@@ -59,7 +59,7 @@
 
   <assign|gui-down-color|#e0e0e0>
 
-  <assign|gui-input-color|#f0f0f0>
+  <assign|gui-bright-color|#f0f0f0>
 
   <assign|gui-sun-color|white>
 
@@ -77,15 +77,11 @@
     </src-comment>
   </active*>
 
-  <assign|gui-dense-table|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0px>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
+  <assign|dense-raster|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0px>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
 
-  <assign|gui-normal-table|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|1|1|1|-1|cell-tsep|0px>|<cwith|2|-1|1|-1|cell-tsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
+  <assign|short-raster|<macro|body|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
 
-  <assign|gui-airy-table|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-big-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|1|1|1|-1|cell-tsep|0px>|<cwith|2|-1|1|-1|cell-tsep|<value|gui-big-sep>>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
-
-  <assign|gui-dense-bar|<macro|body|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-lsep|0px>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
-
-  <assign|gui-normal-bar|<macro|body|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
+  <assign|wide-raster|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|1|1|1|-1|cell-tsep|0px>|<cwith|2|-1|1|-1|cell-tsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -93,33 +89,33 @@
     </src-comment>
   </active*>
 
-  <assign|gui-small-framed|<macro|main-col|border1-col|border2-col|pad|body|<gui-dense-table|<tformat|<twith|table-hmode|auto>|<cwith|1|1|1|-1|cell-background|<arg|border1-col>>|<cwith|3|3|1|-1|cell-background|<arg|border2-col>>|<cwith|1|-1|3|3|cell-background|<arg|border2-col>>|<cwith|1|-1|1|1|cell-background|<arg|border1-col>>|<cwith|1|-1|1|1|cell-width|1px>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|3|3|cell-width|1px>|<cwith|1|-1|3|3|cell-hmode|exact>|<cwith|1|1|1|-1|cell-height|1px>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|3|3|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|2|2|2|2|cell-lsep|<arg|pad>>|<cwith|2|2|2|2|cell-rsep|<arg|pad>>|<cwith|2|2|2|2|cell-bsep|<arg|pad>>|<cwith|2|2|2|2|cell-tsep|<arg|pad>>|<cwith|2|2|2|2|cell-vcorrect|a>|<cwith|2|2|2|2|cell-hyphen|n>|<cwith|2|2|2|2|cell-hpart|1>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|<arg|body>>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
+  <assign|short-highlight|<macro|main-col|border1-col|border2-col|pad|body|<dense-raster|<tformat|<twith|table-hmode|auto>|<cwith|1|1|1|-1|cell-background|<arg|border1-col>>|<cwith|3|3|1|-1|cell-background|<arg|border2-col>>|<cwith|1|-1|3|3|cell-background|<arg|border2-col>>|<cwith|1|-1|1|1|cell-background|<arg|border1-col>>|<cwith|1|-1|1|1|cell-width|1px>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|3|3|cell-width|1px>|<cwith|1|-1|3|3|cell-hmode|exact>|<cwith|1|1|1|-1|cell-height|1px>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|3|3|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|2|2|2|2|cell-lsep|<arg|pad>>|<cwith|2|2|2|2|cell-rsep|<arg|pad>>|<cwith|2|2|2|2|cell-bsep|<arg|pad>>|<cwith|2|2|2|2|cell-tsep|<arg|pad>>|<cwith|2|2|2|2|cell-vcorrect|a>|<cwith|2|2|2|2|cell-hyphen|n>|<cwith|2|2|2|2|cell-hpart|1>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|<arg|body>>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
 
-  <assign|gui-line-framed|<macro|main-col|border1-col|border2-col|pad|body|<gui-dense-table|<tformat|<cwith|1|1|1|-1|cell-background|<arg|border1-col>>|<cwith|3|3|1|-1|cell-background|<arg|border2-col>>|<cwith|1|-1|1|1|cell-background|<arg|border1-col>>|<cwith|1|-1|1|1|cell-width|1px>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|1|1|-1|cell-height|1px>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|3|3|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|2|2|2|2|cell-background|<arg|main-col>>|<cwith|2|2|2|2|cell-lsep|<arg|pad>>|<cwith|2|2|2|2|cell-rsep|<arg|pad>>|<cwith|2|2|2|2|cell-bsep|<arg|pad>>|<cwith|2|2|2|2|cell-tsep|<arg|pad>>|<cwith|2|2|2|2|cell-vcorrect|a>|<cwith|2|2|2|2|cell-hyphen|n>|<cwith|2|2|2|2|cell-hpart|1>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|<arg|body>>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
+  <assign|wide-highlight|<macro|main-col|border1-col|border2-col|pad|body|<dense-raster|<tformat|<cwith|1|1|1|-1|cell-background|<arg|border1-col>>|<cwith|3|3|1|-1|cell-background|<arg|border2-col>>|<cwith|1|-1|1|1|cell-background|<arg|border1-col>>|<cwith|1|-1|1|1|cell-width|1px>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|1|1|-1|cell-height|1px>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|3|3|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|2|2|2|2|cell-background|<arg|main-col>>|<cwith|2|2|2|2|cell-lsep|<arg|pad>>|<cwith|2|2|2|2|cell-rsep|<arg|pad>>|<cwith|2|2|2|2|cell-bsep|<arg|pad>>|<cwith|2|2|2|2|cell-tsep|<arg|pad>>|<cwith|2|2|2|2|cell-vcorrect|a>|<cwith|2|2|2|2|cell-hyphen|n>|<cwith|2|2|2|2|cell-hpart|1>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|<arg|body>>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
 
-  <assign|gui-big-framed|<macro|main-col|border1-col|border2-col|pad|body|<gui-dense-table|<tformat|<cwith|1|1|1|-1|cell-background|<arg|border1-col>>|<cwith|3|3|1|-1|cell-background|<arg|border2-col>>|<cwith|1|-1|3|3|cell-background|<arg|border2-col>>|<cwith|1|-1|1|1|cell-background|<arg|border1-col>>|<cwith|1|-1|1|1|cell-width|1px>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|3|3|cell-width|1px>|<cwith|1|-1|3|3|cell-hmode|exact>|<cwith|1|1|1|-1|cell-height|1px>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|3|3|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|2|2|2|2|cell-background|<arg|main-col>>|<cwith|2|2|2|2|cell-lsep|<arg|pad>>|<cwith|2|2|2|2|cell-rsep|<arg|pad>>|<cwith|2|2|2|2|cell-bsep|<arg|pad>>|<cwith|2|2|2|2|cell-tsep|<arg|pad>>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<\cell>
+  <assign|block-highlight|<macro|main-col|border1-col|border2-col|pad|body|<dense-raster|<tformat|<cwith|1|1|1|-1|cell-background|<arg|border1-col>>|<cwith|3|3|1|-1|cell-background|<arg|border2-col>>|<cwith|1|-1|3|3|cell-background|<arg|border2-col>>|<cwith|1|-1|1|1|cell-background|<arg|border1-col>>|<cwith|1|-1|1|1|cell-width|1px>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|3|3|cell-width|1px>|<cwith|1|-1|3|3|cell-hmode|exact>|<cwith|1|1|1|-1|cell-height|1px>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|3|3|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|2|2|2|2|cell-background|<arg|main-col>>|<cwith|2|2|2|2|cell-lsep|<arg|pad>>|<cwith|2|2|2|2|cell-rsep|<arg|pad>>|<cwith|2|2|2|2|cell-bsep|<arg|pad>>|<cwith|2|2|2|2|cell-tsep|<arg|pad>>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<\cell>
     <arg|body>
   </cell>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
 
   \;
 
-  <assign|gui-big-raise|<style-with|src-compact|none|<macro|body|<gui-big-framed|<value|gui-up-color>|<value|gui-sun-color>|<value|gui-shadow-color>|<value|gui-med-sep>|<arg|body>>>>>
+  <assign|short-raise|<style-with|src-compact|none|<macro|body|<short-highlight|<value|gui-up-color>|<value|gui-sun-color>|<value|gui-shadow-color>|<value|gui-small-sep>|<arg|body>>>>>
 
-  <assign|gui-big-lower|<style-with|src-compact|none|<macro|body|<gui-big-framed|<value|gui-down-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-med-sep>|<arg|body>>>>>
+  <assign|short-lower|<style-with|src-compact|none|<macro|body|<short-highlight|<value|gui-down-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
 
-  <assign|gui-big-input|<style-with|src-compact|none|<macro|body|<gui-big-framed|<value|gui-input-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-med-sep>|<arg|body>>>>>
+  <assign|short-bright|<style-with|src-compact|none|<macro|body|<short-highlight|<value|gui-bright-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
 
-  <assign|gui-small-raise|<style-with|src-compact|none|<macro|body|<gui-small-framed|<value|gui-up-color>|<value|gui-sun-color>|<value|gui-shadow-color>|<value|gui-small-sep>|<arg|body>>>>>
+  <assign|wide-raise|<style-with|src-compact|none|<macro|body|<wide-highlight|<value|gui-up-color>|<value|gui-sun-color>|<value|gui-shadow-color>|<value|gui-small-sep>|<arg|body>>>>>
 
-  <assign|gui-small-lower|<style-with|src-compact|none|<macro|body|<gui-small-framed|<value|gui-down-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
+  <assign|wide-lower|<style-with|src-compact|none|<macro|body|<wide-highlight|<value|gui-down-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
 
-  <assign|gui-small-input|<style-with|src-compact|none|<macro|body|<gui-small-framed|<value|gui-input-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
+  <assign|wide-bright|<style-with|src-compact|none|<macro|body|<wide-highlight|<value|gui-bright-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
 
-  <assign|gui-line-raise|<style-with|src-compact|none|<macro|body|<gui-line-framed|<value|gui-up-color>|<value|gui-sun-color>|<value|gui-shadow-color>|<value|gui-small-sep>|<arg|body>>>>>
+  <assign|block-raise|<style-with|src-compact|none|<macro|body|<block-highlight|<value|gui-up-color>|<value|gui-sun-color>|<value|gui-shadow-color>|<value|gui-med-sep>|<arg|body>>>>>
 
-  <assign|gui-line-lower|<style-with|src-compact|none|<macro|body|<gui-line-framed|<value|gui-down-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
+  <assign|block-lower|<style-with|src-compact|none|<macro|body|<block-highlight|<value|gui-down-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-med-sep>|<arg|body>>>>>
 
-  <assign|gui-line-input|<style-with|src-compact|none|<macro|body|<gui-line-framed|<value|gui-input-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-small-sep>|<arg|body>>>>>
+  <assign|block-bright|<style-with|src-compact|none|<macro|body|<block-highlight|<value|gui-bright-color>|<value|gui-shadow-color>|<value|gui-sun-color>|<value|gui-med-sep>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -127,7 +123,7 @@
     </src-comment>
   </active*>
 
-  <assign|gui-centered-bar|<macro|l|c|r|<gui-dense-table|<tformat|<cwith|1|-1|1|-1|cell-hyphen|n>|<cwith|1|1|1|1|cell-hpart|1>|<cwith|1|1|3|3|cell-hpart|1>|<cwith|1|1|3|3|cell-halign|r>|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|l>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|3|3|cell-hyphen|t>|<cwith|1|1|2|2|cell-width|>|<cwith|1|1|2|2|cell-hmode|auto>|<table|<row|<\cell>
+  <assign|gui-centered-bar|<macro|l|c|r|<dense-raster|<tformat|<cwith|1|-1|1|-1|cell-hyphen|n>|<cwith|1|1|1|1|cell-hpart|1>|<cwith|1|1|3|3|cell-hpart|1>|<cwith|1|1|3|3|cell-halign|r>|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|l>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|3|3|cell-hyphen|t>|<cwith|1|1|2|2|cell-width|>|<cwith|1|1|2|2|cell-hmode|auto>|<table|<row|<\cell>
     <arg|l>
   </cell>|<cell|<arg|c>>|<\cell>
     <arg|r>
@@ -141,9 +137,9 @@
     </src-comment>
   </active*>
 
-  <assign|gui-hrule-sep|<macro|around|left|right|height|col|<gui-dense-table|<tformat|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|1|1|-1|cell-height|<arg|around>>|<cwith|2|2|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-height|<arg|height>>|<cwith|4|4|1|-1|cell-height|1px>|<cwith|5|5|1|-1|cell-height|<arg|around>>|<cwith|2|2|1|-1|cell-background|<value|gui-shadow-color>>|<cwith|4|4|1|-1|cell-background|<value|gui-sun-color>>|<cwith|3|3|1|1|cell-background|<value|gui-shadow-color>>|<cwith|3|3|2|2|cell-background|<arg|col>>|<cwith|3|3|3|3|cell-background|<value|gui-sun-color>>|<cwith|1|-1|1|1|cell-width|<arg|left>>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|3|3|cell-width|<arg|right>>|<cwith|1|-1|3|3|cell-hmode|exact>|<cwith|1|-1|2|2|cell-hpart|1>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
+  <assign|gui-hrule-sep|<macro|around|left|right|height|col|<dense-raster|<tformat|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|1|1|-1|cell-height|<arg|around>>|<cwith|2|2|1|-1|cell-height|1px>|<cwith|3|3|1|-1|cell-height|<arg|height>>|<cwith|4|4|1|-1|cell-height|1px>|<cwith|5|5|1|-1|cell-height|<arg|around>>|<cwith|2|2|1|-1|cell-background|<value|gui-shadow-color>>|<cwith|4|4|1|-1|cell-background|<value|gui-sun-color>>|<cwith|3|3|1|1|cell-background|<value|gui-shadow-color>>|<cwith|3|3|2|2|cell-background|<arg|col>>|<cwith|3|3|3|3|cell-background|<value|gui-sun-color>>|<cwith|1|-1|1|1|cell-width|<arg|left>>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|3|3|cell-width|<arg|right>>|<cwith|1|-1|3|3|cell-hmode|exact>|<cwith|1|-1|2|2|cell-hpart|1>|<table|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|>|<cell|>|<cell|>>>>>>>
 
-  <assign|gui-vspace-sep|<macro|height|<gui-dense-table|<tformat|<cwith|1|-1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-height|<arg|height>>|<table|<row|<cell|>>>>>>>
+  <assign|gui-vspace-sep|<macro|height|<dense-raster|<tformat|<cwith|1|-1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-height|<arg|height>>|<table|<row|<cell|>>>>>>>
 
   <assign|gui-hrule|<macro|<gui-hrule-sep|<value|gui-med-sep>|0px|0px|0px|<value|gui-down-color>>>>
 
@@ -177,7 +173,7 @@
 
   <assign|gui-toggle|<macro|on|<gui-generic-toggle|<gui-generic-marker|<arg|on>>>>>
 
-  <assign|gui-button-toggle|<macro|on|text|<style-with|src-compact|none|<if|<equal|<arg|on>|true>|<gui-small-lower|<arg|text>>|<gui-small-raise|<arg|text>>>>>>
+  <assign|gui-button-toggle|<macro|on|text|<style-with|src-compact|none|<if|<equal|<arg|on>|true>|<short-lower|<arg|text>>|<short-raise|<arg|text>>>>>>
 
   <\active*>
     <\src-comment>

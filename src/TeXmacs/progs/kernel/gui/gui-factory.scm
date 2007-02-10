@@ -184,9 +184,9 @@
      (vertical ,@body)))
 
 (tm-build-macro (field name val)
-  (with f (cond ((in? :short options) 'form-short-input)
-		((in? :multiline options) 'form-big-input)
-		(else 'form-line-input))
+  (with f (cond ((in? :short options) 'form-short-bright)
+		((in? :multiline options) 'form-big-bright)
+		(else 'form-line-bright))
     `(,f ,name (entry ,name ,val "content"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -207,12 +207,20 @@
 	 (body* (map make-row body)))
     `((quote table) ,@body*)))
 
+(tm-build-macro (dense-raster . rows)
+  `((quote dense-raster) (tformat (table ,@rows))))
+
+(tm-build-macro (short-raster . rows)
+  `((quote short-raster) (tformat (table ,@rows))))
+
 (tm-build-macro (raster . rows)
-  (let* ((short? (in? :short options))
-	 (name (if short? 'gui-normal-bar 'gui-normal-table)))
-    `(,name (tformat (table ,@rows)))))
+  `((quote wide-raster) (tformat (table ,@rows))))
+
+(tm-build-macro (dense-bar . cells)
+  `((quote dense-raster) (tformat (table (row ,@cells)))))
+
+(tm-build-macro (short-bar . cells)
+  `((quote short-raster) (tformat (table (row ,@cells)))))
 
 (tm-build-macro (bar . cells)
-  (let* ((short? (in? :short options))
-	 (name (if short? 'gui-normal-bar 'gui-normal-table)))
-    `(,name (tformat (table (row ,@cells))))))
+  `((quote wide-raster) (tformat (table (row ,@cells)))))
