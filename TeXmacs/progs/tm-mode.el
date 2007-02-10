@@ -45,9 +45,11 @@
 	 dialogue delayed on-entry on-exit
 	 tm-build tm-build-macro tm-build-widget widget-delayed widget-with
 	 action alternative alternatives aspect
-	 bar button button-alternative button-toggle
-	 field form form-cancel form-done form-next form-previous
-	 header internal raster sheet suggestions toggle) "\\|")
+	 bar block-input button button-alternative button-toggle
+	 dense-bar dense-raster
+	 form form-cancel form-done form-next form-previous
+	 header input internal raster
+	 sheet short-bar short-input short-raster suggestions toggle) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -84,12 +86,14 @@
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
 	       interactive dialogue-user widget-with
-	       action aspect button field form internal))
+	       action aspect block-input button form
+	       input internal short-input))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
 	       delayed dialogue on-entry on-exit widget-delayed
-	       bar header raster sheet
+	       bar dense-bar dense-raster header raster
+	       sheet short-bar short-raster
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
