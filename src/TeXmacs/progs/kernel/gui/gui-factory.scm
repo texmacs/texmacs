@@ -136,7 +136,7 @@
 	((== x :yellow) '("gui-toggle-color" "pastel yellow"))
 	((== x :orange) '("gui-toggle-color" "pastel orange"))
 	((== x :grey) '("gui-toggle-color" "light grey"))
-	((== x :circle) '("gui-toggle-type" "circle"))
+	((== x :circular) '("gui-toggle-type" "circular"))
 	((== x :square) '("gui-toggle-type" "square"))
 	((== x :checked) '("gui-marker-type" "checked"))
 	((== x :bullet) '("gui-marker-type" "bullet"))
@@ -183,11 +183,14 @@
   `(form-sheet ,name ,val
      (vertical ,@body)))
 
-(tm-build-macro (field name val)
-  (with f (cond ((in? :short options) 'form-short-bright)
-		((in? :multiline options) 'form-big-bright)
-		(else 'form-line-bright))
-    `(,f ,name (entry ,name ,val "content"))))
+(tm-build-macro (short-input name val)
+  `((quote short-input) ,name (entry ,name ,val "content")))
+
+(tm-build-macro (input name val)
+  `((quote wide-input) ,name (entry ,name ,val "content")))
+
+(tm-build-macro (block-input name val)
+  `((quote block-input) ,name (entry ,name ,val "content")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tabular constructs
