@@ -173,7 +173,7 @@
        `(suggestions ,var ',proposals)))
 
 (define (interactive-field prompt var type)
-  `(,prompt (field ,var :auto)))
+  `(,prompt (input ,var :auto)))
 
 (define (interactive-fields prompts vars types)
   (with rows (map interactive-field prompts vars types)
