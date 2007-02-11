@@ -75,22 +75,22 @@
 
   <\active*>
     <\src-comment>
-      Submacros for form identifiers
+      Low-level macros for widgets
     </src-comment>
   </active*>
 
-  <drd-props|form-window|arity|<tuple|repeat|1|1>|border|no>
+  <drd-props|widget-window|arity|<tuple|repeat|1|1>|border|no>
 
-  <assign|form-prefix|>
+  <assign|widget-prefix|>
 
-  <assign|form|<macro|name|body|<style-with|src-compact|none|<with|form-prefix|<merge|<value|form-prefix>|<arg|name>|->|<wide-normal|<arg|body>>>>>>
+  <assign|widget|<macro|name|body|<style-with|src-compact|none|<with|widget-prefix|<merge|<value|widget-prefix>|<arg|name>|->|<wide-normal|<arg|body>>>>>>
 
-  <assign|form-id|<macro|name|<id|<merge|<value|form-prefix>|<arg|name>>>>>
+  <assign|widget-id|<macro|name|<id|<merge|<value|widget-prefix>|<arg|name>>>>>
 
-  <assign|form-value|<macro|name|<extern|widget-ref|<arg|name>|<value|form-prefix>>>>
+  <assign|widget-value|<macro|name|<extern|widget-ref|<arg|name>|<value|widget-prefix>>>>
 
-  <assign|form-cmd|<macro|cmd|<merge|(widget-delay (widget-with
-  "|<value|form-prefix>|" |<arg|cmd>|))>>>
+  <assign|widget-cmd|<macro|cmd|<merge|(widget-delay (widget-with
+  "|<value|widget-prefix>|" |<arg|cmd>|))>>>
 
   <\active*>
     <\src-comment>
@@ -144,19 +144,19 @@
     </src-comment>
   </active*>
 
-  <assign|short-input|<macro|name|val|<short-bright|<locus|<form-id|<arg|name>>|<arg|val>>>>>
+  <assign|short-input|<macro|name|val|<short-bright|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
 
-  <assign|wide-input|<macro|name|val|<wide-bright|<locus|<form-id|<arg|name>>|<arg|val>>>>>
+  <assign|wide-input|<macro|name|val|<wide-bright|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
 
   <assign|block-input|<\macro|name|val>
     <\block-bright>
-      <\locus|<form-id|<arg|name>>>
+      <\locus|<widget-id|<arg|name>>>
         <arg|val>
       </locus>
     </block-bright>
   </macro>>
 
-  <assign|hidden-input|<macro|name|val|body|<surround|<hidden|<locus|<form-id|<arg|name>>|<arg|val>>>||<with|<merge|form-value-|<arg|name>>|<arg|val>|<arg|body>>>>>
+  <assign|hidden-input|<macro|name|val|body|<surround|<hidden|<locus|<widget-id|<arg|name>>|<arg|val>>>||<with|<merge|widget-value-|<arg|name>>|<arg|val>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -202,7 +202,7 @@
 
   <assign|render-button|<macro|on|body|<compound|<merge|<value|button-shape>|-button>|<arg|on>|<arg|body>>>>
 
-  <assign|button|<macro|body|cmd|<render-button|false|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
+  <assign|button|<macro|body|cmd|<render-button|false|<action|<arg|body>|<widget-cmd|<arg|cmd>>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -240,12 +240,12 @@
     </src-comment>
   </active*>
 
-  <assign|toggle-cmd|<macro|name|val|<style-with|src-compact|none|<form-cmd|<merge|(widget-set!
+  <assign|toggle-cmd|<macro|name|val|<style-with|src-compact|none|<widget-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<not|<arg|val>>|")>>>>>
 
-  <assign|toggle-box|<macro|name|val|<style-with|src-compact|none|<action|<render-box-marker|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>>|<toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+  <assign|toggle-box|<macro|name|val|<style-with|src-compact|none|<action|<render-box-marker|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>>|<toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<widget-id|<arg|name>>|<arg|val>>>>>>
 
-  <assign|toggle-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>|<arg|text>>|<toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+  <assign|toggle-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>|<arg|text>>|<toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<widget-id|<arg|name>>|<arg|val>>>>>>
 
   <\active*>
     <\src-comment>
@@ -253,10 +253,10 @@
     </src-comment>
   </active*>
 
-  <assign|radio-box|<macro|name|val|<style-with|src-compact|none|<action|<render-box-marker|<equal|<arg|val>|<form-value|<arg|name>>>>|<form-cmd|<merge|(widget-set!
+  <assign|radio-box|<macro|name|val|<style-with|src-compact|none|<action|<render-box-marker|<equal|<arg|val>|<widget-value|<arg|name>>>>|<widget-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
-  <assign|radio-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<equal|<arg|val>|<form-value|<arg|name>>>|<arg|text>>|<form-cmd|<merge|(widget-set!
+  <assign|radio-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<equal|<arg|val>|<widget-value|<arg|name>>>|<arg|text>>|<widget-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
   <\active*>
@@ -270,7 +270,7 @@
   <assign|conditional|<macro|cond|body|<compound|<if|<arg|cond>|identity|hidden-macro>|<arg|body>>>>
 
   <assign|pagelet|<\macro|name|val|body>
-    <\conditional|<equal|<arg|val>|<form-value|<arg|name>>>>
+    <\conditional|<equal|<arg|val>|<widget-value|<arg|name>>>>
       <arg|body>
     </conditional>
   </macro>>

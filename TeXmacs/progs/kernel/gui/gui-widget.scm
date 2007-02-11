@@ -59,14 +59,14 @@
     (ahash-ref t var)))
 
 (tm-define (internal-set! var val)
-  (when (context-has? "form-prefix")
-    (and-with handle* (get-env "form-prefix")
+  (when (context-has? "widget-prefix")
+    (and-with handle* (get-env "widget-prefix")
       (with handle (if (== handle* "") "" (string-drop-right handle* 1))
 	(widget-internal-set! handle var val)))))
 
 (tm-define (internal-ref var)
-  (when (context-has? "form-prefix")
-    (and-with handle* (get-env "form-prefix")
+  (when (context-has? "widget-prefix")
+    (and-with handle* (get-env "widget-prefix")
       (with handle (if (== handle* "") "" (string-drop-right handle* 1))
 	(widget-internal-ref handle var)))))
 
@@ -150,7 +150,7 @@
      (widget-internal-new aux-handle)
      (set! aux-result ,body)
      (set! aux-end (+ widget-call-back-nr 1))
-     `(form ,aux-serial (document ,@aux-result))))
+     `(widget ,aux-serial (document ,@aux-result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Stand-alone widgets
@@ -177,19 +177,19 @@
 (define (macrofy-body t)
   (receive (m args) (macrofy #f #f (tm->stree t) '())
     (values `(macro ,@(map car args) ,m)
-	    `(form-window ,@(map cdr args)))))
+	    `(widget-window ,@(map cdr args)))))
 
 (define (stand-alone body)
-  (let* ((style '(tuple "generic" "gui-form"))
+  (let* ((style '(tuple "generic" "gui-utils"))
 	 (init '(collection (associate "window-bars" "false")
 			    (associate "prog-scripts" "maxima"))))
     `(document (style ,style) (body ,body) (initial ,init))))
 
 (define (stand-alone* body)
   (receive (def body*) (macrofy-body body)
-    (let* ((style '(tuple "generic" "gui-form"))
+    (let* ((style '(tuple "generic" "gui-utils"))
 	   (init `(collection (associate "window-bars" "false")
-			      (associate "form-window" ,def)
+			      (associate "widget-window" ,def)
 			      (associate "prog-scripts" "maxima"))))
       `(document (style ,style) (body ,body*) (initial ,init)))))
 
