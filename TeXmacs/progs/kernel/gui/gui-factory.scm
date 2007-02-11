@@ -22,7 +22,7 @@
 (tm-define (build-content w)
   (:synopsis "Generate a content builder from a scheme program @w")
   (cond ((list? w) `(list ,(build-content-list w)))
-	((== w '-) `(list '(gui-vspace)))
+	((== w '-) `(list '(gui-medskip)))
 	((== w '---) `(list '(gui-hrule)))
 	((== w '>>>) `(list '(htab "1em")))
 	((symbol? w) `(list ',w))
@@ -130,16 +130,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (build-aspect x)
-  (cond ((== x :red) '("gui-toggle-color" "pastel red"))
-	((== x :green) '("gui-toggle-color" "pastel green"))
-	((== x :blue) '("gui-toggle-color" "pastel blue"))
-	((== x :yellow) '("gui-toggle-color" "pastel yellow"))
-	((== x :orange) '("gui-toggle-color" "pastel orange"))
-	((== x :grey) '("gui-toggle-color" "light grey"))
-	((== x :circular) '("gui-toggle-type" "circular"))
-	((== x :square) '("gui-toggle-type" "square"))
-	((== x :checked) '("gui-marker-type" "checked"))
-	((== x :bullet) '("gui-marker-type" "bullet"))
+  (cond ((== x :circular) '("box-shape" "circular"))
+	((== x :square) '("box-shape" "square"))
+	((== x :red) '("box-color" "pastel red"))
+	((== x :green) '("box-color" "pastel green"))
+	((== x :blue) '("box-color" "pastel blue"))
+	((== x :yellow) '("box-color" "pastel yellow"))
+	((== x :orange) '("box-color" "pastel orange"))
+	((== x :grey) '("box-color" "light grey"))
+	((== x :checked) '("marker-shape" "checked"))
+	((== x :bullet) '("marker-shape" "bullet"))
 	(else '())))
 
 (tm-build (aspect . body)
@@ -152,37 +152,6 @@
 ;; Buttons, toggles, alternatives and input fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-build-macro (action body . cmds)
-  `(form-action (horizontal ,body) (command ,@cmds)))
-
-(tm-build-macro (button body . cmds)
-  `(form-button (horizontal ,body) (command ,@cmds)))
-
-(tm-build-macro (toggle name val)
-  `(form-toggle ,name (entry ,name ,val "boolean")))
-
-(tm-build-macro (button-toggle name val . body)
-  `(form-button-toggle ,name (entry ,name ,val "boolean")
-     (horizontal ,@body)))
-
-(tm-build-macro (alternatives name val . body)
-  `(form-alternatives ,name (entry ,name ,val "string")
-     (vertical ,@body)))
-
-(tm-build-macro (alternative name val)
-  `(form-alternative ,name ,val))
-
-(tm-build-macro (button-alternative name val . body)
-  `(form-button-alternative ,name ,val
-     (horizontal ,@body)))
-
-(tm-build-macro (header . body)
-  `(gui-centered-switch (horizontal ,@body)))
-
-(tm-build-macro (sheet name val . body)
-  `(form-sheet ,name ,val
-     (vertical ,@body)))
-
 (tm-build-macro (short-input name val)
   `((quote short-input) ,name (entry ,name ,val "content")))
 
@@ -191,6 +160,34 @@
 
 (tm-build-macro (block-input name val)
   `((quote block-input) ,name (entry ,name ,val "content")))
+
+(tm-build-macro (hidden-input name val . body)
+  `((quote hidden-input) ,name (entry ,name ,val "string")
+     (vertical ,@body)))
+
+(tm-build-macro (button body . cmds)
+  `((quote button) (horizontal ,body) (command ,@cmds)))
+
+(tm-build-macro (toggle name val)
+  `((quote toggle-box) ,name (entry ,name ,val "boolean")))
+
+(tm-build-macro (toggle-button name val . body)
+  `((quote toggle-button) ,name (entry ,name ,val "boolean")
+    (horizontal ,@body)))
+
+(tm-build-macro (radio name val)
+  `((quote radio-box) ,name ,val))
+
+(tm-build-macro (radio-button name val . body)
+  `((quote radio-button) ,name ,val
+     (horizontal ,@body)))
+
+(tm-build-macro (header-bar . body)
+  `((quote header-bar) (horizontal ,@body)))
+
+(tm-build-macro (pagelet name val . body)
+  `((quote pagelet) ,name ,val
+     (vertical ,@body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tabular constructs

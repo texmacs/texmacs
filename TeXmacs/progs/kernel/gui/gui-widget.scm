@@ -163,12 +163,12 @@
 	  (values (cons h t) end)))))
 
 (define (macrofy p i t args)
-  (cond ((in? (list p i) '((form-toggle 1)
-			   (form-button-toggle 1)
-			   (form-alternatives 1)
-			   (short-input 1)
+  (cond ((in? (list p i) '((short-input 1)
 			   (wide-input 1)
-			   (block-input 1)))
+			   (block-input 1)
+			   (hidden-input 1)
+			   (toggle-box 1)
+			   (toggle-button 1)))
 	 (with v (string-append "v" (number->string (length args)))
 	   (values `(arg ,v) (rcons args (cons v t)))))
 	((nlist? t) (values t args))
@@ -192,6 +192,9 @@
 			      (associate "form-window" ,def)
 			      (associate "prog-scripts" "maxima"))))
       `(document (style ,style) (body ,body*) (initial ,init)))))
+
+(tm-define (widget-build w)
+  (tm->tree (eval (widget-armour (build-content w)))))
 
 (tm-define (widget-popup name w)
   (let* ((body (tm->tree (eval (widget-armour (build-content w)))))

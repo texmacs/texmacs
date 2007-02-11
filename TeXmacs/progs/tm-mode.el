@@ -44,12 +44,12 @@
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
 	 tm-build tm-build-macro tm-build-widget widget-delayed widget-with
-	 action alternative alternatives aspect
-	 bar block-input button button-alternative button-toggle
-	 dense-bar dense-raster
+	 aspect bar block-input button dense-bar dense-raster
 	 form form-cancel form-done form-next form-previous
-	 header input internal raster
-	 sheet short-bar short-input short-raster suggestions toggle) "\\|")
+	 header-bar hidden-input input internal
+	 pagelet radio radio-button raster
+	 short-bar short-input short-raster suggestions
+	 toggle toggle-button) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -74,7 +74,7 @@
     (put s 'scheme-indent-function 3))
   (dolist (s '(with with-global and-with with-innermost receive
 	       with-environment with-environment* converter
-	       alternatives button-alternative button-toggle sheet))
+	       hidden-input pagelet radio-button toggle-button))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module provide-public with-result
 	       and-let* setup-append-if define-group
@@ -86,14 +86,14 @@
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
 	       interactive dialogue-user widget-with
-	       action aspect block-input button form
+	       aspect block-input button form
 	       input internal short-input))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
 	       delayed dialogue on-entry on-exit widget-delayed
-	       bar dense-bar dense-raster header raster
-	       sheet short-bar short-raster
+	       bar dense-bar dense-raster header-bar
+	       raster short-bar short-raster
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
