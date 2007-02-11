@@ -44,11 +44,12 @@
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
 	 tm-build tm-build-macro tm-build-widget widget-delayed widget-with
-	 aspect bar block-input button dense-bar dense-raster
+	 aspect bar block-input button concat
+	 dense-bar dense-raster document
 	 form form-cancel form-done form-next form-previous
 	 header-bar hidden-input input internal
 	 pagelet radio radio-button raster
-	 short-bar short-input short-raster suggestions
+	 sequence short-bar short-input short-raster suggestions
 	 toggle toggle-button) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
@@ -93,7 +94,7 @@
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
 	       delayed dialogue on-entry on-exit widget-delayed
-	       bar dense-bar dense-raster header-bar
-	       raster short-bar short-raster
+	       bar concat dense-bar dense-raster document
+	       header-bar raster sequence short-bar short-raster
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
