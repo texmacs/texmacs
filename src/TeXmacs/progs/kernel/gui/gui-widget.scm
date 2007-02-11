@@ -180,14 +180,14 @@
 	    `(widget-window ,@(map cdr args)))))
 
 (define (stand-alone body)
-  (let* ((style '(tuple "generic" "gui-utils"))
+  (let* ((style '(tuple "generic" "gui"))
 	 (init '(collection (associate "window-bars" "false")
 			    (associate "prog-scripts" "maxima"))))
     `(document (style ,style) (body ,body) (initial ,init))))
 
 (define (stand-alone* body)
   (receive (def body*) (macrofy-body body)
-    (let* ((style '(tuple "generic" "gui-utils"))
+    (let* ((style '(tuple "generic" "gui"))
 	   (init `(collection (associate "window-bars" "false")
 			      (associate "widget-window" ,def)
 			      (associate "prog-scripts" "maxima"))))

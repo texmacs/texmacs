@@ -82,21 +82,21 @@
 (tm-build (quote x)
   `(list ',x))
 
-(tm-define (horizontal l)
+(tm-define (concat l)
   (cond ((null? l) "")
 	((null? (cdr l)) (car l))
 	(else (cons 'concat l))))
 
-(tm-build (horizontal . body)
-  `(list (horizontal ,(build-content-list body))))
+(tm-build (concat . body)
+  `(list (concat ,(build-content-list body))))
 
-(tm-define (vertical l)
+(tm-define (document l)
   (cond ((null? l) "")
 	((null? (cdr l)) (car l))
 	(else (cons 'document l))))
 
-(tm-build (vertical . body)
-  `(list (vertical ,(build-content-list body))))
+(tm-build (document . body)
+  `(list (document ,(build-content-list body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fundamental interactive constructs for building widget
@@ -163,31 +163,31 @@
 
 (tm-build-macro (hidden-input name val . body)
   `((quote hidden-input) ,name (entry ,name ,val "string")
-     (vertical ,@body)))
+    (document ,@body)))
 
 (tm-build-macro (button body . cmds)
-  `((quote button) (horizontal ,body) (command ,@cmds)))
+  `((quote button) (concat ,body) (command ,@cmds)))
 
 (tm-build-macro (toggle name val)
   `((quote toggle-box) ,name (entry ,name ,val "boolean")))
 
 (tm-build-macro (toggle-button name val . body)
   `((quote toggle-button) ,name (entry ,name ,val "boolean")
-    (horizontal ,@body)))
+    (concat ,@body)))
 
 (tm-build-macro (radio name val)
   `((quote radio-box) ,name ,val))
 
 (tm-build-macro (radio-button name val . body)
   `((quote radio-button) ,name ,val
-     (horizontal ,@body)))
+    (concat ,@body)))
 
 (tm-build-macro (header-bar . body)
-  `((quote header-bar) (horizontal ,@body)))
+  `((quote header-bar) (concat ,@body)))
 
 (tm-build-macro (pagelet name val . body)
   `((quote pagelet) ,name ,val
-     (vertical ,@body)))
+    (document ,@body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tabular constructs
@@ -195,7 +195,7 @@
 
 (tm-build-macro (cell . body)
   (cond ((== body '(>>>)) `(gui-tab))
-	(else `((quote cell) (horizontal ,@body)))))
+	(else `((quote cell) (concat ,@body)))))
 
 (tm-build-macro (row . body)
   (let* ((make-cell (lambda (x) (if (func? x 'cell) x `(cell ,x))))
