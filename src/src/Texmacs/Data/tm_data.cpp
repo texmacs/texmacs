@@ -13,6 +13,10 @@
 #include "tm_data.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "web_files.hpp"
+#ifdef EXPERIMENTAL
+#include "../../Style/Memorizer/clean_copy.hpp"
+#endif
 
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
@@ -22,12 +26,21 @@ int max_undo_depth= 100; // should actually be part of tm_data_rep
 * Constructor and destructor
 ******************************************************************************/
 
-tm_data_rep::tm_data_rep (): history (0), hist_pos (-1) {}
+tm_data_rep::tm_data_rep () {}
 tm_data_rep::~tm_data_rep () {}
 
 /******************************************************************************
 * Low level functions for maintaining the buffer menu
 ******************************************************************************/
+
+int
+tm_data_rep::find_buffer (path p) {
+  int i;
+  for (i=0; i<N(bufs); i++)
+    if (bufs[i]->rp <= p)
+      return i;
+  return -1;
+}
 
 int
 tm_data_rep::find_buffer (url name) {
@@ -45,6 +58,8 @@ tm_data_rep::new_menu_name (url u) {
     name= as_string (tail (u * url_parent ()));
   if ((name == "") || (name == "."))
     name= as_string (u);
+  if (is_rooted_tmfs (u))
+    name= as_string (call ("tmfs-name", as_string (u)));
 
   int i, j;
   for (j=1; true; j++) {
@@ -57,24 +72,44 @@ tm_data_rep::new_menu_name (url u) {
   }
 }
 
-void
-tm_data_rep::update_menu () {
-  int i;
-  string s ("(menu-bind buffer-menu ");
-  for (i=0; i<N(bufs); i++) {
-    if (i>0) s << " ";
-    s << "(\"" << bufs[i]->abbr << "\" ";
-    s << "(switch-to-buffer \"" * as_string (bufs[i]->name) * "\"))";
+static void
+menu_append_buffer (string& s, tm_buffer buf) {
+  s << " (\"" << buf->abbr;
+  if (buf->needs_to_be_saved ()) s << " *"; 
+  s << "\" (switch-to-buffer \"" * as_string (buf->name) * "\"))";
+}
+
+object
+tm_data_rep::get_buffer_menu () {
+  int i, count;
+  bool two_types= false;;
+  string s ("(menu-dynamic");
+  for (i=0, count=0; i<N(bufs); i++) {
+    if (is_none (bufs[i]->extra) == is_none (bufs[0]->extra)) {
+      menu_append_buffer (s, bufs[i]);
+      count++;
+    }
+    else two_types= true;
+    if (count == 10) break;
+  }
+  if (two_types) {
+    s << " ---";
+    for (i=0, count=0; i<N(bufs); i++) {
+      if (is_none (bufs[i]->extra) != is_none (bufs[0]->extra)) {
+	menu_append_buffer (s, bufs[i]);
+	count++;
+      }
+      if (count == 10) break;
+    }
   }
   s << ")";
-  (void) eval (s);
+  return eval (s);
 }
 
 void
 tm_data_rep::menu_insert_buffer (tm_buffer buf) {
   // bufs << ((pointer) buf); // causes compilation error
   bufs << buf; // WARNING: that one compile, what was the use of the cast?
-  update_menu ();
 }
 
 void
@@ -86,7 +121,6 @@ tm_data_rep::menu_delete_buffer (tm_buffer buf) {
 
   for (i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
   bufs->resize (n-1);
-  update_menu();
 }
 
 void
@@ -98,7 +132,6 @@ tm_data_rep::menu_focus_buffer (tm_buffer buf) {
 
   for (i=nr; i>=1; i--) bufs[i]= bufs[i-1];
   bufs[0]= buf;
-  update_menu ();
 }
 
 /******************************************************************************
@@ -179,13 +212,18 @@ tm_data_rep::set_name_buffer (url name) {
   set_abbr_buffer (new_menu_name (name));
 }
 
+string
+tm_data_rep::get_abbr_buffer () {
+  tm_buffer buf= get_buffer ();
+  return buf->abbr;
+}
+
 void
 tm_data_rep::set_abbr_buffer (string abbr) {
   int i;
   tm_buffer buf= get_buffer ();
   if (buf->abbr == abbr) return;
   buf->abbr= abbr;
-  update_menu ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL)
@@ -198,6 +236,13 @@ tm_data_rep::get_name_buffer () {
   tm_buffer buf= get_buffer ();
   if (!is_none (buf->extra)) return buf->extra;
   return buf->name;
+}
+
+url
+tm_data_rep::get_name_buffer (path p) {
+  int nr= find_buffer (p);
+  if (nr == -1) return url_none ();
+  return bufs[nr]->name;
 }
 
 /******************************************************************************
@@ -219,7 +264,6 @@ tm_data_rep::new_view (url name) {
   ed->notify_page_change ();
   ed->add_init (buf->init);
   ed->notify_change (THE_DECORATIONS);
-  ed->notify_change (THE_AUTOMATIC_SIZE);
   ed->typeset_invalidate_env ();
 
   tm_view temp_vw= get_view (false);
@@ -296,8 +340,8 @@ tm_data_rep::detach_view (tm_view vw) {
 ******************************************************************************/
 
 tm_window
-tm_data_rep::new_window (display dis, bool map_flag) {
-  tm_window win= new tm_window_rep (new tm_widget_rep (this, dis));
+tm_data_rep::new_window (display dis, bool map_flag, tree geom) {
+  tm_window win= new tm_window_rep (new tm_widget_rep (this, dis), geom);
   if (map_flag) win->win->map ();
   return win;
 }
@@ -342,8 +386,8 @@ tm_data_rep::new_buffer_in_this_window (url name, tree doc) {
 }
 
 void
-tm_data_rep::new_buffer_in_new_window (url name, tree doc) {
-  tm_window win= new_window (get_display ());
+tm_data_rep::new_buffer_in_new_window (url name, tree doc, tree geom) {
+  tm_window win= new_window (get_display (), true, geom);
   tm_buffer buf= new_buffer (name, doc);
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
@@ -363,6 +407,13 @@ tm_data_rep::nr_bufs () {
 tm_buffer
 tm_data_rep::get_buf (int i) {
   return (tm_buffer) bufs[i];
+}
+
+tm_buffer
+tm_data_rep::get_buf (path p) {
+  int nr= find_buffer (p);
+  if (nr >= 0) return bufs[nr];
+  else return NULL;
 }
 
 void
@@ -388,10 +439,16 @@ tm_data_rep::switch_to_buffer (int nr) {
   attach_view (win, new_vw);
   set_view (new_vw);
   menu_focus_buffer (buf);
-  project_update_menu ();
   tm_widget meta= new_vw->win->wid;
   meta->set_shrinking_factor (meta->get_shrinking_factor ());
   // cout << "Switched to buffer " << nr << "\n";
+}
+
+bool
+tm_data_rep::switch_to_buffer (path p) {
+  int nr= find_buffer (p);
+  if (nr != -1) switch_to_buffer (nr);
+  return nr != -1;
 }
 
 void
@@ -422,7 +479,6 @@ tm_data_rep::switch_to_active_buffer (url name) {
         tm_view vw= buf->vws[i];
         set_view (vw);
         menu_focus_buffer (buf);
-        project_update_menu ();
         return;
       }
   }
@@ -432,6 +488,7 @@ tm_data_rep::switch_to_active_buffer (url name) {
 void
 tm_data_rep::revert_buffer () {
   tm_buffer buf= get_buffer ();
+  web_cache_invalidate (buf->name);
   tree doc= load_tree (buf->name, buf->fm);
   if (doc == "error") set_message ("Error: file not found", "revert buffer");
   else revert_buffer (buf->name, doc);
@@ -464,13 +521,13 @@ tm_data_rep::kill_buffer () {
 }
 
 void
-tm_data_rep::open_window () {
+tm_data_rep::open_window (tree geom) {
   int i;
   for (i=1; true; i++) {
     string name= "no name " * as_string (i);
     if (i==1) name= "no name";
     if (find_buffer (name) != -1) continue;
-    new_buffer_in_new_window (name, tree (DOCUMENT));
+    new_buffer_in_new_window (name, tree (DOCUMENT), geom);
     return;
   }
 }
@@ -488,7 +545,7 @@ tm_data_rep::clone_window () {
 void
 tm_data_rep::kill_window () {
   int i, j;
-  tm_window win    = get_window ();
+  tm_window win= get_window ();
   for (i=0; i<N(bufs); i++) {
     tm_buffer buf= bufs[i];
     for (j=0; j<N(buf->vws); j++) {
@@ -502,6 +559,21 @@ tm_data_rep::kill_window () {
     }
   }
   quit ();
+}
+
+void
+tm_data_rep::kill_window_and_buffer () {
+  if (N(bufs) <= 1) quit();
+  int i;
+  bool kill= true;
+  tm_buffer buf= get_buffer();
+  tm_window win= get_window ();
+  for (i=0; i<N(buf->vws); i++) {
+    tm_view old_vw= buf->vws[i];
+    if (old_vw->win != win) kill= false;
+  }
+  kill_window ();
+  if (kill) delete_buffer (buf);
 }
 
 void
@@ -522,15 +594,12 @@ tm_data_rep::no_bufs () {
 }
 
 void
-tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
+tm_data_rep::set_aux (string aux, url name) {
   int i, nr= find_buffer (aux);
-  if (nr == -1) new_buffer (aux, doc);
-  else revert_buffer (aux, doc);
-  nr= find_buffer (aux);
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
     buf->extra= name;
-    if (aux == "* Help *") {
+    if (starts (aux, "Help - ")) {
       buf->fm= "help";
       buf->read_only= true;
     }
@@ -538,28 +607,48 @@ tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
       tm_view vw= buf->vws[i];
       vw->ed->set_base_name (name);
     }
-    switch_to_buffer (nr);
   }
 }
 
 void
-tm_data_rep::set_help_buffer (url name, tree doc) {
-  set_aux_buffer ("* Help *", name, doc);
-  tree t= tuple (name->t, doc);
-  hist_pos++;
-  if ((hist_pos>=0) && (hist_pos<N(history)) && (history[hist_pos]!=t))
-    history->resize (hist_pos);
-  if (hist_pos == N(history))
-    history << tuple (name->t, doc);
+tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
+  int i, nr= find_buffer (aux);
+  if (nr == -1) new_buffer (aux, doc);
+  else revert_buffer (aux, doc);
+  nr= find_buffer (aux);
+  if (nr != -1) {
+    set_aux (aux, name);
+    switch_to_buffer (nr);
+  }
+}
+
+static string
+get_doc_title (tree t) {
+  if (is_atomic (t)) return "";
+  if (is_compound (t, "doc-title") ||
+      is_compound (t, "tmdoc-title") ||
+      is_compound (t, "tmdoc-title*") ||
+      is_compound (t, "tmweb-title"))
+    return tree_to_verbatim (t[0]);
+  else {
+    for (int i=0; i<N(t); i++) {
+      string r= get_doc_title (t[i]);
+      if (r != "") return r;
+    }
+    return "";
+  }
+}
+
+string
+get_help_title (url name, tree t) {
+  string s= get_doc_title (t);
+  if (s == "") return "Help - " * as_string (tail (name));
+  else return "Help - " * s;
 }
 
 void
-tm_data_rep::browse_help (int delta) {
-  if (hist_pos + delta < 0) return;
-  if (hist_pos + delta >= N(history)) return;
-  hist_pos += delta-1;
-  tree t= history[hist_pos+1];
-  set_help_buffer (as_url (t[0]), t[1]);
+tm_data_rep::set_help_buffer (url name, tree doc) {
+  set_aux_buffer (get_help_title (name, doc), name, doc);
 }
 
 /******************************************************************************
@@ -580,7 +669,6 @@ tm_data_rep::project_attach (string prj_name) {
   else {
     url full_name= head (buf->name) * prj_name;
     buf->prj= load_passive_buffer (full_name);
-    project_update_menu ();
   }
 }
 
@@ -590,11 +678,11 @@ tm_data_rep::project_attached () {
   return buf->project != "";
 }
 
-void
-tm_data_rep::project_update_menu () {
+object
+tm_data_rep::get_project_buffer_menu () {
   tm_buffer buf= get_buffer ();
-  if (buf->prj == NULL) return;
-  string s ("(menu-bind project-buffer-menu ");
+  if (buf->prj == NULL) return eval ("(menu-dynamic)");
+  string s ("(menu-dynamic ");
   s << "(\"" << buf->prj->abbr << "\" ";
   s << "(switch-to-buffer \"" * as_string (buf->prj->name) * "\"))";
 
@@ -610,7 +698,7 @@ tm_data_rep::project_update_menu () {
     }
 
   s << ")";
-  (void) eval (s);
+  return eval (s);
 }
 
 /******************************************************************************
@@ -623,22 +711,32 @@ path
 new_document () {
   int i, n= N(the_et);
   for (i=0; i<n; i++)
-    if (the_et[i] == UNINIT) {
+    if (the_et[i] == UNINIT && nil (the_et[i]->obs)) {
       assign (the_et[i], tree (DOCUMENT, ""));
       return path (i); // obtain_ip (the_et[i]);
     }
   insert (the_et, n, tuple (tree (DOCUMENT, "")));
+#ifdef EXPERIMENTAL
+  global_notify_insert (path (n), tuple (tree (DOCUMENT, "")));
+#endif
   return path (n); // obtain_ip (the_et[n]);
 }
 
 void
 delete_document (path rp) {
   assign (subtree (the_et, rp), UNINIT);
+#ifdef EXPERIMENTAL
+  global_notify_assign (rp, UNINIT);
+#endif
 }
 
 void
 set_document (path rp, tree t) {
+  //assign (subtree (the_et, rp), t);
   assign (subtree (the_et, rp), copy (t));
+#ifdef EXPERIMENTAL
+  global_notify_assign (rp, copy (t));
+#endif
 }
 
 /******************************************************************************

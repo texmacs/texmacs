@@ -1,19 +1,30 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.5.10>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Compatibility with other formats>
 
-  <TeXmacs> is fully compatible with Postscript (as well as <acronym|PDF>),
-  which is used as the format in order to <hyper-link|print
-  documents|../start/man-print.en.tm>. <TeXmacs> also provides converters
-  from and to <LaTeX> and an input filter for Html.
+  <TeXmacs> documents can be saved without loss of information in three
+  formats: the native <TeXmacs> format, <name|Xml> and as a <name|Scheme>
+  expression. <TeXmacs> documents can be converted in a <em|wysiwyg>
+  (what-you-see-is-what-you-get) way to either <name|Postscript> or
+  <name|Pdf>, which are used as the primary formats for <hyper-link|printing
+  documents|../start/man-print.en.tm>. <TeXmacs> finally provides converters
+  for <LaTeX>, <name|Html> and <name|MathML>.
+
+  <TeXmacs> documents can be converted to other formats using the different
+  items in the <menu|File|Export> menu. Similarly, the <menu|File|Import>
+  menu contains all formats which can be imported into <TeXmacs>. Besides
+  exporting or importing entire documents, it is also possible to copy and
+  paste document fragments using <menu|Edit|Copy to> and <menu|Edit|Paste
+  from>. The default formats for copy and pasting can be specified in
+  <menu|Tools|Selections|Export> and <menu|Tools|Selections|Import>.
 
   <\traverse>
     <branch|<LaTeX>|latex/man-latex.en.tm>
 
-    <branch|Html|html/man-html.en.tm>
+    <branch|<name|Html> and <name|MathML>|html/man-html.en.tm>
 
     <branch|Adding new converters|new/man-newconv.en.tm>
   </traverse>
@@ -31,17 +42,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

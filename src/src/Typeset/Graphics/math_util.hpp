@@ -13,7 +13,6 @@
 #ifndef MATH_UTIL_H
 #define MATH_UTIL_H
 #include "tree.hpp"
-#include <math.h>
 
 const  double tm_infinity=3.40282347e+38F;
 const  double tm_PI=3.1415926535897932384626433832795029L;

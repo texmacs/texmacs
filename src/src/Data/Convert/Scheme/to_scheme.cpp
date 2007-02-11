@@ -14,12 +14,57 @@
 #include "drd_std.hpp"
 
 /******************************************************************************
+* Handling escape characters
+******************************************************************************/
+
+string
+slash (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case '(':
+    case ')':
+    case ' ': 
+    case '\'':
+      if ((n<2) || (s[0]!='\042') || (s[n-1]!='\042')) r << "\\";
+      r << s[i];
+      break;
+    case '\\':
+      r << '\\' << s[i];
+      break;
+    case '\042':
+      if (((i==0) && (s[n-1]=='\042')) ||
+	  ((i==(n-1)) && (s[0]=='\042')))
+	r << s[i];
+      else r << "\\" << s[i];
+      break;
+    case ((char) 0):
+      r << "\\0";
+      break;
+    case '\t':
+      r << "\\t";
+      break;
+    case '\n':
+      r << "\\n";
+      break;
+    default:
+      r << s[i];
+    }
+  return r;
+}
+
+/******************************************************************************
 * Converting scheme trees to strings
 ******************************************************************************/
 
 static void
 scheme_tree_to_string (string& out, scheme_tree p) {
-  if (!is_tuple (p)) out << slash (p->label);
+  if (!is_tuple (p)) {
+    string s= p->label;
+    if (is_quoted (s)) out << scm_quote (raw_unquote (s));
+    else out << slash (s);
+  }
   else {
     if (is_tuple (p, "\'", 1)) {
       out << "\'";
@@ -59,7 +104,7 @@ scheme_tree_to_block (scheme_tree p) {
 
 scheme_tree
 tree_to_scheme_tree (tree t) {
-  if (is_atomic (t)) return "\"" * escape_quotes (t->label) * "\"";
+  if (is_atomic (t)) return scm_quote (t->label);
   else if (is_func (t, EXPAND) && is_atomic (t[0])) {
     int i, n= N(t);
     tree u (TUPLE, n);

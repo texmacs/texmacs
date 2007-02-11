@@ -1,10 +1,32 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.6>
 
 <style|tmweb>
 
 <\body>
   <tmweb-current|Home|News><tmweb-title|Last news about
   <TeXmacs>|<tmweb-home-links>>
+
+  <section*|Version 1.0.6 has been released>
+
+  The main improvements with respect to <TeXmacs>-1.0.5 are:
+
+  <\itemize>
+    <item>Improved <name|<LaTeX>> and <name|Html> converters and support for
+    <name|MathML>.
+
+    <item>An <with|mode|math|\<alpha\>>-version of a graphical mode for
+    drawing technical pictures.
+
+    <item>Default use of <name|Type 1> fonts.
+
+    <item>New plug-ins for <name|Maple> and <name|Mathematica>.
+
+    <item>Simple animations.
+
+    <item>Faster booting.
+
+    <item>Started documentation of the <name|Scheme> <acronym|API>.
+  </itemize>
 
   <section*|Version 1.0.5 has been released>
 

@@ -86,16 +86,22 @@ concater_rep::flag_ok (string s, path ip, color col) {
   string info_flag= env->get_string (INFO_FLAG);
   if (info_flag == "short") {
     box infob= info_box (dip, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
+    box specb= specific_box (ip, infob, false, env->fn);
     print (STD_ITEM, specb);
   }
-  if (info_flag == "detailed") {
+  if (info_flag == "detailed" || info_flag == "paper") {
     int sz= script (env->fn_size, env->index_level+2);
     font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
-    print (STD_ITEM, specb);
+    if (info_flag == "detailed") {
+      box specb= specific_box (ip, flagb, false, env->fn);
+      print (STD_ITEM, specb);
+    }
+    else {
+      box b= resize_box (ip, flagb, 0, 0, 0, env->fn->yx);
+      print (STD_ITEM, b);
+    }
   }
 }
 
@@ -140,6 +146,7 @@ concater_rep::with_limits (int status) {
 void
 concater_rep::typeset (tree t, path ip) {
   // cout << "Typeset " << t << ", " << ip << ", " << obtain_ip (t) << "\n";
+
   /*
   if (obtain_ip (t) != ip)
     cout << "TeXmacs] Wrong ip: " << t << "\n"
@@ -180,6 +187,17 @@ concater_rep::typeset (tree t, path ip) {
   case GROUP:
     typeset_group (t, ip);
     break;
+  case HIDDEN:
+    //(void) env->exec (t);
+    (void) typeset_as_concat (env, t[0], descend (ip, 0));
+    break;
+  case FREEZE:
+    //typeset (freeze (t[0]), decorate_middle (ip));
+    typeset (attach_middle (t[0], ip));
+    break;
+  case UNFREEZE:
+    typeset (t[0], descend (ip, 0));
+    break;
   case HSPACE:
     t= env->exec (t);
     typeset_hspace (t, ip);
@@ -199,6 +217,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_space (attach_here (t, ip));
     break;
   case HTAB:
+    if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
     print (space (env->as_length (t[0])));
     control (t, ip);
     break;
@@ -401,6 +420,9 @@ concater_rep::typeset (tree t, path ip) {
   case MARK:
     typeset_mark (t, ip);
     break;
+  case EXPAND_AS:
+    typeset_expand_as (t, ip);
+    break;
   case EVAL:
     typeset_eval (t, ip);
     break;
@@ -436,6 +458,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_include (t, ip);
     break;
   case USE_PACKAGE:
+  case USE_MODULE:
     typeset_executable (t, ip);
     break;
 
@@ -449,6 +472,13 @@ concater_rep::typeset (tree t, path ip) {
   case OVER:
   case DIV:
   case MOD:
+  case MATH_SQRT:
+  case EXP:
+  case LOG:
+  case POW:
+  case COS:
+  case SIN:
+  case TAN:
   case MERGE:
   case LENGTH:
   case RANGE:
@@ -493,6 +523,8 @@ concater_rep::typeset (tree t, path ip) {
   case XSPC_LENGTH:
   case PAR_LENGTH:
   case PAG_LENGTH:
+  case GW_LENGTH:
+  case GH_LENGTH:
   case TMPT_LENGTH:
   case PX_LENGTH:
     typeset_executable (t, ip);
@@ -518,6 +550,42 @@ concater_rep::typeset (tree t, path ip) {
   case SYMBOL:
   case LATEX:
   case HYBRID:
+    typeset_inactive (t, ip);
+    break;
+
+  case LOCUS:
+    typeset_locus (t, ip);
+    break;
+  case ID:
+    typeset_inactive (t, ip);
+    break;
+  case HARD_ID:
+    typeset_executable (t, ip);
+    break;
+  case LINK:
+  case URL:
+  case SCRIPT:
+    typeset_inactive (t, ip);
+    break;
+  case HLINK:
+  case ACTION:
+    typeset_compound (t, ip);
+    break;
+  case SET_BINDING:
+    typeset_set_binding (t, ip);
+    break;
+  case GET_BINDING:
+    typeset_executable (t, ip);
+    break;
+  case LABEL:
+  case REFERENCE:
+  case PAGEREF:
+    typeset_compound (t, ip);
+    break;
+  case WRITE:
+    typeset_write (t, ip);
+    break;
+
   case TUPLE:
   case ATTR:
   case TMLEN:
@@ -526,35 +594,33 @@ concater_rep::typeset (tree t, path ip) {
   case BACKUP:
     typeset_inactive (t, ip);
     break;
-  case LABEL:
-    typeset_label (t, ip);
-    break;
-  case REFERENCE:
-    typeset_reference (t, ip, 0);
-    break;
-  case PAGEREF:
-    typeset_reference (t, ip, 1);
-    break;
-  case WRITE:
-    typeset_write (t, ip);
-    break;
   case SPECIFIC:
     typeset_specific (t, ip);
     break;
-  case HLINK:
-    typeset_hyperlink (t, ip);
-    break;
-  case ACTION:
-    typeset_action (t, ip);
-    break;
-  case TAG:
-    typeset_tag (t, ip);
-    break;
-  case MEANING:
-    typeset_meaning (t, ip);
-    break;
   case FLAG:
     typeset_flag (t, ip);
+    break;
+
+  case ANIM_COMPOSE:
+    typeset_anim_compose (t, ip);
+    break;
+  case ANIM_REPEAT:
+    typeset_anim_repeat (t, ip);
+    break;
+  case ANIM_CONSTANT:
+    typeset_anim_constant (t, ip);
+    break;
+  case ANIM_TRANSLATE:
+    typeset_anim_translate (t, ip);
+    break;
+  case ANIM_PROGRESSIVE:
+    typeset_anim_progressive (t, ip);
+    break;
+  case VIDEO:
+    typeset_video (t, ip);
+    break;
+  case SOUND:
+    typeset_sound (t, ip);
     break;
 
   case GRAPHICS:
@@ -562,6 +628,12 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case SUPERPOSE:
     typeset_superpose (t, ip);
+    break;
+  case GR_GROUP:
+    typeset_gr_group (t, ip);
+    break;
+  case GR_LINEAR_TRANSFORM:
+    typeset_gr_linear_transform (t, ip);
     break;
   case TEXT_AT:
     typeset_text_at (t, ip);
@@ -653,9 +725,83 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   return b;
 }
 
+box
+typeset_as_box (edit_env env, tree t, path ip) {
+  box b= typeset_as_concat (env, t, ip);
+
+  SI ox= 0;
+  int i, n=N(b);
+  for (i=0; i<n; i++)
+    if (b[i]->w() != 0)
+      ox= b[i]->x1;
+
+  array<box> bs (1);
+  array<SI>  xs (1);
+  array<SI>  ys (1);
+  bs[0]= b;
+  xs[0]= ox;
+  ys[0]= 0;
+  return composite_box (ip, bs, xs, ys);
+}
+
+box
+typeset_as_atomic (edit_env env, tree t, path ip) {
+  if (is_func (t, WITH)) {
+    int i, n= N(t), k= (n-1)>>1; // is k=0 allowed ?
+    if ((n&1) != 1) return empty_box (ip);
+
+    STACK_NEW_ARRAY(vars,string,k);
+    STACK_NEW_ARRAY(oldv,tree,k);
+    STACK_NEW_ARRAY(newv,tree,k);
+    for (i=0; i<k; i++) {
+      tree var_t= env->exec (t[i<<1]);
+      if (is_atomic (var_t)) {
+	string var= var_t->label;
+	vars[i]= var;
+	oldv[i]= env->read (var);
+	newv[i]= env->exec (t[(i<<1)+1]);
+      }
+      else {
+	STACK_DELETE_ARRAY(vars);
+	STACK_DELETE_ARRAY(oldv);
+	STACK_DELETE_ARRAY(newv);
+	return empty_box (ip);
+      }
+    }
+
+    // for (i=0; i<k; i++) env->monitored_write_update (vars[i], newv[i]);
+    for (i=0; i<k; i++) env->write_update (vars[i], newv[i]);
+    box b= typeset_as_atomic (env, t[n-1], descend (ip, n-1));
+    for (i=k-1; i>=0; i--) env->write_update (vars[i], oldv[i]);
+    STACK_DELETE_ARRAY(vars);
+    STACK_DELETE_ARRAY(oldv);
+    STACK_DELETE_ARRAY(newv);
+    return b;
+  }
+  else {
+    array<line_item> a= typeset_concat (env, t, ip);
+    if (N(a) == 1) return a[0]->b;
+
+    int i, n=N(a);
+    if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
+    array<box> items (n);
+    array<SI>  spc (n);
+    if (n>0) {
+      spc[0]=0;
+      for (i=0; i<n-1; i++) {
+	items[i]  = a[i]->b;
+	spc  [i+1]= a[i]->spc->def;
+      }
+      items[i]= a[i]->b;
+    }
+    return concat_box (ip, items, spc);
+  }
+}
+
 tree
 box_info (edit_env env, tree t, string what) {
-  box b= typeset_as_concat (env, attach_here (t, decorate ()));
+  box b= typeset_as_atomic (env, attach_here (t, decorate ()));
+
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {

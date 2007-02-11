@@ -19,7 +19,8 @@
 extern rel_hashmap<string,string> command_type;
 extern rel_hashmap<string,int>    command_arity;
 extern rel_hashmap<string,string> command_def;
-extern hashfunc<string,int>       latex_arity;
-extern hashfunc<string,string>    latex_type;
+
+string latex_type  (string cmd);
+int    latex_arity (string cmd);
 
 #endif // defined CONVERT_TEX_H

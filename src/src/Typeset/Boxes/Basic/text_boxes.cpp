@@ -195,13 +195,13 @@ cursor
 text_box_rep::find_cursor (path bp) {
   metric ex;
   cursor cu (0, 0);
-  fn->get_extents (str (0, bp->item), ex);
+  int l= min (bp->item, N(str));
+  fn->get_extents (str (0, l), ex);
   cu->ox= ex->x2;
-  if (bp->item != 0) {
-    int i= bp->item-1;
-    if (str[i] == '>')
-      while ((i>0) && (str[i]!='<')) i--;
-    fn->get_extents (str (i, bp->item), ex);
+  if (l != 0) {
+    int k= l;
+    tm_char_backwards (str, k);
+    fn->get_extents (str (k, l), ex);
   }
   cu->y1= min (ex->y1, 0);
   cu->y2= max (ex->y2, fn->yx);

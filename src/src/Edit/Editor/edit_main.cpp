@@ -43,7 +43,11 @@ edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
   tp= correct_cursor (et, rp * 0);
 }
 
-edit_main_rep::~edit_main_rep () {}
+edit_main_rep::~edit_main_rep () {
+#ifdef EXPERIMENTAL
+  mem= memorizer ();
+#endif
+}
 
 editor
 new_editor (server_rep* sv, tm_buffer buf) {
@@ -128,8 +132,6 @@ edit_main_rep::focus_on_this_editor () {
 void
 edit_main_rep::notify_page_change () {
   if (attached ()) this << emit_invalidate_all ();
-  if (get_init_string (PAGE_MEDIUM) == "automatic")
-    notify_change (THE_AUTOMATIC_SIZE);
 }
 
 /******************************************************************************
@@ -147,13 +149,8 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   if (pdf) name= url_temp (".ps");
 
   string medium = env->get_string (PAGE_MEDIUM);
-  if (conform && (medium == "papyrus")) conform= false;
-  if ((!conform) && (medium == "automatic")) {
-    set_message (
-      "Error: you should switch to ``paper'' or ``papyrus'' page type",
-      "print");
-    return;
-  }
+  if (conform && (medium != "paper")) conform= false;
+  // FIXME: better command for conform printing
 
   // Set environment variables for printing
 
@@ -231,13 +228,34 @@ edit_main_rep::export_ps (url name, string first, string last) {
   print (name, true, as_int (first), as_int (last));
 }
 
+array<int>
+edit_main_rep::print_snippet (url name, tree t) {
+  bool ps= suffix (name) == "ps" || suffix (name) == "eps";
+  typeset_prepare ();
+  int dpi= as_int (printing_dpi);
+  if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
+  box b= typeset_as_box (env, t, path ());
+  if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
+    if (ps) make_eps (name, dis, b, dpi);
+    else {
+      url temp= url_temp ("eps");
+      make_eps (temp, dis, b, dpi);
+      system ("convert", temp, name);
+      ::remove (temp);
+    }
+  }
+  array<int> a;
+  a << b->x3 << b->y3 << b->x4 << b->y4;
+  return a;
+}
+
 /******************************************************************************
 * Evaluation of expressions
 ******************************************************************************/
 
 void
 edit_main_rep::footer_eval (string s) {
-  s= unslash (s); // FIXME: dirty fix; should not be necessary
+  // s= unslash (s); // FIXME: dirty fix; should not be necessary
   string r= object_to_string (eval (s));
   set_message (r, "evaluate expression");
 }

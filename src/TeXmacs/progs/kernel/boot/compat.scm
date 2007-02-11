@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel boot compat)
-  (:export exec-file))
+(texmacs-module (kernel boot compat))
 
 (define cout-port
   (make-soft-port
@@ -42,5 +41,5 @@
 			      (else (default-eval form (car env)))))))))
 
 ;;; for old-style initialization files
-(define (exec-file . args)
+(define-public (exec-file . args)
   (noop))

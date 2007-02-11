@@ -14,11 +14,7 @@
 #define EVENT_H
 #include "tree.hpp"
 #include "command.hpp"
-
-#ifndef _TIME_T
-#define _TIME_T
-typedef long time_t;
-#endif
+#include "timer.hpp"
 
 class window_rep;
 typedef window_rep* window;
@@ -52,6 +48,9 @@ struct event {
   friend class event_ptr_base;
 };
 ABSTRACT_CODE(event);
+
+inline ostream& operator << (ostream& out, event ev) {
+  return out << ((tree) ev); }
 
 /******************************************************************************
 * User interface

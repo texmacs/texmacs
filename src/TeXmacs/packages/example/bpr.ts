@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.7>
+<TeXmacs|1.0.6.2>
 
 <style|source>
 
@@ -385,14 +385,14 @@
 
   <assign|fold-item|<resize|<active*|<with|mode|math|\<bullet\>>>|||1.5fn||><assign|item|<value|old-item>>>
 
-  <assign|fold-algorithm|<macro|x|y|<style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>>|<right-flush>>
+  <assign|summarized-algorithm|<macro|x|y|<style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>>|<right-flush>>
     <\with|padded-normal|<value|fold-padded-normal>|item|<value|fold-item>>
       <arg|x>
     </with>
   </surround>>>>
 
-  <assign|unfold-algorithm|<\macro|x|y>
-    <style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>>|<right-flush>>
+  <assign|detailed-algorithm|<\macro|x|y>
+    <style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>>|<right-flush>>
       <\with|padded-normal|<value|fold-padded-normal>|item|<value|fold-item>>
         <arg|y>
       </with>

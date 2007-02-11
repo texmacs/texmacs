@@ -98,3 +98,65 @@ box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
   if (ink) b= resize_box (decorate (), b, b->x3, b->y3, b->x4, b->y4, true);
   return box_widget (b, trans);
 }
+
+/******************************************************************************
+* Getting extents of a typesetted tree
+* Application: get window size for widget tree
+******************************************************************************/
+
+#include "display.hpp"
+#include "drd_std.hpp"
+#include "drd_info.hpp"
+#include "convert.hpp"
+#include "formatter.hpp"
+#include "Format/format.hpp"
+
+void use_modules (tree t);
+
+edit_env
+get_init_environment (tree doc, drd_info& drd) {
+  display  dis= current_display ();
+  hashmap<string,tree> h1 (UNINIT), h2 (UNINIT), h3 (UNINIT), h4 (UNINIT);
+  edit_env env (dis, drd, "none", h1, h2, h3, h4);
+  env->write_default_env ();
+  bool ok;
+  tree t, style= extract (doc, "style");
+  hashmap<string,tree> H;
+  get_server () -> style_get_cache (style, H, t, ok);
+  if (ok) {
+    env->patch_env (H);
+    ok= drd->set_locals (t);
+  }
+  if (!ok) {
+    if (!is_tuple (style))
+      fatal_error ("tuple expected as style",
+		   "edit_interface_rep::typeset_style_using_cache");
+    tree t (USE_PACKAGE, A (style));
+    env->exec (t);
+    env->read_env (H);
+    drd->heuristic_init (H);
+  }
+  use_modules (env->read (THE_MODULES));
+  // FIXME: extract (doc, "init")
+  // env->write (PAGE_TYPE, "a5");
+  env->update ();
+  return env;
+}
+
+tree
+tree_extents (tree doc) {
+  drd_info drd ("none", std_drd);
+  edit_env env= get_init_environment (doc, drd);
+  tree t= extract (doc, "body");
+  lazy lz= make_lazy (env, t, path ());
+  format vf= make_query_vstream_width (array<line_item>(), array<line_item>());
+  format rf= lz->query (LAZY_BOX, vf);
+  SI w= ((format_vstream) rf)->width;
+  box b= (box) lz->produce (LAZY_BOX, make_format_width (w));
+  SI h= b->h ();
+  w += env->get_length (PAGE_SCREEN_LEFT);
+  w += env->get_length (PAGE_SCREEN_RIGHT);
+  h += env->get_length (PAGE_SCREEN_TOP);
+  h += env->get_length (PAGE_SCREEN_BOT);
+  return tuple (as_tree ((w / (5*PIXEL)) + 1), as_tree ((h / (5*PIXEL)) + 1));
+}

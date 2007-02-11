@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert rewrite tmtm-eqns)
-  (:export tmtm-eqnumber->nonumber tmtm-nonumber->eqnumber))
+(texmacs-module (convert rewrite tmtm-eqns))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; These routines should be moved to base.scm once
@@ -21,13 +20,13 @@
 
 (define (stree-contains? t u)
   (cond ((== t u) #t)
-	((not (list? t)) #f)
+	((nlist? t) #f)
 	((null? t) #f)
 	(else (or (stree-contains? (car t) u) (stree-contains? (cdr t) u)))))
 
 (define (stree-replace t what by)
   (cond ((== t what) by)
-	((not (list? t)) t)
+	((nlist? t) t)
 	((null? t) t)
 	(else (cons (stree-replace (car t) what by)
 		    (stree-replace (cdr t) what by)))))
@@ -38,7 +37,7 @@
 
 (define (tmtm-find-eqlabel t)
   (cond ((func? t 'label) t)
-	((not (list? t)) #f)
+	((nlist? t) #f)
 	((null? t) #f)
 	(else (let ((lab (tmtm-find-eqlabel (car t))))
 		(if lab lab (tmtm-find-eqlabel (cdr t)))))))
@@ -67,7 +66,7 @@
 	(else t)))
 
 (define (tmtm-eqnumber<->nonumber t old new)
-  (cond ((not (list? t)) t)
+  (cond ((nlist? t) t)
 	((null? t) t)
 	((and (func? t 'eqnarray* 1) (not (stree-contains? t old))) t)
 	((or (func? t 'eqnarray 1) (func? t 'eqnarray* 1))
@@ -78,9 +77,9 @@
 			       (cdr t))))))
 
 ;; ATTENTION: output may not be concat-simplified
-(define (tmtm-eqnumber->nonumber t)
+(tm-define (tmtm-eqnumber->nonumber t)
   (tmtm-eqnumber<->nonumber t '(eq-number) '(no-number)))
 
 ;; ATTENTION: output may not be concat-simplified
-(define (tmtm-nonumber->eqnumber t)
+(tm-define (tmtm-nonumber->eqnumber t)
   (tmtm-eqnumber<->nonumber t '(no-number) '(eq-number)))

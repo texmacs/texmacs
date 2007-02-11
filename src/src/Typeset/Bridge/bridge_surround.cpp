@@ -31,6 +31,7 @@ public:
   bool notify_macro  (int type, string var, int level, path p, tree u);
   void notify_change ();
 
+  void my_clean_links ();
   void my_exec_until (path p);
   bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
@@ -137,6 +138,12 @@ bridge_surround_rep::notify_change () {
 /******************************************************************************
 * Typesetting
 ******************************************************************************/
+
+void
+bridge_surround_rep::my_clean_links () {
+  if (corrupted || (N(ttt->old_patch) != 0))
+    link_env= link_repository (true);
+}
 
 void
 bridge_surround_rep::my_exec_until (path p) {

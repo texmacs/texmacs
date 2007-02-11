@@ -22,15 +22,19 @@
 
 tree
 tm_data_rep::load_tree (url u, string fm) {
-  string s, name= as_string (tail (u)), suf= suffix (name);
+  string s, suf= suffix (u);
   string action= "load " * fm * " file";
   u= resolve (u);
   if (is_none (u) || load_string (u, s)) {
-    set_message ("Error: file#" * name * "#not found", action);
+    set_message ("Error: file#" * as_string (u) * "#not found", action);
     return "error";
   }
   if ((fm == "generic") || (fm == "help")) fm= get_format (s, suf);
-  return generic_to_tree (s, fm * "-document");
+  tree t= generic_to_tree (s, fm * "-document");
+  tree links= extract (t, "links");
+  if (N (links) != 0)
+    (void) call ("register-link-locations", object (u), object (links));
+  return t;
 }
 
 void
@@ -62,9 +66,11 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   }
 
   if (fm == "help") {
+    extern string get_help_title (url name, tree t);
     tree doc= load_tree (u, fm);
     if (doc == "error") return;
-    if (where == 1) new_buffer_in_new_window ("* Help *", doc);
+    if (where == 1)
+      new_buffer_in_new_window (get_help_title (u, doc), doc);
     set_help_buffer (u, doc);
     return;
   }
@@ -151,11 +157,19 @@ tree make_collection (hashmap<T,U> h) {
 tree
 tm_data_rep::make_document (tm_view vw, string fm) {
   tree body= subtree (the_et, vw->buf->rp);
+  if (fm == "verbatim")
+    body= vw->ed->exec_texmacs (body);
   if (fm == "html")
     body= vw->ed->exec_html (body);
+  if (fm == "latex")
+    body= vw->ed->exec_latex (body);
 
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
+  object arg1 (vw->buf->name);
+  object arg2 (body);
+  tree links= as_tree (call ("get-link-locations", arg1, arg2));
+
   if (vw->buf->project != "")
     doc << compound ("project", vw->buf->project);
   if (vw->ed->get_style() != tree (TUPLE))
@@ -166,6 +180,8 @@ tm_data_rep::make_document (tm_view vw, string fm) {
     doc << compound ("initial", make_collection (vw->ed->get_init()));
   if (N (vw->ed->get_fin()) != 0)
     doc << compound ("final", make_collection (vw->ed->get_fin()));
+  if (N (links) != 0)
+    doc << compound ("links", links);
   if (vw->ed->get_save_aux()) {
     if (N (vw->buf->ref) != 0)
       doc << compound ("references", make_collection (vw->buf->ref));
@@ -190,8 +206,9 @@ tm_data_rep::save_buffer (url u, string fm) {
   }
 
   tm_buffer buf= get_buffer ();
-  if ((buf->read_only && (u == buf->name)) ||
-      ((!is_none (buf->extra)) && (buf->name != "* Aux *"))) {
+  if ((u == buf->name && buf->read_only) ||
+      (u == buf->name && has_permission (u,"r") && !has_permission (u,"w")) ||
+      (!is_none (buf->extra) && buf->name != "* Aux *")) {
     set_message ("Error: file is read only", action);
     return;
   }
@@ -234,7 +251,8 @@ tm_data_rep::auto_save () {
 	  set_message ("Error: " * as_string (name) * " did not open",
 		       "save TeXmacs file");
 	else {
-	  set_message ("saved " * as_string (name), "save TeXmacs file");
+	  call ("set-temporary-message",
+		"saved " * as_string (name), "save TeXmacs file", 2500);
 	  buf->mark_undo_block ();
 	  buf->need_autosave= false;
 	  buf->last_autosave= buf->undo_depth- 1;
@@ -242,20 +260,7 @@ tm_data_rep::auto_save () {
       }
     }
   }
-  delayed_autosave();
-}
-
-void
-tm_data_rep::delayed_autosave () {
-  display d= get_display();
-  d->remove_all_delayed_messages (get_meta()->get_this(), "auto save");
-  string s= as_string(eval ("(get-preference \"autosave\")"));
-  int p;
-  if (is_int(s)) p= as_int(s) * 1000;
-  else p= 120000;
-  if (p>0) {
-    d->delayed_message (get_meta()->get_this(), "auto save", p);
-  }
+  call ("delayed-auto-save");
 }
 
 /******************************************************************************
@@ -271,7 +276,7 @@ tm_data_rep::no_name () {
 bool
 tm_data_rep::help_buffer () {
   tm_buffer buf= get_buffer ();
-  return buf->name == "* Help *";
+  return buf->fm == "help";
 }
 
 bool

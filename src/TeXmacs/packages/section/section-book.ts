@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.6.9>
 
 <style|source>
 
@@ -35,7 +35,7 @@
     </src-comment>
   </active*>
 
-  <assign|part-title-sub|<macro|body|<style-with|src-compact|none|<new-page*><no-indent><assign|page-this-header|><assign|page-this-footer|><new-line><no-indent><vspace*|0.25pag><with|math-font-series|bold|font-series|bold|font-size|3|<arg|body>><vspace|0.05pag><no-indent*><new-page>>>>
+  <assign|part-title-sub|<macro|body|<style-with|src-compact|none|<new-dpage*><no-indent><assign|page-this-header|><assign|page-this-footer|><new-line><no-indent><vspace*|0.25pag><with|math-font-series|bold|font-series|bold|font-size|3|<arg|body>><vspace|0.05pag><no-indent*><new-dpage>>>>
 
   <assign|part-title|<macro|name|<part-title-sub|<style-with|src-compact|none|<vspace|0.05pag><new-line><htab|0fn><arg|name><htab|0fn>>>>>
 

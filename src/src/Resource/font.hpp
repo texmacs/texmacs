@@ -13,7 +13,6 @@
 #ifndef FONT_H
 #define FONT_H
 #include "space.hpp"
-#include "encoding.hpp"
 #include "display.hpp"
 #include "ps_device.hpp"
 
@@ -27,7 +26,6 @@ struct glyph;
 
 struct font_rep: rep<font> {
   display  dis;              // underlying display
-  encoding enc;              // underlying encoding of the font
   SI       size;             // requested size
   SI       design_size;      // design size in points/256
   SI       display_size;     // display size in points/PIXEL
@@ -71,12 +69,10 @@ struct font_rep: rep<font> {
   virtual glyph get_glyph (string s);
 };
 
-font join (font fn1, font fn2);
-font subfont (font fn, encoding enc);
 font error_font (font fn);
-
 font virtual_font (font base, string family, int size, int dpi);
 font tt_font (display dis, string family, int size, int dpi);
+font unicode_font (display dis, string family, int size, int dpi);
 font x_font (display dis, string family, int size, int dpi);
 font tex_font (display dis, string fam, int size, int dpi, int dsize=10);
 font tex_cm_font (display dis, string fam, int size, int dpi, int dsize=10);

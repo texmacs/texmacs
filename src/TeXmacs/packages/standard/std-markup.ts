@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.6.5>
 
 <style|<tuple|source|std>>
 
@@ -45,7 +45,7 @@
 
   <\active*>
     <\src-comment>
-      Size tags (very-small: script-size, smaller: footnotesize, larger:
+      Size tags (very-small: scriptsize, smaller: footnotesize, larger:
       Large, very-large: LARGE, really-huge: HUGE)
     </src-comment>
   </active*>
@@ -179,7 +179,23 @@
     </src-comment>
   </active*>
 
+  <assign|hresize|<macro|x|left|right|<resize|<arg|x>|<arg|left>||<arg|right>|>>>
+
+  <assign|vresize|<macro|x|bottom|top|<resize|<arg|x>||<arg|bottom>||<arg|top>>>>
+
+  <assign|smash|<macro|x|<vresize|<arg|x>|0ex|1ex>>>
+
+  <assign|smash-top|<macro|x|<vresize|<arg|x>||1ex>>>
+
+  <assign|smash-bottom|<macro|x|<vresize|<arg|x>|0ex|>>>
+
   <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
+
+  <assign|hphantom|<macro|x|<vresize|<phantom|<arg|x>>|0ex|1ex>>>
+
+  <assign|vphantom|<macro|x|<hresize|<phantom|<arg|x>>|0em|0em>>>
+
+  \;
 
   <assign|overline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
@@ -189,25 +205,9 @@
 
   <drd-props|underline|arity|1|accessible|all>
 
-  <\active*>
-    <\src-comment>
-      Tags for dynamic presentations.
-    </src-comment>
-  </active*>
-
-  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>>
-
-  <assign|unfold|<\macro|x|y>
-    <\with|par-left|<plus|<value|par-left>|1.5fn>>
-      <style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<hflush>|<arg|x>>>
-
-      <surround||<right-flush>|<arg|y>>
-    </with>
-  </macro>>
-
-  <assign|switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
-
   \;
+
+  <assign|slink|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
 </body>
 
 <\initial>

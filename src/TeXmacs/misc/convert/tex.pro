@@ -1,7 +1,7 @@
 %%BeginProcSet: tex.pro
 /TeXDict 250 dict def TeXDict begin /N{def}def /B{bind def}N /S{exch}N
 /X{S N}B /TR{translate}N /isls false N /vsize 11 72 mul N /hsize 8.5 72
-mul N /landplus90{false}def /@rigin{isls{[0 landplus90{1 -1}{-1 1}
+mul N /landplus90{true}def /@rigin{isls{[0 landplus90{1 -1}{-1 1}
 ifelse 0 0 0]concat}if 72 Resolution div 72 VResolution div neg scale
 isls{landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div
 hsize mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul

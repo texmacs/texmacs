@@ -156,7 +156,7 @@ edit_replace_rep::spell_keypress (string s) {
     spell_next ();
   }
   else if ((s == "r") || (s == "R"))
-    (void) eval ("(interactive '(\"Replace by:\") 'spell-replace)");
+    (void) eval ("(interactive spell-replace \"Replace by\")");
   else if ((s == "i") || (s == "I")) {
     ispell_insert (search_lan, spell_s);
     spell_dicmod= true;

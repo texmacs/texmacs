@@ -22,12 +22,25 @@ SCM object_stack;
 * Installation of guile and initialization of guile
 ******************************************************************************/
 
+#ifdef GUILE_C
+static void (*old_call_back) (int, char**)= NULL;
+static void
+new_call_back (void *closure, int argc, char** argv) {
+  old_call_back (argc, argv);
+}
+#endif
+
 void
 start_guile (int argc, char** argv, void (*call_back) (int, char**)) {
+#ifdef GUILE_C
+  old_call_back= call_back;
+  scm_boot_guile (argc, argv, new_call_back, 0);
+#else
 #ifdef DOTS_OK
   gh_enter (argc, argv, (void (*)(...)) ((void*) call_back));
 #else
   gh_enter (argc, argv, call_back);
+#endif
 #endif
 }
 
@@ -44,13 +57,11 @@ initialize_guile () {
     "    (lambda (port) (write obj port))))\n"
     "\n"
     "(define (texmacs-version) \"" TEXMACS_VERSION "\")\n"
-    "(define buffer-menu '())\n"
-    "(define project-buffer-menu '())\n"
     "(define object-stack '(()))";
 
   scm_c_eval_string (init_prg);
   initialize_glue ();
-  object_stack= gh_lookup ("object-stack");
+  object_stack= scm_lookup_string ("object-stack");
 }
 
 /******************************************************************************

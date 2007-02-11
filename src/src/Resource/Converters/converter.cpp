@@ -153,35 +153,56 @@ convert (string input, string from, string to) {
 string 
 convert_to_cork (string input, string from) {
   string str;
-  if (from!="UTF-8")
-    str = convert_using_iconv (input,from,"UTF-8");
+  if (from != "UTF-8")
+    str = convert_using_iconv (input, from, "UTF-8");
   return utf8_to_cork (str);
 }
 
 string 
 convert_from_cork (string input, string to) {
   string str = cork_to_utf8 (input);
-  if (to!=string("UTF-8"))
-    str = convert_using_iconv (str,"UTF-8",to);
+  if (to != "UTF-8")
+    str = convert_using_iconv (str, "UTF-8", to);
   return str;
 }
 
 string
 utf8_to_cork (string input) {
-  converter conv = load_converter ("UTF-8","Cork");
-  return apply (conv,input);  
+  converter conv= load_converter ("UTF-8", "Cork");
+  int start, i, n= N(input);
+  string output;
+  for (i=0; i<n; ) {
+    start= i;
+    unsigned int code= decode_from_utf8 (input, i);
+    string s= input (start, i);
+    string r= apply (conv, s);
+    if (r == s && code >= 256)
+      r= "<#" * as_hexadecimal (code) * ">";
+    output << r;
+  }
+  return output;
 }
 
 string
 cork_to_utf8 (string input) {
-  converter conv = load_converter ("Cork","UTF-8");
-  return apply (conv,input);
+  converter conv= load_converter ("Cork", "UTF-8");
+  int start= 0, i, n= N(input);
+  string r;
+  for (i=0; i<n; i++)
+    if (input[i] == '<' && i+1<n && input[i+1] == '#') {
+      r << apply (conv, input (start, i));
+      start= i= i+2;
+      while (i<n && input[i] != '>') i++;
+      r << encode_as_utf8 (from_hexadecimal (input (start, i)));
+      start= i+1;
+    }
+  return r * apply (conv, input (start, n));
 }
 
 string
 utf8_to_html (string input) {
   converter conv = load_converter ("UTF-8", "HTML");
-  string s = apply (conv,input);
+  string s = apply (conv, input);
   return utf8_to_hex_entities(s);
 }
 
@@ -198,6 +219,8 @@ public:
 };
 
 class iconv_converter {
+  string from;
+  string to;
   iconv_t cd;
   bool show_errors;
   bool successful;
@@ -209,13 +232,15 @@ public:
   friend string apply (iconv_converter &conv, string input);
 };
 
-iconv_converter::iconv_converter (string from, string to, bool errors)
-  : show_errors (errors), successful (false) {
-  auto_array<char> from_cp = as_charp(from);
-  auto_array<char> to_cp = as_charp(to);
+iconv_converter::iconv_converter (string from2, string to2, bool errors):
+  from (from2), to (to2), show_errors (errors), successful (false)
+{
+  auto_array<char> from_cp = as_charp (from);
+  auto_array<char> to_cp = as_charp (to);
   cd = iconv_open (to_cp, from_cp);
-  if (! is_valid() && show_errors)
-    system_error("Initialization of iconv failed!");
+  if (!is_valid() && show_errors)
+    system_error ("Initialization of iconv from " * from *
+		  " to " * to * " failed!");
   successful= true;
 }
 
@@ -251,8 +276,10 @@ string apply (iconv_converter &conv, string input) {
     size_t r = iconv_adaptor(iconv, conv.cd,
 			     &in_cursor, &in_left, &out_cursor, &out_left);
     if(r == (size_t)-1 && errno != E2BIG) {
-      if (conv.show_errors)
+      if (conv.show_errors) {
+	cerr << "\nConverting from " << conv.from << " to " << conv.to << "\n";
 	system_error ("String conversion using iconv failed!");
+      }
       conv.successful= false;
       return "";
     }
@@ -283,7 +310,7 @@ bool check_using_iconv (string input, string encoding) {
 string
 convert_using_iconv (string input, string from, string to) {
 #ifdef USE_ICONV
-  iconv_converter conv(from, to, true);
+  iconv_converter conv (from, to, true);
   return apply (conv, input);
 #else
   (void) input;
@@ -325,12 +352,12 @@ hashtree_from_dictionary (
   string key_string, val_string, file;
   file_name = file_name * ".scm";
   if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name), file)) {
-    system_error ("Couldn't open encoding dictionary",file_name);
+    system_error ("Couldn't open encoding dictionary", file_name);
     return;
   }
   tree t = block_to_scheme_tree (file);
   if (!is_tuple (t)) {
-    system_error ("Malformed encoding dictionary",file_name);
+    system_error ("Malformed encoding dictionary", file_name);
     return;
   }
   for (int i=0; i<N(t); i++) {
@@ -340,8 +367,8 @@ hashtree_from_dictionary (
         //cout << N(pairs[i]) << "\n" << as_string(pairs[i]) << "\n";
         reverse ? key_string = t[i][1]->label : key_string = t[i][0]->label;
         reverse ? val_string = t[i][0]->label : val_string = t[i][1]->label;
-        if (is_quoted(key_string)) key_string = unquote(key_string);
-        if (is_quoted(val_string)) val_string = unquote(val_string);
+        if (is_quoted (key_string)) key_string = scm_unquote (key_string);
+        if (is_quoted (val_string)) val_string = scm_unquote (val_string);
         //cout << "key: " << key_string << " val: " << val_string << "\n";
         if (key_escape == BIT2BIT)
           key_string = convert_escapes (key_string, false);
@@ -508,8 +535,68 @@ encode_as_utf8 (unsigned int code) {
   else return "";
 }
 
+unsigned int
+decode_from_utf8 (string s, int& i) {
+  unsigned char c = s[i];
+  if ((0x80 & c) == 0) {
+    // 0x0ddddddd
+    i++;
+    return (unsigned int) c;
+  }
+  unsigned int code;
+  int trail;
+  if ((0xE0 & c) == 0xC0) {
+    // 0x110ddddd 0x10dddddd
+    trail = 1;
+    code = c & 0x1F;
+  }
+  else if ((0xF0 & c) == 0xE0) {
+    // 0x1110dddd 0x10dddddd 0x10dddddd
+    trail = 2;
+    code = c & 0x0F;
+  }
+  else if ((0xF8 & c) == 0xF0) {
+    // 0x11110dddd 0x10dddddd 0x10dddddd 0x10dddddd
+    trail = 3;
+    code = c & 0x07;
+  }
+  else {
+    // failsafe
+    //cout << "failsafe: " << c << " (" << (unsigned int)(c) << ")\n";
+    i++;
+    return (unsigned int) c;
+  }
+  for (; trail > 0; trail--) {
+    i++;
+    if (i >= N(s)) i= N(s)-1;
+    c = s[i];
+    code = (code << 6) | (c & 0x3F);
+  }
+  i++;
+  return code;
+}
+
 string
 utf8_to_hex_entities (string s) {
+  string result;
+  int i, n= N(s);
+  for (i=0; i<n; ) {
+    unsigned char c = s[i];
+    if ((0x80 & c) == 0 || ((0xF8 & c) == 0xF8)) {
+      result << c;
+      i++;
+    }
+    else {
+      unsigned int code= decode_from_utf8 (s, i);
+      string hex= as_hexadecimal (code);
+      while (N(hex) < 4) hex = "0" * hex;
+      //cout << "entity: " << hex << " (" << code << ")\n";
+      result << "&#x" << hex << ";";
+    }
+  }
+  return result;
+
+  /*
   string result;
   const int n = N(s);
   int i;
@@ -544,7 +631,7 @@ utf8_to_hex_entities (string s) {
       result << c;
       continue;
     }
-    for (/*noop*/; trail > 0; trail--) {
+    for (; trail > 0; trail--) {
       // Garbage in, garbage out. Do not resync when input is bad.
       i++;
       c = s[i];
@@ -556,4 +643,5 @@ utf8_to_hex_entities (string s) {
     result << "&#x" << hex << ";";
   }
   return result;
+  */
 }

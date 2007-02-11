@@ -1,9 +1,9 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.6>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Making donations to the <TeXmacs> project>
+  <tmdoc-title|Making donations to the <TeXmacs> project>
 
   <paragraph|Making donations to TeXmacs through the SPI organization>
 
@@ -13,9 +13,8 @@
   You may make donations of money to TeXmacs via this organization, by noting
   on your check or e-mail for wire transfers that your money should go to the
   TeXmacs project. You may also make donations of equipment or services or
-  donations through vendors. See the SPI website for more information. We
-  will maintain a webpage with a list of donors soon (if you agree to be on
-  the list).
+  donations through vendors. See the SPI website for more information. The
+  list of donators is maintained at our website.
 
   <paragraph|Details on how to donate money>
 
@@ -27,7 +26,7 @@
 
   and mail it to the following <label|address>address:
 
-  <\with|interparagraph space|0fn>
+  <\with|par-par-sep|0fn>
     <\quotation>
       Software in the Public Interest, Inc.
 
@@ -42,14 +41,14 @@
   To make an electronic transfer (this will work for non-US too), you need to
   give your bank the routing number and account number as follows:
 
-  <\with|interparagraph space|0fn>
+  <\with|par-par-sep|0fn>
     <\quotation>
       The SPI bank account is at American Express Centurion Bank.
 
-      <\with|font family|tt>
-        <with|font series|bold|Routing Number: >124071889
+      <\with|font-family|tt>
+        <with|font-series|bold|Routing Number: >124071889
 
-        <with|font series|bold|Account Number: >1296789
+        <with|font-series|bold|Account Number: >1296789
       </with>
     </quotation>
   </with>
@@ -57,8 +56,8 @@
   Don't forget to note on your check or e-mail for wire transfers that the
   money should be spent on the TeXmacs projet. In addition you may specify a
   more specific purpose on which you would like us to spend the money. You
-  may also <apply|hyper-link|contact us|../../authors/contact.en.tm> for a
-  more detailed discussion on this issue.
+  may also <hyper-link|contact us|../../authors/contact.en.tm> for a more
+  detailed discussion on this issue.
 
   <paragraph|Important notes>
 
@@ -66,11 +65,11 @@
   problems. When you have completed the electronic wire, please send a copy
   of the receipt to the above address so there is a copy of your donation.
   The copy you send to the treasurer is important. You may also want to
-  <apply|hyper-link|contact|../../authors/contact.en.tm> the TeXmacs team in
-  order to make sure that the money arrived on the TeXmacs account.
+  <hyper-link|contact|../../authors/contact.en.tm> the TeXmacs team in order
+  to make sure that the money arrived on the TeXmacs account.
 
-  <\with|font shape|italic>
-    <with|font series|bold|Note:> The SPI address and account numbers may
+  <\with|font-shape|italic>
+    <with|font-series|bold|Note:> The SPI address and account numbers may
     change from time to time. Please do not copy the address and account
     numbers, but rather point to the page
     <verbatim|http://www.spi-inc.org/donations> to ensure that donors will
@@ -82,46 +81,18 @@
   international money transfer costs), please check the instructions on
   <verbatim|http://www.ffis.de/Verein/spi-en.html>.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|address|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|<uninit>|?>>
-    <associate|toc-4|<tuple|<uninit>|?>>
-    <associate|toc-5|<tuple|<uninit>|?>>
-    <associate|toc-6|<tuple|<uninit>|?>>
-    <associate|toc-7|<tuple|<uninit>|?>>
-    <associate|toc-8|<tuple|<uninit>|?>>
-  </collection>
-</references>

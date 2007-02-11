@@ -17,8 +17,7 @@
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel regexp regexp-select)
-  (:export tm-select))
+(texmacs-module (kernel regexp regexp-select))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Intersections of matches
@@ -111,6 +110,57 @@
     (list (cons* (list (list ':replace r)) r bl))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (navigate-up p pat bl)
+  (if (and p (nnull? p))
+      (select-list (path->tree (cDr p)) pat bl)
+      '()))
+
+(define (navigate-down p pat bl)
+  (with q (cDr (cursor-path))
+    (if (and p (list-starts? (cDr q) p))
+	(select-list (path->tree (list-head q (1+ (length p)))) pat bl)
+	'())))
+
+(define (navigate-first p pat bl)
+  (if p
+      (let* ((t (path->tree p))
+	     (a (tree-arity t)))
+	(if (> a 0)
+	    (select-list (tree-ref t 0) pat bl)
+	    '()))
+      '()))
+
+(define (navigate-last p pat bl)
+  (if p
+      (let* ((t (path->tree p))
+	     (a (tree-arity t)))
+	(if (> a 0)
+	    (select-list (tree-ref t (- a 1)) pat bl)
+	    '()))
+      '()))
+
+(define (navigate-next p pat bl)
+  (if (and p (nnull? p))
+      (let* ((t (path->tree (cDr p)))
+	     (l (cAr p)))
+	(if (< l (- (tree-arity t) 1))
+	    (select-list (tree-ref t (+ l 1)) pat bl)
+	    '()))
+      '()))
+
+(define (navigate-previous p pat bl)
+  (if (and p (nnull? p))
+      (let* ((t (path->tree (cDr p)))
+	     (l (cAr p)))
+	(if (> l 0)
+	    (select-list (tree-ref t (- l 1)) pat bl)
+	    '()))
+      '()))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pattern selecting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -123,6 +173,14 @@
 (ahash-set! select-table :match select-match)
 (ahash-set! select-table :replace select-replace)
 
+(define navigate-table (make-ahash-table))
+(ahash-set! navigate-table :up navigate-up)
+(ahash-set! navigate-table :down navigate-down)
+(ahash-set! navigate-table :first navigate-first)
+(ahash-set! navigate-table :last navigate-last)
+(ahash-set! navigate-table :next navigate-next)
+(ahash-set! navigate-table :previous navigate-previous)
+
 (define (select-one x pat bl)
   (cond  ((pair? pat)
 	  (with fpat (car pat)
@@ -133,11 +191,11 @@
 		  (with new-bl (bindings-add bl (cadr pat) x)
 		    (if new-bl (list (cons* (list) x new-bl)) '())))
 		 (else '()))))
-	 ((and (keyword? pat) (!= pat :1)) (select-list x (list pat) bl))
+	 ((and (keyword? pat) (!= pat :%1)) (select-list x (list pat) bl))
 	 ((not (tm-compound? x)) '())
 	 ((symbol? pat) (select-symbol (cdr (tm->list x)) 0 pat bl))
 	 ((integer? pat) (select-range (cdr (tm->list x)) 0 pat (+ pat 1) bl))
-	 ((== pat :1) (select-range (cdr (tm->list x)) 0 0 (tm-arity x) bl))
+	 ((== pat :%1) (select-range (cdr (tm->list x)) 0 0 (tm-arity x) bl))
 	 (else '())))
 
 (define (select-continue-sub x pat)
@@ -153,19 +211,22 @@
   ;; (display* "select list " x ", " pat ", " bl "\n")
   "Selects subexpressions of @l using the pattern @pat and under bindings @bl."
   (cond ((null? pat) (list (cons* (list) x bl)))
-	((not (pair? pat)) '())
+	((npair? pat) '())
 	((keyword? (car pat))
 	 (with fpat (car pat)
-	   (cond ((== fpat :0)
+	   (cond ((== fpat :%0)
 		  (select-list x (cdr pat) bl))
 		 ((== fpat :*)
 		  (let* ((r (select-list x (cdr pat) bl))
-			 (l (select-one x :1 bl)))
+			 (l (select-one x :%1 bl)))
 		    (append r (select-continue l pat))))
-		 ((integer? (keyword->number fpat))
+		 ((keyword->number fpat)
 		  (let* ((h (number->keyword (- (keyword->number fpat) 1)))
-			 (l (select-one x :1 bl)))
+			 (l (select-one x :%1 bl)))
 		    (select-continue l (cons h (cdr pat)))))
+		 ((ahash-ref navigate-table fpat)
+		  ((ahash-ref navigate-table fpat)
+		   (and (tree? x) (tree-get-path x)) (cdr pat) bl))
 		 ((ahash-ref match-term fpat)
 		  (with upat (ahash-ref match-term fpat)
 		    (select-list x (append upat (cdr pat)) bl)))
@@ -178,8 +239,21 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-select x pattern)
+(define-public (tm-select x pattern)
   "Select all subtrees of @x which match a given path pattern @pattern"
   (with sols (select-list x pattern '())
     ;; (display* "sols= " sols "\n")
     (map cadr sols)))
+
+(with-module texmacs-user
+  (define-public guile-select select)
+  (define-public (select . args)
+    (import-from (kernel regexp regexp-select))
+    (if (= (length args) 2)
+	(apply tm-select args)
+	(apply guile-select args))))
+
+(define-public (tm-ref t . l)
+  (and (tm? t)
+       (with r (select t l)
+	 (and (nnull? r) (car r)))))
