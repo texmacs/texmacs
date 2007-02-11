@@ -1,13 +1,18 @@
-<TeXmacs|1.0.6.7>
+<TeXmacs|1.0.6.8>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.8>
+  <section|Changes from version 1.0.6 to 1.0.6.9>
 
   <\itemize>
+    <item>Asynchroneous script evaluation using plug-ins (1.0.6.9).
+
+    <item>Further improvements in the upcoming markup-based graphical user
+    interface (1.0.6.9).
+
     <item>Several improvements for large multi-part documents (1.0.6.8).
 
     <item>Started the implementation of a new markup-based graphical user
