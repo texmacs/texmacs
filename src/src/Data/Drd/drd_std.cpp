@@ -81,6 +81,8 @@ init_std_drd () {
   init (HTAB, "htab", options (1, 1) -> name ("tab"));
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
+  init (SCROLLED, "scrolled", fixed (2, 1, BIFORM) -> accessible (1));  
+  init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DATOMS, "datoms",

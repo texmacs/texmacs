@@ -81,6 +81,7 @@ box frozen_box (path ip, box b);
 box move_box (path ip, box b, SI x, SI y, bool chf= false, bool bigf= false);
 box resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 		bool chf= false, bool adjust= false);
+box clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2);
 box vcorrect_box (path ip, box b, SI top_cor, SI bot_cor);
 box page_box (path ip, tree page, SI w, SI h,
 	      array<box> bs  , array<SI> bs_x  , array<SI> bs_y,

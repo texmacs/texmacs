@@ -172,6 +172,16 @@ concater_rep::typeset_move (tree t, path ip) {
   print (STD_ITEM, move_box (ip, b, x, y, true));
 }
 
+void
+concater_rep::typeset_scrolled (tree t, path ip) {
+  // IDEA: set left, right, bottom, top environment variables
+  //       and allow doing computations with them
+  SI   x= -env->as_length (env->exec (t[0]));
+  SI   y= -env->as_length (env->exec (t[1]));
+  box  b= typeset_as_concat (env, t[2], descend (ip, 2));
+  print (STD_ITEM, move_box (ip, b, x, y, true));
+}
+
 static SI
 resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
   if (!is_atomic (new_size)) return old;
@@ -225,6 +235,18 @@ concater_rep::typeset_resize (tree t, path ip) {
   SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[4]));
   bool fl= is_atomic (t[1]) && (N(t[1]->label)!=0) && (t[1]->label[0]=='@');
   print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, !fl));
+}
+
+void
+concater_rep::typeset_clipped (tree t, path ip) {
+  // IDEA: set left, right, bottom, top environment variables
+  //       and allow doing computations with them
+  box  b = typeset_as_concat (env, t[4], descend (ip, 4));
+  SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[0]));
+  SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[1]));
+  SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[2]));
+  SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[3]));
+  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
 }
 
 /******************************************************************************

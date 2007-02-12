@@ -130,6 +130,38 @@ resize_box_rep::resize_box_rep (
   finalize ();
 }
 
+struct clip_box_rep: public change_box_rep {
+  SI old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
+  clip_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2);
+  operator tree () { return tree (TUPLE, "clip", (tree) bs[0]); }
+  void pre_display (ps_device &dev);
+  void post_display (ps_device &dev);
+};
+
+clip_box_rep::clip_box_rep (
+  path ip, box b, SI X1, SI Y1, SI X2, SI Y2):
+    change_box_rep (ip, true)
+{
+  insert (b, 0, 0);
+  position ();
+  x1= X1; y1= Y1;
+  x2= X2; y2= Y2;
+  // left_justify ();
+  finalize ();
+}
+
+void
+clip_box_rep::pre_display (ps_device &dev) {
+  dev->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  dev->extra_clipping (x1, y1, x2, y2);
+}
+
+void
+clip_box_rep::post_display (ps_device &dev) {
+  dev->set_clipping (
+    old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
+}
+
 struct vcorrect_box_rep: public change_box_rep {
   vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
   operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
@@ -388,6 +420,11 @@ box
 resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	    bool child_flag, bool adjust) {
   return new resize_box_rep (ip, b, x1, y1, x2, y2, child_flag, adjust);
+}
+
+box
+clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2) {
+  return new clip_box_rep (ip, b, x1, y1, x2, y2);
 }
 
 box
