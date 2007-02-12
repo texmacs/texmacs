@@ -227,6 +227,12 @@ concater_rep::typeset (tree t, path ip) {
   case RESIZE:
     typeset_resize (t, ip);
     break;
+  case SCROLLED:
+    typeset_scrolled (t, ip);
+    break;
+  case CLIPPED:
+    typeset_clipped (t, ip);
+    break;
   case REPEAT:
     typeset_repeat (t, ip);
     break;

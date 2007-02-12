@@ -51,6 +51,8 @@ class concater_rep {
   void typeset_space (tree t, path ip);
   void typeset_move (tree t, path ip);
   void typeset_resize (tree t, path ip);
+  void typeset_scrolled (tree t, path ip);
+  void typeset_clipped (tree t, path ip);
   void typeset_float (tree t, path ip);
   void typeset_repeat (tree t, path ip);
   void typeset_formatting (tree t, path ip, string var);

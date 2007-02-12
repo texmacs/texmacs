@@ -122,6 +122,10 @@ arg_type (tree t, int i) {
   case RESIZE:
     if (i > 0) return "length";
     else return "";
+  case SCROLLED:
+  case CLIPPED:
+    if (i < n-1) return "length";
+    else return "";
   case ASSIGN:
   case DRD_PROPS:
   case VALUE:
