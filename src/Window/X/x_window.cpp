@@ -217,9 +217,16 @@ void
 x_window_rep::get_position (SI& x, SI& y) {
 #ifdef OS_WIN32
   XGetWindowPos (dpy, win, &win_x, &win_y);
-#endif
   x=  win_x*PIXEL;
   y= -win_y*PIXEL;
+#else
+  int xx, yy;
+  Window ww;
+  bool b;
+  b=  XTranslateCoordinates (dpy, win, dis->root, 0, 0, &xx, &yy, &ww);
+  x=  xx*PIXEL;
+  y= -yy*PIXEL;
+#endif
 }
 
 void
