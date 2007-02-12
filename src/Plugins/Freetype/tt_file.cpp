@@ -46,18 +46,32 @@ tt_locate (string name) {
     //cout << "tt_locate: " << name << " -> " << u << "\n";
     if (!is_none (u)) return u;
   }
-  else if (use_locate) {
-    string s= eval_system ("locate", "/" * name);
-    int start, i, n= N(s);
-    for (start=0, i=0; i<n; i++)
-      if (s[i]=='\n') {
-	if (ends (s (start, i), name))
-	  return url (s (start, i));
-	start= i+1;
-      }
-    url tt_path= search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype");
-    return resolve (tt_path * name);
-  }
+  else if (use_locate &&
+	   // NOTE: avoiding unnecessary locates can greatly improve timings
+	   !starts (name, "ec") &&
+	   !starts (name, "la") &&
+	   !starts (name, "cm") &&
+	   !starts (name, "msam") &&
+	   !starts (name, "msbm") &&
+	   !starts (name, "bbm") &&
+	   !starts (name, "stmary") &&
+	   !starts (name, "rsfs") &&
+	   !starts (name, "grmn")
+	   // FIXME: better caching of missed tt_locates would be better
+	   )
+    {
+      string s= eval_system ("locate", "/" * name);
+      //cout << "locate " << name << " -> " << s << "\n";
+      int start, i, n= N(s);
+      for (start=0, i=0; i<n; i++)
+	if (s[i]=='\n') {
+	  if (ends (s (start, i), name))
+	    return url (s (start, i));
+	  start= i+1;
+	}
+      url tt_path= search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype");
+      return resolve (tt_path * name);
+    }
   return url_none ();
 }
 
@@ -120,7 +134,7 @@ tt_find_name (string name, int size) {
 
   bench_start ("tt find name");
   string r= tt_find_name_sub (name, size);
-  // cout << name << size << " -> " << r << "\n";
+  //cout << name << size << " -> " << r << "\n";
   bench_cumul ("tt find name");
 
   if (r != "") cache_set ("font_cache.scm", s, r);
