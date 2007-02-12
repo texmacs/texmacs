@@ -19,11 +19,34 @@
 ;; Building content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (build-options-sub l)
+  (if (and (nnull? l) (pair? (car l)) (keyword? (caar l)))
+      (with (options . args) (build-options-sub (cdr l))
+	(cons (cons (car l) options) args))
+      (cons '() l)))
+
+(tm-define (build-options l)
+  (build-options-sub (cdr l)))
+
+(define (with-bindings l)
+  (if (null? l) l
+      (cons* (keyword->string (caar l)) (cadar l)
+	     (with-bindings (cdr l)))))
+
+(tm-define (build-with options builder)
+  (if (null? options) builder
+      (let* ((bindings (with-bindings options))
+	     (fun (lambda (x) `(with ,@bindings ,x))))
+	`(map ,fun ,builder))))
+
 (tm-define (build-content w)
   (:synopsis "Generate a content builder from a scheme program @w")
-  (cond ((list? w) `(list ,(build-content-list w)))
-	((== w '-) `(list '(gui-medskip)))
+  (cond ((list? w)
+	 (with (options . body) (build-options w)
+	   (with l (cons (car w) body)
+	     (build-with options `(list ,(build-content-list l))))))
 	((== w '---) `(list '(gui-hrule)))
+	((== w '===) `(list '(gui-medskip)))
 	((== w '>>>) `(list '(htab "1em")))
 	((symbol? w) `(list ',w))
 	(else `(list ,w))))
@@ -35,22 +58,14 @@
 ;; Declare new content builders
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (build-options-sub l)
-  (if (and (nnull? l) (keyword? (car l)))
-      (with (options . args) (build-options-sub (cdr l))
-	(cons (cons (car l) options) args))
-      (cons '() l)))
-
-(tm-define (build-options l)
-  (build-options-sub (cdr l)))
-
 (tm-define-macro (tm-build proto . body)
   (let* ((fun (car proto))
 	 (args (cdr proto)))
     `(tm-define (build-content w)
        (:case ,fun)
        (with ,(cons 'options args) (build-options w)
-	 ,@body))))
+	 (build-with options
+           (begin ,@body))))))
 
 (tm-define-macro (tm-build-macro proto . body)
   (let* ((fun (car proto))
@@ -58,7 +73,8 @@
     `(tm-define (build-content w)
        (:case ,fun)
        (with ,(cons 'options args) (build-options w)
-	 (build-content (begin ,@body))))))
+	 (build-with options
+	   (build-content (begin ,@body)))))))
 
 (tm-define-macro (tm-build-widget proto . body)
   (let* ((fun (car proto))
@@ -66,7 +82,8 @@
     `(tm-define (build-content w)
        (:case ,fun)
        (with ,(cons 'options args) (build-options w)
-	 (build-content-list ,(list 'quasiquote body))))))
+	 (build-with options
+	   (build-content-list ,(list 'quasiquote body)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fundamental constructs
@@ -81,6 +98,12 @@
 
 (tm-build (quote x)
   `(list ',x))
+
+(tm-build (with . body)
+  (let* ((bindings (with-bindings options))
+	 (fun (lambda (x) `(with ,@bindings ,x)))
+	 (builder (build-content-list body)))
+    `(map ,fun ,builder)))
 
 (tm-define (concat l)
   (cond ((null? l) "")
@@ -124,29 +147,6 @@
 
 (tm-build-macro (internal var val)
   `(instruct (widget-internal-set! aux-handle ,var ,val)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Aspect attributes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (build-aspect x)
-  (cond ((== x :circular) '("box-shape" "circular"))
-	((== x :square) '("box-shape" "square"))
-	((== x :red) '("box-color" "pastel red"))
-	((== x :green) '("box-color" "pastel green"))
-	((== x :blue) '("box-color" "pastel blue"))
-	((== x :yellow) '("box-color" "pastel yellow"))
-	((== x :orange) '("box-color" "pastel orange"))
-	((== x :grey) '("box-color" "light grey"))
-	((== x :checked) '("marker-shape" "checked"))
-	((== x :bullet) '("marker-shape" "bullet"))
-	(else '())))
-
-(tm-build (aspect . body)
-  (let* ((bindings (append-map build-aspect options))
-	 (fun (lambda (x) `(with ,@bindings ,x)))
-	 (builder (build-content-list body)))
-    `(map ,fun ,builder)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Buttons, toggles, alternatives and input fields
@@ -207,20 +207,48 @@
 	 (body* (map make-row body)))
     `((quote table) ,@body*)))
 
+(define (range-start x)
+  (cond ((number? x) (number->string x))
+	((== x '*) "1")
+	((list-2? x) (number->string (car x)))
+	(else "1")))
+
+(define (range-end x)
+  (cond ((number? x) (number->string x))
+	((== x '*) "-1")
+	((list-2? x) (number->string (car x)))
+	(else "-1")))
+
+(define (table-attribute x)
+  (cond ((string-starts? (keyword->string (car x)) "table-")
+	 `(twith ,(keyword->string (car x)) ,(cadr x)))
+	((string-starts? (keyword->string (car x)) "cell-")
+	 `(cwith ,(range-start (cadr x)) ,(range-end (cadr x))
+		 ,(range-start (caddr x)) ,(range-end (caddr x))
+		 ,(keyword->string (car x)) ,(cadddr x)))
+	(else #f)))
+
+(tm-define-macro (tm-build-table name rows)
+  `(with attrs (filter-map table-attribute options)
+     (set! options (list-filter options (non table-attribute)))
+     (list '(quote ,name)
+	   (rcons (cons 'tformat attrs)
+		  (cons 'table ,rows)))))
+
 (tm-build-macro (dense-raster . rows)
-  `((quote dense-raster) (tformat (table ,@rows))))
+  (tm-build-table dense-raster rows))
 
 (tm-build-macro (short-raster . rows)
-  `((quote short-raster) (tformat (table ,@rows))))
+  (tm-build-table short-raster rows))
 
 (tm-build-macro (raster . rows)
-  `((quote wide-raster) (tformat (table ,@rows))))
+  (tm-build-table wide-raster rows))
 
 (tm-build-macro (dense-bar . cells)
-  `((quote dense-raster) (tformat (table (row ,@cells)))))
+  (tm-build-table dense-raster (list cells)))
 
 (tm-build-macro (short-bar . cells)
-  `((quote short-raster) (tformat (table (row ,@cells)))))
+  (tm-build-table short-raster (list cells)))
 
 (tm-build-macro (bar . cells)
-  `((quote wide-raster) (tformat (table (row ,@cells)))))
+  (tm-build-table wide-raster (list cells)))
