@@ -194,10 +194,12 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
     cout << "Configure resize: " << ev->xconfigure.width << ","
 	 << ev->xconfigure.height << "\n";
 	 */
+    /*
     if ((ev->xconfigure.x!=0) || (ev->xconfigure.y!=0) ||
 	((ev->xconfigure.width == win->win_w) &&
 	 (ev->xconfigure.height == win->win_h)))
-      win->move_event (ev->xconfigure.x, ev->xconfigure.y);
+    */
+    win->move_event (ev->xconfigure.x, ev->xconfigure.y);
     win->resize_event (ev->xconfigure.width, ev->xconfigure.height);
     break;
   case CreateNotify:
