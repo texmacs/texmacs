@@ -23,11 +23,11 @@
 
 (tm-build-widget (widget-3 given)
   (center "Different types of data")
-  -
+  ===
   (let ((hidden "Secret text"))
     (internal "internal" (+ 1 1))
     (input "visible" "")
-    -
+    ===
     (with "button-shape" "invisible"
       (bar
 	(button "Parameter" (display* ,given "\n"))
@@ -40,14 +40,13 @@
 (tm-build-widget (widget-4)
   (short-bar
     (toggle "pressed?" #f)
-    (aspect :square
-      (toggle "second?" #f))
+    (toggle (:box-shape "square") "second?" #f)
     (toggle-button "third?" #f "Toggle"))
   (hidden-input "color" "red"
     (short-bar
-      "Green" (aspect :green (radio "color" "green"))
-      "Red" (aspect :red (radio "color" "red"))
-      "Blue" (aspect :blue (radio "color" "blue"))))
+      "Green" (radio (:box-color "pastel green") "color" "green")
+      "Red" (radio (:box-color "pastel red") "color" "red")
+      "Blue" (radio (:box-color "pastel blue") "color" "blue")))
   (short-bar
     (button "Toggles"
       (display* (widget-ref "pressed?") ", "
@@ -59,9 +58,11 @@
 
 (tm-build-widget (widget-5)
   (raster
+    (:cell-halign * 1 "r")
+    (:font-shape "italic")
     ("From:" (input "First" ""))
     ("To:" (input "Second" "")))
-  -
+  ===
   (bar
     (button "Copy" (widget-set! "Second" (widget-ref "First")))
     (button "Clear" (widget-set! "Second" ""))
@@ -74,7 +75,7 @@
 	(sync (lambda () (widget-set! "Output" (tree (number->string nr)))))
 	(inc (lambda () (set! nr (+ nr 1)) (sync))))
     (input "Output" "0")
-    -
+    ===
     (bar
       (button "Start"
 	(when (not busy)
@@ -112,10 +113,10 @@
 (tm-build-widget (widget-8)
   "Input:"
   (math (block-input "input" ""))
-  -
+  ===
   "Output:"
   (math (block-input "output" ""))
-  -
+  ===
   (bar
     (button "Differentiate"
       (widget->script "tmin" "input")
@@ -133,9 +134,10 @@
   (form ("test" "first" "second")
     (suggestions "first" '("hallo" "hop"))
     (raster
+      (:cell-halign * 1 "r")
       ("First input:" (input "first" :auto))
       ("Second input:" (input "second" :auto)))
-    -
+    ===
     (bar
       (form-previous)
       (form-next)
