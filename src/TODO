@@ -1,0 +1,204 @@
+
+===============================================================================
+GENERAL ARCHITECTURE
+===============================================================================
+
+Implement better tools for debugging
+  * Mechanism to recover all scheme error messages in a dedicated
+    TeXmacs buffer, together with foldable backtraces.
+  * Provide correct locations for the "texmacs-error" primitive.
+  * Provide a clean exception semantics for all routines in the basic APIs.
+  * Clean exception semantics for C++ routines which are exported to Scheme.
+  * Emergency saving of modified buffers on fatal_error.
+  * Throw-catch mechanism in C++ code when compiling with enable-debug
+    and replacement of fatal_error when possible.
+  * Test-suite of TeXmacs documents for different features and
+    automated checks for certain types of correctness.
+
+Hunt down memory leaks
+  * Valgrind
+  * Implement marking algorithm
+
+===============================================================================
+SCHEME INTERFACE
+===============================================================================
+
+Internal plug-in for Guile
+
+Integrate menus in new GUI system
+
+Naming conventions
+  * Rename "drd-" -> "logic-" for routines from kernel/drd.
+  * Appropriate naming convention for routines which operate on markup:
+    when to use tmconcat-, concat-, concat/, tree-concat-, ...,
+    especially for tags like "tree" which are also used as data types.
+
+More systematic preservation of locality
+  * Replace dispatch tables by contextual overloading where possible
+    (i.e. LaTeX export).
+
+===============================================================================
+TYPESETTER
+===============================================================================
+
+General
+  * Equivalent of TEX \topsep
+    In TEXMACS, the \topsep always equals 0.75em. It should be possible
+    to modify this. For symmetry, we might also introduce a ``bottom sep''.
+  * Resizing macro expansions
+    When attempting to resize a macro application to become smaller than
+    the ``x'', the invisible markers may have undesirable side-effects.
+  * Font parameters
+    Separate environment variables for ``typewriter'', ``sans serif'',
+    ``small caps'', ``slant'', etc.
+    Find rendering font as a function of selected font and language.
+  * Simplification of page parameters
+    Should we still reorganize? It should be easy to access to
+    the page width and height and some other parameters.
+
+Text
+  * Introduction of the paragraph tag
+    Distinguish between paragraphs and paragraph units.
+  * Page decorations (headers and footers)
+    Should the corresponding environment variables become macros?
+  * Fine-grained baseline skip
+    Associate baseline skip (or ascent and descent) to each individual box
+    in concatenation. Next compute maximum over each line. Take maximum of
+    maximum after first line and maximum before second line in order to
+    obtain final value. Also for other parameters such as baselineskip?
+  * Precise scope of variables which affect paragraph layout.
+
+Mathematics
+  * Horizontal grouping instead of \bigop ... \big.
+    Introduce grouping primitives in which expressions with big operands
+    (and maybe large delimiters) can be encapsulated. The advantage is that
+    this eases parsing and an indicative bounding box is shown.
+  * Scripts to large delimiters produced by macros
+    Such scripts are not put at the right positions
+  * Macro for fractions in continued fractions.
+  * Less vertical spacing in text style between numerator/denominator and bar.
+  * Left-numbering of equation arrays
+    Should be possible now using the extern primitive.
+  * Consider fractions and scripts as operators
+    Consider fractions as operators => spaces before and after.
+    Similarly for scripts => small space before left scripts and
+    after right scripts.
+  * Better spacing
+    Determine spacing between two mathematical boxes as a function of
+    the rough semantics of the boxes. Application: no need for operators
+    like the unary minus.
+
+Style-sheet language
+  * Introduce a style options mechanism
+    Option -> call back macro which can be enriched by several packages
+    Call back macros called at end of reading style files when option selected
+    Selected options postpended to name for style-file caching
+  * Grey menu entries for parameters which cannot be changed in style
+    For instance, a style might provide a limited number of font base sizes.
+
+Boxes
+  * Origin of boxes
+    Boxes should not have origins; its children should have positions instead.
+
+Current bridges
+  * Temporarily inccorect markup
+    When pressing A-backspace inside a surround tag, we first remove
+    two children of the surround tag (so that it obtains arity 1) and
+    next remove the tag itself. The temporarily inccorect surround tag
+    of arity 1 may cause bridge_surround to crash.
+    Temporary fix: add extra nodes in the bridge.
+    Better fix: implement an elementary modification assign_label
+    which allows to change the surround tag into another tag like tuple
+    before performing incorrect operations.
+
+===============================================================================
+EDITOR
+===============================================================================
+
+Editing source trees
+  * Edit as option
+    A facility "Edit as" to convert a selection into any other format and
+    put the result in an "edit-as" tag for manual editing. When pressing
+    return, reconvert back into TEXMACS.
+  * More customizable presentation of source tags
+    Make the presentation of source code more customizable by user macros.
+    Done for syntactic highlighting, but should also be done for special
+    rendering of certain primitives and the rendering of tags.
+  * Primitive for block arguments
+    Currently, we may stretch tags. We also need a primitive for stretching
+    tag arguments.
+  * Comments
+    Tags for short commands inside the program
+  * Visual hints
+    Display informative flags at places where tags have been stretched or
+    a modification to the source style has been applied
+
+===============================================================================
+TOOLS AND FREQUENTLY USED SUBROUTINES
+===============================================================================
+
+Quoting
+  * Implement different routines for quoting and quote/unquote
+    using the appropriate routine.
+
+General caching mechanism
+  * Optimize performance as a function of cost of recomputation and
+    storage requirement
+
+LATEX import
+  * Avoid name-clashes with built-in commands
+    Importation of LATEX macros whose names coincide with built-in
+    commands may lead to incorrect documents (e.g. the point macro
+    in publs/1998/zeta.tex). We should probably post-correct imported
+    documents.
+  * Better parsing of verbatim arguments
+    Some commands, like cite, documentclass, etc. take verbatim arguments,
+    which should not be parsed in the generic way. The string_arg function
+    is a temporary remedy.
+
+===============================================================================
+MANAGEMENT AND ADMINISTRATION
+===============================================================================
+
+Publicity
+
+Mirror sites
+  * CVS mirror at Savannah and automatic update scheme.
+  * Also search for other mirror sites (increases availability and
+    visibility on the web).
+
+===============================================================================
+TUTORIAL OR SERIES OF INTRODUCTORY ARTICLES (E.G. FOR LINUX MAGAZINE)
+===============================================================================
+
+General introduction/quick overview
+  * Different purposes of TEXMACS
+  * Writing a simple text
+  * Style-sheets and writing a simple macro
+  * Running a computer algebra system
+  * Inserting an action tag which launches an xterm (and mutator tag?)
+
+Writing simple structured texts
+  * Why are structured documents useful?
+  * How to enter structure into TEXMACS, redundancy of the interface
+  * Understanding the visual indications, cursor movement
+  * Editing the structure (removing structure, improper nesting, variants,
+    numbering)
+  * Exploiting structure: spell checking, searching
+  * Reminders about correct typography
+
+Writing mathematical texts
+  * Entering math mode, equations, equation arrays
+  * Simple mathematical formulas, recall cursor movement
+  * Mathematical symbols, variants
+  * Semantics of multiplication, function application and
+    other implicit semantics
+  * Simple matrices and other tabular environments
+
+Writing simple macros and style-sheets
+  * Rendering of source code, what is source code?
+  * A simple macro
+  * A simple style package
+  * Customization of some existing macros
+
+Etc.
