@@ -6,14 +6,11 @@
   <tmweb-current|Download|Binaries><tmweb-title|<TeXmacs> inside
   GNU/<name|Linux> distributions|<tmweb-download-links>>
 
-  The following GNU/Linux distributions provide packages for <TeXmacs>:
+  The following GNU/Linux distributions provide packages or third-part
+  packages for <TeXmacs>:
 
   <\itemize>
     <item><hlink|Alt Linux|#alt-linux>.
-
-    <item><hlink|Cent OS|#redhat>.
-
-    <item><hlink|CERN Scientific Linux|#redhat>.
 
     <item><hlink|Debian GNU/Linux|#debian>.
 
@@ -26,8 +23,6 @@
     <item><hlink|Mandriva|#mandriva>.
 
     <item><hlink|Open Suse|#suse>.
-
-    <item><hlink|Oracle unbreakable Linux|#redhat>.
 
     <item><hlink|Red Hat|#redhat>.
 
@@ -73,6 +68,9 @@
 
     <item><hlink|Debian package for the unstable
     distribution|http://packages.debian.org/unstable/editors/texmacs.html>.
+
+    <item><hlink|Debian package for the experimental
+    distribution|http://packages.debian.org/experimental/editors/texmacs>.
   </itemize>
 
   If you are running the "<verbatim|unstable>" distribution, you can get
@@ -144,11 +142,13 @@
   its clones (<hlink|CentOS|http://www.centos.org/>, <hlink|CERN Scientific
   Linux|http://linux.web.cern.ch/linux/scientific4/>, <hlink|Oracle
   Unbreakable Linux|http://www.oracle.com/Linux/>, etc.) can find rpms of
-  recent versions of <TeXmacs> at Dag Vieers repository. Just install the
-  rpmforge-release package for your distribution, it contains all the
-  necessary config files. Then
+  recent versions of <TeXmacs> at <hlink|Dag Vieers
+  repository|http://dag.wieers.com/rpm/>. Just install the
+  <hlink|rpmforge-release|http://dag.wieers.com/rpm/packages/rpmforge-release/>
+  package for your distribution, it contains all the necessary config files.
+  Then
 
-  <verbatim| \ \ \ yum install TeXmacs>
+  <verbatim| \ \ \ yum install texmacs>
 
   As usual,
 
@@ -168,7 +168,7 @@
   "<verbatim|unstable>", and therefore contains <TeXmacs>. You can (probably)
   install an up-to-date TeXmacs from Debian "<verbatim|experimental>".
 
-  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1999--2007|Andrey Grozin|Joris van der Hoeven>
 
   <tmweb-license>
 </body>

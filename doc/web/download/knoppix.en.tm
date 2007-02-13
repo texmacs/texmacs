@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.9>
+<TeXmacs|1.0.6.9>
 
 <style|tmweb>
 
@@ -6,8 +6,9 @@
   <tmweb-current|Download|Knoppix><tmweb-title|Knoppix CDs for
   <TeXmacs>|<tmweb-download-links>>
 
-  There are several Knoppix distributions (i.e <name|GNU/Linux> Live-CDs)
-  available for <TeXmacs>:
+  <hlink|Knoppix|http://www.knoppix.org/> is a GNU/<name|Linux> distribution
+  on a live-CD or live-DVD. The distribution contains a<nbsp>package for
+  <TeXmacs> and so do several <name|Knoppix>-based distributions:
 
   <\itemize>
     <item><hlink|<TeXmacs> and several computer algebra
