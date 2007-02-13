@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.6.9>
 
 <style|tmweb>
 
@@ -14,8 +14,8 @@
     <item*|<hlink|RPM|rpm.en.tm>>For GNU/<name|Linux> distributions based on
     RPM packages (RedHat, Mandrake, etc.).
 
-    <item*|<hlink|Debian|debian.en.tm>>For users of <name|Debian>
-    GNU/<name|Linux>.
+    <item*|<hlink|Linux|linux.en.tm>>For users of several standard
+    GNU/<name|Linux> distributions.
 
     <item*|<hlink|Cygwin|cygwin.en.tm>>For users of Windows (requires the
     installation of <name|Cygwin>).
@@ -35,11 +35,11 @@
     systems.
   </description>
 
-  We recommend a <hyper-link|reasonably fast|requirements.en.tm> computer for
+  We recommend a <hlink|reasonably fast|requirements.en.tm> computer for
   running <TeXmacs>. On <name|Unix> systems, it is recommended to have a
-  standard <hyper-link|<TeX>/<LaTeX>|requirements.en.tm#TeX> installed on
-  your system, which is usually the case. If not, then you will need to
-  install some <hyper-link|extra fonts|fonts.en.tm>.
+  standard <hlink|<TeX>/<LaTeX>|requirements.en.tm#TeX> installed on your
+  system, which is usually the case. If not, then you will need to install
+  some <hlink|extra fonts|fonts.en.tm>.
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
