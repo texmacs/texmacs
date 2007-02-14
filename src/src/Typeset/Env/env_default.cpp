@@ -100,6 +100,7 @@ initialize_default_env () {
   env (PAR_COLUMNS_SEP)  = "2fn";       // separation between columns
 
   env (PAGE_MEDIUM)      = "papyrus";   // paper medium: paper, papyrus, auto
+  env (PAGE_PRINTED)     = "false";     // printed version?
   env (PAGE_TYPE)        = "a4";        // paper type (-> width & height)
   env (PAGE_ORIENTATION) = "portrait";  // paper orientation
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?

@@ -118,7 +118,7 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
     }
   }
 
-  bool on_paper= (env->get_string (PAGE_MEDIUM) == "paper");
+  bool on_paper= (env->get_string (PAGE_PRINTED) == "true");
   bool preserve= (get_locus_rendering ("locus-on-paper") == "preserve");
   string var= (visited? VISITED_COLOR: LOCUS_COLOR);
   string current_col= env->get_string (COLOR);

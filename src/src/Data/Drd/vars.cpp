@@ -95,6 +95,7 @@ string PAR_COLUMNS_SEP ("par-columns-sep");
 ******************************************************************************/
 
 string PAGE_MEDIUM ("page-medium");
+string PAGE_PRINTED ("page-printed");
 string PAGE_TYPE ("page-type");
 string PAGE_ORIENTATION ("page-orientation");
 string PAGE_WIDTH_MARGIN ("page-width-margin");

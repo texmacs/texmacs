@@ -179,7 +179,7 @@ concater_rep::typeset_scrolled (tree t, path ip) {
   SI   x= -env->as_length (env->exec (t[0]));
   SI   y= -env->as_length (env->exec (t[1]));
   box  b= typeset_as_concat (env, t[2], descend (ip, 2));
-  print (STD_ITEM, move_box (ip, b, x, y, true));
+  print (STD_ITEM, scroll_box (ip, b, x, y));
 }
 
 static SI
