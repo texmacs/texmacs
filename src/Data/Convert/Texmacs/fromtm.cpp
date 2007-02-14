@@ -452,6 +452,7 @@ extract_document (tree doc) {
 	tree l= init[i][0];
 	tree r= init[i][1];
 	if ((l == PAGE_MEDIUM) ||
+	    (l == PAGE_PRINTED) ||
 	    (l == PAGE_TYPE) ||
 	    (l == PAGE_ORIENTATION) ||
 	    (l == PAGE_WIDTH_MARGIN) ||

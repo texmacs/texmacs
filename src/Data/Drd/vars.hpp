@@ -85,6 +85,7 @@ extern string PAR_COLUMNS;
 extern string PAR_COLUMNS_SEP;
 
 extern string PAGE_MEDIUM;
+extern string PAGE_PRINTED;
 extern string PAGE_TYPE;
 extern string PAGE_ORIENTATION;
 extern string PAGE_WIDTH_MARGIN;

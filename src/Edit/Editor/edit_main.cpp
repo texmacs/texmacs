@@ -158,7 +158,10 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   env->write (DPI, printing_dpi);
   env->write (PAGE_SHOW_HF, "true");
   env->write (PAGE_SCREEN_MARGIN, "false");
-  if (!conform) env->write (PAGE_MEDIUM, "paper");
+  if (!conform) {
+    env->write (PAGE_MEDIUM, "paper");
+    env->write (PAGE_PRINTED, "true");
+  }
 
   // Typeset pages for printing
 
