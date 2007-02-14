@@ -58,66 +58,70 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
 }
 
 path
-edit_cursor_rep::tree_path (SI x, SI y, SI delta) {
-  path p= correct_cursor (et, eb->find_tree_path (x, y, delta));
+edit_cursor_rep::tree_path (path sp, SI x, SI y, SI delta) {
+  path p= correct_cursor (et, find_scrolled_tree_path (eb, sp, x, y, delta));
   return make_cursor_accessible (p, searching_forwards);
 }
 
 bool
 edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
+  path sp= find_innermost_scroll (eb, tp);
   searching_forwards= dx == 1 || dy == -1;
+
   int i,d;
-  path ref_p= tree_path (x0, y0, d0);
+  path ref_p= tree_path (sp, x0, y0, d0);
   if (ref_p != tp) {
     tp= ref_p;
     return true;
   }
   
   // cout << "ref_p = " << ref_p << "\n";
-  if (ref_p == tree_path (x0, y0, d0+ dx*DELTA)) {
+  if (ref_p == tree_path (sp, x0, y0, d0+ dx*DELTA)) {
     for (i=1; i<DELTA; i=i<<1)
-      if (ref_p != tree_path (x0+ dx*i, y0+ dy*i, d0+ dx*DELTA)) break;
+      if (ref_p != tree_path (sp, x0+ dx*i, y0+ dy*i, d0+ dx*DELTA))
+	break;
     if (i>=DELTA) return false;
     for (d=i>>2; d>=1; d=d>>1)
-      if (ref_p != tree_path (x0+ dx*(i-d), y0+ dy*(i-d), d0+ dx*DELTA)) i-=d;
+      if (ref_p != tree_path (sp, x0+ dx*(i-d), y0+ dy*(i-d), d0+ dx*DELTA))
+	i-=d;
 
     x0 += dx*i;
     y0 += dy*i;
   }
   
-  // cout << "path  = " << tree_path (x0, y0, d0) << "\n";
+  // cout << "path  = " << tree_path (sp, x0, y0, d0) << "\n";
   if (dx!=0) {
-    if (ref_p == tree_path (x0, y0, d0)) {
+    if (ref_p == tree_path (sp, x0, y0, d0)) {
       for (i=1; i<DELTA; i=i<<1)
-	if (ref_p != tree_path (x0, y0, d0+ dx*i)) break;
+	if (ref_p != tree_path (sp, x0, y0, d0+ dx*i)) break;
       if (i>=DELTA)
 	fatal_error ("inconsistent cursor handling",
 		     "edit_cursor_rep::cursor_move_sub");
       for (d=i>>2; d>=1; d=d>>1)
-	if (ref_p != tree_path (x0, y0, d0+ dx*(i-d))) i-=d;
+	if (ref_p != tree_path (sp, x0, y0, d0+ dx*(i-d))) i-=d;
       d0 += dx*i;
     }
     else {
       for (i=1; i<DELTA; i=i<<1)
-	if (ref_p == tree_path (x0, y0, d0- dx*i)) break;
+	if (ref_p == tree_path (sp, x0, y0, d0- dx*i)) break;
       if (i<DELTA) {
 	for (d=i>>2; d>=1; d=d>>1)
-	  if (ref_p == tree_path (x0, y0, d0- dx*(i-d))) i-=d;
+	  if (ref_p == tree_path (sp, x0, y0, d0- dx*(i-d))) i-=d;
 	i--;
 	d0 -= dx*i;
       }
       else {  // exceptional case
-	ref_p= tree_path (x0, y0, d0- dx*DELTA);
+	ref_p= tree_path (sp, x0, y0, d0- dx*DELTA);
 	for (i=1; i<DELTA; i=i<<1)
-	  if (ref_p == tree_path (x0, y0, d0- dx*i)) break;
+	  if (ref_p == tree_path (sp, x0, y0, d0- dx*i)) break;
 	for (d=i>>2; d>=1; d=d>>1)
-	  if (ref_p == tree_path (x0, y0, d0- dx*(i-d))) i-=d;
+	  if (ref_p == tree_path (sp, x0, y0, d0- dx*(i-d))) i-=d;
 	d0 -= dx*i;
       }
     }
   }
 
-  tp= tree_path (x0, y0, d0);
+  tp= tree_path (sp, x0, y0, d0);
   return true;
 }
 
@@ -152,7 +156,7 @@ edit_cursor_rep::notify_cursor_moved (int status) {
 void
 edit_cursor_rep::go_to (SI x, SI y) {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
-  tp= tree_path (x, y, 0);
+  tp= tree_path (path (), x, y, 0);
   notify_cursor_moved (CENTER);
   mv->ox   = x;
   mv->oy   = y;
@@ -281,27 +285,28 @@ edit_cursor_rep::go_end_line () {
 
 void
 edit_cursor_rep::adjust_cursor () {
+  path sp= find_innermost_scroll (eb, tp);
   cursor mv= copy (cu);
   SI dx= PIXEL << 8, ddelta= 0;
-  path p= tree_path (mv->ox, mv->oy, mv->delta);
+  path p= tree_path (sp, mv->ox, mv->oy, mv->delta);
   if (p != tp) {
     // cout << "Cursors don't match\n";
     while (dx != 0 || ddelta != 0) {
       // cout << "  " << tp << ", " << p << "\n";
-      p= tree_path (mv->ox, mv->oy, mv->delta);
+      p= tree_path (sp, mv->ox, mv->oy, mv->delta);
       int eps= (path_inf (p, tp)? 1: -1);
       if (p == tp) eps= (mv->ox < cu->ox? 1: -1);
       if (p == tp && mv->ox == cu->ox) eps= (mv->delta < cu->delta? 1: -1);
       if (dx > 0) {
 	if (p != tp ||
-	    tree_path (mv->ox + eps * dx, mv->oy, mv->delta) == tp)
+	    tree_path (sp, mv->ox + eps * dx, mv->oy, mv->delta) == tp)
 	  mv->ox += eps * dx;
 	dx >>= 1;
 	if (dx == 0) ddelta= DELTA;
       }
       else if (ddelta > 0) {
 	if (p != tp ||
-	    tree_path (mv->ox, mv->oy, mv->delta + eps * ddelta) == tp)
+	    tree_path (sp, mv->ox, mv->oy, mv->delta + eps * ddelta) == tp)
 	  mv->delta += eps * ddelta;
 	ddelta >>= 1;
       }

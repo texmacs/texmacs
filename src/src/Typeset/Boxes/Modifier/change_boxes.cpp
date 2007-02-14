@@ -95,7 +95,7 @@ change_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 }
 
 /******************************************************************************
-* moving and resizing boxes
+* Moving boxes
 ******************************************************************************/
 
 struct move_box_rep: public change_box_rep {
@@ -111,6 +111,24 @@ move_box_rep::move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
   position ();
   finalize ();
 }
+
+struct scroll_box_rep: public change_box_rep {
+  scroll_box_rep (path ip, box b, SI x, SI y);
+  int get_type () { return SCROLL_BOX; }
+  operator tree () { return tree (TUPLE, "scroll", (tree) bs[0]); }
+};
+
+scroll_box_rep::scroll_box_rep (path ip, box b, SI x, SI y):
+  change_box_rep (ip, false, false)
+{
+  insert (b, x, y);
+  position ();
+  finalize ();
+}
+
+/******************************************************************************
+* Resizing boxes
+******************************************************************************/
 
 struct resize_box_rep: public change_box_rep {
   resize_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2,
@@ -136,6 +154,7 @@ struct clip_box_rep: public change_box_rep {
   operator tree () { return tree (TUPLE, "clip", (tree) bs[0]); }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
+  selection find_selection (path lbp, path rbp);
 };
 
 clip_box_rep::clip_box_rep (
@@ -160,6 +179,13 @@ void
 clip_box_rep::post_display (ps_device &dev) {
   dev->set_clipping (
     old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
+}
+
+selection
+clip_box_rep::find_selection (path lbp, path rbp) {
+  selection sel= change_box_rep::find_selection (lbp, rbp);
+  return selection (sel->rs & rectangle (x1, y1, x2, y2),
+		    sel->start, sel->end, sel->valid);
 }
 
 struct vcorrect_box_rep: public change_box_rep {
@@ -414,6 +440,11 @@ textat_box_rep::graphical_select (SI x, SI y, SI dist) {
 box
 move_box (path ip, box b, SI x, SI y, bool child_flag, bool big_flag) {
   return new move_box_rep (ip, b, x, y, child_flag, big_flag);
+}
+
+box
+scroll_box (path ip, box b, SI x, SI y) {
+  return new scroll_box_rep (ip, b, x, y);
 }
 
 box
