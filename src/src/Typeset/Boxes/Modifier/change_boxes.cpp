@@ -112,20 +112,6 @@ move_box_rep::move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
   finalize ();
 }
 
-struct scroll_box_rep: public change_box_rep {
-  scroll_box_rep (path ip, box b, SI x, SI y);
-  int get_type () { return SCROLL_BOX; }
-  operator tree () { return tree (TUPLE, "scroll", (tree) bs[0]); }
-};
-
-scroll_box_rep::scroll_box_rep (path ip, box b, SI x, SI y):
-  change_box_rep (ip, false, false)
-{
-  insert (b, x, y);
-  position ();
-  finalize ();
-}
-
 /******************************************************************************
 * Resizing boxes
 ******************************************************************************/
@@ -148,20 +134,44 @@ resize_box_rep::resize_box_rep (
   finalize ();
 }
 
+struct vcorrect_box_rep: public change_box_rep {
+  vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
+  operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
+};
+
+vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor):
+  change_box_rep (ip, false, false)
+{
+  insert (b, 0, -top_cor);
+  position ();
+  y1 -= bot_cor;
+  y2 += top_cor;
+  finalize ();
+}
+
+/******************************************************************************
+* Clipped boxes
+******************************************************************************/
+
 struct clip_box_rep: public change_box_rep {
+  bool scrolled;
   SI old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
-  clip_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2);
+public:
+  clip_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2,
+		bool scrolled, SI scx, SI scy);
   operator tree () { return tree (TUPLE, "clip", (tree) bs[0]); }
+  int get_type () { return scrolled? SCROLL_BOX: change_box_rep::get_type(); }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
   selection find_selection (path lbp, path rbp);
 };
 
 clip_box_rep::clip_box_rep (
-  path ip, box b, SI X1, SI Y1, SI X2, SI Y2):
-    change_box_rep (ip, true)
+  path ip, box b, SI X1, SI Y1, SI X2, SI Y2,
+  bool scrolled2, SI scx, SI scy):
+  change_box_rep (ip, true), scrolled (scrolled2)
 {
-  insert (b, 0, 0);
+  insert (b, scx, scy);
   position ();
   x1= X1; y1= Y1;
   x2= X2; y2= Y2;
@@ -186,21 +196,6 @@ clip_box_rep::find_selection (path lbp, path rbp) {
   selection sel= change_box_rep::find_selection (lbp, rbp);
   return selection (sel->rs & rectangle (x1, y1, x2, y2),
 		    sel->start, sel->end, sel->valid);
-}
-
-struct vcorrect_box_rep: public change_box_rep {
-  vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
-  operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
-};
-
-vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor):
-  change_box_rep (ip, false, false)
-{
-  insert (b, 0, -top_cor);
-  position ();
-  y1 -= bot_cor;
-  y2 += top_cor;
-  finalize ();
 }
 
 /******************************************************************************
@@ -443,11 +438,6 @@ move_box (path ip, box b, SI x, SI y, bool child_flag, bool big_flag) {
 }
 
 box
-scroll_box (path ip, box b, SI x, SI y) {
-  return new scroll_box_rep (ip, b, x, y);
-}
-
-box
 resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	    bool child_flag, bool adjust) {
   return new resize_box_rep (ip, b, x1, y1, x2, y2, child_flag, adjust);
@@ -455,7 +445,12 @@ resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 
 box
 clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2) {
-  return new clip_box_rep (ip, b, x1, y1, x2, y2);
+  return new clip_box_rep (ip, b, x1, y1, x2, y2, false, 0, 0);
+}
+
+box
+clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2, SI scx, SI scy) {
+  return new clip_box_rep (ip, b, x1, y1, x2, y2, true, scx, scy);
 }
 
 box

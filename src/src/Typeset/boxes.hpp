@@ -279,6 +279,8 @@ bool outside (SI x, SI delta, SI x1, SI x2);
 void make_eps (url dest, display dis, box b, int dpi);
 path find_innermost_scroll (box b, path p);
 path find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta);
+void find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,
+		       rectangle& outer, rectangle& inner);
 
 extern bool   refresh_needed;
 extern time_t refresh_next;

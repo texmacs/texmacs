@@ -122,8 +122,8 @@ arg_type (tree t, int i) {
   case RESIZE:
     if (i > 0) return "length";
     else return "";
-  case SCROLLED:
   case CLIPPED:
+  case CANVAS:
     if (i < n-1) return "length";
     else return "";
   case ASSIGN:

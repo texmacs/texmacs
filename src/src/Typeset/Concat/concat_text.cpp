@@ -12,6 +12,7 @@
 
 #include "concater.hpp"
 #include "formatter.hpp"
+#include "analyze.hpp"
 
 lazy make_lazy_vstream (edit_env env, tree t, path ip, tree channel);
 
@@ -172,16 +173,6 @@ concater_rep::typeset_move (tree t, path ip) {
   print (STD_ITEM, move_box (ip, b, x, y, true));
 }
 
-void
-concater_rep::typeset_scrolled (tree t, path ip) {
-  // IDEA: set left, right, bottom, top environment variables
-  //       and allow doing computations with them
-  SI   x= -env->as_length (env->exec (t[0]));
-  SI   y= -env->as_length (env->exec (t[1]));
-  box  b= typeset_as_concat (env, t[2], descend (ip, 2));
-  print (STD_ITEM, scroll_box (ip, b, x, y));
-}
-
 static SI
 resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
   if (!is_atomic (new_size)) return old;
@@ -247,6 +238,35 @@ concater_rep::typeset_clipped (tree t, path ip) {
   SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[2]));
   SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[3]));
   print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
+}
+
+void
+concater_rep::typeset_canvas (tree t, path ip) {
+  // IDEA: set left, right, bottom, top environment variables
+  //       and allow doing computations with them
+  box  b = typeset_as_concat (env, t[6], descend (ip, 6));
+  SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[0]));
+  SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[1]));
+  SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[2]));
+  SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[3]));
+  SI   sx, sy;
+  tree scx= env->exec (t[4]);
+  tree scy= env->exec (t[5]);
+  if (is_atomic (scx) && ends (scx->label, "%")) {
+    double p= as_double (scx->label (0, N(scx->label)-1)) / 100.0;
+    SI d = ((x2-x1) - (b->x2-b->x1));
+    SI dx= (d >= 0? 0: (SI) (p * d));
+    sx= dx + x1 - b->x1;
+  }
+  else sx= -env->as_length (scx);
+  if (is_atomic (scy) && ends (scy->label, "%")) {
+    double p= as_double (scy->label (0, N(scy->label)-1)) / 100.0;
+    SI d = ((y2-y1) - (b->y2-b->y1));
+    SI dy= (d >= 0? 0: (SI) (p * d));
+    sy= dy + y1 - b->y1;
+  }
+  else sy= -env->as_length (scy);
+  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2, sx, sy));
 }
 
 /******************************************************************************

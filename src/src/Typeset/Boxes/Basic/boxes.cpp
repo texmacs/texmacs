@@ -213,7 +213,8 @@ find_innermost_scroll (box b, path p) {
     cp= path (bp->item, cp);
     bp= bp->next;
   }
-  return sp;
+  if (nil (sp)) return sp;
+  else return sp * 0;
 }
 
 path
@@ -233,6 +234,29 @@ find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta) {
   //cout << "Find " << x << ", " << y << "; " << delta;
   //cout << " -> " << bp << "\n";
   return b->find_tree_path (bp);
+}
+
+void
+find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,
+		  rectangle& outer, rectangle& inner)
+{
+  if (nil (sp)) {
+    x= y= sx= sy= 0;
+    outer= inner= rectangle (0, 0, 0, 0);
+  }
+  else if (atom (sp)) {
+    x    = 0;
+    y    = 0;
+    sx   = b->sx (0);
+    sy   = b->sy (0);
+    outer= rectangle (b->x1, b->y1, b->x2, b->y2);
+    inner= rectangle (b[0]->x1, b[0]->y1, b[0]->x2, b[0]->y2);
+  }
+  else {
+    find_canvas_info (b[sp->item], sp->next, x, y, sx, sy, outer, inner);
+    x += b->sx (sp->item);
+    y += b->sy (sp->item);
+  }
 }
 
 /******************************************************************************
