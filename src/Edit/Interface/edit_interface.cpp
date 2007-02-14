@@ -168,17 +168,50 @@ edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
 
 void
 edit_interface_rep::cursor_visible () {
+  path sp= find_innermost_scroll (eb, tp);
   cursor cu= get_cursor ();
-  cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
-  update_visible ();
-  if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) <  vx1) ||
-      (cu->ox+ ((SI) (cu->y2 * cu->slope)) >= vx2) ||
-      (cu->oy+ cu->y1 <  vy1) ||
-      (cu->oy+ cu->y2 >= vy2))
-    {
-      scroll_to (cu->ox- ((vx2-vx1)>>1), cu->oy+ ((vy2-vy1)>>1));
-      this << emit_invalidate_all ();
-    }
+  if (nil (sp)) {
+    update_visible ();
+    cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
+    if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) <  vx1) ||
+	(cu->ox+ ((SI) (cu->y2 * cu->slope)) >= vx2) ||
+	(cu->oy+ cu->y1 <  vy1) ||
+	(cu->oy+ cu->y2 >= vy2))
+      {
+	scroll_to (cu->ox- ((vx2-vx1)>>1), cu->oy+ ((vy2-vy1)>>1));
+	this << emit_invalidate_all ();
+      }
+  }
+  else {
+    SI x, y, sx, sy;
+    rectangle outer, inner;
+    find_canvas_info (eb, sp, x, y, sx, sy, outer, inner);
+    if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) < x + outer->x1) ||
+	(cu->ox+ ((SI) (cu->y2 * cu->slope)) > x + outer->x2))
+      {
+	SI tx= inner->x2 - inner->x1;
+	SI cx= outer->x2 - outer->x1;
+	if (tx > cx) {
+	  SI dx= cu->ox - x + outer->x1 - inner->x1 - sx;
+	  double p= 100.0 * ((double) (dx - (cx>>1))) / ((double) (tx-cx));
+	  p= max (min (p, 100.0), 0.0);
+	  eval_delayed ("(canvas-scroll-x \"" * as_string (p) * "%\")");
+	}
+      }
+    if ((cu->oy+ cu->y1 < y + outer->y1) ||
+	(cu->oy+ cu->y2 > y + outer->y2))
+      {
+	SI ty= inner->y2 - inner->y1;
+	SI cy= outer->y2 - outer->y1;
+	if (ty > cy) {
+	  SI yy= cu->oy + ((cu->y1 + cu->y2) >> 1);
+	  SI dy= yy - y + outer->y1 - inner->y1 - sy;
+	  double p= 100.0 * ((double) (dy - (cy>>1))) / ((double) (ty-cy));
+	  p= max (min (p, 100.0), 0.0);
+	  eval_delayed ("(canvas-scroll-y \"" * as_string (p) * "%\")");
+	}
+      }
+  }
 }
 
 void

@@ -203,3 +203,17 @@
 	 (geom (tree-extents doc)))
     (open-buffer-in-window name doc* geom)
     (set-aux name name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Canvas routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (canvas-scroll-x p)
+  (with-innermost t 'canvas
+    (when (!= (tree->stree (tree-ref t 4)) p)
+      (tree-set (tree-ref t 4) p))))
+
+(tm-define (canvas-scroll-y p)
+  (with-innermost t 'canvas
+    (when (!= (tree->stree (tree-ref t 5)) p)
+      (tree-set (tree-ref t 5) p))))
