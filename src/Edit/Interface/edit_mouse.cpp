@@ -139,8 +139,9 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
   end_x  = x;
   end_y  = y;
   selection_visible ();
-  path p1= tree_path (start_x, start_y, 0);
-  path p2= tree_path (end_x  , end_y  , 0);
+  path sp= find_innermost_scroll (eb, tp);
+  path p1= tree_path (sp, start_x, start_y, 0);
+  path p2= tree_path (sp, end_x  , end_y  , 0);
   if (path_inf (p2, p1)) {
     path temp= p1;
     p1= p2;
@@ -254,7 +255,7 @@ edit_interface_rep::set_pointer (
 
 void
 edit_interface_rep::update_active_loci () {
-  path cp= path_up (tree_path (last_x, last_y, 0));
+  path cp= path_up (tree_path (path (), last_x, last_y, 0));
   tree mt= subtree (et, cp);
   path p = cp;
   list<string> ids1, ids2;

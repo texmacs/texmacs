@@ -190,6 +190,52 @@ box_rep::transform (frame fr) {
 }
 
 /******************************************************************************
+* Modified cursor routines in presence of scrolled boxes
+******************************************************************************/
+
+path
+find_innermost_scroll (box b, path p) {
+  // Given a box b and a logical path p, this routine returns 
+  // the longest box path sp such that b[sp] is a scroll node
+  path bp;
+  while (true) {
+    bool found= false;
+    bp= b->find_box_path (p, found);
+    if (found) break;
+    p= path_up (p);
+    if (nil (p)) return path ();
+  }
+  bp= path_up (bp);
+  path cp, sp;
+  while (!nil (bp)) {
+    if (b->get_type () == SCROLL_BOX) sp= reverse (cp);
+    b = b[bp->item];
+    cp= path (bp->item, cp);
+    bp= bp->next;
+  }
+  return sp;
+}
+
+path
+find_scrolled_box_path (box b, path sp, SI x, SI y, SI delta) {
+  if (nil (sp)) return b->find_box_path (x, y, delta, false);
+  else {
+    int m= sp->item;
+    SI xx= x - b->sx (m), yy= y - b->sy (m);
+    SI dd= delta + get_delta (xx, b[m]->x1, b[m]->x2);
+    return path (m, find_scrolled_box_path (b[m], sp->next, xx, yy, dd));
+  }
+}
+
+path
+find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta) {
+  path bp= find_scrolled_box_path (b, sp, x, y, delta);
+  //cout << "Find " << x << ", " << y << "; " << delta;
+  //cout << " -> " << bp << "\n";
+  return b->find_tree_path (bp);
+}
+
+/******************************************************************************
 * For graphical boxes
 ******************************************************************************/
 
@@ -519,13 +565,13 @@ operator << (ostream& out, cursor cu) {
 * Selections
 ******************************************************************************/
 
-selection::selection (rectangles rs, path start, path end):
+selection::selection (rectangles rs, path start, path end, bool valid):
   rep (new selection_rep)
 {
   rep->rs   = rs;
   rep->start= start;
   rep->end  = end;
-  rep->valid= true;
+  rep->valid= valid;
 }
 
 bool

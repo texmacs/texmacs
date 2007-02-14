@@ -30,6 +30,7 @@
 #define STACK_BOX     1
 #define CONTROL_BOX   2
 #define MOVE_BOX      3
+#define SCROLL_BOX    4
 
 /******************************************************************************
 * The cursor class
@@ -70,7 +71,8 @@ struct selection_rep: concrete_struct {
 struct selection {
   CONCRETE(selection);
   selection (rectangles rs= rectangles(),
-	     path start= path(), path end= path ());
+	     path start= path(), path end= path (),
+	     bool valid= true);
 };
 CONCRETE_CODE(selection);
 
@@ -275,6 +277,8 @@ ostream& operator << (ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
 void make_eps (url dest, display dis, box b, int dpi);
+path find_innermost_scroll (box b, path p);
+path find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta);
 
 extern bool   refresh_needed;
 extern time_t refresh_next;

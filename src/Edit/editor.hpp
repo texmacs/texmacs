@@ -94,7 +94,7 @@ protected:
   virtual void back_in_general (tree t, path p, bool forward) = 0;
 
   /* other protected subroutines */
-  virtual path tree_path (SI x, SI y, SI delta) = 0;
+  virtual path tree_path (path sp, SI x, SI y, SI delta) = 0;
   virtual void apply_changes () = 0;
   virtual void animate () = 0;
   virtual void correct_concat (path p, int done=0) = 0;
