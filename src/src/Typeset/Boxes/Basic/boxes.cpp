@@ -24,6 +24,8 @@
 
 int box_rep::subnr () { return 0; }
 box box_rep::subbox (int i) { (void) i; return box (); }
+box box::operator [] (path p) {
+  if (nil (p)) return *this; else return rep->subbox(p->item)[p->next]; }
 double box_rep::left_slope () { return 0.0; }
 double box_rep::right_slope () { return 0.0; }
 SI box_rep::left_correction () { return (SI) (-min (0, y1) * left_slope ()); }
@@ -381,7 +383,8 @@ box_rep::get_type () {
 }
 
 tree
-box_rep::get_info () {
+box_rep::get_info (tree in) {
+  (void) in;
   return "";
 }
 
