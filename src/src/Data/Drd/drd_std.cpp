@@ -242,6 +242,8 @@ init_std_drd () {
   init (FN_LENGTH, "fn-length", fixed (0));
   init (FNS_LENGTH, "fns-length", fixed (0));
   init (BLS_LENGTH, "bls-length", fixed (0));
+  init (FNBOT_LENGTH, "fnbot-length", fixed (0));
+  init (FNTOP_LENGTH, "fntop-length", fixed (0));
   init (SPC_LENGTH, "spc-length", fixed (0));
   init (XSPC_LENGTH, "xspc-length", fixed (0));
   init (PAR_LENGTH, "par-length", fixed (0));

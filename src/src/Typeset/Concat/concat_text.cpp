@@ -264,7 +264,7 @@ get_canvas_vertical (edit_env env, tree attrs, SI by1, SI by2,
   if (is_atomic (attrs[4]) && ends (attrs[5]->label, "%")) {
     double p= as_double (attrs[5]->label (0, N(attrs[5]->label)-1)) / 100.0;
     SI d = ((y2 - y1) - (by2 - by1));
-    SI dy= (d >= 0? 0: (SI) (p * d));
+    SI dy= (d >= 0? d: (SI) (p * d));
     scy  = dy + y1 - by1;
   }
   else scy= -env->as_length (attrs[5]);

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.6.9>
 
 <style|source>
 
@@ -43,13 +43,35 @@
 
   <assign|short-input|<macro|name|val|<short-bright|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
 
-  <assign|wide-input|<macro|name|val|<wide-bright|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
+  <assign|wide-input|<\macro|name|scx|val>
+    <wide-bright|<canvas||1fnbot|1par|1fntop|<arg|scx>||<group|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
+  </macro>>
 
   <assign|block-input|<\macro|name|val>
     <\block-bright>
       <\locus|<widget-id|<arg|name>>>
         <arg|val>
       </locus>
+    </block-bright>
+  </macro>>
+
+  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
+    <\block-bright>
+      Hopsa
+
+      <\canvas||-5fn|1par|4fn|<arg|scx>|<arg|scy>>
+        <\locus|<widget-id|<arg|name>>>
+          <arg|val>
+        </locus>
+      </canvas>
+
+      Holala
+    </block-bright>
+  </macro>>
+
+  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
+    <\block-bright>
+      <canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>|<locus|<widget-id|<arg|name>>|<arg|val>>>
     </block-bright>
   </macro>>
 

@@ -44,7 +44,7 @@
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
 	 tm-build tm-build-macro tm-build-widget widget-delayed widget-with
-	 aspect bar block-input button concat
+	 aspect bar block-input button canvas-input concat
 	 dense-bar dense-raster document
 	 form form-cancel form-done form-next form-previous
 	 header-bar hidden-input input internal
@@ -59,7 +59,7 @@
        '(texmacs-module provide-public
 	 define-macro define-public-macro define-table
 	 tm-define tm-define-macro tm-property request-handler define-group
-	 tm-build tm-build-macro
+	 tm-build tm-build-macro tm-build-widget
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
@@ -71,7 +71,7 @@
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+ \\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
-  (dolist (s '(ahash-with))
+  (dolist (s '(ahash-with canvas-input))
     (put s 'scheme-indent-function 3))
   (dolist (s '(with with-global and-with with-innermost receive
 	       with-environment with-environment* converter
@@ -81,7 +81,7 @@
 	       and-let* setup-append-if define-group
 	       define-macro define-public-macro while for repeat when
 	       tm-define tm-define-macro tm-property request-handler
-	       tm-build tm-build-macro
+	       tm-build tm-build-macro tm-build-widget
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator

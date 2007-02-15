@@ -273,6 +273,8 @@ private:
   tree exec_fn_length ();
   tree exec_fns_length ();
   tree exec_bls_length ();
+  tree exec_fnbot_length ();
+  tree exec_fntop_length ();
   tree exec_spc_length ();
   tree exec_xspc_length ();
   tree exec_par_length ();
