@@ -168,10 +168,20 @@ lazy_canvas_rep::query (lazy_type request, format fm) {
     format body_fm= par->query (request, fm);
     format_width fmw= (format_width) body_fm;
     SI width= fmw->width;
-    tree old= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
+    tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
+    tree old2= env->local_begin (PAR_LEFT, "0tmpt");
+    tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
+    tree old4= env->local_begin (PAR_MODE, "justify");
+    tree old5= env->local_begin (PAR_NO_FIRST, "true");
+    tree old6= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
     SI x1, x2, scx;
     get_canvas_horizontal (env, attrs, 0, fmw->width, x1, x2, scx);
-    env->local_end (PAR_WIDTH, old);
+    env->local_end (PAR_WIDTH, old6);
+    env->local_end (PAR_NO_FIRST, old5);
+    env->local_end (PAR_MODE, old4);
+    env->local_end (PAR_RIGHT, old3);
+    env->local_end (PAR_LEFT, old2);
+    env->local_end (PAGE_MEDIUM, old1);
     return make_format_width (x2 - x1);
   }
   return lazy_rep::query (request, fm);
@@ -190,12 +200,22 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
     box b= (box) body;
     format_width fmw= (format_width) bfm;
     SI width= fmw->width;
-    tree old= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
+    tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
+    tree old2= env->local_begin (PAR_LEFT, "0tmpt");
+    tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
+    tree old4= env->local_begin (PAR_MODE, "justify");
+    tree old5= env->local_begin (PAR_NO_FIRST, "true");
+    tree old6= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
     SI x1, x2, scx;
     get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
     SI y1, y2, scy;
     get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
-    env->local_end (PAR_WIDTH, old);
+    env->local_end (PAR_WIDTH, old6);
+    env->local_end (PAR_NO_FIRST, old5);
+    env->local_end (PAR_MODE, old4);
+    env->local_end (PAR_RIGHT, old3);
+    env->local_end (PAR_LEFT, old2);
+    env->local_end (PAGE_MEDIUM, old1);
     box rb= clip_box (ip, b, x1, y1, x2, y2, xt, yt, scx, scy);
     if (request == LAZY_BOX) return make_lazy_box (rb);
     else {
