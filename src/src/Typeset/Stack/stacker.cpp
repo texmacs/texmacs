@@ -167,6 +167,8 @@ shove (page_item& item1, page_item& item2, stack_border sb, stack_border sb2) {
     // cout << "  Shove: " << sh << LF;
     if (sh == 0) {
       // no collisions
+      // NOTE: the following slower (useless?) condition would be more correct
+      // sh==0 || b1->get_type()==SCROLL_BOX || b2->get_type()==SCROLL_BOX
       SI h= max (height, max (b2->y2, b2->y2 - b1->y1 - (top - bot)));
       item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
     }

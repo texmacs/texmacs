@@ -14,6 +14,7 @@
 #include "Line/lazy_vstream.hpp"
 #include "Format/format.hpp"
 #include "Stack/stacker.hpp"
+#include "Boxes/construct.hpp"
 
 array<line_item> typeset_marker (edit_env env, path ip);
 array<line_item> typeset_concat (edit_env, tree t, path ip);
@@ -145,6 +146,74 @@ lazy
 make_lazy_hidden (edit_env env, tree t, path ip) {
   (void) make_lazy (env, t[0], descend (ip, 0));
   return lazy_document (env, tree (DOCUMENT), ip);
+}
+
+/******************************************************************************
+* Canvas
+******************************************************************************/
+
+void get_canvas_horizontal (edit_env env, tree attrs, SI bx1, SI bx2,
+			    SI& x1, SI& x2, SI& scx);
+void get_canvas_vertical   (edit_env env, tree attrs, SI by1, SI by2,
+			    SI& y1, SI& y2, SI& scy);
+
+lazy_canvas_rep::lazy_canvas_rep (
+  edit_env env2, tree attrs2, lazy par2, path ip):
+    lazy_rep (LAZY_CANVAS, ip), env (env2), attrs (attrs2), par (par2) {}
+
+format
+lazy_canvas_rep::query (lazy_type request, format fm) {
+  if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
+    format body_fm= par->query (request, fm);
+    format_width fmw= (format_width) body_fm;
+    SI width= fmw->width;
+    tree old= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
+    SI x1, x2, scx;
+    get_canvas_horizontal (env, attrs, 0, fmw->width, x1, x2, scx);
+    env->local_end (PAR_WIDTH, old);
+    return make_format_width (x2 - x1);
+  }
+  return lazy_rep::query (request, fm);
+}
+
+lazy
+lazy_canvas_rep::produce (lazy_type request, format fm) {
+  if (request == type) return this;
+  if (request == LAZY_VSTREAM || request == LAZY_BOX) {
+    format bfm= fm;
+    if (request == LAZY_VSTREAM) {
+      format_vstream fvs= (format_vstream) fm;
+      bfm= make_format_width (fvs->width);
+    }
+    lazy body= par->produce (LAZY_BOX, bfm);
+    box b= (box) body;
+    format_width fmw= (format_width) bfm;
+    SI width= fmw->width;
+    tree old= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
+    SI x1, x2, scx;
+    get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
+    SI y1, y2, scy;
+    get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
+    env->local_end (PAR_WIDTH, old);
+    box rb= clip_box (ip, b, x1, y1, x2, y2, scx, scy);
+    if (request == LAZY_BOX) return make_lazy_box (rb);
+    else {
+      array<page_item> l;
+      stack_border     sb;
+      l << page_item (rb);
+      return lazy_vstream (ip, "", l, sb);
+    }
+  }
+  return lazy_rep::produce (request, fm);
+}
+
+lazy
+make_lazy_canvas (edit_env env, tree t, path ip) {
+  tree attrs (TUPLE, 6);
+  for (int i=0; i<6; i++)
+    attrs[i]= env->exec (t[i]);
+  lazy par= make_lazy (env, t[6], descend (ip, 6));
+  return lazy_canvas (env, attrs, par, ip);
 }
 
 /******************************************************************************
@@ -484,6 +553,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_surround (env, t, ip);
     //case HIDDEN:
     //return make_lazy_hidden (env, t, ip);
+  case CANVAS:
+    return make_lazy_canvas (env, t, ip);
   case DATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
   case DLINES:

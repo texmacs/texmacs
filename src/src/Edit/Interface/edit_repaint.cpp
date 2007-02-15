@@ -46,7 +46,7 @@ edit_interface_rep::draw_env (ps_device dev) {
 
 void
 edit_interface_rep::draw_cursor (ps_device dev) {
-  if (got_focus || full_screen) {
+  if (!temp_invalid_cursor && (got_focus || full_screen)) {
     cursor cu= get_cursor();
     if (!inside_active_graphics ()) {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;

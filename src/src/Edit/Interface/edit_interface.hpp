@@ -58,6 +58,7 @@ protected:
   rectangles    selection_rects;
   rectangles    env_rects;
   cursor        oc;
+  bool          temp_invalid_cursor;
   array<string> completions;
   string        completion_prefix;
   int           completion_pos;

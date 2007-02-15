@@ -241,10 +241,44 @@ concater_rep::typeset_clipped (tree t, path ip) {
 }
 
 void
+get_canvas_horizontal (edit_env env, tree attrs, SI bx1, SI bx2,
+		       SI& x1, SI& x2, SI& scx)
+{
+  x1= resize (env, bx1, bx1, bx2, attrs[0]);
+  x2= resize (env, bx2, bx1, bx2, attrs[2]);
+  if (is_atomic (attrs[4]) && ends (attrs[4]->label, "%")) {
+    double p= as_double (attrs[4]->label (0, N(attrs[4]->label)-1)) / 100.0;
+    SI d = ((x2 - x1) - (bx2 - bx1));
+    SI dx= (d >= 0? 0: (SI) (p * d));
+    scx  = dx + x1 - bx1;
+  }
+  else scx= -env->as_length (attrs[4]);
+}
+
+void
+get_canvas_vertical (edit_env env, tree attrs, SI by1, SI by2,
+		     SI& y1, SI& y2, SI& scy)
+{
+  y1= resize (env, by1, by1, by2, attrs[1]);
+  y2= resize (env, by2, by1, by2, attrs[3]);
+  if (is_atomic (attrs[4]) && ends (attrs[5]->label, "%")) {
+    double p= as_double (attrs[5]->label (0, N(attrs[5]->label)-1)) / 100.0;
+    SI d = ((y2 - y1) - (by2 - by1));
+    SI dy= (d >= 0? 0: (SI) (p * d));
+    scy  = dy + y1 - by1;
+  }
+  else scy= -env->as_length (attrs[5]);
+}
+
+void
 concater_rep::typeset_canvas (tree t, path ip) {
   // IDEA: set left, right, bottom, top environment variables
   //       and allow doing computations with them
+  tree attrs (TUPLE, 6);
+  for (int i=0; i<6; i++)
+    attrs[i]= env->exec (t[i]);
   box  b = typeset_as_concat (env, t[6], descend (ip, 6));
+  /*
   SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[0]));
   SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[1]));
   SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[2]));
@@ -266,7 +300,11 @@ concater_rep::typeset_canvas (tree t, path ip) {
     sy= dy + y1 - b->y1;
   }
   else sy= -env->as_length (scy);
-  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2, sx, sy));
+  */
+  SI x1, y1, x2, y2, scx, scy;
+  get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
+  get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
+  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2, scx, scy));
 }
 
 /******************************************************************************

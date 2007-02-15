@@ -53,4 +53,22 @@ struct lazy_surround {
 };
 EXTEND_NULL_CODE(lazy,lazy_surround);
 
+struct lazy_canvas_rep: public lazy_rep {
+  edit_env env;  // "current" environment
+  tree attrs;    // canvas dimensions and scrolling
+  lazy par;      // the canvas body
+
+  lazy_canvas_rep (edit_env env, tree attrs, lazy p, path ip);
+  inline operator tree () { return "Canvas"; }
+  lazy produce (lazy_type request, format fm);
+  format query (lazy_type request, format fm);
+};
+
+struct lazy_canvas {
+  EXTEND_NULL(lazy,lazy_canvas);
+  inline lazy_canvas (edit_env env, tree attrs, lazy par, path ip):
+    rep (new lazy_canvas_rep (env, attrs, par, ip)) { rep->ref_count= 1; }
+};
+EXTEND_NULL_CODE(lazy,lazy_canvas);
+
 #endif // defined LAZY_TYPESET_H
