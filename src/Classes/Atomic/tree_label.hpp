@@ -69,6 +69,7 @@ enum tree_label {
   FS_LENGTH, FBS_LENGTH, EM_LENGTH,
   LN_LENGTH, SEP_LENGTH, YFRAC_LENGTH, EX_LENGTH, // font specific
   FN_LENGTH, FNS_LENGTH, BLS_LENGTH,
+  FNBOT_LENGTH, FNTOP_LENGTH,
   SPC_LENGTH, XSPC_LENGTH,                        // font specific & stretchy
   PAR_LENGTH, PAG_LENGTH,                         // other
   GW_LENGTH, GH_LENGTH,                           // width & height of graphics

@@ -144,3 +144,11 @@
       >>>
       (form-cancel)
       (form-done "Ok" (lambda (x y) (display* x ", " y "\n"))))))
+
+(tm-build-widget (widget-10)
+  (canvas-input "canvas" "-6em" "6em" "")
+  ===
+  (bar
+    (button "Display" (display* (widget-ref "canvas") "\n"))
+    >>>
+    (button "Done" (dismiss))))

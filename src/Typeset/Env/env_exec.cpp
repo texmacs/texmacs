@@ -339,6 +339,10 @@ edit_env_rep::exec (tree t) {
     return exec_fns_length ();
   case BLS_LENGTH:
     return exec_bls_length ();
+  case FNBOT_LENGTH:
+    return exec_fnbot_length ();
+  case FNTOP_LENGTH:
+    return exec_fntop_length ();
   case SPC_LENGTH:
     return exec_spc_length ();
   case XSPC_LENGTH:

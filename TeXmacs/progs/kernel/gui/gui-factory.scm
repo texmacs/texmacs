@@ -20,10 +20,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (build-options-sub l)
-  (if (and (nnull? l) (pair? (car l)) (keyword? (caar l)))
+  (if (null? l) (cons '() '())
       (with (options . args) (build-options-sub (cdr l))
-	(cons (cons (car l) options) args))
-      (cons '() l)))
+	(if (and (pair? (car l)) (keyword? (caar l)))
+	    (cons (cons (car l) options) args)
+	    (cons options (cons (car l) args))))))
 
 (tm-define (build-options l)
   (build-options-sub (cdr l)))
@@ -156,10 +157,14 @@
   `((quote short-input) ,name (entry ,name ,val "content")))
 
 (tm-build-macro (input name val)
-  `((quote wide-input) ,name (entry ,name ,val "content")))
+  `((quote wide-input) ,name "0%" (entry ,name ,val "content")))
 
 (tm-build-macro (block-input name val)
   `((quote block-input) ,name (entry ,name ,val "content")))
+
+(tm-build-macro (canvas-input name y1 y2 val)
+  `((quote canvas-input) ,name ,y1 ,y2 "0%" "0%"
+    (entry ,name ,val "content")))
 
 (tm-build-macro (hidden-input name val . body)
   `((quote hidden-input) ,name (entry ,name ,val "string")

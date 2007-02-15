@@ -299,7 +299,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
 void
 edit_interface_rep::handle_repaint (repaint_event ev) {
   if (env_change != 0)
-    system_warning ("Invalid situation",
+    system_warning ("Invalid situation (" * as_string (env_change) * ")",
 		    "(edit_interface_rep::handle_repaint)");
   /*
   // In the past, we used the code below in order to hide the trace of

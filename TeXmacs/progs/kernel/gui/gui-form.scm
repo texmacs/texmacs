@@ -119,26 +119,28 @@
      '()))
 
 (tm-build-macro (form-previous)
-  `(aspect :circle :blue
-     (button "<less>"
-       (set! form-position (form-equalize form-position))
-       (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
-	      (lengths (map length (map cdr form-suggest)))
-	      (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
-	 (set! form-position (form-increment form-position -1 start end)))
-       (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
-		 form-vars (map cdr form-type) (map cdr form-position)))))
+  `(button "<less>"
+     (:box-shape "circular")
+     (:box-color "pastel blue")
+     (set! form-position (form-equalize form-position))
+     (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
+	    (lengths (map length (map cdr form-suggest)))
+	    (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
+       (set! form-position (form-increment form-position -1 start end)))
+     (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
+	       form-vars (map cdr form-type) (map cdr form-position))))
 
 (tm-build-macro (form-next)
-  `(aspect :circle :blue
-     (button "<gtr>"
-       (set! form-position (form-equalize form-position))
-       (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
-	      (lengths (map length (map cdr form-suggest)))
-	      (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
-	 (set! form-position (form-increment form-position 1 start end)))
-       (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
-		 form-vars (map cdr form-type) (map cdr form-position)))))
+  `(button "<gtr>"
+     (:box-shape "circular")
+     (:box-color "pastel blue")
+     (set! form-position (form-equalize form-position))
+     (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
+	    (lengths (map length (map cdr form-suggest)))
+	    (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
+       (set! form-position (form-increment form-position 1 start end)))
+     (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
+	       form-vars (map cdr form-type) (map cdr form-position))))
 
 (tm-build-macro (form-cancel)
   `(button "Cancel" (dismiss)))		 

@@ -252,6 +252,16 @@ edit_env_rep::exec_bls_length () {
 }
 
 tree
+edit_env_rep::exec_fnbot_length () {
+  return tree (TMLEN, as_string (fn->y1));
+}
+
+tree
+edit_env_rep::exec_fntop_length () {
+  return tree (TMLEN, as_string (fn->y2));
+}
+
+tree
 edit_env_rep::exec_spc_length () {
   return tree (TMLEN,
 	       as_string (fn->spc->min),
