@@ -154,9 +154,9 @@ edit_cursor_rep::notify_cursor_moved (int status) {
 }
 
 void
-edit_cursor_rep::go_to (SI x, SI y) {
+edit_cursor_rep::go_to (SI x, SI y, bool absolute) {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
-  tp= tree_path (path (), x, y, 0);
+  tp= tree_path (absolute? path (): find_innermost_scroll (eb, tp), x, y, 0);
   notify_cursor_moved (CENTER);
   mv->ox   = x;
   mv->oy   = y;
@@ -202,16 +202,30 @@ edit_cursor_rep::go_down () {
 void
 edit_cursor_rep::go_page_up () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
-  if (mv->oy >= eb->y2) return;
-  go_to (mv->ox, mv->oy+ get_window_height ());
+  path sp= find_innermost_scroll (eb, tp);
+  if (nil (sp)) go_to (mv->ox, min (mv->oy + get_window_height (), eb->y2));
+  else {
+    SI x, y, sx, sy;
+    rectangle outer, inner;
+    box b= eb[path_up (sp)];
+    find_canvas_info (eb, sp, x, y, sx, sy, outer, inner);
+    go_to (mv->ox, min (mv->oy + b->h (), y + sy + inner->y2), false);
+  }
   select_from_cursor_if_active ();
 }
 
 void
 edit_cursor_rep::go_page_down () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
-  if (mv->oy < eb->y1) return;
-  go_to (mv->ox, mv->oy- get_window_height ());
+  path sp= find_innermost_scroll (eb, tp);
+  if (nil (sp)) go_to (mv->ox, max (mv->oy - get_window_height (), eb->y1));
+  else {
+    SI x, y, sx, sy;
+    rectangle outer, inner;
+    box b= eb[path_up (sp)];
+    find_canvas_info (eb, sp, x, y, sx, sy, outer, inner);
+    go_to (mv->ox, max (mv->oy - b->h (), y + sy + inner->y1), false);
+  }
   select_from_cursor_if_active ();
 }
 
