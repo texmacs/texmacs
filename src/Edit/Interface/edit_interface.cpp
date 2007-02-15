@@ -51,7 +51,8 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0), shadow (NULL), stored (NULL),
+  oc (0, 0), temp_invalid_cursor (false),
+  shadow (NULL), stored (NULL),
   cur_sb (2), cur_wb (2)
 {
   input_mode= INPUT_NORMAL;
@@ -192,9 +193,12 @@ edit_interface_rep::cursor_visible () {
 	SI tx= inner->x2 - inner->x1;
 	SI cx= outer->x2 - outer->x1;
 	if (tx > cx) {
-	  SI dx= cu->ox - x + outer->x1 - inner->x1 - sx;
+	  SI outer_cx= cu->ox - x;
+	  SI inner_cx= outer_cx - sx;
+	  SI dx= inner_cx - inner->x1;
 	  double p= 100.0 * ((double) (dx - (cx>>1))) / ((double) (tx-cx));
 	  p= max (min (p, 100.0), 0.0);
+	  temp_invalid_cursor= true;
 	  eval_delayed ("(canvas-scroll-x \"" * as_string (p) * "%\")");
 	}
       }
@@ -204,10 +208,12 @@ edit_interface_rep::cursor_visible () {
 	SI ty= inner->y2 - inner->y1;
 	SI cy= outer->y2 - outer->y1;
 	if (ty > cy) {
-	  SI yy= cu->oy + ((cu->y1 + cu->y2) >> 1);
-	  SI dy= yy - y + outer->y1 - inner->y1 - sy;
+	  SI outer_cy= cu->oy + ((cu->y1 + cu->y2) >> 1) - y;
+	  SI inner_cy= outer_cy - sy;
+	  SI dy= inner_cy - inner->y1;
 	  double p= 100.0 * ((double) (dy - (cy>>1))) / ((double) (ty-cy));
 	  p= max (min (p, 100.0), 0.0);
+	  temp_invalid_cursor= true;
 	  eval_delayed ("(canvas-scroll-y \"" * as_string (p) * "%\")");
 	}
       }
@@ -420,6 +426,7 @@ edit_interface_rep::apply_changes () {
     set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
 
   // cout << "Cursor\n";
+  temp_invalid_cursor= false;
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+
 		    THE_CURSOR+THE_FOCUS)) {
     SI /*P1= pixel,*/ P2= 2*pixel, P3= 3*pixel;

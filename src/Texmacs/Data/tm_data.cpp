@@ -612,7 +612,7 @@ tm_data_rep::set_aux (string aux, url name) {
 
 void
 tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
-  int i, nr= find_buffer (aux);
+  int nr= find_buffer (aux);
   if (nr == -1) new_buffer (aux, doc);
   else revert_buffer (aux, doc);
   nr= find_buffer (aux);
