@@ -154,7 +154,7 @@ public:
   /* public routines from edit_cursor */
   virtual path make_cursor_accessible (path p, bool forwards) = 0;
   virtual void show_cursor_if_hidden () = 0;
-  virtual void go_to (SI x, SI y) = 0;
+  virtual void go_to (SI x, SI y, bool absolute= true) = 0;
   virtual void go_left_physical () = 0;
   virtual void go_right_physical () = 0;
   virtual void go_left () = 0;

@@ -42,7 +42,7 @@ public:
   ~edit_cursor_rep ();
 
   /* visual cursor movement */
-  void go_to (SI x, SI y);
+  void go_to (SI x, SI y, bool absolute= true);
   void go_left_physical ();
   void go_right_physical ();
   void go_left ();
