@@ -48,6 +48,9 @@ bool operator == (object obj1, object obj2);
 bool operator != (object obj1, object obj2);
 
 object null_object ();
+object list_object (object obj1);
+object list_object (object obj1, object obj2);
+object list_object (object obj1, object obj2, object obj3);
 object symbol_object (string s);
 object cons (object obj1, object obj2);
 object car (object obj);
@@ -101,6 +104,7 @@ object eval (object expr);
 object eval_secure (string expr);
 object eval_file (string name);
 void   eval_delayed (string expr);
+void   eval_delayed (object expr);
 
 object call (char* fun);
 object call (char* fun, object a1);

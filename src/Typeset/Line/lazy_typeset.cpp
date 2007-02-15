@@ -158,8 +158,9 @@ void get_canvas_vertical   (edit_env env, tree attrs, SI by1, SI by2,
 			    SI& y1, SI& y2, SI& scy);
 
 lazy_canvas_rep::lazy_canvas_rep (
-  edit_env env2, tree attrs2, lazy par2, path ip):
-    lazy_rep (LAZY_CANVAS, ip), env (env2), attrs (attrs2), par (par2) {}
+  edit_env env2, tree xt2, tree yt2, tree attrs2, lazy par2, path ip):
+    lazy_rep (LAZY_CANVAS, ip),
+    env (env2), xt (xt2), yt (yt2), attrs (attrs2), par (par2) {}
 
 format
 lazy_canvas_rep::query (lazy_type request, format fm) {
@@ -195,7 +196,7 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
     SI y1, y2, scy;
     get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
     env->local_end (PAR_WIDTH, old);
-    box rb= clip_box (ip, b, x1, y1, x2, y2, scx, scy);
+    box rb= clip_box (ip, b, x1, y1, x2, y2, xt, yt, scx, scy);
     if (request == LAZY_BOX) return make_lazy_box (rb);
     else {
       array<page_item> l;
@@ -210,10 +211,14 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
 lazy
 make_lazy_canvas (edit_env env, tree t, path ip) {
   tree attrs (TUPLE, 6);
-  for (int i=0; i<6; i++)
+  for (int i=0; i<4; i++)
     attrs[i]= env->exec (t[i]);
+  tree xt = env->expand (t[4]);
+  tree yt = env->expand (t[5]);
+  attrs[4]= env->exec (xt);
+  attrs[5]= env->exec (yt);
   lazy par= make_lazy (env, t[6], descend (ip, 6));
-  return lazy_canvas (env, attrs, par, ip);
+  return lazy_canvas (env, xt, yt, attrs, par, ip);
 }
 
 /******************************************************************************

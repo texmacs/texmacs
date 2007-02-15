@@ -198,8 +198,14 @@ edit_interface_rep::cursor_visible () {
 	  SI dx= inner_cx - inner->x1;
 	  double p= 100.0 * ((double) (dx - (cx>>1))) / ((double) (tx-cx));
 	  p= max (min (p, 100.0), 0.0);
-	  temp_invalid_cursor= true;
-	  eval_delayed ("(canvas-scroll-x \"" * as_string (p) * "%\")");
+	  tree old_xt= eb[path_up (sp)]->get_info ("scroll-x");
+	  tree new_xt= as_string (p) * "%";
+	  if (new_xt != old_xt && is_accessible (obtain_ip (old_xt))) {
+	    object fun= symbol_object ("tree-set");
+	    object cmd= list_object (fun, old_xt, new_xt);
+	    eval_delayed (cmd);
+	    temp_invalid_cursor= true;
+	  }
 	}
       }
     if ((cu->oy+ cu->y1 < y + outer->y1) ||
@@ -213,8 +219,14 @@ edit_interface_rep::cursor_visible () {
 	  SI dy= inner_cy - inner->y1;
 	  double p= 100.0 * ((double) (dy - (cy>>1))) / ((double) (ty-cy));
 	  p= max (min (p, 100.0), 0.0);
-	  temp_invalid_cursor= true;
-	  eval_delayed ("(canvas-scroll-y \"" * as_string (p) * "%\")");
+	  tree old_yt= eb[path_up (sp)]->get_info ("scroll-y");
+	  tree new_yt= as_string (p) * "%";
+	  if (new_yt != old_yt && is_accessible (obtain_ip (old_yt))) {
+	    object fun= symbol_object ("tree-set");
+	    object cmd= list_object (fun, old_yt, new_yt);
+	    eval_delayed (cmd);
+	    temp_invalid_cursor= true;
+	  }
 	}
       }
   }

@@ -77,6 +77,12 @@ operator != (object obj1, object obj2) {
 
 object null_object () {
   return object (SCM_NULL); }
+object list_object (object obj1) {
+  return cons (obj1, null_object ()); }
+object list_object (object obj1, object obj2) {
+  return cons (obj1, cons (obj2, null_object ())); }
+object list_object (object obj1, object obj2, object obj3) {
+  return cons (obj1, cons (obj2, cons (obj3, null_object ()))); }
 object symbol_object (string s) {
   return object (symbol_to_scm (s)); }
 object cons (object obj1, object obj2) {
@@ -299,6 +305,8 @@ object eval_secure (string expr) {
 object eval_file (string name) {
   return object (eval_scheme_file (name)); }
 void eval_delayed (string expr) {
+  (void) call ("exec-delayed", scheme_cmd (expr)); }
+void eval_delayed (object expr) {
   (void) call ("exec-delayed", scheme_cmd (expr)); }
 
 static inline array<SCM>

@@ -106,6 +106,7 @@ typedef array<double> point;
 class box {
   ABSTRACT_NULL(box);
   inline box operator [] (int i);
+  box operator [] (path p);
   operator tree ();
   bool operator == (box b2);
   bool operator != (box b2);
@@ -220,7 +221,7 @@ public:
   /************************** retrieving information *************************/
 
   virtual int       get_type ();
-  virtual tree      get_info ();
+  virtual tree      get_info (tree in);
   virtual int       get_leaf_left_pos ();
   virtual int       get_leaf_right_pos ();
   virtual string    get_leaf_string ();
