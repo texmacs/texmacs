@@ -120,8 +120,8 @@
 
 (tm-build-macro (form-previous)
   `(button "<less>"
-     (:box-shape "circular")
-     (:box-color "pastel blue")
+     ;;(:button-shape "circular")
+     ;;(:button-color "pastel blue")
      (set! form-position (form-equalize form-position))
      (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
 	    (lengths (map length (map cdr form-suggest)))
@@ -132,8 +132,8 @@
 
 (tm-build-macro (form-next)
   `(button "<gtr>"
-     (:box-shape "circular")
-     (:box-color "pastel blue")
+     ;;(:button-shape "circular")
+     ;;(:button-color "pastel blue")
      (set! form-position (form-equalize form-position))
      (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
 	    (lengths (map length (map cdr form-suggest)))

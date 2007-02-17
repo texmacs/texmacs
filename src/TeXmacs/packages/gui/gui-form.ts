@@ -29,6 +29,8 @@
 
   <assign|button-shape|square>
 
+  <assign|button-color|light grey>
+
   <assign|box-shape|circular>
 
   <assign|box-color|pastel blue>
@@ -86,6 +88,8 @@
   <assign|invisible-button|<macro|on|body|<group|<arg|body>>>>
 
   <assign|square-button|<macro|on|body|<style-with|src-compact|none|<if|<equal|<arg|on>|true>|<short-lower|<arg|body>>|<short-raise|<arg|body>>>>>>
+
+  <assign|circular-button|<macro|on|body|<with|box-color|<value|button-color>|<arg|body><circular-box|<arg|body>>>>>
 
   <assign|render-button|<macro|on|body|<compound|<merge|<value|button-shape>|-button>|<arg|on>|<arg|body>>>>
 
