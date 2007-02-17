@@ -28,7 +28,7 @@
     (internal "internal" (+ 1 1))
     (input "visible" "")
     ===
-    (with "button-shape" "invisible"
+    (with (:button-shape "invisible")
       (bar
 	(button "Parameter" (display* ,given "\n"))
 	(button "Hidden" (display* hidden "\n"))
@@ -152,3 +152,79 @@
     (button "Display" (display* (widget-ref "canvas") "\n"))
     >>>
     (button "Done" (dismiss))))
+
+(tm-build-widget (print-widget)
+  (center
+    (short-raster
+      (:cell-halign * 1 "r")
+      (:cell-lsep * -1 "2em")
+      ("Printer:"
+       (short-input (:short-width "10em") "printer" "default")
+       (button (small "Configure")
+	  (:button-shape "invisible")
+	  (with name (tree->string (widget-ref "printer"))
+	    (widget-popup "Printer configuration"
+	      `(configure-printer-widget ,name)))))
+      ("Options:"
+       (short-input (:short-width "10em") "options" "default")
+       (button (small "Configure")
+	  (with type (tree->string (widget-ref "printer"))
+	    (widget-popup "Printer options configuration"
+	      `(configure-printer-options-widget ,type)))))))
+  ---
+  (center
+    (short-raster
+      (:cell-halign * 1 "r")
+      ("Pages:" (concat (short-input (:short-width "2em") "first" "1") " -- "
+			(short-input (:short-width "2em") "last" "1")))
+      ("Copies:" (short-input (:short-width "2em") "number" "1"))))
+  ---
+  (bar
+    (button "Preview" (noop))
+    (button "Export" (noop))
+    >>>
+    (button "Cancel" (dismiss))
+    (button "Print" (noop))))
+
+(tm-build-widget (configure-printer-widget which)
+  (let ((name ,which)
+	(cmd (if (== name "default") "lpr" (string-append "lpr -P" name))))
+    (form ("configure-printer" "name" "command" "paper" "dpi")
+      (suggestions "name" (list name))
+      (suggestions "command" (list cmd))
+      (suggestions "paper" (list "a4"))
+      (suggestions "dpi" (list "600"))
+      (raster
+	(:cell-halign * 1 "r")
+	("Printer name:" (input "name" :auto))
+	("Printing command:" (input "command" :auto))
+	("Paper format:" (input "paper" :auto))
+	("Dots per inch:" (input "dpi" :auto)))
+      ===
+      (bar
+	(form-previous)
+	(form-next)
+	>>>
+	(form-cancel)
+	(form-done "Save" ignore)))))
+
+(tm-build-widget (configure-printer-options-widget which)
+  (let ((type ,which))
+    (form ("configure-printer-options" "type" "parity" "reduce")
+      (suggestions "type" (list type))
+      (suggestions "parity" (list "all"))
+      (suggestions "reduce" (list "1"))
+      (suggestions "booklet" (list "false"))
+      (raster
+	(:cell-halign * 1 "r")
+	("Printer options type:" (input "type" :auto))
+	("Filter pages:" (input "parity" :auto))
+	("Document pages per page:" (input "reduce" :auto))
+	("Reorder pages as booklet:" (toggle "booklet" :auto)))
+      ===
+      (bar
+	(form-previous)
+	(form-next)
+	>>>
+	(form-cancel)
+	(form-done "Save" ignore)))))

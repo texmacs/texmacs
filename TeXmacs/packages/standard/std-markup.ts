@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.5>
+<TeXmacs|1.0.6.9>
 
 <style|<tuple|source|std>>
 
@@ -180,6 +180,8 @@
   </active*>
 
   <assign|hresize|<macro|x|left|right|<resize|<arg|x>|<arg|left>||<arg|right>|>>>
+
+  <assign|hextend|<macro|x|right|<resize|<arg|x>|||<merge|r]|<arg|right>>|>>>
 
   <assign|vresize|<macro|x|bottom|top|<resize|<arg|x>||<arg|bottom>||<arg|top>>>>
 
