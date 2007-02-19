@@ -82,7 +82,6 @@ init_std_drd () {
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
   init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
-  init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DATOMS, "datoms",
@@ -330,6 +329,10 @@ init_std_drd () {
   init (BOX_INFO, "box-info", fixed (2));
   init (FRAME_DIRECT, "frame-direct", fixed (1));
   init (FRAME_INVERSE, "frame-inverse", fixed (1));
+
+  init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
+  init (SCROLLABLE, "scrollable", fixed (9, 1, BIFORM) -> accessible (1));
+  init (HIGHLIGHT, "highlight", fixed (6, 1, BIFORM) -> accessible (1));
 
   init (FORMAT, "format", repeat (1, 1));
   init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));

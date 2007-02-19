@@ -59,6 +59,8 @@ box superpose_box (path ip, array<box> bs, bool bfl= true);
 box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y);
 box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 	      SI bl, SI br, SI bb, SI bt, color fg, color bg, bool transp);
+box highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
+		   color bg, color sunny, color shadow);
 
 box frac_box (path ip, box b1, box b2, font fn, font sfn, color c);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, color c);
@@ -74,6 +76,7 @@ box side_box (path ip, box ref, box l1, box l2, box r1, box r2, font f, int l);
 box specific_box (path ip, box b, bool printer_flag, font fn);
 box flag_box (path ip, box b, SI h, SI lw, color dark, color light);
 box info_box (path ip, SI h, SI lw, color dark, color light);
+box scrollbar_box (path ip, box b, bool vertical, SI span, tree t);
 
 box symbol_box (path ip, box b, int n);
 box shorter_box (path ip, box b, int n);

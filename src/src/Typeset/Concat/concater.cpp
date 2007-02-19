@@ -230,9 +230,6 @@ concater_rep::typeset (tree t, path ip) {
   case CLIPPED:
     typeset_clipped (t, ip);
     break;
-  case CANVAS:
-    typeset_canvas (t, ip);
-    break;
   case REPEAT:
     typeset_repeat (t, ip);
     break;
@@ -674,6 +671,15 @@ concater_rep::typeset (tree t, path ip) {
   case POSTSCRIPT:
     typeset_postscript (t, ip);
     break;
+
+  case CANVAS:
+  case SCROLLABLE:
+    typeset_scrollable_canvas (t, ip);
+    break;
+  case HIGHLIGHT:
+    typeset_highlight (t, ip);
+    break;
+
   default:
     if (L(t) < START_EXTENSIONS) print (STD_ITEM, test_box (ip));
     else typeset_compound (t, ip);
