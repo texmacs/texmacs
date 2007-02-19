@@ -905,6 +905,19 @@ edit_env_rep::exec_plus_minus (tree t) {
   else return tree (ERROR, "bad plus/minus");
 }
 
+static bool
+is_percentage (tree t) {
+  return
+    is_atomic (t) &&
+    ends (t->label, "%") &&
+    is_double (t->label (0, N (t->label) - 1));
+}
+
+static double
+as_percentage (tree t) {
+  return as_double (t->label (0, N (t->label) - 1)) / 100.0;
+}
+
 tree
 edit_env_rep::exec_times_over (tree t) {
   int i, n= N(t);
@@ -912,6 +925,7 @@ edit_env_rep::exec_times_over (tree t) {
   tree prod= exec (t[0]);
   if (is_double (prod));
   else if (is_anylen (prod)) prod= as_tmlen (prod);
+  else if (is_percentage (prod)) prod= as_tree (as_percentage (prod));
   else return tree (ERROR, "bad times/over");
   if ((n==1) && is_func (t, OVER)) {
     if (is_double (prod)) return as_string (1 / as_double (prod));
@@ -939,6 +953,12 @@ edit_env_rep::exec_times_over (tree t) {
       if (is_double (prod))
 	prod= tmlen_times (as_double (prod), mul);
       else return tree (ERROR, "bad times/over");
+    }
+    else if (is_percentage (mul)) {
+      double _mul= as_percentage (mul);
+      if (is_double (prod))
+	prod= as_string (_mul * as_double (prod));
+      else prod= tmlen_times (_mul, prod);
     }
     else return tree (ERROR, "bad times/over");
     // cout << "  " << i << "\t" << prod << "\n";

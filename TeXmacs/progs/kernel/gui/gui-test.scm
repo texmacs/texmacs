@@ -22,8 +22,7 @@
   (concat "a+" (frac "1" "2")))
 
 (tm-build-widget (widget-3 given)
-  (center "Different types of data")
-  ===
+  (center (concat (strong "Different types of data") (vspace "0.5em")))
   (let ((hidden "Secret text"))
     (internal "internal" (+ 1 1))
     (input "visible" "")

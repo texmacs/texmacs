@@ -123,7 +123,6 @@ arg_type (tree t, int i) {
     if (i > 0) return "length";
     else return "";
   case CLIPPED:
-  case CANVAS:
     if (i < n-1) return "length";
     else return "";
   case ASSIGN:
@@ -174,6 +173,15 @@ arg_type (tree t, int i) {
     else return "";
   case FLAG:
     if (i==2) return "arg";
+    else return "";
+  case CANVAS:
+    if (i < n-1) return "length";
+    else return "";
+  case SCROLLABLE:
+    if (i < n-2) return "length";
+    else return "";
+  case HIGHLIGHT:
+    if (i <= 2) return "length";
     else return "";
   default:
     return "";

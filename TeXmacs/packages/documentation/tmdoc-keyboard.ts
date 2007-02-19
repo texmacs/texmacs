@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.9>
 
 <style|<tuple|source|std>>
 
@@ -23,6 +23,8 @@
 
   <assign|key|<macro|x|<active*|<move|<with|font-size|<times|<value|font-size>|0.92>|<block|<tformat|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|broken
   white>|<table|<row|<cell|<with|font-family|tt|<inactive*|<arg|x>>>>>>>>>||0.05fn>>>>
+
+  <assign|key|<macro|x|<active*|<move|<small|<with|font-family|tt|<highlight|2ln|2ln|2ln|#e0e0e0|#f0f0f0|#c0c0c0|<vcorrect|<arg|x>>>>>||0.075ex>>>>
 
   \;
 
@@ -97,5 +99,6 @@
   <\collection>
     <associate|language|english>
     <associate|preamble|true>
+    <associate|sfactor|3>
   </collection>
 </initial>

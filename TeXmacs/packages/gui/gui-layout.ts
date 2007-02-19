@@ -31,7 +31,7 @@
 
   <assign|gui-med-sep|0.5em>
 
-  <assign|gui-big-sep|1em>
+  <assign|gui-big-sep|0.75em>
 
   <assign|raised-color|light grey>
 
@@ -105,7 +105,11 @@
 
   <assign|gui-hrule|<macro|<gui-ruler|<value|gui-med-sep>|0px|0px|0px|<value|lowered-color>>>>
 
+  <assign|gui-smallskip|<macro|<gui-vspace|<value|gui-small-sep>>>>
+
   <assign|gui-medskip|<macro|<gui-vspace|<value|gui-med-sep>>>>
+
+  <assign|gui-bigskip|<macro|<gui-vspace|<value|gui-big-sep>>>>
 
   <assign|gui-tab|<macro|<tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|0px>|<cwith|1|1|1|1|cell-rsep|0px>|<cwith|1|1|1|1|cell-bsep|0px>|<cwith|1|1|1|1|cell-tsep|0px>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<\cell>
     \;

@@ -309,6 +309,69 @@ cell_box_rep::display (ps_device dev) {
 }
 
 /******************************************************************************
+* Highlight boxes
+******************************************************************************/
+
+struct highlight_box_rep: public change_box_rep {
+  SI w, xpad, ypad;
+  color bg, sun, shad, old_bg;
+  highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
+		     color bg, color sun, color shad);
+  operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
+  void pre_display (ps_device &dev);
+  void post_display (ps_device &dev);
+  void display (ps_device dev);
+};
+
+highlight_box_rep::highlight_box_rep (
+  path ip, box b, SI w2, SI xp2, SI yp2, color bg2, color sun2, color shad2):
+  change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
+  bg (bg2), sun (sun2), shad (shad2)
+{
+  insert (b, w + xpad, 0);
+  position ();
+  x1= b->x1;
+  y1= b->y1 - w - ypad;
+  x2= b->x2 + 2 * (w + xpad);
+  y2= b->y2 + w + ypad;
+  x3= min (x1, b->x3 + w + xpad);
+  y3= min (y1, b->y3);
+  x4= max (x2, b->x4 + w + xpad);
+  y4= max (y2, b->y4);
+  finalize ();
+}
+
+void
+highlight_box_rep::pre_display (ps_device& dev) {
+  old_bg= dev->get_background ();
+  dev->set_background (bg);
+  dev->clear (x1, y1, x2, y2);
+}
+
+void
+highlight_box_rep::post_display (ps_device &dev) {
+  dev->set_background (old_bg);
+}
+
+void
+highlight_box_rep::display (ps_device dev) {
+  SI W= w;
+  if (!dev->is_printer ()) {
+    SI pixel= dev->pixel;
+    W= ((w + pixel/2) / pixel) * pixel;
+    if (w>0 && W==0) W= pixel;
+  }
+  dev->set_color (sun);
+  dev->fill (x1  , y2-W, x2  , y2  );
+  dev->fill (x1  , y1  , x1+W, y2  );
+  dev->set_color (shad);
+  dev->fill (x1+W, y1  , x2  , y1+W);
+  dev->fill (x2-W, y1  , x2  , y2-W);
+  dev->triangle (x1, y1, x1+W, y1, x1+W, y1+W);
+  dev->triangle (x2, y2, x2, y2-W, x2-W, y2-W);
+}
+
+/******************************************************************************
 * action boxes
 ******************************************************************************/
 
@@ -476,6 +539,12 @@ cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
   box cb= new cell_box_rep (ip, b, x0, y0, x1, y1, x2, y2,
 			    bl, br, bb, bt, fg, bg, trp);
   return cb;
+}
+
+box
+highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
+	       color bg, color sun, color shad) {
+  return new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
 }
 
 box

@@ -185,6 +185,12 @@
 
   <assign|vresize|<macro|x|bottom|top|<resize|<arg|x>||<arg|bottom>||<arg|top>>>>
 
+  <assign|bcorrect|<macro|x|<resize|<arg|x>||<merge|b[|1fnbot>||>>>
+
+  <assign|tcorrect|<macro|x|<resize|<arg|x>||||<merge|t]|1fntop>>>>
+
+  <assign|vcorrect|<macro|x|<resize|<arg|x>||<merge|b[|1fnbot>||<merge|t]|1fntop>>>>
+
   <assign|smash|<macro|x|<vresize|<arg|x>|0ex|1ex>>>
 
   <assign|smash-top|<macro|x|<vresize|<arg|x>||1ex>>>
