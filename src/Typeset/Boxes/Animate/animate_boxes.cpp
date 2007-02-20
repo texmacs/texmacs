@@ -472,7 +472,7 @@ struct anim_translate_box_rep: public anim_effect_box_rep {
     sx (0)= start_x - x1 + as_int (t * (end_x - start_x));
     sy (0)= start_y - y1 + as_int (t * (end_y - start_y)); }
   void set_clipping (ps_device& dev, double t) {
-    if (t != 1.0 || end_x != x1 != end_y != y1)
+    if (t != 1.0 || end_x != x1 || end_y != y1)
       dev->extra_clipping (x1, y1, x2, y2); }
 };
 
