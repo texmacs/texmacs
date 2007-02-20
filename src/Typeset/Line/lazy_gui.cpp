@@ -84,18 +84,24 @@ lazy
 lazy_canvas_rep::produce (lazy_type request, format fm) {
   if (request == type) return this;
   if (request == LAZY_VSTREAM || request == LAZY_BOX) {
-    SI bar= 0;
-    if (N(attrs) == 9 && is_atomic (attrs[8]) &&
-	(ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e")))
-      bar= max (0, env->as_length (attrs[6]) + env->as_length (attrs[7]));
+    SI delta= 0;
+    if (N(attrs) > 6) {
+      SI w  = env->as_length (attrs[6]);
+      SI pad= env->as_length (attrs[7]);
+      SI bor= 6*env->get_int (SFACTOR) * PIXEL;
+      if (is_atomic (attrs[8]))
+	if (ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e"))
+	  delta= max (0, w + pad);
+      delta += 2 * bor;
+    }
     format bfm= fm;
     if (request == LAZY_VSTREAM) {
       format_vstream fvs= (format_vstream) fm;
-      bfm= make_format_width (fvs->width - bar);
+      bfm= make_format_width (fvs->width - delta);
     }
     box b= (box) par->produce (LAZY_BOX, bfm);
     format_width fmw= (format_width) bfm;
-    SI width= fmw->width + bar;
+    SI width= fmw->width + delta;
     tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
     tree old2= env->local_begin (PAR_LEFT, "0tmpt");
     tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
@@ -112,9 +118,9 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
     env->local_end (PAR_RIGHT, old3);
     env->local_end (PAR_LEFT, old2);
     env->local_end (PAGE_MEDIUM, old1);
-    path dip= (N(attrs) == 9? decorate (ip): ip);
+    path dip= (N(attrs) > 6? decorate (ip): ip);
     box rb= clip_box (dip, b, x1, y1, x2, y2, xt, yt, scx, scy);
-    if (N(attrs) == 9)
+    if (N(attrs) > 6)
       rb= put_scroll_bars (env, rb, ip, attrs, b, xt, yt, scx, scy);
     if (request == LAZY_BOX) return make_lazy_box (rb);
     else {

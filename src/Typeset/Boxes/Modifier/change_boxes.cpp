@@ -318,6 +318,7 @@ struct highlight_box_rep: public change_box_rep {
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
 		     color bg, color sun, color shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
+  int get_type () { return ORNAMENT_BOX; }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
   void display (ps_device dev);
