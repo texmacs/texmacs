@@ -214,12 +214,18 @@ bridge_canvas_rep::my_typeset (int desired_status) {
   for (i=6; i<n-1; i++)
     attrs[i]= env->exec (st[i]);    
 
-  SI bar= 0;
-  if (N(attrs) == 9 && is_atomic (attrs[8]) &&
-      (ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e")))
-    bar= max (0, env->as_length (attrs[6]) + env->as_length (attrs[7]));
+  SI delta= 0;
+  if (N(attrs) > 6) {
+    SI w  = env->as_length (attrs[6]);
+    SI pad= env->as_length (attrs[7]);
+    SI bor= 6*env->get_int (SFACTOR) * PIXEL;
+    if (is_atomic (attrs[8]))
+      if (ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e"))
+	delta= max (0, w + pad);
+    delta += 2 * bor;
+  }
   SI l= env->get_length (PAR_LEFT);
-  SI r= env->get_length (PAR_RIGHT) + bar;
+  SI r= env->get_length (PAR_RIGHT) + delta;
   with= tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
 
   box b = typeset_ornament (desired_status);
@@ -227,9 +233,9 @@ bridge_canvas_rep::my_typeset (int desired_status) {
   SI x1, y1, x2, y2, scx, scy;
   get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
   get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
-  path dip= (n == 10? decorate (ip): ip);
+  path dip= (n > 7? decorate (ip): ip);
   box cb= clip_box (dip, b, x1, y1, x2, y2, xt, yt, scx, scy);
-  if (n == 10) cb= put_scroll_bars (env, cb, ip, attrs, b, xt, yt, scx, scy);
+  if (n > 7) cb= put_scroll_bars (env, cb, ip, attrs, b, xt, yt, scx, scy);
   if (l != 0) cb= move_box (decorate (ip), cb, l, 0);
   insert_ornament (cb);
 }
