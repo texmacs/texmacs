@@ -14,6 +14,7 @@
 #include "tm_buffer.hpp"
 #include "timer.hpp"
 #include "link.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * dispatching
@@ -213,9 +214,34 @@ edit_interface_rep::mouse_scroll (SI x, SI y, bool up) {
   if (eb->action (action , x, y, 0) != "") return;
   SI dy= 100*PIXEL;
   if (!up) dy= -dy;
-  SERVER (scroll_where (x, y));
-  y += dy;
-  SERVER (scroll_to (x, y));
+  path sp= find_innermost_scroll (eb, tp);
+  if (nil (sp)) {
+    SERVER (scroll_where (x, y));
+    y += dy;
+    SERVER (scroll_to (x, y));
+  }
+  else {
+    SI x, y, sx, sy;
+    rectangle outer, inner;
+    find_canvas_info (eb, sp, x, y, sx, sy, outer, inner);
+    SI ty= inner->y2 - inner->y1;
+    SI cy= outer->y2 - outer->y1;
+    if (ty > cy) {
+      tree   old_yt= eb[path_up (sp)]->get_info ("scroll-y");
+      string old_ys= as_string (old_yt);
+      double old_p = 0.0;
+      if (ends (old_ys, "%")) old_p= as_double (old_ys (0, N(old_ys)-1));
+      double new_p= old_p + 100.0 * ((double) dy) / ((double) (ty - cy));
+      new_p= max (min (new_p, 100.0), 0.0);
+      tree new_yt= as_string (new_p) * "%";
+      if (new_yt != old_yt && is_accessible (obtain_ip (old_yt))) {
+	object fun= symbol_object ("tree-set");
+	object cmd= list_object (fun, old_yt, new_yt);
+	eval_delayed (cmd);
+	temp_invalid_cursor= true;
+      }
+    }
+  }
 }
 
 /******************************************************************************
