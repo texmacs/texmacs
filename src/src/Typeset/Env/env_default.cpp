@@ -225,6 +225,21 @@ initialize_default_env () {
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
 
+  env (CANVAS_TYPE)           = "plain";        // which kind of scrollbars
+  env (CANVAS_COLOR)          = "white";        // canvas colour
+  env (CANVAS_HPADDING)       = "0px";          // horizontal canvas padding
+  env (CANVAS_VPADDING)       = "0px";          // vertical canvas padding
+  env (CANVAS_BAR_WIDTH)      = "1em";          // width of scroll bars
+  env (CANVAS_BAR_PADDING)    = "0.25em";       // distance of scrollbars
+  env (CANVAS_BAR_COLOR)      = "grey";         // color of bar
+  env (ORNAMENT_SHAPE)        = "rectangular";  // shape of the ornament
+  env (ORNAMENT_BORDER)       = "1ln";          // border width
+  env (ORNAMENT_HPADDING)     = "0px";          // horizontal padding of body
+  env (ORNAMENT_VPADDING)     = "0px";          // vertical padding of body
+  env (ORNAMENT_COLOR)        = "light grey";   // background color
+  env (ORNAMENT_SUNNY_COLOR)  = "white";        // sunny color
+  env (ORNAMENT_SHADOW_COLOR) = "dark grey";    // shadow color
+
   /* hiding and showing content */
   env ("shown")= identity_m;
   env ("ignore")=

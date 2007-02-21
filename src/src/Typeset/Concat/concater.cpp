@@ -673,11 +673,10 @@ concater_rep::typeset (tree t, path ip) {
     break;
 
   case CANVAS:
-  case SCROLLABLE:
-    typeset_scrollable_canvas (t, ip);
+    typeset_canvas (t, ip);
     break;
-  case HIGHLIGHT:
-    typeset_highlight (t, ip);
+  case ORNAMENT:
+    typeset_ornament (t, ip);
     break;
 
   default:

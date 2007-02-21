@@ -424,6 +424,9 @@ public:
   inline space get_vspace (string var) {
     tree t= env [var];
     return as_vspace (t); }
+  inline color get_color (string var) {
+    tree t= env [var];
+    return dis->get_color (as_string (t)); }
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);

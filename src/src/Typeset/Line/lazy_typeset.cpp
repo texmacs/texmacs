@@ -23,7 +23,7 @@ array<line_item> join (array<line_item> a, array<line_item> b);
 lazy make_lazy_paragraph (edit_env env, tree t, path ip);
 lazy make_lazy_table (edit_env env, tree t, path ip);
 lazy make_lazy_canvas (edit_env env, tree t, path ip);
-lazy make_lazy_highlight (edit_env env, tree t, path ip);
+lazy make_lazy_ornament (edit_env env, tree t, path ip);
 
 /******************************************************************************
 * Documents
@@ -532,10 +532,9 @@ make_lazy (edit_env env, tree t, path ip) {
   case ACTION:
     return make_lazy_compound (env, t, ip);
   case CANVAS:
-  case SCROLLABLE:
     return make_lazy_canvas (env, t, ip);
-  case HIGHLIGHT:
-    return make_lazy_highlight (env, t, ip);
+  case ORNAMENT:
+    return make_lazy_ornament (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);

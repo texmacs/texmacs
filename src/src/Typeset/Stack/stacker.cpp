@@ -165,9 +165,11 @@ shove (page_item& item1, page_item& item2, stack_border sb, stack_border sb2) {
   else {
     SI sh= shove_in (b1, b2, hor_sep, top, bot);
     //cout << "  Shove: " << sh << LF;
+    //cout << "    b1= " << b1 << "\n";
+    //cout << "    b2= " << b2 << "\n";
     if (sh == 0 ||
-	(b1->get_type() >= SCROLL_BOX && b1->get_type() <= ORNAMENT_BOX) ||
-	(b2->get_type() >= SCROLL_BOX && b2->get_type() <= ORNAMENT_BOX))
+	b1->get_type() == SCROLL_BOX ||
+	b2->get_type() == SCROLL_BOX)
     {
       SI h= max (height, max (b2->y2, b2->y2 - b1->y1 - (top - bot)));
       item1->spc= item1->spc + space (h- (b2->y2- b1->y1));

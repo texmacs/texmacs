@@ -331,8 +331,7 @@ init_std_drd () {
   init (FRAME_INVERSE, "frame-inverse", fixed (1));
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
-  init (SCROLLABLE, "scrollable", fixed (9, 1, BIFORM) -> accessible (1));
-  init (HIGHLIGHT, "highlight", fixed (6, 1, BIFORM) -> accessible (1));
+  init (ORNAMENT, "ornament", fixed (1) -> accessible (0));
 
   init (FORMAT, "format", repeat (1, 1));
   init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));

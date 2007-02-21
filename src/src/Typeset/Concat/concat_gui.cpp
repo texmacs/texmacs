@@ -13,6 +13,7 @@
 #include "concater.hpp"
 #include "formatter.hpp"
 #include "analyze.hpp"
+#include "Concat/canvas_properties.hpp"
 
 SI resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size);
 
@@ -20,66 +21,102 @@ SI resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size);
 * Scrollable canvases
 ******************************************************************************/
 
+canvas_properties
+get_canvas_properties (edit_env env, tree t) {
+  bool printed= (env->get_string (PAGE_PRINTED) == "true");
+  SI   border = env->get_length (ORNAMENT_BORDER);
+  SI   pixel  = env->get_int (SFACTOR) * PIXEL;
+  if (!printed)
+    border= max (pixel, ((border + pixel/2) / pixel) * pixel);
+
+  canvas_properties props;
+  props->env        = env;
+  props->type       = env->get_string (CANVAS_TYPE);
+  props->x1         = env->exec (t[0]);
+  props->y1         = env->exec (t[1]);
+  props->x2         = env->exec (t[2]);
+  props->y2         = env->exec (t[3]);
+  props->xt         = env->expand (t[4]);
+  props->yt         = env->expand (t[5]);
+  props->scx        = env->exec (props->xt);
+  props->scy        = env->exec (props->yt);
+  props->hpadding   = env->get_length (CANVAS_HPADDING);
+  props->vpadding   = env->get_length (CANVAS_VPADDING);
+  props->border     = border;
+  props->bg         = env->get_color (CANVAS_COLOR);
+  props->sunny      = env->get_color (ORNAMENT_SUNNY_COLOR);
+  props->shadow     = env->get_color (ORNAMENT_SHADOW_COLOR);
+  props->bar_width  = env->get_length (CANVAS_BAR_WIDTH);
+  props->bar_padding= env->get_length (CANVAS_BAR_PADDING);
+  props->bar_bg     = env->get_color (CANVAS_BAR_COLOR);
+  props->bar_button = env->get_color (ORNAMENT_COLOR);
+  return props;
+}
+
 void
-get_canvas_horizontal (edit_env env, tree attrs, SI bx1, SI bx2,
-		       SI& x1, SI& x2, SI& scx)
+get_canvas_horizontal (canvas_properties props,
+		       SI bx1, SI bx2, SI& x1, SI& x2, SI& scx)
 {
-  x1= resize (env, bx1, bx1, bx2, attrs[0]);
-  x2= resize (env, bx2, bx1, bx2, attrs[2]);
-  if (N(attrs) > 6) {
-    if (is_atomic (attrs[8]))
-      if (ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e")) {
-	SI d= env->as_length (attrs[6]) + env->as_length (attrs[7]);
-	x2= max (x1, x2-d);
-      }
-    SI border= 6*env->get_int (SFACTOR) * PIXEL;
-    x1 += border;
-    x2 -= border;
+  edit_env env   = props->env;
+  string   type  = props->type;
+  SI       bwid  = props->bar_width;
+  SI       bpad  = props->bar_padding;
+  SI       border= props->border;
+  x1= resize (env, bx1, bx1, bx2, props->x1);
+  x2= resize (env, bx2, bx1, bx2, props->x2);
+  if (type != "plain") {
+    if (ends (type, "w") || ends (type, "e"))
+      x2= max (x1, x2 - (bwid + bpad));
+    x1 += (border + props->hpadding);
+    x2 -= (border + props->hpadding);
   }
-  if (is_atomic (attrs[4]) && ends (attrs[4]->label, "%")) {
-    double p= as_double (attrs[4]->label (0, N(attrs[4]->label)-1)) / 100.0;
+  if (is_atomic (props->scx) && ends (props->scx->label, "%")) {
+    double p= as_double (props->scx->label (0, N(props->scx->label)-1))/100.0;
     SI d = ((x2 - x1) - (bx2 - bx1));
     SI dx= (d >= 0? 0: (SI) (p * d));
     scx  = dx + x1 - bx1;
   }
-  else scx= -env->as_length (attrs[4]);
+  else scx= -env->as_length (props->scx);
 }
 
 void
-get_canvas_vertical (edit_env env, tree attrs, SI by1, SI by2,
-		     SI& y1, SI& y2, SI& scy)
+get_canvas_vertical (canvas_properties props,
+		     SI by1, SI by2, SI& y1, SI& y2, SI& scy)
 {
-  y1= resize (env, by1, by1, by2, attrs[1]);
-  y2= resize (env, by2, by1, by2, attrs[3]);
-  if (N(attrs) > 6) {
-    if (is_atomic (attrs[8]))
-      if (starts (attrs[8]->label, "n") || starts (attrs[8]->label, "s")) {
-	SI d= env->as_length (attrs[6]) + env->as_length (attrs[7]);
-	y2= max (y1, y2-d);
-      }
-    SI border= 6*env->get_int (SFACTOR) * PIXEL;
-    y1 += border;
-    y2 -= border;
+  edit_env env   = props->env;
+  string   type  = props->type;
+  SI       bwid  = props->bar_width;
+  SI       bpad  = props->bar_padding;
+  SI       border= props->border;
+  y1= resize (env, by1, by1, by2, props->y1);
+  y2= resize (env, by2, by1, by2, props->y2);
+  if (type != "plain") {
+    if (starts (type, "n") || starts (type, "s"))
+      y2= max (y1, y2 - (bwid + bpad));
+    y1 += (border + props->vpadding);
+    y2 -= (border + props->vpadding);
   }
-  if (is_atomic (attrs[4]) && ends (attrs[5]->label, "%")) {
-    double p= as_double (attrs[5]->label (0, N(attrs[5]->label)-1)) / 100.0;
+  if (is_atomic (props->scy) && ends (props->scy->label, "%")) {
+    double p= as_double (props->scy->label (0, N(props->scy->label)-1))/100.0;
     SI d = ((y2 - y1) - (by2 - by1));
     SI dy= (d >= 0? d: (SI) (p * d));
     scy  = dy + y1 - by1;
   }
-  else scy= -env->as_length (attrs[5]);
+  else scy= -env->as_length (props->scy);
 }
 
 box
-make_hor_bar (edit_env env, path ip, SI x1, SI x2, SI h, SI border,
-	      SI X1, SI X2)
-{
-  box mask1= empty_box (ip, x1, border, x2, h-border);
-  box mask2= empty_box (ip, X1, 2*border, X2, h-2*border);
-  box hl1  = highlight_box (ip, mask1, border, 0, 0, env->dis->light_grey,
-			    env->dis->grey, env->dis->white);
-  box hl2  = highlight_box (ip, mask2, border, 0, 0, env->dis->light_grey,
-			    env->dis->white, env->dis->grey);
+make_hor_bar (canvas_properties props, path ip, SI x1, SI x2, SI X1, SI X2) {
+  SI    h     = props->bar_width;
+  SI    border= props->border;
+  color c1    = props->bar_bg;
+  color c2    = props->sunny;
+  color c3    = props->shadow;
+  color c4    = props->bar_button;
+  box   mask1 = empty_box (ip, x1, border, x2, h-border);
+  box   mask2 = empty_box (ip, X1, 2*border, X2, h-2*border);
+  box   hl1   = highlight_box (ip, mask1, border, 0, 0, c1, c3, c2);
+  box   hl2   = highlight_box (ip, mask2, border, 0, 0, c4, c2, c3);
   array<box> bs (2);
   array<SI>  xs (2);
   array<SI>  ys (2);
@@ -90,15 +127,17 @@ make_hor_bar (edit_env env, path ip, SI x1, SI x2, SI h, SI border,
 }
 
 box
-make_ver_bar (edit_env env, path ip, SI y1, SI y2, SI w, SI border,
-	      SI Y1, SI Y2)
-{
-  box mask1= empty_box (ip, border, y1, w-border, y2);
-  box mask2= empty_box (ip, 2*border, Y1, w-2*border, Y2);
-  box hl1  = highlight_box (ip, mask1, border, 0, 0, env->dis->light_grey,
-			    env->dis->grey, env->dis->white);
-  box hl2  = highlight_box (ip, mask2, border, 0, 0, env->dis->light_grey,
-			    env->dis->white, env->dis->grey);
+make_ver_bar (canvas_properties props, path ip, SI y1, SI y2, SI Y1, SI Y2) {
+  SI    w     = props->bar_width;
+  SI    border= props->border;
+  color c1    = props->bar_bg;
+  color c2    = props->sunny;
+  color c3    = props->shadow;
+  color c4    = props->bar_button;
+  box   mask1 = empty_box (ip, border, y1, w-border, y2);
+  box   mask2 = empty_box (ip, 2*border, Y1, w-2*border, Y2);
+  box   hl1   = highlight_box (ip, mask1, border, 0, 0, c1, c3, c2);
+  box   hl2   = highlight_box (ip, mask2, border, 0, 0, c4, c2, c3);
   array<box> bs (2);
   array<SI>  xs (2);
   array<SI>  ys (2);
@@ -109,76 +148,76 @@ make_ver_bar (edit_env env, path ip, SI y1, SI y2, SI w, SI border,
 }
 
 box
-put_scroll_bars (edit_env env, box b, path ip, tree attrs,
-		 box inner, tree xt, tree yt, SI scx, SI scy)
+put_scroll_bars (canvas_properties props, box b, path ip,
+		 box inner, SI scx, SI scy)
 {
-  path dip= decorate (ip);
-  SI   w  = env->as_length (attrs[6]);
-  SI   pad= env->as_length (attrs[7]);
-  SI   bor= 6*env->get_int (SFACTOR) * PIXEL;
-  int  hor= 0;
-  int  ver= 0;
-  if (is_atomic (attrs[8]) && starts (attrs[8]->label, "s")) hor= -1;
-  if (is_atomic (attrs[8]) && starts (attrs[8]->label, "n")) hor=  1;
-  if (is_atomic (attrs[8]) && ends   (attrs[8]->label, "w")) ver= -1;
-  if (is_atomic (attrs[8]) && ends   (attrs[8]->label, "e")) ver=  1;
+  string type  = props->type;
+  SI     hpad  = props->hpadding;
+  SI     vpad  = props->vpadding;
+  SI     bwid  = props->bar_width;
+  SI     bpad  = props->bar_padding;
+  SI     border= props->border;
+  color  ccol  = props->bg;
+  color  csun  = props->sunny;
+  color  cshad = props->shadow;
+  path   dip   = decorate (ip);
+  int    hor   = 0;
+  int    ver   = 0;
+  if (type != "plain") {
+    if (starts (type, "s")) hor= -1;
+    if (starts (type, "n")) hor=  1;
+    if (ends   (type, "w")) ver= -1;
+    if (ends   (type, "e")) ver=  1;
+  }
   array<box> bs (1);
   array<SI>  xs (1);
   array<SI>  ys (1);
-  bs[0]= highlight_box (dip, b, bor, 0, 0, env->dis->white,
-			env->dis->grey, env->dis->grey);
-  xs[0]= (ver < 0? w+pad: 0) - bor;
-  ys[0]= (hor < 0? w+pad: 0) + bor;
-  if (hor != 0 && inner->w() > b->w()) {
-    SI dx= b->x1 - inner->x1 - scx;
+  b     = resize_box (dip, b, b->x1-hpad, b->y1-vpad, b->x2+hpad, b->y2+vpad);
+  bs[0] = highlight_box (dip, b, border, 0, 0, ccol, cshad, csun);
+  xs[0] = (ver < 0? bwid + bpad: 0) - border;
+  ys[0] = (hor < 0? bwid + bpad: 0) + border;
+  if (hor != 0 && inner->w() > b->w() + 4 - 2*hpad) { 
+    SI dx= b->x1 + hpad - inner->x1 - scx;
     double start= 0.0, end= 1.0;
     start= ((double) dx) / ((double) inner->w());
-    end  = start + ((double) b->w()) / ((double) inner->w());
-    SI X1= b->x1 + bor + ((SI) (start * (b->w() - 2*bor)));
-    SI X2= b->x1 + bor + ((SI) (end   * (b->w() - 2*bor)));
-    box hor_bar= make_hor_bar (env, dip, b->x1, b->x2, w, bor, X1, X2);
-    hor_bar= scrollbar_box (dip, hor_bar, false, X2-X1, xt);
+    end  = start + ((double) b->w() - 2*hpad) / ((double) inner->w());
+    SI X1= b->x1 + border + ((SI) (start * (b->w() - 2*border)));
+    SI X2= b->x1 + border + ((SI) (end   * (b->w() - 2*border)));
+    box hor_bar= make_hor_bar (props, dip, b->x1, b->x2, X1, X2);
+    hor_bar= scrollbar_box (dip, hor_bar, false, X2-X1, props->xt);
     bs << hor_bar;
-    xs << (ver < 0? w+pad: 0) - bor;
-    ys << (hor < 0? b->y1: b->y2+pad+2*bor);
+    xs << (ver < 0? bwid + bpad: 0) - border;
+    ys << (hor < 0? b->y1: b->y2 + bpad + 2*border);
   }
-  if (ver != 0 && inner->h() > b->h()) {
-    SI dy= b->y1 - inner->y1 - scy;
+  if (ver != 0 && inner->h() > b->h() + 4 - 2*vpad) {
+    SI dy= b->y1 + vpad - inner->y1 - scy;
     double start= 0.0, end= 1.0;
     start= ((double) dy) / ((double) inner->h());
-    end  = start + ((double) b->h()) / ((double) inner->h());
-    SI Y1= b->y1 + bor + ((SI) (start * (b->h() - 2*bor)));
-    SI Y2= b->y1 + bor + ((SI) (end   * (b->h() - 2*bor)));
-    box ver_bar= make_ver_bar (env, dip, b->y1, b->y2, w, bor, Y1, Y2);
-    ver_bar= scrollbar_box (dip, ver_bar, true, Y2-Y1, yt);
+    end  = start + ((double) b->h() - 2*vpad) / ((double) inner->h());
+    SI Y1= b->y1 + border + ((SI) (start * (b->h() - 2*border)));
+    SI Y2= b->y1 + border + ((SI) (end   * (b->h() - 2*border)));
+    box ver_bar= make_ver_bar (props, dip, b->y1, b->y2, Y1, Y2);
+    ver_bar= scrollbar_box (dip, ver_bar, true, Y2-Y1, props->yt);
     bs << ver_bar;
-    xs << (ver < 0? b->x1-2*bor: b->x2+pad);
-    ys << (hor < 0? w+pad: 0) + bor;
+    xs << (ver < 0? b->x1 - 2*border: b->x2 + bpad);
+    ys << (hor < 0? bwid + bpad: 0) + border;
   }
   return composite_box (ip, bs, xs, ys);
 }
 
 void
-concater_rep::typeset_scrollable_canvas (tree t, path ip) {
+concater_rep::typeset_canvas (tree t, path ip) {
   // IDEA: set left, right, bottom, top environment variables
   //       and allow doing computations with them
-  int i, n= N(t);
-  tree attrs (TUPLE, n-1);
-  for (i=0; i<4; i++)
-    attrs[i]= env->exec (t[i]);
-  tree xt = env->expand (t[4]);
-  tree yt = env->expand (t[5]);
-  attrs[4]= env->exec (xt);
-  attrs[5]= env->exec (yt);
-  for (i=6; i<n-1; i++)
-    attrs[i]= env->exec (t[i]);    
-  box  b = typeset_as_concat (env, t[n-1], descend (ip, n-1));
+  canvas_properties props= get_canvas_properties (env, t);
+  box b= typeset_as_concat (env, t[6], descend (ip, 6));
   SI x1, y1, x2, y2, scx, scy;
-  get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
-  get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
-  path dip= (n > 7? decorate (ip): ip);
-  box cb= clip_box (dip, b, x1, y1, x2, y2, xt, yt, scx, scy);
-  if (n > 7) cb= put_scroll_bars (env, cb, ip, attrs, b, xt, yt, scx, scy);
+  get_canvas_horizontal (props, b->x1, b->x2, x1, x2, scx);
+  get_canvas_vertical (props, b->y1, b->y2, y1, y2, scy);
+  string type= env->get_string (CANVAS_TYPE);
+  path dip= (type == "plain"? ip: decorate (ip));
+  box cb= clip_box (dip, b, x1, y1, x2, y2, props->xt, props->yt, scx, scy);
+  if (type != "plain") cb= put_scroll_bars (props, cb, ip, b, scx, scy);
   print (STD_ITEM, cb);
 }
 
@@ -187,13 +226,13 @@ concater_rep::typeset_scrollable_canvas (tree t, path ip) {
 ******************************************************************************/
 
 void
-concater_rep::typeset_highlight (tree t, path ip) {
-  SI    w     = env->as_length (env->exec (t[0]));
-  SI    xpad  = env->as_length (env->exec (t[1]));
-  SI    ypad  = env->as_length (env->exec (t[2]));
-  color bg    = env->dis->get_color (env->exec_string (t[3]));
-  color sunny = env->dis->get_color (env->exec_string (t[4]));
-  color shadow= env->dis->get_color (env->exec_string (t[5]));
-  box   b     = typeset_as_concat (env, t[6], descend (ip, 6));
+concater_rep::typeset_ornament (tree t, path ip) {
+  SI    w     = env->get_length (ORNAMENT_BORDER);
+  SI    xpad  = env->get_length (ORNAMENT_HPADDING);
+  SI    ypad  = env->get_length (ORNAMENT_VPADDING);
+  color bg    = env->get_color  (ORNAMENT_COLOR);
+  color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
+  color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
+  box   b     = typeset_as_concat (env, t[0], descend (ip, 0));
   print (STD_ITEM, highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow));
 }

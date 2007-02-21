@@ -211,4 +211,19 @@ extern string SRC_SPECIAL;
 extern string SRC_COMPACT;
 extern string SRC_CLOSE;
 
+extern string CANVAS_TYPE;
+extern string CANVAS_COLOR;
+extern string CANVAS_HPADDING;
+extern string CANVAS_VPADDING;
+extern string CANVAS_BAR_WIDTH;
+extern string CANVAS_BAR_PADDING;
+extern string CANVAS_BAR_COLOR;
+extern string ORNAMENT_SHAPE;
+extern string ORNAMENT_BORDER;
+extern string ORNAMENT_HPADDING;
+extern string ORNAMENT_VPADDING;
+extern string ORNAMENT_COLOR;
+extern string ORNAMENT_SUNNY_COLOR;
+extern string ORNAMENT_SHADOW_COLOR;
+
 #endif // defined VARS_H

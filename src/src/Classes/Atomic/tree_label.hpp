@@ -105,7 +105,7 @@ enum tree_label {
   BOX_INFO, FRAME_DIRECT, FRAME_INVERSE,
 
   // graphical interface markup
-  CANVAS, SCROLLABLE, HIGHLIGHT,
+  CANVAS, ORNAMENT,
 
   // obsolete tags
   FORMAT, LINE_SEP, SPLIT, DELAY, HOLD, RELEASE,
