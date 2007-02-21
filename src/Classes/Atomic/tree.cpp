@@ -260,8 +260,6 @@ is_multi_paragraph (tree t) {
     return true;
   case LOCUS:
   case CANVAS:
-  case SCROLLABLE:
-  case HIGHLIGHT:
     return is_multi_paragraph (t[N(t)-1]);
   default:
     if (L(t) < START_EXTENSIONS) return false;

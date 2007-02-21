@@ -12,26 +12,20 @@
 
 #include "bridge.hpp"
 #include "analyze.hpp"
-
-void get_canvas_horizontal (edit_env env, tree attrs, SI bx1, SI bx2,
-			    SI& x1, SI& x2, SI& scx);
-void get_canvas_vertical   (edit_env env, tree attrs, SI by1, SI by2,
-			    SI& y1, SI& y2, SI& scy);
-box put_scroll_bars (edit_env env, box b, path ip, tree attrs,
-		     box inner, tree xt, tree yt, SI scx, SI scy);
+#include "Concat/canvas_properties.hpp"
 
 /******************************************************************************
 * Abstract bridge for ornaments
 ******************************************************************************/
 
-class bridge_ornament_rep: public bridge_rep {
+class bridge_ornamented_rep: public bridge_rep {
 protected:
   int    last;
   bridge body;
   tree   with;
 
 public:
-  bridge_ornament_rep (typesetter ttt, tree st, path ip);
+  bridge_ornamented_rep (typesetter ttt, tree st, path ip);
   void initialize ();
 
   void notify_assign (path p, tree u);
@@ -46,14 +40,15 @@ public:
   void insert_ornament (box b);
 };
 
-bridge_ornament_rep::bridge_ornament_rep (typesetter ttt, tree st, path ip):
-  bridge_rep (ttt, st, ip), with (tree (TUPLE))
+bridge_ornamented_rep::bridge_ornamented_rep (
+  typesetter ttt, tree st, path ip):
+    bridge_rep (ttt, st, ip), with (tree (TUPLE))
 {
   initialize ();
 }
 
 void
-bridge_ornament_rep::initialize () {
+bridge_ornamented_rep::initialize () {
   last= N(st)-1;
   if (nil(body)) body= make_bridge (ttt, st[last], descend (ip, last));
   else replace_bridge (body, st[last], descend (ip, last));
@@ -64,7 +59,7 @@ bridge_ornament_rep::initialize () {
 ******************************************************************************/
 
 void
-bridge_ornament_rep::notify_assign (path p, tree u) {
+bridge_ornamented_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
   if (nil (p)) {
     st= u;
@@ -87,9 +82,10 @@ bridge_ornament_rep::notify_assign (path p, tree u) {
 }
 
 void
-bridge_ornament_rep::notify_insert (path p, tree u) {
+bridge_ornamented_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_ornament_rep::notify_insert");
+  if (nil (p))
+    fatal_error ("Nil path", "bridge_ornamented_rep::notify_insert");
   if (atom (p) || (p->item != last)) bridge_rep::notify_insert (p, u);
   else {
     bool mp_flag= is_multi_paragraph (st);
@@ -101,9 +97,10 @@ bridge_ornament_rep::notify_insert (path p, tree u) {
 }
 
 void
-bridge_ornament_rep::notify_remove (path p, int nr) {
+bridge_ornamented_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_ornament_rep::notify_remove");
+  if (nil (p))
+    fatal_error ("Nil path", "bridge_ornamented_rep::notify_remove");
   if (atom (p) || (p->item != last)) bridge_rep::notify_remove (p, nr);
   else {
     bool mp_flag= is_multi_paragraph (st);
@@ -115,14 +112,16 @@ bridge_ornament_rep::notify_remove (path p, int nr) {
 }
 
 bool
-bridge_ornament_rep::notify_macro (int type, string var, int l, path p, tree u) {
+bridge_ornamented_rep::notify_macro (
+  int type, string var, int l, path p, tree u)
+{
   bool flag= body->notify_macro (type, var, l, p, u);
   if (flag) status= CORRUPTED;
   return flag;
 }
 
 void
-bridge_ornament_rep::notify_change () {
+bridge_ornamented_rep::notify_change () {
   status= CORRUPTED;
   body->notify_change ();
 }
@@ -132,14 +131,14 @@ bridge_ornament_rep::notify_change () {
 ******************************************************************************/
 
 void
-bridge_ornament_rep::my_exec_until (path p) {
+bridge_ornamented_rep::my_exec_until (path p) {
   for (int i=0; i<N(with)-1; i+=2)
     env->monitored_write_update (with[i]->label, with[i+1]);
   body->exec_until (p->next);
 }
 
 bool
-bridge_ornament_rep::my_typeset_will_be_complete () {
+bridge_ornamented_rep::my_typeset_will_be_complete () {
   if (status != CORRUPTED) return false;
   return body->my_typeset_will_be_complete ();
 }
@@ -160,7 +159,7 @@ make_ornament_body (path ip, array<page_item> l) {
 }
 
 box
-bridge_ornament_rep::typeset_ornament (int desired_status) {
+bridge_ornamented_rep::typeset_ornament (int desired_status) {
   int i;
   tree old (TUPLE, N(with));
   for (i=0; i<N(with)-1; i+=2) {
@@ -178,7 +177,7 @@ bridge_ornament_rep::typeset_ornament (int desired_status) {
 }
 
 void
-bridge_ornament_rep::insert_ornament (box b) {
+bridge_ornamented_rep::insert_ornament (box b) {
   ttt->insert_marker (st, ip);
   array<page_item> l2= array<page_item> (1);
   l2[0]= page_item (b);
@@ -189,10 +188,10 @@ bridge_ornament_rep::insert_ornament (box b) {
 * Canvases
 ******************************************************************************/
 
-class bridge_canvas_rep: public bridge_ornament_rep {
+class bridge_canvas_rep: public bridge_ornamented_rep {
 public:
   bridge_canvas_rep (typesetter ttt, tree st, path ip):
-    bridge_ornament_rep (ttt, st, ip) {}
+    bridge_ornamented_rep (ttt, st, ip) {}
   void my_typeset (int desired_status);
 };
 
@@ -203,26 +202,18 @@ bridge_canvas (typesetter ttt, tree st, path ip) {
 
 void
 bridge_canvas_rep::my_typeset (int desired_status) {
-  int i, n= N(st);
-  tree attrs (TUPLE, n-1);
-  for (i=0; i<4; i++)
-    attrs[i]= env->exec (st[i]);
-  tree xt = env->expand (st[4]);
-  tree yt = env->expand (st[5]);
-  attrs[4]= env->exec (xt);
-  attrs[5]= env->exec (yt);
-  for (i=6; i<n-1; i++)
-    attrs[i]= env->exec (st[i]);    
+  canvas_properties props= get_canvas_properties (env, st);
 
   SI delta= 0;
-  if (N(attrs) > 6) {
-    SI w  = env->as_length (attrs[6]);
-    SI pad= env->as_length (attrs[7]);
-    SI bor= 6*env->get_int (SFACTOR) * PIXEL;
-    if (is_atomic (attrs[8]))
-      if (ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e"))
-	delta= max (0, w + pad);
-    delta += 2 * bor;
+  string type= props->type;
+  if (type != "plain") {
+    SI hpad= props->hpadding;
+    SI w   = props->bar_width;
+    SI pad = props->bar_padding;
+    SI bor = props->border;
+    if (ends (type, "w") || ends (type, "e"))
+      delta= max (0, w + pad);
+    delta += 2 * bor + 2 * hpad;
   }
   SI l= env->get_length (PAR_LEFT);
   SI r= env->get_length (PAR_RIGHT) + delta;
@@ -231,11 +222,11 @@ bridge_canvas_rep::my_typeset (int desired_status) {
   box b = typeset_ornament (desired_status);
 
   SI x1, y1, x2, y2, scx, scy;
-  get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
-  get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
-  path dip= (n > 7? decorate (ip): ip);
-  box cb= clip_box (dip, b, x1, y1, x2, y2, xt, yt, scx, scy);
-  if (n > 7) cb= put_scroll_bars (env, cb, ip, attrs, b, xt, yt, scx, scy);
+  get_canvas_horizontal (props, b->x1, b->x2, x1, x2, scx);
+  get_canvas_vertical (props, b->y1, b->y2, y1, y2, scy);
+  path dip= (type == "plain"? ip: decorate (ip));
+  box cb= clip_box (dip, b, x1, y1, x2, y2, props->xt, props->yt, scx, scy);
+  if (type != "plain") cb= put_scroll_bars (props, cb, ip, b, scx, scy);
   if (l != 0) cb= move_box (decorate (ip), cb, l, 0);
   insert_ornament (cb);
 }
@@ -244,31 +235,31 @@ bridge_canvas_rep::my_typeset (int desired_status) {
 * Hightlighting
 ******************************************************************************/
 
-class bridge_highlight_rep: public bridge_ornament_rep {
+class bridge_ornament_rep: public bridge_ornamented_rep {
 public:
-  bridge_highlight_rep (typesetter ttt, tree st, path ip):
-    bridge_ornament_rep (ttt, st, ip) {}
+  bridge_ornament_rep (typesetter ttt, tree st, path ip):
+    bridge_ornamented_rep (ttt, st, ip) {}
   void my_typeset (int desired_status);
 };
 
 bridge
-bridge_highlight (typesetter ttt, tree st, path ip) {
-  return new bridge_highlight_rep (ttt, st, ip);
+bridge_ornament (typesetter ttt, tree st, path ip) {
+  return new bridge_ornament_rep (ttt, st, ip);
 }
 
 void
-bridge_highlight_rep::my_typeset (int desired_status) {
-  SI    w     = env->as_length (env->exec (st[0]));
-  SI    xpad  = env->as_length (env->exec (st[1]));
-  SI    ypad  = env->as_length (env->exec (st[2]));
-  color bg    = env->dis->get_color (env->exec_string (st[3]));
-  color sunny = env->dis->get_color (env->exec_string (st[4]));
-  color shadow= env->dis->get_color (env->exec_string (st[5]));
-  SI l= env->get_length (PAR_LEFT ) + w + xpad;
-  SI r= env->get_length (PAR_RIGHT) + w + xpad;
-  with= tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
-        tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
-  box b = typeset_ornament (desired_status);
-  box hb= highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow);
+bridge_ornament_rep::my_typeset (int desired_status) {
+  SI    w     = env->get_length (ORNAMENT_BORDER);
+  SI    xpad  = env->get_length (ORNAMENT_HPADDING);
+  SI    ypad  = env->get_length (ORNAMENT_VPADDING);
+  color bg    = env->get_color  (ORNAMENT_COLOR);
+  color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
+  color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
+  SI    l     = env->get_length (PAR_LEFT ) + w + xpad;
+  SI    r     = env->get_length (PAR_RIGHT) + w + xpad;
+  with        = tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
+                tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
+  box   b     = typeset_ornament (desired_status);
+  box   hb    = highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow);
   insert_ornament (move_box (decorate (ip), hb, -w-xpad, 0));
 }

@@ -27,7 +27,7 @@ bridge bridge_expand_as (typesetter, tree, path);
 bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
 bridge bridge_locus (typesetter, tree, path);
-bridge bridge_highlight (typesetter, tree, path);
+bridge bridge_ornament (typesetter, tree, path);
 bridge bridge_canvas (typesetter, tree, path);
 
 bridge nil_bridge;
@@ -113,10 +113,9 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case ACTION:
     return bridge_compound (ttt, st, ip);
   case CANVAS:
-  case SCROLLABLE:
     return bridge_canvas (ttt, st, ip);
-  case HIGHLIGHT:
-    return bridge_highlight (ttt, st, ip);
+  case ORNAMENT:
+    return bridge_ornament (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);

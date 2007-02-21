@@ -237,3 +237,22 @@ string SRC_STYLE ("src-style");
 string SRC_SPECIAL ("src-special");
 string SRC_COMPACT ("src-compact");
 string SRC_CLOSE ("src-close");
+
+/******************************************************************************
+* Environment variables for the graphical user interface
+******************************************************************************/
+
+string CANVAS_TYPE ("canvas-type");
+string CANVAS_COLOR ("canvas-color");
+string CANVAS_HPADDING ("canvas-hpadding");
+string CANVAS_VPADDING ("canvas-vpadding");
+string CANVAS_BAR_WIDTH ("canvas-bar-width");
+string CANVAS_BAR_PADDING ("canvas-bar-padding");
+string CANVAS_BAR_COLOR ("canvas-bar-color");
+string ORNAMENT_SHAPE ("ornament-shape");
+string ORNAMENT_BORDER ("ornament-border");
+string ORNAMENT_HPADDING ("ornament-hpadding");
+string ORNAMENT_VPADDING ("ornament-vpadding");
+string ORNAMENT_COLOR ("ornament-color");
+string ORNAMENT_SUNNY_COLOR ("ornament-sunny-color");
+string ORNAMENT_SHADOW_COLOR ("ornament-shadow-color");

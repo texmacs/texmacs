@@ -16,26 +16,18 @@
 #include "Stack/stacker.hpp"
 #include "Boxes/construct.hpp"
 #include "analyze.hpp"
-
-void get_canvas_horizontal (edit_env env, tree attrs, SI bx1, SI bx2,
-			    SI& x1, SI& x2, SI& scx);
-void get_canvas_vertical   (edit_env env, tree attrs, SI by1, SI by2,
-			    SI& y1, SI& y2, SI& scy);
-box put_scroll_bars (edit_env env, box b, path ip, tree attrs,
-		     box inner, tree xt, tree yt, SI scx, SI scy);
+#include "Concat/canvas_properties.hpp"
 
 /******************************************************************************
 * Canvases
 ******************************************************************************/
 
 struct lazy_canvas_rep: public lazy_rep {
-  edit_env env;  // "current" environment
-  tree xt;       // reference to the tree with the horizontal scroll
-  tree yt;       // reference to the tree with the vertical scroll
-  tree attrs;    // canvas dimensions and scrolling
-  lazy par;      // the canvas body
+  canvas_properties props;
+  lazy par;
 
-  lazy_canvas_rep (edit_env env, tree xt, tree yt, tree a, lazy p, path ip);
+  lazy_canvas_rep (canvas_properties props2, lazy par2, path ip):
+    lazy_rep (LAZY_CANVAS, ip), props (props2), par (par2) {}
   inline operator tree () { return "Canvas"; }
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
@@ -43,17 +35,11 @@ struct lazy_canvas_rep: public lazy_rep {
 
 struct lazy_canvas {
 EXTEND_NULL(lazy,lazy_canvas);
-  inline lazy_canvas (edit_env env, tree xt, tree yt,
-		      tree attrs, lazy par, path ip):
-    rep (new lazy_canvas_rep (env, xt, yt, attrs, par, ip)) {
+  inline lazy_canvas (canvas_properties props, lazy par, path ip):
+    rep (new lazy_canvas_rep (props, par, ip)) {
       rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_canvas);
-
-lazy_canvas_rep::lazy_canvas_rep (
-  edit_env env2, tree xt2, tree yt2, tree attrs2, lazy par2, path ip):
-    lazy_rep (LAZY_CANVAS, ip),
-    env (env2), xt (xt2), yt (yt2), attrs (attrs2), par (par2) {}
 
 format
 lazy_canvas_rep::query (lazy_type request, format fm) {
@@ -61,6 +47,7 @@ lazy_canvas_rep::query (lazy_type request, format fm) {
     format body_fm= par->query (request, fm);
     format_width fmw= (format_width) body_fm;
     SI width= fmw->width;
+    edit_env env= props->env;
     tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
     tree old2= env->local_begin (PAR_LEFT, "0tmpt");
     tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
@@ -68,14 +55,25 @@ lazy_canvas_rep::query (lazy_type request, format fm) {
     tree old5= env->local_begin (PAR_NO_FIRST, "true");
     tree old6= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
     SI x1, x2, scx;
-    get_canvas_horizontal (env, attrs, 0, fmw->width, x1, x2, scx);
+    get_canvas_horizontal (props, 0, fmw->width, x1, x2, scx);
     env->local_end (PAR_WIDTH, old6);
     env->local_end (PAR_NO_FIRST, old5);
     env->local_end (PAR_MODE, old4);
     env->local_end (PAR_RIGHT, old3);
     env->local_end (PAR_LEFT, old2);
     env->local_end (PAGE_MEDIUM, old1);
-    return make_format_width (x2 - x1);
+    SI delta= 0;
+    string type= props->type;
+    if (type != "plain") {
+      SI hpad= props->hpadding;
+      SI w   = props->bar_width;
+      SI pad = props->bar_padding;
+      SI bor = props->border;
+      if (ends (type, "w") || ends (type, "e"))
+	delta= max (0, w + pad);
+      delta += 2 * bor + 2 * hpad;
+    }
+    return make_format_width (x2 - x1 + delta);
   }
   return lazy_rep::query (request, fm);
 }
@@ -85,14 +83,15 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
   if (request == type) return this;
   if (request == LAZY_VSTREAM || request == LAZY_BOX) {
     SI delta= 0;
-    if (N(attrs) > 6) {
-      SI w  = env->as_length (attrs[6]);
-      SI pad= env->as_length (attrs[7]);
-      SI bor= 6*env->get_int (SFACTOR) * PIXEL;
-      if (is_atomic (attrs[8]))
-	if (ends (attrs[8]->label, "w") || ends (attrs[8]->label, "e"))
-	  delta= max (0, w + pad);
-      delta += 2 * bor;
+    string type= props->type;
+    if (type != "plain") {
+      SI hpad= props->hpadding;
+      SI w   = props->bar_width;
+      SI pad = props->bar_padding;
+      SI bor = props->border;
+      if (ends (type, "w") || ends (type, "e"))
+	delta= max (0, w + pad);
+      delta += 2 * bor + 2 * hpad;
     }
     format bfm= fm;
     if (request == LAZY_VSTREAM) {
@@ -102,6 +101,7 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
     box b= (box) par->produce (LAZY_BOX, bfm);
     format_width fmw= (format_width) bfm;
     SI width= fmw->width + delta;
+    edit_env env= props->env;
     tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
     tree old2= env->local_begin (PAR_LEFT, "0tmpt");
     tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
@@ -109,19 +109,18 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
     tree old5= env->local_begin (PAR_NO_FIRST, "true");
     tree old6= env->local_begin (PAR_WIDTH, tree (TMLEN, as_string (width)));
     SI x1, x2, scx;
-    get_canvas_horizontal (env, attrs, b->x1, b->x2, x1, x2, scx);
+    get_canvas_horizontal (props, b->x1, b->x2, x1, x2, scx);
     SI y1, y2, scy;
-    get_canvas_vertical (env, attrs, b->y1, b->y2, y1, y2, scy);
+    get_canvas_vertical (props, b->y1, b->y2, y1, y2, scy);
     env->local_end (PAR_WIDTH, old6);
     env->local_end (PAR_NO_FIRST, old5);
     env->local_end (PAR_MODE, old4);
     env->local_end (PAR_RIGHT, old3);
     env->local_end (PAR_LEFT, old2);
     env->local_end (PAGE_MEDIUM, old1);
-    path dip= (N(attrs) > 6? decorate (ip): ip);
-    box rb= clip_box (dip, b, x1, y1, x2, y2, xt, yt, scx, scy);
-    if (N(attrs) > 6)
-      rb= put_scroll_bars (env, rb, ip, attrs, b, xt, yt, scx, scy);
+    path dip= (type == "plain"? ip: decorate (ip));
+    box rb= clip_box (dip, b, x1, y1, x2, y2, props->xt, props->yt, scx, scy);
+    if (type != "plain") rb= put_scroll_bars (props, rb, ip, b, scx, scy);
     if (request == LAZY_BOX) return make_lazy_box (rb);
     else {
       array<page_item> l;
@@ -134,54 +133,45 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
 
 lazy
 make_lazy_canvas (edit_env env, tree t, path ip) {
-  int i, n= N(t);
-  tree attrs (TUPLE, n-1);
-  for (int i=0; i<4; i++)
-    attrs[i]= env->exec (t[i]);
-  tree xt = env->expand (t[4]);
-  tree yt = env->expand (t[5]);
-  attrs[4]= env->exec (xt);
-  attrs[5]= env->exec (yt);
-  for (i=6; i<n-1; i++)
-    attrs[i]= env->exec (t[i]);    
-  lazy par= make_lazy (env, t[n-1], descend (ip, n-1));
-  return lazy_canvas (env, xt, yt, attrs, par, ip);
+  canvas_properties props= get_canvas_properties (env, t);
+  lazy par= make_lazy (env, t[6], descend (ip, 6));
+  return lazy_canvas (props, par, ip);
 }
 
 /******************************************************************************
-* Highlighting
+* Ornaments
 ******************************************************************************/
 
-struct lazy_highlight_rep: public lazy_rep {
+struct lazy_ornament_rep: public lazy_rep {
   edit_env env;             // "current" environment
-  lazy par;                 // the highlighted body
+  lazy par;                 // the ornamented body
   SI w, xpad, ypad;         // spacing parameters
   color bg, sunny, shadow;  // colors
-  lazy_highlight_rep (edit_env env2, lazy par2, path ip,
-		      SI w2, SI xpad2, SI ypad2,
-		      color bg2, color sunny2, color shadow2):
-    lazy_rep (LAZY_HIGHLIGHT, ip), env (env2), par (par2),
+  lazy_ornament_rep (edit_env env2, lazy par2, path ip,
+		     SI w2, SI xpad2, SI ypad2,
+		     color bg2, color sunny2, color shadow2):
+    lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2),
     w (w2), xpad (xpad2), ypad (ypad2),
     bg (bg2), sunny (sunny2), shadow (shadow2) {}
   
-  inline operator tree () { return "Highlight"; }
+  inline operator tree () { return "Ornament"; }
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
 };
 
-struct lazy_highlight {
-EXTEND_NULL(lazy,lazy_highlight);
-  lazy_highlight (edit_env env, lazy par, path ip,
-		  SI w, SI xpad, SI ypad,
-		  color bg, color sunny, color shadow):
-    rep (new lazy_highlight_rep (env, par, ip, w, xpad, ypad,
-				 bg, sunny, shadow)) {
+struct lazy_ornament {
+EXTEND_NULL(lazy,lazy_ornament);
+  lazy_ornament (edit_env env, lazy par, path ip,
+		 SI w, SI xpad, SI ypad,
+		 color bg, color sunny, color shadow):
+    rep (new lazy_ornament_rep (env, par, ip, w, xpad, ypad,
+				bg, sunny, shadow)) {
       rep->ref_count= 1; }
 };
-EXTEND_NULL_CODE(lazy,lazy_highlight);
+EXTEND_NULL_CODE(lazy,lazy_ornament);
 
 format
-lazy_highlight_rep::query (lazy_type request, format fm) {
+lazy_ornament_rep::query (lazy_type request, format fm) {
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
     format body_fm= par->query (request, fm);
     format_width fmw= (format_width) body_fm;
@@ -191,7 +181,7 @@ lazy_highlight_rep::query (lazy_type request, format fm) {
 }
 
 lazy
-lazy_highlight_rep::produce (lazy_type request, format fm) {
+lazy_ornament_rep::produce (lazy_type request, format fm) {
   if (request == type) return this;
   if (request == LAZY_VSTREAM || request == LAZY_BOX) {
     format bfm= fm;
@@ -201,6 +191,10 @@ lazy_highlight_rep::produce (lazy_type request, format fm) {
     }
     box b = (box) par->produce (LAZY_BOX, bfm);
     box hb= highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow);
+    // FIXME: this dirty hack ensures that shoving is correct
+    hb= move_box (decorate (ip), hb, 1, 0);
+    hb= move_box (decorate (ip), hb, -1, 0);
+    // End dirty hack
     if (request == LAZY_BOX) return make_lazy_box (hb);
     else {
       array<page_item> l;
@@ -212,13 +206,13 @@ lazy_highlight_rep::produce (lazy_type request, format fm) {
 }
 
 lazy
-make_lazy_highlight (edit_env env, tree t, path ip) {
-  SI    w     = env->as_length (env->exec (t[0]));
-  SI    xpad  = env->as_length (env->exec (t[1]));
-  SI    ypad  = env->as_length (env->exec (t[2]));
-  color bg    = env->dis->get_color (env->exec_string (t[3]));
-  color sunny = env->dis->get_color (env->exec_string (t[4]));
-  color shadow= env->dis->get_color (env->exec_string (t[5]));
-  lazy par= make_lazy (env, t[6], descend (ip, 6));
-  return lazy_highlight (env, par, ip, w, xpad, ypad, bg, sunny, shadow);
+make_lazy_ornament (edit_env env, tree t, path ip) {
+  SI    w     = env->get_length (ORNAMENT_BORDER);
+  SI    xpad  = env->get_length (ORNAMENT_HPADDING);
+  SI    ypad  = env->get_length (ORNAMENT_VPADDING);
+  color bg    = env->get_color  (ORNAMENT_COLOR);
+  color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
+  color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
+  lazy  par   = make_lazy (env, t[0], descend (ip, 0));
+  return lazy_ornament (env, par, ip, w, xpad, ypad, bg, sunny, shadow);
 }
