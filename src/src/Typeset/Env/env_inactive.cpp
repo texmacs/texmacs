@@ -74,6 +74,11 @@ is_long_arg (tree t, int i) {
   case ACTIVE:
   case VAR_ACTIVE:
     return is_multi_paragraph (t[i]);
+  case LOCUS:
+  case CANVAS:
+  case ORNAMENT:
+    if (i == n-1) return is_long (t[i]);
+    break;
   default:
     break;
   }

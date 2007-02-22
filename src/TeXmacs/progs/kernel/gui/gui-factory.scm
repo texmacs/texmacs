@@ -240,20 +240,23 @@
 	   (rcons (cons 'tformat attrs)
 		  (cons 'table ,rows)))))
 
-(tm-build-macro (dense-raster . rows)
-  (tm-build-table dense-raster rows))
+(tm-build-macro (dense-tile . rows)
+  (tm-build-table dense-tile rows))
 
-(tm-build-macro (short-raster . rows)
-  (tm-build-table short-raster rows))
+(tm-build-macro (short-tile . rows)
+  (tm-build-table short-tile rows))
 
-(tm-build-macro (raster . rows)
-  (tm-build-table wide-raster rows))
+(tm-build-macro (association-tile . rows)
+  (tm-build-table association-tile rows))
+
+(tm-build-macro (tile . rows)
+  (tm-build-table wide-tile rows))
 
 (tm-build-macro (dense-bar . cells)
-  (tm-build-table dense-raster (list cells)))
+  (tm-build-table dense-tile (list cells)))
 
 (tm-build-macro (short-bar . cells)
-  (tm-build-table short-raster (list cells)))
+  (tm-build-table short-tile (list cells)))
 
 (tm-build-macro (bar . cells)
-  (tm-build-table wide-raster (list cells)))
+  (tm-build-table wide-tile (list cells)))
