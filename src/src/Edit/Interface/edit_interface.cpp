@@ -286,9 +286,9 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
        is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (p, rs, recurse);
   else {
-    if (get_init_string (MODE) == "src")
-      set_access_mode (DRD_ACCESS_SOURCE);
-    else set_access_mode (DRD_ACCESS_NORMAL);
+    int new_mode= DRD_ACCESS_NORMAL;
+    if (get_init_string (MODE) == "src") new_mode= DRD_ACCESS_SOURCE;
+    int old_mode= set_access_mode (new_mode);
     if (is_accessible_cursor (et, p) || in_source ()) {
       bool right;
       path p1= p * 0, p2= p * 1, q1, q2;
@@ -301,6 +301,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       selection sel= eb->find_check_selection (q1, q2);
       rs << outline (sel->rs, pixel);
     }
+    set_access_mode (old_mode);
     if (recurse) compute_env_rects (p, rs, recurse);
   }
 }

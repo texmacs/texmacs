@@ -39,9 +39,9 @@ path
 edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
   path start_p= p;
   bool inverse= false;
+  int old_mode= get_access_mode ();
   if (get_init_string (MODE) == "src")
     set_access_mode (DRD_ACCESS_SOURCE);
-  else set_access_mode (DRD_ACCESS_NORMAL);
   while (!is_accessible_cursor (et, p) && !in_source ()) {
     path pp;
     if (forwards ^ inverse)
@@ -54,6 +54,7 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
     }
     else p= pp;
   }
+  set_access_mode (old_mode);
   return p;
 }
 

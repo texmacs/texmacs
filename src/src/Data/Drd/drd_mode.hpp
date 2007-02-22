@@ -19,6 +19,7 @@
 
 #define DRD_WRITABLE_NORMAL  0
 #define DRD_WRITABLE_INPUT   1
+#define DRD_WRITABLE_ANY     2
 
 int set_access_mode (int mode);
 int get_access_mode ();

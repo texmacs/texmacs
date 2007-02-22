@@ -15,6 +15,7 @@
 #include "timer.hpp"
 #include "link.hpp"
 #include "analyze.hpp"
+#include "drd_mode.hpp"
 
 /******************************************************************************
 * dispatching
@@ -281,7 +282,9 @@ edit_interface_rep::set_pointer (
 
 void
 edit_interface_rep::update_active_loci () {
+  int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
   path cp= path_up (tree_path (path (), last_x, last_y, 0));
+  set_access_mode (old_mode);
   tree mt= subtree (et, cp);
   path p = cp;
   list<string> ids1, ids2;
