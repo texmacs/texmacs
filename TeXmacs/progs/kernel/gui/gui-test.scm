@@ -56,8 +56,7 @@
     (button "Done" (dismiss))))
 
 (tm-build-widget (widget-5)
-  (raster
-    (:cell-halign * 1 "r")
+  (association-tile
     (:font-shape "italic")
     ("From:" (input "First" ""))
     ("To:" (input "Second" "")))
@@ -132,8 +131,7 @@
 (tm-build-widget (widget-9)
   (form ("test" "first" "second")
     (suggestions "first" '("hallo" "hop"))
-    (raster
-      (:cell-halign * 1 "r")
+    (association-tile
       ("First input:" (input "first" :auto))
       ("Second input:" (input "second" :auto)))
     ===
@@ -154,7 +152,7 @@
 
 (tm-build-widget (print-widget)
   (center
-    (short-raster
+    (short-tile
       (:cell-halign * 1 "r")
       (:cell-lsep * -1 "2em")
       ("Printer:"
@@ -172,7 +170,7 @@
 	      `(configure-printer-options-widget ,type)))))))
   ---
   (center
-    (short-raster
+    (short-tile
       (:cell-halign * 1 "r")
       ("Pages:" (concat (short-input (:short-width "2em") "first" "1") " -- "
 			(short-input (:short-width "2em") "last" "1")))
@@ -193,8 +191,7 @@
       (suggestions "command" (list cmd))
       (suggestions "paper" (list "a4"))
       (suggestions "dpi" (list "600"))
-      (raster
-	(:cell-halign * 1 "r")
+      (association-tile
 	("Printer name:" (input "name" :auto))
 	("Printing command:" (input "command" :auto))
 	("Paper format:" (input "paper" :auto))
@@ -214,8 +211,7 @@
       (suggestions "parity" (list "all"))
       (suggestions "reduce" (list "1"))
       (suggestions "booklet" (list "false"))
-      (raster
-	(:cell-halign * 1 "r")
+      (association-tile
 	("Printer options type:" (input "type" :auto))
 	("Filter pages:" (input "parity" :auto))
 	("Document pages per page:" (input "reduce" :auto))

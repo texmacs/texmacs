@@ -46,29 +46,19 @@
   <assign|short-input|<macro|name|val|<short-bright|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
 
   <assign|wide-input|<\macro|name|scx|val>
-    <wide-bright|<canvas||1fnbot|1par|1fntop|<arg|scx>||<group|<locus|<widget-id|<arg|name>>|<arg|val>>>>>
+    <\block-bright>
+      <\canvas||1fnbot|1par|1fntop|<arg|scx>|>
+        <group|<locus|<widget-id|<arg|name>>|<arg|val>>>
+      </canvas>
+    </block-bright>
   </macro>>
 
   <assign|block-input|<\macro|name|val>
-    <\block-bright>
+    <\block-highlight|<value|bright-color>|<value|shadow-color>|<value|sunny-color>|<value|gui-med-sep>>
       <\locus|<widget-id|<arg|name>>>
         <arg|val>
       </locus>
-    </block-bright>
-  </macro>>
-
-  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
-    <\block-bright>
-      Hopsa
-
-      <\canvas||-5fn|1par|4fn|<arg|scx>|<arg|scy>>
-        <\locus|<widget-id|<arg|name>>>
-          <arg|val>
-        </locus>
-      </canvas>
-
-      Holala
-    </block-bright>
+    </block-highlight>
   </macro>>
 
   <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>

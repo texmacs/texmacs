@@ -309,6 +309,43 @@ cell_box_rep::display (ps_device dev) {
 }
 
 /******************************************************************************
+* Remember boxes
+******************************************************************************/
+
+class remember_box_rep: public change_box_rep {
+public:
+  rectangles* logs_ptr;
+  SI          ox, oy;
+public:
+  inline remember_box_rep (path ip, box b):
+    change_box_rep (ip, true), logs_ptr (NULL)
+  {
+    insert (b, 0, 0);
+    position ();
+    finalize ();
+  }
+  inline remember_box_rep::~remember_box_rep () {
+    if (logs_ptr != NULL) {
+      rectangles& logs= *logs_ptr;
+      logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
+      logs= rectangles (rectangle (0, 0, 0, 0), logs);
+      // cout << "  8=X " << rectangle (ox+x3, oy+y3, ox+x4, oy+y4) << "\n";
+    }
+  }
+  inline void position_at (SI x, SI y, rectangles& logs) {
+    x += x0; y += y0;
+    if (logs_ptr == NULL) logs= rectangles (rectangle (0, 0, 0, 0), logs);
+    else logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
+    ox= x; oy= y;
+    logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
+    logs_ptr= &logs;
+  }
+  inline void display (ps_device dev) {
+    dev->apply_shadow (x1, y1, x2, y2);
+  }
+};
+
+/******************************************************************************
 * Highlight boxes
 ******************************************************************************/
 
@@ -542,9 +579,15 @@ cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 }
 
 box
+remember_box (path ip, box b) {
+  return new remember_box_rep (ip, b);
+}
+
+box
 highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
 	       color bg, color sun, color shad) {
-  return new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
+  box hb= new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
+  return remember_box (decorate (ip), hb);
 }
 
 box

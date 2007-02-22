@@ -179,7 +179,7 @@
 
 (define (interactive-fields prompts vars types)
   (with rows (map interactive-field prompts vars types)
-    `(raster (:cell-halign * 1 "r") ,@rows)))
+    `(association-tile ,@rows)))
 
 (tm-define (interactive-form fun prompts vars types defaults)
   (:synopsis "Standard form for a simple function application")
