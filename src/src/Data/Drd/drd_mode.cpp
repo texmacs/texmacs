@@ -12,7 +12,8 @@
 
 #include "drd_mode.hpp"
 
-static int drd_access_mode;
+static int drd_access_mode  = DRD_ACCESS_NORMAL;
+static int drd_writable_mode= DRD_WRITABLE_NORMAL;
 
 int
 set_access_mode (int mode) {
@@ -24,4 +25,16 @@ set_access_mode (int mode) {
 int
 get_access_mode () {
   return drd_access_mode;
+}
+
+int
+set_writable_mode (int mode) {
+  int old_mode= drd_writable_mode;
+  drd_writable_mode= mode;
+  return old_mode;
+}
+
+int
+get_writable_mode () {
+  return drd_writable_mode;
 }

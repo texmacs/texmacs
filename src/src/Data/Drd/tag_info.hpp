@@ -80,10 +80,14 @@ struct parent_info {
 * The child_info class contains more detailed information about each of
 * the children of the tag.
 *
-* - The accessible field specifies whether the field can be edited.
-*   ACCESSIBLE_ALWAYS children can always be edited, ACCESSIBLE_NEVER children
-*   can only be edited in source mode and ACCESSIBLE_HIDDEN children may
-*   require unfolding in order to be edited.
+* - The accessible field specifies whether the field can be accessed.
+*   ACCESSIBLE_ALWAYS children can always be accessed, ACCESSIBLE_NEVER
+*   children can only be accessed in source mode and ACCESSIBLE_HIDDEN
+*   children may require unfolding in order to be accessed.
+*
+* - The writability field specifies whether an accessible field can be edited.
+*   When the writability of a child is disabled, its whole descendance
+*   becomes read-only, except for those parts whose writability are re-enabled.
 *
 * - The block field specifies whether the field is required to be
 *   a block structure, an inline structure, or any of the two.
@@ -100,6 +104,10 @@ struct parent_info {
 #define ACCESSIBLE_HIDDEN     1
 #define ACCESSIBLE_ALWAYS     2
 
+#define WRITABILITY_NORMAL    0
+#define WRITABILITY_DISABLE   1
+#define WRITABILITY_ENABLE    2
+
 #define BLOCK_REQUIRE_BLOCK   0
 #define BLOCK_REQUIRE_INLINE  1
 #define BLOCK_REQUIRE_NONE    2
@@ -111,12 +119,14 @@ struct parent_info {
 #define MODE_SRC              4
 
 struct child_info {
-  unsigned accessible       : 2; // child is accessible?
-  unsigned block            : 2; // require children to be blocks?
-  unsigned mode             : 3; // in which mode is the child?
-  unsigned freeze_accessible: 1; // true => disable heuristic determination
-  unsigned freeze_block     : 1;
-  unsigned freeze_mode      : 1;
+  unsigned accessible        : 2; // child is accessible?
+  unsigned writability       : 2; // writability of child
+  unsigned block             : 2; // require children to be blocks?
+  unsigned mode              : 3; // in which mode is the child?
+  unsigned freeze_accessible : 1; // true => disable heuristic determination
+  unsigned freeze_writability: 1;
+  unsigned freeze_block      : 1;
+  unsigned freeze_mode       : 1;
 
   child_info (bool frozen= false);
   child_info (string s);
@@ -141,6 +151,8 @@ public:
   tag_info no_border ();
   tag_info accessible (int i);
   tag_info hidden (int i);
+  tag_info disable_writable (int i);
+  tag_info enable_writable (int i);
   tag_info name (string s);
   int      get_index (int child, int n);
   void     set_attribute (string which, tree val);

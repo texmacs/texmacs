@@ -69,6 +69,14 @@
 
   <assign|hidden-input|<macro|name|val|body|<surround|<hidden|<locus|<widget-id|<arg|name>>|<arg|val>>>||<with|<merge|widget-value-|<arg|name>>|<arg|val>|<arg|body>>>>>
 
+  <drd-props|short-input|arity|2|enable-writability|all>
+
+  <drd-props|wide-input|arity|3|enable-writability|all>
+
+  <drd-props|block-input|arity|2|enable-writability|all>
+
+  <drd-props|canvas-input|arity|6|enable-writability|all>
+
   <\active*>
     <\src-comment>
       Buttons
@@ -84,6 +92,8 @@
   <assign|render-button|<macro|on|body|<compound|<merge|<value|button-shape>|-button>|<arg|on>|<arg|body>>>>
 
   <assign|button|<macro|body|cmd|<render-button|false|<action|<arg|body>|<widget-cmd|<arg|cmd>>|<arg|body>>>>>
+
+  <drd-props|button|arity|2|enable-writability|all>
 
   <\active*>
     <\src-comment>
@@ -128,6 +138,10 @@
 
   <assign|toggle-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>|<arg|text>>|<toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<widget-id|<arg|name>>|<arg|val>>>>>>
 
+  <drd-props|toggle-box|arity|2|accessible|1|enable-writability|all>
+
+  <drd-props|toggle-button|arity|3|accessible|1|accessible|2|enable-writability|all>
+
   <\active*>
     <\src-comment>
       Radio boxes
@@ -139,6 +153,10 @@
 
   <assign|radio-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<equal|<arg|val>|<widget-value|<arg|name>>>|<arg|text>>|<widget-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
+
+  <drd-props|radio-box|arity|2|accessible|1|enable-writability|all>
+
+  <drd-props|radio-button|arity|3|accessible|1|accessible|2|enable-writability|all>
 
   <\active*>
     <\src-comment>

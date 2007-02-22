@@ -70,10 +70,14 @@ is_modified_accessible (tree t, path p, bool activate, bool persistent) {
 
 bool
 is_accessible_cursor (tree t, path p) {
-  if (is_atomic (t))
-    return atom (p) && p->item >= 0 && p->item <= N(t->label);
-  else if (atom (p))
-    return !the_drd->is_child_enforcing (t);
+  if (is_atomic (t) || atom (p)) {
+    if (get_writable_mode () == DRD_WRITABLE_INPUT)
+      return false;
+    if (is_atomic (t))
+      return atom (p) && p->item >= 0 && p->item <= N(t->label);
+    else if (atom (p))
+      return !the_drd->is_child_enforcing (t);
+  }
   else switch (L(t)) {
   case ACTIVE:
     return is_modified_accessible (t, p, true, false);
@@ -92,7 +96,17 @@ is_accessible_cursor (tree t, path p) {
       set_access_mode (old);
       return r;
     }
-    else return is_accessible_cursor (t[p->item], p->next);
+    else {
+      int w  = the_drd->get_writability_child (t, p->item);
+      int old= get_writable_mode ();
+      if (w == WRITABILITY_DISABLE)
+	set_writable_mode (DRD_WRITABLE_INPUT);
+      else if (w == WRITABILITY_ENABLE)
+	set_writable_mode (DRD_WRITABLE_NORMAL);
+      bool r= is_accessible_cursor (t[p->item], p->next);
+      set_writable_mode (old);
+      return r;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.6.9>
 
 <style|source>
 
@@ -55,7 +55,17 @@
     </src-comment>
   </active*>
 
+  <assign|disable-writability|<value|identity>>
+
+  <assign|enable-writability|<value|identity>>
+
+  <drd-props|disable-writability|arity|1|border|no|accessible|all|disable-writability|all>
+
+  <drd-props|enable-writability|arity|1|border|no|accessible|all|enable-writability|all>
+
   <drd-props|widget-window|arity|<tuple|repeat|1|1>|border|no>
+
+  \;
 
   <assign|widget-prefix|>
 
