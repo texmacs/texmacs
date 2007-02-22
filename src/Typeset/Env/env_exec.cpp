@@ -557,21 +557,41 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (val == "no") drd->set_no_border (l, true);
 	drd->freeze_no_border (l);
       }
-      if (prop == "unaccessible" || prop == "hidden" || prop == "accessible") {
-	int prop_code= ACCESSIBLE_NEVER;
-	if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
-	if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
-	if (val == "none") prop_code= ACCESSIBLE_NEVER;
-	if (is_int (val))
-	  drd->set_accessible (l, as_int (val), prop_code);
-	else if (val == "none" || val == "all") {
-	  int i, n= drd->get_nr_indices (l);
-	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, prop_code);
-	    drd->freeze_accessible (l, i);
+      if (prop == "unaccessible" ||
+	  prop == "hidden" ||
+	  prop == "accessible")
+	{
+	  int prop_code= ACCESSIBLE_NEVER;
+	  if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
+	  if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
+	  if (val == "none") prop_code= ACCESSIBLE_NEVER;
+	  if (is_int (val))
+	    drd->set_accessible (l, as_int (val), prop_code);
+	  else if (val == "none" || val == "all") {
+	    int i, n= drd->get_nr_indices (l);
+	    for (i=0; i<n; i++) {
+	      drd->set_accessible (l, i, prop_code);
+	      drd->freeze_accessible (l, i);
+	    }
 	  }
 	}
-      }
+      if (prop == "normal-writability" ||
+	  prop == "disable-writability" ||
+	  prop == "enable-writability")
+	{
+	  int prop_code= WRITABILITY_NORMAL;
+	  if (prop == "disable-writability") prop_code= WRITABILITY_DISABLE;
+	  if (prop == "enable-writability") prop_code= WRITABILITY_ENABLE;
+	  if (is_int (val))
+	    drd->set_writability (l, as_int (val), prop_code);
+	  else if (val == "all") {
+	    int i, n= drd->get_nr_indices (l);
+	    for (i=0; i<n; i++) {
+	      drd->set_writability (l, i, prop_code);
+	      drd->freeze_writability (l, i);
+	    }
+	  }
+	}
     }
   return t;
 }

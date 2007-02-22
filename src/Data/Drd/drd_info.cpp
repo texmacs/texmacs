@@ -293,6 +293,41 @@ drd_info_rep::is_accessible_child (tree t, int i) {
 }
 
 /******************************************************************************
+* Children's writability
+******************************************************************************/
+
+void
+drd_info_rep::set_writability (tree_label l, int nr, int writability) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
+  child_info& ci= ti->ci[nr];
+  if (ci.freeze_writability) return;
+  ci.writability= writability;
+}
+
+int
+drd_info_rep::get_writability (tree_label l, int nr) {
+  return info[l]->ci[nr].writability;
+}
+
+void
+drd_info_rep::freeze_writability (tree_label l, int nr) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info  & ti= info(l);
+  child_info& ci= ti->ci[nr];
+  ci.freeze_writability= true;
+}
+
+int
+drd_info_rep::get_writability_child (tree t, int i) {
+  tag_info ti= info[L(t)];
+  int index= ti->get_index (i, N(t));
+  if ((index<0) || (index>=N(ti->ci))) return WRITABILITY_DISABLE;
+  return ti->ci[index].writability;
+}
+
+/******************************************************************************
 * Mode determination
 ******************************************************************************/
 

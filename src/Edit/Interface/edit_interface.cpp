@@ -17,6 +17,7 @@
 #include "tm_buffer.hpp"
 #include "Metafont/tex_files.hpp"
 #include "data_cache.hpp"
+#include "drd_mode.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
 #include "../../Style/Evaluate/evaluate_main.hpp"
@@ -285,16 +286,21 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
        is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (p, rs, recurse);
   else {
-    bool right;
-    path p1= p * 0, p2= p * 1, q1, q2;
-    if (is_script (subtree (et, p), right)) {
-      p1= start (et, p * 0);
-      p2= end   (et, p * 0);
+    if (get_init_string (MODE) == "src")
+      set_access_mode (DRD_ACCESS_SOURCE);
+    else set_access_mode (DRD_ACCESS_NORMAL);
+    if (is_accessible_cursor (et, p) || in_source ()) {
+      bool right;
+      path p1= p * 0, p2= p * 1, q1, q2;
+      if (is_script (subtree (et, p), right)) {
+	p1= start (et, p * 0);
+	p2= end   (et, p * 0);
+      }
+      if (is_func (st, CELL)) { q1= p1; q2= p2; }
+      else selection_correct (et, p1, p2, q1, q2);
+      selection sel= eb->find_check_selection (q1, q2);
+      rs << outline (sel->rs, pixel);
     }
-    if (is_func (st, CELL)) { q1= p1; q2= p2; }
-    else selection_correct (et, p1, p2, q1, q2);
-    selection sel= eb->find_check_selection (q1, q2);
-    rs << outline (sel->rs, pixel);
     if (recurse) compute_env_rects (p, rs, recurse);
   }
 }

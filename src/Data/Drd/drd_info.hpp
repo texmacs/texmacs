@@ -64,6 +64,11 @@ public:
   bool all_accessible (tree_label tag);
   bool is_accessible_child (tree t, int child);
 
+  void set_writability (tree_label tag, int nr, int writability);
+  int  get_writability (tree_label tag, int nr);
+  void freeze_writability (tree_label tag, int nr);
+  int  get_writability_child (tree t, int child);
+
   void set_block (tree_label tag, int nr, int require_block);
   int  get_block (tree_label tag, int nr);
   void freeze_block (tree_label tag, int nr);

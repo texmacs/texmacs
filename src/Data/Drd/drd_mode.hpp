@@ -13,11 +13,16 @@
 #ifndef DRD_MODE_H
 #define DRD_MODE_H
 
-#define DRD_ACCESS_NORMAL 0
-#define DRD_ACCESS_HIDDEN 1
-#define DRD_ACCESS_SOURCE 2
+#define DRD_ACCESS_NORMAL    0
+#define DRD_ACCESS_HIDDEN    1
+#define DRD_ACCESS_SOURCE    2
+
+#define DRD_WRITABLE_NORMAL  0
+#define DRD_WRITABLE_INPUT   1
 
 int set_access_mode (int mode);
 int get_access_mode ();
+int set_writable_mode (int mode);
+int get_writable_mode ();
 
 #endif // defined DRD_MODE_H
