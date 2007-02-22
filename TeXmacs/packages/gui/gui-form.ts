@@ -47,9 +47,7 @@
 
   <assign|wide-input|<\macro|name|scx|val>
     <\block-bright>
-      <\canvas||1fnbot|1par|1fntop|<arg|scx>|>
-        <group|<locus|<widget-id|<arg|name>>|<arg|val>>>
-      </canvas>
+      <group|<canvas|0px|1fnbot|1par|1fntop|<arg|scx>||<locus|<widget-id|<arg|name>>|<arg|val>>>>
     </block-bright>
   </macro>>
 
@@ -63,7 +61,35 @@
 
   <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
     <\block-bright>
-      <canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>|<locus|<widget-id|<arg|name>>|<arg|val>>>
+      <\canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>>
+        <\locus|<widget-id|<arg|name>>>
+          <arg|val>
+        </locus>
+      </canvas>
+    </block-bright>
+  </macro>>
+
+  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
+    <hrule>
+
+    <\block-bright>
+      <hrule>
+
+      <\canvas||-5em|1par|5em|<arg|scx>|<arg|scy>>
+        <arg|val>
+      </canvas>
+
+      <hrule>
+    </block-bright>
+
+    <hrule>
+  </macro>>
+
+  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
+    <\block-bright>
+      <\canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>>
+        <arg|val>
+      </canvas>
     </block-bright>
   </macro>>
 
@@ -93,7 +119,7 @@
 
   <assign|button|<macro|body|cmd|<render-button|false|<action|<arg|body>|<widget-cmd|<arg|cmd>>|<arg|body>>>>>
 
-  <drd-props|button|arity|2|enable-writability|all>
+  <drd-props|button|arity|2|accessible|none|enable-writability|all>
 
   <\active*>
     <\src-comment>
@@ -138,9 +164,9 @@
 
   <assign|toggle-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>|<arg|text>>|<toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<widget-id|<arg|name>>|<arg|val>>>>>>
 
-  <drd-props|toggle-box|arity|2|accessible|1|enable-writability|all>
+  <drd-props|toggle-box|arity|2|enable-writability|all>
 
-  <drd-props|toggle-button|arity|3|accessible|1|accessible|2|enable-writability|all>
+  <drd-props|toggle-button|arity|3|accessible|none|enable-writability|all>
 
   <\active*>
     <\src-comment>
@@ -154,9 +180,9 @@
   <assign|radio-button|<macro|name|val|text|<style-with|src-compact|none|<action|<render-button|<equal|<arg|val>|<widget-value|<arg|name>>>|<arg|text>>|<widget-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
-  <drd-props|radio-box|arity|2|accessible|1|enable-writability|all>
+  <drd-props|radio-box|arity|2|enable-writability|all>
 
-  <drd-props|radio-button|arity|3|accessible|1|accessible|2|enable-writability|all>
+  <drd-props|radio-button|arity|3|accessible|none|enable-writability|all>
 
   <\active*>
     <\src-comment>

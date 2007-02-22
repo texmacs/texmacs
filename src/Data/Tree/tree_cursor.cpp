@@ -58,8 +58,7 @@ is_modified_accessible (tree t, path p, bool activate, bool persistent) {
   else if (atom (p) && !persistent) return false;
   else {
     bool r;
-    int old= get_access_mode ();
-    set_access_mode (activate? DRD_ACCESS_NORMAL: DRD_ACCESS_SOURCE);
+    int old= set_access_mode (activate? DRD_ACCESS_NORMAL: DRD_ACCESS_SOURCE);
     if (persistent) r= is_accessible_cursor (t, p);
     else r= the_drd->is_accessible_child (t, p->item);
     set_access_mode (old);
@@ -72,7 +71,8 @@ bool
 is_accessible_cursor (tree t, path p) {
   if (is_atomic (t) || atom (p)) {
     if (get_writable_mode () == DRD_WRITABLE_INPUT)
-      return false;
+      if (get_access_mode () != DRD_ACCESS_SOURCE)
+	return false;
     if (is_atomic (t))
       return atom (p) && p->item >= 0 && p->item <= N(t->label);
     else if (atom (p))
@@ -90,21 +90,22 @@ is_accessible_cursor (tree t, path p) {
   default:
     if (!the_drd->is_accessible_child (t, p->item)) return false;
     else if (the_drd->get_mode_child (t, p->item, MODE_PARENT) == MODE_SRC) {
-      int old= get_access_mode ();
-      set_access_mode (DRD_ACCESS_SOURCE);
+      int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
       bool r= is_accessible_cursor (t[p->item], p->next);
-      set_access_mode (old);
+      set_access_mode (old_mode);
       return r;
     }
     else {
-      int w  = the_drd->get_writability_child (t, p->item);
-      int old= get_writable_mode ();
-      if (w == WRITABILITY_DISABLE)
-	set_writable_mode (DRD_WRITABLE_INPUT);
-      else if (w == WRITABILITY_ENABLE)
-	set_writable_mode (DRD_WRITABLE_NORMAL);
+      int old_mode= get_writable_mode ();
+      if (old_mode != DRD_WRITABLE_ANY) {
+	int w  = the_drd->get_writability_child (t, p->item);
+	if (w == WRITABILITY_DISABLE)
+	  set_writable_mode (DRD_WRITABLE_INPUT);
+	else if (w == WRITABILITY_ENABLE)
+	  set_writable_mode (DRD_WRITABLE_NORMAL);
+      }
       bool r= is_accessible_cursor (t[p->item], p->next);
-      set_writable_mode (old);
+      set_writable_mode (old_mode);
       return r;
     }
   }
