@@ -586,8 +586,7 @@ remember_box (path ip, box b) {
 box
 highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
 	       color bg, color sun, color shad) {
-  box hb= new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
-  return remember_box (decorate (ip), hb);
+  return new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
 }
 
 box

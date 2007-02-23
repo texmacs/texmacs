@@ -60,35 +60,43 @@
   </macro>>
 
   <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
-    <\block-bright>
-      <\canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>>
-        <\locus|<widget-id|<arg|name>>>
-          <arg|val>
-        </locus>
-      </canvas>
-    </block-bright>
-  </macro>>
-
-  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
-    <hrule>
+    <\ornament>
+      <htab|5mm>
+    </ornament>
 
     <\block-bright>
-      <hrule>
+      <\ornament>
+        <htab|5mm>
+      </ornament>
 
       <\canvas||-5em|1par|5em|<arg|scx>|<arg|scy>>
         <arg|val>
       </canvas>
 
-      <hrule>
+      <\ornament>
+        <htab|5mm>
+      </ornament>
     </block-bright>
 
-    <hrule>
+    <\ornament>
+      <htab|5mm>
+    </ornament>
   </macro>>
 
   <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
     <\block-bright>
       <\canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>>
         <arg|val>
+      </canvas>
+    </block-bright>
+  </macro>>
+
+  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
+    <\block-bright>
+      <\canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>>
+        <\locus|<widget-id|<arg|name>>>
+          <arg|val>
+        </locus>
       </canvas>
     </block-bright>
   </macro>>
