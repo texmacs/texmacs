@@ -35,7 +35,10 @@ curve_rep::bound (double t, double eps) {
   //TODO: Improve this, as soon as the curvature ()
   //      for transformed_curves will be implemented
   bool b;
-  double delta= eps / norm (grad (t, b));
+  double ng= norm (grad (t, b));
+  if (ng <= 1.0e-12)
+    return tm_infinity;
+  double delta= eps / ng;
   while (delta >= 1.0e-6) {
     point val1 = evaluate (t);
     point val2 = evaluate (max (t-delta, 0.0));

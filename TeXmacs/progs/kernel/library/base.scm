@@ -202,6 +202,13 @@
 	      (i2 (string->float s2)))
 	 (and i1 i2 (== i1 i2)))))
 
+(define-public (string-symbol=? s1 s2)
+  (if (symbol? s1)
+      (set! s1 (symbol->string s1)))
+  (if (symbol? s2)
+      (set! s2 (symbol->string s2)))
+  (== s1 s2))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
