@@ -53,49 +53,118 @@
 ;; Edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Basic operations
+(define moveclick-tolerance "5px")
+(define previous-leftclick #f)
+(define (points-dist< p1 p2 eps)
+  (set! p1 (frame-direct `(tuple ,(cadr p1) ,(caddr p1))))
+  (set! p2 (frame-direct `(tuple ,(cadr p2) ,(caddr p2))))
+  (set! eps (length-decode eps))
+  (let* ((x1 (s2f (cadr p1)))
+	 (y1 (s2f (caddr p1)))
+	 (x2 (s2f (cadr p2)))
+	 (y2 (s2f (caddr p2)))
+     )
+     (< (+ (* (- x2 x1) (- x2 x1)) (* (- y2 y1) (- y2 y1))) (* eps eps))))
+
+;; Basic operations (create)
+(define (point_create x y mode)
+  (graphics-group-enrich-insert `(point ,x ,y)))
+
+(define (line_create x y mode)
+  (with o `(,mode (point ,x ,y) (point ,x ,y))
+    (graphics-store-state 'start-create)
+    (set! graphics-undo-enabled #f)
+    (create-graphical-object o 'new 'object-and-points #f)
+    (set! current-point-no 1)
+    (set! sticky-point #t)
+    (graphics-store-state #f)))
+
+(define (text-at_create x y mode)
+  (graphics-group-enrich-insert
+    `(text-at "" (point ,x ,y))))
+
+;; Basic operations (add point)
+(define (object_add-point x y obj no)
+  ;(display* "obj " obj "\n")
+  (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
+      (with l (list-tail (cdr obj) no)
+	(graphics-store-state #f)
+	(if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
+	    (begin
+	      (set-cdr! l (cons (car l) (cdr l)))
+	      (set-car! l `(point ,x ,y))
+	      (create-graphical-object obj 'active 'object-and-points no)
+	      (set! current-point-no no))
+	    (begin
+	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
+	      (create-graphical-object obj 'active 'object-and-points (+ no 1))
+	      (set! current-point-no (+ no 1))))
+	(set! current-edge-sel? #t)
+	(set! sticky-point #t))))
+
+;; Basic operations (commit)
+(define (object_commit x y obj)
+  (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
+  (begin
+     (create-graphical-object obj 'active 'points #f)
+     (graphics-group-enrich-insert-bis
+      obj graphical-color graphical-pstyle
+      graphical-lwidth
+      (local-magnification graphical-magnification)
+      graphical-lstyle
+      graphical-lstyle-unit
+      graphical-larrows
+      graphical-fcolor
+      graphical-textat-halign
+      graphical-textat-valign #f)
+     (if (== (state-ref graphics-first-state 'graphics-action)
+	     'start-move)
+	 (remove-undo-mark))
+     (set! sticky-point #f)
+     (set! leftclick-waiting #f)
+     (set! current-edge-sel? #f)
+     (set! graphics-undo-enabled #t)
+     (graphics-forget-states))))
+
 ;; Left button
 (define (point_left-button x y p obj no edge)
   (if sticky-point
       ;;Last
-      (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
       (begin
-	(create-graphical-object obj 'active 'points #f)
-	(graphics-group-enrich-insert-bis
-	 obj graphical-color graphical-pstyle
-	 graphical-lwidth
-	 (local-magnification graphical-magnification)
-	 graphical-lstyle
-	 graphical-lstyle-unit
-	 graphical-larrows
-	 graphical-fcolor
-	 graphical-textat-halign
-	 graphical-textat-valign #f)
-	(if (== (state-ref graphics-first-state 'graphics-action)
-		'start-move)
-	    (remove-undo-mark))
-	(set! sticky-point #f)
-	(set! current-edge-sel? #f)
-	(set! graphics-undo-enabled #t)
-	(graphics-forget-states)))
+	(if (and leftclick-waiting
+		 (points-dist<
+		   previous-leftclick `(point ,x ,y) moveclick-tolerance))
+	    (object_commit x y obj)
+	    (begin
+	       (set-message "Another left click to finish" "")
+	       (set! leftclick-waiting #t)))
+	;(display* "prev-leftc=" previous-leftclick "\n")
+	;(display* "x=" x "\n")
+	;(display* "y=" y "\n\n")
+        (set! previous-leftclick `(point ,x ,y)))
       ;;Start move
       (begin
+	(set-message "Left click to add points ; middle button to undo" "")
 	(graphics-store-state 'start-move)
 	(create-graphical-object obj p 'object-and-points #f)
 	(graphics-remove p 'memoize-layer)
 	(graphics-group-start)
 	(set! sticky-point #t)
+	(set! leftclick-waiting #f)
 	(set! current-point-no no)
 	(set! current-edge-sel? #t)
 	(set! graphics-undo-enabled #f)
+        (set! previous-leftclick  `(point ,x ,y))
 	(if (and edge (not (and (in? (car obj) '(arc carc))
 				(> (length obj) 3))))
-	  (point_sticky-right-button x y p
-	    (cadr (graphical-object #t)) no edge))
-	  (graphics-store-state #f))))
+	  (object_add-point x y
+	    (cadr (graphical-object #t)) no))
+	(graphics-store-state #f))))
 
 (define (text-at_left-button x y p obj no edge)
   (if sticky-point
-      (point_left-button x y p obj 1 edge)
+      (object_commit x y obj)
       (if (on-graphical-embedding-box? x y obj "1mm")
 	  (begin
 	     (set-texmacs-pointer 'graphics-cross)
@@ -108,13 +177,26 @@
 ;; Move
 (define (point_move x y p obj no edge)
   (if sticky-point
+      (if (and leftclick-waiting
+	       (not (points-dist<
+		      previous-leftclick `(point ,x ,y) moveclick-tolerance)))
+          (begin
+	     ;(display* "prev-leftc(2)=" previous-leftclick "\n")
+	     ;(display* "x(2)=" x "\n")
+	     ;(display* "y(2)=" y "\n\n")
+	     (set! leftclick-waiting #f)
+	     (object_add-point x y obj no))
+	  (begin
+	     (if leftclick-waiting
+		 (set-message "Another left click to finish" "")
+		 (set-message "(Shift) Left click to add ; middle button to undo" ""))
+	     (if (== (car obj) 'point)
+	         (set! obj `(point ,x ,y))
+	         (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
+	     (create-graphical-object obj 'active 'object-and-points
+	       (if edge no `(,edge ,no)))))
       (begin
-	(if (== (car obj) 'point)
-	    (set! obj `(point ,x ,y))
-	    (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
-	(create-graphical-object obj 'active 'object-and-points
-	  (if edge no `(,edge ,no))))
-      (begin
+	(set-message "Left click to add or to move ; middle button to remove" "")
 	(create-graphical-object obj p 'points (if edge no `(,edge ,no)))
 	(if p
 	    (with p2 (tm-upwards-path p '(text-at) '(graphics))
@@ -162,63 +244,76 @@
 (define (other_middle-button x y p obj no)
   (point_middle-button x y p obj no))
 
-;; Right button (add point)
-(define (point_sticky-right-button x y p obj no edge)
-  (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
-      (with l (list-tail (cdr obj) no)
-	(graphics-store-state #f)
-	(if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
-	    (begin
-	      (set-cdr! l (cons (car l) (cdr l)))
-	      (set-car! l `(point ,x ,y))
-	      (create-graphical-object obj 'active 'object-and-points no)
-	      (set! current-point-no no))
-	    (begin
-	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
-	      (create-graphical-object obj 'active 'object-and-points (+ no 1))
-	      (set! current-point-no (+ no 1))))
-	(set! current-edge-sel? #t)
-	(set! sticky-point #t))))
-
-;; Right button (create)
-(define (point_nonsticky-right-button x y mode)
-  (graphics-group-enrich-insert `(point ,x ,y)))
-
-(define (line_nonsticky-right-button x y mode)
-  (with o `(,mode (point ,x ,y) (point ,x ,y))
-    (graphics-store-state 'start-create)
-    (set! graphics-undo-enabled #f)
-    (create-graphical-object o 'new 'object-and-points #f)
-    (set! current-point-no 1)
-    (set! sticky-point #t)
-    (graphics-store-state #f)))
-
-(define (text-at_nonsticky-right-button x y mode)
-  (graphics-group-enrich-insert
-    `(text-at "" (point ,x ,y))))
-
 ;; Dispatch
+(define (edit-insert x y)
+  (with mode (cadr (graphics-mode))
+    (if just-started-dragging
+	(set! disable-drag #t))
+    (set! layer-of-last-removed-object #f)
+    (dispatch mode ((point)
+		    (line cline spline cspline arc carc)
+		    (text-at))
+	      create (x y mode) do-tick)))
+
 (define (edit_left-button x y)
+  (set-texmacs-pointer 'graphics-cross)
   (with-graphics-context
-   "insert" x y p obj no edge
-   (dispatch (car obj) ((point line cline spline cspline arc carc)
-			(text-at))
-	     left-button (x y p obj no edge) do-tick handle-other)))
+   ";:insert" x y p obj no edge
+   (if sticky-point
+       (begin
+	 (if just-started-dragging
+	     (set! disable-drag #t))
+	 (dispatch (car obj) ((point line cline spline cspline arc carc)
+			      (text-at))
+		   left-button (x y p obj no edge) do-tick handle-other))
+       (if obj
+	   (begin
+	     (edit_tab-key (if (graphics-states-void?)
+			       #f
+			       (state-ref (graphics-pop-state) 'choosing)))
+	     (graphics-store-state #f)
+	     (set! choosing #t))
+	   (edit-insert x y)))))
 
 (define (edit_move x y)
-  (with-graphics-context
-   ";:move" x y p obj no edge
-   (if obj
-       (dispatch (car obj) ((point line cline spline cspline arc carc)
-			    (text-at)
-			    (gr-group))
-		 move (x y p obj no edge) do-tick handle-other
-       )
-       (begin
-	  (set-texmacs-pointer 'graphics-cross)
-	  (create-graphical-object '(nothing) #f 'points #f)))))
+  (set-texmacs-pointer 'graphics-cross #t)
+  (if choosing
+   ;; Start moving point/object or inserting a new point
+      (with first #f
+      ;; NOTE: Hack to restore the state when choosing has been set
+	 (graphics-state-set (graphics-pop-state))
+	 (set! first (not choosing))
+	 (set! choosing #f)
+	 (let* ((x current-x)
+		(y current-y)
+		(obj current-obj)
+		(p current-path-under-mouse)
+		(no current-point-no)
+		(edge current-edge-sel?))
+	     ;; NOTE: End hack
+	   (graphics-forget-states)
+	  ;(display* "(x,y)=(" x "," y ")\n")
+	  ;(display* "obj(1')=" obj "\n")
+	  ;(display* "p(1')=" p "\n\n")
+	   (if (and first
+		    (not just-started-dragging)
+		    (not (eq? (car obj) 'text-at)))
+	       (edit-insert x y)
+	       (dispatch (car obj) ((point line cline spline cspline arc carc)
+			            (text-at))
+		         left-button (x y p obj no edge) do-tick handle-other))))
+   ;; Moving
+      (with-graphics-context
+       ";:move" x y p obj no edge
+       (if obj
+	   (dispatch (car obj) ((point line cline spline cspline arc carc)
+				(text-at)
+				(gr-group))
+	             move (x y p obj no edge) do-tick handle-other)
+	   (create-graphical-object '(nothing) #f 'points #f)))))
 
 (define (edit_middle-button x y)
+  (set-texmacs-pointer 'graphics-cross)
   (with-graphics-context
    "remove" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline arc carc
@@ -226,25 +321,31 @@
 	     middle-button (x y p obj no) do-tick handle-other)))
 
 (define (edit_right-button x y)
-  (if sticky-point
-      (with-graphics-context
-       "last" x y p obj no edge
-       (dispatch (car obj) ((point line cline spline cspline arc carc text-at))
-		 sticky-right-button (x y p obj no edge) do-tick))
-      (with mode (cadr (graphics-mode))
-	(set! layer-of-last-removed-object #f)
-	(dispatch mode ((point)
-			(line cline spline cspline arc carc)
-			(text-at))
-		  nonsticky-right-button (x y mode) do-tick))))
+  (display* "Right button(edit) currently unused\n"))
 
-(tm-define (edit_tab-key)
+(tm-define (edit_tab-key next)
  ;(display* "Graphics] Edit(Tab)\n")
   (if (and current-x current-y)
-      (begin
-	(select-next)
+      (let* ((x current-x)
+	     (y current-y))
+	(if next
+	    (select-next))
 	(invalidate-graphical-object)
-	(edit_move current-x current-y)
+	(with-graphics-context
+	 ";:move" x y p obj no edge
+	;(display* "(x,y)=(" x "," y ")\n")
+	;(display* "obj(0)=" obj "\n")
+	;(display* "p(0)=" p "\n")
+	 (if obj
+	     (create-graphical-object
+		obj p 'points
+		(with tag (car obj)
+		   (if (== tag 'text-at)
+		       (set! no 1))
+		   (cond ((== tag 'gr-group)
+			  #f)
+			 (else
+		          (if edge no `(,edge ,no))))))))
 	(invalidate-graphical-object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -599,8 +700,11 @@
 	     (group-edit))
 	    right-button (x y)))
 
+(define just-started-dragging #f)
+(define disable-drag #f)
 (tm-define (graphics-start-drag x y)
   ;(display* "Graphics] Start-drag " x ", " y "\n")
+  (set! just-started-dragging #t)
   (graphics-insert-point x y))
 
 (tm-define (graphics-dragging x y)
@@ -609,7 +713,13 @@
 
 (tm-define (graphics-end-drag x y)
   ;(display* "Graphics] End-drag " x ", " y "\n")
-  (graphics-insert-point x y))
+  (set! just-started-dragging #f)
+  (if disable-drag
+      (set! disable-drag #f)
+      (begin
+	(graphics-insert-point x y)
+	(if (eq? (car (graphics-mode)) 'edit)
+	    (graphics-insert-point x y)))))
 
 (tm-define (graphics-start-right-drag x y)
   ;(display* "Graphics] Start-right-drag " x ", " y "\n")
@@ -630,7 +740,7 @@
   (dispatch (car (graphics-mode))
 	    ((edit)
 	     (group-edit))
-	    tab-key ()))
+	    tab-key (#t)))
 
 (tm-define (graphics-enter-mode old-mode new-mode)
   (if (and (graphics-group-mode? old-mode)

@@ -53,7 +53,10 @@
   (vector-set! past-events 1 '()))
 
 ;; State variables
+(tm-define choosing #f)
 (tm-define sticky-point #f)
+(tm-define leftclick-waiting #f)
+(tm-define current-obj #f)
 (tm-define current-point-no #f)
 (tm-define current-edge-sel? #f)
 (tm-define current-selection #f)
@@ -72,7 +75,10 @@
 (tm-define state-slots
   ''(graphics-action
      graphical-object
+     choosing
      sticky-point
+     leftclick-waiting
+     current-obj
      current-point-no
      current-edge-sel?
      current-selection
@@ -84,7 +90,8 @@
      selected-objects
      selecting-x0
      selecting-y0
-     multiselecting))
+     multiselecting
+     current-path-under-mouse))
 
 (define-export-macro (state-len)
   `(length ,state-slots))
@@ -105,7 +112,10 @@
   (with st (new-state)
     (state-set! st 'graphics-action #f)
     (state-set! st 'graphical-object (get-graphical-object))
+    (state-set! st 'choosing choosing)
     (state-set! st 'sticky-point sticky-point)
+    (state-set! st 'leftclick-waiting leftclick-waiting)
+    (state-set! st 'current-obj current-obj)
     (state-set! st 'current-point-no current-point-no)
     (state-set! st 'current-edge-sel? current-edge-sel?)
     (state-set! st 'current-selection current-selection)
@@ -118,6 +128,7 @@
     (state-set! st 'selecting-x0 selecting-x0)
     (state-set! st 'selecting-y0 selecting-y0)
     (state-set! st 'multiselecting multiselecting)
+    (state-set! st 'current-path-under-mouse current-path-under-mouse)
     st))
 
 (tm-define (graphics-state-set st)
@@ -125,7 +136,10 @@
     (if (pair? (tree->stree o))
 	(set-graphical-object o)
 	(create-graphical-object #f #f #f #f)))
+  (set! choosing (state-ref st 'choosing))
   (set! sticky-point (state-ref st 'sticky-point))
+  (set! leftclick-waiting (state-ref st 'leftclick-waiting))
+  (set! current-obj (state-ref st 'current-obj))
   (set! current-point-no (state-ref st 'current-point-no))
   (set! current-edge-sel? (state-ref st 'current-edge-sel?))
   (set! current-selection (state-ref st 'current-selection))
@@ -137,7 +151,8 @@
   (set! selected-objects (state-ref st 'selected-objects))
   (set! selecting-x0 (state-ref st 'selecting-x0))
   (set! selecting-y0 (state-ref st 'selecting-y0))
-  (set! multiselecting (state-ref st 'multiselecting)))
+  (set! multiselecting (state-ref st 'multiselecting))
+  (set! current-path-under-mouse (state-ref st 'current-path-under-mouse)))
 
 ;; State stack
 (tm-define graphics-states '())
@@ -188,7 +203,10 @@
 
 (tm-define (graphics-reset-state)
   (create-graphical-object #f #f #f #f)
+  (set! choosing #f)
   (set! sticky-point #f)
+  (set! leftclick-waiting #f)
+  (set! current-obj #f)
   (set! current-point-no #f)
   (set! current-edge-sel? #f)
   (set! current-selection #f)
@@ -321,17 +339,22 @@
 
 ;; Graphics X cursor
 ;;NOTE: This subsection is OK
-(tm-define graphics-texmacs-pointer 'none)
-(tm-define (set-texmacs-pointer curs)
+(tm-define graphics-texmacs-pointer #f)
+(tm-define (set-texmacs-pointer curs . cache)
   (define (set-pointer name)
      (if (symbol? name)
 	 (set! name (symbol->string name)))
      (set! graphics-texmacs-pointer name)
   )
-  (if (!= graphics-texmacs-pointer curs)
+  (if (null? cache)
+      (set! graphics-texmacs-pointer #f))
+  (if (not (string-symbol=? graphics-texmacs-pointer curs))
   (cond ((== curs 'none)
 	 (set-pointer 'none)
 	 (set-mouse-pointer
+      ;; FIXME: This function is horribly slow, due to the
+      ;;   non-correct (?) caching of the xmp files, or to
+      ;;   the building of too much X11 datastructures.
 	    (tm_xpm "tm_cursor_none.xpm")
 	    (tm_xpm "tm_mask_none.xpm")))
 	((== curs 'text-arrow)
@@ -362,6 +385,7 @@
 			 (,no current-point-no)
 			 (,edge current-edge-sel?)
 			 (,path (cDr (cursor-path))))
+			 (set! current-obj ,obj)
 		       ,(cons 'begin body))
 		  (begin
 		     (set! res #f)
@@ -376,6 +400,9 @@
 		   (,edge (and sel (== (length sel) 2)))
 		   (,no (if sel (cAr (car sel)) #f)))
 	      (set! current-path-under-mouse ,path)
+	      (set! current-obj ,obj)
+	      (set! current-point-no ,no)
+	      (set! current-edge-sel? ,edge)
 	      (if ,obj
 		  ,(cons 'begin body)
 		  (if (and (string? ,msg)

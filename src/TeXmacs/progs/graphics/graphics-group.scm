@@ -449,9 +449,9 @@
 			       text-at))
 		   unselect-all (p) do-tick))))
 
-(tm-define (group-edit_tab-key)
+(tm-define (group-edit_tab-key next)
  ;(display* "Graphics] Group-edit(Tab)\n")
-  (edit_tab-key))
+  (edit_tab-key next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cut & paste actions

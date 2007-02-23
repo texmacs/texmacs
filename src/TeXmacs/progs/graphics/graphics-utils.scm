@@ -327,9 +327,21 @@
 (tm-define (graphics-eval-magnification-at path)
   (tree->stree (get-env-tree-at "magnification" path)))
 
+(define (convert-magn m)
+  (if (== m "default")
+      (set! m 1.0))
+  (if (string? m)
+      (set! m (s2f m)))
+  m)
+  ;; FIXME: Using this function is crappy ; it would be
+  ;;   much better to be sure that a magnification equal
+  ;;   to "default" never enters the functions below.
+  ;;   But this seems to depend on some realtime-dependent
+  ;;   behaviour, thus testing this has not (yet) been
+  ;;   done correctly.
+
 (tm-define (multiply-magnification magn h)
-  (if (string? h)
-      (set! h (s2f h)))
+  (set! h (convert-magn h))
   (cond ((equal? h 1.0)
          #t
         )
@@ -337,8 +349,7 @@
          (set! h (* h (s2f (cadr magn))))
         )
         ((or (string? magn) (number? magn))
-         (if (string? magn)
-             (set! magn (s2f magn)))
+	 (set! magn (convert-magn magn))
          (set! h (* h magn))
         )
         (else
@@ -349,8 +360,7 @@
      `(times ,(f2s h) (value "magnification"))))
 
 (tm-define (local-magnification amagn)
-  (if (string? amagn)
-      (set! amagn (s2f amagn)))
+  (set! amagn (convert-magn amagn))
  `(times ,(f2s (/ amagn (s2f (graphics-eval-magnification))))
 	  (value "magnification")))
 

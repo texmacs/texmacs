@@ -190,11 +190,13 @@ ps_device_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
 
 void
 ps_device_rep::set_background_pattern (tree pat) {
+  /*
   pattern= pat;
   if (is_atomic (pattern))
     set_background (current_display () -> get_color (pat->label));
   else if (is_func (pattern, PATTERN, 5))
     set_background (current_display () -> get_color (as_string (pattern[4])));
+  */
 }
 
 bool is_percentage (tree t);
@@ -202,6 +204,7 @@ double as_percentage (tree t);
 
 void
 ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
+  /*
   if (is_atomic (pattern))
     clear (x1, y1, x2, y2);
   else if (is_func (pattern, PATTERN)) {
@@ -227,6 +230,7 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
       }
     set_clipping (cx1, cy1, cx2, cy2, true);
   }
+  */
 }
 
 #undef RND

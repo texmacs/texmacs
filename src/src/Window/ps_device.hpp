@@ -38,7 +38,7 @@ public:
   int pixel;                // PIXEL*sfactor
   int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
   ps_device master;         // master device in case of shadow devices
-  tree pattern;             // current background pattern
+  //tree pattern;             // current background pattern
 
 public:
   ps_device_rep ();
