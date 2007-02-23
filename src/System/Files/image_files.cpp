@@ -32,7 +32,7 @@ hashmap<tree,string> ps_bbox ("");
 tree
 xpm_load (url u) {
   string s;
-  load_string ("$TEXMACS_PIXMAPS_PATH" * u, s);
+  load_string ("$TEXMACS_PIXMAP_PATH" * u, s);
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", s);
 
   int i, j;

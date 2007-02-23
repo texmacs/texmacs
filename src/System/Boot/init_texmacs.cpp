@@ -125,6 +125,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/langs/natural/hyphen");
   make_dir ("$TEXMACS_HOME_PATH/langs/programming");
   make_dir ("$TEXMACS_HOME_PATH/misc");
+  make_dir ("$TEXMACS_HOME_PATH/misc/patterns");
   make_dir ("$TEXMACS_HOME_PATH/misc/pixmaps");
   make_dir ("$TEXMACS_HOME_PATH/packages");
   make_dir ("$TEXMACS_HOME_PATH/plugins");
@@ -244,7 +245,11 @@ init_env_vars () {
   (void) get_env_path ("TEXMACS_SYNTAX_PATH",
 		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
 		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
-  (void) get_env_path ("TEXMACS_PIXMAPS_PATH",
+  (void) get_env_path ("TEXMACS_PATTERN_PATH",
+		       "$TEXMACS_HOME_PATH/misc/patterns" |
+		       url ("$TEXMACS_PATH/misc/patterns") |
+		       plugin_path ("misc/patterns"));
+  (void) get_env_path ("TEXMACS_PIXMAP_PATH",
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
 		       url ("$TEXMACS_PATH/misc/pixmaps") |
 		       plugin_path ("misc/pixmaps"));

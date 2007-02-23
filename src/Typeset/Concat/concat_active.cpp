@@ -227,9 +227,10 @@ concater_rep::typeset_flag (tree t, path ip) {
 * Typesetting postscript images
 ******************************************************************************/
 
-static bool
+bool
 is_magnification (string s) {
   double result;
+  if (N(s) == 0) return false;
   for (int i=0; i<N(s); /*nop*/) {
     if (s[i]=='*') { i++; read_double (s, i, result); }
     else if (s[i]=='/') { i++; read_double (s, i, result); }
@@ -238,7 +239,7 @@ is_magnification (string s) {
   return true;
 }
 
-static double
+double
 get_magnification (string s) {
   int i=0;
   double magn= 1.0, result;

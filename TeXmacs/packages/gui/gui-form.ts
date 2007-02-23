@@ -47,7 +47,7 @@
 
   <assign|wide-input|<\macro|name|scx|val>
     <\block-bright>
-      <group|<canvas|0px|1fnbot|1par|1fntop|<arg|scx>||<locus|<widget-id|<arg|name>>|<arg|val>>>>
+      <canvas|0px|1fnbot|1par|1fntop|<arg|scx>||<locus|<widget-id|<arg|name>>|<group|<arg|val>>>>
     </block-bright>
   </macro>>
 
@@ -57,38 +57,6 @@
         <arg|val>
       </locus>
     </block-highlight>
-  </macro>>
-
-  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
-    <\ornament>
-      <htab|5mm>
-    </ornament>
-
-    <\block-bright>
-      <\ornament>
-        <htab|5mm>
-      </ornament>
-
-      <\canvas||-5em|1par|5em|<arg|scx>|<arg|scy>>
-        <arg|val>
-      </canvas>
-
-      <\ornament>
-        <htab|5mm>
-      </ornament>
-    </block-bright>
-
-    <\ornament>
-      <htab|5mm>
-    </ornament>
-  </macro>>
-
-  <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>
-    <\block-bright>
-      <\canvas||<arg|y1>|1par|<arg|y2>|<arg|scx>|<arg|scy>>
-        <arg|val>
-      </canvas>
-    </block-bright>
   </macro>>
 
   <assign|canvas-input|<\macro|name|y1|y2|scx|scy|val>

@@ -61,7 +61,7 @@ box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 	      SI bl, SI br, SI bb, SI bt, color fg, color bg, bool transp);
 box remember_box (path ip, box b);
 box highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
-		   color bg, color sunny, color shadow);
+		   tree bg, color sunny, color shadow);
 
 box frac_box (path ip, box b1, box b2, font fn, font sfn, color c);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, color c);
