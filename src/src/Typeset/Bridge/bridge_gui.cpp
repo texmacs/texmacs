@@ -115,7 +115,10 @@ bool
 bridge_ornamented_rep::notify_macro (
   int type, string var, int l, path p, tree u)
 {
+  //cout << "Notify macro " << type << ", " << var << ", " << l
+  //     << ", " << p << ", " << u << " in " << st << "\n";
   bool flag= body->notify_macro (type, var, l, p, u);
+  flag= flag || env->depends (st (0, last), var, l);
   if (flag) status= CORRUPTED;
   return flag;
 }
@@ -217,7 +220,8 @@ bridge_canvas_rep::my_typeset (int desired_status) {
   }
   SI l= env->get_length (PAR_LEFT);
   SI r= env->get_length (PAR_RIGHT) + delta;
-  with= tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
+  with= tuple (PAR_LEFT, tree (TMLEN, as_string (0))) *
+        tuple (PAR_RIGHT, tree (TMLEN, as_string (l + r)));
 
   box b = typeset_ornament (desired_status);
 
@@ -229,6 +233,7 @@ bridge_canvas_rep::my_typeset (int desired_status) {
   if (type != "plain") cb= put_scroll_bars (props, cb, ip, b, scx, scy);
   if (l != 0) cb= move_box (decorate (ip), cb, l, 0);
   insert_ornament (cb);
+  //insert_ornament (remember_box (decorate (ip), cb));
 }
 
 /******************************************************************************
@@ -261,5 +266,6 @@ bridge_ornament_rep::my_typeset (int desired_status) {
                 tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
   box   b     = typeset_ornament (desired_status);
   box   hb    = highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow);
-  insert_ornament (move_box (decorate (ip), hb, -w-xpad, 0));
+  box   mb    = move_box (decorate (ip), hb, -w-xpad, 0);
+  insert_ornament (remember_box (decorate (ip), mb));
 }
