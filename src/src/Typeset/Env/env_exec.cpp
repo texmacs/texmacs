@@ -13,6 +13,7 @@
 #include "env.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "image_files.hpp"
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
 #include "typesetter.hpp"
@@ -392,6 +393,9 @@ edit_env_rep::exec (tree t) {
     return exec_set_binding (t);
   case GET_BINDING:
     return exec_get_binding (t);
+
+  case PATTERN:
+    return exec_pattern (t);
 
   case _POINT:
     return exec_point (t);
@@ -925,7 +929,7 @@ edit_env_rep::exec_plus_minus (tree t) {
   else return tree (ERROR, "bad plus/minus");
 }
 
-static bool
+bool
 is_percentage (tree t) {
   return
     is_atomic (t) &&
@@ -933,7 +937,7 @@ is_percentage (tree t) {
     is_double (t->label (0, N (t->label) - 1));
 }
 
-static double
+double
 as_percentage (tree t) {
   return as_double (t->label (0, N (t->label) - 1)) / 100.0;
 }
@@ -1445,6 +1449,56 @@ edit_env_rep::exec_get_binding (tree t) {
   if (complete && value == tree (UNINIT))
     system_warning ("Undefined reference", key);
   return value;
+}
+
+bool is_magnification (string s);
+double get_magnification (string s);
+
+tree
+edit_env_rep::exec_pattern (tree t) {
+  url im= exec_string (t[0]);
+  url image= resolve (relative (base_file_name, im));
+  if (is_none (image))
+    image= resolve (url ("$TEXMACS_PATTERN_PATH") * im);
+  if (is_none (image)) return "white";
+  int imw_pt, imh_pt;
+  image_size (image, imw_pt, imh_pt);
+  double pt= ((double) dpi*PIXEL) / 72.0;
+  SI imw= (SI) (((double) imw_pt) * pt);
+  SI imh= (SI) (((double) imh_pt) * pt);
+  if (imw <= 0 || imh <= 0) return "white";
+  string w= exec_string (t[1]);
+  string h= exec_string (t[2]);
+  if (is_length (w))
+    w= as_string (as_length (w));
+  else if (is_magnification (w))
+    w= as_string ((SI) (get_magnification (w) * ((double) imw)));
+  if (is_length (h))
+    h= as_string (as_length (h));
+  else if (is_magnification (h))
+    h= as_string ((SI) (get_magnification (h) * ((double) imh)));
+  if (w == "" && h != "") {
+    if (is_int (h)) w= (SI) ((as_double (h) * imw) / imh);
+    else if (is_percentage (h))
+      w= as_string ((as_percentage (h) * imw) / imh) * "%";
+    else return "white";
+  }
+  else if (h == "" && w != "") {
+    if (is_int (w)) h= (SI) ((as_double (w) * imh) / imw);
+    else if (is_percentage (w))
+      h= as_string ((as_percentage (w) * imh) / imw) * "%";
+    else return "white";
+  }
+  else if (w == "" && h == "") {
+    w= as_string (imw);
+    h= as_string (imh);
+  }
+  else if ((!is_int (w) && !is_percentage (w)) ||
+	   (!is_int (h) && !is_percentage (h)))
+    return "white";
+  tree r (PATTERN, as_string (image), w, h);
+  if (N(t) == 4) r << exec (t[3]);
+  return r;
 }
 
 tree

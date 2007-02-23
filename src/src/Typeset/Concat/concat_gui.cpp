@@ -43,13 +43,13 @@ get_canvas_properties (edit_env env, tree t) {
   props->hpadding   = env->get_length (CANVAS_HPADDING);
   props->vpadding   = env->get_length (CANVAS_VPADDING);
   props->border     = border;
-  props->bg         = env->get_color (CANVAS_COLOR);
+  props->bg         = env->read (CANVAS_COLOR);
   props->sunny      = env->get_color (ORNAMENT_SUNNY_COLOR);
   props->shadow     = env->get_color (ORNAMENT_SHADOW_COLOR);
   props->bar_width  = env->get_length (CANVAS_BAR_WIDTH);
   props->bar_padding= env->get_length (CANVAS_BAR_PADDING);
-  props->bar_bg     = env->get_color (CANVAS_BAR_COLOR);
-  props->bar_button = env->get_color (ORNAMENT_COLOR);
+  props->bar_bg     = env->read (CANVAS_BAR_COLOR);
+  props->bar_button = env->read (ORNAMENT_COLOR);
   return props;
 }
 
@@ -109,10 +109,10 @@ box
 make_hor_bar (canvas_properties props, path ip, SI x1, SI x2, SI X1, SI X2) {
   SI    h     = props->bar_width;
   SI    border= props->border;
-  color c1    = props->bar_bg;
+  tree  c1    = props->bar_bg;
   color c2    = props->sunny;
   color c3    = props->shadow;
-  color c4    = props->bar_button;
+  tree  c4    = props->bar_button;
   box   mask1 = empty_box (ip, x1, border, x2, h-border);
   box   mask2 = empty_box (ip, X1, 2*border, X2, h-2*border);
   box   hl1   = highlight_box (ip, mask1, border, 0, 0, c1, c3, c2);
@@ -130,10 +130,10 @@ box
 make_ver_bar (canvas_properties props, path ip, SI y1, SI y2, SI Y1, SI Y2) {
   SI    w     = props->bar_width;
   SI    border= props->border;
-  color c1    = props->bar_bg;
+  tree  c1    = props->bar_bg;
   color c2    = props->sunny;
   color c3    = props->shadow;
-  color c4    = props->bar_button;
+  tree  c4    = props->bar_button;
   box   mask1 = empty_box (ip, border, y1, w-border, y2);
   box   mask2 = empty_box (ip, 2*border, Y1, w-2*border, Y2);
   box   hl1   = highlight_box (ip, mask1, border, 0, 0, c1, c3, c2);
@@ -157,7 +157,7 @@ put_scroll_bars (canvas_properties props, box b, path ip,
   SI     bwid  = props->bar_width;
   SI     bpad  = props->bar_padding;
   SI     border= props->border;
-  color  ccol  = props->bg;
+  tree   ccol  = props->bg;
   color  csun  = props->sunny;
   color  cshad = props->shadow;
   path   dip   = decorate (ip);
@@ -230,7 +230,7 @@ concater_rep::typeset_ornament (tree t, path ip) {
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
-  color bg    = env->get_color  (ORNAMENT_COLOR);
+  tree  bg    = env->read       (ORNAMENT_COLOR);
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
   box   b     = typeset_as_concat (env, t[0], descend (ip, 0));

@@ -146,10 +146,11 @@ struct lazy_ornament_rep: public lazy_rep {
   edit_env env;             // "current" environment
   lazy par;                 // the ornamented body
   SI w, xpad, ypad;         // spacing parameters
-  color bg, sunny, shadow;  // colors
+  tree bg;                  // background color or pattern
+  color sunny, shadow;      // border colors
   lazy_ornament_rep (edit_env env2, lazy par2, path ip,
 		     SI w2, SI xpad2, SI ypad2,
-		     color bg2, color sunny2, color shadow2):
+		     tree bg2, color sunny2, color shadow2):
     lazy_rep (LAZY_ORNAMENT, ip), env (env2), par (par2),
     w (w2), xpad (xpad2), ypad (ypad2),
     bg (bg2), sunny (sunny2), shadow (shadow2) {}
@@ -163,7 +164,7 @@ struct lazy_ornament {
 EXTEND_NULL(lazy,lazy_ornament);
   lazy_ornament (edit_env env, lazy par, path ip,
 		 SI w, SI xpad, SI ypad,
-		 color bg, color sunny, color shadow):
+		 tree bg, color sunny, color shadow):
     rep (new lazy_ornament_rep (env, par, ip, w, xpad, ypad,
 				bg, sunny, shadow)) {
       rep->ref_count= 1; }
@@ -210,7 +211,7 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
-  color bg    = env->get_color  (ORNAMENT_COLOR);
+  tree  bg    = env->read       (ORNAMENT_COLOR);
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
   lazy  par   = make_lazy (env, t[0], descend (ip, 0));

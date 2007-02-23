@@ -24,13 +24,13 @@ public:
   SI       hpadding;
   SI       vpadding;
   SI       border;
-  color    bg;
+  tree     bg;
   color    sunny;
   color    shadow;
   SI       bar_width;
   SI       bar_padding;
-  color    bar_bg;
-  color    bar_button;
+  tree     bar_bg;
+  tree     bar_button;
 
 public:
   inline canvas_properties_rep () {}

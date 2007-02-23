@@ -70,13 +70,12 @@ is_modified_accessible (tree t, path p, bool activate, bool persistent) {
 bool
 is_accessible_cursor (tree t, path p) {
   if (is_atomic (t) || atom (p)) {
-    if (get_writable_mode () == DRD_WRITABLE_INPUT)
-      if (get_access_mode () != DRD_ACCESS_SOURCE)
-	return false;
-    if (is_atomic (t))
+    if (get_writable_mode () == DRD_WRITABLE_INPUT &&
+	get_access_mode () != DRD_ACCESS_SOURCE)
+      return false;
+    else if (is_atomic (t))
       return atom (p) && p->item >= 0 && p->item <= N(t->label);
-    else if (atom (p))
-      return !the_drd->is_child_enforcing (t);
+    else return !the_drd->is_child_enforcing (t);
   }
   else switch (L(t)) {
   case ACTIVE:

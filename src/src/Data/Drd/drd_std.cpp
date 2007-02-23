@@ -297,6 +297,8 @@ init_std_drd () {
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
   init (BACKUP, "backup", fixed (2));
+  init (PATTERN, "pattern", options (3, 1));
+  init (GRADIENT, "gradient", fixed (3));
   init (SPECIFIC, "specific", fixed (2));
   init (FLAG, "flag", options (2, 1));
 

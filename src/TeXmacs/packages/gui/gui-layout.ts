@@ -37,6 +37,8 @@
 
   <assign|lowered-color|#e0e0e0>
 
+  <assign|bright-color|<pattern|crinkle-paper.png||>>
+
   <assign|bright-color|#f0f0f0>
 
   <assign|sunny-color|white>

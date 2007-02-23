@@ -257,7 +257,7 @@ bridge_ornament_rep::my_typeset (int desired_status) {
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
-  color bg    = env->get_color  (ORNAMENT_COLOR);
+  tree  bg    = env->read       (ORNAMENT_COLOR);
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
   SI    l     = env->get_length (PAR_LEFT ) + w + xpad;

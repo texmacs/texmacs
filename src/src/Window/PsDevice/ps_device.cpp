@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "ps_device.hpp"
+#include "display.hpp"
 
 /******************************************************************************
 * Constructors
@@ -175,7 +176,7 @@ abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2) {
 }
 
 /******************************************************************************
-* Default rendering routines
+* Default property selection and rendering routines
 ******************************************************************************/
 
 void
@@ -185,6 +186,47 @@ ps_device_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   x[1]= x2; y[1]= y2;
   x[2]= x3; y[2]= y3;
   polygon (x, y);
+}
+
+void
+ps_device_rep::set_background_pattern (tree pat) {
+  pattern= pat;
+  if (is_atomic (pattern))
+    set_background (current_display () -> get_color (pat->label));
+  else if (is_func (pattern, PATTERN, 5))
+    set_background (current_display () -> get_color (as_string (pattern[4])));
+}
+
+bool is_percentage (tree t);
+double as_percentage (tree t);
+
+void
+ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
+  if (is_atomic (pattern))
+    clear (x1, y1, x2, y2);
+  else if (is_func (pattern, PATTERN)) {
+    SI cx1, cy1, cx2, cy2;
+    get_clipping (cx1, cy1, cx2, cy2);
+    extra_clipping (x1, y1, x2, y2);
+    url u= as_string (pattern[0]);
+    SI w= x2 - x1, h= y2 - y1;
+    if (is_int (pattern[1])) w= as_int (pattern[1]);
+    else if (is_percentage (pattern[1]))
+      w= (SI) (as_percentage (pattern[1]) * ((double) w));
+    if (is_int (pattern[2])) h= as_int (pattern[2]);
+    else if (is_percentage (pattern[2]))
+      h= (SI) (as_percentage (pattern[2]) * ((double) h));
+    SI sx= is_percentage (pattern[1])? 0: ox;
+    SI sy= is_percentage (pattern[2])? 0: oy;
+    for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
+      for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
+	SI X1= i*w     - sx, Y1= j*h     - sy;
+	SI X2= (i+1)*w - sx, Y2= (j+1)*h - sy;
+	if (X1 < x2 && X2 > x1 && Y1 < y2 && Y2 > y1)
+	  image (u, w, h, X1, Y1, 0.0, 0.0, 1.0, 1.0);
+      }
+    set_clipping (cx1, cy1, cx2, cy2, true);
+  }
 }
 
 #undef RND

@@ -293,6 +293,8 @@ private:
   tree exec_set_binding (tree t);
   tree exec_get_binding (tree t);
 
+  tree exec_pattern (tree t);
+
   tree exec_point (tree t);
   tree exec_box_info (tree t);
   tree exec_frame_direct (tree t);

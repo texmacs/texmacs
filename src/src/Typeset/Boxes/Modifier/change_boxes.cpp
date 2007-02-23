@@ -351,9 +351,10 @@ public:
 
 struct highlight_box_rep: public change_box_rep {
   SI w, xpad, ypad;
-  color bg, sun, shad, old_bg;
+  tree bg;
+  color sun, shad, old_bg;
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
-		     color bg, color sun, color shad);
+		     tree bg, color sun, color shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
@@ -361,7 +362,7 @@ struct highlight_box_rep: public change_box_rep {
 };
 
 highlight_box_rep::highlight_box_rep (
-  path ip, box b, SI w2, SI xp2, SI yp2, color bg2, color sun2, color shad2):
+  path ip, box b, SI w2, SI xp2, SI yp2, tree bg2, color sun2, color shad2):
   change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
   bg (bg2), sun (sun2), shad (shad2)
 {
@@ -381,8 +382,14 @@ highlight_box_rep::highlight_box_rep (
 void
 highlight_box_rep::pre_display (ps_device& dev) {
   old_bg= dev->get_background ();
-  dev->set_background (bg);
-  dev->clear (x1, y1, x2, y2);
+  //dev->set_background (bg);
+  dev->set_background_pattern (bg);
+  SI W= w;
+  if (!dev->is_printer ()) {
+    SI pixel= dev->pixel;
+    W= ((w + pixel - 1) / pixel) * pixel;
+  }
+  dev->clear_pattern (x1+W, y1+W, x2-W, y2-W);
 }
 
 void
@@ -395,8 +402,7 @@ highlight_box_rep::display (ps_device dev) {
   SI W= w;
   if (!dev->is_printer ()) {
     SI pixel= dev->pixel;
-    W= ((w + pixel/2) / pixel) * pixel;
-    if (w>0 && W==0) W= pixel;
+    W= ((w + pixel - 1) / pixel) * pixel;
   }
   dev->set_color (sun);
   dev->fill (x1  , y2-W, x2  , y2  );
@@ -585,7 +591,7 @@ remember_box (path ip, box b) {
 
 box
 highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
-	       color bg, color sun, color shad) {
+	       tree bg, color sun, color shad) {
   return new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
 }
 

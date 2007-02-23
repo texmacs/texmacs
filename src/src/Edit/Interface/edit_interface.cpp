@@ -289,7 +289,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
     int new_mode= DRD_ACCESS_NORMAL;
     if (get_init_string (MODE) == "src") new_mode= DRD_ACCESS_SOURCE;
     int old_mode= set_access_mode (new_mode);
-    if (is_accessible_cursor (et, p) || in_source ()) {
+    tree st= subtree (et, p);
+    if (is_accessible_cursor (et, p * right_index (st)) || in_source ()) {
       bool right;
       path p1= p * 0, p2= p * 1, q1, q2;
       if (is_script (subtree (et, p), right)) {
