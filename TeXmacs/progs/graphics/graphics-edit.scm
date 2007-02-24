@@ -85,6 +85,12 @@
     `(text-at "" (point ,x ,y))))
 
 ;; Basic operations (add point)
+(define (object_set-point xcur ycur obj no)
+ ;(display* "obj=" obj "\n")
+  (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
+      (with l (list-tail (cdr obj) no)
+	(set-car! l `(point ,xcur ,ycur)))))
+
 (define (object_add-point xcur ycur x y obj no dirn)
   ;;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
@@ -139,7 +145,10 @@
 	(if (and leftclick-waiting
 		 (points-dist<
 		   previous-leftclick `(point ,x ,y) moveclick-tolerance))
-	    (object_commit x y obj)
+	    (begin
+	       (object_set-point
+		  (cadr previous-leftclick) (caddr previous-leftclick) obj no)
+	       (object_commit x y obj))
 	    (begin
 	       (set-message "Another left click to finish" "")
 	       (set! leftclick-waiting #t)))
