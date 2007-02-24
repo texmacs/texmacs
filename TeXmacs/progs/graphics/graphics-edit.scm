@@ -85,23 +85,27 @@
     `(text-at "" (point ,x ,y))))
 
 ;; Basic operations (add point)
-(define (object_add-point x y obj no)
-  ;(display* "obj " obj "\n")
+(define (object_add-point xcur ycur x y obj no dirn)
+  ;;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
-	(graphics-store-state #f)
-	(if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
-	    (begin
-	      (set-cdr! l (cons (car l) (cdr l)))
-	      (set-car! l `(point ,x ,y))
-	      (create-graphical-object obj 'active 'object-and-points no)
-	      (set! current-point-no no))
-	    (begin
-	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
-	      (create-graphical-object obj 'active 'object-and-points (+ no 1))
-	      (set! current-point-no (+ no 1))))
-	(set! current-edge-sel? #t)
-	(set! sticky-point #t))))
+  	(graphics-store-state #f)
+ 	(if dirn
+ 	    (begin
+ 	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
+ 	      (if (and xcur ycur)
+ 		  (set-car! l `(point ,xcur ,ycur)))
+ 	      (create-graphical-object obj 'active 'object-and-points (+ no 1))
+ 	      (set! current-point-no (+ no 1)))
+  	    (begin
+  	      (set-cdr! l (cons (car l) (cdr l)))
+  	      (set-car! l `(point ,x ,y))
+ 	      (if (and xcur ycur)
+ 		  (set-car! (cdr l) `(point ,xcur ,ycur)))
+  	      (create-graphical-object obj 'active 'object-and-points no)
+ 	      (set! current-point-no no)))
+  	(set! current-edge-sel? #t)
+  	(set! sticky-point #t))))
 
 ;; Basic operations (commit)
 (define (object_commit x y obj)
@@ -158,8 +162,8 @@
         (set! previous-leftclick  `(point ,x ,y))
 	(if (and edge (not (and (in? (car obj) '(arc carc))
 				(> (length obj) 3))))
-	  (object_add-point x y
-	    (cadr (graphical-object #t)) no))
+	  (object_add-point #f #f x y
+	    (cadr (graphical-object #t)) no #t))
 	(graphics-store-state #f))))
 
 (define (text-at_left-button x y p obj no edge)
@@ -185,7 +189,9 @@
 	     ;(display* "x(2)=" x "\n")
 	     ;(display* "y(2)=" y "\n\n")
 	     (set! leftclick-waiting #f)
-	     (object_add-point x y obj no))
+	     (object_add-point
+	       (cadr previous-leftclick) (caddr previous-leftclick)
+	       x y obj no (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
 	  (begin
 	     (if leftclick-waiting
 		 (set-message "Another left click to finish" "")
