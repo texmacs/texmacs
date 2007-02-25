@@ -45,9 +45,10 @@ public:
   color black, white, red, green, blue;
   color yellow, magenta, orange, brown, pink;
   color light_grey, grey, dark_grey;
-  virtual color get_color (string s) = 0;
-  virtual color rgb (int r, int g, int b) = 0;
-  virtual void  get_rgb (color col, int& r, int& g, int& b) = 0;
+  virtual color  get_color (string s) = 0;
+  virtual color  rgb (int r, int g, int b) = 0;
+  virtual void   get_rgb (color col, int& r, int& g, int& b) = 0;
+  virtual string get_name (color c) = 0;
 
   /* language support */
   string  out_lan;

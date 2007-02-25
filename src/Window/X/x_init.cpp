@@ -163,6 +163,16 @@ x_display_rep::get_color (string s) {
   return black;
 }
 
+string
+x_display_rep::get_name (color c) {
+  SI r, g, b;
+  get_rgb (c, r, g, b);
+  return "#" *
+    as_hexadecimal (r, 2) *
+    as_hexadecimal (g, 2) *
+    as_hexadecimal (b, 2);
+}
+
 void
 x_display_rep::initialize_colors () {
   if (depth >= 16) {

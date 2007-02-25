@@ -129,13 +129,14 @@ public:
   ~x_display_rep ();
 
   /****************************** Color **************************************/
-  int   alloc_color (int r, int g, int b);
-  void  init_color_map ();
-  void  initialize_colors ();
-  void  prepare_color (int sfactor, color fg, color bg);
-  color get_color (string s);
-  color rgb (int r, int g, int b);
-  void  get_rgb (color col, int& r, int& g, int& b);
+  int    alloc_color (int r, int g, int b);
+  void   init_color_map ();
+  void   initialize_colors ();
+  void   prepare_color (int sfactor, color fg, color bg);
+  color  get_color (string s);
+  color  rgb (int r, int g, int b);
+  void   get_rgb (color col, int& r, int& g, int& b);
+  string get_name (color c);
 
   /****************************** Keyboard ***********************************/
   void initialize_input_method ();

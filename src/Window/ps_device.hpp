@@ -38,7 +38,7 @@ public:
   int pixel;                // PIXEL*sfactor
   int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
   ps_device master;         // master device in case of shadow devices
-  //tree pattern;             // current background pattern
+  tree pattern;             // current background pattern
 
 public:
   ps_device_rep ();
@@ -74,6 +74,7 @@ public:
   virtual color get_color () = 0;
   virtual color get_color (string s) = 0;
   virtual color get_background () = 0;
+  virtual tree  get_background_pattern ();
 
   /* main graphical routines */
   virtual void set_color (color c) = 0;

@@ -387,8 +387,8 @@ x_display_rep::translate (string s, string from, string to) {
 window (*get_current_window) (void)= NULL; // FIXME: dirty hack
 
 // Definitions from X11/cursorfont.h
-static
-int fetch_X11_cursor_no (string name) {
+static int
+fetch_X11_cursor_no (string name) {
   string pref= name(0,3);
   if (pref!="XC_") return -1;
   name= name (3,N(name));
@@ -527,10 +527,10 @@ void
 x_display_rep::set_pointer (string curs_name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
   if (mask_name=="") mask_name= curs_name;
-  x_drawable_rep dra= x_drawable_rep (this);
-  dra.xpm_initialize (curs_name);
-  if (mask_name!=curs_name) dra.xpm_initialize (mask_name);
-  dra.~x_drawable_rep ();
+  x_drawable_rep* dra= new x_drawable_rep (this);
+  dra->xpm_initialize (curs_name);
+  if (mask_name!=curs_name) dra->xpm_initialize (mask_name);
+  delete dra;
   Pixmap curs= (Pixmap) xpm_bitmap [curs_name];
   Pixmap mask= (Pixmap) xpm_bitmap [mask_name];
 

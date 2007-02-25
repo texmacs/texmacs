@@ -735,12 +735,12 @@ table_rep::finish () {
   SI    y2= tb->y2;
   color fg= env->col;
   b= cell_box (tb->ip, tb, 0, 0, x1, y1, x2, y2,
-	       lborder, rborder, bborder, tborder, fg, fg, true);
+	       lborder, rborder, bborder, tborder, fg, "");
   SI Lsep= lsep+lborder, Rsep= rsep+rborder;
   SI Bsep= bsep+bborder, Tsep= tsep+tborder;
   if ((Lsep != 0) || (Rsep != 0) || (Bsep != 0) || (Tsep != 0))
     b= cell_box (b->ip, b, Lsep, 0, x1, y1-Bsep, x2+Lsep+Rsep, y2+Tsep,
-		 0, 0, 0, 0, fg, fg, true);
+		 0, 0, 0, 0, fg, "");
 }
 
 array<box>
@@ -779,12 +779,12 @@ table_rep::var_finish () {
     SI    y2= tb->y2 + TB;
     color fg= env->col;
     b= cell_box (tb->ip, tb, 0, 0, x1, y1, x2, y2,
-		 lborder, rborder, BB, TB, fg, fg, true);
+		 lborder, rborder, BB, TB, fg, "");
     SI Lsep= lsep+lborder, Rsep= rsep+rborder;
     SI Bsep= BS+BB, Tsep= TS+TB;
     if ((Lsep != 0) || (Rsep != 0) || (Bsep != 0) || (Tsep != 0))
       b= cell_box (b->ip, b, Lsep, 0, x1, y1-Bsep, x2+Lsep+Rsep, y2+Tsep,
-		   0, 0, 0, 0, fg, fg, true);
+		   0, 0, 0, 0, fg, "");
     stack << b;
   }
   return stack;

@@ -19,8 +19,8 @@ class window_rep: virtual public ps_device_rep {
 public:
   display dis;
 
-  inline window_rep (display dis);
-  inline virtual ~window_rep ();
+  inline window_rep (display dis2): dis (dis2) {}
+  inline virtual ~window_rep () {}
 
   virtual void set_name (string name) = 0;
   virtual void map () = 0;
@@ -38,9 +38,6 @@ public:
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual bool repainted () = 0;
 };
-
-inline window_rep::window_rep (display dis2): dis (dis2) {}
-inline window_rep::~window_rep () {}
 
 window plain_window (widget w, char* name, SI ww=0, SI hh=0, SI x=0, SI y=0);
 window popup_window (widget w, SI x, SI y);
