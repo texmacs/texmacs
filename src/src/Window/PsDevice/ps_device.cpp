@@ -19,7 +19,8 @@
 
 ps_device_rep::ps_device_rep ():
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
-  sfactor (1), pixel (PIXEL), thicken (0), master (NULL) {}
+  sfactor (1), pixel (PIXEL), thicken (0),
+  master (NULL), pattern (UNINIT) {}
 
 ps_device_rep::~ps_device_rep () {}
 
@@ -190,13 +191,23 @@ ps_device_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
 
 void
 ps_device_rep::set_background_pattern (tree pat) {
-  /*
   pattern= pat;
-  if (is_atomic (pattern))
+  if (pattern == "");
+  else if (is_atomic (pattern))
     set_background (current_display () -> get_color (pat->label));
-  else if (is_func (pattern, PATTERN, 5))
-    set_background (current_display () -> get_color (as_string (pattern[4])));
-  */
+  else if (is_func (pattern, PATTERN, 4))
+    set_background (current_display () -> get_color (as_string (pattern[3])));
+}
+
+tree
+ps_device_rep::get_background_pattern () {
+  if (is_atomic (pattern) || is_func (pattern, PATTERN, 4)) return pattern;
+  else {
+    tree s= current_display () -> get_name (get_background ());
+    if (is_func (pattern, PATTERN, 3))
+      return pattern * tree (PATTERN, s);
+    else return s;
+  }
 }
 
 bool is_percentage (tree t);
@@ -204,8 +215,8 @@ double as_percentage (tree t);
 
 void
 ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
-  /*
-  if (is_atomic (pattern))
+  if (pattern == "");
+  else if (is_atomic (pattern))
     clear (x1, y1, x2, y2);
   else if (is_func (pattern, PATTERN)) {
     SI cx1, cy1, cx2, cy2;
@@ -219,8 +230,8 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
     if (is_int (pattern[2])) h= as_int (pattern[2]);
     else if (is_percentage (pattern[2]))
       h= (SI) (as_percentage (pattern[2]) * ((double) h));
-    SI sx= is_percentage (pattern[1])? 0: ox;
-    SI sy= is_percentage (pattern[2])? 0: oy;
+    SI sx= 0; //is_percentage (pattern[1])? 0: ox;
+    SI sy= 0; //is_percentage (pattern[2])? 0: oy;
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
       for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
 	SI X1= i*w     - sx, Y1= j*h     - sy;
@@ -230,7 +241,6 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
       }
     set_clipping (cx1, cy1, cx2, cy2, true);
   }
-  */
 }
 
 #undef RND

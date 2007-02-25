@@ -129,7 +129,7 @@ cell_rep::format_cell (tree fm) {
     decoration= env->exec (var[CELL_DECORATION]);
   else decoration= "";
   if (var->contains (CELL_BACKGROUND)) {
-    bg= as_string (env->exec (var[CELL_BACKGROUND]));
+    bg= env->exec (var[CELL_BACKGROUND]);
     if (bg == "foreground") bg= env->get_string (COLOR);
   }
   else bg= "";
@@ -360,9 +360,7 @@ cell_rep::finish () {
   }
 
   color fc= env->col;
-  bool   tr= (bg == "");
-  color  bc= env->dis->get_color (tr? env->get_string (BG_COLOR): bg);
 
   b= cell_box (ip, b, xoff, yoff, 0, 0, x2-x1, y2-y1,
-	       lborder, rborder, bborder, tborder, fc, bc, tr);
+	       lborder, rborder, bborder, tborder, fc, bg);
 }

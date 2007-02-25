@@ -242,10 +242,10 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
 
 struct cell_box_rep: public change_box_rep {
   SI    bl, br, bb, bt;
-  color fg, bg, old_bg;
-  bool  transp;
+  color fg;
+  tree  bg, old_bg;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-		SI bl, SI br, SI bb, SI bt, color fg, color bg, bool transp);
+		SI bl, SI br, SI bb, SI bt, color fg, tree bg);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
@@ -254,16 +254,16 @@ struct cell_box_rep: public change_box_rep {
 
 cell_box_rep::cell_box_rep (
   path ip, box b, SI X0, SI Y0, SI X1, SI Y1, SI X2, SI Y2,
-  SI Bl, SI Br, SI Bb, SI Bt, color Fg, color Bg, bool Transp):
+  SI Bl, SI Br, SI Bb, SI Bt, color Fg, tree Bg):
   change_box_rep (ip, false),
   bl (Bl<<1), br (Br<<1), bb (Bb<<1), bt (Bt<<1),
-  fg (Fg), bg (Bg), transp (Transp)
+  fg (Fg), bg (Bg)
 {
   insert (b, X0, Y0);
   position ();
   x1= X1; y1= Y1;
   x2= X2; y2= Y2;
-  if ((!transp) || (bl>0) || (br>0) || (bb>0) || (bt>0)) {
+  if ((bg != "") || (bl>0) || (br>0) || (bb>0) || (bt>0)) {
     // the 4*PIXEL extra space is sufficient for (shrinking factor) <= 8
     x3= min (x3, x1 - (bl>>1) - (bl>0? PIXEL<<2: 0));
     y3= min (y3, y1 - (bb>>1) - (bb>0? PIXEL<<2: 0));
@@ -275,16 +275,16 @@ cell_box_rep::cell_box_rep (
 
 void
 cell_box_rep::pre_display (ps_device& dev) {
-  if (transp) return;
-  old_bg= dev->get_background ();
-  dev->set_background (bg);
-  dev->clear (x1, y1, x2, y2);
+  if (bg == "") return;
+  old_bg= dev->get_background_pattern ();
+  dev->set_background_pattern (bg);
+  dev->clear_pattern (x1, y1, x2, y2);
 }
 
 void
 cell_box_rep::post_display (ps_device &dev) {
-  if (transp) return;
-  dev->set_background (old_bg);
+  if (bg == "") return;
+  dev->set_background_pattern (old_bg);
 }
 
 void
@@ -351,8 +351,8 @@ public:
 
 struct highlight_box_rep: public change_box_rep {
   SI w, xpad, ypad;
-  tree bg;
-  color sun, shad, old_bg;
+  tree bg, old_bg;
+  color sun, shad;
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
 		     tree bg, color sun, color shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
@@ -381,8 +381,7 @@ highlight_box_rep::highlight_box_rep (
 
 void
 highlight_box_rep::pre_display (ps_device& dev) {
-  old_bg= dev->get_background ();
-  //dev->set_background (bg);
+  old_bg= dev->get_background_pattern ();
   dev->set_background_pattern (bg);
   SI W= w;
   if (!dev->is_printer ()) {
@@ -394,7 +393,7 @@ highlight_box_rep::pre_display (ps_device& dev) {
 
 void
 highlight_box_rep::post_display (ps_device &dev) {
-  dev->set_background (old_bg);
+  dev->set_background_pattern (old_bg);
 }
 
 void
@@ -577,10 +576,10 @@ repeat_box (path ip, box ref, box repeat, SI xoff) {
 
 box
 cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-	  SI bl, SI br, SI bb, SI bt, color fg, color bg, bool trp)
+	  SI bl, SI br, SI bb, SI bt, color fg, tree bg)
 {
   box cb= new cell_box_rep (ip, b, x0, y0, x1, y1, x2, y2,
-			    bl, br, bb, bt, fg, bg, trp);
+			    bl, br, bb, bt, fg, bg);
   return cb;
 }
 

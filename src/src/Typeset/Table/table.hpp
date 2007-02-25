@@ -114,7 +114,7 @@ public:
   SI       shift;             // shift when tables may be hyphenated
 
   tree     decoration;        // decoration
-  string   bg;                // background color
+  tree     bg;                // background color or pattern
   bool     orientation;       // portrait or landscape
   SI       width;             // the width of the cell
   SI       height;            // the height of the cell
