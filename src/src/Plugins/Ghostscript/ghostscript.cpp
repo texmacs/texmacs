@@ -66,18 +66,21 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
 {
   if (DEBUG_VERBOSE)
     cout << "TeXmacs] Running ghostscript " << image << "\n";
-  //cout << "WH : " << w << ", " << h << "\n";
 
   int bx1, by1, bx2, by2;
   ps_bounding_box (image, bx1, by1, bx2, by2);
-  //cout << "BB: " << bx1 << ", " << by1 << ", " << bx2 << ", " << by2 << "\n";
   int x1= bx1 + as_int (cx1 * (bx2 - bx1));
   int y1= by1 + as_int (cy1 * (by2 - by1));
   int x2= bx1 + as_int (cx2 * (bx2 - bx1));
   int y2= by1 + as_int (cy2 * (by2 - by1));
+  // FIXME: this dirty hack is needed as a correction for the rendering
+  // of patterns with a non-entire width or height. Without the hack,
+  // white lines may appear at the borders of the patterns.
+  // However the hack also causes normal images to be rendered
+  // slightly incorrectly
   if (x1+1 < x2) x1++;
   if (y1+1 < y2) y1++;
-  //cout << "SB: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";
+  // End dirty hack
 
   if (ghostscript_bugged ()) {
     int scr  = DefaultScreen (dpy);
@@ -96,7 +99,6 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   Atom st= XA_STRING;
   double dpi_x= ((double) (w*72))/((double) (x2-x1));
   double dpi_y= ((double) (h*72))/((double) (y2-y1));
-  //cout << "DPI: " << dpi_x << ", " << dpi_y << "\n";
   string data=
     (ghostscript_bugged ()? as_string (pix_id): string ("0")) * " 0 " *
     as_string (x1) * " " * as_string (y1) * " " *
