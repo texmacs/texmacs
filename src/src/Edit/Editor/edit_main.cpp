@@ -194,10 +194,10 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   ps_device dev=
     printer (dis, name, dpi, pages, page_type, landsc, w/cm, h/cm);
   for (i=start; i<end; i++) {
-    string col_name= env->get_string (BG_COLOR);
-    dev->set_background (dis->get_color (col_name));
-    if (col_name != "white")
-      dev->clear (0, (SI) -h, (SI) w, 0);
+    tree bg= env->read (BG_COLOR);
+    dev->set_background_pattern (bg);
+    if (bg != "white")
+      dev->clear_pattern (0, (SI) -h, (SI) w, 0);
 
     rectangles rs;
     the_box[0]->sx(i)= 0;

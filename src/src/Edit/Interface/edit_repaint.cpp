@@ -13,7 +13,7 @@
 #include "Interface/edit_interface.hpp"
 
 extern int nr_painted;
-extern void clear_rectangles (ps_device dev, rectangles l);
+extern void clear_pattern_rectangles (ps_device dev, rectangles l);
 
 /******************************************************************************
 * repainting the window
@@ -23,8 +23,8 @@ void
 edit_interface_rep::draw_text (ps_device dev, rectangles& l) {
   nr_painted=0;
   bool tp_found= false;
-  string bg= get_init_string (BG_COLOR);
-  dev->set_background (dis->get_color (bg));
+  tree bg= get_init_value (BG_COLOR);
+  dev->set_background_pattern (bg);
   refresh_needed= do_animate;
   refresh_next  = next_animate;
   eb->redraw (dev, eb->find_box_path (tp, tp_found), l);
@@ -90,10 +90,10 @@ edit_interface_rep::draw_surround (ps_device dev, rectangle r) {
   dev->set_background (dis->light_grey);
   string medium= get_init_string (PAGE_MEDIUM);
   if ((medium == "papyrus") || (medium == "paper"))
-    dev->clear (max (eb->x2, r->x1), r->y1,
-		r->x2, min (eb->y2+ 2*pixel, r->y2));
+    dev->clear_pattern (max (eb->x2, r->x1), r->y1,
+			r->x2, min (eb->y2+ 2*pixel, r->y2));
   else if (medium == "paper")
-    dev->clear (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
+    dev->clear_pattern (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
 }
 
 void
@@ -168,9 +168,9 @@ edit_interface_rep::draw_graphics (ps_device dev) {
 void
 edit_interface_rep::draw_pre (ps_device dev, rectangle r) {
   // draw surroundings
-  string bg= get_init_string (BG_COLOR);
-  dev->set_background (dis->get_color (bg));
-  clear_rectangles (dev, rectangles (translate (r, dev->ox, dev->oy)));
+  tree bg= get_init_value (BG_COLOR);
+  dev->set_background_pattern (bg);
+  clear_pattern_rectangles (dev, rectangles (translate (r, dev->ox, dev->oy)));
   draw_surround (dev, r);
 
   // predraw cursor
@@ -288,10 +288,10 @@ edit_interface_rep::handle_clear (clear_event ev) {
   SI x1= ev->x1 * sfactor, y1= ev->y1 * sfactor;
   SI x2= ev->x2 * sfactor, y2= ev->y2 * sfactor;
   win->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BG_COLOR);
-  win->set_background (dis->get_color (bg));
-  win->clear (max (eb->x1, x1), max (eb->y1, y1),
-	      min (eb->x2, x2), min (eb->y2, y2));
+  tree bg= get_init_value (BG_COLOR);
+  win->set_background_pattern (bg);
+  win->clear_pattern (max (eb->x1, x1), max (eb->y1, y1),
+		      min (eb->x2, x2), min (eb->y2, y2));
   draw_surround (win, rectangle (x1, y1, x2, y2));
   win->set_shrinking_factor (1);
 }

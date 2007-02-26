@@ -23,22 +23,6 @@
 
   <\active*>
     <\src-comment>
-      Environment variables for buttons
-    </src-comment>
-  </active*>
-
-  <assign|button-shape|square>
-
-  <assign|button-color|light grey>
-
-  <assign|box-shape|circular>
-
-  <assign|box-color|pastel blue>
-
-  <assign|marker-shape|checked>
-
-  <\active*>
-    <\src-comment>
       Input fields
     </src-comment>
   </active*>

@@ -424,8 +424,11 @@ x_drawable_rep::image (
     pm= XCreatePixmap (dis->dpy, gs_win, w, h, dis->depth);
     if (imlib2_supports (u))
       imlib2_display (dpy, pm, u, w, h, cx1, cy1, cx2, cy2);
-    else
+    else {
+      //XSetForeground (dpy, gc, dis->white);
+      //XFillRectangle (dpy, pm, gc, 0, 0, w, h);
       ghostscript_run (dpy, gs_win, pm, u, w, h, cx1, cy1, cx2, cy2);
+    }
 
     // caching
     if (N(cache_image_nr) == 0) cache_image_last_gc= texmacs_time ();
