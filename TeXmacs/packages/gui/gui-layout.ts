@@ -23,32 +23,6 @@
 
   <\active*>
     <\src-comment>
-      Environment variables for GUI layout
-    </src-comment>
-  </active*>
-
-  <assign|gui-small-sep|0.25em>
-
-  <assign|gui-med-sep|0.5em>
-
-  <assign|gui-big-sep|0.75em>
-
-  <assign|raised-color|light grey>
-
-  <assign|lowered-color|#e0e0e0>
-
-  <assign|bright-color|<pattern|crinkle-paper.png||>>
-
-  <assign|bright-color|#f0f0f0>
-
-  <assign|sunny-color|white>
-
-  <assign|shadow-color|grey>
-
-  <assign|short-width|0em>
-
-  <\active*>
-    <\src-comment>
       Tables
     </src-comment>
   </active*>

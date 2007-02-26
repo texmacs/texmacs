@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.6.9>
 
 <style|source>
 
@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|gui-widget|gui-layout|gui-form>
+  <use-package|gui-widget|gui-metal|gui-layout|gui-form>
 
   \;
 </body>

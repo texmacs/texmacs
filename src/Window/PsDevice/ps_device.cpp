@@ -219,6 +219,9 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
   else if (is_atomic (pattern))
     clear (x1, y1, x2, y2);
   else if (is_func (pattern, PATTERN)) {
+    outer_round (x1, y1, x2, y2);
+    //cout << "A: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";
+    //cout << "A: " << x/pixel1 << ", " << y1 << ", " << x2 << ", " << y2 << "\n";
     SI cx1, cy1, cx2, cy2;
     get_clipping (cx1, cy1, cx2, cy2);
     extra_clipping (x1, y1, x2, y2);
@@ -230,6 +233,8 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
     if (is_int (pattern[2])) h= as_int (pattern[2]);
     else if (is_percentage (pattern[2]))
       h= (SI) (as_percentage (pattern[2]) * ((double) h));
+    w= ((w + pixel - 1) / pixel) * pixel;
+    h= ((h + pixel - 1) / pixel) * pixel;
     SI sx= 0; //is_percentage (pattern[1])? 0: ox;
     SI sy= 0; //is_percentage (pattern[2])? 0: oy;
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
@@ -241,6 +246,7 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
       }
     set_clipping (cx1, cy1, cx2, cy2, true);
   }
+  else clear (x1, y1, x2, y2);
 }
 
 #undef RND
