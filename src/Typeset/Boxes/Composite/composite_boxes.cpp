@@ -235,6 +235,10 @@ composite_box_rep::find_rip () {
 
 path
 composite_box_rep::find_box_path (path p, bool& found) {
+  // cout << "Find box path " << box (this) << ", " << p
+  //      << "; " << reverse (ip)
+  //      << ", " << reverse (find_lip ())
+  //      << " -- " << reverse (find_rip ()) << "\n";
   int n= subnr();
   // cout << "Search cursor " << p << " among " << n
   //      << " at " << box (this) << " " << reverse (ip) << "\n";
