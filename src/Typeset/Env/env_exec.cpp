@@ -930,10 +930,10 @@ edit_env_rep::exec_plus_minus (tree t) {
 }
 
 bool
-is_percentage (tree t) {
+is_percentage (tree t, string s= "%") {
   return
     is_atomic (t) &&
-    ends (t->label, "%") &&
+    ends (t->label, s) &&
     is_double (t->label (0, N (t->label) - 1));
 }
 
@@ -1478,15 +1478,15 @@ edit_env_rep::exec_pattern (tree t) {
   else if (is_magnification (h))
     h= as_string ((SI) (get_magnification (h) * ((double) imh)));
   if (w == "" && h != "") {
-    if (is_int (h)) w= (SI) ((as_double (h) * imw) / imh);
+    if (is_int (h)) w= as_string ((SI) ((as_double (h) * imw) / imh));
     else if (is_percentage (h))
-      w= as_string ((as_percentage (h) * imw) / imh) * "%";
+      w= as_string (100.0 * (as_percentage (h) * imw) / imh) * "@";
     else return "white";
   }
   else if (h == "" && w != "") {
-    if (is_int (w)) h= (SI) ((as_double (w) * imh) / imw);
+    if (is_int (w)) h= as_string ((SI) ((as_double (w) * imh) / imw));
     else if (is_percentage (w))
-      h= as_string ((as_percentage (w) * imh) / imw) * "%";
+      h= as_string (100.0 * (as_percentage (w) * imh) / imw) * "@";
     else return "white";
   }
   else if (w == "" && h == "") {

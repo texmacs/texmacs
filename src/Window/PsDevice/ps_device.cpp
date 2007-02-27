@@ -210,7 +210,7 @@ ps_device_rep::get_background_pattern () {
   }
 }
 
-bool is_percentage (tree t);
+bool is_percentage (tree t, string s= "%");
 double as_percentage (tree t);
 
 void
@@ -230,9 +230,13 @@ ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
     if (is_int (pattern[1])) w= as_int (pattern[1]);
     else if (is_percentage (pattern[1]))
       w= (SI) (as_percentage (pattern[1]) * ((double) w));
+    else if (is_percentage (pattern[1], "@"))
+      w= (SI) (as_percentage (pattern[1]) * ((double) h));
     if (is_int (pattern[2])) h= as_int (pattern[2]);
     else if (is_percentage (pattern[2]))
       h= (SI) (as_percentage (pattern[2]) * ((double) h));
+    else if (is_percentage (pattern[2], "@"))
+      h= (SI) (as_percentage (pattern[2]) * ((double) w));
     w= ((w + pixel - 1) / pixel) * pixel;
     h= ((h + pixel - 1) / pixel) * pixel;
     SI sx= 0; //is_percentage (pattern[1])? 0: ox;
