@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.6.9>
 
 <style|tmweb>
 
@@ -71,6 +71,8 @@
       <item><hlink|How can I insert an OpenOffice.org table|#usage-3>?
 
       <item><hlink|How can I insert the number of pages|#usage-4>?
+
+      <item><hlink|How can I resize an image|#usage-5>?
     </itemize-minus>
 
     <item>Microtypography
@@ -396,6 +398,22 @@
 
   <answer| Put a label on the last page of your document and use the
   <verbatim|pageref> primitive in order to produce the corresponding number.>
+
+  <\question>
+    <label|usage-5>How can I resize an image?
+  </question>
+
+  <\answer>
+    Put your cursor right behind the image and press <key|backspace>. You
+    will see the name of the image, followed by six other fields. The two
+    fields after the name of the image are respectively its width and its
+    height. You may for instance set the width to <verbatim|5cm> and the
+    height to <verbatim|27mm>. When leaving the width open, it will
+    automatically be determined as a function of the height (and vice versa).
+    When leaving both fields open, the image will be reproduced at its
+    original size. Notice that a width of <verbatim|1par> will span your
+    image over the paragraph width.
+  </answer>
 
   <section*|Microtypography>
 
