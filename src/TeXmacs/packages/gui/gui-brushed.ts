@@ -51,6 +51,8 @@
     </src-comment>
   </active*>
 
+  <assign|bg-color|<pattern|ridged-brushed-light.png|/2|/2|light grey>>
+
   <assign|bg-color|<pattern|ridged-brushed-light.png|65px|65px|light grey>>
 
   <assign|canvas-color|<pattern|paper-ridged-bright.png|/2|/2|light grey>>

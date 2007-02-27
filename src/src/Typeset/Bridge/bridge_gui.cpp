@@ -13,6 +13,7 @@
 #include "bridge.hpp"
 #include "analyze.hpp"
 #include "Concat/canvas_properties.hpp"
+#include "Line/lazy_paragraph.hpp"
 
 /******************************************************************************
 * Abstract bridge for ornaments
@@ -171,20 +172,27 @@ bridge_ornamented_rep::typeset_ornament (int desired_status) {
   }
   array<page_item> l2;
   stack_border sb2;
+  array<line_item> a2, b2;
   ttt->local_start (l2, sb2);
+  a2= ttt->a; b2= ttt->b;
+  ttt->a= array<line_item> (); ttt->b= array<line_item> ();
   body->typeset (desired_status);
+  ttt->a= a2; ttt->b= b2;
   ttt->local_end (l2, sb2);
   for (i-=2; i>=0; i-=2)
     env->write_update (with[i]->label, old[i+1]);
-  return make_ornament_body (ip, l2);
+  box ob= make_ornament_body (ip, l2);
+  return ob;
 }
 
 void
 bridge_ornamented_rep::insert_ornament (box b) {
-  ttt->insert_marker (st, ip);
-  array<page_item> l2= array<page_item> (1);
-  l2[0]= page_item (b);
-  ttt->insert_stack (l2, stack_border ());
+  lazy_paragraph par (env, ip);
+  par->a= copy (ttt->a);
+  par->a << line_item (STD_ITEM, b, HYPH_INVALID);
+  par->a << ttt->b;
+  par->format_paragraph ();
+  ttt->insert_stack (par->sss->l, par->sss->sb);
 }
 
 /******************************************************************************

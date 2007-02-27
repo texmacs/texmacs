@@ -118,6 +118,10 @@ box_rep::find_right_box_path () {
 
 path
 box_rep::find_box_path (path p, bool& found) {
+  // cout << "Find box path " << box (this) << ", " << p
+  //      << "; " << reverse (ip)
+  //      << ", " << reverse (find_lip ())
+  //      << " -- " << reverse (find_rip ()) << "\n";
   found= (!nil(p)) && is_accessible (ip);
   if (last_item (p) == 0) return path (0);
   else return path (1);
