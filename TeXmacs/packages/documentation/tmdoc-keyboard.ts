@@ -24,7 +24,7 @@
   <assign|key|<macro|x|<active*|<move|<with|font-size|<times|<value|font-size>|0.92>|<block|<tformat|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|broken
   white>|<table|<row|<cell|<with|font-family|tt|<inactive*|<arg|x>>>>>>>>>||0.05fn>>>>
 
-  <assign|key|<macro|x|<active*|<move|<small|<with|font-family|tt|<highlight|2ln|2ln|2ln|#e0e0e0|#f0f0f0|#c0c0c0|<vcorrect|<arg|x>>>>>||0.075ex>>>>
+  <assign|key|<macro|x|<active*|<move|<small|<with|font-family|tt|<with|ornament-color|#e0e0e0|ornament-sunny-color|#f0f0f0|ornament-shadow-color|#c0c0c0|ornament-hpadding|2ln|ornament-vpadding|2ln|ornament-border|2ln|<ornament|<vcorrect|<arg|x>>>>>>||0.075ex>>>>
 
   \;
 
