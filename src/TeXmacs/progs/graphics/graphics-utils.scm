@@ -122,6 +122,23 @@
 ;;TODO: Extend (foreach-cons) for recursively traversing tree nodes.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other utility routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (string-number=? s1 s2)
+  (and (string? s1) (string? s2)
+       (let* ((i1 (string->float s1))
+	      (i2 (string->float s2)))
+	 (and i1 i2 (== i1 i2)))))
+
+(tm-define (string-symbol=? s1 s2)
+  (if (symbol? s1)
+      (set! s1 (symbol->string s1)))
+  (if (symbol? s2)
+      (set! s2 (symbol->string s2)))
+  (== s1 s2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for accessing trees & managing listprops
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -325,5 +325,6 @@ edit_interface_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI     x   = ev->x*sfactor;
   SI     y   = ev->y*sfactor;
+  cout << type << " (" << x << ", " << y << ") at " << ev->t << "\n";
   mouse_any (type, x, y, ev->t);
 }
