@@ -150,7 +150,7 @@
 		  (cadr previous-leftclick) (caddr previous-leftclick) obj no)
 	       (object_commit x y obj))
 	    (begin
-	       (set-message "Another left click to finish" "")
+	       (set-message "Left click: finish" "")
 	       (set! leftclick-waiting #t)))
 	;(display* "prev-leftc=" previous-leftclick "\n")
 	;(display* "x=" x "\n")
@@ -158,7 +158,7 @@
         (set! previous-leftclick `(point ,x ,y)))
       ;;Start move
       (begin
-	(set-message "Left click to add points ; middle button to undo" "")
+	(set-message "Left click: add point; Middle click: undo" "")
 	(graphics-store-state 'start-move)
 	(create-graphical-object obj p 'object-and-points #f)
 	(graphics-remove p 'memoize-layer)
@@ -203,15 +203,15 @@
 	       x y obj no (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
 	  (begin
 	     (if leftclick-waiting
-		 (set-message "Another left click to finish" "")
-		 (set-message "(Shift) Left click to add ; middle button to undo" ""))
+		 (set-message "Left click: finish" "")
+		 (set-message "Left click: add point; Middle click: undo" ""))
 	     (if (== (car obj) 'point)
 	         (set! obj `(point ,x ,y))
 	         (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
 	     (create-graphical-object obj 'active 'object-and-points
 	       (if edge no `(,edge ,no)))))
       (begin
-	(set-message "Left click to add or to move ; middle button to remove" "")
+	(set-message "Left click: add or edit object; Middle click: remove object" "")
 	(create-graphical-object obj p 'points (if edge no `(,edge ,no)))
 	(if p
 	    (with p2 (tm-upwards-path p '(text-at) '(graphics))
