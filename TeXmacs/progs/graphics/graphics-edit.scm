@@ -150,8 +150,14 @@
 		  (cadr previous-leftclick) (caddr previous-leftclick) obj no)
 	       (object_commit x y obj))
 	    (begin
-	       (set-message "Left click: finish" "")
-	       (set! leftclick-waiting #t)))
+              (if (and (not leftclick-waiting)
+                       previous-leftclick
+                       (points-dist<
+			previous-leftclick `(point ,x ,y) moveclick-tolerance))
+                  (undo)
+		  (begin
+		    (set-message "Left click: finish" "")
+		    (set! leftclick-waiting #t)))))
 	;(display* "prev-leftc=" previous-leftclick "\n")
 	;(display* "x=" x "\n")
 	;(display* "y=" y "\n\n")
