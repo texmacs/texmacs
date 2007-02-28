@@ -6008,7 +6008,7 @@ else
 int
 main ()
 {
-exit(sizeof(void*))
+return(sizeof(void*))
   ;
   return 0;
 }

@@ -379,7 +379,7 @@ CONFIG_WORD_MASK="0xfffffffc"
 CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 
 AC_MSG_CHECKING(if we are on a 64-bits computer)
-AC_RUN_IFELSE([AC_LANG_PROGRAM([],[exit(sizeof(void*))])],
+AC_RUN_IFELSE([AC_LANG_PROGRAM([],[return(sizeof(void*))])],
   [void_size=0],[void_size=$?])
 if test "$void_size" = "8"; then
   AC_MSG_RESULT([yes])
