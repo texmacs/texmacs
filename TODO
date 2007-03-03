@@ -128,6 +128,12 @@ Structured text
     when appropriate.
 
 Editing source trees
+  * User-defined macros can be turned into a compound using the backspace key,
+    builtin macros can't. Why is that? How do I change the name of the
+    call to a buildin macro? Can I avoid removing it and creating a new one?
+  * If the first argument of a call to a user defined macro contains a
+    <document> tag, I cannot turn it into a compound any more. Why that?
+  * There seems to be no way to manually create or remove <document> tags.
   * Edit as option
     A facility "Edit as" to convert a selection into any other format and
     put the result in an "edit-as" tag for manual editing. When pressing
