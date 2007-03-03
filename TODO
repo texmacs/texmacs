@@ -134,6 +134,7 @@ Editing source trees
   * If the first argument of a call to a user defined macro contains a
     <document> tag, I cannot turn it into a compound any more. Why that?
   * There seems to be no way to manually create or remove <document> tags.
+  * Edit the "init" part of a file in source code form.
   * Edit as option
     A facility "Edit as" to convert a selection into any other format and
     put the result in an "edit-as" tag for manual editing. When pressing
