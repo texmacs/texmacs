@@ -194,8 +194,8 @@
     (eval cmd)
     (switch-to-active-buffer old)))
 
-(tm-define-macro (with-active-buffer . l)
-  (with-active-buffer-sub (car l) (cons 'begin (cdr l))))
+(tm-define-macro (with-active-buffer buf . body)
+  `(with-active-buffer-sub ,buf `(begin ,@body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
