@@ -854,6 +854,7 @@ tm_buffer_rep::truncate_undos (int nr) {
 
 bool
 tm_buffer_rep::needs_to_be_saved () {
+  if (!in_menu) return false;
   if (need_save) return true;
   if ((undo == "nil") || (undo[0] != ""))
     return (last_save != undo_depth);
@@ -862,6 +863,7 @@ tm_buffer_rep::needs_to_be_saved () {
 
 bool
 tm_buffer_rep::needs_to_be_autosaved () {
+  if (!in_menu) return false;
   if (!needs_to_be_saved ()) return false;
   if (need_autosave) return true;
   if ((undo == "nil") || (undo[0] != ""))
