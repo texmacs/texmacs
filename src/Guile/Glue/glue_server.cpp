@@ -690,12 +690,55 @@ tmg_set_help_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_set_buffer_tree (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-buffer-tree");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "set-buffer-tree");
+
+  url in1= scm_to_url (arg1);
+  content in2= scm_to_content (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_buffer_tree (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_buffer_tree (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "get-buffer-tree");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_buffer_tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_get_buffer_menu () {
   // SCM_DEFER_INTS;
   object out= get_server()->get_buffer_menu ();
   // SCM_ALLOW_INTS;
 
   return object_to_scm (out);
+}
+
+SCM
+tmg_buffer_in_menu (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "buffer-in-menu");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "buffer-in-menu");
+
+  url in1= scm_to_url (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->buffer_in_menu (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -1133,7 +1176,10 @@ initialize_glue_server () {
   scm_new_procedure ("set-aux", (FN) tmg_set_aux, 2, 0, 0);
   scm_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
   scm_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
+  scm_new_procedure ("set-buffer-tree", (FN) tmg_set_buffer_tree, 2, 0, 0);
+  scm_new_procedure ("get-buffer-tree", (FN) tmg_get_buffer_tree, 1, 0, 0);
   scm_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);
+  scm_new_procedure ("buffer-in-menu", (FN) tmg_buffer_in_menu, 2, 0, 0);
   scm_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
   scm_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
   scm_new_procedure ("project-attached?", (FN) tmg_project_attachedP, 0, 0, 0);

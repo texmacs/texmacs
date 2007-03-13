@@ -49,14 +49,14 @@ edit_modify_rep::~edit_modify_rep () {}
       }						\
   }
 
-#define CHECK_OTHER_EDITOR(cmd)			\
-  if (!(rp <= pp)) {				\
-    tm_buffer other= sv->get_buf (pp);		\
-    if (N(other->vws) != 0) {			\
-      ((tm_view) (other->vws[0]))->ed->cmd;	\
-      return;					\
-    }						\
-    else system_warning ("Dangerous change");	\
+#define CHECK_OTHER_EDITOR(cmd)				\
+  if (!(rp <= pp)) {					\
+    tm_buffer other= sv->get_buf (pp);			\
+    if (N(other->vws) != 0) {				\
+      ((tm_view) (other->vws[0]))->ed->cmd;		\
+      return;						\
+    }							\
+    /*else system_warning ("Dangerous change");*/	\
   }
 
 void

@@ -84,7 +84,10 @@ public:
   void set_aux_buffer (string aux, url name, tree doc);
   void set_help_buffer (url name, tree doc);
   void browse_help (int delta);
+  void set_buffer_tree (url name, tree doc);
+  tree get_buffer_tree (url name);
   object get_buffer_menu ();
+  bool buffer_in_menu (url name, bool flag);
 
   /* Project management */
   void project_attach (string prj_name);

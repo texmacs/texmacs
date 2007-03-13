@@ -78,7 +78,10 @@
   (set-aux set_aux (void string url))
   (set-aux-buffer set_aux_buffer (void string url content))
   (set-help-buffer set_help_buffer (void url content))
+  (set-buffer-tree set_buffer_tree (void url content))
+  (get-buffer-tree get_buffer_tree (tree url))
   (get-buffer-menu get_buffer_menu (object))
+  (buffer-in-menu buffer_in_menu (bool url bool))
 
   (project-attach project_attach (void string))
   (project-detach project_attach (void))

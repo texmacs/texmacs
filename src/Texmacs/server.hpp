@@ -92,7 +92,10 @@ public:
   virtual void set_aux (string aux, url name) = 0;
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
+  virtual void set_buffer_tree (url name, tree doc) = 0;
+  virtual tree get_buffer_tree (url name) = 0;
   virtual object get_buffer_menu () = 0;
+  virtual bool buffer_in_menu (url name, bool flag) = 0;
 
   /* Projects */
   virtual void project_attach (string prj_name= "") = 0;
