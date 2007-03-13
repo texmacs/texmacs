@@ -23,35 +23,6 @@
 
 ;;NOTE: This section is OK till we find a better system for handling the GC
 
-;; Past events
-(define past-events #('() '()))
-(tm-define (event-exists! o e)
-  (vector-set!
-     past-events 0
-     (cons (list o e) (vector-ref past-events 0))))
-
-(tm-define (event-exists? o e t)
-  (define (seek-event l)
-     (if (or (null? l) (npair? (car l)))
-	 #f
-	 (with x (car l)
-	    (if (and (== (car x) o) (== (cadr x) e))
-		#t
-		(seek-event (cdr l)))))
-  )
-  (if (in? t '(0 1))
-      (seek-event (vector-ref past-events t))
-      #f))
-
-(tm-define (events-clocktick)
-  (vector-set! past-events 1 (vector-ref past-events 0))
-  (vector-set! past-events 0 '()))
-
-(define (events-forget)
-  (set! past-events (make-vector 2))
-  (vector-set! past-events 0 '())
-  (vector-set! past-events 1 '()))
-
 ;; State variables
 (tm-define choosing #f)
 (tm-define sticky-point #f)
@@ -224,8 +195,7 @@
 
 (tm-define (graphics-forget-states)
   (set! graphics-first-state #f)
-  (set! graphics-states '())
-  (events-forget))
+  (set! graphics-states '()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for using and maintaining the current graphics context
@@ -484,37 +454,3 @@
 	  (graphics-forget-states)
 	  (invalidate-graphical-object))))
    (else (display* "Uncaptured reset-context " cmd "\n"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dispatching
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;NOTE: This section is OK till we find a better system for dispatching
-
-(define-export-macro (dispatch obj vals func vars . parms)
-  (define (cond-case elt)
-    `(,(if (null? (cdr elt))
-	   `(== ,obj ',(car elt))
-	   `(in? ,obj ',elt))
-      (,(string->symbol
-	 (string-append
-	  (symbol->string (car elt))
-	  "_"
-	  (symbol->string func)))
-       . ,vars)))
-  `(begin
-    ,(if (and (pair? parms) (in? 'do-tick parms))
-	`(begin
-	    (events-clocktick)
-	    (event-exists! ,obj ',func)))
-     (if (and (not sticky-point)
-	      (tm-upwards-path (cDr (cursor-path)) '(text-at) '(graphics)))
-	 (when-inside-text-at ',func . ,vars)
-	,(append (cons
-	    'cond
-	    (map cond-case vals))
-	   `(,(if (and (pair? parms) (in? 'handle-other parms))
-		 `(else (,(string->symbol
-			   (string-append
-			    "other_" (symbol->string func))) . ,vars))
-		 `(else (display* "Uncaptured " ',func " " ,obj "\n"))))))))
