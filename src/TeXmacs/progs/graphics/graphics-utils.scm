@@ -35,10 +35,9 @@
   ;;   and errors during accessing the Scheme namespace, too (i.e. : the
   ;;   same variable gives one value at one point in the code, and a little
   ;;   bit later, something else).
-  ;;   It seems that as soon as macros become a little bit complex (c.f.
-  ;;   for example (with-graphics-context) or (dispatch)), the Guile
-  ;;   macroexpander interacts poorly with the memoizing stuff in
-  ;;   (define-public-macro), and then it becomes unstable.
+  ;;   It seems that as soon as macros become a little bit complex,
+  ;;   the Guile macroexpander interacts poorly with the memoizing
+  ;;   stuff in (define-public-macro), and then it becomes unstable.
   ;;
   ;; TODO: Solve this problem.
 
@@ -243,9 +242,10 @@
 			 arc carc
 			 text-at
 			 gr-group))
-(tm-define gr-tags-curves    '(line cline spline cspline arc carc))
-(tm-define gr-tags-noncurves '(point text-at gr-group))
-(tm-define gr-tags-oneshot   '(point arc carc text-at gr-group))
+(tm-define gr-tags-curves       '(line cline spline cspline arc carc))
+(tm-define gr-tags-point-curves `(point . ,gr-tags-curves))
+(tm-define gr-tags-noncurves    '(point text-at gr-group))
+(tm-define gr-tags-oneshot      '(point arc carc text-at gr-group))
 
 (tm-define (stree-at p)
   (tree->stree (path->tree p)))

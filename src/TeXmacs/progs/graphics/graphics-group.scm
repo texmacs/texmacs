@@ -246,7 +246,8 @@
   (graphics-group-start))
 
 ;; State transitions
-(tm-define (point_start-operation opn p obj)
+(tm-define (start-operation opn p obj)
+  (:require (in? (car obj) (append '(point text-at) gr-tags-curves)))
   (set! current-path-under-mouse #f)
   (if sticky-point
       ;;Perform operation
@@ -317,7 +318,7 @@
 	 )
 	 ((and (not multiselecting) (or p (nnull? selected-objects)))
 	  (if (null? selected-objects)
-	      (point_toggle-select #f #f p obj))
+	      (any_toggle-select #f #f p obj))
 	  (if (store-important-points)
 	  (begin
 	     (graphics-store-state 'start-operation)
@@ -334,7 +335,7 @@
 	     (set! group-old-x (s2f current-x))
 	     (set! group-old-y (s2f current-y))))))))
 
-(tm-define (point_toggle-select x y p obj)
+(define (any_toggle-select x y p obj)
   (if (not sticky-point)
   (if multiselecting
       (let* ((x1 (s2f selecting-x0))
@@ -381,7 +382,11 @@
 	     (set! selecting-y0 y)
 	     (set! multiselecting #t))))))
 
-(tm-define (point_unselect-all p)
+(tm-define (toggle-select x y p obj)
+  (:require (in? (car obj) (append '(point text-at) gr-tags-curves)))
+  (any_toggle-select x y p obj))
+
+(define (any_unselect-all p obj)
   (if (nnull? selected-objects)
   (begin
      (set! selected-objects '())
@@ -390,8 +395,13 @@
 	   (== (cadr (graphics-mode)) 'props))
       (graphics-copy-props p))))
 
+(tm-define (unselect-all p obj)
+  (:require (in? (car obj) (append '(point text-at) gr-tags-curves)))
+  (any_unselect-all p obj))
+
 ;; Dispatch
-(tm-define (group-edit_move x y)
+(tm-define (edit_move mode x y)
+  (:require (eq? mode 'group-edit))
   (with-graphics-context ";move" x y p obj no edge
      (if sticky-point
 	 (begin
@@ -427,31 +437,29 @@
 				(point ,selecting-x0 ,y)))))))
 	     (create-graphical-object obj p 'points #f)))))
 
-(tm-define (group-edit_left-button x y)
+(tm-define (edit_left-button mode x y)
+  (:require (eq? mode 'group-edit))
   (with-graphics-context "start-operation" x y p obj no edge
-     (dispatch (car obj) ((point line cline spline cspline arc carc
-			   text-at))
-	       start-operation ('move p obj) do-tick)))
+     (start-operation 'move p obj)))
 
-(tm-define (group-edit_right-button x y)
+(tm-define (edit_right-button mode x y)
+  (:require (eq? mode 'group-edit))
   (with-graphics-context "toggle-select" x y p obj no edge
-     (dispatch (car obj) ((point line cline spline cspline arc carc
-			   text-at))
-	       toggle-select (x y p obj) do-tick)))
+     (toggle-select x y p obj)))
 
-(tm-define (group-edit_middle-button x y)
+(tm-define (edit_middle-button mode x y)
+  (:require (eq? mode 'group-edit))
   (with-graphics-context "unselect-all" x y p obj no edge
      (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
 	 (if (null? selected-objects)
-	     (point_middle-button x y p obj no)
+	     (middle-button x y p obj no)
 	     (remove-selected-objects))
-	 (dispatch (car obj) ((point line cline spline cspline arc carc
-			       text-at))
-		   unselect-all (p) do-tick))))
+	 (unselect-all p obj))))
 
-(tm-define (group-edit_tab-key next)
+(tm-define (edit_tab-key mode next)
+  (:require (eq? mode 'group-edit))
  ;(display* "Graphics] Group-edit(Tab)\n")
-  (edit_tab-key next))
+  (edit_tab-key 'edit next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cut & paste actions
@@ -476,7 +484,7 @@
 	      (cons (tree->stree (path->tree p)) copied-objects)))
      )
      (set! copied-objects (reverse copied-objects))
-     (point_unselect-all #f)
+     (any_unselect-all #f #f)
      (update-buffer)
      (if (null? copied-objects)
 	 (stree->tree "")
