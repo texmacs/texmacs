@@ -33,6 +33,7 @@ public:
   bool read_only;         // buffer is read only?
   bool secure;            // is the buffer secure?
   tm_buffer prj;          // buffer which corresponds to the project
+  bool in_menu;           // should the buffer be listed in the menus?
 
   tree undo;              // for undoing changes
   tree redo;              // for redoing changes
@@ -55,7 +56,7 @@ public:
     fm ("texmacs"), extra (url_none ()), vws (0),
     need_save (false), need_autosave (false),
     read_only (false), secure (is_secure (name2)),
-    prj (NULL), undo ("nil"), redo ("nil"), exdo ("nil"),
+    prj (NULL), in_menu (true), undo ("nil"), redo ("nil"), exdo ("nil"),
     undo_depth (0), redo_depth (0), last_save (0), last_autosave (0),
     rp (new_document ()), project (""), style ("style"),
     init ("?"), fin ("?"), ref ("?"), aux ("?") {}

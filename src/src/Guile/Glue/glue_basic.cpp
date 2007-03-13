@@ -416,23 +416,6 @@ tmg_tree_child (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tree_set_childS (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-set-child!");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-set-child!");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree-set-child!");
-
-  tree in1= scm_to_tree (arg1);
-  int in2= scm_to_int (arg2);
-  tree in3= scm_to_tree (arg3);
-
-  // SCM_DEFER_INTS;
-  tree_set (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_tree_ip (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ip");
 
@@ -2839,7 +2822,6 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-children", (FN) tmg_tree_children, 1, 0, 0);
   scm_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
   scm_new_procedure ("tree-child", (FN) tmg_tree_child, 2, 0, 0);
-  scm_new_procedure ("tree-set-child!", (FN) tmg_tree_set_childS, 3, 0, 0);
   scm_new_procedure ("tree-ip", (FN) tmg_tree_ip, 1, 0, 0);
   scm_new_procedure ("tree-eq?", (FN) tmg_tree_eqP, 2, 0, 0);
   scm_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);

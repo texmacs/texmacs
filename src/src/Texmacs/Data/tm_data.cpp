@@ -74,9 +74,11 @@ tm_data_rep::new_menu_name (url u) {
 
 static void
 menu_append_buffer (string& s, tm_buffer buf) {
-  s << " (\"" << buf->abbr;
-  if (buf->needs_to_be_saved ()) s << " *"; 
-  s << "\" (switch-to-buffer \"" * as_string (buf->name) * "\"))";
+  if (buf->in_menu) {
+    s << " (\"" << buf->abbr;
+    if (buf->needs_to_be_saved ()) s << " *"; 
+    s << "\" (switch-to-buffer \"" * as_string (buf->name) * "\"))";
+  }
 }
 
 object
@@ -104,6 +106,16 @@ tm_data_rep::get_buffer_menu () {
   }
   s << ")";
   return eval (s);
+}
+
+bool
+tm_data_rep::buffer_in_menu (url u, bool flag) {
+  int nr= find_buffer (u);
+  if (nr == -1) return false;
+  tm_buffer buf= bufs[nr];
+  bool old= buf->in_menu;
+  buf->in_menu= flag;
+  return old;
 }
 
 void
@@ -649,6 +661,23 @@ get_help_title (url name, tree t) {
 void
 tm_data_rep::set_help_buffer (url name, tree doc) {
   set_aux_buffer (get_help_title (name, doc), name, doc);
+}
+
+void
+tm_data_rep::set_buffer_tree (url name, tree doc) {
+  int nr= find_buffer (name);
+  if (nr == -1) new_buffer (name, tree (DOCUMENT));
+  nr= find_buffer (name);
+  tm_buffer buf= bufs[nr];
+  get_editor () -> assign (buf->rp, doc);
+}
+
+tree
+tm_data_rep::get_buffer_tree (url name) {
+  int nr= find_buffer (name);
+  if (nr == -1) return "";
+  tm_buffer buf= bufs[nr];
+  return subtree (the_et, buf->rp);
 }
 
 /******************************************************************************
