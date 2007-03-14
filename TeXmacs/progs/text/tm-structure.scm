@@ -81,7 +81,7 @@
   (with sec? (tm/section-detect? (car l) short-principal-section-tag?)
     `(show-part ,(number->string nr)
 		(document ,@l)
-		,(if sec? `(document ,(car l)) ""))))
+		,(if sec? `(document ,(tm->stree (car l))) ""))))
 
 (define (make-subparts l)
   (if (short-style?) l
@@ -92,7 +92,7 @@
   (with sec? (tm/section-detect? (car l) (principal-section-predicate))
     `(show-part ,(number->string nr)
 		(document ,(car l) ,@(make-subparts (cdr l)))
-		,(if sec? `(document ,(car l)) ""))))
+		,(if sec? `(document ,(tm->stree (car l))) ""))))
 
 (tm-define (principal-sections-to-document-parts l)
   (with r (tm/section-split l (principal-section-predicate))
