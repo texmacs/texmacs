@@ -20,7 +20,7 @@
 ;; Basic scheme processing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;NOTE: Except for the (define-export-macro) problem, this section is OK.
+;;NOTE: This section is OK.
 (define-macro (define-export-macro head . body)
  `(begin
      (define-macro ,(car head)
@@ -28,18 +28,11 @@
      )
      (export ,(car head))))
      (export define-export-macro)
-  ;; NOTE: It appears that (define-public-macro) is *NOT* equivalent
-  ;;   to (define-macro) + (export). The appropriate macro declaration
-  ;;   function is the current one, otherwise, strange bugs happen, namely,
-  ;;   crashing when accessing unbound variables inside complex macros,
-  ;;   and errors during accessing the Scheme namespace, too (i.e. : the
-  ;;   same variable gives one value at one point in the code, and a little
-  ;;   bit later, something else).
-  ;;   It seems that as soon as macros become a little bit complex,
-  ;;   the Guile macroexpander interacts poorly with the memoizing
-  ;;   stuff in (define-public-macro), and then it becomes unstable.
-  ;;
-  ;; TODO: Solve this problem.
+  ;; NOTE: Deprecated. It seems that as soon as macros become a little bit
+  ;;   complex, the Guile macroexpander interacts poorly with the memoizing
+  ;;   stuff in (define-public-macro), and then it becomes unstable. This
+  ;;   is the reason why (define-export-macro) exists : it is *strictly*
+  ;;   equivalent to (define-macro) + (export), and never raises problems.
 
 ;; Conversions
 (tm-define (tree->object t)
@@ -78,7 +71,7 @@
 ;; Iterators
 (define-public foreach for)
 
-(define-export-macro (foreach-number what . body)
+(define-public-macro (foreach-number what . body)
   (let ((n (length what)))
     (cond ((== n 3)
          ;;(foreach-number (i i0 iN) body[i])
@@ -101,7 +94,7 @@
 		     ,(- 0 (car (cddddr what))) ,(caddr what)) ,@body)))
           (else '(noop)))))
 
-(define-export-macro (foreach-cons i . b)
+(define-public-macro (foreach-cons i . b)
 ;;(foreach-cons (e l) i   body[elt]) -> for each cons e of the list l
 ;;(foreach-cons (e l1 l2) body[elt]) -> for each cons e in [l1...l2]
   (if (null? (cddr i))
@@ -473,9 +466,6 @@
 ;; Subroutines for modifying the innermost group of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;NOTE: layer-of-last-removed-object is part of the environment.
-;;TODO: Look at this when the appropriate stuff for environments
-;;  will have been implemented.
 (tm-define (graphics-group-insert-bis t go-into)
  ;(display* "t=" t "\n")
   (let* ((p (graphics-group-path))
@@ -610,7 +600,6 @@
 	       )))
 	path))
     
-;;NOTE: layer-of-last-removed-object is part of the environment.
 (tm-define (graphics-remove p . parms)
   (with p0 (graphics-object-root-path p)
      (set! layer-of-last-removed-object

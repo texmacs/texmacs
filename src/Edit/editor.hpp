@@ -187,6 +187,8 @@ public:
   virtual bool   inside_active_graphics (bool b=true) = 0;
   virtual bool   over_graphics (SI x, SI y) = 0;
   virtual tree   get_graphics () = 0;
+  virtual double get_x () = 0;
+  virtual double get_y () = 0;
   virtual frame  find_frame (bool last= false) = 0;
   virtual grid   find_grid () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;

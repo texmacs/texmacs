@@ -2127,6 +2127,24 @@ tmg_in_graphicsP () {
 }
 
 SCM
+tmg_get_graphical_x () {
+  // SCM_DEFER_INTS;
+  double out= get_server()->get_editor()->get_x ();
+  // SCM_ALLOW_INTS;
+
+  return double_to_scm (out);
+}
+
+SCM
+tmg_get_graphical_y () {
+  // SCM_DEFER_INTS;
+  double out= get_server()->get_editor()->get_y ();
+  // SCM_ALLOW_INTS;
+
+  return double_to_scm (out);
+}
+
+SCM
 tmg_get_graphical_object () {
   // SCM_DEFER_INTS;
   tree out= get_server()->get_editor()->get_graphical_object ();
@@ -3063,6 +3081,8 @@ initialize_glue_editor () {
   scm_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   scm_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
   scm_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
+  scm_new_procedure ("get-graphical-x", (FN) tmg_get_graphical_x, 0, 0, 0);
+  scm_new_procedure ("get-graphical-y", (FN) tmg_get_graphical_y, 0, 0, 0);
   scm_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
   scm_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
   scm_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);

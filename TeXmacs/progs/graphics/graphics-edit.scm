@@ -15,37 +15,33 @@
 
 (texmacs-module (graphics graphics-edit)
   (:use (utils library cursor) (utils library tree)
+	(kernel texmacs tm-states)
         (graphics graphics-utils) (graphics graphics-main)
         (graphics graphics-object) (graphics graphics-env)
         (graphics graphics-kbd) (graphics graphics-group)))
 
-;; TODO: Oui, ca serait bien de commencer par une reorganisation grossiere.
-;; Tu peux systematiser l'utilisation de l'API des arbres (tree-assign, etc.)
-;; et rajouter systematiquement des "synopsis" pour les tm-define.
-;; Aussi la separation en plusieurs fichiers graphics-edit, graphics-env,
-;; graphics-object, etc. serait bienvenue.
+;; TODO:
+;;   -> systematiser l'utilisation de l'API des arbres (tree-assign, etc.)
+;;   -> rajouter systematiquement des "synopsis" pour les tm-define.
 ;;
-;; Ensuite, il faudrait chercher scrupuleusement a factoriser et simplifier
-;; le code. Par exemple, des macros comme foreach et foreach-number, etc.,
-;; devraient etre dans kernel/boot/abbrevs ou kernel/library (et chercher
-;; des noms plus elegants). De maniere plus generale, je pense que
-;; des "grosses routines" sont un mauvais style de programmation
-;; dans Scheme.
-;; En general, ca indique qu'il existe une solution plus elegante.
+;;   -> chercher scrupuleusement a factoriser et simplifier le code.
+;;   -> des macros comme foreach et foreach-number, etc., devraient
+;;      etre dans kernel/boot/abbrevs ou kernel/library (et chercher
+;;      des noms plus elegants).
 ;;
-;; On en discutera davantage apres un premier passage en revue.
+;;   -> On en discutera davantage apres un premier passage en revue.
+;;
+;;   -> Remove all the (stree-at), (tree->stree), etc.
+;;   -> Replace the remaining (tree->stree) by (tm->stree) or (t2o)
+;;   -> Except in simple cases, remove all the (tree->stree) which
+;;      slow the code, and operate everywhere and all the time on trees.
+;;
+;;   -> Remove the synchro-unsafe (get-env) & (get-env-tree) everywhere.
+;;
+;;   -> Use systematically (first), (second), etc., instead
+;;      of (car), (cadr), etc.
 
-;; TODO : Remove all the (stree-at), (tree->stree), etc.
-;; TODO : Replace the remaining (tree->stree) by (tm->stree) or (t2o)
-;; TODO : Except in simple cases, remove all the (tree->stree) which
-;;   slow the code, and operate everywhere and all the time on trees.
-
-;; TODO: Remove the synchro-unsafe (get-env) & (get-env-tree) everywhere.
-
-;; TODO: Use systematically (first), (second), etc., instead
-;;   of (car), (cadr), etc.
-
-;; TODO : Dans la doc, preciser **exactement** les conditions d'evaluation
+;; NOTE: Dans la doc, preciser **exactement** les conditions d'evaluation
 ;;   des differentes fonctions (par exemple (stree->tree #f) == #f,
 ;;   mais (stree->tree 1) == <tree 1>.
 
@@ -196,7 +192,9 @@
 	  (begin
 	     (set-texmacs-pointer 'graphics-cross)
 	     (any_left-button x y p obj 1 edge))
-	  (go-to (car (select-first (s2f x) (s2f y)))))))
+	  (begin
+	     (set-texmacs-pointer 'text-arrow)
+	     (go-to (car (select-first (s2f x) (s2f y))))))))
 
 (tm-define (left-button x y p obj no edge)
   (:require (not (in? (car obj) gr-tags-all)))
@@ -204,6 +202,7 @@
 
 ;; Move
 (define (any_move x y p obj no edge)
+ ;(display* "obj[move<" sticky-point ">]=")(write obj)(display "\n")
   (if sticky-point
       (if (and leftclick-waiting
 	       (not (points-dist<
@@ -291,63 +290,57 @@
 
 (tm-define (edit_left-button mode x y)
   (:require (eq? mode 'edit))
+  (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (with-graphics-context
-   ";:insert" x y p obj no edge
-   (if sticky-point
-       (begin
-	 (if just-started-dragging
-	     (set! disable-drag #t))
-	 (left-button x y p obj no edge))
-       (if obj
-	   (begin
-	     (edit_tab-key 'edit
-			   (if (graphics-states-void?)
-			       #f
-			       (state-ref (graphics-pop-state) 'choosing)))
-	     (graphics-store-state #f)
-	     (set! choosing #t))
-	   (edit-insert x y)))))
+ ;(display "obj[left-button]=")(write current-obj)(display "\n")
+  (if sticky-point
+      (begin
+	(if just-started-dragging
+	    (set! disable-drag #t))
+	(left-button
+	  x y current-path current-obj current-point-no current-edge-sel?))
+      (if current-obj
+	  (begin
+	    (edit_tab-key 'edit
+			  (if (graphics-states-void?)
+			      #f
+			      (state-ref (graphics-pop-state) 'choosing)))
+	    (graphics-store-state #f)
+	    (set! choosing #t))
+	  (edit-insert x y))))
 
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'edit))
+  (:state graphics-state)
+ ;(display "obj[move]=")(write current-obj)(display "\n")
   (set-texmacs-pointer 'graphics-cross #t)
   (if choosing
    ;; Start moving point/object or inserting a new point
       (with first #f
-      ;; NOTE: Hack to restore the state when choosing has been set
 	 (graphics-state-set (graphics-pop-state))
+      ;; Restores the state when choosing has been set
 	 (set! first (not choosing))
 	 (set! choosing #f)
-	 (let* ((x current-x)
-		(y current-y)
-		(obj current-obj)
-		(p current-path-under-mouse)
-		(no current-point-no)
-		(edge current-edge-sel?))
-	     ;; NOTE: End hack
-	   (graphics-forget-states)
-	  ;(display* "(x,y)=(" x "," y ")\n")
-	  ;(display* "obj(1')=" obj "\n")
-	  ;(display* "p(1')=" p "\n\n")
-	   (if (and first
-		    (not just-started-dragging)
-		    (not (eq? (car obj) 'text-at)))
-	       (edit-insert x y)
-	       (left-button x y p obj no edge))))
+	 (graphics-forget-states)
+	 (if (and first
+		  (not just-started-dragging)
+		  (not (eq? (car current-obj) 'text-at)))
+	     (edit-insert current-x current-y)
+	     (left-button current-x current-y
+		current-path current-obj current-point-no current-edge-sel?)))
    ;; Moving
-      (with-graphics-context
-       ";:move" x y p obj no edge
-       (if obj
-	   (move x y p obj no edge)
+      (begin
+       (if current-obj
+	   (move
+	     x y current-path current-obj current-point-no current-edge-sel?)
 	   (create-graphical-object '(nothing) #f 'points #f)))))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'edit))
+  (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (with-graphics-context
-   "remove" x y p obj no edge
-   (middle-button x y p obj no)))
+  (if current-obj
+      (middle-button x y current-path current-obj current-point-no)))
 
 (tm-define (edit_right-button mode x y)
   (:require (eq? mode 'edit))
@@ -355,29 +348,26 @@
 
 (tm-define (edit_tab-key mode next)
   (:require (eq? mode 'edit))
+  (:state graphics-state)
  ;(display* "Graphics] Edit(Tab)\n")
   (if (and current-x current-y)
-      (let* ((x current-x)
-	     (y current-y))
+      (begin
 	(if next
 	    (select-next))
 	(invalidate-graphical-object)
-	(with-graphics-context
-	 ";:move" x y p obj no edge
-	;(display* "(x,y)=(" x "," y ")\n")
-	;(display* "obj(0)=" obj "\n")
-	;(display* "p(0)=" p "\n")
-	 (if obj
-	     (create-graphical-object
-		obj p 'points
-		(with tag (car obj)
-		   (if (== tag 'text-at)
-		       (set! no 1))
-		   (cond ((== tag 'gr-group)
-			  #f)
-			 (else
-		          (if edge no `(,edge ,no))))))))
-	(invalidate-graphical-object))))
+	(if current-obj
+	    (create-graphical-object
+	       current-obj current-path 'points
+	       (with tag (car current-obj)
+		  (if (== tag 'text-at)
+		      (set! current-point-no 1))
+		  (cond ((== tag 'gr-group)
+			 #f)
+			(else
+		         (if current-edge-sel?
+			     current-point-no
+			    `(,current-edge-sel? ,current-point-no))))))))
+      (invalidate-graphical-object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit properties (implemented as a group mode, see below)
@@ -538,10 +528,11 @@
 	 (graphics-remove-property "gr-text-at-valign"))))
 
 (tm-define (current-is-textat?)
-  (and current-path-under-mouse
-       (== (tree-label (path->tree current-path-under-mouse)) 'text-at)))
+  (and current-path
+       (== (tree-label (path->tree current-path)) 'text-at)))
 
 (tm-define (text-at-change-halign p dirn)
+  (:state graphics-state)
   (let* ((obj (stree-at p))
 	 (mag (get-graphical-prop p "magnification"))
 	 (halign (get-graphical-prop p "text-at-halign"))
@@ -557,13 +548,14 @@
 			    (else "left"))))
      )
      (graphics-remove p 'memoize-layer)
-     (set! current-path-under-mouse
+     (set! current-path
 	(graphics-group-enrich-insert-bis
 	   obj #f #f #f mag #f #f #f #f halign2 valign #f))
      (create-graphical-object obj '() 'points 'no-group)
      (graphics-group-start)))
 
 (tm-define (text-at-change-valign p dirn)
+  (:state graphics-state)
   (let* ((obj (stree-at p))
 	 (mag (get-graphical-prop p "magnification"))
 	 (halign (get-graphical-prop p "text-at-halign"))
@@ -581,7 +573,7 @@
 			    (else "base"))))
      )
      (graphics-remove p 'memoize-layer)
-     (set! current-path-under-mouse
+     (set! current-path
 	(graphics-group-enrich-insert-bis
 	   obj #f #f #f mag #f #f #f #f halign valign2 #f))
      (create-graphical-object obj '() 'points 'no-group)
@@ -592,22 +584,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (when-inside-text-at func x y)
-  (define (uncaptured)
-     (if (!= func 'move)
-     (begin
-	(graphics-group-start)
-	(graphics-move-point x y)))
-  )
- ;(display* "Inside text-at=" func "; x=" x "; y=" y "\n")
-  (with res (with-graphics-context
-	       ";insert" x y p obj no edge
-		(if (and (pair? obj) (eq? (car obj) 'text-at))
-		    (cond
-		      ((== func 'left-button)
-		       (left-button x y p obj no edge)))
-		    (uncaptured))
-	    )
-	    (if (not res) (uncaptured))))
+  (:state graphics-state)
+  (let* ((res #t)
+	 (uncaptured (lambda ()
+		       (if (!= func 'move)
+			   (begin
+			     (graphics-group-start)
+			     (graphics-move-point x y))))))
+    ;;(display* "Inside text-at=" func "; x=" x "; y=" y "\n")
+    (if (and (not sticky-point)
+	     (tm-upwards-path (cDr (cursor-path)) '(text-at) '(graphics)))
+	(if (and (pair? current-obj) (eq? (car current-obj) 'text-at))
+	    (cond
+	      ((== func 'left-button)
+	       (left-button current-x current-y
+		 current-path current-obj current-point-no current-edge-sel?)))
+	    (uncaptured))
+	(set! res #f))
+    ;;(display* "res=" res "\n")
+    res))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dealing with superpositions
@@ -640,9 +635,9 @@
 
 (tm-define (graphics-zmove dirn)
  ;(display* "dirn(graphics-zmove)=" dirn "\n")
- ;(display* "current-path-under-mouse=" current-path-under-mouse "\n")
-  (if current-path-under-mouse
-  (let* ((p (graphics-object-root-path current-path-under-mouse))
+ ;(display* "current-path" current-path "\n")
+  (if current-path
+  (let* ((p (graphics-object-root-path current-path))
 	 (t (if p (path->tree p) #f))
 	 (t0 (if t (path->tree (cDr p)) #f))
      )
@@ -655,7 +650,7 @@
 	       )
 	       (path-remove p 1)
 	       (path-insert p-1 `(tuple ,(tree->stree t)))
-	       (set! current-path-under-mouse p-1)
+	       (set! current-path p-1)
 	    ))
 	   )
 	   ((eq? dirn 'foreground)
@@ -665,7 +660,7 @@
 	       )
 	       (path-remove p 1)
 	       (path-insert p+1 `(tuple ,(tree->stree t)))
-	       (set! current-path-under-mouse p+1)
+	       (set! current-path p+1)
 	    ))
 	   )
 	   ((eq? dirn 'farther)
@@ -678,7 +673,7 @@
 	       (begin
 		  (path-remove p 1)
 		  (path-insert p-1 `(tuple ,(tree->stree t)))
-		  (set! current-path-under-mouse p-1)))
+		  (set! current-path p-1)))
 	    ))
 	   )
 	   ((eq? dirn 'closer)
@@ -691,7 +686,7 @@
 	       (begin
 		  (path-remove p 1)
 		  (path-insert p+1 `(tuple ,(tree->stree t)))
-		  (set! current-path-under-mouse p+1)))
+		  (set! current-path p+1)))
 	    ))
 	   )
 	   (else #t)
@@ -705,26 +700,35 @@
 
 (tm-define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")
-  (edit_left-button (car (graphics-mode)) x y))
+  (if (not (when-inside-text-at 'left-button x y))
+      (edit_left-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-move-point x y)
-  ;(display* "Graphics] Move " x ", " y "\n")
-  (edit_move (car (graphics-mode)) x y))
+ ;(display* "Graphics] Move " x ", " y "\n")
+  (if (not (when-inside-text-at 'move x y))
+      (edit_move (car (graphics-mode)) x y)))
 
 (tm-define (graphics-remove-point x y)
   ;(display* "Graphics] Remove " x ", " y "\n")
-  (edit_middle-button (car (graphics-mode)) x y))
+  (if (not (when-inside-text-at 'middle-button x y))
+      (edit_middle-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-last-point x y)
   ;(display* "Graphics] Last " x ", " y "\n")
-  (edit_right-button (car (graphics-mode)) x y))
+  (if (not (when-inside-text-at 'right-button x y))
+      (edit_right-button (car (graphics-mode)) x y)))
 
 (define just-started-dragging #f)
 (define disable-drag #f)
+;; FIXME : put these 2 variables inside the state.
+
 (tm-define (graphics-start-drag x y)
   ;(display* "Graphics] Start-drag " x ", " y "\n")
-  (set! just-started-dragging #t)
-  (graphics-insert-point x y))
+  (if (when-inside-text-at 'start-drag x y)
+      (set! disable-drag #t)
+      (begin
+        (set! just-started-dragging #t)
+        (graphics-insert-point x y))))
 
 (tm-define (graphics-dragging x y)
   ;(display* "Graphics] dragging " x ", " y "\n")
@@ -732,13 +736,15 @@
 
 (tm-define (graphics-end-drag x y)
   ;(display* "Graphics] End-drag " x ", " y "\n")
-  (set! just-started-dragging #f)
-  (if disable-drag
-      (set! disable-drag #f)
-      (begin
-	(graphics-insert-point x y)
-	(if (eq? (car (graphics-mode)) 'edit)
-	    (graphics-insert-point x y)))))
+  (if (not (when-inside-text-at 'end-drag x y))
+  (begin
+    (set! just-started-dragging #f)
+    (if disable-drag
+        (set! disable-drag #f)
+        (begin
+	  (graphics-insert-point x y)
+	  (if (eq? (car (graphics-mode)) 'edit)
+	      (graphics-insert-point x y)))))))
 
 (tm-define (graphics-start-right-drag x y)
   ;(display* "Graphics] Start-right-drag " x ", " y "\n")
@@ -749,9 +755,10 @@
   (graphics-move-point x y))
 
 (tm-define (graphics-end-right-drag x y)
+  (:state graphics-state)
   ;(display* "Graphics] End-right-drag " x ", " y "\n")
-; FIXME : test due to timing problems in detecting the drag
   (if (not sticky-point)
+; FIXME : test due to timing problems in detecting the drag
       (graphics-last-point x y)))
 
 (tm-define (graphics-choose-point)
@@ -759,6 +766,7 @@
   (edit_tab-key (car (graphics-mode)) #t))
 
 (tm-define (graphics-enter-mode old-mode new-mode)
+  (:state graphics-state)
   (if (and (graphics-group-mode? old-mode)
 	   (not (graphics-group-mode? new-mode))
       )
