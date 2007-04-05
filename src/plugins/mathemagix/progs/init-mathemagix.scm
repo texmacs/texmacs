@@ -16,11 +16,11 @@
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mathemagix-input) mathemagix))
 
-(if (url-exists-in-path? "mmx-light.bin")
+(if (url-exists-in-path? "mmx-light")
     (plugin-configure mathemagix
-      (:require (url-exists-in-path? "mmx-light.bin"))
+      (:require (url-exists-in-path? "mmx-light"))
       (:initialize (mathemagix-initialize))
-      (:launch "mmx-light.bin --texmacs")
+      (:launch "mmx-light --texmacs")
       (:session "Mathemagix"))
     (plugin-configure mathemagix
       (:require (url-exists-in-path? "mmx-shell"))
