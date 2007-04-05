@@ -100,7 +100,7 @@
 	'(concat))))
 
 (tm-define (graphical-object! obj)
- ;(display* "graphical object=" obj "\n")
+ ;(display "graphical object!=")(write obj)(display "\n")
   (set-graphical-object (stree->tree obj)))
 
 ;; Graphical props
@@ -122,7 +122,7 @@
 ;;                       property of the current graphic object (i.e.,
 ;;                       the one located at cursor) ;
 ;; -> 'basic         <=> if sticky-point => 'active
-;;                             otherwise => current-path-under-mouse.
+;;                             otherwise => current-path.
 (define (dv var val)
   (if (== val "default")
       (get-default-val var)
@@ -133,7 +133,7 @@
      (if (== mode 'basic)
 	 (if sticky-point
 	     (get-graphical-prop 'active prop)
-	     (get-graphical-prop current-path-under-mouse prop))
+	     (get-graphical-prop current-path prop))
 	 (cond
 	    ((== mode 'active)
 	     (cond
@@ -546,7 +546,7 @@
 		)
 	       `(concat .
                   ,(create-graphical-contours
-		      selected-objects current-path-under-mouse pts)
+		      selected-objects current-path pts)
 		)
 		(append
 		   props

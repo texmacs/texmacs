@@ -19,7 +19,7 @@
 ;; Global variables and subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define define-option-table (make-hash-table 100))
+(define-public define-option-table (make-hash-table 100))
 
 (define-public ovl-table (make-ahash-table))
 (define-public ovl-conds '())

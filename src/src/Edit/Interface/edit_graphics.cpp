@@ -21,7 +21,11 @@
 * Constructors and destructors
 ******************************************************************************/
 
-edit_graphics_rep::edit_graphics_rep () { graphical_object= tree(); }
+edit_graphics_rep::edit_graphics_rep () {
+  gr_x= gr_y= 0.0;
+  graphical_object= tree();
+}
+
 edit_graphics_rep::~edit_graphics_rep () {}
 
 /******************************************************************************
@@ -74,6 +78,16 @@ edit_graphics_rep::get_graphics () {
     p = p->next;
   }
   return res;
+}
+
+double
+edit_graphics_rep::get_x () {
+  return gr_x;
+}
+
+double
+edit_graphics_rep::get_y () {
+  return gr_y;
 }
 
 frame
@@ -330,6 +344,8 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().
     p = adjust (p);
+    gr_x= p[0];
+    gr_y= p[1];
     string sx= as_string (p[0]);
     string sy= as_string (p[1]);
     invalidate_graphical_object ();

@@ -15,6 +15,7 @@
 
 (texmacs-module (graphics graphics-group)
   (:use (utils library cursor) (utils library tree)
+	(kernel texmacs tm-states)
         (graphics graphics-utils) (graphics graphics-main)
         (graphics graphics-object) (graphics graphics-env)
         (graphics graphics-kbd) (graphics graphics-edit)))
@@ -248,7 +249,7 @@
 ;; State transitions
 (tm-define (start-operation opn p obj)
   (:require (in? (car obj) (append '(point text-at) gr-tags-curves)))
-  (set! current-path-under-mouse #f)
+  (set! current-path #f)
   (if sticky-point
       ;;Perform operation
       (begin
@@ -290,19 +291,19 @@
 	      (group-selected-objects))
 	 )
 	 ((and (not multiselecting) (== (cadr (graphics-mode)) 'props))
-	; FIXME: in (with-graphics-context), if we are in group mode,
-	;   obj is := to '(point). Find why it is so, and remove this.
+	; FIXME: when the state is recalculated, if we are in group
+	;   mode, obj is := to '(point). Find if it is still so and
+	;   why, and thus correct the problem if necessary.
 	  (if (null? selected-objects)
 	      (if p
 	      (begin
 		 (set! obj (stree-at p))
-		 (set! current-path-under-mouse
+		 (set! current-path
 		       (graphics-assign-props p obj 'no-group))
 		     ; FIXME: In order for (create-graphical-object)
 		     ;   to work appropriately in the current case,
 		     ;   we need to manually update the value of
-		     ;   current-path-under-mouse. At some point,
-		     ;   clean this.
+		     ;   current-path. At some point, clean this.
 		 (create-graphical-object obj '() 'points 'no-group)))
 	      (with l '()
 		 (foreach (o selected-objects)
@@ -369,8 +370,9 @@
 	 (set! selecting-y0 #f)
       )
       (if p
-	; FIXME: in (with-graphics-context), if we are in group mode,
-	;   obj is := to '(point). Find why it is so, and remove this.
+	; FIXME: when the state is recalculated, if we are in group
+	;   mode, obj is := to '(point). Find if it is still so and
+	;   why, and thus correct the problem if necessary.
 	  (with t (path->tree p)
 	     (if (seek-eq? t selected-objects)
 		 (remove-eq? t selected-objects)
@@ -402,59 +404,59 @@
 ;; Dispatch
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'group-edit))
-  (with-graphics-context ";move" x y p obj no edge
-     (if sticky-point
-	 (begin
-	    (set! x (s2f x))
-	    (set! y (s2f y))
-	    (with mode (graphics-mode)
-	       (cond ((== (cadr mode) 'move)
-			(transform-graphical-object
-			   (group-translate (- x group-old-x)
-					    (- y group-old-y))))
-		     ((== (cadr mode) 'zoom)
-			(set-graphical-object group-first-go)
-			(transform-graphical-object
-			   (group-zoom x y))
-		     )
-		     ((== (cadr mode) 'rotate)
-			(set-graphical-object group-first-go)
-			(transform-graphical-object
-			   (group-rotate x y))
-		     ))
-	    )
-	    (set! group-old-x x)
-	    (set! group-old-y y))
-	 (if multiselecting
-	     (begin
-		(graphical-object!
-		   (append
-		      (create-graphical-props 'default #f)
-		     `((with color red
-			 (cline (point ,selecting-x0 ,selecting-y0)
-				(point ,x ,selecting-y0)
-				(point ,x ,y)
-				(point ,selecting-x0 ,y)))))))
-	     (create-graphical-object obj p 'points #f)))))
+  (:state graphics-state)
+  (if sticky-point
+      (begin
+	 (set! x (s2f x))
+	 (set! y (s2f y))
+	 (with mode (graphics-mode)
+	    (cond ((== (cadr mode) 'move)
+		     (transform-graphical-object
+			(group-translate (- x group-old-x)
+					 (- y group-old-y))))
+		  ((== (cadr mode) 'zoom)
+		     (set-graphical-object group-first-go)
+		     (transform-graphical-object
+			(group-zoom x y))
+		  )
+		  ((== (cadr mode) 'rotate)
+		     (set-graphical-object group-first-go)
+		     (transform-graphical-object
+			(group-rotate x y))
+		  ))
+	 )
+	 (set! group-old-x x)
+	 (set! group-old-y y))
+      (if multiselecting
+	  (begin
+	     (graphical-object!
+		(append
+		   (create-graphical-props 'default #f)
+		  `((with color red
+		      (cline (point ,selecting-x0 ,selecting-y0)
+		 	     (point ,x ,selecting-y0)
+			     (point ,x ,y)
+			     (point ,selecting-x0 ,y)))))))
+	  (create-graphical-object current-obj current-path 'points #f))))
 
 (tm-define (edit_left-button mode x y)
   (:require (eq? mode 'group-edit))
-  (with-graphics-context "start-operation" x y p obj no edge
-     (start-operation 'move p obj)))
+  (:state graphics-state)
+  (start-operation 'move current-path current-obj))
 
 (tm-define (edit_right-button mode x y)
   (:require (eq? mode 'group-edit))
-  (with-graphics-context "toggle-select" x y p obj no edge
-     (toggle-select x y p obj)))
+  (:state graphics-state)
+  (toggle-select x y current-path current-obj))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'group-edit))
-  (with-graphics-context "unselect-all" x y p obj no edge
-     (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
-	 (if (null? selected-objects)
-	     (middle-button x y p obj no)
-	     (remove-selected-objects))
-	 (unselect-all p obj))))
+  (:state graphics-state)
+  (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
+      (if (null? selected-objects)
+	  (middle-button x y current-path current-obj current-point-no)
+	  (remove-selected-objects))
+      (unselect-all current-path current-obj)))
 
 (tm-define (edit_tab-key mode next)
   (:require (eq? mode 'group-edit))
@@ -466,9 +468,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (graphics-selection-active?)
+  (:state graphics-state)
   (nnull? selected-objects))
 
 (tm-define (graphics-copy)
+  (:state graphics-state)
   (if (== (car (graphics-mode)) 'group-edit)
   (with copied-objects '()
      (foreach (o selected-objects)
@@ -493,6 +497,7 @@
   (stree->tree "")))
 
 (tm-define (graphics-cut)
+  (:state graphics-state)
   (if (== (car (graphics-mode)) 'group-edit)
   (let* ((l selected-objects)
 	 (res (graphics-copy))
@@ -505,6 +510,7 @@
   (stree->tree "")))
 
 (tm-define (graphics-paste sel)
+  (:state graphics-state)
   (if (and (== (car (graphics-mode)) 'group-edit)
 	   (tree-compound? sel)
 	   (== (tree-label sel) 'graphics)

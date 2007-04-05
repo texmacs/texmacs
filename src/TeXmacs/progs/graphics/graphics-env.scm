@@ -15,74 +15,80 @@
 
 (texmacs-module (graphics graphics-env)
   (:use (utils library cursor) (utils library tree)
+	(kernel texmacs tm-states)
 	(graphics graphics-utils)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; State variables & history for the current graphics context
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;NOTE: This section is OK till we find a better system for handling the GC
-
+;;NOTE: This section is OK
 ;; State variables
-(tm-define choosing #f)
-(tm-define sticky-point #f)
-(tm-define leftclick-waiting #f)
-(tm-define current-obj #f)
-(tm-define current-point-no #f)
-(tm-define current-edge-sel? #f)
-(tm-define current-selection #f)
-(tm-define previous-selection #f)
-(tm-define subsel-no #f)
-(tm-define current-x #f)
-(tm-define current-y #f)
-(tm-define graphics-undo-enabled #t)
-(tm-define selected-objects '())
-(tm-define selecting-x0 #f)
-(tm-define selecting-y0 #f)
-(tm-define multiselecting #f)
-(tm-define current-path-under-mouse #f) ; volatile
-(tm-define layer-of-last-removed-object #f)
+(define-state graphics-state
+  (slots ((graphics-action #f)
+	  (current-graphical-object #f)
+	  (choosing #f)
+	  (sticky-point #f)
+	  (leftclick-waiting #f)
+	  (current-point-no #f)
+	  (current-edge-sel? #f)
+	  (current-selection #f)
+	  (previous-selection #f)
+	  (subsel-no #f)
+	  (graphics-undo-enabled #t)
+	  (selected-objects '())
+	  (selecting-x0 #f)
+	  (selecting-y0 #f)
+	  (multiselecting #f)
+	  (layer-of-last-removed-object #f)))
+  (props ((current-x (f2s (get-graphical-x)))
+	  (current-y (f2s (get-graphical-y)))
+	  (sel (if sticky-point
+		   #f
+		   (select-choose (s2f current-x) (s2f current-y))))
+	  (pxy (if sel (car sel) '()))
+	  (current-path (if sticky-point
+			    (cDr (cursor-path))
+			    (graphics-path pxy)))
+	  (current-obj
+	    (with gm (graphics-group-mode? (graphics-mode))
+	      (if gm
+		  '(point)
+		  (if sticky-point
+		      (with o (graphical-object #t)
+			(if (and (pair? o) (nnull? (cdr o)))
+			    (cadr o)
+			    #f))
+		      (graphics-object pxy)))))
+	  (other-inits
+	    (if (not sticky-point)
+		(begin
+		   (set! current-point-no (if sel (cAr (car sel)) #f))
+		   (set! current-edge-sel? (and sel (== (length sel) 2)))))))))
 
+;; State stack (1)
 (tm-define state-slots
-  ''(graphics-action
-     graphical-object
-     choosing
-     sticky-point
-     leftclick-waiting
-     current-obj
-     current-point-no
-     current-edge-sel?
-     current-selection
-     previous-selection
-     subsel-no
-     current-x
-     current-y
-     graphics-undo-enabled
-     selected-objects
-     selecting-x0
-     selecting-y0
-     multiselecting
-     current-path-under-mouse))
+  `(quote ,(state-names graphics-state)))
 
-(define-export-macro (state-len)
+(define-public-macro (state-len)
   `(length ,state-slots))
 
 (tm-define (new-state)
   (make-vector (state-len)))
 
-(define-export-macro (state-slot-ref i)
+(define-public-macro (state-slot-ref i)
   `(- (length (memq ,i ,state-slots)) 1))
 
-(define-export-macro (state-ref st var)
+(define-public-macro (state-ref st var)
   `(vector-ref ,st (state-slot-ref ,var)))
 
-(define-export-macro (state-set! st var val)
+(define-public-macro (state-set! st var val)
   `(vector-set! ,st (state-slot-ref ,var) ,val))
 
 (tm-define (graphics-state-get)
   (with st (new-state)
     (state-set! st 'graphics-action #f)
-    (state-set! st 'graphical-object (get-graphical-object))
+    (state-set! st 'current-graphical-object (get-graphical-object))
     (state-set! st 'choosing choosing)
     (state-set! st 'sticky-point sticky-point)
     (state-set! st 'leftclick-waiting leftclick-waiting)
@@ -99,11 +105,11 @@
     (state-set! st 'selecting-x0 selecting-x0)
     (state-set! st 'selecting-y0 selecting-y0)
     (state-set! st 'multiselecting multiselecting)
-    (state-set! st 'current-path-under-mouse current-path-under-mouse)
+    (state-set! st 'current-path current-path)
     st))
 
 (tm-define (graphics-state-set st)
-  (with o (state-ref st 'graphical-object)
+  (with o (state-ref st 'current-graphical-object)
     (if (pair? (tree->stree o))
 	(set-graphical-object o)
 	(create-graphical-object #f #f #f #f)))
@@ -123,9 +129,9 @@
   (set! selecting-x0 (state-ref st 'selecting-x0))
   (set! selecting-y0 (state-ref st 'selecting-y0))
   (set! multiselecting (state-ref st 'multiselecting))
-  (set! current-path-under-mouse (state-ref st 'current-path-under-mouse)))
+  (set! current-path (state-ref st 'current-path)))
 
-;; State stack
+;; State stack (2)
 (tm-define graphics-states '())
 
 (tm-define (graphics-states-void?)
@@ -190,7 +196,7 @@
   (set! selecting-x0 #f)
   (set! selecting-y0 #f)
   (set! multiselecting #f)
-  (set! current-path-under-mouse #f)
+  (set! current-path #f)
   (set! layer-of-last-removed-object #f))
 
 (tm-define (graphics-forget-states)
@@ -340,63 +346,52 @@
 	   #t))))
 
 ;; Graphics context
-;;NOTE: This subsection is OK till we find a better system for handling the GC
-(define-export-macro (with-graphics-context msg x y path obj no edge . body)
-  `(with res #t
-     (set! current-x x)
-     (set! current-y y)
-     (set! current-path-under-mouse #f)
-     (with gm (graphics-group-mode? (graphics-mode))
-	(if sticky-point
-	    (with o (graphical-object #t)
-	      (if (or gm (and (pair? o) (nnull? (cdr o)))
-		  )
-		  (let* ((,obj (if gm '(point) (cadr o)))
-			 (,no current-point-no)
-			 (,edge current-edge-sel?)
-			 (,path (cDr (cursor-path))))
-			 (set! current-obj ,obj)
-		       ,(cons 'begin body))
-		  (begin
-		     (set! res #f)
-		     (if (not (and (string? ,msg)
-				   (== (substring ,msg 0 1) ";")))
-			 (display* "Uncaptured gc(sticky) "
-			    ,msg " " o ", " ,x ", " ,y "\n")))))
-	    (let* (( sel (select-choose (s2f ,x) (s2f ,y)))
-		   ( pxy (if sel (car sel) '()))
-		   (,path (graphics-path pxy))
-		   (,obj (if gm '(point) (graphics-object pxy)))
-		   (,edge (and sel (== (length sel) 2)))
-		   (,no (if sel (cAr (car sel)) #f)))
-	      (set! current-path-under-mouse ,path)
-	      (set! current-obj ,obj)
-	      (set! current-point-no ,no)
-	      (set! current-edge-sel? ,edge)
-	      (if ,obj
-		  ,(cons 'begin body)
-		  (if (and (string? ,msg)
-			   (== (substring ,msg 0 1) ";"))
-		      (if (== (substring ,msg 0 2) ";:")
-			 ,(cons 'begin body)
-			  (set! res #f))
-		      (begin
-			 (set! res #f)
-			 (display* "Uncaptured gc(!sticky) "
-				   ,msg " " ,obj ", " ,x ", " ,y "\n"))))))
-     )
-     res))
+;;NOTE: This subsection is not yet OK. We still need to :
+;;  (1) remove (tmdefine) ;
+;;  (2) review & simplify (graphics-reset-context) ;
+(define-public-macro (with-graphics-state x y path obj no edge . body)
+ `(with-state-by-name graphics-state
+    (let* ((,path current-path)
+	   (,obj current-obj)
+	   (,no current-point-no)
+	   (,edge current-edge-sel?)
+       )
+       . ,body))) ;; Deprecated
 
+(define (define-option-state opt decl)
+  (with (fun head . body) decl
+    `(,fun ,head (with-state-by-name ,(car opt) ,@body))))
+
+(hash-set! define-option-table :state define-option-state)
+
+;(define-public-macro (tmdefine head . body)
+;  (with st #f
+;    (foreach-cons (c body)
+;      (with i (car c)
+;        (if (and (pair? i) (eq? (car i) ':state))
+;            (set! st c)))
+;    )
+;    (if st
+;    (begin
+;      (set-car! st `(with-state-by-name ,(cadar st) . ,(cdr st)))
+;      (set-cdr! st '()))))
+;  `(tm-define ,head . ,body))
+
+;; Graphics context [reset]
 (define current-cursor #f)
 (define TM_PATH (var-eval-system "echo $TEXMACS_PATH"))
 (define (tm_xpm name)
   (string-append TM_PATH "/misc/pixmaps/" name))
 
 (tm-define (graphics-reset-context cmd)
+;;FIXME: Should be called only once, when we move out of a <graphics>.
+;;  Should not be called all the time because of the case 'text-cursor.
+;;  Find a way to test this more precisely inside the C++.
+  (:state graphics-state)
   ;; cmd in { begin, exit, undo }
   ;; (display* "Graphics] Reset-context " cmd "\n")
   (if (in? cmd '(begin exit))
-      (set! current-path-under-mouse #f))
+      (set! current-path #f))
   (cond
    ((== cmd 'text-cursor)
     (if (not (== current-cursor 'text-cursor))
