@@ -119,9 +119,10 @@
     cas-times-op-table
     cas-over-op-table
     cas-prefix-op-table
-    (list->ahash-set '(%prime factorial ^ _ conj choose))
-    (list->ahash-set '(matrix det row tuple list set comma))
-    (list->ahash-set '(| ||))))
+    (list->ahash-set '(%prime factorial ^ _ %dotaccess %sqaccess))
+    (list->ahash-set '(quote quasiquote eval))
+    (list->ahash-set '(matrix det row tuple list set comma | ||))
+    (list->ahash-set '(conj choose))))
 
 (define (cas-special-op? x)
   (ahash-ref cas-special-op-table x))
@@ -258,11 +259,21 @@
 (define (cas-out-cell x)
   `(cell ,(cas-out x)))
 
+(define (cas-out-quasiquote x)
+  (cond ((nlist? x) x)
+	((func? x 'unquote 1) (cas-out (cadr x)))
+	(else (map cas-out-quasiquote x))))
+
 (define (cas-out-atom x)
   (cond ((null? x) "null")
 	((number? x) (number->string x))
 	((symbol? x) (cas->tmsymbol x))
 	((string? x) x)
+	((func? x 'quote 1) (cadr x))
+	((func? x 'quasiquote 1) (cas-out-quasiquote (cadr x)))
+	((func? x 'eval 1) (eval (cadr x)))
+	((func? x 'eval 2)
+	 (plugin-eval (cadr x) "default" (tm->tree (caddr x))))
 	((func? x 'matrix) `(matrix (table ,@(map cas-out (cdr x)))))
 	((func? x 'det) `(det (table ,@(map cas-out (cdr x)))))
 	((func? x 'row) `(row ,@(map cas-out-cell (cdr x))))
