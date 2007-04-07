@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.7>
+<TeXmacs|1.0.6.9>
 
 <style|<tuple|source|std>>
 
@@ -199,6 +199,14 @@
       <arg|y>
     </render-folded-grouped>
   </macro>>
+
+  <assign|summarized-raw|<macro|x|y|<arg|x>>>
+
+  <assign|detailed-raw|<macro|x|y|<arg|y>>>
+
+  <assign|unfold-summarized|<macro|x|<action|<arg|x>|(mouse-unfold)|<arg|x>>>>
+
+  <assign|fold-detailed|<macro|x|<action|<arg|x>|(mouse-fold)|<arg|x>>>>
 
   <assign|summarized-tiny|<macro|x|y|<action|<arg|x>|(mouse-unfold)|<arg|x>>>>
 

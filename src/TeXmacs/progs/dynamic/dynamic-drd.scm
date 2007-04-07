@@ -57,6 +57,7 @@
 (define-summarize summarized-std detailed-std)
 (define-summarize summarized-env detailed-env)
 (define-summarize summarized-grouped detailed-grouped)
+(define-summarize summarized-raw detailed-raw)
 (define-summarize summarized-tiny detailed-tiny)
 
 (ahash-set! toggle-table 'summarized-algorithm 'detailed-algorithm)
