@@ -77,8 +77,8 @@
   <TeXmacs> from "<verbatim|experimental>" (by including the corresponding
   line in your <verbatim|/etc/apt/sources.list>) which is rather up-to-date.
   Versions in "<verbatim|stable>", "<verbatim|testing>", and
-  "<verbatim|unstable>" are way too old. Unfortunately, the package is
-  orphaned. Any volunteers?
+  "<verbatim|unstable>" are way too old. The package is currently maintained
+  by Atsuhito Kohda and Kamaraju Kusumanchi.
 
   <section*|Fedora><label|fedora>
 
