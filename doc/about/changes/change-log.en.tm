@@ -1,13 +1,23 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.6.9>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.9>
+  <section|Changes from version 1.0.6 to 1.0.6.10>
 
   <\itemize>
+    <item>Increased user-friendliness of graphics mode (1.0.6.10).
+
+    <item>Necessary updates for Maxima 5.10.0 (1.0.6.10).
+
+    <item>Further improvements in the upcoming markup-based graphical user
+    interface (1.0.6.10).
+
+    <item>Background patterns for document, ornaments and table cells
+    (1.0.6.10).
+
     <item>Asynchroneous script evaluation using plug-ins (1.0.6.9).
 
     <item>Further improvements in the upcoming markup-based graphical user
