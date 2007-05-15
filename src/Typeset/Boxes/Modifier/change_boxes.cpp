@@ -324,7 +324,7 @@ public:
     position ();
     finalize ();
   }
-  inline remember_box_rep::~remember_box_rep () {
+  inline ~remember_box_rep () {
     if (logs_ptr != NULL) {
       rectangles& logs= *logs_ptr;
       logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
