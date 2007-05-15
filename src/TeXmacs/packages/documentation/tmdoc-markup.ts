@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.2>
 
 <style|source>
 
@@ -80,6 +80,33 @@
 
   <\active*>
     <\src-comment>
+      Documentation of scheme macros.
+    </src-comment>
+  </active*>
+
+  <assign|scm|<macro|x|<with|mode|prog|<arg|x>>>>
+
+  <assign|scm-fun|<macro|x|<with|color|dark blue|<scm|<arg|x>>>>>
+
+  <assign|scm-macro|<macro|x|<with|color|dark magenta|<scm|<arg|x>>>>>
+
+  <assign|scm-arg|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>>>>>
+
+  <assign|scm-args|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>><rsup|*>>>>
+
+  <assign|scm-opt-arg|<macro|x|<with|color|dark
+  grey|[<style-with|<scm-arg|<arg|x>>>]>>>
+
+  <assign|explain-scm-sub|<macro|x| <arg|x>>>
+
+  <assign|explain-scm-fun|<xmacro|x|<style-with|src-compact|none|<scm|(<scm-fun|<arg|x|0>><map-args|explain-scm-sub|concat|x|1>)>>>>
+
+  <assign|explain-scm-macro|<xmacro|x|<style-with|src-compact|none|<scm|(<scm-macro|<arg|x|0>><map-args|explain-scm-sub|concat|x|1>)>>>>
+
+  <drd-props|explain-scm-macro|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
       Links inside the documentation and special types of links. We are not
       very happy about this yet, so part of these macros will probably be
       modified sometime in the future.
@@ -88,9 +115,7 @@
 
   <assign|simple-link|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
 
-  <assign|hyper-link|<macro|x|y|<hlink|<arg|x>|<arg|y>>>>
-
-  <assign|hyper-link|<macro|x|y|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<hlink|<arg|x>|<unquote|<arg|y>>>>|<with|color|blue|<arg|x>>>>>>>
+  <assign|hyper-link*|<macro|x|y|<hlink|<arg|x>|<arg|y>>>>
 
   <assign|concept-link|<macro|x|<with|color|magenta|<arg|x>>>>
 
@@ -127,6 +152,10 @@
   </macro>>
 
   <assign|scheme-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|x>>>>>
+  </macro>>
+
+  <assign|shell-fragment|<\macro|x>
     <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
   </macro>>
 
@@ -161,9 +190,13 @@
     </src-comment>
   </active*>
 
-  <assign|icon|<macro|name|<postscript|<find-file|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>|/2|/2||||>>>
+  <assign|icon|<macro|name|<postscript|<find-file|$TEXMACS_PATH/misc/pixmaps|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>|/2|/2||||>>>
 
   <assign|screenshot|<macro|name|<postscript|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|/2|/2||||>>>
+
+  \;
+
+  <assign|cursor|<with|color|red|\|>>
 
   \;
 

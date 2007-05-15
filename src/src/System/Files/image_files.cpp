@@ -17,6 +17,7 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "scheme.hpp"
+#include "../Plugins/Imlib2/imlib2.hpp"
 
 #ifdef OS_WIN32
 #include <x11/xlib.h>
@@ -31,7 +32,7 @@ hashmap<tree,string> ps_bbox ("");
 tree
 xpm_load (url u) {
   string s;
-  load_string ("$TEXMACS_PIXMAPS_PATH" * u, s);
+  load_string ("$TEXMACS_PIXMAP_PATH" * u, s);
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", s);
 
   int i, j;
@@ -66,6 +67,73 @@ xpm_size (url u, int& w, int& h) {
   if (!ok) fatal_error ("Invalid xpm (" * file_name * ")", "xpm_size");
 }
 
+array<string>
+xpm_colors (tree t) {
+  array<string> res(0);
+  string s= t[0]->label;
+  int ok, i=0, j, k, w, h, c, b;
+  skip_spaces (s, i);
+  ok= read_int (s, i, w);
+  skip_spaces (s, i);
+  ok= read_int (s, i, h) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, c) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, b) && ok;
+  if ((!ok) || (N(t)<(c+1)) || (c<=0))
+    fatal_error ("Invalid xpm tree", "x_drawable_rep::xpm_colors");
+
+  for (k=0; k<c; k++) {
+    string s   = as_string (t[k+1]);
+    string def = "none";
+    if (N(s)<b) i=N(s); else i=b;
+
+    skip_spaces (s, i);
+    if ((i<N(s)) && (s[i]=='s')) {
+      i++;
+      skip_spaces (s, i);
+      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
+      skip_spaces (s, i);
+    }
+    if ((i<N(s)) && (s[i]=='c')) {
+      i++;
+      skip_spaces (s, i);
+      j=i;
+      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
+      def= locase_all (s (j, i));
+    }
+    res<<def;
+  }
+  return res;
+}
+
+array<SI>
+xpm_hotspot (tree t) {
+  array<SI> res(0);
+  string s= t[0]->label;
+  int ok, i=0, w, h, c, b, x, y;
+  skip_spaces (s, i);
+  ok= read_int (s, i, w);
+  skip_spaces (s, i);
+  ok= read_int (s, i, h) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, c) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, b) && ok;
+  if ((!ok) || (N(t)<(c+1)) || (c<=0))
+    fatal_error ("Invalid xpm tree", "x_drawable_rep::xpm_hotspot");
+
+  skip_spaces (s, i);
+  ok= read_int (s, i, x) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, y) && ok;
+  if (ok) {
+    res<<x;
+    res<<y;
+  }
+  return res;
+}
+
 /******************************************************************************
 * Loading postscript files or conversion to postscript
 ******************************************************************************/
@@ -75,9 +143,16 @@ ps_load (url image) {
   url name= resolve (image);
   if (is_none (name))
     name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
+
 #ifdef OS_WIN32
   if (is_ramdisc (name)) name= get_from_ramdisc (name);
-  string s= as_string (call ("image->postscript", object (name)));
+#endif
+
+  string s, suf= suffix (name);
+  if (suf == "ps" || suf == "eps") load_string (name, s);
+  else s= as_string (call ("image->postscript", object (name)));
+
+#ifdef OS_WIN32
   if (s == "") {
     char *data;
     char *path= as_charp (as_string (name));
@@ -89,9 +164,8 @@ ps_load (url image) {
       free (data);
     }
   }
-#else
-  string s= as_string (call ("image->postscript", object (name)));
 #endif
+
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s);
   return s;
 }
@@ -132,4 +206,20 @@ ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2) {
   x2= (int) X2; y2= (int) Y2;
   if (ok) return;
   x1= y1= 0; x2= 596; y2= 842;
+}
+
+/******************************************************************************
+* Getting the size of an image, using internal plug-ins if possible
+******************************************************************************/
+
+void
+image_size (url image, int& w, int& h) {
+  if (imlib2_supports (image))
+    imlib2_image_size (image, w, h);
+  else {
+    int x1, y1, x2, y2;
+    ps_bounding_box (image, x1, y1, x2, y2);
+    w= x2 - x1;
+    h= y2 - y1;
+  }
 }

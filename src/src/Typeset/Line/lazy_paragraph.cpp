@@ -411,7 +411,7 @@ void
 lazy_paragraph_rep::format_paragraph () {
   width -= right;
 
-  int start= 0, i, j;
+  int start= 0, i, j, k;
   // cout << "Typeset " << a << "\n";
   for (i=0; i<=N(a); i++) {
     // determine the next unit
@@ -427,8 +427,14 @@ lazy_paragraph_rep::format_paragraph () {
     if (no_first) style (PAR_FIRST)= "0cm";
     for (j=start; j<i; j++)
       if (a[j]->type == CONTROL_ITEM)
-	if (is_tuple (a[j]->t, "env_par"))
+	if (is_tuple (a[j]->t, "env_par")) {
+	  if (a[j]->t[1]->label == PAR_FIRST) {
+	    for (k=j-1; k>=start; k--)
+	      if (a[k]->b->w () != 0) break;
+	    if (k >= start) continue;
+	  }
 	  style (a[j]->t[1]->label)= a[j]->t[2];
+	}
     no_first= (style [PAR_NO_FIRST] == "true");
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
@@ -534,7 +540,7 @@ lazy_paragraph_rep::query (lazy_type request, format fm) {
     int i, n= N(li);
     for (i=0; i<n-1; i++)
       w += li[i]->spc->def + li[i]->b->x2;
-    w += li[i]->b->x2;
+    if (i<n) w += li[i]->b->x2;
     w= max (w, 1);  // width of a paragraph must be strictly positive for
                     // correct positioning inside tables
     return make_format_width (w);
@@ -546,6 +552,7 @@ lazy
 lazy_paragraph_rep::produce (lazy_type request, format fm) {
   if (request == type) return this;
   if (request == LAZY_VSTREAM) {
+    bool hidden= (N(a) == 0);
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
       width= fs->width;
@@ -553,6 +560,16 @@ lazy_paragraph_rep::produce (lazy_type request, format fm) {
       if (N (fs->after ) != 0) a= join (a, fs->after );
     }
     format_paragraph ();
+    /* Hide line items of height 0 */
+    int i, n= N(sss->l);
+    if (hidden)
+      for (i=0; i<n; i++) {
+	box b= sss->l[i]->b;
+	sss->l[i]->type= PAGE_HIDDEN_ITEM;
+	sss->l[i]->b   = resize_box (ip, b, b->x1, 0, b->x2, 0);
+	sss->l[i]->spc = space (0, 0, 0);
+      }
+    /* End hiding code */
     return lazy_vstream (ip, "", sss->l, sss->sb);
   }
   return lazy_rep::produce (request, fm);

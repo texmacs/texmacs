@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (secure-secure)
-  (:use (texmacs plugin plugin-cmd))
-  (:export latexer))
+  (:use (utils plugins plugin-cmd)))
 
 (tm-define (latexer s)
   (:type (-> tree object))

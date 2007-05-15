@@ -25,6 +25,7 @@ class tm_widget_rep: public basic_widget_rep {
 public:
   server_rep* sv;
   hashmap<tree,tree> props;
+  bool serial;
 
 protected:
   bool     footer_flag;        // footer visible ?
@@ -46,7 +47,8 @@ public:
   bool get_subwidget_flag (widget w);
   void set_subwidget_flag (widget w, bool on);
 
-  void interactive (string name, string& s, command cmd);
+  void interactive (string name, string type, array<string> def,
+		    string& s, command cmd);
   void interactive_return ();
   void set_left_footer (string s);
   void set_right_footer (string s);
@@ -70,7 +72,6 @@ public:
   void handle_keyboard_focus (keyboard_focus_event ev);
   void handle_resize (resize_event ev);
   void handle_destroy (destroy_event ev);
-  void handle_alarm (alarm_event ev);
 
   bool handle (event ev);
 

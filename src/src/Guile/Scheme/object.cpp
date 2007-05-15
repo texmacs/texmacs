@@ -77,6 +77,14 @@ operator != (object obj1, object obj2) {
 
 object null_object () {
   return object (SCM_NULL); }
+object list_object (object obj1) {
+  return cons (obj1, null_object ()); }
+object list_object (object obj1, object obj2) {
+  return cons (obj1, cons (obj2, null_object ())); }
+object list_object (object obj1, object obj2, object obj3) {
+  return cons (obj1, cons (obj2, cons (obj3, null_object ()))); }
+object symbol_object (string s) {
+  return object (symbol_to_scm (s)); }
 object cons (object obj1, object obj2) {
   return object (scm_cons (obj1->lookup(), obj2->lookup())); }
 object car (object obj) {
@@ -105,6 +113,7 @@ bool is_list (object obj) { return scm_is_list (obj->lookup()); }
 bool is_bool (object obj) { return scm_is_bool (obj->lookup()); }
 bool is_int (object obj) { return scm_is_int (obj->lookup()); }
 bool is_string (object obj) { return scm_is_string (obj->lookup()); }
+bool is_symbol (object obj) { return scm_is_symbol (obj->lookup()); }
 bool is_tree (object obj) { return scm_is_tree (obj->lookup()); }
 bool is_path (object obj) { return scm_is_path (obj->lookup()); }
 bool is_url (object obj) { return scm_is_url (obj->lookup()); }
@@ -116,8 +125,11 @@ bool is_url (object obj) { return scm_is_url (obj->lookup()); }
 object::object (): rep (new object_rep (SCM_NULL)) {}
 object::object (bool b): rep (new object_rep (bool_to_scm (b))) {}
 object::object (int i): rep (new object_rep (int_to_scm (i))) {}
+object::object (char* s): rep (new object_rep (string_to_scm (string (s)))) {}
 object::object (string s): rep (new object_rep (string_to_scm (s))) {}
 object::object (tree t): rep (new object_rep (tree_to_scm (t))) {}
+object::object (list<string> l): rep (new object_rep(list_string_to_scm(l))) {}
+object::object (list<tree> l): rep (new object_rep (list_tree_to_scm (l))) {}
 object::object (path p): rep (new object_rep (path_to_scm (p))) {}
 object::object (url u): rep (new object_rep (url_to_scm (u))) {}
 
@@ -142,6 +154,13 @@ as_string (object obj) {
   return scm_to_string (s);
 }
 
+string
+as_symbol (object obj) {
+  SCM s= obj->lookup();
+  if (!scm_is_symbol (s)) return "";
+  return scm_to_symbol (s);
+}
+
 tree
 as_tree (object obj) {
   SCM t= obj->lookup();
@@ -153,6 +172,20 @@ scheme_tree
 as_scheme_tree (object obj) {
   SCM t= obj->lookup();
   return scm_to_scheme_tree (t);
+}
+
+list<string>
+as_list_string (object obj) {
+  SCM l= obj->lookup();
+  if (!scm_is_list_string (l)) return list<string> ();
+  return scm_to_list_string (l);
+}
+
+list<tree>
+as_list_tree (object obj) {
+  SCM l= obj->lookup();
+  if (!scm_is_list_tree (l)) return list<tree> ();
+  return scm_to_list_tree (l);
 }
 
 path
@@ -202,6 +235,24 @@ object_to_string (object obj) {
   return as_string (call ("object->string", obj));
 }
 
+object
+scheme_cmd (char* s) {
+  return eval ("(lambda () " * string (s) * ")");
+}
+
+object
+scheme_cmd (string s) {
+  return eval ("(lambda () " * s * ")");
+}
+
+object
+scheme_cmd (object cmd) {
+  cmd= cons (cmd, null_object ());
+  cmd= cons (null_object (), cmd);
+  cmd= cons (eval ("'lambda"), cmd);
+  return eval (cmd);
+}
+
 /******************************************************************************
 * Conversions to functional objects
 ******************************************************************************/
@@ -217,19 +268,6 @@ public:
 command
 as_command (object obj) {
   return new object_command_rep (obj);
-}
-
-class scheme_command_rep: public command_rep {
-  string s;
-public:
-  scheme_command_rep (string s2): s (s2) {}
-  void apply () { (void) eval (s); }
-  ostream& print (ostream& out) { return out << s; }
-};
-
-command
-as_command (string s) {
-  return new scheme_command_rep (s);
 }
 
 class object_make_widget_rep: public make_widget_rep {
@@ -267,7 +305,9 @@ object eval_secure (string expr) {
 object eval_file (string name) {
   return object (eval_scheme_file (name)); }
 void eval_delayed (string expr) {
-  (void) call ("exec-delayed", expr); }
+  (void) call ("exec-delayed", scheme_cmd (expr)); }
+void eval_delayed (object expr) {
+  (void) call ("exec-delayed", scheme_cmd (expr)); }
 
 static inline array<SCM>
 array_lookup (array<object> a) {

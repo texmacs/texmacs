@@ -27,6 +27,7 @@ typedef x_window_rep* x_window;
 #define XK_CYRILLIC
 
 #include <X11/Xlib.h>
+#include <X11/X.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/Xatom.h>
@@ -84,6 +85,7 @@ ostream& operator << (ostream& out, message m);
 ******************************************************************************/
 
 class x_display_rep: public display_rep {
+public:
   Display*        dpy;
   GC              gc;
   GC              pixmap_gc;
@@ -94,12 +96,12 @@ class x_display_rep: public display_rep {
   int             depth;
   Colormap        cols;
   color*          cmap;
+  bool            im_ok;
+  XIM             im;
   list<widget>    grab_ptr;
   list<widget>    grab_kbd;
   unsigned int    state;
   list<message>   messages;
-  x_drawable_rep* shadow;
-  x_window_rep*   shadow_src;
   x_window_rep*   gswindow;
   int             argc;
   char**          argv;
@@ -108,6 +110,8 @@ class x_display_rep: public display_rep {
   SI              balloon_x;
   SI              balloon_y;
   time_t          balloon_time;
+  bool            interrupted;
+  time_t          interrupt_time;
 
   hashmap<x_character,pointer> color_scale;       // for anti-aliasing
   hashmap<x_character,pointer> character_bitmap;  // bitmaps of all characters
@@ -125,15 +129,17 @@ public:
   ~x_display_rep ();
 
   /****************************** Color **************************************/
-  int   alloc_color (int r, int g, int b);
-  void  init_color_map ();
-  void  initialize_colors ();
-  void  prepare_color (int sfactor, color fg, color bg);
-  color get_color (string s);
-  color rgb (int r, int g, int b);
-  void  get_rgb (color col, int& r, int& g, int& b);
+  int    alloc_color (int r, int g, int b);
+  void   init_color_map ();
+  void   initialize_colors ();
+  void   prepare_color (int sfactor, color fg, color bg);
+  color  get_color (string s);
+  color  rgb (int r, int g, int b);
+  void   get_rgb (color col, int& r, int& g, int& b);
+  string get_name (color c);
 
   /****************************** Keyboard ***********************************/
+  void initialize_input_method ();
   void insert_keysym (array<int>& a, int i, int j);
   void get_xmodmap ();
   void map (int key, string s);
@@ -141,6 +147,7 @@ public:
   void initialize_keyboard_pointer ();
   string look_up_key (XKeyEvent* ev);
   string look_up_mouse (XButtonEvent* ev);
+  unsigned int get_kbd_modifiers ();
   unsigned int get_button_mask (XButtonEvent* ev);
 
   /******************************** Fonts ************************************/
@@ -180,10 +187,12 @@ public:
   void   set_help_balloon (widget wid, SI x, SI y);
   void   map_balloon ();
   void   unmap_balloon ();
-  void   postscript_auto_gc ();
-  void   postscript_gc (string name);
-  void   set_pointer (string pixmap_name);
+  void   image_auto_gc ();
+  void   image_gc (string name);
+  void   set_pointer (string name);
+  void   set_pointer (string curs_name, string mask_name);
   void   set_wait_indicator (string message, string arg);
+  bool   check_event (int type);
 
   /************************** Event processing *******************************/
   void process_event (x_window win, XEvent* ev);

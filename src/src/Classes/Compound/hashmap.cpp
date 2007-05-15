@@ -20,7 +20,8 @@
 * Hashmap entries
 ******************************************************************************/
 
-TMPL H::hashentry (T key2, U im2): key (key2), im (im2) {}
+TMPL H::hashentry (int code2, T key2, U im2):
+  code (code2), key (key2), im (im2) {}
 
 TMPL H::operator tree () {
   return tree (ASSOCIATE, as_tree(key), as_tree(im)); }
@@ -33,12 +34,12 @@ operator << (ostream& out, H h) {
 
 TMPL bool
 operator == (H h1, H h2) {
-  return (h1.key==h2.key) && (h1.im==h2.im);
+  return (h1.code==h2.code) && (h1.key==h2.key) && (h1.im==h2.im);
 }
 
 TMPL bool
 operator != (H h1, H h2) {
-  return (h1.key!=h2.key) || (h1.im!=h2.im);
+  return (h1.code!=h2.code) || (h1.key!=h2.key) || (h1.im!=h2.im);
 }
 
 /******************************************************************************
@@ -65,9 +66,11 @@ hashmap_rep<T,U>::resize (int n2) {
 
 TMPL bool
 hashmap_rep<T,U>::contains (T x) {
-  list<hashentry<T,U> >  l (a[hash(x)&(n-1)]);
+  register int hv= hash (x);
+  list<hashentry<T,U> >  l (a [hv & (n-1)]);
   while (!nil (l)) {
-    if (l->item.key==x) return true;
+    if (l->item.code == hv && l->item.key == x)
+      return true;
     l= l->next;
   }
   return false;
@@ -80,24 +83,27 @@ hashmap_rep<T,U>::empty () {
 
 TMPL U&
 hashmap_rep<T,U>::bracket_rw (T x) {
-  register int hv= hash(x);
-  list<hashentry<T,U> >  l (a[hv&(n-1)]);
+  register int hv= hash (x);
+  list<hashentry<T,U> >  l (a [hv & (n-1)]);
   while (!nil (l)) {
-    if (l->item.key==x) return l->item.im;
+    if (l->item.code == hv && l->item.key == x)
+      return l->item.im;
     l= l->next;
   }
-  if (size>=n*max) resize (n<<1);
-  list<hashentry<T,U> >& rl= a[hv&(n-1)];
-  rl= list<hashentry<T,U> > (H (x, init), rl);
+  if (size >= n*max) resize (n<<1);
+  list<hashentry<T,U> >& rl= a [hv & (n-1)];
+  rl= list<hashentry<T,U> > (H (hv, x, init), rl);
   size ++;
   return rl->item.im;
 }
 
 TMPL U
 hashmap_rep<T,U>::bracket_ro (T x) {
-  list<hashentry<T,U> >  l (a[hash(x)&(n-1)]);
+  register int hv= hash (x);
+  list<hashentry<T,U> >  l (a [hv & (n-1)]);
   while (!nil (l)) {
-    if (l->item.key==x) return l->item.im;
+    if (l->item.code == hv && l->item.key == x)
+      return l->item.im;
     l= l->next;
   }
   return init;
@@ -105,12 +111,13 @@ hashmap_rep<T,U>::bracket_ro (T x) {
 
 TMPL void
 hashmap_rep<T,U>::reset (T x) {
-  list<hashentry<T,U> > *l= &(a[hash(x)&(n-1)]);
+  register int hv= hash (x);
+  list<hashentry<T,U> > *l= &(a [hv & (n-1)]);
   while (!nil (*l)) {
-    if ((*l)->item.key==x) {
-      *l=(*l)->next;
+    if ((*l)->item.code == hv && (*l)->item.key == x) {
+      *l= (*l)->next;
       size --;
-      if (size<(n>>1)*max) resize (n>>1);
+      if (size < (n>>1) * max) resize (n>>1);
       return;
     }
     l= &((*l)->next);
@@ -131,13 +138,13 @@ hashmap_rep<T,U>::generate (void (*routine) (T)) {
 
 TMPL ostream&
 operator << (ostream& out, hashmap<T,U> h) {
-  int i=0, j=0, n=h->n, size=h->size;
+  int i= 0, j= 0, n= h->n, size= h->size;
   out << "{ ";
   for (; i<n; i++) {
-    list<hashentry<T,U> > l=h->a[i];
-    for (; !nil(l); l=l->next, j++) {
+    list<hashentry<T,U> > l= h->a[i];
+    for (; !nil (l); l= l->next, j++) {
       out << l->item;
-      if (j!=size-1) out << ", ";
+      if (j != size-1) out << ", ";
     }
   }
   out << " }";
@@ -148,8 +155,8 @@ TMPL hashmap<T,U>::operator tree () {
   int i=0, j=0, n=rep->n, size=rep->size;
   tree t (COLLECTION, size);
   for (; i<n; i++) {
-    list<hashentry<T,U> > l=rep->a[i];
-    for (; !nil(l); l=l->next, j++)
+    list<hashentry<T,U> > l= rep->a[i];
+    for (; !nil (l); l= l->next, j++)
       t[j]= (tree) l->item;
   }
   return t;
@@ -157,10 +164,10 @@ TMPL hashmap<T,U>::operator tree () {
 
 TMPL void
 hashmap_rep<T,U>::join (hashmap<T,U> h) {
-  int i=0, n=h->n;
+  int i= 0, n= h->n;
   for (; i<n; i++) {
-    list<hashentry<T,U> > l=h->a[i];
-    for (; !nil(l); l=l->next)
+    list<hashentry<T,U> > l= h->a[i];
+    for (; !nil(l); l= l->next)
       bracket_rw (l->item.key)= copy (l->item.im);
   }
 }
@@ -168,9 +175,9 @@ hashmap_rep<T,U>::join (hashmap<T,U> h) {
 TMPL bool
 operator == (hashmap<T,U> h1, hashmap<T,U> h2) {
   if (h1->size != h2->size) return false;
-  int i=0, n=h1->n;
+  int i= 0, n= h1->n;
   for (; i<n; i++) {
-    list<hashentry<T,U> > l=h1->a[i];
+    list<hashentry<T,U> > l= h1->a[i];
     for (; !nil(l); l=l->next)
       if (h2[l->item.key] != l->item.im) return false;
   }

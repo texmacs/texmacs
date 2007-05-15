@@ -12,6 +12,7 @@
 
 #include "concater.hpp"
 #include "formatter.hpp"
+#include "analyze.hpp"
 
 lazy make_lazy_vstream (edit_env env, tree t, path ip, tree channel);
 
@@ -31,6 +32,9 @@ concater_rep::typeset_substring (string s, path ip, int pos) {
     break; \
   case SPC_SPACE: \
     print (spc); \
+    break; \
+  case SPC_DSPACE: \
+    print (space (spc->min << 1, spc->def << 1, spc->max << 1)); \
     break; \
   case SPC_PERIOD: \
     print (spc+ extra); \
@@ -135,6 +139,7 @@ concater_rep::typeset_concat (tree t, path ip) {
 
 void
 concater_rep::typeset_hspace (tree t, path ip) {
+  if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
   if (N(t)==1) print (env->as_hspace (t[0]));
   else print (space (env->as_length (t[0]),
 		     env->as_length (t[1]),
@@ -168,7 +173,7 @@ concater_rep::typeset_move (tree t, path ip) {
   print (STD_ITEM, move_box (ip, b, x, y, true));
 }
 
-static SI
+SI
 resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
   if (!is_atomic (new_size)) return old;
   string s= new_size->label;
@@ -223,6 +228,18 @@ concater_rep::typeset_resize (tree t, path ip) {
   print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, !fl));
 }
 
+void
+concater_rep::typeset_clipped (tree t, path ip) {
+  // IDEA: set left, right, bottom, top environment variables
+  //       and allow doing computations with them
+  box  b = typeset_as_concat (env, t[4], descend (ip, 4));
+  SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[0]));
+  SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[1]));
+  SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[2]));
+  SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[3]));
+  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
+}
+
 /******************************************************************************
 * Floating objects
 ******************************************************************************/
@@ -234,6 +251,8 @@ concater_rep::typeset_float (tree t, path ip) {
   tree ch= tuple (t1, t2);
   lazy lz= make_lazy_vstream (env, t[2], descend (ip, 2), ch);
   marker (descend (ip, 0));
+  if (is_accessible (ip) && !env->read_only)
+    flag_ok (as_string (t1), decorate_middle (ip), env->dis->brown);
   print (FLOAT_ITEM, control_box (decorate_middle (ip), lz, env->fn));
   marker (descend (ip, 1));
 }

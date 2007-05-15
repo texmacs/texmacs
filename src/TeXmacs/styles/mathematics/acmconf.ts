@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.7>
+<TeXmacs|1.0.6>
 
 <style|source>
 
@@ -35,15 +35,15 @@
 
   <assign|font-base-size|9>
 
-  <assign|page-odd|17.5mm>
+  <assign|page-odd|20mm>
 
-  <assign|page-even|17.5mm>
+  <assign|page-even|20mm>
 
-  <assign|par-width|175mm>
+  <assign|page-right|20mm>
 
-  <assign|page-top|15mm>
+  <assign|page-top|25mm>
 
-  <assign|page-bot|20mm>
+  <assign|page-bot|25mm>
 
   <\active*>
     <\src-comment>

@@ -60,6 +60,7 @@ public:
   void selection_get (path& start, path& end);
   path selection_get_start ();
   path selection_get_end ();
+  path selection_get_path ();
   void selection_set (string key, tree t, bool persistant= false);
   void selection_set (tree t);
   void selection_set_start (path p= path());

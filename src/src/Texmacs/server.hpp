@@ -29,7 +29,6 @@ class server_rep: public abstract_struct {
 public:
   server_rep ();
   virtual ~server_rep ();
-  virtual void advance_banner () = 0;
 
   /* Control global server parameters */
   virtual void   set_input_language (string s) = 0;
@@ -48,8 +47,7 @@ public:
 
   /* Guile scheme motor */
   virtual bool exec_file (url u) = 0;
-  virtual void exec_delayed (string s) = 0;
-  virtual void exec_delayed (command cmd) = 0;
+  virtual void exec_delayed (object cmd) = 0;
   virtual string preference (string var) = 0;
 
   /* TeXmacs layout */
@@ -68,37 +66,48 @@ public:
   /* Buffer management */
   virtual int  nr_bufs () = 0;
   virtual tm_buffer get_buf (int i) = 0;
-  virtual url  get_name_buffer () = 0;
+  virtual tm_buffer get_buf (path p) = 0;
   virtual void set_name_buffer (url name) = 0;
+  virtual url  get_name_buffer () = 0;
+  virtual url  get_name_buffer (path p) = 0;
   virtual void set_abbr_buffer (string abbr) = 0;
+  virtual string get_abbr_buffer () = 0;
   virtual void new_buffer () = 0;
   virtual void switch_to_buffer (url name) = 0;
+  virtual bool switch_to_buffer (path p) = 0;
   virtual void switch_to_active_buffer (url name) = 0;
   virtual void revert_buffer () = 0;
   virtual void kill_buffer () = 0;
-  virtual void open_window () = 0;
+  virtual void new_buffer_in_new_window (url name, tree t, tree geom= "") = 0;
+  virtual void open_window (tree geom= "") = 0;
   virtual void clone_window () = 0;
   virtual void kill_window () = 0;
+  virtual void kill_window_and_buffer () = 0;
   virtual void set_max_undo_depth (int i) = 0;
   virtual int  get_max_undo_depth () = 0;
   virtual bool no_bufs () = 0;
   virtual bool no_name () = 0;
   virtual bool help_buffer () = 0;
   virtual void revert_buffer (url name, tree doc) = 0;
+  virtual void set_aux (string aux, url name) = 0;
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
-  virtual void browse_help (int delta) = 0;
+  virtual void set_buffer_tree (url name, tree doc) = 0;
+  virtual tree get_buffer_tree (url name) = 0;
+  virtual object get_buffer_menu () = 0;
+  virtual bool buffer_in_menu (url name, bool flag) = 0;
 
   /* Projects */
   virtual void project_attach (string prj_name= "") = 0;
   virtual bool project_attached () = 0;
+  virtual object get_project_buffer_menu () = 0;
 
   /* Loading and saving files */
   virtual tree load_tree (url name, string f) = 0;
   virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
   virtual void save_buffer (url name, string fm) = 0;
   virtual void auto_save () = 0;
-  virtual void delayed_autosave () = 0;
+  //virtual void delayed_autosave () = 0;
   virtual bool buffer_unsaved () = 0;
   virtual bool exists_unsaved_buffer () = 0;
   virtual void pretend_save_buffer () = 0;
@@ -116,7 +125,9 @@ public:
   virtual color       get_color (string s) = 0;
   virtual int         get_nr_windows () = 0;
 
-  virtual void style_update_menu () = 0;
+  virtual object get_style_menu () = 0;
+  virtual object get_add_package_menu () = 0;
+  virtual object get_remove_package_menu () = 0;
   virtual void style_clear_cache () = 0;
   virtual void style_set_cache (
             tree style, hashmap<string,tree> H, tree drd) = 0;
@@ -124,6 +135,7 @@ public:
 	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
 
   /* getting window properties */
+  virtual int  get_window_id () = 0;
   virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;
   virtual void set_bool_window_property (string what, bool val) = 0;
   virtual void set_int_window_property (string what, int val) = 0;
@@ -140,12 +152,13 @@ public:
   virtual void set_extents (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void set_left_footer (string s) = 0;
   virtual void set_right_footer (string s) = 0;
-  virtual void set_message (string left, string right) = 0;
-  virtual void interactive (string name, string& s, command call_back) = 0;
-  virtual void dialogue_start (string name, widget wid, scheme_tree prg) = 0;
-  virtual void dialogue_inquire (scheme_tree& arg) = 0;
+  virtual void set_message (string left, string right, bool temp= false) = 0;
+  virtual void recall_message () = 0;
+  virtual void dialogue_start (string name, widget wid) = 0;
+  virtual void dialogue_inquire (int i, string& arg) = 0;
   virtual void dialogue_end () = 0;
-  virtual void choose_file (string title, string type, scheme_tree prg) = 0;
+  virtual void choose_file (object fun, string title, string type) = 0;
+  virtual void interactive (object fun, scheme_tree p) = 0;
   virtual void full_screen_mode (bool on, bool edit) = 0;
   virtual bool in_full_screen_mode () = 0;
   virtual bool in_full_screen_edit_mode () = 0;
@@ -161,8 +174,10 @@ public:
   virtual void   set_printer_dpi (string dpi) = 0;
   virtual void   set_default_shrinking_factor (int sf) = 0;
   virtual int    get_default_shrinking_factor () = 0;
-  virtual void   postscript_gc (string which= "*") = 0;
+  virtual void   image_gc (string which= "*") = 0;
   virtual void   inclusions_gc (string which= "*") = 0;
+  virtual void   typeset_update (path p) = 0;
+  virtual void   typeset_update_all () = 0;
   virtual string translate (string which, string from, string to) = 0;
   virtual bool   is_yes (string s) = 0;
   virtual void   quit () = 0;

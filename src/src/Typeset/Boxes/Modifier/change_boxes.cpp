@@ -63,6 +63,7 @@ struct change_box_rep: public composite_box_rep {
     return sx1(0) + bs[0]->get_leaf_offset (search); }
 
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 change_box_rep::change_box_rep (path ip, bool fl1, bool fl2):
@@ -83,8 +84,18 @@ change_box_rep::graphical_select (SI x, SI y, SI dist) {
     return bs[0]->graphical_select (x- sx(0), y- sy(0), dist);
 }
 
+gr_selections
+change_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+//TODO : Check if it is correct
+  if (child_flag)
+    return composite_box_rep::graphical_select (x1, y1, x2, y2);
+  else
+    return bs[0]->graphical_select (x1- sx(0), y1- sy(0),
+				    x2- sx(0), y2- sy(0));
+}
+
 /******************************************************************************
-* moving and resizing boxes
+* Moving boxes
 ******************************************************************************/
 
 struct move_box_rep: public change_box_rep {
@@ -100,6 +111,10 @@ move_box_rep::move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
   position ();
   finalize ();
 }
+
+/******************************************************************************
+* Resizing boxes
+******************************************************************************/
 
 struct resize_box_rep: public change_box_rep {
   resize_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2,
@@ -132,6 +147,60 @@ vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor):
   y1 -= bot_cor;
   y2 += top_cor;
   finalize ();
+}
+
+/******************************************************************************
+* Clipped boxes
+******************************************************************************/
+
+struct clip_box_rep: public change_box_rep {
+  tree xt, yt;
+  SI old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
+public:
+  clip_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2,
+		tree xt, tree yt, SI scx, SI scy);
+  operator tree () { return tree (TUPLE, "clip", (tree) bs[0]); }
+  int get_type () {
+    return xt!=UNINIT || yt!=UNINIT? SCROLL_BOX: change_box_rep::get_type(); }
+  tree get_info (tree in) {
+    if (in == "scroll-x") return xt;
+    else if (in == "scroll-y") return yt;
+    else return box_rep::get_info (in); }
+  void pre_display (ps_device &dev);
+  void post_display (ps_device &dev);
+  selection find_selection (path lbp, path rbp);
+};
+
+clip_box_rep::clip_box_rep (
+  path ip, box b, SI X1, SI Y1, SI X2, SI Y2,
+  tree xt2, tree yt2, SI scx, SI scy):
+  change_box_rep (ip, true), xt (xt2), yt (yt2)
+{
+  insert (b, scx, scy);
+  position ();
+  x1= X1; y1= Y1;
+  x2= X2; y2= Y2;
+  // left_justify ();
+  finalize ();
+}
+
+void
+clip_box_rep::pre_display (ps_device &dev) {
+  dev->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  dev->extra_clipping (x1, y1, x2, y2);
+}
+
+void
+clip_box_rep::post_display (ps_device &dev) {
+  dev->set_clipping (
+    old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
+}
+
+selection
+clip_box_rep::find_selection (path lbp, path rbp) {
+  selection sel= change_box_rep::find_selection (lbp, rbp);
+  return selection (sel->rs & rectangle (x1, y1, x2, y2),
+		    sel->start, sel->end, sel->valid);
 }
 
 /******************************************************************************
@@ -173,10 +242,10 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
 
 struct cell_box_rep: public change_box_rep {
   SI    bl, br, bb, bt;
-  color fg, bg, old_bg;
-  bool  transp;
+  color fg;
+  tree  bg, old_bg;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-		SI bl, SI br, SI bb, SI bt, color fg, color bg, bool transp);
+		SI bl, SI br, SI bb, SI bt, color fg, tree bg);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
@@ -185,16 +254,16 @@ struct cell_box_rep: public change_box_rep {
 
 cell_box_rep::cell_box_rep (
   path ip, box b, SI X0, SI Y0, SI X1, SI Y1, SI X2, SI Y2,
-  SI Bl, SI Br, SI Bb, SI Bt, color Fg, color Bg, bool Transp):
+  SI Bl, SI Br, SI Bb, SI Bt, color Fg, tree Bg):
   change_box_rep (ip, false),
   bl (Bl<<1), br (Br<<1), bb (Bb<<1), bt (Bt<<1),
-  fg (Fg), bg (Bg), transp (Transp)
+  fg (Fg), bg (Bg)
 {
   insert (b, X0, Y0);
   position ();
   x1= X1; y1= Y1;
   x2= X2; y2= Y2;
-  if ((!transp) || (bl>0) || (br>0) || (bb>0) || (bt>0)) {
+  if ((bg != "") || (bl>0) || (br>0) || (bb>0) || (bt>0)) {
     // the 4*PIXEL extra space is sufficient for (shrinking factor) <= 8
     x3= min (x3, x1 - (bl>>1) - (bl>0? PIXEL<<2: 0));
     y3= min (y3, y1 - (bb>>1) - (bb>0? PIXEL<<2: 0));
@@ -206,16 +275,16 @@ cell_box_rep::cell_box_rep (
 
 void
 cell_box_rep::pre_display (ps_device& dev) {
-  if (transp) return;
-  old_bg= dev->get_background ();
-  dev->set_background (bg);
-  dev->clear (x1, y1, x2, y2);
+  if (bg == "") return;
+  old_bg= dev->get_background_pattern ();
+  dev->set_background_pattern (bg);
+  dev->clear_pattern (x1, y1, x2, y2);
 }
 
 void
 cell_box_rep::post_display (ps_device &dev) {
-  if (transp) return;
-  dev->set_background (old_bg);
+  if (bg == "") return;
+  dev->set_background_pattern (old_bg);
 }
 
 void
@@ -237,6 +306,111 @@ cell_box_rep::display (ps_device dev) {
     dev->fill (X1  , Y1  , X2  , Y1+b);
     dev->fill (X1  , Y2-t, X2  , Y2  );
   }
+}
+
+/******************************************************************************
+* Remember boxes
+******************************************************************************/
+
+class remember_box_rep: public change_box_rep {
+public:
+  rectangles* logs_ptr;
+  SI          ox, oy;
+public:
+  inline remember_box_rep (path ip, box b):
+    change_box_rep (ip, true), logs_ptr (NULL)
+  {
+    insert (b, 0, 0);
+    position ();
+    finalize ();
+  }
+  inline ~remember_box_rep () {
+    if (logs_ptr != NULL) {
+      rectangles& logs= *logs_ptr;
+      logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
+      logs= rectangles (rectangle (0, 0, 0, 0), logs);
+      // cout << "  8=X " << rectangle (ox+x3, oy+y3, ox+x4, oy+y4) << "\n";
+    }
+  }
+  inline void position_at (SI x, SI y, rectangles& logs) {
+    x += x0; y += y0;
+    if (logs_ptr == NULL) logs= rectangles (rectangle (0, 0, 0, 0), logs);
+    else logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
+    ox= x; oy= y;
+    logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
+    logs_ptr= &logs;
+  }
+  inline void display (ps_device dev) {
+    dev->apply_shadow (x1, y1, x2, y2);
+  }
+};
+
+/******************************************************************************
+* Highlight boxes
+******************************************************************************/
+
+struct highlight_box_rep: public change_box_rep {
+  SI w, xpad, ypad;
+  tree bg, old_bg;
+  color sun, shad;
+  highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
+		     tree bg, color sun, color shad);
+  operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
+  void pre_display (ps_device &dev);
+  void post_display (ps_device &dev);
+  void display (ps_device dev);
+};
+
+highlight_box_rep::highlight_box_rep (
+  path ip, box b, SI w2, SI xp2, SI yp2, tree bg2, color sun2, color shad2):
+  change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
+  bg (bg2), sun (sun2), shad (shad2)
+{
+  insert (b, w + xpad, 0);
+  position ();
+  x1= b->x1;
+  y1= b->y1 - w - ypad;
+  x2= b->x2 + 2 * (w + xpad);
+  y2= b->y2 + w + ypad;
+  x3= min (x1, b->x3 + w + xpad);
+  y3= min (y1, b->y3);
+  x4= max (x2, b->x4 + w + xpad);
+  y4= max (y2, b->y4);
+  finalize ();
+}
+
+void
+highlight_box_rep::pre_display (ps_device& dev) {
+  old_bg= dev->get_background_pattern ();
+  dev->set_background_pattern (bg);
+  SI W= w;
+  if (!dev->is_printer ()) {
+    SI pixel= dev->pixel;
+    W= ((w + pixel - 1) / pixel) * pixel;
+  }
+  dev->clear_pattern (x1+W, y1+W, x2-W, y2-W);
+}
+
+void
+highlight_box_rep::post_display (ps_device &dev) {
+  dev->set_background_pattern (old_bg);
+}
+
+void
+highlight_box_rep::display (ps_device dev) {
+  SI W= w;
+  if (!dev->is_printer ()) {
+    SI pixel= dev->pixel;
+    W= ((w + pixel - 1) / pixel) * pixel;
+  }
+  dev->set_color (sun);
+  dev->fill (x1  , y2-W, x2  , y2  );
+  dev->fill (x1  , y1  , x1+W, y2  );
+  dev->set_color (shad);
+  dev->fill (x1+W, y1  , x2  , y1+W);
+  dev->fill (x2-W, y1  , x2  , y2-W);
+  dev->triangle (x1, y1, x1+W, y1, x1+W, y1+W);
+  dev->triangle (x2, y2, x2, y2-W, x2-W, y2-W);
 }
 
 /******************************************************************************
@@ -265,7 +439,8 @@ action_box_rep::action_box_rep (
 tree
 action_box_rep::action (tree t, SI x, SI y, SI delta) {
   if (t == filter) {
-    call ("set-action-path", reverse (vip));
+    call ("action-set-path", reverse (vip));
+    // FIXME: we should also reset the action path
     cmd ();
     return "done";
   }
@@ -273,20 +448,48 @@ action_box_rep::action (tree t, SI x, SI y, SI delta) {
 }
 
 /******************************************************************************
+* locus boxes
+******************************************************************************/
+
+struct locus_box_rep: public change_box_rep {
+  list<string> ids;
+  SI pixel;
+  locus_box_rep (path ip, box b, list<string> ids, SI pixel);
+  operator tree () { return tree (TUPLE, "locus"); }
+  void loci (SI x, SI y, SI delta, list<string>& ids2, rectangles& rs);
+};
+
+locus_box_rep::locus_box_rep (path ip, box b, list<string> ids2, SI pixel2):
+  change_box_rep (ip, true), ids (ids2), pixel (pixel2)
+{
+  insert (b, 0, 0);
+  position ();
+  left_justify ();
+  finalize ();
+}
+
+void
+locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
+  bs[0]->loci (x, y, delta, l, rs);
+  l = l * ids;
+  rs= rs * outline (rectangles (rectangle (x1, y1, x2, y2)), pixel);
+}
+
+/******************************************************************************
 * tag boxes
 ******************************************************************************/
 
 struct tag_box_rep: public change_box_rep {
-  string name;
-  tag_box_rep (path ip, box b, string name);
+  tree keys;
+  tag_box_rep (path ip, box b, tree keys);
   operator tree () { return tree (TUPLE, "tag", bs[0]); }
   tree tag (tree t, SI x, SI y, SI delta);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
   path find_tag (string name);
 };
 
-tag_box_rep::tag_box_rep (path ip, box b, string name2):
-  change_box_rep (ip, false), name (name2)
+tag_box_rep::tag_box_rep (path ip, box b, tree keys2):
+  change_box_rep (ip, false), keys (keys2)
 {
   insert (b, 0, 0);
   position ();
@@ -296,15 +499,43 @@ tag_box_rep::tag_box_rep (path ip, box b, string name2):
 
 void
 tag_box_rep::collect_page_numbers (hashmap<string,tree>& h, tree page) {
-  h (name)= page;
+  for (int i=0; i<N(keys); i++)
+    h (keys[i]->label)= page;
   bs[0]->collect_page_numbers (h, page);
 }
 
 path
 tag_box_rep::find_tag (string search) {
-  if (name == search)
-    return reverse (descend_decode (ip, 1));
+  for (int i=0; i<N(keys); i++)
+    if (keys[i]->label == search)
+      return reverse (descend_decode (ip, 1));
   return path ();
+}
+
+/******************************************************************************
+* textat boxes
+******************************************************************************/
+
+struct textat_box_rep: public move_box_rep {
+  textat_box_rep (path ip, box b, SI x, SI y):
+    move_box_rep (ip, b, x, y, false, false) {}
+  gr_selections graphical_select (SI x, SI y, SI dist);
+  operator tree () { return tree (TUPLE, "textat", (tree) bs[0]); }
+};
+
+gr_selections
+textat_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->p= point (x, y);
+    gs->cp << box_rep::find_tree_path (x, y, dist);
+    gs->pts << gs->p;
+    gs->c= curve ();
+    res << gs;
+  }
+  return res;
 }
 
 /******************************************************************************
@@ -323,6 +554,17 @@ resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 }
 
 box
+clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2) {
+  return new clip_box_rep (ip, b, x1, y1, x2, y2, UNINIT, UNINIT, 0, 0);
+}
+
+box
+clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
+	  tree xt, tree yt, SI scx, SI scy) {
+  return new clip_box_rep (ip, b, x1, y1, x2, y2, xt, yt, scx, scy);
+}
+
+box
 vcorrect_box (path ip, box b, SI top_cor, SI bot_cor) {
   return new vcorrect_box_rep (ip, b, top_cor, bot_cor);
 }
@@ -334,11 +576,22 @@ repeat_box (path ip, box ref, box repeat, SI xoff) {
 
 box
 cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-	  SI bl, SI br, SI bb, SI bt, color fg, color bg, bool trp)
+	  SI bl, SI br, SI bb, SI bt, color fg, tree bg)
 {
   box cb= new cell_box_rep (ip, b, x0, y0, x1, y1, x2, y2,
-			    bl, br, bb, bt, fg, bg, trp);
+			    bl, br, bb, bt, fg, bg);
   return cb;
+}
+
+box
+remember_box (path ip, box b) {
+  return new remember_box_rep (ip, b);
+}
+
+box
+highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
+	       tree bg, color sun, color shad) {
+  return new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
 }
 
 box
@@ -352,6 +605,16 @@ action_box (path ip, box b, tree filter, command cmd, bool ch) {
 }
 
 box
-tag_box (path ip, box b, string name) {
-  return new tag_box_rep (ip, b, name);
+locus_box (path ip, box b, list<string> ids, SI pixel) {
+  return new locus_box_rep (ip, b, ids, pixel);
+}
+
+box
+tag_box (path ip, box b, tree keys) {
+  return new tag_box_rep (ip, b, keys);
+}
+
+box
+textat_box (path ip, box b, SI x, SI y) {
+  return new textat_box_rep (ip, b, x, y);
 }

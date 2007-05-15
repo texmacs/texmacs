@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : compound_font.cpp
 * DESCRIPTION: fonts which are agglomerated from several other fonts.
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 2005  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -11,57 +11,12 @@
 ******************************************************************************/
 
 #include "font.hpp"
-#include "translator.hpp"
-#include "analyze.hpp"
+#include "charmap.hpp"
 #include "convert.hpp"
-#include "file.hpp"
 
 /******************************************************************************
-* The compound encoding structure
+* The compound font class
 ******************************************************************************/
-
-RESOURCE(compound_encoding);
-
-struct compound_encoding_rep: rep<compound_encoding> {
-  int                    fast_map[256];
-  hashmap<string,int>    char_map;
-  hashmap<string,string> char_subst;
-  compound_encoding_rep (string name, tree def);
-};
-
-RESOURCE_CODE(compound_encoding);
-
-compound_encoding_rep::compound_encoding_rep (string name, tree def):
-  rep<compound_encoding> (name), char_map (-1), char_subst ("x")
-{
-  int i;
-  for (i=0; i<256; i++)
-    fast_map[i]= -1;
-
-  int nr, tot= N (def);
-  for (nr=tot-1; nr>=0; nr--) {
-    string s, fname= as_string (def[nr]) * ".scm";
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
-    if (load_string (url ("$TEXMACS_PATH/fonts/enc", fname), s)) return;
-    tree t= block_to_scheme_tree (s);
-    if (!is_tuple (t)) return;
-    
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (is_func (t[i], TUPLE, 2) &&
-	  is_atomic (t[i][0]) && is_atomic (t[i][1]))
-	{
-	  string l= unquote (t[i][0]->label);
-	  string r= unquote (t[i][1]->label);
-	  if ((l == r) && (N(l) == 1))
-	    fast_map[(unsigned char) l[0]]= nr;
-	  else {
-	    char_map   (l)= nr;
-	    char_subst (l)= r;
-	  }
-	}
-  }
-}
 
 static tree
 map_car (tree t) {
@@ -72,29 +27,16 @@ map_car (tree t) {
   return r;
 }
 
-compound_encoding
-load_compound_encoding (tree def) {
-  string name= tree_to_scheme (def);
-  if (compound_encoding::instances -> contains (name))
-    return compound_encoding (name);
-  return make (compound_encoding, name,
-	       new compound_encoding_rep (name, def));
-}
-
-/******************************************************************************
-* The compound font class
-******************************************************************************/
-
 struct compound_font_rep: font_rep {
-  scheme_tree       def;
-  array<font>       fn;
-  compound_encoding enc;
+  scheme_tree  def;
+  array<font>  fn;
+  charmap      cm;
 
   compound_font_rep (string name, scheme_tree def, array<font> fn);
-  void advance (string s, int& i, string& r, int& nr);
-  void get_extents (string s, metric& ex);
-  void draw (ps_device dev, string s, SI x, SI y);
-  glyph get_glyph (string s);
+  void   advance (string s, int& pos, string& r, int& ch);
+  void   get_extents (string s, metric& ex);
+  void   draw (ps_device dev, string s, SI x, SI y);
+  glyph  get_glyph (string s);
   double get_left_slope  (string s);
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
@@ -104,45 +46,22 @@ struct compound_font_rep: font_rep {
 compound_font_rep::compound_font_rep (
   string name, scheme_tree def2, array<font> fn2):
     font_rep (fn2[0]->dis, name, fn2[0]),
-    def (def2), fn (fn2), enc (load_compound_encoding (map_car (def)))
+    def (def2), fn (fn2), cm (load_charmap (map_car (def)))
 {}
 
 void
-compound_font_rep::advance (string s, int& i, string& r, int& nr) {
-  // advance as much as possible while remaining in same subfont
-  // return the corresponding transcoded substring in r and
-  // the index of the subfont in nr. The string r is assumed to
-  // be initialized with s if i=0 for speeding things up when r==s at exit.
-  // The fast_map tells which 1-byte characters are mapped to themselves.
-
-  int n= N(s);
-  nr= enc->fast_map[(unsigned char) s[i]];
-  if (nr >= 0) {
-    int start= i++;
-    while ((i<n) && (enc->fast_map[(unsigned char) s[i]] == nr)) i++;
-    if ((start>0) || (i<n)) r= s (start, i);
+compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
+  cm->advance (s, pos, r, ch);
+  //cout << "(r,ch)= (" << r << "," << ch << ")\n";
+  if (ch>0 && nil (fn[ch])) {
+    tree t= def[ch][1];
+    if (is_tuple (t, "virtual", 3))
+      fn[ch]= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
+    else fn[ch]= find_font (dis, t);
+    if (nil (fn[ch]))
+      fatal_error ("Font not found", "compound_font_rep::advance");
+    //fn[ch]->copy_math_pars (fn[0]);
   }
-  else {
-    int start= i;
-    skip_symbol (s, i);
-    string ss= s (start, i);
-    nr= enc->char_map [ss];
-    r = copy (enc->char_subst (ss));
-    while (i < n) {
-      if (enc->fast_map[(unsigned char) s[i]] >= 0) break;
-      start= i;
-      skip_symbol (s, i);
-      ss= s (start, i);
-      int nr2= enc->char_map [ss];
-      if (nr2 != nr) {
-	i= start;
-	break;
-      }
-      r << enc->char_subst (ss);
-    }
-  }
-  if ((nr>0) && (nil (fn[nr])))
-    fn[nr]= find_font (fn[0]->dis, def[nr][1]);
 }
 
 /******************************************************************************

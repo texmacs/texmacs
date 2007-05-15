@@ -26,7 +26,7 @@ class printer_rep: public ps_device_rep {
   bool     landscape;
   double   paper_w;
   double   paper_h;
-  bool     true_type;
+  bool     type_1;
   string   prologue;
   string   body;
   int      cur_page;
@@ -51,7 +51,8 @@ public:
   printer_rep (display dis, url ps_file_name, int dpi, int nr_pages,
 	       string ptype, bool landsc, double paper_w, double paper_h);
   ~printer_rep ();
-  int get_type ();
+  bool is_printer ();
+  void next_page ();
 
   /*********************** subroutines for printing **************************/
 
@@ -72,7 +73,7 @@ public:
 
   /******************** routines from ps_device.hpp ************************/
 
-  void  set_clipping (SI x1, SI y1, SI x2, SI y2);
+  void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   color rgb (int r, int g, int b);
   void  get_rgb (color col, int& r, int& g, int& b);
   color get_color ();
@@ -81,18 +82,23 @@ public:
   void  set_color (color c);
   void  set_background (color c);
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
-  void  set_line_style (SI w, int type=0);
+  void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
+  void  lines (array<SI> x, array<SI> y);
   void  clear (SI x1, SI y1, SI x2, SI y2);
   void  fill (SI x1, SI y1, SI x2, SI y2);
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  polygon (array<SI> x, array<SI> y);
+  void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
-  void  postscript (url image, SI w, SI h, SI x, SI y,
-		    int x1, int y1, int x2, int y2);
+  void  image (url u, SI w, SI h, SI x, SI y,
+	       double cx1, double cy1, double cx2, double cy2);
 
-  void next_page ();
-  bool check_event (int type);
+  void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y);
+  void new_shadow (ps_device& dev);
+  void delete_shadow (ps_device& dev);
+  void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 };
 

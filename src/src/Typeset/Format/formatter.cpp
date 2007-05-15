@@ -68,6 +68,12 @@ lazy_rep::produce (lazy_type request, format fm) {
     return tmp->produce (request, fm);
   }
 
+  if ((request == LAZY_BOX) && (fm->type == FORMAT_WIDTH)) {
+    format_width fw= (format_width) fm;
+    lazy tmp= produce (LAZY_VSTREAM, make_format_vstream (fw->width, 0, 0));
+    return tmp->produce (request, fm);
+  }
+
   cout << "\nThe lazy structure was " << ((tree) (*this)) << "\n";
   cout << "The format was " << ((tree) fm) << "\n";
   fatal_error ("invalid production", "lazy_rep::produce");

@@ -28,7 +28,7 @@ static hashmap<string,int> timing_last  (0);
 
 time_t
 texmacs_time () {
-#ifdef USE_GET_TIME_OF_DAY
+#ifdef HAVE_GETTIMEOFDAY
   struct timeval tp;
   gettimeofday (&tp, NULL);
   return (time_t) ((tp.tv_sec * 1000) + (tp.tv_usec / 1000));

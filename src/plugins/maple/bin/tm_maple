@@ -1,3 +1,30 @@
 #!/bin/sh
 
-exec maple_in_filter | maple -ll  -l p=calc -c 'interface(plotoptions=`portrait,colour,width=300,height=200`)' | maple_filter
+TEXMACS_MAPLE_BIN=`which maple`
+TEXMACS_MAPLE_BIN=`realpath "$TEXMACS_MAPLE_BIN"`
+#if [ $? -ne 0 ]
+#then
+#    TEXMACS_MAPLE_BIN=`which maple`
+#    TEXMACS_MAPLE_BIN=`realpath.py "$TEXMACS_MAPLE_BIN"`
+#fi
+if [ $? -ne 0 ]
+then
+    TEXMACS_MAPLE_BIN=`which maple`
+fi
+TEXMACS_MAPLE_DIR=`echo -n "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
+export TEXMACS_MAPLE_BIN
+export TEXMACS_MAPLE_DIR
+
+if [ -d "$TEXMACS_MAPLE_DIR/extern" ]
+then
+    if [ -f "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]
+    then
+        DUMMY="dummy"
+    else
+        cd $TEXMACS_PATH/plugins/maple; make -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH"
+    fi
+    exec "${HOME}/.TeXmacs/bin/tm_maple_9.sh"
+elif [ -f "$TEXMACS_MAPLE_DIR/mwshelp" ]
+then
+    exec tm_maple_5
+fi

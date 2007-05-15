@@ -52,6 +52,18 @@
     ((tcx tt bold italic $s $d) (tex tcxbttsl $s $d 0))
     ((tcx $a $b small-caps $s $d) (tcx $a $b right $s $d))
 
+    ((frc rm medium right $s $d) (ec frcr $s $d))
+    ((frc rm medium slanted $s $d) (tex frcsl $s $d))
+    ((frc rm medium italic $s $d) (tex frcsl $s $d))
+    ((frc rm medium long $s $d) (tex frca $s $d))
+    ((frc rm bold right $s $d) (tex frcbx $s $d))
+    ((frc rm bold slanted $s $d) (tex frcslbx $s $d))
+    ((frc rm bold italic $s $d) (tex frcslbx $s $d))
+    ((frc rm light $c $s $d) (tex frcf $s $d))
+    ((frc ss $a right $s $d) (tex frcc $s $d))
+    ((frc ss $a italic $s $d) (tex frcslc $s $d))
+    ((frc tt $b $c $s $d) (tex frcw $s $d))
+
     ((cherokee $a medium $b $s $d) (tex cherokee $s $d 0))
     ((tengwar $a medium $b $s $d) (tex tengwar $s $d 0))
     ((shavian $a medium $b $s $d) (tex shavian $s $d 0))

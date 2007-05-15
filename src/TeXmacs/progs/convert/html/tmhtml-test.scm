@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html tmhtml-test)
-  (:use (convert html tmhtml) (convert tools sxml))
-  (:export regtest-tmhtml))
+  (:use (convert html tmhtml) (convert tools sxml)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic conversions
@@ -414,7 +413,7 @@
 ;; Complete test suite
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (regtest-tmhtml)
+(tm-define (regtest-tmhtml)
   (let ((n (+ (regtest-tmhtml-basic)
 	      (regtest-tmhtml-format)
 	      (regtest-tmhtml-with)

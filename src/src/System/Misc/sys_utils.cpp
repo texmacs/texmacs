@@ -25,6 +25,7 @@ int script_status = 1;
 
 int
 system (string s) {
+  // cout << "System: " << s << "\n";
   char* _s= as_charp (s);
 #ifdef OS_WIN32
   int r= _system (_s);
@@ -38,7 +39,7 @@ system (string s) {
 string
 eval_system (string s) {
   url temp= url_temp ();
-  string temp_s= concretize (temp);
+  string temp_s= escape_sh (concretize (temp));
 #ifdef OS_WIN32
   system (s * " > \"" * temp_s * "\"");
 #else
@@ -46,7 +47,11 @@ eval_system (string s) {
 #endif
   string result;
   bool flag= load_string (temp, result, false);
+#ifdef OS_WIN32
   system ("rm \"" * temp_s * "\"");
+#else
+  system ("rm " * temp_s);
+#endif
   if (flag) {
 #ifdef OS_WIN32
     cerr << "TeXmacs] failed: " << s * " > " * temp_s << "\n";

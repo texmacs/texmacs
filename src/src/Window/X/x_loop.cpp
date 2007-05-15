@@ -13,6 +13,7 @@
 #include "X/x_display.hpp"
 #include "X/x_window.hpp"
 #include "iterator.hpp"
+#include "converter.hpp"
 
 #ifdef OS_WIN32
 #include <sys/time.h>
@@ -25,7 +26,38 @@
 #endif
 
 extern hashmap<Window,pointer> Window_to_window;
-int nr_windows=0;
+int  nr_windows= 0;
+
+static int  kbd_count= 0;
+static bool request_partial_redraw= false;
+
+/******************************************************************************
+* Hack for getting the remote time
+******************************************************************************/
+
+static bool time_initialized= false;
+static long time_difference = 0;
+
+static void
+synchronize_time (Time t) {
+  if (time_initialized && time_difference == 0) return;
+  long d= texmacs_time () - ((time_t) t);
+  if (time_initialized) {
+    if (d < time_difference)
+      time_difference= d;
+  }
+  else {
+    time_initialized= true;
+    time_difference = d;
+  }
+  if (-1000 <= time_difference && time_difference <= 1000)
+    time_difference= 0;
+}
+
+static time_t
+remote_time (Time t) {
+  return ((time_t) t) + time_difference;
+}
 
 /******************************************************************************
 * Look up keys and mouse
@@ -36,41 +68,17 @@ x_display_rep::look_up_key (XKeyEvent* ev) {
   KeySym key= 0;
   //cout << ev->state << ", " << ev->keycode << LF;
 
-  /*
-  // decode non standard keys
-  if (ev->state >= 256) {
-    if ((ev->state&3)==0) key= XLookupKeysym (ev, 2);
-    else {
-      key= XLookupKeysym (ev, 3);
-      if (key==0) key= XLookupKeysym (ev, 2);
-    }
+  if (im_ok) {
+    x_window win= (x_window) Window_to_window[ev->window];
+    char str[256];
+    Status status;
+    int count = Xutf8LookupString (win->ic, (XKeyPressedEvent*) ev,
+				   str, 256, &key, &status);
+    string r (str, count);
+    r= utf8_to_cork (r);
+    if (contains_unicode_char (r)) return r;
   }
-
-  // decode standard keys
-  if (key == 0) {
-    if ((ev->state&3)==0) key= XLookupKeysym (ev, 0);
-    else {
-      key= XLookupKeysym (ev, 1);
-      if (key==0) key= XLookupKeysym (ev, 0);
-    }
-  }
-
-  // special treatment for num-lock
-  string s= ((ev->state&3)? upper_key [key]: lower_key [key]);
-  if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) {
-    if (ev->state&16) {
-      if ((ev->state&3)==0) key= XLookupKeysym (ev, 1);
-      else {
-	key= XLookupKeysym (ev, 0);
-	if (key==0) key= XLookupKeysym (ev, 1);
-      }
-      s= ((ev->state&3)? upper_key [key]: lower_key [key]);
-    }
-    if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s));
-  }
-  */
-
-  XLookupString (ev, NULL, 0, &key, NULL);
+  else XLookupString (ev, NULL, 0, &key, NULL);
   string s= ((ev->state&3)? upper_key [key]: lower_key [key]);
   if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s));
 
@@ -161,8 +169,8 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
       XExposeEvent& ee= ev->xexpose;
       /*
       cout << "Expose: " << ee.x << "," << ee.y << ","
-	   << ee.x+ee.width << "," << ee.y+ee.height << "\n";
-	   */
+           << ee.x+ee.width << "," << ee.y+ee.height << "\n";
+      */
       win->invalidate_event (ee.x, ee.y, ee.x+ee.width, ee.y+ee.height);
       break;
     }
@@ -186,10 +194,12 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
     cout << "Configure resize: " << ev->xconfigure.width << ","
 	 << ev->xconfigure.height << "\n";
 	 */
+    /*
     if ((ev->xconfigure.x!=0) || (ev->xconfigure.y!=0) ||
 	((ev->xconfigure.width == win->win_w) &&
 	 (ev->xconfigure.height == win->win_h)))
-      win->move_event (ev->xconfigure.x, ev->xconfigure.y);
+    */
+    win->move_event (ev->xconfigure.x, ev->xconfigure.y);
     win->resize_event (ev->xconfigure.width, ev->xconfigure.height);
     break;
   case CreateNotify:
@@ -243,14 +253,20 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
     unmap_balloon ();
     set_button_state (ev->xmotion.state);
     win->mouse_event ("move", ev->xmotion.x, ev->xmotion.y, ev->xmotion.time);
-
     break;
   case KeyPress:
     unmap_balloon ();
     {
       string key= look_up_key (&ev->xkey);
-      // cout << "Press " << key << " at " << ev->xkey.time
-      // << " (" << texmacs_time() << ")\n";
+      //cout << "Press " << key << " at " << (time_t) ev->xkey.time
+      //<< " (" << texmacs_time() << ")\n";
+      kbd_count++;
+      synchronize_time (ev->xkey.time);
+      if (texmacs_time () - remote_time (ev->xkey.time) < 100 ||
+	  (kbd_count & 15) == 0)
+	request_partial_redraw= true;
+      //cout << "key   : " << key << "\n";
+      //cout << "redraw: " << request_partial_redraw << "\n";
       if (N(key)>0) win->key_event (key);
       break;
     }
@@ -306,23 +322,32 @@ void set_interpose_handler (void (*r) (void)) { the_interpose_handler= r; }
 
 void
 x_display_rep::event_loop () {
-  bool wait= true;
-  int count= 0;
-  int delay= MIN_DELAY;
+  bool wait  = true;
+  int count  = 0;
+  int delay  = MIN_DELAY;
 
   while (nr_windows>0) {
+    request_partial_redraw= false;
+
     // Get events
+    XEvent report;
     if (XPending (dpy) > 0) {
-      XEvent report;
       XNextEvent (dpy, &report);
-      // cout << "Event: " << event_name[report.type] << "\n";
+      if (XFilterEvent (&report, (Window) NULL) == True) continue;
+      //if (string (event_name[report.type]) != "No expose")
+      //cout << "Event: " << event_name[report.type] << "\n";
       x_window win= (x_window) Window_to_window[report.xany.window];
       if (win!=NULL) process_event (win, &report);
       count= 0;
       delay= MIN_DELAY;
       wait = false;
-      continue;
     }
+
+    // Don't typeset when resizing window
+    if (XPending (dpy) > 0)
+      if (report.type == ConfigureNotify ||
+	  report.type == Expose ||
+	  report.type == NoExpose) continue;
 
     // Wait for events on all channels and interpose
     if (wait) {
@@ -338,15 +363,24 @@ x_display_rep::event_loop () {
 
     // Popup help balloons
     if (!nil (balloon_wid))
-      if (texmacs_time () >= (balloon_time+666))
+      if (texmacs_time () - balloon_time >= 666)
 	if (balloon_win == NULL)
 	  map_balloon ();
 
     // Redraw invalid windows
-    iterator<Window> it= iterate (Window_to_window);
-    while (it->busy()) {
-      x_window win= (x_window) Window_to_window[it->next()];
-      win->repaint_invalid_regions();
+    if (XPending (dpy) == 0 || request_partial_redraw) {
+      interrupted= false;
+      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
+      iterator<Window> it= iterate (Window_to_window);
+      while (it->busy()) { // first the window which has the focus
+	x_window win= (x_window) Window_to_window[it->next()];
+	if (win->has_focus) win->repaint_invalid_regions();
+      }
+      it= iterate (Window_to_window);
+      while (it->busy()) { // and then the other windows
+	x_window win= (x_window) Window_to_window[it->next()];
+	if (!win->has_focus) win->repaint_invalid_regions();
+      }
     }
 
     // Handle alarm messages

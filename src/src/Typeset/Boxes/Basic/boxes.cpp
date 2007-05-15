@@ -13,6 +13,10 @@
 #include "boxes.hpp"
 #include "formatter.hpp"
 #include "Graphics/point.hpp"
+#include "timer.hpp"
+#include "PsDevice/printer.hpp"
+#include "file.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * Default settings for virtual routines
@@ -20,6 +24,8 @@
 
 int box_rep::subnr () { return 0; }
 box box_rep::subbox (int i) { (void) i; return box (); }
+box box::operator [] (path p) {
+  if (nil (p)) return *this; else return rep->subbox(p->item)[p->next]; }
 double box_rep::left_slope () { return 0.0; }
 double box_rep::right_slope () { return 0.0; }
 SI box_rep::left_correction () { return (SI) (-min (0, y1) * left_slope ()); }
@@ -68,6 +74,16 @@ box_rep::distance (int i, SI x, SI y, SI delta) {
   return dx+dy;
 }
 
+bool
+box_rep::in_rectangle (SI X1, SI Y1, SI X2, SI Y2) {
+  return x1>=X1 && y1>=Y1 && x2<=X2 && y2<=Y2;
+}
+
+bool
+box_rep::contains_rectangle (SI X1, SI Y1, SI X2, SI Y2) {
+  return x1<=X1 && y1<=Y1 && x2>=X2 && y2>=Y2;
+}
+
 /******************************************************************************
 * Cursor routines
 ******************************************************************************/
@@ -102,6 +118,10 @@ box_rep::find_right_box_path () {
 
 path
 box_rep::find_box_path (path p, bool& found) {
+  // cout << "Find box path " << box (this) << ", " << p
+  //      << "; " << reverse (ip)
+  //      << ", " << reverse (find_lip ())
+  //      << " -- " << reverse (find_rip ()) << "\n";
   found= (!nil(p)) && is_accessible (ip);
   if (last_item (p) == 0) return path (0);
   else return path (1);
@@ -169,6 +189,82 @@ box_rep::relocate (path new_ip, bool force) {
   for (i=0; i<n; i++) subbox (i)->relocate (ip, force);
 }
 
+box
+box_rep::transform (frame fr) {
+  (void) fr;
+  return box ();
+}
+
+/******************************************************************************
+* Modified cursor routines in presence of scrolled boxes
+******************************************************************************/
+
+path
+find_innermost_scroll (box b, path p) {
+  // Given a box b and a logical path p, this routine returns 
+  // the longest box path sp such that b[sp] is a scroll node
+  path bp;
+  while (true) {
+    bool found= false;
+    bp= b->find_box_path (p, found);
+    if (found) break;
+    p= path_up (p);
+    if (nil (p)) return path ();
+  }
+  bp= path_up (bp);
+  path cp, sp;
+  while (!nil (bp)) {
+    if (b->get_type () == SCROLL_BOX) sp= reverse (cp);
+    b = b[bp->item];
+    cp= path (bp->item, cp);
+    bp= bp->next;
+  }
+  if (nil (sp)) return sp;
+  else return sp * 0;
+}
+
+path
+find_scrolled_box_path (box b, path sp, SI x, SI y, SI delta) {
+  if (nil (sp)) return b->find_box_path (x, y, delta, false);
+  else {
+    int m= sp->item;
+    SI xx= x - b->sx (m), yy= y - b->sy (m);
+    SI dd= delta + get_delta (xx, b[m]->x1, b[m]->x2);
+    return path (m, find_scrolled_box_path (b[m], sp->next, xx, yy, dd));
+  }
+}
+
+path
+find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta) {
+  path bp= find_scrolled_box_path (b, sp, x, y, delta);
+  //cout << "Find " << x << ", " << y << "; " << delta;
+  //cout << " -> " << bp << "\n";
+  return b->find_tree_path (bp);
+}
+
+void
+find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,
+		  rectangle& outer, rectangle& inner)
+{
+  if (nil (sp)) {
+    x= y= sx= sy= 0;
+    outer= inner= rectangle (0, 0, 0, 0);
+  }
+  else if (atom (sp)) {
+    x    = 0;
+    y    = 0;
+    sx   = b->sx (0);
+    sy   = b->sy (0);
+    outer= rectangle (b->x1, b->y1, b->x2, b->y2);
+    inner= rectangle (b[0]->x1, b[0]->y1, b[0]->x2, b[0]->y2);
+  }
+  else {
+    find_canvas_info (b[sp->item], sp->next, x, y, sx, sy, outer, inner);
+    x += b->sx (sp->item);
+    y += b->sy (sp->item);
+  }
+}
+
 /******************************************************************************
 * For graphical boxes
 ******************************************************************************/
@@ -189,7 +285,7 @@ box_rep::get_limits (point& lim1, point& lim2) {
 }
 
 frame
-box_rep::find_frame (path bp) {
+box_rep::find_frame (path bp, bool last) {
   SI    x= 0;
   SI    y= 0;
   box   b= this;
@@ -200,7 +296,11 @@ box_rep::find_frame (path bp) {
     b  = b->subbox (bp->item);
     bp = bp->next;
     frame g= b->get_frame ();
-    if (!nil (g)) f= scaling (1.0, point (x, y)) * g;
+    if (!nil (g))
+      if (last)
+	f= g;
+      else
+	f= scaling (1.0, point (x, y)) * g;
   }
   return f;
 }
@@ -255,6 +355,23 @@ box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->cp << find_tree_path (x, y, dist);
     // FIXME: check whether this is correct: I do not remember whether
     // find_tree_path returns an absolute or a relative path
+    gs->c= curve ();
+    res << gs;
+  }
+  return res;
+}
+
+gr_selections
+box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  if (in_rectangle (x1, y1, x2, y2)) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x1, y1);
+    SI dist= (SI)norm (point (x2-x1, y2-y1));
+    gs->cp << find_tree_path (x1, y1, dist);
+    // FIXME: as above, check whether this is correct or not
+    gs->pts= array<point> (0);
+    gs->c= curve ();
     res << gs;
   }
   return res;
@@ -270,7 +387,8 @@ box_rep::get_type () {
 }
 
 tree
-box_rep::get_info () {
+box_rep::get_info (tree in) {
+  (void) in;
   return "";
 }
 
@@ -343,11 +461,11 @@ box_rep::get_leaf_offset (string search) {
 int nr_painted= 0;
 
 void
-clear_rectangles (ps_device dev, rectangles l) {
+clear_pattern_rectangles (ps_device dev, rectangles l) {
   while (!nil (l)) {
     rectangle r (l->item);
-    dev->clear (r->x1- dev->ox, r->y1- dev->oy,
-		r->x2- dev->ox, r->y2- dev->oy);
+    dev->clear_pattern (r->x1- dev->ox, r->y1- dev->oy,
+			r->x2- dev->ox, r->y2- dev->oy);
     l= l->next;
   }
 }
@@ -368,7 +486,7 @@ box_rep::reindex (int i, int item, int n) {
 
 void
 box_rep::redraw (ps_device dev, path p, rectangles& l) {
-  if (((nr_painted&15) == 15) && dev->check_event (INPUT_EVENT)) return;
+  if (((nr_painted&15) == 15) && dev->interrupted (true)) return;
   dev->move_origin (x0, y0);
   SI delta= dev->pixel; // adjust visibility to compensate truncation
   if (dev->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
@@ -394,7 +512,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
       }
     }
 
-    if (((nr_painted&15) == 15) && dev->check_event (EVENT_STATUS)) {
+    if (((nr_painted&15) == 15) && dev->interrupted ()) {
       l= translate (l, -dev->ox, -dev->oy);
       clear_incomplete (l, dev->pixel, item, i1, i2);
       l= translate (l, dev->ox, dev->oy);
@@ -478,13 +596,13 @@ operator << (ostream& out, cursor cu) {
 * Selections
 ******************************************************************************/
 
-selection::selection (rectangles rs, path start, path end):
+selection::selection (rectangles rs, path start, path end, bool valid):
   rep (new selection_rep)
 {
   rep->rs   = rs;
   rep->start= start;
   rep->end  = end;
-  rep->valid= true;
+  rep->valid= valid;
 }
 
 bool
@@ -520,6 +638,107 @@ operator << (ostream& out, gr_selection sel) {
   return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
 }
 
+struct less_eq_gr_selection {
+  static inline bool leq (gr_selection& a, gr_selection& b) {
+    return a->dist <= b->dist; }
+};
+
+tree as_tree (gr_selections sels) {
+  merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
+  int i, n= N(sels);
+  array<array<path> > res (n);
+  for (i=0; i<n; i++)
+    res[i]= sels[i]->cp;
+  return (tree) res;
+}
+
+/******************************************************************************
+* Animations
+******************************************************************************/
+
+int
+box_rep::anim_length () {
+  int i, n= subnr (), len=0;
+  for (i=0; i<n; i++) {
+    int slen= subbox (i)->anim_length ();
+    if (slen == -1) return -1;
+    if (slen > len) len= slen;
+  }
+  return len;
+}
+
+bool
+box_rep::anim_started () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    if (!subbox (i)->anim_started ()) return false;
+  return true;
+}
+
+bool
+box_rep::anim_finished () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    if (!subbox (i)->anim_finished ()) return false;
+  return true;
+}
+
+void
+box_rep::anim_start_at (time_t at) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->anim_start_at (at);
+}
+
+void
+box_rep::anim_finish_now () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->anim_finish_now ();
+}
+
+time_t
+box_rep::anim_next_update () {
+  fatal_error ("Invalid situation", "box_rep::anim_next_update");
+  return texmacs_time ();
+}
+
+void
+box_rep::anim_check_invalid (bool& flag, time_t& at, rectangles& rs) {
+  time_t now= texmacs_time ();
+  time_t finish_at= anim_next_update ();
+  if (finish_at - now < 0) finish_at= now;
+  if (flag && at - now < 0) at= now;
+  if (!flag || finish_at - (at - 3) < 0) {
+    flag= true;
+    at  = finish_at;
+    rs  = rectangle (x1, y1, x2, y2);
+  }
+  else if (finish_at - (at + 3) <= 0) {
+    rs << rectangle (x1, y1, x2, y2);
+    if (finish_at - at < 0)
+      at= finish_at;
+  }
+}
+
+void
+box_rep::anim_get_invalid (bool& flag, time_t& at, rectangles& rs) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    bool   flag2= false;
+    time_t at2= at;
+    rectangles rs2;
+    subbox (i)->anim_get_invalid (flag2, at2, rs2);
+    if (flag2) {
+      rs2= translate (rs2, sx (i), sy (i));
+      if (at2 - (at-3) < 0) rs= rs2;
+      else rs << rs2;
+      flag= true;
+      if (at2 - at < 0) at= at2;
+    }
+  }
+}
+
 /******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
@@ -528,6 +747,13 @@ tree
 box_rep::action (tree t, SI x, SI y, SI delta) {
   (void) x; (void) y; (void) delta; (void) t;
   return "";
+}
+
+void
+box_rep::loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs) {
+  (void) x; (void) y; (void) delta;  
+  ids= list<string> ();
+  rs = rectangles ();
 }
 
 void
@@ -583,4 +809,24 @@ attach_dip (tree ref, path dip) {
     r->obs= list_observer (ip_observer (dip), r->obs);
     return r;
   }
+}
+
+/******************************************************************************
+* Convert to postscript
+******************************************************************************/
+
+void
+make_eps (url name, display dis, box b, int dpi) {
+  double inch= ((double) dpi * PIXEL);
+  double cm  = inch / 2.54;
+  SI w= b->x4 - b->x3;
+  SI h= b->y4 - b->y3;
+  b->x0= -b->x3;
+  b->y0= -b->y4;
+  ps_device dev= printer (dis, name, dpi, 1, "user", false, w/cm, h/cm);
+  dev->set_color (dis->black);
+  dev->set_background (dis->white);
+  rectangles rs;
+  b->redraw (dev, path (0), rs);
+  delete dev;
 }

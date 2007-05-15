@@ -12,6 +12,7 @@
 
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * Specific boxes
@@ -19,17 +20,18 @@
 
 struct specific_box_rep: public box_rep {
   box b;
-  int type;
-  specific_box_rep (path ip, box b2, int type2, font fn):
-    box_rep (ip), b (b2), type (type2) {
+  bool printer_flag;
+  specific_box_rep (path ip, box b2, bool flag, font fn):
+    box_rep (ip), b (b2), printer_flag (flag) {
       x1=x2=y1=0;
       y2=fn->yx;
       x3= b->x3; y3= b->y3;
       x4= b->x4; y4= b->y4;
     }
-  operator tree () { return tuple ("specific", (tree) b, as_string (type)); }
+  operator tree () {
+    return tuple ("specific", (tree) b, as_string (printer_flag)); }
   void display (ps_device dev) {
-    if (dev->get_type () == type) {
+    if (dev->is_printer () == printer_flag) {
       rectangles rs;
       b->redraw (dev, path (), rs);
     }
@@ -105,16 +107,65 @@ info_box_rep::info_box_rep (
 }
 
 /******************************************************************************
+* Scrollbar boxes
+******************************************************************************/
+
+struct scrollbar_box_rep: public composite_box_rep {
+  bool vertical;
+  SI span;
+  tree t;
+  scrollbar_box_rep (path ip, box b, bool vertical2, SI span2, tree t2):
+    composite_box_rep (ip), vertical (vertical2), span (span2), t (t2) {
+      insert (b, 0, 0); position (); finalize (); }
+  operator tree () { return tuple ("scrollbar", (tree) bs[0]); }
+  tree action (tree type, SI x, SI y, SI delta);
+};
+
+tree
+scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
+  tree u= t;
+  if (vertical) {
+    double p= 100.0;
+    SI Y1= y1 + (span>>1);
+    SI Y2= y2 - (span>>1);
+    if (Y1 < Y2) p= 100.0 * ((double) (y-Y1)) / ((double) (Y2-Y1));
+    p= min (100.0, max (0.0, p));
+    u= tree (as_string (p) * "%");
+  }
+  else {
+    double p= 0.0;
+    SI X1= x1 + (span>>1);
+    SI X2= x2 - (span>>1);
+    if (X1 < X2) p= 100.0 * ((double) (x-X1)) / ((double) (X2-X1));
+    p= max (0.0, min (100.0, p));
+    u= tree (as_string (p) * "%");
+  }
+  if (u != t && is_accessible (obtain_ip (t)))
+    {
+      object fun= symbol_object ("tree-set");
+      object cmd= list_object (fun, t, u);
+      eval_delayed (cmd);
+    }
+  return "done";
+}
+
+/******************************************************************************
 * box construction routines
 ******************************************************************************/
 
 box
-specific_box (path ip, box b, int type, font fn) {
-  return new specific_box_rep (ip, b, type, fn);
+specific_box (path ip, box b, bool printer_flag, font fn) {
+  return new specific_box_rep (ip, b, printer_flag, fn);
 }
 
 box flag_box (path ip, box b, SI h, SI lw, color dark, color light) {
   return new flag_box_rep (ip, b, h, lw, dark, light);
+}
+
+box
+flag_box (path ip, string s, font fn, color dark, color light) {
+  box b= text_box (decorate_right (ip), 0, s, fn, dark);
+  return flag_box (ip, b, fn->wfn, fn->wline, dark, light);
 }
 
 box info_box (path ip, SI h, SI lw, color dark, color light) {
@@ -122,7 +173,6 @@ box info_box (path ip, SI h, SI lw, color dark, color light) {
 }
 
 box
-flag_box (path ip, string s, font fn, color dark, color light) {
-  box b= text_box (decorate_right (ip), 0, s, fn, dark);
-  return flag_box (ip, b, fn->wfn, fn->wline, dark, light);
+scrollbar_box (path ip, box b, bool vertical, SI span, tree t) {
+  return new scrollbar_box_rep (ip, b, vertical, span, t);
 }
