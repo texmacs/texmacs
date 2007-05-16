@@ -131,6 +131,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")
+(lazy-keyboard (doc tmdoc-drd) in-tmdoc?)
 (lazy-menu (doc help-menu) help-menu)
 (lazy-define (doc tmdoc) tmdoc-expand-help tmdoc-expand-help-manual
 	     tmdoc-expand-this tmdoc-include)
