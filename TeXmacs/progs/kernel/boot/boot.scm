@@ -21,7 +21,7 @@
 (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
 (define (guile-c?) (equal? (scheme-dialect) "guile-c"))
 (define (guile-b-c?) (or (guile-b?) (guile-c?)))
-(if (guile-c?) (use-modules (ice-9 rdelim)))
+(if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
 
 ;; Should be defined 
 (define dialogue-break #f)
