@@ -986,7 +986,7 @@
   (if (tmtex-math-mode?) (set! x `(with "mode" "math" ,x)))
   (receive (name-url name-string) (tmtex-eps-names)
     (print-snippet name-url x)
-    (list 'epsfig (string-append "file=" name-string))))
+    (list 'includegraphics name-string)))
 
 (define (tmtex-graphics l)
   (tmtex-eps (cons 'graphics l)))
@@ -996,12 +996,12 @@
     (if (or (string-ends? name ".ps")
 	    (string-ends? name ".eps")
 	    (not (url-exists? u)))
-	(list 'epsfig (string-append "file=" name))
+	(list 'includegraphics name)
 	(let* ((suffix (url-suffix u))
 	       (fm (string-append (format-from-suffix suffix) "-file")))
 	  (receive (name-url name-string) (tmtex-eps-names)
 	    (convert-to-file u fm "postscript-file" name-url)
-	    (list 'epsfig (string-append "file=" name-string)))))))
+	    (list 'includegraphics name-string))))))
 
 (define (tmtex-postscript l)
   (let* ((fig (tmtex-as-eps (force-string (car l))))
