@@ -502,6 +502,8 @@ x_display_rep::initialize_keyboard_pointer () {
   Map (XK_onehalf, "onehalf");
   Map (XK_threequarters, "threequarters");
   Map (XK_questiondown, "questiondown");
+  Map (XK_multiply, "times");
+  Map (XK_division, "div");
 
   Map (XK_Agrave, "\xc0");
   Map (XK_Aacute, "\xc1");
@@ -527,7 +529,7 @@ x_display_rep::initialize_keyboard_pointer () {
   Map (XK_Ocircumflex, "\xd4");
   Map (XK_Otilde, "\xd5");
   Map (XK_Odiaeresis, "\xd6");
-  Map (XK_multiply, "\xd7");
+  Map (XK_OE, "\xd7");
   Map (XK_Ooblique, "\xd8");
   Map (XK_Ugrave, "\xd9");
   Map (XK_Uacute, "\xda");
@@ -560,7 +562,7 @@ x_display_rep::initialize_keyboard_pointer () {
   Map (XK_ocircumflex, "\xf4");
   Map (XK_otilde, "\xf5");
   Map (XK_odiaeresis, "\xf6");
-  Map (XK_division, "\xf7");
+  Map (XK_oe, "\xf7");
   Map (XK_oslash, "\xf8");
   Map (XK_ugrave, "\xf9");
   Map (XK_uacute, "\xfa");
