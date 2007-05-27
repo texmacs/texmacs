@@ -140,27 +140,21 @@
   (map list->string
        (list-fold-right string-split-lines/kons '(()) (string->list s))))
 
-(define (string-search-separator s sep)
-  (if (char? sep)
-      (string-index s sep)
-      (with pos (string-search-forwards sep 0 s)
-	(and (>= pos 0) pos))))
-
-(provide-public (string-tokenize s sep)
+(provide-public (string-tokenize-by-char s sep)
   "Cut string @s into pieces using @sep as a separator."
-  (with d (string-search-separator s sep)
+  (with d (string-index s sep)
     (if d
 	(cons (substring s 0 d)
-	      (string-tokenize (substring s (+ 1 d) (string-length s)) sep))
+	      (string-tokenize-by-char (substring s (+ 1 d) (string-length s)) sep))
 	(list s))))
 
-(define-public (string-tokenize-n s sep n)
-  "As @string-tokenize, but only cut first @n pieces"
-  (with d (string-search-separator s sep)
+(define-public (string-tokenize-by-char-n s sep n)
+  "As @string-tokenize-by-char, but only cut first @n pieces"
+  (with d (string-index s sep)
     (if (or (= n 0) (not d))
 	(list s)
 	(cons (substring s 0 d)
-	      (string-tokenize-n (substring s (+ 1 d) (string-length s))
+	      (string-tokenize-by-char-n (substring s (+ 1 d) (string-length s))
 				 sep
 				 (- n 1))))))
 
@@ -173,7 +167,7 @@
 
 (define-public (string-tokenize-comma s)
   "Cut string @s into pieces using comma as a separator and remove whitespace."
-  (map string-trim-both (string-tokenize s #\,)))
+  (map string-trim-both (string-tokenize-by-char s #\,)))
 
 (define-public (string-recompose-comma l)
   "Turn list @l of strings into comma separated string."
@@ -190,7 +184,7 @@
 
 (define-public (string->alist s)
   "Parse @s of the form \"var1=val1/.../varn=valn\" as an association list."
-  (map string->property-pair (string-tokenize s "/")))
+  (map string->property-pair (string-tokenize-by-char s #\/)))
 
 (define-public (alist->string l)
   "Pretty print the association list @l as a string."
