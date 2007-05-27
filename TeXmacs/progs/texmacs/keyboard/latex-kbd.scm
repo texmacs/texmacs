@@ -36,7 +36,10 @@
   "Mu" "Nu" "Xi" "Omicron" "Pi" "Rho"
   "Sigma" "Tau" "Upsilon" "Phi" "Chi" "Psi" "Omega"
   "grave" "acute" "check" "breve" "bar"
-  "cedille" "sz" "ae" "oe" "AE" "OE"
+  "cedille"
+  "AA" "AE" "DH" "L" "NG" "O" "OE" "S" "SS" "TH"
+  "aa" "ae" "dh" "dj" "i" "j" "l" "ng" "o" "oe" "ss" "sz" "th"
+
   "ast" "asterisk"
   
   "cdot" "times" "asterisk" "div" "diamond"

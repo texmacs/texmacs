@@ -27,6 +27,7 @@
 (drd-group latex-command-0%
   #{\ }# #{\;}# #{\,}# #{\:}#
   - / [ ] ! * | i j ss SS oe OE ae AE
+  AA DH L NG O S TH aa dh dj l ng o th pounds
   quad qquad par smallskip medskip bigskip
   noindent newline linebreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
@@ -51,7 +52,7 @@
   dot ddot dddot ddddot
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox text not
-  #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle ensuremath
+  #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b k r thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
   includegraphics url penalty

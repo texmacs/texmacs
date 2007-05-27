@@ -80,14 +80,29 @@ latex_symbol_to_tree (string s) {
       if (s == "\\ ") return " ";
       if (s == "\\-") return "";
       if (s == "\\/") return "";
-      if (s == "\\i") return "\031";
-      if (s == "\\j") return "\032";
-      if (s == "\\oe") return "\367";
-      if (s == "\\ae") return "\346";
-      if (s == "\\ss") return "\377";
-      if (s == "\\OE") return "\327";
-      if (s == "\\AE") return "\306";
-      if (s == "\\SS") return "\337";
+      if (s == "\\AA") return "\xC5";
+      if (s == "\\AE") return "\xC6";
+      if (s == "\\DH") return "\xD0";
+      if (s == "\\L") return "\x8A";
+      if (s == "\\NG") return "\x8D";
+      if (s == "\\O") return "\xD8";
+      if (s == "\\OE") return "\xD7";
+      if (s == "\\S") return "\x9F";
+      if (s == "\\SS") return "\xDF";
+      if (s == "\\TH") return "\xDE";
+      if (s == "\\aa") return "\xE5";
+      if (s == "\\ae") return "\xE6";
+      if (s == "\\dh") return "\xF0";
+      if (s == "\\dj") return "\x9E";
+      if (s == "\\i") return "\x19";
+      if (s == "\\j") return "\x1A";
+      if (s == "\\l") return "\xAA";
+      if (s == "\\ng") return "\xAD";
+      if (s == "\\o") return "\xF8";
+      if (s == "\\oe") return "\xF7";
+      if (s == "\\ss") return "\xFF";
+      if (s == "\\th") return "\xFE";
+      if (s == "\\pounds") return "\xBF";
       if (s == "\\\\") return tree (FORMAT, "next line");
       if (s == "\\cr") return tree (FORMAT, "next line");
       if (s == "\\noindent")  return tree (FORMAT, "no first indentation");
@@ -507,10 +522,12 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\~", 1)) return latex_accent (t[1], "~");
   if (is_tuple (t, "\\`", 1)) return latex_accent (t[1], "<grave>");
   if (is_tuple (t, "\\'", 1)) return latex_accent (t[1], "<acute>");
-  if (is_tuple (t, "\\\"", 1)) return latex_accent (t[1], "<ddot>");
+  if (is_tuple (t, "\\\"", 1)) return latex_accent (t[1], "<ddot>"); // diaeresis
   if (is_tuple (t, "\\.", 1)) return latex_accent (t[1], "<dot>");
   if (is_tuple (t, "\\u", 1)) return latex_accent (t[1], "<breve>");
-  if (is_tuple (t, "\\v", 1)) return latex_accent (t[1], "<check>");
+  if (is_tuple (t, "\\v", 1)) return latex_accent (t[1], "<check>"); // caron
+  if (is_tuple (t, "\\=", 1)) return latex_accent (t[1], "<bar>");   // macron
+
 
   if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\texttt", 1)) return m2e (t, FONT_FAMILY, "tt");
