@@ -1129,7 +1129,7 @@
 
   ("A var" "<Alpha>")
   ("A var var" "<forall>")
-  ("A var var avr" "<aleph>")
+  ("A var var var" "<aleph>")
   ("B var" "<Beta>")
   ("B var var" "<bot>")
   ("B var var var" "<beth>")
