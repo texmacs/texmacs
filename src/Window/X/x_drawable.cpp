@@ -19,6 +19,7 @@
 #include "Ghostscript/ghostscript.hpp"
 #include "Imlib2/imlib2.hpp"
 
+extern int  nr_windows;
 extern bool reverse_colors;
 extern hashmap<tree,string> ps_bbox;
 
@@ -410,6 +411,7 @@ x_drawable_rep::image (
       dummy= glue_widget (false, false, max_w, max_h);
     }
     dis->gswindow= new x_window_rep (dummy, dis, "ghostscript", 0, 0);
+    nr_windows--; // the dummy window should not be counted
   }
 
   Pixmap pm;
