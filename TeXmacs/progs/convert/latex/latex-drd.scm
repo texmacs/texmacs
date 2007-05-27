@@ -293,6 +293,7 @@
 (drd-table latex-needs%
   (geometry "geometry")
   (epsfig "epsfig")
+  (includegraphics "graphicx")
 
   (mathscr "mathrsfs")
   (EuScript "euscript")
