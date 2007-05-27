@@ -46,7 +46,7 @@
   `(concat (item* (concat
 		   ,(object->string (quotient (* (cdr l) 100) highest-score))
 		   "%"))
-	   (hlink ,(cAr (string-tokenize (car l) #\/)) ,(car l))))
+	   (hlink ,(cAr (string-tokenize-by-char (car l) #\/)) ,(car l))))
 
 (define (make-translate . args)
   (with s (apply string-append args)
@@ -54,7 +54,7 @@
 
 (define (build-link-page keyword file-list)
   (let* ((lan (get-output-language))
-	 (keyword-list (string-tokenize keyword #\space))
+	 (keyword-list (string-tokenize-by-char keyword #\space))
 	 (the-result (get-score-list keyword-list file-list))
 	 ;;(the-result (get-final-sorted-results keyword file-list))
 	 (text (make-translate "No matches found for ``" keyword "''."))
@@ -91,7 +91,7 @@
 (define (docgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
 	 (l2 (map url->string l1))
-	 (l3 (append-map (cut string-tokenize <> #\:) l2)))
+	 (l3 (append-map (cut string-tokenize-by-char <> #\:) l2)))
     (build-link-page what l3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
