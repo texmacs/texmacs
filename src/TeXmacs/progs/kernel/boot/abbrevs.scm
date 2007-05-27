@@ -65,9 +65,13 @@
 (define-public (number->keyword x)
   (symbol->keyword (string->symbol (string-append "%" (number->string x)))))
 
-(define-public (save-object file value)
-  (write value (open-file (url-materialize file "") OPEN_WRITE))
-  (flush-all-ports))
+(if guile-c?
+  (define-public (save-object file value)
+    (pretty-print value (open-file (url-materialize file "") OPEN_WRITE))
+    (flush-all-ports))
+  (define-public (save-object file value)
+    (write value (open-file (url-materialize file "") OPEN_WRITE))
+    (flush-all-ports)))
 
 (define-public (load-object file)
   (read (open-file (url-materialize file "r") OPEN_READ)))
