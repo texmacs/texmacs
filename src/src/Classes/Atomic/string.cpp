@@ -14,6 +14,7 @@
 #include "string.hpp"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /******************************************************************************
 * Low level routines and constructors
@@ -345,8 +346,7 @@ void
 fatal_error (string message, string routine, string file) {
   cerr << "\nFatal error: " << message << " in '" << routine << "'\n";
   if (N(file)!=0) cerr << "See file   : " << file << "\n";
-  //cout << 1/0 << "\n";
-  exit (1);
+  abort ();
 }
 
 void
