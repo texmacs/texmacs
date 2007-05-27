@@ -78,7 +78,7 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 #endif
 
   string result;
-  if (load_string ("$TEXMACS_HOME_PATH/system/bib/temp.bbl", result))
+  if (load_string ("$TEXMACS_HOME_PATH/system/bib/temp.bbl", result, false))
     return "Error: bibtex failed to create bibliography";
 
   int count=1;

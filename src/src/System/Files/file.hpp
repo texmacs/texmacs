@@ -16,7 +16,7 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 
-bool load_string (url file_name, string& s, bool fatal=false);
+bool load_string (url file_name, string& s, bool fatal);
 bool save_string (url file_name, string s, bool fatal=false);
 
 bool is_of_type (url name, string filter);

@@ -102,7 +102,7 @@ load_translator (string name) {
   string file_name= name * ".enc";
   if (DEBUG_STD) cout << "TeXmacs] Loading " << file_name << "\n";
   url u ("$TEXMACS_HOME_PATH/fonts/enc:$TEXMACS_PATH/fonts/enc", file_name);
-  if (load_string (u, s)) return load_virtual (name);
+  if (load_string (u, s, false)) return load_virtual (name);
 
   translator trl= new translator_rep (name);
   int i, j, num=0;

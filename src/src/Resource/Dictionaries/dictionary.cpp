@@ -34,7 +34,7 @@ dictionary_rep::load (url u) {
   }
 
   string s;
-  if (load_string (u, s)) return;
+  if (load_string (u, s, false)) return;
   tree t= block_to_scheme_tree (s);
   if (!is_tuple (t)) return;
 

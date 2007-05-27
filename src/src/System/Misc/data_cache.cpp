@@ -168,7 +168,7 @@ cache_load (string buffer) {
   if (!cache_loaded->contains (buffer)) {
     string cache_file= texmacs_home_path * "/system/cache/" * buffer;
     string cached;
-    if (!load_string (cache_file, cached)) {
+    if (!load_string (cache_file, cached, false)) {
       if (buffer == "file_cache" || buffer == "doc_cache") {
 	int i=0, n= N(cached);
 	while (i<n) {

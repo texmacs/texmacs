@@ -351,7 +351,7 @@ setup_texmacs () {
   string s= scheme_tree_to_block (texmacs_settings);
   //cout << "settings_t= " << texmacs_settings << "\n";
   //cout << "settings_s= " << s << "\n";
-  if (save_string (settings_file, s) || load_string (settings_file, s)) {
+  if (save_string (settings_file, s) || load_string (settings_file, s, false)) {
     cerr << HRULE;
     cerr << "I could not save or reload the file\n\n";
     cerr << "\t" << settings_file << "\n\n";
@@ -393,8 +393,8 @@ init_plugins () {
   url old_settings= "$TEXMACS_HOME_PATH/system/TEX_PATHS";
   url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";
   string s;
-  if (load_string (new_settings, s)) {
-    if (load_string (old_settings, s)) {
+  if (load_string (new_settings, s, false)) {
+    if (load_string (old_settings, s, false)) {
       setup_texmacs ();
       install_status= 1;
     }
