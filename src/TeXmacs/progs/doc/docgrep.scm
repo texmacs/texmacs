@@ -57,7 +57,7 @@
 	 (keyword-list (string-tokenize keyword #\space))
 	 (the-result (get-score-list keyword-list file-list))
 	 ;;(the-result (get-final-sorted-results keyword file-list))
-	 (text (make-translate "No matches found for#\`\`" keyword "''."))
+	 (text (make-translate "No matches found for ``" keyword "''."))
 	 (body (list text)))
     (if (nnull? the-result)
 	(let ((highest-score (cdar the-result)))
@@ -71,7 +71,7 @@
 			      (tmdoc-title
 			       (concat
 				,(make-translate
-				  "Results of the search for#\`\`"
+				  "Results of the search for ``"
 				  keyword
 				  "''")))
 			      ,@body))
