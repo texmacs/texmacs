@@ -287,7 +287,7 @@ AC_SUBST(IMLIB2_LDFLAGS)
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
 #--------------------------------------------------------------------
 
-AC_MSG_CHECKING(whether ... arguments bahave correctly)
+AC_MSG_CHECKING(whether ... arguments behave correctly)
 CXXFLAGS="`guile-config compile`"
 AC_TRY_COMPILE([
   #include <guile/gh.h>
