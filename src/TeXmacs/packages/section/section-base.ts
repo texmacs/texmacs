@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.6.10>
 
 <style|source>
 
@@ -250,7 +250,7 @@
   </macro>>
 
   <assign|render-table-of-contents|<\macro|name|body>
-    <principal-section*|<arg|name>>
+    <with|chapter-toc|<macro|name|>|section-toc|<macro|name|>|<principal-section*|<arg|name>>>
 
     <with|par-first|0fn|par-par-sep|0fn|<arg|body>>
   </macro>>
