@@ -32,8 +32,8 @@ hashmap<tree,string> ps_bbox ("");
 tree
 xpm_load (url u) {
   string s;
-  load_string ("$TEXMACS_PIXMAP_PATH" * u, s);
-  if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", s);
+  load_string ("$TEXMACS_PIXMAP_PATH" * u, s, false);
+  if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", s, true);
 
   int i, j;
   tree t (TUPLE);
@@ -149,7 +149,7 @@ ps_load (url image) {
 #endif
 
   string s, suf= suffix (name);
-  if (suf == "ps" || suf == "eps") load_string (name, s);
+  if (suf == "ps" || suf == "eps") load_string (name, s, false);
   else s= as_string (call ("image->postscript", object (name)));
 
 #ifdef OS_WIN32
@@ -166,7 +166,7 @@ ps_load (url image) {
   }
 #endif
 
-  if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s);
+  if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s, true);
   return s;
 }
 

@@ -30,7 +30,7 @@ pk_loader::pk_loader (url pk_file_name, tex_font_metric tfm2, int dpi2):
   bc (tfm->bc), ec (tfm->ec),
   char_pos(0), char_flag(0), unpacked(0)
 {
-  (void) load_string (pk_file_name, input_s);
+  (void) load_string (pk_file_name, input_s, true);
   input_pos= 0;
 }
 

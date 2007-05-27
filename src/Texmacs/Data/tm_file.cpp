@@ -25,7 +25,7 @@ tm_data_rep::load_tree (url u, string fm) {
   string s, suf= suffix (u);
   string action= "load " * fm * " file";
   u= resolve (u);
-  if (is_none (u) || load_string (u, s)) {
+  if (is_none (u) || load_string (u, s, false)) {
     set_message ("Error: file#" * as_string (u) * "#not found", action);
     return "error";
   }

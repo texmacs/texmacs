@@ -103,7 +103,7 @@ static hashmap<string,string> html_entity ("");
 void load_html_entities (hashmap<string, string> table, string fname) {
   string s;
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
-  if (load_string (url ("$TEXMACS_PATH/langs/encoding", fname), s)) return;
+  if (load_string (url ("$TEXMACS_PATH/langs/encoding", fname), s, false)) return;
   tree t= block_to_scheme_tree (s);
   if (!is_tuple (t)) return;
 

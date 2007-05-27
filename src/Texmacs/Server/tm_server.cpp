@@ -308,7 +308,7 @@ tm_server_rep::style_get_cache (
   else {
     string s;
     url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
-    if (exists (name) && (!load_string (name, s))) {
+    if (exists (name) && (!load_string (name, s, false))) {
       // cout << "loaded " << name << LF;
       tree pair= scheme_to_tree (s);
       H= hashmap<string,tree> (UNINIT, pair[0]);

@@ -351,7 +351,7 @@ hashtree_from_dictionary (
   system_info ("Loading",file_name);
   string key_string, val_string, file;
   file_name = file_name * ".scm";
-  if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name), file)) {
+  if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name), file, false)) {
     system_error ("Couldn't open encoding dictionary", file_name);
     return;
   }

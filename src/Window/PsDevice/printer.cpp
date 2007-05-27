@@ -407,7 +407,7 @@ printer_rep::generate_tex_fonts () {
       if (suffix (u) == "pfb") {
 	url v= url_temp (".pfa");
 	system ("pfb2pfa", u, v);
-	(void) load_string (v, ttf);
+	(void) load_string (v, ttf, true);
 	remove (v);
       }
     }
