@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -35,6 +35,8 @@
 
     <item>Felix Breuer helped with the support of Unicode and other character
     encodings. He also made a donation to the project.
+
+    <item>Norbert Nemec contributed a series of patches.
 
     <item>Josef Weidendorfer made several patches for improving the
     performance of <TeXmacs>.
