@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.4>
+<TeXmacs|1.0.6.10>
 
 <style|tmweb>
 
@@ -30,7 +30,7 @@
     <item><hlink|<TeXmacs> quick start guide|http://www.lpmo.edu/~ratier/rmll2005-ratier-chap01.pdf>,
     an introduction by Nicolas Ratier, which fits on one A4.
 
-    <item><hlink|<TeXmacs> in 60 minutes|http://www.fmi.uni-passau.de/~seidl/texmacs/tmtour.html>,
+    <item><hlink|<TeXmacs> in 60 minutes|http://www.texmacs.org/Contrib/Seidl/tmtour/tmtour.html>,
     a hands on tutorial by Andreas Seidl.
 
     <item><hlink|GNU <TeXmacs>: a scientific editing
