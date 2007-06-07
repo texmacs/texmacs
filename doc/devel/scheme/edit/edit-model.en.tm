@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -24,8 +24,8 @@
 
   All <TeXmacs> documents or document fragments can be thought of as
   <em|trees>, as explained in more detail in the chapter about the
-  <hyper-link|<TeXmacs> document format|../../format/basics/basics.en.tm>.
-  For instance, the mathematical formula
+  <hlink|<TeXmacs> document format|../../format/basics/basics.en.tm>. For
+  instance, the mathematical formula
 
   <\equation>
     <label|example-edit-formula>a<rsub|1>+\<cdots\>+a<rsub|n>
@@ -39,7 +39,8 @@
 
   Trees which are part of a document which is effectively being edited are
   said to be <hlink|active|../overview/overview-content.en.tm#tree-active>,
-  and they correspond to the <value|scheme> data type<nbsp><verbatim|tree>.
+  and they are implemented using the <value|scheme>
+  type<nbsp><verbatim|tree>.
 
   Besides this representation format, which is preferred when editing
   document fragments, <TeXmacs> also allows you to represent
@@ -50,9 +51,10 @@
   another format). Finally, <TeXmacs> provides a
   <hlink|hybrid|../overview/overview-content.en.tm#tree-hybrid>
   representation, which corresponds to the <value|scheme> type
-  <verbatim|content>. The <verbatim|content> type is typically used for
-  writing abstract utility routines for trees, which can then be applied
-  indistinctly to objects of type <verbatim|tree> or <verbatim|stree>.
+  <verbatim|content>. The <verbatim|content> type (corresponding to the
+  prefix <verbatim|tm->, for simplicity) is typically used for writing
+  abstract utility routines for trees, which can then be applied indistinctly
+  to objects of type <verbatim|tree> or <verbatim|stree>.
 
   One major advantage of active trees (of type <verbatim|tree>) is that they
   are aware of their own location in the document. As a consequence,
@@ -79,6 +81,19 @@
   (<reference|example-edit-formula>) using the routine
   <verbatim|tree-insert!>, then <verbatim|t> keeps its value <em|and> its
   location, even though one of its ancestors was altered.
+
+  Some further precisions and terminology will be useful. First of all, we
+  have seen a distinction between <em|active> and <em|passive> trees,
+  according to whether a tree is part of a document or not. Secondly,
+  <TeXmacs> both supports <em|native trees> (of type <verbatim|tree>), which
+  are implemented in C++, and <em|scheme trees> (of type <verbatim|stree>),
+  which have a more familiar <value|scheme> syntax. Finally, <em|hybrid
+  trees> unify native and scheme trees. Formally speaking, a hybrid tree is
+  either a string, a native tree or a list whose first element is a symbol
+  and whose other elements are again hybrid trees. We notice that active
+  trees are necessarily native, but native trees may both be active or
+  passive. Furthermore, certain descendants of an inactive tree may be
+  active, but we never have the contrary.
 
   <paragraph|Positions inside document fragments>
 
@@ -238,9 +253,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
