@@ -19,6 +19,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
+#include "Modify/tree_reference.hpp"
 #include "tree_traverse.hpp"
 #include "tm_layout.hpp"
 #include "Concat/concater.hpp"
@@ -333,6 +334,31 @@ tree_range (tree t, int i, int j) {
 tree
 tree_append (tree t1, tree t2) {
   return t1 * t2;
+}
+
+bool
+tree_active (tree t) {
+  path ip= obtain_ip (t);
+  return nil (ip) || last_item (ip) != DETACHED;
+}
+
+/******************************************************************************
+* Tree references
+******************************************************************************/
+
+#define SCM_ASSERT_TREE_REFERENCE(t,arg,rout) \
+  SCM_ASSERT (SCM_TREEP (t), t, arg, rout)
+
+SCM
+tree_reference_to_scm (tree_reference t) {
+  fatal_error ("cannot use references as scheme objects",
+	       "tree_reference_to_scm");
+  return SCM_UNSPECIFIED;
+}
+
+tree_reference
+scm_to_tree_reference (SCM tree_smob) {
+  return *((tree*) SCM_CDR (tree_smob));
 }
 
 /******************************************************************************

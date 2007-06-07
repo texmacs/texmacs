@@ -127,7 +127,7 @@
 	    (= (tree-arity (tree-ref t 0)) 1))
 	(begin
 	  (if (tree-is? t 0 'document)
-	      (tree-set t 0 (tree-ref t 0 0)))
+	      (tree-set! t 0 (tree-ref t 0 0)))
 	  (tree-set! t `(math ,(tree-ref t 0)))
 	  (with r (atomic-cut-right-until (tree-end (tree-ref t 0))
 					  string-ref-npunct?)

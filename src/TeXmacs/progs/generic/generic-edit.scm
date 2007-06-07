@@ -225,7 +225,7 @@
 		     (tree-go-to t :end)
 		     (tree-go-to t pos :start)))
 		((== pos 1) (tree-go-to t 0 :end))
-		(else (tree-remove t (- pos 1) 1)))))))
+		(else (tree-remove! t (- pos 1) 1)))))))
 
 (tm-define (structured-insert-up)
   (:inside tree)
@@ -383,7 +383,7 @@
   (with-innermost t 'float
     (let ((op (if flag string-union string-minus))
 	  (st (tree-ref t 1)))
-      (tree-set st (op (tree->string st) what)))))
+      (tree-set! st (op (tree->string st) what)))))
 
 (define (test-insertion-positioning? what)
   (with-innermost t 'float

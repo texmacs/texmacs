@@ -401,9 +401,9 @@ tmg_tree_arity (SCM arg1) {
 }
 
 SCM
-tmg_tree_child (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child");
+tmg_tree_child_ref (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-ref");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-ref");
 
   tree in1= scm_to_tree (arg1);
   int in2= scm_to_int (arg2);
@@ -413,6 +413,23 @@ tmg_tree_child (SCM arg1, SCM arg2) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_child_setS (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-set!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-set!");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-child-set!");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_set (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -426,6 +443,19 @@ tmg_tree_ip (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
+}
+
+SCM
+tmg_tree_activeP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-active?");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= tree_active (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -620,6 +650,262 @@ tmg_tree_extents (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_assign (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-assign");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tree-assign");
+
+  tree in1= scm_to_tree (arg1);
+  content in2= scm_to_content (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_assign (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_insert (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-insert");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-insert");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_insert (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_remove (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-remove");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-remove");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-remove");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_remove (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_split (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-split");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-split");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-split");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_split (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_join (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-join");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-join");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_reference_join (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_assign_node (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-assign-node");
+  SCM_ASSERT_TREE_LABEL (arg2, SCM_ARG2, "tree-assign-node");
+
+  tree in1= scm_to_tree (arg1);
+  tree_label in2= scm_to_tree_label (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_reference_assign_node (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_insert_node (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-insert-node");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert-node");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-insert-node");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_insert_node (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_remove_node (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-remove-node");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-remove-node");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_remove_node (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_assignS (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-assign!");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tree-assign!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  content in2= scm_to_content (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_reference_assign (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_insertS (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-insert!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert!");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-insert!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  int in2= scm_to_int (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_insert (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_removeS (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-remove!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-remove!");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-remove!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_remove (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_splitS (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-split!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-split!");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-split!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_split (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_joinS (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-join!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-join!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_reference_join (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_assign_nodeS (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-assign-node!");
+  SCM_ASSERT_TREE_LABEL (arg2, SCM_ARG2, "tree-assign-node!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  tree_label in2= scm_to_tree_label (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_reference_assign_node (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_insert_nodeS (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-insert-node!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert-node!");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-insert-node!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  int in2= scm_to_int (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_reference_insert_node (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_remove_nodeS (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_REFERENCE (arg1, SCM_ARG1, "tree-remove-node!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-remove-node!");
+
+  tree_reference in1= scm_to_tree_reference (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  tree_reference_remove_node (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2821,8 +3107,10 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-label", (FN) tmg_tree_label, 1, 0, 0);
   scm_new_procedure ("tree-children", (FN) tmg_tree_children, 1, 0, 0);
   scm_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
-  scm_new_procedure ("tree-child", (FN) tmg_tree_child, 2, 0, 0);
+  scm_new_procedure ("tree-child-ref", (FN) tmg_tree_child_ref, 2, 0, 0);
+  scm_new_procedure ("tree-child-set!", (FN) tmg_tree_child_setS, 3, 0, 0);
   scm_new_procedure ("tree-ip", (FN) tmg_tree_ip, 1, 0, 0);
+  scm_new_procedure ("tree-active?", (FN) tmg_tree_activeP, 1, 0, 0);
   scm_new_procedure ("tree-eq?", (FN) tmg_tree_eqP, 2, 0, 0);
   scm_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   scm_new_procedure ("tree-range", (FN) tmg_tree_range, 3, 0, 0);
@@ -2837,6 +3125,22 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-load-inclusion", (FN) tmg_tree_load_inclusion, 1, 0, 0);
   scm_new_procedure ("tree-as-string", (FN) tmg_tree_as_string, 1, 0, 0);
   scm_new_procedure ("tree-extents", (FN) tmg_tree_extents, 1, 0, 0);
+  scm_new_procedure ("tree-assign", (FN) tmg_tree_assign, 2, 0, 0);
+  scm_new_procedure ("tree-insert", (FN) tmg_tree_insert, 3, 0, 0);
+  scm_new_procedure ("tree-remove", (FN) tmg_tree_remove, 3, 0, 0);
+  scm_new_procedure ("tree-split", (FN) tmg_tree_split, 3, 0, 0);
+  scm_new_procedure ("tree-join", (FN) tmg_tree_join, 2, 0, 0);
+  scm_new_procedure ("tree-assign-node", (FN) tmg_tree_assign_node, 2, 0, 0);
+  scm_new_procedure ("tree-insert-node", (FN) tmg_tree_insert_node, 3, 0, 0);
+  scm_new_procedure ("tree-remove-node", (FN) tmg_tree_remove_node, 2, 0, 0);
+  scm_new_procedure ("tree-assign!", (FN) tmg_tree_assignS, 2, 0, 0);
+  scm_new_procedure ("tree-insert!", (FN) tmg_tree_insertS, 3, 0, 0);
+  scm_new_procedure ("tree-remove!", (FN) tmg_tree_removeS, 3, 0, 0);
+  scm_new_procedure ("tree-split!", (FN) tmg_tree_splitS, 3, 0, 0);
+  scm_new_procedure ("tree-join!", (FN) tmg_tree_joinS, 2, 0, 0);
+  scm_new_procedure ("tree-assign-node!", (FN) tmg_tree_assign_nodeS, 2, 0, 0);
+  scm_new_procedure ("tree-insert-node!", (FN) tmg_tree_insert_nodeS, 3, 0, 0);
+  scm_new_procedure ("tree-remove-node!", (FN) tmg_tree_remove_nodeS, 2, 0, 0);
   scm_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   scm_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   scm_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);

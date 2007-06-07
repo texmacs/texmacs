@@ -101,7 +101,7 @@
 
 (tm-define (variant-replace which by)
   (with-innermost t which
-    (tree-assign-node t by)))
+    (tree-assign-node! t by)))
 
 (define (variants-of-sub lab type nv?)
   (with numbered? (in? lab (numbered-tag-list*))
@@ -153,7 +153,7 @@
 
 (tm-define (tree-show-hidden t)
   (:require (tree-is? t 'hidden))
-  (tree-assign-node t 'shown))
+  (tree-assign-node! t 'shown))
 
 (tm-define (cursor-show-hidden)
   (with t (buffer-tree)

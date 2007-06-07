@@ -40,8 +40,8 @@
 	   (cons (tree-label t) l)))))
 
 (tm-define (buffer-expand-includes)
-  (tree-assign (buffer-tree)
-	       (expand-includes (buffer-tree) (get-name-buffer))))
+  (with t (buffer-tree)
+    (tree-assign! t (expand-includes (buffer-tree) (get-name-buffer)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main internal representations for document parts:
@@ -75,8 +75,8 @@
 (define (buffer-hide-preamble)
   (with t (buffer-tree)
     (when (match? t '(document (show-preamble :%1) (ignore (document :*))))
-      (tree-assign t `(document (hide-preamble ,(tree-ref t 0 0))
-				,@(tree-children (tree-ref t 1 0)))))))
+      (tree-assign! t `(document (hide-preamble ,(tree-ref t 0 0))
+				 ,@(tree-children (tree-ref t 1 0)))))))
 
 (define (buffer-flatten-subpart t)
   (if (tree-in? t '(show-part hide-part))
@@ -219,10 +219,10 @@
     (with t (document-find-part (buffer-tree) id)
       (cond ((not t) (noop))
 	    ((tree-is? t 'show-part)
-	     (tree-assign-node t 'hide-part)
+	     (tree-assign-node! t 'hide-part)
 	     (buffer-go-to-part (car (buffer-parts-list #f))))
 	    ((tree-is? t 'hide-part)
-	     (tree-assign-node t 'show-part)
+	     (tree-assign-node! t 'show-part)
 	     (buffer-go-to-part id))))))
 
 (tm-define (buffer-make-preamble)
@@ -241,7 +241,7 @@
   (if (== (buffer-get-part-mode) :one)
       (with id (document-part-name t)
 	(document-select-part (tree-up t) id))
-      (tree-assign-node t 'show-part)))
+      (tree-assign-node! t 'show-part)))
 
 (tm-define (show-hidden-part id)
   (:synopsis "Make hidden part with identifier @id visible")
