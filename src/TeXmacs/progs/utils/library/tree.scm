@@ -108,7 +108,6 @@
 
 (tm-define (tree-ref t . l)
   (:synopsis "Access a subtree of @t according to @l.")
-  (display* "tree-ref " t ", " l "\n")
   (cond ((not (tree? t)) #f)
 	;; NOTE: the following special cases are treated fast,
 	((null? l) t)
@@ -171,16 +170,6 @@
   (:synopsis "Set a subtree of @t to a new value according to @l.")
   (with r (reverse args)
     (tree-set-sub t (reverse (cdr r)) (car r))))
-
-;(tm-define tree-set! tree-set)
-
-;(tm-define (tree-set t . args)
-;  (:synopsis "Set a subtree of @t to a new value according to @l.")
-;  (let ((l (cDr args))
-;	(u (cAr args)))
-;    (with r (select t l)
-;      (if (nnull? r)
-;	  (tree-set-diff (car r) u)))))
 
 (tm-define-macro (tree-set! t . l)
   (:synopsis "Set a subtree of @t to a new value according to @l.")
