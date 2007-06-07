@@ -83,7 +83,7 @@
 			       (tm-range t l (tm-length t)))))
     (cond ((not p)
 	   (texmacs-error "tree-set-diff" "~S isn't part of a document" ref))
-	  ((tm-equal? ref t) (noop))
+	  ((tm-equal? ref t) ref)
 	  ((tree-inside? t ref)
 	   (with q (tree->path t)
 	     (tree-remove-node! ref (list-ref q (length p)))
@@ -103,12 +103,12 @@
 	   (tree-insert! ref l
 			 (cons (tm-car ref)
 			       (sublist (tm-cdr t) l (- (tm-arity t) r))))
-	   (if (!= (tm-car ref) (tm-car t))
+	   (if (== (tm-car ref) (tm-car t)) ref
 	       (tree-assign-node! ref (tm-car t))))
 	  ((and (tm-compound? ref)
 		(= (+ l r) (tm-arity t)) (> (tm-arity ref) (tm-arity t)))
 	   (tree-remove! ref l (- (- (tm-arity ref) r) l))
-	   (if (!= (tm-car ref) (tm-car t))
+	   (if (== (tm-car ref) (tm-car t)) ref
 	       (tree-assign-node! ref (tm-car t))))
 	  (else
 	   (with pos (tree-focus ref (tm-cdr t))
@@ -122,10 +122,9 @@
 
 (tm-define-macro (tree-set-diff! ref t)
   (:synopsis "Assign @ref with @t.")
-  (with var (gensym)
-    `(with ,var (tree->path ,ref)
-       (tree-set-diff ,ref ,t)
-       (set! ,ref (path->tree ,var)))))
+  `(begin
+     (set! ,ref (tree-set-diff ,ref ,t))
+     ,ref))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level tree access
@@ -182,7 +181,7 @@
 		      (list-find-index (tree-children t)
 				       (cut tree-is? <> (car l))))
 	   (if i (tree-set-sub t (cons i (cdr l)) u)
-	       (tree-set-sub-error t l))))
+	         (tree-set-sub-error t l))))
 	;; More cases can be treated for trees in a document
 	((tree-active? t)
 	 (with r (select t l)

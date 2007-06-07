@@ -426,10 +426,10 @@ tmg_tree_child_setS (SCM arg1, SCM arg2, SCM arg3) {
   content in3= scm_to_content (arg3);
 
   // SCM_DEFER_INTS;
-  tree_set (in1, in2, in3);
+  tree out= tree_set (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return tree_to_scm (out);
 }
 
 SCM

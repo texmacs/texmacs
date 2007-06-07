@@ -320,9 +320,10 @@ tree_ref (tree t, int i) {
   return t[i];
 }
 
-void
+tree
 tree_set (tree t, int i, tree u) {
   t[i]= u;
+  return u;
 }
 
 tree
