@@ -367,10 +367,15 @@ tree
 tree_assign (tree r, tree t) {
   path ip= obtain_ip (r);
   //cout << "Assign " << r << ", " << t << " at " << ip << "\n";
-  if (ip_attached (ip))
-    get_server()->get_editor()->assign (reverse (ip), t);
-  else assign (r, t);
-  return r;
+  if (ip_attached (ip)) {
+    path p= reverse (ip);
+    get_server()->get_editor()->assign (p, copy (t));
+    return get_server()->get_editor()->the_subtree (p);
+  }
+  else {
+    assign (r, t);
+    return r;
+  }
 }
 
 tree
@@ -379,7 +384,7 @@ tree_insert (tree r, int pos, tree t) {
   //cout << "Insert " << r << ", " << pos << ", " << t
   //     << " at " << ip << "\n";
   if (ip_attached (ip))
-    get_server()->get_editor()->insert (reverse (ip) * pos, t);
+    get_server()->get_editor()->insert (reverse (ip) * pos, copy (t));
   else insert (r, pos, t);
   return r;
 }
@@ -433,7 +438,7 @@ tree_insert_node (tree r, int pos, tree t) {
   //     << " at " << ip << "\n";
   if (ip_attached (ip)) {
     path p= reverse (ip);
-    get_server()->get_editor()->insert_node (p * pos, t);
+    get_server()->get_editor()->insert_node (p * pos, copy (t));
     return get_server()->get_editor()->the_subtree (p);
   }
   else {
