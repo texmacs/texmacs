@@ -19,7 +19,6 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
-#include "Modify/tree_reference.hpp"
 #include "tree_traverse.hpp"
 #include "tm_layout.hpp"
 #include "Concat/concater.hpp"
@@ -342,23 +341,119 @@ tree_active (tree t) {
   return nil (ip) || last_item (ip) != DETACHED;
 }
 
-/******************************************************************************
-* Tree references
-******************************************************************************/
-
-#define SCM_ASSERT_TREE_REFERENCE(t,arg,rout) \
-  SCM_ASSERT (SCM_TREEP (t), t, arg, rout)
-
-SCM
-tree_reference_to_scm (tree_reference t) {
-  fatal_error ("cannot use references as scheme objects",
-	       "tree_reference_to_scm");
-  return SCM_UNSPECIFIED;
+tree
+tree_child_insert (tree t, int pos, tree x) {
+  cout << "t= " << t << "\n";
+  cout << "x= " << x << "\n";
+  int i, n= N(t);
+  tree r (t, n+1);
+  for (i=0; i<pos; i++) r[i]= t[i];
+  r[pos]= x;
+  for (i=pos; i<n; i++) r[i+1]= t[i];
+  return r;
 }
 
-tree_reference
-scm_to_tree_reference (SCM tree_smob) {
-  return *((tree*) SCM_CDR (tree_smob));
+/******************************************************************************
+* Document modification routines
+******************************************************************************/
+
+static inline bool
+ip_attached (path ip) {
+  return nil (ip) || last_item (ip) != DETACHED;
+}
+
+tree
+tree_assign (tree r, tree t) {
+  path ip= obtain_ip (r);
+  //cout << "Assign " << r << ", " << t << " at " << ip << "\n";
+  if (ip_attached (ip))
+    get_server()->get_editor()->assign (reverse (ip), t);
+  else assign (r, t);
+  return r;
+}
+
+tree
+tree_insert (tree r, int pos, tree t) {
+  path ip= obtain_ip (r);
+  //cout << "Insert " << r << ", " << pos << ", " << t
+  //     << " at " << ip << "\n";
+  if (ip_attached (ip))
+    get_server()->get_editor()->insert (reverse (ip) * pos, t);
+  else insert (r, pos, t);
+  return r;
+}
+
+tree
+tree_remove (tree r, int pos, int nr) {
+  path ip= obtain_ip (r);
+  //cout << "Remove " << r << ", " << pos << ", " << nr
+  //     << " at " << ip << "\n";
+  if (ip_attached (ip))
+    get_server()->get_editor()->remove (reverse (ip) * pos, nr);
+  else remove (r, pos, nr);
+  return r;
+}
+
+tree
+tree_split (tree r, int pos, int at) {
+  path ip= obtain_ip (r);
+  //cout << "Split " << r << ", " << pos << ", " << at
+  //     << " at " << ip << "\n";
+  if (ip_attached (ip))
+    get_server()->get_editor()->split (reverse (ip) * path (pos, at));
+  else split (r, pos, at);
+  return r;
+}
+
+tree
+tree_join (tree r, int pos) {
+  path ip= obtain_ip (r);
+  //cout << "Join " << r << ", " << pos << " at " << ip << "\n";
+  if (ip_attached (ip))
+    get_server()->get_editor()->join (reverse (ip) * pos);
+  else join (r, pos);
+  return r;
+}
+
+tree
+tree_assign_node (tree r, tree_label op) {
+  path ip= obtain_ip (r);
+  //cout << "Assign node " << r << ", " << tree (op) << " at " << ip << "\n";
+  if (ip_attached (ip))
+    get_server()->get_editor()->assign_node (reverse (ip), op);
+  else assign_node (r, op);
+  return r;
+}
+
+tree
+tree_insert_node (tree r, int pos, tree t) {
+  path ip= obtain_ip (r);
+  //cout << "Insert node " << r << ", " << pos << ", " << t
+  //     << " at " << ip << "\n";
+  if (ip_attached (ip)) {
+    path p= reverse (ip);
+    get_server()->get_editor()->insert_node (p * pos, t);
+    return get_server()->get_editor()->the_subtree (p);
+  }
+  else {
+    insert_node (r, pos, t);
+    return r;
+  }
+}
+
+tree
+tree_remove_node (tree r, int pos) {
+  path ip= obtain_ip (r);
+  //cout << "Remove node " << r << ", " << pos << " at " << ip << "\n";
+  if (ip_attached (ip)) {
+    path p= reverse (ip);
+    get_server()->get_editor()->remove_node (p * pos);
+    return get_server()->get_editor()->the_subtree (p);
+  }
+  else {
+    remove_node (r, pos);
+    return r;
+  }
 }
 
 /******************************************************************************
