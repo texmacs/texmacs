@@ -15,6 +15,31 @@
 (texmacs-module (utils library tree))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; In place versions of fundamental modification routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (tree-assign! ref t)
+  `(begin
+     (set! ,ref (tree-assign ,ref ,t))
+     ,ref))
+
+(tm-define tree-insert! tree-insert)
+(tm-define tree-remove! tree-remove)
+(tm-define tree-split! tree-split)
+(tm-define tree-join! tree-join)
+(tm-define tree-assign-node! tree-assign-node)
+
+(tm-define-macro (tree-insert-node! ref pos t)
+  `(begin
+     (set! ,ref (tree-insert-node ,ref ,pos ,t))
+     ,ref))
+
+(tm-define-macro (tree-remove-node! ref pos)
+  `(begin
+     (set! ,ref (tree-remove-node ,ref ,pos))
+     ,ref))
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Use fundamental modification routines in an intelligent way
 ;; via a unique assignment routine
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
