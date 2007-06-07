@@ -53,7 +53,7 @@
   (tree-children A (array_tree tree))
   (tree-arity N (int tree))
   (tree-child-ref tree_ref (tree tree int))
-  (tree-child-set! tree_set (void tree int content))
+  (tree-child-set! tree_set (tree tree int content))
   (tree-child-insert tree_child_insert (tree content int content))
   (tree-ip obtain_ip (path tree))
   (tree-active? tree_active (bool tree))
