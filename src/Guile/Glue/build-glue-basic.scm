@@ -52,8 +52,10 @@
   (tree-label L (tree_label tree))
   (tree-children A (array_tree tree))
   (tree-arity N (int tree))
-  (tree-child tree_ref (tree tree int))
+  (tree-child-ref tree_ref (tree tree int))
+  (tree-child-set! tree_set (void tree int content))
   (tree-ip obtain_ip (path tree))
+  (tree-active? tree_active (bool tree))
   (tree-eq? strong_equal (bool tree tree))
   (subtree subtree (tree tree path))
   (tree-range tree_range (tree tree int int))
@@ -68,6 +70,26 @@
   (tree-load-inclusion load_inclusion (tree url))
   (tree-as-string var_as_string (string tree))
   (tree-extents tree_extents (tree content))
+
+  (tree-assign tree_assign (void tree content))
+  (tree-insert tree_reference_insert (void tree int content))
+  (tree-remove tree_reference_remove (void tree int int))
+  (tree-split tree_reference_split (void tree int int))
+  (tree-join tree_reference_join (void tree int))
+  (tree-assign-node tree_reference_assign_node (void tree tree_label))
+  (tree-insert-node tree_insert_node (void tree int content))
+  (tree-remove-node tree_remove_node (void tree int))
+  (tree-assign! tree_reference_assign (void tree_reference content))
+  (tree-insert! tree_reference_insert (void tree_reference int content))
+  (tree-remove! tree_reference_remove (void tree_reference int int))
+  (tree-split! tree_reference_split (void tree_reference int int))
+  (tree-join! tree_reference_join (void tree_reference int))
+  (tree-assign-node! tree_reference_assign_node
+		     (void tree_reference tree_label))
+  (tree-insert-node! tree_reference_insert_node
+		     (void tree_reference int content))
+  (tree-remove-node! tree_reference_remove_node
+		     (void tree_reference int))
 
   ;; paths
   (path-inf? path_inf (bool path path))

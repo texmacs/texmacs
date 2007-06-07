@@ -115,7 +115,7 @@
 		 (out (map chat-convert new))
 		 (in `(chat-input ,user (document ""))))
 	(ahash-set! chat-connected (cons room user) #t)
-	(tree-set (tree-ref session 1) `(document ,@out ,in))
+	(tree-set! session 1 `(document ,@out ,in))
 	(tree-go-to session 1 :last 1 :end)
 	(chat-refresh-handler room user (tree-innermost 'chat-session))))))
 
@@ -138,7 +138,7 @@
 	     (ok (chat-connected?)))
     (with-server (chat-server room)
       (chat-wake-up room user #f)
-      (tree-assign (tree-ref input 1) '(document ""))
+      (tree-set! input 1 '(document ""))
       (remote-request `(chat-emit ,room ,user ,emit)))))
 
 (tm-define (kbd-return)
@@ -158,7 +158,7 @@
   (with (nr user contents) field
     (while (>= nr (- (tree-arity t) 1))
       (tree-insert! t (- (tree-arity t) 1) '(document "")))
-    (tree-assign (tree-ref t nr) (chat-convert field))))
+    (tree-set! t nr (chat-convert field))))
 
 (define (chat-wake-up room user ring?)
   (with last (ahash-ref chat-last-modification (cons room user))

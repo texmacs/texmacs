@@ -15,93 +15,6 @@
 (texmacs-module (utils library tree))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Fundamental modification routines
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tree-assign ref t)
-  (:synopsis "Assign @ref with @t.")
-  ;;(display* "Assign " ref ", " t "\n")
-  (with p (tree->path ref)
-    (if p (path-assign p t)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
-
-(tm-define-macro (tree-assign! ref t)
-  (with var (gensym)
-    `(with ,var ,t
-       (tree-assign ,ref ,var)
-       (set! ,ref ,var))))
-
-(tm-define (tree-insert ref pos t)
-  (:synopsis "Insert the children of @t into @ref at position @pos.")
-  ;;(display* "Insert " ref ", " pos ", " t "\n")
-  (with p (tree->path ref)
-    (if p (path-insert (rcons p pos) t)
-	(texmacs-error "tree-insert" "~S is not part of a document" ref))))
-
-(tm-define tree-insert! tree-insert)
-
-(tm-define (tree-remove ref pos nr)
-  (:synopsis "Remove @nr children from @ref at position @pos.")
-  ;;(display* "Remove " ref ", " pos ", " nr "\n")
-  (with p (tree->path ref)
-    (if p (path-remove (rcons p pos) nr)
-	(texmacs-error "tree-remove" "~S is not part of a document" ref))))
-
-(tm-define tree-remove! tree-remove)
-
-(tm-define (tree-split ref pos at)
-  (:synopsis "Split the @pos-th child of @ref at position @at.")
-  ;;(display* "Split " ref ", " pos ", " at "\n")
-  (with p (tree->path ref)
-    (if p (path-split (rcons* p pos at))
-	(texmacs-error "tree-split" "~S is not part of a document" ref))))
-
-(tm-define tree-split! tree-split)
-
-(tm-define (tree-join ref pos)
-  (:synopsis "Split the @pos-th child of @ref with the next child.")
-  ;;(display* "Join " ref ", " pos "\n")
-  (with p (tree->path ref)
-    (if p (path-join (rcons p pos))
-	(texmacs-error "tree-join" "~S is not part of a document" ref))))
-
-(tm-define tree-join! tree-join)
-
-(tm-define (tree-insert-node ref pos ins)
-  (:synopsis "Transform @ref into @lab with @ref inserted at position @pos.")
-  ;;(display* "Insert node " ref ", " pos ", " ins "\n")
-  (with p (tree->path ref)
-    (if p (path-insert-node (rcons p pos) ins)
-	(texmacs-error "tree-insert-node" "~S isn't part of a document" ref))))
-
-(tm-define-macro (tree-insert-node! ref pos ins)
-  (with var (gensym)
-    `(with ,var (tree->path ,ref)
-       (tree-insert-node ,ref ,pos ,ins)
-       (set! ,ref (path->tree ,var)))))
-
-(tm-define (tree-remove-node ref pos)
-  (:synopsis "Replace @ref by its @pos-th child.")
-  ;;(display* "Remove node " ref ", " pos "\n")
-  (with p (tree->path ref)
-    (if p (path-remove-node (rcons p pos))
-	(texmacs-error "tree-remove-node" "~S isn't part of a document" ref))))
-
-(tm-define-macro (tree-remove-node! ref pos)
-  `(begin
-     (tree-remove-node ,ref ,pos)
-     (set! ,ref (tree-ref ,ref ,pos))))
-
-(tm-define (tree-assign-node ref lab)
-  (:synopsis "Replace the label of @ref by @lab.")
-  ;;(display* "Assign node " ref ", " lab "\n")
-  (with p (tree->path ref)
-    (if p (path-assign-node p lab)
-	(texmacs-error "tree-assign-node" "~S isn't part of a document" ref))))
-
-(tm-define tree-assign-node! tree-assign-node)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Use fundamental modification routines in an intelligent way
 ;; via a unique assignment routine
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -157,30 +70,33 @@
 	  ((and (tm-atomic? ref) (tm-atomic? t)
 		(= (+ l r) (tm-length t)) (> (tm-length ref) (tm-length t)))
 	   (tree-remove! ref l (- (- (tm-length ref) r) l)))
-	  ((not (tm-compound? t)) (tree-assign ref t))
+	  ((not (tm-compound? t)) (tree-assign! ref t))
 	  ((and (tm-compound? ref) (= l (tm-arity ref)) (= l (tm-arity t)))
-	   (tree-assign-node ref (tm-car t)))
+	   (tree-assign-node! ref (tm-car t)))
 	  ((and (tm-compound? ref)
 		(= (+ l r) (tm-arity ref)) (< (tm-arity ref) (tm-arity t)))
 	   (tree-insert! ref l
 			 (cons (tm-car ref)
 			       (sublist (tm-cdr t) l (- (tm-arity t) r))))
-	   (if (!= (tm-car ref) (tm-car t)) (tree-assign-node ref (tm-car t))))
+	   (if (!= (tm-car ref) (tm-car t))
+	       (tree-assign-node! ref (tm-car t))))
 	  ((and (tm-compound? ref)
 		(= (+ l r) (tm-arity t)) (> (tm-arity ref) (tm-arity t)))
 	   (tree-remove! ref l (- (- (tm-arity ref) r) l))
-	   (if (!= (tm-car ref) (tm-car t)) (tree-assign-node ref (tm-car t))))
+	   (if (!= (tm-car ref) (tm-car t))
+	       (tree-assign-node! ref (tm-car t))))
 	  (else
 	   (with pos (tree-focus ref (tm-cdr t))
-	     (if (not pos) (tree-assign ref t)
+	     (if (not pos) (tree-assign! ref t)
 		 (let* ((tl (tm->list t))
 			(head (list-head tl (+ pos 1)))
 			(mid  (list-ref tl (+ pos 1)))
 			(tail (list-tail tl (+ pos 2))))
 		   (tree-set-diff! ref mid)
-		   (tree-insert-node ref pos (append head tail)))))))))
+		   (tree-insert-node! ref pos (append head tail)))))))))
 
 (tm-define-macro (tree-set-diff! ref t)
+  (:synopsis "Assign @ref with @t.")
   (with var (gensym)
     `(with ,var (tree->path ,ref)
        (tree-set-diff ,ref ,t)
@@ -192,24 +108,86 @@
 
 (tm-define (tree-ref t . l)
   (:synopsis "Access a subtree of @t according to @l.")
+  (display* "tree-ref " t ", " l "\n")
   (cond ((not (tree? t)) #f)
+	;; NOTE: the following special cases are treated fast,
 	((null? l) t)
-	((and (list-1? l) (integer? (car l)))
-	 (tree-child t (car l)))
+	((integer? (car l))
+	 (with i (car l)
+	   (and (tree-compound? t) (>= i 0) (< i (tree-arity t))
+		(apply tree-ref (cons (tree-child-ref t i) (cdr l))))))
+	((== (car l) :first)
+	 (apply tree-ref (cons t (cons 0 (cdr l)))))
+	((== (car l) :last)
+	 (and (tree-compound? t)
+	      (apply tree-ref (cons t (cons (- (tree-arity t) 1) (cdr l))))))
+	((symbol? (car l))
+	 (and (tree-compound? t)
+	      (with i (list-find-index (tree-children t)
+				       (cut tree-is? <> (car l)))
+		(apply tree-ref (cons t (cons i (cdr l)))))))
+	;; but they can all be replaced by the general code below
 	(else (with r (select t l)
 		(and (nnull? r) (car r))))))
 
+(define (tree-set-sub-error t l)
+  (texmacs-error "tree-set-sub" "~S does not admit a subtree along ~S" t l))
+
+(define (tree-set-sub t l u)
+  (cond ((not (tree? t)) (texmacs-error "tree-set-sub" "~S is not a tree" t))
+	;; NOTE: the following special cases are treated fast and apart
+	((null? l)
+	 (if (tree-active? t)
+	     (tree-set-diff t u)
+	     (tree-assign t u)))
+	((integer? (car l))
+	 (with i (car l)
+	   (if (and (tree-compound? t) (>= i 0) (< i (tree-arity t)))
+	       (if (or (nnull? (cdr l)) (tree-active? t))
+		   (tree-set-sub (tree-child-ref t (car l)) (cdr l) u)
+		   (tree-child-set! t (car l) u))
+	       (tree-set-sub-error t l))))
+	((== (car l) :first)
+	 (tree-set-sub t (cons 0 (cdr l)) u))
+	((== (car l) :last)
+	 (if (tree-compound? t)
+	     (tree-set-sub t (cons (- (tree-arity t) 1) (cdr l)) u)
+	     (tree-set-sub-error t l)))
+	((symbol? (car l))
+	 (with i (and (tree-compound? t)
+		      (list-find-index (tree-children t)
+				       (cut tree-is? <> (car l))))
+	   (if i (tree-set-sub t (cons i (cdr l)) u)
+	       (tree-set-sub-error t l))))
+	;; More cases can be treated for trees in a document
+	((tree-active? t)
+	 (with r (select t l)
+	   (if (nnull? r)
+	       (tree-set-diff (car r) u)
+	       (tree-set-sub-error t l))))
+	(else (tree-set-sub-error t l))))
+
 (tm-define (tree-set t . args)
   (:synopsis "Set a subtree of @t to a new value according to @l.")
-  (let ((l (cDr args))
-	(u (cAr args)))
-    (with r (select t l)
-      (if (nnull? r)
-	  (tree-set-diff (car r) u)))))
+  (with r (reverse args)
+    (tree-set-sub t (reverse (cdr r)) (car r))))
+
+;(tm-define tree-set! tree-set)
+
+;(tm-define (tree-set t . args)
+;  (:synopsis "Set a subtree of @t to a new value according to @l.")
+;  (let ((l (cDr args))
+;	(u (cAr args)))
+;    (with r (select t l)
+;      (if (nnull? r)
+;	  (tree-set-diff (car r) u)))))
 
 (tm-define-macro (tree-set! t . l)
+  (:synopsis "Set a subtree of @t to a new value according to @l.")
   (if (list-1? l)
-      `(tree-set-diff! ,t ,@l)
+      `(if (tree-active? ,t)
+	   (tree-set-diff! ,t ,@l)
+	   (tree-assign! ,t ,@l))
       `(tree-set ,t ,@l)))
 
 (tm-define (tree-start t . l)

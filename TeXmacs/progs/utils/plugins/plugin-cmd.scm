@@ -108,11 +108,12 @@
 	   (u (tree-up t 3)))
       (cond ((not doc) (noop))
 	    ((plugin-async-active? handle)
-	     (if (<= t1 t2) (tree-set t doc)))
+	     (if (<= t1 t2) (tree-set! t doc)))
 	    ((and u (== (tree-label u) 'output))
 	     (with (name session channel) (ahash-ref plugin-source handle)
-	       (tree-assign (tree-up t 2) doc)
-	       (start-input name session (tree->path u))))))))
+	       (with p (tree-up t 2)
+		 (tree-assign! p doc)
+		 (start-input name session (tree->path u)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; serialization

@@ -33,7 +33,7 @@
 (define (locify x)
   (cond ((list? x) (for-each locify x))
 	((locified? x) (noop))
-	(else (tree-insert-node x 1 `(locus (id ,(create-unique-id)))))))
+	(else (tree-insert-node! x 1 `(locus (id ,(create-unique-id)))))))
 
 (define (environment->locus t)
   (or (and (tm-func? t 'locus) t)

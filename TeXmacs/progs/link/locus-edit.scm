@@ -74,7 +74,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (locus-insert-link t ln)
-  (tree-insert t (- (tree-arity t) 1) `(locus ,(tree-copy ln))))
+  (tree-insert! t (- (tree-arity t) 1) `(locus ,(tree-copy ln))))
 
 (tm-define (locus-remove-link ln)
   (tree-remove (tree-up ln) (tree-index ln) 1))
