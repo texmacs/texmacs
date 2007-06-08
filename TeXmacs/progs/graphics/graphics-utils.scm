@@ -16,6 +16,10 @@
 (texmacs-module (graphics graphics-utils)
   (:use (utils library cursor) (utils library tree)))
 
+(tm-define (path-assign p t) (tree-assign (path->tree p) t))
+(tm-define (path-insert p t) (tree-insert (path->tree (cDr p)) (cAr p) t))
+(tm-define (path-remove p n) (tree-remove (path->tree (cDr p)) (cAr p) n))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic scheme processing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

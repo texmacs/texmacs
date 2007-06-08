@@ -142,6 +142,24 @@ clean_join (tree t, path p) {
 }
 
 tree
+clean_assign_node (tree t, path p, tree_label op) {
+  if (nil (p)) {
+    int i, n= N(t);
+    tree r (op, n);
+    for (i=0; i<n; i++) r[i]= t[i];
+    return r;
+  }
+  else {
+    int i, j= p->item, n= N(t);
+    tree r (t, n);
+    for (i=0; i<j; i++) r[i]= t[i];
+    r[j]= clean_assign_node (t[j], p->next, op);
+    for (i++; i<n; i++) r[i]= t[i];
+    return r;
+  }  
+}
+
+tree
 clean_insert_node (tree t, path p, tree u) {
   if (nil (p->next)) {
     int i, j= p->item, n= N(u);
@@ -169,24 +187,6 @@ clean_remove_node (tree t, path p) {
     tree r (t, n);
     for (i=0; i<j; i++) r[i]= t[i];
     r[j]= clean_remove_node (t[j], p->next);
-    for (i++; i<n; i++) r[i]= t[i];
-    return r;
-  }  
-}
-
-tree
-clean_assign_node (tree t, path p, tree_label op) {
-  if (nil (p)) {
-    int i, n= N(t);
-    tree r (op, n);
-    for (i=0; i<n; i++) r[i]= t[i];
-    return r;
-  }
-  else {
-    int i, j= p->item, n= N(t);
-    tree r (t, n);
-    for (i=0; i<j; i++) r[i]= t[i];
-    r[j]= clean_assign_node (t[j], p->next, op);
     for (i++; i<n; i++) r[i]= t[i];
     return r;
   }  

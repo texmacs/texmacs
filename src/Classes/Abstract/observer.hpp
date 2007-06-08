@@ -41,9 +41,9 @@ public:
   virtual void notify_var_split   (tree& ref, tree t1, tree t2) = 0;
   virtual void notify_join        (tree& ref, int pos, tree next) = 0;
   virtual void notify_var_join    (tree& ref, tree t, int offset) = 0;
+  virtual void notify_assign_node (tree& ref, tree_label op) = 0;
   virtual void notify_insert_node (tree& ref, int pos) = 0;
   virtual void notify_remove_node (tree& ref, int pos) = 0;
-  virtual void notify_assign_node (tree& ref, tree_label op) = 0;
   virtual void notify_detach      (tree& ref, tree closest, bool right) = 0;
 
   // Extra routines for particular types of observers
@@ -85,9 +85,9 @@ void insert      (tree& ref, int pos, tree t);
 void remove      (tree& ref, int pos, int nr);
 void split       (tree& ref, int pos, int at);
 void join        (tree& ref, int pos);
+void assign_node (tree& ref, tree_label op);
 void insert_node (tree& ref, int pos, tree t);
 void remove_node (tree& ref, int pos);
-void assign_node (tree& ref, tree_label op);
 
 void insert_observer (observer& o, observer what);
 void remove_observer (observer& o, observer what);

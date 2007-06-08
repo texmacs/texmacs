@@ -35,9 +35,9 @@ public:
   void notify_var_split   (tree& ref, tree t1, tree t2);
   void notify_join        (tree& ref, int pos, tree next);
   void notify_var_join    (tree& ref, tree t, int offset);
+  void notify_assign_node (tree& ref, tree_label op);
   void notify_insert_node (tree& ref, int pos);
   void notify_remove_node (tree& ref, int pos);
-  void notify_assign_node (tree& ref, tree_label op);
   void notify_detach      (tree& ref, tree closest, bool right);
 
   bool get_ip (path& ip);
@@ -112,6 +112,12 @@ ip_observer_rep::notify_var_join (tree& ref, tree t, int offset) {
 }
 
 void
+ip_observer_rep::notify_assign_node (tree& ref, tree_label op) {
+  // cout << "Notify assign node " << ref << ", " << as_string (op) << "\n";
+  (void) ref; (void) op;
+}
+
+void
 ip_observer_rep::notify_insert_node (tree& ref, int pos) {
   // cout << "Notify insert node " << ref << ", " << pos << "\n";
   ip= path (pos, ip);
@@ -128,12 +134,6 @@ ip_observer_rep::notify_remove_node (tree& ref, int pos) {
   if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[pos], ip);
   else detach_ip (ref[pos]);
   ip= DETACHED; // detach_ip (ref);
-}
-
-void
-ip_observer_rep::notify_assign_node (tree& ref, tree_label op) {
-  // cout << "Notify assign node " << ref << ", " << as_string (op) << "\n";
-  (void) ref; (void) op;
 }
 
 void

@@ -242,6 +242,18 @@ join (tree& ref, int pos) {
 }
 
 void
+assign_node (tree& ref, tree_label op) {
+  // cout << "Assign node " << ref << " : " << tree (op) << "\n";
+  if (!nil (ref->obs)) {
+    ref->obs->notify_assign_node (ref, op);
+    simplify (ref->obs);
+  }
+  LR (ref)= op;
+  // stretched_print (ref, true, 1);
+  // consistency_check ();
+}
+
+void
 insert_node (tree& ref, int pos, tree t) {
   // cout << "Insert node " << ref << " : " << t << " at " << pos << "\n";
   int i, n= N(t);
@@ -269,18 +281,6 @@ remove_node (tree& ref, int pos) {
     if (i < pos) detach (ref[i], ref[pos], false);
     else if (i > pos) detach (ref[i], ref[pos], true);
   ref= ref[pos];
-  // stretched_print (ref, true, 1);
-  // consistency_check ();
-}
-
-void
-assign_node (tree& ref, tree_label op) {
-  // cout << "Assign node " << ref << " : " << tree (op) << "\n";
-  if (!nil (ref->obs)) {
-    ref->obs->notify_assign_node (ref, op);
-    simplify (ref->obs);
-  }
-  LR (ref)= op;
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
