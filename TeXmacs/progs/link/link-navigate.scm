@@ -130,7 +130,7 @@
   (:argument filter? "Filter on navigation mode?")
   (if (or (not t) (null? (tree->path t))) '()
       (with l (exact-link-list t filter?)
-	(if (== (buffer-path) (tree->path t)) l
+	(if (root? t) l
 	    (append l (upward-link-list (tree-up t) filter?))))))
 
 (tm-define (complete-link-list t filter?)
@@ -155,7 +155,7 @@
       (let* ((ids (tree->ids t))
 	     (add? (nnull? (list-intersection ids active-ids)))
 	     (r (if add? (list t) '())))
-	(if (== (buffer-path) (tree->path t)) r
+	(if (root? t) r
 	    (append r (link-active-upwards-sub (tree-up t) active-ids))))))
 
 (tm-define (link-active-upwards t)
