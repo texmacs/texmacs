@@ -219,6 +219,16 @@ notify_join (typesetter ttt, path p) {
 }
 
 void
+notify_assign_node (typesetter ttt, path p, tree_label op) {
+  // cout << "Assign node " << p << ", " << as_string (op) << "\n";
+  tree t= subtree (ttt->br->st, p);
+  int i, n= N(t);
+  tree r (op, n);
+  for (i=0; i<n; i++) r[i]= t[i];
+  ttt->br->notify_assign (p, r);
+}
+
+void
 notify_insert_node (typesetter ttt, path p, tree t) {
   // cout << "Insert node " << p << ", " << t << "\n";
   int i, pos= last_item (p), n= N(t);
@@ -234,16 +244,6 @@ notify_remove_node (typesetter ttt, path p) {
   // cout << "Remove node " << p << "\n";
   tree t= subtree (ttt->br->st, p);
   ttt->br->notify_assign (path_up (p), t);
-}
-
-void
-notify_assign_node (typesetter ttt, path p, tree_label op) {
-  // cout << "Assign node " << p << ", " << as_string (op) << "\n";
-  tree t= subtree (ttt->br->st, p);
-  int i, n= N(t);
-  tree r (op, n);
-  for (i=0; i<n; i++) r[i]= t[i];
-  ttt->br->notify_assign (p, r);
 }
 
 /******************************************************************************

@@ -31,18 +31,18 @@ public:
   void remove             (path p, int nr);
   void split              (path p);
   void join               (path p);
+  void assign_node        (path p, tree_label op);
   void insert_node        (path p, tree t);
   void remove_node        (path p);
-  void assign_node        (path p, tree_label op);
   void finished           (path p);
   void notify_assign      (path p, tree u);
   void notify_insert      (path p, tree u);
   void notify_remove      (path p, int nr);
   void notify_split       (path p);
   void notify_join        (path p);
+  void notify_assign_node (path p, tree_label op);
   void notify_insert_node (path p, tree t);
   void notify_remove_node (path p);
-  void notify_assign_node (path p, tree_label op);
   void post_notify        (path p);
 
   void notify_undo (string op, path p, tree t); 

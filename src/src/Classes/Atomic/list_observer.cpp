@@ -40,9 +40,9 @@ public:
   void notify_var_split   (tree& ref, tree t1, tree t2);
   void notify_join        (tree& ref, int pos, tree next);
   void notify_var_join    (tree& ref, tree t, int offset);
+  void notify_assign_node (tree& ref, tree_label op);
   void notify_insert_node (tree& ref, int pos);
   void notify_remove_node (tree& ref, int pos);
-  void notify_assign_node (tree& ref, tree_label op);
   void notify_detach      (tree& ref, tree closest, bool right);
 
   bool get_ip (path& ip);
@@ -101,6 +101,12 @@ list_observer_rep::notify_var_join (tree& ref, tree t, int offset) {
 }
 
 void
+list_observer_rep::notify_assign_node (tree& ref, tree_label op) {
+  if (!nil (o1)) o1->notify_assign_node (ref, op);
+  if (!nil (o2)) o2->notify_assign_node (ref, op);
+}
+
+void
 list_observer_rep::notify_insert_node (tree& ref, int pos) {
   if (!nil (o1)) o1->notify_insert_node (ref, pos);
   if (!nil (o2)) o2->notify_insert_node (ref, pos);
@@ -110,12 +116,6 @@ void
 list_observer_rep::notify_remove_node (tree& ref, int pos) {
   if (!nil (o1)) o1->notify_remove_node (ref, pos);
   if (!nil (o2)) o2->notify_remove_node (ref, pos);
-}
-
-void
-list_observer_rep::notify_assign_node (tree& ref, tree_label op) {
-  if (!nil (o1)) o1->notify_assign_node (ref, op);
-  if (!nil (o2)) o2->notify_assign_node (ref, op);
 }
 
 void

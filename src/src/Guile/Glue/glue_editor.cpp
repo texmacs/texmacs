@@ -98,120 +98,6 @@ tmg_path_2tree (SCM arg1) {
 }
 
 SCM
-tmg_path_assign (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-assign");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "path-assign");
-
-  path in1= scm_to_path (arg1);
-  content in2= scm_to_content (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->assign (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_insert (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-insert");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "path-insert");
-
-  path in1= scm_to_path (arg1);
-  content in2= scm_to_content (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_remove (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-remove");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "path-remove");
-
-  path in1= scm_to_path (arg1);
-  int in2= scm_to_int (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_split (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-split");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->split (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_join (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-join");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->join (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_insert_node (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-insert-node");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "path-insert-node");
-
-  path in1= scm_to_path (arg1);
-  content in2= scm_to_content (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_node (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_remove_node (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-remove-node");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_node (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_assign_node (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-assign-node");
-  SCM_ASSERT_TREE_LABEL (arg2, SCM_ARG2, "path-assign-node");
-
-  path in1= scm_to_path (arg1);
-  tree_label in2= scm_to_tree_label (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->assign_node (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_path_correct (SCM arg1) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-correct");
 
@@ -2910,14 +2796,6 @@ initialize_glue_editor () {
   scm_new_procedure ("mutator-path", (FN) tmg_mutator_path, 0, 0, 0);
   scm_new_procedure ("mutator-time", (FN) tmg_mutator_time, 0, 0, 0);
   scm_new_procedure ("path->tree", (FN) tmg_path_2tree, 1, 0, 0);
-  scm_new_procedure ("path-assign", (FN) tmg_path_assign, 2, 0, 0);
-  scm_new_procedure ("path-insert", (FN) tmg_path_insert, 2, 0, 0);
-  scm_new_procedure ("path-remove", (FN) tmg_path_remove, 2, 0, 0);
-  scm_new_procedure ("path-split", (FN) tmg_path_split, 1, 0, 0);
-  scm_new_procedure ("path-join", (FN) tmg_path_join, 1, 0, 0);
-  scm_new_procedure ("path-insert-node", (FN) tmg_path_insert_node, 2, 0, 0);
-  scm_new_procedure ("path-remove-node", (FN) tmg_path_remove_node, 1, 0, 0);
-  scm_new_procedure ("path-assign-node", (FN) tmg_path_assign_node, 2, 0, 0);
   scm_new_procedure ("path-correct", (FN) tmg_path_correct, 1, 0, 0);
   scm_new_procedure ("path-insert-with", (FN) tmg_path_insert_with, 3, 0, 0);
   scm_new_procedure ("path-remove-with", (FN) tmg_path_remove_with, 2, 0, 0);

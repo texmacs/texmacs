@@ -165,6 +165,25 @@ edit_modify_rep::join (path pp) {
 }
 
 void
+edit_modify_rep::assign_node (path pp, tree_label op) {
+  CHECK_OTHER_EDITOR (assign_node (pp, op));
+  path p= copy (pp);
+  // cout << "Assign node " << get_label (tree (op)) << " at " << p << "\n";
+  tree& st= subtree (et, p);
+  notify_undo ("assign_node", p, get_label (st));
+
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_assign_node (p, op);
+  FOR_ALL_EDITORS_END
+
+  ::assign_node (subtree (et, p), op);
+#ifdef EXPERIMENTAL
+  global_notify_assign_node (p, op);
+#endif
+  finished (pp);
+}
+
+void
 edit_modify_rep::insert_node (path pp, tree t) {
   CHECK_OTHER_EDITOR (insert_node (pp, t));
   path p= copy (pp);
@@ -198,25 +217,6 @@ edit_modify_rep::remove_node (path pp) {
   ::remove_node (subtree (et, path_up (p)), pos);
 #ifdef EXPERIMENTAL
   global_notify_remove_node (p);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::assign_node (path pp, tree_label op) {
-  CHECK_OTHER_EDITOR (assign_node (pp, op));
-  path p= copy (pp);
-  // cout << "Assign node " << get_label (tree (op)) << " at " << p << "\n";
-  tree& st= subtree (et, p);
-  notify_undo ("assign_node", p, get_label (st));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_assign_node (p, op);
-  FOR_ALL_EDITORS_END
-
-  ::assign_node (subtree (et, p), op);
-#ifdef EXPERIMENTAL
-  global_notify_assign_node (p, op);
 #endif
   finished (pp);
 }
@@ -270,6 +270,13 @@ edit_modify_rep::notify_join (path p) {
 }
 
 void
+edit_modify_rep::notify_assign_node (path p, tree_label op) {
+  if (!(rp <= p)) return;
+  cur_pos= position_new (tp);
+  ::notify_assign_node (get_typesetter (), p - rp, op);
+}
+
+void
 edit_modify_rep::notify_insert_node (path p, tree t) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
@@ -281,13 +288,6 @@ edit_modify_rep::notify_remove_node (path p) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
   ::notify_remove_node (get_typesetter (), p - rp);
-}
-
-void
-edit_modify_rep::notify_assign_node (path p, tree_label op) {
-  if (!(rp <= p)) return;
-  cur_pos= position_new (tp);
-  ::notify_assign_node (get_typesetter (), p - rp, op);
 }
 
 void
@@ -543,6 +543,13 @@ edit_modify_rep::perform_undo_redo (tree x) {
       else go_to (end (et, p * last));
     }
   }
+  else if (op == "assign_node") {
+    if (p <= tp) assign_node (p, as_tree_label (t->label));
+    else {
+      assign_node (p, as_tree_label (t->label));
+      go_to (end (et, p));
+    }
+  }
   else if (op == "insert_node") {
     if (p < tp) insert_node (p, t);
     else {
@@ -559,13 +566,6 @@ edit_modify_rep::perform_undo_redo (tree x) {
     else {
       remove_node (p);
       go_to (end (et, path_up (p)));
-    }
-  }
-  else if (op == "assign_node") {
-    if (p <= tp) assign_node (p, as_tree_label (t->label));
-    else {
-      assign_node (p, as_tree_label (t->label));
-      go_to (end (et, p));
     }
   }
 }

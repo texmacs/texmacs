@@ -37,9 +37,9 @@ public:
   void notify_var_split   (tree& ref, tree t1, tree t2);
   void notify_join        (tree& ref, int pos, tree next);
   void notify_var_join    (tree& ref, tree t, int offset);
+  void notify_assign_node (tree& ref, tree_label op);
   void notify_insert_node (tree& ref, int pos);
   void notify_remove_node (tree& ref, int pos);
-  void notify_assign_node (tree& ref, tree_label op);
   void notify_detach      (tree& ref, tree closest, bool right);
 
   bool get_position (tree& t, int& index);
@@ -146,6 +146,13 @@ tree_position_rep::notify_var_join (tree& ref, tree t, int offset) {
 }
 
 void
+tree_position_rep::notify_assign_node (tree& ref, tree_label op) {
+  // cout << "Notify assign node " << ref << ", " << as_string (op) << "\n";
+  (void) ref; (void) op;
+  // cout << "position -> " << obtain_position (observer (this)) << "\n";
+}
+
+void
 tree_position_rep::notify_insert_node (tree& ref, int pos) {
   // cout << "Notify insert node " << ref << ", " << pos << "\n";
   (void) ref; (void) pos;
@@ -157,13 +164,6 @@ tree_position_rep::notify_remove_node (tree& ref, int pos) {
   // cout << "Notify remove node " << ref << ", " << pos << "\n";
   if (index == 0) reattach_left (this, ref[pos]);
   else reattach_right (this, ref[pos]);
-  // cout << "position -> " << obtain_position (observer (this)) << "\n";
-}
-
-void
-tree_position_rep::notify_assign_node (tree& ref, tree_label op) {
-  // cout << "Notify assign node " << ref << ", " << as_string (op) << "\n";
-  (void) ref; (void) op;
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
 

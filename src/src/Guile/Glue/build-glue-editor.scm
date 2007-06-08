@@ -30,14 +30,6 @@
 
   ;; low-level modification routines
   (path->tree the_subtree (tree path))
-  (path-assign assign (void path content))
-  (path-insert insert (void path content))
-  (path-remove remove (void path int))
-  (path-split split (void path))
-  (path-join join (void path))
-  (path-insert-node insert_node (void path content))
-  (path-remove-node remove_node (void path))
-  (path-assign-node assign_node (void path tree_label))
   (path-correct correct (void path))
   (path-insert-with insert_with (void path string content))
   (path-remove-with remove_with (void path string))
