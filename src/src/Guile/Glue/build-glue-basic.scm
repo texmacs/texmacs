@@ -73,7 +73,7 @@
   (tree-extents tree_extents (tree content))
 
   (tree-assign tree_assign (tree tree content))
-  (tree-insert tree_insert (tree tree int content))
+  (tree-var-insert tree_insert (tree tree int content))
   (tree-remove tree_remove (tree tree int int))
   (tree-split tree_split (tree tree int int))
   (tree-join tree_join (tree tree int))

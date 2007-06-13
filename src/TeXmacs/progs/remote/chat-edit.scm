@@ -157,7 +157,7 @@
   ;;(display* "Update " field "\n")
   (with (nr user contents) field
     (while (>= nr (- (tree-arity t) 1))
-      (tree-insert! t (- (tree-arity t) 1) '(document "")))
+      (tree-insert! t (- (tree-arity t) 1) '("")))
     (tree-set! t nr (chat-convert field))))
 
 (define (chat-wake-up room user ring?)

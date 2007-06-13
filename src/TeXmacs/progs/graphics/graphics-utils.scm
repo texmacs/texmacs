@@ -485,7 +485,7 @@
                              val)
 			  layer-of-last-removed-object)
                       (tree-arity (path->tree p)))
-	    (path-insert (rcons p n) (list 'tuple t))
+	    (path-insert (rcons p n) (list t))
 	    (if (func? t 'with)
 		(if (and go-into (func? (cAr t) 'text-at))
 		    (set! p2 (append p (list n (- (length t) 2) 0 0)))
@@ -593,7 +593,7 @@
 (tm-define (graphics-active-insert t)
   (with p (graphics-active-path)
     (if p (with n (tree-arity (path->tree p))
-	    (path-insert (rcons p n) (list 'tuple t))
+	    (path-insert (rcons p n) (list t))
 	    (go-to (rcons p 1))))))
 
 (tm-define (graphics-object-root-path p)

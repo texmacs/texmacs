@@ -223,7 +223,7 @@
     (when (and (>= i 0) (<= i (tree-arity t)))
       (let* ((empty (if (tree-in? t (big-switch-tag-list)) '(document "") ""))
 	     (v (switch-index :visible)))
-	(tree-insert! t i `(,(tree-label t) (shown ,empty)))
+	(tree-insert! t i `((shown ,empty)))
 	(if (tree-in? t (alternative-tag-list))
 	    (switch-select i)
 	    (switch-select (+ v 1)))

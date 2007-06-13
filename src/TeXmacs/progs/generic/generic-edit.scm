@@ -210,7 +210,7 @@
     (if (== (tm-car t) 'tree)
 	(with pos (tree-down-index t)
 	  (if forwards? (set! pos (1+ pos)))
-	  (tree-insert! t pos '(tree ""))
+	  (tree-insert! t pos '(""))
 	  (tree-go-to t pos 0)))))
 
 (tm-define (structured-remove forwards?)
@@ -239,7 +239,7 @@
   (with-innermost t 'tree
     (if (== (tree-down-index t) 0)
 	(with pos (tree-arity t)
-	  (tree-insert! t pos '(tree ""))
+	  (tree-insert! t pos '(""))
 	  (tree-go-to t pos 0))
 	(begin
 	  (set! t (tree-down t))

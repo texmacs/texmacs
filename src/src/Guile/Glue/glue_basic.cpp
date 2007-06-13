@@ -685,10 +685,10 @@ tmg_tree_assign (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tree_insert (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-insert");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-insert");
+tmg_tree_var_insert (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-var-insert");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-var-insert");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tree-var-insert");
 
   tree in1= scm_to_tree (arg1);
   int in2= scm_to_int (arg2);
@@ -3152,7 +3152,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-as-string", (FN) tmg_tree_as_string, 1, 0, 0);
   scm_new_procedure ("tree-extents", (FN) tmg_tree_extents, 1, 0, 0);
   scm_new_procedure ("tree-assign", (FN) tmg_tree_assign, 2, 0, 0);
-  scm_new_procedure ("tree-insert", (FN) tmg_tree_insert, 3, 0, 0);
+  scm_new_procedure ("tree-var-insert", (FN) tmg_tree_var_insert, 3, 0, 0);
   scm_new_procedure ("tree-remove", (FN) tmg_tree_remove, 3, 0, 0);
   scm_new_procedure ("tree-split", (FN) tmg_tree_split, 3, 0, 0);
   scm_new_procedure ("tree-join", (FN) tmg_tree_join, 2, 0, 0);
