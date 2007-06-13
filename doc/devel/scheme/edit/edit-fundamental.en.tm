@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -22,54 +22,43 @@
   not generally recommended, and may lead to severe bugs.
 
   <\explain>
-    <explain-scm-fun|tree-assign|<scm-arg|which>|<scm-arg|new-value>>
-
-    <explain-scm-macro|tree-assign!|<scm-arg|which>|<scm-arg|new-value>><explain-synopsis|tree
+    <explain-scm-macro|tree-assign!|<scm-arg|var>|<scm-arg|new-value>><explain-synopsis|tree
     assignment>
   <|explain>
-    This routine replaces the tree <scm-arg|which> by a new content value
-    <scm-arg|new-value>.
-
-    If <scm-arg|which> is also a <value|scheme> variable, then the macro
-    <scm-macro|tree-assign!> should be used to set it to <scm-arg|new-value>.
+    On input, we have a <value|scheme> variable <scm-arg|var> of type
+    <verbatim|tree> and <scm-arg|new-value> of type <verbatim|content>. The
+    macro replaces the tree by <scm-arg|new-value> and updates <scm-arg|var>
+    accordingly. The new tree value of <scm-arg|var> is returned.
   </explain>
 
   <\explain>
-    <explain-scm-fun|tree-insert|<scm-arg|which>|<scm-arg|pos>|<scm-arg|ins>>
-
-    <explain-scm-macro|tree-insert!|<scm-arg|which>|<scm-arg|pos>|<scm-arg|ins>><explain-synopsis|insertion
+    <explain-scm-macro|tree-insert!|<scm-arg|var>|<scm-arg|pos>|<scm-arg|ins>><explain-synopsis|insertion
     of new nodes or characters>
   <|explain>
-    If <scm-arg|which> is a compound tree, then <scm-arg|ins> should be of
-    compound content type, say with children
-    <with|mode|math|u<rsub|0>,\<ldots\>,u<rsub|l-1>>. In that case, the
-    routine inserts <with|mode|math|u<rsub|0>,\<ldots\>,u<rsub|l-1>> into the
-    children of <scm-arg|which>, at position<nbsp><scm-arg|pos> (see figure
-    <reference|insert-remove-fig>). If <scm-arg|which> is a string tree, then
+    The first parameter <scm-arg|var> is a <value|scheme> variable of type
+    <verbatim|tree>. If <scm-arg|var> is a compound tree, then <scm-arg|ins>
+    should be a list <with|mode|math|u<rsub|0>,\<ldots\>,u<rsub|l-1>> of new
+    children of type <verbatim|content>. In that case, the routine inserts
+    <with|mode|math|u<rsub|0>,\<ldots\>,u<rsub|l-1>> into the children of
+    <scm-arg|var>, at position<nbsp><scm-arg|pos> (see figure
+    <reference|insert-remove-fig>). If <scm-arg|var> is a string tree, then
     <scm-arg|ins> should be of string content type, and the string
-    <scm-arg|ins> is inserted into <scm-arg|which> at
-    position<nbsp><scm-arg|pos>.
-
-    If <scm-arg|which> is also a <value|scheme> variable, then both the
-    function <scm-fun|tree-insert> and the macro <scm-macro|tree-insert!>
-    update the value of <scm-arg|which>.
+    <scm-arg|ins> is inserted into <scm-arg|var> at
+    position<nbsp><scm-arg|pos>. The variable <scm-arg|var> is updated with
+    the result of the insertion and the result is returned.
   </explain>
 
   <\explain>
-    <explain-scm-fun|tree-remove|<scm-arg|which>|<scm-arg|pos>|<scm-arg|nr>>
-
-    <explain-scm-macro|tree-remove!|<scm-arg|which>|<scm-arg|pos>|<scm-arg|nr>><explain-synopsis|removal
+    <explain-scm-macro|tree-remove!|<scm-arg|var>|<scm-arg|pos>|<scm-arg|nr>><explain-synopsis|removal
     of nodes or characters>
   <|explain>
-    If <scm-arg|which> is a compound tree, then <scm-arg|nr> of its children
-    are removed, starting at position <scm-arg|pos> (see figure
-    <reference|insert-remove-fig>). If <scm-arg|which> is a string tree, then
-    <scm-arg|nr> characters are removed, starting at
-    position<nbsp><scm-arg|pos>.
-
-    If <scm-arg|which> is also a <value|scheme> variable, then both the
-    function <scm-fun|tree-remove> and the macro <scm-macro|tree-remove!>
-    update the value of <scm-arg|which>.
+    The first parameter <scm-arg|var> is a <value|scheme> variable of type
+    <verbatim|tree>. If <scm-arg|var> is a compound tree, then <scm-arg|nr>
+    of its children are removed, starting at position <scm-arg|pos> (see
+    figure <reference|insert-remove-fig>). If <scm-arg|var> is a string tree,
+    then <scm-arg|nr> characters are removed, starting at
+    position<nbsp><scm-arg|pos>. The variable <scm-arg|var> is updated with
+    the result of the removal and the result is returned.
   </explain>
 
   <\big-figure>
@@ -80,53 +69,47 @@
     \;
   <|big-figure>
     <label|insert-remove-fig>Illustration of the operations
-    <scm|(<scm-fun|tree-insert> t i u)> and <scm|(<scm-fun|tree-remove> t i
-    l)>. If <scm|u> has arity<nbsp><scm|l>, then we notice that
-    <scm|(<scm-fun|tree-remove> t i l)> undos the insertion
-    <scm|(<scm-fun|tree-insert> t i u)>.
+    <scm|(<scm-macro|tree-insert!> t i u)> and <scm|(<scm-macro|tree-remove!>
+    t i l)>. If <scm|u> has length<nbsp><scm|l>, then we notice that
+    <scm|(<scm-macro|tree-remove!> t i l)> undos the insertion
+    <scm|(<scm-macro|tree-insert!> t i u)>.
   </big-figure>
 
   \;
 
   <\explain>
-    <explain-scm-fun|tree-split|<scm-arg|which>|<scm-arg|pos>|<scm-arg|at>>
-
-    <explain-scm-macro|tree-split!|<scm-arg|which>|<scm-arg|pos>|<scm-arg|at>><explain-synopsis|split
+    <explain-scm-macro|tree-split!|<scm-arg|var>|<scm-arg|pos>|<scm-arg|at>><explain-synopsis|split
     the children into two parts>
   <|explain>
-    Given a tree <scm-arg|which>, this routine is used to split its child
-    <with|mode|math|u> at position <scm-arg|pos> into two parts. If
+    The first parameter <scm-arg|var> is a <value|scheme> variable of type
+    <verbatim|tree>. The macro is used to split the child <with|mode|math|u>
+    of <scm-arg|var> at position <scm-arg|pos> into two parts. If
     <with|mode|math|u> is a compound tree, then the first part consists of
     the first <scm-arg|at> children and the second part of the remaining
     ones. Both parts carry the same label as <with|mode|math|u> and
-    <with|mode|math|u> is replaced by the two parts inside <scm-arg|which>
-    (see figure <reference|split-join-fig>). If <with|mode|math|u> is string
-    tree, then it is rather split into two strings at position <scm-arg|at>.
-
-    If <scm-arg|which> is also a <value|scheme> variable, then both the
-    function <scm-fun|tree-split> and the macro <scm-macro|tree-split!>
-    update the value of <scm-arg|which>.
+    <with|mode|math|u> is replaced by the two parts inside <scm-arg|var> (see
+    figure <reference|split-join-fig>). If <with|mode|math|u> is string tree,
+    then it is rather split into two strings at position <scm-arg|at>. The
+    variable <scm-arg|var> is updated with the result of the split command
+    and the result is returned.
   </explain>
 
   <\explain>
-    <explain-scm-fun|tree-join|<scm-arg|which>|<scm-arg|pos>>
-
-    <explain-scm-macro|tree-join!|<scm-arg|which>|<scm-arg|pos>><explain-synopsis|join
+    <explain-scm-macro|tree-join!|<scm-arg|var>|<scm-arg|pos>><explain-synopsis|join
     two adjacent nodes>
   <|explain>
-    Given a tree <scm-arg|which>, this routine is used to join its child
-    <with|mode|math|u> at position <scm-arg|pos> with the child
+    The first parameter <scm-arg|var> is a <value|scheme> variable of type
+    <verbatim|tree>. This macro is used to join the child <with|mode|math|u>
+    of <scm-arg|var> at position <scm-arg|pos> with the child
     <with|mode|math|v> at position <scm-arg|pos>+1. If <with|mode|math|u> and
-    <with|mode|math|v> are trees, then they are removed from <scm-arg|which>
+    <with|mode|math|v> are trees, then they are removed from <scm-arg|var>
     and replaced by a single tree which has the same label as
     <with|mode|math|u> and whose children are those of <with|mode|math|u>,
     followed by the children of <with|mode|math|v> (see figure
     <reference|split-join-fig>). If <with|mode|math|u> and <with|mode|math|v>
-    are strings, then they are replaced by their concatenation.
-
-    If <scm-arg|which> is also a <value|scheme> variable, then both the
-    function <scm-fun|tree-join> and the macro <scm-macro|tree-join!> update
-    the value of <scm-arg|which>.
+    are strings, then they are replaced by their concatenation. The variable
+    <scm-arg|var> is updated with the result of the join command and the
+    result is returned.
   </explain>
 
   <\big-figure>
@@ -137,54 +120,40 @@
     \;
   <|big-figure>
     <label|split-join-fig>Illustration of the operations
-    <scm|(<scm-fun|tree-split> t i j)> and <scm|(<scm-fun|tree-join> t i)>.
-    Notice that <scm|(<scm-fun|tree-join> t i)> undos
-    <scm|(<scm-fun|tree-split> t i j)>.
+    <scm|(<scm-macro|tree-split!> t i j)> and <scm|(<scm-macro|tree-join!> t
+    i)>. Notice that <scm|(<scm-macro|tree-join!> t i)> undos
+    <scm|(<scm-macro|tree-split!> t i j)>.
   </big-figure>
 
   <\explain>
-    <explain-scm-fun|tree-assign-node|<scm-arg|which>|<scm-arg|lab>>
-
-    <explain-scm-macro|tree-assign-node!|<scm-arg|which>|<scm-arg|lab>><explain-synopsis|assign
+    <explain-scm-macro|tree-assign-node!|<scm-arg|var>|<scm-arg|lab>><explain-synopsis|assign
     the label of a tree>
   <|explain>
-    This routine replaces the label of a compound tree <scm-arg|which> by a
-    new value <scm-arg|lab>.
-
-    If <scm-arg|which> is also a <value|scheme> variable, then both the
-    function <scm-fun|tree-assign-node> and the macro
-    <scm-macro|tree-assign-node!> update the value of <scm-arg|which>.
+    This macro replaces the label of a compound tree stored in a
+    <value|scheme> variable <scm-arg|var> by a new value <scm-arg|lab>. The
+    result of the substitution is returned.
   </explain>
 
   <\explain>
-    <explain-scm-fun|tree-insert-node|<scm-arg|which>|<scm-arg|pos>|<scm-arg|ins>>
-
-    <explain-scm-macro|tree-insert-node!|<scm-arg|which>|<scm-arg|pos>|<scm-arg|ins>><explain-synopsis|insert
+    <explain-scm-macro|tree-insert-node!|<scm-arg|var>|<scm-arg|pos>|<scm-arg|ins>><explain-synopsis|insert
     the tree as a child of another one>
   <|explain>
-    Given a tree <scm-arg|which> and a content tree <scm-arg|ins>, this
-    routine replaces <scm-arg|which> by <scm-arg|ins>, with <scm-arg|which>
-    inserted as a new child of <scm-arg|ins> at position <scm-arg|pos> (see
-    figure <reference|insert-remove-node-fig>).
-
-    If <scm-arg|which> is also a <value|scheme> variable, then the macro
-    <scm-macro|tree-insert-node!> should be used to update the value of
-    <scm-arg|which>.
+    Given a <value|scheme> variable <scm-arg|var>, containing a tree, and a
+    content tree <scm-arg|ins>, this macro replaces <scm-arg|var> by
+    <scm-arg|ins>, with <scm-arg|var> inserted as a new child of
+    <scm-arg|ins> at position <scm-arg|pos> (see figure
+    <reference|insert-remove-node-fig>). The result of the insertion is
+    returned.
   </explain>
 
   <\explain>
-    <explain-scm-fun|tree-remove-node|<scm-arg|which>|<scm-arg|pos>>
-
-    <explain-scm-macro|tree-remove-node!|<scm-arg|which>|<scm-arg|pos>><explain-synopsis|replace
+    <explain-scm-macro|tree-remove-node!|<scm-arg|var>|<scm-arg|pos>><explain-synopsis|replace
     a tree by a child>
   <|explain>
-    Given a compound tree <scm-arg|which>, this routine replaces it by its
-    child at position <scm-arg|pos> (see figure
-    <reference|insert-remove-node-fig>).
-
-    If <scm-arg|which> is also a <value|scheme> variable, then the macro
-    <scm-macro|tree-remove-node!> should be used to update the value of
-    <scm-arg|which>.
+    Given a <value|scheme> variable <scm-arg|var>, containing a compound
+    tree, this macro replaces <scm-arg|var> by its child at position
+    <scm-arg|pos> (see figure <reference|insert-remove-node-fig>). The value
+    of this child is returned.
   </explain>
 
   <\big-figure>
@@ -195,10 +164,21 @@
     \;
   <|big-figure>
     <label|insert-remove-node-fig>Illustration of the operations
-    <scm|(<scm-fun|tree-insert-node> t i u)> and
-    <scm|(<scm-fun|tree-remove-node> t i)>. Notice that the second operation
-    undos the first one.
+    <scm|(<scm-macro|tree-insert-node!> t i u)> and
+    <scm|(<scm-macro|tree-remove-node!> t i)>. Notice that the second
+    operation undos the first one.
   </big-figure>
+
+  <\remark>
+    Each of the macros <scm-macro|tree-assign!>, <scm-macro|tree-insert!>,
+    <abbr|etc.> has a functional counterpart
+    <verbatim|<scm-fun|tree-assign>>, <verbatim|<scm-fun|tree-insert>>, etc.
+    The first parameter of these counterparts can be an arbitrary
+    ``l-<no-break>value'' and does not have to be a scheme variable. However,
+    in the case when a <value|scheme> variable is passed as the first
+    parameter, these variants do not necessarily update its contents with the
+    return<nbsp>value.
+  </remark>
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
 
