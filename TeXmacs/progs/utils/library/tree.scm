@@ -23,6 +23,11 @@
      (set! ,ref (tree-assign ,ref ,t))
      ,ref))
 
+(tm-define (tree-insert t pos x)
+  (cond ((string? x) (tree-var-insert t pos x))
+	((list? x) (tree-var-insert t pos (cons 'tuple x)))
+	(else (texmacs-error "tree-insert" "~S is not a string or a list" x))))
+
 (tm-define tree-insert! tree-insert)
 (tm-define tree-remove! tree-remove)
 (tm-define tree-split! tree-split)
@@ -100,9 +105,7 @@
 	   (tree-assign-node! ref (tm-car t)))
 	  ((and (tm-compound? ref)
 		(= (+ l r) (tm-arity ref)) (< (tm-arity ref) (tm-arity t)))
-	   (tree-insert! ref l
-			 (cons (tm-car ref)
-			       (sublist (tm-cdr t) l (- (tm-arity t) r))))
+	   (tree-insert! ref l (sublist (tm-cdr t) l (- (tm-arity t) r)))
 	   (if (== (tm-car ref) (tm-car t)) ref
 	       (tree-assign-node! ref (tm-car t))))
 	  ((and (tm-compound? ref)

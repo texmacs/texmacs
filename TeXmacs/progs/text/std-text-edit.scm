@@ -31,26 +31,26 @@
   (with-innermost t 'doc-data
     (with pos (1+ (tree-down-index t))
       (cond ((== l 'doc-author-data)
-	     (tree-insert! t pos `(doc-data (,l (author-name ""))))
+	     (tree-insert! t pos `((,l (author-name ""))))
 	     (tree-go-to t pos 0 0 0))
 	    ((== l 'doc-note)
-	     (tree-insert! t pos `(doc-data (,l (document ""))))
+	     (tree-insert! t pos `((,l (document ""))))
 	     (tree-go-to t pos 0 0 0))
 	    ((in? l doc-data-inactive-tags)
-	     (tree-insert! t pos `(doc-data (doc-inactive (,l ""))))
+	     (tree-insert! t pos `((doc-inactive (,l ""))))
 	     (tree-go-to t pos 0 0 0))
 	    (else
-	     (tree-insert! t pos `(doc-data (,l "")))
+	     (tree-insert! t pos `((,l "")))
 	     (tree-go-to t pos 0 0))))))
 
 (tm-define (make-author-data-element l)
   (with-innermost t 'doc-author-data
     (with pos (1+ (tree-down-index t))
       (cond ((in? l '(author-address author-note))
-	     (tree-insert! t pos `(doc-author-data (,l (document ""))))
+	     (tree-insert! t pos `((,l (document ""))))
 	     (tree-go-to t pos 0 0 0))
 	    (else
-	     (tree-insert! t pos `(doc-author-data (,l "")))
+	     (tree-insert! t pos `((,l "")))
 	     (tree-go-to t pos 0 0))))))
 
 (tm-define (kbd-return)

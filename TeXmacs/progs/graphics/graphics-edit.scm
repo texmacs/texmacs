@@ -649,7 +649,7 @@
 		   (t-1 (path->tree p-1))
 	       )
 	       (path-remove p 1)
-	       (path-insert p-1 `(tuple ,(tree->stree t)))
+	       (path-insert p-1 `(,(tree->stree t)))
 	       (set! current-path p-1)
 	    ))
 	   )
@@ -659,7 +659,7 @@
 		   (t+1 (path->tree p+1))
 	       )
 	       (path-remove p 1)
-	       (path-insert p+1 `(tuple ,(tree->stree t)))
+	       (path-insert p+1 `(,(tree->stree t)))
 	       (set! current-path p+1)
 	    ))
 	   )
@@ -672,7 +672,7 @@
 	       (if no
 	       (begin
 		  (path-remove p 1)
-		  (path-insert p-1 `(tuple ,(tree->stree t)))
+		  (path-insert p-1 `(,(tree->stree t)))
 		  (set! current-path p-1)))
 	    ))
 	   )
@@ -685,7 +685,7 @@
 	       (if no
 	       (begin
 		  (path-remove p 1)
-		  (path-insert p+1 `(tuple ,(tree->stree t)))
+		  (path-insert p+1 `(,(tree->stree t)))
 		  (set! current-path p+1)))
 	    ))
 	   )

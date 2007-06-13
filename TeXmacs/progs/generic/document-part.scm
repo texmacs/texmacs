@@ -229,7 +229,7 @@
   (:synopsis "Create a preamble for the current document")
   (when (not (buffer-has-preamble?))
     (with t (buffer-tree)
-      (tree-insert! t 0 '(document (hide-preamble (document ""))))
+      (tree-insert! t 0 '((hide-preamble (document ""))))
       (buffer-set-part-mode :preamble))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
