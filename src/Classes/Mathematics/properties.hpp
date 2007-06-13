@@ -15,7 +15,7 @@
 #include "math_tree.hpp"
 
 template<typename T>
-class properties {
+class unary_properties {
 public:
   typedef T scalar_type;
   typedef T norm_type;

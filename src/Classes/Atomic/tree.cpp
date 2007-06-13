@@ -17,9 +17,7 @@
 * Main routines for trees
 ******************************************************************************/
 
-#ifdef OS_WIN32
-const tree_label tree::init=UNINIT;
-#endif
+template<> tree default_helper<tree>::init (UNINIT);
 
 void
 destroy_tree_rep (tree_rep* rep) {

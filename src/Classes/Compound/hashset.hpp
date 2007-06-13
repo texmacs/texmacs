@@ -46,7 +46,7 @@ public:
 };
 
 template<class T> class hashset {
-  CONCRETE_TEMPLATE(hashset,T);
+CONCRETE_TEMPLATE(hashset,T);
   inline hashset (int n=1, int max=1):
     rep (new hashset_rep<T>(n, max)) {}
   operator tree ();

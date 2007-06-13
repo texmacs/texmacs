@@ -15,7 +15,7 @@
 #include "vector.hpp"
 #define TMPL template<typename T>
 #define BINARY_TMPL template<typename T, typename U>
-#define R typename properties<T>::norm_type
+#define R typename unary_properties<T>::norm_type
 #define M typename binary_properties<T,U>::product_type
 
 TMPL class matrix;
@@ -73,10 +73,10 @@ struct pair {
 };
 
 TMPL
-class properties<matrix<T> > {
+class unary_properties<matrix<T> > {
 public:
   typedef T scalar_type;
-  typedef typename properties<T>::norm_type norm_type;
+  typedef typename unary_properties<T>::norm_type norm_type;
   typedef pair<int,int> index_type;
   static inline tree index_name (index_type i) {
     return tree (RSUB, tree (RSUB, "x", as_string (i.first + 1)),

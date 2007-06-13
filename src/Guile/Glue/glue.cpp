@@ -18,6 +18,7 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
+#include "Tmfs/tmfs.hpp"
 #include "analyze.hpp"
 #include "tree_traverse.hpp"
 #include "tm_layout.hpp"
@@ -888,8 +889,60 @@ urlP (SCM t) {
 url url_concat (url u1, url u2) { return u1 * u2; }
 url url_or (url u1, url u2) { return u1 | u2; }
 void string_save (string s, url u) { (void) save_string (u, s); }
-string string_load (url u) { string s; (void) load_string (u, s, false); return s; }
+string string_load (url u) {
+  string s; (void) load_string (u, s, false); return s; }
 url url_ref (url u, int i) { return u[i]; }
+
+/******************************************************************************
+* Table types
+******************************************************************************/
+
+typedef hashmap<string,string> table_string_string;
+
+static bool
+scm_is_table_string_string (SCM p) {
+  if (scm_is_null (p)) return true;
+  else if (!scm_is_null (p)) return false;
+  else {
+    SCM f= SCM_CAR (p);
+    return scm_is_pair (f) &&
+           scm_is_string (SCM_CAR (f)) &&
+           scm_is_string (SCM_CDR (f)) &&
+           scm_is_table_string_string (SCM_CDR (p));
+  }
+}
+
+#define SCM_ASSERT_TABLE_STRING_STRING(p,arg,rout) \
+  SCM_ASSERT (scm_is_table_string_string (p), p, arg, rout)
+
+SCM
+table_string_string_to_scm (hashmap<string,string> t) {
+  SCM p= SCM_NULL;
+  iterator<string> it= iterate (t);
+  while (it->busy ()) {
+    string s= it->next ();
+    SCM n= scm_cons (string_to_scm (s), string_to_scm (t[s]));
+    p= scm_cons (n, p);
+  }
+  return p;
+}
+
+hashmap<string,string>
+scm_to_table_string_string (SCM p) {
+  hashmap<string,string> t;
+  while (!scm_is_null (p)) {
+    SCM n= SCM_CAR (p);
+    t (scm_to_string (SCM_CAR (n)))= scm_to_string (SCM_CDR (n));
+    p= SCM_CDR (p);
+  }
+  return t;
+}
+
+#define scm_is_solution scm_is_table_string_string
+#define SCM_ASSERT_SOLUTION(p,arg,rout) \
+  SCM_ASSERT (scm_is_solution(p), p, arg, rout)
+#define solution_to_scm table_string_string_to_scm
+#define scm_to_solution scm_to_table_string_string
 
 /******************************************************************************
 * Several array types
@@ -903,7 +956,9 @@ typedef array<widget> array_widget;
 static bool
 scm_is_array_int (SCM p) {
   if (scm_is_null (p)) return true;
-  else return scm_is_int (SCM_CAR (p)) && scm_is_array_int (SCM_CDR (p));
+  else return scm_is_pair (p) &&
+	      scm_is_int (SCM_CAR (p)) &&
+	      scm_is_array_int (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_ARRAY_INT(p,arg,rout) \
@@ -930,7 +985,9 @@ scm_to_array_int (SCM p) {
 static bool
 scm_is_array_string (SCM p) {
   if (scm_is_null (p)) return true;
-  else return scm_is_string (SCM_CAR (p)) && scm_is_array_string (SCM_CDR (p));
+  else return scm_is_pair (p) && 
+	      scm_is_string (SCM_CAR (p)) &&
+	      scm_is_array_string (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_ARRAY_STRING(p,arg,rout) \
@@ -957,7 +1014,9 @@ scm_to_array_string (SCM p) {
 static bool
 scm_is_array_tree (SCM p) {
   if (scm_is_null (p)) return true;
-  else return SCM_TREEP (SCM_CAR (p)) && scm_is_array_tree (SCM_CDR (p));
+  else return scm_is_pair (p) && 
+	      SCM_TREEP (SCM_CAR (p)) &&
+	      scm_is_array_tree (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_ARRAY_TREE(p,arg,rout) \
@@ -984,7 +1043,9 @@ scm_to_array_tree (SCM p) {
 static bool
 scm_is_array_widget (SCM p) {
   if (scm_is_null (p)) return true;
-  else return scm_is_widget (SCM_CAR (p)) && scm_is_array_widget (SCM_CDR (p));
+  else return scm_is_pair (p) &&
+	      scm_is_widget (SCM_CAR (p)) &&
+	      scm_is_array_widget (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_ARRAY_WIDGET(p,arg,rout) \
@@ -1008,6 +1069,35 @@ scm_to_array_widget (SCM p) {
   return a;
 }
 
+static bool
+scm_is_solutions (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_pair (p) &&
+	      scm_is_solution (SCM_CAR (p)) &&
+	      scm_is_solutions (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_SOLUTIONS(p,arg,rout) \
+  SCM_ASSERT (scm_is_solutions (p), p, arg, rout)
+
+SCM
+solutions_to_scm (array<solution> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (solution_to_scm (a[i]), p);
+  return p;
+}
+
+array<solution>
+scm_to_solutions (SCM p) {
+  array<solution> a;
+  while (!scm_is_null (p)) {
+    a << scm_to_solution (SCM_CAR (p));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
+
 /******************************************************************************
 * List types
 ******************************************************************************/
@@ -1017,7 +1107,9 @@ typedef list<string> list_string;
 bool
 scm_is_list_string (SCM p) {
   if (scm_is_null (p)) return true;
-  else return scm_is_string (SCM_CAR (p)) && scm_is_list_string (SCM_CDR (p));
+  else return scm_is_pair (p) &&
+	      scm_is_string (SCM_CAR (p)) &&
+	      scm_is_list_string (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_LIST_STRING(p,arg,rout) \
@@ -1042,7 +1134,9 @@ typedef list<tree> list_tree;
 bool
 scm_is_list_tree (SCM p) {
   if (scm_is_null (p)) return true;
-  else return scm_is_tree (SCM_CAR (p)) && scm_is_list_tree (SCM_CDR (p));
+  else return scm_is_pair (p) &&
+	      scm_is_tree (SCM_CAR (p)) &&
+	      scm_is_list_tree (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_LIST_TREE(p,arg,rout) \
@@ -1060,6 +1154,23 @@ scm_to_list_tree (SCM p) {
   if (scm_is_null (p)) return list_tree ();
   return list_tree (scm_to_tree (SCM_CAR (p)),
 		    scm_to_list_tree (SCM_CDR (p)));
+}
+
+/******************************************************************************
+* Other wrapper types
+******************************************************************************/
+
+#define SCM_ASSERT_COLLECTION(p,arg,rout) \
+  SCM_ASSERT (scm_is_array_string (p), p, arg, rout)
+
+SCM
+collection_to_scm (collection ss) {
+  return array_string_to_scm (as_strings (ss));
+}
+
+collection
+scm_to_collection (SCM p) {
+  return as_collection (scm_to_array_string (p));
 }
 
 /******************************************************************************

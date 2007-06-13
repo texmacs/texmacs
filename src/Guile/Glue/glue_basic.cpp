@@ -2387,6 +2387,142 @@ tmg_system_2 (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_tmfs_set (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set");
+  SCM_ASSERT_COLLECTION (arg2, SCM_ARG2, "tmfs-set");
+
+  string in1= scm_to_string (arg1);
+  collection in2= scm_to_collection (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_set (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_reset (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-reset");
+  SCM_ASSERT_COLLECTION (arg2, SCM_ARG2, "tmfs-reset");
+
+  string in1= scm_to_string (arg1);
+  collection in2= scm_to_collection (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_reset (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_get (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  collection out= tmfs_get (in1);
+  // SCM_ALLOW_INTS;
+
+  return collection_to_scm (out);
+}
+
+SCM
+tmg_tmfs_new_save (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-new-save");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-new-save");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_save (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_new_remove (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-new-remove");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_remove (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_new_load (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-new-load");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tmfs_load (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmfs_set_property (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-set-property");
+
+  array_string in1= scm_to_array_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_set_property (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_reset_property (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-reset-property");
+
+  array_string in1= scm_to_array_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_reset_property (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_get_property (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-property");
+
+  array_string in1= scm_to_array_string (arg1);
+
+  // SCM_DEFER_INTS;
+  solutions out= tmfs_get_property (in1);
+  // SCM_ALLOW_INTS;
+
+  return solutions_to_scm (out);
+}
+
+SCM
+tmg_tmfs_get_property_value (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-property-value");
+
+  array_string in1= scm_to_array_string (arg1);
+
+  // SCM_DEFER_INTS;
+  collection out= tmfs_get_property_value (in1);
+  // SCM_ALLOW_INTS;
+
+  return collection_to_scm (out);
+}
+
+SCM
 tmg_connection_declaredP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
 
@@ -3138,6 +3274,16 @@ initialize_glue_basic () {
   scm_new_procedure ("system-search-score", (FN) tmg_system_search_score, 2, 0, 0);
   scm_new_procedure ("system-1", (FN) tmg_system_1, 2, 0, 0);
   scm_new_procedure ("system-2", (FN) tmg_system_2, 3, 0, 0);
+  scm_new_procedure ("tmfs-set", (FN) tmg_tmfs_set, 2, 0, 0);
+  scm_new_procedure ("tmfs-reset", (FN) tmg_tmfs_reset, 2, 0, 0);
+  scm_new_procedure ("tmfs-get", (FN) tmg_tmfs_get, 1, 0, 0);
+  scm_new_procedure ("tmfs-new-save", (FN) tmg_tmfs_new_save, 2, 0, 0);
+  scm_new_procedure ("tmfs-new-remove", (FN) tmg_tmfs_new_remove, 1, 0, 0);
+  scm_new_procedure ("tmfs-new-load", (FN) tmg_tmfs_new_load, 1, 0, 0);
+  scm_new_procedure ("tmfs-set-property", (FN) tmg_tmfs_set_property, 1, 0, 0);
+  scm_new_procedure ("tmfs-reset-property", (FN) tmg_tmfs_reset_property, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-property", (FN) tmg_tmfs_get_property, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-property-value", (FN) tmg_tmfs_get_property_value, 1, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

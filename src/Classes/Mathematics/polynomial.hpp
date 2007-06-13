@@ -15,7 +15,7 @@
 #include "vector.hpp"
 #define TMPL template<typename T>
 #define BINARY_TMPL template<typename T, typename U>
-#define R typename properties<T>::norm_type
+#define R typename unary_properties<T>::norm_type
 #define M typename binary_properties<T,U>::product_type
 
 TMPL class polynomial;
@@ -67,10 +67,10 @@ CONCRETE_TEMPLATE(polynomial,T);
 CONCRETE_TEMPLATE_CODE(polynomial,typename,T);
 
 TMPL
-class properties<polynomial<T> > {
+class unary_properties<polynomial<T> > {
 public:
   typedef T scalar_type;
-  typedef typename properties<T>::norm_type norm_type;
+  typedef typename unary_properties<T>::norm_type norm_type;
   typedef int index_type;
   static inline tree index_name (index_type i) {
     return tree (RSUB, "x", as_string (i+1)); }
