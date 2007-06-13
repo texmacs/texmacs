@@ -116,6 +116,13 @@ struct abstract_struct {
   virtual inline ~abstract_struct () { DEBUG(abstract_count--); }
 };
 
+template<typename T>
+struct default_helper {
+  static T init;
+};
+
+template<typename T> T default_helper<T>::init= T ();
+
 /******************************************************************************
 * indirect structures
 ******************************************************************************/

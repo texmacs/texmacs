@@ -28,12 +28,6 @@ class tree {
   inline tree (tree_rep* rep2);
 
 public:
-#ifdef OS_WIN32
-  static const tree_label init; // used by hashmap<tree>() constructor
-#else
-  static const tree_label init = UNINIT; // used by hashmap<tree>() constructor
-#endif
-
   inline tree (const tree& x);
   inline ~tree ();
   inline atomic_rep* operator -> ();
@@ -109,6 +103,8 @@ public:
   inline compound_rep (tree_label l, array<tree> a2): tree_rep (l), a (a2) {}
   friend class tree;
 };
+
+template<> struct default_helper<tree> { static tree init; };
 
 typedef tree scheme_tree;
 

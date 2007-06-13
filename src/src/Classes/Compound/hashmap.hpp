@@ -80,11 +80,12 @@ public:
 };
 
 template<class T, class U> class hashmap {
-  CONCRETE_TEMPLATE_2(hashmap,T,U);
+CONCRETE_TEMPLATE_2(hashmap,T,U);
+  static hashmap<T,U> init;
   inline hashmap ():
-    rep (new hashmap_rep<T,U>(U::init, 1, 1)) {}
+    rep (new hashmap_rep<T,U> (default_helper<U>::init, 1, 1)) {}
   inline hashmap (U init, int n=1, int max=1):
-    rep (new hashmap_rep<T,U>(init, n, max)) {}
+    rep (new hashmap_rep<T,U> (init, n, max)) {}
   // only for hashmap<string,tree>
   hashmap (U init, tree t);
   // end only for hashmap<string,tree>
