@@ -216,8 +216,10 @@
   (tmfs-new-load tmfs_load (string string))
   (tmfs-set-property tmfs_set_property (void array_string))
   (tmfs-reset-property tmfs_reset_property (void array_string))
-  (tmfs-get-property tmfs_get_property (solutions array_string))
-  (tmfs-get-property-value tmfs_get_property_value (collection array_string))
+  (tmfs-get-solutions tmfs_get_solutions (solutions array_string))
+  (tmfs-get-solutions2 tmfs_get_solutions (solutions solutions array_string))
+  (tmfs-get-values tmfs_get_values (collection array_string))
+  (tmfs-get-values2 tmfs_get_values (collection solutions array_string))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))

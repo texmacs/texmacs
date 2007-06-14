@@ -2497,26 +2497,56 @@ tmg_tmfs_reset_property (SCM arg1) {
 }
 
 SCM
-tmg_tmfs_get_property (SCM arg1) {
-  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-property");
+tmg_tmfs_get_solutions (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-solutions");
 
   array_string in1= scm_to_array_string (arg1);
 
   // SCM_DEFER_INTS;
-  solutions out= tmfs_get_property (in1);
+  solutions out= tmfs_get_solutions (in1);
   // SCM_ALLOW_INTS;
 
   return solutions_to_scm (out);
 }
 
 SCM
-tmg_tmfs_get_property_value (SCM arg1) {
-  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-property-value");
+tmg_tmfs_get_solutions2 (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SOLUTIONS (arg1, SCM_ARG1, "tmfs-get-solutions2");
+  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "tmfs-get-solutions2");
+
+  solutions in1= scm_to_solutions (arg1);
+  array_string in2= scm_to_array_string (arg2);
+
+  // SCM_DEFER_INTS;
+  solutions out= tmfs_get_solutions (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return solutions_to_scm (out);
+}
+
+SCM
+tmg_tmfs_get_values (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-values");
 
   array_string in1= scm_to_array_string (arg1);
 
   // SCM_DEFER_INTS;
-  collection out= tmfs_get_property_value (in1);
+  collection out= tmfs_get_values (in1);
+  // SCM_ALLOW_INTS;
+
+  return collection_to_scm (out);
+}
+
+SCM
+tmg_tmfs_get_values2 (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SOLUTIONS (arg1, SCM_ARG1, "tmfs-get-values2");
+  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "tmfs-get-values2");
+
+  solutions in1= scm_to_solutions (arg1);
+  array_string in2= scm_to_array_string (arg2);
+
+  // SCM_DEFER_INTS;
+  collection out= tmfs_get_values (in1, in2);
   // SCM_ALLOW_INTS;
 
   return collection_to_scm (out);
@@ -3282,8 +3312,10 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-new-load", (FN) tmg_tmfs_new_load, 1, 0, 0);
   scm_new_procedure ("tmfs-set-property", (FN) tmg_tmfs_set_property, 1, 0, 0);
   scm_new_procedure ("tmfs-reset-property", (FN) tmg_tmfs_reset_property, 1, 0, 0);
-  scm_new_procedure ("tmfs-get-property", (FN) tmg_tmfs_get_property, 1, 0, 0);
-  scm_new_procedure ("tmfs-get-property-value", (FN) tmg_tmfs_get_property_value, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-solutions", (FN) tmg_tmfs_get_solutions, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-solutions2", (FN) tmg_tmfs_get_solutions2, 2, 0, 0);
+  scm_new_procedure ("tmfs-get-values", (FN) tmg_tmfs_get_values, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-values2", (FN) tmg_tmfs_get_values2, 2, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

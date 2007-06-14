@@ -68,6 +68,65 @@ property_decode (string s) {
 }
 
 /******************************************************************************
+* Routines for properties and solutions
+******************************************************************************/
+
+property
+substitute (property p, solution sol) {
+  property r= copy (p);
+  for (int i=0; i<N(p); i++)
+    if (sol->contains (p[i]))
+      r[i]= sol[p[i]];
+  return r;
+}
+
+properties
+substitute (property p, solutions sols) {
+  properties r;
+  for (int i=0; i<N(sols); i++)
+    r << substitute (p, sols[i]);
+  return r;
+}
+
+property
+simplify (property p, solutions sols) {
+  p= copy (p);
+  int i, n= N(p);
+  for (i=0; i<n; i++)
+    if (is_unknown (p[i])) {
+      string r= p[i];
+      for (int j=0; j<N(sols); j++)
+	if (sols[j]->contains (p[i])) {
+	  if (is_unknown (r)) r= sols[j][p[i]];
+	  else {
+	    if (sols[j][p[i]] == r) continue;
+	    r= p[i];
+	    break;
+	  }
+	}
+      p[i]= r;
+    }
+  return p;
+}
+
+collection
+as_collection (solutions sols, string key) {
+  collection c;
+  for (int i=0; i<N(sols); i++)
+    if (sols[i]->contains (key))
+      c (sols[i][key])= 1;
+  return c;
+}
+
+collection
+as_collection (solutions sols, property p) {
+  int i, n= N(p);
+  for (i=0; i<n; i++)
+    if (is_unknown (p[i])) return as_collection (sols, p[i]);
+  return collection ();
+}
+
+/******************************************************************************
 * Adding and removing properties
 ******************************************************************************/
 
@@ -76,7 +135,11 @@ property_treat (transaction& t, property p, int i, property val, int eps) {
   //cout << "Property treat " << p << ", " << i << ", "
   //<< val << ", " << eps << "\n";
   int j, n= N(p);
-  add (t, property_encode (p), property_encode (val), eps);
+  for (j=1; j<n; j++)
+    if (p[j] != "*") {
+      add (t, property_encode (p), property_encode (val), eps);
+      break;
+    }
   for (j=i; j<n; j++) {
     property p2  = copy (p);
     property val2= copy (val);
@@ -90,17 +153,17 @@ transaction
 as_transaction (property p, int eps) {
   p= property_quote (p);
   transaction t;
-  property_treat (t, p, 1, property (), eps);
+  property_treat (t, p, 0, property (), eps);
   return t;
 }
 
 void
-tmfs_set_property (property p) {
+tmfs_raw_set_property (property p) {
   tmfs_write (as_transaction (p, 1));
 }
 
 void
-tmfs_reset_property (property p) {
+tmfs_raw_reset_property (property p) {
   tmfs_write (as_transaction (p, -1));
 }
 
@@ -136,26 +199,9 @@ decode_solutions (collection t, property v) {
   return sols;
 }
 
-collection
-as_collection (solutions sols, string key) {
-  collection c;
-  for (int i=0; i<N(sols); i++)
-    if (sols[i]->contains (key))
-      c (sols[i][key])= 1;
-  return c;
-}
-
-string
-get_first_var (property p) {
-  int i, n= N(p);
-  for (i=0; i<n; i++)
-    if (is_unknown (p[i])) return p[i];
-  return "";
-}
-
 solutions
-tmfs_get_property (property query) {
-  //cout << "Query: " << query << "\n";
+tmfs_raw_get_solutions (property query) {
+  // cout << "  Query: " << query << "\n";
   property p;
   property v;
   property_wildcards (query, p, v);
@@ -163,38 +209,9 @@ tmfs_get_property (property query) {
   return decode_solutions (c, v);
 }
 
-collection
-tmfs_get_property_value (property query) {
-  solutions sols= tmfs_get_property (query);
-  string var= get_first_var (query);
-  if (!is_unknown (var)) return collection ();
-  return as_collection (sols, var);
-}
-
 /******************************************************************************
 * Combining queries
 ******************************************************************************/
-
-property
-simplify (property query, solutions sols) {
-  query= copy (query);
-  int i, n= N(query);
-  for (i=0; i<n; i++)
-    if (is_unknown (query[i])) {
-      string r= query[i];
-      for (int j=0; j<N(sols); j++)
-	if (sols[j]->contains (query[i])) {
-	  if (is_unknown (r)) r= sols[j][query[i]];
-	  else {
-	    if (sols[j][query[i]] == r) continue;
-	    r= query[i];
-	    break;
-	  }
-	}
-      query[i]= r;
-    }
-  return query;
-}
 
 solutions
 combine (solutions sols1, solutions sols2) {
@@ -219,71 +236,24 @@ combine (solutions sols1, solutions sols2) {
 }
 
 solutions
-tmfs_get_property (solutions sols1, property p) {
-  property query= simplify (p, sols1);
-  solutions sols2= tmfs_get_property (query);
-  return combine (sols1, sols2);
-}
-
-collection
-tmfs_get_property_value (solutions sols1, property query) {
-  solutions sols2= tmfs_get_property (sols1, query);
-  string var= get_first_var (query);
-  if (!is_unknown (var)) return collection ();
-  return as_collection (sols2, var);
-}
-
-/******************************************************************************
-* File attributes
-******************************************************************************/
-
-transaction
-attribute_as_transaction (property p, int eps) {
-  transaction t= as_transaction (p, eps);
-  for (int i=1; i<N(p); i++)
-    if (is_identifier (p[i]))
-      add (t, "@" * p[i], property_encode (p), eps);
-  return t;
-}
-
-void
-tmfs_set_attribute (property p) {
-  tmfs_write (attribute_as_transaction (p, 1));
-}
-
-void
-tmfs_set_attributes (properties ps) {
-  for (int i=0; i<N(ps); i++)
-    tmfs_set_attribute (ps[i]);
-}
-
-void
-tmfs_reset_attribute (property p) {
-  tmfs_write (attribute_as_transaction (p, -1));
-}
-
-void
-tmfs_reset_attributes (properties ps) {
-  for (int i=0; i<N(ps); i++)
-    tmfs_reset_attribute (ps[i]);
+tmfs_raw_get_solutions (solutions sols1, property query) {
+  //cout << "Get property " << sols1 << ", " << query << "\n";
+  solutions sols2;
+  hashmap<string,solutions> cache;
+  for (int i=0; i<N(sols1); i++) {
+    property p= substitute (query, sols1[i]);
+    string s= property_encode (p);
+    if (!cache->contains (s))
+      cache(s)= tmfs_raw_get_solutions (p);
+    solutions sols3; sols3 << sols1[i];
+    sols2 << combine (sols3, cache[s]);
+  }
+  return sols2;
 }
 
 solutions
-tmfs_get_attribute (property p) {
-  tmfs_get_property (p);
-}
-
-collection
-tmfs_get_attribute_value (property p) {
-  tmfs_get_property_value (p);
-}
-
-properties
-tmfs_get_attributes (string s) {
-  properties ps;
-  collection c= tmfs_get ("@" * s);
-  iterator<string> it= iterate (c);
-  while (it->busy ())
-    ps << property_decode (it->next ());
-  return ps;
+tmfs_var_get_solutions (solutions sols1, property p) {
+  property query= simplify (p, sols1);
+  solutions sols2= tmfs_raw_get_solutions (query);
+  return combine (sols1, sols2);
 }
