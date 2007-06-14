@@ -902,7 +902,7 @@ typedef hashmap<string,string> table_string_string;
 static bool
 scm_is_table_string_string (SCM p) {
   if (scm_is_null (p)) return true;
-  else if (!scm_is_null (p)) return false;
+  else if (!scm_is_pair (p)) return false;
   else {
     SCM f= SCM_CAR (p);
     return scm_is_pair (f) &&

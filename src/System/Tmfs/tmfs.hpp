@@ -62,18 +62,26 @@ void tmfs_save (string key, string val);
 void tmfs_remove (string key);
 string tmfs_load (string key);
 
+property substitute (property p, solution sol);
+properties substitute (property p, solutions sols);
+collection as_collection (solutions sols, string key);
+collection as_collection (solutions sols, property p);
+void tmfs_raw_set_property (property p);
+void tmfs_raw_reset_property (property p);
+solutions tmfs_raw_get_solutions (property query);
+solutions tmfs_raw_get_solutions (solutions sols, property ps);
+
+bool tmfs_allows (string id, string type);
 void tmfs_set_property (property p);
+void tmfs_set_properties (properties ps);
 void tmfs_reset_property (property p);
-solutions tmfs_get_property (property query);
-collection tmfs_get_property_value (property query);
-solutions tmfs_get_property (solutions sols, properties ps);
-collection tmfs_get_property_value (solutions sols, property query);
-void tmfs_set_attribute (property p);
-void tmfs_set_attributes (properties ps);
-void tmfs_reset_attribute (property p);
-void tmfs_reset_attributes (properties ps);
-solutions tmfs_get_attribute (property p);
-collection tmfs_get_attribute_value (property p);
-properties tmfs_get_attributes (string s);
+void tmfs_reset_properties (properties ps);
+solutions tmfs_get_solutions (property query);
+solutions tmfs_get_solutions (solutions sols, property query);
+properties tmfs_get_matches (property query);
+properties tmfs_get_matches (solutions sols, property query);
+collection tmfs_get_values (property query);
+collection tmfs_get_values (solutions sols, property query);
+properties tmfs_get_properties (string id);
 
 #endif // defined TMFS_H
