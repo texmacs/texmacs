@@ -62,16 +62,37 @@ void tmfs_save (string key, string val);
 void tmfs_remove (string key);
 string tmfs_load (string key);
 
+property substitute (property p, string what, string by);
+properties substitute (properties ps, string what, string by);
 property substitute (property p, solution sol);
 properties substitute (property p, solutions sols);
+properties exclude_types (properties ps, collection c);
 collection as_collection (solutions sols, string key);
 collection as_collection (solutions sols, property p);
 void tmfs_raw_set_property (property p);
+void tmfs_raw_set_properties (properties ps);
 void tmfs_raw_reset_property (property p);
+collection tmfs_raw_get_values (property query);
 solutions tmfs_raw_get_solutions (property query);
+properties tmfs_raw_get_matches (property query);
 solutions tmfs_raw_get_solutions (solutions sols, property ps);
 
+string tmfs_create_identifier ();
+string tmfs_create_user (string name);
+collection tmfs_search_user (string name);
+void tmfs_set_user (string user);
+string tmfs_get_user ();
 bool tmfs_allows (string id, string type);
+bool tmfs_allows (property p, string type);
+bool tmfs_allows (solution sol, string type);
+strings tmfs_filter (strings ss, string type);
+properties tmfs_filter (properties ps, string type);
+solutions tmfs_filter (solutions sols, string type);
+collection tmfs_get_permissions (string id, string type);
+void tmfs_set_permissions (string id, string type, collection users);
+void tmfs_set_permissions (string id, collection users);
+void tmfs_set_similar_permissions (string id, string type, string similar_id);
+void tmfs_set_similar_permissions (string id, string similar_id);
 void tmfs_set_property (property p);
 void tmfs_set_properties (properties ps);
 void tmfs_reset_property (property p);
@@ -83,5 +104,30 @@ properties tmfs_get_matches (solutions sols, property query);
 collection tmfs_get_values (property query);
 collection tmfs_get_values (solutions sols, property query);
 properties tmfs_get_properties (string id);
+string tmfs_create_ressource (string type, string user= tmfs_get_user ());
+string tmfs_create_similar_ressource (string type, string old_id);
+
+string tmfs_create_file (string name, string c, string user= tmfs_get_user ());
+string tmfs_create_similar_file (string name, string contents, string old_id);
+collection tmfs_search_file (string name);
+collection tmfs_search_head (string name);
+string tmfs_update_file (string old_id, string contents);
+string tmfs_load_file (string id);
+string tmfs_create_project (string name);
+collection tmfs_search_project (string name);
+string tmfs_create_snapshot (string name, string prj);
+collection tmfs_search_snapshot (string name);
+collection tmfs_get_projects (string id);
+collection tmfs_get_heads (string prj);
+void tmfs_branch_file (string old_id, string prj);
+void tmfs_branch_project (string old_prj, string new_prj);
+
+void tmfs_import (url prj_dir, url u, string prj);
+void tmfs_export (url prj_dir, url u, string prj);
+void tmfs_set_home (string prj, url u);
+url tmfs_get_home (string prj);
+collection tmfs_get_projects (url u);
+void tmfs_import (url u);
+void tmfs_export (url u);
 
 #endif // defined TMFS_H
