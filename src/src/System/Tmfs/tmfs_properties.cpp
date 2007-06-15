@@ -72,6 +72,22 @@ property_decode (string s) {
 ******************************************************************************/
 
 property
+substitute (property p, string what, string by) {
+  property q= copy (p);
+  for (int i=0; i<N(p); i++)
+    if (p[i] == what) q[i]= by;
+  return q;
+}
+
+properties
+substitute (properties ps, string what, string by) {
+  properties qs;
+  for (int i=0; i<N(ps); i++)
+    qs << substitute (ps[i], what, by);
+  return qs;
+}
+
+property
 substitute (property p, solution sol) {
   property r= copy (p);
   for (int i=0; i<N(p); i++)
@@ -107,6 +123,15 @@ simplify (property p, solutions sols) {
       p[i]= r;
     }
   return p;
+}
+
+properties
+exclude_types (properties ps, collection c) {
+  properties r;
+  for (int i=0; i<N(ps); i++)
+    if (N(ps[i])>0 && !c->contains (ps[i][0]))
+      r << ps[i];
+  return r;
 }
 
 collection
@@ -163,7 +188,20 @@ tmfs_raw_set_property (property p) {
 }
 
 void
+tmfs_raw_set_properties (properties ps) {
+  for (int i=0; i<N(ps); i++)
+    tmfs_raw_set_property (ps[i]);
+}
+
+void
 tmfs_raw_reset_property (property p) {
+  for (int i=0; i<N(p); i++)
+    if (is_unknown (p[i])) {
+      properties ps= tmfs_raw_get_matches (p);
+      for (int j=0; j<N(ps); j++)
+	tmfs_write (as_transaction (ps[j], -1));
+      return;
+    }
   tmfs_write (as_transaction (p, -1));
 }
 
@@ -207,6 +245,16 @@ tmfs_raw_get_solutions (property query) {
   property_wildcards (query, p, v);
   collection c= tmfs_get (property_encode (p));
   return decode_solutions (c, v);
+}
+
+collection
+tmfs_raw_get_values (property query) {
+  return as_collection (tmfs_raw_get_solutions (query), query);
+}
+
+properties
+tmfs_raw_get_matches (property query) {
+  return substitute (query, tmfs_raw_get_solutions (query));
 }
 
 /******************************************************************************

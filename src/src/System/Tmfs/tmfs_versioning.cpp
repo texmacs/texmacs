@@ -11,48 +11,6 @@
 ******************************************************************************/
 
 #include "tmfs.hpp"
-#include "Scheme/object.hpp"
-
-/******************************************************************************
-* New identifier
-******************************************************************************/
-
-string
-tmfs_new_identifier () {
-  return as_string (call ("create-unique-id"));
-}
-
-/******************************************************************************
-* Copy properties from old version
-******************************************************************************/
-
-property
-substitute (property p, string what, string by) {
-  property q= copy (p);
-  for (int i=0; i<N(p); i++)
-    if (p[i] == what) q[i]= by;
-  return q;
-}
-
-properties
-substitute (properties ps, string what, string by) {
-  properties qs;
-  for (int i=0; i<N(ps); i++)
-    qs << substitute (ps[i], what, by);
-  return qs;
-}
-
-void
-tmfs_copy_properties (string old_id, string new_id,
-		      collection except= collection ())
-{
-  properties ps= tmfs_get_properties (old_id);
-  properties qs;
-  for (int i=0; i<N(ps); i++)
-    if (N(ps[i]) > 1 && !(except[ps[i][0]] > 0))
-      qs << ps;
-  tmfs_set_properties (substitute (qs, old_id, new_id));
-}
 
 /******************************************************************************
 * Versioning routines
@@ -66,67 +24,137 @@ tmfs_get_revision (string id) {
 }
 
 string
-tmfs_new_revision (string contents, int revision) {
-  string new_id= tmfs_new_identifier ();
-  tmfs_save (new_id, contents);
-  tmfs_set_property (seq ("head", new_id));
-  tmfs_set_property (seq ("revision", new_id, as_string (revision)));
-  return new_id;
-}
-
-string
-tmfs_new (string contents) {
-  string main_id= tmfs_new_identifier ();
-  string new_id= tmfs_new_revision (contents, 1);
+tmfs_create_file (string name, string contents, string user) {
+  string main_id= tmfs_create_ressource ("file", user);
+  string new_id = tmfs_create_ressource ("revision", user);
+  tmfs_set_property (seq ("name", main_id, name));
   tmfs_set_property (seq ("version", new_id, main_id));
+  tmfs_set_property (seq ("revision", new_id, "1"));
+  tmfs_set_property (seq ("tag", new_id, user, "head"));
+  tmfs_save (new_id, contents);
   return new_id;
 }
 
 string
-tmfs_update (string old_id, string contents) {
-  int revision= tmfs_get_revision (old_id);
-  string new_id= tmfs_new_revision (contents, revision + 1);
-  tmfs_copy_properties (old_id, new_id);
-  tmfs_set_property (seq ("update", old_id, new_id));
-  tmfs_reset_property (seq ("head", old_id));
+tmfs_create_similar_file (string name, string contents, string old_id) {
+  string main_id= tmfs_create_similar_ressource ("file", old_id);
+  string new_id = tmfs_create_similar_ressource ("revision", old_id);
+  tmfs_set_property (seq ("name", main_id, name));
+  tmfs_set_property (seq ("version", new_id, main_id));
+  tmfs_set_property (seq ("revision", new_id, "1"));
+  solutions sols= tmfs_get_solutions (seq ("in", old_id, "?project"));
+  property p= seq ("tag", new_id, "?project", "head");
+  tmfs_set_properties (substitute (p, sols));
+  tmfs_save (new_id, contents);
   return new_id;
+}
+
+collection
+tmfs_search_file (string name) {
+  solutions sols= tmfs_get_solutions (seq ("name", "?file", name));
+  return tmfs_get_values (sols, seq ("file", "?file"));
+}
+
+collection
+tmfs_search_head (string name) {
+  solutions sols= tmfs_get_solutions (seq ("name", "?file", name));
+  sols= tmfs_get_solutions (sols, seq ("file", "?file"));
+  sols= tmfs_get_solutions (sols, seq ("version", "?rev", "?file"));
+  sols= tmfs_get_solutions (sols, seq ("tag", "?rev", "?prj", "head"));
+  return as_collection (sols, "?rev");
+}
+
+string
+tmfs_update_file (string old_id, string contents) {
+  if (!tmfs_allows (old_id, "read")) return "";
+  if (!tmfs_allows (old_id, "write")) return "";
+  int revision = tmfs_get_revision (old_id);
+  string new_id= tmfs_create_similar_ressource ("revision", old_id);
+  tmfs_set_property (seq ("revision", new_id, as_string (revision + 1)));
+  tmfs_set_property (seq ("update", old_id, new_id));
+  properties props= tmfs_get_properties (old_id);
+  strings a;
+  a << "owner" << "in" << "read" << "write"
+    << "revision" << "tag" << "branch" << "update";
+  props= exclude_types (props, as_collection (a));
+  tmfs_set_properties (substitute (props, old_id, new_id));
+  solutions sols= tmfs_get_solutions (seq ("tag", old_id, "?p", "head"));
+  tmfs_set_properties (substitute (seq ("tag", new_id, "?p", "head"), sols));
+  tmfs_reset_properties (substitute (seq ("tag", old_id, "?p", "head"), sols));
+  tmfs_save (new_id, contents);
+  return new_id;
+}
+
+string
+tmfs_load_file (string id) {
+  if (!tmfs_allows (id, "read")) return "";
+  return tmfs_load (id);
 }
 
 /******************************************************************************
-* Projects and branches
+* Projects, snapshots and branches
 ******************************************************************************/
 
-void
-tmfs_set_project (string id, string prj) {
-  tmfs_set_property (seq ("in", id, prj));
+string
+tmfs_create_project (string name) {
+  string prj= tmfs_create_ressource ("project");
+  tmfs_set_property (seq ("name", prj, name));
+  return prj;
 }
 
-void
-tmfs_reset_project (string id, string prj) {
-  tmfs_reset_property (seq ("in", id, prj));
+collection
+tmfs_search_project (string name) {
+  solutions sols= tmfs_get_solutions (seq ("name", "?prj", name));
+  return tmfs_get_values (sols, seq ("project", "?prj"));
 }
 
-strings
+string
+tmfs_create_snapshot (string name, string prj) {
+  string shot= tmfs_create_ressource ("snapshot");
+  tmfs_set_property (seq ("name", shot, name));
+  collection ids= tmfs_get_heads (prj);
+  iterator<string> it= iterate (ids);
+  while (it->busy ())
+    tmfs_set_property (seq ("tag", it->next (), prj, shot));
+  return shot;
+}
+
+collection
+tmfs_search_snapshot (string name) {
+  solutions sols= tmfs_get_solutions (seq ("name", "?shot", name));
+  return tmfs_get_values (sols, seq ("snapshot", "?shot"));
+}
+
+collection
 tmfs_get_projects (string id) {
-  return as_strings (tmfs_get_values (seq ("in", id, "?prj")));
+  return tmfs_get_values (seq ("in", id, "?prj"));
 }
 
-strings
-tmfs_get_project_heads (string prj) {
-  solutions sols= tmfs_get_solutions (seq ("in", "?id", prj));
-  collection c= tmfs_get_values (sols, seq ("head", "?id"));
-  return as_strings (c);
+collection
+tmfs_get_heads (string prj) {
+  return tmfs_get_values (seq ("tag", "?id", prj, "head"));
 }
 
 void
-tmfs_new_branch (string old_prj, string new_prj) {
-  strings ids= as_strings (tmfs_get_project_heads (old_prj));
-  for (int i=0; i<N(ids); i++) {
-    string old_id= ids[i];
-    string new_id= tmfs_new_revision (tmfs_load (old_id), 1);
-    tmfs_copy_properties (old_id, new_id, singleton ("in"));
-    tmfs_set_project (new_id, new_prj);
-    tmfs_set_property (seq ("branch", old_prj, new_prj));
-    tmfs_set_property (seq ("branch", old_id, new_id));
-  }
+tmfs_branch_file (string old_id, string prj) {
+  string new_id= tmfs_create_ressource ("revision", prj);
+  tmfs_set_property (seq ("revision", new_id, "1"));
+  tmfs_set_property (seq ("branch", old_id, new_id));
+  tmfs_set_property (seq ("tag", new_id, prj, "head"));
+  properties props= tmfs_get_properties (old_id);
+  strings a;
+  a << "owner" << "in" << "read" << "write"
+    << "revision" << "tag" << "branch" << "update";
+  props= exclude_types (props, as_collection (a));
+  tmfs_set_properties (substitute (props, old_id, new_id));
+  tmfs_save (new_id, tmfs_load_file (old_id));
+}
+
+void
+tmfs_branch_project (string old_prj, string new_prj) {
+  tmfs_set_property (seq ("branch", old_prj, new_prj));
+  strings ids= as_strings (tmfs_get_heads (old_prj));
+  ids= tmfs_filter (ids, "read");
+  for (int i=0; i<N(ids); i++)
+    tmfs_branch_file (ids[i], new_prj);
 }
