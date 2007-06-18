@@ -232,6 +232,7 @@
   (tmfs-get-attributes tmfs_get_attributes (properties string))
   (tmfs-add-attributes tmfs_add_attributes (void string properties))
   (tmfs-remove-attributes tmfs_remove_attributes (void string properties))
+  (tmfs-change-attributes tmfs_change_attributes (void string properties))
   (tmfs-query tmfs_query (solutions properties))
   (solutions->collection as_collection (collection solutions string))
 

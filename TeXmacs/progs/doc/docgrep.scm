@@ -43,10 +43,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-hlink l highest-score)
-  `(concat (item* (concat
-		   ,(object->string (quotient (* (cdr l) 100) highest-score))
-		   "%"))
-	   (hlink ,(cAr (string-tokenize-by-char (car l) #\/)) ,(car l))))
+  `(concat
+     (item*
+       (concat ,(object->string (quotient (* (cdr l) 100) highest-score)) "%"))
+     (hlink ,(cAr (string-tokenize-by-char (car l) #\/)) ,(car l))))
 
 (define (make-translate . args)
   (with s (apply string-append args)
