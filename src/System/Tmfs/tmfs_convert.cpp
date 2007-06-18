@@ -19,7 +19,6 @@
 * Useful subroutines
 ******************************************************************************/
 
-/*
 bool
 is_cruft (string s) {
   return
@@ -47,13 +46,11 @@ create_parents (url u) {
     mkdir (url_parent (u));
   }
 }
-*/
 
 /******************************************************************************
 * Importation and exportation
 ******************************************************************************/
 
-/*
 bool
 operator < (string a, string b) {
   return a <= b && a != b;
@@ -69,11 +66,11 @@ operator <= (property p1, property p2) {
 
 properties
 tmfs_list_heads_inside (url u, string prj) {
-  strings ids= as_strings (tmfs_get_values (seq ("tag", "?id", prj, "head")));
+  strings files= as_strings (tmfs_get_project_files (prj));
   properties r;
-  for (int i=0; i<N(ids); i++) {
-    string id= ids[i];
-    collection pl= tmfs_get_values (seq ("mirror", id, prj, "?delta"));
+  for (int i=0; i<N(files); i++) {
+    string id= files[i];
+    collection pl= tmfs_query (seq ("mirror", id, prj, "?delta"), "?delta");
     if (N(pl) > 0) {
       url v= first (pl);
       if (u == url_here () || descends (v, u))
@@ -89,20 +86,20 @@ tmfs_export (url prj_dir, url u, string prj) {
   properties ps= tmfs_list_heads_inside (u, prj);
   for (int i=0; i<N(ps); i++) {
     url    v = ps[i][0];
-    string id= ps[i][1];
+    string file= ps[i][1];
     cout << "Process " << (prj_dir * v) << "\n";
     if (!exists (prj_dir * v)) {
-      string val= tmfs_load_file (id);
+      string val= tmfs_load_file (file);
       create_parents (prj_dir * v);
       save_string (prj_dir * v, val);
-      cout << "Export " << id << " -> " << (prj_dir * v) << "\n";
+      cout << "Export " << file << " -> " << (prj_dir * v) << "\n";
     }
     else {
       string val1= load_string (prj_dir * v);
-      string val2= tmfs_load_file (id);
+      string val2= tmfs_load_file (file);
       if (val2 != val1) {
 	save_string (prj_dir * v, val2);
-	cout << "Update " << id << " -> " << (prj_dir * v) << "\n";
+	cout << "Update " << file << " -> " << (prj_dir * v) << "\n";
       }
     }
   }
@@ -125,61 +122,58 @@ tmfs_import (url prj_dir, url u, string prj) {
   }
   else if (is_regular (prj_dir * u)) {
     string loc= as_string (u);
-    solutions  sols= tmfs_query (seq ("mirror", "?id", prj, loc));
-    collection ids = tmfs_get_values (sols, seq ("tag", "?id", prj, "head"));
-    if (N (ids) == 0) {
+    properties ps;
+    ps << seq ("mirror", "?file", prj, loc) << seq ("in", "?file", prj);
+    collection files= tmfs_query (ps, "?file");
+    if (N (files) == 0) {
+      properties xps; xps << seq ("mirror", "self", prj, loc);
       string val = load_string (prj_dir * u);
       string name= create_name (as_string (tail (u)), val);
-      string id  = tmfs_create_file (name, val, prj);
-      tmfs_set_property (seq ("mirror", id, prj, loc));
-      cout << "Import " << u << " -> " << id << "\n";
+      string file= tmfs_create_file (name, val, prj, xps);
+      cout << "Import " << u << " -> " << file << "\n";
     }
     else {
-      string id  = first (ids);
-      string val1= tmfs_load_file (id);
+      string file= first (files);
+      string val1= tmfs_load_file (file);
       string val2= load_string (prj_dir * u);
       if (val1 == val2) return;
-      id= tmfs_update_file (id, val2);
-      cout << "Update " << u << " -> " << id << "\n";
+      tmfs_save_file (file, val2);
+      cout << "Update " << u << " -> " << file << "\n";
     }
   }
 
   properties ps= tmfs_list_heads_inside (u, prj);
   for (int i=0; i<N(ps); i++) {
     url    v = ps[i][0];
-    string id= ps[i][1];
+    string file= ps[i][1];
     if (!exists (prj_dir * v)) {
-      tmfs_reset_property (seq ("tag", id, prj, "head"));
-      tmfs_reset_property (seq ("mirror", id, prj, as_string (v)));
-      cout << "Remove " << v << " -> " << id << "\n";
+      tmfs_reset_head (file);
+      cout << "Remove " << v << " -> " << file << "\n";
     }
   }
 }
-*/
 
 /******************************************************************************
-* Importation based on home directories for users and projects
+* Importation based on root directories for users and projects
 ******************************************************************************/
 
-/*
 void
-tmfs_set_home (string prj, url u) {
-  url old_home= tmfs_get_home (prj);
-  if (!is_none (old_home))
-    tmfs_reset_property (seq ("home", prj, as_string (old_home)));
-  tmfs_set_property (seq ("home", prj, as_string (u)));
+tmfs_set_root (string prj, url u) {
+  properties ps;
+  if (!is_none (u)) ps << seq ("root", prj, as_string (u));
+  tmfs_change_attributes (prj, ps);
 }
 
 url
-tmfs_get_home (string prj) {
-  collection c= tmfs_get_values (seq ("home", prj, "?url"));
+tmfs_get_root (string prj) {
+  collection c= tmfs_query (seq ("root", prj, "?url"), "?url");
   if (N(c) != 1) return url_none ();
   return url (first (c));
 }
 
 collection
 tmfs_get_projects (url u) {
-  collection c= tmfs_get_values (seq ("home", "?prj", as_string (u)));
+  collection c= tmfs_query (seq ("root", "?prj", as_string (u)), "?prj");
   if (N(c) != 0 || is_root (u)) return c;
   return tmfs_get_projects (url_parent (u));
 }
@@ -197,7 +191,7 @@ tmfs_import (url u) {
   else if (N(prjs) > 1)
     cerr << "TeXmacs] error: too many projects for " << u << "\n";
   else {
-    url prj_dir= tmfs_get_home (prjs[0]);
+    url prj_dir= tmfs_get_root (prjs[0]);
     tmfs_import (prj_dir, delta_dir (prj_dir, u), prjs[0]);
   }
 }
@@ -210,8 +204,7 @@ tmfs_export (url u) {
   else if (N(prjs) > 1)
     cerr << "TeXmacs] error: too many projects for " << u << "\n";
   else {
-    url prj_dir= tmfs_get_home (prjs[0]);
+    url prj_dir= tmfs_get_root (prjs[0]);
     tmfs_export (prj_dir, delta_dir (prj_dir, u), prjs[0]);
   }
 }
-*/
