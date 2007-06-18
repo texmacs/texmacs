@@ -11,43 +11,39 @@
 ******************************************************************************/
 
 #include "tmfs.hpp"
-#include "Scheme/object.hpp"
 
 static string tmfs_user= "root";
 static hashmap<string,bool> empty_map (false);
 static hashmap<string,hashmap<string,bool> > tmfs_permissions (empty_map);
 static hashmap<string,bool> tmfs_cycle_table (false);
 
-string property_encode (property p);
+string property_append (property p);
 
 /******************************************************************************
 * User management
 ******************************************************************************/
 
 string
-tmfs_create_identifier () {
-  return as_string (call ("create-unique-id"));
-}
-
-string
 tmfs_create_user (string name) {
   if (N (tmfs_search_user (name)) != 0) return "";
-  string id= tmfs_create_identifier ();
-  tmfs_raw_set_property (seq ("user", id));
-  tmfs_raw_set_property (seq ("name", id, name));
-  tmfs_raw_set_property (seq ("owner", id, id));
-  tmfs_raw_set_property (seq ("in", id, id));
-  tmfs_raw_set_property (seq ("read", id, id));
-  tmfs_raw_set_property (seq ("write", id, id));
-  return id;
+  string user= tmfs_create_ressource ();
+  string home= tmfs_create_file (name * " - home", "", user);
+  properties ps;
+  ps << seq ("user", user)
+     << seq ("name", user, name)
+     << seq ("owner", user, user)
+     << seq ("in", user, user)
+     << seq ("read", user, user)
+     << seq ("write", user, user)
+     << seq ("home", user, home);
+  tmfs_save_ressource (user, "", ps);
+  return user;
 }
 
 collection
 tmfs_search_user (string name) {
-  solutions sols= tmfs_raw_get_solutions (seq ("name", "?user", name));
-  sols= tmfs_raw_get_solutions (sols, seq ("user", "?user"));
-  sols= tmfs_filter (sols, "read");
-  return as_collection (sols, "?user");
+  properties ps; ps << seq ("name", "?user", name) << seq ("user", "?user");
+  return as_collection (tmfs_get_solutions (ps), "?user");
 }
 
 void
@@ -58,37 +54,6 @@ tmfs_set_user (string user) {
 string
 tmfs_get_user () {
   return tmfs_user;
-}
-
-/******************************************************************************
-* Resources
-******************************************************************************/
-
-string
-tmfs_create_ressource (string type, string user) {
-  string id= tmfs_create_identifier ();
-  tmfs_raw_set_property (seq (type, id));
-  tmfs_raw_set_property (seq ("owner", id, user));
-  tmfs_raw_set_property (seq ("in", id, user));
-  tmfs_raw_set_property (seq ("read", id, user));
-  tmfs_raw_set_property (seq ("write", id, user));
-  return id;
-}
-
-string
-tmfs_create_similar_ressource (string type, string old_id) {
-  properties ps;
-  string new_id= tmfs_create_identifier ();
-  tmfs_raw_set_property (seq (type, new_id));
-  ps= tmfs_raw_get_matches (seq ("owner", old_id, "?user"));
-  tmfs_raw_set_properties (substitute (ps, old_id, new_id));
-  ps= tmfs_raw_get_matches (seq ("in", old_id, "?user"));
-  tmfs_raw_set_properties (substitute (ps, old_id, new_id));
-  ps= tmfs_raw_get_matches (seq ("read", old_id, "?user"));
-  tmfs_raw_set_properties (substitute (ps, old_id, new_id));
-  ps= tmfs_raw_get_matches (seq ("write", old_id, "?user"));
-  tmfs_raw_set_properties (substitute (ps, old_id, new_id));
-  return new_id;
 }
 
 /******************************************************************************
@@ -110,7 +75,7 @@ bool
 tmfs_allows_compute (string id, string type, string user) {
   if (user == "root") return true;
   property query= seq (type, id, "?user");
-  solutions sols= tmfs_raw_get_solutions (query);
+  solutions sols= tmfs_get_solutions (query);
   strings a= as_strings (as_collection (sols, query));
   for (int i=0; i<N(a); i++)
     if (tmfs_allows_via (id, type, user, a[i]))
@@ -120,7 +85,7 @@ tmfs_allows_compute (string id, string type, string user) {
 
 bool
 tmfs_allows (string id, string type, string user) {
-  string s= property_encode (seq (id, user));
+  string s= property_append (seq (id, user));
   if (!tmfs_permissions[type]->contains (s)) {
     //cout << "Allows? " << id << ", " << type << ", " << user << INDENT << LF;
     if (!tmfs_permissions->contains (type))
@@ -195,119 +160,29 @@ tmfs_filter (solutions sols, string type) {
 }
 
 /******************************************************************************
-* Interface for setting and getting permissions
+* Querying with permission checking
 ******************************************************************************/
-
-collection
-tmfs_get_permissions (string id, string type) {
-  return tmfs_get_values (seq (type, id, "?user"));
-}
-
-void
-tmfs_set_permissions (string id, string type, collection users) {
-  if (tmfs_allows (id, "owner") && N(users) != 0) {
-    tmfs_raw_reset_property (seq (type, id, "?user"));
-    strings a= as_strings (users);
-    for (int i=0; i<N(a); i++)
-      tmfs_raw_set_property (seq (type, id, a[i]));
-  }
-}
-
-void
-tmfs_set_permissions (string id, collection users) {
-  tmfs_set_permissions (id, "owner", users);
-  tmfs_set_permissions (id, "in", users);
-  tmfs_set_permissions (id, "read", users);
-  tmfs_set_permissions (id, "write", users);
-}
-
-void
-tmfs_set_similar_permissions (string id, string type, string similar_id) {
-  tmfs_set_permissions (id, type, tmfs_get_permissions (similar_id, type));
-}
-
-void
-tmfs_set_similar_permissions (string id, string similar_id) {
-  tmfs_set_similar_permissions (id, "owner", similar_id);
-  tmfs_set_similar_permissions (id, "in", similar_id);
-  tmfs_set_similar_permissions (id, "read", similar_id);
-  tmfs_set_similar_permissions (id, "write", similar_id);
-}
-
-/******************************************************************************
-* Property setting and getting according to permissions
-******************************************************************************/
-
-void
-tmfs_set_property (property p) {
-  if (tmfs_allows (p, "owner")) {
-    if (N(p) == 3) tmfs_permissions(p[0])= hashmap<string,bool> (false);
-    tmfs_raw_set_property (p);
-  }
-}
-
-void
-tmfs_set_properties (properties ps) {
-  for (int i=0; i<N(ps); i++)
-    tmfs_set_property (ps[i]);
-}
-
-void
-tmfs_reset_property (property p) {
-  if (tmfs_allows (p, "owner")) {
-    if (N(p) == 3) tmfs_permissions(p[0])= hashmap<string,bool> (false);
-    tmfs_raw_reset_property (p);
-  }
-}
-
-void
-tmfs_reset_properties (properties ps) {
-  for (int i=0; i<N(ps); i++)
-    tmfs_reset_property (ps[i]);
-}
 
 solutions
-tmfs_get_solutions (property query) {
+tmfs_query (property query) {
   if (!tmfs_allows (query, "read")) return solutions ();
-  solutions sols= tmfs_raw_get_solutions (query);
+  solutions sols= tmfs_get_solutions (query);
   return tmfs_filter (sols, "read");
 }
 
+collection
+tmfs_query (property query, string unknown) {
+  return as_collection (tmfs_query (query), unknown);
+}
+
 solutions
-tmfs_get_solutions (solutions sols1, property query) {
-  if (!tmfs_allows (query, "read")) return solutions ();
-  solutions sols= tmfs_raw_get_solutions (sols1, query);
+tmfs_query (properties queries) {
+  if (N(tmfs_filter (queries, "read")) != N(queries)) return solutions ();
+  solutions sols= tmfs_get_solutions (queries);
   return tmfs_filter (sols, "read");
 }
 
-properties
-tmfs_get_matches (property query) {
-  return substitute (query, tmfs_get_solutions (query));
-}
-
-properties
-tmfs_get_matches (solutions sols, property query) {
-  return substitute (query, tmfs_get_solutions (query));
-}
-
 collection
-tmfs_get_values (property query) {
-  return as_collection (tmfs_get_solutions (query), query);
-}
-
-collection
-tmfs_get_values (solutions sols, property query) {
-  return as_collection (tmfs_get_solutions (sols, query), query);
-}
-
-properties
-tmfs_get_properties (string id) {
-  properties ps;
-  ps << tmfs_get_matches (seq ("?a", id));
-  ps << tmfs_get_matches (seq ("?a", id, "?b"));
-  ps << tmfs_get_matches (seq ("?a", "?b", id));
-  ps << tmfs_get_matches (seq ("?a", id, "?b", "?c"));
-  ps << tmfs_get_matches (seq ("?a", "?b", id, "?c"));
-  ps << tmfs_get_matches (seq ("?a", "?b", "?c", id));
-  return ps;
+tmfs_query (properties queries, string unknown) {
+  return as_collection (tmfs_query (queries), unknown);
 }
