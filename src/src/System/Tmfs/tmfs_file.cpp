@@ -17,7 +17,7 @@
 ******************************************************************************/
 
 string
-tmfs_create_file (string name, string contents, string user) {
+tmfs_create_file (string name, string contents, string user, properties xps) {
   string master= tmfs_create_identifier ();
   string file  = tmfs_create_ressource ();
   properties ps;
@@ -27,7 +27,8 @@ tmfs_create_file (string name, string contents, string user) {
      << seq ("owner", file, user)
      << seq ("in", file, user)
      << seq ("read", file, user)
-     << seq ("write", file, user);
+     << seq ("write", file, user)
+     << substitute (xps, "self", file);
   tmfs_save_ressource (file, contents, ps);
   return file;
 }
@@ -55,34 +56,6 @@ tmfs_load_file (string file) {
   if (tmfs_allows (file, "read"))
     return tmfs_load_ressource_file (file);
   return "";
-}
-
-void
-tmfs_set_file_properties (string file, properties ps) {
-  if (tmfs_allows (file, "owner"))
-    tmfs_save_ressource (file, tmfs_load_ressource_file (file), ps);
-}
-
-properties
-tmfs_get_file_properties (string file) {
-  if (tmfs_allows (file, "read"))
-    return tmfs_load_ressource_properties (file);
-  return properties ();
-}
-
-void
-tmfs_add_file_properties (string file, properties add_ps) {
-  properties ps= tmfs_get_file_properties (file);
-  ps= reset (ps, add_ps);
-  ps << add_ps;
-  tmfs_set_file_properties (file, ps);
-}
-
-void
-tmfs_remove_file_properties (string file, properties sub_ps) {
-  properties ps= tmfs_get_file_properties (file);
-  ps= reset (ps, sub_ps);
-  tmfs_set_file_properties (file, ps);
 }
 
 /******************************************************************************
@@ -118,7 +91,8 @@ tmfs_get_file_projects (string file) {
 
 collection
 tmfs_get_project_files (string project) {
-  collection files= tmfs_query (seq ("in", "?file", project), "?file");
+  properties ps; ps << seq ("in", "?file", project) << seq ("file", "?file");
+  collection files= tmfs_query (ps, "?file");
   collection homes= tmfs_query (seq ("home", project, "?home"), "?home");
   return files * invert (homes);
 }
@@ -130,7 +104,7 @@ tmfs_get_project_files (string project) {
 void
 tmfs_branch_file (string old_file, string branch) {
   string contents= tmfs_load_file (old_file);
-  properties ps  = tmfs_get_file_properties (old_file);
+  properties ps  = tmfs_get_attributes (old_file);
   string new_file= tmfs_create_ressource ();
   ps= substitute (ps, old_file, new_file);
   properties mp;

@@ -64,6 +64,7 @@ properties substitute (properties ps, string what, string by);
 property substitute (property p, solution sol);
 properties substitute (property p, solutions sols);
 properties exclude_types (properties ps, collection c);
+properties widen (properties ps);
 
 // Solutions
 collection as_collection (solutions sols, string key);
@@ -118,21 +119,23 @@ bool tmfs_allows (solution sol, string type);
 strings tmfs_filter (strings ss, string type);
 properties tmfs_filter (properties ps, string type);
 solutions tmfs_filter (solutions sols, string type);
+void tmfs_set_attributes (string file, properties ps);
+properties tmfs_get_attributes (string file);
+void tmfs_add_attributes (string file, properties add_ps);
+void tmfs_remove_attributes (string file, properties sub_ps);
+void tmfs_change_attributes (string file, properties mod_ps);
 solutions tmfs_query (property query);
 collection tmfs_query (property query, string unknown);
 solutions tmfs_query (properties queries);
 collection tmfs_query (properties queries, string unknown);
 
 // File and project management
-string tmfs_create_file (string name, string c, string user= tmfs_get_user ());
+string tmfs_create_file (string name, string c, string user= tmfs_get_user (),
+			 properties xps= properties ());
 string tmfs_create_similar_file (string name, string contents, string old_id);
 collection tmfs_search_file (string name);
 void tmfs_save_file (string file, string contents);
 string tmfs_load_file (string file);
-void tmfs_set_file_properties (string file, properties ps);
-properties tmfs_get_file_properties (string file);
-void tmfs_add_file_properties (string file, properties add_ps);
-void tmfs_remove_file_properties (string file, properties sub_ps);
 string tmfs_create_project (string name, string user= tmfs_get_user ());
 collection tmfs_search_project (string name);
 collection tmfs_get_file_projects (string file);
@@ -143,8 +146,8 @@ string tmfs_create_branch (string p, string name, string u= tmfs_get_user ());
 // Compatability with conventional file systems
 void tmfs_import (url prj_dir, url u, string prj);
 void tmfs_export (url prj_dir, url u, string prj);
-void tmfs_set_home (string prj, url u);
-url tmfs_get_home (string prj);
+void tmfs_set_root (string prj, url u);
+url tmfs_get_root (string prj);
 collection tmfs_get_projects (url u);
 void tmfs_import (url u);
 void tmfs_export (url u);

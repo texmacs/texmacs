@@ -228,6 +228,10 @@
   (tmfs-set-user tmfs_set_user (void string))
   (tmfs-get-user tmfs_get_user (string))
   (tmfs-allows? tmfs_allows (bool string string))
+  (tmfs-set-attributes tmfs_set_attributes (void string properties))
+  (tmfs-get-attributes tmfs_get_attributes (properties string))
+  (tmfs-add-attributes tmfs_add_attributes (void string properties))
+  (tmfs-remove-attributes tmfs_remove_attributes (void string properties))
   (tmfs-query tmfs_query (solutions properties))
   (solutions->collection as_collection (collection solutions string))
 
@@ -236,22 +240,16 @@
   (tmfs-search-file tmfs_search_file (collection string))
   (tmfs-save-file tmfs_save_file (void string string))
   (tmfs-load-file tmfs_load_file (string string))
-  (tmfs-set-file-properties tmfs_set_file_properties (void string properties))
-  (tmfs-get-file-properties tmfs_get_file_properties (properties string))
-  (tmfs-add-file-properties tmfs_add_file_properties (void string properties))
-  (tmfs-remove-file-properties tmfs_remove_file_properties
-			       (void string properties))
-
   (tmfs-create-project tmfs_create_project (string string))
   (tmfs-search-project tmfs_search_project (collection string))
   (tmfs-get-file-projects tmfs_get_file_projects (collection string))
   (tmfs-get-project-files tmfs_get_project_files (collection string))
   (tmfs-create-branch tmfs_create_branch (string string string))
 
-;   (tmfs-set-home tmfs_set_home (void string url))
-;   (tmfs-get-home tmfs_get_home (url string))
-;   (tmfs-import tmfs_import (void url))
-;   (tmfs-export tmfs_export (void url))
+  (tmfs-set-root tmfs_set_root (void string url))
+  (tmfs-get-root tmfs_get_root (url string))
+  (tmfs-import tmfs_import (void url))
+  (tmfs-export tmfs_export (void url))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))

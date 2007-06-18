@@ -160,7 +160,47 @@ tmfs_filter (solutions sols, string type) {
 }
 
 /******************************************************************************
-* Querying with permission checking
+* Setting attributes (i.e. properties with checked permissions)
+******************************************************************************/
+
+void
+tmfs_set_attributes (string ressource, properties ps) {
+  if (tmfs_allows (ressource, "owner"))
+    tmfs_save_ressource (ressource, tmfs_load_ressource_file (ressource), ps);
+}
+
+properties
+tmfs_get_attributes (string ressource) {
+  if (tmfs_allows (ressource, "read"))
+    return tmfs_load_ressource_properties (ressource);
+  return properties ();
+}
+
+void
+tmfs_add_attributes (string ressource, properties add_ps) {
+  properties ps= tmfs_get_attributes (ressource);
+  ps= reset (ps, add_ps);
+  ps << add_ps;
+  tmfs_set_attributes (ressource, ps);
+}
+
+void
+tmfs_remove_attributes (string ressource, properties sub_ps) {
+  properties ps= tmfs_get_attributes (ressource);
+  ps= reset (ps, sub_ps);
+  tmfs_set_attributes (ressource, ps);
+}
+
+void
+tmfs_change_attributes (string ressource, properties mod_ps) {
+  properties ps= tmfs_get_attributes (ressource);
+  ps= reset (ps, widen (mod_ps));
+  ps << mod_ps;
+  tmfs_set_attributes (ressource, ps);
+}
+
+/******************************************************************************
+* Querying properties with permission checking
 ******************************************************************************/
 
 solutions

@@ -2612,6 +2612,64 @@ tmg_tmfs_allowsP (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_tmfs_set_attributes (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-attributes");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-set-attributes");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_set_attributes (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_get_attributes (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-attributes");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  properties out= tmfs_get_attributes (in1);
+  // SCM_ALLOW_INTS;
+
+  return properties_to_scm (out);
+}
+
+SCM
+tmg_tmfs_add_attributes (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-add-attributes");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-add-attributes");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_add_attributes (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_remove_attributes (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-remove-attributes");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-remove-attributes");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_remove_attributes (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_tmfs_query (SCM arg1) {
   SCM_ASSERT_PROPERTIES (arg1, SCM_ARG1, "tmfs-query");
 
@@ -2713,64 +2771,6 @@ tmg_tmfs_load_file (SCM arg1) {
 }
 
 SCM
-tmg_tmfs_set_file_properties (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-file-properties");
-  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-set-file-properties");
-
-  string in1= scm_to_string (arg1);
-  properties in2= scm_to_properties (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_set_file_properties (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_get_file_properties (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-file-properties");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  properties out= tmfs_get_file_properties (in1);
-  // SCM_ALLOW_INTS;
-
-  return properties_to_scm (out);
-}
-
-SCM
-tmg_tmfs_add_file_properties (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-add-file-properties");
-  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-add-file-properties");
-
-  string in1= scm_to_string (arg1);
-  properties in2= scm_to_properties (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_add_file_properties (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_remove_file_properties (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-remove-file-properties");
-  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-remove-file-properties");
-
-  string in1= scm_to_string (arg1);
-  properties in2= scm_to_properties (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_remove_file_properties (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_tmfs_create_project (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-create-project");
 
@@ -2835,6 +2835,60 @@ tmg_tmfs_create_branch (SCM arg1, SCM arg2) {
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
+}
+
+SCM
+tmg_tmfs_set_root (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-root");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "tmfs-set-root");
+
+  string in1= scm_to_string (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_set_root (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_get_root (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-root");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= tmfs_get_root (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_tmfs_import (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "tmfs-import");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_import (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_export (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "tmfs-export");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_export (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -3606,6 +3660,10 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-set-user", (FN) tmg_tmfs_set_user, 1, 0, 0);
   scm_new_procedure ("tmfs-get-user", (FN) tmg_tmfs_get_user, 0, 0, 0);
   scm_new_procedure ("tmfs-allows?", (FN) tmg_tmfs_allowsP, 2, 0, 0);
+  scm_new_procedure ("tmfs-set-attributes", (FN) tmg_tmfs_set_attributes, 2, 0, 0);
+  scm_new_procedure ("tmfs-get-attributes", (FN) tmg_tmfs_get_attributes, 1, 0, 0);
+  scm_new_procedure ("tmfs-add-attributes", (FN) tmg_tmfs_add_attributes, 2, 0, 0);
+  scm_new_procedure ("tmfs-remove-attributes", (FN) tmg_tmfs_remove_attributes, 2, 0, 0);
   scm_new_procedure ("tmfs-query", (FN) tmg_tmfs_query, 1, 0, 0);
   scm_new_procedure ("solutions->collection", (FN) tmg_solutions_2collection, 2, 0, 0);
   scm_new_procedure ("tmfs-create-file", (FN) tmg_tmfs_create_file, 2, 0, 0);
@@ -3613,15 +3671,15 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-search-file", (FN) tmg_tmfs_search_file, 1, 0, 0);
   scm_new_procedure ("tmfs-save-file", (FN) tmg_tmfs_save_file, 2, 0, 0);
   scm_new_procedure ("tmfs-load-file", (FN) tmg_tmfs_load_file, 1, 0, 0);
-  scm_new_procedure ("tmfs-set-file-properties", (FN) tmg_tmfs_set_file_properties, 2, 0, 0);
-  scm_new_procedure ("tmfs-get-file-properties", (FN) tmg_tmfs_get_file_properties, 1, 0, 0);
-  scm_new_procedure ("tmfs-add-file-properties", (FN) tmg_tmfs_add_file_properties, 2, 0, 0);
-  scm_new_procedure ("tmfs-remove-file-properties", (FN) tmg_tmfs_remove_file_properties, 2, 0, 0);
   scm_new_procedure ("tmfs-create-project", (FN) tmg_tmfs_create_project, 1, 0, 0);
   scm_new_procedure ("tmfs-search-project", (FN) tmg_tmfs_search_project, 1, 0, 0);
   scm_new_procedure ("tmfs-get-file-projects", (FN) tmg_tmfs_get_file_projects, 1, 0, 0);
   scm_new_procedure ("tmfs-get-project-files", (FN) tmg_tmfs_get_project_files, 1, 0, 0);
   scm_new_procedure ("tmfs-create-branch", (FN) tmg_tmfs_create_branch, 2, 0, 0);
+  scm_new_procedure ("tmfs-set-root", (FN) tmg_tmfs_set_root, 2, 0, 0);
+  scm_new_procedure ("tmfs-get-root", (FN) tmg_tmfs_get_root, 1, 0, 0);
+  scm_new_procedure ("tmfs-import", (FN) tmg_tmfs_import, 1, 0, 0);
+  scm_new_procedure ("tmfs-export", (FN) tmg_tmfs_export, 1, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

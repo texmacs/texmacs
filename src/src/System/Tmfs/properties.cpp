@@ -192,3 +192,14 @@ exclude_types (properties ps, collection c) {
       r << ps[i];
   return r;
 }
+
+properties
+widen (properties ps) {
+  properties r;
+  for (int i=0; i<N(ps); i++) {
+    property c= copy (ps[i]);
+    if (N(c) > 0) c[N(c)-1]= "?any";
+    r << c;
+  }
+  return r;
+}
