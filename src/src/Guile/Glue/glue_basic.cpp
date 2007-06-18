@@ -2471,85 +2471,81 @@ tmg_tmfs_new_load (SCM arg1) {
 }
 
 SCM
-tmg_tmfs_set_property (SCM arg1) {
-  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-set-property");
-
-  array_string in1= scm_to_array_string (arg1);
-
+tmg_tmfs_create_ressource () {
   // SCM_DEFER_INTS;
-  tmfs_set_property (in1);
+  string out= tmfs_create_ressource ();
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return string_to_scm (out);
 }
 
 SCM
-tmg_tmfs_reset_property (SCM arg1) {
-  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-reset-property");
+tmg_tmfs_ressource_head (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-ressource-head");
 
-  array_string in1= scm_to_array_string (arg1);
+  string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  tmfs_reset_property (in1);
+  string out= tmfs_get_head (in1);
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return string_to_scm (out);
 }
 
 SCM
-tmg_tmfs_get_solutions (SCM arg1) {
-  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-solutions");
+tmg_tmfs_ressource_versions (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-ressource-versions");
 
-  array_string in1= scm_to_array_string (arg1);
-
-  // SCM_DEFER_INTS;
-  solutions out= tmfs_get_solutions (in1);
-  // SCM_ALLOW_INTS;
-
-  return solutions_to_scm (out);
-}
-
-SCM
-tmg_tmfs_get_solutions2 (SCM arg1, SCM arg2) {
-  SCM_ASSERT_SOLUTIONS (arg1, SCM_ARG1, "tmfs-get-solutions2");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "tmfs-get-solutions2");
-
-  solutions in1= scm_to_solutions (arg1);
-  array_string in2= scm_to_array_string (arg2);
+  string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  solutions out= tmfs_get_solutions (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return solutions_to_scm (out);
-}
-
-SCM
-tmg_tmfs_get_values (SCM arg1) {
-  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "tmfs-get-values");
-
-  array_string in1= scm_to_array_string (arg1);
-
-  // SCM_DEFER_INTS;
-  collection out= tmfs_get_values (in1);
+  collection out= tmfs_get_versions (in1);
   // SCM_ALLOW_INTS;
 
   return collection_to_scm (out);
 }
 
 SCM
-tmg_tmfs_get_values2 (SCM arg1, SCM arg2) {
-  SCM_ASSERT_SOLUTIONS (arg1, SCM_ARG1, "tmfs-get-values2");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "tmfs-get-values2");
+tmg_tmfs_save_ressource (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-save-ressource");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-save-ressource");
+  SCM_ASSERT_PROPERTIES (arg3, SCM_ARG3, "tmfs-save-ressource");
 
-  solutions in1= scm_to_solutions (arg1);
-  array_string in2= scm_to_array_string (arg2);
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  properties in3= scm_to_properties (arg3);
 
   // SCM_DEFER_INTS;
-  collection out= tmfs_get_values (in1, in2);
+  tmfs_save_ressource (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return collection_to_scm (out);
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_load_ressource_file (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-load-ressource-file");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tmfs_load_ressource_file (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmfs_load_ressource_properties (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-load-ressource-properties");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  properties out= tmfs_load_ressource_properties (in1);
+  // SCM_ALLOW_INTS;
+
+  return properties_to_scm (out);
 }
 
 SCM
@@ -2616,50 +2612,31 @@ tmg_tmfs_allowsP (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tmfs_get_permissions (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-permissions");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-get-permissions");
+tmg_tmfs_query (SCM arg1) {
+  SCM_ASSERT_PROPERTIES (arg1, SCM_ARG1, "tmfs-query");
 
-  string in1= scm_to_string (arg1);
+  properties in1= scm_to_properties (arg1);
+
+  // SCM_DEFER_INTS;
+  solutions out= tmfs_query (in1);
+  // SCM_ALLOW_INTS;
+
+  return solutions_to_scm (out);
+}
+
+SCM
+tmg_solutions_2collection (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SOLUTIONS (arg1, SCM_ARG1, "solutions->collection");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "solutions->collection");
+
+  solutions in1= scm_to_solutions (arg1);
   string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  collection out= tmfs_get_permissions (in1, in2);
+  collection out= as_collection (in1, in2);
   // SCM_ALLOW_INTS;
 
   return collection_to_scm (out);
-}
-
-SCM
-tmg_tmfs_set_permissions (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-permissions");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-set-permissions");
-  SCM_ASSERT_COLLECTION (arg3, SCM_ARG3, "tmfs-set-permissions");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  collection in3= scm_to_collection (arg3);
-
-  // SCM_DEFER_INTS;
-  tmfs_set_permissions (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_set_all_permissions (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-all-permissions");
-  SCM_ASSERT_COLLECTION (arg2, SCM_ARG2, "tmfs-set-all-permissions");
-
-  string in1= scm_to_string (arg1);
-  collection in2= scm_to_collection (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_set_permissions (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2678,17 +2655,17 @@ tmg_tmfs_create_file (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tmfs_create_file2 (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-create-file2");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-create-file2");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "tmfs-create-file2");
+tmg_tmfs_create_file_in (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-create-file-in");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-create-file-in");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "tmfs-create-file-in");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
   string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  string out= tmfs_create_similar_file (in1, in2, in3);
+  string out= tmfs_create_file (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -2708,31 +2685,18 @@ tmg_tmfs_search_file (SCM arg1) {
 }
 
 SCM
-tmg_tmfs_search_head (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-search-head");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  collection out= tmfs_search_head (in1);
-  // SCM_ALLOW_INTS;
-
-  return collection_to_scm (out);
-}
-
-SCM
-tmg_tmfs_update_file (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-update-file");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-update-file");
+tmg_tmfs_save_file (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-save-file");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-save-file");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  string out= tmfs_update_file (in1, in2);
+  tmfs_save_file (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return string_to_scm (out);
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2746,6 +2710,64 @@ tmg_tmfs_load_file (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
+}
+
+SCM
+tmg_tmfs_set_file_properties (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-file-properties");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-set-file-properties");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_set_file_properties (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_get_file_properties (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-file-properties");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  properties out= tmfs_get_file_properties (in1);
+  // SCM_ALLOW_INTS;
+
+  return properties_to_scm (out);
+}
+
+SCM
+tmg_tmfs_add_file_properties (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-add-file-properties");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-add-file-properties");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_add_file_properties (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_remove_file_properties (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-remove-file-properties");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-remove-file-properties");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_remove_file_properties (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2775,128 +2797,44 @@ tmg_tmfs_search_project (SCM arg1) {
 }
 
 SCM
-tmg_tmfs_create_snapshot (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-create-snapshot");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-create-snapshot");
+tmg_tmfs_get_file_projects (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-file-projects");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  collection out= tmfs_get_file_projects (in1);
+  // SCM_ALLOW_INTS;
+
+  return collection_to_scm (out);
+}
+
+SCM
+tmg_tmfs_get_project_files (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-project-files");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  collection out= tmfs_get_project_files (in1);
+  // SCM_ALLOW_INTS;
+
+  return collection_to_scm (out);
+}
+
+SCM
+tmg_tmfs_create_branch (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-create-branch");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-create-branch");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  string out= tmfs_create_snapshot (in1, in2);
+  string out= tmfs_create_branch (in1, in2);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
-}
-
-SCM
-tmg_tmfs_search_snapshot (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-search-snapshot");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  collection out= tmfs_search_snapshot (in1);
-  // SCM_ALLOW_INTS;
-
-  return collection_to_scm (out);
-}
-
-SCM
-tmg_tmfs_get_heads (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-heads");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  collection out= tmfs_get_heads (in1);
-  // SCM_ALLOW_INTS;
-
-  return collection_to_scm (out);
-}
-
-SCM
-tmg_tmfs_branch_file (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-branch-file");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-branch-file");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_branch_file (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_branch_project (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-branch-project");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-branch-project");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_branch_project (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_set_home (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-set-home");
-  SCM_ASSERT_URL (arg2, SCM_ARG2, "tmfs-set-home");
-
-  string in1= scm_to_string (arg1);
-  url in2= scm_to_url (arg2);
-
-  // SCM_DEFER_INTS;
-  tmfs_set_home (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_get_home (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-get-home");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  url out= tmfs_get_home (in1);
-  // SCM_ALLOW_INTS;
-
-  return url_to_scm (out);
-}
-
-SCM
-tmg_tmfs_import (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "tmfs-import");
-
-  url in1= scm_to_url (arg1);
-
-  // SCM_DEFER_INTS;
-  tmfs_import (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tmfs_export (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "tmfs-export");
-
-  url in1= scm_to_url (arg1);
-
-  // SCM_DEFER_INTS;
-  tmfs_export (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -3657,37 +3595,33 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-new-save", (FN) tmg_tmfs_new_save, 2, 0, 0);
   scm_new_procedure ("tmfs-new-remove", (FN) tmg_tmfs_new_remove, 1, 0, 0);
   scm_new_procedure ("tmfs-new-load", (FN) tmg_tmfs_new_load, 1, 0, 0);
-  scm_new_procedure ("tmfs-set-property", (FN) tmg_tmfs_set_property, 1, 0, 0);
-  scm_new_procedure ("tmfs-reset-property", (FN) tmg_tmfs_reset_property, 1, 0, 0);
-  scm_new_procedure ("tmfs-get-solutions", (FN) tmg_tmfs_get_solutions, 1, 0, 0);
-  scm_new_procedure ("tmfs-get-solutions2", (FN) tmg_tmfs_get_solutions2, 2, 0, 0);
-  scm_new_procedure ("tmfs-get-values", (FN) tmg_tmfs_get_values, 1, 0, 0);
-  scm_new_procedure ("tmfs-get-values2", (FN) tmg_tmfs_get_values2, 2, 0, 0);
+  scm_new_procedure ("tmfs-create-ressource", (FN) tmg_tmfs_create_ressource, 0, 0, 0);
+  scm_new_procedure ("tmfs-ressource-head", (FN) tmg_tmfs_ressource_head, 1, 0, 0);
+  scm_new_procedure ("tmfs-ressource-versions", (FN) tmg_tmfs_ressource_versions, 1, 0, 0);
+  scm_new_procedure ("tmfs-save-ressource", (FN) tmg_tmfs_save_ressource, 3, 0, 0);
+  scm_new_procedure ("tmfs-load-ressource-file", (FN) tmg_tmfs_load_ressource_file, 1, 0, 0);
+  scm_new_procedure ("tmfs-load-ressource-properties", (FN) tmg_tmfs_load_ressource_properties, 1, 0, 0);
   scm_new_procedure ("tmfs-create-user", (FN) tmg_tmfs_create_user, 1, 0, 0);
   scm_new_procedure ("tmfs-search-user", (FN) tmg_tmfs_search_user, 1, 0, 0);
   scm_new_procedure ("tmfs-set-user", (FN) tmg_tmfs_set_user, 1, 0, 0);
   scm_new_procedure ("tmfs-get-user", (FN) tmg_tmfs_get_user, 0, 0, 0);
   scm_new_procedure ("tmfs-allows?", (FN) tmg_tmfs_allowsP, 2, 0, 0);
-  scm_new_procedure ("tmfs-get-permissions", (FN) tmg_tmfs_get_permissions, 2, 0, 0);
-  scm_new_procedure ("tmfs-set-permissions", (FN) tmg_tmfs_set_permissions, 3, 0, 0);
-  scm_new_procedure ("tmfs-set-all-permissions", (FN) tmg_tmfs_set_all_permissions, 2, 0, 0);
+  scm_new_procedure ("tmfs-query", (FN) tmg_tmfs_query, 1, 0, 0);
+  scm_new_procedure ("solutions->collection", (FN) tmg_solutions_2collection, 2, 0, 0);
   scm_new_procedure ("tmfs-create-file", (FN) tmg_tmfs_create_file, 2, 0, 0);
-  scm_new_procedure ("tmfs-create-file2", (FN) tmg_tmfs_create_file2, 3, 0, 0);
+  scm_new_procedure ("tmfs-create-file-in", (FN) tmg_tmfs_create_file_in, 3, 0, 0);
   scm_new_procedure ("tmfs-search-file", (FN) tmg_tmfs_search_file, 1, 0, 0);
-  scm_new_procedure ("tmfs-search-head", (FN) tmg_tmfs_search_head, 1, 0, 0);
-  scm_new_procedure ("tmfs-update-file", (FN) tmg_tmfs_update_file, 2, 0, 0);
+  scm_new_procedure ("tmfs-save-file", (FN) tmg_tmfs_save_file, 2, 0, 0);
   scm_new_procedure ("tmfs-load-file", (FN) tmg_tmfs_load_file, 1, 0, 0);
+  scm_new_procedure ("tmfs-set-file-properties", (FN) tmg_tmfs_set_file_properties, 2, 0, 0);
+  scm_new_procedure ("tmfs-get-file-properties", (FN) tmg_tmfs_get_file_properties, 1, 0, 0);
+  scm_new_procedure ("tmfs-add-file-properties", (FN) tmg_tmfs_add_file_properties, 2, 0, 0);
+  scm_new_procedure ("tmfs-remove-file-properties", (FN) tmg_tmfs_remove_file_properties, 2, 0, 0);
   scm_new_procedure ("tmfs-create-project", (FN) tmg_tmfs_create_project, 1, 0, 0);
   scm_new_procedure ("tmfs-search-project", (FN) tmg_tmfs_search_project, 1, 0, 0);
-  scm_new_procedure ("tmfs-create-snapshot", (FN) tmg_tmfs_create_snapshot, 2, 0, 0);
-  scm_new_procedure ("tmfs-search-snapshot", (FN) tmg_tmfs_search_snapshot, 1, 0, 0);
-  scm_new_procedure ("tmfs-get-heads", (FN) tmg_tmfs_get_heads, 1, 0, 0);
-  scm_new_procedure ("tmfs-branch-file", (FN) tmg_tmfs_branch_file, 2, 0, 0);
-  scm_new_procedure ("tmfs-branch-project", (FN) tmg_tmfs_branch_project, 2, 0, 0);
-  scm_new_procedure ("tmfs-set-home", (FN) tmg_tmfs_set_home, 2, 0, 0);
-  scm_new_procedure ("tmfs-get-home", (FN) tmg_tmfs_get_home, 1, 0, 0);
-  scm_new_procedure ("tmfs-import", (FN) tmg_tmfs_import, 1, 0, 0);
-  scm_new_procedure ("tmfs-export", (FN) tmg_tmfs_export, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-file-projects", (FN) tmg_tmfs_get_file_projects, 1, 0, 0);
+  scm_new_procedure ("tmfs-get-project-files", (FN) tmg_tmfs_get_project_files, 1, 0, 0);
+  scm_new_procedure ("tmfs-create-branch", (FN) tmg_tmfs_create_branch, 2, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

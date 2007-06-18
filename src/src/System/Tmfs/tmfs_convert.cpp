@@ -19,6 +19,7 @@
 * Useful subroutines
 ******************************************************************************/
 
+/*
 bool
 is_cruft (string s) {
   return
@@ -46,11 +47,13 @@ create_parents (url u) {
     mkdir (url_parent (u));
   }
 }
+*/
 
 /******************************************************************************
 * Importation and exportation
 ******************************************************************************/
 
+/*
 bool
 operator < (string a, string b) {
   return a <= b && a != b;
@@ -122,7 +125,7 @@ tmfs_import (url prj_dir, url u, string prj) {
   }
   else if (is_regular (prj_dir * u)) {
     string loc= as_string (u);
-    solutions  sols= tmfs_get_solutions (seq ("mirror", "?id", prj, loc));
+    solutions  sols= tmfs_query (seq ("mirror", "?id", prj, loc));
     collection ids = tmfs_get_values (sols, seq ("tag", "?id", prj, "head"));
     if (N (ids) == 0) {
       string val = load_string (prj_dir * u);
@@ -152,11 +155,13 @@ tmfs_import (url prj_dir, url u, string prj) {
     }
   }
 }
+*/
 
 /******************************************************************************
 * Importation based on home directories for users and projects
 ******************************************************************************/
 
+/*
 void
 tmfs_set_home (string prj, url u) {
   url old_home= tmfs_get_home (prj);
@@ -209,3 +214,4 @@ tmfs_export (url u) {
     tmfs_export (prj_dir, delta_dir (prj_dir, u), prjs[0]);
   }
 }
+*/

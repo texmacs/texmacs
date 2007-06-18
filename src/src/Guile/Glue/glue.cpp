@@ -1011,6 +1011,11 @@ scm_to_array_string (SCM p) {
   return a;
 }
 
+#define scm_is_property scm_is_array_string
+#define SCM_ASSERT_PROPERTY(p,arg,rout) SCM_ASSERT_ARRAY_STRING (p,arg,rout)
+#define property_to_scm array_string_to_scm
+#define scm_to_property scm_to_array_string
+
 static bool
 scm_is_array_tree (SCM p) {
   if (scm_is_null (p)) return true;
@@ -1064,6 +1069,35 @@ scm_to_array_widget (SCM p) {
   array<widget> a;
   while (!scm_is_null (p)) {
     a << scm_to_widget (SCM_CAR (p));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
+
+static bool
+scm_is_properties (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_pair (p) &&
+	      scm_is_property (SCM_CAR (p)) &&
+	      scm_is_properties (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_PROPERTIES(p,arg,rout) \
+  SCM_ASSERT (scm_is_properties (p), p, arg, rout)
+
+SCM
+properties_to_scm (array<property> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (property_to_scm (a[i]), p);
+  return p;
+}
+
+array<property>
+scm_to_properties (SCM p) {
+  array<property> a;
+  while (!scm_is_null (p)) {
+    a << scm_to_property (SCM_CAR (p));
     p= SCM_CDR (p);
   }
   return a;
