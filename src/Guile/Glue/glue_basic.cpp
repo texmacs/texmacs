@@ -2670,6 +2670,21 @@ tmg_tmfs_remove_attributes (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_tmfs_change_attributes (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-change-attributes");
+  SCM_ASSERT_PROPERTIES (arg2, SCM_ARG2, "tmfs-change-attributes");
+
+  string in1= scm_to_string (arg1);
+  properties in2= scm_to_properties (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_change_attributes (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_tmfs_query (SCM arg1) {
   SCM_ASSERT_PROPERTIES (arg1, SCM_ARG1, "tmfs-query");
 
@@ -2886,6 +2901,15 @@ tmg_tmfs_export (SCM arg1) {
 
   // SCM_DEFER_INTS;
   tmfs_export (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_start_server () {
+  // SCM_DEFER_INTS;
+  tmfs_start_server ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -3664,6 +3688,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-get-attributes", (FN) tmg_tmfs_get_attributes, 1, 0, 0);
   scm_new_procedure ("tmfs-add-attributes", (FN) tmg_tmfs_add_attributes, 2, 0, 0);
   scm_new_procedure ("tmfs-remove-attributes", (FN) tmg_tmfs_remove_attributes, 2, 0, 0);
+  scm_new_procedure ("tmfs-change-attributes", (FN) tmg_tmfs_change_attributes, 2, 0, 0);
   scm_new_procedure ("tmfs-query", (FN) tmg_tmfs_query, 1, 0, 0);
   scm_new_procedure ("solutions->collection", (FN) tmg_solutions_2collection, 2, 0, 0);
   scm_new_procedure ("tmfs-create-file", (FN) tmg_tmfs_create_file, 2, 0, 0);
@@ -3680,6 +3705,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-get-root", (FN) tmg_tmfs_get_root, 1, 0, 0);
   scm_new_procedure ("tmfs-import", (FN) tmg_tmfs_import, 1, 0, 0);
   scm_new_procedure ("tmfs-export", (FN) tmg_tmfs_export, 1, 0, 0);
+  scm_new_procedure ("tmfs-start-server", (FN) tmg_tmfs_start_server, 0, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

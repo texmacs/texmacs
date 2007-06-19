@@ -26,6 +26,7 @@
 #endif
 
 extern hashmap<Window,pointer> Window_to_window;
+extern void (*server_call_back) (void);
 int  nr_windows= 0;
 
 static int  kbd_count= 0;
@@ -326,7 +327,8 @@ x_display_rep::event_loop () {
   int count  = 0;
   int delay  = MIN_DELAY;
 
-  while (nr_windows>0) {
+  while (nr_windows>0 || server_call_back != NULL) {
+    if (server_call_back != NULL) server_call_back ();
     request_partial_redraw= false;
 
     // Get events
@@ -342,6 +344,7 @@ x_display_rep::event_loop () {
       delay= MIN_DELAY;
       wait = false;
     }
+    if (nr_windows == 0) continue;
 
     // Don't typeset when resizing window
     if (XPending (dpy) > 0)
