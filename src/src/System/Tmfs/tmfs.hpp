@@ -152,4 +152,7 @@ collection tmfs_get_projects (url u);
 void tmfs_import (url u);
 void tmfs_export (url u);
 
+// Server
+void tmfs_start_server ();
+
 #endif // defined TMFS_H

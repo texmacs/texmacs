@@ -252,6 +252,8 @@
   (tmfs-import tmfs_import (void url))
   (tmfs-export tmfs_export (void url))
 
+  (tmfs-start-server tmfs_start_server (void))
+
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))
   (connection-status connection_status (int string string))

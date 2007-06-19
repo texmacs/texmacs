@@ -18,6 +18,8 @@
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
 
+extern void (*server_call_back) (void);
+
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
 int max_undo_depth= 100; // should actually be part of tm_data_rep
@@ -570,7 +572,8 @@ tm_data_rep::kill_window () {
       }
     }
   }
-  quit ();
+  if (server_call_back == NULL) quit ();
+  else delete_window (win);
 }
 
 void
