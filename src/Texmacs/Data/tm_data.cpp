@@ -14,11 +14,10 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "web_files.hpp"
+#include "socket_server.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
-
-extern void (*server_call_back) (void);
 
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
@@ -572,7 +571,7 @@ tm_data_rep::kill_window () {
       }
     }
   }
-  if (server_call_back == NULL) quit ();
+  if (number_of_servers () == 0) quit ();
   else delete_window (win);
 }
 
