@@ -154,5 +154,10 @@ void tmfs_export (url u);
 
 // Server
 void tmfs_start_server ();
+string tmfs_server_read (int fd);
+void tmfs_server_write (int fd, string s);
+void tmfs_start_client (string host);
+string tmfs_client_read ();
+void tmfs_client_write (string s);
 
 #endif // defined TMFS_H

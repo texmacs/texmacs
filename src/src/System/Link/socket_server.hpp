@@ -1,8 +1,8 @@
 
 /******************************************************************************
-* MODULE     : socket_link.cpp
-* DESCRIPTION: TeXmacs links by sockets
-* COPYRIGHT  : (C) 2000  Joris van der Hoeven
+* MODULE     : socket_server.cpp
+* DESCRIPTION: TeXmacs servers over sockets
+* COPYRIGHT  : (C) 2007  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -10,24 +10,22 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#ifndef SOCKET_LINK_H
-#define SOCKET_LINK_H
+#ifndef SOCKET_SERVER_H
+#define SOCKET_SERVER_H
 #include "tm_link.hpp"
 
 /******************************************************************************
-* The socket_link class
+* The socket_server class
 ******************************************************************************/
 
-struct socket_link_rep: tm_link_rep {
-  string host;          // host for the socket
-  int    port;          // port for the socket
-  int    type;          // socket type
-  int    io;            // file descriptor for data going to the child
-  string outbuf;        // pending output from plugin
+struct socket_server_rep: tm_link_rep {
+  int port;                 // port for the socket
+  int server;               // listening socket descriptor
+  array<tm_link> incoming;  // list of clients
 
 public:
-  socket_link_rep (string host, int port, int type, int fd);
-  ~socket_link_rep ();
+  socket_server_rep (int port);
+  ~socket_server_rep ();
 
   string start ();
   void   write (string s, int channel);
@@ -36,10 +34,11 @@ public:
   void   interrupt ();
   void   stop ();
 
-  void   feed (int channel);
+  void start_client ();
 };
 
-void listen_to_sockets ();
-void close_all_sockets ();
+int  number_of_servers ();
+void listen_to_servers ();
+void close_all_servers ();
 
-#endif // SOCKET_LINK_H
+#endif // SOCKET_SERVER_H

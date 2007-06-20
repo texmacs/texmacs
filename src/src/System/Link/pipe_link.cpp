@@ -135,7 +135,7 @@ pipe_link_rep::start () {
       recursive_kill (pid);
 #endif
       wait (NULL);
-      if (r == ERROR) return "Error: the application does not reply";
+      if (r == -1) return "Error: the application does not reply";
       else
 	return "Error: the application did not send its usual startup banner";
     }
@@ -183,7 +183,7 @@ pipe_link_rep::feed (int channel) {
   if (channel == LINK_OUT) r = ::read (out, tempout, 1024);
   else r = ::read (err, tempout, 1024);
 #endif
-  if (r == ERROR) {
+  if (r == -1) {
     cerr << "TeXmacs] read failed for#'" << cmd << "'\n";
     wait (NULL);
   }

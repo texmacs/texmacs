@@ -28,6 +28,10 @@
 #define LINK_OUT  0
 #define LINK_ERR  1
 
+#define SOCKET_DEFAULT  0
+#define SOCKET_CLIENT   1
+#define SOCKET_SERVER   2
+
 /******************************************************************************
 * The tm_link class
 ******************************************************************************/
@@ -62,6 +66,8 @@ inline bool tm_link::operator != (tm_link l) { return rep != l.rep; }
 
 tm_link make_pipe_link (string cmd);
 tm_link make_dynamic_link (string lib, string symb, string init, string ses);
-tm_link make_socket_link (string host, int port);
+tm_link make_socket_link (string h, int p, int t= SOCKET_DEFAULT, int fd= -1);
+tm_link make_socket_server (int port);
+tm_link find_socket_link (int fd);
 
 #endif // TM_LINK_H

@@ -18,6 +18,7 @@
 #include "file.hpp"
 #include "pipe_link.hpp"
 #include "socket_link.hpp"
+#include "socket_server.hpp"
 
 server* the_server= NULL;
 bool texmacs_started= false;
@@ -405,6 +406,7 @@ tm_server_rep::in_full_screen_edit_mode () {
 
 void
 tm_server_rep::interpose_handler () {
+  listen_to_servers ();
   listen_to_pipes ();
   listen_to_sockets ();
   listen_to_connections ();

@@ -2916,6 +2916,69 @@ tmg_tmfs_start_server () {
 }
 
 SCM
+tmg_tmfs_server_read (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "tmfs-server-read");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tmfs_server_read (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmfs_server_write (SCM arg1, SCM arg2) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "tmfs-server-write");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tmfs-server-write");
+
+  int in1= scm_to_int (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  tmfs_server_write (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_start_client (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-start-client");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_start_client (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tmfs_client_read () {
+  // SCM_DEFER_INTS;
+  string out= tmfs_client_read ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmfs_client_write (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmfs-client-write");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tmfs_client_write (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_connection_declaredP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
 
@@ -3706,6 +3769,11 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-import", (FN) tmg_tmfs_import, 1, 0, 0);
   scm_new_procedure ("tmfs-export", (FN) tmg_tmfs_export, 1, 0, 0);
   scm_new_procedure ("tmfs-start-server", (FN) tmg_tmfs_start_server, 0, 0, 0);
+  scm_new_procedure ("tmfs-server-read", (FN) tmg_tmfs_server_read, 1, 0, 0);
+  scm_new_procedure ("tmfs-server-write", (FN) tmg_tmfs_server_write, 2, 0, 0);
+  scm_new_procedure ("tmfs-start-client", (FN) tmg_tmfs_start_client, 1, 0, 0);
+  scm_new_procedure ("tmfs-client-read", (FN) tmg_tmfs_client_read, 0, 0, 0);
+  scm_new_procedure ("tmfs-client-write", (FN) tmg_tmfs_client_write, 1, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

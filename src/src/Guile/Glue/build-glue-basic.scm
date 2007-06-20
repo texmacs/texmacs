@@ -253,6 +253,11 @@
   (tmfs-export tmfs_export (void url))
 
   (tmfs-start-server tmfs_start_server (void))
+  (tmfs-server-read tmfs_server_read (string int))
+  (tmfs-server-write tmfs_server_write (void int string))
+  (tmfs-start-client tmfs_start_client (void string))
+  (tmfs-client-read tmfs_client_read (string))
+  (tmfs-client-write tmfs_client_write (void string))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))

@@ -14,6 +14,7 @@
 #include "X/x_window.hpp"
 #include "iterator.hpp"
 #include "converter.hpp"
+#include "socket_server.hpp"
 
 #ifdef OS_WIN32
 #include <sys/time.h>
@@ -26,7 +27,6 @@
 #endif
 
 extern hashmap<Window,pointer> Window_to_window;
-extern void (*server_call_back) (void);
 int  nr_windows= 0;
 
 static int  kbd_count= 0;
@@ -327,8 +327,7 @@ x_display_rep::event_loop () {
   int count  = 0;
   int delay  = MIN_DELAY;
 
-  while (nr_windows>0 || server_call_back != NULL) {
-    if (server_call_back != NULL) server_call_back ();
+  while (nr_windows>0 || number_of_servers () != 0) {
     request_partial_redraw= false;
 
     // Get events
@@ -363,6 +362,7 @@ x_display_rep::event_loop () {
     }
     else wait= true;
     if (the_interpose_handler != NULL) the_interpose_handler ();
+    if (nr_windows == 0) continue;
 
     // Popup help balloons
     if (!nil (balloon_wid))
