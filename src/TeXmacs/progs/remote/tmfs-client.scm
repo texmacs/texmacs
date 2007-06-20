@@ -28,40 +28,67 @@
 	(else (object->string #f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Asynchroneous server
+;; Asynchroneous servers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmfs-server-client-active? (make-ahash-table))
+(define tmfs-server-client-waiting? (make-ahash-table))
+
+(tm-define (tmfs-server-clients)
+  (ahash-set->list tmfs-server-client-active?))
 
 (define (tmfs-server-eval cmd)
-  (display* "Received command " cmd "\n")
+  (display* "Server command: " cmd "\n")
   (object->string* (eval (string->object cmd))))
 
-(tm-define (tmfs-server-add-client client)
+(tm-define (tmfs-server-add client)
   (ahash-set! tmfs-server-client-active? client #t)
   (with wait 1
     (delayed
       (:while (ahash-ref tmfs-server-client-active? client))
       (:pause ((lambda () (inexact->exact wait))))
       (:do (set! wait (min (* 1.001 wait) 2500)))
-      (with cmd (tmfs-server-read client)
-	(when (!= cmd "")
-	  (with result (tmfs-server-eval cmd)
-	    (tmfs-server-write client result)
-	    (set! wait 1)))))))
+      (when (not (ahash-ref tmfs-server-client-waiting? client))
+	(with cmd (tmfs-server-read client)
+	  (when (!= cmd "")
+	    (with result (tmfs-server-eval cmd)
+	      (tmfs-server-write client result)
+	      (set! wait 1))))))))
 
-(tm-define (tmfs-server-remove-client client)
+(tm-define (tmfs-server-remove client)
   (ahash-remove! tmfs-server-client-active? client))
 
+(define (tmfs-server-remote-sub client cmd return)
+  (when (not (ahash-ref tmfs-server-client-waiting? client))
+    (ahash-set! tmfs-server-client-waiting? client #t)
+    (tmfs-server-write client (object->string* cmd))
+    (with wait 1
+      (delayed
+	(:while (ahash-ref tmfs-server-client-waiting? client))
+	(:pause ((lambda () (inexact->exact wait))))
+	(:do (set! wait (min (* 1.001 wait) 2500)))
+	(with result (tmfs-server-read client)
+	  (when (!= result "")
+	    (ahash-set! tmfs-server-client-waiting? client #f)
+	    (set! wait 1)
+	    (return (string->object result))))))))
+
+(tm-define (tmfs-server-remote client cmd)
+  (if dialogue-break
+      (dialogue-user local-continue
+	(with return (dialogue-machine local-continue)
+	  (tmfs-server-remote-sub client cmd return)))
+      (texmacs-error "dialogue-ask" "Not in dialogue")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Asynchroneous client
+;; Asynchroneous clients
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmfs-client-active? #f)
 (define tmfs-client-waiting? #f)
 
 (define (tmfs-client-eval cmd)
-  (display* "Received command " cmd "\n")
+  (display* "Client command: " cmd "\n")
   (object->string* (eval (string->object cmd))))
 
 (tm-define (tmfs-client-add)
@@ -81,11 +108,7 @@
 (tm-define (tmfs-client-remove)
   (set! tmfs-client-active? #f))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Asynchroneous evaluation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmfs-delayed-remote cmd)
+(define (tmfs-client-remote-sub cmd return)
   (when (not tmfs-client-waiting?)
     (set! tmfs-client-waiting? #t)
     (tmfs-client-write (object->string* cmd))
@@ -98,13 +121,13 @@
 	  (when (!= result "")
 	    (set! tmfs-client-waiting? #f)
 	    (set! wait 1)
-	    (string->object result)))))))
+	    (return (string->object result))))))))
 
-(tm-define (tmfs-remote cmd)
+(tm-define (tmfs-client-remote cmd)
   (if dialogue-break
       (dialogue-user local-continue
 	(with return (dialogue-machine local-continue)
-	  (tmfs-delayed-remote cmd)))
+	  (tmfs-client-remote-sub cmd return)))
       (texmacs-error "dialogue-ask" "Not in dialogue")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -113,16 +136,16 @@
 
 (tm-define (tmfs-checkout l)
   (dialogue
-    (let* ((new-closure (tmfs-remote `(tmfs-closure ,l)))
+    (let* ((new-closure (tmfs-client-remote `(tmfs-closure ,l)))
 	   (old-closure (tmfs-closure l))
 	   (diff-closure (list-difference new-closure old-closure))
-	   (news (tmfs-remote `(tmfs-get-ressources ,diff-closure))))
+	   (news (tmfs-client-remote `(tmfs-get-ressources ,diff-closure))))
       (tmfs-set-ressources news))))
 
 (tm-define (tmfs-commit l)
   (dialogue
-    (let* ((old-closure (tmfs-remote `(tmfs-closure ,l)))
+    (let* ((old-closure (tmfs-client-remote `(tmfs-closure ,l)))
 	   (new-closure (tmfs-closure l))
 	   (diff-closure (list-difference new-closure old-closure))
 	   (news (tmfs-get-ressources diff-closure)))
-      (tmfs-remote `(tmfs-set-ressources ,news)))))
+      (tmfs-client-remote `(tmfs-set-ressources ,news)))))
