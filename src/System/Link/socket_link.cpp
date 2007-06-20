@@ -44,7 +44,7 @@ socket_link_rep::socket_link_rep (string host2, int port2, int type2, int fd):
   io     = fd;
   outbuf = "";
   alive  = (fd != -1);
-  if (type == SOCKET_SERVER) call ("tmfs-server-add-client", object (io));
+  if (type == SOCKET_SERVER) call ("tmfs-server-add", object (io));
   else if (type == SOCKET_CLIENT) call ("tmfs-client-add");
 }
 
@@ -213,7 +213,7 @@ socket_link_rep::interrupt () {
 void
 socket_link_rep::stop () {
   if (!alive) return;
-  if (type == SOCKET_SERVER) call ("tmfs-server-remove-client", object (io));
+  if (type == SOCKET_SERVER) call ("tmfs-server-remove", object (io));
   else if (type == SOCKET_CLIENT) call ("tmfs-client-remove");
   close (io);
   io= -1;
