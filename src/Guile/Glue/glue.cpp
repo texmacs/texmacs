@@ -514,15 +514,28 @@ scm_to_scheme_tree (SCM p) {
 * Content
 ******************************************************************************/
 
+bool
+scm_is_content (SCM p) {
+  if (scm_is_string (p) || scm_is_tree (p)) return true;
+  else if (!scm_is_pair (p) || !scm_is_symbol (SCM_CAR (p))) return false;
+  else {
+    for (p= SCM_CDR (p); !scm_is_null (p); p= SCM_CDR (p))
+      if (!scm_is_content (SCM_CAR (p))) return false;
+    return true;
+  }
+}
+
 #define content tree
-#define SCM_ASSERT_CONTENT(p,arg,rout)
+#define SCM_ASSERT_CONTENT(p,arg,rout) \
+  SCM_ASSERT (scm_is_content (p), p, arg, rout)
 #define content_to_scm tree_to_scm
 
 tree
 scm_to_content (SCM p) {
+  if (scm_is_string (p)) return scm_to_string (p);
   if (scm_is_tree (p)) return scm_to_tree (p);
-  if (scm_is_list (p)) {
-    if (scm_is_null (p) || (!scm_is_symbol (SCM_CAR (p)))) return "?";
+  if (scm_is_pair (p)) {
+    if (!scm_is_symbol (SCM_CAR (p))) return "?";
     tree t (make_tree_label (scm_to_symbol (SCM_CAR (p))));
     p= SCM_CDR (p);
     while (!scm_is_null (p)) {
@@ -531,11 +544,13 @@ scm_to_content (SCM p) {
     }
     return t;
   }
-  if (scm_is_symbol (p)) return scm_to_symbol (p);
-  if (scm_is_string (p)) return scm_to_string (p);
-  if (scm_is_int (p)) return as_string ((int) scm_to_int (p));
-  if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
   return "?";
+}
+
+static SCM
+contentP (SCM t) {
+  bool b= scm_is_content (t);
+  return bool_to_scm (b);
 }
 
 /******************************************************************************
@@ -1251,6 +1266,7 @@ initialize_glue () {
   scm_set_smob_print (url_tag, print_url);
   scm_set_smob_equalp (url_tag, cmp_url);
   scm_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("tm?", (FN) contentP, 1, 0, 0);
   scm_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
   scm_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
@@ -1298,6 +1314,7 @@ initialize_glue () {
   command_tag= scm_newsmob (&command_smob_funcs);
   url_tag= scm_newsmob (&url_smob_funcs);
   scm_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("tm?", (FN) contentP, 1, 0, 0);
   scm_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
   scm_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
