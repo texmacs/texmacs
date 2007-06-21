@@ -788,6 +788,5 @@
 		   ((in? submode gr-tags-curves) (noop))
 		   ((== submode 'text-at) (noop))
 		   (else (display* "Uncaptured finish (edit)\n")))))
-	 ((== (car mode) 'group-edit)
-	   (noop))
+	 ((== (car mode) 'group-edit) (noop))
 	 (else (display* "Uncaptured finish\n")))))
