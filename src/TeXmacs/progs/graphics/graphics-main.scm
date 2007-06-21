@@ -386,7 +386,8 @@
 	      )
 	      ((== type 'detailed)
 	       (if nsubd
-		   (set-car! (cdr (list-ref aspect 3)) nsubd)
+		   (set-car! (cdr (list-ref aspect 3))
+			     (number->string nsubd))
 		   (set-car! (cdr (list-ref aspect 3))
 			     (cadr (list-ref
 				     (get-default-val "gr-grid-aspect")
@@ -399,7 +400,7 @@
       )
       (with aspect
 	    `(tuple (tuple "axes" "none") (tuple "1" "none")
-		    (tuple ,nsubd "none"))
+		    (tuple ,(number->string nsubd) "none"))
 	(if (not nsubd)
 	    (set-car! (cdr (list-ref aspect 3))
 		      (cadr (list-ref
@@ -541,7 +542,7 @@
      (graphics-enter-mode old-mode val)
      (graphics-set-property "gr-mode"
 	(cond ((or (symbol? val) (string? val))
-	       (list 'tuple 'edit val))
+	       (list 'tuple "edit" val))
 	      ((pair? val)
 	       (cons 'tuple val))))))
 
