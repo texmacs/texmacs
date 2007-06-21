@@ -145,6 +145,13 @@ dyn_link_rep::write (string s, int channel) {
   delete[] _session;
 }
 
+string&
+dyn_link_rep::watch (int channel) {
+  static string empty_string= "";
+  if (channel == LINK_OUT) return ret;
+  else return empty_string;
+}
+
 string
 dyn_link_rep::read (int channel) {
   if (channel == LINK_OUT) {

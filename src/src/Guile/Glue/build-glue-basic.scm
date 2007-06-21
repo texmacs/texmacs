@@ -258,6 +258,7 @@
   (tmfs-start-client tmfs_start_client (void string))
   (tmfs-client-read tmfs_client_read (string))
   (tmfs-client-write tmfs_client_write (void string))
+  (tmfs-secure-mode tmfs_secure_mode (void))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))

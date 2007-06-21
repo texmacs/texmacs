@@ -173,7 +173,6 @@ socket_link_rep::write (string s, int channel) {
 void
 socket_link_rep::feed (int channel) {
   if ((!alive) || (channel != LINK_OUT)) return;
-
   char tempout[1024];
   int r= recv (io, tempout, 1024, 0);
   if (r <= 0) {
@@ -185,6 +184,13 @@ socket_link_rep::feed (int channel) {
     if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
+}
+
+string&
+socket_link_rep::watch (int channel) {
+  static string empty_string= "";
+  if (channel == LINK_OUT) return outbuf;
+  else return empty_string;
 }
 
 string
@@ -199,11 +205,15 @@ socket_link_rep::read (int channel) {
 
 void
 socket_link_rep::listen (int msecs) {
-  int wait_until= texmacs_time () + msecs;
-  while (outbuf == "") {
-    listen_to_sockets (); // FIXME: should listen more specifically
-    if (texmacs_time () - wait_until > 0) break;
-  }
+  if (!alive) return;
+  fd_set rfds;
+  FD_ZERO (&rfds);
+  FD_SET (io, &rfds);
+  struct timeval tv;
+  tv.tv_sec  = msecs / 1000;
+  tv.tv_usec = 1000 * (msecs % 1000);
+  int nr= select (io+1, &rfds, NULL, NULL, &tv);
+  if (nr != 0 && FD_ISSET (io, &rfds)) feed (LINK_OUT);
 }
 
 void

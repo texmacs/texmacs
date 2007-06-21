@@ -27,14 +27,15 @@ public:
   socket_server_rep (int port);
   ~socket_server_rep ();
 
-  string start ();
-  void   write (string s, int channel);
-  string read (int channel);
-  void   listen (int msecs);
-  void   interrupt ();
-  void   stop ();
+  string  start ();
+  void    write (string s, int channel);
+  string& watch (int channel);
+  string  read (int channel);
+  void    listen (int msecs);
+  void    interrupt ();
+  void    stop ();
 
-  void start_client ();
+  void    start_client ();
 };
 
 int  number_of_servers ();

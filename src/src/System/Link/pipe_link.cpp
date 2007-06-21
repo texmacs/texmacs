@@ -202,6 +202,14 @@ pipe_link_rep::feed (int channel) {
   }
 }
 
+string&
+pipe_link_rep::watch (int channel) {
+  static string empty_string= "";
+  if (channel == LINK_OUT) return outbuf;
+  else if (channel == LINK_ERR) return errbuf;
+  else return empty_string;
+}
+
 string
 pipe_link_rep::read (int channel) {
   if (channel == LINK_OUT) {
@@ -219,6 +227,7 @@ pipe_link_rep::read (int channel) {
 
 void
 pipe_link_rep::listen (int msecs) {
+  if (!alive) return;
   int wait_until= texmacs_time () + msecs;
   while ((outbuf == "") && (errbuf == "")) {
     listen_to_pipes (); // FIXME: should listen more specifically
