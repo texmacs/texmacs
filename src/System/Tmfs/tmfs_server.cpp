@@ -21,8 +21,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+/******************************************************************************
+* Server side
+******************************************************************************/
+
 static socket_server_rep* tmfs_server= NULL;
-static hashmap<int,string> server_reading ("");
 
 void
 tmfs_start_server () {
@@ -42,36 +45,13 @@ tmfs_stop_server () {
   }
 }
 
-static bool
-message_complete (string s) {
-  int i, n= N(s);
-  for (i=0; i<n; i++)
-    if (s[i] == '\n') break;
-  if (i == n) return false;
-  return (n - (i+1)) >= as_int (s (0, i));
-}
-
-static string
-message_receive (string& s) {
-  int i, n= N(s);
-  for (i=0; i<n; i++)
-    if (s[i] == '\n') break;
-  if (i == n) return "";
-  int l= as_int (s (0, i++));
-  string r= s (i, i+l);
-  s= s (i+l, n);
-  return r;
-}
-
 string
 tmfs_server_read (int fd) {
   tm_link ln= find_socket_link (fd);
   if (nil (ln)) return "";
-  if (!server_reading->contains (fd)) server_reading (fd)= "";
-  string& r= server_reading (fd);
-  r << ln -> read (LINK_OUT);
-  if (!message_complete (r)) return "";
-  string back= message_receive (r);
+  if (!ln->complete_packet (LINK_OUT)) return "";
+  bool success;
+  string back= ln->read_packet (LINK_OUT, 0, success);
   //cout << "Server read " << back << "\n";
   return back;
 }
@@ -81,11 +61,14 @@ tmfs_server_write (int fd, string s) {
   tm_link ln= find_socket_link (fd);
   if (nil (ln)) return;
   //cout << "Server write " << s << "\n";
-  ln->write ((as_string (N(s)) * "\n") * s, LINK_IN);
+  ln->write_packet (s, LINK_IN);
 }
 
+/******************************************************************************
+* Client side
+******************************************************************************/
+
 static socket_link_rep* tmfs_client= NULL;
-static string client_reading= "";
 
 void
 tmfs_start_client (string host) {
@@ -109,9 +92,9 @@ tmfs_stop_client () {
 string
 tmfs_client_read () {
   if (tmfs_client == NULL || !tmfs_client->alive) return "";
-  client_reading << tmfs_client -> read (LINK_OUT);
-  if (!message_complete (client_reading)) return "";
-  string back= message_receive (client_reading);
+  if (!tmfs_client->complete_packet (LINK_OUT)) return "";
+  bool success;
+  string back= tmfs_client->read_packet (LINK_OUT, 0, success);
   //cout << "Server read " << back << "\n";
   return back;
 }
@@ -120,5 +103,10 @@ void
 tmfs_client_write (string s) {
   if (tmfs_client == NULL || !tmfs_client->alive) return;
   //cout << "Client write " << s << "\n";
-  tmfs_client->write ((as_string (N(s)) * "\n") * s, LINK_IN);
+  tmfs_client->write_packet (s, LINK_IN);
+}
+
+void
+tmfs_secure_mode () {
+  tmfs_client->secure_client ();
 }

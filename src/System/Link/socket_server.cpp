@@ -108,6 +108,12 @@ socket_server_rep::write (string s, int channel) {
   (void) s; (void) channel;
 }
 
+string&
+socket_server_rep::watch (int channel) {
+  static string empty_string= "";
+  (void) channel; return empty_string;
+}
+
 string
 socket_server_rep::read (int channel) {
   (void) channel; return "";

@@ -2979,6 +2979,15 @@ tmg_tmfs_client_write (SCM arg1) {
 }
 
 SCM
+tmg_tmfs_secure_mode () {
+  // SCM_DEFER_INTS;
+  tmfs_secure_mode ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_connection_declaredP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
 
@@ -3774,6 +3783,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tmfs-start-client", (FN) tmg_tmfs_start_client, 1, 0, 0);
   scm_new_procedure ("tmfs-client-read", (FN) tmg_tmfs_client_read, 0, 0, 0);
   scm_new_procedure ("tmfs-client-write", (FN) tmg_tmfs_client_write, 1, 0, 0);
+  scm_new_procedure ("tmfs-secure-mode", (FN) tmg_tmfs_secure_mode, 0, 0, 0);
   scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

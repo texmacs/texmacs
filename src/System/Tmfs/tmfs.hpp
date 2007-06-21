@@ -159,5 +159,6 @@ void tmfs_server_write (int fd, string s);
 void tmfs_start_client (string host);
 string tmfs_client_read ();
 void tmfs_client_write (string s);
+void tmfs_secure_mode ();
 
 #endif // defined TMFS_H

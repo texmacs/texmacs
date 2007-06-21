@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : tm_link.cpp
+* MODULE     : tm_link.hpp
 * DESCRIPTION: Links between TeXmacs and extern programs
 * COPYRIGHT  : (C) 2000  Joris van der Hoeven
 *******************************************************************************
@@ -37,18 +37,26 @@
 ******************************************************************************/
 
 struct tm_link_rep: abstract_struct {
-  bool alive; // link is alive
+  bool   alive;   // link is alive
+  string secret;  // empty string or secret key for encrypted connections
 
 public:
   inline tm_link_rep () {}
   inline virtual ~tm_link_rep () {}
 
-  virtual string start () = 0;
-  virtual void   write (string s, int channel) = 0;
-  virtual string read (int channel) = 0;
-  virtual void   listen (int msecs) = 0;
-  virtual void   interrupt () = 0;
-  virtual void   stop () = 0;
+  virtual string  start () = 0;
+  virtual void    write (string s, int channel) = 0;
+  virtual string& watch (int channel) = 0;
+  virtual string  read (int channel) = 0;
+  virtual void    listen (int msecs) = 0;
+  virtual void    interrupt () = 0;
+  virtual void    stop () = 0;
+
+  void write_packet (string s, int channel);
+  bool complete_packet (int channel);
+  string read_packet (int channel, int timeout, bool& success);
+  void secure_server (string cmd);
+  void secure_client ();
 
   friend class tm_link;
 };
