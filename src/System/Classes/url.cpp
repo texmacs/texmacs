@@ -417,12 +417,6 @@ is_ramdisc (url u) {
   return is_concat (u) && is_root (u[1], "ramdisc");
 }
 
-bool
-is_without_name (url u) {
-  string s= as_string (u);
-  return (N(s)>=7) && (s(0,7)=="no name");
-}
-
 /******************************************************************************
 * Conversion routines for urls
 ******************************************************************************/

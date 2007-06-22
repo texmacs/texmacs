@@ -26,6 +26,8 @@ bool is_symbolic_link (url name);
 bool is_newer (url which, url than);
 int  last_modified (url u, bool cache_flag= true);
 url  url_temp (string suffix= "");
+url  url_scratch (string prefix= "no_name_", string postfix= ".tm", int i=1);
+bool is_scratch (url u);
 
 array<string> read_directory (url name, bool& error_flag);
 

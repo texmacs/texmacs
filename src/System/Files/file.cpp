@@ -314,6 +314,22 @@ url_temp (string suffix) {
   return u;
 }
 
+url
+url_scratch (string prefix, string postfix, int i) {
+  url dir ("$TEXMACS_HOME_PATH/texts/scratch");
+  if (!exists (dir)) mkdir (dir);
+  for (; true; i++) {
+    url name= dir * (prefix * as_string (i) * postfix);
+    if (!exists (name)) return name;
+  }
+  return dir * (prefix * "x" * postfix);
+}
+
+bool
+is_scratch (url u) {
+  return head (u) == url ("$TEXMACS_HOME_PATH/texts/scratch");
+}
+
 /******************************************************************************
 * Reading directories
 ******************************************************************************/

@@ -55,6 +55,15 @@ tm_data_rep::find_buffer (url name) {
 string
 tm_data_rep::new_menu_name (url u) {
   string name= as_string (tail (u));
+  if (starts (name, "no_name_") && ends (name, ".tm")) {
+    display dis= current_display ();
+    string lan= dis->get_output_language ();
+    string no_name= translate ("No name", "english", lan);
+    for (int i=0; i<N(no_name); i++)
+      if (((unsigned char) (no_name[i])) >= (unsigned char) 128)
+	{ no_name= "No name"; break; }
+    name= no_name * " [" * name (8, N(name) - 3) * "]";
+  }
   if ((name == "") || (name == "."))
     name= as_string (tail (u * url_parent ()));
   if ((name == "") || (name == "."))
@@ -439,13 +448,15 @@ tm_data_rep::get_buf (path p) {
 
 url
 tm_data_rep::new_buffer () {
-  int i;
-  for (i=1; true; i++) {
-    string name= "no name " * as_string (i);
-    if (i==1) name= "no name";
-    if (find_buffer (name) != -1) continue;
-    new_buffer_in_this_window (name, tree (DOCUMENT));
-    return name;
+  int i=1;
+  while (true) {
+    url name= url_scratch ("no_name_", ".tm", i);
+    int nr= find_buffer (name);
+    if (nr == -1) {
+      new_buffer_in_this_window (name, tree (DOCUMENT));
+      return name;
+    }
+    else i++;
   }
 }
 
@@ -543,13 +554,15 @@ tm_data_rep::kill_buffer () {
 
 url
 tm_data_rep::open_window (tree geom) {
-  int i;
-  for (i=1; true; i++) {
-    string name= "no name " * as_string (i);
-    if (i==1) name= "no name";
-    if (find_buffer (name) != -1) continue;
-    new_buffer_in_new_window (name, tree (DOCUMENT), geom);
-    return name;
+  int i=1;
+  while (true) {
+    url name= url_scratch ("no_name_", ".tm", i);
+    int nr= find_buffer (name);
+    if (nr == -1) {
+      new_buffer_in_new_window (name, tree (DOCUMENT), geom);
+      return name;
+    }
+    else i++;
   }
 }
 
