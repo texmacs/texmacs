@@ -254,13 +254,16 @@
   (tmfs-import tmfs_import (void url))
   (tmfs-export tmfs_export (void url))
 
-  (tmfs-start-server tmfs_start_server (void))
-  (tmfs-server-read tmfs_server_read (string int))
-  (tmfs-server-write tmfs_server_write (void int string))
-  (tmfs-start-client tmfs_start_client (void string))
-  (tmfs-client-read tmfs_client_read (string))
-  (tmfs-client-write tmfs_client_write (void string))
-  (tmfs-secure-mode tmfs_secure_mode (void))
+  ;; TeXmacs servers and clients
+  (server-start server_start (void))
+  (server-stop server_stop (void))
+  (server-read server_read (string int))
+  (server-write server_write (void int string))
+  (client-start client_start (void string))
+  (client-stop client_stop (void))
+  (client-read client_read (string))
+  (client-write client_write (void string))
+  (enter-secure-mode enter_secure_mode (void))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))

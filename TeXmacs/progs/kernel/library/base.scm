@@ -226,6 +226,15 @@
   "Parse @s and build scheme object"
   (call-with-input-string s read))
 
+(define-public (object->string* obj)
+  (cond ((null? obj) (object->string obj))
+	((pair? obj) (object->string obj))
+	((number? obj) (object->string obj))
+	((string? obj) (object->string obj))
+	((symbol? obj) (object->string obj))
+	((tree? obj) (object->string (tree->stree obj)))
+	(else (object->string #f))))
+
 (define-public (func? x f . opts)
   "Is @x a list with first stree @f? Optionally test the length of @x."
   (let ((n (length opts)))
