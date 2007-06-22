@@ -1,0 +1,64 @@
+
+/******************************************************************************
+* MODULE     : texmacs_client.cpp
+* DESCRIPTION: clients of TeXmacs servers
+* COPYRIGHT  : (C) 2007  Joris van der Hoeven 
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "client_server.hpp"
+#include "socket_server.hpp"
+#include "socket_link.hpp"
+#include "Scheme/object.hpp"
+
+static socket_link_rep* the_client= NULL;
+
+/******************************************************************************
+* Client side
+******************************************************************************/
+
+void
+client_start (string host) {
+  if (the_client == NULL) {
+    (void) eval ("(use-modules (remote texmacs-server))");
+    (void) eval ("(use-modules (remote texmacs-client))");
+    the_client= new socket_link_rep (host, 6561, SOCKET_CLIENT, -1);
+  }
+  if (!the_client->alive)
+    cout << "TeXmacs] Starting client... " << the_client->start () << "\n";
+}
+
+void
+client_stop () {
+  if (the_client != NULL) {
+    the_client->stop ();
+    delete the_client;
+    the_client= NULL;
+  }
+}
+
+string
+client_read () {
+  if (the_client == NULL || !the_client->alive) return "";
+  if (!the_client->complete_packet (LINK_OUT)) return "";
+  bool success;
+  string back= the_client->read_packet (LINK_OUT, 0, success);
+  //cout << "Server read " << back << "\n";
+  return back;
+}
+
+void
+client_write (string s) {
+  if (the_client == NULL || !the_client->alive) return;
+  //cout << "Client write " << s << "\n";
+  the_client->write_packet (s, LINK_IN);
+}
+
+void
+enter_secure_mode () {
+  the_client->secure_client ();
+}
