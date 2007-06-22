@@ -258,6 +258,14 @@ tm_data_rep::get_name_buffer (path p) {
   return bufs[nr]->name;
 }
 
+url
+tm_data_rep::get_all_buffers () {
+  url u= url_none ();
+  for (int i=N(bufs)-1; i>=0; i--)
+    u= bufs[i]->name | u;
+  return u;
+}
+
 /******************************************************************************
 * Low level view routines
 ******************************************************************************/
@@ -429,7 +437,7 @@ tm_data_rep::get_buf (path p) {
   else return NULL;
 }
 
-void
+url
 tm_data_rep::new_buffer () {
   int i;
   for (i=1; true; i++) {
@@ -437,7 +445,7 @@ tm_data_rep::new_buffer () {
     if (i==1) name= "no name";
     if (find_buffer (name) != -1) continue;
     new_buffer_in_this_window (name, tree (DOCUMENT));
-    return;
+    return name;
   }
 }
 
@@ -533,7 +541,7 @@ tm_data_rep::kill_buffer () {
   delete_buffer (buf);
 }
 
-void
+url
 tm_data_rep::open_window (tree geom) {
   int i;
   for (i=1; true; i++) {
@@ -541,7 +549,7 @@ tm_data_rep::open_window (tree geom) {
     if (i==1) name= "no name";
     if (find_buffer (name) != -1) continue;
     new_buffer_in_new_window (name, tree (DOCUMENT), geom);
-    return;
+    return name;
   }
 }
 
@@ -768,6 +776,96 @@ set_document (path rp, tree t) {
 #ifdef EXPERIMENTAL
   global_notify_assign (rp, copy (t));
 #endif
+}
+
+/******************************************************************************
+* Window management
+******************************************************************************/
+
+static int  last_window= 1;
+static path the_windows;
+
+int
+create_window_id () {
+  the_windows= path (last_window, the_windows);
+  return last_window++;
+}
+
+static path
+remove (path p, int i) {
+  if (nil (p)) return p;
+  else if (p->item == i) return p->next;
+  else return path (p->item, remove (p->next, i));
+}
+
+void
+destroy_window_id (int i) {
+  the_windows= remove (the_windows, i);
+}
+
+int
+tm_data_rep::window_current () {
+  tm_window win= get_window ();
+  return win->id;
+}
+
+path
+tm_data_rep::windows_list () {
+  return the_windows;
+}
+
+path
+tm_data_rep::buffer_to_windows (url name) {
+  path p;
+  int nr= find_buffer (name);
+  if (nr == -1) return path ();
+  tm_buffer buf= bufs[nr];
+  for (int i=0; i<N(buf->vws); i++)
+    if (buf->vws[i]->win != NULL)
+      p= path (buf->vws[i]->win->id, p);
+  return p;
+}
+
+url
+tm_data_rep::window_to_buffer (int id) {
+  for (int i=0; i<N(bufs); i++)
+    for (int j=0; j<N(bufs[i]->vws); j++)
+      if (bufs[i]->vws[j]->win != NULL)
+	if (bufs[i]->vws[j]->win->id == id)
+	  return bufs[i]->name;
+  return url_none ();
+}
+
+tm_view
+tm_data_rep::window_find_view (int id) {
+  for (int i=0; i<N(bufs); i++)
+    for (int j=0; j<N(bufs[i]->vws); j++)
+      if (bufs[i]->vws[j]->win != NULL)
+	if (bufs[i]->vws[j]->win->id == id)
+	  return bufs[i]->vws[j];
+  return NULL;
+}
+
+void
+tm_data_rep::window_set_buffer (int id, url name) {
+  tm_view old_vw= window_find_view (id);
+  if (old_vw == NULL || old_vw->buf->name == name) return;
+  tm_window win= old_vw->win;
+  int nr= find_buffer (name);
+  if (nr == -1) return;
+  tm_buffer buf   = bufs[nr];
+  tm_view   new_vw= get_passive_view (buf);
+  detach_view (old_vw);
+  attach_view (win, new_vw);
+}
+
+void
+tm_data_rep::window_focus (int id) {
+  if (id == window_current ()) return;
+  tm_view vw= window_find_view (id);
+  if (vw == NULL) return;
+  set_view (vw);
+  menu_focus_buffer (vw->buf);
 }
 
 /******************************************************************************

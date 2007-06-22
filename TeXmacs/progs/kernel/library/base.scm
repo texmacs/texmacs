@@ -248,3 +248,29 @@
 
 (define-public (position-new . opts)
   (position-new-path (if (null? opts) (cursor-path) (car opts))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Urls and buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (url->list u)
+  (cond ((url-none? u) '())
+	((url-or? u) (append (url->list (url-ref u 1))
+			     (url->list (url-ref u 2))))
+	(else (list u))))
+
+(define-public (list->url l)
+  (cond ((null? l) (url-none))
+	((null? (cdr l)) (car l))
+	(else (url-or (car l) (list->url (cdr l))))))
+
+(define-public (buffer->tree u)
+  (with t (get-buffer-tree u)
+    (and (tree-active? t) t)))
+
+(define-public (tree->buffer t)
+  (and-with p (tree->path t)
+    (get-name-buffer-path p)))
+
+(define-public (buffer-list)
+  (url->list (get-all-buffers)))

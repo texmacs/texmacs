@@ -323,20 +323,9 @@
 ;; Thumbnails facility
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (url-or-list l)
-  (cond ((null? l) (url-none))
-	((null? (cdr l)) (car l))
-	(else (url-or (car l) (url-or-list (cdr l))))))
-
 (define (thumbnail-suffixes)
-  (url-or-list (map url-wildcard
-		    '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG"))))
-
-(define (url->list u)
-  (cond ((url-none? u) '())
-	((url-or? u) (append (url->list (url-ref u 1))
-			     (url->list (url-ref u 2))))
-	(else (list u))))
+  (list->url (map url-wildcard
+		  '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG"))))
 
 (define (fill-row l nr)
   (cond ((= nr 0) '())

@@ -44,13 +44,6 @@
       (system-mkdir dir)
       (system-copy file u2))))
 
-(define (url->list u)
-  (cond ((url-none? u) '())
-	((url-or? u)
-	 (append (url->list (url-ref u 1))
-		 (url->list (url-ref u 2))))
-	(else (list u))))
-
 (tm-define (tmweb-convert-dir tm-dir html-dir)
   (let* ((u1 (url-append tm-dir (url-any)))
 	 (u2 (url-expand (url-complete u1 "dr")))

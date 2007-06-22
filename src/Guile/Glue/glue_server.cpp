@@ -458,10 +458,10 @@ tmg_get_abbr_buffer () {
 SCM
 tmg_new_buffer () {
   // SCM_DEFER_INTS;
-  get_server()->new_buffer ();
+  url out= get_server()->new_buffer ();
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return url_to_scm (out);
 }
 
 SCM
@@ -541,10 +541,10 @@ tmg_open_buffer_in_window (SCM arg1, SCM arg2, SCM arg3) {
 SCM
 tmg_open_window () {
   // SCM_DEFER_INTS;
-  get_server()->open_window ();
+  url out= get_server()->open_window ();
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return url_to_scm (out);
 }
 
 SCM
@@ -554,10 +554,10 @@ tmg_open_window_geometry (SCM arg1) {
   content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->open_window (in1);
+  url out= get_server()->open_window (in1);
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return url_to_scm (out);
 }
 
 SCM
@@ -718,6 +718,15 @@ tmg_get_buffer_tree (SCM arg1) {
 }
 
 SCM
+tmg_get_all_buffers () {
+  // SCM_DEFER_INTS;
+  url out= get_server()->get_all_buffers ();
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
 tmg_get_buffer_menu () {
   // SCM_DEFER_INTS;
   object out= get_server()->get_buffer_menu ();
@@ -779,6 +788,78 @@ tmg_get_project_buffer_menu () {
   // SCM_ALLOW_INTS;
 
   return object_to_scm (out);
+}
+
+SCM
+tmg_window_current () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->window_current ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_window_list () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->windows_list ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_buffer_2windows (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "buffer->windows");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  path out= get_server()->buffer_to_windows (in1);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_window_2buffer (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window->buffer");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= get_server()->window_to_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_window_set_buffer (SCM arg1, SCM arg2) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-set-buffer");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "window-set-buffer");
+
+  int in1= scm_to_int (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->window_set_buffer (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_window_focus (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-focus");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->window_focus (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -1178,12 +1259,19 @@ initialize_glue_server () {
   scm_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
   scm_new_procedure ("set-buffer-tree", (FN) tmg_set_buffer_tree, 2, 0, 0);
   scm_new_procedure ("get-buffer-tree", (FN) tmg_get_buffer_tree, 1, 0, 0);
+  scm_new_procedure ("get-all-buffers", (FN) tmg_get_all_buffers, 0, 0, 0);
   scm_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);
   scm_new_procedure ("buffer-in-menu", (FN) tmg_buffer_in_menu, 2, 0, 0);
   scm_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
   scm_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
   scm_new_procedure ("project-attached?", (FN) tmg_project_attachedP, 0, 0, 0);
   scm_new_procedure ("get-project-buffer-menu", (FN) tmg_get_project_buffer_menu, 0, 0, 0);
+  scm_new_procedure ("window-current", (FN) tmg_window_current, 0, 0, 0);
+  scm_new_procedure ("window-list", (FN) tmg_window_list, 0, 0, 0);
+  scm_new_procedure ("buffer->windows", (FN) tmg_buffer_2windows, 1, 0, 0);
+  scm_new_procedure ("window->buffer", (FN) tmg_window_2buffer, 1, 0, 0);
+  scm_new_procedure ("window-set-buffer", (FN) tmg_window_set_buffer, 2, 0, 0);
+  scm_new_procedure ("window-focus", (FN) tmg_window_focus, 1, 0, 0);
   scm_new_procedure ("texmacs-load-tree", (FN) tmg_texmacs_load_tree, 2, 0, 0);
   scm_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
   scm_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);

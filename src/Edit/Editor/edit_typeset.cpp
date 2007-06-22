@@ -19,7 +19,7 @@
 #include "Bridge/impl_typesetter.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Environment/std_environment.hpp"
-#endif EXPERIMENTAL
+#endif // EXPERIMENTAL
 
 //box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
 
