@@ -35,8 +35,7 @@ safe_malloc (register size_t sz) {
   void* ptr= malloc (sz);
   if (ptr==NULL) {
     cerr << "Fatal error: out of memory\n";
-    cout << 1/0 << "\n";
-    exit (1);
+    abort ();
   }
   return ptr;
 }
