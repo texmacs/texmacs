@@ -2241,6 +2241,36 @@ tmg_url_temp () {
 }
 
 SCM
+tmg_url_scratch (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "url-scratch");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "url-scratch");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "url-scratch");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  url out= url_scratch (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_url_scratchP (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "url-scratch?");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_scratch (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_string_save (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-save");
   SCM_ASSERT_URL (arg2, SCM_ARG2, "string-save");
@@ -3729,6 +3759,8 @@ initialize_glue_basic () {
   scm_new_procedure ("url-newer?", (FN) tmg_url_newerP, 2, 0, 0);
   scm_new_procedure ("url-last-modified", (FN) tmg_url_last_modified, 1, 0, 0);
   scm_new_procedure ("url-temp", (FN) tmg_url_temp, 0, 0, 0);
+  scm_new_procedure ("url-scratch", (FN) tmg_url_scratch, 3, 0, 0);
+  scm_new_procedure ("url-scratch?", (FN) tmg_url_scratchP, 1, 0, 0);
   scm_new_procedure ("string-save", (FN) tmg_string_save, 2, 0, 0);
   scm_new_procedure ("string-load", (FN) tmg_string_load, 1, 0, 0);
   scm_new_procedure ("system-move", (FN) tmg_system_move, 2, 0, 0);

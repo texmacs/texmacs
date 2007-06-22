@@ -105,7 +105,6 @@ bool is_rooted_name (url u);
 bool is_path (url u);
 bool is_rooted_path (url u);
 bool is_ramdisc (url u);
-bool is_without_name (url u);
 
 /******************************************************************************
 * operations on urls

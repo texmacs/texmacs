@@ -196,6 +196,8 @@
   (url-newer? is_newer (bool url url))
   (url-last-modified last_modified (int url))
   (url-temp url_temp (url))
+  (url-scratch url_scratch (url string string int))
+  (url-scratch? is_scratch (bool url))
   (string-save string_save (void string url))
   (string-load string_load (string url))
   (system-move move (void url url))

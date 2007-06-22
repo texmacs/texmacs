@@ -167,7 +167,7 @@ tm_scheme_rep::choose_file (object fun, string title, string type) {
   url     name= get_name_buffer ();
   command cb  = dialogue_command (get_server(), fun, 1);
   widget  wid = file_chooser_widget (cb, type, magn);
-  if (!is_without_name (name)) {
+  if (!is_scratch (name)) {
     wid << set_string ("directory", as_string (head (name)));
     if ((type != "image") && (type != "")) {
       url u= tail (name);

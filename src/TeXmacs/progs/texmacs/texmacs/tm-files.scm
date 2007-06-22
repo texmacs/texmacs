@@ -30,11 +30,9 @@
 
 (tm-define (save-buffer . l)
   (if (and (pair? l) (url? (car l))) (set! current-save-target (car l)))
-  (cond ((= (length l) 0)
-	 (if (no-name?)
-	     (interactive save-buffer)
-	     (texmacs-save-buffer (get-name-buffer) "generic")))
-	((= (length l) 1) (secure-save-buffer (car l) "generic"))
+  (cond ((= (length l) 0) (save-buffer (get-name-buffer)))
+	((= (length l) 1) (save-buffer (car l) "generic"))
+	((url-scratch? (car l)) (interactive save-buffer))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
 (tm-define (export-buffer to)
@@ -81,15 +79,6 @@
 	  (:pause len)
 	  (auto-save)))))
 
-(tm-define (recover-auto-save)
-  (with name "$TEXMACS_HOME_PATH/system/autosave.tm"
-    (if (url-exists? name)
-	(dialogue
-	  (if (dialogue-confirm? "Recover autosave file?" #t)
-	      (with t (texmacs-load-tree name "texmacs")
-		(set-buffer (get-name-buffer) t))
-	      (system-remove name))))))
-
 (define (notify-autosave var val)
   (if (has-view?) ; delayed-autosave would crash at initialization time
       (delayed-auto-save)))
@@ -103,7 +92,7 @@
 
 (tm-define (propose-name-buffer)
   (with name (url->string (get-name-buffer))
-    (cond ((not (string-starts? name "no name")) name)
+    (cond ((not (url-scratch? name)) name)
 	  ((os-win32?) "")
 	  (else (string-append (var-eval-system "pwd") "/")))))
 

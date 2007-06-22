@@ -227,6 +227,8 @@ tm_data_rep::save_buffer (url u, string fm) {
     else {
       set_message ("saved " * name, action);
       if (fm == "texmacs") {
+	if (no_name () && exists (get_name_buffer ()))
+	  remove (get_name_buffer ());
 	set_name_buffer (u);
 	pretend_save_buffer ();
 	if (suffix (u) == "ts") style_clear_cache ();
@@ -242,9 +244,9 @@ tm_data_rep::auto_save () {
   for (i=0; i<n; i++) {
     tm_buffer buf= bufs[i];
     if ((buf->needs_to_be_autosaved () && (!buf->read_only))) {
-      url name= glue (buf->name, "~");
-      if (is_without_name (buf->name))
-	name= "$TEXMACS_HOME_PATH/system/autosave.tm";
+      url name= buf->name;
+      if (!is_scratch (name))
+	name= glue (buf->name, "~");
       if (N(buf->vws)!=0) {
 	tree doc= make_document (buf->vws[0]);
 	if (save_string (name, tree_to_texmacs (doc)))
@@ -270,7 +272,7 @@ tm_data_rep::auto_save () {
 bool
 tm_data_rep::no_name () {
   tm_buffer buf= get_buffer ();
-  return is_without_name (buf->name);
+  return is_scratch (buf->name);
 }
 
 bool
