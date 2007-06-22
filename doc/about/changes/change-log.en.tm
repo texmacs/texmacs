@@ -1,13 +1,21 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.10>
+  <section|Changes from version 1.0.6 to 1.0.6.11>
 
   <\itemize>
+    <item>More control for developers over buffer and window management
+    (1.0.6.11).
+
+    <item>Started rewroting new <TeXmacs> file system in C++ (1.0.6.11).
+
+    <item>Rewrote secure peer to peer client/server connections in C++
+    (1.0.6.11).
+
     <item>Increased user-friendliness of graphics mode (1.0.6.10).
 
     <item>Necessary updates for Maxima 5.10.0 (1.0.6.10).
