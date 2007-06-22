@@ -135,6 +135,20 @@ disk_decode_transaction (string s) {
 }
 
 /******************************************************************************
+* Constructors and destructors
+******************************************************************************/
+
+disk_table_rep::disk_table_rep (url root2): root (root2) {
+  if (exists (root * "pending")) {
+    string s;
+    load_string (root * "pending", s, true);
+    pending_write= disk_decode_transaction (s);
+  }
+}
+
+disk_table_rep::~disk_table_rep () {}
+
+/******************************************************************************
 * Writing values to disk
 ******************************************************************************/
 
@@ -201,7 +215,32 @@ write_to_disk (url u, transaction t) {
 
 void
 disk_table_rep::write (transaction t) {
-  write_to_disk (root, t);
+  // write_to_disk (root, t);
+
+  transaction pending;
+  transaction r;
+  iterator<string> it= iterate (t);
+  while (it->busy ()) {
+    string s= it->next ();
+    collection val= t[s];
+    if (N (filter (val, true)) == 0) pending (s)= val;
+    else r (s)= val;
+  }
+
+  string app= disk_encode_transaction (pending);
+  save_string (root * "pending", app, true, true);
+  merge (pending_write, pending);
+  merge (pending_read, pending);
+  write_to_disk (root, r);
+
+  if (N (pending_write) > 10000) {
+    write_to_disk (root, pending_write);
+    remove (root * "pending");
+  }
+  if (N (pending_read) > 10000) {
+    read_cache= pending_read;
+    pending_read= transaction ();
+  }
 }
 
 /******************************************************************************
@@ -252,5 +291,32 @@ read_from_disk (url u, collection keys, int level) {
 
 transaction
 disk_table_rep::read (collection keys) {
-  return read_from_disk (root, keys, 0);
+  //return read_from_disk (root, keys, 0);
+
+  transaction done;
+  collection  remaining;
+  iterator<string> it= iterate (keys);
+  while (it->busy ()) {
+    string s= it->next ();
+    if (keys [s] > 0 && keys [s] < 3) {
+      if (pending_read->contains (s))
+	done (s)= pending_read [s];
+      else if (read_cache->contains (s))
+	done (s)= read_cache [s];
+      else remaining (s)= keys [s];
+    }
+  }
+
+  transaction extra= read_from_disk (root, remaining, 0);
+  it= iterate (remaining);
+  while (it->busy ()) {
+    string s= it->next ();
+    if (remaining [s] > 0 && remaining [s] < 3)
+      pending_read (s)= extra [s];
+  }
+  if (N (pending_read) > 10000) {
+    read_cache= pending_read;
+    pending_read= transaction ();
+  }
+  return done * extra;
 }

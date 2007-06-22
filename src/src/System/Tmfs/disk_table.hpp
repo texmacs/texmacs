@@ -21,11 +21,14 @@ typedef hashmap<string,collection> transaction;
 
 class disk_table_rep: concrete_struct {
 private:
-  url root; // directory where the table is stored
+  url         root;           // directory where the table is stored
+  transaction pending_write;  // pending transactions for writing
+  transaction pending_read;   // pending transactions for caching
+  transaction read_cache;     // cache for reading
 
 public:
-  inline disk_table_rep (url root2): root (root2) {}
-  inline ~disk_table_rep () {}
+  disk_table_rep (url root2);
+  ~disk_table_rep ();
   void write (transaction t);
   transaction read (collection keys);
   friend class disk_table;
