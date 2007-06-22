@@ -24,7 +24,6 @@ static socket_link_rep* the_client= NULL;
 void
 client_start (string host) {
   if (the_client == NULL) {
-    (void) eval ("(use-modules (remote texmacs-server))");
     (void) eval ("(use-modules (remote texmacs-client))");
     the_client= new socket_link_rep (host, 6561, SOCKET_CLIENT, -1);
   }

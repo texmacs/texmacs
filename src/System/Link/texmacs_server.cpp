@@ -25,7 +25,6 @@ void
 server_start () {
   if (the_server == NULL) {
     (void) eval ("(use-modules (remote texmacs-server))");
-    (void) eval ("(use-modules (remote texmacs-client))");
     the_server= new socket_server_rep (6561);
   }
   if (!the_server->alive)
