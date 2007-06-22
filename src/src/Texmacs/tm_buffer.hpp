@@ -20,6 +20,8 @@ extern tree the_et;
 path new_document ();
 void delete_document (path rp);
 void set_document (path rp, tree t);
+int  create_window_id ();
+void destroy_window_id (int);
 
 class tm_buffer_rep {
 public:
@@ -87,8 +89,10 @@ class tm_window_rep {
 public:
   window    win;
   tm_widget wid;
+  int       id;
   inline tm_window_rep (tm_widget wid2, tree geom):
-    win (texmacs_window (wid2, geom)), wid (wid2) {}
+    win (texmacs_window (wid2, geom)), wid (wid2), id (create_window_id ()) {}
+  inline ~tm_window_rep () { destroy_window_id (id); }
 };
 
 typedef tm_buffer_rep* tm_buffer;

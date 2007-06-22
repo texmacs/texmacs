@@ -63,14 +63,14 @@ public:
   int  nr_bufs ();
   tm_buffer get_buf (int i);
   tm_buffer get_buf (path p);
-  void new_buffer ();
+  url  new_buffer ();
   void switch_to_buffer (int nr);
   bool switch_to_buffer (path p);
   void switch_to_buffer (url name);
   void switch_to_active_buffer (url name);
   void revert_buffer ();
   void kill_buffer ();
-  void open_window (tree geom= "");
+  url  open_window (tree geom= "");
   void clone_window ();
   void kill_window ();
   void kill_window_and_buffer ();
@@ -86,6 +86,7 @@ public:
   void browse_help (int delta);
   void set_buffer_tree (url name, tree doc);
   tree get_buffer_tree (url name);
+  url  get_all_buffers ();
   object get_buffer_menu ();
   bool buffer_in_menu (url name, bool flag);
 
@@ -93,6 +94,15 @@ public:
   void project_attach (string prj_name);
   bool project_attached ();
   object get_project_buffer_menu ();
+
+  /* Window management */
+  int  window_current ();
+  path windows_list ();
+  path buffer_to_windows (url name);
+  url  window_to_buffer (int id);
+  tm_view window_find_view (int id);
+  void window_set_buffer (int id, url name);
+  void window_focus (int id);
 
   /* File management */
   tree load_tree (url name, string fm);

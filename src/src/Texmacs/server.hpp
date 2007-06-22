@@ -72,14 +72,14 @@ public:
   virtual url  get_name_buffer (path p) = 0;
   virtual void set_abbr_buffer (string abbr) = 0;
   virtual string get_abbr_buffer () = 0;
-  virtual void new_buffer () = 0;
+  virtual url  new_buffer () = 0;
   virtual void switch_to_buffer (url name) = 0;
   virtual bool switch_to_buffer (path p) = 0;
   virtual void switch_to_active_buffer (url name) = 0;
   virtual void revert_buffer () = 0;
   virtual void kill_buffer () = 0;
   virtual void new_buffer_in_new_window (url name, tree t, tree geom= "") = 0;
-  virtual void open_window (tree geom= "") = 0;
+  virtual url  open_window (tree geom= "") = 0;
   virtual void clone_window () = 0;
   virtual void kill_window () = 0;
   virtual void kill_window_and_buffer () = 0;
@@ -94,6 +94,7 @@ public:
   virtual void set_help_buffer (url name, tree doc) = 0;
   virtual void set_buffer_tree (url name, tree doc) = 0;
   virtual tree get_buffer_tree (url name) = 0;
+  virtual url  get_all_buffers () = 0;
   virtual object get_buffer_menu () = 0;
   virtual bool buffer_in_menu (url name, bool flag) = 0;
 
@@ -101,6 +102,14 @@ public:
   virtual void project_attach (string prj_name= "") = 0;
   virtual bool project_attached () = 0;
   virtual object get_project_buffer_menu () = 0;
+
+  /* Window management */
+  virtual int  window_current () = 0;
+  virtual path windows_list () = 0;
+  virtual path buffer_to_windows (url name) = 0;
+  virtual url  window_to_buffer (int id) = 0;
+  virtual void window_set_buffer (int id, url name) = 0;
+  virtual void window_focus (int id) = 0;
 
   /* Loading and saving files */
   virtual tree load_tree (url name, string f) = 0;
