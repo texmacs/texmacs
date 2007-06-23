@@ -13,6 +13,7 @@
 #include "tmfs.hpp"
 #include "file.hpp"
 
+void write_to_disk (url u, transaction t);
 transaction read_table_from_disk (url u);
 
 /******************************************************************************
@@ -129,24 +130,70 @@ disk_decode_transaction (string s) {
     start= i;
     for (; i<n; i++)
       if (s[i] == '\n') break;
-    t(key)= disk_decode_collection (s (start, i));
+    if (!t->contains (key)) t (key)= collection ();
+    merge (t (key), disk_decode_collection (s (start, i)));
   }
   return t;
 }
 
 /******************************************************************************
-* Constructors and destructors
+* Constructors and destructors and pending disk cache
 ******************************************************************************/
 
 disk_table_rep::disk_table_rep (url root2): root (root2) {
+  if (!exists (root)) mkdir (root);
   if (exists (root * "pending")) {
     string s;
     load_string (root * "pending", s, true);
-    pending_write= disk_decode_transaction (s);
+    transaction t= disk_decode_transaction (s);
+    write_to_disk (root, t);
+    remove (root * "pending");
+  }
+  open_pending_write ();
+}
+
+disk_table_rep::~disk_table_rep () {
+  close_pending_write ();
+}
+
+void
+disk_table_rep::open_pending_write () {
+  string name= concretize (root * "pending");
+  char* _name= as_charp (name);
+#ifdef OS_WIN32
+  pending_fp= _fopen (_name, "ab");
+#else
+  pending_fp= fopen (_name, "a");
+#endif
+  if (pending_fp == NULL)
+    fatal_error ("Cannot store pending writes file for TeXmacs file system",
+		 "disk_table_rep::open_pending_write");
+  delete[] _name;
+}
+
+void
+disk_table_rep::close_pending_write () {
+  fclose (pending_fp);
+}
+
+void
+disk_table_rep::flush_pending_write () {
+  if (N (pending_write) > 10000) {
+    write_to_disk (root, pending_write);
+    pending_write= transaction ();
+    close_pending_write ();
+    remove (root * "pending");
+    open_pending_write ();
   }
 }
 
-disk_table_rep::~disk_table_rep () {}
+void
+disk_table_rep::flush_pending_read () {
+  if (N (pending_read) > 10000) {
+    read_cache= pending_read;
+    pending_read= transaction ();
+  }
+}
 
 /******************************************************************************
 * Writing values to disk
@@ -215,8 +262,6 @@ write_to_disk (url u, transaction t) {
 
 void
 disk_table_rep::write (transaction t) {
-  // write_to_disk (root, t);
-
   transaction pending;
   transaction r;
   iterator<string> it= iterate (t);
@@ -228,19 +273,16 @@ disk_table_rep::write (transaction t) {
   }
 
   string app= disk_encode_transaction (pending);
-  save_string (root * "pending", app, true, true);
+  int i, n= N(app);
+  for (i=0; i<n; i++)
+    fputc (app[i], pending_fp);
+  fflush (pending_fp);
   merge (pending_write, pending);
   merge (pending_read, pending);
   write_to_disk (root, r);
 
-  if (N (pending_write) > 10000) {
-    write_to_disk (root, pending_write);
-    remove (root * "pending");
-  }
-  if (N (pending_read) > 10000) {
-    read_cache= pending_read;
-    pending_read= transaction ();
-  }
+  flush_pending_write ();
+  flush_pending_read ();
 }
 
 /******************************************************************************
@@ -291,8 +333,6 @@ read_from_disk (url u, collection keys, int level) {
 
 transaction
 disk_table_rep::read (collection keys) {
-  //return read_from_disk (root, keys, 0);
-
   transaction done;
   collection  remaining;
   iterator<string> it= iterate (keys);
@@ -305,6 +345,7 @@ disk_table_rep::read (collection keys) {
 	done (s)= read_cache [s];
       else remaining (s)= keys [s];
     }
+    else remaining (s)= keys [s];
   }
 
   transaction extra= read_from_disk (root, remaining, 0);
@@ -314,9 +355,6 @@ disk_table_rep::read (collection keys) {
     if (remaining [s] > 0 && remaining [s] < 3)
       pending_read (s)= extra [s];
   }
-  if (N (pending_read) > 10000) {
-    read_cache= pending_read;
-    pending_read= transaction ();
-  }
+  flush_pending_read ();
   return done * extra;
 }

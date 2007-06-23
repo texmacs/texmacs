@@ -15,6 +15,7 @@
 #include "url.hpp"
 #include "hashmap.hpp"
 #include "iterator.hpp"
+#include <stdio.h>
 
 typedef hashmap<string,int> collection;
 typedef hashmap<string,collection> transaction;
@@ -22,9 +23,16 @@ typedef hashmap<string,collection> transaction;
 class disk_table_rep: concrete_struct {
 private:
   url         root;           // directory where the table is stored
+  FILE*       pending_fp;     // file pointer for pending writes
   transaction pending_write;  // pending transactions for writing
   transaction pending_read;   // pending transactions for caching
   transaction read_cache;     // cache for reading
+
+private:
+  void open_pending_write ();
+  void close_pending_write ();
+  void flush_pending_write ();
+  void flush_pending_read ();
 
 public:
   disk_table_rep (url root2);
