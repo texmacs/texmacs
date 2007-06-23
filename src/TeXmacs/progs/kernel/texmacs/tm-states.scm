@@ -31,7 +31,7 @@
 (define (slotlist-load l)
  ;(display* "load=" l "\n")
   (for (e l)
-     (primitive-eval
+     (eval
         `(begin
 	   (if (not (defined? ',(car e)))
 	       (define-public ,(car e) #f))
@@ -39,22 +39,22 @@
 		 ,(with val (cadr e)
 		     (if (and (pair? val) (eq? (car val) 'quote))
 			 val
-			`(quote ,(primitive-eval val)))))))))
+			`(quote ,(eval val)))))))))
 
 (define (proplist-load l funcs)
  ;(display* "load[props]=" l "\n")
   (for (e l)
      (if (not (defined? `,(car e)))
-	 (primitive-eval `(define-public ,(car e) #f))))
+	 (eval `(define-public ,(car e) #f))))
   (for (f funcs)
      (f)))
 
 (define (slotlist-save l)
   (for (e l)
-     (set-car! (cdr e) `(quote ,(primitive-eval (car e)))))
+     (set-car! (cdr e) `(quote ,(eval (car e)))))
  ;(display* "save=" l "\n")
  ;(for (e l)
- ;   (primitive-eval `(undefine ,(car e))))
+ ;   (eval `(undefine ,(car e))))
 )
 
 ;; User-level API
@@ -135,7 +135,7 @@
 	    (define-public ,name #f))
 	(with cprops #f
 	  (set! cprops (map (lambda (x)
-			       (primitive-eval
+			       (eval
 				  `(lambda () (set! ,(car x) ,(cadr x)))))
 			   ',props))
 	  (set! ,name (state-create (append '(,slots ,props) `(,cprops))))))))
