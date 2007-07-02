@@ -541,9 +541,12 @@
   (with old-mode (graphics-mode)
      (graphics-enter-mode old-mode val)
      (graphics-set-property "gr-mode"
-	(cond ((or (symbol? val) (string? val))
+	(cond ((string? val)
 	       (list 'tuple "edit" val))
+	      ((symbol? val)
+	       (list 'tuple "edit" (sy2s val)))
 	      ((pair? val)
+               (set! val (map symbol->string val))
 	       (cons 'tuple val))))))
 
 (tm-define (graphics-group-mode? mode)

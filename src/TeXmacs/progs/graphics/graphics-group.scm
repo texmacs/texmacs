@@ -280,8 +280,7 @@
 	 (graphics-forget-states))
       ;;Start operation
       (cond
-	 ((and (not multiselecting)
-	       (== (cadr (graphics-mode)) "group-ungroup"))
+	 ((and (not multiselecting) (eq? (cadr (graphics-mode)) 'group-ungroup))
 	  (if (and p (not sticky-point) (null? selected-objects)
 		   (== (tree-label (path->tree p)) 'gr-group))
 	      (set! selected-objects `(,(path->tree p))))
@@ -291,7 +290,7 @@
 	      (ungroup-current-object)
 	      (group-selected-objects))
 	 )
-	 ((and (not multiselecting) (== (cadr (graphics-mode)) "props"))
+	 ((and (not multiselecting) (== (cadr (graphics-mode)) 'props))
 	; FIXME: when the state is recalculated, if we are in group
 	;   mode, obj is := to '(point). Find if it is still so and
 	;   why, and thus correct the problem if necessary.

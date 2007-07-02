@@ -37,6 +37,13 @@
   ;;   stuff in (define-public-macro), and then it becomes unstable. This
   ;;   is the reason why (define-export-macro) exists : it is *strictly*
   ;;   equivalent to (define-macro) + (export), and never raises problems.
+  ;;
+  ;; NOTE: Not deprecated anymore. using (define-public-macro) for
+  ;;   defining (foreach-cons) is the cause of an unfixeable and
+  ;;   ununderstandeable crash in (group-zoom). I don't understand
+  ;;   why, (foreach-cons) is just expanding a (do) loop, it *should*
+  ;;   work without any problems ! Thus, using (define-public-macro)
+  ;;   is currently banned from the graphics-*.scm code.
 
 ;; Conversions
 (tm-define (tree->object t)
