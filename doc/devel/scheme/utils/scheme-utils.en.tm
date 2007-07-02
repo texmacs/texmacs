@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -14,7 +14,8 @@
 
     <branch|Logical programming extensions|utils-logic.en.tm>
 
-    <branch|Contextual overloading|utils-overload.en.tm>
+    <branch|Function definitions and contextual
+    overloading|utils-overload.en.tm>
 
     <branch|Interactive dialogues|utils-dialogue.en.tm>
 
