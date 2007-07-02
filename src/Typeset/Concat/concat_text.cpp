@@ -26,6 +26,15 @@ concater_rep::typeset_substring (string s, path ip, int pos) {
   a << line_item (STRING_ITEM, b, HYPH_INVALID, env->lan);
 }
 
+void
+concater_rep::typeset_colored_substring
+  (string s, path ip, int pos, string col)
+{
+  color c= (col == ""? env->col: env->dis->get_color (col));
+  box b= text_box (ip, pos, s, env->fn, c);
+  a << line_item (STRING_ITEM, b, HYPH_INVALID, env->lan);
+}
+
 #define PRINT_SPACE(spc_type) \
   switch (spc_type) { \
   case SPC_NONE: \
@@ -72,7 +81,34 @@ concater_rep::typeset_substring (string s, path ip, int pos) {
   }
 
 void
-concater_rep::typeset_string (string s, path ip) {
+concater_rep::typeset_text_string (string s, path ip) {
+  int    start, pos=0;
+  space  spc= env->fn->spc;
+  space  extra= env->fn->extra;
+
+  do {
+    start= pos;
+    text_property tp= env->lan->advance (s, pos);
+    if ((pos>start) && (s[start]==' ')) { // spaces
+      if (start==0) typeset_substring ("", ip, 0);
+      penalty_min (tp->pen_after);
+      PRINT_SPACE (tp->spc_before);
+      PRINT_SPACE (tp->spc_after);
+      if ((pos==N(s)) || (s[pos]==' '))
+	typeset_substring ("", ip, pos);
+    }
+    else { // strings
+      penalty_max (tp->pen_before);
+      PRINT_SPACE (tp->spc_before)
+      typeset_substring (s (start, pos), ip, start);
+      penalty_min (tp->pen_after);
+      PRINT_SPACE (tp->spc_after)
+    }
+  } while (pos<N(s));
+}
+
+void
+concater_rep::typeset_math_string (string s, path ip) {
   int    start, pos=0;
   space  spc= env->fn->spc;
   space  extra= env->fn->extra;
@@ -98,6 +134,35 @@ concater_rep::typeset_string (string s, path ip) {
       if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
       if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
       else PRINT_SPACE (tp->spc_after)
+    }
+  } while (pos<N(s));
+}
+
+void
+concater_rep::typeset_prog_string (tree t, path ip) {
+  string s= t->label;
+  int    start, pos=0;
+  space  spc= env->fn->spc;
+  space  extra= env->fn->extra;
+
+  do {
+    start= pos;
+    text_property tp= env->lan->advance (s, pos);
+    if ((pos>start) && (s[start]==' ')) { // spaces
+      if (start==0) typeset_substring ("", ip, 0);
+      penalty_min (tp->pen_after);
+      PRINT_SPACE (tp->spc_before);
+      PRINT_SPACE (tp->spc_after);
+      if ((pos==N(s)) || (s[pos]==' '))
+	typeset_substring ("", ip, pos);
+    }
+    else { // strings
+      penalty_max (tp->pen_before);
+      PRINT_SPACE (tp->spc_before)
+      typeset_colored_substring (s (start, pos), ip, start,
+				 env->lan->get_color (t, start, pos));
+      penalty_min (tp->pen_after);
+      PRINT_SPACE (tp->spc_after)
     }
   } while (pos<N(s));
 }

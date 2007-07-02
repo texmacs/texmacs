@@ -95,6 +95,7 @@ struct language_rep: rep<language> {
   virtual void hyphenate (string s, int after, string& l, string& r) = 0;
   virtual string get_group (string s);
   virtual array<string> get_members (string s);
+  virtual string get_color (tree t, int start, int end);
 };
 
 inline language_rep::language_rep (string s):

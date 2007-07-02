@@ -13,9 +13,10 @@
 #include "analyze.hpp"
 #include "language.hpp"
 #include "Languages/impl_language.hpp"
+#include "Scheme/object.hpp"
 
-verb_language_rep::verb_language_rep ():
-  language_rep ("verbatim") {}
+verb_language_rep::verb_language_rep (string name):
+  language_rep (name) {}
 
 text_property
 verb_language_rep::advance (string s, int& pos) {
@@ -55,5 +56,6 @@ verb_language_rep::hyphenate (
 language
 prog_language (string s) {
   if (language::instances -> contains (s)) return language (s);
-  return make (language, s, new verb_language_rep ());
+  if (s == "scheme") return make (language, s, new scheme_language_rep (s));
+  return make (language, s, new verb_language_rep (s));
 }
