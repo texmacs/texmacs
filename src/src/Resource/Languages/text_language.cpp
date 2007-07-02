@@ -306,9 +306,9 @@ text_language (string s) {
   if (s == "swedish") return new text_language_rep (s, "swedish");
   if (s == "taiwanese") return new oriental_language_rep (s);
   if (s == "ukrainian") return new text_language_rep (s, "ukrainian");
-  if (s == "verbatim") return new verb_language_rep ();
+  if (s == "verbatim") return new verb_language_rep ("verbatim");
   cerr << "\nThe language was " << s << "\n";
   fatal_error ("unknown language", "text_language");
-  return new verb_language_rep ();
+  return new verb_language_rep ("verbatim");
   // avoids error message when C++ compiler behaves badly
 }

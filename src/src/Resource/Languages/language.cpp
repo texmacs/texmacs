@@ -74,3 +74,9 @@ language_rep::get_members (string s) {
   (void) s;
   return array<string> ();
 }
+
+string
+language_rep::get_color (tree t, int start, int end) {
+  (void) t; (void) start; (void) end;
+  return "";
+}
