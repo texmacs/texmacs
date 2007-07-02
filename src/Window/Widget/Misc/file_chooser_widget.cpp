@@ -136,6 +136,7 @@ file_chooser_command (widget fch, int type) {
 class file_list_widget_rep: public attribute_widget_rep {
   widget_rep*   fch;
   string        dir;
+  array<bool>   lids;
   array<string> names;
   array<string> suffix;
   bool          dir_flag;
@@ -198,7 +199,7 @@ file_list_widget_rep::handle_get_size (get_size_event ev) {
   font fn= dis->default_font ();
   ev->w= ev->h= 0;
   for (i=0; i<N(names); i++)
-    if (list_in_directory (dir, names[i], suffix, dir_flag)) {
+    if (lids[i]) {
       fn->var_get_extents (names[i], ex);
       ev->w  = max (ev->w, ((ex->x2- ex->x1+ 2)/3) + (6*PIXEL));
       ev->h += ((fn->y2- fn->y1+ 2)/3) + (4*PIXEL);
@@ -216,7 +217,7 @@ file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   win->set_shrinking_factor (3);
   SI y= 0;
   for (i=0; i<N(names); i++)
-    if (list_in_directory (dir, names[i], suffix, dir_flag)) {
+    if (lids[i]) {
       win->set_color (dis->black);
       if (hilight == i) win->set_color (dis->red);
       fn->var_get_extents (names[i], ex);
@@ -236,7 +237,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
     metric ex;
     font fn= dis->default_font ();
     for (i=0; i<N(names); i++)
-      if (list_in_directory (dir, names[i], suffix, dir_flag)) {
+      if (lids[i]) {
 	fn->var_get_extents (names[i], ex);
 	if ((search >= (y+ fn->y1- fn->y2- 12*PIXEL)) && (search < y)) break;
 	y += fn->y1- fn->y2- 12*PIXEL;
@@ -274,6 +275,9 @@ file_list_widget_rep::handle_set_string (set_string_event ev) {
     dir= ev->s;
     bool flag;
     names= read_directory (url_system (dir), flag);
+    lids= array<bool>(N(names));
+    for (int i=0; i<N(names); i++)
+      lids[i]= list_in_directory (dir, names[i], suffix, dir_flag);
     SI w, h;
     this << get_size (w, h, 0);
     get_canvas () << set_extents (0, -h, w, 0);
