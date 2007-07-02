@@ -38,12 +38,21 @@
       `(define-public ,head ,@body)
       '(noop)))
 
-(define-macro (define-public-macro head . body)
-  `(define-public ,(car head)
-     ;; FIXME: why can't we use procedure->macro for a non-memoizing variant?
-     (procedure->memoizing-macro
-      (lambda (cmd env)
-	(apply (lambda ,(cdr head) ,@body) (cdr cmd))))))
+(if (guile-a?)
+    (define-macro (define-public-macro head . body)
+      `(define-public ,(car head)
+	 ;; FIXME: why can't we use procedure->macro
+	 ;; for a non-memoizing variant?
+	 (procedure->memoizing-macro
+	  (lambda (cmd env)
+	    (apply (lambda ,(cdr head) ,@body) (cdr cmd)))))))
+
+(if (not (guile-a?))
+    (define-macro (define-public-macro head . body)
+      `(begin
+	 (define-macro ,(car head)
+	   (lambda ,(cdr head) ,@body))
+	 (export ,(car head)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; On-entry and on-exit macros

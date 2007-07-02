@@ -95,7 +95,7 @@ load_string (url u, string& s, bool fatal) {
 }
 
 bool
-save_string (url u, string s, bool fatal, bool append) {
+save_string (url u, string s, bool fatal) {
   if (is_rooted_tmfs (u)) {
     bool err= save_to_server (u, s);
     if (err && fatal)
@@ -111,9 +111,9 @@ save_string (url u, string s, bool fatal, bool append) {
     string name= concretize (r);
     char* _name= as_charp (name);
 #ifdef OS_WIN32
-    FILE* fout= _fopen (_name, append? "ab": "wb");
+    FILE* fout= _fopen (_name, "wb");
 #else
-    FILE* fout= fopen (_name, append? "a": "w");
+    FILE* fout= fopen (_name, "w");
 #endif
     if (fout == NULL) err= true;
     if (!err) {

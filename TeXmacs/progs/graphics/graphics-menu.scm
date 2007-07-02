@@ -198,12 +198,12 @@
   ("Circle" (graphics-set-mode "carc"))
   ("Text box" (graphics-set-mode "text-at"))
   ---
-  ("Move" (graphics-set-mode '("group-edit" "move")))
-  ("Zoom/unzoom" (graphics-set-mode '("group-edit" "zoom")))
-  ("Rotate" (graphics-set-mode '("group-edit" "rotate")))
-  ("Group/ungroup" (graphics-set-mode '("group-edit" "group-ungroup")))
+  ("Move" (graphics-set-mode '(group-edit move)))
+  ("Zoom/unzoom" (graphics-set-mode '(group-edit zoom)))
+  ("Rotate" (graphics-set-mode '(group-edit rotate)))
+  ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup)))
   ---
-  ("Properties" (graphics-set-mode '("group-edit" "props"))))
+  ("Properties" (graphics-set-mode '(group-edit props))))
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
@@ -432,15 +432,15 @@
       (link graphics-enable-change-properties-menu))
   |
   (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
-      (graphics-set-mode '("group-edit" "props")))
+      (graphics-set-mode '(group-edit props)))
   (   (balloon (icon "tm_group_move.xpm") "Move objects")
-      (graphics-set-mode '("group-edit" "move")))
+      (graphics-set-mode '(group-edit move)))
   (   (balloon (icon "tm_group_zoom.xpm") "Zoom/unzoom objects")
-      (graphics-set-mode '("group-edit" "zoom")))
+      (graphics-set-mode '(group-edit zoom)))
   (   (balloon (icon "tm_group_rotate.xpm") "Rotate objects")
-      (graphics-set-mode '("group-edit" "rotate")))
+      (graphics-set-mode '(group-edit rotate)))
   (   (balloon (icon "tm_group_group.xpm") "Group/ungroup objects")
-      (graphics-set-mode '("group-edit" "group-ungroup")))
+      (graphics-set-mode '(group-edit group-ungroup)))
  ;(   (balloon (icon "tm_group_group.xpm") "Group objects")
  ;    (group-selected-objects))
  ;(   (balloon (icon "tm_group_ungroup.xpm") "Ungroup objects")
