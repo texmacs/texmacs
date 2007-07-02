@@ -25,7 +25,8 @@ void
 edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   last_x= x; last_y= y;
   mark_undo_blocks ();
-  update_active_loci ();
+  if (type != "move" || (attached () && !dis->check_event (MOTION_EVENT)))
+    update_active_loci ();
 
   if (type == "leave")
     set_pointer ("XC_top_left_arrow");
