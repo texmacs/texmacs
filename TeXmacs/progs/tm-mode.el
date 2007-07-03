@@ -14,6 +14,87 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Define lists of special keywords
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq nullary-keywords
+  '(cond call/cc values define-preferences menu-dynamic
+    case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
+    define-grammar drd-rule drd-rules assume texmacs-modes
+    delayed dialogue on-entry on-exit widget-delayed
+    association-tile bar concat dense-bar dense-tile document
+    header-bar sequence short-bar short-tile tile))
+
+(setq nullary-misc
+  '(:use :inherit))
+
+(setq nullary-indent
+  (append nullary-keywords nullary-misc))
+
+(setq unary-keywords
+  '(with-result
+    and-let* setup-append-if
+    while for repeat when
+    drd-group drd-table drd-dispatcher
+    with-cc with-aux with-mutator
+    with-action with-module with-cursor with-server
+    dialogue-user widget-with
+    aspect block-input button form
+    input internal short-input))
+
+(setq unary-definitions
+  '(texmacs-module provide-public
+    define-group define-macro define-public-macro
+    tm-define tm-define-macro tm-property request-handler
+    tm-build tm-build-macro tm-build-widget
+    menu-bind menu-extend define-table define-format))
+
+(setq unary-no-highlight
+  '(format interactive))
+
+(setq unary-indent
+  (append unary-keywords unary-definitions unary-no-highlight))
+
+(setq binary-keywords
+  '(with with-global and-with with-innermost receive
+    with-environment with-environment* converter
+    hidden-input pagelet radio-button toggle-button))
+
+(setq binary-indent
+  binary-keywords)
+
+(setq ternary-keywords
+  '(ahash-with canvas-input))
+
+(setq ternary-indent
+  ternary-keywords)
+
+(setq other-keywords
+  '(define-secure-symbols map-in-order link promise plugin-configure
+    plugin-input-converters use-modules export import-from inherit-modules
+    lazy-menu lazy-keyboard lazy-define lazy-format lazy-input-converter
+    form-cancel form-done form-next form-previous radio suggestions toggle))
+
+(setq highlight-definitions
+  unary-definitions)
+
+(setq highlight-keywords
+  (append nullary-keywords unary-keywords unary-definitions
+	  binary-keywords ternary-keywords other-keywords))
+
+(setq highlight-native
+  '(let let* begin for if else while define define-macro
+    define-public define-public-macro))
+
+(setq highlight-any
+  (append highlight-definitions highlight-keywords highlight-native))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Define TeXmacs style
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (add-hook 'scheme-mode-hook '(lambda () (texmacs-style)))
 
 (defun texmacs-style ()
@@ -24,45 +105,11 @@
    (list
     (cons
      (concat "\\<\\("
-      (mapconcat 'symbol-name
-       '(texmacs-module provide-public define-macro define-public-macro
-         tm-define tm-define-macro tm-property request-handler
-	 define-table define-preferences define-secure-symbols
-         texmacs-modes and-let\\* case-lambda
-	 with with-global with-result
-         ahash-with and-with for repeat
-	 with-innermost with-action with-mutator
-	 with-module with-cursor with-server
-	 call/cc with-cc values receive map-in-order
-         drd-group drd-table drd-dispatcher
-         define-grammar drd-rule drd-rules assume menu-bind
-         menu-extend menu-dynamic kbd-map kbd-wildcards kbd-commands
-         kbd-symbols setup-append-if when link promise while
-	 plugin-configure plugin-input-converters use-modules export
-	 import-from inherit-modules lazy-menu lazy-keyboard
-	 lazy-define lazy-format lazy-input-converter
-	 define-format converter with-aux define-group
-	 dialogue delayed on-entry on-exit
-	 tm-build tm-build-macro tm-build-widget widget-delayed widget-with
-	 aspect association-tile
-	 bar block-input button canvas-input concat
-	 dense-bar dense-tile document
-	 form form-cancel form-done form-next form-previous
-	 header-bar hidden-input input internal
-	 pagelet radio radio-button
-	 sequence short-bar short-input short-tile suggestions
-	 tile toggle toggle-button) "\\|")
-      "\\)\\>")
+      (mapconcat 'symbol-name highlight-keywords "\\|") "\\)\\>")
      'font-lock-keyword-face)
     (cons
      (concat "(\\("
-      (mapconcat 'symbol-name
-       '(texmacs-module provide-public
-	 define-macro define-public-macro define-table
-	 tm-define tm-define-macro tm-property request-handler define-group
-	 tm-build tm-build-macro tm-build-widget
-	 menu-bind menu-extend plugin-configure
-	 plugin-input-converters define-format) "\\|")
+      (mapconcat 'symbol-name highlight-definitions "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     (cons
@@ -72,30 +119,11 @@
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+ \\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
-  (dolist (s '(ahash-with canvas-input))
+  (dolist (s ternary-indent)
     (put s 'scheme-indent-function 3))
-  (dolist (s '(with with-global and-with with-innermost receive
-	       with-environment with-environment* converter
-	       hidden-input pagelet radio-button toggle-button))
+  (dolist (s binary-indent)
     (put s 'scheme-indent-function 2))
-  (dolist (s '(texmacs-module provide-public with-result
-	       and-let* setup-append-if define-group
-	       define-macro define-public-macro while for repeat when
-	       tm-define tm-define-macro tm-property request-handler
-	       tm-build tm-build-macro tm-build-widget
-	       drd-group drd-table drd-dispatcher menu-bind
-	       menu-extend plugin-configure plugin-input-converters
-	       with-cc format with-aux with-mutator
-	       with-action with-module with-cursor with-server
-	       interactive dialogue-user widget-with
-	       aspect block-input button form
-	       input internal short-input))
+  (dolist (s unary-indent)
     (put s 'scheme-indent-function 1))
-  (dolist (s '(cond call/cc values define-preferences menu-dynamic
-	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
-	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue on-entry on-exit widget-delayed
-	       association-tile bar concat dense-bar dense-tile document
-	       header-bar sequence short-bar short-tile tile
-	       :use :inherit))
+  (dolist (s nullary-indent)
     (put s 'scheme-indent-function 0)))

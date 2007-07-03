@@ -86,9 +86,11 @@
 
   <assign|scm|<macro|x|<with|mode|prog|prog-language|scheme|<arg|x>>>>
 
-  <assign|scm-arg|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>>>>>
+  <assign|scm-verb|<macro|x|<with|prog-language|verbatim|<arg|x>>>>
 
-  <assign|scm-args|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>><rsup|*>>>>
+  <assign|scm-arg|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>>>>
+
+  <assign|scm-args|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>><rsup|*>>>
 
   <assign|scm-opt-arg|<macro|x|<with|color|dark
   grey|[<style-with|<scm-arg|<arg|x>>>]>>>

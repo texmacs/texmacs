@@ -18,21 +18,12 @@
 scheme_language_rep::scheme_language_rep (string name):
   language_rep (name), colored ("")
 {
-  string prim= "blue";
-  colored ("define")= prim;
-  colored ("define-macro")= prim;
-  colored ("define-public")= prim;
-  colored ("define-public-macro")= prim;
-  colored ("tm-define")= prim;
-  colored ("tm-define-macro")= prim;
-  colored ("begin")= prim;
-  colored ("let")= prim;
-  colored ("let*")= prim;
-  colored ("with")= prim;
-  colored ("if")= prim;
-  colored ("cond")= prim;
-  colored ("else")= prim;
-  colored ("while")= prim;
+  eval ("(use-modules (utils misc tm-keywords))");
+  list<string> l= as_list_string (eval ("(map symbol->string highlight-any)"));
+  while (!nil (l)) {
+    colored (l->item)= "blue";
+    l= l->next;
+  }
 }
 
 text_property
