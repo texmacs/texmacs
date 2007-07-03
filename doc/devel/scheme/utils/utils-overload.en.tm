@@ -197,61 +197,6 @@
     the function or macro.
   </explain>
 
-  <\explain>
-    <verbatim|(:default <scm-arg|var> <scm-arg|val>)><explain-synopsis|default
-    value for argument>
-  <|explain>
-    This option specifies a default value <scm-arg|val> for the argument
-    <scm-arg|var>. The default value will typically be proposed when calling
-    the function interactively.
-  </explain>
-
-  <\explain>
-    <verbatim|(:proposals <scm-arg|var> <scm-arg|val-list>)><explain-synopsis|proposed
-    values for argument>
-  <|explain>
-    This option is a variant of <verbatim|:default>, when a list of possible
-    values is proposed instead of merely one default value.
-  </explain>
-
-  <\explain>
-    <verbatim|(:interactive <scm-arg|yes?>)><explain-synopsis|relies on
-    interactive user input?>
-  <|explain>
-    This option specifies that the function relies on interactive user input,
-    whenever <scm-arg|yes?> is <verbatim|#t>. Interactive functions are
-    postfixed by three dots when they are used in menu items.
-  </explain>
-
-  <\explain>
-    <verbatim|(:check-mark <scm-arg|type>
-    <scm-arg|pred?>)><explain-synopsis|use checkmark in menus item?>
-  <|explain>
-    This option indicates that a checkmark might have to be displayed before
-    a menu item which invokes the function. More precisely, a predicate
-    <scm-arg|pred?> is used in order to determine whether the checkmark has
-    to be displayed; it is passed exactly the same arguments as the function
-    itself. Several types of checkmarks are available: <verbatim|"v"> for
-    <math|\<checked\>>, <verbatim|"o"> for <math|\<circ\>> and <verbatim|"*">
-    for <math|\<bullet\>>. The first type is used for toggles and the last
-    ones for the current value among different possibilities (the
-    <math|<group|\<circ\>>> is used for implicitly determined values and
-    <math|\<bullet\>> for values which are explicitly selected by the user).
-  </explain>
-
-  <\explain>
-    <verbatim|(:secure <scm-arg|yes?>)><explain-synopsis|secure function or
-    macro?>
-  <|explain>
-    This option specifies whether a given function or macro is secure. Secure
-    functions are useful in combination with stylesheets. Indeed, allowing
-    documents to call arbitrary <value|scheme> programs would be insecure
-    when opening a foreign document found somewhere on the web. Nevertheless,
-    when writing plug-ins, it can be useful to use arbitrary scheme functions
-    in order to evaluate <TeXmacs> macros. This can be done by declaring the
-    functions that you want to use to be secure.
-  </explain>
-
   <tmdoc-copyright|2007|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
