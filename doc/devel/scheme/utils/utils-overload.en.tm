@@ -8,34 +8,33 @@
   Conventional programming languages often provide mechanism to overload
   certain functions depending on the types of the arguments. <TeXmacs>
   provides additional context-based overloading mechanisms, which require the
-  use of the <scm-macro|tm-define> construct for function declarations (and
-  <scm-macro|tm-define-macro> for macro declarations). Furthermore, one may
-  use <scm-macro|tm-define> for associating additional properties to a
-  function, such as documentation or default values for the arguments.
+  use of the <scm|tm-define> construct for function declarations (and
+  <scm|tm-define-macro> for macro declarations). Furthermore, one may use
+  <scm|tm-define> for associating additional properties to a function, such
+  as documentation or default values for the arguments.
 
   <\explain>
-    <explain-scm-macro|tm-define|<scm-arg|head>|<scm-args|options>|<scm-args|body>><explain-synopsis|<TeXmacs>
-    function definition>
+    <scm|(tm-define <scm-arg|head> <scm-args|options>
+    <scm-args|body>)><explain-synopsis|<TeXmacs> function definition>
 
-    <explain-scm-macro|tm-define-macro|<scm-arg|head>|<scm-args|options>|<scm-args|body>><explain-synopsis|<TeXmacs>
-    macro definition>
+    <scm|(tm-define-macro <scm-arg|head> <scm-args|options>
+    <scm-args|body>)><explain-synopsis|<TeXmacs> macro definition>
   <|explain>
     <TeXmacs> function and macro declarations are similar to usual
-    declarations based on <verbatim|define> and <verbatim|define-macro>,
-    except for the additional list of <scm-arg|options> and the fact that all
-    functions and macros defined using <scm-macro|tm-define> and
-    <scm-macro|tm-define-macro> are public. Each option is of the form
-    <verbatim|(:<scm-arg|kind> <scm-args|arguments>)> and the <scm-arg|body>
-    starts at the first element of the list following <scm-arg|head> which is
-    not of this form.
+    declarations based on <scm|define> and <scm|define-macro>, except for the
+    additional list of <scm-arg|options> and the fact that all functions and
+    macros defined using <scm|tm-define> and <scm|tm-define-macro> are
+    public. Each option is of the form <scm|(:<scm-arg|kind>
+    <scm-args|arguments>)> and the <scm-arg|body> starts at the first element
+    of the list following <scm-arg|head> which is not of this form.
   </explain>
 
   <paragraph|Contextual overloading>
 
   We will first describe the various options for overloading. If several
-  definitions are given for the same function (or macro) <verbatim|foo> and
+  definitions are given for the same function (or macro) <scm|foo> and
   several definitions satisfy the corresponding overloading conditions, when
-  applying <verbatim|foo> to some arguments, then the <em|most particular>
+  applying <scm|foo> to some arguments, then the <em|most particular>
   definition will prevail. For any of the overloading options, we will
   therefore have to specify what we mean my ``most particular''. When trying
   to find out the most particular set of options, we first sort on mode, next
@@ -44,18 +43,17 @@
   this yet.
 
   <\explain>
-    <verbatim|(:mode <scm-arg|mode>)><explain-synopsis|mode-based
-    overloading>
+    <scm|(:mode <scm-arg|mode>)><explain-synopsis|mode-based overloading>
   <|explain>
     This option specifies that the definition is only valid when we are in a
-    given <scm-arg|mode>. New modes are defined using
-    <scm-macro|texmacs-modes> and modes can inherit from other modes. A mode
-    <math|m<rsub|1>> is understood to be more particular than another mode
-    <math|m<rsub|2>> if <math|m<rsub|1>> inherits from <math|m<rsub|2>>.
+    given <scm-arg|mode>. New modes are defined using <scm|texmacs-modes> and
+    modes can inherit from other modes. A mode <math|m<rsub|1>> is understood
+    to be more particular than another mode <math|m<rsub|2>> if
+    <math|m<rsub|1>> inherits from <math|m<rsub|2>>.
   </explain>
 
   <\explain>
-    <verbatim|(:context <scm-arg|pred?>)><explain-synopsis|cursor path based
+    <scm|(:context <scm-arg|pred?>)><explain-synopsis|cursor path based
     overloading>
   <|explain>
     Let <math|t<rsub|1>> be the innermost tree to which the cursor is
@@ -67,17 +65,16 @@
     <math|P<rsub|1>> and<nbsp><math|P<rsub|2>> compete, then the most
     particular one is the one which is satisfied by a <math|t<rsub|i>> with
     the lowest value of <math|i>. An example will be given below for the
-    option <verbatim|:inside>, which is a special case of
-    <verbatim|:context>.
+    option <scm|:inside>, which is a special case of <scm|:context>.
   </explain>
 
   <\explain>
-    <verbatim|(:inside <scm-arg|label>)><explain-synopsis|cursor path based
+    <scm|(:inside <scm-arg|label>)><explain-synopsis|cursor path based
     overloading>
   <|explain>
-    This option is a special case of the <verbatim|:context> option, for the
-    predicate <verbatim|(lambda (t) (tree-in? '<scm-arg|label>))>. As an
-    example, let us consider the following definitions:
+    This option is a special case of the <scm|:context> option, for the
+    predicate <scm|(lambda (t) (tree-in? '<scm-arg|label>))>. As an example,
+    let us consider the following definitions:
 
     <\scheme-fragment>
       (tm-define (special)
@@ -100,25 +97,24 @@
     </scheme-fragment>
 
     Assuming that your cursor is inside a fraction inside a subscript,
-    calling <verbatim|special> will swap the numerator and the denominator.
-    On the other hand, if your cursor is inside a subscript inside a
-    fraction, then calling <verbatim|special> will change the subscript into
-    a superscript.
+    calling <scm|special> will swap the numerator and the denominator. On the
+    other hand, if your cursor is inside a subscript inside a fraction, then
+    calling <scm|special> will change the subscript into a superscript.
   </explain>
 
   <\explain>
-    <verbatim|(:match <scm-arg|pattern>)><explain-synopsis|argument based
+    <scm|(:match <scm-arg|pattern>)><explain-synopsis|argument based
     overloading>
   <|explain>
     This option specifies that one necessary condition for the declaration to
     be valid valid is that the arguments match the specified pattern
-    according to the primitive <scm-fun|match?>. We have not yet implemented
-    a function to test whether a pattern is a restriction of another pattern,
+    according to the primitive <scm|match?>. We have not yet implemented a
+    function to test whether a pattern is a restriction of another pattern,
     so ambiguous overloads cannot be resolved.
   </explain>
 
   <\explain>
-    <verbatim|(:require <scm-arg|cond>)><explain-synopsis|argument based
+    <scm|(:require <scm-arg|cond>)><explain-synopsis|argument based
     overloading>
   <|explain>
     This option specifies that one necessary condition for the declaration to
@@ -128,18 +124,18 @@
   </explain>
 
   <\explain>
-    <verbatim|(:case <scm-arg|label-1> ...
-    <scm-arg|label-n>)><explain-synopsis|argument based dispatching>
+    <scm|(:case <scm-arg|label-1> ... <scm-arg|label-n>)><explain-synopsis|argument
+    based dispatching>
   <|explain>
-    This is a very special case of the <verbatim|:match> option, where we
-    require the first argument to be a compound hybrid tree whose root label
-    is amongst <scm-arg|label-1> until <scm-arg|label-n>. Besides a
-    simplified syntax, the implementation of <verbatim|:case> is done using a
-    dispatch via a hash table. When appropriate, you should therefore
-    priviledge <verbatim|:case> over the general form of <verbatim|:match>. A
-    typical situation when <verbatim|:case> is useful is when writing a
-    converter <verbatim|tm-\<gtr\>foo> of <TeXmacs> trees into your own
-    foormat: specific converters for given tags can be added using
+    This is a very special case of the <scm|:match> option, where we require
+    the first argument to be a compound hybrid tree whose root label is
+    amongst <scm-arg|label-1> until <scm-arg|label-n>. Besides a simplified
+    syntax, the implementation of <scm|:case> is done using a dispatch via a
+    hash table. When appropriate, you should therefore priviledge <scm|:case>
+    over the general form of <scm|:match>. A typical situation when
+    <scm|:case> is useful is when writing a converter <scm|tm-\<gtr\>foo> of
+    <TeXmacs> trees into your own foormat: specific converters for given tags
+    can be added using
 
     <\scheme-fragment>
       (tm-define (tm-\<gtr\>foo t)
@@ -152,14 +148,14 @@
 
   <paragraph|Other options for function and macro declarations>
 
-  Besides the contextual overloading options, the <scm-macro|tm-define> and
-  <scm-macro|tm-define-macro> primitives admit several other options for
-  attaching additional information to the function or macro. We will now
-  describe these options and explain how the additional information attached
-  to functions can be exploited.
+  Besides the contextual overloading options, the <scm|tm-define> and
+  <scm|tm-define-macro> primitives admit several other options for attaching
+  additional information to the function or macro. We will now describe these
+  options and explain how the additional information attached to functions
+  can be exploited.
 
   <\explain>
-    <verbatim|(:synopsis <scm-arg|short-help>)><explain-synopsis|short
+    <scm|(:synopsis <scm-arg|short-help>)><explain-synopsis|short
     description>
   <|explain>
     This option gives a short discription of the function or macro, in the
@@ -181,7 +177,7 @@
   </explain>
 
   <\explain>
-    <verbatim|(:argument <scm-arg|var> <scm-arg|description>)><explain-synopsis|argument
+    <scm|(:argument <scm-arg|var> <scm-arg|description>)><explain-synopsis|argument
     description>
   <|explain>
     This option gives a short <scm-arg|description> of one of the arguments
@@ -190,7 +186,7 @@
   </explain>
 
   <\explain>
-    <verbatim|(:returns <scm-arg|description>)><explain-synopsis|return value
+    <scm|(:returns <scm-arg|description>)><explain-synopsis|return value
     description>
   <|explain>
     This option gives a short <scm-arg|description> of the return value of
