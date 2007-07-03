@@ -51,12 +51,8 @@
     </cell>>>>>
   </macro>>
 
-  <assign|scheme-input|<\macro|prompt|body>
-    <tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|2|2|cell-lsep|0fn>|<cwith|1|1|2|2|cell-rsep|0fn>|<cwith|1|1|2|2|cell-hyphen|t>|<twith|table-hyphen|y>|<table|<row|<cell|<with|color|dark
-    green|<arg|prompt>>>|<\cell>
-      <with|math-display|true|<arg|body>>
-    </cell>>>>>
-  </macro>>
+  <assign|scheme-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|dark
+  green|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
 
   <\active*>
     <\src-comment>

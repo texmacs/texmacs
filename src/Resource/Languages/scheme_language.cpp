@@ -46,7 +46,12 @@ array<int>
 scheme_language_rep::get_hyphens (string s) {
   int i;
   array<int> penalty (N(s)+1);
-  for (i=0; i<N(penalty); i++) penalty[i]= HYPH_INVALID;
+  penalty[0]= HYPH_INVALID;
+  for (i=1; i<N(s); i++)
+    if (s[i-1] == '-' && is_alpha (s[i]))
+      penalty[i]= HYPH_STD;
+    else penalty[i]= HYPH_INVALID;
+  penalty[i]= HYPH_INVALID;
   return penalty;
 }
 
@@ -63,7 +68,7 @@ scheme_language_rep::get_color (tree t, int start, int end) {
   static string none= "";
   if (start >= end) return none;
   string s= t->label;
-  for (int i=0; i<=start; i++)
+  for (int i= max (0, start-1000); i <= start; i++)
     switch (s[i]) {
     case ';': return "brown";
     case '\042':
@@ -81,7 +86,7 @@ scheme_language_rep::get_color (tree t, int start, int end) {
   if (!colored->contains (r)) {
     colored (r)= "";
     if (as_bool (call ("defined?", symbol_object (tm_decode (r)))))
-      colored (r)= "#303080";
+      colored (r)= "#306080";
   }
   return colored[r];
 }
