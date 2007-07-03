@@ -26,3 +26,18 @@
 
 (define-group fragment-tag
   framed-fragment scheme-fragment shell-fragment cpp-fragment mmx-fragment)
+
+;; override variant function for verbatim and scm
+;; FIXME: find a nicer solution
+
+(tm-define (variant-circulate forward?)
+  (:mode in-tmdoc?)
+  (:inside verbatim)
+  (with-innermost t 'verbatim
+    (tree-assign-node! t 'scm)))
+
+(tm-define (variant-circulate forward?)
+  (:mode in-tmdoc?)
+  (:inside scm)
+  (with-innermost t 'scm
+    (tree-assign-node! t 'verbatim)))

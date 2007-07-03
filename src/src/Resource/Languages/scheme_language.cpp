@@ -89,7 +89,7 @@ scheme_language_rep::get_color (tree t, int start, int end) {
   string r= s (start, end);
   if (!colored->contains (r)) {
     colored (r)= "";
-    if (as_bool (call ("defined?", symbol_object (s (start, end)))))
+    if (as_bool (call ("defined?", symbol_object (tm_decode (r)))))
       colored (r)= "#303080";
   }
   return colored[r];
