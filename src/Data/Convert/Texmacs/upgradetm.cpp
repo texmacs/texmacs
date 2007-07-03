@@ -2709,6 +2709,36 @@ upgrade_label_assignment (tree t) {
 }
 
 /******************************************************************************
+* Upgrade scheme documentation
+******************************************************************************/
+
+tree
+upgrade_scheme_doc (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "scm-fun", 1) ||
+	   is_compound (t, "scm-macro", 1))
+    return compound ("scm", t[0]);
+  else if (is_compound (t, "explain-scm-fun") ||
+	   is_compound (t, "explain-scm-macro"))
+    {
+      tree r (CONCAT);
+      r << "(" << t[0];
+      for (int i=1; i<N(t); i++)
+	r << " " << t[i];
+      r << ")";
+      return compound ("scm", simplify_concat (r));
+    }
+  else {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_scheme_doc (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2818,5 +2848,7 @@ upgrade (tree t, string version) {
     t= rename_primitive (t, "hyper-link", "hlink");
   if (version_inf_eq (version, "1.0.6.2"))
     t= upgrade_label_assignment (t);
+  if (version_inf_eq (version, "1.0.6.10"))
+    t= upgrade_scheme_doc (t);
   return t;
 }
