@@ -7,25 +7,23 @@
 
   Regular expressions naturally generalize from strings to trees and allow to
   test whether a given tree matches a given pattern. <TeXmacs> implements the
-  primitives <scm-fun|match?> and <verbatim|<scm-fun|match>> for this
-  purpose, which also provide support for wildcards, user-defined grammars
-  and more.
+  primitives <scm|match?> and <scm|match> for this purpose, which also
+  provide support for wildcards, user-defined grammars and more.
 
   <\explain>
-    <explain-scm-fun|match?|<scm-arg|expr>
-    <scm-arg|pattern>><explain-synopsis|check whether a scheme expression
-    satisfies a pattern>
+    <scm|(match? <scm-arg|expr> <scm-arg|pattern>)><explain-synopsis|check
+    whether a scheme expression satisfies a pattern>
   <|explain>
     This function determines whether a scheme expression <scm-arg|expr>
     satisfies a given <scm-arg|pattern>. It will be detailed below how to
     form valid patterns. The matching routines recursively understand that
-    native trees match their scheme counterparts. For instance,
-    <verbatim|(match? (tree "x") "x<name|">)> will return <verbatim|#t>.
+    native trees match their scheme counterparts. For instance, <scm|(match?
+    (tree "x") "x<name|">)> will return <scm|#t>.
   </explain>
 
   <\explain>
-    <explain-scm-fun|match|<scm-arg|l> <scm-arg|pattern>
-    <scm-arg|bindings>><explain-synopsis|solutions to a given pattern under
+    <scm|(match <scm-arg|l> <scm-arg|pattern>
+    <scm-arg|bindings>)><explain-synopsis|solutions to a given pattern under
     bindings>
   <|explain>
     Given a list <scm-arg|l> of scheme expressions, a <scm-arg|pattern> with
@@ -36,12 +34,12 @@
   </explain>
 
   <\explain>
-    <explain-scm-fun|define-grammar|<scm-args|rules>><explain-synopsis|user
-    defined matching grammars>
+    <scm|(define-grammar <scm-args|rules>)><explain-synopsis|user defined
+    matching grammars>
   <|explain>
-    Given a list of rules of the form <verbatim|(:<scm-arg|var>
+    Given a list of rules of the form <scm|(:<scm-arg|var>
     <scm-arg|pattern-1> ... <scm-arg|pattern-n>)>, this instruction defines a
-    new terminal symbol <verbatim|:<scm-arg|var>> for each such rule, which
+    new terminal symbol <scm|:<scm-arg|var>> for each such rule, which
     matches the disjunction of the patterns <scm-arg|pattern-1> until
     <scm-arg|pattern-n>. This terminal symbol can then be used as an
     abbreviation in matching patterns. Grammar rules may be interdependent.
@@ -50,100 +48,83 @@
   Valid patterns are formed in the following ways:
 
   <\explain>
-    <verbatim|><scm-arg|leaf><explain-synopsis|symbols, strings, etc.>
+    <scm-arg|leaf><explain-synopsis|symbols, strings, etc.>
   <|explain>
     A <scm-arg|leaf> is only matched against itself.
   </explain>
 
   <\explain>
-    <verbatim|><verbatim|(<scm-arg|pattern-1> ...
-    <scm-arg|pattern-n>)><explain-synopsis|lists>
+    <scm|(<scm-arg|pattern-1> ... <scm-arg|pattern-n>)><explain-synopsis|lists>
   <|explain>
-    In the case when lists <verbatim|l-1> until <verbatim|l-n> match
+    In the case when lists <scm|l-1> until <scm|l-n> match
     <scm-arg|pattern-1> until <scm-arg|pattern-n>, their concatenation
-    matches the pattern <verbatim|(<scm-arg|pattern-1> ...
-    <scm-arg|pattern-n>)>.
+    matches the pattern <scm|(<scm-arg|pattern-1> ... <scm-arg|pattern-n>)>.
   </explain>
 
   <\explain>
-    <verbatim|><verbatim|:#1>, <verbatim|:#2>, <verbatim|:#3> ...,
-    <verbatim|:*><explain-synopsis|wildcards>
+    <scm|:#1>, <scm|:#2>, <scm|:#3> ..., <scm|:*><explain-synopsis|wildcards>
   <|explain>
-    The wildcard <verbatim|:#n>, where <verbatim|n> is a number matches any
-    list of length <verbatim|n>. The wildcard <verbatim|:*> matches any list,
-    including the empty list.
+    The wildcard <scm|:#n>, where <scm|n> is a number matches any list of
+    length <scm|n>. The wildcard <scm|:*> matches any list, including the
+    empty list.
   </explain>
 
   <\explain>
-    <verbatim|><verbatim|'<scm-arg|var>><explain-synopsis|variables>
+    <scm|'<scm-arg|var>><explain-synopsis|variables>
   <|explain>
     This pattern attempts to bind the variable <scm-arg|var> against the
     expression. If <scm-arg|var> is used only once, then it essentially
     behaves as a wildcard. More generally, it can be used to form patterns
-    with identical subexpressions. For instance, the pattern <verbatim|(frac
-    'x 'x)> will match all fractions <math|<frac|x|x>>.
+    with identical subexpressions. For instance, the pattern <scm|(frac 'x
+    'x)> will match all fractions <math|<frac|x|x>>.
   </explain>
 
   <\explain>
-    <verbatim|><verbatim|'<scm-arg|var>><explain-synopsis|variables>
+    <scm|:<scm-arg|var>><explain-synopsis|user-provided grammar rules>
   <|explain>
-    This pattern attempts to bind the variable <scm-arg|var> against the
-    expression. If <scm-arg|var> is used only once, then it essentially
-    behaves as a wildcard. More generally, it can be used to form patterns
-    with identical subexpressions. For instance, the pattern <verbatim|(frac
-    'x 'x)> will match all fractions <math|<frac|x|x>>.
+    In the case when <scm|:<scm-arg|var>> is a user-provided terminal symbol
+    (see <scm|define-grammar> above), this pattern matches the corresponding
+    grammar.
   </explain>
 
   <\explain>
-    <verbatim|><verbatim|:<scm-arg|var>><explain-synopsis|user-provided
-    grammar rules>
+    <scm|:<scm-arg|pred?>><explain-synopsis|arbitrary <value|scheme>
+    predicates>
   <|explain>
-    In the case when <verbatim|:<scm-arg|var>> is a user-provided terminal
-    symbol (see <scm-fun|define-grammar> above), this pattern matches the
-    corresponding grammar.
+    Given a <value|scheme> predicate <scm-arg|pred?>, such as <scm|string?>,
+    this pattern matches any scheme expression which satisfies the predicate.
   </explain>
 
   <\explain>
-    <verbatim|><verbatim|:<scm-arg|pred?>><explain-synopsis|arbitrary
-    <value|scheme> predicates>
-  <|explain>
-    Given a <value|scheme> predicate <scm-arg|pred?>, such as
-    <verbatim|string?>, this pattern matches any scheme expression which
-    satisfies the predicate.
-  </explain>
+    <scm|(:not <scm-arg|pattern>)>
 
-  <\explain>
-    <verbatim|><verbatim|(:not <scm-arg|pattern>)>
+    <scm|(:or <scm-arg|pattern-1> ... <scm-arg|pattern-n>)>
 
-    <verbatim|(:or <scm-arg|pattern-1> ... <scm-arg|pattern-n>)>
-
-    <verbatim|><verbatim|(:and <scm-arg|pattern-1> ...
+    <scm|><scm|(:and <scm-arg|pattern-1> ...
     <scm-arg|pattern-n>)><explain-synopsis|logical operations>
   <|explain>
     Negation, disjunction and conjunction of patterns.
   </explain>
 
   <\explain>
-    <verbatim|(:repeat <scm-arg|pattern>)><explain-synopsis|repetition>
+    <scm|(:repeat <scm-arg|pattern>)><explain-synopsis|repetition>
   <|explain>
-    Given lists <verbatim|l-1> until <verbatim|l-n> which match
-    <scm-arg|pattern>, their concatenation matches the repetition
-    <verbatim|(repeat <scm-arg|pattern>)>. In particular, the empty list is
-    matched.
+    Given lists <scm|l-1> until <scm|l-n> which match <scm-arg|pattern>,
+    their concatenation matches the repetition <scm|(:repeat
+    <scm-arg|pattern>)>. In particular, the empty list is matched.
   </explain>
 
   <\explain>
-    <verbatim|(:group <scm-arg|pattern-1> ...
-    <scm-arg|pattern-n>)><explain-synopsis|grouping>
+    <scm|(:group <scm-arg|pattern-1> ... <scm-arg|pattern-n>)><explain-synopsis|grouping>
   <|explain>
     Groups a concatenation of patterns into a new list patterns. For
-    instance, all lists of the form <verbatim|(a b a b ... a b)> are matched
-    by <verbatim|(:repeat (:group a b))>, whereas <verbatim|(:repeat (a b))>
-    rather matches all lists of the form <verbatim|((a b) (a b) ... (a b))>.
+    instance, all lists of the form <scm|(a b a b ... a b)> are matched by
+    <scm|(:repeat (:group a b))>, whereas <scm|(:repeat (a b))> rather
+    matches all lists of the form <scm|((a b) (a b) ... (a b))>.
   </explain>
 
   <\explain>
-    <verbatim|(:quote <scm-arg|expr>)><explain-synopsis|quotation>
+    <scm|(:quote <scm-arg|expr>)><explain-synopsis|quotation>
   <|explain>
     Only matches a given expression <scm-arg|expr>.
   </explain>
@@ -155,9 +136,9 @@
       (define t '(foo (bar "x") (bar "y") (option "z")))
     </scheme-fragment>
 
-    matches the pattern <verbatim|(foo (:repeat (bar :#1)) :*)>, but not
-    <verbatim|(foo (:repeat (bar 'x)) :*)>. The call <verbatim|(match t '(foo
-    'x 'y :*))> will return <verbatim|(((x . (bar "x")) (y . (bar "y"))))>.
+    matches the pattern <scm|(foo (:repeat (bar :#1)) :*)>, but not <scm|(foo
+    (:repeat (bar 'x)) :*)>. The call <scm|(match t '(foo 'x 'y :*))> will
+    return <scm|(((x . (bar "x")) (y . (bar "y"))))>.
   </example>
 
   <\example>
@@ -171,8 +152,8 @@
       \ \ (:b (:repeat :a)))
     </scheme-fragment>
 
-    Then the list <verbatim|(a b x y c a a)> matches the pattern
-    <verbatim|(:b :2 :b)>.
+    Then the list <scm|(a b x y c a a)> matches the pattern <scm|(:b :#2
+    :b)>.
   </example>
 
   <tmdoc-copyright|2007|Joris van der Hoeven>

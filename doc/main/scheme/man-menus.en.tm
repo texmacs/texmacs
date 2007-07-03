@@ -1,26 +1,26 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Creating your own dynamic menus>
 
-  You may define (or modify) a (part of a) menu with name <verbatim|name>
+  You may define (or modify) a (part of a) menu with name <scm-arg|name>
   using
 
-  <\verbatim>
-    \ \ \ \ (menu-bind <em|name> . <em|prog>)
-  </verbatim>
+  <\scheme-fragment>
+    (menu-bind <scm-arg|name> . <scm-arg|prog>)
+  </scheme-fragment>
 
   and append new entries to an existing (part of a) menu with name
-  <verbatim|name> using
+  <scm-arg|name> using
 
-  <\verbatim>
-    \ \ \ \ (menu-extend <em|name> . <em|prog>)
-  </verbatim>
+  <\scheme-fragment>
+    (menu-extend <scm-arg|name> . <scm-arg|prog>)
+  </scheme-fragment>
 
-  Here <verbatim|<em|prog>> is a program which represents the entries of the
-  menu. In particular, you may take a look at the files in the directory
+  Here <scm-arg|prog> is a program which represents the entries of the menu.
+  In particular, you may take a look at the files in the directory
 
   <\verbatim>
     \ \ \ \ $TEXMACS_PATH/progs/menu
@@ -31,41 +31,48 @@
   More precisely, the program <verbatim|<em|prog>> in <verbatim|menu-set> or
   <verbatim|menu-append> is a list of entries of one of the following forms:
 
-  <\verbatim>
-    \ \ \ \ (=\<gtr\> "<em|pulldown menu name>"
-    <em|menu-definition>)<next-line> \ \ \ (-\<gtr\> "<em|pullright menu
-    name>" <em|menu-definition>)<next-line> \ \ \ ("<em|entry>"
-    <em|action>)<next-line> \ \ \ ---<next-line> \ \ \ (if c<em|ondition>
-    <em|menu-definition>)<next-line> \ \ \ (link <em|variable>)
-  </verbatim>
+  <\scheme-fragment>
+    (=\<gtr\> "pulldown menu name" <scm-arg|menu-definition>)
 
-  The constructors <verbatim|=\<gtr\>> and <verbatim|-\<gtr\>> are used to
-  create pulldown or pullright menus and <verbatim|<em|menu-definition>>
-  should contain a program which creates the submenu. The constructor
-  <verbatim|("<em|entry>" <em|action>)> creates an ordinary entry, where
-  <verbatim|action> will be compiled and executed when you click on
-  <verbatim|<em|entry>>. Items of a menu may be separated using
-  <verbatim|--->. The constructor <verbatim|if> is used for inserting menu
-  items only if a certain <verbatim|<em|condition>> is satisfied (for
-  instance, if we are in math mode).
+    (-\<gtr\> "pullright menu name" <scm-arg|menu-definition>)
 
-  Finally, if you declared a menu <verbatim|<em|name>>, then you may use this
-  menu indirectly using the <verbatim|link> constructor. This indirect way of
-  declaring submenus has two advantages
+    ("entry" <scm-arg|action>)
+
+    ---
+
+    (if <scm-arg|condition> <scm-arg|menu-definition>)
+
+    (link <scm-arg|variable>)
+  </scheme-fragment>
+
+  \;
+
+  The constructors <scm|=\<gtr\>> and <scm|-\<gtr\>> are used to create
+  pulldown or pullright menus and <scm-arg|menu-definition> should contain a
+  program which creates the submenu. The constructor <scm|("entry"
+  <scm-arg|action>)> creates an ordinary entry, where <scm-arg|action> will
+  be compiled and executed when you click on <scm|entry>. Items of a menu may
+  be separated using <verbatim|--->. The constructor <scm|if> is used for
+  inserting menu items only if a certain <scm-arg|condition> is satisfied
+  (for instance, if we are in math mode).
+
+  Finally, if you declared a menu <scm-arg|name>, then you may use this menu
+  indirectly using the <scm|link> constructor. This indirect way of declaring
+  submenus has two advantages
 
   <\itemize>
     <item>An ``indirect'' submenu may be linked to as many menus as we like.
 
     <item>New items may be added to ``indirect'' submenus
-    <with|font-shape|italic|a posteriori> using <verbatim|menu-append>.
+    <with|font-shape|italic|a posteriori> using <scm|menu-append>.
   </itemize>
 
-  The main <TeXmacs> menus are <verbatim|texmacs-menu>,
-  <verbatim|texmacs-popup-menu>, <verbatim|texmacs-main-icons>,
-  <verbatim|texmacs-context-icons> and <verbatim|texmacs-extra-icons>. Other
-  standard indirect menus are <verbatim|file-menu>, <verbatim|edit-menu>,
-  <verbatim|insert-menu>, <verbatim|text-menu>, <verbatim|paragraph-menu>,
-  <verbatim|document-menu>, <verbatim|options-menu> and <verbatim|help-menu>.
+  The main <TeXmacs> menus are <scm|texmacs-menu>, <scm|texmacs-popup-menu>,
+  <scm|texmacs-main-icons>, <scm|texmacs-context-icons> and
+  <scm|texmacs-extra-icons>. Other standard indirect menus are
+  <scm|file-menu>, <scm|edit-menu>, <scm|insert-menu>, <scm|text-menu>,
+  <scm|paragraph-menu>, <scm|document-menu>, <scm|options-menu> and
+  <scm|help-menu>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

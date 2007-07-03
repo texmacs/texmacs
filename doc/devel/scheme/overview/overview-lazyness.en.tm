@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -35,15 +35,14 @@
   <verbatim| \ \ \ $TEXMACS_PATH/progs/kernel<new-line>
   \ \ \ $TEXMACS_PATH/progs/utils/library>
 
-  All symbols which are defined inside the module using <verbatim|define> or
-  <verbatim|define-macro> are only visible within the module itself. In order
-  to make the symbol publicly visible you should use <verbatim|tm-define> or
-  <verbatim|tm-define-macro>. Currently, because of implementation details
-  for the <hyper-link|contextual overloading
-  system|overview-overloading.en.tm>, as soon as a symbol is declared to be
-  public, it becomes visible inside all other modules. However, you should
-  not rely on this: in the future, it explicit importation with
-  <verbatim|:use> might become<nbsp>necessary.
+  All symbols which are defined inside the module using <scm|define> or
+  <scm|define-macro> are only visible within the module itself. In order to
+  make the symbol publicly visible you should use <scm|tm-define> or
+  <scm|tm-define-macro>. Currently, because of implementation details for the
+  <hlink|contextual overloading system|overview-overloading.en.tm>, as soon
+  as a symbol is declared to be public, it becomes visible inside all other
+  modules. However, you should not rely on this: in the future, it explicit
+  importation with <scm|:use> might become<nbsp>necessary.
 
   Because the number of <TeXmacs> modules and plug-ins keeps on growing, it
   is unefficient to load all modules when booting. Instead, initialization
@@ -53,9 +52,8 @@
   spare time, when the computer is waiting for user input.
 
   For instance, assume that you defined a large new editing function
-  <verbatim|foo-action> inside the module <verbatim|(foo-<no-break>edit)>.
-  Then your initialization file <verbatim|init-foo.scm> would typically
-  contain a line
+  <scm|foo-action> inside the module <scm|(foo-edit)>. Then your
+  initialization file <verbatim|init-foo.scm> would typically contain a line
 
   <\scheme-fragment>
     (lazy-define (foo-edit) foo-action)
@@ -80,21 +78,20 @@
   happen that the standard definition is loaded after your ``redefinition''.
   In that case, your redefinition remains without consequence.
 
-  For this reason, <TeXmacs> also provides the instruction
-  <verbatim|import-from> to force a particular module to be loaded.
-  Similarly, the commands <verbatim|lazy-keyboard-force>,
-  <verbatim|lazy-plugin-force>, <abbr|etc.> may be used to force all lazy
-  keyboard definitions <abbr|resp.> plug-ins to be loaded. In other words,
-  the use of lazyness forces to make implicit dependencies between modules
-  more explicit.
+  For this reason, <TeXmacs> also provides the instruction <scm|import-from>
+  to force a particular module to be loaded. Similarly, the commands
+  <scm|lazy-keyboard-force>, <scm|lazy-plugin-force>, <abbr|etc.> may be used
+  to force all lazy keyboard definitions <abbr|resp.> plug-ins to be loaded.
+  In other words, the use of lazyness forces to make implicit dependencies
+  between modules more explicit.
 
   In the case when you want to redefine keyboard shortcuts, the
-  <hyper-link|contextual overloading system|overview-overloading.en.tm> gives
-  you an even more fine-grained control. For instance, assume that the
-  keyboard shortcut <key|x x x> has been defined twice, both in general and
-  in math mode. After calling <verbatim|lazy-keyboard-force> and overriding
-  the general definition of the shortcut, the special definition will still
-  take precedence in math mode. Alternatively, you may redefine the keyboard
+  <hlink|contextual overloading system|overview-overloading.en.tm> gives you
+  an even more fine-grained control. For instance, assume that the keyboard
+  shortcut <key|x x x> has been defined twice, both in general and in math
+  mode. After calling <scm|lazy-keyboard-force> and overriding the general
+  definition of the shortcut, the special definition will still take
+  precedence in math mode. Alternatively, you may redefine the keyboard
   shortcut using
 
   <\scheme-fragment>

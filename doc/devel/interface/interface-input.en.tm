@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -23,8 +23,8 @@
   allows you for instance to treat multi-line input in a particular way or
   the perform transformations on the <TeXmacs> tree.
 
-  The <verbatim|:serialize> option is a very powerful, but also a very
-  abstract way to customize input: it forces you to write a complete input
+  The <scm|:serialize> option is a very powerful, but also a very abstract
+  way to customize input: it forces you to write a complete input
   transformation function. In many circumstances, the user really wants to
   rewrite two dimensional mathematical input to a more standard form, like
   rewriting <no-break><with|mode|math|<frac|a|b>> to <verbatim|((a)/(b))>.

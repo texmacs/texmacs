@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -7,9 +7,9 @@
 
   All <TeXmacs> documents or document fragments can be thought of as
   <em|trees>, as explained in more detail in the chapter about the
-  <hyper-link|<TeXmacs> document format|../../format/basics/basics.en.tm>.
-  Inside <value|scheme> programs, there are two main ways to represent such
-  trees, depending on whether one manipulates active or passive documents:
+  <hlink|<TeXmacs> document format|../../format/basics/basics.en.tm>. Inside
+  <value|scheme> programs, there are two main ways to represent such trees,
+  depending on whether one manipulates active or passive documents:
 
   <paragraph|Passive documents and <value|scheme> trees><label|tree-passive>
 
@@ -101,10 +101,10 @@
   either a string, a tree or a list whose first element is a symbol and whose
   remaining elements are other expressions of type <verbatim|content>.
   <TeXmacs> provides several routines (usually prefixed by <verbatim|tm->)
-  for basic operations on content, like <verbatim|tm-car>,
-  <verbatim|tm-arity>, <verbatim|tm-\<gtr\>list>, <verbatim|tm-equal?>, etc.
-  Most higher level routines are built on top of these routines, so as to
-  accept arguments of type <verbatim|content> whenever appropriate.
+  for basic operations on content, like <scm|tm-car>, <scm|tm-arity>,
+  <scm|tm-\<gtr\>list>, <scm|tm-equal?>, etc. Most higher level routines are
+  built on top of these routines, so as to accept arguments of type
+  <verbatim|content> whenever appropriate.
 
   <paragraph|Persistent positions inside trees>
 
@@ -124,12 +124,11 @@
     \ \ \ \ (insert t)))
   </scheme-fragment>
 
-  The <verbatim|with-cursor> macro temporarily changes the cursor position,
-  while storing the old cursor position in such a way that it will be updated
+  The <scm|with-cursor> macro temporarily changes the cursor position, while
+  storing the old cursor position in such a way that it will be updated
   during changes of the document. The user may also use the more explicit
-  routines <verbatim|position-new>, <verbatim|position-delete>,
-  <verbatim|position-set> and <verbatim|position-get> to manage persistent
-  positions.
+  routines <scm|position-new>, <scm|position-delete>, <scm|position-set> and
+  <scm|position-get> to manage persistent positions.
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
 

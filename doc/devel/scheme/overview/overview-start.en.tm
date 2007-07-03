@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -65,10 +65,10 @@
   The customization of the <hlink|keyboard|../utils/utils-keyboard.en.tm> and
   <hlink|menus|../utils/utils-menus.en.tm> is described in more detail in the
   chapter about the <TeXmacs> extensions of <value|scheme>. Notice also that,
-  because of the <hyper-link|lazy loading mechanism|overview-lazyness.en.tm>,
-  you can not always assume that the standard key-bindings and menus are
-  loaded before <verbatim|my-init-texmacs.scm>. This implies that some care
-  is needed in the case of <hyper-link|redefinitions|overview-lazyness.en.tm#redefinitions>.
+  because of the <hlink|lazy loading mechanism|overview-lazyness.en.tm>, you
+  can not always assume that the standard key-bindings and menus are loaded
+  before <verbatim|my-init-texmacs.scm>. This implies that some care is
+  needed in the case of <hlink|redefinitions|overview-lazyness.en.tm#redefinitions>.
 
   The file <verbatim|my-init-buffer.scm> can for instance be used in order to
   automatically select a certain style when starting a new document:
@@ -85,9 +85,9 @@
 
   Notice that the check <verbatim|(no-name?)> is important: when omitted, the
   styles of existing documents would also be changed to <tmstyle|article>.
-  The command <verbatim|(pretend-save-buffer)> is used in order to avoid
-  <TeXmacs> to complain about unsaved documents when leaving <TeXmacs>
-  without changing the document.
+  The command <scm|(pretend-save-buffer)> is used in order to avoid <TeXmacs>
+  to complain about unsaved documents when leaving <TeXmacs> without changing
+  the document.
 
   Another typical use of <verbatim|my-init-buffer.scm> is when you mainly
   want to use <TeXmacs> as a front-end to another system. For instance, the
@@ -100,11 +100,11 @@
     \ \ \ \ (make-session "maxima" (url-\<gtr\>string (get-name-buffer))))
   </scheme-fragment>
 
-  Using <verbatim|(url-\<gtr\>string (get-name-buffer))> as the second
-  argument of <verbatim|make-session> ensures that a different session will
-  be opened for every new buffer. If you want all buffers to share a common
-  instance of <name|Maxima>, then you should use <verbatim|"default">
-  instead, for the second argument.
+  Using <scm|(url-\<gtr\>string (get-name-buffer))> as the second argument of
+  <scm|make-session> ensures that a different session will be opened for
+  every new buffer. If you want all buffers to share a common instance of
+  <name|Maxima>, then you should use <scm|"default"> instead, for the second
+  argument.
 
   <paragraph|User provided plug-ins>
 
@@ -135,8 +135,8 @@
 
   Any other <value|scheme> code present in <verbatim|init-<em|name>.scm> will
   then be executed when the plug-in is booted, that is, shortly after
-  <TeXmacs> is started up. By using the additional <verbatim|(:prioritary
-  #t)> option, you may force the plug-in to be loaded earlier during the boot
+  <TeXmacs> is started up. By using the additional <scm|(:prioritary #t)>
+  option, you may force the plug-in to be loaded earlier during the boot
   procedure.
 
   Of course, the plug-in mechanism is more interesting when the plug-in
@@ -156,7 +156,7 @@
   load the appropriate modules only when needed.
 
   For more information about how to write plug-ins, we refer to the
-  <hyper-link|corresponding chapter|../../interface/interface.en.tm>.
+  <hlink|corresponding chapter|../../interface/interface.en.tm>.
 
   <paragraph|Interactive invocation of <value|scheme> commands>
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -14,10 +14,10 @@
 
   <paragraph|Regular expressions>
 
-  <TeXmacs> implements the routines <verbatim|match?> and <verbatim|select>
-  for matching regular expressions and selecting subexpressions along a
-  ``path''. These routines both work for the <verbatim|content> type. For
-  instance, in order to search all expressions of the form
+  <TeXmacs> implements the routines <scm|match?> and <scm|select> for
+  matching regular expressions and selecting subexpressions along a ``path''.
+  These routines both work for the <verbatim|content> type. For instance, in
+  order to search all expressions of the form
 
   <\equation*>
     <frac|<with|color|brown|a>|1+<sqrt|<with|color|brown|b>>>
@@ -38,10 +38,9 @@
 
   <TeXmacs> supports several commands for asynchronous evaluation of scheme
   commands and interactive dialogues with the user. In general, asynchroneous
-  instructions have to be encapsulated inside a ``<verbatim|dialogue>
-  block''. For instance, when executing the following scheme command, you
-  will be prompted for two numbers, whose product will be displayed in the
-  footer:
+  instructions have to be encapsulated inside a ``<scm|dialogue> block''. For
+  instance, when executing the following scheme command, you will be prompted
+  for two numbers, whose product will be displayed in the footer:
 
   <\with|prog-language|scheme|prog-session|default>
     <\session>
@@ -61,8 +60,8 @@
   <paragraph|User preferences>
 
   When writing a plug-in, you may wish to define some new user preferences.
-  This can be done using the <verbatim|define-preferences> command, which
-  adds a list of user preferences, together with their default values and a
+  This can be done using the <scm|define-preferences> command, which adds a
+  list of user preferences, together with their default values and a
   call-back routine. The call-back routine is called whenever you change the
   corresponding preference. For instance:
 
@@ -74,18 +73,18 @@
     \ \ ("Snail's cruising speed" "1mm/sec" notify-Achilles))
   </scheme-fragment>
 
-  Preferences can be set, reset and read using <verbatim|set-preference>,
-  <verbatim|reset-preference> and <verbatim|get-preference>.
+  Preferences can be set, reset and read using <scm|set-preference>,
+  <scm|reset-preference> and <scm|get-preference>.
 
   <paragraph|New data formats and converters>
 
   New data formats and converters can be declared using the
-  <verbatim|define-format> and <verbatim|converter> instructions. When a
-  format can be converted from or into <TeXmacs>, then it will automatically
-  appear into the <menu|File|Export> and <menu|File|Import> menus. Similarly,
-  when a format can be converted to <name|Postscript>, then it also becomes a
-  valid format for images. <TeXmacs> also attempts to combine explictly
-  declared converters into new ones.
+  <scm|define-format> and <scm|converter> instructions. When a format can be
+  converted from or into <TeXmacs>, then it will automatically appear into
+  the <menu|File|Export> and <menu|File|Import> menus. Similarly, when a
+  format can be converted to <name|Postscript>, then it also becomes a valid
+  format for images. <TeXmacs> also attempts to combine explictly declared
+  converters into new ones.
 
   Typically, the declaration of a new format and a converter would look like:
 

@@ -1,40 +1,40 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Creating your own keyboard shortcuts>
 
-  Keymaps are specified using the command\ 
+  Keymaps are specified using the command
 
-  <\verbatim>
-    \ \ \ \ (kbd-map . <em|keymaps>)
-  </verbatim>
+  <\scheme-fragment>
+    (kbd-map . <scm-arg|keymaps>)
+  </scheme-fragment>
 
   Optionally, you may specify conditions which must be satisfied for the
-  keymap to be valid using the <verbatim|:mode> option. For instance, the
-  command
+  keymap to be valid using the <scm|:mode> option. For instance, the command
 
-  <\verbatim>
-    \ \ \ \ (kbd-map (:mode in-math?) . <em|keymaps>)
-  </verbatim>
+  <\scheme-fragment>
+    (kbd-map (:mode in-math?) . <scm-arg|keymaps>)
+  </scheme-fragment>
 
   specifies a list of keyboard shortcuts which will only be valid in
-  math-mode. Each item in <verbatim|<em|keymaps>> is of one of the following
-  forms:
+  math-mode. Each item in <scm-arg|keymaps> is of one of the following forms:
 
-  <\verbatim>
-    \ \ \ \ (<em|key-combination> <em|action_1> ... <em|action_n>)<next-line>
-    \ \ \ (<em|key-combination> <em|result>)<next-line>
-    \ \ \ (<em|key-combination> <em|result> <em|help-message>)
-  </verbatim>
+  <\scheme-fragment>
+    (<em|key-combination> <scm-arg|action_1> ... <scm-arg|action_n>)
 
-  In the first case, the <verbatim|<em|action_i>> are <scheme> commands
-  associated to the string <verbatim|<em|key-combination>>. In the second and
-  third case, <verbatim|<em|result>> is a string which is to be inserted in
-  the text when the <verbatim|<em|key-combination>> has been completed. An
-  optional <verbatim|<em|help-message>> may be displayed when the
-  <verbatim|<em|key-combination>> is finished.
+    (<em|key-combination> <scm-arg|result>)
+
+    (<em|key-combination> <scm-arg|result> <scm-arg|help-message>)
+  </scheme-fragment>
+
+  In the first case, the <scm-arg|action_i> are <scheme> commands associated
+  to the string <scm-arg|key-combination>. In the second and third case,
+  <scm-arg|result> is a string which is to be inserted in the text when the
+  <scm-arg|key-combination> has been completed. An optional
+  <scm-arg|help-message> may be displayed when the <scm-arg|key-combination>
+  is finished.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

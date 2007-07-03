@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.4>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -72,8 +72,8 @@
     \ \ \ \ (tm-assign-diff p date)))
   </scheme-fragment>
 
-  The <verbatim|tm-assign-diff> command is convenient, because it only
-  modifies the document if a real change occurred.
+  The <scm|tm-assign-diff> command is convenient, because it only modifies
+  the document if a real change occurred.
 
   The insertion of blinking content is slightly more complex, since it also
   takes into account the current content of the mutator tag. The <key|C-F12>

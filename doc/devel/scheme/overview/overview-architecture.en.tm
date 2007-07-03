@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -9,26 +9,21 @@
   to be conscious of the internal architecture of the <value|scheme> modules
   inside <TeXmacs> (see figure <reference|scheme-api-fig>).
 
-  <big-figure|<with|gr-edit-grid-aspect|<tuple|<tuple|axes|none>|<tuple|1|none>|<tuple|4|none>>|gr-mode|<tuple|edit|cline>|gr-fill-mode|inside|gr-fill-color|black|gr-line-width|1ln|<graphics||<with|fill-mode|both|fill-color|grey|<cline|<point|-6.5|-0.5>|<point|6.5|-0.5>|<point|6.5|-4>|<point|-6.5|-4>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|-4|-2>|<point|4|-2>|<point|4|-1>|<point|-4|-1>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|-6|-1>|<point|-4.5|-1>|<point|-4.5|-2.5>|<point|-0.25|-2.5>|<point|-0.25|-3.5>|<point|-6|-3.5>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|0.25|-2.5>|<point|4.5|-2.5>|<point|4.5|-1>|<point|6|-1>|<point|6|-3.5>|<point|0.25|-3.5>>>|<text-at|<value|scheme>
-  routines from glue|<point|3.25|-3>|center|center>|<text-at|Standard
-  <value|scheme> language|<point|-3.25|-3>|center|center>|<with|fill-color|pastel
-  grey|<line|<point|-2.25|-2>>>|<with|fill-color|pastel
-  grey|<line|<point|-2.25|-2>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|-2.5|-2.25>|<point|-2.25|-2>|<point|-2|-2.25>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|1.75|-2.25>|<point|2|-2>|<point|2.25|-2.25>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|-0.25|-0.75>|<point|0|-0.5>|<point|0.25|-0.75>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|-5.5|-0.75>|<point|-5.25|-0.5>|<point|-5|-0.75>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|5|-0.75>|<point|5.25|-0.5>|<point|5.5|-0.75>>>|<with|line-width|2ln|fill-color|black|<line|<point|-2.25|-2.5>|<point|-2.25|-2.25>>>|<with|line-width|2ln|fill-color|black|<line|<point|2|-2.5>|<point|2|-2.25>>>|<with|line-width|2ln|fill-color|black|<line|<point|0|-1>|<point|0|-0.75>>>|<with|line-width|2ln|fill-color|black|<line|<point|-5.25|-1>|<point|-5.25|-0.75>>>|<with|line-width|2ln|fill-color|black|<line|<point|5.25|-1>|<point|5.25|-0.75>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|-6.5|0>|<point|6.5|0>|<point|6.5|-0.5>|<point|-6.5|-0.5>>>|<with|fill-mode|both|fill-color|grey|<cline|<point|-6.5|1>|<point|-6.5|3.5>|<point|-0.5|3.5>|<point|-0.5|1>>>|<with|fill-mode|both|fill-color|grey|<cline|<point|0.5|3.5>|<point|6.5|3.5>|<point|6.5|1>|<point|0.5|1>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|-6|2.5>|<point|-6|1.5>|<point|-4.5|1.5>|<point|-4.5|2.5>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|-4.25|1.5>|<point|-2.75|1.5>|<point|-2.75|2.5>|<point|-4.25|2.5>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|-2.5|1.5>|<point|-1|1.5>|<point|-1|2.5>|<point|-2.5|2.5>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|1|2.5>|<point|1|1.5>|<point|2.5|1.5>|<point|2.5|2.5>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|2.75|2.5>|<point|2.75|1.5>|<point|4.25|1.5>|<point|4.25|2.5>>>|<with|fill-mode|both|fill-color|pastel
-  grey|<cline|<point|4.5|1.5>|<point|6|1.5>|<point|6|2.5>|<point|4.5|2.5>>>|<text-at|Plug-ins|<point|3.5|3>|center|center>|<text-at|Internal
-  modules|<point|-3.5|3>|center|center>|<with|line-width|2ln|fill-color|pastel
-  grey|<line|<point|-3.5|0>|<point|-3.5|1>>>|<with|line-width|2ln|fill-color|pastel
-  grey|<line|<point|3.5|0>|<point|3.5|1>>>|<with|line-width|2ln|fill-color|pastel
-  grey|<line|<point|-0.5|2.25>|<point|0.5|2.25>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|-3.75|0.75>|<point|-3.5|1>|<point|-3.25|0.75>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|3.25|0.75>|<point|3.5|1>|<point|3.75|0.75>>>|<with|fill-mode|inside|fill-color|black|<cline|<point|0.25|2.5>|<point|0.5|2.25>|<point|0.25|2>>>|<text-at|Language
-  extensions, utilities and libraries|<point|0|-1.5>|center|center>>>|<label|scheme-api-fig>Schematic
+  <big-figure|<with|gr-edit-grid-aspect|<tuple|<tuple|axes|none>|<tuple|1|none>|<tuple|4|none>>|gr-mode|<tuple|edit|cline>|gr-fill-color|black|gr-line-width|1ln|<graphics||<with|fill-color|grey|<cline|<point|-6.5|-0.5>|<point|6.5|-0.5>|<point|6.5|-4>|<point|-6.5|-4>>>|<with|fill-color|pastel
+  grey|<cline|<point|-4|-2>|<point|4|-2>|<point|4|-1>|<point|-4|-1>>>|<with|fill-color|pastel
+  grey|<cline|<point|-6|-1>|<point|-4.5|-1>|<point|-4.5|-2.5>|<point|-0.25|-2.5>|<point|-0.25|-3.5>|<point|-6|-3.5>>>|<with|fill-color|pastel
+  grey|<cline|<point|0.25|-2.5>|<point|4.5|-2.5>|<point|4.5|-1>|<point|6|-1>|<point|6|-3.5>|<point|0.25|-3.5>>>|<with|text-at-halign|center|text-at-valign|center|<text-at|<value|scheme>
+  routines from glue|<point|3.25|-3>>>|<with|text-at-halign|center|text-at-valign|center|<text-at|Standard
+  <value|scheme> language|<point|-3.25|-3>>>|<with|<line|<point|-2.25|-2>>>|<with|<line|<point|-2.25|-2>>>|<with|fill-color|black|color|none|<cline|<point|-2.5|-2.25>|<point|-2.25|-2>|<point|-2|-2.25>>>|<with|fill-color|black|color|none|<cline|<point|1.75|-2.25>|<point|2|-2>|<point|2.25|-2.25>>>|<with|fill-color|black|color|none|<cline|<point|-0.25|-0.75>|<point|0|-0.5>|<point|0.25|-0.75>>>|<with|fill-color|black|color|none|<cline|<point|-5.5|-0.75>|<point|-5.25|-0.5>|<point|-5|-0.75>>>|<with|fill-color|black|color|none|<cline|<point|5|-0.75>|<point|5.25|-0.5>|<point|5.5|-0.75>>>|<with|line-width|2ln|<line|<point|-2.25|-2.5>|<point|-2.25|-2.25>>>|<with|line-width|2ln|<line|<point|2|-2.5>|<point|2|-2.25>>>|<with|line-width|2ln|<line|<point|0|-1>|<point|0|-0.75>>>|<with|line-width|2ln|<line|<point|-5.25|-1>|<point|-5.25|-0.75>>>|<with|line-width|2ln|<line|<point|5.25|-1>|<point|5.25|-0.75>>>|<with|fill-color|pastel
+  grey|<cline|<point|-6.5|0>|<point|6.5|0>|<point|6.5|-0.5>|<point|-6.5|-0.5>>>|<with|fill-color|grey|<cline|<point|-6.5|1>|<point|-6.5|3.5>|<point|-0.5|3.5>|<point|-0.5|1>>>|<with|fill-color|grey|<cline|<point|0.5|3.5>|<point|6.5|3.5>|<point|6.5|1>|<point|0.5|1>>>|<with|fill-color|pastel
+  grey|<cline|<point|-6|2.5>|<point|-6|1.5>|<point|-4.5|1.5>|<point|-4.5|2.5>>>|<with|fill-color|pastel
+  grey|<cline|<point|-4.25|1.5>|<point|-2.75|1.5>|<point|-2.75|2.5>|<point|-4.25|2.5>>>|<with|fill-color|pastel
+  grey|<cline|<point|-2.5|1.5>|<point|-1|1.5>|<point|-1|2.5>|<point|-2.5|2.5>>>|<with|fill-color|pastel
+  grey|<cline|<point|1|2.5>|<point|1|1.5>|<point|2.5|1.5>|<point|2.5|2.5>>>|<with|fill-color|pastel
+  grey|<cline|<point|2.75|2.5>|<point|2.75|1.5>|<point|4.25|1.5>|<point|4.25|2.5>>>|<with|fill-color|pastel
+  grey|<cline|<point|4.5|1.5>|<point|6|1.5>|<point|6|2.5>|<point|4.5|2.5>>>|<with|text-at-halign|center|text-at-valign|center|<text-at|Plug-ins|<point|3.5|3>>>|<with|text-at-halign|center|text-at-valign|center|<text-at|Internal
+  modules|<point|-3.5|3>>>|<with|line-width|2ln|<line|<point|-3.5|0>|<point|-3.5|1>>>|<with|line-width|2ln|<line|<point|3.5|0>|<point|3.5|1>>>|<with|line-width|2ln|<line|<point|-0.5|2.25>|<point|0.5|2.25>>>|<with|fill-color|black|color|none|<cline|<point|-3.75|0.75>|<point|-3.5|1>|<point|-3.25|0.75>>>|<with|fill-color|black|color|none|<cline|<point|3.25|0.75>|<point|3.5|1>|<point|3.75|0.75>>>|<with|fill-color|black|color|none|<cline|<point|0.25|2.5>|<point|0.5|2.25>|<point|0.25|2>>>|<with|text-at-halign|center|text-at-valign|center|<text-at|Language
+  extensions, utilities and libraries|<point|0|-1.5>>>>>|<label|scheme-api-fig>Schematic
   organization of the <value|scheme> API.>
 
   <paragraph|Built-in <value|scheme> commands>
@@ -60,18 +55,18 @@
 
   <\itemize>
     <item>A certain number of frequently used
-    <hyper-link|abbreviations|../utils/utils-abbrevs.en.tm>, like
-    <verbatim|==> for <verbatim|equal?>.
+    <hlink|abbreviations|../utils/utils-abbrevs.en.tm>, like <scm|==> for
+    <scm|equal?>.
 
-    <item>General language extensions for <hyper-link|contextual
-    overloading|overview-overloading.en.tm>, <hyper-link|logical
+    <item>General language extensions for <hlink|contextual
+    overloading|overview-overloading.en.tm>, <hlink|logical
     programming|overview-meta.en.tm>, <abbr|etc.>
 
     <item><TeXmacs>-specific language extensions for the definition of
-    <hyper-link|menus|../utils/utils-menus.en.tm>, <hyper-link|keyboard
+    <hlink|menus|../utils/utils-menus.en.tm>, <hlink|keyboard
     shortcuts|../utils/utils-keyboard.en.tm>, <abbr|etc.>
 
-    <item>Additional routines for <hyper-link|<TeXmacs> content
+    <item>Additional routines for <hlink|<TeXmacs> content
     manipulation|overview-content.en.tm> and pattern matching.
 
     <item>Further utilities and libraries for common types like strings and
