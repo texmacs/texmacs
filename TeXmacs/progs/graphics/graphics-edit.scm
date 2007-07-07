@@ -64,19 +64,22 @@
      (< (+ (* (- x2 x1) (- x2 x1)) (* (- y2 y1) (- y2 y1))) (* eps eps))))
 
 ;; Basic operations (create)
+(define (check-sketch1)
+  (if (not (and (pair? (sketch-get)) (eq? 1 (length (sketch-get)))))
+      (graphics-error "(check-sketch1)")))
+  
 (tm-define (create x y mode)
   (:require (eq? mode 'point))
   (graphics-group-enrich-insert `(point ,x ,y)))
 
 (tm-define (create x y mode)
   (:require (in? mode gr-tags-curves))
-  (with o `(,mode (point ,x ,y) (point ,x ,y))
+  (with o (graphics-enrich `(,mode (point ,x ,y) (point ,x ,y)))
     (graphics-store-state 'start-create)
     (set! graphics-undo-enabled #f)
-    (set! sticky-point #t)
+    (sketch-set! `(,o))
+    (sketch-checkout)
     (set! current-obj o)
-    (set! current-point-no #f)
-    (graphics-decorations-update 'new)
     (set! current-point-no 1)
     (graphics-store-state #f)))
 
@@ -86,14 +89,19 @@
     `(text-at "" (point ,x ,y))))
 
 ;; Basic operations (add point)
-(define (object_set-point xcur ycur obj no)
+(define (object_set-point xcur ycur no)
+  (check-sketch1)
+  (define obj (stree-radical (car (sketch-get))))
  ;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
 	(set-car! l `(point ,xcur ,ycur)))))
 
-(define (object_add-point xcur ycur x y obj no dirn)
-  ;;(display* "obj=" obj "\n")
+(define (object_add-point xcur ycur x y no dirn)
+  (define obj #f)
+  (check-sketch1)
+  (set! obj (stree-radical (car (sketch-get))))
+ ;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
   	(graphics-store-state #f)
@@ -104,23 +112,27 @@
  		  (set-car! l `(point ,xcur ,ycur)))
  	      (set! current-point-no (+ no 1))
               (set! current-obj obj)
- 	      (graphics-decorations-update 'active))
+ 	      (graphics-decorations-update))
   	    (begin
   	      (set-cdr! l (cons (car l) (cdr l)))
   	      (set-car! l `(point ,x ,y))
  	      (if (and xcur ycur)
  		  (set-car! (cdr l) `(point ,xcur ,ycur)))
  	      (set! current-point-no no)
- 	      (graphics-decorations-update 'active)))
+ 	      (graphics-decorations-update)))
   	(set! current-edge-sel? #t)
   	(set! sticky-point #t))))
 
 ;; Basic operations (commit)
 (define (object_commit x y obj)
+  (check-sketch1)
+  (set! obj (stree-radical (car (sketch-get))))
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
   (begin
-     (graphics-group-enrich-insert-bis
-      obj graphical-color graphical-pstyle
+     (fetch-props (car (sketch-get)))
+     (set! obj (graphics-enrich-bis
+      obj
+      graphical-color graphical-pstyle
       graphical-lwidth
       (local-magnification graphical-magnification)
       graphical-lstyle
@@ -128,17 +140,17 @@
       graphical-larrows
       graphical-fcolor
       graphical-textat-halign
-      graphical-textat-valign #f)
+      graphical-textat-valign))
+     (sketch-set! `(,obj))
+     (sketch-commit)
      (if (== (state-ref graphics-first-state 'graphics-action)
 	     'start-move)
 	 (remove-undo-mark))
-     (set! sticky-point #f)
      (set! leftclick-waiting #f)
      (set! current-edge-sel? #f)
      (set! graphics-undo-enabled #t)
-     (set! current-obj obj)
+     (set! current-obj (stree-radical obj))
      (set! current-point-no #f)
-     (graphics-decorations-update 'active)
      (graphics-forget-states))))
 
 ;; Left button
@@ -151,8 +163,8 @@
 		   previous-leftclick `(point ,x ,y) moveclick-tolerance))
 	    (begin
 	       (object_set-point
-		  (cadr previous-leftclick) (caddr previous-leftclick) obj no)
-	       (object_commit x y obj))
+		  (cadr previous-leftclick) (caddr previous-leftclick) no)
+	       (object_commit x y #f))
 	    (begin
               (if (and (not leftclick-waiting)
                        previous-leftclick
@@ -170,10 +182,10 @@
       (begin
 	(set-message "Left click: add point; Middle click: undo" "")
 	(graphics-store-state 'start-move)
-	(set! sticky-point #t)
-	(set! current-point-no #f)
-	(graphics-decorations-update)
-	(graphics-remove p 'memoize-layer)
+	(set! current-point-no no)
+	(sketch-set! `(,(path->tree p)))
+	(sketch-checkout)
+	(sketch-set! (map tree->stree (sketch-get)))
 	(graphics-group-start)
 	(set! leftclick-waiting #f)
 	(set! current-point-no no)
@@ -182,8 +194,7 @@
         (set! previous-leftclick  `(point ,x ,y))
 	(if (and edge (not (and (in? (car obj) '(arc carc))
 				(> (length obj) 3))))
-	  (object_add-point #f #f x y
-	    (cadr (graphical-object #t)) no #t))
+	  (object_add-point #f #f x y no #t))
 	(graphics-store-state #f))))
 
 (tm-define (left-button x y p obj no edge)
@@ -220,17 +231,19 @@
 	     (set! leftclick-waiting #f)
 	     (object_add-point
 	       (cadr previous-leftclick) (caddr previous-leftclick)
-	       x y obj no (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
+	       x y no (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
 	  (begin
 	     (if leftclick-waiting
 		 (set-message "Left click: finish" "")
 		 (set-message "Left click: add point; Middle click: undo" ""))
+	     (check-sketch1)
+	     (set! obj (stree-radical (car (sketch-get))))
 	     (if (== (car obj) 'point)
 	         (set! obj `(point ,x ,y))
 	         (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
 	     (set! current-point-no no)
 	     (set! current-edge-sel? edge)
-	     (graphics-decorations-update 'active)))
+	     (graphics-decorations-update)))
       (begin
 	(set-message "Left click: add or edit object; Middle click: remove object" "")
 	(set! current-point-no no)
