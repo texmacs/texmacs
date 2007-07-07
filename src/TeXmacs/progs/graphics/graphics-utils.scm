@@ -71,9 +71,50 @@
 (tm-define t2o tree->object)
 (tm-define o2t object->tree)
 
+;; Error
+(tm-define (graphics-error msg . opt)
+  (if (null? opt)
+      (display msg)
+      (display* msg (car opt)))
+  (newline) ;(quit-TeXmacs)
+)
+
 ;; Lists as bags
-(tm-define seek-eq? memq)
-(tm-define remove-eq? delq1!)
+;; FIXME: One more time, due to an incomplete implementation
+;;   of some very basic functionnality, we had to do our own
+;;   hack...
+;(tm-define seek-eq? memq)
+;(tm-define remove-eq? delq1!)
+
+(tm-define (complete-eq? x y)
+  (if (and (tree? x) (tree? y))
+      (tree-eq? x y)
+      (eq? x y)))
+
+(tm-define (seek-eq? x l)
+  (if (pair? l)
+      (if (complete-eq? x (car l))
+          l
+          (seek-eq? x (cdr l)))
+      #f))
+
+(tm-define (remove-eq0? x l)
+  (define l0 (cons 'X l))
+  (define (seek l prec)
+     (if (pair? l)
+         (if (complete-eq? x (car l))
+             (set-cdr! prec (cdr l))
+             (seek (cdr l) (cdr prec))))
+  )
+  (seek l l0)
+  (cdr l0))
+
+(define-export-macro (remove-eq? x l)
+  (if (symbol? l)
+     `(begin
+	 (set! ,l (remove-eq0? ,x ,l))
+	,l)
+     `(remove-eq0? ,x ,l)))
 
 ;; Iterators
 (define-public foreach for)
