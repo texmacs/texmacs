@@ -73,9 +73,11 @@
   (with o `(,mode (point ,x ,y) (point ,x ,y))
     (graphics-store-state 'start-create)
     (set! graphics-undo-enabled #f)
-    (create-graphical-object o 'new 'object-and-points #f)
-    (set! current-point-no 1)
     (set! sticky-point #t)
+    (set! current-obj o)
+    (set! current-point-no #f)
+    (graphics-decorations-update 'new)
+    (set! current-point-no 1)
     (graphics-store-state #f)))
 
 (tm-define (create x y mode)
@@ -100,15 +102,16 @@
  	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
  	      (if (and xcur ycur)
  		  (set-car! l `(point ,xcur ,ycur)))
- 	      (create-graphical-object obj 'active 'object-and-points (+ no 1))
- 	      (set! current-point-no (+ no 1)))
+ 	      (set! current-point-no (+ no 1))
+              (set! current-obj obj)
+ 	      (graphics-decorations-update 'active))
   	    (begin
   	      (set-cdr! l (cons (car l) (cdr l)))
   	      (set-car! l `(point ,x ,y))
  	      (if (and xcur ycur)
  		  (set-car! (cdr l) `(point ,xcur ,ycur)))
-  	      (create-graphical-object obj 'active 'object-and-points no)
- 	      (set! current-point-no no)))
+ 	      (set! current-point-no no)
+ 	      (graphics-decorations-update 'active)))
   	(set! current-edge-sel? #t)
   	(set! sticky-point #t))))
 
@@ -116,7 +119,6 @@
 (define (object_commit x y obj)
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
   (begin
-     (create-graphical-object obj 'active 'points #f)
      (graphics-group-enrich-insert-bis
       obj graphical-color graphical-pstyle
       graphical-lwidth
@@ -134,6 +136,9 @@
      (set! leftclick-waiting #f)
      (set! current-edge-sel? #f)
      (set! graphics-undo-enabled #t)
+     (set! current-obj obj)
+     (set! current-point-no #f)
+     (graphics-decorations-update 'active)
      (graphics-forget-states))))
 
 ;; Left button
@@ -165,10 +170,11 @@
       (begin
 	(set-message "Left click: add point; Middle click: undo" "")
 	(graphics-store-state 'start-move)
-	(create-graphical-object obj p 'object-and-points #f)
+	(set! sticky-point #t)
+	(set! current-point-no #f)
+	(graphics-decorations-update)
 	(graphics-remove p 'memoize-layer)
 	(graphics-group-start)
-	(set! sticky-point #t)
 	(set! leftclick-waiting #f)
 	(set! current-point-no no)
 	(set! current-edge-sel? #t)
@@ -222,11 +228,14 @@
 	     (if (== (car obj) 'point)
 	         (set! obj `(point ,x ,y))
 	         (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
-	     (create-graphical-object obj 'active 'object-and-points
-	       (if edge no `(,edge ,no)))))
+	     (set! current-point-no no)
+	     (set! current-edge-sel? edge)
+	     (graphics-decorations-update 'active)))
       (begin
 	(set-message "Left click: add or edit object; Middle click: remove object" "")
-	(create-graphical-object obj p 'points (if edge no `(,edge ,no)))
+	(set! current-point-no no)
+	(set! current-edge-sel? edge)
+	(graphics-decorations-update)
 	(if p
 	    (with p2 (tm-upwards-path p '(text-at) '(graphics))
 	       (if (not p2) (go-to (rcons p 0))))))))
@@ -249,7 +258,8 @@
   (if sticky-point
       (display* "Sticky move(gr-group) !yet implemented\n")
       (begin
-	(create-graphical-object obj p 'points #f))))
+	(set! current-point-no #f)
+	(graphics-decorations-update))))
 
 (tm-define (move x y p obj no edge)
   (:require (not (in? (car obj) gr-tags-all)))
@@ -273,7 +283,8 @@
 	      (graphics-group-start))
 	    (with l (if (<= no 0) obj (list-tail (cdr obj) (- no 1)))
 	      (set-cdr! l (cddr l))
-	      (create-graphical-object obj p 'points #f)
+	      (set! current-point-no #f)
+	      (graphics-decorations-update)
 	      (graphics-active-assign obj)))
 	(set! sticky-point #f))))
 
@@ -333,7 +344,7 @@
        (if current-obj
 	   (move
 	     x y current-path current-obj current-point-no current-edge-sel?)
-	   (create-graphical-object '(nothing) #f 'points #f)))))
+	   (graphics-decorations-reset)))))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'edit))
@@ -347,6 +358,7 @@
   (display* "Right button(edit) currently unused\n"))
 
 (tm-define (edit_tab-key mode next)
+;; FIXME: Buggy since I don't know when
   (:require (eq? mode 'edit))
   (:state graphics-state)
  ;(display* "Graphics] Edit(Tab)\n")
@@ -356,17 +368,7 @@
 	    (select-next))
 	(invalidate-graphical-object)
 	(if current-obj
-	    (create-graphical-object
-	       current-obj current-path 'points
-	       (with tag (car current-obj)
-		  (if (== tag 'text-at)
-		      (set! current-point-no 1))
-		  (cond ((== tag 'gr-group)
-			 #f)
-			(else
-		         (if current-edge-sel?
-			     current-point-no
-			    `(,current-edge-sel? ,current-point-no))))))))
+	    (graphics-decorations-update)))
       (invalidate-graphical-object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -450,7 +452,7 @@
 			     (graphics-textat-valign-enabled?)))
 
 ;; Functions for managing properties
-(tm-define (graphics-assign-props p obj mode)
+(tm-define (graphics-assign-props p obj)
   (let* ((color (graphics-path-property p "color"))
 	 (ps (graphics-path-property p "point-style"))
 	 (lw (graphics-path-property p "line-width"))
@@ -484,8 +486,6 @@
 		  (graphics-get-property "gr-text-at-halign") ha)
 	      (if (graphics-textat-valign-enabled?)
 		  (graphics-get-property "gr-text-at-valign") va) #f)
-	(if mode
-	    (create-graphical-object obj 'new 'points mode))
 	res)))
 
 (tm-define (graphics-copy-props p)
@@ -551,7 +551,8 @@
      (set! current-path
 	(graphics-group-enrich-insert-bis
 	   obj #f #f #f mag #f #f #f #f halign2 valign #f))
-     (create-graphical-object obj '() 'points 'no-group)
+     (sketch-reset)
+     (graphics-decorations-update)
      (graphics-group-start)))
 
 (tm-define (text-at-change-valign p dirn)
@@ -576,7 +577,8 @@
      (set! current-path
 	(graphics-group-enrich-insert-bis
 	   obj #f #f #f mag #f #f #f #f halign valign2 #f))
-     (create-graphical-object obj '() 'points 'no-group)
+     (sketch-reset)
+     (graphics-decorations-update)
      (graphics-group-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -777,7 +779,7 @@
       )
       (begin
 	 (if sticky-point (undo))
-	 (create-graphical-object '(nothing) #f 'points 'group))))
+	 (graphics-decorations-update))))
 
 (tm-define (graphics-finish)
   ;;(display* "Graphics] Finish\n")

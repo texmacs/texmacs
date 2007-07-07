@@ -409,7 +409,12 @@
     (graphics-reset-state)
     (graphics-forget-states)
     (with p (graphics-active-path)
-       (if p (create-graphical-object (graphics-active-object) p 'points #f))))
+       (if p
+	   (begin
+	      (set! current-path p)
+	      (set! current-obj (graphics-active-object))
+	      (set! current-point-no #f)
+	      (graphics-decorations-update)))))
    ((and (== cmd 'exit) sticky-point)
     (set! graphics-undo-enabled #t)
     (if graphics-first-state
@@ -435,8 +440,11 @@
 	  (if (and graphics-undo-enabled (not sticky-point))
 	      (with p (graphics-active-path)
 		(if p
-		    (create-graphical-object
-		       (graphics-active-object) p 'points #f)
+		    (begin
+		       (set! current-path p)
+		       (set! current-obj (graphics-active-object))
+		       (set! current-point-no #f)
+		       (graphics-decorations-update))
 		    (graphics-decorations-reset))))
 	  (if (and (not graphics-undo-enabled) sticky-point)
 	      (graphics-decorations-reset))

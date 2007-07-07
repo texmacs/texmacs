@@ -559,17 +559,37 @@
 
 (tm-define (graphics-decorations-update . parms)
 ;; Creating the graphical object exclusively from the context
-  (if (graphics-group-mode? (graphics-mode))
-      (begin
-         (if (== (length parms) 4)
-             (create-graphical-object
-                (car parms) (cadr parms) (caddr parms) (cadddr parms))
-             (with pts #f
-                (if (null? parms)
-                    (set! pts 'points)
-                    (set! pts (car parms)))
-                (create-graphical-object current-obj current-path pts #f))))
-      (graphics-error "Error (graphics-decorations-update)!")))
+  (if (== (length parms) 4)
+      (create-graphical-object
+	 (car parms) (cadr parms) (caddr parms) (cadddr parms))
+      (if (graphics-group-mode? (graphics-mode))
+	  (with pts #f
+	     (if (null? parms)
+		 (set! pts 'points)
+		 (set! pts (car parms)))
+	     (if (and (null? (sketch-get))
+		      (pair? current-obj)
+		      (> (length current-obj) 1))
+		 (create-graphical-object current-obj '() 'points 'no-group)
+		 (create-graphical-object current-obj current-path pts #f)))
+	  (let* ((mode (if (null? parms) current-path (car parms)))
+		 (tag (if current-obj (car current-obj) #f))
+	     )
+	     (create-graphical-object
+		current-obj
+		mode
+		(if sticky-point 'object-and-points 'points)
+                (if (== tag 'text-at)
+                    1
+                    (cond ((or (not tag)
+			       (== tag 'gr-group))
+                           #f)
+                          (else
+			     (if current-point-no
+				 (if current-edge-sel?
+				     current-point-no
+				    `(,current-edge-sel? ,current-point-no))
+				 #f)))))))))
 
 (tm-define (graphics-decorations-reset)
   (create-graphical-object #f #f #f #f))

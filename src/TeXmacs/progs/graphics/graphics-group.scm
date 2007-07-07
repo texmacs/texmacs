@@ -294,17 +294,18 @@
 	      (begin
 		 (set! obj (stree-at p))
 		 (set! current-path
-		       (graphics-assign-props p obj 'no-group))
+		       (graphics-assign-props p obj))
 		     ; FIXME: In order for (graphics-decorations-update)
 		     ;   to work appropriately in the current case,
 		     ;   we need to manually update the value of
 		     ;   current-path. At some point, clean this.
-		 (graphics-decorations-update obj '() 'points 'no-group)))
+		 (set! current-obj obj)
+		 (graphics-decorations-update)))
 	      (with l '()
 		 (foreach (o (sketch-get))
 		    (with p (graphics-assign-props
-		       (tree->path o)
-		       (tree->stree o) #f)
+			       (tree->path o)
+			       (tree->stree o))
 		       (set! l (cons (path->tree p) l)))
 		 )
 		 (sketch-set! (reverse l))
