@@ -546,7 +546,13 @@
 		)
 	       `(concat .
                   ,(create-graphical-contours
-		      the-sketch current-path pts)
+		      (map (lambda (x)
+			      (if (tree? x)
+				  (enhanced-tree->radical x)
+				  x)
+			   )
+			   the-sketch)
+		      current-path pts)
 		)
 		(append
 		   props
@@ -624,11 +630,48 @@
             (remove-eq? t the-sketch)
             (rcons the-sketch t))))
 
+(tm-define (sketch-transform opn)
+  (set! the-sketch (map opn the-sketch))
+  (set! current-obj
+	(if (graphics-group-mode? (graphics-mode)) '(nothing) #f))
+  (set! current-path #f)
+  (graphics-decorations-update 'object))
+
+;; TODO: Replace sticky-point by a more appropriate name for
+;;   telling whether we are in SELECTING or MODIFYING mode.
 (tm-define (sketch-checkout)
-  #t)
+  (if sticky-point
+      (graphics-error "(sketch-checkout)"))
+  (set! layer-of-last-removed-object
+	(if (== (length (sketch-get)) 1)
+	    #f
+	   '()))
+  (if (graphics-group-mode? (graphics-mode))
+      (graphics-decorations-update 'object))
+  (foreach (o (sketch-get))
+     (graphics-remove (tree->path o) 'memoize-layer)
+  )
+  (set! sticky-point #t))
 
 (tm-define (sketch-commit)
-  #t)
+  (if (not sticky-point)
+      (graphics-error "(sketch-commit)"))
+  (with sketch0 (list-copy (sketch-get))
+     (sketch-reset)
+     (foreach (o sketch0)
+	(with layer layer-of-last-removed-object
+	   (sketch-toggle (radical->enhanced-tree
+			     (path->tree (graphics-group-insert o))))
+	   (if (not (list? layer))
+	       (set! layer-of-last-removed-object layer)))
+     )
+     (set! layer-of-last-removed-object #f)
+     (set! current-obj
+	   (if (graphics-group-mode? (graphics-mode)) '(nothing) #f))
+     (set! current-path #f)
+     (graphics-decorations-update)
+  )
+  (set! sticky-point #f))
 
 (tm-define (sketch-cancel)
   #t)

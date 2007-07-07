@@ -218,7 +218,7 @@
       (begin
 	 (set-car! list-find-prop-cons val)
          l)
-     `(with ,var ,val . ,l)))
+     `(with ,var ,val . ,(if (eq? (car l) 'with) (cdr l) l))))
 
 (tm-define (tm-find-prop p var)
 ;;(tm-find-prop '<tree <with|a|1|...>> "a")              -> <tree 1>

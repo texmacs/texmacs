@@ -24,28 +24,6 @@
 ;; Group edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Util
-(define (group-list l tag)
-  (if (pair? l)
-      (if (and #f ; FIXME: Just added #f. This (if) should not be
-		  ;   needed anymore. After some time using the soft,
-		  ;   if no strange behaviour is observed, remove it.
-	       (!= tag 'point)
-	       (== (car l) "point-style"))
-	  (group-list (cddr l) tag)
-	  (with val (if (== (car l) "magnification")
-	                (local-magnification (cadr l))
-			(cadr l))
-	     (cons `(,(car l) ,val) (group-list (cddr l) tag))))
-     '()))
-
-(define (restore-selected-objects so)
-  (foreach (t so)
-     (sketch-toggle
-	(if (eq? (tree-label t) 'with)
-		 (tree-ref t (- (tree-arity t) 1))
-		 t))))
-
 ;; State
 (define group-old-x #f)
 (define group-old-y #f)
@@ -132,15 +110,11 @@
 	    (curmag #f)
 	    (gmag (s2f (graphics-eval-magnification)))
 	)
-	(foreach-cons (c (cdr res))
-	   (set-car! c (if (eq? (caar c) 'with)
-			   (with curmag
-				 (s2f (find-prop
-					 (car c) "magnification" "1.0"))
-			      (list-find&set-prop
-				 (car c) "magnification" (f2s (* curmag gmag h))))
-			  `(with "magnification" ,(f2s (* gmag h)) ,(car c)))))
-	res))))
+	(if (eq? (car res) 'with)
+	    (with curmag (s2f (find-prop res "magnification" "1.0"))
+	       (list-find&set-prop
+		  res "magnification" (f2s (* curmag gmag h))))
+	   `(with "magnification" ,(f2s (* gmag h)) ,res))))))
 
 (define (rotate-point x0 y0 alpha)
   (lambda (o)
@@ -167,26 +141,13 @@
   (if (and (not sticky-point) (nnull? (sketch-get)))
   (begin
     (graphics-store-state 'group-selected-objects)
-    (graphics-decorations-update 'object)
-    (foreach (o (sketch-get))
-       (graphics-remove (tree->path o))
+    (sketch-checkout)
+    (with o (cons 'gr-group (sketch-get))
+       (sketch-reset)
+       (sketch-toggle o)
     )
-    (sketch-reset)
-    (with go (tree->stree (get-graphical-object))
-       (if (nnull? (cdr go))
-       (with l '()
-	  (foreach (o (cdr go))
-	  (with t (cadr (cAr o))
-	     (set-cdr! (list-tail o (- (length o) 2)) '())
-	     (set! l (cons (graphics-enrich-sub
-			      t (group-list (cdr o) (car t))) l))
-	  ))
-	  (with p (graphics-group-insert (cons 'gr-group (reverse l)))
-	     (sketch-set! `(,(path->tree p)))
-	     (graphics-decorations-update)
-	  )
-	  (graphics-group-start)))
-    )
+    (sketch-commit)
+    (graphics-group-start)
     (set! graphics-undo-enabled #t)
     (graphics-forget-states))))
 
@@ -194,51 +155,23 @@
   (if (and (not sticky-point)
 	   (== (length (sketch-get)) 1)
 	   (== (tree-label (car (sketch-get))) 'gr-group))
-  (let* ((so0 (sketch-get))
-	 (obj (car (sketch-get)))
-    )
+  (with obj (car (sketch-get))
     (graphics-store-state 'ungroup-selected-objects)
+    (sketch-checkout)
     (sketch-reset)
     (foreach-number (i 0 < (tree-arity obj))
-       (with o (tree-ref obj i)
-	  (if (== (tree-label o) 'with)
-	      (set! o (tree-ref o (- (tree-arity o) 1))))
-	  (sketch-toggle o))
+       (sketch-toggle (tree-ref obj i))
     )
-    (graphics-decorations-update 'object)
-    (foreach (o so0)
-       (graphics-remove (tree->path o) 'memoize-layer)
-    )
-    (sketch-reset)
-    (with go (tree->stree (get-graphical-object))
-       (if (nnull? (cdr go))
-       (with l '()
-	  (foreach (o (cdr go))
-	  (let* ((t (cadr (cAr o)))
-                 (layer layer-of-last-removed-object)
-	     )
-	     (set-cdr! (list-tail o (- (length o) 2)) '())
-	     (with p (graphics-group-insert
-			(graphics-enrich-sub
-			   t (group-list (cdr o) (car t))))
-		(set! layer-of-last-removed-object layer)
-		(sketch-toggle (path->tree p))
-	     )
-	  ))
-	  (set! layer-of-last-removed-object #f)
-	  (graphics-decorations-update)
-	  (graphics-group-start)))
-    )
+    (sketch-commit)
+    (graphics-group-start)
     (set! graphics-undo-enabled #t)
     (graphics-forget-states))))
 
 ;; Removing
 (tm-define (remove-selected-objects)
-  (foreach (o (sketch-get))
-     (graphics-remove (tree->path o))
-  )
+  (sketch-checkout)
   (sketch-reset)
-  (graphics-decorations-update)
+  (sketch-commit)
   (graphics-group-start))
 
 ;; State transitions
@@ -248,29 +181,11 @@
   (if sticky-point
       ;;Perform operation
       (begin
-	 (let* ((go (tree->stree (get-graphical-object)))
-		(so '())
-	    )
-	    (if (nnull? (cdr go))
-	    (begin
-	       (foreach (o (cdr go))
-	       (with t (cadr (cAr o))
-		  (set-cdr! (list-tail o (- (length o) 2)) '())
-		  (set! so (cons (path->tree 
-		     (graphics-group-insert
-			(graphics-enrich-sub
-			   t (group-list (cdr o) (car t)))))
-		     so))
-	       ))
-	       (restore-selected-objects (reverse so))
-	      ;(sketch-reset)
-	       (graphics-decorations-update)
-	       (graphics-group-start)))
-	 )
+	 (sketch-commit)
+	 (graphics-decorations-update)
 	 (if (== (state-ref graphics-first-state 'graphics-action)
 		 'start-operation)
 	     (remove-undo-mark))
-	 (set! sticky-point #f)
 	 (set! graphics-undo-enabled #t)
 	 (graphics-forget-states))
       ;;Start operation
@@ -286,19 +201,11 @@
 	      (group-selected-objects))
 	 )
 	 ((and (not multiselecting) (== (cadr (graphics-mode)) 'props))
-	; FIXME: when the state is recalculated, if we are in group
-	;   mode, obj is := to '(point). Find if it is still so and
-	;   why, and thus correct the problem if necessary.
 	  (if (null? (sketch-get))
 	      (if p
 	      (begin
 		 (set! obj (stree-at p))
-		 (set! current-path
-		       (graphics-assign-props p obj))
-		     ; FIXME: In order for (graphics-decorations-update)
-		     ;   to work appropriately in the current case,
-		     ;   we need to manually update the value of
-		     ;   current-path. At some point, clean this.
+		 (set! current-path (graphics-assign-props p obj))
 		 (set! current-obj obj)
 		 (graphics-decorations-update)))
 	      (with l '()
@@ -319,14 +226,9 @@
 	  (if (store-important-points)
 	  (begin
 	     (graphics-store-state 'start-operation)
-	     (graphics-decorations-update 'object)
-	     (set! group-first-go (get-graphical-object))
-	     (set! layer-of-last-removed-object '())
-	     (foreach (o (sketch-get))
-		(graphics-remove (tree->path o) 'memoize-layer)
-	     )
-	     (sketch-reset)
-	     (set! sticky-point #t)
+	     (sketch-checkout)
+	     (sketch-transform tree->stree)
+	     (set! group-first-go (copy-tree (sketch-get)))
 	     (set! graphics-undo-enabled #f)
 	     (graphics-store-state #f)
 	     (set! group-old-x (s2f current-x))
@@ -357,7 +259,7 @@
 	 (set! sel (graphics-select-area x1 y1 x2 y2))
 	 (sketch-reset)
 	 (foreach (p sel)
-            (sketch-toggle (path->tree p))
+            (sketch-toggle (radical->enhanced-tree (path->tree p)))
 	 )
 	 (graphics-decorations-update)
 	 (set! multiselecting #f)
@@ -365,11 +267,8 @@
 	 (set! selecting-y0 #f)
       )
       (if p
-	; FIXME: when the state is recalculated, if we are in group
-	;   mode, obj is := to '(point). Find if it is still so and
-	;   why, and thus correct the problem if necessary.
 	  (with t (path->tree p)
-	     (sketch-toggle t)
+	     (sketch-toggle (radical->enhanced-tree t))
 	     (graphics-decorations-update))
 	  (begin
 	     (set! selecting-x0 x)
@@ -403,17 +302,17 @@
 	 (set! y (s2f y))
 	 (with mode (graphics-mode)
 	    (cond ((== (cadr mode) 'move)
-		     (transform-graphical-object
+		     (sketch-transform
 			(group-translate (- x group-old-x)
 					 (- y group-old-y))))
 		  ((== (cadr mode) 'zoom)
-		     (set-graphical-object group-first-go)
-		     (transform-graphical-object
+		     (sketch-set! group-first-go)
+		     (sketch-transform
 			(group-zoom x y))
 		  )
 		  ((== (cadr mode) 'rotate)
-		     (set-graphical-object group-first-go)
-		     (transform-graphical-object
+		     (sketch-set! group-first-go)
+		     (sketch-transform
 			(group-rotate x y))
 		  ))
 	 )
@@ -466,20 +365,7 @@
 (tm-define (graphics-copy)
   (:state graphics-state)
   (if (== (car (graphics-mode)) 'group-edit)
-  (with copied-objects '()
-     (foreach (o (sketch-get))
-     (with p (tm-upwards-path (tree->path o) '(with) '())
-	(let* ((t (if p (path->tree p) #f))
-	       (n (if t (tree-arity t) #f))
-	       (o2 (if (and t n (> n 0)) (tree-ref t (- n 1)) #f))
-	   )
-	   (if (or (not p) (and o2 (!= o2 o)))
-	       (set! p (tree->path o)))
-	)
-	(set! copied-objects
-	      (cons (tree->stree (path->tree p)) copied-objects)))
-     )
-     (set! copied-objects (reverse copied-objects))
+  (with copied-objects (list-copy (sketch-get))
      (any_unselect-all #f #f)
      (update-buffer)
      (if (null? copied-objects)
@@ -491,35 +377,29 @@
 (tm-define (graphics-cut)
   (:state graphics-state)
   (if (== (car (graphics-mode)) 'group-edit)
-  (let* ((l (sketch-get))
+  (let* ((l (list-copy (sketch-get)))
 	 (res (graphics-copy))
      )
-     (foreach (o l)
-	(graphics-remove (tree->path o))
-     )
+     (sketch-set! l)
+     (sketch-checkout)
+     (sketch-reset)
+     (sketch-commit)
      res
   )
   (stree->tree "")))
 
 (tm-define (graphics-paste sel)
   (:state graphics-state)
+ ;(display* "sel=" sel "\n")
   (if (and (== (car (graphics-mode)) 'group-edit)
 	   (tree-compound? sel)
 	   (== (tree-label sel) 'graphics)
 	   (> (tree-arity sel) 0))
-  (with l '()
+  (begin
+     (sketch-reset)
+     (sketch-checkout)
      (foreach-number (i 0 < (tree-arity sel))
-     (let* ((t (tree-ref sel i))
-	    (v (if (== (tree-label t) 'with)
-		   (if (> (tree-arity t) 0)
-		       (tree-ref t (- (tree-arity t) 1))
-		       t)
-		   t))
-	)
-	(if (in? (tree-label v) gr-tags-all)
-	    (with p (graphics-group-insert (tree->stree t))
-	       (if p (set! l (cons (path->tree p) l))))))
+	(sketch-toggle (tree-ref sel i))
      )
-     (sketch-set! (reverse l))
-     (graphics-decorations-update)
+     (sketch-commit)
      (graphics-group-start))))
