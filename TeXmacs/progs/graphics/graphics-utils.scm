@@ -16,10 +16,6 @@
 (texmacs-module (graphics graphics-utils)
   (:use (utils library cursor) (utils library tree)))
 
-(tm-define (path-assign p t) (tree-assign (path->tree p) t))
-(tm-define (path-insert p t) (tree-insert (path->tree (cDr p)) (cAr p) t))
-(tm-define (path-remove p n) (tree-remove (path->tree (cDr p)) (cAr p) n))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic scheme processing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -258,8 +254,8 @@
 (tm-define (graphics-graphics-path)
   ;; path to innermost graphics tag
   (let* ((p (cDr (cursor-path)))
-	 (t (stree-at p)))
-    (if (func? t 'graphics) p
+	 (t (path->tree p)))
+    (if (eq? (tree-label t) 'graphics) p
 	(with u (tree-innermost 'graphics)
 	  (and u (tree->path u))))))
 
@@ -492,7 +488,7 @@
                              val)
 			  layer-of-last-removed-object)
                       (tree-arity (path->tree p)))
-	    (path-insert (rcons p n) (list t))
+	    (tree-insert (path->tree p) n (list t))
 	    (if (func? t 'with)
 		(if (and go-into (func? (cAr t) 'text-at))
 		    (set! p2 (append p (list n (- (length t) 2) 0 0)))
@@ -590,7 +586,7 @@
 (tm-define (graphics-active-assign t)
   (with p (graphics-active-path)
     (if p (begin
-	    (path-assign p t)
+	    (tree-assign (path->tree p) t)
 	    (go-to (rcons p 1))))))
 
 (tm-define (graphics-active-set-tag l)
@@ -600,7 +596,7 @@
 (tm-define (graphics-active-insert t)
   (with p (graphics-active-path)
     (if p (with n (tree-arity (path->tree p))
-	    (path-insert (rcons p n) (list t))
+	    (tree-insert (path->tree p) n (list t))
 	    (go-to (rcons p 1))))))
 
 (tm-define (graphics-object-root-path p)
@@ -619,7 +615,7 @@
 		   (cons (cAr p0) layer-of-last-removed-object)
 		   (cAr p0))
 	       #f))
-     (path-remove p0 1)))
+     (tree-remove (path->tree (cDr p0)) (cAr p0) 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Box info & frame
