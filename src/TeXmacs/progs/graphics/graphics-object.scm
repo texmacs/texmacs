@@ -546,7 +546,7 @@
 		)
 	       `(concat .
                   ,(create-graphical-contours
-		      selected-objects current-path pts)
+		      the-sketch current-path pts)
 		)
 		(append
 		   props
@@ -557,27 +557,22 @@
       )
       (graphical-object! '(concat))))
 
-(tm-define (fetch-sketch b)
-;; NOTE: Temporary hack to clean the code without having to
-;;   change everything immediately.
-  (if (and (nnull? selected-objects) (nnull? the-sketch))
-      (graphics-error "Error (fetch-sketch)[" b "]"))
-  (if b
-      (if (null? the-sketch)
-	  (begin
-             (set! the-sketch selected-objects)
-             (set! selected-objects '())))
-      (if (nnull? the-sketch)
-	  (begin
-             (set! selected-objects the-sketch)
-             (set! the-sketch '())))))
-
-(tm-define (update-graphical-object)
+(tm-define (graphics-decorations-update . parms)
 ;; Creating the graphical object exclusively from the context
-  (fetch-sketch #f)
-  (if (not sticky-point)
-      (create-graphical-object current-obj current-path 'points #f)
-      (graphics-error "Error (update-graphical-object)[2]!")))
+  (if (graphics-group-mode? (graphics-mode))
+      (begin
+         (if (== (length parms) 4)
+             (create-graphical-object
+                (car parms) (cadr parms) (caddr parms) (cadddr parms))
+             (with pts #f
+                (if (null? parms)
+                    (set! pts 'points)
+                    (set! pts (car parms)))
+                (create-graphical-object current-obj current-path pts #f))))
+      (graphics-error "Error (graphics-decorations-update)!")))
+
+(tm-define (graphics-decorations-reset)
+  (create-graphical-object #f #f #f #f))
 
 ;; Operating on the graphical object
 (tm-define (transform-graphical-object opn)
@@ -591,22 +586,19 @@
 ;; Managing the sketch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define the-sketch '())
-
-(tm-define (sketch-tree)
-  (fetch-sketch #t)
+(tm-define (sketch-get)
   the-sketch)
 
+(tm-define (sketch-set! l)
+  (set! the-sketch l))
+
 (tm-define (sketch-in? t)
-  (fetch-sketch #t)
   (seek-eq? t the-sketch))
 
 (tm-define (sketch-reset)
-  (set! selected-objects '())
   (set! the-sketch '()))
 
 (tm-define (sketch-toggle t)
-  (fetch-sketch #t)
   (set! the-sketch
         (if (sketch-in? t)
             (remove-eq? t the-sketch)

@@ -785,7 +785,7 @@
      (if (and (> newud 100) (< newud 10000000))
      (with magn (multiply-magnification
                    (graphics-get-property "magnification") e)
-        (create-graphical-object #f #f #f #f)
+        (graphics-decorations-reset)
         (graphics-set-property "gr-frame" newfr)
         (if magn  
             (graphics-set-property "magnification" magn))))))
@@ -803,7 +803,7 @@
                                  (tuple ,(add x dx)
                                         ,(add y dy))))
      )         
-     (create-graphical-object #f #f #f #f)
+     (graphics-decorations-reset)
      (graphics-set-property "gr-frame" newfr)))
 
 (tm-define (graphics-change-extents dw dh)
@@ -817,7 +817,7 @@
          (set! w w2))
      (if (> (length-decode h2) 0)
          (set! h h2))
-     (create-graphical-object #f #f #f #f)
+     (graphics-decorations-reset)
      (graphics-set-extents w h)))
 
 (tm-define (graphics-change-geo-valign dirn)

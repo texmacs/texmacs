@@ -269,7 +269,7 @@
 		(!= (logand (get-keyboard-modifiers) ShiftMask) 0))
 	    (begin
 	      (graphics-remove p)
-	      (create-graphical-object #f #f #f #f)
+	      (graphics-decorations-reset)
 	      (graphics-group-start))
 	    (with l (if (<= no 0) obj (list-tail (cdr obj) (- no 1)))
 	      (set-cdr! l (cddr l))
@@ -691,7 +691,7 @@
 	   )
 	   (else #t)
      )
-     (set! selected-objects '())
+     (sketch-reset)
      (graphics-group-start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
