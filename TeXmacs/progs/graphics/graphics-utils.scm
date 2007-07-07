@@ -72,10 +72,9 @@
 (tm-define o2t object->tree)
 
 ;; Error
-(tm-define (graphics-error msg . opt)
-  (if (null? opt)
-      (display msg)
-      (display* msg (car opt)))
+(tm-define (graphics-error . msg)
+  (foreach (e msg)
+     (display e))
   (newline) ;(quit-TeXmacs)
 )
 
