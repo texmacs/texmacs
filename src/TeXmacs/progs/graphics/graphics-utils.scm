@@ -556,7 +556,7 @@
 (tm-define (graphics-group-start)
   (graphics-finish)
   (with p (graphics-group-path)
-    (if p (go-to (rcons p 0)))))
+    (if p (go-to (append p '(0 0))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the active tag
@@ -657,6 +657,11 @@
 		   (cAr p0))
 	       #f))
      (tree-remove (path->tree (cDr p0)) (cAr p0) 1))))
+
+(tm-define (graphics-assign p t)
+  (if p (begin
+	  (tree-assign (path->tree p) t)
+	  (go-to (rcons p 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Box info & frame

@@ -41,13 +41,14 @@
 			 val
 			`(quote ,(eval val)))))))))
 
-(define (proplist-load l funcs)
+(define (proplist-load l funcs b)
  ;(display* "load[props]=" l "\n")
   (for (e l)
      (if (not (defined? `,(car e)))
 	 (eval `(define-public ,(car e) #f))))
-  (for (f funcs)
-     (f)))
+  (if b
+      (for (f funcs)
+	 (f))))
 
 (define (slotlist-save l)
   (for (e l)
@@ -65,7 +66,7 @@
     (set! current-state #f)
     (state-save old-current)))
   
-(define-public (state-load sr)
+(define-public (state-load sr . opt)
  ;(display* "sl=" sr "\n")
   (if sr
       (begin
@@ -73,7 +74,7 @@
             (begin
               (state-synchronize)
               (slotlist-load (state-slots sr))))
-        (proplist-load (state-props sr) (state-cprops sr))
+	(proplist-load (state-props sr) (state-cprops sr) (null? opt))
         (set! current-state sr))))
 
 (define-public (state-save sr)
@@ -150,3 +151,14 @@
 (define-public-macro (with-state-by-name name . body)
  `(with sr ,name
      (with-state sr . ,body)))
+
+(define-public-macro (with-state-slots sr . body)
+ `(begin
+     (state-load ,sr #f)
+     (with res (begin . ,body)
+       (state-save ,sr)
+       res)))
+
+(define-public-macro (with-state-slots-by-name name . body)
+ `(with sr ,name
+     (with-state-slots sr . ,body)))

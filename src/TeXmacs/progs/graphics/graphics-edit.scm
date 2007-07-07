@@ -90,8 +90,9 @@
 
 ;; Basic operations (add point)
 (define (object_set-point xcur ycur no)
+  (define obj #f)
   (check-sketch1)
-  (define obj (stree-radical (car (sketch-get))))
+  (set! obj (stree-radical (car (sketch-get))))
  ;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
@@ -124,12 +125,13 @@
   	(set! sticky-point #t))))
 
 ;; Basic operations (commit)
-(define (object_commit x y obj)
+(define (object_commit)
+  (define obj #f)
   (check-sketch1)
   (set! obj (stree-radical (car (sketch-get))))
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
   (begin
-     (fetch-props (car (sketch-get)))
+     (graphical-fetch-props (car (sketch-get)))
      (set! obj (graphics-enrich-bis
       obj
       graphical-color graphical-pstyle
@@ -141,13 +143,13 @@
       graphical-fcolor
       graphical-textat-halign
       graphical-textat-valign))
+     (set! current-edge-sel? #f)
      (sketch-set! `(,obj))
      (sketch-commit)
      (if (== (state-ref graphics-first-state 'graphics-action)
 	     'start-move)
 	 (remove-undo-mark))
      (set! leftclick-waiting #f)
-     (set! current-edge-sel? #f)
      (set! graphics-undo-enabled #t)
      (set! current-obj (stree-radical obj))
      (set! current-point-no #f)
@@ -164,7 +166,7 @@
 	    (begin
 	       (object_set-point
 		  (cadr previous-leftclick) (caddr previous-leftclick) no)
-	       (object_commit x y #f))
+	       (object_commit))
 	    (begin
               (if (and (not leftclick-waiting)
                        previous-leftclick
@@ -204,7 +206,7 @@
 (tm-define (left-button x y p obj no edge)
   (:require (eq? (car obj) 'text-at))
   (if sticky-point
-      (object_commit x y obj)
+      (object_commit)
       (if (on-graphical-embedding-box? x y obj "1mm")
 	  (begin
 	     (set-texmacs-pointer 'graphics-cross)
@@ -280,6 +282,7 @@
 
 ;; Middle button
 (tm-define (any_middle-button x y p obj no)
+ ;(display* "obj[" p "]=" obj "\n")
   (if sticky-point
       ;;Back
       (begin
@@ -297,8 +300,8 @@
 	    (with l (if (<= no 0) obj (list-tail (cdr obj) (- no 1)))
 	      (set-cdr! l (cddr l))
 	      (set! current-point-no #f)
-	      (graphics-decorations-update)
-	      (graphics-active-assign obj)))
+	      (graphics-assign p obj)
+	      (graphics-decorations-update)))
 	(set! sticky-point #f))))
 
 (tm-define (middle-button x y p obj no)
@@ -328,7 +331,9 @@
 	    (edit_tab-key 'edit
 			  (if (graphics-states-void?)
 			      #f
-			      (state-ref (graphics-pop-state) 'choosing)))
+			      choosing))
+	    (if (not (graphics-states-void?))
+		(graphics-pop-state))
 	    (graphics-store-state #f)
 	    (set! choosing #t))
 	  (edit-insert x y))))
@@ -363,25 +368,28 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
+ ;(display* "Graphics] Edit(Middle-button)[" current-path "]=" current-obj "\n")
   (if current-obj
-      (middle-button x y current-path current-obj current-point-no)))
+      (begin
+	 (if choosing
+	     (graphics-state-set (graphics-pop-state)))
+	 (middle-button x y current-path current-obj current-point-no))))
 
 (tm-define (edit_right-button mode x y)
   (:require (eq? mode 'edit))
   (display* "Right button(edit) currently unused\n"))
 
 (tm-define (edit_tab-key mode next)
-;; FIXME: Buggy since I don't know when
   (:require (eq? mode 'edit))
   (:state graphics-state)
- ;(display* "Graphics] Edit(Tab)\n")
+ ;(display* "\nGraphics] Edit(Tab)[" next "," current-path "]=" current-obj "\n")
   (if (and current-x current-y)
       (begin
+	(if current-obj
+	    (graphics-decorations-update))
 	(if next
 	    (select-next))
-	(invalidate-graphical-object)
-	(if current-obj
-	    (graphics-decorations-update)))
+      )
       (invalidate-graphical-object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -479,7 +487,7 @@
      )
      (graphics-remove p 'memoize-layer)
      (with res
-	   (graphics-group-enrich-insert-bis obj
+	   (graphics-group-enrich-insert-bis (stree-radical obj)
 	      (if (graphics-color-enabled?)
 		  (graphics-get-property "gr-color") color)
 	      (if (graphics-point-style-enabled?)
@@ -777,7 +785,12 @@
       (graphics-last-point x y)))
 
 (tm-define (graphics-choose-point)
+  (:state graphics-state)
   ;(display* "Graphics] Choose\n")
+  (if (not (graphics-states-void?))
+      (graphics-pop-state))
+  (set! choosing #t)
+  (graphics-store-state #f)
   (edit_tab-key (car (graphics-mode)) #t))
 
 (tm-define (graphics-enter-mode old-mode new-mode)

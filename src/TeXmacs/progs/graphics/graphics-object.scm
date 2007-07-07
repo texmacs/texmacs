@@ -74,7 +74,7 @@
 (tm-define graphical-textat-halign "default")
 (tm-define graphical-textat-valign "default")
 
-(tm-define (fetch-props o)
+(tm-define (graphical-fetch-props o)
   (set! graphical-color (find-prop o "color" "default"))
   (set! graphical-pstyle (find-prop o "point-style" "default"))
   (set! graphical-lwidth (find-prop o "line-width" "default"))
@@ -96,7 +96,7 @@
   (with o (tree->stree (get-graphical-object))
    ;(display* "o=" o "\n")
     (if (and fetch (pair? o))
-	(fetch-props o))
+	(graphical-fetch-props o))
     (if (pair? o)
 	(if (== (cdr o) '()) o (cAr o))
 	'(concat))))
@@ -528,7 +528,7 @@
 ;; no   == description of the edge  <=> no | (edge no)
 ;;      == flag used in group modes <=> 'group | 'no-group
   (define edge #t)
- ;(display* "o[create-graphical-object]=")(write o)(newline)
+ ;(display* "o[create-graphical-object](" mode "," pts "," no ")=")(write o)(newline)
   (if (pair? no)
       (begin
 	 (set! edge (car no))
@@ -561,19 +561,19 @@
 		  `((concat . ,(cond ((== pts 'points) op)
 				     ((== pts 'object) `(,o))
 				     ((== pts 'object-and-points)
-				      (cons o op))))))))
-      )
+				      (cons o op)))))))))
       (graphical-object! '(concat))))
 
 (tm-define (graphics-decorations-update . parms)
 ;; Creating the graphical object exclusively from the context
+  (invalidate-graphical-object)
   (if (== (length parms) 4)
       (create-graphical-object
 	 (car parms) (cadr parms) (caddr parms) (cadddr parms))
       (if (graphics-group-mode? (graphics-mode))
 	  (with pts #f
 	     (if (null? parms)
-		 (set! pts 'points)
+		 (set! pts (if sticky-point 'object 'points))
 		 (set! pts (car parms)))
 	     (if (and (null? (sketch-get))
 		      (pair? current-obj)
@@ -593,10 +593,11 @@
 	     (if (tree? current-obj)
 		 (set! current-obj (tree->stree current-obj)))
 	     (if (and (eq? mode 'active)
-		      (pair? current-obj)
-		      (eq? (car current-obj) 'with))
+		      (pair? current-obj))
 		 (begin
-		    (fetch-props current-obj)
+		    (graphical-fetch-props 
+		       (if (eq? (car current-obj) 'with)
+			   current-obj `(with ,current-obj)))
 		    (set! current-obj (stree-radical current-obj))))
 	     (create-graphical-object
 		current-obj
@@ -612,7 +613,8 @@
 				 (if current-edge-sel?
 				     current-point-no
 				    `(,current-edge-sel? ,current-point-no))
-				 #f)))))))))
+				 #f))))))))
+  (invalidate-graphical-object))
 
 (tm-define (graphics-decorations-reset)
   (create-graphical-object #f #f #f #f))
@@ -659,7 +661,7 @@
   (set! current-obj
 	(if (graphics-group-mode? (graphics-mode)) '(nothing) #f))
   (set! current-path #f)
-  (graphics-decorations-update 'object))
+  (graphics-decorations-update))
 
 ;; TODO: Replace sticky-point by a more appropriate name for
 ;;   telling whether we are in SELECTING or MODIFYING mode.
@@ -670,15 +672,16 @@
 	(if (== (length (sketch-get)) 1)
 	    #f
 	   '()))
-  (if (graphics-group-mode? (graphics-mode))
-      (graphics-decorations-update 'object))
-  (foreach (o (sketch-get))
+  (foreach-cons (c (sketch-get))
+     (with o (car c)
      (if (tree? o)
-	 (graphics-remove (tree->path o) 'memoize-layer))
+     (begin
+	(graphics-remove (tree->path o) 'memoize-layer)
+	(if (or (tree->path o) (tree->path (enhanced-tree->radical o)))
+	    (set-car! c (tree-copy o))))))
   )
   (set! sticky-point #t)
-  (if (not (graphics-group-mode? (graphics-mode)))
-      (graphics-decorations-update)))
+  (graphics-decorations-update))
 
 (tm-define (sketch-commit)
   (define group-mode? (graphics-group-mode? (graphics-mode)))
@@ -694,11 +697,18 @@
      )
      (set! layer-of-last-removed-object #f)
      (set! current-obj
-	   (if group-mode? '(nothing) #f))
-     (set! current-path #f)
-     (graphics-decorations-update)
+	   (if group-mode?
+	      '(nothing)
+	       (if (== 1 (length (sketch-get)))
+		   (stree-radical (tm->stree (car (sketch-get))))
+		   #f)))
+     (set! current-path
+	   (if (and (== 1 (length (sketch-get)))
+		    (tree? (car (sketch-get))))
+	       (tree->path (car (sketch-get)))))
   )
-  (set! sticky-point #f))
+  (set! sticky-point #f)
+  (graphics-decorations-update))
 
 (tm-define (sketch-cancel)
   #t)

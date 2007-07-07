@@ -364,6 +364,12 @@
 
 (hash-set! define-option-table :state define-option-state)
 
+(define (define-option-state-slots opt decl)
+  (with (fun head . body) decl
+    `(,fun ,head (with-state-slots-by-name ,(car opt) ,@body))))
+
+(hash-set! define-option-table :state-slots define-option-state-slots)
+
 ;(define-public-macro (tmdefine head . body)
 ;  (with st #f
 ;    (foreach-cons (c body)
@@ -387,7 +393,7 @@
 ;;FIXME: Should be called only once, when we move out of a <graphics>.
 ;;  Should not be called all the time because of the case 'text-cursor.
 ;;  Find a way to test this more precisely inside the C++.
-  (:state graphics-state)
+  (:state-slots graphics-state)
   ;; cmd in { begin, exit, undo }
   ;; (display* "Graphics] Reset-context " cmd "\n")
   (if (in? cmd '(begin exit))
@@ -448,6 +454,7 @@
 		    (graphics-decorations-reset))))
 	  (if (and (not graphics-undo-enabled) sticky-point)
 	      (graphics-decorations-reset))
+	  (set! choosing #f)
 	  (set! sticky-point #f)
 	  (set! current-point-no #f)
 	  (set! graphics-undo-enabled #t)
@@ -455,5 +462,6 @@
 	  (if graphics-first-state
 	      (graphics-back-first))
 	  (graphics-forget-states)
-	  (invalidate-graphical-object))))
+	  (invalidate-graphical-object)))
+    (graphics-group-start))
    (else (display* "Uncaptured reset-context " cmd "\n"))))
