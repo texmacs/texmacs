@@ -557,6 +557,28 @@
       )
       (graphical-object! '(concat))))
 
+(tm-define (fetch-sketch b)
+;; NOTE: Temporary hack to clean the code without having to
+;;   change everything immediately.
+  (if (and (nnull? selected-objects) (nnull? the-sketch))
+      (graphics-error "Error (fetch-sketch)[" b "]"))
+  (if b
+      (if (null? the-sketch)
+	  (begin
+             (set! the-sketch selected-objects)
+             (set! selected-objects '())))
+      (if (nnull? the-sketch)
+	  (begin
+             (set! selected-objects the-sketch)
+             (set! the-sketch '())))))
+
+(tm-define (update-graphical-object)
+;; Creating the graphical object exclusively from the context
+  (fetch-sketch #f)
+  (if (not sticky-point)
+      (create-graphical-object current-obj current-path 'points #f)
+      (graphics-error "Error (update-graphical-object)[2]!")))
+
 ;; Operating on the graphical object
 (tm-define (transform-graphical-object opn)
   (with o (tree->stree (get-graphical-object))
@@ -564,3 +586,37 @@
      (begin
 	(set! o (opn o))
 	(graphical-object! o)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Managing the sketch
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define the-sketch '())
+
+(tm-define (sketch-tree)
+  (fetch-sketch #t)
+  the-sketch)
+
+(tm-define (sketch-in? t)
+  (fetch-sketch #t)
+  (seek-eq? t the-sketch))
+
+(tm-define (sketch-reset)
+  (set! selected-objects '())
+  (set! the-sketch '()))
+
+(tm-define (sketch-toggle t)
+  (fetch-sketch #t)
+  (set! the-sketch
+        (if (sketch-in? t)
+            (remove-eq? t the-sketch)
+            (rcons the-sketch t))))
+
+(tm-define (sketch-checkout)
+  #t)
+
+(tm-define (sketch-commit)
+  #t)
+
+(tm-define (sketch-cancel)
+  #t)
