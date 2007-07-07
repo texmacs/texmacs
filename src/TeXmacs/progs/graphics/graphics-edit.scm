@@ -648,8 +648,8 @@
 	    (let* ((p-1 (rcons (cDr p) 0))
 		   (t-1 (path->tree p-1))
 	       )
-	       (path-remove p 1)
-	       (path-insert p-1 `(,(tree->stree t)))
+	       (tree-remove t0 (cAr p) 1)
+	       (tree-insert (tree-up t-1) (cAr p-1) `(,(tree->stree t)))
 	       (set! current-path p-1)
 	    ))
 	   )
@@ -658,8 +658,8 @@
 	    (let* ((p+1 (rcons (cDr p) (- (tree-arity t0) 1)))
 		   (t+1 (path->tree p+1))
 	       )
-	       (path-remove p 1)
-	       (path-insert p+1 `(,(tree->stree t)))
+	       (tree-remove t0 (cAr p) 1)
+	       (tree-insert (tree-up t+1) (cAr p+1) `(,(tree->stree t)))
 	       (set! current-path p+1)
 	    ))
 	   )
@@ -671,8 +671,8 @@
 	       )
 	       (if no
 	       (begin
-		  (path-remove p 1)
-		  (path-insert p-1 `(,(tree->stree t)))
+		  (tree-remove t0 (cAr p) 1)
+		  (tree-insert (tree-up t-1) (cAr p-1) `(,(tree->stree t)))
 		  (set! current-path p-1)))
 	    ))
 	   )
@@ -684,8 +684,8 @@
 	       )
 	       (if no
 	       (begin
-		  (path-remove p 1)
-		  (path-insert p+1 `(,(tree->stree t)))
+		  (tree-remove t0 (cAr p) 1)
+		  (tree-insert (tree-up t+1) (cAr p+1) `(,(tree->stree t)))
 		  (set! current-path p+1)))
 	    ))
 	   )
