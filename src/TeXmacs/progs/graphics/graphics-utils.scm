@@ -648,6 +648,7 @@
 	path))
     
 (tm-define (graphics-remove p . parms)
+  (if p
   (with p0 (graphics-object-root-path p)
      (set! layer-of-last-removed-object
 	   (if (and (pair? parms) (eq? (car parms) 'memoize-layer))
@@ -655,7 +656,7 @@
 		   (cons (cAr p0) layer-of-last-removed-object)
 		   (cAr p0))
 	       #f))
-     (tree-remove (path->tree (cDr p0)) (cAr p0) 1)))
+     (tree-remove (path->tree (cDr p0)) (cAr p0) 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Box info & frame
@@ -712,6 +713,11 @@
 (tm-define (enhanced-tree->radical t)
   (if (enhanced-tree? t)
       (tree-ref t (- (tree-arity t) 1))
+      t))
+
+(tm-define (stree-radical t)
+  (if (and (pair? t) (eq? (car t) 'with) (nnull? (cdr t)))
+      (cAr t)
       t))
 
 (tm-define (radical->enhanced-tree r)

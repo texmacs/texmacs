@@ -74,6 +74,21 @@
 (tm-define graphical-textat-halign "default")
 (tm-define graphical-textat-valign "default")
 
+(tm-define (fetch-props o)
+  (set! graphical-color (find-prop o "color" "default"))
+  (set! graphical-pstyle (find-prop o "point-style" "default"))
+  (set! graphical-lwidth (find-prop o "line-width" "default"))
+  (set! graphical-magnification (find-prop o "magnification" "default"))
+  (set! graphical-lstyle (find-prop o "dash-style" "default"))
+  (set! graphical-lstyle-unit
+	(find-prop o "dash-style-unit" "default"))
+  (set! graphical-larrows (find-prop o "line-arrows" "default"))
+  (set! graphical-fcolor (find-prop o "fill-color" "default"))
+  (set! graphical-textat-halign
+	(find-prop o "text-at-halign" "default"))
+  (set! graphical-textat-valign
+	(find-prop o "text-at-valign" "default")))
+
 (tm-define (graphical-object fetch)
 ; FIXME: Remove this (tree->stree) should give more speed, but I'm not sure
 ;   about what is the best way now. Then, directly plug the tree and test
@@ -81,20 +96,7 @@
   (with o (tree->stree (get-graphical-object))
    ;(display* "o=" o "\n")
     (if (and fetch (pair? o))
-       (begin
-	  (set! graphical-color (find-prop o "color" "default"))
-	  (set! graphical-pstyle (find-prop o "point-style" "default"))
-	  (set! graphical-lwidth (find-prop o "line-width" "default"))
-	  (set! graphical-magnification (find-prop o "magnification" "default"))
-	  (set! graphical-lstyle (find-prop o "dash-style" "default"))
-	  (set! graphical-lstyle-unit
-		(find-prop o "dash-style-unit" "default"))
-	  (set! graphical-larrows (find-prop o "line-arrows" "default"))
-	  (set! graphical-fcolor (find-prop o "fill-color" "default"))
-	  (set! graphical-textat-halign
-		(find-prop o "text-at-halign" "default"))
-	  (set! graphical-textat-valign
-		(find-prop o "text-at-valign" "default"))))
+	(fetch-props o))
     (if (pair? o)
 	(if (== (cdr o) '()) o (cAr o))
 	'(concat))))
@@ -578,9 +580,24 @@
 		      (> (length current-obj) 1))
 		 (create-graphical-object current-obj '() 'points 'no-group)
 		 (create-graphical-object current-obj current-path pts #f)))
-	  (let* ((mode (if (null? parms) current-path (car parms)))
+	  (let* ((mode (if (null? parms)
+			   (if sticky-point
+			      'active
+			       current-path)
+			   (car parms)))
 		 (tag (if current-obj (car current-obj) #f))
 	     )
+	     (if (and sticky-point
+		      (== 1 (length (sketch-get))))
+		 (set! current-obj (car (sketch-get))))
+	     (if (tree? current-obj)
+		 (set! current-obj (tree->stree current-obj)))
+	     (if (and (eq? mode 'active)
+		      (pair? current-obj)
+		      (eq? (car current-obj) 'with))
+		 (begin
+		    (fetch-props current-obj)
+		    (set! current-obj (stree-radical current-obj))))
 	     (create-graphical-object
 		current-obj
 		mode
@@ -612,19 +629,26 @@
 ;; Managing the sketch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (get-root x)
+  (if (and (tree? x) (tree->path x))
+      (radical->enhanced-tree x)
+      x))
+
 (tm-define (sketch-get)
   the-sketch)
 
 (tm-define (sketch-set! l)
-  (set! the-sketch l))
+  (set! the-sketch (map get-root l)))
 
 (tm-define (sketch-in? t)
+  (set! t (get-root t))
   (seek-eq? t the-sketch))
 
 (tm-define (sketch-reset)
   (set! the-sketch '()))
 
 (tm-define (sketch-toggle t)
+  (set! t (get-root t))
   (set! the-sketch
         (if (sketch-in? t)
             (remove-eq? t the-sketch)
@@ -649,25 +673,28 @@
   (if (graphics-group-mode? (graphics-mode))
       (graphics-decorations-update 'object))
   (foreach (o (sketch-get))
-     (graphics-remove (tree->path o) 'memoize-layer)
+     (if (tree? o)
+	 (graphics-remove (tree->path o) 'memoize-layer))
   )
-  (set! sticky-point #t))
+  (set! sticky-point #t)
+  (if (not (graphics-group-mode? (graphics-mode)))
+      (graphics-decorations-update)))
 
 (tm-define (sketch-commit)
+  (define group-mode? (graphics-group-mode? (graphics-mode)))
   (if (not sticky-point)
       (graphics-error "(sketch-commit)"))
   (with sketch0 (list-copy (sketch-get))
      (sketch-reset)
      (foreach (o sketch0)
 	(with layer layer-of-last-removed-object
-	   (sketch-toggle (radical->enhanced-tree
-			     (path->tree (graphics-group-insert o))))
+	   (sketch-toggle (path->tree (graphics-group-insert-bis o group-mode?)))
 	   (if (not (list? layer))
 	       (set! layer-of-last-removed-object layer)))
      )
      (set! layer-of-last-removed-object #f)
      (set! current-obj
-	   (if (graphics-group-mode? (graphics-mode)) '(nothing) #f))
+	   (if group-mode? '(nothing) #f))
      (set! current-path #f)
      (graphics-decorations-update)
   )

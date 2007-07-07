@@ -259,7 +259,7 @@
 	 (set! sel (graphics-select-area x1 y1 x2 y2))
 	 (sketch-reset)
 	 (foreach (p sel)
-            (sketch-toggle (radical->enhanced-tree (path->tree p)))
+            (sketch-toggle (path->tree p))
 	 )
 	 (graphics-decorations-update)
 	 (set! multiselecting #f)
@@ -268,7 +268,7 @@
       )
       (if p
 	  (with t (path->tree p)
-	     (sketch-toggle (radical->enhanced-tree t))
+	     (sketch-toggle t)
 	     (graphics-decorations-update))
 	  (begin
 	     (set! selecting-x0 x)
