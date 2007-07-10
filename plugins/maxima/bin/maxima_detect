@@ -36,20 +36,17 @@ find_old_help()
   fi
 }
 
-PATH="/cygdrive/c/Program Files/Maxima-5.9.2/bin:$PATH"
-PATH="/cygdrive/c/Program Files/Maxima-5.9.3/bin:$PATH"
-export PATH
-
-MAXIMA=`type -p maxima 2>/dev/null`
+if [ $OSTYPE == "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
+MAXIMA=`type -p maxima$EXT 2>/dev/null`
 if [ $? -eq 0 ]
 then
-  if [ -f "/usr/bin/cygwin1.dll" ]
+  if [ $OSTYPE == "cygwin" ]
   then
     if [ "$1" ]
     then
-      maxima.bat -d | grep -F 'maxima-htmldir=' | \
-        sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|' \
-	    -e 's|\\|/|g' -e 's|C:|/cygdrive/c/|'
+      maxima -d | grep -F 'maxima-htmldir=' | \
+        sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|' | \
+	cygpath -f -
     else
       echo '("cygwin")'
     fi
