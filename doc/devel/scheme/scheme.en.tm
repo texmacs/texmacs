@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -14,6 +14,9 @@
 
     <branch|Programming routines for editing
     documents|edit/scheme-edit.en.tm>
+
+    <branch|Scheme interface for the graphical
+    mode|graphics/scheme-graphics.en.tm>
   </traverse>
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
