@@ -21,87 +21,115 @@
         (graphics graphics-kbd) (graphics graphics-group)))
 
 ;; TODO:
-;;   -> systematiser l'utilisation de l'API des arbres (tree-assign, etc.)
-;;   -> rajouter systematiquement des "synopsis" pour les tm-define.
 ;;
-;;   -> chercher scrupuleusement a factoriser et simplifier le code.
-;;   -> des macros comme foreach et foreach-number, etc., devraient
-;;      etre dans kernel/boot/abbrevs ou kernel/library (et chercher
-;;      des noms plus elegants).
+;;   1. Chercher scrupuleusement a factoriser et simplifier le code.
 ;;
-;;   -> On en discutera davantage apres un premier passage en revue.
+;;   -> Enlever *tous* les parametres dans les fonctions de l'editeur
+;;      graphique, et utiliser uniquement les variables d'etat ;
+;;
+;;   -> Use systematically (first), (second), etc., instead
+;;      of (car), (cadr), etc.
+;;
+;;   2. travailler exclusivement avec des trees, et sauf dans les
+;;      rares cas ou peut-etre c'est necessaire, supprimer toute
+;;      utilisation des paths ;
 ;;
 ;;   -> Remove all the (stree-at), (tree->stree), etc.
+;;
 ;;   -> Replace the remaining (tree->stree) by (tm->stree) or (t2o)
+;;
 ;;   -> Except in simple cases, remove all the (tree->stree) which
 ;;      slow the code, and operate everywhere and all the time on trees.
 ;;
 ;;   -> Remove the synchro-unsafe (get-env) & (get-env-tree) everywhere.
 ;;
-;;   -> Use systematically (first), (second), etc., instead
-;;      of (car), (cadr), etc.
+;;   3. Doc, reorganisation code
+;;
+;;   ->  rajouter systematiquement des "synopsis" pour les tm-define.
+;;
+;;   -> des macros comme foreach et foreach-number, etc., devraient
+;;      etre dans kernel/boot/abbrevs ou kernel/library (et chercher
+;;      des noms plus elegants).
+;;
+;;   -> dans la doc, preciser **exactement** les conditions d'evaluation
+;;      des differentes fonctions (par exemple (stree->tree #f) == #f,
+;;      mais (stree->tree 1) == <tree 1>.
+;;
+;;   -> On en discutera davantage apres un premier passage en revue.
 
-;; NOTE: Dans la doc, preciser **exactement** les conditions d'evaluation
-;;   des differentes fonctions (par exemple (stree->tree #f) == #f,
-;;   mais (stree->tree 1) == <tree 1>.
+;; FIXME: Les cercles et arcs de cercles sont bogues
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Basic operations
-(define moveclick-tolerance "5px")
-(define previous-leftclick #f)
-(define (points-dist< p1 p2 eps)
-  (set! p1 (frame-direct `(tuple ,(cadr p1) ,(caddr p1))))
-  (set! p2 (frame-direct `(tuple ,(cadr p2) ,(caddr p2))))
-  (set! eps (length-decode eps))
-  (let* ((x1 (s2f (cadr p1)))
-	 (y1 (s2f (caddr p1)))
-	 (x2 (s2f (cadr p2)))
-	 (y2 (s2f (caddr p2)))
-     )
-     (< (+ (* (- x2 x1) (- x2 x1)) (* (- y2 y1) (- y2 y1))) (* eps eps))))
+;;
+;; NOTE: Imperative functions, which inconditionnaly perform a given
+;;   operation on the sketch.
+;;
+;;   These functions depend on, and can change the current edit state (i.e.,
+;;   being in modifying or in selecting mode), and they maintain the value
+;;   of the state variables current-point-no and current-edge-sel?, which
+;;   are basic pointers inside the edited object.
+;;
+;;   In other words, these functions are methods which operate on the sketch,
+;;   according to what you need to do when editing in point mode.
+
+;; Basic operations (setting the object)
+(define (object-set! o . opt)
+ ;(display* "o=" o "\n")
+  (set! layer-of-last-removed-object #f)
+  (if sticky-point
+      (sketch-set! `(,o))
+      (if (in? 'checkout opt)
+	  (begin
+	     (sketch-set! `(,o))
+	     (sketch-checkout))
+	  (if (in? 'new opt)
+	      (graphics-group-enrich-insert o)
+	      (graphics-assign current-path o)))
+  )
+  (set! current-obj o))
 
 ;; Basic operations (create)
-(define (check-sketch1)
+(define (sketch-get1)
   (if (not (and (pair? (sketch-get)) (eq? 1 (length (sketch-get)))))
-      (graphics-error "(check-sketch1)")))
+      (graphics-error "(sketch-get1)"))
+  (sketch-get))
   
-(tm-define (create x y mode)
-  (:require (eq? mode 'point))
-  (graphics-group-enrich-insert `(point ,x ,y)))
+(tm-define (object_create tag x y)
+  (:require (eq? tag 'point))
+  (object-set! `(point ,x ,y) 'new))
 
-(tm-define (create x y mode)
-  (:require (in? mode gr-tags-curves))
-  (with o (graphics-enrich `(,mode (point ,x ,y) (point ,x ,y)))
+(tm-define (object_create tag x y)
+  (:require (in? tag gr-tags-curves))
+  (with o (graphics-enrich `(,tag (point ,x ,y) (point ,x ,y)))
     (graphics-store-state 'start-create)
-    (set! graphics-undo-enabled #f)
-    (sketch-set! `(,o))
-    (sketch-checkout)
+    (object-set! o 'checkout)
     (set! current-obj o)
     (set! current-point-no 1)
     (graphics-store-state #f)))
 
-(tm-define (create x y mode)
-  (:require (eq? mode 'text-at))
-  (graphics-group-enrich-insert
-    `(text-at "" (point ,x ,y))))
+(tm-define (object_create tag x y)
+  (:require (eq? tag 'text-at))
+  (object-set! `(text-at "" (point ,x ,y)) 'new))
 
-;; Basic operations (add point)
-(define (object_set-point xcur ycur no)
-  (define obj #f)
-  (check-sketch1)
-  (set! obj (stree-radical (car (sketch-get))))
+;; Basic operations (set & add point)
+(define (object_set-point no xcur ycur)
+  (define obj (stree-radical (car (sketch-get1))))
  ;(display* "obj=" obj "\n")
-  (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
-      (with l (list-tail (cdr obj) no)
-	(set-car! l `(point ,xcur ,ycur)))))
+  (if (== (car obj) 'point)
+      (begin
+	 (set-car! (cdr obj) xcur)
+	 (set-car! (cddr obj) ycur))
+      (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
+          (with l (list-tail (cdr obj) no)
+	    (set-car! l `(point ,xcur ,ycur)))))
+  (object-set! (car (sketch-get))))
 
-(define (object_add-point xcur ycur x y no dirn)
-  (define obj #f)
-  (check-sketch1)
-  (set! obj (stree-radical (car (sketch-get))))
+(define (object_add-point no xcur ycur x y dirn)
+  (define obj (stree-radical (car (sketch-get1))))
  ;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
@@ -111,24 +139,39 @@
  	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
  	      (if (and xcur ycur)
  		  (set-car! l `(point ,xcur ,ycur)))
- 	      (set! current-point-no (+ no 1))
-              (set! current-obj obj)
- 	      (graphics-decorations-update))
+ 	      (set! current-point-no (+ no 1)))
   	    (begin
   	      (set-cdr! l (cons (car l) (cdr l)))
   	      (set-car! l `(point ,x ,y))
  	      (if (and xcur ycur)
  		  (set-car! (cdr l) `(point ,xcur ,ycur)))
- 	      (set! current-point-no no)
- 	      (graphics-decorations-update)))
-  	(set! current-edge-sel? #t)
-  	(set! sticky-point #t))))
+ 	      (set! current-point-no no))
+        )
+	(object-set! (car (sketch-get)))
+  	(set! current-edge-sel? #t))))
 
-;; Basic operations (commit)
+;; Basic operations (remove)
+(define (object_remove-point no)
+;; FIXME: should read the radical & memoize it
+  (with l (if (<= no 0)
+	      current-obj
+	      (list-tail (cdr current-obj) (- no 1)))
+    (set-cdr! l (cddr l))
+    (set! current-point-no #f)
+    (object-set! current-obj)))
+  ;; FIXME: Should assign the memoized radical, here
+
+(define (object_remove)
+  (graphics-remove current-path))
+
+;; Basic operations (checkout & commit)
+(define (object_checkout)
+  (sketch-set! `(,(path->tree current-path)))
+  (sketch-checkout)
+  (sketch-set! (map tree->stree (sketch-get))))
+
 (define (object_commit)
-  (define obj #f)
-  (check-sketch1)
-  (set! obj (stree-radical (car (sketch-get))))
+  (define obj (stree-radical (car (sketch-get1))))
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
   (begin
      (graphical-fetch-props (car (sketch-get)))
@@ -146,175 +189,192 @@
      (set! current-edge-sel? #f)
      (sketch-set! `(,obj))
      (sketch-commit)
-     (if (== (state-ref graphics-first-state 'graphics-action)
-	     'start-move)
-	 (remove-undo-mark))
      (set! leftclick-waiting #f)
-     (set! graphics-undo-enabled #t)
      (set! current-obj (stree-radical obj))
      (set! current-point-no #f)
      (graphics-forget-states))))
 
+;; Edition operations
+;;
+;; NOTE: Intelligent functions, which take into account the state,
+;;   the previous mouse clicks, etc. They also perform printing the
+;;   help messages. These functions maintain the value of the state
+;;   variables, and they manage state stacking.
+;;
+;;   In other words, these functions implement the different states
+;;   of the editing automaton.
+
+(define moveclick-tolerance "5px")
+(define previous-leftclick #f)
+
+(define (move-over)
+ ;(display* "obj[move<" sticky-point ">]=")(write current-obj)(display "\n")
+  (set-message "Left click: add or edit object; Middle click: remove object" "")
+  (graphics-decorations-update)
+  (if current-path
+      (with p2 (tm-upwards-path current-path '(text-at) '(graphics))
+         (if (not p2) (go-to (rcons current-path 0))))))
+
+(define (edit-insert x y)
+  (if just-started-dragging
+      (set! disable-drag #t))
+  (object_create (cadr (graphics-mode)) x y))
+
+(define (start-move)
+  (define edge current-edge-sel?)
+  (set-message "Left click: add point; Middle click: undo" "")
+  (graphics-store-state 'start-move)
+  (object_checkout)
+  (graphics-group-start)
+  (set! current-edge-sel? #t)
+  (set! leftclick-waiting #f)
+  (set! previous-leftclick `(point ,current-x ,current-y))
+  (if (and edge
+	   (not (and (in? (car current-obj) '(arc carc))
+			  (> (length current-obj) 3))))
+      (begin
+	 (object_add-point current-point-no #f #f current-x current-y #t)
+	 (graphics-decorations-update)))
+  (graphics-store-state #f))
+
+(define (move-point)
+ ;(display* "obj[move<" sticky-point ">]=")(write current-obj)(display "\n")
+  (if (and leftclick-waiting
+	   (not (points-dist<
+		  previous-leftclick
+		 `(point ,current-x ,current-y)
+		  moveclick-tolerance)))
+      (begin
+	 ;(display* "prev-leftc(2)=" previous-leftclick "\n")
+	 ;(display* "x(2)=" current-x "\n")
+	 ;(display* "y(2)=" current-y "\n\n")
+	 (set! leftclick-waiting #f)
+	 (object_add-point
+	   current-point-no
+	   (cadr previous-leftclick) (caddr previous-leftclick)
+	   current-x current-y
+	   (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
+      (begin
+	 (if leftclick-waiting
+	     (set-message "Left click: finish" "")
+	     (set-message "Left click: add point; Middle click: undo" ""))
+	 (object_set-point current-point-no current-x current-y))
+  )
+  (graphics-decorations-update))
+
+(define (last-point)
+  (if (and leftclick-waiting
+	   (points-dist<
+	     previous-leftclick
+	    `(point ,current-x ,current-y)
+	     moveclick-tolerance))
+      (begin
+         (object_set-point
+	    current-point-no
+	    (cadr previous-leftclick)
+	    (caddr previous-leftclick))
+         (object_commit))
+      (begin
+        (if (and (not leftclick-waiting)
+                 previous-leftclick
+                 (points-dist<
+		  previous-leftclick
+                 `(point ,current-x ,current-y)
+		  moveclick-tolerance))
+            (undo)
+	    (begin
+	      (set-message "Left click: finish" "")
+	      (set! leftclick-waiting #t)))))
+ ;(display* "prev-leftc=" previous-leftclick "\n")
+ ;(display* "x=" current-x "\n")
+ ;(display* "y=" current-y "\n\n")
+  (set! previous-leftclick `(point ,current-x ,current-y)))
+
+(define (back)
+;; FIXME: Doesn't undo the right point, it seems
+ ;(display* "obj[" p "]=" obj "\n")
+  (graphics-back-state #f)
+  (graphics-move-point current-x current-y))
+
+(define (remove-point)
+ ;(display* "obj[" p "]=" obj "\n")
+  (if (or (in? (car current-obj) gr-tags-oneshot) (null? (cdddr current-obj))
+	  (not (in? (car current-obj) gr-tags-all))
+	  (!= (logand (get-keyboard-modifiers) ShiftMask) 0))
+      (begin
+        (object_remove)
+        (graphics-decorations-reset)
+        (graphics-group-start))
+      (begin
+        (object_remove-point current-point-no)
+        (graphics-decorations-update))))
+
 ;; Left button
-(define (any_left-button x y p obj no edge)
+(tm-define (left-button)
+  (:require (in? (car current-obj) gr-tags-point-curves))
   (if sticky-point
-      ;;Last
-      (begin
-	(if (and leftclick-waiting
-		 (points-dist<
-		   previous-leftclick `(point ,x ,y) moveclick-tolerance))
-	    (begin
-	       (object_set-point
-		  (cadr previous-leftclick) (caddr previous-leftclick) no)
-	       (object_commit))
-	    (begin
-              (if (and (not leftclick-waiting)
-                       previous-leftclick
-                       (points-dist<
-			previous-leftclick `(point ,x ,y) moveclick-tolerance))
-                  (undo)
-		  (begin
-		    (set-message "Left click: finish" "")
-		    (set! leftclick-waiting #t)))))
-	;(display* "prev-leftc=" previous-leftclick "\n")
-	;(display* "x=" x "\n")
-	;(display* "y=" y "\n\n")
-        (set! previous-leftclick `(point ,x ,y)))
-      ;;Start move
-      (begin
-	(set-message "Left click: add point; Middle click: undo" "")
-	(graphics-store-state 'start-move)
-	(set! current-point-no no)
-	(sketch-set! `(,(path->tree p)))
-	(sketch-checkout)
-	(sketch-set! (map tree->stree (sketch-get)))
-	(graphics-group-start)
-	(set! leftclick-waiting #f)
-	(set! current-point-no no)
-	(set! current-edge-sel? #t)
-	(set! graphics-undo-enabled #f)
-        (set! previous-leftclick  `(point ,x ,y))
-	(if (and edge (not (and (in? (car obj) '(arc carc))
-				(> (length obj) 3))))
-	  (object_add-point #f #f x y no #t))
-	(graphics-store-state #f))))
+      (last-point)
+      (start-move)))
 
-(tm-define (left-button x y p obj no edge)
-  (:require (in? (car obj) gr-tags-point-curves))
-  (any_left-button x y p obj no edge))
-
-(tm-define (left-button x y p obj no edge)
-  (:require (eq? (car obj) 'text-at))
+(tm-define (left-button)
+  (:require (eq? (car current-obj) 'text-at))
   (if sticky-point
       (object_commit)
-      (if (on-graphical-embedding-box? x y obj "1mm")
+      (if (on-graphical-embedding-box? current-x current-y current-obj "1mm")
 	  (begin
 	     (set-texmacs-pointer 'graphics-cross)
-	     (any_left-button x y p obj 1 edge))
+	     (set! current-point-no 1)
+	     (start-move))
 	  (begin
 	     (set-texmacs-pointer 'text-arrow)
-	     (go-to (car (select-first (s2f x) (s2f y))))))))
+	     (go-to (car (select-first (s2f current-x) (s2f current-y))))))))
 
-(tm-define (left-button x y p obj no edge)
-  (:require (not (in? (car obj) gr-tags-all)))
-  (any_left-button x y p obj no edge))
+(tm-define (left-button)
+  (:require (not (in? (car current-obj) gr-tags-all)))
+  (if sticky-point
+      (last-point)
+      (start-move)))
 
 ;; Move
-(define (any_move x y p obj no edge)
- ;(display* "obj[move<" sticky-point ">]=")(write obj)(display "\n")
+(tm-define (move)
+  (:require (in? (car current-obj) gr-tags-point-curves))
   (if sticky-point
-      (if (and leftclick-waiting
-	       (not (points-dist<
-		      previous-leftclick `(point ,x ,y) moveclick-tolerance)))
-          (begin
-	     ;(display* "prev-leftc(2)=" previous-leftclick "\n")
-	     ;(display* "x(2)=" x "\n")
-	     ;(display* "y(2)=" y "\n\n")
-	     (set! leftclick-waiting #f)
-	     (object_add-point
-	       (cadr previous-leftclick) (caddr previous-leftclick)
-	       x y no (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
-	  (begin
-	     (if leftclick-waiting
-		 (set-message "Left click: finish" "")
-		 (set-message "Left click: add point; Middle click: undo" ""))
-	     (check-sketch1)
-	     (set! obj (stree-radical (car (sketch-get))))
-	     (if (== (car obj) 'point)
-	         (set! obj `(point ,x ,y))
-	         (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
-	     (set! current-point-no no)
-	     (set! current-edge-sel? edge)
-	     (graphics-decorations-update)))
-      (begin
-	(set-message "Left click: add or edit object; Middle click: remove object" "")
-	(set! current-point-no no)
-	(set! current-edge-sel? edge)
-	(graphics-decorations-update)
-	(if p
-	    (with p2 (tm-upwards-path p '(text-at) '(graphics))
-	       (if (not p2) (go-to (rcons p 0))))))))
+      (move-point)
+      (move-over)))
 
-(tm-define (move x y p obj no edge)
-  (:require (in? (car obj) gr-tags-point-curves))
-  (any_move x y p obj no edge))
-
-(tm-define (move x y p obj no edge)
-  (:require (eq? (car obj) 'text-at))
+(tm-define (move)
+  (:require (eq? (car current-obj) 'text-at))
   (if (and (not sticky-point)
-	   (on-graphical-embedding-box? x y obj "1mm"))
+	   (on-graphical-embedding-box? current-x current-y current-obj "1mm"))
       (set-texmacs-pointer 'graphics-cross-arrows)
       (set-texmacs-pointer 'graphics-cross)
   )
-  (any_move x y p obj 1 edge))
+  (set! current-point-no 1)
+  (if sticky-point
+      (move-point)
+      (move-over)))
 
-(tm-define (move x y p obj no edge)
-  (:require (eq? (car obj) 'gr-group))
+(tm-define (move)
+  (:require (eq? (car current-obj) 'gr-group))
   (if sticky-point
       (display* "Sticky move(gr-group) !yet implemented\n")
       (begin
 	(set! current-point-no #f)
 	(graphics-decorations-update))))
 
-(tm-define (move x y p obj no edge)
-  (:require (not (in? (car obj) gr-tags-all)))
-  (any_move x y p obj no edge))
+(tm-define (move)
+  (:require (not (in? (car current-obj) gr-tags-all)))
+  (if sticky-point
+      (move-point)
+      (move-over)))
 
 ;; Middle button
-(tm-define (any_middle-button x y p obj no)
- ;(display* "obj[" p "]=" obj "\n")
+(tm-define (middle-button)
   (if sticky-point
-      ;;Back
-      (begin
-	(graphics-back-state #f)
-	(graphics-move-point x y))
-      ;;Remove
-      (begin
-	(if (or (in? (car obj) gr-tags-oneshot) (null? (cdddr obj))
-		(not (in? (car obj) gr-tags-all))
-		(!= (logand (get-keyboard-modifiers) ShiftMask) 0))
-	    (begin
-	      (graphics-remove p)
-	      (graphics-decorations-reset)
-	      (graphics-group-start))
-	    (with l (if (<= no 0) obj (list-tail (cdr obj) (- no 1)))
-	      (set-cdr! l (cddr l))
-	      (set! current-point-no #f)
-	      (graphics-assign p obj)
-	      (graphics-decorations-update)))
-	(set! sticky-point #f))))
-
-(tm-define (middle-button x y p obj no)
-  (any_middle-button x y p obj no))
+      (back)
+      (remove-point)))
 
 ;; Dispatch
-(define (edit-insert x y)
-  (with mode (cadr (graphics-mode))
-    (if just-started-dragging
-	(set! disable-drag #t))
-    (set! layer-of-last-removed-object #f)
-    (create x y mode)))
-
 (tm-define (edit_left-button mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
@@ -324,8 +384,7 @@
       (begin
 	(if just-started-dragging
 	    (set! disable-drag #t))
-	(left-button
-	  x y current-path current-obj current-point-no current-edge-sel?))
+	(left-button))
       (if current-obj
 	  (begin
 	    (edit_tab-key 'edit
@@ -355,13 +414,11 @@
 		  (not just-started-dragging)
 		  (not (eq? (car current-obj) 'text-at)))
 	     (edit-insert current-x current-y)
-	     (left-button current-x current-y
-		current-path current-obj current-point-no current-edge-sel?)))
+	     (left-button)))
    ;; Moving
       (begin
        (if current-obj
-	   (move
-	     x y current-path current-obj current-point-no current-edge-sel?)
+	   (move)
 	   (graphics-decorations-reset)))))
 
 (tm-define (edit_middle-button mode x y)
@@ -373,7 +430,7 @@
       (begin
 	 (if choosing
 	     (graphics-state-set (graphics-pop-state)))
-	 (middle-button x y current-path current-obj current-point-no))))
+	 (middle-button))))
 
 (tm-define (edit_right-button mode x y)
   (:require (eq? mode 'edit))
@@ -620,8 +677,7 @@
 	(if (and (pair? current-obj) (eq? (car current-obj) 'text-at))
 	    (cond
 	      ((== func 'left-button)
-	       (left-button current-x current-y
-		 current-path current-obj current-point-no current-edge-sel?)))
+	       (left-button)))
 	    (uncaptured))
 	(set! res #f))
     ;;(display* "res=" res "\n")

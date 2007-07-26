@@ -28,18 +28,11 @@
      )
      (export ,(car head))))
      (export define-export-macro)
-  ;; NOTE: Deprecated. It seems that as soon as macros become a little bit
-  ;;   complex, the Guile macroexpander interacts poorly with the memoizing
-  ;;   stuff in (define-public-macro), and then it becomes unstable. This
-  ;;   is the reason why (define-export-macro) exists : it is *strictly*
+  ;; NOTE: It seems that as soon as macros become a little bit complex,
+  ;;   the Guile macroexpander interacts poorly with the memoizing stuff
+  ;;   in (define-public-macro), and then it becomes unstable. This is
+  ;;   the reason why (define-export-macro) exists : it is *strictly*
   ;;   equivalent to (define-macro) + (export), and never raises problems.
-  ;;
-  ;; NOTE: Not deprecated anymore. using (define-public-macro) for
-  ;;   defining (foreach-cons) is the cause of an unfixeable and
-  ;;   ununderstandeable crash in (group-zoom). I don't understand
-  ;;   why, (foreach-cons) is just expanding a (do) loop, it *should*
-  ;;   work without any problems ! Thus, using (define-public-macro)
-  ;;   is currently banned from the graphics-*.scm code.
 
 ;; Conversions
 (tm-define (tree->object t)
@@ -326,7 +319,7 @@
    '(with "gr-mode" "point" 
           "gr-frame" (tuple "scale" "1cm" (tuple "0.5gw" "0.5gh"))
           "gr-geometry" (tuple "geometry" "1par" "0.6par")
-      (graphics))
+      (graphics ""))
    '(6 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
