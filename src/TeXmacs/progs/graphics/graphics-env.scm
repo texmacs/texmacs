@@ -36,6 +36,7 @@
 	  (previous-selection #f)
 	  (subsel-no #f)
 	  (graphics-undo-enabled #t)
+	  (remove-undo-mark? #f)
 	  (the-sketch '())
 	  (selecting-x0 #f)
 	  (selecting-y0 #f)
@@ -101,6 +102,7 @@
     (state-set! st 'current-x current-x)
     (state-set! st 'current-y current-y)
     (state-set! st 'graphics-undo-enabled graphics-undo-enabled)
+    (state-set! st 'remove-undo-mark? remove-undo-mark?)
     (state-set! st 'the-sketch the-sketch)
     (state-set! st 'selecting-x0 selecting-x0)
     (state-set! st 'selecting-y0 selecting-y0)
@@ -125,6 +127,7 @@
   (set! current-x (state-ref st 'current-x))
   (set! current-y (state-ref st 'current-y))
   (set! graphics-undo-enabled (state-ref st 'graphics-undo-enabled))
+  (set! remove-undo-mark? (state-ref st 'remove-undo-mark?))
   (set! the-sketch (state-ref st 'the-sketch))
   (set! selecting-x0 (state-ref st 'selecting-x0))
   (set! selecting-y0 (state-ref st 'selecting-y0))
@@ -192,6 +195,7 @@
   (set! current-x #f)
   (set! current-y #f)
   (set! graphics-undo-enabled #t)
+  (set! remove-undo-mark? #f)
   (set! the-sketch '())
   (set! selecting-x0 #f)
   (set! selecting-y0 #f)
@@ -423,12 +427,13 @@
 	      (graphics-decorations-update)))))
    ((and (== cmd 'exit) sticky-point)
     (set! graphics-undo-enabled #t)
+    (set! remove-undo-mark? #f)
     (if graphics-first-state
 	(begin
 	  (if (== (state-ref graphics-first-state 'graphics-action)
 		   'start-move)
 	      (with p (cursor-path)
-		(unredoable-undo)
+		(unredoable-undo) ;; FIXME: Should rely on remove-undo-mark?
 		(go-to p)))))
     (graphics-reset-state)
     (graphics-forget-states))
@@ -439,6 +444,7 @@
 	(begin
 	; FIXME : In this begin, the state variables should be raz-ed as well !
 	  (set! graphics-undo-enabled #t)
+	  (set! remove-undo-mark? #f)
 	  (unredoable-undo))
 	(begin
 	  (set! the-sketch '())
@@ -458,6 +464,7 @@
 	  (set! sticky-point #f)
 	  (set! current-point-no #f)
 	  (set! graphics-undo-enabled #t)
+	  (set! remove-undo-mark? #f)
 	  (set! multiselecting #f)
 	  (if graphics-first-state
 	      (graphics-back-first))

@@ -60,6 +60,17 @@
 	 0)))
       0))
 
+(tm-define (points-dist< p1 p2 eps)
+  (set! p1 (frame-direct `(tuple ,(cadr p1) ,(caddr p1))))
+  (set! p2 (frame-direct `(tuple ,(cadr p2) ,(caddr p2))))
+  (set! eps (length-decode eps))
+  (let* ((x1 (s2f (cadr p1)))
+         (y1 (s2f (caddr p1)))
+         (x2 (s2f (cadr p2)))
+         (y2 (s2f (caddr p2)))
+     )
+     (< (+ (* (- x2 x1) (- x2 x1)) (* (- y2 y1) (- y2 y1))) (* eps eps))))
+
 ;; Graphical object
 (tm-define default-color-go-points "#4040ff")
 (tm-define default-color-selected-points "#ff6060")
@@ -672,15 +683,18 @@
 	(if (== (length (sketch-get)) 1)
 	    #f
 	   '()))
+  (set! remove-undo-mark? #f)
   (foreach-cons (c (sketch-get))
      (with o (car c)
      (if (tree? o)
      (begin
+	(set! remove-undo-mark? #t)
 	(graphics-remove (tree->path o) 'memoize-layer)
 	(if (or (tree->path o) (tree->path (enhanced-tree->radical o)))
 	    (set-car! c (tree-copy o))))))
   )
   (set! sticky-point #t)
+  (set! graphics-undo-enabled #f)
   (graphics-decorations-update))
 
 (tm-define (sketch-commit)
@@ -708,6 +722,9 @@
 	       (tree->path (car (sketch-get)))))
   )
   (set! sticky-point #f)
+  (set! graphics-undo-enabled #t)
+  (if remove-undo-mark?
+      (remove-undo-mark))
   (graphics-decorations-update))
 
 (tm-define (sketch-cancel)

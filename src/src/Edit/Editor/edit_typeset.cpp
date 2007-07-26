@@ -214,6 +214,16 @@ edit_typeset_rep::get_env_value (string var, path p) {
 
 tree
 edit_typeset_rep::get_env_value (string var) {
+ /* FIXME: tp is wrong (and consequently, crashes TeXmacs)
+  *   when we call this routine from inside the code which
+  *   is triggered by a button, for example.
+  *
+  * Test: fire TeXmacs, then open a new Graphics, then click
+  *   on the icon for going in spline mode. Then it crashes,
+  *   because we call (get-env-tree) from inside the Scheme.
+  *   If we call (get-env-tree-at ... (cDr (cursor-path))),
+  *   then it works.
+  */
   return get_env_value (var, tp);
 }
 
