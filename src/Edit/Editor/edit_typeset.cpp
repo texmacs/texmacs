@@ -189,7 +189,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
     if (p != correct_cursor (et, rp * 0)) {
       if (DEBUG_STD)
 	cout << "TeXmacs] Warning: resynchronizing for path " << p << "\n";
-      apply_changes ();
+      // apply_changes ();
     }
   if (N(cur[p])!=0) return;
   if (N(cur)>=25) // avoids out of memory in weird cases
