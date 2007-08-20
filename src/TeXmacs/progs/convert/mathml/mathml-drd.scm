@@ -26,7 +26,10 @@
   ("<mathpi>" "&pi;"))
 
 (drd-table mathml-constant->tm%
+  ("&eulergamma;" "<matheuler>")
+  ("&ImaginaryI;" "<mathi>")
   ("&ii;" "<mathi>")
+  ("&pi;" "<mathpi>")
   ("&true;" "true")
   ("&false;" "false")
   ("&phiv;" "<varphi>")
@@ -56,7 +59,6 @@
   ("&ThickSpace;" (hspace "0.2777778em")))
 
 (drd-rules
-  ((mathml-constant->tm% 'x 'y) (tm->mathml-constant% 'y 'x))
   ((mathml-operator->tm% 'x 'y) (tm->mathml-operator% 'y 'x))
   ((mathml-symbol->tm% 'x 'y) (mathml-constant->tm% 'x 'y))
   ((mathml-symbol->tm% 'x 'y) (mathml-operator->tm% 'x 'y)))
