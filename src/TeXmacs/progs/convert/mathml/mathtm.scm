@@ -116,6 +116,11 @@
 	      ((or (== h '(mathvariant "bold"))
 		   (== h '(mathvariant "bold-italic")))
 	       (cons* "math-font-series" "bold" r))
+	      ((or (== h '(mathvariant "sans-serif"))
+		   (== h '(mathvariant "sans-serif--italic")))
+	       (cons* "math-font-family" "ms" r))
+	      ((== h '(mathvariant "monospace"))
+	       (cons* "math-font-family" "mt" r))
 	      (else r)))))
 
 (define (mathtm-mstyle env a c)
