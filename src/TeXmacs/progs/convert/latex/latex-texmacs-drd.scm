@@ -193,7 +193,7 @@
 (drd-table latex-texmacs-3%
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1)
-  (glossaryentry (!append 1 "&" 2 "&" 3)))
+  (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3)))
 
 (drd-table latex-texmacs-4%
   (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
@@ -247,7 +247,10 @@
    ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
   ("elsequation" ((!begin "eqnarray") (!append --- "&&")))
   ("elsequation*" ((!begin "eqnarray*") (!append --- "&&")))
-  ("theglossary" ((!begin "tabular" "llr") ---)))
+  ("theglossary"
+   ((!begin "list" "" (!append "\\setlength{\\labelwidth}{6.5em}"
+			       "\\setlength{\\leftindent}{7em}"
+			       "\\small")) ---)))
 
 (drd-table latex-texmacs-env-arity%
   ("proof" 0)
