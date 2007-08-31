@@ -60,6 +60,7 @@
   (gggeq "\\geq\\negmedspace\\negmedspace\\geq\\negmedspace\\negmedspace\\geq")
 
   ;; extra literal symbols
+  (btimes "{\\mbox{\\rotatebox[origin=c]{90}{$\\ltimes$}}}")
   (Backepsilon "{\\mbox{\\rotatebox[origin=c]{180}{E}}}")
   (Mho "{\\mbox{\\rotatebox[origin=c]{180}{$\\Omega$}}}")
   (mathcatalan "C")
@@ -191,7 +192,8 @@
 
 (drd-table latex-texmacs-3%
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
-  (tmref 1))
+  (tmref 1)
+  (glossaryentry (!append 1 "&" 2 "&" 3)))
 
 (drd-table latex-texmacs-4%
   (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
@@ -244,7 +246,8 @@
   ("tmindent"
    ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
   ("elsequation" ((!begin "eqnarray") (!append --- "&&")))
-  ("elsequation*" ((!begin "eqnarray*") (!append --- "&&"))))
+  ("elsequation*" ((!begin "eqnarray*") (!append --- "&&")))
+  ("theglossary" ((!begin "tabular" "llr") ---)))
 
 (drd-table latex-texmacs-env-arity%
   ("proof" 0)
@@ -254,17 +257,18 @@
   ("tmindent" 0)
   ("proof" 0)
   ("elsequation" 0)
-  ("elsequation*" 0))
+  ("elsequation*" 0)
+  ("theglossary" 1))
 
 (drd-group latex-texmacs-tag%
   begin-proof begin-proof* begin-tmparmod begin-tmparsep begin-tmindent
-  begin-elsequation begin-elsequation*)
+  begin-elsequation begin-elsequation* begin-theglossary)
 
 (drd-group latex-environment-0%
   begin-proof begin-tmindent begin-elsequation begin-elsequation*)
 
 (drd-group latex-environment-1%
-  begin-proof*)
+  begin-proof* begin-theglossary)
 
 (drd-group latex-environment-3%
   begin-tmparmod begin-tmparsep)

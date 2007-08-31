@@ -29,6 +29,8 @@
 (define tmtex-packages '())
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
+(define tmtex-auto-produce 0)
+(define tmtex-auto-consume 0)
 (define tmtex-image-root-url (string->url "image"))
 (define tmtex-image-root-string "image")
 (define tmtex-appendices? #f)
@@ -72,6 +74,8 @@
 (define (tmtex-initialize opts)
   (set! tmtex-env (make-ahash-table))
   (set! tmtex-serial 0)
+  (set! tmtex-auto-produce 0)
+  (set! tmtex-auto-consume 0)
   (if (== (url-suffix current-save-target) "tex")
       (begin
 	(set! tmtex-image-root-url (url-unglue current-save-target 4))
@@ -1338,6 +1342,26 @@
   (tex-apply 'citeyear (tmtex (car l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Glossaries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-glossary s l)
+  (with nr (+ tmtex-auto-produce 1)
+    (set! tmtex-auto-produce nr)
+    `(label ,(string-append "autolab" (number->string nr)))))
+
+(define (tmtex-glossary-entry s l)
+  (with nr (+ tmtex-auto-consume 1)
+    (with lab (string-append "autolab" (number->string nr))
+      (set! tmtex-auto-consume nr)
+      `(glossaryentry ,(tmtex (car l)) ,(tmtex (cadr l)) (pageref ,lab)))))
+
+(define (tmtex-the-glossary s l)
+  `(!document
+      (,(if (latex-book-style?) 'chapter* 'section*) "Glossary")
+      ((!begin "theglossary" ,(car l)) ,(tmtex (cadr l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1544,7 +1568,11 @@
   ((:or equation equation*) (,tmtex-equation-wrapper 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
-  ((:or the-index the-glossary) (,tmtex-dummy -1))
+  (the-index (,tmtex-dummy -1))
+  (glossary (,tmtex-glossary 1))
+  (glossary-explain (,tmtex-glossary 2))
+  (glossary-2 (,tmtex-glossary-entry 3))
+  (the-glossary (,tmtex-the-glossary 2))
   ((:or table-of-contents) (,tmtex-toc 2))
   (bibliography (,tmtex-bib 4))
   (thebibliography (,tmtex-thebibliography 2))

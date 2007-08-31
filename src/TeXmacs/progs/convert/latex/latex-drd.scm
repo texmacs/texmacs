@@ -317,6 +317,7 @@
   (llleq "amsmath")
   (ggeq "amsmath")
   (gggeq "amsmath")
+  (btimes "graphicx")
   (Backepsilon "graphicx")
   (Mho "graphicx")
   (mho "graphicx")
