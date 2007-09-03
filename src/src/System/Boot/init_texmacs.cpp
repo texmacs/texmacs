@@ -54,7 +54,7 @@ get_env_path (string which, url def) {
 
 static url
 plugin_path (string which) {
-  url base  = "$TEXMACS_HOME_PATH:$TEXMACS_PATH:/usr/share/TeXmacs";
+  url base= "$TEXMACS_HOME_PATH:/etc/TeXmacs:$TEXMACS_PATH:/usr/share/TeXmacs";
   url search= base * "plugins" * url_wildcard ("*") * which;
   return expand (complete (search, "r"));
 }
@@ -63,6 +63,7 @@ scheme_tree
 plugin_list () {
   bool flag;
   array<string> a= read_directory ("$TEXMACS_PATH/plugins", flag);
+  a << read_directory ("/etc/TeXmacs/plugins", flag);
   a << read_directory ("$TEXMACS_HOME_PATH/plugins", flag);
   a << read_directory ("/usr/share/TeXmacs/plugins", flag);
   merge_sort (a);
