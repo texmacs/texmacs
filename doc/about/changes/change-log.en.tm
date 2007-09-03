@@ -11,10 +11,16 @@
     <item>More control for developers over buffer and window management
     (1.0.6.11).
 
-    <item>Started rewroting new <TeXmacs> file system in C++ (1.0.6.11).
+    <item>Added plug-in for <name|Sage> computer algebra system (1.0.6.11).
+
+    <item>Started rewriting new <TeXmacs> file system in C++ (1.0.6.11).
 
     <item>Rewrote secure peer to peer client/server connections in C++
     (1.0.6.11).
+
+    <item>Continued reorganizations for the graphics mode (1.0.6.11).
+
+    <item>Corrections of a few old bugs (1.0.6.11).
 
     <item>Increased user-friendliness of graphics mode (1.0.6.10).
 
