@@ -38,7 +38,7 @@
 
     <item><hlink|R|statistics.en.tm#r>
 
-    <item><hlink|Sage|cas.en.tm#r>
+    <item><hlink|Sage|cas.en.tm#sage>
 
     <item><hlink|Xfig|graphics.en.tm#xfig>
 
