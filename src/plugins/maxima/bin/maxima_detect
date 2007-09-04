@@ -46,7 +46,7 @@ then
     then
       maxima -d | grep -F 'maxima-htmldir=' | \
         sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|' | \
-	cygpath -f -
+        cygpath -f -
     else
       echo '("cygwin")'
     fi
@@ -61,9 +61,10 @@ version 5.9.2
 version 5.9.3
 version 5.10
 version 5.11
-version 5.12" >/dev/null
+version 5.12
+version 5.13" >/dev/null
         then
-          # 5.9.1 or 5.9.2 or 5.9.3 or 5.10 or 5.11 or 5.12
+          # 5.9.1 or 5.9.2 or 5.9.3 or 5.10 or 5.11 or 5.12 or 5.13
           maxima -d | grep -F 'maxima-htmldir=' | sed -e \
           's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
         else
