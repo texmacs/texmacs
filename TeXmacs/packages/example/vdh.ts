@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.6.10>
 
 <style|source>
 
@@ -79,6 +79,20 @@
     <assign|rsS|<with|math-font|cal*|S>>
 
     <assign|rsT|<with|math-font|cal*|T>>
+
+    <assign|ssM|<math|<with|math-font-family|tss|M>>>
+
+    <assign|ssMM|<math|<with|math-font-family|tss|MM>>>
+
+    <assign|ssR|<math|<with|math-font-family|tss|R>>>
+
+    <assign|ssRM|<math|<with|math-font-family|tss|RM>>>
+
+    <assign|ssA|<math|<with|math-font-family|tss|A>>>
+
+    <assign|ssL|<math|<with|math-font-family|tss|L>>>
+
+    <assign|ssT|<math|<with|math-font-family|tss|T>>>
 
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
 
