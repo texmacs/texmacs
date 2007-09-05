@@ -37,7 +37,7 @@ find_old_help()
 }
 
 if [ $OSTYPE == "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
-MAXIMA=`type -p maxima$EXT 2>/dev/null`
+MAXIMA=`which maxima$EXT 2>/dev/null`
 if [ $? -eq 0 ]
 then
   if [ $OSTYPE == "cygwin" ]
