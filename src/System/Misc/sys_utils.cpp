@@ -128,37 +128,3 @@ check_pos (tree t, int pos, string what) {
       return true;
   return false;
 }
-
-void
-recursive_kill (int pid) {
-  string s= eval_system ("ps -l");
-  int i, n= N(s);
-  for (i=0; i<n; i++)
-    if (s[i] == '\t')
-      s[i]= ' ';
-  tree t= analyze (s, '\n');
-  n= N(t);
-  for (i=0; i<n; i++)
-    t[i]= analyze (t[i]->label, ' ');
-
-  if (n>1) {
-    int pid_pos = search_pos (t[0], "PID");
-    int ppid_pos= search_pos (t[0], "PPID");
-    if (pid_pos  == -1) pid_pos = search_pos (t[0], "pid");
-    if (ppid_pos == -1) ppid_pos= search_pos (t[0], "ppid");
-    if (pid_pos  == -1) pid_pos = search_pos (t[0], "Pid");
-    if (ppid_pos == -1) ppid_pos= search_pos (t[0], "Ppid");
-    if (ppid_pos == -1) ppid_pos= search_pos (t[0], "PPid");
-    if (pid_pos  == -1) pid_pos = 3;
-    if (ppid_pos == -1) ppid_pos= 4;
-    if (check_pos (t, pid_pos, as_string (pid)) &&
-	check_pos (t, ppid_pos, as_string (pid)))
-      {
-	for (i=0; i<n; i++)
-	  if (t[i][ppid_pos] == as_string (pid))
-	    recursive_kill (as_int (t[i][pid_pos]));
-      }
-  }
-  // cout << "Killing " << pid << "\n";
-  system ("kill -9 " * as_string (pid) * " 2> /dev/null");
-}

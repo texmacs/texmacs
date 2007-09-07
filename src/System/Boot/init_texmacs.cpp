@@ -339,7 +339,7 @@ setup_texmacs () {
   url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
   cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
   cerr << HRULE;
-  cerr << "Since this seems to be the first time you run this\n";
+  cerr << "Since this seems to be the first time you have run this\n";
   cerr << "version of TeXmacs, I will first analyze your system\n";
   cerr << "in order to set up some TeX paths in the correct way.\n";
   cerr << "This may take some seconds; the result can be found in\n\n";

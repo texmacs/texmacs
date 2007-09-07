@@ -94,6 +94,7 @@ pipe_link_rep::start () {
   pipe (pp_err);
   pid= fork ();
   if (pid==0) { // the child
+    setsid();
     close (pp_in  [OUT]);
     close (pp_out [IN ]);
     close (pp_err [IN ]);
@@ -132,7 +133,10 @@ pipe_link_rep::start () {
 #ifdef OS_WIN32
       PIPE_Close(&conn);
 #else
-      recursive_kill (pid);
+      if (-1 != killpg(pid,SIGTERM)) {
+	sleep(2);
+	killpg(pid,SIGKILL);
+      }
 #endif
       wait (NULL);
       if (r == -1) return "Error: the application does not reply";
@@ -191,7 +195,10 @@ pipe_link_rep::feed (int channel) {
 #ifdef OS_WIN32
     PIPE_Close(&conn);
 #else
-    recursive_kill (pid);
+    if (-1 != killpg(pid,SIGTERM)) {
+      sleep(2);
+      killpg(pid,SIGKILL);
+    }
 #endif
     alive= false;
   }
@@ -241,7 +248,7 @@ pipe_link_rep::interrupt () {
 #ifdef OS_WIN32
   PIPE_Close(&conn);
 #else
-  kill (pid, SIGINT);
+  killpg (pid, SIGINT);
 #endif
 }
 
@@ -251,7 +258,10 @@ pipe_link_rep::stop () {
 #ifdef OS_WIN32
   PIPE_Close(&conn);
 #else
-  recursive_kill (pid);
+  if (-1 != killpg(pid,SIGTERM)) {
+    sleep(2);
+    killpg(pid,SIGKILL);
+  }
   alive= false;
   close (in);
 #endif
@@ -331,7 +341,10 @@ close_all_pipes () {
 #ifdef OS_WIN32
       PIPE_Close (&con->conn);
 #else
-      recursive_kill (con->pid);
+      if (-1 != killpg(con->pid,SIGTERM)) {
+	sleep(2);
+	killpg(con->pid,SIGKILL);
+      }
 #endif
       con->alive= false;
     }
