@@ -1,5 +1,8 @@
 #!/bin/sh
 
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+
 if [ -z "$TEXMACS_PATH" ] ; then
   TEXMACS_PATH=@tmdata@
   export TEXMACS_PATH

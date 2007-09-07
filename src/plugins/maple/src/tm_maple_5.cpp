@@ -193,7 +193,7 @@ maple_output () {
 	return;
       }
       else if (r == 0) {
-	kill (pid, SIGKILL);
+	killpg (pid, SIGKILL);
 	cout << DATA_END;
 	cout.flush ();
 	exit (0);
@@ -269,7 +269,7 @@ maple_input () {
 
 void
 maple_interrupt (int sig) {
-  kill (pid, sig);
+  killpg (pid, sig);
   cout << DATA_END; // << DATA_END << DATA_END;
   signal (sig, maple_interrupt);
   siginterrupt (sig, 1);
@@ -310,6 +310,7 @@ main () {
   pipe (fromchild);
   pid= fork ();
   if (pid==0) { // the child
+    setsid();
     dup2 (tochild [IN], STDIN);
     close (tochild [IN]);
     close (fromchild [IN]);
