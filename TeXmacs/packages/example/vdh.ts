@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.6.11>
 
 <style|source>
 
@@ -80,7 +80,21 @@
 
     <assign|rsT|<with|math-font|cal*|T>>
 
+    <assign|ssA|<math|<with|math-font-family|tss|A>>>
+
+    <assign|ssAlg|<math|<with|math-font-family|tss|Alg>>>
+
+    <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
+
+    <assign|ssGL|<math|<with|math-font-family|tss|GL>>>
+
+    <assign|ssL|<math|<with|math-font-family|tss|L>>>
+
+    <assign|ssLin|<math|<with|math-font-family|tss|Lin>>>
+
     <assign|ssM|<math|<with|math-font-family|tss|M>>>
+
+    <assign|ssMat|<math|<with|math-font-family|tss|Mat>>>
 
     <assign|ssMM|<math|<with|math-font-family|tss|MM>>>
 
@@ -88,11 +102,9 @@
 
     <assign|ssRM|<math|<with|math-font-family|tss|RM>>>
 
-    <assign|ssA|<math|<with|math-font-family|tss|A>>>
-
-    <assign|ssL|<math|<with|math-font-family|tss|L>>>
-
     <assign|ssT|<math|<with|math-font-family|tss|T>>>
+
+    <assign|ssVect|<math|<with|math-font-family|tss|Vect>>>
 
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
 
