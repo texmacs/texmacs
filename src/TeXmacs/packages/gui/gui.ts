@@ -1,10 +1,10 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.6.11>
 
 <style|source>
 
 <\body>
   <active*|<\src-title>
-    <src-package|gui-utils|1.0>
+    <src-package|gui|1.0>
 
     <\src-purpose>
       Standard GUI markup
