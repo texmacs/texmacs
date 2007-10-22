@@ -12,16 +12,30 @@
 
 #ifndef WIDGET_H
 #define WIDGET_H
-#include "url.hpp"
-#include "Widkit/event.hpp"
+#include "tree.hpp"
+#include "command.hpp"
+#include "timer.hpp"
 
+class window_rep;
+typedef window_rep* window;
+class display_rep;
+typedef display_rep* display;
+display current_display ();
+typedef int color;
+class url;
 template<class T> class promise;
+
+class widkit_widget;
+typedef widkit_widget widget;
+enum gravity { north_west, north,  north_east,
+	       west,       center, east,
+	       south_west, south,  south_east };
 
 /******************************************************************************
 * The abstract widget class
 ******************************************************************************/
 
-class widget_rep;
+/*
 class widget {
 public:
   ABSTRACT_NULL(widget);
@@ -63,6 +77,7 @@ inline bool widget::operator != (widget w) { return rep != w.rep; }
 
 ostream& operator << (ostream& out, widget w);
 widget operator << (widget w, event ev);
+*/
 
 /******************************************************************************
 * Exported special widgets

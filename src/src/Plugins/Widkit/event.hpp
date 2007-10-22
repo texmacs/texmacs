@@ -12,21 +12,7 @@
 
 #ifndef EVENT_H
 #define EVENT_H
-#include "tree.hpp"
-#include "command.hpp"
-#include "timer.hpp"
-
-class window_rep;
-typedef window_rep* window;
-class display_rep;
-typedef display_rep* display;
-display current_display ();
-typedef int color;
-
-class widget;
-enum gravity { north_west, north,  north_east,
-	       west,       center, east,
-	       south_west, south,  south_east };
+#include "widget.hpp"
 
 /******************************************************************************
 * The event class

@@ -13,6 +13,7 @@
 #include "Widkit/basic_widget.hpp"
 #include "display.hpp"
 #include "window.hpp"
+
 SI get_dx(gravity grav, int w);
 SI get_dy(gravity grav, int h);
 
@@ -21,14 +22,14 @@ SI get_dy(gravity grav, int h);
 ******************************************************************************/
 
 basic_widget_rep::basic_widget_rep (gravity grav):
-  widget_rep (array<widget> (0), array<string> (0), grav),
+  widkit_widget_rep (array<widget> (0), array<string> (0), grav),
   ptr_focus (-1) {}
 basic_widget_rep::basic_widget_rep (array<widget> a,
   gravity grav):
-  widget_rep (a, array<string> (N(a)), grav), ptr_focus (-1) {}
+  widkit_widget_rep (a, array<string> (N(a)), grav), ptr_focus (-1) {}
 basic_widget_rep::basic_widget_rep (array<widget> a2,
   array<string> name2, gravity grav2):
-  widget_rep (a2, name2, grav2), ptr_focus (-1) {}
+  widkit_widget_rep (a2, name2, grav2), ptr_focus (-1) {}
 
 /******************************************************************************
 * Generating events in local coordinates

@@ -12,10 +12,10 @@
 
 #ifndef BASIC_WIDGET_H
 #define BASIC_WIDGET_H
-#include "widget.hpp"
+#include "Widkit/widkit_widget.hpp"
 #include "Widkit/Event/basic_event.hpp"
 
-class basic_widget_rep: public widget_rep {
+class basic_widget_rep: public widkit_widget_rep {
 protected:
   int ptr_focus; // subwidget where the pointer is (-1 if none)
 

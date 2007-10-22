@@ -14,7 +14,7 @@
 #define X_DISPLAY_H
 #include "timer.hpp"
 #include "display.hpp"
-#include "widget.hpp"
+#include "Widkit/widkit_widget.hpp"
 #include "array.hpp"
 #include "hashmap.hpp"
 

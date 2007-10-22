@@ -46,8 +46,8 @@
 #define CHANGE_SUFFIXES 13
 
 class file_chooser_command_rep: public command_rep {
-  widget_rep* fch;
-  int         type;
+  widkit_widget_rep* fch;
+  int                type;
 public:
   file_chooser_command_rep (widget w, int t): fch(w.rep), type(t) {}
   void apply ();
@@ -135,13 +135,13 @@ file_chooser_command (widget fch, int type) {
 ******************************************************************************/
 
 class file_list_widget_rep: public attribute_widget_rep {
-  widget_rep*   fch;
-  string        dir;
-  array<bool>   lids;
-  array<string> names;
-  array<string> suffix;
-  bool          dir_flag;
-  int           hilight;
+  widkit_widget_rep* fch;
+  string             dir;
+  array<bool>        lids;
+  array<string>      names;
+  array<string>      suffix;
+  bool               dir_flag;
+  int                hilight;
 
 public:
   file_list_widget_rep (widget ch, array<string> suffix, bool dir_flag);

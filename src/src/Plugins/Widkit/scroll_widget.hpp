@@ -31,12 +31,12 @@ public:
 ******************************************************************************/
 
 class scrollable_widget_rep: public scroll_widget_rep {
-  SI          scx, scy;    // scroll x,y position
-  SI          ex1, ey1;    // extents of scrolled window lo-left
-  SI          ex2, ey2;    // extents of scrolled window hi-right
-  widget_rep* hor;         // the horizontal scroll bar
-  widget_rep* ver;         // the vertical scroll bar
-  gravity     backup;      // for a dirty bugfix
+  SI                 scx, scy;    // scroll x,y position
+  SI                 ex1, ey1;    // extents of scrolled window lo-left
+  SI                 ex2, ey2;    // extents of scrolled window hi-right
+  widkit_widget_rep* hor;         // the horizontal scroll bar
+  widkit_widget_rep* ver;         // the vertical scroll bar
+  gravity            backup;      // for a dirty bugfix
 
   void scroll_to (SI scx, SI scy);
   void set_extents (SI ex1, SI ey1, SI ex2, SI ey2);
@@ -64,12 +64,12 @@ public:
 
 class scrollbar_rep: public scroll_widget_rep {
 protected:
-  widget_rep* ref;
-  SI          sc_min, sc_max, sc_pos, before, after;
-  double      factor;
-  bool        gripped;
-  bool        scrolling;
-  int         increment;
+  widkit_widget_rep* ref;
+  SI                 sc_min, sc_max, sc_pos, before, after;
+  double             factor;
+  bool               gripped;
+  bool               scrolling;
+  int                increment;
 
 public:
   scrollbar_rep (widget ref);

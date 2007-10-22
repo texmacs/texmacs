@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "window.hpp"
-#include "widget.hpp"
+#include "Widkit/widkit_widget.hpp"
 #include "tm_widget.hpp"
 
 #define THIS (widget (this))
@@ -144,7 +144,7 @@ tm_widget_rep::~tm_widget_rep () {
   if (texmacs_icon_menu != NULL) delete[] texmacs_icon_menu;
 }
 
-widget_rep*
+widkit_widget_rep*
 tm_widget_rep::get_this () {
   return this;
 }

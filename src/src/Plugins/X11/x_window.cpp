@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "X11/x_window.hpp"
-#include "widget.hpp"
+#include "Widkit/widkit_widget.hpp"
 
 extern int    nr_windows;
 

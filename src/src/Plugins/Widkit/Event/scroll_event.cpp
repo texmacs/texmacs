@@ -10,8 +10,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "widget.hpp"
 #include "ps_device.hpp"
+#include "Widkit/widkit_widget.hpp"
 #include "Widkit/Event/scroll_event.hpp"
 
 /******************************************************************************
@@ -24,6 +24,7 @@ scroll_event_rep::operator tree () {
   tree t (TUPLE, "scroll_event", which);
   t << as_string (c1/PIXEL) << as_string (c2/PIXEL) << as_string (c3/PIXEL);
   return t; }
+
 /******************************************************************************
 * Other events for internal use
 ******************************************************************************/

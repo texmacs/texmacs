@@ -12,8 +12,8 @@
 
 #ifndef BASIC_EVENT_H
 #define BASIC_EVENT_H
-#include "widget.hpp"
 #include "Widkit/event.hpp"
+#include "Widkit/widkit_widget.hpp"
 #include "Widkit/Event/event_codes.hpp"
 
 /******************************************************************************

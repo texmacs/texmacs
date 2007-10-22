@@ -39,7 +39,7 @@ public:
 ******************************************************************************/
 
 class inputs_list_command_rep: public command_rep {
-  widget_rep* ilw;
+  widkit_widget_rep* ilw;
   int         i;  // -1 corresponds to cancel
   int         n;
 public:
