@@ -37,7 +37,7 @@ tm_config_rep::set_input_language (string s) {
 void
 tm_config_rep::set_output_language (string s) {
   out_lan= s;
-  get_display()->set_output_language (s);
+  the_display->set_output_language (s);
 }
 
 string

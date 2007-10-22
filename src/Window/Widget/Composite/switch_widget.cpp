@@ -18,7 +18,7 @@ class switch_widget_rep: public composite_widget_rep {
   array<widget> variant;
   array<string> variant_name;
 public:
-  switch_widget_rep (display dis, array<widget> a, array<string> name, int i);
+  switch_widget_rep (array<widget> a, array<string> name, int i);
   operator tree ();
 
   void handle_attach_window (attach_window_event ev);
@@ -29,9 +29,9 @@ public:
   bool handle               (event ev);
 };
 
-switch_widget_rep::switch_widget_rep (display dis, array<widget> v,
+switch_widget_rep::switch_widget_rep (array<widget> v,
   array<string> name, int init):
-    composite_widget_rep (dis, 1),
+    composite_widget_rep (1),
     current (init),
     variant (v), variant_name (name)
 {
@@ -132,7 +132,7 @@ switch_widget_rep::handle (event ev) {
 
 widget
 switch_widget (array<widget> a, array<string> name, int init) {
-  return new switch_widget_rep (current_display (), a, name, init);
+  return new switch_widget_rep (a, name, init);
 }
 
 widget

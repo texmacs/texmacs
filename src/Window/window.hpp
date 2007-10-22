@@ -17,9 +17,7 @@
 
 class window_rep: virtual public ps_device_rep {
 public:
-  display dis;
-
-  inline window_rep (display dis2): dis (dis2) {}
+  inline window_rep () {}
   inline virtual ~window_rep () {}
 
   virtual void set_name (string name) = 0;

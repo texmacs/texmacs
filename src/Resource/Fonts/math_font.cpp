@@ -20,7 +20,7 @@
 typedef int SI;
 bool operator == (font fn1, font fn2) { return fn1.rep == fn2.rep; }
 bool operator != (font fn1, font fn2) { return fn1.rep == fn2.rep; }
-font find_font (display dis, tree t);
+font find_font (tree t);
 
 /******************************************************************************
 * The compound font class
@@ -53,7 +53,7 @@ struct math_font_rep: font_rep {
 
 math_font_rep::math_font_rep (
   string name, scheme_tree t, font base, font error):
-    font_rep (base->dis, name, base), base_fn (base), error_fn (error),
+    font_rep (name, base), base_fn (base), error_fn (error),
     math (load_translator (as_string (t[1][0]))),
     rubber (load_translator (as_string (t[2][0]))),
     italic (load_translator ("italic")),
@@ -77,7 +77,7 @@ math_font_rep::init_font (int fn_nr, font& fn) {
   if (is_tuple (t, "virtual", 3))
     fn= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
   else {
-    fn= find_font (base_fn->dis, t);
+    fn= find_font (t);
     if (nil (fn))
       fatal_error ("Font not found", "math_font_rep::search_font");
   }
@@ -97,7 +97,7 @@ math_font_rep::search_font (string& s, font& fn) {
       if ((c!=-1) && (s (N(s)-3, N(s)) != "-0>")) {
 	int fn_nr= c/256;
 	if (nil (rubber_table [fn_nr])) {
-	  fn= find_font (base_fn->dis, rubber_name [fn_nr]);
+	  fn= find_font (rubber_name [fn_nr]);
 	  if (nil (fn))
 	    fatal_error ("Font not found", "math_font_rep::search_font");
 	  fn->yfrac= base_fn->yfrac;

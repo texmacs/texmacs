@@ -36,7 +36,7 @@ struct tex_font_rep: font_rep {
   font_glyphs      pk;
   double           unit;
 
-  tex_font_rep (display dis, string name, int status,
+  tex_font_rep (string name, int status,
 		string family, int size, int dpi, int dsize);
 
   void get_extents (string s, metric& ex);
@@ -63,9 +63,9 @@ struct tex_font_rep: font_rep {
 
 #define conv(x) ((SI) (((double) (x))*unit))
 
-tex_font_rep::tex_font_rep (display dis, string name, int status2,
+tex_font_rep::tex_font_rep (string name, int status2,
   string family2, int size2, int dpi2, int dsize2):
-  font_rep (dis, name), status (status2), dsize (dsize2)
+  font_rep (name), status (status2), dsize (dsize2)
 {
   load_tex (family2, size2, dpi2, dsize, tfm, pk);
 
@@ -709,36 +709,36 @@ tex_font_rep::get_glyph (string s) {
 ******************************************************************************/
 
 font
-tex_font (display dis, string family, int size, int dpi, int dsize) {
+tex_font (string family, int size, int dpi, int dsize) {
   string name= "tex:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (dis, name, TEX_ANY, family, size, dpi, dsize));
+    new tex_font_rep (name, TEX_ANY, family, size, dpi, dsize));
 }
 
 font
-tex_cm_font (display dis, string family, int size, int dpi, int dsize) {
+tex_cm_font (string family, int size, int dpi, int dsize) {
   string name= "cm:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (dis, name, TEX_CM, family, size, dpi, dsize));
+    new tex_font_rep (name, TEX_CM, family, size, dpi, dsize));
 }
 
 font
-tex_ec_font (display dis, string family, int size, int dpi, int dsize) {
+tex_ec_font (string family, int size, int dpi, int dsize) {
   string name= "ec:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (dis, name, TEX_EC, family, size, dpi, dsize));
+    new tex_font_rep (name, TEX_EC, family, size, dpi, dsize));
 }
 
 font
-tex_la_font (display dis, string family, int size, int dpi, int dsize) {
+tex_la_font (string family, int size, int dpi, int dsize) {
   string name= "la:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (dis, name, TEX_LA, family, size, dpi, dsize));
+    new tex_font_rep (name, TEX_LA, family, size, dpi, dsize));
 }
 
 font
-tex_adobe_font (display dis, string family, int size, int dpi, int dsize) {
+tex_adobe_font (string family, int size, int dpi, int dsize) {
   string name= "adobe:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (dis, name, TEX_ADOBE, family, size, dpi, dsize));
+    new tex_font_rep (name, TEX_ADOBE, family, size, dpi, dsize));
 }

@@ -20,15 +20,15 @@ SI get_dy(gravity grav, int h);
 * Constructors and destructors
 ******************************************************************************/
 
-basic_widget_rep::basic_widget_rep (display dis, gravity grav):
-  widget_rep (dis, array<widget> (0), array<string> (0), grav),
+basic_widget_rep::basic_widget_rep (gravity grav):
+  widget_rep (array<widget> (0), array<string> (0), grav),
   ptr_focus (-1) {}
-basic_widget_rep::basic_widget_rep (display dis, array<widget> a,
+basic_widget_rep::basic_widget_rep (array<widget> a,
   gravity grav):
-  widget_rep (dis, a, array<string> (N(a)), grav), ptr_focus (-1) {}
-basic_widget_rep::basic_widget_rep (display dis, array<widget> a2,
+  widget_rep (a, array<string> (N(a)), grav), ptr_focus (-1) {}
+basic_widget_rep::basic_widget_rep (array<widget> a2,
   array<string> name2, gravity grav2):
-  widget_rep (dis, a2, name2, grav2), ptr_focus (-1) {}
+  widget_rep (a2, name2, grav2), ptr_focus (-1) {}
 
 /******************************************************************************
 * Generating events in local coordinates
@@ -190,7 +190,7 @@ basic_widget_rep::handle_alarm (alarm_event ev) {
 
 void
 basic_widget_rep::handle_clear (clear_event ev) {
-  win->set_background (dis->white);
+  win->set_background (the_display->white);
   win->clear (ev->x1, ev->y1, ev->x2, ev->y2);
 }
 
@@ -221,14 +221,14 @@ basic_widget_rep::handle_keyboard_grab (keyboard_grab_event ev) { (void) ev; }
 
 void
 basic_widget_rep::handle_mouse_grab (mouse_grab_event ev) {
-  if (ev->flag) dis->grab_pointer (this);
+  if (ev->flag) the_display->grab_pointer (this);
   else {
     /*
-    if (dis->has_grab_pointer (this))
+    if (the_display->has_grab_pointer (this))
       fatal_error ("Widget does not have pointer grab",
 		   "basic_widget_rep::handle_mouse_grab");
     */
-    dis->ungrab_pointer ();
+    the_display->ungrab_pointer ();
   }
 }
 

@@ -520,12 +520,12 @@ edit_select_rep::selection_get_path () {
 
 void
 edit_select_rep::selection_raw_set (string key, tree t) {
-  (void) dis->set_selection (widget (this), key, t, "");
+  (void) the_display->set_selection (widget (this), key, t, "");
 }
 
 tree
 edit_select_rep::selection_raw_get (string key) {
-  return copy (dis->get_selection (widget (this), key));
+  return copy (the_display->get_selection (widget (this), key));
 }
 
 void
@@ -565,7 +565,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
     s= tree_to_generic (t, selection_export * "-snippet");
     s= selection_encode (lan, s);
   }
-  if (dis->set_selection (widget (this), key, sel, s) &&
+  if (the_display->set_selection (widget (this), key, sel, s) &&
       (!persistant)) selection_cancel ();
 }
 
@@ -594,7 +594,7 @@ edit_select_rep::selection_copy (string key) {
 
 void
 edit_select_rep::selection_paste (string key) {
-  tree t= copy (dis->get_selection (widget (this), key));
+  tree t= copy (the_display->get_selection (widget (this), key));
   if (inside_active_graphics ()) {
     if (is_tuple (t, "texmacs", 3))
       call ("graphics-paste", t[1]);
@@ -636,7 +636,7 @@ edit_select_rep::selection_paste (string key) {
 
 void
 edit_select_rep::selection_clear (string key) {
-  dis->clear_selection (key);
+  the_display->clear_selection (key);
 }
 
 void

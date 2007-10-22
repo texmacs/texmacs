@@ -36,7 +36,7 @@ protected:
   object*  texmacs_icon_menu;  // accelerate icon bar rendering
 
 public:
-  tm_widget_rep (server_rep* sv, display dis);
+  tm_widget_rep (server_rep* sv);
   ~tm_widget_rep ();
   widget_rep* get_this ();
 

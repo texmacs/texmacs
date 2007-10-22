@@ -816,16 +816,16 @@ attach_dip (tree ref, path dip) {
 ******************************************************************************/
 
 void
-make_eps (url name, display dis, box b, int dpi) {
+make_eps (url name, box b, int dpi) {
   double inch= ((double) dpi * PIXEL);
   double cm  = inch / 2.54;
   SI w= b->x4 - b->x3;
   SI h= b->y4 - b->y3;
   b->x0= -b->x3;
   b->y0= -b->y4;
-  ps_device dev= printer (dis, name, dpi, 1, "user", false, w/cm, h/cm);
-  dev->set_color (dis->black);
-  dev->set_background (dis->white);
+  ps_device dev= printer (name, dpi, 1, "user", false, w/cm, h/cm);
+  dev->set_color (the_display->black);
+  dev->set_background (the_display->white);
   rectangles rs;
   b->redraw (dev, path (0), rs);
   delete dev;

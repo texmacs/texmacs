@@ -18,14 +18,14 @@
 * Routines for abstract composite widgets
 ******************************************************************************/
 
-composite_widget_rep::composite_widget_rep (display dis, gravity grav):
-  basic_widget_rep (dis, grav) {}
-composite_widget_rep::composite_widget_rep (display dis, array<widget> a,
+composite_widget_rep::composite_widget_rep (gravity grav):
+  basic_widget_rep (grav) {}
+composite_widget_rep::composite_widget_rep (array<widget> a,
   gravity grav):
-  basic_widget_rep (dis, a, grav) {}
-composite_widget_rep::composite_widget_rep (display dis, array<widget> a,
+  basic_widget_rep (a, grav) {}
+composite_widget_rep::composite_widget_rep (array<widget> a,
   array<string> name, gravity grav):
-  basic_widget_rep (dis, a, name, grav) {}
+  basic_widget_rep (a, name, grav) {}
 
 void
 composite_widget_rep::handle_clean (clean_event ev) { (void) ev;

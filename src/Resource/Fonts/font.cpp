@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "font.hpp"
+#include "display.hpp"
 
 RESOURCE_CODE(font);
 
@@ -18,17 +19,15 @@ RESOURCE_CODE(font);
 * Constructors for fonts
 ******************************************************************************/
 
-font_rep::font_rep (display dis2, string s):
+font_rep::font_rep (string s):
   rep<font> (s),
-  dis       (dis2),
   spc       (0),
   extra     (0)
 {
 }
 
-font_rep::font_rep (display dis2, string s, font fn):
+font_rep::font_rep (string s, font fn):
   rep<font>    (s),
-  dis          (dis2),
   size         (fn->size),
   design_size  (fn->design_size),
   display_size (fn->display_size),
@@ -152,7 +151,7 @@ struct error_font_rep: font_rep {
 };
 
 error_font_rep::error_font_rep (string name, font fnb):
-  font_rep (fnb->dis, name, fnb), fn (fnb) {}
+  font_rep (name, fnb), fn (fnb) {}
 
 void
 error_font_rep::get_extents (string s, metric& ex) {
@@ -166,7 +165,7 @@ error_font_rep::get_xpositions (string s, SI* xpos) {
 
 void
 error_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  dev->set_color (fn->dis->red);
+  dev->set_color (the_display->red);
   fn->draw (dev, s, x, y);
 }
 

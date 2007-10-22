@@ -107,7 +107,7 @@ protected:
 
 public:
   editor_rep ();
-  editor_rep (server_rep* sv, display dis, tm_buffer buf);
+  editor_rep (server_rep* sv, tm_buffer buf);
   inline virtual ~editor_rep () {}
 
   /* public routines from edit_interface */

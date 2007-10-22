@@ -32,7 +32,6 @@ public:
 
 class widget_rep: public abstract_struct {
 public:
-  display       dis;              // underlying display
   window        win;              // underlying window
   SI            ox, oy;           // origin of widget in window
   SI            w, h;             // width and height of widget
@@ -40,7 +39,7 @@ public:
   array<widget> a;                // children of widget
   array<string> name;             // names for the children
 
-  widget_rep (display dis, array<widget> a, array<string> name, gravity grav);
+  widget_rep (array<widget> a, array<string> name, gravity grav);
   virtual ~widget_rep ();
 
   virtual operator tree () = 0;

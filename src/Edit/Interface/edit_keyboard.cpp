@@ -67,7 +67,7 @@ edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
 
 unsigned int
 edit_interface_rep::get_kbd_modifiers () {
-  return sv->get_display()->get_kbd_modifiers ();
+  return the_display->get_kbd_modifiers ();
 }
 
 /******************************************************************************

@@ -159,7 +159,7 @@ public:
 ******************************************************************************/
 
 file_list_widget_rep::file_list_widget_rep (widget c, array<string> s, bool f):
-  attribute_widget_rep (c->dis, 0), fch (c.rep),
+  attribute_widget_rep (0), fch (c.rep),
   dir (""), suffix (s), dir_flag (f), hilight (-1) {}
 
 file_list_widget_rep::operator tree () {
@@ -196,7 +196,7 @@ void
 file_list_widget_rep::handle_get_size (get_size_event ev) {
   int i;
   metric ex;
-  font fn= dis->default_font ();
+  font fn= the_display->default_font ();
   ev->w= ev->h= 0;
   for (i=0; i<N(names); i++)
     if (lids[i]) {
@@ -211,15 +211,15 @@ void
 file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   int i; 
   metric ex;
-  win->set_background (dis->white);
+  win->set_background (the_display->white);
   win->clear (0, -h, w, 0);
-  font fn= dis->default_font ();
+  font fn= the_display->default_font ();
   win->set_shrinking_factor (3);
   SI y= 0;
   for (i=0; i<N(names); i++)
     if (lids[i]) {
-      win->set_color (dis->black);
-      if (hilight == i) win->set_color (dis->red);
+      win->set_color (the_display->black);
+      if (hilight == i) win->set_color (the_display->red);
       fn->var_get_extents (names[i], ex);
       fn ->draw (win, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
       y += fn->y1- fn->y2- 12*PIXEL;
@@ -235,7 +235,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
     int i;
     SI y= 0, search= ev->y*3;
     metric ex;
-    font fn= dis->default_font ();
+    font fn= the_display->default_font ();
     for (i=0; i<N(names); i++)
       if (lids[i]) {
 	fn->var_get_extents (names[i], ex);
@@ -294,7 +294,7 @@ file_list_widget_rep::handle_set_string (set_string_event ev) {
 class image_widget_rep: public attribute_widget_rep {
   string file_name;
 public:
-  image_widget_rep (display dis);
+  image_widget_rep ();
   operator tree ();
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
@@ -305,8 +305,8 @@ public:
 * Implementation of image widgets
 ******************************************************************************/
 
-image_widget_rep::image_widget_rep (display dis):
-  attribute_widget_rep (dis, 0, south_west), file_name ("") {}
+image_widget_rep::image_widget_rep ():
+  attribute_widget_rep (0, south_west), file_name ("") {}
 
 image_widget_rep::operator tree () {
   return "image";
@@ -319,7 +319,7 @@ image_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  win->set_background (dis->white);
+  win->set_background (the_display->white);
   win->clear (0, 0, w, h);
   layout_dark_outline (win, 0, 0, w, h);
   if (file_name != "") {
@@ -358,7 +358,7 @@ class file_chooser_widget_rep: public attribute_widget_rep {
   string        magn;
 
 public:
-  file_chooser_widget_rep (display dis, command cmd, string type, string magn);
+  file_chooser_widget_rep (command cmd, string type, string magn);
   operator tree ();
 
   widget input_widget (string what, int type);
@@ -410,8 +410,8 @@ file_chooser_widget_rep::button_widget (string what, int type) {
 }
 
 file_chooser_widget_rep::file_chooser_widget_rep (
-  display dis, command cmd2, string type2, string magn2):
-  attribute_widget_rep (dis, 1), cmd (cmd2), type (type2), magn (magn2)
+  command cmd2, string type2, string magn2):
+  attribute_widget_rep (1), cmd (cmd2), type (type2), magn (magn2)
 {
   ref_count++;
 
@@ -539,7 +539,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
     cw4[1] = vertical_list (imw, ims);
     cn4[1] = "parameters";
     cw4[2] = glue_widget (false, false, sep);
-    cw4[3] = new image_widget_rep (dis);
+    cw4[3] = new image_widget_rep ();
     cn4[3] = "image";
     cw4[4] = glue_widget (false, false, sep);
 
@@ -582,7 +582,7 @@ file_chooser_widget_rep::handle_get_size (get_size_event ev) {
     if (type == "image") ev->h= 500*PIXEL;
     else ev->h= 350*PIXEL;
   }
-  else dis->get_max_size (ev->w, ev->h);
+  else the_display->get_max_size (ev->w, ev->h);
 }
 
 void
@@ -705,5 +705,5 @@ file_chooser_widget_rep::handle_destroy (destroy_event ev) {
 
 widget
 file_chooser_widget (command cmd, string type, string magn) {
-  return new file_chooser_widget_rep (current_display (), cmd, type, magn);
+  return new file_chooser_widget_rep (cmd, type, magn);
 }

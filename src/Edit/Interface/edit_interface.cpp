@@ -57,7 +57,7 @@ edit_interface_rep::edit_interface_rep ():
   cur_sb (2), cur_wb (2)
 {
   input_mode= INPUT_NORMAL;
-  dis->get_extents (cur_wx, cur_wy);
+  the_display->get_extents (cur_wx, cur_wy);
 }
 
 edit_interface_rep::~edit_interface_rep () {
@@ -91,11 +91,6 @@ edit_interface_rep::resume () {
   cur_sb= 2;
   tp= make_cursor_accessible (tp, true);
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
-}
-
-display
-edit_interface_rep::get_display () {
-  return dis;
 }
 
 widget
@@ -325,7 +320,7 @@ int
 edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
       win->repainted () &&
-      (!dis->check_event (event_type)) &&
+      (!the_display->check_event (event_type)) &&
       got_focus)
     return texmacs_time () - last_change;
   else return 0;
@@ -575,7 +570,7 @@ edit_interface_rep::after_menu_action () {
 
 void
 edit_interface_rep::handle_get_size (get_size_event ev) {
-  dis->get_extents (ev->w, ev->h);
+  the_display->get_extents (ev->w, ev->h);
 }
 
 void

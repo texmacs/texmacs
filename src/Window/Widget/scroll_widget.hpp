@@ -21,7 +21,7 @@
 
 class scroll_widget_rep: public attribute_widget_rep {
 public:
-  scroll_widget_rep (display dis, array<widget> a, gravity grav);
+  scroll_widget_rep (array<widget> a, gravity grav);
   virtual void handle_scroll (scroll_event ev) = 0;
   virtual bool handle (event ev);
 };

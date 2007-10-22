@@ -19,9 +19,9 @@
 ******************************************************************************/
 
 
-scroll_widget_rep::scroll_widget_rep (display dis, array<widget> a2,
+scroll_widget_rep::scroll_widget_rep (array<widget> a2,
   gravity grav2):
-  attribute_widget_rep (dis, a2, grav2) {}
+  attribute_widget_rep (a2, grav2) {}
 
 bool
 scroll_widget_rep::handle (event ev) {

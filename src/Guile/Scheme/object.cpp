@@ -275,7 +275,7 @@ class object_make_widget_rep: public make_widget_rep {
 public:
   object_make_widget_rep (object obj2): obj (obj2) {}
   ostream& print (ostream& out) { return out << obj; }
-  widget get_widget (display dis) { (void) dis;
+  widget get_widget () {
     SCM result= call_scheme (obj->lookup ());
     if (scm_is_widget (result)) return scm_to_widget (result);
     else {

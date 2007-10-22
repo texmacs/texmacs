@@ -78,7 +78,6 @@ public:
   operator tree ();
   void suspend ();
   void resume ();
-  display get_display ();
   widget  get_widget ();
   void    get_size (SI& wx, SI& wy);
 

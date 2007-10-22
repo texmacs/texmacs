@@ -27,8 +27,8 @@ static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
-static x_display_rep* cur_x_display= NULL;
-static display cur_display= NULL;
+x_display_rep* the_x_display= NULL;
+display the_display= NULL;
 
 /******************************************************************************
 * Set up colors
@@ -805,26 +805,23 @@ x_display_rep::~x_display_rep () {
   XCloseDisplay (dpy);
 }
 
-display
+void
 open_display (int argc2, char** argv2) {
-  cur_x_display= new x_display_rep (argc2, argv2);
-  cur_display  = (display) cur_x_display;
-  return cur_display;
-}
-
-display
-current_display () {
-  if (cur_display == NULL)
-    fatal_error ("No display has been opened yet", "current_display");
-  return cur_display;
+  if (the_display != NULL)
+    fatal_error ("display already open", "open_display");
+  the_x_display= new x_display_rep (argc2, argv2);
+  the_display  = (display) the_x_display;
 }
 
 void
 flush_display () {
-  XFlush (cur_x_display->dpy);
+  XFlush (the_x_display->dpy);
 }
 
 void
-close_display (display dis) {
-  delete dis;
+close_display () {
+  if (the_display == NULL)
+    fatal_error ("display not yet open", "close_display");
+  delete the_display;
+  the_display= NULL;
 }

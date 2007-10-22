@@ -26,7 +26,7 @@ struct unicode_font_rep: font_rep {
   font_metric fnm;
   font_glyphs fng;
 
-  unicode_font_rep (display dis, string name, string family, int size, int dpi);
+  unicode_font_rep (string name, string family, int size, int dpi);
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
@@ -40,9 +40,9 @@ struct unicode_font_rep: font_rep {
 
 #define conv(x) ((SI) (((double) (x))*unit))
 
-unicode_font_rep::unicode_font_rep (display dis, string name,
+unicode_font_rep::unicode_font_rep (string name,
   string family, int size2, int dpi):
-  font_rep (dis, name)
+  font_rep (name)
 {
   size= size2;
   fnm = tt_font_metric (family, size, dpi);
@@ -185,16 +185,16 @@ unicode_font_rep::get_glyph (string s) {
 ******************************************************************************/
 
 font
-unicode_font (display dis, string family, int size, int dpi) {
+unicode_font (string family, int size, int dpi) {
   string name= "unicode:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new unicode_font_rep (dis, name, family, size, dpi));
+    new unicode_font_rep (name, family, size, dpi));
 }
 
 #else
 
 font
-unicode_font (display dis, string family, int size, int dpi) {
+unicode_font (string family, int size, int dpi) {
   string name= "unicode:" * family * as_string (size) * "@" * as_string(dpi);
   cerr << "\n\nFont name= " << name << "\n";
   fatal_error ("True type support was disabled", "unicode_font");

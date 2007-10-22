@@ -160,7 +160,7 @@ concater_rep::typeset_include (tree t, path ip) {
 void
 concater_rep::typeset_drd_props (tree t, path ip) {
   (void) env->exec (t);
-  flag ("drd-properties", ip, env->dis->brown);
+  flag ("drd-properties", ip, the_display->brown);
   control (t, ip);
 }
 

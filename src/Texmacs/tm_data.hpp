@@ -45,7 +45,7 @@ protected:
   void      detach_view (tm_view vw);
 
   /* Low level window manipulation */
-  tm_window new_window (display dis, bool map_flag= true, tree geom= "");
+  tm_window new_window (bool map_flag= true, tree geom= "");
   bool      delete_view_from_window (tm_window win);
   void      delete_window (tm_window win);
 

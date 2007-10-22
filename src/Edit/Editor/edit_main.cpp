@@ -28,16 +28,16 @@
 ******************************************************************************/
 
 editor_rep::editor_rep ():
-  attribute_widget_rep (dis),
+  attribute_widget_rep (),
   drd (buf->abbr, std_drd), et (the_et), rp (buf->rp) {}
 
-editor_rep::editor_rep (server_rep* sv2, display dis, tm_buffer buf2):
-  attribute_widget_rep (dis),
+editor_rep::editor_rep (server_rep* sv2, tm_buffer buf2):
+  attribute_widget_rep (),
   sv (sv2), buf (buf2), drd (buf->abbr, std_drd),
   et (the_et), rp (buf2->rp) {}
 
-edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
-  editor_rep (sv, dis, buf), props (UNKNOWN)
+edit_main_rep::edit_main_rep (server_rep* sv, tm_buffer buf):
+  editor_rep (sv, buf), props (UNKNOWN)
 {
   notify_change (THE_TREE);
   tp= correct_cursor (et, rp * 0);
@@ -51,7 +51,7 @@ edit_main_rep::~edit_main_rep () {
 
 editor
 new_editor (server_rep* sv, tm_buffer buf) {
-  return new edit_main_rep (sv, current_display (), buf);
+  return new edit_main_rep (sv, buf);
 }
 
 /******************************************************************************
@@ -192,7 +192,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 
   int i;
   ps_device dev=
-    printer (dis, name, dpi, pages, page_type, landsc, w/cm, h/cm);
+    printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   for (i=start; i<end; i++) {
     tree bg= env->read (BG_COLOR);
     dev->set_background_pattern (bg);
@@ -239,10 +239,10 @@ edit_main_rep::print_snippet (url name, tree t) {
   if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
   box b= typeset_as_box (env, t, path ());
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
-    if (ps) make_eps (name, dis, b, dpi);
+    if (ps) make_eps (name, b, dpi);
     else {
       url temp= url_temp ("eps");
-      make_eps (temp, dis, b, dpi);
+      make_eps (temp, b, dpi);
       system ("convert", temp, name);
       ::remove (temp);
     }

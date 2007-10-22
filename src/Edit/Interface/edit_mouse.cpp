@@ -25,7 +25,8 @@ void
 edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   last_x= x; last_y= y;
   mark_undo_blocks ();
-  if (type != "move" || (attached () && !dis->check_event (MOTION_EVENT)))
+  if (type != "move" ||
+      (attached () && !the_display->check_event (MOTION_EVENT)))
     update_active_loci ();
 
   if (type == "leave")
@@ -81,7 +82,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
-    if (attached () && dis->check_event (DRAG_EVENT)) return;
+    if (attached () && the_display->check_event (DRAG_EVENT)) return;
     mouse_drag (x, y);
   }
   if (type == "release-left" || type == "release-right") {
@@ -267,14 +268,14 @@ edit_interface_rep::get_cursor () {
 
 void
 edit_interface_rep::set_pointer (string name) {
-  sv->get_display()->set_pointer(name);
+  the_display->set_pointer(name);
 }
 
 void
 edit_interface_rep::set_pointer (
   string curs_name, string mask_name)
 {
-  sv->get_display()->set_pointer(curs_name, mask_name);
+  the_display->set_pointer(curs_name, mask_name);
 }
 
 /******************************************************************************

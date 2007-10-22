@@ -49,7 +49,7 @@ texmacs_window (widget wid, tree geom) {
     w= as_int (geom[0]);
     h= as_int (geom[1]);
   }
-  wid->dis->get_extents (W, H); W /= PIXEL; H /= PIXEL;
+  the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
   return plain_window (wid, "TeXmacs", w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
@@ -94,9 +94,8 @@ get_subtree (path p) {
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
-tm_server_rep::tm_server_rep (display dis2):
-  dis (dis2), vw (NULL),
-  full_screen (false), full_screen_edit (false), def_sfactor (5),
+tm_server_rep::tm_server_rep ():
+  vw (NULL), full_screen (false), full_screen_edit (false), def_sfactor (5),
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
 {
@@ -105,7 +104,7 @@ tm_server_rep::tm_server_rep (display dis2):
   set_interpose_handler (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
   get_current_window= texmacs_current_window;
-  out_lan= dis->get_output_language ();
+  out_lan= the_display->get_output_language ();
   if (is_none (tm_init_file))
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
   if (is_none (my_init_file))
@@ -126,7 +125,7 @@ tm_server_rep::tm_server_rep (display dis2):
 }
 
 tm_server_rep::~tm_server_rep () {}
-server::server (display dis): rep (new tm_server_rep (dis)) {}
+server::server (): rep (new tm_server_rep ()) {}
 
 /******************************************************************************
 * Get and set objects associated to server
@@ -135,11 +134,6 @@ server::server (display dis): rep (new tm_server_rep (dis)) {}
 server_rep*
 tm_server_rep::get_server () {
   return this;
-}
-
-display
-tm_server_rep::get_display () {
-  return dis;
 }
 
 bool
@@ -190,7 +184,7 @@ tm_server_rep::get_meta () {
 
 color
 tm_server_rep::get_color (string s) {
-  return get_display () -> get_color (s);
+  return the_display -> get_color (s);
 }
 
 int
@@ -432,7 +426,7 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  dis->set_wait_indicator (message, arg);
+  the_display -> set_wait_indicator (message, arg);
 }
 
 void
@@ -488,7 +482,7 @@ tm_server_rep::get_default_shrinking_factor () {
 
 void
 tm_server_rep::image_gc (string which) {
-  dis->image_gc (which);
+  the_display -> image_gc (which);
   typeset_update_all ();
 }
 
@@ -521,8 +515,7 @@ tm_server_rep::typeset_update_all () {
 
 string
 tm_server_rep::translate (string which, string from, string to) {
-  display dis= get_display ();
-  return dis->translate (which, from, to);
+  return the_display -> translate (which, from, to);
 }
 
 bool

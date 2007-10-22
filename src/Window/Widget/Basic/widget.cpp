@@ -18,9 +18,8 @@
 ******************************************************************************/
 
 extern int widget_count;
-widget_rep::widget_rep (display dis2, array<widget> a2,
-			array<string> n2, gravity grav2):
-  dis (dis2), win (NULL), ox (0), oy (0), w (0), h (0),
+widget_rep::widget_rep (array<widget> a2, array<string> n2, gravity grav2):
+  win (NULL), ox (0), oy (0), w (0), h (0),
   grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
 
 widget_rep::~widget_rep () { DEBUG(widget_count--); }

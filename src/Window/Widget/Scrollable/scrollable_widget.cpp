@@ -23,7 +23,7 @@ inline bool nil(widget_rep* x) { return x==NULL; }
 ******************************************************************************/
 
 scrollable_widget_rep::scrollable_widget_rep (widget child, gravity grav):
-  scroll_widget_rep (child->dis, 1, grav)
+  scroll_widget_rep (1, grav)
 {
   a[0]= child;
   scx= 0; scy= 0;
@@ -124,7 +124,7 @@ scrollable_widget_rep::handle_get_size (get_size_event ev) {
     ev->w= 8*PIXEL;
     ev->h= 8*PIXEL;
   }
-  if (ev->mode== 1) dis->get_max_size (ev->w, ev->h);
+  if (ev->mode== 1) the_display->get_max_size (ev->w, ev->h);
 }
 
 void

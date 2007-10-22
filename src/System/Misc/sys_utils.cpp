@@ -94,37 +94,3 @@ set_env (string var, string with) {
 #endif
   // do not delete _var and _with !!!
 }
-
-static tree
-analyze (string s, char c) {
-  tree t (TUPLE);
-  int i=0, last= 0, n= N(s);
-  while ((i<n) && (s[i]==c)) i++;
-  for (; i<n; i++)
-    if (s[i] == c) {
-      t << s (last, i);
-      while ((i<n) && (s[i]==c)) i++;
-      last= i; i--;
-    }
-  if ((n>0) && (s[n-1]!=c))
-    t << s (last, n);
-  return t;
-}
-
-static int
-search_pos (tree t, string what) {
-  int i, n= N(t);
-  for (i=0; i<n; i++)
-    if (t[i] == what)
-      return i;
-  return -1;
-}
-
-static bool
-check_pos (tree t, int pos, string what) {
-  int i, n= N(t);
-  for (i=0; i<n; i++)
-    if ((N(t[i])>pos) && (t[i][pos] == what))
-      return true;
-  return false;
-}

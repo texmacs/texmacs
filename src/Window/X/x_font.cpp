@@ -155,27 +155,27 @@ x_display_rep::default_font_sub (bool tt) {
     if (out_lan == "japanese" || out_lan == "korean") {
       tree modern_fn= tuple ("modern", "ss", "medium", "right");
       modern_fn << as_string (sz) << as_string (dpi);
-      return find_font (this, modern_fn);
+      return find_font (modern_fn);
     }
     if (out_lan == "chinese" || out_lan == "taiwanese")
-      return unicode_font (this, "fireflysung", sz, dpi);
+      return unicode_font ("fireflysung", sz, dpi);
     //if (out_lan == "japanese")
-    //return unicode_font (this, "ipagui", sz, dpi);
+    //return unicode_font ("ipagui", sz, dpi);
     //if (out_lan == "korean")
-    //return unicode_font (this, "UnDotum", sz, dpi);
+    //return unicode_font ("UnDotum", sz, dpi);
     if (ff == "ec")
-      return tex_ec_font (this, tt? ff * "tt": fam, sz, dpi);
+      return tex_ec_font (tt? ff * "tt": fam, sz, dpi);
     if (ff == "la")
-      return tex_la_font (this, tt? ff * "tt": fam, sz, dpi, 1000);
+      return tex_la_font (tt? ff * "tt": fam, sz, dpi, 1000);
     if (ff == "pu") tt= false;
     if ((ff == "cm") || (ff == "pn") || (ff == "pu"))
-      return tex_cm_font (this, tt? ff * "tt": fam, sz, dpi);
+      return tex_cm_font (tt? ff * "tt": fam, sz, dpi);
   }
-  return tex_font (this, fam, sz, dpi);
-  // if (out_lan == "german") return tex_font (this, "ygoth", 14, 300, 0);
-  // return tex_font (this, "rpagk", 10, 300, 0);
-  // return tex_font (this, "rphvr", 10, 300, 0);
-  // return ps_font (this, "b&h-lucidabright-medium-r-normal", 11, 300);
+  return tex_font (fam, sz, dpi);
+  // if (out_lan == "german") return tex_font ("ygoth", 14, 300, 0);
+  // return tex_font ("rpagk", 10, 300, 0);
+  // return tex_font ("rphvr", 10, 300, 0);
+  // return ps_font ("b&h-lucidabright-medium-r-normal", 11, 300);
 }
 
 font
@@ -274,12 +274,11 @@ x_display_rep::load_system_font (string family, int size, int dpi,
 * The implementation
 ******************************************************************************/
 
-x_font_rep::x_font_rep (
-  display dis, string name, string family2, int size2, int dpi2):
-    font_rep (dis, name)
+x_font_rep::x_font_rep (string name, string family2, int size2, int dpi2):
+  font_rep (name)
 {
   metric ex;
-  dis->load_system_font (family2, size2, dpi2, fnm, fng);
+  the_display->load_system_font (family2, size2, dpi2, fnm, fng);
 
   family       = family2;
   size         = size2;
@@ -397,8 +396,8 @@ x_font_rep::get_glyph (string s) {
 ******************************************************************************/
 
 font
-x_font (display dis, string family, int size, int dpi) {
+x_font (string family, int size, int dpi) {
   string name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
   if (font::instances -> contains (name)) return font (name);
-  else return new x_font_rep (dis, name, family, size, dpi);
+  else return new x_font_rep (name, family, size, dpi);
 }

@@ -25,7 +25,7 @@ class wait_widget_rep: public basic_widget_rep {
   string wait_s;
   string message;
 public:
-  wait_widget_rep (display dis, SI width, SI height, string message);
+  wait_widget_rep (SI width, SI height, string message);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -36,12 +36,14 @@ public:
 * Implementation of wait decoration widgets
 ******************************************************************************/
 
-wait_widget_rep::wait_widget_rep (display dis, SI width, SI height, string s):
-  basic_widget_rep (dis, 0, south_west), message (s)
+wait_widget_rep::wait_widget_rep (SI width, SI height, string s):
+  basic_widget_rep (0, south_west), message (s)
 {
   w= width; h= height;
-  wait_s = dis->translate ("please wait", "english", dis->out_lan);
-  message= tm_var_encode (dis->translate (s, "english", dis->out_lan));
+  wait_s = the_display->translate ("please wait", "english",
+				   the_display->out_lan);
+  message= tm_var_encode (the_display->translate (s, "english",
+						  the_display->out_lan));
   wait_s= upcase_all (wait_s);
 }
 
@@ -60,9 +62,9 @@ extern font the_default_wait_font;
 void
 wait_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
-  win->set_background (dis->rgb (255, 255, 160));
+  win->set_background (the_display->rgb (255, 255, 160));
   win->clear (0, 0, w, h);
-  win->set_color (dis->black);
+  win->set_color (the_display->black);
   win->line (0, 0, w-PIXEL, 0);
   win->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
   win->line (0, 0, 0, h);
@@ -74,12 +76,12 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
   fn->var_get_extents (wait_s, ex);
   SI x= (3*w - (ex->x1+ex->x2)) >> 1;
   SI y= 2*h - ((ex->y1+ex->y2) >> 1);
-  win->set_color (dis->red);
+  win->set_color (the_display->red);
   fn->var_draw (win, wait_s, x, y);
   fn->var_get_extents (message, ex);
   x= (3*w - (ex->x1+ex->x2)) >> 1;
   y= h - ((ex->y1+ex->y2) >> 1);
-  win->set_color (dis->black);
+  win->set_color (the_display->black);
   fn->var_draw (win, message, x, y);
   win->set_shrinking_factor (1);
 }
@@ -90,5 +92,5 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
 
 widget
 wait_widget (SI width, SI height, string message) {
-  return new wait_widget_rep (current_display (), width, height, message);
+  return new wait_widget_rep (width, height, message);
 }

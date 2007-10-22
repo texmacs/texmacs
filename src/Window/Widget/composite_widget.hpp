@@ -21,10 +21,9 @@
 
 class composite_widget_rep: public basic_widget_rep {
 public:
-  composite_widget_rep (display dis, gravity grav= north_west);
-  composite_widget_rep (display dis, array<widget> a,
-			gravity grav= north_west);
-  composite_widget_rep (display dis, array<widget> a,
+  composite_widget_rep (gravity grav= north_west);
+  composite_widget_rep (array<widget> a, gravity grav= north_west);
+  composite_widget_rep (array<widget> a,
 			array<string> name, gravity grav= north_west);
 
   virtual void handle_clean  (clean_event ev);

@@ -33,7 +33,7 @@ public:
 ******************************************************************************/
 
 balloon_widget_rep::balloon_widget_rep (widget w, widget help):
-  basic_widget_rep (w->dis, 1)
+  basic_widget_rep (1)
 {
   a[0]       = w;
   balloon_wid= help;
@@ -52,7 +52,7 @@ balloon_widget_rep::balloon_handle_mouse (mouse_event ev) {
     win->get_position (x, y);
     SI xx= x+ ev->x+ 10*PIXEL;
     SI yy= y+ ev->y- 5*PIXEL;
-    dis->set_help_balloon (balloon_wid, xx, yy);
+    the_display->set_help_balloon (balloon_wid, xx, yy);
   }
 }
 
@@ -97,7 +97,7 @@ public:
 ******************************************************************************/
 
 balloon_decoration_widget_rep::balloon_decoration_widget_rep (widget w):
-  basic_widget_rep (w->dis, 1, south_west) { a[0]= w; }
+  basic_widget_rep (1, south_west) { a[0]= w; }
 
 balloon_decoration_widget_rep::operator tree () {
   return tree (TUPLE, "decoration", (tree) a[0]);
@@ -121,9 +121,9 @@ balloon_decoration_widget_rep::handle_position (position_event ev) {
 void
 balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
-  win->set_background (dis->rgb (255, 255, 160));
+  win->set_background (the_display->rgb (255, 255, 160));
   win->clear (0, 0, w, h);
-  win->set_color (dis->black);
+  win->set_color (the_display->black);
   win->line (0, 0, w-PIXEL, 0);
   win->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
   win->line (0, 0, 0, h);

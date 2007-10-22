@@ -26,7 +26,6 @@ class tm_server_rep:
   public tm_scheme_rep
 {
 protected:
-  display dis;            // current display
   tm_view vw;             // current editor
   bool full_screen;       // full screen mode
   bool full_screen_edit;  // full screen edit mode
@@ -36,12 +35,11 @@ protected:
   hashmap<tree,tree> style_drd;                    // style drd cache
 
 public:
-  tm_server_rep (display dis);
+  tm_server_rep ();
   ~tm_server_rep ();
 
   /* Get and set objects associated to server */
   server_rep* get_server ();
-  display     get_display ();
   bool        has_view ();
   tm_view     get_view (bool must_be_valid= true);
   void        set_view (tm_view vw);

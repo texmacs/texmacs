@@ -13,6 +13,7 @@
 #include "font.hpp"
 #include "tt_face.hpp"
 #include "tt_file.hpp"
+#include "timer.hpp"
 
 #ifdef USE_FREETYPE
 

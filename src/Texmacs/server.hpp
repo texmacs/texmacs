@@ -123,7 +123,6 @@ public:
 
   /* Get and set objects associated to server */
   virtual server_rep* get_server () = 0;
-  virtual display     get_display () = 0;
   virtual bool        has_view () = 0;
   virtual tm_view     get_view (bool must_be_valid= true) = 0;
   virtual void        set_view (tm_view vw) = 0;
@@ -196,7 +195,7 @@ public:
 
 class server {
   ABSTRACT(server);
-  server (display dis);
+  server ();
 };
 ABSTRACT_CODE(server);
 

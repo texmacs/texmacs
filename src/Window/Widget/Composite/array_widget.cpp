@@ -24,9 +24,8 @@ class horizontal_array_rep: public composite_widget_rep {
   int stretch_me;
 
 public:
-  horizontal_array_rep (display dis, array<widget> a, int stretch_me);
-  horizontal_array_rep (display dis, array<widget> a, array<string> name,
-			int stretch_me);
+  horizontal_array_rep (array<widget> a, int stretch_me);
+  horizontal_array_rep (array<widget> a, array<string> name, int stretch_me);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -34,13 +33,12 @@ public:
   void handle_find_child (find_child_event ev);
 };
 
-horizontal_array_rep::horizontal_array_rep (display dis, array<widget> a,
-					    int sm):
-  composite_widget_rep (dis, a), stretch_me (sm) {}
+horizontal_array_rep::horizontal_array_rep (array<widget> a, int sm):
+  composite_widget_rep (a), stretch_me (sm) {}
 
-horizontal_array_rep::horizontal_array_rep (display dis, array<widget> a,
+horizontal_array_rep::horizontal_array_rep (array<widget> a,
   array<string> name, int sm):
-    composite_widget_rep (dis, a, name), stretch_me (sm) {}
+    composite_widget_rep (a, name), stretch_me (sm) {}
 
 horizontal_array_rep::operator tree () {
   int i;
@@ -123,10 +121,10 @@ horizontal_array_rep::handle_find_child (find_child_event ev) {
 
 widget
 horizontal_array (array<widget> a, int stretch_me) {
-  return new horizontal_array_rep (current_display (), a, stretch_me);
+  return new horizontal_array_rep (a, stretch_me);
 }
 
 widget
 horizontal_array (array<widget> a, array<string> name, int sm) {
-  return new horizontal_array_rep (current_display (), a, name, sm);
+  return new horizontal_array_rep (a, name, sm);
 }

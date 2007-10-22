@@ -45,7 +45,7 @@ public:
 ******************************************************************************/
 
 popup_widget_rep::popup_widget_rep (widget w, gravity quit2):
-  basic_widget_rep (w->dis, 1), quit (quit2),
+  basic_widget_rep (1), quit (quit2),
   grabbed (false), stick (false), freeze (false)
 {
   a[0]= w;
@@ -109,7 +109,7 @@ popup_widget_rep::handle_mouse (mouse_event ev) {
   stick = stick && (!pressed);
   if (grabbed) a[0] << emit_mouse (ev);
   if ((type != "leave") && (!stick) && (!freeze)) {
-    if (dis->has_grab_pointer (this)) {
+    if (the_display->has_grab_pointer (this)) {
       grabbed= pressed && (!leaving);
       if (!grabbed) this << emit_mouse_grab (false);
     }

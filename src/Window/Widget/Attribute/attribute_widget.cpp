@@ -17,13 +17,13 @@
 * Constructors for abstract attribute widgets
 ******************************************************************************/
 
-attribute_widget_rep::attribute_widget_rep (display dis, gravity grav):
-  basic_widget_rep (dis, grav) {}
-attribute_widget_rep::attribute_widget_rep (display dis, array<widget> a,
+attribute_widget_rep::attribute_widget_rep (gravity grav):
+  basic_widget_rep (grav) {}
+attribute_widget_rep::attribute_widget_rep (array<widget> a,
   gravity grav):
-  basic_widget_rep (dis, a, grav) {}
-attribute_widget_rep::attribute_widget_rep (display dis, array<widget> a,
-  array<string> name, gravity grav): basic_widget_rep (dis, a, name, grav) {}
+  basic_widget_rep (a, grav) {}
+attribute_widget_rep::attribute_widget_rep (array<widget> a,
+  array<string> name, gravity grav): basic_widget_rep (a, name, grav) {}
 
 /******************************************************************************
 * Retrieving information from attribute widgets

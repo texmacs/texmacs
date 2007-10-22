@@ -37,7 +37,7 @@ edit_interface_rep::draw_env (ps_device dev) {
   if (!full_screen) {
     rectangles rs= env_rects;
     while (!nil (rs)) {
-      dev->set_color (dis->rgb (0, 255, 255));
+      dev->set_color (the_display->rgb (0, 255, 255));
       dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }
@@ -69,10 +69,10 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       }
       if (cu->valid) {
 	if (mode == "math")
-	  dev->set_color (dis->rgb (192, 0, 255));
-	else dev->set_color (dis->red);
+	  dev->set_color (the_display->rgb (192, 0, 255));
+	else dev->set_color (the_display->red);
       }
-      else dev->set_color (dis->green);
+      else dev->set_color (the_display->green);
       SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
       if (family == "ss") lserif= rserif= 0;
       dev->line (x1-lserif, y1, x1+rserif, y1);
@@ -87,7 +87,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
 
 void
 edit_interface_rep::draw_surround (ps_device dev, rectangle r) {
-  dev->set_background (dis->light_grey);
+  dev->set_background (the_display->light_grey);
   string medium= get_init_string (PAGE_MEDIUM);
   if ((medium == "papyrus") || (medium == "paper"))
     dev->clear_pattern (max (eb->x2, r->x1), r->y1,
@@ -99,7 +99,7 @@ edit_interface_rep::draw_surround (ps_device dev, rectangle r) {
 void
 edit_interface_rep::draw_context (ps_device dev, rectangle r) {
   int i;
-  dev->set_color (dis->light_grey);
+  dev->set_color (the_display->light_grey);
   dev->set_line_style (pixel);
   for (i=1; i<N(eb[0]); i++) {
     SI y= eb->sy(0)+ eb[0]->sy2(i);
@@ -114,7 +114,7 @@ edit_interface_rep::draw_selection (ps_device dev) {
   if (!nil (locus_rects)) {
     rectangles rs= locus_rects;
     while (!nil (rs)) {
-      dev->set_color (dis->rgb (32, 160, 96));
+      dev->set_color (the_display->rgb (32, 160, 96));
       dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }
@@ -122,7 +122,8 @@ edit_interface_rep::draw_selection (ps_device dev) {
   if (made_selection) {
     rectangles rs= selection_rects;
     while (!nil (rs)) {
-      dev->set_color (table_selection? dis->rgb (192, 0, 255): dis->red);
+      dev->set_color (table_selection? the_display->rgb (192, 0, 255):
+		                       the_display->red);
       dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }
@@ -140,7 +141,7 @@ edit_interface_rep::draw_graphics (ps_device dev) {
       if (tm_curs != "none")
 	if (tm_curs == "graphics-cross") {
 	  dev->set_line_style (pixel);
-	  dev->set_color (dis->red);
+	  dev->set_color (the_display->red);
 	  dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
 	  dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
         }
@@ -148,7 +149,7 @@ edit_interface_rep::draw_graphics (ps_device dev) {
 	if (tm_curs == "graphics-cross-arrows") {
 	  static int s= 6*pixel, a= 2*pixel;
 	  dev->set_line_style (pixel);
-	  dev->set_color (dis->red);
+	  dev->set_color (the_display->red);
 	  dev->line (cu->ox, cu->oy-s, cu->ox, cu->oy+s);
 	  dev->line (cu->ox-s, cu->oy, cu->ox+s, cu->oy);
 	  dev->line (cu->ox, cu->oy-s,cu->ox-a, cu->oy-s+a);

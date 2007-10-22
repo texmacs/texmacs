@@ -26,7 +26,7 @@ class xpm_widget_rep: public basic_widget_rep {
   int  ww, hh;
 
 public:
-  xpm_widget_rep (display dis, url name, bool trans, int dx, int dy);
+  xpm_widget_rep (url name, bool trans, int dx, int dy);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -34,8 +34,8 @@ public:
 };
 
 xpm_widget_rep::xpm_widget_rep (
-  display dis, url name2, bool t2, int dx2, int dy2):
-    basic_widget_rep (dis, center), name (name2),
+  url name2, bool t2, int dx2, int dy2):
+    basic_widget_rep (center), name (name2),
     transparent (t2), dx (dx2), dy (dy2)
 {
   xpm_size (name, ww, hh);
@@ -66,5 +66,5 @@ xpm_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 widget
 xpm_widget (url name, bool transp) {
-  return new xpm_widget_rep (current_display (), name, transp, PIXEL, PIXEL);
+  return new xpm_widget_rep (name, transp, PIXEL, PIXEL);
 }

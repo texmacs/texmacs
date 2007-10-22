@@ -23,16 +23,15 @@ class glue_widget_rep: public basic_widget_rep {
   SI   minw, minh;    // minimal width and height in pixels
 
 public:
-  glue_widget_rep (display dis, bool hflag, bool vflag, SI minw, SI minh);
+  glue_widget_rep (bool hflag, bool vflag, SI minw, SI minh);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
 };
 
-glue_widget_rep::glue_widget_rep (display dis,
-  bool hflag2, bool vflag2, SI w2, SI h2):
-  basic_widget_rep (dis),
+glue_widget_rep::glue_widget_rep (bool hflag2, bool vflag2, SI w2, SI h2):
+  basic_widget_rep (),
   hflag (hflag2), vflag (vflag2), minw (w2), minh (h2) {}
 
 glue_widget_rep::operator tree () {
@@ -50,7 +49,7 @@ glue_widget_rep::handle_get_size (get_size_event ev) {
     ev->h= minh;
   }
   if (ev->mode==1) {
-    dis->get_max_size (ev->w, ev->h);
+    the_display->get_max_size (ev->w, ev->h);
     if (!hflag) ev->w= minw;
     if (!vflag) ev->h= minh;
   }
@@ -67,5 +66,5 @@ glue_widget_rep::handle_repaint (repaint_event ev) {
 
 widget
 glue_widget (bool hflag, bool vflag, SI minw, SI minh) {
-  return new glue_widget_rep (current_display (), hflag, vflag, minw, minh);
+  return new glue_widget_rep (hflag, vflag, minw, minh);
 }

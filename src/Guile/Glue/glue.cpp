@@ -635,55 +635,6 @@ observerP (SCM t) {
 }
 
 /******************************************************************************
-* Displays
-******************************************************************************/
-
-static long display_tag;
-
-#define scm_is_display(dis) \
-  (SCM_NIMP (dis) && (((long) SCM_CAR (dis)) == display_tag))
-#define SCM_ASSERT_DISPLAY(dis,arg,rout) \
-  SCM_ASSERT (scm_is_display (dis), dis, arg, rout)
-
-/*static*/ SCM
-display_to_scm (display dis) {
-  SCM display_smob;
-  SET_SMOB (display_smob, (void*) (new display (dis)), (SCM) display_tag);
-  return display_smob;
-}
-
-static display
-scm_to_display (SCM display_smob) {
-  return *((display*) SCM_CDR (display_smob));
-}
-
-static SCM
-mark_display (SCM display_smob) {
-  (void) display_smob;
-  return SCM_BOOL_F;
-}
-
-static scm_sizet
-free_display (SCM display_smob) {
-  display *ptr = (display *) SCM_CDR (display_smob);
-  delete ptr;
-  return 0;
-}
-
-static int
-print_display (SCM display_smob, SCM port, scm_print_state *pstate) {
-  (void) display_smob; (void) pstate;
-  string s= "<display>";
-  scm_display (string_to_scm (s), port);
-  return 1;
-}
-
-static SCM
-cmp_display (SCM dis1, SCM dis2) {
-  return scm_bool2scm (scm_to_display (dis1) == scm_to_display (dis2));
-}
-
-/******************************************************************************
 * Widgets
 ******************************************************************************/
 
@@ -1241,11 +1192,6 @@ initialize_glue () {
   scm_set_smob_free (observer_tag, free_observer);
   scm_set_smob_print (observer_tag, print_observer);
   scm_set_smob_equalp (observer_tag, cmp_observer);
-  display_tag= scm_make_smob_type ("display", 0);
-  scm_set_smob_mark (display_tag, mark_display);
-  scm_set_smob_free (display_tag, free_display);
-  scm_set_smob_print (display_tag, print_display);
-  scm_set_smob_equalp (display_tag, cmp_display);
   widget_tag= scm_make_smob_type ("widget", 0);
   scm_set_smob_mark (widget_tag, mark_widget);
   scm_set_smob_free (widget_tag, free_widget);
@@ -1285,10 +1231,6 @@ scm_smobfuns observer_smob_funcs = {
   mark_observer, free_observer, print_observer, cmp_observer
 };
 
-scm_smobfuns display_smob_funcs = {
-  mark_display, free_display, print_display, cmp_display
-};
-
 scm_smobfuns widget_smob_funcs = {
   mark_widget, free_widget, print_widget, cmp_widget
 };
@@ -1309,7 +1251,6 @@ void
 initialize_glue () {
   tree_tag= scm_newsmob (&tree_smob_funcs);
   observer_tag= scm_newsmob (&observer_smob_funcs);
-  display_tag= scm_newsmob (&display_smob_funcs);
   widget_tag= scm_newsmob (&widget_smob_funcs);
   make_widget_tag= scm_newsmob (&make_widget_smob_funcs);
   command_tag= scm_newsmob (&command_smob_funcs);

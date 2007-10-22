@@ -25,7 +25,7 @@ class inputs_list_widget_rep: public attribute_widget_rep {
   bool          ok;
 
 public:
-  inputs_list_widget_rep (display dis, command cmd, array<string> prompts);
+  inputs_list_widget_rep (command cmd, array<string> prompts);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -75,8 +75,8 @@ inputs_list_command (widget ilw, int i, int n) {
 ******************************************************************************/
 
 inputs_list_widget_rep::inputs_list_widget_rep (
-  display dis, command cmd2, array<string> prompts2):
-    attribute_widget_rep (dis, 1), cmd (cmd2), prompts (prompts2), ok (true)
+  command cmd2, array<string> prompts2):
+    attribute_widget_rep (1), cmd (cmd2), prompts (prompts2), ok (true)
 {
   ref_count++;
 
@@ -132,7 +132,7 @@ inputs_list_widget_rep::handle_get_size (get_size_event ev) {
   SI dummy;
   a[0] << get_size (ev->w, ev->h, ev->mode);
   if (ev->mode < 1) ev->w= max (ev->w, 300*PIXEL);
-  else dis->get_max_size (ev->w, dummy);
+  else the_display->get_max_size (ev->w, dummy);
 }
 
 void
@@ -168,5 +168,5 @@ inputs_list_widget_rep::handle_destroy (destroy_event ev) {
 
 widget
 inputs_list_widget (command cmd, array<string> fields) {
-  return new inputs_list_widget_rep (current_display (), cmd, fields);
+  return new inputs_list_widget_rep (cmd, fields);
 }

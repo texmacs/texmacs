@@ -39,9 +39,9 @@ string PS2 ("z");
 ******************************************************************************/
 
 printer_rep::printer_rep (
-  display dis2, url ps_file_name2, int dpi2, int nr_pages2,
+  url ps_file_name2, int dpi2, int nr_pages2,
   string page_type2, bool landscape2, double paper_w2, double paper_h2):
-    dis (dis2), ps_file_name (ps_file_name2), dpi (dpi2),
+    ps_file_name (ps_file_name2), dpi (dpi2),
     nr_pages (nr_pages2), page_type (page_type2),
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
     linelen (0), fg (-1), bg (-1), ncols (0),
@@ -52,19 +52,19 @@ printer_rep::printer_rep (
 {
   type_1    = get_font_type () > 0;
 
-  black     = dis->black;
-  white     = dis->white;
-  red       = dis->red;
-  green     = dis->green;
-  blue      = dis->blue;
-  yellow    = dis->yellow;
-  magenta   = dis->magenta;
-  orange    = dis->orange;
-  brown     = dis->brown;
-  pink      = dis->pink;
-  light_grey= dis->light_grey;
-  grey      = dis->grey;
-  dark_grey = dis->dark_grey;
+  black     = the_display->black;
+  white     = the_display->white;
+  red       = the_display->red;
+  green     = the_display->green;
+  blue      = the_display->blue;
+  yellow    = the_display->yellow;
+  magenta   = the_display->magenta;
+  orange    = the_display->orange;
+  brown     = the_display->brown;
+  pink      = the_display->pink;
+  light_grey= the_display->light_grey;
+  grey      = the_display->grey;
+  dark_grey = the_display->dark_grey;
 
   string tex_pro, special_pro, color_pro, texps_pro;
   load_string ("$TEXMACS_PATH/misc/convert/tex.pro", tex_pro, true);
@@ -261,7 +261,7 @@ printer_rep::move_to (SI x, SI y) {
 void
 printer_rep::select_color (color c) {
   int r, g, b;
-  dis->get_rgb (c, r, g, b);
+  the_display->get_rgb (c, r, g, b);
   r= 10000+ ((r*1000)/255);
   g= 10000+ ((g*1000)/255);
   b= 10000+ ((b*1000)/255);
@@ -501,12 +501,12 @@ printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 
 color
 printer_rep::rgb (int r, int g, int b) {
-  return dis->rgb (r, g, b);
+  return the_display->rgb (r, g, b);
 }
 
 void
 printer_rep::get_rgb (color col, int& r, int& g, int& b) {
-  dis->get_rgb (col, r, g, b);
+  the_display->get_rgb (col, r, g, b);
 }
 
 color
@@ -516,7 +516,7 @@ printer_rep::get_color () {
 
 color
 printer_rep::get_color (string s) {
-  return dis->get_color (s);
+  return the_display->get_color (s);
 }
 
 color
@@ -781,9 +781,9 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 ******************************************************************************/
 
 ps_device
-printer (display dis, url ps_file_name, int dpi, int nr_pages,
+printer (url ps_file_name, int dpi, int nr_pages,
 	 string page_type, bool landscape, double paper_w, double paper_h)
 {
-  return new printer_rep (dis, ps_file_name, dpi, nr_pages,
+  return new printer_rep (ps_file_name, dpi, nr_pages,
 			  page_type, landscape, paper_w, paper_h);
 }
