@@ -106,9 +106,9 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 void
 tm_scheme_rep::dialogue_start (string name, widget wid) {
   if (dialogue_win == NULL) {
-    string lan= get_display()->out_lan;
+    string lan= the_display->out_lan;
     if (lan == "russian") lan= "english";
-    name= get_display()->translate (name, "english", lan);
+    name= the_display->translate (name, "english", lan);
     char* _name= as_charp (name);
     window win= get_meta () -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;

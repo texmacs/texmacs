@@ -35,7 +35,7 @@ struct x_font_rep: font_rep {
   font_metric fnm;
   font_glyphs fng;
 
-  x_font_rep (display dis, string name, string family, int size, int dpi);
+  x_font_rep (string name, string family, int size, int dpi);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);

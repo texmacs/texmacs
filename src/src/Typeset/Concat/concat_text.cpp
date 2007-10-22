@@ -30,7 +30,7 @@ void
 concater_rep::typeset_colored_substring
   (string s, path ip, int pos, string col)
 {
-  color c= (col == ""? env->col: env->dis->get_color (col));
+  color c= (col == ""? env->col: the_display->get_color (col));
   box b= text_box (ip, pos, s, env->fn, c);
   a << line_item (STRING_ITEM, b, HYPH_INVALID, env->lan);
 }
@@ -317,7 +317,7 @@ concater_rep::typeset_float (tree t, path ip) {
   lazy lz= make_lazy_vstream (env, t[2], descend (ip, 2), ch);
   marker (descend (ip, 0));
   if (is_accessible (ip) && !env->read_only)
-    flag_ok (as_string (t1), decorate_middle (ip), env->dis->brown);
+    flag_ok (as_string (t1), decorate_middle (ip), the_display->brown);
   print (FLOAT_ITEM, control_box (decorate_middle (ip), lz, env->fn));
   marker (descend (ip, 1));
 }

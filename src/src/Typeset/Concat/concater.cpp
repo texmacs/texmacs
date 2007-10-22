@@ -37,14 +37,14 @@ concater_rep::marker (path ip) {
   if (is_decoration (ip)) ip= path (0, ip);
   string fn_name= "cmr";
   int sz= script (env->fn_size, env->index_level);
-  font gfn (tex_font (env->dis, fn_name, sz, (int) (env->magn*env->dpi)));
-  box b= text_box (ip->next, ip->item, "", gfn, env->dis->blue);
+  font gfn (tex_font (fn_name, sz, (int) (env->magn*env->dpi)));
+  box b= text_box (ip->next, ip->item, "", gfn, the_display->blue);
   a << line_item (STD_ITEM, b, HYPH_INVALID);
 }
 
 void
 concater_rep::ghost (string s, path ip) {
-  ghost (s, ip, env->dis->blue);
+  ghost (s, ip, the_display->blue);
 }
 
 void
@@ -66,7 +66,7 @@ concater_rep::ghost (string s, path ip, color col) {
     else if (s[0] == '}') { fn_name= "cmsy"; s= "g"; }
   }
   int sz= script (env->fn_size, env->index_level);
-  font gfn (tex_font (env->dis, fn_name, sz, (int) (env->magn*env->dpi)));
+  font gfn (tex_font (fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (decorate (ip), 0, s, gfn, col);
   array<box> bs (1);
   bs[0]= b;
@@ -78,11 +78,11 @@ concater_rep::flag_ok (string s, path ip, color col) {
   path dip = decorate_right (ip);
   SI h= 4*env->fn->wfn/5;
   int r, g, b;
-  env->dis->get_rgb (col, r, g, b);
+  the_display->get_rgb (col, r, g, b);
   r= 255- (255 - r)/6;
   g= 255- (255 - g)/6;
   b= 255- (255 - b)/6;
-  color light= env->dis->rgb (r, g, b);
+  color light= the_display->rgb (r, g, b);
   string info_flag= env->get_string (INFO_FLAG);
   if (info_flag == "short") {
     box infob= info_box (dip, h, env->fn->wline, col, light);
@@ -91,7 +91,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
   }
   if (info_flag == "detailed" || info_flag == "paper") {
     int sz= script (env->fn_size, env->index_level+2);
-    font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
+    font gfn (tex_font ("ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
     if (info_flag == "detailed") {
@@ -209,12 +209,12 @@ concater_rep::typeset (tree t, path ip) {
     typeset_hspace (t, ip);
     break;
   case VAR_VSPACE:
-    flag (env->drd->get_name (L(t)), ip, env->dis->brown);
+    flag (env->drd->get_name (L(t)), ip, the_display->brown);
     t= tree (VAR_VSPACE, env->exec (tree (TMLEN, A(t))));
     control (t, ip);
     break;
   case VSPACE:
-    flag (env->drd->get_name (L(t)), ip, env->dis->brown);
+    flag (env->drd->get_name (L(t)), ip, the_display->brown);
     t= tree (VSPACE, env->exec (tree (TMLEN, A(t))));
     control (t, ip);
     break;
@@ -257,19 +257,19 @@ concater_rep::typeset (tree t, path ip) {
 
   case WITH_LIMITS:
     with_limits (LIMITS_DISPLAY);
-    flag ("with-limits", ip, env->dis->brown);
+    flag ("with-limits", ip, the_display->brown);
     control (t, ip);
     break;
   case LINE_BREAK:
     if (N(a)>0) a[N(a)-1]->penalty = 0;	
-    flag ("line-break", ip, env->dis->brown);
+    flag ("line-break", ip, the_display->brown);
     control (t, ip);
     break;
   case NEW_LINE:
   case NEXT_LINE:
     {
       string name= env->drd->get_name (L(t));
-      flag (name, ip, env->dis->brown);
+      flag (name, ip, the_display->brown);
       control (t, ip);
       break;
     }
@@ -279,23 +279,23 @@ concater_rep::typeset (tree t, path ip) {
 	(a[N(a)-1]->type == STRING_ITEM) &&
 	(a[N(a)-1]->b->get_leaf_string () == ""))
       a[N(a)-2]->penalty = HYPH_INVALID;	
-    flag ("no line break", ip, env->dis->brown);
+    flag ("no line break", ip, the_display->brown);
     control (t, ip);
     break;
   case YES_INDENT:
-    flag ("yes-first-indent", ip, env->dis->brown);
+    flag ("yes-first-indent", ip, the_display->brown);
     control (tuple ("env_par", PAR_FIRST, env->read (PAR_FIRST)), ip);
     break;
   case NO_INDENT:
-    flag ("no-first-indent", ip, env->dis->brown);
+    flag ("no-first-indent", ip, the_display->brown);
     control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
     break;
   case VAR_YES_INDENT:
-    flag ("yes-first-indent-after", ip, env->dis->brown);
+    flag ("yes-first-indent-after", ip, the_display->brown);
     control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
     break;
   case VAR_NO_INDENT:
-    flag ("no-first-indent-after", ip, env->dis->brown);
+    flag ("no-first-indent-after", ip, the_display->brown);
     control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
     break;
   case VAR_PAGE_BREAK:
@@ -308,7 +308,7 @@ concater_rep::typeset (tree t, path ip) {
   case NEW_DPAGE:
     {
       string name= env->drd->get_name (L(t));
-      flag (name, ip, env->dis->brown);
+      flag (name, ip, the_display->brown);
       control (t, ip);
       break;
     }

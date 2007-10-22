@@ -339,7 +339,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   if (!nil (f)) {
     if (!over_graphics (x, y)) return false;
     if (type == "move" || type == "dragging")
-      if (dis->check_event (MOTION_EVENT))
+      if (the_display->check_event (MOTION_EVENT))
 	return true;
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().

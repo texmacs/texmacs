@@ -39,7 +39,7 @@ struct virtual_font_rep: font_rep {
 
 virtual_font_rep::virtual_font_rep (
   string name, font base, string vname, int size2, int dpi2):
-    font_rep (base->dis, name, base), base_fn (base),
+    font_rep (name, base), base_fn (base),
     virt (load_translator (vname)), size (size2), dpi (dpi2),
     last (N(virt->virt_def)),
     fnm (std_font_metric (name, new metric [last], 0, last-1)),

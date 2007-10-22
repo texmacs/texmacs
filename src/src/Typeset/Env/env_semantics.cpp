@@ -249,20 +249,17 @@ edit_env_rep::update_font () {
   switch (mode) {
   case 0:
   case 1:
-    fn= find_font (dis,
-		   get_string (FONT), get_string (FONT_FAMILY),
+    fn= find_font (get_string (FONT), get_string (FONT_FAMILY),
 		   get_string (FONT_SERIES), get_string (FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
   case 2:
-    fn= find_font (dis,
-		   get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
+    fn= find_font (get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
 		   get_string (MATH_FONT_SERIES), get_string (MATH_FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
   case 3:
-    fn= find_font (dis,
-		   get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
+    fn= find_font (get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
 		   get_string (PROG_FONT_SERIES), get_string (PROG_FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
@@ -281,8 +278,8 @@ edit_env_rep::update_color () {
     if (fc == "none") fill_mode= FILL_MODE_NONE;
     else fill_mode= FILL_MODE_BOTH;
   }
-  col= dis->get_color (c);
-  fill_color= dis->get_color (fc);
+  col= the_display->get_color (c);
+  fill_color= the_display->get_color (fc);
 }
 
 void

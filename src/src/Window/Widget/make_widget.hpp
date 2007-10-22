@@ -23,21 +23,21 @@ public:
   inline make_widget_rep () {}
   inline virtual ~make_widget_rep () {}
   inline virtual ostream& print (ostream& out);
-  virtual widget get_widget (display dis) = 0;
+  virtual widget get_widget () = 0;
 };
 
 class make_widget {
 public:
   ABSTRACT_NULL(make_widget);
-  inline widget operator () (display dis);
+  inline widget operator () ();
   inline friend ostream& operator << (ostream& out, make_widget cmd);
 };
 ABSTRACT_NULL_CODE(make_widget);
 
 inline ostream& make_widget_rep::print (ostream& out) {
   return out << "make_widget"; }
-inline widget make_widget::operator () (display dis) {
-  return rep->get_widget (dis); }
+inline widget make_widget::operator () () {
+  return rep->get_widget (); }
 inline bool operator == (make_widget mw1, make_widget mw2) {
   return mw1.rep == mw2.rep; }
 inline ostream& operator << (ostream& out, make_widget cmd) {

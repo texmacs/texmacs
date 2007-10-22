@@ -45,7 +45,7 @@ struct compound_font_rep: font_rep {
 
 compound_font_rep::compound_font_rep (
   string name, scheme_tree def2, array<font> fn2):
-    font_rep (fn2[0]->dis, name, fn2[0]),
+    font_rep (name, fn2[0]),
     def (def2), fn (fn2), cm (load_charmap (map_car (def)))
 {}
 
@@ -57,7 +57,7 @@ compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
     tree t= def[ch][1];
     if (is_tuple (t, "virtual", 3))
       fn[ch]= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
-    else fn[ch]= find_font (dis, t);
+    else fn[ch]= find_font (t);
     if (nil (fn[ch]))
       fatal_error ("Font not found", "compound_font_rep::advance");
     //fn[ch]->copy_math_pars (fn[0]);
@@ -169,12 +169,12 @@ compound_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-compound_font (display dis, scheme_tree def) {
+compound_font (scheme_tree def) {
   string name= tree_to_scheme (def);
   if (font::instances->contains (name))
     return font (name);
   array<font> fn (N(def));
-  fn[0]= find_font (dis, def[0][1]);
+  fn[0]= find_font (def[0][1]);
   if (nil (fn[0])) return font ();
   return make (font, name, new compound_font_rep (name, def, fn));
 }

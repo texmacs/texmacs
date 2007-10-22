@@ -25,7 +25,7 @@ class separator_widget_rep: public attribute_widget_rep {
   bool vert;
 
 public:
-  separator_widget_rep (display dis, SI pre, SI post, bool vert);
+  separator_widget_rep (SI pre, SI post, bool vert);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -35,8 +35,8 @@ public:
 };
 
 separator_widget_rep::separator_widget_rep (
-  display dis, SI pre2, SI post2, bool vert2):
-    attribute_widget_rep (dis), pre (pre2), post (post2), vert (vert2) {}
+  SI pre2, SI post2, bool vert2):
+    attribute_widget_rep (), pre (pre2), post (post2), vert (vert2) {}
 
 separator_widget_rep::operator tree () {
   return "separator";
@@ -45,13 +45,13 @@ separator_widget_rep::operator tree () {
 void
 separator_widget_rep::handle_get_size (get_size_event ev) {
   if (vert) {
-    if (ev->mode==1) dis->get_max_size (ev->w, ev->h);
+    if (ev->mode==1) the_display->get_max_size (ev->w, ev->h);
     ev->w= 2*PIXEL+ pre+ post;
     ev->h= 0;
   }
   else {
     if (ev->mode==-1) ev->w= 0;
-    if (ev->mode==1) dis->get_max_size (ev->w, ev->h);
+    if (ev->mode==1) the_display->get_max_size (ev->w, ev->h);
     ev->h= 2*PIXEL+ pre+ post;
   }
 }
@@ -63,7 +63,7 @@ separator_widget_rep::handle_repaint (repaint_event ev) {
   win->set_line_style (PIXEL);
   if (vert) win->line (pre+PIXEL, ev->y1, pre+PIXEL, ev->y2);
   else win->line (ev->x1, -pre-PIXEL, ev->x2, -pre-PIXEL);
-  win->set_color (dis->white);
+  win->set_color (the_display->white);
   win->set_line_style (PIXEL);
   if (vert) win->line (pre+2*PIXEL, ev->y1, pre+2*PIXEL, ev->y2);
   else win->line (ev->x1, -pre-2*PIXEL, ev->x2, -pre-2*PIXEL);
@@ -86,5 +86,5 @@ separator_widget_rep::handle_set_coord2 (set_coord2_event ev) {
 
 widget
 separator_widget (SI pre, SI post, bool vert) {
-  return new separator_widget_rep (current_display (), pre, post, vert);
+  return new separator_widget_rep (pre, post, vert);
 }

@@ -50,7 +50,7 @@ public:
 ******************************************************************************/
 
 canvas_widget_rep::canvas_widget_rep (widget child, gravity grav):
-  basic_widget_rep (child->dis, 1), show_scroll_bars (true)
+  basic_widget_rep (1), show_scroll_bars (true)
 {
   a[0] = new scrollable_widget_rep (child, grav);
   hor  = new hor_scrollbar_widget_rep (a[0]);
@@ -129,7 +129,7 @@ canvas_widget_rep::handle_get_size (get_size_event ev) {
     ev->w= 32*PIXEL;
     ev->h= 32*PIXEL;
   }
-  if (ev->mode== 1) dis->get_max_size (ev->w, ev->h);
+  if (ev->mode== 1) the_display->get_max_size (ev->w, ev->h);
 }
 
 void

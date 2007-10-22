@@ -130,8 +130,8 @@ make_texmacs_widget (server_rep* sv) {
 
 static int tm_widget_serial= 0;
 
-tm_widget_rep::tm_widget_rep (server_rep* sv2, display dis):
-  basic_widget_rep (dis, 1), sv (sv2), serial (tm_widget_serial++),
+tm_widget_rep::tm_widget_rep (server_rep* sv2):
+  basic_widget_rep (1), sv (sv2), serial (tm_widget_serial++),
   footer_flag (true), text_ptr (NULL),
   texmacs_menu (NULL), texmacs_icon_menu (NULL)
 {
@@ -330,7 +330,7 @@ tm_widget_rep::handle_get_size (get_size_event ev) {
     ev->w= (800-24) * PIXEL; // (800-32) * PIXEL;
     ev->h= (600-28) * PIXEL;
   }
-  else if (ev->mode == 1) dis->get_max_size (ev->w, ev->h);
+  else if (ev->mode == 1) the_display->get_max_size (ev->w, ev->h);
   else basic_widget_rep::handle_get_size (ev);
 }
 

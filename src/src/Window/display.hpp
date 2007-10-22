@@ -87,10 +87,10 @@ public:
   virtual bool check_event (int type) = 0;
 };
 
-display open_display (int argc=0, char** argv=NULL);
-display current_display ();
-void    close_display (display dis);
-void    set_interpose_handler (void (*) (void));
-void    beep ();
+extern display the_display;
+void open_display (int argc=0, char** argv=NULL);
+void close_display ();
+void set_interpose_handler (void (*) (void));
+void beep ();
 
 #endif // defined DISPLAY_H

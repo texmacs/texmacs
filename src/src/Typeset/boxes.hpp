@@ -249,7 +249,7 @@ public:
   friend struct lazy_paragraph_rep;
   friend class  phrase_box_rep;
   friend class  remember_box_rep;
-  friend void make_eps (url dest, ::display dis, box b, int dpi= 600);
+  friend void make_eps (url dest, box b, int dpi= 600);
 };
 ABSTRACT_NULL_CODE(box);
 
@@ -278,7 +278,7 @@ inline int N (box b) { return b.rep->subnr(); }
 ostream& operator << (ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
-void make_eps (url dest, display dis, box b, int dpi);
+void make_eps (url dest, box b, int dpi);
 path find_innermost_scroll (box b, path p);
 path find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta);
 void find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,

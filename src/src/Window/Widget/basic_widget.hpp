@@ -20,9 +20,9 @@ protected:
   int ptr_focus; // subwidget where the pointer is (-1 if none)
 
 public:
-  basic_widget_rep (display dis, gravity grav= north_west);
-  basic_widget_rep (display dis, array<widget> a, gravity grav= north_west);
-  basic_widget_rep (display dis, array<widget> a, array<string> name,
+  basic_widget_rep (gravity grav= north_west);
+  basic_widget_rep (array<widget> a, gravity grav= north_west);
+  basic_widget_rep (array<widget> a, array<string> name,
 		    gravity grav= north_west);
 
   event emit_position   (SI ox, SI oy, SI w, SI h, gravity grav= north_west);

@@ -56,8 +56,7 @@ string
 tm_data_rep::new_menu_name (url u) {
   string name= as_string (tail (u));
   if (starts (name, "no_name_") && ends (name, ".tm")) {
-    display dis= current_display ();
-    string lan= dis->get_output_language ();
+    string lan= the_display->get_output_language ();
     string no_name= translate ("No name", "english", lan);
     for (int i=0; i<N(no_name); i++)
       if (((unsigned char) (no_name[i])) >= (unsigned char) 128)
@@ -370,8 +369,8 @@ tm_data_rep::detach_view (tm_view vw) {
 ******************************************************************************/
 
 tm_window
-tm_data_rep::new_window (display dis, bool map_flag, tree geom) {
-  tm_window win= new tm_window_rep (new tm_widget_rep (this, dis), geom);
+tm_data_rep::new_window (bool map_flag, tree geom) {
+  tm_window win= new tm_window_rep (new tm_widget_rep (this), geom);
   if (map_flag) win->win->map ();
   return win;
 }
@@ -417,7 +416,7 @@ tm_data_rep::new_buffer_in_this_window (url name, tree doc) {
 
 void
 tm_data_rep::new_buffer_in_new_window (url name, tree doc, tree geom) {
-  tm_window win= new_window (get_display (), true, geom);
+  tm_window win= new_window (true, geom);
   tm_buffer buf= new_buffer (name, doc);
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
@@ -568,7 +567,7 @@ tm_data_rep::open_window (tree geom) {
 
 void
 tm_data_rep::clone_window () {
-  tm_window win= new_window (get_display ());
+  tm_window win= new_window ();
   tm_buffer buf= get_buffer ();
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);

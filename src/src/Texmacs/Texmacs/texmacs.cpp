@@ -182,10 +182,10 @@ TeXmacs_main (int argc, char** argv) {
   init_plugins ();
   bench_cumul ("initialize plugins");
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
-  display dis= open_display (argc, argv);
-  dis->set_default_font (the_default_font);
+  open_display (argc, argv);
+  the_display->set_default_font (the_default_font);
   if (DEBUG_STD) cout << "TeXmacs] Starting server...\n";
-  server sv (dis);
+  server sv;
 
   for (i=1; i<argc; i++) {
     string s= argv[i];
@@ -223,10 +223,10 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   texmacs_started= true;
-  dis->event_loop ();
+  the_display->event_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";
-  close_display (dis);
+  close_display ();
   if (DEBUG_STD) cout << "TeXmacs] Good bye...\n";
 }
 

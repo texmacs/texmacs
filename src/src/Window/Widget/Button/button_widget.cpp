@@ -20,20 +20,20 @@
 ******************************************************************************/
 
 button_widget_rep::button_widget_rep (widget w2, bool rf2, bool bf2):
-  attribute_widget_rep (w2->dis, 1, south_west),
+  attribute_widget_rep (1, south_west),
   extra_left (0), extra_right (0), rflag (rf2), button_flag (bf2),
   enabled(true), centered(false), status (false), inside (false)
 { a[0]= w2; }
     
 button_widget_rep::button_widget_rep (widget lw, widget rw):
-  attribute_widget_rep (lw->dis, 2, south_west),
+  attribute_widget_rep (2, south_west),
   extra_left (0), extra_right (0), rflag (false), button_flag (false),
   enabled(true), centered(false), status (false), inside (false)
 { a[0]= lw; a[1]= rw; }
     
 button_widget_rep::button_widget_rep (
   widget lw, widget cw, widget rw, bool e, bool c):
-    attribute_widget_rep (cw->dis, 3, south_west),
+    attribute_widget_rep (3, south_west),
     extra_left (0), extra_right (0), rflag (false), button_flag (false),
     enabled(e), centered(c), status (false), inside (false)
 { a[0]= lw; a[1]= cw; a[2]= rw; }

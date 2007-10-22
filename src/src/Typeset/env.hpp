@@ -14,6 +14,7 @@
 #define ENV_H
 #include "vars.hpp"
 #include "drd_info.hpp"
+#include "display.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "path.hpp"
@@ -110,7 +111,6 @@
 class edit_env;
 class edit_env_rep: public concrete_struct {
 public:
-  display                      dis;
   drd_info&                    drd;
 private:
   hashmap<string,tree>         env;
@@ -318,8 +318,7 @@ private:
   tree rewrite_inactive (tree t, tree var);
 
 public:
-  edit_env_rep (display dis,
-		drd_info& drd,
+  edit_env_rep (drd_info& drd,
 		url base_file_name,
 		hashmap<string,tree>& local_ref,
 		hashmap<string,tree>& global_ref,
@@ -428,7 +427,7 @@ public:
     return as_vspace (t); }
   inline color get_color (string var) {
     tree t= env [var];
-    return dis->get_color (as_string (t)); }
+    return the_display->get_color (as_string (t)); }
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);
@@ -438,8 +437,7 @@ class edit_env {
   CONCRETE_NULL(edit_env);
   inline edit_env (edit_env_rep* rep2):
     rep(rep2) { INC_COUNT_NULL (this->rep); }
-  edit_env (display dis,
-	    drd_info& drd,
+  edit_env (drd_info& drd,
 	    url base_file_name,
 	    hashmap<string,tree>& local_ref,
 	    hashmap<string,tree>& global_ref,

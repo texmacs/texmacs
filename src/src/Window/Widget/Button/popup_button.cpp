@@ -99,7 +99,7 @@ popup_button_rep::map_popup () {
 
   if (!nil (mw)) {
     // int start_1= texmacs_time ();
-    popup_w= popup_widget (mw (dis), opposite (where));
+    popup_w= popup_widget (mw (), opposite (where));
     // cout << "Mapping required " << (texmacs_time ()-start_1) << " ms\n";
   }
 
@@ -147,7 +147,7 @@ popup_button_rep::unmap_popup () {
   if (!nil (mw)) popup_w= widget ();
 
   this << emit_invalidate_all ();
-  if (!dis->has_grab_pointer (this))
+  if (!the_display->has_grab_pointer (this))
     fatal_error ("I do not have the pointer grab",
 		 "popup_button_rep::unmap_popup");
   this << emit_mouse_grab (false);
@@ -242,7 +242,7 @@ popup_button_rep::handle_mouse (mouse_event ev) {
     time_t now;
     do {
       now= texmacs_time ();
-      if (dis->check_event (MENU_EVENT)) return;
+      if (the_display->check_event (MENU_EVENT)) return;
     } while ((now-entered_at) < MAP_DELAY);
     map_popup ();
   }

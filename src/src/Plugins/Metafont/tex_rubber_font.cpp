@@ -27,7 +27,7 @@ struct tex_rubber_font_rep: font_rep {
   font_glyphs      pk;
   double           unit;
 
-  tex_rubber_font_rep (display dis, string name, string trl_name,
+  tex_rubber_font_rep (string name, string trl_name,
 		       string family, int size, int dpi, int dsize);
   void get_extents (int c, metric& ex);
   void get_partial_extents (int c, metric& ex);
@@ -53,9 +53,9 @@ struct tex_dummy_rubber_font_rep: font_rep {
 
 #define conv(x) ((SI) (((double) (x))*unit))
 
-tex_rubber_font_rep::tex_rubber_font_rep (display dis, string name,
+tex_rubber_font_rep::tex_rubber_font_rep (string name,
   string trl_name, string family2, int size2, int dpi2, int dsize2):
-    font_rep (dis, name), dsize (dsize2), ext (load_translator (trl_name))
+    font_rep (name), dsize (dsize2), ext (load_translator (trl_name))
 {
   load_tex (family2, size2, dpi2, dsize, tfm, pk);
 
@@ -92,11 +92,11 @@ tex_rubber_font_rep::tex_rubber_font_rep (display dis, string name,
 }
 
 font
-tex_rubber_font (display dis, string trl_name,
+tex_rubber_font (string trl_name,
 		 string family, int size, int dpi, int dsize) {
   string name= "tex-rubber:"*family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_rubber_font_rep (dis, name, trl_name, family, size, dpi, dsize));
+    new tex_rubber_font_rep (name, trl_name, family, size, dpi, dsize));
 }
 
 /******************************************************************************
@@ -283,7 +283,7 @@ tex_rubber_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 tex_dummy_rubber_font_rep::tex_dummy_rubber_font_rep (string name, font fn):
-  font_rep (fn->dis, name), base_fn (fn) {}
+  font_rep (name), base_fn (fn) {}
 
 void
 tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {

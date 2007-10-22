@@ -18,7 +18,6 @@
 #include "url.hpp"
 
 class printer_rep: public ps_device_rep {
-  display  dis;
   url      ps_file_name;
   int      dpi;
   int      nr_pages;
@@ -48,7 +47,7 @@ class printer_rep: public ps_device_rep {
   hashmap<string,array<int> > tex_font_chars;
 
 public:
-  printer_rep (display dis, url ps_file_name, int dpi, int nr_pages,
+  printer_rep (url ps_file_name, int dpi, int nr_pages,
 	       string ptype, bool landsc, double paper_w, double paper_h);
   ~printer_rep ();
   bool is_printer ();
@@ -102,7 +101,7 @@ public:
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 };
 
-ps_device printer (display dis, url ps_file_name, int dpi, int nr_pages= 1,
+ps_device printer (url ps_file_name, int dpi, int nr_pages= 1,
 		   string page_type= "a4", bool landscape= false,
 		   double paper_w= 21.0, double paper_h= 29.7);
 

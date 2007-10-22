@@ -21,11 +21,9 @@
 
 class attribute_widget_rep: public basic_widget_rep {
 public:
-  attribute_widget_rep (display dis,
-			gravity grav= north_west);
-  attribute_widget_rep (display dis, array<widget> a,
-			gravity grav= north_west);
-  attribute_widget_rep (display dis, array<widget> a,
+  attribute_widget_rep (gravity grav= north_west);
+  attribute_widget_rep (array<widget> a, gravity grav= north_west);
+  attribute_widget_rep (array<widget> a,
 			array<string> name, gravity grav= north_west);
 
   virtual void handle_get_integer   (get_integer_event ev);

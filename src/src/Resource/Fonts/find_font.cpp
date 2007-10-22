@@ -62,84 +62,84 @@ substitute (tree by, hashmap<string,tree>& H) {
 }
 
 font
-find_font_bis (display dis, tree t) {
+find_font_bis (tree t) {
   // cout << "Find " << t << "\n";
 
   if ((arity (t)==0) || is_compound (t[0])) return font ();
 
   if (is_tuple (t, "compound"))
-    return compound_font (dis, t (1, N(t)));
+    return compound_font (t (1, N(t)));
 
   if (is_tuple (t, "truetype", 3))
-    return tt_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+    return tt_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "unicode", 3))
-    return unicode_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+    return unicode_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "x", 3))
-    return x_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+    return x_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "tex", 3))
-    return tex_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+    return tex_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "tex", 4))
-    return tex_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]),
+    return tex_font (as_string (t[1]), as_int (t[2]), as_int (t[3]),
 		     as_int (t[4]));
 
   if (is_tuple (t, "cm", 3))
-    return tex_cm_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+    return tex_cm_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "cm", 4))
-    return tex_cm_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]),
+    return tex_cm_font (as_string (t[1]), as_int (t[2]), as_int (t[3]),
 			as_int (t[4]));
 
   if (is_tuple (t, "ec", 3))
-    return tex_ec_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+    return tex_ec_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "ec", 4))
-    return tex_ec_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]),
+    return tex_ec_font (as_string (t[1]), as_int (t[2]), as_int (t[3]),
 			as_int (t[4]));
   
   if (is_tuple (t, "la", 3))
-    return tex_la_font (dis, as_string (t[1]), as_int (t[2]) * 100,
+    return tex_la_font (as_string (t[1]), as_int (t[2]) * 100,
 			as_int (t[3]), 1000);
 
   if (is_tuple (t, "la", 4))
-    return tex_la_font (dis, as_string (t[1]), as_int (t[2]) * 100,
+    return tex_la_font (as_string (t[1]), as_int (t[2]) * 100,
 			as_int (t[3]), as_int (t[4]) * 100);
 
   if (is_tuple (t, "adobe", 3))
-    return tex_adobe_font (dis, as_string (t[1]), as_int (t[2]),
+    return tex_adobe_font (as_string (t[1]), as_int (t[2]),
 			   as_int (t[3]));
 
   if (is_tuple (t, "adobe", 4))
-    return tex_adobe_font (dis, as_string (t[1]), as_int (t[2]),
+    return tex_adobe_font (as_string (t[1]), as_int (t[2]),
 			   as_int (t[3]), as_int (t[4]));
 
   if (is_tuple (t, "tex-rubber", 4))
-    return tex_rubber_font (dis, as_string (t[1]), as_string (t[2]),
+    return tex_rubber_font (as_string (t[1]), as_string (t[2]),
 			    as_int (t[3]), as_int (t[4]));
 
   if (is_tuple (t, "tex-rubber", 5))
-    return tex_rubber_font (dis, as_string (t[1]), as_string (t[2]),
+    return tex_rubber_font (as_string (t[1]), as_string (t[2]),
 			    as_int (t[3]), as_int (t[4]), as_int (t[5]));
 
   if (is_tuple (t, "tex-dummy-rubber", 1)) {
-    font fn= find_font (dis, t[1]);
+    font fn= find_font (t[1]);
     if (nil (fn)) return fn;
     return tex_dummy_rubber_font (fn);
   }
   
   if (is_tuple (t, "error", 1)) {
-    font fn= find_font (dis, t[1]);
+    font fn= find_font (t[1]);
     if (nil (fn)) return fn;
     return error_font (fn);
   }
 
   if (is_tuple (t, "math", 4) && is_tuple (t[1]) && is_tuple (t[2])) {
-    font fn= find_font (dis, t[3]);
+    font fn= find_font (t[3]);
     if (nil (fn)) return fn;
-    font error_fn= error_font (find_font (dis, t[4]));
+    font error_fn= error_font (find_font (t[4]));
     if (nil (error_fn)) error_fn= error_font (fn);
     return math_font (t, fn, error_fn);
   }
@@ -151,16 +151,16 @@ find_font_bis (display dis, tree t) {
   for (i=0; i<n; i++) {
     hashmap<string,tree> H ("?");
     if (matches (t, rule[i][0], H))
-      return find_font (dis, substitute (rule[i][1], H));
+      return find_font (substitute (rule[i][1], H));
   }
 
   return font ();
 }
 
 font
-find_font (display dis, tree t) {
+find_font (tree t) {
   bench_start ("find font");
-  font fn= find_font_bis (dis, t);
+  font fn= find_font_bis (t);
   bench_cumul ("find font");
   return fn;
 }
@@ -170,7 +170,7 @@ find_font (display dis, tree t) {
 ******************************************************************************/
 
 font
-find_font (display dis, string family, string fn_class,
+find_font (string family, string fn_class,
 	   string series, string shape, int sz, int dpi)
 {
   string s=
@@ -184,7 +184,7 @@ find_font (display dis, string family, string fn_class,
   t1[1]= fn_class;
   t1[2]= series; t1[3]= shape;
   t1[4]= as_string (sz); t1[5]= as_string (dpi);
-  font fn= find_font (dis, t1);
+  font fn= find_font (t1);
   if (!nil (fn)) {
     font::instances (s)= (pointer) fn.rep;
     return fn;
@@ -194,7 +194,7 @@ find_font (display dis, string family, string fn_class,
   t2[0]= family;
   t2[1]= fn_class; t2[2]= series;
   t2[3]= as_string (sz); t2[4]= as_string (dpi);
-  fn= find_font (dis, t2);
+  fn= find_font (t2);
   if (!nil (fn)) {
     font::instances (s)= (pointer) fn.rep;
     return fn;
@@ -203,14 +203,14 @@ find_font (display dis, string family, string fn_class,
   tree t3 (TUPLE, 4);
   t3[0]= family;
   t3[1]= fn_class; t3[2]= as_string (sz); t3[3]= as_string (dpi);
-  fn= find_font (dis, t3);
+  fn= find_font (t3);
   if (!nil (fn)) {
     font::instances (s)= (pointer) fn.rep;
     return fn;
   }
 
   tree panic (TUPLE, "tex", "cmr", as_string (sz), as_string (dpi));
-  fn= find_font (dis, panic);
+  fn= find_font (panic);
   font::instances (s)= (pointer) fn.rep;
   return fn;
 }

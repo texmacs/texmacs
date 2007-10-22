@@ -30,7 +30,7 @@ class box_widget_rep: public basic_widget_rep {
   int  dw, dh;
 
 public:
-  box_widget_rep (display dis, box b, bool trans, int dw, int dh);
+  box_widget_rep (box b, bool trans, int dw, int dh);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -38,8 +38,8 @@ public:
 };
 
 box_widget_rep::box_widget_rep (
-  display dis, box b2, bool trans2, int dw2, int dh2):
-    basic_widget_rep (dis, south_west), b (b2),
+  box b2, bool trans2, int dw2, int dh2):
+    basic_widget_rep (south_west), b (b2),
     transparent (trans2), dw (dw2+2*PIXEL), dh (dh2+2*PIXEL) {}
 
 box_widget_rep::operator tree () {
@@ -74,7 +74,7 @@ box_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 widget
 box_widget (box b, bool trans) {
-  return new box_widget_rep (current_display (), b, trans, 3*PIXEL, 3*PIXEL);
+  return new box_widget_rep (b, trans, 3*PIXEL, 3*PIXEL);
 }
 
 widget
@@ -92,8 +92,7 @@ box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
   if ((n >= 4) && is_atomic (p[3])) shape   = as_string (p[3]);
   if ((n >= 5) && is_atomic (p[4])) sz      = as_int (p[4]);
   if ((n >= 6) && is_atomic (p[5])) dpi     = as_int (p[5]);
-  display dis= current_display ();
-  font fn= find_font (dis, family, fn_class, series, shape, sz, dpi);
+  font fn= find_font (family, fn_class, series, shape, sz, dpi);
   box  b = text_box (decorate (), 0, s, fn, col);
   if (ink) b= resize_box (decorate (), b, b->x3, b->y3, b->x4, b->y4, true);
   return box_widget (b, trans);
@@ -115,9 +114,8 @@ void use_modules (tree t);
 
 edit_env
 get_init_environment (tree doc, drd_info& drd) {
-  display  dis= current_display ();
   hashmap<string,tree> h1 (UNINIT), h2 (UNINIT), h3 (UNINIT), h4 (UNINIT);
-  edit_env env (dis, drd, "none", h1, h2, h3, h4);
+  edit_env env (drd, "none", h1, h2, h3, h4);
   env->write_default_env ();
   bool ok;
   tree t, style= extract (doc, "style");
