@@ -75,7 +75,7 @@ edit_src     := $(call findsrc,Edit)
 resource_src := $(call findsrc,Resource)
 window_src   := $(call findsrc_in,Window,Event PsDevice Widget)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Ghostscript Imlib2 \
-                                          Ispell Metafont Openssl)
+                                          Ispell Metafont Openssl Widkit)
 x11_src      := $(call findsrc_in,Plugins,X11)
 texmacs_src  := $(call findsrc,Texmacs)
 typeset_src  := $(call findsrc,Typeset)
