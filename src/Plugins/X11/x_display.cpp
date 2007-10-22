@@ -12,9 +12,9 @@
 
 #include "timer.hpp"
 #include "dictionary.hpp"
-#include "X/x_display.hpp"
-#include "X/x_drawable.hpp"
-#include "X/x_window.hpp"
+#include "X11/x_display.hpp"
+#include "X11/x_drawable.hpp"
+#include "X11/x_window.hpp"
 #include "iterator.hpp"
 #include "image_files.hpp"
 #include <X11/cursorfont.h>
