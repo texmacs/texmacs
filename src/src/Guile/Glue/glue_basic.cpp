@@ -3533,10 +3533,10 @@ tmg_widget_balloon (SCM arg1, SCM arg2) {
 SCM
 tmg_widget_pulldown_button_lazy (SCM arg1, SCM arg2) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-pulldown-button-lazy");
-  SCM_ASSERT_MAKE_WIDGET (arg2, SCM_ARG2, "widget-pulldown-button-lazy");
+  SCM_ASSERT_PROMISE_WIDGET (arg2, SCM_ARG2, "widget-pulldown-button-lazy");
 
   widget in1= scm_to_widget (arg1);
-  make_widget in2= scm_to_make_widget (arg2);
+  promise_widget in2= scm_to_promise_widget (arg2);
 
   // SCM_DEFER_INTS;
   widget out= pulldown_button (in1, in2);
@@ -3548,10 +3548,10 @@ tmg_widget_pulldown_button_lazy (SCM arg1, SCM arg2) {
 SCM
 tmg_widget_pullright_button_lazy (SCM arg1, SCM arg2) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-pullright-button-lazy");
-  SCM_ASSERT_MAKE_WIDGET (arg2, SCM_ARG2, "widget-pullright-button-lazy");
+  SCM_ASSERT_PROMISE_WIDGET (arg2, SCM_ARG2, "widget-pullright-button-lazy");
 
   widget in1= scm_to_widget (arg1);
-  make_widget in2= scm_to_make_widget (arg2);
+  promise_widget in2= scm_to_promise_widget (arg2);
 
   // SCM_DEFER_INTS;
   widget out= pullright_button (in1, in2);
@@ -3599,16 +3599,16 @@ tmg_widget_box (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
 }
 
 SCM
-tmg_object_2make_widget (SCM arg1) {
-  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->make-widget");
+tmg_object_2promise_widget (SCM arg1) {
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->promise-widget");
 
   object in1= scm_to_object (arg1);
 
   // SCM_DEFER_INTS;
-  make_widget out= as_make_widget (in1);
+  promise_widget out= as_promise_widget (in1);
   // SCM_ALLOW_INTS;
 
-  return make_widget_to_scm (out);
+  return promise_widget_to_scm (out);
 }
 
 void
@@ -3871,5 +3871,5 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-pullright-button-lazy", (FN) tmg_widget_pullright_button_lazy, 2, 0, 0);
   scm_new_procedure ("widget-wait", (FN) tmg_widget_wait, 3, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
-  scm_new_procedure ("object->make-widget", (FN) tmg_object_2make_widget, 1, 0, 0);
+  scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
 }

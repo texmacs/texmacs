@@ -12,8 +12,10 @@
 
 #ifndef WIDGET_H
 #define WIDGET_H
-#include "Widkit/event.hpp"
 #include "url.hpp"
+#include "Widkit/event.hpp"
+
+template<class T> class promise;
 
 /******************************************************************************
 * The abstract widget class
@@ -88,6 +90,8 @@ widget command_button (widget lw, widget cw, widget rw, command cmd,
 		       bool e=true, bool c=false);
 widget pulldown_button (widget w, widget m, bool button_flag= false);
 widget pullright_button (widget w, widget m, bool button_flag= false);
+widget pulldown_button (widget w, promise<widget> pw);
+widget pullright_button (widget w, promise<widget> pw);
 widget popup_widget (widget w, gravity quit=center);
 widget canvas_widget (widget w, gravity grav=north_west);
 widget input_text_widget (command call_back);

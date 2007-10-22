@@ -16,6 +16,7 @@
 #include "Scheme/object.hpp"
 #include "list.hpp"
 #include "array.hpp"
+#include "promise.hpp"
 
 /******************************************************************************
 * The object representation class
@@ -270,12 +271,12 @@ as_command (object obj) {
   return new object_command_rep (obj);
 }
 
-class object_make_widget_rep: public make_widget_rep {
+class object_promise_widget_rep: public promise_rep<widget> {
   object obj;
 public:
-  object_make_widget_rep (object obj2): obj (obj2) {}
+  object_promise_widget_rep (object obj2): obj (obj2) {}
   ostream& print (ostream& out) { return out << obj; }
-  widget get_widget () {
+  widget eval () {
     SCM result= call_scheme (obj->lookup ());
     if (scm_is_widget (result)) return scm_to_widget (result);
     else {
@@ -285,9 +286,9 @@ public:
   }
 };
 
-make_widget
-as_make_widget (object obj) {
-  return new object_make_widget_rep (obj);
+promise<widget>
+as_promise_widget (object obj) {
+  return new object_promise_widget_rep (obj);
 }
 
 /******************************************************************************

@@ -12,7 +12,7 @@
 
 #include "timer.hpp"
 #include "window.hpp"
-#include "make_widget.hpp"
+#include "promise.hpp"
 #include "Widkit/Button/button_widget.hpp"
 
 #ifdef OS_WIN32
@@ -26,13 +26,13 @@
 ******************************************************************************/
 
 class popup_button_rep: public button_widget_rep {
-  make_widget mw;
-  widget      popup_w;
-  window      popup;
-  gravity     where;
-  time_t      entered_at;
-  bool        require_map;
-  bool        stick;
+  promise<widget> prom;
+  widget  popup_w;
+  window  popup;
+  gravity where;
+  time_t  entered_at;
+  bool    require_map;
+  bool    stick;
 
 private:
   void map_popup ();
@@ -40,7 +40,7 @@ private:
   void consistent (string s);
 public:
   popup_button_rep (widget w, widget pw, gravity where, bool button_flag);
-  popup_button_rep (widget w, make_widget mw, gravity where);
+  popup_button_rep (widget w, promise<widget> prom, gravity where);
   void handle_attach_window (attach_window_event ev);
   void handle_mouse (mouse_event ev);
   bool handle (event ev);
@@ -54,7 +54,7 @@ gravity opposite (gravity grav);
 
 popup_button_rep::popup_button_rep (widget w, widget pw, gravity wh, bool fl):
   button_widget_rep (w, wh==east, fl),
-  mw (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
+  prom (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
   where (wh), require_map (false), stick (false)
 {
   if ((where!=east) && (where!=south) && (where!=south_east))
@@ -62,10 +62,11 @@ popup_button_rep::popup_button_rep (widget w, widget pw, gravity wh, bool fl):
 		 "popup_button_rep::popup_button_rep");
 }
 
-popup_button_rep::popup_button_rep (widget w, make_widget mw2, gravity where2):
-  button_widget_rep (w, where2==east),
-  mw (mw2), popup_w (), popup (NULL),
-  where (where2), require_map (false), stick (false)
+popup_button_rep::popup_button_rep (
+  widget w, promise<widget> prom2, gravity where2):
+    button_widget_rep (w, where2==east),
+    prom (prom2), popup_w (), popup (NULL),
+    where (where2), require_map (false), stick (false)
 {
   if ((where!=east) && (where!=south) && (where!=south_east))
     fatal_error ("direction not implemented",
@@ -97,9 +98,9 @@ popup_button_rep::map_popup () {
   require_map= false;
   stick      = false;
 
-  if (!nil (mw)) {
+  if (!nil (prom)) {
     // int start_1= texmacs_time ();
-    popup_w= popup_widget (mw (), opposite (where));
+    popup_w= popup_widget (prom (), opposite (where));
     // cout << "Mapping required " << (texmacs_time ()-start_1) << " ms\n";
   }
 
@@ -144,7 +145,7 @@ popup_button_rep::unmap_popup () {
   popup->unmap ();
   delete popup;
   popup= NULL;
-  if (!nil (mw)) popup_w= widget ();
+  if (!nil (prom)) popup_w= widget ();
 
   this << emit_invalidate_all ();
   if (!the_display->has_grab_pointer (this))
@@ -300,11 +301,11 @@ pullright_button (widget w, widget pw, bool button_flag) {
 }
 
 widget
-pulldown_button (widget w, make_widget mw) {
-  return new popup_button_rep (w, mw, south_east);
+pulldown_button (widget w, promise<widget> prom) {
+  return new popup_button_rep (w, prom, south_east);
 }
 
 widget
-pullright_button (widget w, make_widget mw) {
-  return new popup_button_rep (w, mw, east);
+pullright_button (widget w, promise<widget> prom) {
+  return new popup_button_rep (w, prom, east);
 }
