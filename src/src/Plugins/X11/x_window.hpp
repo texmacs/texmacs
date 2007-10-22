@@ -13,7 +13,7 @@
 #ifndef X_WINDOW_H
 #define X_WINDOW_H
 #include "window.hpp"
-#include "X/x_drawable.hpp"
+#include "X11/x_drawable.hpp"
 #include "rectangles.hpp"
 #include "array.hpp"
 

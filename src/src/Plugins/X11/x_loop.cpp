@@ -10,8 +10,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "X/x_display.hpp"
-#include "X/x_window.hpp"
+#include "X11/x_display.hpp"
+#include "X11/x_window.hpp"
 #include "iterator.hpp"
 #include "converter.hpp"
 #include "socket_server.hpp"

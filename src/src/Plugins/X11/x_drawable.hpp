@@ -13,8 +13,8 @@
 #ifndef X_DRAWABLE_H
 #define X_DRAWABLE_H
 #include "ps_device.hpp"
-#include "X/x_display.hpp"
-#include "X/x_font.hpp"
+#include "X11/x_display.hpp"
+#include "X11/x_font.hpp"
 #include "rectangles.hpp"
 #include "array.hpp"
 

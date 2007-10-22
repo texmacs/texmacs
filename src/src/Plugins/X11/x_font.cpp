@@ -10,8 +10,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "X/x_window.hpp"
-#include "X/x_font.hpp"
+#include "X11/x_window.hpp"
+#include "X11/x_font.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
