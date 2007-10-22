@@ -84,9 +84,8 @@ path as_path (object obj);
 url as_url (object obj);
 command as_command (object obj);
 #ifdef WIDGET_H // FIXME: dirty hack
-#include "make_widget.hpp"
 widget as_widget (object obj);
-make_widget as_make_widget (object obj);
+promise<widget> as_promise_widget (object obj);
 #endif
 
 object tree_to_stree (tree t);

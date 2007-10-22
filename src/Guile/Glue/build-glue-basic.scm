@@ -304,8 +304,10 @@
   ;;(widget-text-input input_text_widget (widget command))
   ;;(widget-file-chooser file_chooser_widget (widget command string string))
   (widget-balloon balloon_widget (widget widget widget))
-  (widget-pulldown-button-lazy pulldown_button (widget widget make_widget))
-  (widget-pullright-button-lazy pullright_button (widget widget make_widget))
+  (widget-pulldown-button-lazy pulldown_button
+			       (widget widget promise_widget))
+  (widget-pullright-button-lazy pullright_button
+				(widget widget promise_widget))
   (widget-wait wait_widget (widget int int string))
   (widget-box box_widget (widget scheme_tree string int bool bool))
-  (object->make-widget as_make_widget (make_widget object)))
+  (object->promise-widget as_promise_widget (promise_widget object)))

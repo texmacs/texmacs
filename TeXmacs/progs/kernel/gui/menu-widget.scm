@@ -238,7 +238,7 @@
 	   ((cond ((== tag '=>) widget-pulldown-button-lazy)
 		  ((== tag '->) widget-pullright-button-lazy))
 	    (make-menu-label label e?)
-	    (object->make-widget
+	    (object->promise-widget
 	     (lambda () (make-menu-widget (list 'vertical items) e?))))))
       (if (tuple? label 'balloon 2)
 	  (widget-balloon button

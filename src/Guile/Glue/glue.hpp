@@ -16,7 +16,8 @@
 #include "tree.hpp"
 #include "path.hpp"
 #include "url.hpp"
-#include "make_widget.hpp"
+#include "widget.hpp"
+#include "promise.hpp"
 
 void initialize_glue ();
 
