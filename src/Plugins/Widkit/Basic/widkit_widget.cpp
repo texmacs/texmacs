@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : widget.hpp
-* DESCRIPTION: Definition of abstract widgets
+* MODULE     : widkit_widget.hpp
+* DESCRIPTION: Definition of abstract native widgets
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,19 +10,20 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "widget.hpp"
 #include "window.hpp"
+#include "Widkit/widkit_widget.hpp"
 
 /******************************************************************************
 * Widget construction and destruction
 ******************************************************************************/
 
 extern int widget_count;
-widget_rep::widget_rep (array<widget> a2, array<string> n2, gravity grav2):
+widkit_widget_rep::widkit_widget_rep (array<widget> a2, array<string> n2,
+				      gravity grav2):
   win (NULL), ox (0), oy (0), w (0), h (0),
   grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
 
-widget_rep::~widget_rep () { DEBUG(widget_count--); }
+widkit_widget_rep::~widkit_widget_rep () { DEBUG(widget_count--); }
 
 /******************************************************************************
 * Computing lower left and upper right widget coordinates
@@ -57,22 +58,22 @@ get_dy (gravity grav, int h) {
 }
 
 SI
-widget_rep::x1 () {
+widkit_widget_rep::x1 () {
   return ox- get_dx (grav, w);
 }
 
 SI
-widget_rep::y1 () {
+widkit_widget_rep::y1 () {
   return oy- get_dy (grav, h)- h;
 }
 
 SI
-widget_rep::x2 () {
+widkit_widget_rep::x2 () {
   return ox- get_dx (grav, w)+ w;
 }
 
 SI
-widget_rep::y2 () {
+widkit_widget_rep::y2 () {
   return oy- get_dy (grav, h);
 }
 
@@ -102,12 +103,12 @@ widget::operator [] (string s) {
 ******************************************************************************/
 
 bool
-widget_rep::attached () {
+widkit_widget_rep::attached () {
   return win!=NULL;
 }
 
 void
-widget_rep::fatal_error (string message, string in, string file_name) {
+widkit_widget_rep::fatal_error (string message, string in, string file_name) {
   cerr << "\n------------------------------------------------------------------------------\n";
   cerr << widget (this);
   cerr << "------------------------------------------------------------------------------\n";

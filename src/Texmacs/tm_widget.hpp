@@ -38,7 +38,7 @@ protected:
 public:
   tm_widget_rep (server_rep* sv);
   ~tm_widget_rep ();
-  widget_rep* get_this ();
+  widkit_widget_rep* get_this ();
 
   operator tree ();
   void set_window_name (string s);

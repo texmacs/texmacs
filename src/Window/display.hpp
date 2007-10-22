@@ -17,7 +17,8 @@
 #include "timer.hpp"
 
 struct font;
-class widget;
+class widkit_widget;
+typedef widkit_widget widget;
 class window_rep;
 typedef window_rep* window;
 class display_rep;

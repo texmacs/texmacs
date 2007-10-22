@@ -16,7 +16,7 @@
 SI get_dx (gravity grav, int w);
 SI get_dy (gravity grav, int h);
 
-inline bool nil(widget_rep* x) { return x==NULL; }
+inline bool nil (widkit_widget_rep* x) { return x==NULL; }
 
 /******************************************************************************
 * Routines for scrollable widgets
