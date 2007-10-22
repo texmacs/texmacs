@@ -12,7 +12,7 @@
 
 #ifndef WIDGET_H
 #define WIDGET_H
-#include "event.hpp"
+#include "Widkit/event.hpp"
 #include "url.hpp"
 
 /******************************************************************************

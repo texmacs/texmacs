@@ -15,7 +15,7 @@
 #include "editor.hpp"
 #include "timer.hpp"
 #include "window.hpp"
-#include "Event/attribute_event.hpp"
+#include "Widkit/Event/attribute_event.hpp"
 
 #define INPUT_NORMAL      0
 #define INPUT_SEARCH      1

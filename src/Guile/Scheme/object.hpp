@@ -84,7 +84,7 @@ path as_path (object obj);
 url as_url (object obj);
 command as_command (object obj);
 #ifdef WIDGET_H // FIXME: dirty hack
-#include "Widget/make_widget.hpp"
+#include "make_widget.hpp"
 widget as_widget (object obj);
 make_widget as_make_widget (object obj);
 #endif

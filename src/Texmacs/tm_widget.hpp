@@ -14,8 +14,8 @@
 #define TM_WIDGET_H
 #include "server.hpp"
 #include "window.hpp"
-#include "Event/attribute_event.hpp"
 #include "scheme.hpp"
+#include "Widkit/Event/attribute_event.hpp"
 
 class tm_widget_rep;
 class tm_widget;

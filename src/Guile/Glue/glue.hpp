@@ -16,7 +16,7 @@
 #include "tree.hpp"
 #include "path.hpp"
 #include "url.hpp"
-#include "Widget/make_widget.hpp"
+#include "make_widget.hpp"
 
 void initialize_glue ();
 

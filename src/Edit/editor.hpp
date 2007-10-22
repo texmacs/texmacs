@@ -13,7 +13,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 #include "typesetter.hpp"
-#include "Widget/attribute_widget.hpp"
+#include "Widkit/attribute_widget.hpp"
 #include "server.hpp"
 #include "scheme.hpp"
 #include "drd_info.hpp"
