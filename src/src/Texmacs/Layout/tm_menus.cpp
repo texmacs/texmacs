@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "tm_layout.hpp"
-#include "tm_buffer.hpp"
+#include "tm_window.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -49,56 +49,47 @@ icon_bar_name (int which) {
 
 int
 tm_layout_rep::get_window_id () {
-  tm_widget meta= get_meta ();
-  return meta->serial;
+  return get_window () -> serial ();
 }
 
 void
 tm_layout_rep::set_window_property (scheme_tree what, scheme_tree val) {
-  tm_widget meta= get_meta ();
-  meta->props (what)= val;
+  get_window () -> set_property (what, val);
 }
 
 void
 tm_layout_rep::set_bool_window_property (string what, bool val) {
-  tm_widget meta= get_meta ();
-  meta->props (what)= (val? string ("true"): string ("false"));
+  get_window () -> set_property (what, val? string ("true"): string ("false"));
 }
 
 void
 tm_layout_rep::set_int_window_property (string what, int val) {
-  tm_widget meta= get_meta ();
-  meta->props (what)= as_tree (val);
+  get_window () -> set_property (what, as_tree (val));
 }
 
 void
 tm_layout_rep::set_string_window_property (string what, string val) {
-  tm_widget meta= get_meta ();
-  meta->props (what)= val;
+  get_window () -> set_property (what, val);
 }
 
 scheme_tree
 tm_layout_rep::get_window_property (scheme_tree what) {
-  tm_widget meta= get_meta ();
-  return meta->props [what];
+  return get_window () -> get_property (what);
 }
 
 bool
 tm_layout_rep::get_bool_window_property (string what) {
-  tm_widget meta= get_meta ();
-  return as_bool (meta->props [what]);
+  return as_bool (get_window () -> get_property (what));
 }
 
 int
 tm_layout_rep::get_int_window_property (string what) {
-  tm_widget meta= get_meta ();
-  return as_int (meta->props [what]);
+  return as_int (get_window () -> get_property (what));
 }
 
 string
 tm_layout_rep::get_string_window_property (string what) {
-  tm_widget meta= get_meta ();
-  return as_string (meta->props [what]);
+  return as_string (get_window () -> get_property (what));
 }
 
 /******************************************************************************
@@ -108,75 +99,68 @@ tm_layout_rep::get_string_window_property (string what) {
 void
 tm_layout_rep::menu_widget (string menu, wk_widget& w) {
   object xmenu= eval ("'" * menu);
-  tm_widget meta= get_meta ();
   w= make_menu_widget (xmenu);
 }
 
 void
 tm_layout_rep::menu_main (string menu) {
   if (!has_view ()) return;
-  tm_widget meta= get_meta ();  
-  meta->menu_main (menu);
+  get_window () -> menu_main (menu);
 }
 
 void
 tm_layout_rep::menu_icons (int which, string menu) {
   if ((which<0) || (which>2) || (!has_view())) return;
-  tm_widget meta= get_meta ();
-  meta->menu_icons (which, menu);
+  get_window () -> menu_icons (which, menu);
 }
 
 void
 tm_layout_rep::show_header (bool flag) {
   if (!has_view ()) return;
-  tm_widget meta= get_meta ();
-  meta->set_subwidget_flag (((wk_widget) meta) ["header"], flag);
+  tm_window win= get_window ();
+  win -> set_subwidget_flag (win->get_header (), flag);
 }
 
 void
 tm_layout_rep::show_icon_bar (int which, bool flag) {
   if ((which<0) || (which>2) || (!has_view())) return;
   string name= icon_bar_name (which);
-  tm_widget meta= get_meta ();
-  meta->set_subwidget_flag (((wk_widget) meta) ["header"] [name], flag);
+  tm_window win= get_window ();
+  win -> set_subwidget_flag (win->get_header () ["header"] [name], flag);
 }
 
 void
 tm_layout_rep::show_footer (bool flag) {
   if (!has_view ()) return;
-  tm_widget meta= get_meta ();
-  meta->set_footer_flag (flag);
+  get_window () ->set_footer_flag (flag);
 }
 
 bool
 tm_layout_rep::visible_header () {
-  tm_widget meta= get_meta ();
-  return meta->get_subwidget_flag (((wk_widget) meta) ["header"]);
+  tm_window win= get_window ();
+  return win -> get_subwidget_flag (win -> get_header ());
 }
 
 bool
 tm_layout_rep::visible_icon_bar (int which) {
   if ((which<0) || (which>2)) return false;
   string name= icon_bar_name (which);
-  tm_widget meta= get_meta ();
-  return meta->get_subwidget_flag (((wk_widget) meta) ["header"] [name]);
+  tm_window win= get_window ();
+  return win -> get_subwidget_flag (win -> get_header () [name]);
 }
 
 bool
 tm_layout_rep::visible_footer () {
-  tm_widget meta= get_meta ();
-  return meta->get_footer_flag ();
+  return get_window () -> get_footer_flag ();
 }
 
 void
 tm_layout_rep::set_shrinking_factor (int sf) {
   if (!has_view ()) return;
-  tm_widget meta= get_meta ();
-  meta->set_shrinking_factor (sf);
+  get_window () -> set_shrinking_factor (sf);
 }
 
 int
 tm_layout_rep::get_shrinking_factor () {
-  tm_widget meta= get_meta ();
-  return meta->get_shrinking_factor ();
+  return get_window () -> get_shrinking_factor ();
 }

@@ -129,7 +129,6 @@ public:
   virtual tm_buffer   get_buffer () = 0;
   virtual editor      get_editor () = 0;
   virtual tm_window   get_window () = 0;
-  virtual tm_widget   get_meta () = 0;
   virtual color       get_color (string s) = 0;
   virtual int         get_nr_windows () = 0;
 

@@ -46,7 +46,6 @@ public:
   tm_buffer   get_buffer ();
   editor      get_editor ();
   tm_window   get_window ();
-  tm_widget   get_meta ();
   color       get_color (string s);
   int         get_nr_windows ();
 
