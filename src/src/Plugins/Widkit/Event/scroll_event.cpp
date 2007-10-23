@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "ps_device.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "Widkit/wk_widget.hpp"
 #include "Widkit/Event/scroll_event.hpp"
 
 /******************************************************************************
@@ -31,8 +31,8 @@ scroll_event_rep::operator tree () {
 
 event get_width (SI& w) { return get_coord1 ("width", w); }
 event get_height (SI& h) { return get_coord1 ("height", h); }
-event set_hor_bar (widget bar) { return set_widget ("hor-bar",bar); }
-event set_ver_bar (widget bar) { return set_widget ("ver-bar",bar); }
+event set_hor_bar (wk_widget bar) { return set_widget ("hor-bar",bar); }
+event set_ver_bar (wk_widget bar) { return set_widget ("ver-bar",bar); }
 event emit_bar_set_extents (SI min, SI max) {
   return set_coord2 ("extents", min, max); }
 event emit_bar_scroll_to (SI pos) {

@@ -90,7 +90,7 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
 * exported routines
 ******************************************************************************/
 
-widget
-wait_widget (SI width, SI height, string message) {
+wk_widget
+wait_wk_widget (SI width, SI height, string message) {
   return new wait_widget_rep (width, height, message);
 }

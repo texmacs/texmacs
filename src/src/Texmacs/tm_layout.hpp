@@ -20,7 +20,7 @@ public:
   ~tm_layout_rep ();
 
   /* menus */
-  void menu_widget (string menu, widget& w);
+  void menu_widget (string menu, wk_widget& w);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
 
@@ -46,6 +46,9 @@ public:
   int  get_shrinking_factor ();
 };
 
+wk_widget box_wk_widget (box b, bool trans);
+wk_widget box_wk_widget (scheme_tree p, string s, color col,
+			 bool trans= true, bool ink= false);
 widget box_widget (box b, bool trans);
 widget box_widget (scheme_tree p, string s, color col,
 		   bool trans= true, bool ink= false);

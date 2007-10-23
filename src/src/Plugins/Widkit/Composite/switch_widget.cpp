@@ -14,11 +14,11 @@
 #include "Widkit/Event/attribute_event.hpp"
 
 class switch_widget_rep: public composite_widget_rep {
-  int           current;
-  array<widget> variant;
-  array<string> variant_name;
+  int current;
+  array<wk_widget> variant;
+  array<string>    variant_name;
 public:
-  switch_widget_rep (array<widget> a, array<string> name, int i);
+  switch_widget_rep (array<wk_widget> a, array<string> name, int i);
   operator tree ();
 
   void handle_attach_window (attach_window_event ev);
@@ -29,7 +29,7 @@ public:
   bool handle               (event ev);
 };
 
-switch_widget_rep::switch_widget_rep (array<widget> v,
+switch_widget_rep::switch_widget_rep (array<wk_widget> v,
   array<string> name, int init):
     composite_widget_rep (1),
     current (init),
@@ -130,16 +130,16 @@ switch_widget_rep::handle (event ev) {
 * Interface
 ******************************************************************************/
 
-widget
-switch_widget (array<widget> a, array<string> name, int init) {
+wk_widget
+switch_widget (array<wk_widget> a, array<string> name, int init) {
   return new switch_widget_rep (a, name, init);
 }
 
-widget
-optional_widget (widget w, bool on) {
-  array<widget> a (2);
+wk_widget
+optional_widget (wk_widget w, bool on) {
+  array<wk_widget> a (2);
   a[0]= w;
-  a[1]= glue_widget (false, false);
+  a[1]= glue_wk_widget (false, false);
   array<string> name (2);
   name[0]= "default";
   return switch_widget (a, name, on? 0: 1);

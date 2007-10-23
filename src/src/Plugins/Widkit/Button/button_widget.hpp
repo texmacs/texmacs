@@ -32,9 +32,10 @@ public:
   bool   status;
   bool   inside;
 
-  button_widget_rep (widget w, bool rflag=false, bool button_flag= false);
-  button_widget_rep (widget lw, widget rw);
-  button_widget_rep (widget lw, widget cw, widget rw,
+  button_widget_rep (wk_widget w,
+		     bool rflag=false, bool button_flag= false);
+  button_widget_rep (wk_widget lw, wk_widget rw);
+  button_widget_rep (wk_widget lw, wk_widget cw, wk_widget rw,
 		     bool e=true, bool c=false);
   operator tree ();
 

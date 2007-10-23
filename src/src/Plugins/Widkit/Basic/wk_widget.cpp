@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : widkit_widget.hpp
+* MODULE     : wk_widget.hpp
 * DESCRIPTION: Definition of abstract native widgets
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -11,19 +11,19 @@
 ******************************************************************************/
 
 #include "window.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "Widkit/wk_widget.hpp"
 
 /******************************************************************************
 * Widget construction and destruction
 ******************************************************************************/
 
 extern int widget_count;
-widkit_widget_rep::widkit_widget_rep (array<widget> a2, array<string> n2,
-				      gravity grav2):
-  win (NULL), ox (0), oy (0), w (0), h (0),
-  grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
+wk_widget_rep::wk_widget_rep (
+  array<wk_widget> a2, array<string> n2, gravity grav2):
+    win (NULL), ox (0), oy (0), w (0), h (0),
+    grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
 
-widkit_widget_rep::~widkit_widget_rep () { DEBUG(widget_count--); }
+wk_widget_rep::~wk_widget_rep () { DEBUG(widget_count--); }
 
 /******************************************************************************
 * Computing lower left and upper right widget coordinates
@@ -39,7 +39,7 @@ get_dx (gravity grav, int w) {
   case north_east: case east: case south_east:
     return w;
   }
-  fatal_error ("unknown gravity", "get_dx", "widget.cpp");
+  fatal_error ("unknown gravity", "get_dx", "wk_widget.cpp");
   return 0; // Because of bug in certain versions of g++
 }
 
@@ -53,27 +53,27 @@ get_dy (gravity grav, int h) {
   case south_west: case south: case south_east:
     return -h;
   }
-  fatal_error ("unknown gravity", "get_dy", "widget.cpp");
+  fatal_error ("unknown gravity", "get_dy", "wk_widget.cpp");
   return 0; // Because of bug in certain versions of g++
 }
 
 SI
-widkit_widget_rep::x1 () {
+wk_widget_rep::x1 () {
   return ox- get_dx (grav, w);
 }
 
 SI
-widkit_widget_rep::y1 () {
+wk_widget_rep::y1 () {
   return oy- get_dy (grav, h)- h;
 }
 
 SI
-widkit_widget_rep::x2 () {
+wk_widget_rep::x2 () {
   return ox- get_dx (grav, w)+ w;
 }
 
 SI
-widkit_widget_rep::y2 () {
+wk_widget_rep::y2 () {
   return oy- get_dy (grav, h);
 }
 
@@ -89,10 +89,10 @@ get_first (string s) {
   return s;
 }
 
-widget
-widget::operator [] (string s) {
+wk_widget
+wk_widget::operator [] (string s) {
   string l= get_first (s);
-  widget w;
+  wk_widget w;
   (*this) << get_widget (l, w);
   if (l==s) return w;
   else return w [s (N(l)+1, N(s))];
@@ -103,14 +103,14 @@ widget::operator [] (string s) {
 ******************************************************************************/
 
 bool
-widkit_widget_rep::attached () {
+wk_widget_rep::attached () {
   return win!=NULL;
 }
 
 void
-widkit_widget_rep::fatal_error (string message, string in, string file_name) {
+wk_widget_rep::fatal_error (string message, string in, string file_name) {
   cerr << "\n------------------------------------------------------------------------------\n";
-  cerr << widget (this);
+  cerr << wk_widget (this);
   cerr << "------------------------------------------------------------------------------\n";
   cerr << "Fatal error: " << message << "\n";
   if (in != "") cerr << "In function: '" << in << "'\n";
@@ -118,8 +118,8 @@ widkit_widget_rep::fatal_error (string message, string in, string file_name) {
   exit (1);
 }
 
-widget
-operator << (widget w, event ev) {
+wk_widget
+operator << (wk_widget w, event ev) {
   if (!w->handle (ev))
     cerr << "Warning: " << ((tree) ev)
 	 << " cannot be handled by\n" << w << "\n";
@@ -138,7 +138,7 @@ print_tree (ostream& out, tree t, int tab) {
 }
 
 ostream&
-operator << (ostream& out, widget w) {
+operator << (ostream& out, wk_widget w) {
   print_tree (out, (tree) w, 0);
   return out;
 }

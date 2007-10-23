@@ -13,7 +13,7 @@
 #ifndef BASIC_EVENT_H
 #define BASIC_EVENT_H
 #include "Widkit/event.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "Widkit/wk_widget.hpp"
 #include "Widkit/Event/event_codes.hpp"
 
 /******************************************************************************
@@ -28,15 +28,15 @@ struct get_size_event_rep: public event_rep {
 EVENT(get_size_event);
 
 struct get_widget_event_rep: public event_rep {
-  string which; widget& w;
-  get_widget_event_rep (string which, widget& w);
+  string which; wk_widget& w;
+  get_widget_event_rep (string which, wk_widget& w);
   operator tree ();
 };
 EVENT(get_widget_event);
 
 struct set_widget_event_rep: public event_rep {
-  string which; widget w;
-  set_widget_event_rep (string which, widget w);
+  string which; wk_widget w;
+  set_widget_event_rep (string which, wk_widget w);
   operator tree ();
 };
 EVENT(set_widget_event);

@@ -522,12 +522,12 @@ public:
 };
 
 class editor {
-  EXTEND_NULL(widget,editor);
+EXTEND_NULL(wk_widget,editor);
 public:
   inline bool operator == (editor w) { return rep == w.rep; }
   inline bool operator != (editor w) { return rep != w.rep; }
 };
-EXTEND_NULL_CODE(widget,editor);
+EXTEND_NULL_CODE(wk_widget,editor);
 
 editor new_editor (server_rep* sv, tm_buffer buf);
 

@@ -38,14 +38,14 @@ protected:
 public:
   tm_widget_rep (server_rep* sv);
   ~tm_widget_rep ();
-  widkit_widget_rep* get_this ();
+  wk_widget_rep* get_this ();
 
   operator tree ();
   void set_window_name (string s);
-  void set_popup_menu (widget w, SI x, SI y);
-  void set_subwidget (widget w, string which, widget sw);
-  bool get_subwidget_flag (widget w);
-  void set_subwidget_flag (widget w, bool on);
+  void set_popup_menu (wk_widget w, SI x, SI y);
+  void set_subwidget (wk_widget w, string which, wk_widget sw);
+  bool get_subwidget_flag (wk_widget w);
+  void set_subwidget_flag (wk_widget w, bool on);
 
   void interactive (string name, string type, array<string> def,
 		    string& s, command cmd);
@@ -59,7 +59,7 @@ public:
   void set_shrinking_factor (int sf);
   int  get_shrinking_factor ();
 
-  void menu_widget (string menu, widget& w);
+  void menu_widget (string menu, wk_widget& w);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
 
@@ -81,8 +81,8 @@ public:
 };
 
 class tm_widget {
-  EXTEND_NULL(widget,tm_widget);
+EXTEND_NULL(wk_widget,tm_widget);
 };
-EXTEND_NULL_CODE(widget,tm_widget);
+EXTEND_NULL_CODE(wk_widget,tm_widget);
 
 #endif // defined TM_WIDGET_H

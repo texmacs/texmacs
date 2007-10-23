@@ -78,8 +78,8 @@ public:
   operator tree ();
   void suspend ();
   void resume ();
-  widget  get_widget ();
-  void    get_size (SI& wx, SI& wy);
+  wk_widget get_widget ();
+  void      get_size (SI& wx, SI& wy);
 
   /* routines for dealing with shrinked coordinates */
   int  get_pixel_size ();

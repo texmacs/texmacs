@@ -18,7 +18,7 @@ class tm_scheme_rep: virtual public server_rep {
 protected:
   array<object> cmds;          // commands which are still to be executed
   window dialogue_win;         // dialogue window
-  widget dialogue_wid;         // dialogue widget
+  wk_widget dialogue_wid;      // dialogue wk_widget
 
 public:
   tm_scheme_rep ();
@@ -29,7 +29,7 @@ public:
   void exec_pending_commands ();
   string preference (string var);
 
-  void dialogue_start (string name, widget wid);
+  void dialogue_start (string name, wk_widget wid);
   void dialogue_inquire (int i, string& arg);
   void dialogue_end ();
   void choose_file (object fun, string title, string type);

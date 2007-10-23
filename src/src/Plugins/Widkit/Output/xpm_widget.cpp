@@ -64,7 +64,7 @@ xpm_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 * Interface
 ******************************************************************************/
 
-widget
-xpm_widget (url name, bool transp) {
+wk_widget
+xpm_wk_widget (url name, bool transp) {
   return new xpm_widget_rep (name, transp, PIXEL, PIXEL);
 }

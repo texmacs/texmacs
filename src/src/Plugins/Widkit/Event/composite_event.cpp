@@ -22,11 +22,11 @@ clean_event_rep::operator tree () { return "clean_event"; }
 event emit_clean () {
   return new clean_event_rep (); }
 
-insert_event_rep::insert_event_rep (string s2, widget w2):
+insert_event_rep::insert_event_rep (string s2, wk_widget w2):
   event_rep (INSERT_EVENT), s (s2), w (w2) {}
 insert_event_rep::operator tree () {
   return tree (TUPLE, "insert_event", s); }
-event emit_insert (string s, widget w) {
+event emit_insert (string s, wk_widget w) {
   return new insert_event_rep (s, w); }
 
 remove_event_rep::remove_event_rep (string s2):

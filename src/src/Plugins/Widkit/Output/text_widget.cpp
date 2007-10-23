@@ -75,13 +75,13 @@ text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 * Interface
 ******************************************************************************/
 
-widget
-text_widget (string s, bool tsp, string lan) {
+wk_widget
+text_wk_widget (string s, bool tsp, string lan) {
   return new text_widget_rep (s, the_display->black,
 			      tsp, lan, false, 3*PIXEL, 0);
 }
 
-widget
-menu_text_widget (string s, color col, string lan, bool tt) {
+wk_widget
+menu_text_wk_widget (string s, color col, string lan, bool tt) {
   return new text_widget_rep (s, col, true, lan, tt, 3*PIXEL, 0);
 }

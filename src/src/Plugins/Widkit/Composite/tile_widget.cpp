@@ -24,8 +24,8 @@ protected:
   int cols, rows;
 
 public:
-  tile_rep (array<widget> a, int cols);
-  tile_rep (array<widget> a, int cols, array<string> name);
+  tile_rep (array<wk_widget> a, int cols);
+  tile_rep (array<wk_widget> a, int cols, array<string> name);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -34,11 +34,11 @@ public:
   void handle_set_coord2 (set_coord2_event ev);
 };
 
-tile_rep::tile_rep (array<widget> a, int cols2):
+tile_rep::tile_rep (array<wk_widget> a, int cols2):
   attribute_widget_rep (a, south_west),
   cols (max (1, cols2)), rows ((N(a)+cols-1)/cols) {}
 
-tile_rep::tile_rep (array<widget> a, int cols2, array<string> n):
+tile_rep::tile_rep (array<wk_widget> a, int cols2, array<string> n):
   attribute_widget_rep (a, n, south_west),
   cols (max (1, cols2)), rows ((N(a)+cols-1)/cols) {}
 
@@ -125,12 +125,12 @@ tile_rep::handle_set_coord2 (set_coord2_event ev) {
 * Interface
 ******************************************************************************/
 
-widget
-tile (array<widget> a, int cols) {
+wk_widget
+tile (array<wk_widget> a, int cols) {
   return new tile_rep (a, cols);
 }
 
-widget
-tile (array<widget> a, int cols, array<string> name) {
+wk_widget
+tile (array<wk_widget> a, int cols, array<string> name) {
   return new tile_rep (a, cols, name);
 }

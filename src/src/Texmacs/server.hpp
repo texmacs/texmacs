@@ -51,7 +51,7 @@ public:
   virtual string preference (string var) = 0;
 
   /* TeXmacs layout */
-  virtual void menu_widget (string menu, widget& w) = 0;
+  virtual void menu_widget (string menu, wk_widget& w) = 0;
   virtual void menu_main (string menu) = 0;
   virtual void menu_icons (int which, string menu) = 0;
   virtual void show_header (bool flag) = 0;
@@ -162,7 +162,7 @@ public:
   virtual void set_right_footer (string s) = 0;
   virtual void set_message (string left, string right, bool temp= false) = 0;
   virtual void recall_message () = 0;
-  virtual void dialogue_start (string name, widget wid) = 0;
+  virtual void dialogue_start (string name, wk_widget wid) = 0;
   virtual void dialogue_inquire (int i, string& arg) = 0;
   virtual void dialogue_end () = 0;
   virtual void choose_file (object fun, string title, string type) = 0;

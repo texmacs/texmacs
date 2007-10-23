@@ -26,8 +26,8 @@
 ******************************************************************************/
 
 class popup_button_rep: public button_widget_rep {
-  promise<widget> prom;
-  widget  popup_w;
+  promise<wk_widget> prom;
+  wk_widget          popup_w;
   window  popup;
   gravity where;
   time_t  entered_at;
@@ -39,8 +39,10 @@ private:
   void unmap_popup ();
   void consistent (string s);
 public:
-  popup_button_rep (widget w, widget pw, gravity where, bool button_flag);
-  popup_button_rep (widget w, promise<widget> prom, gravity where);
+  popup_button_rep (wk_widget w, wk_widget pw,
+		    gravity where, bool button_flag);
+  popup_button_rep (wk_widget w, promise<wk_widget> prom,
+		    gravity where);
   void handle_attach_window (attach_window_event ev);
   void handle_mouse (mouse_event ev);
   bool handle (event ev);
@@ -52,10 +54,11 @@ gravity opposite (gravity grav);
 * Routines for popup buttons
 ******************************************************************************/
 
-popup_button_rep::popup_button_rep (widget w, widget pw, gravity wh, bool fl):
-  button_widget_rep (w, wh==east, fl),
-  prom (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
-  where (wh), require_map (false), stick (false)
+popup_button_rep::popup_button_rep (
+  wk_widget w, wk_widget pw, gravity wh, bool fl):
+    button_widget_rep (w, wh==east, fl),
+    prom (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
+    where (wh), require_map (false), stick (false)
 {
   if ((where!=east) && (where!=south) && (where!=south_east))
     fatal_error ("direction not implemented",
@@ -63,7 +66,7 @@ popup_button_rep::popup_button_rep (widget w, widget pw, gravity wh, bool fl):
 }
 
 popup_button_rep::popup_button_rep (
-  widget w, promise<widget> prom2, gravity where2):
+  wk_widget w, promise<wk_widget> prom2, gravity where2):
     button_widget_rep (w, where2==east),
     prom (prom2), popup_w (), popup (NULL),
     where (where2), require_map (false), stick (false)
@@ -128,7 +131,7 @@ popup_button_rep::map_popup () {
   // cout << "Positioning required " << (texmacs_time ()-start_2) << " ms\n";
 
   // int start_3= texmacs_time ();
-  popup= popup_window (popup_w, x, y);
+  popup= popup_window (abstract (popup_w), x, y);
   // cout << "Window creation required " << (texmacs_time ()-start_3) << " ms\n";
   // int start_4= texmacs_time ();
   popup->map ();
@@ -145,7 +148,7 @@ popup_button_rep::unmap_popup () {
   popup->unmap ();
   delete popup;
   popup= NULL;
-  if (!nil (prom)) popup_w= widget ();
+  if (!nil (prom)) popup_w= wk_widget ();
 
   this << emit_invalidate_all ();
   if (!the_display->has_grab_pointer (this))
@@ -290,22 +293,22 @@ opposite (gravity grav) {
 * Interface
 ******************************************************************************/
 
-widget
-pulldown_button (widget w, widget pw, bool button_flag) {
+wk_widget
+pulldown_button (wk_widget w, wk_widget pw, bool button_flag) {
   return new popup_button_rep (w, pw, south_east, button_flag);
 }
 
-widget
-pullright_button (widget w, widget pw, bool button_flag) {
+wk_widget
+pullright_button (wk_widget w, wk_widget pw, bool button_flag) {
   return new popup_button_rep (w, pw, east, button_flag);
 }
 
-widget
-pulldown_button (widget w, promise<widget> prom) {
+wk_widget
+pulldown_button (wk_widget w, promise<wk_widget> prom) {
   return new popup_button_rep (w, prom, south_east);
 }
 
-widget
-pullright_button (widget w, promise<widget> prom) {
+wk_widget
+pullright_button (wk_widget w, promise<wk_widget> prom) {
   return new popup_button_rep (w, prom, east);
 }

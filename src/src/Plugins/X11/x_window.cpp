@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "X11/x_window.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "Widkit/wk_widget.hpp"
 
 extern int    nr_windows;
 
@@ -28,15 +28,15 @@ x_window_rep::compute_size (SI& def_w, SI& def_h,
   dis->get_extents (def_w, def_h);
   def_w >>= 1;
   def_h >>= 1;
-  w << ::get_size (def_w, def_h, 0);
+  concrete (w) << ::get_size (def_w, def_h, 0);
 
   min_w= def_w;
   min_h= def_h;
-  w << ::get_size (min_w, min_h, -1);
+  concrete (w) << ::get_size (min_w, min_h, -1);
 
   max_w= def_w;
   max_h= def_h;
-  w << ::get_size (max_w, max_h, 1);
+  concrete (w) << ::get_size (max_w, max_h, 1);
 }
 
 void
@@ -100,8 +100,8 @@ x_window_rep::initialize () {
   // int start_1= texmacs_time ();
   SI def_w, def_h, min_w, min_h, max_w, max_h;
   compute_size (def_w, def_h, min_w, min_h, max_w, max_h);
-  w << emit_attach_window (this);
-  w << emit_position (0, 0, def_w, def_h);
+  concrete (w) << emit_attach_window (this);
+  concrete (w) << emit_position (0, 0, def_w, def_h);
   set_origin (0, 0);  
   decode (def_w, def_h); def_h= -def_h;
   decode (min_w, min_h); min_h= -min_h;
@@ -192,7 +192,7 @@ x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
 }
 
 x_window_rep::~x_window_rep () {
-  w << emit_attach_window (NULL);
+  concrete (w) << emit_attach_window (NULL);
 
   XEvent report;
   while (XCheckWindowEvent (dpy, win, 0xffffffff, &report));
@@ -322,23 +322,23 @@ void
 x_window_rep::move_event (int x, int y) {
   bool flag= (win_x!=x) || (win_y!=y);
   win_x= x; win_y= y;
-  if (flag) w << emit_move ();
+  if (flag) concrete (w) << emit_move ();
 }
 
 void
 x_window_rep::resize_event (int ww, int hh) {
   bool flag= (win_w!=ww) || (win_h!=hh);
   win_w= ww; win_h= hh;
-  if (flag) w << emit_resize ();
+  if (flag) concrete (w) << emit_resize ();
   if (flag || !win_flag) {
-    w << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
+    concrete (w) << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
     win_flag= true;
   }
 }
 
 void
 x_window_rep::destroy_event () {
-  w << emit_destroy ();
+  concrete (w) << emit_destroy ();
 }
 
 /******************************************************************************
@@ -352,40 +352,40 @@ x_window_rep::invalidate_event (int x1, int y1, int x2, int y2) {
 
 void
 x_window_rep::key_event (string key) {
-  kbd_focus << emit_keypress (key, 0);
+  concrete (kbd_focus) << emit_keypress (key, 0);
 }
 
 void
 x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
-  kbd_focus << emit_keyboard_focus (true);
+  concrete (kbd_focus) << emit_keyboard_focus (true);
 }
 
 void
 x_window_rep::focus_out_event () {
   if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
-  kbd_focus << emit_keyboard_focus (false);
+  concrete (kbd_focus) << emit_keyboard_focus (false);
 }
 
 void
 x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
-  if (nil (dis->grab_ptr) || (!dis->grab_ptr->item->win)) {
+  if (nil (dis->grab_ptr) || (!concrete (dis->grab_ptr->item)->win)) {
     set_origin (0, 0);
     encode (x, y);
-    w << emit_mouse (ev, x, y, t, dis->state);
+    concrete (w) << emit_mouse (ev, x, y, t, dis->state);
   }
   else {
-    x_window grab_win= (x_window) dis->grab_ptr->item->win;
-    if (((window) this) != dis->grab_ptr->item->win) {
+    x_window grab_win= (x_window) concrete (dis->grab_ptr->item)->win;
+    if (((window) this) != concrete (dis->grab_ptr->item)->win) {
       x += win_x- grab_win->win_x;
       y += win_y- grab_win->win_y;
       // return;
     }
     set_origin (0, 0);
     encode (x, y);
-    dis->grab_ptr->item << emit_mouse (ev, x, y, t, dis->state);
+    concrete (dis->grab_ptr->item) << emit_mouse (ev, x, y, t, dis->state);
   }
 }
 
@@ -406,7 +406,7 @@ x_window_rep::repaint_invalid_regions () {
     encode (r->x2, r->y2);
     x_drawable_rep::set_clipping (r->x1, r->y2, r->x2, r->y1);
     bool stop_flag= false;
-    w << emit_repaint (r->x1, r->y2, r->x2, r->y1, stop_flag);
+    concrete (w) << emit_repaint (r->x1, r->y2, r->x2, r->y1, stop_flag);
     switch (stop_flag) {
     case true : new_regions= rectangles (invalid_regions->item, new_regions);
     case false: invalid_regions= invalid_regions->next; break;
@@ -418,9 +418,9 @@ x_window_rep::repaint_invalid_regions () {
 
 void
 x_window_rep::set_keyboard_focus (widget wid) {
-  if (has_focus && (kbd_focus!=wid.rep)) {
-    kbd_focus << emit_keyboard_focus (false);
-    wid << emit_keyboard_focus (true);
+  if (has_focus && (kbd_focus != wid.rep)) {
+    concrete (kbd_focus) << emit_keyboard_focus (false);
+    concrete (wid) << emit_keyboard_focus (true);
   }
   kbd_focus= wid.rep;
 }

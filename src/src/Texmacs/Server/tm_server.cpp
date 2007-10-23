@@ -41,7 +41,7 @@ int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
 
 window
-texmacs_window (widget wid, tree geom) {
+texmacs_window (wk_widget wid, tree geom) {
   int W, H;
   int w= geometry_w, h= geometry_h;
   int x= geometry_x, y= geometry_y;
@@ -52,7 +52,13 @@ texmacs_window (widget wid, tree geom) {
   the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
-  return plain_window (wid, "TeXmacs", w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
+  return plain_window (abstract (wid), "TeXmacs",
+		       w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
+}
+
+window
+texmacs_window (widget wid, tree geom) {
+  return texmacs_window (concrete (wid), geom);
 }
 
 /******************************************************************************
@@ -321,25 +327,25 @@ tm_server_rep::style_get_cache (
 
 void
 tm_server_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  widget meta= (widget) get_meta ();
+  wk_widget meta= (wk_widget) get_meta ();
   meta["canvas"] << ::get_visible (x1, y1, x2, y2);
 }
 
 void
 tm_server_rep::scroll_where (SI& x, SI& y) {
-  widget meta= (widget) get_meta ();
+  wk_widget meta= (wk_widget) get_meta ();
   meta["canvas"] << get_coord2 ("scroll position", x, y);
 }
 
 void
 tm_server_rep::scroll_to (SI x, SI y) {
-  widget meta= (widget) get_meta ();
+  wk_widget meta= (wk_widget) get_meta ();
   meta["canvas"] << set_scroll_pos (x, y);
 }
 
 void
 tm_server_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  widget meta= (widget) get_meta ();
+  wk_widget meta= (wk_widget) get_meta ();
   meta["canvas"] << ::set_extents (x1, y1, x2, y2);
 }
 
@@ -369,7 +375,7 @@ tm_server_rep::recall_message () {
 
 void
 tm_server_rep::full_screen_mode (bool on, bool edit) {
-  widget meta= (widget) get_meta ();
+  wk_widget meta= (wk_widget) get_meta ();
   if (on && !edit) {
     show_header (false);
     show_footer (false);

@@ -38,7 +38,7 @@ class x_window_rep: public x_drawable_rep, public window_rep {
 
   bool          ic_ok;
   XIC           ic;
-  widkit_widget_rep*   kbd_focus;
+  widget_rep*   kbd_focus;
   bool          has_focus;
 
   bool          full_screen_flag;

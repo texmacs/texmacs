@@ -18,10 +18,10 @@
 ******************************************************************************/
 
 class balloon_widget_rep: public basic_widget_rep {
-  widget balloon_wid;
+  wk_widget balloon_wid;
 
 public:
-  balloon_widget_rep (widget w, widget help);
+  balloon_widget_rep (wk_widget w, wk_widget help);
   operator tree ();
 
   void balloon_handle_mouse (mouse_event ev);
@@ -32,7 +32,7 @@ public:
 * Implementation of balloon widgets
 ******************************************************************************/
 
-balloon_widget_rep::balloon_widget_rep (widget w, widget help):
+balloon_widget_rep::balloon_widget_rep (wk_widget w, wk_widget help):
   basic_widget_rep (1)
 {
   a[0]       = w;
@@ -52,7 +52,7 @@ balloon_widget_rep::balloon_handle_mouse (mouse_event ev) {
     win->get_position (x, y);
     SI xx= x+ ev->x+ 10*PIXEL;
     SI yy= y+ ev->y- 5*PIXEL;
-    the_display->set_help_balloon (balloon_wid, xx, yy);
+    the_display->set_help_balloon (abstract (balloon_wid), xx, yy);
   }
 }
 
@@ -84,7 +84,7 @@ balloon_widget_rep::handle (event ev) {
 
 class balloon_decoration_widget_rep: public basic_widget_rep {
 public:
-  balloon_decoration_widget_rep (widget w);
+  balloon_decoration_widget_rep (wk_widget w);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -96,7 +96,7 @@ public:
 * Implementation of balloon decoration widgets
 ******************************************************************************/
 
-balloon_decoration_widget_rep::balloon_decoration_widget_rep (widget w):
+balloon_decoration_widget_rep::balloon_decoration_widget_rep (wk_widget w):
   basic_widget_rep (1, south_west) { a[0]= w; }
 
 balloon_decoration_widget_rep::operator tree () {
@@ -134,7 +134,7 @@ balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
 * exported routines
 ******************************************************************************/
 
-widget
-balloon_widget (widget w, widget help) {
+wk_widget
+balloon_widget (wk_widget w, wk_widget help) {
   return new balloon_widget_rep (w, new balloon_decoration_widget_rep (help));
 }

@@ -18,7 +18,7 @@
 * Routines for abstract scrollbars
 ******************************************************************************/
 
-scrollbar_rep::scrollbar_rep (widget ref2):
+scrollbar_rep::scrollbar_rep (wk_widget ref2):
   scroll_widget_rep (0, south_west), ref (ref2.rep),
   sc_min(0), sc_max(0), sc_pos(0), before(0), after(0),
   factor (0.5), gripped (false), scrolling (false), increment (0) {}
@@ -68,7 +68,7 @@ scrollbar_rep::handle_set_coord2 (set_coord2_event ev) {
 * Routines for horizontal scrollbars
 ******************************************************************************/
 
-hor_scrollbar_widget_rep::hor_scrollbar_widget_rep (widget ref):
+hor_scrollbar_widget_rep::hor_scrollbar_widget_rep (wk_widget ref):
   scrollbar_rep (ref) {}
 
 hor_scrollbar_widget_rep::operator tree () {
@@ -215,7 +215,7 @@ hor_scrollbar_widget_rep::handle_scroll (scroll_event ev) {
 * Routines for vertical scrollbars
 ******************************************************************************/
 
-ver_scrollbar_widget_rep::ver_scrollbar_widget_rep (widget ref):
+ver_scrollbar_widget_rep::ver_scrollbar_widget_rep (wk_widget ref):
   scrollbar_rep (ref) {}
 
 ver_scrollbar_widget_rep::operator tree () {

@@ -14,6 +14,8 @@
 #define EVENT_H
 #include "widget.hpp"
 
+class wk_widget;
+
 /******************************************************************************
 * The event class
 ******************************************************************************/
@@ -29,7 +31,7 @@ struct event_rep: public abstract_struct {
 };
 
 struct event {
-  ABSTRACT(event);            
+ABSTRACT(event);            
   inline operator tree () { return (tree) (*rep); }
   friend class event_ptr_base;
 };
@@ -44,8 +46,8 @@ inline ostream& operator << (ostream& out, event ev) {
 
 /*** basic events ***/
 event get_size (SI& w, SI& h, int mode=0);
-event get_widget (string which, widget& w);
-event set_widget (string which, widget w);
+event get_widget (string which, wk_widget& w);
+event set_widget (string which, wk_widget w);
 event set_language (string which, bool& b);
 event emit_attach_window (window win);
 event emit_reposition ();
@@ -69,7 +71,7 @@ event emit_find_child (SI x, SI y, int& which);
 
 /*** composite events ***/
 event emit_clean ();
-event emit_insert (string where, widget wid);
+event emit_insert (string where, wk_widget wid);
 event emit_remove (string where);
 
 /*** attribute events ***/
@@ -89,7 +91,7 @@ event set_coord3  (string which, SI c1, SI c2, SI c3);
 event set_coord4  (string which, SI c1, SI c2, SI c3, SI c4);
 
 /*** scroll events ***/
-event set_scrollable (widget w);
+event set_scrollable (wk_widget w);
 event set_extents    (SI x1, SI y1, SI x2, SI y2);
 event set_scroll_pos (SI x, SI y);
 event get_extents    (SI& x1, SI& y1, SI& x2, SI& y2);

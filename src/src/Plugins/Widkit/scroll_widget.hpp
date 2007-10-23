@@ -21,7 +21,7 @@
 
 class scroll_widget_rep: public attribute_widget_rep {
 public:
-  scroll_widget_rep (array<widget> a, gravity grav);
+  scroll_widget_rep (array<wk_widget> a, gravity grav);
   virtual void handle_scroll (scroll_event ev) = 0;
   virtual bool handle (event ev);
 };
@@ -31,12 +31,12 @@ public:
 ******************************************************************************/
 
 class scrollable_widget_rep: public scroll_widget_rep {
-  SI                 scx, scy;    // scroll x,y position
-  SI                 ex1, ey1;    // extents of scrolled window lo-left
-  SI                 ex2, ey2;    // extents of scrolled window hi-right
-  widkit_widget_rep* hor;         // the horizontal scroll bar
-  widkit_widget_rep* ver;         // the vertical scroll bar
-  gravity            backup;      // for a dirty bugfix
+  SI             scx, scy;    // scroll x,y position
+  SI             ex1, ey1;    // extents of scrolled window lo-left
+  SI             ex2, ey2;    // extents of scrolled window hi-right
+  wk_widget_rep* hor;         // the horizontal scroll bar
+  wk_widget_rep* ver;         // the vertical scroll bar
+  gravity        backup;      // for a dirty bugfix
 
   void scroll_to (SI scx, SI scy);
   void set_extents (SI ex1, SI ey1, SI ex2, SI ey2);
@@ -44,7 +44,7 @@ class scrollable_widget_rep: public scroll_widget_rep {
   void scroll_event_ver (SI& y, SI& before, SI& after);
 
 public:
-  scrollable_widget_rep (widget child, gravity grav);
+  scrollable_widget_rep (wk_widget child, gravity grav);
   operator tree ();
 
   void handle_get_size   (get_size_event ev);
@@ -64,7 +64,7 @@ public:
 
 class scrollbar_rep: public scroll_widget_rep {
 protected:
-  widkit_widget_rep* ref;
+  wk_widget_rep* ref;
   SI                 sc_min, sc_max, sc_pos, before, after;
   double             factor;
   bool               gripped;
@@ -72,7 +72,7 @@ protected:
   int                increment;
 
 public:
-  scrollbar_rep (widget ref);
+  scrollbar_rep (wk_widget ref);
 
   void handle_set_coord1 (set_coord1_event ev);
   void handle_set_coord2 (set_coord2_event ev);
@@ -87,7 +87,7 @@ class hor_scrollbar_widget_rep: public scrollbar_rep {
   SI   encode_position (SI x);
 
 public:
-  hor_scrollbar_widget_rep (widget ref);
+  hor_scrollbar_widget_rep (wk_widget ref);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -106,7 +106,7 @@ class ver_scrollbar_widget_rep: public scrollbar_rep {
   SI   encode_position (SI y);
 
 public:
-  ver_scrollbar_widget_rep (widget ref);
+  ver_scrollbar_widget_rep (wk_widget ref);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
