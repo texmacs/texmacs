@@ -19,54 +19,39 @@
 
 class tm_widget_rep;
 class tm_widget;
-class server_rep;
 
 class tm_widget_rep: public basic_widget_rep {
-public:
-  server_rep* sv;
-  hashmap<tree,tree> props;
-  int serial;
-
 protected:
   bool     footer_flag;        // footer visible ?
   string*  text_ptr;           // where the interactive string is returned
   command  call_back;          // called when typing finished
-  int      sfactor;            // the shrinking factor
-  object*  texmacs_menu;       // accelerate menu rendering
-  object*  texmacs_icon_menu;  // accelerate icon bar rendering
 
-public:
-  tm_widget_rep (server_rep* sv);
-  ~tm_widget_rep ();
-  wk_widget_rep* get_this ();
-
-  operator tree ();
-  void set_window_name (string s);
-  void set_popup_menu (wk_widget w, SI x, SI y);
-  void set_subwidget (wk_widget w, string which, wk_widget sw);
-  bool get_subwidget_flag (wk_widget w);
-  void set_subwidget_flag (wk_widget w, bool on);
-
-  void interactive (string name, string type, array<string> def,
-		    string& s, command cmd);
-  void interactive_return ();
+protected:
   void set_left_footer (string s);
   void set_right_footer (string s);
   int  get_footer_mode ();
   void set_footer_mode (int which);
   bool get_footer_flag ();
   void set_footer_flag (bool on);
-  void set_shrinking_factor (int sf);
-  int  get_shrinking_factor ();
 
-  void menu_widget (string menu, wk_widget& w);
-  void menu_main (string menu);
-  void menu_icons (int which, string menu);
+  void set_subwidget (wk_widget w, string which, wk_widget sw);
+  bool get_subwidget_flag (wk_widget w);
+  void set_subwidget_flag (wk_widget w, bool on);
+
+public:
+  tm_widget_rep (int mask);
+  ~tm_widget_rep ();
+  operator tree ();
+
+  void interactive (string name, string type, array<string> def,
+		    string& s, command cmd);
+  void interactive_return ();
 
   void handle_get_size (get_size_event ev);
   void handle_get_widget (get_widget_event ev);
   void handle_set_widget (set_widget_event ev);
   void handle_set_string (set_string_event ev);
+  void handle_get_string (get_string_event ev);
   void handle_keypress (keypress_event ev);
   void handle_mouse (mouse_event ev);
   void handle_keyboard_focus (keyboard_focus_event ev);
@@ -75,7 +60,6 @@ public:
 
   bool handle (event ev);
 
-  friend class server_rep;
   friend class tm_editor_rep;
   friend class tm_widget;
 };
