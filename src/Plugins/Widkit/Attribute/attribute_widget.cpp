@@ -19,11 +19,12 @@
 
 attribute_widget_rep::attribute_widget_rep (gravity grav):
   basic_widget_rep (grav) {}
-attribute_widget_rep::attribute_widget_rep (array<widget> a,
-  gravity grav):
-  basic_widget_rep (a, grav) {}
-attribute_widget_rep::attribute_widget_rep (array<widget> a,
-  array<string> name, gravity grav): basic_widget_rep (a, name, grav) {}
+attribute_widget_rep::attribute_widget_rep (
+  array<wk_widget> a, gravity grav):
+    basic_widget_rep (a, grav) {}
+attribute_widget_rep::attribute_widget_rep (
+  array<wk_widget> a, array<string> name, gravity grav):
+    basic_widget_rep (a, name, grav) {}
 
 /******************************************************************************
 * Retrieving information from attribute widgets

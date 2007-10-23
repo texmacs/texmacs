@@ -14,6 +14,7 @@
 #define TM_BUFFER_H
 #include "server.hpp"
 
+window texmacs_window (wk_widget wid, tree geom);
 window texmacs_window (widget wid, tree geom);
 
 extern tree the_et;
@@ -91,7 +92,8 @@ public:
   tm_widget wid;
   int       id;
   inline tm_window_rep (tm_widget wid2, tree geom):
-    win (texmacs_window (wid2, geom)), wid (wid2), id (create_window_id ()) {}
+    win (texmacs_window (abstract (wid2), geom)),
+    wid (wid2), id (create_window_id ()) {}
   inline ~tm_window_rep () { destroy_window_id (id); }
 };
 

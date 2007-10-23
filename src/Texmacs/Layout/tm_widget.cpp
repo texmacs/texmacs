@@ -11,63 +11,63 @@
 ******************************************************************************/
 
 #include "window.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "Widkit/wk_widget.hpp"
 #include "tm_widget.hpp"
 
-#define THIS (widget (this))
+#define THIS (wk_widget (this))
 
 extern int nr_windows;
 
-widget make_menu_widget (object menu);
+wk_widget make_menu_widget (object menu);
 string icon_bar_name (int which);
 
 /******************************************************************************
 * Subwidgets of main TeXmacs widgets
 ******************************************************************************/
 
-static widget
+static wk_widget
 make_menu_bar () {
-  array<widget> M (2);
+  array<wk_widget> M (2);
   array<string> M_name (2);
-  M[0]= horizontal_array (array<widget> (0));
-  M[1]= glue_widget (true, false);
+  M[0]= horizontal_array (array<wk_widget> (0));
+  M[1]= glue_wk_widget (true, false);
   M_name[0]= "menu";
 
-  array<widget> V (2);
+  array<wk_widget> V (2);
   array<string> V_name (2);
-  V[0]= glue_widget (true, false, 0, 2*PIXEL);
+  V[0]= glue_wk_widget (true, false, 0, 2*PIXEL);
   V[1]= horizontal_array (M, M_name);
   V_name[1]= "bar";
   return optional_widget (vertical_list (V, V_name));
 }
 
-static widget
+static wk_widget
 make_icon_bar (bool on) {
-  array<widget> I (4);
+  array<wk_widget> I (4);
   array<string> I_name (4);
-  I[0]= glue_widget (false, false, 3*PIXEL);
-  I[1]= horizontal_array (array<widget> (0));
-  I[2]= glue_widget (true, false);
-  I[3]= glue_widget (false, false, 3*PIXEL);
+  I[0]= glue_wk_widget (false, false, 3*PIXEL);
+  I[1]= horizontal_array (array<wk_widget> (0));
+  I[2]= glue_wk_widget (true, false);
+  I[3]= glue_wk_widget (false, false, 3*PIXEL);
   I_name[1]= "icons";
 
-  array<widget> V (2);
+  array<wk_widget> V (2);
   array<string> V_name (2);
-  V[0]= separator_widget (PIXEL, 2*PIXEL);
+  V[0]= separator_wk_widget (PIXEL, 2*PIXEL);
   V[1]= horizontal_array (I, I_name);
   V_name[1]= "bar";
   return optional_widget (vertical_list (V, V_name), on);
 }
 
-static widget
+static wk_widget
 make_header (server_rep* sv) {
-  array<widget> H (5);
+  array<wk_widget> H (5);
   array<string> H_name (5);
   H[0]= make_menu_bar ();
   H[1]= make_icon_bar (sv->preference ("main icon bar") == "on");
   H[2]= make_icon_bar (sv->preference ("context dependent icons") == "on");
   H[3]= make_icon_bar (sv->preference ("user provided icons") == "on");
-  H[4]= glue_widget (true, false, 0, 2*PIXEL);
+  H[4]= glue_wk_widget (true, false, 0, 2*PIXEL);
   H_name[0]= "menu";
   H_name[1]= "main";
   H_name[2]= "context";
@@ -76,47 +76,47 @@ make_header (server_rep* sv) {
 			  sv->preference ("header") == "on");
 }
 
-static widget
+static wk_widget
 make_footer (server_rep* sv) {
-  array<widget> F (3);
+  array<wk_widget> F (3);
   array<string> F_name (3);
-  F[0]= text_widget ("Welcome to TeXmacs!", false, "english");
-  F[1]= glue_widget (true, false);
-  F[2]= text_widget ("TeXmacs#" TEXMACS_VERSION, false, "english");
+  F[0]= text_wk_widget ("Welcome to TeXmacs!", false, "english");
+  F[1]= glue_wk_widget (true, false);
+  F[2]= text_wk_widget ("TeXmacs#" TEXMACS_VERSION, false, "english");
   F_name[0]= "left";
   F_name[1]= "middle";
   F_name[2]= "right";
-  widget ftr= horizontal_array (F, F_name, 1);
+  wk_widget ftr= horizontal_array (F, F_name, 1);
 #ifdef OS_DARWIN
-  F << glue_widget (false, false, 14*PIXEL, 0);
+  F << glue_wk_widget (false, false, 14*PIXEL, 0);
   F_name << "margin";
 #endif
 
-  array<widget> I (2);
+  array<wk_widget> I (2);
   array<string> I_name (2);
-  I[0]= text_widget ("Input:", false, "english");
-  I[1]= glue_widget (true, false);
+  I[0]= text_wk_widget ("Input:", false, "english");
+  I[1]= glue_wk_widget (true, false);
   I_name[0]= "left";
   I_name[1]= "middle";
-  widget iac= horizontal_array (I, I_name, 1);
+  wk_widget iac= horizontal_array (I, I_name, 1);
 
-  array<widget> S (3);
+  array<wk_widget> S (3);
   array<string> S_name (3);
   S[0]= ftr;
   S[1]= iac;
-  S[2]= glue_widget (false, false);
+  S[2]= glue_wk_widget (false, false);
   S_name[0]= "default";
   S_name[1]= "interactive";
   return switch_widget (S, S_name,
 			sv->preference ("status bar") == "on"? 0: 2);
 }
 
-static widget
+static wk_widget
 make_texmacs_widget (server_rep* sv) {
-  array<widget> V (3);
+  array<wk_widget> V (3);
   array<string> V_name (3);
   V[0]= make_header (sv);
-  V[1]= canvas_widget (glue_widget ());
+  V[1]= canvas_widget (glue_wk_widget ());
   V[2]= make_footer (sv);
   V_name[0]= "header";
   V_name[1]= "canvas";
@@ -144,7 +144,7 @@ tm_widget_rep::~tm_widget_rep () {
   if (texmacs_icon_menu != NULL) delete[] texmacs_icon_menu;
 }
 
-widkit_widget_rep*
+wk_widget_rep*
 tm_widget_rep::get_this () {
   return this;
 }
@@ -159,7 +159,7 @@ tm_widget_rep::set_window_name (string s) {
 }
 
 void
-tm_widget_rep::set_subwidget (widget w, string which, widget sw) {
+tm_widget_rep::set_subwidget (wk_widget w, string which, wk_widget sw) {
   SI ww1= 600*PIXEL, hh1=18*PIXEL, ww2=600*PIXEL, hh2=18*PIXEL;
   if (which == "icons") hh1= hh2= 18*PIXEL;
   w << get_size (ww1, hh1);
@@ -172,14 +172,14 @@ tm_widget_rep::set_subwidget (widget w, string which, widget sw) {
 }
 
 bool
-tm_widget_rep::get_subwidget_flag (widget w) {
+tm_widget_rep::get_subwidget_flag (wk_widget w) {
   int which;
   w << get_integer ("switch", which);
   return which == 0;
 }
 
 void
-tm_widget_rep::set_subwidget_flag (widget w, bool on) {
+tm_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
   if (get_subwidget_flag (w) != on) {
     w << set_integer ("switch", on? 0: 1);
     if (attached ()) THIS << emit_update ();
@@ -191,7 +191,7 @@ tm_widget_rep::set_subwidget_flag (widget w, bool on) {
 ******************************************************************************/
 
 void
-tm_widget_rep::menu_widget (string menu, widget& w) {
+tm_widget_rep::menu_widget (string menu, wk_widget& w) {
   object xmenu= eval ("'" * menu);
   // tm_widget meta= get_meta ();
   w= make_menu_widget (xmenu);
@@ -203,7 +203,7 @@ tm_widget_rep::menu_main (string menu) {
   object xmenu= call ("menu-expand", eval ("'" * menu));
   if (xmenu == texmacs_menu[0]) return;
   texmacs_menu[0]= xmenu;
-  widget w= make_menu_widget (xmenu);
+  wk_widget w= make_menu_widget (xmenu);
   set_subwidget (THIS ["header"] ["menu"] ["bar"], "menu", w);
 }
 
@@ -215,7 +215,7 @@ tm_widget_rep::menu_icons (int which, string menu) {
   if (xmenu == texmacs_icon_menu[which]) return;
   texmacs_icon_menu[which]= xmenu;
   string name= icon_bar_name (which);
-  widget w= make_menu_widget (xmenu);
+  wk_widget w= make_menu_widget (xmenu);
   set_subwidget (THIS ["header"] [name] ["bar"], "icons", w);
 }
 
@@ -225,13 +225,13 @@ tm_widget_rep::menu_icons (int which, string menu) {
 
 void
 tm_widget_rep::set_left_footer (string s) {
-  widget tw= text_widget (s, false, "english");
+  wk_widget tw= text_wk_widget (s, false, "english");
   set_subwidget (THIS ["footer"], "left", tw);
 }
 
 void
 tm_widget_rep::set_right_footer (string s) {
-  widget tw= text_widget (s, false, "english");
+  wk_widget tw= text_wk_widget (s, false, "english");
   set_subwidget (THIS ["footer"], "right", tw);
 }
 
@@ -295,9 +295,9 @@ tm_widget_rep::interactive (string name, string type, array<string> def,
   if (get_footer_mode () == 1) { s= "cancel"; return; }
   call_back= cmd;
   set_footer_mode (1);
-  widget iac= THIS ["footer"] ["interactive"];
-  widget tw = text_widget (name, false, "english");
-  widget inp= input_text_widget (new ia_command_rep (this));
+  wk_widget iac= THIS ["footer"] ["interactive"];
+  wk_widget tw = text_wk_widget (name, false, "english");
+  wk_widget inp= input_text_wk_widget (new ia_command_rep (this));
   inp << set_string ("type", type);
   if (N(def) > 0) inp << set_string ("input", def[0]);
   for (i=0; i<n; i++) inp << set_string ("default", def[i]);
@@ -311,7 +311,7 @@ tm_widget_rep::interactive (string name, string type, array<string> def,
 
 void
 tm_widget_rep::interactive_return () {
-  widget iac= THIS ["footer"] ["interactive"];
+  wk_widget iac= THIS ["footer"] ["interactive"];
   iac ["middle"] << get_input_string (*text_ptr);
   text_ptr= NULL;
   iac ["middle"] << emit_keyboard_focus (false);

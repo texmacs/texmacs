@@ -19,20 +19,20 @@
 * Routines for abstract button_widgets
 ******************************************************************************/
 
-button_widget_rep::button_widget_rep (widget w2, bool rf2, bool bf2):
+button_widget_rep::button_widget_rep (wk_widget w2, bool rf2, bool bf2):
   attribute_widget_rep (1, south_west),
   extra_left (0), extra_right (0), rflag (rf2), button_flag (bf2),
   enabled(true), centered(false), status (false), inside (false)
 { a[0]= w2; }
     
-button_widget_rep::button_widget_rep (widget lw, widget rw):
+button_widget_rep::button_widget_rep (wk_widget lw, wk_widget rw):
   attribute_widget_rep (2, south_west),
   extra_left (0), extra_right (0), rflag (false), button_flag (false),
   enabled(true), centered(false), status (false), inside (false)
 { a[0]= lw; a[1]= rw; }
     
 button_widget_rep::button_widget_rep (
-  widget lw, widget cw, widget rw, bool e, bool c):
+  wk_widget lw, wk_widget cw, wk_widget rw, bool e, bool c):
     attribute_widget_rep (3, south_west),
     extra_left (0), extra_right (0), rflag (false), button_flag (false),
     enabled(e), centered(c), status (false), inside (false)
@@ -145,21 +145,24 @@ button_widget_rep::handle_set_coord2 (set_coord2_event ev) {
 class command_button_rep: public button_widget_rep {
   command cmd;
 public:
-  command_button_rep (widget w, command cmd, bool button_flag= false);
-  command_button_rep (widget lw, widget rw, command cmd);
-  command_button_rep (widget lw, widget cw, widget rw, command cmd,
-		      bool e, bool c);
+  command_button_rep (wk_widget w, command cmd, bool button_flag= false);
+  command_button_rep (wk_widget lw, wk_widget rw, command cmd);
+  command_button_rep (wk_widget lw, wk_widget cw, wk_widget rw,
+		      command cmd, bool e, bool c);
   void handle_mouse (mouse_event ev);
 };
 
-command_button_rep::command_button_rep (widget w, command cmd2, bool bf):
-  button_widget_rep (w, false, bf), cmd (cmd2) {}
-
-command_button_rep::command_button_rep (widget lw, widget rw, command cmd2):
-  button_widget_rep (lw, rw), cmd (cmd2) {}
+command_button_rep::command_button_rep (
+  wk_widget w, command cmd2, bool bf):
+    button_widget_rep (w, false, bf), cmd (cmd2) {}
 
 command_button_rep::command_button_rep (
-  widget lw, widget cw, widget rw, command cmd2, bool e, bool c):
+  wk_widget lw, wk_widget rw, command cmd2):
+    button_widget_rep (lw, rw), cmd (cmd2) {}
+
+command_button_rep::command_button_rep (
+  wk_widget lw, wk_widget cw, wk_widget rw,
+  command cmd2, bool e, bool c):
     button_widget_rep (lw, cw, rw, e, c), cmd (cmd2) {}
 
 void
@@ -184,17 +187,19 @@ command_button_rep::handle_mouse (mouse_event ev) {
 * Interface
 ******************************************************************************/
 
-widget
-command_button (widget w, command cmd, bool button_flag) {
+wk_widget
+command_button (wk_widget w, command cmd, bool button_flag) {
   return new command_button_rep (w, cmd, button_flag);
 }
 
-widget
-command_button (widget lw, widget rw, command cmd) {
+wk_widget
+command_button (wk_widget lw, wk_widget rw, command cmd) {
   return new command_button_rep (lw, rw, cmd);
 }
 
-widget
-command_button (widget lw, widget cw, widget rw, command cmd, bool e, bool c) {
+wk_widget
+command_button (wk_widget lw, wk_widget cw, wk_widget rw,
+		command cmd, bool e, bool c)
+{
   return new command_button_rep (lw, cw, rw, cmd, e, c);
 }

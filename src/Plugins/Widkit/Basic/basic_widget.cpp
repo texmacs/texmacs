@@ -22,14 +22,14 @@ SI get_dy(gravity grav, int h);
 ******************************************************************************/
 
 basic_widget_rep::basic_widget_rep (gravity grav):
-  widkit_widget_rep (array<widget> (0), array<string> (0), grav),
+  wk_widget_rep (array<wk_widget> (0), array<string> (0), grav),
   ptr_focus (-1) {}
-basic_widget_rep::basic_widget_rep (array<widget> a,
-  gravity grav):
-  widkit_widget_rep (a, array<string> (N(a)), grav), ptr_focus (-1) {}
-basic_widget_rep::basic_widget_rep (array<widget> a2,
-  array<string> name2, gravity grav2):
-  widkit_widget_rep (a2, name2, grav2), ptr_focus (-1) {}
+basic_widget_rep::basic_widget_rep (
+  array<wk_widget> a, gravity grav):
+    wk_widget_rep (a, array<string> (N(a)), grav), ptr_focus (-1) {}
+basic_widget_rep::basic_widget_rep (
+  array<wk_widget> a2, array<string> name2, gravity grav2):
+    wk_widget_rep (a2, name2, grav2), ptr_focus (-1) {}
 
 /******************************************************************************
 * Generating events in local coordinates
@@ -250,14 +250,14 @@ basic_widget_rep::handle_find_child (find_child_event ev) {
 ******************************************************************************/
 
 void
-test_round (widget w, string var, SI num) {
+test_round (wk_widget w, string var, SI num) {
   if (num != ((num>>8)<<8))
     w->fatal_error ("Bad rounding of " * var * "=" * as_string (num),
 		    "test_round", "basic_widget.cpp");
 }
 
 static void
-test_window_attached (event ev, widget w) {
+test_window_attached (event ev, wk_widget w) {
   if (!w->attached ()) {
     cerr << "\n" << HRULE << "\n";
     cerr << ev << " was sent to\n" << w;
@@ -270,7 +270,7 @@ test_window_attached (event ev, widget w) {
 bool
 basic_widget_rep::handle (event ev) {
   if (DEBUG_EVENTS) cout << "TeXmacs] " << ev << "\n";
-  // " ---> " << widget(this) << "\n";
+  // " ---> " << wk_widget (this) << "\n";
   if (attached ()) win->set_origin (ox, oy);
   switch (ev->type) {
   case GET_SIZE_EVENT:

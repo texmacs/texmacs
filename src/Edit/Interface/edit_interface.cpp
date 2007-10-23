@@ -93,9 +93,9 @@ edit_interface_rep::resume () {
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
 }
 
-widget
+wk_widget
 edit_interface_rep::get_widget () {
-  return widget (this);
+  return wk_widget (this);
 }
 
 /******************************************************************************
@@ -375,7 +375,7 @@ edit_interface_rep::apply_changes () {
   }
   if (sb != cur_sb) {
     cur_sb= sb;
-    widget meta= (widget) get_server () -> get_meta ();
+    wk_widget meta= (wk_widget) get_server () -> get_meta ();
     meta ["canvas"] << set_integer ("scrollbars", sb);
   }
 

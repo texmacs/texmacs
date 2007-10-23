@@ -24,13 +24,13 @@ tm_layout_rep::~tm_layout_rep () {}
 * Subroutines
 ******************************************************************************/
 
-widget
+wk_widget
 make_menu_widget (object menu) {
-  widget w= as_widget (call ("make-menu-widget", menu, true));
+  wk_widget w= concrete (as_widget (call ("make-menu-widget", menu, true)));
   //string s= "(make-menu-widget '" * menu * " #t)";
   //widget w= as_widget (eval (s));
   if (nil (w)) {
-    array<widget> a (0);
+    array<wk_widget> a (0);
     return horizontal_array (a);
   }
   return w;
@@ -106,7 +106,7 @@ tm_layout_rep::get_string_window_property (string what) {
 ******************************************************************************/
 
 void
-tm_layout_rep::menu_widget (string menu, widget& w) {
+tm_layout_rep::menu_widget (string menu, wk_widget& w) {
   object xmenu= eval ("'" * menu);
   tm_widget meta= get_meta ();
   w= make_menu_widget (xmenu);
@@ -130,7 +130,7 @@ void
 tm_layout_rep::show_header (bool flag) {
   if (!has_view ()) return;
   tm_widget meta= get_meta ();
-  meta->set_subwidget_flag (((widget) meta) ["header"], flag);
+  meta->set_subwidget_flag (((wk_widget) meta) ["header"], flag);
 }
 
 void
@@ -138,7 +138,7 @@ tm_layout_rep::show_icon_bar (int which, bool flag) {
   if ((which<0) || (which>2) || (!has_view())) return;
   string name= icon_bar_name (which);
   tm_widget meta= get_meta ();
-  meta->set_subwidget_flag (((widget) meta) ["header"] [name], flag);
+  meta->set_subwidget_flag (((wk_widget) meta) ["header"] [name], flag);
 }
 
 void
@@ -151,7 +151,7 @@ tm_layout_rep::show_footer (bool flag) {
 bool
 tm_layout_rep::visible_header () {
   tm_widget meta= get_meta ();
-  return meta->get_subwidget_flag (((widget) meta) ["header"]);
+  return meta->get_subwidget_flag (((wk_widget) meta) ["header"]);
 }
 
 bool
@@ -159,7 +159,7 @@ tm_layout_rep::visible_icon_bar (int which) {
   if ((which<0) || (which>2)) return false;
   string name= icon_bar_name (which);
   tm_widget meta= get_meta ();
-  return meta->get_subwidget_flag (((widget) meta) ["header"] [name]);
+  return meta->get_subwidget_flag (((wk_widget) meta) ["header"] [name]);
 }
 
 bool

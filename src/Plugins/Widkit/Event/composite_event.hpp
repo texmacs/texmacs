@@ -13,7 +13,7 @@
 #ifndef COMPOSITE_EVENT_H
 #define COMPOSITE_EVENT_H
 #include "Widkit/event.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "Widkit/wk_widget.hpp"
 #include "Widkit/Event/event_codes.hpp"
 
 /******************************************************************************
@@ -27,8 +27,8 @@ struct clean_event_rep: public event_rep {
 EVENT(clean_event);
 
 struct insert_event_rep: public event_rep {
-  string s; widget w;
-  insert_event_rep (string s, widget w);
+  string s; wk_widget w;
+  insert_event_rep (string s, wk_widget w);
   operator tree ();
 };
 EVENT(insert_event);

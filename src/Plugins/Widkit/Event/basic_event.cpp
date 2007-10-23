@@ -26,18 +26,18 @@ get_size_event_rep::operator tree () {
 event get_size (SI& w, SI& h, int mode) {
   return new get_size_event_rep (w, h, mode); }
 
-get_widget_event_rep::get_widget_event_rep (string ww, widget& w2):
+get_widget_event_rep::get_widget_event_rep (string ww, wk_widget& w2):
   event_rep (GET_WIDGET_EVENT), which (ww), w (w2) {}
 get_widget_event_rep::operator tree () {
   return tree (TUPLE, "get_widget_event", which); }
-event get_widget (string which, widget& w) {
+event get_widget (string which, wk_widget& w) {
   return new get_widget_event_rep (which, w); }
 
-set_widget_event_rep::set_widget_event_rep (string ww, widget w2):
+set_widget_event_rep::set_widget_event_rep (string ww, wk_widget w2):
   event_rep (SET_WIDGET_EVENT), which (ww), w (w2) {}
 set_widget_event_rep::operator tree () {
   return tree (TUPLE, "set_widget_event", which); }
-event set_widget (string which, widget w) {
+event set_widget (string which, wk_widget w) {
   return new set_widget_event_rep (which, w); }
 
 set_language_event_rep::set_language_event_rep (string ww, bool& rr):

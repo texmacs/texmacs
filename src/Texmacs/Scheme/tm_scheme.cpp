@@ -104,7 +104,7 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 }
 
 void
-tm_scheme_rep::dialogue_start (string name, widget wid) {
+tm_scheme_rep::dialogue_start (string name, wk_widget wid) {
   if (dialogue_win == NULL) {
     string lan= the_display->out_lan;
     if (lan == "russian") lan= "english";
@@ -118,7 +118,7 @@ tm_scheme_rep::dialogue_start (string name, widget wid) {
     ox += (dx - ex) >> 1;
     oy -= (dy - ey) >> 1;
     dialogue_wid= wid;
-    dialogue_win= plain_window (dialogue_wid, _name, 0, 0, ox, oy);
+    dialogue_win= plain_window (abstract (dialogue_wid), _name, 0, 0, ox, oy);
     dialogue_win->map ();
     delete[] _name;
   }
@@ -137,7 +137,7 @@ tm_scheme_rep::dialogue_end () {
     dialogue_win->unmap ();
     delete dialogue_win;
     dialogue_win= NULL;
-    dialogue_wid= widget ();
+    dialogue_wid= wk_widget ();
   }
 }
 
@@ -164,9 +164,9 @@ tm_scheme_rep::choose_file (object fun, string title, string type) {
     if (den != 1) magn << "/" << as_string (den);
   }
 
-  url     name= get_name_buffer ();
-  command cb  = dialogue_command (get_server(), fun, 1);
-  widget  wid = file_chooser_widget (cb, type, magn);
+  url       name= get_name_buffer ();
+  command   cb  = dialogue_command (get_server(), fun, 1);
+  wk_widget wid = file_chooser_wk_widget (cb, type, magn);
   if (!is_scratch (name)) {
     wid << set_string ("directory", as_string (head (name)));
     if ((type != "image") && (type != "")) {
@@ -185,8 +185,10 @@ tm_scheme_rep::choose_file (object fun, string title, string type) {
   else wid << set_string ("directory", ".");
   dialogue_start (title, wid);
   if (type == "directory")
-    dialogue_win->set_keyboard_focus (dialogue_wid[0]["directory"]["input"]);
-  else dialogue_win->set_keyboard_focus (dialogue_wid[0]["file"]["input"]);
+    dialogue_win->set_keyboard_focus
+      (abstract (dialogue_wid[0]["directory"]["input"]));
+  else dialogue_win->set_keyboard_focus
+	 (abstract (dialogue_wid[0]["file"]["input"]));
 }
 
 /******************************************************************************
@@ -275,9 +277,9 @@ tm_scheme_rep::interactive (object fun, scheme_tree p) {
     for (i=0; i<n; i++)
       prompts[i]= get_prompt (p, i);
     command cb= dialogue_command (get_server(), fun, n);
-    widget wid= inputs_list_widget (cb, prompts);
+    wk_widget wid= inputs_list_wk_widget (cb, prompts);
     for (i=0; i<n; i++) {
-      widget input_wid= wid[0]["inputs"][i]["input"];
+      wk_widget input_wid= wid[0]["inputs"][i]["input"];
       input_wid << set_string ("type", get_type (p, i));
       array<string> proposals= get_proposals (p, i);
       int j, k= N(proposals);
@@ -287,7 +289,8 @@ tm_scheme_rep::interactive (object fun, scheme_tree p) {
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
-    dialogue_win->set_keyboard_focus (dialogue_wid[0]["inputs"][0]["input"]);
+    dialogue_win->set_keyboard_focus
+      (abstract (dialogue_wid[0]["inputs"][0]["input"]));
   }
   else {
     if (get_meta () -> get_footer_mode () == 1) beep ();

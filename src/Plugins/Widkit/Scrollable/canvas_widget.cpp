@@ -1,5 +1,4 @@
 
-
 /******************************************************************************
 * MODULE     : canvas_widget.cpp
 * DESCRIPTION: A canvas widget with horizontal and vertical scrollbars.
@@ -27,11 +26,11 @@ class canvas_widget_rep: public basic_widget_rep {
   SI ex1, ey1, ex2, ey2;
   SI last_w, last_h;
   bool show_scroll_bars;
-  widget hor; bool hor_active;
-  widget ver; bool ver_active;
+  wk_widget hor; bool hor_active;
+  wk_widget ver; bool ver_active;
 
 public:
-  canvas_widget_rep (widget child, gravity grav);
+  canvas_widget_rep (wk_widget child, gravity grav);
   operator tree ();
   void set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2);
 
@@ -49,7 +48,7 @@ public:
 * Creation of canvas widgets
 ******************************************************************************/
 
-canvas_widget_rep::canvas_widget_rep (widget child, gravity grav):
+canvas_widget_rep::canvas_widget_rep (wk_widget child, gravity grav):
   basic_widget_rep (1), show_scroll_bars (true)
 {
   a[0] = new scrollable_widget_rep (child, grav);
@@ -260,11 +259,11 @@ canvas_widget_rep::handle (event ev) {
 ******************************************************************************/
 
 event
-set_scrollable (widget w) {
+set_scrollable (wk_widget w) {
   return set_widget ("scrollable", w);
 }
 
-widget
-canvas_widget (widget w, gravity grav) {
+wk_widget
+canvas_widget (wk_widget w, gravity grav) {
   return new canvas_widget_rep (w, grav);
 }

@@ -84,7 +84,7 @@ separator_widget_rep::handle_set_coord2 (set_coord2_event ev) {
 * Interface
 ******************************************************************************/
 
-widget
-separator_widget (SI pre, SI post, bool vert) {
+wk_widget
+separator_wk_widget (SI pre, SI post, bool vert) {
   return new separator_widget_rep (pre, post, vert);
 }

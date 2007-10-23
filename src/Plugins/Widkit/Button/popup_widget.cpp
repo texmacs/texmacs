@@ -29,7 +29,7 @@ class popup_widget_rep: public basic_widget_rep {
   bool    freeze;
 
 public:
-  popup_widget_rep (widget w, gravity quit);
+  popup_widget_rep (wk_widget w, gravity quit);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -44,7 +44,7 @@ public:
 * Routines for popup widgets
 ******************************************************************************/
 
-popup_widget_rep::popup_widget_rep (widget w, gravity quit2):
+popup_widget_rep::popup_widget_rep (wk_widget w, gravity quit2):
   basic_widget_rep (1), quit (quit2),
   grabbed (false), stick (false), freeze (false)
 {
@@ -100,7 +100,7 @@ popup_widget_rep::handle_mouse (mouse_event ev) {
 	 << ", "  << (freeze? "frozen": "not frozen")
 	 << ", "  << (pressed? "pressed": "non pressed") << "\n";
     cout << "   " << ((event) ev) << "\n";
-    cout << "   " << pritty ((widget) this) << "\n";
+    cout << "   " << pritty ((wk_widget) this) << "\n";
     cout << "   " << ((int) ((void*) this)) << "\n";
   }
   */
@@ -122,7 +122,7 @@ popup_widget_rep::handle_mouse (mouse_event ev) {
 	 << ", "  << (freeze? "frozen": "not frozen")
 	 << ", "  << (pressed? "pressed": "non pressed") << "\n";
     cout << "   " << ((event) ev) << "\n";
-    cout << "   " << pritty ((widget) this) << "\n";
+    cout << "   " << pritty ((wk_widget) this) << "\n";
     cout << "   " << ((int) ((void*) this)) << "\n";
   }
   */
@@ -161,7 +161,7 @@ popup_widget_rep::handle (event ev) {
 * Interface
 ******************************************************************************/
 
-widget
-popup_widget (widget w, gravity quit) {
+wk_widget
+popup_widget (wk_widget w, gravity quit) {
   return new popup_widget_rep (w, quit);
 }

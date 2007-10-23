@@ -337,7 +337,7 @@ void
 tm_data_rep::attach_view (tm_window win, tm_view vw) {
   // cout << "Attach view " << vw->buf->name << "\n";
   vw->win= win;
-  widget wid= (widget) win->wid;
+  wk_widget wid= (wk_widget) win->wid;
   wid ["canvas"] << set_widget ("scrollable", vw->ed);
   if (wid->attached ()) {
     vw->ed->resume ();
@@ -353,8 +353,8 @@ tm_data_rep::detach_view (tm_view vw) {
   tm_window win= vw->win;
   if (win == NULL) return;
   vw->win= NULL;
-  widget wid= (widget) win->wid;
-  wid ["canvas"] << set_widget ("scrollable", glue_widget ());
+  wk_widget wid= (wk_widget) win->wid;
+  wid ["canvas"] << set_widget ("scrollable", glue_wk_widget ());
   if (wid->attached ()) {
     vw->ed->suspend ();
     vw->ed << emit_attach_window (NULL);

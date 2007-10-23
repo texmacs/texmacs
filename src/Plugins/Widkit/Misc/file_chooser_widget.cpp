@@ -46,10 +46,10 @@
 #define CHANGE_SUFFIXES 13
 
 class file_chooser_command_rep: public command_rep {
-  widkit_widget_rep* fch;
+  wk_widget_rep* fch;
   int                type;
 public:
-  file_chooser_command_rep (widget w, int t): fch(w.rep), type(t) {}
+  file_chooser_command_rep (wk_widget w, int t): fch(w.rep), type(t) {}
   void apply ();
   ostream& print (ostream& out) {
     return out << "File chooser command (" << type << ")"; }
@@ -57,7 +57,7 @@ public:
 
 void
 file_chooser_command_rep::apply () {
-  widget fch_wid (fch);
+  wk_widget fch_wid (fch);
   switch (type) {
   case CHANGE_FILE:
     {
@@ -81,7 +81,8 @@ file_chooser_command_rep::apply () {
     fch_wid << set_string ("directory", "~");
     break;
   case BUTTON_TEXTS:
-    fch_wid << set_string ("directory", as_string (url ("$TEXMACS_HOME_PATH", "texts")));
+    fch_wid << set_string ("directory",
+			   as_string (url ("$TEXMACS_HOME_PATH", "texts")));
     break;
   case BUTTON_FILE_OK:
     {
@@ -116,7 +117,7 @@ file_chooser_command_rep::apply () {
       else if (type == IMAGE_CLIP_Y1) which= "clip-y1";
       else if (type == IMAGE_CLIP_X2) which= "clip-x2";
       else which= "clip-y2";
-      widget inp= fch_wid[0]["image"]["parameters"][which]["input"];
+      wk_widget inp= fch_wid[0]["image"]["parameters"][which]["input"];
       inp << get_string ("input", s);
       if (s == "#f") fch_wid << set_string ("return", "#f");
       else inp << set_string ("input", scm_unquote (s));
@@ -126,7 +127,7 @@ file_chooser_command_rep::apply () {
 }
 
 command
-file_chooser_command (widget fch, int type) {
+file_chooser_command (wk_widget fch, int type) {
   return new file_chooser_command_rep (fch, type);
 }
 
@@ -135,7 +136,7 @@ file_chooser_command (widget fch, int type) {
 ******************************************************************************/
 
 class file_list_widget_rep: public attribute_widget_rep {
-  widkit_widget_rep* fch;
+  wk_widget_rep* fch;
   string             dir;
   array<bool>        lids;
   array<string>      names;
@@ -144,10 +145,10 @@ class file_list_widget_rep: public attribute_widget_rep {
   int                hilight;
 
 public:
-  file_list_widget_rep (widget ch, array<string> suffix, bool dir_flag);
+  file_list_widget_rep (wk_widget ch, array<string> suffix, bool dir_flag);
   operator tree ();
 
-  widget get_canvas ();
+  wk_widget get_canvas ();
 
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
@@ -159,18 +160,19 @@ public:
 * Implementation of file_list widgets
 ******************************************************************************/
 
-file_list_widget_rep::file_list_widget_rep (widget c, array<string> s, bool f):
-  attribute_widget_rep (0), fch (c.rep),
-  dir (""), suffix (s), dir_flag (f), hilight (-1) {}
+file_list_widget_rep::file_list_widget_rep (
+  wk_widget c, array<string> s, bool f):
+    attribute_widget_rep (0), fch (c.rep),
+    dir (""), suffix (s), dir_flag (f), hilight (-1) {}
 
 file_list_widget_rep::operator tree () {
   return "file_list";
 }
 
-widget
+wk_widget
 file_list_widget_rep::get_canvas () {
   string which (dir_flag? string ("directories"): string ("files"));
-  widget fch_wid (fch);
+  wk_widget fch_wid (fch);
   return fch_wid[0]["list"][which];
 }
 
@@ -246,7 +248,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
     if (i==N(names)) return;
 
     string s= names[i];
-    widget fch_wid (fch);
+    wk_widget fch_wid (fch);
     if (hilight == i) {
       if (dir_flag) {
 	string name= as_string (url_system (dir, s));
@@ -362,8 +364,8 @@ public:
   file_chooser_widget_rep (command cmd, string type, string magn);
   operator tree ();
 
-  widget input_widget (string what, int type);
-  widget button_widget (string what, int type);
+  wk_widget input_widget (string what, int type);
+  wk_widget button_widget (string what, int type);
 
   void handle_get_size (get_size_event ev);
   void handle_set_string (set_string_event ev);
@@ -381,7 +383,8 @@ class drive_menu_command_rep: public command_rep {
   file_chooser_widget_rep *fileChooser;
 
 public:
-  drive_menu_command_rep (file_chooser_widget_rep *fileChooser2, string driveLetter2):
+  drive_menu_command_rep (file_chooser_widget_rep *fileChooser2,
+			  string driveLetter2):
     fileChooser (fileChooser2), driveLetter(driveLetter2) {}
   void apply () {
     fileChooser << set_string("directory", driveLetter);
@@ -393,20 +396,20 @@ public:
 * Implementation of file_chooser widgets
 ******************************************************************************/
 
-widget
+wk_widget
 file_chooser_widget_rep::input_widget (string what, int type) {
-  array<widget> ww (2);
+  array<wk_widget> ww (2);
   array<string> nn (2);
-  ww[0]= text_widget (what, false, "english");
-  ww[1]= input_text_widget (file_chooser_command (this, type));
+  ww[0]= text_wk_widget (what, false, "english");
+  ww[1]= input_text_wk_widget (file_chooser_command (this, type));
   nn[1]= "input";
   if (type == CHANGE_DIR) ww[1] << set_string ("type", "directory");
   return horizontal_list (ww, nn);
 }
 
-widget
+wk_widget
 file_chooser_widget_rep::button_widget (string what, int type) {
-  return command_button (text_widget (what, false, "english"),
+  return command_button (text_wk_widget (what, false, "english"),
 			 file_chooser_command (this, type), true);
 }
 
@@ -425,138 +428,140 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   SI sep= 3*PIXEL;
   int cw2n= 5;
   if (type == "directory") cw2n= 3;
-  array<widget> cw2 (cw2n);
+  array<wk_widget> cw2 (cw2n);
   array<string> cn2 (cw2n);
-  cw2[0]= glue_widget (false, true, sep);
-  cw2[1]= canvas_widget (new file_list_widget_rep (this, suffix, true));
+  cw2[0]= glue_wk_widget (false, true, sep);
+  cw2[1]=
+    canvas_widget (wk_widget (new file_list_widget_rep (this, suffix, true)));
   cn2[1]= "directories";
-  cw2[2]= glue_widget (false, true, sep);
+  cw2[2]= glue_wk_widget (false, true, sep);
   if (type != "directory") {
-    cw2[3]= canvas_widget (new file_list_widget_rep (this, suffix, false));
+    cw2[3]=
+      canvas_widget (wk_widget (new file_list_widget_rep (this,suffix,false)));
     cn2[3]= "files";
-    cw2[4]= glue_widget (false, true, sep-PIXEL);
+    cw2[4]= glue_wk_widget (false, true, sep-PIXEL);
   }
 
 #ifdef OS_WIN32
-  widget drive_menu = vertical_menu (array<widget> ());
+  wk_widget drive_menu = vertical_menu (array<wk_widget> ());
   unsigned int driveMask = XGetDrivesMask();
   char driveString[4] = "A:\\";
   for (char x = 'A'; x <= 'Z'; x++)
     if(driveMask & (1 << (x - 'A'))) {
       driveString[0] = x;
       drive_menu << emit_insert (driveString,
-	command_button (text_widget (driveString),
+	command_button (text_wk_widget (driveString),
 			new drive_menu_command_rep (this, driveString)));
     }
-  array<widget> drw (2);
-  drw[0] = pullright_button (text_widget("Drive"), drive_menu);
-  drw[1] = text_widget("");
-  // drw[1]= glue_widget (false, true, sep);
+  array<wk_widget> drw (2);
+  drw[0] = pullright_button (text_wk_widget ("Drive"), drive_menu);
+  drw[1] = text_wk_widget("");
+  // drw[1]= glue_wk_widget (false, true, sep);
 #endif
 
   int BUTTON_OK= BUTTON_FILE_OK;
   if (type == "directory") BUTTON_OK= BUTTON_DIR_OK;
 
 #ifdef OS_WIN32
-  array<widget> cw3 (11);
-  cw3[0]= glue_widget (false, false, sep);
-  cw3[1]= pulldown_button (text_widget ("Drive"), drive_menu, true);
-  cw3[2]= glue_widget (false, false, sep);
+  array<wk_widget> cw3 (11);
+  cw3[0]= glue_wk_widget (false, false, sep);
+  cw3[1]= pulldown_button (text_wk_widget ("Drive"), drive_menu, true);
+  cw3[2]= glue_wk_widget (false, false, sep);
   cw3[3]= button_widget ("Home", BUTTON_HOME);
-  cw3[4]= glue_widget (false, false, sep);
+  cw3[4]= glue_wk_widget (false, false, sep);
   cw3[5]= button_widget ("Texts", BUTTON_TEXTS);
-  cw3[6]= glue_widget (true, false);
+  cw3[6]= glue_wk_widget (true, false);
   cw3[7]= button_widget ("Ok", BUTTON_OK);
-  cw3[8]= glue_widget (false, false, sep);
+  cw3[8]= glue_wk_widget (false, false, sep);
   cw3[9]= button_widget ("Cancel", BUTTON_CANCEL);
-  cw3[10]= glue_widget (false, false, sep);
+  cw3[10]= glue_wk_widget (false, false, sep);
 #else
-  array<widget> cw3 (9);
-  cw3[0]= glue_widget (false, false, sep);
+  array<wk_widget> cw3 (9);
+  cw3[0]= glue_wk_widget (false, false, sep);
   cw3[1]= button_widget ("Home", BUTTON_HOME);
-  cw3[2]= glue_widget (false, false, sep);
+  cw3[2]= glue_wk_widget (false, false, sep);
   cw3[3]= button_widget ("Texts", BUTTON_TEXTS);
-  cw3[4]= glue_widget (true, false);
+  cw3[4]= glue_wk_widget (true, false);
   cw3[5]= button_widget ("Ok", BUTTON_OK);
-  cw3[6]= glue_widget (false, false, sep);
+  cw3[6]= glue_wk_widget (false, false, sep);
   cw3[7]= button_widget ("Cancel", BUTTON_CANCEL);
 #ifdef OS_DARWIN
-  cw3[8]= glue_widget (false, false, sep + 14*PIXEL);
+  cw3[8]= glue_wk_widget (false, false, sep + 14*PIXEL);
 #else
-  cw3[8]= glue_widget (false, false, sep);
+  cw3[8]= glue_wk_widget (false, false, sep);
 #endif
 #endif
 
   int cwn= 11;
   if (type == "image") cwn= 17;
   if (type == "directory") cwn= 7;
-  array<widget> cw (cwn);
+  array<wk_widget> cw (cwn);
   array<string> cn (cwn);
-  cw[0]    = glue_widget (true, false, 0, sep);
-  cw[1]    = input_widget ("Directory:", CHANGE_DIR);
-  cn[1]    = "directory";
-  cw[2]    = glue_widget (true, false, 0, sep);
+  cw[0]= glue_wk_widget (true, false, 0, sep);
+  cw[1]= input_widget ("Directory:", CHANGE_DIR);
+  cn[1]= "directory";
+  cw[2]= glue_wk_widget (true, false, 0, sep);
 
   if (type == "directory") {
-    cw[3]    = horizontal_list (cw2, cn2);
-    cn[3]    = "list";
+    cw[3]= horizontal_list (cw2, cn2);
+    cn[3]= "list";
   }
 
   if (type != "directory") {
-    cw[3]    = input_widget ("File:", CHANGE_FILE);
-    cn[3]    = "file";
-    cw[4]    = glue_widget (true, false, 0, sep);
-    cw[5]    = input_widget ("Suffixes:", CHANGE_SUFFIXES);
-    cn[5]    = "suffixes";
-    cw[6]    = glue_widget (true, false, 0, sep);
-    cw[7]    = horizontal_list (cw2, cn2);
-    cn[7]    = "list";
+    cw[3]= input_widget ("File:", CHANGE_FILE);
+    cn[3]= "file";
+    cw[4]= glue_wk_widget (true, false, 0, sep);
+    cw[5]= input_widget ("Suffixes:", CHANGE_SUFFIXES);
+    cn[5]= "suffixes";
+    cw[6]= glue_wk_widget (true, false, 0, sep);
+    cw[7]= horizontal_list (cw2, cn2);
+    cn[7]= "list";
   }
 
   if (type == "image") {
-    array<widget> imw (11);
+    array<wk_widget> imw (11);
     array<string> ims (11);
     imw[ 0]= input_widget ("width:", IMAGE_HSIZE);
     ims[ 0]= "hsize";
-    imw[ 1]= glue_widget (true, false, 0, sep);
+    imw[ 1]= glue_wk_widget (true, false, 0, sep);
     imw[ 2]= input_widget ("height:", IMAGE_VSIZE);
     ims[ 2]= "vsize";
-    imw[ 3]= glue_widget (true, false, 0, sep);
+    imw[ 3]= glue_wk_widget (true, false, 0, sep);
     imw[ 4]= input_widget ("left border:", IMAGE_CLIP_X1);
     ims[ 4]= "clip-x1";
-    imw[ 5]= glue_widget (true, false, 0, sep);
+    imw[ 5]= glue_wk_widget (true, false, 0, sep);
     imw[ 6]= input_widget ("lower border:", IMAGE_CLIP_Y1);
     ims[ 6]= "clip-y1";
-    imw[ 7]= glue_widget (true, false, 0, sep);
+    imw[ 7]= glue_wk_widget (true, false, 0, sep);
     imw[ 8]= input_widget ("right border:", IMAGE_CLIP_X2);
     ims[ 8]= "clip-x2";
-    imw[ 9]= glue_widget (true, false, 0, sep);
+    imw[ 9]= glue_wk_widget (true, false, 0, sep);
     imw[10]= input_widget ("upper border:", IMAGE_CLIP_Y2);
     ims[10]= "clip-y2";
 
-    array<widget> cw4 (5);
+    array<wk_widget> cw4 (5);
     array<string> cn4 (5);
-    cw4[0] = glue_widget (false, false, sep);
+    cw4[0] = glue_wk_widget (false, false, sep);
     cw4[1] = vertical_list (imw, ims);
     cn4[1] = "parameters";
-    cw4[2] = glue_widget (false, false, sep);
+    cw4[2] = glue_wk_widget (false, false, sep);
     cw4[3] = new image_widget_rep ();
     cn4[3] = "image";
-    cw4[4] = glue_widget (false, false, sep);
+    cw4[4] = glue_wk_widget (false, false, sep);
 
-    cw[ 8] = separator_widget ();
-    cw[ 9] = glue_widget (true, false, 0, sep);
+    cw[ 8] = separator_wk_widget ();
+    cw[ 9] = glue_wk_widget (true, false, 0, sep);
     cw[10] = horizontal_list (cw4, cn4);
     cn[10] = "image";
-    cw[11] = glue_widget (true, false, 0, sep);
-    cw[12] = separator_widget ();
-    cw[13] = glue_widget (true, false, 0, sep);
+    cw[11] = glue_wk_widget (true, false, 0, sep);
+    cw[12] = separator_wk_widget ();
+    cw[13] = glue_wk_widget (true, false, 0, sep);
   }
 
-  cw[cwn-3]= glue_widget (true, false, 0, sep);
+  cw[cwn-3]= glue_wk_widget (true, false, 0, sep);
   cw[cwn-2]= horizontal_list (cw3);
   cn[cwn-2]= "buttons";
-  cw[cwn-1]= glue_widget (true, false, 0, sep);
+  cw[cwn-1]= glue_wk_widget (true, false, 0, sep);
 
   a[0]= vertical_list (cw, cn);
 
@@ -607,7 +612,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
       a[0]["image"]["image"] << set_string ("name", name);
       array<string> ps_suffix;
       ps_suffix << ".ps" << ".eps";
-      widget par_wid= a[0]["image"]["parameters"];
+      wk_widget par_wid= a[0]["image"]["parameters"];
       if (has_suffix (name, ps_suffix)) {
 	par_wid["hsize"]["input"] << set_string ("input", "");
 	par_wid["vsize"]["input"] << set_string ("input", "");
@@ -679,7 +684,7 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
     }
     if (type == "image") {
       string hsize, vsize, cx1, cy1, cx2, cy2;
-      widget par= a[0]["image"]["parameters"];
+      wk_widget par= a[0]["image"]["parameters"];
       par["hsize"]["input"] << get_string ("input", hsize);
       par["vsize"]["input"] << get_string ("input", vsize);
       par["clip-x1"]["input"] << get_string ("input", cx1);
@@ -704,7 +709,7 @@ file_chooser_widget_rep::handle_destroy (destroy_event ev) {
 * exported routines
 ******************************************************************************/
 
-widget
-file_chooser_widget (command cmd, string type, string magn) {
+wk_widget
+file_chooser_wk_widget (command cmd, string type, string magn) {
   return new file_chooser_widget_rep (cmd, type, magn);
 }

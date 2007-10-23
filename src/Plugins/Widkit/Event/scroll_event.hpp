@@ -32,8 +32,8 @@ EVENT(scroll_event);
 
 event get_width (SI& w);
 event get_height (SI& h);
-event set_hor_bar (widget bar);
-event set_ver_bar (widget bar);
+event set_hor_bar (wk_widget bar);
+event set_ver_bar (wk_widget bar);
 event emit_bar_set_extents (SI min, SI max);
 event emit_bar_scroll_to (SI pos);
 event emit_scroll (SI& c1, SI& c2, SI& c3);

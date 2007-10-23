@@ -17,7 +17,7 @@
 #include "list.hpp"
 #include "array.hpp"
 #include "promise.hpp"
-#include "Widkit/widkit_widget.hpp"
+#include "widget.hpp"
 
 /******************************************************************************
 * The object representation class

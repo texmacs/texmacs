@@ -23,8 +23,8 @@ void abs_round (SI& l);
 
 class horizontal_list_rep: public composite_widget_rep {
 public:
-  horizontal_list_rep (array<widget> a);
-  horizontal_list_rep (array<widget> a, array<string> name);
+  horizontal_list_rep (array<wk_widget> a);
+  horizontal_list_rep (array<wk_widget> a, array<string> name);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -32,10 +32,10 @@ public:
   void handle_find_child (find_child_event ev);
 };
 
-horizontal_list_rep::horizontal_list_rep (array<widget> a):
+horizontal_list_rep::horizontal_list_rep (array<wk_widget> a):
   composite_widget_rep (a) {}
 
-horizontal_list_rep::horizontal_list_rep (array<widget> a,
+horizontal_list_rep::horizontal_list_rep (array<wk_widget> a,
   array<string> n):
   composite_widget_rep (a, n) {}
 
@@ -121,8 +121,8 @@ horizontal_list_rep::handle_find_child (find_child_event ev) {
 class vertical_list_rep: public composite_widget_rep {
   bool menu_flag;
 public:
-  vertical_list_rep (array<widget> a, bool mf= false);
-  vertical_list_rep (array<widget> a, array<string> name);
+  vertical_list_rep (array<wk_widget> a, bool mf= false);
+  vertical_list_rep (array<wk_widget> a, array<string> name);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -130,10 +130,10 @@ public:
   void handle_find_child (find_child_event ev);
 };
 
-vertical_list_rep::vertical_list_rep (array<widget> a, bool mf):
+vertical_list_rep::vertical_list_rep (array<wk_widget> a, bool mf):
   composite_widget_rep (a), menu_flag (mf) {}
 
-vertical_list_rep::vertical_list_rep (array<widget> a,
+vertical_list_rep::vertical_list_rep (array<wk_widget> a,
   array<string> name):
     composite_widget_rep (a, name), menu_flag (false) {}
 
@@ -227,27 +227,27 @@ vertical_list_rep::handle_find_child (find_child_event ev) {
 * Interface
 ******************************************************************************/
 
-widget
-horizontal_list (array<widget> a) {
+wk_widget
+horizontal_list (array<wk_widget> a) {
   return new horizontal_list_rep (a);
 }
 
-widget
-horizontal_list (array<widget> a, array<string> name) {
+wk_widget
+horizontal_list (array<wk_widget> a, array<string> name) {
   return new horizontal_list_rep (a, name);
 }
 
-widget
-vertical_list (array<widget> a) {
+wk_widget
+vertical_list (array<wk_widget> a) {
   return new vertical_list_rep (a);
 }
 
-widget
-vertical_list (array<widget> a, array<string> name) {
+wk_widget
+vertical_list (array<wk_widget> a, array<string> name) {
   return new vertical_list_rep (a, name);
 }
 
-widget
-vertical_menu (array<widget> a) {
+wk_widget
+vertical_menu (array<wk_widget> a) {
   return new vertical_list_rep (a, true);
 }

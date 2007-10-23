@@ -18,8 +18,7 @@
 * Scroll widgets
 ******************************************************************************/
 
-
-scroll_widget_rep::scroll_widget_rep (array<widget> a2,
+scroll_widget_rep::scroll_widget_rep (array<wk_widget> a2,
   gravity grav2):
   attribute_widget_rep (a2, grav2) {}
 
