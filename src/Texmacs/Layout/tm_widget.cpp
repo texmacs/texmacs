@@ -193,7 +193,6 @@ tm_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
 void
 tm_widget_rep::menu_widget (string menu, wk_widget& w) {
   object xmenu= eval ("'" * menu);
-  // tm_widget meta= get_meta ();
   w= make_menu_widget (xmenu);
 }
 

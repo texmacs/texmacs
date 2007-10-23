@@ -13,7 +13,7 @@
 #ifndef TM_DATA_H
 #define TM_DATA_H
 #include "server.hpp"
-#include "tm_buffer.hpp"
+#include "tm_window.hpp"
 
 class tm_data_rep: virtual public server_rep {
 protected:

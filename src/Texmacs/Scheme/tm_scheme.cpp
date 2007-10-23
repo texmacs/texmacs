@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "tm_scheme.hpp"
+#include "tm_window.hpp"
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
@@ -110,7 +111,7 @@ tm_scheme_rep::dialogue_start (string name, wk_widget wid) {
     if (lan == "russian") lan= "english";
     name= the_display->translate (name, "english", lan);
     char* _name= as_charp (name);
-    window win= get_meta () -> win;
+    window win= get_window () -> wid -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
     win->get_position (ox, oy);
     win->get_size (dx, dy);
@@ -152,13 +153,12 @@ void
 tm_scheme_rep::choose_file (object fun, string title, string type) {
   string magn;
   if (type == "image") {
-    tm_widget meta = get_meta ();
-    editor ed      = get_editor ();
-    int dpi        = as_int (ed->get_env_string (DPI));
-    int sfactor    = meta->get_shrinking_factor ();
-    int num        = 75*sfactor;
-    int den        = dpi;
-    int g          = gcd (num, den);
+    editor ed   = get_editor ();
+    int dpi     = as_int (ed->get_env_string (DPI));
+    int sfactor = get_window () -> get_shrinking_factor ();
+    int num     = 75*sfactor;
+    int den     = dpi;
+    int g       = gcd (num, den);
     num /= g; den /= g;
     if (num != 1) magn << "*" << as_string (num);
     if (den != 1) magn << "/" << as_string (den);
@@ -293,10 +293,10 @@ tm_scheme_rep::interactive (object fun, scheme_tree p) {
       (abstract (dialogue_wid[0]["inputs"][0]["input"]));
   }
   else {
-    if (get_meta () -> get_footer_mode () == 1) beep ();
+    if (get_window () -> get_footer_mode () == 1) beep ();
     else {
       command interactive_cmd=
-	new interactive_command_rep (this, get_meta (), fun, p);
+	new interactive_command_rep (this, get_window () -> wid, fun, p);
       interactive_cmd ();
     }
   }

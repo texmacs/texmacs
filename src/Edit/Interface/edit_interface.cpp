@@ -14,7 +14,7 @@
 #include "file.hpp"
 #include "convert.hpp"
 #include "server.hpp"
-#include "tm_buffer.hpp"
+#include "tm_window.hpp"
 #include "Metafont/tex_files.hpp"
 #include "data_cache.hpp"
 #include "drd_mode.hpp"
@@ -375,8 +375,8 @@ edit_interface_rep::apply_changes () {
   }
   if (sb != cur_sb) {
     cur_sb= sb;
-    wk_widget meta= (wk_widget) get_server () -> get_meta ();
-    meta ["canvas"] << set_integer ("scrollbars", sb);
+    tm_window win= get_server () -> get_window ();
+    win -> get_canvas () << set_integer ("scrollbars", sb);
   }
 
   // window decorations (menu bar, icon bars, footer)

@@ -470,8 +470,8 @@ tm_data_rep::switch_to_buffer (int nr) {
   attach_view (win, new_vw);
   set_view (new_vw);
   menu_focus_buffer (buf);
-  tm_widget meta= new_vw->win->wid;
-  meta->set_shrinking_factor (meta->get_shrinking_factor ());
+  tm_window nwin= new_vw->win;
+  nwin->set_shrinking_factor (nwin->get_shrinking_factor ());
   // cout << "Switched to buffer " << nr << "\n";
 }
 

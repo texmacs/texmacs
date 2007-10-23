@@ -14,9 +14,6 @@
 #define TM_BUFFER_H
 #include "server.hpp"
 
-window texmacs_window (wk_widget wid, tree geom);
-window texmacs_window (widget wid, tree geom);
-
 extern tree the_et;
 path new_document ();
 void delete_document (path rp);
@@ -76,29 +73,5 @@ public:
   bool needs_to_be_saved ();
   bool needs_to_be_autosaved ();
 };
-
-class tm_view_rep {
-public:
-  tm_buffer buf;
-  editor    ed;
-  tm_window win;
-  inline tm_view_rep (tm_buffer buf2, editor ed2):
-    buf (buf2), ed (ed2), win (NULL) {}
-};
-
-class tm_window_rep {
-public:
-  window    win;
-  tm_widget wid;
-  int       id;
-  inline tm_window_rep (tm_widget wid2, tree geom):
-    win (texmacs_window (abstract (wid2), geom)),
-    wid (wid2), id (create_window_id ()) {}
-  inline ~tm_window_rep () { destroy_window_id (id); }
-};
-
-typedef tm_buffer_rep* tm_buffer;
-typedef tm_view_rep*   tm_view;
-typedef tm_window_rep* tm_window;
 
 #endif // defined TM_BUFFER_H

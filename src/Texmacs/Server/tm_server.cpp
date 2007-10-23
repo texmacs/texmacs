@@ -150,7 +150,7 @@ tm_server_rep::has_view () {
 tm_view
 tm_server_rep::get_view (bool must_be_valid) {
   if (must_be_valid && (vw==NULL))
-    fatal_error ("No active view", "tm_server_rep::get_meta");
+    fatal_error ("No active view", "tm_server_rep::get_view");
   return vw;
 }
 
@@ -178,14 +178,8 @@ tm_window
 tm_server_rep::get_window () {
   tm_view vw= get_view ();
   if (vw->win==NULL)
-    fatal_error ("No window attached to view", "tm_server_rep::get_meta");
+    fatal_error ("No window attached to view", "tm_server_rep::get_window");
   return vw->win;
-}
-
-tm_widget
-tm_server_rep::get_meta () {
-  tm_window win= get_window ();
-  return win->wid;
 }
 
 color
@@ -327,55 +321,50 @@ tm_server_rep::style_get_cache (
 
 void
 tm_server_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  wk_widget meta= (wk_widget) get_meta ();
-  meta["canvas"] << ::get_visible (x1, y1, x2, y2);
+  get_window () -> get_canvas () << ::get_visible (x1, y1, x2, y2);
 }
 
 void
 tm_server_rep::scroll_where (SI& x, SI& y) {
-  wk_widget meta= (wk_widget) get_meta ();
-  meta["canvas"] << get_coord2 ("scroll position", x, y);
+  get_window () -> get_canvas () << get_coord2 ("scroll position", x, y);
 }
 
 void
 tm_server_rep::scroll_to (SI x, SI y) {
-  wk_widget meta= (wk_widget) get_meta ();
-  meta["canvas"] << set_scroll_pos (x, y);
+  get_window () -> get_canvas () << set_scroll_pos (x, y);
 }
 
 void
 tm_server_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  wk_widget meta= (wk_widget) get_meta ();
-  meta["canvas"] << ::set_extents (x1, y1, x2, y2);
+  get_window () -> get_canvas () << ::set_extents (x1, y1, x2, y2);
 }
 
 void
 tm_server_rep::set_left_footer (string s) {
   if ((vw == NULL) || (vw->win == NULL)) return;
-  get_meta()->set_left_footer (s);
+  get_window () -> set_left_footer (s);
 }
 
 void
 tm_server_rep::set_right_footer (string s) {
   if ((vw == NULL) || (vw->win == NULL)) return;
-  get_meta()->set_right_footer (s);
+  get_window () -> set_right_footer (s);
 }
 
 void
 tm_server_rep::set_message (string left, string right, bool temp) {
   if ((vw == NULL) || (vw->win == NULL)) return;
-  get_editor()->set_message (left, right, temp);
+  get_editor() -> set_message (left, right, temp);
 }
 
 void
 tm_server_rep::recall_message () {
   if ((vw == NULL) || (vw->win == NULL)) return;
-  get_editor()->recall_message ();
+  get_editor() -> recall_message ();
 }
 
 void
 tm_server_rep::full_screen_mode (bool on, bool edit) {
-  wk_widget meta= (wk_widget) get_meta ();
   if (on && !edit) {
     show_header (false);
     show_footer (false);
@@ -384,7 +373,7 @@ tm_server_rep::full_screen_mode (bool on, bool edit) {
     show_header (true);
     show_footer (true);
   }
-  meta->win->full_screen (on);
+  get_window()->wid->win->full_screen (on);
   get_editor()->full_screen_mode (on && !edit);
   full_screen = on;
   full_screen_edit = on && edit;
