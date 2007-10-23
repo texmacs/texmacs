@@ -15,10 +15,7 @@
 #include "tm_widget.hpp"
 
 #define THIS (wk_widget (this))
-
 extern int nr_windows;
-
-wk_widget make_menu_widget (object menu);
 string icon_bar_name (int which);
 
 /******************************************************************************
@@ -60,24 +57,23 @@ make_icon_bar (bool on) {
 }
 
 static wk_widget
-make_header (server_rep* sv) {
+make_header (int mask) {
   array<wk_widget> H (5);
   array<string> H_name (5);
   H[0]= make_menu_bar ();
-  H[1]= make_icon_bar (sv->preference ("main icon bar") == "on");
-  H[2]= make_icon_bar (sv->preference ("context dependent icons") == "on");
-  H[3]= make_icon_bar (sv->preference ("user provided icons") == "on");
+  H[1]= make_icon_bar ((mask & 2) == 2);
+  H[2]= make_icon_bar ((mask & 4) == 4);
+  H[3]= make_icon_bar ((mask & 8) == 8);
   H[4]= glue_wk_widget (true, false, 0, 2*PIXEL);
   H_name[0]= "menu";
   H_name[1]= "main";
   H_name[2]= "context";
   H_name[3]= "user";
-  return optional_widget (vertical_list (H, H_name),
-			  sv->preference ("header") == "on");
+  return optional_widget (vertical_list (H, H_name), (mask & 1) == 1);
 }
 
 static wk_widget
-make_footer (server_rep* sv) {
+make_footer (int mask) {
   array<wk_widget> F (3);
   array<string> F_name (3);
   F[0]= text_wk_widget ("Welcome to TeXmacs!", false, "english");
@@ -107,17 +103,16 @@ make_footer (server_rep* sv) {
   S[2]= glue_wk_widget (false, false);
   S_name[0]= "default";
   S_name[1]= "interactive";
-  return switch_widget (S, S_name,
-			sv->preference ("status bar") == "on"? 0: 2);
+  return switch_widget (S, S_name, (mask & 16) == 16? 0: 2);
 }
 
 static wk_widget
-make_texmacs_widget (server_rep* sv) {
+make_texmacs_widget (int mask) {
   array<wk_widget> V (3);
   array<string> V_name (3);
-  V[0]= make_header (sv);
+  V[0]= make_header (mask);
   V[1]= canvas_widget (glue_wk_widget ());
-  V[2]= make_footer (sv);
+  V[2]= make_footer (mask);
   V_name[0]= "header";
   V_name[1]= "canvas";
   V_name[2]= "footer";
@@ -125,38 +120,25 @@ make_texmacs_widget (server_rep* sv) {
 }
 
 /******************************************************************************
-* Meta editor constructor and destructor
+* Constructor and destructor
 ******************************************************************************/
 
-static int tm_widget_serial= 0;
-
-tm_widget_rep::tm_widget_rep (server_rep* sv2):
-  basic_widget_rep (1), sv (sv2), serial (tm_widget_serial++),
-  footer_flag (true), text_ptr (NULL),
-  texmacs_menu (NULL), texmacs_icon_menu (NULL)
+tm_widget_rep::tm_widget_rep (int mask):
+  basic_widget_rep (1),
+  footer_flag (true), text_ptr (NULL)
 {
-  a[0]= make_texmacs_widget (sv);
-  sfactor= sv->get_default_shrinking_factor ();
+  a[0]= make_texmacs_widget (mask);
 }
 
-tm_widget_rep::~tm_widget_rep () {
-  if (texmacs_menu != NULL) delete[] texmacs_menu;
-  if (texmacs_icon_menu != NULL) delete[] texmacs_icon_menu;
-}
-
-wk_widget_rep*
-tm_widget_rep::get_this () {
-  return this;
-}
+tm_widget_rep::~tm_widget_rep () {}
 
 tm_widget_rep::operator tree () {
   return tree (TUPLE, "TeXmacs window", (tree) a[0]);
 }
 
-void
-tm_widget_rep::set_window_name (string s) {
-  win->set_name (s);
-}
+/******************************************************************************
+* Accessors
+******************************************************************************/
 
 void
 tm_widget_rep::set_subwidget (wk_widget w, string which, wk_widget sw) {
@@ -187,39 +169,7 @@ tm_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
 }
 
 /******************************************************************************
-* Menus
-******************************************************************************/
-
-void
-tm_widget_rep::menu_widget (string menu, wk_widget& w) {
-  object xmenu= eval ("'" * menu);
-  w= make_menu_widget (xmenu);
-}
-
-void
-tm_widget_rep::menu_main (string menu) {
-  if (texmacs_menu == NULL) texmacs_menu= new object[1];
-  object xmenu= call ("menu-expand", eval ("'" * menu));
-  if (xmenu == texmacs_menu[0]) return;
-  texmacs_menu[0]= xmenu;
-  wk_widget w= make_menu_widget (xmenu);
-  set_subwidget (THIS ["header"] ["menu"] ["bar"], "menu", w);
-}
-
-void
-tm_widget_rep::menu_icons (int which, string menu) {
-  if ((which<0) || (which>2)) return;
-  if (texmacs_icon_menu == NULL) texmacs_icon_menu= new object[3];
-  object xmenu= call ("menu-expand", eval ("'" * menu));
-  if (xmenu == texmacs_icon_menu[which]) return;
-  texmacs_icon_menu[which]= xmenu;
-  string name= icon_bar_name (which);
-  wk_widget w= make_menu_widget (xmenu);
-  set_subwidget (THIS ["header"] [name] ["bar"], "icons", w);
-}
-
-/******************************************************************************
-* The footer and executing commands on the bottom line
+* Changing the footer
 ******************************************************************************/
 
 void
@@ -233,14 +183,6 @@ tm_widget_rep::set_right_footer (string s) {
   wk_widget tw= text_wk_widget (s, false, "english");
   set_subwidget (THIS ["footer"], "right", tw);
 }
-
-class ia_command_rep: public command_rep {
-  tm_widget_rep* man;
-public:
-  ia_command_rep (tm_widget_rep* man2): man (man2) {}
-  void apply () { man->interactive_return (); }
-  ostream& print (ostream& out) { return out << "tm_widget_rep command"; }
-};
 
 int
 tm_widget_rep::get_footer_mode () {
@@ -275,16 +217,17 @@ tm_widget_rep::set_footer_flag (bool on) {
     set_footer_mode (on? 0: 2);
 }
 
-void
-tm_widget_rep::set_shrinking_factor (int sf) {
-  sfactor= sf;
-  THIS ["canvas"] << set_integer ("shrinking factor", sf);
-}
+/******************************************************************************
+* Interactive commands on the footer
+******************************************************************************/
 
-int
-tm_widget_rep::get_shrinking_factor () {
-  return sfactor;
-}
+class ia_command_rep: public command_rep {
+  tm_widget_rep* man;
+public:
+  ia_command_rep (tm_widget_rep* man2): man (man2) {}
+  void apply () { man->interactive_return (); }
+  ostream& print (ostream& out) { return out << "tm_widget_rep command"; }
+};
 
 void
 tm_widget_rep::interactive (string name, string type, array<string> def,
@@ -320,7 +263,7 @@ tm_widget_rep::interactive_return () {
 }
 
 /******************************************************************************
-* Handling other events
+* Handling standard events
 ******************************************************************************/
 
 void
@@ -340,14 +283,54 @@ tm_widget_rep::handle_get_widget (get_widget_event ev) {
 
 void
 tm_widget_rep::handle_set_widget (set_widget_event ev) {
-  a[0] << ev;
+  if (ev->which == "menu bar")
+    set_subwidget (THIS ["header"] ["menu"] ["bar"], "menu", ev->w);
+  else if (ev->which == "main icons bar")
+    set_subwidget (THIS ["header"] ["main"] ["bar"], "icons", ev->w);
+  else if (ev->which == "context icons bar")
+    set_subwidget (THIS ["header"] ["context"] ["bar"], "icons", ev->w);
+  else if (ev->which == "user icons bar")
+    set_subwidget (THIS ["header"] ["user"] ["bar"], "icons", ev->w);
+  else a[0] << ev;
 }
 
 void
 tm_widget_rep::handle_set_string (set_string_event ev) {
-  if (ev->which == "left footer") { set_left_footer (ev->s); return; }
-  if (ev->which == "right footer") { set_right_footer (ev->s); return; }
-  fatal_error ("Could not set string attribute " * ev->which);
+  if (ev->which == "window name") win->set_name (ev->s);
+  else if (ev->which == "left footer") set_left_footer (ev->s);
+  else if (ev->which == "right footer") set_right_footer (ev->s);
+  else if (ev->which == "footer mode") set_footer_mode (as_int (ev->s));
+  else if (ev->which == "footer flag") set_footer_flag (ev->s == "on");
+  else if (ev->which == "header")
+    set_subwidget_flag (THIS ["header"], ev->s == "on");
+  else if (ev->which == "main icons")
+    set_subwidget_flag (THIS ["header"] ["main"], ev->s == "on");
+  else if (ev->which == "context icons")
+    set_subwidget_flag (THIS ["header"] ["context"], ev->s == "on");
+  else if (ev->which == "user icons")
+    set_subwidget_flag (THIS ["header"] ["user"], ev->s == "on");
+  else fatal_error ("Could not set string attribute " * ev->which);
+}
+
+void
+tm_widget_rep::handle_get_string (get_string_event ev) {
+  if (ev->which == "footer mode")
+    ev->s= as_string (get_footer_mode ());
+  else if (ev->which == "footer flag")
+    ev->s= get_footer_flag ()? string ("on"): string ("off");
+  else if (ev->which == "header")
+    ev->s= get_subwidget_flag (THIS ["header"])?
+             string ("on"): string ("off");
+  else if (ev->which == "main icons")
+    ev->s= get_subwidget_flag (THIS ["header"] ["main"])?
+             string ("on"): string ("off");
+  else if (ev->which == "context icons")
+    ev->s= get_subwidget_flag (THIS ["header"] ["context"])?
+             string ("on"): string ("off");
+  else if (ev->which == "user icons")
+    ev->s= get_subwidget_flag (THIS ["header"] ["user"])?
+             string ("on"): string ("off");
+  else fatal_error ("Could not set string attribute " * ev->which);
 }
 
 void
@@ -383,7 +366,7 @@ tm_widget_rep::handle_destroy (destroy_event ev) {
   // WARNING: should be removed when the window model is redesigned
   THIS ["canvas"] << emit_keyboard_focus (true);
 
-  sv->exec_delayed (scheme_cmd ("(safely-kill-window)"));
+  get_server () -> exec_delayed (scheme_cmd ("(safely-kill-window)"));
 }
 
 /******************************************************************************
@@ -394,6 +377,9 @@ bool
 tm_widget_rep::handle (event ev) {
   // cout << "handle " << ((event) ev) << LF;
   switch (ev->type) {
+  case GET_STRING_EVENT:
+    handle_get_string (ev);
+    return true;
   case SET_STRING_EVENT:
     handle_set_string (ev);
     return true;

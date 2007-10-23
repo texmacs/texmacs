@@ -341,7 +341,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   wid ["canvas"] << set_widget ("scrollable", vw->ed);
   if (wid->attached ()) {
     vw->ed->resume ();
-    win->wid->set_window_name (vw->buf->abbr);
+    win->set_window_name (vw->buf->abbr);
     wid ["canvas"] << emit_update ();
   }
   // cout << "View attached\n";
@@ -358,7 +358,7 @@ tm_data_rep::detach_view (tm_view vw) {
   if (wid->attached ()) {
     vw->ed->suspend ();
     vw->ed << emit_attach_window (NULL);
-    win->wid->set_window_name ("TeXmacs");
+    win->set_window_name ("TeXmacs");
     wid ["canvas"] << emit_update ();
   }
   // cout << "View detached\n";
@@ -370,7 +370,13 @@ tm_data_rep::detach_view (tm_view vw) {
 
 tm_window
 tm_data_rep::new_window (bool map_flag, tree geom) {
-  tm_window win= new tm_window_rep (new tm_widget_rep (this), geom);
+  int    mask= 0;
+  if (preference ("header") == "on") mask += 1;
+  if (preference ("main icon bar") == "on") mask += 2;
+  if (preference ("context dependent icons") == "on") mask += 4;
+  if (preference ("user provided icons") == "on") mask += 8;
+  if (preference ("status bar") == "on") mask += 16;
+  tm_window win= new tm_window_rep (new tm_widget_rep (mask), geom);
   if (map_flag) win->win->map ();
   return win;
 }

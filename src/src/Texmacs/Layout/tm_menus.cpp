@@ -49,7 +49,7 @@ icon_bar_name (int which) {
 
 int
 tm_layout_rep::get_window_id () {
-  return get_window () -> serial ();
+  return get_window () -> serial;
 }
 
 void
@@ -118,7 +118,8 @@ void
 tm_layout_rep::show_header (bool flag) {
   if (!has_view ()) return;
   tm_window win= get_window ();
-  win -> set_subwidget_flag (win->get_header (), flag);
+  win -> get_main () <<
+    set_string ("header", flag? string ("on"): string ("off"));
 }
 
 void
@@ -126,19 +127,22 @@ tm_layout_rep::show_icon_bar (int which, bool flag) {
   if ((which<0) || (which>2) || (!has_view())) return;
   string name= icon_bar_name (which);
   tm_window win= get_window ();
-  win -> set_subwidget_flag (win->get_header () ["header"] [name], flag);
+  win -> get_main () <<
+    set_string (name * " icons", flag? string ("on"): string ("off"));
 }
 
 void
 tm_layout_rep::show_footer (bool flag) {
   if (!has_view ()) return;
-  get_window () ->set_footer_flag (flag);
+  get_window () -> set_footer_flag (flag);
 }
 
 bool
 tm_layout_rep::visible_header () {
   tm_window win= get_window ();
-  return win -> get_subwidget_flag (win -> get_header ());
+  string s;
+  win -> get_main () << get_string ("header", s);
+  return s == "on";
 }
 
 bool
@@ -146,7 +150,9 @@ tm_layout_rep::visible_icon_bar (int which) {
   if ((which<0) || (which>2)) return false;
   string name= icon_bar_name (which);
   tm_window win= get_window ();
-  return win -> get_subwidget_flag (win -> get_header () [name]);
+  string s;
+  win->get_main () << get_string (name * " icons", s);
+  return s == "on";
 }
 
 bool
