@@ -25,13 +25,13 @@ tm_frame_rep::~tm_frame_rep () {}
 * Subroutines
 ******************************************************************************/
 
-wk_widget
+widget
 make_menu_widget (object menu) {
-  wk_widget w= concrete (as_widget (call ("make-menu-widget", menu, true)));
+  widget w= as_widget (call ("make-menu-widget", menu, true));
   //string s= "(make-menu-widget '" * menu * " #t)";
   //widget w= as_widget (eval (s));
   if (nil (w)) {
-    array<wk_widget> a (0);
+    array<widget> a (0);
     return horizontal_array (a);
   }
   return w;
@@ -100,7 +100,7 @@ tm_frame_rep::get_string_window_property (string what) {
 void
 tm_frame_rep::menu_widget (string menu, wk_widget& w) {
   object xmenu= eval ("'" * menu);
-  w= make_menu_widget (xmenu);
+  w= concrete (make_menu_widget (xmenu));
 }
 
 void
@@ -228,7 +228,7 @@ tm_frame_rep::full_screen_mode (bool on, bool edit) {
     show_header (true);
     show_footer (true);
   }
-  get_window()->wid->win->full_screen (on);
+  concrete (get_window()->wid) -> win -> full_screen (on);
   get_editor()->full_screen_mode (on && !edit);
   full_screen = on;
   full_screen_edit = on && edit;

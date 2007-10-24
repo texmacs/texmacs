@@ -99,14 +99,14 @@ widget_rep::set_blackbox (string key, blackbox val) {
 }
 
 blackbox
-widget_rep::get_blackbox (string key) {
-  (void) key; (void) val;
+widget_rep::get_blackbox (string key, int type_id) {
+  (void) key; (void) type_id;
   fatal_error ("No default implementation", "widget_rep::set_blackbox");
 }
 
 void
-widget_rep::changed (string key) {
-  blackbox val= get_blackbox (key);
+widget_rep::changed (string key, int type_id) {
+  blackbox val= get_blackbox (key, type_id);
   list<widget_connection> l= out;
   while (!nil (l)) {
     l->item->set_blackbox (key, val);

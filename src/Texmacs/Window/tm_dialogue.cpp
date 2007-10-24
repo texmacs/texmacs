@@ -68,7 +68,7 @@ tm_frame_rep::dialogue_start (string name, wk_widget wid) {
     if (lan == "russian") lan= "english";
     name= the_display->translate (name, "english", lan);
     char* _name= as_charp (name);
-    window win= get_window () -> wid -> win;
+    window win= concrete (get_window () -> wid) -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
     win->get_position (ox, oy);
     win->get_size (dx, dy);

@@ -20,9 +20,9 @@ window texmacs_window (widget wid, tree geom);
 
 class tm_window_rep {
 public:
-  window    win;
-  wk_widget wid;
-  int       id;
+  window win;
+  widget wid;
+  int    id;
 
 public:
   hashmap<tree,tree> props;
@@ -36,7 +36,7 @@ protected:
   command  call_back;          // called when typing finished
 
 public:
-  tm_window_rep (wk_widget wid2, tree geom);
+  tm_window_rep (widget wid2, tree geom);
   ~tm_window_rep ();
   void set_window_name (string s);
   void map ();

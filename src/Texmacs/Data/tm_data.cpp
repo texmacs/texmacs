@@ -337,7 +337,7 @@ void
 tm_data_rep::attach_view (tm_window win, tm_view vw) {
   // cout << "Attach view " << vw->buf->name << "\n";
   vw->win= win;
-  wk_widget wid= (wk_widget) win->wid;
+  wk_widget wid= concrete (win->wid);
   wid ["canvas"] << set_widget ("scrollable", vw->ed);
   if (wid->attached ()) {
     vw->ed->resume ();
@@ -353,7 +353,7 @@ tm_data_rep::detach_view (tm_view vw) {
   tm_window win= vw->win;
   if (win == NULL) return;
   vw->win= NULL;
-  wk_widget wid= (wk_widget) win->wid;
+  wk_widget wid= concrete (win->wid);
   wid ["canvas"] << set_widget ("scrollable", glue_wk_widget ());
   if (wid->attached ()) {
     vw->ed->suspend ();
@@ -384,7 +384,7 @@ tm_data_rep::new_window (bool map_flag, tree geom) {
   if (get_preference ("user provided icons") == "on") mask += 8;
   if (get_preference ("status bar") == "on") mask += 16;
   command quit= new kill_window_command_rep ();
-  tm_window win= new tm_window_rep (texmacs_wk_widget (mask, quit), geom);
+  tm_window win= new tm_window_rep (texmacs_widget (mask, quit), geom);
   if (map_flag) win->map ();
   return win;
 }
