@@ -117,18 +117,13 @@ tm_layout_rep::menu_icons (int which, string menu) {
 void
 tm_layout_rep::show_header (bool flag) {
   if (!has_view ()) return;
-  tm_window win= get_window ();
-  win -> get_main () <<
-    set_string ("header", flag? string ("on"): string ("off"));
+  get_window () -> set_header_flag (flag);
 }
 
 void
 tm_layout_rep::show_icon_bar (int which, bool flag) {
   if ((which<0) || (which>2) || (!has_view())) return;
-  string name= icon_bar_name (which);
-  tm_window win= get_window ();
-  win -> get_main () <<
-    set_string (name * " icons", flag? string ("on"): string ("off"));
+  get_window () -> set_icon_bar_flag (which, flag);
 }
 
 void
@@ -139,20 +134,13 @@ tm_layout_rep::show_footer (bool flag) {
 
 bool
 tm_layout_rep::visible_header () {
-  tm_window win= get_window ();
-  string s;
-  win -> get_main () << get_string ("header", s);
-  return s == "on";
+  return get_window () -> get_header_flag ();
 }
 
 bool
 tm_layout_rep::visible_icon_bar (int which) {
   if ((which<0) || (which>2)) return false;
-  string name= icon_bar_name (which);
-  tm_window win= get_window ();
-  string s;
-  win->get_main () << get_string (name * " icons", s);
-  return s == "on";
+  return get_window () -> get_icon_bar_flag (which);
 }
 
 bool

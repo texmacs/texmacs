@@ -153,10 +153,12 @@ public:
   virtual string get_string_window_property (string what) = 0;
 
   /* Routines concerning the current editor widget */
+  virtual void set_scrollbars (int sb) = 0;
   virtual void get_visible (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
   virtual void scroll_where (SI& x, SI& y) = 0;
   virtual void scroll_to (SI x, SI y) = 0;
   virtual void set_extents (SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void get_extents (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
   virtual void set_left_footer (string s) = 0;
   virtual void set_right_footer (string s) = 0;
   virtual void set_message (string left, string right, bool temp= false) = 0;

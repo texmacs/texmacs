@@ -58,10 +58,12 @@ public:
   void style_get_cache (tree st, hashmap<string,tree>& H, tree& t, bool& flag);
 
   /* Routines concerning the current editor widget */
+  void set_scrollbars (int sb);
   void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
   void scroll_where (SI& x, SI& y);
   void scroll_to (SI x, SI y);
   void set_extents (SI x1, SI y1, SI x2, SI y2);
+  void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
   void set_left_footer (string s);
   void set_right_footer (string s);
   void set_message (string left, string right, bool temp= false);

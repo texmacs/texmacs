@@ -321,22 +321,32 @@ tm_server_rep::style_get_cache (
 
 void
 tm_server_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  get_window () -> get_canvas () << ::get_visible (x1, y1, x2, y2);
+  get_window () -> get_visible (x1, y1, x2, y2);
+}
+
+void
+tm_server_rep::set_scrollbars (int sb) {
+  get_window () -> set_scrollbars (sb);
 }
 
 void
 tm_server_rep::scroll_where (SI& x, SI& y) {
-  get_window () -> get_canvas () << get_coord2 ("scroll position", x, y);
+  get_window () -> get_scroll_pos (x, y);
 }
 
 void
 tm_server_rep::scroll_to (SI x, SI y) {
-  get_window () -> get_canvas () << set_scroll_pos (x, y);
+  get_window () -> set_scroll_pos (x, y);
+}
+
+void
+tm_server_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
+  get_window () -> get_extents (x1, y1, x2, y2);
 }
 
 void
 tm_server_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  get_window () -> get_canvas () << ::set_extents (x1, y1, x2, y2);
+  get_window () -> set_extents (x1, y1, x2, y2);
 }
 
 void

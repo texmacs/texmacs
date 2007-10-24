@@ -56,3 +56,5 @@ event get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
   return get_coord4 ("visible", x1, y1, x2, y2); }
 event set_scroll_pos (SI x, SI y) {
   return set_coord2 ("scroll position", x, y); }
+event get_scroll_pos (SI& x, SI& y) {
+  return get_coord2 ("scroll position", x, y); }

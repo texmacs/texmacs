@@ -42,10 +42,14 @@ public:
   operator tree ();
 
   void handle_get_size (get_size_event ev);
-  void handle_get_widget (get_widget_event ev);
   void handle_set_widget (set_widget_event ev);
+  void handle_get_widget (get_widget_event ev);
   void handle_set_string (set_string_event ev);
   void handle_get_string (get_string_event ev);
+  void handle_set_coord2 (set_coord2_event ev);
+  void handle_get_coord2 (get_coord2_event ev);
+  void handle_set_coord4 (set_coord4_event ev);
+  void handle_get_coord4 (get_coord4_event ev);
   void handle_keypress (keypress_event ev);
   void handle_mouse (mouse_event ev);
   void handle_keyboard_focus (keyboard_focus_event ev);
