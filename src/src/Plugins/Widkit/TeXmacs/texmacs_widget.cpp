@@ -38,7 +38,7 @@ protected:
   void set_subwidget_flag (wk_widget w, bool on);
 
 public:
-  texmacs_widget_rep (int mask);
+  texmacs_widget_rep (int mask, command quit);
   ~texmacs_widget_rep ();
   operator tree ();
 
@@ -168,8 +168,8 @@ make_texmacs_widget (int mask) {
 * Constructor and destructor
 ******************************************************************************/
 
-texmacs_widget_rep::texmacs_widget_rep (int mask):
-  basic_widget_rep (1), footer_flag (true)
+texmacs_widget_rep::texmacs_widget_rep (int mask, command quit2):
+  basic_widget_rep (1), footer_flag (true), quit (quit2)
 {
   a[0]= make_texmacs_widget (mask);
 }
@@ -453,5 +453,5 @@ texmacs_widget_rep::handle (event ev) {
 
 wk_widget
 texmacs_wk_widget (int mask, command quit) {
-  return new texmacs_widget_rep (mask);
+  return new texmacs_widget_rep (mask, quit);
 }
