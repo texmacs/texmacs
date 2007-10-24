@@ -26,6 +26,52 @@ wk_widget_rep::wk_widget_rep (
 wk_widget_rep::~wk_widget_rep () { DEBUG(widget_count--); }
 
 /******************************************************************************
+* Message passing
+******************************************************************************/
+
+void
+wk_widget_rep::set_blackbox (string key, blackbox val) {
+  int type_id= type_box (val);
+  // cout << "Setting " << key << " := " << val << ", " << type_id << "\n";
+  if (type_id == type_helper<int>::id)
+    wk_widget (this) << ::set_integer (key, open_box<int> (val));
+  else if (type_id == type_helper<string>::id)
+    wk_widget (this) << ::set_string (key, open_box<string> (val));
+  else if (type_id == type_helper<widget>::id)
+    wk_widget (this) << ::set_widget (key, concrete (open_box<widget> (val)));
+  else fatal_error ("cannot handle message type",
+		    "wk_widget_rep::set_blackbox");
+}
+
+blackbox
+wk_widget_rep::get_blackbox (string key, int type_id) {
+  //cout << "Getting " << key << ", " << type_id << "\n";
+  if (type_id == type_helper<int>::id) {
+    int i;
+    wk_widget (this) << ::get_integer (key, i);
+    //cout << "Got " << key << " = " << i << "\n";
+    return close_box<int> (i);
+  }
+  else if (type_id == type_helper<string>::id) {
+    string s;
+    wk_widget (this) << ::get_string (key, s);
+    //cout << "Got " << key << " = " << s << "\n";
+    return close_box<string> (s);
+  }
+  else if (type_id == type_helper<widget>::id) {
+    wk_widget w;
+    wk_widget (this) << ::get_widget (key, w);
+    //cout << "Got " << key << " = " << w << "\n";
+    return close_box<widget> (abstract (w));
+  }
+  else {
+    fatal_error ("cannot handle message type",
+		 "wk_widget_rep::get_blackbox");
+    return blackbox ();
+  }
+}
+
+/******************************************************************************
 * Computing lower left and upper right widget coordinates
 ******************************************************************************/
 

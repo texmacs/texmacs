@@ -44,17 +44,18 @@ protected:
 public:
   widget_rep ();
   virtual inline ~widget_rep ();
+  virtual ostream& print (ostream& out);
 
   virtual void set_blackbox (string key, blackbox val);
-  virtual blackbox get_blackbox (string key);
-  virtual void changed (string key);
+  virtual blackbox get_blackbox (string key, int type_id);
+  virtual void changed (string key, int type_id);
   virtual void connect (string key, widget w2, string key2);
   virtual void deconnect (string key, widget w2, string key2);
 
-  template<class T> inline void
-  set (string key, T val) { set_blackbox (key, close_box<T> (val)); }
-  template<class T> inline T
-  get (string key) { return open_box<T> (get_blackbox (key)); }
+  template<class T> inline void set (string key, T val) {
+    set_blackbox (key, close_box<T> (val)); }
+  template<class T> inline T get (string key) {
+    return open_box<T> (get_blackbox (key, type_helper<T>::id)); }
 
   friend class widget;
 };
@@ -66,6 +67,12 @@ ABSTRACT_NULL(widget);
   inline bool operator != (widget w) { return rep != w.rep; }
 };
 ABSTRACT_NULL_CODE(widget);
+
+inline ostream&
+operator << (ostream& out, widget w) {
+  if (nil (w)) return out << "nil";
+  else return w->print (out);
+}
 
 /******************************************************************************
 * Exported special widgets
