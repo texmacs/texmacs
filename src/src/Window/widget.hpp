@@ -15,6 +15,7 @@
 #include "list.hpp"
 #include "tree.hpp"
 #include "blackbox.hpp"
+#include "ntuple.hpp"
 #include "command.hpp"
 #include "timer.hpp"
 
@@ -52,10 +53,40 @@ public:
   virtual void connect (string key, widget w2, string key2);
   virtual void deconnect (string key, widget w2, string key2);
 
-  template<class T> inline void set (string key, T val) {
-    set_blackbox (key, close_box<T> (val)); }
-  template<class T> inline T get (string key) {
-    return open_box<T> (get_blackbox (key, type_helper<T>::id)); }
+  template<class T1> inline void
+  set (string key, T1 val) {
+    set_blackbox (key, close_box (val)); }
+  template<class T1, class T2> void
+  set (string key, T1 val1, T2 val2) {
+    typedef pair<T1,T2> T;
+    set_blackbox (key, close_box<T> (T (val1, val2))); }
+  template<class T1, class T2, class T3> void
+  set (string key, T1 val1, T2 val2, T3 val3) {
+    typedef triple<T1,T2,T3> T;
+    set_blackbox (key, close_box<T> (T (val1, val2, val3))); }
+  template<class T1, class T2, class T3, class T4> void
+  set (string key, T1 val1, T2 val2, T3 val3, T4 val4) {
+    typedef quadruple<T1,T2,T3,T4> T;
+    set_blackbox (key, close_box<T> (T (val1, val2, val3, val4))); }
+
+  template<class T1> inline T1
+  get (string key) {
+    return open_box<T1> (get_blackbox (key, type_helper<T1>::id)); }
+  template<class T1, class T2> void
+  get (string key, T1& val1, T2& val2) {
+    typedef pair<T1,T2> T;
+    T p= open_box<T> (get_blackbox (key, type_helper<T>::id));
+    val1= p.x1; val2= p.x2; }
+  template<class T1, class T2, class T3> void
+  get (string key, T1& val1, T2& val2, T3& val3) {
+    typedef triple<T1,T2,T3> T;
+    T t= open_box<T> (get_blackbox (key, type_helper<T>::id));
+    val1= t.x1; val2= t.x2; val3= t.x3; }
+  template<class T1, class T2, class T3, class T4> void
+  get (string key, T1& val1, T2& val2, T3& val3, T4& val4) {
+    typedef quadruple<T1,T2,T3,T4> T;
+    T q= open_box<T> (get_blackbox (key, type_helper<T>::id));
+    val1= q.x1; val2= q.x2; val3= q.x3; val4= q.x4; }
 
   friend class widget;
 };

@@ -123,17 +123,17 @@ tm_window_rep::get_shrinking_factor () {
 
 void
 tm_window_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  concrete (wid) << ::get_visible (x1, y1, x2, y2);
+  wid -> get<SI,SI,SI,SI> ("visible", x1, y1, x2, y2);
 }
 
 void
 tm_window_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
-  concrete (wid) << ::get_extents (x1, y1, x2, y2);
+  wid -> get<SI,SI,SI,SI> ("extents", x1, y1, x2, y2);
 }
 
 void
 tm_window_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  concrete (wid) << ::set_extents (x1, y1, x2, y2);
+  wid -> set<SI,SI,SI,SI> ("extents", x1, y1, x2, y2);
 }
 
 void
@@ -143,12 +143,12 @@ tm_window_rep::set_scrollbars (int i) {
 
 void
 tm_window_rep::get_scroll_pos (SI& x, SI& y) {
-  concrete (wid) << ::get_scroll_pos (x, y);
+  wid -> get<SI,SI> ("scroll position", x, y);
 }
 
 void
 tm_window_rep::set_scroll_pos (SI x, SI y) {
-  concrete (wid) << ::set_scroll_pos (x, y);
+  wid -> set<SI,SI> ("scroll position", x, y);
 }
 
 /******************************************************************************
