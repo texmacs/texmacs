@@ -23,8 +23,6 @@ class tm_widget;
 class tm_widget_rep: public basic_widget_rep {
 protected:
   bool     footer_flag;        // footer visible ?
-  string*  text_ptr;           // where the interactive string is returned
-  command  call_back;          // called when typing finished
 
 protected:
   void set_left_footer (string s);
@@ -42,10 +40,6 @@ public:
   tm_widget_rep (int mask);
   ~tm_widget_rep ();
   operator tree ();
-
-  void interactive (string name, string type, array<string> def,
-		    string& s, command cmd);
-  void interactive_return ();
 
   void handle_get_size (get_size_event ev);
   void handle_get_widget (get_widget_event ev);

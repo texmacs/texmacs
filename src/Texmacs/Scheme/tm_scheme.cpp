@@ -227,7 +227,7 @@ get_proposals (scheme_tree p, int i) {
 
 class interactive_command_rep: public command_rep {
   server_rep*   sv;   // the underlying server
-  tm_widget     wid;  // the underlying TeXmacs window
+  tm_window     win;  // the underlying TeXmacs window
   object        fun;  // the function which is applied to the arguments
   scheme_tree   p;    // the interactive arguments
   int           i;    // counter where we are
@@ -235,8 +235,8 @@ class interactive_command_rep: public command_rep {
 
 public:
   interactive_command_rep (
-    server_rep* sv2, tm_widget wid2, object fun2, scheme_tree p2):
-      sv (sv2), wid (wid2), fun (fun2), p (p2), i (0), s (N(p)) {}
+    server_rep* sv2, tm_window win2, object fun2, scheme_tree p2):
+      sv (sv2), win (win2), fun (fun2), p (p2), i (0), s (N(p)) {}
   void apply ();
   ostream& print (ostream& out) {
     return out << "interactive command " << p; }
@@ -262,7 +262,7 @@ interactive_command_rep::apply () {
     string prompt= get_prompt (p, i);
     string type  = get_type (p, i);
     array<string> proposals= get_proposals (p, i);
-    wid->interactive (prompt, type, proposals, s[i], this);
+    win->interactive (prompt, type, proposals, s[i], this);
     i++;
   }
 }
@@ -296,7 +296,7 @@ tm_scheme_rep::interactive (object fun, scheme_tree p) {
     if (get_window () -> get_footer_mode () == 1) beep ();
     else {
       command interactive_cmd=
-	new interactive_command_rep (this, get_window () -> wid, fun, p);
+	new interactive_command_rep (this, get_window (), fun, p);
       interactive_cmd ();
     }
   }

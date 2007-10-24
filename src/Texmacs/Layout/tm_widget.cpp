@@ -15,8 +15,6 @@
 #include "tm_widget.hpp"
 
 #define THIS (wk_widget (this))
-extern int nr_windows;
-string icon_bar_name (int which);
 
 /******************************************************************************
 * Subwidgets of main TeXmacs widgets
@@ -124,8 +122,7 @@ make_texmacs_widget (int mask) {
 ******************************************************************************/
 
 tm_widget_rep::tm_widget_rep (int mask):
-  basic_widget_rep (1),
-  footer_flag (true), text_ptr (NULL)
+  basic_widget_rep (1), footer_flag (true)
 {
   a[0]= make_texmacs_widget (mask);
 }
@@ -192,15 +189,28 @@ tm_widget_rep::get_footer_mode () {
 }
 
 void
-tm_widget_rep::set_footer_mode (int which) {
-  if (get_footer_mode () != which) {
+tm_widget_rep::set_footer_mode (int new_mode) {
+  int old_mode= get_footer_mode ();
+  if (old_mode != new_mode) {
+    wk_widget iac= THIS ["footer"] ["interactive"];
+    if (old_mode == 1) {
+      iac ["middle"] << emit_keyboard_focus(false);
+      THIS ["canvas"] << emit_keyboard_focus (true);
+    }
+
     SI ww1= 600*PIXEL, hh1=18*PIXEL, ww2=600*PIXEL, hh2=18*PIXEL;
     THIS ["footer"] << get_size (ww1, hh1);
-    THIS ["footer"] << set_integer ("switch", which);
+    THIS ["footer"] << set_integer ("switch", new_mode);
     THIS ["footer"] << get_size (ww2, hh2);
     if (attached ()) {
       if (hh1 == hh2) THIS ["footer"] << emit_update ();
       else THIS << emit_update ();
+    }
+
+    if (new_mode == 1) {
+      iac << emit_update ();
+      THIS ["canvas"] << emit_keyboard_focus (false);
+      iac  ["middle"] << emit_keyboard_focus (true);
     }
   }
 }
@@ -215,51 +225,6 @@ tm_widget_rep::set_footer_flag (bool on) {
   footer_flag= on;
   if (get_footer_mode () != 1)
     set_footer_mode (on? 0: 2);
-}
-
-/******************************************************************************
-* Interactive commands on the footer
-******************************************************************************/
-
-class ia_command_rep: public command_rep {
-  tm_widget_rep* man;
-public:
-  ia_command_rep (tm_widget_rep* man2): man (man2) {}
-  void apply () { man->interactive_return (); }
-  ostream& print (ostream& out) { return out << "tm_widget_rep command"; }
-};
-
-void
-tm_widget_rep::interactive (string name, string type, array<string> def,
-			    string& s, command cmd)
-{
-  int i, n= N(def);
-  if (get_footer_mode () == 1) { s= "cancel"; return; }
-  call_back= cmd;
-  set_footer_mode (1);
-  wk_widget iac= THIS ["footer"] ["interactive"];
-  wk_widget tw = text_wk_widget (name, false, "english");
-  wk_widget inp= input_text_wk_widget (new ia_command_rep (this));
-  inp << set_string ("type", type);
-  if (N(def) > 0) inp << set_string ("input", def[0]);
-  for (i=0; i<n; i++) inp << set_string ("default", def[i]);
-  iac << set_widget ("left", tw);
-  iac << set_widget ("middle", inp);
-  iac << emit_update ();
-  THIS ["canvas"] << emit_keyboard_focus (false);
-  iac  ["middle"] << emit_keyboard_focus (true);
-  text_ptr= &s;
-}
-
-void
-tm_widget_rep::interactive_return () {
-  wk_widget iac= THIS ["footer"] ["interactive"];
-  iac ["middle"] << get_input_string (*text_ptr);
-  text_ptr= NULL;
-  iac ["middle"] << emit_keyboard_focus (false);
-  THIS ["canvas"] << emit_keyboard_focus (true);
-  set_footer_mode (footer_flag? 0: 2);
-  call_back ();
 }
 
 /******************************************************************************
@@ -291,6 +256,10 @@ tm_widget_rep::handle_set_widget (set_widget_event ev) {
     set_subwidget (THIS ["header"] ["context"] ["bar"], "icons", ev->w);
   else if (ev->which == "user icons bar")
     set_subwidget (THIS ["header"] ["user"] ["bar"], "icons", ev->w);
+  else if (ev->which == "interactive prompt")
+    set_subwidget (THIS ["footer"] ["interactive"], "left", ev->w);
+  else if (ev->which == "interactive input")
+    set_subwidget (THIS ["footer"] ["interactive"], "middle", ev->w);
   else a[0] << ev;
 }
 
@@ -330,6 +299,8 @@ tm_widget_rep::handle_get_string (get_string_event ev) {
   else if (ev->which == "user icons")
     ev->s= get_subwidget_flag (THIS ["header"] ["user"])?
              string ("on"): string ("off");
+  else if (ev->which == "interactive input")
+    THIS ["footer"] ["interactive"] ["middle"] << get_input_string (ev->s);
   else fatal_error ("Could not set string attribute " * ev->which);
 }
 

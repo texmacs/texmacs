@@ -28,7 +28,8 @@ tm_window_rep::tm_window_rep (tm_widget wid2, tree geom):
   win (texmacs_window (abstract (wid2), geom)),
   wid (wid2), id (create_window_id ()),
   serial (tm_window_serial++),
-  texmacs_menu (NULL), texmacs_icon_menu (NULL)
+  texmacs_menu (NULL), texmacs_icon_menu (NULL),
+  text_ptr (NULL)
 {
   sfactor= get_server () -> get_default_shrinking_factor ();
 }
@@ -122,4 +123,38 @@ void
 tm_window_rep::set_footer_flag (bool on) {
   get_main () <<
     set_string ("footer flag", on? string ("on"): string ("off"));
+}
+
+/******************************************************************************
+* Interactive commands on the footer
+******************************************************************************/
+
+class ia_command_rep: public command_rep {
+  tm_window_rep* win;
+public:
+  ia_command_rep (tm_window_rep* win2): win (win2) {}
+  void apply () { win->interactive_return (); }
+  ostream& print (ostream& out) { return out << "tm_window command"; }
+};
+
+void
+tm_window_rep::interactive (string name, string type, array<string> def,
+			    string& s, command cmd)
+{
+  if (get_footer_mode () == 1) { s= "cancel"; return; }
+  text_ptr = &s;
+  call_back= cmd;
+  wk_widget tw = text_wk_widget (name, false, "english");
+  wk_widget inp= input_text_wk_widget (new ia_command_rep (this), type, def);
+  get_main () << set_widget ("interactive prompt", tw);
+  get_main () << set_widget ("interactive input", inp);
+  set_footer_mode (1);
+}
+
+void
+tm_window_rep::interactive_return () {
+  get_main () << get_string ("interactive input", *text_ptr);
+  text_ptr= NULL;
+  set_footer_mode (get_footer_flag ()? 0: 2);
+  call_back ();
 }
