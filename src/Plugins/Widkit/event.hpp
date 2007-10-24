@@ -94,8 +94,9 @@ event set_coord4  (string which, SI c1, SI c2, SI c3, SI c4);
 event set_scrollable (wk_widget w);
 event set_extents    (SI x1, SI y1, SI x2, SI y2);
 event set_scroll_pos (SI x, SI y);
-event get_extents    (SI& x1, SI& y1, SI& x2, SI& y2);
 event get_visible    (SI& x1, SI& y1, SI& x2, SI& y2);
+event get_extents    (SI& x1, SI& y1, SI& x2, SI& y2);
+event get_scroll_pos (SI& x, SI& y);
 
 /*** user input events ***/
 event set_input_string (string s);

@@ -376,7 +376,7 @@ edit_interface_rep::apply_changes () {
   if (sb != cur_sb) {
     cur_sb= sb;
     tm_window win= get_server () -> get_window ();
-    win -> get_canvas () << set_integer ("scrollbars", sb);
+    win -> set_scrollbars (sb);
   }
 
   // window decorations (menu bar, icon bars, footer)

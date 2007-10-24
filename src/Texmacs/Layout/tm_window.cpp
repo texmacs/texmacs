@@ -40,19 +40,9 @@ tm_window_rep::~tm_window_rep () {
   destroy_window_id (id);
 }
 
-/******************************************************************************
-* Special methods
-******************************************************************************/
-
 void
-tm_window_rep::set_shrinking_factor (int sf) {
-  sfactor= sf;
-  get_canvas () << set_integer ("shrinking factor", sf);
-}
-
-int
-tm_window_rep::get_shrinking_factor () {
-  return sfactor;
+tm_window_rep::set_window_name (string s) {
+  get_main () << set_string ("window name", s);
 }
 
 /******************************************************************************
@@ -81,14 +71,81 @@ tm_window_rep::menu_icons (int which, string menu) {
   get_main () << set_widget (name * " icons bar", w);
 }
 
+void
+tm_window_rep::set_header_flag (bool flag) {
+  get_main () << set_string ("header", flag? string ("on"): string ("off"));
+}
+
+void
+tm_window_rep::set_icon_bar_flag (int which, bool flag) {
+  string name= icon_bar_name (which);
+  get_main () <<
+    set_string (name * " icons", flag? string ("on"): string ("off"));
+}
+
+bool
+tm_window_rep::get_header_flag () {
+  string s;
+  get_main () << get_string ("header", s);
+  return s == "on";
+}
+
+bool
+tm_window_rep::get_icon_bar_flag (int which) {
+  string name= icon_bar_name (which);
+  string s;
+  get_main () << get_string (name * " icons", s);
+  return s == "on";
+}
+
 /******************************************************************************
-* The footer and executing commands on the bottom line
+* The canvas
 ******************************************************************************/
 
 void
-tm_window_rep::set_window_name (string s) {
-  get_main () << set_string ("window name", s);
+tm_window_rep::set_shrinking_factor (int sf) {
+  sfactor= sf;
+  get_main () << set_string ("shrinking factor", as_string (sf));
 }
+
+int
+tm_window_rep::get_shrinking_factor () {
+  return sfactor;
+}
+
+void
+tm_window_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
+  get_main () << ::get_visible (x1, y1, x2, y2);
+}
+
+void
+tm_window_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
+  get_main () << ::get_extents (x1, y1, x2, y2);
+}
+
+void
+tm_window_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
+  get_main () << ::set_extents (x1, y1, x2, y2);
+}
+
+void
+tm_window_rep::set_scrollbars (int i) {
+  get_main () << set_string ("scrollbars", as_string (i));
+}
+
+void
+tm_window_rep::get_scroll_pos (SI& x, SI& y) {
+  get_main () << ::get_scroll_pos (x, y);
+}
+
+void
+tm_window_rep::set_scroll_pos (SI x, SI y) {
+  get_main () << ::set_scroll_pos (x, y);
+}
+
+/******************************************************************************
+* The footer and executing commands on the bottom line
+******************************************************************************/
 
 void
 tm_window_rep::set_left_footer (string s) {

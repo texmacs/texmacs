@@ -37,26 +37,29 @@ protected:
 public:
   tm_window_rep (tm_widget wid2, tree geom);
   ~tm_window_rep ();
-
+  void set_window_name (string s);
+  inline wk_widget get_main () {
+    return wk_widget (wid); }
   inline void set_property (scheme_tree what, scheme_tree val) {
     props (what)= val; }
   inline scheme_tree get_property (scheme_tree what) {
     return props [what]; }
 
-  inline wk_widget get_main () {
-    return wk_widget (wid); }
-  inline wk_widget get_header () {
-    return get_main () ["header"]; }
-  inline wk_widget get_canvas () {
-    return get_main () ["canvas"]; }
-  inline wk_widget get_footer () {
-    return get_main () ["footer"]; }
-
-  void set_window_name (string s);
-  int  get_shrinking_factor ();
-  void set_shrinking_factor (int sf);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
+  void set_header_flag (bool flag);
+  void set_icon_bar_flag (int which, bool flag);
+  bool get_header_flag ();
+  bool get_icon_bar_flag (int which);
+
+  int  get_shrinking_factor ();
+  void set_shrinking_factor (int sf);
+  void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
+  void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
+  void set_extents (SI x1, SI y1, SI x2, SI y2);
+  void set_scrollbars (int i);
+  void get_scroll_pos (SI& x, SI& y);
+  void set_scroll_pos (SI x, SI y);
 
   int  get_footer_mode ();
   void set_footer_mode (int which);

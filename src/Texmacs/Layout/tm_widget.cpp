@@ -266,10 +266,6 @@ tm_widget_rep::handle_set_widget (set_widget_event ev) {
 void
 tm_widget_rep::handle_set_string (set_string_event ev) {
   if (ev->which == "window name") win->set_name (ev->s);
-  else if (ev->which == "left footer") set_left_footer (ev->s);
-  else if (ev->which == "right footer") set_right_footer (ev->s);
-  else if (ev->which == "footer mode") set_footer_mode (as_int (ev->s));
-  else if (ev->which == "footer flag") set_footer_flag (ev->s == "on");
   else if (ev->which == "header")
     set_subwidget_flag (THIS ["header"], ev->s == "on");
   else if (ev->which == "main icons")
@@ -278,16 +274,20 @@ tm_widget_rep::handle_set_string (set_string_event ev) {
     set_subwidget_flag (THIS ["header"] ["context"], ev->s == "on");
   else if (ev->which == "user icons")
     set_subwidget_flag (THIS ["header"] ["user"], ev->s == "on");
+  else if (ev->which == "shrinking factor")
+    THIS ["canvas"] << set_integer ("shrinking factor", as_int (ev->s));
+  else if (ev->which == "scrollbars")
+    THIS ["canvas"] << set_integer ("scrollbars", as_int (ev->s));
+  else if (ev->which == "footer mode") set_footer_mode (as_int (ev->s));
+  else if (ev->which == "footer flag") set_footer_flag (ev->s == "on");
+  else if (ev->which == "left footer") set_left_footer (ev->s);
+  else if (ev->which == "right footer") set_right_footer (ev->s);
   else fatal_error ("Could not set string attribute " * ev->which);
 }
 
 void
 tm_widget_rep::handle_get_string (get_string_event ev) {
-  if (ev->which == "footer mode")
-    ev->s= as_string (get_footer_mode ());
-  else if (ev->which == "footer flag")
-    ev->s= get_footer_flag ()? string ("on"): string ("off");
-  else if (ev->which == "header")
+  if (ev->which == "header")
     ev->s= get_subwidget_flag (THIS ["header"])?
              string ("on"): string ("off");
   else if (ev->which == "main icons")
@@ -299,9 +299,38 @@ tm_widget_rep::handle_get_string (get_string_event ev) {
   else if (ev->which == "user icons")
     ev->s= get_subwidget_flag (THIS ["header"] ["user"])?
              string ("on"): string ("off");
+  else if (ev->which == "footer mode")
+    ev->s= as_string (get_footer_mode ());
+  else if (ev->which == "footer flag")
+    ev->s= get_footer_flag ()? string ("on"): string ("off");
   else if (ev->which == "interactive input")
     THIS ["footer"] ["interactive"] ["middle"] << get_input_string (ev->s);
   else fatal_error ("Could not set string attribute " * ev->which);
+}
+
+void
+tm_widget_rep::handle_set_coord2 (set_coord2_event ev) {
+  if (ev->which == "scroll position") THIS ["canvas"] << ev;
+  else fatal_error ("Could not set coord2 attribute " * ev->which);
+}
+
+void
+tm_widget_rep::handle_get_coord2 (get_coord2_event ev) {
+  if (ev->which == "scroll position") THIS ["canvas"] << ev;
+  else fatal_error ("Could not get coord2 attribute " * ev->which);
+}
+
+void
+tm_widget_rep::handle_set_coord4 (set_coord4_event ev) {
+  if (ev->which == "extents") THIS ["canvas"] << ev;
+  else fatal_error ("Could not set coord4 attribute " * ev->which);
+}
+
+void
+tm_widget_rep::handle_get_coord4 (get_coord4_event ev) {
+  if (ev->which == "extents") THIS ["canvas"] << ev;
+  else if (ev->which == "visible") THIS ["canvas"] << ev;
+  else fatal_error ("Could not get coord4 attribute " * ev->which);
 }
 
 void
@@ -353,6 +382,18 @@ tm_widget_rep::handle (event ev) {
     return true;
   case SET_STRING_EVENT:
     handle_set_string (ev);
+    return true;
+  case GET_COORD2_EVENT:
+    handle_get_coord2 (ev);
+    return true;
+  case SET_COORD2_EVENT:
+    handle_set_coord2 (ev);
+    return true;
+  case GET_COORD4_EVENT:
+    handle_get_coord4 (ev);
+    return true;
+  case SET_COORD4_EVENT:
+    handle_set_coord4 (ev);
     return true;
   default:
     return basic_widget_rep::handle (ev);
