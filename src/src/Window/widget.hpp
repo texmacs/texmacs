@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : widget.hpp
 * DESCRIPTION: Definition of abstract widgets
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 2007  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -12,7 +12,9 @@
 
 #ifndef WIDGET_H
 #define WIDGET_H
+#include "list.hpp"
 #include "tree.hpp"
+#include "blackbox.hpp"
 #include "command.hpp"
 #include "timer.hpp"
 
@@ -22,6 +24,8 @@ class display_rep;
 typedef display_rep* display;
 typedef int color;
 class url;
+class widget;
+class widget_connection;
 template<class T> class promise;
 
 enum gravity { north_west, north,  north_east,
@@ -33,22 +37,35 @@ enum gravity { north_west, north,  north_east,
 ******************************************************************************/
 
 class widget_rep: public abstract_struct {
+protected:
+  list<widget_connection> in;
+  list<widget_connection> out;
+
 public:
-  inline widget_rep () {}
-  virtual inline ~widget_rep () {}
+  widget_rep ();
+  virtual inline ~widget_rep ();
+
+  virtual void set_blackbox (string key, blackbox val);
+  virtual blackbox get_blackbox (string key);
+  virtual void changed (string key);
+  virtual void connect (string key, widget w2, string key2);
+  virtual void deconnect (string key, widget w2, string key2);
+
+  template<class T> inline void
+  set (string key, T val) { set_blackbox (key, close_box<T> (val)); }
+  template<class T> inline T
+  get (string key) { return open_box<T> (get_blackbox (key)); }
+
   friend class widget;
 };
 
 class widget {
 public:
 ABSTRACT_NULL(widget);
-  inline bool operator == (widget w);
-  inline bool operator != (widget w);
+  inline bool operator == (widget w) { return rep == w.rep; }
+  inline bool operator != (widget w) { return rep != w.rep; }
 };
-
 ABSTRACT_NULL_CODE(widget);
-inline bool widget::operator == (widget w) { return rep == w.rep; }
-inline bool widget::operator != (widget w) { return rep != w.rep; }
 
 /******************************************************************************
 * Exported special widgets
