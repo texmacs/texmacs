@@ -306,10 +306,9 @@ object eval_secure (string expr) {
   return eval ("(wrap-eval-secure " * expr * ")"); }
 object eval_file (string name) {
   return object (eval_scheme_file (name)); }
-void eval_delayed (string expr) {
-  (void) call ("exec-delayed", scheme_cmd (expr)); }
-void eval_delayed (object expr) {
-  (void) call ("exec-delayed", scheme_cmd (expr)); }
+bool exec_file (url u) {
+  object ret= eval_file (materialize (u));
+  return ret != object ("#<unspecified>"); }
 
 static inline array<SCM>
 array_lookup (array<object> a) {
@@ -355,3 +354,36 @@ object call (object fun, object a1, object a2, object a3) {
 			      a2->lookup(), a3->lookup())); }
 object call (object fun, array<object> a) {
   return object (call_scheme (fun->lookup(), array_lookup(a))); }
+
+/******************************************************************************
+* Delayed evaluation
+******************************************************************************/
+
+static array<object> delayed_queue;
+
+void
+eval_delayed (string expr) {
+  delayed_queue << scheme_cmd (expr);
+}
+
+void
+eval_delayed (object expr) {
+  delayed_queue << scheme_cmd (expr);
+}
+
+void
+exec_delayed (object cmd) {
+  delayed_queue << cmd;
+}
+
+void
+exec_pending_commands () {
+  array<object> a= delayed_queue;
+  delayed_queue= array<object> (0);
+  int i, n= N(a);
+  for (i=0; i<n; i++) {
+    object obj= call (a[i]);
+    if (is_bool (obj) && !as_bool (obj))
+      delayed_queue << a[i];
+  }
+}

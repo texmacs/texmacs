@@ -26,6 +26,10 @@ url tm_init_file= url_none ();
 url my_init_file= url_none ();
 string my_init_cmds= "";
 
+/******************************************************************************
+* Execution of commands
+******************************************************************************/
+
 void reset_inclusions ();
 extern string printing_dpi;
 extern string printing_cmd;
@@ -101,7 +105,7 @@ server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
 tm_server_rep::tm_server_rep ():
-  vw (NULL), full_screen (false), full_screen_edit (false), def_sfactor (5),
+  vw (NULL), def_sfactor (5),
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
 {
@@ -145,6 +149,11 @@ tm_server_rep::get_server () {
 bool
 tm_server_rep::has_view () {
   return vw != NULL;
+}
+
+bool
+tm_server_rep::has_window () {
+  return vw != NULL && vw->win != NULL;
 }
 
 tm_view
@@ -313,90 +322,6 @@ tm_server_rep::style_get_cache (
       f= true;
     }
   }
-}
-
-/******************************************************************************
-* Routines concerning the widget
-******************************************************************************/
-
-void
-tm_server_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  get_window () -> get_visible (x1, y1, x2, y2);
-}
-
-void
-tm_server_rep::set_scrollbars (int sb) {
-  get_window () -> set_scrollbars (sb);
-}
-
-void
-tm_server_rep::scroll_where (SI& x, SI& y) {
-  get_window () -> get_scroll_pos (x, y);
-}
-
-void
-tm_server_rep::scroll_to (SI x, SI y) {
-  get_window () -> set_scroll_pos (x, y);
-}
-
-void
-tm_server_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
-  get_window () -> get_extents (x1, y1, x2, y2);
-}
-
-void
-tm_server_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  get_window () -> set_extents (x1, y1, x2, y2);
-}
-
-void
-tm_server_rep::set_left_footer (string s) {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_window () -> set_left_footer (s);
-}
-
-void
-tm_server_rep::set_right_footer (string s) {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_window () -> set_right_footer (s);
-}
-
-void
-tm_server_rep::set_message (string left, string right, bool temp) {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_editor() -> set_message (left, right, temp);
-}
-
-void
-tm_server_rep::recall_message () {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_editor() -> recall_message ();
-}
-
-void
-tm_server_rep::full_screen_mode (bool on, bool edit) {
-  if (on && !edit) {
-    show_header (false);
-    show_footer (false);
-  }
-  else {
-    show_header (true);
-    show_footer (true);
-  }
-  get_window()->wid->win->full_screen (on);
-  get_editor()->full_screen_mode (on && !edit);
-  full_screen = on;
-  full_screen_edit = on && edit;
-}
-
-bool
-tm_server_rep::in_full_screen_mode () {
-  return full_screen && !full_screen_edit;
-}
-
-bool
-tm_server_rep::in_full_screen_edit_mode () {
-  return full_screen && full_screen_edit;
 }
 
 /******************************************************************************

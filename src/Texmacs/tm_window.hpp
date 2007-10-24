@@ -13,6 +13,7 @@
 #ifndef TM_WINDOW_H
 #define TM_WINDOW_H
 #include "tm_buffer.hpp"
+#include "window.hpp"
 
 window texmacs_window (wk_widget wid, tree geom);
 window texmacs_window (widget wid, tree geom);
@@ -20,7 +21,7 @@ window texmacs_window (widget wid, tree geom);
 class tm_window_rep {
 public:
   window    win;
-  tm_widget wid;
+  wk_widget wid;
   int       id;
 
 public:
@@ -35,11 +36,11 @@ protected:
   command  call_back;          // called when typing finished
 
 public:
-  tm_window_rep (tm_widget wid2, tree geom);
+  tm_window_rep (wk_widget wid2, tree geom);
   ~tm_window_rep ();
   void set_window_name (string s);
-  inline wk_widget get_main () {
-    return wk_widget (wid); }
+  void map ();
+  void unmap ();
   inline void set_property (scheme_tree what, scheme_tree val) {
     props (what)= val; }
   inline scheme_tree get_property (scheme_tree what) {

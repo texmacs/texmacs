@@ -15,20 +15,16 @@
 #include "timer.hpp"
 #include "tm_config.hpp"
 #include "tm_buffer.hpp"
-#include "tm_layout.hpp"
-#include "tm_scheme.hpp"
+#include "tm_frame.hpp"
 #include "tm_data.hpp"
 
 class tm_server_rep:
   public tm_config_rep,
   public tm_data_rep,
-  public tm_layout_rep,
-  public tm_scheme_rep
+  public tm_frame_rep
 {
 protected:
   tm_view vw;             // current editor
-  bool full_screen;       // full screen mode
-  bool full_screen_edit;  // full screen edit mode
   int def_sfactor;        // default shrinking factor
 
   hashmap<tree,hashmap<string,tree> > style_cache; // style environments cache
@@ -41,6 +37,7 @@ public:
   /* Get and set objects associated to server */
   server_rep* get_server ();
   bool        has_view ();
+  bool        has_window ();
   tm_view     get_view (bool must_be_valid= true);
   void        set_view (tm_view vw);
   tm_buffer   get_buffer ();
@@ -56,21 +53,6 @@ public:
   void style_clear_cache ();
   void style_set_cache (tree st, hashmap<string,tree> H, tree t);
   void style_get_cache (tree st, hashmap<string,tree>& H, tree& t, bool& flag);
-
-  /* Routines concerning the current editor widget */
-  void set_scrollbars (int sb);
-  void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
-  void scroll_where (SI& x, SI& y);
-  void scroll_to (SI x, SI y);
-  void set_extents (SI x1, SI y1, SI x2, SI y2);
-  void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
-  void set_left_footer (string s);
-  void set_right_footer (string s);
-  void set_message (string left, string right, bool temp= false);
-  void recall_message ();
-  void full_screen_mode (bool on, bool edit);
-  bool in_full_screen_mode ();
-  bool in_full_screen_edit_mode ();
 
   /* Miscellaneous routines */
   void   interpose_handler ();

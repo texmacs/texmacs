@@ -43,7 +43,6 @@
   (set-shrinking-factor set_shrinking_factor (void int))
   (get-shrinking-factor get_shrinking_factor (int))
 
-  (exec-delayed exec_delayed (void object))
   (shell shell (void string))
   (dialogue-end dialogue_end (void))
   (choose-file choose_file (void object string string))

@@ -271,6 +271,19 @@ tmg_object_2command (SCM arg1) {
 }
 
 SCM
+tmg_exec_delayed (SCM arg1) {
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "exec-delayed");
+
+  object in1= scm_to_object (arg1);
+
+  // SCM_DEFER_INTS;
+  exec_delayed (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_tree_2stree (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
 
@@ -3635,6 +3648,7 @@ initialize_glue_basic () {
   scm_new_procedure ("math-group-members", (FN) tmg_math_group_members, 1, 0, 0);
   scm_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
   scm_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
+  scm_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
   scm_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);

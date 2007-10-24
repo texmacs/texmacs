@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : tm_scheme.cpp
-* DESCRIPTION: The TeXmacs-lisp motor
+* MODULE     : tm_dialogue.cpp
+* DESCRIPTION: Dialogues
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,54 +10,11 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "tm_scheme.hpp"
+#include "tm_frame.hpp"
 #include "tm_window.hpp"
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
-
-/******************************************************************************
-* Constructor and destructor
-******************************************************************************/
-
-tm_scheme_rep::tm_scheme_rep () { dialogue_win= NULL; }
-tm_scheme_rep::~tm_scheme_rep () {}
-
-/******************************************************************************
-* Execution of commands
-******************************************************************************/
-
-bool
-tm_scheme_rep::exec_file (url u) {
-  object ret= eval_file (materialize (u));
-  return ret != object ("#<unspecified>");
-}
-
-string
-tm_scheme_rep::preference (string var) {
-  return as_string (call ("get-preference", var));
-}
-
-/******************************************************************************
-* Delayed execution of commands
-******************************************************************************/
-
-void
-tm_scheme_rep::exec_delayed (object cmd) {
-  cmds << cmd;
-}
-
-void
-tm_scheme_rep::exec_pending_commands () {
-  array<object> a= cmds;
-  cmds= array<object> (0);
-  int i, n= N(a);
-  for (i=0; i<n; i++) {
-    object obj= call (a[i]);
-    if (is_bool (obj) && !as_bool (obj))
-      cmds << a[i];
-  }
-}
 
 /******************************************************************************
 * Dialogues
@@ -85,7 +42,7 @@ dialogue_command_rep::apply () {
     string s_arg;
     sv->dialogue_inquire (i, s_arg);
     if (s_arg == "#f") {
-      sv->exec_delayed (scheme_cmd ("(dialogue-end)"));
+      exec_delayed (scheme_cmd ("(dialogue-end)"));
       return;
     }
     object arg= string_to_object (s_arg);
@@ -95,8 +52,8 @@ dialogue_command_rep::apply () {
   }
   call ("learn-interactive", fun, learn);
   cmd= cons (fun, cmd);
-  sv->exec_delayed (scheme_cmd ("(dialogue-end)"));
-  sv->exec_delayed (scheme_cmd (cmd));
+  exec_delayed (scheme_cmd ("(dialogue-end)"));
+  exec_delayed (scheme_cmd (cmd));
 }
 
 command
@@ -105,7 +62,7 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 }
 
 void
-tm_scheme_rep::dialogue_start (string name, wk_widget wid) {
+tm_frame_rep::dialogue_start (string name, wk_widget wid) {
   if (dialogue_win == NULL) {
     string lan= the_display->out_lan;
     if (lan == "russian") lan= "english";
@@ -126,14 +83,14 @@ tm_scheme_rep::dialogue_start (string name, wk_widget wid) {
 }
 
 void
-tm_scheme_rep::dialogue_inquire (int i, string& arg) {
+tm_frame_rep::dialogue_inquire (int i, string& arg) {
   string s= "input";
   if (i>0) s= "input-" * as_string (i);
   dialogue_wid << get_string (s, arg);
 }
 
 void
-tm_scheme_rep::dialogue_end () {
+tm_frame_rep::dialogue_end () {
   if (dialogue_win != NULL) {
     dialogue_win->unmap ();
     delete dialogue_win;
@@ -150,7 +107,7 @@ gcd (int i, int j) {
 }
 
 void
-tm_scheme_rep::choose_file (object fun, string title, string type) {
+tm_frame_rep::choose_file (object fun, string title, string type) {
   string magn;
   if (type == "image") {
     editor ed   = get_editor ();
@@ -268,10 +225,10 @@ interactive_command_rep::apply () {
 }
 
 void
-tm_scheme_rep::interactive (object fun, scheme_tree p) {
+tm_frame_rep::interactive (object fun, scheme_tree p) {
   if (!is_tuple (p))
     fatal_error ("tuple expected", "edit_interface_rep::interactive");
-  if (preference ("interactive questions") == "popup") {
+  if (get_preference ("interactive questions") == "popup") {
     int i, n= N(p);
     array<string> prompts (n);
     for (i=0; i<n; i++)

@@ -40,6 +40,7 @@
   (math-group-members math_group_members (array_string string))
   (math-symbol-type math_symbol_type (string string))
   (object->command as_command (command object))
+  (exec-delayed exec_delayed (void object))
 
   ;; routines for trees
   (tree->stree tree_to_scheme_tree (scheme_tree tree))

@@ -15,7 +15,7 @@
 #include "Boxes/construct.hpp"
 #include "font.hpp"
 #include "window.hpp"
-#include "tm_layout.hpp"
+#include "tm_frame.hpp"
 
 void layout_default (window win, SI x1, SI y1, SI x2, SI y2);
 

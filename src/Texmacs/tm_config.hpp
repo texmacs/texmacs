@@ -29,6 +29,9 @@ public:
   tm_config_rep ();
   ~tm_config_rep ();
 
+  /* User preferences */
+  string get_preference (string var);
+
   /* Set and get input and output languages */
   void   set_input_language (string s);
   void   set_output_language (string s);

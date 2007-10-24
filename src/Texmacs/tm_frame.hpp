@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : tm_layout.hpp
-* DESCRIPTION: Layout of TeXmacs windows, menus, icons, etc.
+* MODULE     : tm_frame.hpp
+* DESCRIPTION: Routines for main TeXmacs frames
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,19 +10,20 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#ifndef TM_LAYOUT_H
-#define TM_LAYOUT_H
+#ifndef TM_FRAME_H
+#define TM_FRAME_H
 #include "server.hpp"
 
-class tm_layout_rep: virtual public server_rep {
-public:
-  tm_layout_rep ();
-  ~tm_layout_rep ();
+class tm_frame_rep: virtual public server_rep {
+protected:
+  bool full_screen;        // full screen mode
+  bool full_screen_edit;   // full screen edit mode
+  window dialogue_win;     // dialogue window
+  wk_widget dialogue_wid;  // dialogue wk_widget
 
-  /* menus */
-  void menu_widget (string menu, wk_widget& w);
-  void menu_main (string menu);
-  void menu_icons (int which, string menu);
+public:
+  tm_frame_rep ();
+  ~tm_frame_rep ();
 
   /* properties */
   int get_window_id ();
@@ -35,15 +36,40 @@ public:
   int get_int_window_property (string what);
   string get_string_window_property (string what);
 
-  /* visibility properties */
+  /* menus */
   void show_header (bool flag);
   void show_icon_bar (int which, bool flag);
-  void show_footer   (bool flag);
   bool visible_header ();
   bool visible_icon_bar (int which);
-  bool visible_footer ();
+  void menu_widget (string menu, wk_widget& w);
+  void menu_main (string menu);
+  void menu_icons (int which, string menu);
+
+  /* canvas */
   void set_shrinking_factor (int sf);
   int  get_shrinking_factor ();
+  void set_scrollbars (int sb);
+  void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
+  void scroll_where (SI& x, SI& y);
+  void scroll_to (SI x, SI y);
+  void set_extents (SI x1, SI y1, SI x2, SI y2);
+  void get_extents (SI& x1, SI& y1, SI& x2, SI& y2);
+  void full_screen_mode (bool on, bool edit);
+  bool in_full_screen_mode ();
+  bool in_full_screen_edit_mode ();
+
+  /* footer */
+  void show_footer (bool flag);
+  bool visible_footer ();
+  void set_left_footer (string s);
+  void set_right_footer (string s);
+  void set_message (string left, string right, bool temp= false);
+  void recall_message ();
+  void dialogue_start (string name, wk_widget wid);
+  void dialogue_inquire (int i, string& arg);
+  void dialogue_end ();
+  void choose_file (object fun, string title, string type);
+  void interactive (object fun, scheme_tree p);
 };
 
 wk_widget box_wk_widget (box b, bool trans);
@@ -53,4 +79,4 @@ widget box_widget (box b, bool trans);
 widget box_widget (scheme_tree p, string s, color col,
 		   bool trans= true, bool ink= false);
 
-#endif // defined TM_LAYOUT_H
+#endif // defined TM_FRAME_H
