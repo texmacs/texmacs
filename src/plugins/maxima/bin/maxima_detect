@@ -36,17 +36,17 @@ find_old_help()
   fi
 }
 
-if [ $OSTYPE == "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
+if [ $OSTYPE = "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
 MAXIMA=`which maxima$EXT 2>/dev/null`
 if [ $? -eq 0 ]
 then
-  if [ $OSTYPE == "cygwin" ]
+  if [ $OSTYPE = "cygwin" ]
   then
     if [ "$1" ]
     then
       maxima -d | grep -F 'maxima-htmldir=' | \
         sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|' | \
-        cygpath -f -
+	cygpath -f -
     else
       echo '("cygwin")'
     fi
