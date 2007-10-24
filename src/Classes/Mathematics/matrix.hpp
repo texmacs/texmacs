@@ -13,6 +13,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include "vector.hpp"
+#include "ntuple.hpp"
 #define TMPL template<typename T>
 #define BINARY_TMPL template<typename T, typename U>
 #define R typename unary_properties<T>::norm_type
@@ -64,13 +65,6 @@ CONCRETE_TEMPLATE_CODE(matrix,typename,T);
 TMPL inline int NR (matrix<T> m) { return m->rows; }
 TMPL inline int NC (matrix<T> m) { return m->cols; }
 TMPL inline T*  A  (matrix<T> m) { return m->a; }
-
-template<typename T,typename U=T>
-struct pair {
-  T first;
-  U second;
-  inline pair (T t= 0, U u= 0): first (t), second (u) {}
-};
 
 TMPL
 class unary_properties<matrix<T> > {
