@@ -17,7 +17,7 @@
 * Main routines for trees
 ******************************************************************************/
 
-tree default_helper<tree>::init (UNINIT);
+tree type_helper<tree>::init (UNINIT);
 
 void
 destroy_tree_rep (tree_rep* rep) {

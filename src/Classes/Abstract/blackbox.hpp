@@ -16,11 +16,11 @@
 
 class blackbox_rep: public abstract_struct {
 public:
-  void* data;
-  inline blackbox_rep (void* data2): data (data2) {}
+  inline blackbox_rep () {}
   inline virtual ~blackbox_rep () {}
-  inline virtual ostream& display (ostream& out) {
-    return out << "blackbox"; }
+  inline virtual int type_identier () { return 0; }
+  inline virtual bool equal (blackbox_rep* ptr) { (void) ptr; return false; }
+  inline virtual ostream& display (ostream& out) { return out << "blackbox"; }
 };
 
 class blackbox {
@@ -29,31 +29,42 @@ ABSTRACT_NULL(blackbox);
 };
 ABSTRACT_NULL_CODE(blackbox);
 
-inline bool operator == (blackbox bb1, blackbox bb2) {
-  return bb1->data == bb2->data; }
-inline bool operator != (blackbox bb1, blackbox bb2) {
-  return bb1->data != bb2->data; }
-inline ostream& operator << (ostream& out, blackbox bb) {
-  return out << bb->display (out); }
-
 template<class T>
 class whitebox_rep: public blackbox_rep {
 public:
-  inline whitebox_rep (const T& data):
-    blackbox_rep ((void*) new T (data)) {}
-  inline ~whitebox_rep () { delete (T*) data; }
-  inline ostream& display (ostream& out) {
-    return out << *((T*) data); }
+  T data;
+public:
+  inline whitebox_rep (const T& data2): data (data2) {}
+  inline ~whitebox_rep () {}
+  inline int type_identier () { return type_helper<T>::id; }
+  inline bool equal (blackbox_rep* ptr) {
+    return !nil (b) && b->type_identifier () == type_helper<T>::id &&
+           ((whitebox_rep<T>*) ptr)->data == data; }
+  inline ostream& display (ostream& out) { return out << data; }
 };
 
+inline bool operator == (blackbox bb1, blackbox bb2) {
+  if (nil (bb1)) return nil (bb2);
+  else return bb1->equal (bb2.rep); }
+inline bool operator != (blackbox bb1, blackbox bb2) {
+  if (nil (bb1)) return !nil (bb2);
+  else return !bb1->equal (bb2.rep); }
+inline ostream& operator << (ostream& out, blackbox bb) {
+  return out << bb->display (out); }
+
 template<class T> blackbox
-whitebox (const T& data) {
+open_box (const T& data) {
   return new whitebox_rep<T> (data);
 }
 
 template<class T> T&
-view_as (blackbox bb) {
-  return *((T*) bb->data);
+close_box (blackbox bb) {
+  return ((whitebox_rep<T>*) bb.rep) -> data;
+}
+
+template<class T> bool
+check_box (blackbox bb) {
+  return !nil (bb) && bb->type_identifier () == type_helper<T>::id;
 }
 
 #endif // BLACKBOX_H

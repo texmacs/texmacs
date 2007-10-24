@@ -104,7 +104,7 @@ public:
   friend class tree;
 };
 
-template<> struct default_helper<tree> { static tree init; };
+template<> struct type_helper<tree> { static tree init; };
 
 typedef tree scheme_tree;
 

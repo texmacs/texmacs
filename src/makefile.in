@@ -73,7 +73,7 @@ data_src     := $(call findsrc,Data)
 guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
 edit_src     := $(call findsrc,Edit)
 resource_src := $(call findsrc,Resource)
-window_src   := $(call findsrc_in,Window,Event PsDevice Widget)
+window_src   := $(call findsrc,Window)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Ghostscript Imlib2 \
                                           Ispell Metafont Openssl Widkit)
 x11_src      := $(call findsrc_in,Plugins,X11)

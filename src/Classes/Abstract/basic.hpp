@@ -117,11 +117,14 @@ struct abstract_struct {
 };
 
 template<typename T>
-struct default_helper {
-  static T init;
+struct type_helper {
+  static int id;
+  static T   init;
 };
 
-template<typename T> T default_helper<T>::init= T ();
+int new_type_identifier ();
+template<typename T> int type_helper<T>::id  = new_type_identifier ();
+template<typename T> T   type_helper<T>::init= T ();
 
 /******************************************************************************
 * indirect structures

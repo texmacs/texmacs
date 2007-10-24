@@ -83,6 +83,13 @@ operator delete[] (register void* ptr)
 
 #endif // not defined NO_FAST_ALLOC
 
+int
+new_type_identifier () {
+  static int id= 0;
+  id--;
+  return id;
+}
+
 static int debug_status= 0;
 
 bool
