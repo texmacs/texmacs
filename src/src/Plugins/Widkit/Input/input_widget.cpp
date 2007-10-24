@@ -374,3 +374,13 @@ wk_widget
 input_text_wk_widget (command call_back) {
   return new input_widget_rep (call_back);
 }
+
+wk_widget
+input_text_wk_widget (command cb, string type, array<string> def) {
+  int i, n= N(def);
+  wk_widget inp= input_text_wk_widget (cb);
+  inp << set_string ("type", type);
+  if (n>0) inp << set_string ("input", def[0]);
+  for (i=0; i<n; i++) inp << set_string ("default", def[i]);
+  return inp;
+}

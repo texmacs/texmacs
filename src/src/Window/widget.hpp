@@ -81,6 +81,7 @@ widget pullright_button (widget w, promise<widget> pw);
 widget popup_widget (widget w, gravity quit=center);
 widget canvas_widget (widget w, gravity grav=north_west);
 widget input_text_widget (command call_back);
+widget input_text_widget (command cb, string type, array<string> def);
 widget inputs_list_widget (command call_back, array<string> prompts);
 widget file_chooser_widget (command cmd, string type="texmacs", string mgn="");
 widget balloon_widget (widget w, widget help);

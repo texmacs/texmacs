@@ -196,6 +196,11 @@ input_text_widget (command call_back) {
 }
 
 widget
+input_text_widget (command call_back, string type, array<string> def) {
+  return abstract (input_text_wk_widget (call_back, type, def));
+}
+
+widget
 inputs_list_widget (command call_back, array<string> prompts) {
   return abstract (inputs_list_wk_widget (call_back, prompts));
 }

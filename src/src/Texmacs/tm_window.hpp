@@ -28,9 +28,11 @@ public:
   int                serial;
   int                sfactor;       // the shrinking factor
 
-public:
+protected:
   object*  texmacs_menu;       // accelerate menu rendering
   object*  texmacs_icon_menu;  // accelerate icon bar rendering
+  string*  text_ptr;           // where the interactive string is returned
+  command  call_back;          // called when typing finished
 
 public:
   tm_window_rep (tm_widget wid2, tree geom);
@@ -41,8 +43,6 @@ public:
   inline scheme_tree get_property (scheme_tree what) {
     return props [what]; }
 
-  void set_window_name (string s);
-
   inline wk_widget get_main () {
     return wk_widget (wid); }
   inline wk_widget get_header () {
@@ -52,22 +52,21 @@ public:
   inline wk_widget get_footer () {
     return get_main () ["footer"]; }
 
-  inline void interactive (string name, string type, array<string> def,
-			   string& s, command cmd) {
-    wid->interactive (name, type, def, s, cmd); }
-  inline void interactive_return () {
-    wid->interactive_return (); }
-  void set_left_footer (string s);
-  void set_right_footer (string s);
+  void set_window_name (string s);
+  int  get_shrinking_factor ();
+  void set_shrinking_factor (int sf);
+  void menu_main (string menu);
+  void menu_icons (int which, string menu);
+
   int  get_footer_mode ();
   void set_footer_mode (int which);
   bool get_footer_flag ();
   void set_footer_flag (bool on);
-  int  get_shrinking_factor ();
-  void set_shrinking_factor (int sf);
-
-  void menu_main (string menu);
-  void menu_icons (int which, string menu);
+  void set_left_footer (string s);
+  void set_right_footer (string s);
+  void interactive (string name, string type, array<string> def,
+		    string& s, command cmd);
+  void interactive_return ();
 };
 
 class tm_view_rep {
