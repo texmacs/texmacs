@@ -296,19 +296,6 @@ tmg_get_shrinking_factor () {
 }
 
 SCM
-tmg_exec_delayed (SCM arg1) {
-  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "exec-delayed");
-
-  object in1= scm_to_object (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->exec_delayed (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_shell (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "shell");
 
@@ -1223,7 +1210,6 @@ initialize_glue_server () {
   scm_new_procedure ("full-screen-edit?", (FN) tmg_full_screen_editP, 0, 0, 0);
   scm_new_procedure ("set-shrinking-factor", (FN) tmg_set_shrinking_factor, 1, 0, 0);
   scm_new_procedure ("get-shrinking-factor", (FN) tmg_get_shrinking_factor, 0, 0, 0);
-  scm_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
   scm_new_procedure ("shell", (FN) tmg_shell, 1, 0, 0);
   scm_new_procedure ("dialogue-end", (FN) tmg_dialogue_end, 0, 0, 0);
   scm_new_procedure ("choose-file", (FN) tmg_choose_file, 3, 0, 0);

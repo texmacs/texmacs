@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "edit_main.hpp"
-#include "tm_widget.hpp"
 #include "tm_buffer.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"

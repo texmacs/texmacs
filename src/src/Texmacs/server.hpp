@@ -13,8 +13,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 #include "editor.hpp"
-#include "tm_widget.hpp"
 #include "url.hpp"
+#include "Scheme/object.hpp"
 
 class tm_buffer_rep;
 class tm_view_rep;
@@ -22,7 +22,6 @@ class tm_window_rep;
 typedef tm_buffer_rep* tm_buffer;
 typedef tm_view_rep*   tm_view;
 typedef tm_window_rep* tm_window;
-class tm_widget;
 class editor;
 
 class server_rep: public abstract_struct {
@@ -30,7 +29,29 @@ public:
   server_rep ();
   virtual ~server_rep ();
 
+  /* Get and set objects associated to server */
+  virtual server_rep* get_server () = 0;
+  virtual bool        has_view () = 0;
+  virtual bool        has_window () = 0;
+  virtual tm_view     get_view (bool must_be_valid= true) = 0;
+  virtual void        set_view (tm_view vw) = 0;
+  virtual tm_buffer   get_buffer () = 0;
+  virtual editor      get_editor () = 0;
+  virtual tm_window   get_window () = 0;
+  virtual color       get_color (string s) = 0;
+  virtual int         get_nr_windows () = 0;
+
+  virtual object get_style_menu () = 0;
+  virtual object get_add_package_menu () = 0;
+  virtual object get_remove_package_menu () = 0;
+  virtual void style_clear_cache () = 0;
+  virtual void style_set_cache (
+            tree style, hashmap<string,tree> H, tree drd) = 0;
+  virtual void style_get_cache (
+	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
+
   /* Control global server parameters */
+  virtual string get_preference (string var) = 0;
   virtual void   set_input_language (string s) = 0;
   virtual void   set_output_language (string s) = 0;
   virtual string get_input_language () = 0;
@@ -45,23 +66,48 @@ public:
   virtual void   get_keycomb (string& s, int& status,
 			      command& cmd, string& sh, string& help) = 0;
 
-  /* Guile scheme motor */
-  virtual bool exec_file (url u) = 0;
-  virtual void exec_delayed (object cmd) = 0;
-  virtual string preference (string var) = 0;
+  /* TeXmacs frames */
+  virtual int  get_window_id () = 0;
+  virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;
+  virtual void set_bool_window_property (string what, bool val) = 0;
+  virtual void set_int_window_property (string what, int val) = 0;
+  virtual void set_string_window_property (string what, string val) = 0;
+  virtual scheme_tree get_window_property (scheme_tree what) = 0;
+  virtual bool get_bool_window_property (string what) = 0;
+  virtual int get_int_window_property (string what) = 0;
+  virtual string get_string_window_property (string what) = 0;
 
-  /* TeXmacs layout */
+  virtual void show_header (bool flag) = 0;
+  virtual void show_icon_bar (int which, bool flag) = 0;
+  virtual bool visible_header () = 0;
+  virtual bool visible_icon_bar (int which) = 0;
   virtual void menu_widget (string menu, wk_widget& w) = 0;
   virtual void menu_main (string menu) = 0;
   virtual void menu_icons (int which, string menu) = 0;
-  virtual void show_header (bool flag) = 0;
-  virtual void show_icon_bar (int which, bool flag) = 0;
-  virtual void show_footer   (bool flag) = 0;
-  virtual bool visible_header () = 0;
-  virtual bool visible_icon_bar (int which) = 0;
-  virtual bool visible_footer () = 0;
+
   virtual void set_shrinking_factor (int sf) = 0;
   virtual int  get_shrinking_factor () = 0;
+  virtual void set_scrollbars (int sb) = 0;
+  virtual void get_visible (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
+  virtual void scroll_where (SI& x, SI& y) = 0;
+  virtual void scroll_to (SI x, SI y) = 0;
+  virtual void set_extents (SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void get_extents (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
+  virtual void full_screen_mode (bool on, bool edit) = 0;
+  virtual bool in_full_screen_mode () = 0;
+  virtual bool in_full_screen_edit_mode () = 0;
+
+  virtual void show_footer   (bool flag) = 0;
+  virtual bool visible_footer () = 0;
+  virtual void set_left_footer (string s) = 0;
+  virtual void set_right_footer (string s) = 0;
+  virtual void set_message (string left, string right, bool temp= false) = 0;
+  virtual void recall_message () = 0;
+  virtual void dialogue_start (string name, wk_widget wid) = 0;
+  virtual void dialogue_inquire (int i, string& arg) = 0;
+  virtual void dialogue_end () = 0;
+  virtual void choose_file (object fun, string title, string type) = 0;
+  virtual void interactive (object fun, scheme_tree p) = 0;
 
   /* Buffer management */
   virtual int  nr_bufs () = 0;
@@ -116,63 +162,11 @@ public:
   virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
   virtual void save_buffer (url name, string fm) = 0;
   virtual void auto_save () = 0;
-  //virtual void delayed_autosave () = 0;
   virtual bool buffer_unsaved () = 0;
   virtual bool exists_unsaved_buffer () = 0;
   virtual void pretend_save_buffer () = 0;
 
-  /* Get and set objects associated to server */
-  virtual server_rep* get_server () = 0;
-  virtual bool        has_view () = 0;
-  virtual tm_view     get_view (bool must_be_valid= true) = 0;
-  virtual void        set_view (tm_view vw) = 0;
-  virtual tm_buffer   get_buffer () = 0;
-  virtual editor      get_editor () = 0;
-  virtual tm_window   get_window () = 0;
-  virtual color       get_color (string s) = 0;
-  virtual int         get_nr_windows () = 0;
-
-  virtual object get_style_menu () = 0;
-  virtual object get_add_package_menu () = 0;
-  virtual object get_remove_package_menu () = 0;
-  virtual void style_clear_cache () = 0;
-  virtual void style_set_cache (
-            tree style, hashmap<string,tree> H, tree drd) = 0;
-  virtual void style_get_cache (
-	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
-
-  /* getting window properties */
-  virtual int  get_window_id () = 0;
-  virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;
-  virtual void set_bool_window_property (string what, bool val) = 0;
-  virtual void set_int_window_property (string what, int val) = 0;
-  virtual void set_string_window_property (string what, string val) = 0;
-  virtual scheme_tree get_window_property (scheme_tree what) = 0;
-  virtual bool get_bool_window_property (string what) = 0;
-  virtual int get_int_window_property (string what) = 0;
-  virtual string get_string_window_property (string what) = 0;
-
-  /* Routines concerning the current editor widget */
-  virtual void set_scrollbars (int sb) = 0;
-  virtual void get_visible (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
-  virtual void scroll_where (SI& x, SI& y) = 0;
-  virtual void scroll_to (SI x, SI y) = 0;
-  virtual void set_extents (SI x1, SI y1, SI x2, SI y2) = 0;
-  virtual void get_extents (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
-  virtual void set_left_footer (string s) = 0;
-  virtual void set_right_footer (string s) = 0;
-  virtual void set_message (string left, string right, bool temp= false) = 0;
-  virtual void recall_message () = 0;
-  virtual void dialogue_start (string name, wk_widget wid) = 0;
-  virtual void dialogue_inquire (int i, string& arg) = 0;
-  virtual void dialogue_end () = 0;
-  virtual void choose_file (object fun, string title, string type) = 0;
-  virtual void interactive (object fun, scheme_tree p) = 0;
-  virtual void full_screen_mode (bool on, bool edit) = 0;
-  virtual bool in_full_screen_mode () = 0;
-  virtual bool in_full_screen_edit_mode () = 0;
-
-  /* Misscelaneous routines */
+  /* Miscellaneous routines */
   virtual void   interpose_handler () = 0;
   virtual void   wait_handler (string message, string arg) = 0;
   virtual void   set_script_status (int i) = 0;

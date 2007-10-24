@@ -110,5 +110,6 @@ wk_widget file_chooser_wk_widget (command cmd, string type="texmacs",
 				  string mgn="");
 wk_widget balloon_widget (wk_widget w, wk_widget help);
 wk_widget wait_wk_widget (SI w, SI h, string message);
+wk_widget texmacs_wk_widget (int mask, command quit);
 
 #endif // defined WK_WIDGET_H

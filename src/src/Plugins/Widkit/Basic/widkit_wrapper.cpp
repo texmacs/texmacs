@@ -219,3 +219,8 @@ widget
 wait_widget (SI w, SI h, string message) {
   return abstract (wait_wk_widget (w, h, message));
 }
+
+widget
+texmacs_widget (int mask, command quit) {
+  return abstract (texmacs_wk_widget (mask, quit));
+}

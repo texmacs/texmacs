@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : tm_widget.cpp
-* DESCRIPTION: Main current graphical interface for user applications
+* MODULE     : texmacs_widget.cpp
+* DESCRIPTION: Widget for the main TeXmacs window
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -11,10 +11,57 @@
 ******************************************************************************/
 
 #include "window.hpp"
-#include "Widkit/wk_widget.hpp"
-#include "tm_widget.hpp"
+#include "Widkit/basic_widget.hpp"
+#include "Widkit/Event/attribute_event.hpp"
 
 #define THIS (wk_widget (this))
+
+/******************************************************************************
+* The TeXmacs widget
+******************************************************************************/
+
+class texmacs_widget_rep: public basic_widget_rep {
+protected:
+  bool    footer_flag;  // footer visible ?
+  command quit;         // called on destruction
+
+protected:
+  void set_left_footer (string s);
+  void set_right_footer (string s);
+  int  get_footer_mode ();
+  void set_footer_mode (int which);
+  bool get_footer_flag ();
+  void set_footer_flag (bool on);
+
+  void set_subwidget (wk_widget w, string which, wk_widget sw);
+  bool get_subwidget_flag (wk_widget w);
+  void set_subwidget_flag (wk_widget w, bool on);
+
+public:
+  texmacs_widget_rep (int mask);
+  ~texmacs_widget_rep ();
+  operator tree ();
+
+  void handle_get_size (get_size_event ev);
+  void handle_set_widget (set_widget_event ev);
+  void handle_get_widget (get_widget_event ev);
+  void handle_set_string (set_string_event ev);
+  void handle_get_string (get_string_event ev);
+  void handle_set_coord2 (set_coord2_event ev);
+  void handle_get_coord2 (get_coord2_event ev);
+  void handle_set_coord4 (set_coord4_event ev);
+  void handle_get_coord4 (get_coord4_event ev);
+  void handle_keypress (keypress_event ev);
+  void handle_mouse (mouse_event ev);
+  void handle_keyboard_focus (keyboard_focus_event ev);
+  void handle_resize (resize_event ev);
+  void handle_destroy (destroy_event ev);
+
+  bool handle (event ev);
+
+  friend class tm_editor_rep;
+  friend class texmacs_widget;
+};
 
 /******************************************************************************
 * Subwidgets of main TeXmacs widgets
@@ -121,15 +168,15 @@ make_texmacs_widget (int mask) {
 * Constructor and destructor
 ******************************************************************************/
 
-tm_widget_rep::tm_widget_rep (int mask):
+texmacs_widget_rep::texmacs_widget_rep (int mask):
   basic_widget_rep (1), footer_flag (true)
 {
   a[0]= make_texmacs_widget (mask);
 }
 
-tm_widget_rep::~tm_widget_rep () {}
+texmacs_widget_rep::~texmacs_widget_rep () {}
 
-tm_widget_rep::operator tree () {
+texmacs_widget_rep::operator tree () {
   return tree (TUPLE, "TeXmacs window", (tree) a[0]);
 }
 
@@ -138,7 +185,7 @@ tm_widget_rep::operator tree () {
 ******************************************************************************/
 
 void
-tm_widget_rep::set_subwidget (wk_widget w, string which, wk_widget sw) {
+texmacs_widget_rep::set_subwidget (wk_widget w, string which, wk_widget sw) {
   SI ww1= 600*PIXEL, hh1=18*PIXEL, ww2=600*PIXEL, hh2=18*PIXEL;
   if (which == "icons") hh1= hh2= 18*PIXEL;
   w << get_size (ww1, hh1);
@@ -151,14 +198,14 @@ tm_widget_rep::set_subwidget (wk_widget w, string which, wk_widget sw) {
 }
 
 bool
-tm_widget_rep::get_subwidget_flag (wk_widget w) {
+texmacs_widget_rep::get_subwidget_flag (wk_widget w) {
   int which;
   w << get_integer ("switch", which);
   return which == 0;
 }
 
 void
-tm_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
+texmacs_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
   if (get_subwidget_flag (w) != on) {
     w << set_integer ("switch", on? 0: 1);
     if (attached ()) THIS << emit_update ();
@@ -170,26 +217,26 @@ tm_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
 ******************************************************************************/
 
 void
-tm_widget_rep::set_left_footer (string s) {
+texmacs_widget_rep::set_left_footer (string s) {
   wk_widget tw= text_wk_widget (s, false, "english");
   set_subwidget (THIS ["footer"], "left", tw);
 }
 
 void
-tm_widget_rep::set_right_footer (string s) {
+texmacs_widget_rep::set_right_footer (string s) {
   wk_widget tw= text_wk_widget (s, false, "english");
   set_subwidget (THIS ["footer"], "right", tw);
 }
 
 int
-tm_widget_rep::get_footer_mode () {
+texmacs_widget_rep::get_footer_mode () {
   int which;
   THIS ["footer"] << get_integer ("switch", which);
   return which;
 }
 
 void
-tm_widget_rep::set_footer_mode (int new_mode) {
+texmacs_widget_rep::set_footer_mode (int new_mode) {
   int old_mode= get_footer_mode ();
   if (old_mode != new_mode) {
     wk_widget iac= THIS ["footer"] ["interactive"];
@@ -216,12 +263,12 @@ tm_widget_rep::set_footer_mode (int new_mode) {
 }
 
 bool
-tm_widget_rep::get_footer_flag () {
+texmacs_widget_rep::get_footer_flag () {
   return footer_flag;
 }
 
 void
-tm_widget_rep::set_footer_flag (bool on) {
+texmacs_widget_rep::set_footer_flag (bool on) {
   footer_flag= on;
   if (get_footer_mode () != 1)
     set_footer_mode (on? 0: 2);
@@ -232,7 +279,7 @@ tm_widget_rep::set_footer_flag (bool on) {
 ******************************************************************************/
 
 void
-tm_widget_rep::handle_get_size (get_size_event ev) {
+texmacs_widget_rep::handle_get_size (get_size_event ev) {
   if (ev->mode == 0) {
     ev->w= (800-24) * PIXEL; // (800-32) * PIXEL;
     ev->h= (600-28) * PIXEL;
@@ -242,12 +289,12 @@ tm_widget_rep::handle_get_size (get_size_event ev) {
 }
 
 void
-tm_widget_rep::handle_get_widget (get_widget_event ev) {
+texmacs_widget_rep::handle_get_widget (get_widget_event ev) {
   a[0] << ev;
 }
 
 void
-tm_widget_rep::handle_set_widget (set_widget_event ev) {
+texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
   if (ev->which == "menu bar")
     set_subwidget (THIS ["header"] ["menu"] ["bar"], "menu", ev->w);
   else if (ev->which == "main icons bar")
@@ -264,7 +311,7 @@ tm_widget_rep::handle_set_widget (set_widget_event ev) {
 }
 
 void
-tm_widget_rep::handle_set_string (set_string_event ev) {
+texmacs_widget_rep::handle_set_string (set_string_event ev) {
   if (ev->which == "window name") win->set_name (ev->s);
   else if (ev->which == "header")
     set_subwidget_flag (THIS ["header"], ev->s == "on");
@@ -286,7 +333,7 @@ tm_widget_rep::handle_set_string (set_string_event ev) {
 }
 
 void
-tm_widget_rep::handle_get_string (get_string_event ev) {
+texmacs_widget_rep::handle_get_string (get_string_event ev) {
   if (ev->which == "header")
     ev->s= get_subwidget_flag (THIS ["header"])?
              string ("on"): string ("off");
@@ -309,51 +356,51 @@ tm_widget_rep::handle_get_string (get_string_event ev) {
 }
 
 void
-tm_widget_rep::handle_set_coord2 (set_coord2_event ev) {
+texmacs_widget_rep::handle_set_coord2 (set_coord2_event ev) {
   if (ev->which == "scroll position") THIS ["canvas"] << ev;
   else fatal_error ("Could not set coord2 attribute " * ev->which);
 }
 
 void
-tm_widget_rep::handle_get_coord2 (get_coord2_event ev) {
+texmacs_widget_rep::handle_get_coord2 (get_coord2_event ev) {
   if (ev->which == "scroll position") THIS ["canvas"] << ev;
   else fatal_error ("Could not get coord2 attribute " * ev->which);
 }
 
 void
-tm_widget_rep::handle_set_coord4 (set_coord4_event ev) {
+texmacs_widget_rep::handle_set_coord4 (set_coord4_event ev) {
   if (ev->which == "extents") THIS ["canvas"] << ev;
   else fatal_error ("Could not set coord4 attribute " * ev->which);
 }
 
 void
-tm_widget_rep::handle_get_coord4 (get_coord4_event ev) {
+texmacs_widget_rep::handle_get_coord4 (get_coord4_event ev) {
   if (ev->which == "extents") THIS ["canvas"] << ev;
   else if (ev->which == "visible") THIS ["canvas"] << ev;
   else fatal_error ("Could not get coord4 attribute " * ev->which);
 }
 
 void
-tm_widget_rep::handle_keypress (keypress_event ev) {
+texmacs_widget_rep::handle_keypress (keypress_event ev) {
   if (get_footer_mode () == 1)
     THIS ["footer"] ["interactive"] ["middle"] << ev;
   else THIS ["canvas"] << ev;
 }
 
 void
-tm_widget_rep::handle_mouse (mouse_event ev) {
+texmacs_widget_rep::handle_mouse (mouse_event ev) {
   basic_widget_rep::handle_mouse (ev);
 }
 
 void
-tm_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
+texmacs_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
   if (get_footer_mode () == 1)
     THIS ["footer"] ["interactive"] ["middle"] << ev;
   else THIS ["canvas"] << ev;
 }
 
 void
-tm_widget_rep::handle_resize (resize_event ev) {
+texmacs_widget_rep::handle_resize (resize_event ev) {
   switch (get_footer_mode ()) {
   case 0: THIS ["footer"] ["middle"] << ev; break;
   case 1: THIS ["footer"] ["interactive"] ["middle"] << ev; break;
@@ -362,11 +409,11 @@ tm_widget_rep::handle_resize (resize_event ev) {
 }
 
 void
-tm_widget_rep::handle_destroy (destroy_event ev) {
+texmacs_widget_rep::handle_destroy (destroy_event ev) {
   // WARNING: should be removed when the window model is redesigned
   THIS ["canvas"] << emit_keyboard_focus (true);
 
-  get_server () -> exec_delayed (scheme_cmd ("(safely-kill-window)"));
+  quit ();
 }
 
 /******************************************************************************
@@ -374,7 +421,7 @@ tm_widget_rep::handle_destroy (destroy_event ev) {
 ******************************************************************************/
 
 bool
-tm_widget_rep::handle (event ev) {
+texmacs_widget_rep::handle (event ev) {
   // cout << "handle " << ((event) ev) << LF;
   switch (ev->type) {
   case GET_STRING_EVENT:
@@ -398,4 +445,13 @@ tm_widget_rep::handle (event ev) {
   default:
     return basic_widget_rep::handle (ev);
   }
+}
+
+/******************************************************************************
+* exported routines
+******************************************************************************/
+
+wk_widget
+texmacs_wk_widget (int mask, command quit) {
+  return new texmacs_widget_rep (mask);
 }

@@ -248,7 +248,7 @@ tm_data_rep::set_abbr_buffer (string abbr) {
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL)
-      vw2->win->win->set_name (buf->abbr);
+      vw2->win->set_window_name (buf->abbr);
   }
 }
 
@@ -368,16 +368,24 @@ tm_data_rep::detach_view (tm_view vw) {
 * Low level window routines
 ******************************************************************************/
 
+class kill_window_command_rep: public command_rep {
+public:
+  inline kill_window_command_rep () {}
+  inline void apply () { exec_delayed (scheme_cmd ("(safely-kill-window)")); }
+  ostream& print (ostream& out) { return out << "kill window"; }
+};
+
 tm_window
 tm_data_rep::new_window (bool map_flag, tree geom) {
-  int    mask= 0;
-  if (preference ("header") == "on") mask += 1;
-  if (preference ("main icon bar") == "on") mask += 2;
-  if (preference ("context dependent icons") == "on") mask += 4;
-  if (preference ("user provided icons") == "on") mask += 8;
-  if (preference ("status bar") == "on") mask += 16;
-  tm_window win= new tm_window_rep (new tm_widget_rep (mask), geom);
-  if (map_flag) win->win->map ();
+  int mask= 0;
+  if (get_preference ("header") == "on") mask += 1;
+  if (get_preference ("main icon bar") == "on") mask += 2;
+  if (get_preference ("context dependent icons") == "on") mask += 4;
+  if (get_preference ("user provided icons") == "on") mask += 8;
+  if (get_preference ("status bar") == "on") mask += 16;
+  command quit= new kill_window_command_rep ();
+  tm_window win= new tm_window_rep (texmacs_wk_widget (mask, quit), geom);
+  if (map_flag) win->map ();
   return win;
 }
 
@@ -401,7 +409,7 @@ tm_data_rep::delete_view_from_window (tm_window win) {
 void
 tm_data_rep::delete_window (tm_window win) {
   while (delete_view_from_window (win));
-  win->win->unmap ();
+  win->unmap ();
   delete win->win;
   delete win;
 }

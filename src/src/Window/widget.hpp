@@ -86,5 +86,6 @@ widget inputs_list_widget (command call_back, array<string> prompts);
 widget file_chooser_widget (command cmd, string type="texmacs", string mgn="");
 widget balloon_widget (widget w, widget help);
 widget wait_widget (SI w, SI h, string message);
+widget texmacs_widget (int mask, command quit);
 
 #endif // defined WIDGET_H
