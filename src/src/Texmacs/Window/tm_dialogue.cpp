@@ -126,7 +126,7 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
   command  cb  = dialogue_command (get_server(), fun, 1);
   widget   wid = file_chooser_widget (cb, type, magn);
   if (!is_scratch (name)) {
-    concrete (wid) << set_string ("directory", as_string (head (name)));
+    set_directory (wid, as_string (head (name)));
     if ((type != "image") && (type != "")) {
       url u= tail (name);
       string old_suf= suffix (u);
@@ -137,10 +137,10 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
 	  u= unglue (u, N(old_suf) + 1);
 	  u= glue (u, "." * new_suf);
 	}
-      concrete (wid) << set_string ("file", as_string (u));
+      set_file (wid, as_string (u));
     }
   }
-  else concrete (wid) << set_string ("directory", ".");
+  else set_directory (wid, ".");
   dialogue_start (title, wid);
   if (type == "directory")
     dialogue_win->set_keyboard_focus (get_directory (dialogue_wid));
@@ -235,19 +235,17 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     command cb= dialogue_command (get_server(), fun, n);
     widget wid= inputs_list_widget (cb, prompts);
     for (i=0; i<n; i++) {
-      widget input_wid= abstract (concrete (wid) [0]["inputs"][i]["input"]);
-      concrete (input_wid) << set_string ("type", get_type (p, i));
+      widget input_wid= get_form_field (wid, i);
+      set_input_type (input_wid, get_type (p, i));
       array<string> proposals= get_proposals (p, i);
       int j, k= N(proposals);
-      if (k > 0) concrete (input_wid) << set_string ("input", proposals[0]);
-      for (j=0; j<k; j++)
-	concrete (input_wid) << set_string ("default", proposals[j]);
+      if (k > 0) set_string_input (input_wid, proposals[0]);
+      for (j=0; j<k; j++) add_input_proposal (input_wid, proposals[j]);
     }
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
-    dialogue_win->set_keyboard_focus
-      (abstract (concrete (dialogue_wid) [0]["inputs"][0]["input"]));
+    dialogue_win->set_keyboard_focus (get_form_field (dialogue_wid, 0));
   }
   else {
     if (get_window () -> get_interactive_mode ()) beep ();
