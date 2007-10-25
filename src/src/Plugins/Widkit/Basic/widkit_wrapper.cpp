@@ -17,6 +17,9 @@
 
 #define THIS wk_widget (this)
 
+void send_geometry (wk_widget w, blackbox val);
+blackbox query_geometry (wk_widget w, int type_id);
+
 /******************************************************************************
 * Type conversions
 ******************************************************************************/
@@ -278,6 +281,102 @@ send_coord4 (wk_widget w, string key, blackbox val) {
   w << set_coord4 (key, p.x1, p.x2, p.x3, p.x4);
 }
 
+void
+send_position (wk_widget w, blackbox val) {
+  typedef pair<SI,SI> coord2;
+  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
+  if (type_box (val) != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "send_position");
+  geometry g=
+    open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
+  coord2 p= open_box<coord2> (val);
+  g.x1= p.x1; g.x2= p.x2;
+  send_geometry (w, close_box<geometry> (g));
+}
+
+void
+send_size (wk_widget w, blackbox val) {
+  typedef pair<SI,SI> coord2;
+  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
+  if (type_box (val) != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "send_size");
+  geometry g=
+    open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
+  coord2 p= open_box<coord2> (val);
+  g.x3= p.x1; g.x4= p.x2;
+  send_geometry (w, close_box<geometry> (g));
+}
+
+void
+send_gravity (wk_widget w, blackbox val) {
+  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
+  if (type_box (val) != type_helper<gravity>::id)
+    fatal_error ("type mismatch", "send_gravity");
+  geometry g=
+    open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
+  g.x5= open_box<gravity> (val);
+  send_geometry (w, close_box<geometry> (g));
+}
+
+void
+send_geometry (wk_widget w, blackbox val) {
+  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
+  if (type_box (val) != type_helper<geometry>::id)
+    fatal_error ("type mismatch", "send_geometry");
+  geometry g= open_box<geometry> (val);
+  w << emit_position (g.x1, g.x2, g.x3, g.x4, g.x5);
+}
+
+void
+send_keyboard (wk_widget w, blackbox val) {
+  typedef pair<string,time_t> keypress;
+  if (type_box (val) != type_helper<keypress>::id)
+    fatal_error ("type mismatch", "send_keyboard");
+  keypress k= open_box<keypress> (val);
+  w << emit_keypress (k.x1, k.x2);
+}
+
+void
+send_keyboard_focus (wk_widget w, blackbox val) {
+  typedef pair<bool,time_t> focus;
+  if (type_box (val) != type_helper<focus>::id)
+    fatal_error ("type mismatch", "send_keyboard_focus");
+  focus f= open_box<focus> (val);
+  w << emit_keyboard_focus (f.x1, f.x2);
+}
+
+void
+send_mouse (wk_widget w, blackbox val) {
+  typedef quintuple<string,int,int,time_t,int> mouse;
+  if (type_box (val) != type_helper<mouse>::id)
+    fatal_error ("type mismatch", "send_mouse");
+  mouse m= open_box<mouse> (val);
+  w << emit_mouse (m.x1, m.x2, m.x3, m.x4, m.x5);
+}
+
+void
+send_invalidate_all (wk_widget w, blackbox val) {
+  if (!nil (val))
+    fatal_error ("type mismatch", "send_invalidate_all");
+  w << emit_invalidate_all ();
+}
+
+void
+send_invalidate (wk_widget w, blackbox val) {
+  typedef quadruple<SI,SI,SI,SI> coord4;
+  if (type_box (val) != type_helper<coord4>::id)
+    fatal_error ("type mismatch", "send_invalidate");
+  coord4 p= open_box<coord4> (val);
+  w << emit_invalidate (p.x1, p.x2, p.x3, p.x4);
+}
+
+void
+send_destroy (wk_widget w, blackbox val) {
+  if (!nil (val))
+    fatal_error ("type mismatch", "send_destroy");
+  w << emit_destroy ();
+}
+
 blackbox
 query_bool (wk_widget w, string key, int type_id) {
   if (type_id != type_helper<bool>::id)
@@ -334,6 +433,47 @@ query_coord4 (wk_widget w, string key, int type_id) {
   return close_box<coord4> (coord4 (c1, c2, c3, c4));
 }
 
+blackbox
+query_size (wk_widget w, int which, int type_id) {
+  typedef pair<SI,SI> coord2;
+  if (type_id != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "query_size");
+  SI c1, c2;
+  w << get_size (c1, c2, which);
+  return close_box<coord2> (coord2 (c1, c2));
+}
+
+blackbox
+query_size (wk_widget w, int type_id) {
+  typedef pair<SI,SI> coord2;
+  if (type_id != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "query_size");
+  return close_box<coord2> (coord2 (w->w, w->h));
+}
+
+blackbox
+query_position (wk_widget w, int type_id) {
+  typedef pair<SI,SI> coord2;
+  if (type_id != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "query_position");
+  return close_box<coord2> (coord2 (w->ox, w->oy));
+}
+
+blackbox
+query_gravity (wk_widget w, int type_id) {
+  if (type_id != type_helper<gravity>::id)
+    fatal_error ("type mismatch", "query_gravity");
+  return close_box<gravity> (w->grav);
+}
+
+blackbox
+query_geometry (wk_widget w, int type_id) {
+  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
+  if (type_id != type_helper<geometry>::id)
+    fatal_error ("type mismatch", "query_geometry");
+  return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
+}
+
 /******************************************************************************
 * Message passing
 ******************************************************************************/
@@ -343,6 +483,36 @@ wk_widget_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_NAME:
     send_string (THIS, "window name", val);
+    break;
+  case SLOT_SIZE:
+    send_size (THIS, val);
+    break;
+  case SLOT_POSITION:
+    send_position (THIS, val);
+    break;
+  case SLOT_GRAVITY:
+    send_gravity (THIS, val);
+    break;
+  case SLOT_GEOMETRY:
+    send_geometry (THIS, val);
+    break;
+  case SLOT_KEYBOARD:
+    send_keyboard (THIS, val);
+    break;
+  case SLOT_KEYBOARD_FOCUS:
+    send_keyboard_focus (THIS, val);
+    break;
+  case SLOT_MOUSE:
+    send_mouse (THIS, val);
+    break;
+  case SLOT_INVALIDATE_ALL:
+    send_invalidate_all (THIS, val);
+    break;
+  case SLOT_INVALIDATE:
+    send_invalidate (THIS, val);
+    break;
+  case SLOT_DESTROY:
+    send_destroy (THIS, val);
     break;
 
   case SLOT_SHRINKING_FACTOR:
@@ -409,6 +579,23 @@ wk_widget_rep::send (slot s, blackbox val) {
 blackbox
 wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
+  case SLOT_MINIMAL_SIZE:
+    return query_size (THIS, -1, type_id);
+  case SLOT_DEFAULT_SIZE:
+    return query_size (THIS, 0, type_id);
+  case SLOT_MAXIMAL_SIZE:
+    return query_size (THIS, 1, type_id);
+  case SLOT_SIZE:
+    return query_size (THIS, type_id);
+  case SLOT_POSITION:
+    return query_position (THIS, type_id);
+  case SLOT_GRAVITY:
+    return query_gravity (THIS, type_id);
+  case SLOT_GEOMETRY:
+    return query_geometry (THIS, type_id);
+  case SLOT_INVALID:
+    fatal_error ("not yet implemented", "wk_widget_rep::query");
+
   case SLOT_EXTENTS:
     return query_coord4 (THIS, "extents", type_id);
   case SLOT_VISIBLE_PART:

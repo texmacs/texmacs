@@ -12,6 +12,7 @@
 
 #include "X11/x_window.hpp"
 #include "Widkit/wk_widget.hpp"
+#include "message.hpp"
 
 extern int    nr_windows;
 
@@ -101,7 +102,7 @@ x_window_rep::initialize () {
   SI def_w, def_h, min_w, min_h, max_w, max_h;
   compute_size (def_w, def_h, min_w, min_h, max_w, max_h);
   concrete (w) << emit_attach_window (this);
-  concrete (w) << emit_position (0, 0, def_w, def_h);
+  set_geometry (w, 0, 0, def_w, def_h);
   set_origin (0, 0);  
   decode (def_w, def_h); def_h= -def_h;
   decode (min_w, min_h); min_h= -min_h;
@@ -331,14 +332,14 @@ x_window_rep::resize_event (int ww, int hh) {
   win_w= ww; win_h= hh;
   if (flag) concrete (w) << emit_resize ();
   if (flag || !win_flag) {
-    concrete (w) << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
+    set_geometry (w, 0, 0, win_w*PIXEL, win_h*PIXEL);
     win_flag= true;
   }
 }
 
 void
 x_window_rep::destroy_event () {
-  concrete (w) << emit_destroy ();
+  send_destroy (w);
 }
 
 /******************************************************************************
@@ -352,21 +353,21 @@ x_window_rep::invalidate_event (int x1, int y1, int x2, int y2) {
 
 void
 x_window_rep::key_event (string key) {
-  concrete (kbd_focus) << emit_keypress (key, 0);
+  send_keyboard (kbd_focus, key);
 }
 
 void
 x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
-  concrete (kbd_focus) << emit_keyboard_focus (true);
+  send_keyboard_focus (kbd_focus, true);
 }
 
 void
 x_window_rep::focus_out_event () {
   if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
-  concrete (kbd_focus) << emit_keyboard_focus (false);
+  send_keyboard_focus (kbd_focus, false);
 }
 
 void
@@ -374,7 +375,7 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
   if (nil (dis->grab_ptr) || (!concrete (dis->grab_ptr->item)->win)) {
     set_origin (0, 0);
     encode (x, y);
-    concrete (w) << emit_mouse (ev, x, y, t, dis->state);
+    send_mouse (w, ev, x, y, t, dis->state);
   }
   else {
     x_window grab_win= (x_window) concrete (dis->grab_ptr->item)->win;
@@ -385,7 +386,7 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
     }
     set_origin (0, 0);
     encode (x, y);
-    concrete (dis->grab_ptr->item) << emit_mouse (ev, x, y, t, dis->state);
+    send_mouse (dis->grab_ptr->item, ev, x, y, t, dis->state);
   }
 }
 
@@ -419,8 +420,8 @@ x_window_rep::repaint_invalid_regions () {
 void
 x_window_rep::set_keyboard_focus (widget wid) {
   if (has_focus && (kbd_focus != wid.rep)) {
-    concrete (kbd_focus) << emit_keyboard_focus (false);
-    concrete (wid) << emit_keyboard_focus (true);
+    send_keyboard_focus (kbd_focus, false);
+    send_keyboard_focus (wid, true);
   }
   kbd_focus= wid.rep;
 }
