@@ -13,9 +13,9 @@
 #include "window.hpp"
 #include "Widkit/wk_widget.hpp"
 #include "tm_window.hpp"
+#include "message.hpp"
 
 widget make_menu_widget (object menu);
-string icon_bar_name (int which);
 
 /******************************************************************************
 * Meta editor constructor and destructor
@@ -45,7 +45,7 @@ tm_window_rep::~tm_window_rep () {
 
 void
 tm_window_rep::set_window_name (string s) {
-  wid -> set<string> ("window name", s);
+  set_name (wid, s);
 }
 
 void
@@ -69,7 +69,7 @@ tm_window_rep::menu_main (string menu) {
   if (xmenu == texmacs_menu[0]) return;
   texmacs_menu[0]= xmenu;
   widget w= make_menu_widget (xmenu);
-  wid -> set<widget> ("menu bar", w);
+  ::set_main_menu (wid, w);
 }
 
 void
@@ -79,31 +79,35 @@ tm_window_rep::menu_icons (int which, string menu) {
   object xmenu= call ("menu-expand", eval ("'" * menu));
   if (xmenu == texmacs_icon_menu[which]) return;
   texmacs_icon_menu[which]= xmenu;
-  string name= icon_bar_name (which);
   widget w= make_menu_widget (xmenu);
-  wid -> set<widget> (name * " icons bar", w);
+  if      (which == 0) set_main_icons (wid, w);
+  else if (which == 1) set_context_icons (wid, w);
+  else if (which == 2) set_user_icons (wid, w);
 }
 
 void
 tm_window_rep::set_header_flag (bool flag) {
-  wid -> set<string> ("header", flag? string ("on"): string ("off"));
+  set_header_visibility (wid, flag);
 }
 
 void
 tm_window_rep::set_icon_bar_flag (int which, bool flag) {
-  string name= icon_bar_name (which);
-  wid -> set<string> (name * " icons", flag? string ("on"): string ("off"));
+  if      (which == 0) set_main_icons_visibility (wid, flag);
+  else if (which == 1) set_context_icons_visibility (wid, flag);
+  else if (which == 2) set_user_icons_visibility (wid, flag);
 }
 
 bool
 tm_window_rep::get_header_flag () {
-  return wid -> get<string> ("header") == "on";
+  return get_header_visibility (wid);
 }
 
 bool
 tm_window_rep::get_icon_bar_flag (int which) {
-  string name= icon_bar_name (which);
-  return wid -> get<string> (name * " icons") == "on";
+  if      (which == 0) return get_main_icons_visibility (wid);
+  else if (which == 1) return get_context_icons_visibility (wid);
+  else if (which == 2) return get_user_icons_visibility (wid);
+  else return false;
 }
 
 /******************************************************************************
@@ -113,7 +117,7 @@ tm_window_rep::get_icon_bar_flag (int which) {
 void
 tm_window_rep::set_shrinking_factor (int sf) {
   sfactor= sf;
-  wid -> set<string> ("shrinking factor", as_string (sf));
+  ::set_shrinking_factor (wid, sf);
 }
 
 int
@@ -123,66 +127,56 @@ tm_window_rep::get_shrinking_factor () {
 
 void
 tm_window_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  wid -> get<SI,SI,SI,SI> ("visible", x1, y1, x2, y2);
+  get_visible_part (wid, x1, y1, x2, y2);
 }
 
 void
 tm_window_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
-  wid -> get<SI,SI,SI,SI> ("extents", x1, y1, x2, y2);
+  ::get_extents (wid, x1, y1, x2, y2);
 }
 
 void
 tm_window_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  wid -> set<SI,SI,SI,SI> ("extents", x1, y1, x2, y2);
+  ::set_extents (wid, x1, y1, x2, y2);
 }
 
 void
 tm_window_rep::set_scrollbars (int i) {
-  wid -> set<string> ("scrollbars", as_string (i));
+  ::set_scrollbars_visibility (wid, i);
 }
 
 void
 tm_window_rep::get_scroll_pos (SI& x, SI& y) {
-  wid -> get<SI,SI> ("scroll position", x, y);
+  get_scroll_position (wid, x, y);
 }
 
 void
 tm_window_rep::set_scroll_pos (SI x, SI y) {
-  wid -> set<SI,SI> ("scroll position", x, y);
+  set_scroll_position (wid, x, y);
 }
 
 /******************************************************************************
-* The footer and executing commands on the bottom line
+* The footer as a status bar
 ******************************************************************************/
+
+bool
+tm_window_rep::get_footer_flag () {
+  return get_footer_visibility (wid);
+}
+
+void
+tm_window_rep::set_footer_flag (bool flag) {
+  set_footer_visibility (wid, flag);
+}
 
 void
 tm_window_rep::set_left_footer (string s) {
-  wid -> set<string> ("left footer", s);
+  ::set_left_footer (wid, s);
 }
 
 void
 tm_window_rep::set_right_footer (string s) {
-  wid -> set<string> ("right footer", s);
-}
-
-int
-tm_window_rep::get_footer_mode () {
-  return as_int (wid -> get<string> ("footer mode"));
-}
-
-void
-tm_window_rep::set_footer_mode (int which) {
-  wid -> set<string> ("footer mode", as_string (which));
-}
-
-bool
-tm_window_rep::get_footer_flag () {
-  return wid -> get<string> ("footer flag") == "on";
-}
-
-void
-tm_window_rep::set_footer_flag (bool on) {
-  wid -> set<string> ("footer flag", on? string ("on"): string ("off"));
+  ::set_right_footer (wid, s);
 }
 
 /******************************************************************************
@@ -197,24 +191,34 @@ public:
   ostream& print (ostream& out) { return out << "tm_window command"; }
 };
 
+bool
+tm_window_rep::get_interactive_mode () {
+  return ::get_interactive_mode (wid);
+}
+
+void
+tm_window_rep::set_interactive_mode (bool flag) {
+  ::set_interactive_mode (wid, flag);
+}
+
 void
 tm_window_rep::interactive (string name, string type, array<string> def,
 			    string& s, command cmd)
 {
-  if (get_footer_mode () == 1) { s= "cancel"; return; }
+  if (get_interactive_mode ()) { s= "cancel"; return; }
   text_ptr = &s;
   call_back= cmd;
   widget tw = text_widget (name, false, "english");
   widget inp= input_text_widget (new ia_command_rep (this), type, def);
-  wid -> set<widget> ("interactive prompt", tw);
-  wid -> set<widget> ("interactive input", inp);
-  set_footer_mode (1);
+  set_interactive_prompt (wid, tw);
+  set_interactive_input (wid, inp);
+  set_interactive_mode (true);
 }
 
 void
 tm_window_rep::interactive_return () {
-  *text_ptr= wid -> get<string> ("interactive input");
+  *text_ptr= get_interactive_input (wid);
   text_ptr= NULL;
-  set_footer_mode (get_footer_flag ()? 0: 2);
+  set_interactive_mode (false);
   call_back ();
 }

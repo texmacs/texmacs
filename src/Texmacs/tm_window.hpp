@@ -62,12 +62,12 @@ public:
   void get_scroll_pos (SI& x, SI& y);
   void set_scroll_pos (SI x, SI y);
 
-  int  get_footer_mode ();
-  void set_footer_mode (int which);
   bool get_footer_flag ();
   void set_footer_flag (bool on);
   void set_left_footer (string s);
   void set_right_footer (string s);
+  bool get_interactive_mode ();
+  void set_interactive_mode (bool on);
   void interactive (string name, string type, array<string> def,
 		    string& s, command cmd);
   void interactive_return ();

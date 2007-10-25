@@ -17,16 +17,16 @@
 ******************************************************************************/
 
 class widget_connection_rep: public concrete_struct {
-protected:
+public:
   widget_rep* w1;  // widget which triggers the signal
-  string key1;     // name of the slot
+  slot s1;         // corresponding slot
   widget_rep* w2;  // widget which receives the signal
-  string key2;     // name of the slot
+  slot s2;         // corresponding slot
 
 public:
-  inline widget_connection_rep (widget_rep* w1b, string key1b,
-				widget_rep* w2b, string key2b):
-    w1 (w1b), key1 (key1b), w2 (w2b), key2 (key2b) {}
+  inline widget_connection_rep (widget_rep* w1b, slot s1b,
+				widget_rep* w2b, slot s2b):
+    w1 (w1b), s1 (s1b), w2 (w2b), s2 (s2b) {}
 
   friend class widget_connection;
 };
@@ -34,12 +34,15 @@ public:
 class widget_connection {
 public:
 CONCRETE(widget_connection);
+  inline widget_connection (widget_rep* w1, slot s1,
+			    widget_rep* w2, slot s2):
+    rep (new widget_connection_rep (w1, s1, w2, s2)) {}
   inline bool operator == (widget_connection con) {
-    return rep->w1 == con->w1 && rep->key1 == con->key1 &&
-           rep->w2 == con->w2 && rep->key2 == con->key2; }
+    return rep->w1 == con->w1 && rep->s1 == con->s1 &&
+           rep->w2 == con->w2 && rep->s2 == con->s2; }
   inline bool operator != (widget_connection con) {
-    return rep->w1 != con->w1 || rep->key1 != con->key1 ||
-           rep->w2 != con->w2 || rep->key2 != con->key2; }
+    return rep->w1 != con->w1 || rep->s1 != con->s1 ||
+           rep->w2 != con->w2 || rep->s2 != con->s2; }
 };
 CONCRETE_CODE(widget_connection);
 
@@ -76,14 +79,16 @@ widget_rep::~widget_rep () {
   out= list<widget_connection> ();
 }
 
-widget_rep::connect (string key, widget w2, string key2) {
-  widget_connection con (rep, key, w2.rep, key2);
+void
+widget_rep::connect (slot s, widget w2, slot s2) {
+  widget_connection con (this, s, w2.rep, s2);
   insert (out, con);
   insert (w2->in, con);
 }
 
-widget_rep::deconnect (string key, widget w2, string key2) {
-  widget_connection con (rep, key, w2.rep, key2);
+void
+widget_rep::deconnect (slot s, widget w2, slot s2) {
+  widget_connection con (this, s, w2.rep, s2);
   remove (out, con);
   remove (w2->in, con);
 }
@@ -93,23 +98,33 @@ widget_rep::deconnect (string key, widget w2, string key2) {
 ******************************************************************************/
 
 void
-widget_rep::set_blackbox (string key, blackbox val) {
-  (void) key; (void) val;
+widget_rep::send (slot s, blackbox val) {
+  (void) s; (void) val;
   fatal_error ("No default implementation", "widget_rep::set_blackbox");
 }
 
 blackbox
-widget_rep::get_blackbox (string key, int type_id) {
-  (void) key; (void) type_id;
+widget_rep::query (slot s, int type_id) {
+  (void) s; (void) type_id;
   fatal_error ("No default implementation", "widget_rep::set_blackbox");
+  return blackbox ();
 }
 
 void
-widget_rep::changed (string key, int type_id) {
-  blackbox val= get_blackbox (key, type_id);
+widget_rep::notify (slot s, int type_id) {
+  blackbox val= query (s, type_id);
   list<widget_connection> l= out;
   while (!nil (l)) {
-    l->item->set_blackbox (key, val);
+    l->item->w2->send (s, val);
     l= l->next;
   }  
+}
+
+/******************************************************************************
+* Miscellaneous
+******************************************************************************/
+
+ostream&
+widget_rep::print (ostream& out) {
+  return out << "widget";
 }
