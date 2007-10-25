@@ -199,15 +199,15 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
   if (popup_win == NULL) {
     SI wx, wy;
     win->get_position (wx, wy);
-    wk_widget wid;
+    widget wid;
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
-    wk_widget popup_wid= popup_widget (wid, center);
-    popup_win= popup_window (abstract (popup_wid), wx+ ox+ x, wy+ oy+ y);
+    widget popup_wid= popup_widget (wid, center);
+    popup_win= popup_window (popup_wid, wx+ ox+ x, wy+ oy+ y);
     popup_win->map ();
     this << emit_mouse_grab (true);
-    popup_wid << set_integer ("grabbed", 1);
+    concrete (popup_wid) << set_integer ("grabbed", 1);
     // popup_wid << set_integer ("freeze", 1);
-    popup_wid << emit_mouse_grab (true);
+    concrete (popup_wid) << emit_mouse_grab (true);
   }
 }
 

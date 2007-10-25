@@ -19,7 +19,7 @@ protected:
   bool full_screen;        // full screen mode
   bool full_screen_edit;   // full screen edit mode
   window dialogue_win;     // dialogue window
-  wk_widget dialogue_wid;  // dialogue wk_widget
+  widget dialogue_wid;     // dialogue widget
 
 public:
   tm_frame_rep ();
@@ -41,7 +41,7 @@ public:
   void show_icon_bar (int which, bool flag);
   bool visible_header ();
   bool visible_icon_bar (int which);
-  void menu_widget (string menu, wk_widget& w);
+  void menu_widget (string menu, widget& w);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
 
@@ -65,16 +65,13 @@ public:
   void set_right_footer (string s);
   void set_message (string left, string right, bool temp= false);
   void recall_message ();
-  void dialogue_start (string name, wk_widget wid);
+  void dialogue_start (string name, widget wid);
   void dialogue_inquire (int i, string& arg);
   void dialogue_end ();
   void choose_file (object fun, string title, string type);
   void interactive (object fun, scheme_tree p);
 };
 
-wk_widget box_wk_widget (box b, bool trans);
-wk_widget box_wk_widget (scheme_tree p, string s, color col,
-			 bool trans= true, bool ink= false);
 widget box_widget (box b, bool trans);
 widget box_widget (scheme_tree p, string s, color col,
 		   bool trans= true, bool ink= false);

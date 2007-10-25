@@ -93,11 +93,6 @@ edit_interface_rep::resume () {
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
 }
 
-wk_widget
-edit_interface_rep::get_widget () {
-  return wk_widget (this);
-}
-
 /******************************************************************************
 * Routines for dealing with shrinked coordinates
 ******************************************************************************/

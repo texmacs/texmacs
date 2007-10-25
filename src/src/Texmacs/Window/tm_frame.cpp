@@ -98,9 +98,9 @@ tm_frame_rep::get_string_window_property (string what) {
 ******************************************************************************/
 
 void
-tm_frame_rep::menu_widget (string menu, wk_widget& w) {
+tm_frame_rep::menu_widget (string menu, widget& w) {
   object xmenu= eval ("'" * menu);
-  w= concrete (make_menu_widget (xmenu));
+  w= make_menu_widget (xmenu);
 }
 
 void

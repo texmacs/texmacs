@@ -337,12 +337,12 @@ void
 tm_data_rep::attach_view (tm_window win, tm_view vw) {
   // cout << "Attach view " << vw->buf->name << "\n";
   vw->win= win;
-  wk_widget wid= concrete (win->wid);
-  wid ["canvas"] << set_widget ("scrollable", vw->ed);
-  if (wid->attached ()) {
+  widget wid= win->wid;
+  concrete (wid) ["canvas"] << set_widget ("scrollable", vw->ed);
+  if (concrete (wid) -> attached ()) {
     vw->ed->resume ();
     win->set_window_name (vw->buf->abbr);
-    wid ["canvas"] << emit_update ();
+    concrete (wid) ["canvas"] << emit_update ();
   }
   // cout << "View attached\n";
 }
@@ -353,13 +353,13 @@ tm_data_rep::detach_view (tm_view vw) {
   tm_window win= vw->win;
   if (win == NULL) return;
   vw->win= NULL;
-  wk_widget wid= concrete (win->wid);
-  wid ["canvas"] << set_widget ("scrollable", glue_wk_widget ());
-  if (wid->attached ()) {
+  widget wid= win->wid;
+  concrete (wid) ["canvas"] << set_widget ("scrollable", glue_wk_widget ());
+  if (concrete (wid) -> attached ()) {
     vw->ed->suspend ();
     vw->ed << emit_attach_window (NULL);
     win->set_window_name ("TeXmacs");
-    wid ["canvas"] << emit_update ();
+    concrete (wid) ["canvas"] << emit_update ();
   }
   // cout << "View detached\n";
 }

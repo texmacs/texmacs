@@ -45,7 +45,7 @@ int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
 
 window
-texmacs_window (wk_widget wid, tree geom) {
+texmacs_window (widget wid, tree geom) {
   int W, H;
   int w= geometry_w, h= geometry_h;
   int x= geometry_x, y= geometry_y;
@@ -56,13 +56,7 @@ texmacs_window (wk_widget wid, tree geom) {
   the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
-  return plain_window (abstract (wid), "TeXmacs",
-		       w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
-}
-
-window
-texmacs_window (widget wid, tree geom) {
-  return texmacs_window (concrete (wid), geom);
+  return plain_window (wid, "TeXmacs", w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
 }
 
 /******************************************************************************
