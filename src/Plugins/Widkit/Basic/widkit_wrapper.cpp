@@ -257,13 +257,6 @@ send_string (wk_widget w, string key, blackbox val) {
 }
 
 void
-send_widget (wk_widget w, string key, blackbox val) {
-  if (type_box (val) != type_helper<widget>::id)
-    fatal_error ("type mismatch", "send_widget");
-  w << set_widget (key, concrete (open_box<widget> (val)));
-}
-
-void
 send_coord2 (wk_widget w, string key, blackbox val) {
   typedef pair<SI,SI> coord2;
   if (type_box (val) != type_helper<coord2>::id)
@@ -405,15 +398,6 @@ query_string (wk_widget w, string key, int type_id) {
 }
 
 blackbox
-query_widget (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<widget>::id)
-    fatal_error ("type mismatch", "query_widget");
-  wk_widget wkw;
-  w << get_widget (key, wkw);
-  return close_box<widget> (abstract (wkw));
-}
-
-blackbox
 query_coord2 (wk_widget w, string key, int type_id) {
   typedef pair<SI,SI> coord2;
   if (type_id != type_helper<coord2>::id)
@@ -474,6 +458,22 @@ query_geometry (wk_widget w, int type_id) {
   return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
 }
 
+template<class T> void
+check_type (blackbox bb, string s) {
+  if (type_box (bb) != type_helper<T>::id) {
+    cerr << "\nslot type= " << s << "\n";
+    fatal_error ("type mismatch", "check_type");
+  }
+}
+
+void
+check_type_void (blackbox bb, string s) {
+  if (!nil (bb)) {
+    cerr << "\nslot type= " << s << "\n";
+    fatal_error ("type mismatch", "check_type");
+  }
+}
+
 /******************************************************************************
 * Message passing
 ******************************************************************************/
@@ -531,26 +531,14 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_HEADER_VISIBILITY:
     send_bool (THIS, "header", val);
     break;
-  case SLOT_MAIN_MENU:
-    send_widget (THIS, "menu bar", val);
-    break;
   case SLOT_MAIN_ICONS_VISIBILITY:
     send_bool (THIS, "main icons", val);
-    break;
-  case SLOT_MAIN_ICONS:
-    send_widget (THIS, "main icons bar", val);
     break;
   case SLOT_CONTEXT_ICONS_VISIBILITY:
     send_bool (THIS, "context icons", val);
     break;
-  case SLOT_CONTEXT_ICONS:
-    send_widget (THIS, "context icons bar", val);
-    break;
   case SLOT_USER_ICONS_VISIBILITY:
     send_bool (THIS, "user icons", val);
-    break;
-  case SLOT_USER_ICONS:
-    send_widget (THIS, "user icons bar", val);
     break;
   case SLOT_FOOTER_VISIBILITY:
     send_bool (THIS, "footer flag", val);
@@ -564,15 +552,15 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_INTERACTIVE_MODE:
     send_bool (THIS, "interactive mode", val);
     break;
-  case SLOT_INTERACTIVE_PROMPT:
-    send_widget (THIS, "interactive prompt", val);
+
+  case SLOT_FILE:
+    send_string (THIS, "file", val);
     break;
-  case SLOT_INTERACTIVE_INPUT:
-    send_widget (THIS, "interactive input", val);
+  case SLOT_DIRECTORY:
+    send_string (THIS, "directory", val);
     break;
   default:
-    fatal_error ("cannot handle message type",
-		 "wk_widget_rep::set_blackbox");
+    fatal_error ("cannot handle slot type", "wk_widget_rep::send");
   }
 }
 
@@ -619,9 +607,57 @@ wk_widget_rep::query (slot s, int type_id) {
     return query_bool (THIS, "interactive mode", type_id);
   case SLOT_INTERACTIVE_INPUT:
     return query_string (THIS, "interactive input", type_id);
+
+  case SLOT_STRING_INPUT:
+    return query_string (THIS, "input", type_id);
   default:
-    fatal_error ("cannot handle message type",
-		 "wk_widget_rep::set_blackbox");
+    fatal_error ("cannot handle slot type", "wk_widget_rep::query");
     return blackbox ();
+  }
+}
+
+widget
+wk_widget_rep::read (slot s, blackbox index) {
+  switch (s) {
+  case SLOT_FILE:
+    check_type_void (index, "SLOT_FILE");
+    return abstract (THIS [0] ["file"] ["input"]);
+  case SLOT_DIRECTORY:
+    check_type_void (index, "SLOT_DIRECTORY");
+    return abstract (THIS [0] ["directory"] ["input"]);
+  default:
+    fatal_error ("cannot handle slot type", "wk_widget_rep::read");
+  }
+}
+
+void
+wk_widget_rep::write (slot s, blackbox index, widget w) {
+  switch (s) {
+  case SLOT_MAIN_MENU:
+    check_type_void (index, "SLOT_MAIN_MENU");
+    THIS << set_widget ("menu bar", concrete (w));
+    break;
+  case SLOT_MAIN_ICONS:
+    check_type_void (index, "SLOT_MAIN_ICONS");
+    THIS << set_widget ("main icons bar", concrete (w));
+    break;
+  case SLOT_CONTEXT_ICONS:
+    check_type_void (index, "SLOT_CONTEXT_ICONS");
+    THIS << set_widget ("context icons bar", concrete (w));
+    break;
+  case SLOT_USER_ICONS:
+    check_type_void (index, "SLOT_USER_ICONS");
+    THIS << set_widget ("user icons bar", concrete (w));
+    break;
+  case SLOT_INTERACTIVE_PROMPT:
+    check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
+    THIS << set_widget ("interactive prompt", concrete (w));
+    break;
+  case SLOT_INTERACTIVE_INPUT:
+    check_type_void (index, "SLOT_INTERACTIVE_INPUT");
+    THIS << set_widget ("interactive input", concrete (w));
+    break;
+  default:
+    fatal_error ("cannot handle slot type", "wk_widget_rep::write");
   }
 }

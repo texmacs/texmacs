@@ -15,6 +15,7 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
+#include "message.hpp"
 
 /******************************************************************************
 * Dialogues
@@ -142,10 +143,8 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
   else concrete (wid) << set_string ("directory", ".");
   dialogue_start (title, wid);
   if (type == "directory")
-    dialogue_win->set_keyboard_focus
-      (abstract (concrete (dialogue_wid) [0]["directory"]["input"]));
-  else dialogue_win->set_keyboard_focus
-	 (abstract (concrete (dialogue_wid)[0]["file"]["input"]));
+    dialogue_win->set_keyboard_focus (get_directory (dialogue_wid));
+  else dialogue_win->set_keyboard_focus (get_file (dialogue_wid));
 }
 
 /******************************************************************************
