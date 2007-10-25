@@ -72,13 +72,13 @@ box_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 * Interface
 ******************************************************************************/
 
-wk_widget
-box_wk_widget (box b, bool trans) {
-  return new box_widget_rep (b, trans, 3*PIXEL, 3*PIXEL);
+widget
+box_widget (box b, bool tr) {
+  return abstract (wk_widget (new box_widget_rep (b, tr, 3*PIXEL, 3*PIXEL)));
 }
 
-wk_widget
-box_wk_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
+widget
+box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
   string family  = "roman";
   string fn_class= "mr";
   string series  = "medium";
@@ -95,17 +95,7 @@ box_wk_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
   font fn= find_font (family, fn_class, series, shape, sz, dpi);
   box  b = text_box (decorate (), 0, s, fn, col);
   if (ink) b= resize_box (decorate (), b, b->x3, b->y3, b->x4, b->y4, true);
-  return box_wk_widget (b, trans);
-}
-
-widget
-box_widget (box b, bool trans) {
-  return abstract (box_wk_widget (b, trans));
-}
-
-widget
-box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
-  return abstract (box_wk_widget (p, s, col, trans, ink));
+  return box_widget (b, trans);
 }
 
 /******************************************************************************

@@ -62,7 +62,7 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 }
 
 void
-tm_frame_rep::dialogue_start (string name, wk_widget wid) {
+tm_frame_rep::dialogue_start (string name, widget wid) {
   if (dialogue_win == NULL) {
     string lan= the_display->out_lan;
     if (lan == "russian") lan= "english";
@@ -72,11 +72,11 @@ tm_frame_rep::dialogue_start (string name, wk_widget wid) {
     SI ox, oy, dx, dy, ex= 0, ey= 0;
     win->get_position (ox, oy);
     win->get_size (dx, dy);
-    wid << get_size (ex, ey, -1);
+    concrete (wid) << get_size (ex, ey, -1);
     ox += (dx - ex) >> 1;
     oy -= (dy - ey) >> 1;
     dialogue_wid= wid;
-    dialogue_win= plain_window (abstract (dialogue_wid), _name, 0, 0, ox, oy);
+    dialogue_win= plain_window (dialogue_wid, _name, 0, 0, ox, oy);
     dialogue_win->map ();
     delete[] _name;
   }
@@ -86,7 +86,7 @@ void
 tm_frame_rep::dialogue_inquire (int i, string& arg) {
   string s= "input";
   if (i>0) s= "input-" * as_string (i);
-  dialogue_wid << get_string (s, arg);
+  concrete (dialogue_wid) << get_string (s, arg);
 }
 
 void
@@ -95,7 +95,7 @@ tm_frame_rep::dialogue_end () {
     dialogue_win->unmap ();
     delete dialogue_win;
     dialogue_win= NULL;
-    dialogue_wid= wk_widget ();
+    dialogue_wid= widget ();
   }
 }
 
@@ -121,11 +121,11 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
     if (den != 1) magn << "/" << as_string (den);
   }
 
-  url       name= get_name_buffer ();
-  command   cb  = dialogue_command (get_server(), fun, 1);
-  wk_widget wid = file_chooser_wk_widget (cb, type, magn);
+  url      name= get_name_buffer ();
+  command  cb  = dialogue_command (get_server(), fun, 1);
+  widget   wid = file_chooser_widget (cb, type, magn);
   if (!is_scratch (name)) {
-    wid << set_string ("directory", as_string (head (name)));
+    concrete (wid) << set_string ("directory", as_string (head (name)));
     if ((type != "image") && (type != "")) {
       url u= tail (name);
       string old_suf= suffix (u);
@@ -136,16 +136,16 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
 	  u= unglue (u, N(old_suf) + 1);
 	  u= glue (u, "." * new_suf);
 	}
-      wid << set_string ("file", as_string (u));
+      concrete (wid) << set_string ("file", as_string (u));
     }
   }
-  else wid << set_string ("directory", ".");
+  else concrete (wid) << set_string ("directory", ".");
   dialogue_start (title, wid);
   if (type == "directory")
     dialogue_win->set_keyboard_focus
-      (abstract (dialogue_wid[0]["directory"]["input"]));
+      (abstract (concrete (dialogue_wid) [0]["directory"]["input"]));
   else dialogue_win->set_keyboard_focus
-	 (abstract (dialogue_wid[0]["file"]["input"]));
+	 (abstract (concrete (dialogue_wid)[0]["file"]["input"]));
 }
 
 /******************************************************************************
@@ -234,20 +234,21 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     for (i=0; i<n; i++)
       prompts[i]= get_prompt (p, i);
     command cb= dialogue_command (get_server(), fun, n);
-    wk_widget wid= inputs_list_wk_widget (cb, prompts);
+    widget wid= inputs_list_widget (cb, prompts);
     for (i=0; i<n; i++) {
-      wk_widget input_wid= wid[0]["inputs"][i]["input"];
-      input_wid << set_string ("type", get_type (p, i));
+      widget input_wid= abstract (concrete (wid) [0]["inputs"][i]["input"]);
+      concrete (input_wid) << set_string ("type", get_type (p, i));
       array<string> proposals= get_proposals (p, i);
       int j, k= N(proposals);
-      if (k > 0) input_wid << set_string ("input", proposals[0]);
-      for (j=0; j<k; j++) input_wid << set_string ("default", proposals[j]);
+      if (k > 0) concrete (input_wid) << set_string ("input", proposals[0]);
+      for (j=0; j<k; j++)
+	concrete (input_wid) << set_string ("default", proposals[j]);
     }
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
     dialogue_win->set_keyboard_focus
-      (abstract (dialogue_wid[0]["inputs"][0]["input"]));
+      (abstract (concrete (dialogue_wid) [0]["inputs"][0]["input"]));
   }
   else {
     if (get_window () -> get_interactive_mode ()) beep ();

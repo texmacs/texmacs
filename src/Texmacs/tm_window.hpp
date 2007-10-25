@@ -15,7 +15,6 @@
 #include "tm_buffer.hpp"
 #include "window.hpp"
 
-window texmacs_window (wk_widget wid, tree geom);
 window texmacs_window (widget wid, tree geom);
 
 class tm_window_rep {

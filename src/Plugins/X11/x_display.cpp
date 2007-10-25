@@ -19,6 +19,8 @@
 #include "image_files.hpp"
 #include <X11/cursorfont.h>
 #include "Widkit/wk_widget.hpp"
+#include "message.hpp"
+
 extern hashmap<Window,pointer> Window_to_window;
 
 /******************************************************************************
@@ -626,7 +628,7 @@ x_display_rep::set_wait_indicator (string message, string arg) {
   widget old_wid= ww->w;
   ww->w= wait_wid;
   concrete (wait_wid) << emit_attach_window (ww);
-  send_geometry (wait_wid, x1, y1, x2-x1, y2-y1);
+  set_geometry (wait_wid, x1, y1, x2-x1, y2-y1);
   send_invalidate_all (wait_wid);
   ww->repaint_invalid_regions ();
   ww->w= old_wid;

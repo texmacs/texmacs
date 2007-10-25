@@ -81,7 +81,7 @@ public:
   virtual void show_icon_bar (int which, bool flag) = 0;
   virtual bool visible_header () = 0;
   virtual bool visible_icon_bar (int which) = 0;
-  virtual void menu_widget (string menu, wk_widget& w) = 0;
+  virtual void menu_widget (string menu, widget& w) = 0;
   virtual void menu_main (string menu) = 0;
   virtual void menu_icons (int which, string menu) = 0;
 
@@ -103,7 +103,7 @@ public:
   virtual void set_right_footer (string s) = 0;
   virtual void set_message (string left, string right, bool temp= false) = 0;
   virtual void recall_message () = 0;
-  virtual void dialogue_start (string name, wk_widget wid) = 0;
+  virtual void dialogue_start (string name, widget wid) = 0;
   virtual void dialogue_inquire (int i, string& arg) = 0;
   virtual void dialogue_end () = 0;
   virtual void choose_file (object fun, string title, string type) = 0;
