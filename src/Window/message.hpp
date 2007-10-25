@@ -429,7 +429,7 @@ get_interactive_input (widget w) {
 ******************************************************************************/
 
 inline widget
-get_dialogue_input (widget w, int i) {
+get_form_field (widget w, int i) {
   // get the i-th input widget from a dialogue widget
   return read<int> (w, SLOT_FORM_FIELD, i);
 }
@@ -441,15 +441,21 @@ get_string_input (widget w) {
 }
 
 inline void
-set_default_input (widget w, string s) {
+set_string_input (widget w, string s) {
   // set default input string of input widget
-  send<string> (w, SLOT_DEFAULT_INPUT, s);
+  send<string> (w, SLOT_STRING_INPUT, s);
 }
 
 inline void
-add_proposal_input (widget w, string s) {
+set_input_type (widget w, string s) {
+  // set the type of an input field
+  send<string> (w, SLOT_INPUT_TYPE, s);
+}
+
+inline void
+add_input_proposal (widget w, string s) {
   // add an extra proposal for input widget (e.g. from history)
-  send<string> (w, SLOT_PROPOSAL_INPUT, s);
+  send<string> (w, SLOT_INPUT_PROPOSAL, s);
 }
 
 inline void

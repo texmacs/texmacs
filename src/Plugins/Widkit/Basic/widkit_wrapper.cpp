@@ -553,6 +553,15 @@ wk_widget_rep::send (slot s, blackbox val) {
     send_bool (THIS, "interactive mode", val);
     break;
 
+  case SLOT_STRING_INPUT:
+    send_string (THIS, "input", val);
+    break;
+  case SLOT_INPUT_TYPE:
+    send_string (THIS, "type", val);
+    break;
+  case SLOT_INPUT_PROPOSAL:
+    send_string (THIS, "default", val);
+    break;
   case SLOT_FILE:
     send_string (THIS, "file", val);
     break;
@@ -619,6 +628,9 @@ wk_widget_rep::query (slot s, int type_id) {
 widget
 wk_widget_rep::read (slot s, blackbox index) {
   switch (s) {
+  case SLOT_FORM_FIELD:
+    check_type<int> (index, "SLOT_FORM_FIELD");
+    return abstract (THIS [0] ["inputs"] [open_box<int> (index)] ["input"]);
   case SLOT_FILE:
     check_type_void (index, "SLOT_FILE");
     return abstract (THIS [0] ["file"] ["input"]);
