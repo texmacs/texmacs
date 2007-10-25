@@ -142,7 +142,7 @@ x_display_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
   x= (x * PIXEL);
   y= ((-y) * PIXEL);
   // cout << "\nLeave " << ((tree) concrete (old_widget)) << " {\n";
-  concrete (old_widget) << emit_mouse ("leave", x, y, 0, state);
+  send_mouse (old_widget, "leave", x, y, 0, state);
   // cout << "}\n";
 
   XQueryPointer (dpy, ((x_window) concrete (new_widget)->win)->win,
@@ -151,7 +151,7 @@ x_display_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
   x= (x * PIXEL);
   y= ((-y) * PIXEL);
   // cout << "Enter " << ((tree) concrete (new_widget)) << " {\n";
-  concrete (new_widget) << emit_mouse ("enter", x, y, 0, state);  
+  send_mouse (new_widget, "enter", x, y, 0, state);
   // cout << "}\n\n";
 }
 
@@ -626,12 +626,12 @@ x_display_rep::set_wait_indicator (string message, string arg) {
   widget old_wid= ww->w;
   ww->w= wait_wid;
   concrete (wait_wid) << emit_attach_window (ww);
-  concrete (wait_wid) << emit_position (x1, y1, x2-x1, y2-y1);
-  concrete (wait_wid) << emit_invalidate_all ();
+  send_geometry (wait_wid, x1, y1, x2-x1, y2-y1);
+  send_invalidate_all (wait_wid);
   ww->repaint_invalid_regions ();
   ww->w= old_wid;
   XFlush (dpy);
-  concrete (old_wid) << emit_invalidate_all ();
+  send_invalidate_all (old_wid);
 }
 
 bool

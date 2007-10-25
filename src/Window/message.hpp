@@ -14,10 +14,16 @@
 #define MESSAGE_H
 #include "widget.hpp"
 #include "ntuple.hpp"
+#include "rectangles.hpp"
 
 /******************************************************************************
 * Helper templates for sending messages
 ******************************************************************************/
+
+inline void
+send (widget w, slot s) {
+  w->send (s, blackbox ());
+}
 
 template<class T1> inline void
 send (widget w, slot s, T1 val) {
@@ -40,6 +46,12 @@ template<class T1, class T2, class T3, class T4> void
 send (widget w, slot s, T1 val1, T2 val2, T3 val3, T4 val4) {
   typedef quadruple<T1,T2,T3,T4> T;
   w->send (s, close_box<T> (T (val1, val2, val3, val4)));
+}
+
+template<class T1, class T2, class T3, class T4, class T5> void
+send (widget w, slot s, T1 val1, T2 val2, T3 val3, T4 val4, T5 val5) {
+  typedef quintuple<T1,T2,T3,T4,T5> T;
+  w->send (s, close_box<T> (T (val1, val2, val3, val4, val5)));
 }
 
 template<class T1> inline T1
@@ -68,6 +80,13 @@ query (widget w, slot s, T1& val1, T2& val2, T3& val3, T4& val4) {
   val1= q.x1; val2= q.x2; val3= q.x3; val4= q.x4;
 }
 
+template<class T1, class T2, class T3, class T4, class T5> void
+query (widget w, slot s, T1& val1, T2& val2, T3& val3, T4& val4, T5& val5) {
+  typedef quintuple<T1,T2,T3,T4,T5> T;
+  T q= open_box<T> (w->query (s, type_helper<T>::id));
+  val1= q.x1; val2= q.x2; val3= q.x3; val4= q.x4; val5= q.x5;
+}
+
 inline void
 connect (widget w1, slot s1, widget w2, slot s2) {
   w1->connect (s1, w2, s2);
@@ -90,7 +109,123 @@ get_window_id (widget w) {
 
 inline void
 set_name (widget w, string s) {
+  // set the name of a widget (usually a window)
   send<string> (w, SLOT_NAME, s);
+}
+
+inline void
+get_minimal_size (widget w, SI& width, SI& height) {
+  // get the minimal size of the widget
+  query<SI,SI> (w, SLOT_MINIMAL_SIZE, width, height);
+}
+
+inline void
+get_default_size (widget w, SI& width, SI& height) {
+  // get the default size of the widget
+  query<SI,SI> (w, SLOT_DEFAULT_SIZE, width, height);
+}
+
+inline void
+get_maximal_size (widget w, SI& width, SI& height) {
+  // get the maximal size of the widget
+  query<SI,SI> (w, SLOT_MAXIMAL_SIZE, width, height);
+}
+
+inline void
+set_size (widget w, SI width, SI height) {
+  // set the current size of the widget
+  send<SI,SI> (w, SLOT_SIZE, width, height);
+}
+
+inline void
+get_size (widget w, SI& width, SI& height) {
+  // get the current size of the widget
+  query<SI,SI> (w, SLOT_SIZE, width, height);
+}
+
+inline void
+set_position (widget w, SI x, SI y) {
+  // set the current position of the widget inside the parent widget
+  send<SI,SI> (w, SLOT_POSITION, x, y);
+}
+
+inline void
+get_position (widget w, SI& x, SI& y) {
+  // get the current position of the widget inside the parent widget
+  query<SI,SI> (w, SLOT_POSITION, x, y);
+}
+
+inline void
+set_gravity (widget w, gravity grav) {
+  // set the gravity of the widget (i.e. the position of the origin)
+  send<gravity> (w, SLOT_GRAVITY, grav);
+}
+
+inline gravity
+get_gravity (widget w) {
+  // get the current position of the widget inside the parent widget
+  return query<gravity> (w, SLOT_GRAVITY);
+}
+
+inline void
+set_geometry (widget w, SI ww, SI hh, SI x, SI y, gravity grav=north_west) {
+  // simultaneously set the size, position and gravity
+  send<SI,SI,SI,SI,gravity> (w, SLOT_GEOMETRY, ww, hh, x, y, grav);
+}
+
+inline void
+get_geometry (widget w, SI& ww, SI& hh, SI& x, SI& y, gravity& grav) {
+  // simultaneously get the size, position and gravity
+  query<SI,SI,SI,SI,gravity> (w, SLOT_GEOMETRY, ww, hh, x, y, grav);
+}
+
+inline void
+send_keyboard (widget w, string key, time_t t= 0) {
+  // send a key press event
+  send<string,time_t> (w, SLOT_KEYBOARD, key, t);
+}
+
+inline void
+send_keyboard_focus (widget w, bool has_focus, time_t t= 0) {
+  // attach or detach the keyboard focus to or from a widget
+  send<bool,time_t> (w, SLOT_KEYBOARD_FOCUS, has_focus, t);
+}
+
+inline void
+send_mouse (widget w, string kind, SI x, SI y, time_t t, int status) {
+  // send a mouse event of a given kind at position (x, y) and time t
+  // the status corresponds to active keyboard modifiers at the event time
+  send<string,SI,SI,time_t,int> (w, SLOT_MOUSE, kind, x, y, t, status);
+}
+
+inline void
+send_repaint (widget w, SI x1, SI y1, SI x2, SI y2) {
+  // request widget to repaint a region
+  send<SI,SI,SI,SI> (w, SLOT_REPAINT, x1, y1, x2, y2);
+}
+
+inline void
+send_invalidate_all (widget w) {
+  // invalidate the widget so that it will be repaint at a next iteration
+  send (w, SLOT_INVALIDATE_ALL);
+}
+
+inline void
+send_invalidate (widget w, SI x1, SI y1, SI x2, SI y2) {
+  // invalidate a region so that it will be repaint at a next iteration
+  send<SI,SI,SI,SI> (w, SLOT_INVALIDATE, x1, y1, x2, y2);
+}
+
+inline rectangles
+get_invalid (widget w) {
+  // get the rectangles of a widget which need to be repaint
+  return query<rectangles> (w, SLOT_INVALID);
+}
+
+inline void
+send_destroy (widget w) {
+  // request a widget to be destroyed
+  send (w, SLOT_DESTROY);
 }
 
 /******************************************************************************
