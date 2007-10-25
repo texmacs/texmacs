@@ -45,6 +45,7 @@ public:
   void handle_get_size (get_size_event ev);
   void handle_set_widget (set_widget_event ev);
   void handle_get_widget (get_widget_event ev);
+  void handle_set_integer (set_integer_event ev);
   void handle_set_string (set_string_event ev);
   void handle_get_string (get_string_event ev);
   void handle_set_coord2 (set_coord2_event ev);
@@ -311,6 +312,15 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
 }
 
 void
+texmacs_widget_rep::handle_set_integer (set_integer_event ev) {
+  if (ev->which == "shrinking factor")
+    THIS ["canvas"] << set_integer ("shrinking factor", ev->i);
+  else if (ev->which == "scrollbars")
+    THIS ["canvas"] << set_integer ("scrollbars", ev->i);
+  else fatal_error ("Could not set integer attribute " * ev->which);
+}
+
+void
 texmacs_widget_rep::handle_set_string (set_string_event ev) {
   if (ev->which == "window name") win->set_name (ev->s);
   else if (ev->which == "header")
@@ -321,11 +331,8 @@ texmacs_widget_rep::handle_set_string (set_string_event ev) {
     set_subwidget_flag (THIS ["header"] ["context"], ev->s == "on");
   else if (ev->which == "user icons")
     set_subwidget_flag (THIS ["header"] ["user"], ev->s == "on");
-  else if (ev->which == "shrinking factor")
-    THIS ["canvas"] << set_integer ("shrinking factor", as_int (ev->s));
-  else if (ev->which == "scrollbars")
-    THIS ["canvas"] << set_integer ("scrollbars", as_int (ev->s));
-  else if (ev->which == "footer mode") set_footer_mode (as_int (ev->s));
+  else if (ev->which == "interactive mode")
+    set_footer_mode (ev->s == "on"? 1: (footer_flag? 0: 2));
   else if (ev->which == "footer flag") set_footer_flag (ev->s == "on");
   else if (ev->which == "left footer") set_left_footer (ev->s);
   else if (ev->which == "right footer") set_right_footer (ev->s);
@@ -346,8 +353,8 @@ texmacs_widget_rep::handle_get_string (get_string_event ev) {
   else if (ev->which == "user icons")
     ev->s= get_subwidget_flag (THIS ["header"] ["user"])?
              string ("on"): string ("off");
-  else if (ev->which == "footer mode")
-    ev->s= as_string (get_footer_mode ());
+  else if (ev->which == "interactive mode")
+    ev->s= get_footer_mode () == 1? string ("on"): string ("off");
   else if (ev->which == "footer flag")
     ev->s= get_footer_flag ()? string ("on"): string ("off");
   else if (ev->which == "interactive input")
@@ -410,9 +417,6 @@ texmacs_widget_rep::handle_resize (resize_event ev) {
 
 void
 texmacs_widget_rep::handle_destroy (destroy_event ev) {
-  // WARNING: should be removed when the window model is redesigned
-  THIS ["canvas"] << emit_keyboard_focus (true);
-
   quit ();
 }
 
@@ -424,6 +428,9 @@ bool
 texmacs_widget_rep::handle (event ev) {
   // cout << "handle " << ((event) ev) << LF;
   switch (ev->type) {
+  case SET_INTEGER_EVENT:
+    handle_set_integer (ev);
+    return true;
   case GET_STRING_EVENT:
     handle_get_string (ev);
     return true;

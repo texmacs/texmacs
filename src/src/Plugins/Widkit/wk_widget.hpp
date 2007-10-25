@@ -42,8 +42,8 @@ public:
   wk_widget_rep (array<wk_widget> a, array<string> name, gravity grav);
   ~wk_widget_rep ();
 
-  void set_blackbox (string key, blackbox val);
-  blackbox get_blackbox (string key, int type_id);
+  void send (slot s, blackbox val);
+  blackbox query (slot s, int type_id);
 
   virtual operator tree () = 0;
   virtual bool handle (event ev) = 0;

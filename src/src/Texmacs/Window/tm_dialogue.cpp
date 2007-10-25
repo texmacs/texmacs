@@ -250,7 +250,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
       (abstract (dialogue_wid[0]["inputs"][0]["input"]));
   }
   else {
-    if (get_window () -> get_footer_mode () == 1) beep ();
+    if (get_window () -> get_interactive_mode ()) beep ();
     else {
       command interactive_cmd=
 	new interactive_command_rep (this, get_window (), fun, p);
