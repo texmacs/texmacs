@@ -75,7 +75,14 @@ typedef enum slot {
   SLOT_RIGHT_FOOTER,
   SLOT_INTERACTIVE_MODE,
   SLOT_INTERACTIVE_PROMPT,
-  SLOT_INTERACTIVE_INPUT
+  SLOT_INTERACTIVE_INPUT,
+
+  SLOT_FORM_FIELD,
+  SLOT_STRING_INPUT,
+  SLOT_DEFAULT_INPUT,
+  SLOT_PROPOSAL_INPUT,
+  SLOT_FILE,
+  SLOT_DIRECTORY
 };
 
 //extern bool* slot_state_table;
@@ -97,6 +104,8 @@ public:
 
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
+  virtual widget read (slot s, blackbox index);
+  virtual void write (slot s, blackbox index, widget w);
   virtual void notify (slot s, int type_id);
   virtual void connect (slot s, widget w2, slot s2);
   virtual void deconnect (slot s, widget w2, slot s2);

@@ -100,14 +100,27 @@ widget_rep::deconnect (slot s, widget w2, slot s2) {
 void
 widget_rep::send (slot s, blackbox val) {
   (void) s; (void) val;
-  fatal_error ("No default implementation", "widget_rep::set_blackbox");
+  fatal_error ("No default implementation", "widget_rep::send");
 }
 
 blackbox
 widget_rep::query (slot s, int type_id) {
   (void) s; (void) type_id;
-  fatal_error ("No default implementation", "widget_rep::set_blackbox");
+  fatal_error ("No default implementation", "widget_rep::query");
   return blackbox ();
+}
+
+widget
+widget_rep::read (slot s, blackbox index) {
+  (void) s; (void) index;
+  fatal_error ("No default implementation", "widget_rep::read");
+  return widget ();
+}
+
+void
+widget_rep::write (slot s, blackbox index, widget w) {
+  (void) s; (void) index; (void) w;
+  fatal_error ("No default implementation", "widget_rep::write");
 }
 
 void

@@ -87,6 +87,26 @@ query (widget w, slot s, T1& val1, T2& val2, T3& val3, T4& val4, T5& val5) {
   val1= q.x1; val2= q.x2; val3= q.x3; val4= q.x4; val5= q.x5;
 }
 
+inline widget
+read (widget w, slot s) {
+  return w->read (s, blackbox ());
+}
+
+template<class T1> inline widget
+read (widget w, slot s, T1 i1) {
+  return w->read (s, close_box (i1));
+}
+
+inline void
+write (widget w, slot s, widget val) {
+  w->write (s, blackbox (), val);
+}
+
+template<class T1> inline void
+write (widget w, slot s, T1 i1, widget val) {
+  w->write (s, close_box (i1), val);
+}
+
 inline void
 connect (widget w1, slot s1, widget w2, slot s2) {
   w1->connect (s1, w2, s2);
@@ -293,7 +313,7 @@ get_header_visibility (widget w) {
 inline void
 set_main_menu (widget w, widget bar) {
   // set main menu bar
-  send<widget> (w, SLOT_MAIN_MENU, bar);
+  write (w, SLOT_MAIN_MENU, bar);
 }
 
 inline void
@@ -311,7 +331,7 @@ get_main_icons_visibility (widget w) {
 inline void
 set_main_icons (widget w, widget bar) {
   // set main icons bar
-  send<widget> (w, SLOT_MAIN_ICONS, bar);
+  write (w, SLOT_MAIN_ICONS, bar);
 }
 
 inline void
@@ -329,7 +349,7 @@ get_context_icons_visibility (widget w) {
 inline void
 set_context_icons (widget w, widget bar) {
   // set context icons bar
-  send<widget> (w, SLOT_CONTEXT_ICONS, bar);
+  write (w, SLOT_CONTEXT_ICONS, bar);
 }
 
 inline void
@@ -347,7 +367,7 @@ get_user_icons_visibility (widget w) {
 inline void
 set_user_icons (widget w, widget bar) {
   // set user icons bar
-  send<widget> (w, SLOT_USER_ICONS, bar);
+  write (w, SLOT_USER_ICONS, bar);
 }
 
 inline void
@@ -389,19 +409,71 @@ get_interactive_mode (widget w) {
 inline void
 set_interactive_prompt (widget w, widget prompt) {
   // set prompt for interactive input
-  send<widget> (w, SLOT_INTERACTIVE_PROMPT, prompt);
+  write (w, SLOT_INTERACTIVE_PROMPT, prompt);
 }
 
 inline void
 set_interactive_input (widget w, widget input) {
   // set interactive input widget
-  send<widget> (w, SLOT_INTERACTIVE_INPUT, input);
+  write (w, SLOT_INTERACTIVE_INPUT, input);
 }
 
 inline string
 get_interactive_input (widget w) {
   // set interactive input widget
   return query<string> (w, SLOT_INTERACTIVE_INPUT);
+}
+
+/******************************************************************************
+* Dialogue windows
+******************************************************************************/
+
+inline widget
+get_dialogue_input (widget w, int i) {
+  // get the i-th input widget from a dialogue widget
+  return read<int> (w, SLOT_FORM_FIELD, i);
+}
+
+inline string
+get_string_input (widget w) {
+  // get input string from input widget
+  return query<string> (w, SLOT_STRING_INPUT);
+}
+
+inline void
+set_default_input (widget w, string s) {
+  // set default input string of input widget
+  send<string> (w, SLOT_DEFAULT_INPUT, s);
+}
+
+inline void
+add_proposal_input (widget w, string s) {
+  // add an extra proposal for input widget (e.g. from history)
+  send<string> (w, SLOT_PROPOSAL_INPUT, s);
+}
+
+inline void
+set_file (widget w, string s) {
+  // set current file of file chooser widget
+  send<string> (w, SLOT_FILE, s);
+}
+
+inline widget
+get_file (widget w) {
+  // get file input widget
+  return read (w, SLOT_FILE);
+}
+
+inline void
+set_directory (widget w, string s) {
+  // set current directory of directory chooser widget
+  send<string> (w, SLOT_DIRECTORY, s);
+}
+
+inline widget
+get_directory (widget w) {
+  // get directory input widget
+  return read (w, SLOT_DIRECTORY);
 }
 
 #endif // defined MESSAGE_H

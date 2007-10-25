@@ -44,6 +44,8 @@ public:
 
   void send (slot s, blackbox val);
   blackbox query (slot s, int type_id);
+  widget read (slot s, blackbox index);
+  void write (slot s, blackbox index, widget w);
 
   virtual operator tree () = 0;
   virtual bool handle (event ev) = 0;
