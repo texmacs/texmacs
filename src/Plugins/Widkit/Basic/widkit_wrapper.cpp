@@ -386,7 +386,8 @@ send_invalidate (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<coord4>::id)
     fatal_error ("type mismatch", "send_invalidate");
   coord4 p= open_box<coord4> (val);
-  w << emit_invalidate (p.x1, p.x2, p.x3, p.x4);
+  w << emit_invalidate (w->ox + p.x1, w->oy + p.x2,
+			w->ox + p.x3, w->oy + p.x4);
 }
 
 void
