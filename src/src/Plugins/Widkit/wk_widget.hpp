@@ -19,17 +19,7 @@
 * The abstract widkit implementation of widgets
 ******************************************************************************/
 
-class wk_widget_rep;
-class wk_widget {
-public:
-ABSTRACT_NULL(wk_widget);
-  inline wk_widget operator [] (int i);
-         wk_widget operator [] (string s);
-  inline operator tree ();
-  inline bool operator == (wk_widget w);
-  inline bool operator != (wk_widget w);
-};
-
+class wk_widget;
 class wk_widget_rep: public widget_rep {
 public:
   window   win;             // underlying window
@@ -57,14 +47,17 @@ public:
 
   friend   class wk_widget;
 };
-ABSTRACT_NULL_CODE(wk_widget);
 
-inline wk_widget wk_widget::operator [] (int i) { return rep->a[i]; }
-inline wk_widget::operator tree () { return (tree) (*rep); }
-inline bool wk_widget::operator == (wk_widget w) {
-  return rep == w.rep; }
-inline bool wk_widget::operator != (wk_widget w) {
-  return rep != w.rep; }
+class wk_widget {
+public:
+ABSTRACT_NULL(wk_widget);
+  inline wk_widget operator [] (int i) { return rep->a[i]; }
+  wk_widget operator [] (string s);
+  inline operator tree () { return (tree) (*rep); }
+  inline bool operator == (wk_widget w) { return rep == w.rep; }
+  inline bool operator != (wk_widget w) { return rep != w.rep; }
+};
+ABSTRACT_NULL_CODE(wk_widget);
 
 inline widget abstract (wk_widget w) {
   return widget (w.rep); }
