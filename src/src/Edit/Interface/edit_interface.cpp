@@ -18,6 +18,7 @@
 #include "Metafont/tex_files.hpp"
 #include "data_cache.hpp"
 #include "drd_mode.hpp"
+#include "message.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
 #include "../../Style/Evaluate/evaluate_main.hpp"
@@ -114,8 +115,8 @@ edit_interface_rep::set_shrinking_factor (int sf) {
 
 void
 edit_interface_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
-  this << emit_invalidate ((x1-sfactor+1)/sfactor, (y1-sfactor+1)/sfactor,
-			   (x2+sfactor-1)/sfactor, (y2+sfactor-1)/sfactor);
+  send_invalidate (this, (x1-sfactor+1)/sfactor, (y1-sfactor+1)/sfactor,
+		         (x2+sfactor-1)/sfactor, (y2+sfactor-1)/sfactor);
 }
 
 void
@@ -171,7 +172,7 @@ edit_interface_rep::cursor_visible () {
 	(cu->oy+ cu->y2 >= vy2))
       {
 	scroll_to (cu->ox- ((vx2-vx1)>>1), cu->oy+ ((vy2-vy1)>>1));
-	this << emit_invalidate_all ();
+	send_invalidate_all (this);
       }
   }
   else {
@@ -238,7 +239,7 @@ edit_interface_rep::selection_visible () {
 
   if (scroll_x || scroll_y) {
     scroll_to (new_x, new_y);
-    this << emit_invalidate_all ();
+    send_invalidate_all (this);
     SI old_vx1= vx1, old_vy1= vy1;
     update_visible ();
     end_x += vx1- old_vx1;
@@ -512,7 +513,7 @@ edit_interface_rep::apply_changes () {
 
   // cout << "Handling environment changes\n";
   if (env_change & THE_ENVIRONMENT)
-    this << emit_invalidate_all ();
+    send_invalidate_all (this);
 
   // cout << "Applied changes\n";
   env_change  = 0;

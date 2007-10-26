@@ -130,7 +130,7 @@ edit_main_rep::focus_on_this_editor () {
 
 void
 edit_main_rep::notify_page_change () {
-  if (attached ()) this << emit_invalidate_all ();
+  if (attached ()) send_invalidate_all (this);
 }
 
 /******************************************************************************
