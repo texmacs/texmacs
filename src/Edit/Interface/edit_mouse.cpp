@@ -35,10 +35,10 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     set_pointer ("XC_top_left_arrow");
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
-  if (!nil (popup_wid) && (type != "leave")) {
-    set_visibility (popup_wid, true);
-    destroy_window_widget (popup_wid);
-    popup_wid= widget ();
+  if (!nil (popup_win) && (type != "leave")) {
+    set_visibility (popup_win, false);
+    destroy_window_widget (popup_win);
+    popup_win= widget ();
     this << emit_mouse_grab (false);
   }
 
@@ -198,14 +198,14 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
   if (eb->action ("adjust", x, y, 0) != "") return;
   x /= sfactor; y /= sfactor;
   abs_round (x, y);
-  if (nil (popup_wid)) {
+  if (nil (popup_win)) {
     SI wx, wy;
     win->get_position (wx, wy);
     widget wid;
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
-    widget popup_w= popup_widget (wid, center);
-    popup_wid= popup_window_widget (popup_w, wx+ ox+ x, wy+ oy+ y);
-    set_visibility (popup_wid, true);
+    widget popup_wid= popup_widget (wid, center);
+    popup_win= popup_window_widget (popup_wid, wx+ ox+ x, wy+ oy+ y);
+    set_visibility (popup_win, true);
     this << emit_mouse_grab (true);
     concrete (popup_wid) << set_integer ("grabbed", 1);
     // popup_wid << set_integer ("freeze", 1);

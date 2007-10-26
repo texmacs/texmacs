@@ -36,7 +36,7 @@ protected:
   bool          got_focus;     // do we have keyboard focus ?
   string        sh_s;          // current string for shorthands
   int           sh_len;        // length of translation
-  widget        popup_wid;     // the current popup window
+  widget        popup_win;     // the current popup window
   string        message_l;     // a left message to display
   string        message_r;     // a right message to display
   string        last_l;        // last displayed left message
