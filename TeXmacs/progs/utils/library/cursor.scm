@@ -180,9 +180,10 @@
 
 (tm-define (go-to-buffer name)
   (:argument  name "Switch to buffer")
-  (:proposals name (map car (get-buffer-menu)))
-  (let* ((l1 (assoc name (get-buffer-menu)))
-	 (l2 (assoc (string-append name " *") (get-buffer-menu))))
+  (:proposals name (map car (list-filter (get-buffer-menu) pair?)))
+  (let* ((m  (list-filter (get-buffer-menu) pair?))
+	 (l1 (assoc name m))
+	 (l2 (assoc (string-append name " *") m)))
     (cond (l1 ((cadr l1)))
 	  (l2 ((cadr l2)))
 	  (else (set-message (string-append "No buffer#" name)
