@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : wk_widget.hpp
+* MODULE     : wk_widget.cpp
 * DESCRIPTION: Definition of abstract native widgets
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -24,6 +24,26 @@ wk_widget_rep::wk_widget_rep (
     grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
 
 wk_widget_rep::~wk_widget_rep () { DEBUG(widget_count--); }
+
+wk_widget
+plain_window_widget (wk_widget wid, char* s, SI w, SI h, SI x, SI y) {
+  window win= plain_window (abstract (wid), s, w, h, x, y);
+  (void) win;
+  return wid;
+}
+
+wk_widget
+popup_window_widget (wk_widget wid, SI x, SI y) {
+  window win= popup_window (abstract (wid), x, y);
+  (void) win;
+  return wid;
+}
+
+void
+destroy_window_widget (wk_widget w) {
+  // FIXME: check that widget is really a window widget
+  delete w->win;
+}
 
 /******************************************************************************
 * Computing lower left and upper right widget coordinates

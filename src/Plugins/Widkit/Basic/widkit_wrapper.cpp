@@ -231,6 +231,21 @@ texmacs_widget (int mask, command quit) {
   return abstract (texmacs_wk_widget (mask, quit));
 }
 
+widget
+plain_window_widget (widget wid, char* s, SI w, SI h, SI x, SI y) {
+  return abstract (plain_window_widget (concrete (wid), s, w, h, x, y));
+}
+
+widget
+popup_window_widget (widget wid, SI x, SI y) {
+  return abstract (popup_window_widget (concrete (wid), x, y));
+}
+
+void
+destroy_window_widget (widget w) {
+  destroy_window_widget (concrete (w));
+}
+
 /******************************************************************************
 * Helper routines for message passing
 ******************************************************************************/

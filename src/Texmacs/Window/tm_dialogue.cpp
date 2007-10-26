@@ -64,21 +64,21 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 
 void
 tm_frame_rep::dialogue_start (string name, widget wid) {
-  if (dialogue_win == NULL) {
+  if (nil (dialogue_win)) {
     string lan= the_display->out_lan;
     if (lan == "russian") lan= "english";
     name= the_display->translate (name, "english", lan);
     char* _name= as_charp (name);
-    window win= concrete (get_window () -> wid) -> win;
+    widget win= get_window () -> wid;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
-    win->get_position (ox, oy);
-    win->get_size (dx, dy);
+    concrete(win)->win->get_position (ox, oy);
+    concrete(win)->win->get_size (dx, dy);
     concrete (wid) << get_size (ex, ey, -1);
     ox += (dx - ex) >> 1;
     oy -= (dy - ey) >> 1;
     dialogue_wid= wid;
-    dialogue_win= plain_window (dialogue_wid, _name, 0, 0, ox, oy);
-    dialogue_win->map ();
+    dialogue_win= plain_window_widget (dialogue_wid, _name, 0, 0, ox, oy);
+    concrete(dialogue_win)->win->map ();
     delete[] _name;
   }
 }
@@ -92,10 +92,10 @@ tm_frame_rep::dialogue_inquire (int i, string& arg) {
 
 void
 tm_frame_rep::dialogue_end () {
-  if (dialogue_win != NULL) {
-    dialogue_win->unmap ();
-    delete dialogue_win;
-    dialogue_win= NULL;
+  if (!nil (dialogue_win)) {
+    concrete(dialogue_win)->win->unmap ();
+    destroy_window_widget (dialogue_win);
+    dialogue_win= widget ();
     dialogue_wid= widget ();
   }
 }
@@ -143,8 +143,10 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
   else set_directory (wid, ".");
   dialogue_start (title, wid);
   if (type == "directory")
-    dialogue_win->set_keyboard_focus (get_directory (dialogue_wid));
-  else dialogue_win->set_keyboard_focus (get_file (dialogue_wid));
+    concrete(dialogue_win)->win->
+      set_keyboard_focus (get_directory (dialogue_wid));
+  else concrete(dialogue_win)->win->
+	 set_keyboard_focus (get_file (dialogue_wid));
 }
 
 /******************************************************************************
@@ -245,7 +247,8 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
-    dialogue_win->set_keyboard_focus (get_form_field (dialogue_wid, 0));
+    concrete(dialogue_win)->win->
+      set_keyboard_focus (get_form_field (dialogue_wid, 0));
   }
   else {
     if (get_window () -> get_interactive_mode ()) beep ();

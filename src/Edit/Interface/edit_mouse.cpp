@@ -16,6 +16,7 @@
 #include "link.hpp"
 #include "analyze.hpp"
 #include "drd_mode.hpp"
+#include "window.hpp"
 
 /******************************************************************************
 * dispatching
@@ -33,10 +34,10 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     set_pointer ("XC_top_left_arrow");
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
-  if ((popup_win != NULL) && (type != "leave")) {
-    popup_win->map ();
-    delete popup_win;
-    popup_win= NULL;
+  if (!nil (popup_wid) && (type != "leave")) {
+    concrete (popup_wid) -> win -> map ();
+    destroy_window_widget (popup_wid);
+    popup_wid= widget ();
     this << emit_mouse_grab (false);
   }
 
@@ -196,14 +197,14 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
   if (eb->action ("adjust", x, y, 0) != "") return;
   x /= sfactor; y /= sfactor;
   abs_round (x, y);
-  if (popup_win == NULL) {
+  if (nil (popup_wid)) {
     SI wx, wy;
     win->get_position (wx, wy);
     widget wid;
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
-    widget popup_wid= popup_widget (wid, center);
-    popup_win= popup_window (popup_wid, wx+ ox+ x, wy+ oy+ y);
-    popup_win->map ();
+    widget popup_w= popup_widget (wid, center);
+    popup_wid= popup_window_widget (popup_w, wx+ ox+ x, wy+ oy+ y);
+    concrete (popup_wid) -> win -> map ();
     this << emit_mouse_grab (true);
     concrete (popup_wid) << set_integer ("grabbed", 1);
     // popup_wid << set_integer ("freeze", 1);

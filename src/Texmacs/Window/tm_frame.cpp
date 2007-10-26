@@ -18,7 +18,7 @@
 ******************************************************************************/
 
 tm_frame_rep::tm_frame_rep ():
-  full_screen (false), full_screen_edit (false), dialogue_win (NULL) {}
+  full_screen (false), full_screen_edit (false), dialogue_win () {}
 tm_frame_rep::~tm_frame_rep () {}
 
 /******************************************************************************
@@ -228,7 +228,7 @@ tm_frame_rep::full_screen_mode (bool on, bool edit) {
     show_header (true);
     show_footer (true);
   }
-  concrete (get_window()->wid) -> win -> full_screen (on);
+  concrete (get_window () -> wid) -> win -> full_screen (on);
   get_editor()->full_screen_mode (on && !edit);
   full_screen = on;
   full_screen_edit = on && edit;

@@ -15,11 +15,11 @@
 #include "tm_buffer.hpp"
 #include "window.hpp"
 
-window texmacs_window (widget wid, tree geom);
+widget texmacs_window_widget (widget wid, tree geom);
 
 class tm_window_rep {
 public:
-  window win;
+  widget win;
   widget wid;
   int    id;
 
