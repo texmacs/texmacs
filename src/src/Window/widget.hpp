@@ -55,6 +55,10 @@ public:
   virtual void connect (slot s, widget w2, slot s2);
   virtual void deconnect (slot s, widget w2, slot s2);
 
+  // NOTE: the following routines are only needed for debugging widkit
+  virtual bool attached ();
+  // NOTE: please remove as soon as changes have stabilized
+
   friend class widget;
 };
 

@@ -71,8 +71,8 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     char* _name= as_charp (name);
     widget win= get_window () -> wid;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
-    concrete(win)->win->get_position (ox, oy);
-    concrete(win)->win->get_size (dx, dy);
+    concrete (win)->win->get_position (ox, oy);
+    concrete (win)->win->get_size (dx, dy);
     concrete (wid) << get_size (ex, ey, -1);
     ox += (dx - ex) >> 1;
     oy -= (dy - ey) >> 1;
@@ -143,9 +143,9 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
   else set_directory (wid, ".");
   dialogue_start (title, wid);
   if (type == "directory")
-    concrete(dialogue_win)->win->
+    concrete (dialogue_win)->win->
       set_keyboard_focus (get_directory (dialogue_wid));
-  else concrete(dialogue_win)->win->
+  else concrete (dialogue_win)->win->
 	 set_keyboard_focus (get_file (dialogue_wid));
 }
 
@@ -247,7 +247,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
-    concrete(dialogue_win)->win->
+    concrete (dialogue_win)->win->
       set_keyboard_focus (get_form_field (dialogue_wid, 0));
   }
   else {

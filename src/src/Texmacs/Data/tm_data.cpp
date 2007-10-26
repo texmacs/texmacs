@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "web_files.hpp"
 #include "socket_server.hpp"
+#include "message.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
@@ -338,12 +339,11 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   // cout << "Attach view " << vw->buf->name << "\n";
   vw->win= win;
   widget wid= win->wid;
-  concrete (wid) ["canvas"] << set_widget ("scrollable", vw->ed);
-  if (concrete (wid) -> attached ()) {
-    vw->ed->resume ();
-    win->set_window_name (vw->buf->abbr);
-    concrete (wid) ["canvas"] << emit_update ();
-  }
+  set_canvas (wid, abstract ((wk_widget) vw->ed));
+  if (!wid -> attached ())
+    fatal_error ("widget should be attached", "tm_data_rep::attach_view");
+  vw->ed->resume ();
+  win->set_window_name (vw->buf->abbr);
   // cout << "View attached\n";
 }
 
@@ -354,13 +354,11 @@ tm_data_rep::detach_view (tm_view vw) {
   if (win == NULL) return;
   vw->win= NULL;
   widget wid= win->wid;
-  concrete (wid) ["canvas"] << set_widget ("scrollable", glue_wk_widget ());
-  if (concrete (wid) -> attached ()) {
-    vw->ed->suspend ();
-    vw->ed << emit_attach_window (NULL);
-    win->set_window_name ("TeXmacs");
-    concrete (wid) ["canvas"] << emit_update ();
-  }
+  if (!wid -> attached ())
+    fatal_error ("widget should be attached", "tm_data_rep::attach_view");
+  vw->ed->suspend ();
+  set_canvas (wid, glue_widget ());
+  win->set_window_name ("TeXmacs");
   // cout << "View detached\n";
 }
 

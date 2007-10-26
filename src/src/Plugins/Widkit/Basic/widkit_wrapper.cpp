@@ -686,6 +686,10 @@ wk_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_USER_ICONS");
     THIS << set_widget ("user icons bar", concrete (w));
     break;
+  case SLOT_CANVAS:
+    check_type_void (index, "SLOT_CANVAS");
+    THIS << set_widget ("scrollable", concrete (w));
+    break;
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
     THIS << set_widget ("interactive prompt", concrete (w));

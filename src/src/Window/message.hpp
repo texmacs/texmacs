@@ -47,6 +47,7 @@ typedef enum slot_id {
   SLOT_VISIBLE_PART,
   SLOT_SCROLLBARS_VISIBILITY,
   SLOT_SCROLL_POSITION,
+  SLOT_CANVAS,
 
   SLOT_HEADER_VISIBILITY,
   SLOT_MAIN_MENU,
@@ -379,8 +380,14 @@ get_scroll_position (widget w, SI& x, SI& y) {
   query<SI,SI> (w, SLOT_SCROLL_POSITION, x, y);
 }
 
+inline void
+set_canvas (widget w, widget cv) {
+  // set the scrollable canvas itself
+  write (w, SLOT_CANVAS, cv);
+}
+
 /******************************************************************************
-* Top-level window related messages
+* Top-level window related messages (also behaves as a canvas)
 ******************************************************************************/
 
 inline void
