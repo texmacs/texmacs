@@ -448,7 +448,12 @@ query_size (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
   if (type_id != type_helper<coord2>::id)
     fatal_error ("type mismatch", "query_size");
-  return close_box<coord2> (coord2 (w->w, w->h));
+  if (w->is_window_widget ()) {
+    SI W, H;
+    w->win->get_size (W, H);
+    return close_box<coord2> (coord2 (W, H));
+  }
+  else return close_box<coord2> (coord2 (w->w, w->h));
 }
 
 blackbox
@@ -456,7 +461,12 @@ query_position (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
   if (type_id != type_helper<coord2>::id)
     fatal_error ("type mismatch", "query_position");
-  return close_box<coord2> (coord2 (w->ox, w->oy));
+  if (w->is_window_widget ()) {
+    SI x, y;
+    w->win->get_position (x, y);
+    return close_box<coord2> (coord2 (x, y));
+  }
+  else return close_box<coord2> (coord2 (w->ox, w->oy));
 }
 
 blackbox
@@ -471,7 +481,13 @@ query_geometry (wk_widget w, int type_id) {
   typedef quintuple<SI,SI,SI,SI,gravity> geometry;
   if (type_id != type_helper<geometry>::id)
     fatal_error ("type mismatch", "query_geometry");
-  return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
+  if (w->is_window_widget ()) {
+    SI x, y, W, H;
+    w->win->get_position (x, y);
+    w->win->get_size (W, H);
+    return close_box<geometry> (geometry (x, y, W, H, w->grav));
+  }
+  else return close_box<geometry> (geometry (w->ox,w->oy,w->w,w->h,w->grav));
 }
 
 template<class T> void

@@ -15,8 +15,6 @@
 #include "tm_buffer.hpp"
 #include "window.hpp"
 
-widget texmacs_window_widget (widget wid, tree geom);
-
 class tm_window_rep {
 public:
   widget win;

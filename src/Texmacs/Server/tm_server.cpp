@@ -38,29 +38,6 @@ extern int nr_windows;
 extern window (*get_current_window) (void);
 
 /******************************************************************************
-* Creation of TeXmacs window
-******************************************************************************/
-
-int geometry_w= 800, geometry_h= 600;
-int geometry_x= 0  , geometry_y= 0;
-
-widget
-texmacs_window_widget (widget wid, tree geom) {
-  int W, H;
-  int w= geometry_w, h= geometry_h;
-  int x= geometry_x, y= geometry_y;
-  if (is_tuple (geom) && N (geom) >= 2) {
-    w= as_int (geom[0]);
-    h= as_int (geom[1]);
-  }
-  the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
-  if (x < 0) x= W + x + 1 - w;
-  if (y < 0) y= H + y + 1 - h;
-  return plain_window_widget (wid, "TeXmacs",
-			      w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
-}
-
-/******************************************************************************
 * Texmacs server constructor and destructor
 ******************************************************************************/
 
