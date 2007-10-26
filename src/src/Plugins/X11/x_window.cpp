@@ -23,24 +23,6 @@ hashmap<Window,pointer> Window_to_window (NULL);
 ******************************************************************************/
 
 void
-x_window_rep::compute_size (SI& def_w, SI& def_h,
-			    SI& min_w, SI& min_h, SI& max_w, SI& max_h)
-{
-  dis->get_extents (def_w, def_h);
-  def_w >>= 1;
-  def_h >>= 1;
-  concrete (w) << ::get_size (def_w, def_h, 0);
-
-  min_w= def_w;
-  min_h= def_h;
-  concrete (w) << ::get_size (min_w, min_h, -1);
-
-  max_w= def_w;
-  max_h= def_h;
-  concrete (w) << ::get_size (max_w, max_h, 1);
-}
-
-void
 x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
   XSizeHints* size_hints;
   XWMHints*   wm_hints;
@@ -94,16 +76,18 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
 
 void
 x_window_rep::initialize () {
+  SI min_w= Min_w, min_h= Min_h;
+  SI def_w= Def_w, def_h= Def_h;
+  SI max_w= Max_w, max_h= Max_h;
+
   dpy= dis->dpy;
   gc = dis->gc;
   full_screen_flag= false;
   
   // int start_1= texmacs_time ();
-  SI def_w, def_h, min_w, min_h, max_w, max_h;
-  compute_size (def_w, def_h, min_w, min_h, max_w, max_h);
   concrete (w) << emit_attach_window (this);
-  set_geometry (w, 0, 0, def_w, def_h);
-  set_origin (0, 0);  
+  set_geometry (abstract (concrete (w) [0]), 0, 0, def_w, def_h);
+  set_origin (0, 0);
   decode (def_w, def_h); def_h= -def_h;
   decode (min_w, min_h); min_h= -min_h;
   decode (max_w, max_h); max_h= -max_h;
@@ -167,14 +151,19 @@ x_window_rep::initialize () {
   Window_to_window (win)= (void*) this;
 }
 
-x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2):
-  x_drawable_rep (dis2), window_rep (), w (w2), dis (dis2),
-  name (n2), win_x (0), win_y (0), win_w (0), win_h (0),
+x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
+			    SI min_w, SI min_h, SI def_w, SI def_h,
+			    SI max_w, SI max_h):
+  x_drawable_rep (dis2), window_rep (), w (w2), dis (dis2), name (n2),
+  Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
+  Max_w (max_w), Max_h (max_h),
+  win_x (0), win_y (0), win_w (Def_w/PIXEL), win_h (Def_h/PIXEL),
   kbd_focus (w.rep), has_focus (false)
 {
   initialize ();
 }
 
+/*
 x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2, SI x, SI y):
   x_drawable_rep (dis2), window_rep (), w (w2), dis (dis2),
   name (n2), win_x (x/PIXEL), win_y (-y/PIXEL), win_w (0), win_h (0),
@@ -191,6 +180,7 @@ x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
 {
   initialize ();
 }
+*/
 
 x_window_rep::~x_window_rep () {
   concrete (w) << emit_attach_window (NULL);
@@ -250,7 +240,7 @@ x_window_rep::move (SI x, SI y) {
 void
 x_window_rep::resize (SI w, SI h) {
   h=-h; decode (w, h);
-  XResizeWindow (dpy, win, w/PIXEL, h/PIXEL);
+  XResizeWindow (dpy, win, w, h);
 }
 
 void
@@ -332,7 +322,7 @@ x_window_rep::resize_event (int ww, int hh) {
   win_w= ww; win_h= hh;
   if (flag) concrete (w) << emit_resize ();
   if (flag || !win_flag) {
-    set_geometry (w, 0, 0, win_w*PIXEL, win_h*PIXEL);
+    set_geometry (abstract (concrete (w) [0]), 0, 0, win_w*PIXEL, win_h*PIXEL);
     win_flag= true;
   }
 }
@@ -486,6 +476,23 @@ x_window_rep::repainted () {
 ******************************************************************************/
 
 window
+popup_window (widget w, SI min_w, SI min_h,
+	      SI def_w, SI def_h, SI max_w, SI max_h)
+{
+  return new x_window_rep (w, (x_display) the_display, NULL,
+			   min_w, min_h, def_w, def_h, max_w, max_h);
+}
+
+window
+plain_window (widget w, char* name, SI min_w, SI min_h,
+	      SI def_w, SI def_h, SI max_w, SI max_h)
+{
+  return new x_window_rep (w, (x_display) the_display, name,
+			   min_w, min_h, def_w, def_h, max_w, max_h);
+}
+
+/*
+window
 popup_window (widget w, SI x, SI y) {
   return new x_window_rep (w, (x_display) the_display, NULL, x, y);
 }
@@ -495,3 +502,4 @@ plain_window (widget w, char* name, SI width, SI height, SI x, SI y) {
   return new x_window_rep (w, (x_display) the_display, name,
 			   width, height, x, y);
 }
+*/

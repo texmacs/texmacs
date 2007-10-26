@@ -113,8 +113,8 @@ widget file_chooser_widget (command cmd, string type="texmacs", string mgn="");
 widget balloon_widget (widget w, widget help);
 widget wait_widget (SI w, SI h, string message);
 widget texmacs_widget (int mask, command quit);
-widget plain_window_widget (widget W, char* s, SI w=0, SI h=0, SI x=0, SI y=0);
-widget popup_window_widget (widget W, SI x, SI y);
+widget plain_window_widget (widget w, char* s);
+widget popup_window_widget (widget w);
 void   destroy_window_widget (widget w);
 
 #endif // defined WIDGET_H

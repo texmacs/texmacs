@@ -110,8 +110,8 @@ wk_widget file_chooser_wk_widget (command cmd, string type="texmacs",
 wk_widget balloon_widget (wk_widget w, wk_widget help);
 wk_widget wait_wk_widget (SI w, SI h, string message);
 wk_widget texmacs_wk_widget (int mask, command quit);
-wk_widget plain_window_widget (wk_widget wid, char* s, SI w, SI h, SI x, SI y);
-wk_widget popup_window_widget (wk_widget wid, SI x, SI y);
+wk_widget plain_window_widget (wk_widget wid, char* s);
+wk_widget popup_window_widget (wk_widget wid);
 void      destroy_window_widget (wk_widget w);
 
 #endif // defined WK_WIDGET_H

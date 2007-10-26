@@ -37,7 +37,9 @@ public:
   virtual bool repainted () = 0;
 };
 
-window plain_window (widget w, char* name, SI ww=0, SI hh=0, SI x=0, SI y=0);
-window popup_window (widget w, SI x, SI y);
+window plain_window (widget w, char* name, SI min_w, SI min_h,
+		     SI def_w, SI def_h, SI max_w, SI max_h);
+window popup_window (widget w, SI min_w, SI min_h,
+		     SI def_w, SI def_h, SI max_w, SI max_h);
 
 #endif // defined WINDOW_H
