@@ -137,6 +137,11 @@ widget_rep::notify (slot s, int type_id) {
 * Miscellaneous
 ******************************************************************************/
 
+bool
+widget_rep::attached () {
+  return true;
+}
+
 ostream&
 widget_rep::print (ostream& out) {
   return out << "widget";

@@ -35,6 +35,7 @@ public:
   void set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2);
 
   void handle_get_size (get_size_event ev);
+  void handle_get_widget (get_widget_event ev);
   void handle_set_widget (set_widget_event ev);
   void handle_position (position_event ev);
   void handle_repaint (repaint_event ev);
@@ -132,6 +133,12 @@ canvas_widget_rep::handle_get_size (get_size_event ev) {
 }
 
 void
+canvas_widget_rep::handle_get_widget (get_widget_event ev) {
+  if (ev->which == "scrollable") ev->w= a[0]->a[0];
+  else basic_widget_rep::handle_get_widget (ev);
+}
+
+void
 canvas_widget_rep::handle_set_widget (set_widget_event ev) {
   if (ev->which == "scrollable") a[0]->a[0]= ev->w;
   else basic_widget_rep::handle_set_widget (ev);
@@ -219,6 +226,7 @@ bool
 canvas_widget_rep::handle (event ev) {
   switch (ev->type) {
   case GET_SIZE_EVENT:
+  case GET_WIDGET_EVENT:
   case SET_WIDGET_EVENT:
   case ATTACH_WINDOW_EVENT:
   case POSITION_EVENT:

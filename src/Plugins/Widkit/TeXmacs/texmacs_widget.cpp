@@ -308,6 +308,12 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
     set_subwidget (THIS ["footer"] ["interactive"], "left", ev->w);
   else if (ev->which == "interactive input")
     set_subwidget (THIS ["footer"] ["interactive"], "middle", ev->w);
+  else if (ev->which == "scrollable") {
+    wk_widget old= THIS ["canvas"] ["scrollable"];
+    THIS ["canvas"] << set_widget ("scrollable", ev->w);
+    old << emit_attach_window (NULL);
+    THIS ["canvas"] << emit_update ();
+  }
   else a[0] << ev;
 }
 
