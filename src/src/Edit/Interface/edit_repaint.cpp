@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Interface/edit_interface.hpp"
+#include "window.hpp"
 
 extern int nr_painted;
 extern void clear_pattern_rectangles (ps_device dev, rectangles l);

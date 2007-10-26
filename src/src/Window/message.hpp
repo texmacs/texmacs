@@ -23,6 +23,8 @@
 
 typedef enum slot_id {
   SLOT_WINDOW_ID,
+  SLOT_VISIBILITY,
+  SLOT_FULL_SCREEN,
   SLOT_NAME,
   SLOT_MINIMAL_SIZE,
   SLOT_DEFAULT_SIZE,
@@ -196,6 +198,18 @@ inline int
 get_window_id (widget w) {
   // get window ID of a widget or 0 if the widget is not attached
   return query<int> (w, SLOT_WINDOW_ID);
+}
+
+inline void
+set_visibility (widget w, bool flag) {
+  // map or unmap a window widget
+  send<bool> (w, SLOT_VISIBILITY, flag);
+}
+
+inline void
+set_full_screen (widget w, bool flag) {
+  // set or reset full screen mode for a window widget
+  send<bool> (w, SLOT_FULL_SCREEN, flag);
 }
 
 inline void

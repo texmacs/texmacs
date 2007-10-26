@@ -14,6 +14,7 @@
 #include "url.hpp"
 #include "Widkit/wk_widget.hpp"
 #include "message.hpp"
+#include "window.hpp"
 
 #define THIS wk_widget (this)
 
@@ -496,6 +497,15 @@ check_type_void (blackbox bb, string s) {
 void
 wk_widget_rep::send (slot s, blackbox val) {
   switch (s) {
+  case SLOT_VISIBILITY:
+    check_type<bool> (val, "SLOT_VISIBILITY");
+    if (open_box<bool> (val)) win->map ();
+    else win->unmap ();
+    break;
+  case SLOT_FULL_SCREEN:
+    check_type<bool> (val, "SLOT_FULL_SCREEN");
+    win->full_screen (open_box<bool> (val));
+    break;
   case SLOT_NAME:
     send_string (THIS, "window name", val);
     break;

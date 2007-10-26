@@ -47,7 +47,7 @@ edit_interface_rep::edit_interface_rep ():
   do_animate (false), next_animate (last_change-1),
   full_screen (false), got_focus (false),
   sh_s (""), sh_len (0),
-  popup_win (NULL),
+  popup_wid (),
   sfactor (sv->get_default_shrinking_factor ()),
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
