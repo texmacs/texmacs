@@ -14,10 +14,8 @@
 #include "boxes.hpp"
 #include "Boxes/construct.hpp"
 #include "font.hpp"
-#include "window.hpp"
 #include "tm_frame.hpp"
-
-void layout_default (window win, SI x1, SI y1, SI x2, SI y2);
+#include "window.hpp"
 
 /******************************************************************************
 * Text widgets
@@ -59,7 +57,11 @@ box_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 box_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  if (!transparent) layout_default (win, 0, 0, w, h);
+  if (!transparent) {
+    win->set_background (win->light_grey);
+    win->set_color (win->light_grey);
+    win->fill (0, 0, w, h);
+  }
   win->set_shrinking_factor (SHRINK);
   rectangles l (rectangle (0, 0, w, h));
   SI x= ((SHRINK*w-b->w())>>1) - b->x1;

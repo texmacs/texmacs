@@ -24,7 +24,7 @@ widget make_menu_widget (object menu);
 static int tm_window_serial= 0;
 
 tm_window_rep::tm_window_rep (widget wid2, tree geom):
-  win (texmacs_window (wid2, geom)),
+  win (texmacs_window_widget (wid2, geom)),
   wid (wid2), id (create_window_id ()),
   serial (tm_window_serial++),
   texmacs_menu (NULL), texmacs_icon_menu (NULL),
@@ -50,12 +50,12 @@ tm_window_rep::set_window_name (string s) {
 
 void
 tm_window_rep::map () {
-  win->map ();
+  concrete (win) -> win -> map ();
 }
 
 void
 tm_window_rep::unmap () {
-  win->unmap ();
+  concrete (win) -> win -> unmap ();
 }
 
 /******************************************************************************

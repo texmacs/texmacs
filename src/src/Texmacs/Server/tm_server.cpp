@@ -44,8 +44,8 @@ extern window (*get_current_window) (void);
 int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
 
-window
-texmacs_window (widget wid, tree geom) {
+widget
+texmacs_window_widget (widget wid, tree geom) {
   int W, H;
   int w= geometry_w, h= geometry_h;
   int x= geometry_x, y= geometry_y;
@@ -56,7 +56,8 @@ texmacs_window (widget wid, tree geom) {
   the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
-  return plain_window (wid, "TeXmacs", w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
+  return plain_window_widget (wid, "TeXmacs",
+			      w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
 }
 
 /******************************************************************************
@@ -79,8 +80,8 @@ texmacs_wait_handler (string message, string arg, int level) {
 window
 texmacs_current_window () {
   if (the_server == NULL)
-    fatal_error ("No server", "texmacs_current_window", "tm_server.cpp");
-  return (*the_server)->get_window()->win;
+    fatal_error ("No server", "texmacs_current_window");
+  return concrete ((*the_server) -> get_window () -> win) -> win;
 }
 
 server
