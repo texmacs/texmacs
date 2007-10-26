@@ -14,6 +14,7 @@
 #include "window.hpp"
 #include "promise.hpp"
 #include "Widkit/Button/button_widget.hpp"
+#include "message.hpp"
 
 #ifdef OS_WIN32
 #define MAP_DELAY 250
@@ -131,7 +132,10 @@ popup_button_rep::map_popup () {
   // cout << "Positioning required " << (texmacs_time ()-start_2) << " ms\n";
 
   // int start_3= texmacs_time ();
-  popup= popup_window (abstract (popup_w), x, y);
+  wk_widget win_wid= popup_window_widget (popup_w);
+  set_position (abstract (win_wid), x, y);
+  popup= win_wid -> win;
+  // popup= popup_window (abstract (popup_w), x, y);
   // cout << "Window creation required " << (texmacs_time ()-start_3) << " ms\n";
   // int start_4= texmacs_time ();
   popup->map ();

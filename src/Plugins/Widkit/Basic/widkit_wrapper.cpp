@@ -233,13 +233,13 @@ texmacs_widget (int mask, command quit) {
 }
 
 widget
-plain_window_widget (widget wid, char* s, SI w, SI h, SI x, SI y) {
-  return abstract (plain_window_widget (concrete (wid), s, w, h, x, y));
+plain_window_widget (widget wid, char* s) {
+  return abstract (plain_window_widget (concrete (wid), s));
 }
 
 widget
-popup_window_widget (widget wid, SI x, SI y) {
-  return abstract (popup_window_widget (concrete (wid), x, y));
+popup_window_widget (widget wid) {
+  return abstract (popup_window_widget (concrete (wid)));
 }
 
 void
@@ -296,11 +296,14 @@ send_position (wk_widget w, blackbox val) {
   typedef quintuple<SI,SI,SI,SI,gravity> geometry;
   if (type_box (val) != type_helper<coord2>::id)
     fatal_error ("type mismatch", "send_position");
-  geometry g=
-    open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
   coord2 p= open_box<coord2> (val);
-  g.x1= p.x1; g.x2= p.x2;
-  send_geometry (w, close_box<geometry> (g));
+  if (w->is_window_widget ()) w->win->move (p.x1, p.x2);
+  else {
+    geometry g=
+      open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
+    g.x1= p.x1; g.x2= p.x2;
+    send_geometry (w, close_box<geometry> (g));
+  }
 }
 
 void
@@ -309,11 +312,14 @@ send_size (wk_widget w, blackbox val) {
   typedef quintuple<SI,SI,SI,SI,gravity> geometry;
   if (type_box (val) != type_helper<coord2>::id)
     fatal_error ("type mismatch", "send_size");
-  geometry g=
-    open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
   coord2 p= open_box<coord2> (val);
-  g.x3= p.x1; g.x4= p.x2;
-  send_geometry (w, close_box<geometry> (g));
+  if (w->is_window_widget ()) w->win->resize (p.x1, p.x2);
+  else {
+    geometry g=
+      open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
+    g.x3= p.x1; g.x4= p.x2;
+    send_geometry (w, close_box<geometry> (g));
+  }
 }
 
 void
@@ -333,7 +339,11 @@ send_geometry (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<geometry>::id)
     fatal_error ("type mismatch", "send_geometry");
   geometry g= open_box<geometry> (val);
-  w << emit_position (g.x1, g.x2, g.x3, g.x4, g.x5);
+  if (w->is_window_widget ()) {
+    w->win->move (g.x1, g.x2);
+    w->win->resize (g.x3, g.x4);
+  }
+  else w << emit_position (g.x1, g.x2, g.x3, g.x4, g.x5);
 }
 
 void

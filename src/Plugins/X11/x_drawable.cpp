@@ -404,13 +404,17 @@ x_drawable_rep::image (
   decode (x, y);
 
   if (dis->gswindow == NULL) {
+    SI max_w= dis->display_width  * PIXEL;
+    SI max_h= dis->display_height * PIXEL;
     widget dummy= text_widget ("ghostscript window");
     if (ghostscript_bugged ()) {
-      SI max_w= 2 * dis->display_width  * PIXEL;
-      SI max_h= 2 * dis->display_height * PIXEL;
+      max_w *= 2;
+      max_h *= 2;
       dummy= glue_widget (false, false, max_w, max_h);
     }
-    dis->gswindow= new x_window_rep (dummy, dis, "ghostscript", 0, 0);
+    //dis->gswindow= new x_window_rep (dummy, dis, "ghostscript", 0, 0);
+    dis->gswindow= new x_window_rep (dummy, dis, "ghostscript",
+				     max_w, max_h, max_w, max_h, max_w, max_h);
     nr_windows--; // the dummy window should not be counted
   }
 

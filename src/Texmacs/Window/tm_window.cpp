@@ -59,8 +59,10 @@ texmacs_window_widget (widget wid, tree geom) {
   the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
-  return plain_window_widget (wid, "TeXmacs",
-			      w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
+  widget win= plain_window_widget (wid, "TeXmacs");
+  set_size (win, w*PIXEL, h*PIXEL);
+  set_position (win, x*PIXEL, (-y)*PIXEL);
+  return win;
 }
 
 /******************************************************************************

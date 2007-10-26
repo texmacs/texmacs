@@ -69,17 +69,19 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     if (lan == "russian") lan= "english";
     name= the_display->translate (name, "english", lan);
     char* _name= as_charp (name);
+    dialogue_wid= wid;
+    dialogue_win= plain_window_widget (dialogue_wid, _name);
+    delete[] _name;
+
     widget win= get_window () -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
     get_position (win, ox, oy);
     get_size (win, dx, dy);
-    concrete (wid) << get_size (ex, ey, -1);
+    get_size (dialogue_win, ex, ey);
     ox += (dx - ex) >> 1;
     oy -= (dy - ey) >> 1;
-    dialogue_wid= wid;
-    dialogue_win= plain_window_widget (dialogue_wid, _name, ex, ey, ox, oy);
+    set_position (dialogue_win, ox, oy);
     set_visibility (dialogue_win, true);
-    delete[] _name;
   }
 }
 

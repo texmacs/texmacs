@@ -598,7 +598,9 @@ x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
 
 void
 x_display_rep::map_balloon () {
-  balloon_win= popup_window (balloon_wid, balloon_x, balloon_y);
+  widget win_wid= popup_window_widget (balloon_wid);
+  set_position (win_wid, balloon_x, balloon_y);
+  balloon_win= concrete (win_wid) -> win;
   balloon_win->map ();
 }
 
