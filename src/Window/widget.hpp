@@ -25,68 +25,13 @@ typedef display_rep* display;
 typedef int color;
 class url;
 class widget;
+class slot;
 class widget_connection;
 template<class T> class promise;
 
 enum gravity { north_west, north,  north_east,
 	       west,       center, east,
 	       south_west, south,  south_east };
-
-/******************************************************************************
-* C++ stupidity does not allow forward declaration of enums.
-* Slots should really be defined in message.hpp
-******************************************************************************/
-
-typedef enum slot {
-  SLOT_WINDOW_ID,
-  SLOT_NAME,
-  SLOT_MINIMAL_SIZE,
-  SLOT_DEFAULT_SIZE,
-  SLOT_MAXIMAL_SIZE,
-  SLOT_SIZE,
-  SLOT_POSITION,
-  SLOT_GRAVITY,
-  SLOT_GEOMETRY, // FIXME: this is a bit redundant
-  SLOT_KEYBOARD,
-  SLOT_KEYBOARD_FOCUS,
-  SLOT_MOUSE,
-  SLOT_REPAINT,
-  SLOT_INVALIDATE_ALL,
-  SLOT_INVALIDATE,
-  SLOT_INVALID,
-  SLOT_DESTROY,
-
-  SLOT_SHRINKING_FACTOR,
-  SLOT_EXTENTS,
-  SLOT_VISIBLE_PART,
-  SLOT_SCROLLBARS_VISIBILITY,
-  SLOT_SCROLL_POSITION,
-
-  SLOT_HEADER_VISIBILITY,
-  SLOT_MAIN_MENU,
-  SLOT_MAIN_ICONS_VISIBILITY,
-  SLOT_MAIN_ICONS,
-  SLOT_CONTEXT_ICONS_VISIBILITY,
-  SLOT_CONTEXT_ICONS,
-  SLOT_USER_ICONS_VISIBILITY,
-  SLOT_USER_ICONS,
-  SLOT_FOOTER_VISIBILITY,
-  SLOT_LEFT_FOOTER,
-  SLOT_RIGHT_FOOTER,
-  SLOT_INTERACTIVE_MODE,
-  SLOT_INTERACTIVE_PROMPT,
-  SLOT_INTERACTIVE_INPUT,
-
-  SLOT_FORM_FIELD,
-  SLOT_STRING_INPUT,
-  SLOT_INPUT_TYPE,
-  SLOT_INPUT_PROPOSAL,
-  SLOT_FILE,
-  SLOT_DIRECTORY
-};
-
-//extern bool* slot_state_table;
-//inline bool is_state_slot (slot s) { return slots_state_table[s]; }
 
 /******************************************************************************
 * The abstract widget class
