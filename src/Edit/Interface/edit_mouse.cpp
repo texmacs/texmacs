@@ -16,6 +16,7 @@
 #include "link.hpp"
 #include "analyze.hpp"
 #include "drd_mode.hpp"
+#include "message.hpp"
 #include "window.hpp"
 
 /******************************************************************************
@@ -35,7 +36,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
   if (!nil (popup_wid) && (type != "leave")) {
-    concrete (popup_wid) -> win -> map ();
+    set_visibility (popup_wid, true);
     destroy_window_widget (popup_wid);
     popup_wid= widget ();
     this << emit_mouse_grab (false);
@@ -204,7 +205,7 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
     widget popup_w= popup_widget (wid, center);
     popup_wid= popup_window_widget (popup_w, wx+ ox+ x, wy+ oy+ y);
-    concrete (popup_wid) -> win -> map ();
+    set_visibility (popup_wid, true);
     this << emit_mouse_grab (true);
     concrete (popup_wid) << set_integer ("grabbed", 1);
     // popup_wid << set_integer ("freeze", 1);

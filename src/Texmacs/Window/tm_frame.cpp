@@ -12,6 +12,7 @@
 
 #include "tm_frame.hpp"
 #include "tm_window.hpp"
+#include "message.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -228,8 +229,8 @@ tm_frame_rep::full_screen_mode (bool on, bool edit) {
     show_header (true);
     show_footer (true);
   }
-  concrete (get_window () -> wid) -> win -> full_screen (on);
-  get_editor()->full_screen_mode (on && !edit);
+  set_full_screen (get_window () -> win, on);
+  get_editor () -> full_screen_mode (on && !edit);
   full_screen = on;
   full_screen_edit = on && edit;
 }

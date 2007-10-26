@@ -78,7 +78,7 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     oy -= (dy - ey) >> 1;
     dialogue_wid= wid;
     dialogue_win= plain_window_widget (dialogue_wid, _name, 0, 0, ox, oy);
-    concrete(dialogue_win)->win->map ();
+    set_visibility (dialogue_win, true);
     delete[] _name;
   }
 }
@@ -93,7 +93,7 @@ tm_frame_rep::dialogue_inquire (int i, string& arg) {
 void
 tm_frame_rep::dialogue_end () {
   if (!nil (dialogue_win)) {
-    concrete(dialogue_win)->win->unmap ();
+    set_visibility (dialogue_win, false);
     destroy_window_widget (dialogue_win);
     dialogue_win= widget ();
     dialogue_wid= widget ();

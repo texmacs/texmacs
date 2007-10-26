@@ -50,12 +50,12 @@ tm_window_rep::set_window_name (string s) {
 
 void
 tm_window_rep::map () {
-  concrete (win) -> win -> map ();
+  set_visibility (win, true);
 }
 
 void
 tm_window_rep::unmap () {
-  concrete (win) -> win -> unmap ();
+  set_visibility (win, false);
 }
 
 /******************************************************************************
