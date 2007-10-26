@@ -15,6 +15,10 @@
 #include "tm_window.hpp"
 #include "message.hpp"
 
+int geometry_w= 800, geometry_h= 600;
+int geometry_x= 0  , geometry_y= 0;
+
+widget texmacs_window_widget (widget wid, tree geom);
 widget make_menu_widget (object menu);
 
 /******************************************************************************
@@ -37,6 +41,26 @@ tm_window_rep::~tm_window_rep () {
   if (texmacs_menu != NULL) delete[] texmacs_menu;
   if (texmacs_icon_menu != NULL) delete[] texmacs_icon_menu;
   destroy_window_id (id);
+}
+
+/******************************************************************************
+* Creation of TeXmacs window
+******************************************************************************/
+
+widget
+texmacs_window_widget (widget wid, tree geom) {
+  int W, H;
+  int w= geometry_w, h= geometry_h;
+  int x= geometry_x, y= geometry_y;
+  if (is_tuple (geom) && N (geom) >= 2) {
+    w= as_int (geom[0]);
+    h= as_int (geom[1]);
+  }
+  the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
+  if (x < 0) x= W + x + 1 - w;
+  if (y < 0) y= H + y + 1 - h;
+  return plain_window_widget (wid, "TeXmacs",
+			      w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
 }
 
 /******************************************************************************

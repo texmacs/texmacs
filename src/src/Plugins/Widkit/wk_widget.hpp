@@ -39,13 +39,14 @@ public:
 
   virtual operator tree () = 0;
   virtual bool handle (event ev) = 0;
+  virtual bool is_window_widget ();
 
-  SI       x1 (); SI y1 (); // lower left window coordinates of widget
-  SI       x2 (); SI y2 (); // upper right window coordinates of widget
-  bool     attached ();
-  void     fatal_error (string message, string in="", string fname="");
+  SI    x1 (); SI y1 (); // lower left window coordinates of widget
+  SI    x2 (); SI y2 (); // upper right window coordinates of widget
+  bool  attached ();
+  void  fatal_error (string message, string in="", string fname="");
 
-  friend   class wk_widget;
+  friend class wk_widget;
 };
 
 class wk_widget {

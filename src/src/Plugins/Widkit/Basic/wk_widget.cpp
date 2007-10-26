@@ -12,6 +12,7 @@
 
 #include "window.hpp"
 #include "Widkit/wk_widget.hpp"
+#include "Widkit/Event/basic_event.hpp"
 
 /******************************************************************************
 * Widget construction and destruction
@@ -24,26 +25,6 @@ wk_widget_rep::wk_widget_rep (
     grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
 
 wk_widget_rep::~wk_widget_rep () { DEBUG(widget_count--); }
-
-wk_widget
-plain_window_widget (wk_widget wid, char* s, SI w, SI h, SI x, SI y) {
-  window win= plain_window (abstract (wid), s, w, h, x, y);
-  (void) win;
-  return wid;
-}
-
-wk_widget
-popup_window_widget (wk_widget wid, SI x, SI y) {
-  window win= popup_window (abstract (wid), x, y);
-  (void) win;
-  return wid;
-}
-
-void
-destroy_window_widget (wk_widget w) {
-  // FIXME: check that widget is really a window widget
-  delete w->win;
-}
 
 /******************************************************************************
 * Computing lower left and upper right widget coordinates
@@ -124,7 +105,12 @@ wk_widget::operator [] (string s) {
 
 bool
 wk_widget_rep::attached () {
-  return win!=NULL;
+  return win != NULL;
+}
+
+bool
+wk_widget_rep::is_window_widget () {
+  return false;
 }
 
 void
@@ -161,4 +147,54 @@ ostream&
 operator << (ostream& out, wk_widget w) {
   print_tree (out, (tree) w, 0);
   return out;
+}
+
+/******************************************************************************
+* Window widgets
+******************************************************************************/
+
+class window_widget_rep: public wk_widget_rep {
+public:
+  window_widget_rep (array<wk_widget> a, array<string> name):
+    wk_widget_rep (a, name, north_west) {}
+  operator tree () { return tree (TUPLE, "window", (tree) a[0]); }
+  bool is_window_widget () { return true; }
+  bool handle (event ev);
+};
+
+bool
+window_widget_rep::handle (event ev) {
+  if (ev->type == ATTACH_WINDOW_EVENT)
+    win= ((attach_window_event) ev)->win;
+  return a[0] -> handle (ev);
+}
+
+wk_widget
+window_widget (wk_widget w) {
+  array<wk_widget> a (1);
+  a[0]= w;
+  array<string> name (1);
+  name[0]= "window";
+  return new window_widget_rep (a, name);
+}
+
+wk_widget
+plain_window_widget (wk_widget wid, char* s, SI w, SI h, SI x, SI y) {
+  wid= window_widget (wid);
+  (void) plain_window (abstract (wid), s, w, h, x, y);
+  return wid;
+}
+
+wk_widget
+popup_window_widget (wk_widget wid, SI x, SI y) {
+  wid= window_widget (wid);
+  (void) popup_window (abstract (wid), x, y);
+  return wid;
+}
+
+void
+destroy_window_widget (wk_widget w) {
+  if (!w->is_window_widget ())
+    fatal_error ("not a window widget", "destroy_window_widget");
+  delete w->win;
 }

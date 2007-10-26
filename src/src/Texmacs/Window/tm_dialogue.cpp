@@ -69,15 +69,15 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     if (lan == "russian") lan= "english";
     name= the_display->translate (name, "english", lan);
     char* _name= as_charp (name);
-    widget win= get_window () -> wid;
+    widget win= get_window () -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
-    concrete (win)->win->get_position (ox, oy);
-    concrete (win)->win->get_size (dx, dy);
+    get_position (win, ox, oy);
+    get_size (win, dx, dy);
     concrete (wid) << get_size (ex, ey, -1);
     ox += (dx - ex) >> 1;
     oy -= (dy - ey) >> 1;
     dialogue_wid= wid;
-    dialogue_win= plain_window_widget (dialogue_wid, _name, 0, 0, ox, oy);
+    dialogue_win= plain_window_widget (dialogue_wid, _name, ex, ey, ox, oy);
     set_visibility (dialogue_win, true);
     delete[] _name;
   }
@@ -85,9 +85,11 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
 
 void
 tm_frame_rep::dialogue_inquire (int i, string& arg) {
-  string s= "input";
-  if (i>0) s= "input-" * as_string (i);
-  concrete (dialogue_wid) << get_string (s, arg);
+  if (i == 0) arg= get_string_input (dialogue_wid);
+  else {
+    widget field_i= get_form_field (dialogue_wid, i);
+    arg= get_string_input (field_i);
+  }
 }
 
 void
