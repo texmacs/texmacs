@@ -299,6 +299,7 @@ send_position (wk_widget w, blackbox val) {
   coord2 p= open_box<coord2> (val);
   if (w->is_window_widget ()) w->win->move (p.x1, p.x2);
   else {
+    // FIXME: we should use coordinates relative to parent widget
     geometry g=
       open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
     g.x1= p.x1; g.x2= p.x2;
@@ -343,7 +344,10 @@ send_geometry (wk_widget w, blackbox val) {
     w->win->move (g.x1, g.x2);
     w->win->resize (g.x3, g.x4);
   }
-  else w << emit_position (g.x1, g.x2, g.x3, g.x4, g.x5);
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    w << emit_position (g.x1, g.x2, g.x3, g.x4, g.x5);
+  }
 }
 
 void
@@ -477,7 +481,10 @@ query_position (wk_widget w, int type_id) {
     w->win->get_position (x, y);
     return close_box<coord2> (coord2 (x, y));
   }
-  else return close_box<coord2> (coord2 (w->ox, w->oy));
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    return close_box<coord2> (coord2 (w->ox, w->oy));
+  }
 }
 
 blackbox
@@ -498,7 +505,10 @@ query_geometry (wk_widget w, int type_id) {
     w->win->get_size (W, H);
     return close_box<geometry> (geometry (x, y, W, H, w->grav));
   }
-  else return close_box<geometry> (geometry (w->ox,w->oy,w->w,w->h,w->grav));
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
+  }
 }
 
 template<class T> void
