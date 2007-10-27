@@ -339,7 +339,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   // cout << "Attach view " << vw->buf->name << "\n";
   vw->win= win;
   widget wid= win->wid;
-  set_canvas (wid, abstract ((wk_widget) vw->ed));
+  set_canvas (wid, vw->ed);
   if (!wid -> attached ())
     fatal_error ("widget should be attached", "tm_data_rep::attach_view");
   vw->ed->resume ();

@@ -28,11 +28,11 @@
 ******************************************************************************/
 
 editor_rep::editor_rep ():
-  attribute_widget_rep (),
+  simple_widget_rep (),
   drd (buf->abbr, std_drd), et (the_et), rp (buf->rp) {}
 
 editor_rep::editor_rep (server_rep* sv2, tm_buffer buf2):
-  attribute_widget_rep (),
+  simple_widget_rep (),
   sv (sv2), buf (buf2), drd (buf->abbr, std_drd),
   et (the_et), rp (buf2->rp) {}
 

@@ -183,15 +183,15 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 ******************************************************************************/
 
 void
-edit_interface_rep::handle_keypress (keypress_event ev) {
+edit_interface_rep::handle_keypress (string key, time_t t) {
   mark_undo_blocks ();
-  key_press (ev->key);
+  key_press (key); (void) t;
   notify_change (THE_DECORATIONS);
 }
 
 void
-edit_interface_rep::handle_keyboard_focus (keyboard_focus_event ev) {
-  got_focus= ev->flag;
+edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
+  got_focus= has_focus; (void) t;
   notify_change (THE_FOCUS);
   if (got_focus) {
     focus_on_this_editor ();

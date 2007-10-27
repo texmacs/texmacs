@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "Widkit/basic_widget.hpp"
+#include "Widkit/simple_wk_widget.hpp"
 #include "boxes.hpp"
 #include "Boxes/construct.hpp"
 #include "font.hpp"
@@ -21,7 +21,7 @@
 * Text widgets
 ******************************************************************************/
 
-class box_widget_rep: public basic_widget_rep {
+class box_widget_rep: public simple_widget_rep {
   box  b;
   bool transparent;
   SI   X1, Y1, X2, Y2;
@@ -31,13 +31,13 @@ public:
   box_widget_rep (box b, bool trans, int dw, int dh);
   operator tree ();
 
-  void handle_get_size (get_size_event ev);
-  void handle_repaint (repaint_event ev);
+  void handle_get_size_hint (SI& w, SI& h);
+  void handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
 };
 
 box_widget_rep::box_widget_rep (
   box b2, bool trans2, int dw2, int dh2):
-    basic_widget_rep (south_west), b (b2),
+    simple_widget_rep (), b (b2),
     transparent (trans2), dw (dw2+2*PIXEL), dh (dh2+2*PIXEL) {}
 
 box_widget_rep::operator tree () {
@@ -47,25 +47,26 @@ box_widget_rep::operator tree () {
 #define SHRINK 6
 
 void
-box_widget_rep::handle_get_size (get_size_event ev) {
+box_widget_rep::handle_get_size_hint (SI& w, SI& h) {
   X1= b->x1; Y1= b->y1;
   X2= b->x2; Y2= b->y2;
-  ev->w = ((X2- X1+ SHRINK- 1)/SHRINK)+ 2*dw;
-  ev->h = ((Y2- Y1+ SHRINK- 1)/SHRINK)+ 2*dh;
-  abs_round (ev->w, ev->h);
+  w = ((X2- X1+ SHRINK- 1)/SHRINK)+ 2*dw;
+  h = ((Y2- Y1+ SHRINK- 1)/SHRINK)+ 2*dh;
+  abs_round (w, h);
 }
 
 void
-box_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
+box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) stop;
   if (!transparent) {
     win->set_background (win->light_grey);
     win->set_color (win->light_grey);
-    win->fill (0, 0, w, h);
+    win->fill (0, -h, w, 0);
   }
   win->set_shrinking_factor (SHRINK);
   rectangles l (rectangle (0, 0, w, h));
   SI x= ((SHRINK*w-b->w())>>1) - b->x1;
-  SI y= ((SHRINK*h-b->h())>>1) - b->y1;
+  SI y= ((SHRINK*h-b->h())>>1) - b->y1 - SHRINK*h;
   b->redraw (win, path(), l, x, y);
   win->set_shrinking_factor (1);
 }
@@ -76,7 +77,7 @@ box_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 widget
 box_widget (box b, bool tr) {
-  return abstract (wk_widget (new box_widget_rep (b, tr, 3*PIXEL, 3*PIXEL)));
+  return widget (new box_widget_rep (b, tr, 3*PIXEL, 3*PIXEL));
 }
 
 widget
