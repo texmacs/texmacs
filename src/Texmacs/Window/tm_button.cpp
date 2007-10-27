@@ -15,7 +15,7 @@
 #include "Boxes/construct.hpp"
 #include "font.hpp"
 #include "tm_frame.hpp"
-#include "window.hpp"
+#include "message.hpp"
 
 /******************************************************************************
 * Text widgets
@@ -58,6 +58,7 @@ box_widget_rep::handle_get_size_hint (SI& w, SI& h) {
 void
 box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
   (void) x1; (void) y1; (void) x2; (void) y2; (void) stop;
+  ps_device win= get_ps_device (this);
   if (!transparent) {
     win->set_background (win->light_grey);
     win->set_color (win->light_grey);

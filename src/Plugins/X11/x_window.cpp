@@ -163,25 +163,6 @@ x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
   initialize ();
 }
 
-/*
-x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2, SI x, SI y):
-  x_drawable_rep (dis2), window_rep (), w (w2), dis (dis2),
-  name (n2), win_x (x/PIXEL), win_y (-y/PIXEL), win_w (0), win_h (0),
-  kbd_focus (w.rep), has_focus (false)
-{
-  initialize ();
-}
-
-x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
-			    SI ww, SI hh, SI x, SI y):
-  x_drawable_rep (dis2), window_rep (), w (w2), dis (dis2), name (n2),
-  win_x (x/PIXEL), win_y (-y/PIXEL), win_w (ww/PIXEL), win_h (hh/PIXEL),
-  kbd_focus (w.rep), has_focus (false)
-{
-  initialize ();
-}
-*/
-
 x_window_rep::~x_window_rep () {
   concrete (w) << emit_attach_window (NULL);
 
@@ -192,6 +173,11 @@ x_window_rep::~x_window_rep () {
   Window_to_window->reset (win);
   nr_windows--;
   XDestroyWindow (dpy, win);
+}
+
+widget
+x_window_rep::get_widget () {
+  return w;
 }
 
 void
@@ -490,16 +476,3 @@ plain_window (widget w, char* name, SI min_w, SI min_h,
   return new x_window_rep (w, (x_display) the_display, name,
 			   min_w, min_h, def_w, def_h, max_w, max_h);
 }
-
-/*
-window
-popup_window (widget w, SI x, SI y) {
-  return new x_window_rep (w, (x_display) the_display, NULL, x, y);
-}
-
-window
-plain_window (widget w, char* name, SI width, SI height, SI x, SI y) {
-  return new x_window_rep (w, (x_display) the_display, name,
-			   width, height, x, y);
-}
-*/

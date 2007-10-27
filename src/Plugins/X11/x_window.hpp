@@ -56,10 +56,8 @@ public:
 
   x_window_rep (widget w, x_display dis, char* name,
 		SI min_w, SI min_h, SI def_w, SI def_h, SI max_w, SI max_h);
-  //x_window_rep (widget w, x_display dis, char* name);
-  //x_window_rep (widget w, x_display dis, char* name, SI x, SI y);
-  //x_window_rep (widget wid, x_display dis, char* name, SI w, SI h, SI x, SI y);
   ~x_window_rep ();
+  widget get_widget ();
   void get_extents (int& w, int& h);
 
   void set_hints (SI min_w, SI min_h, SI max_w, SI max_h);

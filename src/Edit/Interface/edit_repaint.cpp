@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "Interface/edit_interface.hpp"
-#include "window.hpp"
+#include "message.hpp"
 
 extern int nr_painted;
 extern void clear_pattern_rectangles (ps_device dev, rectangles l);
@@ -176,6 +176,7 @@ edit_interface_rep::draw_pre (ps_device dev, rectangle r) {
   draw_surround (dev, r);
 
   // predraw cursor
+  ps_device win= get_ps_device (this);
   draw_cursor (dev);
   rectangles l= copy_always;
   while (!nil (l)) {
@@ -187,6 +188,7 @@ edit_interface_rep::draw_pre (ps_device dev, rectangle r) {
 
 void
 edit_interface_rep::draw_post (ps_device dev, rectangle r) {
+  ps_device win= get_ps_device (this);
   win->set_shrinking_factor (sfactor);
   dev->set_shrinking_factor (sfactor);
   draw_context (dev, r);
@@ -200,6 +202,7 @@ edit_interface_rep::draw_post (ps_device dev, rectangle r) {
 
 void
 edit_interface_rep::draw_with_shadow (rectangle r) {
+  ps_device win= get_ps_device (this);
   rectangle sr= r / sfactor;
   win->new_shadow (shadow);
   win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
@@ -239,14 +242,16 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
 
 void
 edit_interface_rep::draw_with_stored (rectangle r) {
+  ps_device win= get_ps_device (this);
   //cout << "Redraw " << (r/(sfactor*PIXEL)) << "\n";
 
   /* Verify whether the backing store is still valid */
   if (!nil (stored_rects)) {
     SI w1, h1, w2, h2;
-    win    -> get_extents (w1, h1);
+    win   -> get_extents (w1, h1);
     stored -> get_extents (w2, h2);
-    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2) {
+    if (stored->ox != win->ox || stored->oy != win->oy ||
+	w1 != w2 || h1 != h2) {
       // cout << "x"; cout.flush ();
       stored_rects= rectangles ();
     }
@@ -287,6 +292,7 @@ edit_interface_rep::draw_with_stored (rectangle r) {
 
 void
 edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
+  ps_device win= get_ps_device (this);
   x1 *= sfactor; y1 *= sfactor; x2 *= sfactor; y2 *= sfactor;
   win->set_shrinking_factor (sfactor);
   tree bg= get_init_value (BG_COLOR);
@@ -299,6 +305,7 @@ edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
 
 void
 edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
+  ps_device win= get_ps_device (this);
   if (env_change != 0)
     system_warning ("Invalid situation (" * as_string (env_change) * ")",
 		    "(edit_interface_rep::handle_repaint)");

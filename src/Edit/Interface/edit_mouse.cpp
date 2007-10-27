@@ -200,7 +200,7 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
   abs_round (x, y);
   if (nil (popup_win)) {
     SI wx, wy;
-    win->get_position (wx, wy);
+    ::get_position (get_window (this), wx, wy);
     widget wid;
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
     widget popup_wid= popup_widget (wid, center);

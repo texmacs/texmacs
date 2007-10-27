@@ -678,6 +678,9 @@ wk_widget_rep::query (slot s, int type_id) {
 widget
 wk_widget_rep::read (slot s, blackbox index) {
   switch (s) {
+  case SLOT_WINDOW:
+    check_type_void (index, "SLOT_WINDOW");
+    return win -> get_widget ();
   case SLOT_FORM_FIELD:
     check_type<int> (index, "SLOT_FORM_FIELD");
     return abstract (THIS [0] ["inputs"] [open_box<int> (index)] ["input"]);

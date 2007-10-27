@@ -63,8 +63,9 @@ edit_interface_rep::edit_interface_rep ():
 
 edit_interface_rep::~edit_interface_rep () {
   if (attached ()) {
-    win->delete_shadow (shadow);
-    win->delete_shadow (stored);
+    ps_device dev= get_ps_device (this);
+    dev->delete_shadow (shadow);
+    dev->delete_shadow (stored);
   }
 }
 
@@ -77,8 +78,9 @@ edit_interface_rep::suspend () {
   got_focus= false;
   notify_change (THE_FOCUS);
   if (attached ()) {
-    win->delete_shadow (shadow);
-    win->delete_shadow (stored);
+    ps_device dev= get_ps_device (this);
+    dev->delete_shadow (shadow);
+    dev->delete_shadow (stored);
   }
 }
 
@@ -315,7 +317,7 @@ edit_interface_rep::has_changed (int question) {
 int
 edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
-      win->repainted () &&
+      get_ps_device (this) -> repainted () &&
       (!the_display->check_event (event_type)) &&
       got_focus)
     return texmacs_time () - last_change;
@@ -342,7 +344,7 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
-	if (!win->interrupted ()) drd_update ();
+	if (!get_ps_device (this) -> interrupted ()) drd_update ();
 	cache_memorize ();
 	last_update= last_change;
       }
@@ -358,7 +360,7 @@ edit_interface_rep::apply_changes () {
   int sb= 1;
   if (attached () && get_init_string (PAGE_MEDIUM) == "automatic") {
     SI wx, wy;
-    win->get_size (wx, wy);
+    ::get_size (get_window (this), wx, wy);
     if (get_init_string (SCROLL_BARS) == "false") sb= 0;
     if (get_server () -> in_full_screen_mode ()) sb= 0;
     if (sb) wx -= 20 * PIXEL;
