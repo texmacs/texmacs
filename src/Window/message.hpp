@@ -12,6 +12,7 @@
 
 #ifndef MESSAGE_H
 #define MESSAGE_H
+#include "ps_device.hpp"
 #include "widget.hpp"
 #include "ntuple.hpp"
 #include "rectangles.hpp"
@@ -22,13 +23,10 @@
 ******************************************************************************/
 
 typedef enum slot_id {
-  SLOT_WINDOW_ID,
+  SLOT_PS_DEVICE,
   SLOT_VISIBILITY,
   SLOT_FULL_SCREEN,
   SLOT_NAME,
-  SLOT_MINIMAL_SIZE,
-  SLOT_DEFAULT_SIZE,
-  SLOT_MAXIMAL_SIZE,
   SLOT_SIZE,
   SLOT_POSITION,
   SLOT_GRAVITY,
@@ -195,10 +193,10 @@ deconnect (widget w1, slot s1, widget w2, slot s2) {
 * Standard messages
 ******************************************************************************/
 
-inline int
-get_window_id (widget w) {
-  // get window ID of a widget or 0 if the widget is not attached
-  return query<int> (w, SLOT_WINDOW_ID);
+inline ps_device
+get_ps_device (widget w) {
+  // get ps_device associated to widget (or NULL if the widget is not attached)
+  return query<ps_device> (w, SLOT_PS_DEVICE);
 }
 
 inline void
@@ -217,24 +215,6 @@ inline void
 set_name (widget w, string s) {
   // set the name of a widget (usually a window)
   send<string> (w, SLOT_NAME, s);
-}
-
-inline void
-get_minimal_size (widget w, SI& width, SI& height) {
-  // get the minimal size of the widget
-  query<SI,SI> (w, SLOT_MINIMAL_SIZE, width, height);
-}
-
-inline void
-get_default_size (widget w, SI& width, SI& height) {
-  // get the default size of the widget
-  query<SI,SI> (w, SLOT_DEFAULT_SIZE, width, height);
-}
-
-inline void
-get_maximal_size (widget w, SI& width, SI& height) {
-  // get the maximal size of the widget
-  query<SI,SI> (w, SLOT_MAXIMAL_SIZE, width, height);
 }
 
 inline void

@@ -449,16 +449,6 @@ query_coord4 (wk_widget w, string key, int type_id) {
 }
 
 blackbox
-query_size (wk_widget w, int which, int type_id) {
-  typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_size");
-  SI c1, c2;
-  w << get_size (c1, c2, which);
-  return close_box<coord2> (coord2 (c1, c2));
-}
-
-blackbox
 query_size (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
   if (type_id != type_helper<coord2>::id)
@@ -638,12 +628,10 @@ wk_widget_rep::send (slot s, blackbox val) {
 blackbox
 wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
-  case SLOT_MINIMAL_SIZE:
-    return query_size (THIS, -1, type_id);
-  case SLOT_DEFAULT_SIZE:
-    return query_size (THIS, 0, type_id);
-  case SLOT_MAXIMAL_SIZE:
-    return query_size (THIS, 1, type_id);
+  case SLOT_PS_DEVICE:
+    if (type_id != type_helper<ps_device>::id)
+      fatal_error ("ps_device expected", "wk_widget_rep::query");
+    return close_box<ps_device> ((ps_device) win);
   case SLOT_SIZE:
     return query_size (THIS, type_id);
   case SLOT_POSITION:
