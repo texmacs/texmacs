@@ -12,6 +12,7 @@
 
 #include "ps_device.hpp"
 #include "display.hpp"
+#include "rectangles.hpp"
 
 /******************************************************************************
 * Constructors
@@ -117,6 +118,20 @@ ps_device_rep::extra_clipping (SI x1, SI y1, SI x2, SI y2) {
   x1= max (x1, ox1); y1= max (y1, oy1);
   x2= max (x1, min (x2, ox2)); y2= max (y1, min (y2, oy2));
   set_clipping (x1, y1, x2, y2);
+}
+
+void
+ps_device_rep::clip (SI x1, SI y1, SI x2, SI y2) {
+  rectangle r (cx1, cy1, cx2, cy2);
+  clip_stack= rectangles (r, clip_stack);
+  set_clipping (x1, y1, x2, y2);
+}
+
+void
+ps_device_rep::unclip () {
+  rectangle r (clip_stack->item);
+  set_clipping (r->x1- ox, r->y1- oy, r->x2- ox, r->y2- oy);
+  clip_stack= clip_stack->next;
 }
 
 bool
