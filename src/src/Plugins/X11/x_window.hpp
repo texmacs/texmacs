@@ -31,7 +31,6 @@ class x_window_rep: public x_drawable_rep, public window_rep {
   Window        win;
   GC            gc;
   rectangles    invalid_regions;
-  rectangles    clipping;
   SI            Min_w, Min_h;
   SI            Def_w, Def_h;
   SI            Max_w, Max_h;
@@ -87,8 +86,6 @@ public:
 
   void   invalidate (SI x1, SI y1, SI x2, SI y2);
   bool   repainted ();
-  void   clip (SI x1, SI y1, SI x2, SI y2);
-  void   unclip ();
   void   translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy);
 
   /****************************** friends ************************************/

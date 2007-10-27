@@ -40,10 +40,10 @@ public:
   virtual void set_keyboard_focus (widget wid) = 0;
     // forward keyboard events to the subwidget wid of the window
 
-  virtual void clip (SI x1, SI y1, SI x2, SI y2) = 0;
-  virtual void unclip () = 0;
-  virtual void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) = 0;
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
+    // explicit request for redrawing a region in the window
+  virtual void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) = 0;
+    // fast translation of a region in the window (used for scrolling)
 };
 
 window plain_window (widget w, string name, SI min_w, SI min_h,

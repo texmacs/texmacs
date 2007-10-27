@@ -29,6 +29,8 @@ typedef int color;
 class ps_device_rep;
 typedef ps_device_rep* ps_device;
 class x_drawable_rep;
+class rectangle;
+typedef list<rectangle> rectangles;
 
 class ps_device_rep {
 public:
@@ -39,6 +41,7 @@ public:
   int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
   ps_device master;         // master device in case of shadow devices
   tree pattern;             // current background pattern
+  rectangles clip_stack;    // stack with clipping regions
 
 public:
   ps_device_rep ();
@@ -98,6 +101,8 @@ public:
   virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
   virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   void extra_clipping (SI x1, SI y1, SI x2, SI y2);
+  void clip (SI x1, SI y1, SI x2, SI y2);
+  void unclip ();
 
   /* shadowing and copying rectangular regions across devices */
   virtual void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y)=0;

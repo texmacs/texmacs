@@ -403,20 +403,6 @@ x_window_rep::set_keyboard_focus (widget wid) {
 ******************************************************************************/
 
 void
-x_window_rep::clip (SI x1, SI y1, SI x2, SI y2) {
-  rectangle r (cx1, cy1, cx2, cy2);
-  clipping= rectangles (r, clipping);
-  x_drawable_rep::set_clipping (x1, y1, x2, y2);
-}
-
-void
-x_window_rep::unclip () {
-  rectangle r (clipping->item);
-  x_drawable_rep::set_clipping (r->x1- ox, r->y1- oy, r->x2- ox, r->y2- oy);
-  clipping= clipping->next;
-}
-
-void
 x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
   SI X1= x1+ dx;
   SI Y2= y2+ dy;
