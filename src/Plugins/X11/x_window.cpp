@@ -213,7 +213,7 @@ x_window_rep::get_size (SI& ww, SI& hh) {
 }
 
 void
-x_window_rep::move (SI x, SI y) {
+x_window_rep::set_position (SI x, SI y) {
   x= x/PIXEL;
   y= -y/PIXEL;
   if ((x+ win_w) > dis->display_width) x= dis->display_width- win_w;
@@ -224,7 +224,7 @@ x_window_rep::move (SI x, SI y) {
 }
 
 void
-x_window_rep::resize (SI w, SI h) {
+x_window_rep::set_size (SI w, SI h) {
   h=-h; decode (w, h);
   XResizeWindow (dpy, win, w, h);
 }
@@ -244,17 +244,13 @@ x_window_rep::get_name () {
 }
 
 void
-x_window_rep::map () {
-  XMapRaised (dpy, win);
+x_window_rep::set_visibility (bool flag) {
+  if (flag) XMapRaised (dpy, win);
+  else XUnmapWindow (dpy, win);  
 }
 
 void
-x_window_rep::unmap () {
-  XUnmapWindow (dpy, win);  
-}
-
-void
-x_window_rep::full_screen (bool flag) {
+x_window_rep::set_full_screen (bool flag) {
   if (full_screen_flag == flag) return;
   string old_name= get_name ();
   if (old_name == "")
@@ -269,16 +265,16 @@ x_window_rep::full_screen (bool flag) {
 		       dis->display_width, dis->display_height);
     move_event   (0, 0);
     resize_event (dis->display_width, dis->display_height);
-    map ();
+    set_visibility (true);
     XSetInputFocus (dpy, win, PointerRoot, CurrentTime);
   }
   else {
-    unmap ();
+    set_visibility (false);
     Window_to_window->reset (win);
     nr_windows--;
     XDestroyWindow (dpy, win);
     win= save_win;
-    unmap ();
+    set_visibility (false);
     Window_to_window->reset (win);
     nr_windows--;
     XDestroyWindow (dpy, win);
@@ -286,7 +282,7 @@ x_window_rep::full_screen (bool flag) {
     win_x= save_x; win_y= save_y;
     win_w= save_w; win_h= save_h;
     initialize ();
-    map ();
+    set_visibility (true);
     XMoveResizeWindow (dpy, win, save_x, save_y, save_w, save_h);
     resize_event (save_w, save_h);
     move_event   (save_x, save_y);
@@ -336,14 +332,14 @@ void
 x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
-  send_keyboard_focus (kbd_focus, true);
+  send_notify_focus (kbd_focus, true);
 }
 
 void
 x_window_rep::focus_out_event () {
   if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
-  send_keyboard_focus (kbd_focus, false);
+  send_notify_focus (kbd_focus, false);
 }
 
 void
@@ -396,8 +392,8 @@ x_window_rep::repaint_invalid_regions () {
 void
 x_window_rep::set_keyboard_focus (widget wid) {
   if (has_focus && (kbd_focus != wid.rep)) {
-    send_keyboard_focus (kbd_focus, false);
-    send_keyboard_focus (wid, true);
+    send_notify_focus (kbd_focus, false);
+    send_notify_focus (wid, true);
   }
   kbd_focus= wid.rep;
 }
@@ -462,17 +458,23 @@ x_window_rep::repainted () {
 ******************************************************************************/
 
 window
-popup_window (widget w, SI min_w, SI min_h,
+popup_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
-  return new x_window_rep (w, (x_display) the_display, NULL,
-			   min_w, min_h, def_w, def_h, max_w, max_h);
+  char* _name= as_charp (name);
+  window win= new x_window_rep (w, (x_display) the_display, NULL,
+				min_w, min_h, def_w, def_h, max_w, max_h);
+  delete[] _name;
+  return win;
 }
 
 window
-plain_window (widget w, char* name, SI min_w, SI min_h,
+plain_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
-  return new x_window_rep (w, (x_display) the_display, name,
-			   min_w, min_h, def_w, def_h, max_w, max_h);
+  char* _name= as_charp (name);
+  window win= new x_window_rep (w, (x_display) the_display, _name,
+				min_w, min_h, def_w, def_h, max_w, max_h);
+  delete[] _name;
+  return win;
 }

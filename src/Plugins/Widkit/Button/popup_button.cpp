@@ -132,13 +132,13 @@ popup_button_rep::map_popup () {
   // cout << "Positioning required " << (texmacs_time ()-start_2) << " ms\n";
 
   // int start_3= texmacs_time ();
-  wk_widget win_wid= popup_window_widget (popup_w);
+  wk_widget win_wid= popup_window_widget (popup_w, "Popup");
   set_position (abstract (win_wid), x, y);
   popup= win_wid -> win;
   // popup= popup_window (abstract (popup_w), x, y);
   // cout << "Window creation required " << (texmacs_time ()-start_3) << " ms\n";
   // int start_4= texmacs_time ();
-  popup->map ();
+  popup->set_visibility (true);
   // cout << "Mapping required " << (texmacs_time ()-start_4) << " ms\n";
 
   this << emit_invalidate_all ();
@@ -149,7 +149,7 @@ void
 popup_button_rep::unmap_popup () {
   if (popup == NULL)
     fatal_error ("Unexpected situation", "popup_button_rep::unmap_popup");
-  popup->unmap ();
+  popup->set_visibility (false);
   delete popup;
   popup= NULL;
   if (!nil (prom)) popup_w= wk_widget ();

@@ -24,25 +24,31 @@ public:
   virtual widget get_widget () = 0;
 
   virtual void set_name (string name) = 0;
-  virtual void map () = 0;
-  virtual void unmap () = 0;
-  virtual void full_screen (bool flag) = 0;
-  virtual void get_position (SI& x, SI& y) = 0;
+    // set the window title
+  virtual void set_visibility (bool flag) = 0;
+    // map or unmap the window
+  virtual void set_full_screen (bool flag) = 0;
+    // set or reset full screen mode
+  virtual void set_size (SI w, SI h) = 0;
+    // resize the window
   virtual void get_size (SI& w, SI& h) = 0;
-  virtual void move (SI x, SI y) = 0;
-  virtual void resize (SI w, SI h) = 0;
+    // get the current size of the window
+  virtual void set_position (SI x, SI y) = 0;
+    // move the window
+  virtual void get_position (SI& x, SI& y) = 0;
+    // get the current position of the window on the screen
   virtual void set_keyboard_focus (widget wid) = 0;
+    // forward keyboard events to the subwidget wid of the window
 
   virtual void clip (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void unclip () = 0;
   virtual void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) = 0;
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
-  virtual bool repainted () = 0;
 };
 
-window plain_window (widget w, char* name, SI min_w, SI min_h,
+window plain_window (widget w, string name, SI min_w, SI min_h,
 		     SI def_w, SI def_h, SI max_w, SI max_h);
-window popup_window (widget w, SI min_w, SI min_h,
+window popup_window (widget w, string name, SI min_w, SI min_h,
 		     SI def_w, SI def_h, SI max_w, SI max_h);
 
 #endif // defined WINDOW_H

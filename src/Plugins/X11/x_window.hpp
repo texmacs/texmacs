@@ -75,22 +75,21 @@ public:
 
   /********************* routines from window.hpp **************************/
 
+  void   set_name (string name);
   string get_name ();
-  void set_name (string s);
-  void map ();
-  void unmap ();
-  void full_screen (bool flag);
-  void get_position (SI& x, SI& y);
-  void get_size (SI& w, SI& h);
-  void move (SI x, SI y);
-  void resize (SI w, SI h);
-  void set_keyboard_focus (widget wid);
+  void   set_visibility (bool flag);
+  void   set_full_screen (bool flag);
+  void   set_size (SI w, SI h);
+  void   get_size (SI& w, SI& h);
+  void   set_position (SI x, SI y);
+  void   get_position (SI& x, SI& y);
+  void   set_keyboard_focus (widget wid);
 
-  void invalidate (SI x1, SI y1, SI x2, SI y2);
-  bool repainted ();
-  void clip (SI x1, SI y1, SI x2, SI y2);
-  void unclip ();
-  void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy);
+  void   invalidate (SI x1, SI y1, SI x2, SI y2);
+  bool   repainted ();
+  void   clip (SI x1, SI y1, SI x2, SI y2);
+  void   unclip ();
+  void   translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy);
 
   /****************************** friends ************************************/
 

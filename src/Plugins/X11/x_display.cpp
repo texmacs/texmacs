@@ -598,17 +598,17 @@ x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
 
 void
 x_display_rep::map_balloon () {
-  widget win_wid= popup_window_widget (balloon_wid);
+  widget win_wid= popup_window_widget (balloon_wid, "Balloon");
   set_position (win_wid, balloon_x, balloon_y);
   balloon_win= concrete (win_wid) -> win;
-  balloon_win->map ();
+  balloon_win->set_visibility (true);
 }
 
 void
 x_display_rep::unmap_balloon () {
   if (!nil (balloon_wid)) {
     if (balloon_win != NULL) {
-      balloon_win->unmap ();
+      balloon_win->set_visibility (false);
       delete balloon_win;
       balloon_win= NULL;
     }

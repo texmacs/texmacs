@@ -48,7 +48,7 @@ window_widget (wk_widget w) {
 ******************************************************************************/
 
 wk_widget
-plain_window_widget (wk_widget wid, char* s) {
+plain_window_widget (wk_widget wid, string s) {
   SI W, H;
   the_display -> get_extents (W, H);
   SI min_w= 0, min_h= 0, def_w= H, def_h= H, max_w= H, max_h= H;
@@ -62,7 +62,7 @@ plain_window_widget (wk_widget wid, char* s) {
 }
 
 wk_widget
-popup_window_widget (wk_widget wid) {
+popup_window_widget (wk_widget wid, string s) {
   SI W, H;
   the_display -> get_extents (W, H);
   SI min_w= 0, min_h= 0, def_w= H, def_h= H, max_w= H, max_h= H;
@@ -70,7 +70,7 @@ popup_window_widget (wk_widget wid) {
   wid << get_size (def_w, def_h, 0);
   wid << get_size (max_w, max_h, 1);
   wid= window_widget (wid);
-  (void) popup_window (abstract (wid),
+  (void) popup_window (abstract (wid), s,
 		       min_w, min_h, def_w, def_h, max_w, max_h);
   return wid;
 }
