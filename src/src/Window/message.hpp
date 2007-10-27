@@ -33,7 +33,8 @@ typedef enum slot_id {
   SLOT_GRAVITY,
   SLOT_GEOMETRY, // FIXME: this is a bit redundant
   SLOT_KEYBOARD,
-  SLOT_KEYBOARD_FOCUS,
+  SLOT_REQUEST_FOCUS,
+  SLOT_NOTIFY_FOCUS,
   SLOT_MOUSE,
   SLOT_REPAINT,
   SLOT_INVALIDATE_ALL,
@@ -279,9 +280,15 @@ send_keyboard (widget w, string key, time_t t= 0) {
 }
 
 inline void
-send_keyboard_focus (widget w, bool has_focus, time_t t= 0) {
-  // attach or detach the keyboard focus to or from a widget
-  send<bool,time_t> (w, SLOT_KEYBOARD_FOCUS, has_focus, t);
+send_request_focus (widget w) {
+  // request the keyboard focus for a widget
+  send (w, SLOT_REQUEST_FOCUS);
+}
+
+inline void
+send_notify_focus (widget w, bool has_focus, time_t t= 0) {
+  // notify whether the widget has the keyboard focus
+  send<bool,time_t> (w, SLOT_NOTIFY_FOCUS, has_focus, t);
 }
 
 inline void

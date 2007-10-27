@@ -204,7 +204,7 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     widget wid;
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
     widget popup_wid= popup_widget (wid, center);
-    popup_win= popup_window_widget (popup_wid);
+    popup_win= popup_window_widget (popup_wid, "Popup menu");
     set_position (popup_win, wx+ ox+ x, wy+ oy+ y);
     set_visibility (popup_win, true);
     this << emit_mouse_grab (true);

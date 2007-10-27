@@ -68,10 +68,8 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     string lan= the_display->out_lan;
     if (lan == "russian") lan= "english";
     name= the_display->translate (name, "english", lan);
-    char* _name= as_charp (name);
     dialogue_wid= wid;
-    dialogue_win= plain_window_widget (dialogue_wid, _name);
-    delete[] _name;
+    dialogue_win= plain_window_widget (dialogue_wid, name);
 
     widget win= get_window () -> win;
     SI ox, oy, dx, dy, ex= 0, ey= 0;
@@ -147,10 +145,8 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
   else set_directory (wid, ".");
   dialogue_start (title, wid);
   if (type == "directory")
-    concrete (dialogue_win)->win->
-      set_keyboard_focus (get_directory (dialogue_wid));
-  else concrete (dialogue_win)->win->
-	 set_keyboard_focus (get_file (dialogue_wid));
+    send_request_focus (get_directory (dialogue_wid));
+  else send_request_focus (get_file (dialogue_wid));
 }
 
 /******************************************************************************
@@ -251,8 +247,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
-    concrete (dialogue_win)->win->
-      set_keyboard_focus (get_form_field (dialogue_wid, 0));
+    send_request_focus (get_form_field (dialogue_wid, 0));
   }
   else {
     if (get_window () -> get_interactive_mode ()) beep ();

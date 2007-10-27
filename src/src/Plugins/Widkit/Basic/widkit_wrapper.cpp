@@ -233,13 +233,13 @@ texmacs_widget (int mask, command quit) {
 }
 
 widget
-plain_window_widget (widget wid, char* s) {
+plain_window_widget (widget wid, string s) {
   return abstract (plain_window_widget (concrete (wid), s));
 }
 
 widget
-popup_window_widget (widget wid) {
-  return abstract (popup_window_widget (concrete (wid)));
+popup_window_widget (widget wid, string s) {
+  return abstract (popup_window_widget (concrete (wid), s));
 }
 
 void
@@ -297,7 +297,7 @@ send_position (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<coord2>::id)
     fatal_error ("type mismatch", "send_position");
   coord2 p= open_box<coord2> (val);
-  if (w->is_window_widget ()) w->win->move (p.x1, p.x2);
+  if (w->is_window_widget ()) w->win->set_position (p.x1, p.x2);
   else {
     // FIXME: we should use coordinates relative to parent widget
     geometry g=
@@ -314,7 +314,7 @@ send_size (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<coord2>::id)
     fatal_error ("type mismatch", "send_size");
   coord2 p= open_box<coord2> (val);
-  if (w->is_window_widget ()) w->win->resize (p.x1, p.x2);
+  if (w->is_window_widget ()) w->win->set_size (p.x1, p.x2);
   else {
     geometry g=
       open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
@@ -341,8 +341,8 @@ send_geometry (wk_widget w, blackbox val) {
     fatal_error ("type mismatch", "send_geometry");
   geometry g= open_box<geometry> (val);
   if (w->is_window_widget ()) {
-    w->win->move (g.x1, g.x2);
-    w->win->resize (g.x3, g.x4);
+    w->win->set_position (g.x1, g.x2);
+    w->win->set_size (g.x3, g.x4);
   }
   else {
     // FIXME: we should use coordinates relative to parent widget
@@ -360,10 +360,17 @@ send_keyboard (wk_widget w, blackbox val) {
 }
 
 void
-send_keyboard_focus (wk_widget w, blackbox val) {
+send_request_focus (wk_widget w, blackbox val) {
+  if (!nil (val))
+    fatal_error ("type mismatch", "send_request_focus");
+  w->win->set_keyboard_focus (abstract (w));
+}
+
+void
+send_notify_focus (wk_widget w, blackbox val) {
   typedef pair<bool,time_t> focus;
   if (type_box (val) != type_helper<focus>::id)
-    fatal_error ("type mismatch", "send_keyboard_focus");
+    fatal_error ("type mismatch", "send_notify_focus");
   focus f= open_box<focus> (val);
   w << emit_keyboard_focus (f.x1, f.x2);
 }
@@ -526,12 +533,11 @@ wk_widget_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_VISIBILITY:
     check_type<bool> (val, "SLOT_VISIBILITY");
-    if (open_box<bool> (val)) win->map ();
-    else win->unmap ();
+    win->set_visibility (open_box<bool> (val));
     break;
   case SLOT_FULL_SCREEN:
     check_type<bool> (val, "SLOT_FULL_SCREEN");
-    win->full_screen (open_box<bool> (val));
+    win->set_full_screen (open_box<bool> (val));
     break;
   case SLOT_NAME:
     send_string (THIS, "window name", val);
@@ -551,8 +557,11 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_KEYBOARD:
     send_keyboard (THIS, val);
     break;
-  case SLOT_KEYBOARD_FOCUS:
-    send_keyboard_focus (THIS, val);
+  case SLOT_REQUEST_FOCUS:
+    send_request_focus (THIS, val);
+    break;
+  case SLOT_NOTIFY_FOCUS:
+    send_notify_focus (THIS, val);
     break;
   case SLOT_MOUSE:
     send_mouse (THIS, val);
