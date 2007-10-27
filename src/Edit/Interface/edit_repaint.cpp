@@ -286,9 +286,8 @@ edit_interface_rep::draw_with_stored (rectangle r) {
 ******************************************************************************/
 
 void
-edit_interface_rep::handle_clear (clear_event ev) {
-  SI x1= ev->x1 * sfactor, y1= ev->y1 * sfactor;
-  SI x2= ev->x2 * sfactor, y2= ev->y2 * sfactor;
+edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
+  x1 *= sfactor; y1 *= sfactor; x2 *= sfactor; y2 *= sfactor;
   win->set_shrinking_factor (sfactor);
   tree bg= get_init_value (BG_COLOR);
   win->set_background_pattern (bg);
@@ -299,7 +298,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
 }
 
 void
-edit_interface_rep::handle_repaint (repaint_event ev) {
+edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
   if (env_change != 0)
     system_warning ("Invalid situation (" * as_string (env_change) * ")",
 		    "(edit_interface_rep::handle_repaint)");
@@ -310,14 +309,14 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   // Nevertheless, the code seems no longer necessary. In case it would be,
   // it should be moved somewhere inside the internal repaint routines.
   SI extra= 3 * get_init_int (FONT_BASE_SIZE) * PIXEL / (2*sfactor);
-  SI x1= (ev->x1-extra) * sfactor, y1= (ev->y1-extra) * sfactor;
-  SI x2= (ev->x2+extra) * sfactor, y2= (ev->y2+extra) * sfactor;
-  draw_with_stored (rectangle (x1, y1, x2, y2));
+  SI X1= (x1-extra) * sfactor, Y1= (y1-extra) * sfactor;
+  SI X2= (x2+extra) * sfactor, Y2= (y2+extra) * sfactor;
+  draw_with_stored (rectangle (X1, Y1, X2, Y2));
   */
 
   // cout << "Repainting\n";
-  draw_with_stored (rectangle (ev->x1, ev->y1, ev->x2, ev->y2) * sfactor);
-  if (win->interrupted ()) ev->stop= true;
+  draw_with_stored (rectangle (x1, y1, x2, y2) * sfactor);
+  if (win->interrupted ()) stop= true;
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
   // cout << "Repainted\n";

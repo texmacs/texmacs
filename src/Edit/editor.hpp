@@ -13,7 +13,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 #include "typesetter.hpp"
-#include "Widkit/attribute_widget.hpp"
+#include "Widkit/simple_wk_widget.hpp"
 #include "server.hpp"
 #include "scheme.hpp"
 #include "drd_info.hpp"
@@ -36,7 +36,7 @@ class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
 class server_rep;
 
-class editor_rep: public attribute_widget_rep {
+class editor_rep: public simple_widget_rep {
 public:
   server_rep* sv;   // the underlying texmacs server
 
@@ -522,12 +522,12 @@ public:
 };
 
 class editor {
-EXTEND_NULL(wk_widget,editor);
+EXTEND_NULL(widget,editor);
 public:
   inline bool operator == (editor w) { return rep == w.rep; }
   inline bool operator != (editor w) { return rep != w.rep; }
 };
-EXTEND_NULL_CODE(wk_widget,editor);
+EXTEND_NULL_CODE(widget,editor);
 
 editor new_editor (server_rep* sv, tm_buffer buf);
 

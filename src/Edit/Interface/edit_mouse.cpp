@@ -326,10 +326,9 @@ edit_interface_rep::update_active_loci () {
 ******************************************************************************/
 
 void
-edit_interface_rep::handle_mouse (mouse_event ev) {
-  string type= ev->type;
-  SI     x   = ev->x*sfactor;
-  SI     y   = ev->y*sfactor;
-  //cout << type << " (" << x << ", " << y << ") at " << ev->t << "\n";
-  mouse_any (type, x, y, ev->t);
+edit_interface_rep::handle_mouse (string kind, SI x, SI y, time_t t, int st) {
+  x *= sfactor;
+  y *= sfactor;
+  //cout << kind << " (" << x << ", " << y << ") at " << t << "\n";
+  mouse_any (kind, x, y, t); (void) st;
 }

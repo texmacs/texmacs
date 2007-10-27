@@ -167,15 +167,14 @@ public:
   void   recall_message ();
 
   /* event handlers */
-  void handle_get_size (get_size_event ev);
-  void handle_attach_window (attach_window_event ev);
-  void handle_clear (clear_event ev);
-  void handle_repaint (repaint_event ev);
-  void handle_keypress (keypress_event ev);
-  void handle_mouse (mouse_event ev);
-  void handle_keyboard_focus (keyboard_focus_event ev);
-  void handle_resize (resize_event ev);
-  void handle_set_integer (set_integer_event ev);
+  void handle_get_size_hint (SI& w, SI& h);
+  void handle_notify_resize (SI w, SI h);
+  void handle_keypress (string key, time_t t);
+  void handle_keyboard_focus (bool has_focus, time_t t);
+  void handle_mouse (string kind, SI x, SI y, time_t t, int status);
+  void handle_set_shrinking_factor (int sf);
+  void handle_clear (SI x1, SI y1, SI x2, SI y2);
+  void handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
 
   friend class interactive_command_rep;
   friend class tm_window_rep;

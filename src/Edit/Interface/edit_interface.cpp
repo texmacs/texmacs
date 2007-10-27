@@ -565,23 +565,17 @@ edit_interface_rep::after_menu_action () {
 ******************************************************************************/
 
 void
-edit_interface_rep::handle_get_size (get_size_event ev) {
-  the_display->get_extents (ev->w, ev->h);
+edit_interface_rep::handle_get_size_hint (SI& w, SI& h) {
+  the_display->get_extents (w, h);
 }
 
 void
-edit_interface_rep::handle_attach_window (attach_window_event ev) {
-  basic_widget_rep::handle_attach_window (ev);
-}
-
-void
-edit_interface_rep::handle_resize (resize_event ev) { (void) ev;
+edit_interface_rep::handle_notify_resize (SI w, SI h) {
+  (void) w; (void) h;
   notify_change (THE_TREE);
 }
 
 void
-edit_interface_rep::handle_set_integer (set_integer_event ev) {
-  if (ev->which == "shrinking factor")
-    set_shrinking_factor (ev->i);
-  else a[0]->a[0] << ev;
+edit_interface_rep::handle_set_shrinking_factor (int sf) {
+  set_shrinking_factor (sf);
 }

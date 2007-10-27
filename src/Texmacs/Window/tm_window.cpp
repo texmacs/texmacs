@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "window.hpp"
-#include "Widkit/wk_widget.hpp"
 #include "tm_window.hpp"
 #include "message.hpp"
 
