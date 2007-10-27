@@ -15,10 +15,13 @@
 #include "ps_device.hpp"
 #include "display.hpp"
 
+class widget;
+
 class window_rep: virtual public ps_device_rep {
 public:
   inline window_rep () {}
   inline virtual ~window_rep () {}
+  virtual widget get_widget () = 0;
 
   virtual void set_name (string name) = 0;
   virtual void map () = 0;

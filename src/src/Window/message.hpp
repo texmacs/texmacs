@@ -24,6 +24,7 @@
 
 typedef enum slot_id {
   SLOT_PS_DEVICE,
+  SLOT_WINDOW,
   SLOT_VISIBILITY,
   SLOT_FULL_SCREEN,
   SLOT_NAME,
@@ -197,6 +198,12 @@ inline ps_device
 get_ps_device (widget w) {
   // get ps_device associated to widget (or NULL if the widget is not attached)
   return query<ps_device> (w, SLOT_PS_DEVICE);
+}
+
+inline widget
+get_window (widget w) {
+  // get the top-level window widget in which the widget is embedded
+  return read (w, SLOT_WINDOW);
 }
 
 inline void

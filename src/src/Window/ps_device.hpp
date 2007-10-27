@@ -50,6 +50,7 @@ public:
   virtual x_drawable_rep* as_x_drawable ();
   virtual void get_extents (int& w, int& h);
   virtual void next_page ();
+  virtual bool repainted ();
   virtual bool interrupted (bool check= false);
 
   /* basic routines */
