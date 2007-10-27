@@ -48,12 +48,20 @@ public:
   virtual ostream& print (ostream& out);
 
   virtual void send (slot s, blackbox val);
+    // send a message val to the slot s
   virtual blackbox query (slot s, int type_id);
+    // obtain information of a given type from the slot s
   virtual widget read (slot s, blackbox index);
+    // abstract read access (of type s) of a subwidget at position index
   virtual void write (slot s, blackbox index, widget w);
+    // abstract write access (of type s) of a subwidget at position index
   virtual void notify (slot s, int type_id);
+    // notification of a change on a slot s which contains a state variable
+    // sends the current value (obtained via query) to all connected widgets
   virtual void connect (slot s, widget w2, slot s2);
+    // connect a state slot s to another slot s2 of another widget w2
   virtual void deconnect (slot s, widget w2, slot s2);
+    // deconnect a state slot s from another slot s2 of another widget w2
 
   // NOTE: the following routines are only needed for debugging widkit
   virtual bool attached ();
@@ -77,7 +85,17 @@ operator << (ostream& out, widget w) {
 }
 
 /******************************************************************************
-* Exported special widgets and window widget destruction
+* The routines below should be provided by a concrete GUI implementation
+* Besides, the GUI should implement a simple_widget_rep class which inherits
+* from widget_rep, with the following virtual methods:
+*   virtual void handle_get_size_hint (SI& w, SI& h);
+*   virtual void handle_notify_resize (SI w, SI h);
+*   virtual void handle_keypress (string key, time_t t);
+*   virtual void handle_keyboard_focus (bool has_focus, time_t t);
+*   virtual void handle_mouse (string kind, SI x, SI y, time_t t, int status);
+*   virtual void handle_set_shrinking_factor (int sf);
+*   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
+*   virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
 ******************************************************************************/
 
 widget horizontal_list (array<widget> a);

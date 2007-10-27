@@ -19,6 +19,7 @@
 #include "connect.hpp"
 #include "typesetter.hpp"
 #include "drd_std.hpp"
+#include "message.hpp"
 #include <dlfcn.h>
 #include <setjmp.h>
 
