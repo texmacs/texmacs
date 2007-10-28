@@ -18,6 +18,7 @@
 #include "iterator.hpp"
 #include "Ghostscript/ghostscript.hpp"
 #include "Imlib2/imlib2.hpp"
+#include "Widkit/wk_widget.hpp"
 
 extern int  nr_windows;
 extern bool reverse_colors;
@@ -406,15 +407,18 @@ x_drawable_rep::image (
   if (dis->gswindow == NULL) {
     SI max_w= dis->display_width  * PIXEL;
     SI max_h= dis->display_height * PIXEL;
-    widget dummy= text_widget ("ghostscript window");
+    //widget dummy= text_widget ("ghostscript window");
     if (ghostscript_bugged ()) {
       max_w *= 2;
       max_h *= 2;
-      dummy= glue_widget (false, false, max_w, max_h);
+      //dummy= glue_widget (false, false, max_w, max_h);
     }
+    widget dummy = glue_widget (false, false, max_w, max_h);
+    widget win   = plain_window_widget (dummy, "Ghostscript");
+    dis->gswindow= (x_window_rep*) concrete (win) -> win;
     //dis->gswindow= new x_window_rep (dummy, dis, "ghostscript", 0, 0);
-    dis->gswindow= new x_window_rep (dummy, dis, "ghostscript",
-				     max_w, max_h, max_w, max_h, max_w, max_h);
+    //dis->gswindow= new x_window_rep (dummy, dis, "ghostscript",
+    //max_w, max_h, max_w, max_h, max_w, max_h);
     nr_windows--; // the dummy window should not be counted
   }
 
