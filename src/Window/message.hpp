@@ -36,6 +36,7 @@ typedef enum slot_id {
   SLOT_KEYBOARD,
   SLOT_KEYBOARD_FOCUS,
   SLOT_MOUSE,
+  SLOT_MOUSE_GRAB,
   SLOT_REPAINT,
   SLOT_INVALIDATE_ALL,
   SLOT_INVALIDATE,
@@ -296,6 +297,12 @@ send_mouse (widget w, string kind, SI x, SI y, time_t t, int status) {
   // send a mouse event of a given kind at position (x, y) and time t
   // the status corresponds to active keyboard modifiers at the event time
   send<string,SI,SI,time_t,int> (w, SLOT_MOUSE, kind, x, y, t, status);
+}
+
+inline void
+send_mouse_grab (widget w, bool has_grab, time_t t= 0) {
+  // notify whether the widget has the keyboard focus
+  send<bool,time_t> (w, SLOT_MOUSE_GRAB, has_grab, t);
 }
 
 inline void

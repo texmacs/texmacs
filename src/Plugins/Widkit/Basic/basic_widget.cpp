@@ -221,17 +221,7 @@ void
 basic_widget_rep::handle_keyboard_grab (keyboard_grab_event ev) { (void) ev; }
 
 void
-basic_widget_rep::handle_mouse_grab (mouse_grab_event ev) {
-  if (ev->flag) the_display->grab_pointer (this);
-  else {
-    /*
-    if (the_display->has_grab_pointer (this))
-      fatal_error ("Widget does not have pointer grab",
-		   "basic_widget_rep::handle_mouse_grab");
-    */
-    the_display->ungrab_pointer ();
-  }
-}
+basic_widget_rep::handle_mouse_grab (mouse_grab_event ev) { (void) ev; }
 
 void
 basic_widget_rep::handle_request_alarm (request_alarm_event ev) { (void) ev; }

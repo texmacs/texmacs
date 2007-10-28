@@ -148,3 +148,22 @@ operator << (ostream& out, wk_widget w) {
   print_tree (out, (tree) w, 0);
   return out;
 }
+
+/******************************************************************************
+* Pointer grabbing
+******************************************************************************/
+
+void
+wk_grab_pointer (wk_widget w) {
+  the_display->grab_pointer (abstract (w));
+}
+
+void
+wk_ungrab_pointer () {
+  the_display->ungrab_pointer ();
+}
+
+bool
+wk_has_pointer_grab (wk_widget w) {
+  return the_display->has_grab_pointer (abstract (w));
+}

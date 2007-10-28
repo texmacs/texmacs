@@ -39,7 +39,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     set_visibility (popup_win, false);
     destroy_window_widget (popup_win);
     popup_win= widget ();
-    this << emit_mouse_grab (false);
+    the_display -> ungrab_pointer ();
   }
 
   if (inside_graphics (false)) {
@@ -89,7 +89,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   }
   if (type == "release-left" || type == "release-right") {
     dragging= right_dragging= false;
-    this << emit_mouse_grab (false);
+    the_display -> ungrab_pointer ();
     if ((t >= last_click) && ((t - last_click) <= 250)) {
       last_click= t;
       if (mouse_extra_click (x, y))
@@ -123,7 +123,7 @@ edit_interface_rep::mouse_click (SI x, SI y) {
   start_y   = y;
   start_drag= dragging= true;
   start_right_drag= right_dragging= false;
-  this << emit_mouse_grab (true);
+  the_display -> grab_pointer (this);
 }
 
 bool
@@ -207,10 +207,8 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     popup_win= popup_window_widget (popup_wid, "Popup menu");
     set_position (popup_win, wx+ ox+ x, wy+ oy+ y);
     set_visibility (popup_win, true);
-    this << emit_mouse_grab (true);
-    concrete (popup_wid) << set_integer ("grabbed", 1);
-    // popup_wid << set_integer ("freeze", 1);
-    concrete (popup_wid) << emit_mouse_grab (true);
+    the_display -> grab_pointer (this);
+    the_display -> grab_pointer (popup_wid);
   }
 }
 
