@@ -35,6 +35,7 @@ public:
   void handle_get_size (get_size_event ev);
   void handle_position (position_event ev);
   void handle_repaint (repaint_event ev);
+  void handle_mouse_grab (mouse_grab_event ev);
   void handle_mouse (mouse_event ev);
   void handle_set_integer (set_integer_event ev);
   bool handle (event ev);
@@ -82,6 +83,14 @@ extern string pritty (tree t); // from x_display.cpp
 */
 
 void
+popup_widget_rep::handle_mouse_grab (mouse_grab_event ev) {
+  if (ev->flag) {
+    grabbed= true;
+    freeze = false;
+  }
+}
+
+void
 popup_widget_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI     x= ev->x, y= ev->y;
@@ -109,9 +118,9 @@ popup_widget_rep::handle_mouse (mouse_event ev) {
   stick = stick && (!pressed);
   if (grabbed) a[0] << emit_mouse (ev);
   if ((type != "leave") && (!stick) && (!freeze)) {
-    if (the_display->has_grab_pointer (this)) {
+    if (wk_has_pointer_grab (this)) {
       grabbed= pressed && (!leaving);
-      if (!grabbed) this << emit_mouse_grab (false);
+      if (!grabbed) wk_ungrab_pointer ();
     }
   }
 
@@ -130,8 +139,7 @@ popup_widget_rep::handle_mouse (mouse_event ev) {
 
 void
 popup_widget_rep::handle_set_integer (set_integer_event ev) {
-  if (ev->which == "grabbed") { grabbed= (ev->i != 0); stick= freeze= false; }
-  else if (ev->which == "stick") { stick= (ev->i != 0); }
+  if (ev->which == "stick") { stick= (ev->i != 0); }
   else if (ev->which == "freeze") { freeze= (ev->i != 0); }
   else fatal_error ("Could not set integer attribute " * ev->which);
 }
@@ -145,9 +153,11 @@ popup_widget_rep::handle (event ev) {
   case UPDATE_EVENT:
   case INVALIDATE_EVENT:
   case MOUSE_EVENT:
-  case MOUSE_GRAB_EVENT:
   case REPAINT_EVENT:
     return basic_widget_rep::handle (ev);
+  case MOUSE_GRAB_EVENT:
+    handle_mouse_grab (ev);
+    return true;
   case SET_INTEGER_EVENT:
     handle_set_integer (ev);
     return true;

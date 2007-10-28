@@ -378,6 +378,15 @@ send_mouse (wk_widget w, blackbox val) {
 }
 
 void
+send_mouse_grab (wk_widget w, blackbox val) {
+  typedef pair<bool,time_t> grab;
+  if (type_box (val) != type_helper<grab>::id)
+    fatal_error ("type mismatch", "send_mouse_grab");
+  grab f= open_box<grab> (val);
+  w << emit_mouse_grab (f.x1, f.x2);
+}
+
+void
 send_invalidate_all (wk_widget w, blackbox val) {
   if (!nil (val))
     fatal_error ("type mismatch", "send_invalidate_all");
@@ -555,6 +564,9 @@ wk_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_MOUSE:
     send_mouse (THIS, val);
+    break;
+  case SLOT_MOUSE_GRAB:
+    send_mouse_grab (THIS, val);
     break;
   case SLOT_INVALIDATE_ALL:
     send_invalidate_all (THIS, val);

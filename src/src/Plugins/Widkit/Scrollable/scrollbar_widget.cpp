@@ -150,21 +150,21 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
       scrolling= true;
       increment= -5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
-      this << emit_mouse_grab (true);
+      wk_grab_pointer (this);
       the_display->delayed_message (this, "scroll", 100);
     }
     else if (X >= (w-aw)) {
       scrolling= true;
       increment= 5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
-      this << emit_mouse_grab (true);
+      wk_grab_pointer (this);
       the_display->delayed_message (this, "scroll", 100);
     }
     else if (X<X1) this << emit_bar_scroll_to (sc_pos- ww);
     else if (X>X2) this << emit_bar_scroll_to (sc_pos+ ww);
     else {
       gripped= true;
-      this << emit_mouse_grab (true);
+      wk_grab_pointer (this);
       factor= ((double) (X-X1))/((double) (X2-X1));
     }
   }
@@ -172,7 +172,7 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
   if (type == "press-middle") {
     SI x= encode_position (X);
     this << emit_bar_scroll_to (x- ((after-before)>>1));
-    this << emit_mouse_grab (true);
+    wk_grab_pointer (this);
     factor= 0.5;
   }
 
@@ -192,7 +192,7 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
   if (((type == "release-left") || (type == "release-middle")) &&
       (!ev->pressed ("left")) && (!ev->pressed ("middle"))) {
     gripped= scrolling= false;
-    this << emit_mouse_grab (false);
+    wk_ungrab_pointer ();
   }
 }
 
@@ -297,21 +297,21 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
       scrolling= true;
       increment= -5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
-      this << emit_mouse_grab (true);
+      wk_grab_pointer (this);
       the_display->delayed_message (this, "scroll", 100);
     }
     else if (Y >= (h-ah)) {
       scrolling= true;
       increment= 5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
-      this << emit_mouse_grab (true);
+      wk_grab_pointer (this);
       the_display->delayed_message (this, "scroll", 100);
     }
     else if (Y<Y1) this << emit_bar_scroll_to (sc_pos- hh);
     else if (Y>Y2) this << emit_bar_scroll_to (sc_pos+ hh);
     else {
       gripped= true;
-      this << emit_mouse_grab (true);
+      wk_grab_pointer (this);
       factor= ((double) (Y-Y1))/((double) (Y2-Y1));
     }
   }
@@ -319,7 +319,7 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
   if (type == "press-middle") {
     SI y= encode_position (Y);
     this << emit_bar_scroll_to (y- ((after-before)>>1));
-    this << emit_mouse_grab (true);
+    wk_grab_pointer (this);
     factor= 0.5;
   }
 
@@ -339,7 +339,7 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
   if (((type == "release-left") || (type == "release-middle")) &&
       (!ev->pressed ("left")) && (!ev->pressed ("middle"))) {
     gripped= scrolling= false;
-    this << emit_mouse_grab (false);
+    wk_ungrab_pointer ();
   }
 }
 

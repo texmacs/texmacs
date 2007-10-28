@@ -142,7 +142,7 @@ popup_button_rep::map_popup () {
   // cout << "Mapping required " << (texmacs_time ()-start_4) << " ms\n";
 
   this << emit_invalidate_all ();
-  this << emit_mouse_grab (true);
+  wk_grab_pointer (this);
 }
 
 void
@@ -155,10 +155,10 @@ popup_button_rep::unmap_popup () {
   if (!nil (prom)) popup_w= wk_widget ();
 
   this << emit_invalidate_all ();
-  if (!the_display->has_grab_pointer (this))
+  if (!wk_has_pointer_grab (this))
     fatal_error ("I do not have the pointer grab",
 		 "popup_button_rep::unmap_popup");
-  this << emit_mouse_grab (false);
+  wk_ungrab_pointer ();
 }
 
 void
@@ -218,8 +218,8 @@ popup_button_rep::handle_mouse (mouse_event ev) {
 	if (require_map) map_popup ();
 	if (status) {
 	  consistent ("handle_mouse (2)");
-	  popup_w << set_integer ("grabbed", 1);
-	  popup_w << emit_mouse_grab (true);
+	  popup_w << set_integer ("stick", 0);
+	  wk_grab_pointer (popup_w);
 	}
       }
     }
@@ -231,9 +231,8 @@ popup_button_rep::handle_mouse (mouse_event ev) {
 	if (require_map) { map_popup (); stick= true; }
 	if (status) {
 	  consistent ("handle_mouse (3)");
-	  popup_w << set_integer ("grabbed", 1);
 	  popup_w << set_integer ("stick", 1);
-	  popup_w << emit_mouse_grab (true);
+	  wk_grab_pointer (popup_w);
 	}
       }
       else {
