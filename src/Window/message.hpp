@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 typedef enum slot_id {
+  SLOT_IDENTIFIER,
   SLOT_PS_DEVICE,
   SLOT_WINDOW,
   SLOT_VISIBILITY,
@@ -33,8 +34,7 @@ typedef enum slot_id {
   SLOT_GRAVITY,
   SLOT_GEOMETRY, // FIXME: this is a bit redundant
   SLOT_KEYBOARD,
-  SLOT_REQUEST_FOCUS,
-  SLOT_NOTIFY_FOCUS,
+  SLOT_KEYBOARD_FOCUS,
   SLOT_MOUSE,
   SLOT_REPAINT,
   SLOT_INVALIDATE_ALL,
@@ -195,6 +195,12 @@ deconnect (widget w1, slot s1, widget w2, slot s2) {
 * Standard messages
 ******************************************************************************/
 
+inline int
+get_identifier (widget w) {
+  // get low-level handle for the widget's window, as used by the OS
+  return query<int> (w, SLOT_IDENTIFIER);
+}
+
 inline ps_device
 get_ps_device (widget w) {
   // get ps_device associated to widget (or NULL if the widget is not attached)
@@ -280,15 +286,9 @@ send_keyboard (widget w, string key, time_t t= 0) {
 }
 
 inline void
-send_request_focus (widget w) {
-  // request the keyboard focus for a widget
-  send (w, SLOT_REQUEST_FOCUS);
-}
-
-inline void
-send_notify_focus (widget w, bool has_focus, time_t t= 0) {
+send_keyboard_focus (widget w, bool has_focus, time_t t= 0) {
   // notify whether the widget has the keyboard focus
-  send<bool,time_t> (w, SLOT_NOTIFY_FOCUS, has_focus, t);
+  send<bool,time_t> (w, SLOT_KEYBOARD_FOCUS, has_focus, t);
 }
 
 inline void

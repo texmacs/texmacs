@@ -173,8 +173,7 @@ public:
   void   grab_pointer (widget wid);
   void   ungrab_pointer ();
   bool   has_grab_pointer (widget w);
-  void   grab_keyboard (widget wid);
-  void   ungrab_keyboard ();
+  void   request_keyboard_focus (widget wid);
 
   /*********************** interclient communication *************************/
   tree   get_selection (widget wid, string key);

@@ -21,8 +21,11 @@ class window_rep: virtual public ps_device_rep {
 public:
   inline window_rep () {}
   inline virtual ~window_rep () {}
-  virtual widget get_widget () = 0;
 
+  virtual int get_identifier () = 0;
+    // get low-level handle for the window, as used by the operating system
+  virtual widget get_widget () = 0;
+    // get the top widget associated to the window
   virtual void set_name (string name) = 0;
     // set the window title
   virtual void set_visibility (bool flag) = 0;
@@ -37,9 +40,6 @@ public:
     // move the window
   virtual void get_position (SI& x, SI& y) = 0;
     // get the current position of the window on the screen
-  virtual void set_keyboard_focus (widget wid) = 0;
-    // forward keyboard events to the subwidget wid of the window
-
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
     // explicit request for redrawing a region in the window
   virtual void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) = 0;

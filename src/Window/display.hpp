@@ -67,8 +67,7 @@ public:
   virtual void grab_pointer (widget wid) = 0;
   virtual void ungrab_pointer () = 0;
   virtual bool has_grab_pointer (widget w) = 0;
-  virtual void grab_keyboard (widget wid) = 0;
-  virtual void ungrab_keyboard () = 0;
+  virtual void request_keyboard_focus (widget wid) = 0;
   virtual unsigned int get_kbd_modifiers () = 0;
 
   /* interclient communication */

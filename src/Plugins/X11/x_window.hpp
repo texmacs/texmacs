@@ -56,6 +56,7 @@ public:
   x_window_rep (widget w, x_display dis, char* name,
 		SI min_w, SI min_h, SI def_w, SI def_h, SI max_w, SI max_h);
   ~x_window_rep ();
+  int get_identifier ();
   widget get_widget ();
   void get_extents (int& w, int& h);
 
@@ -82,7 +83,7 @@ public:
   void   get_size (SI& w, SI& h);
   void   set_position (SI x, SI y);
   void   get_position (SI& x, SI& y);
-  void   set_keyboard_focus (widget wid);
+  void   request_keyboard_focus (widget wid);
 
   void   invalidate (SI x1, SI y1, SI x2, SI y2);
   bool   repainted ();

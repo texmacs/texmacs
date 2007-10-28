@@ -219,15 +219,10 @@ x_display_rep::has_grab_pointer (widget w) {
 }
 
 void
-x_display_rep::grab_keyboard (widget wid) { (void) wid;
-  fatal_error ("Not yet implemented", "x_display_rep::grab_keyboard");
-  // XSetInputFocus (dpy, win, RevertToNone, CurrentTime);
-}
-
-void
-x_display_rep::ungrab_keyboard () {
-  fatal_error ("Not yet implemented", "x_display_rep::ungrab_keyboard");
-  // XSetInputFocus (dpy, win, RevertToNone, CurrentTime);
+x_display_rep::request_keyboard_focus (widget wid) {
+  Window id= (Window) get_identifier (wid);
+  x_window win= (x_window) Window_to_window[id];
+  win->request_keyboard_focus (wid);
 }
 
 /******************************************************************************

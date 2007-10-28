@@ -175,6 +175,11 @@ x_window_rep::~x_window_rep () {
   XDestroyWindow (dpy, win);
 }
 
+int
+x_window_rep::get_identifier () {
+  return (int) win;
+}
+
 widget
 x_window_rep::get_widget () {
   return w;
@@ -332,14 +337,14 @@ void
 x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
-  send_notify_focus (kbd_focus, true);
+  send_keyboard_focus (kbd_focus, true);
 }
 
 void
 x_window_rep::focus_out_event () {
   if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
-  send_notify_focus (kbd_focus, false);
+  send_keyboard_focus (kbd_focus, false);
 }
 
 void
@@ -390,10 +395,10 @@ x_window_rep::repaint_invalid_regions () {
 }
 
 void
-x_window_rep::set_keyboard_focus (widget wid) {
+x_window_rep::request_keyboard_focus (widget wid) {
   if (has_focus && (kbd_focus != wid.rep)) {
-    send_notify_focus (kbd_focus, false);
-    send_notify_focus (wid, true);
+    send_keyboard_focus (kbd_focus, false);
+    send_keyboard_focus (wid, true);
   }
   kbd_focus= wid.rep;
 }
