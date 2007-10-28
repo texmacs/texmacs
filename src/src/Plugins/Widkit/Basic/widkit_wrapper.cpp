@@ -360,17 +360,10 @@ send_keyboard (wk_widget w, blackbox val) {
 }
 
 void
-send_request_focus (wk_widget w, blackbox val) {
-  if (!nil (val))
-    fatal_error ("type mismatch", "send_request_focus");
-  w->win->set_keyboard_focus (abstract (w));
-}
-
-void
-send_notify_focus (wk_widget w, blackbox val) {
+send_keyboard_focus (wk_widget w, blackbox val) {
   typedef pair<bool,time_t> focus;
   if (type_box (val) != type_helper<focus>::id)
-    fatal_error ("type mismatch", "send_notify_focus");
+    fatal_error ("type mismatch", "send_keyboard_focus");
   focus f= open_box<focus> (val);
   w << emit_keyboard_focus (f.x1, f.x2);
 }
@@ -557,11 +550,8 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_KEYBOARD:
     send_keyboard (THIS, val);
     break;
-  case SLOT_REQUEST_FOCUS:
-    send_request_focus (THIS, val);
-    break;
-  case SLOT_NOTIFY_FOCUS:
-    send_notify_focus (THIS, val);
+  case SLOT_KEYBOARD_FOCUS:
+    send_keyboard_focus (THIS, val);
     break;
   case SLOT_MOUSE:
     send_mouse (THIS, val);
@@ -637,9 +627,15 @@ wk_widget_rep::send (slot s, blackbox val) {
 blackbox
 wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
+  case SLOT_IDENTIFIER:
+    if (type_id != type_helper<int>::id)
+      fatal_error ("int expected (SLOT_IDENTIFIER)",
+		   "wk_widget_rep::query");
+    return close_box<int> (win->get_identifier ());
   case SLOT_PS_DEVICE:
     if (type_id != type_helper<ps_device>::id)
-      fatal_error ("ps_device expected", "wk_widget_rep::query");
+      fatal_error ("ps_device expected (SLOT_PS_DEVICE)",
+		   "wk_widget_rep::query");
     return close_box<ps_device> ((ps_device) win);
   case SLOT_SIZE:
     return query_size (THIS, type_id);
