@@ -206,6 +206,13 @@ get_identifier (widget w) {
   return query<int> (w, SLOT_IDENTIFIER);
 }
 
+inline void
+set_identifier (widget w, int id) {
+  // attach a widget w to the window given by its low-level identifier id
+  // if id=0, then the widget is detached from its underlying window
+  return send<int> (w, SLOT_IDENTIFIER, id);
+}
+
 inline ps_device
 get_ps_device (widget w) {
   // get ps_device associated to widget (or NULL if the widget is not attached)
