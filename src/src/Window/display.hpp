@@ -74,7 +74,7 @@ public:
   virtual unsigned int get_kbd_modifiers () = 0;
   virtual void set_help_balloon (widget wid, SI x, SI y) = 0;
   virtual void image_gc (string name= "*") = 0;
-  virtual void set_wait_indicator (string message, string arg) = 0;
+  virtual void set_wait_indicator (widget w, string message, string arg) = 0;
   virtual bool check_event (int type) = 0;
 };
 

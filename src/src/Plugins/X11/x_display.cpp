@@ -382,8 +382,6 @@ x_display_rep::translate (string s, string from, string to) {
 * X Pointers
 ******************************************************************************/
 
-window (*get_current_window) (void)= NULL; // FIXME: dirty hack
-
 // Definitions from X11/cursorfont.h
 static int
 fetch_X11_cursor_no (string name) {
@@ -611,13 +609,13 @@ x_display_rep::unmap_balloon () {
 }
 
 void
-x_display_rep::set_wait_indicator (string message, string arg) {
-  if ((get_current_window == NULL) || (message == "")) return;
+x_display_rep::set_wait_indicator (widget w, string message, string arg) {
+  int id= get_identifier (w);
+  if (id == 0 || message == "") return;
   if (arg != "") message= message * "#" * arg * "...";
   SI width= 400*PIXEL, height= 160*PIXEL;
   widget wait_wid= wait_widget (width, height, message);
-  window wait_win= get_current_window ();
-  x_window_rep* ww= (x_window_rep*) wait_win;
+  x_window ww= (x_window) Window_to_window[(Window) id];
   SI mid_x= (ww->win_w>>1)*PIXEL, mid_y= -(ww->win_h>>1)*PIXEL + height;
   SI x1= mid_x- width/2, y1= mid_y- height/2;
   SI x2= mid_x+ width/2, y2= mid_y+ height/2;
