@@ -99,4 +99,7 @@ public:
   friend Bool my_predicate (Display* dpy, XEvent* ev, XPointer arg);
 };
 
+typedef x_window_rep* x_window;
+x_window get_x_window (widget w);
+
 #endif // defined X_WINDOW_H

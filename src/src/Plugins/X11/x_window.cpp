@@ -191,6 +191,13 @@ x_window_rep::get_extents (int& w, int& h) {
   h= win_h;
 }
 
+x_window
+get_x_window (widget w) {
+  int id= get_identifier (w);
+  if (id == 0) return NULL;
+  else return (x_window) Window_to_window[(Window) id];
+}
+
 /******************************************************************************
 * Window apping and appearance
 ******************************************************************************/
