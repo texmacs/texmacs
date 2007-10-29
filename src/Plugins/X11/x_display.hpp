@@ -189,7 +189,7 @@ public:
   void   image_gc (string name);
   void   set_mouse_pointer (widget w, string name);
   void   set_mouse_pointer (widget w, string curs_name, string mask_name);
-  void   set_wait_indicator (string message, string arg);
+  void   set_wait_indicator (widget w, string message, string arg);
   bool   check_event (int type);
 
   /************************** Event processing *******************************/

@@ -35,7 +35,6 @@ extern string printing_dpi;
 extern string printing_cmd;
 extern string printing_on;
 extern int nr_windows;
-extern window (*get_current_window) (void);
 
 /******************************************************************************
 * Texmacs server constructor and destructor
@@ -52,13 +51,6 @@ texmacs_wait_handler (string message, string arg, int level) {
   (void) level;
   if (texmacs_started && the_server != NULL)
     (*the_server)->wait_handler (message, arg);
-}
-
-window
-texmacs_current_window () {
-  if (the_server == NULL)
-    fatal_error ("No server", "texmacs_current_window");
-  return concrete ((*the_server) -> get_window () -> win) -> win;
 }
 
 server
@@ -85,7 +77,6 @@ tm_server_rep::tm_server_rep ():
   initialize_guile ();
   set_interpose_handler (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
-  get_current_window= texmacs_current_window;
   out_lan= the_display->get_output_language ();
   if (is_none (tm_init_file))
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
@@ -328,7 +319,7 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  the_display -> set_wait_indicator (message, arg);
+  the_display -> set_wait_indicator (get_window () -> win, message, arg);
 }
 
 void
