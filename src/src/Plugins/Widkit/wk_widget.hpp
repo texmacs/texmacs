@@ -71,7 +71,7 @@ ostream& operator << (ostream& out, wk_widget w);
 wk_widget operator << (wk_widget w, event ev);
 
 void wk_grab_pointer (wk_widget w);
-void wk_ungrab_pointer ();
+void wk_ungrab_pointer (wk_widget w);
 bool wk_has_pointer_grab (wk_widget w);
 
 /******************************************************************************

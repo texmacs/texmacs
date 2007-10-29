@@ -155,15 +155,15 @@ operator << (ostream& out, wk_widget w) {
 
 void
 wk_grab_pointer (wk_widget w) {
-  the_display->grab_pointer (abstract (w));
+  w->win->set_mouse_grab (abstract (w), true);
 }
 
 void
-wk_ungrab_pointer () {
-  the_display->ungrab_pointer ();
+wk_ungrab_pointer (wk_widget w) {
+  w->win->set_mouse_grab (abstract (w), false);
 }
 
 bool
 wk_has_pointer_grab (wk_widget w) {
-  return the_display->has_grab_pointer (abstract (w));
+  return w->win->get_mouse_grab (abstract (w));
 }

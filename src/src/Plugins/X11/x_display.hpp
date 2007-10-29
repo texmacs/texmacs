@@ -170,10 +170,9 @@ public:
   void   get_max_size (SI& width, SI& height);
   void   set_button_state (unsigned int state);
   void   emulate_leave_enter (widget old_widget, widget new_widget);
-  void   grab_pointer (widget wid);
-  void   ungrab_pointer ();
-  bool   has_grab_pointer (widget w);
-  void   request_keyboard_focus (widget wid);
+  void   obtain_mouse_grab (widget wid);
+  void   release_mouse_grab ();
+  bool   has_mouse_grab (widget w);
 
   /*********************** interclient communication *************************/
   tree   get_selection (widget wid, string key);
@@ -188,8 +187,8 @@ public:
   void   unmap_balloon ();
   void   image_auto_gc ();
   void   image_gc (string name);
-  void   set_pointer (string name);
-  void   set_pointer (string curs_name, string mask_name);
+  void   set_mouse_pointer (widget w, string name);
+  void   set_mouse_pointer (widget w, string curs_name, string mask_name);
   void   set_wait_indicator (string message, string arg);
   bool   check_event (int type);
 

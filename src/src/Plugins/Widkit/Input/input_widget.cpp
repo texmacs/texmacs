@@ -310,7 +310,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 	if (pos >= N(s)) break;
       }
     }
-    the_display->request_keyboard_focus (this);
+    win->set_keyboard_focus (this);
     this << emit_invalidate_all ();
   }
 

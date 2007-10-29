@@ -18,9 +18,9 @@ class blackbox_rep: public abstract_struct {
 public:
   inline blackbox_rep () {}
   inline virtual ~blackbox_rep () {}
-  inline virtual int get_type () = 0;
-  inline virtual bool equal (blackbox_rep* ptr) = 0;
-  inline virtual ostream& display (ostream& out) = 0;
+  virtual int get_type () = 0;
+  virtual bool equal (blackbox_rep* ptr) = 0;
+  virtual ostream& display (ostream& out) = 0;
 };
 
 class blackbox {

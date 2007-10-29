@@ -61,7 +61,7 @@ inputs_list_command_rep::apply () {
     string answer;
     il_wid[0]["inputs"][i]["input"] << get_string ("input", answer);
     if (answer == "#f") il_wid << set_string ("return", "#f");
-    else the_display->request_keyboard_focus
+    else il_wid[0]->win->set_keyboard_focus
 	   (abstract (il_wid[0]["inputs"][i+1]["input"]));
   }
 }

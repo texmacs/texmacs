@@ -192,7 +192,7 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
   if (((type == "release-left") || (type == "release-middle")) &&
       (!ev->pressed ("left")) && (!ev->pressed ("middle"))) {
     gripped= scrolling= false;
-    wk_ungrab_pointer ();
+    wk_ungrab_pointer (this);
   }
 }
 
@@ -339,7 +339,7 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
   if (((type == "release-left") || (type == "release-middle")) &&
       (!ev->pressed ("left")) && (!ev->pressed ("middle"))) {
     gripped= scrolling= false;
-    wk_ungrab_pointer ();
+    wk_ungrab_pointer (this);
   }
 }
 

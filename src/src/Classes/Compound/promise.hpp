@@ -18,6 +18,7 @@ class tree;
 template<class T> class promise_rep;
 template<class T> class promise;
 template<class T> ostream& operator << (ostream& out, promise<T> cmd);
+template<class T> bool nil (promise<T> l);
 
 template<class T>
 class promise_rep: public abstract_struct {

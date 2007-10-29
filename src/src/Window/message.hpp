@@ -34,9 +34,12 @@ typedef enum slot_id {
   SLOT_GRAVITY,
   SLOT_GEOMETRY, // FIXME: this is a bit redundant
   SLOT_KEYBOARD,
-  SLOT_KEYBOARD_FOCUS,
+  SLOT_KEYBOARD_REQUEST_FOCUS,
+  SLOT_KEYBOARD_NOTIFY_FOCUS,
   SLOT_MOUSE,
-  SLOT_MOUSE_GRAB,
+  SLOT_MOUSE_REQUEST_GRAB,
+  SLOT_MOUSE_NOTIFY_GRAB,
+  SLOT_MOUSE_POINTER,
   SLOT_REPAINT,
   SLOT_INVALIDATE_ALL,
   SLOT_INVALIDATE,
@@ -199,6 +202,7 @@ deconnect (widget w1, slot s1, widget w2, slot s2) {
 inline int
 get_identifier (widget w) {
   // get low-level handle for the widget's window, as used by the OS
+  // widgets which have not been attached to a window have a zero identifier
   return query<int> (w, SLOT_IDENTIFIER);
 }
 
@@ -287,9 +291,15 @@ send_keyboard (widget w, string key, time_t t= 0) {
 }
 
 inline void
-send_keyboard_focus (widget w, bool has_focus, time_t t= 0) {
-  // notify whether the widget has the keyboard focus
-  send<bool,time_t> (w, SLOT_KEYBOARD_FOCUS, has_focus, t);
+send_keyboard_request_focus (widget w, bool get_focus= true) {
+  // request the keyboard focus for a widget
+  send<bool> (w, SLOT_KEYBOARD_REQUEST_FOCUS, get_focus);
+}
+
+inline void
+send_keyboard_notify_focus (widget w, bool has_focus, time_t t= 0) {
+  // notify that the widget got or lost keyboard focus
+  send<bool,time_t> (w, SLOT_KEYBOARD_NOTIFY_FOCUS, has_focus, t);
 }
 
 inline void
@@ -300,9 +310,21 @@ send_mouse (widget w, string kind, SI x, SI y, time_t t, int status) {
 }
 
 inline void
-send_mouse_grab (widget w, bool has_grab, time_t t= 0) {
-  // notify whether the widget has the keyboard focus
-  send<bool,time_t> (w, SLOT_MOUSE_GRAB, has_grab, t);
+send_mouse_request_grab (widget w, bool get_grab) {
+  // request a mouse grab for the widget
+  send<bool> (w, SLOT_MOUSE_REQUEST_GRAB, get_grab);
+}
+
+inline void
+send_mouse_notify_grab (widget w, bool has_grab, time_t t= 0) {
+  // notify that the widget got or lost the mouse grab
+  send<bool,time_t> (w, SLOT_MOUSE_NOTIFY_GRAB, has_grab, t);
+}
+
+inline void
+send_mouse_pointer (widget w, string name, string mask_name= "") {
+  // request a permanent change for the mouse pointer
+  send<string,string> (w, SLOT_MOUSE_POINTER, name, mask_name);
 }
 
 inline void

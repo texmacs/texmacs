@@ -73,10 +73,10 @@ public:
   typedef typename unary_properties<T>::norm_type norm_type;
   typedef pair<int,int> index_type;
   static inline tree index_name (index_type i) {
-    return tree (RSUB, tree (RSUB, "x", as_string (i.first + 1)),
-		 as_string (i.second + 1)); }
+    return tree (RSUB, tree (RSUB, "x", as_string (i.x1 + 1)),
+		 as_string (i.x2 + 1)); }
   static inline scalar_type access (matrix<T> m, index_type var) {
-    return m (var.first, var.second); }
+    return m (var.x1, var.x2); }
 };
 
 BINARY_TMPL

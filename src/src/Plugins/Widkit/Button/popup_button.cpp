@@ -158,7 +158,7 @@ popup_button_rep::unmap_popup () {
   if (!wk_has_pointer_grab (this))
     fatal_error ("I do not have the pointer grab",
 		 "popup_button_rep::unmap_popup");
-  wk_ungrab_pointer ();
+  wk_ungrab_pointer (this);
 }
 
 void

@@ -44,6 +44,14 @@ public:
     // explicit request for redrawing a region in the window
   virtual void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) = 0;
     // fast translation of a region in the window (used for scrolling)
+  virtual void set_keyboard_focus (widget wid, bool get_focus= true) = 0;
+    // obtain or release the keyboard focus
+  virtual void set_mouse_grab (widget wid, bool get_grab) = 0;
+    // obtain or release the mouse grab
+  virtual bool get_mouse_grab (widget w) = 0;
+    // does this widget have the mouse grab?
+  virtual void set_mouse_pointer (widget wid, string name, string mask) = 0;
+    // set the shape of the mouse pointer with a mask ("" means no mask)
 };
 
 window plain_window (widget w, string name, SI min_w, SI min_h,
