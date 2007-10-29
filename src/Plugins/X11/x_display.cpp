@@ -515,8 +515,8 @@ x_display_rep::set_mouse_pointer (widget w, string name) {
   int no= fetch_X11_cursor_no (name);
   if (no==-1) return;
   Cursor cursor=XCreateFontCursor(dpy, no);
-  int id= get_identifier (w);
-  if (id != 0) XDefineCursor(dpy, (Window) id, cursor);
+  x_window win= get_x_window (w);
+  if (win != NULL) XDefineCursor(dpy, win->win, cursor);
 }
 
 void
@@ -570,8 +570,8 @@ x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
 
   SI x= hotspot[0], y= hotspot[1];
   Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);
-  int id= get_identifier (w);
-  if (id != 0) XDefineCursor(dpy, (Window) id, cursor);
+  x_window win= get_x_window (w);
+  if (win != NULL) XDefineCursor(dpy, win->win, cursor);
 }
 
 /******************************************************************************
@@ -610,12 +610,11 @@ x_display_rep::unmap_balloon () {
 
 void
 x_display_rep::set_wait_indicator (widget w, string message, string arg) {
-  int id= get_identifier (w);
-  if (id == 0 || message == "") return;
+  x_window ww= get_x_window (w);
+  if (ww == NULL || message == "") return;
   if (arg != "") message= message * "#" * arg * "...";
   SI width= 400*PIXEL, height= 160*PIXEL;
   widget wait_wid= wait_widget (width, height, message);
-  x_window ww= (x_window) Window_to_window[(Window) id];
   SI mid_x= (ww->win_w>>1)*PIXEL, mid_y= -(ww->win_h>>1)*PIXEL + height;
   SI x1= mid_x- width/2, y1= mid_y- height/2;
   SI x2= mid_x+ width/2, y2= mid_y+ height/2;
