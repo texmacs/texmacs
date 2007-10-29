@@ -39,7 +39,6 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     set_visibility (popup_win, false);
     destroy_window_widget (popup_win);
     popup_win= widget ();
-    the_display -> ungrab_pointer ();
   }
 
   if (inside_graphics (false)) {
@@ -207,7 +206,7 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     popup_win= popup_window_widget (popup_wid, "Popup menu");
     set_position (popup_win, wx+ ox+ x, wy+ oy+ y);
     set_visibility (popup_win, true);
-    the_display -> grab_pointer (this);
+    the_display -> request_keyboard_focus (this);
     the_display -> grab_pointer (popup_wid);
   }
 }
