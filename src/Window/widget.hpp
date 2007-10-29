@@ -44,7 +44,7 @@ protected:
 
 public:
   widget_rep ();
-  virtual inline ~widget_rep ();
+  virtual ~widget_rep ();
   virtual ostream& print (ostream& out);
 
   virtual void send (slot s, blackbox val);

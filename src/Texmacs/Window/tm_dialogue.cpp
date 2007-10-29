@@ -145,8 +145,8 @@ tm_frame_rep::choose_file (object fun, string title, string type) {
   else set_directory (wid, ".");
   dialogue_start (title, wid);
   if (type == "directory")
-    the_display -> request_keyboard_focus (get_directory (dialogue_wid));
-  else the_display -> request_keyboard_focus (get_file (dialogue_wid));
+    send_keyboard_request_focus (get_directory (dialogue_wid));
+  else send_keyboard_request_focus (get_file (dialogue_wid));
 }
 
 /******************************************************************************
@@ -247,7 +247,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     string title= "Enter data";
     if (ends (prompts[0], "?")) title= "Question";
     dialogue_start (title, wid);
-    the_display -> request_keyboard_focus (get_form_field (dialogue_wid, 0));
+    send_keyboard_request_focus (get_form_field (dialogue_wid, 0));
   }
   else {
     if (get_window () -> get_interactive_mode ()) beep ();

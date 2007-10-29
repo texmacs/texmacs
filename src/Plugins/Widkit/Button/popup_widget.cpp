@@ -120,7 +120,7 @@ popup_widget_rep::handle_mouse (mouse_event ev) {
   if ((type != "leave") && (!stick) && (!freeze)) {
     if (wk_has_pointer_grab (this)) {
       grabbed= pressed && (!leaving);
-      if (!grabbed) wk_ungrab_pointer ();
+      if (!grabbed) wk_ungrab_pointer (this);
     }
   }
 

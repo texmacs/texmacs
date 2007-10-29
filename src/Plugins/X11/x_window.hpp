@@ -83,7 +83,10 @@ public:
   void   get_size (SI& w, SI& h);
   void   set_position (SI x, SI y);
   void   get_position (SI& x, SI& y);
-  void   request_keyboard_focus (widget wid);
+  void   set_keyboard_focus (widget wid, bool get_focus);
+  void   set_mouse_grab (widget wid, bool get_grab);
+  bool   get_mouse_grab (widget w);
+  void   set_mouse_pointer (widget wid, string name, string mask);
 
   void   invalidate (SI x1, SI y1, SI x2, SI y2);
   bool   repainted ();

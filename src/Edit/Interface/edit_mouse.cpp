@@ -88,7 +88,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   }
   if (type == "release-left" || type == "release-right") {
     dragging= right_dragging= false;
-    the_display -> ungrab_pointer ();
+    send_mouse_request_grab (this, false);
     if ((t >= last_click) && ((t - last_click) <= 250)) {
       last_click= t;
       if (mouse_extra_click (x, y))
@@ -122,7 +122,7 @@ edit_interface_rep::mouse_click (SI x, SI y) {
   start_y   = y;
   start_drag= dragging= true;
   start_right_drag= right_dragging= false;
-  the_display -> grab_pointer (this);
+  send_mouse_request_grab (this, true);
 }
 
 bool
@@ -206,8 +206,8 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     popup_win= popup_window_widget (popup_wid, "Popup menu");
     set_position (popup_win, wx+ ox+ x, wy+ oy+ y);
     set_visibility (popup_win, true);
-    the_display -> request_keyboard_focus (this);
-    the_display -> grab_pointer (popup_wid);
+    send_keyboard_request_focus (this);
+    send_mouse_request_grab (popup_wid, true);
   }
 }
 
@@ -268,14 +268,14 @@ edit_interface_rep::get_cursor () {
 
 void
 edit_interface_rep::set_pointer (string name) {
-  the_display->set_pointer(name);
+  send_mouse_pointer (this, name);
 }
 
 void
 edit_interface_rep::set_pointer (
   string curs_name, string mask_name)
 {
-  the_display->set_pointer(curs_name, mask_name);
+  send_mouse_pointer (this, curs_name, mask_name);
 }
 
 /******************************************************************************

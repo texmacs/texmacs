@@ -180,25 +180,25 @@ pritty (tree t) {
 */
 
 void
-x_display_rep::grab_pointer (widget wid) {
+x_display_rep::obtain_mouse_grab (widget wid) {
   Window win= ((x_window) concrete (wid)->win)->win;
   if ((!nil (grab_ptr)) && (wid==grab_ptr->item)) return;
   widget old_widget; if (!nil (grab_ptr)) old_widget= grab_ptr->item;
   grab_ptr= list<widget> (wid, grab_ptr);
   widget new_widget= grab_ptr->item;
-  send_mouse_grab (new_widget, true);
+  send_mouse_notify_grab (new_widget, true);
   XGrabPointer (dpy, win, false,
 		PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
   // cout << "\n---> In grab " << pritty ((tree) wid) << "\n\n";
   if (!nil (old_widget)) {
-    send_mouse_grab (old_widget, false);
+    send_mouse_notify_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
 }
 
 void
-x_display_rep::ungrab_pointer () {
+x_display_rep::release_mouse_grab () {
   if (nil (grab_ptr)) return;
   widget old_widget= grab_ptr->item;
   grab_ptr= grab_ptr->next;
@@ -209,26 +209,19 @@ x_display_rep::ungrab_pointer () {
   }
   else {
     x_window grab_win= (x_window) concrete (new_widget)->win;
-    send_mouse_grab (new_widget, true);    
+    send_mouse_notify_grab (new_widget, true);    
     XGrabPointer (dpy, grab_win->win, false,
 		  PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		  GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
     // cout << "\n---> In grab " << pritty ((tree) new_widget) << "\n\n";
-    send_mouse_grab (old_widget, false);
+    send_mouse_notify_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
 }
 
 bool
-x_display_rep::has_grab_pointer (widget w) {
+x_display_rep::has_mouse_grab (widget w) {
   return (!nil (grab_ptr)) && (grab_ptr->item == w);
-}
-
-void
-x_display_rep::request_keyboard_focus (widget wid) {
-  Window id= (Window) get_identifier (wid);
-  x_window win= (x_window) Window_to_window[id];
-  win->request_keyboard_focus (wid);
 }
 
 /******************************************************************************
@@ -520,33 +513,33 @@ fetch_X11_cursor_no (string name) {
 }
 
 void
-x_display_rep::set_pointer (string name) {
+x_display_rep::set_mouse_pointer (widget w, string name) {
   int no= fetch_X11_cursor_no (name);
   if (no==-1) return;
   Cursor cursor=XCreateFontCursor(dpy, no);
-  if (get_current_window != NULL)
-    XDefineCursor(dpy, ((x_window_rep*)get_current_window())->win, cursor);
+  int id= get_identifier (w);
+  if (id != 0) XDefineCursor(dpy, (Window) id, cursor);
 }
 
 void
-x_display_rep::set_pointer (string curs_name, string mask_name) {
+x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
-  if (mask_name=="") mask_name= curs_name;
+  if (mask_name=="") mask_name= name;
   x_drawable_rep* dra= new x_drawable_rep (this);
-  dra->xpm_initialize (curs_name);
-  if (mask_name!=curs_name) dra->xpm_initialize (mask_name);
+  dra->xpm_initialize (name);
+  if (mask_name!=name) dra->xpm_initialize (mask_name);
   delete dra;
-  Pixmap curs= (Pixmap) xpm_bitmap [curs_name];
+  Pixmap curs= (Pixmap) xpm_bitmap [name];
   Pixmap mask= (Pixmap) xpm_bitmap [mask_name];
 
-  if (!xpm_cache->contains (curs_name))
-    xpm_cache (curs_name)= xpm_load (curs_name);
+  if (!xpm_cache->contains (name))
+    xpm_cache (name)= xpm_load (name);
 
   if (!xpm_cache->contains (mask_name))
     xpm_cache (mask_name)= xpm_load (mask_name);
 
-  array<string> cnames_curs= xpm_colors (xpm_cache[curs_name]);
-  array<SI> hotspot= xpm_hotspot (xpm_cache[curs_name]);
+  array<string> cnames_curs= xpm_colors (xpm_cache[name]);
+  array<SI> hotspot= xpm_hotspot (xpm_cache[name]);
   if (N(hotspot) == 0)
     fatal_error ("Missing hotspot", "x_display_rep::set_pointer");
   array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
@@ -579,8 +572,8 @@ x_display_rep::set_pointer (string curs_name, string mask_name) {
 
   SI x= hotspot[0], y= hotspot[1];
   Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);
-  if (get_current_window != NULL)
-    XDefineCursor(dpy, ((x_window_rep*)get_current_window())->win, cursor);
+  int id= get_identifier (w);
+  if (id != 0) XDefineCursor(dpy, (Window) id, cursor);
 }
 
 /******************************************************************************

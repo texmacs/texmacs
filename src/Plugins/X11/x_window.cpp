@@ -337,14 +337,14 @@ void
 x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
-  send_keyboard_focus (kbd_focus, true);
+  send_keyboard_notify_focus (kbd_focus, true);
 }
 
 void
 x_window_rep::focus_out_event () {
   if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
-  send_keyboard_focus (kbd_focus, false);
+  send_keyboard_notify_focus (kbd_focus, false);
 }
 
 void
@@ -395,12 +395,32 @@ x_window_rep::repaint_invalid_regions () {
 }
 
 void
-x_window_rep::request_keyboard_focus (widget wid) {
+x_window_rep::set_keyboard_focus (widget wid, bool get_focus) {
+  if (!get_focus)
+    fatal_error ("Explicit loss of keyboard focus not yet implemented",
+		 "x_window_rep::set_keyboard_focus");
   if (has_focus && (kbd_focus != wid.rep)) {
-    send_keyboard_focus (kbd_focus, false);
-    send_keyboard_focus (wid, true);
+    send_keyboard_notify_focus (kbd_focus, false);
+    send_keyboard_notify_focus (wid, true);
   }
   kbd_focus= wid.rep;
+}
+
+void
+x_window_rep::set_mouse_grab (widget wid, bool get_grab) {
+  if (get_grab) dis->obtain_mouse_grab (wid);
+  else dis->release_mouse_grab ();
+}
+
+bool
+x_window_rep::get_mouse_grab (widget w) {
+  return dis->has_mouse_grab (w);
+}
+
+void
+x_window_rep::set_mouse_pointer (widget wid, string name, string mask) {
+  if (mask == "") dis->set_mouse_pointer (wid, name);
+  else dis->set_mouse_pointer (wid, name, mask);
 }
 
 /******************************************************************************
