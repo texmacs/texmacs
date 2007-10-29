@@ -22,8 +22,6 @@ public:
   inline window_rep () {}
   inline virtual ~window_rep () {}
 
-  virtual int get_identifier () = 0;
-    // get low-level handle for the window, as used by the operating system
   virtual widget get_widget () = 0;
     // get the top widget associated to the window
   virtual void set_name (string name) = 0;
@@ -56,7 +54,13 @@ public:
 
 window plain_window (widget w, string name, SI min_w, SI min_h,
 		     SI def_w, SI def_h, SI max_w, SI max_h);
+  // construct a plain window with a given name and size hints
 window popup_window (widget w, string name, SI min_w, SI min_h,
 		     SI def_w, SI def_h, SI max_w, SI max_h);
+  // construct a popup window with a given name and size hints
+int get_identifier (window w);
+  // get low-level handle for the window, as used by the operating system
+window get_window (int id);
+  // determine the window as a function of its identifier
 
 #endif // defined WINDOW_H

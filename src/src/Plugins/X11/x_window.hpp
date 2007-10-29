@@ -56,7 +56,6 @@ public:
   x_window_rep (widget w, x_display dis, char* name,
 		SI min_w, SI min_h, SI def_w, SI def_h, SI max_w, SI max_h);
   ~x_window_rep ();
-  int get_identifier ();
   widget get_widget ();
   void get_extents (int& w, int& h);
 
@@ -97,9 +96,11 @@ public:
   friend class x_display_rep;
   friend class x_drawable_rep;
   friend Bool my_predicate (Display* dpy, XEvent* ev, XPointer arg);
+  friend int get_identifier (window w);
 };
 
 typedef x_window_rep* x_window;
+Window get_Window (widget w);
 x_window get_x_window (widget w);
 
 #endif // defined X_WINDOW_H

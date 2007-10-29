@@ -556,6 +556,10 @@ check_type_void (blackbox bb, string s) {
 void
 wk_widget_rep::send (slot s, blackbox val) {
   switch (s) {
+  case SLOT_IDENTIFIER:
+    check_type<int> (val, "SLOT_IDENTIFIER");
+    THIS << emit_attach_window (get_window (open_box<int> (val)));
+    break;
   case SLOT_VISIBILITY:
     check_type<bool> (val, "SLOT_VISIBILITY");
     win->set_visibility (open_box<bool> (val));
@@ -673,10 +677,8 @@ wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_IDENTIFIER:
     if (type_id != type_helper<int>::id)
-      fatal_error ("int expected (SLOT_IDENTIFIER)",
-		   "wk_widget_rep::query");
-    if (win == NULL) close_box<int> (0);
-    return close_box<int> (win->get_identifier ());
+      fatal_error ("int expected (SLOT_IDENTIFIER)", "wk_widget_rep::query");
+    return close_box<int> (get_identifier (win));
   case SLOT_PS_DEVICE:
     if (type_id != type_helper<ps_device>::id)
       fatal_error ("ps_device expected (SLOT_PS_DEVICE)",

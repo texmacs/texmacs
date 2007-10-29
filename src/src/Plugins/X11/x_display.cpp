@@ -138,23 +138,23 @@ x_display_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
   SI root_x, root_y, x, y;
   unsigned int mask;
 
-  XQueryPointer (dpy, ((x_window) concrete (old_widget)->win)->win,
+  XQueryPointer (dpy, get_Window (old_widget),
 		 &root, &child, &root_x, &root_y, &x, &y, &mask);
   set_button_state (mask);
   x= (x * PIXEL);
   y= ((-y) * PIXEL);
-  // cout << "\nLeave " << ((tree) concrete (old_widget)) << " {\n";
+  // cout << "\nLeave " << old_widget << "\n";
   send_mouse (old_widget, "leave", x, y, 0, state);
-  // cout << "}\n";
+  // cout << "Leave OK\n";
 
-  XQueryPointer (dpy, ((x_window) concrete (new_widget)->win)->win,
+  XQueryPointer (dpy, get_Window (new_widget),
 		 &root, &child, &root_x, &root_y, &x, &y, &mask);
   set_button_state (mask);
   x= (x * PIXEL);
   y= ((-y) * PIXEL);
-  // cout << "Enter " << ((tree) concrete (new_widget)) << " {\n";
+  // cout << "Enter " << new_widget << "\n";
   send_mouse (new_widget, "enter", x, y, 0, state);
-  // cout << "}\n\n";
+  // cout << "Enter OK\n\n";
 }
 
 /******************************************************************************
@@ -181,7 +181,7 @@ pritty (tree t) {
 
 void
 x_display_rep::obtain_mouse_grab (widget wid) {
-  Window win= ((x_window) concrete (wid)->win)->win;
+  Window win= get_Window (wid);
   if ((!nil (grab_ptr)) && (wid==grab_ptr->item)) return;
   widget old_widget; if (!nil (grab_ptr)) old_widget= grab_ptr->item;
   grab_ptr= list<widget> (wid, grab_ptr);
@@ -208,12 +208,12 @@ x_display_rep::release_mouse_grab () {
     // cout << "\n---> No grab\n\n";
   }
   else {
-    x_window grab_win= (x_window) concrete (new_widget)->win;
+    x_window grab_win= get_x_window (new_widget);
     send_mouse_notify_grab (new_widget, true);    
     XGrabPointer (dpy, grab_win->win, false,
 		  PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		  GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
-    // cout << "\n---> In grab " << pritty ((tree) new_widget) << "\n\n";
+    // cout << "\n---> In grab " << new_widget << "\n";
     send_mouse_notify_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
@@ -240,15 +240,15 @@ x_display_rep::get_selection (widget wid, string key) {
   if (key != "primary") return "none";
   if (XGetSelectionOwner (dpy, XA_PRIMARY) == None) return "none";
   
-  Window win= ((x_window) concrete (wid)->win)->win;
+  Window win= get_Window (wid);
   Atom data= XInternAtom (dpy, "MY_STRING_SELECTION", false);
   XConvertSelection (dpy, XA_PRIMARY, XA_STRING, data, win, CurrentTime);
 
   int i;
   XEvent ev;
   for (i=0; i<1000000; i++)
-    if (XCheckIfEvent (dpy, &ev, my_predicate,
-		       (XPointer) ((x_window) concrete (wid)->win))) break;
+    if (XCheckIfEvent (dpy, &ev, my_predicate, (XPointer) get_x_window (wid)))
+      break;
   if (i==1000000) return "none";
   XSelectionEvent& sel= ev.xselection;
 
@@ -276,7 +276,7 @@ bool
 x_display_rep::set_selection (widget wid, string key, tree t, string s) {
   selections (key)= copy (t);
   if (key == "primary") {
-    Window win= ((x_window) concrete (wid)->win)->win;
+    Window win= get_Window (wid);
     if (selection!=NULL) delete[] selection;
     XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
     if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
@@ -305,7 +305,7 @@ message::message (widget wid, string s, time_t t):
 
 ostream&
 operator << (ostream& out, message m) {
-  return out << "message " << m->s << " to " << concrete (m->wid)
+  return out << "message " << m->s << " to " << m->wid
 	     << "at time " << m->t << "\n";
 }
 
@@ -358,10 +358,10 @@ x_display_rep::set_output_language (string s) {
 
   iterator<Window> it= iterate (Window_to_window);
   while (it->busy()) {
-    x_window win= (x_window) Window_to_window[it->next()];
+    x_window win= (x_window) Window_to_window [it->next()];
     bool flag;
     concrete (win->w) << ::set_language (s, flag);
-    if (flag && concrete (win->w) -> attached ())
+    if (flag && get_x_window (win->w) != NULL)
       concrete (win->w) << emit_update ();
   }
 }
@@ -592,7 +592,7 @@ void
 x_display_rep::map_balloon () {
   widget win_wid= popup_window_widget (balloon_wid, "Balloon");
   set_position (win_wid, balloon_x, balloon_y);
-  balloon_win= concrete (win_wid) -> win;
+  balloon_win= (window) get_x_window (win_wid);
   balloon_win->set_visibility (true);
 }
 
@@ -620,7 +620,7 @@ x_display_rep::set_wait_indicator (widget w, string message, string arg) {
   SI x2= mid_x+ width/2, y2= mid_y+ height/2;
   widget old_wid= ww->w;
   ww->w= wait_wid;
-  concrete (wait_wid) << emit_attach_window (ww);
+  set_identifier (wait_wid, (int) ww->win);
   set_geometry (wait_wid, x1, y1, x2-x1, y2-y1);
   send_invalidate_all (wait_wid);
   ww->repaint_invalid_regions ();

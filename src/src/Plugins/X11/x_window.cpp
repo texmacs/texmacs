@@ -85,8 +85,6 @@ x_window_rep::initialize () {
   full_screen_flag= false;
   
   // int start_1= texmacs_time ();
-  concrete (w) << emit_attach_window (this);
-  set_geometry (abstract (concrete (w) [0]), 0, 0, def_w, def_h);
   set_origin (0, 0);
   decode (def_w, def_h); def_h= -def_h;
   decode (min_w, min_h); min_h= -min_h;
@@ -149,6 +147,8 @@ x_window_rep::initialize () {
 
   nr_windows++;
   Window_to_window (win)= (void*) this;
+  set_identifier (w, (int) win);
+  set_geometry (abstract (concrete (w) [0]), 0, 0, Def_w, Def_h);
 }
 
 x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
@@ -164,7 +164,7 @@ x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
 }
 
 x_window_rep::~x_window_rep () {
-  concrete (w) << emit_attach_window (NULL);
+  set_identifier (w, 0);
 
   XEvent report;
   while (XCheckWindowEvent (dpy, win, 0xffffffff, &report));
@@ -173,11 +173,6 @@ x_window_rep::~x_window_rep () {
   Window_to_window->reset (win);
   nr_windows--;
   XDestroyWindow (dpy, win);
-}
-
-int
-x_window_rep::get_identifier () {
-  return (int) win;
 }
 
 widget
@@ -191,11 +186,32 @@ x_window_rep::get_extents (int& w, int& h) {
   h= win_h;
 }
 
+Window
+get_Window (widget w) {
+  int id= get_identifier (w);
+  if (id == 0) {
+    cerr << "\nwidget = " << w << "\n";
+    fatal_error ("widget is not attached to a window", "get_Window");
+  }
+  return (Window) id;
+}
+
 x_window
 get_x_window (widget w) {
   int id= get_identifier (w);
   if (id == 0) return NULL;
   else return (x_window) Window_to_window[(Window) id];
+}
+
+int
+get_identifier (window w) {
+  return (int) (((x_window) w) -> win);
+}
+
+window
+get_window (int id) {
+  if (id == 0) return NULL;
+  else return (window) ((x_window) Window_to_window[(Window) id]);
 }
 
 /******************************************************************************
@@ -356,16 +372,16 @@ x_window_rep::focus_out_event () {
 
 void
 x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
-  if (nil (dis->grab_ptr) || (!concrete (dis->grab_ptr->item)->win)) {
+  if (nil (dis->grab_ptr) || (get_x_window (dis->grab_ptr->item) == NULL)) {
     set_origin (0, 0);
     encode (x, y);
     send_mouse (w, ev, x, y, t, dis->state);
   }
   else {
-    x_window grab_win= (x_window) concrete (dis->grab_ptr->item)->win;
-    if (((window) this) != concrete (dis->grab_ptr->item)->win) {
-      x += win_x- grab_win->win_x;
-      y += win_y- grab_win->win_y;
+    x_window grab_win= get_x_window (dis->grab_ptr->item);
+    if (this != grab_win) {
+      x += win_x - grab_win->win_x;
+      y += win_y - grab_win->win_y;
       // return;
     }
     set_origin (0, 0);
