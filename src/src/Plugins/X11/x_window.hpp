@@ -36,7 +36,6 @@ class x_window_rep: public x_drawable_rep, public window_rep {
   SI            Max_w, Max_h;
   int           win_x, win_y;
   int           win_w, win_h;
-  bool          win_flag;
 
   bool          ic_ok;
   XIC           ic;
