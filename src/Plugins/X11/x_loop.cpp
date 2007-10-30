@@ -15,7 +15,6 @@
 #include "iterator.hpp"
 #include "converter.hpp"
 #include "socket_server.hpp"
-#include "Widkit/wk_widget.hpp"
 #include "message.hpp"
 
 #ifdef OS_WIN32

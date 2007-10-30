@@ -18,7 +18,6 @@
 #include "iterator.hpp"
 #include "image_files.hpp"
 #include <X11/cursorfont.h>
-#include "Widkit/wk_widget.hpp"
 #include "message.hpp"
 
 extern hashmap<Window,pointer> Window_to_window;
