@@ -16,6 +16,7 @@
 #include "converter.hpp"
 #include "socket_server.hpp"
 #include "Widkit/wk_widget.hpp"
+#include "message.hpp"
 
 #ifdef OS_WIN32
 #include <sys/time.h>
@@ -393,7 +394,7 @@ x_display_rep::event_loop () {
       message m= messages->item;
       if ((m->t - ct) <= 0) {
 	messages= messages->next;
-	concrete (m->wid) << emit_alarm (m->s, m->t);
+	send_delayed_message (m->wid, m->s, m->t);
       }
       else break;
     }

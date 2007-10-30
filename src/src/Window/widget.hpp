@@ -94,7 +94,7 @@ operator << (ostream& out, widget w) {
 *   virtual void handle_mouse (string kind, SI x, SI y, time_t t, int status);
 *   virtual void handle_set_shrinking_factor (int sf);
 *   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
-*   virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
+*   virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2);
 ******************************************************************************/
 
 widget horizontal_list (array<widget> a);

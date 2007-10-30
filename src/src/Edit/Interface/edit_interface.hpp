@@ -174,7 +174,7 @@ public:
   void handle_mouse (string kind, SI x, SI y, time_t t, int status);
   void handle_set_shrinking_factor (int sf);
   void handle_clear (SI x1, SI y1, SI x2, SI y2);
-  void handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
+  void handle_repaint (SI x1, SI y1, SI x2, SI y2);
 
   friend class interactive_command_rep;
   friend class tm_window_rep;
