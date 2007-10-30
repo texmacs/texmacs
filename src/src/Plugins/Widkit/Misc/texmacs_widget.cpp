@@ -13,6 +13,7 @@
 #include "window.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/Event/attribute_event.hpp"
+#include "message.hpp"
 
 #define THIS (wk_widget (this))
 
@@ -241,10 +242,8 @@ texmacs_widget_rep::set_footer_mode (int new_mode) {
   int old_mode= get_footer_mode ();
   if (old_mode != new_mode) {
     wk_widget iac= THIS ["footer"] ["interactive"];
-    if (old_mode == 1) {
-      iac ["middle"] << emit_keyboard_focus(false);
-      THIS ["canvas"] << emit_keyboard_focus (true);
-    }
+    if (old_mode == 1)
+      send_keyboard_focus (abstract (THIS ["canvas"]));
 
     SI ww1= 600*PIXEL, hh1=18*PIXEL, ww2=600*PIXEL, hh2=18*PIXEL;
     THIS ["footer"] << get_size (ww1, hh1);
@@ -257,8 +256,7 @@ texmacs_widget_rep::set_footer_mode (int new_mode) {
 
     if (new_mode == 1) {
       iac << emit_update ();
-      THIS ["canvas"] << emit_keyboard_focus (false);
-      iac  ["middle"] << emit_keyboard_focus (true);
+      send_keyboard_focus (abstract (iac ["middle"]));
     }
   }
 }

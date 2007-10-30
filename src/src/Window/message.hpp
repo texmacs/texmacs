@@ -35,11 +35,9 @@ typedef enum slot_id {
   SLOT_GEOMETRY, // FIXME: this is a bit redundant
   SLOT_UPDATE,
   SLOT_KEYBOARD,
-  SLOT_KEYBOARD_REQUEST_FOCUS,
-  SLOT_KEYBOARD_NOTIFY_FOCUS,
+  SLOT_KEYBOARD_FOCUS,
   SLOT_MOUSE,
-  SLOT_MOUSE_REQUEST_GRAB,
-  SLOT_MOUSE_NOTIFY_GRAB,
+  SLOT_MOUSE_GRAB,
   SLOT_MOUSE_POINTER,
   SLOT_REPAINT,
   SLOT_INVALIDATE_ALL,
@@ -335,15 +333,15 @@ send_keyboard (widget w, string key, time_t t= 0) {
 }
 
 inline void
-send_keyboard_request_focus (widget w, bool get_focus= true) {
+send_keyboard_focus (widget w, bool get_focus= true) {
   // request the keyboard focus for a widget
-  send<bool> (w, SLOT_KEYBOARD_REQUEST_FOCUS, get_focus);
+  send<bool> (w, SLOT_KEYBOARD_FOCUS, get_focus);
 }
 
 inline void
-send_keyboard_notify_focus (widget w, bool has_focus, time_t t= 0) {
+notify_keyboard_focus (widget w, bool has_focus) {
   // notify that the widget got or lost keyboard focus
-  send<bool,time_t> (w, SLOT_KEYBOARD_NOTIFY_FOCUS, has_focus, t);
+  notify<bool> (w, SLOT_KEYBOARD_FOCUS, has_focus);
 }
 
 inline void
@@ -354,15 +352,15 @@ send_mouse (widget w, string kind, SI x, SI y, time_t t, int status) {
 }
 
 inline void
-send_mouse_request_grab (widget w, bool get_grab) {
+send_mouse_grab (widget w, bool get_grab) {
   // request a mouse grab for the widget
-  send<bool> (w, SLOT_MOUSE_REQUEST_GRAB, get_grab);
+  send<bool> (w, SLOT_MOUSE_GRAB, get_grab);
 }
 
 inline void
-send_mouse_notify_grab (widget w, bool has_grab, time_t t= 0) {
+notify_mouse_grab (widget w, bool has_grab) {
   // notify that the widget got or lost the mouse grab
-  send<bool,time_t> (w, SLOT_MOUSE_NOTIFY_GRAB, has_grab, t);
+  notify<bool> (w, SLOT_MOUSE_GRAB, has_grab);
 }
 
 inline void
