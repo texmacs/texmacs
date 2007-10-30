@@ -26,7 +26,7 @@ public:
   virtual void handle_mouse (string kind, SI x, SI y, time_t t, int status);
   virtual void handle_set_shrinking_factor (int sf);
   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
-  virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);
+  virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2);
 
   void handle_get_size (get_size_event ev);
   void handle_attach_window (attach_window_event ev);

@@ -402,13 +402,10 @@ x_window_rep::repaint_invalid_regions () {
     encode (r->x1, r->y1);
     encode (r->x2, r->y2);
     x_drawable_rep::set_clipping (r->x1, r->y2, r->x2, r->y1);
-    bool stop_flag= false;
-    concrete (w) << emit_repaint (r->x1, r->y2, r->x2, r->y1, stop_flag);
-    switch (stop_flag) {
-    case true : new_regions= rectangles (invalid_regions->item, new_regions);
-    case false: invalid_regions= invalid_regions->next; break;
-    default   : invalid_regions << new_regions; return;
-    }
+    send_repaint (w, r->x1, r->y2, r->x2, r->y1);
+    if (interrupted ())
+      new_regions= rectangles (invalid_regions->item, new_regions);
+    invalid_regions= invalid_regions->next;
   }
   invalid_regions= new_regions;
 }

@@ -15,6 +15,9 @@
 #include "widget.hpp"
 
 class wk_widget;
+class rectangle;
+template<class T> class list;
+typedef list<rectangle> rectangles;
 
 /******************************************************************************
 * The event class

@@ -60,8 +60,8 @@ simple_widget_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) stop;
+simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 /******************************************************************************
@@ -111,5 +111,5 @@ simple_widget_rep::handle_clear (clear_event ev) {
 
 void
 simple_widget_rep::handle_repaint (repaint_event ev) {
-  handle_repaint (ev->x1, ev->y1, ev->x2, ev->y2, ev->stop);
+  handle_repaint (ev->x1, ev->y1, ev->x2, ev->y2);
 }

@@ -24,8 +24,8 @@
 
 typedef enum slot_id {
   SLOT_IDENTIFIER,
-  SLOT_PS_DEVICE,
   SLOT_WINDOW,
+  SLOT_PS_DEVICE,
   SLOT_VISIBILITY,
   SLOT_FULL_SCREEN,
   SLOT_NAME,
@@ -39,10 +39,10 @@ typedef enum slot_id {
   SLOT_MOUSE,
   SLOT_MOUSE_GRAB,
   SLOT_MOUSE_POINTER,
-  SLOT_REPAINT,
-  SLOT_INVALIDATE_ALL,
   SLOT_INVALIDATE,
-  SLOT_INVALID,
+  SLOT_INVALIDATE_ALL,
+  SLOT_REPAINT,
+  SLOT_DELAYED_MESSAGE,
   SLOT_DESTROY,
 
   SLOT_SHRINKING_FACTOR,
@@ -228,16 +228,16 @@ set_identifier (widget w, int id) {
   return send<int> (w, SLOT_IDENTIFIER, id);
 }
 
-inline ps_device
-get_ps_device (widget w) {
-  // get ps_device associated to widget (or NULL if the widget is not attached)
-  return query<ps_device> (w, SLOT_PS_DEVICE);
-}
-
 inline widget
 get_window (widget w) {
   // get the top-level window widget in which the widget is embedded
   return read (w, SLOT_WINDOW);
+}
+
+inline ps_device
+get_ps_device (widget w) {
+  // get ps_device associated to widget (or NULL if the widget is not attached)
+  return query<ps_device> (w, SLOT_PS_DEVICE);
 }
 
 inline void
@@ -370,12 +370,6 @@ send_mouse_pointer (widget w, string name, string mask_name= "") {
 }
 
 inline void
-send_repaint (widget w, SI x1, SI y1, SI x2, SI y2) {
-  // request widget to repaint a region
-  send<SI,SI,SI,SI> (w, SLOT_REPAINT, x1, y1, x2, y2);
-}
-
-inline void
 send_invalidate_all (widget w) {
   // invalidate the widget so that it will be repaint at a next iteration
   send (w, SLOT_INVALIDATE_ALL);
@@ -387,10 +381,16 @@ send_invalidate (widget w, SI x1, SI y1, SI x2, SI y2) {
   send<SI,SI,SI,SI> (w, SLOT_INVALIDATE, x1, y1, x2, y2);
 }
 
-inline rectangles
-get_invalid (widget w) {
-  // get the rectangles of a widget which need to be repaint
-  return query<rectangles> (w, SLOT_INVALID);
+inline void
+send_repaint (widget w, SI x1, SI y1, SI x2, SI y2) {
+  // request widget to repaint a region
+  send<SI,SI,SI,SI> (w, SLOT_REPAINT, x1, y1, x2, y2);
+}
+
+inline void
+send_delayed_message (widget w, string message, time_t t) {
+  // send a message to w which will only be received at time t
+  send<string,time_t> (w, SLOT_DELAYED_MESSAGE, message, t);
 }
 
 inline void

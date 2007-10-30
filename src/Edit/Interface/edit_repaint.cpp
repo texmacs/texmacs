@@ -304,8 +304,7 @@ edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
-  ps_device win= get_ps_device (this);
+edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   if (env_change != 0)
     system_warning ("Invalid situation (" * as_string (env_change) * ")",
 		    "(edit_interface_rep::handle_repaint)");
@@ -323,7 +322,6 @@ edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
 
   // cout << "Repainting\n";
   draw_with_stored (rectangle (x1, y1, x2, y2) * sfactor);
-  if (win->interrupted ()) stop= true;
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
   // cout << "Repainted\n";

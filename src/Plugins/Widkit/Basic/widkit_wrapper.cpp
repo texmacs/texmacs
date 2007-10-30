@@ -424,13 +424,6 @@ send_mouse_pointer (wk_widget w, blackbox val) {
 }
 
 void
-send_invalidate_all (wk_widget w, blackbox val) {
-  if (!nil (val))
-    fatal_error ("type mismatch", "send_invalidate_all");
-  w << emit_invalidate_all ();
-}
-
-void
 send_invalidate (wk_widget w, blackbox val) {
   typedef quadruple<SI,SI,SI,SI> coord4;
   if (type_box (val) != type_helper<coord4>::id)
@@ -438,6 +431,32 @@ send_invalidate (wk_widget w, blackbox val) {
   coord4 p= open_box<coord4> (val);
   w << emit_invalidate (w->ox + p.x1, w->oy + p.x2,
 			w->ox + p.x3, w->oy + p.x4);
+}
+
+void
+send_invalidate_all (wk_widget w, blackbox val) {
+  if (!nil (val))
+    fatal_error ("type mismatch", "send_invalidate_all");
+  w << emit_invalidate_all ();
+}
+
+void
+send_repaint (wk_widget w, blackbox val) {
+  typedef quadruple<SI,SI,SI,SI> repaint;
+  if (type_box (val) != type_helper<repaint>::id)
+    fatal_error ("type mismatch", "send_repaint");
+  repaint r= open_box<repaint> (val);
+  bool stop_flag= false;
+  w << emit_repaint (r.x1, r.x2, r.x3, r.x4, stop_flag);
+}
+
+void
+send_delayed_message (wk_widget w, blackbox val) {
+  typedef pair<string,time_t> delayed;
+  if (type_box (val) != type_helper<delayed>::id)
+    fatal_error ("type mismatch", "send_delayed_message");
+  delayed dm= open_box<delayed> (val);
+  w << emit_alarm (dm.x1, dm.x2);
 }
 
 void
@@ -495,11 +514,17 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_MOUSE_POINTER:
     send_mouse_pointer (THIS, val);
     break;
+  case SLOT_INVALIDATE:
+    send_invalidate (THIS, val);
+    break;
   case SLOT_INVALIDATE_ALL:
     send_invalidate_all (THIS, val);
     break;
-  case SLOT_INVALIDATE:
-    send_invalidate (THIS, val);
+  case SLOT_REPAINT:
+    send_repaint (THIS, val);
+    break;
+  case SLOT_DELAYED_MESSAGE:
+    send_delayed_message (THIS, val);
     break;
   case SLOT_DESTROY:
     send_destroy (THIS, val);
@@ -687,9 +712,6 @@ wk_widget_rep::query (slot s, int type_id) {
     return query_gravity (THIS, type_id);
   case SLOT_GEOMETRY:
     return query_geometry (THIS, type_id);
-  case SLOT_INVALID:
-    fatal_error ("not yet implemented", "wk_widget_rep::query");
-
   case SLOT_EXTENTS:
     return query_coord4 (THIS, "extents", type_id);
   case SLOT_VISIBLE_PART:
