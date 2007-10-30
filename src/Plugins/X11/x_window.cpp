@@ -356,14 +356,14 @@ void
 x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
-  send_keyboard_notify_focus (kbd_focus, true);
+  notify_keyboard_focus (kbd_focus, true);
 }
 
 void
 x_window_rep::focus_out_event () {
   if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
-  send_keyboard_notify_focus (kbd_focus, false);
+  notify_keyboard_focus (kbd_focus, false);
 }
 
 void
@@ -419,8 +419,8 @@ x_window_rep::set_keyboard_focus (widget wid, bool get_focus) {
     fatal_error ("Explicit loss of keyboard focus not yet implemented",
 		 "x_window_rep::set_keyboard_focus");
   if (has_focus && (kbd_focus != wid.rep)) {
-    send_keyboard_notify_focus (kbd_focus, false);
-    send_keyboard_notify_focus (wid, true);
+    notify_keyboard_focus (kbd_focus, false);
+    notify_keyboard_focus (wid, true);
   }
   kbd_focus= wid.rep;
 }

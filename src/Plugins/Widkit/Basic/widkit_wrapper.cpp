@@ -392,19 +392,10 @@ send_keyboard (wk_widget w, blackbox val) {
 }
 
 void
-send_keyboard_request_focus (wk_widget w, blackbox val) {
+send_keyboard_focus (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "send_keyboard_request_focus");
+    fatal_error ("type mismatch", "send_keyboard_focus");
   w->win->set_keyboard_focus (abstract (w), open_box<bool> (val));
-}
-
-void
-send_keyboard_notify_focus (wk_widget w, blackbox val) {
-  typedef pair<bool,time_t> focus;
-  if (type_box (val) != type_helper<focus>::id)
-    fatal_error ("type mismatch", "send_keyboard_notify_focus");
-  focus f= open_box<focus> (val);
-  w << emit_keyboard_focus (f.x1, f.x2);
 }
 
 void
@@ -417,26 +408,17 @@ send_mouse (wk_widget w, blackbox val) {
 }
 
 void
-send_mouse_request_grab (wk_widget w, blackbox val) {
+send_mouse_grab (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "send_mouse_request_grab");
+    fatal_error ("type mismatch", "send_mouse_grab");
   w->win->set_mouse_grab (abstract (w), open_box<bool> (val));
-}
-
-void
-send_mouse_notify_grab (wk_widget w, blackbox val) {
-  typedef pair<bool,time_t> grab;
-  if (type_box (val) != type_helper<grab>::id)
-    fatal_error ("type mismatch", "send_mouse_notify_grab");
-  grab f= open_box<grab> (val);
-  w << emit_mouse_grab (f.x1, f.x2);
 }
 
 void
 send_mouse_pointer (wk_widget w, blackbox val) {
   typedef pair<string,string> change_pointer;
   if (type_box (val) != type_helper<change_pointer>::id)
-    fatal_error ("type mismatch", "send_mouse_notify_grab");
+    fatal_error ("type mismatch", "send_mouse_pointer");
   change_pointer cp= open_box<change_pointer> (val);
   w->win->set_mouse_pointer (abstract (w), cp.x1, cp.x2);
 }
@@ -501,20 +483,14 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_KEYBOARD:
     send_keyboard (THIS, val);
     break;
-  case SLOT_KEYBOARD_REQUEST_FOCUS:
-    send_keyboard_request_focus (THIS, val);
-    break;
-  case SLOT_KEYBOARD_NOTIFY_FOCUS:
-    send_keyboard_notify_focus (THIS, val);
+  case SLOT_KEYBOARD_FOCUS:
+    send_keyboard_focus (THIS, val);
     break;
   case SLOT_MOUSE:
     send_mouse (THIS, val);
     break;
-  case SLOT_MOUSE_REQUEST_GRAB:
-    send_mouse_request_grab (THIS, val);
-    break;
-  case SLOT_MOUSE_NOTIFY_GRAB:
-    send_mouse_notify_grab (THIS, val);
+  case SLOT_MOUSE_GRAB:
+    send_mouse_grab (THIS, val);
     break;
   case SLOT_MOUSE_POINTER:
     send_mouse_pointer (THIS, val);
@@ -751,6 +727,20 @@ wk_widget_rep::query (slot s, int type_id) {
 ******************************************************************************/
 
 void
+notify_keyboard_focus (wk_widget w, blackbox val) {
+  if (type_box (val) != type_helper<bool>::id)
+    fatal_error ("type mismatch", "notify_keyboard_focus");
+  w << emit_keyboard_focus (open_box<bool> (val));
+}
+
+void
+notify_mouse_grab (wk_widget w, blackbox val) {
+  if (type_box (val) != type_helper<bool>::id)
+    fatal_error ("type mismatch", "notify_mouse_grab");
+  w << emit_mouse_grab (open_box<bool> (val));
+}
+
+void
 wk_widget_rep::notify (slot s, blackbox new_val) {
   switch (s) {
   case SLOT_SIZE:
@@ -762,6 +752,12 @@ wk_widget_rep::notify (slot s, blackbox new_val) {
   case SLOT_POSITION:
     check_type<SI,SI> (new_val, "SLOT_POSITION");
     THIS << emit_move ();
+    break;
+  case SLOT_KEYBOARD_FOCUS:
+    notify_keyboard_focus (THIS, new_val);
+    break;
+  case SLOT_MOUSE_GRAB:
+    notify_mouse_grab (THIS, new_val);
     break;
   }
   widget_rep::notify (s, new_val);

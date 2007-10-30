@@ -186,13 +186,13 @@ x_display_rep::obtain_mouse_grab (widget wid) {
   widget old_widget; if (!nil (grab_ptr)) old_widget= grab_ptr->item;
   grab_ptr= list<widget> (wid, grab_ptr);
   widget new_widget= grab_ptr->item;
-  send_mouse_notify_grab (new_widget, true);
+  notify_mouse_grab (new_widget, true);
   XGrabPointer (dpy, win, false,
 		PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
   // cout << "\n---> In grab " << pritty ((tree) wid) << "\n\n";
   if (!nil (old_widget)) {
-    send_mouse_notify_grab (old_widget, false);
+    notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
 }
@@ -209,12 +209,12 @@ x_display_rep::release_mouse_grab () {
   }
   else {
     x_window grab_win= get_x_window (new_widget);
-    send_mouse_notify_grab (new_widget, true);    
+    notify_mouse_grab (new_widget, true);    
     XGrabPointer (dpy, grab_win->win, false,
 		  PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		  GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
     // cout << "\n---> In grab " << new_widget << "\n";
-    send_mouse_notify_grab (old_widget, false);
+    notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
 }
