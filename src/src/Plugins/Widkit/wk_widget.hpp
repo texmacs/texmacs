@@ -34,6 +34,7 @@ public:
 
   void send (slot s, blackbox val);
   blackbox query (slot s, int type_id);
+  void notify (slot s, blackbox new_val);
   widget read (slot s, blackbox index);
   void write (slot s, blackbox index, widget w);
 

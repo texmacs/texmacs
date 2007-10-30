@@ -124,11 +124,10 @@ widget_rep::write (slot s, blackbox index, widget w) {
 }
 
 void
-widget_rep::notify (slot s, int type_id) {
-  blackbox val= query (s, type_id);
+widget_rep::notify (slot s, blackbox new_val) {
   list<widget_connection> l= out;
   while (!nil (l)) {
-    l->item->w2->send (s, val);
+    l->item->w2->send (s, new_val);
     l= l->next;
   }  
 }

@@ -166,6 +166,22 @@ query (widget w, slot s, T1& val1, T2& val2, T3& val3, T4& val4, T5& val5) {
   val1= q.x1; val2= q.x2; val3= q.x3; val4= q.x4; val5= q.x5;
 }
 
+inline void
+notify (widget w, slot s) {
+  w->notify (s, blackbox ());
+}
+
+template<class T1> inline void
+notify (widget w, slot s, T1 val) {
+  w->notify (s, close_box (val));
+}
+
+template<class T1, class T2> void
+notify (widget w, slot s, T1 val1, T2 val2) {
+  typedef pair<T1,T2> T;
+  w->notify (s, close_box<T> (T (val1, val2)));
+}
+
 inline widget
 read (widget w, slot s) {
   return w->read (s, blackbox ());
@@ -257,6 +273,12 @@ get_size (widget w, SI& width, SI& height) {
 }
 
 inline void
+notify_size (widget w, SI new_width, SI new_height) {
+  // notify a size change for the widget
+  notify<SI,SI> (w, SLOT_SIZE, new_width, new_height);
+}
+
+inline void
 set_position (widget w, SI x, SI y) {
   // set the current position of the widget inside the parent widget
   send<SI,SI> (w, SLOT_POSITION, x, y);
@@ -266,6 +288,12 @@ inline void
 get_position (widget w, SI& x, SI& y) {
   // get the current position of the widget inside the parent widget
   query<SI,SI> (w, SLOT_POSITION, x, y);
+}
+
+inline void
+notify_position (widget w, SI new_x, SI new_y) {
+  // notify a change in the position of the widget
+  notify<SI,SI> (w, SLOT_POSITION, new_x, new_y);
 }
 
 inline void

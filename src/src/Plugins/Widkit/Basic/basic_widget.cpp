@@ -246,7 +246,7 @@ test_window_attached (event ev, wk_widget w) {
     cerr << ev << " was sent to\n" << w;
     cerr << HRULE << "\n";
     fatal_error ("widget was not yet attached to window",
-		 "basic_widget::handle", "basic_diwget.cpp");
+		 "basic_widget::handle", "basic_widget.cpp");
   }
 }
 
