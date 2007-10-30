@@ -351,6 +351,13 @@ send_geometry (wk_widget w, blackbox val) {
 }
 
 void
+send_update (wk_widget w, blackbox val) {
+  if (!nil (val))
+    fatal_error ("type mismatch", "send_update");
+  w << emit_update ();
+}
+
+void
 send_keyboard (wk_widget w, blackbox val) {
   typedef pair<string,time_t> keypress;
   if (type_box (val) != type_helper<keypress>::id)
@@ -582,6 +589,9 @@ wk_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_GEOMETRY:
     send_geometry (THIS, val);
+    break;
+  case SLOT_UPDATE:
+    send_update (THIS, val);
     break;
   case SLOT_KEYBOARD:
     send_keyboard (THIS, val);

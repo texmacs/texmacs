@@ -48,7 +48,6 @@ inline ostream& operator << (ostream& out, event ev) {
 event get_size (SI& w, SI& h, int mode=0);
 event get_widget (string which, wk_widget& w);
 event set_widget (string which, wk_widget w);
-event set_language (string which, bool& b);
 event emit_attach_window (window win);
 event emit_reposition ();
 event emit_position (SI ox, SI oy, SI w, SI h, gravity grav=north_west);

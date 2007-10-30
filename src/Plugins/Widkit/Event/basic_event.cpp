@@ -40,13 +40,6 @@ set_widget_event_rep::operator tree () {
 event set_widget (string which, wk_widget w) {
   return new set_widget_event_rep (which, w); }
 
-set_language_event_rep::set_language_event_rep (string ww, bool& rr):
-  event_rep (SET_LANGUAGE_EVENT), which (ww), resize (rr) {}
-set_language_event_rep::operator tree () {
-  return tree (TUPLE, "set_language_event", which); }
-event set_language (string which, bool& resize) {
-  return new set_language_event_rep (which, resize); }
-
 /******************************************************************************
 * Structure events
 ******************************************************************************/

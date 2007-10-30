@@ -114,13 +114,6 @@ basic_widget_rep::handle_set_widget (set_widget_event ev) {
   fatal_error ("Could not set widget attribute " * ev->which);
 }
 
-void
-basic_widget_rep::handle_set_language (set_language_event ev) {
-  int i;
-  for (i=0; i<N(a); i++) a[i] << ev;
-  ev->resize= true;
-}
-
 /******************************************************************************
 * Handling structure events
 ******************************************************************************/
@@ -271,9 +264,6 @@ basic_widget_rep::handle (event ev) {
     return true;
   case SET_WIDGET_EVENT:
     handle_set_widget (ev);
-    return true;
-  case SET_LANGUAGE_EVENT:
-    handle_set_language (ev);
     return true;
   case ATTACH_WINDOW_EVENT:
     handle_attach_window (ev);
