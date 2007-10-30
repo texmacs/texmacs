@@ -11,10 +11,9 @@
 ******************************************************************************/
 
 #include "X11/x_window.hpp"
-#include "Widkit/wk_widget.hpp"
 #include "message.hpp"
 
-extern int    nr_windows;
+extern int nr_windows;
 
 hashmap<Window,pointer> Window_to_window (NULL);
 
