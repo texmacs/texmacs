@@ -323,14 +323,14 @@ void
 x_window_rep::move_event (int x, int y) {
   bool flag= (win_x!=x) || (win_y!=y);
   win_x= x; win_y= y;
-  if (flag) concrete (w) << emit_move ();
+  if (flag) notify_position (w, win_x*PIXEL, win_y*PIXEL);
 }
 
 void
 x_window_rep::resize_event (int ww, int hh) {
   bool flag= (win_w!=ww) || (win_h!=hh);
   win_w= ww; win_h= hh;
-  if (flag) concrete (w) << emit_resize ();
+  if (flag) notify_size (w, win_w*PIXEL, win_h*PIXEL);
   if (flag || !win_flag) {
     set_geometry (abstract (concrete (w) [0]), 0, 0, win_w*PIXEL, win_h*PIXEL);
     win_flag= true;

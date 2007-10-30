@@ -55,9 +55,8 @@ public:
     // abstract read access (of type s) of a subwidget at position index
   virtual void write (slot s, blackbox index, widget w);
     // abstract write access (of type s) of a subwidget at position index
-  virtual void notify (slot s, int type_id);
+  virtual void notify (slot s, blackbox new_val);
     // notification of a change on a slot s which contains a state variable
-    // sends the current value (obtained via query) to all connected widgets
   virtual void connect (slot s, widget w2, slot s2);
     // connect a state slot s to another slot s2 of another widget w2
   virtual void deconnect (slot s, widget w2, slot s2);

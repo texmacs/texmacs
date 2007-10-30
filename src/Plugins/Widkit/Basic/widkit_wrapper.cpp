@@ -248,7 +248,32 @@ destroy_window_widget (widget w) {
 }
 
 /******************************************************************************
-* Helper routines for message passing
+* Type checking
+******************************************************************************/
+
+void
+check_type_void (blackbox bb, string s) {
+  if (!nil (bb)) {
+    cerr << "\nslot type= " << s << "\n";
+    fatal_error ("type mismatch", "check_type");
+  }
+}
+
+template<class T> void
+check_type (blackbox bb, string s) {
+  if (type_box (bb) != type_helper<T>::id) {
+    cerr << "\nslot type= " << s << "\n";
+    fatal_error ("type mismatch", "check_type");
+  }
+}
+
+template<class T1, class T2> inline void
+check_type (blackbox bb, string s) {
+  check_type<pair<T1,T2> > (bb, s);
+}
+
+/******************************************************************************
+* Sending messages
 ******************************************************************************/
 
 void
@@ -440,126 +465,6 @@ send_destroy (wk_widget w, blackbox val) {
   w << emit_destroy ();
 }
 
-blackbox
-query_bool (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<bool>::id)
-    fatal_error ("type mismatch", "query_bool");
-  string s;
-  w << get_string (key, s);
-  return close_box<bool> (s == "on");
-}
-
-blackbox
-query_int (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<int>::id)
-    fatal_error ("type mismatch", "query_int");
-  int i;
-  w << get_integer (key, i);
-  return close_box<int> (i);
-}
-
-blackbox
-query_string (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<string>::id)
-    fatal_error ("type mismatch", "query_string");
-  string s;
-  w << get_string (key, s);
-  return close_box<string> (s);
-}
-
-blackbox
-query_coord2 (wk_widget w, string key, int type_id) {
-  typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_coord2");
-  SI c1, c2;
-  w << get_coord2 (key, c1, c2);
-  return close_box<coord2> (coord2 (c1, c2));
-}
-
-blackbox
-query_coord4 (wk_widget w, string key, int type_id) {
-  typedef quadruple<SI,SI,SI,SI> coord4;
-  if (type_id != type_helper<coord4>::id)
-    fatal_error ("type mismatch", "query_coord4");
-  SI c1, c2, c3, c4;
-  w << get_coord4 (key, c1, c2, c3, c4);
-  return close_box<coord4> (coord4 (c1, c2, c3, c4));
-}
-
-blackbox
-query_size (wk_widget w, int type_id) {
-  typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_size");
-  if (w->is_window_widget ()) {
-    SI W, H;
-    w->win->get_size (W, H);
-    return close_box<coord2> (coord2 (W, H));
-  }
-  else return close_box<coord2> (coord2 (w->w, w->h));
-}
-
-blackbox
-query_position (wk_widget w, int type_id) {
-  typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_position");
-  if (w->is_window_widget ()) {
-    SI x, y;
-    w->win->get_position (x, y);
-    return close_box<coord2> (coord2 (x, y));
-  }
-  else {
-    // FIXME: we should use coordinates relative to parent widget
-    return close_box<coord2> (coord2 (w->ox, w->oy));
-  }
-}
-
-blackbox
-query_gravity (wk_widget w, int type_id) {
-  if (type_id != type_helper<gravity>::id)
-    fatal_error ("type mismatch", "query_gravity");
-  return close_box<gravity> (w->grav);
-}
-
-blackbox
-query_geometry (wk_widget w, int type_id) {
-  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
-  if (type_id != type_helper<geometry>::id)
-    fatal_error ("type mismatch", "query_geometry");
-  if (w->is_window_widget ()) {
-    SI x, y, W, H;
-    w->win->get_position (x, y);
-    w->win->get_size (W, H);
-    return close_box<geometry> (geometry (x, y, W, H, w->grav));
-  }
-  else {
-    // FIXME: we should use coordinates relative to parent widget
-    return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
-  }
-}
-
-template<class T> void
-check_type (blackbox bb, string s) {
-  if (type_box (bb) != type_helper<T>::id) {
-    cerr << "\nslot type= " << s << "\n";
-    fatal_error ("type mismatch", "check_type");
-  }
-}
-
-void
-check_type_void (blackbox bb, string s) {
-  if (!nil (bb)) {
-    cerr << "\nslot type= " << s << "\n";
-    fatal_error ("type mismatch", "check_type");
-  }
-}
-
-/******************************************************************************
-* Message passing
-******************************************************************************/
-
 void
 wk_widget_rep::send (slot s, blackbox val) {
   switch (s) {
@@ -682,6 +587,110 @@ wk_widget_rep::send (slot s, blackbox val) {
   }
 }
 
+/******************************************************************************
+* Querying
+******************************************************************************/
+
+blackbox
+query_bool (wk_widget w, string key, int type_id) {
+  if (type_id != type_helper<bool>::id)
+    fatal_error ("type mismatch", "query_bool");
+  string s;
+  w << get_string (key, s);
+  return close_box<bool> (s == "on");
+}
+
+blackbox
+query_int (wk_widget w, string key, int type_id) {
+  if (type_id != type_helper<int>::id)
+    fatal_error ("type mismatch", "query_int");
+  int i;
+  w << get_integer (key, i);
+  return close_box<int> (i);
+}
+
+blackbox
+query_string (wk_widget w, string key, int type_id) {
+  if (type_id != type_helper<string>::id)
+    fatal_error ("type mismatch", "query_string");
+  string s;
+  w << get_string (key, s);
+  return close_box<string> (s);
+}
+
+blackbox
+query_coord2 (wk_widget w, string key, int type_id) {
+  typedef pair<SI,SI> coord2;
+  if (type_id != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "query_coord2");
+  SI c1, c2;
+  w << get_coord2 (key, c1, c2);
+  return close_box<coord2> (coord2 (c1, c2));
+}
+
+blackbox
+query_coord4 (wk_widget w, string key, int type_id) {
+  typedef quadruple<SI,SI,SI,SI> coord4;
+  if (type_id != type_helper<coord4>::id)
+    fatal_error ("type mismatch", "query_coord4");
+  SI c1, c2, c3, c4;
+  w << get_coord4 (key, c1, c2, c3, c4);
+  return close_box<coord4> (coord4 (c1, c2, c3, c4));
+}
+
+blackbox
+query_size (wk_widget w, int type_id) {
+  typedef pair<SI,SI> coord2;
+  if (type_id != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "query_size");
+  if (w->is_window_widget ()) {
+    SI W, H;
+    w->win->get_size (W, H);
+    return close_box<coord2> (coord2 (W, H));
+  }
+  else return close_box<coord2> (coord2 (w->w, w->h));
+}
+
+blackbox
+query_position (wk_widget w, int type_id) {
+  typedef pair<SI,SI> coord2;
+  if (type_id != type_helper<coord2>::id)
+    fatal_error ("type mismatch", "query_position");
+  if (w->is_window_widget ()) {
+    SI x, y;
+    w->win->get_position (x, y);
+    return close_box<coord2> (coord2 (x, y));
+  }
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    return close_box<coord2> (coord2 (w->ox, w->oy));
+  }
+}
+
+blackbox
+query_gravity (wk_widget w, int type_id) {
+  if (type_id != type_helper<gravity>::id)
+    fatal_error ("type mismatch", "query_gravity");
+  return close_box<gravity> (w->grav);
+}
+
+blackbox
+query_geometry (wk_widget w, int type_id) {
+  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
+  if (type_id != type_helper<geometry>::id)
+    fatal_error ("type mismatch", "query_geometry");
+  if (w->is_window_widget ()) {
+    SI x, y, W, H;
+    w->win->get_position (x, y);
+    w->win->get_size (W, H);
+    return close_box<geometry> (geometry (x, y, W, H, w->grav));
+  }
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
+  }
+}
+
 blackbox
 wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
@@ -736,6 +745,29 @@ wk_widget_rep::query (slot s, int type_id) {
     return blackbox ();
   }
 }
+
+/******************************************************************************
+* Notification of state changes
+******************************************************************************/
+
+void
+wk_widget_rep::notify (slot s, blackbox new_val) {
+  switch (s) {
+  case SLOT_SIZE:
+    check_type<SI,SI> (new_val, "SLOT_SIZE");
+    THIS << emit_resize ();
+    break;
+  case SLOT_POSITION:
+    check_type<SI,SI> (new_val, "SLOT_POSITION");
+    THIS << emit_move ();
+    break;
+  }
+  widget_rep::notify (s, new_val);
+}
+
+/******************************************************************************
+* Read and write access of subwidgets
+******************************************************************************/
 
 widget
 wk_widget_rep::read (slot s, blackbox index) {
