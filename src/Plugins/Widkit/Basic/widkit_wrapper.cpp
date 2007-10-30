@@ -756,6 +756,8 @@ wk_widget_rep::notify (slot s, blackbox new_val) {
   case SLOT_SIZE:
     check_type<SI,SI> (new_val, "SLOT_SIZE");
     THIS << emit_resize ();
+    if (is_window_widget ())
+      send_size (THIS [0], new_val);
     break;
   case SLOT_POSITION:
     check_type<SI,SI> (new_val, "SLOT_POSITION");

@@ -105,7 +105,6 @@ x_window_rep::initialize () {
   if (win_x < 0) win_x= 0;
   if ((win_y+ win_h) > dis->display_height) win_y= dis->display_height- win_h;
   if (win_y < 0) win_y=0;
-  win_flag= false;
   win= XCreateWindow (dpy, dis->root, win_x, win_y, win_w, win_h, 0,
 		      dis->depth, InputOutput, CopyFromParent,
 		      valuemask, &setattr);
@@ -148,7 +147,8 @@ x_window_rep::initialize () {
   nr_windows++;
   Window_to_window (win)= (void*) this;
   set_identifier (w, (int) win);
-  set_geometry (abstract (concrete (w) [0]), 0, 0, Def_w, Def_h);
+  notify_position (w, 0, 0);
+  notify_size (w, Def_w, Def_h);
 }
 
 x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
@@ -331,10 +331,6 @@ x_window_rep::resize_event (int ww, int hh) {
   bool flag= (win_w!=ww) || (win_h!=hh);
   win_w= ww; win_h= hh;
   if (flag) notify_size (w, win_w*PIXEL, win_h*PIXEL);
-  if (flag || !win_flag) {
-    set_geometry (abstract (concrete (w) [0]), 0, 0, win_w*PIXEL, win_h*PIXEL);
-    win_flag= true;
-  }
 }
 
 void
