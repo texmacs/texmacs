@@ -33,6 +33,7 @@ typedef enum slot_id {
   SLOT_POSITION,
   SLOT_GRAVITY,
   SLOT_GEOMETRY, // FIXME: this is a bit redundant
+  SLOT_UPDATE,
   SLOT_KEYBOARD,
   SLOT_KEYBOARD_REQUEST_FOCUS,
   SLOT_KEYBOARD_NOTIFY_FOCUS,
@@ -289,6 +290,14 @@ inline void
 get_geometry (widget w, SI& ww, SI& hh, SI& x, SI& y, gravity& grav) {
   // simultaneously get the size, position and gravity
   query<SI,SI,SI,SI,gravity> (w, SLOT_GEOMETRY, ww, hh, x, y, grav);
+}
+
+inline void
+send_update (widget w) {
+  // this message is issued if the contents of w or a subwidget of w
+  // has changed in such a way that the geometries of w and its subwidgets
+  // may need to be adjusted. Example: a change of the current output language
+  send (w, SLOT_UPDATE);
 }
 
 inline void

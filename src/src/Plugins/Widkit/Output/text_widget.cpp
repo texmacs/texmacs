@@ -24,7 +24,7 @@ class text_widget_rep: public basic_widget_rep {
   string  original, s;
   color   col;
   bool    transparent;
-  string  lan;
+  string  in_lan;
   bool    tt;
   metric  ex;
   int     dw, dh;
@@ -43,7 +43,7 @@ text_widget_rep::text_widget_rep (
   string l2, bool tt2, int dw2, int dh2):
     basic_widget_rep (south_west),
     original (s2), s (s2), col (c2),
-    transparent (t2), lan (l2), tt (tt2),
+    transparent (t2), in_lan (l2), tt (tt2),
     dw (dw2+2*PIXEL), dh (dh2+2*PIXEL) {}
 
 text_widget_rep::operator tree () {
@@ -52,8 +52,8 @@ text_widget_rep::operator tree () {
 
 void
 text_widget_rep::handle_get_size (get_size_event ev) {
-  s= tm_var_encode (the_display->translate (original, lan,
-					    the_display->out_lan));
+  string out_lan= the_display->get_output_language ();
+  s= tm_var_encode (the_display->translate (original, in_lan, out_lan));
   font fn= the_display->default_font (tt);
   fn->var_get_extents (s, ex);
   ev->w = ((ex->x2- ex->x1+ 2)/3)+ 2*dw;

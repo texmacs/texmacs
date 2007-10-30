@@ -41,13 +41,6 @@ struct set_widget_event_rep: public event_rep {
 };
 EVENT(set_widget_event);
 
-struct set_language_event_rep: public event_rep {
-  string which; bool& resize;
-  set_language_event_rep (string which, bool& resize);
-  operator tree ();
-};
-EVENT(set_language_event);
-
 /******************************************************************************
 * Structure events
 ******************************************************************************/

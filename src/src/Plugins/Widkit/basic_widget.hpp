@@ -37,7 +37,6 @@ public:
   virtual void handle_get_size       (get_size_event ev);
   virtual void handle_get_widget     (get_widget_event ev);
   virtual void handle_set_widget     (set_widget_event ev);
-  virtual void handle_set_language   (set_language_event ev);
   virtual void handle_attach_window  (attach_window_event ev);
   virtual void handle_position       (position_event ev);
   virtual void handle_move           (move_event ev);

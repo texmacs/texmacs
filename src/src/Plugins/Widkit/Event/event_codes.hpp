@@ -18,48 +18,47 @@
 #define GET_SIZE_EVENT        0x00000000
 #define GET_WIDGET_EVENT      0x00000001
 #define SET_WIDGET_EVENT      0x00000002
-#define SET_LANGUAGE_EVENT    0x00000003
-#define ATTACH_WINDOW_EVENT   0x00000004
-#define POSITION_EVENT        0x00000005
-#define MOVE_EVENT            0x00000006
-#define RESIZE_EVENT          0x00000007
-#define DESTROY_EVENT         0x00000008
-#define KEYPRESS_EVENT        0x00000009
-#define KEYBOARD_FOCUS_EVENT  0x0000000a
-#define MOUSE_EVENT           0x0000000b
-#define ALARM_EVENT           0x0000000c
-#define CLEAR_EVENT           0x0000000d
-#define REPAINT_EVENT         0x0000000e
-#define UPDATE_EVENT          0x0000000f
-#define INVALIDATE_EVENT      0x00000010
-#define KEYBOARD_GRAB_EVENT   0x00000011
-#define MOUSE_GRAB_EVENT      0x00000012
-#define REQUEST_ALARM_EVENT   0x00000013
-#define FIND_CHILD_EVENT      0x00000014
+#define ATTACH_WINDOW_EVENT   0x00000003
+#define POSITION_EVENT        0x00000004
+#define MOVE_EVENT            0x00000005
+#define RESIZE_EVENT          0x00000006
+#define DESTROY_EVENT         0x00000007
+#define KEYPRESS_EVENT        0x00000008
+#define KEYBOARD_FOCUS_EVENT  0x00000009
+#define MOUSE_EVENT           0x0000000a
+#define ALARM_EVENT           0x0000000b
+#define CLEAR_EVENT           0x0000000c
+#define REPAINT_EVENT         0x0000000d
+#define UPDATE_EVENT          0x0000000e
+#define INVALIDATE_EVENT      0x0000000f
+#define KEYBOARD_GRAB_EVENT   0x00000010
+#define MOUSE_GRAB_EVENT      0x00000011
+#define REQUEST_ALARM_EVENT   0x00000012
+#define FIND_CHILD_EVENT      0x00000013
 
 /*** composite events ***/
-#define CLEAN_EVENT           0x00000015
-#define INSERT_EVENT          0x00000016
-#define REMOVE_EVENT          0x00000017
+#define CLEAN_EVENT           0x00000014
+#define INSERT_EVENT          0x00000015
+#define REMOVE_EVENT          0x00000016
 
 /*** attribute events ***/
-#define GET_INTEGER_EVENT     0x00000018
-#define GET_DOUBLE_EVENT      0x00000019
-#define GET_STRING_EVENT      0x0000001a
-#define GET_COORD1_EVENT      0x0000001b
-#define GET_COORD2_EVENT      0x0000001c
-#define GET_COORD3_EVENT      0x0000001d
-#define GET_COORD4_EVENT      0x0000001e
-#define SET_INTEGER_EVENT     0x0000001f
-#define SET_DOUBLE_EVENT      0x00000020
-#define SET_STRING_EVENT      0x00000021
-#define SET_COORD1_EVENT      0x00000022
-#define SET_COORD2_EVENT      0x00000023
-#define SET_COORD3_EVENT      0x00000024
-#define SET_COORD4_EVENT      0x00000025
+#define GET_INTEGER_EVENT     0x00000017
+#define GET_DOUBLE_EVENT      0x00000018
+#define GET_STRING_EVENT      0x00000019
+#define GET_COORD1_EVENT      0x0000001a
+#define GET_COORD2_EVENT      0x0000001b
+#define GET_COORD3_EVENT      0x0000001c
+#define GET_COORD4_EVENT      0x0000001d
+#define SET_INTEGER_EVENT     0x0000001e
+#define SET_DOUBLE_EVENT      0x0000001f
+#define SET_STRING_EVENT      0x00000020
+#define SET_COORD1_EVENT      0x00000021
+#define SET_COORD2_EVENT      0x00000022
+#define SET_COORD3_EVENT      0x00000023
+#define SET_COORD4_EVENT      0x00000024
 
 /*** scroll events ***/
-#define SCROLL_EVENT          0x00000026
+#define SCROLL_EVENT          0x00000025
 
 /*** shared implementation for event_ptr<> ***/
 template<class R> struct event_ptr;

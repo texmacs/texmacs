@@ -359,10 +359,8 @@ x_display_rep::set_output_language (string s) {
   iterator<Window> it= iterate (Window_to_window);
   while (it->busy()) {
     x_window win= (x_window) Window_to_window [it->next()];
-    bool flag;
-    concrete (win->w) << ::set_language (s, flag);
-    if (flag && get_x_window (win->w) != NULL)
-      concrete (win->w) << emit_update ();
+    if (get_x_window (win->w) != NULL)
+      send_update (win->w);
   }
 }
 

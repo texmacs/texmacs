@@ -40,10 +40,9 @@ wait_widget_rep::wait_widget_rep (SI width, SI height, string s):
   basic_widget_rep (0, south_west), message (s)
 {
   w= width; h= height;
-  wait_s = the_display->translate ("please wait", "english",
-				   the_display->out_lan);
-  message= tm_var_encode (the_display->translate (s, "english",
-						  the_display->out_lan));
+  string out_lan= the_display->get_output_language ();
+  wait_s = the_display->translate ("please wait", "english", out_lan);
+  message= tm_var_encode (the_display->translate (s, "english", out_lan));
   wait_s= upcase_all (wait_s);
 }
 
