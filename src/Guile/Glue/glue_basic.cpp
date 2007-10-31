@@ -284,6 +284,89 @@ tmg_exec_delayed (SCM arg1) {
 }
 
 SCM
+tmg_get_keyboard_modifiers () {
+  // SCM_DEFER_INTS;
+  int out= get_kbd_modifiers ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_set_input_language (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-input-language");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  set_input_language (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_input_language () {
+  // SCM_DEFER_INTS;
+  string out= get_input_language ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_set_output_language (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-output-language");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  gui_set_output_language (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_output_language () {
+  // SCM_DEFER_INTS;
+  string out= get_output_language ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "translate");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "translate");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  string out= translate (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_color (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "color");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= named_color (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_tree_2stree (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
 
@@ -3649,6 +3732,13 @@ initialize_glue_basic () {
   scm_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
   scm_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
   scm_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
+  scm_new_procedure ("get-keyboard-modifiers", (FN) tmg_get_keyboard_modifiers, 0, 0, 0);
+  scm_new_procedure ("set-input-language", (FN) tmg_set_input_language, 1, 0, 0);
+  scm_new_procedure ("get-input-language", (FN) tmg_get_input_language, 0, 0, 0);
+  scm_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);
+  scm_new_procedure ("get-output-language", (FN) tmg_get_output_language, 0, 0, 0);
+  scm_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
+  scm_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
   scm_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);

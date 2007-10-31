@@ -18,8 +18,6 @@
 
 class tm_config_rep: virtual public server_rep {
 protected:
-  string in_lan;                             // current input language
-  string out_lan;                            // current output language
   string var_suffix;                         // space + the variant key
   string unvar_suffix;                       // space + the unvariant key
   hashmap<string,tree>   pre_kbd_wildcards;  // wildcards applied to defns
@@ -31,12 +29,6 @@ public:
 
   /* User preferences */
   string get_preference (string var);
-
-  /* Set and get input and output languages */
-  void   set_input_language (string s);
-  void   set_output_language (string s);
-  string get_input_language ();
-  string get_output_language ();
 
   /* Font setup */
   void set_font_rules (scheme_tree rules);

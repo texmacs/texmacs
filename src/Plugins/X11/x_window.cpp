@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : x_window.cpp
-* DESCRIPTION: Windows under X
+* DESCRIPTION: Windows under X11
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -41,9 +41,9 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
     fatal_error ("out of memory (X server)", "set_attributes");
 
   // int start_1= texmacs_time ();
-  if (!dis->xpm_pixmap->contains ("TeXmacs.xpm"))
+  if (!gui->xpm_pixmap->contains ("TeXmacs.xpm"))
     xpm_initialize ("TeXmacs.xpm");
-  Pixmap pm= (Pixmap) dis->xpm_pixmap ["TeXmacs.xpm"];
+  Pixmap pm= (Pixmap) gui->xpm_pixmap ["TeXmacs.xpm"];
   // cout << "Getting pixmap required " << (texmacs_time ()-start_1) << " ms\n";
 
   // int start_2= texmacs_time ();
@@ -64,8 +64,8 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
     win,
     &Window_Name,
     &Icon_Name,
-    dis->argv,
-    dis->argc,
+    gui->argv,
+    gui->argc,
     size_hints,
     wm_hints,
     class_hints
@@ -79,8 +79,8 @@ x_window_rep::initialize () {
   SI def_w= Def_w, def_h= Def_h;
   SI max_w= Max_w, max_h= Max_h;
 
-  dpy= dis->dpy;
-  gc = dis->gc;
+  dpy= gui->dpy;
+  gc = gui->gc;
   full_screen_flag= false;
   
   // int start_1= texmacs_time ();
@@ -100,12 +100,12 @@ x_window_rep::initialize () {
   // FIXME: backing store does not seem to work correctly
   if (win_w == 0) win_w= def_w;
   if (win_h == 0) win_h= def_h;
-  if ((win_x+ win_w) > dis->display_width) win_x= dis->display_width- win_w;
+  if ((win_x+ win_w) > gui->screen_width) win_x= gui->screen_width- win_w;
   if (win_x < 0) win_x= 0;
-  if ((win_y+ win_h) > dis->display_height) win_y= dis->display_height- win_h;
+  if ((win_y+ win_h) > gui->screen_height) win_y= gui->screen_height- win_h;
   if (win_y < 0) win_y=0;
-  win= XCreateWindow (dpy, dis->root, win_x, win_y, win_w, win_h, 0,
-		      dis->depth, InputOutput, CopyFromParent,
+  win= XCreateWindow (dpy, gui->root, win_x, win_y, win_w, win_h, 0,
+		      gui->depth, InputOutput, CopyFromParent,
 		      valuemask, &setattr);
   x_drawable_rep::win= (Drawable) win;
   // cout << "XWindow creation required " << (texmacs_time ()-start_2) << " ms\n";
@@ -118,8 +118,8 @@ x_window_rep::initialize () {
 
   unsigned long ic_mask= 0;
   ic_ok= false;
-  if (dis->im_ok) {
-    ic= XCreateIC (dis->im,
+  if (gui->im_ok) {
+    ic= XCreateIC (gui->im,
 		   XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
 		   XNClientWindow, win,
 		   NULL);
@@ -150,10 +150,10 @@ x_window_rep::initialize () {
   notify_size (w, Def_w, Def_h);
 }
 
-x_window_rep::x_window_rep (widget w2, x_display dis2, char* n2,
+x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
 			    SI min_w, SI min_h, SI def_w, SI def_h,
 			    SI max_w, SI max_h):
-  x_drawable_rep (dis2), window_rep (), w (w2), dis (dis2), name (n2),
+  x_drawable_rep (gui2), window_rep (), w (w2), gui (gui2), name (n2),
   Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
   win_x (0), win_y (0), win_w (Def_w/PIXEL), win_h (Def_h/PIXEL),
@@ -227,7 +227,7 @@ x_window_rep::get_position (SI& x, SI& y) {
   int xx, yy;
   Window ww;
   bool b;
-  b=  XTranslateCoordinates (dpy, win, dis->root, 0, 0, &xx, &yy, &ww);
+  b=  XTranslateCoordinates (dpy, win, gui->root, 0, 0, &xx, &yy, &ww);
   x=  xx*PIXEL;
   y= -yy*PIXEL;
 #endif
@@ -243,9 +243,9 @@ void
 x_window_rep::set_position (SI x, SI y) {
   x= x/PIXEL;
   y= -y/PIXEL;
-  if ((x+ win_w) > dis->display_width) x= dis->display_width- win_w;
+  if ((x+ win_w) > gui->screen_width) x= gui->screen_width- win_w;
   if (x<0) x=0;
-  if ((y+ win_h) > dis->display_height) y= dis->display_height- win_h;
+  if ((y+ win_h) > gui->screen_height) y= gui->screen_height- win_h;
   if (y<0) y=0;
   XMoveWindow (dpy, win, x, y);
 }
@@ -289,9 +289,9 @@ x_window_rep::set_full_screen (bool flag) {
     save_w= win_w; save_h= win_h;
     initialize ();
     XMoveResizeWindow (dpy, win, 0, 0,
-		       dis->display_width, dis->display_height);
+		       gui->screen_width, gui->screen_height);
     move_event   (0, 0);
-    resize_event (dis->display_width, dis->display_height);
+    resize_event (gui->screen_width, gui->screen_height);
     set_visibility (true);
     XSetInputFocus (dpy, win, PointerRoot, CurrentTime);
   }
@@ -367,13 +367,13 @@ x_window_rep::focus_out_event () {
 
 void
 x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
-  if (nil (dis->grab_ptr) || (get_x_window (dis->grab_ptr->item) == NULL)) {
+  if (nil (gui->grab_ptr) || (get_x_window (gui->grab_ptr->item) == NULL)) {
     set_origin (0, 0);
     encode (x, y);
-    send_mouse (w, ev, x, y, t, dis->state);
+    send_mouse (w, ev, x, y, t, gui->state);
   }
   else {
-    x_window grab_win= get_x_window (dis->grab_ptr->item);
+    x_window grab_win= get_x_window (gui->grab_ptr->item);
     if (this != grab_win) {
       x += win_x - grab_win->win_x;
       y += win_y - grab_win->win_y;
@@ -381,7 +381,7 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
     }
     set_origin (0, 0);
     encode (x, y);
-    send_mouse (dis->grab_ptr->item, ev, x, y, t, dis->state);
+    send_mouse (gui->grab_ptr->item, ev, x, y, t, gui->state);
   }
 }
 
@@ -423,19 +423,19 @@ x_window_rep::set_keyboard_focus (widget wid, bool get_focus) {
 
 void
 x_window_rep::set_mouse_grab (widget wid, bool get_grab) {
-  if (get_grab) dis->obtain_mouse_grab (wid);
-  else dis->release_mouse_grab ();
+  if (get_grab) gui->obtain_mouse_grab (wid);
+  else gui->release_mouse_grab ();
 }
 
 bool
 x_window_rep::get_mouse_grab (widget w) {
-  return dis->has_mouse_grab (w);
+  return gui->has_mouse_grab (w);
 }
 
 void
 x_window_rep::set_mouse_pointer (widget wid, string name, string mask) {
-  if (mask == "") dis->set_mouse_pointer (wid, name);
-  else dis->set_mouse_pointer (wid, name, mask);
+  if (mask == "") gui->set_mouse_pointer (wid, name);
+  else gui->set_mouse_pointer (wid, name, mask);
 }
 
 /******************************************************************************
@@ -454,7 +454,7 @@ x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
 
   XEvent report;
   while (XCheckWindowEvent (dpy, win, ExposureMask, &report))
-    dis->process_event (this, &report);
+    gui->process_event (this, &report);
 
   rectangles region (rectangle (x1, y2, x2, y1));
   rectangles invalid_intern= invalid_regions & region;
@@ -488,7 +488,7 @@ popup_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
   char* _name= as_charp (name);
-  window win= new x_window_rep (w, (x_display) the_display, NULL,
+  window win= new x_window_rep (w, the_gui, NULL,
 				min_w, min_h, def_w, def_h, max_w, max_h);
   delete[] _name;
   return win;
@@ -499,7 +499,7 @@ plain_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
   char* _name= as_charp (name);
-  window win= new x_window_rep (w, (x_display) the_display, _name,
+  window win= new x_window_rep (w, the_gui, _name,
 				min_w, min_h, def_w, def_h, max_w, max_h);
   delete[] _name;
   return win;

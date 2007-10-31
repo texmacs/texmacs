@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : x_drawable.hpp
-* DESCRIPTION: Drawables under X
+* DESCRIPTION: Drawables under X11
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -13,7 +13,7 @@
 #ifndef X_DRAWABLE_H
 #define X_DRAWABLE_H
 #include "ps_device.hpp"
-#include "X11/x_display.hpp"
+#include "X11/x_gui.hpp"
 #include "X11/x_font.hpp"
 #include "rectangles.hpp"
 #include "array.hpp"
@@ -23,7 +23,7 @@
 ******************************************************************************/
 
 class x_drawable_rep: virtual public ps_device_rep {
-  x_display dis;
+  x_gui     gui;
   Display*  dpy;
   Drawable  win;
   int       w, h;
@@ -32,7 +32,7 @@ class x_drawable_rep: virtual public ps_device_rep {
 
 public:
 
-  x_drawable_rep (x_display dis, int w=0, int h=0);
+  x_drawable_rep (x_gui gui, int w=0, int h=0);
   ~x_drawable_rep ();
 
   bool is_x_drawable ();
@@ -52,10 +52,7 @@ public:
   /******************** routines from ps_device.hpp ************************/
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  color rgb (int r, int g, int b);
-  void  get_rgb (color col, int& r, int& g, int& b);
   color get_color ();
-  color get_color (string s);
   color get_background ();
   void  set_color (color c);
   void  set_background (color c);
@@ -80,7 +77,7 @@ public:
 
   /****************************** friends ************************************/
 
-  friend class x_display_rep;
+  friend class x_gui_rep;
   friend class x_window_rep;
   friend Bool my_predicate (Display* dpy, XEvent* ev, XPointer arg);
 };

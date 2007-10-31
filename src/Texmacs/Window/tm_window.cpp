@@ -55,7 +55,7 @@ texmacs_window_widget (widget wid, tree geom) {
     w= as_int (geom[0]);
     h= as_int (geom[1]);
   }
-  the_display -> get_extents (W, H); W /= PIXEL; H /= PIXEL;
+  gui_root_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
   widget win= plain_window_widget (wid, "TeXmacs");

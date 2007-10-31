@@ -135,7 +135,6 @@ public:
   void complete_message ();
   void complete_start (string prefix, array<string> compls);
   bool complete_keypress (string key);
-  unsigned int get_kbd_modifiers ();
 
   /* mouse handling */
   void mouse_any (string s, SI x, SI y, time_t t);

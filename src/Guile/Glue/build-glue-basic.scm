@@ -41,6 +41,13 @@
   (math-symbol-type math_symbol_type (string string))
   (object->command as_command (command object))
   (exec-delayed exec_delayed (void object))
+  (get-keyboard-modifiers get_kbd_modifiers (int))
+  (set-input-language set_input_language (void string))
+  (get-input-language get_input_language (string))
+  (set-output-language gui_set_output_language (void string))
+  (get-output-language get_output_language (string))
+  (translate translate (string string string string))
+  (color named_color (int string))
 
   ;; routines for trees
   (tree->stree tree_to_scheme_tree (scheme_tree tree))

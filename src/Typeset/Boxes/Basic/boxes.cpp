@@ -824,8 +824,8 @@ make_eps (url name, box b, int dpi) {
   b->x0= -b->x3;
   b->y0= -b->y4;
   ps_device dev= printer (name, dpi, 1, "user", false, w/cm, h/cm);
-  dev->set_color (the_display->black);
-  dev->set_background (the_display->white);
+  dev->set_color (black);
+  dev->set_background (white);
   rectangles rs;
   b->redraw (dev, path (0), rs);
   delete dev;

@@ -29,7 +29,7 @@ struct test_box_rep: public box_rep {
 
 void
 test_box_rep::display (ps_device dev) {
-  dev->set_color (dev->green);
+  dev->set_color (green);
   dev->set_line_style (PIXEL);
   dev->line (x1, y1, x2, y2);
   dev->line (x1, y2, x2, y1);

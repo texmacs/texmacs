@@ -18,6 +18,7 @@
 #include "PsDevice/page_type.hpp"
 #include "typesetter.hpp"
 #include "drd_mode.hpp"
+#include "dictionary.hpp"
 
 extern int script_status;
 
@@ -1194,7 +1195,7 @@ edit_env_rep::exec_translate (tree t) {
   tree t3= exec (t[2]);
   if (is_compound (t1) || is_compound (t2) || is_compound (t3))
     return tree (ERROR, "bad translate");
-  return the_display->translate (t1->label, t2->label, t3->label);
+  return translate (t1->label, t2->label, t3->label);
 }
 
 tree

@@ -16,7 +16,7 @@
 #include "Graphics/frame.hpp"
 #include "Graphics/curve.hpp"
 #include "Graphics/grid.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 
 box graphics_box (
   path ip, array<box> bs, frame f, grid g, point lim1, point lim2);

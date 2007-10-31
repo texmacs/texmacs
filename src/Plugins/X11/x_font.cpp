@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : x_font.cpp
-* DESCRIPTION: server_ps_fonts and server_tex_fonts under X windows
+* DESCRIPTION: server_ps_fonts and server_tex_fonts under X11
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -13,6 +13,7 @@
 #include "X11/x_window.hpp"
 #include "X11/x_font.hpp"
 #include "analyze.hpp"
+#include "dictionary.hpp"
 
 /******************************************************************************
 * Displaying characters
@@ -69,28 +70,28 @@ void
 x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
   x_character xc (c, fng, sfactor, cur_fg, cur_bg);
-  Pixmap pm= (Pixmap) dis->character_pixmap [xc];
+  Pixmap pm= (Pixmap) gui->character_pixmap [xc];
   if (pm == 0) {
-    dis->prepare_color (sfactor, cur_fg, cur_bg);
+    gui->prepare_color (sfactor, cur_fg, cur_bg);
     x_character col_entry (0, font_glyphs (), sfactor, cur_fg, cur_bg);
-    color* cols= (color*) dis->color_scale [col_entry];
+    color* cols= (color*) gui->color_scale [col_entry];
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
-    pm= XCreatePixmap (dis->dpy, dis->root, w, h, dis->depth);
+    pm= XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
     for (j=0; j<h; j++)
       for (i=0; i<w; i++) {
 	color col= cols [gl->get_x(i,j)];
-	XSetForeground (dis->dpy, dis->pixmap_gc, dis->cmap[col]);
-	XDrawPoint (dis->dpy, (Drawable) pm, dis->pixmap_gc, i, j);
+	XSetForeground (gui->dpy, gui->pixmap_gc, gui->cmap[col]);
+	XDrawPoint (gui->dpy, (Drawable) pm, gui->pixmap_gc, i, j);
       }
-    dis->character_pixmap (xc)= (pointer) pm;
+    gui->character_pixmap (xc)= (pointer) pm;
   }
 
   // get the bitmap
   xc= x_character (c, fng, sfactor, 0, 0);
-  Bitmap bm= (Bitmap) dis->character_bitmap [xc];
+  Bitmap bm= (Bitmap) gui->character_bitmap [xc];
   if (bm == NULL) {
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (nil (pre_gl)) return;
@@ -107,12 +108,12 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 	if (on) data[b]= data[b] | (1<<(i&7));
       }
     bm= new Bitmap_rep;
-    bm->bm    = XCreateBitmapFromData (dis->dpy, dis->root, data, w, h);
+    bm->bm    = XCreateBitmapFromData (gui->dpy, gui->root, data, w, h);
     bm->width = gl->width;
     bm->height= gl->height;
     bm->xoff  = xo;
     bm->yoff  = yo;
-    dis->character_bitmap (xc)= (pointer) bm;
+    gui->character_bitmap (xc)= (pointer) bm;
     delete[] data;
   }
 
@@ -127,17 +128,17 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 * Server fonts
 ******************************************************************************/
 
-static string the_default_display_font ("");
+static string the_default_font ("");
 font the_default_wait_font;
 
 void
-x_display_rep::set_default_font (string name) {
-  the_default_display_font= name;
+x_gui_rep::set_default_font (string name) {
+  the_default_font= name;
 }
 
 font
-x_display_rep::default_font_sub (bool tt) {
-  string s= the_default_display_font;
+x_gui_rep::default_font_sub (bool tt) {
+  string s= the_default_font;
   if (s == "") s= "ecrm11@300";
   int i, j, n= N(s);
   for (j=0; j<n; j++) if ((s[j] >= '0') && (s[j] <= '9')) break;
@@ -148,6 +149,7 @@ x_display_rep::default_font_sub (bool tt) {
   int dpi= (j<n? as_int (s (j, n)): 300);
   if (N(fam) >= 2) {
     string ff= fam (0, 2);
+    string out_lan= get_output_language ();
     if (((out_lan == "bulgarian") || (out_lan == "russian") ||
 	 (out_lan == "ukrainian")) &&
 	((ff == "cm") || (ff == "ec"))) {
@@ -179,10 +181,20 @@ x_display_rep::default_font_sub (bool tt) {
 }
 
 font
-x_display_rep::default_font (bool tt) {
+x_gui_rep::default_font (bool tt) {
   font fn= default_font_sub (tt);
   the_default_wait_font= fn;
   return fn;
+}
+
+void
+set_default_font (string name) {
+  the_gui->set_default_font (name);
+}
+
+font
+get_default_font (bool tt) {
+  return the_gui->default_font (tt);
 }
 
 /******************************************************************************
@@ -190,7 +202,7 @@ x_display_rep::default_font (bool tt) {
 ******************************************************************************/
 
 void
-x_display_rep::get_ps_char (Font fn, int c, metric& ex, glyph& gl) {
+x_gui_rep::get_ps_char (Font fn, int c, metric& ex, glyph& gl) {
   XCharStruct xcs;
   int i1, i2, i3;
   char temp[1]; temp[0]= (char) c;
@@ -234,8 +246,8 @@ x_display_rep::get_ps_char (Font fn, int c, metric& ex, glyph& gl) {
 }
 
 void
-x_display_rep::load_system_font (string family, int size, int dpi,
-				 font_metric& fnm, font_glyphs& fng)
+x_gui_rep::load_system_font (string family, int size, int dpi,
+			     font_metric& fnm, font_glyphs& fng)
 {
   string fn_name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
   if (font_metric::instances -> contains (fn_name)) {
@@ -270,6 +282,13 @@ x_display_rep::load_system_font (string family, int size, int dpi,
   fng= std_font_glyphs (fn_name, gls , 0, 255);
 }
 
+void
+load_system_font (string family, int size, int dpi,
+		  font_metric& fnm, font_glyphs& fng)
+{
+  the_gui->load_system_font (family, size, dpi, fnm, fng);
+}
+
 /******************************************************************************
 * The implementation
 ******************************************************************************/
@@ -278,7 +297,7 @@ x_font_rep::x_font_rep (string name, string family2, int size2, int dpi2):
   font_rep (name)
 {
   metric ex;
-  the_display->load_system_font (family2, size2, dpi2, fnm, fng);
+  load_system_font (family2, size2, dpi2, fnm, fng);
 
   family       = family2;
   size         = size2;

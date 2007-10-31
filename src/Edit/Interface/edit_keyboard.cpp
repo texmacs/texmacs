@@ -65,11 +65,6 @@ edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
   return sv->kbd_get_command (which, help, c);
 }
 
-unsigned int
-edit_interface_rep::get_kbd_modifiers () {
-  return the_display->get_kbd_modifiers ();
-}
-
 /******************************************************************************
 * Main keyboard routines
 ******************************************************************************/

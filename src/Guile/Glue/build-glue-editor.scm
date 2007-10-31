@@ -153,7 +153,6 @@
   (emulate-keyboard emulate_keyboard (void string))
   (emulate-keyboard-message emulate_keyboard (void string string))
   (complete-try? complete_try (bool))
-  (get-keyboard-modifiers get_kbd_modifiers (int))
   
   ;; moving the cursor
   (go-to-path go_to (void path))

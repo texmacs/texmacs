@@ -31,6 +31,7 @@
 #include "Freetype/tt_file.hpp"
 #include "Bibtex/bibtex.hpp"
 #include "link.hpp"
+#include "dictionary.hpp"
 #include <string.h>
 #include <libguile.h>
 

@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "Widkit/simple_wk_widget.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 
 /******************************************************************************
 * Constructor
@@ -26,7 +26,7 @@ simple_widget_rep::simple_widget_rep ():
 
 void
 simple_widget_rep::handle_get_size_hint (SI& w, SI& h) {
-  the_display->get_extents (w, h);  
+  gui_root_extents (w, h);  
 }
 
 void

@@ -70,13 +70,7 @@ public:
   bool is_visible (SI x1, SI y1, SI x2, SI y2);
 
   /* color */
-  color black, white, red, green, blue;
-  color yellow, magenta, orange, brown, pink;
-  color light_grey, grey, dark_grey;
-  virtual color rgb (int r, int g, int b) = 0;
-  virtual void  get_rgb (color col, int& r, int& g, int& b) = 0;
   virtual color get_color () = 0;
-  virtual color get_color (string s) = 0;
   virtual color get_background () = 0;
   virtual tree  get_background_pattern ();
 

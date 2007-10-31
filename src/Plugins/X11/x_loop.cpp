@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "X11/x_display.hpp"
+#include "X11/x_gui.hpp"
 #include "X11/x_window.hpp"
 #include "iterator.hpp"
 #include "converter.hpp"
@@ -66,7 +66,7 @@ remote_time (Time t) {
 ******************************************************************************/
 
 string
-x_display_rep::look_up_key (XKeyEvent* ev) {
+x_gui_rep::look_up_key (XKeyEvent* ev) {
   KeySym key= 0;
   //cout << ev->state << ", " << ev->keycode << LF;
 
@@ -97,7 +97,7 @@ x_display_rep::look_up_key (XKeyEvent* ev) {
 }
 
 string
-x_display_rep::look_up_mouse (XButtonEvent* ev) {
+x_gui_rep::look_up_mouse (XButtonEvent* ev) {
   switch (ev->button) {
   case Button1: return "left";
   case Button2: return "middle";
@@ -109,7 +109,7 @@ x_display_rep::look_up_mouse (XButtonEvent* ev) {
 }
 
 unsigned int
-x_display_rep::get_button_mask (XButtonEvent* ev) {
+x_gui_rep::get_button_mask (XButtonEvent* ev) {
   switch (ev->button) {
   case Button1: return Button1Mask;
   case Button2: return Button2Mask;
@@ -162,7 +162,7 @@ char* event_name[]= {
 };
 
 void
-x_display_rep::process_event (x_window win, XEvent* ev) {
+x_gui_rep::process_event (x_window win, XEvent* ev) {
   //if (ev->type != NoExpose)
   //cout << "Event: " << event_name[ev->type] << "\n";
   switch (ev->type) {
@@ -316,14 +316,14 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
 ******************************************************************************/
 
 static void (*the_interpose_handler) (void) = NULL;
-void set_interpose_handler (void (*r) (void)) { the_interpose_handler= r; }
+void gui_interpose (void (*r) (void)) { the_interpose_handler= r; }
 
 #define MIN_DELAY   10
 #define MAX_DELAY   1000
 #define SLEEP_AFTER 120000
 
 void
-x_display_rep::event_loop () {
+x_gui_rep::event_loop () {
   bool wait  = true;
   int count  = 0;
   int delay  = MIN_DELAY;

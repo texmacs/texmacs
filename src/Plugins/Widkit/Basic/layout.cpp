@@ -12,9 +12,9 @@
 
 #include "window.hpp"
 
-color layout_light (window win) { return the_display->light_grey; }
-color layout_normal (window win) { return the_display->grey; }
-color layout_dark (window win) { return the_display->dark_grey; }
+color layout_light (window win) { return light_grey; }
+color layout_normal (window win) { return grey; }
+color layout_dark (window win) { return dark_grey; }
 
 void
 layout_default (window win, SI x1, SI y1, SI x2, SI y2) {
@@ -53,7 +53,7 @@ layout_dark_outline (window win, SI x1, SI y1, SI x2, SI y2) {
 void
 layout_lower (window win, SI x1, SI y1, SI x2, SI y2) {
   win->set_line_style (PIXEL);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x1, y1, x2-PIXEL, y1);
   win->line (x2- PIXEL, y1, x2- PIXEL, y2- PIXEL);
   win->set_color (layout_dark (win));
@@ -67,7 +67,7 @@ layout_higher (window win, SI x1, SI y1, SI x2, SI y2) {
   win->set_color (layout_dark (win));
   win->line (x1, y1, x2- PIXEL, y1);
   win->line (x2- PIXEL, y1, x2- PIXEL, y2- PIXEL);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x1, y2- PIXEL, x2, y2- PIXEL);
   win->line (x1, y1, x1, y2- PIXEL);
 }
@@ -80,7 +80,7 @@ layout_submenu_triangle (window win, SI x, SI y) {
   win->set_color (layout_dark (win));
   win->line (x, y-3*PIXEL, x, y+3*PIXEL);
   win->line (x, y+3*PIXEL, x+7*PIXEL, y);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x, y-3*PIXEL, x+7*PIXEL, y);
 }
 
@@ -93,7 +93,7 @@ layout_up_arrow (window win, SI x, SI y, SI w, SI h) {
   win->set_color (layout_dark (win));
   win->line (x, y, x+w, y);
   win->line (x+w, y, x+hw, y+h);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x, y, x+hw, y+h);
 }
 
@@ -105,7 +105,7 @@ layout_down_arrow (window win, SI x, SI y, SI w, SI h) {
   win->triangle (x, y+h, x+w, y+h, x+hw, y);
   win->set_color (layout_dark (win));
   win->line (x+w, y+h, x+hw, y);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x, y+h, x+w, y+h);
   win->line (x, y+h, x+hw, y);
 }
@@ -119,7 +119,7 @@ layout_left_arrow (window win, SI x, SI y, SI w, SI h) {
   win->set_color (layout_dark (win));
   win->line (x+w, y, x+w, y+h);
   win->line (x+w, y, x, y+hh);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x+w, y+h, x, y+hh);
 }
 
@@ -131,7 +131,7 @@ layout_right_arrow (window win, SI x, SI y, SI w, SI h) {
   win->triangle (x, y, x, y+h, x+w, y+hh);
   win->set_color (layout_dark (win));
   win->line (x, y, x+w, y+hh);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->line (x, y+h, x+w, y+hh);
   win->line (x, y, x, y+h);
 }

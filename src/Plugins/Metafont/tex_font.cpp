@@ -14,6 +14,7 @@
 #include "Metafont/load_tex.hpp"
 #include "translator.hpp"
 #include "iterator.hpp"
+#include "gui.hpp"
 
 #define TEX_ANY   0
 #define TEX_EC    1
@@ -220,7 +221,7 @@ tex_font_rep::special_draw (ps_device dev, string s, SI x, SI y) {
   string rr= special_translate[r];
   color c= dev->get_color ();
   if (N(rr) != 0) r= rr;
-  else dev->set_color (dev->red);
+  else dev->set_color (red);
   draw (dev, r, x, y);
   dev->set_color (c);
   get_extents (r, ex);

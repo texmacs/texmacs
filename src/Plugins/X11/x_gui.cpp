@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : x_display.cpp
-* DESCRIPTION: X displays
+* MODULE     : x_gui.cpp
+* DESCRIPTION: Graphical user interface for X11
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -12,10 +12,9 @@
 
 #include "timer.hpp"
 #include "dictionary.hpp"
-#include "X11/x_display.hpp"
+#include "X11/x_gui.hpp"
 #include "X11/x_drawable.hpp"
 #include "X11/x_window.hpp"
-#include "iterator.hpp"
 #include "image_files.hpp"
 #include <X11/cursorfont.h>
 #include "message.hpp"
@@ -52,20 +51,20 @@ int hash (x_character xc) {
   return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf; }
 
 void
-x_display_rep::prepare_color (int sf, color fg, color bg) {
+x_gui_rep::prepare_color (int sf, color fg, color bg) {
   int nr_cols= sf*sf;
   if (nr_cols >= 64) nr_cols= 64;
   x_character col_entry (0, font_glyphs (), sf, fg, bg);
   color* cols= (color*) color_scale [col_entry];
   if (cols == NULL) {
     int fR, fG, fB, bR, bG, bB, j;
-    get_rgb (fg, fR, fG, fB);
-    get_rgb (bg, bR, bG, bB);
+    get_rgb_color (fg, fR, fG, fB);
+    get_rgb_color (bg, bR, bG, bB);
     cols= new color [nr_cols+1];
     for (j=0; j<=nr_cols; j++)
-      cols [nr_cols-j]= rgb ((bR*j + fR*(nr_cols-j)) / nr_cols,
-			     (bG*j + fG*(nr_cols-j)) / nr_cols,
-			     (bB*j + fB*(nr_cols-j)) / nr_cols);
+      cols [nr_cols-j]= rgb_color ((bR*j + fR*(nr_cols-j)) / nr_cols,
+				   (bG*j + fG*(nr_cols-j)) / nr_cols,
+				   (bB*j + fB*(nr_cols-j)) / nr_cols);
     color_scale (col_entry)= (void*) cols;
   }
 }
@@ -85,7 +84,7 @@ get_bit (char *s, int i) {
 }
 
 unsigned int
-x_display_rep::get_kbd_modifiers () {
+x_gui_rep::get_kbd_modifiers () {
   static char keymap[32];
   unsigned int res=0;
   XQueryKeymap(dpy, keymap);
@@ -116,23 +115,28 @@ x_display_rep::get_kbd_modifiers () {
   return res;
 }
 
+unsigned int
+get_kbd_modifiers () {
+  return the_gui->get_kbd_modifiers ();
+}
+
 /******************************************************************************
 * Subroutines
 ******************************************************************************/
 
 void
-x_display_rep::set_button_state (unsigned int state) {
+x_gui_rep::set_button_state (unsigned int state) {
   int i= 0;
   if ((state & Button1Mask) != 0) i += 1;
   if ((state & Button2Mask) != 0) i += 2;
   if ((state & Button3Mask) != 0) i += 4;
   if ((state & Button4Mask) != 0) i += 8;
   if ((state & Button5Mask) != 0) i += 16;
-  x_display_rep::state= i;
+  x_gui_rep::state= i;
 }
 
 void
-x_display_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
+x_gui_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
   Window root, child;
   SI root_x, root_y, x, y;
   unsigned int mask;
@@ -179,7 +183,7 @@ pritty (tree t) {
 */
 
 void
-x_display_rep::obtain_mouse_grab (widget wid) {
+x_gui_rep::obtain_mouse_grab (widget wid) {
   Window win= get_Window (wid);
   if ((!nil (grab_ptr)) && (wid==grab_ptr->item)) return;
   widget old_widget; if (!nil (grab_ptr)) old_widget= grab_ptr->item;
@@ -197,7 +201,7 @@ x_display_rep::obtain_mouse_grab (widget wid) {
 }
 
 void
-x_display_rep::release_mouse_grab () {
+x_gui_rep::release_mouse_grab () {
   if (nil (grab_ptr)) return;
   widget old_widget= grab_ptr->item;
   grab_ptr= grab_ptr->next;
@@ -219,7 +223,7 @@ x_display_rep::release_mouse_grab () {
 }
 
 bool
-x_display_rep::has_mouse_grab (widget w) {
+x_gui_rep::has_mouse_grab (widget w) {
   return (!nil (grab_ptr)) && (grab_ptr->item == w);
 }
 
@@ -234,7 +238,7 @@ my_predicate (Display* dpy, XEvent* ev, XPointer arg) { (void) dpy;
 }
 
 tree
-x_display_rep::get_selection (widget wid, string key) {
+x_gui_rep::get_selection (widget wid, string key) {
   if (selections->contains (key)) return copy (selections [key]);
   if (key != "primary") return "none";
   if (XGetSelectionOwner (dpy, XA_PRIMARY) == None) return "none";
@@ -272,7 +276,7 @@ x_display_rep::get_selection (widget wid, string key) {
 }
 
 bool
-x_display_rep::set_selection (widget wid, string key, tree t, string s) {
+x_gui_rep::set_selection (widget wid, string key, tree t, string s) {
   selections (key)= copy (t);
   if (key == "primary") {
     Window win= get_Window (wid);
@@ -285,12 +289,27 @@ x_display_rep::set_selection (widget wid, string key, tree t, string s) {
 }
 
 void
-x_display_rep::clear_selection (string key) {
+x_gui_rep::clear_selection (string key) {
   selections->reset (key);
   if ((key == "primary") && (selection != NULL)) {
     delete[] selection;
     selection= NULL;
   }
+}
+
+bool
+set_selection (widget wid, string k, tree t, string s="") {
+  return the_gui->set_selection (wid, k, t, s);
+}
+
+tree
+get_selection (widget wid, string k) {
+  return the_gui->get_selection (wid, k);
+}
+
+void
+clear_selection (string key) {
+  the_gui->clear_selection (key);
 }
 
 /******************************************************************************
@@ -316,63 +335,15 @@ insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
   return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
 }
 
-static list<message>
-remove_all_messages (list<message> l, widget wid, string s, int& found) {
-  if (nil (l))
-    return l;
-  else if (l->item->wid == wid && l->item->s == s) {
-    found++;
-    return remove_all_messages (l->next, wid, s, found);
-  }
-  else
-    return list<message>(l->item, remove_all_messages(l->next, wid, s, found));
-};
-
 void
-x_display_rep::delayed_message (widget wid, string s, time_t delay) {
+x_gui_rep::delayed_message (widget wid, string s, time_t delay) {
   time_t ct= texmacs_time ();
   messages= insert_message (messages, wid, s, ct, ct+ delay);
 }
 
-int
-x_display_rep::remove_all_delayed_messages (widget wid, string s) {
-  int found= 0;
-  messages= remove_all_messages (messages, wid, s, found);
-  return found;
-}
-
-/******************************************************************************
-* Set the current language
-******************************************************************************/
-
 void
-x_display_rep::load_dictionary (string name, string from, string to) {
-  dictionary dict= ::load_dictionary (from, to);
-  dict->load (name);
-}
-
-void
-x_display_rep::set_output_language (string s) {
-  out_lan= s;
-
-  iterator<Window> it= iterate (Window_to_window);
-  while (it->busy()) {
-    x_window win= (x_window) Window_to_window [it->next()];
-    if (get_x_window (win->w) != NULL)
-      send_update (win->w);
-  }
-}
-
-string
-x_display_rep::get_output_language () {
-  return out_lan;
-}
-
-string
-x_display_rep::translate (string s, string from, string to) {
-  if (N(from)==0) return s;
-  dictionary dict= ::load_dictionary (from, to);
-  return dict->translate (s);
+delayed_message (widget wid, string mess, time_t delay) {
+  the_gui->delayed_message (wid, mess, delay);
 }
 
 /******************************************************************************
@@ -508,7 +479,7 @@ fetch_X11_cursor_no (string name) {
 }
 
 void
-x_display_rep::set_mouse_pointer (widget w, string name) {
+x_gui_rep::set_mouse_pointer (widget w, string name) {
   int no= fetch_X11_cursor_no (name);
   if (no==-1) return;
   Cursor cursor=XCreateFontCursor(dpy, no);
@@ -517,7 +488,7 @@ x_display_rep::set_mouse_pointer (widget w, string name) {
 }
 
 void
-x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
+x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
   if (mask_name=="") mask_name= name;
   x_drawable_rep* dra= new x_drawable_rep (this);
@@ -536,7 +507,7 @@ x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   array<string> cnames_curs= xpm_colors (xpm_cache[name]);
   array<SI> hotspot= xpm_hotspot (xpm_cache[name]);
   if (N(hotspot) == 0)
-    fatal_error ("Missing hotspot", "x_display_rep::set_pointer");
+    fatal_error ("Missing hotspot", "x_gui_rep::set_pointer");
   array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
   char* bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
 					      string ("white"));
@@ -552,7 +523,7 @@ x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   else
   if (XAllocColor (dpy, cols, &closest1)) fg= &closest1;
   else
-    fatal_error ("Unable to allocate fgcolor", "x_display_rep::set_pointer");
+    fatal_error ("Unable to allocate fgcolor", "x_gui_rep::set_pointer");
 
   XColor exact2, closest2;
   XLookupColor(dpy, cols, bgcolor, &exact2, &closest2);
@@ -560,7 +531,7 @@ x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   else
   if (XAllocColor (dpy, cols, &closest2)) bg= &closest2;
   else
-    fatal_error ("Unable to allocate bgcolor", "x_display_rep::set_pointer");
+    fatal_error ("Unable to allocate bgcolor", "x_gui_rep::set_pointer");
 
   delete[] bgcolor;
   delete[] fgcolor;
@@ -576,7 +547,7 @@ x_display_rep::set_mouse_pointer (widget w, string name, string mask_name) {
 ******************************************************************************/
 
 void
-x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
+x_gui_rep::set_help_balloon (widget wid, SI x, SI y) {
   unmap_balloon ();
   balloon_wid = wid;
   balloon_win = NULL;
@@ -586,7 +557,7 @@ x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
 }
 
 void
-x_display_rep::map_balloon () {
+x_gui_rep::map_balloon () {
   widget win_wid= popup_window_widget (balloon_wid, "Balloon");
   set_position (win_wid, balloon_x, balloon_y);
   balloon_win= (window) get_x_window (win_wid);
@@ -594,7 +565,7 @@ x_display_rep::map_balloon () {
 }
 
 void
-x_display_rep::unmap_balloon () {
+x_gui_rep::unmap_balloon () {
   if (!nil (balloon_wid)) {
     if (balloon_win != NULL) {
       balloon_win->set_visibility (false);
@@ -606,7 +577,7 @@ x_display_rep::unmap_balloon () {
 }
 
 void
-x_display_rep::set_wait_indicator (widget w, string message, string arg) {
+x_gui_rep::set_wait_indicator (widget w, string message, string arg) {
   x_window ww= get_x_window (w);
   if (ww == NULL || message == "") return;
   if (arg != "") message= message * "#" * arg * "...";
@@ -627,7 +598,7 @@ x_display_rep::set_wait_indicator (widget w, string message, string arg) {
 }
 
 bool
-x_display_rep::check_event (int type) {
+x_gui_rep::check_event (int type) {
   bool status;
   XEvent ev;
   switch (type) {
@@ -668,4 +639,19 @@ beep () {
 #else
   cerr << '\a';
 #endif
+}
+
+void
+set_help_balloon (widget wid, SI x, SI y) {
+  the_gui->set_help_balloon (wid, x, y);
+}
+
+void
+set_wait_indicator (widget w, string message, string arg) {
+  the_gui->set_wait_indicator (w, message, arg);
+}
+
+bool
+check_event (int type) {
+  return the_gui->check_event (type);
 }

@@ -136,7 +136,6 @@ public:
   virtual bool complete_try () = 0;
   virtual void complete_start (string prefix, array<string> compls) = 0;
   virtual bool complete_keypress (string key) = 0;
-  virtual unsigned int get_kbd_modifiers () = 0;
   virtual void mouse_any (string s, SI x, SI y, time_t t) = 0;
   virtual void mouse_click (SI x, SI y) = 0;
   virtual bool mouse_extra_click (SI x, SI y) = 0;

@@ -34,5 +34,10 @@ public:
 };
 
 dictionary load_dictionary (string from, string to);
+void set_input_language (string s);
+string get_input_language ();
+void set_output_language (string s);
+string get_output_language ();
+string translate (string lan, string from, string to);
 
 #endif // defined DICTIONARY_H

@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "Widkit/basic_widget.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 #include "window.hpp"
 
 SI get_dx(gravity grav, int w);
@@ -184,7 +184,7 @@ basic_widget_rep::handle_alarm (alarm_event ev) {
 
 void
 basic_widget_rep::handle_clear (clear_event ev) {
-  win->set_background (the_display->white);
+  win->set_background (white);
   win->clear (ev->x1, ev->y1, ev->x2, ev->y2);
 }
 

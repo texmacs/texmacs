@@ -15,6 +15,7 @@
 #include "window.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/layout.hpp"
+#include "dictionary.hpp"
 
 /******************************************************************************
 * Text widgets
@@ -52,9 +53,9 @@ text_widget_rep::operator tree () {
 
 void
 text_widget_rep::handle_get_size (get_size_event ev) {
-  string out_lan= the_display->get_output_language ();
-  s= tm_var_encode (the_display->translate (original, in_lan, out_lan));
-  font fn= the_display->default_font (tt);
+  string out_lan= get_output_language ();
+  s= tm_var_encode (translate (original, in_lan, out_lan));
+  font fn= get_default_font (tt);
   fn->var_get_extents (s, ex);
   ev->w = ((ex->x2- ex->x1+ 2)/3)+ 2*dw;
   ev->h = ((fn->y2- fn->y1+ 2)/3)+ 2*dh;
@@ -65,7 +66,7 @@ void
 text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   if (!transparent) layout_default (win, 0, 0, w, h);
   win->set_color (col);
-  font fn= the_display->default_font (tt);
+  font fn= get_default_font (tt);
   win->set_shrinking_factor (3);
   fn ->var_draw (win, s, 3*dw- ex->x1, 3*dh- fn->y1);
   win->set_shrinking_factor (1);
@@ -77,8 +78,7 @@ text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 wk_widget
 text_wk_widget (string s, bool tsp, string lan) {
-  return new text_widget_rep (s, the_display->black,
-			      tsp, lan, false, 3*PIXEL, 0);
+  return new text_widget_rep (s, black, tsp, lan, false, 3*PIXEL, 0);
 }
 
 wk_widget

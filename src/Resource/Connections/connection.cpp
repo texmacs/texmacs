@@ -24,7 +24,7 @@
 #include "scheme.hpp"
 #include "resource.hpp"
 #include "Generic/input.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 
 static tree connection_retrieve (string name, string session);
 

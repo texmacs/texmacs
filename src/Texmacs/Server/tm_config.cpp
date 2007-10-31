@@ -18,10 +18,7 @@
 ******************************************************************************/
 
 tm_config_rep::tm_config_rep ():
-  in_lan ("english"),
-  out_lan ("english"),
-  var_suffix (" tab"),
-  unvar_suffix (" S-tab") {}
+  var_suffix (" tab"), unvar_suffix (" S-tab") {}
 
 tm_config_rep::~tm_config_rep () {}
 
@@ -32,31 +29,6 @@ tm_config_rep::~tm_config_rep () {}
 string
 tm_config_rep::get_preference (string var) {
   return as_string (call ("get-preference", var));
-}
-
-/******************************************************************************
-* Set input and output language
-******************************************************************************/
-
-void
-tm_config_rep::set_input_language (string s) {
-  in_lan= s;
-}
-
-void
-tm_config_rep::set_output_language (string s) {
-  out_lan= s;
-  the_display->set_output_language (s);
-}
-
-string
-tm_config_rep::get_input_language () {
-  return in_lan;
-}
-
-string
-tm_config_rep::get_output_language () {
-  return out_lan;
 }
 
 /******************************************************************************

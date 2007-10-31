@@ -52,7 +52,7 @@ balloon_widget_rep::balloon_handle_mouse (mouse_event ev) {
     win->get_position (x, y);
     SI xx= x+ ev->x+ 10*PIXEL;
     SI yy= y+ ev->y- 5*PIXEL;
-    the_display->set_help_balloon (abstract (balloon_wid), xx, yy);
+    set_help_balloon (abstract (balloon_wid), xx, yy);
   }
 }
 
@@ -121,9 +121,9 @@ balloon_decoration_widget_rep::handle_position (position_event ev) {
 void
 balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
-  win->set_background (the_display->rgb (255, 255, 160));
+  win->set_background (rgb_color (255, 255, 160));
   win->clear (0, 0, w, h);
-  win->set_color (the_display->black);
+  win->set_color (black);
   win->line (0, 0, w-PIXEL, 0);
   win->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
   win->line (0, 0, 0, h);

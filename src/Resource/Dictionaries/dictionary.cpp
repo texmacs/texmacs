@@ -106,3 +106,22 @@ dictionary_rep::translate (string s) {
   if (N(dest)==0) return s;
   return dest;
 }
+
+/******************************************************************************
+* Interface
+******************************************************************************/
+
+static string in_lan ("english");
+static string out_lan ("english");
+
+void set_input_language (string s) { in_lan= s; }
+string get_input_language () { return in_lan; }
+void set_output_language (string s) { out_lan= s; }
+string get_output_language () { return out_lan; }
+
+string
+translate (string s, string from, string to) {
+  if (N(from)==0) return s;
+  dictionary dict= load_dictionary (from, to);
+  return dict->translate (s);
+}

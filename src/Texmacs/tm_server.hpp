@@ -43,7 +43,6 @@ public:
   tm_buffer   get_buffer ();
   editor      get_editor ();
   tm_window   get_window ();
-  color       get_color (string s);
   int         get_nr_windows ();
 
   /* Caching style files */

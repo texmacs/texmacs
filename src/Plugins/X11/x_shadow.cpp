@@ -53,7 +53,7 @@ x_drawable_rep::new_shadow (ps_device& dev) {
     delete_shadow (dev);
   }
   //cout << "Create " << mw << ", " << mh << "\n";
-  dev= (ps_device) new x_drawable_rep (dis, mw, mh);
+  dev= (ps_device) new x_drawable_rep (gui, mw, mh);
 }
 
 void

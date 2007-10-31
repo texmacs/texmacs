@@ -60,8 +60,8 @@ box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
   ps_device win= get_ps_device (this);
   if (!transparent) {
-    win->set_background (win->light_grey);
-    win->set_color (win->light_grey);
+    win->set_background (light_grey);
+    win->set_color (light_grey);
     win->fill (0, -h, w, 0);
   }
   win->set_shrinking_factor (SHRINK);
@@ -107,7 +107,7 @@ box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
 * Application: get window size for widget tree
 ******************************************************************************/
 
-#include "display.hpp"
+#include "gui.hpp"
 #include "drd_std.hpp"
 #include "drd_info.hpp"
 #include "convert.hpp"

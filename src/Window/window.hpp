@@ -12,10 +12,12 @@
 
 #ifndef WINDOW_H
 #define WINDOW_H
+#include "gui.hpp"
 #include "ps_device.hpp"
-#include "display.hpp"
 
 class widget;
+class window_rep;
+typedef window_rep* window;
 
 class window_rep: virtual public ps_device_rep {
 public:
