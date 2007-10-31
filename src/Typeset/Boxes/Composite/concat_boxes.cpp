@@ -520,7 +520,7 @@ public:
   phrase_box_rep (path ip, array<box> bs, array<SI> spc);
   ~phrase_box_rep ();
   void position_at (SI x, SI y, rectangles& change_log_ptr);
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 phrase_box_rep::phrase_box_rep (path ip, array<box> bs, array<SI> spc):
@@ -546,8 +546,8 @@ phrase_box_rep::position_at (SI x, SI y, rectangles& logs) {
 }
 
 void
-phrase_box_rep::display (ps_device dev) {
-  dev->apply_shadow (x1, y1, x2, y2);
+phrase_box_rep::display (renderer ren) {
+  ren->apply_shadow (x1, y1, x2, y2);
 }
 
 /******************************************************************************

@@ -12,7 +12,7 @@
 
 #ifndef MESSAGE_H
 #define MESSAGE_H
-#include "ps_device.hpp"
+#include "renderer.hpp"
 #include "widget.hpp"
 #include "ntuple.hpp"
 #include "rectangles.hpp"
@@ -25,7 +25,7 @@
 typedef enum slot_id {
   SLOT_IDENTIFIER,
   SLOT_WINDOW,
-  SLOT_PS_DEVICE,
+  SLOT_RENDERER,
   SLOT_VISIBILITY,
   SLOT_FULL_SCREEN,
   SLOT_NAME,
@@ -234,10 +234,10 @@ get_window (widget w) {
   return read (w, SLOT_WINDOW);
 }
 
-inline ps_device
-get_ps_device (widget w) {
-  // get ps_device associated to widget (or NULL if the widget is not attached)
-  return query<ps_device> (w, SLOT_PS_DEVICE);
+inline renderer
+get_renderer (widget w) {
+  // get renderer associated to widget (or NULL if the widget is not attached)
+  return query<renderer> (w, SLOT_RENDERER);
 }
 
 inline void

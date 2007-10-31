@@ -166,8 +166,8 @@ public:
     if (in == "scroll-x") return xt;
     else if (in == "scroll-y") return yt;
     else return box_rep::get_info (in); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
+  void pre_display (renderer &ren);
+  void post_display (renderer &ren);
   selection find_selection (path lbp, path rbp);
 };
 
@@ -185,14 +185,14 @@ clip_box_rep::clip_box_rep (
 }
 
 void
-clip_box_rep::pre_display (ps_device &dev) {
-  dev->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
-  dev->extra_clipping (x1, y1, x2, y2);
+clip_box_rep::pre_display (renderer &ren) {
+  ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  ren->extra_clipping (x1, y1, x2, y2);
 }
 
 void
-clip_box_rep::post_display (ps_device &dev) {
-  dev->set_clipping (
+clip_box_rep::post_display (renderer &ren) {
+  ren->set_clipping (
     old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
 }
 
@@ -247,9 +247,9 @@ struct cell_box_rep: public change_box_rep {
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 		SI bl, SI br, SI bb, SI bt, color fg, tree bg);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
-  void display (ps_device dev);
+  void pre_display (renderer &ren);
+  void post_display (renderer &ren);
+  void display (renderer ren);
 };
 
 cell_box_rep::cell_box_rep (
@@ -274,25 +274,25 @@ cell_box_rep::cell_box_rep (
 }
 
 void
-cell_box_rep::pre_display (ps_device& dev) {
+cell_box_rep::pre_display (renderer& ren) {
   if (bg == "") return;
-  old_bg= dev->get_background_pattern ();
-  dev->set_background_pattern (bg);
-  dev->clear_pattern (x1, y1, x2, y2);
+  old_bg= ren->get_background_pattern ();
+  ren->set_background_pattern (bg);
+  ren->clear_pattern (x1, y1, x2, y2);
 }
 
 void
-cell_box_rep::post_display (ps_device &dev) {
+cell_box_rep::post_display (renderer &ren) {
   if (bg == "") return;
-  dev->set_background_pattern (old_bg);
+  ren->set_background_pattern (old_bg);
 }
 
 void
-cell_box_rep::display (ps_device dev) {
+cell_box_rep::display (renderer ren) {
   if ((bl>0) || (br>0) || (bb>0) || (bt>0)) {
     SI l= bl, r= br, b= bb, t= bt;
-    if (dev->sfactor > 1) { // correction for screen display only
-      SI  pixel= dev->pixel;
+    if (ren->sfactor > 1) { // correction for screen display only
+      SI  pixel= ren->pixel;
       l= ((l + (pixel - 1)) / pixel) * pixel;
       r= ((r + (pixel - 1)) / pixel) * pixel;
       b= ((b + (pixel - 1)) / pixel) * pixel;
@@ -300,11 +300,11 @@ cell_box_rep::display (ps_device dev) {
     }
     SI X1= x1-(l>>1), X2= x2+(r>>1);
     SI Y1= y1-(b>>1), Y2= y2+(t>>1);
-    dev->set_color (fg);
-    dev->fill (X1  , Y1  , X1+l, Y2  );
-    dev->fill (X2-r, Y1  , X2  , Y2  );
-    dev->fill (X1  , Y1  , X2  , Y1+b);
-    dev->fill (X1  , Y2-t, X2  , Y2  );
+    ren->set_color (fg);
+    ren->fill (X1  , Y1  , X1+l, Y2  );
+    ren->fill (X2-r, Y1  , X2  , Y2  );
+    ren->fill (X1  , Y1  , X2  , Y1+b);
+    ren->fill (X1  , Y2-t, X2  , Y2  );
   }
 }
 
@@ -340,8 +340,8 @@ public:
     logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
     logs_ptr= &logs;
   }
-  inline void display (ps_device dev) {
-    dev->apply_shadow (x1, y1, x2, y2);
+  inline void display (renderer ren) {
+    ren->apply_shadow (x1, y1, x2, y2);
   }
 };
 
@@ -356,9 +356,9 @@ struct highlight_box_rep: public change_box_rep {
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
 		     tree bg, color sun, color shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
-  void display (ps_device dev);
+  void pre_display (renderer &ren);
+  void post_display (renderer &ren);
+  void display (renderer ren);
 };
 
 highlight_box_rep::highlight_box_rep (
@@ -380,37 +380,37 @@ highlight_box_rep::highlight_box_rep (
 }
 
 void
-highlight_box_rep::pre_display (ps_device& dev) {
-  old_bg= dev->get_background_pattern ();
-  dev->set_background_pattern (bg);
+highlight_box_rep::pre_display (renderer& ren) {
+  old_bg= ren->get_background_pattern ();
+  ren->set_background_pattern (bg);
   SI W= w;
-  if (!dev->is_printer ()) {
-    SI pixel= dev->pixel;
+  if (!ren->is_printer ()) {
+    SI pixel= ren->pixel;
     W= ((w + pixel - 1) / pixel) * pixel;
   }
-  dev->clear_pattern (x1+W, y1+W, x2-W, y2-W);
+  ren->clear_pattern (x1+W, y1+W, x2-W, y2-W);
 }
 
 void
-highlight_box_rep::post_display (ps_device &dev) {
-  dev->set_background_pattern (old_bg);
+highlight_box_rep::post_display (renderer &ren) {
+  ren->set_background_pattern (old_bg);
 }
 
 void
-highlight_box_rep::display (ps_device dev) {
+highlight_box_rep::display (renderer ren) {
   SI W= w;
-  if (!dev->is_printer ()) {
-    SI pixel= dev->pixel;
+  if (!ren->is_printer ()) {
+    SI pixel= ren->pixel;
     W= ((w + pixel - 1) / pixel) * pixel;
   }
-  dev->set_color (sun);
-  dev->fill (x1  , y2-W, x2  , y2  );
-  dev->fill (x1  , y1  , x1+W, y2  );
-  dev->set_color (shad);
-  dev->fill (x1+W, y1  , x2  , y1+W);
-  dev->fill (x2-W, y1  , x2  , y2-W);
-  dev->triangle (x1, y1, x1+W, y1, x1+W, y1+W);
-  dev->triangle (x2, y2, x2, y2-W, x2-W, y2-W);
+  ren->set_color (sun);
+  ren->fill (x1  , y2-W, x2  , y2  );
+  ren->fill (x1  , y1  , x1+W, y2  );
+  ren->set_color (shad);
+  ren->fill (x1+W, y1  , x2  , y1+W);
+  ren->fill (x2-W, y1  , x2  , y2-W);
+  ren->triangle (x1, y1, x1+W, y1, x1+W, y1+W);
+  ren->triangle (x2, y2, x2, y2-W, x2-W, y2-W);
 }
 
 /******************************************************************************

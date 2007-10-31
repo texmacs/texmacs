@@ -38,7 +38,7 @@ struct empty_box_rep: public box_rep {
   empty_box_rep (path ip, int x1b, int y1b, int x2b, int y2b): box_rep (ip) {
     x3=x4=y3=y4=0; x1= x1b; y1=y1b; x2=x2b; y2=y2b; }
   operator tree () { return "empty"; }
-  void display (ps_device dev) { (void) dev; }
+  void display (renderer ren) { (void) ren; }
 };
 
 /*****************************************************************************/
@@ -52,7 +52,7 @@ struct bracket_box_rep: public box_rep {
 
   bracket_box_rep (path ip, int br_type2, SI penw, color c, SI y1b, SI y2b);
   operator tree () { return "bracket"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 SI
@@ -93,7 +93,7 @@ bracket_box_rep::bracket_box_rep (path ip, int br_type2, SI penw2, color c,
 }
 
 void
-draw_bracket (ps_device dev, int br_type, SI x, SI y, SI w, SI h, SI lw) {
+draw_bracket (renderer ren, int br_type, SI x, SI y, SI w, SI h, SI lw) {
   x+=lw; w-=2*lw;
   y+=lw; h-=2*lw;
   switch (br_type) {
@@ -104,9 +104,9 @@ draw_bracket (ps_device dev, int br_type, SI x, SI y, SI w, SI h, SI lw) {
       SI hh= (SI) (((double) h) / sqrt (2.0));
       SI ox= x+ ww;
       SI oy= y+ (h>>1);
-      dev->set_line_style (PIXEL);
+      ren->set_line_style (PIXEL);
       for (i=0; i<lw; i+=PIXEL)
-	dev->arc (ox-ww+i, oy-hh, ox+ww-i, oy+hh, 135<<6, 90<<6);
+	ren->arc (ox-ww+i, oy-hh, ox+ww-i, oy+hh, 135<<6, 90<<6);
     }
     break;
   case Rbracket:
@@ -116,20 +116,20 @@ draw_bracket (ps_device dev, int br_type, SI x, SI y, SI w, SI h, SI lw) {
       SI hh= (SI) (((double) h) / sqrt (2.0));
       SI ox= x+ w- ww;
       SI oy= y+ (h>>1);
-      dev->set_line_style (PIXEL);
+      ren->set_line_style (PIXEL);
       for (i=0; i<lw; i+=PIXEL)
-	dev->arc (ox-ww+i, oy-hh, ox+ww-i, oy+hh, -(45<<6), 90<<6);
+	ren->arc (ox-ww+i, oy-hh, ox+ww-i, oy+hh, -(45<<6), 90<<6);
     }
     break;
   case Lcrochet:
-    dev->line (x, y, x, y+h);
-    dev->line (x, y, x+w, y);
-    dev->line (x, y+h, x+w, y+h);
+    ren->line (x, y, x, y+h);
+    ren->line (x, y, x+w, y);
+    ren->line (x, y+h, x+w, y+h);
     break;
   case Rcrochet:
-    dev->line (x+w, y, x+w, y+h);
-    dev->line (x, y, x+w, y);
-    dev->line (x, y+h, x+w, y+h);
+    ren->line (x+w, y, x+w, y+h);
+    ren->line (x, y, x+w, y);
+    ren->line (x, y+h, x+w, y+h);
     break;
   case Laccolade:
   case Raccolade:
@@ -139,41 +139,41 @@ draw_bracket (ps_device dev, int br_type, SI x, SI y, SI w, SI h, SI lw) {
       SI oy= y+ (h>>1);
       // SI xx= x+ w;
       SI yy= y+ h;
-      dev->line (ox, y+d-PIXEL, ox, oy-d);
-      dev->line (ox, oy+d-PIXEL, ox, yy-d);
+      ren->line (ox, y+d-PIXEL, ox, oy-d);
+      ren->line (ox, oy+d-PIXEL, ox, yy-d);
       if (br_type==Laccolade) {
-	dev->arc (ox, yy-w, ox+w, yy, 90<<6, 90<<6);
-	dev->arc (ox-w, oy, ox, oy+w, 270<<6, 90<<6);
-	dev->arc (ox-w, oy-w, ox, oy, 0, 90<<6);
-	dev->arc (ox, y, ox+w, y+w, 180<<6, 90<<6);
+	ren->arc (ox, yy-w, ox+w, yy, 90<<6, 90<<6);
+	ren->arc (ox-w, oy, ox, oy+w, 270<<6, 90<<6);
+	ren->arc (ox-w, oy-w, ox, oy, 0, 90<<6);
+	ren->arc (ox, y, ox+w, y+w, 180<<6, 90<<6);
       }
       else {
-	dev->arc (ox-w, yy-w, ox, yy, 0, 90<<6);
-	dev->arc (ox, oy, ox+w, oy+w, 180<<6, 90<<6);
-	dev->arc (ox, oy-w, ox+w, oy, 90<<6, 90<<6);
-	dev->arc (ox-w, y, ox, y+w, 270<<6, 90<<6);
+	ren->arc (ox-w, yy-w, ox, yy, 0, 90<<6);
+	ren->arc (ox, oy, ox+w, oy+w, 180<<6, 90<<6);
+	ren->arc (ox, oy-w, ox+w, oy, 90<<6, 90<<6);
+	ren->arc (ox-w, y, ox, y+w, 270<<6, 90<<6);
       }
     }
     break;
   case Langular:
-    dev->line (x, y+(h>>1), x+w, y);
-    dev->line (x, y+(h>>1), x+w, y+h);
+    ren->line (x, y+(h>>1), x+w, y);
+    ren->line (x, y+(h>>1), x+w, y+h);
     break;
   case Rangular:
-    dev->line (x+w, y+(h>>1), x, y);
-    dev->line (x+w, y+(h>>1), x, y+h);
+    ren->line (x+w, y+(h>>1), x, y);
+    ren->line (x+w, y+(h>>1), x, y+h);
     break;
   case Absolute:
-    dev->line (x, y, x, y+h);
+    ren->line (x, y, x, y+h);
     break;
   }
 }
 
 void
-bracket_box_rep::display (ps_device dev) {
-  dev->set_line_style (penw);
-  dev->set_color (col);
-  draw_bracket (dev, br_type, 0, y1, x2, y2-y1, penw);
+bracket_box_rep::display (renderer ren) {
+  ren->set_line_style (penw);
+  ren->set_color (col);
+  draw_bracket (ren, br_type, 0, y1, x2, y2-y1, penw);
 }
 
 /*****************************************************************************/

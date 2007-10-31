@@ -116,14 +116,14 @@ font_rep::var_get_xpositions (string s, SI* xpos) {
 }
 
 void
-font_rep::var_draw (ps_device dev, string s, SI x, SI y) {
+font_rep::var_draw (renderer ren, string s, SI x, SI y) {
   SI dx=0;
   int start=0, end;
   while (start<N(s)) {
     for (end=start; (end<N(s)) && (s[end]!=' '); end++);
     if (start<end) {
       metric ex;
-      draw (dev, s (start, end), x+dx, y);
+      draw (ren, s (start, end), x+dx, y);
       get_extents (s (start, end), ex);
       dx += ex->x2;
     }
@@ -147,7 +147,7 @@ struct error_font_rep: font_rep {
   error_font_rep (string name, font fn);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, string s, SI x, SI y);
 };
 
 error_font_rep::error_font_rep (string name, font fnb):
@@ -164,9 +164,9 @@ error_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-error_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  dev->set_color (red);
-  fn->draw (dev, s, x, y);
+error_font_rep::draw (renderer ren, string s, SI x, SI y) {
+  ren->set_color (red);
+  fn->draw (ren, s, x, y);
 }
 
 font

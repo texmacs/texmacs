@@ -30,7 +30,7 @@ struct unicode_font_rep: font_rep {
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, string s, SI x, SI y);
   glyph get_glyph (string s);
 };
 
@@ -160,11 +160,11 @@ unicode_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-unicode_font_rep::draw (ps_device dev, string s, SI x, SI y) {
+unicode_font_rep::draw (renderer ren, string s, SI x, SI y) {
   int i= 0, n= N(s);
   while (i<n) {
     unsigned int uc= read_unicode_char (s, i);
-    dev->draw (uc, fng, x, y);
+    ren->draw (uc, fng, x, y);
     metric_struct* ex= fnm->get (uc);
     x += ex->x2;
   }

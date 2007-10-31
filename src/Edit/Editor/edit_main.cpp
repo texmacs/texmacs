@@ -14,7 +14,7 @@
 #include "tm_buffer.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
-#include "PsDevice/printer.hpp"
+#include "Renderer/printer.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
 #include "typesetter.hpp"
@@ -167,7 +167,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 
   box the_box= typeset_as_document (env, subtree (et, rp), reverse (rp));
 
-  // Determine parameters for printer device
+  // Determine parameters for printer
 
   string page_type = env->get_string (PAGE_TYPE);
   double w         = env->page_width;
@@ -191,21 +191,21 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   // Print pages
 
   int i;
-  ps_device dev=
+  renderer ren=
     printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   for (i=start; i<end; i++) {
     tree bg= env->read (BG_COLOR);
-    dev->set_background_pattern (bg);
+    ren->set_background_pattern (bg);
     if (bg != "white")
-      dev->clear_pattern (0, (SI) -h, (SI) w, 0);
+      ren->clear_pattern (0, (SI) -h, (SI) w, 0);
 
     rectangles rs;
     the_box[0]->sx(i)= 0;
     the_box[0]->sy(i)= 0;
-    the_box[0][i]->redraw (dev, path (0), rs);
-    if (i<end-1) dev->next_page ();
+    the_box[0][i]->redraw (ren, path (0), rs);
+    if (i<end-1) ren->next_page ();
   }
-  delete dev;
+  delete ren;
 
   if (pdf) {
     ps2pdf (name, orig);

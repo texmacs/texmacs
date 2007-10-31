@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "bitmap_font.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 
 glyph
 join (glyph gl1, glyph gl2) {

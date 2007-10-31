@@ -42,18 +42,18 @@ struct tex_font_rep: font_rep {
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, string s, SI x, SI y);
   SI   get_left_correction (string s);
   SI   get_right_correction (string s);
   glyph get_glyph (string s);
   void special_get_extents (string s, metric& ex);
   void special_get_xpositions (string s, SI* xpos);
-  void special_draw (ps_device dev, string s, SI x, SI y);
+  void special_draw (renderer ren, string s, SI x, SI y);
   SI   special_get_left_correction (string s);
   SI   special_get_right_correction (string s);
   void accented_get_extents (string s, metric& ex);
   void accented_get_xpositions (string s, SI* xpos);
-  void accented_draw (ps_device dev, string s, SI x, SI y);
+  void accented_draw (renderer ren, string s, SI x, SI y);
   SI   accented_get_left_correction (string s);
   SI   accented_get_right_correction (string s);
 };
@@ -203,12 +203,12 @@ tex_font_rep::special_get_xpositions (string s, SI* xpos) {
 }
 
 void
-tex_font_rep::special_draw (ps_device dev, string s, SI x, SI y) {
+tex_font_rep::special_draw (renderer ren, string s, SI x, SI y) {
   register int i, j;
   metric ex;
   for (i=0; i<N(s); i++)
     if (s[i]=='<') break;
-  draw (dev, s (0, i), x, y);
+  draw (ren, s (0, i), x, y);
   get_extents (s (0, i), ex);
   x += ex->x2;
   for (j=i+1; j<N(s); j++)
@@ -219,16 +219,16 @@ tex_font_rep::special_draw (ps_device dev, string s, SI x, SI y) {
   status= TEX_ANY;
   string r= s (i, j);
   string rr= special_translate[r];
-  color c= dev->get_color ();
+  color c= ren->get_color ();
   if (N(rr) != 0) r= rr;
-  else dev->set_color (red);
-  draw (dev, r, x, y);
-  dev->set_color (c);
+  else ren->set_color (red);
+  draw (ren, r, x, y);
+  ren->set_color (c);
   get_extents (r, ex);
   x += ex->x2;
   status= temp;
   
-  draw (dev, s (j, N(s)), x, y);
+  draw (ren, s (j, N(s)), x, y);
 }
 
 SI
@@ -414,14 +414,14 @@ tex_font_rep::accented_get_xpositions (string s, SI* xpos) {
 }
 
 void
-tex_font_rep::accented_draw (ps_device dev, string s, SI x, SI y) {
+tex_font_rep::accented_draw (renderer ren, string s, SI x, SI y) {
   int old_status= status;
   status= TEX_ANY;
 
   register int i;
   string acc= get_accents (s);
   s= get_unaccented (s);
-  draw (dev, s, x, y);
+  draw (ren, s, x, y);
 
   for (i=0; i<N(acc); i++)
     if (acc[i] != ' ') {
@@ -441,7 +441,7 @@ tex_font_rep::accented_draw (ps_device dev, string s, SI x, SI y) {
 	else xx += (ey->x2 - ey->x1) / 5;
       }
       else xx += (SI) (((double) yy) * slope);
-      draw (dev, string (c), x+ xx, y+ yy);
+      draw (ren, string (c), x+ xx, y+ yy);
     }
 
   status= old_status;
@@ -584,7 +584,7 @@ tex_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
+tex_font_rep::draw (renderer ren, string s, SI ox, SI y) {
   register int i;
   switch (status) {
   case TEX_ANY:
@@ -593,7 +593,7 @@ tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
   case TEX_LA:
     for (i=0; i<N(s); i++)
       if (s[i]=='<') {
-	special_draw (dev, s, ox, y);
+	special_draw (ren, s, ox, y);
 	return;
       }
     break;
@@ -601,12 +601,12 @@ tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
   case TEX_ADOBE:
     for (i=0; i<N(s); i++) {
       if (s[i]=='<') {
-	special_draw (dev, s, ox, y);
+	special_draw (ren, s, ox, y);
 	return;
       }
       if ((s[i] & 128) != 0) {
 	ACCENTS_PREPARE;
-	accented_draw (dev, s, ox, y);
+	accented_draw (ren, s, ox, y);
 	return;
       }
     }
@@ -626,7 +626,7 @@ tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
     register int c= buf[i];
     glyph gl= pk->get (c);
     if (nil (gl)) continue;
-    dev->draw (c, pk, x, y);
+    ren->draw (c, pk, x, y);
     x += conv (tfm->w(c)+ ker[i]);
   }
   STACK_DELETE_ARRAY (str);

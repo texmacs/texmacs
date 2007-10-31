@@ -14,7 +14,7 @@
 #include "formatter.hpp"
 #include "Graphics/point.hpp"
 #include "timer.hpp"
-#include "PsDevice/printer.hpp"
+#include "Renderer/printer.hpp"
 #include "file.hpp"
 #include "merge_sort.hpp"
 
@@ -461,11 +461,11 @@ box_rep::get_leaf_offset (string search) {
 int nr_painted= 0;
 
 void
-clear_pattern_rectangles (ps_device dev, rectangles l) {
+clear_pattern_rectangles (renderer ren, rectangles l) {
   while (!nil (l)) {
     rectangle r (l->item);
-    dev->clear_pattern (r->x1- dev->ox, r->y1- dev->oy,
-			r->x2- dev->ox, r->y2- dev->oy);
+    ren->clear_pattern (r->x1- ren->ox, r->y1- ren->oy,
+			r->x2- ren->ox, r->y2- ren->oy);
     l= l->next;
   }
 }
@@ -485,25 +485,25 @@ box_rep::reindex (int i, int item, int n) {
 }
 
 void
-box_rep::redraw (ps_device dev, path p, rectangles& l) {
-  if (((nr_painted&15) == 15) && dev->interrupted (true)) return;
-  dev->move_origin (x0, y0);
-  SI delta= dev->pixel; // adjust visibility to compensate truncation
-  if (dev->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
+box_rep::redraw (renderer ren, path p, rectangles& l) {
+  if (((nr_painted&15) == 15) && ren->interrupted (true)) return;
+  ren->move_origin (x0, y0);
+  SI delta= ren->pixel; // adjust visibility to compensate truncation
+  if (ren->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
     rectangles ll;
     l= rectangles();
-    pre_display (dev);
+    pre_display (ren);
 
     int i, item=-1, n=subnr (), i1= n, i2= -1;
     if (!nil(p)) i1= i2= item= p->item;
     for (i=0; i<n; i++) {
       int k= reindex (i, item, n-1);
-      if (nil(p)) subbox (k)->redraw (dev, path (), ll);
+      if (nil(p)) subbox (k)->redraw (ren, path (), ll);
       else if (i!=0) {
-	if (k > item) subbox(k)->redraw (dev, path (0), ll);
-	else subbox(k)->redraw (dev, path (subbox(k)->subnr()-1), ll);
+	if (k > item) subbox(k)->redraw (ren, path (0), ll);
+	else subbox(k)->redraw (ren, path (subbox(k)->subnr()-1), ll);
       }
-      else subbox(k)->redraw (dev, p->next, ll);
+      else subbox(k)->redraw (ren, p->next, ll);
       if (!nil(ll)) {
 	i1= min (i1, k);
 	i2= max (i2, k);
@@ -512,28 +512,28 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
       }
     }
 
-    if (((nr_painted&15) == 15) && dev->interrupted ()) {
-      l= translate (l, -dev->ox, -dev->oy);
-      clear_incomplete (l, dev->pixel, item, i1, i2);
-      l= translate (l, dev->ox, dev->oy);
+    if (((nr_painted&15) == 15) && ren->interrupted ()) {
+      l= translate (l, -ren->ox, -ren->oy);
+      clear_incomplete (l, ren->pixel, item, i1, i2);
+      l= translate (l, ren->ox, ren->oy);
     }
     else {
-      l= rectangle (x3+ dev->ox, y3+ dev->oy, x4+ dev->ox, y4+ dev->oy);
-      display (dev);
-      if (nr_painted < 15) dev->apply_shadow (x1, y1, x2, y2);
+      l= rectangle (x3+ ren->ox, y3+ ren->oy, x4+ ren->ox, y4+ ren->oy);
+      display (ren);
+      if (nr_painted < 15) ren->apply_shadow (x1, y1, x2, y2);
       nr_painted++;
     }
 
-    post_display (dev);
+    post_display (ren);
   }
-  dev->move_origin (-x0, -y0);
+  ren->move_origin (-x0, -y0);
 }
 
 void
-box_rep::redraw (ps_device dev, path p, rectangles& l, SI x, SI y) {
-  dev->move_origin (x, y);
-  redraw (dev, p, l);
-  dev->move_origin (-x, -y);
+box_rep::redraw (renderer ren, path p, rectangles& l, SI x, SI y) {
+  ren->move_origin (x, y);
+  redraw (ren, p, l);
+  ren->move_origin (-x, -y);
 }
 
 void
@@ -542,13 +542,13 @@ box_rep::clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2) {
 }
 
 void
-box_rep::pre_display (ps_device &dev) {
-  (void) dev;
+box_rep::pre_display (renderer &ren) {
+  (void) ren;
 }
 
 void
-box_rep::post_display (ps_device &dev) {
-  (void) dev;
+box_rep::post_display (renderer &ren) {
+  (void) ren;
 }
 
 /******************************************************************************
@@ -823,10 +823,10 @@ make_eps (url name, box b, int dpi) {
   SI h= b->y4 - b->y3;
   b->x0= -b->x3;
   b->y0= -b->y4;
-  ps_device dev= printer (name, dpi, 1, "user", false, w/cm, h/cm);
-  dev->set_color (black);
-  dev->set_background (white);
+  renderer ren= printer (name, dpi, 1, "user", false, w/cm, h/cm);
+  ren->set_color (black);
+  ren->set_background (white);
   rectangles rs;
-  b->redraw (dev, path (0), rs);
-  delete dev;
+  b->redraw (ren, path (0), rs);
+  delete ren;
 }

@@ -28,7 +28,7 @@ struct text_box_rep: public box_rep {
   text_box_rep (path ip, int pos, string s, font fn, color col);
   operator tree () { return str; }
 
-  void      display (ps_device dev);
+  void      display (renderer ren);
   double    left_slope ();
   double    right_slope ();
   SI        left_correction ();
@@ -76,9 +76,9 @@ text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, color col2):
 }
 
 void
-text_box_rep::display (ps_device dev) {
-  dev->set_color (col);
-  fn->draw (dev, str, 0, 0);
+text_box_rep::display (renderer ren) {
+  ren->set_color (col);
+  fn->draw (ren, str, 0, 0);
 }
 
 double text_box_rep::left_slope () {

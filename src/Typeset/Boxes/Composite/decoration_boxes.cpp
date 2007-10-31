@@ -30,10 +30,10 @@ struct specific_box_rep: public box_rep {
     }
   operator tree () {
     return tuple ("specific", (tree) b, as_string (printer_flag)); }
-  void display (ps_device dev) {
-    if (dev->is_printer () == printer_flag) {
+  void display (renderer ren) {
+    if (ren->is_printer () == printer_flag) {
       rectangles rs;
-      b->redraw (dev, path (), rs);
+      b->redraw (ren, path (), rs);
     }
   }
 };
@@ -46,19 +46,19 @@ struct flag_box_rep: public composite_box_rep {
   color light, old_bg;
   flag_box_rep (path ip, box b, SI h, SI lw, color dark, color light);
   operator tree () { return tree (TUPLE, "flag"); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
+  void pre_display (renderer &ren);
+  void post_display (renderer &ren);
 };
 
 void
-flag_box_rep::pre_display (ps_device &dev) {
-  old_bg= dev->get_background ();
-  dev->set_background (light);
+flag_box_rep::pre_display (renderer &ren) {
+  old_bg= ren->get_background ();
+  ren->set_background (light);
 }
 
 void
-flag_box_rep::post_display (ps_device &dev) {
-  dev->set_background (old_bg);
+flag_box_rep::post_display (renderer &ren) {
+  ren->set_background (old_bg);
 }
 
 flag_box_rep::flag_box_rep (

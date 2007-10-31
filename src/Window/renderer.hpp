@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : ps_device.hpp
-* DESCRIPTION: Abstract device for printing post-script graphics
+* MODULE     : renderer.hpp
+* DESCRIPTION: Abstract graphical rendering primitives
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,8 +10,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#ifndef PS_DEVICE_H
-#define PS_DEVICE_H
+#ifndef RENDERER_H
+#define RENDERER_H
 #include "bitmap_font.hpp"
 #include "url.hpp"
 
@@ -23,31 +23,31 @@ typedef int color;
 #define MINUS_INFINITY ((SI) 0xc0000000)
 
 /******************************************************************************
-* The abstract ps_device class
+* The abstract renderer class
 ******************************************************************************/
 
-class ps_device_rep;
-typedef ps_device_rep* ps_device;
+class renderer_rep;
+typedef renderer_rep* renderer;
 class x_drawable_rep;
 class rectangle;
 typedef list<rectangle> rectangles;
 
-class ps_device_rep {
+class renderer_rep {
 public:
   SI  ox, oy;               // origin
   SI  cx1, cy1, cx2, cy2;   // visible region (clipping)
   int sfactor;              // shrinking factor
   int pixel;                // PIXEL*sfactor
   int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
-  ps_device master;         // master device in case of shadow devices
+  renderer master;          // master renderer in case of shadow renderers
   tree pattern;             // current background pattern
   rectangles clip_stack;    // stack with clipping regions
 
 public:
-  ps_device_rep ();
-  virtual ~ps_device_rep ();
+  renderer_rep ();
+  virtual ~renderer_rep ();
 
-  /* routines for specific devices */
+  /* routines for specific renderers */
   virtual bool is_printer ();
   virtual bool is_x_drawable ();
   virtual x_drawable_rep* as_x_drawable ();
@@ -98,12 +98,12 @@ public:
   void clip (SI x1, SI y1, SI x2, SI y2);
   void unclip ();
 
-  /* shadowing and copying rectangular regions across devices */
-  virtual void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y)=0;
-  virtual void new_shadow (ps_device& dev) = 0;
-  virtual void delete_shadow (ps_device& dev) = 0;
-  virtual void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) = 0;
-  virtual void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) = 0;
+  /* shadowing and copying rectangular regions across renderers */
+  virtual void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y)=0;
+  virtual void new_shadow (renderer& ren) = 0;
+  virtual void delete_shadow (renderer& ren) = 0;
+  virtual void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 };
 
@@ -112,4 +112,4 @@ void abs_round (SI& x, SI& y);
 void abs_inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
 void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
     
-#endif // defined PS_DEVICE_H
+#endif // defined RENDERER_H

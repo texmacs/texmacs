@@ -40,8 +40,8 @@ modifier_box_rep::subbox (int i) { (void) i;
 }
 
 void
-modifier_box_rep::display (ps_device dev) {
-  (void) dev;
+modifier_box_rep::display (renderer ren) {
+  (void) ren;
 }
 
 tree

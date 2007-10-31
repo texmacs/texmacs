@@ -24,7 +24,7 @@ public:
 
   int       subnr ();
   box       subbox (int i);
-  void      display (ps_device dev);  
+  void      display (renderer ren);  
   operator  tree ();
   tree      action (tree t, SI x, SI y, SI delta);
   void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);

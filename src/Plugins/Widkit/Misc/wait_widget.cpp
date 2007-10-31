@@ -13,7 +13,7 @@
 #include "analyze.hpp"
 #include "gui.hpp"
 #include "window.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 #include "font.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "dictionary.hpp"

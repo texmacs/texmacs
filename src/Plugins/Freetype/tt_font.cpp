@@ -29,7 +29,7 @@ struct tt_font_rep: font_rep {
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, string s, SI x, SI y);
   glyph get_glyph (string s);
 };
 
@@ -145,12 +145,12 @@ tt_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-tt_font_rep::draw (ps_device dev, string s, SI x, SI y) {
+tt_font_rep::draw (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     int i;
     for (i=0; i<N(s); i++) {
       QN c= s[i];
-      dev->draw (c, fng, x, y);
+      ren->draw (c, fng, x, y);
       metric_struct* ex= fnm->get (c);
       x += ex->x2;
     }

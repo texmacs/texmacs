@@ -200,7 +200,7 @@ public:
   virtual tree   get_graphical_object () = 0;
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;
-  virtual void   draw_graphical_object (ps_device dev) = 0;
+  virtual void   draw_graphical_object (renderer ren) = 0;
   virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */

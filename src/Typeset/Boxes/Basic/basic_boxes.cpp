@@ -24,16 +24,16 @@ struct test_box_rep: public box_rep {
   test_box_rep (path ip): box_rep (ip) {
     x1=x3=0; x2=x4=50<<8; y1=y3=0; y2=y4= 25<<8; }
   operator tree () { return "test"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 void
-test_box_rep::display (ps_device dev) {
-  dev->set_color (green);
-  dev->set_line_style (PIXEL);
-  dev->line (x1, y1, x2, y2);
-  dev->line (x1, y2, x2, y1);
-  // dev->arc (x1, y1, x2, y2, 45*64, 90*64);
+test_box_rep::display (renderer ren) {
+  ren->set_color (green);
+  ren->set_line_style (PIXEL);
+  ren->line (x1, y1, x2, y2);
+  ren->line (x1, y2, x2, y1);
+  // ren->arc (x1, y1, x2, y2, 45*64, 90*64);
 }
 
 /******************************************************************************
@@ -47,7 +47,7 @@ struct line_box_rep: public box_rep {
 
   line_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b, SI w, color c);
   operator tree () { return "line"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 line_box_rep::line_box_rep (
@@ -67,10 +67,10 @@ line_box_rep::line_box_rep (
 }
 
 void
-line_box_rep::display (ps_device dev) {
-  dev->set_line_style (width);
-  dev->set_color (col);
-  dev->line (X1, Y1, X2, Y2);
+line_box_rep::display (renderer ren) {
+  ren->set_line_style (width);
+  ren->set_color (col);
+  ren->line (X1, Y1, X2, Y2);
 }
 
 /******************************************************************************
@@ -84,7 +84,7 @@ struct polygon_box_rep: public box_rep {
 
   polygon_box_rep (path ip, array<SI> x, array<SI> y, SI w, color f, color o);
   operator tree () { return "polygon"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 polygon_box_rep::polygon_box_rep (
@@ -102,15 +102,15 @@ polygon_box_rep::polygon_box_rep (
 }
 
 void
-polygon_box_rep::display (ps_device dev) {
-  dev->set_color (fill);
-  dev->polygon (x, y);
+polygon_box_rep::display (renderer ren) {
+  ren->set_color (fill);
+  ren->polygon (x, y);
   if (w>0) {
     int i, n= N(x);
-    dev->set_line_style (w);
-    dev->set_color (outline);
+    ren->set_line_style (w);
+    ren->set_color (outline);
     for (i=0; i<n; i++)
-      dev->line (x[i], y[i], x[(i+1)%n], y[(i+1)%n]);
+      ren->line (x[i], y[i], x[(i+1)%n], y[(i+1)%n]);
   }
 }
 
@@ -127,7 +127,7 @@ struct arc_box_rep: public box_rep {
   arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
 	       int A1, int A2, SI w, color c);
   operator tree () { return "arc"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
@@ -169,11 +169,11 @@ arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
 }
 
 void
-arc_box_rep::display (ps_device dev) {
-  dev->set_line_style (width);
-  dev->set_color (col);
-  dev->arc (X1, Y1, X2, Y2, a1, a2-a1);
-  // dev->line (x1, y1, x2, y2);
+arc_box_rep::display (renderer ren) {
+  ren->set_line_style (width);
+  ren->set_color (col);
+  ren->arc (X1, Y1, X2, Y2, a1, a2-a1);
+  // ren->line (x1, y1, x2, y2);
 }
 
 /******************************************************************************
@@ -187,7 +187,7 @@ struct image_box_rep: public box_rep {
   image_box_rep (path ip, url u2, SI w, SI h,
 		 double cx1, double cy1, double cx2, double cy2);
   operator tree () { return "image"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 image_box_rep::image_box_rep (
@@ -202,8 +202,8 @@ image_box_rep::image_box_rep (
 }
 
 void
-image_box_rep::display (ps_device dev) {
-  dev->image (u, x2, y2, 0, 0, cx1, cy1, cx2, cy2);
+image_box_rep::display (renderer ren) {
+  ren->image (u, x2, y2, 0, 0, cx1, cy1, cx2, cy2);
 }
 
 /******************************************************************************
@@ -215,7 +215,7 @@ struct control_tree_box_rep: public box_rep {
   control_tree_box_rep (path ip, tree t2, font fn): box_rep (ip), t (t2) {
     x1=x2=x3=x4=y1=y3=y4=0; y2=fn->yx; }
   operator tree () { return tuple ("control tree", (tree) t); }
-  void display (ps_device dev) { (void) dev; }
+  void display (renderer ren) { (void) ren; }
   tree get_leaf_tree () { return t; }
 };
 
@@ -224,7 +224,7 @@ struct control_lazy_box_rep: public box_rep {
   control_lazy_box_rep (path ip, lazy lz2, font fn): box_rep (ip), lz (lz2) {
     x1=x2=x3=x4=y1=y3=y4=0; y2=fn->yx; }
   operator tree () { return tuple ("control lazy", (tree) lz); }
-  void display (ps_device dev) { (void) dev; }
+  void display (renderer ren) { (void) ren; }
   lazy get_leaf_lazy () { return lz; }
 };
 

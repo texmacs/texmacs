@@ -35,7 +35,7 @@ struct compound_font_rep: font_rep {
   compound_font_rep (string name, scheme_tree def, array<font> fn);
   void   advance (string s, int& pos, string& r, int& ch);
   void   get_extents (string s, metric& ex);
-  void   draw (ps_device dev, string s, SI x, SI y);
+  void   draw (renderer ren, string s, SI x, SI y);
   glyph  get_glyph (string s);
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -93,7 +93,7 @@ compound_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-compound_font_rep::draw (ps_device dev, string s, SI x, SI y) {
+compound_font_rep::draw (renderer ren, string s, SI x, SI y) {
   int i=0, n= N(s);
   while (i < n) {
     int nr;
@@ -101,7 +101,7 @@ compound_font_rep::draw (ps_device dev, string s, SI x, SI y) {
     metric ey;
     advance (s, i, r, nr);
     if (nr >= 0) {
-      fn[nr]->draw (dev, r, x, y);
+      fn[nr]->draw (ren, r, x, y);
       if (i < n) {
 	fn[nr]->get_extents (r, ey);
 	x += ey->x2;

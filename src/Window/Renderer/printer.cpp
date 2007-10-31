@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : printer.cpp
-* DESCRIPTION: Abstract device for printing post-script graphics
+* DESCRIPTION: Renderer for printing post-script graphics
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "PsDevice/printer.hpp"
+#include "Renderer/printer.hpp"
 #include "Metafont/tex_files.hpp"
 #include "Freetype/tt_file.hpp"
 #include "file.hpp"
@@ -468,7 +468,7 @@ printer_rep::generate_tex_fonts () {
 void
 printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   outer_round (x1, y1, x2, y2);
-  ps_device_rep::set_clipping (x1, y1, x2, y2);
+  renderer_rep::set_clipping (x1, y1, x2, y2);
   if (restore) {
     print (PS_CLIP_POP);
     cfn= "";
@@ -717,29 +717,29 @@ printer_rep::image (
 }
 
 void
-printer_rep::fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y) {
+printer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
   (void) x1; (void) y1; (void) x2; (void) y2;
-  (void) dev; (void) x; (void) y;
+  (void) ren; (void) x; (void) y;
 }
 
 void
-printer_rep::new_shadow (ps_device& dev) {
-  (void) dev;
+printer_rep::new_shadow (renderer& ren) {
+  (void) ren;
 }
 
 void
-printer_rep::delete_shadow (ps_device& dev) {
-  (void) dev;
+printer_rep::delete_shadow (renderer& ren) {
+  (void) ren;
 }
 
 void
-printer_rep::get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
-  (void) dev; (void) x1; (void) y1; (void) x2; (void) y2;
+printer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void
-printer_rep::put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
-  (void) dev; (void) x1; (void) y1; (void) x2; (void) y2;
+printer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void
@@ -751,7 +751,7 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 * user interface
 ******************************************************************************/
 
-ps_device
+renderer
 printer (url ps_file_name, int dpi, int nr_pages,
 	 string page_type, bool landscape, double paper_w, double paper_h)
 {
