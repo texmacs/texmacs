@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "ps_device.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 #include "rectangles.hpp"
 
 /******************************************************************************
@@ -214,16 +214,16 @@ ps_device_rep::set_background_pattern (tree pat) {
   pattern= pat;
   if (pattern == "");
   else if (is_atomic (pattern))
-    set_background (the_display -> get_color (pat->label));
+    set_background (named_color (pat->label));
   else if (is_func (pattern, PATTERN, 4))
-    set_background (the_display -> get_color (as_string (pattern[3])));
+    set_background (named_color (as_string (pattern[3])));
 }
 
 tree
 ps_device_rep::get_background_pattern () {
   if (is_atomic (pattern) || is_func (pattern, PATTERN, 4)) return pattern;
   else {
-    tree s= the_display -> get_name (get_background ());
+    tree s= get_named_color (get_background ());
     if (is_func (pattern, PATTERN, 3))
       return pattern * tree (PATTERN, s);
     else return s;

@@ -133,7 +133,7 @@ inputs_list_widget_rep::handle_get_size (get_size_event ev) {
   SI dummy;
   a[0] << get_size (ev->w, ev->h, ev->mode);
   if (ev->mode < 1) ev->w= max (ev->w, 300*PIXEL);
-  else the_display->get_max_size (ev->w, dummy);
+  else gui_maximal_extents (ev->w, dummy);
 }
 
 void

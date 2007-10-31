@@ -199,7 +199,7 @@ void
 file_list_widget_rep::handle_get_size (get_size_event ev) {
   int i;
   metric ex;
-  font fn= the_display->default_font ();
+  font fn= get_default_font ();
   ev->w= ev->h= 0;
   for (i=0; i<N(names); i++)
     if (lids[i]) {
@@ -214,15 +214,15 @@ void
 file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   int i; 
   metric ex;
-  win->set_background (the_display->white);
+  win->set_background (white);
   win->clear (0, -h, w, 0);
-  font fn= the_display->default_font ();
+  font fn= get_default_font ();
   win->set_shrinking_factor (3);
   SI y= 0;
   for (i=0; i<N(names); i++)
     if (lids[i]) {
-      win->set_color (the_display->black);
-      if (hilight == i) win->set_color (the_display->red);
+      win->set_color (black);
+      if (hilight == i) win->set_color (red);
       fn->var_get_extents (names[i], ex);
       fn ->draw (win, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
       y += fn->y1- fn->y2- 12*PIXEL;
@@ -238,7 +238,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
     int i;
     SI y= 0, search= ev->y*3;
     metric ex;
-    font fn= the_display->default_font ();
+    font fn= get_default_font ();
     for (i=0; i<N(names); i++)
       if (lids[i]) {
 	fn->var_get_extents (names[i], ex);
@@ -322,7 +322,7 @@ image_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  win->set_background (the_display->white);
+  win->set_background (white);
   win->clear (0, 0, w, h);
   layout_dark_outline (win, 0, 0, w, h);
   if (file_name != "") {
@@ -588,7 +588,7 @@ file_chooser_widget_rep::handle_get_size (get_size_event ev) {
     if (type == "image") ev->h= 500*PIXEL;
     else ev->h= 350*PIXEL;
   }
-  else the_display->get_max_size (ev->w, ev->h);
+  else gui_maximal_extents (ev->w, ev->h);
 }
 
 void

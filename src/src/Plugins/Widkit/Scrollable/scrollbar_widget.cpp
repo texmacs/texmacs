@@ -83,7 +83,7 @@ hor_scrollbar_widget_rep::handle_get_size (get_size_event ev) {
     ev->h= 16*PIXEL;
   }
   if (ev->mode== 1) {
-    the_display->get_max_size (ev->w, ev->h);
+    gui_maximal_extents (ev->w, ev->h);
     ev->h= 16*PIXEL;
   }
 }
@@ -151,14 +151,14 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
       increment= -5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
       wk_grab_pointer (this);
-      the_display->delayed_message (this, "scroll", 100);
+      delayed_message (this, "scroll", 100);
     }
     else if (X >= (w-aw)) {
       scrolling= true;
       increment= 5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
       wk_grab_pointer (this);
-      the_display->delayed_message (this, "scroll", 100);
+      delayed_message (this, "scroll", 100);
     }
     else if (X<X1) this << emit_bar_scroll_to (sc_pos- ww);
     else if (X>X2) this << emit_bar_scroll_to (sc_pos+ ww);
@@ -183,7 +183,7 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
 
   if ((type == "move") &&
       ((gripped && ev->pressed ("left")) || ev->pressed ("middle"))) {
-    if (the_display->check_event (DRAG_EVENT)) return;
+    if (check_event (DRAG_EVENT)) return;
     SI x = encode_position (X);
     SI dx= (SI) ((after+before)*factor);
     this << emit_bar_scroll_to (x+ before- dx);
@@ -200,7 +200,7 @@ void
 hor_scrollbar_widget_rep::handle_alarm (alarm_event ev) {
   if (scrolling && (ev->message == "scroll")) {
     this << emit_bar_scroll_to (sc_pos + increment);
-    the_display->delayed_message (this, "scroll", 10);
+    delayed_message (this, "scroll", 10);
   }
 }
 
@@ -230,7 +230,7 @@ ver_scrollbar_widget_rep::handle_get_size (get_size_event ev) {
     ev->h= 8*PIXEL;
   }
   if (ev->mode== 1) {
-    the_display->get_max_size (ev->w, ev->h);
+    gui_maximal_extents (ev->w, ev->h);
     ev->w= 16*PIXEL;
   }
 }
@@ -298,14 +298,14 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
       increment= -5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
       wk_grab_pointer (this);
-      the_display->delayed_message (this, "scroll", 100);
+      delayed_message (this, "scroll", 100);
     }
     else if (Y >= (h-ah)) {
       scrolling= true;
       increment= 5*PIXEL;
       this << emit_bar_scroll_to (sc_pos + increment);
       wk_grab_pointer (this);
-      the_display->delayed_message (this, "scroll", 100);
+      delayed_message (this, "scroll", 100);
     }
     else if (Y<Y1) this << emit_bar_scroll_to (sc_pos- hh);
     else if (Y>Y2) this << emit_bar_scroll_to (sc_pos+ hh);
@@ -330,7 +330,7 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
 
   if ((type == "move") &&
       ((gripped && ev->pressed ("left")) || ev->pressed ("middle"))) {
-    if (the_display->check_event (DRAG_EVENT)) return;
+    if (check_event (DRAG_EVENT)) return;
     SI y = encode_position (Y);
     SI dy= (SI) ((after+before)*factor);
     this << emit_bar_scroll_to (y+ before- dy);
@@ -347,7 +347,7 @@ void
 ver_scrollbar_widget_rep::handle_alarm (alarm_event ev) {
   if (scrolling && (ev->message == "scroll")) {
     this << emit_bar_scroll_to (sc_pos + increment);
-    the_display->delayed_message (this, "scroll", 10);
+    delayed_message (this, "scroll", 10);
   }
 }
 

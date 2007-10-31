@@ -13,50 +13,6 @@
 ******************************************************************************/
 
 SCM
-tmg_set_input_language (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-input-language");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->set_input_language (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_get_input_language () {
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_input_language ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_set_output_language (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-output-language");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->set_output_language (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_get_output_language () {
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_output_language ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_insert_kbd_wildcard (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "insert-kbd-wildcard");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "insert-kbd-wildcard");
@@ -908,19 +864,6 @@ tmg_auto_save () {
 }
 
 SCM
-tmg_color (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "color");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  int out= get_server()->get_color (in1);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_get_style_menu () {
   // SCM_DEFER_INTS;
   object out= get_server()->get_style_menu ();
@@ -1130,23 +1073,6 @@ tmg_recall_message () {
 }
 
 SCM
-tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "translate");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "translate");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  string out= get_server()->translate (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_yesP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "yes?");
 
@@ -1187,10 +1113,6 @@ tmg_package_evaluate (SCM arg1, SCM arg2, SCM arg3) {
 
 void
 initialize_glue_server () {
-  scm_new_procedure ("set-input-language", (FN) tmg_set_input_language, 1, 0, 0);
-  scm_new_procedure ("get-input-language", (FN) tmg_get_input_language, 0, 0, 0);
-  scm_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);
-  scm_new_procedure ("get-output-language", (FN) tmg_get_output_language, 0, 0, 0);
   scm_new_procedure ("insert-kbd-wildcard", (FN) tmg_insert_kbd_wildcard, 5, 0, 0);
   scm_new_procedure ("set-variant-keys", (FN) tmg_set_variant_keys, 2, 0, 0);
   scm_new_procedure ("kbd-pre-rewrite", (FN) tmg_kbd_pre_rewrite, 1, 0, 0);
@@ -1262,7 +1184,6 @@ initialize_glue_server () {
   scm_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
   scm_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);
   scm_new_procedure ("auto-save", (FN) tmg_auto_save, 0, 0, 0);
-  scm_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
   scm_new_procedure ("get-style-menu", (FN) tmg_get_style_menu, 0, 0, 0);
   scm_new_procedure ("get-add-package-menu", (FN) tmg_get_add_package_menu, 0, 0, 0);
   scm_new_procedure ("get-remove-package-menu", (FN) tmg_get_remove_package_menu, 0, 0, 0);
@@ -1282,7 +1203,6 @@ initialize_glue_server () {
   scm_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
   scm_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);
   scm_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);
-  scm_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
   scm_new_procedure ("yes?", (FN) tmg_yesP, 1, 0, 0);
   scm_new_procedure ("quit-TeXmacs", (FN) tmg_quit_TeXmacs, 0, 0, 0);
   scm_new_procedure ("package-evaluate", (FN) tmg_package_evaluate, 3, 0, 0);

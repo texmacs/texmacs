@@ -14,8 +14,9 @@
 #include "analyze.hpp"
 #include "vars.hpp"
 #include "language.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 #include "file.hpp"
+#include "dictionary.hpp"
 
 /******************************************************************************
 * Array-like operations on strings and compound structures
@@ -135,8 +136,7 @@ evaluate_translate (tree t) {
   tree t3= evaluate (t[2]);
   if (is_compound (t1) || is_compound (t2) || is_compound (t3))
     return evaluate_error ("bad translate");
-  display dis= current_display ();
-  return dis->translate (t1->label, t2->label, t3->label);
+  return translate (t1->label, t2->label, t3->label);
 }
 
 tree

@@ -58,7 +58,7 @@ edit_interface_rep::edit_interface_rep ():
   cur_sb (2), cur_wb (2)
 {
   input_mode= INPUT_NORMAL;
-  the_display->get_extents (cur_wx, cur_wy);
+  gui_root_extents (cur_wx, cur_wy);
 }
 
 edit_interface_rep::~edit_interface_rep () {
@@ -318,7 +318,7 @@ int
 edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
       get_ps_device (this) -> repainted () &&
-      (!the_display->check_event (event_type)) &&
+      (!check_event (event_type)) &&
       got_focus)
     return texmacs_time () - last_change;
   else return 0;
@@ -568,7 +568,7 @@ edit_interface_rep::after_menu_action () {
 
 void
 edit_interface_rep::handle_get_size_hint (SI& w, SI& h) {
-  the_display->get_extents (w, h);
+  gui_root_extents (w, h);
 }
 
 void

@@ -278,8 +278,8 @@ edit_env_rep::update_color () {
     if (fc == "none") fill_mode= FILL_MODE_NONE;
     else fill_mode= FILL_MODE_BOTH;
   }
-  col= the_display->get_color (c);
-  fill_color= the_display->get_color (fc);
+  col= named_color (c);
+  fill_color= named_color (fc);
 }
 
 void

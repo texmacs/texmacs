@@ -155,7 +155,7 @@ void
 concater_rep::typeset_set_binding (tree t, path ip) {
   tree keys= env->exec (t);
   if (L(keys) == TUPLE) {
-    flag ("set binding", ip, the_display->blue);
+    flag ("set binding", ip, blue);
     if (N(keys) > 0) {
       path sip= ip;
       if (N(t) >= 3 && (!nil (env->macro_src))) {
@@ -218,7 +218,7 @@ concater_rep::typeset_flag (tree t, path ip) {
   }
   if (((N(t) == 2) || is_accessible (sip)) && (!env->read_only)) {
     marker (descend (ip, 0));
-    flag_ok (name, ip, the_display->get_color (col));
+    flag_ok (name, ip, named_color (col));
     marker (descend (ip, 1));  
   }
 }

@@ -16,6 +16,7 @@
 #include "file.hpp"
 #include "analyze.hpp"
 #include "message.hpp"
+#include "dictionary.hpp"
 
 /******************************************************************************
 * Dialogues
@@ -65,9 +66,9 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 void
 tm_frame_rep::dialogue_start (string name, widget wid) {
   if (nil (dialogue_win)) {
-    string lan= the_display->out_lan;
+    string lan= get_output_language ();
     if (lan == "russian") lan= "english";
-    name= the_display->translate (name, "english", lan);
+    name= translate (name, "english", lan);
     dialogue_wid= wid;
     dialogue_win= plain_window_widget (dialogue_wid, name);
 

@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : x_window.hpp
-* DESCRIPTION: Windows under X
+* DESCRIPTION: Windows under X11
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -22,8 +22,9 @@
 ******************************************************************************/
 
 class x_window_rep: public x_drawable_rep, public window_rep {
+public:
   widget        w;
-  x_display     dis;
+  x_gui         gui;
   char*         name;
   string        the_name;
 
@@ -52,7 +53,7 @@ public:
   /********************* specific routines for x_window **********************/
 
 
-  x_window_rep (widget w, x_display dis, char* name,
+  x_window_rep (widget w, x_gui gui, char* name,
 		SI min_w, SI min_h, SI def_w, SI def_h, SI max_w, SI max_h);
   ~x_window_rep ();
   widget get_widget ();
@@ -92,7 +93,7 @@ public:
 
   /****************************** friends ************************************/
 
-  friend class x_display_rep;
+  friend class x_gui_rep;
   friend class x_drawable_rep;
   friend Bool my_predicate (Display* dpy, XEvent* ev, XPointer arg);
   friend int get_identifier (window w);

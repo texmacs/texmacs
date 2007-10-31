@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "display.hpp"
+#include "gui.hpp"
 #include "ps_device.hpp"
 #include "window.hpp"
 #include "Widkit/attribute_widget.hpp"
@@ -45,13 +45,13 @@ separator_widget_rep::operator tree () {
 void
 separator_widget_rep::handle_get_size (get_size_event ev) {
   if (vert) {
-    if (ev->mode==1) the_display->get_max_size (ev->w, ev->h);
+    if (ev->mode==1) gui_maximal_extents (ev->w, ev->h);
     ev->w= 2*PIXEL+ pre+ post;
     ev->h= 0;
   }
   else {
     if (ev->mode==-1) ev->w= 0;
-    if (ev->mode==1) the_display->get_max_size (ev->w, ev->h);
+    if (ev->mode==1) gui_maximal_extents (ev->w, ev->h);
     ev->h= 2*PIXEL+ pre+ post;
   }
 }
@@ -63,7 +63,7 @@ separator_widget_rep::handle_repaint (repaint_event ev) {
   win->set_line_style (PIXEL);
   if (vert) win->line (pre+PIXEL, ev->y1, pre+PIXEL, ev->y2);
   else win->line (ev->x1, -pre-PIXEL, ev->x2, -pre-PIXEL);
-  win->set_color (the_display->white);
+  win->set_color (white);
   win->set_line_style (PIXEL);
   if (vert) win->line (pre+2*PIXEL, ev->y1, pre+2*PIXEL, ev->y2);
   else win->line (ev->x1, -pre-2*PIXEL, ev->x2, -pre-2*PIXEL);

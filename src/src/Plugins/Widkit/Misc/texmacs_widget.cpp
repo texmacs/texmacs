@@ -283,7 +283,7 @@ texmacs_widget_rep::handle_get_size (get_size_event ev) {
     ev->w= (800-24) * PIXEL; // (800-32) * PIXEL;
     ev->h= (600-28) * PIXEL;
   }
-  else if (ev->mode == 1) the_display->get_max_size (ev->w, ev->h);
+  else if (ev->mode == 1) gui_maximal_extents (ev->w, ev->h);
   else basic_widget_rep::handle_get_size (ev);
 }
 

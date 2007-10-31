@@ -16,6 +16,7 @@
 #include "web_files.hpp"
 #include "socket_server.hpp"
 #include "message.hpp"
+#include "dictionary.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
@@ -57,7 +58,7 @@ string
 tm_data_rep::new_menu_name (url u) {
   string name= as_string (tail (u));
   if (starts (name, "no_name_") && ends (name, ".tm")) {
-    string lan= the_display->get_output_language ();
+    string lan= get_output_language ();
     string no_name= translate ("No name", "english", lan);
     for (int i=0; i<N(no_name); i++)
       if (((unsigned char) (no_name[i])) >= (unsigned char) 128)

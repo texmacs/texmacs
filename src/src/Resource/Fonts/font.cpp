@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "font.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 
 RESOURCE_CODE(font);
 
@@ -165,7 +165,7 @@ error_font_rep::get_xpositions (string s, SI* xpos) {
 
 void
 error_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  dev->set_color (the_display->red);
+  dev->set_color (red);
   fn->draw (dev, s, x, y);
 }
 

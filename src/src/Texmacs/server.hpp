@@ -38,7 +38,6 @@ public:
   virtual tm_buffer   get_buffer () = 0;
   virtual editor      get_editor () = 0;
   virtual tm_window   get_window () = 0;
-  virtual color       get_color (string s) = 0;
   virtual int         get_nr_windows () = 0;
 
   virtual object get_style_menu () = 0;
@@ -52,10 +51,6 @@ public:
 
   /* Control global server parameters */
   virtual string get_preference (string var) = 0;
-  virtual void   set_input_language (string s) = 0;
-  virtual void   set_output_language (string s) = 0;
-  virtual string get_input_language () = 0;
-  virtual string get_output_language () = 0;
   virtual void   set_font_rules (scheme_tree rules) = 0;
   virtual bool   kbd_get_command (string s, string& help, command& cmd) = 0;
   virtual void   insert_kbd_wildcard (string key, string im,
@@ -181,7 +176,6 @@ public:
   virtual void   inclusions_gc (string which= "*") = 0;
   virtual void   typeset_update (path p) = 0;
   virtual void   typeset_update_all () = 0;
-  virtual string translate (string which, string from, string to) = 0;
   virtual bool   is_yes (string s) = 0;
   virtual void   quit () = 0;
   virtual tree   evaluate (string name, string session, tree expr) = 0;
@@ -196,5 +190,6 @@ ABSTRACT_CODE(server);
 
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();
+void gui_set_output_language (string lan);
 
 #endif // defined SERVER_H

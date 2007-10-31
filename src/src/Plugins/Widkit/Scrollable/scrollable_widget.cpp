@@ -125,7 +125,7 @@ scrollable_widget_rep::handle_get_size (get_size_event ev) {
     ev->w= 8*PIXEL;
     ev->h= 8*PIXEL;
   }
-  if (ev->mode== 1) the_display->get_max_size (ev->w, ev->h);
+  if (ev->mode== 1) gui_maximal_extents (ev->w, ev->h);
 }
 
 void

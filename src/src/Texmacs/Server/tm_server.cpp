@@ -19,6 +19,7 @@
 #include "pipe_link.hpp"
 #include "socket_link.hpp"
 #include "socket_server.hpp"
+#include "dictionary.hpp"
 
 server* the_server= NULL;
 bool texmacs_started= false;
@@ -65,6 +66,12 @@ get_subtree (path p) {
   return get_server()->get_editor()->the_subtree (p);
 }
 
+void
+gui_set_output_language (string lan) {
+  set_output_language (lan);
+  gui_refresh ();
+}
+
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
@@ -75,9 +82,8 @@ tm_server_rep::tm_server_rep ():
 {
   the_server= new server (this);
   initialize_guile ();
-  set_interpose_handler (texmacs_interpose_handler);
+  gui_interpose (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
-  out_lan= the_display->get_output_language ();
   if (is_none (tm_init_file))
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
   if (is_none (my_init_file))
@@ -152,11 +158,6 @@ tm_server_rep::get_window () {
   if (vw->win==NULL)
     fatal_error ("No window attached to view", "tm_server_rep::get_window");
   return vw->win;
-}
-
-color
-tm_server_rep::get_color (string s) {
-  return the_display -> get_color (s);
 }
 
 int
@@ -319,7 +320,7 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  the_display -> set_wait_indicator (get_window () -> win, message, arg);
+  set_wait_indicator (get_window () -> win, message, arg);
 }
 
 void
@@ -375,7 +376,7 @@ tm_server_rep::get_default_shrinking_factor () {
 
 void
 tm_server_rep::image_gc (string which) {
-  the_display -> image_gc (which);
+  ::image_gc (which);
   typeset_update_all ();
 }
 
@@ -404,11 +405,6 @@ tm_server_rep::typeset_update_all () {
     for (j=0; j<N(buf->vws); j++)
       ((tm_view) (buf->vws[j]))->ed->typeset_invalidate_all ();
   }
-}
-
-string
-tm_server_rep::translate (string which, string from, string to) {
-  return the_display -> translate (which, from, to);
 }
 
 bool

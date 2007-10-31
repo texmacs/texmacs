@@ -132,10 +132,10 @@ input_widget_rep::update_draw_s () {
 void
 input_widget_rep::handle_get_size (get_size_event ev) {
   SI dummy;
-  font fn= the_display->default_font ();
+  font fn= get_default_font ();
   ev->h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
   abs_round (ev->w, ev->h);
-  if (ev->mode == 1) the_display->get_max_size (ev->w, dummy);
+  if (ev->mode == 1) gui_maximal_extents (ev->w, dummy);
 }
 
 void
@@ -143,7 +143,7 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   update_draw_s (); 
 
   metric ex;
-  font fn= the_display->default_font ();
+  font fn= get_default_font ();
   fn->var_get_extents (draw_s, ex);
   SI left= ex->x1, bottom= fn->y1, right= ex->x2;
   fn->var_get_extents (draw_s (0, pos), ex);
@@ -164,12 +164,12 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     layout_lower (win, 0, 0, w, h);
   }
   else layout_default (win, 0, 0, w, h);
-  win->set_color (the_display->black);
+  win->set_color (black);
   win->set_shrinking_factor (SHRINK);
   fn->var_draw (win, draw_s, dw- left, dh- bottom);
   if (got_focus) {
     SI pixel= SHRINK*PIXEL;
-    win->set_color (the_display->red);
+    win->set_color (red);
     win->line (current+ dw, dh,
 	       current+ dw, height- pixel- dh);
     win->line (current+ dw- pixel, dh,
@@ -293,7 +293,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
   string type= ev->type;
   SI     x   = ev->x;
-  font   fn  = the_display->default_font ();
+  font   fn  = get_default_font ();
 
   if (type == "press-left") {
     if (N(s)>0) {
@@ -315,9 +315,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
   }
 
   if (type == "press-middle") {
-    tree t=
-      copy (the_display->get_selection (abstract (wk_widget (this)),
-					"primary"));
+    tree t= copy (get_selection (abstract (wk_widget (this)), "primary"));
     if (is_tuple (t, "extern", 1)) {
       string ins= as_string (t[1]);
       s= s (0, pos) * ins * s(pos, N(s));

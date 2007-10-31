@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "display.hpp"
+#include "gui.hpp"
 #include "Widkit/layout.hpp"
 #include "Widkit/basic_widget.hpp"
 
@@ -49,7 +49,7 @@ glue_widget_rep::handle_get_size (get_size_event ev) {
     ev->h= minh;
   }
   if (ev->mode==1) {
-    the_display->get_max_size (ev->w, ev->h);
+    gui_maximal_extents (ev->w, ev->h);
     if (!hflag) ev->w= minw;
     if (!vflag) ev->h= minh;
   }

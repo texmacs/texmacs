@@ -14,7 +14,7 @@
 #define ENV_H
 #include "vars.hpp"
 #include "drd_info.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "path.hpp"
@@ -427,7 +427,7 @@ public:
     return as_vspace (t); }
   inline color get_color (string var) {
     tree t= env [var];
-    return the_display->get_color (as_string (t)); }
+    return named_color (as_string (t)); }
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);

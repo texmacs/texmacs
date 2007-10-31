@@ -388,9 +388,9 @@ send_repaint (widget w, SI x1, SI y1, SI x2, SI y2) {
 }
 
 inline void
-send_delayed_message (widget w, string message, time_t t) {
-  // send a message to w which will only be received at time t
-  send<string,time_t> (w, SLOT_DELAYED_MESSAGE, message, t);
+send_delayed_message (widget w, string message, time_t delay) {
+  // send a message to w which will only be received after a given delay
+  send<string,time_t> (w, SLOT_DELAYED_MESSAGE, message, delay);
 }
 
 inline void

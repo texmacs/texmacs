@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : x_init.cpp
-* DESCRIPTION: Initialization of window manager
+* DESCRIPTION: Initialization of the X11 window manager
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -14,28 +14,31 @@
 #include "language.hpp"
 #include "font.hpp"
 #include "analyze.hpp"
+#include "dictionary.hpp"
+#include "iterator.hpp"
+#include "message.hpp"
 #include <locale.h>
 
-#ifndef XK_ISO_Left_Tab
-#define	XK_ISO_Left_Tab 0xFE20
-#endif
+x_gui_rep* the_gui= NULL;
+extern hashmap<Window,pointer> Window_to_window;
+
+/******************************************************************************
+* Set up colors
+******************************************************************************/
 
 bool reverse_colors= false;
+
+color black, white, red, green, blue;
+color yellow, magenta, orange, brown, pink;
+color light_grey, grey, dark_grey;
 
 static int CSCALES= 4;
 static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
-x_display_rep* the_x_display= NULL;
-display the_display= NULL;
-
-/******************************************************************************
-* Set up colors
-******************************************************************************/
-
 int
-x_display_rep::alloc_color (int r, int g, int b) {
+x_alloc_color (int r, int g, int b) {
   if (reverse_colors) {
     int m= min (r, min (g, b));
     int M= max (r, max (g, b));
@@ -59,32 +62,33 @@ x_display_rep::alloc_color (int r, int g, int b) {
   col.red  = r;
   col.green= g;
   col.blue = b;
-  if (!XAllocColor (dpy, cols, &col))
+  if (!XAllocColor (the_gui->dpy, the_gui->cols, &col))
     cerr << "Warning: can't allocate color\n";
   return col.pixel;
 }
 
 void
-x_display_rep::init_color_map () {
+x_init_color_map () {
   int i, r, g, b;
 
-  cmap= new color [CTOTAL];
+  the_gui->cmap= new color [CTOTAL];
 
   for (i=0; i<=GREYS; i++)
-    cmap[i]= alloc_color ((i*65535)/GREYS, (i*65535)/GREYS, (i*65535)/GREYS);
+    the_gui->cmap[i]=
+      x_alloc_color ((i*65535)/GREYS, (i*65535)/GREYS, (i*65535)/GREYS);
 
   for (r=0; r<=CSCALES; r++)
     for (g=0; g<=CSCALES; g++)
       for (b=0; b<=CSCALES; b++) {
 	i= r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
-	cmap[i]= alloc_color ((r*65535)/CSCALES,
-			      (g*65535)/CSCALES,
-			      (b*65535)/CSCALES);
+	the_gui->cmap[i]= x_alloc_color ((r*65535)/CSCALES,
+					 (g*65535)/CSCALES,
+					 (b*65535)/CSCALES);
       }
 }
 
 color
-x_display_rep::rgb (int r, int g, int b) {
+rgb_color (int r, int g, int b) {
   if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
   else {
     r= (r*CSCALES+ 128)/255;
@@ -95,7 +99,7 @@ x_display_rep::rgb (int r, int g, int b) {
 }
 
 void
-x_display_rep::get_rgb (color col, int& r, int& g, int& b) {
+get_rgb_color (color col, int& r, int& g, int& b) {
   if (col <= GREYS) {
     r= (col*255)/GREYS;
     g= (col*255)/GREYS;
@@ -114,20 +118,20 @@ x_display_rep::get_rgb (color col, int& r, int& g, int& b) {
 }
 
 color
-x_display_rep::get_color (string s) {
+named_color (string s) {
   if ((N(s) == 4) && (s[0]=='#')) {
     int r= 17 * from_hexadecimal (s (1, 2));
     int g= 17 * from_hexadecimal (s (2, 3));
     int b= 17 * from_hexadecimal (s (3, 4));
-    return rgb (r, g, b);
+    return rgb_color (r, g, b);
   }
   if ((N(s) == 7) && (s[0]=='#')) {
     int r= from_hexadecimal (s (1, 3));
     int g= from_hexadecimal (s (3, 5));
     int b= from_hexadecimal (s (5, 7));
-    return rgb (r, g, b);
+    return rgb_color (r, g, b);
   }
-  int pastel= (depth>=16? 223: 191);
+  int pastel= (the_gui->depth>=16? 223: 191);
   if (s == "black")          return black;
   if (s == "white")          return white;
   if (s == "grey")           return grey;
@@ -136,37 +140,37 @@ x_display_rep::get_color (string s) {
   if (s == "yellow")         return yellow;
   if (s == "green")          return green;
   if (s == "magenta")        return magenta;
-  if (s == "cyan")           return rgb (0, 255, 255);
+  if (s == "cyan")           return rgb_color (0, 255, 255);
   if (s == "orange")         return orange;
   if (s == "brown")          return brown;
   if (s == "pink")           return pink;
-  if (s == "broken white")   return rgb (255, 255, pastel);
+  if (s == "broken white")   return rgb_color (255, 255, pastel);
   if (s == "light grey")     return light_grey;
   if (s == "dark grey")      return dark_grey;
-  if (s == "dark red")       return rgb (128, 0, 0);
-  if (s == "dark blue")      return rgb (0, 0, 128);
-  if (s == "dark yellow")    return rgb (128, 128, 0);
-  if (s == "dark green")     return rgb (0, 128, 0);
-  if (s == "dark magenta")   return rgb (128, 0, 128);
-  if (s == "dark cyan")      return rgb (0, 128, 128);
-  if (s == "dark orange")    return rgb (128, 64, 0);
-  if (s == "dark brown")     return rgb (64, 16, 0);
-  if (s == "pastel grey")    return rgb (pastel, pastel, pastel);
-  if (s == "pastel red")     return rgb (255, pastel, pastel);
-  if (s == "pastel blue")    return rgb (pastel, pastel, 255);
-  if (s == "pastel yellow")  return rgb (255, 255, pastel);
-  if (s == "pastel green")   return rgb (pastel, 255, pastel);
-  if (s == "pastel magenta") return rgb (255, pastel, 255);
-  if (s == "pastel cyan")    return rgb (pastel, 255, 255);
-  if (s == "pastel orange")  return rgb (255, pastel, 2*pastel-255);
-  if (s == "pastel brown")   return rgb (pastel, 2*pastel-255, 2*pastel-255);
+  if (s == "dark red")       return rgb_color (128, 0, 0);
+  if (s == "dark blue")      return rgb_color (0, 0, 128);
+  if (s == "dark yellow")    return rgb_color (128, 128, 0);
+  if (s == "dark green")     return rgb_color (0, 128, 0);
+  if (s == "dark magenta")   return rgb_color (128, 0, 128);
+  if (s == "dark cyan")      return rgb_color (0, 128, 128);
+  if (s == "dark orange")    return rgb_color (128, 64, 0);
+  if (s == "dark brown")     return rgb_color (64, 16, 0);
+  if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
+  if (s == "pastel red")     return rgb_color (255, pastel, pastel);
+  if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
+  if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
+  if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
+  if (s == "pastel magenta") return rgb_color (255, pastel, 255);
+  if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
+  if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
+  if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
   return black;
 }
 
 string
-x_display_rep::get_name (color c) {
+get_named_color (color c) {
   SI r, g, b;
-  get_rgb (c, r, g, b);
+  get_rgb_color (c, r, g, b);
   return "#" *
     as_hexadecimal (r, 2) *
     as_hexadecimal (g, 2) *
@@ -174,30 +178,30 @@ x_display_rep::get_name (color c) {
 }
 
 void
-x_display_rep::initialize_colors () {
-  if (depth >= 16) {
+x_initialize_colors () {
+  if (the_gui->depth >= 16) {
     CSCALES= 8;
     CFACTOR= 9;
     GREYS  = 256;
     CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
   }
 
-  init_color_map ();
+  x_init_color_map ();
 
-  black   = rgb (0, 0, 0);
-  white   = rgb (255, 255, 255);
-  red     = rgb (255, 0, 0);
-  blue    = rgb (0, 0, 255);
-  yellow  = rgb (255, 255, 0);
-  green   = rgb (0, 255, 0);
-  magenta = rgb (255, 0, 255);
-  orange  = rgb (255, 128, 0);
-  brown   = rgb (128, 32, 0);
-  pink    = rgb (255, 128, 128);
+  black   = rgb_color (0, 0, 0);
+  white   = rgb_color (255, 255, 255);
+  red     = rgb_color (255, 0, 0);
+  blue    = rgb_color (0, 0, 255);
+  yellow  = rgb_color (255, 255, 0);
+  green   = rgb_color (0, 255, 0);
+  magenta = rgb_color (255, 0, 255);
+  orange  = rgb_color (255, 128, 0);
+  brown   = rgb_color (128, 32, 0);
+  pink    = rgb_color (255, 128, 128);
 
-  light_grey = rgb (208, 208, 208);
-  grey       = rgb (184, 184, 184);
-  dark_grey  = rgb (112, 112, 112);
+  light_grey = rgb_color (208, 208, 208);
+  grey       = rgb_color (184, 184, 184);
+  dark_grey  = rgb_color (112, 112, 112);
 }
 
 /******************************************************************************
@@ -205,7 +209,7 @@ x_display_rep::initialize_colors () {
 ******************************************************************************/
 
 void
-x_display_rep::initialize_input_method () {
+x_gui_rep::initialize_input_method () {
   im_ok= false;
   if (setlocale (LC_CTYPE, "") == NULL)
     cerr << "TeXmacs] Warning: locale could not be set\n";
@@ -224,6 +228,10 @@ x_display_rep::initialize_input_method () {
 * Get xmodmap
 ******************************************************************************/
 
+#ifndef XK_ISO_Left_Tab
+#define	XK_ISO_Left_Tab 0xFE20
+#endif
+
 static XModifierKeymap* xmodmap;
 static int        mod_n;
 static KeyCode*   mod_k;
@@ -232,13 +240,13 @@ static array<int> mod_ctrl;
 static array<int> mod_alt;
 
 void
-x_display_rep::insert_keysym (array<int>& a, int i, int j) {
+x_gui_rep::insert_keysym (array<int>& a, int i, int j) {
   int ks= XKeycodeToKeysym (dpy, mod_k[i*mod_n+j], 0);
   if (ks!=0) a << ks;
 }
 
 void
-x_display_rep::get_xmodmap () {
+x_gui_rep::get_xmodmap () {
   int i;
   xmodmap= XGetModifierMapping (dpy);
   mod_n= xmodmap->max_keypermod;
@@ -257,19 +265,19 @@ x_display_rep::get_xmodmap () {
 ******************************************************************************/
 
 void
-x_display_rep::map (int key, string s) {
+x_gui_rep::map (int key, string s) {
   lower_key (key)= s;
   upper_key (key)= "S-" * s;
 }
 
 void
-x_display_rep::Map (int key, string s) {
+x_gui_rep::Map (int key, string s) {
   lower_key (key)= s;
   upper_key (key)= s;
 }
 
 void
-x_display_rep::initialize_keyboard_pointer () {
+x_gui_rep::initialize_keyboard_pointer () {
   // Latin characters
   Map (XK_a, "a");
   Map (XK_b, "b");
@@ -738,13 +746,13 @@ x_display_rep::initialize_keyboard_pointer () {
 ******************************************************************************/
 
 void
-x_display_rep::get_extents (SI& width, SI& height) {
-  width = display_width  * PIXEL;
-  height= display_height * PIXEL;
+x_gui_rep::get_extents (SI& width, SI& height) {
+  width = screen_width  * PIXEL;
+  height= screen_height * PIXEL;
 }
 
 void
-x_display_rep::get_max_size (SI& width, SI& height) {
+x_gui_rep::get_max_size (SI& width, SI& height) {
   width = 8000 * PIXEL;
   height= 6000 * PIXEL;
 }
@@ -753,20 +761,16 @@ x_display_rep::get_max_size (SI& width, SI& height) {
 * Main initialization
 ******************************************************************************/
 
-display_rep::display_rep () {}
-display_rep::~display_rep () {}
-
-x_display_rep::x_display_rep (int argc2, char** argv2):
-  display_rep (),
+x_gui_rep::x_gui_rep (int argc2, char** argv2):
   color_scale ((void*) NULL),
   character_bitmap (NULL), character_pixmap ((pointer) 0),
   xpm_bitmap (0), xpm_pixmap (0),
   lower_key (""), upper_key (""),
   selection (NULL), selections ("none")
 {
+  the_gui= this;
   if ((dpy= XOpenDisplay (NULL)) == NULL)
-    fatal_error ("I failed to connect to Xserver",
-		 "x_display_rep::x_display_rep");
+    fatal_error ("I failed to connect to Xserver", "x_gui_rep::x_gui_rep");
   // XSynchronize (dpy, true);
 
   XGCValues values;
@@ -776,8 +780,8 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   gc                 = XCreateGC (dpy, root, 0, &values);
   pixmap_gc          = XCreateGC (dpy, root, 0, &values);
   depth              = DefaultDepth (dpy, scr);
-  display_width      = DisplayWidth  (dpy, scr);
-  display_height     = DisplayHeight (dpy, scr);
+  screen_width       = DisplayWidth  (dpy, scr);
+  screen_height      = DisplayHeight (dpy, scr);
   cols               = DefaultColormap (dpy, DefaultScreen (dpy));
   state              = 0;
   gswindow           = NULL;
@@ -790,38 +794,57 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   XSetGraphicsExposures (dpy, gc, true);
 
   //get_xmodmap ();
-  initialize_colors ();
+  x_initialize_colors ();
   initialize_input_method ();
   initialize_keyboard_pointer ();
-  out_lan= get_locale_language ();
+  set_output_language (get_locale_language ());
   (void) default_font ();
 }
 
-x_display_rep::~x_display_rep () {
+x_gui_rep::~x_gui_rep () {
   if (im_ok) XCloseIM (im);
   clear_selection ("primary");
   XFreeGC (dpy, gc);
-  delete[] cmap;
   XCloseDisplay (dpy);
+  delete[] cmap;
 }
 
 void
-open_display (int argc2, char** argv2) {
-  if (the_display != NULL)
-    fatal_error ("display already open", "open_display");
-  the_x_display= new x_display_rep (argc2, argv2);
-  the_display  = (display) the_x_display;
+gui_open (int argc2, char** argv2) {
+  if (the_gui != NULL)
+    fatal_error ("gui already open", "gui_open");
+  the_gui= new x_gui_rep (argc2, argv2);
 }
 
 void
-flush_display () {
-  XFlush (the_x_display->dpy);
+gui_start_loop () {
+  the_gui->event_loop ();
 }
 
 void
-close_display () {
-  if (the_display == NULL)
-    fatal_error ("display not yet open", "close_display");
-  delete the_display;
-  the_display= NULL;
+gui_close () {
+  if (the_gui == NULL)
+    fatal_error ("gui not yet open", "gui_close");
+  delete the_gui;
+  the_gui= NULL;
+}
+
+void
+gui_root_extents (SI& width, SI& height) {
+  the_gui->get_extents (width, height);
+}
+
+void
+gui_maximal_extents (SI& width, SI& height) {
+  the_gui->get_max_size (width, height);
+}
+
+void
+gui_refresh () {
+  iterator<Window> it= iterate (Window_to_window);
+  while (it->busy()) {
+    x_window win= (x_window) Window_to_window [it->next()];
+    if (get_x_window (win->w) != NULL)
+      send_update (win->w);
+  }
 }

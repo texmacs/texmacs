@@ -92,7 +92,7 @@ concater_rep::typeset_sound (tree t, path ip) {
     int sz= script (env->fn_size, env->index_level);
     font gfn (tex_font ("cmr", sz, (int) (env->magn*env->dpi)));
     print (STD_ITEM, sound_box (ip, sound, gfn->yx));
-    flag ("sound", ip, the_display->brown);
+    flag ("sound", ip, brown);
   }
   else typeset_dynamic (tree (ERROR, "bad sound", t[0]), ip);
 }

@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : x_font.hpp
-* DESCRIPTION: Abstract display class
+* DESCRIPTION: X11 fonts
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT

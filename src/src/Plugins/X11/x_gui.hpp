@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : x_display.hpp
-* DESCRIPTION: Abstract display class
+* MODULE     : x_gui.hpp
+* DESCRIPTION: Graphical user interface for X11
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,19 +10,20 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#ifndef X_DISPLAY_H
-#define X_DISPLAY_H
+#ifndef X_GUI_H
+#define X_GUI_H
 #include "timer.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 #include "widget.hpp"
 #include "array.hpp"
 #include "hashmap.hpp"
 
-class x_display_rep;
+class x_gui_rep;
 class x_drawable_rep;
 class x_window_rep;
-typedef x_display_rep* x_display;
+typedef x_gui_rep* x_gui;
 typedef x_window_rep* x_window;
+extern x_gui the_gui;
 
 #define XK_CYRILLIC
 
@@ -81,18 +82,18 @@ CONCRETE_CODE(message);
 ostream& operator << (ostream& out, message m);
 
 /******************************************************************************
-* The x_display class
+* The x_gui class
 ******************************************************************************/
 
-class x_display_rep: public display_rep {
+class x_gui_rep {
 public:
   Display*        dpy;
   GC              gc;
   GC              pixmap_gc;
   int             scr;
   Window          root;
-  int             display_width;
-  int             display_height;
+  int             screen_width;
+  int             screen_height;
   int             depth;
   Colormap        cols;
   color*          cmap;
@@ -125,18 +126,11 @@ public:
   hashmap<string,tree>         selections;
 
 public:
-  x_display_rep (int argc, char** argv);
-  ~x_display_rep ();
+  x_gui_rep (int argc, char** argv);
+  ~x_gui_rep ();
 
-  /****************************** Color **************************************/
-  int    alloc_color (int r, int g, int b);
-  void   init_color_map ();
-  void   initialize_colors ();
-  void   prepare_color (int sfactor, color fg, color bg);
-  color  get_color (string s);
-  color  rgb (int r, int g, int b);
-  void   get_rgb (color col, int& r, int& g, int& b);
-  string get_name (color c);
+  /******************************* Colors ************************************/
+  void prepare_color (int sfactor, color fg, color bg);
 
   /****************************** Keyboard ***********************************/
   void initialize_input_method ();
@@ -159,12 +153,6 @@ public:
   void load_system_font (string family, int size, int dpi,
 			 font_metric& fnm, font_glyphs& fng);
 
-  /************************** Server languages *******************************/
-  void   load_dictionary (string name, string from, string to);
-  void   set_output_language (string lan);
-  string get_output_language ();
-  string translate (string s, string from, string to);
-
   /********************* extents, grabbing, selections ***********************/
   void   get_extents (SI& width, SI& height);
   void   get_max_size (SI& width, SI& height);
@@ -178,10 +166,9 @@ public:
   tree   get_selection (widget wid, string key);
   bool   set_selection (widget wid, string key, tree t, string s);
   void   clear_selection (string key);
-  void   delayed_message (widget wid, string s, time_t delay);
-  int    remove_all_delayed_messages (widget wid, string s);
 
   /**************************** miscellaneous ********************************/
+  void   delayed_message (widget wid, string s, time_t delay);
   void   set_help_balloon (widget wid, SI x, SI y);
   void   map_balloon ();
   void   unmap_balloon ();
@@ -203,4 +190,4 @@ public:
   friend class x_tex_font_rep;
 };
 
-#endif // defined X_DISPLAY_H
+#endif // defined X_GUI_H

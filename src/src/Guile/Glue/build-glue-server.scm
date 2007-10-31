@@ -18,10 +18,6 @@
   "get_server()->"
   "initialize_glue_server"
 
-  (set-input-language set_input_language (void string))
-  (get-input-language get_input_language (string))
-  (set-output-language set_output_language (void string))
-  (get-output-language get_output_language (string))
   (insert-kbd-wildcard insert_kbd_wildcard (void string string bool bool bool))
   (set-variant-keys set_variant_keys (void string string))
   (kbd-pre-rewrite kbd_pre_rewrite (string string))
@@ -100,7 +96,6 @@
   (texmacs-save-buffer save_buffer (void url string))
   (auto-save auto_save (void))
   
-  (color get_color (int string))
   (get-style-menu get_style_menu (object))
   (get-add-package-menu get_add_package_menu (object))
   (get-remove-package-menu get_remove_package_menu (object))
@@ -120,7 +115,6 @@
   (set-message set_message (void string string))
   (set-message-temp set_message (void string string bool))
   (recall-message recall_message (void))
-  (translate translate (string string string string))
   (yes? is_yes (bool string))
   (quit-TeXmacs quit (void))
   (package-evaluate evaluate (tree string string content)))

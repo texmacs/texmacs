@@ -13,7 +13,7 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 #include "ps_device.hpp"
-#include "display.hpp"
+#include "gui.hpp"
 #include "hashmap.hpp"
 #include "url.hpp"
 
@@ -73,10 +73,7 @@ public:
   /******************** routines from ps_device.hpp ************************/
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  color rgb (int r, int g, int b);
-  void  get_rgb (color col, int& r, int& g, int& b);
   color get_color ();
-  color get_color (string s);
   color get_background ();
   void  set_color (color c);
   void  set_background (color c);
