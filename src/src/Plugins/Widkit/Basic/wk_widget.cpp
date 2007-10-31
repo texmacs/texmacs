@@ -31,7 +31,7 @@ wk_widget_rep::~wk_widget_rep () { DEBUG(widget_count--); }
 ******************************************************************************/
 
 SI
-get_dx (gravity grav, int w) {
+get_dx (gravity grav, SI w) {
   switch (grav) {
   case north_west: case west: case south_west:
     return 0;
@@ -45,7 +45,7 @@ get_dx (gravity grav, int w) {
 }
 
 SI
-get_dy (gravity grav, int h) {
+get_dy (gravity grav, SI h) {
   switch (grav) {
   case north_west: case north: case  north_east:
     return 0;

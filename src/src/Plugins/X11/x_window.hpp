@@ -86,7 +86,7 @@ public:
   void   set_mouse_grab (widget wid, bool get_grab);
   bool   get_mouse_grab (widget w);
   void   set_mouse_pointer (widget wid, string name, string mask);
-
+  void   delayed_message (widget wid, string s, time_t delay);
   void   invalidate (SI x1, SI y1, SI x2, SI y2);
   bool   repainted ();
   void   translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy);

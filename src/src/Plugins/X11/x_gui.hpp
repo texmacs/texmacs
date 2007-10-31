@@ -168,15 +168,14 @@ public:
   void   clear_selection (string key);
 
   /**************************** miscellaneous ********************************/
-  void   delayed_message (widget wid, string s, time_t delay);
-  void   set_help_balloon (widget wid, SI x, SI y);
+  void   show_help_balloon (widget wid, SI x, SI y);
   void   map_balloon ();
   void   unmap_balloon ();
   void   image_auto_gc ();
   void   image_gc (string name);
   void   set_mouse_pointer (widget w, string name);
   void   set_mouse_pointer (widget w, string curs_name, string mask_name);
-  void   set_wait_indicator (widget w, string message, string arg);
+  void   show_wait_indicator (widget w, string message, string arg);
   bool   check_event (int type);
 
   /************************** Event processing *******************************/

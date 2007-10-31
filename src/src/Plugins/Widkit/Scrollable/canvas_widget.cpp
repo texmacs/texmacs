@@ -15,8 +15,9 @@
 #include "Widkit/Event/attribute_event.hpp"
 #include "Widkit/scroll_widget.hpp"
 #include "Widkit/layout.hpp"
-SI get_dx (gravity grav, int w);
-SI get_dy (gravity grav, int h);
+
+SI get_dx (gravity grav, SI w);
+SI get_dy (gravity grav, SI h);
 
 /******************************************************************************
 * Canvas widgets

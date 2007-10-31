@@ -388,14 +388,16 @@ x_gui_rep::event_loop () {
     }
 
     // Handle alarm messages
-    while (!nil (messages)) {
-      time_t ct= texmacs_time ();
-      message m= messages->item;
-      if ((m->t - ct) <= 0) {
+    if (!nil (messages)) {
+      list<message> not_ready;
+      while (!nil (messages)) {
+	time_t ct= texmacs_time ();
+	message m= messages->item;
+	if ((m->t - ct) <= 0) send_delayed_message (m->wid, m->s, m->t);
+	else not_ready= list<message> (m, not_ready);
 	messages= messages->next;
-	send_delayed_message (m->wid, m->s, m->t);
       }
-      else break;
+      messages= not_ready;
     }
   }
 }

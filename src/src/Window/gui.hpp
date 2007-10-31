@@ -108,9 +108,13 @@ bool check_event (int type);
 void image_gc (string name= "*");
   // Garbage collect images of a given name (may use wildcards)
   // This routine only needs to be implemented if you use your own image cache
-
-void delayed_message (widget wid, string mess, time_t delay);
-void set_help_balloon (widget wid, SI x, SI y);
-void set_wait_indicator (widget w, string message, string arg);
+void show_help_balloon (widget balloon, SI x, SI y);
+  // Display a help balloon at position (x, y); the help balloon should
+  // disappear as soon as the user presses a key or moves the mouse
+void show_wait_indicator (widget base, string message, string argument);
+  // Display a wait indicator with a message and an optional argument
+  // The indicator might for instance be displayed at the center of
+  // the base widget which triggered the lengthy operation;
+  // the indicator should be removed if the message is empty
 
 #endif // defined GUI_H

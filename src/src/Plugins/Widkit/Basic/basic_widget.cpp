@@ -14,8 +14,8 @@
 #include "gui.hpp"
 #include "window.hpp"
 
-SI get_dx(gravity grav, int w);
-SI get_dy(gravity grav, int h);
+SI get_dx (gravity grav, SI w);
+SI get_dy (gravity grav, SI h);
 
 /******************************************************************************
 * Constructors and destructors
@@ -136,11 +136,11 @@ basic_widget_rep::handle_position (position_event ev) { (void) ev;
 }
 
 void
-basic_widget_rep::handle_move (move_event ev) { (void) ev; }
+basic_widget_rep::handle_move (move_event ev) { (void) ev;
+}
 
 void
 basic_widget_rep::handle_resize (resize_event ev) { (void) ev;
-  this << emit_update ();
 }
 
 void
