@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "bitmap_font.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 
 static int
 log2i (int i) {

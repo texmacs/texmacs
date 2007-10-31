@@ -28,7 +28,7 @@ struct stack_box_rep: public composite_box_rep {
 
   void      position (array<SI> spc);
   void      finalize ();
-  void      display (ps_device dev);
+  void      display (renderer ren);
   void      clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
   bool      access_allowed ();
 
@@ -73,8 +73,8 @@ stack_box_rep::finalize () {
 }
 
 void
-stack_box_rep::display (ps_device dev) {
-  dev->apply_shadow (x1, y1, x2, y2);
+stack_box_rep::display (renderer ren) {
+  ren->apply_shadow (x1, y1, x2, y2);
 }
 
 bool

@@ -26,12 +26,12 @@ struct grid_box_rep: public box_rep {
   grid g;
   frame f;
   bool first_time;
-  int dev_pixel;
+  int ren_pixel;
   array<box> bs;
   SI un;
   grid_box_rep (
     path ip, grid g, frame f, SI un, point lim1, point lim2);
-  void display (ps_device dev);
+  void display (renderer ren);
   operator tree () { return (tree)g; }
   path find_lip () { return path (-1); }
   path find_rip () { return path (-1); }
@@ -53,9 +53,9 @@ grid_box_rep::grid_box_rep (
 }
 
 void
-grid_box_rep::display (ps_device dev) {
+grid_box_rep::display (renderer ren) {
   int i;
-  if (first_time || dev->pixel!=dev_pixel) {
+  if (first_time || ren->pixel!=ren_pixel) {
     point p1= f [point (x1, y1)];
     point p2= f [point (x2, y2)];
     point l1= point (min (p1[0], p2[0]), min (p1[1], p2[1]));
@@ -87,14 +87,14 @@ grid_box_rep::display (ps_device dev) {
     for (i=0; i<N(grads); i++) {
       curve c= f (grads[i]->c);
       bs << curve_box (
-	      decorate (ip), c, dev->pixel, named_color (grads[i]->col),
+	      decorate (ip), c, ren->pixel, named_color (grads[i]->col),
 	      array<bool> (0), 0, FILL_MODE_NONE, white, array<box> (0));
     }
     first_time= false;
-    dev_pixel= dev->pixel;
+    ren_pixel= ren->pixel;
   }
   for (i=0; i<N(bs); i++)
-    bs[i]->display (dev);
+    bs[i]->display (ren);
 }
 
 gr_selections

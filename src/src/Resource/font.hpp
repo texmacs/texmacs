@@ -13,7 +13,7 @@
 #ifndef FONT_H
 #define FONT_H
 #include "space.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 
 RESOURCE(font);
 
@@ -54,7 +54,7 @@ struct font_rep: rep<font> {
 
   virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
-  virtual void   draw (ps_device dev, string s, SI x, SI y) = 0;
+  virtual void   draw (renderer ren, string s, SI x, SI y) = 0;
 
   virtual double get_left_slope  (string s);
   virtual double get_right_slope (string s);
@@ -63,7 +63,7 @@ struct font_rep: rep<font> {
 
   void var_get_extents (string s, metric& ex);
   void var_get_xpositions (string s, SI* xpos);
-  void var_draw (ps_device dev, string s, SI x, SI y);
+  void var_draw (renderer ren, string s, SI x, SI y);
   virtual glyph get_glyph (string s);
 };
 

@@ -99,8 +99,8 @@ composite_box_rep::left_justify () {
 ******************************************************************************/
 
 void
-composite_box_rep::display (ps_device dev) {
-  (void) dev;
+composite_box_rep::display (renderer ren) {
+  (void) ren;
 }
 
 int

@@ -30,8 +30,8 @@ struct graphics_box_rep: public composite_box_rep {
   grid get_grid ();
   void  get_limits (point& lim1, point& lim2);
   operator tree () { return "graphics"; }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
+  void pre_display (renderer &ren);
+  void post_display (renderer &ren);
   int reindex (int i, int item, int n);
   virtual int find_child (SI x, SI y, SI delta, bool force);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
@@ -70,14 +70,14 @@ graphics_box_rep::get_limits (point& lim1b, point& lim2b) {
 }
 
 void
-graphics_box_rep::pre_display (ps_device &dev) {
-  dev->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
-  dev->extra_clipping (x1, y1, x2, y2);
+graphics_box_rep::pre_display (renderer &ren) {
+  ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  ren->extra_clipping (x1, y1, x2, y2);
 }
 
 void
-graphics_box_rep::post_display (ps_device &dev) {
-  dev->set_clipping (
+graphics_box_rep::post_display (renderer &ren) {
+  ren->set_clipping (
     old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
 }
 
@@ -185,7 +185,7 @@ struct point_box_rep: public box_rep {
     int fill, color fill_col, string style);
   SI graphical_distance (SI x, SI y) { return (SI)norm (p - point (x, y)); }
   gr_selections graphical_select (SI x, SI y, SI dist);
-  void display (ps_device dev);
+  void display (renderer ren);
   operator tree () { return "point"; }
 };
 
@@ -217,7 +217,7 @@ point_box_rep::graphical_select (SI x, SI y, SI dist) {
 }
 
 void
-point_box_rep::display (ps_device dev) {
+point_box_rep::display (renderer ren) {
   array<SI> x (4), y (4);
   x[0]= ((SI) p[0]) - r;
   y[0]= ((SI) p[1]) - r;
@@ -227,34 +227,34 @@ point_box_rep::display (ps_device dev) {
   y[2]= ((SI) p[1]) + r;
   x[3]= ((SI) p[0]) + r;
   y[3]= ((SI) p[1]) - r;
-  dev->set_line_style (PIXEL);
+  ren->set_line_style (PIXEL);
   if (style == "square") {
     if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-      dev->set_color (fill_col);
-      dev->line (x[0], y[0], x[1], y[1]);
-      dev->line (x[1], y[1], x[2], y[2]);
-      dev->line (x[2], y[2], x[3], y[3]);
-      dev->line (x[3], y[3], x[0], y[0]);
-      dev->polygon (x, y, false);
+      ren->set_color (fill_col);
+      ren->line (x[0], y[0], x[1], y[1]);
+      ren->line (x[1], y[1], x[2], y[2]);
+      ren->line (x[2], y[2], x[3], y[3]);
+      ren->line (x[3], y[3], x[0], y[0]);
+      ren->polygon (x, y, false);
     }
     if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-      dev->set_color (col);
-      dev->line (x[0], y[0], x[1], y[1]);
-      dev->line (x[1], y[1], x[2], y[2]);
-      dev->line (x[2], y[2], x[3], y[3]);
-      dev->line (x[3], y[3], x[0], y[0]);
+      ren->set_color (col);
+      ren->line (x[0], y[0], x[1], y[1]);
+      ren->line (x[1], y[1], x[2], y[2]);
+      ren->line (x[2], y[2], x[3], y[3]);
+      ren->line (x[3], y[3], x[0], y[0]);
     }
   }
   else {
     if (style == "disk"
      || fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-      dev->set_color (style == "disk" ? col : fill_col);
-      dev->arc (x[0], y[0]+dev->pixel, x[2], y[2]+dev->pixel, 0, 64*360);
-      dev->fill_arc (x[0], y[0]+dev->pixel, x[2], y[2]+dev->pixel, 0, 64*360);
+      ren->set_color (style == "disk" ? col : fill_col);
+      ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
+      ren->fill_arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
     if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-      dev->set_color (col);
-      dev->arc (x[0], y[0]+dev->pixel, x[2], y[2]+dev->pixel, 0, 64*360);
+      ren->set_color (col);
+      ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
     }
   }
 }
@@ -282,7 +282,7 @@ struct curve_box_rep: public box_rep {
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
-  void display (ps_device dev);
+  void display (renderer ren);
   operator tree () { return "curve"; }
   SI length ();
   void apply_style ();
@@ -426,21 +426,21 @@ curve_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-curve_box_rep::display (ps_device dev) {
+curve_box_rep::display (renderer ren) {
   int i, n;
   if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
-    dev->set_color (fill_col);
+    ren->set_color (fill_col);
     n= N(a);
     array<SI> x (n), y (n);
     for (i=0; i<n; i++) {
       x[i]= (SI)a[i][0];
       y[i]= (SI)a[i][1];
     }
-    dev->polygon (x, y, false);
+    ren->polygon (x, y, false);
   }
   if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
-    dev->set_color (col);
-    dev->set_line_style (width, 0, false);
+    ren->set_color (col);
+    ren->set_line_style (width, 0, false);
  // TODO: Add options for handling round/nonround joins & line ends
     if (N (style) == 0) {
       n= N(a);
@@ -449,7 +449,7 @@ curve_box_rep::display (ps_device dev) {
 	x[i]= (SI) a[i][0];
 	y[i]= (SI) a[i][1];
       }
-      dev->lines (x, y);
+      ren->lines (x, y);
     }
     else {
       SI li=0, o=0;
@@ -498,14 +498,14 @@ curve_box_rep::display (ps_device dev) {
 	    y << (SI) b[1];
 	  }
 	}
-	dev->lines (x, y);
+	ren->lines (x, y);
       }
     }
   }
 
   rectangles ll;
-  if (!nil (arrows[0])) arrows[0]->redraw (dev, path (), ll);
-  if (!nil (arrows[1])) arrows[1]->redraw (dev, path (), ll);
+  if (!nil (arrows[0])) arrows[0]->redraw (ren, path (), ll);
+  if (!nil (arrows[1])) arrows[1]->redraw (ren, path (), ll);
 }
 
 SI

@@ -14,7 +14,7 @@
 #define GRID_H
 #include "frame.hpp"
 #include "curve.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 
 class grid_curve_rep: public concrete_struct {
 public:

@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : ps_device.cpp
-* DESCRIPTION: Abstract device for printing post-script graphics
+* MODULE     : renderer.cpp
+* DESCRIPTION: Abstract graphical rendering primitives
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "ps_device.hpp"
+#include "renderer.hpp"
 #include "gui.hpp"
 #include "rectangles.hpp"
 
@@ -18,48 +18,48 @@
 * Constructors
 ******************************************************************************/
 
-ps_device_rep::ps_device_rep ():
+renderer_rep::renderer_rep ():
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
   sfactor (1), pixel (PIXEL), thicken (0),
   master (NULL), pattern (UNINIT) {}
 
-ps_device_rep::~ps_device_rep () {}
+renderer_rep::~renderer_rep () {}
 
 /******************************************************************************
 * Device specific
 ******************************************************************************/
 
 bool
-ps_device_rep::is_printer () {
+renderer_rep::is_printer () {
   return false;
 }
 
 bool
-ps_device_rep::is_x_drawable () {
+renderer_rep::is_x_drawable () {
   return false;
 }
 
 void
-ps_device_rep::get_extents (int& w, int& h) {
+renderer_rep::get_extents (int& w, int& h) {
   w= h= 0;
 }
 
 x_drawable_rep*
-ps_device_rep::as_x_drawable () {
+renderer_rep::as_x_drawable () {
   return NULL;
 }
 
 void
-ps_device_rep::next_page () {
+renderer_rep::next_page () {
 }
 
 bool
-ps_device_rep::repainted () {
+renderer_rep::repainted () {
   return true;
 }
 
 bool
-ps_device_rep::interrupted (bool check) {
+renderer_rep::interrupted (bool check) {
   (void) check;
   return false;
 }
@@ -69,19 +69,19 @@ ps_device_rep::interrupted (bool check) {
 ******************************************************************************/
 
 void
-ps_device_rep::set_origin (SI x, SI y) {
+renderer_rep::set_origin (SI x, SI y) {
   ox= x;
   oy= y;
 }
 
 void
-ps_device_rep::move_origin (SI dx, SI dy) {
+renderer_rep::move_origin (SI dx, SI dy) {
   ox += dx;
   oy += dy;
 }
 
 void
-ps_device_rep::set_shrinking_factor (int sf) {
+renderer_rep::set_shrinking_factor (int sf) {
   ox  /= sfactor; oy  /= sfactor;
   cx1 /= sfactor; cy1 /= sfactor;
   cx2 /= sfactor; cy2 /= sfactor;
@@ -98,13 +98,13 @@ ps_device_rep::set_shrinking_factor (int sf) {
 ******************************************************************************/
 
 void
-ps_device_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
+renderer_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
   x1= cx1- ox; y1= cy1- oy;
   x2= cx2- ox; y2= cy2- oy;
 }
 
 void
-ps_device_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
+renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   (void) restore;
   outer_round (x1, y1, x2, y2);
   cx1= x1+ ox; cy1= y1+ oy;
@@ -112,7 +112,7 @@ ps_device_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 }
 
 void
-ps_device_rep::extra_clipping (SI x1, SI y1, SI x2, SI y2) {
+renderer_rep::extra_clipping (SI x1, SI y1, SI x2, SI y2) {
   SI ox1, oy1, ox2, oy2;
   get_clipping (ox1, oy1, ox2, oy2);
   x1= max (x1, ox1); y1= max (y1, oy1);
@@ -121,21 +121,21 @@ ps_device_rep::extra_clipping (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-ps_device_rep::clip (SI x1, SI y1, SI x2, SI y2) {
+renderer_rep::clip (SI x1, SI y1, SI x2, SI y2) {
   rectangle r (cx1, cy1, cx2, cy2);
   clip_stack= rectangles (r, clip_stack);
   set_clipping (x1, y1, x2, y2);
 }
 
 void
-ps_device_rep::unclip () {
+renderer_rep::unclip () {
   rectangle r (clip_stack->item);
   set_clipping (r->x1- ox, r->y1- oy, r->x2- ox, r->y2- oy);
   clip_stack= clip_stack->next;
 }
 
 bool
-ps_device_rep::is_visible (SI x1, SI y1, SI x2, SI y2) {
+renderer_rep::is_visible (SI x1, SI y1, SI x2, SI y2) {
   return
     (x2 >= (cx1- ox)) && (y2 >= (cy1- oy)) &&
     (x1 <  (cx2- ox)) && (y1 <  (cy2- oy));
@@ -144,13 +144,13 @@ ps_device_rep::is_visible (SI x1, SI y1, SI x2, SI y2) {
 #define RND(x) (((x)>=0)?(((x)/pixel)*pixel):((((x)-pixel+1)/pixel)*pixel))
 
 void
-ps_device_rep::round (SI& x, SI& y) {
+renderer_rep::round (SI& x, SI& y) {
   x= RND (x+ ox)- ox;
   y= RND (y+ oy)- oy;
 }
 
 void
-ps_device_rep::inner_round (SI& x1, SI& y1, SI& x2, SI& y2) {
+renderer_rep::inner_round (SI& x1, SI& y1, SI& x2, SI& y2) {
   x1= RND (x1+ox+pixel-1) - ox;
   y1= RND (y1+oy+pixel-1) - oy;
   x2= RND (x2+ox) - ox;
@@ -158,7 +158,7 @@ ps_device_rep::inner_round (SI& x1, SI& y1, SI& x2, SI& y2) {
 }
 
 void
-ps_device_rep::outer_round (SI& x1, SI& y1, SI& x2, SI& y2) {
+renderer_rep::outer_round (SI& x1, SI& y1, SI& x2, SI& y2) {
   x1= RND (x1+ox) - ox;
   y1= RND (y1+oy) - oy;
   x2= RND (x2+ox+pixel-1) - ox;
@@ -201,7 +201,7 @@ abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2) {
 ******************************************************************************/
 
 void
-ps_device_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
+renderer_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   array<SI> x (3), y (3);
   x[0]= x1; y[0]= y1;
   x[1]= x2; y[1]= y2;
@@ -210,7 +210,7 @@ ps_device_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
 }
 
 void
-ps_device_rep::set_background_pattern (tree pat) {
+renderer_rep::set_background_pattern (tree pat) {
   pattern= pat;
   if (pattern == "");
   else if (is_atomic (pattern))
@@ -220,7 +220,7 @@ ps_device_rep::set_background_pattern (tree pat) {
 }
 
 tree
-ps_device_rep::get_background_pattern () {
+renderer_rep::get_background_pattern () {
   if (is_atomic (pattern) || is_func (pattern, PATTERN, 4)) return pattern;
   else {
     tree s= get_named_color (get_background ());
@@ -234,7 +234,7 @@ bool is_percentage (tree t, string s= "%");
 double as_percentage (tree t);
 
 void
-ps_device_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
+renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
   if (pattern == "");
   else if (is_atomic (pattern))
     clear (x1, y1, x2, y2);

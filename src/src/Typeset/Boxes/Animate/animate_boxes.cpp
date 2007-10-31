@@ -50,7 +50,7 @@ struct anim_constant_box_rep: public composite_box_rep {
   anim_constant_box_rep (path ip, box b, int length);
   operator tree () { return tree (TUPLE, "anim_constant", (tree) bs[0]); }
 
-  void   pre_display (ps_device& dev);
+  void   pre_display (renderer& ren);
   int    anim_length () { return length; }
   bool   anim_started () { return started; }
   bool   anim_finished () { return finished; }
@@ -70,7 +70,7 @@ anim_constant_box_rep::anim_constant_box_rep (path ip, box b, int length2):
 }
 
 void
-anim_constant_box_rep::pre_display (ps_device& dev) {
+anim_constant_box_rep::pre_display (renderer& ren) {
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
     finished= (texmacs_time () - (started_at+length) >= 0);
@@ -118,14 +118,14 @@ public:
 
   int       subnr () { return 1; }
   box       subbox (int i) { (void) i; return bs[current]; }
-  void      display (ps_device dev) { (void) dev; }
+  void      display (renderer ren) { (void) ren; }
   operator  tree () { return tree ("composed animation"); }
   tree      action (tree t, SI x, SI y, SI delta);
   void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
-  void   pre_display (ps_device& dev);
+  void   pre_display (renderer& ren);
   int    anim_length () { return cum_len[N(bs)-1]; }
   bool   anim_started () { return started; }
   bool   anim_finished () { return finished; }
@@ -211,7 +211,7 @@ anim_compose_box_rep::find_tag (string name) {
 ******************************************************************************/
 
 void
-anim_compose_box_rep::pre_display (ps_device& dev) {
+anim_compose_box_rep::pre_display (renderer& ren) {
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
     time_t now= texmacs_time ();
@@ -312,7 +312,7 @@ struct anim_repeat_box_rep: public composite_box_rep {
   anim_repeat_box_rep (path ip, box b);
   operator tree () { return tree (TUPLE, "anim_repeat", (tree) bs[0]); }
 
-  void pre_display (ps_device& dev);
+  void pre_display (renderer& ren);
   int  anim_length () { return -1; }
   bool anim_started () { return started; }
   bool anim_finished () { return false; }
@@ -332,7 +332,7 @@ anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b):
 }
 
 void
-anim_repeat_box_rep::pre_display (ps_device& dev) {
+anim_repeat_box_rep::pre_display (renderer& ren) {
   if (!started) anim_start_at (texmacs_time ());
   else if (length > 0) {
     time_t now= texmacs_time ();
@@ -373,10 +373,10 @@ struct anim_effect_box_rep: public composite_box_rep {
   anim_effect_box_rep (path ip, box b, int len);
   operator tree () { return tree (TUPLE, "anim_effect", (tree) b); }
 
-  void pre_display (ps_device& dev);
-  void post_display (ps_device& dev);
+  void pre_display (renderer& ren);
+  void post_display (renderer& ren);
   virtual void set_position (double t) = 0;
-  virtual void set_clipping (ps_device& dev, double t) = 0;
+  virtual void set_clipping (renderer& ren, double t) = 0;
 
   int    anim_length () { return length; }
   bool   anim_started () { return started; }
@@ -399,7 +399,7 @@ anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, int len):
 }
 
 void
-anim_effect_box_rep::pre_display (ps_device& dev) {
+anim_effect_box_rep::pre_display (renderer& ren) {
   double t= 1.0;
   if (!started) anim_start_at (texmacs_time ());
 
@@ -417,13 +417,13 @@ anim_effect_box_rep::pre_display (ps_device& dev) {
     refresh_at (anim_next_update ());
   }
 
-  dev->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
-  set_clipping (dev, t);
+  ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  set_clipping (ren, t);
 }
 
 void
-anim_effect_box_rep::post_display (ps_device &dev) {
-  dev->set_clipping
+anim_effect_box_rep::post_display (renderer &ren) {
+  ren->set_clipping
     (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
 }
 
@@ -471,9 +471,9 @@ struct anim_translate_box_rep: public anim_effect_box_rep {
   void set_position (double t) {
     sx (0)= start_x - x1 + as_int (t * (end_x - start_x));
     sy (0)= start_y - y1 + as_int (t * (end_y - start_y)); }
-  void set_clipping (ps_device& dev, double t) {
+  void set_clipping (renderer& ren, double t) {
     if (t != 1.0 || end_x != x1 || end_y != y1)
-      dev->extra_clipping (x1, y1, x2, y2); }
+      ren->extra_clipping (x1, y1, x2, y2); }
 };
 
 struct anim_progressive_box_rep: public anim_effect_box_rep {
@@ -484,13 +484,13 @@ struct anim_progressive_box_rep: public anim_effect_box_rep {
   operator tree () { return tree (TUPLE, "anim_progressive", (tree) b); }
 
   void set_position (double t) { (void) t; }
-  void set_clipping (ps_device& dev, double t) {
+  void set_clipping (renderer& ren, double t) {
     SI X1= start_r->x1 + as_int (t * (end_r->x1 - start_r->x1));
     SI Y1= start_r->y1 + as_int (t * (end_r->y1 - start_r->y1));
     SI X2= start_r->x2 + as_int (t * (end_r->x2 - start_r->x2));
     SI Y2= start_r->y2 + as_int (t * (end_r->y2 - start_r->y2));
     if (t != 1.0 || X1 != x1 || Y1 != y1 || X2 != x2 || Y2 != y2)
-      dev->extra_clipping (X1, Y1, X2, Y2); }
+      ren->extra_clipping (X1, Y1, X2, Y2); }
 };
 
 /******************************************************************************
@@ -504,13 +504,13 @@ struct sound_box_rep: public box_rep {
   sound_box_rep (path ip, url u2, SI h):
     box_rep (ip), u (u2), started (false) { y2= h; }
   operator tree () { return tree (TUPLE, "sound", u->t); }
-  void display (ps_device dev) { (void) dev; }
+  void display (renderer ren) { (void) ren; }
 
   void play_sound () {
     if (exists_in_path ("play"))
       system ("play", u, "&");
     started= true; }
-  void pre_display (ps_device& dev) {
+  void pre_display (renderer& ren) {
     if (!started) anim_start_at (texmacs_time ()); }
   int  anim_length () { return 0; }
   bool anim_started () { return started; }

@@ -310,25 +310,25 @@ edit_graphics_rep::invalidate_graphical_object () {
 }
 
 void
-edit_graphics_rep::draw_graphical_object (ps_device dev) {
+edit_graphics_rep::draw_graphical_object (renderer ren) {
   if (nil (go_box)) set_graphical_object (graphical_object);
   if (nil (go_box)) return;
   SI ox1, oy1, ox2, oy2;
-  dev->get_clipping (ox1, oy1, ox2, oy2);
+  ren->get_clipping (ox1, oy1, ox2, oy2);
   SI gx1, gy1, gx2, gy2;
   if (find_graphical_region (gx1, gy1, gx2, gy2))
-    dev->extra_clipping (gx1, gy1, gx2, gy2);
+    ren->extra_clipping (gx1, gy1, gx2, gy2);
   int i;
   for (i=0; i<go_box->subnr(); i++) {
     box b= go_box->subbox (i);
     if ((tree)b=="point" || (tree)b=="curve")
-      b->display (dev);
+      b->display (ren);
     else {
       rectangles rs;
-      b->redraw (dev, path (), rs);
+      b->redraw (ren, path (), rs);
     }
   }
-  dev->set_clipping (ox1, oy1, ox2, oy2);
+  ren->set_clipping (ox1, oy1, ox2, oy2);
 }
 
 bool

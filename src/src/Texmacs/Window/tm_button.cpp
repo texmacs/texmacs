@@ -58,7 +58,7 @@ box_widget_rep::handle_get_size_hint (SI& w, SI& h) {
 void
 box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
-  ps_device win= get_ps_device (this);
+  renderer win= get_renderer (this);
   if (!transparent) {
     win->set_background (light_grey);
     win->set_color (light_grey);

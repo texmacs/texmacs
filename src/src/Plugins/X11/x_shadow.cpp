@@ -17,10 +17,10 @@
 ******************************************************************************/
 
 void
-x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y) {
-  if (dev == NULL) fatal_error ("invalid situation", "x_drawable_rep::fetch");
-  if (dev->is_printer ()) return;
-  x_drawable_rep* src= dev->as_x_drawable ();
+x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
+  if (ren == NULL) fatal_error ("invalid situation", "x_drawable_rep::fetch");
+  if (ren->is_printer ()) return;
+  x_drawable_rep* src= ren->as_x_drawable ();
   if (src->win == win && x1 == x && y1 == y) return;
   outer_round (x1, y1, x2, y2);
   SI X1= x1, Y1= y1;
@@ -43,33 +43,34 @@ x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y) {
 ******************************************************************************/
 
 void
-x_drawable_rep::new_shadow (ps_device& dev) {
+x_drawable_rep::new_shadow (renderer& ren) {
   SI mw, mh, sw, sh;
-  ((ps_device) this) -> get_extents (mw, mh);
-  if (dev != NULL) {
-    dev->get_extents (sw, sh);
+  ((renderer) this) -> get_extents (mw, mh);
+  if (ren != NULL) {
+    ren->get_extents (sw, sh);
     if (sw == mw && sh == mh) return;
     //cout << "Old: " << sw << ", " << sh << "\n";
-    delete_shadow (dev);
+    delete_shadow (ren);
   }
   //cout << "Create " << mw << ", " << mh << "\n";
-  dev= (ps_device) new x_drawable_rep (gui, mw, mh);
+  ren= (renderer) new x_drawable_rep (gui, mw, mh);
 }
 
 void
-x_drawable_rep::delete_shadow (ps_device& dev) {
-  if (dev != NULL) {
-    delete dev->as_x_drawable ();
-    dev= NULL;
+x_drawable_rep::delete_shadow (renderer& ren) {
+  if (ren != NULL) {
+    delete ren->as_x_drawable ();
+    ren= NULL;
   }
 }
 
 void
-x_drawable_rep::get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
+x_drawable_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
-  if (dev == NULL) fatal_error ("null device", "x_drawable_rep::get_shadow");
-  if (dev->is_printer ()) return;
-  x_drawable_rep* shadow= dev->as_x_drawable ();
+  if (ren == NULL)
+    fatal_error ("invalid renderer", "x_drawable_rep::get_shadow");
+  if (ren->is_printer ()) return;
+  x_drawable_rep* shadow= ren->as_x_drawable ();
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
@@ -89,11 +90,12 @@ x_drawable_rep::get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-x_drawable_rep::put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
+x_drawable_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
-  if (dev == NULL) fatal_error ("null device", "x_drawable_rep::put_shadow");
-  if (dev->is_printer ()) return;
-  x_drawable_rep* shadow= dev->as_x_drawable ();
+  if (ren == NULL)
+    fatal_error ("invalid renderer", "x_drawable_rep::put_shadow");
+  if (ren->is_printer ()) return;
+  x_drawable_rep* shadow= ren->as_x_drawable ();
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);

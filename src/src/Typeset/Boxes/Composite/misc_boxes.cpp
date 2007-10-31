@@ -93,7 +93,7 @@ struct page_box_rep: composite_box_rep {
 		array<box> bs, array<SI> x, array<SI> y, box dec);
   operator tree ();
   int find_child (SI x, SI y, SI delta, bool force);
-  void display (ps_device dev);
+  void display (renderer ren);
   void clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
   path find_left_box_path ();
@@ -133,10 +133,10 @@ page_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 }
 
 void
-page_box_rep::display (ps_device dev) {
+page_box_rep::display (renderer ren) {
   if (!nil (decoration)) {
     rectangles rs;
-    decoration->redraw (dev, path (), rs);
+    decoration->redraw (ren, path (), rs);
   }
 }
 

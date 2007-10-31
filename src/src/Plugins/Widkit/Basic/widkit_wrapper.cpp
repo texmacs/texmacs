@@ -699,11 +699,11 @@ wk_widget_rep::query (slot s, int type_id) {
     if (type_id != type_helper<int>::id)
       fatal_error ("int expected (SLOT_IDENTIFIER)", "wk_widget_rep::query");
     return close_box<int> (get_identifier (win));
-  case SLOT_PS_DEVICE:
-    if (type_id != type_helper<ps_device>::id)
-      fatal_error ("ps_device expected (SLOT_PS_DEVICE)",
+  case SLOT_RENDERER:
+    if (type_id != type_helper<renderer>::id)
+      fatal_error ("renderer expected (SLOT_RENDERER)",
 		   "wk_widget_rep::query");
-    return close_box<ps_device> ((ps_device) win);
+    return close_box<renderer> ((renderer) win);
   case SLOT_SIZE:
     return query_size (THIS, type_id);
   case SLOT_POSITION:

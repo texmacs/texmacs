@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "env.hpp"
-#include "PsDevice/page_type.hpp"
+#include "Renderer/page_type.hpp"
 #include "typesetter.hpp"
 
 /******************************************************************************

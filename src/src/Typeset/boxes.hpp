@@ -16,7 +16,7 @@
 #include "basic.hpp"
 #include "rectangles.hpp"
 #include "path.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "hashmap.hpp"
@@ -132,9 +132,9 @@ public:
   void              relocate (path p, bool force= false);
   virtual box	    transform (frame fr);
   virtual operator  tree () = 0;
-  virtual void      pre_display (ps_device& dev);
-  virtual void      post_display (ps_device& dev);
-  virtual void      display (ps_device dev) = 0;
+  virtual void      pre_display (renderer& ren);
+  virtual void      post_display (renderer& ren);
+  virtual void      display (renderer ren) = 0;
   virtual void      clear_incomplete (rectangles& rs, SI pixel,
 				      int i, int i1, int i2);
   virtual int       subnr ();
@@ -146,8 +146,8 @@ public:
   virtual path      find_tag (string name);
 
   virtual int  reindex (int i, int item, int n);
-  void redraw (ps_device dev, path p, rectangles& l);
-  void redraw (ps_device dev, path p, rectangles& l, SI x, SI y);
+  void redraw (renderer ren, path p, rectangles& l);
+  void redraw (renderer ren, path p, rectangles& l, SI x, SI y);
 
   /*************************** positioning routines **************************/
 

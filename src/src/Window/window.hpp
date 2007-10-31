@@ -13,13 +13,13 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 #include "gui.hpp"
-#include "ps_device.hpp"
+#include "renderer.hpp"
 
 class widget;
 class window_rep;
 typedef window_rep* window;
 
-class window_rep: virtual public ps_device_rep {
+class window_rep: virtual public renderer_rep {
 public:
   inline window_rep () {}
   inline virtual ~window_rep () {}

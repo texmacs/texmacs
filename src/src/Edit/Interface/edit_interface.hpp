@@ -62,10 +62,10 @@ protected:
   array<string> completions;
   string        completion_prefix;
   int           completion_pos;
-  ps_device     shadow;
+  renderer      shadow;
   SI            vx1, vy1, vx2, vy2;
   rectangles    stored_rects;
-  ps_device     stored;
+  renderer      stored;
   rectangles    locus_new_rects;
   rectangles    locus_rects;
   list<string>  active_ids;
@@ -91,15 +91,15 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 
   /* repainting the window */
-  void draw_text (ps_device dev, rectangles& l);
-  void draw_surround (ps_device dev, rectangle r);
-  void draw_context (ps_device dev, rectangle r);
-  void draw_env (ps_device dev);
-  void draw_cursor (ps_device dev);
-  void draw_selection (ps_device dev);
-  void draw_graphics (ps_device dev);
-  void draw_pre (ps_device dev, rectangle r);
-  void draw_post (ps_device dev, rectangle r);
+  void draw_text (renderer ren, rectangles& l);
+  void draw_surround (renderer ren, rectangle r);
+  void draw_context (renderer ren, rectangle r);
+  void draw_env (renderer ren);
+  void draw_cursor (renderer ren);
+  void draw_selection (renderer ren);
+  void draw_graphics (renderer ren);
+  void draw_pre (renderer ren, rectangle r);
+  void draw_post (renderer ren, rectangle r);
   void draw_with_shadow (rectangle r);
   void draw_with_stored (rectangle r);
 

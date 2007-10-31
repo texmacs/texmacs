@@ -6,7 +6,7 @@
 *******************************************************************************
 * This module contains all system-wide routines of GUIs.
 * An abstract widget interface can be found in widget.hpp / message.hpp and
-* an abstract interface for drawing primitives in ps_device.hpp.
+* an abstract interface for drawing primitives in renderer.hpp.
 * The Widkit plug-in provides a default implementation for a widget library.
 * When using Widkit, you should provide a simple window implementation,
 * as specified in window.hpp.

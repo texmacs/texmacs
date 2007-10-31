@@ -12,7 +12,7 @@
 
 #ifndef X_DRAWABLE_H
 #define X_DRAWABLE_H
-#include "ps_device.hpp"
+#include "renderer.hpp"
 #include "X11/x_gui.hpp"
 #include "X11/x_font.hpp"
 #include "rectangles.hpp"
@@ -22,7 +22,7 @@
 * The x_drawable class
 ******************************************************************************/
 
-class x_drawable_rep: virtual public ps_device_rep {
+class x_drawable_rep: virtual public renderer_rep {
   x_gui     gui;
   Display*  dpy;
   Drawable  win;
@@ -49,7 +49,7 @@ public:
   void draw (int char_code, font_glyphs fn, SI x, SI y);
   void xpm_initialize (url file_name);
 
-  /******************** routines from ps_device.hpp ************************/
+  /********************** routines from renderer.hpp *************************/
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   color get_color ();
@@ -68,11 +68,11 @@ public:
   void  image (url u, SI w, SI h, SI x, SI y,
 	       double cx1, double cy1, double cx2, double cy2);
 
-  void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y);
-  void new_shadow (ps_device& dev);
-  void delete_shadow (ps_device& dev);
-  void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
-  void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
+  void new_shadow (renderer& ren);
+  void delete_shadow (renderer& ren);
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
   /****************************** friends ************************************/

@@ -12,12 +12,12 @@
 
 #ifndef PRINTER_H
 #define PRINTER_H
-#include "ps_device.hpp"
+#include "renderer.hpp"
 #include "gui.hpp"
 #include "hashmap.hpp"
 #include "url.hpp"
 
-class printer_rep: public ps_device_rep {
+class printer_rep: public renderer_rep {
   url      ps_file_name;
   int      dpi;
   int      nr_pages;
@@ -70,7 +70,7 @@ public:
   void select_tex_font (string name);
   void generate_tex_fonts ();
 
-  /******************** routines from ps_device.hpp ************************/
+  /********************** routines from renderer.hpp *************************/
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   color get_color ();
@@ -90,16 +90,16 @@ public:
   void  image (url u, SI w, SI h, SI x, SI y,
 	       double cx1, double cy1, double cx2, double cy2);
 
-  void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y);
-  void new_shadow (ps_device& dev);
-  void delete_shadow (ps_device& dev);
-  void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
-  void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
+  void new_shadow (renderer& ren);
+  void delete_shadow (renderer& ren);
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 };
 
-ps_device printer (url ps_file_name, int dpi, int nr_pages= 1,
-		   string page_type= "a4", bool landscape= false,
-		   double paper_w= 21.0, double paper_h= 29.7);
+renderer printer (url ps_file_name, int dpi, int nr_pages= 1,
+		  string page_type= "a4", bool landscape= false,
+		  double paper_w= 21.0, double paper_h= 29.7);
 
 #endif // defined PRINTER_H
