@@ -439,6 +439,35 @@ x_window_rep::set_mouse_pointer (widget wid, string name, string mask) {
 }
 
 /******************************************************************************
+* Delayed messages
+******************************************************************************/
+
+message_rep::message_rep (widget wid2, string s2, time_t t2):
+  wid (wid2), s (s2), t (t2) {}
+message::message (widget wid, string s, time_t t):
+  rep (new message_rep (wid, s, t)) {}
+
+ostream&
+operator << (ostream& out, message m) {
+  return out << "message " << m->s << " to " << m->wid
+	     << "at time " << m->t << "\n";
+}
+
+static list<message>
+insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
+  if (nil (l)) return list<message> (message (wid, s, t));
+  time_t ref= l->item->t;
+  if ((t-cur) <= (ref-cur)) return list<message> (message (wid, s, t), l);
+  return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
+}
+
+void
+x_window_rep::delayed_message (widget wid, string s, time_t delay) {
+  time_t ct= texmacs_time ();
+  the_gui->messages= insert_message (the_gui->messages, wid, s, ct, ct+ delay);
+}
+
+/******************************************************************************
 * Routines concerning regions in a window
 ******************************************************************************/
 

@@ -20,6 +20,8 @@
 
 void send_geometry (wk_widget w, blackbox val);
 blackbox query_geometry (wk_widget w, int type_id);
+SI get_dx (gravity grav, SI w);
+SI get_dy (gravity grav, SI h);
 
 /******************************************************************************
 * Type conversions
@@ -327,7 +329,7 @@ send_position (wk_widget w, blackbox val) {
     // FIXME: we should use coordinates relative to parent widget
     geometry g=
       open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
-    g.x1= p.x1; g.x2= p.x2;
+    g.x1= p.x1; g.x2= p.x2; g.x5= north_west;
     send_geometry (w, close_box<geometry> (g));
   }
 }
@@ -343,7 +345,7 @@ send_size (wk_widget w, blackbox val) {
   else {
     geometry g=
       open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
-    g.x3= p.x1; g.x4= p.x2;
+    g.x3= p.x1; g.x4= p.x2; g.x5= north_west;
     send_geometry (w, close_box<geometry> (g));
   }
 }
@@ -664,7 +666,8 @@ query_position (wk_widget w, int type_id) {
   }
   else {
     // FIXME: we should use coordinates relative to parent widget
-    return close_box<coord2> (coord2 (w->ox, w->oy));
+    return close_box<coord2> (coord2 (w->ox - get_dx (w->grav, w->w),
+				      w->oy - get_dy (w->grav, w->h)));
   }
 }
 
@@ -688,7 +691,9 @@ query_geometry (wk_widget w, int type_id) {
   }
   else {
     // FIXME: we should use coordinates relative to parent widget
-    return close_box<geometry> (geometry (w->ox, w->oy, w->w, w->h, w->grav));
+    return close_box<geometry> (geometry (w->ox - get_dx (w->grav, w->w),
+					  w->oy - get_dy (w->grav, w->h),
+					  w->w, w->h, w->grav));
   }
 }
 

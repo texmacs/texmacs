@@ -52,6 +52,8 @@ public:
     // does this widget have the mouse grab?
   virtual void set_mouse_pointer (widget wid, string name, string mask) = 0;
     // set the shape of the mouse pointer with a mask ("" means no mask)
+  virtual void delayed_message (widget wid, string message, time_t delay) = 0;
+    // send message to wid for reception after delay (used for scrolling)
 };
 
 window plain_window (widget w, string name, SI min_w, SI min_h,

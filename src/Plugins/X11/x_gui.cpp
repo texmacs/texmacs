@@ -313,40 +313,6 @@ clear_selection (string key) {
 }
 
 /******************************************************************************
-* Delayed messages
-******************************************************************************/
-
-message_rep::message_rep (widget wid2, string s2, time_t t2):
-  wid (wid2), s (s2), t (t2) {}
-message::message (widget wid, string s, time_t t):
-  rep (new message_rep (wid, s, t)) {}
-
-ostream&
-operator << (ostream& out, message m) {
-  return out << "message " << m->s << " to " << m->wid
-	     << "at time " << m->t << "\n";
-}
-
-static list<message>
-insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
-  if (nil (l)) return list<message> (message (wid, s, t));
-  time_t ref= l->item->t;
-  if ((t-cur) <= (ref-cur)) return list<message> (message (wid, s, t), l);
-  return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
-}
-
-void
-x_gui_rep::delayed_message (widget wid, string s, time_t delay) {
-  time_t ct= texmacs_time ();
-  messages= insert_message (messages, wid, s, ct, ct+ delay);
-}
-
-void
-delayed_message (widget wid, string mess, time_t delay) {
-  the_gui->delayed_message (wid, mess, delay);
-}
-
-/******************************************************************************
 * X Pointers
 ******************************************************************************/
 
@@ -547,7 +513,7 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
 ******************************************************************************/
 
 void
-x_gui_rep::set_help_balloon (widget wid, SI x, SI y) {
+x_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   unmap_balloon ();
   balloon_wid = wid;
   balloon_win = NULL;
@@ -555,6 +521,8 @@ x_gui_rep::set_help_balloon (widget wid, SI x, SI y) {
   balloon_y   = y;
   balloon_time= texmacs_time ();
 }
+
+#include "Widkit/wk_widget.hpp"
 
 void
 x_gui_rep::map_balloon () {
@@ -577,7 +545,7 @@ x_gui_rep::unmap_balloon () {
 }
 
 void
-x_gui_rep::set_wait_indicator (widget w, string message, string arg) {
+x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
   x_window ww= get_x_window (w);
   if (ww == NULL || message == "") return;
   if (arg != "") message= message * "#" * arg * "...";
@@ -642,13 +610,13 @@ beep () {
 }
 
 void
-set_help_balloon (widget wid, SI x, SI y) {
-  the_gui->set_help_balloon (wid, x, y);
+show_help_balloon (widget wid, SI x, SI y) {
+  the_gui->show_help_balloon (wid, x, y);
 }
 
 void
-set_wait_indicator (widget w, string message, string arg) {
-  the_gui->set_wait_indicator (w, message, arg);
+show_wait_indicator (widget w, string message, string arg) {
+  the_gui->show_wait_indicator (w, message, arg);
 }
 
 bool

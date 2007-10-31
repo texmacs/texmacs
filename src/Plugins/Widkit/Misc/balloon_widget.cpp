@@ -52,7 +52,7 @@ balloon_widget_rep::balloon_handle_mouse (mouse_event ev) {
     win->get_position (x, y);
     SI xx= x+ ev->x+ 10*PIXEL;
     SI yy= y+ ev->y- 5*PIXEL;
-    set_help_balloon (abstract (balloon_wid), xx, yy);
+    show_help_balloon (abstract (balloon_wid), xx, yy);
   }
 }
 
@@ -100,7 +100,7 @@ balloon_decoration_widget_rep::balloon_decoration_widget_rep (wk_widget w):
   basic_widget_rep (1, south_west) { a[0]= w; }
 
 balloon_decoration_widget_rep::operator tree () {
-  return tree (TUPLE, "decoration", (tree) a[0]);
+  return tree (TUPLE, "balloon decoration", (tree) a[0]);
 }
 
 void
