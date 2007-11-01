@@ -345,10 +345,10 @@ notify_keyboard_focus (widget w, bool has_focus) {
 }
 
 inline void
-send_mouse (widget w, string kind, SI x, SI y, time_t t, int status) {
+send_mouse (widget w, string kind, SI x, SI y, int mods, time_t t) {
   // send a mouse event of a given kind at position (x, y) and time t
-  // the status corresponds to active keyboard modifiers at the event time
-  send<string,SI,SI,time_t,int> (w, SLOT_MOUSE, kind, x, y, t, status);
+  // mods corresponds to active buttons and keyboard modifiers at time t
+  send<string,SI,SI,int,time_t> (w, SLOT_MOUSE, kind, x, y, mods, t);
 }
 
 inline void

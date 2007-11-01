@@ -102,8 +102,6 @@ void clear_selection (string cb);
 
 void beep ();
   // Issue a beep
-unsigned int get_kbd_modifiers ();
-  // Get the current keyboard modifiers (shift, control, etc.)
 bool check_event (int type);
   // Check whether an event of one of the above types has occurred;
   // we check for keyboard events while repainting windows

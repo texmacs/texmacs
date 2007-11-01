@@ -24,7 +24,7 @@
 ******************************************************************************/
 
 void
-edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
+edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
   last_x= x; last_y= y;
   mark_undo_blocks ();
   if (type != "move" ||
@@ -76,7 +76,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
       dragging= start_drag= false;
     if (type == "release-right")
       right_dragging= start_right_drag= false;
-    if (mouse_graphics (type2, x, y, t)) return;
+    if (mouse_graphics (type2, x, y, mods, t)) return;
     if (!over_graphics (x, y))
       eval ("(graphics-reset-context 'text-cursor)");
   }
@@ -96,7 +96,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     }
     else {
       last_click= t;
-      mouse_select (x, y);
+      mouse_select (x, y, mods);
     }
   }
   if (type == "press-middle") mouse_paste (x, y);
@@ -159,9 +159,9 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 }
 
 void
-edit_interface_rep::mouse_select (SI x, SI y) {
+edit_interface_rep::mouse_select (SI x, SI y, int mods) {
   if (eb->action ("select" , x, y, 0) != "") return;
-  if (!nil (active_ids) && (get_kbd_modifiers () & 1) == 0) {
+  if (!nil (active_ids) && (mods & 256) == 0) {
     call ("link-follow-ids", object (active_ids));
     return;
   }
@@ -323,9 +323,9 @@ edit_interface_rep::update_active_loci () {
 ******************************************************************************/
 
 void
-edit_interface_rep::handle_mouse (string kind, SI x, SI y, time_t t, int st) {
+edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
   x *= sfactor;
   y *= sfactor;
-  //cout << kind << " (" << x << ", " << y << ") at " << t << "\n";
-  mouse_any (kind, x, y, t); (void) st;
+  //cout << kind << " (" << x << ", " << y << "; " << m << ") at " << t << "\n";
+  mouse_any (kind, x, y, m, t);
 }

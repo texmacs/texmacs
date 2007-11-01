@@ -332,7 +332,7 @@ edit_graphics_rep::draw_graphical_object (renderer ren) {
 }
 
 bool
-edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
+edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   (void) t;
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
@@ -349,16 +349,27 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
     string sx= as_string (p[0]);
     string sy= as_string (p[1]);
     invalidate_graphical_object ();
-    if (type == "move"            ) call ("graphics-move-point"      , sx, sy);
-    if (type == "release-left"    ) call ("graphics-insert-point"    , sx, sy);
-    if (type == "release-middle"  ) call ("graphics-remove-point"    , sx, sy);
-    if (type == "release-right"   ) call ("graphics-last-point"      , sx, sy);
-    if (type == "start-drag"      ) call ("graphics-start-drag"      , sx, sy);
-    if (type == "dragging"        ) call ("graphics-dragging"        , sx, sy);
-    if (type == "end-drag"        ) call ("graphics-end-drag"        , sx, sy);
-    if (type == "start-right-drag") call ("graphics-start-right-drag", sx, sy);
-    if (type == "right-dragging"  ) call ("graphics-right-dragging"  , sx, sy);
-    if (type == "end-right-drag"  ) call ("graphics-end-right-drag"  , sx, sy);
+    call ("set-keyboard-modifiers", object (m));
+    if (type == "move")
+      call ("graphics-move-point", sx, sy);
+    else if (type == "release-left")
+      call ("graphics-insert-point", sx, sy);
+    else if (type == "release-middle")
+      call ("graphics-remove-point", sx, sy);
+    else if (type == "release-right")
+      call ("graphics-last-point", sx, sy);
+    else if (type == "start-drag")
+      call ("graphics-start-drag", sx, sy);
+    else if (type == "dragging")
+      call ("graphics-dragging", sx, sy);
+    else if (type == "end-drag")
+      call ("graphics-end-drag", sx, sy);
+    else if (type == "start-right-drag")
+      call ("graphics-start-right-drag", sx, sy);
+    else if (type == "right-dragging")
+      call ("graphics-right-dragging", sx, sy);
+    else if (type == "end-right-drag")
+      call ("graphics-end-right-drag", sx, sy);
     invalidate_graphical_object ();
     notify_change (THE_CURSOR);
     return true;

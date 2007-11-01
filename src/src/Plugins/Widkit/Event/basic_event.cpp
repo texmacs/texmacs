@@ -105,23 +105,23 @@ event emit_keyboard_focus (bool in_out_flag, time_t t) {
   return new keyboard_focus_event_rep (in_out_flag, t); }
 
 mouse_event_rep::mouse_event_rep (string type2, SI x2, SI y2,
-  time_t t2, int status2): event_rep (MOUSE_EVENT),
-    type (type2), x (x2), y (y2), t (t2), status (status2) {}
+  int mods2, time_t t2): event_rep (MOUSE_EVENT),
+    type (type2), x (x2), y (y2), mods (mods2), t (t2) {}
 mouse_event_rep::operator tree () {
   return tree (TUPLE, "mouse_event", type,
 	       tree (TUPLE, as_string (x/PIXEL), as_string (y/PIXEL))); }
 bool
 mouse_event_rep::pressed (string s) {
-  if (s == "left") return (status&1) != 0;
-  if (s == "middle") return (status&2) != 0;
-  if (s == "right") return (status&4) != 0;
-  if (s == "extra1") return (status&8) != 0;
-  if (s == "extra2") return (status&16) != 0;
+  if (s == "left") return (mods&1) != 0;
+  if (s == "middle") return (mods&2) != 0;
+  if (s == "right") return (mods&4) != 0;
+  if (s == "extra1") return (mods&8) != 0;
+  if (s == "extra2") return (mods&16) != 0;
   return false; }
-event emit_mouse (string type, SI x, SI y, time_t t, int status) {
-  return new mouse_event_rep (type, x, y, t, status); }
+event emit_mouse (string type, SI x, SI y, int mods, time_t t) {
+  return new mouse_event_rep (type, x, y, mods, t); }
 event emit_mouse (mouse_event ev, string type, SI x, SI y) {
-  return new mouse_event_rep (type, x, y, ev->t, ev->status); }
+  return new mouse_event_rep (type, x, y, ev->mods, ev->t); }
 
 alarm_event_rep::alarm_event_rep (string message2, time_t t2):
   event_rep (ALARM_EVENT), message (message2), t (t2) {}

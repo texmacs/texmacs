@@ -50,7 +50,7 @@ public:
   void   set_graphical_object (tree t);
   void   invalidate_graphical_object ();
   void   draw_graphical_object (renderer ren);
-  bool   mouse_graphics (string s, SI x, SI y, time_t t);
+  bool   mouse_graphics (string s, SI x, SI y, int mods, time_t t);
 };
 
 #endif // defined EDIT_GRAPHICS_H

@@ -70,57 +70,6 @@ x_gui_rep::prepare_color (int sf, color fg, color bg) {
 }
 
 /******************************************************************************
-* Keyboard modifiers
-******************************************************************************/
-
-static XModifierKeymap* xmodmap= NULL;
-static int        mod_n;
-static KeyCode*   mod_k;
-
-inline int
-get_bit (char *s, int i) {
-  register int j= i&7;
-  return (s[i>>3] & 1<<j)>>j & 1;
-}
-
-unsigned int
-x_gui_rep::get_kbd_modifiers () {
-  static char keymap[32];
-  unsigned int res=0;
-  XQueryKeymap(dpy, keymap);
-  if (xmodmap == NULL) {
-    xmodmap= XGetModifierMapping (dpy);
-    mod_n= xmodmap->max_keypermod;
-    mod_k= xmodmap->modifiermap;
-  }
-  for (int i=0; i<mod_n; i++) {
-    KeyCode j;
-    j= mod_k [ShiftMapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= ShiftMask;
-    j= mod_k [ControlMapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= ControlMask;
-    j= mod_k [LockMapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= LockMask;
-    j= mod_k [Mod1MapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= Mod1Mask;
-    j= mod_k [Mod2MapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= Mod2Mask;
-    j= mod_k [Mod3MapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= Mod3Mask;
-    j= mod_k [Mod4MapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= Mod4Mask;
-    j= mod_k [Mod5MapIndex*mod_n + i];
-    if (j && get_bit (keymap, j)) res |= Mod5Mask;
-  }
-  return res;
-}
-
-unsigned int
-get_kbd_modifiers () {
-  return the_gui->get_kbd_modifiers ();
-}
-
-/******************************************************************************
 * Subroutines
 ******************************************************************************/
 
@@ -132,6 +81,14 @@ x_gui_rep::set_button_state (unsigned int state) {
   if ((state & Button3Mask) != 0) i += 4;
   if ((state & Button4Mask) != 0) i += 8;
   if ((state & Button5Mask) != 0) i += 16;
+  if ((state & ShiftMask)   != 0) i += 256;
+  if ((state & ControlMask) != 0) i += 512;
+  if ((state & LockMask)    != 0) i += 1024;
+  if ((state & Mod1Mask)    != 0) i += 2048;
+  if ((state & Mod2Mask)    != 0) i += 4096;
+  if ((state & Mod3Mask)    != 0) i += 8192;
+  if ((state & Mod4Mask)    != 0) i += 16384;
+  if ((state & Mod5Mask)    != 0) i += 32768;
   x_gui_rep::state= i;
 }
 
@@ -147,7 +104,7 @@ x_gui_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
   x= (x * PIXEL);
   y= ((-y) * PIXEL);
   // cout << "\nLeave " << old_widget << "\n";
-  send_mouse (old_widget, "leave", x, y, 0, state);
+  send_mouse (old_widget, "leave", x, y, state, 0);
   // cout << "Leave OK\n";
 
   XQueryPointer (dpy, get_Window (new_widget),
@@ -156,7 +113,7 @@ x_gui_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
   x= (x * PIXEL);
   y= ((-y) * PIXEL);
   // cout << "Enter " << new_widget << "\n";
-  send_mouse (new_widget, "enter", x, y, 0, state);
+  send_mouse (new_widget, "enter", x, y, state, 0);
   // cout << "Enter OK\n\n";
 }
 

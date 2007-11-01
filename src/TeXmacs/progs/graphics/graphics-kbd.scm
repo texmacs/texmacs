@@ -21,14 +21,14 @@
 ;; Keyboard handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define ShiftMask   1)
-(tm-define LockMask    2)
-(tm-define ControlMask 4)
-(tm-define Mod1Mask    8)
-(tm-define Mod2Mask   16)
-(tm-define Mod3Mask   32)
-(tm-define Mod4Mask   64)
-(tm-define Mod5Mask  128)
+(tm-define ShiftMask     256)
+(tm-define LockMask      512)
+(tm-define ControlMask  1024)
+(tm-define Mod1Mask     2048)
+(tm-define Mod2Mask     4096)
+(tm-define Mod3Mask     8192)
+(tm-define Mod4Mask    16384)
+(tm-define Mod5Mask    32768)
 
 (tm-define (kbd-tab)
   (:mode in-graphics?)

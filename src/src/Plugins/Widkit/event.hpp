@@ -59,7 +59,7 @@ event emit_resize ();
 event emit_destroy ();
 event emit_keypress (string key, time_t t);
 event emit_keyboard_focus (bool in_out_flag, time_t t=0);
-event emit_mouse (string type, SI x, SI y, time_t t, int status);
+event emit_mouse (string type, SI x, SI y, int mods, time_t t);
 event emit_alarm (string message, time_t t);
 event emit_clear (SI x1, SI y1, SI x2, SI y2);
 event emit_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop);

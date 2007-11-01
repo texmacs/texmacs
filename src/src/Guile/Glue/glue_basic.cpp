@@ -284,15 +284,6 @@ tmg_exec_delayed (SCM arg1) {
 }
 
 SCM
-tmg_get_keyboard_modifiers () {
-  // SCM_DEFER_INTS;
-  int out= get_kbd_modifiers ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_set_input_language (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-input-language");
 
@@ -3732,7 +3723,6 @@ initialize_glue_basic () {
   scm_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
   scm_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
   scm_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
-  scm_new_procedure ("get-keyboard-modifiers", (FN) tmg_get_keyboard_modifiers, 0, 0, 0);
   scm_new_procedure ("set-input-language", (FN) tmg_set_input_language, 1, 0, 0);
   scm_new_procedure ("get-input-language", (FN) tmg_get_input_language, 0, 0, 0);
   scm_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);
