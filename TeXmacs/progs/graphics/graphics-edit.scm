@@ -777,6 +777,14 @@
 ;; Event hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define the-keyboard-modifiers 0)
+
+(tm-define (set-keyboard-modifiers mods)
+  (set! the-keyboard-modifiers mods))
+
+(tm-define (get-keyboard-modifiers)
+  the-keyboard-modifiers)
+
 (tm-define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")
   (if (not (when-inside-text-at 'left-button x y))

@@ -41,7 +41,6 @@
   (math-symbol-type math_symbol_type (string string))
   (object->command as_command (command object))
   (exec-delayed exec_delayed (void object))
-  (get-keyboard-modifiers get_kbd_modifiers (int))
   (set-input-language set_input_language (void string))
   (get-input-language get_input_language (string))
   (set-output-language gui_set_output_language (void string))

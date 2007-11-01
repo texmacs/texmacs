@@ -143,7 +143,6 @@ public:
   void initialize_keyboard_pointer ();
   string look_up_key (XKeyEvent* ev);
   string look_up_mouse (XButtonEvent* ev);
-  unsigned int get_kbd_modifiers ();
   unsigned int get_button_mask (XButtonEvent* ev);
 
   /******************************** Fonts ************************************/

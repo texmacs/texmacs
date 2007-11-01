@@ -402,7 +402,7 @@ send_keyboard_focus (wk_widget w, blackbox val) {
 
 void
 send_mouse (wk_widget w, blackbox val) {
-  typedef quintuple<string,int,int,time_t,int> mouse;
+  typedef quintuple<string,SI,SI,int,time_t> mouse;
   if (type_box (val) != type_helper<mouse>::id)
     fatal_error ("type mismatch", "send_mouse");
   mouse m= open_box<mouse> (val);

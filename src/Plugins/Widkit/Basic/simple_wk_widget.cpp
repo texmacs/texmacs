@@ -45,8 +45,8 @@ simple_widget_rep::handle_keyboard_focus (bool has_focus, time_t t) {
 }
 
 void
-simple_widget_rep::handle_mouse (string kind, SI x, SI y, time_t t, int st) {
-  (void) kind; (void) x; (void) y; (void) t; (void) st;
+simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t) {
+  (void) kind; (void) x; (void) y; (void) mods; (void) t;
 }
 
 void
@@ -95,7 +95,7 @@ simple_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
 
 void
 simple_widget_rep::handle_mouse (mouse_event ev) {
-  handle_mouse (ev->type, ev->x, ev->y, ev->t, ev->status);
+  handle_mouse (ev->type, ev->x, ev->y, ev->mods, ev->t);
 }
 
 void

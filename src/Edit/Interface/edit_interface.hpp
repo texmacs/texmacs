@@ -137,11 +137,11 @@ public:
   bool complete_keypress (string key);
 
   /* mouse handling */
-  void mouse_any (string s, SI x, SI y, time_t t);
+  void mouse_any (string s, SI x, SI y, int mods, time_t t);
   void mouse_click (SI x, SI y);
   bool mouse_extra_click (SI x, SI y);
   void mouse_drag (SI x, SI y);
-  void mouse_select (SI x, SI y);
+  void mouse_select (SI x, SI y, int mods);
   void mouse_paste (SI x, SI y);
   void mouse_adjust (SI x, SI y);
   void mouse_scroll (SI x, SI y, bool up);
@@ -170,7 +170,7 @@ public:
   void handle_notify_resize (SI w, SI h);
   void handle_keypress (string key, time_t t);
   void handle_keyboard_focus (bool has_focus, time_t t);
-  void handle_mouse (string kind, SI x, SI y, time_t t, int status);
+  void handle_mouse (string kind, SI x, SI y, int mods, time_t t);
   void handle_set_shrinking_factor (int sf);
   void handle_clear (SI x1, SI y1, SI x2, SI y2);
   void handle_repaint (SI x1, SI y1, SI x2, SI y2);

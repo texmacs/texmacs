@@ -373,7 +373,7 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
   if (nil (gui->grab_ptr) || (get_x_window (gui->grab_ptr->item) == NULL)) {
     set_origin (0, 0);
     encode (x, y);
-    send_mouse (w, ev, x, y, t, gui->state);
+    send_mouse (w, ev, x, y, gui->state, t);
   }
   else {
     x_window grab_win= get_x_window (gui->grab_ptr->item);
@@ -384,7 +384,7 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
     }
     set_origin (0, 0);
     encode (x, y);
-    send_mouse (gui->grab_ptr->item, ev, x, y, t, gui->state);
+    send_mouse (gui->grab_ptr->item, ev, x, y, gui->state, t);
   }
 }
 

@@ -91,7 +91,7 @@ operator << (ostream& out, widget w) {
 *   virtual void handle_notify_resize (SI w, SI h);
 *   virtual void handle_keypress (string key, time_t t);
 *   virtual void handle_keyboard_focus (bool has_focus, time_t t);
-*   virtual void handle_mouse (string kind, SI x, SI y, time_t t, int status);
+*   virtual void handle_mouse (string kind, SI x, SI y, int mods, time_t t);
 *   virtual void handle_set_shrinking_factor (int sf);
 *   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
 *   virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2);
