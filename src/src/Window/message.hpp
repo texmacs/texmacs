@@ -31,8 +31,6 @@ typedef enum slot_id {
   SLOT_NAME,
   SLOT_SIZE,
   SLOT_POSITION,
-  SLOT_GRAVITY,
-  SLOT_GEOMETRY, // FIXME: this is a bit redundant
   SLOT_UPDATE,
   SLOT_KEYBOARD,
   SLOT_KEYBOARD_FOCUS,
@@ -292,30 +290,6 @@ inline void
 notify_position (widget w, SI new_x, SI new_y) {
   // notify a change in the position of the widget
   notify<SI,SI> (w, SLOT_POSITION, new_x, new_y);
-}
-
-inline void
-set_gravity (widget w, gravity grav) {
-  // set the gravity of the widget (i.e. the position of the origin)
-  send<gravity> (w, SLOT_GRAVITY, grav);
-}
-
-inline gravity
-get_gravity (widget w) {
-  // get the current position of the widget inside the parent widget
-  return query<gravity> (w, SLOT_GRAVITY);
-}
-
-inline void
-set_geometry (widget w, SI ww, SI hh, SI x, SI y, gravity grav=north_west) {
-  // simultaneously set the size, position and gravity
-  send<SI,SI,SI,SI,gravity> (w, SLOT_GEOMETRY, ww, hh, x, y, grav);
-}
-
-inline void
-get_geometry (widget w, SI& ww, SI& hh, SI& x, SI& y, gravity& grav) {
-  // simultaneously get the size, position and gravity
-  query<SI,SI,SI,SI,gravity> (w, SLOT_GEOMETRY, ww, hh, x, y, grav);
 }
 
 inline void
