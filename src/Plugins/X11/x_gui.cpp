@@ -533,12 +533,11 @@ x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
   SI width= 400*PIXEL, height= 160*PIXEL;
   widget wait_wid= wait_widget (width, height, message);
   SI mid_x= (ww->win_w>>1)*PIXEL, mid_y= -(ww->win_h>>1)*PIXEL + height;
-  SI x1= mid_x- width/2, y1= mid_y- height/2;
-  SI x2= mid_x+ width/2, y2= mid_y+ height/2;
+  SI x= mid_x- width/2, y= mid_y- height/2;
   widget old_wid= ww->w;
   ww->w= wait_wid;
   set_identifier (wait_wid, (int) ww->win);
-  set_geometry (wait_wid, x1, y1, x2-x1, y2-y1);
+  set_position (wait_wid, x, y);
   send_invalidate_all (wait_wid);
   ww->repaint_invalid_regions ();
   ww->w= old_wid;

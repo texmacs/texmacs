@@ -18,11 +18,6 @@
 
 #define THIS wk_widget (this)
 
-void send_geometry (wk_widget w, blackbox val);
-blackbox query_geometry (wk_widget w, int type_id);
-SI get_dx (gravity grav, SI w);
-SI get_dy (gravity grav, SI h);
-
 /******************************************************************************
 * Type conversions
 ******************************************************************************/
@@ -275,6 +270,40 @@ check_type (blackbox bb, string s) {
 }
 
 /******************************************************************************
+* Widget geometry
+******************************************************************************/
+
+SI get_dx (gravity grav, SI w);
+SI get_dy (gravity grav, SI h);
+
+void
+set_geometry (wk_widget wid, SI x, SI y, SI w, SI h) {
+  if (wid->is_window_widget ()) {
+    wid->win->set_position (x, y);
+    wid->win->set_size (w, h);
+  }
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    wid << emit_position (x, y, w, h, north_west);
+  }
+}
+
+void
+get_geometry (wk_widget wid, SI& x, SI& y, SI& w, SI& h) {
+  if (wid->is_window_widget ()) {
+    wid->win->get_position (x, y);
+    wid->win->get_size (w, h);
+  }
+  else {
+    // FIXME: we should use coordinates relative to parent widget
+    x= wid->ox - get_dx (wid->grav, wid->w);
+    y= wid->oy - get_dy (wid->grav, wid->h);
+    w= wid->w;
+    h= wid->h;
+  }
+}
+
+/******************************************************************************
 * Sending messages
 ******************************************************************************/
 
@@ -320,60 +349,29 @@ send_coord4 (wk_widget w, string key, blackbox val) {
 void
 send_position (wk_widget w, blackbox val) {
   typedef pair<SI,SI> coord2;
-  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
   if (type_box (val) != type_helper<coord2>::id)
     fatal_error ("type mismatch", "send_position");
   coord2 p= open_box<coord2> (val);
   if (w->is_window_widget ()) w->win->set_position (p.x1, p.x2);
   else {
     // FIXME: we should use coordinates relative to parent widget
-    geometry g=
-      open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
-    g.x1= p.x1; g.x2= p.x2; g.x5= north_west;
-    send_geometry (w, close_box<geometry> (g));
+    SI x, y, W, H;
+    get_geometry (w, x, y, W, H);
+    set_geometry (w, p.x1, p.x2, W, H);
   }
 }
 
 void
 send_size (wk_widget w, blackbox val) {
   typedef pair<SI,SI> coord2;
-  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
   if (type_box (val) != type_helper<coord2>::id)
     fatal_error ("type mismatch", "send_size");
   coord2 p= open_box<coord2> (val);
   if (w->is_window_widget ()) w->win->set_size (p.x1, p.x2);
   else {
-    geometry g=
-      open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
-    g.x3= p.x1; g.x4= p.x2; g.x5= north_west;
-    send_geometry (w, close_box<geometry> (g));
-  }
-}
-
-void
-send_gravity (wk_widget w, blackbox val) {
-  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
-  if (type_box (val) != type_helper<gravity>::id)
-    fatal_error ("type mismatch", "send_gravity");
-  geometry g=
-    open_box<geometry> (query_geometry (w, type_helper<geometry>::id));
-  g.x5= open_box<gravity> (val);
-  send_geometry (w, close_box<geometry> (g));
-}
-
-void
-send_geometry (wk_widget w, blackbox val) {
-  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
-  if (type_box (val) != type_helper<geometry>::id)
-    fatal_error ("type mismatch", "send_geometry");
-  geometry g= open_box<geometry> (val);
-  if (w->is_window_widget ()) {
-    w->win->set_position (g.x1, g.x2);
-    w->win->set_size (g.x3, g.x4);
-  }
-  else {
-    // FIXME: we should use coordinates relative to parent widget
-    w << emit_position (g.x1, g.x2, g.x3, g.x4, g.x5);
+    SI x, y, W, H;
+    get_geometry (w, x, y, W, H);
+    set_geometry (w, x, y, p.x1, p.x2);
   }
 }
 
@@ -491,12 +489,6 @@ wk_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_POSITION:
     send_position (THIS, val);
-    break;
-  case SLOT_GRAVITY:
-    send_gravity (THIS, val);
-    break;
-  case SLOT_GEOMETRY:
-    send_geometry (THIS, val);
     break;
   case SLOT_UPDATE:
     send_update (THIS, val);
@@ -646,12 +638,9 @@ query_size (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
   if (type_id != type_helper<coord2>::id)
     fatal_error ("type mismatch", "query_size");
-  if (w->is_window_widget ()) {
-    SI W, H;
-    w->win->get_size (W, H);
-    return close_box<coord2> (coord2 (W, H));
-  }
-  else return close_box<coord2> (coord2 (w->w, w->h));
+  SI x, y, W, H;
+  get_geometry (w, x, y, W, H);
+  return close_box<coord2> (coord2 (W, H));
 }
 
 blackbox
@@ -659,42 +648,9 @@ query_position (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
   if (type_id != type_helper<coord2>::id)
     fatal_error ("type mismatch", "query_position");
-  if (w->is_window_widget ()) {
-    SI x, y;
-    w->win->get_position (x, y);
-    return close_box<coord2> (coord2 (x, y));
-  }
-  else {
-    // FIXME: we should use coordinates relative to parent widget
-    return close_box<coord2> (coord2 (w->ox - get_dx (w->grav, w->w),
-				      w->oy - get_dy (w->grav, w->h)));
-  }
-}
-
-blackbox
-query_gravity (wk_widget w, int type_id) {
-  if (type_id != type_helper<gravity>::id)
-    fatal_error ("type mismatch", "query_gravity");
-  return close_box<gravity> (w->grav);
-}
-
-blackbox
-query_geometry (wk_widget w, int type_id) {
-  typedef quintuple<SI,SI,SI,SI,gravity> geometry;
-  if (type_id != type_helper<geometry>::id)
-    fatal_error ("type mismatch", "query_geometry");
-  if (w->is_window_widget ()) {
-    SI x, y, W, H;
-    w->win->get_position (x, y);
-    w->win->get_size (W, H);
-    return close_box<geometry> (geometry (x, y, W, H, w->grav));
-  }
-  else {
-    // FIXME: we should use coordinates relative to parent widget
-    return close_box<geometry> (geometry (w->ox - get_dx (w->grav, w->w),
-					  w->oy - get_dy (w->grav, w->h),
-					  w->w, w->h, w->grav));
-  }
+  SI x, y, W, H;
+  get_geometry (w, x, y, W, H);
+  return close_box<coord2> (coord2 (x, y));
 }
 
 blackbox
@@ -713,10 +669,6 @@ wk_widget_rep::query (slot s, int type_id) {
     return query_size (THIS, type_id);
   case SLOT_POSITION:
     return query_position (THIS, type_id);
-  case SLOT_GRAVITY:
-    return query_gravity (THIS, type_id);
-  case SLOT_GEOMETRY:
-    return query_geometry (THIS, type_id);
   case SLOT_EXTENTS:
     return query_coord4 (THIS, "extents", type_id);
   case SLOT_VISIBLE_PART:
