@@ -276,13 +276,15 @@ notify_size (widget w, SI new_width, SI new_height) {
 
 inline void
 set_position (widget w, SI x, SI y) {
-  // set the current position of the widget inside the parent widget
+  // set the position of the top left corner of the widget w
+  // w.r.t. the top left of its parent widget
   send<SI,SI> (w, SLOT_POSITION, x, y);
 }
 
 inline void
 get_position (widget w, SI& x, SI& y) {
-  // get the current position of the widget inside the parent widget
+  // get the position of the top left corner of the widget w
+  // w.r.t. the top left of its parent widget
   query<SI,SI> (w, SLOT_POSITION, x, y);
 }
 
@@ -322,6 +324,7 @@ inline void
 send_mouse (widget w, string kind, SI x, SI y, int mods, time_t t) {
   // send a mouse event of a given kind at position (x, y) and time t
   // mods corresponds to active buttons and keyboard modifiers at time t
+  // the position is specified w.r.t. the top left corner of w
   send<string,SI,SI,int,time_t> (w, SLOT_MOUSE, kind, x, y, mods, t);
 }
 
@@ -351,13 +354,15 @@ send_invalidate_all (widget w) {
 
 inline void
 send_invalidate (widget w, SI x1, SI y1, SI x2, SI y2) {
-  // invalidate a region so that it will be repaint at a next iteration
+  // invalidate a region so that it will be repaint at a next iteration;
+  // the region is specified w.r.t. the top left corner of w
   send<SI,SI,SI,SI> (w, SLOT_INVALIDATE, x1, y1, x2, y2);
 }
 
 inline void
 send_repaint (widget w, SI x1, SI y1, SI x2, SI y2) {
-  // request widget to repaint a region
+  // request widget to repaint a region;
+  // the region is specified w.r.t. the top left corner of w
   send<SI,SI,SI,SI> (w, SLOT_REPAINT, x1, y1, x2, y2);
 }
 

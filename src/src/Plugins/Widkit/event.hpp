@@ -19,6 +19,10 @@ class rectangle;
 template<class T> class list;
 typedef list<rectangle> rectangles;
 
+enum gravity { north_west, north,  north_east,
+	       west,       center, east,
+	       south_west, south,  south_east };
+
 /******************************************************************************
 * The event class
 ******************************************************************************/

@@ -29,10 +29,6 @@ class slot;
 class widget_connection;
 template<class T> class promise;
 
-enum gravity { north_west, north,  north_east,
-	       west,       center, east,
-	       south_west, south,  south_east };
-
 /******************************************************************************
 * The abstract widget class
 ******************************************************************************/
@@ -98,14 +94,10 @@ operator << (ostream& out, widget w) {
 ******************************************************************************/
 
 widget horizontal_list (array<widget> a);
-widget horizontal_list (array<widget> a, array<string> name);
 widget vertical_list (array<widget> a);
-widget vertical_list (array<widget> a, array<string> name);
 widget vertical_menu (array<widget> a);
 widget tile (array<widget> a, int cols);
-widget tile (array<widget> a, int cols, array<string> name);
 widget horizontal_array (array<widget> a, int stretch_me= -1);
-widget horizontal_array (array<widget> a, array<string> s, int stretch_me= -1);
 widget switch_widget (array<widget> a, array<string> name, int init= 0);
 widget optional_widget (widget w, bool on= true);
 widget glue_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);
@@ -121,8 +113,8 @@ widget pulldown_button (widget w, widget m, bool button_flag= false);
 widget pullright_button (widget w, widget m, bool button_flag= false);
 widget pulldown_button (widget w, promise<widget> pw);
 widget pullright_button (widget w, promise<widget> pw);
-widget popup_widget (widget w, gravity quit=center);
-widget canvas_widget (widget w, gravity grav=north_west);
+widget popup_widget (widget w);
+widget canvas_widget (widget w);
 widget input_text_widget (command call_back);
 widget input_text_widget (command cb, string type, array<string> def);
 widget inputs_list_widget (command call_back, array<string> prompts);

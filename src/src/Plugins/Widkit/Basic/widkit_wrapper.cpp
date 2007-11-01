@@ -74,18 +74,8 @@ horizontal_list (array<widget> a) {
 }
 
 widget
-horizontal_list (array<widget> a, array<string> name) {
-  return abstract (horizontal_list (concrete (a), name));
-}
-
-widget
 vertical_list (array<widget> a) {
   return abstract (vertical_list (concrete (a)));
-}
-
-widget
-vertical_list (array<widget> a, array<string> name) {
-  return abstract (vertical_list (concrete (a), name));
 }
 
 widget
@@ -99,18 +89,8 @@ tile (array<widget> a, int cols) {
 }
 
 widget
-tile (array<widget> a, int cols, array<string> name) {
-  return abstract (tile (concrete (a), cols, name));
-}
-
-widget
 horizontal_array (array<widget> a, int stretch_me) {
   return abstract (horizontal_array (concrete (a), stretch_me));
-}
-
-widget
-horizontal_array (array<widget> a, array<string> s, int stretch_me) {
-  return abstract (horizontal_array (concrete (a), s, stretch_me));
 }
 
 widget
@@ -185,13 +165,13 @@ pullright_button (widget w, promise<widget> pw) {
 }
 
 widget
-popup_widget (widget w, gravity quit) {
-  return abstract (popup_widget (concrete (w), quit));
+popup_widget (widget w) {
+  return abstract (popup_widget (concrete (w), center));
 }
 
 widget
-canvas_widget (widget w, gravity grav) {
-  return abstract (canvas_widget (concrete (w), grav));
+canvas_widget (widget w) {
+  return abstract (canvas_widget (concrete (w), north_west));
 }
 
 widget
@@ -277,13 +257,24 @@ SI get_dx (gravity grav, SI w);
 SI get_dy (gravity grav, SI h);
 
 void
+principal_widget_check (wk_widget wid) {
+  // FIXME: Positions should really be computed relative to parent widgets.
+  // Currently, we only allow geometry access of the unique child of
+  // a window widget.
+  if (wid->win != NULL && wid != concrete (wid->win->get_widget ()) [0]) {
+    cerr << "Widget= " << wid << "\n";
+    fatal_error ("invalid geometry access", "principal_widget_check");
+  }
+}
+
+void
 set_geometry (wk_widget wid, SI x, SI y, SI w, SI h) {
   if (wid->is_window_widget ()) {
     wid->win->set_position (x, y);
     wid->win->set_size (w, h);
   }
   else {
-    // FIXME: we should use coordinates relative to parent widget
+    principal_widget_check (wid); // FIXME: we should use parent's coordinates
     wid << emit_position (x, y, w, h, north_west);
   }
 }
@@ -295,7 +286,7 @@ get_geometry (wk_widget wid, SI& x, SI& y, SI& w, SI& h) {
     wid->win->get_size (w, h);
   }
   else {
-    // FIXME: we should use coordinates relative to parent widget
+    principal_widget_check (wid); // FIXME: we should use parent's coordinates
     x= wid->ox - get_dx (wid->grav, wid->w);
     y= wid->oy - get_dy (wid->grav, wid->h);
     w= wid->w;
@@ -354,7 +345,6 @@ send_position (wk_widget w, blackbox val) {
   coord2 p= open_box<coord2> (val);
   if (w->is_window_widget ()) w->win->set_position (p.x1, p.x2);
   else {
-    // FIXME: we should use coordinates relative to parent widget
     SI x, y, W, H;
     get_geometry (w, x, y, W, H);
     set_geometry (w, p.x1, p.x2, W, H);
@@ -404,6 +394,7 @@ send_mouse (wk_widget w, blackbox val) {
   if (type_box (val) != type_helper<mouse>::id)
     fatal_error ("type mismatch", "send_mouse");
   mouse m= open_box<mouse> (val);
+  // FIXME: we should assume the position in the local coordinates
   w << emit_mouse (m.x1, m.x2, m.x3, m.x4, m.x5);
 }
 
@@ -447,6 +438,7 @@ send_repaint (wk_widget w, blackbox val) {
     fatal_error ("type mismatch", "send_repaint");
   repaint r= open_box<repaint> (val);
   bool stop_flag= false;
+  // FIXME: we should assume local coordinates for repainting
   w << emit_repaint (r.x1, r.x2, r.x3, r.x4, stop_flag);
 }
 
