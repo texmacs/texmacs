@@ -122,8 +122,10 @@ public:
   hashmap<int,string>          lower_key;
   hashmap<int,string>          upper_key;
 
+  list<Window>                 windows_l;
   char*                        selection;
-  hashmap<string,tree>         selections;
+  hashmap<string,tree>         selection_t;
+  hashmap<string,string>       selection_s;
 
 public:
   x_gui_rep (int argc, char** argv);
@@ -163,8 +165,11 @@ public:
   bool   has_mouse_grab (widget w);
 
   /*********************** interclient communication *************************/
-  tree   get_selection (widget wid, string key);
-  bool   set_selection (widget wid, string key, tree t, string s);
+  void   created_window (Window win);
+  void   deleted_window (Window win);
+  void   focussed_window (Window win);
+  bool   get_selection (string key, tree& t, string& s);
+  bool   set_selection (string key, tree t, string s);
   void   clear_selection (string key);
 
   /**************************** miscellaneous ********************************/

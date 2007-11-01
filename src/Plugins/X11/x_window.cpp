@@ -160,6 +160,7 @@ x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
   kbd_focus (w.rep), has_focus (false)
 {
   initialize ();
+  gui->created_window (win);
 }
 
 x_window_rep::~x_window_rep () {
@@ -172,6 +173,7 @@ x_window_rep::~x_window_rep () {
   Window_to_window->reset (win);
   nr_windows--;
   XDestroyWindow (dpy, win);
+  gui->deleted_window (win);
 }
 
 widget
@@ -356,6 +358,7 @@ x_window_rep::focus_in_event () {
   if (ic_ok) XSetICFocus (ic);
   has_focus= true;
   notify_keyboard_focus (kbd_focus, true);
+  gui->focussed_window (win);
 }
 
 void

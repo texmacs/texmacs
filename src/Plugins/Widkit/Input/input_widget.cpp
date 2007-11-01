@@ -315,7 +315,8 @@ input_widget_rep::handle_mouse (mouse_event ev) {
   }
 
   if (type == "press-middle") {
-    tree t= copy (get_selection (abstract (wk_widget (this)), "primary"));
+    tree t; string sel;
+    (void) get_selection ("primary", t, sel);
     if (is_tuple (t, "extern", 1)) {
       string ins= as_string (t[1]);
       s= s (0, pos) * ins * s(pos, N(s));
