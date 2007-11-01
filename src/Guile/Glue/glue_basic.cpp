@@ -3249,21 +3249,6 @@ tmg_widget_hlist (SCM arg1) {
 }
 
 SCM
-tmg_widget_named_hlist (SCM arg1, SCM arg2) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-named-hlist");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "widget-named-hlist");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  array_string in2= scm_to_array_string (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= horizontal_list (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
 tmg_widget_vlist (SCM arg1) {
   SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-vlist");
 
@@ -3271,21 +3256,6 @@ tmg_widget_vlist (SCM arg1) {
 
   // SCM_DEFER_INTS;
   widget out= vertical_list (in1);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_named_vlist (SCM arg1, SCM arg2) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-named-vlist");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "widget-named-vlist");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  array_string in2= scm_to_array_string (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= vertical_list (in1, in2);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3320,23 +3290,6 @@ tmg_widget_tile (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_widget_named_tile (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-named-tile");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-named-tile");
-  SCM_ASSERT_ARRAY_STRING (arg3, SCM_ARG3, "widget-named-tile");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  int in2= scm_to_int (arg2);
-  array_string in3= scm_to_array_string (arg3);
-
-  // SCM_DEFER_INTS;
-  widget out= tile (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
 tmg_widget_harray (SCM arg1, SCM arg2) {
   SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-harray");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-harray");
@@ -3346,23 +3299,6 @@ tmg_widget_harray (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   widget out= horizontal_array (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_named_harray (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-named-harray");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "widget-named-harray");
-  SCM_ASSERT_INT (arg3, SCM_ARG3, "widget-named-harray");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  array_string in2= scm_to_array_string (arg2);
-  int in3= scm_to_int (arg3);
-
-  // SCM_DEFER_INTS;
-  widget out= horizontal_array (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3597,6 +3533,32 @@ tmg_widget_pullright_button (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   widget out= pullright_button (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_popup (SCM arg1) {
+  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-popup");
+
+  widget in1= scm_to_widget (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= popup_widget (in1);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_canvas (SCM arg1) {
+  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-canvas");
+
+  widget in1= scm_to_widget (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= canvas_widget (in1);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3938,14 +3900,10 @@ initialize_glue_basic () {
   scm_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
   scm_new_procedure ("connection-read", (FN) tmg_connection_read, 3, 0, 0);
   scm_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
-  scm_new_procedure ("widget-named-hlist", (FN) tmg_widget_named_hlist, 2, 0, 0);
   scm_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
-  scm_new_procedure ("widget-named-vlist", (FN) tmg_widget_named_vlist, 2, 0, 0);
   scm_new_procedure ("widget-vmenu", (FN) tmg_widget_vmenu, 1, 0, 0);
   scm_new_procedure ("widget-tile", (FN) tmg_widget_tile, 2, 0, 0);
-  scm_new_procedure ("widget-named-tile", (FN) tmg_widget_named_tile, 3, 0, 0);
   scm_new_procedure ("widget-harray", (FN) tmg_widget_harray, 2, 0, 0);
-  scm_new_procedure ("widget-named-harray", (FN) tmg_widget_named_harray, 3, 0, 0);
   scm_new_procedure ("widget-switch", (FN) tmg_widget_switch, 2, 0, 0);
   scm_new_procedure ("widget-switch-init", (FN) tmg_widget_switch_init, 3, 0, 0);
   scm_new_procedure ("widget-optional", (FN) tmg_widget_optional, 1, 0, 0);
@@ -3960,6 +3918,8 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-command-button-3", (FN) tmg_widget_command_button_3, 6, 0, 0);
   scm_new_procedure ("widget-pulldown-button", (FN) tmg_widget_pulldown_button, 2, 0, 0);
   scm_new_procedure ("widget-pullright-button", (FN) tmg_widget_pullright_button, 2, 0, 0);
+  scm_new_procedure ("widget-popup", (FN) tmg_widget_popup, 1, 0, 0);
+  scm_new_procedure ("widget-canvas", (FN) tmg_widget_canvas, 1, 0, 0);
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-pulldown-button-lazy", (FN) tmg_widget_pulldown_button_lazy, 2, 0, 0);
   scm_new_procedure ("widget-pullright-button-lazy", (FN) tmg_widget_pullright_button_lazy, 2, 0, 0);

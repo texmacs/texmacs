@@ -527,6 +527,11 @@ x_gui_rep::unmap_balloon () {
 
 void
 x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
+  // NOTE: the wait indicator is directly displayed inside the window
+  // corresponding to w. We explicitly shortcut the main event loop
+  // by invalidating the wait widget and requesting a redraw.
+  // Using a popup window does not work, because it would be necessary
+  // to return to the main loop to map and redraw it.
   x_window ww= get_x_window (w);
   if (ww == NULL || message == "") return;
   if (arg != "") message= message * "#" * arg * "...";
@@ -536,8 +541,8 @@ x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
   SI x= mid_x- width/2, y= mid_y- height/2;
   widget old_wid= ww->w;
   ww->w= wait_wid;
-  set_identifier (wait_wid, (int) ww->win);
   set_position (wait_wid, x, y);
+  set_identifier (wait_wid, (int) ww->win);
   send_invalidate_all (wait_wid);
   ww->repaint_invalid_regions ();
   ww->w= old_wid;
