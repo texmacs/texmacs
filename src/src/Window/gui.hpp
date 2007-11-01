@@ -80,12 +80,14 @@ void load_system_font (string family, int size, int dpi,
 * Clipboard support
 ******************************************************************************/
 
-bool set_selection (widget wid, string k, tree t, string s= "");
-  // Copy a selection to the clipboard
-tree get_selection (widget wid, string k);
-  // Get a selection from the clipboard
-void clear_selection (string key);
-  // Clear a selection on the clipboard
+bool set_selection (string cb, tree t, string s);
+  // Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
+  // Returns true on success
+bool get_selection (string cb, tree& t, string& s);
+  // Retrieve the selection 't' with string equivalent 's' from clipboard 'cb'
+  // Returns true on success; sets t to (extern s) for external selections
+void clear_selection (string cb);
+  // Clear the selection on clipboard 'cb'
 
 /******************************************************************************
 * Miscellaneous

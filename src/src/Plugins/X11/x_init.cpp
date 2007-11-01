@@ -766,7 +766,7 @@ x_gui_rep::x_gui_rep (int argc2, char** argv2):
   character_bitmap (NULL), character_pixmap ((pointer) 0),
   xpm_bitmap (0), xpm_pixmap (0),
   lower_key (""), upper_key (""),
-  selection (NULL), selections ("none")
+  selection (NULL), selection_t ("none"), selection_s ("")
 {
   the_gui= this;
   if ((dpy= XOpenDisplay (NULL)) == NULL)

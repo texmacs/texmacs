@@ -237,25 +237,47 @@ my_predicate (Display* dpy, XEvent* ev, XPointer arg) { (void) dpy;
   return (win->win==ev->xany.window) && (ev->type==SelectionNotify);
 }
 
-tree
-x_gui_rep::get_selection (widget wid, string key) {
-  if (selections->contains (key)) return copy (selections [key]);
-  if (key != "primary") return "none";
-  if (XGetSelectionOwner (dpy, XA_PRIMARY) == None) return "none";
+void
+x_gui_rep::created_window (Window win) {
+  windows_l << win;
+}
+
+void
+x_gui_rep::deleted_window (Window win) {
+  windows_l= remove (windows_l, win);
+}
+
+void
+x_gui_rep::focussed_window (Window win) {
+  windows_l= list<Window> (win, remove (windows_l, win));
+}
+
+bool
+x_gui_rep::get_selection (string key, tree& t, string& s) {
+  t= "none";
+  s= "";
+  if (selection_t->contains (key)) {
+    t= copy (selection_t [key]);
+    s= copy (selection_s [key]);
+    return true;
+  }
+  if (key != "primary") return false;
+  if (XGetSelectionOwner (dpy, XA_PRIMARY) == None) return false;
   
-  Window win= get_Window (wid);
+  if (nil (windows_l)) return false;
+  Window win= windows_l->item;
+  x_window x_win= (x_window) Window_to_window[win];
   Atom data= XInternAtom (dpy, "MY_STRING_SELECTION", false);
   XConvertSelection (dpy, XA_PRIMARY, XA_STRING, data, win, CurrentTime);
 
   int i;
   XEvent ev;
   for (i=0; i<1000000; i++)
-    if (XCheckIfEvent (dpy, &ev, my_predicate, (XPointer) get_x_window (wid)))
+    if (XCheckIfEvent (dpy, &ev, my_predicate, (XPointer) x_win))
       break;
-  if (i==1000000) return "none";
+  if (i==1000000) return false;
   XSelectionEvent& sel= ev.xselection;
 
-  string s ("");
   if (sel.property!=None) {
     long offset=0;
     Atom type;
@@ -272,14 +294,17 @@ x_gui_rep::get_selection (widget wid, string key) {
       XFree (ret);
     } while (remains>0);
   }
-  return tuple ("extern", s);
+  t= tuple ("extern", s);
+  return true;
 }
 
 bool
-x_gui_rep::set_selection (widget wid, string key, tree t, string s) {
-  selections (key)= copy (t);
+x_gui_rep::set_selection (string key, tree t, string s) {
+  selection_t (key)= copy (t);
+  selection_s (key)= copy (s);
   if (key == "primary") {
-    Window win= get_Window (wid);
+    if (nil (windows_l)) return false;
+    Window win= windows_l->item;
     if (selection!=NULL) delete[] selection;
     XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
     if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
@@ -290,7 +315,8 @@ x_gui_rep::set_selection (widget wid, string key, tree t, string s) {
 
 void
 x_gui_rep::clear_selection (string key) {
-  selections->reset (key);
+  selection_t->reset (key);
+  selection_s->reset (key);
   if ((key == "primary") && (selection != NULL)) {
     delete[] selection;
     selection= NULL;
@@ -298,13 +324,13 @@ x_gui_rep::clear_selection (string key) {
 }
 
 bool
-set_selection (widget wid, string k, tree t, string s="") {
-  return the_gui->set_selection (wid, k, t, s);
+set_selection (string key, tree t, string s) {
+  return the_gui->set_selection (key, t, s);
 }
 
-tree
-get_selection (widget wid, string k) {
-  return the_gui->get_selection (wid, k);
+bool
+get_selection (string key, tree& t, string& s) {
+  return the_gui->get_selection (key, t, s);
 }
 
 void
@@ -521,8 +547,6 @@ x_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   balloon_y   = y;
   balloon_time= texmacs_time ();
 }
-
-#include "Widkit/wk_widget.hpp"
 
 void
 x_gui_rep::map_balloon () {
