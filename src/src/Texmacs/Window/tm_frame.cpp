@@ -33,7 +33,7 @@ make_menu_widget (object menu) {
   //widget w= as_widget (eval (s));
   if (nil (w)) {
     array<widget> a (0);
-    return horizontal_array (a);
+    return horizontal_menu (a);
   }
   return w;
 }
