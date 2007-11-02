@@ -11,9 +11,8 @@
 ******************************************************************************/
 
 #include "analyze.hpp"
-#include "language.hpp"
-#include "Languages/hyphenate.hpp"
-#include "Languages/impl_language.hpp"
+#include "hyphenate.hpp"
+#include "impl_language.hpp"
 #include "sys_utils.hpp"
 
 /******************************************************************************

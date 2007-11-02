@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "Renderer/printer.hpp"
+#include "printer.hpp"
 #include "Metafont/tex_files.hpp"
 #include "Freetype/tt_file.hpp"
 #include "file.hpp"

@@ -15,7 +15,7 @@
 #include "file.hpp"
 #include "image_files.hpp"
 #include "scheme.hpp"
-#include "Renderer/page_type.hpp"
+#include "page_type.hpp"
 #include "typesetter.hpp"
 #include "drd_mode.hpp"
 #include "dictionary.hpp"

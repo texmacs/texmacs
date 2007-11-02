@@ -10,10 +10,9 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "language.hpp"
 #include "analyze.hpp"
-#include "Languages/hyphenate.hpp"
-#include "Languages/impl_language.hpp"
+#include "hyphenate.hpp"
+#include "impl_language.hpp"
 #include "file.hpp"
 #include "iterator.hpp"
 
