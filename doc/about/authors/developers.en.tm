@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.6.11>
 
 <style|tmdoc>
 
@@ -6,8 +6,6 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
-    <item>Dan Martens made the <name|Windows> port.
-
     <item>Henri Lesourd developed a native mode for drawing technical
     pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
 
@@ -19,15 +17,17 @@
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
 
+    <item>Dan Martens made the <name|Windows> port.
+
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
-
-    <item>Nobuki Takayama invited me to Japan in order to add CJK support to
-    <TeXmacs>. He also provided a lot of help with this task.
 
     <item>Dan Grayson helped me to implement communications with computer
     algebra systems via pipes. He also provided some money support for
     <TeXmacs>, and he made many useful comments and suggestions.
+
+    <item>Nobuki Takayama invited me to Japan in order to add CJK support to
+    <TeXmacs>. He also provided a lot of help with this task.
 
     <item>Karim Belabas designed and developed with me the first protocol for
     interfacing <TeXmacs> with scientific computation or computer algebra

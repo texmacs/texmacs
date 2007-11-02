@@ -5,11 +5,11 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.14>
+  <section|Changes from version 1.0.6 to 1.0.6.12>
 
   <\itemize>
     <item>Complete abstraction of the graphical user interface should make
-    porting easier (1.0.6.14).
+    porting easier (1.0.6.12).
 
     <item>Improved signal handling for pipe communications (1.0.6.12).
 
