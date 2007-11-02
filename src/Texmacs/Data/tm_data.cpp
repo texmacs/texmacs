@@ -341,7 +341,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   vw->win= win;
   widget wid= win->wid;
   set_canvas (wid, vw->ed);
-  if (!wid -> attached ())
+  if (!is_attached (wid))
     fatal_error ("widget should be attached", "tm_data_rep::attach_view");
   vw->ed->resume ();
   win->set_window_name (vw->buf->abbr);
@@ -355,7 +355,7 @@ tm_data_rep::detach_view (tm_view vw) {
   if (win == NULL) return;
   vw->win= NULL;
   widget wid= win->wid;
-  if (!wid -> attached ())
+  if (!is_attached (wid))
     fatal_error ("widget should be attached", "tm_data_rep::attach_view");
   vw->ed->suspend ();
   set_canvas (wid, glue_widget ());

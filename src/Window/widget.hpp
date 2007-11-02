@@ -58,10 +58,6 @@ public:
   virtual void deconnect (slot s, widget w2, slot s2);
     // deconnect a state slot s from another slot s2 of another widget w2
 
-  // NOTE: the following routines are only needed for debugging widkit
-  virtual bool attached ();
-  // NOTE: please remove as soon as changes have stabilized
-
   friend class widget;
 };
 

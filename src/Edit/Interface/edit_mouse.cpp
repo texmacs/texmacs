@@ -27,8 +27,7 @@ void
 edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
   last_x= x; last_y= y;
   mark_undo_blocks ();
-  if (type != "move" ||
-      (attached () && !check_event (MOTION_EVENT)))
+  if (type != "move" || (is_attached (this) && !check_event (MOTION_EVENT)))
     update_active_loci ();
 
   if (type == "leave")
@@ -83,7 +82,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
-    if (attached () && check_event (DRAG_EVENT)) return;
+    if (is_attached (this) && check_event (DRAG_EVENT)) return;
     mouse_drag (x, y);
   }
   if (type == "release-left" || type == "release-right") {

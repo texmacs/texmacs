@@ -62,7 +62,7 @@ edit_interface_rep::edit_interface_rep ():
 }
 
 edit_interface_rep::~edit_interface_rep () {
-  if (attached ()) {
+  if (is_attached (this)) {
     renderer ren= get_renderer (this);
     ren->delete_shadow (shadow);
     ren->delete_shadow (stored);
@@ -77,7 +77,7 @@ void
 edit_interface_rep::suspend () {
   got_focus= false;
   notify_change (THE_FOCUS);
-  if (attached ()) {
+  if (is_attached (this)) {
     renderer ren= get_renderer (this);
     ren->delete_shadow (shadow);
     ren->delete_shadow (stored);
@@ -358,7 +358,7 @@ edit_interface_rep::apply_changes () {
 
   // cout << "Handling automatic resizing\n";
   int sb= 1;
-  if (attached () && get_init_string (PAGE_MEDIUM) == "automatic") {
+  if (is_attached (this) && get_init_string (PAGE_MEDIUM) == "automatic") {
     SI wx, wy;
     ::get_size (get_window (this), wx, wy);
     if (get_init_string (SCROLL_BARS) == "false") sb= 0;
@@ -379,7 +379,7 @@ edit_interface_rep::apply_changes () {
 
   // window decorations (menu bar, icon bars, footer)
   int wb= 2;
-  if (attached ()) {
+  if (is_attached (this)) {
     string val= get_init_string (WINDOW_BARS);
     if (val == "auto") wb= 2;
     else if (val == "false") wb= 0;

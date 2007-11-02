@@ -219,6 +219,12 @@ get_identifier (widget w) {
   return query<int> (w, SLOT_IDENTIFIER);
 }
 
+inline bool
+is_attached (widget w) {
+  // is the widget attached to some window?
+  return get_identifier (w) != 0;
+}
+
 inline void
 set_identifier (widget w, int id) {
   // attach a widget w to the window given by its low-level identifier id
