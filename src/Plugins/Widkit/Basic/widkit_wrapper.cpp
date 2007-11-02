@@ -15,8 +15,12 @@
 #include "Widkit/wk_widget.hpp"
 #include "message.hpp"
 #include "window.hpp"
+#include "dictionary.hpp"
 
 #define THIS wk_widget (this)
+
+static void noop () {}
+widget box_widget (scheme_tree p, string s, color col, bool trans, bool ink);
 
 /******************************************************************************
 * Type conversions
@@ -124,8 +128,13 @@ text_widget (string s, bool tsp, string lan) {
 }
 
 widget
-menu_text_widget (string s, color col, string lan, bool tt) {
-  return abstract (menu_text_wk_widget (s, col, lan, tt));
+menu_text_widget (string s, color col, bool tsp, string lan, bool tt) {
+  return abstract (menu_text_wk_widget (s, col, tsp, lan, tt));
+}
+
+widget
+text_widget (string s, color col, bool tsp, string lan) {
+  return menu_text_widget (s, col, tsp, lan, false);
 }
 
 widget
@@ -142,6 +151,32 @@ widget
 command_button (widget lw, widget cw, widget rw, command cmd, bool e, bool c) {
   return abstract (command_button (concrete (lw), concrete (cw),
 				   concrete (rw), cmd, e, c));
+}
+
+widget
+menu_group (string name, string lan) {
+  widget lw= empty_widget ();
+  widget cw= text_widget (name, dark_grey, false, lan);
+  widget rw= empty_widget ();
+  return command_button (lw, cw, rw, noop, false, true);
+}
+
+widget
+menu_button (widget w, command cmd, string pre, string ks, bool ok) {
+  if (pre == "" && ks == "") return command_button (w, cmd, false);
+  else {
+    color  c = ok? black: dark_grey;
+    widget lw= empty_widget ();
+    widget rw= menu_text_widget (ks, c, true, "english", true);
+    if (pre != "") {
+      string s= "";
+      if (pre == "v") s= "<checked>";
+      if (pre == "o") s= "<circ>";
+      if (pre == "*") s= "<bullet>";
+      if (s != "") lw= box_widget (tree (TUPLE), s, c, true, false);
+    }
+    return command_button (lw, w, rw, cmd, ok, false);
+  }
 }
 
 widget
