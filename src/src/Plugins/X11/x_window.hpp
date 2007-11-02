@@ -83,6 +83,7 @@ public:
   void   set_position (SI x, SI y);
   void   get_position (SI& x, SI& y);
   void   set_keyboard_focus (widget wid, bool get_focus);
+  bool   get_keyboard_focus (widget wid);
   void   set_mouse_grab (widget wid, bool get_grab);
   bool   get_mouse_grab (widget w);
   void   set_mouse_pointer (widget wid, string name, string mask);

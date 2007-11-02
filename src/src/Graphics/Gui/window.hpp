@@ -46,6 +46,8 @@ public:
     // Fast translation of a region in the window (used for scrolling)
   virtual void set_keyboard_focus (widget wid, bool get_focus= true) = 0;
     // Obtain or release the keyboard focus
+  virtual bool get_keyboard_focus (widget wid) = 0;
+    // Does this widget have the keyboard focus
   virtual void set_mouse_grab (widget wid, bool get_grab) = 0;
     // Obtain or release the mouse grab. Recursive grabs are stored on
     // a stack: if w1 and w2 successively grab the mouse and w2 releases
