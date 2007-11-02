@@ -14,7 +14,7 @@
 #include "formatter.hpp"
 #include "Graphics/point.hpp"
 #include "timer.hpp"
-#include "Renderer/printer.hpp"
+#include "printer.hpp"
 #include "file.hpp"
 #include "merge_sort.hpp"
 

@@ -12,7 +12,7 @@
 
 #include "env.hpp"
 #include "convert.hpp"
-#include "Renderer/page_type.hpp"
+#include "page_type.hpp"
 #include "typesetter.hpp"
 
 /******************************************************************************

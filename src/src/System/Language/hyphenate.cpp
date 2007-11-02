@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "file.hpp"
-#include "Languages/hyphenate.hpp"
+#include "hyphenate.hpp"
 #include "analyze.hpp"
 
 #include <stdio.h>

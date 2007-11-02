@@ -67,19 +67,18 @@ $(foreach dir,$(patsubst %,$(1)/%,$(2)),\
 $(notdir $(wildcard $(dir)/*.cpp $(dir)/*/*.cpp)))
 findsrc = $(call findsrc_in,$(1),*)
 
+kernel_src   := $(call findsrc,Kernel)
 system_src   := $(call findsrc,System)
-classes_src  := $(call findsrc,Classes)
 data_src     := $(call findsrc,Data)
-guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
-edit_src     := $(call findsrc,Edit)
-resource_src := $(call findsrc,Resource)
-window_src   := $(call findsrc,Window)
+graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Ghostscript Imlib2 \
                                           Ispell Metafont Openssl Widkit)
 x11_src      := $(call findsrc_in,Plugins,X11)
-texmacs_src  := $(call findsrc,Texmacs)
-typeset_src  := $(call findsrc,Typeset)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
+typeset_src  := $(call findsrc,Typeset)
+edit_src     := $(call findsrc,Edit)
+texmacs_src  := $(call findsrc,Texmacs)
+guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
 
 # Each makefile will have its own Deps directory. Okay that is a bit
 # inefficient, but that is much simpler to maintain.
@@ -90,8 +89,8 @@ style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 
 make_deps = $(patsubst %.cpp,Deps/%.d,$(notdir $(1)))
 
-texmacs_deps := $(call make_deps,$(system_src) $(classes_src) $(data_src)\
- $(edit_src) $(guile_src) $(resource_src) $(window_src)\
+texmacs_deps := $(call make_deps,$(system_src) $(kernel_src) $(data_src)\
+ $(edit_src) $(guile_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
  $(typeset_src) $(style_src))
 
@@ -103,15 +102,14 @@ deps += $(texmacs_deps)
 
 incl_flags = $(patsubst %,-I%,$(1))
 
-system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Classes/Mathematics Data/Drd Data/String Data/Tree Data/Convert Guile)
-classes_incl  := $(system_incl)
-data_incl     := $(system_incl) $(call incl_flags,Resource)
-resource_incl := $(system_incl) $(call incl_flags,Resource Window)
-plugins_incl  := $(resource_incl) $(call incl_flags,Plugins)
-window_incl   := $(plugins_incl)
-x11_incl      := $(plugins_incl)
-style_incl    := $(plugins_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
-typeset_incl  := $(resource_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
+system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/Observers Data/String Data/Tmfs Data/Tree Guile Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer Plugins)
+kernel_incl   := $(system_incl)
+data_incl     := $(system_incl)
+graphics_incl := $(system_incl)
+plugins_incl  := $(system_incl)
+x11_incl      := $(system_incl)
+style_incl    := $(system_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
+typeset_incl  := $(system_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
 guile_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
 edit_incl     := $(guile_incl) $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(guile_incl)
@@ -120,7 +118,7 @@ texmacs_incl  := $(guile_incl)
 # Dependencies
 ###############################################################################
 
-deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Classes/Mathematics Data/Drd Data/String Data/Tree Data/Convert Resource Plugins Window Style/Memorizer Typeset Edit Texmacs Guile)
+deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/Observers Data/String Data/Tmfs Data/Tree Graphics Plugins Style/Memorizer Typeset Edit Texmacs Guile Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer)
 
 deps_flags = $(deps_incl)\
  $(CPPFLAGS) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
@@ -157,12 +155,11 @@ endif
 makeobj = $(patsubst %.cpp,Objects/%.o,$(1))
 
 system_obj   := $(call makeobj,$(system_src))
-classes_obj  := $(call makeobj,$(classes_src))
+kernel_obj   := $(call makeobj,$(kernel_src))
 data_obj     := $(call makeobj,$(data_src))
 edit_obj     := $(call makeobj,$(edit_src))
 guile_obj    := $(call makeobj,$(guile_src))
-window_obj   := $(call makeobj,$(window_src))
-resource_obj := $(call makeobj,$(resource_src))
+graphics_obj := $(call makeobj,$(graphics_src))
 x11_obj      := $(call makeobj,$(x11_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
@@ -182,18 +179,16 @@ cxx_incl     = $(call cxx_flags,$(1) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
 
 $(system_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include)
-$(classes_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(classes_incl))
+$(kernel_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(kernel_incl))
 $(data_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include)
 $(edit_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(edit_incl))
 $(guile_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(guile_incl))
-$(resource_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(resource_incl))
-$(window_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(window_incl))
+$(graphics_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(plugins_incl) $(CXXXWINDOW))
 $(x11_obj): Objects/%.o: %.cpp
@@ -244,10 +239,9 @@ endif
 uses = $(sort $(foreach use,$(patsubst %,uses_%,$(1)),$($(use))))
 
 uses_system   := $(system_obj)
-uses_classes  := $(classes_obj)
+uses_kernel   := $(kernel_obj)
 uses_data     := $(data_obj)
-uses_resource := $(resource_obj)
-uses_window   := $(window_obj)
+uses_graphics := $(graphics_obj)
 uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
 uses_typeset  := $(typeset_obj)
@@ -258,8 +252,8 @@ uses_texmacs  := $(texmacs_obj)
 
 # Compilation rules
 
-TEXMACS_objects := $(strip $(call uses,system classes data resource\
- window plugins x11 style typeset edit glue texmacs))
+TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
+ plugins x11 style typeset edit glue texmacs))
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDXWINDOW) \
   $(LDGUILE) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)

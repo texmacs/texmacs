@@ -11,8 +11,7 @@
 ******************************************************************************/
 
 #include "analyze.hpp"
-#include "language.hpp"
-#include "Languages/impl_language.hpp"
+#include "impl_language.hpp"
 #include "Scheme/object.hpp"
 
 verb_language_rep::verb_language_rep (string name):

@@ -16,7 +16,7 @@ extern hashmap<string,int> default_var_type;
 void initialize_default_var_type ();
 extern hashmap<string,tree> default_env;
 void initialize_default_env ();
-#include "Renderer/page_type.hpp"
+#include "page_type.hpp"
 
 /******************************************************************************
 * Initialization

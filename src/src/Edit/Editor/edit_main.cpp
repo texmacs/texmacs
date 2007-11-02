@@ -14,7 +14,7 @@
 #include "tm_buffer.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
-#include "Renderer/printer.hpp"
+#include "printer.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
 #include "typesetter.hpp"
