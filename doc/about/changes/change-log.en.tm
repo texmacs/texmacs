@@ -1,15 +1,22 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.6.11>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.11>
+  <section|Changes from version 1.0.6 to 1.0.6.14>
 
   <\itemize>
+    <item>Complete abstraction of the graphical user interface should make
+    porting easier (1.0.6.14).
+
+    <item>Improved signal handling for pipe communications (1.0.6.12).
+
     <item>More control for developers over buffer and window management
     (1.0.6.11).
+
+    <item>Syntax highlighting for <name|Scheme> programs (1.0.6.11).
 
     <item>Added plug-in for <name|Sage> computer algebra system (1.0.6.11).
 
