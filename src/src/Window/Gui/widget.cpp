@@ -136,11 +136,6 @@ widget_rep::notify (slot s, blackbox new_val) {
 * Miscellaneous
 ******************************************************************************/
 
-bool
-widget_rep::attached () {
-  return true;
-}
-
 ostream&
 widget_rep::print (ostream& out) {
   return out << "widget";

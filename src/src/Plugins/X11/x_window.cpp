@@ -206,7 +206,8 @@ get_x_window (widget w) {
 
 int
 get_identifier (window w) {
-  return (int) (((x_window) w) -> win);
+  if (w == NULL) return 0;
+  else return (int) (((x_window) w) -> win);
 }
 
 window
