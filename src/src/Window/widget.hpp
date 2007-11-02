@@ -122,20 +122,22 @@ widget tile_menu (array<widget> a, int cols);
   // a menu rendered as a table of cols columns wide & made up of widgets in a
 widget menu_separator (bool vertical);
   // a horizontal or vertical menu separator
+widget menu_group (string name, string lan= "");
+  // a menu group; the name should be greyed and centered
 
 widget pulldown_button (widget w, promise<widget> pw);
   // a button w with a lazy pulldown menu pw
 widget pullright_button (widget w, promise<widget> pw);
   // a button w with a lazy pullright menu pw
-widget command_button (widget w, command cmd, bool button_flag= false);
-widget command_button (widget lw, widget cw, widget rw, command cmd,
-		       bool e=true, bool c=false);
+widget menu_button (widget w, command cmd, string pre, string ks, bool ok);
+  // a command button with an optional prefix (o, * or v) and
+  // keyboard shortcut; if ok does not hold, then the button is greyed
 widget balloon_widget (widget w, widget help);
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while
 
-widget text_widget (string s, bool tsp= false, string lan="");
-widget menu_text_widget (string s, color col, string lan="", bool tt= false);
+widget text_widget (string s, color col, bool tsp= true, string lan="");
+  // a text widget with a given color, transparency and language
 widget xpm_widget (url file_name);
   // a widget with an X pixmap icon
 

@@ -23,7 +23,8 @@
 
 (define (make-menu-error . args)
   (apply tm-display-error args)
-  (widget-text "Error" #f ""))
+  (widget-text "Error" (color "black") #t "english"))
+
 (define (make-menu-bad-format p e?)
   (make-menu-error "menu has bad format in " (object->string p)))
 
@@ -73,7 +74,7 @@
   (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
     (cond ((string? p)			; "text"
-	   (widget-menu-text p col (get-input-language) tt?))
+	   (widget-text p col #t "english"))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) e? tt?))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
@@ -95,10 +96,7 @@
 
 (define (make-menu-group s)
   "Make @(group :string?) menu item."
-  (widget-command-button-3
-   (widget-empty) (make-menu-label s #f) (widget-empty)
-   (object->command noop)
-   #f #t))
+  (widget-menu-group s "english"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
@@ -106,23 +104,8 @@
 
 (define (make-menu-entry-button e? bar? check label short command)
   (if bar?
-      (widget-command-button-1 (make-menu-label label e?)
-			       command #f)
-      (widget-command-button-3
-       (if (== check "")
-	   (widget-empty)
-	   (widget-box '()
-		       (cadr (assoc check '(("v" "<checked>")
-					    ("o" "<circ>")
-					    ("*" "<bullet>"))))
-		       (color (if e? "black" "dark grey"))
-		       #t #f))
-       (make-menu-label label e?)
-       (if (== short "")
-	   (widget-empty)
-	   (make-menu-label short e? #t))
-       command
-       e? #f)))
+      (widget-menu-button (make-menu-label label e?) command "" "" e?)
+      (widget-menu-button (make-menu-label label e?) command check short e?)))
 
 (define (make-menu-entry-shortcut label action opt-key)
   (cond (opt-key opt-key)
@@ -175,7 +158,8 @@
 	(label (car p)))
     (if (tuple? label 'balloon 2)
 	(widget-balloon but
-			(widget-text (caddr label) #t (get-input-language)))
+			(widget-text (caddr label) (color "black")
+				     #t "english"))
 	but)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -183,14 +167,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-menu-symbol-button e? symstring opt-symobj)
-  (widget-command-button-1
-   (widget-box '() symstring
-	       (color (if e? "black" "dark grey"))
-	       #t #f)
-   (if opt-symobj
-       (make-menu-command (insert opt-symobj))
-       (make-menu-command (insert symstring)))
-   #f))
+  (let* ((col (color (if e? "black" "dark grey")))
+	 (sym (if opt-symobj opt-symobj symstring)))
+    (widget-menu-button (widget-box '() symstring col #t #f)
+			(make-menu-command (insert sym)) "" "" e?)))
 
 (define (make-menu-symbol p e?)
   "Make @(symbol :string? :*) menu item."
@@ -233,14 +213,15 @@
   "Make @((:or -> =>) :menu-label :menu-item-list) menu item."
   (with (tag label . items) p
     (let ((button
-	   ((cond ((== tag '=>) widget-pulldown-button-lazy)
-		  ((== tag '->) widget-pullright-button-lazy))
+	   ((cond ((== tag '=>) widget-pulldown-button)
+		  ((== tag '->) widget-pullright-button))
 	    (make-menu-label label e?)
 	    (object->promise-widget
 	     (lambda () (make-menu-widget (list 'vertical items) e?))))))
       (if (tuple? label 'balloon 2)
 	  (widget-balloon button
-			  (widget-text (caddr label) #t (get-input-language)))
+			  (widget-text (caddr label) (color "black")
+				       #t "english"))
 	  button))))
 
 (define (make-menu-tile p e?)

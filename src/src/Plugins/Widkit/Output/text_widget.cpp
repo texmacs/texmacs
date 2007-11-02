@@ -82,6 +82,6 @@ text_wk_widget (string s, bool tsp, string lan) {
 }
 
 wk_widget
-menu_text_wk_widget (string s, color col, string lan, bool tt) {
-  return new text_widget_rep (s, col, true, lan, tt, 3*PIXEL, 0);
+menu_text_wk_widget (string s, color col, bool tsp, string lan, bool tt) {
+  return new text_widget_rep (s, col, tsp, lan, tt, 3*PIXEL, 0);
 }
