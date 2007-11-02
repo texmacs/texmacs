@@ -27,9 +27,7 @@
 (define (make-menu-bad-format p e?)
   (make-menu-error "menu has bad format in " (object->string p)))
 
-(define (pixel) 256) ; TODO: length arithmetic
-(define (widget-empty) (widget-glue #f #f 0 0))
-(define (make-menu-empty) (widget-harray '() -1))
+(define (make-menu-empty) (widget-hmenu '()))
 
 (define (delay-command cmd)
   (object->command (lambda () (exec-delayed cmd))))
@@ -81,7 +79,7 @@
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
-  	   (widget-xpm (cadr p) #t)))))
+  	   (widget-xpm (cadr p))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elementary menu items
@@ -89,11 +87,11 @@
 
 (define (make-menu-hsep)
   "Make @--- menu item."
-  (widget-separator (* 2 (pixel)) (* 2 (pixel)) #f))
+  (widget-separator #f))
 
 (define (make-menu-vsep)
   "Make @| menu item."
-  (widget-separator (* 2 (pixel)) (* 2 (pixel)) #t))
+  (widget-separator #t))
 
 (define (make-menu-group s)
   "Make @(group :string?) menu item."
@@ -173,12 +171,12 @@
 
 (define (make-menu-entry p e? bar?)
   "Make @:menu-wide-item menu item."
-  (let ((button (make-menu-entry-sub p e? bar?))
+  (let ((but (make-menu-entry-sub p e? bar?))
 	(label (car p)))
     (if (tuple? label 'balloon 2)
-	(widget-balloon button
+	(widget-balloon but
 			(widget-text (caddr label) #t (get-input-language)))
-	button)))
+	but)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbol fields
@@ -225,7 +223,7 @@
 
 (define (make-menu-horizontal p e?)
   "Make @(horizontal :menu-item-list) menu item."
-  (widget-harray (make-menu-items (cadr p) e? #t) -1))
+  (widget-hmenu (make-menu-items (cadr p) e? #t)))
 
 (define (make-menu-vertical p e?)
   "Make @(vertical :menu-item-list) menu item."
@@ -248,7 +246,7 @@
 (define (make-menu-tile p e?)
   "Make @(tile :integer? :menu-item-list) menu item."
   (with (tag width . items) p
-    (widget-tile (make-menu-items items e? #f) width)))
+    (widget-tmenu (make-menu-items items e? #f) width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus

@@ -79,18 +79,18 @@ vertical_list (array<widget> a) {
 }
 
 widget
+horizontal_menu (array<widget> a) {
+  return abstract (horizontal_array (concrete (a), -1));
+}
+
+widget
 vertical_menu (array<widget> a) {
   return abstract (vertical_menu (concrete (a)));
 }
 
 widget
-tile (array<widget> a, int cols) {
+tile_menu (array<widget> a, int cols) {
   return abstract (tile (concrete (a), cols));
-}
-
-widget
-horizontal_array (array<widget> a, int stretch_me) {
-  return abstract (horizontal_array (concrete (a), stretch_me));
 }
 
 widget
@@ -104,13 +104,18 @@ optional_widget (widget w, bool on) {
 }
 
 widget
+empty_widget () {
+  return abstract (glue_wk_widget (false, false, 0, 0));
+}
+
+widget
 glue_widget (bool hx, bool vx, SI w, SI h) {
   return abstract (glue_wk_widget (hx, vx, w, h));
 }
 
 widget
-separator_widget (SI pre, SI post, bool vert) {
-  return abstract (separator_wk_widget (pre, post, vert));
+menu_separator (bool vert) {
+  return abstract (separator_wk_widget (2*PIXEL, 2*PIXEL, vert));
 }
 
 widget
@@ -124,8 +129,8 @@ menu_text_widget (string s, color col, string lan, bool tt) {
 }
 
 widget
-xpm_widget (url file_name, bool transp) {
-  return abstract (xpm_wk_widget (file_name, transp));
+xpm_widget (url file_name) {
+  return abstract (xpm_wk_widget (file_name, true));
 }
 
 widget
@@ -134,24 +139,9 @@ command_button (widget w, command cmd, bool button_flag) {
 }
 
 widget
-command_button (widget lw, widget rw, command cmd) {
-  return abstract (command_button (concrete (lw), concrete (rw), cmd));
-}
-
-widget
 command_button (widget lw, widget cw, widget rw, command cmd, bool e, bool c) {
   return abstract (command_button (concrete (lw), concrete (cw),
 				   concrete (rw), cmd, e, c));
-}
-
-widget
-pulldown_button (widget w, widget m, bool button_flag) {
-  return abstract (pulldown_button (concrete (w), concrete (m), button_flag));
-}
-
-widget
-pullright_button (widget w, widget m, bool button_flag) {
-  return abstract (pullright_button (concrete (w), concrete (m), button_flag));
 }
 
 widget
@@ -172,11 +162,6 @@ popup_widget (widget w) {
 widget
 canvas_widget (widget w) {
   return abstract (canvas_widget (concrete (w), north_west));
-}
-
-widget
-input_text_widget (command call_back) {
-  return abstract (input_text_wk_widget (call_back));
 }
 
 widget

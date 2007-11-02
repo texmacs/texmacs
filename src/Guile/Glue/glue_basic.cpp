@@ -3236,26 +3236,13 @@ tmg_connection_read (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_widget_hlist (SCM arg1) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-hlist");
+tmg_widget_hmenu (SCM arg1) {
+  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-hmenu");
 
   array_widget in1= scm_to_array_widget (arg1);
 
   // SCM_DEFER_INTS;
-  widget out= horizontal_list (in1);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_vlist (SCM arg1) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-vlist");
-
-  array_widget in1= scm_to_array_widget (arg1);
-
-  // SCM_DEFER_INTS;
-  widget out= vertical_list (in1);
+  widget out= horizontal_menu (in1);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3275,126 +3262,37 @@ tmg_widget_vmenu (SCM arg1) {
 }
 
 SCM
-tmg_widget_tile (SCM arg1, SCM arg2) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-tile");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-tile");
+tmg_widget_tmenu (SCM arg1, SCM arg2) {
+  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-tmenu");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-tmenu");
 
   array_widget in1= scm_to_array_widget (arg1);
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
-  widget out= tile (in1, in2);
+  widget out= tile_menu (in1, in2);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
 }
 
 SCM
-tmg_widget_harray (SCM arg1, SCM arg2) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-harray");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-harray");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  int in2= scm_to_int (arg2);
-
+tmg_widget_empty () {
   // SCM_DEFER_INTS;
-  widget out= horizontal_array (in1, in2);
+  widget out= empty_widget ();
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
 }
 
 SCM
-tmg_widget_switch (SCM arg1, SCM arg2) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-switch");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "widget-switch");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  array_string in2= scm_to_array_string (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= switch_widget (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_switch_init (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-switch-init");
-  SCM_ASSERT_ARRAY_STRING (arg2, SCM_ARG2, "widget-switch-init");
-  SCM_ASSERT_INT (arg3, SCM_ARG3, "widget-switch-init");
-
-  array_widget in1= scm_to_array_widget (arg1);
-  array_string in2= scm_to_array_string (arg2);
-  int in3= scm_to_int (arg3);
-
-  // SCM_DEFER_INTS;
-  widget out= switch_widget (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_optional (SCM arg1) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-optional");
-
-  widget in1= scm_to_widget (arg1);
-
-  // SCM_DEFER_INTS;
-  widget out= optional_widget (in1);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_optional_init (SCM arg1, SCM arg2) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-optional-init");
-  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "widget-optional-init");
-
-  widget in1= scm_to_widget (arg1);
-  bool in2= scm_to_bool (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= optional_widget (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_glue (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "widget-glue");
-  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "widget-glue");
-  SCM_ASSERT_INT (arg3, SCM_ARG3, "widget-glue");
-  SCM_ASSERT_INT (arg4, SCM_ARG4, "widget-glue");
+tmg_widget_separator (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "widget-separator");
 
   bool in1= scm_to_bool (arg1);
-  bool in2= scm_to_bool (arg2);
-  int in3= scm_to_int (arg3);
-  int in4= scm_to_int (arg4);
 
   // SCM_DEFER_INTS;
-  widget out= glue_widget (in1, in2, in3, in4);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_separator (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "widget-separator");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-separator");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "widget-separator");
-
-  int in1= scm_to_int (arg1);
-  int in2= scm_to_int (arg2);
-  bool in3= scm_to_bool (arg3);
-
-  // SCM_DEFER_INTS;
-  widget out= separator_widget (in1, in2, in3);
+  widget out= menu_separator (in1);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3418,15 +3316,13 @@ tmg_widget_text (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_widget_xpm (SCM arg1, SCM arg2) {
+tmg_widget_xpm (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "widget-xpm");
-  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "widget-xpm");
 
   url in1= scm_to_url (arg1);
-  bool in2= scm_to_bool (arg2);
 
   // SCM_DEFER_INTS;
-  widget out= xpm_widget (in1, in2);
+  widget out= xpm_widget (in1);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3469,23 +3365,6 @@ tmg_widget_command_button_1 (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_widget_command_button_2 (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-command-button-2");
-  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-command-button-2");
-  SCM_ASSERT_COMMAND (arg3, SCM_ARG3, "widget-command-button-2");
-
-  widget in1= scm_to_widget (arg1);
-  widget in2= scm_to_widget (arg2);
-  command in3= scm_to_command (arg3);
-
-  // SCM_DEFER_INTS;
-  widget out= command_button (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
 tmg_widget_command_button_3 (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-command-button-3");
   SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-command-button-3");
@@ -3503,62 +3382,6 @@ tmg_widget_command_button_3 (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, S
 
   // SCM_DEFER_INTS;
   widget out= command_button (in1, in2, in3, in4, in5, in6);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_pulldown_button (SCM arg1, SCM arg2) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-pulldown-button");
-  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-pulldown-button");
-
-  widget in1= scm_to_widget (arg1);
-  widget in2= scm_to_widget (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= pulldown_button (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_pullright_button (SCM arg1, SCM arg2) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-pullright-button");
-  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "widget-pullright-button");
-
-  widget in1= scm_to_widget (arg1);
-  widget in2= scm_to_widget (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= pullright_button (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_popup (SCM arg1) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-popup");
-
-  widget in1= scm_to_widget (arg1);
-
-  // SCM_DEFER_INTS;
-  widget out= popup_widget (in1);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_canvas (SCM arg1) {
-  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-canvas");
-
-  widget in1= scm_to_widget (arg1);
-
-  // SCM_DEFER_INTS;
-  widget out= canvas_widget (in1);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3604,23 +3427,6 @@ tmg_widget_pullright_button_lazy (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   widget out= pullright_button (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_wait (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "widget-wait");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-wait");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-wait");
-
-  int in1= scm_to_int (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  widget out= wait_widget (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -3899,31 +3705,19 @@ initialize_glue_basic () {
   scm_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
   scm_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
   scm_new_procedure ("connection-read", (FN) tmg_connection_read, 3, 0, 0);
-  scm_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
-  scm_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
+  scm_new_procedure ("widget-hmenu", (FN) tmg_widget_hmenu, 1, 0, 0);
   scm_new_procedure ("widget-vmenu", (FN) tmg_widget_vmenu, 1, 0, 0);
-  scm_new_procedure ("widget-tile", (FN) tmg_widget_tile, 2, 0, 0);
-  scm_new_procedure ("widget-harray", (FN) tmg_widget_harray, 2, 0, 0);
-  scm_new_procedure ("widget-switch", (FN) tmg_widget_switch, 2, 0, 0);
-  scm_new_procedure ("widget-switch-init", (FN) tmg_widget_switch_init, 3, 0, 0);
-  scm_new_procedure ("widget-optional", (FN) tmg_widget_optional, 1, 0, 0);
-  scm_new_procedure ("widget-optional-init", (FN) tmg_widget_optional_init, 2, 0, 0);
-  scm_new_procedure ("widget-glue", (FN) tmg_widget_glue, 4, 0, 0);
-  scm_new_procedure ("widget-separator", (FN) tmg_widget_separator, 3, 0, 0);
+  scm_new_procedure ("widget-tmenu", (FN) tmg_widget_tmenu, 2, 0, 0);
+  scm_new_procedure ("widget-empty", (FN) tmg_widget_empty, 0, 0, 0);
+  scm_new_procedure ("widget-separator", (FN) tmg_widget_separator, 1, 0, 0);
   scm_new_procedure ("widget-text", (FN) tmg_widget_text, 3, 0, 0);
-  scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 2, 0, 0);
+  scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-menu-text", (FN) tmg_widget_menu_text, 4, 0, 0);
   scm_new_procedure ("widget-command-button-1", (FN) tmg_widget_command_button_1, 3, 0, 0);
-  scm_new_procedure ("widget-command-button-2", (FN) tmg_widget_command_button_2, 3, 0, 0);
   scm_new_procedure ("widget-command-button-3", (FN) tmg_widget_command_button_3, 6, 0, 0);
-  scm_new_procedure ("widget-pulldown-button", (FN) tmg_widget_pulldown_button, 2, 0, 0);
-  scm_new_procedure ("widget-pullright-button", (FN) tmg_widget_pullright_button, 2, 0, 0);
-  scm_new_procedure ("widget-popup", (FN) tmg_widget_popup, 1, 0, 0);
-  scm_new_procedure ("widget-canvas", (FN) tmg_widget_canvas, 1, 0, 0);
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-pulldown-button-lazy", (FN) tmg_widget_pulldown_button_lazy, 2, 0, 0);
   scm_new_procedure ("widget-pullright-button-lazy", (FN) tmg_widget_pullright_button_lazy, 2, 0, 0);
-  scm_new_procedure ("widget-wait", (FN) tmg_widget_wait, 3, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
 }
