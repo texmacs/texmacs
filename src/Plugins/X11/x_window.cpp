@@ -425,6 +425,11 @@ x_window_rep::set_keyboard_focus (widget wid, bool get_focus) {
   kbd_focus= wid.rep;
 }
 
+bool
+x_window_rep::get_keyboard_focus (widget wid) {
+  return has_focus && kbd_focus == wid.rep;
+}
+
 void
 x_window_rep::set_mouse_grab (widget wid, bool get_grab) {
   if (get_grab) gui->obtain_mouse_grab (wid);

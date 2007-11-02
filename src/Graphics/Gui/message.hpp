@@ -326,6 +326,12 @@ notify_keyboard_focus (widget w, bool has_focus) {
   notify<bool> (w, SLOT_KEYBOARD_FOCUS, has_focus);
 }
 
+inline bool
+query_keyboard_focus (widget w) {
+  // does this widget have the keyboard focus?
+  return query<bool> (w, SLOT_KEYBOARD_FOCUS);
+}
+
 inline void
 send_mouse (widget w, string kind, SI x, SI y, int mods, time_t t) {
   // send a mouse event of a given kind at position (x, y) and time t
@@ -344,6 +350,12 @@ inline void
 notify_mouse_grab (widget w, bool has_grab) {
   // notify that the widget got or lost the mouse grab
   notify<bool> (w, SLOT_MOUSE_GRAB, has_grab);
+}
+
+inline bool
+query_mouse_grab (widget w) {
+  // does this widget have the mouse grab?
+  return query<bool> (w, SLOT_MOUSE_GRAB);
 }
 
 inline void

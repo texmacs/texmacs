@@ -666,6 +666,20 @@ query_position (wk_widget w, int type_id) {
 }
 
 blackbox
+query_keyboard_focus (wk_widget w, int type_id) {
+  if (type_id != type_helper<bool>::id)
+    fatal_error ("type mismatch", "query_keyboard_focus");
+  return close_box<bool> (w->win->get_keyboard_focus (abstract (w)));
+}
+
+blackbox
+query_mouse_grab (wk_widget w, int type_id) {
+  if (type_id != type_helper<bool>::id)
+    fatal_error ("type mismatch", "query_mouse_grab");
+  return close_box<bool> (w->win->get_mouse_grab (abstract (w)));
+}
+
+blackbox
 wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_IDENTIFIER:
@@ -681,6 +695,11 @@ wk_widget_rep::query (slot s, int type_id) {
     return query_size (THIS, type_id);
   case SLOT_POSITION:
     return query_position (THIS, type_id);
+  case SLOT_KEYBOARD_FOCUS:
+    return query_keyboard_focus (THIS, type_id);
+  case SLOT_MOUSE_GRAB:
+    return query_mouse_grab (THIS, type_id);
+
   case SLOT_EXTENTS:
     return query_coord4 (THIS, "extents", type_id);
   case SLOT_VISIBLE_PART:
