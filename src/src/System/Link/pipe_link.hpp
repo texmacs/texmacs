@@ -22,7 +22,6 @@ extern char **environ;
 
 extern char **environ;
 
-#define ERROR (-1)
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
@@ -56,14 +55,15 @@ public:
   pipe_link_rep (string cmd);
   ~pipe_link_rep ();
 
-  string start ();
-  void   write (string s, int channel);
-  string read (int channel);
-  void   listen (int msecs);
-  void   interrupt ();
-  void   stop ();
+  string  start ();
+  void    write (string s, int channel);
+  string& watch (int channel);
+  string  read (int channel);
+  void    listen (int msecs);
+  void    interrupt ();
+  void    stop ();
 
-  void   feed (int channel);
+  void    feed (int channel);
 };
 
 void listen_to_pipes ();

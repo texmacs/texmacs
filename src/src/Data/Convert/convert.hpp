@@ -33,6 +33,7 @@ tree   texmacs_document_to_tree (string s);
 string tree_to_texmacs (tree t);
 tree   extract (tree doc, string attr);
 tree   extract_document (tree doc);
+tree   change_doc_attr (tree doc, string attr, tree val);
 hashmap<string,int> get_codes (string version);
 tree   string_to_tree (string s, string version);
 tree   upgrade (tree t, string version);
@@ -50,9 +51,9 @@ tree   scheme_to_tree (string s);
 tree   scheme_document_to_tree (string s);
 
 /*** Verbatim ***/
-string tree_to_verbatim (tree t, bool pritty= false);
-tree   verbatim_to_tree (string s);
-tree   verbatim_document_to_tree (string s);
+string tree_to_verbatim (tree t, bool wrap= false, string enc= "default");
+tree   verbatim_to_tree (string s, bool wrap= false, string enc= "default");
+tree   verbatim_document_to_tree (string s, bool w= false, string e= "default");
 
 /*** Latex ***/
 tree   parse_latex (string s);

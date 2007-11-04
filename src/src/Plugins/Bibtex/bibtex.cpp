@@ -37,6 +37,21 @@ remove_start_space (tree t) {
 }
 
 tree
+search_bib (tree t) {
+  if (is_atomic (t)) return "";
+  else if (is_compound (t, "thebibliography", 2) && is_document (t[1]))
+    return t;
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++) {
+      tree r= search_bib (t[i]);
+      if (r != "") return r;
+    }
+    return "";
+  }
+}
+
+tree
 bibtex_run (string style, string dir, string fname, tree bib_t) {
   int i;
   string bib_s= "\\bibstyle{" * style * "}\n";
@@ -63,16 +78,13 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 #endif
 
   string result;
-  if (load_string ("$TEXMACS_HOME_PATH/system/bib/temp.bbl", result))
+  if (load_string ("$TEXMACS_HOME_PATH/system/bib/temp.bbl", result, false))
     return "Error: bibtex failed to create bibliography";
 
   int count=1;
   tree t= generic_to_tree (result, "latex-snippet");
-  if (is_document (t) && is_extension (t[0])) t= t[0];
-  if (is_document (t) && (N(t)>1) && is_extension (t[1])) t= t[1];
-  if (arity(t) == 0) return "";
-  if (!is_compound (t, "thebibliography", 2) || !is_document (t[1]))
-    return "";
+  t= search_bib (t);
+  if (t == "") return "";
   tree largest= t[0];
   t= t[1];
   tree u (DOCUMENT);
@@ -94,5 +106,6 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 	u << v;
       }
   }
+  if (N(u) == 0) u= tree (DOCUMENT, "");
   return compound ("bib-list", largest, u);
 }

@@ -80,8 +80,10 @@ bridge_rewrite_rep::my_typeset (int desired_status) {
   if (is_func (st, INCLUDE)) {
     url save_name= env->cur_file_name;
     env->cur_file_name= relative (env->base_file_name, as_string (st[0]));
+    env->secure= is_secure (env->cur_file_name);
     body->typeset (desired_status);
     env->cur_file_name= save_name;
+    env->secure= is_secure (env->cur_file_name);
   }
   else body->typeset (desired_status);
 }

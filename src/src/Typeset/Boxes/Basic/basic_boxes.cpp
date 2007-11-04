@@ -16,8 +16,6 @@
 #include "boxes.hpp"
 #include "formatter.hpp"
 
-#include <math.h>
-
 /******************************************************************************
 * The test box
 ******************************************************************************/
@@ -26,16 +24,16 @@ struct test_box_rep: public box_rep {
   test_box_rep (path ip): box_rep (ip) {
     x1=x3=0; x2=x4=50<<8; y1=y3=0; y2=y4= 25<<8; }
   operator tree () { return "test"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 void
-test_box_rep::display (ps_device dev) {
-  dev->set_color (dev->green);
-  dev->set_line_style (PIXEL);
-  dev->line (x1, y1, x2, y2);
-  dev->line (x1, y2, x2, y1);
-  // dev->arc (x1, y1, x2, y2, 45*64, 90*64);
+test_box_rep::display (renderer ren) {
+  ren->set_color (green);
+  ren->set_line_style (PIXEL);
+  ren->line (x1, y1, x2, y2);
+  ren->line (x1, y2, x2, y1);
+  // ren->arc (x1, y1, x2, y2, 45*64, 90*64);
 }
 
 /******************************************************************************
@@ -49,7 +47,7 @@ struct line_box_rep: public box_rep {
 
   line_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b, SI w, color c);
   operator tree () { return "line"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 line_box_rep::line_box_rep (
@@ -69,10 +67,10 @@ line_box_rep::line_box_rep (
 }
 
 void
-line_box_rep::display (ps_device dev) {
-  dev->set_line_style (width);
-  dev->set_color (col);
-  dev->line (X1, Y1, X2, Y2);
+line_box_rep::display (renderer ren) {
+  ren->set_line_style (width);
+  ren->set_color (col);
+  ren->line (X1, Y1, X2, Y2);
 }
 
 /******************************************************************************
@@ -86,7 +84,7 @@ struct polygon_box_rep: public box_rep {
 
   polygon_box_rep (path ip, array<SI> x, array<SI> y, SI w, color f, color o);
   operator tree () { return "polygon"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 polygon_box_rep::polygon_box_rep (
@@ -104,15 +102,15 @@ polygon_box_rep::polygon_box_rep (
 }
 
 void
-polygon_box_rep::display (ps_device dev) {
-  dev->set_color (fill);
-  dev->polygon (x, y);
+polygon_box_rep::display (renderer ren) {
+  ren->set_color (fill);
+  ren->polygon (x, y);
   if (w>0) {
     int i, n= N(x);
-    dev->set_line_style (w);
-    dev->set_color (outline);
+    ren->set_line_style (w);
+    ren->set_color (outline);
     for (i=0; i<n; i++)
-      dev->line (x[i], y[i], x[(i+1)%n], y[(i+1)%n]);
+      ren->line (x[i], y[i], x[(i+1)%n], y[(i+1)%n]);
   }
 }
 
@@ -129,7 +127,7 @@ struct arc_box_rep: public box_rep {
   arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
 	       int A1, int A2, SI w, color c);
   operator tree () { return "arc"; }
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
@@ -171,41 +169,41 @@ arc_box_rep::arc_box_rep (path ip, SI X1b, SI Y1b, SI X2b, SI Y2b,
 }
 
 void
-arc_box_rep::display (ps_device dev) {
-  dev->set_line_style (width);
-  dev->set_color (col);
-  dev->arc (X1, Y1, X2, Y2, a1, a2-a1);
-  // dev->line (x1, y1, x2, y2);
+arc_box_rep::display (renderer ren) {
+  ren->set_line_style (width);
+  ren->set_color (col);
+  ren->arc (X1, Y1, X2, Y2, a1, a2-a1);
+  // ren->line (x1, y1, x2, y2);
 }
 
 /******************************************************************************
-* Postscript boxes
+* Image boxes
 ******************************************************************************/
 
-struct postscript_box_rep: public box_rep {
-  url image;
-  int X1, Y1, X2, Y2;
+struct image_box_rep: public box_rep {
+  url u;
+  double cx1, cy1, cx2, cy2;
 
-  postscript_box_rep (path ip, url image2, SI w, SI h,
-		      int X1, int Y1, int X2, int Y2);
-  operator tree () { return "postscript"; }
-  void display (ps_device dev);
+  image_box_rep (path ip, url u2, SI w, SI h,
+		 double cx1, double cy1, double cx2, double cy2);
+  operator tree () { return "image"; }
+  void display (renderer ren);
 };
 
-postscript_box_rep::postscript_box_rep (
-  path ip, url image2,
-  SI w, SI h, int X1b, int Y1b, int X2b, int Y2b):
-    box_rep (ip), image (image2)
+image_box_rep::image_box_rep (
+  path ip, url u2,
+  SI w, SI h, double cx1b, double cy1b, double cx2b, double cy2b):
+    box_rep (ip), u (u2)
 {
-  X1= X1b; Y1= Y1b;
-  X2= X2b; Y2= Y2b;
+  cx1= cx1b; cy1= cy1b;
+  cx2= cx2b; cy2= cy2b;
   x1= x3= 0; y1= y3= 0;
   x2= x4= w; y2= y4= h;
 }
 
 void
-postscript_box_rep::display (ps_device dev) {
-  dev->postscript (image, x2, y2, 0, 0, X1, Y1, X2, Y2);
+image_box_rep::display (renderer ren) {
+  ren->image (u, x2, y2, 0, 0, cx1, cy1, cx2, cy2);
 }
 
 /******************************************************************************
@@ -217,7 +215,7 @@ struct control_tree_box_rep: public box_rep {
   control_tree_box_rep (path ip, tree t2, font fn): box_rep (ip), t (t2) {
     x1=x2=x3=x4=y1=y3=y4=0; y2=fn->yx; }
   operator tree () { return tuple ("control tree", (tree) t); }
-  void display (ps_device dev) { (void) dev; }
+  void display (renderer ren) { (void) ren; }
   tree get_leaf_tree () { return t; }
 };
 
@@ -226,7 +224,7 @@ struct control_lazy_box_rep: public box_rep {
   control_lazy_box_rep (path ip, lazy lz2, font fn): box_rep (ip), lz (lz2) {
     x1=x2=x3=x4=y1=y3=y4=0; y2=fn->yx; }
   operator tree () { return tuple ("control lazy", (tree) lz); }
-  void display (ps_device dev) { (void) dev; }
+  void display (renderer ren) { (void) ren; }
   lazy get_leaf_lazy () { return lz; }
 };
 
@@ -260,10 +258,10 @@ polygon_box (path ip, array<SI> x, array<SI> y, color c) {
 }
 
 box
-postscript_box (path ip, url image, SI w, SI h,
-		int x1, int y1, int x2, int y2)
+image_box (path ip, url u, SI w, SI h,
+	   double cx1, double cy1, double cx2, double cy2)
 {
-  return new postscript_box_rep (ip, image, w, h, x1, y1, x2, y2);
+  return new image_box_rep (ip, u, w, h, cx1, cy1, cx2, cy2);
 }
 
 box

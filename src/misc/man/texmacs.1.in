@@ -1,4 +1,4 @@
-.TH texmacs.1 3 "20May2000" @PACKAGE@-@DEVEL_VERSION@
+.TH texmacs 1 "12Sep2005" @PACKAGE@-@DEVEL_VERSION@
 .SH NAME
 GNU TeXmacs - a WYSIWYG mathematical text editor
 .PP
@@ -51,6 +51,30 @@ Display all communicated data between TeXmacs and extern systems.
 \fB\-\-debug-all\fR
 Turn all debugging flags on.
 .TP
+\fB\-\-delete-cache\fR
+This option deletes all files in the TeXmacs cache. TeXmacs uses
+several caches for speeding up font, file, directory and style file loading.
+However, these optimizations may be incorrect when the user manually
+changes files in the TeXmacs distribution or when new fonts are added.
+This is rarely the case for normal users, but sometimes necessary
+for TeXmacs developers.
+.TP
+\fB\-\-delete-doc-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated help file loading.
+.TP
+\fB\-\-delete-file-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated file loading.
+.TP
+\fB\-\-delete-font-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated font loading.
+.TP
+\fB\-\-delete-style-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated style file loading.
+.TP
 \fB\-fn [font]\fR, \fB\-\-font [font]\fR
 Sets the default TeX fonts for menus and so to [font].
 The [font] is of the form [name], [name][size] or [name][size]@[dpi].
@@ -70,11 +94,22 @@ Display a help message, which lists the command line options of TeXmacs.
 \fB\-i [file]\fR, \fB\-\-initialize [file]\fR
 Uses [file] as a guile/scheme initialization file for TeXmacs.
 .TP
+\fB\-Oc\fR, \fB\-\-no\-char\-clipping\fR
+Faster but less perfect displaying of anti-aliased fonts.
+.TP
+\fB\+Oc\fR, \fB\-\-char\-clipping\fR
+High quality displaying of anti-aliased fonts (default).
+.TP
 \fB\-p\fR, \fB\-\-path\fR
 Echo the TeXmacs path.
 .TP
 \fB\-q\fR, \fB\-\-quit\fR
 Shortcut for the option -x "(quit-TeXmacs)".
+.TP
+\fB\-r\fR, \fB\-\-reverse\fR
+Reverse video mode. This mode inverts and weakens the intensity of all colors.
+This option is only available as a global start-up option. You cannot change
+it while running TeXmacs.
 .TP
 \fB\-s\fR, \fB\-\-silent\fR
 Silent execution: less messages to standard output.
@@ -94,19 +129,13 @@ Display some informative messages.
 Execute the scheme command [cmd] just after startup.
 If you specify several -x options, then the corresponding
 scheme commands are executed in the same order.
-.TP
-\fB\-Oc\fR, \fB\-\-no\-char\-clipping\fR
-Faster but less perfect displaying of anti-aliased fonts.
-.TP
-\fB\+Oc\fR, \fB\-\-char\-clipping\fR
-High quality displaying of anti-aliased fonts (default).
 .PP
 .SH AUTHOR
 Written by Joris van der Hoeven
 .SH "REPORTING BUGS"
 Report bugs to <bugs@texmacs.org>.
 .SH COPYRIGHT
-Copyright \(co 1999-2001 Joris van der Hoeven
+Copyright \(co 1999-2005 Joris van der Hoeven
 .br
 This is free software; see the source for copying conditions.
 GNU TeXmacs comes with NO WARRANTY WHATSOEVER;

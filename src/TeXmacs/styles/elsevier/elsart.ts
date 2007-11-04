@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.6.6>
 
 <style|source>
 
@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|title-generic|std-latex>
+  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|title-generic|std-latex|cite-author-year>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -185,9 +185,9 @@
     </src-comment>
   </active*>
 
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-4fn|<yes-indent>><resize|<arg|x>|r-2.5fn|||>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-2.5fn|<yes-indent>><resize|<arg|x>|r-2.2fn|||><hspace|0.3fn>>>>
 
-  <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|par-sep|0fn|par-ver-sep|0fn|par-par-sep|0fn|<arg|body>>>>>
+  <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|par-sep|0.2fn|par-par-sep|0fn|<arg|body>>>>>
 
   \;
 

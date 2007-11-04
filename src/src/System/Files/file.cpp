@@ -16,6 +16,9 @@
 #include "hashmap.hpp"
 #include "timer.hpp"
 #include "merge_sort.hpp"
+#include "data_cache.hpp"
+#include "web_files.hpp"
+#include "Scheme/object.hpp"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -41,8 +44,20 @@ load_string (url u, string& s, bool fatal) {
   if (!is_rooted_name (r)) r= resolve (r);
   bool err= !is_rooted_name (r);
   if (!err) {
-    bench_start ("load file");
     string name= concretize (r);
+
+    // File contents in cache?
+    bool file_flag= do_cache_file (name);
+    bool doc_flag= do_cache_doc (name);
+    string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
+    if (doc_flag) cache_load ("doc_cache");
+    if (is_cached (cache_type, name) && is_up_to_date (url_parent (r))) {
+      s= cache_get (cache_type, name) -> label;
+      return false;
+    }
+    // End caching
+
+    bench_start ("load file");
     char* _name= as_charp (name);
 #ifdef OS_WIN32
     FILE* fin= _fopen (_name, "rb");
@@ -67,40 +82,27 @@ load_string (url u, string& s, bool fatal) {
     }
     delete[] _name;
     bench_cumul ("load file");
-  }
-  if (err && fatal)
-    fatal_error (as_string (u) * " not readable", "load_string");
-  return err;
-}
 
-/*
-#include <fstream>
-bool
-load_string (url u, string& s, bool fatal) {
-  string name= concretize (u);
-  char* _name= as_charp (name);
-  bool err= !is_rooted_name (u);
-  if (!err) {
-    cout << "opening " << name << "\n";
-    ifstream fin (_name);
-    cout << "opened\n";
-    if (!fin) err= true;
-    if (!err) {
-      char c;
-      while (fin.get (c)) s << c;
-      if (!fin.eof ()) err= true;
-    }
+    // Cache file contents
+    if (!err && N(s) <= 10000)
+      if (file_flag || doc_flag)
+	cache_set (cache_type, name, s);
+    // End caching
   }
-  cout << "read " << s << "\n";
   if (err && fatal)
     fatal_error (as_string (u) * " not readable", "load_string");
-  delete[] _name;
   return err;
 }
-*/
 
 bool
 save_string (url u, string s, bool fatal) {
+  if (is_rooted_tmfs (u)) {
+    bool err= save_to_server (u, s);
+    if (err && fatal)
+      fatal_error (as_string (u) * " not writeable", "save_string");
+    return err;
+  }
+
   // cout << "Save " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r, "");
@@ -121,7 +123,18 @@ save_string (url u, string s, bool fatal) {
       fclose (fout);
     }
     delete[] _name;
+
+    // Cache file contents
+    bool file_flag= do_cache_file (name);
+    bool doc_flag= do_cache_doc (name);
+    string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
+    if (!err && N(s) <= 10000)
+      if (file_flag || doc_flag)
+	cache_set (cache_type, name, s);
+    (bool) is_up_to_date (url_parent (r), true);
+    // End caching
   }
+
   if (err && fatal)
     fatal_error (as_string (u) * " not writeable", "save_string");
   return err;
@@ -132,11 +145,27 @@ save_string (url u, string s, bool fatal) {
 ******************************************************************************/
 
 static bool
-get_attributes (url name, struct stat* buf, bool link_flag=false) {
+get_attributes (url name, struct stat* buf,
+		bool link_flag=false, bool cache_flag= true)
+{
   // cout << "Stat " << name << LF;
+  string name_s= concretize (name);
+
+  // Stat result in cache?
+  if (cache_flag &&
+      is_cached ("stat_cache.scm", name_s) &&
+      is_up_to_date (url_parent (name)))
+    {
+      string r= cache_get ("stat_cache.scm", name_s) -> label;
+      if (r == "#f") return true;
+      buf->st_mode= ((unsigned int) as_int (r));
+      return false;
+    }
+  // End caching
+
   bench_start ("stat");
   bool flag;
-  char* temp= as_charp (concretize (name));
+  char* temp= as_charp (name_s);
 #ifdef OS_WIN32
   flag= _stat (temp, buf);
 #else
@@ -147,17 +176,72 @@ get_attributes (url name, struct stat* buf, bool link_flag=false) {
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   delete[] temp;
   bench_cumul ("stat");
+
+  // Cache stat results
+  if (cache_flag) {
+    if (flag) {
+      if (do_cache_stat_fail (name_s))
+	cache_set ("stat_cache.scm", name_s, "#f");
+    }
+    else {
+      if (do_cache_stat (name_s))
+	cache_set ("stat_cache.scm", name_s, as_string ((int) buf->st_mode));
+    }
+  }
+  // End caching
+
   return flag;
 }
 
 bool
 is_of_type (url name, string filter) {
   if (filter == "") return true;
+  int i, n= N(filter);
+
+  // Files from the web
+  if (is_rooted_web (name)) {
+    // cout << "  try " << name << "\n";
+    url from_web= get_from_web (name);
+    // cout << "  --> " << from_web << "\n";
+    if (is_none (from_web)) return false;
+    for (i=0; i<n; i++)
+      switch (filter[i]) {
+      case 'd': return false;
+      case 'l': return false;
+      case 'w': return false;
+      case 'x': return false;
+      }
+    return true;
+  }
+
+  // Files from a remote server
+  if (is_rooted_tmfs (name)) {
+    for (i=0; i<n; i++)
+      switch (filter[i]) {
+      case 'd': return false;
+      case 'l': return false;
+      case 'r':
+	if (!as_bool (call ("tmfs-permission?", name, "read")))
+	  return false;
+	break;
+      case 'w':
+	if (!as_bool (call ("tmfs-permission?", name, "write")))
+	  return false;
+	break;
+      case 'x': return false;
+      }
+    return true;
+  }
+
+  // Files from the ramdisk
+  if (is_ramdisc (name))
+    return true;
+
+  // Normal files
 #ifdef OS_WIN32
   if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
     name = glue (name, ".exe");
 #endif
-  int i, n= N(filter);
   bool preserve_links= false;
   for (i=0; i<n; i++)
     preserve_links= preserve_links || (filter[i] == 'l');
@@ -195,10 +279,21 @@ bool is_regular (url name) { return is_of_type (name, "f"); }
 bool is_directory (url name) { return is_of_type (name, "d"); }
 bool is_symbolic_link (url name) { return is_of_type (name, "l"); }
 
+int
+last_modified (url u, bool cache_flag) {
+  struct stat u_stat;
+  if (get_attributes (u, &u_stat, true, cache_flag)) return 0;
+  return u_stat.st_mtime;
+}
+
 bool
 is_newer (url which, url than) {
   struct stat which_stat;
   struct stat than_stat;
+  // FIXME: why was this? 
+  if (is_cached ("stat_cache.scm", concretize (which))) return false;
+  if (is_cached ("stat_cache.scm", concretize (than))) return false;
+  // end FIXME
   if (get_attributes (which, &which_stat, true)) return false;
   if (get_attributes (than , &than_stat , true)) return false;
   return which_stat.st_mtime > than_stat.st_mtime;
@@ -219,9 +314,40 @@ url_temp (string suffix) {
   return u;
 }
 
+url
+url_scratch (string prefix, string postfix, int i) {
+  url dir ("$TEXMACS_HOME_PATH/texts/scratch");
+  if (!exists (dir)) mkdir (dir);
+  for (; true; i++) {
+    url name= dir * (prefix * as_string (i) * postfix);
+    if (!exists (name)) return name;
+  }
+  return dir * (prefix * "x" * postfix);
+}
+
+bool
+is_scratch (url u) {
+  return head (u) == url ("$TEXMACS_HOME_PATH/texts/scratch");
+}
+
 /******************************************************************************
 * Reading directories
 ******************************************************************************/
+
+static array<string>
+cache_dir_get (string dir) {
+  tree t= cache_get ("dir_cache.scm", dir);
+  array<string> a (N(t));
+  for (int i=0; i<N(t); i++) a[i]= t[i]->label;
+  return a;
+}
+
+static void
+cache_dir_set (string dir, array<string> a) {
+  tree t (TUPLE, N(a));
+  for (int i=0; i<N(a); i++) t[i]= a[i];
+  cache_set ("dir_cache.scm", dir, t);
+}
 
 array<string>
 read_directory (url u, bool& error_flag) {
@@ -229,7 +355,12 @@ read_directory (url u, bool& error_flag) {
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);
+
+  // Directory contents in cache?
+  if (is_cached ("dir_cache.scm", name) && is_up_to_date (u))
+    return cache_dir_get (name);
   bench_start ("read directory");
+  // End caching
 
   DIR* dp;
   char* temp= as_charp (name);
@@ -248,8 +379,90 @@ read_directory (url u, bool& error_flag) {
   (void) closedir (dp);
   merge_sort (dir);
 
+  // Caching of directory contents
   bench_cumul ("read directory");
+  if (do_cache_dir (name))
+    cache_dir_set (name, dir);
+  // End caching
+
   return dir;
+}
+
+/******************************************************************************
+* Searching text in the documentation
+******************************************************************************/
+
+static array<int>
+search (string what, string in) {
+  int i= 0, n= N(what);
+  array<int> matches;
+  if (n == 0) return matches;
+  while (true) {
+    int pos= search_forwards (what, i, in);
+    if (pos == -1) return matches;
+    matches << pos;
+    i= pos+1;
+  }
+}
+
+static bool
+precedes (string in, int pos, string what) {
+  return pos >= N(what) && in (pos-N(what), pos) == what;
+}
+
+static int
+compute_score (string what, string in, int pos, string suf) {
+  int score= 1;
+  if (pos > 0 && !is_iso_alpha (in [pos-1]))
+    if (pos + N(what) + 1 < N(in) && !is_iso_alpha (in [pos+N(what)]))
+      score *= 10;
+  if (suf == "tm") {
+    if (precedes (in, pos, "<")) score= 0;
+    else if (precedes (in, pos, "<\\")) score= 0;
+    else if (precedes (in, pos, "<|")) score= 0;
+    else if (precedes (in, pos, "</")) score= 0;
+    else if (precedes (in, pos, "compound|")) score= 0;
+    else if (precedes (in, pos, "<name|")) score *= 10;
+    else if (precedes (in, pos, "<tmstyle|")) score *= 10;
+    else if (precedes (in, pos, "<tmdtd|")) score *= 10;
+    else if (precedes (in, pos, "<explain-macro|")) score *= 10;
+    else if (precedes (in, pos, "<var-val|")) score *= 10;
+  }
+  else if (suf == "scm") {
+    if (precedes (in, pos, "define ")) score *= 10;
+    else if (precedes (in, pos, "define-public ")) score *= 10;
+    else if (precedes (in, pos, "define (")) score *= 10;
+    else if (precedes (in, pos, "define-public (")) score *= 10;
+    else if (precedes (in, pos, "define-macro ")) score *= 10;
+    else if (precedes (in, pos, "define-public-macro ")) score *= 10;
+    else if (precedes (in, pos, "define-macro (")) score *= 10;
+    else if (precedes (in, pos, "define-public-macro (")) score *= 10;
+  }
+  return score;
+}
+
+static int
+compute_score (string what, string in, array<int> pos, string suf) {
+  int score= 0, i= 0, n= N(pos);
+  for (i=0; i<n; i++)
+    score += compute_score (what, in, pos[i], suf);
+  return score;
+}
+
+int
+search_score (url u, array<string> a) {
+  string in, suf= suffix (u);
+  if (load_string (u, in, false)) return 0;
+  in= locase_all (in);
+  int i, score= 1, n= N(a);
+  for (i=0; i<n; i++) {
+    string what= locase_all (a[i]);
+    array<int> pos= search (what, in);
+    score *= compute_score (what, in, pos, suf);
+    if (score == 0) return 0;
+    if (score > 1000000) score= 1000000;
+  }
+  return score;
 }
 
 /******************************************************************************

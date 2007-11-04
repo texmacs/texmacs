@@ -13,14 +13,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (lisp-initialize)
-	(import-from (texmacs plugin plugin-convert))
+	(import-from (utils plugins plugin-convert))
 	(plugin-input-converters lisp))
 
 (define (lisp-versions)
   (let ((version-list
 	 (append (if (url-exists-in-path? "clisp") '("Clisp") '())
-		 (if (url-exists-in-path? "lisp") '("Cmucl") '()))))
-    (if (not (null? version-list))
+		 (if (url-exists-in-path? "lisp") '("Cmucl") '())
+		 (if (url-exists-in-path? "scl") '("Scl") '()))))
+    (if (nnull? version-list)
       (let* ((default (car version-list))
 	     (rest (cdr version-list))
 	     (launch-default
@@ -36,7 +37,8 @@
 
 (plugin-configure lisp
   (:require (or (url-exists-in-path? "clisp")
-		(url-exists-in-path? "lisp")))
+		(url-exists-in-path? "lisp")
+		(url-exists-in-path? "scl")))
   (:initialize (lisp-initialize))
   ,@(lisp-versions)
   (:session "Lisp"))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -48,7 +48,7 @@
     </framed-fragment>
   </quotation>
 
-  where <verbatim|<em|done>> is either <verbatim|#t> or <verbatim|#f>. The
+  where <verbatim|<em|done>> is either <scm|#t> or <scm|#f>. The
   <verbatim|multiline> plug-in provides an example of this mechanism (see in
   particular the file <example-plugin-link|multiline/src/multiline.cpp>).
 
@@ -65,17 +65,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -50,8 +50,8 @@
     \ \ \ \ <example-plugin-link|mutator/progs/init-mutator.scm>
   </verbatim>
 
-  The <key|C-F11> key simply inserts <inactive*|<mutator|text|(mutate-date)>>
-  into the main text:
+  The <key|C-F11> key simply inserts the continuously updated time into the
+  main text:
 
   <\cpp-fragment>
     (kbd-map ("C-F11" (insert '(mutator "" "(mutate-date)"))))
@@ -72,13 +72,13 @@
     \ \ \ \ (tm-assign-diff p date)))
   </scheme-fragment>
 
-  The <verbatim|tm-assign-diff> command is convenient, because it only
-  modifies the document if a real change occurred.
+  The <scm|tm-assign-diff> command is convenient, because it only modifies
+  the document if a real change occurred.
 
   The insertion of blinking content is slightly more complex, since it also
   takes into account the current content of the mutator tag. The <key|C-F12>
-  key inserts <inactive*|<mutator|text|(mutate-blink)>> into the main text
-  and puts the cursor after the text in the body of the mutator:
+  key inserts a blinking text into the main text and puts the cursor after
+  the text in the body of the mutator:
 
   <\cpp-fragment>
     (kbd-map ("C-F12" (insert-go-to '(mutator "text" "(mutate-blink)")
@@ -105,11 +105,11 @@
 
     \ \ \ \ \ \ \ \ \ (e (mod s 4)))
 
-    \ \ \ \ (if (and (\<less\>= e 1) (not (match? t '(strong :1))))
+    \ \ \ \ (if (and (\<less\>= e 1) (not (match? t '(strong :%1))))
 
     \ \ \ \ \ \ \ \ (tm-ins-unary p 'strong))
 
-    \ \ \ \ (if (and (\<gtr\>= e 2) (match? t '(strong :1)))
+    \ \ \ \ (if (and (\<gtr\>= e 2) (match? t '(strong :%1)))
 
     \ \ \ \ \ \ \ \ (tm-rem-unary p))))
   </scheme-fragment>

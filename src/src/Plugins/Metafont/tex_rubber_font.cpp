@@ -27,13 +27,13 @@ struct tex_rubber_font_rep: font_rep {
   font_glyphs      pk;
   double           unit;
 
-  tex_rubber_font_rep (display dis, string name, string trl_name,
+  tex_rubber_font_rep (string name, string trl_name,
 		       string family, int size, int dpi, int dsize);
   void get_extents (int c, metric& ex);
   void get_partial_extents (int c, metric& ex);
   void get_extents (string s, metric& ex);
-  void draw (ps_device dev, int c, SI x, SI& y, SI& real_y);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, int c, SI x, SI& y, SI& real_y);
+  void draw (renderer ren, string s, SI x, SI y);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -44,7 +44,7 @@ struct tex_dummy_rubber_font_rep: font_rep {
   font base_fn;
   tex_dummy_rubber_font_rep (string name, font base_fn);
   void get_extents (string s, metric& ex);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, string s, SI x, SI y);
 };
 
 /******************************************************************************
@@ -53,9 +53,9 @@ struct tex_dummy_rubber_font_rep: font_rep {
 
 #define conv(x) ((SI) (((double) (x))*unit))
 
-tex_rubber_font_rep::tex_rubber_font_rep (display dis, string name,
+tex_rubber_font_rep::tex_rubber_font_rep (string name,
   string trl_name, string family2, int size2, int dpi2, int dsize2):
-    font_rep (dis, name), dsize (dsize2), ext (load_translator (trl_name))
+    font_rep (name), dsize (dsize2), ext (load_translator (trl_name))
 {
   load_tex (family2, size2, dpi2, dsize, tfm, pk);
 
@@ -92,11 +92,11 @@ tex_rubber_font_rep::tex_rubber_font_rep (display dis, string name,
 }
 
 font
-tex_rubber_font (display dis, string trl_name,
+tex_rubber_font (string trl_name,
 		 string family, int size, int dpi, int dsize) {
   string name= "tex-rubber:"*family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_rubber_font_rep (dis, name, trl_name, family, size, dpi, dsize));
+    new tex_rubber_font_rep (name, trl_name, family, size, dpi, dsize));
 }
 
 /******************************************************************************
@@ -173,12 +173,14 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
     ex->y1 += ex->y2;
     ex->y2  = 0;
   }
-
-  if ((N(s) >= 9) && (s(0,7) == "<large-")) {
+  else {
     // correction for large delimiters
-    switch (s[7]) {
+    int j;
+    for (j=1; j<N(s); j++) if (s[j]=='-') break;
+    if (j==N(s)) return; else j++;
+    switch (s[j]) {
     case 'r':
-      if ((N(s) >= 13) && (s(8,13) == "angle")) {
+      if ((N(s) >= j+6) && (s(j+1,j+6) == "angle")) {
 	ex->x1= ex->x3- sep;
 	ex->x2= ex->x4+ sep;
 	break;
@@ -198,17 +200,17 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-tex_rubber_font_rep::draw (ps_device dev, int c, SI x, SI& y, SI& real_y) {
-  dev->draw (c, pk, x, y);
+tex_rubber_font_rep::draw (renderer ren, int c, SI x, SI& y, SI& real_y) {
+  ren->draw (c, pk, x, y);
   SI delta  = conv (tfm->h (c)+ tfm->d (c));
-  SI pixel  = PIXEL * dev->sfactor;
+  SI pixel  = PIXEL * ren->sfactor;
   y        -= pixel * (delta/pixel);
   real_y   -= delta;
   while (y >= real_y + pixel) y -= pixel;
 }
 
 void
-tex_rubber_font_rep::draw (ps_device dev, string s, SI x, SI y) {
+tex_rubber_font_rep::draw (renderer ren, string s, SI x, SI y) {
   metric ex;
   get_extents (s, ex);
 
@@ -223,22 +225,22 @@ tex_rubber_font_rep::draw (ps_device dev, string s, SI x, SI y) {
   if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) return;
   QN c = tfm->nth_in_list (pre_c, n);
 
-  if (tfm->tag (c) != 3) dev->draw (c, pk, x, y);
+  if (tfm->tag (c) != 3) ren->draw (c, pk, x, y);
   else {
     int i;
     int nr_rep= n- tfm->list_len (pre_c);
 
     SI real_y= y; // may be necessary to round y
                   // using SI temp= x; decode (temp, y); encode (temp, y);
-    if (tfm->top (c)!=0) draw (dev, tfm->top (c), x, y, real_y);
+    if (tfm->top (c)!=0) draw (ren, tfm->top (c), x, y, real_y);
     if (tfm->rep (c)!=0)
       for (i=0; i<nr_rep; i++)
-	draw (dev, tfm->rep (c), x, y, real_y);
-    if (tfm->mid (c)!=0) draw (dev, tfm->mid (c), x, y, real_y);
+	draw (ren, tfm->rep (c), x, y, real_y);
+    if (tfm->mid (c)!=0) draw (ren, tfm->mid (c), x, y, real_y);
     if ((tfm->rep (c)!=0) && (tfm->mid (c)!=0))
       for (i=0; i<nr_rep; i++)
-	draw (dev, tfm->rep (c), x, y, real_y);
-    if (tfm->bot (c)!=0) draw (dev, tfm->bot (c), x, y, real_y);
+	draw (ren, tfm->rep (c), x, y, real_y);
+    if (tfm->bot (c)!=0) draw (ren, tfm->bot (c), x, y, real_y);
   }
 }
 
@@ -281,20 +283,23 @@ tex_rubber_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 tex_dummy_rubber_font_rep::tex_dummy_rubber_font_rep (string name, font fn):
-  font_rep (fn->dis, name), base_fn (fn) {}
+  font_rep (name), base_fn (fn) {}
 
 void
 tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {
   string r= s;
   if (s(0,8) == "<large-.") r= "<left-(" * s (8, N(s));
+  if (s(0,7) == "<left-.") r= "<left-(" * s (7, N(s));
+  if (s(0,6) == "<mid-.") r= "<left-(" * s (6, N(s));
+  if (s(0,8) == "<right-.") r= "<left-(" * s (8, N(s));
   if (s(0,6) == "<big-.") r= "<big-sum" * s (6, N(s));
   base_fn->get_extents (r, ex);
   ex->x1= ex->x2= ex->x3= ex->x4= 0;
 }
 
 void
-tex_dummy_rubber_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  (void) dev; (void) s; (void) x; (void) y;
+tex_dummy_rubber_font_rep::draw (renderer ren, string s, SI x, SI y) {
+  (void) ren; (void) s; (void) x; (void) y;
 }
 
 font

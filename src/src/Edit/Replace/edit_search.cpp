@@ -13,6 +13,7 @@
 #include "Replace/edit_replace.hpp"
 #include "Interface/edit_interface.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
@@ -109,7 +110,7 @@ edit_replace_rep::search_upwards_in_set (tree t) {
     for (i=0; i<n; i++) {
       if (is_atomic (t[i])) {
 	string s= t[i]->label;
-	if (is_quoted (s)) s= unquote (s);
+	if (is_quoted (s)) s= raw_unquote (s);
 	if (std_contains (s)) {
 	  tree_label l= as_tree_label (s);
 	  if (is_func (st, l)) return p;
@@ -358,12 +359,18 @@ edit_replace_rep::next_match (bool forward) {
     }
     search_end= test (search_at, search_what);
     if (search_end != search_at) {
+      go_to (copy (search_end));
+      show_cursor_if_hidden ();
       set_selection (search_at, search_end);
       notify_change (THE_SELECTION);
-      go_to (copy (search_end));
       return;
     }
+    int new_mode= DRD_ACCESS_HIDDEN;
+    if (get_init_string (MODE) == "src" || inside ("show-preamble"))
+      new_mode= DRD_ACCESS_SOURCE;
+    int old_mode= set_access_mode (new_mode);
     step_horizontal (forward);
+    set_access_mode (old_mode);
   }
 }
 
@@ -559,7 +566,7 @@ edit_replace_rep::replace_keypress (string s) {
     step_horizontal (forward);
     replace_next ();
   }
-  else if (s == "a") {
+  else if (s == "a" || s == "!") {
     while (search_at != rp) {
       nr_replaced++;
       go_to (copy (search_end));

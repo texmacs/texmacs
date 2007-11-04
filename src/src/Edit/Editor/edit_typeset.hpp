@@ -51,6 +51,9 @@ public:
   double   divide_lengths (string l1, string l2);
 
   void     drd_update ();
+#ifdef EXPERIMENTAL
+  void     environment_update ();
+#endif
   bool     defined_at_cursor (string var_name);
   bool     defined_at_init (string var_name);
   bool     defined_in_init (string var_name);
@@ -65,10 +68,13 @@ public:
   double   get_init_double (string var_name);
   language get_env_language ();
 
-  tree     exec (tree t, hashmap<string,tree> env);
+  tree     exec (tree t, hashmap<string,tree> env, bool expand_refs= true);
   tree     exec_texmacs (tree t, path p);
+  tree     exec_texmacs (tree t);
   tree     exec_html (tree t, path p);
   tree     exec_html (tree t);
+  tree     exec_latex (tree t, path p);
+  tree     exec_latex (tree t);
   tree     texmacs_exec (tree t);
 
   void     init_env (string var, tree by);
@@ -83,6 +89,7 @@ public:
   void     typeset_prepare ();
   void     typeset_invalidate_env ();
   void     typeset_exec_until (path p);
+  void     typeset_invalidate (path p);
   void     typeset_invalidate_all ();
   void     typeset (SI& x1, SI& y1, SI& x2, SI& y2);
 

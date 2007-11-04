@@ -33,12 +33,13 @@ public:
   dyn_link_rep (string lib, string symbol, string init, string session);
   ~dyn_link_rep ();
 
-  string start ();
-  void   write (string s, int channel);
-  string read (int channel);
-  void   listen (int msecs);
-  void   interrupt ();
-  void   stop ();
+  string  start ();
+  void    write (string s, int channel);
+  string& watch (int channel);
+  string  read (int channel);
+  void    listen (int msecs);
+  void    interrupt ();
+  void    stop ();
 };
 
 #endif // defined DYN_LINK_H

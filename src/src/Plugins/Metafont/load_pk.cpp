@@ -30,7 +30,7 @@ pk_loader::pk_loader (url pk_file_name, tex_font_metric tfm2, int dpi2):
   bc (tfm->bc), ec (tfm->ec),
   char_pos(0), char_flag(0), unpacked(0)
 {
-  (void) load_string (pk_file_name, input_s);
+  (void) load_string (pk_file_name, input_s, true);
   input_pos= 0;
 }
 
@@ -420,17 +420,8 @@ pk_loader::load_pk () {
   }
 
   register int c;
-  for (c=bc; c<=ec; c++) {
-    if (tfm->tag (c)==3) {
-      if (tfm->bot(c)!=0) fng[tfm->bot (c)]->status |= 1;
-      if (tfm->top(c)!=0) fng[tfm->top (c)]->status |= 2;
-      if (tfm->mid(c)!=0) fng[tfm->mid (c)]->status |= 3;
-      if (tfm->rep(c)!=0) fng[tfm->rep (c)]->status |= 3;
-    }
-  }
   for (c=0; c<=ec-bc; c++)
     if (!nil (fng[c])) {
-      if (fng[c]->status != 0) fng[c]->yoff= 0;
       SI design_size = tfm->design_size () >> 12;
       SI display_size= (((design_size*dpi)/72)*PIXEL) >> 8;
       double unit    = ((double) display_size) / ((double) (1<<20));

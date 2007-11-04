@@ -15,8 +15,7 @@
 (texmacs-module (convert latex textest)
   (:use
     (convert tools tmpre) (convert tools output)
-    (convert latex tmtex) (convert latex texout))
-  (:export test))
+    (convert latex tmtex) (convert latex texout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeX output
@@ -220,5 +219,5 @@
   (tmtex-initialize)
   (tmtex (tmpre-produce text-document)))
 
-(define (test)
+(tm-define (test)
   (serialize-latex (texmacs->latex text-document '())))

@@ -2,7 +2,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : boot.scm
-;; DESCRIPTION : initialization of the TeXmacs module system
+;; DESCRIPTION : some global variables, public macros, on-entry, on-exit and
+;;               initialization of the TeXmacs module system
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -13,17 +14,79 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define texmacs-user (current-module))
+(define temp-module (current-module))
+(define temp-value #f)
 
 (define (guile-a?) (equal? (scheme-dialect) "guile-a"))
 (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
+(define (guile-c?) (equal? (scheme-dialect) "guile-c"))
+(define (guile-b-c?) (or (guile-b?) (guile-c?)))
+(if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
+
+;; Should be defined 
+(define dialogue-break #f)
+(define dialogue-return #f)
+(define dialogue-error #f)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Provide functions if not defined and public macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (provide-public head . body)
+  (if (or (and (symbol? head) (not (defined? head)))
+	  (and (pair? head) (symbol? (car head)) (not (defined? (car head)))))
+      `(define-public ,head ,@body)
+      '(noop)))
+
+(if (guile-a?)
+    (define-macro (define-public-macro head . body)
+      `(define-public ,(car head)
+	 ;; FIXME: why can't we use procedure->macro
+	 ;; for a non-memoizing variant?
+	 (procedure->memoizing-macro
+	  (lambda (cmd env)
+	    (apply (lambda ,(cdr head) ,@body) (cdr cmd)))))))
+
+(if (not (guile-a?))
+    (define-macro (define-public-macro head . body)
+      `(begin
+	 (define-macro ,(car head)
+	   (lambda ,(cdr head) ,@body))
+	 (export ,(car head)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; On-entry and on-exit macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (quit-TeXmacs-scheme) (noop))
+
+(define-macro (on-entry . cmd)
+  `(begin ,@cmd))
+
+(define-macro (on-exit . cmd)
+  `(set! quit-TeXmacs-scheme (lambda () ,@cmd (,quit-TeXmacs-scheme))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Module switching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (with-module module . body)
+  `(begin
+     (set! temp-module (current-module))
+     (set-current-module ,module)
+     ,@body
+     (set-current-module temp-module)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Module handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (if (guile-a?)
     (begin
       (define import-from use-modules)
-      (define re-export export)
-      (define do-export export)))
+      (define re-export export)))
 
-(if (guile-b?)
+(if (guile-b-c?)
     (begin
       (define-macro (import-from . modules)
 	`(process-use-modules
@@ -36,23 +99,7 @@
       ;;     `(module-use! (current-module) (resolve-module ',module)))
       ;;   `(begin
       ;;     ,@(map import-from-body modules)))
-
-      (define backup-deprecation-warning noop)
-      (define-macro (do-export . syms)
-	;; guile-b gives a warning when using the export keyword in
-	;; a module which inherits from a module in which the keyword
-	;; is already defined. For module inheritance, this has been solved
-	;; by using the re-export keyword. But if the intention is to
-	;; locally *override* the outer definition, then we really *need* to
-	;; use export and not re-export. This is used during lazy definitions,
-	;; where the outer definition may call the local definition. If one
-	;; uses the outer definition as the local definition, then one obtains
-	;; an infinite loop...
-	`(begin
-	   (set! backup-deprecation-warning issue-deprecation-warning)
-	   (set! issue-deprecation-warning (lambda l (noop)))
-	   (export ,@syms)
-	   (set! issue-deprecation-warning backup-deprecation-warning)))))
+      ))
 
 (define-macro (inherit-modules . which-list)
   (define (module-exports which)
@@ -69,12 +116,28 @@
     (cond ((not (pair? action)) (noop))
 	  ((equal? (car action) :use) (cons 'use-modules (cdr action)))
 	  ((equal? (car action) :inherit) (cons 'inherit-modules (cdr action)))
-	  ((equal? (car action) :export) (cons 'do-export (cdr action)))
+	  ((equal? (car action) :export)
+	   (display "Warning] The option :export is no longer supported\n")
+	   (display "       ] Please use tm-define instead\n"))
 	  (else '(noop))))
   (let ((l (map-in-order transform options)))
-    (if (guile-b?)
+    (if (guile-b-c?)
 	(set! l (cons `(module-use! (current-module) ,texmacs-user) l)))
-    ;(display "loading ") (display name) (display "\n")
+    ;;(display "loading ") (display name) (display "\n")
     `(begin
        (define-module ,name)
        ,@l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy modules for extern mactos in style packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define markup-modules-list '((utils misc markup-funcs)))
+
+(define-macro (lazy-markup-modules . l)
+  `(set! markup-modules-list (append markup-modules-list ',l)))
+
+(define-macro (lazy-markup-modules-force)
+  `(begin
+     (use-modules ,@markup-modules-list)
+     (set! markup-modules-list '())))

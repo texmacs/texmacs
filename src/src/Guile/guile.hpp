@@ -21,7 +21,7 @@
 #ifdef GUILE_A
 #define scm_is_bool gh_boolean_p
 #define scm_is_int SCM_INUMP
-#define scm_is_string gh_string_p
+#define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
 #define scm_is_symbol gh_symbol_p
 #define scm_is_null gh_null_p
 #define scm_is_pair gh_pair_p
@@ -45,17 +45,27 @@
 #define scm_call_1 gh_call1
 #define scm_call_2 gh_call2
 #define scm_call_3 gh_call3
+#define scm_new_procedure gh_new_procedure
+#define scm_lookup_string gh_lookup
 
 typedef SCM (*scm_t_catch_body) (void *data);
 typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 #endif
 
-#ifdef GUILE_B
+#ifndef GUILE_A
 #define scm_is_bool(x) SCM_NFALSEP(scm_boolean_p(x))
+#ifdef GUILE_B
 #define scm_is_int SCM_INUMP
-#define scm_is_string(x) SCM_NFALSEP(scm_string_p(x))
+#define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
+#else
+#define scm_is_int scm_is_integer
+#endif
+#ifndef scm_is_symbol
 #define scm_is_symbol(x) SCM_NFALSEP(scm_symbol_p(x))
+#endif
+#ifndef scm_is_null
 #define scm_is_null(x) SCM_NFALSEP(scm_null_p(x))
+#endif
 #define scm_is_pair(x) SCM_NFALSEP(scm_pair_p(x))
 #define scm_is_list(x) SCM_NFALSEP(scm_list_p(x))
 
@@ -69,6 +79,14 @@ typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 #define scm_scm2str gh_scm2newstr
 #define scm_symbol2scm scm_str2symbol
 #define scm_scm2symbol gh_symbol2newstr
+
+#ifdef GUILE_C
+#define scm_new_procedure(name,r,a,b,c) scm_c_define_gsubr(name,a,b,c,r)
+#define scm_lookup_string(name) scm_variable_ref(scm_c_lookup(name))
+#else
+#define scm_new_procedure gh_new_procedure
+#define scm_lookup_string gh_lookup
+#endif
 #endif
 
 #endif // defined GUILE_HH

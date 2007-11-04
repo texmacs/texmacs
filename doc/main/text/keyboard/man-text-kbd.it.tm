@@ -44,7 +44,7 @@
   halign|c>|<cwith|6|6|7|8|cell halign|c>|<cwith|6|6|7|7|cell
   halign|c>|<table|<row|<cell|Abbreviazione>|<cell|>|<cell|Esempio>|<cell|>|<cell|Abbreviazione>|<cell|>|<cell|Esempio>|<cell|>>|<row|<cell|<expand|kbd-text|'>>|<cell|Acuto
   >|<cell|<expand|kbd-text|' e>>|<cell|é>|<cell|<expand|kbd-text|`>>|<cell|Grave
-  \0>|<cell|<expand|kbd-text|` e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Circonflesso
+  `>|<cell|<expand|kbd-text|` e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Circonflesso
   >|<cell|<expand|kbd-text|^ e>>|<cell|ê>|<cell|<expand|kbd-text|^>>|<cell|Umlaut
   >|<cell|<expand|kbd-text|" e>>|<cell|ë>>|<row|<cell|<expand|kbd-text|~>>|<cell|Tilde
   >|<cell|<expand|kbd-text|~ a>>|<cell|ã>|<cell|<expand|kbd-text|C>>|<cell|Cedilla

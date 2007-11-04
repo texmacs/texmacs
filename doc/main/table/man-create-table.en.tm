@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.6.2>
 
 <style|tmdoc>
 
@@ -9,12 +9,12 @@
   of the following keyboard shorthands:
 
   <\description>
-    <item*|<kbd-table|N t>>Create a regular table.
+    <item*|<kbd-table|N t>>Create a plain table.
 
-    <item*|<kbd-table|N T>>Create a regular table whose cells are centered.
+    <item*|<kbd-table|N T>>Create a table whose cells are centered.
 
-    <item*|<kbd-table|N b>>Create a regular ``block'', whose cells are
-    separated by lines.
+    <item*|<kbd-table|N b>>Create a ``block'', whose cells all have a small
+    border.
 
     <item*|<kbd-table|N B>>Create a block whose cells are centered.
   </description>
@@ -29,17 +29,50 @@
     <item*|<kbd-table|N c>>Create a choice list.
   </description>
 
-  The <markup|eqnarray*> environment is also a special kind of table-like
-  structure, which extends over the entire line. You may start a list of
-  equations using <menu|Text|Mathematics|Equations>.
+  Examples of a plain table, a centered block and a matrix are shown below.
+  Notice that the environments with the explanatory text below the tables
+  were created using <menu|Insert|Table|Small table>. The use of ``small
+  tables'' allows you to put several tables besides each other on the same
+  line. For a single large table, one may use <menu|Insert|Table|Big
+  table>.<vspace|0.5fn>
+
+  <\with|par-mode|center>
+    <small-table|<tabular|<tformat|<table|<row|<cell|boom>|<cell|tree>>|<row|<cell|hallo>|<cell|hello>>|<row|<cell|wiskunde>|<cell|mathematics>>>>>|A
+    plain table.><small-table|<block|<tformat|<table|<row|<cell|boom>|<cell|tree>>|<row|<cell|hallo>|<cell|hello>>|<row|<cell|wiskunde>|<cell|mathematics>>>>>|A
+    centered block.><small-table|<with|mode|math|<with|math-display|true|<matrix|<tformat|<table|<row|<cell|a>|<cell|b>>|<row|<cell|c>|<cell|d>>>>>>>|A
+    matrix.>
+  </with>
+
+  <vspace*|0.5fn>There are several other table-like environments and new ones
+  may be created by the user. For instance, using
+  <menu|Text|Mathematics|Equations> or <kbd-math|&>, you may insert an
+  <markup|eqnarray*> environment, which allows mathematically oriented users
+  to align a list of equations which span over entire lines. An example of
+  such a list of equations is
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|sin (f(x)*g(x))<rprime|'>>|<cell|=>|<cell|(f(x)*g(x))<rprime|'>*cos
+    (f(x)*g(x))>>|<row|<cell|>|<cell|=>|<cell|(f<rprime|'>(x)*g(x)+f(x)*g<rprime|'>(x))*cos
+    (f(x)*g(x))>>>>
+  </eqnarray*>
 
   When starting a new table, its size is minimal (usually
   <with|mode|math|1\<times\>1>) and its cells are empty. New rows and columns
   are inserted using the <key|A-<key-left>>, <key|A-<key-right>>,
   <key|A-<key-up>> and <key|A-<key-down>> shorthands. For instance,
   <key|A-<key-right>> creates a new column at the right of the current cursor
-  position. You may also start a new row below the current cursor position by
-  hitting <key|<key-return>>.
+  position, as illustrated in the figure below. You may also start a new row
+  below the current cursor position by hitting <key|<key-return>>.
+
+  <\big-figure>
+    <\equation*>
+      <matrix|<tformat|<table|<row|<cell|a<value|cursor>>|<cell|b>>|<row|<cell|c>|<cell|d>>>>><space|2em>\<longrightarrow\><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|<value|cursor>>|<cell|b>>|<row|<cell|c>|<cell|>|<cell|d>>>>>
+    </equation*>
+  <|big-figure>
+    Example of the insertion of a new column in a matrix. Assuming that the
+    cursor is at the position indicated in the left-hand matrix, insertion of
+    a new column using <key|A-<key-right>> results in the right-hand matrix.
+  </big-figure>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -53,35 +86,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Table>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Mathematics>|<with|font-family|<quote|ss>|Equations>>|<pageref|idx-2>>
-    </associate>
-  </collection>
-</auxiliary>
