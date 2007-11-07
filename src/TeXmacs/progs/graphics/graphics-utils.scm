@@ -170,6 +170,18 @@
       (set! s2 (symbol->string s2)))
   (== s1 s2))
 
+(tm-define (maprec func o)
+  (if (pair? o)
+      (map (lambda (x) (maprec func x)) o)
+      (func o)))
+
+(tm-define (tm-copy o)
+  (define (copy x)
+     (if (tree? x)
+         (tree-copy x)
+         (copy-tree x)))
+  (maprec copy o))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for accessing trees & managing listprops
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

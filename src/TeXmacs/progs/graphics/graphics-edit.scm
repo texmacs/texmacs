@@ -118,14 +118,13 @@
 ;; Basic operations (set & add point)
 (define (object_set-point no xcur ycur)
   (define obj (stree-radical (car (sketch-get1))))
- ;(display* "obj=" obj "\n")
+ ;(display* "obj[" no ";" xcur "," ycur "]=" obj "\n")
   (if (== (car obj) 'point)
       (begin
 	 (set-car! (cdr obj) xcur)
 	 (set-car! (cddr obj) ycur))
-      (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
-          (with l (list-tail (cdr obj) no)
-	    (set-car! l `(point ,xcur ,ycur)))))
+      (with l (list-tail (cdr obj) no)
+	 (set-car! l `(point ,xcur ,ycur))))
   (object-set! (car (sketch-get))))
 
 (define (object_add-point no xcur ycur x y dirn)
@@ -291,7 +290,6 @@
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (define (back)
-;; FIXME: Doesn't undo the right point, it seems
  ;(display* "obj[" p "]=" obj "\n")
   (graphics-back-state #f)
   (graphics-move-point current-x current-y))
@@ -869,7 +867,8 @@
       )
       (begin
 	 (if sticky-point (undo))
-	 (graphics-decorations-update))))
+	 (sketch-reset)
+	 (graphics-decorations-reset))))
 
 (tm-define (graphics-finish)
   ;;(display* "Graphics] Finish\n")
