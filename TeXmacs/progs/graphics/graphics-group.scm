@@ -155,6 +155,7 @@
   (if (and (not sticky-point)
 	   (== (length (sketch-get)) 1)
 	   (== (tree-label (car (sketch-get))) 'gr-group))
+	;; TODO: Add support for ungrouping <with|...props...|<gr-group|...>>
   (with obj (car (sketch-get))
     (graphics-store-state 'ungroup-selected-objects)
     (sketch-checkout)
@@ -345,7 +346,7 @@
   (:state graphics-state)
   (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
       (if (null? (sketch-get))
-	  (middle-button x y current-path current-obj current-point-no)
+	  (middle-button)
 	  (remove-selected-objects))
       (unselect-all current-path current-obj)))
 

@@ -103,7 +103,7 @@
     (state-set! st 'current-y current-y)
     (state-set! st 'graphics-undo-enabled graphics-undo-enabled)
     (state-set! st 'remove-undo-mark? remove-undo-mark?)
-    (state-set! st 'the-sketch the-sketch)
+    (state-set! st 'the-sketch (tm-copy the-sketch))
     (state-set! st 'selecting-x0 selecting-x0)
     (state-set! st 'selecting-y0 selecting-y0)
     (state-set! st 'multiselecting multiselecting)
