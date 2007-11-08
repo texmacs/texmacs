@@ -363,7 +363,7 @@ logarithmic_rep::get_curves (point lim1, point lim2, double u, bool b) {
   if (N(col)>=3) {
     for (i=2; i<base; i++) {
       double dx, dy;
-      dx= dy= step*log(i)/log(base);
+      dx= dy= step*log((double)i)/log((double)base);
       for (x=xo; x<=x2; x+=step)
         res << create_line (x+dx, y1, x+dx, y2, col[2]);
       for (x=xo-step; x>=x1-step; x-=step)
@@ -423,7 +423,7 @@ logarithmic_rep::find_closest_point (point p, point pmin, point pmax) {
   int i;
   for (i=1; i<base; i++) {
     double dx, dy;
-    dx= dy= step*log(i)/log(base);
+    dx= dy= step*log((double)i)/log((double)base);
     for (x=xo; x<=x2; x+=step)
       if (norm(x+dx-p[0])<norm(xm-p[0])) xm= x+dx;
     for (x=xo-step; x>=x1-step; x-=step)
