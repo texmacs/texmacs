@@ -545,7 +545,7 @@
       (begin
 	 (set! edge (car no))
 	 (set! no (cadr no))))
-  (if o
+  (if (and o (not (null? o)))
       (let* ((op (add-selections-colors
 		    (create-graphical-contour o edge no)
 		    default-color-go-points #f))
