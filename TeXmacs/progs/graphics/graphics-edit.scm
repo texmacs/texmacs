@@ -280,7 +280,11 @@
 		  previous-leftclick
                  `(point ,current-x ,current-y)
 		  moveclick-tolerance))
-            (undo)
+	    (begin
+	       (undo)
+	       (set! choosing #f)
+               (set! leftclick-waiting #f)
+	       (set! just-started-dragging))
 	    (begin
 	      (set-message "Left click: finish" "")
 	      (set! leftclick-waiting #t)))))
@@ -385,13 +389,17 @@
 	(left-button))
       (if current-obj
 	  (begin
-	    (edit_tab-key 'edit
-			  (if (graphics-states-void?)
-			      #f
-			      choosing))
-	    (if (not (graphics-states-void?))
-		(graphics-pop-state))
-	    (graphics-store-state #f)
+	    (if (not just-started-dragging)
+	    (begin
+	       (edit_tab-key 'edit
+			     (if (graphics-states-void?)
+				 #f
+				 choosing))))
+	    (if (or (not just-started-dragging) (not choosing))
+	    (begin
+	       (if (not (graphics-states-void?))
+		   (graphics-pop-state))
+	       (graphics-store-state #f)))
 	    (set! choosing #t))
 	  (edit-insert x y))))
 
