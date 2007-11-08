@@ -69,12 +69,12 @@ void  operator delete[] (register void* ptr);
 int   mem_used ();
 void  mem_info ();
 
-#ifndef OS_WIN32
-#define STACK_NEW_ARRAY(name,T,size) T name[size]
-#define STACK_DELETE_ARRAY(name)
-#else
+#if (defined OS_WIN32 || defined __SUNPRO_CC)
 #define STACK_NEW_ARRAY(name,T,size) T* name= new T[size]
 #define STACK_DELETE_ARRAY(name) delete[] name
+#else
+#define STACK_NEW_ARRAY(name,T,size) T name[size]
+#define STACK_DELETE_ARRAY(name)
 #endif
 
 enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_VERBOSE, DEBUG_FLAG_EVENTS,

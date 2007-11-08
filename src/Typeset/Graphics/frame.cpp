@@ -82,13 +82,15 @@ struct affine_2D_rep: public frame_rep {
     q= m * q;
     return point (q[0], q[1]); }
   point inverse_transform (point p) {
-    fatal_error ("Not yet implemented", "affine_2D_rep::inverse_transform"); }
+    fatal_error ("Not yet implemented", "affine_2D_rep::inverse_transform");
+    return p; }
   point jacobian (point p, point v, bool &error) {
     (void) p; error= false; return j * v; }
   point jacobian_of_inverse (point p, point v, bool &error) {
     (void) p; (void) v; (void) error;
     fatal_error ("Not yet implemented",
-		 "affine_2D_rep::jacobian_of_inverse"); }
+		 "affine_2D_rep::jacobian_of_inverse"); 
+    return p;}
   double direct_bound (point p, double eps) { return eps; }
   double inverse_bound (point p, double eps) { return eps; }
 };
@@ -120,6 +122,7 @@ struct compound_frame_rep: public frame_rep {
     (void) p; (void) v; (void) error;
     fatal_error ("Not yet implemented",
 		 "compound_frame_rep::jacobian_of_inverse");
+    return p;
   }
   double direct_bound (point p, double eps) {
     return f1->direct_bound (f2(p), f2->direct_bound (p, eps)); }
