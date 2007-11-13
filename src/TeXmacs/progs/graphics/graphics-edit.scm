@@ -57,8 +57,6 @@
 ;;
 ;;   -> On en discutera davantage apres un premier passage en revue.
 
-;; FIXME: Les cercles et arcs de cercles sont bogues
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -80,6 +78,9 @@
 (define (object-set! o . opt)
  ;(display* "o=" o "\n")
   (set! layer-of-last-removed-object #f)
+  (set! current-obj o)    ;; FIXME: Hmmm, I still have a doubt for this one.
+                          ;;   Should completely clarify its role & centralize
+                          ;;   where it's managed (and for similar gvs as well).
   (if sticky-point
       (sketch-set! `(,o))
       (if (in? 'checkout opt)
@@ -88,9 +89,7 @@
 	     (sketch-checkout))
 	  (if (in? 'new opt)
 	      (graphics-group-enrich-insert o)
-	      (graphics-assign current-path o)))
-  )
-  (set! current-obj o))
+	      (graphics-assign current-path o)))))
 
 ;; Basic operations (create)
 (define (sketch-get1)
@@ -106,9 +105,8 @@
   (:require (in? tag gr-tags-curves))
   (with o (graphics-enrich `(,tag (point ,x ,y) (point ,x ,y)))
     (graphics-store-state 'start-create)
-    (object-set! o 'checkout)
-    (set! current-obj o)
     (set! current-point-no 1)
+    (object-set! o 'checkout)
     (graphics-store-state #f)))
 
 (tm-define (object_create tag x y)
@@ -283,8 +281,8 @@
 	    (begin
 	       (undo)
 	       (set! choosing #f)
-               (set! leftclick-waiting #f)
-	       (set! just-started-dragging))
+	       (set! leftclick-waiting #f)
+	       (set! just-started-dragging #f))
 	    (begin
 	      (set-message "Left click: finish" "")
 	      (set! leftclick-waiting #t)))))
