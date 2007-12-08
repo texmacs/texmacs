@@ -69,6 +69,7 @@ filter_preamble (tree t) {
 #define t2e parsed_text_to_tree
 #define m2e latex_modifier_to_tree
 #define var_m2e var_latex_modifier_to_tree
+#define v2e latex_verbarg_to_tree
 tree l2e (tree);
 tree latex_command_to_tree (tree t);
 
@@ -676,6 +677,10 @@ latex_command_to_tree (tree t) {
     textm_natbib= true; return compound ("cite-author*-link", t2e (t[1])); }
   if (is_tuple (t, "\\citeyear", 1)) {
     textm_natbib= true; return compound ("cite-year-link", t2e (t[1])); }
+  if (is_tuple (t, "\\bibitem", 1))
+    return compound ("bibitem", v2e (t[1]));
+  if (is_tuple (t, "\\bibitem*", 2))
+    return compound ("bibitem*", v2e (t[1]), t2e (t[2]));
   if (is_tuple (t, "\\index", 1)) {
     string s= string_arg (t2e (t[1]));
     return latex_index_to_tree (s);
