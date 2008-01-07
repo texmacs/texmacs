@@ -94,8 +94,8 @@ make_dynamic_link (string lib, string symb, string init, string session) {
 }
 
 static TeXmacs_exports_1 TeXmacs= {
-  "TeXmacs communication protocol 1",
-  "TeXmacs " TEXMACS_VERSION,
+  const_cast<char*> ("TeXmacs communication protocol 1"),
+  const_cast<char*> ("TeXmacs " TEXMACS_VERSION),
 };
 
 string

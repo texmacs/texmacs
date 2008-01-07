@@ -307,7 +307,7 @@ printer_rep::select_tex_font (string name) {
 * make tex characters and fonts
 ******************************************************************************/
 
-static char* hex_string= "0123456789ABCDEF";
+static const char* hex_string= "0123456789ABCDEF";
 
 void
 printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {

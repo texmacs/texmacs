@@ -578,7 +578,7 @@ fnsymbol_nr (int nr) {
 * Conversions to and from hexadecimal
 ******************************************************************************/
 
-static char* hex_string= "0123456789ABCDEF";
+static const char* hex_string= "0123456789ABCDEF";
 
 string
 as_hexadecimal (int i) {

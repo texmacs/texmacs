@@ -423,7 +423,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   int i, n= N(t);
   for (i=0; i<n; i++)
     suffix << ("." * as_string (t[i]));
-  if (n == 0) suffix << "";
+  if (n == 0) suffix << string ("");
 
   SI sep= 3*PIXEL;
   int cw2n= 5;
@@ -611,7 +611,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
       if (name != "") name= as_string (url_system (scm_unquote (dir), name));
       a[0]["image"]["image"] << set_string ("name", name);
       array<string> ps_suffix;
-      ps_suffix << ".ps" << ".eps";
+      ps_suffix << string (".ps") << string (".eps");
       wk_widget par_wid= a[0]["image"]["parameters"];
       if (has_suffix (name, ps_suffix)) {
 	par_wid["hsize"]["input"] << set_string ("input", "");
@@ -655,7 +655,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
       }
       i=j+1;
     }
-    if (!any) suffix << "";
+    if (!any) suffix << string ("");
     // Force a refresh:
     string dir;
     a[0]["directory"]["input"] << get_string ("input", dir);

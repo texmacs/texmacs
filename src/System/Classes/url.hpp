@@ -32,7 +32,7 @@ class url {
 private:
   url (tree t): rep (new url_rep (t)) {}
 public:
-  url (char* name);
+  url (const char* name);
   url (string name);
   url (string dir, string name);
   inline bool operator == (url u) { return rep->t == u->t; }
@@ -69,7 +69,7 @@ url url_wildcard ();                  // any url
 url url_wildcard (string name);       // string with * wildcards
 
 url operator * (url u1, url u2);      // concatenation of url with rootless url
-url operator * (url u1, char* name);
+url operator * (url u1, const char* name);
 url operator * (url u1, string name);
 url operator | (url u1, url u2);      // disjunction of urls like in file paths
 

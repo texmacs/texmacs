@@ -262,7 +262,7 @@ url_standard (string dir, string name) {
   return url_standard (dir) * url_standard (name);
 }
 
-url::url (char* name): rep (new url_rep (url_unix (name)->t)) {}
+url::url (const char* name): rep (new url_rep (url_unix (name)->t)) {}
 url::url (string name): rep (new url_rep (url_unix (name)->t)) {}
 url::url (string path_name, string name):
   rep (new url_rep (url_unix (path_name, name)->t)) {}
@@ -317,7 +317,7 @@ operator * (url u1, url u2) {
 }
 
 url
-operator * (url u1, char* name) {
+operator * (url u1, const char* name) {
   return u1 * url (name);
 }
 

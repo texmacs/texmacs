@@ -127,7 +127,8 @@ bool is_url (object obj) { return scm_is_url (obj->lookup()); }
 object::object (): rep (new object_rep (SCM_NULL)) {}
 object::object (bool b): rep (new object_rep (bool_to_scm (b))) {}
 object::object (int i): rep (new object_rep (int_to_scm (i))) {}
-object::object (char* s): rep (new object_rep (string_to_scm (string (s)))) {}
+object::object (const char* s):
+  rep (new object_rep (string_to_scm (string (s)))) {}
 object::object (string s): rep (new object_rep (string_to_scm (s))) {}
 object::object (tree t): rep (new object_rep (tree_to_scm (t))) {}
 object::object (list<string> l): rep (new object_rep(list_string_to_scm(l))) {}
@@ -238,7 +239,7 @@ object_to_string (object obj) {
 }
 
 object
-scheme_cmd (char* s) {
+scheme_cmd (const char* s) {
   return eval ("(lambda () " * string (s) * ")");
 }
 
@@ -296,7 +297,7 @@ as_promise_widget (object obj) {
 * Evaluation and function calls
 ******************************************************************************/
 
-object eval (char* expr) {
+object eval (const char* expr) {
   return object (eval_scheme (expr)); }
 object eval (string expr) {
   return object (eval_scheme (expr)); }
@@ -319,16 +320,16 @@ array_lookup (array<object> a) {
   return scm;
 }
 
-object call (char* fun) {
+object call (const char* fun) {
   return object (call_scheme (eval_scheme(fun))); }
-object call (char* fun, object a1) {
+object call (const char* fun, object a1) {
   return object (call_scheme (eval_scheme(fun), a1->lookup())); }
-object call (char* fun, object a1, object a2) {
+object call (const char* fun, object a1, object a2) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(), a2->lookup())); }
-object call (char* fun, object a1, object a2, object a3) {
+object call (const char* fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
-object call (char* fun, array<object> a) {
+object call (const char* fun, array<object> a) {
   return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
 object call (string fun) {

@@ -36,7 +36,7 @@ class matrix_rep: concrete_struct {
 public:
   inline matrix_rep (T* a2, int rows2, int cols2):
     rows (rows2), cols (cols2), a (a2) {}
-  inline ~matrix_rep () { delete[] a; }
+  inline ~matrix_rep () { if (a != NULL) delete[] a; }
   friend class matrix<T>;
   friend int NR LESSGTR (matrix<T> m);
   friend int NC LESSGTR (matrix<T> m);
@@ -50,13 +50,12 @@ CONCRETE_TEMPLATE(matrix,T);
     rep (new matrix_rep<T> (a, rows, cols)) {}
   inline matrix (T c, int rows, int cols) {
     int i, n= rows * cols;
-    T* a= new T[n];
+    T* a= (n == 0? (T*) NULL: new T[n]);
     for (i=0; i<n; i++)
       a[i]= ((i%(cols+1)) == 0? c: T(0));
     rep= new matrix_rep<T> (a, rows, cols); }
   inline matrix () {
-    T* a= new T[0];
-    rep= new matrix_rep<T> (a, 0, 0); }
+    rep= new matrix_rep<T> (NULL, 0, 0); }
   inline T& operator () (int i, int j) {
     return rep->a[i*rep->cols + j]; }
 };

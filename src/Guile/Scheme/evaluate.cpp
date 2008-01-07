@@ -46,7 +46,7 @@ start_guile (int argc, char** argv, void (*call_back) (int, char**)) {
 
 void
 initialize_guile () {
-  char* init_prg =
+  const char* init_prg =
     "(read-set! keywords 'prefix)\n"
     "(read-enable 'positions)\n"
     "(debug-enable 'debug)\n"

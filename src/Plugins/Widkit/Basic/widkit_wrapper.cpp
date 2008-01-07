@@ -769,6 +769,8 @@ wk_widget_rep::notify (slot s, blackbox new_val) {
   case SLOT_MOUSE_GRAB:
     notify_mouse_grab (THIS, new_val);
     break;
+  default:
+    break;
   }
   widget_rep::notify (s, new_val);
 }

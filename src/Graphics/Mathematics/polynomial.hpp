@@ -33,7 +33,7 @@ class polynomial_rep: concrete_struct {
 public:
   inline polynomial_rep (T* a2, int n2): n(n2), a(a2) {
     while (n > 0 && a[n-1] == 0) n--; }
-  inline ~polynomial_rep () { delete[] a; }
+  inline ~polynomial_rep () { if (a != NULL) delete[] a; }
   friend class polynomial<T>;
   friend int N LESSGTR (polynomial<T> a);
   friend T* A LESSGTR (polynomial<T> a);
@@ -45,12 +45,11 @@ CONCRETE_TEMPLATE(polynomial,T);
   inline polynomial (T *a, int n):
     rep (new polynomial_rep<T> (a, n)) {}
   inline polynomial (T c, int n) {
-    T* a= new T[n];
+    T* a= (n == 0? NULL: new T[n]);
     for (int i=0; i<n; i++) a[i]= c;
     rep= new polynomial_rep<T> (a, n); }
   inline polynomial () {
-    T* a= new T[0];
-    rep= new polynomial_rep<T> (a, 0); }
+    rep= new polynomial_rep<T> (NULL, 0); }
   inline polynomial (T c1) {
     T* a= new T[1]; a[0]= c1;
     rep= new polynomial_rep<T> (a, 1); }

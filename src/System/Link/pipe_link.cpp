@@ -66,10 +66,10 @@ void
 execute_shell (string s) {
   char *_s= as_charp (s);
   char *argv[4];
-  argv[0] = "sh";
-  argv[1] = "-c";
+  argv[0] = const_cast<char*> ("sh");
+  argv[1] = const_cast<char*> ("-c");
   argv[2] = _s;
-  argv[3] = 0;
+  argv[3] = NULL;
   execve ("/bin/sh", argv, environ);
   delete[] _s;
 }
