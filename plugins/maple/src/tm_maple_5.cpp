@@ -76,12 +76,12 @@ public:
 };
 
 inline bool
-operator == (const string& s1, char* s2) {
+operator == (const string& s1, const char* s2) {
   return strcmp (s1.s, s2) == 0;
 }
 
 inline bool
-ends (const string& s1, char* s2) {
+ends (const string& s1, const char* s2) {
   int n= strlen (s2);
   return s1.n >= n && strcmp (s1.s + s1.n - n, s2) == 0;
 }

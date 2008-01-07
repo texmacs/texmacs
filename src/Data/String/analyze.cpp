@@ -873,7 +873,7 @@ starts (string s, const string what) {
 
 bool
 ends (string s, const char* what) {
-  string r ((char*) what);
+  string r (what);
   if (N(r) > N(s)) return false;
   return s (N(s)-N(r), N(s)) == r;
 }

@@ -35,8 +35,6 @@ class string {
   inline string (): rep (new string_rep()) {}
   inline string (int n): rep (new string_rep (n)) {}
   string (char c);
-  string (char *s);
-  string (char *s, int n);
   string (const char *s);
   string (const char *s, int n);
   inline char& operator [] (int i) { return rep->a[i]; }
