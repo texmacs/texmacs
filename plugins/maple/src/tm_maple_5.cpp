@@ -58,7 +58,7 @@ public:
   int   n; // length
   string (int reserve= 7):
     l (reserve+1), s (new char[l]), n (0) { s[0]='\0'; }
-  string (char *s2):
+  string (const char* s2):
     l (strlen(s2)+1), s (new char[l]), n (l-1) { strcpy (s, s2); }
   string (const string& s2):
     l (s2.n+1), s (new char[l]), n (l-1) { strcpy (s, s2.s); }
@@ -282,8 +282,8 @@ maple_interrupt (int sig) {
 volatile void
 invoke_maple () {
   charp argv[3];
-  argv[0] = "maple";
-  argv[1] = "-q";
+  argv[0] = const_cast<char*> ("maple");
+  argv[1] = const_cast<char*> ("-q");
   argv[2] = 0;
   char* maple_bin= getenv ("TEXMACS_MAPLE_BIN");
   execve (maple_bin, argv, environ);
