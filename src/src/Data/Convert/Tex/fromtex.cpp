@@ -69,7 +69,7 @@ filter_preamble (tree t) {
 #define t2e parsed_text_to_tree
 #define m2e latex_modifier_to_tree
 #define var_m2e var_latex_modifier_to_tree
-#define v2e latex_verbarg_to_tree
+#define v2e latex_verbarg_to_string
 tree l2e (tree);
 tree latex_command_to_tree (tree t);
 
@@ -378,19 +378,9 @@ var_m2e (tree t, string var, string val) {
 	       tree (RESET, copy (var)));
 }
 
-tree
-latex_verbarg_to_tree (tree t) {
-  t= l2e (t);
-  if (is_concat (t)) {
-    string s;
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (is_atomic (t[i])) s << t[i]->label;
-      else if (is_func (t[i], RSUB, 1) && is_atomic (t[i][0]))
-	s << "_" << t[i][0]->label;
-    return s;
-  }
-  else return "";
+string
+v2e (tree t) {
+  return string_arg (t2e (t, false));
 }
 
 static bool
@@ -640,12 +630,12 @@ latex_command_to_tree (tree t) {
   }
   if (is_tuple (t, "\\cite", 1) || is_tuple (t, "\\nocite", 1)) {
     string cite_type= t[0]->label (1, N(t[0]->label));
-    string s= string_arg (t2e(t[1]));
+    string s= v2e (t[1]);
     return latex_cite_to_tree (cite_type, s);
   }
   if (is_tuple (t, "\\cite*", 2)) {
     tree   ot= t2e(t[1])->label;
-    string s = string_arg (t2e(t[2]));
+    string s = v2e (t[2]);
     tree   ct= latex_cite_to_tree ("cite", s);
     if (N(ct) == 2) return compound ("cite-detail", ct[1], ot);
     return tree (CONCAT, ct, " (", ot, ")");
@@ -666,7 +656,7 @@ latex_command_to_tree (tree t) {
       if (cite_type == "citep") cite_type= "cite-parenthesized" * star;
       if (cite_type == "citealt") cite_type= "cite-raw" * star;
       if (cite_type == "citealp") cite_type= "cite-raw" * star;
-      string s= string_arg (t2e(t[1]));
+      string s= v2e (t[1]);
       return latex_cite_to_tree (cite_type, s);
     }
   if (is_tuple (t, "\\citetext", 1))
@@ -680,9 +670,9 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\bibitem", 1))
     return compound ("bibitem", v2e (t[1]));
   if (is_tuple (t, "\\bibitem*", 2))
-    return compound ("bibitem*", v2e (t[1]), t2e (t[2]));
+    return compound ("bibitem*", v2e (t[1]), v2e (t[2]));
   if (is_tuple (t, "\\index", 1)) {
-    string s= string_arg (t2e (t[1]));
+    string s= v2e (t[1]);
     return latex_index_to_tree (s);
   }
   if (is_tuple (t, "\\displaylines", 1)) {
@@ -697,7 +687,7 @@ latex_command_to_tree (tree t) {
     return r;
   }
   if (is_tuple (t, "\\includegraphics", 1)) {
-    tree name= latex_verbarg_to_tree (t[1]);
+    tree name= v2e (t[1]);
     if (name == "") return "";
     else {
       tree g (POSTSCRIPT, 7);
