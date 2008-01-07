@@ -293,7 +293,7 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit, SI* xpos) {
 * Output of tex_font_metric instances
 ******************************************************************************/
 
-static char* HOR_RULE= "---------------------------------------------------------------------------\n";
+static const char* HOR_RULE= "---------------------------------------------------------------------------\n";
 
 double
 fixed (int i) {

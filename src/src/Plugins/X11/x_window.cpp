@@ -112,7 +112,7 @@ x_window_rep::initialize () {
 
   // cout << "Hints: " << min_w << ", " << min_h << " --- "
   // << max_w << ", " << max_h << "\n";
-  if (name == NULL) name= "popup";
+  if (name == NULL) name= const_cast<char*> ("popup");
   if (the_name == "") the_name= name;
   set_hints (min_w, min_h, max_w, max_h);
 

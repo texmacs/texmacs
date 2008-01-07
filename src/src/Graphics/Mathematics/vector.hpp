@@ -33,7 +33,7 @@ class vector_rep: concrete_struct {
   T* a;
 public:
   inline vector_rep (T* a2, int n2): n(n2), a(a2) {}
-  inline ~vector_rep () { delete[] a; }
+  inline ~vector_rep () { if (a != NULL) delete[] a; }
   friend class vector<T>;
   friend int N LESSGTR (vector<T> a);
   friend T* A LESSGTR (vector<T> a);
@@ -45,12 +45,11 @@ CONCRETE_TEMPLATE(vector,T);
   inline vector (T *a, int n):
     rep (new vector_rep<T> (a, n)) {}
   inline vector (T c, int n) {
-    T* a= new T[n];
+    T* a= (n == 0? (T*) NULL: new T[n]);
     for (int i=0; i<n; i++) a[i]= c;
     rep= new vector_rep<T> (a, n); }
   inline vector () {
-    T* a= new T[0];
-    rep= new vector_rep<T> (a, 0); }
+    rep= new vector_rep<T> (NULL, 0); }
   inline vector (T c1) {
     T* a= new T[1]; a[0]= c1;
     rep= new vector_rep<T> (a, 1); }

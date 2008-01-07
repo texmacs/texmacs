@@ -1188,32 +1188,33 @@ scm_to_collection (SCM p) {
 
 void
 initialize_glue () {
-  tree_tag= scm_make_smob_type ("tree", 0);
+  tree_tag= scm_make_smob_type (const_cast<char*> ("tree"), 0);
   scm_set_smob_mark (tree_tag, mark_tree);
   scm_set_smob_free (tree_tag, free_tree);
   scm_set_smob_print (tree_tag, print_tree);
   scm_set_smob_equalp (tree_tag, cmp_tree);
-  observer_tag= scm_make_smob_type ("observer", 0);
+  observer_tag= scm_make_smob_type (const_cast<char*> ("observer"), 0);
   scm_set_smob_mark (observer_tag, mark_observer);
   scm_set_smob_free (observer_tag, free_observer);
   scm_set_smob_print (observer_tag, print_observer);
   scm_set_smob_equalp (observer_tag, cmp_observer);
-  widget_tag= scm_make_smob_type ("widget", 0);
+  widget_tag= scm_make_smob_type (const_cast<char*> ("widget"), 0);
   scm_set_smob_mark (widget_tag, mark_widget);
   scm_set_smob_free (widget_tag, free_widget);
   scm_set_smob_print (widget_tag, print_widget);
   scm_set_smob_equalp (widget_tag, cmp_widget);
-  promise_widget_tag= scm_make_smob_type ("promise-widget", 0);
+  promise_widget_tag=
+    scm_make_smob_type (const_cast<char*> ("promise-widget"), 0);
   scm_set_smob_mark (promise_widget_tag, mark_promise_widget);
   scm_set_smob_free (promise_widget_tag, free_promise_widget);
   scm_set_smob_print (promise_widget_tag, print_promise_widget);
   scm_set_smob_equalp (promise_widget_tag, cmp_promise_widget);
-  command_tag= scm_make_smob_type ("command", 0);
+  command_tag= scm_make_smob_type (const_cast<char*> ("command"), 0);
   scm_set_smob_mark (command_tag, mark_command);
   scm_set_smob_free (command_tag, free_command);
   scm_set_smob_print (command_tag, print_command);
   scm_set_smob_equalp (command_tag, cmp_command);
-  url_tag= scm_make_smob_type ("url", 0);
+  url_tag= scm_make_smob_type (const_cast<char*> ("url"), 0);
   scm_set_smob_mark (url_tag, mark_url);
   scm_set_smob_free (url_tag, free_url);
   scm_set_smob_print (url_tag, print_url);

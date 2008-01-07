@@ -124,7 +124,9 @@ x_gui_rep::get_button_mask (XButtonEvent* ev) {
 * Process events
 ******************************************************************************/
 
-char* event_name[]= {
+typedef const char* charp;
+
+charp event_name[]= {
   "?",
   "?",
   "Key press",

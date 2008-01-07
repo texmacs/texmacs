@@ -54,14 +54,14 @@ string::string (char c) {
   rep->a[0]=c;
 }
 
-string::string (char *a) {
+string::string (const char* a) {
   register int i, n=strlen(a);
   rep= new string_rep(n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
 }
 
-string::string (char* a, int n) {
+string::string (const char* a, int n) {
   register int i;
   rep= new string_rep(n);
   for (i=0; i<n; i++)
@@ -73,7 +73,7 @@ string::string (char* a, int n) {
 ******************************************************************************/
 
 bool
-string::operator == (char* s) {
+string::operator == (const char* s) {
   register int i, n= rep->n;
   register char* S= rep->a;
   for (i=0; i<n; i++) {
@@ -84,7 +84,7 @@ string::operator == (char* s) {
 }
 
 bool
-string::operator != (char* s) {
+string::operator != (const char* s) {
   register int i, n= rep->n;
   register char* S= rep->a;
   for (i=0; i<n; i++) {
@@ -153,12 +153,12 @@ operator * (string a, string b) {
 }
 
 string
-operator * (char* a, string b) {
+operator * (const char* a, string b) {
   return string (a) * b;
 }
 
 string
-operator * (string a, char* b) {
+operator * (string a, const char* b) {
   return a * string (b);
 }
 
@@ -262,7 +262,7 @@ as_string (double x) {
 }
 
 string
-as_string (char* s) {
+as_string (const char* s) {
   return string (s);
 }
 

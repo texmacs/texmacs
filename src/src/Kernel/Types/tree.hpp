@@ -35,7 +35,7 @@ public:
 
   inline tree ();
   inline tree (string l);
-  inline tree (char* l);
+  inline tree (const char* l);
   inline tree (tree_label l, int n=0);
   inline tree (tree_label l, array<tree> a);
   inline tree (tree t, int n);
@@ -60,8 +60,8 @@ public:
   friend inline bool operator != (tree t, tree_label lab);
   friend inline bool operator == (tree t, string s);
   friend inline bool operator != (tree t, string s);
-  friend inline bool operator == (tree t, char* s);
-  friend inline bool operator != (tree t, char* s);
+  friend inline bool operator == (tree t, const char* s);
+  friend inline bool operator != (tree t, const char* s);
   friend inline bool strong_equal (tree t, tree u);
   friend inline bool is_func (tree t, tree_label l);
   friend inline bool is_func (tree t, tree_label l, int i);
@@ -144,7 +144,7 @@ inline tree& tree::operator = (tree x) {
 
 inline tree::tree ():
   rep (new atomic_rep (string ())) {}
-inline tree::tree (char *s):
+inline tree::tree (const char *s):
   rep (new atomic_rep (s)) {}
 inline tree::tree (string s):
   rep (new atomic_rep (s)) {}
@@ -190,9 +190,9 @@ inline bool operator == (tree t, string s) {
   return (t.rep->op == STRING) && (t->label == s); }
 inline bool operator != (tree t, string s) {
   return (t.rep->op != STRING) || (t->label != s); }
-inline bool operator == (tree t, char* s) {
+inline bool operator == (tree t, const char* s) {
   return (t.rep->op == STRING) && (t->label == s); }
-inline bool operator != (tree t, char* s) {
+inline bool operator != (tree t, const char* s) {
   return (t.rep->op != STRING) || (t->label != s); }
 inline bool strong_equal (tree t, tree u) {
   return t.rep == u. rep; }
@@ -287,11 +287,11 @@ inline bool is_tuple (tree t) {
   return (L(t) == TUPLE); }
 inline bool is_tuple (tree t, string s) {
   return (L(t) == TUPLE) && (N(t) >= 1) && (t[0] == s); }
-inline bool is_tuple (tree t, char* s) {
+inline bool is_tuple (tree t, const char* s) {
   return (L(t) == TUPLE) && (N(t) >= 1) && (t[0] == s); }
 inline bool is_tuple (tree t, string s, int n) {
   return (L(t) == TUPLE) && (N(t) == (n+1)) && (t[0] == s); }
-inline bool is_tuple (tree t, char* s, int n) {
+inline bool is_tuple (tree t, const char* s, int n) {
   return (L(t) == TUPLE) && (N(t) == (n+1)) && (t[0] == s); }
 
 /******************************************************************************

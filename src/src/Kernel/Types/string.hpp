@@ -37,9 +37,11 @@ class string {
   string (char c);
   string (char *s);
   string (char *s, int n);
+  string (const char *s);
+  string (const char *s, int n);
   inline char& operator [] (int i) { return rep->a[i]; }
-  bool operator == (char* s);
-  bool operator != (char* s);
+  bool operator == (const char* s);
+  bool operator != (const char* s);
   bool operator == (string s);
   bool operator != (string s);
   string operator () (int start, int end);
@@ -51,9 +53,9 @@ string   copy (string a);
 ostream& operator << (ostream& out, string a);
 string&  operator << (string& a, char);
 string&  operator << (string& a, string b);
-string   operator * (char* a, string b);
+string   operator * (const char* a, string b);
 string   operator * (string a, string b);
-string   operator * (string a, char* b);
+string   operator * (string a, const char* b);
 bool     operator <= (string a, string b);
 int      hash (string s);
 
@@ -64,7 +66,7 @@ char*  as_charp  (string s);
 string as_string_bool (bool f);
 string as_string (int i);
 string as_string (double x);
-string as_string (char* s);
+string as_string (const char* s);
 bool   is_bool   (string s);
 bool   is_int    (string s);
 bool   is_double (string s);

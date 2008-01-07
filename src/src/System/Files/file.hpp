@@ -38,9 +38,9 @@ inline void system (string which, url u1) {
   system (which * " " * sys_concretize (u1)); }
 inline void system (string which, url u1, url u2) {
   system (which * " " * sys_concretize (u1) * " " * sys_concretize (u2)); }
-inline void system (string which, url u1, char* post) {
+inline void system (string which, url u1, const char* post) {
   system (which * " " * sys_concretize (u1) * " " * post); }
-inline void system (string which, url u1, char* sep, url u2) {
+inline void system (string which, url u1, const char* sep, url u2) {
   system (which * " " * sys_concretize (u1) * " " * sep *
 	          " " * sys_concretize (u2)); }
 inline string eval_system (string which, url u1) {
