@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.1>
+<TeXmacs|1.0.6.12>
 
 <style|tmweb>
 
@@ -21,8 +21,10 @@
     \ \ \ \ which guile-config
   </code>
 
-  If one of these commands yields an error message, then <hyper-link|click
-  here|requirements.en.tm>.
+  If one of these commands yields an error message, then <hlink|click
+  here|requirements.en.tm>. On some systems, you also need to make sure that
+  you installed the development packages (<abbr|i.e.> X11-dev or X11-devel)
+  for <name|Xlib>.
 
   <section|Download and unpack the source code>
 
@@ -104,16 +106,16 @@
 
   <section|Be cool...>
 
-  Please <hyper-link|let us know|../contact/contact.en.tm> if you like or
-  dislike the program. It is very useful for us to have a rough idea about
-  the number of permanent users and for what applications you are interested
-  in <TeXmacs>. Furthermore, we are glad to receive your suggestions and
+  Please <hlink|let us know|../contact/contact.en.tm> if you like or dislike
+  the program. It is very useful for us to have a rough idea about the number
+  of permanent users and for what applications you are interested in
+  <TeXmacs>. Furthermore, we are glad to receive your suggestions and
   problems, no matter how silly they may seem to you. You may also
-  <hyper-link|subscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
+  <hlink|subscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
   <verbatim|texmacs-info> mailing lists. If you really like the program, then
-  please consider <hyper-link|donating|../contribute/donations.en.tm> money
-  or services to us. Of course, you may also
-  <hyper-link|contribute|../contribute/contribute.en.tm> yourself.
+  please consider <hlink|donating|../contribute/donations.en.tm> money or
+  services to us. Of course, you may also
+  <hlink|contribute|../contribute/contribute.en.tm> yourself.
 
   <appendix|Configuration options>
 
@@ -189,7 +191,7 @@
     in configure.in.
 
     <item>If you encounter other problems, or if our fixes don't work, then
-    please <hyper-link|contact us|../contact/contact.en.tm>.
+    please <hlink|contact us|../contact/contact.en.tm>.
   </itemize>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
