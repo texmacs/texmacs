@@ -13,7 +13,7 @@
 #ifndef TM_WINDOW_H
 #define TM_WINDOW_H
 #include "tm_buffer.hpp"
-#include "window.hpp"
+//#include "window.hpp"
 
 class tm_window_rep {
 public:

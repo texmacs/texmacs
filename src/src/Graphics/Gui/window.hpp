@@ -59,6 +59,10 @@ public:
     // Set the shape of the mouse pointer with a mask ("" means no mask)
   virtual void delayed_message (widget wid, string message, time_t delay) = 0;
     // Send message to wid for reception after delay (used for scrolling)
+  inline virtual void begin_draw () {};
+    // Use window as renderer outside dedicated repaint method
+  inline virtual void end_draw () {};
+    // Stop using window as renderer outside dedicated repaint method
 };
 
 window plain_window (widget w, string name, SI min_w, SI min_h,

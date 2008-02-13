@@ -47,9 +47,11 @@ scrollable_widget_rep::scroll_event_hor (SI& x, SI& bef, SI& af) {
     win->set_origin (ox, oy);
     int dx= max (-w, min (w, x- scx));
     if ((dx>-w) && (dx<w) && (dx!=0)) {
+      win->begin_draw ();
       win->clip (0, -h, w, 0);
       win->translate (0, -h, w, 0, -dx, 0);
       win->unclip ();
+      win->end_draw ();
     }
     if (dx>0) this << emit_invalidate (w- dx, -h, w, 0);
     if (dx<0) this << emit_invalidate (0, -h, -dx, 0);
@@ -71,11 +73,13 @@ scrollable_widget_rep::scroll_event_ver (SI& y, SI& bef, SI& af) {
     win->set_origin (ox, oy);
     int dy= max (-h, min (h, y- scy));
     if ((dy>-h) && (dy<h) && (dy!=0)) {
+      win->begin_draw ();
       win->clip (0, -h, w, 0);
       win->translate (0, -h, w, 0, 0, -dy);
       if (dy>0) a[0] << emit_clear (0, -dy, w, 0);
       else a[0] << emit_clear (0, -h, w, -h-dy);
       win->unclip ();
+      win->end_draw ();
     }
     if (dy>0) this << emit_invalidate (0, -dy, w, 0);
     if (dy<0) this << emit_invalidate (0, -h, w, -h-dy);

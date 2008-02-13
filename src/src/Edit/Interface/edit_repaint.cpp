@@ -304,9 +304,12 @@ edit_interface_rep::handle_clear (SI x1, SI y1, SI x2, SI y2) {
 
 void
 edit_interface_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
-  if (env_change != 0)
+  if (env_change != 0) {
     system_warning ("Invalid situation (" * as_string (env_change) * ")",
 		    "(edit_interface_rep::handle_repaint)");
+    return;
+  }
+
   /*
   // In the past, we used the code below in order to hide the trace of
   // a moving cursor. This code is now incorrect, because the rectangle

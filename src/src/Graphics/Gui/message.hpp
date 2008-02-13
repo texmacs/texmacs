@@ -75,17 +75,17 @@ typedef enum slot_id {
 
 class slot {
 public:
-  slot_id id;
-  inline slot (slot_id id2): id (id2) {}
-  inline slot (const slot& s): id (s.id) {}
-  inline slot& operator = (slot s) { id= s.id; return *this; }
-  inline operator slot_id () { return id; }
-  inline bool operator == (slot_id id2) { return id == id2; }
-  inline bool operator != (slot_id id2) { return id != id2; }
-  inline bool operator == (slot s) { return id == s.id; }
-  inline bool operator != (slot s) { return id != s.id; }
+  slot_id sid;
+  inline slot (slot_id sid2): sid (sid2) {}
+  inline slot (const slot& s): sid (s.sid) {}
+  inline slot& operator = (slot s) { sid= s.sid; return *this; }
+  inline operator slot_id () { return sid; }
+  inline bool operator == (slot_id sid2) { return sid == sid2; }
+  inline bool operator != (slot_id sid2) { return sid != sid2; }
+  inline bool operator == (slot s) { return sid == s.sid; }
+  inline bool operator != (slot s) { return sid != s.sid; }
   inline friend ostream& operator << (ostream& out, slot s) {
-    return out << s.id; }
+    return out << s.sid; }
 };
 
 //extern bool* slot_state_table;
