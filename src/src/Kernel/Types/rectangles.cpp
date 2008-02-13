@@ -103,7 +103,7 @@ complement (rectangle r1, rectangle r2, rectangles& l) {
 
 void
 complement (rectangles l1, rectangle r2, rectangles& l) {
-  for (; !nil (l1); l1= l1->next)
+  for (; !is_nil (l1); l1= l1->next)
     complement (l1->item, r2, l);
 }
 
@@ -131,7 +131,7 @@ operator / (rectangle r, int d) {
 rectangles
 operator - (rectangles l1, rectangles l2) {
   rectangles a=l1;
-  for (; !nil (l2); l2= l2->next) {
+  for (; !is_nil (l2); l2= l2->next) {
     rectangles b;
     complement (a, l2->item, b);
     a=b;
@@ -142,8 +142,8 @@ operator - (rectangles l1, rectangles l2) {
 rectangles
 operator & (rectangles l1, rectangles l2) {
   rectangles l, lc1, lc2;
-  for (lc1= l1; !nil (lc1); lc1= lc1->next)
-    for (lc2= l2; !nil (lc2); lc2= lc2->next)
+  for (lc1= l1; !is_nil (lc1); lc1= lc1->next)
+    for (lc2= l2; !is_nil (lc2); lc2= lc2->next)
       intersection (lc1->item, lc2->item, l);
   return l;
 }
@@ -159,7 +159,7 @@ adjacent (rectangle r1, rectangle r2) {
 
 rectangles
 disjoint_union (rectangles l, rectangle r) {
-  if (nil (l)) return r;
+  if (is_nil (l)) return r;
   if (adjacent (l->item, r))
     return disjoint_union (l->next,
 			   least_upper_bound (rectangles (l->item, r)));
@@ -169,7 +169,7 @@ disjoint_union (rectangles l, rectangle r) {
 rectangles
 operator | (rectangles l1, rectangles l2) {
   rectangles l (l1-l2);
-  while (!nil (l2)) {
+  while (!is_nil (l2)) {
     l = disjoint_union (l, l2->item);
     l2= l2->next;
   }
@@ -178,7 +178,7 @@ operator | (rectangles l1, rectangles l2) {
 
 rectangles
 translate (rectangles l, SI x, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1+ x, r->y1+ y, r->x2+ x, r->y2+ y),
 		     translate (l->next, x, y));
@@ -186,7 +186,7 @@ translate (rectangles l, SI x, SI y) {
 
 rectangles
 thicken (rectangles l, SI width, SI height) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1- width, r->y1- height,
 				r->x2+ width, r->y2+ height),
@@ -201,19 +201,19 @@ outline (rectangles rs, SI pixel) {
 
 rectangles
 operator * (rectangles l, int d) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   return rectangles (l->item*d, l->next*d);
 }
 
 rectangles
 operator / (rectangles l, int d) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   return rectangles (l->item/d, l->next/d);
 }
 
 rectangles
 correct (rectangles l) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   if ((l->item->x1 >= l->item->x2) || (l->item->y1 >= l->item->y2))
     return correct (l->next);
   return rectangles (l->item, correct (l->next));
@@ -221,15 +221,15 @@ correct (rectangles l) {
 
 rectangles
 simplify (rectangles l) {
-  if (nil (l) || atom (l)) return l;
+  if (is_nil (l) || is_atom (l)) return l;
   return simplify (l->next) | rectangles (l->item);
 }
 
 rectangle
 least_upper_bound (rectangles l) {
-  if (nil (l)) fatal_error ("no rectangles in list", "least_upper_bound");
+  if (is_nil (l)) fatal_error ("no rectangles in list", "least_upper_bound");
   rectangle r1= copy (l->item);
-  while (!nil (l->next)) {
+  while (!is_nil (l->next)) {
     l= l->next;
     rectangle r2= l->item;
     r1->x1= min (r1->x1, r2->x1);
@@ -243,7 +243,7 @@ least_upper_bound (rectangles l) {
 double
 area (rectangles r) {
   double sum= 0.0;
-  while (!nil (r)) {
+  while (!is_nil (r)) {
     sum += area (r->item);
     r= r->next;
   }

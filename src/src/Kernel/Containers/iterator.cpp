@@ -64,7 +64,7 @@ hashset_iterator_rep<T>::hashset_iterator_rep (hashset<T> h2):
 template<class T> void
 hashset_iterator_rep<T>::spool () {
   if (i >= h->n) return;
-  while (nil (l)) {
+  while (is_nil (l)) {
     if ((++i) >= h->n) return;
     l= h->a[i];
   }
@@ -112,7 +112,7 @@ hashmap_iterator_rep<T,U>::hashmap_iterator_rep (hashmap<T,U> h2):
 template<class T, class U> void
 hashmap_iterator_rep<T,U>::spool () {
   if (i >= h->n) return;
-  while (nil (l)) {
+  while (is_nil (l)) {
     if ((++i) >= h->n) return;
     l= h->a[i];
   }

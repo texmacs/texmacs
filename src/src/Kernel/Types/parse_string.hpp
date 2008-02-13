@@ -43,7 +43,7 @@ class parse_string {
   inline parse_string (): rep (new parse_string_rep ()) {}
   inline parse_string (string s): rep (new parse_string_rep (s)) {}
   inline char operator [] (int i) { return rep->get_char (i); }
-  inline operator bool () { return !nil (rep->l); }
+  inline operator bool () { return !is_nil (rep->l); }
   inline void operator += (int i) { rep->advance (i); }
 };
 CONCRETE_CODE(parse_string);

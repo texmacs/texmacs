@@ -22,7 +22,7 @@
 template <class T, class U> U
 rel_hashmap<T,U>::operator [] (T x) {
   if (rep==NULL) fatal_error ("invalid relative hashmap");
-  if (rep->item->contains (x) || nil (rep->next)) return rep->item [x];
+  if (rep->item->contains (x) || is_nil (rep->next)) return rep->item [x];
   return rep->next [x];
 }
 
@@ -30,7 +30,7 @@ template <class T, class U> U&
 rel_hashmap<T,U>::operator () (T x) {
   if (rep==NULL) fatal_error ("invalid relative hashmap");
   if (rep->item->contains (x)) return rep->item (x);
-  if ((!nil (rep->next)) && rep->next->contains (x))
+  if ((!is_nil (rep->next)) && rep->next->contains (x))
     rep->item(x)= copy (rep->next[x]);
   return rep->item (x);
 }
@@ -38,7 +38,7 @@ rel_hashmap<T,U>::operator () (T x) {
 template <class T, class U> bool
 rel_hashmap_rep<T,U>::contains (T x) {
   if (item->contains (x)) return true;
-  if (nil (next)) return false;
+  if (is_nil (next)) return false;
   return next->contains (x);
 }
 
@@ -50,7 +50,7 @@ rel_hashmap_rep<T,U>::extend () {
 
 template <class T, class U> void
 rel_hashmap_rep<T,U>::shorten () {
-  if (nil (next))
+  if (is_nil (next))
     fatal_error ("relative hashmap cannot be shortened",
 		 "rel_hashmap_rep<T,U>::shorten");
   item= next->item;
@@ -59,7 +59,7 @@ rel_hashmap_rep<T,U>::shorten () {
 
 template <class T, class U> void
 rel_hashmap_rep<T,U>::merge () {
-  if (nil (next))
+  if (is_nil (next))
     fatal_error ("relative hashmap cannot be merged",
 		 "rel_hashmap_rep<T,U>::merge");
   next->change (item);
@@ -73,13 +73,13 @@ rel_hashmap_rep<T,U>::find_changes (hashmap<T,U>& CH) {
   list<hashentry<T,U> > remove;
   for (i=0; i<CH->n; i++) {
     list<hashentry<T,U> > l (CH->a[i]);
-    while (!nil (l)) {
+    while (!is_nil (l)) {
       if (h [l->item.key] == l->item.im)
 	remove= list<hashentry<T,U> > (l->item, remove);
       l=l->next;
     }
   }
-  while (!nil (remove)) {
+  while (!is_nil (remove)) {
     CH->reset (remove->item.key);
     remove= remove->next;
   }
@@ -91,13 +91,13 @@ rel_hashmap_rep<T,U>::find_differences (hashmap<T,U>& CH) {
   list<hashentry<T,U> > add;
   for (i=0; i<item->n; i++) {
     list<hashentry<T,U> > l (item->a[i]);
-    while (!nil (l)) {
+    while (!is_nil (l)) {
       if (!CH->contains (l->item.key))
 	add= list<hashentry<T,U> > (l->item, add);
       l=l->next;
     }
   }
-  while (!nil (add)) {
+  while (!is_nil (add)) {
     CH (add->item.key)= next [add->item.key];
     add= add->next;
   }
@@ -109,7 +109,7 @@ rel_hashmap_rep<T,U>::change (hashmap<T,U> CH) {
   int i;
   for (i=0; i<CH->n; i++) {
     list<hashentry<T,U> > l (CH->a[i]);
-    while (!nil (l)) {
+    while (!is_nil (l)) {
       item (l->item.key)= l->item.im;
       l=l->next;
     }
@@ -118,9 +118,9 @@ rel_hashmap_rep<T,U>::change (hashmap<T,U> CH) {
 
 template <class T, class U> ostream&
 operator << (ostream& out, rel_hashmap<T,U> H) {
-  if (nil (H)) out << "(null)";
+  if (is_nil (H)) out << "(null)";
   else {
-    while (!nil (H->next)) {
+    while (!is_nil (H->next)) {
       out << H->item << LF;
       out << HRULE << LF;
       H= H->next;

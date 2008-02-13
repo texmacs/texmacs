@@ -368,7 +368,7 @@ x_gui_rep::event_loop () {
     if (nr_windows == 0) continue;
 
     // Popup help balloons
-    if (!nil (balloon_wid))
+    if (!is_nil (balloon_wid))
       if (texmacs_time () - balloon_time >= 666)
 	if (balloon_win == NULL)
 	  map_balloon ();
@@ -390,9 +390,9 @@ x_gui_rep::event_loop () {
     }
 
     // Handle alarm messages
-    if (!nil (messages)) {
+    if (!is_nil (messages)) {
       list<message> not_ready;
-      while (!nil (messages)) {
+      while (!is_nil (messages)) {
 	time_t ct= texmacs_time ();
 	message m= messages->item;
 	if ((m->t - ct) <= 0) send_delayed_message (m->wid, m->s, m->t);

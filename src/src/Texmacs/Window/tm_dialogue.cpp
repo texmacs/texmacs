@@ -65,7 +65,7 @@ dialogue_command (server_rep* sv, object fun, int nr_args) {
 
 void
 tm_frame_rep::dialogue_start (string name, widget wid) {
-  if (nil (dialogue_win)) {
+  if (is_nil (dialogue_win)) {
     string lan= get_output_language ();
     if (lan == "russian") lan= "english";
     name= translate (name, "english", lan);
@@ -95,7 +95,7 @@ tm_frame_rep::dialogue_inquire (int i, string& arg) {
 
 void
 tm_frame_rep::dialogue_end () {
-  if (!nil (dialogue_win)) {
+  if (!is_nil (dialogue_win)) {
     set_visibility (dialogue_win, false);
     destroy_window_widget (dialogue_win);
     dialogue_win= widget ();

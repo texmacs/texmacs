@@ -59,7 +59,7 @@ template<> hashmap<string,pointer> resource_ptr<PTR##_rep>::instances (NULL);
 #endif
 
 template<class R>
-inline bool nil (const resource_ptr<R>& res) { return res.rep == NULL; }
+inline bool is_nil (const resource_ptr<R>& res) { return res.rep == NULL; }
 
 template<class R>
 ostream& operator << (ostream& out, const resource_ptr<R>& t);

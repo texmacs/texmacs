@@ -37,7 +37,7 @@ void
 edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
     rectangles rs= env_rects;
-    while (!nil (rs)) {
+    while (!is_nil (rs)) {
       ren->set_color (rgb_color (0, 255, 255));
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
@@ -112,9 +112,9 @@ edit_interface_rep::draw_context (renderer ren, rectangle r) {
 
 void
 edit_interface_rep::draw_selection (renderer ren) {
-  if (!nil (locus_rects)) {
+  if (!is_nil (locus_rects)) {
     rectangles rs= locus_rects;
-    while (!nil (rs)) {
+    while (!is_nil (rs)) {
       ren->set_color (rgb_color (32, 160, 96));
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
@@ -122,7 +122,7 @@ edit_interface_rep::draw_selection (renderer ren) {
   }
   if (made_selection) {
     rectangles rs= selection_rects;
-    while (!nil (rs)) {
+    while (!is_nil (rs)) {
       ren->set_color (table_selection? rgb_color (192, 0, 255): red);
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
@@ -178,7 +178,7 @@ edit_interface_rep::draw_pre (renderer ren, rectangle r) {
   renderer win= get_renderer (this);
   draw_cursor (ren);
   rectangles l= copy_always;
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     rectangle lr (l->item);
     win->put_shadow (ren, lr->x1, lr->y1, lr->x2, lr->y2);
     l= l->next;
@@ -220,14 +220,14 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
     l= l & rectangles (translate (r, ren->ox, ren->oy));
     simplify (l);
     copy_always= translate (copy_always, ren->ox, ren->oy);
-    while (!nil (copy_always)) {
+    while (!is_nil (copy_always)) {
       l= rectangles (copy_always->item, l);
       copy_always= copy_always->next;
     }
     ren->set_shrinking_factor (1);
 
     draw_post (ren, r);
-    while (!nil(l)) {
+    while (!is_nil(l)) {
       SI x1= (l->item->x1)/sfactor - ren->ox - PIXEL;
       SI y1= (l->item->y1)/sfactor - ren->oy - PIXEL;
       SI x2= (l->item->x2)/sfactor - ren->ox + PIXEL;
@@ -245,7 +245,7 @@ edit_interface_rep::draw_with_stored (rectangle r) {
   //cout << "Redraw " << (r/(sfactor*PIXEL)) << "\n";
 
   /* Verify whether the backing store is still valid */
-  if (!nil (stored_rects)) {
+  if (!is_nil (stored_rects)) {
     SI w1, h1, w2, h2;
     win   -> get_extents (w1, h1);
     stored -> get_extents (w2, h2);
@@ -258,7 +258,7 @@ edit_interface_rep::draw_with_stored (rectangle r) {
 
   /* Either draw with backing store or regenerate */
   rectangle sr= r / sfactor;
-  if (nil (rectangles (r) - stored_rects) && !nil (stored_rects)) {
+  if (is_nil (rectangles (r) - stored_rects) && !is_nil (stored_rects)) {
     // cout << "*"; cout.flush ();
     win->new_shadow (shadow);
     win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);

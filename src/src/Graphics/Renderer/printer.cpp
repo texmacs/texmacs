@@ -511,7 +511,7 @@ printer_rep::set_background (color c) {
 void
 printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   glyph gl= fn->get(ch);
-  if (nil (gl)) return;
+  if (is_nil (gl)) return;
   string name= fn->res_name;
   unsigned char c= ch;
   if (ch >= 256) {

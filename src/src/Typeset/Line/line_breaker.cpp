@@ -173,7 +173,7 @@ line_breaker_rep::next_ragged_break (path pos) {
   if (pos == path (start)) cur_spc= first_spc+ cur_item->b->w();
   else {
     path p= pos;
-    while (!atom (p)) {
+    while (!is_atom (p)) {
       line_item item1, item2;
       p= p->next;
       hyphenate (cur_item, p->item, item1, item2);
@@ -310,7 +310,7 @@ line_breaker_rep::break_string (line_item item, path pos, int i, space spc) {
   string item_s= item->b->get_leaf_string ();
   array<int> hp= item->lan->get_hyphens (item_s);
 
-  if ((item->b->w() > line_width) || (!atom (pos))) {
+  if ((item->b->w() > line_width) || (!is_atom (pos))) {
     j= get_position (item->b->get_leaf_font (), item_s, line_width- spc->def);
     for (j= min (j+2, N(hp)-1); j>=0; j--)
       if (hp[j] < HYPH_INVALID) {
@@ -346,7 +346,7 @@ line_breaker_rep::process (path pos) {
   if (pos == path (start)) spc= space (first_spc+ first->b->w());
   else {
     path p= pos;
-    while (!atom (p)) {
+    while (!is_atom (p)) {
       line_item item1, item2;
       p= p->next;
       hyphenate (first, p->item, item1, item2);
@@ -397,7 +397,7 @@ line_breaker_rep::process (path pos) {
 
 void
 line_breaker_rep::get_breaks (array<path>& ap, path p) {
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   lb_info cur= best[p];
   get_breaks (ap, cur->prev);
   ap << p;
@@ -421,7 +421,7 @@ line_breaker_rep::compute_breaks () {
   get_breaks (ap, path (end));
 
   // Finish with fix for disallowing last lines with only empty boxes
-  if (N(ap) <= 2 || !atom (ap[N(ap)-2])) return ap;
+  if (N(ap) <= 2 || !is_atom (ap[N(ap)-2])) return ap;
   for (i= ap[N(ap)-2]->item; i<end; i++)
     if (a[i]->b->w() + a[i]->spc->def != 0)
       return ap;

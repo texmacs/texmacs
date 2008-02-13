@@ -250,7 +250,7 @@ destroy_window_widget (widget w) {
 
 void
 check_type_void (blackbox bb, string s) {
-  if (!nil (bb)) {
+  if (!is_nil (bb)) {
     cerr << "\nslot type= " << s << "\n";
     fatal_error ("type mismatch", "check_type");
   }
@@ -387,7 +387,7 @@ send_size (wk_widget w, blackbox val) {
 
 void
 send_update (wk_widget w, blackbox val) {
-  if (!nil (val))
+  if (!is_nil (val))
     fatal_error ("type mismatch", "send_update");
   w << emit_update ();
 }
@@ -446,7 +446,7 @@ send_invalidate (wk_widget w, blackbox val) {
 
 void
 send_invalidate_all (wk_widget w, blackbox val) {
-  if (!nil (val))
+  if (!is_nil (val))
     fatal_error ("type mismatch", "send_invalidate_all");
   w << emit_invalidate_all ();
 }
@@ -473,7 +473,7 @@ send_delayed_message (wk_widget w, blackbox val) {
 
 void
 send_destroy (wk_widget w, blackbox val) {
-  if (!nil (val))
+  if (!is_nil (val))
     fatal_error ("type mismatch", "send_destroy");
   w << emit_destroy ();
 }

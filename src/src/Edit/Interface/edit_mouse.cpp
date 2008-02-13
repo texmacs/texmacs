@@ -34,7 +34,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     set_pointer ("XC_top_left_arrow");
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
-  if (!nil (popup_win) && (type != "leave")) {
+  if (!is_nil (popup_win) && (type != "leave")) {
     set_visibility (popup_win, false);
     destroy_window_widget (popup_win);
     popup_win= widget ();
@@ -160,7 +160,7 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 void
 edit_interface_rep::mouse_select (SI x, SI y, int mods) {
   if (eb->action ("select" , x, y, 0) != "") return;
-  if (!nil (active_ids) && (mods & 256) == 0) {
+  if (!is_nil (active_ids) && (mods & 256) == 0) {
     call ("link-follow-ids", object (active_ids));
     return;
   }
@@ -196,7 +196,7 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
   if (eb->action ("adjust", x, y, 0) != "") return;
   x /= sfactor; y /= sfactor;
   abs_round (x, y);
-  if (nil (popup_win)) {
+  if (is_nil (popup_win)) {
     SI wx, wy;
     ::get_position (get_window (this), wx, wy);
     widget wid;
@@ -217,7 +217,7 @@ edit_interface_rep::mouse_scroll (SI x, SI y, bool up) {
   SI dy= 100*PIXEL;
   if (!up) dy= -dy;
   path sp= find_innermost_scroll (eb, tp);
-  if (nil (sp)) {
+  if (is_nil (sp)) {
     SERVER (scroll_where (x, y));
     y += dy;
     SERVER (scroll_to (x, y));
@@ -254,7 +254,7 @@ cursor
 edit_interface_rep::get_cursor () {
   if (inside_graphics ()) {
     frame f= find_frame ();
-    if (!nil (f)) {
+    if (!is_nil (f)) {
       point p= f [point (last_x, last_y)];
       p= f (adjust (p));
       SI x= (SI) p[0];
@@ -298,9 +298,9 @@ edit_interface_rep::update_active_loci () {
 
   locus_new_rects= rectangles ();
   active_ids= list<string> ();
-  if (!nil (ids1 * ids2) && !has_changed (THE_FOCUS)) {
+  if (!is_nil (ids1 * ids2) && !has_changed (THE_FOCUS)) {
     list<tree> l= as_list_tree (call ("link-active-upwards", object (mt)));
-    while (!nil (l)) {
+    while (!is_nil (l)) {
       tree lt= l->item;
       path lp= reverse (obtain_ip (lt));
       selection sel= eb->find_check_selection (lp * start(lt), lp * end(lt));
@@ -309,7 +309,7 @@ edit_interface_rep::update_active_loci () {
     }
     ids1= as_list_string (call ("link-active-ids", object (ids1)));
     ids2= as_list_string (call ("link-active-ids", object (ids2)));
-    if (nil (ids1)) rs1= rectangles ();
+    if (is_nil (ids1)) rs1= rectangles ();
     // FIXME: we should keep track which id corresponds to which rectangle
     locus_new_rects= rs1 * rs2;
     active_ids= ids1 * ids2;

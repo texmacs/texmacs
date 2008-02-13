@@ -306,7 +306,7 @@ edit_interface_rep::set_hybrid_footer (tree st) {
       // macro argument
       string name= st->label;
       path mp= search_upwards (MACRO);
-      if (!nil (mp)) {
+      if (!is_nil (mp)) {
 	tree mt= subtree (et, mp);
 	int i, n= N(mt)-1;
 	for (i=0; i<n; i++)

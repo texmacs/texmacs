@@ -111,7 +111,7 @@ sqrt_box_rep::sqrt_box_rep (
   SI by   = sqrtb->y2+ dy;
 
   insert (b1, 0, 0);
-  if (!nil (b2)) {
+  if (!is_nil (b2)) {
     SI X = - sqrtb->w();
     SI M = X / 3;
     SI Y = sqrtb->y1;

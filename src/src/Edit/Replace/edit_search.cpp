@@ -39,7 +39,7 @@ edit_replace_rep::search_upwards (string what) {
 
 bool
 edit_replace_rep::inside (tree_label l) {
-  return !nil (search_upwards (l));
+  return !is_nil (search_upwards (l));
 }
 
 path
@@ -75,7 +75,7 @@ edit_replace_rep::search_parent_upwards (tree_label l) {
 
 bool
 edit_replace_rep::inside_with (string var, string val) {
-  return !nil (search_upwards_with (var, val));
+  return !is_nil (search_upwards_with (var, val));
 }
 
 path
@@ -92,7 +92,7 @@ edit_replace_rep::search_upwards_with (string var, string val) {
 string
 edit_replace_rep::inside_which (tree t) {
   path p= search_upwards_in_set (t);
-  if ((p == rp) || nil (p)) return "";
+  if ((p == rp) || is_nil (p)) return "";
   tree st= subtree (et, p);
   if (is_func (st, COMPOUND)) return as_string (st[0]);
   else return as_string (L(st));
@@ -124,7 +124,7 @@ edit_replace_rep::search_upwards_in_set (tree t) {
 
 static bool
 is_accessible_path (drd_info drd, tree t, path p) {
-  if (nil (p)) return true;
+  if (is_nil (p)) return true;
   return
     drd->is_accessible_child (t, p->item) &&
     (p->item < N(t)) &&
@@ -263,14 +263,14 @@ edit_replace_rep::step_ascend (bool forward) {
 
   if (forward) {
     if (l == N(st)) {
-      if (atom (search_at - rp)) search_at= rp;
+      if (is_atom (search_at - rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
   }
   else {
     if (l == -1) {
-      if (atom (search_at - rp)) search_at= rp;
+      if (is_atom (search_at - rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
@@ -463,9 +463,9 @@ edit_replace_rep::search_keypress (string s) {
       else search_next (search_what, s != "C-r", true);
     }
     else if ((s == "delete") || (s == "backspace")) {
-      if (nil (where_stack))
+      if (is_nil (where_stack))
 	search_stop ();
-      else if (atom (where_stack)) {
+      else if (is_atom (where_stack)) {
 	go_to (where_stack->item);
 	search_stop ();
       }

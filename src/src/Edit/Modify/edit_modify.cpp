@@ -314,7 +314,7 @@ edit_modify_rep::post_notify (path p) {
 static tree
 encode (string op, path p, tree t) {
   string s= copy (op);
-  while (!nil (p)) {
+  while (!is_nil (p)) {
     s << ";" << as_string (p->item);
     p= p->next;
   }

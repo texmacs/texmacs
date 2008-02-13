@@ -123,7 +123,7 @@ edit_interface_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
 
 void
 edit_interface_rep::invalidate (rectangles rs) {
-  while (!nil (rs)) {
+  while (!is_nil (rs)) {
     invalidate (rs->item->x1-pixel, rs->item->y1-pixel,
 		rs->item->x2+pixel, rs->item->y2+pixel);
     rs= rs->next;
@@ -165,7 +165,7 @@ void
 edit_interface_rep::cursor_visible () {
   path sp= find_innermost_scroll (eb, tp);
   cursor cu= get_cursor ();
-  if (nil (sp)) {
+  if (is_nil (sp)) {
     update_visible ();
     cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
     if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) <  vx1) ||
@@ -500,7 +500,7 @@ edit_interface_rep::apply_changes () {
   }
 
   // cout << "Handling backing store\n";
-  if (!nil (stored_rects)) {
+  if (!is_nil (stored_rects)) {
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION+THE_EXTENTS))
       stored_rects= rectangles ();
   }
@@ -508,7 +508,7 @@ edit_interface_rep::apply_changes () {
     SI gx1, gy1, gx2, gy2;
     if (find_graphical_region (gx1, gy1, gx2, gy2)) {
       rectangle gr= rectangle (gx1, gy1, gx2, gy2);
-      if (!nil (gr - stored_rects))
+      if (!is_nil (gr - stored_rects))
 	invalidate (gx1, gy1, gx2, gy2);
     }
   }

@@ -162,7 +162,7 @@ tt_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
   int c= ((QN) s[0]);
   glyph gl= fng->get (c);
-  if (nil (gl)) return font_rep::get_glyph (s);
+  if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
 }
 

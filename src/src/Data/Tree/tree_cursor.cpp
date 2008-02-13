@@ -21,15 +21,15 @@
 
 bool
 is_inside (tree t, path p) {
-  if (nil (p)) return false;
+  if (is_nil (p)) return false;
   else if (is_atomic (t)) {
     string s= t->label;
     int i, n= N(s), k= p->item;
-    if (!atom (p) || k<0 || k>n) return false;
+    if (!is_atom (p) || k<0 || k>n) return false;
     for (i=0; i<k; tm_char_forwards (s, i));
     return i == k;
   }
-  else if (atom (p)) return p->item == 0 || p->item == 1;
+  else if (is_atom (p)) return p->item == 0 || p->item == 1;
   else return p->item >= 0 && p->item < N(t) &&
 	      is_inside (t[p->item], p->next);
 }
@@ -38,14 +38,14 @@ path
 closest_inside (tree t, path p) {
   // Arbitrary paths may be outside the tree.
   // This routine returns a closest path to p inside the tree t
-  if (nil (p)) return path (0);
+  if (is_nil (p)) return path (0);
   else if (is_atomic (t)) {
     string s= t->label;
     int i, n= N(s), k= max (0, min (n, p->item));
     for (i=0; i<k; tm_char_forwards (s, i));
     return i;
   }
-  else if (atom (p) || p->item < 0 || p->item >= N(t))
+  else if (is_atom (p) || p->item < 0 || p->item >= N(t))
     return path (max (0, min (1, p->item)));
   else return path (p->item, closest_inside (t[p->item], p->next));
 }
@@ -55,7 +55,7 @@ is_modified_accessible (tree t, path p, bool activate, bool persistent) {
   if (p->item != 0) return false;
   t= t[0]; p= p->next;
   if (is_atomic (t)) return is_accessible_cursor (t, p);
-  else if (atom (p) && !persistent) return false;
+  else if (is_atom (p) && !persistent) return false;
   else {
     bool r;
     int old= set_access_mode (activate? DRD_ACCESS_NORMAL: DRD_ACCESS_SOURCE);
@@ -69,12 +69,12 @@ is_modified_accessible (tree t, path p, bool activate, bool persistent) {
 
 bool
 is_accessible_cursor (tree t, path p) {
-  if (is_atomic (t) || atom (p)) {
+  if (is_atomic (t) || is_atom (p)) {
     if (get_writable_mode () == DRD_WRITABLE_INPUT &&
 	get_access_mode () != DRD_ACCESS_SOURCE)
       return false;
     else if (is_atomic (t))
-      return atom (p) && p->item >= 0 && p->item <= N(t->label);
+      return is_atom (p) && p->item >= 0 && p->item <= N(t->label);
     else return !the_drd->is_child_enforcing (t);
   }
   else switch (L(t)) {
@@ -116,7 +116,7 @@ closest_accessible (tree t, path p) {
   // This routine returns the closest path to p inside t which is accessible
   // The routine returns nil if there exists no accessible path inside t
   if (is_atomic (t)) return p;
-  else if (atom (p) && !the_drd->is_child_enforcing (t)) return p;
+  else if (is_atom (p) && !the_drd->is_child_enforcing (t)) return p;
   else {
     int i, k= p->item, n= N(t);
     if (p == 1) k= max (0, n-1);
@@ -126,10 +126,10 @@ closest_accessible (tree t, path p) {
 	// FIXME: certain tags modify source accessability props
 	// FIXME: cells with non-trivial span may lead to unaccessability
 	// FIXME: very dynamic markup should be treated after typesetting
-	if (atom (p) && is_atomic (t[j]))
+	if (is_atom (p) && is_atomic (t[j]))
 	  return path (j, p->item * N (t[j]->label));
-	path r= closest_accessible (t[j], atom (p)? p: p->next);
-	if (!nil (r)) return path (j, r);
+	path r= closest_accessible (t[j], is_atom (p)? p: p->next);
+	if (!is_nil (r)) return path (j, r);
       }
       return path ();
     }
@@ -139,7 +139,7 @@ closest_accessible (tree t, path p) {
 bool
 is_shifted (tree t, path p, int dir= -1, bool flag= false) {
   if (dir == 0) return true;
-  else if (atom (p)) {
+  else if (is_atom (p)) {
     if (flag) {
       if (dir < 0) return p->item != 0;
       else return p->item != right_index (t);
@@ -160,13 +160,13 @@ is_shifted (tree t, path p, int dir= -1, bool flag= false) {
 
 bool
 valid_cursor (tree t, path p, bool start_flag) {
-  if ((!nil (p)) && (!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] testing valid cursor " << p << " in " << t << "\n";
     fatal_error ("bad path", "valid_cursor", "tree_cursor.cpp");
   }
 
-  if (nil (p)) return false;
-  if (atom (p)) {
+  if (is_nil (p)) return false;
+  if (is_atom (p)) {
     if (the_drd->is_child_enforcing (t)) return false;
     if (start_flag) return (p->item!=0);
     return true;
@@ -174,7 +174,7 @@ valid_cursor (tree t, path p, bool start_flag) {
   if (is_concat (t))
     return valid_cursor (t[p->item], p->next, start_flag || (p->item!=0));
   if (is_mod_active_once (t))
-    return is_atomic (t[0]) || (!atom (p->next));
+    return is_atomic (t[0]) || (!is_atom (p->next));
   if (is_prime (t)) return false;
   // FIXME: hack for treating VAR_EXPAND "math"
   if (is_compound (t, "input", 2) && (N(p) == 2) &&
@@ -186,13 +186,13 @@ valid_cursor (tree t, path p, bool start_flag) {
 static path
 pre_correct (tree t, path p) {
   // cout << "Precorrect " << p << " in " << t << "\n";
-  if ((!nil (p)) && (!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] precorrecting " << p << " in " << t << "\n";
     fatal_error ("bad path", "pre_correct", "tree_cursor.cpp");
   }
 
-  if (nil (p)) return pre_correct (t, path(0));
-  if (atom (p)) {
+  if (is_nil (p)) return pre_correct (t, path(0));
+  if (is_atom (p)) {
     if (the_drd->is_child_enforcing (t)) {
       if ((p->item == 0) && the_drd->is_accessible_child (t, 0))
 	return path (0, pre_correct (t[0], path (0)));
@@ -203,7 +203,7 @@ pre_correct (tree t, path p) {
     }
     return p;
   }
-  if (is_mod_active_once (t) && is_compound (t[0]) && atom (p->next)) {
+  if (is_mod_active_once (t) && is_compound (t[0]) && is_atom (p->next)) {
     if (N (t[0]) == 0) return path (0);
     t= t[0]; p= p->next;
     if (p->item==0) return path (0, path (0, pre_correct (t[0], path (0))));
@@ -228,30 +228,30 @@ pre_correct (tree t, path p) {
 
 static bool
 left_most (tree t, path p) {
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("invalid nil path", "left_most", "tree_cursor.cpp");
-  if ((!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] left most " << p << " in " << t << "\n";
     fatal_error ("bad path", "left_most", "tree_cursor.cpp");
   }
 
   int i=p->item;
-  if (atom (p)) return i==0;
+  if (is_atom (p)) return i==0;
   if (is_concat (p)) return (i==0) && left_most (t[0], p->next);
   return false;
 }
 
 static path
 left_correct (tree t, path p) {
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("invalid nil path", "left_correct", "tree_cursor.cpp");
-  if ((!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] left correcting " << p << " in " << t << "\n";
     fatal_error ("bad path", "left_correct", "tree_cursor.cpp");
   }
 
   int i=p->item;
-  if (atom (p)) return p;
+  if (is_atom (p)) return p;
   if (is_concat (t) && (i>0) && left_most (t[i], p->next))
     return path (i-1, pre_correct (t[i-1], path (right_index (t[i-1]))));
   if (is_prime (t)) return path (0);
@@ -260,30 +260,30 @@ left_correct (tree t, path p) {
 
 static bool
 right_most (tree t, path p) {
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("invalid nil path", "right_most", "tree_cursor.cpp");
-  if ((!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] right most " << p << " in " << t << "\n";
     fatal_error ("bad path", "right_most", "tree_cursor.cpp");
   }
 
   int i=p->item;
-  if (atom (p)) return i==right_index (t);
+  if (is_atom (p)) return i==right_index (t);
   if (is_concat (p)) return (i==1) && right_most (t[N(t)-1], p->next);
   return false;
 }
 
 static path
 right_correct (tree t, path p) {
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("invalid nil path", "right_correct", "tree_cursor.cpp");
-  if ((!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] right correcting " << p << " in " << t << "\n";
     fatal_error ("bad path", "right_correct", "tree_cursor.cpp");
   }
 
   int i=p->item;
-  if (atom (p)) return p;
+  if (is_atom (p)) return p;
   if (is_concat (t) && (i<N(t)-1) && right_most (t[i], p->next))
     return path (i+1, pre_correct (t[i-1], path (0)));
   if (is_prime (t)) return path (1);
@@ -303,14 +303,14 @@ correct_cursor (tree t, path p) {
 path
 start (tree t, path p) {
   // cout << "Start " << p << " in " << t << "\n";
-  if ((!nil (p)) && (arity (parent_subtree (t, p)) == 0)) return p;
+  if ((!is_nil (p)) && (arity (parent_subtree (t, p)) == 0)) return p;
   return correct_cursor (t, p * 0);
 }
 
 path
 end (tree t, path p) {
   // cout << "End " << p << " in " << t << "\n";
-  if ((!nil (p)) && (arity (parent_subtree (t, p)) == 0)) return p;
+  if ((!is_nil (p)) && (arity (parent_subtree (t, p)) == 0)) return p;
   return correct_cursor (t, p * right_index (subtree (t, p)));
 }
 
@@ -319,7 +319,7 @@ path end (tree t) { return end (t, path ()); }
 
 path
 up_correct (tree t, path p, bool active= true) {
-  if (nil (p)) return p;
+  if (is_nil (p)) return p;
   if ((p->item<0) || (p->item>=N(t))) return path ();
   if (active && (!the_drd->is_accessible_child (t, p->item))) return path ();
   return path (p->item,
@@ -331,7 +331,7 @@ super_correct (tree t, path p) {
   path q= path_up (p);
   path r= up_correct (t, q);
   if (q != r) {
-    if (nil (r)) fatal_error ("Unexpected situation", "super_correct");
+    if (is_nil (r)) fatal_error ("Unexpected situation", "super_correct");
     else if (is_atomic (subtree (t, r))) p= path_up (r) * 0;
     else p= r * 0;
   }

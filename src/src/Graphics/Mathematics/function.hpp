@@ -20,7 +20,7 @@
 #define C typename properties<F>::scalar_type
 
 TMPL class function;
-TMPL bool nil (function<F,T> f);
+TMPL bool is_nil (function<F,T> f);
 
 /******************************************************************************
 * Abstract function class

@@ -39,7 +39,7 @@ bridge_expand_as_rep::bridge_expand_as_rep (typesetter ttt, tree st, path ip):
 
 void
 bridge_expand_as_rep::initialize () {
-  if (nil (body)) body= make_bridge (ttt, st[1], descend (ip, 1));
+  if (is_nil (body)) body= make_bridge (ttt, st[1], descend (ip, 1));
   else replace_bridge (body, st[1], descend (ip, 1));
 }
 
@@ -55,15 +55,15 @@ bridge_expand_as (typesetter ttt, tree st, path ip) {
 void
 bridge_expand_as_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, EXPAND_AS)))
+  if (is_nil (p) && (!is_func (u, EXPAND_AS)))
     fatal_error ("Nil path", "bridge_expand_as_rep::notify_assign");
-  if (nil (p) || (p->item != 1)) {
+  if (is_nil (p) || (p->item != 1)) {
     st= substitute (st, p, u);
     initialize ();
   }
   else {
     // bool mp_flag= is_multi_paragraph (st);
-    if (atom (p)) {
+    if (is_atom (p)) {
       body= make_bridge (ttt, u, descend (ip, 1));
       st= substitute (st, 1, body->st);
     }
@@ -79,8 +79,8 @@ bridge_expand_as_rep::notify_assign (path p, tree u) {
 void
 bridge_expand_as_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_expand_as_rep::notify_insert");
-  if (atom (p) || (p->item != 1)) bridge_rep::notify_insert (p, u);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_expand_as_rep::notify_insert");
+  if (is_atom (p) || (p->item != 1)) bridge_rep::notify_insert (p, u);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     body->notify_insert (p->next, u);
@@ -93,8 +93,8 @@ bridge_expand_as_rep::notify_insert (path p, tree u) {
 void
 bridge_expand_as_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_expand_as_rep::notify_remove");
-  if (atom (p) || (p->item != 1)) bridge_rep::notify_remove (p, nr);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_expand_as_rep::notify_remove");
+  if (is_atom (p) || (p->item != 1)) bridge_rep::notify_remove (p, nr);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     body->notify_remove (p->next, nr);

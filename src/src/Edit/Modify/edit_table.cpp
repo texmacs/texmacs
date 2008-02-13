@@ -104,7 +104,7 @@ edit_table_rep::search_format (path p) {
 path
 edit_table_rep::search_format (int& row, int& col) {
   path p= search_table (row, col);
-  if (nil (p)) return p;
+  if (is_nil (p)) return p;
   if (is_func (subtree (et, p), TFORMAT)) return p;
   if (is_func (subtree (et, path_up (p)), TFORMAT)) return path_up (p);
   insert_node (p * 0, TFORMAT);
@@ -128,13 +128,13 @@ path
 edit_table_rep::search_table (int& row, int& col) {
   row= col= 0;
   path p= search_table ();
-  if (nil (p)) return p;
+  if (is_nil (p)) return p;
   path q= p, r= tail (tp, N(p));
 
   if (N(r) <= 1) return path ();
   row= r->item;
   while (true) {
-    if (nil (r)) return r;
+    if (is_nil (r)) return r;
     q= q * r->item;
     r= r->next;
     if (is_func (subtree (et, q), ROW)) break;
@@ -143,7 +143,7 @@ edit_table_rep::search_table (int& row, int& col) {
   if (N(r) <= 1) return path ();
   col= r->item;
   while (true) {
-    if (nil (r)) return r;
+    if (is_nil (r)) return r;
     q= q * r->item;
     r= r->next;
     if (!is_func (subtree (et, q), TFORMAT)) break;
@@ -661,7 +661,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
 
   int i, j, row, col, nr_rows, nr_cols;
   p= search_table (row, col);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   table_get_extents (p, nr_rows, nr_cols);
 
   bool flag=true;
@@ -1038,7 +1038,7 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
 void
 edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
   path cp= search_upwards (CELL);
-  if (nil (cp)) return;
+  if (is_nil (cp)) return;
   tree T= empty_table (nr_rows, nr_cols);
   path p (0, 0, 0, 0);
   T= tree (TFORMAT, T);
@@ -1054,7 +1054,7 @@ edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
 void
 edit_table_rep::destroy_table () {
   path fp= search_format ();
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   while (rp < fp) {
     tree st= subtree (et, path_up (fp));
     if (!is_func (st, TFORMAT)) break;
@@ -1076,7 +1076,7 @@ edit_table_rep::destroy_table () {
 void
 edit_table_rep::table_disactivate () {
   path fp= search_format ();
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   tree st= subtree (et, fp);
   if (!is_func (st, TFORMAT)) return;
   insert_node (fp * 0, INACTIVE);
@@ -1086,7 +1086,7 @@ edit_table_rep::table_disactivate () {
 void
 edit_table_rep::table_extract_format () {
   path fp= search_format ();
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   tree fm= table_get_format (fp);
   fm << "";
   if (is_extension (subtree (et, path_up (fp)), 1)) fp= path_up (fp);
@@ -1098,7 +1098,7 @@ void
 edit_table_rep::table_insert_row (bool forward) {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
@@ -1112,7 +1112,7 @@ void
 edit_table_rep::table_insert_column (bool forward) {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
@@ -1126,7 +1126,7 @@ void
 edit_table_rep::table_remove_row (bool forward, bool flag) {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
@@ -1151,7 +1151,7 @@ void
 edit_table_rep::table_remove_column (bool forward, bool flag) {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
@@ -1176,7 +1176,7 @@ int
 edit_table_rep::table_nr_rows () {
   int nr_rows, nr_cols;
   path fp= search_format ();
-  if (nil (fp)) return -1;
+  if (is_nil (fp)) return -1;
   table_get_extents (fp, nr_rows, nr_cols);
   return nr_rows;
 }
@@ -1185,7 +1185,7 @@ int
 edit_table_rep::table_nr_columns () {
   int nr_rows, nr_cols;
   path fp= search_format ();
-  if (nil (fp)) return -1;
+  if (is_nil (fp)) return -1;
   table_get_extents (fp, nr_rows, nr_cols);
   return nr_cols;
 }
@@ -1194,7 +1194,7 @@ int
 edit_table_rep::table_which_row () {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return 0;
+  if (is_nil (fp)) return 0;
   return row+1;
 }
 
@@ -1202,7 +1202,7 @@ int
 edit_table_rep::table_which_column () {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return 0;
+  if (is_nil (fp)) return 0;
   return col+1;
 }
 
@@ -1210,7 +1210,7 @@ path
 edit_table_rep::table_search_cell (int row, int col) {
   int nr_rows, nr_cols;
   path fp= search_format ();
-  if (nil (fp)) return path ();
+  if (is_nil (fp)) return path ();
   table_get_extents (fp, nr_rows, nr_cols);
   if (row>0) row--; else row+=nr_rows;
   if (col>0) col--; else col+=nr_cols;
@@ -1222,7 +1222,7 @@ void
 edit_table_rep::table_go_to (int row, int col) {
   int nr_rows, nr_cols;
   path fp= search_format ();
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   table_get_extents (fp, nr_rows, nr_cols);
   if (row>0) row--; else row+=nr_rows;
   if (col>0) col--; else col+=nr_cols;
@@ -1255,7 +1255,7 @@ void
 edit_table_rep::table_format_center () {
   int row, col;
   path fp= search_format (row, col);
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   table_format_center (fp, row, col);
 }
 
@@ -1281,7 +1281,7 @@ void
 edit_table_rep::table_correct_block_content () {
   int nr_rows, nr_cols;
   path fp= search_format ();
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   table_get_extents (fp, nr_rows, nr_cols);
   int row, col;
   for (row= 0; row < nr_rows; row++)
@@ -1319,7 +1319,7 @@ edit_table_rep::cell_set_format (string var, string val) {
   else {
     int row, col;
     path fp= search_format (row, col); row++; col++;
-    if (nil (fp)) return;
+    if (is_nil (fp)) return;
     if (cell_mode=="row")
       table_set_format (fp, row, 1, row, -1, var, val);
     else if (cell_mode=="column")
@@ -1335,7 +1335,7 @@ string
 edit_table_rep::cell_get_format (string var) {
   int row, col;
   path fp= search_format (row, col); row++; col++;
-  if (nil (fp)) return "";
+  if (is_nil (fp)) return "";
   if (cell_mode=="row")
     return as_string (table_get_format (fp, row, 1, row, -1, var));
   else if (cell_mode=="column")
@@ -1355,7 +1355,7 @@ edit_table_rep::cell_del_format (string var) {
   else {
     int row, col;
     path fp= search_format (row, col); row++; col++;
-    if (nil (fp)) return;
+    if (is_nil (fp)) return;
     if (cell_mode=="row") table_del_format (fp, row, 1, row, -1, var);
     else if (cell_mode=="column") table_del_format (fp, 1, col, -1, col, var);
     else if (cell_mode=="table") table_del_format (fp, 1, 1, -1, -1, var);
@@ -1367,6 +1367,6 @@ edit_table_rep::cell_del_format (string var) {
 void
 edit_table_rep::table_test () {
   path fp= search_format ();
-  if (nil (fp)) return;
+  if (is_nil (fp)) return;
   cout << table_get_format (fp) << "\n";
 }

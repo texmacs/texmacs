@@ -70,15 +70,15 @@ edit_env_rep::rewrite (tree t) {
     {
       if (!(is_atomic (t[0]) && is_atomic (t[1]) && is_atomic (t[2])))
 	return tree (ERROR, "invalid map arguments");
-      if (nil (macro_arg) || (!macro_arg->item->contains (t[2]->label)))
+      if (is_nil (macro_arg) || (!macro_arg->item->contains (t[2]->label)))
 	return tree (ERROR, "map arguments " * t[2]->label);
       tree v= macro_arg->item [t[2]->label];
       if (is_atomic (v))
 	return tree (ERROR, "map arguments " * t[2]->label);
       list<hashmap<string,tree> > old_var= macro_arg;
       list<hashmap<string,path> > old_src= macro_src;
-      if (!nil (macro_arg)) macro_arg= macro_arg->next;
-      if (!nil (macro_src)) macro_src= macro_src->next;
+      if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+      if (!is_nil (macro_src)) macro_src= macro_src->next;
 
       int start= 0, end= N(v);
       if (N(t)>=4) start= as_int (exec (t[3]));
@@ -103,7 +103,7 @@ edit_env_rep::rewrite (tree t) {
     {
       if ((!is_func (t[0], ARG)) ||
 	  is_compound (t[0][0]) ||
-	  nil (macro_arg) ||
+	  is_nil (macro_arg) ||
 	  (!macro_arg->item->contains (t[0][0]->label)))
 	return tree (ERROR, "invalid rewrite-inactive");
       tree val= macro_arg->item [t[0][0]->label];
@@ -152,7 +152,7 @@ edit_env_rep::exec_until_rewrite (tree t, path p, string var, int level) {
 tree
 texmacs_exec (edit_env env, tree cmd) {
   // re-entrancy
-  if (!nil (current_rewrite_env)) env= current_rewrite_env;
+  if (!is_nil (current_rewrite_env)) env= current_rewrite_env;
   return env->exec (cmd);
 }
 
@@ -627,13 +627,13 @@ edit_env_rep::exec_arg (tree t) {
   tree r= t[0];
   if (is_compound (r))
     return tree (ERROR, "bad argument application");
-  if (nil (macro_arg) || (!macro_arg->item->contains (r->label)))
+  if (is_nil (macro_arg) || (!macro_arg->item->contains (r->label)))
     return tree (ERROR, "argument " * r->label);
   r= macro_arg->item [r->label];
   list<hashmap<string,tree> > old_var= macro_arg;
   list<hashmap<string,path> > old_src= macro_src;
-  if (!nil (macro_arg)) macro_arg= macro_arg->next;
-  if (!nil (macro_src)) macro_src= macro_src->next;
+  if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+  if (!is_nil (macro_src)) macro_src= macro_src->next;
   if (N(t) > 1) {
     int i, n= N(t);
     for (i=1; i<n; i++) {
@@ -657,7 +657,7 @@ edit_env_rep::exec_quote_arg (tree t) {
   tree r= t[0];
   if (is_compound (r))
     return tree (ERROR, "bad quoted argument application");
-  if (nil (macro_arg) || (!macro_arg->item->contains (r->label)))
+  if (is_nil (macro_arg) || (!macro_arg->item->contains (r->label)))
     return tree (ERROR, "quoted argument " * r->label);
   r= macro_arg->item [r->label];
   if (N(t) > 1) {
@@ -695,12 +695,12 @@ edit_env_rep::exec_get_arity (tree t) {
 tree
 edit_env_rep::exec_eval_args (tree t) {
   tree v= macro_arg->item [as_string (t[0])];
-  if (is_atomic (v) || nil (macro_arg))
+  if (is_atomic (v) || is_nil (macro_arg))
     return tree (ERROR, "eval arguments " * t[0]->label);
   list<hashmap<string,tree> > old_var= macro_arg;
   list<hashmap<string,path> > old_src= macro_src;
-  if (!nil (macro_arg)) macro_arg= macro_arg->next;
-  if (!nil (macro_src)) macro_src= macro_src->next;
+  if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+  if (!is_nil (macro_src)) macro_src= macro_src->next;
 
   int i, n= N(v);
   tree r (v, n);
@@ -1524,13 +1524,13 @@ edit_env_rep::exec_box_info (tree t) {
 tree
 edit_env_rep::exec_frame_direct (tree t) {
   tree t1= exec (t[0]);
-  return as_tree (!nil (fr) ? fr (::as_point (t1)) : point ());
+  return as_tree (!is_nil (fr) ? fr (::as_point (t1)) : point ());
 }
 
 tree
 edit_env_rep::exec_frame_inverse (tree t) {
   tree t1= exec (t[0]);
-  return as_tree (!nil (fr) ? fr [::as_point (t1)] : point ());
+  return as_tree (!is_nil (fr) ? fr [::as_point (t1)] : point ());
 }
 
 /******************************************************************************
@@ -1540,8 +1540,8 @@ edit_env_rep::exec_frame_inverse (tree t) {
 void
 edit_env_rep::exec_until (tree t, path p) {
   // cout << "Execute " << t << " until " << p << "\n";
-  if (nil (p)) return;
-  if (atom (p)) {
+  if (is_nil (p)) return;
+  if (is_atom (p)) {
     if (p->item!=0)
       (void) exec (t);
     return;
@@ -1953,15 +1953,15 @@ bool
 edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
   // cout << "  " << macro_arg << "\n";
   tree r= t[0];
-  if (is_atomic (r) && (!nil (macro_arg)) &&
+  if (is_atomic (r) && (!is_nil (macro_arg)) &&
       macro_arg->item->contains (r->label))
     {
       bool found;
       tree arg= macro_arg->item [r->label];
       list<hashmap<string,tree> > old_var= macro_arg;
       list<hashmap<string,path> > old_src= macro_src;
-      if (!nil (macro_arg)) macro_arg= macro_arg->next;
-      if (!nil (macro_src)) macro_src= macro_src->next;
+      if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+      if (!is_nil (macro_src)) macro_src= macro_src->next;
       if (level == 0) {
 	found= (r->label == var);
 	if ((N(t) > 1) && found) {
@@ -1970,7 +1970,7 @@ edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
 	    tree u= exec (t[i]);
 	    if (!is_int (u)) { found= false; break; }
 	    int nr= as_int (u);
-	    if ((!is_compound (arg)) || (nr<0) || (nr>=N(arg)) || nil (p)) {
+	    if ((!is_compound (arg)) || (nr<0) || (nr>=N(arg)) || is_nil (p)) {
 	      found= false; break; }
 	    if (p->item != nr) found= false;
 	    arg= arg[nr];
@@ -1989,13 +1989,13 @@ edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
   /*
   cout << "  " << macro_arg << "\n";
   tree r= t[0];
-  if (is_atomic (r) && (r->label == var) && (!nil (macro_arg))) {
+  if (is_atomic (r) && (r->label == var) && (!is_nil (macro_arg))) {
     bool found= (level == 0) && macro_arg->item->contains (r->label);
     tree arg  = macro_arg->item [var];
     list<hashmap<string,tree> > old_var= macro_arg;
     list<hashmap<string,path> > old_src= macro_src;
-    if (!nil (macro_arg)) macro_arg= macro_arg->next;
-    if (!nil (macro_src)) macro_src= macro_src->next;
+    if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+    if (!is_nil (macro_src)) macro_src= macro_src->next;
     if (found) exec_until (arg, p);
     else found= exec_until (arg, p, var, level-1);
     macro_arg= old_var;
@@ -2012,10 +2012,10 @@ edit_env_rep::exec_until_mark (tree t, path p, string var, int level) {
     // cout << "\n\tTest: " << t[0] << ", " << p << "\n";
     path q= p;
     int i, n= N(t[0]);
-    for (i=1; (!nil (q)) && (i<n); i++, q= q->next)
+    for (i=1; (!is_nil (q)) && (i<n); i++, q= q->next)
       if (t[0][i] != as_string (q->item))
 	break;
-    border= (i == n) && atom (q);
+    border= (i == n) && is_atom (q);
     // FIXME: in order to be clean, we should check whether q->item
     // is on the border of the contents of the argument t[0].
     // Nevertheless, this only matters for strings and
@@ -2077,7 +2077,7 @@ edit_env_rep::exec_until_while (tree t, path p, string var, int level) {
 
 tree
 edit_env_rep::expand (tree t, bool search_accessible) {
-  if (is_atomic (t) || nil (macro_arg)) return t;
+  if (is_atomic (t) || is_nil (macro_arg)) return t;
   else if (is_func (t, ARG) || is_func (t, QUOTE_ARG)) {
     if (is_compound (t[0]))
       return tree (ERROR, "bad argument application");
@@ -2086,8 +2086,8 @@ edit_env_rep::expand (tree t, bool search_accessible) {
     tree r= macro_arg->item [t[0]->label];
     list<hashmap<string,tree> > old_var= macro_arg;
     list<hashmap<string,path> > old_src= macro_src;
-    if (!nil (macro_arg)) macro_arg= macro_arg->next;
-    if (!nil (macro_src)) macro_src= macro_src->next;
+    if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+    if (!is_nil (macro_src)) macro_src= macro_src->next;
     if (N(t) > 1) {
       int i, n= N(t);
       for (i=1; i<n; i++) {
@@ -2130,7 +2130,7 @@ edit_env_rep::depends (tree t, string s, int level) {
        << " " << macro_arg << "\n";
   */
 
-  if (is_atomic (t) || nil (macro_arg)) return false;
+  if (is_atomic (t) || is_nil (macro_arg)) return false;
   else if (is_func (t, ARG) ||
 	   is_func (t, QUOTE_ARG) ||
 	   is_func (t, MAP_ARGS) ||
@@ -2145,8 +2145,8 @@ edit_env_rep::depends (tree t, string s, int level) {
       tree r= macro_arg->item [v->label];
       list<hashmap<string,tree> > old_var= macro_arg;
       list<hashmap<string,path> > old_src= macro_src;
-      if (!nil (macro_arg)) macro_arg= macro_arg->next;
-      if (!nil (macro_src)) macro_src= macro_src->next;
+      if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+      if (!is_nil (macro_src)) macro_src= macro_src->next;
       bool dep= depends (r, s, level-1);
       macro_arg= old_var;
       macro_src= old_src;

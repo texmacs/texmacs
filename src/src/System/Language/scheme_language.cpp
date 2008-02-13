@@ -19,7 +19,7 @@ scheme_language_rep::scheme_language_rep (string name):
 {
   eval ("(use-modules (utils misc tm-keywords))");
   list<string> l= as_list_string (eval ("(map symbol->string highlight-any)"));
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     colored (l->item)= "blue";
     l= l->next;
   }

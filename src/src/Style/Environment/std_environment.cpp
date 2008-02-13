@@ -76,7 +76,7 @@ std_environment_rep::print (const string& prefix) {
   cout << prefix << "Std environment" << LF;
   env->print (prefix * (pure? string ("|* "): string ("|  ")));
   std_environment it= next;
-  while (!nil (it)) {
+  while (!is_nil (it)) {
     it->env->print (prefix * (it->pure? string ("|* "): string ("|  ")));
     it= it->next;
   }
@@ -328,7 +328,7 @@ macro_redown (environment& env, basic_environment local) {
 bool
 macro_top_level (environment& env) {
   std_environment std= as_std_environment (env);
-  return nil (std->args);
+  return is_nil (std->args);
 }
 
 basic_environment

@@ -126,21 +126,21 @@ find_font_bis (tree t) {
 
   if (is_tuple (t, "tex-dummy-rubber", 1)) {
     font fn= find_font (t[1]);
-    if (nil (fn)) return fn;
+    if (is_nil (fn)) return fn;
     return tex_dummy_rubber_font (fn);
   }
   
   if (is_tuple (t, "error", 1)) {
     font fn= find_font (t[1]);
-    if (nil (fn)) return fn;
+    if (is_nil (fn)) return fn;
     return error_font (fn);
   }
 
   if (is_tuple (t, "math", 4) && is_tuple (t[1]) && is_tuple (t[2])) {
     font fn= find_font (t[3]);
-    if (nil (fn)) return fn;
+    if (is_nil (fn)) return fn;
     font error_fn= error_font (find_font (t[4]));
-    if (nil (error_fn)) error_fn= error_font (fn);
+    if (is_nil (error_fn)) error_fn= error_font (fn);
     return math_font (t, fn, error_fn);
   }
 
@@ -185,7 +185,7 @@ find_font (string family, string fn_class,
   t1[2]= series; t1[3]= shape;
   t1[4]= as_string (sz); t1[5]= as_string (dpi);
   font fn= find_font (t1);
-  if (!nil (fn)) {
+  if (!is_nil (fn)) {
     font::instances (s)= (pointer) fn.rep;
     return fn;
   }
@@ -195,7 +195,7 @@ find_font (string family, string fn_class,
   t2[1]= fn_class; t2[2]= series;
   t2[3]= as_string (sz); t2[4]= as_string (dpi);
   fn= find_font (t2);
-  if (!nil (fn)) {
+  if (!is_nil (fn)) {
     font::instances (s)= (pointer) fn.rep;
     return fn;
   }
@@ -204,7 +204,7 @@ find_font (string family, string fn_class,
   t3[0]= family;
   t3[1]= fn_class; t3[2]= as_string (sz); t3[3]= as_string (dpi);
   fn= find_font (t3);
-  if (!nil (fn)) {
+  if (!is_nil (fn)) {
     font::instances (s)= (pointer) fn.rep;
     return fn;
   }

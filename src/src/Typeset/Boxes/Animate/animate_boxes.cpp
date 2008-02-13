@@ -278,19 +278,19 @@ anim_compose_box_rep::find_box_path (path p, bool& found) {
 
 path
 anim_compose_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) return box_rep::find_tree_path (bp);
+  if (is_atom (bp)) return box_rep::find_tree_path (bp);
   return bs[current]->find_tree_path (bp->next);
 }
 
 cursor
 anim_compose_box_rep::find_cursor (path bp) {
-  if (atom (bp)) return box_rep::find_cursor (bp);
+  if (is_atom (bp)) return box_rep::find_cursor (bp);
   else return bs[current]->find_cursor (bp->next);
 }
 
 selection
 anim_compose_box_rep::find_selection (path lbp, path rbp) {
-  if (!atom (lbp) && !atom (rbp))
+  if (!is_atom (lbp) && !is_atom (rbp))
     return bs[current]->find_selection (lbp->next, rbp->next);
   else return box_rep::find_selection (lbp, rbp);
 }

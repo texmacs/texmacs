@@ -218,7 +218,7 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
   //cout << "  large= " << large << "\n";
   char align_c= '\0'; if (N (halign) != 0) align_c= halign[0];
   bool lr_flag= (align_c >= 'A' && align_c <= 'Z');
-  if (!nil (T)) {
+  if (!is_nil (T)) {
     if (N (T->halign) > 0) align_c= T->halign[0];
     else align_c= '\0';
     lr_flag= (align_c >= 'A' && align_c <= 'Z');
@@ -230,7 +230,7 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     else lw= rw= 0;
     mw += lborder + rborder;
   }
-  else if (!nil (lz) && large) {
+  else if (!is_nil (lz) && large) {
     lw= rw= 0;
     format fm= lz->query (LAZY_BOX, make_query_vstream_width (0, 0));
     format_width fw= (format_width) fm;
@@ -273,7 +273,7 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
 void
 cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
   char align_c= '\0'; if (N (valign) != 0) align_c= valign[0];
-  if (nil (T)) {
+  if (is_nil (T)) {
     bh= th= mh= 0;
     if (align_c >= 'A' && align_c <= 'Z') {
       bh= -b->y1+ bsep + bborder;
@@ -308,7 +308,7 @@ void
 cell_rep::position_horizontally (SI offset, SI mw, SI lw, SI rw) {
   x1= offset;
   x2= offset + mw;
-  if (nil (T)) {
+  if (is_nil (T)) {
     char align_c= '\0'; if (N (halign) != 0) align_c= halign[0];
     if (align_c == 'l') xoff= -b->x1 + (lsep + lborder);
     else if (align_c == 'c') xoff= (mw - b->x1 - b->x2) >> 1;
@@ -326,7 +326,7 @@ void
 cell_rep::position_vertically (SI offset, SI mh, SI bh, SI th) {
   y1= offset - mh;
   y2= offset;
-  if (nil (T)) {
+  if (is_nil (T)) {
     char align_c= '\0'; if (N (valign) != 0) align_c= valign[0];
     if (align_c == 'b') yoff= -b->y1 + (bsep + bborder);
     else if (align_c == 'c') yoff= (mh - b->y1 - b->y2) >> 1;
@@ -354,7 +354,7 @@ cell_rep::finish_horizontal () {
 
 void
 cell_rep::finish () {
-  if (!nil (T)) {
+  if (!is_nil (T)) {
     T->finish ();
     b= T->b;
   }

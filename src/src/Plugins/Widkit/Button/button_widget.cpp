@@ -179,7 +179,7 @@ command_button_rep::handle_mouse (mouse_event ev) {
   if (status!=old) {
     this << emit_invalidate_all ();
     if ((type == "release-left") || (type == "release-right"))
-      if (!nil (cmd)) cmd ();
+      if (!is_nil (cmd)) cmd ();
   }
 }
 

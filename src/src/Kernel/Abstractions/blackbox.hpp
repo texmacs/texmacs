@@ -44,18 +44,18 @@ public:
 };
 
 inline bool operator == (blackbox bb1, blackbox bb2) {
-  if (nil (bb1)) return nil (bb2);
+  if (is_nil (bb1)) return is_nil (bb2);
   else return bb1->equal (bb2.rep); }
 inline bool operator != (blackbox bb1, blackbox bb2) {
-  if (nil (bb1)) return !nil (bb2);
+  if (is_nil (bb1)) return !is_nil (bb2);
   else return !bb1->equal (bb2.rep); }
 inline ostream& operator << (ostream& out, blackbox bb) {
-  if (nil (bb)) return out << "nil";
+  if (is_nil (bb)) return out << "nil";
   else return bb->display (out); }
 
 inline int
 type_box (blackbox bb) {
-  return nil (bb)? 0: bb->get_type ();
+  return is_nil (bb)? 0: bb->get_type ();
 }
 
 template<class T> blackbox

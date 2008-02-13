@@ -191,7 +191,7 @@ concater_rep::typeset_argument (tree t, path ip) {
   // cout << "Argument " << t << ", " << ip << "\n";
   tree r= t[0];
   if (is_compound (r) ||
-      nil (env->macro_arg) ||
+      is_nil (env->macro_arg) ||
       (!env->macro_arg->item->contains (r->label)))
     {
       typeset_error (t, ip);
@@ -210,8 +210,8 @@ concater_rep::typeset_argument (tree t, path ip) {
   marker (descend (ip, 0));
   list<hashmap<string,tree> > old_var= env->macro_arg;
   list<hashmap<string,path> > old_src= env->macro_src;
-  if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
-  if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+  if (!is_nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+  if (!is_nil (env->macro_src)) env->macro_src= env->macro_src->next;
 
   if (N(t) > 1) {
     int i, n= N(t);
@@ -243,7 +243,7 @@ concater_rep::typeset_mark (tree t, path ip) {
   // cout << "Mark: " << t << ", " << ip << "\n\n";
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
-      (!nil (env->macro_arg)) &&
+      (!is_nil (env->macro_arg)) &&
       env->macro_arg->item->contains (t[0][0]->label))
     {
       string name = t[0][0]->label;

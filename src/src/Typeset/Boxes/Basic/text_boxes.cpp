@@ -184,7 +184,7 @@ text_box_rep::find_box_path (path p, bool& found) {
   //      << "; " << reverse (ip)
   //      << ", " << reverse (find_lip ())
   //      << " -- " << reverse (find_rip ()) << "\n";
-  found= (!nil(p)) && is_accessible (ip);
+  found= (!is_nil(p)) && is_accessible (ip);
   if (found) {
     int i= last_item (p) - pos;
     if (i < 0) return path (0);

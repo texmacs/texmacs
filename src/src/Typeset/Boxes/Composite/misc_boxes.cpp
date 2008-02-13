@@ -63,7 +63,7 @@ scatter_box_rep::find_right_box_path () {
 
 selection
 scatter_box_rep::find_selection (path lbp, path rbp) {
-  if (nil (lbp) || nil (rbp) || atom (lbp) || atom (rbp))
+  if (is_nil (lbp) || is_nil (rbp) || is_atom (lbp) || is_atom (rbp))
     return composite_box_rep::find_selection (lbp, rbp);
   else {
     int i;
@@ -108,7 +108,7 @@ page_box_rep::page_box_rep (path ip2, tree page2, SI w, SI h,
   x2= max (x2, w);
   y1= -h;
   y2= 0;
-  if (!nil (decoration)) {
+  if (!is_nil (decoration)) {
     x3= min (x3, decoration->x0+ decoration->x3);
     x4= max (x4, decoration->x0+ decoration->x4);
     y3= min (y3, decoration->y0+ decoration->y3);
@@ -134,7 +134,7 @@ page_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 void
 page_box_rep::display (renderer ren) {
-  if (!nil (decoration)) {
+  if (!is_nil (decoration)) {
     rectangles rs;
     decoration->redraw (ren, path (), rs);
   }
@@ -152,7 +152,7 @@ page_box_rep::clear_incomplete (
   // cout << "main   = " << r1 << "\n";
   extra = extra - r1;
 
-  if (!nil (decoration)) {
+  if (!is_nil (decoration)) {
     int i, n= N (decoration);
     for (i=0; i<n; i++) {
       box b= decoration [i];

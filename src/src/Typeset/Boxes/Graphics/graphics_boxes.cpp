@@ -310,13 +310,13 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   arrows= array<box>(2);
   point p1, p2;
   bool error;
-  if (N(arrows2)>0 && !nil (arrows2[0])) {
+  if (N(arrows2)>0 && !is_nil (arrows2[0])) {
     point tg= c->grad (0.0, error);
     if (!error) {
       frame fr= scaling (1.0, a[0]) *
 		rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[0]= arrows2[0]->transform (fr);
-      if (!nil (arrows[0])) {
+      if (!is_nil (arrows[0])) {
 	x1= min (x1, arrows[0]->x1);
 	y1= min (y1, arrows[0]->y1);
 	x2= max (x2, arrows[0]->x2);
@@ -324,13 +324,13 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
       }
     }
   }
-  if (N(arrows2)>1 && !nil (arrows2[1])) {
+  if (N(arrows2)>1 && !is_nil (arrows2[1])) {
     point tg= c->grad (1.0, error);
     if (!error) {
       frame fr= scaling (1.0, a[N(a)-1]) *
 		rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[1]= arrows2[1]->transform (fr);
-      if (!nil (arrows[1])) {
+      if (!is_nil (arrows[1])) {
 	x1= min (x1, arrows[1]->x1);
 	y1= min (y1, arrows[1]->y1);
 	x2= max (x2, arrows[1]->x2);
@@ -504,8 +504,8 @@ curve_box_rep::display (renderer ren) {
   }
 
   rectangles ll;
-  if (!nil (arrows[0])) arrows[0]->redraw (ren, path (), ll);
-  if (!nil (arrows[1])) arrows[1]->redraw (ren, path (), ll);
+  if (!is_nil (arrows[0])) arrows[0]->redraw (ren, path (), ll);
+  if (!is_nil (arrows[1])) arrows[1]->redraw (ren, path (), ll);
 }
 
 SI

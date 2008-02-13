@@ -26,7 +26,7 @@
 static list<SCM> destroy_list;
 
 object_rep::object_rep (SCM obj) {
-  while (!nil (destroy_list)) {
+  while (!is_nil (destroy_list)) {
     SCM handle= destroy_list->item;
     SCM_SETCAR (handle, scm_listify (SCM_UNDEFINED));
     while (scm_is_pair (SCM_CDR (handle)) && scm_is_null (SCM_CADR (handle)))

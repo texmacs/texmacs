@@ -41,7 +41,7 @@ bridge_locus_rep::bridge_locus_rep (typesetter ttt, tree st, path ip):
 void
 bridge_locus_rep::initialize () {
   last= N(st)-1;
-  if (nil(body)) body= make_bridge (ttt, st[last], descend (ip, last));
+  if (is_nil(body)) body= make_bridge (ttt, st[last], descend (ip, last));
   else replace_bridge (body, st[last], descend (ip, last));
 }
 
@@ -57,16 +57,16 @@ bridge_locus (typesetter ttt, tree st, path ip) {
 void
 bridge_locus_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, LOCUS)))
+  if (is_nil (p) && (!is_func (u, LOCUS)))
     fatal_error ("Nil path", "bridge_locus_rep::notify_assign");
-  if (nil (p)) {
+  if (is_nil (p)) {
     st=u;
     initialize ();
   }
   else {
     bool mp_flag= is_multi_paragraph (st);
     if (p->item == last) {
-      if (atom (p)) body= make_bridge (ttt, u, descend (ip, last));
+      if (is_atom (p)) body= make_bridge (ttt, u, descend (ip, last));
       else body->notify_assign (p->next, u);
       st= substitute (st, p->item, body->st);
     }
@@ -82,8 +82,8 @@ bridge_locus_rep::notify_assign (path p, tree u) {
 void
 bridge_locus_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_locus_rep::notify_insert");
-  if (atom (p) || (p->item != last)) bridge_rep::notify_insert (p, u);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_locus_rep::notify_insert");
+  if (is_atom (p) || (p->item != last)) bridge_rep::notify_insert (p, u);
   else {
     bool mp_flag= is_multi_paragraph (st);
     body->notify_insert (p->next, u);
@@ -96,8 +96,8 @@ bridge_locus_rep::notify_insert (path p, tree u) {
 void
 bridge_locus_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_locus_rep::notify_remove");
-  if (atom (p) || (p->item != last)) bridge_rep::notify_remove (p, nr);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_locus_rep::notify_remove");
+  if (is_atom (p) || (p->item != last)) bridge_rep::notify_remove (p, nr);
   else {
     bool mp_flag= is_multi_paragraph (st);
     body->notify_remove (p->next, nr);

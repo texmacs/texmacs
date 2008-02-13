@@ -25,7 +25,7 @@
 int box_rep::subnr () { return 0; }
 box box_rep::subbox (int i) { (void) i; return box (); }
 box box::operator [] (path p) {
-  if (nil (p)) return *this; else return rep->subbox(p->item)[p->next]; }
+  if (is_nil (p)) return *this; else return rep->subbox(p->item)[p->next]; }
 double box_rep::left_slope () { return 0.0; }
 double box_rep::right_slope () { return 0.0; }
 SI box_rep::left_correction () { return (SI) (-min (0, y1) * left_slope ()); }
@@ -122,7 +122,7 @@ box_rep::find_box_path (path p, bool& found) {
   //      << "; " << reverse (ip)
   //      << ", " << reverse (find_lip ())
   //      << " -- " << reverse (find_rip ()) << "\n";
-  found= (!nil(p)) && is_accessible (ip);
+  found= (!is_nil(p)) && is_accessible (ip);
   if (last_item (p) == 0) return path (0);
   else return path (1);
 }
@@ -183,7 +183,7 @@ box_rep::find_check_selection (path lp, path rp) {
 void
 box_rep::relocate (path new_ip, bool force) {
   if (!force)
-    if (nil (ip) || (ip->item >= 0) || (ip == new_ip)) return;
+    if (is_nil (ip) || (ip->item >= 0) || (ip == new_ip)) return;
   ip= new_ip;
   int i, n= subnr ();
   for (i=0; i<n; i++) subbox (i)->relocate (ip, force);
@@ -209,23 +209,23 @@ find_innermost_scroll (box b, path p) {
     bp= b->find_box_path (p, found);
     if (found) break;
     p= path_up (p);
-    if (nil (p)) return path ();
+    if (is_nil (p)) return path ();
   }
   bp= path_up (bp);
   path cp, sp;
-  while (!nil (bp)) {
+  while (!is_nil (bp)) {
     if (b->get_type () == SCROLL_BOX) sp= reverse (cp);
     b = b[bp->item];
     cp= path (bp->item, cp);
     bp= bp->next;
   }
-  if (nil (sp)) return sp;
+  if (is_nil (sp)) return sp;
   else return sp * 0;
 }
 
 path
 find_scrolled_box_path (box b, path sp, SI x, SI y, SI delta) {
-  if (nil (sp)) return b->find_box_path (x, y, delta, false);
+  if (is_nil (sp)) return b->find_box_path (x, y, delta, false);
   else {
     int m= sp->item;
     SI xx= x - b->sx (m), yy= y - b->sy (m);
@@ -246,11 +246,11 @@ void
 find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,
 		  rectangle& outer, rectangle& inner)
 {
-  if (nil (sp)) {
+  if (is_nil (sp)) {
     x= y= sx= sy= 0;
     outer= inner= rectangle (0, 0, 0, 0);
   }
-  else if (atom (sp)) {
+  else if (is_atom (sp)) {
     x    = 0;
     y    = 0;
     sx   = b->sx (0);
@@ -290,13 +290,13 @@ box_rep::find_frame (path bp, bool last) {
   SI    y= 0;
   box   b= this;
   frame f= get_frame ();
-  while (!nil (bp)) {
+  while (!is_nil (bp)) {
     x += b->sx (bp->item);
     y += b->sy (bp->item);
     b  = b->subbox (bp->item);
     bp = bp->next;
     frame g= b->get_frame ();
-    if (!nil (g))
+    if (!is_nil (g))
       if (last)
 	f= g;
       else
@@ -309,11 +309,11 @@ grid
 box_rep::find_grid (path bp) {
   box   b= this;
   grid g= get_grid ();
-  while (!nil (bp)) {
+  while (!is_nil (bp)) {
     b  = b->subbox (bp->item);
     bp = bp->next;
     grid g2= b->get_grid ();
-    if (!nil (g2)) g= g2;
+    if (!is_nil (g2)) g= g2;
   }
   return g;
 }
@@ -322,7 +322,7 @@ void
 box_rep::find_limits (path bp, point& lim1, point& lim2) {
   box b= this;
   get_limits (lim1, lim2);
-  while (!nil (bp)) {
+  while (!is_nil (bp)) {
     point slim1, slim2;
     b  = b->subbox (bp->item);
     bp = bp->next;
@@ -462,7 +462,7 @@ int nr_painted= 0;
 
 void
 clear_pattern_rectangles (renderer ren, rectangles l) {
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     rectangle r (l->item);
     ren->clear_pattern (r->x1- ren->ox, r->y1- ren->oy,
 			r->x2- ren->ox, r->y2- ren->oy);
@@ -495,16 +495,16 @@ box_rep::redraw (renderer ren, path p, rectangles& l) {
     pre_display (ren);
 
     int i, item=-1, n=subnr (), i1= n, i2= -1;
-    if (!nil(p)) i1= i2= item= p->item;
+    if (!is_nil(p)) i1= i2= item= p->item;
     for (i=0; i<n; i++) {
       int k= reindex (i, item, n-1);
-      if (nil(p)) subbox (k)->redraw (ren, path (), ll);
+      if (is_nil(p)) subbox (k)->redraw (ren, path (), ll);
       else if (i!=0) {
 	if (k > item) subbox(k)->redraw (ren, path (0), ll);
 	else subbox(k)->redraw (ren, path (subbox(k)->subnr()-1), ll);
       }
       else subbox(k)->redraw (ren, p->next, ll);
-      if (!nil(ll)) {
+      if (!is_nil(ll)) {
 	i1= min (i1, k);
 	i2= max (i2, k);
 	l = ll * l;
@@ -782,7 +782,7 @@ ostream& operator << (ostream& out, box b) { return out << ((tree) b); }
 
 path
 descend_decode (path ip, int side) {
-  if (nil (ip)) return descend (ip, side);
+  if (is_nil (ip)) return descend (ip, side);
   else switch (ip->item) {
   case DECORATION       : return ip->next;
   case DECORATION_LEFT  : return descend (ip->next, 0);

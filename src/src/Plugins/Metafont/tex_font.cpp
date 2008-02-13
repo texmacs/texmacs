@@ -513,7 +513,7 @@ tex_font_rep::get_extents (string s, metric& ex) {
   for (i=0; i<m; i++) {
     int c= buf[i];
     glyph gl= pk->get (c);
-    if (nil (gl)) continue;
+    if (is_nil (gl)) continue;
     
     y1= min (y1, -conv (tfm->d(c)));
     y2= max (y2,  conv (tfm->h(c)));
@@ -625,7 +625,7 @@ tex_font_rep::draw (renderer ren, string s, SI ox, SI y) {
   for (i=0; i<m; i++) {
     register int c= buf[i];
     glyph gl= pk->get (c);
-    if (nil (gl)) continue;
+    if (is_nil (gl)) continue;
     ren->draw (c, pk, x, y);
     x += conv (tfm->w(c)+ ker[i]);
   }
@@ -699,7 +699,7 @@ tex_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
   int c= ((QN) s[0]);
   glyph gl= pk->get (c);
-  if (nil (gl)) return font_rep::get_glyph (s);
+  if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
 }
 

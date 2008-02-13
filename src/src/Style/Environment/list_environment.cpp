@@ -21,7 +21,7 @@ tree list_environment_rep::uninit (UNINIT);
 
 void
 list_environment_rep::compress () {
-  while (!nil (next->next) &&
+  while (!is_nil (next->next) &&
 	 env->size > next->env->size + next->next->env->size)
     next->compress ();
     
@@ -43,7 +43,7 @@ list_environment_rep::compress () {
 tree*
 list_environment_rep::raw_read (int key) {
   tree* r= env->raw_read (key);
-  if (r != NULL || nil (next)) return r;
+  if (r != NULL || is_nil (next)) return r;
   misses++;
   if (misses >= env->size + next->env->size) {
     compress ();
@@ -61,7 +61,7 @@ list_environment_rep::print (const string& prefix) {
   cout << prefix << "List environment" << LF;
   env->print (prefix * "|  ");
   list_environment it= next;
-  while (!nil (it)) {
+  while (!is_nil (it)) {
     it->env->print (prefix * "|  ");
     it= it->next;
   }
@@ -73,13 +73,13 @@ list_environment_rep::print (const string& prefix) {
 
 int
 total_size (list_environment l) {
-  if (nil (l)) return 0;
+  if (is_nil (l)) return 0;
   return l->env->size + total_size (l->next);
 }
 
 static void
 flatten (basic_environment& env, list_environment l) {
-  if (nil (l->next))
+  if (is_nil (l->next))
     env->multiple_insert (l->env->a, l->env->n);
   else {
     flatten (env, l->next);
@@ -89,8 +89,8 @@ flatten (basic_environment& env, list_environment l) {
 
 basic_environment
 flatten (list_environment l) {
-  if (nil (l)) return basic_environment (2);
-  if (nil (l->next)) return l->env;
+  if (is_nil (l)) return basic_environment (2);
+  if (is_nil (l->next)) return l->env;
   int size= total_size (l);
   int n=2;
   while (n < size) n= n<<1;

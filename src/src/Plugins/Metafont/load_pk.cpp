@@ -421,7 +421,7 @@ pk_loader::load_pk () {
 
   register int c;
   for (c=0; c<=ec-bc; c++)
-    if (!nil (fng[c])) {
+    if (!is_nil (fng[c])) {
       SI design_size = tfm->design_size () >> 12;
       SI display_size= (((design_size*dpi)/72)*PIXEL) >> 8;
       double unit    = ((double) display_size) / ((double) (1<<20));

@@ -45,16 +45,16 @@ table_rep::display (bool flag) {
   for (i=0; i<nr_rows; i++) {
     cout << "[ ";
     for (j=0; j<nr_cols; j++)
-      if (!nil (T[i][j])) {
+      if (!is_nil (T[i][j])) {
 	cell C= T[i][j];
 	if (j != 0) cout << ", ";
-	if (!nil (C->b)) cout << C->b;
-	else if (!nil (C->T)) {
+	if (!is_nil (C->b)) cout << C->b;
+	else if (!is_nil (C->T)) {
 	  cout << "subtable ";
 	  C->T->display (false);
 	}
 	else cout << "nil";
-	if (!nil (C->D)) {
+	if (!is_nil (C->D)) {
 	  cout << " & decoration ";
 	  C->D->display (false);
 	}
@@ -221,8 +221,8 @@ table_rep::handle_decorations () {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (!nil (C->T))) C->T->handle_decorations ();
-      if ((!nil (C)) && (!nil (C->D))) {
+      if ((!is_nil (C)) && (!is_nil (C->T))) C->T->handle_decorations ();
+      if ((!is_nil (C)) && (!is_nil (C->D))) {
 	C->D->handle_decorations ();
 	if (C->D->status == 1) {
 	  ii= i+ C->row_span- 1;
@@ -253,8 +253,8 @@ table_rep::handle_decorations () {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if (!nil (C)) {
-	if ((!nil (C->D)) && (C->D->status==1)) {
+      if (!is_nil (C)) {
+	if ((!is_nil (C->D)) && (C->D->status==1)) {
 	  for (di=0; di<C->D->nr_rows; di++)
 	    for (dj=0; dj<C->D->nr_cols; dj++) {
 	      ii= di+ off_i[i]+ ex_i1[i]- C->D->i0;
@@ -289,12 +289,12 @@ table_rep::handle_span () {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if (!nil (C)) {
+      if (!is_nil (C)) {
 	for (ii=0; ii<C->row_span; ii++)
 	  for (jj=0; jj<C->col_span; jj++)
 	    if ((ii != 0) || (jj != 0))
 	      T[i+ii][j+jj]= cell ();
-	if (!nil (C->T)) C->T->handle_span ();
+	if (!is_nil (C->T)) C->T->handle_span ();
       }
     }
 }
@@ -310,14 +310,14 @@ table_rep::merge_borders () {
   for (i1=0; i1<nr_rows; i1++)
     for (j1=0; j1<(nr_cols-1); j1++) {
       cell C1= T[i1][j1], C2;
-      if (!nil (C1)) {
+      if (!is_nil (C1)) {
 	int i2, j2= j1 + C1->col_span;
 	if (j2 >= nr_cols) continue;
 	for (i2=i1; i2>=0; i2--) {
 	  C2= T[i2][j2];
-	  if (!nil (C2)) break;
+	  if (!is_nil (C2)) break;
 	}
-	if (!nil (C2)) {
+	if (!is_nil (C2)) {
 	  SI width= max (C1->rborder, C2->lborder);
 	  C1->rborder= C2->lborder= width;
 	  // ATTENTION: introduce new border variables when cells become lazy
@@ -328,14 +328,14 @@ table_rep::merge_borders () {
   for (i1=0; i1<(nr_rows-1); i1++)
     for (j1=0; j1<nr_cols; j1++) {
       cell C1= T[i1][j1], C2;
-      if (!nil (C1)) {
+      if (!is_nil (C1)) {
 	int i2= i1 + C1->row_span, j2;
 	if (i2 >= nr_rows) continue;
 	for (j2=j1; j2>=0; j2--) {
 	  C2= T[i2][j2];
-	  if (!nil (C2)) break;
+	  if (!is_nil (C2)) break;
 	}
-	if (!nil (C2)) {
+	if (!is_nil (C2)) {
 	  SI width= max (C1->bborder, C2->tborder);
 	  C1->bborder= C2->tborder= width;
 	  // ATTENTION: introduce new border variables when cells become lazy
@@ -441,7 +441,7 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->col_span == 1)) {
+      if ((!is_nil (C)) && (C->col_span == 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
 	//cout << i << ", " << j << ": "
@@ -456,7 +456,7 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->col_span != 1)) {
+      if ((!is_nil (C)) && (C->col_span != 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
 	SI tot= sum (Mw+j, C->col_span);
@@ -472,7 +472,7 @@ table_rep::compute_horizontal_parts (double* part) {
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if (!nil (C))
+      if (!is_nil (C))
 	part[j]= max (part[j], C->hpart);
     }
 }
@@ -519,8 +519,8 @@ table_rep::position_columns () {
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if (!nil (C)) {
-	if (!nil (C->T)) {
+      if (!is_nil (C)) {
+	if (!is_nil (C->T)) {
 	  C->T->width= mw[j]- C->lborder- C->rborder;
 	  C->T->hmode= "exact";
 	  C->T->position_columns ();
@@ -568,7 +568,7 @@ table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->row_span==1)) {
+      if ((!is_nil (C)) && (C->row_span==1)) {
 	SI cmh, cbh, cth;
 	C->compute_height (cmh, cbh, cth);
 	mh[i]= max (mh[i], cmh);
@@ -581,7 +581,7 @@ table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->row_span!=1)) {
+      if ((!is_nil (C)) && (C->row_span!=1)) {
 	SI cmh, cbh, cth;
 	C->compute_height (cmh, cbh, cth);
 	SI tot= sum (mh+i, C->row_span);
@@ -597,7 +597,7 @@ table_rep::compute_vertical_parts (double* part) {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if (!nil (C))
+      if (!is_nil (C))
 	part[i]= max (part[i], C->vpart);
     }
 }
@@ -640,7 +640,7 @@ table_rep::position_rows () {
   for (i=0; i<nr_rows; i++) {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (!nil (C->T))) {
+      if ((!is_nil (C)) && (!is_nil (C->T))) {
 	C->T->height= mh[j]- C->bborder- C->tborder;
 	C->T->vmode = "exact";
 	C->T->position_rows ();
@@ -665,7 +665,7 @@ table_rep::position_rows () {
   for (i=0; i<nr_rows; i++) {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
-      if (!nil (C)) {
+      if (!is_nil (C)) {
 	SI tot= sum (mh+i, C->row_span);
 	C->position_vertically (yoff, tot, tot+ bh[i]- mh[i], th[i]);
 	C->shift= -yoff+ tot- bh[i];
@@ -699,8 +699,8 @@ table_rep::finish_horizontal () {
   for (j=0; j<nr_cols; j++) {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if (!nil (C)) {
-	if (!nil (C->T))
+      if (!is_nil (C)) {
+	if (!is_nil (C->T))
 	  C->T->finish_horizontal ();
 	else if (C->hyphen != "n")
 	  C->finish_horizontal ();
@@ -720,7 +720,7 @@ table_rep::finish () {
   array<SI>  y;
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++)
-      if (!nil (T[i][j])) {
+      if (!is_nil (T[i][j])) {
 	cell C = T[i][j];
 	C->finish ();
 	bs << C->b;
@@ -759,7 +759,7 @@ table_rep::var_finish () {
     array<SI>  x;
     array<SI>  y;
     for (j=0; j<nr_cols; j++)
-      if (!nil (T[i][j])) {
+      if (!is_nil (T[i][j])) {
 	cell C = T[i][j];
 	C->finish ();
 	bs << C->b;

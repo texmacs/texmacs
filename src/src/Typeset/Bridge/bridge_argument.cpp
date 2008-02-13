@@ -47,7 +47,7 @@ bridge_argument_rep::initialize (string name2, path pf, tree b_t, path b_ip) {
       valid = true;
       name  = name2;
       prefix= pf;
-      if (nil (body)) body = make_bridge (ttt, b_t, b_ip);
+      if (is_nil (body)) body = make_bridge (ttt, b_t, b_ip);
       else replace_bridge (body, b_t, b_ip);
     }
 }
@@ -86,7 +86,7 @@ bridge_argument_rep::notify_macro (int tp, string var, int l, path p, tree u) {
 	p= tail (p, n);
 	switch (tp) {
 	case MACRO_ASSIGN:
-	  if (nil (p)) replace_bridge (body, u, body->ip);
+	  if (is_nil (p)) replace_bridge (body, u, body->ip);
 	  else body->notify_assign (p, u);
 	  break;
 	case MACRO_INSERT:
@@ -102,8 +102,8 @@ bridge_argument_rep::notify_macro (int tp, string var, int l, path p, tree u) {
     else {
       list<hashmap<string,tree> > old_var= env->macro_arg;
       list<hashmap<string,path> > old_src= env->macro_src;
-      if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
-      if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+      if (!is_nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+      if (!is_nil (env->macro_src)) env->macro_src= env->macro_src->next;
       flag= body->notify_macro (tp, var, l-1, p, u);
       env->macro_arg= old_var;
       env->macro_src= old_src;
@@ -139,7 +139,7 @@ bridge_argument_rep::my_typeset (int desired_status) {
   if (is_compound (r)) value= tree (ERROR, "value");
   else {
     name = r->label;
-    if ((!nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
+    if ((!is_nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
       value= env->macro_arg->item [name];
       if (!is_func (value, BACKUP)) {
 	path new_valip= env->macro_src->item [name];
@@ -167,8 +167,8 @@ bridge_argument_rep::my_typeset (int desired_status) {
   ttt->insert_marker (body->st, ip);
   list<hashmap<string,tree> > old_var= env->macro_arg;
   list<hashmap<string,path> > old_src= env->macro_src;
-  if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
-  if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+  if (!is_nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+  if (!is_nil (env->macro_src)) env->macro_src= env->macro_src->next;
   body->typeset (desired_status);
   env->macro_arg= old_var;
   env->macro_src= old_src;

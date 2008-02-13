@@ -67,7 +67,7 @@ stretched_print (tree t, bool ips, int indent) {
 ostream&
 operator << (ostream& out, observer o) {
   out << "<observer";
-  if (nil (o)) out << " null";
+  if (is_nil (o)) out << " null";
   else o->print (out);
   out << ">";
   return out;
@@ -87,10 +87,10 @@ operator << (ostream& out, observer o) {
 
 static void
 simplify (observer& obs) {
-  if (nil (obs)) return;
+  if (is_nil (obs)) return;
   observer& o1= obs->get_child (0);
   observer& o2= obs->get_child (1);  
-  if (!nil (o1) || !nil (o2)) {
+  if (!is_nil (o1) || !is_nil (o2)) {
     simplify (o1);
     simplify (o2);
     obs= list_observer (o1, o2);
@@ -99,7 +99,7 @@ simplify (observer& obs) {
 
 static void
 detach (tree& ref, tree closest, bool right) {
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_detach (ref, closest, right);
     simplify (ref->obs);
   }
@@ -113,7 +113,7 @@ detach (tree& ref, tree closest, bool right) {
 void
 assign (tree& ref, tree t) {
   // cout << "Assign " << ref << " := " << t << "\n";
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_assign (ref, t);
     simplify (ref->obs);
   }
@@ -140,7 +140,7 @@ insert (tree& ref, int pos, tree t) {
     for (i=0; i<nr; i++)
       ref[pos+i]= t[i];
   }
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_insert (ref, pos, is_atomic (t)? N(t->label): N(t));
     simplify (ref->obs);
   }
@@ -151,7 +151,7 @@ insert (tree& ref, int pos, tree t) {
 void
 remove (tree& ref, int pos, int nr) {
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_remove (ref, pos, nr);
     simplify (ref->obs);
   }
@@ -196,11 +196,11 @@ split (tree& ref, int pos, int at) {
   ref[pos  ]= t1;
   ref[pos+1]= t2;
 
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_split (ref, pos, t);
     simplify (ref->obs);
   }
-  if (!nil (t->obs)) {
+  if (!is_nil (t->obs)) {
     t->obs->notify_var_split (t, t1, t2);
     simplify (t->obs);
   }
@@ -222,12 +222,12 @@ join (tree& ref, int pos) {
   int offset= is_atomic (ref)? N(t1->label): N(t1);
   if (is_atomic (t1) && is_atomic (t2)) t= t1->label * t2->label;
   else t= t1 * t2;
-  if (!nil (ref->obs)) ref->obs->notify_join (ref, pos, t);
-  if (!nil (t1->obs)) {
+  if (!is_nil (ref->obs)) ref->obs->notify_join (ref, pos, t);
+  if (!is_nil (t1->obs)) {
     t1->obs->notify_var_join (t1, t, 0);
     simplify (t1->obs);
   }
-  if (!nil (t2->obs)) {
+  if (!is_nil (t2->obs)) {
     t2->obs->notify_var_join (t2, t, offset);
     simplify (t2->obs);
   }
@@ -244,7 +244,7 @@ join (tree& ref, int pos) {
 void
 assign_node (tree& ref, tree_label op) {
   // cout << "Assign node " << ref << " : " << tree (op) << "\n";
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_assign_node (ref, op);
     simplify (ref->obs);
   }
@@ -262,7 +262,7 @@ insert_node (tree& ref, int pos, tree t) {
   r[pos]= ref;
   for (i=pos; i<n; i++) r[i+1]= t[i];
   ref= r;
-  if (!nil (ref[pos]->obs)) {
+  if (!is_nil (ref[pos]->obs)) {
     ref[pos]->obs->notify_insert_node (ref, pos);
     simplify (ref[pos]->obs);
   }
@@ -273,7 +273,7 @@ insert_node (tree& ref, int pos, tree t) {
 void
 remove_node (tree& ref, int pos) {
   // cout << "Remove node " << ref << " : " << pos << "\n";
-  if (!nil (ref->obs)) {
+  if (!is_nil (ref->obs)) {
     ref->obs->notify_remove_node (ref, pos);
     simplify (ref->obs);
   }

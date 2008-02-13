@@ -21,7 +21,7 @@ disk_table tmfs;
 
 void
 tmfs_initialize () {
-  if (nil (tmfs)) tmfs= disk_table ("$TEXMACS_HOME_PATH/tmfs");
+  if (is_nil (tmfs)) tmfs= disk_table ("$TEXMACS_HOME_PATH/tmfs");
 }
 
 void
