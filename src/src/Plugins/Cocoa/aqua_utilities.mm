@@ -1,0 +1,72 @@
+
+/******************************************************************************
+* MODULE     : aqua_utilities.mm
+* DESCRIPTION: Utilities for Aqua
+* COPYRIGHT  : (C) 2007  Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "aqua_utilities.h"
+
+NSRect to_nsrect(coord4 p)
+{
+	float c = 1.0/PIXEL;
+	return NSMakeRect(p.x1*c, -p.x4*c, (p.x3-p.x1)*c, (p.x4-p.x2)*c);
+}
+
+NSPoint to_nspoint(coord2 p)
+{
+	float c = 1.0/PIXEL;
+	return NSMakePoint(p.x1*c,-p.x2*c);
+}
+
+NSSize to_nssize(coord2 p)
+{
+	float c = 1.0/PIXEL;
+	return NSMakeSize(p.x1*c,p.x2*c);
+}
+
+coord4 from_nsrect(NSRect rect)
+{
+	SI c1, c2, c3, c4;
+	
+	c1 = rect.origin.x*PIXEL;
+	c2 = rect.origin.y*PIXEL;
+	c3 = (rect.origin.x+rect.size.width)*PIXEL;
+	c4 = (rect.origin.y+rect.size.height)*PIXEL;	
+	return coord4 (c1, c2, c3, c4);
+}
+
+coord2 from_nspoint(NSPoint pt)
+{
+	SI c1, c2;
+	c1 = pt.x*PIXEL;
+	c2 = -pt.y*PIXEL;
+	return coord2 (c1,c2)	;
+}
+
+coord2 from_nssize(NSSize s)
+{
+	SI c1, c2;
+	c1 = s.width*PIXEL;
+	c2 = s.height*PIXEL;
+	return coord2 (c1,c2)	;
+}
+
+NSString *to_nsstring(string s)
+{
+	char *p = as_charp(s);
+	NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
+	delete [] p;	
+	return nss;
+}
+
+string from_nsstring(NSString *s)
+{
+	const char *cstr = [s cStringUsingEncoding:NSUTF8StringEncoding];
+	return string((char*)cstr);
+}
