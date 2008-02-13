@@ -18,8 +18,8 @@ class tree;
 template<class T> class list_rep;
 template<class T> class list;
 
-template<class T> bool nil (list<T> l);
-template<class T> bool atom (list<T> l);
+template<class T> bool is_nil (list<T> l);
+template<class T> bool is_atom (list<T> l);
 template<class T> bool strong_equal (list<T> l1, list<T> l2);
 
 template<class T> class list {
@@ -32,7 +32,7 @@ template<class T> class list {
   operator tree ();
   static list<T> init;
 
-  friend bool atom LESSGTR (list<T> l);
+  friend bool is_atom LESSGTR (list<T> l);
   friend bool strong_equal LESSGTR (list<T> l1, list<T> l2);
 };
 
@@ -57,7 +57,7 @@ TMPL inline list<T>::list (T item1, T item2, list<T> next):
   rep (new list_rep<T>(item1, list<T> (item2, next))) {}
 TMPL inline list<T>::list (T item1, T item2, T item3, list<T> next):
   rep (new list_rep<T>(item1, list<T> (item2, item3, next))) {}
-TMPL inline bool atom (list<T> l) { return (!nil (l)) && nil (l->next); }
+TMPL inline bool is_atom (list<T> l) { return (!is_nil (l)) && is_nil (l->next); }
 TMPL list<T> list<T>::init= list<T> ();
 
 TMPL int      N (list<T> l);

@@ -76,7 +76,7 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     x_character col_entry (0, font_glyphs (), sfactor, cur_fg, cur_bg);
     color* cols= (color*) gui->color_scale [col_entry];
     SI xo, yo;
-    glyph pre_gl= fng->get (c); if (nil (pre_gl)) return;
+    glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
     pm= XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
@@ -94,7 +94,7 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   Bitmap bm= (Bitmap) gui->character_bitmap [xc];
   if (bm == NULL) {
     SI xo, yo;
-    glyph pre_gl= fng->get (c); if (nil (pre_gl)) return;
+    glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, b, on, w= gl->width, h= gl->height;
     int byte_width= ((w-1)>>3)+1;
@@ -406,7 +406,7 @@ x_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
   int c= ((QN) s[0]);
   glyph gl= fng->get (c);
-  if (nil (gl)) return font_rep::get_glyph (s);
+  if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
 }
 

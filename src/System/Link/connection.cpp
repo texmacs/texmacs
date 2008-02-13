@@ -191,7 +191,7 @@ connection_start (string name, string session, bool again) {
     return "Error: connection " * name * " has not been declared";
 
   connection con= connection (name * "-" * session);
-  if (nil (con)) {
+  if (is_nil (con)) {
     if (DEBUG_VERBOSE)
       cout << "TeXmacs] Starting session '" << session << "'\n";
     tree t= connection_info (name, session);
@@ -217,7 +217,7 @@ void
 connection_write (string name, string session, string s) {
   // cout << "Write " << name << ", " << session << ", " << s << "\n";
   connection con= connection (name * "-" * session);
-  if (nil (con)) return;
+  if (is_nil (con)) return;
   con->write (s);
 }
 
@@ -232,7 +232,7 @@ tree
 connection_read (string name, string session, string channel) {
   // cout << "Read " << name << ", " << session << ", " << channel << "\n";
   connection con= connection (name * "-" * session);
-  if (nil (con)) return "";
+  if (is_nil (con)) return "";
   con->read (LINK_ERR);
   tree t= con->tm_err->get (channel);
   if (t == "") {
@@ -247,7 +247,7 @@ void
 connection_interrupt (string name, string session) {
   // cout << "Interrupt " << name << ", " << session << "\n";
   connection con= connection (name * "-" * session);
-  if (nil (con)) return;
+  if (is_nil (con)) return;
   con->interrupt ();
 }
 
@@ -255,7 +255,7 @@ void
 connection_stop (string name, string session) {
   // cout << "Stop " << name << ", " << session << "\n";
   connection con= connection (name * "-" * session);
-  if (nil (con)) return;
+  if (is_nil (con)) return;
   con->stop ();
 }
 
@@ -263,9 +263,9 @@ int
 connection_status (string name, string session) {
   // cout << "Status " << name << ", " << session << " -> ";
   connection con= connection (name * "-" * session);
-  if ((!nil (con)) && (con->status == CONNECTION_DYING))
+  if ((!is_nil (con)) && (con->status == CONNECTION_DYING))
     return WAITING_FOR_OUTPUT;
-  if (nil (con) || (!con->ln->alive)) return CONNECTION_DEAD;
+  if (is_nil (con) || (!con->ln->alive)) return CONNECTION_DEAD;
   // cout << con->ln->status << "\n";
   return con->status;
 }
@@ -277,7 +277,7 @@ connection_status (string name, string session) {
 static connection
 connection_get (string name, string session) {
   connection con= connection (name * "-" * session);
-  if (nil (con)) {
+  if (is_nil (con)) {
     if (connection_start (name, session, true) != "ok") return con;
     con= connection (name * "-" * session);
   }
@@ -288,7 +288,7 @@ static tree
 connection_retrieve (string name, string session) {
   // cout << "Retrieve " << name << ", " << session << "\n";
   connection con= connection (name * "-" * session);
-  if (nil (con)) return "";
+  if (is_nil (con)) return "";
   tree doc (DOCUMENT);
   while (true) {
     listen_to_pipes ();
@@ -307,7 +307,7 @@ tree
 connection_eval (string name, string session, tree t) {
   // cout << "Evaluating " << name << ", " << session << ", " << t << LF;
   connection con= connection_get (name, session);
-  if (nil (con)) return "";
+  if (is_nil (con)) return "";
   connection_write (name, session, t);
   return connection_retrieve (name, session);
 }
@@ -316,7 +316,7 @@ tree
 connection_eval (string name, string session, string s) {
   // cout << "Evaluating " << name << ", " << session << ", " << s << LF;
   connection con= connection_get (name, session);
-  if (nil (con)) return "";
+  if (is_nil (con)) return "";
   connection_write (name, session, s);
   return connection_retrieve (name, session);
 }

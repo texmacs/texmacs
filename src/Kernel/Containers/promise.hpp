@@ -18,7 +18,7 @@ class tree;
 template<class T> class promise_rep;
 template<class T> class promise;
 template<class T> ostream& operator << (ostream& out, promise<T> cmd);
-template<class T> bool nil (promise<T> l);
+template<class T> bool is_nil (promise<T> l);
 
 template<class T>
 class promise_rep: public abstract_struct {
@@ -46,7 +46,7 @@ TMPL inline T promise<T>::operator () () {
 TMPL inline bool operator == (promise<T> mw1, promise<T> mw2) {
   return mw1.rep == mw2.rep; }
 TMPL inline ostream& operator << (ostream& out, promise<T> cmd) {
-  if (nil (cmd)) return out << "(null)"; else return cmd->print(out); }
+  if (is_nil (cmd)) return out << "(null)"; else return cmd->print(out); }
 #undef TMPL
 
 #endif // defined PROMISE_H

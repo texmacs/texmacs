@@ -45,10 +45,10 @@ unregister_pointer (string id, observer which) {
   // cout << "Unregister: " << id << " -> " << obtain_tree (which) << "\n";
   list<observer>& l1= id_resolve (id);
   l1= remove (l1, which);
-  if (nil (l1)) id_resolve->reset (id);
+  if (is_nil (l1)) id_resolve->reset (id);
   list<string>& l2= pointer_resolve (which);
   l2= remove (l2, id);
-  if (nil (l2)) pointer_resolve->reset (which);
+  if (is_nil (l2)) pointer_resolve->reset (which);
 }
 
 void
@@ -61,7 +61,7 @@ void
 unregister_vertex (tree v, soft_link ln) {
   list<soft_link>& l= vertex_occurrences (v);
   l= remove (l, ln);
-  if (nil (l)) vertex_occurrences->reset (v);
+  if (is_nil (l)) vertex_occurrences->reset (v);
 }
 
 void
@@ -94,14 +94,14 @@ unregister_link (soft_link ln) {
 link_repository_rep::link_repository_rep () {}
 
 link_repository_rep::~link_repository_rep () {
-  while (!nil (loci)) {
+  while (!is_nil (loci)) {
     tree t= obtain_tree (loci->item);
     unregister_pointer (ids->item, loci->item);
     detach_pointer (t, loci->item);
     ids= ids->next;
     loci= loci->next;
   }
-  while (!nil (links)) {
+  while (!is_nil (links)) {
     unregister_link (links->item);
     links= links->next;
   }
@@ -128,20 +128,20 @@ link_repository_rep::insert_link (soft_link ln) {
 
 list<string>
 get_ids (list<observer> l) {
-  if (nil (l)) return list<string> ();
+  if (is_nil (l)) return list<string> ();
   return pointer_resolve [l->item] * get_ids (l->next);
 }
 
 list<string>
 get_ids (tree t) {
-  if (nil (t->obs)) return list<string> ();
+  if (is_nil (t->obs)) return list<string> ();
   list<observer> l= t->obs->get_tree_pointers ();
   return reverse (get_ids (l));
 }
 
 list<tree>
 as_trees (list<observer> l) {
-  if (nil (l)) return list<tree> ();
+  if (is_nil (l)) return list<tree> ();
   else return list<tree> (obtain_tree (l->item), as_trees (l->next));
 }
 
@@ -152,7 +152,7 @@ get_trees (string id) {
 
 list<tree>
 as_tree_list (list<soft_link> l) {
-  if (nil (l)) return list<tree> ();
+  if (is_nil (l)) return list<tree> ();
   else return list<tree> (l->item->t, as_tree_list (l->next));
 }
 

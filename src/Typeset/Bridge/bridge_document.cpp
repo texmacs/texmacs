@@ -69,11 +69,11 @@ bridge_document (typesetter ttt, tree st, path ip) {
 void
 bridge_document_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, DOCUMENT)) && (!is_func (u, PARA)))
+  if (is_nil (p) && (!is_func (u, DOCUMENT)) && (!is_func (u, PARA)))
     fatal_error ("Nil path", "bridge_document_rep::notify_assign");
-  if (nil (p)) { st= u; initialize (); }
+  if (is_nil (p)) { st= u; initialize (); }
   else {
-    if (atom (p)) {
+    if (is_atom (p)) {
       replace_bridge (brs[p->item], u, descend (ip, p->item));
       st= substitute (st, p->item, brs[p->item]->st);
     }
@@ -81,7 +81,7 @@ bridge_document_rep::notify_assign (path p, tree u) {
       brs[p->item]->notify_assign (p->next, u);
       st= substitute (st, p->item, brs[p->item]->st);
     }
-    if (!nil (acc)) acc->notify_assign (p, u);
+    if (!is_nil (acc)) acc->notify_assign (p, u);
   }
   status= CORRUPTED;
 }
@@ -89,8 +89,8 @@ bridge_document_rep::notify_assign (path p, tree u) {
 void
 bridge_document_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_insert");
-  if (atom (p)) {
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_insert");
+  if (is_atom (p)) {
     int i, j, n= N(brs), pos= p->item, nr= N(u);
     array<bridge> brs2 (n+nr);
     for (i=0; i<pos; i++) brs2[i]= brs[i];
@@ -101,13 +101,13 @@ bridge_document_rep::notify_insert (path p, tree u) {
     }
     brs= brs2;
     st = (st (0, p->item) * u) * st (p->item, N(st));
-    if (!nil (acc)) acc->notify_insert (p, u);
+    if (!is_nil (acc)) acc->notify_insert (p, u);
     // initialize_acc ();
   }
   else {
     brs[p->item]->notify_insert (p->next, u);
     st= substitute (st, p->item, brs[p->item]->st);
-    if (!nil (acc)) acc->notify_assign (p->item, st[p->item]);
+    if (!is_nil (acc)) acc->notify_assign (p->item, st[p->item]);
   }
   status= CORRUPTED;
 }
@@ -115,8 +115,8 @@ bridge_document_rep::notify_insert (path p, tree u) {
 void
 bridge_document_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_remove");
-  if (atom (p)) {
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_remove");
+  if (is_atom (p)) {
     int i, n= N(brs), pos= p->item;
     array<bridge> brs2 (n-nr);
     for (i=0; i<pos ; i++) brs2[i]= brs[i];
@@ -135,13 +135,13 @@ bridge_document_rep::notify_remove (path p, int nr) {
     if (change_flag) // touch brs[pos..n] for correct ``changes handling''
       for (i=pos; i<n; i++)
 	brs[i]->notify_change ();
-    if (!nil (acc)) acc->notify_remove (p, nr);
+    if (!is_nil (acc)) acc->notify_remove (p, nr);
     // initialize_acc ();
   }
   else {
     brs[p->item]->notify_remove (p->next, nr);
     st= substitute (st, p->item, brs[p->item]->st);
-    if (!nil (acc)) acc->notify_assign (p->item, st[p->item]);
+    if (!is_nil (acc)) acc->notify_assign (p->item, st[p->item]);
   }
   status= CORRUPTED;
 }
@@ -154,7 +154,7 @@ bridge_document_rep::notify_macro (int tp, string var, int l, path p, tree u) {
     flag= brs[i]->notify_macro (tp, var, l, p, u) || flag;
   if (flag) {
     status= CORRUPTED;
-    if (!nil (acc)) acc->notify_change ();
+    if (!is_nil (acc)) acc->notify_change ();
   }
   return flag;
 }
@@ -162,7 +162,7 @@ bridge_document_rep::notify_macro (int tp, string var, int l, path p, tree u) {
 void
 bridge_document_rep::notify_change () {
   status= CORRUPTED;
-  if (!nil (acc)) acc->notify_change ();
+  if (!is_nil (acc)) acc->notify_change ();
   if (N(brs)>0) brs[0]->notify_change ();
   if (N(brs)>1) brs[N(brs)-1]->notify_change ();
 }
@@ -173,7 +173,7 @@ bridge_document_rep::notify_change () {
 
 void
 bridge_document_rep::my_exec_until (path p) {
-  if (nil (acc)) {
+  if (is_nil (acc)) {
     int i;
     for (i=0; i<p->item; i++)
       brs[i]->exec_until (path (right_index (brs[i]->st)), true);
@@ -184,7 +184,7 @@ bridge_document_rep::my_exec_until (path p) {
 
 bool
 bridge_document_rep::my_typeset_will_be_complete () {
-  if (nil (acc)) {
+  if (is_nil (acc)) {
     int i, n= N(brs);
     for (i=0; i<n; i++)
       if (!brs[i]->my_typeset_will_be_complete ()) return false;
@@ -196,7 +196,7 @@ bridge_document_rep::my_typeset_will_be_complete () {
 void
 bridge_document_rep::my_typeset (int desired_status) {
   //cout << INDENT;
-  if (nil (acc)) {
+  if (is_nil (acc)) {
     int i, n= N(st);
     array<line_item> a= ttt->a;
     array<line_item> b= ttt->b;

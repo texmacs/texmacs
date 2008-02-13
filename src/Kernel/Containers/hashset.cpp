@@ -23,7 +23,7 @@ hashset_rep<T>::resize (int n2) {
   a= new list<T>[n];
   for (i=0; i<oldn; i++) {
     list<T> l(olda[i]);
-    while (!nil(l)) {
+    while (!is_nil(l)) {
       list<T>& newl= a[hash(l->item)&(n-1)];
       newl= list<T> (l->item, newl);
       l=l->next;
@@ -34,7 +34,7 @@ hashset_rep<T>::resize (int n2) {
 
 template<class T> static T*
 search (list<T> l, T x) {
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     if (l->item==x) return &(l->item);
     l= l->next;
   }
@@ -58,7 +58,7 @@ hashset_rep<T>::insert (T x) {
 template<class T> void
 hashset_rep<T>::remove (T x) {
   list<T>* lptr= &a[hash(x)&(n-1)];
-  while (!nil (*lptr)) {
+  while (!is_nil (*lptr)) {
     if ((*lptr)->item==x) {
       *lptr=(*lptr)->next;
       size --;
@@ -74,7 +74,7 @@ operator <= (hashset<T> h1, hashset<T> h2) {
   if (N(h1)>N(h2)) return false;
   for (; i<n; i++) {
     list<T> l=h1->a[i];
-    for (; !nil (l); l=l->next, j++)
+    for (; !is_nil (l); l=l->next, j++)
       if (!h2->contains (l->item)) return false;
   }
   return true;
@@ -96,7 +96,7 @@ operator << (ostream& out, hashset<T> h) {
   out << "{ ";
   for (; i<n; i++) {
     list<T> l=h->a[i];
-    for (; !nil (l); l=l->next, j++) {
+    for (; !is_nil (l); l=l->next, j++) {
       out << l->item;
       if (j!=size-1) out << ", ";
     }
@@ -111,7 +111,7 @@ hashset<T>::operator tree () {
   tree t (COLLECTION, size);
   for (; i<n; i++) {
     list<T> l=this->rep->a[i];
-    for (; !nil (l); l=l->next, j++)
+    for (; !is_nil (l); l=l->next, j++)
       t[j]= as_tree(l->item);
   }
   return t;

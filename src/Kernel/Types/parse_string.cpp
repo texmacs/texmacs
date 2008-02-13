@@ -16,7 +16,7 @@
 
 void
 parse_string_rep::advance (int n) {
-  if (nil (l) || n <= 0) return;
+  if (is_nil (l) || n <= 0) return;
   p->item += n;
   if (p->item >= N (l->item)) {
     n= p->item - N (l->item);
@@ -29,13 +29,13 @@ parse_string_rep::advance (int n) {
 string
 parse_string_rep::read (int n) {
   string s;
-  while (!nil (l) && p->item + n > N (l->item)) {
+  while (!is_nil (l) && p->item + n > N (l->item)) {
     s << l->item (p->item, N (l->item));
     n -= (N (l->item) - p->item);
     l  = l->next;
     p  = p->next;
   }
-  if (nil (l)) return s;
+  if (is_nil (l)) return s;
   s << l->item (p->item, p->item + n);
   p->item += n;
   if (p->item >= N(l->item)) {
@@ -55,31 +55,31 @@ parse_string_rep::write (string s) {
 
 char
 parse_string_rep::get_char (int n) {
-  if (nil (l)) return 0;
+  if (is_nil (l)) return 0;
   if (p->item + n < N (l->item))
     return l->item [p->item + n];
 
   list<string> ll= l;
   list<int>    pp= p;
-  while (!nil (l) && pp->item + n >= N (ll->item)) {
+  while (!is_nil (l) && pp->item + n >= N (ll->item)) {
     n -= (N (ll->item) - pp->item);
     ll = ll->next;
     pp = pp->next;
   }
-  if (nil (ll)) return 0;
+  if (is_nil (ll)) return 0;
   return ll->item [pp->item + n];
 }
 
 string
 parse_string_rep::get_string (int n) {
-  if (nil (l)) return "";
+  if (is_nil (l)) return "";
   if (p->item + n <= N (l->item))
     return l->item (p->item, p->item + n);
 
   string s;
   list<string> ll= l;
   list<int>    pp= p;
-  while (n >= 0 && !nil (ll)) {
+  while (n >= 0 && !is_nil (ll)) {
     int m= min (N (ll->item) - pp->item, n);
     s << ll->item (pp->item, pp->item + m);
     n -= m;
@@ -91,7 +91,7 @@ parse_string_rep::get_string (int n) {
 
 bool
 parse_string_rep::test (string s) {
-  if (nil (l)) return N(s) == 0;
+  if (is_nil (l)) return N(s) == 0;
   if (p->item + N(s) <= N (l->item))
     return ::test (l->item, p->item, s);
 
@@ -107,7 +107,7 @@ ostream&
 operator << (ostream& out, parse_string s) {
   list<string> l= s->l;
   list<int>    p= s->p;
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     out << l->item (p->item, N(l->item));
     l= l->next;
     p= p->next;

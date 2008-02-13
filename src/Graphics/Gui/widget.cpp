@@ -57,7 +57,7 @@ insert (list<widget_connection>& l, widget_connection con) {
 
 void
 remove (list<widget_connection>& l, widget_connection con) {
-  if (nil (l)) fatal_error ("removal not succeeded", "remove", "widget.cpp");
+  if (is_nil (l)) fatal_error ("removal not succeeded", "remove", "widget.cpp");
   else if (l->item == con) l= l->next;
   else remove (l->next, con);
 }
@@ -66,12 +66,12 @@ widget_rep::widget_rep () {}
 
 widget_rep::~widget_rep () {
   list<widget_connection> l= in;
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     remove (l->item->w1->out, l->item);
     l= l->next;
   }
   l= out;
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     remove (l->item->w2->in, l->item);
     l= l->next;
   }
@@ -126,7 +126,7 @@ widget_rep::write (slot s, blackbox index, widget w) {
 void
 widget_rep::notify (slot s, blackbox new_val) {
   list<widget_connection> l= out;
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     l->item->w2->send (s, new_val);
     l= l->next;
   }  

@@ -342,7 +342,7 @@ tree_append (tree t1, tree t2) {
 bool
 tree_active (tree t) {
   path ip= obtain_ip (t);
-  return nil (ip) || last_item (ip) != DETACHED;
+  return is_nil (ip) || last_item (ip) != DETACHED;
 }
 
 tree
@@ -363,7 +363,7 @@ tree_child_insert (tree t, int pos, tree x) {
 
 static inline bool
 ip_attached (path ip) {
-  return nil (ip) || last_item (ip) != DETACHED;
+  return is_nil (ip) || last_item (ip) != DETACHED;
 }
 
 tree
@@ -570,7 +570,7 @@ scm_is_path (SCM p) {
 
 SCM
 path_to_scm (path p) {
-  if (nil (p)) return SCM_NULL;
+  if (is_nil (p)) return SCM_NULL;
   else return scm_cons (int_to_scm (p->item), path_to_scm (p->next));
 }
 
@@ -1124,7 +1124,7 @@ scm_is_list_string (SCM p) {
 
 SCM
 list_string_to_scm (list_string l) {
-  if (nil (l)) return SCM_NULL;
+  if (is_nil (l)) return SCM_NULL;
   return scm_cons (string_to_scm (l->item),
 		   list_string_to_scm (l->next));
 }
@@ -1151,7 +1151,7 @@ scm_is_list_tree (SCM p) {
 
 SCM
 list_tree_to_scm (list_tree l) {
-  if (nil (l)) return SCM_NULL;
+  if (is_nil (l)) return SCM_NULL;
   return scm_cons (tree_to_scm (l->item),
 		   list_tree_to_scm (l->next));
 }

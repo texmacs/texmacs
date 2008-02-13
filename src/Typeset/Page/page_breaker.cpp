@@ -155,7 +155,7 @@ page_breaker_rep::page_breaker_rep (
 
 bool
 var_path_inf_eq (path p1, path p2) {
-  if (nil (p1) || nil (p2)) return nil (p1);
+  if (is_nil (p1) || is_nil (p2)) return is_nil (p1);
   if (p1->item<p2->item) return true;
   if (p1->item>p2->item) return false;
   return var_path_inf_eq (p1->next, p2->next);
@@ -202,7 +202,7 @@ find_end_block (array<path> a, int start, int end) {
 /*static*/ page_item
 access (array<page_item> l, path p) {
   page_item item= l[p->item];
-  if (nil (p->next)) return item;
+  if (is_nil (p->next)) return item;
   else {
     lazy_vstream ins= (lazy_vstream) item->fl[p->next->item];
     return access (ins->l, p->next->next);
@@ -211,7 +211,7 @@ access (array<page_item> l, path p) {
 
 /*static*/ array<page_item>
 sub (array<page_item> l, path p, path q) {
-  if (atom (p) && atom (q)) {
+  if (is_atom (p) && is_atom (q)) {
     int i= p->item, j= q->item, k;
     array<page_item> r (j-i);
     for (k=i; k<j; k++) r[k-i]= l[k];
@@ -412,7 +412,7 @@ page_breaker_rep::generate_breaks (vbreak br, int id, path flb)
   if (id == -1) {
     halt= path (sub_end);
     for (sid=0; sid<nr_flows; sid++)
-      if (atom (flow_fl[sid]))
+      if (is_atom (flow_fl[sid]))
 	br[sid]= 0;
   }
   else if (br[id]==0) {
@@ -428,7 +428,7 @@ page_breaker_rep::generate_breaks (vbreak br, int id, path flb)
       if (access (l, path_dec (start))->penalty < HYPH_INVALID) break;
       start= path_dec (start);
     }
-    if ((!nil (flb)) && (last_item (flb) == 1)) {
+    if ((!is_nil (flb)) && (last_item (flb) == 1)) {
       int credit= 3;
       spool_break (br, flb, halt);
       while (true) {
@@ -494,7 +494,7 @@ page_breaker_rep::compute_total_height (vbreak br) {
   for (id=0; id<nr_flows; id++) {
     path fl= flow_fl[id];
     space stot= br[id]==0? space (0): copy (flow_tot[id][br[id]-1]);
-    if (!atom (fl)) {
+    if (!is_atom (fl)) {
       int ch  = last_item (path_up (fl));
       int cont= br[id]==0? 0: flow_cont[id][br[id]-1];
       if (ch == 0)
@@ -714,7 +714,7 @@ page_breaker_rep::correct_pagelet (int start, int end) {
     if (brk[start][id] > brk[end][id])
       return false;
   for (id=0; id<nr_flows; id++)
-    if ((!atom (flow_fl[id])) && (last_item (path_up (flow_fl[id])) == 1))
+    if ((!is_atom (flow_fl[id])) && (last_item (path_up (flow_fl[id])) == 1))
       for (mid= 0; mid<nr_flows; mid++)
 	if ((brk[start][mid] < brk[end][mid]) &&
 	    (flow_fl[mid] == path_up (flow_fl[id], 2)))
@@ -797,7 +797,7 @@ page_breaker_rep::make_pagelet (int start, int end, path flb, int nr_cols) {
   for (sid=0; sid<nr_flows; sid++)
     if (N(part[sid]) != 0) {
       path sfl= flow_fl[sid];
-      if ((!atom (sfl)) && (last_item (path_up (sfl)) == 1) &&
+      if ((!is_atom (sfl)) && (last_item (path_up (sfl)) == 1) &&
 	  (last_item (path_up (sfl, 2)) == nr_cols))
 	{
 	  int i, j;
@@ -835,7 +835,7 @@ page_breaker_rep::make_pagelet (int start, int end, path flb, int nr_cols) {
       if (starts (flow_fl[id], flb)) {
 	int i, ch=-1;
 	path fl= flow_fl[id];
-	if (!atom (fl)) ch= last_item (path_up (fl));
+	if (!is_atom (fl)) ch= last_item (path_up (fl));
 	for (i=1; i<N(part[id]); i++) {
 	  insertion ins;
 	  if (last_item (flow_fl[id]) == nr_cols) {
@@ -1144,7 +1144,7 @@ page_breaker_rep::tc_propose_break (path flb) {
   vpenalty pen= pg1->pen + pg2->pen + as_vpenalty (pg2->ht->def - pg1->ht->def);
   if (first_longer || second_longer) pen += UNBALANCED_COLUMNS;
   if (second_longer) pen += LONGER_LATTER_COLUMN;
-  if (nil (tc_bpg1) || (pen < tc_bpen)) {
+  if (is_nil (tc_bpg1) || (pen < tc_bpen)) {
     tc_bmid= tc_middle;
     tc_bpen= pen;
     tc_bpg1= pg1;
@@ -1205,7 +1205,7 @@ page_breaker_rep::make_two_column (int start, int end, path flb) {
     }
   }
 
-  if (nil (tc_bpg1))
+  if (is_nil (tc_bpg1))
     sk << make_pagelet (tc_start, tc_end, flb, 2);
   else {
     sk << tc_bpg1;
@@ -1319,7 +1319,7 @@ page_breaker_rep::propose_break () {
   */
   bool last_page= last_page_flag && (cur_end == brk_last);
   vpenalty pen= format_pagelet (pg, height, last_page);
-  if (nil (best_pg) || (pen < best_pen)) {
+  if (is_nil (best_pg) || (pen < best_pen)) {
     best_end= cur_end;
     best_pen= pen;
     best_pg = pg;
@@ -1327,7 +1327,7 @@ page_breaker_rep::propose_break () {
 
   if (quality>0) {
     vpenalty tot_pen= pen + best_pens[cur_start];
-    if (nil (best_pgs[cur_end]) || (tot_pen < best_pens[cur_end])) {
+    if (is_nil (best_pgs[cur_end]) || (tot_pen < best_pens[cur_end])) {
       best_prev[cur_end]= cur_start;
       best_pens[cur_end]= tot_pen;
       best_pgs [cur_end]= pg;

@@ -55,7 +55,7 @@ hashmap_rep<T,U>::resize (int n2) {
   a= new list<hashentry<T,U> >[n];
   for (i=0; i<oldn; i++) {
     list<hashentry<T,U> > l(olda[i]);
-    while (!nil (l)) {
+    while (!is_nil (l)) {
       list<hashentry<T,U> >& newl= a[hash(l->item.key)&(n-1)];
       newl= list<hashentry<T,U> > (l->item, newl);
       l=l->next;
@@ -68,7 +68,7 @@ TMPL bool
 hashmap_rep<T,U>::contains (T x) {
   register int hv= hash (x);
   list<hashentry<T,U> >  l (a [hv & (n-1)]);
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)
       return true;
     l= l->next;
@@ -85,7 +85,7 @@ TMPL U&
 hashmap_rep<T,U>::bracket_rw (T x) {
   register int hv= hash (x);
   list<hashentry<T,U> >  l (a [hv & (n-1)]);
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)
       return l->item.im;
     l= l->next;
@@ -101,7 +101,7 @@ TMPL U
 hashmap_rep<T,U>::bracket_ro (T x) {
   register int hv= hash (x);
   list<hashentry<T,U> >  l (a [hv & (n-1)]);
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)
       return l->item.im;
     l= l->next;
@@ -113,7 +113,7 @@ TMPL void
 hashmap_rep<T,U>::reset (T x) {
   register int hv= hash (x);
   list<hashentry<T,U> > *l= &(a [hv & (n-1)]);
-  while (!nil (*l)) {
+  while (!is_nil (*l)) {
     if ((*l)->item.code == hv && (*l)->item.key == x) {
       *l= (*l)->next;
       size --;
@@ -129,7 +129,7 @@ hashmap_rep<T,U>::generate (void (*routine) (T)) {
   int i;
   for (i=0; i<n; i++) {
     list<hashentry<T,U> > l (a[i]);
-    while (!nil (l)) {
+    while (!is_nil (l)) {
       routine (l->item.key);
       l=l->next;
     }
@@ -142,7 +142,7 @@ operator << (ostream& out, hashmap<T,U> h) {
   out << "{ ";
   for (; i<n; i++) {
     list<hashentry<T,U> > l= h->a[i];
-    for (; !nil (l); l= l->next, j++) {
+    for (; !is_nil (l); l= l->next, j++) {
       out << l->item;
       if (j != size-1) out << ", ";
     }
@@ -156,7 +156,7 @@ TMPL hashmap<T,U>::operator tree () {
   tree t (COLLECTION, size);
   for (; i<n; i++) {
     list<hashentry<T,U> > l= rep->a[i];
-    for (; !nil (l); l= l->next, j++)
+    for (; !is_nil (l); l= l->next, j++)
       t[j]= (tree) l->item;
   }
   return t;
@@ -167,7 +167,7 @@ hashmap_rep<T,U>::join (hashmap<T,U> h) {
   int i= 0, n= h->n;
   for (; i<n; i++) {
     list<hashentry<T,U> > l= h->a[i];
-    for (; !nil(l); l= l->next)
+    for (; !is_nil(l); l= l->next)
       bracket_rw (l->item.key)= copy (l->item.im);
   }
 }
@@ -178,7 +178,7 @@ operator == (hashmap<T,U> h1, hashmap<T,U> h2) {
   int i= 0, n= h1->n;
   for (; i<n; i++) {
     list<hashentry<T,U> > l= h1->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       if (h2[l->item.key] != l->item.im) return false;
   }
   return true;

@@ -125,7 +125,7 @@ edit_env_rep::monitored_patch_env (hashmap<string,tree> patch) {
   int i=0, n=patch->n;
   for (; i<n; i++) {
     list<hashentry<string,tree> > l=patch->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       monitored_write_update (l->item.key, l->item.im);
   }
 }
@@ -136,7 +136,7 @@ edit_env_rep::patch_env (hashmap<string,tree> patch) {
   int i=0, n=patch->n;
   for (; i<n; i++) {
     list<hashentry<string,tree> > l=patch->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       write_update (l->item.key, l->item.im);
   }
 }
@@ -166,7 +166,7 @@ edit_env_rep::local_end (hashmap<string,tree>& prev_back) {
   int i=0, n=back->n;
   for (; i<n; i++) {
     list<hashentry<string,tree> > l=back->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       prev_back->write_back (l->item.key, back);
   }
   back= prev_back;

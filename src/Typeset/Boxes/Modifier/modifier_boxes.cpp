@@ -181,7 +181,7 @@ symbol_box_rep::symbol_box_rep (path ip, box b2, int n2):
 
 static box
 subbox (box b, path p) {
-  if (nil (p)) return b;
+  if (is_nil (p)) return b;
   return subbox (b[p->item], p->next);
 }
 
@@ -231,7 +231,7 @@ shorter_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
 path
 shorter_box_rep::find_rip () {
   path p= modifier_box_rep::find_rip ();
-  if (is_accessible (ip) && (!nil(p)) && (p->item > (pos+ len)))
+  if (is_accessible (ip) && (!is_nil(p)) && (p->item > (pos+ len)))
     return descend (p->next, pos+ len);
   else return p;  
 }
@@ -329,16 +329,16 @@ struct macro_box_rep: public composite_box_rep {
   SI rsup_correction () { return bs[0]->rsup_correction(); }
   SI sub_lo_base (int l) {
     // second test separates small and large big operators
-    return (!nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
+    return (!is_nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
       y1 - (l>0? 0: big_fn->yshift): box_rep::sub_lo_base (l); }
   SI sub_hi_lim (int l) {
     // second test separates small and large size big operators
-    return (!nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
+    return (!is_nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
       y1 - (l>0? 0: big_fn->yshift) +
         bs[0]->sub_hi_lim (l) - bs[0]->sub_lo_base (l):
       box_rep::sub_hi_lim (l); }
   SI sup_lo_base (int l) {
-    if (nil (big_fn)) return box_rep::sup_lo_base (l);
+    if (is_nil (big_fn)) return box_rep::sup_lo_base (l);
     SI syx= big_fn->yx * script (big_fn->size, 1) / big_fn->size;
     if ((y2-y1) <= 3*big_fn->yx) syx -= (l<0? 0: big_fn->yshift);
     return y2- syx; }

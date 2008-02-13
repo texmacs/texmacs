@@ -36,7 +36,7 @@ bridge_rewrite_rep::bridge_rewrite_rep (typesetter ttt, tree st, path ip):
 
 void
 bridge_rewrite_rep::initialize (tree body_t) {
-  if (nil (body)) body= make_bridge (ttt, attach_right (body_t, ip));
+  if (is_nil (body)) body= make_bridge (ttt, attach_right (body_t, ip));
   else replace_bridge (body, attach_right (body_t, ip));
 }
 

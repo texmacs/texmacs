@@ -280,8 +280,8 @@ static path
 table_search_format (tree t, path p) {
   tree st= subtree (t, p);
   if (is_func (st, TFORMAT) && is_func (st[N(st)-1], TABLE)) return p;
-  while ((!nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
-  if ((!nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
+  while ((!is_nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
+  if ((!is_nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
     p= path_up (p);
   return p;
 }
@@ -290,7 +290,7 @@ static void
 table_search_coordinates (tree t, path p, int& row, int& col) {
   row= col= 0;
   while (true) {
-    if (nil (p)) p= path (1);
+    if (is_nil (p)) p= path (1);
     if (p == path (0)) p= path (0, 0);
     if (p == path (1)) p= path (N(t)-1, 1);
     if (is_func (t, TFORMAT));
@@ -334,7 +334,7 @@ selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
     o1= i1;
     o2= i2;
   }
-  else if (atom (i1) || atom (i2)) {
+  else if (is_atom (i1) || is_atom (i2)) {
     if (is_atomic (t)) {
       o1= i1;
       o2= i2;
@@ -376,7 +376,7 @@ static void
 selection_bcorrect (drd_info drd, tree t, path i1, path i2, path& o1, path& o2)
 {
   o1= i1; o2= i2;
-  if (is_compound (t) && !atom (i1) && !atom (i2) && i1->item == i2->item) {
+  if (is_compound (t) && !is_atom (i1) && !is_atom (i2) && i1->item == i2->item) {
     path O1, O2;
     selection_bcorrect (drd, t[i1->item], i1->next, i2->next, O1, O2);
     if (drd->var_without_border (L(t[i1->item])) && (O1->item != O2->item)) {
@@ -397,21 +397,21 @@ compute_selection (tree t, path start, path end) {
   path p1= start->next;
   path p2= end->next;
 
-  if (nil (p1) || nil (p2)) {
+  if (is_nil (p1) || is_nil (p2)) {
     if (start == path (right_index (t))) return "";
     if (end == path (0)) return "";
     if (start == end) return "";
-    if (nil (p1) && nil (p2)) {
+    if (is_nil (p1) && is_nil (p2)) {
       if (is_compound (t)) return copy (t);
       if (i1>=i2) return "";
       return t->label (i1, i2);
     }
     if (is_compound (t) && (!is_format (t))) return copy (t);
-    if (nil (p1)) {
+    if (is_nil (p1)) {
       i1= 0;
       p1= (start->item==0? 0: right_index (t[i1]));
     }
-    if (nil (p2)) {
+    if (is_nil (p2)) {
       i2= N(t)-1;
       p2= (end->item==0? 0: right_index (t[i2]));
     }
@@ -629,7 +629,7 @@ edit_select_rep::selection_paste (string key) {
       if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;
 	path fp= search_format (row, col);
-	if (nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
+	if (is_nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
 	else table_write_subtable (fp, row, col, t[1]);
       }
       else insert_tree (t[1]);

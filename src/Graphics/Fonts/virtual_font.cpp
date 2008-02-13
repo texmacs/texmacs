@@ -252,14 +252,14 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   if (N(s)==1) {
     cfnm= fnm;
     cfng= fng;
-    if (nil (fng->get(c)))
+    if (is_nil (fng->get(c)))
       fng->get(c)= compile (virt->virt_def[c], fnm->get(c));
     return c;
   }
   else {
     make_char_font (res_name * s, cfnm, cfng);
     tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));
-    if (nil (cfng->get(0)))
+    if (is_nil (cfng->get(0)))
       cfng->get(0)= compile (t, cfnm->get(0));
     return 0;
   }

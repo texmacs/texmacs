@@ -131,7 +131,7 @@ ip_observer_rep::notify_remove_node (tree& ref, int pos) {
   for (int i=0; i<N(ref); i++)
     if (i != pos)
       detach_ip (ref[i]);
-  if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[pos], ip);
+  if ((!is_nil (ip)) && (ip->item>=0)) attach_ip (ref[pos], ip);
   else detach_ip (ref[pos]);
   ip= DETACHED; // detach_ip (ref);
 }
@@ -153,7 +153,7 @@ ip_observer_rep::get_ip (path& ip2) {
 
 bool
 ip_observer_rep::set_ip (path ip2) {
-  if (nil (ip) || nil (ip2))
+  if (is_nil (ip) || is_nil (ip2))
     fatal_error ("cannot alter global root", "ip_observer_rep::set_ip");
   ip->item= ip2->item;
   ip->next= ip2->next;
@@ -163,7 +163,7 @@ ip_observer_rep::set_ip (path ip2) {
 void
 attach_ip (tree& ref, path ip) {
   // cout << "Set ip of " << ref << " to " << ip << "\n";
-  if (nil (ref->obs) || !ref->obs->set_ip (ip)) {
+  if (is_nil (ref->obs) || !ref->obs->set_ip (ip)) {
     // cout << "Create ip observer " << ip << " for " << ref << "\n";
     ref->obs= list_observer (ip_observer (ip), ref->obs);
   }
@@ -181,14 +181,14 @@ attach_ip (tree& ref, path ip) {
 void
 detach_ip (tree& ref) {
   // cout << "Detach ip of " << ref << "\n";
-  if (!nil (ref->obs))
+  if (!is_nil (ref->obs))
     (void) ref->obs->set_ip (DETACHED);
 }
 
 path
 obtain_ip (tree& ref) {
   path ip;
-  if (nil (ref->obs)) return DETACHED;
+  if (is_nil (ref->obs)) return DETACHED;
   if (!ref->obs->get_ip (ip)) return DETACHED;
   return ip;
 }

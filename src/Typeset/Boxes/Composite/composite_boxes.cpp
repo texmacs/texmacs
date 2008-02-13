@@ -145,7 +145,7 @@ composite_box_rep::find_tag (string name) {
   int i, n= N(bs);
   for (i=0; i<n; i++) {
     path p= bs[i]->find_tag (name);
-    if (!nil (p)) return p;
+    if (!is_nil (p)) return p;
   }
   return path ();
 }
@@ -160,9 +160,9 @@ composite_box_rep::transform (frame fr) {
   int i;
   array<box> bs;
   for (i= 0; i<subnr(); i++) {
-    if (!nil (subbox (i))) {
+    if (!is_nil (subbox (i))) {
       box sb= subbox (i)->transform (fr);
-      if (!nil (sb)) bs << sb;
+      if (!is_nil (sb)) bs << sb;
     }
   }
   return N (bs)==0?box ():composite_box (ip, bs);
@@ -312,13 +312,13 @@ composite_box_rep::find_box_path (path p, bool& found) {
 
 path
 composite_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) return box_rep::find_tree_path (bp);
+  if (is_atom (bp)) return box_rep::find_tree_path (bp);
   return bs[bp->item]->find_tree_path (bp->next);
 }
 
 cursor
 composite_box_rep::find_cursor (path bp) {
-  if (atom (bp)) return box_rep::find_cursor (bp);
+  if (is_atom (bp)) return box_rep::find_cursor (bp);
   else {
     int i= bp->item;
     cursor cu= bs[i]->find_cursor (bp->next);
@@ -331,7 +331,7 @@ composite_box_rep::find_cursor (path bp) {
 
 selection
 composite_box_rep::find_selection (path lbp, path rbp) {
-  if ((!atom (lbp)) && (!atom (rbp)) && (lbp->item == rbp->item)) {
+  if ((!is_atom (lbp)) && (!is_atom (rbp)) && (lbp->item == rbp->item)) {
     int i= lbp->item;
     selection sel= bs[i]->find_selection (lbp->next, rbp->next);
     return selection (translate (sel->rs, sx(i), sy(i)), sel->start, sel->end);

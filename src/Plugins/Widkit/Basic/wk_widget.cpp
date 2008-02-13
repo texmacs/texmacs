@@ -155,19 +155,19 @@ operator << (ostream& out, wk_widget w) {
 
 void
 wk_grab_pointer (wk_widget w) {
-  if (nil (w) || w->win == NULL)
+  if (is_nil (w) || w->win == NULL)
     fatal_error ("widget should be attached", "wk_grab_pointer");
   w->win->set_mouse_grab (abstract (w), true);
 }
 
 void
 wk_ungrab_pointer (wk_widget w) {
-  if (nil (w) || w->win == NULL)
+  if (is_nil (w) || w->win == NULL)
     fatal_error ("widget should be attached", "wk_grab_pointer");
   w->win->set_mouse_grab (abstract (w), false);
 }
 
 bool
 wk_has_pointer_grab (wk_widget w) {
-  return !nil (w) && w->win != NULL && w->win->get_mouse_grab (abstract (w));
+  return !is_nil (w) && w->win != NULL && w->win->get_mouse_grab (abstract (w));
 }

@@ -293,20 +293,20 @@ void          refresh_at (time_t t);
 #define DECORATION_MIDDLE (-3)
 #define DECORATION_RIGHT  (-4)
 #define DETACHED          (-5)
-#define is_accessible(p) ((nil (p)) || ((p)->item >= 0))
-#define is_decoration(p) ((!nil (p)) && ((p)->item < 0))
+#define is_accessible(p) ((is_nil (p)) || ((p)->item >= 0))
+#define is_decoration(p) ((!is_nil (p)) && ((p)->item < 0))
 inline path descend (path ip, int i) {
-  return (nil (ip) || (ip->item >= 0))? path (i, ip): ip; }
+  return (is_nil (ip) || (ip->item >= 0))? path (i, ip): ip; }
 inline path decorate () {
   return path (DECORATION); }
 inline path decorate (path ip) {
-  return (nil (ip) || (ip->item >= 0))? path (DECORATION, ip): ip; }
+  return (is_nil (ip) || (ip->item >= 0))? path (DECORATION, ip): ip; }
 inline path decorate_left (path ip) {
-  return (nil (ip) || (ip->item >= 0))? path (DECORATION_LEFT, ip): ip; }
+  return (is_nil (ip) || (ip->item >= 0))? path (DECORATION_LEFT, ip): ip; }
 inline path decorate_middle (path ip) {
-  return (nil (ip) || (ip->item >= 0))? path (DECORATION_MIDDLE, ip): ip; }
+  return (is_nil (ip) || (ip->item >= 0))? path (DECORATION_MIDDLE, ip): ip; }
 inline path decorate_right (path ip) {
-  return (nil (ip) || (ip->item >= 0))? path (DECORATION_RIGHT, ip): ip; }
+  return (is_nil (ip) || (ip->item >= 0))? path (DECORATION_RIGHT, ip): ip; }
 path descend_decode (path ip, int side);
 
 inline bool box_rep::accessible () { return is_accessible (find_lip ()); }

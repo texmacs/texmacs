@@ -53,12 +53,12 @@ void
 compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
   cm->advance (s, pos, r, ch);
   //cout << "(r,ch)= (" << r << "," << ch << ")\n";
-  if (ch>0 && nil (fn[ch])) {
+  if (ch>0 && is_nil (fn[ch])) {
     tree t= def[ch][1];
     if (is_tuple (t, "virtual", 3))
       fn[ch]= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
     else fn[ch]= find_font (t);
-    if (nil (fn[ch]))
+    if (is_nil (fn[ch]))
       fatal_error ("Font not found", "compound_font_rep::advance");
     //fn[ch]->copy_math_pars (fn[0]);
   }
@@ -175,6 +175,6 @@ compound_font (scheme_tree def) {
     return font (name);
   array<font> fn (N(def));
   fn[0]= find_font (def[0][1]);
-  if (nil (fn[0])) return font ();
+  if (is_nil (fn[0])) return font ();
   return make (font, name, new compound_font_rep (name, def, fn));
 }

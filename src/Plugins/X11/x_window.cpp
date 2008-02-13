@@ -371,7 +371,7 @@ x_window_rep::focus_out_event () {
 
 void
 x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
-  if (nil (gui->grab_ptr) || (get_x_window (gui->grab_ptr->item) == NULL)) {
+  if (is_nil (gui->grab_ptr) || (get_x_window (gui->grab_ptr->item) == NULL)) {
     set_origin (0, 0);
     encode (x, y);
     send_mouse (w, ev, x, y, gui->state, t);
@@ -391,15 +391,15 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
 
 void
 x_window_rep::repaint_invalid_regions () {
-  //if (!nil (invalid_regions)) cout << invalid_regions << "\n";
+  //if (!is_nil (invalid_regions)) cout << invalid_regions << "\n";
   //else { cout << "."; cout.flush (); }
   rectangles new_regions;
-  if (!nil (invalid_regions)) {
+  if (!is_nil (invalid_regions)) {
     rectangle lub= least_upper_bound (invalid_regions);
     if (area (lub) < 1.2 * area (invalid_regions))
       invalid_regions= rectangles (lub);
   }
-  while (!nil (invalid_regions)) {
+  while (!is_nil (invalid_regions)) {
     set_origin (0, 0);
     rectangle r= copy (invalid_regions->item);
     encode (r->x1, r->y1);
@@ -464,7 +464,7 @@ operator << (ostream& out, message m) {
 
 static list<message>
 insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
-  if (nil (l)) return list<message> (message (wid, s, t));
+  if (is_nil (l)) return list<message> (message (wid, s, t));
   time_t ref= l->item->t;
   if ((t-cur) <= (ref-cur)) return list<message> (message (wid, s, t), l);
   return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
@@ -514,7 +514,7 @@ x_window_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
 
 bool
 x_window_rep::repainted () {
-  return nil (invalid_regions);
+  return is_nil (invalid_regions);
 }
 
 /******************************************************************************

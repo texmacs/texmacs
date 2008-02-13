@@ -37,7 +37,7 @@ edit_graphics_rep::inside_graphics (bool b) {
   path p   = path_up (tp);
   bool flag= false;
   tree st  = et;
-  while (!nil (p)) {
+  while (!is_nil (p)) {
     if (is_func (st, GRAPHICS)) flag= true;
     if (b && is_func (st, TEXT_AT )) flag= false;
     st= st[p->item];
@@ -54,7 +54,7 @@ edit_graphics_rep::inside_active_graphics (bool b) {
 bool
 edit_graphics_rep::over_graphics (SI x, SI y) {
   frame f= find_frame ();
-  if (!nil (f)) {
+  if (!is_nil (f)) {
     point lim1, lim2;
     find_limits (lim1, lim2);
     point p = adjust (f [point (x, y)]);
@@ -72,7 +72,7 @@ edit_graphics_rep::get_graphics () {
   path p   = path_up (tp);
   tree st  = et;
   tree res = tree ();
-  while (!nil (p)) {
+  while (!is_nil (p)) {
     if (is_func (st, GRAPHICS)) res= st;
     st= st[p->item];
     p = p->next;
@@ -120,7 +120,7 @@ edit_graphics_rep::find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2) {
   find_limits (lim1, lim2);
   if (lim1 == point ()) return false;
   frame f= find_frame ();
-  if (nil (f)) return false;
+  if (is_nil (f)) return false;
   point p1= f (point (lim1[0], lim1[1]));
   point p2= f (point (lim2[0], lim2[1]));
   x1= (SI) p1[0]; y1= (SI) p1[1];
@@ -132,17 +132,17 @@ point
 edit_graphics_rep::adjust (point p) {
   frame f= find_frame ();
   grid g= find_grid ();
-  if (!nil (g) && !nil (gr0) && g!=gr0) {
+  if (!is_nil (g) && !is_nil (gr0) && g!=gr0) {
     graphical_select (p[0], p[1]);
     g= gr0;
   }
-  if (nil (g))
+  if (is_nil (g))
     return p;
   else {
     point res;
     gr_selections sels= gs;
     frame f2= find_frame (true);
-    if (!nil (f2)) {
+    if (!is_nil (f2)) {
       point fp= f2 (p);
       int i;
       if ((tree)g == "empty_grid") {
@@ -162,7 +162,7 @@ edit_graphics_rep::adjust (point p) {
 	}
       }
       else
-      if (!nil (f)) { 
+      if (!is_nil (f)) { 
 	res= f2 (g->find_point_around (p, 10*get_pixel_size (), f));
 	for (i=0; i<N(pts); i++) {
 	  point sp= pts[i];
@@ -199,7 +199,7 @@ edit_graphics_rep::find_point (point p) {
 tree
 edit_graphics_rep::graphical_select (double x, double y) { 
   frame f= find_frame ();
-  if (nil (f)) return tuple ();
+  if (is_nil (f)) return tuple ();
   gr_selections sels;
   point p0 = point (x, y);
   point p = f (p0);
@@ -211,7 +211,7 @@ edit_graphics_rep::graphical_select (double x, double y) {
   gr0= empty_grid ();
   grid g= find_grid ();
   frame f2= find_frame (true);
-  if (!nil (g) && !nil (f2)) {
+  if (!is_nil (g) && !is_nil (f2)) {
     gr0= g;
     p = f2 (point (x, y));
     int i, j, n= N(sels);
@@ -228,7 +228,7 @@ edit_graphics_rep::graphical_select (double x, double y) {
         if (i<j) {
 	  curve c1= sels[i]->c;
 	  curve c2= sels[j]->c;
-	  if (!nil (c1) && !nil (c2))
+	  if (!is_nil (c1) && !is_nil (c2))
 	    ci= ci << intersection (c1, c2, p, eps);
         }
     }
@@ -237,7 +237,7 @@ edit_graphics_rep::graphical_select (double x, double y) {
     for (i=0; i<N(gc); i++) {
       curve c= f2 (gc[i]->c);
       for (j=0; j<n; j++)
-	if (!nil (sels[j]->c))
+	if (!is_nil (sels[j]->c))
 	  cgi= cgi << intersection (c, sels[j]->c, p, eps);
     }
   }
@@ -249,7 +249,7 @@ edit_graphics_rep::graphical_select (
   double x1, double y1, double x2, double y2)
 { 
   frame f= find_frame ();
-  if (nil (f)) return tuple ();
+  if (is_nil (f)) return tuple ();
   gr_selections sels;
   point p1 = f (point (x1, y1)), p2= f (point (x2, y2));
   sels= eb->graphical_select ((SI)p1[0], (SI)p1[1], (SI)p2[0], (SI)p2[1]);
@@ -270,7 +270,7 @@ edit_graphics_rep::set_graphical_object (tree t) {
   //tree old_fr= env->local_begin (GR_FRAME, (tree) find_frame ());  
   frame f_env= env->fr;
   env->fr= find_frame ();
-  if (!nil (env->fr)) {
+  if (!is_nil (env->fr)) {
     int i,n=0;
     go_box= typeset_as_concat (env, t, path (0));
     for (i=0; i<N(go_box); i++)
@@ -296,7 +296,7 @@ edit_graphics_rep::set_graphical_object (tree t) {
 void
 edit_graphics_rep::invalidate_graphical_object () {
   SI gx1, gy1, gx2, gy2;
-  if (find_graphical_region (gx1, gy1, gx2, gy2) && !nil (go_box)) {
+  if (find_graphical_region (gx1, gy1, gx2, gy2) && !is_nil (go_box)) {
     int i;
     rectangles rs;
     rectangle gr (gx1, gy1, gx2, gy2);
@@ -311,8 +311,8 @@ edit_graphics_rep::invalidate_graphical_object () {
 
 void
 edit_graphics_rep::draw_graphical_object (renderer ren) {
-  if (nil (go_box)) set_graphical_object (graphical_object);
-  if (nil (go_box)) return;
+  if (is_nil (go_box)) set_graphical_object (graphical_object);
+  if (is_nil (go_box)) return;
   SI ox1, oy1, ox2, oy2;
   ren->get_clipping (ox1, oy1, ox2, oy2);
   SI gx1, gy1, gx2, gy2;
@@ -336,7 +336,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   (void) t;
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
-  if (!nil (f)) {
+  if (!is_nil (f)) {
     if (!over_graphics (x, y)) return false;
     if (type == "move" || type == "dragging")
       if (check_event (MOTION_EVENT))

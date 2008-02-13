@@ -37,6 +37,6 @@ inline void     command::operator () (void) { rep->apply(); }
 inline bool     operator == (command cmd1, command cmd2) {
   return cmd1.rep == cmd2.rep; }
 inline ostream& operator << (ostream& out, command cmd) {
-  if (nil(cmd)) return out << "(null)"; else return cmd->print(out); }
+  if (is_nil(cmd)) return out << "(null)"; else return cmd->print(out); }
 
 #endif // defined COMMAND_H

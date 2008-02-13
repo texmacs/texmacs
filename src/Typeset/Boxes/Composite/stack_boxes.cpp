@@ -87,7 +87,7 @@ stack_box_rep::clear_incomplete (
   rectangles& rs, SI pixel, int which, int i1, int i2)
 {
   if (N(bs) == 0) return;
-  if ((i1 <= i2) && (!nil (rs))) {
+  if ((i1 <= i2) && (!is_nil (rs))) {
     //cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )" << LF;
     //cout << "  in: " << (rs/256) << LF;
     
@@ -114,7 +114,7 @@ stack_box_rep::clear_incomplete (
     if ((min_y < max_y) && (bound->y1 < min_y) && (max_y < bound->y2)) {
       rectangles new_rs;
       rectangles count= rs;
-      while (!nil (count)) {
+      while (!is_nil (count)) {
 	rectangle& r= count->item;
 	if ((r->y1 <= min_y) || (r->y2 >= max_y))
 	  new_rs= rectangles (r, new_rs);
@@ -211,7 +211,7 @@ stack_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 path
 stack_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) {
+  if (is_atom (bp)) {
     if (bp->item == 0) {
       if (is_accessible (lip)) return reverse (lip);
       else return reverse (descend_decode (lip, 0));
@@ -228,7 +228,7 @@ cursor
 stack_box_rep::find_cursor (path bp) {
   cursor cu= composite_box_rep::find_cursor (bp);
   int i= bp->item, j1, j2, n= N(bs);
-  if (atom (bp)) i= (bp == 0? 0: N(bs)-1);
+  if (is_atom (bp)) i= (bp == 0? 0: N(bs)-1);
   if (bs[i]->h() != 0) return cu;
   for (j1= i-1; j1>=0; j1--)
     if (bs[j1]->h () != 0) break;
@@ -245,7 +245,7 @@ stack_box_rep::find_cursor (path bp) {
 
 static rectangles
 descend (rectangles l, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, min (r->y1, y), r->x2, r->y2),
 		     descend (l->next, y));
@@ -253,7 +253,7 @@ descend (rectangles l, SI y) {
 
 static rectangles
 ascend (rectangles l, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, r->y1, r->x2, max (r->y2, y)),
 		     ascend (l->next, y));
@@ -261,7 +261,7 @@ ascend (rectangles l, SI y) {
 
 static rectangles
 extend_left (rectangles l, SI x) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (min (r->x1, x), r->y1, r->x2, r->y2),
 		     extend_left (l->next, x));
@@ -269,7 +269,7 @@ extend_left (rectangles l, SI x) {
 
 static rectangles
 extend_right (rectangles l, SI x) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, r->y1, max (r->x2, x), r->y2),
 		     extend_right (l->next, x));
@@ -277,7 +277,7 @@ extend_right (rectangles l, SI x) {
 
 static rectangles
 truncate_top (rectangles l, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, r->y1, r->x2, min (r->y2, y)),
 		     truncate_top (l->next, y));
@@ -285,7 +285,7 @@ truncate_top (rectangles l, SI y) {
 
 static rectangles
 truncate_bottom (rectangles l, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, max (r->y1, y), r->x2, r->y2),
 		     truncate_bottom (l->next, y));
@@ -294,15 +294,15 @@ truncate_bottom (rectangles l, SI y) {
 selection
 stack_box_rep::find_selection (path lbp, path rbp) {
   if ((N(bs) == 0) ||
-      ((!atom (lbp)) && (!atom (rbp)) && (lbp->item == rbp->item)))
+      ((!is_atom (lbp)) && (!is_atom (rbp)) && (lbp->item == rbp->item)))
     return composite_box_rep::find_selection (lbp, rbp);
 
-  int  i1  = atom (lbp)? 0      : lbp->item;
-  int  i2  = atom (rbp)? N(bs)-1: rbp->item;
-  path lbp1= atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
+  int  i1  = is_atom (lbp)? 0      : lbp->item;
+  int  i2  = is_atom (rbp)? N(bs)-1: rbp->item;
+  path lbp1= is_atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
   path rbp1= path (i1, bs[i1]->find_right_box_path ());
   path lbp2= path (i2, bs[i2]->find_left_box_path ());
-  path rbp2= atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
+  path rbp2= is_atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
 
   if (i1 == i2) {
     path lp= find_tree_path (lbp);
@@ -320,7 +320,7 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     if (i2 == i1+1) {
       rs << extend_right (sel1->rs, x2);
       rs << extend_left  (sel2->rs, x1);
-      if ((!nil (sel1->rs)) && (!nil (sel2->rs))) {
+      if ((!is_nil (sel1->rs)) && (!is_nil (sel2->rs))) {
 	rectangle r1= least_upper_bound (sel1->rs);
 	rectangle r2= least_upper_bound (sel2->rs);
 	if ((r1->x1 < r2->x2) && (r2->y2 < r1->y1))

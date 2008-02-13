@@ -106,7 +106,7 @@ tex_rubber_font (string trl_name,
 void
 tex_rubber_font_rep::get_extents (int c, metric& ex) {
   glyph gl= pk->get (c);
-  if (nil (gl))
+  if (is_nil (gl))
     ex->x1= ex->y1= ex->x2= ex->y2= ex->x3= ex->y3= ex->x4= ex->y4= 0;
   else {
     ex->x1=  0;

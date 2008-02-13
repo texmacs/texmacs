@@ -87,7 +87,7 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   //cout << "Typeset " << body << "\n";
   bool accessible= is_accessible (obtain_ip (body));
   bool visited= false;
-  if (!nil (env->link_env)) {
+  if (!is_nil (env->link_env)) {
     int i, j;
     for (i=0; i<last; i++) {
       tree arg= env->exec (t[i]);
@@ -158,7 +158,7 @@ concater_rep::typeset_set_binding (tree t, path ip) {
     flag ("set binding", ip, blue);
     if (N(keys) > 0) {
       path sip= ip;
-      if (N(t) >= 3 && (!nil (env->macro_src))) {
+      if (N(t) >= 3 && (!is_nil (env->macro_src))) {
 	tree body= env->expand (tree (ARG, t[2]), true);
 	sip= obtain_ip (body);
       }
@@ -212,7 +212,7 @@ concater_rep::typeset_flag (tree t, path ip) {
   string name= env->exec_string (t[0]);
   string col = env->exec_string (t[1]);
   path sip= ip;
-  if ((N(t) >= 3) && (!nil (env->macro_src))) {
+  if ((N(t) >= 3) && (!is_nil (env->macro_src))) {
     string var= env->exec_string (t[2]);
     sip= env->macro_src->item [var];
   }

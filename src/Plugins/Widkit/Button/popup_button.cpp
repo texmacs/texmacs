@@ -102,7 +102,7 @@ popup_button_rep::map_popup () {
   require_map= false;
   stick      = false;
 
-  if (!nil (prom)) {
+  if (!is_nil (prom)) {
     // int start_1= texmacs_time ();
     popup_w= popup_widget (prom (), opposite (where));
     // cout << "Mapping required " << (texmacs_time ()-start_1) << " ms\n";
@@ -152,7 +152,7 @@ popup_button_rep::unmap_popup () {
   popup->set_visibility (false);
   delete popup;
   popup= NULL;
-  if (!nil (prom)) popup_w= wk_widget ();
+  if (!is_nil (prom)) popup_w= wk_widget ();
 
   this << emit_invalidate_all ();
   if (!wk_has_pointer_grab (this))
@@ -265,7 +265,7 @@ popup_button_rep::handle (event ev) {
   case CLEAN_EVENT:
   case INSERT_EVENT:
   case REMOVE_EVENT:
-    if (!nil (popup_w)) popup_w << ev;
+    if (!is_nil (popup_w)) popup_w << ev;
     return true;
   case GET_COORD2_EVENT:
   case SET_COORD2_EVENT:

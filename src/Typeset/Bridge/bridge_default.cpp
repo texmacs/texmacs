@@ -35,7 +35,7 @@ bridge_default (typesetter ttt, tree st, path ip) {
 
 tree
 substitute (tree t, path p, tree u) {
-  if (nil (p)) return u;
+  if (is_nil (p)) return u;
   int i, n= N(t);
   tree t2 (t, n);
   for (i=0; i<n; i++) {
@@ -47,7 +47,7 @@ substitute (tree t, path p, tree u) {
 
 tree
 insert_at (tree t, path p, tree u) {
-  if (atom (p)) {
+  if (is_atom (p)) {
     if (is_atomic (t)) {
       if (is_compound (u)) fatal_error ("two atoms expected", "insert");
       return t->label (0, p->item) *u->label* t->label (p->item, N(t->label));
@@ -59,7 +59,7 @@ insert_at (tree t, path p, tree u) {
 
 tree
 remove_at (tree t, path p, int nr) {
-  if (atom (p)) {
+  if (is_atom (p)) {
     if (is_atomic (t))
       return t->label (0, p->item) * t->label (p->item+nr, N(t->label));
     else return t (0, p->item) * t (p->item+nr, N(t));

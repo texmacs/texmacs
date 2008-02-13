@@ -133,7 +133,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 void
 edit_dynamic_rep::activate () {
   path p= search_upwards (INACTIVE);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   tree st= subtree (et, p * 0);
 
   if (is_func (st, COMPOUND) && is_atomic (st[0])) {
@@ -190,9 +190,9 @@ edit_dynamic_rep::insert_argument (path p, bool forward) {
 void
 edit_dynamic_rep::insert_argument (bool forward) {
   path p= find_dynamic (tp);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   if (p == tp) p= find_dynamic (path_up (tp));
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   insert_argument (p, forward);
 }
 
@@ -262,9 +262,9 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 void
 edit_dynamic_rep::remove_argument (bool forward) {
   path p= find_dynamic (tp);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   if (p == tp) p= find_dynamic (path_up (tp));
-  if (nil (p)) return;
+  if (is_nil (p)) return;
 
   tree t= subtree (et, path_up (p));
   int i= last_item (p), n= N(t), d= 1;
@@ -485,8 +485,8 @@ edit_dynamic_rep::make_hybrid () {
 bool
 edit_dynamic_rep::activate_latex () {
   path p= search_upwards (LATEX);
-  if (nil (p)) p= search_upwards (HYBRID);
-  if (nil (p)) return false;
+  if (is_nil (p)) p= search_upwards (HYBRID);
+  if (is_nil (p)) return false;
   tree st= subtree (et, p);
   if (is_atomic (st[0])) {
     if (is_func (subtree (et, path_up (p)), INACTIVE))
@@ -510,7 +510,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
   if (activate_latex ()) return;
   set_message ("", "");
   path p= search_upwards (HYBRID);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   tree st= subtree (et, p);
   if (is_compound (st[0])) return;
   if (is_func (subtree (et, path_up (p)), INACTIVE))
@@ -519,7 +519,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
   // activate macro argument
   string name= st[0]->label;
   path mp= search_upwards (MACRO);
-  if (!nil (mp)) {
+  if (!is_nil (mp)) {
     tree mt= subtree (et, mp);
     int i, n= N(mt)-1;
     for (i=0; i<n; i++)
@@ -563,7 +563,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
 void
 edit_dynamic_rep::activate_symbol () {
   path p= search_upwards (SYMBOL);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   tree st= subtree (et, p);
   if (is_func (subtree (et, path_up (p)), INACTIVE))
     p= path_up (p);
@@ -584,7 +584,7 @@ edit_dynamic_rep::activate_symbol () {
 void
 edit_dynamic_rep::activate_compound () {
   path p= search_upwards (COMPOUND);
-  if (!nil (p)) {
+  if (!is_nil (p)) {
     tree st= subtree (et, p);
     tree u (make_tree_label (st[0]->label));
     u << A (st (1, N(st)));
@@ -625,7 +625,7 @@ void
 edit_dynamic_rep::temp_proof_fix () {
   /* this routine should be removed as soon as possible */
   path p = search_upwards ("proof");
-  if (nil (p) || (N(tp) < N(p)+2)) return;
+  if (is_nil (p) || (N(tp) < N(p)+2)) return;
   path q = head (tp, N(p)+2);
   tree st= subtree (et, path_up (q));
   if ((!is_document (st)) || (last_item (q) != (N(st)-1))) return;

@@ -78,7 +78,7 @@ math_font_rep::init_font (int fn_nr, font& fn) {
     fn= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
   else {
     fn= find_font (t);
-    if (nil (fn))
+    if (is_nil (fn))
       fatal_error ("Font not found", "math_font_rep::search_font");
   }
   fn->copy_math_pars (base_fn);
@@ -96,9 +96,9 @@ math_font_rep::search_font (string& s, font& fn) {
       int c= rubber->dict [root];
       if ((c!=-1) && (s (N(s)-3, N(s)) != "-0>")) {
 	int fn_nr= c/256;
-	if (nil (rubber_table [fn_nr])) {
+	if (is_nil (rubber_table [fn_nr])) {
 	  fn= find_font (rubber_name [fn_nr]);
-	  if (nil (fn))
+	  if (is_nil (fn))
 	    fatal_error ("Font not found", "math_font_rep::search_font");
 	  fn->yfrac= base_fn->yfrac;
 	  // fn->copy_math_pars (base_fn);
@@ -111,7 +111,7 @@ math_font_rep::search_font (string& s, font& fn) {
       if (c != -1) {
 	int fn_nr= c/256;
 	fn= font_table [fn_nr];
-	if (nil (fn)) init_font (fn_nr, fn);
+	if (is_nil (fn)) init_font (fn_nr, fn);
 	s= string ((char) (c&255)) * s (i+1, N(s));
 	return;
       }
@@ -122,7 +122,7 @@ math_font_rep::search_font (string& s, font& fn) {
   if (c != -1) { 
     int fn_nr= c/256;
     fn= font_table [fn_nr];
-    if (nil (fn)) init_font (fn_nr, fn);
+    if (is_nil (fn)) init_font (fn_nr, fn);
     s= string ((char) (c&255));
   }
   else {

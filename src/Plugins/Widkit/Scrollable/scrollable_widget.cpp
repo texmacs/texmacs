@@ -16,7 +16,7 @@
 SI get_dx (gravity grav, int w);
 SI get_dy (gravity grav, int h);
 
-inline bool nil (wk_widget_rep* x) { return x==NULL; }
+inline bool is_nil (wk_widget_rep* x) { return x==NULL; }
 
 /******************************************************************************
 * Routines for scrollable widgets
@@ -89,16 +89,16 @@ scrollable_widget_rep::scroll_event_ver (SI& y, SI& bef, SI& af) {
 
 void
 scrollable_widget_rep::scroll_to (SI scx2, SI scy2) {
-  if ((scx2 != scx) && (!nil (hor))) hor << emit_bar_scroll_to (scx2);
-  if ((scy2 != scy) && (!nil (ver))) ver << emit_bar_scroll_to (scy2);
+  if ((scx2 != scx) && (!is_nil (hor))) hor << emit_bar_scroll_to (scx2);
+  if ((scy2 != scy) && (!is_nil (ver))) ver << emit_bar_scroll_to (scy2);
 }
 
 void
 scrollable_widget_rep::set_extents (SI ex1b, SI ey1b, SI ex2b, SI ey2b) {
   ex1= ex1b; ey1= ey1b; ex2= ex2b; ey2= ey2b;
   abs_outer_round (ex1, ey1, ex2, ey2);
-  if (nil (hor)) scx = ex1- (x1()- ox);
-  if (nil (ver)) scy = ey1- (y1()- oy);
+  if (is_nil (hor)) scx = ex1- (x1()- ox);
+  if (is_nil (ver)) scy = ey1- (y1()- oy);
   a[0]->ox = ox -scx; a[0]->oy = oy -scy ;
   a[0]->w  = ex2-ex1; a[0]->h  = ey2-ey1;
   if ((backup == north_west) && ((a[0]->ox>0) || (a[0]->oy<0))) {
@@ -111,8 +111,8 @@ scrollable_widget_rep::set_extents (SI ex1b, SI ey1b, SI ex2b, SI ey2b) {
   }
   else a[0]->grav= backup;
   if (attached ()) this << emit_invalidate_all ();
-  if (!nil (hor)) hor << emit_bar_set_extents (ex1, ex2);
-  if (!nil (ver)) ver << emit_bar_set_extents (ey1, ey2);
+  if (!is_nil (hor)) hor << emit_bar_set_extents (ex1, ex2);
+  if (!is_nil (ver)) ver << emit_bar_set_extents (ey1, ey2);
 }
 
 /******************************************************************************

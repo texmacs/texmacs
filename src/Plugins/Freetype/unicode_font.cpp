@@ -176,7 +176,7 @@ unicode_font_rep::get_glyph (string s) {
   unsigned int uc= read_unicode_char (s, i);
   if (i != n) return font_rep::get_glyph (s);
   glyph gl= fng->get (uc);
-  if (nil (gl)) return font_rep::get_glyph (s);
+  if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
 }
 

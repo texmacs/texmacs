@@ -116,13 +116,13 @@ lazy_paragraph_rep::line_print (line_item item) {
 
 void
 lazy_paragraph_rep::line_print (line_item item, path left, path right) {
-  if (nil (left) && nil (right)) line_print (item);
+  if (is_nil (left) && is_nil (right)) line_print (item);
   else {
     line_item item1, item2;
-    hyphenate (item, nil (left)? right->item: left->item, item1, item2);
-    line_print (nil (left) ? item1: item2,
-		nil (left) ? left : left->next,
-		nil (right)? right: right->next);
+    hyphenate (item, is_nil (left)? right->item: left->item, item1, item2);
+    line_print (is_nil (left) ? item1: item2,
+		is_nil (left) ? left : left->next,
+		is_nil (right)? right: right->next);
   }
 }
 
@@ -135,7 +135,7 @@ lazy_paragraph_rep::line_print (path start, path end) {
     line_print (a[start->item], start->next, path ());
     for (i=start->item+1; i<end->item; i++)
       line_print (a[i]);
-    if (!atom (end))
+    if (!is_atom (end))
       line_print (a[end->item], path (), end->next);
   }
 }

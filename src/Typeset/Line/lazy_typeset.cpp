@@ -347,7 +347,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
   if (is_compound (r)) value= tree (ERROR, "value");
   else {
     name = r->label;
-    if ((!nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
+    if ((!is_nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
       value= env->macro_arg->item [name];
       if (!is_func (value, BACKUP)) {
 	path new_valip= env->macro_src->item [name];
@@ -361,8 +361,8 @@ make_lazy_argument (edit_env env, tree t, path ip) {
   array<line_item> b= typeset_marker (env, descend (ip, 1));
   list<hashmap<string,tree> > old_var= env->macro_arg;
   list<hashmap<string,path> > old_src= env->macro_src;
-  if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
-  if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+  if (!is_nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+  if (!is_nil (env->macro_src)) env->macro_src= env->macro_src->next;
 
   if (N(t) > 1) {
     int i, n= N(t);
@@ -394,7 +394,7 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
-      (!nil (env->macro_arg)) &&
+      (!is_nil (env->macro_arg)) &&
       env->macro_arg->item->contains (t[0][0]->label))
     {
       string name = t[0][0]->label;

@@ -775,7 +775,7 @@ path
 new_document () {
   int i, n= N(the_et);
   for (i=0; i<n; i++)
-    if (the_et[i] == UNINIT && nil (the_et[i]->obs)) {
+    if (the_et[i] == UNINIT && is_nil (the_et[i]->obs)) {
       assign (the_et[i], tree (DOCUMENT, ""));
       return path (i); // obtain_ip (the_et[i]);
     }
@@ -818,7 +818,7 @@ create_window_id () {
 
 static path
 remove (path p, int i) {
-  if (nil (p)) return p;
+  if (is_nil (p)) return p;
   else if (p->item == i) return p->next;
   else return path (p->item, remove (p->next, i));
 }

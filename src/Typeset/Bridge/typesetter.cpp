@@ -109,7 +109,7 @@ typesetter_rep::local_end (array<page_item>& prev_l, stack_border& prev_sb) {
 static rectangles
 requires_update (rectangles log) {
   rectangles rs;
-  while (!nil (log)) {
+  while (!is_nil (log)) {
     rectangle r1= log->item;
     rectangle r2= log->next->item;
     if (r1 == rectangle (0, 0, 0, 0)) rs= rectangles (r2, rs);
@@ -177,7 +177,7 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
   b->position_at (0, 0, change_log);
   change_log= requires_update (change_log);
   rectangle r (0, 0, 0, 0);
-  if (!nil (change_log)) r= least_upper_bound (change_log);
+  if (!is_nil (change_log)) r= least_upper_bound (change_log);
   x1b= r->x1; y1b= r->y1; x2b= r->x2; y2b= r->y2;
   change_log= rectangles ();
   return b;
@@ -190,7 +190,7 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
 void
 notify_assign (typesetter ttt, path p, tree u) {
   // cout << "Assign " << p << ", " << u << "\n";
-  if (nil (p)) ttt->br= make_bridge (ttt, u, ttt->br->ip);
+  if (is_nil (p)) ttt->br= make_bridge (ttt, u, ttt->br->ip);
   else ttt->br->notify_assign (p, u);
 }
 

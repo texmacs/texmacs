@@ -129,14 +129,14 @@ concat_box_rep::clear_incomplete (
     rectangles new_rs;
     rectangles mid_rs;
     rectangles count= rs;
-    while (!nil (count)) {
+    while (!is_nil (count)) {
       rectangle& r= count->item;
       if ((lbusy && (r->x1 < left)) || (rbusy && (r->x2 > right))) new_rs << r;
       else mid_rs << r;
       count= count->next;
     }
     rs= new_rs;
-    if (!nil (mid_rs)) rs= rs * least_upper_bound (mid_rs);
+    if (!is_nil (mid_rs)) rs= rs * least_upper_bound (mid_rs);
 
     // cout << "  out: " << rs << "\n\n";
   }
@@ -374,7 +374,7 @@ concat_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
 
 path
 concat_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) {
+  if (is_atom (bp)) {
     if (bp->item == 0) {
       if (is_accessible (lip)) return reverse (lip);
       else return reverse (descend_decode (lip, 0));
@@ -389,7 +389,7 @@ concat_box_rep::find_tree_path (path bp) {
 
 cursor
 concat_box_rep::find_cursor (path bp) {
-  if (atom (bp)) return box_rep::find_cursor (bp);
+  if (is_atom (bp)) return box_rep::find_cursor (bp);
   else {
     int i= bp->item, j, n;
     cursor cu= bs[i]->find_cursor (bp->next);
@@ -422,16 +422,16 @@ concat_box_rep::find_cursor (path bp) {
 selection
 concat_box_rep::find_selection (path lbp, path rbp) {
   if ((N(bs) == 0) ||
-      ((!atom (lbp)) && (!atom (rbp)) && (lbp->item == rbp->item)))
+      ((!is_atom (lbp)) && (!is_atom (rbp)) && (lbp->item == rbp->item)))
     return composite_box_rep::find_selection (lbp, rbp);
 
   int  i;
-  int  i1  = atom (lbp)? 0      : lbp->item;
-  int  i2  = atom (rbp)? N(bs)-1: rbp->item;
-  path lbp1= atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
+  int  i1  = is_atom (lbp)? 0      : lbp->item;
+  int  i2  = is_atom (rbp)? N(bs)-1: rbp->item;
+  path lbp1= is_atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
   path rbp1= path (i1, bs[i1]->find_right_box_path ());
   path lbp2= path (i2, bs[i2]->find_left_box_path ());
-  path rbp2= atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
+  path rbp2= is_atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
 
   /*
   cout << "Find selection " << lbp << " --- " << rbp << "\n"
@@ -460,7 +460,7 @@ concat_box_rep::find_selection (path lbp, path rbp) {
       path rbpi= path (i, bs[i]->find_right_box_path ());
       rs << find_selection (lbpi, rbpi)->rs;
     }
-    if (nil (rs)) return selection (rectangles (), lp, rp);
+    if (is_nil (rs)) return selection (rectangles (), lp, rp);
     rectangle r= least_upper_bound (rs);
     return selection (r, lp, rp);
   }

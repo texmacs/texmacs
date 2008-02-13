@@ -65,7 +65,7 @@ static environment reenter_rewrite_env;
 tree
 texmacs_evaluate (environment env, tree t) {
   // re-entrancy
-  if (!nil (reenter_rewrite_env)) env= reenter_rewrite_env;
+  if (!is_nil (reenter_rewrite_env)) env= reenter_rewrite_env;
   environment old_env= std_env;
   std_env= env;
   tree r= evaluate (t);

@@ -215,7 +215,7 @@ public:                                    \
 #define CONCRETE_NULL(PTR) \
   CONCRETE(PTR);           \
   inline PTR();            \
-  friend bool nil /*LESSGTR*/ (PTR x)
+  friend bool is_nil /*LESSGTR*/ (PTR x)
 #define CONCRETE_NULL_CODE(PTR)                         \
   inline PTR::PTR (): rep(NULL) {}                      \
   inline PTR::PTR (const PTR& x):                       \
@@ -226,11 +226,11 @@ public:                                    \
   inline PTR& PTR::operator = (PTR x) {                 \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep); \
     this->rep=x.rep; return *this; }                    \
-  inline bool nil (PTR x) { return x.rep==NULL; }
+  inline bool is_nil (PTR x) { return x.rep==NULL; }
 #define CONCRETE_NULL_TEMPLATE(PTR,T) \
   CONCRETE_TEMPLATE(PTR,T);           \
   inline PTR();                       \
-  friend bool nil LESSGTR (PTR<T> x)
+  friend bool is_nil LESSGTR (PTR<T> x)
 #define CONCRETE_NULL_TEMPLATE_CODE(PTR,TT,T)                           \
   template<TT T> inline PTR<T>::PTR (): rep(NULL) {}                    \
   template<TT T> inline PTR<T>::PTR (const PTR<T>& x):                  \
@@ -241,12 +241,12 @@ public:                                    \
   template<TT T> inline PTR<T>& PTR<T>::operator = (PTR<T> x) {         \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep);                 \
     this->rep=x.rep; return *this; }                                    \
-  template<TT T> inline bool nil (PTR<T> x) { return x.rep==NULL; }
+  template<TT T> inline bool is_nil (PTR<T> x) { return x.rep==NULL; }
 
 #define CONCRETE_NULL_TEMPLATE_2(PTR,T1,T2) \
   CONCRETE_TEMPLATE_2(PTR,T1,T2);           \
   inline PTR();                             \
-  friend bool nil LESSGTR (PTR<T1,T2> x)
+  friend bool is_nil LESSGTR (PTR<T1,T2> x)
 #define CONCRETE_NULL_TEMPLATE_2_CODE(PTR,TT1,T1,TT2,T2)                  \
   template<TT1 T1, TT2 T2> inline PTR<T1,T2>::PTR (): rep(NULL) {}        \
   template<TT1 T1, TT2 T2> inline PTR<T1,T2>::PTR (const PTR<T1,T2>& x):  \
@@ -259,7 +259,7 @@ public:                                    \
   inline PTR<T1,T2>& PTR<T1,T2>::operator = (PTR<T1,T2> x) {              \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep);                   \
     this->rep=x.rep; return *this; }                                      \
-  template<TT1 T1, TT2 T2> inline bool nil (PTR<T1,T2> x) {               \
+  template<TT1 T1, TT2 T2> inline bool is_nil (PTR<T1,T2> x) {               \
     return x.rep==NULL; }
 // end concrete_null
 

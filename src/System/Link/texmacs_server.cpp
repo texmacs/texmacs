@@ -42,7 +42,7 @@ server_stop () {
 string
 server_read (int fd) {
   tm_link ln= find_socket_link (fd);
-  if (nil (ln)) return "";
+  if (is_nil (ln)) return "";
   if (!ln->complete_packet (LINK_OUT)) return "";
   bool success;
   string back= ln->read_packet (LINK_OUT, 0, success);
@@ -53,7 +53,7 @@ server_read (int fd) {
 void
 server_write (int fd, string s) {
   tm_link ln= find_socket_link (fd);
-  if (nil (ln)) return;
+  if (is_nil (ln)) return;
   //cout << "Server write " << s << "\n";
   ln->write_packet (s, LINK_IN);
 }

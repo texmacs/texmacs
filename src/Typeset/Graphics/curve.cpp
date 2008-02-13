@@ -174,7 +174,7 @@ array<point>
 intersection (curve f, curve g, point p0, double eps) {
   // For local intersections only
   array<point> res;
-  if (nil (f) || nil (g)) return res;
+  if (is_nil (f) || is_nil (g)) return res;
   bool found= false;
   double d1, d2;
   if (f==g) {

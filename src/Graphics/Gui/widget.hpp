@@ -71,7 +71,7 @@ ABSTRACT_NULL_CODE(widget);
 
 inline ostream&
 operator << (ostream& out, widget w) {
-  if (nil (w)) return out << "nil";
+  if (is_nil (w)) return out << "nil";
   else return w->print (out);
 }
 

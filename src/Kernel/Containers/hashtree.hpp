@@ -19,7 +19,7 @@
  
 template<class K, class V> class hashtree;
 template<class K, class V> int N (hashtree<K,V> tree);
-template<class K, class V> bool nil (hashtree<K,V> tree);
+template<class K, class V> bool is_nil (hashtree<K,V> tree);
  
 template<class K, class V> class hashtree_rep: concrete_struct {
   hashmap<K,hashtree<K,V> > children;
@@ -125,10 +125,10 @@ public:
 
   friend class hashtree_rep<K,V>;
 #ifdef OS_WIN32
-  friend bool nil (hashtree<K,V> ht);
+  friend bool is_nil (hashtree<K,V> ht);
   friend int N (hashtree<K,V> ht);
 #else
-  friend bool nil<K,V> (hashtree<K,V> ht);
+  friend bool is_nil<K,V> (hashtree<K,V> ht);
   friend int N<K,V>(hashtree<K,V> ht);
 #endif
 };

@@ -111,7 +111,7 @@ hashtree<K,V>::operator() (K key) {
 ******************************************************************************/
 
 template<class K, class V> inline bool
-nil (hashtree<K,V> ht) {
+is_nil (hashtree<K,V> ht) {
   return ht.rep == NULL;
 }
 

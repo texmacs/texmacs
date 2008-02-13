@@ -21,11 +21,11 @@
 template<class T> ostream&
 operator << (ostream& out, list<T> l) {
   out << "[";
-  if (!nil (l)) {
+  if (!is_nil (l)) {
     out << " " << l->item;
     l=l->next;
   }
-  while (!nil (l)) {
+  while (!is_nil (l)) {
     out << ", " << l->item;
     l=l->next;
   }
@@ -55,14 +55,14 @@ template<class T> list<T>::operator tree () {
 
 template<class T> list<T>&
 operator << (list<T>& l, T item) {
-  if (nil (l)) l= list<T> (item, list<T> ());
+  if (is_nil (l)) l= list<T> (item, list<T> ());
   else l->next << item;
   return l;
 }
 
 template<class T> list<T>&
 operator << (list<T>& l1, list<T> l2) {
-  if (nil (l1)) l1= l2;
+  if (is_nil (l1)) l1= l2;
   else l1->next << l2;
   return l1;
 }
@@ -81,22 +81,22 @@ operator << (T& item, list<T>& l) {
 
 template<class T> T
 last_item (list<T> l) {
-  if (nil (l)) fatal_error ("empty path", "last_item", "list.cpp");
-  if (nil (l->next)) return l->item;
+  if (is_nil (l)) fatal_error ("empty path", "last_item", "list.cpp");
+  if (is_nil (l->next)) return l->item;
   return last_item (l->next);
 }
 
 template<class T> T&
 access_last (list<T>& l) {
-  if (nil (l)) fatal_error ("empty path", "access_last", "list.cpp");
-  if (nil (l->next)) return l->item;
+  if (is_nil (l)) fatal_error ("empty path", "access_last", "list.cpp");
+  if (is_nil (l->next)) return l->item;
   return access_last (l->next);
 }
 
 template<class T> list<T>&
 suppress_last (list<T>& l) {
-  if (nil (l)) fatal_error ("empty path", "suppress_last", "list.cpp");
-  if (nil (l->next)) l= list<T> ();
+  if (is_nil (l)) fatal_error ("empty path", "suppress_last", "list.cpp");
+  if (is_nil (l->next)) l= list<T> ();
   else suppress_last (l->next);
   return l;
 }
@@ -112,25 +112,25 @@ strong_equal (list<T> l1, list<T> l2) {
 
 template<class T> bool
 operator == (list<T> l1, list<T> l2) {
-  if (nil (l1) || nil (l2)) return (nil (l1) == nil (l2));
+  if (is_nil (l1) || is_nil (l2)) return (is_nil (l1) == is_nil (l2));
   return (l1->item==l2->item) && (l1->next==l2->next);
 }
 
 template<class T> bool
 operator != (list<T> l1, list<T> l2) {
-  if (nil (l1) || nil (l2)) return (nil (l1) != nil (l2));
+  if (is_nil (l1) || is_nil (l2)) return (is_nil (l1) != is_nil (l2));
   return (l1->item!=l2->item) || (l1->next!=l2->next);
 }
 
 template<class T> bool
 operator < (list<T> l1, list<T> l2) {
-  if (nil (l1) || nil (l2)) return !nil (l2);
+  if (is_nil (l1) || is_nil (l2)) return !is_nil (l2);
   return (l1->item==l2->item) && (l1->next<l2->next);
 }
 
 template<class T> bool
 operator <= (list<T> l1, list<T> l2) {
-  if (nil (l1) || nil (l2)) return nil (l1);
+  if (is_nil (l1) || is_nil (l2)) return is_nil (l1);
   return (l1->item==l2->item) && (l1->next<=l2->next);
 }
 
@@ -140,39 +140,39 @@ operator <= (list<T> l1, list<T> l2) {
 
 template<class T> int
 N (list<T> l) {
-  if (nil (l)) return 0;
+  if (is_nil (l)) return 0;
   else return N (l->next) + 1;
 }
 
 template<class T> list<T>
 copy (list<T> l) {
-  if (nil (l)) return list<T> ();
+  if (is_nil (l)) return list<T> ();
   else return list<T> (l->item, copy (l->next));
 }
 
 template<class T> list<T>
 operator * (list<T> l1, T x) {
-  if (nil (l1)) return x;
+  if (is_nil (l1)) return x;
   else return list<T> (l1->item, l1->next * x);
 }
 
 template<class T> list<T>
 operator * (list<T> l1, list<T> l2) {
-  if (nil (l1)) return copy (l2);
+  if (is_nil (l1)) return copy (l2);
   else return list<T> (l1->item, l1->next * l2);
 }
 
 template<class T> list<T>
 head (list<T> l, int n) {
   if (n==0) return list<T> ();
-  if (nil (l)) fatal_error ("list too short", "head", "list.cpp");
+  if (is_nil (l)) fatal_error ("list too short", "head", "list.cpp");
   return list<T> (l->item, head (l->next, n-1));
 }
 
 template<class T> list<T>
 tail (list<T> l, int n) {
   for (; n>0; n--) {
-    if (nil (l)) fatal_error ("list too short", "tail", "list.cpp");
+    if (is_nil (l)) fatal_error ("list too short", "tail", "list.cpp");
     l=l->next;
   }
   return l;
@@ -181,7 +181,7 @@ tail (list<T> l, int n) {
 template<class T> list<T>
 reverse (list<T> l) {
   list<T> r;
-  while (!nil(l)) {
+  while (!is_nil(l)) {
     r= list<T> (l->item, r);
     l=l->next;
   }
@@ -190,7 +190,7 @@ reverse (list<T> l) {
 
 template<class T> list<T>
 remove (list<T> l, T what) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   else if (l->item == what) return remove (l->next, what);
   else return list<T> (l->item, remove (l->next, what));
 }

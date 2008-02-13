@@ -72,7 +72,7 @@ move_any (tree t, path p, bool forward) {
     }
     return q * (1-l);
   }
-  else if (nil (q)) return p;
+  else if (is_nil (q)) return p;
 
   l = last_item (q);
   q = path_up (q);
@@ -210,7 +210,7 @@ static bool
 inside_same_argument (tree t, path p, path q, hashset<int> labs) {
   path c= common (p, q);
   path r= path_up (q);
-  while (!nil (r) && (r != c)) {
+  while (!is_nil (r) && (r != c)) {
     r= path_up (r);
     if (labs->contains ((int) L (subtree (t, r)))) return false;
   }
@@ -281,7 +281,7 @@ path previous_argument (tree t, path p) {
 
 static path
 search_upwards (tree t, path p, tree_label which) {
-  if (nil (p) || L (subtree (t, p)) == which) return p;
+  if (is_nil (p) || L (subtree (t, p)) == which) return p;
   else return search_upwards (t, path_up (p), which);
 }
 

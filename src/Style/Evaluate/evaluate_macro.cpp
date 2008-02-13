@@ -337,7 +337,7 @@ evaluate_compound (tree t) {
 * Argument expansion
 ******************************************************************************/
 
-#define is_accessible(p) ((nil (p)) || ((p)->item >= 0))
+#define is_accessible(p) ((is_nil (p)) || ((p)->item >= 0))
 
 tree
 expand (tree t, bool search_accessible) {

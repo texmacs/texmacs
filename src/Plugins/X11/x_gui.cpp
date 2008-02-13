@@ -142,8 +142,8 @@ pritty (tree t) {
 void
 x_gui_rep::obtain_mouse_grab (widget wid) {
   Window win= get_Window (wid);
-  if ((!nil (grab_ptr)) && (wid==grab_ptr->item)) return;
-  widget old_widget; if (!nil (grab_ptr)) old_widget= grab_ptr->item;
+  if ((!is_nil (grab_ptr)) && (wid==grab_ptr->item)) return;
+  widget old_widget; if (!is_nil (grab_ptr)) old_widget= grab_ptr->item;
   grab_ptr= list<widget> (wid, grab_ptr);
   widget new_widget= grab_ptr->item;
   notify_mouse_grab (new_widget, true);
@@ -151,7 +151,7 @@ x_gui_rep::obtain_mouse_grab (widget wid) {
 		PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
   // cout << "\n---> In grab " << pritty ((tree) wid) << "\n\n";
-  if (!nil (old_widget)) {
+  if (!is_nil (old_widget)) {
     notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
@@ -159,11 +159,11 @@ x_gui_rep::obtain_mouse_grab (widget wid) {
 
 void
 x_gui_rep::release_mouse_grab () {
-  if (nil (grab_ptr)) return;
+  if (is_nil (grab_ptr)) return;
   widget old_widget= grab_ptr->item;
   grab_ptr= grab_ptr->next;
-  widget new_widget; if (!nil (grab_ptr)) new_widget= grab_ptr->item;
-  if (nil (grab_ptr)) {
+  widget new_widget; if (!is_nil (grab_ptr)) new_widget= grab_ptr->item;
+  if (is_nil (grab_ptr)) {
     XUngrabPointer (dpy, CurrentTime);
     // cout << "\n---> No grab\n\n";
   }
@@ -181,7 +181,7 @@ x_gui_rep::release_mouse_grab () {
 
 bool
 x_gui_rep::has_mouse_grab (widget w) {
-  return (!nil (grab_ptr)) && (grab_ptr->item == w);
+  return (!is_nil (grab_ptr)) && (grab_ptr->item == w);
 }
 
 /******************************************************************************
@@ -221,7 +221,7 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
   if (key != "primary") return false;
   if (XGetSelectionOwner (dpy, XA_PRIMARY) == None) return false;
   
-  if (nil (windows_l)) return false;
+  if (is_nil (windows_l)) return false;
   Window win= windows_l->item;
   x_window x_win= (x_window) Window_to_window[win];
   Atom data= XInternAtom (dpy, "MY_STRING_SELECTION", false);
@@ -260,7 +260,7 @@ x_gui_rep::set_selection (string key, tree t, string s) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
   if (key == "primary") {
-    if (nil (windows_l)) return false;
+    if (is_nil (windows_l)) return false;
     Window win= windows_l->item;
     if (selection!=NULL) delete[] selection;
     XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
@@ -515,7 +515,7 @@ x_gui_rep::map_balloon () {
 
 void
 x_gui_rep::unmap_balloon () {
-  if (!nil (balloon_wid)) {
+  if (!is_nil (balloon_wid)) {
     if (balloon_win != NULL) {
       balloon_win->set_visibility (false);
       delete balloon_win;

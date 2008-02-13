@@ -18,7 +18,7 @@
 
 tree
 clean_assign (tree t, path p, tree u) {
-  if (nil (p)) return copy (u);
+  if (is_nil (p)) return copy (u);
   else {
     int i, j= p->item, n= N(t);
     tree r (t, n);
@@ -31,11 +31,11 @@ clean_assign (tree t, path p, tree u) {
 
 tree
 clean_insert (tree t, path p, tree u) {
-  if (nil (p->next) && is_atomic (t)) {
+  if (is_nil (p->next) && is_atomic (t)) {
     string s= t->label;
     return s (0, p->item) * u->label * s (p->item, N(s));
   }
-  else if (nil (p->next)) {
+  else if (is_nil (p->next)) {
     int i, j= p->item, n= N(t), nr= N(u);
     tree r (t, n+nr);
     for (i=0; i<j; i++) r[i]= t[i];
@@ -55,11 +55,11 @@ clean_insert (tree t, path p, tree u) {
 
 tree
 clean_remove (tree t, path p, int nr) {
-  if (nil (p->next) && is_atomic (t)) {
+  if (is_nil (p->next) && is_atomic (t)) {
     string s= t->label;
     return s (0, p->item) * s (p->item+nr, N(s));
   }
-  else if (nil (p->next)) {
+  else if (is_nil (p->next)) {
     int i, j= p->item, n= N(t);
     tree r (t, n-nr);
     for (i=0; i<j; i++) r[i]= t[i];
@@ -78,7 +78,7 @@ clean_remove (tree t, path p, int nr) {
 
 tree
 clean_split (tree t, path p) {
-  if (nil (p->next->next)) {
+  if (is_nil (p->next->next)) {
     tree u= t[p->item];
     int i, n1= p->next->item, n2= N(u)-n1;
     tree s1, s2;
@@ -112,7 +112,7 @@ clean_split (tree t, path p) {
 
 tree
 clean_join (tree t, path p) {
-  if (nil (p->next)) {
+  if (is_nil (p->next)) {
     int i, j= p->item;
     tree s1= t[j], s2= t[j+1], u;
     if (is_atomic (s1))
@@ -143,7 +143,7 @@ clean_join (tree t, path p) {
 
 tree
 clean_assign_node (tree t, path p, tree_label op) {
-  if (nil (p)) {
+  if (is_nil (p)) {
     int i, n= N(t);
     tree r (op, n);
     for (i=0; i<n; i++) r[i]= t[i];
@@ -161,7 +161,7 @@ clean_assign_node (tree t, path p, tree_label op) {
 
 tree
 clean_insert_node (tree t, path p, tree u) {
-  if (nil (p->next)) {
+  if (is_nil (p->next)) {
     int i, j= p->item, n= N(u);
     tree r (u, n+1);
     for (i=0; i<j; i++) r[i]= u[i];
@@ -181,7 +181,7 @@ clean_insert_node (tree t, path p, tree u) {
 
 tree
 clean_remove_node (tree t, path p) {
-  if (nil (p->next)) return t[p->item];
+  if (is_nil (p->next)) return t[p->item];
   else {
     int i, j= p->item, n= N(t);
     tree r (t, n);

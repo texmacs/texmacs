@@ -410,7 +410,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	else s << ss;
       }
       else if (((t->label[i] == '\'') || (t->label[i] == '`')) &&
-	       (!nil (mode_stack)) && (mode_stack->item == 1))
+	       (!is_nil (mode_stack)) && (mode_stack->item == 1))
 	{
 	  int start= i++;
 	  while ((i<n) && (t->label[i] == t->label[i-1])) i++;
@@ -436,7 +436,7 @@ upgrade_textual (tree t, path& mode_stack) {
       }
       else if (is_func (u, RESET)) {
 	if (u == tree (RESET, "mode"))
-	  if (!nil (mode_stack))
+	  if (!is_nil (mode_stack))
 	    mode_stack= mode_stack->next;
       }
       else if (is_func (u, BEGIN, 1)) {
@@ -451,7 +451,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	    (u[0] == "equation*") ||
 	    (u[0] == "eqnarray*") ||
 	    (u[0] == "leqnarray*"))
-	  if (!nil (mode_stack))
+	  if (!is_nil (mode_stack))
 	    mode_stack= mode_stack->next;
       }
       if (is_concat (t) && is_concat (u)) r << A(u);

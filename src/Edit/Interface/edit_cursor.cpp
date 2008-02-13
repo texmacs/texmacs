@@ -204,7 +204,7 @@ void
 edit_cursor_rep::go_page_up () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   path sp= find_innermost_scroll (eb, tp);
-  if (nil (sp)) go_to (mv->ox, min (mv->oy + get_window_height (), eb->y2));
+  if (is_nil (sp)) go_to (mv->ox, min (mv->oy + get_window_height (), eb->y2));
   else {
     SI x, y, sx, sy;
     rectangle outer, inner;
@@ -219,7 +219,7 @@ void
 edit_cursor_rep::go_page_down () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   path sp= find_innermost_scroll (eb, tp);
-  if (nil (sp)) go_to (mv->ox, max (mv->oy - get_window_height (), eb->y1));
+  if (is_nil (sp)) go_to (mv->ox, max (mv->oy - get_window_height (), eb->y1));
   else {
     SI x, y, sx, sy;
     rectangle outer, inner;
@@ -411,25 +411,25 @@ edit_cursor_rep::go_end_paragraph () {
 void
 edit_cursor_rep::go_start_of (tree_label what) {
   path p= search_upwards (what);
-  if (!nil (p)) go_to (start (et, p));
+  if (!is_nil (p)) go_to (start (et, p));
 }
 
 void
 edit_cursor_rep::go_end_of (tree_label what) {
   path p= search_upwards (what);
-  if (!nil (p)) go_to (end (et, p));
+  if (!is_nil (p)) go_to (end (et, p));
 }
 
 void
 edit_cursor_rep::go_start_with (string var, string val) {
   path p= search_upwards_with (var, val);
-  if (!nil (p)) go_to (start (et, p));
+  if (!is_nil (p)) go_to (start (et, p));
 }
 
 void
 edit_cursor_rep::go_end_with (string var, string val) {
   path p= search_upwards_with (var, val);
-  if (!nil (p)) go_to (end (et, p));
+  if (!is_nil (p)) go_to (end (et, p));
 }
 
 /******************************************************************************
@@ -462,7 +462,7 @@ search_label (tree t, string which) {
     int i, n=N(t);
     for (i=0; i<n; i++) {
       path q= search_label (t[i], which);
-      if (!nil (q)) return path (i, q);
+      if (!is_nil (q)) return path (i, q);
     }
     return path ();
   }
@@ -479,14 +479,14 @@ edit_cursor_rep::show_cursor_if_hidden () {
 void
 edit_cursor_rep::go_to_label (string s) {
   path p= search_label (et, s);
-  if (!nil (p)) {
+  if (!is_nil (p)) {
     go_to (p);
     show_cursor_if_hidden ();
     return;
   }
-  if (!nil (eb)) {
+  if (!is_nil (eb)) {
     p= eb->find_tag (s);
-    if (!nil (p)) {
+    if (!is_nil (p)) {
       go_to (p);
       show_cursor_if_hidden ();
       return;

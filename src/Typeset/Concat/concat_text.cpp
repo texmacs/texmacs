@@ -359,7 +359,7 @@ void
 concater_rep::typeset_decorated_box (tree t, path ip) {
   (void) t; (void) ip;
   int n= N (env->decorated_boxes);
-  if ((n > 0) && (!nil (env->decorated_boxes [n-1]))) {
+  if ((n > 0) && (!is_nil (env->decorated_boxes [n-1]))) {
     print (STD_ITEM, env->decorated_boxes [n-1]);
     env->decorated_boxes [n-1]= box ();
   }
