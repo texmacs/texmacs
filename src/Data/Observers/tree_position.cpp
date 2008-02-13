@@ -190,7 +190,7 @@ obtain_position (observer o) {
   int  index;
   if (!o->get_position (t, index)) return path ();
   path ip= obtain_ip (t);
-  if (ip == DETACHED) return path ();
+  if (ip == path (DETACHED)) return path ();
   return reverse (ip) * index;
 }
 

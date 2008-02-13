@@ -10,7 +10,6 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "window.hpp"
 #include "tm_window.hpp"
 #include "message.hpp"
 

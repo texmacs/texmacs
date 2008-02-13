@@ -13,7 +13,11 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 #include "typesetter.hpp"
+#ifdef AQUATEXMACS
+#include "aqua_simple_widget.h"
+#else
 #include "Widkit/simple_wk_widget.hpp"
+#endif
 #include "server.hpp"
 #include "scheme.hpp"
 #include "drd_info.hpp"

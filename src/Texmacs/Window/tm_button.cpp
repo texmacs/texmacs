@@ -10,7 +10,11 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#ifdef AQUATEXMACS
+#include "aqua_simple_widget.h"
+#else
 #include "Widkit/simple_wk_widget.hpp"
+#endif
 #include "boxes.hpp"
 #include "Boxes/construct.hpp"
 #include "font.hpp"
@@ -59,6 +63,10 @@ void
 box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
   renderer win= get_renderer (this);
+#ifdef AQUATEXMACS
+  SI w,h;
+  handle_get_size_hint (w,h);
+#endif
   if (!transparent) {
     win->set_background (light_grey);
     win->set_color (light_grey);
