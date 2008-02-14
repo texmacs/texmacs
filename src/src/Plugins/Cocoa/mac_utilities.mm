@@ -16,11 +16,13 @@ void mac_fix_paths()
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   /* add appropriate TEXMACS_PATH to the current environment */
+#if 0
   setenv("TEXMACS_PATH",
          [[[[NSBundle mainBundle] resourcePath] 
             stringByAppendingPathComponent:@"share/TeXmacs"] 
             cStringUsingEncoding:NSUTF8StringEncoding],
          1);
+#endif
   /* add TeX directory */
   /* FIXME: make this user-defined */
   setenv("PATH",

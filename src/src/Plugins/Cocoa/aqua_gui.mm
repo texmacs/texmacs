@@ -14,7 +14,6 @@
 #include "iterator.hpp"
 #include "dictionary.hpp"
 #include "aqua_gui.h"
-#include "aqua_window.h"
 #include "analyze.hpp"
 #include <locale.h>
 #include "language.hpp"

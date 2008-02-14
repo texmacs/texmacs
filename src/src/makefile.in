@@ -9,6 +9,8 @@
 default: all
 
 vpath %.cpp $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
+vpath %.m $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
+vpath %.mm $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
 
 ###############################################################################
 # Configuration variables
@@ -25,7 +27,9 @@ CXXOPTIMIZE = @CONFIG_CXXOPTIMIZE@ @CONFIG_CXXDIALECT@
 CXXDEBUG = @CONFIG_CXXDEBUG@ 
 CXXFLAGS = $(CXXWARNING) $(CXXTEMPLATE) $(CXXOPTIMIZE) $(CXXDEBUG) @CONFIG_CXXFLAGS@ @CXXFLAGS@
 CPPFLAGS = @CPPFLAGS@
-CXXXWINDOW =@CONFIG_CX@
+CXXX11 = @X11_CFLAGS@
+CXXCOCOA = @COCOA_CFLAGS@
+CXXGUI = $(CXX@CONFIG_GUI@)
 CXXIMLIB2 = @IMLIB2_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
@@ -35,8 +39,10 @@ LDFLAGS = @CONFIG_BFLAGS@
 LDSTATIC = @CONFIG_BSTATIC@
 LDSHARED = @CONFIG_BSHARED@
 LDPATH = @CONFIG_BPATH@
-LDXWINDOW =@CONFIG_BX@
 LDDL = @CONFIG_BDL@
+LDX11 = @X11_LDFLAGS@
+LDCOCOA = @COCOA_LDFLAGS@
+LDGUI = $(LD@CONFIG_GUI@)
 LDIMLIB2 = @IMLIB2_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
 LDICONV = @ICONV_LDFLAGS@
@@ -66,14 +72,22 @@ findsrc_in = \
 $(foreach dir,$(patsubst %,$(1)/%,$(2)),\
 $(notdir $(wildcard $(dir)/*.cpp $(dir)/*/*.cpp)))
 findsrc = $(call findsrc_in,$(1),*)
+findm_in = \
+$(foreach dir,$(patsubst %,$(1)/%,$(2)),\
+$(notdir $(wildcard $(dir)/*.m $(dir)/*/*.m)))
+findmm_in = \
+$(foreach dir,$(patsubst %,$(1)/%,$(2)),\
+$(notdir $(wildcard $(dir)/*.mm $(dir)/*/*.mm)))
 
 kernel_src   := $(call findsrc,Kernel)
 system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Ghostscript Imlib2 \
-                                          Ispell Metafont Openssl Widkit)
-x11_src      := $(call findsrc_in,Plugins,X11)
+                                          Ispell Metafont Openssl)
+x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
+cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
+cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
@@ -87,14 +101,18 @@ guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
 # $(deps) and define an rule without command for every source file it
 # compiles.
 
-make_deps = $(patsubst %.cpp,Deps/%.d,$(notdir $(1)))
+make_cpp_deps = $(patsubst %.cpp,Deps/%.d,$(notdir $(1)))
+make_m_deps = $(patsubst %.m,Deps/%.d,$(notdir $(1)))
+make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 
-texmacs_deps := $(call make_deps,$(system_src) $(kernel_src) $(data_src)\
+texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
  $(edit_src) $(guile_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
  $(typeset_src) $(style_src))
+texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
+texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 
-deps += $(texmacs_deps)
+deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
 ###############################################################################
 # Include files
@@ -108,6 +126,7 @@ data_incl     := $(system_incl)
 graphics_incl := $(system_incl)
 plugins_incl  := $(system_incl)
 x11_incl      := $(system_incl)
+cocoa_incl    := $(system_incl)
 style_incl    := $(system_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
 typeset_incl  := $(system_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
 guile_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
@@ -122,12 +141,14 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files Sys
 
 deps_flags = $(deps_incl)\
  $(CPPFLAGS) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
- -I$(tmsrc)/include $(CXXXWINDOW)
+ -I$(tmsrc)/include $(CXXX11) $(CXXGUI)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
 # current directory, and that feature is disable by -I-.
 
-$(texmacs_deps): Deps/%.d: %.cpp
+$(texmacs_cpp_deps): Deps/%.d: %.cpp
+$(texmacs_m_deps): Deps/%.d: %.m
+$(texmacs_mm_deps): Deps/%.d: %.mm
 
 $(deps):
 	@ echo "make deps: $@"
@@ -153,6 +174,8 @@ endif
 ###############################################################################
 
 makeobj = $(patsubst %.cpp,Objects/%.o,$(1))
+makeobj_m = $(patsubst %.m,Objects/%.o,$(1))
+makeobj_mm = $(patsubst %.mm,Objects/%.o,$(1))
 
 system_obj   := $(call makeobj,$(system_src))
 kernel_obj   := $(call makeobj,$(kernel_src))
@@ -161,6 +184,8 @@ edit_obj     := $(call makeobj,$(edit_src))
 guile_obj    := $(call makeobj,$(guile_src))
 graphics_obj := $(call makeobj,$(graphics_src))
 x11_obj      := $(call makeobj,$(x11_src))
+cocoa_m_obj  := $(call makeobj_m,$(cocoa_m_src))
+cocoa_mm_obj := $(call makeobj_mm,$(cocoa_mm_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
@@ -190,9 +215,13 @@ $(guile_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXXWINDOW))
+	$(call cxx_incl,$(plugins_incl) $(CXXX11))
 $(x11_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(x11_incl) $(CXXXWINDOW))
+	$(call cxx_incl,$(x11_incl) $(CXXX11))
+$(cocoa_m_obj): Objects/%.o: %.m
+	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
+$(cocoa_mm_obj): Objects/%.o: %.mm
+	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
 $(texmacs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(texmacs_incl))
 $(typeset_obj): Objects/%.o: %.cpp
@@ -244,6 +273,7 @@ uses_data     := $(data_obj)
 uses_graphics := $(graphics_obj)
 uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
+uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
 uses_style    := $(style_obj)
 uses_edit     := $(edit_obj)
@@ -253,9 +283,9 @@ uses_texmacs  := $(texmacs_obj)
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 style typeset edit glue texmacs))
+ plugins x11 cocoa style typeset edit glue texmacs))
 
-link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDXWINDOW) \
+link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) \
   $(LDGUILE) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
