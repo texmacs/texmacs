@@ -19,6 +19,9 @@
 #include "../../Style/Memorizer/clean_copy.hpp"
 #include "../../Style/Environment/environment.hpp"
 #endif
+#ifdef AQUATEXMACS
+void mac_fix_paths ();
+#endif
 
 extern bool   char_clip;
 extern bool   reverse_colors;
@@ -270,6 +273,9 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+#ifdef AQUATEXMACS
+  mac_fix_paths ();
+#endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());

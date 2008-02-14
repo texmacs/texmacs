@@ -367,17 +367,18 @@ CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
-CONFIG_CX="$X_CFLAGS"
 CONFIG_CXXOPTIMIZE="-O2"
 CONFIG_BSTATIC="-Wl,-Bstatic"
 CONFIG_BSHARED="-Wl,-Bdynamic"
 CONFIG_BFLAGS=""
 CONFIG_BPATH="-Wl,-rpath,"
-CONFIG_BX="$X_LIBS -lXext -lX11"
 CONFIG_WORD_LENGTH="4"
 CONFIG_WORD_LENGTH_INC="3"
 CONFIG_WORD_MASK="0xfffffffc"
 CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+
+X11_CFLAGS="$X_CFLAGS"
+X11_LDFLAGS="$X_LIBS -lXext -lX11"
 
 AC_MSG_CHECKING(if we are on a 64-bits computer)
 AC_RUN_IFELSE([AC_LANG_PROGRAM([],[return(sizeof(void*))])],
@@ -406,7 +407,7 @@ case "${host}" in
     AC_MSG_RESULT(final adjustments for an Intel or AMS Solaris host)
     CONFIG_CXXOPTIMIZE="-O3"
     CONFIG_BPATH="-Wl,-R,"
-    CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+    X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)
@@ -436,7 +437,7 @@ case "${host}" in
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
-    CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+    X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
@@ -486,7 +487,7 @@ case "${host}" in
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
-    CONFIG_BX="$X_LIBS -lX11"
+    X11_LDFLAGS="$X_LIBS -lX11"
     CONFIG_WORD_MASK="0xfffffff8"
     CONFIG_STD_SETENV=""
     CONFIG_CHMOD="chmod"
@@ -547,7 +548,7 @@ case "$enable_experimental" in
         CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
         ;;
     no)
-	AC_MSG_RESULT([disabling experimental features])
+	AC_MSG_RESULT([disabling experimental style rewriting code])
         CONFIG_EXPERIMENTAL=""
 	;;
     *)
@@ -557,20 +558,71 @@ esac
 AC_SUBST(CONFIG_EXPERIMENTAL)
 
 #--------------------------------------------------------------------
+# Gui selection
+#--------------------------------------------------------------------
+
+CONFIG_X11=""
+CONFIG_COCOA=""
+CONFIG_GUI="X11"
+
+AC_ARG_ENABLE(cocoa,
+[  --enable-cocoa          replace X11 by Cocoa interface],
+    [], [enable_cocoa="no"])
+case "$enable_cocoa" in
+    yes)
+	AC_MSG_RESULT([enabling experimental Cocoa port])
+        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
+        AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
+	COCOA_CFLAGS=""
+	COCOA_LDFLAGS="-framework Cocoa"
+        CONFIG_GUI="COCOA"
+        ;;
+    no)
+	AC_MSG_RESULT([disabling experimental Cocoa port])
+	;;
+    *)
+	AC_MSG_ERROR([bad option --enable-cocoa=$enable_cocoa])
+	;;
+esac
+
+case "$CONFIG_GUI" in
+     X11)
+	CONFIG_X11="X11 Widkit"
+	;;
+    COCOA)
+        CONFIG_COCOA="Cocoa"
+	;;
+esac
+
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LDFLAGS)
+AC_SUBST(COCOA_CFLAGS)
+AC_SUBST(COCOA_LDFLAGS)
+
+AC_SUBST(CONFIG_X11)
+AC_SUBST(CONFIG_COCOA)
+AC_SUBST(CONFIG_GUI)
+
+#--------------------------------------------------------------------
 # Debugging options
 #--------------------------------------------------------------------
 
-AC_MSG_CHECKING(if compiler supports -fno-rtti -fno-exceptions)
-CXXFLAGS="-fno-rtti -fno-exceptions"
+STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+if test "$enable_cocoa" = "yes"; then
+    STD_DEBUG_FLAGS="-fno-exceptions"
+fi
+
+AC_MSG_CHECKING(if compiler supports $STD_DEBUG_FLAGS)
+CXXFLAGS="$STD_DEBUG_FLAGS"
 AC_TRY_COMPILE([
   int some_variable = 0;
 ],[
 ],[
-  CONFIG_CXXDIALECT="-fno-rtti -fno-exceptions"
-  AC_MSG_RESULT(yes)
+    CONFIG_CXXDIALECT="$STD_DEBUG_FLAGS"
+    AC_MSG_RESULT(yes)
 ],[
-  CONFIG_CXXDIALECT=""
-  AC_MSG_RESULT(no)
+    CONFIG_CXXDIALECT=""
+    AC_MSG_RESULT(no)
 ])
 CXXFLAGS=""
 AC_SUBST(CONFIG_CXXDIALECT)
@@ -679,7 +731,6 @@ esac
 
 AC_SUBST(CONFIG_OS)
 AC_SUBST(CONFIG_OS_SUFFIX)
-AC_SUBST(CONFIG_CX)
 AC_SUBST(CONFIG_CXXWARNING)
 AC_SUBST(CONFIG_CXXTEMPLATE)
 AC_SUBST(CONFIG_CXXOPTIMIZE)
@@ -688,7 +739,6 @@ AC_SUBST(CONFIG_BFLAGS)
 AC_SUBST(CONFIG_BSTATIC)
 AC_SUBST(CONFIG_BSHARED)
 AC_SUBST(CONFIG_BPATH)
-AC_SUBST(CONFIG_BX)
 AC_SUBST(CONFIG_WORD_LENGTH)
 AC_SUBST(CONFIG_WORD_LENGTH_INC)
 AC_SUBST(CONFIG_WORD_MASK)

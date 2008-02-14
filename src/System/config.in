@@ -1,5 +1,8 @@
 /* src/System/config.in.  Generated from configure.in by autoheader.  */
 
+/* Enable experimental Cocoa port */
+#undef AQUATEXMACS
+
 /* Defined if ...-style argument passing works */
 #undef DOTS_OK
 

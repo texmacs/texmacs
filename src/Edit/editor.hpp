@@ -14,7 +14,7 @@
 #define EDITOR_H
 #include "typesetter.hpp"
 #ifdef AQUATEXMACS
-#include "aqua_simple_widget.h"
+#include "Cocoa/aqua_simple_widget.h"
 #else
 #include "Widkit/simple_wk_widget.hpp"
 #endif

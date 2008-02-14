@@ -10,16 +10,16 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#ifdef AQUATEXMACS
-#include "aqua_simple_widget.h"
-#else
-#include "Widkit/simple_wk_widget.hpp"
-#endif
 #include "boxes.hpp"
 #include "Boxes/construct.hpp"
 #include "font.hpp"
 #include "tm_frame.hpp"
 #include "message.hpp"
+#ifdef AQUATEXMACS
+#include "Cocoa/aqua_simple_widget.h"
+#else
+#include "Widkit/simple_wk_widget.hpp"
+#endif
 
 /******************************************************************************
 * Text widgets

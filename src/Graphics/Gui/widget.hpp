@@ -20,8 +20,6 @@
 
 class window_rep;
 typedef window_rep* window;
-//class display_rep;
-//typedef display_rep* display;
 typedef int color;
 class url;
 class widget;
