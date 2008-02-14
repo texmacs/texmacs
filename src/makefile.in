@@ -83,7 +83,7 @@ kernel_src   := $(call findsrc,Kernel)
 system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
-plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Ghostscript Imlib2 \
+plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Imlib2 \
                                           Ispell Metafont Openssl)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
@@ -141,7 +141,7 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files Sys
 
 deps_flags = $(deps_incl)\
  $(CPPFLAGS) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
- -I$(tmsrc)/include $(CXXX11) $(CXXGUI)
+ -I$(tmsrc)/include $(CXXGUI)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
 # current directory, and that feature is disable by -I-.
@@ -215,7 +215,7 @@ $(guile_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXX11))
+	$(call cxx_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
 $(cocoa_m_obj): Objects/%.o: %.m
