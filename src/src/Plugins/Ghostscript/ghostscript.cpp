@@ -64,7 +64,6 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
 		 url image, SI w, SI h,
 		 double cx1, double cy1, double cx2, double cy2)
 {
-#ifndef AQUATEXMACS
   if (DEBUG_VERBOSE)
     cout << "TeXmacs] Running ghostscript " << image << "\n";
 
@@ -120,5 +119,4 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   save_string (temp_name, nice_ps, true);
   system ("tm_gs", temp_name);
   remove (temp_name);
-#endif
 }

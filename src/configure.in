@@ -587,7 +587,7 @@ esac
 
 case "$CONFIG_GUI" in
      X11)
-	CONFIG_X11="X11 Widkit"
+	CONFIG_X11="X11 Widkit Ghostscript"
 	;;
     COCOA)
         CONFIG_COCOA="Cocoa"
