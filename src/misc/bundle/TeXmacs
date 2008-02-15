@@ -1,0 +1,15 @@
+#!/bin/sh
+
+LAUNCH_SCRIPT="$PWD/$0"
+LAUNCH_DIR=`dirname $LAUNCH_SCRIPT`
+
+TEXMACS_PATH="$LAUNCH_DIR/../Resources/share/TeXmacs"
+PATH="$TEXMACS_PATH/bin:/opt/local/bin:$PATH"
+DYLD_LIBRARY_PATH="$TEXMACS_PATH/lib${DYLD_LIBRARY_PATH+":$DYLD_LIBRARY_PATH"}"
+export TEXMACS_PATH PATH DYLD_LIBRARY_PATH
+
+export LAUNCH_SCRIPT LAUNCH_DIR
+env
+echo $@
+
+exec $LAUNCH_DIR/texmacs.bin "$@" < /dev/null
