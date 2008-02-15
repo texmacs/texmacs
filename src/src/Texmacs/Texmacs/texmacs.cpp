@@ -153,6 +153,7 @@ TeXmacs_main (int argc, char** argv) {
 	       (s == "-delete-cache") || (s == "-delete-font-cache") ||
 	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
 	       (s == "-delete-doc-cache"));
+      else if (starts (s, "-psn"));
       else {
 	cout << "\n";
 	cout << "Options for TeXmacs:\n\n";
