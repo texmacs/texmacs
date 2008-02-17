@@ -202,14 +202,13 @@ BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
 BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
 BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
 
-BUNDLE: TEXMACS
+BUNDLE_MAIN: TEXMACS
 	$(RM) -r $(BUNDLE_APP)
 	$(MKDIR) $(BUNDLE_APP)
 	$(MKDIR) $(BUNDLE_CONTENTS)
 	$(CP) $(BUNDLE_SRC)/Info.plist $(BUNDLE_CONTENTS)
 	$(CP) $(BUNDLE_SRC)/PkgInfo $(BUNDLE_CONTENTS)
 	$(MKDIR) $(BUNDLE_CONTENTS)/MacOS
-#	$(CP) TeXmacs/bin/texmacs.bin $(BUNDLE_CONTENTS)/MacOS/TeXmacs
 	$(CP) $(BUNDLE_SRC)/TeXmacs $(BUNDLE_CONTENTS)/MacOS
 	$(CP) TeXmacs/bin/texmacs.bin $(BUNDLE_CONTENTS)/MacOS
 	$(MKDIR) $(BUNDLE_RESOURCES)
@@ -231,24 +230,6 @@ BUNDLE: TEXMACS
 	$(CHMOD) 644 $(BUNDLE_TEXMACS)/progs/ice-9/*
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
-	$(CP) /opt/local/lib/libguile.17.dylib $(BUNDLE_TEXMACS)/lib
-	$(CP) /opt/local/lib/libgmp.3.dylib $(BUNDLE_TEXMACS)/lib
-	$(CP) /opt/local/lib/libltdl.3.dylib $(BUNDLE_TEXMACS)/lib
-	$(CP) /opt/local/lib/libfreetype.6.dylib $(BUNDLE_TEXMACS)/lib
-	$(CP) /opt/local/lib/libz.1.dylib $(BUNDLE_TEXMACS)/lib
-	$(CP) /opt/local/lib/libiconv.2.dylib $(BUNDLE_TEXMACS)/lib
-	install_name_tool -change /opt/local/lib/libguile.17.dylib @executable_path/../Resources/share/TeXmacs/lib/libguile.17.dylib $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/libguile.17.dylib $(BUNDLE_TEXMACS)/lib/libguile.17.dylib
-	install_name_tool -change /opt/local/lib/libgmp.3.dylib @executable_path/../Resources/share/TeXmacs/lib/libgmp.3.dylib $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/libgmp.3.dylib $(BUNDLE_TEXMACS)/lib/libgmp.3.dylib
-	install_name_tool -change /opt/local/lib/libltdl.3.dylib @executable_path/../Resources/share/TeXmacs/lib/libltdl.3.dylib $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/libltdl.3.dylib $(BUNDLE_TEXMACS)/lib/libltdl.3.dylib
-	install_name_tool -change /opt/local/lib/libfreetype.6.dylib @executable_path/../Resources/share/TeXmacs/lib/libfreetype.6.dylib $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/libfreetype.6.dylib $(BUNDLE_TEXMACS)/lib/libfreetype.6.dylib
-	install_name_tool -change /opt/local/lib/libz.1.dylib @executable_path/../Resources/share/TeXmacs/lib/libz.1.dylib $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/libz.1.dylib $(BUNDLE_TEXMACS)/lib/libz.1.dylib
-	install_name_tool -change /opt/local/lib/libiconv.2.dylib @executable_path/../Resources/share/TeXmacs/lib/libiconv.2.dylib $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/libiconv.2.dylib $(BUNDLE_TEXMACS)/lib/libiconv.2.dylib
 	$(RM) -r $(BUNDLE_TEXMACS)/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/CVS
@@ -257,6 +238,19 @@ BUNDLE: TEXMACS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
+
+define bundle_install_lib
+	$(CP) /opt/local/lib/$(1) $(BUNDLE_TEXMACS)/lib
+	install_name_tool -change /opt/local/lib/$(1) @executable_path/../Resources/share/TeXmacs/lib/$(1) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
+	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/$(1) $(BUNDLE_TEXMACS)/lib/$(1)
+endef
+
+bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o  '/opt/.*/lib[^/]*dylib')
+
+BUNDLE_LIBS:
+	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(notdir $(lib))) ;)
+
+BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
 
 DISKIMAGE: BUNDLE
 	hdiutil create -srcfolder $(BUNDLE_APP) ../TeXmacs.dmg
