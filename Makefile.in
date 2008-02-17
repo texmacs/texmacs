@@ -245,7 +245,7 @@ define bundle_install_lib
 	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/$(1) $(BUNDLE_TEXMACS)/lib/$(1)
 endef
 
-bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o  '/opt/.*/lib[^/]*dylib')
+bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
 
 BUNDLE_LIBS:
 	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(notdir $(lib))) ;)
@@ -253,6 +253,7 @@ BUNDLE_LIBS:
 BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
 
 DISKIMAGE: BUNDLE
+	$(RM) ../TeXmacs.dmg
 	hdiutil create -srcfolder $(BUNDLE_APP) ../TeXmacs.dmg
 	$(RM) -r $(BUNDLE_APP)
 
