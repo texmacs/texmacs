@@ -197,12 +197,15 @@ UNINSTALL:
 ###############################################################################
 
 BUNDLE_SRC = misc/bundle
-BUNDLE_APP = ../TeXmacs.app
+BUNDLE_APP = ../distr/TeXmacs.app
+BUNDLE_DMG = ../distr/TeXmacs.dmg
 BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
 BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
 BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
+BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 BUNDLE_MAIN: TEXMACS
+	$(MKDIR) ../distr
 	$(RM) -r $(BUNDLE_APP)
 	$(MKDIR) $(BUNDLE_APP)
 	$(MKDIR) $(BUNDLE_CONTENTS)
@@ -217,6 +220,8 @@ BUNDLE_MAIN: TEXMACS
 	$(CP) src/Plugins/Cocoa/InputPanel.nib $(BUNDLE_RESOURCES)
 	$(CP) src/Plugins/Cocoa/InputDialog.nib $(BUNDLE_RESOURCES)
 	$(CP) src/Plugins/Cocoa/Segment.nib $(BUNDLE_RESOURCES)
+	$(MKDIR) $(BUNDLE_RESOURCES)/bin
+	$(MKDIR) $(BUNDLE_RESOURCES)/lib
 	$(MKDIR) $(BUNDLE_RESOURCES)/share
 	$(CP) TeXmacs $(BUNDLE_RESOURCES)/share
 	$(RM) $(BUNDLE_TEXMACS)/bin/texmacs.bin
@@ -230,6 +235,15 @@ BUNDLE_MAIN: TEXMACS
 	$(CHMOD) 644 $(BUNDLE_TEXMACS)/progs/ice-9/*
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
+	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
+	$(CP) ../distr/$(BUNDLE_FONTS) $(BUNDLE_TEXMACS) ; \
+	cd $(BUNDLE_TEXMACS) ; \
+	tar -zxf $(BUNDLE_FONTS); \
+	$(RM) $(BUNDLE_FONTS) ; \
+	fi
+#	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
+#	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
+#	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
 	$(RM) -r $(BUNDLE_TEXMACS)/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/CVS
@@ -240,9 +254,9 @@ BUNDLE_MAIN: TEXMACS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
 
 define bundle_install_lib
-	$(CP) /opt/local/lib/$(1) $(BUNDLE_TEXMACS)/lib
-	install_name_tool -change /opt/local/lib/$(1) @executable_path/../Resources/share/TeXmacs/lib/$(1) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/share/TeXmacs/lib/$(1) $(BUNDLE_TEXMACS)/lib/$(1)
+	$(CP) /opt/local/lib/$(1) $(BUNDLE_RESOURCES)/lib
+	install_name_tool -change /opt/local/lib/$(1) @executable_path/../Resources/lib/$(1) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
+	install_name_tool -id @executable_path/../Resources/lib/$(1) $(BUNDLE_RESOURCES)/lib/$(1)
 endef
 
 bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
@@ -253,13 +267,11 @@ BUNDLE_LIBS:
 BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
 
 DISKIMAGE: BUNDLE
-	$(RM) ../TeXmacs.dmg
-	hdiutil create -srcfolder $(BUNDLE_APP) ../TeXmacs.dmg
+	$(RM) $(BUNDLE_DMG)
+	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
 	$(RM) -r $(BUNDLE_APP)
 
 .PHONY: BUNDLE
-
-# otool -L ../TeXmacs.app/Contents/MacOS/texmacs.bin | grep -o  '[^[:space:]]*libfreetype\..*\.dylib'
 
 ###############################################################################
 # Cleaning and backups

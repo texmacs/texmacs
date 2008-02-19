@@ -2,14 +2,20 @@
 
 LAUNCH_SCRIPT="$PWD/$0"
 LAUNCH_DIR=`dirname $LAUNCH_SCRIPT`
+export LAUNCH_SCRIPT LAUNCH_DIR
 
-TEXMACS_PATH="$LAUNCH_DIR/../Resources/share/TeXmacs"
-PATH="$TEXMACS_PATH/bin:/opt/local/bin:$PATH"
+RESOURCES_DIR="$LAUNCH_DIR/../Resources"
+#PATH=/opt/local/bin:$PATH
+PATH="$RESOURCES_DIR/bin:$PATH"
+DYLD_LIBRARY_PATH="$RESOURCES_DIR/lib${DYLD_LIBRARY_PATH+":$DYLD_LIBRARY_PATH"}"
+export RESOURCES_DIR PATH DYLD_LIBRARY_PATH
+
+TEXMACS_PATH="$RESOURCES_DIR/share/TeXmacs"
+PATH="$TEXMACS_PATH/bin:$PATH"
 DYLD_LIBRARY_PATH="$TEXMACS_PATH/lib${DYLD_LIBRARY_PATH+":$DYLD_LIBRARY_PATH"}"
 export TEXMACS_PATH PATH DYLD_LIBRARY_PATH
 
-export LAUNCH_SCRIPT LAUNCH_DIR
-env
-echo $@
+#GS_LIB=".:$RESOURCES_DIR/ghostscript/8.61/lib:$RESOURCES_DIR/ghostscript/8.61/Resource:$RESOURCES_DIR/ghostscript/fonts:$RESOURCES_DIR/fonts/default/ghostscript:$RESOURCES_DIR/fonts/default/Type1:$RESOURCES_DIR/fonts/default/TrueType:/usr/lib/DPS/outline/base:/usr/openwin/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/TrueType:/usr/share/cups/fonts"
+#export GS_LIB
 
 exec $LAUNCH_DIR/texmacs.bin "$@" < /dev/null
