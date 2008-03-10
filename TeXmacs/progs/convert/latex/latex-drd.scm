@@ -25,7 +25,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-group latex-command-0%
-  #{\ }# #{\;}# #{\,}# #{\:}#
+  ,(string->symbol " ") ,(string->symbol ";") 
+  ,(string->symbol ",") ,(string->symbol ":") 
   - / [ ] ! * | i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o th pounds
   quad qquad par smallskip medskip bigskip
@@ -52,7 +53,8 @@
   dot ddot dddot ddddot
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox text not
-  #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b k r thispagestyle ensuremath
+  ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
+  ^ over ~ = u v H t c d b k r thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
   includegraphics url penalty
@@ -86,7 +88,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-group latex-command-0*%
-  item #{\\}#)
+  item ,(string->symbol "\\"))
 
 (drd-group latex-command-1*%
   documentclass documentstyle sqrt bibitem cite)
@@ -166,7 +168,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-group latex-control%
-  $ & % #{\#}# _ { } <less> <gtr>)
+  $ & % ,(string->symbol "#") _ { } <less> <gtr>)
 
 (drd-group latex-operator%
   arccos arcsin arctan arg cos cosh cot coth csc deg det dim exp gcd hom
