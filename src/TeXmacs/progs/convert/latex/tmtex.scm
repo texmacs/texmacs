@@ -103,7 +103,7 @@
   (block* ("" "c" "" #t))
   (tabular ("" "l" "" #f))
   (tabular* ("" "c" "" #f))
-  (matrix ((#{left\(}#) "c" (#{right\)}#) #f))
+  (matrix ((,(string->symbol "left(")) "c" (,(string->symbol "right)")) #f))
   (det ((left|) "c" (right|) #f))
   (choice ((left\{) "l" (right.) #f)))
 
