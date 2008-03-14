@@ -35,6 +35,9 @@ extern x_gui the_gui;
 #include <X11/keysym.h>
 #include <X11/Sunkeysym.h>
 
+extern bool true_color;
+#define CONVERT(c) (true_color? c: gui->cmap[c])
+
 /******************************************************************************
 * For anti aliasing of TeX fonts
 ******************************************************************************/

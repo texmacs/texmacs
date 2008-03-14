@@ -119,13 +119,13 @@ x_drawable_rep::get_background () {
 
 void
 x_drawable_rep::set_color (color c) {
-  XSetForeground (dpy, gc, gui->cmap[c]);
+  XSetForeground (dpy, gc, CONVERT (c));
   cur_fg= c;
 }
 
 void
 x_drawable_rep::set_background (color c) {
-  XSetBackground (dpy, gc, gui->cmap[c]);
+  XSetBackground (dpy, gc, CONVERT (c));
   cur_bg= c;
 }
 
@@ -170,9 +170,9 @@ x_drawable_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  XSetForeground (dpy, gc, gui->cmap[cur_bg]);
+  XSetForeground (dpy, gc, CONVERT (cur_bg));
   XFillRectangle (dpy, win, gc, x1, y2, x2-x1, y1-y2);
-  XSetForeground (dpy, gc, gui->cmap[cur_fg]);
+  XSetForeground (dpy, gc, CONVERT (cur_fg));
 }
 
 void
@@ -296,7 +296,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
       pmcs(name)= closest.pixel;
     else {
       int myc= rgb_color (exact.red/256, exact.green/256, exact.blue/256);
-      pmcs(name)= gui->cmap[myc];
+      pmcs(name)= CONVERT (myc);
     }
     delete[] _def;
   }

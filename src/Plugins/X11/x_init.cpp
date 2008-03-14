@@ -26,6 +26,7 @@ extern hashmap<Window,pointer> Window_to_window;
 * Set up colors
 ******************************************************************************/
 
+bool true_color= false;
 bool reverse_colors= false;
 
 color black, white, red, green, blue;
@@ -57,6 +58,8 @@ x_alloc_color (int r, int g, int b) {
     g= (int) (tt + mu * (g - t) + 0.5);
     b= (int) (tt + mu * (b - t) + 0.5);
   }
+  if (true_color)
+    return (r << 16) + (g << 8) + b;
 
   XColor col;
   col.red  = r;
@@ -69,8 +72,9 @@ x_alloc_color (int r, int g, int b) {
 
 void
 x_init_color_map () {
-  int i, r, g, b;
+  if (true_color) return;
 
+  int i, r, g, b;
   the_gui->cmap= new color [CTOTAL];
 
   for (i=0; i<=GREYS; i++)
@@ -89,7 +93,8 @@ x_init_color_map () {
 
 color
 rgb_color (int r, int g, int b) {
-  if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
+  if (true_color) return (r << 16) + (g << 8) + b;
+  else if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
   else {
     r= (r*CSCALES+ 128)/255;
     g= (g*CSCALES+ 128)/255;
@@ -100,7 +105,12 @@ rgb_color (int r, int g, int b) {
 
 void
 get_rgb_color (color col, int& r, int& g, int& b) {
-  if (col <= GREYS) {
+  if (true_color) {
+    r= (col >> 16) & 255;
+    g= (col >> 8 ) & 255;
+    b=  col        & 255;
+  }
+  else if (col <= GREYS) {
     r= (col*255)/GREYS;
     g= (col*255)/GREYS;
     b= (col*255)/GREYS;
@@ -774,6 +784,7 @@ x_gui_rep::x_gui_rep (int argc2, char** argv2):
   // XSynchronize (dpy, true);
 
   XGCValues values;
+  XVisualInfo visual;
 
   scr                = DefaultScreen (dpy);
   root               = RootWindow (dpy, scr);
@@ -791,6 +802,13 @@ x_gui_rep::x_gui_rep (int argc2, char** argv2):
   interrupted        = false;
   interrupt_time     = texmacs_time ();
 
+  if (XMatchVisualInfo (dpy, scr, depth, TrueColor, &visual) != 0) {
+    if (visual.red_mask   == (255 << 16) &&
+	visual.green_mask == (255 << 8) &&
+	visual.blue_mask  == 255)
+      true_color= true;
+  }
+
   XSetGraphicsExposures (dpy, gc, true);
 
   //get_xmodmap ();
@@ -806,7 +824,7 @@ x_gui_rep::~x_gui_rep () {
   clear_selection ("primary");
   XFreeGC (dpy, gc);
   XCloseDisplay (dpy);
-  delete[] cmap;
+  if (!true_color) delete[] cmap;
 }
 
 void
