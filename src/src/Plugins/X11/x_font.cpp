@@ -83,7 +83,7 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     for (j=0; j<h; j++)
       for (i=0; i<w; i++) {
 	color col= cols [gl->get_x(i,j)];
-	XSetForeground (gui->dpy, gui->pixmap_gc, gui->cmap[col]);
+	XSetForeground (gui->dpy, gui->pixmap_gc, CONVERT (col));
 	XDrawPoint (gui->dpy, (Drawable) pm, gui->pixmap_gc, i, j);
       }
     gui->character_pixmap (xc)= (pointer) pm;
