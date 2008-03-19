@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.6.10>
 
 <style|tmdoc>
 
@@ -55,9 +55,9 @@
 
   <\remark>
     The way <TeXmacs> sends commands to your application can be customized in
-    a similar way as for the input: we provide a <verbatim|:commander>
+    a similar way as for the input: we provide a <scm|:commander>
     configuration option for this, which works in a similar way as the
-    <verbatim|:serializer> option.
+    <scm|:serializer> option.
   </remark>
 
   <paragraph|The <verbatim|complete> plug-in>
@@ -162,17 +162,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

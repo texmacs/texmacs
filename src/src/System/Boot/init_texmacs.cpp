@@ -54,7 +54,7 @@ get_env_path (string which, url def) {
 
 static url
 plugin_path (string which) {
-  url base  = "$TEXMACS_HOME_PATH:$TEXMACS_PATH:/usr/share/TeXmacs";
+  url base= "$TEXMACS_HOME_PATH:/etc/TeXmacs:$TEXMACS_PATH:/usr/share/TeXmacs";
   url search= base * "plugins" * url_wildcard ("*") * which;
   return expand (complete (search, "r"));
 }
@@ -63,6 +63,7 @@ scheme_tree
 plugin_list () {
   bool flag;
   array<string> a= read_directory ("$TEXMACS_PATH/plugins", flag);
+  a << read_directory ("/etc/TeXmacs/plugins", flag);
   a << read_directory ("$TEXMACS_HOME_PATH/plugins", flag);
   a << read_directory ("/usr/share/TeXmacs/plugins", flag);
   merge_sort (a);
@@ -105,6 +106,7 @@ make_dir (url which) {
 static void
 init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH");
+  make_dir ("$TEXMACS_HOME_PATH/bin");
   make_dir ("$TEXMACS_HOME_PATH/doc");
   make_dir ("$TEXMACS_HOME_PATH/doc/about");
   make_dir ("$TEXMACS_HOME_PATH/doc/about/changes");
@@ -113,6 +115,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/fonts/error");
   make_dir ("$TEXMACS_HOME_PATH/fonts/pk");
   make_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/truetype");
   make_dir ("$TEXMACS_HOME_PATH/fonts/type1");
   make_dir ("$TEXMACS_HOME_PATH/fonts/virtual");
   make_dir ("$TEXMACS_HOME_PATH/langs");
@@ -123,6 +126,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/langs/natural/hyphen");
   make_dir ("$TEXMACS_HOME_PATH/langs/programming");
   make_dir ("$TEXMACS_HOME_PATH/misc");
+  make_dir ("$TEXMACS_HOME_PATH/misc/patterns");
   make_dir ("$TEXMACS_HOME_PATH/misc/pixmaps");
   make_dir ("$TEXMACS_HOME_PATH/packages");
   make_dir ("$TEXMACS_HOME_PATH/plugins");
@@ -134,7 +138,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
   make_dir ("$TEXMACS_HOME_PATH/texts");
   system ("chmod -f 700", "$TEXMACS_HOME_PATH/system");
-  remove ("$TEXMACS_HOME_PATH/system/tmp" * url_wildcard ("*"));
+  remove (url ("$TEXMACS_HOME_PATH/system/tmp") * url_wildcard ("*"));
 }
 
 /******************************************************************************
@@ -222,18 +226,38 @@ init_env_vars () {
   url style_path=
     get_env_path ("TEXMACS_STYLE_PATH",
 		  expand (complete (all_root * url_wildcard (), "dr")));
+  url text_root=
+    get_env_path ("TEXMACS_TEXT_ROOT",
+		  "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
+		  plugin_path ("texts"));
+  url text_path=
+    get_env_path ("TEXMACS_TEXT_PATH",
+		  expand (complete (text_root * url_wildcard (), "dr")));
 
   // Get other data paths
-  (void) get_env_path ("TEXMACS_FILE_PATH",
-		       "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
-		       style_path);
-  (void) get_env_path ("TEXMACS_DOC_PATH", "$TEXMACS_HOME_PATH/doc");
+  (void) get_env_path ("TEXMACS_FILE_PATH",text_path | style_path);
+  (void) set_env_path ("TEXMACS_DOC_PATH",
+		       get_env_path ("TEXMACS_DOC_PATH") |
+		       "$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc" |
+		       plugin_path ("doc"));
+  (void) set_env_path ("TEXMACS_SECURE_PATH",
+		       get_env_path ("TEXMACS_SECURE_PATH") |
+		       "$TEXMACS_PATH:$TEXMACS_HOME_PATH");
   (void) get_env_path ("TEXMACS_SYNTAX_PATH",
 		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
 		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
-  (void) get_env_path ("TEXMACS_PIXMAPS_PATH",
+  (void) get_env_path ("TEXMACS_PATTERN_PATH",
+		       "$TEXMACS_HOME_PATH/misc/patterns" |
+		       url ("$TEXMACS_PATH/misc/patterns") |
+		       plugin_path ("misc/patterns"));
+  (void) get_env_path ("TEXMACS_PIXMAP_PATH",
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
-		       url ("$TEXMACS_PATH/misc/pixmaps"));
+		       url ("$TEXMACS_PATH/misc/pixmaps") |
+		       plugin_path ("misc/pixmaps"));
+  (void) get_env_path ("TEXMACS_DIC_PATH",
+		       "$TEXMACS_HOME_PATH/langs/natural/dic" |
+		       url ("$TEXMACS_PATH/langs/natural/dic") |
+		       plugin_path ("langs/natural/dic"));
 #ifdef OS_WIN32
   set_env ("TEXMACS_SOURCE_PATH", "");
 #else
@@ -278,36 +302,6 @@ init_deprecated () {
       string dir  = s (search_forwards ("=", s) + 1, N(s));
       if (dir != "") set_env ("M2HOME", dir);
     }
-
-  // Check for Maxima
-  if (get_env ("TM_MAXIMA_HOME") == "") {
-    if (exists_in_path ("maxima")) {
-      string where= concretize (resolve_in_path ("maxima"));
-      string s    = var_eval_system ("grep 'MAXIMA_DIRECTORY=' " * where);
-      string dir  = s (search_forwards ("=", s) + 1, N(s));
-      if ((dir == "") &&
-	  exists ("/usr/share/maxima/5.9.0/doc/html/maxima_toc.html"))
-	dir= "/usr/share/maxima/5.9.0";
-      if ((dir == "") && use_locate) {
-	string where= var_eval_system ("locate maxima_toc.html");
-	if (ends (where, "/doc/html/maxima_toc.html"))
-	  dir= where (0, N(where)- 25);
-	if (ends (where, "/info/maxima_toc.html"))
-	  dir= where (0, N(where)- 21);
-      }
-      if (dir != "") set_env ("TM_MAXIMA_HOME", dir);
-    }
-  }
-
-  // Check for Reduce
-  if (get_env ("reduce") == "")
-    if (exists_in_path ("reduce")) {
-      string where= concretize (resolve_in_path ("reduce"));
-      string grep = "grep 'setenv reduce ' " * where;
-      string sed  = "sed 's/setenv reduce //'";
-      string dir  = var_eval_system (grep * " | " * sed);
-      if (dir != "") set_env ("reduce", dir);
-    }
 #endif
 }
 
@@ -320,7 +314,7 @@ get_setting (string var, string def) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
     if (is_tuple (texmacs_settings[i], var, 1)) {
-      return unquote (as_string (texmacs_settings[i][1]));
+      return scm_unquote (as_string (texmacs_settings[i][1]));
     }
   return def;
 }
@@ -330,10 +324,10 @@ set_setting (string var, string val) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
     if (is_tuple (texmacs_settings[i], var, 1)) {
-      texmacs_settings[i][1]= quote (val);
+      texmacs_settings[i][1]= scm_quote (val);
       return;
     }
-  texmacs_settings << tuple (var, quote (val));
+  texmacs_settings << tuple (var, scm_quote (val));
 }
 
 /******************************************************************************
@@ -345,7 +339,7 @@ setup_texmacs () {
   url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
   cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
   cerr << HRULE;
-  cerr << "Since this seems to be the first time you run this\n";
+  cerr << "Since this seems to be the first time you have run this\n";
   cerr << "version of TeXmacs, I will first analyze your system\n";
   cerr << "in order to set up some TeX paths in the correct way.\n";
   cerr << "This may take some seconds; the result can be found in\n\n";
@@ -358,7 +352,7 @@ setup_texmacs () {
   string s= scheme_tree_to_block (texmacs_settings);
   //cout << "settings_t= " << texmacs_settings << "\n";
   //cout << "settings_s= " << s << "\n";
-  if (save_string (settings_file, s) || load_string (settings_file, s)) {
+  if (save_string (settings_file, s) || load_string (settings_file, s, false)) {
     cerr << HRULE;
     cerr << "I could not save or reload the file\n\n";
     cerr << "\t" << settings_file << "\n\n";
@@ -400,8 +394,8 @@ init_plugins () {
   url old_settings= "$TEXMACS_HOME_PATH/system/TEX_PATHS";
   url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";
   string s;
-  if (load_string (new_settings, s)) {
-    if (load_string (old_settings, s)) {
+  if (load_string (new_settings, s, false)) {
+    if (load_string (old_settings, s, false)) {
       setup_texmacs ();
       install_status= 1;
     }

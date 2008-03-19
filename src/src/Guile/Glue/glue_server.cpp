@@ -13,50 +13,6 @@
 ******************************************************************************/
 
 SCM
-tmg_set_input_language (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-input-language");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->set_input_language (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_get_input_language () {
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_input_language ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_set_output_language (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-output-language");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->set_output_language (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_get_output_language () {
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_output_language ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_insert_kbd_wildcard (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "insert-kbd-wildcard");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "insert-kbd-wildcard");
@@ -129,6 +85,15 @@ tmg_set_font_rules (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_window_get_id () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->get_window_id ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
 }
 
 SCM
@@ -287,32 +252,6 @@ tmg_get_shrinking_factor () {
 }
 
 SCM
-tmg_exec_delayed (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "exec-delayed");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->exec_delayed (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_exec_delayed_cmd (SCM arg1) {
-  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "exec-delayed-cmd");
-
-  command in1= scm_to_command (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->exec_delayed (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_shell (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "shell");
 
@@ -336,16 +275,31 @@ tmg_dialogue_end () {
 
 SCM
 tmg_choose_file (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "choose-file");
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "choose-file");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "choose-file");
-  SCM_ASSERT_SCHEME_TREE (arg3, SCM_ARG3, "choose-file");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "choose-file");
 
-  string in1= scm_to_string (arg1);
+  object in1= scm_to_object (arg1);
   string in2= scm_to_string (arg2);
-  scheme_tree in3= scm_to_scheme_tree (arg3);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
   get_server()->choose_file (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_interactive (SCM arg1, SCM arg2) {
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "tm-interactive");
+  SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "tm-interactive");
+
+  object in1= scm_to_object (arg1);
+  scheme_tree in2= scm_to_scheme_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->interactive (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -388,15 +342,6 @@ tmg_pretend_save_buffer () {
 }
 
 SCM
-tmg_get_name_buffer () {
-  // SCM_DEFER_INTS;
-  url out= get_server()->get_name_buffer ();
-  // SCM_ALLOW_INTS;
-
-  return url_to_scm (out);
-}
-
-SCM
 tmg_set_name_buffer (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "set-name-buffer");
 
@@ -410,8 +355,30 @@ tmg_set_name_buffer (SCM arg1) {
 }
 
 SCM
+tmg_get_name_buffer () {
+  // SCM_DEFER_INTS;
+  url out= get_server()->get_name_buffer ();
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_get_name_buffer_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "get-name-buffer-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= get_server()->get_name_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
 tmg_set_abbr_buffer (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-abbr-buffer");
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-abbr-buffer");
 
   string in1= scm_to_string (arg1);
 
@@ -423,12 +390,34 @@ tmg_set_abbr_buffer (SCM arg1) {
 }
 
 SCM
-tmg_new_buffer () {
+tmg_get_abbr_buffer () {
   // SCM_DEFER_INTS;
-  get_server()->new_buffer ();
+  string out= get_server()->get_abbr_buffer ();
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return string_to_scm (out);
+}
+
+SCM
+tmg_new_buffer () {
+  // SCM_DEFER_INTS;
+  url out= get_server()->new_buffer ();
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_switch_to_buffer_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "switch-to-buffer-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->switch_to_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -476,12 +465,42 @@ tmg_kill_buffer () {
 }
 
 SCM
-tmg_open_window () {
+tmg_open_buffer_in_window (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "open-buffer-in-window");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "open-buffer-in-window");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "open-buffer-in-window");
+
+  url in1= scm_to_url (arg1);
+  content in2= scm_to_content (arg2);
+  content in3= scm_to_content (arg3);
+
   // SCM_DEFER_INTS;
-  get_server()->open_window ();
+  get_server()->new_buffer_in_new_window (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_open_window () {
+  // SCM_DEFER_INTS;
+  url out= get_server()->open_window ();
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_open_window_geometry (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "open-window-geometry");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= get_server()->open_window (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
 }
 
 SCM
@@ -497,6 +516,15 @@ SCM
 tmg_kill_window () {
   // SCM_DEFER_INTS;
   get_server()->kill_window ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_kill_window_and_buffer () {
+  // SCM_DEFER_INTS;
+  get_server()->kill_window_and_buffer ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -558,6 +586,21 @@ tmg_set_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_set_aux (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-aux");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "set-aux");
+
+  string in1= scm_to_string (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_aux (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_set_aux_buffer (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-aux-buffer");
   SCM_ASSERT_URL (arg2, SCM_ARG2, "set-aux-buffer");
@@ -590,16 +633,64 @@ tmg_set_help_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_browse_help (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "browse-help");
+tmg_set_buffer_tree (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-buffer-tree");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "set-buffer-tree");
 
-  int in1= scm_to_int (arg1);
+  url in1= scm_to_url (arg1);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->browse_help (in1);
+  get_server()->set_buffer_tree (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_buffer_tree (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "get-buffer-tree");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_buffer_tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_get_all_buffers () {
+  // SCM_DEFER_INTS;
+  url out= get_server()->get_all_buffers ();
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_get_buffer_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_buffer_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_buffer_in_menu (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "buffer-in-menu");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "buffer-in-menu");
+
+  url in1= scm_to_url (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->buffer_in_menu (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -631,6 +722,87 @@ tmg_project_attachedP () {
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_get_project_buffer_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_project_buffer_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_window_current () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->window_current ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_window_list () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->windows_list ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_buffer_2windows (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "buffer->windows");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  path out= get_server()->buffer_to_windows (in1);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_window_2buffer (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window->buffer");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= get_server()->window_to_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_window_set_buffer (SCM arg1, SCM arg2) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-set-buffer");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "window-set-buffer");
+
+  int in1= scm_to_int (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->window_set_buffer (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_window_focus (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-focus");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->window_focus (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -683,25 +855,39 @@ tmg_texmacs_save_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_delayed_autosave () {
+tmg_auto_save () {
   // SCM_DEFER_INTS;
-  get_server()->delayed_autosave ();
+  get_server()->auto_save ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_color (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "color");
-
-  string in1= scm_to_string (arg1);
-
+tmg_get_style_menu () {
   // SCM_DEFER_INTS;
-  int out= get_server()->get_color (in1);
+  object out= get_server()->get_style_menu ();
   // SCM_ALLOW_INTS;
 
-  return int_to_scm (out);
+  return object_to_scm (out);
+}
+
+SCM
+tmg_get_add_package_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_add_package_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_get_remove_package_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_remove_package_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
 }
 
 SCM
@@ -806,9 +992,9 @@ tmg_get_nr_windows () {
 }
 
 SCM
-tmg_postscript_gc () {
+tmg_image_gc () {
   // SCM_DEFER_INTS;
-  get_server()->postscript_gc ();
+  get_server()->image_gc ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -824,20 +1010,66 @@ tmg_inclusions_gc () {
 }
 
 SCM
-tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "translate");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "translate");
+tmg_update_all_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "update-all-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->typeset_update (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_update_all_buffers () {
+  // SCM_DEFER_INTS;
+  get_server()->typeset_update_all ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_message (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  string out= get_server()->translate (in1, in2, in3);
+  get_server()->set_message (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return string_to_scm (out);
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_message_temp (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message-temp");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message-temp");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "set-message-temp");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  bool in3= scm_to_bool (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_message (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_recall_message () {
+  // SCM_DEFER_INTS;
+  get_server()->recall_message ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -881,77 +1113,97 @@ tmg_package_evaluate (SCM arg1, SCM arg2, SCM arg3) {
 
 void
 initialize_glue_server () {
-  gh_new_procedure ("set-input-language", (FN) tmg_set_input_language, 1, 0, 0);
-  gh_new_procedure ("get-input-language", (FN) tmg_get_input_language, 0, 0, 0);
-  gh_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);
-  gh_new_procedure ("get-output-language", (FN) tmg_get_output_language, 0, 0, 0);
-  gh_new_procedure ("insert-kbd-wildcard", (FN) tmg_insert_kbd_wildcard, 5, 0, 0);
-  gh_new_procedure ("set-variant-keys", (FN) tmg_set_variant_keys, 2, 0, 0);
-  gh_new_procedure ("kbd-pre-rewrite", (FN) tmg_kbd_pre_rewrite, 1, 0, 0);
-  gh_new_procedure ("kbd-post-rewrite", (FN) tmg_kbd_post_rewrite, 1, 0, 0);
-  gh_new_procedure ("set-font-rules", (FN) tmg_set_font_rules, 1, 0, 0);
-  gh_new_procedure ("window-set-property", (FN) tmg_window_set_property, 2, 0, 0);
-  gh_new_procedure ("window-get-property", (FN) tmg_window_get_property, 1, 0, 0);
-  gh_new_procedure ("show-header", (FN) tmg_show_header, 1, 0, 0);
-  gh_new_procedure ("show-icon-bar", (FN) tmg_show_icon_bar, 2, 0, 0);
-  gh_new_procedure ("show-footer", (FN) tmg_show_footer, 1, 0, 0);
-  gh_new_procedure ("visible-header?", (FN) tmg_visible_headerP, 0, 0, 0);
-  gh_new_procedure ("visible-icon-bar?", (FN) tmg_visible_icon_barP, 1, 0, 0);
-  gh_new_procedure ("visible-footer?", (FN) tmg_visible_footerP, 0, 0, 0);
-  gh_new_procedure ("full-screen-mode", (FN) tmg_full_screen_mode, 2, 0, 0);
-  gh_new_procedure ("full-screen?", (FN) tmg_full_screenP, 0, 0, 0);
-  gh_new_procedure ("full-screen-edit?", (FN) tmg_full_screen_editP, 0, 0, 0);
-  gh_new_procedure ("set-shrinking-factor", (FN) tmg_set_shrinking_factor, 1, 0, 0);
-  gh_new_procedure ("get-shrinking-factor", (FN) tmg_get_shrinking_factor, 0, 0, 0);
-  gh_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
-  gh_new_procedure ("exec-delayed-cmd", (FN) tmg_exec_delayed_cmd, 1, 0, 0);
-  gh_new_procedure ("shell", (FN) tmg_shell, 1, 0, 0);
-  gh_new_procedure ("dialogue-end", (FN) tmg_dialogue_end, 0, 0, 0);
-  gh_new_procedure ("choose-file", (FN) tmg_choose_file, 3, 0, 0);
-  gh_new_procedure ("has-view?", (FN) tmg_has_viewP, 0, 0, 0);
-  gh_new_procedure ("buffer-unsaved?", (FN) tmg_buffer_unsavedP, 0, 0, 0);
-  gh_new_procedure ("exists-unsaved-buffer?", (FN) tmg_exists_unsaved_bufferP, 0, 0, 0);
-  gh_new_procedure ("pretend-save-buffer", (FN) tmg_pretend_save_buffer, 0, 0, 0);
-  gh_new_procedure ("get-name-buffer", (FN) tmg_get_name_buffer, 0, 0, 0);
-  gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
-  gh_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
-  gh_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
-  gh_new_procedure ("switch-to-buffer", (FN) tmg_switch_to_buffer, 1, 0, 0);
-  gh_new_procedure ("switch-to-active-buffer", (FN) tmg_switch_to_active_buffer, 1, 0, 0);
-  gh_new_procedure ("revert-buffer", (FN) tmg_revert_buffer, 0, 0, 0);
-  gh_new_procedure ("kill-buffer", (FN) tmg_kill_buffer, 0, 0, 0);
-  gh_new_procedure ("open-window", (FN) tmg_open_window, 0, 0, 0);
-  gh_new_procedure ("clone-window", (FN) tmg_clone_window, 0, 0, 0);
-  gh_new_procedure ("kill-window", (FN) tmg_kill_window, 0, 0, 0);
-  gh_new_procedure ("set-maximal-undo-depth", (FN) tmg_set_maximal_undo_depth, 1, 0, 0);
-  gh_new_procedure ("get-maximal-undo-depth", (FN) tmg_get_maximal_undo_depth, 0, 0, 0);
-  gh_new_procedure ("no-name?", (FN) tmg_no_nameP, 0, 0, 0);
-  gh_new_procedure ("help-buffer?", (FN) tmg_help_bufferP, 0, 0, 0);
-  gh_new_procedure ("set-buffer", (FN) tmg_set_buffer, 2, 0, 0);
-  gh_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
-  gh_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
-  gh_new_procedure ("browse-help", (FN) tmg_browse_help, 1, 0, 0);
-  gh_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
-  gh_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
-  gh_new_procedure ("project-attached?", (FN) tmg_project_attachedP, 0, 0, 0);
-  gh_new_procedure ("texmacs-load-tree", (FN) tmg_texmacs_load_tree, 2, 0, 0);
-  gh_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
-  gh_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);
-  gh_new_procedure ("delayed-autosave", (FN) tmg_delayed_autosave, 0, 0, 0);
-  gh_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
-  gh_new_procedure ("style-clear-cache", (FN) tmg_style_clear_cache, 0, 0, 0);
-  gh_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);
-  gh_new_procedure ("set-printing-command", (FN) tmg_set_printing_command, 1, 0, 0);
-  gh_new_procedure ("set-printer-paper-type", (FN) tmg_set_printer_paper_type, 1, 0, 0);
-  gh_new_procedure ("get-printer-paper-type", (FN) tmg_get_printer_paper_type, 0, 0, 0);
-  gh_new_procedure ("set-printer-dpi", (FN) tmg_set_printer_dpi, 1, 0, 0);
-  gh_new_procedure ("set-default-shrinking-factor", (FN) tmg_set_default_shrinking_factor, 1, 0, 0);
-  gh_new_procedure ("get-default-shrinking-factor", (FN) tmg_get_default_shrinking_factor, 0, 0, 0);
-  gh_new_procedure ("get-nr-windows", (FN) tmg_get_nr_windows, 0, 0, 0);
-  gh_new_procedure ("postscript-gc", (FN) tmg_postscript_gc, 0, 0, 0);
-  gh_new_procedure ("inclusions-gc", (FN) tmg_inclusions_gc, 0, 0, 0);
-  gh_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
-  gh_new_procedure ("yes?", (FN) tmg_yesP, 1, 0, 0);
-  gh_new_procedure ("quit-TeXmacs", (FN) tmg_quit_TeXmacs, 0, 0, 0);
-  gh_new_procedure ("package-evaluate", (FN) tmg_package_evaluate, 3, 0, 0);
+  scm_new_procedure ("insert-kbd-wildcard", (FN) tmg_insert_kbd_wildcard, 5, 0, 0);
+  scm_new_procedure ("set-variant-keys", (FN) tmg_set_variant_keys, 2, 0, 0);
+  scm_new_procedure ("kbd-pre-rewrite", (FN) tmg_kbd_pre_rewrite, 1, 0, 0);
+  scm_new_procedure ("kbd-post-rewrite", (FN) tmg_kbd_post_rewrite, 1, 0, 0);
+  scm_new_procedure ("set-font-rules", (FN) tmg_set_font_rules, 1, 0, 0);
+  scm_new_procedure ("window-get-id", (FN) tmg_window_get_id, 0, 0, 0);
+  scm_new_procedure ("window-set-property", (FN) tmg_window_set_property, 2, 0, 0);
+  scm_new_procedure ("window-get-property", (FN) tmg_window_get_property, 1, 0, 0);
+  scm_new_procedure ("show-header", (FN) tmg_show_header, 1, 0, 0);
+  scm_new_procedure ("show-icon-bar", (FN) tmg_show_icon_bar, 2, 0, 0);
+  scm_new_procedure ("show-footer", (FN) tmg_show_footer, 1, 0, 0);
+  scm_new_procedure ("visible-header?", (FN) tmg_visible_headerP, 0, 0, 0);
+  scm_new_procedure ("visible-icon-bar?", (FN) tmg_visible_icon_barP, 1, 0, 0);
+  scm_new_procedure ("visible-footer?", (FN) tmg_visible_footerP, 0, 0, 0);
+  scm_new_procedure ("full-screen-mode", (FN) tmg_full_screen_mode, 2, 0, 0);
+  scm_new_procedure ("full-screen?", (FN) tmg_full_screenP, 0, 0, 0);
+  scm_new_procedure ("full-screen-edit?", (FN) tmg_full_screen_editP, 0, 0, 0);
+  scm_new_procedure ("set-shrinking-factor", (FN) tmg_set_shrinking_factor, 1, 0, 0);
+  scm_new_procedure ("get-shrinking-factor", (FN) tmg_get_shrinking_factor, 0, 0, 0);
+  scm_new_procedure ("shell", (FN) tmg_shell, 1, 0, 0);
+  scm_new_procedure ("dialogue-end", (FN) tmg_dialogue_end, 0, 0, 0);
+  scm_new_procedure ("choose-file", (FN) tmg_choose_file, 3, 0, 0);
+  scm_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
+  scm_new_procedure ("has-view?", (FN) tmg_has_viewP, 0, 0, 0);
+  scm_new_procedure ("buffer-unsaved?", (FN) tmg_buffer_unsavedP, 0, 0, 0);
+  scm_new_procedure ("exists-unsaved-buffer?", (FN) tmg_exists_unsaved_bufferP, 0, 0, 0);
+  scm_new_procedure ("pretend-save-buffer", (FN) tmg_pretend_save_buffer, 0, 0, 0);
+  scm_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
+  scm_new_procedure ("get-name-buffer", (FN) tmg_get_name_buffer, 0, 0, 0);
+  scm_new_procedure ("get-name-buffer-path", (FN) tmg_get_name_buffer_path, 1, 0, 0);
+  scm_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
+  scm_new_procedure ("get-abbr-buffer", (FN) tmg_get_abbr_buffer, 0, 0, 0);
+  scm_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
+  scm_new_procedure ("switch-to-buffer-path", (FN) tmg_switch_to_buffer_path, 1, 0, 0);
+  scm_new_procedure ("switch-to-buffer", (FN) tmg_switch_to_buffer, 1, 0, 0);
+  scm_new_procedure ("switch-to-active-buffer", (FN) tmg_switch_to_active_buffer, 1, 0, 0);
+  scm_new_procedure ("revert-buffer", (FN) tmg_revert_buffer, 0, 0, 0);
+  scm_new_procedure ("kill-buffer", (FN) tmg_kill_buffer, 0, 0, 0);
+  scm_new_procedure ("open-buffer-in-window", (FN) tmg_open_buffer_in_window, 3, 0, 0);
+  scm_new_procedure ("open-window", (FN) tmg_open_window, 0, 0, 0);
+  scm_new_procedure ("open-window-geometry", (FN) tmg_open_window_geometry, 1, 0, 0);
+  scm_new_procedure ("clone-window", (FN) tmg_clone_window, 0, 0, 0);
+  scm_new_procedure ("kill-window", (FN) tmg_kill_window, 0, 0, 0);
+  scm_new_procedure ("kill-window-and-buffer", (FN) tmg_kill_window_and_buffer, 0, 0, 0);
+  scm_new_procedure ("set-maximal-undo-depth", (FN) tmg_set_maximal_undo_depth, 1, 0, 0);
+  scm_new_procedure ("get-maximal-undo-depth", (FN) tmg_get_maximal_undo_depth, 0, 0, 0);
+  scm_new_procedure ("no-name?", (FN) tmg_no_nameP, 0, 0, 0);
+  scm_new_procedure ("help-buffer?", (FN) tmg_help_bufferP, 0, 0, 0);
+  scm_new_procedure ("set-buffer", (FN) tmg_set_buffer, 2, 0, 0);
+  scm_new_procedure ("set-aux", (FN) tmg_set_aux, 2, 0, 0);
+  scm_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
+  scm_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
+  scm_new_procedure ("set-buffer-tree", (FN) tmg_set_buffer_tree, 2, 0, 0);
+  scm_new_procedure ("get-buffer-tree", (FN) tmg_get_buffer_tree, 1, 0, 0);
+  scm_new_procedure ("get-all-buffers", (FN) tmg_get_all_buffers, 0, 0, 0);
+  scm_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);
+  scm_new_procedure ("buffer-in-menu", (FN) tmg_buffer_in_menu, 2, 0, 0);
+  scm_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
+  scm_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
+  scm_new_procedure ("project-attached?", (FN) tmg_project_attachedP, 0, 0, 0);
+  scm_new_procedure ("get-project-buffer-menu", (FN) tmg_get_project_buffer_menu, 0, 0, 0);
+  scm_new_procedure ("window-current", (FN) tmg_window_current, 0, 0, 0);
+  scm_new_procedure ("window-list", (FN) tmg_window_list, 0, 0, 0);
+  scm_new_procedure ("buffer->windows", (FN) tmg_buffer_2windows, 1, 0, 0);
+  scm_new_procedure ("window->buffer", (FN) tmg_window_2buffer, 1, 0, 0);
+  scm_new_procedure ("window-set-buffer", (FN) tmg_window_set_buffer, 2, 0, 0);
+  scm_new_procedure ("window-focus", (FN) tmg_window_focus, 1, 0, 0);
+  scm_new_procedure ("texmacs-load-tree", (FN) tmg_texmacs_load_tree, 2, 0, 0);
+  scm_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
+  scm_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);
+  scm_new_procedure ("auto-save", (FN) tmg_auto_save, 0, 0, 0);
+  scm_new_procedure ("get-style-menu", (FN) tmg_get_style_menu, 0, 0, 0);
+  scm_new_procedure ("get-add-package-menu", (FN) tmg_get_add_package_menu, 0, 0, 0);
+  scm_new_procedure ("get-remove-package-menu", (FN) tmg_get_remove_package_menu, 0, 0, 0);
+  scm_new_procedure ("style-clear-cache", (FN) tmg_style_clear_cache, 0, 0, 0);
+  scm_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);
+  scm_new_procedure ("set-printing-command", (FN) tmg_set_printing_command, 1, 0, 0);
+  scm_new_procedure ("set-printer-paper-type", (FN) tmg_set_printer_paper_type, 1, 0, 0);
+  scm_new_procedure ("get-printer-paper-type", (FN) tmg_get_printer_paper_type, 0, 0, 0);
+  scm_new_procedure ("set-printer-dpi", (FN) tmg_set_printer_dpi, 1, 0, 0);
+  scm_new_procedure ("set-default-shrinking-factor", (FN) tmg_set_default_shrinking_factor, 1, 0, 0);
+  scm_new_procedure ("get-default-shrinking-factor", (FN) tmg_get_default_shrinking_factor, 0, 0, 0);
+  scm_new_procedure ("get-nr-windows", (FN) tmg_get_nr_windows, 0, 0, 0);
+  scm_new_procedure ("image-gc", (FN) tmg_image_gc, 0, 0, 0);
+  scm_new_procedure ("inclusions-gc", (FN) tmg_inclusions_gc, 0, 0, 0);
+  scm_new_procedure ("update-all-path", (FN) tmg_update_all_path, 1, 0, 0);
+  scm_new_procedure ("update-all-buffers", (FN) tmg_update_all_buffers, 0, 0, 0);
+  scm_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
+  scm_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);
+  scm_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);
+  scm_new_procedure ("yes?", (FN) tmg_yesP, 1, 0, 0);
+  scm_new_procedure ("quit-TeXmacs", (FN) tmg_quit_TeXmacs, 0, 0, 0);
+  scm_new_procedure ("package-evaluate", (FN) tmg_package_evaluate, 3, 0, 0);
 }

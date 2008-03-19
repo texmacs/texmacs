@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmpre)
-  (:export tmpre-produce))
+(texmacs-module (convert tools tmpre))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -23,15 +22,20 @@
   verbatim code center indent description itemize itemize-minus
   itemize-dot itemize-arrow enumerate enumerate-numeric
   enumerate-roman enumerate-Roman enumerate-alpha enumerate-Alpha
-  equation equation* eqnarray eqnarray* leqnarray*)
+  equation equation* eqnarray eqnarray* leqnarray leqnarray*
+  elsequation elsequation*)
 
 (drd-group tmpre-sectional%
   part chapter appendix section subsection subsubsection
-  paragraph subparagraph)
+  paragraph subparagraph
+  part* chapter* appendix* section* subsection* subsubsection*
+  paragraph* subparagraph*)
 
 (drd-group tmpre-theorem-env%
   theorem proposition lemma corollary axiom definition notation conjecture
-  remark note example exercise warning convention)
+  remark note example exercise warning convention
+  theorem* proposition* lemma* corollary* axiom* definition* notation*
+  conjecture* remark* note* example* exercise* warning* convention*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preprocessing
@@ -46,7 +50,9 @@
   (or (func? l 'assign 2)
       (and (list? l)
 	   (= (length l) 2)
-	   (drd-in? (car l) tmpre-inline-env%))))
+	   (drd-in? (car l) tmpre-inline-env%)
+	   (pair? (cadr l))
+	   (in? (caadr l) '(document tformat table)))))
 
 (define (tmpre-para x l)
   (cond ((func? (car l) 'para)
@@ -66,7 +72,7 @@
 
 (define (tmpre-empty? x)
   (cond ((== x "") #t)
-	((not (list? x)) #f)
+	((nlist? x) #f)
 	((func? x 'label 1) #t)
 	((func? x 'concat) (list-and (map-in-order tmpre-empty? (cdr x))))
 	(else #f)))
@@ -78,7 +84,7 @@
       (tmpre-document l)))
 
 (define (tmpre l)
-  (cond ((not (list? l)) l)
+  (cond ((nlist? l) l)
 	((and (= (length l) 2)
 	      (drd-in? (car l) tmpre-theorem-env%)
 	      (func? (cadr l) 'document)
@@ -90,5 +96,5 @@
 	((func? l 'document) (cons 'document (tmpre-document (cdr l))))
 	(else (cons (car l) (map-in-order tmpre (cdr l))))))
 
-(define (tmpre-produce l)
+(tm-define (tmpre-produce l)
   (tmpre l))

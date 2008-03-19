@@ -104,11 +104,11 @@
 
     \ \ \ \ \ \ \ \ \ (e (mod s 4)))
 
-    \ \ \ \ (if (and (\<less\>= e 1) (not (match? t '(strong :1))))
+    \ \ \ \ (if (and (\<less\>= e 1) (not (match? t '(strong :%1))))
 
     \ \ \ \ \ \ \ \ (tm-ins-unary p 'strong))
 
-    \ \ \ \ (if (and (\<gtr\>= e 2) (match? t '(strong :1)))
+    \ \ \ \ (if (and (\<gtr\>= e 2) (match? t '(strong :%1)))
 
     \ \ \ \ \ \ \ \ (tm-rem-unary p))))
   </scheme-fragment>

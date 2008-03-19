@@ -211,6 +211,10 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   bool wide;
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   string s= as_string (t[1]);
+  if (env->get_string (MATH_FONT) == "adobe") {
+    if (s == "^") s= "<hat>";
+    if (s == "~") s= "<tilde>";
+  }
   if (starts (s, "<wide-")) {
     s= "<" * s (6, N(s));
     wide= true;
@@ -236,11 +240,16 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
       wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
     else if (s == "<breve>")
       wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+    else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
+      wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
+    else if (s == "<sqoverbrace>" || s == "<sqoverbrace*>")
+      wideb= wide_sqobr_box (decorate_middle (ip), b->x1, b->x2, w, env->col);
     else wideb= wide_box (decorate_middle (ip),
 			  "<rubber-" * s (1, N(s)-1) * ">",
 			  env->fn, env->col, b->x2- b->x1);
     print (STD_ITEM, wide_box (ip, b, wideb, env->fn, env->fn->sep, above));
-    if ((s == "<underbrace>") || (s == "overbrace"))
+    if ((s == "<underbrace>") || (s == "<overbrace>") ||
+	(s == "<squnderbrace>") || (s == "<sqoverbrace>"))
       with_limits (LIMITS_ALWAYS);
   }
   else {

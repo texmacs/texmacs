@@ -40,12 +40,20 @@ modifier_box_rep::subbox (int i) { (void) i;
 }
 
 void
-modifier_box_rep::display (ps_device dev) { (void) dev; }
-
+modifier_box_rep::display (renderer ren) {
+  (void) ren;
+}
 
 tree
 modifier_box_rep::action (tree t, SI x, SI y, SI delta) {
   return b->action (t, x, y, delta);
+}
+
+void
+modifier_box_rep::loci (SI x, SI y, SI delta,
+			list<string>& ids, rectangles& rs)
+{
+  return b->loci (x, y, delta, ids, rs);
 }
 
 void
@@ -139,6 +147,23 @@ modifier_box_rep::graphical_select (SI x, SI y, SI dist) {
   return b->graphical_select (x- sx(0), y- sy(0), dist);
 }
 
+gr_selections
+modifier_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  return b->graphical_select (x1- sx(0), y1- sy(0), x2- sx(0), y2- sy(0));
+}
+
+/******************************************************************************
+* Animations
+******************************************************************************/
+
+int modifier_box_rep::anim_length () { return b->anim_length (); }
+bool modifier_box_rep::anim_started () { return b->anim_started (); }
+bool modifier_box_rep::anim_finished () { return b->anim_finished (); }
+void modifier_box_rep::anim_finish_now () { b->anim_finish_now (); }
+void modifier_box_rep::anim_start_at (time_t at) { b->anim_start_at (at); }
+void modifier_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
+  b->anim_get_invalid (f, at, rs); }
+
 /******************************************************************************
 * Symbol boxes
 ******************************************************************************/
@@ -156,7 +181,7 @@ symbol_box_rep::symbol_box_rep (path ip, box b2, int n2):
 
 static box
 subbox (box b, path p) {
-  if (nil (p)) return b;
+  if (is_nil (p)) return b;
   return subbox (b[p->item], p->next);
 }
 
@@ -206,7 +231,7 @@ shorter_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
 path
 shorter_box_rep::find_rip () {
   path p= modifier_box_rep::find_rip ();
-  if (is_accessible (ip) && (!nil(p)) && (p->item > (pos+ len)))
+  if (is_accessible (ip) && (!is_nil(p)) && (p->item > (pos+ len)))
     return descend (p->next, pos+ len);
   else return p;  
 }
@@ -248,6 +273,31 @@ shorter_box_rep::get_leaf_offset (string search) {
 }
 
 /******************************************************************************
+* Frozen boxes
+******************************************************************************/
+
+class frozen_box_rep: public modifier_box_rep {
+public:
+  frozen_box_rep (path ip, box b);
+  operator tree () { return tree (TUPLE, "frozen", subbox(0)); }
+  path find_lip ();
+  path find_rip ();
+};
+
+frozen_box_rep::frozen_box_rep (path ip, box b2):
+  modifier_box_rep (ip, b2) {}
+
+path
+frozen_box_rep::find_lip () {
+  return box_rep::find_lip ();
+}
+
+path
+frozen_box_rep::find_rip () {
+  return box_rep::find_rip ();
+}
+
+/******************************************************************************
 * macro expansions
 ******************************************************************************/
 
@@ -279,16 +329,16 @@ struct macro_box_rep: public composite_box_rep {
   SI rsup_correction () { return bs[0]->rsup_correction(); }
   SI sub_lo_base (int l) {
     // second test separates small and large big operators
-    return (!nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
+    return (!is_nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
       y1 - (l>0? 0: big_fn->yshift): box_rep::sub_lo_base (l); }
   SI sub_hi_lim (int l) {
     // second test separates small and large size big operators
-    return (!nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
+    return (!is_nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?
       y1 - (l>0? 0: big_fn->yshift) +
         bs[0]->sub_hi_lim (l) - bs[0]->sub_lo_base (l):
       box_rep::sub_hi_lim (l); }
   SI sup_lo_base (int l) {
-    if (nil (big_fn)) return box_rep::sup_lo_base (l);
+    if (is_nil (big_fn)) return box_rep::sup_lo_base (l);
     SI syx= big_fn->yx * script (big_fn->size, 1) / big_fn->size;
     if ((y2-y1) <= 3*big_fn->yx) syx -= (l<0? 0: big_fn->yshift);
     return y2- syx; }
@@ -334,6 +384,11 @@ symbol_box (path ip, box b, int n) {
 box
 shorter_box (path ip, box b, int len) {
   return new shorter_box_rep (ip, b, len);
+}
+
+box
+frozen_box (path ip, box b) {
+  return new frozen_box_rep (ip, b);
 }
 
 box

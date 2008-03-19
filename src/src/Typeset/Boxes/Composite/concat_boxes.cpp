@@ -52,7 +52,11 @@ struct concat_box_rep: public composite_box_rep {
   selection find_selection (path lbp, path rbp);
 
   tree      action (tree t, SI x, SI y, SI delta);
+  void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   SI        get_leaf_offset (string search);
+
+  box       transform (frame fr);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 concat_box_rep::operator tree () {
@@ -104,6 +108,11 @@ concat_box_rep::access_allowed () {
   return false;
 }
 
+box
+concat_box_rep::transform (frame fr) {
+  return composite_box_rep::transform (fr);
+}
+
 void
 concat_box_rep::clear_incomplete (
   rectangles& rs, SI pixel, int i, int i1, int i2)
@@ -120,14 +129,14 @@ concat_box_rep::clear_incomplete (
     rectangles new_rs;
     rectangles mid_rs;
     rectangles count= rs;
-    while (!nil (count)) {
+    while (!is_nil (count)) {
       rectangle& r= count->item;
       if ((lbusy && (r->x1 < left)) || (rbusy && (r->x2 > right))) new_rs << r;
       else mid_rs << r;
       count= count->next;
     }
     rs= new_rs;
-    if (!nil (mid_rs)) rs= rs * least_upper_bound (mid_rs);
+    if (!is_nil (mid_rs)) rs= rs * least_upper_bound (mid_rs);
 
     // cout << "  out: " << rs << "\n\n";
   }
@@ -365,7 +374,7 @@ concat_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
 
 path
 concat_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) {
+  if (is_atom (bp)) {
     if (bp->item == 0) {
       if (is_accessible (lip)) return reverse (lip);
       else return reverse (descend_decode (lip, 0));
@@ -380,7 +389,7 @@ concat_box_rep::find_tree_path (path bp) {
 
 cursor
 concat_box_rep::find_cursor (path bp) {
-  if (atom (bp)) return box_rep::find_cursor (bp);
+  if (is_atom (bp)) return box_rep::find_cursor (bp);
   else {
     int i= bp->item, j, n;
     cursor cu= bs[i]->find_cursor (bp->next);
@@ -413,16 +422,16 @@ concat_box_rep::find_cursor (path bp) {
 selection
 concat_box_rep::find_selection (path lbp, path rbp) {
   if ((N(bs) == 0) ||
-      ((!atom (lbp)) && (!atom (rbp)) && (lbp->item == rbp->item)))
+      ((!is_atom (lbp)) && (!is_atom (rbp)) && (lbp->item == rbp->item)))
     return composite_box_rep::find_selection (lbp, rbp);
 
   int  i;
-  int  i1  = atom (lbp)? 0      : lbp->item;
-  int  i2  = atom (rbp)? N(bs)-1: rbp->item;
-  path lbp1= atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
+  int  i1  = is_atom (lbp)? 0      : lbp->item;
+  int  i2  = is_atom (rbp)? N(bs)-1: rbp->item;
+  path lbp1= is_atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
   path rbp1= path (i1, bs[i1]->find_right_box_path ());
   path lbp2= path (i2, bs[i2]->find_left_box_path ());
-  path rbp2= atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
+  path rbp2= is_atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
 
   /*
   cout << "Find selection " << lbp << " --- " << rbp << "\n"
@@ -451,7 +460,7 @@ concat_box_rep::find_selection (path lbp, path rbp) {
       path rbpi= path (i, bs[i]->find_right_box_path ());
       rs << find_selection (lbpi, rbpi)->rs;
     }
-    if (nil (rs)) return selection (rectangles (), lp, rp);
+    if (is_nil (rs)) return selection (rectangles (), lp, rp);
     rectangle r= least_upper_bound (rs);
     return selection (r, lp, rp);
   }
@@ -466,6 +475,20 @@ concat_box_rep::action (tree t, SI x, SI y, SI delta) {
   return bs[m]->action (t, xx, yy, dd);
 }
 
+void
+concat_box_rep::loci (SI x, SI y, SI delta,
+		      list<string>& ids, rectangles& rs)
+{
+  int delta_out, m= find_any_child (x, y, delta, delta_out);
+  if (m == -1) box_rep::loci (x, y, delta, ids, rs);
+  else {
+    SI xx= x- sx(m), yy= y- sy(m);
+    SI dd= delta_out + get_delta (xx, bs[m]->x1, bs[m]->x2);
+    bs[m]->loci (xx, yy, dd, ids, rs);
+    rs= translate (rs, sx(m), sy(m));
+  }
+}
+
 SI
 concat_box_rep::get_leaf_offset (string search) {
   int i, n=N(bs);
@@ -474,6 +497,16 @@ concat_box_rep::get_leaf_offset (string search) {
     if (offset != bs[i]->w()) return sx1(i) + offset;
   }
   return w();
+}
+
+gr_selections
+concat_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=0; i<n; i++)
+    res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
+                                    x2- sx(i), y2- sy(i));
+  return res;
 }
 
 /******************************************************************************
@@ -487,7 +520,7 @@ public:
   phrase_box_rep (path ip, array<box> bs, array<SI> spc);
   ~phrase_box_rep ();
   void position_at (SI x, SI y, rectangles& change_log_ptr);
-  void display (ps_device dev);
+  void display (renderer ren);
 };
 
 phrase_box_rep::phrase_box_rep (path ip, array<box> bs, array<SI> spc):
@@ -513,8 +546,8 @@ phrase_box_rep::position_at (SI x, SI y, rectangles& logs) {
 }
 
 void
-phrase_box_rep::display (ps_device dev) {
-  dev->apply_shadow (x1, y1, x2, y2);
+phrase_box_rep::display (renderer ren) {
+  ren->apply_shadow (x1, y1, x2, y2);
 }
 
 /******************************************************************************

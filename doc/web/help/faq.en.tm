@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.2>
 
 <style|tmweb>
 
@@ -16,6 +16,6 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|preamble|true>
+    <associate|preamble|false>
   </collection>
 </initial>

@@ -12,7 +12,7 @@
 
 #include "env.hpp"
 #include "convert.hpp"
-#include "PsDevice/page_type.hpp"
+#include "page_type.hpp"
 #include "typesetter.hpp"
 
 /******************************************************************************
@@ -173,9 +173,9 @@ edit_env_rep::as_vspace (tree t) {
 
 point
 edit_env_rep::as_point (tree t) {
-  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
+  if ((is_tuple (t) || is_point (t)) && ((N(t)==0) || is_double (t[0])))
     return ::as_point (t);
-  if (is_tuple (t)) {
+  if (is_tuple (t) || is_point (t)) {
     int i, n= N(t);
     point p(n);
     for (i=0; i<n; i++)
@@ -252,6 +252,16 @@ edit_env_rep::exec_bls_length () {
 }
 
 tree
+edit_env_rep::exec_fnbot_length () {
+  return tree (TMLEN, as_string (fn->y1));
+}
+
+tree
+edit_env_rep::exec_fntop_length () {
+  return tree (TMLEN, as_string (fn->y2));
+}
+
+tree
 edit_env_rep::exec_spc_length () {
   return tree (TMLEN,
 	       as_string (fn->spc->min),
@@ -270,7 +280,8 @@ edit_env_rep::exec_xspc_length () {
 tree
 edit_env_rep::exec_par_length () {
   SI width, d1, d2, d3, d4, d5, d6, d7;
-  get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
+  if (read (PAR_WIDTH) != "auto") width= get_length (PAR_WIDTH);
+  else get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
   width -= (get_length (PAR_LEFT) + get_length (PAR_RIGHT));
   return tree (TMLEN, as_string (width));
 }
@@ -286,3 +297,13 @@ tree edit_env_rep::exec_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_px_length () {
   return tree (TMLEN, as_string (get_int (SFACTOR) * PIXEL)); }
+
+tree edit_env_rep::exec_gw_length () {
+  return tree (TMLEN, as_string (gw)); }
+tree edit_env_rep::exec_gh_length () {
+  return tree (TMLEN, as_string (gh)); }
+
+tree edit_env_rep::exec_msec_length () { return tree (TMLEN, "1"); }
+tree edit_env_rep::exec_sec_length () { return tree (TMLEN, "1000"); }
+tree edit_env_rep::exec_min_length () { return tree (TMLEN, "60000"); }
+tree edit_env_rep::exec_h_length () { return tree (TMLEN, "3600000"); }

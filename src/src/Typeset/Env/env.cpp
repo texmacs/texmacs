@@ -16,24 +16,24 @@ extern hashmap<string,int> default_var_type;
 void initialize_default_var_type ();
 extern hashmap<string,tree> default_env;
 void initialize_default_env ();
-#include "PsDevice/page_type.hpp"
+#include "page_type.hpp"
 
 /******************************************************************************
 * Initialization
 ******************************************************************************/
 
-edit_env_rep::edit_env_rep (display dis2,
-			    drd_info& drd2,
+edit_env_rep::edit_env_rep (drd_info& drd2,
 			    url base_file_name2,
 			    hashmap<string,tree>& local_ref2,
 			    hashmap<string,tree>& global_ref2,
 			    hashmap<string,tree>& local_aux2,
 			    hashmap<string,tree>& global_aux2):
-  dis (dis2), drd (drd2),
+  drd (drd2),
   env (UNINIT), back (UNINIT), src (path (DECORATION)),
   var_type (default_var_type),
   base_file_name (base_file_name2),
   cur_file_name (base_file_name2),
+  secure (is_secure (base_file_name2)),
   local_ref (local_ref2), global_ref (global_ref2),
   local_aux (local_aux2), global_aux (global_aux2)
 {
@@ -46,14 +46,13 @@ edit_env_rep::edit_env_rep (display dis2,
   recover_env= tuple ();
 }
 
-edit_env::edit_env (display dis,
-		    drd_info& drd,
+edit_env::edit_env (drd_info& drd,
 		    url base_file_name,
 		    hashmap<string,tree>& local_ref,
 		    hashmap<string,tree>& global_ref,
 		    hashmap<string,tree>& local_aux,
 		    hashmap<string,tree>& global_aux):
-  rep (new edit_env_rep (dis, drd, base_file_name,
+  rep (new edit_env_rep (drd, base_file_name,
 			 local_ref, global_ref, local_aux, global_aux)) {}
 
 void
@@ -126,7 +125,7 @@ edit_env_rep::monitored_patch_env (hashmap<string,tree> patch) {
   int i=0, n=patch->n;
   for (; i<n; i++) {
     list<hashentry<string,tree> > l=patch->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       monitored_write_update (l->item.key, l->item.im);
   }
 }
@@ -137,7 +136,7 @@ edit_env_rep::patch_env (hashmap<string,tree> patch) {
   int i=0, n=patch->n;
   for (; i<n; i++) {
     list<hashentry<string,tree> > l=patch->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       write_update (l->item.key, l->item.im);
   }
 }
@@ -167,7 +166,7 @@ edit_env_rep::local_end (hashmap<string,tree>& prev_back) {
   int i=0, n=back->n;
   for (; i<n; i++) {
     list<hashentry<string,tree> > l=back->a[i];
-    for (; !nil(l); l=l->next)
+    for (; !is_nil(l); l=l->next)
       prev_back->write_back (l->item.key, back);
   }
   back= prev_back;

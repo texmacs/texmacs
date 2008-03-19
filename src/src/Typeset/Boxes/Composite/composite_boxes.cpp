@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Boxes/composite.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * Setting up composite boxes
@@ -98,8 +99,8 @@ composite_box_rep::left_justify () {
 ******************************************************************************/
 
 void
-composite_box_rep::display (ps_device dev) {
-  (void) dev;
+composite_box_rep::display (renderer ren) {
+  (void) ren;
 }
 
 int
@@ -121,6 +122,18 @@ composite_box_rep::action (tree t, SI x, SI y, SI delta) {
 }
 
 void
+composite_box_rep::loci (SI x, SI y, SI delta,
+			 list<string>& ids, rectangles& rs)
+{
+  int m= find_child (x, y, delta, true);
+  if (m == -1) box_rep::loci (x, y, delta, ids, rs);
+  else {
+    bs[m]->loci (x- sx(m), y- sy(m), delta + get_delta (x, x1, x2), ids, rs);
+    rs= translate (rs, sx(m), sy(m));
+  }
+}
+
+void
 composite_box_rep::collect_page_numbers (hashmap<string,tree>& h, tree page) {
   int i, n= N(bs);
   for (i=0; i<n; i++)
@@ -132,7 +145,7 @@ composite_box_rep::find_tag (string name) {
   int i, n= N(bs);
   for (i=0; i<n; i++) {
     path p= bs[i]->find_tag (name);
-    if (!nil (p)) return p;
+    if (!is_nil (p)) return p;
   }
   return path ();
 }
@@ -140,6 +153,19 @@ composite_box_rep::find_tag (string name) {
 bool
 composite_box_rep::access_allowed () {
   return true;
+}
+
+box
+composite_box_rep::transform (frame fr) {
+  int i;
+  array<box> bs;
+  for (i= 0; i<subnr(); i++) {
+    if (!is_nil (subbox (i))) {
+      box sb= subbox (i)->transform (fr);
+      if (!is_nil (sb)) bs << sb;
+    }
+  }
+  return N (bs)==0?box ():composite_box (ip, bs);
 }
 
 /******************************************************************************
@@ -209,11 +235,13 @@ composite_box_rep::find_rip () {
 
 path
 composite_box_rep::find_box_path (path p, bool& found) {
+  // cout << "Find box path " << box (this) << ", " << p
+  //      << "; " << reverse (ip)
+  //      << ", " << reverse (find_lip ())
+  //      << " -- " << reverse (find_rip ()) << "\n";
   int n= subnr();
-  /*
-  cout << "Search cursor " << p << " among " << n
-       << " at " << box (this) << " " << reverse (ip) << "\n";
-  */
+  // cout << "Search cursor " << p << " among " << n
+  //      << " at " << box (this) << " " << reverse (ip) << "\n";
   if (n == 0) return box_rep::find_box_path (p, found);
 
   int start= n>>1, acc= start, step= (start+1)>>1;
@@ -267,18 +295,30 @@ composite_box_rep::find_box_path (path p, bool& found) {
   if (is_accessible (ip) && (path_up (p) == reverse (ip)) && access_allowed ())
     return box_rep::find_box_path (p, found);
   if (flag) return bp;
+  if (start > 0) {
+    path sl= bs[start-1]->find_rip ();
+    path sr= bs[start  ]->find_lip ();
+    if (is_accessible (sl) && is_accessible (sr) &&
+	path_less_eq (reverse (sl), p) && path_less_eq (p, reverse (sr)))
+      {
+	int c1= N (common (reverse (sl), p));
+	int c2= N (common (reverse (sr), p));
+	int i = (c1 >= c2? start-1: start);
+	return path (i, bs[i]->find_box_path (p, found));
+      }
+  }
   return box_rep::find_box_path (p, flag);
 }
 
 path
 composite_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) return box_rep::find_tree_path (bp);
+  if (is_atom (bp)) return box_rep::find_tree_path (bp);
   return bs[bp->item]->find_tree_path (bp->next);
 }
 
 cursor
 composite_box_rep::find_cursor (path bp) {
-  if (atom (bp)) return box_rep::find_cursor (bp);
+  if (is_atom (bp)) return box_rep::find_cursor (bp);
   else {
     int i= bp->item;
     cursor cu= bs[i]->find_cursor (bp->next);
@@ -291,7 +331,7 @@ composite_box_rep::find_cursor (path bp) {
 
 selection
 composite_box_rep::find_selection (path lbp, path rbp) {
-  if ((!atom (lbp)) && (!atom (rbp)) && (lbp->item == rbp->item)) {
+  if ((!is_atom (lbp)) && (!is_atom (rbp)) && (lbp->item == rbp->item)) {
     int i= lbp->item;
     selection sel= bs[i]->find_selection (lbp->next, rbp->next);
     return selection (translate (sel->rs, sx(i), sy(i)), sel->start, sel->end);
@@ -306,6 +346,18 @@ composite_box_rep::graphical_select (SI x, SI y, SI dist) {
     int i, n= subnr();
     for (i=0; i<n; i++)
       res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  }
+  return res;
+}
+
+gr_selections
+composite_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  if (contains_rectangle (x1, y1, x2, y2)) {
+    int i, n= subnr();
+    for (i=0; i<n; i++)
+      res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
+				      x2- sx(i), y2- sy(i));
   }
   return res;
 }

@@ -13,6 +13,7 @@
 #include "Replace/edit_replace.hpp"
 #include "Interface/edit_interface.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
@@ -38,7 +39,7 @@ edit_replace_rep::search_upwards (string what) {
 
 bool
 edit_replace_rep::inside (tree_label l) {
-  return !nil (search_upwards (l));
+  return !is_nil (search_upwards (l));
 }
 
 path
@@ -74,7 +75,7 @@ edit_replace_rep::search_parent_upwards (tree_label l) {
 
 bool
 edit_replace_rep::inside_with (string var, string val) {
-  return !nil (search_upwards_with (var, val));
+  return !is_nil (search_upwards_with (var, val));
 }
 
 path
@@ -91,7 +92,7 @@ edit_replace_rep::search_upwards_with (string var, string val) {
 string
 edit_replace_rep::inside_which (tree t) {
   path p= search_upwards_in_set (t);
-  if ((p == rp) || nil (p)) return "";
+  if ((p == rp) || is_nil (p)) return "";
   tree st= subtree (et, p);
   if (is_func (st, COMPOUND)) return as_string (st[0]);
   else return as_string (L(st));
@@ -109,7 +110,7 @@ edit_replace_rep::search_upwards_in_set (tree t) {
     for (i=0; i<n; i++) {
       if (is_atomic (t[i])) {
 	string s= t[i]->label;
-	if (is_quoted (s)) s= unquote (s);
+	if (is_quoted (s)) s= raw_unquote (s);
 	if (std_contains (s)) {
 	  tree_label l= as_tree_label (s);
 	  if (is_func (st, l)) return p;
@@ -123,7 +124,7 @@ edit_replace_rep::search_upwards_in_set (tree t) {
 
 static bool
 is_accessible_path (drd_info drd, tree t, path p) {
-  if (nil (p)) return true;
+  if (is_nil (p)) return true;
   return
     drd->is_accessible_child (t, p->item) &&
     (p->item < N(t)) &&
@@ -262,14 +263,14 @@ edit_replace_rep::step_ascend (bool forward) {
 
   if (forward) {
     if (l == N(st)) {
-      if (atom (search_at - rp)) search_at= rp;
+      if (is_atom (search_at - rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
   }
   else {
     if (l == -1) {
-      if (atom (search_at - rp)) search_at= rp;
+      if (is_atom (search_at - rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
@@ -358,12 +359,18 @@ edit_replace_rep::next_match (bool forward) {
     }
     search_end= test (search_at, search_what);
     if (search_end != search_at) {
+      go_to (copy (search_end));
+      show_cursor_if_hidden ();
       set_selection (search_at, search_end);
       notify_change (THE_SELECTION);
-      go_to (copy (search_end));
       return;
     }
+    int new_mode= DRD_ACCESS_HIDDEN;
+    if (get_init_string (MODE) == "src" || inside ("show-preamble"))
+      new_mode= DRD_ACCESS_SOURCE;
+    int old_mode= set_access_mode (new_mode);
     step_horizontal (forward);
+    set_access_mode (old_mode);
   }
 }
 
@@ -456,9 +463,9 @@ edit_replace_rep::search_keypress (string s) {
       else search_next (search_what, s != "C-r", true);
     }
     else if ((s == "delete") || (s == "backspace")) {
-      if (nil (where_stack))
+      if (is_nil (where_stack))
 	search_stop ();
-      else if (atom (where_stack)) {
+      else if (is_atom (where_stack)) {
 	go_to (where_stack->item);
 	search_stop ();
       }
@@ -559,7 +566,7 @@ edit_replace_rep::replace_keypress (string s) {
     step_horizontal (forward);
     replace_next ();
   }
-  else if (s == "a") {
+  else if (s == "a" || s == "!") {
     while (search_at != rp) {
       nr_replaced++;
       go_to (copy (search_end));

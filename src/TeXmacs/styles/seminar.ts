@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.11>
 
 <style|source>
 
@@ -36,8 +36,6 @@
   <assign|page-odd|15mm>
 
   <assign|page-even|15mm>
-
-  <assign|par-width|180mm>
 
   <assign|page-top|15mm>
 

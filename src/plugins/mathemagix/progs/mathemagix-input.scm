@@ -13,14 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (mathemagix-input)
-  (:use (texmacs plugin plugin-convert)))
+  (:use (utils plugins plugin-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathemagix-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -31,7 +31,7 @@
   (mathemagix-input-var-row (cdr r)))
 
 (define (mathemagix-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display "; ")
 	(mathemagix-input-row (car t))
@@ -59,4 +59,8 @@
 
 (plugin-input-converters mathemagix
   (rows mathemagix-input-rows)
-  (det mathemagix-input-det))
+  (det mathemagix-input-det)
+  ("<in>" " in ")
+  ("<neg>" "!")
+  ("<wedge>" "/\\")
+  ("<vee>" "\\/"))

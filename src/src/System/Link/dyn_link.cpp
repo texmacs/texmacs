@@ -94,8 +94,8 @@ make_dynamic_link (string lib, string symb, string init, string session) {
 }
 
 static TeXmacs_exports_1 TeXmacs= {
-  "TeXmacs communication protocol 1",
-  "TeXmacs " TEXMACS_VERSION,
+  const_cast<char*> ("TeXmacs communication protocol 1"),
+  const_cast<char*> ("TeXmacs " TEXMACS_VERSION),
 };
 
 string
@@ -143,6 +143,13 @@ dyn_link_rep::write (string s, int channel) {
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);
   delete[] _s;
   delete[] _session;
+}
+
+string&
+dyn_link_rep::watch (int channel) {
+  static string empty_string= "";
+  if (channel == LINK_OUT) return ret;
+  else return empty_string;
 }
 
 string

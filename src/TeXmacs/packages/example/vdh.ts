@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.4>
+<TeXmacs|1.0.6.11>
 
 <style|source>
 
@@ -52,6 +52,8 @@
 
     <assign|Set|<with|math-font|cal*|S>>
 
+    \;
+
     <assign|rsA|<with|math-font|cal*|A>>
 
     <assign|rsB|<with|math-font|cal*|B>>
@@ -79,6 +81,40 @@
     <assign|rsS|<with|math-font|cal*|S>>
 
     <assign|rsT|<with|math-font|cal*|T>>
+
+    \;
+
+    <assign|ssA|<math|<with|math-font-family|tss|A>>>
+
+    <assign|ssAlg|<math|<with|math-font-family|tss|Alg>>>
+
+    <assign|ssBall|<math|<with|math-font-family|tss|Ball>>>
+
+    <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
+
+    <assign|ssGL|<math|<with|math-font-family|tss|GL>>>
+
+    <assign|ssL|<math|<with|math-font-family|tss|L>>>
+
+    <assign|ssLin|<math|<with|math-font-family|tss|Lin>>>
+
+    <assign|ssM|<math|<with|math-font-family|tss|M>>>
+
+    <assign|ssMat|<math|<with|math-font-family|tss|Mat>>>
+
+    <assign|ssMM|<math|<with|math-font-family|tss|MM>>>
+
+    <assign|ssR|<math|<with|math-font-family|tss|R>>>
+
+    <assign|ssRM|<math|<with|math-font-family|tss|RM>>>
+
+    <assign|ssT|<math|<with|math-font-family|tss|T>>>
+
+    <assign|ssVect|<math|<with|math-font-family|tss|Vect>>>
+
+    \;
+
+    <assign|bpartial|<with|math-font-series|bold|\<partial\>>>
 
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
 
@@ -119,6 +155,16 @@
     <assign|lcut|<macro|x|<wide|<arg|x>|\<wide-varleftarrow\>>>>
 
     <assign|rcut|<macro|x|<wide|<arg|x>|\<wide-varrightarrow\>>>>
+
+    \;
+
+    <assign|rth|<macro|f|r<rsub|<arg|f>>>>
+
+    <assign|reff|<macro|f|<resize|<wide*|<resize|r||0ex|0.3em|1ex>|\<wide-bar\>>||0.5ex|0.4em|1ex><rsub|<arg|f>>>>
+
+    <assign|Bth|<macro|f|\<\|\|\><arg|f>\<\|\|\>>>
+
+    <assign|Beff|<macro|f|\<lceil\><space|-0.75spc>\<lceil\><arg|f>\<rceil\><space|-0.75spc>\<rceil\>>>
   </with>>
 
   \;
@@ -146,7 +192,7 @@
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Leftarrow\>>>>>|(mouse-fold)|<arg|y>>|<arg|y>>
+    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|x>

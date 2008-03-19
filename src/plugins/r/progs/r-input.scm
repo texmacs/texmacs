@@ -13,14 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (r-input)
-  (:use (texmacs plugin plugin-convert)))
+  (:use (utils plugins plugin-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (r-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -32,7 +32,7 @@
  )
 
 (define (r-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display ", ")
 	(r-input-row (car t))

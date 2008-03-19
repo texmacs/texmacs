@@ -14,12 +14,12 @@
 #define TM_BUFFER_H
 #include "server.hpp"
 
-window texmacs_window (widget wid);
-
 extern tree the_et;
 path new_document ();
 void delete_document (path rp);
 void set_document (path rp, tree t);
+int  create_window_id ();
+void destroy_window_id (int);
 
 class tm_buffer_rep {
 public:
@@ -31,7 +31,9 @@ public:
   bool need_save;         // (non textual) modification since last save?
   bool need_autosave;     // (non textual) modification since last autosave?
   bool read_only;         // buffer is read only?
+  bool secure;            // is the buffer secure?
   tm_buffer prj;          // buffer which corresponds to the project
+  bool in_menu;           // should the buffer be listed in the menus?
 
   tree undo;              // for undoing changes
   tree redo;              // for redoing changes
@@ -52,8 +54,9 @@ public:
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
     fm ("texmacs"), extra (url_none ()), vws (0),
-    need_save (false), need_autosave (false), read_only (false),
-    prj (NULL), undo ("nil"), redo ("nil"), exdo ("nil"),
+    need_save (false), need_autosave (false),
+    read_only (false), secure (is_secure (name2)),
+    prj (NULL), in_menu (true), undo ("nil"), redo ("nil"), exdo ("nil"),
     undo_depth (0), redo_depth (0), last_save (0), last_autosave (0),
     rp (new_document ()), project (""), style ("style"),
     init ("?"), fin ("?"), ref ("?"), aux ("?") {}
@@ -70,26 +73,5 @@ public:
   bool needs_to_be_saved ();
   bool needs_to_be_autosaved ();
 };
-
-class tm_view_rep {
-public:
-  tm_buffer buf;
-  editor    ed;
-  tm_window win;
-  inline tm_view_rep (tm_buffer buf2, editor ed2):
-    buf (buf2), ed (ed2), win (NULL) {}
-};
-
-class tm_window_rep {
-public:
-  window    win;
-  tm_widget wid;
-  inline tm_window_rep (tm_widget wid2):
-    win (texmacs_window (wid2)), wid (wid2) {}
-};
-
-typedef tm_buffer_rep* tm_buffer;
-typedef tm_view_rep*   tm_view;
-typedef tm_window_rep* tm_window;
 
 #endif // defined TM_BUFFER_H

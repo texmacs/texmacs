@@ -22,9 +22,9 @@ subvar (tree var, int i) {
 * Test whether a tree (argument) should be rendered in compact format or not.
 ******************************************************************************/
 
-static bool is_long (tree t);
+bool is_long (tree t);
 
-static bool
+bool
 is_long_arg (tree t, int i) {
   // FIXME: should go into the DRD
   int n= N(t);
@@ -74,6 +74,11 @@ is_long_arg (tree t, int i) {
   case ACTIVE:
   case VAR_ACTIVE:
     return is_multi_paragraph (t[i]);
+  case LOCUS:
+  case CANVAS:
+  case ORNAMENT:
+    if (i == n-1) return is_long (t[i]);
+    break;
   default:
     break;
   }
@@ -90,7 +95,7 @@ is_long_arg (tree t, int i) {
   }
 }
 
-static bool
+bool
 is_long (tree t) {
   if (is_compound (t)) {
     int i, n= N(t);
@@ -105,7 +110,7 @@ is_long (tree t) {
 * For syntactic coloring
 ******************************************************************************/
 
-static string
+string
 arg_type (tree t, int i) {
   // FIXME: should go into the DRD
   int n= N(t);
@@ -121,6 +126,9 @@ arg_type (tree t, int i) {
   case MOVE:
   case RESIZE:
     if (i > 0) return "length";
+    else return "";
+  case CLIPPED:
+    if (i < n-1) return "length";
     else return "";
   case ASSIGN:
   case DRD_PROPS:
@@ -165,8 +173,14 @@ arg_type (tree t, int i) {
   case ACTION:
     if (i==1) return "tt";
     else return "";
+  case SET_BINDING:
+    if (i==2) return "arg";
+    else return "";
   case FLAG:
     if (i==2) return "arg";
+    else return "";
+  case CANVAS:
+    if (i < n-1) return "length";
     else return "";
   default:
     return "";

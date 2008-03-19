@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
@@ -16,10 +16,10 @@
 
   Sie können die aktuelle Datei in <acronym|PDF> umwandeln mit
   <menu|File|Export|Pdf>. Beachten Sie bitte, dass Sie den Schrifttyp
-  <em|<name|True Type>> mit <menu|Edit|Preferences|Printer|Font type|True
-  Type>, wenn Sie haben wollen, dass die so erzeugte Postscript- bzw.
-  <acronym|PDF>-Datei \ <name|True Type>-Schriften <index|pdf>verwendet.
-  Allerdings lassen nur die CM-Schriftarten <name|True Type> zu. Diese
+  <em|<name|Type 1>> mit <menu|Edit|Preferences|Printer|Font type|Type 1>,
+  wenn Sie haben wollen, dass die so erzeugte Postscript- bzw.
+  <acronym|PDF>-Datei \ <name|Type 1>-Schriften <index|pdf>verwendet.
+  Allerdings lassen nur die CM-Schriftarten <name|Type 1> zu. Diese
   CM-Schriftarten haben eine etwas schlechtere Qualität als die
   EC-Schriftarten hauptsächlich bei Buchstaben mit Akzenten. Deshalb möchten
   Sie vielleicht lieber EC-Schriftarten verwenden, solange Sie nicht

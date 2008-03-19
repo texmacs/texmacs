@@ -293,7 +293,7 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit, SI* xpos) {
 * Output of tex_font_metric instances
 ******************************************************************************/
 
-static char* HOR_RULE= "---------------------------------------------------------------------------\n";
+static const char* HOR_RULE= "---------------------------------------------------------------------------\n";
 
 double
 fixed (int i) {
@@ -372,7 +372,7 @@ load_tfm (url file_name, string family, int size) {
 
   int i= 0;
   string s;
-  (void) load_string (file_name, s);
+  (void) load_string (file_name, s, true);
   bench_start ("decode tfm");
 
   parse (s, i, tfm->lf);

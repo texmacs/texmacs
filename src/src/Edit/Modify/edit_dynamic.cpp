@@ -54,7 +54,8 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
   int n= arity (t);
   if (is_document (t) || is_func (t, PARA) || is_func (t, SURROUND))
     return true;
-  if (is_func (t, MACRO) || is_func (t, WITH))
+  if (is_func (t, MACRO) || is_func (t, WITH) || is_func (t, LOCUS) ||
+      is_func (t, CANVAS) || is_func (t, ORNAMENT))
     return is_multi_paragraph_macro (t [n-1]);
   if (is_extension (t) && (!is_compound (t, "footnote"))) {
     int i;
@@ -132,7 +133,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 void
 edit_dynamic_rep::activate () {
   path p= search_upwards (INACTIVE);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   tree st= subtree (et, p * 0);
 
   if (is_func (st, COMPOUND) && is_atomic (st[0])) {
@@ -161,7 +162,7 @@ edit_dynamic_rep::go_to_argument (path p, bool start_flag) {
     if ((!drd->is_accessible_child (t, i)) &&
 	(!inactive) && (!in_source ()))
       {
-	ins_unary (path_up (p), INACTIVE);
+	insert_node (path_up (p) * 0, INACTIVE);
 	p= path_up (p) * path (0, i);
       }
     if (start_flag) go_to_start (p);
@@ -189,9 +190,9 @@ edit_dynamic_rep::insert_argument (path p, bool forward) {
 void
 edit_dynamic_rep::insert_argument (bool forward) {
   path p= find_dynamic (tp);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   if (p == tp) p= find_dynamic (path_up (tp));
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   insert_argument (p, forward);
 }
 
@@ -214,7 +215,7 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 	  bool old_locked= env_locked; env_locked= true;
 	  remove (p, d);
 	  if ((d == n) && is_mod_active_once (subtree (et, path_up (p, 2)))) {
-	    rem_unary (path_up (p, 2));
+	    remove_node (path_up (p, 2) * 0);
 	    go_to_border (path_up (p, 2), forward);
 	  }
 	  else if (forward) go_to_argument (path_up (p) * i, true);
@@ -256,6 +257,31 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 
   if (forward) go_to_argument (path_up (p) * (i+1), true);
   else go_to_argument (path_up (p) * (i-1), false);
+}
+
+void
+edit_dynamic_rep::remove_argument (bool forward) {
+  path p= find_dynamic (tp);
+  if (is_nil (p)) return;
+  if (p == tp) p= find_dynamic (path_up (tp));
+  if (is_nil (p)) return;
+
+  tree t= subtree (et, path_up (p));
+  int i= last_item (p), n= N(t), d= 1;
+  if ((!in_source ()) || drd->contains (as_string (L(t)))) {
+    if (forward) do i++; while (i<=n && !drd->insert_point (L(t), i, n));
+    else while (i>=0 && !drd->insert_point (L(t), i, n)) i--;
+    if ((i<0) || (i>n)) return;
+    while (i>=d && !drd->correct_arity (L(t), n-d)) d++;
+    if (i<d || n<=d || !drd->insert_point (L(t), i-d, n-d)) return;
+  }
+  else {
+    if (forward) i++;
+    if (i<d || n<=d) return;
+  }
+  path q= path_up (p) * (i-d);
+  remove (q, d);
+  go_to_argument (q, forward);
 }
 
 /******************************************************************************
@@ -357,10 +383,7 @@ edit_dynamic_rep::insert_with (path p, string var, tree val) {
   }
   else if ((rp < p) && is_func (subtree (et, path_up (p)), WITH))
     insert_with (path_up (p), var, val);
-  else {
-    ins_unary (p, WITH);
-    insert (p * 0, copy (tree (WITH, var, val)));
-  }
+  else insert_node (p * 2, copy (tree (WITH, var, val)));
 }
 
 void
@@ -371,7 +394,7 @@ edit_dynamic_rep::remove_with (path p, string var) {
     for (i=0; i<n; i+=2)
       if (st[i] == var) {
 	remove (p * i, 2);
-	if (n == 2) rem_unary (p);
+	if (n == 2) remove_node (p * 0);
 	return;
       }
   }
@@ -382,7 +405,7 @@ edit_dynamic_rep::remove_with (path p, string var) {
 void
 edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
-      (is_func (t, WITH) && in_source ()))
+      ((is_func (t, WITH) || is_func (t, LOCUS)) && in_source ()))
     back_in_general (t, p, forward);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");
@@ -407,7 +430,7 @@ edit_dynamic_rep::make_mod_active (tree_label l) {
   else {
     path p= path_up (tp);
     if (is_atomic (subtree (et, p))) p= path_up (p);
-    if (rp < p) ins_unary (p, l);
+    if (rp < p) insert_node (p * 0, l);
   }
 }
 
@@ -424,10 +447,7 @@ edit_dynamic_rep::insert_style_with (path p, string var, string val) {
       }
     insert (path_up (p) * (n-1), tree (STYLE_WITH, copy (var), copy (val)));
   }
-  else {
-    ins_unary (p, STYLE_WITH);
-    insert (p * 0, tree (STYLE_WITH, copy (var), copy (val)));
-  }
+  else insert_node (p * 2, copy (tree (STYLE_WITH, var, val)));
 }
 
 void
@@ -465,8 +485,8 @@ edit_dynamic_rep::make_hybrid () {
 bool
 edit_dynamic_rep::activate_latex () {
   path p= search_upwards (LATEX);
-  if (nil (p)) p= search_upwards (HYBRID);
-  if (nil (p)) return false;
+  if (is_nil (p)) p= search_upwards (HYBRID);
+  if (is_nil (p)) return false;
   tree st= subtree (et, p);
   if (is_atomic (st[0])) {
     if (is_func (subtree (et, path_up (p)), INACTIVE))
@@ -490,7 +510,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
   if (activate_latex ()) return;
   set_message ("", "");
   path p= search_upwards (HYBRID);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   tree st= subtree (et, p);
   if (is_compound (st[0])) return;
   if (is_func (subtree (et, path_up (p)), INACTIVE))
@@ -499,7 +519,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
   // activate macro argument
   string name= st[0]->label;
   path mp= search_upwards (MACRO);
-  if (!nil (mp)) {
+  if (!is_nil (mp)) {
     tree mt= subtree (et, mp);
     int i, n= N(mt)-1;
     for (i=0; i<n; i++)
@@ -543,7 +563,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
 void
 edit_dynamic_rep::activate_symbol () {
   path p= search_upwards (SYMBOL);
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   tree st= subtree (et, p);
   if (is_func (subtree (et, path_up (p)), INACTIVE))
     p= path_up (p);
@@ -564,7 +584,7 @@ edit_dynamic_rep::activate_symbol () {
 void
 edit_dynamic_rep::activate_compound () {
   path p= search_upwards (COMPOUND);
-  if (!nil (p)) {
+  if (!is_nil (p)) {
     tree st= subtree (et, p);
     tree u (make_tree_label (st[0]->label));
     u << A (st (1, N(st)));
@@ -605,7 +625,7 @@ void
 edit_dynamic_rep::temp_proof_fix () {
   /* this routine should be removed as soon as possible */
   path p = search_upwards ("proof");
-  if (nil (p) || (N(tp) < N(p)+2)) return;
+  if (is_nil (p) || (N(tp) < N(p)+2)) return;
   path q = head (tp, N(p)+2);
   tree st= subtree (et, path_up (q));
   if ((!is_document (st)) || (last_item (q) != (N(st)-1))) return;

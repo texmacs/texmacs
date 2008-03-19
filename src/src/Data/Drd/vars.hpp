@@ -24,8 +24,13 @@ extern string PREAMBLE;
 extern string SAVE_AUX;
 extern string MODE;
 extern string INFO_FLAG;
+extern string WINDOW_BARS;
+extern string SCROLL_BARS;
 extern string IDENTITY;
 extern string TABULAR;
+extern string THE_LABEL;
+extern string THE_TAGS;
+extern string THE_MODULES;
 
 extern string FONT;
 extern string FONT_FAMILY;
@@ -36,6 +41,8 @@ extern string FONT_BASE_SIZE;
 extern string MAGNIFICATION;
 extern string COLOR;
 extern string BG_COLOR;
+extern string LOCUS_COLOR;
+extern string VISITED_COLOR;
 extern string LANGUAGE;
 extern string ATOM_DECORATIONS;
 extern string LINE_DECORATIONS;
@@ -54,6 +61,7 @@ extern string MATH_CONDENSED;
 extern string MATH_VPOS;
 
 extern string PROG_LANGUAGE;
+extern string PROG_SCRIPTS;
 extern string PROG_FONT;
 extern string PROG_FONT_FAMILY;
 extern string PROG_FONT_SERIES;
@@ -77,6 +85,7 @@ extern string PAR_COLUMNS;
 extern string PAR_COLUMNS_SEP;
 
 extern string PAGE_MEDIUM;
+extern string PAGE_PRINTED;
 extern string PAGE_TYPE;
 extern string PAGE_ORIENTATION;
 extern string PAGE_WIDTH_MARGIN;
@@ -165,24 +174,33 @@ extern string CELL_ROW_SPAN;
 extern string CELL_COL_SPAN;
 extern string CELL_VCORRECT;
 extern string CELL_HYPHEN;
+extern string CELL_BLOCK;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
 extern string POINT_STYLE;
-
 extern string LINE_WIDTH;
-extern string LINE_STYLE;
+extern string DASH_STYLE;
+extern string DASH_STYLE_UNIT;
 extern string LINE_ARROWS;
 extern string LINE_CAPS;
-extern string FILL_MODE;
 extern string FILL_COLOR;
 extern string FILL_STYLE;
+extern string TEXTAT_HALIGN;
+extern string TEXTAT_VALIGN;
 
+extern string GR_GEOMETRY;
 extern string GR_FRAME;
-extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
+extern string GR_POINT_STYLE;
 extern string GR_LINE_WIDTH;
+extern string GR_DASH_STYLE;
+extern string GR_DASH_STYLE_UNIT;
+extern string GR_LINE_ARROWS;
+extern string GR_FILL_COLOR;
+extern string GR_TEXTAT_HALIGN;
+extern string GR_TEXTAT_VALIGN;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;
@@ -192,5 +210,20 @@ extern string SRC_STYLE;
 extern string SRC_SPECIAL;
 extern string SRC_COMPACT;
 extern string SRC_CLOSE;
+
+extern string CANVAS_TYPE;
+extern string CANVAS_COLOR;
+extern string CANVAS_HPADDING;
+extern string CANVAS_VPADDING;
+extern string CANVAS_BAR_WIDTH;
+extern string CANVAS_BAR_PADDING;
+extern string CANVAS_BAR_COLOR;
+extern string ORNAMENT_SHAPE;
+extern string ORNAMENT_BORDER;
+extern string ORNAMENT_HPADDING;
+extern string ORNAMENT_VPADDING;
+extern string ORNAMENT_COLOR;
+extern string ORNAMENT_SUNNY_COLOR;
+extern string ORNAMENT_SHADOW_COLOR;
 
 #endif // defined VARS_H

@@ -10,6 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "../../../src/System/config.h"
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,10 +20,19 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <termios.h>
+
+#if HAVE_PTY_H
+#include <pty.h>
+#endif
+#if HAVE_UTIL_H
+#include <util.h>
+#endif
+
 using namespace std;
 
 typedef char* charp;
-extern charp* environ;
+extern "C" charp* environ;
 
 #define ERROR (-1)
 #define STDIN 0
@@ -30,27 +40,17 @@ extern charp* environ;
 #define STDERR 2
 #define IN 0
 #define OUT 1
-
 #define DATA_BEGIN   ((char) 2)
 #define DATA_END     ((char) 5)
 #define DATA_ESCAPE  ((char) 27)
 //#define DATA_BEGIN   "[BEGIN]"
 //#define DATA_END     "[END]"
 //#define DATA_ESCAPE  "[ESCAPE]"
-
-int   pid;            // process identifier of the child
-int   tochild[2];     // for data going to the child
-int   fromchild[2];   // for data coming from the child
-int   in;             // file descriptor for data going to the child
-int   out;            // file descriptor for data coming from the child
-FILE* fin;            // file associated to in
-
-/******************************************************************************
-* Handling shell input and output
-******************************************************************************/
-
-void
-append (charp &s, char c, int& pos, int& max) {
+static int pid;
+static int master;
+static char prompt[] = "tmshell$ ";
+static const int promptlen = sizeof(prompt)-1;
+static void append (charp &s, char c, int& pos, int& max) {
   if (pos == max) {
     int i;
     charp r= s;
@@ -61,131 +61,109 @@ append (charp &s, char c, int& pos, int& max) {
   }
   s[pos++]= c;
 }
-
-void
-shell_output (bool hide= false) {
-  int output_pos= 0;
+int output_pos;
+charp output;
+static void shell_interrupt (int sig) {
+  if (output != NULL) {
+    int i;
+    for (i=0; i<output_pos; i++) cout << output[i];
+    cout << endl;
+  }
+  cout << DATA_BEGIN << "scheme:(with \"color\" \"red\" \""
+       << "Interrupted TeXmacs shell"
+       << "\")" << DATA_END
+       << DATA_END
+       << flush ;
+  killpg(pid, SIGTERM);
+  sleep(1);
+  killpg(pid, SIGKILL);
+  wait (NULL);
+  exit (0);
+}
+static void shell_output (bool hide= false) {
+  static struct timeval tv = {0, 100};
   int output_max= 1024;
-  charp output= (charp) malloc (output_max);
-  cout << DATA_BEGIN << "verbatim:";
-
+  output = (charp) malloc (output_max);
+  output_pos= 0;
+  cout << DATA_BEGIN << "verbatim:" << flush;
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);
-    FD_SET (out, &rfds);
-    int max_fd= out+1;
-    struct timeval tv;
-    tv.tv_sec  = 0;
-    tv.tv_usec = 100;
-    int nr= select (max_fd, &rfds, NULL, NULL, &tv);
-    if (nr==0) {
-      fflush (stdout);
-      continue;
-    }
+    FD_SET (master, &rfds);
+    int r = select (master+1, &rfds, NULL, NULL, &tv);
+    if (r == 0) continue;
+    if (r == -1) continue;
 
-    if (FD_ISSET (out, &rfds)) {
+    if (FD_ISSET (master, &rfds)) {
       int i, r;
       char outbuf[1024];
-      r = read (out, outbuf, 1024);
+      r = read (master, outbuf, 1024);
       if (r == ERROR) {
-	cerr << "TeXmacs shell] read failed\n";
+	cerr << "TeXmacs shell] read failed\n" << flush;
+	killpg(pid, SIGTERM);
+	sleep(1);
+	killpg(pid, SIGKILL);
 	wait (NULL);
 	exit (1);
       }
       else if (r == 0) {
-	kill (pid, SIGKILL);
-	cout << DATA_END;
-	fflush (stdout);
+	wait (NULL);
+	cout << DATA_END << flush;
 	exit (0);
       }
       else for (i=0; i<r; i++) {
 	append (output, outbuf[i], output_pos, output_max);
 	if (outbuf[i]=='\n') {
 	  append (output, '\0', output_pos, output_max);
-	  if (hide) hide= false;
-	  else cout << output;
-	  fflush (stdout);
+	  if (hide) hide= false; 
+	  else cout << output << flush;
 	  output_pos= 0;
 	}
       }
     }
 
-    if (strncmp (output, "tmshell$ ", 9) == 0)
-      break;
+    if (output_pos >= promptlen && strncmp(output + output_pos - promptlen, prompt, promptlen) == 0)
+      {
+	output[output_pos-promptlen]=0;
+	if (hide) hide= false; 
+	else cout << output << flush;
+	output_pos= 0;
+	break;
+      }
   }
 
-  cout << DATA_END;
-  fflush (stdout);
+  cout << DATA_END << flush;
   free (output);
 }
-
-void
-shell_input () {
+static void shell_input () {
   char input [10000];
   cin.getline (input, 10000, '\n');
   strcat (input, "\n");
-  write (in, input, strlen (input));
-  fflush (fin);
+  write (master, input, strlen (input));
 }
-
-void
-shell_interrupt (int sig) {
-  cout << DATA_BEGIN << "scheme:(with \"color\" \"red\" \"";
-  cout << "Interrupted TeXmacs shell";
-  cout << "\")" << DATA_END;
-  cout << DATA_END;
-  // kill (pid, SIGINT); // Why does this not work ???
-  kill (pid, SIGKILL);
-  exit (0);
-}
-
-/******************************************************************************
-* Launching the shell using a fork
-******************************************************************************/
-
-volatile void
-invoke_shell () {
-  charp argv[3];
-  argv[0] = "sh";
-  argv[1] = "-i";
-  argv[2] = 0;
+static void child() {
+  struct termios t;
+  tcgetattr(STDIN, &t);
+  t.c_lflag &= ~ECHO;
+  tcsetattr(STDIN, TCSANOW, &t);
+  setenv ("PS1", prompt, true);
+  static charp argv[] = { "sh", "-i", NULL };
   execve("/bin/sh", argv, environ);
   exit(127);
 }
-
-int
-main () {
-  setenv ("PS1", "tmshell$ ", true);
-  cout << DATA_BEGIN << "verbatim:";
-  cout << "Shell session inside TeXmacs";
-  pipe (tochild);
-  pipe (fromchild);
-  pid= fork ();
-  if (pid==0) { // the child
-    dup2 (tochild [IN], STDIN);
-    close (tochild [IN]);
-    close (fromchild [IN]);
-    close (tochild [OUT]);
-    dup2 (fromchild [OUT], STDOUT);
-    dup2 (STDOUT, STDERR);
-    close (fromchild [OUT]);
-    invoke_shell ();
-    exit (127);
+static void parent() {
+  signal (SIGINT, shell_interrupt);
+  shell_output (true);
+  cout << DATA_END << flush;
+  while (true) {
+    shell_input ();
+    shell_output ();
   }
-  else { // the main process
-    int sig;
-    out= fromchild [IN];
-    close (fromchild [OUT]);
-    in= tochild [OUT];
-    close (tochild [IN]);
-    fin= fdopen (in, "w");
-    signal (SIGINT, shell_interrupt);
-    shell_output (true);
-    cout << DATA_END;
-    while (true) {
-      shell_input ();
-      shell_output ();
-    }
-  }
-  return 0;
+}
+int main () {
+  cout << DATA_BEGIN << "verbatim:" << "Shell session inside TeXmacs" << flush;
+  pid = forkpty(&master,NULL,NULL,NULL);
+  if (pid==0) child();
+  cout << " pid = " << pid << "\n" << flush;
+  parent();
 }

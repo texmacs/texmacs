@@ -258,7 +258,6 @@ PACKAGE_VERSION=
 PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
-ac_unique_file="Makefile.in"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -843,7 +842,10 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-fastalloc     omit fast allocator for small objects
+  --enable-experimental   support new style rewriting code
+  --enable-cocoa          replace X11 by Cocoa interface
   --enable-debug=ARG      install a debugging enable executable -ggdb
+  --enable-warnings       print warning messages during compilation
   --enable-optimize=ARG   compile with optimizations guessed
 
 Optional Packages:
@@ -852,6 +854,7 @@ Optional Packages:
   --with-x                use the X Window System
   --with-iconv=DIR        where to find iconv system
   --with-freetype=ARG     with freetype support ARG=linked
+  --with-imlib2=ARG       with imlib2 support ARG=no
 
 Some influential environment variables:
   CC          C compiler command
@@ -1213,11 +1216,13 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+ac_config_headers="$ac_config_headers src/System/config.h:src/System/config.in"
+
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.5"
+DEVEL_VERSION="1.0.6.14"
 DEVEL_RELEASE="1"
-STABLE_VERSION="1.0.5"
+STABLE_VERSION="1.0.6"
 STABLE_RELEASE="1"
 WINDOWS_VERSION="1.0.5"
 WINDOWS_RELEASE="1"
@@ -1228,7 +1233,7 @@ WINDOWS_RELEASE="1"
 
 
 #--------------------------------------------------------------------
-# Checks for programs
+# Checks for C++ compiler
 #--------------------------------------------------------------------
 
 ac_ext=c
@@ -2346,6 +2351,53 @@ echo "$as_me: WARNING: cannot find GNU C++ compiler" >&2;}
   ;;
 esac
 
+#--------------------------------------------------------------------
+# Checks for Guile
+#--------------------------------------------------------------------
+
+
+## The GUILE_FLAGS macro.
+  ## First, let's just see if we can find Guile at all.
+  echo "$as_me:$LINENO: checking for Guile" >&5
+echo $ECHO_N "checking for Guile... $ECHO_C" >&6
+  guile-config link > /dev/null || {
+    echo "configure: cannot find guile-config; is Guile installed?" 1>&2
+    exit 1
+  }
+  GUILE_ORIGINAL_CFLAGS="`guile-config compile`"
+  GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
+  GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
+  GUILE_LDFLAGS="`guile-config link`"
+  GUILE_VARIANT_LDFLAGS="-L`guile-config info libdir` -lguile -lreadline -ltermcap"
+
+
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+echo "$as_me:$LINENO: checking version of guile" >&5
+echo $ECHO_N "checking version of guile... $ECHO_C" >&6
+GUILE_VERSION=`guile --version | grep 'Guile \([0-9]\)' | sed 's/Guile \([0-9]*\)/\1/'`
+echo "$as_me:$LINENO: result: $GUILE_VERSION" >&5
+echo "${ECHO_T}$GUILE_VERSION" >&6
+
+case "$GUILE_VERSION" in
+  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+    CONFIG_GUILE_SERIAL="A"
+  ;;
+  1.6* | 1.7*)
+    CONFIG_GUILE_SERIAL="B"
+  ;;
+  *)
+    CONFIG_GUILE_SERIAL="C"
+  ;;
+esac
+
+
+#--------------------------------------------------------------------
+# Checks for standard functionality
+#--------------------------------------------------------------------
+
+
 
 echo "$as_me:$LINENO: checking for C++-compatible X header files" >&5
 echo $ECHO_N "checking for C++-compatible X header files... $ECHO_C" >&6
@@ -2438,36 +2490,6 @@ echo "no; fixing"
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 CPPFLAGS="$ac_save_cppflags"
-
-
-
-## The GUILE_FLAGS macro.
-  ## First, let's just see if we can find Guile at all.
-  echo "$as_me:$LINENO: checking for Guile" >&5
-echo $ECHO_N "checking for Guile... $ECHO_C" >&6
-  guile-config link > /dev/null || {
-    echo "configure: cannot find guile-config; is Guile installed?" 1>&2
-    exit 1
-  }
-  GUILE_ORIGINAL_CFLAGS="`guile-config compile`"
-  GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
-  GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
-  GUILE_LDFLAGS="`guile-config link`"
-  GUILE_VARIANT_LDFLAGS="-L`guile-config info libdir` -lguile -lreadline -ltermcap"
-
-
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-echo "$as_me:$LINENO: checking version of guile" >&5
-echo $ECHO_N "checking version of guile... $ECHO_C" >&6
-GUILE_VERSION=`guile --version | grep 'Guile \([0-9]\)' | sed 's/Guile \([0-9]*\)/\1/'`
-echo "$as_me:$LINENO: result: $GUILE_VERSION" >&5
-echo "${ECHO_T}$GUILE_VERSION" >&6
-
-#--------------------------------------------------------------------
-# Checks for libraries
-#--------------------------------------------------------------------
 
 ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -2665,6 +2687,374 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
+
+echo "$as_me:$LINENO: checking for ANSI C header files" >&5
+echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6
+if test "${ac_cv_header_stdc+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <float.h>
+
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  egrep -v '^ *\+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_cxx_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_cv_header_stdc=yes
+else
+  echo "$as_me: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  ac_cv_header_stdc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+
+if test $ac_cv_header_stdc = yes; then
+  # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <string.h>
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "memchr" >/dev/null 2>&1; then
+  :
+else
+  ac_cv_header_stdc=no
+fi
+rm -f conftest*
+
+fi
+
+if test $ac_cv_header_stdc = yes; then
+  # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <stdlib.h>
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "free" >/dev/null 2>&1; then
+  :
+else
+  ac_cv_header_stdc=no
+fi
+rm -f conftest*
+
+fi
+
+if test $ac_cv_header_stdc = yes; then
+  # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
+  if test "$cross_compiling" = yes; then
+  :
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <ctype.h>
+#if ((' ' & 0x0FF) == 0x020)
+# define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
+# define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
+#else
+# define ISLOWER(c) (('a' <= (c) && (c) <= 'i') \
+                     || ('j' <= (c) && (c) <= 'r') \
+                     || ('s' <= (c) && (c) <= 'z'))
+# define TOUPPER(c) (ISLOWER(c) ? ((c) | 0x40) : (c))
+#endif
+
+#define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
+int
+main ()
+{
+  int i;
+  for (i = 0; i < 256; i++)
+    if (XOR (islower (i), ISLOWER (i))
+        || toupper (i) != TOUPPER (i))
+      exit(2);
+  exit (0);
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  :
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+( exit $ac_status )
+ac_cv_header_stdc=no
+fi
+rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+fi
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_stdc" >&5
+echo "${ECHO_T}$ac_cv_header_stdc" >&6
+if test $ac_cv_header_stdc = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define STDC_HEADERS 1
+_ACEOF
+
+fi
+
+# On IRIX 5.3, sys/types and inttypes.h are conflicting.
+
+
+
+
+
+
+
+
+
+for ac_header in sys/types.h sys/stat.h stdlib.h string.h memory.h strings.h \
+                  inttypes.h stdint.h unistd.h
+do
+as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_Header=yes"
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+eval "$as_ac_Header=no"
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+if test `eval echo '${'$as_ac_Header'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+
+echo "$as_me:$LINENO: checking for FILE" >&5
+echo $ECHO_N "checking for FILE... $ECHO_C" >&6
+if test "${ac_cv_type_FILE+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+if ((FILE *) 0)
+  return 0;
+if (sizeof (FILE))
+  return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_type_FILE=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_cv_type_FILE=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_type_FILE" >&5
+echo "${ECHO_T}$ac_cv_type_FILE" >&6
+if test $ac_cv_type_FILE = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_FILE 1
+_ACEOF
+
+
+fi
+
+echo "$as_me:$LINENO: checking for intptr_t" >&5
+echo $ECHO_N "checking for intptr_t... $ECHO_C" >&6
+if test "${ac_cv_type_intptr_t+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+if ((intptr_t *) 0)
+  return 0;
+if (sizeof (intptr_t))
+  return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_type_intptr_t=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_cv_type_intptr_t=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_type_intptr_t" >&5
+echo "${ECHO_T}$ac_cv_type_intptr_t" >&6
+if test $ac_cv_type_intptr_t = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_INTPTR_T 1
+_ACEOF
+
+
+fi
+
+echo "$as_me:$LINENO: checking for time_t" >&5
+echo $ECHO_N "checking for time_t... $ECHO_C" >&6
+if test "${ac_cv_type_time_t+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+if ((time_t *) 0)
+  return 0;
+if (sizeof (time_t))
+  return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_type_time_t=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_cv_type_time_t=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_type_time_t" >&5
+echo "${ECHO_T}$ac_cv_type_time_t" >&6
+if test $ac_cv_type_time_t = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_TIME_T 1
+_ACEOF
+
+
+fi
 
 echo "$as_me:$LINENO: checking for X" >&5
 echo $ECHO_N "checking for X... $ECHO_C" >&6
@@ -3838,6 +4228,201 @@ fi
 fi
 
 
+
+for ac_header in pty.h util.h
+do
+as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking $ac_header usability" >&5
+echo $ECHO_N "checking $ac_header usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_header_compiler=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking $ac_header presence" >&5
+echo $ECHO_N "checking $ac_header presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <$ac_header>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  egrep -v '^ *\+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_cxx_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc in
+  yes:no )
+    { echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;};;
+  no:yes )
+    { echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: $ac_header: check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;};;
+esac
+echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  eval "$as_ac_Header=$ac_header_preproc"
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+
+fi
+if test `eval echo '${'$as_ac_Header'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+
+for ac_func in gettimeofday
+do
+as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_func" >&5
+echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
+if eval "test \"\${$as_ac_var+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char $ac_func ();
+char (*f) ();
+
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
+choke me
+#else
+f = $ac_func;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_var=yes"
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+eval "$as_ac_var=no"
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
+if test `eval echo '${'$as_ac_var'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+#--------------------------------------------------------------------
+# Checks for dl library
+#--------------------------------------------------------------------
+
 echo "$as_me:$LINENO: checking for dlopen" >&5
 echo $ECHO_N "checking for dlopen... $ECHO_C" >&6
 if test "${ac_cv_func_dlopen+set}" = set; then
@@ -3904,7 +4489,11 @@ echo "$as_me:$LINENO: result: $ac_cv_func_dlopen" >&5
 echo "${ECHO_T}$ac_cv_func_dlopen" >&6
 
 if test "$ac_cv_func_dl" = "yes"; then
-  CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+
+cat >>confdefs.h <<\_ACEOF
+#define DYNAMIC_LINKING 1
+_ACEOF
+
 else
 
 echo "$as_me:$LINENO: checking for dlopen in -ldl" >&5
@@ -4048,9 +4637,12 @@ _ACEOF
 fi
 done
 
-    CONFIG_LDL="-ldl"
     CONFIG_BDL="-ldl"
-    CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+
+cat >>confdefs.h <<\_ACEOF
+#define DYNAMIC_LINKING 1
+_ACEOF
+
   else
 
 echo "$as_me:$LINENO: checking for dld_link in -ldld" >&5
@@ -4118,9 +4710,12 @@ _ACEOF
 fi
 
     if test "$ac_cv_lib_dld_dld_link" = "yes"; then
-      CONFIG_LDL="-ldl"
       CONFIG_BDL="-ldl"
-      CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+
+cat >>confdefs.h <<\_ACEOF
+#define DYNAMIC_LINKING 1
+_ACEOF
+
     else
 
 for ac_func in shl_load
@@ -4199,9 +4794,12 @@ fi
 done
 
       if test "$ac_cv_func_shl_load" = "yes"; then
-        CONFIG_LDL="-ldl"
         CONFIG_BDL="-ldl"
-        CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+
+cat >>confdefs.h <<\_ACEOF
+#define DYNAMIC_LINKING 1
+_ACEOF
+
       else
 
 for ac_func in dlopen
@@ -4280,7 +4878,11 @@ fi
 done
 
         if test "$ac_cv_func_dlopen" = "yes"; then
-          CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+
+cat >>confdefs.h <<\_ACEOF
+#define DYNAMIC_LINKING 1
+_ACEOF
+
         fi
       fi
     fi
@@ -4288,10 +4890,8 @@ done
 fi
 
 
-
-
 #--------------------------------------------------------------------
-# Checks for iconv
+# Checks for iconv library
 #--------------------------------------------------------------------
 
 
@@ -4314,7 +4914,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-CONFIG_USE_ICONV=""
 if test "$with_iconv" = "no" ; then
     echo "$as_me:$LINENO: result: disabling iconv support" >&5
 echo "${ECHO_T}disabling iconv support" >&6
@@ -4526,203 +5125,6 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-echo "$as_me:$LINENO: checking for ANSI C header files" >&5
-echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6
-if test "${ac_cv_header_stdc+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <float.h>
-
-_ACEOF
-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
-  ac_status=$?
-  egrep -v '^ *\+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } >/dev/null; then
-  if test -s conftest.err; then
-    ac_cpp_err=$ac_c_preproc_warn_flag
-  else
-    ac_cpp_err=
-  fi
-else
-  ac_cpp_err=yes
-fi
-if test -z "$ac_cpp_err"; then
-  ac_cv_header_stdc=yes
-else
-  echo "$as_me: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  ac_cv_header_stdc=no
-fi
-rm -f conftest.err conftest.$ac_ext
-
-if test $ac_cv_header_stdc = yes; then
-  # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-#include <string.h>
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  egrep "memchr" >/dev/null 2>&1; then
-  :
-else
-  ac_cv_header_stdc=no
-fi
-rm -f conftest*
-
-fi
-
-if test $ac_cv_header_stdc = yes; then
-  # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-#include <stdlib.h>
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  egrep "free" >/dev/null 2>&1; then
-  :
-else
-  ac_cv_header_stdc=no
-fi
-rm -f conftest*
-
-fi
-
-if test $ac_cv_header_stdc = yes; then
-  # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
-  if test "$cross_compiling" = yes; then
-  :
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-#include <ctype.h>
-#if ((' ' & 0x0FF) == 0x020)
-# define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
-# define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
-#else
-# define ISLOWER(c) (('a' <= (c) && (c) <= 'i') \
-                     || ('j' <= (c) && (c) <= 'r') \
-                     || ('s' <= (c) && (c) <= 'z'))
-# define TOUPPER(c) (ISLOWER(c) ? ((c) | 0x40) : (c))
-#endif
-
-#define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
-int
-main ()
-{
-  int i;
-  for (i = 0; i < 256; i++)
-    if (XOR (islower (i), ISLOWER (i))
-        || toupper (i) != TOUPPER (i))
-      exit(2);
-  exit (0);
-}
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  :
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-( exit $ac_status )
-ac_cv_header_stdc=no
-fi
-rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-fi
-fi
-echo "$as_me:$LINENO: result: $ac_cv_header_stdc" >&5
-echo "${ECHO_T}$ac_cv_header_stdc" >&6
-if test $ac_cv_header_stdc = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define STDC_HEADERS 1
-_ACEOF
-
-fi
-
-# On IRIX 5.3, sys/types and inttypes.h are conflicting.
-
-
-
-
-
-
-
-
-
-for ac_header in sys/types.h sys/stat.h stdlib.h string.h memory.h strings.h \
-                  inttypes.h stdint.h unistd.h
-do
-as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
-echo "$as_me:$LINENO: checking for $ac_header" >&5
-echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
-if eval "test \"\${$as_ac_Header+set}\" = set"; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-$ac_includes_default
-
-#include <$ac_header>
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  eval "$as_ac_Header=yes"
-else
-  echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-eval "$as_ac_Header=no"
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
-echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
-if test `eval echo '${'$as_ac_Header'}'` = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-
-done
-
-
 if test "${ac_cv_header_iconv_h+set}" = set; then
   echo "$as_me:$LINENO: checking for iconv.h" >&5
 echo $ECHO_N "checking for iconv.h... $ECHO_C" >&6
@@ -4867,7 +5269,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 
     echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-    CONFIG_USE_ICONV="#define USE_ICONV"
+
+cat >>confdefs.h <<\_ACEOF
+#define USE_ICONV 1
+_ACEOF
+
 
 else
   echo "$as_me: failed program was:" >&5
@@ -4918,7 +5324,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 
       echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-      CONFIG_USE_ICONV="#define USE_ICONV"
+
+cat >>confdefs.h <<\_ACEOF
+#define USE_ICONV 1
+_ACEOF
+
       ICONV_LDFLAGS="${ICONV_LDFLAGS} -liconv"
 
 else
@@ -4927,6 +5337,9 @@ cat conftest.$ac_ext >&5
 
       echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+      { echo "$as_me:$LINENO: WARNING: absence of iconv may crash HTML import" >&5
+echo "$as_me: WARNING: absence of iconv may crash HTML import" >&2;}
+
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
@@ -4936,10 +5349,6 @@ fi
 
 fi
 
-if test "$CONFIG_USE_ICONV" = "" ; then
-   { echo "$as_me:$LINENO: WARNING: iconv was not found, HTML import may crash" >&5
-echo "$as_me: WARNING: iconv was not found, HTML import may crash" >&2;}
-fi
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
@@ -4953,9 +5362,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 
-
 #--------------------------------------------------------------------
-# Checks for freetype
+# Checks for freetype library
 #--------------------------------------------------------------------
 
 
@@ -4968,7 +5376,6 @@ fi;
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-CONFIG_USE_FREETYPE=""
 if test "$with_freetype" = "no" ; then
     echo "$as_me:$LINENO: result: disabling freetype support" >&5
 echo "${ECHO_T}disabling freetype support" >&6
@@ -5118,11 +5525,19 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 
     echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-    CONFIG_USE_FREETYPE="#define USE_FREETYPE"
+
+cat >>confdefs.h <<\_ACEOF
+#define USE_FREETYPE 1
+_ACEOF
+
     FREETYPE_CFLAGS="$CPPFLAGS"
     if test "$with_freetype" = "linked" -o "$with_freetype" = "" ; then
       FREETYPE_LDFLAGS="$LIBS"
-      CONFIG_LINKED_FREETYPE="#define LINKED_FREETYPE"
+
+cat >>confdefs.h <<\_ACEOF
+#define LINKED_FREETYPE 1
+_ACEOF
+
     fi
 
 else
@@ -5145,35 +5560,138 @@ LIBS="$SAVE_LIBS"
 
 
 
-
-
 #--------------------------------------------------------------------
-# Checks for library functions
+# Checks for Imlib2 library
 #--------------------------------------------------------------------
 
 
-for ac_func in gettimeofday
-do
-as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
-echo "$as_me:$LINENO: checking for $ac_func" >&5
-echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
-if eval "test \"\${$as_ac_var+set}\" = set"; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
+# Check whether --with-imlib2 or --without-imlib2 was given.
+if test "${with_imlib2+set}" = set; then
+  withval="$with_imlib2"
+
+fi;
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
+    echo "$as_me:$LINENO: result: disabling imlib2 support" >&5
+echo "${ECHO_T}disabling imlib2 support" >&6
 else
-  cat >conftest.$ac_ext <<_ACEOF
+    CPPFLAGS=`imlib2-config --cflags`
+    LIBS=`imlib2-config --libs`
+    if test "${ac_cv_header_ft2build_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for ft2build.h" >&5
+echo $ECHO_N "checking for ft2build.h... $ECHO_C" >&6
+if test "${ac_cv_header_ft2build_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_ft2build_h" >&5
+echo "${ECHO_T}$ac_cv_header_ft2build_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking ft2build.h usability" >&5
+echo $ECHO_N "checking ft2build.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $ac_func (); below.  */
-#include <assert.h>
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char $ac_func ();
-char (*f) ();
+$ac_includes_default
+#include <ft2build.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_header_compiler=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking ft2build.h presence" >&5
+echo $ECHO_N "checking ft2build.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <ft2build.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  egrep -v '^ *\+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_cxx_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc in
+  yes:no )
+    { echo "$as_me:$LINENO: WARNING: ft2build.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: ft2build.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: ft2build.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: ft2build.h: proceeding with the preprocessor's result" >&2;};;
+  no:yes )
+    { echo "$as_me:$LINENO: WARNING: ft2build.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: ft2build.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: ft2build.h: check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: ft2build.h: check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: ft2build.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: ft2build.h: proceeding with the preprocessor's result" >&2;};;
+esac
+echo "$as_me:$LINENO: checking for ft2build.h" >&5
+echo $ECHO_N "checking for ft2build.h... $ECHO_C" >&6
+if test "${ac_cv_header_ft2build_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_ft2build_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_ft2build_h" >&5
+echo "${ECHO_T}$ac_cv_header_ft2build_h" >&6
+
+fi
+if test $ac_cv_header_ft2build_h = yes; then
+  echo "$as_me:$LINENO: checking for imlib2" >&5
+echo $ECHO_N "checking for imlib2... $ECHO_C" >&6
+    cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+
+#include <X11/Xlib.h>
+#include <Imlib2.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifdef F77_DUMMY_MAIN
 #  ifdef __cplusplus
@@ -5184,14 +5702,8 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
-choke me
-#else
-f = $ac_func;
-#endif
+
+    Imlib_Image image= imlib_load_image("");
 
   ;
   return 0;
@@ -5209,25 +5721,41 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  eval "$as_ac_var=yes"
+
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+cat >>confdefs.h <<\_ACEOF
+#define USE_IMLIB2 1
+_ACEOF
+
+    IMLIB2_CFLAGS="$CPPFLAGS"
+    if test "$with_imlib2" = "linked" ; then
+      IMLIB2_LDFLAGS="$LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define LINKED_IMLIB2 1
+_ACEOF
+
+    fi
+
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-eval "$as_ac_var=no"
+
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
-echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
-if test `eval echo '${'$as_ac_var'}'` = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
 
-  CONFIG_GET_TIME_OF_DAY="#define USE_GET_TIME_OF_DAY 1"
 
 fi
-done
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+
 
 
 
@@ -5237,13 +5765,16 @@ done
 
 echo "$as_me:$LINENO: checking whether ... arguments behave correctly" >&5
 echo $ECHO_N "checking whether ... arguments behave correctly... $ECHO_C" >&6
+CXXFLAGS="`guile-config compile`"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
 
-  void gh_enter (void (*call_back) (int, char**));
-  void install_guile (void (*call_back) (int, char**)) {
-    gh_enter ((void (*)(...)) ((void*) call_back)); }
+  #include <guile/gh.h>
+  #include <libguile.h>
+  typedef SCM (*FN)(...);
+  static SCM identity (SCM x) { return x; }
+  void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
 
 #ifdef F77_DUMMY_MAIN
 #  ifdef __cplusplus
@@ -5273,7 +5804,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
 
-  CONFIG_DOTS="#define DOTS_OK 1"
+
+cat >>confdefs.h <<\_ACEOF
+#define DOTS_OK 1
+_ACEOF
+
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 
@@ -5286,7 +5821,7 @@ echo "${ECHO_T}no" >&6
 
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
-
+CXXFLAGS=""
 
 echo "$as_me:$LINENO: checking the size_t of guile strings" >&5
 echo $ECHO_N "checking the size_t of guile strings... $ECHO_C" >&6
@@ -5329,7 +5864,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
 
-  CONFIG_GUILE_STR_SIZE_T="#define guile_str_size_t int"
+
+cat >>confdefs.h <<\_ACEOF
+#define guile_str_size_t int
+_ACEOF
+
   echo "$as_me:$LINENO: result: int" >&5
 echo "${ECHO_T}int" >&6
 
@@ -5337,7 +5876,11 @@ else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
 
-  CONFIG_GUILE_STR_SIZE_T="#define guile_str_size_t size_t"
+
+cat >>confdefs.h <<\_ACEOF
+#define guile_str_size_t size_t
+_ACEOF
+
   echo "$as_me:$LINENO: result: size_t" >&5
 echo "${ECHO_T}size_t" >&6
 
@@ -5345,64 +5888,8 @@ fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 CXXFLAGS=""
 
-
-echo "$as_me:$LINENO: checking if compiler supports -fno-rtti -fno-exceptions" >&5
-echo $ECHO_N "checking if compiler supports -fno-rtti -fno-exceptions... $ECHO_C" >&6
-CXXFLAGS="-fno-rtti -fno-exceptions"
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-
-  int some_variable = 0;
-
-#ifdef F77_DUMMY_MAIN
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-#endif
-int
-main ()
-{
-
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-
-  CONFIG_CXXDIALECT="-fno-rtti -fno-exceptions"
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-else
-  echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-
-  CONFIG_CXXDIALECT=""
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-CXXFLAGS=""
-
-
 echo "$as_me:$LINENO: checking if statically linking with guile works" >&5
 echo $ECHO_N "checking if statically linking with guile works... $ECHO_C" >&6
-CONFIG_GUILE_LTDL=""
 CPPFLAGS="$GUILE_CFLAGS"
 LDFLAGS="-static"
 LIBS="$GUILE_LDFLAGS"
@@ -5594,51 +6081,87 @@ LDFLAGS=""
 LIBS=""
 
 #--------------------------------------------------------------------
-# Disable customized allocator
-#--------------------------------------------------------------------
-
-# Check whether --enable-fastalloc or --disable-fastalloc was given.
-if test "${enable_fastalloc+set}" = set; then
-  enableval="$enable_fastalloc"
-
-else
-  enable_fastalloc="yes"
-fi;
-case "$enable_fastalloc" in
-    yes)
-	CONFIG_NO_FAST_ALLOC="" ;;
-    no)
-	CONFIG_NO_FAST_ALLOC="#define NO_FAST_ALLOC"
-	echo "$as_me:$LINENO: result: disabling fast allocator for small objects" >&5
-echo "${ECHO_T}disabling fast allocator for small objects" >&6 ;;
-    *)
-	{ { echo "$as_me:$LINENO: error: bad option --enable-fastalloc=$enable_fastalloc" >&5
-echo "$as_me: error: bad option --enable-fastalloc=$enable_fastalloc" >&2;}
-   { (exit 1); exit 1; }; } ;;
-esac
-
-
-#--------------------------------------------------------------------
 # Handle different systems case by case
 #--------------------------------------------------------------------
 
+CONFIG_OS="GNU_LINUX"
+CONFIG_OS_SUFFIX="gnu-linux"
 CONFIG_CXXFLAGS=""
-CONFIG_CXXWARNING="-Wall -Wno-return-type"
 CONFIG_CXXTEMPLATE=""
 CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
-CONFIG_DASH_I_DASH="-I-"
+CONFIG_CXXOPTIMIZE="-O2"
+CONFIG_BSTATIC="-Wl,-Bstatic"
+CONFIG_BSHARED="-Wl,-Bdynamic"
+CONFIG_BFLAGS=""
+CONFIG_BPATH="-Wl,-rpath,"
+CONFIG_WORD_LENGTH="4"
+CONFIG_WORD_LENGTH_INC="3"
+CONFIG_WORD_MASK="0xfffffffc"
+CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 
-case "$GUILE_VERSION" in
-  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
-    CONFIG_GUILE_SERIAL="A"
-  ;;
-  *)
-    CONFIG_GUILE_SERIAL="B"
-  ;;
-esac
+X11_CFLAGS="$X_CFLAGS"
+X11_LDFLAGS="$X_LIBS -lXext -lX11"
+
+echo "$as_me:$LINENO: checking if we are on a 64-bits computer" >&5
+echo $ECHO_N "checking if we are on a 64-bits computer... $ECHO_C" >&6
+if test "$cross_compiling" = yes; then
+  { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling" >&5
+echo "$as_me: error: cannot run test program while cross compiling" >&2;}
+   { (exit 1); exit 1; }; }
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+return(sizeof(void*))
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  void_size=0
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+( exit $ac_status )
+void_size=$?
+fi
+rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+if test "$void_size" = "8"; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+  CONFIG_WORD_LENGTH="8"
+  CONFIG_WORD_LENGTH_INC="7"
+  CONFIG_WORD_MASK="0xfffffffffffffff8"
+  CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
 
 ac_aux_dir=
 for ac_dir in $srcdir $srcdir/.. $srcdir/../..; do
@@ -5720,175 +6243,55 @@ host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
 case "${host}" in
-  i*86-*-linux* | i*86-*-freebsd*)
-    echo "$as_me:$LINENO: result: final setup for an Intel/GNU-linux host" >&5
-echo "${ECHO_T}final setup for an Intel/GNU-linux host" >&6
-    CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
+  i*86-*-linux* | x86_64-*-linux*)
+    echo "$as_me:$LINENO: result: final adjustments for an Intel or AMD GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for an Intel or AMD GNU/Linux host" >&6
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  *x86_64*-*-linux-gnu*)
-    echo "$as_me:$LINENO: result: final setup for an AMD/Intel x64 GNU-Linux host" >&5
-echo "${ECHO_T}final setup for an AMD/Intel x64 GNU-Linux host" >&6
-    CONFIG_OS="OPTERON_GNU_LINUX"
-    CONFIG_OS_SUFFIX="opteron-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BSTATIC="-Wl, -Bstatic"
-    CONFIG_BSHARED="-Wl, -Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
-  ;;
-  x86_64-*-linux* | x86_64-*-freebsd*)
-    echo "$as_me:$LINENO: result: final setup for an AMD64/x86_64/GNU-linux host" >&5
-echo "${ECHO_T}final setup for an AMD64/x86_64/GNU-linux host" >&6
-    CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
+  i*86-*-freebsd* | x86_64-*-freebsd*)
+    echo "$as_me:$LINENO: result: final adjustments for an Intel or AMD GNU/BSD host" >&5
+echo "${ECHO_T}final adjustments for an Intel or AMD GNU/BSD host" >&6
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  mips-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for a Mips/GNU-linux host" >&5
-echo "${ECHO_T}final setup for a Mips/GNU-linux host" >&6
-    CONFIG_OS="MIPS_GNU_LINUX"
-    CONFIG_OS_SUFFIX="mips-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  i*86-*-solaris*)
+    echo "$as_me:$LINENO: result: final adjustments for an Intel or AMS Solaris host" >&5
+echo "${ECHO_T}final adjustments for an Intel or AMS Solaris host" >&6
+    CONFIG_CXXOPTIMIZE="-O3"
+    CONFIG_BPATH="-Wl,-R,"
+    X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
   ;;
-  mipsel-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for a MipsEL/GNU-linux host" >&5
-echo "${ECHO_T}final setup for a MipsEL/GNU-linux host" >&6
-    CONFIG_OS="MIPSEL_GNU_LINUX"
-    CONFIG_OS_SUFFIX="mipsel-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  *-*-cygwin)
+    echo "$as_me:$LINENO: result: final adjustments for cygwin host" >&5
+echo "${ECHO_T}final adjustments for cygwin host" >&6
+    CONFIG_OS="CYGWIN"
+    CONFIG_BFLAGS="-Wl,-stack,8388608"
+#    CXX="export CYGWIN=check_case:strict; $CXX"
+#    AC_SUBST(CXX)
   ;;
-  arm*-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for an Arm/GNU-linux host" >&5
-echo "${ECHO_T}final setup for an Arm/GNU-linux host" >&6
-    CONFIG_OS="ARM_GNU_LINUX"
-    CONFIG_OS_SUFFIX="arm-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  powerpc-*-darwin*)
+    echo "$ac_t""final adjustments for a PowerPC/Darwin host" 1>&6
+    CONFIG_OS="DARWIN"
+    CONFIG_CXXFLAGS="-I${prefix}/include"
+    CONFIG_BSHARED=""
+    CONFIG_BPATH=""
+    CONFIG_SO="dylib"
+    CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
   powerpc-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for a PowerPC/GNU-linux host" >&5
-echo "${ECHO_T}final setup for a PowerPC/GNU-linux host" >&6
+    echo "$as_me:$LINENO: result: final adjustments for a PowerPC/GNU-linux host" >&5
+echo "${ECHO_T}final adjustments for a PowerPC/GNU-linux host" >&6
     CONFIG_OS="POWERPC_GNU_LINUX"
-    CONFIG_OS_SUFFIX="powerpc-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *sun*)
-    echo "$as_me:$LINENO: result: final setup for a SUN/solaris host" >&5
-echo "${ECHO_T}final setup for a SUN/solaris host" >&6
+    echo "$as_me:$LINENO: result: final adjustments for a SUN/solaris host" >&5
+echo "${ECHO_T}final adjustments for a SUN/solaris host" >&6
     CONFIG_OS="SUN"
     CONFIG_OS_SUFFIX="sun"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC=""
-    CONFIG_LSHARED="-G"
-    CONFIG_LPATH="-Wl,-R,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
-    CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+    X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
@@ -5896,22 +6299,9 @@ echo "${ECHO_T}final setup for a SUN/solaris host" >&6
     CONFIG_STD_SETENV=""
   ;;
   sparc*-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for a Sparc host running GNU/Linux" >&5
-echo "${ECHO_T}final setup for a Sparc host running GNU/Linux" >&6
-    CONFIG_OS="SPARC_GNU_LINUX"
-    CONFIG_OS_SUFFIX="sparc-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
+    echo "$as_me:$LINENO: result: final adjustments for a Sparc host running GNU/Linux" >&5
+echo "${ECHO_T}final adjustments for a Sparc host running GNU/Linux" >&6
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
@@ -5919,249 +6309,61 @@ echo "${ECHO_T}final setup for a Sparc host running GNU/Linux" >&6
     CONFIG_STD_SETENV=""
   ;;
   *dec*)
-    echo "$as_me:$LINENO: result: final setup for a DEC/alpha host" >&5
-echo "${ECHO_T}final setup for a DEC/alpha host" >&6
-    CONFIG_OS="DEC"
-    CONFIG_OS_SUFFIX="dec"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC=""
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
+    echo "$as_me:$LINENO: result: final adjustments for a DEC/alpha host" >&5
+echo "${ECHO_T}final adjustments for a DEC/alpha host" >&6
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   *alpha*-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for an Alpha/GNU-Linux host" >&5
-echo "${ECHO_T}final setup for an Alpha/GNU-Linux host" >&6
-    CONFIG_OS="ALPHA_GNU_LINUX"
-    CONFIG_OS_SUFFIX="alpha-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
+    echo "$as_me:$LINENO: result: final adjustments for an Alpha GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for an Alpha GNU/Linux host" >&6
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   s390-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for an IBM S/390 GNU-Linux host" >&5
-echo "${ECHO_T}final setup for an IBM S/390 GNU-Linux host" >&6
-    CONFIG_OS="S390"
-    CONFIG_OS_SUFFIX="s390"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+    echo "$as_me:$LINENO: result: final adjustments for an IBM S/390 GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for an IBM S/390 GNU/Linux host" >&6
     CONFIG_STD_SETENV=""
   ;;
-  *-*-cygwin)
-    echo "$as_me:$LINENO: result: final setup for cygwin" >&5
-echo "${ECHO_T}final setup for cygwin" >&6
-    CONFIG_OS="CYGWIN"
-    CONFIG_OS_SUFFIX="cygwin"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS="-Wl,-stack,8388608"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS="-Wl,-stack,8388608"
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
-#    CXX="export CYGWIN=check_case:strict; $CXX"
-#    AC_SUBST(CXX)
-  ;;
-  powerpc-*-darwin*)
-    echo "$ac_t""final setup for a PowerPC/Darwin host" 1>&6
-    CONFIG_OS="POWERPC_APPLE_DARWIN"
-    CONFIG_OS_SUFFIX="powerpc-apple-darwin"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXFLAGS="-I${prefix}/include"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-dynamiclib -undefined suppress -flat_namespace"
-    CONFIG_LPATH=
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_LDL="-L${prefix}/lib -ldl"
-    CONFIG_BSHARED=
-    CONFIG_BPATH=
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
-    CONFIG_SO="dylib"
-    CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
-  ;;
   ia64-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for an Itanium/GNU-Linux host" >&5
-echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
-    CONFIG_OS="IA64_GNU_LINUX"
-    CONFIG_OS_SUFFIX="ia64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
+    echo "$as_me:$LINENO: result: final adjustments for an Itanium GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for an Itanium GNU/Linux host" >&6
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for an HP PA_RISC/GNU-Linux host" >&5
-echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
-    CONFIG_OS="HPPA64_GNU_LINUX"
-    CONFIG_OS_SUFFIX="hppa64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
+  hppa*-*-linux*)
+    echo "$as_me:$LINENO: result: final adjustments for an HP PA_RISC GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for an HP PA_RISC GNU/Linux host" >&6
     CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
-  ;;
-  m68k-*-linux*)
-    echo "$as_me:$LINENO: result: final setup for a Motorola 68xxx host" >&5
-echo "${ECHO_T}final setup for a Motorola 68xxx host" >&6
-    CONFIG_OS="M68K"
-    CONFIG_OS_SUFFIX="m68k"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
-  ;;
-  *-linux*)
-    echo "$as_me:$LINENO: result: final setup for an unknown host running GNU/Linux" >&5
-echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
-    CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *sgi-irix*)
-    echo "$ac_t""final setup for a SGI/Irix host" 1>&6
+    echo "$ac_t""final adjustments for a SGI/Irix host" 1>&6
     CONFIG_OS="IRIX"
-    CONFIG_OS_SUFFIX="irix"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_CXXFLAGS=""
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH=""
     X_LIBS=-L/usr/lib32
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
-    CONFIG_BX="$X_LIBS -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
+    X11_LDFLAGS="$X_LIBS -lX11"
     CONFIG_WORD_MASK="0xfffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
     CONFIG_CHMOD="chmod"
-    CONFIG_DASH_I_DASH=""
     CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
   ;;
+  m68k-*-linux* | mips-*-linux* | mipsel-*-linux* | arm*-*-linux*)
+    echo "$as_me:$LINENO: result: final adjustments for a supported GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for a supported GNU/Linux host" >&6
+  ;;
+  *-linux*)
+    echo "$as_me:$LINENO: result: final adjustments for a generic GNU/Linux host" >&5
+echo "${ECHO_T}final adjustments for a generic GNU/Linux host" >&6
+  ;;
   *)
-    echo "$as_me:$LINENO: result: final setup for an unsupported host" >&5
-echo "${ECHO_T}final setup for an unsupported host" >&6
-    CONFIG_OS="UNKNOWN"
-    CONFIG_OS_SUFFIX="unknown"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+    echo "$as_me:$LINENO: result: final adjustments for a generic host" >&5
+echo "${ECHO_T}final adjustments for a generic host" >&6
   ;;
 esac
 
@@ -6170,36 +6372,201 @@ esac
 #--------------------------------------------------------------------
 
 case "$GXX_VERSION" in
-     3.*)
+     3.* | 4.*)
 	 CONFIG_BSTATIC="-static"
 	 CONFIG_BSHARED="-dynamic"
      ;;
 esac
 
 #--------------------------------------------------------------------
-# Enable debug and optimizations
+# Memory allocation options
 #--------------------------------------------------------------------
 
-optimize_default="yes"
+# Check whether --enable-fastalloc or --disable-fastalloc was given.
+if test "${enable_fastalloc+set}" = set; then
+  enableval="$enable_fastalloc"
 
-case "$GXX_VERSION" in
-    3.3.3 | 3.3.4)
-    ;;
-    2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
-	case "${host}" in
-	  i*86-*-linux-gnu* | i*86-*-freebsd*)
-	    { echo "$as_me:$LINENO: WARNING: using g++ 3.*, optimize without inline by default" >&5
-echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
-	    optimize_default="no-inline"
-	  ;;
-	  *)
-	    { echo "$as_me:$LINENO: WARNING: using g++ 3.*, optimize without inline by default" >&5
-echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
-	    optimize_default="no-inline"
-	  ;;
-	esac
-    ;;
+else
+  enable_fastalloc="yes"
+fi;
+case "$enable_fastalloc" in
+    yes)
+        ;;
+    no)
+	echo "$as_me:$LINENO: result: disabling fast allocator for small objects" >&5
+echo "${ECHO_T}disabling fast allocator for small objects" >&6
+
+cat >>confdefs.h <<\_ACEOF
+#define NO_FAST_ALLOC 1
+_ACEOF
+
+	;;
+    *)
+	{ { echo "$as_me:$LINENO: error: bad option --enable-fastalloc=$enable_fastalloc" >&5
+echo "$as_me: error: bad option --enable-fastalloc=$enable_fastalloc" >&2;}
+   { (exit 1); exit 1; }; }
+	;;
 esac
+
+#--------------------------------------------------------------------
+# Experimental options
+#--------------------------------------------------------------------
+
+# Check whether --enable-experimental or --disable-experimental was given.
+if test "${enable_experimental+set}" = set; then
+  enableval="$enable_experimental"
+
+else
+  enable_experimental="no"
+fi;
+case "$enable_experimental" in
+    yes)
+	echo "$as_me:$LINENO: result: enabling experimental style rewriting code" >&5
+echo "${ECHO_T}enabling experimental style rewriting code" >&6
+
+cat >>confdefs.h <<\_ACEOF
+#define EXPERIMENTAL 1
+_ACEOF
+
+        CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
+        ;;
+    no)
+	echo "$as_me:$LINENO: result: disabling experimental style rewriting code" >&5
+echo "${ECHO_T}disabling experimental style rewriting code" >&6
+        CONFIG_EXPERIMENTAL=""
+	;;
+    *)
+	{ { echo "$as_me:$LINENO: error: bad option --enable-experimental=$enable_experimental" >&5
+echo "$as_me: error: bad option --enable-experimental=$enable_experimental" >&2;}
+   { (exit 1); exit 1; }; }
+	;;
+esac
+
+
+#--------------------------------------------------------------------
+# Gui selection
+#--------------------------------------------------------------------
+
+CONFIG_X11=""
+CONFIG_COCOA=""
+CONFIG_GUI="X11"
+
+# Check whether --enable-cocoa or --disable-cocoa was given.
+if test "${enable_cocoa+set}" = set; then
+  enableval="$enable_cocoa"
+
+else
+  enable_cocoa="no"
+fi;
+case "$enable_cocoa" in
+    yes)
+	echo "$as_me:$LINENO: result: enabling experimental Cocoa port" >&5
+echo "${ECHO_T}enabling experimental Cocoa port" >&6
+
+cat >>confdefs.h <<\_ACEOF
+#define AQUATEXMACS 1
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define NO_FAST_ALLOC 1
+_ACEOF
+
+	COCOA_CFLAGS=""
+	COCOA_LDFLAGS="-framework Cocoa"
+        CONFIG_GUI="COCOA"
+        ;;
+    no)
+	echo "$as_me:$LINENO: result: disabling experimental Cocoa port" >&5
+echo "${ECHO_T}disabling experimental Cocoa port" >&6
+	;;
+    *)
+	{ { echo "$as_me:$LINENO: error: bad option --enable-cocoa=$enable_cocoa" >&5
+echo "$as_me: error: bad option --enable-cocoa=$enable_cocoa" >&2;}
+   { (exit 1); exit 1; }; }
+	;;
+esac
+
+case "$CONFIG_GUI" in
+     X11)
+	CONFIG_X11="X11 Widkit Ghostscript"
+	;;
+    COCOA)
+        CONFIG_COCOA="Cocoa"
+	;;
+esac
+
+
+
+
+
+
+
+
+
+
+#--------------------------------------------------------------------
+# Debugging options
+#--------------------------------------------------------------------
+
+STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+if test "$enable_cocoa" = "yes"; then
+    STD_DEBUG_FLAGS="-fno-exceptions"
+fi
+
+echo "$as_me:$LINENO: checking if compiler supports $STD_DEBUG_FLAGS" >&5
+echo $ECHO_N "checking if compiler supports $STD_DEBUG_FLAGS... $ECHO_C" >&6
+CXXFLAGS="$STD_DEBUG_FLAGS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+
+  int some_variable = 0;
+
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+
+    CONFIG_CXXDIALECT="$STD_DEBUG_FLAGS"
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+
+    CONFIG_CXXDIALECT=""
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+CXXFLAGS=""
+
 
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -6216,17 +6583,78 @@ if test "$enable_debug" = "yes"; then
         enable_debug="-g3"
     fi
 fi
+
 if test "$enable_debug" = "no"; then
     echo "$as_me:$LINENO: result: disabling debugging" >&5
 echo "${ECHO_T}disabling debugging" >&6
     CONFIG_STRIP="strip"
     CONFIG_CXXDEBUG=""
+    optimize_default="yes"
 else
     echo "$as_me:$LINENO: result: enabling debugging, $enable_debug" >&5
 echo "${ECHO_T}enabling debugging, $enable_debug" >&6
     CONFIG_STRIP="true"
     CONFIG_CXXDEBUG="$enable_debug"
     optimize_default="no"
+fi
+
+#--------------------------------------------------------------------
+# Warning options
+#--------------------------------------------------------------------
+
+case "$GXX_VERSION" in
+  none)
+    CONFIG_CXXWARNING="";
+  ;;
+  *)
+    CONFIG_CXXWARNING="-Wall -Wno-return-type"
+  ;;
+esac
+
+# Check whether --enable-warnings or --disable-warnings was given.
+if test "${enable_warnings+set}" = set; then
+  enableval="$enable_warnings"
+
+else
+  enable_warnings="yes"
+fi;
+case "$enable_warnings" in
+    yes)
+	echo "$as_me:$LINENO: result: enabling warning flags $CONFIG_CXXWARNING" >&5
+echo "${ECHO_T}enabling warning flags $CONFIG_CXXWARNING" >&6 ;;
+    no)
+        CONFIG_CXXWARNING=""
+	echo "$as_me:$LINENO: result: disabling warning flags" >&5
+echo "${ECHO_T}disabling warning flags" >&6 ;;
+    *)
+        CONFIG_CXXWARNING="$enable_warnings"
+	echo "$as_me:$LINENO: result: enabling warning flags $CONFIG_CXXWARNING" >&5
+echo "${ECHO_T}enabling warning flags $CONFIG_CXXWARNING" >&6 ;;
+esac
+
+#--------------------------------------------------------------------
+# Optimization options
+#--------------------------------------------------------------------
+
+if test "$optimize_default" = "yes"; then
+  case "$GXX_VERSION" in
+    3.3.3 | 3.3.4 | 4.*)
+      ;;
+    2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
+      case "${host}" in
+	i*86-*-linux-gnu* | i*86-*-freebsd*)
+	  { echo "$as_me:$LINENO: WARNING: using g++ 3.*, optimize without inline by default" >&5
+echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
+	  optimize_default="no-inline"
+	;;
+	*)
+	  { echo "$as_me:$LINENO: WARNING: using g++ 3.*, optimize without inline by default" >&5
+echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
+	  optimize_default="no-inline"
+	;;
+      esac
+    ;;
+  esac
 fi
 
 # Check whether --enable-optimize or --disable-optimize was given.
@@ -6282,15 +6710,6 @@ esac
 
 
 
-
-
-
-
-
-
-
-
-
 #--------------------------------------------------------------------
 # Default paths for installation
 #--------------------------------------------------------------------
@@ -6302,67 +6721,67 @@ if test "$prefix" = "NONE"; then
   prefix=/usr/local
 fi
 if test "$exec_prefix" = ""; then
-  exec_prefix=${prefix}
+  exec_prefix='${prefix}'
 fi
 if test "$exec_prefix" = "NONE"; then
-  exec_prefix=${prefix}
+  exec_prefix='${prefix}'
 fi
 if test "$exec_prefix" = '${prefix}'; then
-  exec_prefix=${prefix}
+  exec_prefix='${prefix}'
 fi
 if test "$includedir" = ""; then
-  includedir=${prefix}/include
+  includedir='${prefix}/include'
 fi
 if test "$includedir" = "NONE"; then
-  includedir=${prefix}/include
+  includedir='${prefix}/include'
 fi
 if test "$includedir" = '${prefix}/include'; then
-  includedir=${prefix}/include
+  includedir='${prefix}/include'
 fi
 if test "$libdir" = ""; then
-  libdir=${exec_prefix}/lib
+  libdir='${exec_prefix}/lib'
 fi
 if test "$libdir" = "NONE"; then
-  libdir=${exec_prefix}/lib
+  libdir='${exec_prefix}/lib'
 fi
 if test "$libdir" = '${exec_prefix}/lib'; then
-  libdir=${exec_prefix}/lib
+  libdir='${exec_prefix}/lib'
 fi
 if test "$bindir" = ""; then
-  bindir=${exec_prefix}/bin
+  bindir='${exec_prefix}/bin'
 fi
 if test "$bindir" = "NONE"; then
   bindir=${exec_prefix}/bin
 fi
 if test "$bindir" = '${exec_prefix}/bin'; then
-  bindir=${exec_prefix}/bin
+  bindir='${exec_prefix}/bin'
 fi
 if test "$datadir" = ""; then
-  datadir=${prefix}/share
+  datadir='${prefix}/share'
 fi
 if test "$datadir" = "NONE"; then
-  datadir=${prefix}/share
+  datadir='${prefix}/share'
 fi
 if test "$datadir" = '${prefix}/share'; then
-  datadir=${prefix}/share
+  datadir='${prefix}/share'
 fi
 if test "$mandir" = ""; then
-  mandir=${prefix}/man
+  mandir='${prefix}/man'
 fi
 if test "$mandir" = "NONE"; then
-  mandir=${prefix}/man
+  mandir='${prefix}/man'
 fi
 if test "$mandir" = '${prefix}/man'; then
-  mandir=${prefix}/man
+  mandir='${prefix}/man'
 fi
 if test "$libexecdir" = ""; then
-  libexecdir=${exec_prefix}/libexec
+  libexecdir='${exec_prefix}/libexec'
 fi
 if test "$libexecdir" = "NONE"; then
-  libexecdir=${exec_prefix}/libexec
+  libexecdir='${exec_prefix}/libexec'
 fi
 if test "$libexecdir" = '${exec_prefix}/libexec'; then
-  libexecdir=${exec_prefix}/libexec
+  libexecdir='${exec_prefix}/libexec'
 fi
 
 curdir="`pwd`"
@@ -6404,7 +6823,7 @@ fi
 # Done
 #--------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile:Makefile.in src/common.makefile:src/common.makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in"
+ac_config_files="$ac_config_files Makefile:Makefile.in src/makefile:src/makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6479,38 +6898,7 @@ s/^[^=]*=[ 	]*$//;
 }'
 fi
 
-# Transform confdefs.h into DEFS.
-# Protect against shell expansion while executing Makefile rules.
-# Protect against Makefile macro expansion.
-#
-# If the first sed substitution is executed (which looks for macros that
-# take arguments), then we branch to the quote section.  Otherwise,
-# look for a macro that doesn't take arguments.
-cat >confdef2opt.sed <<\_ACEOF
-t clear
-: clear
-s,^[ 	]*#[ 	]*define[ 	][ 	]*\([^ 	(][^ 	(]*([^)]*)\)[ 	]*\(.*\),-D\1=\2,g
-t quote
-s,^[ 	]*#[ 	]*define[ 	][ 	]*\([^ 	][^ 	]*\)[ 	]*\(.*\),-D\1=\2,g
-t quote
-d
-: quote
-s,[ 	`~#$^&*(){}\\|;'"<>?],\\&,g
-s,\[,\\&,g
-s,\],\\&,g
-s,\$,$$,g
-p
-_ACEOF
-# We use echo to avoid assuming a particular line-breaking character.
-# The extra dot is to prevent the shell from consuming trailing
-# line-breaks from the sub-command output.  A line-break within
-# single-quotes doesn't work because, if this script is created in a
-# platform that uses two characters for line-breaks (e.g., DOS), tr
-# would break.
-ac_LF_and_DOT=`echo; echo .`
-DEFS=`sed -n -f confdef2opt.sed confdefs.h | tr "$ac_LF_and_DOT" ' .'`
-rm -f confdef2opt.sed
-
+DEFS=-DHAVE_CONFIG_H
 
 
 : ${CONFIG_STATUS=./config.status}
@@ -6806,9 +7194,14 @@ Usage: $0 [OPTIONS] [FILE]...
       --recheck    update $as_me by reconfiguring in the same conditions
   --file=FILE[:TEMPLATE]
                    instantiate the configuration file FILE
+  --header=FILE[:TEMPLATE]
+                   instantiate the configuration header FILE
 
 Configuration files:
 $config_files
+
+Configuration headers:
+$config_headers
 
 Report bugs to <bug-autoconf@gnu.org>."
 _ACEOF
@@ -6902,7 +7295,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.in" ;;
-  "src/common.makefile" ) CONFIG_FILES="$CONFIG_FILES src/common.makefile:src/common.makefile.in" ;;
+  "src/makefile" ) CONFIG_FILES="$CONFIG_FILES src/makefile:src/makefile.in" ;;
   "src/System/tm_configure.hpp" ) CONFIG_FILES="$CONFIG_FILES src/System/tm_configure.hpp:src/System/tm_configure.in" ;;
   "misc/admin/admin.makefile" ) CONFIG_FILES="$CONFIG_FILES misc/admin/admin.makefile:misc/admin/admin.makefile.in" ;;
   "misc/doxygen/Doxyfile" ) CONFIG_FILES="$CONFIG_FILES misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in" ;;
@@ -6911,6 +7304,7 @@ do
   "misc/scripts/fig2ps" ) CONFIG_FILES="$CONFIG_FILES misc/scripts/fig2ps:misc/scripts/fig2ps.in" ;;
   "misc/scripts/texmacs" ) CONFIG_FILES="$CONFIG_FILES misc/scripts/texmacs:misc/scripts/texmacs.in" ;;
   "TeXmacs/examples/plugins/dynlink/Makefile" ) CONFIG_FILES="$CONFIG_FILES TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in" ;;
+  "src/System/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/System/config.h:src/System/config.in" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
@@ -6923,6 +7317,7 @@ done
 # bizarre bug on SunOS 4.1.3.
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
+  test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
 fi
 
 # Create a temporary directory, and hook for its removal unless debugging.
@@ -7008,27 +7403,20 @@ s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@ac_ct_CXX@,$ac_ct_CXX,;t t
 s,@GUILE_CFLAGS@,$GUILE_CFLAGS,;t t
 s,@GUILE_LDFLAGS@,$GUILE_LDFLAGS,;t t
+s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@CXXCPP@,$CXXCPP,;t t
 s,@X_CFLAGS@,$X_CFLAGS,;t t
 s,@X_PRE_LIBS@,$X_PRE_LIBS,;t t
 s,@X_LIBS@,$X_LIBS,;t t
 s,@X_EXTRA_LIBS@,$X_EXTRA_LIBS,;t t
-s,@CONFIG_LDL@,$CONFIG_LDL,;t t
 s,@CONFIG_BDL@,$CONFIG_BDL,;t t
-s,@CONFIG_DYNAMIC_LINKING@,$CONFIG_DYNAMIC_LINKING,;t t
 s,@CPP@,$CPP,;t t
-s,@CONFIG_USE_ICONV@,$CONFIG_USE_ICONV,;t t
 s,@ICONV_CFLAGS@,$ICONV_CFLAGS,;t t
 s,@ICONV_LDFLAGS@,$ICONV_LDFLAGS,;t t
-s,@CONFIG_USE_FREETYPE@,$CONFIG_USE_FREETYPE,;t t
-s,@CONFIG_LINKED_FREETYPE@,$CONFIG_LINKED_FREETYPE,;t t
 s,@FREETYPE_CFLAGS@,$FREETYPE_CFLAGS,;t t
 s,@FREETYPE_LDFLAGS@,$FREETYPE_LDFLAGS,;t t
-s,@CONFIG_GET_TIME_OF_DAY@,$CONFIG_GET_TIME_OF_DAY,;t t
-s,@CONFIG_DOTS@,$CONFIG_DOTS,;t t
-s,@CONFIG_GUILE_STR_SIZE_T@,$CONFIG_GUILE_STR_SIZE_T,;t t
-s,@CONFIG_CXXDIALECT@,$CONFIG_CXXDIALECT,;t t
-s,@CONFIG_NO_FAST_ALLOC@,$CONFIG_NO_FAST_ALLOC,;t t
+s,@IMLIB2_CFLAGS@,$IMLIB2_CFLAGS,;t t
+s,@IMLIB2_LDFLAGS@,$IMLIB2_LDFLAGS,;t t
 s,@build@,$build,;t t
 s,@build_cpu@,$build_cpu,;t t
 s,@build_vendor@,$build_vendor,;t t
@@ -7037,23 +7425,25 @@ s,@host@,$host,;t t
 s,@host_cpu@,$host_cpu,;t t
 s,@host_vendor@,$host_vendor,;t t
 s,@host_os@,$host_os,;t t
+s,@CONFIG_EXPERIMENTAL@,$CONFIG_EXPERIMENTAL,;t t
+s,@X11_CFLAGS@,$X11_CFLAGS,;t t
+s,@X11_LDFLAGS@,$X11_LDFLAGS,;t t
+s,@COCOA_CFLAGS@,$COCOA_CFLAGS,;t t
+s,@COCOA_LDFLAGS@,$COCOA_LDFLAGS,;t t
+s,@CONFIG_X11@,$CONFIG_X11,;t t
+s,@CONFIG_COCOA@,$CONFIG_COCOA,;t t
+s,@CONFIG_GUI@,$CONFIG_GUI,;t t
+s,@CONFIG_CXXDIALECT@,$CONFIG_CXXDIALECT,;t t
 s,@CONFIG_OS@,$CONFIG_OS,;t t
 s,@CONFIG_OS_SUFFIX@,$CONFIG_OS_SUFFIX,;t t
-s,@CONFIG_CX@,$CONFIG_CX,;t t
 s,@CONFIG_CXXWARNING@,$CONFIG_CXXWARNING,;t t
 s,@CONFIG_CXXTEMPLATE@,$CONFIG_CXXTEMPLATE,;t t
 s,@CONFIG_CXXOPTIMIZE@,$CONFIG_CXXOPTIMIZE,;t t
 s,@CONFIG_CXXDEBUG@,$CONFIG_CXXDEBUG,;t t
-s,@CONFIG_LFLAGS@,$CONFIG_LFLAGS,;t t
-s,@CONFIG_LSTATIC@,$CONFIG_LSTATIC,;t t
-s,@CONFIG_LSHARED@,$CONFIG_LSHARED,;t t
-s,@CONFIG_LPATH@,$CONFIG_LPATH,;t t
-s,@CONFIG_LX@,$CONFIG_LX,;t t
 s,@CONFIG_BFLAGS@,$CONFIG_BFLAGS,;t t
 s,@CONFIG_BSTATIC@,$CONFIG_BSTATIC,;t t
 s,@CONFIG_BSHARED@,$CONFIG_BSHARED,;t t
 s,@CONFIG_BPATH@,$CONFIG_BPATH,;t t
-s,@CONFIG_BX@,$CONFIG_BX,;t t
 s,@CONFIG_WORD_LENGTH@,$CONFIG_WORD_LENGTH,;t t
 s,@CONFIG_WORD_LENGTH_INC@,$CONFIG_WORD_LENGTH_INC,;t t
 s,@CONFIG_WORD_MASK@,$CONFIG_WORD_MASK,;t t
@@ -7064,8 +7454,6 @@ s,@CONFIG_SO@,$CONFIG_SO,;t t
 s,@CONFIG_LIB_PATH@,$CONFIG_LIB_PATH,;t t
 s,@CONFIG_STRIP@,$CONFIG_STRIP,;t t
 s,@CONFIG_CHMOD@,$CONFIG_CHMOD,;t t
-s,@CONFIG_DASH_I_DASH@,$CONFIG_DASH_I_DASH,;t t
-s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@tmorig@,$tmorig,;t t
 s,@tmdir@,$tmdir,;t t
 s,@tmsrc@,$tmsrc,;t t
@@ -7269,6 +7657,223 @@ s,@abs_top_builddir@,$ac_abs_top_builddir,;t t
     rm -f $tmp/out
   fi
 
+done
+_ACEOF
+cat >>$CONFIG_STATUS <<\_ACEOF
+
+#
+# CONFIG_HEADER section.
+#
+
+# These sed commands are passed to sed as "A NAME B NAME C VALUE D", where
+# NAME is the cpp macro being defined and VALUE is the value it is being given.
+#
+# ac_d sets the value in "#define NAME VALUE" lines.
+ac_dA='s,^\([ 	]*\)#\([ 	]*define[ 	][ 	]*\)'
+ac_dB='[ 	].*$,\1#\2'
+ac_dC=' '
+ac_dD=',;t'
+# ac_u turns "#undef NAME" without trailing blanks into "#define NAME VALUE".
+ac_uA='s,^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
+ac_uB='$,\1#\2define\3'
+ac_uC=' '
+ac_uD=',;t'
+
+for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
+  # Support "outfile[:infile[:infile...]]", defaulting infile="outfile.in".
+  case $ac_file in
+  - | *:- | *:-:* ) # input from stdin
+        cat >$tmp/stdin
+        ac_file_in=`echo "$ac_file" | sed 's,[^:]*:,,'`
+        ac_file=`echo "$ac_file" | sed 's,:.*,,'` ;;
+  *:* ) ac_file_in=`echo "$ac_file" | sed 's,[^:]*:,,'`
+        ac_file=`echo "$ac_file" | sed 's,:.*,,'` ;;
+  * )   ac_file_in=$ac_file.in ;;
+  esac
+
+  test x"$ac_file" != x- && { echo "$as_me:$LINENO: creating $ac_file" >&5
+echo "$as_me: creating $ac_file" >&6;}
+
+  # First look for the input files in the build tree, otherwise in the
+  # src tree.
+  ac_file_inputs=`IFS=:
+    for f in $ac_file_in; do
+      case $f in
+      -) echo $tmp/stdin ;;
+      [\\/$]*)
+         # Absolute (can't be DOS-style, as IFS=:)
+         test -f "$f" || { { echo "$as_me:$LINENO: error: cannot find input file: $f" >&5
+echo "$as_me: error: cannot find input file: $f" >&2;}
+   { (exit 1); exit 1; }; }
+         echo $f;;
+      *) # Relative
+         if test -f "$f"; then
+           # Build tree
+           echo $f
+         elif test -f "$srcdir/$f"; then
+           # Source tree
+           echo $srcdir/$f
+         else
+           # /dev/null tree
+           { { echo "$as_me:$LINENO: error: cannot find input file: $f" >&5
+echo "$as_me: error: cannot find input file: $f" >&2;}
+   { (exit 1); exit 1; }; }
+         fi;;
+      esac
+    done` || { (exit 1); exit 1; }
+  # Remove the trailing spaces.
+  sed 's/[ 	]*$//' $ac_file_inputs >$tmp/in
+
+_ACEOF
+
+# Transform confdefs.h into two sed scripts, `conftest.defines' and
+# `conftest.undefs', that substitutes the proper values into
+# config.h.in to produce config.h.  The first handles `#define'
+# templates, and the second `#undef' templates.
+# And first: Protect against being on the right side of a sed subst in
+# config.status.  Protect against being in an unquoted here document
+# in config.status.
+rm -f conftest.defines conftest.undefs
+# Using a here document instead of a string reduces the quoting nightmare.
+# Putting comments in sed scripts is not portable.
+#
+# `end' is used to avoid that the second main sed command (meant for
+# 0-ary CPP macros) applies to n-ary macro definitions.
+# See the Autoconf documentation for `clear'.
+cat >confdef2sed.sed <<\_ACEOF
+s/[\\&,]/\\&/g
+s,[\\$`],\\&,g
+t clear
+: clear
+s,^[ 	]*#[ 	]*define[ 	][ 	]*\([^ 	(][^ 	(]*\)\(([^)]*)\)[ 	]*\(.*\)$,${ac_dA}\1${ac_dB}\1\2${ac_dC}\3${ac_dD},gp
+t end
+s,^[ 	]*#[ 	]*define[ 	][ 	]*\([^ 	][^ 	]*\)[ 	]*\(.*\)$,${ac_dA}\1${ac_dB}\1${ac_dC}\2${ac_dD},gp
+: end
+_ACEOF
+# If some macros were called several times there might be several times
+# the same #defines, which is useless.  Nevertheless, we may not want to
+# sort them, since we want the *last* AC-DEFINE to be honored.
+uniq confdefs.h | sed -n -f confdef2sed.sed >conftest.defines
+sed 's/ac_d/ac_u/g' conftest.defines >conftest.undefs
+rm -f confdef2sed.sed
+
+# This sed command replaces #undef with comments.  This is necessary, for
+# example, in the case of _POSIX_SOURCE, which is predefined and required
+# on some systems where configure will not decide to define it.
+cat >>conftest.undefs <<\_ACEOF
+s,^[ 	]*#[ 	]*undef[ 	][ 	]*[a-zA-Z_][a-zA-Z_0-9]*,/* & */,
+_ACEOF
+
+# Break up conftest.defines because some shells have a limit on the size
+# of here documents, and old seds have small limits too (100 cmds).
+echo '  # Handle all the #define templates only if necessary.' >>$CONFIG_STATUS
+echo '  if egrep "^[ 	]*#[ 	]*define" $tmp/in >/dev/null; then' >>$CONFIG_STATUS
+echo '  # If there are no defines, we may have an empty if/fi' >>$CONFIG_STATUS
+echo '  :' >>$CONFIG_STATUS
+rm -f conftest.tail
+while grep . conftest.defines >/dev/null
+do
+  # Write a limited-size here document to $tmp/defines.sed.
+  echo '  cat >$tmp/defines.sed <<CEOF' >>$CONFIG_STATUS
+  # Speed up: don't consider the non `#define' lines.
+  echo '/^[ 	]*#[ 	]*define/!b' >>$CONFIG_STATUS
+  # Work around the forget-to-reset-the-flag bug.
+  echo 't clr' >>$CONFIG_STATUS
+  echo ': clr' >>$CONFIG_STATUS
+  sed ${ac_max_here_lines}q conftest.defines >>$CONFIG_STATUS
+  echo 'CEOF
+  sed -f $tmp/defines.sed $tmp/in >$tmp/out
+  rm -f $tmp/in
+  mv $tmp/out $tmp/in
+' >>$CONFIG_STATUS
+  sed 1,${ac_max_here_lines}d conftest.defines >conftest.tail
+  rm -f conftest.defines
+  mv conftest.tail conftest.defines
+done
+rm -f conftest.defines
+echo '  fi # egrep' >>$CONFIG_STATUS
+echo >>$CONFIG_STATUS
+
+# Break up conftest.undefs because some shells have a limit on the size
+# of here documents, and old seds have small limits too (100 cmds).
+echo '  # Handle all the #undef templates' >>$CONFIG_STATUS
+rm -f conftest.tail
+while grep . conftest.undefs >/dev/null
+do
+  # Write a limited-size here document to $tmp/undefs.sed.
+  echo '  cat >$tmp/undefs.sed <<CEOF' >>$CONFIG_STATUS
+  # Speed up: don't consider the non `#undef'
+  echo '/^[ 	]*#[ 	]*undef/!b' >>$CONFIG_STATUS
+  # Work around the forget-to-reset-the-flag bug.
+  echo 't clr' >>$CONFIG_STATUS
+  echo ': clr' >>$CONFIG_STATUS
+  sed ${ac_max_here_lines}q conftest.undefs >>$CONFIG_STATUS
+  echo 'CEOF
+  sed -f $tmp/undefs.sed $tmp/in >$tmp/out
+  rm -f $tmp/in
+  mv $tmp/out $tmp/in
+' >>$CONFIG_STATUS
+  sed 1,${ac_max_here_lines}d conftest.undefs >conftest.tail
+  rm -f conftest.undefs
+  mv conftest.tail conftest.undefs
+done
+rm -f conftest.undefs
+
+cat >>$CONFIG_STATUS <<\_ACEOF
+  # Let's still pretend it is `configure' which instantiates (i.e., don't
+  # use $as_me), people would be surprised to read:
+  #    /* config.h.  Generated by config.status.  */
+  if test x"$ac_file" = x-; then
+    echo "/* Generated by configure.  */" >$tmp/config.h
+  else
+    echo "/* $ac_file.  Generated by configure.  */" >$tmp/config.h
+  fi
+  cat $tmp/in >>$tmp/config.h
+  rm -f $tmp/in
+  if test x"$ac_file" != x-; then
+    if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
+      { echo "$as_me:$LINENO: $ac_file is unchanged" >&5
+echo "$as_me: $ac_file is unchanged" >&6;}
+    else
+      ac_dir=`(dirname "$ac_file") 2>/dev/null ||
+$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+         X"$ac_file" : 'X\(//\)[^/]' \| \
+         X"$ac_file" : 'X\(//\)$' \| \
+         X"$ac_file" : 'X\(/\)' \| \
+         .     : '\(.\)' 2>/dev/null ||
+echo X"$ac_file" |
+    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
+  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
+  	  /^X\(\/\/\)$/{ s//\1/; q; }
+  	  /^X\(\/\).*/{ s//\1/; q; }
+  	  s/.*/./; q'`
+      { case "$ac_dir" in
+  [\\/]* | ?:[\\/]* ) as_incr_dir=;;
+  *)                      as_incr_dir=.;;
+esac
+as_dummy="$ac_dir"
+for as_mkdir_dir in `IFS='/\\'; set X $as_dummy; shift; echo "$@"`; do
+  case $as_mkdir_dir in
+    # Skip DOS drivespec
+    ?:) as_incr_dir=$as_mkdir_dir ;;
+    *)
+      as_incr_dir=$as_incr_dir/$as_mkdir_dir
+      test -d "$as_incr_dir" ||
+        mkdir "$as_incr_dir" ||
+	{ { echo "$as_me:$LINENO: error: cannot create \"$ac_dir\"" >&5
+echo "$as_me: error: cannot create \"$ac_dir\"" >&2;}
+   { (exit 1); exit 1; }; }
+    ;;
+  esac
+done; }
+
+      rm -f $ac_file
+      mv $tmp/config.h $ac_file
+    fi
+  else
+    cat $tmp/config.h
+    rm -f $tmp/config.h
+  fi
 done
 _ACEOF
 

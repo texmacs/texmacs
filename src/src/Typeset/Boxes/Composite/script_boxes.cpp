@@ -82,14 +82,14 @@ lim_box_rep::lim_box_rep (path ip, box ref2, box lo, box hi, font fn, bool gl):
   SI sep_hi= fn->sep + (fn->yshift >> 1);
   SI X, Y;
   insert (ref, 0, 0);
-  if (!nil (lo)) {
+  if (!is_nil (lo)) {
     SI top= max (lo->y2, fn->y2 * script (fn->size, 1) / fn->size) + sep_lo;
     Y= ref->y1;
     X= ((SI) (ref->right_slope ()* (Y+top-lo->y1))) + ((ref->x1+ref->x2)>>1);
     insert (lo, X- (lo->x2 >> 1), Y-top);
     italic_correct (lo);
   }
-  if (!nil (hi)) {
+  if (!is_nil (hi)) {
     SI bot= min (hi->y1, fn->y1 * script (fn->size, 1) / fn->size) - sep_hi;
     Y= ref->y2;
     X= ((SI) (ref->right_slope ()*(Y+hi->y2-bot))) + ((ref->x1+ref->x2)>>1);
@@ -99,8 +99,8 @@ lim_box_rep::lim_box_rep (path ip, box ref2, box lo, box hi, font fn, bool gl):
   italic_correct (ref);
   position ();
   italic_restore (ref);
-  if (!nil (lo)) italic_restore (lo);
-  if (!nil (hi)) italic_restore (hi);
+  if (!is_nil (lo)) italic_restore (lo);
+  if (!is_nil (hi)) italic_restore (hi);
   left_justify ();
   finalize ();
 }
@@ -134,7 +134,7 @@ lim_box_rep::find_box_path (path p, bool& found) {
 
 path
 lim_box_rep::find_tree_path (path bp) {
-  if (glued && atom (bp)) {
+  if (glued && is_atom (bp)) {
     int nr= subnr()- 1;
     if (bp->item == 0) {
       if (is_decoration (bs[0]->ip))
@@ -170,7 +170,7 @@ dummy_script_box_rep::dummy_script_box_rep (path ip, box b1, box b2, font fn):
   SI hi_y = fn->ysup_lo_base;
   SI miny2= (fn->y2 - fn->yshift) * script (fn->size, 1) / fn->size;
 
-  if ((!nil (b1)) && (!nil (b2))) {
+  if ((!is_nil (b1)) && (!is_nil (b2))) {
     SI y= max (b1->y2, miny2);
     SI d= lo_y + y + sep - hi_y - b2->y1;
     if (d > 0) {
@@ -178,17 +178,17 @@ dummy_script_box_rep::dummy_script_box_rep (path ip, box b1, box b2, font fn):
       hi_y += (d>>1);
     }
   }
-  if (!nil (b1)) {
+  if (!is_nil (b1)) {
     insert (b1, 0, lo_y);
     italic_correct (b1);
   }
-  if (!nil (b2)) {
+  if (!is_nil (b2)) {
     insert (b2, 0, hi_y);
     italic_correct (b2);
   }
   position ();
-  if (!nil (b1)) italic_restore (b1);
-  if (!nil (b2)) italic_restore (b2);
+  if (!is_nil (b1)) italic_restore (b1);
+  if (!is_nil (b2)) italic_restore (b2);
   left_justify ();
   y1= min (y1, fn->ysub_lo_base);
   y2= max (y2, fn->ysup_lo_base + fn->yx);
@@ -220,7 +220,7 @@ dummy_script_box_rep::find_box_path (path p, bool& found) {
 
 path
 dummy_script_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) {
+  if (is_atom (bp)) {
     int nr= subnr();
     if (bp->item == 0) {
       if (nr == 1) return reverse (descend_script (bs[0]->ip, 0));
@@ -293,8 +293,8 @@ side_box_rep::side_box_rep (
   SI lsub= sub_lo_base, lsup= sup_lo_base;
   SI rsub= sub_lo_base, rsup= sup_lo_base;
 
-  if (nil (l1)) {
-    if (nil (l2)) nr_left= 0;
+  if (is_nil (l1)) {
+    if (is_nil (l2)) nr_left= 0;
     else {
       nr_left= 1;
       lsup= max (sup_hi_lim, ref->y2- (shift<<1)) - l2->y2;
@@ -305,7 +305,7 @@ side_box_rep::side_box_rep (
   else {
     SI y= max (l1->y2, miny2);
     if (lsub + y > sub_hi_lim) lsub= sub_hi_lim- y;
-    if (nil (l2)) nr_left= 1;
+    if (is_nil (l2)) nr_left= 1;
     else {
       nr_left= 2;
       lsup= max (sup_hi_lim, ref->y2- (shift<<1)) - l2->y2;
@@ -319,8 +319,8 @@ side_box_rep::side_box_rep (
     }
   }
 
-  if (nil (r1)) {
-    if (nil (r2)) nr_right= 0;
+  if (is_nil (r1)) {
+    if (is_nil (r2)) nr_right= 0;
     else {
       nr_right= 1;
       rsup= max (sup_hi_lim, ref->y2- (shift<<1)) - r2->y2;
@@ -331,7 +331,7 @@ side_box_rep::side_box_rep (
   else {
     SI y= max (r1->y2, miny2);
     if (rsub + y > sub_hi_lim) rsub= sub_hi_lim- y;
-    if (nil (r2)) nr_right= 1;
+    if (is_nil (r2)) nr_right= 1;
     else {
       nr_right= 2;
       rsup= max (sup_hi_lim, ref->y2- (shift<<1)) - r2->y2;
@@ -345,19 +345,19 @@ side_box_rep::side_box_rep (
     }
   }
 
-  if (!nil (l1)) {
+  if (!is_nil (l1)) {
     SI dx= l1->right_correction () + ref->lsub_correction ();
     insert (l1, -l1->x2- dx, lsub);
   }
-  if (!nil (l2)) {
+  if (!is_nil (l2)) {
     SI dx= l2->right_correction () - ref->lsup_correction ();
     insert (l2, -l2->x2- dx, lsup);
   }
-  if (!nil (r1)) {
+  if (!is_nil (r1)) {
     SI dx= r1->left_correction () + ref->rsub_correction ();
     insert (r1, ref->x2+ dx, rsub);
   }
-  if (!nil (r2)) {
+  if (!is_nil (r2)) {
     SI dx= r2->left_correction () + ref->rsup_correction ();
     insert (r2, ref->x2+ dx, rsup);
   }
@@ -485,7 +485,7 @@ side_box_rep::find_right_box_path () {
 
 path
 side_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) {
+  if (is_atom (bp)) {
     switch (bp->item) {
     case 0:
       if (nr_left == 0) {
@@ -519,13 +519,13 @@ side_box_rep::find_tree_path (path bp) {
 
 cursor
 side_box_rep::find_cursor (path bp) {
-  if (atom (bp) && (bp->item == 2)) {
+  if (is_atom (bp) && (bp->item == 2)) {
     cursor cu (sx2 (1), 0);
     cu->y1= y1; cu->y2= y2;
     if (nr_left == 2) cu->ox= max (cu->ox, sx2 (2));
     return cu;
   }
-  else if (atom (bp) && (bp->item == 3)) {
+  else if (is_atom (bp) && (bp->item == 3)) {
     cursor cu (sx1 (nr_left+ 1), 0);
     cu->y1= y1; cu->y2= y2;
     if (nr_right == 2) cu->ox= min (cu->ox, sx1 (nr_left+ 2));
@@ -533,17 +533,17 @@ side_box_rep::find_cursor (path bp) {
   }
   else {
     cursor cu= composite_box_rep::find_cursor (bp);
-    if (atom (bp) && (bp->item == 0) && (nr_left != 0)) cu->slope= 0.0;
-    if (atom (bp) && (bp->item == 1) && (nr_right != 0)) cu->slope= 0.0;
+    if (is_atom (bp) && (bp->item == 0) && (nr_left != 0)) cu->slope= 0.0;
+    if (is_atom (bp) && (bp->item == 1) && (nr_right != 0)) cu->slope= 0.0;
     return cu;
   }
 }
 
 selection
 side_box_rep::find_selection (path lbp, path rbp) {
-  if ((lbp == path (2)) && (!atom (rbp)) && (rbp->item == 0))
+  if ((lbp == path (2)) && (!is_atom (rbp)) && (rbp->item == 0))
     lbp= path (0, bs[0]->find_left_box_path ());
-  if ((rbp == path (3)) && (!atom (lbp)) && (lbp->item == 0))
+  if ((rbp == path (3)) && (!is_atom (lbp)) && (lbp->item == 0))
     rbp= path (0, bs[0]->find_right_box_path ());
   return composite_box_rep::find_selection (lbp, rbp);
 }

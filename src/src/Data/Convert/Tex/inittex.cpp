@@ -14,18 +14,31 @@
 #include "rel_hashmap.hpp"
 #include "scheme.hpp"
 
-static int
-latex_arity_func (string s) {
-  return as_int (call ("latex-arity", s));
-}
-
 static string
 latex_type_func (string s) {
   return as_string (call ("latex-type", s));
 }
 
+static int
+latex_arity_func (string s) {
+  return as_int (call ("latex-arity", s));
+}
+
+hashfunc<string,string>    latex_std_type (latex_type_func, "undefined");
+hashfunc<string,int>       latex_std_arity (latex_arity_func, 0);
+
 rel_hashmap<string,string> command_type ("undefined");
 rel_hashmap<string,int>    command_arity (0);
 rel_hashmap<string,string> command_def ("undefined");
-hashfunc<string,int>       latex_arity (latex_arity_func, 0);
-hashfunc<string,string>    latex_type (latex_type_func, "undefined");
+
+string
+latex_type (string s) {
+  if (command_type->contains (s)) return command_type[s];
+  else return latex_std_type [s];
+}
+
+int
+latex_arity (string s) {
+  if (command_arity->contains (s)) return command_arity[s];
+  else return latex_std_arity [s];
+}

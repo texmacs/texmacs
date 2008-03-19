@@ -66,10 +66,10 @@ void
 execute_shell (string s) {
   char *_s= as_charp (s);
   char *argv[4];
-  argv[0] = "sh";
-  argv[1] = "-c";
+  argv[0] = const_cast<char*> ("sh");
+  argv[1] = const_cast<char*> ("-c");
   argv[2] = _s;
-  argv[3] = 0;
+  argv[3] = NULL;
   execve ("/bin/sh", argv, environ);
   delete[] _s;
 }
@@ -94,6 +94,7 @@ pipe_link_rep::start () {
   pipe (pp_err);
   pid= fork ();
   if (pid==0) { // the child
+    setsid();
     close (pp_in  [OUT]);
     close (pp_out [IN ]);
     close (pp_err [IN ]);
@@ -132,10 +133,13 @@ pipe_link_rep::start () {
 #ifdef OS_WIN32
       PIPE_Close(&conn);
 #else
-      recursive_kill (pid);
+      if (-1 != killpg(pid,SIGTERM)) {
+	sleep(2);
+	killpg(pid,SIGKILL);
+      }
 #endif
       wait (NULL);
-      if (r == ERROR) return "Error: the application does not reply";
+      if (r == -1) return "Error: the application does not reply";
       else
 	return "Error: the application did not send its usual startup banner";
     }
@@ -183,7 +187,7 @@ pipe_link_rep::feed (int channel) {
   if (channel == LINK_OUT) r = ::read (out, tempout, 1024);
   else r = ::read (err, tempout, 1024);
 #endif
-  if (r == ERROR) {
+  if (r == -1) {
     cerr << "TeXmacs] read failed for#'" << cmd << "'\n";
     wait (NULL);
   }
@@ -191,7 +195,10 @@ pipe_link_rep::feed (int channel) {
 #ifdef OS_WIN32
     PIPE_Close(&conn);
 #else
-    recursive_kill (pid);
+    if (-1 != killpg(pid,SIGTERM)) {
+      sleep(2);
+      killpg(pid,SIGKILL);
+    }
 #endif
     alive= false;
   }
@@ -200,6 +207,14 @@ pipe_link_rep::feed (int channel) {
     if (channel == LINK_OUT) outbuf << string (tempout, r);
     else errbuf << string (tempout, r);
   }
+}
+
+string&
+pipe_link_rep::watch (int channel) {
+  static string empty_string= "";
+  if (channel == LINK_OUT) return outbuf;
+  else if (channel == LINK_ERR) return errbuf;
+  else return empty_string;
 }
 
 string
@@ -219,10 +234,11 @@ pipe_link_rep::read (int channel) {
 
 void
 pipe_link_rep::listen (int msecs) {
+  if (!alive) return;
   int wait_until= texmacs_time () + msecs;
   while ((outbuf == "") && (errbuf == "")) {
     listen_to_pipes (); // FIXME: should listen more specifically
-    if (texmacs_time () > wait_until) break;
+    if (texmacs_time () - wait_until > 0) break;
   }
 }
 
@@ -232,7 +248,7 @@ pipe_link_rep::interrupt () {
 #ifdef OS_WIN32
   PIPE_Close(&conn);
 #else
-  kill (pid, SIGINT);
+  killpg (pid, SIGINT);
 #endif
 }
 
@@ -242,7 +258,10 @@ pipe_link_rep::stop () {
 #ifdef OS_WIN32
   PIPE_Close(&conn);
 #else
-  recursive_kill (pid);
+  if (-1 != killpg(pid,SIGTERM)) {
+    sleep(2);
+    killpg(pid,SIGKILL);
+  }
   alive= false;
   close (in);
 #endif
@@ -322,7 +341,10 @@ close_all_pipes () {
 #ifdef OS_WIN32
       PIPE_Close (&con->conn);
 #else
-      recursive_kill (con->pid);
+      if (-1 != killpg(con->pid,SIGTERM)) {
+	sleep(2);
+	killpg(con->pid,SIGKILL);
+      }
 #endif
       con->alive= false;
     }

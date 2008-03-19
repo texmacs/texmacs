@@ -102,9 +102,7 @@ edit_interface_rep::compute_text_footer (tree st) {
   language lan= get_env_language ();
   int end  = last_item (tp);
   int start= end;
-  if (lan->enc->token_backward (st->label, start))
-    fatal_error ("bad cursor position in string",
-		 "edit_interface_rep::set_footer");
+  tm_char_backwards (st->label, start);
   r= st->label (start, end);
   if (r == "") r= "start";
   if (r == " ") r= "space";
@@ -254,6 +252,8 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case COMPOUND:
     if (is_atomic (st[0])) return up * as_string (st[0]) * "#";
     else return up * "compound#";
+  case HLINK:
+    return up * "hyperlink(" * as_string (st[1]) * ")#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
@@ -261,8 +261,6 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "value(" * as_string (l/2+1) * ")#";
   case SPECIFIC:
     return up * "texmacs#";
-  case HLINK:
-    return up * "hyperlink(" * as_string (st[1]) * ")#";
   default:
     return up * drd->get_name (L(st)) * "#";
   }
@@ -308,7 +306,7 @@ edit_interface_rep::set_hybrid_footer (tree st) {
       // macro argument
       string name= st->label;
       path mp= search_upwards (MACRO);
-      if (!nil (mp)) {
+      if (!is_nil (mp)) {
 	tree mt= subtree (et, mp);
 	int i, n= N(mt)-1;
 	for (i=0; i<n; i++)
@@ -371,6 +369,7 @@ edit_interface_rep::set_footer () {
   )
 
   if ((N(message_l) == 0) && (N(message_r) == 0)) {
+    last_l= ""; last_r= "";
     tree st= subtree (et, path_up (tp));
     if (set_latex_footer (st)) return;
     if (set_hybrid_footer (st)) return;
@@ -385,61 +384,21 @@ edit_interface_rep::set_footer () {
 }
 
 /******************************************************************************
-* Interactive commands
-******************************************************************************/
-
-class interactive_command_rep: public command_rep {
-  edit_interface_rep* ed;
-  scheme_tree   p;    // the interactive arguments
-  object        q;    // the function which is applied to the arguments
-  int           i;    // counter where we are
-  array<string> s;    // feedback from interaction with user
-
-public:
-  interactive_command_rep (
-    edit_interface_rep* Ed, scheme_tree P, object Q):
-      ed (Ed), p (P), q (Q), i (0), s (N(p)) {}
-  void apply ();
-  ostream& print (ostream& out) {
-    return out << "interactive command " << p; }
-};
-
-void
-interactive_command_rep::apply () {
-  if ((i>0) && (s[i-1] == "cancel")) return;
-  if (i == arity (p)) {
-    array<object> params(N(p));
-    for (i=0; i<N(p); i++) params[i]= object(unquote(s[i]));
-    string ret= as_string (call (q, params));
-    if ((ret != "") && (ret != "#<unspecified>"))
-      ed->set_message (ed->message_l, "interactive command");
-  }
-  else {
-    if ((!is_atomic (p[i])) || (!is_quoted (p[i]->label))) return;
-    s[i]= string ("");
-    tm_view temp_vw= ed->sv->get_view (false);
-    ed->focus_on_this_editor ();
-    ed->sv->interactive (unquote (p[i]->label), s[i], this);
-    ed->sv->set_view (temp_vw);
-    i++;
-  }
-}
-
-/******************************************************************************
 * Exported routines
 ******************************************************************************/
 
 void
-edit_interface_rep::set_message (string l, string r) {
+edit_interface_rep::set_message (string l, string r, bool temp) {
   message_l= l;
   message_r= r;
+  if (!temp) {
+    last_l= l;
+    last_r= r;
+  }
   notify_change (THE_DECORATIONS);
 }
 
 void
-edit_interface_rep::interactive (scheme_tree p, object q) {
-  if (!is_tuple (p))
-    fatal_error ("tuple expected", "edit_interface_rep::interactive");
-  command interactive_cmd= new interactive_command_rep (this, p, q);
-  interactive_cmd ();
+edit_interface_rep::recall_message () {
+  set_message (last_l, last_r);
 }

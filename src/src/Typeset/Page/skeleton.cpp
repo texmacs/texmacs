@@ -71,13 +71,13 @@ operator << (ostream& out, insertion ins) {
 
 bool
 operator == (pagelet pg1, pagelet pg2) {
-  if (nil (pg1) || nil (pg2)) return nil (pg1) == nil (pg2);
+  if (is_nil (pg1) || is_nil (pg2)) return is_nil (pg1) == is_nil (pg2);
   return (pg1->ins == pg2->ins);
 }
 
 bool
 operator != (pagelet pg1, pagelet pg2) {
-  if (nil (pg1) || nil (pg2)) return nil (pg1) != nil (pg2);
+  if (is_nil (pg1) || is_nil (pg2)) return is_nil (pg1) != is_nil (pg2);
   return (pg1->ins != pg2->ins);
 }
 

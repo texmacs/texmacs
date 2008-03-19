@@ -44,6 +44,7 @@
 
 (lazy-define (convert latex texout) serialize-latex)
 (lazy-define (convert latex tmtex) texmacs->latex)
+(lazy-define (convert latex tmtex-elsevier) init-elsevier)
 
 (converter latex-document latex-tree
   (:function parse-latex-document))
@@ -62,5 +63,9 @@
 
 (converter texmacs-stree latex-stree
   (:function-with-options texmacs->latex)
-  (:option "texmacs->latex:faithful-style" "off")
-  (:option "texmacs->latex:indirect-bib" "off"))
+  (:option "texmacs->latex:replace-style" "on")
+  (:option "texmacs->latex:expand-macros" "on")
+  (:option "texmacs->latex:expand-user-macros" "off")
+  (:option "texmacs->latex:indirect-bib" "off")
+  (:option "texmacs->latex:use-catcodes" "off")
+  (:option "texmacs->latex:use-macros" "on"))

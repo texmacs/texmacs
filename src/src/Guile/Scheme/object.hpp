@@ -33,8 +33,11 @@ struct object {
   object ();
   object (bool b);
   object (int i);
+  object (const char* s);
   object (string s);
   object (tree t);
+  object (list<string> l);
+  object (list<tree> l);
   object (path p);
   object (url u);
 };
@@ -45,6 +48,10 @@ bool operator == (object obj1, object obj2);
 bool operator != (object obj1, object obj2);
 
 object null_object ();
+object list_object (object obj1);
+object list_object (object obj1, object obj2);
+object list_object (object obj1, object obj2, object obj3);
+object symbol_object (string s);
 object cons (object obj1, object obj2);
 object car (object obj);
 object cdr (object obj);
@@ -60,6 +67,7 @@ bool is_list (object obj);
 bool is_bool (object obj);
 bool is_int (object obj);
 bool is_string (object obj);
+bool is_symbol (object obj);
 bool is_tree (object obj);
 bool is_path (object obj);
 bool is_url (object obj);
@@ -67,16 +75,17 @@ bool is_url (object obj);
 bool as_bool (object obj);
 int as_int (object obj);
 string as_string (object obj);
+string as_symbol (object obj);
 tree as_tree (object obj);
 scheme_tree as_scheme_tree (object obj);
+list<string> as_list_string (object obj);
+list<tree> as_list_tree (object obj);
 path as_path (object obj);
 url as_url (object obj);
 command as_command (object obj);
-command as_command (string s);
 #ifdef WIDGET_H // FIXME: dirty hack
-#include "Widget/make_widget.hpp"
 widget as_widget (object obj);
-make_widget as_make_widget (object obj);
+promise<widget> as_promise_widget (object obj);
 #endif
 
 object tree_to_stree (tree t);
@@ -84,19 +93,26 @@ tree   stree_to_tree (object obj);
 tree   content_to_tree (object obj);
 object string_to_object (string s);
 string object_to_string (object obj);
+object scheme_cmd (const char* s);
+object scheme_cmd (string s);
+object scheme_cmd (object cmd);
 
-object eval (char* expr);
+object eval (const char* expr);
 object eval (string expr);
 object eval (object expr);
 object eval_secure (string expr);
 object eval_file (string name);
+bool   exec_file (url u);
 void   eval_delayed (string expr);
+void   eval_delayed (object expr);
+void   exec_delayed (object cmd);
+void   exec_pending_commands ();
 
-object call (char* fun);
-object call (char* fun, object a1);
-object call (char* fun, object a1, object a2);
-object call (char* fun, object a1, object a2, object a3);
-object call (char* fun, array<object> a);
+object call (const char* fun);
+object call (const char* fun, object a1);
+object call (const char* fun, object a1, object a2);
+object call (const char* fun, object a1, object a2, object a3);
+object call (const char* fun, array<object> a);
 object call (string fun);
 object call (string fun, object a1);
 object call (string fun, object a1, object a2);

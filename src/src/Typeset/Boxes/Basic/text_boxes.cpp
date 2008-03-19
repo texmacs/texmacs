@@ -28,7 +28,7 @@ struct text_box_rep: public box_rep {
   text_box_rep (path ip, int pos, string s, font fn, color col);
   operator tree () { return str; }
 
-  void      display (ps_device dev);
+  void      display (renderer ren);
   double    left_slope ();
   double    right_slope ();
   SI        left_correction ();
@@ -76,9 +76,9 @@ text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, color col2):
 }
 
 void
-text_box_rep::display (ps_device dev) {
-  dev->set_color (col);
-  fn->draw (dev, str, 0, 0);
+text_box_rep::display (renderer ren) {
+  ren->set_color (col);
+  fn->draw (ren, str, 0, 0);
 }
 
 double text_box_rep::left_slope () {
@@ -180,8 +180,17 @@ text_box_rep::find_right_box_path () {
 
 path
 text_box_rep::find_box_path (path p, bool& found) {
-  found= (!nil(p)) && is_accessible (ip);
-  if (found) return path (last_item (p) - pos);
+  // cout << "Find box path " << box (this) << ", " << p
+  //      << "; " << reverse (ip)
+  //      << ", " << reverse (find_lip ())
+  //      << " -- " << reverse (find_rip ()) << "\n";
+  found= (!is_nil(p)) && is_accessible (ip);
+  if (found) {
+    int i= last_item (p) - pos;
+    if (i < 0) return path (0);
+    else if (i > N(str)) return N(str);
+    else return path (i);
+  }
   else return path (0);
 }
 
@@ -195,13 +204,13 @@ cursor
 text_box_rep::find_cursor (path bp) {
   metric ex;
   cursor cu (0, 0);
-  fn->get_extents (str (0, bp->item), ex);
+  int l= min (bp->item, N(str));
+  fn->get_extents (str (0, l), ex);
   cu->ox= ex->x2;
-  if (bp->item != 0) {
-    int i= bp->item-1;
-    if (str[i] == '>')
-      while ((i>0) && (str[i]!='<')) i--;
-    fn->get_extents (str (i, bp->item), ex);
+  if (l != 0) {
+    int k= l;
+    tm_char_backwards (str, k);
+    fn->get_extents (str (k, l), ex);
   }
   cu->y1= min (ex->y1, 0);
   cu->y2= max (ex->y2, fn->yx);

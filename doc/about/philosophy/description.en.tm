@@ -1,64 +1,46 @@
-<TeXmacs|1.0.2.3>
+<TeXmacs|1.0.5.9>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|A short description of GNU <TeXmacs>>
+  <tmdoc-title|A short description of GNU <TeXmacs>>
 
-  GNU <TeXmacs> is a free scientific text editor, which was both inspired by
-  <TeX> and GNU <name|Emacs>. The editor allows you to write structured
-  documents via a wysiwyg (what-you-see-is-what-you-get) and user friendly
-  interface. New styles may be created by the user. The program implements
-  high-quality typesetting algorithms and <TeX> fonts, which help you to
-  produce professionally looking documents.
+  GNU <TeXmacs> is a free wysiwyw (what you see is what you want) editing
+  platform with special features for scientists. The software aims to provide
+  a unified and user friendly framework for editing structured documents with
+  different types of content (text, graphics, mathematics, interactive
+  content, <abbr|etc.>). The rendering engine uses high-quality typesetting
+  algorithms so as to produce professionally looking documents, which can
+  either be printed out or presented from a laptop.
 
-  The high typesetting quality still goes through for automatically generated
-  formulas, which makes <TeXmacs> suitable as an interface for computer
-  algebra systems. <TeXmacs> also supports the <name|Guile>/<name|Scheme>
-  extension language, so that you may customize the interface and write your
-  own extensions to the editor.
+  The software includes a text editor with support for mathematical formulas,
+  a small technical picture editor and a tool for making presentations from a
+  laptop. Moreover, <TeXmacs> can be used as an interface for many external
+  systems for computer algebra, numerical analysis, statistics,<nbsp>etc. New
+  presentation styles can be written by the user and new features can be
+  added to the editor using the <name|Scheme> extension language. A native
+  spreadsheet and tools for collaborative authoring are planned for later.
 
-  Converters exist for <TeX>/<LaTeX> and they are under development for
-  <name|Html>/<name|MathML>/<name|Xml>. In the future, <TeXmacs> is planned
-  to evolve towards a complete scientific office suite, with spreadsheet
-  capacities, a technical drawing editor and a presentation mode.
+  <TeXmacs> runs on all major <name|Unix> platforms and <name|Windows>.
+  Documents can be saved in <TeXmacs>, <name|Xml> or <name|Scheme> format and
+  printed as <name|Postscript> or <name|Pdf> files. Converters exist for
+  <TeX>/<LaTeX> and <name|Html>/<name|Mathml>.
 
   GNU <TeXmacs> is hosted by the <hlink|Centre de Ressources Informatiques de
   Haute Savoie|http://www.cri74.org>, Archamps, France.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2005|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-  </collection>
-</references>

@@ -28,13 +28,15 @@ struct stack_box_rep: public composite_box_rep {
 
   void      position (array<SI> spc);
   void      finalize ();
-  void      display (ps_device dev);
+  void      display (renderer ren);
   void      clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
   bool      access_allowed ();
 
   int       find_child (SI x, SI y, SI delta, bool force);
   path      find_tree_path (path bp);
+  cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 /******************************************************************************
@@ -44,9 +46,6 @@ struct stack_box_rep: public composite_box_rep {
 void
 stack_box_rep::position (array<SI> spc) {
   int i;
-  if (N(bs)==0)
-    fatal_error ("stack of zero boxes", "stack_box_rep::position");
-  // y1= bs[0]->y2; y2= 0;
   y1 = y2 = 0;
   for (i=0; i<N(bs); i++) {
     sx(i)= 0;
@@ -59,8 +58,9 @@ stack_box_rep::position (array<SI> spc) {
 stack_box_rep::stack_box_rep (path ip, array<box> bs2, array<SI> spc):
   composite_box_rep (ip)
 {
-  bs = bs2;
-  position (spc);
+  bs= bs2;
+  if (N(bs) != 0)
+    position (spc);
   finalize ();
 }
 
@@ -73,8 +73,8 @@ stack_box_rep::finalize () {
 }
 
 void
-stack_box_rep::display (ps_device dev) {
-  dev->apply_shadow (x1, y1, x2, y2);
+stack_box_rep::display (renderer ren) {
+  ren->apply_shadow (x1, y1, x2, y2);
 }
 
 bool
@@ -86,9 +86,10 @@ void
 stack_box_rep::clear_incomplete (
   rectangles& rs, SI pixel, int which, int i1, int i2)
 {
-  if ((i1 <= i2) && (!nil (rs))) {
-    // cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )\n";
-    // cout << "  in : " << rs << "\n";
+  if (N(bs) == 0) return;
+  if ((i1 <= i2) && (!is_nil (rs))) {
+    //cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )" << LF;
+    //cout << "  in: " << (rs/256) << LF;
     
     int i, n= N(bs);
     rectangle bound= least_upper_bound (rs);
@@ -106,14 +107,14 @@ stack_box_rep::clear_incomplete (
     SI Min_y= min_y, Max_y= max_y;
     if (i2+1<n) Min_y= sy4 (i2+1) + 2*pixel;
     if (i1  >0) Max_y= sy3 (i1-1) - 2*pixel;
+    // cout << "  ys : " << Min_y/256 << ", " << min_y/256 << ", " << max_y/256 << ", " << Max_y/256 << "\n";
     */
-    // cout << "  ys : " << Min_y << ", " << min_y << ", " << max_y << ", " << Max_y << "\n";
 
     SI min_y= sy4 (i2) + 2*pixel, max_y= sy3 (i1) - 2*pixel;
     if ((min_y < max_y) && (bound->y1 < min_y) && (max_y < bound->y2)) {
       rectangles new_rs;
       rectangles count= rs;
-      while (!nil (count)) {
+      while (!is_nil (count)) {
 	rectangle& r= count->item;
 	if ((r->y1 <= min_y) || (r->y2 >= max_y))
 	  new_rs= rectangles (r, new_rs);
@@ -123,46 +124,7 @@ stack_box_rep::clear_incomplete (
       rs= reverse (new_rs);
     }
 
-    // cout << "  out: " << rs << "\n\n";
-
-    /*
-    SI min_y= sy4(i2), max_y= sy3(i1);
-    if ((i1 < i2) && (min_y < max_y) &&
-	(bound->y1 < min_y) && (max_y < bound->y2))
-      {
-	rectangles count= rs;
-	SI new_min_y= bound->y2, new_max_y= bound->y1;
-	while (!nil (count)) {
-	  rectangle& r= count->item;
-	  if (r->y1 > min_y) new_min_y= min (new_min_y, r->y1);
-	  if (r->y2 < max_y) new_max_y= max (new_max_y, r->y2);
-	  count= count->next;
-	}
-	if ((new_min_y == bound->y2) || (new_max_y == bound->y1)) return;
-	if (new_min_y > new_max_y) {
-	  if ((i1+1) < i2) return;
-	  SI mid_delta= (new_min_y- new_max_y) >> 1;
-	  abs_round (mid_delta);
-	  new_min_y= new_max_y= new_max_y+ mid_delta;
-	  if ((new_min_y < min_y) || (new_max_y > max_y)) return;
-	}
-	min_y= new_min_y;
-	max_y= new_max_y;
-
-	rectangles new_rs (rectangle (left, min_y, right, max_y));
-	SI semi_left= right, semi_right= left;
-	count= rs;
-	while (!nil (count)) {
-	  rectangle& r= count->item;
-	  if (r->y1 < min_y) semi_right= max (semi_right, r->x2);
-	  if (r->y2 > max_y) semi_left = min (semi_left , r->x1);
-	  count= count->next;
-	}
-	new_rs << rectangle (left, bound->y1, semi_right, min_y);
-	new_rs << rectangle (semi_left, max_y, right, bound->y2);
-	rs= new_rs;
-      }
-    */
+    // cout << "  out: " << (rs/256) << "\n\n";
   }
 }
 
@@ -173,7 +135,8 @@ stack_box_rep::clear_incomplete (
 int
 stack_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   int i, h, n=N(bs);
-  if (n<4) i=0;
+  if (n==0) return -1;
+  else if (n<4) i=0;
   else {
     i= h= n>>1;
     while (h != 0) {
@@ -248,7 +211,7 @@ stack_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 path
 stack_box_rep::find_tree_path (path bp) {
-  if (atom (bp)) {
+  if (is_atom (bp)) {
     if (bp->item == 0) {
       if (is_accessible (lip)) return reverse (lip);
       else return reverse (descend_decode (lip, 0));
@@ -261,13 +224,28 @@ stack_box_rep::find_tree_path (path bp) {
   else return composite_box_rep::find_tree_path (bp);
 }
 
+cursor
+stack_box_rep::find_cursor (path bp) {
+  cursor cu= composite_box_rep::find_cursor (bp);
+  int i= bp->item, j1, j2, n= N(bs);
+  if (is_atom (bp)) i= (bp == 0? 0: N(bs)-1);
+  if (bs[i]->h() != 0) return cu;
+  for (j1= i-1; j1>=0; j1--)
+    if (bs[j1]->h () != 0) break;
+  for (j2= i+1; j2<n; j2++)
+    if (bs[j2]->h () != 0) break;
+  if (j2 < n) cu->oy += sy (j2) - sy (i);
+  else if (j1 >= 0) cu->oy += sy (j1) - sy (i);
+  return cu;
+}
+
 /******************************************************************************
 * Selections
 ******************************************************************************/
 
 static rectangles
 descend (rectangles l, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, min (r->y1, y), r->x2, r->y2),
 		     descend (l->next, y));
@@ -275,7 +253,7 @@ descend (rectangles l, SI y) {
 
 static rectangles
 ascend (rectangles l, SI y) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, r->y1, r->x2, max (r->y2, y)),
 		     ascend (l->next, y));
@@ -283,7 +261,7 @@ ascend (rectangles l, SI y) {
 
 static rectangles
 extend_left (rectangles l, SI x) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (min (r->x1, x), r->y1, r->x2, r->y2),
 		     extend_left (l->next, x));
@@ -291,24 +269,40 @@ extend_left (rectangles l, SI x) {
 
 static rectangles
 extend_right (rectangles l, SI x) {
-  if (nil (l)) return l;
+  if (is_nil (l)) return l;
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, r->y1, max (r->x2, x), r->y2),
 		     extend_right (l->next, x));
 }
 
+static rectangles
+truncate_top (rectangles l, SI y) {
+  if (is_nil (l)) return l;
+  rectangle& r= l->item;
+  return rectangles (rectangle (r->x1, r->y1, r->x2, min (r->y2, y)),
+		     truncate_top (l->next, y));
+}
+
+static rectangles
+truncate_bottom (rectangles l, SI y) {
+  if (is_nil (l)) return l;
+  rectangle& r= l->item;
+  return rectangles (rectangle (r->x1, max (r->y1, y), r->x2, r->y2),
+		     truncate_bottom (l->next, y));
+}
+
 selection
 stack_box_rep::find_selection (path lbp, path rbp) {
   if ((N(bs) == 0) ||
-      ((!atom (lbp)) && (!atom (rbp)) && (lbp->item == rbp->item)))
+      ((!is_atom (lbp)) && (!is_atom (rbp)) && (lbp->item == rbp->item)))
     return composite_box_rep::find_selection (lbp, rbp);
 
-  int  i1  = atom (lbp)? 0      : lbp->item;
-  int  i2  = atom (rbp)? N(bs)-1: rbp->item;
-  path lbp1= atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
+  int  i1  = is_atom (lbp)? 0      : lbp->item;
+  int  i2  = is_atom (rbp)? N(bs)-1: rbp->item;
+  path lbp1= is_atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
   path rbp1= path (i1, bs[i1]->find_right_box_path ());
   path lbp2= path (i2, bs[i2]->find_left_box_path ());
-  path rbp2= atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
+  path rbp2= is_atom (rbp)? path (i2, bs[i2]->find_right_box_path ()): rbp;
 
   if (i1 == i2) {
     path lp= find_tree_path (lbp);
@@ -326,7 +320,7 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     if (i2 == i1+1) {
       rs << extend_right (sel1->rs, x2);
       rs << extend_left  (sel2->rs, x1);
-      if ((!nil (sel1->rs)) && (!nil (sel2->rs))) {
+      if ((!is_nil (sel1->rs)) && (!is_nil (sel2->rs))) {
 	rectangle r1= least_upper_bound (sel1->rs);
 	rectangle r2= least_upper_bound (sel2->rs);
 	if ((r1->x1 < r2->x2) && (r2->y2 < r1->y1))
@@ -338,9 +332,28 @@ stack_box_rep::find_selection (path lbp, path rbp) {
       rs << extend_left  (ascend  (sel2->rs, midy1), x1);
       if (midy1 < midy2) rs << rectangle (x1, midy1, x2, midy2);
     }
+
+    /* This hack produces nicer selections in case of a hidden top/bottom */
+    int j1= i1, j2= i2;
+    while (j1 < i2 && bs[j1]->h() == 0) j1++;
+    while (j2 > j1 && bs[j2]->h() == 0) j2--;
+    if (j1 != i1) rs= truncate_top    (rs, sy2 (j1));
+    if (j2 != i2) rs= truncate_bottom (rs, sy1 (j2));
+    /* End hack */
+
     return selection (rs, lp, rp);
   }
   else return box_rep::find_selection (lbp, rbp);
+}
+
+gr_selections
+stack_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=0; i<n; i++)
+    res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
+				    x2- sx(i), y2- sy(i));
+  return res;
 }
 
 /******************************************************************************

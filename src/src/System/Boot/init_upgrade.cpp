@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "path.hpp"
 #include "sys_utils.hpp"
+#include "data_cache.hpp"
 
 /******************************************************************************
 * Old style settings files
@@ -94,8 +95,16 @@ init_upgrade_doc (string install_version) {
     append (from_dir * "changes-8.en.ptm", to);
   if (version_inf_eq (install_version, "1.0.3.4"))
     append (from_dir * "changes-9.en.ptm", to);
-  if (version_inf_eq (install_version, "1.0.4")) {
+  if (version_inf_eq (install_version, "1.0.4"))
     append (from_dir * "changes-10.en.ptm", to);
+  if (version_inf_eq (install_version, "1.0.5.9"))
+    append (from_dir * "changes-11.en.ptm", to);
+  if (version_inf_eq (install_version, "1.0.5.9"))
+    append (from_dir * "changes-12.en.ptm", to);
+  if (version_inf_eq (install_version, "1.0.5.9"))
+    append (from_dir * "changes-13.en.ptm", to);
+  if (version_inf_eq (install_version, "1.0.6.2")) {
+    append (from_dir * "changes-14.en.ptm", to);
     append (from_dir * "changes-post.en.ptm", to);
   }
   else remove (to);
@@ -124,6 +133,11 @@ init_upgrade () {
   init_upgrade_scheme ();
   init_upgrade_doc (install_version);
 
-  remove ("$TEXMACS_HOME_PATH/system/setup.scm");
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+  remove (url ("$TEXMACS_HOME_PATH/system/setup.scm"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("__*"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/doc_cache"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/file_cache"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
+  cache_refresh ();
 }

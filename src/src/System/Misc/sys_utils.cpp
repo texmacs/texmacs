@@ -25,6 +25,7 @@ int script_status = 1;
 
 int
 system (string s) {
+  // cout << "System: " << s << "\n";
   char* _s= as_charp (s);
 #ifdef OS_WIN32
   int r= _system (_s);
@@ -38,7 +39,7 @@ system (string s) {
 string
 eval_system (string s) {
   url temp= url_temp ();
-  string temp_s= concretize (temp);
+  string temp_s= escape_sh (concretize (temp));
 #ifdef OS_WIN32
   system (s * " > \"" * temp_s * "\"");
 #else
@@ -46,7 +47,11 @@ eval_system (string s) {
 #endif
   string result;
   bool flag= load_string (temp, result, false);
+#ifdef OS_WIN32
   system ("rm \"" * temp_s * "\"");
+#else
+  system ("rm " * temp_s);
+#endif
   if (flag) {
 #ifdef OS_WIN32
     cerr << "TeXmacs] failed: " << s * " > " * temp_s << "\n";
@@ -88,72 +93,4 @@ set_env (string var, string with) {
   (void) putenv (_varw);
 #endif
   // do not delete _var and _with !!!
-}
-
-static tree
-analyze (string s, char c) {
-  tree t (TUPLE);
-  int i=0, last= 0, n= N(s);
-  while ((i<n) && (s[i]==c)) i++;
-  for (; i<n; i++)
-    if (s[i] == c) {
-      t << s (last, i);
-      while ((i<n) && (s[i]==c)) i++;
-      last= i; i--;
-    }
-  if ((n>0) && (s[n-1]!=c))
-    t << s (last, n);
-  return t;
-}
-
-static int
-search_pos (tree t, string what) {
-  int i, n= N(t);
-  for (i=0; i<n; i++)
-    if (t[i] == what)
-      return i;
-  return -1;
-}
-
-static bool
-check_pos (tree t, int pos, string what) {
-  int i, n= N(t);
-  for (i=0; i<n; i++)
-    if ((N(t[i])>pos) && (t[i][pos] == what))
-      return true;
-  return false;
-}
-
-void
-recursive_kill (int pid) {
-  string s= eval_system ("ps -l");
-  int i, n= N(s);
-  for (i=0; i<n; i++)
-    if (s[i] == '\t')
-      s[i]= ' ';
-  tree t= analyze (s, '\n');
-  n= N(t);
-  for (i=0; i<n; i++)
-    t[i]= analyze (t[i]->label, ' ');
-
-  if (n>1) {
-    int pid_pos = search_pos (t[0], "PID");
-    int ppid_pos= search_pos (t[0], "PPID");
-    if (pid_pos  == -1) pid_pos = search_pos (t[0], "pid");
-    if (ppid_pos == -1) ppid_pos= search_pos (t[0], "ppid");
-    if (pid_pos  == -1) pid_pos = search_pos (t[0], "Pid");
-    if (ppid_pos == -1) ppid_pos= search_pos (t[0], "Ppid");
-    if (ppid_pos == -1) ppid_pos= search_pos (t[0], "PPid");
-    if (pid_pos  == -1) pid_pos = 3;
-    if (ppid_pos == -1) ppid_pos= 4;
-    if (check_pos (t, pid_pos, as_string (pid)) &&
-	check_pos (t, ppid_pos, as_string (pid)))
-      {
-	for (i=0; i<n; i++)
-	  if (t[i][ppid_pos] == as_string (pid))
-	    recursive_kill (as_int (t[i][pid_pos]));
-      }
-  }
-  // cout << "Killing " << pid << "\n";
-  system ("kill -9 " * as_string (pid) * " 2> /dev/null");
 }

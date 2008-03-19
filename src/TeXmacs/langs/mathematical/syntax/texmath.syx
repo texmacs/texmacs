@@ -28,9 +28,14 @@ Class arithmetic-assign
 	Penalty=	3
 	Spacing=	Default, Default
 
+Class arithmetic-flux
+	Type=		Associative Infix
+	Precedence=	3
+	Spacing=	Default, Default
+
 Class logic-meta
 	Type=		Infix
-	Precedence=	5
+	Precedence=	7
 	Spacing=	Default, Default
 
 Class logic-quantifier
@@ -50,7 +55,13 @@ Class logic-implication-lim
 	Spacing=	Default, Default
 	Limits=		Always
 
-Class logic-infix
+Class logic-disjunction
+	Type=		Associative Infix
+	Precedence=	30
+	Penalty=	10
+	Spacing=	Default, Default
+
+Class logic-conjunction
 	Type=		Associative Infix
 	Precedence=	30
 	Penalty=	10
@@ -131,9 +142,9 @@ Class arithmetic-plus
 	Penalty=	30
 	Spacing=	Default, Default
 
-Class arithmetic-unary-minus
+Class arithmetic-prefix
 	Type=		Prefix
-	Precedence=	100
+	Precedence=	115
 	Penalty=	Invalid
 	Spacing=	None, None
 
@@ -220,6 +231,9 @@ Class symbol
 Members arithmetic-assign
 	assign plusassign minusassign astassign overassign
 
+Members arithmetic-flux
+	lflux gflux
+
 Members logic-meta
 	models vdash dashv vDash Vdash Vvdash VDash
 	longvdash longdashv longvDash longVdash longVvdash longVDash
@@ -237,20 +251,22 @@ Members logic-implication-lim
 	Leftarrowlim Rightarrowlim Leftrightarrowlim
 	Longleftarrowlim Longrightarrowlim Longleftrightarrowlim
 
-Members logic-infix
-	vee wedge
-	curlyvee curlywedge
+Members logic-disjunction
+	vee curlyvee
+
+Members logic-conjunction
+	wedge curlywedge
 
 Members logic-prefix
 	neg
 
 Members logic-relation
-	= ne neq less gtr le leq prec preceq
+	= ne neq longequal less gtr le leq prec preceq
 	ll lleq subset subseteq sqsubset sqsubseteq in
 	ge geq succ succeq gg ggeq supset supseteq
 	sqsupset sqsupseteq ni equiv nequiv
 	sim simeq asymp approx cong subsetsim supsetsim
-	doteq propto perp
+	doteq propto varpropto perp
 	bowtie Join smile frown signchange
 	mid parallel shortmid shortparallel
 	nmid nparallel nshortmid nshortparallel
@@ -285,7 +301,6 @@ Members logic-relation
 	trianglelefteqslant trianglerighteqslant
 	blacktriangleleft blacktriangleright
 	ntriangleleft ntriangleright
-	ntriangleqleft ntriangleqright
 	ntrianglelefteq ntrianglerighteq
 	ntrianglelefteqslant ntrianglerighteqslant
 
@@ -300,7 +315,7 @@ Members logic-relation-lim
 	equallim longequallim
 
 Members logic-arrow
-	to into from
+	to into from transtype
 	leftarrow rightarrow leftrightarrow
 	mapsto mapsfrom hookleftarrow hookrightarrow
 	longleftarrow longrightarrow longleftrightarrow
@@ -360,9 +375,6 @@ Members arithmetic-plus
 	+ amalg oplus
 	boxplus dotplus dotamalg dotoplus
 
-Members arithmetic-unary-minus
-	um upl upm ump
-
 Members arithmetic-minus
 	- pm mp ominus
 	boxminus
@@ -370,7 +382,7 @@ Members arithmetic-minus
 Members arithmetic-times
 	cdot times otimes circ
 	ast star boxdot boxtimes dottimes dototimes
-	ltimes rtimes join
+	ltimes rtimes atimes btimes join
 
 Members arithmetic-invisible-times
 	*
@@ -380,6 +392,10 @@ Members arithmetic-over
 
 Members arithmetic-condensed-over
 	/
+
+Members arithmetic-prefix
+	um upl upm ump
+	card
 
 Members arithmetic-power
 	^
@@ -402,7 +418,7 @@ Members group-ponctuation
 	, ; :
 
 Members group-bar
-	|
+	| ||
 	mid-| mid-||
 
 Members group-close
@@ -416,6 +432,7 @@ Members group-close
 Members group-suspension
 	ldots cdots udots
 	vdots ddots mdots
+	colons
 
 Members group-suspension-lim
 	cdotslim
@@ -466,6 +483,6 @@ Members symbol
 	smallfrown smallsmile sphericalangle
 	square therefore thorn triangledown
 	triangleq ulcorner urcorner varkappa
-	varnothing varpropto vartriangle veebar yen
+	varnothing vartriangle veebar yen
 
 	comma

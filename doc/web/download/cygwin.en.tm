@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.6.6>
 
 <style|tmweb>
 
@@ -19,7 +19,7 @@
     (from the abovementioned package) for the latest information.\ 
   </enumerate-numeric>
 
-  <value|hrule>
+  <hrule>
 
   You may use <TeXmacs> on a Windows platform via <name|Cygwin>.
   <name|Cygwin> is a Unix distribution which can be used directly under
@@ -89,14 +89,16 @@
 
   <section|Download the <TeXmacs> distribution>
 
-  Download the <hlink|latest version (2.5
+  Download the <hlink|latest version (3.8
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
-  of the source code, or the <hlink|latest stable version (2.4
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<TeXmacs-version-release|stgz>>>.
+  of the source code, or the <hlink|latest stable version (3.8
+  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-src.tar.gz>>>.
   You may for instance save the distribution in
   <with|font-family|tt|C:\\tmp>. The name of the file with the distribution
   is of the form <with|font-family|tt|TeXmacs-[source version]-src.tar.gz>,
   where <with|font-family|tt|[source version]> is the corresponding version.
+  If you do not have ftp access, then you might wish to
+  <hlink|download|http://www.texmacs.org/Download/ftp/targz> from the web.
 
   <section|Compile <TeXmacs>>
 
@@ -127,37 +129,6 @@
   <section|Finishing touches>
 
   <\itemize>
-    <item>Unless you have a a US keyboard you will nead a keyboard mapping
-    file for your keyboard layout. I found the one I use (swedish/finnish) on
-    the page
-
-    <\verbatim>
-      \ \ \ \ <hlink|<with|font-family|tt|http://www-user.tu-chemnitz.de/~goal/>|http://www-user.tu-chemnitz.de/~goal/>
-    </verbatim>
-
-    The file is a text-file that should be named
-    <with|font-family|tt|.xmodmap>, rename it to that if it's called
-    something else (This won't work in Windows, use the <name|Cygwin> command
-    <with|font-family|tt|mv> instead, like
-
-    <\verbatim>
-      \ \ \ \ mv <em|old_name> .xmodmap
-    </verbatim>
-
-    The file should be placed in your <name|Cygwin> home directory (for me
-    <with|font-family|tt|/usr/home>, i.e.
-    <with|font-family|tt|C:\\cygwin\\usr\\home>).
-
-    A French user downloaded
-
-    <\verbatim>
-      \ \ \ \ <hlink|<with|font-family|tt|http://www-user.tu-chemnitz.de/~goal/xfree/XF86Config-4.bz2>|http://www-user.tu-chemnitz.de/~goal/xfree/XF86Config-4.bz2>
-    </verbatim>
-
-    and he had to set the <with|font-family|tt|XbmModel> to
-    <with|font-family|tt|pc105> and the <with|font-family|tt|XkbLayout> to
-    <with|font-family|tt|fr>.
-
     <item>If you want <TeXmacs> to correctly display images of most of the
     standard formats, then you should install the
     <with|font-family|tt|netpbm> library:

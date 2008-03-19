@@ -69,6 +69,9 @@ init_std_drd () {
   init (SURROUND, "surround", fixed (3) -> accessible (0));
   init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
   init (GROUP, "group", fixed (1) -> accessible (0));
+  init (HIDDEN, "hidden", fixed (1) -> no_border () -> hidden (0));
+  init (FREEZE, "freeze", fixed (1) -> no_border ());
+  init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> no_border ());
   init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
 	options (1, 2) -> name ("vertical space before"));
@@ -78,6 +81,7 @@ init_std_drd () {
   init (HTAB, "htab", options (1, 1) -> name ("tab"));
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
+  init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DATOMS, "datoms",
@@ -167,6 +171,7 @@ init_std_drd () {
   init (MAP_ARGS, "map-args", options (3, 2) -> name ("map arguments"));
   init (EVAL_ARGS, "eval-args", fixed (1) -> name ("evaluate arguments"));
   init (MARK, "mark", fixed (2));
+  init (EXPAND_AS, "expand-as", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1));
   init (QUASI, "quasi", fixed (1));
@@ -182,6 +187,7 @@ init_std_drd () {
   init (EXTERN, "extern", repeat (1, 1)); // func and args
   init (INCLUDE, "include", fixed (1));
   init (USE_PACKAGE, "use-package", repeat (1, 1));
+  init (USE_MODULE, "use-module", repeat (1, 1));
 
   init (OR, "or", repeat (2, 1));
   init (XOR, "xor", fixed (2));
@@ -193,6 +199,13 @@ init_std_drd () {
   init (OVER, "over", repeat (1, 1));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
+  init (MATH_SQRT, "math-sqrt", fixed (1));
+  init (EXP, "exp", fixed (1));
+  init (LOG, "log", fixed (1));
+  init (POW, "pow", fixed (2));
+  init (COS, "cos", fixed (1));
+  init (SIN, "sin", fixed (1));
+  init (TAN, "tan", fixed (1));
   init (MERGE, "merge", repeat (2, 1));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (3));
@@ -228,12 +241,20 @@ init_std_drd () {
   init (FN_LENGTH, "fn-length", fixed (0));
   init (FNS_LENGTH, "fns-length", fixed (0));
   init (BLS_LENGTH, "bls-length", fixed (0));
+  init (FNBOT_LENGTH, "fnbot-length", fixed (0));
+  init (FNTOP_LENGTH, "fntop-length", fixed (0));
   init (SPC_LENGTH, "spc-length", fixed (0));
   init (XSPC_LENGTH, "xspc-length", fixed (0));
   init (PAR_LENGTH, "par-length", fixed (0));
   init (PAG_LENGTH, "pag-length", fixed (0));
+  init (GW_LENGTH, "gw-length", fixed (0));
+  init (GH_LENGTH, "gh-length", fixed (0));
   init (TMPT_LENGTH, "tmpt-length", fixed (0));
   init (PX_LENGTH, "px-length", fixed (0));
+  init (MSEC_LENGTH, "msec-length", fixed (0));
+  init (SEC_LENGTH, "sec-length", fixed (0));
+  init (MIN_LENGTH, "min-length", fixed (0));
+  init (H_LENGTH, "h-length", fixed (0));
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> accessible (1));
@@ -254,27 +275,49 @@ init_std_drd () {
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
 
+  init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
+  init (ID, "id", repeat (1, 1) -> accessible (0));
+  init (HARD_ID, "hard-id", options (0, 1));
+  init (LINK, "link", repeat (2, 1) -> accessible (0));
+  init (URL, "url", options (1, 1) -> accessible (0));
+  init (SCRIPT, "script", options (1, 1) -> accessible (0));
+  init (HLINK, "hlink",
+	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
+  init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
+  init (SET_BINDING, "set-binding", options (1, 2));
+  init (GET_BINDING, "get-binding", options (1, 1));
+  init (LABEL, "label", fixed (1));
+  init (REFERENCE, "reference", fixed (1));
+  init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
+  init (WRITE, "write", fixed (2));
+
   init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
   init (TMLEN, "tmlen", options (1, 2) -> name ("TeXmacs length"));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
   init (BACKUP, "backup", fixed (2));
-  init (LABEL, "label", fixed (1));
-  init (REFERENCE, "reference", fixed (1));
-  init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
-  init (WRITE, "write", fixed (2));
+  init (PATTERN, "pattern", options (3, 1));
+  init (GRADIENT, "gradient", fixed (3));
   init (SPECIFIC, "specific", fixed (2));
-  init (HLINK, "hlink",
-	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
-  init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
-  init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
-  init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));
 
+  init (ANIM_COMPOSE, "anim-compose", repeat (1, 1));
+  init (ANIM_REPEAT, "anim-repeat", fixed (1) -> accessible (0));
+  init (ANIM_CONSTANT, "anim-constant",
+	fixed (1, 1, BIFORM) -> accessible (0));
+  init (ANIM_TRANSLATE, "anim-translate",
+	fixed (1, 3, BIFORM) -> accessible (0));
+  init (ANIM_PROGRESSIVE, "anim-progressive",
+	fixed (1, 3, BIFORM) -> accessible (0));
+  init (VIDEO, "video", fixed (5));
+  init (SOUND, "sound", fixed (1));
+
   init (GRAPHICS, "graphics", repeat (1, 1) -> accessible (0));
-  init (SUPERPOSE, "superpose", repeat (1, 1));
-  init (TEXT_AT, "text-at", fixed (1, 3, BIFORM) -> accessible (0));
+  init (SUPERPOSE, "superpose", repeat (1, 1) -> accessible (0));
+  init (GR_GROUP, "gr-group", repeat (1, 1));
+  init (GR_LINEAR_TRANSFORM, "gr-linear-transform", fixed (2));
+  init (TEXT_AT, "text-at", fixed (1, 1, BIFORM) -> accessible (0));
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));
@@ -288,6 +331,9 @@ init_std_drd () {
   init (BOX_INFO, "box-info", fixed (2));
   init (FRAME_DIRECT, "frame-direct", fixed (1));
   init (FRAME_INVERSE, "frame-inverse", fixed (1));
+
+  init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
+  init (ORNAMENT, "ornament", fixed (1) -> accessible (0));
 
   init (FORMAT, "format", repeat (1, 1));
   init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
@@ -311,4 +357,8 @@ init_std_drd () {
   init (FUNC, "func", var_repeat (1, 1));
   init (ENV, "env", var_repeat (1, 2));
   init (AUTHORIZE, "authorize", fixed (2));
+
+  init (make_tree_label ("shown"), "shown",
+	fixed (1) -> accessible (0) -> no_border ());
+  init (make_tree_label ("ignore"), "ignore", fixed (1) -> no_border ());
 }

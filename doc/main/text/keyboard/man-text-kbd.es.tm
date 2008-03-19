@@ -44,7 +44,7 @@
   halign|c>|<cwith|6|6|7|8|cell halign|c>|<cwith|6|6|7|7|cell
   halign|c>|<table|<row|<cell|Atajo>|<cell|>|<cell|Ejemplo>|<cell|>|<cell|Atajo>|<cell|>|<cell|Ejemplo>|<cell|>>|<row|<cell|<expand|kbd-text|'>>|<cell|Acute
   >|<cell|<expand|kbd-text|' e>>|<cell|é>|<cell|<expand|kbd-text|`>>|<cell|Grave
-  \0>|<cell|<expand|kbd-text|` e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Sobrero
+  `>|<cell|<expand|kbd-text|` e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Sobrero
   >|<cell|<expand|kbd-text|^ e>>|<cell|ê>|<cell|<expand|kbd-text|^>>|<cell|Umlaut
   >|<cell|<expand|kbd-text|" e>>|<cell|ë>>|<row|<cell|<expand|kbd-text|~>>|<cell|Tilde
   >|<cell|<expand|kbd-text|~ a>>|<cell|ã>|<cell|<expand|kbd-text|C>>|<cell|Cedilla

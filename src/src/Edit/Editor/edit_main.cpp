@@ -11,15 +11,15 @@
 ******************************************************************************/
 
 #include "edit_main.hpp"
-#include "tm_widget.hpp"
 #include "tm_buffer.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
-#include "PsDevice/printer.hpp"
+#include "printer.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
 #include "typesetter.hpp"
 #include "drd_std.hpp"
+#include "message.hpp"
 #include <dlfcn.h>
 #include <setjmp.h>
 
@@ -28,26 +28,30 @@
 ******************************************************************************/
 
 editor_rep::editor_rep ():
-  attribute_widget_rep (dis),
+  simple_widget_rep (),
   drd (buf->abbr, std_drd), et (the_et), rp (buf->rp) {}
 
-editor_rep::editor_rep (server_rep* sv2, display dis, tm_buffer buf2):
-  attribute_widget_rep (dis),
+editor_rep::editor_rep (server_rep* sv2, tm_buffer buf2):
+  simple_widget_rep (),
   sv (sv2), buf (buf2), drd (buf->abbr, std_drd),
   et (the_et), rp (buf2->rp) {}
 
-edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
-  editor_rep (sv, dis, buf), props (UNKNOWN)
+edit_main_rep::edit_main_rep (server_rep* sv, tm_buffer buf):
+  editor_rep (sv, buf), props (UNKNOWN)
 {
   notify_change (THE_TREE);
   tp= correct_cursor (et, rp * 0);
 }
 
-edit_main_rep::~edit_main_rep () {}
+edit_main_rep::~edit_main_rep () {
+#ifdef EXPERIMENTAL
+  mem= memorizer ();
+#endif
+}
 
 editor
 new_editor (server_rep* sv, tm_buffer buf) {
-  return new edit_main_rep (sv, current_display (), buf);
+  return new edit_main_rep (sv, buf);
 }
 
 /******************************************************************************
@@ -127,9 +131,7 @@ edit_main_rep::focus_on_this_editor () {
 
 void
 edit_main_rep::notify_page_change () {
-  if (attached ()) this << emit_invalidate_all ();
-  if (get_init_string (PAGE_MEDIUM) == "automatic")
-    notify_change (THE_AUTOMATIC_SIZE);
+  if (is_attached (this)) send_invalidate_all (this);
 }
 
 /******************************************************************************
@@ -147,13 +149,8 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   if (pdf) name= url_temp (".ps");
 
   string medium = env->get_string (PAGE_MEDIUM);
-  if (conform && (medium == "papyrus")) conform= false;
-  if ((!conform) && (medium == "automatic")) {
-    set_message (
-      "Error: you should switch to ``paper'' or ``papyrus'' page type",
-      "print");
-    return;
-  }
+  if (conform && (medium != "paper")) conform= false;
+  // FIXME: better command for conform printing
 
   // Set environment variables for printing
 
@@ -161,13 +158,16 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   env->write (DPI, printing_dpi);
   env->write (PAGE_SHOW_HF, "true");
   env->write (PAGE_SCREEN_MARGIN, "false");
-  if (!conform) env->write (PAGE_MEDIUM, "paper");
+  if (!conform) {
+    env->write (PAGE_MEDIUM, "paper");
+    env->write (PAGE_PRINTED, "true");
+  }
 
   // Typeset pages for printing
 
   box the_box= typeset_as_document (env, subtree (et, rp), reverse (rp));
 
-  // Determine parameters for printer device
+  // Determine parameters for printer
 
   string page_type = env->get_string (PAGE_TYPE);
   double w         = env->page_width;
@@ -191,21 +191,21 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   // Print pages
 
   int i;
-  ps_device dev=
-    printer (dis, name, dpi, pages, page_type, landsc, w/cm, h/cm);
+  renderer ren=
+    printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   for (i=start; i<end; i++) {
-    string col_name= env->get_string (BG_COLOR);
-    dev->set_background (dis->get_color (col_name));
-    if (col_name != "white")
-      dev->clear (0, (SI) -h, (SI) w, 0);
+    tree bg= env->read (BG_COLOR);
+    ren->set_background_pattern (bg);
+    if (bg != "white")
+      ren->clear_pattern (0, (SI) -h, (SI) w, 0);
 
     rectangles rs;
     the_box[0]->sx(i)= 0;
     the_box[0]->sy(i)= 0;
-    the_box[0][i]->redraw (dev, path (0), rs);
-    if (i<end-1) dev->next_page ();
+    the_box[0][i]->redraw (ren, path (0), rs);
+    if (i<end-1) ren->next_page ();
   }
-  delete dev;
+  delete ren;
 
   if (pdf) {
     ps2pdf (name, orig);
@@ -231,13 +231,34 @@ edit_main_rep::export_ps (url name, string first, string last) {
   print (name, true, as_int (first), as_int (last));
 }
 
+array<int>
+edit_main_rep::print_snippet (url name, tree t) {
+  bool ps= suffix (name) == "ps" || suffix (name) == "eps";
+  typeset_prepare ();
+  int dpi= as_int (printing_dpi);
+  if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
+  box b= typeset_as_box (env, t, path ());
+  if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
+    if (ps) make_eps (name, b, dpi);
+    else {
+      url temp= url_temp ("eps");
+      make_eps (temp, b, dpi);
+      system ("convert", temp, name);
+      ::remove (temp);
+    }
+  }
+  array<int> a;
+  a << b->x3 << b->y3 << b->x4 << b->y4;
+  return a;
+}
+
 /******************************************************************************
 * Evaluation of expressions
 ******************************************************************************/
 
 void
 edit_main_rep::footer_eval (string s) {
-  s= unslash (s); // FIXME: dirty fix; should not be necessary
+  // s= unslash (s); // FIXME: dirty fix; should not be necessary
   string r= object_to_string (eval (s));
   set_message (r, "evaluate expression");
 }
