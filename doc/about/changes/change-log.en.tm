@@ -1,13 +1,19 @@
-<TeXmacs|1.0.6.11>
+<TeXmacs|1.0.6.12>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.12>
+  <section|Changes from version 1.0.6 to 1.0.6.14>
 
   <\itemize>
+    <item>TrueColor support (1.0.6.14).
+
+    <item>Started native Aqua port for <TeXmacs> (1.0.6.14).
+
+    <item>Fix compatibility issues for C++ and Guile (1.0.6.14).
+
     <item>Complete abstraction of the graphical user interface should make
     porting easier (1.0.6.12).
 
