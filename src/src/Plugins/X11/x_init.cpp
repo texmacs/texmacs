@@ -38,8 +38,31 @@ static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
+static void
+reverse (int& r, int& g, int& b) {
+  int m= min (r, min (g, b));
+  int M= max (r, max (g, b));
+  int t= (r + g + b) / 3;
+  int tt= 255 - t;
+  double mu= 1.0;
+  // tt= 6 * tt / 7;
+  if (M != m) {
+    double lambda1= max (((double) (t - m)) / t,
+			 ((double) (M - t)) / (255 - t));
+    double lambda2= max (((double) (t - m)) / tt,
+			 ((double) (M - t)) / (255 - tt));
+    mu= lambda1 / lambda2;
+  }
+  r= (int) (tt + mu * (r - t) + 0.5);
+  g= (int) (tt + mu * (g - t) + 0.5);
+  b= (int) (tt + mu * (b - t) + 0.5);
+}
+
 int
 x_alloc_color (int r, int g, int b) {
+  if (true_color)
+    return ((r >> 8) << 16) + ((g >> 8) << 8) + (b >> 8);
+
   if (reverse_colors) {
     int m= min (r, min (g, b));
     int M= max (r, max (g, b));
@@ -58,8 +81,6 @@ x_alloc_color (int r, int g, int b) {
     g= (int) (tt + mu * (g - t) + 0.5);
     b= (int) (tt + mu * (b - t) + 0.5);
   }
-  if (true_color)
-    return (r << 16) + (g << 8) + b;
 
   XColor col;
   col.red  = r;
@@ -93,7 +114,10 @@ x_init_color_map () {
 
 color
 rgb_color (int r, int g, int b) {
-  if (true_color) return (r << 16) + (g << 8) + b;
+  if (true_color) {
+    if (reverse_colors) reverse (r, g, b);
+    return (r << 16) + (g << 8) + b;
+  }
   else if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
   else {
     r= (r*CSCALES+ 128)/255;
@@ -109,6 +133,7 @@ get_rgb_color (color col, int& r, int& g, int& b) {
     r= (col >> 16) & 255;
     g= (col >> 8 ) & 255;
     b=  col        & 255;
+    if (reverse_colors) reverse (r, g, b);
   }
   else if (col <= GREYS) {
     r= (col*255)/GREYS;
