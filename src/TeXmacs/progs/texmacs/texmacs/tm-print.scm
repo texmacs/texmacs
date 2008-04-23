@@ -120,5 +120,5 @@
 (tm-define (choose-file-and-print-page-selection start end)
   (:argument start "First page")
   (:argument end "Last page")
-  (choose-file (lambda (name) (print-pages-to-file name ,start ,end))
+  (choose-file (lambda (name) (print-pages-to-file name start end))
 	       "Print page selection to file" "postscript"))
