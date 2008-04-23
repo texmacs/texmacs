@@ -16,6 +16,14 @@
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mathemagix-input) mathemagix))
 
+(texmacs-modes
+  (in-mathemagix-math% #t in-mathemagix% in-math%))
+
+(kbd-map
+  (:mode in-mathemagix-math?)
+  ;;("'" "'")
+  ("\"" "\""))
+
 (if (url-exists-in-path? "mmx-light")
     (plugin-configure mathemagix
       (:require (url-exists-in-path? "mmx-light"))

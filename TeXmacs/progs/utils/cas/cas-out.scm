@@ -122,7 +122,7 @@
     (list->ahash-set '(%prime factorial ^ _ %dotaccess %sqaccess))
     (list->ahash-set '(quote quasiquote eval))
     (list->ahash-set '(matrix det row tuple list set comma | ||))
-    (list->ahash-set '(conj choose))))
+    (list->ahash-set '(sqrt conj choose))))
 
 (define (cas-special-op? x)
   (ahash-ref cas-special-op-table x))
@@ -298,6 +298,8 @@
 	   (if (== y 2)
 	       `(sqrt ,(cas-out (cadr x)))
 	       `(sqrt ,(cas-out (cadr x)) ,(cas-out y)))))
+	((func? x 'sqrt 1)
+	 `(sqrt ,(cas-out (cadr x))))
 	((func? x 'conj 1)
 	 `(wide ,(cas-out (cadr x)) "<bar>"))
 	((func? x 'choose 2)
