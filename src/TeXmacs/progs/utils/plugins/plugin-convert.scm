@@ -336,6 +336,7 @@
   ("<ll>" "<less><less>")
   ("<gg>" "<gtr><gtr>")
   ("<into>" "-<gtr>")
+  ("<mapsto>" "|-<gtr>")
   ("<rightarrow>" "-<gtr>")
   ("<transtype>" ":<gtr>")
 
@@ -347,6 +348,7 @@
   ("<ldots>" "..")
   ("<colons>" "::")
   ("<sharp>" "#")
+  ("<circ>" "@")
 
   ("<bbb-C>" "CC")
   ("<bbb-F>" "FF")
