@@ -710,6 +710,14 @@ x_gui_rep::initialize_keyboard_pointer () {
   map (XK_F10, "F10");
   map (XK_F11, "F11");
   map (XK_F12, "F12");
+  map (XK_F13, "F13");
+  map (XK_F14, "F14");
+  map (XK_F15, "F15");
+  map (XK_F16, "F16");
+  map (XK_F17, "F17");
+  map (XK_F18, "F18");
+  map (XK_F19, "F19");
+  map (XK_F20, "F20");
   // map (XK_Mode_switch, "modeswitch");
 
   // Keypad keys
