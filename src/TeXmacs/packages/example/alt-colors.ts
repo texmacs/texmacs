@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.6.12>
 
 <style|source>
 
@@ -23,19 +23,13 @@
 
   <\active*>
     <\src-comment>
-      Greyed portions of text.
-    </src-comment>
-  </active*>
-
-  <assign|is-greyed|false>
-
-  <assign|greyed|<macro|x|<with|is-greyed|true|color|<if|<equal|<value|mode>|math>|#d0b0b0|grey>|<arg|x>>>>
-
-  <\active*>
-    <\src-comment>
       Mathematics in dark red.
     </src-comment>
   </active*>
+
+  <assign|math-color|dark red>
+
+  <assign|greyed-math-color|#d0b0b0>
 
   <assign|uncolored-math|<value|math>>
 
@@ -43,11 +37,10 @@
 
   <assign|uncolored-equations-base|<value|equations-base>>
 
-  <assign|math|<macro|x|<with|color|<if|<value|is-greyed>|#d0b0b0|dark
-  red>|<uncolored-math|<arg|x>>>>>
+  <assign|math|<macro|x|<with|color|<value|math-color>|<uncolored-math|<arg|x>>>>>
 
   <assign|equation*|<\macro|x>
-    <\with|color|<if|<value|is-greyed>|#d0b0b0|dark red>>
+    <\with|color|<value|math-color>>
       <\uncolored-equation*>
         <arg|x>
       </uncolored-equation*>
@@ -55,12 +48,14 @@
   </macro>>
 
   <assign|equations-base|<\macro|x>
-    <\with|color|<if|<value|is-greyed>|#d0b0b0|dark red>>
+    <\with|color|<value|math-color>>
       <\uncolored-equations-base>
         <arg|x>
       </uncolored-equations-base>
     </with>
   </macro>>
+
+  <assign|greyed|<macro|x|<with|color|grey|math-color|<value|greyed-math-color>|<arg|x>>>>
 
   <\active*>
     <\src-comment>
@@ -68,19 +63,19 @@
     </src-comment>
   </active*>
 
+  <assign|strong-color|dark blue>
+
   <assign|uncolored-theorem-name|<value|theorem-name>>
 
   <assign|uncolored-exercise-name|<value|exercise-name>>
 
   <assign|uncolored-strong|<value|strong>>
 
-  <assign|theorem-name|<macro|x|<with|color|dark
-  blue|<uncolored-theorem-name|<arg|x>>>>>
+  <assign|theorem-name|<macro|x|<with|color|<value|strong-color>|<uncolored-theorem-name|<arg|x>>>>>
 
-  <assign|exercise-name|<macro|x|<with|color|dark
-  blue|<uncolored-exercise-name|<arg|x>>>>>
+  <assign|exercise-name|<macro|x|<with|color|<value|strong-color>|<uncolored-exercise-name|<arg|x>>>>>
 
-  <assign|strong|<macro|x|<with|color|dark blue|<uncolored-strong|<arg|x>>>>>
+  <assign|strong|<macro|x|<with|color|<value|strong-color>|<uncolored-strong|<arg|x>>>>>
 
   <\active*>
     <\src-comment>
