@@ -2739,6 +2739,37 @@ upgrade_scheme_doc (tree t) {
 }
 
 /******************************************************************************
+* Upgrade Mathemagix tag
+******************************************************************************/
+
+tree
+upgrade_mmx (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "mmx", 0) || t == tree (VALUE, "mmx"))
+    return compound ("mathemagix");
+  else if (is_compound (t, "mml", 0) || t == tree (VALUE, "mml"))
+    return compound ("mmxlib");
+  else if (is_compound (t, "scheme", 0) || t == tree (VALUE, "scheme"))
+    return compound ("scheme");
+  else if (is_compound (t, "cpp", 0) || t == tree (VALUE, "cpp"))
+    return compound ("c++");
+  else if (is_compound (t, "scheme-code", 1))
+    return compound ("scm", upgrade_mmx (t[0]));
+  else if (is_compound (t, "scheme-fragment", 1))
+    return compound ("scm-fragment", upgrade_mmx (t[0]));
+  else if (is_compound (t, "cpp-code", 1))
+    return compound ("cpp", upgrade_mmx (t[0]));
+  else {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_mmx (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2850,5 +2881,7 @@ upgrade (tree t, string version) {
     t= upgrade_label_assignment (t);
   if (version_inf_eq (version, "1.0.6.10"))
     t= upgrade_scheme_doc (t);
+  if (version_inf_eq (version, "1.0.6.14"))
+    t= upgrade_mmx (t);
   return t;
 }
