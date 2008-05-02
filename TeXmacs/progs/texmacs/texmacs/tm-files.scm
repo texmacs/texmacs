@@ -16,6 +16,28 @@
   (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Activation of color highlighting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (suffix->programming-language s)
+  (cond ((== s "scm") "scheme")
+	((in? s '("cpp" "hpp" "cc" "hh")) "cpp")
+	((in? s '("mmx" "mmh")) "mathemagix")
+	(else #f)))
+
+(define (textual-tree? t)
+  (or (atomic-tree? t)
+      (and (== (tree-label t) 'document)
+	   (list-and (map textual-tree? (tree-children t))))))
+
+(define (activate-highlighting)
+  (and-let* ((suffix   (url-suffix (get-name-buffer)))
+	     (prog-lan (suffix->programming-language suffix)))
+    (when (textual-tree? (buffer-tree))
+      (init-env "prog-language" prog-lan)
+      (init-env "mode" "prog"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -23,10 +45,11 @@
 
 (define (secure-save-buffer file fm)
   (dialogue
-    (if (or (not (url-exists? file))
-	    (dialogue-confirm?
-	     "File already exists. Overwrite existing file?" #f))
-	(texmacs-save-buffer file fm))))
+    (when (or (not (url-exists? file))
+	      (dialogue-confirm?
+	       "File already exists. Overwrite existing file?" #f))
+      (texmacs-save-buffer file fm)
+      (activate-highlighting))))
 
 (tm-define (save-buffer . l)
   (if (and (pair? l) (url? (car l))) (set! current-save-target (car l)))
@@ -54,7 +77,8 @@
 	     (url-newer? (url-glue file "~") file)
 	     (dialogue-confirm? "Load more recent autosave file?" #t))
 	(texmacs-load-buffer (url-glue file "~") fm where #t)
-	(texmacs-load-buffer file fm where #f))))
+	(texmacs-load-buffer file fm where #f))
+    (activate-highlighting)))
 
 (tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
