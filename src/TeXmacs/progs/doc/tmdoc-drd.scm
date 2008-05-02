@@ -25,7 +25,7 @@
 ;; Special markup categories
 
 (define-group fragment-tag
-  framed-fragment scheme-fragment shell-fragment cpp-fragment mmx-fragment)
+  framed-fragment shell-fragment scm-fragment cpp-fragment mmx-fragment)
 
 ;; override variant function for verbatim and scm
 ;; FIXME: find a nicer solution

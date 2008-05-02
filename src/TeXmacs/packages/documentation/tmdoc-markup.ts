@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.6.14>
 
 <style|source>
 
@@ -80,23 +80,6 @@
 
   <\active*>
     <\src-comment>
-      Documentation of scheme macros.
-    </src-comment>
-  </active*>
-
-  <assign|scm|<macro|x|<with|mode|prog|prog-language|scheme|<arg|x>>>>
-
-  <assign|scm-verb|<macro|x|<with|prog-language|verbatim|<arg|x>>>>
-
-  <assign|scm-arg|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>>>>
-
-  <assign|scm-args|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>><rsup|*>>>
-
-  <assign|scm-opt-arg|<macro|x|<with|color|dark
-  grey|[<style-with|<scm-arg|<arg|x>>>]>>>
-
-  <\active*>
-    <\src-comment>
       Links inside the documentation and special types of links. We are not
       very happy about this yet, so part of these macros will probably be
       modified sometime in the future.
@@ -119,13 +102,9 @@
 
   <\active*>
     <\src-comment>
-      Fragments of code.
+      Framed fragmentd.
     </src-comment>
   </active*>
-
-  <assign|scheme|<name|Scheme>>
-
-  <assign|cpp|<name|C++>>
 
   <assign|framed-table|<macro|x|<with|color|dark
   grey|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-background|pastel
@@ -141,29 +120,84 @@
     </cell>>>>>
   </macro>>
 
-  <assign|scheme-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|x>>>>>
-  </macro>>
+  <assign|todo|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
+  red>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|To
+  do: <arg|x>>>>>>>>
 
-  <assign|shell-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
-  </macro>>
-
-  <assign|cpp-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
-  </macro>>
+  <\active*>
+    <\src-comment>
+      Fragments of <TeXmacs> code.
+    </src-comment>
+  </active*>
 
   <assign|tm-fragment|<\macro|x>
     <quotation|<framed-fragment|<arg|x>>>
   </macro>>
 
-  <assign|scheme-code|<macro|x|<verbatim|<arg|x>>>>
+  <\active*>
+    <\src-comment>
+      Fragments of scheme code.
+    </src-comment>
+  </active*>
 
-  <assign|cpp-code|<macro|x|<verbatim|<arg|x>>>>
+  <assign|scheme|<macro|<name|Scheme>>>
 
-  <assign|todo|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
-  red>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|To
-  do: <arg|x>>>>>>>>
+  <assign|scm|<macro|x|<with|mode|prog|prog-language|scheme|<arg|x>>>>
+
+  <assign|scm-verb|<macro|x|<with|prog-language|verbatim|<arg|x>>>>
+
+  <assign|scm-arg|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>>>>
+
+  <assign|scm-args|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>><rsup|*>>>
+
+  <assign|scm-opt-arg|<macro|x|<with|color|dark
+  grey|[<style-with|<scm-arg|<arg|x>>>]>>>
+
+  <assign|scm-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|x>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Fragments of shell code.
+    </src-comment>
+  </active*>
+
+  <assign|shell|<macro|x|<with|mode|prog|prog-language|shell|<arg|x>>>>
+
+  <assign|shell-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<shell|<arg|x>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Fragments of C++ code.
+    </src-comment>
+  </active*>
+
+  <assign|c++|<macro|<name|C++>>>
+
+  <assign|cpp|<macro|x|<with|mode|prog|prog-language|cpp|<arg|x>>>>
+
+  <assign|cpp-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<cpp|<arg|x>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Fragments of mathemagix code.
+    </src-comment>
+  </active*>
+
+  <assign|mmxlib|<macro|<with|font-shape|small-caps|Mmxlib>>>
+
+  <assign|mathemagix|<macro|<with|font-shape|small-caps|Mathemagix>>>
+
+  <assign|mmx|<macro|x|<with|mode|prog|prog-language|mathemagix|<arg|x>>>>
+
+  <assign|mmx-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|x>>>>>
+  </macro>>
 
   <\active*>
     <\src-comment>

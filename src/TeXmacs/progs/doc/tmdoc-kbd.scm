@@ -19,4 +19,4 @@
   (:mode in-tmdoc?)
   ("S-F5" (make 'scm-arg))
   ("S-F7" (make 'scm))
-  ("M-F7" (make 'scheme-fragment)))
+  ("M-F7" (make 'scm-fragment)))
