@@ -1628,8 +1628,8 @@ tmg_serialize_texmacs_snippet (SCM arg1) {
 }
 
 SCM
-tmg_texmacs_2scheme (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "texmacs->scheme");
+tmg_texmacs_2stm (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "texmacs->stm");
 
   tree in1= scm_to_tree (arg1);
 
@@ -1641,8 +1641,8 @@ tmg_texmacs_2scheme (SCM arg1) {
 }
 
 SCM
-tmg_scheme_2texmacs (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "scheme->texmacs");
+tmg_stm_2texmacs (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "stm->texmacs");
 
   string in1= scm_to_string (arg1);
 
@@ -1654,8 +1654,8 @@ tmg_scheme_2texmacs (SCM arg1) {
 }
 
 SCM
-tmg_scheme_snippet_2texmacs (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "scheme-snippet->texmacs");
+tmg_stm_snippet_2texmacs (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "stm-snippet->texmacs");
 
   string in1= scm_to_string (arg1);
 
@@ -3566,9 +3566,9 @@ initialize_glue_basic () {
   scm_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
   scm_new_procedure ("parse-texmacs-snippet", (FN) tmg_parse_texmacs_snippet, 1, 0, 0);
   scm_new_procedure ("serialize-texmacs-snippet", (FN) tmg_serialize_texmacs_snippet, 1, 0, 0);
-  scm_new_procedure ("texmacs->scheme", (FN) tmg_texmacs_2scheme, 1, 0, 0);
-  scm_new_procedure ("scheme->texmacs", (FN) tmg_scheme_2texmacs, 1, 0, 0);
-  scm_new_procedure ("scheme-snippet->texmacs", (FN) tmg_scheme_snippet_2texmacs, 1, 0, 0);
+  scm_new_procedure ("texmacs->stm", (FN) tmg_texmacs_2stm, 1, 0, 0);
+  scm_new_procedure ("stm->texmacs", (FN) tmg_stm_2texmacs, 1, 0, 0);
+  scm_new_procedure ("stm-snippet->texmacs", (FN) tmg_stm_snippet_2texmacs, 1, 0, 0);
   scm_new_procedure ("cpp-texmacs->verbatim", (FN) tmg_cpp_texmacs_2verbatim, 3, 0, 0);
   scm_new_procedure ("cpp-verbatim-snippet->texmacs", (FN) tmg_cpp_verbatim_snippet_2texmacs, 3, 0, 0);
   scm_new_procedure ("cpp-verbatim->texmacs", (FN) tmg_cpp_verbatim_2texmacs, 3, 0, 0);
