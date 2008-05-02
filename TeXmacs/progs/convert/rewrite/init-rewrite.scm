@@ -52,25 +52,25 @@
 ;; Scheme format for TeXmacs (no information loss)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (scheme-recognizes? s)
+(define (stm-recognizes? s)
   (and (string? s) (string-starts? s "(document (TeXmacs")))
 
-(define-format scheme
+(define-format stm
   (:name "Scheme")
-  (:suffix "scm")
-  (:must-recognize scheme-recognizes?))
+  (:suffix "stm" "scm")
+  (:must-recognize stm-recognizes?))
 
-(converter texmacs-tree scheme-document
-  (:function texmacs->scheme))
+(converter texmacs-tree stm-document
+  (:function texmacs->stm))
 
-(converter scheme-document texmacs-tree
-  (:function scheme->texmacs))
+(converter stm-document texmacs-tree
+  (:function stm->texmacs))
 
-(converter texmacs-tree scheme-snippet
-  (:function texmacs->scheme))
+(converter texmacs-tree stm-snippet
+  (:function texmacs->stm))
 
-(converter scheme-snippet texmacs-tree
-  (:function scheme-snippet->texmacs))
+(converter stm-snippet texmacs-tree
+  (:function stm-snippet->texmacs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim
