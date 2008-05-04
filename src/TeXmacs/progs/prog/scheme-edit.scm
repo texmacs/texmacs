@@ -17,13 +17,36 @@
 	(utils misc tm-keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Search for previous arguments
+;; Treatment of special characters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (previous-special s col)
   (cond ((< col 0) col)
 	((in? (string-ref s col) '(#\( #\) #\space)) col)
 	(else (previous-special s (- col 1)))))
+
+(define (next-special s col)
+  (cond ((>= col (string-length s)) col)
+	((in? (string-ref s col) '(#\( #\) #\space)) col)
+	(else (next-special s (+ col 1)))))
+
+(define (next-word doc row col)
+  (and-with par (program-row row)
+    (and (>= col 0)
+	 (<= col (string-length par))
+	 (substring par col (next-special par col)))))
+
+(define (list-uncommented-length l)
+  (cond ((null? l) 0)
+	((== (car l) #\;) 0)
+	(else (+ (list-uncommented-length (cdr l)) 1))))
+
+(define (string-uncommented-length s)
+  (list-uncommented-length (string->list s)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Search for previous arguments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (previous-argument doc row col level)
   ;;(display* "search " row ", " col "\n")
@@ -32,7 +55,7 @@
        (tree-atomic? (tree-ref doc row))
        (with par (tree->string (tree-ref doc row))
 	 (cond ((>= col (string-length par))
-		(with len (string-length par)
+		(with len (string-uncommented-length par)
 		  (previous-argument doc row (- len 1) level)))
 	       ((< col 0)
 		(previous-argument doc (- row 1) 1000000000 level))
@@ -61,17 +84,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic indentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (next-special s col)
-  (cond ((>= col (string-length s)) col)
-	((in? (string-ref s col) '(#\( #\) #\space)) col)
-	(else (next-special s (+ col 1)))))
-
-(define (next-word doc row col)
-  (and-with par (program-row row)
-    (and (>= col 0)
-	 (<= col (string-length par))
-	 (substring par col (next-special par col)))))
 
 (define (reference-type doc l)
   (if (null? l) ""
