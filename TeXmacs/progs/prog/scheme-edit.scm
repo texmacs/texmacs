@@ -14,7 +14,7 @@
 
 (texmacs-module (prog scheme-edit)
   (:use (prog program-edit)
-	(prog scheme-keywords)))
+	(utils misc tm-keywords)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search for previous arguments
@@ -90,7 +90,7 @@
 (define (compute-indentation doc row col)
   (let* ((l (previous-arguments doc row col 10))
 	 (t (reference-type doc l))
-	 (i (scheme-keyword-get-arity* t))
+	 (i (indent-get-arity t))
 	 (n (length l))
 	 (a (reference-argument l)))
     (cond ((not a) 0)
