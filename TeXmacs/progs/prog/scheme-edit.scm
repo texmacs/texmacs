@@ -68,7 +68,7 @@
 	(else (next-special s (+ col 1)))))
 
 (define (next-word doc row col)
-  (and-with par (program-line row)
+  (and-with par (program-row row)
     (and (>= col 0)
 	 (<= col (string-length par))
 	 (substring par col (next-special par col)))))
@@ -106,9 +106,9 @@
 (tm-define (scheme-indent)
   (:synopsis "indent current line of a scheme program")
   (and-with doc (program-tree)
-    (with i (compute-indentation doc (line-row) -1)
-      (line-set-indent i)
-      (program-go-to (line-row) i))))
+    (with i (compute-indentation doc (program-row-number) -1)
+      (program-set-indent i)
+      (program-go-to (program-row-number) i))))
 
 (tm-define (kbd-tab)
   (:mode in-prog-scheme?)
