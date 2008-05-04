@@ -17,8 +17,14 @@
 	(utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Getting lines in a textual document
+;; Basic routines for textual programs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (inside-program?)
+  (:synopsis "are we inside the line of a textual document?")
+  (let* ((ct (cursor-tree))
+	 (dt (tree-ref ct :up)))
+    (and (tree-atomic? ct) (tree-is? dt 'document))))
 
 (tm-define (program-tree)
   (:synopsis "get the entire program tree")
@@ -26,36 +32,7 @@
 	 (dt (tree-ref ct :up)))
     (and (tree-atomic? ct) (tree-is? dt 'document) dt)))
 
-(tm-define (line-ok?)
-  (:synopsis "are we inside the line of a textual document?")
-  (let* ((ct (cursor-tree))
-	 (dt (tree-ref ct :up)))
-    (and (tree-atomic? ct) (tree-is? dt 'document))))
-
-(tm-define (line-tree . opt)
-  (:synopsis "get current line or the line with a specified offset")
-  (with doc (tree-ref (cursor-tree) :up)
-      (and-let* ((ok? (tree-is? doc 'document))
-		 (cln (tree-index (cursor-tree)))
-		 (off (if (null? opt) 0 (car opt)))
-		 (sln (+ cln off))
-		 (OK? (and (>= sln 0) (< sln (tree-arity doc)))))
-	(tree-ref doc sln))))
-
-(tm-define (line-string . opt)
-  (:synopsis "get current line or the line with a specified offset")
-  (and-with t (apply line-tree opt)
-    (and (tree-atomic? t) (tree->string t))))
-
-(tm-define (line-row)
-  (:synopsis "get the vertical position on the current line")
-  (and (line-ok?) (cADr (cursor-path))))
-
-(tm-define (line-column)
-  (:synopsis "get the horizontal position on the current line")
-  (and (line-ok?) (cAr (cursor-path))))
-
-(tm-define (program-line row)
+(tm-define (program-row row)
   (:synopsis "get the character at a given @row and @column")
   (and-with doc (program-tree)
     (and-with par (tree-ref doc row)
@@ -63,8 +40,16 @@
 
 (tm-define (program-character row col)
   (:synopsis "get the character at a given @row and @col")
-  (and-with par (program-line row)
+  (and-with par (program-row row)
     (and (>= col 0) (< col (string-length par)) (string-ref par col))))
+
+(tm-define (program-row-number)
+  (:synopsis "get the vertical position on the current line")
+  (and (inside-program?) (cADr (cursor-path))))
+
+(tm-define (program-column-number)
+  (:synopsis "get the horizontal position on the current line")
+  (and (inside-program?) (cAr (cursor-path))))
 
 (tm-define (program-go-to row col)
   (:synopsis "go to the character at a given @row and @col")
@@ -96,12 +81,13 @@
 	 (r (substring s (string-get-indent s) (string-length s))))
     (string-append l r)))
 
-(tm-define (line-get-indent)
+(tm-define (program-get-indent)
   (:synopsis "get the indentation of the current line")
-  (and (line-ok?) (string-get-indent (line-string))))
+  (and (inside-program?)
+       (string-get-indent (program-row (program-row-number)))))
 
-(tm-define (line-set-indent i)
+(tm-define (program-set-indent i)
   (:synopsis "set the indentation of the current line to @i spaces")
-  (when (line-ok?)
+  (when (inside-program?)
     (with t (cursor-tree)
       (tree-set t (string-set-indent (tree->string t) i)))))
