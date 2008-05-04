@@ -253,7 +253,7 @@ tmg_insert_raw_go_to (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_insert_return () {
+tmg_insert_raw_return () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert_return ();
   // SCM_ALLOW_INTS;
@@ -2798,7 +2798,7 @@ initialize_glue_editor () {
   scm_new_procedure ("insert", (FN) tmg_insert, 1, 0, 0);
   scm_new_procedure ("insert-go-to", (FN) tmg_insert_go_to, 2, 0, 0);
   scm_new_procedure ("insert-raw-go-to", (FN) tmg_insert_raw_go_to, 2, 0, 0);
-  scm_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);
+  scm_new_procedure ("insert-raw-return", (FN) tmg_insert_raw_return, 0, 0, 0);
   scm_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
   scm_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);
   scm_new_procedure ("remove-structure-upwards", (FN) tmg_remove_structure_upwards, 0, 0, 0);
