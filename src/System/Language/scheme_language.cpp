@@ -20,7 +20,7 @@ scheme_language_rep::scheme_language_rep (string name):
   eval ("(use-modules (utils misc tm-keywords))");
   list<string> l= as_list_string (eval ("(map symbol->string highlight-any)"));
   while (!is_nil (l)) {
-    colored (l->item)= "blue";
+    colored (l->item)= "#309090";
     l= l->next;
   }
 }
@@ -38,6 +38,8 @@ scheme_language_rep::advance (string s, int& pos) {
     return &tp_normal_rep;
   }
   while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='(') && (s[pos]!=')')) pos++;
+  if (pos < N(s) && pos >= 2 && (s[pos] == '(' || s[pos] == ')'))
+    if (s[pos-2] == '#' && s[pos-1] == '\\') pos++;
   return &tp_normal_rep;
 }
 
@@ -85,7 +87,7 @@ scheme_language_rep::get_color (tree t, int start, int end) {
   if (!colored->contains (r)) {
     colored (r)= "";
     if (as_bool (call ("defined?", symbol_object (tm_decode (r)))))
-      colored (r)= "#306080";
+      colored (r)= "#204080";
   }
   return colored[r];
 }

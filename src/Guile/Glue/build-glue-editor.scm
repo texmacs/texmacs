@@ -44,7 +44,7 @@
   (insert insert_tree (void content))
   (insert-go-to var_insert_tree (void content path))
   (insert-raw-go-to insert_tree (void content path))
-  (insert-return insert_return (void))
+  (insert-raw-return insert_return (void))
   (remove-text remove_text (void bool))
   (remove-structure remove_structure (void bool))
   (remove-structure-upwards remove_structure_upwards (void))

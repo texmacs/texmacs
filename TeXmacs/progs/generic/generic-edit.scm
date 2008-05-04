@@ -35,6 +35,7 @@
   (r)
   (select-from-cursor))
 
+(tm-define (insert-return) (insert-raw-return))
 (tm-define (kbd-return) (insert-return))
 (tm-define (kbd-shift-return) (insert-return))
 

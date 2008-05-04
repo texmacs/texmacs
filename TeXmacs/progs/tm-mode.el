@@ -20,7 +20,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq nullary-keywords
-  '(cond call/cc values define-preferences menu-dynamic
+  '(begin cond else call/cc
+    values define-preferences menu-dynamic
     case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
     define-grammar drd-rule drd-rules assume texmacs-modes
     delayed dialogue on-entry on-exit widget-delayed
@@ -34,8 +35,8 @@
   (append nullary-keywords nullary-misc))
 
 (setq unary-keywords
-  '(with-result
-    and-let* setup-append-if
+  '(let let* lambda
+    with-result and-let* setup-append-if
     while for repeat when
     drd-group drd-table drd-dispatcher
     with-cc with-aux with-mutator
@@ -45,8 +46,8 @@
     input internal short-input))
 
 (setq unary-definitions
-  '(texmacs-module provide-public
-    define-group define-macro define-public-macro
+  '(define define-public define-macro define-public-macro
+    texmacs-module provide-public define-group
     tm-define tm-define-macro tm-property request-handler
     tm-build tm-build-macro tm-build-widget
     menu-bind menu-extend define-table define-format))
@@ -72,7 +73,8 @@
   ternary-keywords)
 
 (setq other-keywords
-  '(define-secure-symbols map-in-order link promise plugin-configure
+  '(for if
+    define-secure-symbols map-in-order link promise plugin-configure
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-format lazy-input-converter
     form-cancel form-done form-next form-previous radio suggestions toggle))
@@ -84,12 +86,8 @@
   (append nullary-keywords unary-keywords unary-definitions
 	  binary-keywords ternary-keywords other-keywords))
 
-(setq highlight-native
-  '(let let* begin for if else while define define-macro
-    define-public define-public-macro))
-
 (setq highlight-any
-  (append highlight-definitions highlight-keywords highlight-native))
+  (append highlight-definitions highlight-keywords))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define TeXmacs style

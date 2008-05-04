@@ -97,6 +97,10 @@
 (lazy-menu (math math-menu) math-menu math-icons insert-math-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
+;(display "Booting programming modes\n")
+(lazy-keyboard (prog scheme-edit) in-prog-scheme?)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
 ;(display "Booting source mode\n")
 (lazy-keyboard (source source-kbd) always?)
 (lazy-menu (source source-menu) source-menu source-icons
