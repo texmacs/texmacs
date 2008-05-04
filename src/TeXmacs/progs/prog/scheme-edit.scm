@@ -87,6 +87,18 @@
 		(if (< (car a2) (car a1)) a1
 		    (reference-argument (cdr l)))))))	
 
+(define (tm-count l inc)
+  ;; helper routine for correct indentation of <less> and <gtr>
+  (cond ((null? l) 0)
+	((== (car l) #\<) (tm-count (cdr l) 0))
+	((== (car l) #\>) (+ (tm-count (cdr l) 1) 1))
+	(else (+ (tm-count (cdr l) inc) inc))))
+
+(define (get-offset doc a)
+  ;; helper routine for correct indentation of <less> and <gtr>
+  (with s (tree->string (tree-ref doc (car a)))
+    (tm-count (string->list (substring s 0 (cdr a))) 1)))
+
 (define (compute-indentation doc row col)
   (let* ((l (previous-arguments doc row col 10))
 	 (t (reference-type doc l))
@@ -94,10 +106,10 @@
 	 (n (length l))
 	 (a (reference-argument l)))
     (cond ((not a) 0)
-	  ((not i) (cdr a))
-	  ((<= n i) (+ (cdr (cAr l)) 3))
-	  ((== n (+ i 1)) (+ (cdr (cAr l)) 1))
-	  (else (cdr a)))))
+	  ((not i) (get-offset doc a))
+	  ((<= n i) (+ (get-offset doc (cAr l)) 3))
+	  ((== n (+ i 1)) (+ (get-offset doc (cAr l)) 1))
+	  (else (get-offset doc a)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for automatic indentation
