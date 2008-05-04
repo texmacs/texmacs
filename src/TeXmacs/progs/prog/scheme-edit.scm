@@ -22,12 +22,12 @@
 
 (define (previous-special s col)
   (cond ((< col 0) col)
-	((in? (string-ref s col) '(#\( #\) #\space)) col)
+	((in? (string-ref s col) '(#\( #\) #\space #\")) col)
 	(else (previous-special s (- col 1)))))
 
 (define (next-special s col)
   (cond ((>= col (string-length s)) col)
-	((in? (string-ref s col) '(#\( #\) #\space)) col)
+	((in? (string-ref s col) '(#\( #\) #\space #\")) col)
 	(else (next-special s (+ col 1)))))
 
 (define (next-word doc row col)
@@ -36,13 +36,25 @@
 	 (<= col (string-length par))
 	 (substring par col (next-special par col)))))
 
-(define (list-uncommented-length l)
-  (cond ((null? l) 0)
-	((== (car l) #\;) 0)
-	(else (+ (list-uncommented-length (cdr l)) 1))))
+(define (quoted-backwards s col)
+  (cond ((< col 0) col)
+	((== (string-ref s col) #\") (- col 1))
+	(else (quoted-backwards s (- col 1)))))
+
+(define (quoted-forwards s col)
+  (cond ((>= col (string-length s)) col)
+	((== (string-ref s col) #\") (+ col 1))
+	(else (quoted-forwards s (+ col 1)))))
+
+(define (string-uncommented s col)
+  (cond ((>= col (string-length s)) col)
+	((== (string-ref s col) #\;) col)
+	((== (string-ref s col) #\")
+	 (string-uncommented s (quoted-forwards s (+ col 1))))
+	(else (string-uncommented s (+ col 1)))))
 
 (define (string-uncommented-length s)
-  (list-uncommented-length (string->list s)))
+  (string-uncommented s 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search for previous arguments
@@ -68,6 +80,10 @@
 		(previous-argument doc row (- col 1) (+ level 1)))
 	       ((== (string-ref par col) #\space)
 		(previous-argument doc row (- col 1) level))
+	       ((== (string-ref par col) #\")
+		(with ncol (quoted-backwards par (- col 1))
+		  (if (== level 0) (cons row (+ ncol 1))
+		      (previous-argument doc row ncol level))))
 	       (else (with ncol (previous-special par (- col 1))
 		       (if (== level 0) (cons row (+ ncol 1))
 			   (previous-argument doc row ncol level))))))))
