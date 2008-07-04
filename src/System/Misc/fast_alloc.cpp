@@ -17,7 +17,7 @@
 
 #include "fast_alloc.hpp"
 
-char*  alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
+char   alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
 char*  alloc_mem=NULL;
 size_t alloc_remains=0;
 int    allocated=0;
