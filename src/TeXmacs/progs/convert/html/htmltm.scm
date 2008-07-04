@@ -317,15 +317,23 @@
 	       => (lambda (n) (tmlength (/ n 100) 'par)))
 	      (else (tmlength))))))
 
+(define (htmltm-tex-image s)
+  (with lt (string-append "$\\displaystyle " s "$")
+    (with tm (convert lt "latex-snippet" "texmacs-stree")
+      (list tm))))
+
 (define (htmltm-image env a c)
-  (let* ((s (xmltm-url-text (or (shtml-attr-non-null a 'src) "")))
-	 (w (tmlength->string (htmltm-dimension a 'width)))
-	 (h (tmlength->string (htmltm-dimension a 'height))))
-    (list (xmltm-label-decorate
-	   a 'id
-	   (if (not (and (string-null? w) (string-null? h)))
-	       `(postscript ,s ,w ,h "" "" "" "")
-	       `(postscript ,s "*6383/10000" "" "" "" "" ""))))))
+  (if (and (== (shtml-attr-non-null a 'class) "tex")
+	   (shtml-attr-non-null a 'alt))
+      (htmltm-tex-image (shtml-attr-non-null a 'alt))
+      (let* ((s (xmltm-url-text (or (shtml-attr-non-null a 'src) "")))
+	     (w (tmlength->string (htmltm-dimension a 'width)))
+	     (h (tmlength->string (htmltm-dimension a 'height))))
+	(list (xmltm-label-decorate
+	       a 'id
+	       (if (not (and (string-null? w) (string-null? h)))
+		   `(postscript ,s ,w ,h "" "" "" "")
+		   `(postscript ,s "*6383/10000" "" "" "" "" "")))))))
 
 (define (htmltm-font env a c)
   ;; WARNING: do as old filter, but is fragile and not conformant
