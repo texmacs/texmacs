@@ -254,15 +254,15 @@ BUNDLE_MAIN: TEXMACS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
 
 define bundle_install_lib
-	$(CP) /opt/local/lib/$(1) $(BUNDLE_RESOURCES)/lib
-	install_name_tool -change /opt/local/lib/$(1) @executable_path/../Resources/lib/$(1) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/lib/$(1) $(BUNDLE_RESOURCES)/lib/$(1)
+	$(CP) $(1) $(BUNDLE_RESOURCES)/lib
+	install_name_tool -change $(1) @executable_path/../Resources/lib/$(2) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
+	install_name_tool -id @executable_path/../Resources/lib/$(2) $(BUNDLE_RESOURCES)/lib/$(2)
 endef
 
 bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
 
 BUNDLE_LIBS:
-	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(notdir $(lib))) ;)
+	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
 
 BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
 
