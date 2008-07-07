@@ -317,23 +317,15 @@
 	       => (lambda (n) (tmlength (/ n 100) 'par)))
 	      (else (tmlength))))))
 
-(define (htmltm-tex-image s)
-  (with lt (string-append "$\\displaystyle " s "$")
-    (with tm (convert lt "latex-snippet" "texmacs-stree")
-      (list tm))))
-
 (define (htmltm-image env a c)
-  (if (and (== (shtml-attr-non-null a 'class) "tex")
-	   (shtml-attr-non-null a 'alt))
-      (htmltm-tex-image (shtml-attr-non-null a 'alt))
-      (let* ((s (xmltm-url-text (or (shtml-attr-non-null a 'src) "")))
-	     (w (tmlength->string (htmltm-dimension a 'width)))
+  (let* ((s (xmltm-url-text (or (shtml-attr-non-null a 'src) "")))
+	 (w (tmlength->string (htmltm-dimension a 'width)))
 	     (h (tmlength->string (htmltm-dimension a 'height))))
-	(list (xmltm-label-decorate
-	       a 'id
-	       (if (not (and (string-null? w) (string-null? h)))
-		   `(postscript ,s ,w ,h "" "" "" "")
-		   `(postscript ,s "*6383/10000" "" "" "" "" "")))))))
+    (list (xmltm-label-decorate
+	   a 'id
+	   (if (not (and (string-null? w) (string-null? h)))
+	       `(postscript ,s ,w ,h "" "" "" "")
+	       `(postscript ,s "*6383/10000" "" "" "" "" ""))))))
 
 (define (htmltm-font env a c)
   ;; WARNING: do as old filter, but is fragile and not conformant
@@ -361,6 +353,26 @@
   (if (sxhtml-list? (xpath-parent env))
       '()
       '((next-line))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special rules for improving Wikipedia rendering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (htmltm-tex-image s)
+  (with lt (string-append "$\\displaystyle " s "$")
+    (with tm (convert lt "latex-snippet" "texmacs-stree")
+      (list tm))))
+
+(define (htmltm-wikipedia-image env a c)
+  (if (and (== (shtml-attr-non-null a 'class) "tex")
+	   (shtml-attr-non-null a 'alt))
+      (htmltm-tex-image (shtml-attr-non-null a 'alt))
+      (htmltm-image env a c)))
+
+(define (htmltm-wikipedia-span env a c)
+  (if (== (shtml-attr-non-null a 'class) "texhtml")
+      (list `(math ,(htmltm-args-serial env c)))
+      (htmltm-pass env a c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
@@ -413,7 +425,7 @@
   ;; Grouping
   (div  (handler :mixed :block  htmltm-pass))
   ;; TODO: convert 'align' attributes in div, p and headings
-  (span (handler :mixed :inline htmltm-pass))
+  (span (handler :mixed :inline htmltm-wikipedia-span))
 
   ;; Headings
   (h1 (handler :mixed :block "chapter"))
@@ -481,7 +493,7 @@
   (object (handler :mixed :inline htmltm-drop))
   ;; TODO: handle cases where OBJECT is equivalent to IMG
   (param htmltm-drop) ; allowed only in object
-  (img (handler :empty :inline htmltm-image))
+  (img (handler :empty :inline htmltm-wikipedia-image))
   (applet (handler :mixed :inline htmltm-drop))
   (map (handler :element :inline htmltm-drop))
   (area htmltm-drop) ; allowed only in map

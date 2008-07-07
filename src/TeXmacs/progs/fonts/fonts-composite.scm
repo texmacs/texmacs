@@ -18,6 +18,7 @@
   '(((modern $v $a $b $s $d)
      (compound (ec (roman $v $a $b $s $d))
 	       (la (cyrillic $v $a $b $s $d))
+	       (cmr (tex cmr $s $d))
 	       (cmmi (tex cmmi $s $d))
 	       (cmsy (tex cmsy $s $d))
 	       (msam (tex msam $s $d))
