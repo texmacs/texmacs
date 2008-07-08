@@ -137,6 +137,8 @@ latex_symbol_to_tree (string s) {
       if (s == "\\notin") return "<nin>";
       if (s == "\\addots") return "<udots>";
       if (s == "\\dots") return "<ldots>";
+      if (s == "\\infin") return "<infty>";
+      if (s == "\\rang") return "<rangle>";
       if (s == "\\tableofcontents")
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
     }
@@ -834,9 +836,9 @@ parse_matrix_params (tree t) {
 }
 
 static void
-parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
+parse_pmatrix (tree& r, tree t, int& i, string lb, string rb) {
   tree tformat= parse_matrix_params (t[i]);
-  if (bracket) r << tree (LEFT, "(");
+  if (lb != "") r << tree (LEFT, lb);
 
   int rows=0, cols=0;
   tree V (CONCAT);
@@ -858,17 +860,27 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       continue;
     }
     else if (is_func (v, BEGIN) && ((v[0] == "array") ||(v[0] == "tabular"))) {
-      parse_pmatrix (E, t, i, false);
+      parse_pmatrix (E, t, i, "", "");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (BEGIN, "matrix")) {
-      parse_pmatrix (E, t, i, false);
+      parse_pmatrix (E, t, i, "", "");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (BEGIN, "pmatrix")) {
-      parse_pmatrix (E, t, i, true);
+      parse_pmatrix (E, t, i, "(", ")");
+      if (i<N(t)) continue;
+      break;
+    }
+    else if (v == tree (BEGIN, "bmatrix")) {
+      parse_pmatrix (E, t, i, "{", "}");
+      if (i<N(t)) continue;
+      break;
+    }
+    else if (v == tree (BEGIN, "vmatrix")) {
+      parse_pmatrix (E, t, i, "|", "|");
       if (i<N(t)) continue;
       break;
     }
@@ -876,6 +888,8 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
     else if (v == tree (END, "tabular")) break;
     else if (v == tree (END, "matrix")) break;
     else if (v == tree (END, "pmatrix")) break;
+    else if (v == tree (END, "bmatrix")) break;
+    else if (v == tree (END, "vmatrix")) break;
     else if (v == tree (APPLY, "hline")) {
       int    row  = N(V)+ (N(L)==0? 0: 1);
       string row_s= row==0? as_string (row+1): as_string (row);
@@ -908,7 +922,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
     M= tformat;
   }
   r << M;
-  if (bracket) r << tree (RIGHT, ")");
+  if (rb != "") r << tree (RIGHT, rb);
 }
 
 static tree
@@ -921,10 +935,12 @@ finalize_pmatrix (tree t) {
     tree r (CONCAT);
     for (i=0; i<n; i++)
       if (is_func (u[i], BEGIN)) {
-	if (u[i][0] == "array") parse_pmatrix (r, u, i, false);
-	else if (u[i][0] == "tabular") parse_pmatrix (r, u, i, false);
-	else if (u[i][0] == "matrix") parse_pmatrix (r, u, i, false);
-	else if (u[i][0] == "pmatrix") parse_pmatrix (r, u, i, true);
+	if (u[i][0] == "array") parse_pmatrix (r, u, i, "", "");
+	else if (u[i][0] == "tabular") parse_pmatrix (r, u, i, "", "");
+	else if (u[i][0] == "matrix") parse_pmatrix (r, u, i, "", "");
+	else if (u[i][0] == "pmatrix") parse_pmatrix (r, u, i, "(", ")");
+	else if (u[i][0] == "bmatrix") parse_pmatrix (r, u, i, "[", "]");
+	else if (u[i][0] == "vmatrix") parse_pmatrix (r, u, i, "|", "|");
 	else r << u[i];
       }
       else r << u[i];

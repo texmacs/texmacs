@@ -38,9 +38,10 @@
 
   ;; temporarily
   hline
-
   ;; rewritten
-  notin vert Vert addots)
+  notin vert Vert addots
+  ;; wikipedia
+  infin rang)
 
 (drd-group latex-command-1%
   usepackage part part* chapter chapter*
@@ -67,7 +68,8 @@
   ,(string->symbol "."))
 
 (drd-group latex-command-2%
-  binom choose sideset stackrel citeauthoryear setcounter equal
+  binom choose cfrac tfrac
+  sideset stackrel citeauthoryear setcounter equal
   href)
 
 (drd-group latex-command-3%
@@ -115,7 +117,8 @@
 
 (drd-group latex-environment-0%
   begin-document begin-abstract begin-verbatim
-  begin-matrix begin-pmatrix begin-center begin-picture)
+  begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix
+  begin-center begin-picture)
 
 (drd-group latex-environment-0*%
   begin-figure begin-table)

@@ -478,6 +478,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       u << s (j, i);
       if ((i<n) && (s[i]=='}')) i++;
       arity--;
+      if (arity == 0) option= false;
     }
     else if (option && (s[j]=='#') && (cmd == "\\def")) {
       while ((j+3 <= n) && is_numeric (s[j+1]) && (s[j+2] == '#')) j+=2;
@@ -496,6 +497,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 	t << st;
 	u << st;
 	arity--;
+	if (arity == 0) option= false;
       }
       else break;
     }

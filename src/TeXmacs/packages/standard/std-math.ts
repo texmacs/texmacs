@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.6.14>
 
 <style|<tuple|source|std>>
 
@@ -55,6 +55,10 @@
 
   <assign|choose|<value|binom>>
 
+  <assign|cfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
+
+  <assign|tfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
+
   <\active*>
     <\src-comment>
       Mathematical tabular structures.
@@ -74,18 +78,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
