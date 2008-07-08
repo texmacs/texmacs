@@ -70,6 +70,11 @@ web_cache_invalidate (url name) {
 * Web files
 ******************************************************************************/
 
+static string
+web_encode (string s) {
+  return tm_decode (s);
+}
+
 url
 get_from_web (url name) {
   if (!is_rooted_web (name)) return url_none ();
@@ -92,6 +97,7 @@ get_from_web (url name) {
     urlPath = NULL;
   else
     urlString = "http://" * urlString;
+  urlString= web_encode (urlString);
 
   urlPath = as_charp(urlString);
   tempFilePath = as_charp(as_string(tmp));
@@ -109,7 +115,7 @@ get_from_web (url name) {
   url tmp= url_temp ();
   string tmp_s= escape_sh (concretize (tmp));
   string cmd= "wget --header='User-Agent: TeXmacs-" TEXMACS_VERSION "' -q";
-  cmd << " -O " << tmp_s << " " << as_string (name);
+  cmd << " -O " << tmp_s << " " << escape_sh (web_encode (as_string (name)));
   // cout << cmd << "\n";
   system (cmd);
   // cout << "got " << name << " as " << tmp << "\n";

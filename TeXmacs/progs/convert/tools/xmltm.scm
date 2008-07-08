@@ -135,7 +135,10 @@
   (cork-grave->backquote (utf8->cork s)))
 
 (tm-define (xmltm-url-text s)
-  (cork-grave->backquote (utf8->cork (url-decode s))))
+  ;; (cork-grave->backquote (utf8->cork (url-decode s)))
+  ;; NOTE: don't decode URL names, or also implement a corresponding
+  ;; routine for the encoding, when we click on a hyperlink
+  (string-encode s))
 
 ;; Conversion of Cork GRAVE ACCENT to LEFT SINGLE QUOTATION MARK
 

@@ -129,6 +129,8 @@
   (locase-all locase_all (string string))
   (string-union string_union (string string string))
   (string-minus string_minus (string string string))
+  (string-encode tm_encode (string string))
+  (string-decode tm_decode (string string))
   (escape-generic escape_generic (string string))
   (escape-verbatim escape_verbatim (string string))
   (escape-shell escape_sh (string string))

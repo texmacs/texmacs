@@ -1399,6 +1399,32 @@ tmg_string_minus (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_string_encode (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-encode");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_encode (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_decode (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-decode");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_decode (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_escape_generic (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-generic");
 
@@ -3549,6 +3575,8 @@ initialize_glue_basic () {
   scm_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
   scm_new_procedure ("string-union", (FN) tmg_string_union, 2, 0, 0);
   scm_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
+  scm_new_procedure ("string-encode", (FN) tmg_string_encode, 1, 0, 0);
+  scm_new_procedure ("string-decode", (FN) tmg_string_decode, 1, 0, 0);
   scm_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   scm_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
   scm_new_procedure ("escape-shell", (FN) tmg_escape_shell, 1, 0, 0);
