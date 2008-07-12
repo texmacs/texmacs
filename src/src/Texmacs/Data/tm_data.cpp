@@ -332,7 +332,9 @@ tm_data_rep::delete_view (tm_view vw) {
 	else a[j]= buf->vws[j+1];
       buf->vws= a;
     }
-  delete vw;
+  // delete vw;
+  // FIXME: causes very annoying segfault;
+  // recently introduced during reorganization
 }
 
 void
