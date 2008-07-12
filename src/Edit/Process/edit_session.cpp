@@ -552,7 +552,7 @@ edit_process_rep::session_split () {
   tree st = subtree (et, path_up (p));
   tree del= st (last_item (p), N(st));
   tree w  = copy (subtree (et, path_up (q)));
-  w[4]= compound ("session", del);
+  w[4]= compound ("session", copy (del));
   insert (path_inc (path_up (q)), tree (DOCUMENT, "", w));
   go_to (path_inc (path_up (q)) * 0);
   remove (p, N(del));
