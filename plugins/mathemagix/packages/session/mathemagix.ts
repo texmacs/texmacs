@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.9>
+<TeXmacs|1.0.6.14>
 
 <style|source>
 
@@ -20,6 +20,8 @@
       02111-1307, USA.
     </src-license>
   </src-title>>
+
+  <assign|mathemagix-prompt|<macro|nr|<with|color|red|<arg|nr>] >>>
 
   <assign|mathemagix-output|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0fn>|<generic-output|<arg|body>>>>>
 
