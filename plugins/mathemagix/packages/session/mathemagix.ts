@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <assign|mathemagix-prompt|<macro|nr|<with|color|red|<arg|nr>] >>>
+  <assign|mmx-prompt|<macro|nr|<with|color|red|<arg|nr>] >>>
 
   <assign|mathemagix-output|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0fn>|<generic-output|<arg|body>>>>>
 
