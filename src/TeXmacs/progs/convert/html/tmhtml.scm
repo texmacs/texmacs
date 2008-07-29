@@ -844,7 +844,6 @@
 	((== x '("cell-valign" "b")) "vertical-align: bottom")
 	((== x '("cell-valign" "B")) "vertical-align: baseline")
 	((== (car x) "cell-background")
-	 (display* "background= " (cadr x) "\n")
 	 `(bgcolor ,(tmcolor->htmlcolor (cadr x))))
 	((== (car x) "cell-lborder") (border-attr "border-left" (cadr x)))
 	((== (car x) "cell-rborder") (border-attr "border-right" (cadr x)))
