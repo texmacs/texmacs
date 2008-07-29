@@ -422,14 +422,16 @@ edit_env_rep::exec (tree t) {
 
 tree
 edit_env_rep::exec_formatting (tree t, string v) {
-  int n= N(t);
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n-1; i++) r[i]= exec (t[i]);
   tree oldv= read (v);
-  tree newv= oldv * t (0, n-1);
+  tree newv= oldv * r (0, n-1);
   // monitored_write_update (v, newv);
   write_update (v, newv);
-  tree r= exec (t[n-1]);
+  r[n-1]= exec (t[n-1]);
   write_update (v, oldv);
-  return t (0, n-1) * tree (TFORMAT, r);
+  return r;
 }
 
 tree

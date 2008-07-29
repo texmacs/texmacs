@@ -645,7 +645,7 @@
 
 (define (tmhtml-with-mode val arg)
   (ahash-with tmhtml-env :math (== val "math")
-    (tmhtml arg)))
+    (tmhtml (if (== val "prog") `(verbatim ,arg) arg))))
 
 (define (tmhtml-with-color val arg)
   `((h:font (@ (color ,(tmcolor->htmlcolor val))) ,@(tmhtml arg))))
@@ -802,7 +802,7 @@
 	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
 
 (define (tmhtml-specific l)
-  (cond ((== (car l) "html") (tmhtml (cadr l)))
+  (cond ((== (car l) "html") (list (string-decode (force-string (cadr l)))))
 	((== (car l) "image") (tmhtml-png (cadr l)))
 	(else '())))
 
@@ -844,6 +844,7 @@
 	((== x '("cell-valign" "b")) "vertical-align: bottom")
 	((== x '("cell-valign" "B")) "vertical-align: baseline")
 	((== (car x) "cell-background")
+	 (display* "background= " (cadr x) "\n")
 	 `(bgcolor ,(tmcolor->htmlcolor (cadr x))))
 	((== (car x) "cell-lborder") (border-attr "border-left" (cadr x)))
 	((== (car x) "cell-rborder") (border-attr "border-right" (cadr x)))
@@ -1208,7 +1209,7 @@
   (surround tmhtml-surround)
   (concat tmhtml-concat)
   (format tmhtml-noop)
-  (hspace tmhtml-vspace)
+  (hspace tmhtml-hspace)
   (vspace* tmhtml-vspace)
   (vspace tmhtml-vspace)
   (space tmhtml-hspace)
