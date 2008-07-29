@@ -60,6 +60,8 @@
 
 (tm-define (export-buffer to)
   ;; Temporary fix for saving to postscript or pdf
+  (if (string? to) (set! to (url-relative (get-name-buffer) to)))
+  (if (url? to) (set! current-save-target to))
   (if (in? (url-suffix to) '("ps" "pdf"))
       (print-to-file to)
       (texmacs-save-buffer to "generic")))
