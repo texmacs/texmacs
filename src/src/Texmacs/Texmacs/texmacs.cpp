@@ -137,11 +137,14 @@ TeXmacs_main (int argc, char** argv) {
 	reverse_colors= true;
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
-	if (i<argc)
+	if (i<argc) {
+	  url in  ("$PWD", argv[i-1]);
+	  url out ("$PWD", argv[ i ]);
 	  my_init_cmds= my_init_cmds * " " *
-	    "(texmacs-load-buffer " * scm_quote (argv[i-1]) *
+	    "(texmacs-load-buffer " * scm_quote (as_string (in)) *
 	    " \"generic\" 0 #f) " *
-	    "(export-buffer " * scm_quote (argv[i]) * ")";
+	    "(export-buffer " * scm_quote (as_string (out)) * ")";
+	}
       }
       else if ((s == "-x") || (s == "-execute")) {
 	i++;
