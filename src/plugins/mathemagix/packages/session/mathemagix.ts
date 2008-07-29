@@ -24,6 +24,8 @@
   <assign|mmx-prompt|<macro|nr|<with|color|red|<arg|nr>]<specific|html|&nbsp;>
   >>>
 
+  <assign|mmx-prompt|<macro|nr|<with|color|red|Mmx]<specific|html|&nbsp;> >>>
+
   <assign|mathemagix-output|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0fn>|<generic-output|<arg|body>>>>>
 </body>
 
