@@ -358,6 +358,10 @@ edit_typeset_rep::exec_html (tree t, path p) {
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
   return exec (t, H);
+  //tree r= exec (t, H);
+  //cout << "In: " << t << "\n";
+  //cout << "Out: " << r << "\n";
+  //return r;
 }
 
 tree
