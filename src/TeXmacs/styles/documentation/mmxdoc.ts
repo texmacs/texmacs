@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|tmdoc|tmdoc-web>
+  <use-package|tmdoc|tmdoc-web|varsession>
 
   <\active*>
     <\src-comment>
@@ -33,11 +33,7 @@
     </src-comment>
   </active*>
 
-  <assign|mmxweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Download|download>|<tmweb-link|Progress|progress>|<tmweb-link|Mailing
-  lists|ml>|<tmweb-link|Contact|contact>>>>>
-
-  <assign|mmlweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome-mml>|<tmweb-link|Download|download-mml>|<tmweb-link|Mailing
-  lists|ml>|<tmweb-link|Contact|contact>>>>>
+  <assign|mmxweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|index>|<tmweb-link|Download|download>|<tmweb-link|Language|language>|<tmweb-link|Packages|package_list>|<tmweb-link|Develop|develop>|<tmweb-link|Contact|contact>|<hlink|<with|color|brown|<localize|Search>>|http://www.mathemagix.org/search>>>>>
 
   <\active*>
     <\src-comment>
