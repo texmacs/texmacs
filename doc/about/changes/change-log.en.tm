@@ -1,13 +1,18 @@
-<TeXmacs|1.0.6.12>
+<TeXmacs|1.0.6.14>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.14>
+  <section|Changes from version 1.0.6 to 1.0.6.15>
 
   <\itemize>
+    <item>Improved <scheme> mode (1.0.6.15).
+
+    <item>Improved appearance of <name|Wikipedia> mathematical pages
+    (1.0.6.15).
+
     <item>TrueColor support (1.0.6.14).
 
     <item>Started native Aqua port for <TeXmacs> (1.0.6.14).

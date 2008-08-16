@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.6>
+<TeXmacs|1.0.6.14>
 
 <style|tmdoc>
 
@@ -15,6 +15,8 @@
     <item*|DraTeX>Nicolas Ratier.
 
     <item*|Eikleides>Mark Arrasmith.
+
+    <item*|Feynmf>Maarten Wegewijs.
 
     <item*|Giac>Bernard Parisse.
 
