@@ -79,14 +79,14 @@
 	    ("Compatibility with other formats"
 	     (load-help-article "main/convert/man-convert"))))
   (if (detailed-menus?)
-      (when (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
-	(-> "Tutorial"
-	    ("Browse" (load-help-buffer "tutorial/tut-tutorial"))
-	    ---
-	    ("First contact"
-	     (load-help-article "tutorial/start/tut-start"))
-	    ("Typing a simple text"
-	     (load-help-article "tutorial/start/tut-simple-text")))))
+      (if (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
+	  (-> "Tutorial"
+	      ("Browse" (load-help-buffer "tutorial/tut-tutorial"))
+	      ---
+	      ("First contact"
+	       (load-help-article "tutorial/start/tut-start"))
+	      ("Typing a simple text"
+	       (load-help-article "tutorial/start/tut-simple-text")))))
 ; (when (url-exists-in-help? "devel/style/style.en.tm")
 ;	(-> "Styles"
 ;	    ("Browse" (load-help-buffer "devel/style/style"))
