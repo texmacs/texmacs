@@ -13,6 +13,8 @@
     <item>Improved appearance of <name|Wikipedia> mathematical pages
     (1.0.6.15).
 
+    <item>Added plug-in for drawing Feynman diagrams (1.0.6.15).
+
     <item>TrueColor support (1.0.6.14).
 
     <item>Started native Aqua port for <TeXmacs> (1.0.6.14).
