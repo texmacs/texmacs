@@ -796,6 +796,15 @@ fi
 if test "$bindir" = '${exec_prefix}/bin'; then
   bindir='${exec_prefix}/bin'
 fi
+if test "$datarootdir" = ""; then
+  datarootdir='${prefix}/share'
+fi
+if test "$datarootdir" = "NONE"; then
+  datarootdir='${prefix}/share'
+fi
+if test "$datarootdir" = '${prefix}/share'; then
+  datarootdir='${prefix}/share'
+fi
 if test "$datadir" = ""; then
   datadir='${prefix}/share'
 fi
@@ -806,13 +815,13 @@ if test "$datadir" = '${prefix}/share'; then
   datadir='${prefix}/share'
 fi
 if test "$mandir" = ""; then
-  mandir='${prefix}/man'
+  mandir='${datarootdir}/man'
 fi
 if test "$mandir" = "NONE"; then
-  mandir='${prefix}/man'
+  mandir='${datarootdir}/man'
 fi
-if test "$mandir" = '${prefix}/man'; then
-  mandir='${prefix}/man'
+if test "$mandir" = '${datarootdir}/man'; then
+  mandir='${datarootdir}/man'
 fi
 if test "$libexecdir" = ""; then
   libexecdir='${exec_prefix}/libexec'
