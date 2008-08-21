@@ -11,6 +11,7 @@ exec_prefix = @exec_prefix@
 includedir = @includedir@
 libdir = @libdir@
 bindir = @bindir@
+datarootdir = @datarootdir@
 datadir = @datadir@
 mandir = @mandir@
 tmdir = @tmdir@

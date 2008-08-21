@@ -1,6 +1,8 @@
 #!/bin/sh
 # Program to make a postscript image from a fig picture with latex labels
 
+datarootdir="@datarootdir@"
+
 if test $# != 2; then
   echo "Usage: fig2ps <input.fig> <output.ps>" >&2
   exit 1
