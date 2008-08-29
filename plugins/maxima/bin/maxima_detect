@@ -36,6 +36,28 @@ find_old_help()
   fi
 }
 
+# maximum version
+V1=0; V2=0; V3=0
+
+max_ver() {
+  while [ -n "$1" ]; do
+    if [ $1 -gt $V1 ]
+    then V1=$1; V2=$2; V3=$3
+    elif [ $1 -eq $V1 ]
+    then
+      if [ $2 -gt $V2 ]
+      then V2=$2; V3=$3
+      elif [ $2 -eq $V2 ]
+      then
+        if [ $3 -gt $V3 ]
+        then V3=$3
+        fi
+      fi
+    fi
+    shift; shift; shift
+  done
+}
+
 if [ $OSTYPE = "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
 MAXIMA=`which maxima$EXT 2>/dev/null`
 if [ $? -eq 0 ]
@@ -56,26 +78,40 @@ then
       # 5.9.0 or later
       if [ "$1" ]
       then
-        if $MAXIMA --list-avail | grep -F "version 5.9.1
-version 5.9.2
-version 5.9.3
-version 5.10
-version 5.11
-version 5.12
-version 5.13
-version 5.14" >/dev/null
+        max_ver `maxima --list-avail | \
+          grep '^version [A-Za-z0-9\.]\+, lisp [A_Za-z0-9]\+$' |\
+          sed -e 's/^version \([0-9][0-9]*\)\.\([0-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2 \3/'`
+
+        GOOD=no
+        if [ $V1 -gt 5 ]
+        then GOOD=yes
+        elif [ $V1 -eq 5 ]
         then
-          # 5.9.1 or 5.9.2 or 5.9.3 or
-	  # 5.10 or 5.11 or 5.12 or 5.13 or 5.14 or 5.15
-          maxima -d | grep -F 'maxima-htmldir=' | sed -e \
-          's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
+          if [ $V2 -gt 9 ]
+          then GOOD=yes
+          elif [ $V2 -eq 9 ]
+          then
+            if [ $V3 -gt 0 ]
+            then GOOD=yes
+            fi
+          fi
+        fi
+
+        if [ $GOOD = yes ]
+        then
+          # 5.9.1 or later
+          maxima -d | grep -F 'maxima-htmldir=' |\
+	    sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
         else
           # 5.9.0
           find_old_help
         fi
       else
-        maxima --list-avail | sed -e '1d' -e 's/version /"/' \
-        -e 's/, lisp / /' -e 's/$/"/' -e '2s/^/(/' -e '$s/$/)/'
+        echo '('
+        maxima --list-avail |\
+          grep '^version [a-z0-9\.]\+, lisp [a-zA-Z0-9]\+$' |\
+          sed -e 's/^version \([a-z0-9\.]\+\), lisp \([a-zA_Z0-9]\+\)$/"\1 \2"/'
+        echo ')'
       fi
     else
       # 5.6
