@@ -249,7 +249,7 @@
   ("elsequation*" ((!begin "eqnarray*") (!append --- "&&")))
   ("theglossary"
    ((!begin "list" "" (!append "\\setlength{\\labelwidth}{6.5em}"
-			       "\\setlength{\\leftindent}{7em}"
+			       "\\setlength{\\leftmargin}{7em}"
 			       "\\small")) ---)))
 
 (drd-table latex-texmacs-env-arity%
