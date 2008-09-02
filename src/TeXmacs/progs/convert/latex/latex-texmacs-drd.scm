@@ -41,10 +41,10 @@
    
   ;; asymptotic relations by Joris
   (nasymp "\\not\\asymp")
-  (asympasymp "\\asymp\\!\\!\\!-")
-  (nasympasymp "\\not\\asymp\\!\\!\\!-")
-  (simsim "\\approx\\!\\!\\!-")
-  (nsimsim "\\not\\approx\\!\\!\\!-")
+  (asympasymp "{\\asymp\\!\\!\\!\\!\\!\\!-}")
+  (nasympasymp "{\\not\\asymp\\!\\!\\!\\!\\!\\!-}")
+  (simsim "{\\approx\\!\\!\\!\\!\\!\\!-}")
+  (nsimsim "{\\not\\approx\\!\\!\\!\\!\\!\\!-}")
   (npreccurlyeq "\\not\\preccurlyeq")
   (precprec "\\prec\\!\\!\\!\\prec")
   (precpreceq "\\preceq\\!\\!\\!\\preceq")
