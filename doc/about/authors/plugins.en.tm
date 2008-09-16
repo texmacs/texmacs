@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.6.15>
 
 <style|tmdoc>
 
@@ -7,6 +7,8 @@
 
   <\description-dash>
     <item*|Axiom>Andrey Grozin, Bill Page, David Mentré and Tim Daly.
+
+    <item*|Cadabra>Kasper Peeters.
 
     <item*|CLisp>Michael Graffam.
 
