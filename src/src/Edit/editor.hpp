@@ -16,7 +16,11 @@
 #ifdef AQUATEXMACS
 #include "Cocoa/aqua_simple_widget.h"
 #else
+#ifdef QTTEXMACS
+#include "Qt/qt_simple_widget.hpp"
+#else
 #include "Widkit/simple_wk_widget.hpp"
+#endif
 #endif
 #include "server.hpp"
 #include "scheme.hpp"

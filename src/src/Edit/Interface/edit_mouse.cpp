@@ -203,7 +203,7 @@ edit_interface_rep::mouse_adjust (SI x, SI y) {
     SERVER (menu_widget ("(vertical (link texmacs-popup-menu))", wid));
     widget popup_wid= popup_widget (wid);
     popup_win= ::popup_window_widget (popup_wid, "Popup menu");
-#ifdef AQUATEXMACS
+#if defined (QTTEXMACS) || defined(AQUATEXMACS)
     SI ox, oy;
     get_position (this, ox, oy);
     set_position (popup_win, wx+     x, wy+     y);

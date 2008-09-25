@@ -18,7 +18,11 @@
 #ifdef AQUATEXMACS
 #include "Cocoa/aqua_simple_widget.h"
 #else
+#ifdef QTTEXMACS
+#include "Qt/qt_simple_widget.hpp"
+#else
 #include "Widkit/simple_wk_widget.hpp"
+#endif
 #endif
 
 /******************************************************************************
@@ -63,7 +67,7 @@ void
 box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
   renderer win= get_renderer (this);
-#ifdef AQUATEXMACS
+#if defined (QTTEXMACS) || defined(AQUATEXMACS)
   SI w,h;
   handle_get_size_hint (w,h);
 #endif
