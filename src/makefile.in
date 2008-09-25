@@ -26,9 +26,10 @@ CXXTEMPLATE = @CONFIG_CXXTEMPLATE@
 CXXOPTIMIZE = @CONFIG_CXXOPTIMIZE@ @CONFIG_CXXDIALECT@
 CXXDEBUG = @CONFIG_CXXDEBUG@ 
 CXXFLAGS = $(CXXWARNING) $(CXXTEMPLATE) $(CXXOPTIMIZE) $(CXXDEBUG) @CONFIG_CXXFLAGS@ @CXXFLAGS@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@ @QT_CPPFLAGS@
 CXXX11 = @X11_CFLAGS@
 CXXCOCOA = @COCOA_CFLAGS@
+CXXQT = @QT_CXXFLAGS@ @QT_CPPFLAGS@ 
 CXXGUI = $(CXX@CONFIG_GUI@)
 CXXIMLIB2 = @IMLIB2_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
@@ -42,6 +43,7 @@ LDPATH = @CONFIG_BPATH@
 LDDL = @CONFIG_BDL@
 LDX11 = @X11_LDFLAGS@
 LDCOCOA = @COCOA_LDFLAGS@
+LDQT = @QT_LDFLAGS@ @QT_LIBS@
 LDGUI = $(LD@CONFIG_GUI@)
 LDIMLIB2 = @IMLIB2_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
@@ -53,6 +55,7 @@ RM = rm -f
 CP = cp -r -f
 GLUE = cd Guile/Glue; ./build-glue
 TOUCH = touch
+MOC = @MOC@
 
 ###############################################################################
 # Source files
@@ -88,6 +91,7 @@ plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Imlib2 \
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@)
+qt_src       := $(call findsrc_in,Plugins,@CONFIG_QT@)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
@@ -108,7 +112,7 @@ make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
  $(edit_src) $(guile_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
- $(typeset_src) $(style_src))
+ $(typeset_src) $(style_src) $(qt_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 
@@ -127,11 +131,21 @@ graphics_incl := $(system_incl)
 plugins_incl  := $(system_incl)
 x11_incl      := $(system_incl)
 cocoa_incl    := $(system_incl)
+qt_incl       := $(system_incl)
 style_incl    := $(system_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
 typeset_incl  := $(system_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
 guile_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
 edit_incl     := $(guile_incl) $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(guile_incl)
+
+###############################################################################
+# MOC files
+###############################################################################
+
+qt_moc := Plugins/Qt/QTMGuiHelper.moc Plugins/Qt/QTMInteractiveInputHelper.moc Plugins/Qt/QTMMenuHelper.moc Plugins/Qt/QTMWidget.moc
+
+%.moc: %.hpp
+	$(MOC) $(QT_CPPFLAGS) $< -o $@
 
 ###############################################################################
 # Dependencies
@@ -186,6 +200,7 @@ graphics_obj := $(call makeobj,$(graphics_src))
 x11_obj      := $(call makeobj,$(x11_src))
 cocoa_m_obj  := $(call makeobj_m,$(cocoa_m_src))
 cocoa_mm_obj := $(call makeobj_mm,$(cocoa_mm_src))
+qt_obj 	     := $(call makeobj,$(qt_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
@@ -218,6 +233,8 @@ $(plugins_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
+$(qt_obj): Objects/%.o: %.cpp $(qt_moc)
+	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
@@ -273,6 +290,7 @@ uses_data     := $(data_obj)
 uses_graphics := $(graphics_obj)
 uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
+uses_qt       := $(qt_obj)
 uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
 uses_style    := $(style_obj)
@@ -283,7 +301,7 @@ uses_texmacs  := $(texmacs_obj)
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 cocoa style typeset edit glue texmacs))
+ plugins x11 qt cocoa style typeset edit glue texmacs))
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) \
   $(LDGUILE) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
@@ -340,6 +358,7 @@ DISTR:
 
 CLEAN: DISTR
 	$(RM) Objects/*.o
+	$(RM) Plugins/Qt/*.moc
 
 clean: CLEAN
 

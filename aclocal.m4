@@ -107,3 +107,9 @@ X_CFLAGS="-I.. $X_CFLAGS"
 echo "no; fixing"])
 CPPFLAGS="$ac_save_cppflags"
 ])
+
+#-------------------------------------------------------------------
+# Autotroll support for Qt
+#-------------------------------------------------------------------
+
+m4_include([misc/autotroll/autotroll.m4])
