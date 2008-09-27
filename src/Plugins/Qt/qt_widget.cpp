@@ -149,9 +149,9 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       QPoint pt = to_qpoint(p);
       //[[(NSScrollView*)view documentView] scrollPoint:pt];
       if (DEBUG_EVENTS)
-	cout << pt.y() << LF;
+	cout << "qt_view_widget_rep::send SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")" << LF;
       //qobject_cast<QScrollArea *>(view)->widget()->move(pt);
-      //	qobject_cast<QScrollArea *>(view)->ensureVisible(pt.x(),pt.y());
+     // 	qobject_cast<QScrollArea *>(view)->ensureVisible(pt.x(),pt.y());
       //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
     }
     break;
@@ -295,21 +295,30 @@ qt_view_widget_rep::query (slot s, int type_id) {
 	fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
       QRect rect = view->visibleRegion().boundingRect();
       coord4 c = from_qrect(rect);
+			if (DEBUG_EVENTS) {
+				cout << "qt_view_widget_rep::query SLOT_VISIBLE_PART (" << rect.x() << "," << rect	.y() 
+				 << "," << rect	.width()   << "," << rect	.height() << ")\n"; 
+			}
       return close_box<coord4> (c);
     }
 
-#if 0
-
-  case SLOT_SCROLL_POSITION:
+			
+		case SLOT_SCROLL_POSITION:
     {
       if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
-      if (DEBUG_EVENTS)
-	cout << "QUERY SLOT_SCROLL_POSITION\n";
+				fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       QPoint pt = qobject_cast<QScrollArea *>(view)->widget()->pos(); // FIXME
+
+			if (DEBUG_EVENTS) {
+				cout << "qt_view_widget_rep::query SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n"; 
+			}
+
       //	NSPoint pt = [[(NSScrollView *)view contentView] bounds].origin;
       return close_box<coord2> (from_qpoint(pt));
     }
+			
+#if 0
+
 			
   case SLOT_POSITION:  
     {
@@ -580,8 +589,17 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       //QPoint pt2 = tm_window()->mapToGlobal(pt);
       //pt = tm_scrollarea()->widget()->mapFromGlobal(pt2);
       if (DEBUG_EVENTS)
-	cout << "qt_tm_widget_rep::send SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n";
-      //			tm_scrollarea()->ensureVisible(pt.x(),pt.y());
+	cout << "qt_tm_widget_rep::send SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n ";
+#if 0
+			cout << "scrollarea (" << tm_scrollarea()->x() << "," <<  tm_scrollarea()->y() << "," 
+			     <<  tm_scrollarea()->width() << "," <<  tm_scrollarea()->height() << ")\n";
+			cout << "widget     (" << tm_scrollarea()->widget()->x() << "," <<  tm_scrollarea()->widget()->y() << "," 
+			<<  tm_scrollarea()->widget()->width() << "," <<  tm_scrollarea()->widget()->height() << ")\n";
+			
+			cout << "GOING TO (" << pt.x()+tm_scrollarea()->width()/2 << "," << pt.y()+tm_scrollarea()->height()/2 << ")\n";
+#endif
+			// It is still not very clear to me because this shift of half h/w size works...
+			tm_scrollarea()->ensureVisible(pt.x()+tm_scrollarea()->width()/2,pt.y()+tm_scrollarea()->height()/2);
       //			tm_scrollarea()->widget()->move(pt);
       //[[sv documentView] scrollPoint:pt];
       //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
@@ -621,9 +639,42 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       if (type_id != type_helper<coord2>::id)
 	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       QPoint pt = tm_canvas()->pos();
+			if (DEBUG_EVENTS) {
+				cout << "qt_tm_widget_rep::query SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n"; 
+			}
+			
+			
       return close_box<coord2> (from_qpoint(pt));
     }
 
+		case SLOT_EXTENTS:
+    {
+      if (type_id != type_helper<coord4>::id)
+				fatal_error ("type mismatch", "SLOT_EXTENTS");
+      QRect rect = tm_canvas()->geometry();
+      coord4 c = from_qrect(rect);
+			if (DEBUG_EVENTS) {
+				cout << "qt_tm_widget_rep::query SLOT_EXTENTS (" << rect.x() << "," << rect	.y() 
+				<< "," << rect	.width()   << "," << rect	.height() << ")\n"; 
+			}
+      return close_box<coord4> (c);
+    }
+			
+	
+		case SLOT_VISIBLE_PART:
+    {
+      if (type_id != type_helper<coord4>::id)
+				fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
+      QRect rect = tm_canvas()->visibleRegion().boundingRect();
+      coord4 c = from_qrect(rect);
+			if (DEBUG_EVENTS) {
+				cout << "qt_tm_widget_rep::query SLOT_VISIBLE_PART (" << rect.x() << "," << rect	.y() 
+				<< "," << rect	.width()   << "," << rect	.height() << ")\n"; 
+			}
+      return close_box<coord4> (c);
+    }
+			
+			
   case SLOT_USER_ICONS_VISIBILITY:
     {
       if (type_id != type_helper<bool>::id)
@@ -945,8 +996,12 @@ qt_window_widget_rep::query (slot s, int type_id) {
       typedef pair<SI,SI> coord2;
       if (type_id != type_helper<coord2>::id)
 	fatal_error ("type mismatch (SLOT_POSITION)", "qt_window_widget_rep::query");
-      QPoint p = wid->pos();
-      return close_box<coord2> (from_qpoint(p));
+      QPoint pt = wid->pos();
+			if (DEBUG_EVENTS) {
+				cout << "qt_window_widget_rep::query SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n"; 
+			}
+			
+      return close_box<coord2> (from_qpoint(pt));
     }
   case SLOT_SIZE:
     {
