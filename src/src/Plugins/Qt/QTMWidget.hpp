@@ -22,8 +22,12 @@ class QTMWidget : public QWidget {
 public:
 	QTMWidget(simple_widget_rep *_wid) : QWidget() { 
 	  setFocusPolicy(Qt::StrongFocus);
-		setBackgroundRole(QPalette::Window);
-		setAutoFillBackground(true);
+	//	setBackgroundRole(QPalette::Window);
+//		setAutoFillBackground(true);
+		setAutoFillBackground(false);
+//		setAttribute (Qt::WA_OpaquePaintEvent);
+		setAttribute (Qt::WA_NoSystemBackground);
+
 	  setProperty("texmacs_widget", QVariant::fromValue((void*)_wid));  
 	};
 
