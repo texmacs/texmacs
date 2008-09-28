@@ -65,19 +65,95 @@ widget qt_widget_rep::popup_window_widget (string s)
   return widget();
 }
 
+/******************************************************************************
+ * some debugging infrastucture
+ ******************************************************************************/
 
+
+ostream& operator << (ostream& out, QRect rect)
+{
+	out << "(" << rect.x() << "," << rect.y() << "," << rect.width() << "," << rect.height() << ")";
+	return out;
+}
+
+char  *slot_name(slot s)
+{
+  static char * slot_names[] =  {
+    "SLOT_IDENTIFIER",
+    "SLOT_WINDOW",
+    "SLOT_RENDERER",
+    "SLOT_VISIBILITY",
+    "SLOT_FULL_SCREEN",
+    "SLOT_NAME",
+    "SLOT_SIZE",
+    "SLOT_POSITION",
+    "SLOT_UPDATE",
+    "SLOT_KEYBOARD",
+    "SLOT_KEYBOARD_FOCUS",
+    "SLOT_MOUSE",
+    "SLOT_MOUSE_GRAB",
+    "SLOT_MOUSE_POINTER",
+    "SLOT_INVALIDATE",
+    "SLOT_INVALIDATE_ALL",
+    "SLOT_REPAINT",
+    "SLOT_DELAYED_MESSAGE",
+    "SLOT_DESTROY",
+    
+    "SLOT_SHRINKING_FACTOR",
+    "SLOT_EXTENTS",
+    "SLOT_VISIBLE_PART",
+    "SLOT_SCROLLBARS_VISIBILITY",
+    "SLOT_SCROLL_POSITION",
+    "SLOT_CANVAS",
+    
+    "SLOT_HEADER_VISIBILITY",
+    "SLOT_MAIN_MENU",
+    "SLOT_MAIN_ICONS_VISIBILITY",
+    "SLOT_MAIN_ICONS",
+    "SLOT_CONTEXT_ICONS_VISIBILITY",
+    "SLOT_CONTEXT_ICONS",
+    "SLOT_USER_ICONS_VISIBILITY",
+    "SLOT_USER_ICONS",
+    "SLOT_FOOTER_VISIBILITY",
+    "SLOT_LEFT_FOOTER",
+    "SLOT_RIGHT_FOOTER",
+    "SLOT_INTERACTIVE_MODE",
+    "SLOT_INTERACTIVE_PROMPT",
+    "SLOT_INTERACTIVE_INPUT",
+    
+    "SLOT_FORM_FIELD",
+    "SLOT_STRING_INPUT",
+    "SLOT_INPUT_TYPE",
+    "SLOT_INPUT_PROPOSAL",
+    "SLOT_FILE",
+    "SLOT_DIRECTORY"
+  };
+  return slot_names[s.sid];
+}
+
+											
+											
 /******************************************************************************
 * qt_view_widget_rep
 ******************************************************************************/
 #pragma mark qt_view_widget_rep
 
+// policy: qt_view_widget_rep owns the QWidget
+ 
 qt_view_widget_rep::qt_view_widget_rep(QWidget *v) : qt_widget_rep(), view(v) {  }
-qt_view_widget_rep::~qt_view_widget_rep()  {  }
+qt_view_widget_rep::~qt_view_widget_rep()  
+{ 
+  if (view) delete view;
+  if (DEBUG_EVENTS) 
+    cout << "qt_view_widget_rep::~qt_view_widget_rep()\n";
+}
 
 
 
 void
 qt_view_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_view_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_NAME:
     {	
@@ -93,18 +169,17 @@ qt_view_widget_rep::send (slot s, blackbox val) {
   case SLOT_INVALIDATE:
     {
       if (type_box (val) != type_helper<coord4>::id)
-	fatal_error ("type mismatch", "SLOT_INVALIDATE");
+        fatal_error ("type mismatch", "SLOT_INVALIDATE");
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
-      if (DEBUG_EVENTS)
-	cout << "invalidating rect (" << rect.x() << "," << rect.y() << "," << rect.width() << "," << rect.height() << ")\n";
+      if (DEBUG_EVENTS) cout << "Invalidating rect " << rect << LF;
       view->update(rect);
     }
     break;
   case SLOT_EXTENTS:
     {
       if (type_box (val) != type_helper<coord4>::id)
-	fatal_error ("type mismatch", "SLOT_EXTENTS");
+        fatal_error ("type mismatch", "SLOT_EXTENTS");
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
       qobject_cast< QScrollArea * >(view)->widget()->resize(rect.size());
@@ -114,7 +189,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
   case SLOT_INVALIDATE_ALL:
     {
       if (!is_nil (val))
-	fatal_error ("type mismatch", "SLOT_INVALIDATE_ALL");
+        fatal_error ("type mismatch", "SLOT_INVALIDATE_ALL");
       view->update(); // [view setNeedsDisplay:YES];
     }
     break;
@@ -144,12 +219,11 @@ qt_view_widget_rep::send (slot s, blackbox val) {
   case SLOT_SCROLL_POSITION:
     {
       if (type_box (val) != type_helper<coord2>::id)
-	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
+        fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       coord2 p= open_box<coord2> (val);
       QPoint pt = to_qpoint(p);
       //[[(NSScrollView*)view documentView] scrollPoint:pt];
-      if (DEBUG_EVENTS)
-	cout << "qt_view_widget_rep::send SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")" << LF;
+      if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")" << LF;
       //qobject_cast<QScrollArea *>(view)->widget()->move(pt);
      // 	qobject_cast<QScrollArea *>(view)->ensureVisible(pt.x(),pt.y());
       //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
@@ -158,7 +232,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
   case SLOT_SHRINKING_FACTOR:
     {
       if (type_box (val) != type_helper<int>::id)
-	fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
+        fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
       //w << set_integer (key, open_box<int> (val));
       //FIXME: handle sf
     }
@@ -167,7 +241,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     //			send_keyboard_focus (THIS, val);
     {
       if (type_box (val) != type_helper<bool>::id)
-	fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
+        fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
       if (open_box<bool>(val)) the_keyboard_focus = this;
     }
     break;
@@ -276,6 +350,9 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
+  if ((DEBUG_EVENTS) && (s != SLOT_RENDERER))
+    cout << "qt_view_widget_rep::query " << slot_name(s) << LF;
+  
   switch (s) {
 
   case SLOT_IDENTIFIER:
@@ -285,8 +362,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
 			
   case SLOT_RENDERER:
     if (type_id != type_helper<renderer>::id)
-      fatal_error ("renderer expected (SLOT_RENDERER)",
-		   "qt_view_widget_rep::query");
+      fatal_error ("renderer expected (SLOT_RENDERER)", "qt_view_widget_rep::query");
     return close_box<renderer> ((renderer) the_qt_renderer());
 
   case SLOT_VISIBLE_PART:
@@ -295,10 +371,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
 	fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
       QRect rect = view->visibleRegion().boundingRect();
       coord4 c = from_qrect(rect);
-			if (DEBUG_EVENTS) {
-				cout << "qt_view_widget_rep::query SLOT_VISIBLE_PART (" << rect.x() << "," << rect	.y() 
-				 << "," << rect	.width()   << "," << rect	.height() << ")\n"; 
-			}
+			if (DEBUG_EVENTS) cout << "visibleRegion " << rect << LF;
       return close_box<coord4> (c);
     }
 
@@ -310,7 +383,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       QPoint pt = qobject_cast<QScrollArea *>(view)->widget()->pos(); // FIXME
 
 			if (DEBUG_EVENTS) {
-				cout << "qt_view_widget_rep::query SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n"; 
+				cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
 			}
 
       //	NSPoint pt = [[(NSScrollView *)view contentView] bounds].origin;
@@ -324,9 +397,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
     {
       typedef pair<SI,SI> coord2;
       if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_POSITION)", "qt_view_widget_rep::query");
-      if (DEBUG_EVENTS)
-	cout << "QUERY SLOT_POSITION\n";
+        fatal_error ("type mismatch (SLOT_POSITION)", "qt_view_widget_rep::query");
       return close_box<coord2> (coord2(0,0)); //FIXME: fake position (who need this information?)
     }
 			
@@ -365,6 +436,8 @@ qt_view_widget_rep::query (slot s, int type_id) {
 
 void
 qt_view_widget_rep::notify (slot s, blackbox new_val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_view_widget_rep::notify " << slot_name(s) << LF;
   switch (s) {
 #if 0
   case SLOT_SIZE:
@@ -395,6 +468,9 @@ qt_view_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_view_widget_rep::read (slot s, blackbox index) {
+  if (DEBUG_EVENTS)
+    cout << "qt_view_widget_rep::read " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_WINDOW: {
     check_type_void (index, "SLOT_WINDOW");
@@ -430,6 +506,8 @@ qt_view_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_view_widget_rep::write (slot s, blackbox index, widget w) {
+  if (DEBUG_EVENTS)
+    cout << "qt_view_widget_rep::write " << slot_name(s) << LF;
   switch (s) {
 #if 0
   case SLOT_CANVAS: 
@@ -508,6 +586,8 @@ qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), he
 
 qt_tm_widget_rep::~qt_tm_widget_rep() 
 { 
+  if (DEBUG_EVENTS) 
+    cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
 }
 
 string
@@ -518,6 +598,9 @@ max_translate (string s) {
 
 void
 qt_tm_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_tm_widget_rep::send " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_EXTENTS:
     {
@@ -555,41 +638,38 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   case SLOT_LEFT_FOOTER:
     {
       if (type_box (val) != type_helper<string>::id)
-	fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
+        fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
       string msg = open_box<string> (val);
       leftLabel->setText(to_qstring (max_translate (msg)));
       leftLabel->update();
     }
 			
-    if (DEBUG_EVENTS)
-      cout << "left footer\n";
+  //  if (DEBUG_EVENTS) cout << "left footer\n";
     //			send_string (THIS, "left footer", val);
     break;
   case SLOT_RIGHT_FOOTER:
     {
       if (type_box (val) != type_helper<string>::id)
-	fatal_error ("type mismatch", "SLOT_RIGHT_FOOTER");
+        fatal_error ("type mismatch", "SLOT_RIGHT_FOOTER");
       string msg = open_box<string> (val);
       rightLabel->setText(to_qstring(max_translate (msg)));
       rightLabel->update();
     }
 			
-    if (DEBUG_EVENTS)
-      cout << "right footer\n";
+ //   if (DEBUG_EVENTS) cout << "right footer\n";
     //			send_string (THIS, "right footer", val);
     break;
 			
   case SLOT_SCROLL_POSITION:
     {
       if (type_box (val) != type_helper<coord2>::id)
-	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
+        fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       coord2 p= open_box<coord2> (val);
       QPoint pt = to_qpoint(p);
       // conver from main widget to canvas coordinates
       //QPoint pt2 = tm_window()->mapToGlobal(pt);
       //pt = tm_scrollarea()->widget()->mapFromGlobal(pt2);
-      if (DEBUG_EVENTS)
-	cout << "qt_tm_widget_rep::send SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n ";
+      if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
 			cout << "scrollarea (" << tm_scrollarea()->x() << "," <<  tm_scrollarea()->y() << "," 
 			     <<  tm_scrollarea()->width() << "," <<  tm_scrollarea()->height() << ")\n";
@@ -609,11 +689,11 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   case SLOT_INTERACTIVE_MODE:
     {
       if (type_box (val) != type_helper<bool>::id)
-	fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
-    }
-    if (open_box<bool>(val) == true) {
-      QTimer::singleShot(0,&helper, SLOT(doit()));
-      //			 do_interactive_prompt();
+        fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
+      if (open_box<bool>(val) == true) {
+        QTimer::singleShot(0,&helper, SLOT(doit()));
+        //			 do_interactive_prompt();
+      }
     }
     break;
       
@@ -633,6 +713,9 @@ void QTMInteractiveInputHelper::doit()
 
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
+  if (DEBUG_EVENTS)
+    cout << "qt_tm_widget_rep::query " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_SCROLL_POSITION:
     {
@@ -640,7 +723,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       QPoint pt = tm_canvas()->pos();
 			if (DEBUG_EVENTS) {
-				cout << "qt_tm_widget_rep::query SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n"; 
+				cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
 			}
 			
 			
@@ -654,8 +737,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       QRect rect = tm_canvas()->geometry();
       coord4 c = from_qrect(rect);
 			if (DEBUG_EVENTS) {
-				cout << "qt_tm_widget_rep::query SLOT_EXTENTS (" << rect.x() << "," << rect	.y() 
-				<< "," << rect	.width()   << "," << rect	.height() << ")\n"; 
+				cout << "Canvas geometry " << rect << LF;
 			}
       return close_box<coord4> (c);
     }
@@ -668,8 +750,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       QRect rect = tm_canvas()->visibleRegion().boundingRect();
       coord4 c = from_qrect(rect);
 			if (DEBUG_EVENTS) {
-				cout << "qt_tm_widget_rep::query SLOT_VISIBLE_PART (" << rect.x() << "," << rect	.y() 
-				<< "," << rect	.width()   << "," << rect	.height() << ")\n"; 
+				cout << "Visible Region " << rect << LF;
 			}
       return close_box<coord4> (c);
     }
@@ -678,7 +759,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_USER_ICONS_VISIBILITY:
     {
       if (type_id != type_helper<bool>::id)
-	fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
+        fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
       return close_box<bool> (false);
     }
 			
@@ -688,13 +769,13 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_FOOTER_VISIBILITY:
     {
       if (type_id != type_helper<bool>::id)
-	fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
+        fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
       return close_box<bool> (true);
     }
   case SLOT_INTERACTIVE_INPUT:
     {
       if (type_id != type_helper<string>::id)
-	fatal_error ("type mismatch", "SLOT_INTERACTIVE_INPUT");
+        fatal_error ("type mismatch", "SLOT_INTERACTIVE_INPUT");
       return close_box<string> ( ((qt_input_text_widget_rep*) int_input.rep)->text );
       //          return close_box<string> ("FIXME");
 			
@@ -714,6 +795,8 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 #if 0
 void
 qt_tm_widget_rep::notify (slot s, blackbox new_val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_tm_widget_rep::notify " << slot_name(s) << LF;
   switch (s) {
   default: ;
   }
@@ -723,6 +806,9 @@ qt_tm_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_tm_widget_rep::read (slot s, blackbox index) {
+  if (DEBUG_EVENTS)
+    cout << "qt_tm_widget_rep::read " << slot_name(s) << LF;
+
   switch (s) {
   default:
     return qt_view_widget_rep::read(s,index);
@@ -756,12 +842,18 @@ extern void replaceButtons(QToolBar *dest, QWidget *src)
 
 void
 qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
+  if (DEBUG_EVENTS)
+    cout << "qt_tm_widget_rep::write " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_CANVAS: 
     {
       check_type_void (index, "SLOT_CANVAS");
       QWidget *qw =((qt_view_widget_rep*) w.rep)->view;
+      QWidget *old_canvas = tm_scrollarea()->takeWidget(); 
       tm_scrollarea()->setWidget(qw);			
+      // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
+			qw->setFocus();
       //FIXME:			[[sv window] makeFirstResponder:v];
     }
     break;
@@ -836,6 +928,9 @@ qt_window_widget_rep::qt_window_widget_rep(QWidget *_wid)
 qt_window_widget_rep::~qt_window_widget_rep()  {  }
 
 void qt_window_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_window_widget_rep::send " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_SIZE:
     {
@@ -857,7 +952,7 @@ void qt_window_widget_rep::send (slot s, blackbox val) {
 	QPoint pt = to_qpoint(p); 
 	pt.ry() += 40; // to avoid window under menu bar on MAC when moving at (0,0)
 	if (DEBUG_EVENTS)
-	  cout << "moving to (" << pt.x() << "," << pt.y() << ")" << LF; 
+	  cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF; 
 	wid->move(pt);
       }
     }
@@ -986,6 +1081,8 @@ void qt_window_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_window_widget_rep::query (slot s, int type_id) {
+  if (DEBUG_EVENTS)
+    cout << "qt_window_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_IDENTIFIER:
     if (type_id != type_helper<int>::id)
@@ -998,7 +1095,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
 	fatal_error ("type mismatch (SLOT_POSITION)", "qt_window_widget_rep::query");
       QPoint pt = wid->pos();
 			if (DEBUG_EVENTS) {
-				cout << "qt_window_widget_rep::query SLOT_SCROLL_POSITION (" << pt.x() << "," << pt.y() << ")\n"; 
+				cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
 			}
 			
       return close_box<coord2> (from_qpoint(pt));
@@ -1062,6 +1159,9 @@ qt_window_widget_rep::query (slot s, int type_id) {
 
 void
 qt_window_widget_rep::notify (slot s, blackbox new_val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_window_widget_rep::notify " << slot_name(s) << LF;
+
   switch (s) {
 #if 0
   case SLOT_SIZE:
@@ -1088,6 +1188,9 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_window_widget_rep::read (slot s, blackbox index) {
+  if (DEBUG_EVENTS)
+    cout << "qt_window_widget_rep::read " << slot_name(s) << LF;
+
   switch (s) {
 #if 0
   case SLOT_WINDOW:
@@ -1111,6 +1214,9 @@ qt_window_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_window_widget_rep::write (slot s, blackbox index, widget w) {
+  if (DEBUG_EVENTS)
+    cout << "qt_window_widget_rep::write " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_CANVAS:
     check_type_void (index, "SLOT_CANVAS");
@@ -1210,18 +1316,28 @@ simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
 
 void
 simple_widget_rep::send (slot s, blackbox val) {
+//  if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::send " << slot_name(s) << LF;
+  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+
   qt_view_widget_rep::send(s, val);
 }
 
 
 blackbox
 simple_widget_rep::query (slot s, int type_id) {
+//  if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::query " << slot_name(s) << LF;
+  if ((DEBUG_EVENTS) && (s != SLOT_RENDERER))
+    cout << "[qt_simple_widget_rep] ";
+
   return qt_view_widget_rep::query(s,type_id);
 }
 
 void
 simple_widget_rep::notify (slot s, blackbox new_val) 
 { 
+//  if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::notify " << slot_name(s) << LF;
+  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+
   qt_view_widget_rep::notify (s, new_val);
 }
 
@@ -1232,12 +1348,17 @@ simple_widget_rep::notify (slot s, blackbox new_val)
 widget
 simple_widget_rep::read (slot s, blackbox index) 
 {
+// if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::read " << slot_name(s) << LF;
+  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
   return qt_view_widget_rep::read(s,index);
 }
 
 void
 simple_widget_rep::write (slot s, blackbox index, widget w) 
 {
+//  if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::write " << slot_name(s) << LF;
+  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+
   qt_view_widget_rep::write(s,index,w);
 }
 
