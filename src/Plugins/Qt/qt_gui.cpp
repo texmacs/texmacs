@@ -482,7 +482,33 @@ void qt_gui_rep::update ()
 
 
 #include "QTMGuiHelper.moc"
-		 
+
+
+void QTMStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option,
+                                QPainter *painter, const QWidget *widget)  const
+{
+  if (element == QStyle::PE_FrameStatusBarItem) return;
+  QCommonStyle::drawPrimitive(element,option,painter,widget);
+}  
+
+int QTMStyle::pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const
+{
+  switch (metric) {
+    case PM_ToolBarItemSpacing:
+      return 0;
+    default: 
+      return QCommonStyle::pixelMetric(metric,opt,widget);
+  }
+}
+
+QStyle *qtmstyle()
+{
+  static QStyle *qtmstyle = NULL;
+  if (!qtmstyle) qtmstyle = new QTMStyle;
+  return qtmstyle;
+}
+
+
 void QTMGuiHelper::doUpdate() { 
   gui->update(); 
 }
@@ -599,6 +625,7 @@ qt_gui_rep::~qt_gui_rep()
 void gui_open (int argc2, char** argv2)
 // start the gui
 {
+  
   new QApplication(argc2,argv2);
   
   the_gui = new qt_gui_rep (argc2, argv2);

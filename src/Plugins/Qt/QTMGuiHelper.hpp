@@ -13,6 +13,7 @@
 #define QTMGUIHELPER_HPP
 
 #include <QObject>
+#include <QMacStyle>
 #include "qt_gui.hpp"
 
 class QTMGuiHelper : public QObject {
@@ -26,5 +27,26 @@ public:
 	public slots:
 	void doUpdate();
 };
+
+
+// custom style to override some Qt "features" like
+// frame around widgets in the status bar
+
+class QTMStyle : public QCommonStyle
+  {
+    Q_OBJECT
+    
+  public:
+    QTMStyle() {}
+    ~QTMStyle() {}
+    
+    virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option,
+                       QPainter *painter, const QWidget *widget) const;
+    virtual int QTMStyle::pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
+
+  };
+
+
+QStyle *qtmstyle(); 
 
 #endif
