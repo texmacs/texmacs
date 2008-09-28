@@ -21,6 +21,7 @@ class QTMWidget : public QWidget {
 
 public:
 	QTMWidget(simple_widget_rep *_wid) : QWidget() { 
+    setObjectName("A QTMWidget");
 	  setFocusPolicy(Qt::StrongFocus);
 	//	setBackgroundRole(QPalette::Window);
 //		setAutoFillBackground(true);
@@ -46,6 +47,7 @@ protected:
   virtual void mousePressEvent ( QMouseEvent * event );
   virtual void mouseReleaseEvent ( QMouseEvent * event );
 	virtual void mouseMoveEvent ( QMouseEvent * event );
+	virtual bool event(QEvent *event);
 
 };
 
