@@ -32,9 +32,11 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include <QToolButton>
+#include <QHBoxLayout>
 
 
 #include "QTMWidget.hpp"
+#include "QTMGuiHelper.hpp"
 
 widget the_keyboard_focus(NULL);
 
@@ -555,16 +557,36 @@ widget qt_view_widget_rep::plain_window_widget (string s)
 
 qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), helper(this)
 {
+   
+  
   QScrollArea *sa = new QScrollArea;
   sa->setBackgroundRole(QPalette::Dark);
   tm_window()->setCentralWidget(sa);
-  QStatusBar *bar = new QStatusBar();
   leftLabel = new QLabel("");
   rightLabel = new QLabel("");
+  leftLabel->setFrameStyle(QFrame::NoFrame);
+  rightLabel->setFrameStyle(QFrame::NoFrame);
 	
+  
+  QStatusBar *bar = new QStatusBar();
+  
+  
+#if 1  
   bar->addWidget(leftLabel);
   bar->addPermanentWidget(rightLabel);
-	
+  bar->setStyle(qtmstyle());
+#else
+  QWidget *subbar = new QWidget;
+  
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->addWidget(leftLabel);
+  layout->addStretch();
+  layout->addWidget(rightLabel);
+  
+  subbar->setLayout(layout);
+  bar->addWidget(subbar);  
+#endif
+  
   QMainWindow *mw = tm_window();
 	
   mw->setStatusBar(bar);
@@ -572,7 +594,12 @@ qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), he
   mainToolBar = new QToolBar("main toolbar");
   contextToolBar = new QToolBar("context toolbar");
   userToolBar = new QToolBar("user toolbar");
-	
+
+  mainToolBar->setStyle(qtmstyle());
+  contextToolBar->setStyle(qtmstyle());
+  userToolBar->setStyle(qtmstyle());
+
+  
   mw->addToolBar(mainToolBar);
   mw->addToolBarBreak();
   mw->addToolBar(contextToolBar);
