@@ -570,22 +570,9 @@ qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), he
   
   QStatusBar *bar = new QStatusBar();
   
-  
-#if 1  
   bar->addWidget(leftLabel);
   bar->addPermanentWidget(rightLabel);
   bar->setStyle(qtmstyle());
-#else
-  QWidget *subbar = new QWidget;
-  
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->addWidget(leftLabel);
-  layout->addStretch();
-  layout->addWidget(rightLabel);
-  
-  subbar->setLayout(layout);
-  bar->addWidget(subbar);  
-#endif
   
   QMainWindow *mw = tm_window();
 	
