@@ -13,7 +13,7 @@
 #define QTMGUIHELPER_HPP
 
 #include <QObject>
-#include <QMacStyle>
+#include <QCommonStyle>
 #include "qt_gui.hpp"
 
 class QTMGuiHelper : public QObject {
