@@ -213,6 +213,44 @@
       (tmhtml (list (car x) (list 'document (cadr x))))
       (tmhtml x)))
 
+(define (tmhtml-compute-max-vspace l after?)
+  (and (nnull? l)
+    (with s1 (tmhtml-compute-vspace (car l) after?)
+      (with s2 (tmhtml-compute-max-vspace (cdr l) after?)
+	(cond ((not s1) s2)
+	      ((not s2) s1)
+	      (else
+		(with l1 (string->tmlength s1)
+		  (with l2 (string->tmlength s2)
+		    (if (== (tmlength-unit l1) (tmlength-unit l2))
+			(tmlength (max (tmlength-value l1) (tmlength-value l2))
+				  (tmlength-unit l1))
+			l1 ;; FIXME: do something more subtle here
+			)))))))))
+
+(define (tmhtml-compute-vspace x after?)
+  (cond ((and (not after?) (func? x 'vspace* 1)) (tmhtml-force-string (cadr x)))
+	((and after? (func? x 'vspace 1)) (tmhtml-force-string (cadr x)))
+	((and (not after?) (func? x 'document)) (tmhtml-compute-vspace (cadr x) #f))
+	((and after? (func? x 'document)) (tmhtml-compute-vspace (cAr x) #t))
+	((func? x 'concat) (tmhtml-compute-max-vspace (cdr x) after?))
+	((func? x 'surround) (tmhtml-compute-max-vspace (cDdr x) after?))
+	(else #f)))
+
+(define (tmhtml-document-p x)
+  (let* ((body (tmhtml-document-elem x))
+	 (l1 (tmhtml-compute-vspace x #f))
+	 (l2 (tmhtml-compute-vspace x #t))
+	 (s1 (and l1 (string-append "padding-top: "
+				    (tmlength->htmllength l1 #t))))
+	 (s2 (and l2 (string-append "padding-bottom: "
+				    (tmlength->htmllength l2 #t))))
+	 (s (cond ((and s1 s2) (string-append s1 "; " s2))
+		  (s1 s2)
+		  (s2 s1)
+		  (else #f))))
+    (if s `(h:p (@ (style ,s)) ,@body) `(h:p ,@body))))
+
 (define (tmhtml-document l)
   (cond ((null? l) '())
 	((ahash-ref tmhtml-env :preformatted)
@@ -221,8 +259,7 @@
 	   ((cut list-intersperse <> '("\n"))
 	    (map tmhtml l)))))
 	(else
-	 (tmhtml-post-paragraphs
-	  (map (lambda (x) (cons 'h:p (tmhtml-document-elem x))) l)))))
+	  (tmhtml-post-paragraphs (map tmhtml-document-p l)))))
 
 (define (tmhtml-paragraph l)
   (let rec ((l l))
