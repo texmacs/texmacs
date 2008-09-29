@@ -29,6 +29,7 @@ coord2 from_qpoint(QPoint & pt);
 coord2 from_qsize(QSize & s);
 QString to_qstring(string s);
 string from_qstring(QString & s);
+bool qt_supports_image (url u);
 
 /******************************************************************************
  * Type checking
