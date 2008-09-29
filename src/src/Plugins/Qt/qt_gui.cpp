@@ -487,7 +487,8 @@ void qt_gui_rep::update ()
 void QTMStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option,
                                 QPainter *painter, const QWidget *widget)  const
 {
-  //if (element == QStyle::PE_FrameStatusBarItem) return;
+//  if (element == QStyle::PE_FrameStatusBarItem) return;
+  if (element == QStyle::PE_FrameStatusBar) return;
   QCommonStyle::drawPrimitive(element,option,painter,widget);
 }  
 
