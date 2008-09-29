@@ -98,7 +98,7 @@
       (list (cork->html s))))
 
 (define (tmhtml-text s)
-  (if (ahash-ref tmhtml-env :math)
+  (if (or (ahash-ref tmhtml-env :math) (ahash-ref tmhtml-env :preformatted))
       (tmhtml-string s)
       (tmhtml-string (make-ligatures s))))
 
