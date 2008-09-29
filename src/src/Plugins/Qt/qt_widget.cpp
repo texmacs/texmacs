@@ -638,18 +638,39 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     //			send_bool (THIS, "header", val);
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
-    //			send_bool (THIS, "main icons", val);
+    {
+    if (type_box (val) != type_helper<bool>::id)
+      fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
+    bool f= open_box<bool> (val);
+    mainToolBar->setVisible(f);
+    }
     break;
   case SLOT_CONTEXT_ICONS_VISIBILITY:
-    //			send_bool (THIS, "context icons", val);
+    {
+    if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
+    bool f= open_box<bool> (val);
+    contextToolBar->setVisible(f);
+    }
     break;
   case SLOT_USER_ICONS_VISIBILITY:
-    //			send_bool (THIS, "user icons", val);
+    {
+    if (type_box (val) != type_helper<bool>::id)
+      fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
+    bool f= open_box<bool> (val);
+    userToolBar->setVisible(f);
+    }
     break;
   case SLOT_FOOTER_VISIBILITY:
-    //			send_bool (THIS, "footer flag", val);
-    break;
-  case SLOT_LEFT_FOOTER:
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      bool f= open_box<bool> (val);
+      tm_window()->statusBar()->setVisible(f);
+    }
+      break;
+
+    case SLOT_LEFT_FOOTER:
     {
       if (type_box (val) != type_helper<string>::id)
         fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
@@ -774,17 +795,33 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       if (type_id != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
-      return close_box<bool> (false);
+      return close_box<bool> (userToolBar->isVisible());
     }
-			
   case SLOT_CONTEXT_ICONS_VISIBILITY:
+    {
+      if (type_id != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
+      return close_box<bool> (contextToolBar->isVisible());
+    }
+      
   case SLOT_MAIN_ICONS_VISIBILITY:
+    {
+      if (type_id != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
+      return close_box<bool> (mainToolBar->isVisible());
+    }
+      
   case SLOT_HEADER_VISIBILITY:
-  case SLOT_FOOTER_VISIBILITY:
     {
       if (type_id != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
       return close_box<bool> (true);
+    }
+  case SLOT_FOOTER_VISIBILITY:
+    {
+      if (type_id != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      return close_box<bool> (tm_window()->statusBar()->isVisible());
     }
   case SLOT_INTERACTIVE_INPUT:
     {

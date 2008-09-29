@@ -8,4 +8,7 @@ Port notes
   On Mac we can use the Apple Distiller instead of ghostscript to interpret pdf 
   and ps images. (What about Windows?)
   
+* Visibility status of main icon bar does not correctly report in the View menu
+
+* What is the header (e.g. in the message SLOT_HEADER_VISIBILITY) ?
     

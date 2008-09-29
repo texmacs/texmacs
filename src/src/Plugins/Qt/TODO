@@ -15,7 +15,6 @@ TODO
   horizontally centered, vertically centered at height/3 from top.
 * Interactive prompts with several entries (i.e. query replace):
   all entries should appear in one window.
-* Visibility of icon bars (in View menu).
 * Support for shrinking factor.
 * Help -> (Apple) Search. How to customize this?
 * Make scrollbar(s) moveable (i.e. at the left instead of the right).
@@ -32,5 +31,5 @@ DONE
 * Remove boxes around left and right footer.
 * Horizontal distance between icons too large.
 * Back button when browsing help segfaults.
-
+* Visibility of icon bars (in View menu).
 
