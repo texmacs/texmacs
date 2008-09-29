@@ -730,10 +730,10 @@ bool check_event (int type)
 // we check for keyboard events while repainting windows
 { return the_gui->check_event(type); }
 
-void image_gc (string name)
+//void image_gc (string name)
 // Garbage collect images of a given name (may use wildcards)
 // This routine only needs to be implemented if you use your own image cache
-{ the_gui->image_gc(name); }
+//{ the_gui->image_gc(name); }
 
 void show_help_balloon (widget balloon, SI x, SI y)
 // Display a help balloon at position (x, y); the help balloon should

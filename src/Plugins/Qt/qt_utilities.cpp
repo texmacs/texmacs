@@ -71,3 +71,9 @@ string from_qstring(QString &s)
   const char *cstr = arr;
   return string((char*)cstr);
 }
+
+bool qt_supports_image (url u) {
+  string s= suffix (u);
+  if (s == "ps" || s == "eps" || s == "pdf") return false;
+  return true;
+}
