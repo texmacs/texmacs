@@ -1,0 +1,28 @@
+
+* X should not be launched.
+* White are of empty document should vertically extend to bottom.
+* Delayed help menu, even several seconds after boot.
+* Links don't highlight when moving over them.
+* In the documentation, rendering of keys not correct up to the pixel.
+* Missing image support.
+* Keyboard shortcuts missing in menus.
+* Anti-aliasing should be default for all graphics operations.
+* Invalid situation on several occasions:
+  - During selections.
+  - After scrolling (middle mouse) and clicking in text.
+* Remove boxes around left and right footer.
+* Horizontal distance between icons too large.
+* Modal windows should appear inside main window,
+  horizontally centered, vertically centered at height/3 from top.
+* Interactive prompts with several entries (i.e. query replace):
+  all entries should appear in one window.
+* Visibility of icon bars (in View menu).
+* Support for shrinking factor.
+* Help -> (Apple) Search. How to customize this?
+* Back button when browsing help segfaults.
+* Make scrollbar(s) moveable (i.e. at the left instead of the right).
+* Loss of keyboard focus after clicking on icon menu entry.
+* Add conversion tm_encoding -> Unicode in 'max_translate'
+  (fixes <gtr> in boot message).
+* Several problems in graphics mode.
+* Check for memory leaks and non properly destroyed Qt objects.
