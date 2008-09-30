@@ -28,6 +28,8 @@ TODO
 * Handle correclty destroy_window_widget
 * Handle correclty mask and quit command in texmacs_widget
 * Implement glue_widget
+* qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
+
 
 DONE
 
