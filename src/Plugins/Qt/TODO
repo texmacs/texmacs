@@ -23,7 +23,11 @@ TODO
   (fixes <gtr> in boot message).
 * Several problems in graphics mode.
 * Check for memory leaks and non properly destroyed Qt objects.
-
+* Implement qt_gui_rep::set_mouse_pointer, qt_gui_rep::show_wait_indicator
+* Implement tile_menu
+* Handle correclty destroy_window_widget
+* Handle correclty mask and quit command in texmacs_widget
+* Implement glue_widget
 
 DONE
 

@@ -24,6 +24,9 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
+extern char  *slot_name(slot s); // in qt_widget.cpp
+
+
 #pragma mark qt_chooser_widget_rep
 
 class qt_chooser_widget_rep: public qt_widget_rep {
@@ -54,7 +57,7 @@ public:
 };
 
 qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, string _mgn) 
-  : qt_widget_rep(), cmd(_cmd), type(_type), mgn(_mgn), size(coord2(100,100)), position(coord2(0,0)), file("")
+  : qt_widget_rep(), cmd(_cmd), type(_type), mgn(_mgn), position(coord2(0,0)), size(coord2(100,100)),  file("")
 {
 }
 
@@ -64,11 +67,14 @@ qt_chooser_widget_rep::~qt_chooser_widget_rep()  {  }
 
 void
 qt_chooser_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_chooser_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_VISIBILITY:
     {	
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
+      (void) flag;
     }	
     break;
   case SLOT_SIZE:
@@ -201,7 +207,7 @@ widget file_chooser_widget (command cmd, string type, string mgn)
 
 void qt_chooser_widget_rep::perform_dialog()
 {
-  int result;
+//  int result;
 	
   QFileDialog dialog(NULL);
   dialog.setFileMode(QFileDialog::AnyFile);
@@ -322,7 +328,7 @@ ABSTRACT_NULL_CODE(qt_field_widget);
 
 
 qt_input_widget_rep::qt_input_widget_rep (command _cmd, array<string> _prompts) 
-  : qt_widget_rep(), cmd(_cmd),  size(coord2(100,100)), position(coord2(0,0)), win_title(""), fields(N(_prompts))
+  : qt_widget_rep(), cmd(_cmd),  fields(N(_prompts)), size(coord2(100,100)), position(coord2(0,0)),  win_title("")
 {
   for(int i=0; i < N(_prompts); i++) {
     fields[i] = new qt_field_widget_rep(this);
@@ -336,11 +342,15 @@ qt_input_widget_rep::~qt_input_widget_rep()  {  }
 
 void
 qt_input_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_input_widget_rep::send " << slot_name(s) << LF;
+
   switch (s) {
   case SLOT_VISIBILITY:
     {	
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
+      (void) flag;
     }	
     break;
   case SLOT_SIZE:

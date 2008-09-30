@@ -50,9 +50,10 @@ qt_image_rep::~qt_image_rep() { delete img; }
 
 
 qt_gui_rep::qt_gui_rep(int argc2, char **argv2)
-  : color_scale ((void*) NULL), selection(NULL),
-    character_image (qt_image()), interrupted(false), images (qt_image())
+  : interrupted(false), color_scale ((void*) NULL), 
+    character_image (qt_image()), selection(NULL),  images (qt_image())
 {
+  (void) argc2; (void) argv2;
   //  argc               = argc2;
   //  argv               = argv2;
   interrupted        = false;
@@ -336,7 +337,10 @@ font qt_gui_rep::default_font (bool tt) {
 
 
 void qt_gui_rep::load_system_font (string family, int size, int dpi,
-				   font_metric& fnm, font_glyphs& fng) {} ;
+				   font_metric& fnm, font_glyphs& fng) 
+{
+  (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
+} ;
 
 
 /* interclient communication */
@@ -400,9 +404,9 @@ qt_gui_rep::clear_selection (string key) {
 
 
 /* miscellaneous */
-void qt_gui_rep::image_gc (string name) {} ;
-void qt_gui_rep::set_mouse_pointer (string name) {} ;
-void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) {} ;
+void qt_gui_rep::image_gc (string name) { (void) name; } ; // FIXME: remove this unused function
+void qt_gui_rep::set_mouse_pointer (string name) { (void) name; } ; // FIXME: implement this function
+void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) { (void) curs_name; (void) mask_name; } ;
 #if 0 // FIXME
 static bool check_mask(int mask)
 {
@@ -452,13 +456,16 @@ qt_gui_rep::check_event (int type) {
 #else
 bool
 qt_gui_rep::check_event (int type) {
+  (void) type;
   return false;
 }
 #endif
 
 
 void
-qt_gui_rep::show_wait_indicator (widget w, string message, string arg) {
+qt_gui_rep::show_wait_indicator (widget w, string message, string arg) 
+{
+  (void) w; (void) message; (void) arg;
 }
 
 
@@ -708,7 +715,7 @@ set_selection (string key, tree t, string s) {
 bool
 get_selection (string key, tree& t, string& s) {
   return the_gui->get_selection (key, t, s);
-}
+} 
 
 // Clear the selection on clipboard 'cb'
 void
@@ -738,7 +745,9 @@ bool check_event (int type)
 void show_help_balloon (widget balloon, SI x, SI y)
 // Display a help balloon at position (x, y); the help balloon should
 // disappear as soon as the user presses a key or moves the mouse
-{  }
+{ 
+  (void) balloon; (void) x; (void) y;
+}
 
 void show_wait_indicator (widget base, string message, string argument)
 // Display a wait indicator with a message and an optional argument
