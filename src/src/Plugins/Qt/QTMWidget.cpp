@@ -30,7 +30,7 @@ inline void scale (QPoint &point)
 
 
 
-hashmap<int,string> qtkeymap(NULL);
+hashmap<int,string> qtkeymap (0);
 
 inline void map(int code, string name)
 {
