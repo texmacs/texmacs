@@ -30,6 +30,7 @@ coord2 from_qsize(QSize & s);
 QString to_qstring(string s);
 string from_qstring(QString & s);
 bool qt_supports_image (url u);
+void qt_image_size (url image, int& w, int& h);
 
 /******************************************************************************
  * Type checking
