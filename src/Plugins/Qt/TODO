@@ -2,7 +2,7 @@
 TODO
 
 * X should not be launched.
-* White are of empty document should vertically extend to bottom.
+* White area of empty document should vertically extend to bottom.
 * Delayed help menu, even several seconds after boot.
 * Links don't highlight when moving over them.
 * In the documentation, rendering of keys not correct up to the pixel.

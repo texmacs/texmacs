@@ -11,4 +11,5 @@ Port notes
 * Visibility status of main icon bar does not correctly report in the View menu
 
 * What is the header (e.g. in the message SLOT_HEADER_VISIBILITY) ?
-    
+  ---> All widgets above the canvas widget, i.e. the title bar + icon bars.
+       Under Mac OS, the header only consists of the icon bars.
