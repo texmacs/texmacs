@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "qt_utilities.hpp"
+#include <QImage>
 
 QRect to_qrect(coord4 p)
 {
@@ -76,4 +77,16 @@ bool qt_supports_image (url u) {
   string s= suffix (u);
   if (s == "ps" || s == "eps" || s == "pdf") return false;
   return true;
+}
+
+void qt_image_size (url image, int& w, int& h) {
+  QImage im (to_qstring (as_string (image)));
+  if (im.isNull()) {
+    cerr << "Cannot read image file '" << image << "'" << LF;
+    w = 35; h = 35;
+  }
+  else {
+    w = im.width ();
+    h = im.height ();
+  }
 }

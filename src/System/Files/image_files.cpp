@@ -20,8 +20,8 @@
 #include "../Plugins/Imlib2/imlib2.hpp"
 
 #ifdef QTTEXMACS
-#include <QImage>
-#include "Plugins/Qt/qt_utilities.hpp"
+bool qt_supports_image (url u);
+void qt_image_size (url image, int& w, int& h);
 #endif
 
 #ifdef OS_WIN32
@@ -221,15 +221,7 @@ void
 image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports_image (image)) {
-    QImage im (to_qstring (as_string (image)));
-    if (im.isNull()) {
-      cerr << "Cannot read image file '" << image << "'" << LF;
-      w = 35; h = 35;
-    }
-    else {
-      w = im.width();
-      h = im.height();
-    }
+    qt_image_size (image, w, h);
     return;
   }
 #endif
