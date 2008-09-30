@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.6.15>
 
 <style|source>
 
@@ -26,7 +26,7 @@
 
   <assign|mmx-prompt|<macro|nr|<with|color|red|Mmx]<specific|html|&nbsp;> >>>
 
-  <assign|mathemagix-output|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0fn>|<generic-output|<arg|body>>>>>
+  <assign|mathemagix-output|<macro|body|<generic-output|<arg|body>>>>
 </body>
 
 <\initial>
