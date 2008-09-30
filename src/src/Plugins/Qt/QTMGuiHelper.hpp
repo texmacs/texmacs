@@ -42,7 +42,7 @@ class QTMStyle : public QCommonStyle
     
     virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option,
                        QPainter *painter, const QWidget *widget) const;
-    virtual int QTMStyle::pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
+    virtual int pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
 
   };
 
