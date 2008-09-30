@@ -59,6 +59,8 @@ public:
 qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, string _mgn) 
   : qt_widget_rep(), cmd(_cmd), type(_type), mgn(_mgn), position(coord2(0,0)), size(coord2(100,100)),  file("")
 {
+  if (DEBUG_EVENTS)
+    cout << "qt_chooser_widget_rep::qt_chooser_widget_rep   type=\"" << type << "\" mgn=\"" << mgn << "\"" << LF; 
 }
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep()  {  }
@@ -123,6 +125,8 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_chooser_widget_rep::query (slot s, int type_id) {
+  if (DEBUG_EVENTS)
+    cout << "qt_chooser_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:  
     {
@@ -143,6 +147,7 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
     {
       if (type_id != type_helper<string>::id)
 	fatal_error ("type mismatch (SLOT_STRING_INPUT)", "qt_chooser_widget_rep::query");
+      if (DEBUG_EVENTS) cout << "String: " << file << LF;
       return close_box<string> (file);
     }
 
@@ -154,14 +159,18 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
 
 void
 qt_chooser_widget_rep::notify (slot s, blackbox new_val) {
+  if (DEBUG_EVENTS)
+    cout << "[qt_chooser_widget_rep ]";
   switch (s) {
   default: ;
   }
-  widget_rep::notify (s, new_val);
+  qt_widget_rep::notify (s, new_val);
 }
 
 widget
 qt_chooser_widget_rep::read (slot s, blackbox index) {
+  if (DEBUG_EVENTS)
+    cout << "qt_chooser_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
     check_type_void (index, "SLOT_WINDOW");
@@ -182,6 +191,8 @@ qt_chooser_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_chooser_widget_rep::write (slot s, blackbox index, widget w) {
+  if (DEBUG_EVENTS)
+    cout << "[qt_chooser_widget] ";
   switch (s) {
   default:
     qt_widget_rep::write(s,index,w);
@@ -208,7 +219,7 @@ widget file_chooser_widget (command cmd, string type, string mgn)
 void qt_chooser_widget_rep::perform_dialog()
 {
 //  int result;
-	
+	//FIXME: the chooser dialog is widely incomplete
   QFileDialog dialog(NULL);
   dialog.setFileMode(QFileDialog::AnyFile);
   //dialog.setNameFilter("TeXmacs file (*.tm)");
@@ -219,8 +230,11 @@ void qt_chooser_widget_rep::perform_dialog()
     fileNames = dialog.selectedFiles();
     if (fileNames.count() > 0) {
       file = from_qstring(fileNames[0]);
-      url u= url_system (scm_unquote (file));
-      file = "(url-system " * scm_quote (as_string (u)) * ")";
+      url u = url_system (scm_unquote (file));
+      if (type == "image")
+        file = "(list (url-system " * scm_quote (as_string (u)) * ") \"100\" \"100\" \"0\" \"0\" \"10\" \"10\")";
+      else 
+        file = "(url-system " * scm_quote (as_string (u)) * ")";
     }
   }
   cmd();	
@@ -269,6 +283,8 @@ public:
 
 void
 qt_field_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_field_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
     {
@@ -305,6 +321,8 @@ qt_field_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_field_widget_rep::query (slot s, int type_id) {
+  if (DEBUG_EVENTS)
+    cout << "qt_field_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
     {
@@ -384,6 +402,8 @@ qt_input_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_input_widget_rep::query (slot s, int type_id) {
+  if (DEBUG_EVENTS)
+    cout << "qt_input_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:  
     {
@@ -411,14 +431,18 @@ qt_input_widget_rep::query (slot s, int type_id) {
 
 void
 qt_input_widget_rep::notify (slot s, blackbox new_val) {
+  if (DEBUG_EVENTS)
+    cout << "[qt_input_widget_rep] ";
   switch (s) {
   default: ;
   }
-  widget_rep::notify (s, new_val);
+  qt_widget_rep::notify (s, new_val);
 }
 
 widget
 qt_input_widget_rep::read (slot s, blackbox index) {
+  if (DEBUG_EVENTS)
+    cout << "qt_input_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
     check_type_void (index, "SLOT_WINDOW");
@@ -433,6 +457,8 @@ qt_input_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_input_widget_rep::write (slot s, blackbox index, widget w) {
+  if (DEBUG_EVENTS)
+    cout << "[qt_input_widget_rep] ";
   switch (s) {
   default:
     qt_widget_rep::write(s,index,w);
