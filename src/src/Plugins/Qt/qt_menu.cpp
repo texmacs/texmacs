@@ -25,6 +25,8 @@
 //#import "TMView.h"
 #include <QPointer>
 
+extern char  *slot_name(slot s); // from qt_widget.cpp
+
 class qt_menu_rep : public qt_widget_rep  {
 public:
   QPointer<QAction> item;
@@ -52,6 +54,8 @@ widget qt_menu_rep::popup_window_widget (string s)
 
 
 void qt_menu_rep::send (slot s, blackbox val) {
+  if (DEBUG_EVENTS)
+    cout << "qt_menu_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
     {
@@ -63,12 +67,14 @@ void qt_menu_rep::send (slot s, blackbox val) {
     {	
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
+      (void) flag;
     }	
     break;
   case SLOT_MOUSE_GRAB:
     {	
       check_type<bool> (val, "SLOT_MOUSE_GRAB");
       bool flag = open_box<bool> (val);
+      (void) flag;
       //	[NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (qt_view_widget_rep*)(the_keyboard_focus.rep))->view ];
       if (item->menu()) {
 	item->menu()->exec(QCursor::pos());
@@ -105,7 +111,7 @@ widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 
 
 
-widget tile_menu (array<widget> a, int cols) { return horizontal_menu(a); }
+widget tile_menu (array<widget> a, int cols) { (void) cols; return horizontal_menu(a); }
 // a menu rendered as a table of cols columns wide & made up of widgets in a
 
 
@@ -113,6 +119,7 @@ widget tile_menu (array<widget> a, int cols) { return horizontal_menu(a); }
 widget menu_separator (bool vertical) 
 // a horizontal or vertical menu separator
 {
+  (void) vertical;
   QAction *a = new QAction(NULL);
   a->setSeparator(true);
   return new qt_menu_rep(a); 
@@ -121,6 +128,7 @@ widget menu_separator (bool vertical)
 widget menu_group (string name, string lan) 
 // a menu group; the name should be greyed and centered
 {
+  (void) lan;
   QAction *a = new QAction(to_qstring(name),NULL);
   a->setEnabled(false);
   return new qt_menu_rep(a);
@@ -173,6 +181,7 @@ widget menu_button (widget w, command cmd, string pre, string ks, bool ok)
 // a command button with an optional prefix (o, * or v) and
 // keyboard shortcut; if ok does not hold, then the button is greyed
 {
+  (void) ks;
   QAction *a = NULL;
   
   a = concrete(w)->as_qaction();

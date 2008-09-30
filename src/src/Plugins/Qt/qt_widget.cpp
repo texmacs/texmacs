@@ -54,6 +54,7 @@ qt_renderer_rep *the_qt_renderer()
 
 widget qt_widget_rep::plain_window_widget (string s)
 {
+  (void) s;
   return widget ();
 }
 
@@ -64,6 +65,7 @@ widget qt_widget_rep::make_popup_widget ()
 
 widget qt_widget_rep::popup_window_widget (string s)
 {
+  (void) s;
   return widget();
 }
 
@@ -508,6 +510,7 @@ qt_view_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_view_widget_rep::write (slot s, blackbox index, widget w) {
+  (void) index; (void) w;
   if (DEBUG_EVENTS)
     cout << "qt_view_widget_rep::write " << slot_name(s) << LF;
   switch (s) {
@@ -903,6 +906,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QWidget *qw =((qt_view_widget_rep*) w.rep)->view;
       QWidget *old_canvas = tm_scrollarea()->takeWidget(); 
       tm_scrollarea()->setWidget(qw);			
+      (void) old_canvas;
       // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
 			qw->setFocus();
       //FIXME:			[[sv window] makeFirstResponder:v];
@@ -1239,6 +1243,7 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_window_widget_rep::read (slot s, blackbox index) {
+  (void) index; 
   if (DEBUG_EVENTS)
     cout << "qt_window_widget_rep::read " << slot_name(s) << LF;
 
@@ -1265,7 +1270,8 @@ qt_window_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_window_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_EVENTS)
+  (void) w;
+  if (DEBUG_EVENTS)    
     cout << "qt_window_widget_rep::write " << slot_name(s) << LF;
 
   switch (s) {
@@ -1434,7 +1440,7 @@ widget popup_window_widget (widget w, string s)
   return concrete(w)->popup_window_widget(s);
 }
 
-void   destroy_window_widget (widget w) {  }
+void   destroy_window_widget (widget w) { (void) w;  } //FIXME: Handle correcly
 // destroys a window as created by the above routines
 
 /******************************************************************************
@@ -1447,6 +1453,7 @@ widget texmacs_widget (int mask, command quit)
 // the mask variable indicates whether the menu, icon bars, status bar, etc.
 // are visible or not
 {
+  (void) mask; (void) quit; // FIXME: handle correctly mask and quit
   widget w = new qt_tm_widget_rep();
   return w; 
 }
@@ -1476,13 +1483,18 @@ widget glue_widget (bool hx, bool vx, SI w, SI h)
 // an empty widget of minimal width w and height h and which is horizontally
 // resp. vertically extensible if hx resp. vx is true
 {
-  //FIXME:
+  (void)hx; (void)vx; (void)w; (void)h;
+  //FIXME: Implement
   return new qt_view_widget_rep (new QWidget());
 }
-widget wait_widget (SI width, SI height, string message) { return widget(); }
+widget wait_widget (SI width, SI height, string message) 
 // a widget of a specified width and height, displaying a wait message
 // this widget is only needed when using the X11 plugin
-
+{ 
+  (void) width; (void) height; (void) message;
+  if (DEBUG_EVENTS) cout << "wait_widget IS STILL NOT IMPLEMENTED\n";
+  return widget(); 
+}
 
 
 

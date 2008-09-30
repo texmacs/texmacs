@@ -214,6 +214,7 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 
 void
 qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  (void) alpha; (void) delta;
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
@@ -222,6 +223,7 @@ qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 
 void
 qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  (void) alpha; (void) delta;
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
@@ -552,16 +554,30 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 /* shadowing and copying rectangular regions across devices */
 
 
-void qt_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) {} ;
+void qt_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) 
+{
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y;
+} ;
 void qt_renderer_rep::new_shadow (renderer& dev) { dev =  this; } ;
 void qt_renderer_rep::delete_shadow (renderer& dev) {     dev= NULL; } ;
-void qt_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {} ;
-void qt_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {} ;
-void qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {} ;
+void qt_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) 
+{
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev;
+} ;
+void qt_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) 
+{
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev;
+} ;
+void qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) 
+{
+  (void) x1; (void) y1; (void) x2; (void) y2;
+} ;
 
 #if 1
 font x_font (string family, int size, int dpi)
 {
+  (void) family; (void) size; (void) dpi;
+  if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
   return NULL;
 }
 #endif

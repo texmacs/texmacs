@@ -13,3 +13,11 @@ Port notes
 * What is the header (e.g. in the message SLOT_HEADER_VISIBILITY) ?
   ---> All widgets above the canvas widget, i.e. the title bar + icon bars.
        Under Mac OS, the header only consists of the icon bars.
+
+
+* gui.hpp:void show_help_balloon is useful only in the X11 port. Maybe remove from 
+  the abstract interface.
+  
+  
+* wait_widget seems do not belong to the abstract interface 
+  (it is not called in texmacs code)  
