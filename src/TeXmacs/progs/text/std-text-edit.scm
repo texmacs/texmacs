@@ -127,11 +127,11 @@
   (tree-in? t (numbered-unnumbered (section-tag-list))))
 
 (tm-define (make-section l)
-  (if (not (make-return-after))
+  (if (or (selection-active-any?) (not (make-return-after)))
       (make l)))
 
 (tm-define (make-unnamed-section l)
-  (if (not (make-return-after))
+  (if (or (selection-active-any?) (not (make-return-after)))
       (make l)
       (make-return-before)))
 
