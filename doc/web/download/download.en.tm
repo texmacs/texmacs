@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.6.15>
 
 <style|tmweb>
 
@@ -23,8 +23,7 @@
     <item*|<hlink|Windows|windows.en.tm>>The beta-version of a native Windows
     port.
 
-    <item*|<hlink|Fink|fink.en.tm>>For users of MacOS-X (requires the
-    installation of <name|Fink>).
+    <item*|<hlink|MacOS|fink.en.tm>>For users of MacOS-X.
 
     <item*|<hlink|BSD|bsd.en.tm>>For users of BSD <name|Unix>.
 

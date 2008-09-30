@@ -1,16 +1,20 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.15>
 
 <style|tmweb>
 
 <\body>
   <tmweb-current|Download|Binaries><tmweb-title|Installing <TeXmacs> on
-  MacOS-X using <name|Fink>|<tmweb-download-links>>
+  MacOS-X|<tmweb-download-links>>
 
   You may use <TeXmacs> on the MacOS-X platform using
   <hlink|<name|Fink>|http://fink.sourceforge.net/>. The <name|Fink> project
   wants to bring the full world of Unix Open Source software to Darwin and
   MacOS-X. In order to install <TeXmacs>, you should therefore first install
   <name|Fink> and next <TeXmacs>.
+
+  A possible alternative for <name|Fink> is
+  <hlink|Macports|http://www.macports.org>, which also provides a
+  <hlink|<TeXmacs> package|http://www.macports.org/ports.php?by=name&substr=texmacs>.
 
   <section|Install <name|Fink> via its binary installer>
 
@@ -65,16 +69,16 @@
     \ \ \ \ open-x11 texmacs &
   </code>
 
-  Please <hyper-link|let us know|../contact/contact.en.tm> if you like or
-  dislike the program. It is very useful for us to have a rough idea about
-  the number of permanent users and for what applications you are interested
-  in <TeXmacs>. Furthermore, we are glad to receive your suggestions and
+  Please <hlink|let us know|../contact/contact.en.tm> if you like or dislike
+  the program. It is very useful for us to have a rough idea about the number
+  of permanent users and for what applications you are interested in
+  <TeXmacs>. Furthermore, we are glad to receive your suggestions and
   problems, no matter how silly they may seem to you. You may also
-  <hyper-link|suscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
+  <hlink|suscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
   <verbatim|texmacs-info> mailing lists. If you really like the program, then
-  please consider <hyper-link|donating|../contribute/donations.en.tm> money
-  or services to us. Of course, you may also
-  <hyper-link|contribute|../contribute/contribute.en.tm> yourself.
+  please consider <hlink|donating|../contribute/donations.en.tm> money or
+  services to us. Of course, you may also
+  <hlink|contribute|../contribute/contribute.en.tm> yourself.
 
   <section|Installing <TeXmacs> from source>
 
