@@ -17,6 +17,31 @@
 #include "qt_gui.hpp"
 #include <QPainter>
 #include <QPixmap>
+#include <QImage>
+
+
+/******************************************************************************
+* QT images
+******************************************************************************/
+
+struct qt_image_rep: concrete_struct {
+  QImage *img;
+  SI xo,yo;
+  int w,h;
+  qt_image_rep (QImage *img2, SI xo2, SI yo2, int w2, int h2);
+  ~qt_image_rep();
+  friend class qt_image;
+  friend class qt_drawable;
+};
+
+class qt_image {
+  CONCRETE_NULL(qt_image);
+  qt_image (QImage *img2, SI xo2, SI yo2, int w2, int h2);
+ // qt_image ();
+};
+
+CONCRETE_NULL_CODE(qt_image);
+
 
 
 class qt_renderer_rep: virtual public renderer_rep {
@@ -97,9 +122,9 @@ public:
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
   
-  void draw_clipped (QPixmap * im, int w, int h, SI x, SI y);
+  void draw_clipped (QImage * im, int w, int h, SI x, SI y);
 
-	QPixmap *xpm_image(url file_name);
+	QImage *xpm_image(url file_name);
 
   void begin(QPaintDevice * device) { painter.begin(device); } ;
   void end() { painter.end(); };

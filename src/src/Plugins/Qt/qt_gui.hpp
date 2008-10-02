@@ -75,35 +75,13 @@ ostream& operator << (ostream& out, message m);
 
 
 /******************************************************************************
-* QT images
-******************************************************************************/
-
-struct qt_image_rep: concrete_struct {
-  QPixmap *img;
-  SI xo,yo;
-  int w,h;
-  qt_image_rep (QPixmap *img2, SI xo2, SI yo2, int w2, int h2);
-  ~qt_image_rep();
-  friend class qt_image;
-  friend class qt_drawable;
-};
-
-class qt_image {
-  CONCRETE_NULL(qt_image);
-  qt_image (QPixmap *img2, SI xo2, SI yo2, int w2, int h2);
- // qt_image ();
-};
-
-CONCRETE_NULL_CODE(qt_image);
-
-/******************************************************************************
 * The qt_gui class
 ******************************************************************************/
 
 typedef class qt_gui_rep* qt_gui;
 
 class qt_drawable_rep;
-
+class qt_image;
 
 extern qt_gui the_gui;
 
