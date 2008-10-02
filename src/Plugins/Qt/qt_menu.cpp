@@ -26,6 +26,11 @@
 #include <QtGlobal>
 #include <QPointer>
 #include <QBitmap>
+#include <QGridLayout>
+#include <QToolButton>
+#include <QWidgetAction>
+
+
 
 extern char  *slot_name(slot s); // from qt_widget.cpp
 
@@ -112,10 +117,40 @@ widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 // a vertical menu made up of the widgets in a
 
 
-
-widget tile_menu (array<widget> a, int cols) { (void) cols; return horizontal_menu(a); }
+widget tile_menu (array<widget> a, int cols)
 // a menu rendered as a table of cols columns wide & made up of widgets in a
-
+{ 
+  (void) cols; 
+#if 0 // for the moment this code is disabled since it is not working well
+  QWidget *wid = new QWidget(NULL);
+  QGridLayout *l = new QGridLayout;
+  l->setSizeConstraint(QLayout::SetFixedSize);
+  l->setHorizontalSpacing(0);
+  l->setVerticalSpacing(0);
+  l->setContentsMargins(0,0,0,0);
+  int row=0, col=0;
+  for(int i = 0; i < N(a); i++) {
+    if (is_nil(a[i])) break;
+    QAction *sa = concrete(a[i])->as_qaction();
+    QToolButton *tb = new QToolButton(NULL);
+    tb->setDefaultAction(sa);
+    l->addWidget(tb,row,col);
+    col++;
+    if (col >= cols) { col = 0; row++; }
+  };
+  wid->setLayout(l);
+//  cout << "XXXXXXX" << wid->width() << LF;
+  QWidgetAction *act = new QWidgetAction(NULL);
+  act->setDefaultWidget(wid);
+  QMenu *m = new QMenu();
+  m->addAction(act);
+  QAction *mact = new QAction("Menu",NULL);
+  mact->setMenu(m);
+  return new qt_menu_rep(mact);	
+#else
+  return horizontal_menu(a); 
+#endif
+}
 
 
 widget menu_separator (bool vertical) 

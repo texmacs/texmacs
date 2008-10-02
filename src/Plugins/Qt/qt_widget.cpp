@@ -879,6 +879,11 @@ void replaceActions(QWidget *dest, QWidget *src)
     dest->removeAction(list.takeFirst());
   }
   dest->addActions(src->actions());
+  list = dest->actions();
+  for(int i=0; i< list.count(); i++)
+  {
+    list[i]->setMenuRole(QAction::ApplicationSpecificRole);
+  }
 }
 
 extern void replaceButtons(QToolBar *dest, QWidget *src)
