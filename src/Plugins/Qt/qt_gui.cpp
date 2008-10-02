@@ -14,6 +14,7 @@
 #include "iterator.hpp"
 #include "dictionary.hpp"
 #include "qt_gui.hpp"
+#include "qt_renderer.hpp"
 #include "analyze.hpp"
 #include <locale.h>
 #include "language.hpp"
@@ -29,21 +30,6 @@ qt_gui_rep* the_gui= NULL;
 
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 
-/******************************************************************************
-* Aqua images
-******************************************************************************/
-
-
-qt_image::qt_image (QPixmap * img2, SI xo2, SI yo2, int w2, int h2) :
-  rep (new qt_image_rep(img2,xo2,yo2,w2,h2)) {}
-//qt_image::qt_image () : rep(NULL) {}
-
-qt_image_rep::qt_image_rep (QPixmap * img2, SI xo2, SI yo2, int w2, int h2) :
-  img(img2), xo(xo2), yo(yo2), w(w2), h(h2) {}
-
-qt_image_rep::~qt_image_rep() { delete img; }
-
-/******************************************************************************/
 
 
 

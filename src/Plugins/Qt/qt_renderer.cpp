@@ -19,6 +19,24 @@
 #include "iterator.hpp"
 
 
+
+
+/******************************************************************************
+* Aqua images
+******************************************************************************/
+
+
+qt_image::qt_image (QImage * img2, SI xo2, SI yo2, int w2, int h2) :
+  rep (new qt_image_rep(img2,xo2,yo2,w2,h2)) {}
+//qt_image::qt_image () : rep(NULL) {}
+
+qt_image_rep::qt_image_rep (QImage * img2, SI xo2, SI yo2, int w2, int h2) :
+  img(img2), xo(xo2), yo(yo2), w(w2), h(h2) {}
+
+qt_image_rep::~qt_image_rep() { delete img; }
+
+/******************************************************************************/
+
 qt_renderer_rep::qt_renderer_rep (qt_gui dis2, int w2, int h2)
   : dis (dis2), w (w2), h (h2)
 {
@@ -394,14 +412,15 @@ int char_clip=0;
 #define conv(x) ((SI) (((double) (x))*(fn->unit)))
 
 void
-qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
+qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
   decode (x , y );
   decode (x1, y1);
   decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
 	//clear(x1,y1,x2,y2);
-  painter.drawPixmap(x,y,w,h,*im);
+  //painter.drawImage(x,y,w,h,*im);
+  painter.drawImage(x,y,*im);
 //  [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }  
 
@@ -416,7 +435,8 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
-    QPixmap *im = new QPixmap(w,h);
+    QImage *im = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
+    //if (! (im->hasAlphaChannel())) cout << "WARNING NO ALPHA CHANNEL\n"; 
     {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
@@ -425,12 +445,13 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
       QPen pen(painter.pen());
       QBrush brush(pen.color());	
       pp.setPen(Qt::NoPen);
-      im->fill (QColor (0,0,0,0));
+      im->fill (qRgba (0,0,0,0));
       for (j=0; j<h; j++)
 	for (i=0; i<w; i++) {
 	  int col = gl->get_x(i,j);
-	  brush.setColor(QColor(r,g,b,(255*col)/(nr_cols+1)));		
-	  pp.fillRect(i,j,1,1,brush);
+	  //brush.setColor(QColor(r,g,b,(255*col)/(nr_cols+1)));		
+	  //pp.fillRect(i,j,1,1,brush);
+	  im->setPixel(i,j,qRgba(r,g,b,(255*col)/(nr_cols+1)));
 	}
     }
     qt_image mi2(im, xo, yo, w, h );
@@ -486,16 +507,16 @@ QColor xpm_to_ns_color(string s)
 
 extern int char_clip;
 
-QPixmap *qt_renderer_rep::xpm_image(url file_name)
+QImage *qt_renderer_rep::xpm_image(url file_name)
 { 
-	QPixmap *pxm = NULL;
+	QImage *pxm = NULL;
   qt_image mi = dis->images [as_string(file_name)];
   if (is_nil(mi)) {    
     string sss;
   load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
   if (sss == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
         uchar *buf = (uchar*)as_charp(sss);
-		pxm = new QPixmap();
+		pxm = new QImage();
 		pxm->loadFromData(buf, N(sss));
 		delete buf;
 	//	cout << sss;
@@ -516,7 +537,7 @@ void qt_renderer_rep::xpm (url file_name, SI x, SI y) {
  // delete [] chstr;
 //  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
   ///name = [name stringByDeletingPathExtension];
-  QPixmap *image = xpm_image(file_name);
+  QImage *image = xpm_image(file_name);
   
   if (sfactor != 1)
     fatal_error ("Shrinking factor should be 1", "qt_renderer_rep::xpm");
