@@ -141,7 +141,6 @@ char  *slot_name(slot s)
 /******************************************************************************
 * qt_view_widget_rep
 ******************************************************************************/
-#pragma mark qt_view_widget_rep
 
 // policy: qt_view_widget_rep owns the QWidget
  
@@ -972,7 +971,6 @@ widget qt_tm_widget_rep::plain_window_widget (string s)
 
 
 
-#pragma mark qt_window_widget_rep
 
 
 
@@ -1314,7 +1312,6 @@ qt_window_widget_rep::write (slot s, blackbox index, widget w) {
 * simple_widget_rep
 ******************************************************************************/
 
-#pragma mark simple_widget_rep
 
 /******************************************************************************
 * Constructor
@@ -1426,7 +1423,6 @@ simple_widget_rep::write (slot s, blackbox index, widget w)
 /******************************************************************************
 * Window widgets
 ******************************************************************************/
-#pragma mark Widget interface
 
 
 widget plain_window_widget (widget w, string s) 
