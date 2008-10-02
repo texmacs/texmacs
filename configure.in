@@ -255,7 +255,7 @@ if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
 else
     CPPFLAGS=`imlib2-config --cflags`
     LIBS=`imlib2-config --libs`
-    AC_CHECK_HEADER(ft2build.h,
+    AC_CHECK_HEADER(Imlib2.h,
     AC_MSG_CHECKING(for imlib2)
     AC_TRY_LINK(
 [
@@ -283,6 +283,50 @@ LIBS="$SAVE_LIBS"
 
 AC_SUBST(IMLIB2_CFLAGS)
 AC_SUBST(IMLIB2_LDFLAGS)
+
+#--------------------------------------------------------------------
+# Checks for Axel library
+#--------------------------------------------------------------------
+
+AC_ARG_WITH(axel,
+changequote(<<, >>)dnl
+<<  --with-axel[=ARG]       with axel support [ARG=no]>>dnl
+changequote([, ])dnl
+)
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+if test "$with_axel" = "no" -o "$with_axel" = "" ; then
+    AC_MSG_RESULT([disabling axel support])
+else
+    CPPFLAGS=`axel-config --cflags`
+    LIBS=`axel-config --libs`
+    AC_CHECK_HEADER(Axel.h,
+    AC_MSG_CHECKING(for axel)
+    AC_TRY_LINK(
+[
+#include <Axel.h>
+],[
+    init_axel ();
+],[
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(USE_AXEL, 1, [Use axel library])
+    AXEL_CFLAGS="$CPPFLAGS"
+    if test "$with_axel" = "linked" ; then
+      AXEL_LDFLAGS="$LIBS"
+      AC_DEFINE(LINKED_AXEL, 1, [Link axel library with TeXmacs])
+    fi
+],[
+    AC_MSG_RESULT(no)]))
+fi
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+
+AC_SUBST(AXEL_CFLAGS)
+AC_SUBST(AXEL_LDFLAGS)
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
