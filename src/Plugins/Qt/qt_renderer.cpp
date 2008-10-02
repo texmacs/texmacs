@@ -413,6 +413,7 @@ int char_clip=0;
 
 void
 qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
+	(void) w; (void) h;
   int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
   decode (x , y );
   decode (x1, y1);
