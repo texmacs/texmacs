@@ -22,6 +22,7 @@
 
 #include <QDesktopWidget>
 #include <QClipboard>
+#include "QTMGuiHelper.hpp"
 
 
 extern window (*get_current_window) (void);
@@ -475,33 +476,6 @@ void qt_gui_rep::update ()
 
 
 #include "QTMGuiHelper.moc"
-
-
-void QTMStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option,
-                                QPainter *painter, const QWidget *widget)  const
-{
-//  if (element == QStyle::PE_FrameStatusBarItem) return;
-  if (element == QStyle::PE_FrameStatusBar) return;
-  QCommonStyle::drawPrimitive(element,option,painter,widget);
-}  
-
-int QTMStyle::pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const
-{
-  switch (metric) {
-    case PM_ToolBarItemSpacing:
-      return 0;
-    default: 
-      return QCommonStyle::pixelMetric(metric,opt,widget);
-  }
-}
-
-QStyle *qtmstyle()
-{
-  static QStyle *qtmstyle = NULL;
-  if (!qtmstyle) qtmstyle = new QTMStyle;
-  return qtmstyle;
-}
-
 
 void QTMGuiHelper::doUpdate() { 
   gui->update(); 
