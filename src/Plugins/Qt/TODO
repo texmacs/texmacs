@@ -29,7 +29,8 @@ TODO
 * Handle correclty mask and quit command in texmacs_widget
 * Implement glue_widget
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
-
+* Better image support: for performance use QPixmaps in systems which support native alpha-channel (like MacOSX)
+* In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
 
 DONE
 
