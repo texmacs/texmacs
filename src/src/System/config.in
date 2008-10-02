@@ -69,6 +69,9 @@
 /* Define to 1 if you have the <util.h> header file. */
 #undef HAVE_UTIL_H
 
+/* Link axel library with TeXmacs */
+#undef LINKED_AXEL
+
 /* Link freetype library with TeXmacs */
 #undef LINKED_FREETYPE
 
@@ -98,6 +101,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Use axel library */
+#undef USE_AXEL
 
 /* Use freetype library */
 #undef USE_FREETYPE

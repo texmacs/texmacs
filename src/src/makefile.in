@@ -31,6 +31,7 @@ CXXX11 = @X11_CFLAGS@
 CXXCOCOA = @COCOA_CFLAGS@
 CXXQT = @QT_CXXFLAGS@ @QT_CPPFLAGS@ 
 CXXGUI = $(CXX@CONFIG_GUI@)
+CXXAXEL = @AXEL_CFLAGS@
 CXXIMLIB2 = @IMLIB2_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
@@ -45,6 +46,7 @@ LDX11 = @X11_LDFLAGS@
 LDCOCOA = @COCOA_LDFLAGS@
 LDQT = @QT_LDFLAGS@ @QT_LIBS@
 LDGUI = $(LD@CONFIG_GUI@)
+LDAXEL = @AXEL_LDFLAGS@
 LDIMLIB2 = @IMLIB2_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
 LDICONV = @ICONV_LDFLAGS@
@@ -154,7 +156,7 @@ qt_moc := Plugins/Qt/QTMGuiHelper.moc Plugins/Qt/QTMInteractiveInputHelper.moc P
 deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc System/Language Kernel/Abstractions Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/Observers Data/String Data/Tmfs Data/Tree Graphics Plugins Style/Memorizer Typeset Edit Texmacs Guile Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics Graphics/Renderer)
 
 deps_flags = $(deps_incl)\
- $(CPPFLAGS) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
+ $(CPPFLAGS) $(CXXAXEL) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
  -I$(tmsrc)/include $(CXXGUI)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
@@ -214,7 +216,8 @@ style_obj    := $(call makeobj,$(style_src))
 %.o: %.cpp # Disable implicit compilation rule
 
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
-cxx_incl     = $(call cxx_flags,$(1) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
+cxx_incl     = $(call cxx_flags,$(1) \
+  $(CXXAXEL) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
   $(CXXGUILE) $(CPPFLAGS) $(CXXFLAGS)) 
 
 $(system_obj): Objects/%.o: %.cpp
@@ -304,7 +307,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 qt cocoa style typeset edit glue texmacs))
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) \
-  $(LDGUILE) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
+  $(LDGUILE) $(LDAXEL) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@

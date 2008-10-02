@@ -683,6 +683,8 @@ FREETYPE_CFLAGS
 FREETYPE_LDFLAGS
 IMLIB2_CFLAGS
 IMLIB2_LDFLAGS
+AXEL_CFLAGS
+AXEL_LDFLAGS
 build
 build_cpu
 build_vendor
@@ -1355,6 +1357,7 @@ Optional Packages:
   --with-iconv=DIR        where to find iconv system
   --with-freetype=ARG     with freetype support ARG=linked
   --with-imlib2=ARG       with imlib2 support ARG=no
+  --with-axel=ARG       with axel support ARG=no
   --with-qt               Path to Qt [Look in PATH and /usr/local/Trolltech]
 
 Some influential environment variables:
@@ -6981,18 +6984,18 @@ echo "${ECHO_T}disabling imlib2 support" >&6; }
 else
     CPPFLAGS=`imlib2-config --cflags`
     LIBS=`imlib2-config --libs`
-    if test "${ac_cv_header_ft2build_h+set}" = set; then
-  { echo "$as_me:$LINENO: checking for ft2build.h" >&5
-echo $ECHO_N "checking for ft2build.h... $ECHO_C" >&6; }
-if test "${ac_cv_header_ft2build_h+set}" = set; then
+    if test "${ac_cv_header_Imlib2_h+set}" = set; then
+  { echo "$as_me:$LINENO: checking for Imlib2.h" >&5
+echo $ECHO_N "checking for Imlib2.h... $ECHO_C" >&6; }
+if test "${ac_cv_header_Imlib2_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_header_ft2build_h" >&5
-echo "${ECHO_T}$ac_cv_header_ft2build_h" >&6; }
+{ echo "$as_me:$LINENO: result: $ac_cv_header_Imlib2_h" >&5
+echo "${ECHO_T}$ac_cv_header_Imlib2_h" >&6; }
 else
   # Is the header compilable?
-{ echo "$as_me:$LINENO: checking ft2build.h usability" >&5
-echo $ECHO_N "checking ft2build.h usability... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking Imlib2.h usability" >&5
+echo $ECHO_N "checking Imlib2.h usability... $ECHO_C" >&6; }
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -7000,7 +7003,7 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 $ac_includes_default
-#include <ft2build.h>
+#include <Imlib2.h>
 _ACEOF
 rm -f conftest.$ac_objext
 if { (ac_try="$ac_compile"
@@ -7032,15 +7035,15 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 echo "${ECHO_T}$ac_header_compiler" >&6; }
 
 # Is the header present?
-{ echo "$as_me:$LINENO: checking ft2build.h presence" >&5
-echo $ECHO_N "checking ft2build.h presence... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking Imlib2.h presence" >&5
+echo $ECHO_N "checking Imlib2.h presence... $ECHO_C" >&6; }
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <ft2build.h>
+#include <Imlib2.h>
 _ACEOF
 if { (ac_try="$ac_cpp conftest.$ac_ext"
 case "(($ac_try" in
@@ -7073,40 +7076,40 @@ echo "${ECHO_T}$ac_header_preproc" >&6; }
 # So?  What about this header?
 case $ac_header_compiler:$ac_header_preproc:$ac_cxx_preproc_warn_flag in
   yes:no: )
-    { echo "$as_me:$LINENO: WARNING: ft2build.h: accepted by the compiler, rejected by the preprocessor!" >&5
-echo "$as_me: WARNING: ft2build.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
-    { echo "$as_me:$LINENO: WARNING: ft2build.h: proceeding with the compiler's result" >&5
-echo "$as_me: WARNING: ft2build.h: proceeding with the compiler's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: Imlib2.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: Imlib2.h: proceeding with the compiler's result" >&2;}
     ac_header_preproc=yes
     ;;
   no:yes:* )
-    { echo "$as_me:$LINENO: WARNING: ft2build.h: present but cannot be compiled" >&5
-echo "$as_me: WARNING: ft2build.h: present but cannot be compiled" >&2;}
-    { echo "$as_me:$LINENO: WARNING: ft2build.h:     check for missing prerequisite headers?" >&5
-echo "$as_me: WARNING: ft2build.h:     check for missing prerequisite headers?" >&2;}
-    { echo "$as_me:$LINENO: WARNING: ft2build.h: see the Autoconf documentation" >&5
-echo "$as_me: WARNING: ft2build.h: see the Autoconf documentation" >&2;}
-    { echo "$as_me:$LINENO: WARNING: ft2build.h:     section \"Present But Cannot Be Compiled\"" >&5
-echo "$as_me: WARNING: ft2build.h:     section \"Present But Cannot Be Compiled\"" >&2;}
-    { echo "$as_me:$LINENO: WARNING: ft2build.h: proceeding with the preprocessor's result" >&5
-echo "$as_me: WARNING: ft2build.h: proceeding with the preprocessor's result" >&2;}
-    { echo "$as_me:$LINENO: WARNING: ft2build.h: in the future, the compiler will take precedence" >&5
-echo "$as_me: WARNING: ft2build.h: in the future, the compiler will take precedence" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: Imlib2.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: Imlib2.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: Imlib2.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: Imlib2.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: Imlib2.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Imlib2.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: Imlib2.h: in the future, the compiler will take precedence" >&2;}
 
     ;;
 esac
-{ echo "$as_me:$LINENO: checking for ft2build.h" >&5
-echo $ECHO_N "checking for ft2build.h... $ECHO_C" >&6; }
-if test "${ac_cv_header_ft2build_h+set}" = set; then
+{ echo "$as_me:$LINENO: checking for Imlib2.h" >&5
+echo $ECHO_N "checking for Imlib2.h... $ECHO_C" >&6; }
+if test "${ac_cv_header_Imlib2_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  ac_cv_header_ft2build_h=$ac_header_preproc
+  ac_cv_header_Imlib2_h=$ac_header_preproc
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_header_ft2build_h" >&5
-echo "${ECHO_T}$ac_cv_header_ft2build_h" >&6; }
+{ echo "$as_me:$LINENO: result: $ac_cv_header_Imlib2_h" >&5
+echo "${ECHO_T}$ac_cv_header_Imlib2_h" >&6; }
 
 fi
-if test $ac_cv_header_ft2build_h = yes; then
+if test $ac_cv_header_Imlib2_h = yes; then
   { echo "$as_me:$LINENO: checking for imlib2" >&5
 echo $ECHO_N "checking for imlib2... $ECHO_C" >&6; }
     cat >conftest.$ac_ext <<_ACEOF
@@ -7163,6 +7166,232 @@ _ACEOF
 
 cat >>confdefs.h <<\_ACEOF
 #define LINKED_IMLIB2 1
+_ACEOF
+
+    fi
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+    { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+
+
+fi
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+
+
+
+
+#--------------------------------------------------------------------
+# Checks for Axel library
+#--------------------------------------------------------------------
+
+
+# Check whether --with-axel was given.
+if test "${with_axel+set}" = set; then
+  withval=$with_axel;
+fi
+
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+if test "$with_axel" = "no" -o "$with_axel" = "" ; then
+    { echo "$as_me:$LINENO: result: disabling axel support" >&5
+echo "${ECHO_T}disabling axel support" >&6; }
+else
+    CPPFLAGS=`axel-config --cflags`
+    LIBS=`axel-config --libs`
+    if test "${ac_cv_header_Axel_h+set}" = set; then
+  { echo "$as_me:$LINENO: checking for Axel.h" >&5
+echo $ECHO_N "checking for Axel.h... $ECHO_C" >&6; }
+if test "${ac_cv_header_Axel_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_header_Axel_h" >&5
+echo "${ECHO_T}$ac_cv_header_Axel_h" >&6; }
+else
+  # Is the header compilable?
+{ echo "$as_me:$LINENO: checking Axel.h usability" >&5
+echo $ECHO_N "checking Axel.h usability... $ECHO_C" >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <Axel.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_header_compiler=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6; }
+
+# Is the header present?
+{ echo "$as_me:$LINENO: checking Axel.h presence" >&5
+echo $ECHO_N "checking Axel.h presence... $ECHO_C" >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <Axel.h>
+_ACEOF
+if { (ac_try="$ac_cpp conftest.$ac_ext"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null && {
+	 test -z "$ac_cxx_preproc_warn_flag$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       }; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+
+rm -f conftest.err conftest.$ac_ext
+{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6; }
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_cxx_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: Axel.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: Axel.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Axel.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: Axel.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: Axel.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: Axel.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Axel.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: Axel.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Axel.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: Axel.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Axel.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: Axel.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Axel.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: Axel.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: Axel.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: Axel.h: in the future, the compiler will take precedence" >&2;}
+
+    ;;
+esac
+{ echo "$as_me:$LINENO: checking for Axel.h" >&5
+echo $ECHO_N "checking for Axel.h... $ECHO_C" >&6; }
+if test "${ac_cv_header_Axel_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_Axel_h=$ac_header_preproc
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_header_Axel_h" >&5
+echo "${ECHO_T}$ac_cv_header_Axel_h" >&6; }
+
+fi
+if test $ac_cv_header_Axel_h = yes; then
+  { echo "$as_me:$LINENO: checking for axel" >&5
+echo $ECHO_N "checking for axel... $ECHO_C" >&6; }
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <Axel.h>
+
+int
+main ()
+{
+
+    init_axel ();
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+
+    { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define USE_AXEL 1
+_ACEOF
+
+    AXEL_CFLAGS="$CPPFLAGS"
+    if test "$with_axel" = "linked" ; then
+      AXEL_LDFLAGS="$LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define LINKED_AXEL 1
 _ACEOF
 
     fi
@@ -9629,6 +9858,8 @@ FREETYPE_CFLAGS!$FREETYPE_CFLAGS$ac_delim
 FREETYPE_LDFLAGS!$FREETYPE_LDFLAGS$ac_delim
 IMLIB2_CFLAGS!$IMLIB2_CFLAGS$ac_delim
 IMLIB2_LDFLAGS!$IMLIB2_LDFLAGS$ac_delim
+AXEL_CFLAGS!$AXEL_CFLAGS$ac_delim
+AXEL_LDFLAGS!$AXEL_LDFLAGS$ac_delim
 build!$build$ac_delim
 build_cpu!$build_cpu$ac_delim
 build_vendor!$build_vendor$ac_delim
@@ -9653,8 +9884,6 @@ QT_CPPFLAGS!$QT_CPPFLAGS$ac_delim
 QT_LFLAGS!$QT_LFLAGS$ac_delim
 QT_LDFLAGS!$QT_LDFLAGS$ac_delim
 QT_LIBS!$QT_LIBS$ac_delim
-X11_CFLAGS!$X11_CFLAGS$ac_delim
-X11_LDFLAGS!$X11_LDFLAGS$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -9696,6 +9925,8 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+X11_CFLAGS!$X11_CFLAGS$ac_delim
+X11_LDFLAGS!$X11_LDFLAGS$ac_delim
 COCOA_CFLAGS!$COCOA_CFLAGS$ac_delim
 COCOA_LDFLAGS!$COCOA_LDFLAGS$ac_delim
 CONFIG_X11!$CONFIG_X11$ac_delim
@@ -9737,7 +9968,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 39; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 41; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
