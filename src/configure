@@ -7213,18 +7213,18 @@ echo "${ECHO_T}disabling axel support" >&6; }
 else
     CPPFLAGS=`axel-config --cflags`
     LIBS=`axel-config --libs`
-    if test "${ac_cv_header_Axel_h+set}" = set; then
-  { echo "$as_me:$LINENO: checking for Axel.h" >&5
-echo $ECHO_N "checking for Axel.h... $ECHO_C" >&6; }
-if test "${ac_cv_header_Axel_h+set}" = set; then
+    if test "${ac_cv_header_QGui_Viewer_h+set}" = set; then
+  { echo "$as_me:$LINENO: checking for QGui/Viewer.h" >&5
+echo $ECHO_N "checking for QGui/Viewer.h... $ECHO_C" >&6; }
+if test "${ac_cv_header_QGui_Viewer_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_header_Axel_h" >&5
-echo "${ECHO_T}$ac_cv_header_Axel_h" >&6; }
+{ echo "$as_me:$LINENO: result: $ac_cv_header_QGui_Viewer_h" >&5
+echo "${ECHO_T}$ac_cv_header_QGui_Viewer_h" >&6; }
 else
   # Is the header compilable?
-{ echo "$as_me:$LINENO: checking Axel.h usability" >&5
-echo $ECHO_N "checking Axel.h usability... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking QGui/Viewer.h usability" >&5
+echo $ECHO_N "checking QGui/Viewer.h usability... $ECHO_C" >&6; }
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -7232,7 +7232,7 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 $ac_includes_default
-#include <Axel.h>
+#include <QGui/Viewer.h>
 _ACEOF
 rm -f conftest.$ac_objext
 if { (ac_try="$ac_compile"
@@ -7264,15 +7264,15 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 echo "${ECHO_T}$ac_header_compiler" >&6; }
 
 # Is the header present?
-{ echo "$as_me:$LINENO: checking Axel.h presence" >&5
-echo $ECHO_N "checking Axel.h presence... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking QGui/Viewer.h presence" >&5
+echo $ECHO_N "checking QGui/Viewer.h presence... $ECHO_C" >&6; }
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <Axel.h>
+#include <QGui/Viewer.h>
 _ACEOF
 if { (ac_try="$ac_cpp conftest.$ac_ext"
 case "(($ac_try" in
@@ -7305,40 +7305,40 @@ echo "${ECHO_T}$ac_header_preproc" >&6; }
 # So?  What about this header?
 case $ac_header_compiler:$ac_header_preproc:$ac_cxx_preproc_warn_flag in
   yes:no: )
-    { echo "$as_me:$LINENO: WARNING: Axel.h: accepted by the compiler, rejected by the preprocessor!" >&5
-echo "$as_me: WARNING: Axel.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
-    { echo "$as_me:$LINENO: WARNING: Axel.h: proceeding with the compiler's result" >&5
-echo "$as_me: WARNING: Axel.h: proceeding with the compiler's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: QGui/Viewer.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: QGui/Viewer.h: proceeding with the compiler's result" >&2;}
     ac_header_preproc=yes
     ;;
   no:yes:* )
-    { echo "$as_me:$LINENO: WARNING: Axel.h: present but cannot be compiled" >&5
-echo "$as_me: WARNING: Axel.h: present but cannot be compiled" >&2;}
-    { echo "$as_me:$LINENO: WARNING: Axel.h:     check for missing prerequisite headers?" >&5
-echo "$as_me: WARNING: Axel.h:     check for missing prerequisite headers?" >&2;}
-    { echo "$as_me:$LINENO: WARNING: Axel.h: see the Autoconf documentation" >&5
-echo "$as_me: WARNING: Axel.h: see the Autoconf documentation" >&2;}
-    { echo "$as_me:$LINENO: WARNING: Axel.h:     section \"Present But Cannot Be Compiled\"" >&5
-echo "$as_me: WARNING: Axel.h:     section \"Present But Cannot Be Compiled\"" >&2;}
-    { echo "$as_me:$LINENO: WARNING: Axel.h: proceeding with the preprocessor's result" >&5
-echo "$as_me: WARNING: Axel.h: proceeding with the preprocessor's result" >&2;}
-    { echo "$as_me:$LINENO: WARNING: Axel.h: in the future, the compiler will take precedence" >&5
-echo "$as_me: WARNING: Axel.h: in the future, the compiler will take precedence" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: QGui/Viewer.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: QGui/Viewer.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: QGui/Viewer.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: QGui/Viewer.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: QGui/Viewer.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: QGui/Viewer.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: QGui/Viewer.h: in the future, the compiler will take precedence" >&2;}
 
     ;;
 esac
-{ echo "$as_me:$LINENO: checking for Axel.h" >&5
-echo $ECHO_N "checking for Axel.h... $ECHO_C" >&6; }
-if test "${ac_cv_header_Axel_h+set}" = set; then
+{ echo "$as_me:$LINENO: checking for QGui/Viewer.h" >&5
+echo $ECHO_N "checking for QGui/Viewer.h... $ECHO_C" >&6; }
+if test "${ac_cv_header_QGui_Viewer_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  ac_cv_header_Axel_h=$ac_header_preproc
+  ac_cv_header_QGui_Viewer_h=$ac_header_preproc
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_header_Axel_h" >&5
-echo "${ECHO_T}$ac_cv_header_Axel_h" >&6; }
+{ echo "$as_me:$LINENO: result: $ac_cv_header_QGui_Viewer_h" >&5
+echo "${ECHO_T}$ac_cv_header_QGui_Viewer_h" >&6; }
 
 fi
-if test $ac_cv_header_Axel_h = yes; then
+if test $ac_cv_header_QGui_Viewer_h = yes; then
   { echo "$as_me:$LINENO: checking for axel" >&5
 echo $ECHO_N "checking for axel... $ECHO_C" >&6; }
     cat >conftest.$ac_ext <<_ACEOF
@@ -7348,13 +7348,13 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
-#include <Axel.h>
+#include <QGui/Viewer.h>
 
 int
 main ()
 {
 
-    init_axel ();
+    Viewer viewer(0);
 
   ;
   return 0;

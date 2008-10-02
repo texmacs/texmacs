@@ -302,13 +302,13 @@ if test "$with_axel" = "no" -o "$with_axel" = "" ; then
 else
     CPPFLAGS=`axel-config --cflags`
     LIBS=`axel-config --libs`
-    AC_CHECK_HEADER(Axel.h,
+    AC_CHECK_HEADER(QGui/Viewer.h,
     AC_MSG_CHECKING(for axel)
     AC_TRY_LINK(
 [
-#include <Axel.h>
+#include <QGui/Viewer.h>
 ],[
-    init_axel ();
+    Viewer viewer(0);
 ],[
     AC_MSG_RESULT(yes)
     AC_DEFINE(USE_AXEL, 1, [Use axel library])
