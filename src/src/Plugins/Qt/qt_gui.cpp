@@ -715,3 +715,4 @@ void show_wait_indicator (widget base, string message, string argument)
 // the base widget which triggered the lengthy operation;
 // the indicator should be removed if the message is empty
 { the_gui->show_wait_indicator(base,message,argument);  }
+
