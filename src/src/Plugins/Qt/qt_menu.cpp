@@ -23,6 +23,7 @@
 
 #include "promise.hpp"
 //#import "TMView.h"
+#include <QtGlobal>
 #include <QPointer>
 #include <QBitmap>
 
@@ -162,17 +163,20 @@ QAction* qt_text_widget_rep::as_qaction()
 
 QAction* qt_image_widget_rep::as_qaction()
 {
-  //FIXME: going from xpm to QImage and then back to QPixmap is not good.
-  //       we must find a way to support both QImages (for alpha blending of characters)
-  //       and pixmaps for images which have only a bitwise mask
-  //       this would be more efficient.
-
-  QAction *a = new QAction(NULL);
-  QImage *img = the_qt_renderer()->xpm_image(image);
-  QPixmap pxm(QPixmap::fromImage(*img));
-  QBitmap mask(QBitmap::fromImage(img->createAlphaMask()));
-  pxm.setMask(mask);
-  QIcon icon(pxm);
+	QAction *a = new QAction(NULL);
+	QTMImage *img = the_qt_renderer()->xpm_image(image);
+#ifdef Q_WS_MAC
+	QIcon icon(*img);
+#else
+	//FIXME: going from xpm to QImage and then back to QPixmap is not good.
+	//       we must find a way to support both QImages (for alpha blending of characters)
+	//       and pixmaps for images which have only a bitwise mask
+	//       this would be more efficient.	
+	QPixmap pxm(QPixmap::fromImage(*img));
+	QBitmap mask(QBitmap::fromImage(img->createAlphaMask()));
+	pxm.setMask(mask);
+	QIcon icon(pxm);
+#endif
   //  cout << pxm.size().width() << " " <<  pxm.size().height() << "\n";
   a->setIcon(icon);  
   return  a;
