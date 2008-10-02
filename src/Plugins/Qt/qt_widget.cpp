@@ -362,7 +362,9 @@ qt_view_widget_rep::query (slot s, int type_id) {
   case SLOT_IDENTIFIER:
     if (type_id != type_helper<int>::id)
       fatal_error ("int expected (SLOT_IDENTIFIER)", "qt_view_widget_rep::query");
-    return close_box<int> ((int)view->window());
+//    return close_box<int> ((int)view->window());
+	// we need only to know if the widget is attached to some gui window	  
+		  return close_box<int> (view->window() ? 1 : 0);
 			
   case SLOT_RENDERER:
     if (type_id != type_helper<renderer>::id)
@@ -1141,7 +1143,9 @@ qt_window_widget_rep::query (slot s, int type_id) {
   case SLOT_IDENTIFIER:
     if (type_id != type_helper<int>::id)
       fatal_error ("int expected (SLOT_IDENTIFIER)", "qt_window_widget_rep::query");
-    return close_box<int> ((int)wid);
+		  // we need only to know if the widget is attached to some gui window	  
+		  return close_box<int> (wid ? 1 : 0);
+//    return close_box<int> ((int)wid);
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
