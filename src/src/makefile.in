@@ -144,7 +144,7 @@ texmacs_incl  := $(guile_incl)
 # MOC files
 ###############################################################################
 
-qt_moc := Plugins/Qt/QTMGuiHelper.moc Plugins/Qt/QTMInteractiveInputHelper.moc Plugins/Qt/QTMMenuHelper.moc Plugins/Qt/QTMWidget.moc
+qt_moc := Plugins/Qt/QTMStyle.moc Plugins/Qt/QTMGuiHelper.moc Plugins/Qt/QTMInteractiveInputHelper.moc Plugins/Qt/QTMMenuHelper.moc Plugins/Qt/QTMWidget.moc
 
 %.moc: %.hpp
 	$(MOC) $(QT_CPPFLAGS) $< -o $@

@@ -37,6 +37,7 @@
 
 #include "QTMWidget.hpp"
 #include "QTMGuiHelper.hpp"
+#include "QTMStyle.hpp"
 
 widget the_keyboard_focus(NULL);
 
