@@ -18,17 +18,23 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
-
+#include <QtGlobal>
 
 /******************************************************************************
 * QT images
 ******************************************************************************/
 
+#ifdef Q_WS_MAC
+typedef QPixmap QTMImage;
+#else
+typedef QImage QTMImage;	
+#endif
+
 struct qt_image_rep: concrete_struct {
-  QImage *img;
+  QTMImage *img;
   SI xo,yo;
   int w,h;
-  qt_image_rep (QImage *img2, SI xo2, SI yo2, int w2, int h2);
+  qt_image_rep (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
   ~qt_image_rep();
   friend class qt_image;
   friend class qt_drawable;
@@ -36,7 +42,7 @@ struct qt_image_rep: concrete_struct {
 
 class qt_image {
   CONCRETE_NULL(qt_image);
-  qt_image (QImage *img2, SI xo2, SI yo2, int w2, int h2);
+  qt_image (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
  // qt_image ();
 };
 
@@ -122,9 +128,9 @@ public:
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
   
-  void draw_clipped (QImage * im, int w, int h, SI x, SI y);
+  void draw_clipped (QTMImage * im, int w, int h, SI x, SI y);
 
-	QImage *xpm_image(url file_name);
+	QTMImage *xpm_image(url file_name);
 
   void begin(QPaintDevice * device) { painter.begin(device); } ;
   void end() { painter.end(); };

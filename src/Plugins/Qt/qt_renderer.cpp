@@ -26,11 +26,11 @@
 ******************************************************************************/
 
 
-qt_image::qt_image (QImage * img2, SI xo2, SI yo2, int w2, int h2) :
+qt_image::qt_image (QTMImage * img2, SI xo2, SI yo2, int w2, int h2) :
   rep (new qt_image_rep(img2,xo2,yo2,w2,h2)) {}
 //qt_image::qt_image () : rep(NULL) {}
 
-qt_image_rep::qt_image_rep (QImage * img2, SI xo2, SI yo2, int w2, int h2) :
+qt_image_rep::qt_image_rep (QTMImage * img2, SI xo2, SI yo2, int w2, int h2) :
   img(img2), xo(xo2), yo(yo2), w(w2), h(h2) {}
 
 qt_image_rep::~qt_image_rep() { delete img; }
@@ -399,8 +399,8 @@ void qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   int y2= as_int (cy2 * ih);
   int ww= x2 - x1;
   int hh= y2 - y1;
-  
-  painter.drawImage(QRect(x,y-h,w,h),*pm, QRect(x1,hh-y2,ww,hh));
+
+	painter.drawImage(QRect(x,y-h,w,h),*pm, QRect(x1,hh-y2,ww,hh));
   
 
 };
@@ -412,7 +412,7 @@ int char_clip=0;
 #define conv(x) ((SI) (((double) (x))*(fn->unit)))
 
 void
-qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
+qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
 	(void) w; (void) h;
   int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
   decode (x , y );
@@ -420,8 +420,11 @@ qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
 	//clear(x1,y1,x2,y2);
-  //painter.drawImage(x,y,w,h,*im);
+#ifdef Q_WS_MAC
+  painter.drawPixmap(x,y,w,h,*im);
+#else
   painter.drawImage(x,y,*im);
+#endif
 //  [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }  
 
@@ -436,7 +439,26 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
-    QImage *im = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
+#ifdef Q_WS_MAC
+	  QTMImage *im = new QPixmap(w,h);
+	  {
+		  int nr_cols= sfactor*sfactor;
+		  if (nr_cols >= 64) nr_cols= 64;
+		  
+		  QPainter pp(im);
+		  QPen pen(painter.pen());
+		  QBrush brush(pen.color());	
+		  pp.setPen(Qt::NoPen);
+		  im->fill (QColor (0,0,0,0));
+		  for (j=0; j<h; j++)
+			  for (i=0; i<w; i++) {
+				  int col = gl->get_x(i,j);
+				  brush.setColor(QColor(r,g,b,(255*col)/(nr_cols+1)));		
+				  pp.fillRect(i,j,1,1,brush);
+			  }
+	  }
+#else
+    QTMImage *im = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
     //if (! (im->hasAlphaChannel())) cout << "WARNING NO ALPHA CHANNEL\n"; 
     {
       int nr_cols= sfactor*sfactor;
@@ -455,6 +477,7 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 	  im->setPixel(i,j,qRgba(r,g,b,(255*col)/(nr_cols+1)));
 	}
     }
+#endif
     qt_image mi2(im, xo, yo, w, h );
     mi = mi2;
     //[im release]; // qt_image retains im
@@ -508,17 +531,17 @@ QColor xpm_to_ns_color(string s)
 
 extern int char_clip;
 
-QImage *qt_renderer_rep::xpm_image(url file_name)
+QTMImage *qt_renderer_rep::xpm_image(url file_name)
 { 
-	QImage *pxm = NULL;
+	QTMImage *pxm = NULL;
   qt_image mi = dis->images [as_string(file_name)];
   if (is_nil(mi)) {    
     string sss;
   load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
   if (sss == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
         uchar *buf = (uchar*)as_charp(sss);
-		pxm = new QImage();
-		pxm->loadFromData(buf, N(sss));
+	  pxm = new QTMImage();
+	  pxm->loadFromData(buf, N(sss));
 		delete buf;
 	//	cout << sss;
 	//cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
@@ -538,7 +561,7 @@ void qt_renderer_rep::xpm (url file_name, SI x, SI y) {
  // delete [] chstr;
 //  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
   ///name = [name stringByDeletingPathExtension];
-  QImage *image = xpm_image(file_name);
+  QTMImage *image = xpm_image(file_name);
   
   if (sfactor != 1)
     fatal_error ("Shrinking factor should be 1", "qt_renderer_rep::xpm");
