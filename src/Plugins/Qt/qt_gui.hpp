@@ -154,3 +154,4 @@ public:
 };
 
 #endif // defined QT_GUI_HPP
+
