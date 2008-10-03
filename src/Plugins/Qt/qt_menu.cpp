@@ -117,13 +117,84 @@ widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 // a vertical menu made up of the widgets in a
 
 
+
+
+class MyButton : public QToolButton
+  {
+  public:
+    MyButton(QWidget * parent = 0);
+    void mouseReleaseEvent(QMouseEvent *event);
+  };
+
+
+MyButton::MyButton(QWidget * parent)
+: QToolButton(parent)
+{
+}
+
+
+void MyButton::mouseReleaseEvent(QMouseEvent *event)
+{
+  cout << "click!\n";
+	// this one triggers the action and untoggles the button
+	QToolButton::mouseReleaseEvent(event);
+	// this one forwards the event to the parent
+	QWidget::mouseReleaseEvent(event);
+}
+
+class QTMTileAction : public QWidgetAction
+  {
+    
+    array<widget> arr;
+    int cols;
+  public:
+    QTMTileAction(QWidget * parent = 0, array<widget>& _arr, int _cols) : QWidgetAction(parent), arr(_arr), cols(_cols) {};
+    QWidget * createWidget(QWidget * parent);
+ //   virtual void activate  ( ActionEvent event ) { cout << "TRIG\n"; QWidgetAction::activate(event); } 
+  };
+
+
+QWidget * QTMTileAction::createWidget(QWidget * parent)
+{
+  cout << "QTMTileAction::createWidget\n";
+  QWidget *wid = new QWidget(parent);
+  QGridLayout *l = new QGridLayout(wid);
+  wid->setLayout(l);
+  
+  l->setSizeConstraint(QLayout::SetFixedSize);
+  l->setHorizontalSpacing(0);
+  l->setVerticalSpacing(0);
+  l->setContentsMargins(0,0,0,0);
+  int row=0, col=0;
+  for(int i = 0; i < N(arr); i++) {
+    if (is_nil(arr[i])) break;
+    QAction *sa = concrete(arr[i])->as_qaction();
+    QToolButton *tb = new QToolButton(wid);
+    tb->setDefaultAction(sa);
+#if 0
+    if (!QObject::connect(tb, SIGNAL(clicked()), this, SLOT(trigger())))
+    { cout << "tile_menu: signal/slot connection failed!\n"; }
+#endif
+    l->addWidget(tb,col,row);
+    col++;
+    if (col >= cols) { col = 0; row++; }
+  };
+  
+	return wid;
+}
+
+
 widget tile_menu (array<widget> a, int cols)
 // a menu rendered as a table of cols columns wide & made up of widgets in a
 { 
   (void) cols; 
 #if 0 // for the moment this code is disabled since it is not working well
+#if 0
   QWidget *wid = new QWidget(NULL);
-  QGridLayout *l = new QGridLayout;
+  QGridLayout *l = new QGridLayout(wid);
+  QWidgetAction *act = new QWidgetAction(NULL);
+  act->setDefaultWidget(wid);
+
   l->setSizeConstraint(QLayout::SetFixedSize);
   l->setHorizontalSpacing(0);
   l->setVerticalSpacing(0);
@@ -132,21 +203,32 @@ widget tile_menu (array<widget> a, int cols)
   for(int i = 0; i < N(a); i++) {
     if (is_nil(a[i])) break;
     QAction *sa = concrete(a[i])->as_qaction();
-    QToolButton *tb = new QToolButton(NULL);
+    QToolButton *tb = new MyButton(NULL);
     tb->setDefaultAction(sa);
-    l->addWidget(tb,row,col);
+#if 0
+    if (!QObject::connect(tb, SIGNAL(clicked()), act, SLOT(trigger())) && DEBUG_EVENTS)
+    { cout << "tile_menu: signal/slot connection failed!\n"; }
+#endif
+    l->addWidget(tb,col,row);
     col++;
     if (col >= cols) { col = 0; row++; }
   };
   wid->setLayout(l);
 //  cout << "XXXXXXX" << wid->width() << LF;
-  QWidgetAction *act = new QWidgetAction(NULL);
-  act->setDefaultWidget(wid);
   QMenu *m = new QMenu();
   m->addAction(act);
   QAction *mact = new QAction("Menu",NULL);
   mact->setMenu(m);
   return new qt_menu_rep(mact);	
+#else
+  QWidgetAction *act = new QTMTileAction(NULL, a, cols);  
+  QMenu *m = new QMenu();
+  m->addAction(act);
+  QAction *mact = new QAction("Menu",NULL);
+  mact->setMenu(m);
+  return new qt_menu_rep(mact);	
+//  return new qt_menu_rep(act);	
+#endif
 #else
   return horizontal_menu(a); 
 #endif
@@ -280,6 +362,7 @@ widget xpm_widget (url file_name)// { return widget(); }
 
 QMenu* to_qmenu(widget w)
 {
+  //FIXME: check that a is deallocated somewhere...
   QAction *a = concrete(w)->as_qaction();
   QMenu *m = a->menu();
   return m;
