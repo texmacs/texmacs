@@ -36,17 +36,29 @@ extern char  *slot_name(slot s); // from qt_widget.cpp
 
 class qt_menu_rep : public qt_widget_rep  {
 public:
+  bool flag;
   QPointer<QAction> item;
-  qt_menu_rep(QAction * _item) : item(_item) {  }
+  qt_menu_rep(QAction * _item) : flag(false), item(_item) {  }
   ~qt_menu_rep()  {  }
 
   virtual void send (slot s, blackbox val);
   virtual widget make_popup_widget (); 
   virtual widget popup_window_widget (string s); 
 
-  virtual QAction *as_qaction() { return item; }
+  virtual QAction *as_qaction();
 
 };
+
+QAction *qt_menu_rep::as_qaction() 
+{ 
+  //FIXME: the convention is that as_qaction give ownership of the action to the caller. 
+  //       However in this case we do not want to replicate the action so we must be sure to be called
+  //       only once.
+  if (flag) cout << "THIS MUST NOT HAPPEN (CALLED TWICE)!!\n"; 
+  flag = true;  
+  return item; 
+}
+
 
 widget qt_menu_rep::make_popup_widget ()
 {
@@ -100,14 +112,16 @@ void qt_menu_rep::send (slot s, blackbox val) {
 * Widgets for the construction of menus
 ******************************************************************************/
 
-widget horizontal_menu (array<widget> a) 
+widget horizontal_menu (array<widget> arr) 
 // a horizontal menu made up of the widgets in a
 {
   QAction *act = new QAction("Menu",NULL);
   QMenu *m = new QMenu();
-  for(int i = 0; i < N(a); i++) {
-    if (is_nil(a[i])) break;
-    m->addAction(concrete(a[i])->as_qaction());
+  for(int i = 0; i < N(arr); i++) {
+    if (is_nil(arr[i])) break;
+    QAction *a = concrete(arr[i])->as_qaction();
+    m->addAction(a);
+    a->setParent(m);
   };
   act->setMenu(m);
   return new qt_menu_rep(act);	
@@ -144,11 +158,19 @@ void MyButton::mouseReleaseEvent(QMouseEvent *event)
 
 class QTMTileAction : public QWidgetAction
   {
-    
-    array<widget> arr;
+    QVector <QAction*> actions;
     int cols;
   public:
-    QTMTileAction(QWidget * parent = 0, array<widget>& _arr, int _cols) : QWidgetAction(parent), arr(_arr), cols(_cols) {};
+    QTMTileAction(QWidget * parent, array<widget>& arr, int _cols) : QWidgetAction(parent), cols(_cols)
+    {
+      actions.reserve(N(arr));
+      for(int i = 0; i < N(arr); i++) {
+        if (is_nil(arr[i])) break;
+        QAction *act = concrete(arr[i])->as_qaction();
+        act->setParent(this);
+        actions.append(act);
+      };      
+    };
     QWidget * createWidget(QWidget * parent);
  //   virtual void activate  ( ActionEvent event ) { cout << "TRIG\n"; QWidgetAction::activate(event); } 
   };
@@ -166,9 +188,8 @@ QWidget * QTMTileAction::createWidget(QWidget * parent)
   l->setVerticalSpacing(0);
   l->setContentsMargins(0,0,0,0);
   int row=0, col=0;
-  for(int i = 0; i < N(arr); i++) {
-    if (is_nil(arr[i])) break;
-    QAction *sa = concrete(arr[i])->as_qaction();
+  for(int i = 0; i < actions.count(); i++) {
+    QAction *sa = actions[i];
     QToolButton *tb = new QToolButton(wid);
     tb->setDefaultAction(sa);
 #if 0
@@ -204,6 +225,7 @@ widget tile_menu (array<widget> a, int cols)
     if (is_nil(a[i])) break;
     QAction *sa = concrete(a[i])->as_qaction();
     QToolButton *tb = new MyButton(NULL);
+    sa->setParent(tb);
     tb->setDefaultAction(sa);
 #if 0
     if (!QObject::connect(tb, SIGNAL(clicked()), act, SLOT(trigger())) && DEBUG_EVENTS)
@@ -221,10 +243,10 @@ widget tile_menu (array<widget> a, int cols)
   mact->setMenu(m);
   return new qt_menu_rep(mact);	
 #else
-  QWidgetAction *act = new QTMTileAction(NULL, a, cols);  
-  QMenu *m = new QMenu();
-  m->addAction(act);
   QAction *mact = new QAction("Menu",NULL);
+  QMenu *m = new QMenu(NULL);
+  QWidgetAction *act = new QTMTileAction(m, a, cols);  
+  m->addAction(act);
   mact->setMenu(m);
   return new qt_menu_rep(mact);	
 //  return new qt_menu_rep(act);	
@@ -316,7 +338,8 @@ widget menu_button (widget w, command cmd, string pre, string ks, bool ok)
   
   a = concrete(w)->as_qaction();
   QTMCommand *c = new QTMCommand(cmd.rep);
-  QObject::connect(a,SIGNAL(triggered()),c,SLOT(apply()));
+  c->setParent(a);
+  QObject::connect(a,SIGNAL(triggered()),c,SLOT(apply()),Qt::QueuedConnection);
   a->setEnabled((ok ? true : false));
   // FIXME: implement complete prefix handling and keyboard shortcuts
   // cout << "ks: "<< ks << "\n";
@@ -362,9 +385,9 @@ widget xpm_widget (url file_name)// { return widget(); }
 
 QMenu* to_qmenu(widget w)
 {
-  //FIXME: check that a is deallocated somewhere...
   QAction *a = concrete(w)->as_qaction();
-  QMenu *m = a->menu();
+  QMenu *m = a->menu(); // the menu has no parent
+  delete a;
   return m;
 }
 

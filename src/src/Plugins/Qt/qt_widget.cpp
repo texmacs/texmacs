@@ -876,14 +876,25 @@ void replaceActions(QWidget *dest, QWidget *src)
 {
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) {
-    dest->removeAction(list.takeFirst());
+    QAction *a = list.takeFirst();
+    dest->removeAction(a);
+    a->deleteLater();
   }
-  dest->addActions(src->actions());
-  list = dest->actions();
+//  cout << "replaceActions n:" << src->actions().count() << LF;
+  list = src->actions();
+  while (!list.isEmpty()) {
+    QAction *a = list.takeFirst();
+    dest->addAction(a);
+    a->setParent(dest);
+  }
+  
+  //dest->addActions(src->actions());
+#if 0
   for(int i=0; i< list.count(); i++)
   {
     list[i]->setMenuRole(QAction::ApplicationSpecificRole);
   }
+#endif
 }
 
 extern void replaceButtons(QToolBar *dest, QWidget *src)
