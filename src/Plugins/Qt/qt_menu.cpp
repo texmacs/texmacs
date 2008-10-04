@@ -30,7 +30,7 @@
 #include <QToolButton>
 #include <QWidgetAction>
 
-
+#include <QEvent>
 
 extern char  *slot_name(slot s); // from qt_widget.cpp
 
@@ -133,27 +133,32 @@ widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 
 
 
-class MyButton : public QToolButton
+class QTMToolButton : public QToolButton
   {
   public:
-    MyButton(QWidget * parent = 0);
+    QTMToolButton(QWidget * parent = 0) : QToolButton(parent) { };
+    
     void mouseReleaseEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
   };
 
-
-MyButton::MyButton(QWidget * parent)
-: QToolButton(parent)
+void QTMToolButton::mousePressEvent(QMouseEvent *event)
 {
+	// this one triggers the action and toggles the button
+	QToolButton::mousePressEvent(event);
+	// this one forwards the event to the parent
+  // (which eventually is the menu)
+	QWidget::mousePressEvent(event);  
 }
 
 
-void MyButton::mouseReleaseEvent(QMouseEvent *event)
+void QTMToolButton::mouseReleaseEvent(QMouseEvent *event)
 {
-  cout << "click!\n";
 	// this one triggers the action and untoggles the button
 	QToolButton::mouseReleaseEvent(event);
-	// this one forwards the event to the parent
-	QWidget::mouseReleaseEvent(event);
+	// this one forwards the event to the parent 
+  // (which eventually is the menu which then close itself)
+	QWidget::mouseReleaseEvent(event);  
 }
 
 class QTMTileAction : public QWidgetAction
@@ -175,10 +180,13 @@ class QTMTileAction : public QWidgetAction
  //   virtual void activate  ( ActionEvent event ) { cout << "TRIG\n"; QWidgetAction::activate(event); } 
   };
 
+//FIXME: QTMTileAction::createWidget is called twice: the first time when the action is added to the 
+//       menu, the second when from the menu it is transferred to the toolbar. This is weird since the
+//       first widget does not ever use the widget so it results in a waste of time.
 
 QWidget * QTMTileAction::createWidget(QWidget * parent)
 {
-  cout << "QTMTileAction::createWidget\n";
+  if (DEBUG_EVENTS) cout << "QTMTileAction::createWidget\n";
   QWidget *wid = new QWidget(parent);
   QGridLayout *l = new QGridLayout(wid);
   wid->setLayout(l);
@@ -190,17 +198,12 @@ QWidget * QTMTileAction::createWidget(QWidget * parent)
   int row=0, col=0;
   for(int i = 0; i < actions.count(); i++) {
     QAction *sa = actions[i];
-    QToolButton *tb = new QToolButton(wid);
+    QToolButton *tb = new QTMToolButton(wid);
     tb->setDefaultAction(sa);
-#if 0
-    if (!QObject::connect(tb, SIGNAL(clicked()), this, SLOT(trigger())))
-    { cout << "tile_menu: signal/slot connection failed!\n"; }
-#endif
     l->addWidget(tb,col,row);
     col++;
     if (col >= cols) { col = 0; row++; }
   };
-  
 	return wid;
 }
 
@@ -209,48 +212,9 @@ widget tile_menu (array<widget> a, int cols)
 // a menu rendered as a table of cols columns wide & made up of widgets in a
 { 
   (void) cols; 
-#if 0 // for the moment this code is disabled since it is not working well
-#if 0
-  QWidget *wid = new QWidget(NULL);
-  QGridLayout *l = new QGridLayout(wid);
-  QWidgetAction *act = new QWidgetAction(NULL);
-  act->setDefaultWidget(wid);
-
-  l->setSizeConstraint(QLayout::SetFixedSize);
-  l->setHorizontalSpacing(0);
-  l->setVerticalSpacing(0);
-  l->setContentsMargins(0,0,0,0);
-  int row=0, col=0;
-  for(int i = 0; i < N(a); i++) {
-    if (is_nil(a[i])) break;
-    QAction *sa = concrete(a[i])->as_qaction();
-    QToolButton *tb = new MyButton(NULL);
-    sa->setParent(tb);
-    tb->setDefaultAction(sa);
-#if 0
-    if (!QObject::connect(tb, SIGNAL(clicked()), act, SLOT(trigger())) && DEBUG_EVENTS)
-    { cout << "tile_menu: signal/slot connection failed!\n"; }
-#endif
-    l->addWidget(tb,col,row);
-    col++;
-    if (col >= cols) { col = 0; row++; }
-  };
-  wid->setLayout(l);
-//  cout << "XXXXXXX" << wid->width() << LF;
-  QMenu *m = new QMenu();
-  m->addAction(act);
-  QAction *mact = new QAction("Menu",NULL);
-  mact->setMenu(m);
-  return new qt_menu_rep(mact);	
-#else
-  QAction *mact = new QAction("Menu",NULL);
-  QMenu *m = new QMenu(NULL);
-  QWidgetAction *act = new QTMTileAction(m, a, cols);  
-  m->addAction(act);
-  mact->setMenu(m);
-  return new qt_menu_rep(mact);	
-//  return new qt_menu_rep(act);	
-#endif
+#if 1
+  QWidgetAction *act = new QTMTileAction(NULL, a, cols);  
+  return new qt_menu_rep(act);	
 #else
   return horizontal_menu(a); 
 #endif
