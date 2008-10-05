@@ -31,6 +31,7 @@
 #include <QWidgetAction>
 
 #include <QEvent>
+#include <QStyleOptionMenuItem>
 
 extern char  *slot_name(slot s); // from qt_widget.cpp
 
@@ -130,8 +131,18 @@ widget horizontal_menu (array<widget> arr)
 widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 // a vertical menu made up of the widgets in a
 
-
-
+#if 0
+class QTMAuxMenu : public QMenu
+  {
+  public:
+    QTMAuxMenu() : QMenu() { };
+    
+    void myInitStyleOption(QStyleOptionMenuItem *option, const QAction *action) const
+    {
+      initStyleOption(option,action);
+    }
+};
+#endif
 
 class QTMToolButton : public QToolButton
   {
@@ -140,6 +151,7 @@ class QTMToolButton : public QToolButton
     
     void mouseReleaseEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void paintEvent(QPaintEvent *event);
   };
 
 void QTMToolButton::mousePressEvent(QMouseEvent *event)
@@ -160,6 +172,24 @@ void QTMToolButton::mouseReleaseEvent(QMouseEvent *event)
   // (which eventually is the menu which then close itself)
 	QWidget::mouseReleaseEvent(event);  
 }
+
+
+void QTMToolButton::paintEvent(QPaintEvent *event)
+{
+  QPainter p(this);
+#if 0
+  QStyleOptionMenuItem option;
+  QAction *action = defaultAction();
+  QTMAuxMenu m;
+  m.myInitStyleOption(&option, action);
+  option.rect = rect();
+  QRect r = rect();
+  style()->drawControl(QStyle::CE_MenuItem, &option, &p, this);
+#else
+  defaultAction()->icon().paint(&p,rect());
+#endif
+}
+
 
 class QTMTileAction : public QWidgetAction
   {
@@ -200,7 +230,7 @@ QWidget * QTMTileAction::createWidget(QWidget * parent)
     QAction *sa = actions[i];
     QToolButton *tb = new QTMToolButton(wid);
     tb->setDefaultAction(sa);
-    l->addWidget(tb,col,row);
+    l->addWidget(tb,row,col);
     col++;
     if (col >= cols) { col = 0; row++; }
   };
