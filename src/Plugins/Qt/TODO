@@ -6,7 +6,6 @@ TODO
 * Delayed help menu, even several seconds after boot.
 * Links don't highlight when moving over them.
 * In the documentation, rendering of keys not correct up to the pixel.
-* Keyboard shortcuts missing in menus.
 * Anti-aliasing should be default for all graphics operations.
 * Invalid situation on several occasions:
   - During selections.
@@ -39,3 +38,4 @@ DONE
 * Visibility of icon bars (in View menu).
 * Better image support: for performance use QPixmaps in systems which support native alpha-channel (like MacOSX)
 * Implement tile_menu
+* Keyboard shortcuts missing in menus

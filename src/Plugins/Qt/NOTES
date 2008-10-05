@@ -21,3 +21,7 @@ Port notes
   
 * wait_widget seems do not belong to the abstract interface 
   (it is not called in texmacs code)  
+  
+* due to limitation of Qt/Mac multiple keyboard shortcuts in the menu bar are not correctly 
+  displayed. Need more work...
+  
