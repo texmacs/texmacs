@@ -12,8 +12,8 @@
 
 #include "QTMStyle.hpp"
 #include <QApplication>
-
-
+#include <QStyleOptionMenuItem>
+#include <iostream>
 #include "QTMStyle.moc"
 
 // QTMProxyStyle does not own *style
@@ -162,12 +162,35 @@ int QTMStyle::pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWi
 	}
 }
 
+
+#if 0
+void QTMStyle::drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget)  const
+{
+  switch (element) {
+    case CE_MenuItem: 
+      if (const QStyleOptionMenuItem *mi = qstyleoption_cast<const QStyleOptionMenuItem *>(option)) {
+        QStyleOptionMenuItem mi2(*mi);
+        mi2.text = QString("pippo");
+        style->drawControl(element,&mi2,painter,widget);
+        break;
+      }
+    default:
+      style->drawControl(element,option,painter,widget);
+  }
+}
+#endif
+
 QTMStyle *qtmstyle()
 {
 	static QTMStyle *qtmstyle = NULL;
 	if (!qtmstyle) {
 		//cout << "custom style !!!!\n";
-		qtmstyle = new QTMStyle(qApp->style());
+    QStyle *s = qApp->style();
+//    s->setParent(NULL);
+    // FIXME: if we change style at application level and the old style is deleted 
+    //        the application will crash
+		qtmstyle = new QTMStyle(s);
+//    QApplication::setStyle(qtmstyle);
 	}
 	return qtmstyle;
 }

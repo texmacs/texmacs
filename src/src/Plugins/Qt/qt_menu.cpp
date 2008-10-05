@@ -18,6 +18,8 @@
 #include "qt_basic_widgets.hpp"
 
 #include "QTMMenuHelper.hpp"
+#include "QTMStyle.hpp"
+#include "analyze.hpp" 
 #include "widget.hpp" 
 #include "message.hpp"
 
@@ -32,6 +34,7 @@
 
 #include <QEvent>
 #include <QStyleOptionMenuItem>
+#include <QKeySequence>
 
 extern char  *slot_name(slot s); // from qt_widget.cpp
 
@@ -323,20 +326,35 @@ QAction * qt_balloon_widget_rep::as_qaction()
 }
 
 
+string conv(const string ks)
+{
+  string r(ks);
+  r = replace(r,"C-","Ctrl+");
+  r = replace(r,"M-","Meta+");
+  r = replace(r,"A-","Alt+");
+  r = replace(r,"S-","Shift+");
+  r = replace(r," ",",");
+  return r;
+}
+
 widget menu_button (widget w, command cmd, string pre, string ks, bool ok) 
 // a command button with an optional prefix (o, * or v) and
 // keyboard shortcut; if ok does not hold, then the button is greyed
 {
-  (void) ks;
   QAction *a = NULL;
   
   a = concrete(w)->as_qaction();
   QTMCommand *c = new QTMCommand(cmd.rep);
   c->setParent(a);
   QObject::connect(a,SIGNAL(triggered()),c,SLOT(apply()),Qt::QueuedConnection);
+  if (N(ks)>0) {
+    string qtks = conv(ks);
+    QKeySequence qks(to_qstring(qtks));
+    if (DEBUG_EVENTS) cout << "ks: " << ks << " " << qks.toString().toAscii().data() << "\n";
+    a->setShortcut(qks);
+  }
+  // FIXME: implement complete prefix handling
   a->setEnabled((ok ? true : false));
-  // FIXME: implement complete prefix handling and keyboard shortcuts
-  // cout << "ks: "<< ks << "\n";
   a->setCheckable(pre!="" ? true : false);
   a->setChecked(pre!="" ? true : false);
   if (pre == "v") {

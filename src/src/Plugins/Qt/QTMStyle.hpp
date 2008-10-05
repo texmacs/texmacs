@@ -60,9 +60,9 @@ class QTMStyle : public QTMProxyStyle
 		QTMStyle(QStyle *_style) : QTMProxyStyle(_style) {}
 		~QTMStyle() {}
 		
-		virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option,
-								   QPainter *painter, const QWidget *widget) const;
-		virtual int pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
+		void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
+		int pixelMetric(PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
+	//	void drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
 		
 	};
 
