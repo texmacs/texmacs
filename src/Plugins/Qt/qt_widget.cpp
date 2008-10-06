@@ -561,30 +561,31 @@ widget qt_view_widget_rep::plain_window_widget (string s)
 
 qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), helper(this)
 {
+	
+  QMainWindow *mw = tm_window();
    
   
-  QScrollArea *sa = new QScrollArea;
+  QScrollArea *sa = new QScrollArea(mw);
   sa->setBackgroundRole(QPalette::Dark);
   tm_window()->setCentralWidget(sa);
-  leftLabel = new QLabel("");
-  rightLabel = new QLabel("");
+
+  QStatusBar *bar = new QStatusBar(mw);
+
+  leftLabel = new QLabel("",mw);
+  rightLabel = new QLabel("",mw);
   leftLabel->setFrameStyle(QFrame::NoFrame);
   rightLabel->setFrameStyle(QFrame::NoFrame);
-	
-  
-  QStatusBar *bar = new QStatusBar();
   
   bar->addWidget(leftLabel);
   bar->addPermanentWidget(rightLabel);
   bar->setStyle(qtmstyle());
   
-  QMainWindow *mw = tm_window();
 	
   mw->setStatusBar(bar);
 	
-  mainToolBar = new QToolBar("main toolbar");
-  contextToolBar = new QToolBar("context toolbar");
-  userToolBar = new QToolBar("user toolbar");
+  mainToolBar = new QToolBar("main toolbar", mw);
+  contextToolBar = new QToolBar("context toolbar", mw);
+  userToolBar = new QToolBar("user toolbar", mw);
 
   mainToolBar->setStyle(qtmstyle());
   contextToolBar->setStyle(qtmstyle());
@@ -946,7 +947,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_MAIN_MENU");
     {
       QMenu *m = to_qmenu(w);
-      QMenuBar *b =  new QMenuBar();
+      QMenuBar *b =  new QMenuBar(tm_window());
       replaceActions(b,m);
       tm_window()->setMenuBar(b);
       delete m;
