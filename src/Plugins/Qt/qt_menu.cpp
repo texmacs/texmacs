@@ -421,11 +421,16 @@ QPixmap impress(simple_widget_rep *wid)
       the_qt_renderer()->begin(&pxm);
 		
       QRect rect = QRect(0,0,s.width(),s.height());
+      //cout << "impress (" << s.width() << "," << s.height() << ")\n";
+#if 0
       the_qt_renderer()->clear(rect.x()*PIXEL,  -(rect.y()+rect.height())*PIXEL, 
 			       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
 		
+#else
+      pxm.fill(Qt::transparent);
+#endif
       the_qt_renderer()->set_clipping (rect.x()*PIXEL,  -(rect.y()+rect.height())*PIXEL, 
-				       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+                                       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
       wid->handle_repaint (rect.x()*PIXEL,  -(rect.y()+rect.height())*PIXEL, 
 			   (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
 		
