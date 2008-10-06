@@ -449,7 +449,7 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 		  QPen pen(painter.pen());
 		  QBrush brush(pen.color());	
 		  pp.setPen(Qt::NoPen);
-		  im->fill (QColor (0,0,0,0));
+		  im->fill (Qt:transparent);
 		  for (j=0; j<h; j++)
 			  for (i=0; i<w; i++) {
 				  int col = gl->get_x(i,j);
@@ -459,21 +459,17 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 	  }
 #else
     QTMImage *im = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-    //if (! (im->hasAlphaChannel())) cout << "WARNING NO ALPHA CHANNEL\n"; 
     {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
 
-      QPainter pp(im);
-      QPen pen(painter.pen());
-      QBrush brush(pen.color());	
-      pp.setPen(Qt::NoPen);
-      im->fill (qRgba (0,0,0,0));
+// the following line is disabled because it causes a crash on Qt/X11 4.4.3
+
+      //im->fill (Qt::transparent); 
+
       for (j=0; j<h; j++)
 	for (i=0; i<w; i++) {
 	  int col = gl->get_x(i,j);
-	  //brush.setColor(QColor(r,g,b,(255*col)/(nr_cols+1)));		
-	  //pp.fillRect(i,j,1,1,brush);
 	  im->setPixel(i,j,qRgba(r,g,b,(255*col)/(nr_cols+1)));
 	}
     }
