@@ -39,6 +39,7 @@ inline void map(int code, string name)
 
 void initkeymap()
 {
+  map(Qt::Key_Space,"space");
   map(Qt::Key_Return,"return");
   map(Qt::Key_Tab,"tab");
   map(Qt::Key_Backspace,"backspace");
@@ -172,56 +173,44 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
   
   {
     // char str[256];
-    string r;
+    int key = event->key();
     QString nss = event->text();
     Qt::KeyboardModifiers mods = event->modifiers();
     if (DEBUG_EVENTS) {
-      cout << nss.toUtf8().data() << LF;
-      cout << "key :" << event->key()  << "count: " << nss.count() << LF;
+      cout << "key  : " << key << LF;
+      cout << "text : " << nss.toAscii().data() << LF;
+      cout << "count: " << nss.count() << LF;
     }
-    string modstr;
-    
-    if (mods & Qt::MetaModifier ) modstr= "C-" * modstr;
-    if (mods & Qt::ControlModifier) modstr= "Mod1-" * modstr;
-    //	if (mods & Qt::KeypadModifier) modstr= "Mod3-" * modstr;
-    if (mods & Qt::AltModifier) modstr= "Mod4-" * modstr;
-		
-    int key = event->key();
-    if (qtkeymap->contains(key)) {
+
+    string r;
+    if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
-      r = ((mods & Qt::ShiftModifier)? "S-" * modstr: modstr) * r;          
-      if (DEBUG_EVENTS)
-	cout << "function key press: " << r << LF;
-      wid -> handle_keypress (r, texmacs_time());    
-      return;
-    } 
-		
-		
-    if (mods & (Qt::ControlModifier  | Qt::MetaModifier | Qt::AltModifier))
-      {
-	int k = event->key();
-	if (k<128) {
-	  char c = k;
-	  if ((c>='A')&&(c<='Z')) c -= ('A'-'a'); // lowercase control letters
-	  string rr (&c, 1);
-	  r= utf8_to_cork (rr);          
-				
-	  string s ( modstr * r);
-	  if (DEBUG_EVENTS)
-	    cout << "modified  key press: " << s << LF;
-	  wid -> handle_keypress (s, texmacs_time());    
-	  return;
-	}
-      } 
-    else 
-      {
-	QByteArray buf =  nss.toUtf8();
-	string rr (buf.constData(), buf.count());
-	string s= utf8_to_cork (rr);          
-	if (DEBUG_EVENTS)
-	  cout << "key press: " << s << LF;
-	wid -> handle_keypress (s, texmacs_time());        
-      }
+      if (mods & Qt::ShiftModifier) r= "S-" * r;
+      if (mods & Qt::MetaModifier) r= "C-" * r;
+      if (mods & Qt::ControlModifier) r= "Mod1-" * r;
+      //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
+      if (mods & Qt::AltModifier) r= "Mod4-" * r;
+    }
+    else if (key >= 32 && key < 128) {
+      if ((mods & Qt::ShiftModifier) == 0)
+	if (((char) key) >= 'A' && ((char) key) <= 'Z')
+	  key= (int) (key + ((int) 'a') - ((int) 'A'));
+      r= string ((char) key);
+      if (mods & Qt::MetaModifier) r= "C-" * r;
+      if (mods & Qt::ControlModifier) r= "Mod1-" * r;
+      //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
+      if (mods & Qt::AltModifier) r= "Mod4-" * r;
+    }
+    else {
+      QByteArray buf= nss.toUtf8();
+      string rr (buf.constData(), buf.count());
+      r= utf8_to_cork (rr);
+    }
+
+    if (r == "") return;
+    if (DEBUG_EVENTS)
+      cout << "key press: " << r << LF;
+    wid -> handle_keypress (r, texmacs_time());        
   }
 }
 
