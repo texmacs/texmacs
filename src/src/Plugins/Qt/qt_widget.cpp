@@ -947,7 +947,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_MAIN_MENU");
     {
       QMenu *m = to_qmenu(w);
-      QMenuBar *b =  new QMenuBar(tm_window());
+      QMenuBar *b =  new QMenuBar();
       replaceActions(b,m);
       tm_window()->setMenuBar(b);
       delete m;
