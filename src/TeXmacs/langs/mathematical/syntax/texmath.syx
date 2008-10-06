@@ -220,6 +220,11 @@ Class old-group-close
 	Precedence=	160
 	Penalty=	0
 
+Class spacing
+	Type=		Symbol
+	Precedence=	1000
+	Spacing=	Big, None
+
 Class symbol
 	Type=		Symbol
 	Precedence=	1000
@@ -436,6 +441,9 @@ Members group-suspension
 
 Members group-suspension-lim
 	cdotslim
+
+Members spacing
+	spc
 
 Members symbol
 	alpha beta gamma delta varepsilon
