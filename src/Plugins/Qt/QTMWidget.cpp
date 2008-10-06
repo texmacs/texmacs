@@ -120,6 +120,7 @@ void initkeymap()
   // map( Qt::Key_Find  ,"find" );
   map( Qt::Key_Help  ,"help" );
   // map( Qt::Key_ModeSwitchFunctionKey    ,"modeswitch" );  
+  map( Qt::Key_Dead_Acute, "acute");
 }
 
 
@@ -138,14 +139,15 @@ void QTMWidget::paintEvent ( QPaintEvent * event ) {
   }
   
   
-  the_qt_renderer()->begin(this);
-  
-  the_qt_renderer()->set_clipping (rect.x()*PIXEL,  -(rect.y()+rect.height())*PIXEL, 
-				   (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+  the_qt_renderer()->begin (this);  
 
-  tm_widget()->handle_repaint (rect.x()*PIXEL,  -(rect.y()+rect.height())*PIXEL, 
-			       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
-	
+  the_qt_renderer() -> set_clipping
+    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+     (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+  tm_widget()->handle_repaint
+    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+     (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+
   if (the_qt_renderer()->interrupted()) {
     if (DEBUG_EVENTS)
       cout << "POSTPONE\n"; 
@@ -179,33 +181,48 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
     if (DEBUG_EVENTS) {
       cout << "key  : " << key << LF;
       cout << "text : " << nss.toAscii().data() << LF;
-      cout << "count: " << nss.count() << LF;
+      //cout << "count: " << nss.count() << LF;
+      if (mods & Qt::ShiftModifier) cout << "shift\n";
+      if (mods & Qt::MetaModifier) cout << "meta\n";
+      if (mods & Qt::ControlModifier) cout << "control\n";
+      if (mods & Qt::KeypadModifier) cout << "keypad\n";
+      if (mods & Qt::AltModifier) cout << "alt\n";
     }
 
+    bool flag= true;
     string r;
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
       if (mods & Qt::ShiftModifier) r= "S-" * r;
-      if (mods & Qt::MetaModifier) r= "C-" * r;
-      if (mods & Qt::ControlModifier) r= "Mod1-" * r;
-      //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
-      if (mods & Qt::AltModifier) r= "Mod4-" * r;
-    }
-    else if (key >= 32 && key < 128) {
-      if ((mods & Qt::ShiftModifier) == 0)
-	if (((char) key) >= 'A' && ((char) key) <= 'Z')
-	  key= (int) (key + ((int) 'a') - ((int) 'A'));
-      r= string ((char) key);
-      if (mods & Qt::MetaModifier) r= "C-" * r;
-      if (mods & Qt::ControlModifier) r= "Mod1-" * r;
-      //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
-      if (mods & Qt::AltModifier) r= "Mod4-" * r;
     }
     else {
       QByteArray buf= nss.toUtf8();
       string rr (buf.constData(), buf.count());
       r= utf8_to_cork (rr);
+      unsigned short unic= nss.data()[0].unicode();
+      if (unic > 0 && unic < 32) {
+	if ((mods & Qt::ShiftModifier) == 0)
+	  if (((char) key) >= 'A' && ((char) key) <= 'Z')
+	    key= (int) (key + ((int) 'a') - ((int) 'A'));
+	r= string ((char) key);
+      }
+      else {
+	if (unic == 168) r= "umlaut";
+	if (unic == 96) {
+	  if ((mods & Qt::AltModifier) != 0) r= "grave";
+	  else r= "`";
+	}
+	if (unic == 180) r= "acute";
+	if (unic == 710) r= "hat";
+	if (unic == 732) r= "tilde";
+	flag= false;
+      }
     }
+
+    if (mods & Qt::MetaModifier) r= "C-" * r;
+    if (mods & Qt::ControlModifier) r= "Mod1-" * r;
+    //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
+    if (flag && ((mods & Qt::AltModifier) != 0)) r= "Mod4-" * r;
 
     if (r == "") return;
     if (DEBUG_EVENTS)
@@ -222,18 +239,14 @@ void QTMWidget::mousePressEvent ( QMouseEvent * event ) {
   scale(point);
   Qt::KeyboardModifiers flags = event->modifiers();
   if (flags & Qt::MetaModifier)
-    {
-      wid -> handle_mouse ("press-right", point.x(), point.y(),  3, texmacs_time());
-    }
+    wid -> handle_mouse ("press-right", point.x(), point.y(),
+			 3, texmacs_time());
   else if (flags & Qt::AltModifier)
-    {
-      wid -> handle_mouse ("press-middle", point.x(), point.y(),  2, texmacs_time());
-    }
+    wid -> handle_mouse ("press-middle", point.x(), point.y(),
+			 2, texmacs_time());
   else
-    {
-      wid -> handle_mouse ("press-left", point.x(), point.y(),  1, texmacs_time());
-    }
-	
+    wid -> handle_mouse ("press-left", point.x(), point.y(),
+			 1, texmacs_time());
 }
 
 void QTMWidget::mouseReleaseEvent ( QMouseEvent * event ) {
