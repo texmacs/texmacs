@@ -237,8 +237,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       if (type_box (val) != type_helper<int>::id)
         fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
-      //w << set_integer (key, open_box<int> (val));
-      //FIXME: handle sf
+      if (DEBUG_EVENTS) cout << "Ignored!\n";
     }
     break;
   case SLOT_KEYBOARD_FOCUS:
@@ -733,6 +732,19 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (open_box<bool>(val) == true) {
         QTimer::singleShot(0,&helper, SLOT(doit()));
         //			 do_interactive_prompt();
+      }
+    }
+    break;
+
+  case SLOT_SHRINKING_FACTOR:
+    {
+      if (type_box (val) != type_helper<int>::id)
+        fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
+      if (QTMWidget *tmw = qobject_cast<QTMWidget *> (tm_canvas())) 
+      {
+        int new_sf = open_box<int> (val);
+        if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
+        tmw->tm_widget()->handle_set_shrinking_factor(new_sf);
       }
     }
     break;
