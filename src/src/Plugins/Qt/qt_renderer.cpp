@@ -449,7 +449,7 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 		  QPen pen(painter.pen());
 		  QBrush brush(pen.color());	
 		  pp.setPen(Qt::NoPen);
-		  im->fill (Qt:transparent);
+		  im->fill (Qt::transparent);
 		  for (j=0; j<h; j++)
 			  for (i=0; i<w; i++) {
 				  int col = gl->get_x(i,j);
