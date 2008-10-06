@@ -512,11 +512,15 @@ void qt_gui_rep::event_loop ()
   QTimer t (NULL);
   //QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
   t.start (10);
+
   while (1) {
-    app->sendPostedEvents();
     app->processEvents(QEventLoop::WaitForMoreEvents);
     update();
   }
+  //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
+  app->sendPostedEvents(0, QEvent::DeferredDelete);
+
+
 }
 #endif
 
