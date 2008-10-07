@@ -183,7 +183,7 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
     int key = event->key();
     QString nss = event->text();
     Qt::KeyboardModifiers mods = event->modifiers();
-    if (DEBUG_EVENTS || true) {
+    if (DEBUG_EVENTS) {
       cout << "key  : " << key << LF;
       cout << "text : " << nss.toAscii().data() << LF;
       cout << "count: " << nss.count() << LF;
@@ -233,7 +233,7 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
     if (flag && ((mods & Qt::AltModifier) != 0)) r= "Mod4-" * r;
 
     if (r == "") return;
-    if (DEBUG_EVENTS || true)
+    if (DEBUG_EVENTS)
       cout << "key press: " << r << LF;
     wid -> handle_keypress (r, texmacs_time());        
   }
