@@ -131,8 +131,11 @@ qt_renderer_rep::get_background () {
 void
 qt_renderer_rep::set_color (color c) {
 	QPen p(painter.pen());
+	QBrush b(painter.brush());
 	p.setColor(dis->cmap[c]);
+	b.setColor(dis->cmap[c]);
 	painter.setPen(p);
+	painter.setBrush(b);
   cur_fg= c;
 }
 
@@ -162,7 +165,7 @@ void
 qt_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
-  y1--; y2--; // top-left origin to bottom-left origin conversion
+//  y1--; y2--; // top-left origin to bottom-left origin conversion
 	painter.drawLine(x1,y1,x2,y2);
 }
 
@@ -195,13 +198,7 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
 
 	
 	QBrush brush(dis->cmap[cur_bg]);
-//	QPen p(painter.pen());
-//	p.setColor(dis->cmap[cur_bg]);
-//	painter.setPen(p);
 	painter.fillRect(x1,y2,x2-x1,y1-y2,brush);	
-//	p.setColor(dis->cmap[cur_fg]);
-//	painter.setPen(p);
-	
 }
 
 void
@@ -224,9 +221,8 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   
   decode (x1, y1);
   decode (x2, y2);
-	
-	QBrush brush(dis->cmap[cur_fg]);
 
+	QBrush brush(dis->cmap[cur_fg]);
 	painter.fillRect(x1,y2,x2-x1,y1-y2,brush);	
 }
 
@@ -252,15 +248,18 @@ void
 qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {  
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
-  STACK_NEW_ARRAY (pnt, QPoint, n);
+  QPolygonF poly(n);
   for (i=0; i<n; i++) {
     SI xx= x[i], yy= y[i];
     decode (xx, yy);
-    pnt[i].rx() = xx;
-    pnt[i].ry() = yy;
+    poly[i] = QPointF(xx,yy);
   }
-  painter.drawPolygon(pnt,n,convex? Qt::OddEvenFill : Qt::WindingFill);
-  STACK_DELETE_ARRAY (pnt);
+  QBrush brush(dis->cmap[cur_fg]);
+  QPainterPath pp;
+  pp.addPolygon(poly);
+  pp.closeSubpath();
+  pp.setFillRule(convex ? Qt::OddEvenFill : Qt::WindingFill);
+  painter.fillPath(pp,brush);
 }
 
 
