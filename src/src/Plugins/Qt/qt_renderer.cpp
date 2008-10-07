@@ -419,7 +419,7 @@ qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
   decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
 	//clear(x1,y1,x2,y2);
-#ifdef Q_WS_MAC
+#ifdef QTMPIXMAPS
   painter.drawPixmap(x,y,w,h,*im);
 #else
   painter.drawImage(x,y,*im);
@@ -438,7 +438,7 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
-#ifdef Q_WS_MAC
+#ifdef QTMPIXMAPS
 	  QTMImage *im = new QPixmap(w,h);
 	  {
 		  int nr_cols= sfactor*sfactor;

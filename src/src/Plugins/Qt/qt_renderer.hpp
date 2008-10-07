@@ -24,7 +24,16 @@
 * QT images
 ******************************************************************************/
 
+// if QTMPIXMAPS is defined we use QPixmap for characters and button icons
+// otherwise we use QImage (which support alpha also under X11)
+
 #ifdef Q_WS_MAC
+#define QTMPIXMAPS
+#else
+#undef QTMPIXMAPS
+#endif
+
+#ifdef QTMPIXMAPS
 typedef QPixmap QTMImage;
 #else
 typedef QImage QTMImage;	
