@@ -76,6 +76,24 @@ texmacs_version (string which) {
 }
 
 bool
+gui_is_x () {
+#ifdef QTTEXMACS
+  return false;
+#else
+  return true;
+#endif
+}
+
+bool
+gui_is_qt () {
+#ifdef QTTEXMACS
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool
 os_win32 () {
 #ifdef OS_WIN32
   return true;
