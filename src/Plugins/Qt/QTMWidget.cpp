@@ -121,6 +121,10 @@ void initkeymap()
   map( Qt::Key_Help  ,"help" );
   // map( Qt::Key_ModeSwitchFunctionKey    ,"modeswitch" );  
   map( Qt::Key_Dead_Acute, "acute");
+  map( Qt::Key_Dead_Grave, "grave");
+  map( Qt::Key_Dead_Diaeresis, "umlaut");
+  map( Qt::Key_Dead_Circumflex, "hat");
+  map( Qt::Key_Dead_Tilde, "tilde");
 }
 
 
@@ -178,10 +182,10 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
     int key = event->key();
     QString nss = event->text();
     Qt::KeyboardModifiers mods = event->modifiers();
-    if (DEBUG_EVENTS) {
+    if (DEBUG_EVENTS || true) {
       cout << "key  : " << key << LF;
       cout << "text : " << nss.toAscii().data() << LF;
-      //cout << "count: " << nss.count() << LF;
+      cout << "count: " << nss.count() << LF;
       if (mods & Qt::ShiftModifier) cout << "shift\n";
       if (mods & Qt::MetaModifier) cout << "meta\n";
       if (mods & Qt::ControlModifier) cout << "control\n";
@@ -199,6 +203,8 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
       QByteArray buf= nss.toUtf8();
       string rr (buf.constData(), buf.count());
       r= utf8_to_cork (rr);
+      if (r == "<less>") r= "<";
+      if (r == "<gtr>") r= ">";
       unsigned short unic= nss.data()[0].unicode();
       if (unic > 0 && unic < 32) {
 	if ((mods & Qt::ShiftModifier) == 0)
@@ -225,7 +231,7 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
     if (flag && ((mods & Qt::AltModifier) != 0)) r= "Mod4-" * r;
 
     if (r == "") return;
-    if (DEBUG_EVENTS)
+    if (DEBUG_EVENTS || true)
       cout << "key press: " << r << LF;
     wid -> handle_keypress (r, texmacs_time());        
   }
