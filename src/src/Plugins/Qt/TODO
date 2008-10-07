@@ -3,7 +3,6 @@ TODO
 
 * White area of empty document should vertically extend to bottom.
 * Delayed help menu, even several seconds after boot.
-* Links don't highlight when moving over them.
 * Anti-aliasing should be default for all graphics operations.
 * Invalid situation on several occasions:
   - During selections.
@@ -44,3 +43,4 @@ DONE
 * X should not be launched.
 * Keyboard works more or less fine.
 * In the documentation, rendering of keys not correct up to the pixel.
+* Links don't highlight when moving over them.
