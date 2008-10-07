@@ -179,6 +179,7 @@ void QTMToolButton::mouseReleaseEvent(QMouseEvent *event)
 
 void QTMToolButton::paintEvent(QPaintEvent *event)
 {
+  (void) event;
   QPainter p(this);
 #if 0
   QStyleOptionMenuItem option;
@@ -372,12 +373,10 @@ widget balloon_widget (widget w, widget help)
   return new qt_balloon_widget_rep(w,help);
 }
 
-extern string max_translate (string);
-
 widget text_widget (string s, color col, bool tsp, string lan) 
 // a text widget with a given color, transparency and language
 {
-  return new qt_text_widget_rep(max_translate (s),col,tsp,lan);
+  return new qt_text_widget_rep (qt_translate (s), col, tsp, lan);
 }
 
 widget xpm_widget (url file_name)// { return widget(); }

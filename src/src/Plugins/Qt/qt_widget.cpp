@@ -24,6 +24,7 @@
 #include "promise.hpp"
 #include "analyze.hpp"
 #include "dictionary.hpp"
+#include "converter.hpp"
 
 #include "qt_basic_widgets.hpp"
 #include <QScrollArea>
@@ -610,9 +611,10 @@ qt_tm_widget_rep::~qt_tm_widget_rep()
 }
 
 string
-max_translate (string s) {
+qt_translate (string s) {
   string out_lan= get_output_language ();
   return tm_var_encode (translate (s, "english", out_lan));
+  //return cork_to_utf8 (tm_var_encode (translate (s, "english", out_lan)));
 }
 
 void
@@ -680,7 +682,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<string>::id)
         fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
       string msg = open_box<string> (val);
-      leftLabel->setText(to_qstring (max_translate (msg)));
+      leftLabel->setText(to_qstring (qt_translate (msg)));
       leftLabel->update();
     }
 			
@@ -692,8 +694,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<string>::id)
         fatal_error ("type mismatch", "SLOT_RIGHT_FOOTER");
       string msg = open_box<string> (val);
-      rightLabel->setText(to_qstring(max_translate (msg)));
-      rightLabel->update();
+      rightLabel->setText (to_qstring (qt_translate (msg)));
+      rightLabel->update ();
     }
 			
  //   if (DEBUG_EVENTS) cout << "right footer\n";
