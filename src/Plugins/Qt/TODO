@@ -1,7 +1,6 @@
 
 TODO
 
-* X should not be launched.
 * White area of empty document should vertically extend to bottom.
 * Delayed help menu, even several seconds after boot.
 * Links don't highlight when moving over them.
@@ -27,6 +26,7 @@ TODO
 * Implement glue_widget
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
 * In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
+* File chooser start location should be directory of current file.
 
 PARTIAL 
 
@@ -42,3 +42,4 @@ DONE
 * Better image support: for performance use QPixmaps in systems which support native alpha-channel (like MacOSX)
 * Implement tile_menu
 * Keyboard shortcuts missing in menus
+* X should not be launched.
