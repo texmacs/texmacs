@@ -206,7 +206,8 @@ void QTMWidget::keyPressEvent ( QKeyEvent * event )
       if (r == "<less>") r= "<";
       if (r == "<gtr>") r= ">";
       unsigned short unic= nss.data()[0].unicode();
-      if (unic > 0 && unic < 32) {
+      //cout << "unic= " << unic << "\n";
+      if (unic < 32 && key < 128) {
 	if ((mods & Qt::ShiftModifier) == 0)
 	  if (((char) key) >= 'A' && ((char) key) <= 'Z')
 	    key= (int) (key + ((int) 'a') - ((int) 'A'));
