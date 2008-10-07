@@ -302,7 +302,7 @@ QAction* qt_image_widget_rep::as_qaction()
 {
 	QAction *a = new QAction(NULL);
 	QTMImage *img = the_qt_renderer()->xpm_image(image);
-#ifdef Q_WS_MAC
+#ifdef QTMPIXMAPS
 	QIcon icon(*img);
 #else
 	//FIXME: going from xpm to QImage and then back to QPixmap is not good.
