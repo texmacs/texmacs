@@ -43,3 +43,4 @@ DONE
 * Implement tile_menu
 * Keyboard shortcuts missing in menus
 * X should not be launched.
+* Keyboard works more or less fine.
