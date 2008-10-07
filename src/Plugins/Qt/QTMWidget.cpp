@@ -140,6 +140,7 @@ void QTMWidget::paintEvent ( QPaintEvent * event ) {
     QPainter p(this);
     QBrush brush(QColor("red"));
     p.fillRect(rect,brush);
+    p.end();
   }
   
   

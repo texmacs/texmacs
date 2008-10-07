@@ -455,6 +455,7 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 				  brush.setColor(QColor(r,g,b,(255*col)/(nr_cols+1)));		
 				  pp.fillRect(i,j,1,1,brush);
 			  }
+      pp.end();
 	  }
 #else
     QTMImage *im = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
