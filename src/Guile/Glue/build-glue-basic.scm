@@ -21,6 +21,8 @@
   (texmacs-version-release texmacs_version (string string))
   (version-before? version_inf (bool string string))
   (os-win32? os_win32 (bool))
+  (x-gui? gui_is_x (bool))
+  (qt-gui? gui_is_qt (bool))
   (win32-display win32_display (void string))
   (scheme-dialect scheme_dialect (string))
   (get-texmacs-path get_texmacs_path (string))

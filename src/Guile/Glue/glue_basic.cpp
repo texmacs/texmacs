@@ -50,6 +50,24 @@ tmg_os_win32P () {
 }
 
 SCM
+tmg_x_guiP () {
+  // SCM_DEFER_INTS;
+  bool out= gui_is_x ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_qt_guiP () {
+  // SCM_DEFER_INTS;
+  bool out= gui_is_qt ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_win32_display (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "win32-display");
 
@@ -3476,6 +3494,8 @@ initialize_glue_basic () {
   scm_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   scm_new_procedure ("version-before?", (FN) tmg_version_beforeP, 2, 0, 0);
   scm_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
+  scm_new_procedure ("x-gui?", (FN) tmg_x_guiP, 0, 0, 0);
+  scm_new_procedure ("qt-gui?", (FN) tmg_qt_guiP, 0, 0, 0);
   scm_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
   scm_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   scm_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
