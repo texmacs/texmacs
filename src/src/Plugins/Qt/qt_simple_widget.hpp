@@ -30,21 +30,18 @@ public:
   virtual void handle_clear (SI x1, SI y1, SI x2, SI y2);
   virtual void handle_repaint (SI x1, SI y1, SI x2, SI y2);
 
-	virtual void send (slot s, blackbox val);
-	// send a message val to the slot s
+  virtual void send (slot s, blackbox val);
+  // send a message val to the slot s
   virtual blackbox query (slot s, int type_id);
-	// obtain information of a given type from the slot s
+  // obtain information of a given type from the slot s
   virtual widget read (slot s, blackbox index);
-	// abstract read access (of type s) of a subwidget at position index
+  // abstract read access (of type s) of a subwidget at position index
   virtual void write (slot s, blackbox index, widget w);
-	// abstract write access (of type s) of a subwidget at position index
+  // abstract write access (of type s) of a subwidget at position index
   virtual void notify (slot s, blackbox new_val);
 
-
-	virtual QAction *as_qaction();
-
-//  virtual TMMenuItem *as_menuitem();
-
+  virtual QAction* as_qaction();
+  // virtual TMMenuItem* as_menuitem();
 };
 
 #endif // defined QT_SIMPLE_WIDGET_HPP
