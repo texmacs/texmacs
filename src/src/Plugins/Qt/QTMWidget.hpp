@@ -44,6 +44,8 @@ private slots:
 	
 protected:	
   virtual void paintEvent ( QPaintEvent * event );
+  virtual void focusInEvent ( QFocusEvent * event );
+  virtual void focusOutEvent ( QFocusEvent * event );
   virtual void keyPressEvent ( QKeyEvent * event );
   virtual void mousePressEvent ( QMouseEvent * event );
   virtual void mouseReleaseEvent ( QMouseEvent * event );
