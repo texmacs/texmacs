@@ -41,45 +41,44 @@ widget the_keyboard_focus(NULL);
 * main renderer
 ******************************************************************************/
 
-qt_renderer_rep *the_renderer = NULL;
-qt_renderer_rep *the_qt_renderer() 
-{
+qt_renderer_rep* the_renderer = NULL;
+
+qt_renderer_rep*
+the_qt_renderer()  {
   if (!the_renderer) the_renderer = new qt_renderer_rep (the_gui);
   return the_renderer;
 }
 
-
-widget qt_widget_rep::plain_window_widget (string s)
-{
+widget
+qt_widget_rep::plain_window_widget (string s) {
   (void) s;
   return widget ();
 }
 
-widget qt_widget_rep::make_popup_widget ()
-{
+widget
+qt_widget_rep::make_popup_widget () {
   return this;
 }
 
-widget qt_widget_rep::popup_window_widget (string s)
-{
+widget
+qt_widget_rep::popup_window_widget (string s) {
   (void) s;
-  return widget();
+  return widget ();
 }
 
 /******************************************************************************
- * some debugging infrastucture
- ******************************************************************************/
+* some debugging infrastucture
+******************************************************************************/
 
-
-ostream& operator << (ostream& out, QRect rect)
-{
-	out << "(" << rect.x() << "," << rect.y() << "," << rect.width() << "," << rect.height() << ")";
-	return out;
+ostream&
+operator << (ostream& out, QRect rect) {
+  return out << "(" << rect.x() << "," << rect.y() << ","
+	     << rect.width() << "," << rect.height() << ")";
 }
 
-char  *slot_name(slot s)
-{
-  static char * slot_names[] =  {
+char*
+slot_name (slot s) {
+  static char * slot_names[]= {
     "SLOT_IDENTIFIER",
     "SLOT_WINDOW",
     "SLOT_RENDERER",
@@ -132,23 +131,20 @@ char  *slot_name(slot s)
   return slot_names[s.sid];
 }
 
-											
-											
 /******************************************************************************
 * qt_view_widget_rep
 ******************************************************************************/
 
 // policy: qt_view_widget_rep owns the QWidget
  
-qt_view_widget_rep::qt_view_widget_rep(QWidget *v) : qt_widget_rep(), view(v) {  }
-qt_view_widget_rep::~qt_view_widget_rep()  
-{ 
+qt_view_widget_rep::qt_view_widget_rep (QWidget* v):
+  qt_widget_rep(), view(v) {}
+
+qt_view_widget_rep::~qt_view_widget_rep() { 
   if (view) delete view;
   if (DEBUG_EVENTS) 
     cout << "qt_view_widget_rep::~qt_view_widget_rep()\n";
 }
-
-
 
 void
 qt_view_widget_rep::send (slot s, blackbox val) {
