@@ -52,8 +52,8 @@ public:
 	//  virtual void deconnect (slot s, widget w2, slot s2);
 	virtual widget plain_window_widget (string s);
 	
-	QMainWindow *tm_window() { return qobject_cast<QMainWindow *>(view); };
-	QScrollArea *tm_scrollarea() { return qobject_cast<QScrollArea *>(tm_window()->centralWidget()); };
+	QMainWindow *tm_mainwindow() { return qobject_cast<QMainWindow *>(view); };
+	QScrollArea *tm_scrollarea() { return qobject_cast<QScrollArea *>(tm_mainwindow()->centralWidget()); };
 	QWidget *tm_canvas() { return tm_scrollarea()->widget(); };
 	
 //	void layout();
