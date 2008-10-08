@@ -12,6 +12,8 @@
 
 #include "qt_utilities.hpp"
 #include <QImage>
+#include "dictionary.hpp"
+#include "converter.hpp"
 
 QRect to_qrect(coord4 p)
 {
@@ -56,6 +58,13 @@ coord2 from_qsize(QSize & s)
   c1 = s.width()*PIXEL;
   c2 = s.height()*PIXEL;
   return coord2 (c1,c2)	;
+}
+
+string
+qt_translate (string s) {
+  string out_lan= get_output_language ();
+  return tm_var_encode (translate (s, "english", out_lan));
+  //return cork_to_utf8 (tm_var_encode (translate (s, "english", out_lan)));
 }
 
 QString to_qstring(string s)

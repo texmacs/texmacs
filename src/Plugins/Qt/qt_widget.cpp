@@ -9,7 +9,6 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-
 #include "qt_widget.hpp"
 #include "qt_simple_widget.hpp"
 #include "qt_other_widgets.hpp"
@@ -17,14 +16,11 @@
 #include "qt_utilities.hpp"
 #include "qt_menu.hpp"
 
-
 #include "gui.hpp"
 #include "widget.hpp" 
 #include "message.hpp"
 #include "promise.hpp"
 #include "analyze.hpp"
-#include "dictionary.hpp"
-#include "converter.hpp"
 
 #include "qt_basic_widgets.hpp"
 #include <QScrollArea>
@@ -34,7 +30,6 @@
 #include <QMenuBar>
 #include <QToolButton>
 #include <QHBoxLayout>
-
 
 #include "QTMWidget.hpp"
 #include "QTMGuiHelper.hpp"
@@ -608,13 +603,6 @@ qt_tm_widget_rep::~qt_tm_widget_rep()
 { 
   if (DEBUG_EVENTS) 
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
-}
-
-string
-qt_translate (string s) {
-  string out_lan= get_output_language ();
-  return tm_var_encode (translate (s, "english", out_lan));
-  //return cork_to_utf8 (tm_var_encode (translate (s, "english", out_lan)));
 }
 
 void

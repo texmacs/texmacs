@@ -27,6 +27,7 @@ QSize to_qsize(coord2 p);
 coord4 from_qrect(QRect & rect);
 coord2 from_qpoint(QPoint & pt);
 coord2 from_qsize(QSize & s);
+string qt_translate (string s);
 QString to_qstring(string s);
 string from_qstring(QString & s);
 bool qt_supports_image (url u);
