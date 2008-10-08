@@ -504,7 +504,7 @@ void qt_input_widget_rep::perform_dialog()
 
 void qt_input_widget_rep::perform_dialog()
 {
-  QDialog d;
+  QDialog d(0, Qt::Sheet);
   QVBoxLayout *vl = new QVBoxLayout;
 
   QVector<QComboBox*> cbs(N(fields));
@@ -514,6 +514,8 @@ void qt_input_widget_rep::perform_dialog()
     QLabel *lab = new QLabel( to_qstring(fields[i]->prompt));
     cbs[i] = new QComboBox;
     cbs[i]->addItem(to_qstring(fields[i]->input));
+    cbs[i]->setMinimumContentsLength(40);
+    cbs[i]->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
     for(int j=0; j < N(fields[i]->proposals); j++)
     { 
       cbs[i]->addItem(to_qstring(fields[i]->proposals[j]));
