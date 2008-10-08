@@ -16,14 +16,15 @@ TODO
 * Several problems in graphics mode.
 * Check for memory leaks and non properly destroyed Qt objects.
 * Implement qt_gui_rep::set_mouse_pointer, qt_gui_rep::show_wait_indicator
-* Handle correclty destroy_window_widget
-* Handle correclty mask and quit command in texmacs_widget
+* Handle correctly destroy_window_widget
+* Handle correctly mask and quit command in texmacs_widget
 * Implement glue_widget
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
 * In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
 * File chooser start location should be directory of current file.
 * Russian menus.
 * Clean menu cache on language changes.
+* Missing ghostscript support (on X and Mac OS X).
 
 DONE
 
