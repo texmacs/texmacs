@@ -569,18 +569,19 @@ qt_tm_widget_rep::qt_tm_widget_rep():
   mainToolBar = new QToolBar("main toolbar", mw);
   contextToolBar = new QToolBar("context toolbar", mw);
   userToolBar = new QToolBar("user toolbar", mw);
-  mainToolBar->setStyle(qtmstyle());
-  contextToolBar->setStyle(qtmstyle());
-  userToolBar->setStyle(qtmstyle());  
-  mw->addToolBar(mainToolBar);
-  mw->addToolBarBreak();
-  mw->addToolBar(contextToolBar);
-  mw->addToolBarBreak();
-  mw->addToolBar(userToolBar);
-  mw->addToolBarBreak();
-  mw->setIconSize(QSize(17,17));
-	
-  mw->setFocusPolicy(Qt::StrongFocus);
+  mainToolBar->setStyle (qtmstyle ());
+  contextToolBar->setStyle (qtmstyle ());
+  userToolBar->setStyle (qtmstyle ());  
+  mw->addToolBar (mainToolBar);
+  mw->addToolBarBreak ();
+  mw->addToolBar (contextToolBar);
+  mw->addToolBarBreak ();
+  mw->addToolBar (userToolBar);
+  mw->addToolBarBreak ();
+  userToolBar->hide ();
+  mw->setIconSize (QSize (17, 17));
+
+  mw->setFocusPolicy (Qt::StrongFocus);
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {

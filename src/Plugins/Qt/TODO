@@ -10,7 +10,6 @@ TODO
 * Modal windows should appear inside main window,
   horizontally centered, vertically centered at height/3 from top.
 * Help -> (Apple) Search. How to customize this?
-* Make scrollbar(s) moveable (i.e. at the left instead of the right).
 * Loss of keyboard focus after clicking on icon menu entry.
 * Several problems in graphics mode.
 * Check for memory leaks and non properly destroyed Qt objects.
@@ -44,3 +43,4 @@ DONE
 * Anti-aliasing should be default for all graphics operations.
 * Added postscript rendering via 'convert'.
 * White area of empty document should vertically extend to bottom.
+* Make scrollbar(s) movable: does not seem to be supported by Qt.
