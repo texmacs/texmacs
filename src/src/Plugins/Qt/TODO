@@ -1,6 +1,8 @@
 
 TODO
 
+* Interactive prompts with several entries (i.e. query replace):
+  all entries should appear in one window.
 * Delayed help menu, even several seconds after boot.
 * Invalid situation on several occasions:
   - During selections.
@@ -42,5 +44,3 @@ DONE
 * Anti-aliasing should be default for all graphics operations.
 * Added postscript rendering via 'convert'.
 * White area of empty document should vertically extend to bottom.
-* Interactive prompts with several entries (i.e. query replace):
-  all entries should appear in one window.
