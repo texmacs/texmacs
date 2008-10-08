@@ -562,7 +562,7 @@ qt_tm_widget_rep::qt_tm_widget_rep():
  
   QScrollArea *sa = new QScrollArea (mw);
   sa->setBackgroundRole (QPalette::Dark);
-  tm_mainwindow () -> setCentralWidget (sa);
+  mw->setCentralWidget (sa);
 
   QStatusBar *bar = new QStatusBar(mw);
   leftLabel = new QLabel ("", mw);
