@@ -24,21 +24,14 @@
 #include <QClipboard>
 #include "QTMGuiHelper.hpp"
 
-
 extern window (*get_current_window) (void);
 
 qt_gui_rep* the_gui= NULL;
-
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 
-
-
-
-
-
-qt_gui_rep::qt_gui_rep(int argc2, char **argv2)
-  : interrupted(false), color_scale ((void*) NULL), 
-    character_image (qt_image()), selection(NULL),  images (qt_image())
+qt_gui_rep::qt_gui_rep(int argc2, char **argv2):
+  interrupted(false), color_scale ((void*) NULL), 
+  character_image (qt_image()), selection(NULL),  images (qt_image())
 {
   (void) argc2; (void) argv2;
   //  argc               = argc2;
@@ -53,15 +46,13 @@ qt_gui_rep::qt_gui_rep(int argc2, char **argv2)
   (void) default_font ();
 }
 
-
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
 
   QDesktopWidget *d = QApplication::desktop();
   int w = d->width();     // returns desktop width
-  int h = d->height();    // returns desktop height
-	
+  int h = d->height();    // returns desktop height	
   
   width = ((SI) w)  * PIXEL;
   height= ((SI) h) * PIXEL;
@@ -72,7 +63,6 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
   width = 8000 * PIXEL;
   height= 6000 * PIXEL;
 }
-
 
 /******************************************************************************
 * Set up colors
@@ -88,8 +78,6 @@ static int CSCALES= 4;
 static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
-
-
 
 static QColor alloc_color (int r, int g, int b) {
   if (reverse_colors) {
@@ -185,7 +173,6 @@ color named_color (string s) {
     }
   }
   
-  
   if (s == "black")          return black;
   if (s == "white")          return white;
   if (s == "grey")           return grey;
@@ -260,7 +247,6 @@ qt_gui_rep::initialize_colors () {
   dark_grey  = rgb_color (112, 112, 112);
 }
 
-
 /******************************************************************************
 * Server fonts
 ******************************************************************************/
@@ -323,12 +309,12 @@ font qt_gui_rep::default_font (bool tt) {
 }
 
 
-void qt_gui_rep::load_system_font (string family, int size, int dpi,
-				   font_metric& fnm, font_glyphs& fng) 
+void
+qt_gui_rep::load_system_font (string family, int size, int dpi,
+			      font_metric& fnm, font_glyphs& fng) 
 {
   (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-} ;
-
+}
 
 /* interclient communication */
 
@@ -386,14 +372,11 @@ qt_gui_rep::clear_selection (string key) {
   }
 }
 
-
-
-
-
 /* miscellaneous */
 void qt_gui_rep::image_gc (string name) { (void) name; } ; // FIXME: remove this unused function
 void qt_gui_rep::set_mouse_pointer (string name) { (void) name; } ; // FIXME: implement this function
 void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) { (void) curs_name; (void) mask_name; } ;
+
 #if 0 // FIXME
 static bool check_mask(int mask)
 {
@@ -511,16 +494,15 @@ void qt_gui_rep::event_loop ()
   QApplication *app = (QApplication*)QApplication::instance();
   QTimer t (NULL);
   //QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
-  t.start (10);
+  //t.start (10);
+  t.start (1000);
 
   while (1) {
-    app->processEvents(QEventLoop::WaitForMoreEvents);
-    update();
+    app->processEvents (QEventLoop::WaitForMoreEvents);
+    update ();
   }
   //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
-  app->sendPostedEvents(0, QEvent::DeferredDelete);
-
-
+  app->sendPostedEvents (0, QEvent::DeferredDelete);
 }
 #endif
 
@@ -528,8 +510,8 @@ void qt_gui_rep::event_loop ()
 * Making color scales for anti alised fonts
 ******************************************************************************/
 
-x_character_rep::x_character_rep (
-                                  int c2, font_glyphs fng2, int sf2, color fg2, color bg2):
+x_character_rep::x_character_rep (int c2, font_glyphs fng2, int sf2,
+				  color fg2, color bg2):
   c (c2), fng (fng2), sf (sf2), fg (fg2), bg (bg2) {}
 
 x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
@@ -572,8 +554,6 @@ qt_gui_rep::prepare_color (int sf, color fg, color bg) {
   }
 }
 
-
-
 qt_gui_rep::~qt_gui_rep() 
 { 
   /* release colormap */
@@ -581,42 +561,37 @@ qt_gui_rep::~qt_gui_rep()
   
 } 
 
-
-
-/* interface ******************************************************************/
+/* interface *****************************************************************/
 #pragma mark GUI interface
 
 //static display cur_display= NULL;
-
-
 
 /******************************************************************************
 * Main routines
 ******************************************************************************/
 
-void gui_open (int argc2, char** argv2)
-// start the gui
-{
-  
+void
+gui_open (int argc2, char** argv2) {
+  // start the gui
   new QApplication(argc2,argv2);
-  
   the_gui = new qt_gui_rep (argc2, argv2);
 }
 
-void gui_start_loop ()
-// start the main loop
-{
+void
+gui_start_loop () {
+  // start the main loop
   the_gui->event_loop ();
 }
 
-void gui_close ()
-// cleanly close the gui
-{
+void
+gui_close () {
+  // cleanly close the gui
   if (the_gui == NULL)
     fatal_error ("gui not yet open", "gui_close");
   delete the_gui;
   the_gui=NULL;
 }
+
 void
 gui_root_extents (SI& width, SI& height) {   
   // get the screen size
@@ -629,13 +604,10 @@ gui_maximal_extents (SI& width, SI& height) {
   the_gui->get_max_size (width, height);
 }
 
-void gui_refresh ()
-// update and redraw all windows (e.g. on change of output language)
-{
+void gui_refresh () {
+  // update and redraw all windows (e.g. on change of output language)
   // FIXME: add suitable code
 }
-
-
 
 /******************************************************************************
 * Font support
@@ -667,23 +639,23 @@ load_system_font (string family, int size, int dpi,
 * Clipboard support
 ******************************************************************************/
 
-// Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
-// Returns true on success
 bool
 set_selection (string key, tree t, string s) {
+  // Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
+  // Returns true on success
   return the_gui->set_selection (key, t, s);
 }
 
-// Retrieve the selection 't' with string equivalent 's' from clipboard 'cb'
-// Returns true on success; sets t to (extern s) for external selections
 bool
 get_selection (string key, tree& t, string& s) {
+  // Retrieve the selection 't' with string equivalent 's' from clipboard 'cb'
+  // Returns true on success; sets t to (extern s) for external selections
   return the_gui->get_selection (key, t, s);
 } 
 
-// Clear the selection on clipboard 'cb'
 void
 clear_selection (string key) {
+  // Clear the selection on clipboard 'cb'
   the_gui->clear_selection (key);
 }
 
@@ -692,31 +664,36 @@ clear_selection (string key) {
 * Miscellaneous
 ******************************************************************************/
 
-void beep ()
-// Issue a beep
-{    QApplication::beep(); }
+void
+beep () {
+  // Issue a beep
+  QApplication::beep();
+}
 
-bool check_event (int type)
-// Check whether an event of one of the above types has occurred;
-// we check for keyboard events while repainting windows
-{ return the_gui->check_event(type); }
+bool
+check_event (int type) {
+  // Check whether an event of one of the above types has occurred;
+  // we check for keyboard events while repainting windows
+  return the_gui->check_event(type);
+}
 
 //void image_gc (string name)
 // Garbage collect images of a given name (may use wildcards)
 // This routine only needs to be implemented if you use your own image cache
 //{ the_gui->image_gc(name); }
 
-void show_help_balloon (widget balloon, SI x, SI y)
-// Display a help balloon at position (x, y); the help balloon should
-// disappear as soon as the user presses a key or moves the mouse
-{ 
+void
+show_help_balloon (widget balloon, SI x, SI y) { 
+  // Display a help balloon at position (x, y); the help balloon should
+  // disappear as soon as the user presses a key or moves the mouse
   (void) balloon; (void) x; (void) y;
 }
 
-void show_wait_indicator (widget base, string message, string argument)
-// Display a wait indicator with a message and an optional argument
-// The indicator might for instance be displayed at the center of
-// the base widget which triggered the lengthy operation;
-// the indicator should be removed if the message is empty
-{ the_gui->show_wait_indicator(base,message,argument);  }
-
+void
+show_wait_indicator (widget base, string message, string argument) {
+  // Display a wait indicator with a message and an optional argument
+  // The indicator might for instance be displayed at the center of
+  // the base widget which triggered the lengthy operation;
+  // the indicator should be removed if the message is empty
+  the_gui->show_wait_indicator(base,message,argument); 
+}
