@@ -1,7 +1,6 @@
 
 TODO
 
-* White area of empty document should vertically extend to bottom.
 * Delayed help menu, even several seconds after boot.
 * Invalid situation on several occasions:
   - During selections.
@@ -44,3 +43,4 @@ DONE
   (fixes <gtr> in boot message).
 * Anti-aliasing should be default for all graphics operations.
 * Added postscript rendering via 'convert'.
+* White area of empty document should vertically extend to bottom.
