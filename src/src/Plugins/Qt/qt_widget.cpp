@@ -611,19 +611,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       QSize sz= to_qrect (p).size ();
       // [view window] setContentSize:rect.size];
       QSize ws= tm_scrollarea () -> size ();
-      sz.setHeight (max (sz.height (), ws.height () - 5));
-      cout << "Height= " << ws.height () << "\n";
-      //sz.setHeight (max (sz.height (), ws.height () - 4));
-      // FIXME: we should use 4 instead of 5, but this sometimes
-      // results in having an unwanted scrollbar; why?
+      sz.setHeight (max (sz.height (), 7 * ws.height () / 8));
+      tm_scrollarea () -> setAlignment (Qt::AlignCenter);
       tm_canvas () -> setFixedSize (sz);
-      /*
-      sz.setHeight (max (sz.height (), ws.height () - 32));
-      int dx= ws.width () - sz.width ();
-      int dy= ws.height () - sz.height ();
-      tm_canvas () -> setGeometry (max (dx, 0) >> 1, max (dy, 0) >> 1,
-				   sz.width (), sz.height ());
-      */
     }
     break;
   case SLOT_INVALIDATE_ALL:
