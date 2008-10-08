@@ -7,8 +7,6 @@ TODO
   - After scrolling (middle mouse) and clicking in text.
 * Modal windows should appear inside main window,
   horizontally centered, vertically centered at height/3 from top.
-* Interactive prompts with several entries (i.e. query replace):
-  all entries should appear in one window.
 * Help -> (Apple) Search. How to customize this?
 * Make scrollbar(s) moveable (i.e. at the left instead of the right).
 * Loss of keyboard focus after clicking on icon menu entry.
@@ -44,3 +42,5 @@ DONE
 * Anti-aliasing should be default for all graphics operations.
 * Added postscript rendering via 'convert'.
 * White area of empty document should vertically extend to bottom.
+* Interactive prompts with several entries (i.e. query replace):
+  all entries should appear in one window.
