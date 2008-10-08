@@ -348,26 +348,21 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   if (cache_image->contains (lookup)) pm= (QImage*) cache_image [lookup];
   else {
     // rendering
-    if (qt_supports_image (u)) {
-      pm = new QImage(to_qstring(as_string(u)));
-      if (pm->isNull()) {
-        cout << "Error reading image file " << as_string(u) << LF;
-        delete pm;
-        return;
-      }
+    if (qt_supports_image (u))
+      pm= new QImage (to_qstring (as_string (u)));
+    else if (suffix (u) == "ps" ||
+	     suffix (u) == "eps" ||
+	     suffix (u) == "pdf") {
+      url temp= url_temp (".png");
+      system ("convert", u, temp);
+      pm= new QImage (to_qstring (as_string (temp)));
+      remove (temp);
     }
-    else {
-      //XSetForeground (dpy, gc, white);
-      //XFillRectangle (dpy, pm, gc, 0, 0, w, h);
-      //ghostscript_run (dpy, gs_win, pm, u, w, h, cx1, cy1, cx2, cy2);
-      if (DEBUG_EVENTS) {
-	painter.setRenderHints (0);
-	painter.drawRect (QRect (x, y-h, w, h));
-	cout << "HERE WE MUST SOMEHOW RUN GHOSTSCRIPT\n";
-      }
+    if (pm == NULL || pm->isNull()) {
+      cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+      if (pm != NULL) delete pm;
       return;
     }
-    
     // caching
     if (N(cache_image_nr) == 0) cache_image_last_gc= texmacs_time ();
     cache_image      (lookup)=  pm;
