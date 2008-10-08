@@ -15,19 +15,17 @@ public:
   string str, lan;
   color col;
   bool tsp;
-  
-  qt_text_widget_rep(string _s, color _col, bool _tsp, string _lan) 
-  : str(_s), lan(_lan), col(_col), tsp(_tsp) {};  
 
-  virtual QAction *as_qaction();
-
+  qt_text_widget_rep (string _s, color _col, bool _tsp, string _lan):
+    str (_s), lan (_lan), col (_col), tsp (_tsp) {};  
+  virtual QAction* as_qaction ();
 };
 
 class qt_image_widget_rep : public qt_widget_rep {
 public:
   url image;
   
-  qt_image_widget_rep(url _image) : image(_image) {};
+  qt_image_widget_rep (url _image): image(_image) {};
   virtual QAction *as_qaction();
 };
 
@@ -35,8 +33,9 @@ class qt_balloon_widget_rep : public qt_widget_rep {
 public:
   widget text, hint;
   
-  qt_balloon_widget_rep(widget _text, widget _hint) : text(_text), hint(_hint) {};
-  virtual QAction *as_qaction();
+  qt_balloon_widget_rep (widget _text, widget _hint):
+    text (_text), hint (_hint) {};
+  virtual QAction* as_qaction ();
 };
 
 
@@ -47,6 +46,6 @@ public:
   array<string> def;
   string text;
   
-  qt_input_text_widget_rep(command _cmd, string _type, array<string> _def)
-  : cmd(_cmd), type(_type), def(_def), text("") {};
+  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def):
+    cmd (_cmd), type (_type), def (_def), text ("") {};
 };

@@ -17,25 +17,26 @@
 #include <QPoint>
 #include <QString>
 
-
 typedef quadruple<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
-QRect to_qrect(coord4 p);
-QPoint to_qpoint(coord2 p);
-QSize to_qsize(coord2 p);
-coord4 from_qrect(QRect & rect);
-coord2 from_qpoint(QPoint & pt);
-coord2 from_qsize(QSize & s);
+QRect to_qrect (coord4 p);
+QPoint to_qpoint (coord2 p);
+QSize to_qsize (coord2 p);
+coord4 from_qrect (QRect & rect);
+coord2 from_qpoint (QPoint & pt);
+coord2 from_qsize (QSize & s);
+QString to_qstring (string s);
+string from_qstring (QString & s);
 string qt_translate (string s);
-QString to_qstring(string s);
-string from_qstring(QString & s);
+QString to_qstring_utf8 (string s);
 bool qt_supports_image (url u);
 void qt_image_size (url image, int& w, int& h);
 
 /******************************************************************************
- * Type checking
- ******************************************************************************/
+* Type checking
+******************************************************************************/
+
 #pragma mark type checking
 
 inline void

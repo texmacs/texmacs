@@ -295,7 +295,7 @@ widget pullright_button (widget w, promise<widget> pw)
 
 QAction* qt_text_widget_rep::as_qaction()
 {
-  return new QAction(to_qstring(str),NULL);
+  return new QAction (to_qstring_utf8 (str), NULL);
 }
 
 QAction* qt_image_widget_rep::as_qaction()
