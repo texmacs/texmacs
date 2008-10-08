@@ -76,6 +76,4 @@ inline qt_widget concrete (widget w) { return qt_widget ((qt_widget_rep*) w.rep)
 
 extern widget the_keyboard_focus;
 
-string qt_translate (string s);
-
 #endif // defined QT_WIDGET_HPP
