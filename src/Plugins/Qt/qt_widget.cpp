@@ -195,26 +195,26 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     break;
     
   case SLOT_HEADER_VISIBILITY:
-    //			send_bool (THIS, "header", val);
+    //send_bool (THIS, "header", val);
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
-    //			send_bool (THIS, "main icons", val);
+    //send_bool (THIS, "main icons", val);
     break;
   case SLOT_CONTEXT_ICONS_VISIBILITY:
-    //			send_bool (THIS, "context icons", val);
+    //send_bool (THIS, "context icons", val);
     break;
   case SLOT_USER_ICONS_VISIBILITY:
-    //			send_bool (THIS, "user icons", val);
+    //send_bool (THIS, "user icons", val);
     break;
   case SLOT_FOOTER_VISIBILITY:
-    //			send_bool (THIS, "footer flag", val);
+    //send_bool (THIS, "footer flag", val);
     break;
     
   case SLOT_MOUSE_GRAB:
-    //			send_mouse_grab (THIS, val);
+    //send_mouse_grab (THIS, val);
     break;
   case SLOT_MOUSE_POINTER:
-    //			send_mouse_pointer (THIS, val);
+    //send_mouse_pointer (THIS, val);
     break;
   case SLOT_SCROLL_POSITION:
     {
@@ -237,7 +237,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     }
     break;
   case SLOT_KEYBOARD_FOCUS:
-    //			send_keyboard_focus (THIS, val);
+    //send_keyboard_focus (THIS, val);
     {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
@@ -474,8 +474,8 @@ qt_view_widget_rep::read (slot s, blackbox index) {
       fatal_error ("QWidget property not set", "qt_view_widget_rep::read");
   }
 			
-    //			return qobject_cast <QTMWindow *>(view->window())->wid;
-    //			[(TMWindowController*)[[view window] windowController] widget];
+    //return qobject_cast <QTMWindow *>(view->window())->wid;
+    //[(TMWindowController*)[[view window] windowController] widget];
 #if 0
   case SLOT_WINDOW:
     check_type_void (index, "SLOT_WINDOW");
@@ -515,19 +515,19 @@ qt_view_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_MAIN_MENU:
     check_type_void (index, "SLOT_MAIN_MENU");
     [NSApp setMainMenu: to_nsmenu(w)];
-    //			THIS << set_widget ("menu bar", concrete (w));
+    //THIS << set_widget ("menu bar", concrete (w));
     break;
   case SLOT_MAIN_ICONS:
     check_type_void (index, "SLOT_MAIN_ICONS");
-    //			THIS << set_widget ("main icons bar", concrete (w));
+    //THIS << set_widget ("main icons bar", concrete (w));
     break;
   case SLOT_CONTEXT_ICONS:
     check_type_void (index, "SLOT_CONTEXT_ICONS");
-    //			THIS << set_widget ("context icons bar", concrete (w));
+    //THIS << set_widget ("context icons bar", concrete (w));
     break;
   case SLOT_USER_ICONS:
     check_type_void (index, "SLOT_USER_ICONS");
-    //			THIS << set_widget ("user icons bar", concrete (w));
+    //THIS << set_widget ("user icons bar", concrete (w));
     break;
 #endif
   default:
@@ -536,12 +536,13 @@ qt_view_widget_rep::write (slot s, blackbox index, widget w) {
 }
 
 
-widget qt_view_widget_rep::plain_window_widget (string s)
-// creates a decorated window with name s and contents w
-{
+widget
+qt_view_widget_rep::plain_window_widget (string s) {
+  // creates a decorated window with name s and contents w
   view->setWindowTitle(to_qstring(s));
-  //	return this;
-  widget wid =  new qt_window_widget_rep(view); //FIXME: is this the right thing to do?
+  //return this;
+  widget wid =  new qt_window_widget_rep(view);
+  //FIXME: is this the right thing to do?
   return wid; 
 }
 
@@ -660,8 +661,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       leftLabel->update();
     }
 			
-  //  if (DEBUG_EVENTS) cout << "left footer\n";
-    //			send_string (THIS, "left footer", val);
+    // if (DEBUG_EVENTS) cout << "left footer\n";
+    // send_string (THIS, "left footer", val);
     break;
   case SLOT_RIGHT_FOOTER:
     {
@@ -672,8 +673,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       rightLabel->update ();
     }
 			
- //   if (DEBUG_EVENTS) cout << "right footer\n";
-    //			send_string (THIS, "right footer", val);
+    // if (DEBUG_EVENTS) cout << "right footer\n";
+    // send_string (THIS, "right footer", val);
     break;
 			
   case SLOT_SCROLL_POSITION:
@@ -682,9 +683,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
         fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       coord2 p= open_box<coord2> (val);
       QPoint pt = to_qpoint(p);
-      // conver from main widget to canvas coordinates
-      //QPoint pt2 = tm_mainwindow()->mapToGlobal(pt);
-      //pt = tm_scrollarea()->widget()->mapFromGlobal(pt2);
+      // convert from main widget to canvas coordinates
+      // QPoint pt2 = tm_mainwindow()->mapToGlobal(pt);
+      // pt = tm_scrollarea()->widget()->mapFromGlobal(pt2);
       if (DEBUG_EVENTS)
 	cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
@@ -863,7 +864,7 @@ replaceActions (QWidget* dest, QWidget* src) {
     dest->removeAction(a);
     a->deleteLater();
   }
-//  cout << "replaceActions n:" << src->actions().count() << LF;
+  // cout << "replaceActions n:" << src->actions().count() << LF;
   list = src->actions();
   while (!list.isEmpty()) {
     QAction *a = list.takeFirst();
@@ -871,7 +872,7 @@ replaceActions (QWidget* dest, QWidget* src) {
     a->setParent(dest);
   }
   
-  //dest->addActions(src->actions());
+  // dest->addActions(src->actions());
 #if 0
   for(int i=0; i< list.count(); i++)
   {
