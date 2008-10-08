@@ -525,7 +525,7 @@ widget input_text_widget (command call_back, string type, array<string> def)
 void qt_tm_widget_rep::do_interactive_prompt()
 {
   QStringList items;
-  QString label = to_qstring(((qt_text_widget_rep*)int_prompt.rep)->str);
+  QString label = to_qstring_utf8 (((qt_text_widget_rep*)int_prompt.rep)->str);
   qt_input_text_widget_rep *it = (qt_input_text_widget_rep*)(int_input.rep);
   for(int j=0; j < N(it->def); j++)
     { 

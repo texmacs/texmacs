@@ -14,8 +14,6 @@ TODO
 * Help -> (Apple) Search. How to customize this?
 * Make scrollbar(s) moveable (i.e. at the left instead of the right).
 * Loss of keyboard focus after clicking on icon menu entry.
-* Add conversion tm_encoding -> Unicode in 'max_translate'
-  (fixes <gtr> in boot message).
 * Several problems in graphics mode.
 * Check for memory leaks and non properly destroyed Qt objects.
 * Implement qt_gui_rep::set_mouse_pointer, qt_gui_rep::show_wait_indicator
@@ -25,10 +23,8 @@ TODO
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
 * In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
 * File chooser start location should be directory of current file.
-
-PARTIAL 
-
-* Support for shrinking factor: the menu bar is not updated with the new factor.
+* Russian menus.
+* Clean menu cache on language changes.
 
 DONE
 
@@ -37,10 +33,13 @@ DONE
 * Horizontal distance between icons too large.
 * Back button when browsing help segfaults.
 * Visibility of icon bars (in View menu).
-* Better image support: for performance use QPixmaps in systems which support native alpha-channel (like MacOSX)
-* Implement tile_menu
-* Keyboard shortcuts missing in menus
+* Better image support: for performance use QPixmaps in systems which support native alpha-channel (like MacOSX).
+* Implement tile_menu.
+* Keyboard shortcuts missing in menus.
+* Support for shrinking factor.
 * X should not be launched.
 * Keyboard works more or less fine.
 * In the documentation, rendering of keys not correct up to the pixel.
 * Links don't highlight when moving over them.
+* Add conversion tm_encoding -> Unicode in 'max_translate'
+  (fixes <gtr> in boot message).

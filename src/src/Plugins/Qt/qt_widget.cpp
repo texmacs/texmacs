@@ -670,7 +670,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<string>::id)
         fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
       string msg = open_box<string> (val);
-      leftLabel->setText(to_qstring (qt_translate (msg)));
+      leftLabel->setText (to_qstring_utf8 (qt_translate (msg)));
       leftLabel->update();
     }
 			
@@ -682,7 +682,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<string>::id)
         fatal_error ("type mismatch", "SLOT_RIGHT_FOOTER");
       string msg = open_box<string> (val);
-      rightLabel->setText (to_qstring (qt_translate (msg)));
+      rightLabel->setText (to_qstring_utf8 (qt_translate (msg)));
       rightLabel->update ();
     }
 			
