@@ -183,7 +183,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
       qobject_cast< QScrollArea * >(view)->widget()->resize(rect.size());
-      //			[[(NSScrollView*)view documentView] setFrameSize: rect.size];
+      // [[(NSScrollView*)view documentView] setFrameSize: rect.size];
     }
     break;
   case SLOT_INVALIDATE_ALL:
@@ -607,9 +607,21 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<coord4>::id)
 	fatal_error ("type mismatch", "SLOT_EXTENTS");
       coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect(p);
-      //			[[view window] setContentSize:rect.size];
-      tm_canvas()->setFixedSize(rect.size());
+      //cout << "p= " << p << "\n";
+      QSize sz= to_qrect (p).size ();
+      // [view window] setContentSize:rect.size];
+      QSize ws= tm_scrollarea () -> size ();
+      sz.setHeight (max (sz.height (), ws.height () - 5));
+      cout << "Height= " << ws.height () << "\n";
+      //sz.setHeight (max (sz.height (), ws.height () - 4));
+      tm_canvas () -> setFixedSize (sz);
+      /*
+      sz.setHeight (max (sz.height (), ws.height () - 32));
+      int dx= ws.width () - sz.width ();
+      int dy= ws.height () - sz.height ();
+      tm_canvas () -> setGeometry (max (dx, 0) >> 1, max (dy, 0) >> 1,
+				   sz.width (), sz.height ());
+      */
     }
     break;
   case SLOT_INVALIDATE_ALL:
@@ -621,7 +633,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
 			
   case SLOT_HEADER_VISIBILITY:
-    //			send_bool (THIS, "header", val);
+    // send_bool (THIS, "header", val);
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
     {
@@ -756,39 +768,33 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       if (type_id != type_helper<coord2>::id)
 	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       QPoint pt = tm_canvas()->pos();
-			if (DEBUG_EVENTS) {
-				cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
-			}
-			
-			
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
       return close_box<coord2> (from_qpoint(pt));
     }
 
-		case SLOT_EXTENTS:
+  case SLOT_EXTENTS:
     {
       if (type_id != type_helper<coord4>::id)
-				fatal_error ("type mismatch", "SLOT_EXTENTS");
+	fatal_error ("type mismatch", "SLOT_EXTENTS");
       QRect rect = tm_canvas()->geometry();
       coord4 c = from_qrect(rect);
-			if (DEBUG_EVENTS) {
-				cout << "Canvas geometry " << rect << LF;
-			}
+      if (DEBUG_EVENTS)
+	cout << "Canvas geometry " << rect << LF;
       return close_box<coord4> (c);
     }
 			
 	
-		case SLOT_VISIBLE_PART:
+  case SLOT_VISIBLE_PART:
     {
       if (type_id != type_helper<coord4>::id)
-				fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
+	fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
       QRect rect = tm_canvas()->visibleRegion().boundingRect();
       coord4 c = from_qrect(rect);
-			if (DEBUG_EVENTS) {
-				cout << "Visible Region " << rect << LF;
-			}
+      if (DEBUG_EVENTS)
+	cout << "Visible Region " << rect << LF;
       return close_box<coord4> (c);
     }
-			
 			
   case SLOT_USER_ICONS_VISIBILITY:
     {
@@ -826,9 +832,8 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       if (type_id != type_helper<string>::id)
         fatal_error ("type mismatch", "SLOT_INTERACTIVE_INPUT");
-      return close_box<string> ( ((qt_input_text_widget_rep*) int_input.rep)->text );
-      //          return close_box<string> ("FIXME");
-			
+      return close_box<string> (((qt_input_text_widget_rep*) int_input.rep)->text );
+      // return close_box<string> ("FIXME");
     }
   case SLOT_INTERACTIVE_MODE:
     {
@@ -836,12 +841,12 @@ qt_tm_widget_rep::query (slot s, int type_id) {
         fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
       return close_box<bool> (false); // FIXME: who needs this info?
     }
-      
-			
+
   default:
     return qt_view_widget_rep::query(s,type_id);
   }
 }
+
 #if 0
 void
 qt_tm_widget_rep::notify (slot s, blackbox new_val) {
@@ -865,9 +870,8 @@ qt_tm_widget_rep::read (slot s, blackbox index) {
   }
 }
 
-
-void replaceActions(QWidget *dest, QWidget *src)
-{
+void
+replaceActions (QWidget* dest, QWidget* src) {
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) {
     QAction *a = list.takeFirst();
@@ -891,20 +895,16 @@ void replaceActions(QWidget *dest, QWidget *src)
 #endif
 }
 
-extern void replaceButtons(QToolBar *dest, QWidget *src)
-{
+extern void
+replaceButtons(QToolBar* dest, QWidget* src) {
   replaceActions(dest,src);
   QList<QObject *> list = dest->children();
-  for(int i=0; i< list.count(); i++)
-    {
-      QToolButton *button = qobject_cast<QToolButton*>(list[i]);
-      if (button) {
-	button->setPopupMode(QToolButton::InstantPopup);
-      }
-    }
+  for (int i=0; i<list.count(); i++) {
+    QToolButton *button = qobject_cast<QToolButton*>(list[i]);
+    if (button)
+      button->setPopupMode(QToolButton::InstantPopup);
+  }
 }
-
-
 
 void
 qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
@@ -920,8 +920,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       tm_scrollarea()->setWidget(qw);			
       (void) old_canvas;
       // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
-			qw->setFocus();
-      //FIXME:			[[sv window] makeFirstResponder:v];
+      qw->setFocus();
+      //FIXME: [[sv window] makeFirstResponder:v];
     }
     break;
   case SLOT_MAIN_MENU:
@@ -961,39 +961,37 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
     int_prompt = concrete(w); 
-    //			THIS << set_widget ("interactive prompt", concrete (w));
+    // THIS << set_widget ("interactive prompt", concrete (w));
     break;
   case SLOT_INTERACTIVE_INPUT:
     check_type_void (index, "SLOT_INTERACTIVE_INPUT");
     int_input = concrete(w);
-    //			THIS << set_widget ("interactive input", concrete (w));
+    // THIS << set_widget ("interactive input", concrete (w));
     break;
   default:
     qt_view_widget_rep::write(s,index,w);
   }
 }
 
-widget qt_tm_widget_rep::plain_window_widget (string s)
-// creates a decorated window with name s and contents w
-{
-  widget w = qt_view_widget_rep::plain_window_widget(s); // to manage correctly retain counts
+widget
+qt_tm_widget_rep::plain_window_widget (string s) {
+  // creates a decorated window with name s and contents w
+  widget w = qt_view_widget_rep::plain_window_widget(s);
+  // to manage correctly retain counts
   qt_window_widget_rep * wid = (qt_window_widget_rep *)(w.rep);
   return wid;
 }
 
-
-
-
-
-
-qt_window_widget_rep::qt_window_widget_rep(QWidget *_wid) 
-  : widget_rep(), wid(_wid) { 
+qt_window_widget_rep::qt_window_widget_rep(QWidget *_wid):
+  widget_rep(), wid(_wid)
+{
   wid->setProperty("texmacs_window_widget",QVariant::fromValue((void*)this)); 
 }
 
-qt_window_widget_rep::~qt_window_widget_rep()  {  }
+qt_window_widget_rep::~qt_window_widget_rep () {}
 
-void qt_window_widget_rep::send (slot s, blackbox val) {
+void
+qt_window_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_EVENTS)
     cout << "qt_window_widget_rep::send " << slot_name(s) << LF;
 
@@ -1016,7 +1014,8 @@ void qt_window_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       if (wid) { 
 	QPoint pt = to_qpoint(p); 
-	pt.ry() += 40; // to avoid window under menu bar on MAC when moving at (0,0)
+	pt.ry() += 40;
+	// to avoid window under menu bar on MAC when moving at (0,0)
 	if (DEBUG_EVENTS)
 	  cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF; 
 	wid->move(pt);
@@ -1024,22 +1023,21 @@ void qt_window_widget_rep::send (slot s, blackbox val) {
     }
     break;
   case SLOT_VISIBILITY:
-    {	
+    {
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       if (wid) {
 	if (flag) wid->show();
 	else wid->hide();
       }
-    }	
+    }
     break;
   case SLOT_NAME:
     {	
       check_type<string> (val, "SLOT_NAME");
       string name = open_box<string> (val);
-      if (wid) {
+      if (wid)
 	wid->setWindowTitle(to_qstring(name));
-      }
     }
     break;
 #if 0
@@ -1152,27 +1150,28 @@ qt_window_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_IDENTIFIER:
     if (type_id != type_helper<int>::id)
-      fatal_error ("int expected (SLOT_IDENTIFIER)", "qt_window_widget_rep::query");
-		  // we need only to know if the widget is attached to some gui window	  
-		  return close_box<int> (wid ? 1 : 0);
-//    return close_box<int> ((int)wid);
+      fatal_error ("int expected (SLOT_IDENTIFIER)",
+		   "qt_window_widget_rep::query");
+    // we need only to know if the widget is attached to some gui window
+    return close_box<int> (wid ? 1 : 0);
+    // return close_box<int> ((int)wid);
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
       if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_POSITION)", "qt_window_widget_rep::query");
+	fatal_error ("type mismatch (SLOT_POSITION)",
+		     "qt_window_widget_rep::query");
       QPoint pt = wid->pos();
-			if (DEBUG_EVENTS) {
-				cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
-			}
-			
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint(pt));
     }
   case SLOT_SIZE:
     {
       typedef pair<SI,SI> coord2;
       if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_SIZE)", "qt_window_widget_rep::query");
+	fatal_error ("type mismatch (SLOT_SIZE)",
+		     "qt_window_widget_rep::query");
       QSize s = wid->size();
       return close_box<coord2> (from_qsize(s));
     }
