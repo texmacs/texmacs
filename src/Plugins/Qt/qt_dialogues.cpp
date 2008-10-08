@@ -513,9 +513,9 @@ void qt_input_widget_rep::perform_dialog()
     QHBoxLayout *hl = new QHBoxLayout;
     QLabel *lab = new QLabel( to_qstring(fields[i]->prompt));
     cbs[i] = new QComboBox;
-    cbs[i]->addItem(to_qstring(fields[i]->input));
     cbs[i]->setMinimumContentsLength(40);
     cbs[i]->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
+    cbs[i]->setEditText(to_qstring(fields[i]->input));
     for(int j=0; j < N(fields[i]->proposals); j++)
     { 
       cbs[i]->addItem(to_qstring(fields[i]->proposals[j]));
