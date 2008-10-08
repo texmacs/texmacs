@@ -555,39 +555,31 @@ widget qt_view_widget_rep::plain_window_widget (string s)
 }
 
 
-qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), helper(this)
+qt_tm_widget_rep::qt_tm_widget_rep():
+  qt_view_widget_rep (new QMainWindow ()), helper (this)
 {
-	
-  QMainWindow *mw = tm_window();
-   
-  
-  QScrollArea *sa = new QScrollArea(mw);
-  sa->setBackgroundRole(QPalette::Dark);
-  tm_window()->setCentralWidget(sa);
+  QMainWindow *mw = tm_mainwindow ();
+ 
+  QScrollArea *sa = new QScrollArea (mw);
+  sa->setBackgroundRole (QPalette::Dark);
+  tm_mainwindow () -> setCentralWidget (sa);
 
   QStatusBar *bar = new QStatusBar(mw);
+  leftLabel = new QLabel ("", mw);
+  rightLabel = new QLabel ("", mw);
+  leftLabel->setFrameStyle (QFrame::NoFrame);
+  rightLabel->setFrameStyle (QFrame::NoFrame);
+  bar->addWidget (leftLabel);
+  bar->addPermanentWidget (rightLabel);
+  bar->setStyle (qtmstyle ());
+  mw->setStatusBar (bar);
 
-  leftLabel = new QLabel("",mw);
-  rightLabel = new QLabel("",mw);
-  leftLabel->setFrameStyle(QFrame::NoFrame);
-  rightLabel->setFrameStyle(QFrame::NoFrame);
-  
-  bar->addWidget(leftLabel);
-  bar->addPermanentWidget(rightLabel);
-  bar->setStyle(qtmstyle());
-  
-	
-  mw->setStatusBar(bar);
-	
   mainToolBar = new QToolBar("main toolbar", mw);
   contextToolBar = new QToolBar("context toolbar", mw);
   userToolBar = new QToolBar("user toolbar", mw);
-
   mainToolBar->setStyle(qtmstyle());
   contextToolBar->setStyle(qtmstyle());
-  userToolBar->setStyle(qtmstyle());
-
-  
+  userToolBar->setStyle(qtmstyle());  
   mw->addToolBar(mainToolBar);
   mw->addToolBarBreak();
   mw->addToolBar(contextToolBar);
@@ -599,8 +591,7 @@ qt_tm_widget_rep::qt_tm_widget_rep() : qt_view_widget_rep(new QMainWindow()), he
   mw->setFocusPolicy(Qt::StrongFocus);
 }
 
-qt_tm_widget_rep::~qt_tm_widget_rep() 
-{ 
+qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_EVENTS) 
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
 }
@@ -661,7 +652,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
       bool f= open_box<bool> (val);
-      tm_window()->statusBar()->setVisible(f);
+      tm_mainwindow()->statusBar()->setVisible(f);
     }
       break;
 
@@ -697,7 +688,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       QPoint pt = to_qpoint(p);
       // conver from main widget to canvas coordinates
-      //QPoint pt2 = tm_window()->mapToGlobal(pt);
+      //QPoint pt2 = tm_mainwindow()->mapToGlobal(pt);
       //pt = tm_scrollarea()->widget()->mapFromGlobal(pt2);
       if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
@@ -829,7 +820,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       if (type_id != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
-      return close_box<bool> (tm_window()->statusBar()->isVisible());
+      return close_box<bool> (tm_mainwindow()->statusBar()->isVisible());
     }
   case SLOT_INTERACTIVE_INPUT:
     {
@@ -939,7 +930,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QMenu *m = to_qmenu(w);
       QMenuBar *b =  new QMenuBar();
       replaceActions(b,m);
-      tm_window()->setMenuBar(b);
+      tm_mainwindow()->setMenuBar(b);
       delete m;
     }
     break;
