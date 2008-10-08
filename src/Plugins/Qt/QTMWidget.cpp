@@ -154,6 +154,17 @@ QTMWidget::paintEvent (QPaintEvent* event ) {
   the_qt_renderer()->end();
 }
 
+void
+QTMWidget::focusInEvent (QFocusEvent* event) {
+  //cout << "Got focus\n";
+  QWidget::focusInEvent (event);
+}
+
+void
+QTMWidget::focusOutEvent (QFocusEvent* event) {
+  //cout << "Lost focus\n";
+  QWidget::focusOutEvent (event);
+}
 
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {

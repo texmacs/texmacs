@@ -237,7 +237,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
-      if (open_box<bool>(val)) the_keyboard_focus = this;
+      if (open_box<bool> (val)) the_keyboard_focus = this;
     }
     break;
     
