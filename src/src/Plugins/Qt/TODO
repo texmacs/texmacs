@@ -24,7 +24,6 @@ TODO
 * File chooser start location should be directory of current file.
 * Russian menus.
 * Clean menu cache on language changes.
-* Missing postscript support.
 
 DONE
 
@@ -44,3 +43,4 @@ DONE
 * Add conversion tm_encoding -> Unicode in 'max_translate'
   (fixes <gtr> in boot message).
 * Anti-aliasing should be default for all graphics operations.
+* Added postscript rendering via 'convert'.
