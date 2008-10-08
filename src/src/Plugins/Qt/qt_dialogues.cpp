@@ -20,7 +20,7 @@
 
 #include "url.hpp"
 #include "analyze.hpp"
-
+#include <QtGui>
 #include <QFileDialog>
 #include <QInputDialog>
 
@@ -473,7 +473,7 @@ widget qt_input_widget_rep::plain_window_widget (string s)
 }
 
 
-
+#if 0
 void qt_input_widget_rep::perform_dialog()
 {
   bool ok = false;
@@ -499,8 +499,51 @@ void qt_input_widget_rep::perform_dialog()
   if (ok) cmd();
 
 }
+#endif
 
 
+void qt_input_widget_rep::perform_dialog()
+{
+  QDialog d;
+  QVBoxLayout *vl = new QVBoxLayout;
+
+  QVector<QComboBox*> cbs(N(fields));
+  
+  for(int i=0; i<N(fields); i++) {
+    QHBoxLayout *hl = new QHBoxLayout;
+    QLabel *lab = new QLabel( to_qstring(fields[i]->prompt));
+    cbs[i] = new QComboBox;
+    cbs[i]->addItem(to_qstring(fields[i]->input));
+    for(int j=0; j < N(fields[i]->proposals); j++)
+    { 
+      cbs[i]->addItem(to_qstring(fields[i]->proposals[j]));
+    }
+    cbs[i]->setEditable(true);
+    lab->setBuddy(cbs[i]);
+    hl->addWidget(lab);
+    hl->addWidget(cbs[i]);
+    vl->addLayout(hl);
+  }
+  
+  {
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,  Qt::Horizontal, &d);
+    QObject::connect(buttonBox, SIGNAL(accepted()), &d, SLOT(accept()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), &d, SLOT(reject()));
+    vl->addWidget(buttonBox);
+  }
+  d.setLayout(vl);
+
+  int result = d.exec();
+
+  if (result == QDialog::Accepted) {
+    for(int i=0; i<N(fields); i++) {
+      QString item = cbs[i]->currentText();
+      fields[i]->input = scm_quote(from_qstring(item));
+    }
+	
+    cmd();  
+  }
+}
 
 
 widget inputs_list_widget (command call_back, array<string> prompts)
