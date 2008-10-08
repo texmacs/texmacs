@@ -44,7 +44,7 @@ widget the_keyboard_focus(NULL);
 qt_renderer_rep* the_renderer = NULL;
 
 qt_renderer_rep*
-the_qt_renderer()  {
+the_qt_renderer() {
   if (!the_renderer) the_renderer = new qt_renderer_rep (the_gui);
   return the_renderer;
 }
@@ -686,11 +686,19 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (DEBUG_EVENTS)
 	cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
-      cout << "scrollarea (" << tm_scrollarea()->x() << "," <<  tm_scrollarea()->y() << "," 
-	   <<  tm_scrollarea()->width() << "," <<  tm_scrollarea()->height() << ")\n";
-      cout << "widget     (" << tm_scrollarea()->widget()->x() << "," <<  tm_scrollarea()->widget()->y() << "," 
-	   <<  tm_scrollarea()->widget()->width() << "," <<  tm_scrollarea()->widget()->height() << ")\n";		
-      cout << "GOING TO (" << pt.x()+tm_scrollarea()->width()/2 << "," << pt.y()+tm_scrollarea()->height()/2 << ")\n";
+      cout << "scrollarea ("
+	   << tm_scrollarea()->x() << ","
+	   << tm_scrollarea()->y() << "," 
+	   << tm_scrollarea()->width() << ","
+	   << tm_scrollarea()->height() << ")\n";
+      cout << "widget     ("
+	   << tm_scrollarea()->widget()->x() << ","
+	   << tm_scrollarea()->widget()->y() << "," 
+	   << tm_scrollarea()->widget()->width() << ","
+	   << tm_scrollarea()->widget()->height() << ")\n";		
+      cout << "GOING TO ("
+	   << pt.x()+tm_scrollarea()->width()/2 << ","
+	   << pt.y()+tm_scrollarea()->height()/2 << ")\n";
 #endif
       // It is still not very clear to me because this shift of half h/w size works...
       tm_scrollarea () -> ensureVisible
