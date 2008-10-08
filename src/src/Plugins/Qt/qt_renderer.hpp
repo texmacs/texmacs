@@ -57,15 +57,12 @@ class qt_image {
 
 CONCRETE_NULL_CODE(qt_image);
 
-
-
 class qt_renderer_rep: virtual public renderer_rep {
 public:
   qt_gui dis;
-	QPainter painter; // FIXME: painter needs begin/end
-  int       w, h;
-  
-  color     cur_fg, cur_bg;
+  QPainter painter; // FIXME: painter needs begin/end
+  int   w, h;
+  color cur_fg, cur_bg;
 
 public:
   qt_renderer_rep (qt_gui dis, int w = 0, int h = 0);

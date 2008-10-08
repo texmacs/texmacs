@@ -18,27 +18,23 @@
 #include "file.hpp"
 #include "iterator.hpp"
 
-
-
-
 /******************************************************************************
-* Aqua images
+* Qt images
 ******************************************************************************/
 
-
-qt_image::qt_image (QTMImage * img2, SI xo2, SI yo2, int w2, int h2) :
+qt_image::qt_image (QTMImage * img2, SI xo2, SI yo2, int w2, int h2):
   rep (new qt_image_rep(img2,xo2,yo2,w2,h2)) {}
 //qt_image::qt_image () : rep(NULL) {}
 
-qt_image_rep::qt_image_rep (QTMImage * img2, SI xo2, SI yo2, int w2, int h2) :
+qt_image_rep::qt_image_rep (QTMImage * img2, SI xo2, SI yo2, int w2, int h2):
   img(img2), xo(xo2), yo(yo2), w(w2), h(h2) {}
 
 qt_image_rep::~qt_image_rep() { delete img; }
 
-/******************************************************************************/
+/*****************************************************************************/
 
-qt_renderer_rep::qt_renderer_rep (qt_gui dis2, int w2, int h2)
-  : dis (dis2), w (w2), h (h2)
+qt_renderer_rep::qt_renderer_rep (qt_gui dis2, int w2, int h2):
+  dis (dis2), w (w2), h (h2)
 {
   cur_fg      = black;
   cur_bg      = white;
@@ -60,8 +56,7 @@ qt_renderer_rep::qt_renderer_rep (qt_gui dis2, int w2, int h2)
   #endif
 }
 
-qt_renderer_rep::~qt_renderer_rep () {} ;
-
+qt_renderer_rep::~qt_renderer_rep () {}
 
 /******************************************************************************
 * Conversion between window and postscript coordinates
@@ -80,20 +75,24 @@ qt_renderer_rep::decode (SI& x, SI& y) {
   if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
 }
 
-/******************************************************************************/
+/*****************************************************************************/
 
-void qt_renderer_rep::get_extents (int& w2, int& h2) { w2 = w; h2 = h; } 
-//bool qt_renderer_rep::interrupted (bool check) { return false; } 
+void
+qt_renderer_rep::get_extents (int& w2, int& h2) {
+  w2 = w; h2 = h; } 
+
 bool
 qt_renderer_rep::interrupted (bool check) {
-	return false;
+  (void) check;
+  return false;
+  /*
   bool ret = dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
   if (ret)
     if (DEBUG_EVENTS)
       cout << "INTERRUPTED:" << ret << "\n";
   return ret;
+  */
 }
-
 
 /* routines from renderer.hpp **********************************************/
 
@@ -130,45 +129,40 @@ qt_renderer_rep::get_background () {
 
 void
 qt_renderer_rep::set_color (color c) {
-	QPen p(painter.pen());
-	QBrush b(painter.brush());
-	p.setColor(dis->cmap[c]);
-	b.setColor(dis->cmap[c]);
-	painter.setPen(p);
-	painter.setBrush(b);
+  QPen p (painter.pen());
+  QBrush b (painter.brush());
+  p.setColor (dis->cmap[c]);
+  b.setColor (dis->cmap[c]);
+  painter.setPen (p);
+  painter.setBrush (b);
   cur_fg= c;
 }
 
 void
 qt_renderer_rep::set_background (color c) {
-//  XSetBackground (dpy, gc, dis->cmap[c]);
+  // XSetBackground (dpy, gc, dis->cmap[c]);
   cur_bg= c;
 }
 
 void
-qt_renderer_rep::set_line_style (SI lw, int type, bool round) { (void) type;
-	QPen p(painter.pen());
-  if (lw <= pixel)
-  {
-		p.setWidth(0);
-  }
-  else
-  {
-		p.setWidth((lw+thicken)/(1.0*pixel));
-  }
-	p.setCapStyle(round ? Qt::RoundCap : Qt::SquareCap);
-	p.setJoinStyle(Qt::RoundJoin);
-	painter.setPen(p);
+qt_renderer_rep::set_line_style (SI lw, int type, bool round) {
+  (void) type;
+  QPen p (painter.pen ());
+  if (lw <= pixel) p.setWidth (0);
+  else p.setWidth ((lw+thicken) / (1.0*pixel));
+  p.setCapStyle (round? Qt::RoundCap: Qt::SquareCap);
+  p.setJoinStyle (Qt::RoundJoin);
+  painter.setPen (p);
 }
 
 void
 qt_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
-//  y1--; y2--; // top-left origin to bottom-left origin conversion
-	painter.drawLine(x1,y1,x2,y2);
+  // y1--; y2--; // top-left origin to bottom-left origin conversion
+  painter.setRenderHints (QPainter::Antialiasing);
+  painter.drawLine (x1, y1, x2, y2);
 }
-
 
 void
 qt_renderer_rep::lines (array<SI> x, array<SI> y) {
@@ -180,12 +174,14 @@ qt_renderer_rep::lines (array<SI> x, array<SI> y) {
     decode (xx, yy);
     pnt[i].rx()= xx;
     pnt[i].ry()= yy;
-    if (i>0) painter.drawLine(pnt[i-1],pnt[i]); // FIX: hack
+    if (i>0) {
+      painter.setRenderHints (QPainter::Antialiasing);
+      painter.drawLine (pnt[i-1], pnt[i]); // FIX: hack
+    }
   }
- // XDrawLines (dpy, win, gc, pnt, n, CoordModeOrigin);
+  // XDrawLines (dpy, win, gc, pnt, n, CoordModeOrigin);
   STACK_DELETE_ARRAY (pnt);
 }
-
 
 void
 qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
@@ -194,11 +190,10 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   // outer_round (x1, y1, x2, y2); might still be needed somewhere
   decode (x1, y1);
   decode (x2, y2);
-	  if ((x1>=x2) || (y1<=y2)) return;
-
-	
-	QBrush brush(dis->cmap[cur_bg]);
-	painter.fillRect(x1,y2,x2-x1,y1-y2,brush);	
+  if ((x1>=x2) || (y1<=y2)) return;
+  QBrush brush (dis->cmap[cur_bg]);
+  painter.setRenderHints (0);
+  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);	
 }
 
 void
@@ -222,8 +217,9 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-	QBrush brush(dis->cmap[cur_fg]);
-	painter.fillRect(x1,y2,x2-x1,y1-y2,brush);	
+  QBrush brush (dis->cmap[cur_fg]);
+  painter.setRenderHints (0);
+  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);	
 }
 
 void
@@ -252,21 +248,21 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   for (i=0; i<n; i++) {
     SI xx= x[i], yy= y[i];
     decode (xx, yy);
-    poly[i] = QPointF(xx,yy);
+    poly[i] = QPointF (xx, yy);
   }
   QBrush brush(dis->cmap[cur_fg]);
   QPainterPath pp;
-  pp.addPolygon(poly);
-  pp.closeSubpath();
-  pp.setFillRule(convex ? Qt::OddEvenFill : Qt::WindingFill);
-  painter.fillPath(pp,brush);
+  pp.addPolygon (poly);
+  pp.closeSubpath ();
+  pp.setFillRule (convex? Qt::OddEvenFill: Qt::WindingFill);
+  painter.setRenderHints (QPainter::Antialiasing);
+  painter.fillPath (pp, brush);
 }
 
 
 /******************************************************************************
- * Image rendering
- ******************************************************************************/
-
+* Image rendering
+******************************************************************************/
 
 static int cache_image_last_gc = 0;
 static int cache_image_tot_size= 0;
@@ -281,8 +277,6 @@ static hashmap<tree,int> cache_image_nr (0);
 // see System/Files/image_files.cpp
 
 extern hashmap<tree,string> ps_bbox; 
-
-
 
 void image_auto_gc () {
   int time= texmacs_time ();
@@ -330,25 +324,21 @@ void image_gc (string name) {
   }
 }
 
-
-
-
-
-
-void qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-                              double cx1, double cy1, double cx2, double cy2) 
+void
+qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
+			double cx1, double cy1, double cx2, double cy2) 
 {
   // Given an image of original size (W, H),
   // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
   // at position (x, y) in a rectangle of size (w, h)
 
- // if (DEBUG_EVENTS) cout << "qt_renderer_rep::image " << as_string(u) << LF;
+  // if (DEBUG_EVENTS) cout << "qt_renderer_rep::image " << as_string(u) << LF;
 
   w= w/pixel; h= h/pixel;
   decode (x, y);
   
-  
-  //painter.drawRect(QRect(x,y-h,w,h));
+  //painter.setRenderHints (0);
+  //painter.drawRect (QRect (x, y-h, w, h));
   
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
@@ -369,9 +359,12 @@ void qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     else {
       //XSetForeground (dpy, gc, white);
       //XFillRectangle (dpy, pm, gc, 0, 0, w, h);
-//      ghostscript_run (dpy, gs_win, pm, u, w, h, cx1, cy1, cx2, cy2);
-      if (DEBUG_EVENTS)  painter.drawRect(QRect(x,y-h,w,h));
-      if (DEBUG_EVENTS)  cout << "HERE WE MUST SOMEHOW RUN GHOSTSCRIPT \n";
+      //ghostscript_run (dpy, gs_win, pm, u, w, h, cx1, cy1, cx2, cy2);
+      if (DEBUG_EVENTS) {
+	painter.setRenderHints (0);
+	painter.drawRect (QRect (x, y-h, w, h));
+	cout << "HERE WE MUST SOMEHOW RUN GHOSTSCRIPT\n";
+      }
       return;
     }
     
@@ -399,12 +392,10 @@ void qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   int ww= x2 - x1;
   int hh= y2 - y1;
 
-	painter.drawImage(QRect(x,y-h,w,h),*pm, QRect(x1,hh-y2,ww,hh));
-  
-
+  painter.setRenderHints (0);
+  //painter.setRenderHints (QPainter::SmoothPixmapTransform);
+  painter.drawImage (QRect (x, y-h, w, h), *pm, QRect (x1, hh-y2, ww, hh));
 };
-
-
 
 int char_clip=0;
 
@@ -412,7 +403,7 @@ int char_clip=0;
 
 void
 qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
-	(void) w; (void) h;
+  (void) w; (void) h;
   int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
   decode (x , y );
   decode (x1, y1);
@@ -420,9 +411,11 @@ qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
   y--; // top-left origin to bottom-left origin conversion
 	//clear(x1,y1,x2,y2);
 #ifdef QTMPIXMAPS
-  painter.drawPixmap(x,y,w,h,*im);
+  painter.setRenderHints (0);
+  painter.drawPixmap (x, y, w, h, *im);
 #else
-  painter.drawImage(x,y,*im);
+  painter.setRenderHints (0);
+  painter.drawImage (x, y, *im);
 #endif
 //  [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }  
@@ -439,42 +432,42 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
 #ifdef QTMPIXMAPS
-	  QTMImage *im = new QPixmap(w,h);
-	  {
-		  int nr_cols= sfactor*sfactor;
-		  if (nr_cols >= 64) nr_cols= 64;
+    QTMImage *im = new QPixmap(w,h);
+    {
+      int nr_cols= sfactor*sfactor;
+      if (nr_cols >= 64) nr_cols= 64;
 		  
-		  QPainter pp(im);
-		  QPen pen(painter.pen());
-		  QBrush brush(pen.color());	
-		  pp.setPen(Qt::NoPen);
-		  im->fill (Qt::transparent);
-		  for (j=0; j<h; j++)
-			  for (i=0; i<w; i++) {
-				  int col = gl->get_x(i,j);
-				  brush.setColor(QColor(r,g,b,(255*col)/(nr_cols+1)));		
-				  pp.fillRect(i,j,1,1,brush);
-			  }
+      QPainter pp(im);
+      QPen pen(painter.pen());
+      QBrush brush(pen.color());	
+      pp.setPen(Qt::NoPen);
+      im->fill (Qt::transparent);
+      for (j=0; j<h; j++)
+	for (i=0; i<w; i++) {
+	  int col = gl->get_x (i, j);
+	  brush.setColor (QColor (r, g, b, (255*col)/(nr_cols+1)));
+	  pp.fillRect (i, j, 1, 1, brush);
+	}
       pp.end();
-	  }
+    }
 #else
-    QTMImage *im = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
+    QTMImage *im= new QImage (w, h, QImage::Format_ARGB32_Premultiplied);
     {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
 
-// the following line is disabled because it causes a crash on Qt/X11 4.4.3
-
+      // the following line is disabled because
+      // it causes a crash on Qt/X11 4.4.3
       //im->fill (Qt::transparent); 
 
       for (j=0; j<h; j++)
 	for (i=0; i<w; i++) {
-	  int col = gl->get_x(i,j);
-	  im->setPixel(i,j,qRgba(r,g,b,(255*col)/(nr_cols+1)));
+	  int col = gl->get_x (i, j);
+	  im->setPixel (i, j, qRgba (r, g, b, (255*col)/(nr_cols+1)));
 	}
     }
 #endif
-    qt_image mi2(im, xo, yo, w, h );
+    qt_image mi2 (im, xo, yo, w, h);
     mi = mi2;
     //[im release]; // qt_image retains im
     dis->character_image (xc)= mi;
@@ -491,8 +484,8 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 * Setting up and displaying xpm pixmaps
 ******************************************************************************/
 
-QColor xpm_to_ns_color(string s)
-{
+QColor
+xpm_to_ns_color (string s) {
   if (s == "none") return QColor(100,100,100);
   if ((N(s) == 4) && (s[0]=='#')) {
     int r= 17 * from_hexadecimal (s (1, 2));
@@ -514,48 +507,48 @@ QColor xpm_to_ns_color(string s)
   }
   char *name = as_charp(s);
   for(int i = 0; i<RGBColorsSize; i++) {
-   if (strcmp(name,RGBColors[i].name)==0) {
-	 delete [] name;
-		 return QColor(RGBColors[i].r,RGBColors[i].g,RGBColors[i].b);
-   }
+    if (strcmp(name,RGBColors[i].name)==0) {
+      delete [] name;
+      return QColor(RGBColors[i].r,RGBColors[i].g,RGBColors[i].b);
+    }
   }
-  delete  [] name;
-  return QColor(0,0,0);
+  delete[] name;
+  return QColor (0, 0, 0);
 }
-
-
 
 extern int char_clip;
 
-QTMImage *qt_renderer_rep::xpm_image(url file_name)
-{ 
-	QTMImage *pxm = NULL;
+QTMImage*
+qt_renderer_rep::xpm_image(url file_name) { 
+  QTMImage *pxm = NULL;
   qt_image mi = dis->images [as_string(file_name)];
   if (is_nil(mi)) {    
     string sss;
-  load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
-  if (sss == "") load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
-        uchar *buf = (uchar*)as_charp(sss);
-	  pxm = new QTMImage();
-	  pxm->loadFromData(buf, N(sss));
-		delete buf;
-	//	cout << sss;
-	//cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
-	qt_image mi2(pxm,0,0,pxm->width(),pxm->height());
-		mi = mi2;
-		dis->images(as_string(file_name)) = mi2; 	
+    load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
+    if (sss == "")
+      load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
+    uchar *buf = (uchar*)as_charp(sss);
+    pxm = new QTMImage();
+    pxm->loadFromData(buf, N(sss));
+    delete buf;
+    //out << sss;
+    //cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
+    qt_image mi2(pxm,0,0,pxm->width(),pxm->height());
+    mi = mi2;
+    dis->images(as_string(file_name)) = mi2; 	
   }  
   else pxm = mi->img;
-	return pxm;
+  return pxm;
 }
 
-void qt_renderer_rep::xpm (url file_name, SI x, SI y) {
+void
+qt_renderer_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   
- // char *chstr = as_charp(as_string(file_name));
-//  NSString *name = [NSString stringWithCString:chstr];
- // delete [] chstr;
-//  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
+  // char *chstr = as_charp(as_string(file_name));
+  //  NSString *name = [NSString stringWithCString:chstr];
+  // delete [] chstr;
+  //  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
   ///name = [name stringByDeletingPathExtension];
   QTMImage *image = xpm_image(file_name);
   
@@ -563,17 +556,15 @@ void qt_renderer_rep::xpm (url file_name, SI x, SI y) {
     fatal_error ("Shrinking factor should be 1", "qt_renderer_rep::xpm");
   int w, h;
   w = image->width();
-	h = image->height();
+  h = image->height();
 
-//  [(NSImageRep*)[[image representations] objectAtIndex:0]  drawAtPoint:NSMakePoint(x,y)];
+  //  [(NSImageRep*)[[image representations] objectAtIndex:0]  drawAtPoint:NSMakePoint(x,y)];
   
   int old_clip= char_clip;
   char_clip= true;
   draw_clipped (image, w, h, x, y);
   char_clip=old_clip;
 }
-
-
 
 /* clipping */
 //void qt_renderer_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {} ;
@@ -586,33 +577,22 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   renderer_rep::set_clipping (x1, y1, x2, y2);
   decode (x1, y1);
   decode (x2, y2);
-//	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
-	//	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
+  //	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
+  //	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
 }
-
-
 
 /* shadowing and copying rectangular regions across devices */
 
-
-void qt_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) 
-{
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y;
-} ;
-void qt_renderer_rep::new_shadow (renderer& dev) { dev =  this; } ;
-void qt_renderer_rep::delete_shadow (renderer& dev) {     dev= NULL; } ;
-void qt_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) 
-{
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev;
-} ;
-void qt_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) 
-{
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev;
-} ;
-void qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) 
-{
-  (void) x1; (void) y1; (void) x2; (void) y2;
-} ;
+void qt_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; }
+void qt_renderer_rep::new_shadow (renderer& dev) { dev =  this; }
+void qt_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; }
+void qt_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; }
+void qt_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; }
+void qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; }
 
 #if 1
 font x_font (string family, int size, int dpi)
@@ -622,5 +602,3 @@ font x_font (string family, int size, int dpi)
   return NULL;
 }
 #endif
-
-
