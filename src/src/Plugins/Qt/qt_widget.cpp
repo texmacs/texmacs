@@ -614,6 +614,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       sz.setHeight (max (sz.height (), ws.height () - 5));
       cout << "Height= " << ws.height () << "\n";
       //sz.setHeight (max (sz.height (), ws.height () - 4));
+      // FIXME: we should use 4 instead of 5, but this sometimes
+      // results in having an unwanted scrollbar; why?
       tm_canvas () -> setFixedSize (sz);
       /*
       sz.setHeight (max (sz.height (), ws.height () - 32));
