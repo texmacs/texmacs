@@ -182,7 +182,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
         fatal_error ("type mismatch", "SLOT_EXTENTS");
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
-      qobject_cast< QScrollArea * >(view)->widget()->resize(rect.size());
+      qobject_cast< QScrollArea * >(view) -> widget() -> resize (rect.size ());
       // [[(NSScrollView*)view documentView] setFrameSize: rect.size];
     }
     break;
@@ -225,8 +225,8 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       //[[(NSScrollView*)view documentView] scrollPoint:pt];
       if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")" << LF;
       //qobject_cast<QScrollArea *>(view)->widget()->move(pt);
-     // 	qobject_cast<QScrollArea *>(view)->ensureVisible(pt.x(),pt.y());
-      //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
+      //qobject_cast<QScrollArea *>(view)->ensureVisible(pt.x(),pt.y());
+      //[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
     }
     break;
   case SLOT_SHRINKING_FACTOR:
@@ -353,56 +353,47 @@ qt_view_widget_rep::query (slot s, int type_id) {
     cout << "qt_view_widget_rep::query " << slot_name(s) << LF;
   
   switch (s) {
-
   case SLOT_IDENTIFIER:
     if (type_id != type_helper<int>::id)
-      fatal_error ("int expected (SLOT_IDENTIFIER)", "qt_view_widget_rep::query");
-//    return close_box<int> ((int)view->window());
-	// we need only to know if the widget is attached to some gui window	  
-		  return close_box<int> (view->window() ? 1 : 0);
-			
+      fatal_error ("int expected (SLOT_IDENTIFIER)",
+		   "qt_view_widget_rep::query");
+    // return close_box<int> ((int)view->window());
+    // we need only to know if the widget is attached to some gui window
+    return close_box<int> (view->window() ? 1 : 0);
   case SLOT_RENDERER:
     if (type_id != type_helper<renderer>::id)
-      fatal_error ("renderer expected (SLOT_RENDERER)", "qt_view_widget_rep::query");
+      fatal_error ("renderer expected (SLOT_RENDERER)",
+		   "qt_view_widget_rep::query");
     return close_box<renderer> ((renderer) the_qt_renderer());
-
   case SLOT_VISIBLE_PART:
     {
       if (type_id != type_helper<coord4>::id)
 	fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
       QRect rect = view->visibleRegion().boundingRect();
       coord4 c = from_qrect(rect);
-			if (DEBUG_EVENTS) cout << "visibleRegion " << rect << LF;
+      if (DEBUG_EVENTS) cout << "visibleRegion " << rect << LF;
       return close_box<coord4> (c);
     }
-
-			
-		case SLOT_SCROLL_POSITION:
+  case SLOT_SCROLL_POSITION:
     {
       if (type_id != type_helper<coord2>::id)
-				fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
+	fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
       QPoint pt = qobject_cast<QScrollArea *>(view)->widget()->pos(); // FIXME
-
-			if (DEBUG_EVENTS) {
-				cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
-			}
-
-      //	NSPoint pt = [[(NSScrollView *)view contentView] bounds].origin;
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
+      // NSPoint pt = [[(NSScrollView *)view contentView] bounds].origin;
       return close_box<coord2> (from_qpoint(pt));
     }
-			
-#if 0
-
-			
+#if 0	
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
       if (type_id != type_helper<coord2>::id)
-        fatal_error ("type mismatch (SLOT_POSITION)", "qt_view_widget_rep::query");
-      return close_box<coord2> (coord2(0,0)); //FIXME: fake position (who need this information?)
-    }
-			
-			
+        fatal_error ("type mismatch (SLOT_POSITION)",
+		     "qt_view_widget_rep::query");
+      return close_box<coord2> (coord2(0,0));
+      //FIXME: fake position (who need this information?)
+    }		
   case SLOT_SIZE:
     return query_size (THIS, type_id);
   case SLOT_POSITION:
@@ -694,21 +685,23 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       // conver from main widget to canvas coordinates
       //QPoint pt2 = tm_mainwindow()->mapToGlobal(pt);
       //pt = tm_scrollarea()->widget()->mapFromGlobal(pt2);
-      if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
-			cout << "scrollarea (" << tm_scrollarea()->x() << "," <<  tm_scrollarea()->y() << "," 
-			     <<  tm_scrollarea()->width() << "," <<  tm_scrollarea()->height() << ")\n";
-			cout << "widget     (" << tm_scrollarea()->widget()->x() << "," <<  tm_scrollarea()->widget()->y() << "," 
-			<<  tm_scrollarea()->widget()->width() << "," <<  tm_scrollarea()->widget()->height() << ")\n";
-			
-			cout << "GOING TO (" << pt.x()+tm_scrollarea()->width()/2 << "," << pt.y()+tm_scrollarea()->height()/2 << ")\n";
+      cout << "scrollarea (" << tm_scrollarea()->x() << "," <<  tm_scrollarea()->y() << "," 
+	   <<  tm_scrollarea()->width() << "," <<  tm_scrollarea()->height() << ")\n";
+      cout << "widget     (" << tm_scrollarea()->widget()->x() << "," <<  tm_scrollarea()->widget()->y() << "," 
+	   <<  tm_scrollarea()->widget()->width() << "," <<  tm_scrollarea()->widget()->height() << ")\n";		
+      cout << "GOING TO (" << pt.x()+tm_scrollarea()->width()/2 << "," << pt.y()+tm_scrollarea()->height()/2 << ")\n";
 #endif
-			// It is still not very clear to me because this shift of half h/w size works...
-			tm_scrollarea()->ensureVisible(pt.x()+tm_scrollarea()->width()/2,pt.y()+tm_scrollarea()->height()/2);
-      //			tm_scrollarea()->widget()->move(pt);
+      // It is still not very clear to me because this shift of half h/w size works...
+      tm_scrollarea () -> ensureVisible
+	(pt.x () + tm_scrollarea () -> width  () / 2,
+	 pt.y () + tm_scrollarea () -> height () / 2);
+      //tm_scrollarea()->widget()->move(pt);
       //[[sv documentView] scrollPoint:pt];
-      //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
-      tm_scrollarea()->update();
+      //[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
+      tm_scrollarea () -> update();
     }
     break;
   case SLOT_INTERACTIVE_MODE:
@@ -716,8 +709,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
       if (open_box<bool>(val) == true) {
-        QTimer::singleShot(0,&helper, SLOT(doit()));
-        //			 do_interactive_prompt();
+        QTimer::singleShot (0, &helper, SLOT (doit ()));
+        // do_interactive_prompt();
       }
     }
     break;
@@ -1281,42 +1274,40 @@ qt_window_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
   case SLOT_CANVAS:
     check_type_void (index, "SLOT_CANVAS");
-    //			[(NSScrollView*)view setDocumentView: concrete (w)->get_nsview()];
+    //[(NSScrollView*)view setDocumentView: concrete (w)->get_nsview()];
     break;
   case SLOT_MAIN_MENU:
     check_type_void (index, "SLOT_MAIN_MENU");
-    //			THIS << set_widget ("menu bar", concrete (w));
+    //THIS << set_widget ("menu bar", concrete (w));
     break;
   case SLOT_MAIN_ICONS:
     check_type_void (index, "SLOT_MAIN_ICONS");
-    //			THIS << set_widget ("main icons bar", concrete (w));
+    //THIS << set_widget ("main icons bar", concrete (w));
     break;
   case SLOT_CONTEXT_ICONS:
     check_type_void (index, "SLOT_CONTEXT_ICONS");
-    //			THIS << set_widget ("context icons bar", concrete (w));
+    //THIS << set_widget ("context icons bar", concrete (w));
     break;
   case SLOT_USER_ICONS:
     check_type_void (index, "SLOT_USER_ICONS");
-    //			THIS << set_widget ("user icons bar", concrete (w));
+    //THIS << set_widget ("user icons bar", concrete (w));
     break;
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
-    //			THIS << set_widget ("interactive prompt", concrete (w));
+    //THIS << set_widget ("interactive prompt", concrete (w));
     break;
   case SLOT_INTERACTIVE_INPUT:
     check_type_void (index, "SLOT_INTERACTIVE_INPUT");
-    //			THIS << set_widget ("interactive input", concrete (w));
+    //THIS << set_widget ("interactive input", concrete (w));
     break;
   default:
     fatal_error ("cannot handle slot type", "qt_window_widget_rep::write");
   }
 }
 
-
 /******************************************************************************
 * simple_widget_rep
 ******************************************************************************/
-
 
 /******************************************************************************
 * Constructor
