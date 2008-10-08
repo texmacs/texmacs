@@ -14,7 +14,6 @@
 #define QT_SIMPLE_WIDGET_HPP
 
 #include "widget.hpp"
-
 #include "qt_widget.hpp"
 
 class simple_widget_rep: public qt_view_widget_rep {
