@@ -232,8 +232,13 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       }
     }
 
+#ifdef Q_WS_MAC
     if (mods & Qt::MetaModifier) r= "C-" * r;
     if (mods & Qt::ControlModifier) r= "Mod1-" * r;
+#else
+    if (mods & Qt::ControlModifier) r= "C-" * r;
+    if (mods & Qt::MetaModifier) r= "Mod1-" * r;
+#endif
     //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
     if (flag && ((mods & Qt::AltModifier) != 0)) r= "Mod4-" * r;
 
