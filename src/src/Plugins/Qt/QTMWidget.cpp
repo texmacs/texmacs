@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : QTMWidget.cpp
 * DESCRIPTION: QT Texmacs widget class
-* COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
+* COPYRIGHT  : (C) 2008 Massimiliano Gubinelli and Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -296,6 +296,9 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+  if (DEBUG_EVENTS)
+    cout << "mouse event: " << s << " at "
+	 << point.x () << ", " << point.y () << LF;
 }
 
 void
@@ -307,6 +310,9 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   unsigned int mstate= mouse_state (event, true);
   string s= "release-" * mouse_decode (mstate);
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+  if (DEBUG_EVENTS)
+    cout << "mouse event: " << s << " at "
+	 << point.x () << ", " << point.y () << LF;
 }
 
 void
@@ -318,6 +324,9 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   unsigned int mstate= mouse_state (event, false);
   string s= "move";
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
+  if (DEBUG_EVENTS)
+    cout << "mouse event: " << s << " at "
+	 << point.x () << ", " << point.y () << LF;
 }
 
 bool
