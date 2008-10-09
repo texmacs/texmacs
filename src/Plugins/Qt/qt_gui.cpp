@@ -28,6 +28,7 @@ extern window (*get_current_window) (void);
 
 qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
+bool qt_update_flag= false;
 
 qt_gui_rep::qt_gui_rep(int argc2, char **argv2):
   interrupted(false), color_scale ((void*) NULL), 
@@ -484,6 +485,7 @@ void qt_gui_rep::event_loop ()
     app->processEvents(QEventLoop::WaitForMoreEvents);
     cout << "hop\n";
     update();
+    qt_update_flag= false;
   }
 }
 #endif
@@ -492,14 +494,17 @@ void qt_gui_rep::event_loop ()
 void qt_gui_rep::event_loop ()
 {
   QApplication *app = (QApplication*)QApplication::instance();
-  //QTimer t (NULL);
+  QTimer t (NULL);
   //QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
   //t.start (10);
-  //t.start (1000);
+  t.start (1000);
 
   while (1) {
+    //cout << "."; cout.flush ();
     app->processEvents (QEventLoop::WaitForMoreEvents);
+    //cout << "*"; cout.flush ();
     update ();
+    qt_update_flag= false;
   }
   //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
   app->sendPostedEvents (0, QEvent::DeferredDelete);
@@ -668,6 +673,11 @@ void
 beep () {
   // Issue a beep
   QApplication::beep();
+}
+
+void
+needs_update () {
+  qt_update_flag= true;
 }
 
 bool

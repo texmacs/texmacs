@@ -102,6 +102,9 @@ void clear_selection (string cb);
 
 void beep ();
   // Issue a beep
+void needs_update ();
+  // Inform the gui that the editor needs to update itself
+  // before repainting can start
 bool check_event (int type);
   // Check whether an event of one of the above types has occurred;
   // we check for keyboard events while repainting windows

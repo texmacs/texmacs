@@ -604,6 +604,10 @@ show_wait_indicator (widget w, string message, string arg) {
   the_gui->show_wait_indicator (w, message, arg);
 }
 
+void
+needs_update () {
+}
+
 bool
 check_event (int type) {
   return the_gui->check_event (type);

@@ -307,6 +307,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
 void
 edit_interface_rep::notify_change (int change) {
   env_change= env_change | change;
+  needs_update ();
 }
 
 bool

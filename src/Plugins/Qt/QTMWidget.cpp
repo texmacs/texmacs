@@ -18,6 +18,8 @@
 
 #define PIXEL 256
 
+extern bool qt_update_flag;
+
 hashmap<int,string> qtkeymap (0);
 
 inline void
@@ -120,10 +122,9 @@ initkeymap () {
   map (Qt::Key_Dead_Tilde, "tilde");
 }
 
-
 void
-QTMWidget::postponedUpdate(QRect r) {
-  update(r);
+QTMWidget::postponedUpdate (QRect r) {
+  update (r);
 }
 
 void
@@ -135,23 +136,28 @@ QTMWidget::paintEvent (QPaintEvent* event ) {
     p.fillRect(rect,brush);
     p.end();
   }
-  
-  the_qt_renderer()->begin (this);  
 
-  the_qt_renderer() -> set_clipping
-    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
-     (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
-  tm_widget()->handle_repaint
-    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
-     (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+  if (!qt_update_flag) {
+    the_qt_renderer()->begin (this);  
 
-  if (the_qt_renderer()->interrupted()) {
-    if (DEBUG_EVENTS)
-      cout << "POSTPONE\n"; 
-    QTimer::singleShot(0, this, SLOT(postponedUpdate(rect)));
+    the_qt_renderer() -> set_clipping
+      (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+    tm_widget()->handle_repaint
+      (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+
+    if (the_qt_renderer()->interrupted())
+      qt_update_flag= true;
+
+    the_qt_renderer()->end();
   }
-	
-  the_qt_renderer()->end();
+
+  if (qt_update_flag) {
+    if (DEBUG_EVENTS)
+      cout << "Postponed redrawing\n"; 
+    QTimer::singleShot (1, this, SLOT (postponedUpdate (rect)));
+  }
 }
 
 /*
