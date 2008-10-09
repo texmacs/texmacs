@@ -123,12 +123,15 @@ initkeymap () {
 }
 
 void
-QTMWidget::postponedUpdate (QRect r) {
-  update (r);
+QTMWidget::postponedUpdate () {
+  while (!is_nil (delayed_rects)) {
+    update (delayed_rects->item);
+    delayed_rects= delayed_rects->next;
+  }
 }
 
 void
-QTMWidget::paintEvent (QPaintEvent* event ) {
+QTMWidget::paintEvent (QPaintEvent* event) {
   QRect rect = event->rect();
   if (DEBUG_EVENTS) {
     QPainter p(this);
@@ -137,7 +140,9 @@ QTMWidget::paintEvent (QPaintEvent* event ) {
     p.end();
   }
 
-  if (!qt_update_flag) {
+  if (qt_update_flag)
+    delayed_rects= list<QRect> (rect, delayed_rects);
+  else {
     the_qt_renderer()->begin (this);  
 
     the_qt_renderer() -> set_clipping
@@ -156,7 +161,7 @@ QTMWidget::paintEvent (QPaintEvent* event ) {
   if (qt_update_flag) {
     if (DEBUG_EVENTS)
       cout << "Postponed redrawing\n"; 
-    QTimer::singleShot (1, this, SLOT (postponedUpdate (rect)));
+    QTimer::singleShot (1, this, SLOT (postponedUpdate ()));
   }
 }
 

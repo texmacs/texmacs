@@ -5,9 +5,6 @@ TODO
 * Interactive prompts with several entries (i.e. query replace):
   all entries should appear in one window.
 * Delayed help menu, even several seconds after boot.
-* Invalid situation on several occasions:
-  - During selections.
-  - After scrolling (middle mouse) and clicking in text.
 * Modal windows should appear inside main window,
   horizontally centered, vertically centered at height/3 from top.
 * Help -> (Apple) Search. How to customize this?
@@ -22,6 +19,7 @@ TODO
 * File chooser start location should be directory of current file.
 * Russian menus.
 * Clean menu cache on language changes.
+* Visually indicate when a icon menu button is pressed.
 
 DONE
 
@@ -46,3 +44,6 @@ DONE
 * Make scrollbar(s) movable: does not seem to be supported by Qt.
 * Loss of keyboard focus after clicking on icon menu entry.
 * Pixmap rendering under Linux
+* Invalid situation on several occasions:
+  - During selections.
+  - After scrolling (middle mouse) and clicking in text.
