@@ -492,10 +492,10 @@ void qt_gui_rep::event_loop ()
 void qt_gui_rep::event_loop ()
 {
   QApplication *app = (QApplication*)QApplication::instance();
-  QTimer t (NULL);
+  //QTimer t (NULL);
   //QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
   //t.start (10);
-  t.start (1000);
+  //t.start (1000);
 
   while (1) {
     app->processEvents (QEventLoop::WaitForMoreEvents);
