@@ -19,6 +19,7 @@
 
 class QTMWidget: public QWidget {
   Q_OBJECT
+  list<QRect> delayed_rects;
 
 public:
   inline QTMWidget(simple_widget_rep *_wid): QWidget() { 
@@ -39,8 +40,8 @@ public:
     return (simple_widget_rep *)(v.canConvert<void *>() ? v.value<void *>() : NULL);
   }
 	
-private slots:
-  void postponedUpdate (QRect r);
+public slots:
+  void postponedUpdate ();
 	
 protected:	
   virtual void paintEvent (QPaintEvent* event);
@@ -50,7 +51,7 @@ protected:
   virtual void mousePressEvent (QMouseEvent* event);
   virtual void mouseReleaseEvent (QMouseEvent* event);
   virtual void mouseMoveEvent (QMouseEvent* event);
-  virtual bool event(QEvent *event);
+  virtual bool event (QEvent *event);
 };
 
 #endif
