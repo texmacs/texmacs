@@ -1,5 +1,6 @@
 
-/****************************************************************************** * MODULE     : qt_widget.cpp
+/******************************************************************************
+* MODULE     : qt_widget.cpp
 * DESCRIPTION: QT widget class
 * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
 *******************************************************************************
@@ -30,6 +31,7 @@
 #include <QMenuBar>
 #include <QToolButton>
 #include <QHBoxLayout>
+#include <QScrollBar>
 
 #include "QTMWidget.hpp"
 #include "QTMGuiHelper.hpp"
@@ -567,7 +569,7 @@ qt_tm_widget_rep::qt_tm_widget_rep():
   userToolBar = new QToolBar ("user toolbar", mw);
   mainToolBar->setStyle (qtmstyle ());
   contextToolBar->setStyle (qtmstyle ());
-  userToolBar->setStyle (qtmstyle ());  
+  userToolBar->setStyle (qtmstyle ());
   mw->addToolBar (mainToolBar);
   mw->addToolBarBreak ();
   mw->addToolBar (contextToolBar);
@@ -577,7 +579,8 @@ qt_tm_widget_rep::qt_tm_widget_rep():
   userToolBar->hide ();
   mw->setIconSize (QSize (17, 17));
 
-  mw->setFocusPolicy (Qt::StrongFocus);
+  mw->setFocusPolicy (Qt::NoFocus);
+  sa->setFocusPolicy (Qt::NoFocus);
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -701,9 +704,11 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 	   << pt.y()+tm_scrollarea()->height()/2 << ")\n";
 #endif
       // It is still not very clear to me because this shift of half h/w size works...
-      tm_scrollarea () -> ensureVisible
-	(pt.x () + tm_scrollarea () -> width  () / 2,
-	 pt.y () + tm_scrollarea () -> height () / 2);
+      int sx= pt.x () + tm_scrollarea () -> width  () / 2;
+      int sy= pt.y () + tm_scrollarea () -> height () / 2;
+      tm_scrollarea () -> ensureVisible (sx - 50, sy - 50);
+      tm_scrollarea () -> ensureVisible (sx + 50, sy + 50);
+      tm_scrollarea () -> ensureVisible (sx, sy);
       //tm_scrollarea()->widget()->move(pt);
       //[[sv documentView] scrollPoint:pt];
       //[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
@@ -911,6 +916,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       tm_scrollarea()->setWidget(qw);			
       (void) old_canvas;
       // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
+      qw->setFocusPolicy (Qt::StrongFocus);
       qw->setFocus ();
       //FIXME: [[sv window] makeFirstResponder:v];
     }
