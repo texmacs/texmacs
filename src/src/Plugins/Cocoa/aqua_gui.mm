@@ -774,6 +774,8 @@ void beep ()
   // Issue a beep
 {    NSBeep(); }
 
+void needs_update () {}
+
 bool check_event (int type)
   // Check whether an event of one of the above types has occurred;
   // we check for keyboard events while repainting windows
