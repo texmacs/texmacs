@@ -157,13 +157,13 @@ QTMWidget::paintEvent (QPaintEvent* event ) {
 /*
 void
 QTMWidget::focusInEvent (QFocusEvent* event) {
-  //cout << "Got focus\n";
+  cout << "Got focus\n";
   QWidget::focusInEvent (event);
 }
 
 void
 QTMWidget::focusOutEvent (QFocusEvent* event) {
-  //cout << "Lost focus\n";
+  cout << "Lost focus\n";
   QWidget::focusOutEvent (event);
 }
 */
@@ -251,33 +251,62 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
   }
 }
 
+static unsigned int
+mouse_state (QMouseEvent* event, bool flag) {
+  unsigned int i= 0;
+  Qt::MouseButtons bstate= event->buttons ();
+  Qt::MouseButton  tstate= event->button ();
+  Qt::KeyboardModifiers kstate= event->modifiers ();
+  if (flag) bstate= bstate | tstate;
+  if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+  if ((bstate & Qt::RightButton    ) != 0) i += 4;
+  if ((bstate & Qt::XButton1       ) != 0) i += 8;
+  if ((bstate & Qt::XButton2       ) != 0) i += 16;
+#ifdef Q_WS_MAC
+  if ((kstate & Qt::AltModifier    ) != 0) i = 2;
+  if ((kstate & Qt::MetaModifier   ) != 0) i = 4;
+  if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
+  if ((kstate & Qt::ControlModifier) != 0) i += 2048;
+#else
+  if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
+  if ((kstate & Qt::ControlModifier) != 0) i += 512;
+  if ((kstate & Qt::AltModifier    ) != 0) i += 2048;
+  if ((kstate & Qt::MetaModifier   ) != 0) i += 16384;
+#endif
+  return i;
+}
+
+static string
+mouse_decode (unsigned int mstate) {
+  if      (mstate & 1 ) return "left";
+  else if (mstate & 2 ) return "middle";
+  else if (mstate & 4 ) return "right";
+  else if (mstate & 8 ) return "up";
+  else if (mstate & 16) return "down";
+  return "unknown";
+}
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
   simple_widget_rep *wid= tm_widget ();
   if (!wid) return;
   QPoint point = event->pos();
-  scale(point);
-  Qt::KeyboardModifiers flags = event->modifiers();
-  if (flags & Qt::MetaModifier)
-    wid -> handle_mouse ("press-right", point.x(), point.y(),
-			 3, texmacs_time());
-  else if (flags & Qt::AltModifier)
-    wid -> handle_mouse ("press-middle", point.x(), point.y(),
-			 2, texmacs_time());
-  else
-    wid -> handle_mouse ("press-left", point.x(), point.y(),
-			 1, texmacs_time());
+  scale (point);
+  unsigned int mstate= mouse_state (event, false);
+  string s= "press-" * mouse_decode (mstate);
+  wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
 }
 
 void
-QTMWidget::mouseReleaseEvent ( QMouseEvent * event ) {
+QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   simple_widget_rep *wid = tm_widget();
   if (!wid) return;
   QPoint point = event->pos();
-  scale(point);
-  wid -> handle_mouse ("release-left", point.x(), point.y(),
-		       1, texmacs_time()); // FIXME: rough implementation
+  scale (point);
+  unsigned int mstate= mouse_state (event, true);
+  string s= "release-" * mouse_decode (mstate);
+  wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
 }
 
 void
@@ -285,16 +314,17 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   simple_widget_rep *wid = tm_widget();
   if (!wid) return;
   QPoint point = event->pos();
-  scale(point);
-  wid -> handle_mouse ("move", point.x(), point.y(),
-		       1, texmacs_time()); // FIXME: rough implementation
+  scale (point);
+  unsigned int mstate= mouse_state (event, false);
+  string s= "move";
+  wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
 }
 
 bool
 QTMWidget::event (QEvent* event) {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent *>(event);
-    keyPressEvent(ke);
+    keyPressEvent (ke);
     return true;
   }  
   return QWidget::event(event);
