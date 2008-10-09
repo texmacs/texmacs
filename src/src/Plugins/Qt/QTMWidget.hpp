@@ -17,13 +17,13 @@
 #include <QVariant>
 #include <QWidget>
 
-class QTMWidget : public QWidget {
+class QTMWidget: public QWidget {
   Q_OBJECT
 
 public:
-  QTMWidget(simple_widget_rep *_wid) : QWidget() { 
+  inline QTMWidget(simple_widget_rep *_wid): QWidget() { 
     setObjectName("A QTMWidget");
-    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy (Qt::StrongFocus);
     // setBackgroundRole(QPalette::Window);
     // setAutoFillBackground(true);
     setAutoFillBackground(false);
@@ -44,8 +44,8 @@ private slots:
 	
 protected:	
   virtual void paintEvent ( QPaintEvent * event );
-  virtual void focusInEvent ( QFocusEvent * event );
-  virtual void focusOutEvent ( QFocusEvent * event );
+  //virtual void focusInEvent ( QFocusEvent * event );
+  //virtual void focusOutEvent ( QFocusEvent * event );
   virtual void keyPressEvent ( QKeyEvent * event );
   virtual void mousePressEvent ( QMouseEvent * event );
   virtual void mouseReleaseEvent ( QMouseEvent * event );

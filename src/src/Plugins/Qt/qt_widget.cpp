@@ -35,7 +35,7 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 
-widget the_keyboard_focus(NULL);
+widget the_keyboard_focus (NULL);
 
 /******************************************************************************
 * main renderer
@@ -911,7 +911,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       tm_scrollarea()->setWidget(qw);			
       (void) old_canvas;
       // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
-      qw->setFocus();
+      qw->setFocus ();
       //FIXME: [[sv window] makeFirstResponder:v];
     }
     break;
