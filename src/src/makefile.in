@@ -58,6 +58,7 @@ CP = cp -r -f
 GLUE = cd Guile/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
+MOCFLAGS = @QT_CPPFLAGS@
 
 ###############################################################################
 # Source files
@@ -147,7 +148,7 @@ texmacs_incl  := $(guile_incl)
 qt_moc := Plugins/Qt/QTMStyle.moc Plugins/Qt/QTMGuiHelper.moc Plugins/Qt/QTMInteractiveInputHelper.moc Plugins/Qt/QTMMenuHelper.moc Plugins/Qt/QTMWidget.moc
 
 %.moc: %.hpp
-	$(MOC) $(QT_CPPFLAGS) $< -o $@
+	$(MOC) $(MOCFLAGS) $< -o $@
 
 ###############################################################################
 # Dependencies
