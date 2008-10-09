@@ -1,6 +1,7 @@
 
 TODO
 
+* Paint interrupts.
 * Interactive prompts with several entries (i.e. query replace):
   all entries should appear in one window.
 * Delayed help menu, even several seconds after boot.
@@ -44,3 +45,4 @@ DONE
 * White area of empty document should vertically extend to bottom.
 * Make scrollbar(s) movable: does not seem to be supported by Qt.
 * Loss of keyboard focus after clicking on icon menu entry.
+* Pixmap rendering under Linux

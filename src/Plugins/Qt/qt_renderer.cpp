@@ -446,7 +446,8 @@ void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
       pp.end();
     }
 #else
-    QTMImage *im= new QImage (w, h, QImage::Format_ARGB32_Premultiplied);
+    QTMImage *im= new QImage (w, h, QImage::Format_ARGB32);
+    //QTMImage *im= new QImage (w, h, QImage::Format_ARGB32_Premultiplied);
     {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
