@@ -24,9 +24,9 @@ protected:
   QStyle* style;
 		
 public:
-  explicit QTMProxyStyle(QStyle *_style);
-  ~QTMProxyStyle();
-		
+  explicit QTMProxyStyle (QStyle* _style);
+  ~QTMProxyStyle ();
+
   void drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = 0) const;
   void drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
   void drawItemPixmap (QPainter* painter, const QRect& rect, int alignment, const QPixmap& pixmap) const;
@@ -55,8 +55,8 @@ class QTMStyle: public QTMProxyStyle {
   Q_OBJECT
 
 public:
-  inline QTMStyle(QStyle* _style): QTMProxyStyle (_style) {}
-  inline ~QTMStyle() {}
+  inline QTMStyle (QStyle* _style): QTMProxyStyle (_style) {}
+  inline ~QTMStyle () {}
 
   void drawPrimitive (PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
   int pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;

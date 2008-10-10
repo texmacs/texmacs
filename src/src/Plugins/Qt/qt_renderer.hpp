@@ -50,9 +50,9 @@ struct qt_image_rep: concrete_struct {
 };
 
 class qt_image {
-  CONCRETE_NULL(qt_image);
+CONCRETE_NULL(qt_image);
   qt_image (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
- // qt_image ();
+  // qt_image ();
 };
 
 CONCRETE_NULL_CODE(qt_image);
@@ -71,47 +71,16 @@ public:
   virtual void get_extents (int& w, int& h);
   virtual bool interrupted (bool check= false);
   
-  /* routines from renderer.hpp **********************************************/
+  /***** routines from renderer.hpp ******************************************/
 
-   color rgb (int r, int g, int b);
-   void  get_rgb (color col, int& r, int& g, int& b);
-   color get_color ();
- //  color get_color (string s);
-   color get_background ();
-  
-  void draw (int char_code, font_glyphs fn, SI x, SI y);
+  color rgb (int r, int g, int b);
+  void  get_rgb (color col, int& r, int& g, int& b);
+  color get_color ();
+  // color get_color (string s);
+  color get_background ();
 
-#if 0
-  /* main graphical routines */
-  virtual void set_color (color c);
-  virtual void set_background (color c);
-  virtual void draw (int char_code, font_glyphs fn, SI x, SI y);
-  virtual void set_line_style (SI w, int type=0, bool round=true);
-  virtual void line (SI x1, SI y1, SI x2, SI y2);
-  virtual void clear (SI x1, SI y1, SI x2, SI y2);
-  virtual void fill (SI x1, SI y1, SI x2, SI y2);
-  virtual void arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  virtual void fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  virtual void polygon (array<SI> x, array<SI> y, bool convex=true);
-  virtual void xpm (url file_name, SI x, SI y);
-  virtual void image (url u, SI w, SI h, SI x, SI y,
-                      double cx1, double cy1, double cx2, double cy2);
- // virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
-  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  
-  /* shadowing and copying rectangular regions across devices */
-  virtual void fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y);
-  virtual void new_shadow (renderer& dev);
-  virtual void delete_shadow (renderer& dev);
-  virtual void get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2);
-  virtual void put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2);
-  virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2);
-#endif
-
-
+  void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
-  //color get_color ();
-  //color get_background ();
   void  set_color (color c);
   void  set_background (color c);
   void  set_line_style (SI w, int type=0, bool round=true);
@@ -133,21 +102,21 @@ public:
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
-  
   void draw_clipped (QTMImage * im, int w, int h, SI x, SI y);
 
-	QTMImage *xpm_image(url file_name);
+  /***** private section *****************************************************/
 
-  void begin(QPaintDevice * device) { painter.begin(device); } ;
-  void end() { painter.end(); };
-  
- void encode (SI& x, SI& y);
+  QTMImage *xpm_image(url file_name);
+
+  void begin (QPaintDevice* device) { painter.begin (device); }
+  void end () { painter.end (); }
+
+  void encode (SI& x, SI& y);
   void decode (SI& x, SI& y);
   
-  friend class qt_window_rep;
-      
+  friend class qt_window_rep;   
 };
 
-qt_renderer_rep *the_qt_renderer();
+qt_renderer_rep* the_qt_renderer();
 
 #endif // defined QT_RENDERER_HPP
