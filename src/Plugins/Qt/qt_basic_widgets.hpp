@@ -12,6 +12,7 @@
 
 #ifndef QT_BASIC_WIDGETS_HPP
 #define QT_BASIC_WIDGETS_HPP
+#include "qt_widget.hpp"
 
 class qt_text_widget_rep: public qt_widget_rep {
 public:
