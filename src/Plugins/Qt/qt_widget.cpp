@@ -37,6 +37,9 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 
+
+#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
+
 widget the_keyboard_focus (NULL);
 
 /******************************************************************************
@@ -193,25 +196,32 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     break;
     
   case SLOT_HEADER_VISIBILITY:
+    NOT_IMPLEMENTED ; 
     //send_bool (THIS, "header", val);
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
+      NOT_IMPLEMENTED ; 
     //send_bool (THIS, "main icons", val);
     break;
   case SLOT_CONTEXT_ICONS_VISIBILITY:
+      NOT_IMPLEMENTED ; 
     //send_bool (THIS, "context icons", val);
     break;
   case SLOT_USER_ICONS_VISIBILITY:
+      NOT_IMPLEMENTED ; 
     //send_bool (THIS, "user icons", val);
     break;
   case SLOT_FOOTER_VISIBILITY:
+      NOT_IMPLEMENTED ; 
     //send_bool (THIS, "footer flag", val);
     break;
     
   case SLOT_MOUSE_GRAB:
+      NOT_IMPLEMENTED ; 
     //send_mouse_grab (THIS, val);
     break;
   case SLOT_MOUSE_POINTER:
+      NOT_IMPLEMENTED ; 
     //send_mouse_pointer (THIS, val);
     break;
   case SLOT_SCROLL_POSITION:
@@ -428,6 +438,8 @@ void
 qt_view_widget_rep::notify (slot s, blackbox new_val) {
   if (DEBUG_EVENTS)
     cout << "qt_view_widget_rep::notify " << slot_name(s) << LF;
+  NOT_IMPLEMENTED ; 
+
   switch (s) {
 #if 0
   case SLOT_SIZE:
@@ -617,6 +629,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
 			
   case SLOT_HEADER_VISIBILITY:
+      NOT_IMPLEMENTED ; 
     // send_bool (THIS, "header", val);
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
@@ -816,6 +829,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       if (type_id != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
+      NOT_IMPLEMENTED ; 
       return close_box<bool> (true);
     }
   case SLOT_FOOTER_VISIBILITY:
@@ -835,6 +849,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       if (type_id != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
+      NOT_IMPLEMENTED ; 
       return close_box<bool> (false); // FIXME: who needs this info?
     }
 
@@ -1225,6 +1240,7 @@ void
 qt_window_widget_rep::notify (slot s, blackbox new_val) {
   if (DEBUG_EVENTS)
     cout << "qt_window_widget_rep::notify " << slot_name(s) << LF;
+  NOT_IMPLEMENTED ; 
 
   switch (s) {
 #if 0
@@ -1286,30 +1302,37 @@ qt_window_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
   case SLOT_CANVAS:
     check_type_void (index, "SLOT_CANVAS");
+      NOT_IMPLEMENTED ; 
     //[(NSScrollView*)view setDocumentView: concrete (w)->get_nsview()];
     break;
   case SLOT_MAIN_MENU:
     check_type_void (index, "SLOT_MAIN_MENU");
+      NOT_IMPLEMENTED ; 
     //THIS << set_widget ("menu bar", concrete (w));
     break;
   case SLOT_MAIN_ICONS:
     check_type_void (index, "SLOT_MAIN_ICONS");
+      NOT_IMPLEMENTED ; 
     //THIS << set_widget ("main icons bar", concrete (w));
     break;
   case SLOT_CONTEXT_ICONS:
     check_type_void (index, "SLOT_CONTEXT_ICONS");
+      NOT_IMPLEMENTED ; 
     //THIS << set_widget ("context icons bar", concrete (w));
     break;
   case SLOT_USER_ICONS:
     check_type_void (index, "SLOT_USER_ICONS");
+      NOT_IMPLEMENTED ; 
     //THIS << set_widget ("user icons bar", concrete (w));
     break;
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
+      NOT_IMPLEMENTED ; 
     //THIS << set_widget ("interactive prompt", concrete (w));
     break;
   case SLOT_INTERACTIVE_INPUT:
     check_type_void (index, "SLOT_INTERACTIVE_INPUT");
+      NOT_IMPLEMENTED ; 
     //THIS << set_widget ("interactive input", concrete (w));
     break;
   default:
@@ -1481,7 +1504,12 @@ widget popup_widget (widget w)
 *  their implementation is void
 ******************************************************************************/
 
-widget empty_widget () { return widget(); }
+widget empty_widget () 
+{
+  if (DEBUG_EVENTS) cout << "empty_widget IS STILL NOT IMPLEMENTED\n";
+
+  return widget(); 
+}
 // an empty widget of size zero
 widget glue_widget (bool hx, bool vx, SI w, SI h) 
 //{ return widget(); }
@@ -1489,6 +1517,7 @@ widget glue_widget (bool hx, bool vx, SI w, SI h)
 // resp. vertically extensible if hx resp. vx is true
 {
   (void)hx; (void)vx; (void)w; (void)h;
+  if (DEBUG_EVENTS) cout << "glue_widget IS STILL NOT IMPLEMENTED\n";
   //FIXME: Implement
   return new qt_view_widget_rep (new QWidget());
 }
