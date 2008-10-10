@@ -10,7 +10,6 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-
 #include "iterator.hpp"
 #include "dictionary.hpp"
 #include "qt_gui.hpp"
@@ -19,7 +18,6 @@
 #include <locale.h>
 #include "language.hpp"
 #include "message.hpp"
-
 #include <QDesktopWidget>
 #include <QClipboard>
 #include "QTMGuiHelper.hpp"
@@ -32,30 +30,25 @@ bool qt_update_flag= false;
 
 qt_gui_rep::qt_gui_rep(int argc2, char **argv2):
   interrupted(false), color_scale ((void*) NULL), 
-  character_image (qt_image()), selection(NULL),  images (qt_image())
+  character_image (qt_image()), selection (NULL), images (qt_image())
 {
   (void) argc2; (void) argv2;
-  //  argc               = argc2;
-  //  argv               = argv2;
-  interrupted        = false;
-  interrupt_time     = texmacs_time ();
-  
-  //get_xmodmap ();
+  // argc= argc2;
+  // argv= argv2;
+  interrupted   = false;
+  interrupt_time= texmacs_time ();
   initialize_colors ();
   set_output_language (get_locale_language ());
-  // out_lan= get_locale_language ();
   (void) default_font ();
 }
 
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-
-  QDesktopWidget *d = QApplication::desktop();
-  int w = d->width();     // returns desktop width
-  int h = d->height();    // returns desktop height	
-  
-  width = ((SI) w)  * PIXEL;
+  QDesktopWidget* d= QApplication::desktop();
+  int w = d->width();  // returns desktop width
+  int h = d->height(); // returns desktop height	
+  width = ((SI) w) * PIXEL;
   height= ((SI) h) * PIXEL;
 }
 
@@ -80,7 +73,8 @@ static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
-static QColor alloc_color (int r, int g, int b) {
+static QColor
+alloc_color (int r, int g, int b) {
   if (reverse_colors) {
     int m= min (r, min (g, b));
     int M= max (r, max (g, b));
@@ -99,19 +93,15 @@ static QColor alloc_color (int r, int g, int b) {
     g= (int) (tt + mu * (g - t) + 0.5);
     b= (int) (tt + mu * (b - t) + 0.5);
   }
-  
-  return QColor((255.0*r/65535.0),(255.0*g/65535.0),(255.0*b/65535.0),255);
+  return QColor ((255.0*r/65535.0), (255.0*g/65535.0), (255.0*b/65535.0), 255);
 }
 
 void
 qt_gui_rep::init_color_map () {
   int i, r, g, b;
-  
   cmap= new QColor [CTOTAL];
-  
   for (i=0; i<=GREYS; i++)
     cmap[i]= alloc_color ((i*65535)/GREYS, (i*65535)/GREYS, (i*65535)/GREYS);
-  
   for (r=0; r<=CSCALES; r++)
     for (g=0; g<=CSCALES; g++)
       for (b=0; b<=CSCALES; b++) {
@@ -122,7 +112,8 @@ qt_gui_rep::init_color_map () {
       }
 }
 
-color rgb_color (int r, int g, int b) {
+color
+rgb_color (int r, int g, int b) {
   if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
   else {
     r= (r*CSCALES+ 128)/255;
@@ -132,7 +123,8 @@ color rgb_color (int r, int g, int b) {
   }
 }
 
-void get_rgb_color (color col, int& r, int& g, int& b) {
+void
+get_rgb_color (color col, int& r, int& g, int& b) {
   if (col <= GREYS) {
     r= (col*255)/GREYS;
     g= (col*255)/GREYS;
@@ -150,7 +142,8 @@ void get_rgb_color (color col, int& r, int& g, int& b) {
   }
 }
 
-color named_color (string s) {
+color
+named_color (string s) {
   if ((N(s) == 4) && (s[0]=='#')) {
     int r= 17 * from_hexadecimal (s (1, 2));
     int g= 17 * from_hexadecimal (s (2, 3));
@@ -166,7 +159,7 @@ color named_color (string s) {
   unsigned int depth = 65535;
   int pastel= (depth>=16? 223: 191);
   
-  if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s)) ))) {
+  if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s))))) {
     int level, i=5;
     if (read_int(s,i,level)) {
       level = (level*255) /100;
