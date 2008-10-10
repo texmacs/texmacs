@@ -23,6 +23,7 @@
 #include <QInputDialog>
 
 extern char  *slot_name(slot s); // in qt_widget.cpp
+#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
 
 #pragma mark qt_chooser_widget_rep
 
@@ -75,6 +76,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       (void) flag;
+      NOT_IMPLEMENTED 
     }
     break;
   case SLOT_SIZE:
@@ -94,18 +96,23 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     break;		
   case SLOT_STRING_INPUT:
     // send_string (THIS, "input", val);
+      NOT_IMPLEMENTED 
     break;
   case SLOT_INPUT_TYPE:
     //	send_string (THIS, "type", val);
+      NOT_IMPLEMENTED 
     break;
   case SLOT_INPUT_PROPOSAL:
     //send_string (THIS, "default", val);
+      NOT_IMPLEMENTED 
     break;
   case SLOT_FILE:
     //send_string (THIS, "file", val);
+      NOT_IMPLEMENTED 
     break;
   case SLOT_DIRECTORY:
     //send_string (THIS, "directory", val);
+      NOT_IMPLEMENTED 
     break;
 
   default:
@@ -223,6 +230,7 @@ qt_chooser_widget_rep::perform_dialog () {
         file = "(list (url-system " *
 	  scm_quote (as_string (u)) *
 	  ") \"100\" \"100\" \"0\" \"0\" \"10\" \"10\")";
+      //FIXME: fake image dimensions
       else
         file = "(url-system " * scm_quote (as_string (u)) * ")";
     }
@@ -349,6 +357,7 @@ qt_input_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       (void) flag;
+      NOT_IMPLEMENTED 
     }	
     break;
   case SLOT_SIZE:

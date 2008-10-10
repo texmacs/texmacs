@@ -37,6 +37,7 @@
 #include <QKeySequence>
 
 extern char  *slot_name(slot s); // from qt_widget.cpp
+#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
 
 class qt_menu_rep : public qt_widget_rep  {
 public:
@@ -84,6 +85,8 @@ void qt_menu_rep::send (slot s, blackbox val) {
     {
       if (type_box (val) != type_helper<coord2>::id)
 	fatal_error ("type mismatch", "SLOT_POSITION");
+ NOT_IMPLEMENTED 
+
     }
     break;
   case SLOT_VISIBILITY:
@@ -91,6 +94,7 @@ void qt_menu_rep::send (slot s, blackbox val) {
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       (void) flag;
+      NOT_IMPLEMENTED 
     }	
     break;
   case SLOT_MOUSE_GRAB:
@@ -100,7 +104,7 @@ void qt_menu_rep::send (slot s, blackbox val) {
       (void) flag;
       //	[NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (qt_view_widget_rep*)(the_keyboard_focus.rep))->view ];
       if (item->menu()) {
-	item->menu()->exec(QCursor::pos());
+      	item->menu()->exec(QCursor::pos());
       }
     }	
     //			send_mouse_grab (THIS, val);
