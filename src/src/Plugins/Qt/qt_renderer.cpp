@@ -22,37 +22,37 @@
 * Qt images
 ******************************************************************************/
 
-qt_image::qt_image (QTMImage * img2, SI xo2, SI yo2, int w2, int h2):
-  rep (new qt_image_rep(img2,xo2,yo2,w2,h2)) {}
+qt_image::qt_image (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
+  rep (new qt_image_rep (img2, xo2, yo2, w2, h2)) {}
 //qt_image::qt_image () : rep(NULL) {}
 
-qt_image_rep::qt_image_rep (QTMImage * img2, SI xo2, SI yo2, int w2, int h2):
-  img(img2), xo(xo2), yo(yo2), w(w2), h(h2) {}
+qt_image_rep::qt_image_rep (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
+  img (img2), xo (xo2), yo (yo2), w (w2), h (h2) {}
 
-qt_image_rep::~qt_image_rep() { delete img; }
+qt_image_rep::~qt_image_rep () { delete img; }
 
 /*****************************************************************************/
 
 qt_renderer_rep::qt_renderer_rep (qt_gui dis2, int w2, int h2):
   dis (dis2), w (w2), h (h2)
 {
-  cur_fg      = black;
-  cur_bg      = white;
+  cur_fg     = black;
+  cur_bg     = white;
  
   #if 0 
-  black       = dis->black;
-  white       = dis->white;
-  red         = dis->red;
-  green       = dis->green;
-  blue        = dis->blue;
-  yellow      = dis->yellow;
-  magenta     = dis->magenta;
-  orange      = dis->orange;
-  brown       = dis->brown;
-  pink        = dis->pink;
-  light_grey  = dis->light_grey;
-  grey        = dis->grey;
-  dark_grey   = dis->dark_grey;
+  black      = dis->black;
+  white      = dis->white;
+  red        = dis->red;
+  green      = dis->green;
+  blue       = dis->blue;
+  yellow     = dis->yellow;
+  magenta    = dis->magenta;
+  orange     = dis->orange;
+  brown      = dis->brown;
+  pink       = dis->pink;
+  light_grey = dis->light_grey;
+  grey       = dis->grey;
+  dark_grey  = dis->dark_grey;
   #endif
 }
 
@@ -79,7 +79,8 @@ qt_renderer_rep::decode (SI& x, SI& y) {
 
 void
 qt_renderer_rep::get_extents (int& w2, int& h2) {
-  w2 = w; h2 = h; } 
+  w2 = w; h2 = h;
+}
 
 bool
 qt_renderer_rep::interrupted (bool check) {
@@ -129,8 +130,8 @@ qt_renderer_rep::get_background () {
 
 void
 qt_renderer_rep::set_color (color c) {
-  QPen p (painter.pen());
-  QBrush b (painter.brush());
+  QPen p (painter.pen ());
+  QBrush b (painter.brush ());
   p.setColor (dis->cmap[c]);
   b.setColor (dis->cmap[c]);
   painter.setPen (p);
@@ -404,7 +405,7 @@ qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
   decode (x1, y1);
   decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
-	//clear(x1,y1,x2,y2);
+       // clear(x1,y1,x2,y2);
 #ifdef QTMPIXMAPS
   painter.setRenderHints (0);
   painter.drawPixmap (x, y, w, h, *im);
@@ -412,10 +413,11 @@ qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
   painter.setRenderHints (0);
   painter.drawImage (x, y, *im);
 #endif
-//  [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
+  // [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }  
 
-void qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
+void
+qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
   x_character xc (c, fng, sfactor, cur_fg, 0);
   qt_image mi = dis->character_image [xc];
@@ -515,47 +517,37 @@ xpm_to_ns_color (string s) {
 extern int char_clip;
 
 QTMImage*
-qt_renderer_rep::xpm_image(url file_name) { 
-  QTMImage *pxm = NULL;
-  qt_image mi = dis->images [as_string(file_name)];
-  if (is_nil(mi)) {    
+qt_renderer_rep::xpm_image (url file_name) { 
+  QTMImage *pxm= NULL;
+  qt_image mi= dis->images [as_string (file_name)];
+  if (is_nil (mi)) {    
     string sss;
     load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
     if (sss == "")
       load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
-    uchar *buf = (uchar*)as_charp(sss);
-    pxm = new QTMImage();
-    pxm->loadFromData(buf, N(sss));
+    uchar *buf= (uchar*) as_charp (sss);
+    pxm= new QTMImage();
+    pxm->loadFromData (buf, N(sss));
     delete buf;
     //out << sss;
     //cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
-    qt_image mi2(pxm,0,0,pxm->width(),pxm->height());
-    mi = mi2;
-    dis->images(as_string(file_name)) = mi2; 	
+    qt_image mi2 (pxm, 0, 0, pxm->width(), pxm->height());
+    mi= mi2;
+    dis->images (as_string (file_name))= mi2;
   }  
-  else pxm = mi->img;
+  else pxm= mi->img;
   return pxm;
 }
 
 void
 qt_renderer_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
-  
-  // char *chstr = as_charp(as_string(file_name));
-  //  NSString *name = [NSString stringWithCString:chstr];
-  // delete [] chstr;
-  //  name = [[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
-  ///name = [name stringByDeletingPathExtension];
-  QTMImage *image = xpm_image(file_name);
-  
+  QTMImage* image = xpm_image (file_name);
   if (sfactor != 1)
     fatal_error ("Shrinking factor should be 1", "qt_renderer_rep::xpm");
   int w, h;
-  w = image->width();
-  h = image->height();
-
-  //  [(NSImageRep*)[[image representations] objectAtIndex:0]  drawAtPoint:NSMakePoint(x,y)];
-  
+  w = image->width ();
+  h = image->height ();
   int old_clip= char_clip;
   char_clip= true;
   draw_clipped (image, w, h, x, y);
@@ -573,8 +565,8 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   renderer_rep::set_clipping (x1, y1, x2, y2);
   decode (x1, y1);
   decode (x2, y2);
-  //	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
-  //	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
+  // NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
+  // [NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
 }
 
 /* shadowing and copying rectangular regions across devices */
