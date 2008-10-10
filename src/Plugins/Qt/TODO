@@ -16,6 +16,8 @@ TODO
 * Russian menus.
 * Clean menu cache on language changes.
 * Visually indicate when a icon menu button is pressed.
+* Implement "minibuffer" interactions (currently a dialog pop up instead) 
+
 
 DONE
 
