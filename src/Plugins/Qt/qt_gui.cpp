@@ -265,7 +265,6 @@ font qt_gui_rep::default_font_sub (bool tt) {
   if (N(fam) >= 2) {
     string ff= fam (0, 2);
     string out_lan= get_output_language ();
-
     if (((out_lan == "bulgarian") || (out_lan == "russian") ||
          (out_lan == "ukrainian")) &&
         ((ff == "cm") || (ff == "ec"))) {
@@ -301,7 +300,6 @@ font qt_gui_rep::default_font (bool tt) {
   the_default_wait_font= fn;
   return fn;
 }
-
 
 void
 qt_gui_rep::load_system_font (string family, int size, int dpi,
@@ -349,8 +347,7 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
     QClipboard *clipboard = QApplication::clipboard();
     QString originalText = clipboard->text();
 		
-    clipboard->setText(selection);
-	
+    clipboard->setText(selection);	
   }
   return true;
 }
@@ -367,13 +364,14 @@ qt_gui_rep::clear_selection (string key) {
 }
 
 /* miscellaneous */
-void qt_gui_rep::image_gc (string name) { (void) name; } ; // FIXME: remove this unused function
-void qt_gui_rep::set_mouse_pointer (string name) { (void) name; } ; // FIXME: implement this function
+void qt_gui_rep::image_gc (string name) { (void) name; }
+// FIXME: remove this unused function
+void qt_gui_rep::set_mouse_pointer (string name) { (void) name; }
+// FIXME: implement this function
 void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) { (void) curs_name; (void) mask_name; } ;
 
 #if 0 // FIXME
-static bool check_mask(int mask)
-{
+static bool check_mask(int mask) {
   NSEvent * event = [NSApp nextEventMatchingMask:mask
 		     untilDate:nil
 		     inMode:NSDefaultRunLoopMode 
@@ -425,67 +423,35 @@ qt_gui_rep::check_event (int type) {
 }
 #endif
 
-
 void
-qt_gui_rep::show_wait_indicator (widget w, string message, string arg) 
-{
+qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   (void) w; (void) message; (void) arg;
 }
-
 
 void (*the_interpose_handler) (void) = NULL;
 //void set_interpose_handler (void (*r) (void)) { the_interpose_handler= r; }
 void gui_interpose (void (*r) (void)) { the_interpose_handler= r; }
 
-void update()
-{
-  //NSBeep();
+void
+update () {
   if (the_interpose_handler) the_interpose_handler();
 }
 
-void qt_gui_rep::update ()
-{
-  //  NSLog(@"UPDATE----------------------------");
-
+void
+qt_gui_rep::update () {
   ::update();
   interrupted = false;
 }
 
-
 #include "QTMGuiHelper.moc"
 
-void QTMGuiHelper::doUpdate() { 
+void
+QTMGuiHelper::doUpdate() { 
   gui->update(); 
 }
 
-#if  0 //  testing different event loop strategies
-void qt_gui_rep::event_loop ()
-{
-  QTMGuiHelper h(this);
-  QTimer t( &h );
-  QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
-  t.start( 0 );
-  QApplication::instance()->exec();
-}
-#endif
-
-#if 0
-void qt_gui_rep::event_loop ()
-{
-  QApplication *app = (QApplication*)QApplication::instance();
-  while (1) {
-    app->sendPostedEvents();
-    app->processEvents(QEventLoop::WaitForMoreEvents);
-    cout << "hop\n";
-    update();
-    qt_update_flag= false;
-  }
-}
-#endif
-
-#if 1
-void qt_gui_rep::event_loop ()
-{
+void
+qt_gui_rep::event_loop () {
   QApplication *app = (QApplication*)QApplication::instance();
   QTimer t (NULL);
   //QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
@@ -502,7 +468,6 @@ void qt_gui_rep::event_loop ()
   //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
   app->sendPostedEvents (0, QEvent::DeferredDelete);
 }
-#endif
 
 /******************************************************************************
 * Making color scales for anti alised fonts
@@ -518,20 +483,27 @@ x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
 x_character::operator tree () {
   tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
   t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
-  return t; }
+  return t;
+}
 
-bool operator == (x_character xc1, x_character xc2) {
+bool
+operator == (x_character xc1, x_character xc2) {
   return
     (xc1->c==xc2->c) && (xc1->fng.rep==xc2->fng.rep) &&
-    (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg); }
+    (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg);
+}
 
-bool operator != (x_character xc1, x_character xc2) {
+bool
+operator != (x_character xc1, x_character xc2) {
   return
     (xc1->c!=xc2->c) || (xc1->fng.rep!=xc2->fng.rep) ||
-    (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg); }
+    (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg);
+}
 
-int hash (x_character xc) {
-  return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf; }
+int
+hash (x_character xc) {
+  return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf;
+}
 
 void
 qt_gui_rep::prepare_color (int sf, color fg, color bg) {
@@ -552,11 +524,8 @@ qt_gui_rep::prepare_color (int sf, color fg, color bg) {
   }
 }
 
-qt_gui_rep::~qt_gui_rep() 
-{ 
-  /* release colormap */
-  delete [] this->cmap;
-  
+qt_gui_rep::~qt_gui_rep()  { 
+  delete [] this->cmap;  
 } 
 
 /* interface *****************************************************************/
@@ -602,7 +571,8 @@ gui_maximal_extents (SI& width, SI& height) {
   the_gui->get_max_size (width, height);
 }
 
-void gui_refresh () {
+void
+gui_refresh () {
   // update and redraw all windows (e.g. on change of output language)
   // FIXME: add suitable code
 }
@@ -656,7 +626,6 @@ clear_selection (string key) {
   // Clear the selection on clipboard 'cb'
   the_gui->clear_selection (key);
 }
-
 
 /******************************************************************************
 * Miscellaneous
