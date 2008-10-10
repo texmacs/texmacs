@@ -451,44 +451,27 @@ widget qt_input_widget_rep::plain_window_widget (string s)
   return this;
 }
 
-#if 0
-void qt_input_widget_rep::perform_dialog ()
-{
-  bool ok = false;
-  for(int i=0; i<N(fields); i++) {
-    QStringList items;
-    QString label = to_qstring (fields[i]->prompt);
-    items << to_qstring (fields[i]->input);
-    for(int j=0; j < N(fields[i]->proposals); j++)
-      items << to_qstring (fields[i]->proposals[j]);
-	
-    QString item =
-      QInputDialog::getItem (NULL, "Interactive Prompt", label,
-			     items, 0, true, &ok);
-    if (ok && !item.isEmpty ())
-      fields[i]->input = scm_quote (from_qstring (item));
-    else { ok = false; break; }
-  }
-  if (ok) cmd ();
-}
-#endif
-
 void
 qt_input_widget_rep::perform_dialog() {
   QDialog d (0, Qt::Sheet);
   QVBoxLayout* vl = new QVBoxLayout;
-
+  
   QVector<QComboBox*> cbs (N (fields));
   
   for(int i=0; i<N(fields); i++) {
     QHBoxLayout *hl = new QHBoxLayout;
     QLabel *lab = new QLabel (to_qstring (fields[i]->prompt));
     cbs[i] = new QComboBox;
-    cbs[i]->setMinimumContentsLength (40);
     cbs[i]->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
     cbs[i]->setEditText (to_qstring (fields[i]->input));
-    for(int j=0; j < N(fields[i]->proposals); j++)
-      cbs[i]->addItem (to_qstring (fields[i]->proposals[j]));
+    int minlen = 0;
+    for(int j=0; j < N(fields[i]->proposals); j++) {
+      QString str = to_qstring (fields[i]->proposals[j]);
+      cbs[i]->addItem (str);
+      int c = str.count();
+      if (c > minlen) minlen = c;
+    }
+    cbs[i]->setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
     cbs[i]->setEditable (true);
     lab->setBuddy (cbs[i]);
     hl->addWidget (lab);
@@ -505,21 +488,36 @@ qt_input_widget_rep::perform_dialog() {
     vl->addWidget (buttonBox);
   }
   d.setLayout (vl);
-
+  d.setWindowTitle(to_qstring(win_title));
+  QPoint pos = to_qpoint(position);
+  //cout << "Size :" << size.x1 << "," << size.x2 << LF;
+  //cout << "Position :" << pos.x() << "," << pos.y() << LF;
+  
+  d.updateGeometry();
+  QSize sz = d.sizeHint();
+  QRect r; r.setSize(sz);
+  r.moveCenter(pos);
+  d.setGeometry(r);
+  
   int result = d.exec ();
   if (result == QDialog::Accepted) {
     for(int i=0; i<N(fields); i++) {
       QString item = cbs[i]->currentText();
       fields[i]->input = scm_quote (from_qstring (item));
     }
-    cmd ();  
+  } else {
+    for(int i=0; i<N(fields); i++) {
+      fields[i]->input = "#f";
+    }
   }
+  cmd ();  
 }
 
 widget
 inputs_list_widget (command call_back, array<string> prompts) {
   // a dialogue widget with Ok and Cancel buttons and a series of textual
   // input widgets with specified prompts
+  if (DEBUG_EVENTS) cout << "inputs_list_widget\n";
   return new qt_input_widget_rep (call_back, prompts);
 }
 
