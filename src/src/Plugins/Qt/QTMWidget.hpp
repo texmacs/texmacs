@@ -22,7 +22,7 @@ class QTMWidget: public QWidget {
   list<QRect> delayed_rects;
 
 public:
-  inline QTMWidget(simple_widget_rep *_wid): QWidget() { 
+  inline QTMWidget(simple_widget_rep *_wid): QWidget () { 
     setObjectName("A QTMWidget");
     setFocusPolicy (Qt::StrongFocus);
     // setBackgroundRole(QPalette::Window);
@@ -30,19 +30,20 @@ public:
     setAutoFillBackground(false);
     // setAttribute (Qt::WA_OpaquePaintEvent);
     setAttribute (Qt::WA_NoSystemBackground);
-    setProperty("texmacs_widget", QVariant::fromValue((void*)_wid));
+    setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
     setMouseTracking (true);
-  };
-	
-  simple_widget_rep*
+  }
+
+  inline simple_widget_rep*
   tm_widget() { 
     QVariant v= property("texmacs_widget");
-    return (simple_widget_rep *)(v.canConvert<void *>() ? v.value<void *>() : NULL);
+    return (simple_widget_rep *)
+      (v.canConvert<void*> ()? v.value<void*> (): NULL);
   }
-	
+
 public slots:
   void postponedUpdate ();
-	
+
 protected:	
   virtual void paintEvent (QPaintEvent* event);
   //virtual void focusInEvent (QFocusEvent* event);
@@ -54,4 +55,4 @@ protected:
   virtual bool event (QEvent *event);
 };
 
-#endif
+#endif // QTMWIDGET_HPP
