@@ -33,6 +33,7 @@ protected:
   string type;
   string mgn;
   string win_title;
+  string directory;
   coord2 position;
   coord2 size;
   string file;
@@ -99,22 +100,27 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED 
     break;
   case SLOT_INPUT_TYPE:
-    //	send_string (THIS, "type", val);
-      NOT_IMPLEMENTED 
+    if (type_box (val) != type_helper<string>::id)
+      fatal_error ("type mismatch", "SLOT_DIRECTORY");
+    type = open_box<string> (val);
     break;
+#if 0
   case SLOT_INPUT_PROPOSAL:
     //send_string (THIS, "default", val);
       NOT_IMPLEMENTED 
     break;
+#endif
   case SLOT_FILE:
     //send_string (THIS, "file", val);
       NOT_IMPLEMENTED 
     break;
   case SLOT_DIRECTORY:
-    //send_string (THIS, "directory", val);
-      NOT_IMPLEMENTED 
+    if (type_box (val) != type_helper<string>::id)
+      fatal_error ("type mismatch", "SLOT_DIRECTORY");
+    directory = open_box<string> (val);
+    directory = as_string (url_pwd () * url_system (directory));
     break;
-
+      
   default:
     qt_widget_rep::send (s, val);
   }
@@ -216,10 +222,32 @@ qt_chooser_widget_rep::perform_dialog () {
   // int result;
   // FIXME: the chooser dialog is widely incomplete
   QFileDialog dialog (NULL);
-  dialog.setFileMode (QFileDialog::AnyFile);
+  //dialog.setFileMode (QFileDialog::AnyFile);
   //dialog.setNameFilter ("TeXmacs file (*.tm)");
   dialog.setViewMode (QFileDialog::Detail);
   dialog.setWindowTitle (to_qstring (win_title));
+  if (type == "directory") {
+    dialog.setFileMode(QFileDialog::Directory);
+  } else if (type == "image") {
+    dialog.setFileMode(QFileDialog::ExistingFile);
+  } else {
+    dialog.setFileMode(QFileDialog::AnyFile);
+  }
+
+  dialog.setDirectory(to_qstring(directory));
+  cout << "Dir: " << directory << LF;
+  
+  QPoint pos = to_qpoint(position);
+  //cout << "Size :" << size.x1 << "," << size.x2 << LF;
+  cout << "Position :" << pos.x() << "," << pos.y() << LF;
+  
+  dialog.updateGeometry();
+  QSize sz = dialog.sizeHint();
+  QRect r; r.setSize(sz);
+  r.moveCenter(pos);
+  dialog.setGeometry(r);
+  
+  
   QStringList fileNames;
   if (dialog.exec ()) {
     fileNames = dialog.selectedFiles();
@@ -234,6 +262,8 @@ qt_chooser_widget_rep::perform_dialog () {
       else
         file = "(url-system " * scm_quote (as_string (u)) * ")";
     }
+  } else {
+    file = "#f";
   }
   cmd ();	
 }
