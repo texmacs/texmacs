@@ -17,8 +17,6 @@
 #include <QApplication>
 #include <QTimer>
 
-
-
 #include "timer.hpp"
 #include "gui.hpp"
 #include "font.hpp"
@@ -52,7 +50,6 @@ bool operator == (x_character xc1, x_character xc2);
 bool operator != (x_character xc1, x_character xc2);
 int hash (x_character xc);
 
-
 /******************************************************************************
 * Delayed messages
 ******************************************************************************/
@@ -66,68 +63,61 @@ struct message_rep: concrete_struct {
 };
 
 class message {
-  CONCRETE(message);
+CONCRETE(message);
   message (widget wid, string s, time_t t);
 };
 CONCRETE_CODE(message);
 
 ostream& operator << (ostream& out, message m);
 
-
 /******************************************************************************
 * The qt_gui class
 ******************************************************************************/
 
 typedef class qt_gui_rep* qt_gui;
-
 class qt_drawable_rep;
 class qt_image;
-
 extern qt_gui the_gui;
 
 class qt_gui_rep {
 public:
-  QColor*          cmap;
- 
-//  unsigned int    state;
+  QColor* cmap;
 
+  // unsigned int state;
   bool interrupted;
-  time_t          interrupt_time;
-  
+  time_t interrupt_time;
+
   hashmap<x_character,pointer> color_scale;       // for anti-aliasing
   hashmap<x_character,qt_image> character_image;  // bitmaps of all characters
 
-    char*                        selection;
-  hashmap<string,tree>         selection_t;
-  hashmap<string,string>       selection_s;
+  char*                  selection;
+  hashmap<string,tree>   selection_t;
+  hashmap<string,string> selection_s;
 
-   hashmap<string,qt_image> images; 
+  hashmap<string,qt_image> images; 
 
 public:
-  qt_gui_rep(int argc, char **argv);
-  virtual ~qt_gui_rep();
-  
-  
+  qt_gui_rep (int argc, char **argv);
+  virtual ~qt_gui_rep ();
+
   /********************* extents, grabbing, selections ***********************/
-  void   get_extents (SI& width, SI& height);
-  void   get_max_size (SI& width, SI& height);
- // void   set_button_state (unsigned int state);
+  void get_extents (SI& width, SI& height);
+  void get_max_size (SI& width, SI& height);
+  // void set_button_state (unsigned int state);
 
   /* important routines */
-   void event_loop ();
+  void event_loop ();
   
   /* color */
   void init_color_map ();
   void initialize_colors ();
-
   
   /* fonts */
   virtual void set_default_font (string name);
   virtual font default_font (bool tt= false);
   virtual void load_system_font (string family, int size, int dpi,
                                  font_metric& fnm, font_glyphs& fng);
-  
-  
+
   /* interclient communication */
   virtual bool get_selection (string key, tree& t, string& s);
   virtual bool set_selection (string key, tree t, string s);
@@ -144,14 +134,12 @@ public:
   void update_fast ();
 
   void  prepare_color (int sf, color fg, color bg);
-//  void emulate_leave_enter (widget old_widget, widget new_widget);
-//  void set_button_state (int s);
+  // void emulate_leave_enter (widget old_widget, widget new_widget);
+  // void set_button_state (int s);
   font default_font_sub (bool tt);
 
-  
   friend class qt_renderer_rep;
   friend class qt_window_rep;
 };
 
 #endif // defined QT_GUI_HPP
-

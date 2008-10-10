@@ -10,42 +10,47 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-class qt_text_widget_rep : public qt_widget_rep {
+#ifndef QT_BASIC_WIDGETS_HPP
+#define QT_BASIC_WIDGETS_HPP
+
+class qt_text_widget_rep: public qt_widget_rep {
 public:
   string str, lan;
   color col;
   bool tsp;
 
-  qt_text_widget_rep (string _s, color _col, bool _tsp, string _lan):
-    str (_s), lan (_lan), col (_col), tsp (_tsp) {};  
+  inline qt_text_widget_rep (string _s, color _col, bool _tsp, string _lan):
+    str (_s), lan (_lan), col (_col), tsp (_tsp) {}
   virtual QAction* as_qaction ();
 };
 
-class qt_image_widget_rep : public qt_widget_rep {
+class qt_image_widget_rep: public qt_widget_rep {
 public:
   url image;
   
-  qt_image_widget_rep (url _image): image(_image) {};
+  inline qt_image_widget_rep (url _image): image(_image) {}
   virtual QAction *as_qaction();
 };
 
-class qt_balloon_widget_rep : public qt_widget_rep {
+class qt_balloon_widget_rep: public qt_widget_rep {
 public:
   widget text, hint;
   
-  qt_balloon_widget_rep (widget _text, widget _hint):
-    text (_text), hint (_hint) {};
+  inline qt_balloon_widget_rep (widget _text, widget _hint):
+    text (_text), hint (_hint) {}
   virtual QAction* as_qaction ();
 };
 
-
-class qt_input_text_widget_rep : public qt_widget_rep {
+class qt_input_text_widget_rep: public qt_widget_rep {
 public:
   command cmd;
   string type;
   array<string> def;
   string text;
-  
-  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def):
-    cmd (_cmd), type (_type), def (_def), text ("") {};
+
+  inline qt_input_text_widget_rep
+    (command _cmd, string _type, array<string> _def):
+      cmd (_cmd), type (_type), def (_def), text ("") {}
 };
+
+#endif // QT_BASIC_WIDGETS_HPP

@@ -17,8 +17,7 @@
 #include <QMenu>
 #include <QAction>
 
-QMenu* to_qmenu(widget w);
-QAction* to_qaction(widget w);
-
+QMenu* to_qmenu (widget w);
+QAction* to_qaction (widget w);
 
 #endif // defined QT_MENU_HPP
