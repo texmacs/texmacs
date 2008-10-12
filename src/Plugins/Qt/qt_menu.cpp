@@ -91,9 +91,8 @@ qt_menu_rep::send (slot s, blackbox val) {
       (void) flag;
       // [NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (qt_view_widget_rep*)(the_keyboard_focus.rep))->view ];
       if (item->menu ())
-	item->menu()->exec (QCursor::pos ());
+	     item->menu()->exec (QCursor::pos ());
     }	
-    // send_mouse_grab (THIS, val);
     break;
   default:
     fatal_error ("cannot handle slot type", "qt_menu_rep::send");
@@ -259,9 +258,6 @@ menu_group (string name, string lan) {
 widget
 pulldown_button (widget w, promise<widget> pw) {
   // a button w with a lazy pulldown menu pw
-  // NSString *title = (is_nil(w)? @"":((qt_menu_text_rep*)w.rep)->text);
-  // NSMenuItem *mi = [[alloc_menuitem() initWithTitle:title action:NULL keyEquivalent:@""] autorelease];
-  // TMMenuItem* mi =  (TMMenuItem*)((qt_menu_rep*)w.rep) -> item;
   QAction* a= concrete (w) -> as_qaction ();
   QTMLazyMenu* lm= new QTMLazyMenu (pw.rep);
   a->setMenu (lm);
@@ -364,15 +360,6 @@ xpm_widget (url file_name) {
   // return widget ();
   // a widget with an X pixmap icon
   return new qt_image_widget_rep(file_name);
-#if 0  
-  NSImage *image = the_qt_renderer () -> xpm_image (file_name);
-  // TMMenuItem *mi = [[[TMMenuItem alloc] initWithTitle:to_nsstring(as_string(file_name)) action:NULL keyEquivalent:@""] autorelease];
-  TMMenuItem *mi = [[[TMMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""] autorelease];
-  [mi setRepresentedObject:image];
-  [mi setImage:image];
-  return new qt_menu_rep(mi);
-  // return new qt_menu_text_rep(to_nsstring(as_string(file_name)));
-#endif
 }
 
 QMenu*
