@@ -313,9 +313,17 @@ qt_view_widget_rep::plain_window_widget (string s) {
 }
 
 
-qt_tm_widget_rep::qt_tm_widget_rep():
+qt_tm_widget_rep::qt_tm_widget_rep(int mask):
   qt_view_widget_rep (new QMainWindow ()), helper (this)
 {
+  // decode mask
+  visibility[0] = (mask & 1)  == 1;  // header
+  visibility[1] = (mask & 2)  == 2;  // main
+  visibility[2] = (mask & 4)  == 4;  // context
+  visibility[3] = (mask & 8)  == 8;  // user
+  visibility[4] = (mask & 16) == 16; // footer
+  
+  
   QMainWindow* mw= tm_mainwindow ();
  
   QScrollArea* sa= new QScrollArea (mw);
@@ -344,7 +352,9 @@ qt_tm_widget_rep::qt_tm_widget_rep():
   mw->addToolBarBreak ();
   mw->addToolBar (userToolBar);
   mw->addToolBarBreak ();
-  userToolBar->hide ();
+
+  updateVisibility();
+  
   mw->setIconSize (QSize (17, 17));
 
   mw->setFocusPolicy (Qt::NoFocus);
@@ -355,6 +365,18 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_EVENTS) 
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
 }
+
+void qt_tm_widget_rep::updateVisibility()
+{
+  mainToolBar->setVisible (visibility[1] && visibility[0]);
+  contextToolBar->setVisible (visibility[2] && visibility[0]);
+  userToolBar->setVisible (visibility[3] && visibility[0]);
+  tm_mainwindow()->statusBar()->setVisible (visibility[4]);
+#ifndef Q_WS_MAC
+  tm_mainwindow()->menuBar()->setVisible (visibility[0]);
+#endif
+}
+
 
 void
 qt_tm_widget_rep::send (slot s, blackbox val) {
@@ -376,15 +398,21 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
     break;
   case SLOT_HEADER_VISIBILITY:
-    NOT_IMPLEMENTED;
-    // send_bool (THIS, "header", val);
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      bool f= open_box<bool> (val);
+      visibility[0] = f;
+      updateVisibility();
+    }
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
     {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
       bool f= open_box<bool> (val);
-      mainToolBar->setVisible (f);
+      visibility[1] = f;
+      updateVisibility();
     }
     break;
   case SLOT_CONTEXT_ICONS_VISIBILITY:
@@ -392,7 +420,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
       bool f= open_box<bool> (val);
-      contextToolBar->setVisible (f);
+      visibility[2] = f;
+      updateVisibility();
     }
     break;
   case SLOT_USER_ICONS_VISIBILITY:
@@ -400,7 +429,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
       bool f= open_box<bool> (val);
-      userToolBar->setVisible (f);
+      visibility[3] = f;
+      updateVisibility();
     }
     break;
   case SLOT_FOOTER_VISIBILITY:
@@ -408,7 +438,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       if (type_box (val) != type_helper<bool>::id)
         fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
       bool f= open_box<bool> (val);
-      tm_mainwindow()->statusBar()->setVisible (f);
+      visibility[4] = f;
+      updateVisibility();
     }
     break;
 
@@ -545,27 +576,27 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_USER_ICONS_VISIBILITY:
     if (type_id != type_helper<bool>::id)
       fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
-    return close_box<bool> (userToolBar->isVisible());
+    return close_box<bool> (visibility[3]);
 
   case SLOT_CONTEXT_ICONS_VISIBILITY:
     if (type_id != type_helper<bool>::id)
       fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
-    return close_box<bool> (contextToolBar->isVisible());
+    return close_box<bool> (visibility[2]);
       
   case SLOT_MAIN_ICONS_VISIBILITY:
     if (type_id != type_helper<bool>::id)
       fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
-    return close_box<bool> (mainToolBar->isVisible());
+    return close_box<bool> (visibility[1]);
       
   case SLOT_HEADER_VISIBILITY:
     if (type_id != type_helper<bool>::id)
       fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
-    return close_box<bool> (true);
+    return close_box<bool> (visibility[0]);
 
   case SLOT_FOOTER_VISIBILITY:
     if (type_id != type_helper<bool>::id)
       fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
-    return close_box<bool> (tm_mainwindow()->statusBar()->isVisible());
+    return close_box<bool> (visibility[4]);
 
   case SLOT_INTERACTIVE_INPUT:
     if (type_id != type_helper<string>::id)
@@ -769,9 +800,17 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     break;
 
   case SLOT_FULL_SCREEN:
-    check_type<bool> (val, "SLOT_FULL_SCREEN");
-    NOT_IMPLEMENTED ;
+    {
+      check_type<bool> (val, "SLOT_FULL_SCREEN");
+      NOT_IMPLEMENTED ;
+      bool flag = open_box<bool> (val);
+      if (flag) {
+        if (wid) wid->showFullScreen();
+      } else {
+        if (wid) wid->showNormal();
+      }
     //win->set_full_screen (open_box<bool> (val));
+    }
     break;
       
   case SLOT_UPDATE:
@@ -979,7 +1018,7 @@ texmacs_widget (int mask, command quit) {
   // the mask variable indicates whether the menu, icon bars, status bar, etc.
   // are visible or not
   (void) mask; (void) quit; // FIXME: handle correctly mask and quit
-  widget w= new qt_tm_widget_rep();
+  widget w= new qt_tm_widget_rep(mask);
   return w; 
 }
 
