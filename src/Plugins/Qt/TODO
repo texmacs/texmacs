@@ -49,3 +49,5 @@ DONE
   all entries should appear in one window.
 * Modal windows should appear inside main window,
   horizontally centered, vertically centered at height/3 from top.
+* Fullscreen mode
+* Header/footer visibility

@@ -35,8 +35,10 @@ public:
   qt_widget int_prompt;
   qt_widget int_input;
 
+  bool visibility[5]; 
+
 public:
-  qt_tm_widget_rep ();
+  qt_tm_widget_rep (int mask = 0);
   ~qt_tm_widget_rep ();
 	
   virtual void send (slot s, blackbox val);
@@ -55,7 +57,9 @@ public:
   inline QWidget* tm_canvas () {
     return tm_scrollarea()->widget(); }
 
+  
   // void layout();
+  void updateVisibility();
   void do_interactive_prompt ();
 };
 
