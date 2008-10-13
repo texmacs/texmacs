@@ -84,15 +84,7 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
 
 bool
 qt_renderer_rep::interrupted (bool check) {
-  (void) check;
-  return false;
-  /*
-  bool ret = dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
-  if (ret)
-    if (DEBUG_EVENTS)
-      cout << "INTERRUPTED:" << ret << "\n";
-  return ret;
-  */
+  return dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
 }
 
 /* routines from renderer.hpp **********************************************/

@@ -28,8 +28,17 @@ qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 bool qt_update_flag= false;
 
+int timeout_time;
+int last_keypress_time;
+int last_event_time;
+int last_update_time;
+
+/******************************************************************************
+* Constructor and geometry
+******************************************************************************/
+
 qt_gui_rep::qt_gui_rep(int argc2, char **argv2):
-  interrupted(false), color_scale ((void*) NULL), 
+  interrupted (false), color_scale ((void*) NULL), 
   character_image (qt_image()), selection (NULL), images (qt_image())
 {
   (void) argc2; (void) argv2;
@@ -308,7 +317,9 @@ qt_gui_rep::load_system_font (string family, int size, int dpi,
   (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
 }
 
-/* interclient communication */
+/******************************************************************************
+* interclient communication
+******************************************************************************/
 
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s) {
@@ -363,65 +374,38 @@ qt_gui_rep::clear_selection (string key) {
   }
 }
 
-/* miscellaneous */
+/******************************************************************************
+* Miscellaneous
+******************************************************************************/
+
 void qt_gui_rep::image_gc (string name) { (void) name; }
 // FIXME: remove this unused function
 void qt_gui_rep::set_mouse_pointer (string name) { (void) name; }
 // FIXME: implement this function
 void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) { (void) curs_name; (void) mask_name; } ;
 
-#if 0 // FIXME
-static bool check_mask(int mask) {
-  NSEvent * event = [NSApp nextEventMatchingMask:mask
-		     untilDate:nil
-		     inMode:NSDefaultRunLoopMode 
-		     dequeue:NO];
-  // if (event != nil) NSLog(@"%@",event);
-  return (event != nil);
-  
-}
+/******************************************************************************
+* Main loop
+******************************************************************************/
 
 bool
 qt_gui_rep::check_event (int type) {
   switch (type) {
   case INTERRUPT_EVENT:
     if (interrupted) return true;
-    else  {
+    else {
       time_t now= texmacs_time ();
-      if (now - interrupt_time < 0) return false;
-      //        else interrupt_time= now + (100 / (XPending (dpy) + 1));
-      else interrupt_time= now + 100;
-      interrupted= check_mask(NSKeyDownMask |
-			      // NSKeyUpMask |
-			      NSLeftMouseDownMask |
-			      NSLeftMouseUpMask |
-			      NSRightMouseDownMask |
-			      NSRightMouseUpMask );
+      if (now - timeout_time < 0) return false;
+      return "interrupt\n";
+      interrupted= true;
       return interrupted;
     }
   case INTERRUPTED_EVENT:
     return interrupted;
-  case ANY_EVENT:
-    return check_mask(NSAnyEventMask);
-  case MOTION_EVENT:
-    return check_mask(NSMouseMovedMask);
-  case DRAG_EVENT:
-    return check_mask(NSLeftMouseDraggedMask|NSRightMouseDraggedMask);
-  case MENU_EVENT:
-    return check_mask(NSLeftMouseDownMask |
-		      NSLeftMouseUpMask |
-		      NSRightMouseDownMask |
-		      NSRightMouseUpMask );
+  default:
+    return false;
   }
-  return interrupted;
 }
-#else
-bool
-qt_gui_rep::check_event (int type) {
-  (void) type;
-  return false;
-}
-#endif
 
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
@@ -458,11 +442,17 @@ qt_gui_rep::event_loop () {
   //t.start (10);
   t.start (1000);
 
-  while (1) {
-    //cout << "."; cout.flush ();
+  last_keypress_time= texmacs_time () - 1000000;
+  last_event_time= texmacs_time () - 1000000;
+  last_update_time= texmacs_time () - 1000000;
+  while (true) {
+    int t= texmacs_time ();
+    timeout_time= t + max (25, 2 * (t - last_keypress_time));
+    //cout << "Delay: " << timeout_time - t << "\n";
     app->processEvents (QEventLoop::WaitForMoreEvents);
-    //cout << "*"; cout.flush ();
+    last_event_time= texmacs_time ();
     update ();
+    last_update_time= texmacs_time ();
     qt_update_flag= false;
   }
   //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
