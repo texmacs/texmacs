@@ -28,10 +28,8 @@ qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 bool qt_update_flag= false;
 
+int time_credit;
 int timeout_time;
-int last_keypress_time;
-int last_event_time;
-int last_update_time;
 
 /******************************************************************************
 * Constructor and geometry
@@ -391,17 +389,18 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) { (void)
 bool
 qt_gui_rep::check_event (int type) {
   switch (type) {
+  /*
   case INTERRUPT_EVENT:
     if (interrupted) return true;
     else {
       time_t now= texmacs_time ();
       if (now - timeout_time < 0) return false;
-      return "interrupt\n";
       interrupted= true;
       return interrupted;
     }
   case INTERRUPTED_EVENT:
     return interrupted;
+  */
   default:
     return false;
   }
@@ -438,21 +437,14 @@ void
 qt_gui_rep::event_loop () {
   QApplication *app = (QApplication*)QApplication::instance();
   QTimer t (NULL);
-  //QObject::connect( &t, SIGNAL(timeout()), &h, SLOT(doUpdate()) );
-  //t.start (10);
-  t.start (1000);
+  t.start (100);
 
-  last_keypress_time= texmacs_time () - 1000000;
-  last_event_time= texmacs_time () - 1000000;
-  last_update_time= texmacs_time () - 1000000;
+  time_credit= 1000000;
   while (true) {
-    int t= texmacs_time ();
-    timeout_time= t + max (25, 2 * (t - last_keypress_time));
-    //cout << "Delay: " << timeout_time - t << "\n";
+    timeout_time= texmacs_time () + time_credit;
     app->processEvents (QEventLoop::WaitForMoreEvents);
-    last_event_time= texmacs_time ();
     update ();
-    last_update_time= texmacs_time ();
+    time_credit= min (1000000, 2 * time_credit);
     qt_update_flag= false;
   }
   //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
