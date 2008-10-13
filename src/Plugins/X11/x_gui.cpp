@@ -557,7 +557,7 @@ x_gui_rep::check_event (int type) {
   switch (type) {
   case INTERRUPT_EVENT:
     if (interrupted) return true;
-    else  {
+    else {
       time_t now= texmacs_time ();
       if (now - interrupt_time < 0) return false;
       else interrupt_time= now + (100 / (XPending (dpy) + 1));
