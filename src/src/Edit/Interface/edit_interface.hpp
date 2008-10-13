@@ -15,9 +15,6 @@
 #include "editor.hpp"
 #include "timer.hpp"
 #include "widget.hpp"
-#ifndef AQUATEXMACS
-#include "Widkit/Event/attribute_event.hpp"
-#endif
 
 #define INPUT_NORMAL      0
 #define INPUT_SEARCH      1
