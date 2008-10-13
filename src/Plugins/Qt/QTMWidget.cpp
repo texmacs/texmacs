@@ -19,8 +19,8 @@
 #define PIXEL 256
 
 extern bool qt_update_flag;
+extern int time_credit;
 extern int timeout_time;
-extern int last_keypress_time;
 
 hashmap<int,string> qtkeymap (0);
 
@@ -184,8 +184,8 @@ QTMWidget::focusOutEvent (QFocusEvent* event) {
 
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
-  last_keypress_time= texmacs_time ();
-  timeout_time= last_keypress_time + 25;
+  time_credit= 25;
+  timeout_time= texmacs_time () + time_credit;
   static bool fInit = false;
   if (!fInit) {
     if (DEBUG_EVENTS)
