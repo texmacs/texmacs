@@ -146,6 +146,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   if (qt_update_flag)
     delayed_rects= list<QRect> (rect, delayed_rects);
   else {
+    //int start= texmacs_time ();
     the_qt_renderer()->begin (this);  
 
     the_qt_renderer() -> set_clipping
@@ -159,6 +160,8 @@ QTMWidget::paintEvent (QPaintEvent* event) {
       qt_update_flag= true;
 
     the_qt_renderer()->end();
+    //int end= texmacs_time ();
+    //if (end > start) cout << "Repaint " << end - start << "\n";
   }
 
   if (qt_update_flag) {
@@ -263,7 +266,12 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (r == "") return;
     if (DEBUG_EVENTS)
       cout << "key press: " << r << LF;
+    //int start= texmacs_time ();
     wid -> handle_keypress (r, texmacs_time());        
+    //int end= texmacs_time ();
+    //if (end > start) cout << "Keypress " << end - start << "\n";
+    the_gui->update (); // FIXME: remove this line when
+                        // edit_typeset_rep::get_env_value will be faster
   }
 }
 

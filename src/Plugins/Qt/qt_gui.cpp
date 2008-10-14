@@ -435,15 +435,18 @@ QTMGuiHelper::doUpdate() {
 
 void
 qt_gui_rep::event_loop () {
-  QApplication *app = (QApplication*)QApplication::instance();
+  QApplication *app = (QApplication*) QApplication::instance();
   QTimer t (NULL);
-  t.start (100);
+  t.start (25);
 
   time_credit= 1000000;
   while (true) {
     timeout_time= texmacs_time () + time_credit;
     app->processEvents (QEventLoop::WaitForMoreEvents);
+    //int start= texmacs_time ();
     update ();
+    //int end= texmacs_time ();
+    //if (end > start) cout << "Update " << end - start << "\n";
     time_credit= min (1000000, 2 * time_credit);
     qt_update_flag= false;
   }

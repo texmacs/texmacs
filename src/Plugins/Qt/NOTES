@@ -2,26 +2,29 @@
 Port notes
 ----------
 
-
 * Image support is still partial. In particular System/Files/image_files.cpp 
   should be modified to allow the ue of Qt to gather informations on image sizes.
   On Mac we can use the Apple Distiller instead of ghostscript to interpret pdf 
   and ps images. (What about Windows?)
-  
-* Visibility status of main icon bar does not correctly report in the View menu
 
-* What is the header (e.g. in the message SLOT_HEADER_VISIBILITY) ?
-  ---> All widgets above the canvas widget, i.e. the title bar + icon bars.
-       Under Mac OS, the header only consists of the icon bars.
+* gui.hpp:void show_help_balloon is useful only in the X11 port.
+  Maybe remove from the abstract interface.
 
-
-* gui.hpp:void show_help_balloon is useful only in the X11 port. Maybe remove from 
-  the abstract interface.
-  
-  
 * wait_widget seems do not belong to the abstract interface 
   (it is not called in texmacs code)  
   
-* due to limitation of Qt/Mac multiple keyboard shortcuts in the menu bar are not correctly 
-  displayed. Need more work...
-  
+* due to limitation of Qt/Mac multiple keyboard shortcuts in the menu bar
+  are not correctly displayed. Need more work...
+
+* Paint interrupts can be enabled by uncommenting code in check_event.
+  However, this requires drawing to a shadow buffer.
+  This should be tested on an old computer when repainting is slow.
+  On fast computers, paint interrupts are no longer essential.
+
+* We temporary need to add the_gui->update (); after some of the event handlers,
+  because the current implementation of edit_typeset_rep::get_env_value
+  is too slow in cases of high speed typing (for instance).
+  Ideally, it should be possible to treat several events at once,
+  without interspersing calls to update, since this will relieve
+  the typesetter. This requires an efficient treatment of events
+  in non-updated states.

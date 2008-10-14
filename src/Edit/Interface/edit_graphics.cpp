@@ -39,7 +39,7 @@ edit_graphics_rep::inside_graphics (bool b) {
   tree st  = et;
   while (!is_nil (p)) {
     if (is_func (st, GRAPHICS)) flag= true;
-    if (b && is_func (st, TEXT_AT )) flag= false;
+    if (b && is_func (st, TEXT_AT)) flag= false;
     st= st[p->item];
     p = p->next;
   }
