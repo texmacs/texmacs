@@ -115,25 +115,19 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       }
       break;
     }
-    case '%':
-      if (test (s, i, "%%%%%%%%%% Start TeXmacs macros\n")) {
-	while ((i<n) && (!test (s, i, "%%%%%%%%%% End TeXmacs macros\n")))
-	  i++;
-	i += 30;
-      }
-      else {
-	while ((i<n) && (s[i]!='\n')) i++;
-	if (i<n) i++;
-	int ln=0;
-	while ((i<n) && is_space (s[i]))
-	  if (s[i++]=='\n') ln++;
-	if (ln > 0) {
-	  if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
-	    t[N(t)-1]= "\n";
-	  else t << "\n";
-	}
+    case '%': {
+      while ((i<n) && (s[i]!='\n')) i++;
+      if (i<n) i++;
+      int ln=0;
+      while ((i<n) && is_space (s[i]))
+	if (s[i++]=='\n') ln++;
+      if (ln > 0) {
+	if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
+	  t[N(t)-1]= "\n";
+	else t << "\n";
       }
       break;
+    }
     case '#':
       i++;
       if (i==n) return t;
@@ -699,6 +693,14 @@ latex_parser::parse (string s) {
   for (i=0; i<n; i++)
     if (s[i]=='\n') {
       while ((i<n) && is_space (s[i])) i++;
+      if (test (s, i, "%%%%%%%%%% Start TeXmacs macros\n")) {
+	a << s (start, i);
+	while ((i<n) && (!test (s, i, "%%%%%%%%%% End TeXmacs macros\n")))
+	  i++;
+	i += 30;
+	start= i;
+	continue;
+      }
       if (test (s, i, "\\begin{document}") ||
 	  test (s, i, "\\begin{abstract}") ||
 	  test (s, i, "\\chapter") ||
