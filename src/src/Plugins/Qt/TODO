@@ -1,7 +1,6 @@
 
 TODO
 
-* Delayed help menu, even several seconds after boot.
 * Handle correctly destroy_window_widget
 * Handle correctly mask and quit command in texmacs_widget
 * Several problems in graphics mode.
@@ -50,3 +49,4 @@ DONE
 * Fullscreen mode
 * Header/footer visibility
 * File chooser start location should be directory of current file.
+* Delayed help menu, even several seconds after boot.
