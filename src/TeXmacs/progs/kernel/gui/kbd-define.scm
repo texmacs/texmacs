@@ -34,9 +34,10 @@
 
 (define (lazy-keyboard-force-do l)
   (cond ((null? l) l)
+	((ahash-ref lazy-keyboard-done (cdar l))
+	 (lazy-keyboard-force-do (cdr l)))
 	((texmacs-in-mode? (caar l))
-	 (if (not (ahash-ref lazy-keyboard-done (cdar l)))
-	     (module-load (cdar l)))
+	 (module-load (cdar l))
 	 (ahash-set! lazy-keyboard-done (cdar l) #t)
 	 (lazy-keyboard-force-do (cdr l)))
 	(else (cons (car l) (lazy-keyboard-force-do (cdr l))))))

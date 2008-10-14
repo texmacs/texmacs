@@ -1,7 +1,6 @@
 
 TODO
 
-* Paint interrupts.
 * Delayed help menu, even several seconds after boot.
 * Help -> (Apple) Search. How to customize this?
 * Several problems in graphics mode.
@@ -17,6 +16,7 @@ TODO
 * Clean menu cache on language changes.
 * Visually indicate when a icon menu button is pressed.
 * Implement "minibuffer" interactions (currently a dialog pop up instead) 
+* Paint interrupts.
 
 
 DONE
