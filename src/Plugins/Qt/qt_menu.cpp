@@ -352,7 +352,9 @@ balloon_widget (widget w, widget help)  {
 widget
 text_widget (string s, color col, bool tsp, string lan) {
   // a text widget with a given color, transparency and language
-  return new qt_text_widget_rep (qt_translate (s), col, tsp, lan);
+  string t= qt_translate (s);
+  if (t == "Help") t= "Help ";
+  return new qt_text_widget_rep (t, col, tsp, lan);
 }
 
 widget
