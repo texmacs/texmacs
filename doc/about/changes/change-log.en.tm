@@ -1,13 +1,18 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.6.15>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.15>
+  <section|Changes from version 1.0.6 to 1.0.7>
 
   <\itemize>
+    <item>Started native Qt port for <TeXmacs> (1.0.7).
+
+    <item>Fixed bugs for re-importing files which were exported to <LaTeX>
+    (1.0.7).
+
     <item>Improved <scheme> mode (1.0.6.15).
 
     <item>Improved appearance of <name|Wikipedia> mathematical pages
