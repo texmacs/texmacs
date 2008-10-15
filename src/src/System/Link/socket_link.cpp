@@ -19,6 +19,7 @@
 #include "Scheme/object.hpp"
 #include <stdio.h>
 #include <string.h>
+#ifndef Q_WS_WIN
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -26,6 +27,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif
 #include <errno.h>
 #ifdef OS_WIN32
 #include <sys/misc.h>
@@ -74,6 +76,7 @@ find_socket_link (int fd) {
 
 string
 socket_link_rep::start () {
+#ifndef Q_WS_WIN
   if (alive) return "busy";
   if (DEBUG_AUTO)
     cout << "TeXmacs] Connecting to '" << host << ":" << port << "'\n";
@@ -124,6 +127,9 @@ socket_link_rep::start () {
     return "Error: non working connection to '" * where * "'";
   alive= true;
   return "ok";
+#else
+  return "Error: sockets not implemented";
+#endif
 }
 
 static string
@@ -143,6 +149,7 @@ debug_io_string (string s) {
 
 static int
 send_all (int s, char *buf, int *len) {
+#ifndef Q_WS_WIN
   int total= 0;          // how many bytes we've sent
   int bytes_left= *len;  // how many we have left to send
   int n= 0;
@@ -156,6 +163,9 @@ send_all (int s, char *buf, int *len) {
 
   *len= total;
   return n==-1? -1: 0;
+#else
+  return 0;
+#endif
 } 
 
 
@@ -172,6 +182,7 @@ socket_link_rep::write (string s, int channel) {
 
 void
 socket_link_rep::feed (int channel) {
+#ifndef Q_WS_WIN
   if ((!alive) || (channel != LINK_OUT)) return;
   char tempout[1024];
   int r= recv (io, tempout, 1024, 0);
@@ -184,6 +195,7 @@ socket_link_rep::feed (int channel) {
     if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
+#endif
 }
 
 string&
@@ -205,6 +217,7 @@ socket_link_rep::read (int channel) {
 
 void
 socket_link_rep::listen (int msecs) {
+#ifndef Q_WS_WIN
   if (!alive) return;
   fd_set rfds;
   FD_ZERO (&rfds);
@@ -214,6 +227,7 @@ socket_link_rep::listen (int msecs) {
   tv.tv_usec = 1000 * (msecs % 1000);
   int nr= select (io+1, &rfds, NULL, NULL, &tv);
   if (nr != 0 && FD_ISSET (io, &rfds)) feed (LINK_OUT);
+#endif
 }
 
 void
@@ -222,6 +236,7 @@ socket_link_rep::interrupt () {
 
 void
 socket_link_rep::stop () {
+#ifndef Q_WS_WIN
   if (!alive) return;
   if (type == SOCKET_SERVER) call ("server-remove", object (io));
   else if (type == SOCKET_CLIENT) call ("client-remove");
@@ -229,6 +244,7 @@ socket_link_rep::stop () {
   io= -1;
   alive= false;
   wait (NULL);
+#endif
 }
 
 /******************************************************************************
@@ -237,6 +253,7 @@ socket_link_rep::stop () {
 
 void
 listen_to_sockets () {
+#ifndef Q_WS_WIN
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);
@@ -263,4 +280,5 @@ listen_to_sockets () {
       if (con->alive && FD_ISSET (con->io, &rfds)) con->feed (LINK_OUT);
     }
   }
+#endif
 }

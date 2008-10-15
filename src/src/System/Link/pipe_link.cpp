@@ -17,11 +17,14 @@
 #include "timer.hpp"
 #include <stdio.h>
 #include <string.h>
+#ifdef Q_WS_WIN
+#ifdef OS_WIN32
+#include <sys/pipe.h>
+#endif
+#else
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
-#ifdef OS_WIN32
-#include <sys/pipe.h>
 #endif
 #ifndef __APPLE__
 #include <malloc.h>
@@ -77,6 +80,7 @@ execute_shell (string s) {
 
 string
 pipe_link_rep::start () {
+#ifndef Q_WS_WIN
   if (alive) return "busy";
   if (DEBUG_AUTO) cout << "TeXmacs] Launching '" << cmd << "'\n";
 
@@ -144,6 +148,9 @@ pipe_link_rep::start () {
 	return "Error: the application did not send its usual startup banner";
     }
   }
+#else
+  return "Error: pipes not implemented";
+#endif
 }
 
 static string
@@ -163,6 +170,7 @@ debug_io_string (string s) {
 
 void
 pipe_link_rep::write (string s, int channel) {
+#ifndef Q_WS_WIN
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
   char* _s= as_charp (s);
@@ -172,12 +180,13 @@ pipe_link_rep::write (string s, int channel) {
   ::write (in, _s, N(s));
 #endif
   delete[] _s;
+#endif
 }
 
 void
 pipe_link_rep::feed (int channel) {
+#ifndef Q_WS_WIN
   if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR))) return;
-
   int r;
   char tempout[1024];
 #ifdef OS_WIN32
@@ -207,6 +216,7 @@ pipe_link_rep::feed (int channel) {
     if (channel == LINK_OUT) outbuf << string (tempout, r);
     else errbuf << string (tempout, r);
   }
+#endif
 }
 
 string&
@@ -244,16 +254,19 @@ pipe_link_rep::listen (int msecs) {
 
 void
 pipe_link_rep::interrupt () {
+#ifndef Q_WS_WIN
   if (!alive) return;
 #ifdef OS_WIN32
   PIPE_Close(&conn);
 #else
   killpg (pid, SIGINT);
 #endif
+#endif
 }
 
 void
 pipe_link_rep::stop () {
+#ifndef Q_WS_WIN
   if (!alive) return;
 #ifdef OS_WIN32
   PIPE_Close(&conn);
@@ -267,6 +280,7 @@ pipe_link_rep::stop () {
 #endif
   alive= false;
   wait (NULL);
+#endif
 }
 
 /******************************************************************************
@@ -275,6 +289,7 @@ pipe_link_rep::stop () {
 
 void
 listen_to_pipes () {
+#ifndef Q_WS_WIN
 #ifdef OS_WIN32
   while (true) {
     int max_fd = 0;
@@ -326,6 +341,7 @@ listen_to_pipes () {
     }
   }
 #endif
+#endif
 }
 
 /******************************************************************************
@@ -334,6 +350,7 @@ listen_to_pipes () {
 
 void
 close_all_pipes () {
+#ifndef Q_WS_WIN
   iterator<pointer> it= iterate (pipe_link_set);
   while (it->busy()) {
     pipe_link_rep* con= (pipe_link_rep*) it->next();
@@ -349,4 +366,5 @@ close_all_pipes () {
       con->alive= false;
     }
   }
+#endif
 }
