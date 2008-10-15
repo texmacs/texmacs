@@ -612,17 +612,18 @@ CONFIG_GUI="X11"
 AC_ARG_ENABLE(qt,
 [  --enable-qt             replace X11 by Qt interface],
     [], [enable_qt="no"])
+
 case "$enable_qt" in
     yes)
-  AT_WITH_QT
-  if test x"$at_cv_qt_build" = xko; then 
-		AC_MSG_ERROR([cannot find Qt!])
-   else
-  	AC_MSG_RESULT([enabling experimental Qt port])
-    CONFIG_GUI="QT"
-    AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
-    AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
-  fi
+        HACKED_AT_WITH_QT
+	if test x"$at_cv_qt_build" = xko; then 
+	   AC_MSG_ERROR([cannot find Qt!])
+	else
+	   AC_MSG_RESULT([enabling experimental Qt port])
+           CONFIG_GUI="QT"
+           AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
+           AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
+        fi
         ;;
     no)
 	AC_MSG_RESULT([disabling experimental Qt port])
