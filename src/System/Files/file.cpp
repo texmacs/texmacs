@@ -260,14 +260,14 @@ is_of_type (url name, string filter) {
       if (!S_ISLNK (buf.st_mode)) return false;
       break;
     case 'r':
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
       if ((buf.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) == 0) return false;
 #else
       if ((buf.st_mode & 292) == 0) return false;
 #endif
       break;
     case 'w':
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
       if ((buf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) return false;
 #else
       if ((buf.st_mode & 146) == 0) return false;
@@ -277,7 +277,7 @@ is_of_type (url name, string filter) {
 #ifdef OS_WIN32
       if (suffix(name) == "bat") break;
 #endif
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
       if ((buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0) return false;
 #else
       if ((buf.st_mode & 73) == 0) return false;
