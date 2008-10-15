@@ -258,7 +258,7 @@ is_of_type (url name, string filter) {
       break;
     case 'l':
 #ifdef __MINGW32__
-      return 0;
+      return false;
 #else
       if (!S_ISLNK (buf.st_mode)) return false;
 #endif
