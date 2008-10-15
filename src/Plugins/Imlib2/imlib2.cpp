@@ -171,6 +171,7 @@ imlib2_image_size (url u, int& w, int& h) {
   fatal_error ("Imlib2 is not present", "imlib2_image_size");
 }
 
+#ifndef QTTEXMACS
 void
 imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
 		double cx1, double cy1, double cx2, double cy2)
@@ -180,5 +181,6 @@ imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
   (void) cx1; (void) cy1; (void) cx2; (void) cy2;
   fatal_error ("Imlib2 is not present", "imlib2_display");
 }
+#endif
 
 #endif // USE_IMLIB2
