@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.11>
+<TeXmacs|1.0.7>
 
 <style|tmdoc>
 
@@ -6,9 +6,6 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
-    <item>Henri Lesourd developed a native mode for drawing technical
-    pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
-
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
@@ -16,6 +13,11 @@
     <item>David Allouche replaced the gencc preprocessor by the more standard
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
+
+    <item>Henri Lesourd developed a native mode for drawing technical
+    pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
+
+    <item>Massimiliano Gubinelli contributed an experimental Qt port.
 
     <item>Dan Martens made the <name|Windows> port.
 
