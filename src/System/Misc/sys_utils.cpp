@@ -84,7 +84,7 @@ get_env (string var) {
 
 void
 set_env (string var, string with) {
-#if defined(STD_SETENV) && !defined(Q_WS_WIN)
+#if defined(STD_SETENV) && !defined(__MINGW32__)
   char* _var = as_charp (var);
   char* _with= as_charp (with);
   setenv (_var, _with, 1);

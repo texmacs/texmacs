@@ -257,7 +257,11 @@ is_of_type (url name, string filter) {
       if (!S_ISDIR (buf.st_mode)) return false;
       break;
     case 'l':
+#ifdef __MINGW32__
+      return 0;
+#else
       if (!S_ISLNK (buf.st_mode)) return false;
+#endif
       break;
     case 'r':
 #ifndef __MINGW32__
@@ -313,13 +317,16 @@ is_newer (url which, url than) {
 
 url
 url_temp (string suffix) {
+#ifdef __MINGW32__
+  int rnd= texmacs_time ();
+#else
   static bool initialized= false;
   if (!initialized) {
     srandom ((int) texmacs_time ());
     initialized= true;
   }
-
   int rnd= random ();
+#endif
   string name= "tmp_" * as_string (rnd) * suffix;
   url u ("$TEXMACS_HOME_PATH/system/tmp", name);
   if (exists (u)) return url_temp (suffix);

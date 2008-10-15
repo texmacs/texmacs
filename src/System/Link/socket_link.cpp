@@ -19,7 +19,7 @@
 #include "Scheme/object.hpp"
 #include <stdio.h>
 #include <string.h>
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -76,7 +76,7 @@ find_socket_link (int fd) {
 
 string
 socket_link_rep::start () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if (alive) return "busy";
   if (DEBUG_AUTO)
     cout << "TeXmacs] Connecting to '" << host << ":" << port << "'\n";
@@ -149,7 +149,7 @@ debug_io_string (string s) {
 
 static int
 send_all (int s, char *buf, int *len) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   int total= 0;          // how many bytes we've sent
   int bytes_left= *len;  // how many we have left to send
   int n= 0;
@@ -182,7 +182,7 @@ socket_link_rep::write (string s, int channel) {
 
 void
 socket_link_rep::feed (int channel) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if ((!alive) || (channel != LINK_OUT)) return;
   char tempout[1024];
   int r= recv (io, tempout, 1024, 0);
@@ -217,7 +217,7 @@ socket_link_rep::read (int channel) {
 
 void
 socket_link_rep::listen (int msecs) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if (!alive) return;
   fd_set rfds;
   FD_ZERO (&rfds);
@@ -236,7 +236,7 @@ socket_link_rep::interrupt () {
 
 void
 socket_link_rep::stop () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if (!alive) return;
   if (type == SOCKET_SERVER) call ("server-remove", object (io));
   else if (type == SOCKET_CLIENT) call ("client-remove");
@@ -253,7 +253,7 @@ socket_link_rep::stop () {
 
 void
 listen_to_sockets () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);

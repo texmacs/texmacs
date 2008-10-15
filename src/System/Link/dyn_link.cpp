@@ -13,7 +13,7 @@
 #include "dyn_link.hpp"
 #include "url.hpp"
 #include "hashmap.hpp"
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
 #include <dlfcn.h>
 #endif
 #include <TeXmacs.h>
@@ -26,7 +26,7 @@ static hashmap<string,pointer> dyn_linked (NULL);
 
 string
 symbol_install (string lib, string symb, pointer& f) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   // f becomes NULL in case of failure
   // status message returned
   string out;
@@ -71,7 +71,7 @@ symbol_install (string lib, string symb, pointer& f) {
 
 string
 symbols_install (string lib, string* symb, pointer* f, int n) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   int i;
   for (i=0; i<n; i++) f[i]= NULL;
   for (i=0; i<n; i++) {
@@ -110,7 +110,7 @@ static TeXmacs_exports_1 TeXmacs= {
 
 string
 dyn_link_rep::start () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   string name= lib * ":" * symbol * "-package";
   if (dyn_linked->contains (name))
     routs= dyn_linked [name];
@@ -145,7 +145,7 @@ dyn_link_rep::start () {
 
 void
 dyn_link_rep::write (string s, int channel) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if ((!alive) || (channel != LINK_IN)) return;
   if (routs==NULL)
     fatal_error ("'" * lib * "' not installed", "dyn_link_rep::write");

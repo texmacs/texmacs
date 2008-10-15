@@ -16,7 +16,7 @@
 #include "iterator.hpp"
 #include <stdlib.h>
 #include <string.h>
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -59,7 +59,7 @@ number_of_servers () {
 
 string
 socket_server_rep::start () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   // get the server
   if ((server = socket (PF_INET, SOCK_STREAM, 0)) == -1)
     return "Error: call to 'socket' failed";
@@ -93,7 +93,7 @@ socket_server_rep::start () {
 
 void
 socket_server_rep::start_client () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   struct sockaddr_in remote_address;
   socklen_t addrlen= sizeof (remote_address);
   int client= accept (server, (struct sockaddr *) &remote_address, &addrlen);
@@ -138,7 +138,7 @@ socket_server_rep::interrupt () {
 
 void
 socket_server_rep::stop () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   // FIXME: close children
   if (!alive) return;
   incoming= array<tm_link> ();
@@ -154,7 +154,7 @@ socket_server_rep::stop () {
 
 void
 listen_to_servers () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   while (true) {
     fd_set fds;
     FD_ZERO (&fds);
