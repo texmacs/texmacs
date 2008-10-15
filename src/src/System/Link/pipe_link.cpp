@@ -17,7 +17,7 @@
 #include "timer.hpp"
 #include <stdio.h>
 #include <string.h>
-#ifdef Q_WS_WIN
+#ifdef __MINGW32__
 #ifdef OS_WIN32
 #include <sys/pipe.h>
 #endif
@@ -80,7 +80,7 @@ execute_shell (string s) {
 
 string
 pipe_link_rep::start () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if (alive) return "busy";
   if (DEBUG_AUTO) cout << "TeXmacs] Launching '" << cmd << "'\n";
 
@@ -170,7 +170,7 @@ debug_io_string (string s) {
 
 void
 pipe_link_rep::write (string s, int channel) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
   char* _s= as_charp (s);
@@ -185,7 +185,7 @@ pipe_link_rep::write (string s, int channel) {
 
 void
 pipe_link_rep::feed (int channel) {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR))) return;
   int r;
   char tempout[1024];
@@ -254,7 +254,7 @@ pipe_link_rep::listen (int msecs) {
 
 void
 pipe_link_rep::interrupt () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if (!alive) return;
 #ifdef OS_WIN32
   PIPE_Close(&conn);
@@ -266,7 +266,7 @@ pipe_link_rep::interrupt () {
 
 void
 pipe_link_rep::stop () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   if (!alive) return;
 #ifdef OS_WIN32
   PIPE_Close(&conn);
@@ -289,7 +289,7 @@ pipe_link_rep::stop () {
 
 void
 listen_to_pipes () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
 #ifdef OS_WIN32
   while (true) {
     int max_fd = 0;
@@ -350,7 +350,7 @@ listen_to_pipes () {
 
 void
 close_all_pipes () {
-#ifndef Q_WS_WIN
+#ifndef __MINGW32__
   iterator<pointer> it= iterate (pipe_link_set);
   while (it->busy()) {
     pipe_link_rep* con= (pipe_link_rep*) it->next();
