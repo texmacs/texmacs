@@ -13,7 +13,9 @@
 #include "dyn_link.hpp"
 #include "url.hpp"
 #include "hashmap.hpp"
+#ifndef Q_WS_WIN
 #include <dlfcn.h>
+#endif
 #include <TeXmacs.h>
 
 static hashmap<string,pointer> dyn_linked (NULL);
@@ -24,6 +26,7 @@ static hashmap<string,pointer> dyn_linked (NULL);
 
 string
 symbol_install (string lib, string symb, pointer& f) {
+#ifndef Q_WS_WIN
   // f becomes NULL in case of failure
   // status message returned
   string out;
@@ -61,10 +64,14 @@ symbol_install (string lib, string symb, pointer& f) {
 
   if (DEBUG_AUTO) cout << "TeXmacs] " << out << "\n";
   return out;
+#else
+  return "Dynamic linking not implemented";
+#endif
 }
 
 string
 symbols_install (string lib, string* symb, pointer* f, int n) {
+#ifndef Q_WS_WIN
   int i;
   for (i=0; i<n; i++) f[i]= NULL;
   for (i=0; i<n; i++) {
@@ -72,6 +79,9 @@ symbols_install (string lib, string* symb, pointer* f, int n) {
     if (f[i] == NULL) return message;
   }
   return "Symbols installed for library '" * lib * "'";
+#else
+  return "Dynamic linking not implemented";
+#endif
 }
 
 /******************************************************************************
@@ -100,6 +110,7 @@ static TeXmacs_exports_1 TeXmacs= {
 
 string
 dyn_link_rep::start () {
+#ifndef Q_WS_WIN
   string name= lib * ":" * symbol * "-package";
   if (dyn_linked->contains (name))
     routs= dyn_linked [name];
@@ -127,10 +138,14 @@ dyn_link_rep::start () {
     return ret;
   }
   else return message;
+#else
+  return "Error: dynamic linking not implemented";
+#endif
 }
 
 void
 dyn_link_rep::write (string s, int channel) {
+#ifndef Q_WS_WIN
   if ((!alive) || (channel != LINK_IN)) return;
   if (routs==NULL)
     fatal_error ("'" * lib * "' not installed", "dyn_link_rep::write");
@@ -143,6 +158,7 @@ dyn_link_rep::write (string s, int channel) {
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);
   delete[] _s;
   delete[] _session;
+#endif
 }
 
 string&

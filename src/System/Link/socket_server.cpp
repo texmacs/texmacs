@@ -16,11 +16,13 @@
 #include "iterator.hpp"
 #include <stdlib.h>
 #include <string.h>
+#ifndef Q_WS_WIN
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#endif
 
 hashset<pointer> socket_server_set;
 
@@ -57,6 +59,7 @@ number_of_servers () {
 
 string
 socket_server_rep::start () {
+#ifndef Q_WS_WIN
   // get the server
   if ((server = socket (PF_INET, SOCK_STREAM, 0)) == -1)
     return "Error: call to 'socket' failed";
@@ -83,10 +86,14 @@ socket_server_rep::start () {
 
   alive= true;
   return "ok";
+#else
+  return "Error: sockets not implemented";
+#endif
 }
 
 void
 socket_server_rep::start_client () {
+#ifndef Q_WS_WIN
   struct sockaddr_in remote_address;
   socklen_t addrlen= sizeof (remote_address);
   int client= accept (server, (struct sockaddr *) &remote_address, &addrlen);
@@ -101,6 +108,7 @@ socket_server_rep::start_client () {
     incoming= update;
     incoming << make_socket_link (addr, -1, SOCKET_SERVER, client);
   }
+#endif
 }
 
 void
@@ -130,12 +138,14 @@ socket_server_rep::interrupt () {
 
 void
 socket_server_rep::stop () {
+#ifndef Q_WS_WIN
   // FIXME: close children
   if (!alive) return;
   incoming= array<tm_link> ();
   alive= false;
   close (server);
   wait (NULL);
+#endif
 }
 
 /******************************************************************************
@@ -144,6 +154,7 @@ socket_server_rep::stop () {
 
 void
 listen_to_servers () {
+#ifndef Q_WS_WIN
   while (true) {
     fd_set fds;
     FD_ZERO (&fds);
@@ -171,4 +182,5 @@ listen_to_servers () {
       if (con->alive && FD_ISSET (con->server, &fds)) con->start_client ();
     }
   }
+#endif
 }
