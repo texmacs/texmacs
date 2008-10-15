@@ -65,6 +65,7 @@ make_pipe_link (string cmd) {
 ******************************************************************************/
 
 #ifndef OS_WIN32
+#ifndef __MINGW32__
 void
 execute_shell (string s) {
   char *_s= as_charp (s);
@@ -76,6 +77,7 @@ execute_shell (string s) {
   execve ("/bin/sh", argv, environ);
   delete[] _s;
 }
+#endif
 #endif
 
 string
@@ -153,6 +155,7 @@ pipe_link_rep::start () {
 #endif
 }
 
+#ifndef __MINGW32__
 static string
 debug_io_string (string s) {
   int i, n= N(s);
@@ -167,6 +170,7 @@ debug_io_string (string s) {
   }
   return r;
 }
+#endif
 
 void
 pipe_link_rep::write (string s, int channel) {
