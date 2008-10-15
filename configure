@@ -8190,8 +8190,20 @@ else
   enable_qt="no"
 fi
 
+
 case "$enable_qt" in
     yes)
+
+  if test -r "/c/Qt"; then
+    moc_bin="`which moc`"
+    moc_dir="`dirname $moc_bin`"
+    qt_home="`dirname $moc_dir`"
+    QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
+    QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
+    QT_LDFLAGS=""
+#    QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
+    QT_LIBS="-L'c:$qt_home/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
+  else
 
 
 
@@ -8741,14 +8753,16 @@ echo "${ECHO_T}$at_cv_env_QT_LIBS" >&6; }
   cd "$my_configure_pwd" || echo 'WTF!'
   rm -rf "$my_tmpdir"
 
-  if test x"$at_cv_qt_build" = xko; then
-		{ { echo "$as_me:$LINENO: error: cannot find Qt!" >&5
+  fi
+
+	if test x"$at_cv_qt_build" = xko; then
+	   { { echo "$as_me:$LINENO: error: cannot find Qt!" >&5
 echo "$as_me: error: cannot find Qt!" >&2;}
    { (exit 1); exit 1; }; }
-   else
-  	{ echo "$as_me:$LINENO: result: enabling experimental Qt port" >&5
+	else
+	   { echo "$as_me:$LINENO: result: enabling experimental Qt port" >&5
 echo "${ECHO_T}enabling experimental Qt port" >&6; }
-    CONFIG_GUI="QT"
+           CONFIG_GUI="QT"
 
 cat >>confdefs.h <<\_ACEOF
 #define NO_FAST_ALLOC 1
@@ -8759,7 +8773,7 @@ cat >>confdefs.h <<\_ACEOF
 #define QTTEXMACS 1
 _ACEOF
 
-  fi
+        fi
         ;;
     no)
 	{ echo "$as_me:$LINENO: result: disabling experimental Qt port" >&5

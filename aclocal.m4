@@ -109,7 +109,22 @@ CPPFLAGS="$ac_save_cppflags"
 ])
 
 #-------------------------------------------------------------------
-# Autotroll support for Qt
+# Support for Qt
 #-------------------------------------------------------------------
 
 m4_include([misc/autotroll/autotroll.m4])
+
+AC_DEFUN([HACKED_AT_WITH_QT],[
+  if test -r "/c/Qt"; then
+    moc_bin="`which moc`"
+    moc_dir="`dirname $moc_bin`"
+    qt_home="`dirname $moc_dir`"
+    QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
+    QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
+    QT_LDFLAGS=""
+#    QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
+    QT_LIBS="-L'c:$qt_home/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
+  else
+    AT_WITH_QT
+  fi
+])
