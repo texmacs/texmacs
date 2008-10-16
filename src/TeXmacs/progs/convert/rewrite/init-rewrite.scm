@@ -52,42 +52,68 @@
 ;; Scheme format for TeXmacs (no information loss)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (scheme-recognizes? s)
+(define (stm-recognizes? s)
   (and (string? s) (string-starts? s "(document (TeXmacs")))
 
-(define-format scheme
+(define-format stm
   (:name "Scheme")
-  (:suffix "scm")
-  (:must-recognize scheme-recognizes?))
+  (:suffix "stm" "scm")
+  (:must-recognize stm-recognizes?))
 
-(converter texmacs-tree scheme-document
-  (:function texmacs->scheme))
+(converter texmacs-tree stm-document
+  (:function texmacs->stm))
 
-(converter scheme-document texmacs-tree
-  (:function scheme->texmacs))
+(converter stm-document texmacs-tree
+  (:function stm->texmacs))
 
-(converter texmacs-tree scheme-snippet
-  (:function texmacs->scheme))
+(converter texmacs-tree stm-snippet
+  (:function texmacs->stm))
 
-(converter scheme-snippet texmacs-tree
-  (:function scheme-snippet->texmacs))
+(converter stm-snippet texmacs-tree
+  (:function stm-snippet->texmacs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (texmacs->verbatim x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
+	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "iso-8859-1")))
+    (cpp-texmacs->verbatim x wrap? enc)))
+
+(tm-define (verbatim->texmacs x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "iso-8859-1")))
+    (cpp-verbatim->texmacs x wrap? enc)))
+
+(tm-define (verbatim-snippet->texmacs x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "iso-8859-1")))
+    (cpp-verbatim-snippet->texmacs x wrap? enc)))
 
 (define-format verbatim
   (:name "Verbatim")
   (:suffix "txt"))
 
 (converter verbatim-document texmacs-tree
-  (:function verbatim->texmacs))
-
-(converter texmacs-tree verbatim-document
-  (:function texmacs->verbatim))
+  (:function-with-options verbatim->texmacs)
+  (:option "verbatim->texmacs:wrap" "off")
+  (:option "verbatim->texmacs:encoding" "utf-8"))
 
 (converter verbatim-snippet texmacs-tree
-  (:function verbatim-snippet->texmacs))
+  (:function-with-options verbatim-snippet->texmacs)
+  (:option "verbatim->texmacs:wrap" "off")
+  (:option "verbatim->texmacs:encoding" "utf-8"))
+
+(converter texmacs-tree verbatim-document
+  (:function-with-options texmacs->verbatim)
+  (:option "texmacs->verbatim:wrap" "off")
+  (:option "texmacs->verbatim:encoding" "utf-8"))
 
 (converter texmacs-tree verbatim-snippet
-  (:function texmacs->verbatim))
+  (:function-with-options texmacs->verbatim)
+  (:option "texmacs->verbatim:wrap" "off")
+  (:option "texmacs->verbatim:encoding" "utf-8"))

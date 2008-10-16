@@ -129,7 +129,7 @@ bridge_docrange_rep::rebalance () {
 
 void
 bridge_docrange_rep::notify_assign (path p, tree u) {
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_assign");
   if (divide) {
     int i, n= N(acc);
@@ -144,7 +144,7 @@ void
 bridge_docrange_rep::notify_insert (path p, tree u) {
   // cout << "Notify insert " << p << ", " << N(u)
   //      << " [ " << begin << "--" << end << " ]\n";
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_insert");
   if (p->item > end) {
     cerr << "\nNotify insert " << u << " at " << p << "\n";
@@ -174,7 +174,7 @@ void
 bridge_docrange_rep::notify_remove (path p, int nr) {
   // cout << "Notify insert " << p << ", " << nr
   //      << " [ " << begin << "--" << end << " ]\n";
-  if (nil (p))
+  if (is_nil (p))
     fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_insert");
   if (p->item >= end)
     fatal_error ("Out of range", "bridge_docrange_rep::notify_insert");
@@ -214,7 +214,10 @@ bridge_docrange_rep::notify_macro (int type, string v, int l, path p, tree u) {
 void
 bridge_docrange_rep::notify_change () {
   status= CORRUPTED;
-  if (divide) acc[0]->notify_change ();
+  if (divide) {
+    acc[0]->notify_change ();
+    if (N(acc)>1) acc[N(acc)-1]->notify_change ();
+  }
 }
 
 /******************************************************************************

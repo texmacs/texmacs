@@ -21,6 +21,5 @@ string eval_system (string s);
 string var_eval_system (string s);
 string get_env (string var);
 void   set_env (string var, string with);
-void   recursive_kill (int pid);
 
 #endif // defined SYS_UTILS_H

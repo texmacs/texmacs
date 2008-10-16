@@ -23,7 +23,7 @@ selection_encode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return cork_to_il2 (s);
-  else if (lan == "russian")
+  else if ((lan == "bulgarian") || (lan == "russian"))
     return koi8_to_iso (s);
   else if (lan == "ukrainian")
     return koi8uk_to_iso (s);
@@ -39,7 +39,7 @@ selection_decode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return il2_to_cork (s);
-  else if (lan == "russian")
+  else if ((lan == "bulgarian") || (lan == "russian"))
     return iso_to_koi8 (s);
   else if (lan == "ukrainian")
     return iso_to_koi8uk (s);
@@ -62,13 +62,6 @@ void edit_select_rep::get_selection (path& start, path& end) {
   start= copy (start_p); end= copy (end_p); }
 void edit_select_rep::set_selection (path start, path end) {
   start_p= copy (start); end_p= copy (end); }
-
-path
-common (path start, path end) {
-  if (nil (start) || nil (end)) return path ();
-  if (start->item != end->item) return path ();
-  return path (start->item, common (start->next, end->next));
-}
 
 /******************************************************************************
 * Selecting particular things
@@ -157,14 +150,12 @@ edit_select_rep::select_enlarge () {
       if (mode == "text" || mode == "src") {
 	int i1= last_item (start_p), i2= i1;
 	while (i1>0) {
-	  if (s[i1-1] == ' ') break;
-	  if (s[i1-1] == '>') do { i1--; } while ((i1>0) && (s[i1]!='<'));
-	  i1--;
+	  if (s[i1-1] == ' ' || is_punctuation (s[i1-1])) break;
+	  tm_char_backwards (s, i1);
 	}
 	while (i2<N(s)) {
-	  if (s[i2] == ' ') break;
-	  if (s[i2] == '<') do { i2++; } while ((i2<N(s)) && (s[i2]!='>'));
-	  i2++;
+	  if (s[i2] == ' ' || is_punctuation (s[i2])) break;
+	  tm_char_forwards (s, i2);
 	}
 	if (i1<i2) select (p * i1, p * i2);
 	else {
@@ -289,8 +280,8 @@ static path
 table_search_format (tree t, path p) {
   tree st= subtree (t, p);
   if (is_func (st, TFORMAT) && is_func (st[N(st)-1], TABLE)) return p;
-  while ((!nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
-  if ((!nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
+  while ((!is_nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
+  if ((!is_nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
     p= path_up (p);
   return p;
 }
@@ -299,7 +290,7 @@ static void
 table_search_coordinates (tree t, path p, int& row, int& col) {
   row= col= 0;
   while (true) {
-    if (nil (p)) p= path (1);
+    if (is_nil (p)) p= path (1);
     if (p == path (0)) p= path (0, 0);
     if (p == path (1)) p= path (N(t)-1, 1);
     if (is_func (t, TFORMAT));
@@ -343,7 +334,7 @@ selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
     o1= i1;
     o2= i2;
   }
-  else if (atom (i1) || atom (i2)) {
+  else if (is_atom (i1) || is_atom (i2)) {
     if (is_atomic (t)) {
       o1= i1;
       o2= i2;
@@ -385,7 +376,7 @@ static void
 selection_bcorrect (drd_info drd, tree t, path i1, path i2, path& o1, path& o2)
 {
   o1= i1; o2= i2;
-  if (is_compound (t) && !atom (i1) && !atom (i2) && i1->item == i2->item) {
+  if (is_compound (t) && !is_atom (i1) && !is_atom (i2) && i1->item == i2->item) {
     path O1, O2;
     selection_bcorrect (drd, t[i1->item], i1->next, i2->next, O1, O2);
     if (drd->var_without_border (L(t[i1->item])) && (O1->item != O2->item)) {
@@ -406,21 +397,21 @@ compute_selection (tree t, path start, path end) {
   path p1= start->next;
   path p2= end->next;
 
-  if (nil (p1) || nil (p2)) {
+  if (is_nil (p1) || is_nil (p2)) {
     if (start == path (right_index (t))) return "";
     if (end == path (0)) return "";
     if (start == end) return "";
-    if (nil (p1) && nil (p2)) {
+    if (is_nil (p1) && is_nil (p2)) {
       if (is_compound (t)) return copy (t);
       if (i1>=i2) return "";
       return t->label (i1, i2);
     }
     if (is_compound (t) && (!is_format (t))) return copy (t);
-    if (nil (p1)) {
+    if (is_nil (p1)) {
       i1= 0;
       p1= (start->item==0? 0: right_index (t[i1]));
     }
-    if (nil (p2)) {
+    if (is_nil (p2)) {
       i2= N(t)-1;
       p2= (end->item==0? 0: right_index (t[i2]));
     }
@@ -516,18 +507,27 @@ edit_select_rep::selection_get () {
   }
 }
 
+path
+edit_select_rep::selection_get_path () {
+  path start, end;
+  selection_get (start, end);
+  return common (start, end);
+}
+
 /******************************************************************************
 * Copy and paste
 ******************************************************************************/
 
 void
 edit_select_rep::selection_raw_set (string key, tree t) {
-  (void) dis->set_selection (widget (this), key, t, "");
+  (void) ::set_selection (key, t, "");
 }
 
 tree
 edit_select_rep::selection_raw_get (string key) {
-  return copy (dis->get_selection (widget (this), key));
+  tree t; string s;
+  (void) ::get_selection (key, t, s);
+  return t;
 }
 
 void
@@ -553,16 +553,22 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
   tree sel= tuple ("texmacs", t, mode, lan);
+/*TODO: add mode="graphics" somewhere in the context of the <graphics>
+    tag. To be done when implementing the different embeddings for
+    nicely copying graphics into text, text into graphics, etc.
+ */
   string s;
   if (key == "primary") {
+    if (selection_export == "verbatim") t= exec_texmacs (t, tp);
     if (selection_export == "html") t= exec_html (t, tp);
+    if (selection_export == "latex") t= exec_latex (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
       t= tree (WITH, "mode", "math", t);
     s= tree_to_generic (t, selection_export * "-snippet");
     s= selection_encode (lan, s);
   }
-  if (dis->set_selection (widget (this), key, sel, s) &&
-      (!persistant)) selection_cancel ();
+  if (::set_selection (key, sel, s) && !persistant)
+    selection_cancel ();
 }
 
 void
@@ -572,6 +578,11 @@ edit_select_rep::selection_set (tree t) {
 
 void
 edit_select_rep::selection_copy (string key) {
+  if (inside_active_graphics ()) {
+    tree t= as_tree (eval ("(graphics-copy)"));
+    selection_set (key, t);
+    return;
+  }
   if (selection_active_any ()) {
     path old_tp= tp;
     selection sel; selection_get (sel);
@@ -585,7 +596,13 @@ edit_select_rep::selection_copy (string key) {
 
 void
 edit_select_rep::selection_paste (string key) {
-  tree t= copy (dis->get_selection (widget (this), key));
+  tree t; string s;
+  (void) ::get_selection (key, t, s);
+  if (inside_active_graphics ()) {
+    if (is_tuple (t, "texmacs", 3))
+      call ("graphics-paste", t[1]);
+    return;
+  }
   if (is_tuple (t, "extern", 1)) {
     string mode= get_env_string (MODE);
     string lan = get_env_string (MODE_LANGUAGE (mode));
@@ -612,7 +629,7 @@ edit_select_rep::selection_paste (string key) {
       if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;
 	path fp= search_format (row, col);
-	if (nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
+	if (is_nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
 	else table_write_subtable (fp, row, col, t[1]);
       }
       else insert_tree (t[1]);
@@ -622,7 +639,7 @@ edit_select_rep::selection_paste (string key) {
 
 void
 edit_select_rep::selection_clear (string key) {
-  dis->clear_selection (key);
+  ::clear_selection (key);
 }
 
 void
@@ -751,6 +768,11 @@ edit_select_rep::raw_cut (path p1, path p2) {
 
 void
 edit_select_rep::selection_cut (string key) {
+  if (inside_active_graphics ()) {
+    tree t= as_tree (eval ("(graphics-cut)"));
+    selection_set (key, t);
+    return;
+  }
   if (!selection_active_any ()) return;
   if (selection_active_table ()) {
     path p1= start_p, p2= end_p;
@@ -781,7 +803,7 @@ edit_select_rep::selection_get_cut () {
 
 void
 edit_select_rep::selection_move () {
-  int pos= position_new ();
+  observer pos= position_new (tp);
   tree t= selection_get_cut ();
   go_to (position_get (pos));
   insert_tree (t);

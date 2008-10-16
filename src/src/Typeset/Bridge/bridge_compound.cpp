@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "bridge.hpp"
+#include "drd_std.hpp"
 
 tree insert_at (tree, path, tree);
 tree remove_at (tree, path, int);
@@ -46,7 +47,7 @@ void
 bridge_compound_rep::initialize (tree body_t, int delta2, tree fun2) {
   if ((!valid) || (body->st != body_t) || (delta != delta2) || (fun != fun2)) {
     valid= true;
-    if (nil (body)) body= make_bridge (ttt, attach_right (body_t, ip));
+    if (is_nil (body)) body= make_bridge (ttt, attach_right (body_t, ip));
     else replace_bridge (body, attach_right (body_t, ip));
     delta= delta2;
     fun  = fun2;
@@ -65,9 +66,9 @@ bridge_compound (typesetter ttt, tree st, path ip) {
 void
 bridge_compound_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (L(u) < START_EXTENSIONS))
+  if (is_nil (p) && (L(u) < START_EXTENSIONS))
     fatal_error ("Nil path", "bridge_compound_rep::notify_assign");
-  if (nil (p) || (p->item == 0) || nil (body)) {
+  if (is_nil (p) || (p->item == 0) || is_nil (body)) {
     st= substitute (st, p, u);
     valid= false;
   }
@@ -86,8 +87,8 @@ bridge_compound_rep::notify_assign (path p, tree u) {
 void
 bridge_compound_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_compound_rep::notify_insert");
-  if (atom (p) || nil (body)) bridge_rep::notify_insert (p, u);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_compound_rep::notify_insert");
+  if (is_atom (p) || is_nil (body)) bridge_rep::notify_insert (p, u);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     if (is_func (fun, XMACRO, 2))
@@ -103,8 +104,8 @@ bridge_compound_rep::notify_insert (path p, tree u) {
 void
 bridge_compound_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_compound_rep::notify_remove");
-  if (atom (p) || nil (body)) bridge_rep::notify_remove (p, nr);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_compound_rep::notify_remove");
+  if (is_atom (p) || is_nil (body)) bridge_rep::notify_remove (p, nr);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     if (is_func (fun, XMACRO, 2))
@@ -161,7 +162,7 @@ bridge_compound_rep::notify_macro (
 void
 bridge_compound_rep::notify_change () {
   status= CORRUPTED;
-  if (!nil (body)) body->notify_change ();
+  if (!is_nil (body)) body->notify_change ();
 }
 
 /******************************************************************************
@@ -215,14 +216,18 @@ bridge_compound_rep::my_typeset (int desired_status) {
 	  i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);
-    /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    if (!the_drd->is_child_enforcing (st))
+      ttt->insert_marker (st, ip);
     body->typeset (desired_status);
     env->macro_arg= env->macro_arg->next;
     env->macro_src= env->macro_src->next;
   }
   else {
     initialize (f, d, f);
-    /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    ///*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    if (!the_drd->is_child_enforcing (st))
+      ttt->insert_marker (st, ip);
     body->typeset (desired_status);
   }
 }

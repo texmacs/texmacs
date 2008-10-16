@@ -43,7 +43,7 @@ private:
   hashmap<tree,tree> props; // properties associated to the editor
 
 public:
-  edit_main_rep (server_rep* sv, display dis, tm_buffer buf);
+  edit_main_rep (server_rep* sv, tm_buffer buf);
   ~edit_main_rep ();
 
   void set_property (scheme_tree what, scheme_tree val);
@@ -67,6 +67,7 @@ public:
   void print_to_file (url ps_name, string first="1", string last="1000000");
   void print_buffer (string first="1", string last="1000000");
   void export_ps (url ps_name, string first="1", string last="1000000");
+  array<int> print_snippet (url u, tree t);
 
   void footer_eval (string s);
   tree the_line ();

@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = TMView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            CLASS = TMWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {tmview = TMView; }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

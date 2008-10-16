@@ -1,0 +1,19 @@
+Plugin: interactive-proc
+Summary: library module providing a better interactive procedure
+Release: 1.0
+TeXmacs: 1.0.2
+Author: David Allouche
+License: GNU Public License v2 or later
+
+TeXmacs provides a built-in glue procedure called "interactive" which
+implements user interation in the minibuffer (footer). However this
+function was not updated during the Scheme layer refactoring and
+depends on a callback procedure to be accessible in the top-level
+namespace.
+
+This plugins provides wrappers around "interactive" which use a
+closure callback (instead of a symbol) and can provide a default
+value.
+
+It is not useful to the user by itself, but other modules depend on
+it.

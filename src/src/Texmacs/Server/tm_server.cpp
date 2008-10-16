@@ -18,36 +18,24 @@
 #include "file.hpp"
 #include "pipe_link.hpp"
 #include "socket_link.hpp"
+#include "socket_server.hpp"
+#include "dictionary.hpp"
 
 server* the_server= NULL;
+bool texmacs_started= false;
 url tm_init_file= url_none ();
 url my_init_file= url_none ();
 string my_init_cmds= "";
+
+/******************************************************************************
+* Execution of commands
+******************************************************************************/
 
 void reset_inclusions ();
 extern string printing_dpi;
 extern string printing_cmd;
 extern string printing_on;
 extern int nr_windows;
-extern window (*get_current_window) (void);
-
-/******************************************************************************
-* Creation of TeXmacs window
-******************************************************************************/
-
-int geometry_w= 800, geometry_h= 600;
-int geometry_x= 0  , geometry_y= 0;
-
-window
-texmacs_window (widget wid) {
-  int W, H;
-  int w= geometry_w, h= geometry_h;
-  int x= geometry_x, y= geometry_y;
-  wid->dis->get_extents (W, H); W /= PIXEL; H /= PIXEL;
-  if (x < 0) x= W + x + 1 - w;
-  if (y < 0) y= H + y + 1 - h;
-  return plain_window (wid, "TeXmacs", w*PIXEL, h*PIXEL, x*PIXEL, (-y)*PIXEL);
-}
 
 /******************************************************************************
 * Texmacs server constructor and destructor
@@ -62,15 +50,8 @@ texmacs_interpose_handler () {
 void
 texmacs_wait_handler (string message, string arg, int level) {
   (void) level;
-  if (the_server != NULL)
+  if (texmacs_started && the_server != NULL)
     (*the_server)->wait_handler (message, arg);
-}
-
-window
-texmacs_current_window () {
-  if (the_server == NULL)
-    fatal_error ("No server", "texmacs_current_window", "tm_server.cpp");
-  return (*the_server)->get_window()->win;
 }
 
 server
@@ -80,21 +61,29 @@ get_server () {
   return *the_server;
 }
 
+tree
+get_subtree (path p) {
+  return get_server()->get_editor()->the_subtree (p);
+}
+
+void
+gui_set_output_language (string lan) {
+  set_output_language (lan);
+  gui_refresh ();
+}
+
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
-tm_server_rep::tm_server_rep (display dis2):
-  dis (dis2), vw (NULL), banner_nr (-1),
-  full_screen (false), full_screen_edit (false), def_sfactor (5),
+tm_server_rep::tm_server_rep ():
+  vw (NULL), def_sfactor (5),
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
 {
   the_server= new server (this);
   initialize_guile ();
-  set_interpose_handler (texmacs_interpose_handler);
+  gui_interpose (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
-  get_current_window= texmacs_current_window;
-  out_lan= dis->get_output_language ();
   if (is_none (tm_init_file))
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
   if (is_none (my_init_file))
@@ -104,10 +93,9 @@ tm_server_rep::tm_server_rep (display dis2):
   if (exists (my_init_file)) exec_file (my_init_file);
   bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
-    my_init_cmds= "(begin" * my_init_cmds * ")";
-    exec_delayed (my_init_cmds);
+    my_init_cmds= "(dialogue" * my_init_cmds * ")";
+    exec_delayed (scheme_cmd (my_init_cmds));
   }
-  style_update_menu ();
 #ifdef OS_GNU_LINUX
   return; // in order to avoid segmentation faults
 #elif defined OS_POWERPC_GNU_LINUX
@@ -115,26 +103,8 @@ tm_server_rep::tm_server_rep (display dis2):
 #endif
 }
 
-void
-tm_server_rep::advance_banner () {
-  banner_nr++;
-  if (get_editor()->et != tree (DOCUMENT, "")) banner_nr=5;
-  if (banner_nr < 4) {
-    static string banner[4]= {
-      "Welcome to GNU TeXmacs",
-      "GNU TeXmacs falls under the GNU general public license",
-      "GNU TeXmacs comes without any form of legal warranty",
-      "More information about GNU TeXmacs can be found in the Help->About menu"
-    };
-    set_message (banner[banner_nr], "GNU TeXmacs " TEXMACS_VERSION);
-    dis->delayed_message (get_meta(), "banner", 2500);
-  }
-
-  else if (banner_nr == 4) set_message ("", "");
-}
-
 tm_server_rep::~tm_server_rep () {}
-server::server (display dis): rep (new tm_server_rep (dis)) {}
+server::server (): rep (new tm_server_rep ()) {}
 
 /******************************************************************************
 * Get and set objects associated to server
@@ -145,20 +115,20 @@ tm_server_rep::get_server () {
   return this;
 }
 
-display
-tm_server_rep::get_display () {
-  return dis;
-}
-
 bool
 tm_server_rep::has_view () {
   return vw != NULL;
 }
 
+bool
+tm_server_rep::has_window () {
+  return vw != NULL && vw->win != NULL;
+}
+
 tm_view
 tm_server_rep::get_view (bool must_be_valid) {
   if (must_be_valid && (vw==NULL))
-    fatal_error ("No active view", "tm_server_rep::get_meta");
+    fatal_error ("No active view", "tm_server_rep::get_view");
   return vw;
 }
 
@@ -186,19 +156,8 @@ tm_window
 tm_server_rep::get_window () {
   tm_view vw= get_view ();
   if (vw->win==NULL)
-    fatal_error ("No window attached to view", "tm_server_rep::get_meta");
+    fatal_error ("No window attached to view", "tm_server_rep::get_window");
   return vw->win;
-}
-
-tm_widget
-tm_server_rep::get_meta () {
-  tm_window win= get_window ();
-  return win->wid;
-}
-
-color
-tm_server_rep::get_color (string s) {
-  return get_display () -> get_color (s);
 }
 
 int
@@ -240,16 +199,25 @@ compute_style_menu (url u, int kind) {
   return "";
 }
 
-void
-tm_server_rep::style_update_menu () {
+object
+tm_server_rep::get_style_menu () {
   url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
-  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string sty= compute_style_menu (sty_u, 0);
+  return eval ("(menu-dynamic " * sty * ")");
+}
+
+object
+tm_server_rep::get_add_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string pck= compute_style_menu (pck_u, 1);
-  string rem= compute_style_menu (pck_u, 2);
-  (void) eval ("(menu-bind style-menu " * sty * ")");
-  (void) eval ("(menu-bind add-package-menu " * pck * ")");
-  (void) eval ("(menu-bind remove-package-menu " * rem * ")");
+  return eval ("(menu-dynamic " * pck * ")");
+}
+
+object
+tm_server_rep::get_remove_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string pck= compute_style_menu (pck_u, 2);
+  return eval ("(menu-dynamic " * pck * ")");
 }
 
 /******************************************************************************
@@ -272,7 +240,7 @@ void
 tm_server_rep::style_clear_cache () {
   style_cache=
     hashmap<tree,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
 
   int i, j, n= N(bufs);
   for (i=0; i<n; i++) {
@@ -280,8 +248,6 @@ tm_server_rep::style_clear_cache () {
     for (j=0; j<N(buf->vws); j++)
       ((tm_view) (buf->vws[j]))->ed->init_style ();
   }
-
-  style_update_menu ();
 }
 
 void
@@ -310,11 +276,11 @@ tm_server_rep::style_get_cache (
   else {
     string s;
     url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
-    if (exists (name) && (!load_string (name, s))) {
+    if (exists (name) && (!load_string (name, s, false))) {
       // cout << "loaded " << name << LF;
-      tree pair= scheme_to_tree (s);
-      H= hashmap<string,tree> (UNINIT, pair[0]);
-      t= pair[1];
+      tree p= scheme_to_tree (s);
+      H= hashmap<string,tree> (UNINIT, p[0]);
+      t= p[1];
       style_cache (copy (style))= H;
       style_drd   (copy (style))= t;
       f= true;
@@ -323,90 +289,12 @@ tm_server_rep::style_get_cache (
 }
 
 /******************************************************************************
-* Routines concerning the widget
-******************************************************************************/
-
-void
-tm_server_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  widget meta= (widget) get_meta ();
-  meta["canvas"] << ::get_visible (x1, y1, x2, y2);
-}
-
-void
-tm_server_rep::scroll_where (SI& x, SI& y) {
-  widget meta= (widget) get_meta ();
-  meta["canvas"] << get_coord2 ("scroll position", x, y);
-}
-
-void
-tm_server_rep::scroll_to (SI x, SI y) {
-  widget meta= (widget) get_meta ();
-  meta["canvas"] << set_scroll_pos (x, y);
-}
-
-void
-tm_server_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
-  widget meta= (widget) get_meta ();
-  meta["canvas"] << ::set_extents (x1, y1, x2, y2);
-}
-
-void
-tm_server_rep::set_left_footer (string s) {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_meta()->set_left_footer (s);
-}
-
-void
-tm_server_rep::set_right_footer (string s) {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_meta()->set_right_footer (s);
-}
-
-void
-tm_server_rep::set_message (string left, string right) {
-  get_editor()->set_message (left, right);
-}
-
-void
-tm_server_rep::interactive (string name, string& s, command call_back) {
-  get_meta()->interactive (name, s, call_back);
-}
-
-void
-tm_server_rep::full_screen_mode (bool on, bool edit) {
-  widget meta= (widget) get_meta ();
-  if (on && !edit) {
-    show_header (false);
-    show_footer (false);
-    meta ["canvas"] << set_integer ("scrollbars", false);
-  }
-  else {
-    show_header (true);
-    show_footer (true);
-    meta ["canvas"] << set_integer ("scrollbars", true);
-  }
-  meta->win->full_screen (on);
-  get_editor()->full_screen_mode (on && !edit);
-  full_screen = on;
-  full_screen_edit = on && edit;
-}
-
-bool
-tm_server_rep::in_full_screen_mode () {
-  return full_screen && !full_screen_edit;
-}
-
-bool
-tm_server_rep::in_full_screen_edit_mode () {
-  return full_screen && full_screen_edit;
-}
-
-/******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
 
 void
 tm_server_rep::interpose_handler () {
+  listen_to_servers ();
   listen_to_pipes ();
   listen_to_sockets ();
   listen_to_connections ();
@@ -423,12 +311,16 @@ tm_server_rep::interpose_handler () {
       tm_view vw= (tm_view) buf->vws[j];
       if (vw->win != NULL) vw->ed->apply_changes ();
     }
+    for (j=0; j<N(buf->vws); j++) {
+      tm_view vw= (tm_view) buf->vws[j];
+      if (vw->win != NULL) vw->ed->animate ();
+    }
   }
 }
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
-  dis->set_wait_indicator (message, arg);
+  show_wait_indicator (get_window () -> win, message, arg);
 }
 
 void
@@ -483,36 +375,36 @@ tm_server_rep::get_default_shrinking_factor () {
 }
 
 void
-tm_server_rep::postscript_gc (string which) {
-  dis->postscript_gc (which);
-  int i,j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= (tm_buffer) bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      vw->ed->typeset_invalidate_all ();
-    }
-  }  
+tm_server_rep::image_gc (string which) {
+  ::image_gc (which);
+  typeset_update_all ();
 }
 
 void
 tm_server_rep::inclusions_gc (string which) {
   (void) which;
   reset_inclusions ();
-  int i,j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= (tm_buffer) bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      vw->ed->typeset_invalidate_all ();
-    }
-  }  
+  typeset_update_all ();
 }
 
-string
-tm_server_rep::translate (string which, string from, string to) {
-  display dis= get_display ();
-  return dis->translate (which, from, to);
+void
+tm_server_rep::typeset_update (path p) {
+  int i, j, n= N(bufs);
+  for (i=0; i<n; i++) {
+    tm_buffer buf= ((tm_buffer) bufs[i]);
+    for (j=0; j<N(buf->vws); j++)
+      ((tm_view) (buf->vws[j]))->ed->typeset_invalidate (p);
+  }
+}
+
+void
+tm_server_rep::typeset_update_all () {
+  int i, j, n= N(bufs);
+  for (i=0; i<n; i++) {
+    tm_buffer buf= ((tm_buffer) bufs[i]);
+    for (j=0; j<N(buf->vws); j++)
+      ((tm_view) (buf->vws[j]))->ed->typeset_invalidate_all ();
+  }
 }
 
 bool
@@ -531,6 +423,7 @@ tm_server_rep::is_yes (string s) {
 void
 tm_server_rep::quit () {
   close_all_pipes ();
+  call ("quit-TeXmacs-scheme");
   exit (0);
 }
 
@@ -542,7 +435,15 @@ tree
 tm_server_rep::evaluate (string name, string session, tree expr) {
   if (name == "scheme") {
     string s= tree_to_verbatim (expr);
-    string r= object_to_string (::eval (s));
+    object x= ::eval (s);
+    if (is_tree (x) && as_bool (call ("session-scheme-trees?")))
+      return as_tree (x);
+    else if (as_bool (call ("session-scheme-math?"))) {
+      object y= call ("cas->stree", x);
+      if (as_bool (call ("tm?", y)))
+	return compound ("math", as_tree (call ("tm->tree", y)));
+    }
+    string r= object_to_string (x);
     if (r == "#<unspecified>") r= "";
     return verbatim_to_tree (r);
   }

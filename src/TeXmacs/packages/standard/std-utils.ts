@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.6.3>
 
 <style|<tuple|source|std>>
 
@@ -110,9 +110,33 @@
     </src-comment>
   </active*>
 
-  <assign|set-header|<macro|s|<assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>
+  <assign|set-this-page-header|<macro|s|<style-with|src-compact|none|<flag|<localize|this
+  page header>|brown|s><assign|page-this-header|<arg|s>>>>>
 
-  <assign|set-footer|<macro|s|<assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>
+  <assign|set-header|<macro|s|<style-with|src-compact|none|<flag|<localize|header>|brown|s><assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>>
+
+  <assign|set-odd-page-header|<macro|s|<style-with|src-compact|none|<flag|<localize|odd
+  page header>|brown|s><assign|page-odd-header|<arg|s>>>>>
+
+  <assign|set-even-page-header|<macro|s|<style-with|src-compact|none|<flag|<localize|even
+  page header>|brown|s><assign|page-odd-header|<arg|s>>>>>
+
+  <assign|set-this-page-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|this
+  page footer>|brown|s><assign|page-this-footer|<arg|s>>>>>
+
+  <assign|set-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|footer>|brown|s><assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>>
+
+  <assign|set-odd-page-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|odd
+  page footer>|brown|s><assign|page-odd-footer|<arg|s>>>>>
+
+  <assign|set-even-page-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|even
+  page footer>|brown|s><assign|page-odd-footer|<arg|s>>>>>
+
+  <assign|set-page-number|<macro|nr|<style-with|src-compact|none|<flag|<localize|renumber
+  this page>|brown|nr><assign|page-nr|<arg|nr>>>>>
+
+  <assign|set-page-number-macro|<macro|rendering-macro|<style-with|src-compact|none|<flag|<localize|page
+  number text>|brown|rendering-macro><assign|page-the-page|<arg|rendering-macro>>>>>
 
   <assign|blanc-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|>>>>
 
@@ -132,7 +156,12 @@
 
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
-  \;
+  <assign|wiki-link|<macro|body|name|<style-with|src-compact|none|<action|<arg|body>|<merge|(remote-project-load-by-name
+  "|<arg|name>|")>>>>>
+
+  <assign|inline-block|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
 </body>
 
 <\initial>

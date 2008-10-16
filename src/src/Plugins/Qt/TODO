@@ -1,0 +1,52 @@
+
+TODO
+
+* Handle correctly destroy_window_widget
+* Handle correctly mask and quit command in texmacs_widget
+* Several problems in graphics mode.
+* Check for memory leaks and non properly destroyed Qt objects.
+* Implement qt_gui_rep::set_mouse_pointer, qt_gui_rep::show_wait_indicator
+* Implement glue_widget
+* Help -> (Apple) Search. How to customize this?
+* Clean menu cache on language changes.
+* qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
+* In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
+* Russian menus.
+* Visually indicate when a icon menu button is pressed.
+* Implement "minibuffer" interactions (currently a dialog pop up instead) 
+* Paint interrupts on slow machines.
+
+DONE
+
+* Missing image support.
+* Remove boxes around left and right footer.
+* Horizontal distance between icons too large.
+* Back button when browsing help segfaults.
+* Visibility of icon bars (in View menu).
+* Better image support: for performance use QPixmaps in systems which support native alpha-channel (like MacOSX).
+* Implement tile_menu.
+* Keyboard shortcuts missing in menus.
+* Support for shrinking factor.
+* X should not be launched.
+* Keyboard works more or less fine.
+* In the documentation, rendering of keys not correct up to the pixel.
+* Links don't highlight when moving over them.
+* Add conversion tm_encoding -> Unicode in 'max_translate'
+  (fixes <gtr> in boot message).
+* Anti-aliasing should be default for all graphics operations.
+* Added postscript rendering via 'convert'.
+* White area of empty document should vertically extend to bottom.
+* Make scrollbar(s) movable: does not seem to be supported by Qt.
+* Loss of keyboard focus after clicking on icon menu entry.
+* Pixmap rendering under Linux
+* Invalid situation on several occasions:
+  - During selections.
+  - After scrolling (middle mouse) and clicking in text.
+* Interactive prompts with several entries (i.e. query replace):
+  all entries should appear in one window.
+* Modal windows should appear inside main window,
+  horizontally centered, vertically centered at height/3 from top.
+* Fullscreen mode
+* Header/footer visibility
+* File chooser start location should be directory of current file.
+* Delayed help menu, even several seconds after boot.

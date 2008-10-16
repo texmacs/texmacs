@@ -10,7 +10,10 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "string.hpp"
+#include "analyze.hpp"
+#include "merge_sort.hpp"
+#include "converter.hpp"
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * Tests for caracters
@@ -59,7 +62,7 @@ is_numeric (register char c) {
 }
 
 bool
-is_ponctuation (register char c) {
+is_punctuation (register char c) {
   return
     (c=='.') || (c==',') || (c==':') || (c=='\'') || (c=='`') ||
     (c==';') || (c=='!') || (c=='?');
@@ -157,6 +160,27 @@ locase_all (string s) {
   for (i=0; i<N(s); i++)
     if (!is_upcase (s[i])) r[i]= s[i];
     else r[i]= (char) (((int) ((unsigned char) s[i]))+32);
+  return r;
+}
+
+/******************************************************************************
+* Inserting or removing a character into a string as a set of characters
+******************************************************************************/
+
+string
+string_union (string s1, string s2) {
+  return string_minus (s1, s2) * s2;
+}
+
+string
+string_minus (string s1, string s2) {
+  string r;
+  int i1, n1= N(s1), i2, n2= N(s2);
+  for (i1=0; i1<n1; i1++) {
+    for (i2=0; i2<n2; i2++)
+      if (s1[i1] == s2[i2]) break;
+    if (i2==n2) r << s1[i1];
+  }
   return r;
 }
 
@@ -406,7 +430,7 @@ xml_name_to_tm (string s) {
 }
 
 string
-tm_to_xml_cdata (string s) {
+old_tm_to_xml_cdata (string s) {
   string r;
   int i, n= N(s);
   for (i=0; i<n; i++)
@@ -421,8 +445,40 @@ tm_to_xml_cdata (string s) {
   return r;
 }
 
+object
+tm_to_xml_cdata (string s) {
+  array<object> a;
+  a << symbol_object ("!concat");
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i] == '&') r << "&amp;";
+    else if (s[i] == '>') r << "&gt;";
+    else if (s[i] == '\\') r << "\\";
+    else if (s[i] != '<') r << cork_to_utf8 (s (i, i+1));
+    else {
+      int start= i++;
+      while ((i<n) && (s[i]!='>')) i++;
+      string ss= s (start, i+1);
+      string rr= cork_to_utf8 (ss);
+      string qq= utf8_to_cork (rr);
+      if (rr != ss && qq == ss) r << rr;
+      else {
+	if (r != "") a << object (r);
+	a << cons (symbol_object ("tm-sym"),
+		   cons (ss (1, N(ss)-1),
+			 null_object ()));
+	r= "";
+      }
+    }
+  if (r != "") a << object (r);
+  if (N(a) == 1) return object ("");
+  else if (N(a) == 2) return a[1];
+  else return call ("list", a);
+}
+
 string
-xml_cdata_to_tm (string s) {
+old_xml_cdata_to_tm (string s) {
   string r;
   int i, n= N(s);
   for (i=0; i<n; i++)
@@ -451,6 +507,16 @@ xml_unspace (string s, bool first, bool last) {
       if ((i<n) || (!last)) r << ' ';
     }
   return r;
+}
+
+bool
+contains_unicode_char (string s) {
+  int i= 0, n= N(s);
+  while (i+1<n) {
+    if (s[i] == '<' && s[i+1] == '#') return true;
+    tm_char_forwards (s, i);
+  }
+  return false;
 }
 
 /******************************************************************************
@@ -512,10 +578,18 @@ fnsymbol_nr (int nr) {
 * Conversions to and from hexadecimal
 ******************************************************************************/
 
-static char* hex_string= "0123456789ABCDEF";
+static const char* hex_string= "0123456789ABCDEF";
 
 string
 as_hexadecimal (int i) {
+  if (i<0) return "-" * as_hexadecimal (-i);
+  if (i<16) return hex_string [i & 15];
+  return as_hexadecimal (i >> 4) * hex_string [i & 15];
+}
+
+string
+as_hexadecimal (pointer ptr) {
+  intptr_t i= (intptr_t) ptr;
   if (i<0) return "-" * as_hexadecimal (-i);
   if (i<16) return hex_string [i & 15];
   return as_hexadecimal (i >> 4) * hex_string [i & 15];
@@ -542,11 +616,12 @@ from_hexadecimal (string s) {
 }
 
 /******************************************************************************
-* Convert between verbatim and TeXmacs encoding
+* Routines for the TeXmacs encoding
 ******************************************************************************/
 
 string
 tm_encode (string s) {
+  // verbatim to TeXmacs encoding
   register int i;
   string r;
   for (i=0; i<N(s); i++) {
@@ -559,6 +634,7 @@ tm_encode (string s) {
 
 string
 tm_decode (string s) {
+  // TeXmacs encoding to verbatim
   register int i;
   string r;
   for (i=0; i<N(s); i++) {
@@ -573,6 +649,24 @@ tm_decode (string s) {
       if (s[i]!='>') return r;
     }
     else if (s[i]!='>') r << s[i];
+  }
+  return r;
+}
+
+string
+tm_var_encode (string s) {
+  register int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    if (s[i]=='<') {
+      if (i+1 < n && s[i+1] == '#') {
+	while (i<n && s[i] != '>') r << s[i++];
+	if (i<n) r << s[i];
+      }
+      else r << "<less>";
+    }
+    else if (s[i]=='>') r << "<gtr>";
+    else r << s[i];
   }
   return r;
 }
@@ -598,88 +692,104 @@ tm_correct (string s) {
   return r;
 }
 
+void
+tm_char_forwards (string s, int& pos) {
+  int n= N(s);
+  if (pos == n);
+  else if (s[pos] != '<') pos++;
+  else {
+    while (pos<n && s[pos] != '>') pos++;
+    if (pos<n) pos++;
+  }
+}
+
+void
+tm_char_backwards (string s, int& pos) {
+  if (pos == 0);
+  else if (s[pos-1] != '>') pos--;
+  else {
+    while (pos>0 && s[pos-1] != '<') pos--;
+    if (pos>0) pos--;
+  }
+}
+
+/******************************************************************************
+* Quoting
+******************************************************************************/
+
+string
+scm_quote (string s) {
+  // R5RS compliant external string representation.
+  int i, n= N(s);
+  string r;
+  r << '"';
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case '\"':
+    case '\\':
+      r << '\\' << s[i];
+      break;
+    default:
+      r << s[i];
+    }
+  r << '"';
+  return r;
+}
+
+string
+scm_unquote (string s) {
+  if ((N(s)>=2) && (s[0]=='\"') && (s[N(s)-1]=='\"')) {
+    int i, n= N(s);
+    string r;
+    for (i=1; i<n-1; i++)
+      if (s[i] == '\\' && (s[i+1] == '\"' || s[i+1] == '\\')) r << s[++i];
+      else r << s[i];
+    return r;
+  }
+  else return s;
+}
+
+string
+raw_quote (string s) {
+  // Mark the label of a STRING tree as representing a string and not a symbol.
+  return "\"" * s * "\"";
+}
+ 
+string
+raw_unquote (string s) {
+  // Get the string value of a STRING tree label representing a string.
+  if ((N(s)>=2) && (s[0]=='\"') && (s[N(s)-1]=='\"'))
+    return s (1, N(s)-1);
+  else return s;
+}
+
 /******************************************************************************
 * Handling escape characters
 ******************************************************************************/
 
 string
-slash (string s) {
+escape_sh (string s) {
+#ifdef OS_WIN32
+  return raw_quote (s);
+#else
   int i, n= N(s);
   string r;
   for (i=0; i<n; i++)
     switch (s[i]) {
-    case '(':
-    case ')':
-    case ' ': 
-    case '\'':
-      if ((n<2) || (s[0]!='\042') || (s[n-1]!='\042')) r << "\\";
-      r << s[i];
-      break;
+    case '?':
+    case '&':
+    case '$':
+    case '`':
+    case '\"':
     case '\\':
+    case ' ':
       r << '\\' << s[i];
-      break;
-    case '\042':
-      if (((i==0) && (s[n-1]=='\042')) ||
-	  ((i==(n-1)) && (s[0]=='\042')))
-	r << s[i];
-      else r << "\\" << s[i];
-      break;
-    case ((char) 0):
-      r << "\\0";
-      break;
-    case '\t':
-      r << "\\t";
-      break;
-    case '\n':
-      r << "\\n";
       break;
     default:
       r << s[i];
     }
   return r;
-}
-
-string
-unslash (string s) {
-  int i, n= N(s);
-  string r;
-  for (i=0; i<n; i++)
-    if ((s[i]=='\\') && ((i+1)<n))
-      switch (s[++i]) {
-      case '0': r << ((char) 0); break;
-      case 'n': r << '\n'; break;
-      case 't': r << '\t'; break;
-      default: r << s[i];
-      }
-    else r << s[i];
-  return r;
-}
-
-string
-quote (string s) {
-  return "\"" * slash (s) * "\"";
-}
-
-string
-unquote (string s) {
-  if ((N(s)>=2) && (s[0]=='\042') && (s[N(s)-1]=='\042'))
-    return unslash (s (1, N(s)-1));
-  else return s;
-  /*
-  if (N(s)<2) return "";
-  return s(1,N(s)-1);
-  */
-}
-
-string
-escape_quotes (string s) {
-  int i, n= N(s);
-  string r;
-  for (i=0; i<n; i++) {
-    if ((s[i] == '\\') || (s[i] == '\"')) r << '\\';
-    r << s[i];
-  }
-  return r;
+#endif
 }
 
 string
@@ -765,7 +875,7 @@ starts (string s, const string what) {
 
 bool
 ends (string s, const char* what) {
-  string r ((char*) what);
+  string r (what);
   if (N(r) > N(s)) return false;
   return s (N(s)-N(r), N(s)) == r;
 }
@@ -929,8 +1039,10 @@ parse (string s, int& pos, SI*& a, int len) {
 int
 search_forwards (string s, int pos, string in) {
   int k= N(s), n= N(in);
+  if (k == 0) return pos;
+  char c= s[0];
   while (pos+k <= n) {
-    if (test (in, pos, s)) return pos;
+    if (in[pos] == c && test (in, pos, s)) return pos;
     pos++;
   }
   return -1;
@@ -953,6 +1065,19 @@ search_backwards (string s, int pos, string in) {
 int
 search_backwards (string s, string in) {
   return search_backwards (s, N(in)-N(s), in);
+}
+
+int
+count_occurrences (string s, string in) {
+  int count= 0;
+  int i=0, next, n= N(s);
+  while (i<n) {
+    next= search_forwards (s, i, in);
+    if (next == -1) break;
+    count++;
+    i= next+1;
+  }
+  return count;
 }
 
 string
@@ -988,4 +1113,69 @@ match_wildcard (string s, int spos, string w, int wpos) {
 bool
 match_wildcard (string s, string w) {
   return match_wildcard (s, 0, w, 0);
+}
+
+/******************************************************************************
+* Computations with completions
+******************************************************************************/
+
+array<string>
+as_completions (hashset<string> h) {
+  tree t= (tree) h;
+  int i, n= N(t);
+  array<string> a (n);
+  for (i=0; i<n; i++) a[i]= t[i]->label;
+  merge_sort (a);
+  return a;
+}
+
+/*
+static void
+close_completions (hashset<string>& h) {
+  array<string> a= as_completions (h);
+  int i, j, n= N(a);
+  for (i=1; i<n; i++) {
+    for (j=0; j < min (N(a[i-1]), N(a[i])); j++)
+      if (a[i-1][j] != a[i][j]) break;
+    if (j < min (N(a[i-1]), N(a[i])))
+      h->insert (a[i](0,j));
+  }
+}
+
+array<string>
+close_completions (array<string> a) {
+  int i, n= N(a);
+  hashset<string> h;
+  for (i=0; i<n; i++) h->insert (a[i]);
+  close_completions (h);
+  return as_completions (h);
+}
+*/
+
+array<string>
+close_completions (array<string> a) {
+  if (N(a) == 0) return a;
+  merge_sort (a);
+  int i, j, n= N(a), l= N(a[0]);
+  for (i=1; i<n; i++) {
+    for (j=0; j<l && j<N(a[i]); j++)
+      if (a[i-1][j] != a[i][j]) break;
+    l= j;
+  }
+  array<string> r;
+  r << a[0] (0, l);
+  for (i=0; i<n; i++)
+    if (a[i] != r[N(r)-1])
+      r << a[i];
+  return r;
+}
+
+array<string>
+strip_completions (array<string> a, string prefix) {
+  int i, n= N(a);
+  array<string> b;
+  for (i=0; i<n; i++)
+    if (starts (a[i], prefix))
+      b << a[i] (N(prefix), N(a[i]));
+  return b;
 }

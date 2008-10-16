@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.6.15>
 
 <style|source>
 
@@ -23,32 +23,22 @@
     </src-license>
   </src-title>>
 
-  <assign|indent|<macro|body|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>>
-
-  <assign|algorithm|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>
+  <assign|algorithm|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>
   <with|font-family|tt|<arg|name>>>||<with|item*|<macro|what|<with|font-series|bold|math-font-series|bold|<arg|what>
   >>|<arg|body>>>>>>>
 
   <assign|body|<macro|body|<surround|<vspace*|0.5fn>||<with|item*|<macro|name|<vspace*|0.5fn><with|font-series|bold|math-font-series|bold|<arg|name>
   >>|<arg|body>>>>>
 
+  <assign|indent|<macro|body|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>>
+
+  <assign|pile|<macro|x|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|x>>>>
+
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

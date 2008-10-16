@@ -15,7 +15,7 @@
 #include "tm_buffer.hpp"
 
 /******************************************************************************
-* Keyboard
+* Basic subroutines for keyboard handling
 ******************************************************************************/
 
 int
@@ -60,8 +60,13 @@ edit_interface_rep::in_spell_mode () {
   return input_mode == INPUT_SPELL;
 }
 
+bool
+edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
+  return sv->kbd_get_command (which, help, c);
+}
+
 /******************************************************************************
-* Keyboard
+* Main keyboard routines
 ******************************************************************************/
 
 bool
@@ -70,6 +75,7 @@ edit_interface_rep::try_shortcut (string comb) {
   command cmd;
   string  shorth;
   string  help;
+
 
   sv->get_keycomb (comb, status, cmd, shorth, help);
   if ((status & 1) == 1) {
@@ -95,6 +101,7 @@ edit_interface_rep::try_shortcut (string comb) {
     else set_message ("keyboard shorthand: " * rew, shorth);
     return true;
   }
+
   return false;
 }
 
@@ -108,6 +115,12 @@ simplify_key_press (string key) {
 
 void
 edit_interface_rep::key_press (string key) {
+  if (contains_unicode_char (key)) {
+    if (input_mode == INPUT_NORMAL) insert_tree (key);
+    return;
+  }
+
+  set_message ("", "");
   if (input_mode != INPUT_NORMAL)
     key= simplify_key_press (key);
   switch (input_mode) {
@@ -139,8 +152,9 @@ edit_interface_rep::key_press (string key) {
   string rew= sv->kbd_post_rewrite (key);
   if (N(rew)==1) {
     int i ((unsigned char) rew[0]);
-    if (((i>=32) && (i<=127)) ||
-	((i>=128) && (i <=255))) insert_tree (rew);
+    if ((((i >= 32) && (i <= 127)) || ((i >= 128) && (i <= 255))) &&
+	!inside_active_graphics ())
+      insert_tree (rew);
     sh_s  = string ("");
     sh_len= 0;
   }
@@ -167,21 +181,15 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 ******************************************************************************/
 
 void
-edit_interface_rep::show_keymaps () {
-  fatal_error ("no longer supported", "edit_interface_rep::show_keymaps");
-}
-
-void
-edit_interface_rep::handle_keypress (keypress_event ev) {
-  call ("lazy-in-mode-force");
-  buf->mark_undo_block ();
-  key_press (ev->key);
+edit_interface_rep::handle_keypress (string key, time_t t) {
+  mark_undo_blocks ();
+  key_press (key); (void) t;
   notify_change (THE_DECORATIONS);
 }
 
 void
-edit_interface_rep::handle_keyboard_focus (keyboard_focus_event ev) {
-  got_focus= ev->flag;
+edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
+  got_focus= has_focus; (void) t;
   notify_change (THE_FOCUS);
   if (got_focus) {
     focus_on_this_editor ();

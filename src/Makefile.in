@@ -11,6 +11,7 @@ exec_prefix = @exec_prefix@
 includedir = @includedir@
 libdir = @libdir@
 bindir = @bindir@
+datarootdir = @datarootdir@
 datadir = @datadir@
 mandir = @mandir@
 tmdir = @tmdir@
@@ -193,6 +194,87 @@ UNINSTALL:
 .PHONY: INSTALL UNINSTALL
 
 ###############################################################################
+# Make a bundle for Mac OS X
+###############################################################################
+
+BUNDLE_SRC = misc/bundle
+BUNDLE_APP = ../distr/TeXmacs.app
+BUNDLE_DMG = ../distr/TeXmacs.dmg
+BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
+BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
+BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
+BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+
+BUNDLE_MAIN: TEXMACS
+	$(MKDIR) ../distr
+	$(RM) -r $(BUNDLE_APP)
+	$(MKDIR) $(BUNDLE_APP)
+	$(MKDIR) $(BUNDLE_CONTENTS)
+	$(CP) $(BUNDLE_SRC)/Info.plist $(BUNDLE_CONTENTS)
+	$(CP) $(BUNDLE_SRC)/PkgInfo $(BUNDLE_CONTENTS)
+	$(MKDIR) $(BUNDLE_CONTENTS)/MacOS
+	$(CP) $(BUNDLE_SRC)/TeXmacs $(BUNDLE_CONTENTS)/MacOS
+	$(CP) TeXmacs/bin/texmacs.bin $(BUNDLE_CONTENTS)/MacOS
+	$(MKDIR) $(BUNDLE_RESOURCES)
+	$(CP) $(BUNDLE_SRC)/TeXmacs.icns $(BUNDLE_RESOURCES)
+	$(CP) src/Plugins/Cocoa/English.lproj $(BUNDLE_RESOURCES)
+	$(CP) src/Plugins/Cocoa/InputPanel.nib $(BUNDLE_RESOURCES)
+	$(CP) src/Plugins/Cocoa/InputDialog.nib $(BUNDLE_RESOURCES)
+	$(CP) src/Plugins/Cocoa/Segment.nib $(BUNDLE_RESOURCES)
+	$(MKDIR) $(BUNDLE_RESOURCES)/bin
+	$(MKDIR) $(BUNDLE_RESOURCES)/lib
+	$(MKDIR) $(BUNDLE_RESOURCES)/share
+	$(CP) TeXmacs $(BUNDLE_RESOURCES)/share
+	$(RM) $(BUNDLE_TEXMACS)/bin/texmacs.bin
+	$(RM) -r $(BUNDLE_TEXMACS)/doc
+	$(CP) ../doc $(BUNDLE_TEXMACS)
+	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
+	export GUILE_DATA_PATH; \
+	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
+	export GUILE_LOAD_PATH; \
+	$(CP) $$GUILE_LOAD_PATH $(BUNDLE_TEXMACS)/progs/
+	$(CHMOD) 644 $(BUNDLE_TEXMACS)/progs/ice-9/*
+	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9
+	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
+	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
+	$(CP) ../distr/$(BUNDLE_FONTS) $(BUNDLE_TEXMACS) ; \
+	cd $(BUNDLE_TEXMACS) ; \
+	tar -zxf $(BUNDLE_FONTS); \
+	$(RM) $(BUNDLE_FONTS) ; \
+	fi
+#	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
+#	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
+#	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
+	$(RM) -r $(BUNDLE_TEXMACS)/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
+
+define bundle_install_lib
+	$(CP) $(1) $(BUNDLE_RESOURCES)/lib
+	install_name_tool -change $(1) @executable_path/../Resources/lib/$(2) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
+	install_name_tool -id @executable_path/../Resources/lib/$(2) $(BUNDLE_RESOURCES)/lib/$(2)
+endef
+
+bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
+
+BUNDLE_LIBS:
+	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
+
+BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
+
+DISKIMAGE: BUNDLE
+	$(RM) $(BUNDLE_DMG)
+	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
+	$(RM) -r $(BUNDLE_APP)
+
+.PHONY: BUNDLE
+
+###############################################################################
 # Cleaning and backups
 ###############################################################################
 
@@ -251,8 +333,9 @@ DISTCLEAN: CLEAN
 	$(RM) misc/man/texmacs.1
 	$(RM) misc/scripts/fig2ps
 	$(RM) misc/scripts/texmacs
+	$(RM) src/System/config.h
 	$(RM) src/System/tm_configure.hpp
-	$(RM) src/common.makefile
+	$(RM) src/makefile
 	$(RM) TeXmacs/examples/plugins/dynlink/Makefile
 	$(RM) config.cache
 	$(RM) config.log

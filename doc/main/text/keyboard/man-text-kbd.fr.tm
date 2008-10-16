@@ -45,7 +45,7 @@
   halign|c>|<table|<row|<cell|Raccourcis>|<cell|>|<cell|Exemples>|<cell|>|<cell|Raccourcis>|<cell|>|<cell|Exemples>|<cell|>>|<row|<cell|<expand|kbd-text|'>>|<cell|Accent
   aigu <with|font size|1.19|>>|<cell|<expand|kbd-text|'
   e>>|<cell|é>|<cell|<expand|kbd-text|`>>|<cell|Accent grave <with|font
-  size|1.19|\0>>|<cell|<expand|kbd-text|`
+  size|1.19|`>>|<cell|<expand|kbd-text|`
   e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Accent circonflexe
   <with|font size|1.19|>>|<cell|<expand|kbd-text|^
   e>>|<cell|ê>|<cell|<expand|kbd-text|^>>|<cell|Tréma <with|font

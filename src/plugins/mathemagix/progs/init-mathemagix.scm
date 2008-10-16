@@ -13,11 +13,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathemagix-initialize)
-  (import-from (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mathemagix-input) mathemagix))
 
-(plugin-configure mathemagix
-  (:require (url-exists-in-path? "mmx-shell"))
-  (:initialize (mathemagix-initialize))
-  (:launch "mmx-shell --texmacs")
-  (:session "Mathemagix"))
+(texmacs-modes
+  (in-mathemagix-math% #t in-mathemagix% in-math%))
+
+(kbd-map
+  (:mode in-mathemagix-math?)
+  ;;("'" "'")
+  ("\"" "\""))
+
+(if (url-exists-in-path? "mmx-light")
+    (plugin-configure mathemagix
+      (:require (url-exists-in-path? "mmx-light"))
+      (:initialize (mathemagix-initialize))
+      (:launch "mmx-light --texmacs")
+      (:session "Mathemagix"))
+    (plugin-configure mathemagix
+      (:require (url-exists-in-path? "mmx-shell"))
+      (:initialize (mathemagix-initialize))
+      (:launch "mmx-shell --texmacs")
+      (:session "Mathemagix")))

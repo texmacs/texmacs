@@ -51,7 +51,7 @@ void
 bridge_auto_rep::initialize () {
   if ((!valid) || (body->st != f[1])) {
     valid= true;
-    if (nil (body)) body= make_bridge (ttt, attach_right (f[1], ip));
+    if (is_nil (body)) body= make_bridge (ttt, attach_right (f[1], ip));
     else replace_bridge (body, attach_right (f[1], ip));
   }
 }
@@ -68,7 +68,7 @@ bridge_auto (typesetter ttt, tree st, path ip, tree f, bool border) {
 void
 bridge_auto_rep::notify_assign (path p, tree u) {
   //cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (body)) {
+  if (is_nil (body)) {
     st= substitute (st, p, u);
     valid= false;
   }
@@ -84,7 +84,7 @@ bridge_auto_rep::notify_assign (path p, tree u) {
 void
 bridge_auto_rep::notify_insert (path p, tree u) {
   //cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (body)) bridge_rep::notify_insert (p, u);
+  if (is_nil (body)) bridge_rep::notify_insert (p, u);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     notify_macro (MACRO_INSERT, f[0]->label, -1, p->next, u);
@@ -97,7 +97,7 @@ bridge_auto_rep::notify_insert (path p, tree u) {
 void
 bridge_auto_rep::notify_remove (path p, int nr) {
   //cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (body)) bridge_rep::notify_remove (p, nr);
+  if (is_nil (body)) bridge_rep::notify_remove (p, nr);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     notify_macro (MACRO_REMOVE, f[0]->label, -1, p->next,
@@ -138,7 +138,7 @@ bridge_auto_rep::notify_macro (
 void
 bridge_auto_rep::notify_change () {
   status= CORRUPTED;
-  if (!nil (body)) body->notify_change ();
+  if (!is_nil (body)) body->notify_change ();
 }
 
 /******************************************************************************

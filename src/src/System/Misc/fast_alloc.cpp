@@ -17,7 +17,7 @@
 
 #include "fast_alloc.hpp"
 
-char*  alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
+char   alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
 char*  alloc_mem=NULL;
 size_t alloc_remains=0;
 int    allocated=0;
@@ -35,7 +35,7 @@ safe_malloc (register size_t sz) {
   void* ptr= malloc (sz);
   if (ptr==NULL) {
     cerr << "Fatal error: out of memory\n";
-    exit (1);
+    abort ();
   }
   return ptr;
 }

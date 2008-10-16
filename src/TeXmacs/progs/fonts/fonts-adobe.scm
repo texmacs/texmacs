@@ -89,7 +89,7 @@
 
 
 (set-font-rules
-  '(((adobe mr medium $a $s $d)
+  '(((adobe $f medium $a $s $d)
      (math
       (adobe-math (tex cmr $s $d)
 		  (tex cmmi $s $d)
@@ -102,6 +102,7 @@
 		  (tex cmsy $s $d)
 		  (tex eufm $s $d)
 		  (tex bbm $s $d)
+		  (tex grmn $s $d)
 		  (tex cmbsy $s $d)
 		  (virtual long $s $d)
 		  (virtual negate $s $d)
@@ -114,11 +115,12 @@
 		  (tex rpsyro $s $d 0))
       (rubber (tex-rubber rubber-cmex cmex $s $d)
 	      (tex-rubber rubber-stmary stmary $s $d)
-	      (tex-rubber rubber-wasy wasy $s $d))
+	      (tex-rubber rubber-wasy wasy $s $d)
+	      (tex-dummy-rubber (tex-rubber rubber-cmex $cmex $s $d)))
       (adobe rptmr $s $d 0)
       (adobe rptmr $s $d 0)))
 
-    ((adobe mr bold $a $s $d)
+    ((adobe $f bold $a $s $d)
      (math
       (adobe-math (tex cmbx $s $d)
 		  (tex cmmib $s $d)
@@ -131,6 +133,7 @@
 		  (tex cmbsy $s $d)
 		  (tex eufb $s $d)
 		  (tex bbmbx $s $d)
+		  (tex grxn $s $d)
 		  (tex cmbsy $s $d)
 		  (virtual long $s $d)
 		  (virtual negate $s $d)
@@ -143,6 +146,7 @@
 		  (tex rpsyro $s $d 0))
       (rubber (tex-rubber rubber-cmex cmexb $s $d)
 	      (tex-rubber rubber-stmary stmaryb $s $d)
-	      (tex-rubber rubber-wasy wasyb $s $d))
+	      (tex-rubber rubber-wasy wasyb $s $d)
+	      (tex-dummy-rubber (tex-rubber rubber-cmex $cmex $s $d)))
       (adobe rptmb $s $d 0)
       (adobe rptmb $s $d 0)))))

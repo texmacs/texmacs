@@ -12,14 +12,20 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (gnuplot-initialize)
+  (import-from (utils plugins plugin-convert))
+  (lazy-input-converter (gnuplot-input) gnuplot))
+
 (define (gnuplot-serialize lan t)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
     (with s (texmacs->verbatim (stree->tree u))
       (string-append (escape-verbatim (string-replace s "\n" "~")) "\n"))))
 
 (plugin-configure gnuplot
   (:require (url-exists-in-path? "gnuplot"))
+  (:initialize (gnuplot-initialize))
   (:launch "tm_gnuplot --texmacs")
   (:serializer ,gnuplot-serialize)
-  (:session "Gnuplot"))
+  (:session "Gnuplot")
+  (:scripts "Gnuplot"))

@@ -62,6 +62,7 @@ struct line_breaker_rep {
   line_breaker_rep (array<line_item> a, int start, int end,
 		    SI line_width, SI first_spc, SI last_spc);
 
+  void empty_line_fix (line_item& first, path& pos, int& cur_nr);
   path next_ragged_break (path pos);
   array<path> compute_ragged_breaks ();
 
@@ -91,8 +92,11 @@ get_position (font fn, string s, SI x) {
   fn->get_xpositions (s, xpos);
   while (i<n) {
     prev_i= i;
-    if (s[i]=='<') while ((i<n) && (s[i]!='>')) i++;
-    i++;
+    if (s[i]=='<') {
+      while ((i<n) && (s[i]!='>')) i++;
+      if (i<n) i++;
+    }
+    else i++;
     int m= (prev_x + xpos[i]) >> 1;
     if (x<m) {
       STACK_DELETE_ARRAY (xpos);
@@ -133,6 +137,33 @@ hyphenate (line_item item, int pos, line_item& item1, line_item& item2) {
 * Naive line breaking for ragged paragraph types
 ******************************************************************************/
 
+void
+line_breaker_rep::empty_line_fix (line_item& first, path& pos, int& cur_nr) {
+  // Fix for avoiding lines with only empty boxes
+  int i;
+  SI tot_spc= 0;  
+  for (i= pos->item; i<end && i<=cur_nr; i++) {
+    line_item cur_item = (i==pos->item? first: a[i]);
+    tot_spc += cur_item->b->w() + cur_item->spc->def;
+    if (tot_spc != 0) {
+      if (i == cur_nr) {
+	if (cur_item->spc->def != 0) return;
+	i++;
+      }
+      else i= cur_nr;
+      break;
+    }
+  }
+  cur_nr= i;
+  while (cur_nr<end) {
+    line_item cur_item = (cur_nr-1==pos->item? first: a[cur_nr-1]);
+    if (cur_item->spc->def != 0) break;
+    cur_item= (cur_nr==pos->item? first: a[cur_nr]);
+    if (cur_item->b->w()) break;
+    cur_nr++;
+  }
+}
+
 path
 line_breaker_rep::next_ragged_break (path pos) {
   int       cur_nr  = pos->item;
@@ -142,7 +173,7 @@ line_breaker_rep::next_ragged_break (path pos) {
   if (pos == path (start)) cur_spc= first_spc+ cur_item->b->w();
   else {
     path p= pos;
-    while (!atom (p)) {
+    while (!is_atom (p)) {
       line_item item1, item2;
       p= p->next;
       hyphenate (cur_item, p->item, item1, item2);
@@ -157,7 +188,10 @@ line_breaker_rep::next_ragged_break (path pos) {
     if ((++cur_nr)==end) break;
     cur_item = a[cur_nr];
     cur_spc += cur_item->b->w();
-    if (cur_spc > line_width) break;
+    if (cur_spc > line_width) {
+      // cout << "Overfull " << cur_spc << ", " << line_width << "\n";
+      break;
+    }
   }
 
   while (true) {
@@ -185,13 +219,17 @@ line_breaker_rep::next_ragged_break (path pos) {
       do cur_nr++;
       while ((cur_nr<end) && (a[cur_nr]->penalty >= HYPH_INVALID));
       if (cur_nr<end) cur_nr++;
+      empty_line_fix (first, pos, cur_nr);
       return path (cur_nr);
     }
     cur_item = (cur_nr==pos->item? first: a[cur_nr]);
     cur_spc -= cur_item->spc->def;
     if ((cur_spc <= line_width) &&
-	((cur_item->penalty < HYPH_INVALID) || (cur_nr==end-1)))
-      return path (cur_nr+1);
+	((cur_item->penalty < HYPH_INVALID) || (cur_nr==end-1))) {
+      cur_nr++;
+      empty_line_fix (first, pos, cur_nr);
+      return path (cur_nr);
+    }
   }
 }
 
@@ -272,7 +310,7 @@ line_breaker_rep::break_string (line_item item, path pos, int i, space spc) {
   string item_s= item->b->get_leaf_string ();
   array<int> hp= item->lan->get_hyphens (item_s);
 
-  if ((item->b->w() > line_width) || (!atom (pos))) {
+  if ((item->b->w() > line_width) || (!is_atom (pos))) {
     j= get_position (item->b->get_leaf_font (), item_s, line_width- spc->def);
     for (j= min (j+2, N(hp)-1); j>=0; j--)
       if (hp[j] < HYPH_INVALID) {
@@ -308,7 +346,7 @@ line_breaker_rep::process (path pos) {
   if (pos == path (start)) spc= space (first_spc+ first->b->w());
   else {
     path p= pos;
-    while (!atom (p)) {
+    while (!is_atom (p)) {
       line_item item1, item2;
       p= p->next;
       hyphenate (first, p->item, item1, item2);
@@ -359,7 +397,7 @@ line_breaker_rep::process (path pos) {
 
 void
 line_breaker_rep::get_breaks (array<path>& ap, path p) {
-  if (nil (p)) return;
+  if (is_nil (p)) return;
   lb_info cur= best[p];
   get_breaks (ap, cur->prev);
   ap << p;
@@ -378,9 +416,17 @@ line_breaker_rep::compute_breaks () {
   if (best [path (end)]->pen == HYPH_INVALID)
     for (i=start; i<end; i++)
       process (path (i));
-  
+
   array<path> ap (0);
   get_breaks (ap, path (end));
+
+  // Finish with fix for disallowing last lines with only empty boxes
+  if (N(ap) <= 2 || !is_atom (ap[N(ap)-2])) return ap;
+  for (i= ap[N(ap)-2]->item; i<end; i++)
+    if (a[i]->b->w() + a[i]->spc->def != 0)
+      return ap;
+  ap[N(ap)-2]= ap[N(ap)-1];
+  ap->resize (N(ap)-1);
   return ap;
 }
 

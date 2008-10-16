@@ -14,12 +14,16 @@
 #include "Line/lazy_vstream.hpp"
 #include "Format/format.hpp"
 #include "Stack/stacker.hpp"
+#include "Boxes/construct.hpp"
+#include "analyze.hpp"
 
 array<line_item> typeset_marker (edit_env env, path ip);
 array<line_item> typeset_concat (edit_env, tree t, path ip);
 array<line_item> join (array<line_item> a, array<line_item> b);
 lazy make_lazy_paragraph (edit_env env, tree t, path ip);
 lazy make_lazy_table (edit_env env, tree t, path ip);
+lazy make_lazy_canvas (edit_env env, tree t, path ip);
+lazy make_lazy_ornament (edit_env env, tree t, path ip);
 
 /******************************************************************************
 * Documents
@@ -135,6 +139,16 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
     return par->produce (request, ret_fm);
   }
   return lazy_rep::produce (request, fm);
+}
+
+/******************************************************************************
+* Hidden
+******************************************************************************/
+
+lazy
+make_lazy_hidden (edit_env env, tree t, path ip) {
+  (void) make_lazy (env, t[0], descend (ip, 0));
+  return lazy_document (env, tree (DOCUMENT), ip);
 }
 
 /******************************************************************************
@@ -333,7 +347,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
   if (is_compound (r)) value= tree (ERROR, "value");
   else {
     name = r->label;
-    if ((!nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
+    if ((!is_nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
       value= env->macro_arg->item [name];
       if (!is_func (value, BACKUP)) {
 	path new_valip= env->macro_src->item [name];
@@ -347,8 +361,8 @@ make_lazy_argument (edit_env env, tree t, path ip) {
   array<line_item> b= typeset_marker (env, descend (ip, 1));
   list<hashmap<string,tree> > old_var= env->macro_arg;
   list<hashmap<string,path> > old_src= env->macro_src;
-  if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
-  if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+  if (!is_nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+  if (!is_nil (env->macro_src)) env->macro_src= env->macro_src->next;
 
   if (N(t) > 1) {
     int i, n= N(t);
@@ -369,7 +383,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Mark
+* Mark and expand_as
 ******************************************************************************/
 
 lazy
@@ -380,7 +394,7 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
-      (!nil (env->macro_arg)) &&
+      (!is_nil (env->macro_arg)) &&
       env->macro_arg->item->contains (t[0][0]->label))
     {
       string name = t[0][0]->label;
@@ -409,6 +423,35 @@ make_lazy_mark (edit_env env, tree t, path ip) {
     }
 
   lazy par= make_lazy (env, t[1], descend (ip, 1));
+  return lazy_surround (a, b, par, ip);
+}
+
+lazy
+make_lazy_expand_as (edit_env env, tree t, path ip) {
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  lazy par= make_lazy (env, t[1], descend (ip, 1));
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
+* Locus
+******************************************************************************/
+
+lazy
+make_lazy_locus (edit_env env, tree t, path ip) {
+  extern bool build_locus (edit_env env, tree t, list<string>& ids, string& c);
+  list<string> ids;
+  string col;
+  if (!build_locus (env, t, ids, col))
+    system_warning ("Ignored unaccessible loci");
+  int last= N(t)-1;
+  tree old_col= env->read (COLOR);
+  env->write_update (COLOR, col);
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  lazy par= make_lazy (env, t[last], descend (ip, last));
+  env->write_update (COLOR, old_col);
   return lazy_surround (a, b, par, ip);
 }
 
@@ -443,6 +486,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_document (env, t, ip);
   case SURROUND:
     return lazy_surround (env, t, ip);
+    //case HIDDEN:
+    //return make_lazy_hidden (env, t, ip);
   case DATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
   case DLINES:
@@ -459,6 +504,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MARK:
     return make_lazy_mark (env, t, ip);
+  case EXPAND_AS:
+    return make_lazy_expand_as (env, t, ip);
   case EVAL:
   case QUASI:
     return make_lazy_eval (env, t, ip);
@@ -479,6 +526,15 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_auto (env, t, ip, var_inactive_m);
   case REWRITE_INACTIVE:
     return make_lazy_rewrite (env, t, ip);
+  case LOCUS:
+    return make_lazy_locus (env, t, ip);
+  case HLINK:
+  case ACTION:
+    return make_lazy_compound (env, t, ip);
+  case CANVAS:
+    return make_lazy_canvas (env, t, ip);
+  case ORNAMENT:
+    return make_lazy_ornament (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);

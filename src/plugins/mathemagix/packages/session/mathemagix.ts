@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.9>
+<TeXmacs|1.0.6.15>
 
 <style|source>
 
@@ -21,9 +21,12 @@
     </src-license>
   </src-title>>
 
-  <assign|mathemagix-output|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0fn>|<generic-output|<arg|body>>>>>
+  <assign|mmx-prompt|<macro|nr|<with|color|red|<arg|nr>]<specific|html|&nbsp;>
+  >>>
 
-  \;
+  <assign|mmx-prompt|<macro|nr|<with|color|red|Mmx]<specific|html|&nbsp;> >>>
+
+  <assign|mathemagix-output|<macro|body|<generic-output|<arg|body>>>>
 </body>
 
 <\initial>

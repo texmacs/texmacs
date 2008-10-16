@@ -28,7 +28,7 @@ using std::cerr;
 * Globals
 ******************************************************************************/
 
-extern char*  alloc_table[MAX_FAST];
+extern char   alloc_table[MAX_FAST];
 extern char*  alloc_mem;
 extern size_t alloc_remains;
 extern int    allocated;

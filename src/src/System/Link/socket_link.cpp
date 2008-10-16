@@ -3,6 +3,7 @@
 * MODULE     : socket_link.cpp
 * DESCRIPTION: TeXmacs links by sockets
 * COPYRIGHT  : (C) 2003  Joris van der Hoeven
+* THANKS     : Beej's Guide to Network Programming has been helpful
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -15,8 +16,10 @@
 #include "hashset.hpp"
 #include "iterator.hpp"
 #include "timer.hpp"
+#include "Scheme/object.hpp"
 #include <stdio.h>
 #include <string.h>
+#ifndef __MINGW32__
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -24,6 +27,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif
 #include <errno.h>
 #ifdef OS_WIN32
 #include <sys/misc.h>
@@ -35,13 +39,15 @@ hashset<pointer> socket_link_set;
 * Constructors and destructors for socket_links
 ******************************************************************************/
 
-socket_link_rep::socket_link_rep (string host2, int port2):
-  host (host2), port (port2)
+socket_link_rep::socket_link_rep (string host2, int port2, int type2, int fd):
+  host (host2), port (port2), type (type2)
 {
   socket_link_set->insert ((pointer) this);
-  io     = -1;
+  io     = fd;
   outbuf = "";
-  alive  = false;
+  alive  = (fd != -1);
+  if (type == SOCKET_SERVER) call ("server-add", object (io));
+  else if (type == SOCKET_CLIENT) call ("client-add");
 }
 
 socket_link_rep::~socket_link_rep () {
@@ -50,17 +56,27 @@ socket_link_rep::~socket_link_rep () {
 }
 
 tm_link
-make_socket_link (string host, int port) {
-  return new socket_link_rep (host, port);
+make_socket_link (string host, int port, int type, int fd) {
+  return new socket_link_rep (host, port, type, fd);
+}
+
+tm_link
+find_socket_link (int fd) {
+  iterator<pointer> it= iterate (socket_link_set);
+  while (it->busy()) {
+    socket_link_rep* con= (socket_link_rep*) it->next();
+    if (con->io == fd && con->alive) return tm_link (con);
+  }
+  return tm_link ();
 }
 
 /******************************************************************************
 * Routines for socket_links
 ******************************************************************************/
-#define TERMCHAR '\1'
 
 string
 socket_link_rep::start () {
+#ifndef __MINGW32__
   if (alive) return "busy";
   if (DEBUG_AUTO)
     cout << "TeXmacs] Connecting to '" << host << ":" << port << "'\n";
@@ -111,6 +127,9 @@ socket_link_rep::start () {
     return "Error: non working connection to '" * where * "'";
   alive= true;
   return "ok";
+#else
+  return "Error: sockets not implemented";
+#endif
 }
 
 static string
@@ -128,30 +147,62 @@ debug_io_string (string s) {
   return r;
 }
 
+static int
+send_all (int s, char *buf, int *len) {
+#ifndef __MINGW32__
+  int total= 0;          // how many bytes we've sent
+  int bytes_left= *len;  // how many we have left to send
+  int n= 0;
+
+  while (total < *len) {
+    n= send (s, buf + total, bytes_left, 0);
+    if (n == -1) break;
+    total += n;
+    bytes_left -= n;
+  }
+
+  *len= total;
+  return n==-1? -1: 0;
+#else
+  return 0;
+#endif
+} 
+
+
 void
 socket_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "---> " << debug_io_string (s) << "\n";
-  char* _s= as_charp (s);
-  ::write (io, _s, N(s));
-  delete[] _s;
+  int len= N(s);
+  if (send_all (io, &(s[0]), &len) == -1) {
+    cerr << "TeXmacs] write to '" << host << ":" << port << "' failed\n";
+    stop ();
+  }
 }
 
 void
 socket_link_rep::feed (int channel) {
+#ifndef __MINGW32__
   if ((!alive) || (channel != LINK_OUT)) return;
-
-  int r;
   char tempout[1024];
-  r = ::read (io, tempout, 1024);
-  if (r == ERROR) {
-    cerr << "TeXmacs] read failed from#'" << host << ":" << port << "'\n";
-    wait (NULL);
+  int r= recv (io, tempout, 1024, 0);
+  if (r <= 0) {
+    if (r == 0) cout << "TeXmacs] '" << host << ":" << port << "' hung up\n";
+    else cerr << "TeXmacs] read failed from '" << host << ":" << port << "'\n";
+    stop ();
   }
   else if (r != 0) {
     if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
+#endif
+}
+
+string&
+socket_link_rep::watch (int channel) {
+  static string empty_string= "";
+  if (channel == LINK_OUT) return outbuf;
+  else return empty_string;
 }
 
 string
@@ -166,11 +217,17 @@ socket_link_rep::read (int channel) {
 
 void
 socket_link_rep::listen (int msecs) {
-  int wait_until= texmacs_time () + msecs;
-  while (outbuf == "") {
-    listen_to_sockets (); // FIXME: should listen more specifically
-    if (texmacs_time () > wait_until) break;
-  }
+#ifndef __MINGW32__
+  if (!alive) return;
+  fd_set rfds;
+  FD_ZERO (&rfds);
+  FD_SET (io, &rfds);
+  struct timeval tv;
+  tv.tv_sec  = msecs / 1000;
+  tv.tv_usec = 1000 * (msecs % 1000);
+  int nr= select (io+1, &rfds, NULL, NULL, &tv);
+  if (nr != 0 && FD_ISSET (io, &rfds)) feed (LINK_OUT);
+#endif
 }
 
 void
@@ -179,10 +236,15 @@ socket_link_rep::interrupt () {
 
 void
 socket_link_rep::stop () {
+#ifndef __MINGW32__
   if (!alive) return;
-  alive= false;
+  if (type == SOCKET_SERVER) call ("server-remove", object (io));
+  else if (type == SOCKET_CLIENT) call ("client-remove");
   close (io);
+  io= -1;
+  alive= false;
   wait (NULL);
+#endif
 }
 
 /******************************************************************************
@@ -191,6 +253,7 @@ socket_link_rep::stop () {
 
 void
 listen_to_sockets () {
+#ifndef __MINGW32__
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);
@@ -217,20 +280,5 @@ listen_to_sockets () {
       if (con->alive && FD_ISSET (con->io, &rfds)) con->feed (LINK_OUT);
     }
   }
-}
-
-/******************************************************************************
-* Emergency exit for all sockets
-******************************************************************************/
-
-void
-close_all_sockets () {
-  iterator<pointer> it= iterate (socket_link_set);
-  while (it->busy()) {
-    socket_link_rep* con= (socket_link_rep*) it->next();
-    if (con->alive) {
-      close (con->io);
-      con->alive= false;
-    }
-  }
+#endif
 }

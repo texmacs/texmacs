@@ -1,3 +1,8 @@
-if getenv "redfront" then in "$reduce/redfr/redfront.red"$
-if getenv "TEXMACS_REDUCE_PATH" then in "$reduce/xr/bin/texmacs.red"$
+lisp <<
+   if not getenv("NOREDUCERC") then <<
+      loaddirectories!* := nconc(
+         {"","$HOME/.reduce/lisp/$LISP/$MACHINE/"},loaddirectories!*);
+      if getenv("TEXMACS_REDUCE_PATH") then load tmprint
+  >>
+>> $
 end$

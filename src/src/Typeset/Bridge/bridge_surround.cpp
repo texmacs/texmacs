@@ -31,6 +31,7 @@ public:
   bool notify_macro  (int type, string var, int level, path p, tree u);
   void notify_change ();
 
+  void my_clean_links ();
   void my_exec_until (path p);
   bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
@@ -46,7 +47,7 @@ void
 bridge_surround_rep::initialize () {
   while (N(st)<3) // hack for temporarily incorrect situations (A-backspace)
     st= tree (SURROUND, "") * st;
-  if (nil (body)) body= make_bridge (ttt, st[2], descend (ip, 2));
+  if (is_nil (body)) body= make_bridge (ttt, st[2], descend (ip, 2));
   else replace_bridge (body, st[2], descend (ip, 2));
   changes_before= hashmap<string,tree> (UNINIT);
   corrupted= true;
@@ -64,15 +65,15 @@ bridge_surround (typesetter ttt, tree st, path ip) {
 void
 bridge_surround_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, SURROUND)))
+  if (is_nil (p) && (!is_func (u, SURROUND)))
     fatal_error ("Nil path", "bridge_surround_rep::notify_assign");
-  if (nil (p) || (p->item != 2)) {
+  if (is_nil (p) || (p->item != 2)) {
     st= substitute (st, p, u);
     initialize ();
   }
   else {
     // bool mp_flag= is_multi_paragraph (st);
-    if (atom (p)) {
+    if (is_atom (p)) {
       body= make_bridge (ttt, u, descend (ip, 2));
       st= substitute (st, 2, body->st);
     }
@@ -88,8 +89,8 @@ bridge_surround_rep::notify_assign (path p, tree u) {
 void
 bridge_surround_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_surround_rep::notify_insert");
-  if (atom (p) || (p->item != 2)) bridge_rep::notify_insert (p, u);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_surround_rep::notify_insert");
+  if (is_atom (p) || (p->item != 2)) bridge_rep::notify_insert (p, u);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     body->notify_insert (p->next, u);
@@ -102,8 +103,8 @@ bridge_surround_rep::notify_insert (path p, tree u) {
 void
 bridge_surround_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_surround_rep::notify_remove");
-  if (atom (p) || (p->item != 2)) bridge_rep::notify_remove (p, nr);
+  if (is_nil (p)) fatal_error ("Nil path", "bridge_surround_rep::notify_remove");
+  if (is_atom (p) || (p->item != 2)) bridge_rep::notify_remove (p, nr);
   else {
     // bool mp_flag= is_multi_paragraph (st);
     body->notify_remove (p->next, nr);
@@ -137,6 +138,12 @@ bridge_surround_rep::notify_change () {
 /******************************************************************************
 * Typesetting
 ******************************************************************************/
+
+void
+bridge_surround_rep::my_clean_links () {
+  if (corrupted || (N(ttt->old_patch) != 0))
+    link_env= link_repository (true);
+}
 
 void
 bridge_surround_rep::my_exec_until (path p) {

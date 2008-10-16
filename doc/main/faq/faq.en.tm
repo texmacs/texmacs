@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.9>
 
 <style|tmweb>
 
@@ -31,18 +31,20 @@
     <item>System Appearance and Behavior
 
     <\itemize-minus>
-      <item><hyper-link|<TeXmacs> hangs when opening a document for a while
-      and my disk is being filled with files|#sys-1>?
+      <item><hlink|<TeXmacs> hangs when opening a document for a while and my
+      disk is being filled with files|#sys-1>?
 
-      <item><hyper-link|How can I see the <LaTeX> or <TeX> code corresponding
-      to what I see on the screen|#sys-2>?
+      <item><hlink|How can I see the <LaTeX> or <TeX> code corresponding to
+      what I see on the screen|#sys-2>?
 
-      <item><hyper-link|Why don't you use a common graphical user interface
-      like GTK for your scrollbars, menus, and so on|#sys-3>?
+      <item><hlink|Why don't you use a common graphical user interface like
+      GTK for your scrollbars, menus, and so on|#sys-3>?
 
-      <item><hyper-link|Trying to start <TeXmacs> remotely over a ssh
-      connection, I get an error, while <abbr|e.g.> xclock works without a
+      <item><hlink|Trying to start <TeXmacs> remotely over a ssh connection,
+      I get an error, while <abbr|e.g.> xclock works without a
       problem|#sys-4>?
+
+      <item><hlink|<TeXmacs> is unusually slow while editing|#sys-5>?
     </itemize-minus>
 
     <item>Windows/Cygwin specific
@@ -69,6 +71,8 @@
       <item><hlink|How can I insert an OpenOffice.org table|#usage-3>?
 
       <item><hlink|How can I insert the number of pages|#usage-4>?
+
+      <item><hlink|How can I resize an image|#usage-5>?
     </itemize-minus>
 
     <item>Microtypography
@@ -83,9 +87,9 @@
     <item>Legacy Questions
 
     <\itemize-minus>
-      <item><hyper-link|A publisher sent me a giant <LaTeX> preamble I'm
-      supposed to put in in order to prepare a book for them. What is the
-      best way of putting it in and figuring if it will work|#legacy-1>?
+      <item><hlink|A publisher sent me a giant <LaTeX> preamble I'm supposed
+      to put in in order to prepare a book for them. What is the best way of
+      putting it in and figuring if it will work|#legacy-1>?
     </itemize-minus>
   </itemize>
 
@@ -267,6 +271,31 @@
     about the local and remote machine.
   </answer>
 
+  <\question>
+    <label|sys-5><TeXmacs> is unusually slow while editing?
+  </question>
+
+  <\answer>
+    Graphics card drivers with poor 2D performance can slow <TeXmacs> down
+    termendously.\ 
+
+    If you are running TeXmacs under X on a system with an ATI graphics card
+    and are using ATI's proprietary drivers (the driver called
+    <verbatim|fglrx)>, you can achieve a significant speedup by\ 
+
+    <\itemize>
+      <item><em|either> running an X server such as Xgl that performs 2D
+      operations using the 3D API of the graphics card driver,
+
+      <item><em|or> switching to an open source graphics card driver such as
+      <verbatim|ati> or <verbatim|radeon> which have a far better 2D
+      performance than <verbatim|fglrx>.
+    </itemize>
+
+    Note that if you try both at the same time, you will slow your system
+    down even more, instead of speeding it up.
+  </answer>
+
   <section*|Windows/Cygwin specific>
 
   <\question>
@@ -369,6 +398,22 @@
 
   <answer| Put a label on the last page of your document and use the
   <verbatim|pageref> primitive in order to produce the corresponding number.>
+
+  <\question>
+    <label|usage-5>How can I resize an image?
+  </question>
+
+  <\answer>
+    Put your cursor right behind the image and press <key|backspace>. You
+    will see the name of the image, followed by six other fields. The two
+    fields after the name of the image are respectively its width and its
+    height. You may for instance set the width to <verbatim|5cm> and the
+    height to <verbatim|27mm>. When leaving the width open, it will
+    automatically be determined as a function of the height (and vice versa).
+    When leaving both fields open, the image will be reproduced at its
+    original size. Notice that a width of <verbatim|1par> will span your
+    image over the paragraph width.
+  </answer>
 
   <section*|Microtypography>
 

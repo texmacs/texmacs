@@ -21,21 +21,23 @@
 struct socket_link_rep: tm_link_rep {
   string host;          // host for the socket
   int    port;          // port for the socket
+  int    type;          // socket type
   int    io;            // file descriptor for data going to the child
   string outbuf;        // pending output from plugin
 
 public:
-  socket_link_rep (string host, int port);
+  socket_link_rep (string host, int port, int type, int fd);
   ~socket_link_rep ();
 
-  string start ();
-  void   write (string s, int channel);
-  string read (int channel);
-  void   listen (int msecs);
-  void   interrupt ();
-  void   stop ();
+  string  start ();
+  void    write (string s, int channel);
+  string& watch (int channel);
+  string  read (int channel);
+  void    listen (int msecs);
+  void    interrupt ();
+  void    stop ();
 
-  void   feed (int channel);
+  void    feed (int channel);
 };
 
 void listen_to_sockets ();

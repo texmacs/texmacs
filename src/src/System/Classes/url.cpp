@@ -65,7 +65,11 @@
 #include "file.hpp"
 #include "analyze.hpp"
 
-#ifdef OS_WIN32
+#if defined(OS_WIN32)  || defined(__MINGW32__)
+#define WINPATHS
+#endif
+
+#ifdef WINPATHS
 #define URL_CONCATER  '\\'
 #define URL_SEPARATOR ';'
 #else
@@ -131,7 +135,7 @@ url_ramdisc (string contents) {
 static url
 url_default (string name, int type= URL_SYSTEM) {
   url u= url_get_name (name, type);
-#ifdef OS_WIN32
+#ifdef WINPATHS
   // FIXME: this hack seems a bit too simple
   if (is_concat (u) && (u[2]->t == "")) u= u[1];
   // cout << name << " -> " << url_root ("default") * u << "\n";
@@ -172,6 +176,12 @@ url_ftp (string name) {
   return url_root ("ftp") * u;
 }
 
+static url
+url_tmfs (string name) {
+  url u= url_get_name (name);
+  return url_root ("tmfs") * u;
+}
+
 /******************************************************************************
 * Generic url constructor
 ******************************************************************************/
@@ -188,7 +198,7 @@ heuristic_is_path (string name, int type) {
 
 static bool
 heuristic_is_default (string name, int type) {
-#ifdef OS_WIN32
+#ifdef WINPATHS
   // FIXME: we probably should take into account 'type' too
   if (N(name) < 2) return false;
   if ((name[0] == '\\') && (name[1] == '\\')) return true;
@@ -218,6 +228,7 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "file://")) return url_file (name (7, N (name)));
   if (starts (name, "http://")) return url_http (name (7, N (name)));
   if (starts (name, "ftp://")) return url_ftp (name (6, N (name)));
+  if (starts (name, "tmfs://")) return url_tmfs (name (7, N (name)));
   if (heuristic_is_path (name, type)) return url_path (name, type);
   if (heuristic_is_default (name, type)) return url_default (name, type);
   if (heuristic_is_http (name)) return url_http (name);
@@ -255,7 +266,7 @@ url_standard (string dir, string name) {
   return url_standard (dir) * url_standard (name);
 }
 
-url::url (char* name): rep (new url_rep (url_unix (name)->t)) {}
+url::url (const char* name): rep (new url_rep (url_unix (name)->t)) {}
 url::url (string name): rep (new url_rep (url_unix (name)->t)) {}
 url::url (string path_name, string name):
   rep (new url_rep (url_unix (path_name, name)->t)) {}
@@ -267,7 +278,7 @@ url::url (string path_name, string name):
 static bool
 is_semi_root (url u) {
   // url u such that u/.. == u (website or windows drive name)
-#ifdef OS_WIN32
+#ifdef WINPATHS
   return is_concat (u) && is_root (u[1]) && is_atomic (u[2]);
 #else
   return is_concat (u) && is_root_web (u[1]) && is_atomic (u[2]);
@@ -310,7 +321,7 @@ operator * (url u1, url u2) {
 }
 
 url
-operator * (url u1, char* name) {
+operator * (url u1, const char* name) {
   return u1 * url (name);
 }
 
@@ -368,6 +379,14 @@ is_rooted_web (url u) {
 }
 
 bool
+is_rooted_tmfs (url u) {
+  return
+    is_root_tmfs (u) ||
+    (is_concat (u) && is_rooted_tmfs (u[1])) ||
+    (is_or (u) && is_rooted_tmfs (u[1]) && is_rooted_tmfs (u[2]));
+}
+
+bool
 is_name (url u) {
   if (is_atomic (u)) return true;
   if (!is_concat (u)) return false;
@@ -402,12 +421,6 @@ is_ramdisc (url u) {
   return is_concat (u) && is_root (u[1], "ramdisc");
 }
 
-bool
-is_without_name (url u) {
-  string s= as_string (u);
-  return (N(s)>=7) && (s(0,7)=="no name");
-}
-
 /******************************************************************************
 * Conversion routines for urls
 ******************************************************************************/
@@ -428,7 +441,7 @@ as_string (url u, int type) {
     if ((!is_name (u[1])) && (!is_root (u[1]))) s1= "{" * s1 * "}";
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
-#ifdef OS_WIN32
+#ifdef WINPATHS
     if (is_semi_root (u)) {
       if (ends (s2, ":")) return s2 * "\\";
       else return s2;
@@ -442,14 +455,14 @@ as_string (url u, int type) {
     string s2= as_string (u[2], type);
     if (!is_name_in_path (u[1])) s1= "{" * s1 * "}";
     if ((!is_or (u[2])) && (!is_name_in_path (u[2]))) s2= "{" * s2 * "}";
-#ifdef OS_WIN32
+#ifdef WINPATHS
     if (type == URL_STANDARD) return s1 * ":" * s2;
     else return s1 * string (URL_SEPARATOR) * s2;
 #else
     return s1 * string (URL_SEPARATOR) * s2;
 #endif
   }
-#ifdef OS_WIN32
+#ifdef WINPATHS
   if (is_root (u, "default")) {
     int stype= type;
     if (is_root (u[1]) && (!is_root (u[1], "default"))) stype= URL_STANDARD;
@@ -463,6 +476,7 @@ as_string (url u, int type) {
   if (is_wildcard (u, 0)) return "**";
   if (is_wildcard (u, 1)) return u->t[1]->label;
   fatal_error ("bad url", "as_string", "url.cpp");
+  return ""; // NOT REACHED
 }
 
 ostream&
@@ -514,6 +528,7 @@ glue (url u, string s) {
   cerr << "\nu= " << u << "\n";
   cerr << "s= " << s << "\n";
   fatal_error ("can't glue string to url", "glue", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -525,6 +540,7 @@ unglue (url u, int nr) {
   cerr << "\nu= " << u << "\n";
   cerr << "nr= " << nr << "\n";
   fatal_error ("can't unglue from url", "unglue", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -542,7 +558,7 @@ relative (url base, url u) {
 
 url
 delta_sub (url base, url u) {
-#ifdef OS_WIN32
+#ifdef WINPATHS
   if (is_atomic (base) || heuristic_is_default (as_string (base), URL_SYSTEM))
     return u;
 #else
@@ -558,6 +574,8 @@ delta_sub (url base, url u) {
 
 url
 delta (url base, url u) {
+  if (is_or (u))
+    return delta (base, u[1]) | delta (base, u[2]);
   url res= delta_sub (base, u);
   if (is_none (res)) return u;
   return res;
@@ -575,6 +593,21 @@ expand (url u) {
   if (is_or (u)) return expand (u[1]) | expand (u[2]);
   if (is_concat (u)) return expand (expand (u[1]), expand (u[2]));
   return u;
+}
+
+bool
+descends (url u, url base) {
+  if (is_or (base)) return descends (u, base[1]) || descends (u, base[2]);
+  if (is_concat (u) && is_atomic (base))
+    return u[1] == base;
+  if (is_concat (u) && is_concat (base))
+    return u[1] == base[1] && descends (u[2], base[2]);
+  return false;
+}
+
+bool
+is_secure (url u) {
+  return descends (u, expand (url_path ("$TEXMACS_SECURE_PATH")));
 }
 
 /******************************************************************************
@@ -680,16 +713,10 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return reroot (u, "default");
       return url_none ();
     }
-    if (is_rooted_web (comp)) {
-      if (filter == "") return u;
-      // cout << "  try " << comp << "\n";
-      url from_web= get_from_web (comp);
-      // cout << "  --> " << from_web << "\n";
-      if (is_none (from_web)) return from_web;
-      if (is_of_type (from_web, filter)) return u;
+    if (is_rooted_web (comp) || is_rooted_tmfs (comp) || is_ramdisc (comp)) {
+      if (is_of_type (comp, filter)) return u;
       return url_none ();
     }
-    if (is_ramdisc (comp)) return comp;
     cerr << LF << "base= " << base << LF;
     if (!is_rooted (comp)) fatal_error ("unrooted url", "complete", "url.cpp");
     else fatal_error ("bad protocol in url", "complete", "url.cpp");
@@ -732,6 +759,7 @@ complete (url base, url u, string filter, bool flag) {
   }
   cout << LF << "url= " << u << LF;
   fatal_error ("bad url", "complete", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -764,7 +792,7 @@ resolve (url u, string filter) {
 url
 resolve_in_path (url u) {
   if (use_which) {
-    string name = as_string (u);
+    string name = escape_sh (as_string (u));
     string which= var_eval_system ("which " * name * " 2> /dev/null");
     if (ends (which, name))
       return which;
@@ -784,6 +812,11 @@ exists (url u) {
 bool
 exists_in_path (url u) {
   return !is_none (resolve_in_path (u));
+}
+
+bool
+has_permission (url u, string filter) {
+  return !is_none (resolve (u, filter));
 }
 
 static url
@@ -808,7 +841,7 @@ string
 concretize (url u) {
   // This routine transforms a resolved url into a system file name.
   // In the case of distant files from the web, a local copy is created.
-#ifdef OS_WIN32
+#ifdef WINPATHS
   // FIXME: this fix seems strange;
   // to start with, the if condition is not respected
   string s = as_string (u);
@@ -819,6 +852,7 @@ concretize (url u) {
     return as_string (reroot (u, "default"));
 #endif
   if (is_rooted_web (u)) return concretize (get_from_web (u));
+  if (is_rooted_tmfs (u)) return concretize (get_from_server (u));
   if (is_ramdisc (u)) return concretize (get_from_ramdisc (u));
   if (is_here (u)) return as_string (url_pwd ());
   if (is_parent (u)) return as_string (url_pwd () * url_parent ());

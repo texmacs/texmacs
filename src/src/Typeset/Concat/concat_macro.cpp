@@ -151,14 +151,16 @@ concater_rep::typeset_include (tree t, path ip) {
   tree incl= load_inclusion (incl_file);
   url save_name= env->cur_file_name;
   env->cur_file_name= incl_file;
+  env->secure= is_secure (env->cur_file_name);
   typeset_dynamic (incl, ip);
   env->cur_file_name= save_name;
+  env->secure= is_secure (env->cur_file_name);
 }
 
 void
 concater_rep::typeset_drd_props (tree t, path ip) {
   (void) env->exec (t);
-  flag ("drd-properties", ip, env->dis->brown);
+  flag ("drd-properties", ip, brown);
   control (t, ip);
 }
 
@@ -189,7 +191,7 @@ concater_rep::typeset_argument (tree t, path ip) {
   // cout << "Argument " << t << ", " << ip << "\n";
   tree r= t[0];
   if (is_compound (r) ||
-      nil (env->macro_arg) ||
+      is_nil (env->macro_arg) ||
       (!env->macro_arg->item->contains (r->label)))
     {
       typeset_error (t, ip);
@@ -208,8 +210,8 @@ concater_rep::typeset_argument (tree t, path ip) {
   marker (descend (ip, 0));
   list<hashmap<string,tree> > old_var= env->macro_arg;
   list<hashmap<string,path> > old_src= env->macro_src;
-  if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
-  if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+  if (!is_nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+  if (!is_nil (env->macro_src)) env->macro_src= env->macro_src->next;
 
   if (N(t) > 1) {
     int i, n= N(t);
@@ -241,7 +243,7 @@ concater_rep::typeset_mark (tree t, path ip) {
   // cout << "Mark: " << t << ", " << ip << "\n\n";
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
-      (!nil (env->macro_arg)) &&
+      (!is_nil (env->macro_arg)) &&
       env->macro_arg->item->contains (t[0][0]->label))
     {
       string name = t[0][0]->label;
@@ -270,6 +272,14 @@ concater_rep::typeset_mark (tree t, path ip) {
       marker (descend (valip, right_index (value)));
     }
   else typeset (t[1], descend (ip, 1));
+}
+
+void
+concater_rep::typeset_expand_as (tree t, path ip) {
+  // cout << "Mark: " << t << ", " << ip << "\n\n";
+  marker (descend (ip, 0));
+  typeset (t[1], descend (ip, 1));
+  marker (descend (ip, 1));
 }
 
 void

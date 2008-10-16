@@ -76,94 +76,97 @@ concater_rep::typeset_case (tree t, path ip) {
 }
 
 /******************************************************************************
-* Typesetting other dynamic markup
+* Typesetting linking primitives
 ******************************************************************************/
 
-class guile_command_rep: public command_rep {
-  string s;
-  int    level;
-public:
-  guile_command_rep (string s2, int level2= 0): s (s2), level (level2) {
-    if (as_bool (eval ("(secure? '" * s * ")"))) level= 2;
-  }
-  void apply () {
-    string lambda;
-    switch (max (script_status, level)) {
-    case 0:
-      eval_delayed("(set-message \"Error: scripts not accepted\" \"script\")");
-      break;
-    case 1:
-      lambda= "(lambda (s) (if (equal? s \"y\") " * s * "))";
-      eval_delayed ("(interactive '(\"Accept script (y/n)?\") '" *lambda* ")");
-      break;
-    case 2:
-      eval_delayed (s);
-      break;
+bool
+build_locus (edit_env env, tree t, list<string>& ids, string& col) {
+  //cout << "Typeset " << t << "\n";
+  int last= N(t)-1;
+  tree body= env->expand (t[last], true);
+  //cout << "Typeset " << body << "\n";
+  bool accessible= is_accessible (obtain_ip (body));
+  bool visited= false;
+  if (!is_nil (env->link_env)) {
+    int i, j;
+    for (i=0; i<last; i++) {
+      tree arg= env->exec (t[i]);
+      if (is_compound (arg, "id", 1)) {
+	string id= as_string (arg[0]);
+	if (accessible) env->link_env->insert_locus (id, body);
+	else if (N (obtain_ip (body)) > 1) {
+	  extern tree get_subtree (path p);
+	  path p= path_up (reverse (descend_decode (obtain_ip (body), 1)));
+	  env->link_env->insert_locus ("&" * id, get_subtree (p));
+	}
+	ids= list<string> (id, ids);
+	visited= visited || has_been_visited ("id:" * id);
+      }
+      if (is_compound (arg, "link") && N(arg) >= 2) {
+	if (is_func (arg[1], ATTR)) arg= copy (arg);
+	else arg= arg (0, 1) * tree (LINK, tree (ATTR)) * arg (1, N(arg));
+	arg[1] << tree ("secure")
+	       << (env->secure? tree ("true"): tree ("false"));
+	env->link_env->insert_link (arg);
+	for (j=2; j<N(arg); j++) {
+	  if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0]))
+	    visited= visited || has_been_visited ("id:" * arg[j][0]->label);
+	  if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0]))
+	    visited= visited || has_been_visited ("url:" * arg[j][0]->label);
+	}
+      }
     }
   }
-};
 
-void
-concater_rep::typeset_specific (tree t, path ip) {
-  string which= env->exec_string (t[0]);
-  if (which == "texmacs") {
-    marker (descend (ip, 0));
-    typeset (t[1], descend (ip, 1));
-    marker (descend (ip, 1));
-    //typeset_dynamic (t[1], descend (ip, 1));
-  }
-  else if ((which == "screen") || (which == "printer")) {
-    int  type= (which == "screen"? PS_DEVICE_SCREEN: PS_DEVICE_PRINTER);
-    box  sb  = typeset_as_concat (env, attach_middle (t[1], ip));
-    box  b   = specific_box (decorate_middle (ip), sb, type, env->fn);
-    marker (descend (ip, 0));
-    print (STD_ITEM, b);
-    marker (descend (ip, 1));
-  }
-  else control ("specific", ip);
+  bool on_paper= (env->get_string (PAGE_PRINTED) == "true");
+  bool preserve= (get_locus_rendering ("locus-on-paper") == "preserve");
+  string var= (visited? VISITED_COLOR: LOCUS_COLOR);
+  string current_col= env->get_string (COLOR);
+  string locus_col= env->get_string (var);
+  if (on_paper && preserve) col= locus_col;
+  else if (locus_col == "preserve") col= current_col;
+  else if (locus_col == "global") col= get_locus_rendering (var);
+  else col= locus_col;
+
+  return accessible;
 }
 
 void
-concater_rep::typeset_label (tree t, path ip) {
-  string key  = env->exec_string (t[0]);
-  tree   value= copy (env->read ("the-label"));
-  tree   old_value= env->local_ref[key];
-  if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
-    env->local_ref (key)= tuple (copy (value), old_value[1]);
-  else env->local_ref (key)= tuple (copy (value), "?");
-  if (env->cur_file_name != env->base_file_name) {
-    url d= delta (env->base_file_name, env->cur_file_name);
-    env->local_ref (key) << as_string (d);
+concater_rep::typeset_locus (tree t, path ip) {
+  int last= N(t)-1;
+  list<string> ids;
+  string col;
+  if (build_locus (env, t, ids, col)) {
+    marker (descend (ip, 0));
+    tree old= env->local_begin (COLOR, col);
+    typeset (t[last], descend (ip, last));
+    env->local_end (COLOR, old);
+    marker (descend (ip, 1));
   }
-
-  flag (key, ip, env->dis->blue);
-  // replacement for: control ("label", ip);
-  box b= tag_box (ip, empty_box (ip, 0, 0, 0, env->fn->yx), key);
-  a << line_item (CONTROL_ITEM, b, HYPH_INVALID, "label");
+  else {
+    tree old= env->local_begin (COLOR, col);
+    box b= typeset_as_concat (env, t[last], descend (ip, last));
+    env->local_end (COLOR, old);
+    print (STD_ITEM, locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
+  }
 }
 
 void
-concater_rep::typeset_reference (tree t, path ip, int type) {
-  marker (descend (ip, 0));
-  string key= env->exec_string (t[0]);
-  tree value=
-    env->local_ref->contains (key)?
-    env->local_ref [key]: env->global_ref [key];
-
-  string s= "(go-to-label \"" * key * "\")";
-  if (is_func (value, TUPLE, 3)) {
-    url name= url_system (value[2]->label);
-    string r= quote (as_string (relative (env->base_file_name, name)));
-    s= "(begin (load-browse-buffer (url-system " * r * ")) " * s * ")";
+concater_rep::typeset_set_binding (tree t, path ip) {
+  tree keys= env->exec (t);
+  if (L(keys) == TUPLE) {
+    flag ("set binding", ip, blue);
+    if (N(keys) > 0) {
+      path sip= ip;
+      if (N(t) >= 3 && (!is_nil (env->macro_src))) {
+	tree body= env->expand (tree (ARG, t[2]), true);
+	sip= obtain_ip (body);
+      }
+      box b= tag_box (sip, empty_box (sip, 0, 0, 0, env->fn->yx), keys);
+      a << line_item (CONTROL_ITEM, b, HYPH_INVALID, "label");
+    }
   }
-  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
-  else if (type == 1) value= "?";
-
-  command cmd (new guile_command_rep (s, 2));
-  box b= typeset_as_concat (env, attach_right (value, ip));
-  string action= env->read_only? string ("select"): string ("double-click");
-  print (STD_ITEM, action_box (ip, b, action, cmd, true));
-  marker (descend (ip, 1));  
+  else typeset_dynamic (keys, ip);
 }
 
 void
@@ -180,69 +183,28 @@ concater_rep::typeset_write (tree t, path ip) {
   control ("write", ip);
 }
 
-void
-concater_rep::typeset_hyperlink (tree t, path ip) {
-  if (N(t)<2) return;
-  string href      = env->exec_string (t[1]);
-  string href_file = href;
-  string href_label= "";
-  int i, n= N(href);
-  for (i=0; i<n; i++)
-    if (href[i]=='#') {
-      href_file = href (0, i);
-      href_label= href (i+1, n);
-      break;
-    }
+/******************************************************************************
+* Typesetting other dynamic markup
+******************************************************************************/
 
-  string r, s;
-  if (href_file == "") s= "(go-to-label \"" * href_label * "\")";
-  else {
-    r= as_string (relative (env->base_file_name, url_unix (href_file)));
-    s= "(load-browse-buffer (url-system " * quote (r) * "))";
-    if (href_label != "")
-      s= "(begin " * s * " (go-to-label \"" * href_label * "\"))";
+void
+concater_rep::typeset_specific (tree t, path ip) {
+  string which= env->exec_string (t[0]);
+  if (which == "texmacs" || which == "image") {
+    marker (descend (ip, 0));
+    typeset (t[1], descend (ip, 1));
+    marker (descend (ip, 1));
+    //typeset_dynamic (t[1], descend (ip, 1));
   }
-  command cmd (new guile_command_rep (s, 2));
-  tree old_col= env->local_begin (COLOR, "blue");
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  string action= env->read_only? string ("select"): string ("double-click");
-  print (STD_ITEM, action_box (ip, b, action, cmd, true));
-}
-
-void
-concater_rep::typeset_action (tree t, path ip) {
-  if (N(t)<2) return;
-  string cmd_s= env->exec_string (t[1]);
-  command cmd (new guile_command_rep (cmd_s));
-  tree old_col= env->local_begin (COLOR, "blue");
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  path valip= decorate ();
-  if ((N(t) >= 3) && (is_func (t[2], ARG))) {
-    string var= env->exec_string (t[2][0]);
-    tree   val= env->macro_arg->item [var];
-    if ((var != "") && (!is_func (val, BACKUP))) {
-      path new_valip= env->macro_src->item [var];
-      if (is_accessible (new_valip)) valip= new_valip;
-    }
+  else if ((which == "screen") || (which == "printer")) {
+    bool pr= (which != "screen");
+    box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
+    box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
+    marker (descend (ip, 0));
+    print (STD_ITEM, b);
+    marker (descend (ip, 1));
   }
-  string action= env->read_only? string ("select"): string ("double-click");
-  print (STD_ITEM, action_box (ip, b, action, cmd, true, valip));
-}
-
-void
-concater_rep::typeset_tag (tree t, path ip) {
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0));
-  marker (descend (ip, 1));  
-}
-
-void
-concater_rep::typeset_meaning (tree t, path ip) {
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0));
-  marker (descend (ip, 1));  
+  else control ("specific", ip);
 }
 
 void
@@ -250,13 +212,13 @@ concater_rep::typeset_flag (tree t, path ip) {
   string name= env->exec_string (t[0]);
   string col = env->exec_string (t[1]);
   path sip= ip;
-  if ((N(t) >= 3) && (!nil (env->macro_src))) {
+  if ((N(t) >= 3) && (!is_nil (env->macro_src))) {
     string var= env->exec_string (t[2]);
     sip= env->macro_src->item [var];
   }
   if (((N(t) == 2) || is_accessible (sip)) && (!env->read_only)) {
     marker (descend (ip, 0));
-    flag_ok (name, ip, env->dis->get_color (col));
+    flag_ok (name, ip, named_color (col));
     marker (descend (ip, 1));  
   }
 }
@@ -265,9 +227,10 @@ concater_rep::typeset_flag (tree t, path ip) {
 * Typesetting postscript images
 ******************************************************************************/
 
-static bool
+bool
 is_magnification (string s) {
   double result;
+  if (N(s) == 0) return false;
   for (int i=0; i<N(s); /*nop*/) {
     if (s[i]=='*') { i++; read_double (s, i, result); }
     else if (s[i]=='/') { i++; read_double (s, i, result); }
@@ -276,7 +239,7 @@ is_magnification (string s) {
   return true;
 }
 
-static double
+double
 get_magnification (string s) {
   int i=0;
   double magn= 1.0, result;
@@ -295,6 +258,7 @@ get_magnification (string s) {
 
 void
 concater_rep::typeset_postscript (tree t, path ip) {
+  // determine the image url
   if (N(t)!=7) error_postscript ("parameters");
   tree image_tree= env->exec (t[0]);
   url image= url_none ();
@@ -310,11 +274,13 @@ concater_rep::typeset_postscript (tree t, path ip) {
     image= url_ramdisc (image_tree[0][0]->label) *
            url ("image." * image_tree[1]->label);
   } else error_postscript (image_tree);
-    
-  SI bx1, by1, bx2, by2;
-  ps_bounding_box (image, bx1, by1, bx2, by2);
-  double pt= ((double) env->dpi*PIXEL)/72.0;
-    
+
+  // determine the original size of the image
+  int iw, ih;
+  image_size (image, iw, ih);
+  double pt= ((double) env->dpi*PIXEL) / 72.0;
+
+  // determine the clipping rectangle
   tree tx1= env->exec (t[3]);
   tree ty1= env->exec (t[4]);
   tree tx2= env->exec (t[5]);
@@ -327,24 +293,30 @@ concater_rep::typeset_postscript (tree t, path ip) {
   string sx1= tx1->label;
   string sy1= ty1->label;
   string sx2= tx2->label;
-  string sy2= ty2->label;    
-  if (sx1 != "" && ! env->is_length(sx1)) error_postscript (sx1);
-  if (sy1 != "" && ! env->is_length(sy1)) error_postscript (sy1);
-  if (sx2 != "" && ! env->is_length(sx2)) error_postscript (sx2);
-  if (sy2 != "" && ! env->is_length(sy2)) error_postscript (sy2);
+  string sy2= ty2->label;
+  if (sx1 != "" && ! env->is_length (sx1)) error_postscript (sx1);
+  if (sy1 != "" && ! env->is_length (sy1)) error_postscript (sy1);
+  if (sx2 != "" && ! env->is_length (sx2)) error_postscript (sx2);
+  if (sy2 != "" && ! env->is_length (sy2)) error_postscript (sy2);
 
-  SI x1, y1, x2, y2;
-  if (sx1 == "") x1= bx1;
-  else x1= bx1+ ((SI) (((double) env->as_length (sx1)) / pt));
-  if (sy1 == "") y1= by1;
-  else y1= by1+ ((SI) (((double) env->as_length (sy1)) / pt));
-  if (sx2 == "") x2= bx2;
-  else x2= bx1+ ((SI) (((double) env->as_length (sx2)) / pt));
-  if (sy2 == "") y2= by2;
-  else y2= by1+ ((SI) (((double) env->as_length (sy2)) / pt));
+  int x1, y1, x2, y2;
+  if (sx1 == "") x1= 0;
+  else x1= ((SI) (((double) env->as_length (sx1)) / pt));
+  if (sy1 == "") y1= 0;
+  else y1= ((SI) (((double) env->as_length (sy1)) / pt));
+  if (sx2 == "") x2= iw;
+  else x2= ((SI) (((double) env->as_length (sx2)) / pt));
+  if (sy2 == "") y2= ih;
+  else y2= ((SI) (((double) env->as_length (sy2)) / pt));
   if ((x1>=x2) || (y1>=y2))
     error_postscript (tree (WITH, "color", "red", "null box"));
-  
+
+  double cx1= ((double) x1) / ((double) iw);
+  double cy1= ((double) y1) / ((double) ih);
+  double cx2= ((double) x2) / ((double) iw);
+  double cy2= ((double) y2) / ((double) ih);
+
+  // determine the width and the height
   tree tw= env->exec (t[1]);
   tree th= env->exec (t[2]);
   if (is_compound (tw)) error_postscript (tw);
@@ -361,13 +333,13 @@ concater_rep::typeset_postscript (tree t, path ip) {
   bool hs_is_len= env->is_length (hs);    
   if (ws_is_len) w= env->as_length (ws);
   if (hs_is_len) h= env->as_length (hs);
-  if (ws_is_len && !hs_is_len) h= (w*(y2-y1)) / (x2-x1);
-  if (hs_is_len && !ws_is_len) w= (h*(x2-x1)) / (y2-y1);
+  if (ws_is_len && !hs_is_len) h= (w * (y2-y1)) / (x2-x1);
+  if (hs_is_len && !ws_is_len) w= (h * (x2-x1)) / (y2-y1);
   if (!ws_is_len && !hs_is_len) {
     w= (SI) (((double) (x2-x1)) * pt);
     h= (SI) (((double) (y2-y1)) * pt);
   }
-    
+
   bool ws_is_mag= is_magnification (ws);
   bool hs_is_mag= is_magnification (hs);
   if (ws_is_mag) w= (SI) (((double) w) * get_magnification (ws));
@@ -378,7 +350,8 @@ concater_rep::typeset_postscript (tree t, path ip) {
   if (w <= 0 || h <= 0)
     error_postscript (tree (WITH, "color", "red", "null box"));
 
-  print (STD_ITEM, postscript_box (ip, image, w, h, x1, y1, x2, y2));
+  // print the box
+  print (STD_ITEM, image_box (ip, image, w, h, cx1, cy1, cx2, cy2));
 }
 
 #undef error_postscript

@@ -1,0 +1,11 @@
+Plugin: switch-buffer
+Summary: emacs-style shortcuts to switch buffers
+Release: 1.0
+TeXmacs: 1.0.2
+Author: David Allouche
+License: GNU Public License v2 or later
+Depends: interactive-proc
+
+Bind the shortcut "C-x b" to a command which allow switching buffers
+by footer interaction, with the last visited buffer as default value.
+This emulate the "C-x b" shortcut in emacs.

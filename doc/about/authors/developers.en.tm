@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.7>
 
 <style|tmdoc>
 
@@ -6,8 +6,6 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
-    <item>Dan Martens made the <name|Windows> port.
-
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
@@ -16,8 +14,12 @@
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
 
-    <item>Henri Lesourd is working on native technical drawing support in
-    <TeXmacs>. He also fixed a bug in the presentation mode.
+    <item>Henri Lesourd developed a native mode for drawing technical
+    pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
+
+    <item>Massimiliano Gubinelli contributed an experimental Qt port.
+
+    <item>Dan Martens made the <name|Windows> port.
 
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
@@ -26,6 +28,9 @@
     algebra systems via pipes. He also provided some money support for
     <TeXmacs>, and he made many useful comments and suggestions.
 
+    <item>Nobuki Takayama invited me to Japan in order to add CJK support to
+    <TeXmacs>. He also provided a lot of help with this task.
+
     <item>Karim Belabas designed and developed with me the first protocol for
     interfacing <TeXmacs> with scientific computation or computer algebra
     systems. He also implemented the interface with the Pari system.
@@ -33,13 +38,12 @@
     <item>Felix Breuer helped with the support of Unicode and other character
     encodings. He also made a donation to the project.
 
+    <item>Norbert Nemec contributed a series of patches.
+
     <item>Josef Weidendorfer made several patches for improving the
     performance of <TeXmacs>.
 
     <item>Stéphane Payrard made an important bugfix for destroying windows.
-
-    <item>Josef Weidendorfer for two patches to improve the speed of
-    <TeXmacs>.
 
     <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
 
@@ -48,6 +52,11 @@
 
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
+
+    <item>Nelson Beebe helped with manifacturing a more robust
+    <verbatim|configure.in>.
+
+    <item>Kai Krüger fixed several details for the new Maple interface.
 
     <item>Mickael Floc'hlay and Arnaud Ébalard for their work on searching
     for help.

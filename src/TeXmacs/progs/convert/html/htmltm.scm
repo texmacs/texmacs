@@ -15,15 +15,10 @@
 (texmacs-module (convert html htmltm)
   (:use
     (convert tools tmlength) (convert tools tmcolor)
-    (convert tools tmtable) (convert tools stm)
+    (convert tools old-tmtable) (convert tools stm)
     (convert tools sxml)  (convert tools sxhtml)
     (convert tools environment)
-    (convert tools xmltm) (convert mathml mathtm))
-  (:export 
-    parse-html-snippet parse-html-document
-    html->texmacs
-    htmltm-as-serial ;; for htmltm-test
-    ))
+    (convert tools xmltm) (convert mathml mathtm)))
 
 (define (assoc-string-ci key alist)
   (list-find alist (lambda (pair) (string-ci=? key (car pair)))))
@@ -99,7 +94,7 @@
 
 (define (table-formats env a c)
   ;; As a convention, global properties are placed at the end of the list.
-  ;; Remember that tmtable->tm reverses the list of table formats.
+  ;; Remember that tmtable->stm reverses the list of table formats.
   (append (table-content-formats env c)
 	  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	  ;; TODO: table cellspacing and cellpadding
@@ -111,10 +106,10 @@
 (define (table-width env a)
   ;; TODO: extend the typesetter to support hyphenated cells balancing
   (let ((len (htmltm-dimension a 'width)))
-    (list (tmformat-frame "table-width"
-			  (if (tmlength-null? len)
-			      (tmlength 1 'par)
-			      len)))))
+    (if (tmlength-null? len)
+	(list (tmformat-frame "table-width" (tmlength 1 'par))
+	      (tmformat-frame "table-hmode" "min"))
+	(list (tmformat-frame "table-width" len)))))
 
 (define (table-background env a)
   (or (and-let* ((html-color (shtml-attr-non-null a 'background))
@@ -325,7 +320,7 @@
 (define (htmltm-image env a c)
   (let* ((s (xmltm-url-text (or (shtml-attr-non-null a 'src) "")))
 	 (w (tmlength->string (htmltm-dimension a 'width)))
-	 (h (tmlength->string (htmltm-dimension a 'height))))
+	     (h (tmlength->string (htmltm-dimension a 'height))))
     (list (xmltm-label-decorate
 	   a 'id
 	   (if (not (and (string-null? w) (string-null? h)))
@@ -360,6 +355,26 @@
       '((next-line))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special rules for improving Wikipedia rendering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (htmltm-tex-image s)
+  (with lt (string-append "$\\displaystyle " s "$")
+    (with tm (convert lt "latex-snippet" "texmacs-stree")
+      (list tm))))
+
+(define (htmltm-wikipedia-image env a c)
+  (if (and (== (shtml-attr-non-null a 'class) "tex")
+	   (shtml-attr-non-null a 'alt))
+      (htmltm-tex-image (shtml-attr-non-null a 'alt))
+      (htmltm-image env a c)))
+
+(define (htmltm-wikipedia-span env a c)
+  (if (== (shtml-attr-non-null a 'class) "texhtml")
+      (list `(math ,(htmltm-args-serial env c)))
+      (htmltm-pass env a c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -389,7 +404,7 @@
 (define (cleanup-root env root)
   (sxml-set-content root (htmltm-space-mixed env (sxml-content root))))
 
-(define (htmltm-as-serial root)
+(tm-define (htmltm-as-serial root)
   ;; As htmltm, but returns a serial node.
   ;; Actually also initializes the dynamic enviroment.
   ;; FIXME: move the htmlinitialization elsewhere for symmetry with htmltm.
@@ -410,7 +425,7 @@
   ;; Grouping
   (div  (handler :mixed :block  htmltm-pass))
   ;; TODO: convert 'align' attributes in div, p and headings
-  (span (handler :mixed :inline htmltm-pass))
+  (span (handler :mixed :inline htmltm-wikipedia-span))
 
   ;; Headings
   (h1 (handler :mixed :block "chapter"))
@@ -478,7 +493,7 @@
   (object (handler :mixed :inline htmltm-drop))
   ;; TODO: handle cases where OBJECT is equivalent to IMG
   (param htmltm-drop) ; allowed only in object
-  (img (handler :empty :inline htmltm-image))
+  (img (handler :empty :inline htmltm-wikipedia-image))
   (applet (handler :mixed :inline htmltm-drop))
   (map (handler :element :inline htmltm-drop))
   (area htmltm-drop) ; allowed only in map
@@ -531,10 +546,10 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (parse-html-snippet s)
+(tm-define (parse-html-snippet s)
   (htmltm-parse s))
 
-(define (parse-html-document s)
+(tm-define (parse-html-document s)
   `(!file ,(htmltm-parse s)))
 
 (tm-define (html->texmacs html)
@@ -544,7 +559,8 @@
 	 (body (if snippet? html (cadr html)))
 	 (tm (htmltm-as-serial (sxhtml-correct-table body))))
     (if snippet? tm
-	(let* ((doc (tree-simplify (stree->tree (stm-unary-document tm))))
-	       (body (tree1 'body doc))
-	       (style (tree1 'style (string->tree "browser"))))
-	  (tree2 'document body style)))))
+	(let* ((aux (stm-unary-document tm))
+	       (doc (tree->stree (tree-simplify (stree->tree aux))))
+	       (body `(body ,doc))
+	       (style `(style "browser")))
+	  `(document ,body ,style)))))

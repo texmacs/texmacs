@@ -44,7 +44,7 @@
   halign|c>|<cwith|6|6|7|8|cell halign|c>|<cwith|6|6|7|7|cell
   halign|c>|<table|<row|<cell|Shortcut>|<cell|>|<cell|Example>|<cell|>|<cell|Shortcut>|<cell|>|<cell|Example>|<cell|>>|<row|<cell|<expand|kbd-text|'>>|<cell|Agudo
   >|<cell|<expand|kbd-text|' e>>|<cell|é>|<cell|<expand|kbd-text|`>>|<cell|Grave
-  \0>|<cell|<expand|kbd-text|` e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Circunflexo
+  `>|<cell|<expand|kbd-text|` e>>|<cell|è>>|<row|<cell|<expand|kbd-text|^>>|<cell|Circunflexo
   >|<cell|<expand|kbd-text|^ e>>|<cell|ê>|<cell|<expand|kbd-text|^>>|<cell|Trema
   >|<cell|<expand|kbd-text|" e>>|<cell|ë>>|<row|<cell|<expand|kbd-text|~>>|<cell|Til
   >|<cell|<expand|kbd-text|~ a>>|<cell|ã>|<cell|<expand|kbd-text|C>>|<cell|Cedilha

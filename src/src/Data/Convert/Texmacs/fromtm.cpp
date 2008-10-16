@@ -119,11 +119,14 @@ tm_reader::read_next () {
 	pos= old_pos;
 	return "<";
       }
-      old_pos= pos;
+      pos= old_pos;
+      return "<";
+      /*
       string d= read_char ();
       if ((d == "\\") || (d == "|") || (d == "/")) return "<" * c * d;
       pos= old_pos;
       return "<" * c;
+      */
     }
   case '|':
   case '>':
@@ -170,14 +173,14 @@ tm_reader::read_function_name () {
 
 static void
 get_collection (tree& u, tree t) {
-  if (is_func (t, ASSOCIATE, 2)) u << t;
-  else if (is_func (t, COLLECTION) ||
+  if (is_func (t, COLLECTION) ||
 	   is_func (t, DOCUMENT) ||
 	   is_func (t, CONCAT)) {
     int i;
     for (i=0; i<N(t); i++)
       get_collection (u, t[i]);
   }
+  else if (is_compound (t)) u << t;
 }
 
 tree
@@ -449,6 +452,7 @@ extract_document (tree doc) {
 	tree l= init[i][0];
 	tree r= init[i][1];
 	if ((l == PAGE_MEDIUM) ||
+	    (l == PAGE_PRINTED) ||
 	    (l == PAGE_TYPE) ||
 	    (l == PAGE_ORIENTATION) ||
 	    (l == PAGE_WIDTH_MARGIN) ||
@@ -478,4 +482,15 @@ extract_document (tree doc) {
     }
   }
   return body;
+}
+
+tree
+change_doc_attr (tree doc, string attr, tree val) {
+  int i, n= arity (doc);
+  tree r (doc, n);
+  for (i=0; i<n; i++)
+    if (is_compound (doc[i], attr, 1))
+      r[i]= tree (L(doc[i]), val);
+    else r[i]= doc[i];
+  return r;
 }

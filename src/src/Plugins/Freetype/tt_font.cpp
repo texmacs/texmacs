@@ -25,11 +25,11 @@ struct tt_font_rep: font_rep {
   font_metric fnm;
   font_glyphs fng;
 
-  tt_font_rep (display dis, string name, string family, int size, int dpi);
+  tt_font_rep (string name, string family, int size, int dpi);
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
+  void draw (renderer ren, string s, SI x, SI y);
   glyph get_glyph (string s);
 };
 
@@ -39,9 +39,8 @@ struct tt_font_rep: font_rep {
 
 #define conv(x) ((SI) (((double) (x))*unit))
 
-tt_font_rep::tt_font_rep (display dis, string name,
-  string family, int size2, int dpi):
-  font_rep (dis, name)
+tt_font_rep::tt_font_rep (string name, string family, int size2, int dpi):
+  font_rep (name)
 {
   size= size2;
   fnm = tt_font_metric (family, size, dpi);
@@ -146,12 +145,12 @@ tt_font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-tt_font_rep::draw (ps_device dev, string s, SI x, SI y) {
+tt_font_rep::draw (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     int i;
     for (i=0; i<N(s); i++) {
       QN c= s[i];
-      dev->draw (c, fng, x, y);
+      ren->draw (c, fng, x, y);
       metric_struct* ex= fnm->get (c);
       x += ex->x2;
     }
@@ -163,7 +162,7 @@ tt_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
   int c= ((QN) s[0]);
   glyph gl= fng->get (c);
-  if (nil (gl)) return font_rep::get_glyph (s);
+  if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
 }
 
@@ -172,16 +171,16 @@ tt_font_rep::get_glyph (string s) {
 ******************************************************************************/
 
 font
-tt_font (display dis, string family, int size, int dpi) {
+tt_font (string family, int size, int dpi) {
   string name= "tt:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tt_font_rep (dis, name, family, size, dpi));
+    new tt_font_rep (name, family, size, dpi));
 }
 
 #else
 
 font
-tt_font (display dis, string family, int size, int dpi) {
+tt_font (string family, int size, int dpi) {
   string name= "tt:" * family * as_string (size) * "@" * as_string(dpi);
   cerr << "\n\nFont name= " << name << "\n";
   fatal_error ("True type support was disabled", "tt_font");

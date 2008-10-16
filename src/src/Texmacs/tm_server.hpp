@@ -15,63 +15,43 @@
 #include "timer.hpp"
 #include "tm_config.hpp"
 #include "tm_buffer.hpp"
-#include "tm_layout.hpp"
-#include "tm_scheme.hpp"
+#include "tm_frame.hpp"
 #include "tm_data.hpp"
 
 class tm_server_rep:
   public tm_config_rep,
   public tm_data_rep,
-  public tm_layout_rep,
-  public tm_scheme_rep
+  public tm_frame_rep
 {
 protected:
-  display dis;            // current display
   tm_view vw;             // current editor
-  int banner_nr;          // how far in banner
-  bool full_screen;       // full screen mode
-  bool full_screen_edit;  // full screen edit mode
   int def_sfactor;        // default shrinking factor
 
   hashmap<tree,hashmap<string,tree> > style_cache; // style environments cache
   hashmap<tree,tree> style_drd;                    // style drd cache
 
 public:
-  tm_server_rep (display dis);
+  tm_server_rep ();
   ~tm_server_rep ();
-  void advance_banner ();
 
   /* Get and set objects associated to server */
   server_rep* get_server ();
-  display     get_display ();
   bool        has_view ();
+  bool        has_window ();
   tm_view     get_view (bool must_be_valid= true);
   void        set_view (tm_view vw);
   tm_buffer   get_buffer ();
   editor      get_editor ();
   tm_window   get_window ();
-  tm_widget   get_meta ();
-  color       get_color (string s);
   int         get_nr_windows ();
 
   /* Caching style files */
-  void style_update_menu ();
+  object get_style_menu ();
+  object get_add_package_menu ();
+  object get_remove_package_menu ();
   void style_clear_cache ();
   void style_set_cache (tree st, hashmap<string,tree> H, tree t);
   void style_get_cache (tree st, hashmap<string,tree>& H, tree& t, bool& flag);
-
-  /* Routines concerning the current editor widget */
-  void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
-  void scroll_where (SI& x, SI& y);
-  void scroll_to (SI x, SI y);
-  void set_extents (SI x1, SI y1, SI x2, SI y2);
-  void set_left_footer (string s);
-  void set_right_footer (string s);
-  void set_message (string left, string right);
-  void interactive (string name, string& s, command call_back);
-  void full_screen_mode (bool on, bool edit);
-  bool in_full_screen_mode ();
-  bool in_full_screen_edit_mode ();
 
   /* Miscellaneous routines */
   void   interpose_handler ();
@@ -84,8 +64,10 @@ public:
   void   set_printer_dpi (string dpi);
   void   set_default_shrinking_factor (int sf);
   int    get_default_shrinking_factor ();
-  void   postscript_gc (string which);
+  void   image_gc (string which);
   void   inclusions_gc (string which);
+  void   typeset_update (path p);
+  void   typeset_update_all ();
   string translate (string which, string from, string to);
   bool   is_yes (string s);
   void   quit ();

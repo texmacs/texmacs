@@ -17,7 +17,8 @@
 #include "formatter.hpp"
 
 #define PAGE_LINE_ITEM      0
-#define PAGE_CONTROL_ITEM   1
+#define PAGE_HIDDEN_ITEM    1
+#define PAGE_CONTROL_ITEM   2
 
 class page_item;
 class page_item_rep: public concrete_struct {

@@ -46,13 +46,14 @@ ispeller_rep::ispeller_rep (string lan2): rep<ispeller> (lan2), lan (lan2) {}
 
 string
 ispeller_rep::start () {
-  if (nil (ln)) {
+  if (is_nil (ln)) {
 #ifdef OS_WIN32
     string prg= "\"$TEXMACS_PATH/bin/aspell/aspell.exe\"";
     string cmd= prg * " --data-dir=.%//data --dict-dir=.%//dict -a";
 #else
     string cmd= "ispell -a -d " * ispell_dictionary (lan)
       * ispell_extra_args (lan);
+    if (exists_in_path ("aspell")) cmd[0]= 'a';
 #endif
     ln= make_pipe_link (cmd);
   }
@@ -159,7 +160,7 @@ ispell_encode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return cork_to_il2 (s);
-  else if (lan == "russian")
+  else if ((lan == "bulgarian") || (lan == "russian"))
     return koi8_to_iso (s);
   else if (lan == "ukrainian")
     return koi8uk_to_iso (s);
@@ -175,7 +176,7 @@ ispell_decode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return il2_to_cork (s);
-  else if (lan == "russian")
+  else if ((lan == "bulgarian") || (lan == "russian"))
     return iso_to_koi8 (s);
   else if (lan == "ukrainian")
     return iso_to_koi8uk (s);
@@ -218,13 +219,13 @@ parse_ispell (string s) {
 static void
 ispell_send (string lan, string s) {
   ispeller sc= ispeller (lan);
-  if ((!nil (sc)) && sc->ln->alive) sc->send (s);
+  if ((!is_nil (sc)) && sc->ln->alive) sc->send (s);
 }
 
 static string
 ispell_eval (string lan, string s) {
   ispeller sc= ispeller (lan);
-  if ((!nil (sc)) && sc->ln->alive) {
+  if ((!is_nil (sc)) && sc->ln->alive) {
     sc->send (s);
     return sc->retrieve ();
   }
@@ -237,14 +238,14 @@ ispell_eval (string lan, string s) {
 string
 ispell_start (string lan) {
   ispeller sc= ispeller (lan);
-  if (nil (sc)) sc= new ispeller_rep (lan);
+  if (is_nil (sc)) sc= new ispeller_rep (lan);
   return sc->start ();
 }
 
 tree
 ispell_check (string lan, string s) {
   ispeller sc= ispeller (lan);
-  if (nil (sc) || (!sc->ln->alive)) {
+  if (is_nil (sc) || (!sc->ln->alive)) {
     string message= ispell_start (lan);
     if (starts (message, "Error: ")) return message;
   }

@@ -1,0 +1,34 @@
+% Crossed line
+\fmfcmd{%
+  vardef cross_bar (expr p, len, ang) =
+  ((-len/2,0)--(len/2,0))
+    rotated (ang + angle direction length(p)/2 of p)
+    shifted point length(p)/2 of p
+  enddef;
+  style_def crossed expr p =
+    cdraw p;
+    ccutdraw cross_bar (p, 5mm,  45);
+    ccutdraw cross_bar (p, 5mm, -45)
+  enddef;}
+
+% Slashed line
+\fmfcmd{%
+  vardef slash_bar (expr p, len, ang) =
+  ((-len/2,0)--(len/2,0))
+    rotated (ang + angle direction length(p)/2 of p)
+    shifted point length(p)/2 of p
+  enddef;
+  style_def slashed expr p =
+    cdraw p;
+    ccutdraw cross_bar (p, 5mm,  45);
+  enddef;}
+
+% Directed boson line BROKEN???
+%\fmfcmd{%
+%	style_def bosond expr p =
+%		cdraw (wiggly p);
+%		schrink (3);
+%			cfill (arrow p);
+%		endschrink;
+%	enddef;}
+
