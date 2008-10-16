@@ -65,7 +65,11 @@
 #include "file.hpp"
 #include "analyze.hpp"
 
-#ifdef OS_WIN32
+#if defined(OS_WIN32)  || defined(__MINGW32__)
+#define WINPATHS
+#endif
+
+#ifdef WINPATHS
 #define URL_CONCATER  '\\'
 #define URL_SEPARATOR ';'
 #else
@@ -131,7 +135,7 @@ url_ramdisc (string contents) {
 static url
 url_default (string name, int type= URL_SYSTEM) {
   url u= url_get_name (name, type);
-#ifdef OS_WIN32
+#ifdef WINPATHS
   // FIXME: this hack seems a bit too simple
   if (is_concat (u) && (u[2]->t == "")) u= u[1];
   // cout << name << " -> " << url_root ("default") * u << "\n";
@@ -194,7 +198,7 @@ heuristic_is_path (string name, int type) {
 
 static bool
 heuristic_is_default (string name, int type) {
-#ifdef OS_WIN32
+#ifdef WINPATHS
   // FIXME: we probably should take into account 'type' too
   if (N(name) < 2) return false;
   if ((name[0] == '\\') && (name[1] == '\\')) return true;
@@ -274,7 +278,7 @@ url::url (string path_name, string name):
 static bool
 is_semi_root (url u) {
   // url u such that u/.. == u (website or windows drive name)
-#ifdef OS_WIN32
+#ifdef WINPATHS
   return is_concat (u) && is_root (u[1]) && is_atomic (u[2]);
 #else
   return is_concat (u) && is_root_web (u[1]) && is_atomic (u[2]);
@@ -437,7 +441,7 @@ as_string (url u, int type) {
     if ((!is_name (u[1])) && (!is_root (u[1]))) s1= "{" * s1 * "}";
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
-#ifdef OS_WIN32
+#ifdef WINPATHS
     if (is_semi_root (u)) {
       if (ends (s2, ":")) return s2 * "\\";
       else return s2;
@@ -451,14 +455,14 @@ as_string (url u, int type) {
     string s2= as_string (u[2], type);
     if (!is_name_in_path (u[1])) s1= "{" * s1 * "}";
     if ((!is_or (u[2])) && (!is_name_in_path (u[2]))) s2= "{" * s2 * "}";
-#ifdef OS_WIN32
+#ifdef WINPATHS
     if (type == URL_STANDARD) return s1 * ":" * s2;
     else return s1 * string (URL_SEPARATOR) * s2;
 #else
     return s1 * string (URL_SEPARATOR) * s2;
 #endif
   }
-#ifdef OS_WIN32
+#ifdef WINPATHS
   if (is_root (u, "default")) {
     int stype= type;
     if (is_root (u[1]) && (!is_root (u[1], "default"))) stype= URL_STANDARD;
@@ -554,7 +558,7 @@ relative (url base, url u) {
 
 url
 delta_sub (url base, url u) {
-#ifdef OS_WIN32
+#ifdef WINPATHS
   if (is_atomic (base) || heuristic_is_default (as_string (base), URL_SYSTEM))
     return u;
 #else
@@ -837,7 +841,7 @@ string
 concretize (url u) {
   // This routine transforms a resolved url into a system file name.
   // In the case of distant files from the web, a local copy is created.
-#ifdef OS_WIN32
+#ifdef WINPATHS
   // FIXME: this fix seems strange;
   // to start with, the if condition is not respected
   string s = as_string (u);
