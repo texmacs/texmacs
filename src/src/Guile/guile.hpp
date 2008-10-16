@@ -14,7 +14,47 @@
 #ifndef GUILE_HH
 #define GUILE_HH
 #include "tm_configure.hpp"
+#ifdef __MINGW32__
+// we redefine some symbols to avoid name clashes with Windows headers (included by Guile)
+#define PATTERN WIN_PATTERN
+#define STRING WIN_STRING
+#define GROUP WIN_GROUP
+#ifdef IN
+#define MY_IN IN
+#undef IN
+#endif
+#ifdef OUT
+#define MY_OUT OUT
+#undef OUT
+#endif
+#ifdef MENU_EVENT
+#define MY_MENU_EVENT MENU_EVENT
+#undef MENU_EVENT
+#endif
 #include <guile/gh.h>
+#undef STRING
+#undef ERROR
+#undef PATTERN
+#undef GROUP
+#undef IN
+#undef OUT
+#undef MENU_EVENT
+#ifdef MY_MENU_EVENT
+#define MENU_EVENT MY_MENU_EVENT
+#undef MY_MENU_EVENT
+#endif
+#ifdef MY_IN
+#define IN MY_IN
+#undef MY_IN
+#endif
+#ifdef MY_OUT
+#define OUT MY_OUT
+#undef MY_OUT
+#endif
+#else
+#include <guile/gh.h>
+#endif
+
 
 #define SCM_NULL gh_list (SCM_UNDEFINED)
 

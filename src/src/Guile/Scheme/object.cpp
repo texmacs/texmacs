@@ -10,8 +10,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "guile.hpp"
 #include "Glue/glue.hpp"
+#include "guile.hpp"
 #include "Scheme/evaluate.hpp"
 #include "Scheme/object.hpp"
 #include "list.hpp"

@@ -10,8 +10,13 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "guile.hpp"
+#ifdef __MINGW32__
+//FIXME: if this include is not here we have compilation problems on mingw32 
+//       (probably name clashes with Windows headers)
+#include "tree.hpp"
+#endif
 #include "Glue/glue.hpp"
+#include "guile.hpp"
 #include "Scheme/evaluate.hpp"
 #include "file.hpp"
 #include "timer.hpp"

@@ -12,8 +12,12 @@
 
 #ifndef GLUE_HH
 #define GLUE_HH
-#include "guile.hpp"
+
+//FIXME: if tree.hpp and guile.hpp includes are not in this order
+//       we have compilation problems on mingw32 
+//       (probably name clashes with Windows headers)
 #include "tree.hpp"
+#include "guile.hpp"
 #include "path.hpp"
 #include "url.hpp"
 #include "widget.hpp"
