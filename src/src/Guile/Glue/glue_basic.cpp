@@ -50,6 +50,15 @@ tmg_os_win32P () {
 }
 
 SCM
+tmg_os_mingwP () {
+  // SCM_DEFER_INTS;
+  bool out= os_mingw ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_x_guiP () {
   // SCM_DEFER_INTS;
   bool out= gui_is_x ();
@@ -3494,6 +3503,7 @@ initialize_glue_basic () {
   scm_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   scm_new_procedure ("version-before?", (FN) tmg_version_beforeP, 2, 0, 0);
   scm_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
+  scm_new_procedure ("os-mingw?", (FN) tmg_os_mingwP, 0, 0, 0);
   scm_new_procedure ("x-gui?", (FN) tmg_x_guiP, 0, 0, 0);
   scm_new_procedure ("qt-gui?", (FN) tmg_qt_guiP, 0, 0, 0);
   scm_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
