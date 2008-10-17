@@ -102,6 +102,15 @@ os_win32 () {
 #endif
 }
 
+bool
+os_mingw () {
+#ifdef __MINGW32__
+  return true;
+#else
+  return false;
+#endif
+}
+
 void
 win32_display (string s) {
   cout << s;
