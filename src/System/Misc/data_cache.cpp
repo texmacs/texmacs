@@ -89,42 +89,49 @@ is_recursively_up_to_date (url dir) {
 * Which files should be stored in the cache?
 ******************************************************************************/
 
-static string texmacs_path;
-static string texmacs_doc_path;
-static string texmacs_home_path;
+static url texmacs_path(url_none());
+static url texmacs_doc_path(url_none());
+static url texmacs_home_path(url_none());
+
+
+static string texmacs_path_string;
+static string texmacs_doc_path_string;
+static string texmacs_home_path_string;
+static string texmacs_font_path_string;
+
 
 bool
 do_cache_dir (string name) {
   return
-    starts (name, texmacs_path) ||
-    starts (name, texmacs_doc_path);
+    starts (name, texmacs_path_string) ||
+    starts (name, texmacs_doc_path_string);
 }
 
 bool
 do_cache_stat (string name) {
   return
-    starts (name, texmacs_path) ||
-    starts (name, texmacs_home_path * "/fonts") ||
-    starts (name, texmacs_doc_path);
+    starts (name, texmacs_path_string) ||
+    starts (name, texmacs_font_path_string) ||
+    starts (name, texmacs_doc_path_string);
 }
 
 bool
 do_cache_stat_fail (string name) {
   return
-    starts (name, texmacs_path) ||
-    starts (name, texmacs_doc_path);
+    starts (name, texmacs_path_string) ||
+    starts (name, texmacs_doc_path_string);
 }
 
 bool
 do_cache_file (string name) {
   return
-    starts (name, texmacs_path) ||
-    starts (name, texmacs_home_path * "/fonts");
+    starts (name, texmacs_path_string) ||
+    starts (name, texmacs_font_path_string);
 }
 
 bool
 do_cache_doc (string name) {
-  return starts (name, texmacs_doc_path);
+  return starts (name, texmacs_doc_path_string);
 }
 
 /******************************************************************************
@@ -134,7 +141,7 @@ do_cache_doc (string name) {
 void
 cache_save (string buffer) {
   if (cache_changed->contains (buffer)) {
-    string cache_file= texmacs_home_path * "/system/cache/" * buffer;
+    url cache_file= texmacs_home_path * "/system/cache/" * buffer;
     string cached;
     iterator<tree> it= iterate (cache_data);
     if (buffer == "file_cache" || buffer == "doc_cache") {
@@ -166,7 +173,8 @@ cache_save (string buffer) {
 void
 cache_load (string buffer) {
   if (!cache_loaded->contains (buffer)) {
-    string cache_file= texmacs_home_path * "/system/cache/" * buffer;
+    url cache_file = texmacs_home_path * "/system/cache/" * buffer;
+    cout << "cache_file "<< cache_file << LF;
     string cached;
     if (!load_string (cache_file, cached, false)) {
       if (buffer == "file_cache" || buffer == "doc_cache") {
@@ -221,17 +229,24 @@ cache_refresh () {
 
 void
 cache_initialize () {
-  texmacs_path= concretize ("$TEXMACS_PATH");
+  texmacs_path= url_system ("$TEXMACS_PATH");
   if (get_env ("TEXMACS_HOME_PATH") == "")
-    texmacs_home_path= concretize ("$HOME/.TeXmacs");
-  else texmacs_home_path= concretize ("$TEXMACS_HOME_PATH");
+    texmacs_home_path= url_system ("$HOME/.TeXmacs");
+  else texmacs_home_path= url_system ("$TEXMACS_HOME_PATH");
   if (get_env ("TEXMACS_DOC_PATH") == "")
-    texmacs_doc_path= concretize ("$TEXMACS_PATH/doc");
-  else texmacs_doc_path= concretize ("$TEXMACS_DOC_PATH");
+    texmacs_doc_path= url_system ("$TEXMACS_PATH/doc");
+  else texmacs_doc_path= url_system ("$TEXMACS_DOC_PATH");
+  
+  texmacs_path_string = concretize(texmacs_path);
+  texmacs_home_path_string = concretize(texmacs_home_path);
+  texmacs_doc_path_string = concretize(texmacs_doc_path);
+  texmacs_font_path_string = concretize(texmacs_home_path * "fonts/");
+  
+   
   cache_refresh ();
-  if (is_recursively_up_to_date (url (texmacs_path) * "fonts/type1") &&
-      is_recursively_up_to_date (url (texmacs_path) * "fonts/truetype") &&
-      is_recursively_up_to_date (url (texmacs_home_path) * "fonts/type1") &&
-      is_recursively_up_to_date (url (texmacs_home_path) * "fonts/truetype"));
-  else remove (url (texmacs_home_path) * "fonts/error" * url_wildcard ("*"));
+  if (is_recursively_up_to_date (texmacs_path * "fonts/type1") &&
+      is_recursively_up_to_date (texmacs_path * "fonts/truetype") &&
+      is_recursively_up_to_date (texmacs_home_path * "fonts/type1") &&
+      is_recursively_up_to_date (texmacs_home_path * "fonts/truetype"));
+  else remove (texmacs_home_path * "fonts/error" * url_wildcard ("*"));
 }
