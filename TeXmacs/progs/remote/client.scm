@@ -19,8 +19,10 @@
 ;; Basic routines for sockets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(sigaction SIGPIPE (lambda (sig) #t))
-;; NOTE: Mandatory if we want to be able to catch the socket errors.
+;; mingw does not have SIGPIPE 
+(if (not (os-mingw?))
+  (sigaction SIGPIPE (lambda (sig) #t)))
+  ;; NOTE: Mandatory if we want to be able to catch the socket errors.
 
 (define-macro (new-socket host port)
   `(with sock (socket AF_INET SOCK_STREAM 0)
