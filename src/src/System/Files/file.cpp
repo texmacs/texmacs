@@ -42,10 +42,11 @@ load_string (url u, string& s, bool fatal) {
   // cout << "Load " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r);
+  // cout << "Resolved " << r << LF;
   bool err= !is_rooted_name (r);
   if (!err) {
     string name= concretize (r);
-
+    // cout << "Concrete :" << name << LF;
     // File contents in cache?
     bool file_flag= do_cache_file (name);
     bool doc_flag= do_cache_doc (name);
@@ -59,10 +60,15 @@ load_string (url u, string& s, bool fatal) {
 
     bench_start ("load file");
     char* _name= as_charp (name);
+    // cout << "OPEN :" << _name << LF;
 #ifdef OS_WIN32
     FILE* fin= _fopen (_name, "rb");
 #else
-    FILE* fin= fopen (_name, "r");
+#ifdef __MINGW32__
+    FILE* fin= fopen (_name, "rb");
+#else
+	FILE* fin= fopen (_name, "r");
+#endif
 #endif
     if (fin == NULL) err= true;
     int size= 0;
@@ -370,7 +376,7 @@ cache_dir_set (string dir, array<string> a) {
 
 array<string>
 read_directory (url u, bool& error_flag) {
-  // cout << "Directory " << u << LF;
+ //  cout << "Directory " << u << LF;
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);

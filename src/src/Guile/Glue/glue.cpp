@@ -849,7 +849,11 @@ url_to_scm (url u) {
 url
 scm_to_url (SCM url_smob) {
   if (scm_is_string (url_smob))
+#ifdef __MINGW32__
+    return url_system(scm_to_string (url_smob));
+#else
     return scm_to_string (url_smob);
+#endif
   return *((url*) SCM_CDR (url_smob));
 }
 
