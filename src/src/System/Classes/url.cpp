@@ -28,6 +28,7 @@
 *     in a slightly different way with respect to concatenation.
 *     For instance http://www.texmacs.org/Web * file:///tmp would yield
 *     file:///tmp, where as http://www.texmacs.org/Web * /tmp yields
+*     http://www.texmacs.org/tmp
 *******************************************************************************
 * There are several formats for parsing (and printing) urls:
 *   - System format: the usual format on your operating system.

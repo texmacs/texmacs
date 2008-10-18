@@ -174,7 +174,7 @@ void
 cache_load (string buffer) {
   if (!cache_loaded->contains (buffer)) {
     url cache_file = texmacs_home_path * "/system/cache/" * buffer;
-    cout << "cache_file "<< cache_file << LF;
+    //cout << "cache_file "<< cache_file << LF;
     string cached;
     if (!load_string (cache_file, cached, false)) {
       if (buffer == "file_cache" || buffer == "doc_cache") {
