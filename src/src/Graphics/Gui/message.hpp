@@ -119,7 +119,7 @@ send (widget w, slot s, T1 val1, T2 val2, T3 val3) {
 
 template<class T1, class T2, class T3, class T4> void
 send (widget w, slot s, T1 val1, T2 val2, T3 val3, T4 val4) {
-  typedef quadruple<T1,T2,T3,T4> T;
+  typedef quartet<T1,T2,T3,T4> T;
   w->send (s, close_box<T> (T (val1, val2, val3, val4)));
 }
 
@@ -150,7 +150,7 @@ query (widget w, slot s, T1& val1, T2& val2, T3& val3) {
 
 template<class T1, class T2, class T3, class T4> void
 query (widget w, slot s, T1& val1, T2& val2, T3& val3, T4& val4) {
-  typedef quadruple<T1,T2,T3,T4> T;
+  typedef quartet<T1,T2,T3,T4> T;
   T q= open_box<T> (w->query (s, type_helper<T>::id));
   val1= q.x1; val2= q.x2; val3= q.x3; val4= q.x4;
 }

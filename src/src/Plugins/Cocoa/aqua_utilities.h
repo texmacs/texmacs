@@ -13,7 +13,7 @@
 #include "mac_cocoa.h"
 #include "message.hpp"
 
-typedef quadruple<SI,SI,SI,SI> coord4;
+typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
 NSRect to_nsrect(coord4 p);
