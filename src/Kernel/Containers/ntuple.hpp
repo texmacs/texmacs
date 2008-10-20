@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : ntuple.hpp
-* DESCRIPTION: Pairs, tuples and quadruples
+* DESCRIPTION: Pairs, triples and quartets
 * COPYRIGHT  : (C) 2007  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -50,23 +50,23 @@ operator << (ostream& out, const triple<T1,T2,T3>& t) {
   return out << "[ " << t.x1 << ", " << t.x2 << ", " << t.x3 << " ]"; }
 
 template<class T1, class T2, class T3, class T4>
-class quadruple {
+class quartet {
 public:
   T1 x1; T2 x2; T3 x3; T4 x4;
-  inline quadruple (const quadruple& q):
+  inline quartet (const quartet& q):
     x1 (q.x1), x2 (q.x2), x3 (q.x3), x4 (q.x4) {}
-  inline quadruple (const T1& y1, const T2& y2, const T3& y3, const T3& y4):
+  inline quartet (const T1& y1, const T2& y2, const T3& y3, const T3& y4):
     x1 (y1), x2 (y2), x3 (y3), x4 (y4) {}
-  inline quadruple& operator = (const quadruple& q) {
+  inline quartet& operator = (const quartet& q) {
     x1= q.x1; x2= q.x2; x3= q.x3; x4= q.x4; return *this; }
-  inline bool operator == (const quadruple& q) {
+  inline bool operator == (const quartet& q) {
     return x1 == q.x1 && x2 == q.x2 && x3 == q.x3 && x4 == q.x4; }
-  inline bool operator != (const quadruple& q) {
+  inline bool operator != (const quartet& q) {
     return x1 != q.x1 || x2 != q.x2 || x3 != q.x3 || x4 != q.x4; }
 };
 
 template<class T1, class T2, class T3, class T4> inline ostream&
-operator << (ostream& out, const quadruple<T1,T2,T3,T4>& q) {
+operator << (ostream& out, const quartet<T1,T2,T3,T4>& q) {
   return out << "[ " << q.x1 << ", " << q.x2
 	     << ", " << q.x3 << ", " << q.x4 << " ]"; }
 

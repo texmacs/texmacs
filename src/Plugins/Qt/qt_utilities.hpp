@@ -17,7 +17,7 @@
 #include <QPoint>
 #include <QString>
 
-typedef quadruple<SI,SI,SI,SI> coord4;
+typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
 QRect to_qrect (coord4 p);

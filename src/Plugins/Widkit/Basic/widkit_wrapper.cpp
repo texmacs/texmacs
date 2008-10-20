@@ -350,7 +350,7 @@ send_coord2 (wk_widget w, string key, blackbox val) {
 
 void
 send_coord4 (wk_widget w, string key, blackbox val) {
-  typedef quadruple<SI,SI,SI,SI> coord4;
+  typedef quartet<SI,SI,SI,SI> coord4;
   if (type_box (val) != type_helper<coord4>::id)
     fatal_error ("type mismatch", "send_coord4");
   coord4 p= open_box<coord4> (val);
@@ -436,7 +436,7 @@ send_mouse_pointer (wk_widget w, blackbox val) {
 
 void
 send_invalidate (wk_widget w, blackbox val) {
-  typedef quadruple<SI,SI,SI,SI> coord4;
+  typedef quartet<SI,SI,SI,SI> coord4;
   if (type_box (val) != type_helper<coord4>::id)
     fatal_error ("type mismatch", "send_invalidate");
   coord4 p= open_box<coord4> (val);
@@ -453,7 +453,7 @@ send_invalidate_all (wk_widget w, blackbox val) {
 
 void
 send_repaint (wk_widget w, blackbox val) {
-  typedef quadruple<SI,SI,SI,SI> repaint;
+  typedef quartet<SI,SI,SI,SI> repaint;
   if (type_box (val) != type_helper<repaint>::id)
     fatal_error ("type mismatch", "send_repaint");
   repaint r= open_box<repaint> (val);
@@ -637,7 +637,7 @@ query_coord2 (wk_widget w, string key, int type_id) {
 
 blackbox
 query_coord4 (wk_widget w, string key, int type_id) {
-  typedef quadruple<SI,SI,SI,SI> coord4;
+  typedef quartet<SI,SI,SI,SI> coord4;
   if (type_id != type_helper<coord4>::id)
     fatal_error ("type mismatch", "query_coord4");
   SI c1, c2, c3, c4;
