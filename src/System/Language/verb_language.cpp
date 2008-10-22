@@ -55,6 +55,9 @@ verb_language_rep::hyphenate (
 language
 prog_language (string s) {
   if (language::instances -> contains (s)) return language (s);
-  if (s == "scheme") return make (language, s, new scheme_language_rep (s));
+  if (s == "scheme")
+    return make (language, s, new scheme_language_rep (s));
+  if (s == "mathemagix")
+    return make (language, s, new mathemagix_language_rep (s));
   return make (language, s, new verb_language_rep (s));
 }

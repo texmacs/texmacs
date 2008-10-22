@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.15>
+<TeXmacs|1.0.7>
 
 <style|source>
 
@@ -21,10 +21,11 @@
     </src-license>
   </src-title>>
 
-  <assign|mmx-prompt|<macro|nr|<with|color|red|<arg|nr>]<specific|html|&nbsp;>
-  >>>
+  <assign|mmx-prompt|<macro|nr|<arg|nr>]<specific|html|&nbsp;> >>
 
-  <assign|mmx-prompt|<macro|nr|<with|color|red|Mmx]<specific|html|&nbsp;> >>>
+  <assign|mmx-prompt|<macro|nr|Mmx]<specific|html|&nbsp;> >>
+
+  <assign|mathemagix-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|red|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
 
   <assign|mathemagix-output|<macro|body|<generic-output|<arg|body>>>>
 </body>
