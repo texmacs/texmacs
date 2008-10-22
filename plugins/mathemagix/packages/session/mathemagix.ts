@@ -21,9 +21,11 @@
     </src-license>
   </src-title>>
 
-  <assign|mmx-prompt|<macro|nr|<arg|nr>]<specific|html|&nbsp;> >>
+  <assign|mmx-prompt|<macro|nr|<with|color|red|<arg|nr>]<specific|html|&nbsp;>
+  >>>
 
-  <assign|mmx-prompt|<macro|nr|Mmx]<specific|html|&nbsp;> >>
+  <assign|mmx-prompt|<macro|nr|<with|mode|math|Mmx\<rangle\><specific|html|&nbsp;>
+  \ >>>
 
   <assign|mathemagix-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|red|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
 
