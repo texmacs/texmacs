@@ -14,9 +14,9 @@
 #include "impl_language.hpp"
 #include "Scheme/object.hpp"
 
-static void parse_number(string s,int & pos);
-static void parse_string(string s,int & pos);
-static void parse_identifier(string s,int & pos);
+static void parse_number (string s, int& pos);
+static void parse_string (string s, int& pos);
+static void parse_alpha (string s, int& pos);
 
 mathemagix_language_rep::mathemagix_language_rep (string name):
   language_rep (name), colored ("")
@@ -32,30 +32,15 @@ mathemagix_language_rep::mathemagix_language_rep (string name):
 text_property
 mathemagix_language_rep::advance (string s, int& pos) {
   if (pos==N(s)) return &tp_normal_rep;
-  int opos= pos;
-  parse_number(s,pos); if (opos<pos) return &tp_normal_rep;
-  parse_string(s,pos); if (opos<pos) return &tp_normal_rep;
-  parse_identifier(s,pos); if (opos<pos) return &tp_normal_rep;
-  switch (s[pos]) {
-  case ' ':
-    pos++;
-    return &tp_space_rep;
-  case '(':
-  case ')':
-    pos++;
-    return &tp_normal_rep;
-  case '-': // FIXME: needed for correct typesetting of --
-    if (pos+1 < N(s) && s[pos+1] == '-') {
-      pos++;
-      return &tp_hyph_rep;
-    }
-    break;
-  }
-  while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='(') && (s[pos]!=')') &&
-	 (s[pos] != '-' || pos == N(s) || s[pos+1] != '-') &&
-	 (s[pos]<'a' || s[pos]>'z') && (s[pos]<'A' || s[pos]>'Z') &&
-	 (s[pos]<'0' || s[pos]>'9') &&
-	 (s[pos]!='_') && (s[pos]!='?')) pos++;
+  char c= s[pos];
+  if (c == ' ') {
+    pos++; return &tp_space_rep; }
+  if (c >= '0' && c <= '9') {
+    parse_number (s, pos); return &tp_normal_rep; }
+  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+      (c == '_') || (c == '$')) {
+    parse_alpha (s, pos); return &tp_normal_rep; }
+  tm_char_forwards (s, pos);
   return &tp_normal_rep;
 }
 
@@ -95,8 +80,7 @@ mathemagix_color_setup_constants (hashmap<string, string> & t) {
 }
 
 static void
-mathemagix_color_setup_keywords (hashmap<string, string> & t) 
-{
+mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   string c= "#8020c0";
   t ("abstract")= c;
   t ("alias")= c;
@@ -194,187 +178,194 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)
   t ("xor")= c;
 }
 
-static void mathemagix_color_setup_otherlexeme (hashmap<string, string> & t)
-{
+static void
+mathemagix_color_setup_otherlexeme (hashmap<string, string>& t) {
   string c= "black";
-  t("==>")=c; 
-  t("==")=c;
-  t(":=")=c;
-  t("+=")=c;
-  t("-=")=c; 
-  t("*=")=c;
-  t("/=")=c;
-  t(":=>")=c;
-  t("yield")=c;   
-  t(",")=c;
-  t(";")=c;
-  // t("(")=c;
-  t(")")=c;
-  t("[")=c;
-  t("]")=c;
-  t("{")=c;
-  t("}")=c;
-  t("<<*")=c; 
-  t("<<%")=c;
-  t("<less> <less>")=c;
-  t(">>")=c;
+  t ("==<gtr>")= c; 
+  t ("==")= c;
+  t (":=")= c;
+  t ("+=")= c;
+  t ("-=")= c; 
+  t ("*=")= c;
+  t ("/=")= c;
+  t (":=<gtr>")= c;
+  t ("yield")= c;   
+  t (",")= c;
+  t (";")= c;
+  // t ("(")= c;
+  t (")")= c;
+  t ("[")= c;
+  t ("]")= c;
+  t ("{")= c;
+  t ("}")= c;
+  t ("<less><less>")= c;
+  t ("<less><less>*")= c;
+  t ("<less><less>%")= c;
+  t ("<gtr><gtr>")= c;
 }
 
-static void parse_identifier(string s, int & pos)
-{
+static void
+parse_identifier (hashmap<string, string>& t, string s, int& pos) {
   if ('0'<=s[pos] && s[pos]<='9') return;
   int i=pos;
-  while ( (i<N(s)) && (s[i]<='z' && s[i]>='a' 
-		       || s[i]<='Z' && s[i]>='A'
-		       || s[i]<='9' && s[i]>='0' 
-		       || s[i]=='_' || s[i]=='$' || s[i]=='?'))
-    {i++;}
-  pos= i;
-}
-
-static void parse_identifier(hashmap<string, string> & t,string s, int & pos)
-{
-  if ('0'<=s[pos] && s[pos]<='9') return;
-  int i=pos;
-  while ( (i<N(s)) && (s[i]<='z' && s[i]>='a' 
-		       || s[i]<='Z' && s[i]>='A'
-		       || s[i]<='9' && s[i]>='0' 
-		       || s[i]=='_' || s[i]=='$' || s[i]=='?'))
-    {i++;}
-  if (!(t->contains(s(pos,i)))) pos=i;
-}
-
-static void parse_whitespace(string s, int & pos)
-{
-while(s[pos]==' ') {pos++;}
+  while ((i<N(s)) &&
+	 ((s[i]<='z' && s[i]>='a') ||
+	  (s[i]<='Z' && s[i]>='A') ||
+	  (s[i]<='9' && s[i]>='0') ||
+	  (s[i]=='_' || s[i]=='$') ||
+	  (s[i]=='?')))
+    i++;
+  if (!(t->contains (s (pos,i)))) pos= i;
 }
 
 
-static void parse_string(string s, int & pos)
-{
-  switch (s[pos]) 
-    {
-    case '\042':
-      do{pos++;}
-      while( (pos<N(s)) && ( s[pos-1]=='\\' && s[pos]=='\042' ||
-                             s[pos]!='\042'));
-      if (s[pos]=='\042') pos++;
-      return;
-    case '/':
-      if (pos+1<N(s) && s[pos+1]=='\042')
-        {pos=pos+2;
-        do{
-          if (pos+1<N(s) && s[pos]=='\042' && s[pos+1]=='/') 
-	    {pos=pos+2; return;}
-          pos++;
-        } while (pos<N(s));
-        }
+static void
+parse_alpha (string s, int& pos) {
+  static hashmap<string,string> empty;
+  parse_identifier (empty, s, pos);
+}
+
+static void
+parse_whitespace(string s, int& pos) {
+  while (s[pos] == ' ') pos++;
+}
+
+static void
+parse_string(string s, int& pos) {
+  switch (s[pos])  {
+  case '\042':
+    do pos++;
+    while((pos<N(s)) &&
+	  (s[pos-1]=='\\' && s[pos]=='\042' || s[pos]!='\042'));
+    if (s[pos]=='\042') pos++;
+    return;
+  case '/':
+    if (pos+1<N(s) && s[pos+1]=='\042') {
+      pos=pos+2;
+      do {
+	if (pos+1<N(s) && s[pos]=='\042' && s[pos+1]=='/') {
+	  pos=pos+2; return; }
+	pos++;
+      } while (pos<N(s));
     }
+  }
 }
 
-static void parse_keyword(hashmap<string,string> & t, string s,int & pos)
-{
+static void
+parse_keyword (hashmap<string,string>& t, string s, int& pos) {
+  int i= pos;
+  if (s[i]<='9' && s[i]>='0') return;
+  while ((i<N(s)) && 
+	 ((s[i]<='9' && s[i]>='0') ||
+	  (s[i]<='Z' && s[i]>='A') ||
+	  (s[i]<='z' && s[i]>='a') ||
+	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  string r= s (pos, i);
+  if (t->contains (r) && t(r)=="#8020c0") { pos=i; return; }
+}
+
+static void
+parse_constant (hashmap<string,string>& t, string s, int& pos) {
   int i=pos;
   if (s[i]<='9' && s[i]>='0') return;
-  while (i< N(s) && 
-	 (s[i]<='9' && s[i]>='0' 
-	  || s[i]<='Z' && s[i]>='A' || s[i]<='z' && s[i]>='a'
-	  || s[i]=='_' || s[i]=='$' || s[i]=='?')) {i++;}
-  string r=s(pos,i);
-  if (t->contains(r) && t(r)=="#8020c0"){pos=i;return;}
+  while ((i < N(s)) &&
+	 ((s[i]<='9' && s[i]>='0') ||
+	  (s[i]<='Z' && s[i]>='A') ||
+	  (s[i]<='z' && s[i]>='a') ||
+	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  string r= s (pos, i);
+  if (t->contains (r) && t(r)=="#2060c0") { pos=i; return; }
 }
 
-static void parse_constant(hashmap<string,string> & t, string s,int & pos)
-{
-  int i=pos;
-  if (s[i]<='9' && s[i]>='0') return;
-  while (i< N(s) && (s[i]<='9' && s[i]>='0' 
-		     || s[i]<='Z' && s[i]>='A' || s[i]<='z' && s[i]>='a'
-		     || s[i]=='_' || s[i]=='$' || s[i]=='?')) {i++;}
-  string r=s(pos,i);
-  if (t->contains(r) && t(r)=="#2060c0"){pos=i;return;}
-}
-
-
-static void parse_other_lexeme(hashmap<string,string> & t, string s,int & pos)
-{
+static void
+parse_other_lexeme(hashmap<string,string>& t, string s, int& pos) {
   int i;
-  for(i=5;i>=1;i--) 
-    {string r=s(pos,pos+i);
-      if (t-> contains(r) && t(r)=="black"){pos=pos+i;return;}
-    }
+  for (i=5; i>=1; i--) {
+    string r=s(pos,pos+i);
+    if (t->contains(r) && t(r)=="black") {
+      pos=pos+i; return; }
+  }
 }
 
-static void parse_number(string s,int & pos)
-{
+static void
+parse_number(string s, int& pos) {
   int i=pos;
   if (s[i]=='.') return;
-  while (i<N(s) && (s[i]<='9' && s[i]>='0' || s[i]=='.')){i++;}
+  while (i<N(s) && (s[i]<='9' && s[i]>='0' || s[i]=='.')) i++;
+  if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
+    i++;
+    if (i<N(s) && s[i] == '-') i++;
+    while (i<N(s) && (s[i]<='9' && s[i]>='0')) i++;
+  }
   pos=i;
 }
 
-static void parse_no_declare_type(string s, int & pos)
-{}
+static void
+parse_no_declare_type (string s, int& pos) {}
 
-static void parse_declare_type(string s, int & pos)
-{
+static void
+parse_declare_type (string s, int& pos) {
   if (s[pos]!=':') return;
   if (pos+1<N(s) && s[pos+1]=='=') return;
   pos++;
-  //if(s[pos]!='<gtr>') return;
-  //pos++;
   if (!test (s, pos, "<gtr>")) return;
   pos+=5;
 }
 
-static void parse_comment(string s,int & pos)
-{
+static void
+parse_comment (string s, int& pos) {
   if (s[pos]!='/') return;
   if (pos+1<N(s) && s[pos+1]=='/') {pos=N(s);return;}
-  if (pos+1<N(s) && s[pos+1]=='{') {pos=pos+2;
-    while((pos<N(s) && s[pos]!='}') || (pos+1<N(s) && s[pos+1]!='/')){pos++;}
-    pos=min(pos+2,N(s));}
+  if (pos+1<N(s) && s[pos+1]=='{') {
+    pos= pos+2;
+    while ((pos<N(s) && s[pos]!='}') || (pos+1<N(s) && s[pos+1]!='/')) pos++;
+    pos= min(pos+2,N(s));
+  }
 }
 
-static void parse_parenthesized(string s, int & pos)
-{
+static void
+parse_parenthesized (string s, int& pos) {
   int i=pos;
   if (s[i]!='(') return;
   int nbpar=0;
-  while(i<N(s))
-    {
-      switch (s[i])
-	{case '(':
-	    nbpar++;break;
-	case ')':if (nbpar>0) nbpar--;
-	  if (nbpar==0) {i++;pos=i;return;}
-	  break;
-	case '/':
-	  if( i+1<N(s) && 
-	      (s[i+1]=='\042' || s[i+1]=='{' || s[i+1]=='/')) {pos=i;return;}
-	  break;
-	case '\042':pos=i;return;
-	}
-      i++;
+  while(i<N(s)) {
+    switch (s[i]) {
+    case '(':
+      nbpar++;break;
+    case ')':if (nbpar>0) nbpar--;
+      if (nbpar==0) {i++;pos=i;return;}
+      break;
+    case '/':
+      if (i+1<N(s) && 
+	  (s[i+1]=='\042' || s[i+1]=='{' || s[i+1]=='/')) {
+	pos= i; return; }
+      break;
+    case '\042':
+      pos=i;
+      return;
     }
+    i++;
+  }
   pos=i;
 }
 
-static void parse_declare_function(string s, int & pos)
-{
+static void
+parse_declare_function(string s, int& pos) {
   if (pos+1>=N(s)) return;
-  if (s[pos]==':' && s[pos+1]=='=') {pos=pos+2;return;}
-  if (s[pos]=='=' && s[pos+1]=='=') {pos=pos+2;return;}
+  if (s[pos]==':' && s[pos+1]=='=') { pos=pos+2; return; }
+  if (s[pos]=='=' && s[pos+1]=='=') { pos=pos+2; return; }
 }
 
-string mathemagix_language_rep::get_color (tree t, int start, int end) 
-{
+string
+mathemagix_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
   if (!setup_done) {
     mathemagix_color_setup_constants (colored);
     mathemagix_color_setup_keywords (colored);
     mathemagix_color_setup_otherlexeme (colored);
-    setup_done= true;}
+    setup_done= true;
+  }
+
   static string none= "";
   if (start >= end) return none;
   string s= t->label;
@@ -384,141 +375,157 @@ string mathemagix_language_rep::get_color (tree t, int start, int end)
   bool possible_future_type=false;
   bool possible_future_function=true;
   string type;
-
-do
-{
-  type=none;
-  do
-    {
-      possible_function=possible_future_function;
-      possible_type=possible_future_type;
-      opos=pos;
-      parse_whitespace(s,pos);
+  do {
+    type= none;
+    do {
+      possible_function= possible_future_function;
+      possible_type= possible_future_type;
+      opos= pos;
+      parse_whitespace (s, pos);
       if (opos<pos) break;
-      parse_string(s,pos);
+      parse_string (s, pos);
       if (opos<pos) {
-	type="string";
-	possible_future_function=false;possible_future_type=false;
-	possible_type=false;break;
+	type= "string";
+	possible_future_function= false;
+	possible_future_type= false;
+	possible_type= false;
+	break;
       }
-      parse_comment(s,pos);
+      parse_comment (s, pos);
       if (opos<pos) {
-	type="comment";possible_future_type=false;possible_type=false;break;
+	type= "comment";
+	possible_future_type= false;
+	possible_type= false;
+	break;
       }
-      parse_keyword(colored,s,pos);
+      parse_keyword (colored, s, pos);
       if (opos<pos) {
-	type="keyword";
-	possible_future_type=false;possible_type=false;
-	possible_function=false; break;
+	type= "keyword";
+	possible_future_type= false;
+	possible_type= false;
+	possible_function= false;
+	break;
       }
-      parse_other_lexeme(colored,s,pos);  //not left parenthesis
+      parse_other_lexeme (colored, s, pos);  //not left parenthesis
       if (opos<pos) {
-	type="other_lexeme";
-	possible_function=false;possible_future_function=true;
-	possible_future_type=false;possible_type=false; break;
+	type= "other_lexeme";
+	possible_function= false;
+	possible_future_function= true;
+	possible_future_type= false;
+	possible_type= false;
+	break;
       }
-      parse_constant(colored,s,pos);
+      parse_constant (colored, s, pos);
       if (opos<pos) {
-	type="constant";possible_future_function=false; break;
+	type= "constant";
+	possible_future_function= false;
+	break;
       }
-      parse_number(s,pos);
-      if (opos<pos) 
-	{type="number";possible_future_function=false;break;
-	}
-      parse_no_declare_type(s,pos); // ': :: 
+      parse_number (s, pos);
       if (opos<pos) {
-	type=="no_declare_type";
-	possible_type=false;possible_future_type=false;possible_function=false;
-	possible_future_function=false; break;
+	type= "number";
+	possible_future_function= false;
+	break;
       }
-      parse_declare_type(s,pos); // : and :>
+      parse_no_declare_type (s, pos); // ': :: 
       if (opos<pos) {
-	type="declare_type";
+	type= "no_declare_type";
+	possible_type= false;
+	possible_future_type= false;
+	possible_function= false;
+	possible_future_function= false;
+	break;
+      }
+      parse_declare_type (s, pos); // : and :>
+      if (opos<pos) {
+	type= "declare_type";
 	possible_future_type=true; 
-	possible_function=false; possible_future_function=false; break;
+	possible_function= false;
+	possible_future_function= false;
+	break;
       }
-      parse_identifier(colored,s,pos);
+      parse_identifier (colored, s, pos);
       if (opos<pos) {
 	type="identifier";possible_future_function=false; break;
       }
-      parse_parenthesized(s,pos);
- // stops after well parenthesized ) or before  // or /{ or " or /"
+      parse_parenthesized (s, pos);
+      // stops after well parenthesized ) or before  // or /{ or " or /"
       if (opos<pos && pos<=start) {
 	type="left_parenthesis";
-	possible_function=false;possible_future_function= true;break;
+	possible_function= false;
+	possible_future_function= true;
+	break;
       }
-      if (opos<pos && possible_type==true) return "dark green";
-      pos=opos;
+      if (opos<pos && possible_type==true)
+	return "dark green";
+      pos= opos;
       pos++;
     }
-  while(false);
- }
- while(pos<=start);
- if (possible_type) return "dark green";
- if (type=="string") return "#a06040";// or #d07040
- if (type=="comment") return "brown";
- if (type=="keyword") return "#8020c0";
- if (type=="other_lexeme") return "black";
- if (type=="constant") return "#2060c0";
- if (type=="number") return "#2060c0";
- if (type=="no_declare_type") return "black";
- if (type=="declare_type") return "black";
- if (type=="left_parenthesis") return "black";
- if (type=="identifier" && possible_function==false) return none;
- if (type=="identifier") 
-   {
-     possible_function=false;
-     do
-       {
-	 do
-	   {
-	     opos=pos;
-	     parse_whitespace(s,pos);
-	     if (opos<pos) break;
-	     parse_identifier(colored,s,pos);
-	     if (opos<pos) {possible_function=true; break;}
-	     parse_number(s,pos);
-	     if (opos<pos) {possible_function=true; break;}
-	     parse_constant(colored,s,pos);
-	     if (opos<pos) {possible_function=true; break;}
-	     parse_comment(s,pos);
-	     if (opos<pos) break;
-	     parse_parenthesized(s,pos);
-	     if (opos<pos) {possible_function=true; break;}
-	   }
-	 while(false);
-       }
-     while(opos!=pos);
-     if (!possible_function) return none;
-     do
-       {
-	 do
-	   {
-	     opos=pos;
-	     parse_whitespace(s,pos);
-	     if (opos<pos) break;
-	     parse_identifier(colored,s,pos);
-	     if (opos<pos) break;
-	     parse_number(s,pos);
-	     if (opos<pos) break;
-	     parse_constant(colored,s,pos);
-	     if (opos<pos) break;
-	     parse_comment(s,pos);
-	     if (opos<pos) break;
-	     parse_parenthesized(s,pos);
-	     if (opos<pos) break;
-	     parse_no_declare_type(s,pos);
-	     if (opos<pos) break;
-	     parse_declare_type(s,pos);
-	     if (opos<pos) break;
-	     parse_declare_function(s,pos);
-	     if (opos<pos) return "#0000e0";
-	     parse_other_lexeme(colored,s,pos);
-	     if (opos<pos) return none;
-	   }
-	 while(false);
-	 pos++;
-       }
-     while(pos<N(s));}
- return none;
+    while (false);
+  }
+  while (pos<=start);
+
+  if (possible_type) return "dark green";
+  if (type=="string") return "#a06040";// or #d07040
+  if (type=="comment") return "brown";
+  if (type=="keyword") return "#8020c0";
+  if (type=="other_lexeme") return none;
+  if (type=="constant") return "#2060c0";
+  if (type=="number") return "#2060c0";
+  if (type=="no_declare_type") return none;
+  if (type=="declare_type") return none;
+  if (type=="left_parenthesis") return none;
+  if (type=="identifier" && possible_function==false) return none;
+  if (type=="identifier") {
+    possible_function= false;
+    do {
+      do {
+	opos=pos;
+	parse_whitespace (s, pos);
+	if (opos<pos) break;
+	parse_identifier (colored, s, pos);
+	if (opos<pos) { possible_function= true; break; }
+	parse_number (s, pos);
+	if (opos<pos) { possible_function= true; break; }
+	parse_constant (colored, s, pos);
+	if (opos<pos) { possible_function= true; break; }
+	parse_comment (s, pos);
+	if (opos<pos) break;
+	parse_parenthesized (s, pos);
+	if (opos<pos) { possible_function= true; break; }
+      }
+      while (false);
+    }
+    while (opos!=pos);
+    if (!possible_function) return none;
+    do {
+      do {
+	opos=pos;
+	parse_whitespace (s, pos);
+	if (opos<pos) break;
+	parse_identifier (colored, s, pos);
+	if (opos<pos) break;
+	parse_number(s,pos);
+	if (opos<pos) break;
+	parse_constant (colored, s, pos);
+	if (opos<pos) break;
+	parse_comment(s,pos);
+	if (opos<pos) break;
+	parse_parenthesized (s, pos);
+	if (opos<pos) break;
+	parse_no_declare_type (s, pos);
+	if (opos<pos) break;
+	parse_declare_type (s, pos);
+	if (opos<pos) break;
+	parse_declare_function (s, pos);
+	if (opos<pos) return "#0000e0";
+	parse_other_lexeme (colored, s, pos);
+	if (opos<pos) return none;
+      }
+      while (false);
+      pos++;
+    }
+    while (pos<N(s));
+  }
+  return none;
 }
