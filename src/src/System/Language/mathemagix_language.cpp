@@ -226,12 +226,12 @@ parse_alpha (string s, int& pos) {
 }
 
 static void
-parse_whitespace(string s, int& pos) {
+parse_whitespace (string s, int& pos) {
   while (s[pos] == ' ') pos++;
 }
 
 static void
-parse_string(string s, int& pos) {
+parse_string (string s, int& pos) {
   switch (s[pos])  {
   case '\042':
     do pos++;
@@ -278,7 +278,7 @@ parse_constant (hashmap<string,string>& t, string s, int& pos) {
 }
 
 static void
-parse_other_lexeme(hashmap<string,string>& t, string s, int& pos) {
+parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
   int i;
   for (i=5; i>=1; i--) {
     string r=s(pos,pos+i);
@@ -288,16 +288,21 @@ parse_other_lexeme(hashmap<string,string>& t, string s, int& pos) {
 }
 
 static void
-parse_number(string s, int& pos) {
-  int i=pos;
-  if (s[i]=='.') return;
-  while (i<N(s) && (s[i]<='9' && s[i]>='0' || s[i]=='.')) i++;
+parse_number (string s, int& pos) {
+  int i= pos;
+  if (s[i] == '.') return;
+  while (i<N(s) && 
+	 (s[i] >= '0' && s[i]<= '9' ||
+	  (s[i] == '.' && (i+1<N(s)) &&
+	   ((s[i+1] >= '0' && s[i+1] <= '9') ||
+	    s[i+1] == 'e' || s[i+1] == 'E')))) i++;
+  if (i == pos) return;
   if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (s[i]<='9' && s[i]>='0')) i++;
+    while (i<N(s) && (s[i] <= '9' && s[i] >= '0')) i++;
   }
-  pos=i;
+  pos= i;
 }
 
 static void
@@ -350,7 +355,7 @@ parse_parenthesized (string s, int& pos) {
 }
 
 static void
-parse_declare_function(string s, int& pos) {
+parse_declare_function (string s, int& pos) {
   if (pos+1>=N(s)) return;
   if (s[pos]==':' && s[pos+1]=='=') { pos=pos+2; return; }
   if (s[pos]=='=' && s[pos+1]=='=') { pos=pos+2; return; }
