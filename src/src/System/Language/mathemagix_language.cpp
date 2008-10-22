@@ -14,6 +14,10 @@
 #include "impl_language.hpp"
 #include "Scheme/object.hpp"
 
+static void parse_number(string s,int & pos);
+static void parse_string(string s,int & pos);
+static void parse_identifier(string s,int & pos);
+
 mathemagix_language_rep::mathemagix_language_rep (string name):
   language_rep (name), colored ("")
 { 
@@ -28,6 +32,10 @@ mathemagix_language_rep::mathemagix_language_rep (string name):
 text_property
 mathemagix_language_rep::advance (string s, int& pos) {
   if (pos==N(s)) return &tp_normal_rep;
+  int opos= pos;
+  parse_number(s,pos); if (opos<pos) return &tp_normal_rep;
+  parse_string(s,pos); if (opos<pos) return &tp_normal_rep;
+  parse_identifier(s,pos); if (opos<pos) return &tp_normal_rep;
   switch (s[pos]) {
   case ' ':
     pos++;
@@ -44,7 +52,10 @@ mathemagix_language_rep::advance (string s, int& pos) {
     break;
   }
   while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='(') && (s[pos]!=')') &&
-	 (s[pos] != '-' || pos == N(s) || s[pos+1] != '-')) pos++;
+	 (s[pos] != '-' || pos == N(s) || s[pos+1] != '-') &&
+	 (s[pos]<'a' || s[pos]>'z') && (s[pos]<'A' || s[pos]>'Z') &&
+	 (s[pos]<'0' || s[pos]>'9') &&
+	 (s[pos]!='_') && (s[pos]!='?')) pos++;
   return &tp_normal_rep;
 }
 
@@ -207,6 +218,18 @@ static void mathemagix_color_setup_otherlexeme (hashmap<string, string> & t)
   t("<<%")=c;
   t("<less> <less>")=c;
   t(">>")=c;
+}
+
+static void parse_identifier(string s, int & pos)
+{
+  if ('0'<=s[pos] && s[pos]<='9') return;
+  int i=pos;
+  while ( (i<N(s)) && (s[i]<='z' && s[i]>='a' 
+		       || s[i]<='Z' && s[i]>='A'
+		       || s[i]<='9' && s[i]>='0' 
+		       || s[i]=='_' || s[i]=='$' || s[i]=='?'))
+    {i++;}
+  pos= i;
 }
 
 static void parse_identifier(hashmap<string, string> & t,string s, int & pos)
