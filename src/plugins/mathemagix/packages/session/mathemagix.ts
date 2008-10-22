@@ -27,9 +27,13 @@
   <assign|mmx-prompt|<macro|nr|<with|mode|math|Mmx\<rangle\><specific|html|&nbsp;>
   \ >>>
 
-  <assign|mathemagix-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|red|<arg|prompt>>|<with|color|black|<arg|body>>>>>>
+  <assign|mmx-prompt|<macro|nr|<with|prog-language|verbatim|Mmx]<specific|html|&nbsp;>
+  >>>
 
-  <assign|mathemagix-output|<macro|body|<generic-output|<arg|body>>>>
+  <assign|mathemagix-input|<macro|prompt|body|<style-with|src-compact|none|<generic-input|<with|color|red|<arg|prompt>>|<with|color|dark
+  brown|<arg|body>>>>>>
+
+  <assign|mathemagix-output|<macro|body|<generic-output|<with|prog-language|verbatim|<arg|body>>>>>
 </body>
 
 <\initial>
