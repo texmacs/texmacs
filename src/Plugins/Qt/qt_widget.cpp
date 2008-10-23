@@ -529,8 +529,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   }
 }
 
-#include "QTMInteractiveInputHelper.moc"
-
 void
 QTMInteractiveInputHelper::doit () {
   wid->do_interactive_prompt();

@@ -426,8 +426,6 @@ qt_gui_rep::update () {
   interrupted = false;
 }
 
-#include "QTMGuiHelper.moc"
-
 void
 QTMGuiHelper::doUpdate() { 
   gui->update(); 

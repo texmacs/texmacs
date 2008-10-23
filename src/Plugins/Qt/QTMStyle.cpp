@@ -14,7 +14,6 @@
 #include <QApplication>
 #include <QStyleOptionMenuItem>
 #include <iostream>
-#include "QTMStyle.moc"
 
 /******************************************************************************
 * QTMProxyStyle (does not own *style)
