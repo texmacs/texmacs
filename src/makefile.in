@@ -145,7 +145,7 @@ texmacs_incl  := $(guile_incl)
 # MOC files
 ###############################################################################
 
-qt_moc := Plugins/Qt/moc_QTMStyle.cpp Plugins/Qt/moc_QTMGuiHelper.cpp Plugins/Qt/moc_QTMInteractiveInputHelper.cpp Plugins/Qt/moc_QTMMenuHelper.cpp Plugins/Qt/moc_QTMWidget.cpp
+qt_moc := moc_QTMStyle.cpp moc_QTMGuiHelper.cpp moc_QTMInteractiveInputHelper.cpp moc_QTMMenuHelper.cpp moc_QTMWidget.cpp
 
 moc_%.cpp: %.hpp
 	$(MOC) $(MOCFLAGS) $< -o $@
@@ -237,7 +237,7 @@ $(plugins_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
-$(qt_obj): Objects/%.o: %.cpp $(qt_moc)
+$(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
