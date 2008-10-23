@@ -414,8 +414,6 @@ simple_widget_rep::as_qaction () {
   return a;
 }
 
-#include "QTMMenuHelper.moc"
-
 void
 QTMLazyMenu::force () {
   if (!forced) {

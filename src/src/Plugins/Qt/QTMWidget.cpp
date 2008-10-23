@@ -12,7 +12,6 @@
 
 #include <QtGui>
 #include "QTMWidget.hpp"
-#include "QTMWidget.moc"
 #include "qt_renderer.hpp"
 #include "converter.hpp"
 

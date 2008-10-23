@@ -145,9 +145,9 @@ texmacs_incl  := $(guile_incl)
 # MOC files
 ###############################################################################
 
-qt_moc := Plugins/Qt/QTMStyle.moc Plugins/Qt/QTMGuiHelper.moc Plugins/Qt/QTMInteractiveInputHelper.moc Plugins/Qt/QTMMenuHelper.moc Plugins/Qt/QTMWidget.moc
+qt_moc := Plugins/Qt/moc_QTMStyle.cpp Plugins/Qt/moc_QTMGuiHelper.cpp Plugins/Qt/moc_QTMInteractiveInputHelper.cpp Plugins/Qt/moc_QTMMenuHelper.cpp Plugins/Qt/moc_QTMWidget.cpp
 
-%.moc: %.hpp
+moc_%.cpp: %.hpp
 	$(MOC) $(MOCFLAGS) $< -o $@
 
 ###############################################################################
@@ -362,7 +362,7 @@ DISTR:
 
 CLEAN: DISTR
 	$(RM) Objects/*.o
-	$(RM) Plugins/Qt/*.moc
+	$(RM) Plugins/Qt/moc_*.cpp
 
 clean: CLEAN
 
