@@ -145,9 +145,12 @@ texmacs_incl  := $(guile_incl)
 # MOC files
 ###############################################################################
 
-qt_moc := moc_QTMStyle.cpp moc_QTMGuiHelper.cpp moc_QTMInteractiveInputHelper.cpp moc_QTMMenuHelper.cpp moc_QTMWidget.cpp
+qt_moc := QTMStyle.moc.cpp QTMGuiHelper.moc.cpp QTMInteractiveInputHelper.moc.cpp QTMMenuHelper.moc.cpp QTMWidget.moc.cpp
 
-moc_%.cpp: %.hpp
+qt_moc_paths = $(patsubst %.moc.cpp,Plugins/Qt/%.moc.cpp,$(qt_moc))
+
+
+$(qt_moc_paths): %.moc.cpp: %.hpp
 	$(MOC) $(MOCFLAGS) $< -o $@
 
 ###############################################################################
@@ -204,6 +207,7 @@ x11_obj      := $(call makeobj,$(x11_src))
 cocoa_m_obj  := $(call makeobj_m,$(cocoa_m_src))
 cocoa_mm_obj := $(call makeobj_mm,$(cocoa_mm_src))
 qt_obj 	     := $(call makeobj,$(qt_src))
+moc_obj	     := $(call makeobj,$(qt_moc))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
@@ -238,6 +242,8 @@ $(plugins_obj): Objects/%.o: %.cpp
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
 $(qt_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(qt_incl) $(CXXQT))
+$(moc_obj): Objects/%.o: Plugins/Qt/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
@@ -294,7 +300,7 @@ uses_data     := $(data_obj)
 uses_graphics := $(graphics_obj)
 uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
-uses_qt       := $(qt_obj)
+uses_qt       := $(qt_obj) $(moc_obj)
 uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
 uses_style    := $(style_obj)
@@ -362,7 +368,7 @@ DISTR:
 
 CLEAN: DISTR
 	$(RM) Objects/*.o
-	$(RM) Plugins/Qt/moc_*.cpp
+	$(RM) Plugins/Qt/*.moc.cpp
 
 clean: CLEAN
 
