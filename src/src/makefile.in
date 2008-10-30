@@ -214,8 +214,8 @@ graphics_obj := $(call makeobj,$(graphics_src))
 x11_obj      := $(call makeobj,$(x11_src))
 cocoa_m_obj  := $(call makeobj_m,$(cocoa_m_src))
 cocoa_mm_obj := $(call makeobj_mm,$(cocoa_mm_src))
-qt_obj 	     := $(call makeobj,$(qt_src))
 moc_obj	     := $(call makeobj,$(qt_moc_src))
+qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
@@ -225,6 +225,7 @@ style_obj    := $(call makeobj,$(style_src))
 # compiled with only a specific set of include flags. To achieve that,
 # we must disable the default (implicit) compilation rule and define
 # an appropriate rule for each object file.
+
 
 %.o: %.cpp # Disable implicit compilation rule
 
@@ -249,7 +250,7 @@ $(plugins_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
-$(filter-out moc_%.o, $(qt_obj)): Objects/%.o: %.cpp
+$(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
