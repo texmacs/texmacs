@@ -24,59 +24,59 @@
  * structure for caching font pixmaps
  ******************************************************************************/
 
-struct x_character_rep: concrete_struct {
+struct qt_character_rep: concrete_struct {
 	int          c;
 	font_glyphs  fng;
 	int          sf;
 	color        fg;
 	color        bg;
-	x_character_rep (int c, font_glyphs fng, int sf, color fg, color bg);
-	friend class x_character;
+	qt_character_rep (int c, font_glyphs fng, int sf, color fg, color bg);
+	friend class qt_character;
 };
 
-class x_character {
-	CONCRETE(x_character);
-	x_character (int c=0, font_glyphs fng= font_glyphs (),
+class qt_character {
+	CONCRETE(qt_character);
+	qt_character (int c=0, font_glyphs fng= font_glyphs (),
 				 int sf=1, color fg= 0, color bg= 1);
 	operator tree ();
 };
-CONCRETE_CODE(x_character);
+CONCRETE_CODE(qt_character);
 
-bool operator == (x_character xc1, x_character xc2);
-bool operator != (x_character xc1, x_character xc2);
-int hash (x_character xc);
+bool operator == (qt_character xc1, qt_character xc2);
+bool operator != (qt_character xc1, qt_character xc2);
+int hash (qt_character xc);
 
 
 
-x_character_rep::x_character_rep (int c2, font_glyphs fng2, int sf2,
+qt_character_rep::qt_character_rep (int c2, font_glyphs fng2, int sf2,
 								  color fg2, color bg2):
 c (c2), fng (fng2), sf (sf2), fg (fg2), bg (bg2) {}
 
-x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
-rep (new x_character_rep (c, fng, sf, fg, bg)) {}
+qt_character::qt_character (int c, font_glyphs fng, int sf, color fg, color bg):
+rep (new qt_character_rep (c, fng, sf, fg, bg)) {}
 
-x_character::operator tree () {
+qt_character::operator tree () {
 	tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
 	t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
 	return t;
 }
 
 bool
-operator == (x_character xc1, x_character xc2) {
+operator == (qt_character xc1, qt_character xc2) {
 	return
     (xc1->c==xc2->c) && (xc1->fng.rep==xc2->fng.rep) &&
     (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg);
 }
 
 bool
-operator != (x_character xc1, x_character xc2) {
+operator != (qt_character xc1, qt_character xc2) {
 	return
     (xc1->c!=xc2->c) || (xc1->fng.rep!=xc2->fng.rep) ||
     (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg);
 }
 
 int
-hash (x_character xc) {
+hash (qt_character xc) {
 	return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf;
 }
 
@@ -119,9 +119,9 @@ qt_image_rep::~qt_image_rep () { delete img; }
  ******************************************************************************/
 
 
-QColor* cmap = NULL;
-hashmap<x_character,qt_image> character_image;  // bitmaps of all characters
-hashmap<string,qt_image> images; 
+static QColor* cmap = NULL;
+static hashmap<qt_character,qt_image> character_image;  // bitmaps of all characters
+static hashmap<string,qt_image> images; 
 
 
 /******************************************************************************
@@ -165,7 +165,7 @@ alloc_color (int r, int g, int b) {
 	return QColor ((255.0*r/65535.0), (255.0*g/65535.0), (255.0*b/65535.0), 255);
 }
 
-void
+static void
 init_color_map () {
 	int i, r, g, b;
 	cmap= new QColor [CTOTAL];
@@ -282,7 +282,7 @@ get_named_color (color c) {
 }
 
 
-void
+static void
 initialize_colors () {
 	unsigned int depth = 65535;
 	if (depth >= 16) {
@@ -681,7 +681,7 @@ qt_renderer_rep::draw_clipped (QTMImage *im, int w, int h, SI x, SI y) {
 void
 qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
-  x_character xc (c, fng, sfactor, cur_fg, 0);
+  qt_character xc (c, fng, sfactor, cur_fg, 0);
   qt_image mi = character_image [xc];
   if (is_nil(mi)) {
     int r, g, b;
