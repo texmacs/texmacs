@@ -13,7 +13,6 @@
 #include "iterator.hpp"
 #include "dictionary.hpp"
 #include "qt_gui.hpp"
-#include "qt_renderer.hpp"
 #include "analyze.hpp"
 #include <locale.h>
 #include "language.hpp"
@@ -36,17 +35,15 @@ int timeout_time;
 ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep(int argc2, char **argv2):
-  interrupted (false), color_scale ((void*) NULL), 
-  character_image (qt_image()), selection (NULL), images (qt_image())
+  interrupted (false), selection (NULL)
 {
   (void) argc2; (void) argv2;
   // argc= argc2;
   // argv= argv2;
   interrupted   = false;
   interrupt_time= texmacs_time ();
-  initialize_colors ();
   set_output_language (get_locale_language ());
-  (void) default_font ();
+//  (void) default_font ();
 }
 
 /* important routines */
@@ -65,255 +62,9 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
   height= 6000 * PIXEL;
 }
 
-/******************************************************************************
-* Set up colors
-******************************************************************************/
 
-bool reverse_colors= false;
-
-color black, white, red, green, blue;
-color yellow, magenta, orange, brown, pink;
-color light_grey, grey, dark_grey;
-
-static int CSCALES= 4;
-static int CFACTOR= 5;
-static int GREYS  = 16;
-static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
-
-static QColor
-alloc_color (int r, int g, int b) {
-  if (reverse_colors) {
-    int m= min (r, min (g, b));
-    int M= max (r, max (g, b));
-    int t= (r + g + b) / 3;
-    int tt= 65535 - t;
-    double mu= 1.0;
-    tt= 6 * tt / 7;
-    if (M != m) {
-      double lambda1= max (((double) (t - m)) / t,
-                           ((double) (M - t)) / (65535 - t));
-      double lambda2= max (((double) (t - m)) / tt,
-                           ((double) (M - t)) / (65535 - tt));
-      mu= lambda1 / lambda2;
-    }
-    r= (int) (tt + mu * (r - t) + 0.5);
-    g= (int) (tt + mu * (g - t) + 0.5);
-    b= (int) (tt + mu * (b - t) + 0.5);
-  }
-  return QColor ((255.0*r/65535.0), (255.0*g/65535.0), (255.0*b/65535.0), 255);
-}
-
-void
-qt_gui_rep::init_color_map () {
-  int i, r, g, b;
-  cmap= new QColor [CTOTAL];
-  for (i=0; i<=GREYS; i++)
-    cmap[i]= alloc_color ((i*65535)/GREYS, (i*65535)/GREYS, (i*65535)/GREYS);
-  for (r=0; r<=CSCALES; r++)
-    for (g=0; g<=CSCALES; g++)
-      for (b=0; b<=CSCALES; b++) {
-        i= r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
-        cmap[i]= alloc_color ((r*65535)/CSCALES,
-                              (g*65535)/CSCALES,
-                              (b*65535)/CSCALES);
-      }
-}
-
-color
-rgb_color (int r, int g, int b) {
-  if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
-  else {
-    r= (r*CSCALES+ 128)/255;
-    g= (g*CSCALES+ 128)/255;
-    b= (b*CSCALES+ 128)/255;
-    return r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
-  }
-}
-
-void
-get_rgb_color (color col, int& r, int& g, int& b) {
-  if (col <= GREYS) {
-    r= (col*255)/GREYS;
-    g= (col*255)/GREYS;
-    b= (col*255)/GREYS;
-  }
-  else {
-    int rr, gg, bb;
-    col-= (GREYS+1);
-    bb  = col % CFACTOR;
-    gg  = (col/CFACTOR) % CFACTOR;
-    rr  = (col/(CFACTOR*CFACTOR)) % CFACTOR;
-    r   = (rr*255)/CSCALES;
-    g   = (gg*255)/CSCALES;
-    b   = (bb*255)/CSCALES;
-  }
-}
-
-color
-named_color (string s) {
-  if ((N(s) == 4) && (s[0]=='#')) {
-    int r= 17 * from_hexadecimal (s (1, 2));
-    int g= 17 * from_hexadecimal (s (2, 3));
-    int b= 17 * from_hexadecimal (s (3, 4));
-    return rgb_color (r, g, b);
-  }
-  if ((N(s) == 7) && (s[0]=='#')) {
-    int r= from_hexadecimal (s (1, 3));
-    int g= from_hexadecimal (s (3, 5));
-    int b= from_hexadecimal (s (5, 7));
-    return rgb_color (r, g, b);
-  }
-  unsigned int depth = 65535;
-  int pastel= (depth>=16? 223: 191);
-  
-  if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s))))) {
-    int level, i=5;
-    if (read_int(s,i,level)) {
-      level = (level*255) /100;
-      return rgb_color(level,level,level);
-    }
-  }
-  
-  if (s == "black")          return black;
-  if (s == "white")          return white;
-  if (s == "grey")           return grey;
-  if (s == "red")            return red;
-  if (s == "blue")           return blue;
-  if (s == "yellow")         return yellow;
-  if (s == "green")          return green;
-  if (s == "magenta")        return magenta;
-  if (s == "cyan")           return rgb_color (0, 255, 255);
-  if (s == "orange")         return orange;
-  if (s == "brown")          return brown;
-  if (s == "pink")           return pink;
-  if (s == "broken white")   return rgb_color (255, 255, pastel);
-  if (s == "light grey")     return light_grey;
-  if (s == "dark grey")      return dark_grey;
-  if (s == "dark red")       return rgb_color (128, 0, 0);
-  if (s == "dark blue")      return rgb_color (0, 0, 128);
-  if (s == "dark yellow")    return rgb_color (128, 128, 0);
-  if (s == "dark green")     return rgb_color (0, 128, 0);
-  if (s == "dark magenta")   return rgb_color (128, 0, 128);
-  if (s == "dark cyan")      return rgb_color (0, 128, 128);
-  if (s == "dark orange")    return rgb_color (128, 64, 0);
-  if (s == "dark brown")     return rgb_color (64, 16, 0);
-  if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
-  if (s == "pastel red")     return rgb_color (255, pastel, pastel);
-  if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
-  if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
-  if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
-  if (s == "pastel magenta") return rgb_color (255, pastel, 255);
-  if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
-  if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
-  if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
-  return black;
-}
-
-string
-get_named_color (color c) {
-  SI r, g, b;
-  get_rgb_color (c, r, g, b);
-  return "#" *
-    as_hexadecimal (r, 2) *
-    as_hexadecimal (g, 2) *
-    as_hexadecimal (b, 2);
-}
-
-
-void
-qt_gui_rep::initialize_colors () {
-  unsigned int depth = 65535;
-  if (depth >= 16) {
-    CSCALES= 8;
-    CFACTOR= 9;
-    GREYS  = 256;
-    CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
-  }
-  
-  init_color_map ();
-  
-  black   = rgb_color (0, 0, 0);
-  white   = rgb_color (255, 255, 255);
-  red     = rgb_color (255, 0, 0);
-  blue    = rgb_color (0, 0, 255);
-  yellow  = rgb_color (255, 255, 0);
-  green   = rgb_color (0, 255, 0);
-  magenta = rgb_color (255, 0, 255);
-  orange  = rgb_color (255, 128, 0);
-  brown   = rgb_color (128, 32, 0);
-  pink    = rgb_color (255, 128, 128);
-  
-  light_grey = rgb_color (208, 208, 208);
-  grey       = rgb_color (184, 184, 184);
-  dark_grey  = rgb_color (112, 112, 112);
-}
-
-/******************************************************************************
-* Server fonts
-******************************************************************************/
-
-static string the_default_display_font ("");
-font the_default_wait_font;
-
-void qt_gui_rep::set_default_font (string name) {
-  the_default_display_font= name;
-}
-
-font qt_gui_rep::default_font_sub (bool tt) {
-  string s= the_default_display_font;
-  if (s == "") s= "ecrm11@300";
-  int i, j, n= N(s);
-  for (j=0; j<n; j++) if ((s[j] >= '0') && (s[j] <= '9')) break;
-  string fam= s (0, j);
-  for (i=j; j<n; j++) if (s[j] == '@') break;
-  int sz= (j<n? as_int (s (i, j)): 10);
-  if (j<n) j++;
-  int dpi= (j<n? as_int (s (j, n)): 300);
-  if (N(fam) >= 2) {
-    string ff= fam (0, 2);
-    string out_lan= get_output_language ();
-    if (((out_lan == "bulgarian") || (out_lan == "russian") ||
-         (out_lan == "ukrainian")) &&
-        ((ff == "cm") || (ff == "ec"))) {
-      fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
-    if (out_lan == "japanese" || out_lan == "korean") {
-      tree modern_fn= tuple ("modern", "ss", "medium", "right");
-      modern_fn << as_string (sz) << as_string (dpi);
-      return find_font (modern_fn);
-    }
-    if (out_lan == "chinese" || out_lan == "taiwanese")
-      return unicode_font ( "fireflysung", sz, dpi);
-    //if (out_lan == "japanese")
-    //return unicode_font (this, "ipagui", sz, dpi);
-    //if (out_lan == "korean")
-    //return unicode_font (this, "UnDotum", sz, dpi);
-    if (ff == "ec")
-      return tex_ec_font ( tt? ff * "tt": fam, sz, dpi);
-    if (ff == "la")
-      return tex_la_font ( tt? ff * "tt": fam, sz, dpi, 1000);
-    if (ff == "pu") tt= false;
-    if ((ff == "cm") || (ff == "pn") || (ff == "pu"))
-      return tex_cm_font (tt? ff * "tt": fam, sz, dpi);
-  }
-  return tex_font ( fam, sz, dpi);
-  // if (out_lan == "german") return tex_font (this, "ygoth", 14, 300, 0);
-  // return tex_font (this, "rpagk", 10, 300, 0);
-  // return tex_font (this, "rphvr", 10, 300, 0);
-  // return ps_font (this, "b&h-lucidabright-medium-r-normal", 11, 300);
-}
-
-font qt_gui_rep::default_font (bool tt) {
-  font fn= default_font_sub (tt);
-  the_default_wait_font= fn;
-  return fn;
-}
-
-void
-qt_gui_rep::load_system_font (string family, int size, int dpi,
-			      font_metric& fnm, font_glyphs& fng) 
-{
-  (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-}
+qt_gui_rep::~qt_gui_rep()  { 
+} 
 
 /******************************************************************************
 * interclient communication
@@ -453,70 +204,6 @@ qt_gui_rep::event_loop () {
 }
 
 /******************************************************************************
-* Making color scales for anti alised fonts
-******************************************************************************/
-
-x_character_rep::x_character_rep (int c2, font_glyphs fng2, int sf2,
-				  color fg2, color bg2):
-  c (c2), fng (fng2), sf (sf2), fg (fg2), bg (bg2) {}
-
-x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
-  rep (new x_character_rep (c, fng, sf, fg, bg)) {}
-
-x_character::operator tree () {
-  tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
-  t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
-  return t;
-}
-
-bool
-operator == (x_character xc1, x_character xc2) {
-  return
-    (xc1->c==xc2->c) && (xc1->fng.rep==xc2->fng.rep) &&
-    (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg);
-}
-
-bool
-operator != (x_character xc1, x_character xc2) {
-  return
-    (xc1->c!=xc2->c) || (xc1->fng.rep!=xc2->fng.rep) ||
-    (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg);
-}
-
-int
-hash (x_character xc) {
-  return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf;
-}
-
-void
-qt_gui_rep::prepare_color (int sf, color fg, color bg) {
-  int nr_cols= sf*sf;
-  if (nr_cols >= 64) nr_cols= 64;
-  x_character col_entry (0, font_glyphs (), sf, fg, bg);
-  color* cols= (color*) color_scale [col_entry];
-  if (cols == NULL) {
-    int fR, fG, fB, bR, bG, bB, j;
-    get_rgb_color (fg, fR, fG, fB);
-    get_rgb_color (bg, bR, bG, bB);
-    cols= new color [nr_cols+1];
-    for (j=0; j<=nr_cols; j++)
-      cols [nr_cols-j]= rgb_color ((bR*j + fR*(nr_cols-j)) / nr_cols,
-				   (bG*j + fG*(nr_cols-j)) / nr_cols,
-				   (bB*j + fB*(nr_cols-j)) / nr_cols);
-    color_scale (col_entry)= (void*) cols;
-  }
-}
-
-qt_gui_rep::~qt_gui_rep()  { 
-  delete [] this->cmap;  
-} 
-
-/* interface *****************************************************************/
-#pragma mark GUI interface
-
-//static display cur_display= NULL;
-
-/******************************************************************************
 * Main routines
 ******************************************************************************/
 
@@ -566,14 +253,20 @@ gui_refresh () {
 
 void
 set_default_font (string name) {
+	(void) name;
   // set the name of the default font
-  the_gui->set_default_font (name);
+  // this is ignored since Qt handles fonts for the widgets
 }
 
 font
 get_default_font (bool tt) {
+	(void) tt;	
   // get the default font or monospaced font (if tt is true)
-  return the_gui->default_font (tt);
+	
+  // return a null font since this function is not called in the Qt port.
+  if (DEBUG_EVENTS) cout << "get_default_font(): SHOULD NOT BE CALLED\n";
+  return NULL;
+  //return tex_font (this, "ecrm", 10, 300, 0);
 }
 
 // load the metric and glyphs of a system font
@@ -583,7 +276,8 @@ void
 load_system_font (string family, int size, int dpi,
 		  font_metric& fnm, font_glyphs& fng)
 {
-  the_gui->load_system_font (family, size, dpi, fnm, fng);
+	(void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
+	if (DEBUG_EVENTS) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
 
 /******************************************************************************

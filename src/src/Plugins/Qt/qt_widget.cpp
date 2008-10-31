@@ -40,17 +40,6 @@
 #define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
 widget the_keyboard_focus (NULL);
 
-/******************************************************************************
-* main renderer
-******************************************************************************/
-
-qt_renderer_rep* the_renderer= NULL;
-
-qt_renderer_rep*
-the_qt_renderer () {
-  if (!the_renderer) the_renderer= new qt_renderer_rep (the_gui);
-  return the_renderer;
-}
 
 widget
 qt_widget_rep::plain_window_widget (string s) {
