@@ -15,6 +15,7 @@ TODO
 * Visually indicate when a icon menu button is pressed.
 * Implement "minibuffer" interactions (currently a dialog pop up instead) 
 * Paint interrupts on slow machines.
+* Implement image_gc
 
 DONE
 

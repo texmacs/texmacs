@@ -13,6 +13,7 @@
 #include <QtGui>
 #include "QTMWidget.hpp"
 #include "qt_renderer.hpp"
+#include "qt_gui.hpp"
 #include "converter.hpp"
 
 #define PIXEL 256

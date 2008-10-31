@@ -14,15 +14,10 @@
 #define QT_RENDERER_HPP
 
 #include "renderer.hpp"
-#include "qt_gui.hpp"
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
 #include <QtGlobal>
-
-/******************************************************************************
-* QT images
-******************************************************************************/
 
 // if QTMPIXMAPS is defined we use QPixmap for characters and button icons
 // otherwise we use QImage (which support alpha also under X11)
@@ -39,33 +34,15 @@ typedef QPixmap QTMImage;
 typedef QImage QTMImage;	
 #endif
 
-struct qt_image_rep: concrete_struct {
-  QTMImage *img;
-  SI xo,yo;
-  int w,h;
-  qt_image_rep (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
-  ~qt_image_rep();
-  friend class qt_image;
-  friend class qt_drawable;
-};
-
-class qt_image {
-CONCRETE_NULL(qt_image);
-  qt_image (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
-  // qt_image ();
-};
-
-CONCRETE_NULL_CODE(qt_image);
 
 class qt_renderer_rep: virtual public renderer_rep {
 public:
-  qt_gui dis;
   QPainter painter; // FIXME: painter needs begin/end
   int   w, h;
   color cur_fg, cur_bg;
 
 public:
-  qt_renderer_rep (qt_gui dis, int w = 0, int h = 0);
+  qt_renderer_rep (int w = 0, int h = 0);
   virtual ~qt_renderer_rep ();
   
   virtual void get_extents (int& w, int& h);
@@ -114,7 +91,6 @@ public:
   void encode (SI& x, SI& y);
   void decode (SI& x, SI& y);
   
-  friend class qt_window_rep;   
 };
 
 qt_renderer_rep* the_qt_renderer();

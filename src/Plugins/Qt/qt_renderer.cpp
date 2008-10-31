@@ -17,10 +17,92 @@
 #include "qt_utilities.hpp"
 #include "file.hpp"
 #include "iterator.hpp"
+#include "gui.hpp" // for INTERRUPT_EVENT, INTERRUPTED_EVENT
+#include "font.hpp" // for the definition of font
+
+/******************************************************************************
+ * structure for caching font pixmaps
+ ******************************************************************************/
+
+struct x_character_rep: concrete_struct {
+	int          c;
+	font_glyphs  fng;
+	int          sf;
+	color        fg;
+	color        bg;
+	x_character_rep (int c, font_glyphs fng, int sf, color fg, color bg);
+	friend class x_character;
+};
+
+class x_character {
+	CONCRETE(x_character);
+	x_character (int c=0, font_glyphs fng= font_glyphs (),
+				 int sf=1, color fg= 0, color bg= 1);
+	operator tree ();
+};
+CONCRETE_CODE(x_character);
+
+bool operator == (x_character xc1, x_character xc2);
+bool operator != (x_character xc1, x_character xc2);
+int hash (x_character xc);
+
+
+
+x_character_rep::x_character_rep (int c2, font_glyphs fng2, int sf2,
+								  color fg2, color bg2):
+c (c2), fng (fng2), sf (sf2), fg (fg2), bg (bg2) {}
+
+x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
+rep (new x_character_rep (c, fng, sf, fg, bg)) {}
+
+x_character::operator tree () {
+	tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
+	t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
+	return t;
+}
+
+bool
+operator == (x_character xc1, x_character xc2) {
+	return
+    (xc1->c==xc2->c) && (xc1->fng.rep==xc2->fng.rep) &&
+    (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg);
+}
+
+bool
+operator != (x_character xc1, x_character xc2) {
+	return
+    (xc1->c!=xc2->c) || (xc1->fng.rep!=xc2->fng.rep) ||
+    (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg);
+}
+
+int
+hash (x_character xc) {
+	return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf;
+}
+
+
 
 /******************************************************************************
 * Qt images
 ******************************************************************************/
+struct qt_image_rep: concrete_struct {
+	QTMImage *img;
+	SI xo,yo;
+	int w,h;
+	qt_image_rep (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
+	~qt_image_rep();
+	friend class qt_image;
+	friend class qt_drawable;
+};
+
+class qt_image {
+	CONCRETE_NULL(qt_image);
+	qt_image (QTMImage *img2, SI xo2, SI yo2, int w2, int h2);
+	// qt_image ();
+};
+
+CONCRETE_NULL_CODE(qt_image);
+
 
 qt_image::qt_image (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
   rep (new qt_image_rep (img2, xo2, yo2, w2, h2)) {}
@@ -31,63 +113,251 @@ qt_image_rep::qt_image_rep (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
 
 qt_image_rep::~qt_image_rep () { delete img; }
 
-/*****************************************************************************/
 
-qt_renderer_rep::qt_renderer_rep (qt_gui dis2, int w2, int h2):
-  dis (dis2), w (w2), h (h2)
+/******************************************************************************
+ * Global support variables for all qt_renderers
+ ******************************************************************************/
+
+
+QColor* cmap = NULL;
+hashmap<x_character,qt_image> character_image;  // bitmaps of all characters
+hashmap<string,qt_image> images; 
+
+
+/******************************************************************************
+ * Set up colors
+ ******************************************************************************/
+
+bool reverse_colors= false;
+
+color black, white, red, green, blue;
+color yellow, magenta, orange, brown, pink;
+color light_grey, grey, dark_grey;
+
+static int CSCALES= 4;
+static int CFACTOR= 5;
+static int GREYS  = 16;
+static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
+
+
+
+
+static QColor
+alloc_color (int r, int g, int b) {
+	if (reverse_colors) {
+		int m= min (r, min (g, b));
+		int M= max (r, max (g, b));
+		int t= (r + g + b) / 3;
+		int tt= 65535 - t;
+		double mu= 1.0;
+		tt= 6 * tt / 7;
+		if (M != m) {
+			double lambda1= max (((double) (t - m)) / t,
+								 ((double) (M - t)) / (65535 - t));
+			double lambda2= max (((double) (t - m)) / tt,
+								 ((double) (M - t)) / (65535 - tt));
+			mu= lambda1 / lambda2;
+		}
+		r= (int) (tt + mu * (r - t) + 0.5);
+		g= (int) (tt + mu * (g - t) + 0.5);
+		b= (int) (tt + mu * (b - t) + 0.5);
+	}
+	return QColor ((255.0*r/65535.0), (255.0*g/65535.0), (255.0*b/65535.0), 255);
+}
+
+void
+init_color_map () {
+	int i, r, g, b;
+	cmap= new QColor [CTOTAL];
+	for (i=0; i<=GREYS; i++)
+		cmap[i]= alloc_color ((i*65535)/GREYS, (i*65535)/GREYS, (i*65535)/GREYS);
+	for (r=0; r<=CSCALES; r++)
+		for (g=0; g<=CSCALES; g++)
+			for (b=0; b<=CSCALES; b++) {
+				i= r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
+				cmap[i]= alloc_color ((r*65535)/CSCALES,
+									  (g*65535)/CSCALES,
+									  (b*65535)/CSCALES);
+			}
+}
+
+color
+rgb_color (int r, int g, int b) {
+	if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
+	else {
+		r= (r*CSCALES+ 128)/255;
+		g= (g*CSCALES+ 128)/255;
+		b= (b*CSCALES+ 128)/255;
+		return r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
+	}
+}
+
+void
+get_rgb_color (color col, int& r, int& g, int& b) {
+	if (col <= GREYS) {
+		r= (col*255)/GREYS;
+		g= (col*255)/GREYS;
+		b= (col*255)/GREYS;
+	}
+	else {
+		int rr, gg, bb;
+		col-= (GREYS+1);
+		bb  = col % CFACTOR;
+		gg  = (col/CFACTOR) % CFACTOR;
+		rr  = (col/(CFACTOR*CFACTOR)) % CFACTOR;
+		r   = (rr*255)/CSCALES;
+		g   = (gg*255)/CSCALES;
+		b   = (bb*255)/CSCALES;
+	}
+}
+
+color
+named_color (string s) {
+	if ((N(s) == 4) && (s[0]=='#')) {
+		int r= 17 * from_hexadecimal (s (1, 2));
+		int g= 17 * from_hexadecimal (s (2, 3));
+		int b= 17 * from_hexadecimal (s (3, 4));
+		return rgb_color (r, g, b);
+	}
+	if ((N(s) == 7) && (s[0]=='#')) {
+		int r= from_hexadecimal (s (1, 3));
+		int g= from_hexadecimal (s (3, 5));
+		int b= from_hexadecimal (s (5, 7));
+		return rgb_color (r, g, b);
+	}
+	unsigned int depth = 65535;
+	int pastel= (depth>=16? 223: 191);
+	
+	if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s))))) {
+		int level, i=5;
+		if (read_int(s,i,level)) {
+			level = (level*255) /100;
+			return rgb_color(level,level,level);
+		}
+	}
+	
+	if (s == "black")          return black;
+	if (s == "white")          return white;
+	if (s == "grey")           return grey;
+	if (s == "red")            return red;
+	if (s == "blue")           return blue;
+	if (s == "yellow")         return yellow;
+	if (s == "green")          return green;
+	if (s == "magenta")        return magenta;
+	if (s == "cyan")           return rgb_color (0, 255, 255);
+	if (s == "orange")         return orange;
+	if (s == "brown")          return brown;
+	if (s == "pink")           return pink;
+	if (s == "broken white")   return rgb_color (255, 255, pastel);
+	if (s == "light grey")     return light_grey;
+	if (s == "dark grey")      return dark_grey;
+	if (s == "dark red")       return rgb_color (128, 0, 0);
+	if (s == "dark blue")      return rgb_color (0, 0, 128);
+	if (s == "dark yellow")    return rgb_color (128, 128, 0);
+	if (s == "dark green")     return rgb_color (0, 128, 0);
+	if (s == "dark magenta")   return rgb_color (128, 0, 128);
+	if (s == "dark cyan")      return rgb_color (0, 128, 128);
+	if (s == "dark orange")    return rgb_color (128, 64, 0);
+	if (s == "dark brown")     return rgb_color (64, 16, 0);
+	if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
+	if (s == "pastel red")     return rgb_color (255, pastel, pastel);
+	if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
+	if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
+	if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
+	if (s == "pastel magenta") return rgb_color (255, pastel, 255);
+	if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
+	if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
+	if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
+	return black;
+}
+
+string
+get_named_color (color c) {
+	SI r, g, b;
+	get_rgb_color (c, r, g, b);
+	return "#" *
+    as_hexadecimal (r, 2) *
+    as_hexadecimal (g, 2) *
+    as_hexadecimal (b, 2);
+}
+
+
+void
+initialize_colors () {
+	unsigned int depth = 65535;
+	if (depth >= 16) {
+		CSCALES= 8;
+		CFACTOR= 9;
+		GREYS  = 256;
+		CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
+	}
+	
+	init_color_map ();
+	
+	black   = rgb_color (0, 0, 0);
+	white   = rgb_color (255, 255, 255);
+	red     = rgb_color (255, 0, 0);
+	blue    = rgb_color (0, 0, 255);
+	yellow  = rgb_color (255, 255, 0);
+	green   = rgb_color (0, 255, 0);
+	magenta = rgb_color (255, 0, 255);
+	orange  = rgb_color (255, 128, 0);
+	brown   = rgb_color (128, 32, 0);
+	pink    = rgb_color (255, 128, 128);
+	
+	light_grey = rgb_color (208, 208, 208);
+	grey       = rgb_color (184, 184, 184);
+	dark_grey  = rgb_color (112, 112, 112);
+}
+
+
+/******************************************************************************
+ * qt_renderer
+ ******************************************************************************/
+
+
+
+qt_renderer_rep::qt_renderer_rep (int w2, int h2):
+ w (w2), h (h2)
 {
-  cur_fg     = black;
-  cur_bg     = white;
- 
-  #if 0 
-  black      = dis->black;
-  white      = dis->white;
-  red        = dis->red;
-  green      = dis->green;
-  blue       = dis->blue;
-  yellow     = dis->yellow;
-  magenta    = dis->magenta;
-  orange     = dis->orange;
-  brown      = dis->brown;
-  pink       = dis->pink;
-  light_grey = dis->light_grey;
-  grey       = dis->grey;
-  dark_grey  = dis->dark_grey;
-  #endif
+	if (!cmap) initialize_colors();	
+	
+	cur_fg     = black;
+	cur_bg     = white;
+	
 }
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
 /******************************************************************************
-* Conversion between window and postscript coordinates
-******************************************************************************/
+ * Conversion between window and postscript coordinates
+ ******************************************************************************/
 
 void
 qt_renderer_rep::encode (SI& x, SI& y) {
-  x= (x*pixel) - ox;
-  y= ((-y)*pixel) - oy;
+	x= (x*pixel) - ox;
+	y= ((-y)*pixel) - oy;
 }
 
 void
 qt_renderer_rep::decode (SI& x, SI& y) {
-  x += ox; y += oy;
-  if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
-  if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
+	x += ox; y += oy;
+	if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
+	if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
 }
 
 /*****************************************************************************/
 
 void
 qt_renderer_rep::get_extents (int& w2, int& h2) {
-  w2 = w; h2 = h;
+	w2 = w; h2 = h;
 }
 
 bool
 qt_renderer_rep::interrupted (bool check) {
-  return dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
+	return check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
 }
 
-/* routines from renderer.hpp **********************************************/
 
 /******************************************************************************
 * Drawing into drawables
@@ -124,8 +394,8 @@ void
 qt_renderer_rep::set_color (color c) {
   QPen p (painter.pen ());
   QBrush b (painter.brush ());
-  p.setColor (dis->cmap[c]);
-  b.setColor (dis->cmap[c]);
+  p.setColor (cmap[c]);
+  b.setColor (cmap[c]);
   painter.setPen (p);
   painter.setBrush (b);
   cur_fg= c;
@@ -184,7 +454,7 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  QBrush brush (dis->cmap[cur_bg]);
+  QBrush brush (cmap[cur_bg]);
   painter.setRenderHints (0);
   painter.fillRect (x1, y2, x2-x1, y1-y2, brush);	
 }
@@ -210,7 +480,7 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  QBrush brush (dis->cmap[cur_fg]);
+  QBrush brush (cmap[cur_fg]);
   painter.setRenderHints (0);
   painter.fillRect (x1, y2, x2-x1, y1-y2, brush);	
 }
@@ -243,7 +513,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
     decode (xx, yy);
     poly[i] = QPointF (xx, yy);
   }
-  QBrush brush(dis->cmap[cur_fg]);
+  QBrush brush(cmap[cur_fg]);
   QPainterPath pp;
   pp.addPolygon (poly);
   pp.closeSubpath ();
@@ -412,7 +682,7 @@ void
 qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
   x_character xc (c, fng, sfactor, cur_fg, 0);
-  qt_image mi = dis->character_image [xc];
+  qt_image mi = character_image [xc];
   if (is_nil(mi)) {
     int r, g, b;
     get_rgb (cur_fg, r, g, b);
@@ -460,7 +730,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     qt_image mi2 (im, xo, yo, w, h);
     mi = mi2;
     //[im release]; // qt_image retains im
-    dis->character_image (xc)= mi;
+    character_image (xc)= mi;
     // FIXME: we must release the image at some point (this should be ok now, see qt_image)
   }
   
@@ -511,7 +781,7 @@ extern int char_clip;
 QTMImage*
 qt_renderer_rep::xpm_image (url file_name) { 
   QTMImage *pxm= NULL;
-  qt_image mi= dis->images [as_string (file_name)];
+  qt_image mi= images [as_string (file_name)];
   if (is_nil (mi)) {    
     string sss;
     load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
@@ -525,7 +795,7 @@ qt_renderer_rep::xpm_image (url file_name) {
     //cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
     qt_image mi2 (pxm, 0, 0, pxm->width(), pxm->height());
     mi= mi2;
-    dis->images (as_string (file_name))= mi2;
+    images (as_string (file_name))= mi2;
   }  
   else pxm= mi->img;
   return pxm;
@@ -574,11 +844,22 @@ void qt_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
 void qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2; }
 
-#if 1
 font x_font (string family, int size, int dpi)
 {
   (void) family; (void) size; (void) dpi;
   if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
   return NULL;
 }
-#endif
+
+
+/******************************************************************************
+ * main renderer
+ ******************************************************************************/
+
+qt_renderer_rep* the_renderer= NULL;
+
+qt_renderer_rep*
+the_qt_renderer () {
+	if (!the_renderer) the_renderer= new qt_renderer_rep ();
+	return the_renderer;
+}
