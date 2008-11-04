@@ -130,7 +130,7 @@ slot_name (slot s) {
 // policy: qt_view_widget_rep owns the QWidget
  
 qt_view_widget_rep::qt_view_widget_rep (QWidget* v):
-  qt_widget_rep(), view(v) {}
+  qt_widget_rep(), view(v), current_renderer(NULL)  {}
 
 qt_view_widget_rep::~qt_view_widget_rep() { 
   if (view) delete view;
@@ -210,7 +210,12 @@ qt_view_widget_rep::query (slot s, int type_id) {
     if (type_id != type_helper<renderer>::id)
       fatal_error ("renderer expected (SLOT_RENDERER)",
 		   "qt_view_widget_rep::query");
-    return close_box<renderer> ((renderer) the_qt_renderer());
+    {
+      renderer r = get_current_renderer();
+      //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
+      if (!r) r = the_qt_renderer();
+      return close_box<renderer> (r);
+    }
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;

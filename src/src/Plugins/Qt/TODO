@@ -10,7 +10,6 @@ TODO
 * Help -> (Apple) Search. How to customize this?
 * Clean menu cache on language changes.
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
-* In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
 * Russian menus.
 * Visually indicate when a icon menu button is pressed.
 * Implement "minibuffer" interactions (currently a dialog pop up instead) 
@@ -51,3 +50,4 @@ DONE
 * Header/footer visibility
 * File chooser start location should be directory of current file.
 * Delayed help menu, even several seconds after boot.
+* In any case use QPixmap for the xpm icons (since conversion to QImage and back is costly)
