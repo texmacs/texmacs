@@ -13,7 +13,9 @@
 #ifndef QT_WIDGET_HPP
 #define QT_WIDGET_HPP
 
+
 #include "widget.hpp"
+#include "basic_renderer.hpp"
 #include <QWidget>
 #include <QAction>
 
@@ -39,7 +41,8 @@ public:
 class qt_view_widget_rep: public qt_widget_rep {
 public:	
 	QWidget *view;
-
+  basic_renderer current_renderer;
+  
 public:
   qt_view_widget_rep (QWidget *v);
   ~qt_view_widget_rep ();
@@ -60,7 +63,8 @@ public:
     // deconnect a state slot s from another slot s2 of another widget w2
 
 	virtual widget plain_window_widget (string s); 
-
+  void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
+  basic_renderer get_current_renderer() {  return current_renderer; }
 };
 
 class qt_widget {

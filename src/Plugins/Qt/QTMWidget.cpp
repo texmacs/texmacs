@@ -147,19 +147,24 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     delayed_rects= list<QRect> (rect, delayed_rects);
   else {
     //int start= texmacs_time ();
-    the_qt_renderer()->begin (this);  
+    basic_renderer_rep *r;
+    
+    r = the_qt_renderer();
+    r->begin(this);
+    tm_widget()->set_current_renderer(r);    
 
-    the_qt_renderer() -> set_clipping
-      (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
-       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+    r -> set_clipping
+    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+     (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
     tm_widget()->handle_repaint
-      (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
-       (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
-
-    if (the_qt_renderer()->interrupted())
+    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+     (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
+    
+    if (r->interrupted())
       qt_update_flag= true;
-
-    the_qt_renderer()->end();
+    
+    r->end();
+    tm_widget()->set_current_renderer(NULL);    
     //int end= texmacs_time ();
     //if (end > start) cout << "Repaint " << end - start << "\n";
   }
