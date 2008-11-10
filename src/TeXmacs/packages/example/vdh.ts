@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.11>
+<TeXmacs|1.0.7>
 
 <style|source>
 
@@ -90,9 +90,13 @@
 
     <assign|ssBall|<math|<with|math-font-family|tss|Ball>>>
 
+    <assign|ssC|<math|<with|math-font-family|tss|C>>>
+
     <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
 
     <assign|ssGL|<math|<with|math-font-family|tss|GL>>>
+
+    <assign|ssI|<math|<with|math-font-family|tss|I>>>
 
     <assign|ssL|<math|<with|math-font-family|tss|L>>>
 
