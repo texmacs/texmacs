@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.7>
 
 <style|source>
 
@@ -79,9 +79,11 @@
 
   <assign|the-item|<macro|<transform-item|<value|<counter-item>>>>>
 
-  <assign|item*|<macro|x|<assign|last-item|<arg|x>><current-item|<arg|x>>>>
+  <assign|render-item|<macro|x|<assign|last-item|<arg|x>><current-item|<arg|x>>>>
 
-  <assign|item|<macro|<next-item><item*|<the-item>>>>
+  <assign|item*|<macro|x|<set-binding|<arg|x>><render-item|<arg|x>>>>
+
+  <assign|item|<macro|<next-item><render-item|<the-item>>>>
 
   <\active*>
     <\src-comment>
