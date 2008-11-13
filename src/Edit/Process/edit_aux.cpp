@@ -31,7 +31,7 @@ edit_process_rep::generate_bibliography (
   tree bib_t= buf->aux[bib];
   if (buf->prj != NULL) bib_t= buf->prj->aux[bib];
   string dir= concretize (head (buf->name));
-  tree t= bibtex_run (style, dir, fname, bib_t);
+  tree t= bibtex_run (bib, style, dir, fname, bib_t);
   if (is_atomic (t)) {
     if (starts (t->label, "Error:"))
       set_message (t->label, "compile bibliography");

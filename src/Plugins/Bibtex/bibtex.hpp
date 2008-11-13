@@ -15,6 +15,7 @@
 #include "tree.hpp"
 
 void set_bibtex_command (string cmd);
-tree bibtex_run (string style, string dir, string fname, tree bib_t);
+tree bibtex_run (string bib, string style, string dir, string fname,
+		 tree bib_t);
 
 #endif // BIBTEX_H

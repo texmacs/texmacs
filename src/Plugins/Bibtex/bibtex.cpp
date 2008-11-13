@@ -52,7 +52,7 @@ search_bib (tree t) {
 }
 
 tree
-bibtex_run (string style, string dir, string fname, tree bib_t) {
+bibtex_run (string bib, string style, string dir, string fname, tree bib_t) {
   int i;
   string bib_s= "\\bibstyle{" * style * "}\n";
   for (i=0; i<arity(bib_t); i++)
@@ -98,7 +98,8 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 	  item= compound ("bibitem*", as_string (count++), item[0]);
 	t[i][0]= item;
 	tree v (CONCAT, compound ("bibitem*", item[0]));
-	if (is_atomic (item[1])) v << tree (LABEL, "bib-" * item[1]->label);
+	if (is_atomic (item[1]))
+	  v << tree (LABEL, bib * "-" * item[1]->label);
 	if (N(t[i])>1) {
 	  v << remove_start_space (t[i][1]);
 	  v << A (t[i] (2, N(t[i])));
