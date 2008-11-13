@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.7>
+<TeXmacs|1.0.7>
 
 <style|source>
 
@@ -49,9 +49,11 @@
 
   <assign|render-cite-detail|<macro|x|y|<render-cite|<arg|x>, <arg|y>>>>
 
+  <assign|cite-bib|bib>
+
   <assign|cite-sep|<macro|, >>
 
-  <assign|cite-arg|<macro|x|<write|bib|<arg|x>><reference|<merge|bib-|<arg|x>>>>>
+  <assign|cite-arg|<macro|x|<write|<value|cite-bib>|<arg|x>><reference|<merge|<value|cite-bib>|-|<arg|x>>>>>
 
   <assign|cite-arg-extra|<macro|x|<cite-sep><cite-arg|<arg|x>>>>
 
@@ -61,7 +63,7 @@
 
   <assign|cite-raw|<xmacro|x|<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>>>
 
-  <assign|nocite-arg|<macro|x|<write|bib|<arg|x>>>>
+  <assign|nocite-arg|<macro|x|<write|<value|cite-bib>|<arg|x>>>>
 
   <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
   green|x><map-args|nocite-arg|concat|x>>>>
@@ -72,7 +74,7 @@
 
   <assign|render-bibitem|<macro|text|<compact-item|<transform-bibitem|<arg|text>>>>>
 
-  <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
+  <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|<value|cite-bib>|-|<arg|text>>>>>>
 
   <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<arg|text>><set-binding|<arg|text>>>>>
 
