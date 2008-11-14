@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.7>
 
 <style|tmdoc>
 
@@ -102,14 +102,11 @@
     facilities and so on.
   </enumerate>
 
-  <section|Interaction with other GNU-like projects>
+  <section|Interaction with other GNU projects>
 
-  It might be nice to increase the interaction between <TeXmacs> and other
-  GNU-like projects, such as Gnome or multiplatform GUI's. This might
-  facilitate the incorporation of extern data into <TeXmacs> documents or
-  increase the number of supported platforms. On the other hand, several
-  <TeXmacs> features, such as its font handling, might be interesting for
-  other projects too.
+  We would appreciate help for writing a converter from <TeXmacs> to the
+  <name|Texinfo> format, which is the standard documentation format for the
+  GNU project.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
