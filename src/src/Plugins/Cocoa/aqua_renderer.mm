@@ -14,108 +14,109 @@
 #include "aqua_renderer.h"
 #include "analyze.hpp"
 #include "image_files.hpp"
-#include "aqua_rgb.h"
+#include "file.hpp"
 
-aqua_renderer_rep::aqua_renderer_rep (aqua_gui dis2, int w2, int h2)
-  : dis (dis2), w (w2), h (h2)
+//#include "aqua_rgb.h"
+#include "aqua_utilities.h"
+
+
+
+/******************************************************************************
+ * Cocoa images
+ ******************************************************************************/
+
+struct aqua_image_rep: concrete_struct {
+	NSImage* img;
+	SI xo,yo;
+	int w,h;
+	aqua_image_rep (NSImage* img2, SI xo2, SI yo2, int w2, int h2) :
+  img (img2), xo (xo2), yo (yo2), w (w2), h (h2) { [img retain]; };
+	~aqua_image_rep()  {  [img release]; };
+	friend class aqua_image;
+};
+
+class aqua_image {
+	CONCRETE_NULL(aqua_image);
+  aqua_image (NSImage* img2, SI xo2, SI yo2, int w2, int h2):
+  rep (new aqua_image_rep (img2, xo2, yo2, w2, h2)) {}	
+};
+
+CONCRETE_NULL_CODE(aqua_image);
+
+/******************************************************************************
+ * CG images
+ ******************************************************************************/
+
+struct cg_image_rep: concrete_struct {
+	CGImageRef img;
+	SI xo,yo;
+	int w,h;
+	cg_image_rep (CGImageRef img2, SI xo2, SI yo2, int w2, int h2) :
+    img (img2), xo (xo2), yo (yo2), w (w2), h (h2) { CGImageRetain(img); };
+	~cg_image_rep()  {  CGImageRelease(img); };
+	friend class cg_image;
+};
+
+class cg_image {
+	CONCRETE_NULL(cg_image);
+	cg_image (CGImageRef img2, SI xo2, SI yo2, int w2, int h2):
+    rep (new cg_image_rep (img2, xo2, yo2, w2, h2)) {}	
+};
+
+CONCRETE_NULL_CODE(cg_image);
+
+
+/******************************************************************************
+ * Global support variables for all aqua_renderers
+ ******************************************************************************/
+
+
+static hashmap<basic_character,cg_image> character_image;  // bitmaps of all characters
+static hashmap<string,aqua_image> images; 
+
+
+
+/******************************************************************************
+ * aqua_renderer
+ ******************************************************************************/
+
+void 
+aqua_set_color (color col) {
+  int r, g, b;
+  get_rgb_color(col,r,g,b);
+  [[NSColor colorWithDeviceRed: r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0] set];
+}
+
+aqua_renderer_rep::aqua_renderer_rep (int w2, int h2) :
+  basic_renderer_rep(w2,h2), context(NULL)
 {
-  cur_fg      = black;
-  cur_bg      = white;
- 
-  #if 0 
-  black       = dis->black;
-  white       = dis->white;
-  red         = dis->red;
-  green       = dis->green;
-  blue        = dis->blue;
-  yellow      = dis->yellow;
-  magenta     = dis->magenta;
-  orange      = dis->orange;
-  brown       = dis->brown;
-  pink        = dis->pink;
-  light_grey  = dis->light_grey;
-  grey        = dis->grey;
-  dark_grey   = dis->dark_grey;
-  #endif
 }
 
-aqua_renderer_rep::~aqua_renderer_rep () {} ;
+aqua_renderer_rep::~aqua_renderer_rep () {
+  if (context) end();
+} ;
 
-
-/******************************************************************************
-* Conversion between window and postscript coordinates
-******************************************************************************/
-
-void
-aqua_renderer_rep::encode (SI& x, SI& y) {
-  x= (x*pixel) - ox;
-  y= ((-y)*pixel) - oy;
+void 
+aqua_renderer_rep::begin (void * c) { 
+  context = (NSGraphicsContext*)c; 
+  [context retain];
+//  CGContextBeginPage(context, NULL);
 }
 
-void
-aqua_renderer_rep::decode (SI& x, SI& y) {
-  x += ox; y += oy;
-  if (x>=0) x= x/pixel; else x= (x-pixel+1)/pixel;
-  if (y>=0) y= -(y/pixel); else y= -((y-pixel+1)/pixel);
-}
-
-/******************************************************************************/
-
-void aqua_renderer_rep::get_extents (int& w2, int& h2) { w2 = w; h2 = h; } 
-//bool aqua_renderer_rep::interrupted (bool check) { return false; } 
-bool
-aqua_renderer_rep::interrupted (bool check) {
-	return false;
-  bool ret = dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
-  if (ret) cout << "INTERRUPTED:" << ret << "\n";
-  return ret;
-}
-
-
-/* routines from renderer.hpp **********************************************/
-
-/******************************************************************************
-* Drawing into drawables
-******************************************************************************/
-
-color
-aqua_renderer_rep::rgb (int r, int g, int b) {
-  return rgb_color (r, g, b);
-}
-
-void
-aqua_renderer_rep::get_rgb (color col, int& r, int& g, int& b) {
-  get_rgb_color (col, r, g, b);
-}
-
-color
-aqua_renderer_rep::get_color () {
-  return cur_fg;
-}
-
-#if 0
-color
-aqua_renderer_rep::get_color (string s) {
-  return named_color (s);
-}
-#endif
-
-color
-aqua_renderer_rep::get_background () {
-  return cur_bg;
+void 
+aqua_renderer_rep::end () { 
+//  CGContextEndPage(context);
+  [context release];
+//  CGContextRelease(context); 
+  context = NULL;  
 }
 
 void
 aqua_renderer_rep::set_color (color c) {
-  [dis->cmap[c] set];
-  cur_fg= c;
+  basic_renderer_rep::set_color(c);
+  aqua_set_color(cur_fg);
 }
 
-void
-aqua_renderer_rep::set_background (color c) {
-//  XSetBackground (dpy, gc, dis->cmap[c]);
-  cur_bg= c;
-}
 
 void
 aqua_renderer_rep::set_line_style (SI lw, int type, bool round) { (void) type;
@@ -135,7 +136,7 @@ void
 aqua_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
-  y1--; y2--; // top-left origin to bottom-left origin conversion
+ // y1--; y2--; // top-left origin to bottom-left origin conversion
   [NSBezierPath strokeLineFromPoint:NSMakePoint(x1,y1) toPoint:NSMakePoint(x2,y2)];
 }
 
@@ -166,9 +167,9 @@ aqua_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
 	  if ((x1>=x2) || (y1<=y2)) return;
 	NSRect rect = NSMakeRect(x1,y2,x2-x1,y1-y2);
-  [dis->cmap[cur_bg] set];
+  aqua_set_color (cur_bg);
   [NSBezierPath fillRect:rect];
-  [dis->cmap[cur_fg] set];
+  aqua_set_color (cur_fg);
 }
 
 void
@@ -228,111 +229,216 @@ aqua_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   STACK_DELETE_ARRAY (pnt);
 }
 
+/******************************************************************************
+ * Image rendering
+ ******************************************************************************/
+struct aqua_cache_image_rep: cache_image_element_rep {
+	aqua_cache_image_rep (int w2, int h2, int time2, NSImage *ptr2) :
+  cache_image_element_rep(w2,h2,time2,ptr2) {  [(NSImage*)ptr retain]; };
+	virtual ~aqua_cache_image_rep() {   [(NSImage*)ptr release]; };
+};
 
-//void aqua_renderer_rep::draw (int char_code, font_glyphs fn, SI x, SI y) {} ;
-//void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {} ;
-void aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-                              double cx1, double cy1, double cx2, double cy2) {} ;
 
-
-int char_clip=0;
-
-#define conv(x) ((SI) (((double) (x))*(fn->unit)))
+void
+aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
+                        double cx1, double cy1, double cx2, double cy2) 
+{
+  // Given an image of original size (W, H),
+  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
+  // at position (x, y) in a rectangle of size (w, h)
+  
+  // if (DEBUG_EVENTS) cout << "cg_renderer_rep::image " << as_string(u) << LF;
+  
+  w= w/pixel; h= h/pixel;
+  decode (x, y);
+  
+  //painter.setRenderHints (0);
+  //painter.drawRect (QRect (x, y-h, w, h));
+  
+  NSImage *pm = NULL;
+  tree lookup= tuple (u->t);
+  lookup << as_string (w ) << as_string (h )
+  << as_string (cx1) << as_string (cy1)
+  << as_string (cx2) << as_string (cy2) << "cg-image" ;
+  cache_image_element ci = get_image_cache(lookup);
+  if (!is_nil(ci)) {
+    pm = static_cast<NSImage*> (ci->ptr);
+  } else {
+	  if (suffix (u) == "png") {
+      // rendering
+      string suu = as_string (u);
+      // cout << suu << LF;
+      pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
+	  } else if (suffix (u) == "ps" ||
+               suffix (u) == "eps" ||
+               suffix (u) == "pdf") {
+      url temp= url_temp (".png");
+      system ("convert", u, temp);
+      string suu = as_string (temp);
+      pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
+      remove (temp);
+    }
+    
+    if (pm == NULL ) {
+      cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+      return;
+    }
+    // caching
+    ci = new aqua_cache_image_rep (w,h, texmacs_time(), pm);
+    set_image_cache(lookup, ci);
+    (ci->nr)++;
+  }
+  
+  NSSize isz = [pm size];
+  [pm setFlipped:YES];
+//  [pm drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
+  [pm drawInRect:NSMakeRect(x,y-h,w,h) fromRect:NSMakeRect(0,0,isz.width,isz.height) operation:NSCompositeSourceAtop fraction:1.0];
+}
 
 
 void
 aqua_renderer_rep::draw_clipped (NSImage *im, int w, int h, SI x, SI y) {
-  int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
   decode (x , y );
-  decode (x1, y1);
-  decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
   [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }  
 
 
 
+static CGContextRef 
+MyCreateBitmapContext (int pixelsWide, int pixelsHigh) {
+    int bitmapBytesPerRow   = (pixelsWide * 4);
+    int bitmapByteCount     = (bitmapBytesPerRow * pixelsHigh);	
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    void *bitmapData = malloc( bitmapByteCount );
+    if (bitmapData == NULL) {
+        //fprintf (stderr, "Memory not allocated!");
+        return NULL;
+    }
+    CGContextRef context = CGBitmapContextCreate (bitmapData, pixelsWide,	pixelsHigh,	8,
+                                                  bitmapBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
+    if (context == NULL) {
+        free (bitmapData);
+		// fprintf (stderr, "Context not created!");
+        return NULL;
+    }
+    CGColorSpaceRelease (colorSpace);
+    return context;
+}
+
+
+void
+aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
+	// get the pixmap
+	basic_character xc (c, fng, sfactor, 0, 0);
+	cg_image mi = character_image [xc];
+	if (is_nil(mi)) {
+		SI xo, yo;
+		glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
+		glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
+		int i, j, w= gl->width, h= gl->height;
+		CGImageRef im = NULL;
+		{
+			CGContextRef ic = MyCreateBitmapContext(w,h);
+			int nr_cols= sfactor*sfactor;
+			if (nr_cols >= 64) nr_cols= 64;
+			//CGContextSetShouldAntialias(ic,true);
+			CGContextSetBlendMode(ic,kCGBlendModeCopy);
+			//CGContextSetRGBFillColor(ic,1.0,1.0,1.0,0.0);
+			//CGContextFillRect(ic,CGRectMake(0,0,w,h));
+			
+			for (j=0; j<h; j++)
+				for (i=0; i<w; i++) {
+					int col = gl->get_x (i, j);
+					CGContextSetRGBFillColor(ic, 0.0,0.0,0.0,  ((255*col)/(nr_cols+1))/255.0);
+					CGContextFillRect(ic,CGRectMake(i,j,1,1));
+				}
+			im = CGBitmapContextCreateImage (ic);
+			CGContextRelease (ic);
+		}
+		cg_image mi2 (im, xo, yo, w, h);
+		mi = mi2;
+		CGImageRelease(im); // cg_image retains im
+		character_image (xc)= mi;
+	}
+	
+	// draw the character
+	{
+    CGContextRef cgc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+		(void) w; (void) h;
+		int x1= x- mi->xo*sfactor;
+		int y1=  y+ mi->yo*sfactor;
+		decode (x1, y1);
+		y1--; // top-left origin to bottom-left origin conversion
+		CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
+		CGContextSetShouldAntialias (cgc, true);
+		CGContextSaveGState (cgc);
+		//  cg_set_color (context, cur_fg);
+		CGContextClipToMask (cgc, r, mi->img); 
+		CGContextFillRect (cgc, r);
+		CGContextRestoreGState (cgc);
+	}  
+}
+#if 0
 void aqua_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
-  x_character xc (c, fng, sfactor, cur_fg, cur_bg);
-  aqua_image mi = dis->character_image [xc];
+  basic_character xc (c, fng, sfactor, 0, 0);
+  cg_image mi = character_image [xc];
   if (is_nil(mi)) {
     // cout << "CACHING:" << c << "\n" ;
-    dis->prepare_color (sfactor, cur_fg, cur_bg);
-    x_character col_entry (0, font_glyphs (), sfactor, cur_fg, cur_bg);
-    color* cols= (color*) dis->color_scale [col_entry];
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
     NSImage *im = [[NSImage alloc] initWithSize:NSMakeSize(w,h)];
+    int nr_cols= sfactor*sfactor;
+    if (nr_cols >= 64) nr_cols= 64;
+
     [im lockFocus];
     for (j=0; j<h; j++)
       for (i=0; i<w; i++) {
-        if (gl->get_x(i,j)!=0) {
-        color col= cols [gl->get_x(i,j)];
-        [(NSColor*)dis->cmap[col] set];
+        int col = gl->get_x (i, j);
+        [[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha: ((255*col)/(nr_cols+1))/255.0] set]; 
         [NSBezierPath fillRect:NSMakeRect(i,j,1,1)];
-        }
       }
     [im unlockFocus];
     
     aqua_image mi2(im, xo, yo, w, h );
 	mi = mi2;
     [im release]; // aqua_image retains im
-    dis->character_image (xc)= mi;
+    character_image (xc)= mi;
     // FIXME: we must release the image at some point (this should be ok now, see aqua_image)
   }
   
   // draw the character
-  draw_clipped (mi->img, mi->w, mi->h,
-                x- mi->xo*sfactor, y+ mi->yo*sfactor);
+  {
+    CGContextRef cgc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    (void) w; (void) h;
+    int x1= x- mi->xo*sfactor;
+    int y1=  y+ mi->yo*sfactor;
+    decode (x1, y1);
+    y1--; // top-left origin to bottom-left origin conversion
+    CGRect r = CGRectMake(x1,y1,mi->w,mi->h);
+    CGContextSetShouldAntialias (cgc, true);
+    CGContextSaveGState (cgc);
+    //  aqua_set_color (context, cur_fg);
+    CGContextClipToMask (cgc, r, (CGImage*)(mi->img)); 
+    CGContextFillRect (cgc, r);
+    CGContextRestoreGState (cgc);
+  }  
+
+  
+  // draw the character
+//  draw_clipped (mi->img, mi->w, mi->h,
+ //               x- mi->xo*sfactor, y+ mi->yo*sfactor);
 }
-
-#undef conv
-
-#undef conv
+#endif
 
 /******************************************************************************
 * Setting up and displaying xpm pixmaps
 ******************************************************************************/
 
-NSColor *xpm_to_ns_color(string s)
-{
-  if (s == "none") return [NSColor colorWithDeviceWhite:0.5 alpha:0.0];
-  if ((N(s) == 4) && (s[0]=='#')) {
-    int r= 17 * from_hexadecimal (s (1, 2));
-    int g= 17 * from_hexadecimal (s (2, 3));
-    int b= 17 * from_hexadecimal (s (3, 4));
-    return [NSColor colorWithDeviceRed:r/256.0 green:g/256.0 blue:b/256.0 alpha:1.0];
-  }
-  if ((N(s) == 7) && (s[0]=='#')) {
-    int r= from_hexadecimal (s (1, 3));
-    int g= from_hexadecimal (s (3, 5));
-    int b= from_hexadecimal (s (5, 7));
-    return [NSColor colorWithDeviceRed:r/256.0 green:g/256.0 blue:b/256.0 alpha:1.0];
-  }
-  if ((N(s) == 13) && (s[0]=='#')) {
-    int r= from_hexadecimal (s (1, 5));
-    int g= from_hexadecimal (s (5, 9));
-    int b= from_hexadecimal (s (9, 13));
-    return [NSColor colorWithDeviceRed:r/256.0 green:g/256.0 blue:b/256.0 alpha:1.0];
-  }
-  char *name = as_charp(s);
-  for(int i = 0; i<RGBColorsSize; i++) {
-   if (strcmp(name,RGBColors[i].name)==0) {
-	 delete [] name;
-
-     return [NSColor colorWithDeviceRed:RGBColors[i].r/256.0 green:RGBColors[i].g/256.0 blue:RGBColors[i].b/256.0 alpha:1.0];
-   }
-  }
-  delete  [] name;
-  return [NSColor blackColor];
-}
-
-
-
-//void aqua_renderer_rep::xpm_initialize (url file_name) 
 NSImage* xpm_init(url file_name)
 {
   tree t= xpm_load (file_name);
@@ -354,7 +460,7 @@ NSImage* xpm_init(url file_name)
   
   // setup colors
   string first_name;
-  hashmap<string,NSColor *> pmcs(0);
+  hashmap<string,color> pmcs;
   for (k=0; k<c; k++) {
     string s   = as_string (t[k+1]);
     string name= "";
@@ -378,19 +484,12 @@ NSImage* xpm_init(url file_name)
       def= locase_all (s (j, i));
     }
 
-	pmcs(name)= xpm_to_ns_color(def);
-	#if 0
-	int r=0,g=0,b=0;
-		pmcs(name)= (def == "none" ?
-	    [NSColor colorWithDeviceWhite:1.0 alpha:0.0] :
-		(get_rgb_color(named_color(def),r,g,b),
-		[NSColor colorWithDeviceRed:r/256.0 green:g/256.0 blue:b/256.0 alpha:1.0]) );
-	#endif	
+		pmcs(name)= xpm_to_color(def);
   }
-  
   NSImage *im = [[NSImage alloc] initWithSize:NSMakeSize(w,h)];
 	[im setFlipped:YES];
   [im lockFocus];
+  [[NSGraphicsContext currentContext] setCompositingOperation: NSCompositeCopy];
 
   // setup pixmap
   for (y=0; y<h; y++) {
@@ -400,29 +499,36 @@ NSImage* xpm_init(url file_name)
       string name;
       if (N(s)<(b*(x+1))) name= first_name;
       else name= s (b*x, b*(x+1));
-      NSColor* pmc = pmcs[(pmcs->contains (name) ? name : first_name)];
-      [pmc set];
+      if (name == first_name) 
+        [[NSColor colorWithDeviceWhite:1.0 alpha:0.0] set] ;      
+        else {
+      color col = pmcs[(pmcs->contains (name) ? name : first_name)];
+      aqua_set_color (col);
+        }
 	  [NSBezierPath fillRect:NSMakeRect(x,y,1,1)];
     }
   }
   [im unlockFocus];
   return im;
-//  dis->xpm_pixmap (as_string (file_name))= (int) pm;
-//  dis->xpm_bitmap (as_string (file_name))= (int) bm;
 }
 
 
 extern int char_clip;
 
-NSImage *aqua_renderer_rep::xpm_image(url file_name)
+NSImage *
+aqua_renderer_rep::xpm_image(url file_name)
 { 
 	NSImage *image = nil;
-  aqua_image mi = dis->images [as_string(file_name)];
+  aqua_image mi = images [as_string(file_name)];
   if (is_nil(mi)) {    
 		image = xpm_init(file_name);
+    int w, h;
+    NSSize imgSize = [image size];
+    w = imgSize.width; h = imgSize.height;
 		aqua_image mi2(image,0,0,w,h);
 		mi = mi2;
-		dis->images(as_string(file_name)) = mi2; 	
+		images(as_string(file_name)) = mi2; 	
+    [image release];
   }  
   else image = mi->img;
 	return image;
@@ -453,39 +559,15 @@ void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
 }
 
 
+/******************************************************************************
+ * main cocoa renderer
+ ******************************************************************************/
 
-/* clipping */
-//void aqua_renderer_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {} ;
-//void aqua_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {} ;
+static aqua_renderer_rep* the_renderer= NULL;
 
-void
-aqua_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
-  (void) restore;
-  outer_round (x1, y1, x2, y2);
-  renderer_rep::set_clipping (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-//	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
-	//	[NSBezierPath clipRect:NSMakeRect(x1,y2,x2-x1,y1-y2)];
+aqua_renderer_rep*
+the_aqua_renderer () {
+	if (!the_renderer) the_renderer= new aqua_renderer_rep ();
+	return the_renderer;
 }
-
-
-
-/* shadowing and copying rectangular regions across devices */
-
-
-void aqua_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) {} ;
-void aqua_renderer_rep::new_shadow (renderer& dev) { dev =  this; } ;
-void aqua_renderer_rep::delete_shadow (renderer& dev) {     dev= NULL; } ;
-void aqua_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {} ;
-void aqua_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {} ;
-void aqua_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {} ;
-
-#if 1
-font x_font (string family, int size, int dpi)
-{
-  return NULL;
-}
-#endif
-
 
