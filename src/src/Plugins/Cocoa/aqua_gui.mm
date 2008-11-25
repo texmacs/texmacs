@@ -310,7 +310,11 @@ void aqua_gui_rep::event_loop ()
 	[NSApp finishLaunching];
 	{
 	NSEvent *event = nil;
+    time_credit= 1000000;
+
   while (1) {
+    timeout_time= texmacs_time () + time_credit;
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 			NSDate *dateSlow = [NSDate dateWithTimeIntervalSinceNow:0.5];
 		event= [NSApp nextEventMatchingMask:NSAnyEventMask untilDate: dateSlow //[NSDate distantFuture] 
@@ -324,7 +328,11 @@ void aqua_gui_rep::event_loop ()
 																	 inMode:NSDefaultRunLoopMode dequeue:YES];
 		}
 		interrupted = false;
-    if (!event)  update();
+    if (!event)  {
+       update();
+      time_credit= min (1000000, 2 * time_credit);
+      aqua_update_flag= false;
+    }
     [pool release];
   }  
 	}

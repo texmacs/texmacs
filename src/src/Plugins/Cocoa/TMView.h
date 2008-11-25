@@ -13,17 +13,14 @@
 #include "mac_cocoa.h"
 #include "aqua_simple_widget.h"
 
-@interface TMSimpleView : NSView {
+@interface TMView : NSView  <NSTextInput>
+{
 	simple_widget_rep *wid;
+  NSString *workingText;
+  BOOL processingCompose;
+  NSMutableArray *delayed_rects;
 }
 - (void) setWidget:(widget_rep*) w;
 - (widget_rep*) widget;
-@end
-
-@interface TMView : TMSimpleView  <NSTextInput>
-{
-  NSString *workingText;
-  BOOL processingCompose;
-}
 - (void) deleteWorkingText;
 @end

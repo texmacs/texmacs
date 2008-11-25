@@ -121,52 +121,8 @@ public:
 }
 - (void)dealloc { [self setCommand:NULL];  [self setWidget:NULL];  [super dealloc]; }
 - (void)doit {	if (cmd) cmd->apply(); }
-#if 0
-- (NSImage*) image
-{
-	NSImage *img = [super image];
-	if ((!img)&&(wid))
-	{
-		SI width, height;
-		wid->handle_get_size_hint (width,height);
-		NSSize s = NSMakeSize(width,height);
-		s.width /= PIXEL; s.height /= PIXEL;
-		TMSimpleView *simple = [[[TMSimpleView alloc] initWithFrame:NSMakeRect(0,0,s.width,s.height)] autorelease];
-		[simple setWidget:wid];
-		{
-			NSRect offscreenRect = [simple bounds];
-			static NSWindow* offscreenWindow = nil;
-			static NSView* aView = nil;
-			if (!offscreenWindow) {
-				offscreenWindow = [[NSWindow alloc]
-													 initWithContentRect:offscreenRect
-													 styleMask:NSBorderlessWindowMask
-													 backing:NSBackingStoreRetained
-													 defer:NO];
-				aView = [[offscreenWindow contentView] retain];;
-			}
-			[offscreenWindow setContentView:simple];
-			[offscreenWindow setContentSize:offscreenRect.size];
-			[[offscreenWindow contentView] display]; // Draw to the backing  buffer
-			
-			// Create the NSBItmapImageRep
-			[[offscreenWindow contentView] lockFocus];
-			NSBitmapImageRep* offscreenRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:
-																				 NSMakeRect(0, 0, offscreenRect.size.width, offscreenRect.size.height)] autorelease];
-			
-			// Clean up and delete the window, which is no longer needed.
-			[[offscreenWindow contentView] unlockFocus];
-			[offscreenWindow setContentView:aView];
-			img = [[[NSImage alloc] initWithSize:offscreenRect.size] autorelease];
-			[img addRepresentation:offscreenRep];
-			[img setFlipped:YES];
-			[super setImage:img];			
-			[self setWidget:NULL];
-		}
-	}
-	return img;
-}
-#else
+
+
 - (NSImage*) image
 {
 	NSImage *img = [super image];
@@ -199,8 +155,6 @@ public:
 	}
 	return img;
 }
-
-#endif
 @end
 
 
