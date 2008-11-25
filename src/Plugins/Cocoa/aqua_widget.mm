@@ -649,7 +649,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			if (type_box (val) != type_helper<string>::id)
 				fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
 			string msg = open_box<string> (val);
-			[leftField setStringValue:to_nsstring(msg)];
+			[leftField setStringValue:to_nsstring_utf8(aqua_translate(msg))];
 			[leftField displayIfNeeded];
 		}
       break;
@@ -658,7 +658,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			if (type_box (val) != type_helper<string>::id)
 				fatal_error ("type mismatch", "SLOT_RIGHT_FOOTER");
 			string msg = open_box<string> (val);
-			[rightField setStringValue:to_nsstring(msg)];
+			[rightField setStringValue:to_nsstring_utf8(aqua_translate(msg))];
 			[rightField displayIfNeeded];
 		}
 			break;

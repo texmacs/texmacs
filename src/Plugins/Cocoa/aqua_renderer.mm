@@ -499,10 +499,10 @@ NSImage* xpm_init(url file_name)
       string name;
       if (N(s)<(b*(x+1))) name= first_name;
       else name= s (b*x, b*(x+1));
-      if (name == first_name) 
+      if ((name == first_name) || !(pmcs->contains (name)))
         [[NSColor colorWithDeviceWhite:1.0 alpha:0.0] set] ;      
-        else {
-      color col = pmcs[(pmcs->contains (name) ? name : first_name)];
+      else {
+      color col = pmcs[name];
       aqua_set_color (col);
         }
 	  [NSBezierPath fillRect:NSMakeRect(x,y,1,1)];

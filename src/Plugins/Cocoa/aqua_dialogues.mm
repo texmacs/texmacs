@@ -23,6 +23,8 @@
 #include "url.hpp"
 #include "analyze.hpp"
 
+#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
+
 #pragma mark aqua_chooser_widget_rep
 
 class aqua_chooser_widget_rep: public aqua_widget_rep {
@@ -31,10 +33,10 @@ protected:
 	string type;
 	string mgn;
 	string win_title;
-	coord2 position;
-	coord2 size;
-	
-	string file;
+  string directory;
+  coord2 position;
+  coord2 size;
+  string file;
 	
 public:
   aqua_chooser_widget_rep (command, string, string);
@@ -53,7 +55,9 @@ public:
 };
 
 aqua_chooser_widget_rep::aqua_chooser_widget_rep (command _cmd, string _type, string _mgn) 
-: aqua_widget_rep(), cmd(_cmd), type(_type), mgn(_mgn), size(coord2(100,100)), position(coord2(0,0)), file("")
+: aqua_widget_rep(), cmd(_cmd), type(_type), 
+  mgn(_mgn), position (coord2 (0, 0)), 
+  size (coord2 (100, 100)), file ("")
 {
 }
 
@@ -68,6 +72,8 @@ aqua_chooser_widget_rep::send (slot s, blackbox val) {
 		{	
 			check_type<bool> (val, "SLOT_VISIBILITY");
 			bool flag = open_box<bool> (val);
+      (void) flag;
+      NOT_IMPLEMENTED
 		}	
 			break;
 		case SLOT_SIZE:
@@ -94,20 +100,30 @@ aqua_chooser_widget_rep::send (slot s, blackbox val) {
 			
 		case SLOT_STRING_INPUT:
 	//		send_string (THIS, "input", val);
+        NOT_IMPLEMENTED 
 			break;
 		case SLOT_INPUT_TYPE:
+        if (type_box (val) != type_helper<string>::id)
+          fatal_error ("type mismatch", "SLOT_DIRECTORY");
+        type = open_box<string> (val);        
 		//	send_string (THIS, "type", val);
 			break;
+#if 0
 		case SLOT_INPUT_PROPOSAL:
 			//send_string (THIS, "default", val);
 			break;
+#endif
 		case SLOT_FILE:
 			//send_string (THIS, "file", val);
+        NOT_IMPLEMENTED
 			break;
 		case SLOT_DIRECTORY:
-			//send_string (THIS, "directory", val);
-			break;
-
+        if (type_box (val) != type_helper<string>::id)
+          fatal_error ("type mismatch", "SLOT_DIRECTORY");
+        directory = open_box<string> (val);
+        directory = as_string (url_pwd () * url_system (directory));
+        break;
+        
 		default:
 			aqua_widget_rep::send(s,val);
   }
@@ -236,14 +252,28 @@ void aqua_chooser_widget_rep::perform_dialog()
   [oPanel setPrompt:@"Choose"];
   [oPanel setAllowedFileTypes:fileTypes];
  // [oPanel setAllowsMultipleSelection:YES];
-  result = [oPanel runModalForDirectory:NSHomeDirectory()
+  NSPoint pos = to_nspoint(position);
+  NSRect r = NSMakeRect(0,0,0,0);
+  r.size = [oPanel frame].size;
+  NSOffsetRect(r, pos.x - r.size.width/2, pos.y - r.size.height/2);
+  [oPanel setFrameOrigin:r.origin];
+  
+  result = [oPanel runModalForDirectory:to_nsstring(directory)
                                    file:nil ];
   if (result == NSOKButton) {
       file = from_nsstring([oPanel filename]);
       url u= url_system (scm_unquote (file));
+    if (type == "image")
+      file = "(list (url-system " *
+      scm_quote (as_string (u)) *
+      ") \"100\" \"100\" \"0\" \"0\" \"10\" \"10\")";
+    //FIXME: fake image dimensions
+    else
       file = "(url-system " * scm_quote (as_string (u)) * ")";
+  } else {
+    file = "#f";
   }
-  cmd();	
+  cmd ();	
 }
 
 #endif
@@ -368,6 +398,8 @@ aqua_input_widget_rep::send (slot s, blackbox val) {
 		{	
 			check_type<bool> (val, "SLOT_VISIBILITY");
 			bool flag = open_box<bool> (val);
+      (void) flag;
+      NOT_IMPLEMENTED 
 		}	
 			break;
 		case SLOT_SIZE:
@@ -570,13 +602,16 @@ void aqua_input_widget_rep::perform_dialog()
       NSString *ans = [(NSComboBoxCell*)[form cellAtRow:i column:1] stringValue];
       fields[i]->input = scm_quote(from_nsstring(ans));
     }
-    cmd();
   }
   else  { // Cancel button
+    for(int i=0; i<N(fields); i++) {
+      fields[i]->input = "#f";
+    }
   }
  
   
   [ih release];
+  cmd();
 }
 
 

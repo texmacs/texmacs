@@ -11,6 +11,8 @@
 ******************************************************************************/
 
 #include "aqua_utilities.h"
+#include "dictionary.hpp"
+#include "converter.hpp"
 
 NSRect to_nsrect(coord4 p)
 {
@@ -69,4 +71,20 @@ string from_nsstring(NSString *s)
 {
 	const char *cstr = [s cStringUsingEncoding:NSUTF8StringEncoding];
 	return string((char*)cstr);
+}
+
+
+NSString *to_nsstring_utf8(string s)
+{
+  s= cork_to_utf8 (s);
+	char *p = as_charp(s);
+	NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
+	delete [] p;	
+	return nss;
+}
+
+string
+aqua_translate (string s) {
+  string out_lan= get_output_language ();
+  return tm_var_encode (translate (s, "english", out_lan));
 }

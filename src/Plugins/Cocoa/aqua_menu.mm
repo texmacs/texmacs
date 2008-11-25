@@ -121,7 +121,7 @@ public:
 }
 - (void)dealloc { [self setCommand:NULL];  [self setWidget:NULL];  [super dealloc]; }
 - (void)doit {	if (cmd) cmd->apply(); }
-
+#if 0
 - (NSImage*) image
 {
 	NSImage *img = [super image];
@@ -166,6 +166,41 @@ public:
 	}
 	return img;
 }
+#else
+- (NSImage*) image
+{
+	NSImage *img = [super image];
+	if ((!img)&&(wid))
+	{
+		SI width, height;
+		wid->handle_get_size_hint (width,height);
+		NSSize s = NSMakeSize(width/PIXEL,height/PIXEL);
+   
+    img = [[[NSImage alloc] initWithSize:s] autorelease];
+    [img lockFocus];
+    
+    basic_renderer r = the_aqua_renderer();
+    int x1 = 0;
+    int y1 = s.height;
+    int x2 = s.width;
+    int y2 = 0;
+
+    r -> begin([NSGraphicsContext currentContext]);
+
+    r -> encode (x1,y1);
+    r -> encode (x2,y2);
+    r -> set_clipping (x1,y1,x2,y2);
+    wid -> handle_repaint (x1,y1,x2,y2);
+    r->end();
+    [img unlockFocus];
+    //[img setFlipped:YES];
+    [super setImage:img];			
+    [self setWidget:NULL];
+	}
+	return img;
+}
+
+#endif
 @end
 
 
