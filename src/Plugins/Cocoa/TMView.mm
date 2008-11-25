@@ -1,21 +1,26 @@
 
 /******************************************************************************
-* MODULE     : TMView.mm
-* DESCRIPTION: Main TeXmacs view
-* COPYRIGHT  : (C) 2007  Massimiliano Gubinelli
-*******************************************************************************
-* This software falls under the GNU general public license and comes WITHOUT
-* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
-* If you don't have this file, write to the Free Software Foundation, Inc.,
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-******************************************************************************/
+ * MODULE     : TMView.mm
+ * DESCRIPTION: Main TeXmacs view
+ * COPYRIGHT  : (C) 2007  Massimiliano Gubinelli
+ *******************************************************************************
+ * This software falls under the GNU general public license and comes WITHOUT
+ * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+ * If you don't have this file, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ ******************************************************************************/
 
 #import "TMView.h"
 #include "converter.hpp"
 #include "message.hpp"
 #include "aqua_renderer.h"
+#include "aqua_gui.h"
 
 #define PIXEL 256
+
+extern bool aqua_update_flag;
+extern int time_credit;
+extern int timeout_time;
 
 hashmap<int,string> nskeymap(NULL);
 
@@ -54,82 +59,14 @@ inline void unscaleSize (NSSize &point)
 - (NSRect)rect { return rect; }
 @end
 
-@interface TMSimpleView (Private)
+
+@interface TMView (Private)
 - (void)setNeedsDisplayInTMRect:(TMRect*)r;
+- (void)delayedUpdate;
 @end
 
-@implementation TMSimpleView
-- (id)initWithFrame:(NSRect)frame {
-	self = [super initWithFrame:frame];
-	if (self) {
-		// Initialization code here.
-		wid = NULL;
-	}
-	return self;
-}
-
-- (void)setWidget:(widget_rep*) w
-{
-	wid = (simple_widget_rep*)w;
-}
-
-- (widget_rep*)widget
-{
-	return  (widget_rep*)wid;
-}
 
 
-- (void)setNeedsDisplayInTMRect:(TMRect*)r
-{
-	[self setNeedsDisplayInRect:[r rect]];
-}
-
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow
-{
-	// query widget preferred size
-	SI w,h;
-	wid->handle_get_size_hint (w,h);
-  NSSize s = NSMakeSize(w,h);
-	unscaleSize(s);
-	[self setFrameSize:s];
-}
-
-
-- (void)drawRect:(NSRect)rect 
-{
-//  cout << "SIMPLE DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
-  NSRect bounds = [self bounds];
-	
-	
-	
-	if (1) {
-    basic_renderer r = the_aqua_renderer();
-    int x1 = rect.origin.x;
-    int y1 = rect.origin.y+rect.size.height;
-    int x2 = rect.origin.x+rect.size.width;
-    int y2 = rect.origin.y;
-    
-    r -> begin([NSGraphicsContext currentContext]);
-    r -> encode (x1,y1);
-    r -> encode (x2,y2);
-    r -> set_clipping (x1,y1,x2,y2);
-    wid->handle_repaint (x1,y1,x2,y2);
-		r->end();
-    
-		if ( r->interrupted()) {
-			//	[self setNeedsDisplayInRect:rect];
-			[self performSelector:@selector(setNeedsDisplayInTMRect:) withObject:[[[TMRect alloc] initWithRect:rect] autorelease] afterDelay:0.0];
-			cout << "reinstantiating rect\n";
-		}
-
-  }
-	//cout << "END SIMPLE DRAWING" << "\n";
-	
-	
-}
-
-
-@end
 
 @implementation TMView
 
@@ -139,7 +76,7 @@ inline void map(int code, string name)
   nskeymap(code) = name;
 }
 
-+(void)initialize
+void initkeymap()
 {
   map(0x0d,"return");
   map(0x09,"tab");
@@ -228,14 +165,67 @@ inline void map(int code, string name)
   self = [super initWithFrame:frame];
   if (self) {
     // Initialization code here.
+    wid = NULL;
     processingCompose = NO;
     workingText = nil;
+    delayed_rects = [[NSMutableArray arrayWithCapacity:100] retain];
   }
   return self;
 }
 
+-(void) dealloc
+{
+  [delayed_rects release];
+  [self deleteWorkingText];
+  [super dealloc];
+}
+
+- (void) setWidget:(widget_rep*) w
+{
+	wid = (simple_widget_rep*)w;
+}
+
+- (widget_rep*)widget
+{
+	return  (widget_rep*)wid;
+}
+
+- (void)setNeedsDisplayInTMRect:(TMRect*)r
+{
+  [self setNeedsDisplayInRect:[r rect]];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+  // query widget preferred size
+  SI w,h;
+  wid->handle_get_size_hint (w,h);
+  NSSize s = NSMakeSize(w,h);
+  unscaleSize(s);
+  [self setFrameSize:s];
+}
+
+- (void)delayedUpdate
+{
+  NSMutableArray *arr = delayed_rects;
+  NSEnumerator *enumerator = [arr objectEnumerator];
+  TMRect *anObject;
+  delayed_rects = [[NSMutableArray arrayWithCapacity:10] retain];
+  while ((anObject = [enumerator nextObject])) {
+    [self displayRect:[anObject rect]];
+  }
+  [arr release];
+}
+
+
+
 - (void)drawRect:(NSRect)rect 
 {
+  if (aqua_update_flag) {
+    [delayed_rects addObject:[[[TMRect alloc] initWithRect:rect] autorelease]];
+    return;
+  }
+    
 	// Drawing code here.
 	if ([self inLiveResize])
 	{
@@ -245,67 +235,33 @@ inline void map(int code, string name)
 		//    return;
 	}
 	cout << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
-	NSRect bounds = [self bounds];
+//	NSRect bounds = [self bounds];
 	
-	
-	
-	if (0) { // clear redrawing area
-		[[NSColor whiteColor] set];
-		[NSBezierPath fillRect:rect];
-	}
-	
-	if (1) {
+  {
 		basic_renderer r = the_aqua_renderer();
     int x1 = rect.origin.x;
     int y1 = rect.origin.y+rect.size.height;
     int x2 = rect.origin.x+rect.size.width;
     int y2 = rect.origin.y;
-
+    
     r -> begin([NSGraphicsContext currentContext]);
-
+    
     r -> encode (x1,y1);
     r -> encode (x2,y2);
     r -> set_clipping (x1,y1,x2,y2);
     wid->handle_repaint (x1,y1,x2,y2);
 		r->end();
-		if ( r->interrupted()) {
-			//	[self setNeedsDisplayInRect:rect];
-			[self performSelector:@selector(setNeedsDisplayInTMRect:) withObject:[[[TMRect alloc] initWithRect:rect] autorelease] afterDelay:0.0];
-			cout << "reinstantiating rect\n";
-		}
-	}
-	else
-	{
-		basic_renderer ren = the_aqua_renderer();
-		const NSRect *rects;
-		int count;
-		[self getRectsBeingDrawn:&rects count:&count];
-		for(int i = 0; i < count; i++) {
-			NSRect rect = rects[i];
-			{
-				cout << "\n-------------------\nstarted drqwing one rect\n";
-				ren->begin([[NSGraphicsContext currentContext] graphicsPort]);
-				[NSGraphicsContext saveGraphicsState];
-				ren->set_clipping (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-								   (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
-				//		ren->set_clipping(rect.origin.x*PIXEL, -rect.origin.y*PIXEL, (rect.origin.x+rect.size.width)*PIXEL, -(rect.origin.y+rect.size.height)*PIXEL);
-				wid->handle_repaint (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-									 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
-				cout << "finished drqwing one rect\n";
-				//			wid->handle_repaint(rect.origin.x*PIXEL, rect.origin.y*PIXEL, (rect.origin.x+rect.size.width)*PIXEL, (rect.origin.y+rect.size.height)*PIXEL);
-				[NSGraphicsContext restoreGraphicsState];
-				ren->end();
-			}
-			if (ren->interrupted()) {
-				//	[self setNeedsDisplayInRect:rect];
-				[self performSelector:@selector(setNeedsDisplayInTMRect:) withObject:[[[TMRect alloc] initWithRect:rect] autorelease] afterDelay:0.0];
-				cout << "reinstantiating rect\n";
-			}
-		}		
+    if (r->interrupted())
+      aqua_update_flag= true;
 	}
 	cout << "END DRAWING" << "\n";
-	
-	
+ 
+  if (aqua_update_flag) {
+    if (DEBUG_EVENTS)
+      cout << "Postponed redrawing\n"; 
+    [self performSelector:@selector(delayedUpdate) withObject: nil afterDelay: 10];
+  }
+  
 }
 
 
@@ -321,9 +277,9 @@ inline void map(int code, string name)
     unsigned int mods = [theEvent modifierFlags];
     
     
-
+    
     if (([nss length]==1)&& (!processingCompose))
-
+      
     {
       int key = [nss characterAtIndex:0];
       if (nskeymap->contains(key)) {
@@ -373,9 +329,19 @@ inline void map(int code, string name)
 - (void)keyDown:(NSEvent *)theEvent
 {
   if (!wid) return;
+
+  time_credit= 25;
+  timeout_time= texmacs_time () + time_credit;
+  static bool fInit = false;
+  if (!fInit) {
+    if (DEBUG_EVENTS)
+      cout << "Initializing keymap\n";
+    initkeymap();
+    fInit= true;
+  }
   
   {
-   // char str[256];
+    // char str[256];
     string r;
     NSString *nss = [theEvent charactersIgnoringModifiers];
     unsigned int mods = [theEvent modifierFlags];
@@ -383,12 +349,12 @@ inline void map(int code, string name)
     string modstr;
     
     if (mods & NSControlKeyMask ) modstr= "C-" * modstr;
-//    if (mods & NSAlternateKeyMask) modstr= "Mod1-" * modstr;
+    //    if (mods & NSAlternateKeyMask) modstr= "Mod1-" * modstr;
     if (mods & NSCommandKeyMask) modstr= "Mod1-" * modstr;
     //   if (mods & NSNumericPadKeyMask) s= "Mod3-" * s;
     if (mods & NSHelpKeyMask) modstr= "Mod4-" * modstr;
     
-//    if (!processingCompose)
+    //    if (!processingCompose)
     {
       if ([nss length]>0) {
         int key = [nss characterAtIndex:0];
@@ -410,11 +376,14 @@ inline void map(int code, string name)
           cout << "modified  key press: " << s << LF;
           [self deleteWorkingText];
           wid -> handle_keypress (s, texmacs_time());    
+          the_gui->update (); // FIXME: remove this line when
+          // edit_typeset_rep::get_env_value will be faster
+
           return;
         }
       }
     }
-
+    
     processingCompose = YES;
     static NSMutableArray *nsEvArray = nil;
     if (nsEvArray == nil)
@@ -425,7 +394,7 @@ inline void map(int code, string name)
     [nsEvArray removeObject: theEvent];
   }
 }
- 
+
 #endif
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -502,12 +471,6 @@ inline void map(int code, string name)
 	return YES;
 }
 
-- (void) dealloc
-{
-  [self deleteWorkingText];
-  [super dealloc];
-}
-
 - (void) deleteWorkingText
 { 
   if (workingText == nil)
@@ -515,7 +478,7 @@ inline void map(int code, string name)
   [workingText release];
   workingText = nil;
   processingCompose = NO;
-
+  
   
 }
 
@@ -527,7 +490,7 @@ inline void map(int code, string name)
 {
   processingCompose = NO;
   NSLog(@"insertText: <%@>",aString);
-
+  
   NSString *str = [aString respondsToSelector: @selector(string)] ?
   [aString string] : aString;
   
@@ -550,7 +513,7 @@ inline void map(int code, string name)
 {
   NSString *str = [aString respondsToSelector: @selector(string)] ?
   [aString string] : aString;
-
+  
   if (workingText != nil)
     [self deleteWorkingText];
   if ([str length] == 0)
@@ -568,7 +531,7 @@ inline void map(int code, string name)
 - (BOOL) hasMarkedText
 {
   return workingText != nil;
-
+  
 }
 - (NSInteger) conversationIdentifier
 {
@@ -598,7 +561,7 @@ inline void map(int code, string name)
  */
 - (NSRange) selectedRange
 {
-return NSMakeRange(NSNotFound, 0);
+  return NSMakeRange(NSNotFound, 0);
 }
 /* This method returns the first frame of rects for theRange in screen coordindate system.
  */
