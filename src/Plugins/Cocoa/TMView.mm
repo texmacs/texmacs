@@ -103,18 +103,26 @@ inline void unscaleSize (NSSize &point)
 	
 	
 	if (1) {
-		the_aqua_renderer()->set_clipping (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-																			 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
-		//		the_aqua_renderer()->set_clipping(bounds.origin.x*PIXEL, - bounds.origin.y*PIXEL, (bounds.origin.x+bounds.size.width)*PIXEL,- (bounds.origin.y+bounds.size.height)*PIXEL);
-		wid->handle_repaint (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-												 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
-		//wid->handle_repaint(bounds.origin.x*PIXEL,  bounds.origin.y*PIXEL, (bounds.origin.x+bounds.size.width)*PIXEL, (bounds.origin.y+bounds.size.height)*PIXEL);
-		if ( the_aqua_renderer()->interrupted()) {
+    basic_renderer r = the_aqua_renderer();
+    int x1 = rect.origin.x;
+    int y1 = rect.origin.y+rect.size.height;
+    int x2 = rect.origin.x+rect.size.width;
+    int y2 = rect.origin.y;
+    
+    r -> begin([NSGraphicsContext currentContext]);
+    r -> encode (x1,y1);
+    r -> encode (x2,y2);
+    r -> set_clipping (x1,y1,x2,y2);
+    wid->handle_repaint (x1,y1,x2,y2);
+		r->end();
+    
+		if ( r->interrupted()) {
 			//	[self setNeedsDisplayInRect:rect];
 			[self performSelector:@selector(setNeedsDisplayInTMRect:) withObject:[[[TMRect alloc] initWithRect:rect] autorelease] afterDelay:0.0];
-	//		cout << "reinstantiating rect\n";
+			cout << "reinstantiating rect\n";
 		}
-	}
+
+  }
 	//cout << "END SIMPLE DRAWING" << "\n";
 	
 	
@@ -126,7 +134,7 @@ inline void unscaleSize (NSSize &point)
 @implementation TMView
 
 
-static void map(int code, string name)
+inline void map(int code, string name)
 {
   nskeymap(code) = name;
 }
@@ -229,15 +237,15 @@ static void map(int code, string name)
 - (void)drawRect:(NSRect)rect 
 {
 	// Drawing code here.
-  if ([self inLiveResize])
-  {
-    NSRect bounds = [self bounds];
+	if ([self inLiveResize])
+	{
+		NSRect bounds = [self bounds];
 		[[NSColor blackColor] set];
-    [NSBezierPath strokeRect:NSInsetRect(bounds,1,1)];
+		[NSBezierPath strokeRect:NSInsetRect(bounds,1,1)];
 		//    return;
-  }
-  cout << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
-  NSRect bounds = [self bounds];
+	}
+	cout << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
+	NSRect bounds = [self bounds];
 	
 	
 	
@@ -247,13 +255,20 @@ static void map(int code, string name)
 	}
 	
 	if (1) {
-		the_aqua_renderer()->set_clipping (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-																			 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
-		//		the_aqua_renderer()->set_clipping(bounds.origin.x*PIXEL, - bounds.origin.y*PIXEL, (bounds.origin.x+bounds.size.width)*PIXEL,- (bounds.origin.y+bounds.size.height)*PIXEL);
-		wid->handle_repaint (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-												 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
-		//wid->handle_repaint(bounds.origin.x*PIXEL,  bounds.origin.y*PIXEL, (bounds.origin.x+bounds.size.width)*PIXEL, (bounds.origin.y+bounds.size.height)*PIXEL);
-		if ( the_aqua_renderer()->interrupted()) {
+		basic_renderer r = the_aqua_renderer();
+    int x1 = rect.origin.x;
+    int y1 = rect.origin.y+rect.size.height;
+    int x2 = rect.origin.x+rect.size.width;
+    int y2 = rect.origin.y;
+
+    r -> begin([NSGraphicsContext currentContext]);
+
+    r -> encode (x1,y1);
+    r -> encode (x2,y2);
+    r -> set_clipping (x1,y1,x2,y2);
+    wid->handle_repaint (x1,y1,x2,y2);
+		r->end();
+		if ( r->interrupted()) {
 			//	[self setNeedsDisplayInRect:rect];
 			[self performSelector:@selector(setNeedsDisplayInTMRect:) withObject:[[[TMRect alloc] initWithRect:rect] autorelease] afterDelay:0.0];
 			cout << "reinstantiating rect\n";
@@ -261,7 +276,7 @@ static void map(int code, string name)
 	}
 	else
 	{
-		renderer ren = the_aqua_renderer();
+		basic_renderer ren = the_aqua_renderer();
 		const NSRect *rects;
 		int count;
 		[self getRectsBeingDrawn:&rects count:&count];
@@ -269,15 +284,17 @@ static void map(int code, string name)
 			NSRect rect = rects[i];
 			{
 				cout << "\n-------------------\nstarted drqwing one rect\n";
+				ren->begin([[NSGraphicsContext currentContext] graphicsPort]);
 				[NSGraphicsContext saveGraphicsState];
 				ren->set_clipping (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-													 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
+								   (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
 				//		ren->set_clipping(rect.origin.x*PIXEL, -rect.origin.y*PIXEL, (rect.origin.x+rect.size.width)*PIXEL, -(rect.origin.y+rect.size.height)*PIXEL);
 				wid->handle_repaint (rect.origin.x*PIXEL,  -(rect.origin.y+rect.size.height)*PIXEL, 
-														 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
+									 (rect.origin.x+rect.size.width)*PIXEL, -rect.origin.y*PIXEL);
 				cout << "finished drqwing one rect\n";
 				//			wid->handle_repaint(rect.origin.x*PIXEL, rect.origin.y*PIXEL, (rect.origin.x+rect.size.width)*PIXEL, (rect.origin.y+rect.size.height)*PIXEL);
 				[NSGraphicsContext restoreGraphicsState];
+				ren->end();
 			}
 			if (ren->interrupted()) {
 				//	[self setNeedsDisplayInRect:rect];
@@ -286,7 +303,7 @@ static void map(int code, string name)
 			}
 		}		
 	}
-  cout << "END DRAWING" << "\n";
+	cout << "END DRAWING" << "\n";
 	
 	
 }

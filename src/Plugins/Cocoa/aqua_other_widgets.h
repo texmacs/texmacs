@@ -32,8 +32,10 @@ public:
   aqua_widget int_prompt;
   aqua_widget int_input;
 
+  bool visibility[5]; 
+
 public:
-  aqua_tm_widget_rep ();
+  aqua_tm_widget_rep (int mask = 0);
   ~aqua_tm_widget_rep ();
 	
 	virtual void send (slot s, blackbox val);
@@ -47,6 +49,7 @@ public:
 	virtual widget plain_window_widget (string s);
 	
 	void layout();
+  void updateVisibility();
   void do_interactive_prompt();
 };
 

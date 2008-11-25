@@ -30,6 +30,8 @@
 #import "TMView.h"
 #import "TMButtonsController.h"
 
+#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
+
 widget the_keyboard_focus(NULL);
 
 @interface TMWindowController : NSWindowController
@@ -41,29 +43,24 @@ widget the_keyboard_focus(NULL);
 @end
 
 
-/******************************************************************************
- * main renderer
- ******************************************************************************/
-aqua_renderer_rep *the_renderer = NULL;
-aqua_renderer_rep *the_aqua_renderer() 
-{
-	if (!the_renderer) the_renderer = new aqua_renderer_rep (the_gui);
-	return the_renderer;
-}
 
-
-widget aqua_widget_rep::plain_window_widget (string s)
+widget 
+aqua_widget_rep::plain_window_widget (string s)
 {
+  (void) s;
 	return widget ();
 }
 
-widget aqua_widget_rep::make_popup_widget ()
+widget 
+aqua_widget_rep::make_popup_widget ()
 {
 	return this;
 }
 
-widget aqua_widget_rep::popup_window_widget (string s)
+widget 
+aqua_widget_rep::popup_window_widget (string s)
 {
+  (void) s;
 	return widget();
 }
 
@@ -73,8 +70,14 @@ widget aqua_widget_rep::popup_window_widget (string s)
  ******************************************************************************/
 #pragma mark aqua_view_widget_rep
 
-aqua_view_widget_rep::aqua_view_widget_rep(NSView *v) : aqua_widget_rep(), view(v) { [v retain]; }
-aqua_view_widget_rep::~aqua_view_widget_rep()  { [view release]; }
+aqua_view_widget_rep::aqua_view_widget_rep(NSView *v) : 
+  aqua_widget_rep(), view(v) { 
+  [v retain]; 
+}
+
+aqua_view_widget_rep::~aqua_view_widget_rep()  { 
+  [view release]; 
+}
 
 
 
@@ -101,10 +104,18 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 				fatal_error ("type mismatch", "SLOT_INVALIDATE");
 			coord4 p= open_box<coord4> (val);
 			NSRect rect = to_nsrect(p);
-			NSLog(@"invalidating %@",NSStringFromRect(rect));
+			if (DEBUG_EVENTS) NSLog(@"invalidating %@",NSStringFromRect(rect));
 			[view setNeedsDisplayInRect:rect];
 		}
 			break;
+      case SLOT_INVALIDATE_ALL:
+		{
+			if (!is_nil (val))
+				fatal_error ("type mismatch", "SLOT_INVALIDATE_ALL");
+			[view setNeedsDisplay:YES];
+		}
+        break;
+        
 		case SLOT_EXTENTS:
 		{
 			if (type_box (val) != type_helper<coord4>::id)
@@ -113,13 +124,6 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 			NSRect rect = to_nsrect(p);
 //			[[view window] setContentSize:rect.size];
 			[[(NSScrollView*)view documentView] setFrameSize: rect.size];
-		}
-			break;
-		case SLOT_INVALIDATE_ALL:
-		{
-			if (!is_nil (val))
-				fatal_error ("type mismatch", "SLOT_INVALIDATE_ALL");
-			[view setNeedsDisplay:YES];
 		}
 			break;
 
@@ -140,9 +144,11 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 			break;
 		
 		case SLOT_MOUSE_GRAB:
+        NOT_IMPLEMENTED;
 //			send_mouse_grab (THIS, val);
 			break;
 		case SLOT_MOUSE_POINTER:
+        NOT_IMPLEMENTED;
 //			send_mouse_pointer (THIS, val);
 			break;
 		case SLOT_SCROLL_POSITION:
@@ -280,12 +286,13 @@ aqua_view_widget_rep::query (slot s, int type_id) {
 		case SLOT_IDENTIFIER:
 			if (type_id != type_helper<int>::id)
 				fatal_error ("int expected (SLOT_IDENTIFIER)", "aqua_view_widget_rep::query");
-			return close_box<int> ((int)[view window]);
-			case SLOT_RENDERER:
+        return close_box<int> ((int)[view window] ? 1 : 0);
+    case SLOT_RENDERER:
 			if (type_id != type_helper<renderer>::id)
 				fatal_error ("renderer expected (SLOT_RENDERER)",
 										 "aqua_view_widget_rep::query");
 			return close_box<renderer> ((renderer) the_aqua_renderer());
+#if 0
 			case SLOT_VISIBLE_PART:
 		{
 			if (type_id != type_helper<coord4>::id)
@@ -294,15 +301,7 @@ aqua_view_widget_rep::query (slot s, int type_id) {
 			coord4 c = from_nsrect(rect);
 			return close_box<coord4> (c);
 		}
-
-			case SLOT_SCROLL_POSITION:
-		{
-			if (type_id != type_helper<coord2>::id)
-				fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
-			NSPoint pt = [[(NSScrollView *)view contentView] bounds].origin;
-			return close_box<coord2> (from_nspoint(pt));
-		}
-			
+#endif
 			case SLOT_POSITION:  
 		{
 			typedef pair<SI,SI> coord2;
@@ -311,30 +310,6 @@ aqua_view_widget_rep::query (slot s, int type_id) {
 			return close_box<coord2> (coord2(0,0)); //FIXME: fake position
 		}
 			
-#if 0
-
-			case SLOT_SIZE:
-			return query_size (THIS, type_id);
-			case SLOT_POSITION:
-			return query_position (THIS, type_id);
-			case SLOT_KEYBOARD_FOCUS:
-			return query_keyboard_focus (THIS, type_id);
-			case SLOT_MOUSE_GRAB:
-			return query_mouse_grab (THIS, type_id);
-			
-			case SLOT_EXTENTS:
-			return query_coord4 (THIS, "extents", type_id);
-			case SLOT_SCROLLBARS_VISIBILITY:
-			return query_int (THIS, "scrollbars", type_id);
-			
-			case SLOT_INTERACTIVE_MODE:
-			return query_bool (THIS, "interactive mode", type_id);
-			case SLOT_INTERACTIVE_INPUT:
-			return query_string (THIS, "interactive input", type_id);
-			
-			case SLOT_STRING_INPUT:
-			return query_string (THIS, "input", type_id);
-#endif
 			default:
 			fatal_error ("cannot handle slot type", "aqua_view_widget_rep::query");
 			return blackbox ();
@@ -381,20 +356,6 @@ aqua_view_widget_rep::read (slot s, blackbox index) {
 		case SLOT_WINDOW:
 			check_type_void (index, "SLOT_WINDOW");
 			return [(TMWindowController*)[[view window] windowController] widget];
-#if 0
-		case SLOT_WINDOW:
-			check_type_void (index, "SLOT_WINDOW");
-			return win -> get_widget ();
-		case SLOT_FORM_FIELD:
-			check_type<int> (index, "SLOT_FORM_FIELD");
-			return abstract (THIS [0] ["inputs"] [open_box<int> (index)] ["input"]);
-		case SLOT_FILE:
-			check_type_void (index, "SLOT_FILE");
-			return abstract (THIS [0] ["file"] ["input"]);
-		case SLOT_DIRECTORY:
-			check_type_void (index, "SLOT_DIRECTORY");
-			return abstract (THIS [0] ["directory"] ["input"]);
-#endif
 		default:
 			fatal_error ("cannot handle slot type", "aqua_view_widget_rep::read");
 			return widget();
@@ -404,41 +365,14 @@ aqua_view_widget_rep::read (slot s, blackbox index) {
 void
 aqua_view_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
-#if 0
-		case SLOT_CANVAS: 
-		{
-			check_type_void (index, "SLOT_CANVAS");
-			NSView *v = concrete (w)->get_nsview();
-			NSScrollView *sv = (NSScrollView*) view;
-			[sv setDocumentView: v];
-			[[sv window] makeFirstResponder:v];
-		}
-			break;
-		case SLOT_MAIN_MENU:
-			check_type_void (index, "SLOT_MAIN_MENU");
-			[NSApp setMainMenu: to_nsmenu(w)];
-//			THIS << set_widget ("menu bar", concrete (w));
-			break;
-		case SLOT_MAIN_ICONS:
-			check_type_void (index, "SLOT_MAIN_ICONS");
-//			THIS << set_widget ("main icons bar", concrete (w));
-			break;
-		case SLOT_CONTEXT_ICONS:
-			check_type_void (index, "SLOT_CONTEXT_ICONS");
-//			THIS << set_widget ("context icons bar", concrete (w));
-			break;
-		case SLOT_USER_ICONS:
-			check_type_void (index, "SLOT_USER_ICONS");
-//			THIS << set_widget ("user icons bar", concrete (w));
-			break;
-#endif
 		default:
 			fatal_error ("cannot handle slot type", "aqua_view_widget_rep::write");
   }
 }
 
 
-widget aqua_view_widget_rep::plain_window_widget (string s)
+widget 
+aqua_view_widget_rep::plain_window_widget (string s)
 // creates a decorated window with name s and contents w
 {
 	NSRect screen_frame = [[NSScreen mainScreen] visibleFrame];
@@ -528,9 +462,17 @@ NSString *TMButtonsIdentifier = @"TMButtonsIdentifier";
 @end
 
 
-aqua_tm_widget_rep::aqua_tm_widget_rep() : aqua_view_widget_rep([[[NSView alloc] initWithFrame:NSMakeRect(0,0,100,100)] autorelease]), 
+aqua_tm_widget_rep::aqua_tm_widget_rep(int mask) : aqua_view_widget_rep([[[NSView alloc] initWithFrame:NSMakeRect(0,0,100,100)] autorelease]), 
 		sv(nil), leftField(nil), rightField(nil), bc(nil), toolbar(nil) 
 {
+  // decode mask
+  visibility[0] = (mask & 1)  == 1;  // header
+  visibility[1] = (mask & 2)  == 2;  // main
+  visibility[2] = (mask & 4)  == 4;  // context
+  visibility[3] = (mask & 8)  == 8;  // user
+  visibility[4] = (mask & 16) == 16; // footer
+  
+  
 	NSSize s = NSMakeSize(100,20); // size of the right footer;
 	NSRect r = [view bounds];
 	NSRect r0 = r;
@@ -545,7 +487,8 @@ aqua_tm_widget_rep::aqua_tm_widget_rep() : aqua_view_widget_rep([[[NSView alloc]
 	[sv setHasVerticalScroller:YES];
 	[sv setHasHorizontalScroller:YES];
 	[sv setBorderType:NSNoBorder];
-  [sv setBackgroundColor:[NSColor redColor]];
+//  [sv setBackgroundColor:[NSColor redColor]];
+  [sv setBackgroundColor:[NSColor grayColor]];
 	[sv setDocumentView:[[[NSView alloc] initWithFrame: NSMakeRect(0,0,100,100)] autorelease]];
 	[view addSubview:sv];
 	
@@ -580,6 +523,9 @@ aqua_tm_widget_rep::aqua_tm_widget_rep() : aqua_view_widget_rep([[[NSView alloc]
 	
 	toolbar = [[NSToolbar alloc] initWithIdentifier:TMToolbarIdentifier ];
 	[toolbar setDelegate:wh];
+  
+  updateVisibility();
+
 }
 
 aqua_tm_widget_rep::~aqua_tm_widget_rep() 
@@ -612,6 +558,23 @@ void aqua_tm_widget_rep::layout()
 }
 
 
+void aqua_tm_widget_rep::updateVisibility()
+{
+#if 0
+  mainToolBar->setVisible (visibility[1] && visibility[0]);
+  contextToolBar->setVisible (visibility[2] && visibility[0]);
+  userToolBar->setVisible (visibility[3] && visibility[0]);
+  tm_mainwindow()->statusBar()->setVisible (visibility[4]);
+#ifndef Q_WS_MAC
+  tm_mainwindow()->menuBar()->setVisible (visibility[0]);
+#endif
+#endif
+}
+
+
+
+//#define MAX(a,b) ((a)>=(b)?(a):(b))
+
 void
 aqua_tm_widget_rep::send (slot s, blackbox val) {
   switch (s) {
@@ -621,8 +584,11 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 				fatal_error ("type mismatch", "SLOT_INVALIDATE");
 			coord4 p= open_box<coord4> (val);
 			NSRect rect = to_nsrect(p);
+      NSSize ws = [sv contentSize];
+      NSSize sz = rect.size;
+      sz.height = MAX (sz.height, 7.0 * ws.height / 8.0);
 			//			[[view window] setContentSize:rect.size];
-			[[sv documentView] setFrameSize: rect.size];
+			[[sv documentView] setFrameSize: sz];
 		}
 			break;
 		case SLOT_INVALIDATE_ALL:
@@ -632,22 +598,52 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			[view setNeedsDisplay:YES];
 		}
 			break;
-			
-		case SLOT_HEADER_VISIBILITY:
-			//			send_bool (THIS, "header", val);
-			break;
-		case SLOT_MAIN_ICONS_VISIBILITY:
-			//			send_bool (THIS, "main icons", val);
-			break;
-		case SLOT_CONTEXT_ICONS_VISIBILITY:
-			//			send_bool (THIS, "context icons", val);
-			break;
-		case SLOT_USER_ICONS_VISIBILITY:
-			//			send_bool (THIS, "user icons", val);
-			break;
-		case SLOT_FOOTER_VISIBILITY:
-			//			send_bool (THIS, "footer flag", val);
-			break;
+      case SLOT_HEADER_VISIBILITY:
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      bool f= open_box<bool> (val);
+      visibility[0] = f;
+      updateVisibility();
+    }
+        break;
+      case SLOT_MAIN_ICONS_VISIBILITY:
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
+      bool f= open_box<bool> (val);
+      visibility[1] = f;
+      updateVisibility();
+    }
+        break;
+      case SLOT_CONTEXT_ICONS_VISIBILITY:
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
+      bool f= open_box<bool> (val);
+      visibility[2] = f;
+      updateVisibility();
+    }
+        break;
+      case SLOT_USER_ICONS_VISIBILITY:
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
+      bool f= open_box<bool> (val);
+      visibility[3] = f;
+      updateVisibility();
+    }
+        break;
+      case SLOT_FOOTER_VISIBILITY:
+    {
+      if (type_box (val) != type_helper<bool>::id)
+        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      bool f= open_box<bool> (val);
+      visibility[4] = f;
+      updateVisibility();
+    }
+        break;
+        
 		case SLOT_LEFT_FOOTER:
 		{
 			if (type_box (val) != type_helper<string>::id)
@@ -656,10 +652,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			[leftField setStringValue:to_nsstring(msg)];
 			[leftField displayIfNeeded];
 		}
-			
-			cout << "letf footer\n";
-			//			send_string (THIS, "left footer", val);
-			break;
+      break;
 		case SLOT_RIGHT_FOOTER:
 		{
 			if (type_box (val) != type_helper<string>::id)
@@ -668,9 +661,6 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			[rightField setStringValue:to_nsstring(msg)];
 			[rightField displayIfNeeded];
 		}
-			
-			cout << "right footer\n";
-			//			send_string (THIS, "right footer", val);
 			break;
 			
 		case SLOT_SCROLL_POSITION:
@@ -683,16 +673,35 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			//			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
 		}
 			break;
+        
+      case SLOT_SCROLLBARS_VISIBILITY:
+        // ignore this: cocoa handles scrollbars independently
+        //			send_int (THIS, "scrollbars", val);
+        break;
+        
         case SLOT_INTERACTIVE_MODE:
        {
          if (type_box (val) != type_helper<bool>::id)
            fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
+         if (open_box<bool>(val) == true) {
+           do_interactive_prompt();
+         }
        }
-      if (open_box<bool>(val) == true) {
-        do_interactive_prompt();
-      }
             break;
-      
+
+      case SLOT_SHRINKING_FACTOR:
+        if (type_box (val) != type_helper<int>::id)
+          fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
+#if 0        
+        if (QTMWidget* tmw= qobject_cast<QTMWidget*> (tm_canvas())) {
+          int new_sf = open_box<int> (val);
+          if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
+          tmw->tm_widget()->handle_set_shrinking_factor (new_sf);
+        }
+#endif
+        break;
+        
+        
 
 		default:
 			aqua_view_widget_rep::send(s,val);
@@ -709,22 +718,55 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
 			NSPoint pt = [[sv contentView] bounds].origin;
 			return close_box<coord2> (from_nspoint(pt));
 		}
-		case SLOT_USER_ICONS_VISIBILITY:
-		{
-			if (type_id != type_helper<bool>::id)
-				fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
-			return close_box<bool> (false);
-		}
+        
+        
+      case SLOT_EXTENTS:
+    {
+      if (type_id != type_helper<coord4>::id)
+	      fatal_error ("type mismatch", "SLOT_EXTENTS");
+      NSRect rect= [[sv documentView] frame];
+      coord4 c= from_nsrect (rect);
+ //     if (DEBUG_EVENTS) cout << "Canvas geometry " << rect << LF;
+      return close_box<coord4> (c);
+    }
+        
+        
+      case SLOT_VISIBLE_PART:
+    {
+      if (type_id != type_helper<coord4>::id)
+	      fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
+      NSRect rect= [sv documentVisibleRect];
+      coord4 c= from_nsrect (rect);
+  //    if (DEBUG_EVENTS) cout << "Visible Region " << rect << LF;
+      return close_box<coord4> (c);
+    }
 
-		case SLOT_CONTEXT_ICONS_VISIBILITY:
-		case SLOT_MAIN_ICONS_VISIBILITY:
-		case SLOT_HEADER_VISIBILITY:
-		case SLOT_FOOTER_VISIBILITY:
-		{
-			if (type_id != type_helper<bool>::id)
-				fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
-			return close_box<bool> (true);
-		}
+        
+      case SLOT_USER_ICONS_VISIBILITY:
+        if (type_id != type_helper<bool>::id)
+          fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
+        return close_box<bool> (visibility[3]);
+        
+      case SLOT_CONTEXT_ICONS_VISIBILITY:
+        if (type_id != type_helper<bool>::id)
+          fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
+        return close_box<bool> (visibility[2]);
+        
+      case SLOT_MAIN_ICONS_VISIBILITY:
+        if (type_id != type_helper<bool>::id)
+          fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
+        return close_box<bool> (visibility[1]);
+        
+      case SLOT_HEADER_VISIBILITY:
+        if (type_id != type_helper<bool>::id)
+          fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
+        return close_box<bool> (visibility[0]);
+        
+      case SLOT_FOOTER_VISIBILITY:
+        if (type_id != type_helper<bool>::id)
+          fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+        return close_box<bool> (visibility[4]);
+        
         case SLOT_INTERACTIVE_INPUT:
         {
           if (type_id != type_helper<string>::id)
@@ -744,15 +786,6 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
 			return aqua_view_widget_rep::query(s,type_id);
   }
 }
-#if 0
-void
-aqua_tm_widget_rep::notify (slot s, blackbox new_val) {
-  switch (s) {
-			default: ;
-  }
-  aqua_view_widget_rep::notify (s, new_val);
-}
-#endif
 
 widget
 aqua_tm_widget_rep::read (slot s, blackbox index) {
@@ -863,10 +896,11 @@ aqua_tm_widget_rep::write (slot s, blackbox index, widget w) {
   }
 }
 
-widget aqua_tm_widget_rep::plain_window_widget (string s)
-// creates a decorated window with name s and contents w
-{
-	widget w = aqua_view_widget_rep::plain_window_widget(s); // to manage correctly retain counts
+widget
+aqua_tm_widget_rep::plain_window_widget (string s) {
+  // creates a decorated window with name s and contents w
+	widget w = aqua_view_widget_rep::plain_window_widget(s);
+  // to manage correctly retain counts
 	aqua_window_widget_rep * wid = (aqua_window_widget_rep *)(w.rep);
 	[[wid->get_windowcontroller() window] setToolbar:toolbar];
 	return wid;
@@ -949,103 +983,16 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
 			}
 		}
 			break;
-#if 0
-		case SLOT_IDENTIFIER:
-			check_type<int> (val, "SLOT_IDENTIFIER");
-			THIS << emit_attach_window (get_window (open_box<int> (val)));
-			break;
 		case SLOT_FULL_SCREEN:
 			check_type<bool> (val, "SLOT_FULL_SCREEN");
-			win->set_full_screen (open_box<bool> (val));
+//			win->set_full_screen (open_box<bool> (val));
 			break;
 		case SLOT_UPDATE:
-			send_update (THIS, val);
+        NOT_IMPLEMENTED ;
+	//		send_update (THIS, val);
 			break;
-		case SLOT_KEYBOARD:
-			send_keyboard (THIS, val);
-			break;
-		case SLOT_KEYBOARD_FOCUS:
-			send_keyboard_focus (THIS, val);
-			break;
-		case SLOT_MOUSE:
-			send_mouse (THIS, val);
-			break;
-		case SLOT_MOUSE_GRAB:
-			send_mouse_grab (THIS, val);
-			break;
-		case SLOT_MOUSE_POINTER:
-			send_mouse_pointer (THIS, val);
-			break;
-		case SLOT_INVALIDATE:
-			send_invalidate (THIS, val);
-			break;
-		case SLOT_INVALIDATE_ALL:
-			send_invalidate_all (THIS, val);
-			break;
-		case SLOT_REPAINT:
-			send_repaint (THIS, val);
-			break;
-		case SLOT_DELAYED_MESSAGE:
-			send_delayed_message (THIS, val);
-			break;
-		case SLOT_DESTROY:
-			send_destroy (THIS, val);
-			break;
-			
-		case SLOT_SHRINKING_FACTOR:
-			send_int (THIS, "shrinking factor", val);
-			break;
-		case SLOT_EXTENTS:
-			send_coord4 (THIS, "extents", val);
-			break;
-		case SLOT_SCROLLBARS_VISIBILITY:
-			send_int (THIS, "scrollbars", val);
-			break;
-		case SLOT_SCROLL_POSITION:
-			send_coord2 (THIS, "scroll position", val);
-			break;
-			
-		case SLOT_HEADER_VISIBILITY:
-			send_bool (THIS, "header", val);
-			break;
-		case SLOT_MAIN_ICONS_VISIBILITY:
-			send_bool (THIS, "main icons", val);
-			break;
-		case SLOT_CONTEXT_ICONS_VISIBILITY:
-			send_bool (THIS, "context icons", val);
-			break;
-		case SLOT_USER_ICONS_VISIBILITY:
-			send_bool (THIS, "user icons", val);
-			break;
-		case SLOT_FOOTER_VISIBILITY:
-			send_bool (THIS, "footer flag", val);
-			break;
-		case SLOT_LEFT_FOOTER:
-			send_string (THIS, "left footer", val);
-			break;
-		case SLOT_RIGHT_FOOTER:
-			send_string (THIS, "right footer", val);
-			break;
-		case SLOT_INTERACTIVE_MODE:
-			send_bool (THIS, "interactive mode", val);
-			break;
-			
-		case SLOT_STRING_INPUT:
-			send_string (THIS, "input", val);
-			break;
-		case SLOT_INPUT_TYPE:
-			send_string (THIS, "type", val);
-			break;
-		case SLOT_INPUT_PROPOSAL:
-			send_string (THIS, "default", val);
-			break;
-		case SLOT_FILE:
-			send_string (THIS, "file", val);
-			break;
-		case SLOT_DIRECTORY:
-			send_string (THIS, "directory", val);
-			break;
-#endif			
+
+        
 		default:
 			fatal_error ("cannot handle slot type", "aqua_view_widget_rep::send");
   }
@@ -1058,7 +1005,7 @@ aqua_window_widget_rep::query (slot s, int type_id) {
 		case SLOT_IDENTIFIER:
 			if (type_id != type_helper<int>::id)
 				fatal_error ("int expected (SLOT_IDENTIFIER)", "aqua_window_widget_rep::query");
-			return close_box<int> ((int)[wc window]);
+        return close_box<int> ((int)[wc window] ? 1 : 0);
 			case SLOT_POSITION:  
 		  {
 				typedef pair<SI,SI> coord2;
@@ -1075,45 +1022,6 @@ aqua_window_widget_rep::query (slot s, int type_id) {
 			NSRect frame = [[wc window] frame];
 			return close_box<coord2> (from_nssize(frame.size));
 		}
-#if 0
-			case SLOT_RENDERER:
-			if (type_id != type_helper<renderer>::id)
-				fatal_error ("renderer expected (SLOT_RENDERER)",
-										 "aqua_window_widget_rep::query");
-			return close_box<renderer> ((renderer) win);
-			
-			case SLOT_KEYBOARD_FOCUS:
-			return query_keyboard_focus (THIS, type_id);
-			case SLOT_MOUSE_GRAB:
-			return query_mouse_grab (THIS, type_id);
-			
-			case SLOT_EXTENTS:
-			return query_coord4 (THIS, "extents", type_id);
-			case SLOT_VISIBLE_PART:
-			return query_coord4 (THIS, "visible", type_id);
-			case SLOT_SCROLLBARS_VISIBILITY:
-			return query_int (THIS, "scrollbars", type_id);
-			case SLOT_SCROLL_POSITION:
-			return query_coord2 (THIS, "scroll position", type_id);
-			
-			case SLOT_HEADER_VISIBILITY:
-			return query_bool (THIS, "header", type_id);
-			case SLOT_MAIN_ICONS_VISIBILITY:
-			return query_bool (THIS, "main icons", type_id);
-			case SLOT_CONTEXT_ICONS_VISIBILITY:
-			return query_bool (THIS, "context icons", type_id);
-			case SLOT_USER_ICONS_VISIBILITY:
-			return query_bool (THIS, "user icons", type_id);
-			case SLOT_FOOTER_VISIBILITY:
-			return query_bool (THIS, "footer flag", type_id);
-			case SLOT_INTERACTIVE_MODE:
-			return query_bool (THIS, "interactive mode", type_id);
-			case SLOT_INTERACTIVE_INPUT:
-			return query_string (THIS, "interactive input", type_id);
-			
-			case SLOT_STRING_INPUT:
-			return query_string (THIS, "input", type_id);
-#endif
 			default:
 			fatal_error ("cannot handle slot type", "aqua_widow_widget_rep::query");
 			return blackbox ();
@@ -1126,47 +1034,12 @@ aqua_window_widget_rep::query (slot s, int type_id) {
 
 void
 aqua_window_widget_rep::notify (slot s, blackbox new_val) {
-  switch (s) {
-#if 0
-		case SLOT_SIZE:
-			check_type<SI,SI> (new_val, "SLOT_SIZE");
-			THIS << emit_resize ();
-			if (is_window_widget ())
-				send_size (THIS [0], new_val);
-			break;
-			case SLOT_POSITION:
-			check_type<SI,SI> (new_val, "SLOT_POSITION");
-			THIS << emit_move ();
-			break;
-			case SLOT_KEYBOARD_FOCUS:
-			notify_keyboard_focus (THIS, new_val);
-			break;
-			case SLOT_MOUSE_GRAB:
-			notify_mouse_grab (THIS, new_val);
-			break;
-#endif
-			default: ;
-  }
   widget_rep::notify (s, new_val);
 }
 
 widget
 aqua_window_widget_rep::read (slot s, blackbox index) {
   switch (s) {
-#if 0
-		case SLOT_WINDOW:
-			check_type_void (index, "SLOT_WINDOW");
-			return win -> get_widget ();
-		case SLOT_FORM_FIELD:
-			check_type<int> (index, "SLOT_FORM_FIELD");
-			return abstract (THIS [0] ["inputs"] [open_box<int> (index)] ["input"]);
-		case SLOT_FILE:
-			check_type_void (index, "SLOT_FILE");
-			return abstract (THIS [0] ["file"] ["input"]);
-		case SLOT_DIRECTORY:
-			check_type_void (index, "SLOT_DIRECTORY");
-			return abstract (THIS [0] ["directory"] ["input"]);
-#endif
 		default:
 			fatal_error ("cannot handle slot type", "aqua_window_widget_rep::read");
 			return widget();
@@ -1176,6 +1049,7 @@ aqua_window_widget_rep::read (slot s, blackbox index) {
 void
 aqua_window_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
+#if 0
 		case SLOT_CANVAS:
 			check_type_void (index, "SLOT_CANVAS");
 //			[(NSScrollView*)view setDocumentView: concrete (w)->get_nsview()];
@@ -1204,6 +1078,7 @@ aqua_window_widget_rep::write (slot s, blackbox index, widget w) {
 			check_type_void (index, "SLOT_INTERACTIVE_INPUT");
 			//			THIS << set_widget ("interactive input", concrete (w));
 			break;
+#endif
 		default:
 			fatal_error ("cannot handle slot type", "aqua_window_widget_rep::write");
   }
@@ -1325,8 +1200,10 @@ widget popup_window_widget (widget w, string s)
 	return concrete(w)->popup_window_widget(s);
 }
 
-void   destroy_window_widget (widget w) {  }
+void   destroy_window_widget (widget w) {  
 // destroys a window as created by the above routines
+  (void) w;
+}
 
 /******************************************************************************
  * Top-level widgets, typically given as an argument to plain_window_widget
@@ -1338,7 +1215,9 @@ widget texmacs_widget (int mask, command quit)
 // the mask variable indicates whether the menu, icon bars, status bar, etc.
 // are visible or not
 {
-	widget w = new aqua_tm_widget_rep();
+  (void) mask; (void) quit; // FIXME: handle correctly mask and quit
+
+	widget w = new aqua_tm_widget_rep(mask);
 	return w; 
 }
 
@@ -1360,15 +1239,27 @@ widget popup_widget (widget w)
  *  their implementation is void
  ******************************************************************************/
 
-widget empty_widget () { return widget(); }
-// an empty widget of size zero
-widget glue_widget (bool hx, bool vx, SI w, SI h) 
-//{ return widget(); }
-// an empty widget of minimal width w and height h and which is horizontally
-// resp. vertically extensible if hx resp. vx is true
-{
+widget
+empty_widget () {
+  // an empty widget of size zero
+  NOT_IMPLEMENTED;
+  return widget();
+}
+
+widget
+glue_widget (bool hx, bool vx, SI w, SI h) {
+  //{ return widget(); }
+  // an empty widget of minimal width w and height h and which is horizontally
+  // resp. vertically extensible if hx resp. vx is true
+  NOT_IMPLEMENTED;
+  (void) hx; (void) vx; (void) w; (void) h;
 	return new aqua_view_widget_rep ([[[NSView alloc] initWithFrame:NSMakeRect(0, 0, 50, 50)] autorelease]);
 }
-widget wait_widget (SI width, SI height, string message) { return widget(); }
-// a widget of a specified width and height, displaying a wait message
-// this widget is only needed when using the X11 plugin
+
+widget
+wait_widget (SI width, SI height, string message) { 
+  // a widget of a specified width and height, displaying a wait message
+  // this widget is only needed when using the X11 plugin
+  (void) width; (void) height; (void) message;
+  return widget(); 
+}

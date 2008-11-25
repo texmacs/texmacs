@@ -13,6 +13,7 @@
 #include "mac_cocoa.h"
 #include "aqua_menu.h"
 #include "aqua_utilities.h"
+//#include "aqua_renderer.h"
 #include "aqua_renderer.h"
 #include "aqua_simple_widget.h"
 #include "aqua_basic_widgets.h"
@@ -375,7 +376,13 @@ TMMenuItem * aqua_text_widget_rep::as_menuitem()
 
 TMMenuItem * aqua_image_widget_rep::as_menuitem()
 {
+#if 0
+  CGImageRef cgi = the_aqua_renderer()->xpm_image(image);
+  NSImage *img = [[[NSImage alloc] init] autorelease];
+  [img addRepresentation:[[NSBitmapImageRep alloc ] initWithCGImage: cgi]];
+#else
   NSImage *img = the_aqua_renderer()->xpm_image(image);
+#endif
   //	TMMenuItem *mi = [[[TMMenuItem alloc] initWithTitle:to_nsstring(as_string(file_name)) action:NULL keyEquivalent:@""] autorelease];
   TMMenuItem *mi = [[[TMMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""] autorelease];
   [mi setRepresentedObject:img];
