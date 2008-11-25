@@ -23,7 +23,9 @@ coord4 from_nsrect(NSRect rect);
 coord2 from_nspoint(NSPoint pt);
 coord2 from_nssize(NSSize s);
 NSString *to_nsstring(string s);
+NSString *to_nsstring_utf8(string s);
 string from_nsstring(NSString *s);
+string aqua_translate (string s);
 
 /******************************************************************************
  * Type checking
