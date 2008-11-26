@@ -640,7 +640,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       NSSize sz = [[sv contentView] bounds].size;
       pt.x += sz.width/2;
       pt.y += sz.height/2;
-      cout << "scroll position :" << pt.x << "," << pt.y << LF;
+      //cout << "scroll position :" << pt.x << "," << pt.y << LF;
       
 			[[sv documentView] scrollPoint:pt];
 			//			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];

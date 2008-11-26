@@ -234,7 +234,7 @@ void initkeymap()
 		[NSBezierPath strokeRect:NSInsetRect(bounds,1,1)];
 		//    return;
 	}
-	cout << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
+//	cout << "DRAWING : " << rect.origin.x << ","<< rect.origin.x << ","<< rect.size.width<< "," << rect.size.height <<  "\n";
 //	NSRect bounds = [self bounds];
 	
   {
@@ -248,14 +248,14 @@ void initkeymap()
   //  r -> set_origin(0,0);
     r -> encode (x1,y1);
     r -> encode (x2,y2);
-    cout << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
+ //   cout << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
     r -> set_clipping (x1,y1,x2,y2);
     wid->handle_repaint (x1,y1,x2,y2);
 		r->end();
     if (r->interrupted())
       aqua_update_flag= true;
 	}
-	cout << "END DRAWING" << "\n";
+//	cout << "END DRAWING" << "\n";
  
   if (aqua_update_flag) {
     if (DEBUG_EVENTS)
