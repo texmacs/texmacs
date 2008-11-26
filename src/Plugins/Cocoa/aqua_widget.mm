@@ -304,7 +304,7 @@ aqua_view_widget_rep::query (slot s, int type_id) {
 			if (type_id != type_helper<coord2>::id)
 				fatal_error ("type mismatch (SLOT_POSITION)", "aqua_view_widget_rep::query");
       NSPoint pos = [view frame].origin;
-			return close_box<coord2> (from_nspoint(pos)); //FIXME: fake position
+			return close_box<coord2> (from_nspoint(pos));
 		}
 			
 			default:
@@ -362,6 +362,7 @@ aqua_view_widget_rep::plain_window_widget (string s)
 	//	[view setFrame:frame];
   [nsw setContentView:view];
 	[nsw setTitle:to_nsstring(s)];
+  [nsw setAcceptsMouseMovedEvents:YES];
 	//	[[nsw contentView] addSubview:view];
 //	[nsw setToolbar:((aqua_tm_widget_rep*)w.rep)->toolbar];
 	widget wid =  new aqua_window_widget_rep(nsw);

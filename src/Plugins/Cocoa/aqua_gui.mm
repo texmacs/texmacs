@@ -159,6 +159,7 @@ static bool check_mask(int mask)
   
 }
 
+#if 0
 bool
 aqua_gui_rep::check_event (int type) {
   switch (type) {
@@ -193,8 +194,12 @@ aqua_gui_rep::check_event (int type) {
   }
   return interrupted;
 }
-
-
+#else
+bool
+aqua_gui_rep::check_event (int type) {
+  return false;
+}
+#endif
 
 void
 aqua_gui_rep::show_wait_indicator (widget w, string message, string arg) {

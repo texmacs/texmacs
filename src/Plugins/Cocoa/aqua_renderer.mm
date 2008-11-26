@@ -563,10 +563,10 @@ void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
  * main cocoa renderer
  ******************************************************************************/
 
-static aqua_renderer_rep* the_renderer= NULL;
 
 aqua_renderer_rep*
 the_aqua_renderer () {
+  static aqua_renderer_rep* the_renderer= NULL;
 	if (!the_renderer) the_renderer= new aqua_renderer_rep ();
 	return the_renderer;
 }

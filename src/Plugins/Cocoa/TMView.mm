@@ -245,9 +245,10 @@ void initkeymap()
     int y2 = rect.origin.y;
     
     r -> begin([NSGraphicsContext currentContext]);
-    
+  //  r -> set_origin(0,0);
     r -> encode (x1,y1);
     r -> encode (x2,y2);
+    cout << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
     r -> set_clipping (x1,y1,x2,y2);
     wid->handle_repaint (x1,y1,x2,y2);
 		r->end();
