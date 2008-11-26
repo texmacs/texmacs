@@ -20,6 +20,7 @@
 #include <QDesktopWidget>
 #include <QClipboard>
 #include "QTMGuiHelper.hpp"
+#include "qt_renderer.hpp" // for the_qt_renderer
 
 extern window (*get_current_window) (void);
 
@@ -307,6 +308,7 @@ clear_selection (string key) {
 /******************************************************************************
 * Miscellaneous
 ******************************************************************************/
+int char_clip=0;
 
 void
 beep () {
@@ -326,10 +328,11 @@ check_event (int type) {
   return the_gui->check_event(type);
 }
 
-//void image_gc (string name)
+void image_gc (string name) {
 // Garbage collect images of a given name (may use wildcards)
 // This routine only needs to be implemented if you use your own image cache
-//{ the_gui->image_gc(name); }
+ the_qt_renderer()->image_gc(name); 
+}
 
 void
 show_help_balloon (widget balloon, SI x, SI y) { 
@@ -346,3 +349,11 @@ show_wait_indicator (widget base, string message, string argument) {
   // the indicator should be removed if the message is empty
   the_gui->show_wait_indicator(base,message,argument); 
 }
+
+font x_font (string family, int size, int dpi)
+{
+  (void) family; (void) size; (void) dpi;
+  if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
+  return NULL;
+}
+

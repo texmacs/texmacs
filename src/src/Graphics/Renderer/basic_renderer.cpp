@@ -10,6 +10,9 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "config.h" // for QTTEXMACS and AQUATEXMACS
+#if (defined(QTTEXMACS) || defined(AQUATEXMACS))
+
 #include "basic_renderer.hpp"
 #include "analyze.hpp"
 #include "gui.hpp" // for INTERRUPT_EVENT, INTERRUPTED_EVENT
@@ -309,7 +312,6 @@ basic_renderer_rep::set_background (color c) {
   cur_bg= c;
 }
 
-int char_clip=0;
 
 
 void
@@ -345,13 +347,6 @@ void basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 
 
 
-font x_font (string family, int size, int dpi)
-{
-  (void) family; (void) size; (void) dpi;
-  if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
-  return NULL;
-}
-
 
 /******************************************************************************
  * Image cache
@@ -368,7 +363,7 @@ static hashmap<tree,cache_image_element> cache_image;
 
 extern hashmap<tree,string> ps_bbox; 
 
-void image_auto_gc () {
+void basic_renderer_rep::image_auto_gc () {
   int time= texmacs_time ();
   if (time-cache_image_last_gc <= 300000) return;
   cache_image_last_gc= time;
@@ -391,7 +386,7 @@ void image_auto_gc () {
   }
 }
 
-void image_gc (string name) {
+void basic_renderer_rep::image_gc (string name) {
   (void) name;
   cache_image_last_gc= texmacs_time ();
   iterator<tree> it= iterate (cache_image);
@@ -406,13 +401,13 @@ void image_gc (string name) {
 }
 
 cache_image_element 
-get_image_cache (tree lookup) {
+basic_renderer_rep::get_image_cache (tree lookup) {
   if (cache_image->contains (lookup)) return cache_image [lookup];
   return cache_image_element();
 }
 
 void 
-set_image_cache (tree lookup, cache_image_element ci)  {
+basic_renderer_rep::set_image_cache (tree lookup, cache_image_element ci)  {
   if (N(cache_image) == 0) cache_image_last_gc= texmacs_time ();
 
   cache_image      (lookup)= ci;
@@ -423,3 +418,4 @@ set_image_cache (tree lookup, cache_image_element ci)  {
       cache_image_max_size= cache_image_tot_size << 1;
   }
 }
+#endif

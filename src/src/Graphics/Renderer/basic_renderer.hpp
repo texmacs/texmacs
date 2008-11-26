@@ -104,27 +104,6 @@ public:
   void encode (SI& x, SI& y);
   void decode (SI& x, SI& y);
   
-  
-#if 0
-  void  draw (int char_code, font_glyphs fn, SI x, SI y);
-  void  set_line_style (SI w, int type=0, bool round=true);
-  void  line (SI x1, SI y1, SI x2, SI y2);
-  void  lines (array<SI> x, array<SI> y);
-  void  clear (SI x1, SI y1, SI x2, SI y2);
-  void  fill (SI x1, SI y1, SI x2, SI y2);
-  void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  polygon (array<SI> x, array<SI> y, bool convex=true);
-  void  xpm (url file_name, SI x, SI y);
-  void  image (url u, SI w, SI h, SI x, SI y,
-	       double cx1, double cy1, double cx2, double cy2);
-  void draw_clipped (QTMImage * im, int w, int h, SI x, SI y);
-  /***** private section *****************************************************/
-  
-  QTMImage *xpm_image(url file_name);
-  
-#endif
-  
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
@@ -132,17 +111,20 @@ public:
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
+  cache_image_element  get_image_cache (tree lookup);
+  void set_image_cache (tree lookup, cache_image_element ci);
+  void image_auto_gc ();
+  void image_gc (string name);
+
 };
 
 typedef basic_renderer_rep* basic_renderer;
 
-extern bool reverse_colors;
-extern int CSCALES, CFACTOR, GREYS, CTOTAL;
+//extern bool reverse_colors;
+//extern int CSCALES, CFACTOR, GREYS, CTOTAL;
 
 color xpm_to_color (string s);
 
 
-cache_image_element  get_image_cache (tree lookup);
-void set_image_cache (tree lookup, cache_image_element ci);
 
 #endif // defined BASIC_RENDERER_HPP
