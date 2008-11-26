@@ -18,15 +18,6 @@
 #include <QWidget>
 
 
-#include "Freetype/tt_file.hpp"
-#include <QFont>
-#include <QFontDatabase>
-//#import <CoreGraphics/CoreGraphics.h>
-#define ID ANOTHER_ID
-#define outline another_outline
-#import <ApplicationServices/ApplicationServices.h>
-#undef ID
-#undef outline
 
 /******************************************************************************
 * Qt images
