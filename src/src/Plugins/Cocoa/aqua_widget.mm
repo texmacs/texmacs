@@ -94,10 +94,6 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 			}
 		}
 			break;
-		case SLOT_SCROLLBARS_VISIBILITY:
-			// ignore this: cocoa handles scrollbars independently
-//			send_int (THIS, "scrollbars", val);
-			break;
 		case SLOT_INVALIDATE:
 		{
 			if (type_box (val) != type_helper<coord4>::id)
@@ -115,7 +111,24 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 			[view setNeedsDisplay:YES];
 		}
         break;
-        
+		case SLOT_MOUSE_GRAB:
+      NOT_IMPLEMENTED;
+      //			send_mouse_grab (THIS, val);
+			break;
+		case SLOT_MOUSE_POINTER:
+      NOT_IMPLEMENTED;
+      //			send_mouse_pointer (THIS, val);
+			break;
+      
+		case SLOT_KEYBOARD_FOCUS:
+      //			send_keyboard_focus (THIS, val);
+		{
+			if (type_box (val) != type_helper<bool>::id)
+				fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
+			if (open_box<bool>(val)) the_keyboard_focus = this;
+		}
+			break;
+#if 0
 		case SLOT_EXTENTS:
 		{
 			if (type_box (val) != type_helper<coord4>::id)
@@ -143,14 +156,6 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 //			send_bool (THIS, "footer flag", val);
 			break;
 		
-		case SLOT_MOUSE_GRAB:
-        NOT_IMPLEMENTED;
-//			send_mouse_grab (THIS, val);
-			break;
-		case SLOT_MOUSE_POINTER:
-        NOT_IMPLEMENTED;
-//			send_mouse_pointer (THIS, val);
-			break;
 		case SLOT_SCROLL_POSITION:
 		{
 			if (type_box (val) != type_helper<coord2>::id)
@@ -169,16 +174,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
 			//FIXME: handle sf
 		}
 			break;
-		case SLOT_KEYBOARD_FOCUS:
-//			send_keyboard_focus (THIS, val);
-		{
-			if (type_box (val) != type_helper<bool>::id)
-				fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
-			if (open_box<bool>(val)) the_keyboard_focus = this;
-		}
-			break;
 			
-#if 0
 		case SLOT_SIZE:
 		{
 			if (type_box (val) != type_helper<coord2>::id)
@@ -307,7 +303,8 @@ aqua_view_widget_rep::query (slot s, int type_id) {
 			typedef pair<SI,SI> coord2;
 			if (type_id != type_helper<coord2>::id)
 				fatal_error ("type mismatch (SLOT_POSITION)", "aqua_view_widget_rep::query");
-			return close_box<coord2> (coord2(0,0)); //FIXME: fake position
+      NSPoint pos = [view frame].origin;
+			return close_box<coord2> (from_nspoint(pos)); //FIXME: fake position
 		}
 			
 			default:
@@ -322,27 +319,6 @@ aqua_view_widget_rep::query (slot s, int type_id) {
 
 void
 aqua_view_widget_rep::notify (slot s, blackbox new_val) {
-  switch (s) {
-#if 0
-		case SLOT_SIZE:
-			check_type<SI,SI> (new_val, "SLOT_SIZE");
-			THIS << emit_resize ();
-			if (is_window_widget ())
-				send_size (THIS [0], new_val);
-			break;
-			case SLOT_POSITION:
-			check_type<SI,SI> (new_val, "SLOT_POSITION");
-			THIS << emit_move ();
-			break;
-			case SLOT_KEYBOARD_FOCUS:
-			notify_keyboard_focus (THIS, new_val);
-			break;
-			case SLOT_MOUSE_GRAB:
-			notify_mouse_grab (THIS, new_val);
-			break;
-#endif
-			default: ;
-  }
   aqua_widget_rep::notify (s, new_val);
 }
 
@@ -573,8 +549,6 @@ void aqua_tm_widget_rep::updateVisibility()
 
 
 
-//#define MAX(a,b) ((a)>=(b)?(a):(b))
-
 void
 aqua_tm_widget_rep::send (slot s, blackbox val) {
   switch (s) {
@@ -586,16 +560,9 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 			NSRect rect = to_nsrect(p);
       NSSize ws = [sv contentSize];
       NSSize sz = rect.size;
-      sz.height = MAX (sz.height, 7.0 * ws.height / 8.0);
+      sz.height = max (sz.height, 7.0 * ws.height / 8.0);
 			//			[[view window] setContentSize:rect.size];
 			[[sv documentView] setFrameSize: sz];
-		}
-			break;
-		case SLOT_INVALIDATE_ALL:
-		{
-			if (!is_nil (val))
-				fatal_error ("type mismatch", "SLOT_INVALIDATE_ALL");
-			[view setNeedsDisplay:YES];
 		}
 			break;
       case SLOT_HEADER_VISIBILITY:
@@ -669,6 +636,11 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 				fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
 			coord2 p= open_box<coord2> (val);
 			NSPoint pt = to_nspoint(p);
+      NSSize sz = [[sv contentView] bounds].size;
+      pt.x += sz.width/2;
+      pt.y += sz.height/2;
+      cout << "scroll position :" << pt.x << "," << pt.y << LF;
+      
 			[[sv documentView] scrollPoint:pt];
 			//			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
 		}
@@ -692,6 +664,12 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       case SLOT_SHRINKING_FACTOR:
         if (type_box (val) != type_helper<int>::id)
           fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
+          simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
+      if (w) {
+        int new_sf = open_box<int> (val);
+        if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
+        w->handle_set_shrinking_factor (new_sf);
+      }
 #if 0        
         if (QTMWidget* tmw= qobject_cast<QTMWidget*> (tm_canvas())) {
           int new_sf = open_box<int> (val);
@@ -715,7 +693,7 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
 		{
 			if (type_id != type_helper<coord2>::id)
 				fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
-			NSPoint pt = [[sv contentView] bounds].origin;
+			NSPoint pt = [[sv contentView] frame].origin;
 			return close_box<coord2> (from_nspoint(pt));
 		}
         
