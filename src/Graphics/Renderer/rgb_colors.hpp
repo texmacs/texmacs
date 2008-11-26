@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : qt_rgb.h
+* MODULE     : rgb_colors.h
 * DESCRIPTION: RGB colors following X11 conventons
 * NOTE       : created from X11/rgb.txt using
 *              awk '{ if ($5) aa = $4 " " $5; else aa = $4;  print "{\"" tolower(aa) "\", RGB(" $1 "," $2 "," $3 ")}," }' < /usr/X11R6/share/X11/rgb.txt
