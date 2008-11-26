@@ -320,41 +320,28 @@ basic_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 }
 
 /* shadowing and copying rectangular regions across devices defaults to nothing */
-#if 0
-void basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) {
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; }
-void basic_renderer_rep::new_shadow (renderer& dev) { dev =  this; }
-void basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; }
-void basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; }
-void basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; }
-void basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
-  (void) x1; (void) y1; (void) x2; (void) y2; }
-#else
 void basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) {
 	(void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; 
-	cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2 << ", dev ," << x << "," << y << ")\n";
+	if (DEBUG_EVENTS) cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2 << ", dev ," << x << "," << y << ")\n";
 }
 void basic_renderer_rep::new_shadow (renderer& dev) { dev =  this; 
-	cout << "REN new_shadow\n";
+	if (DEBUG_EVENTS) 	cout << "REN new_shadow\n";
 }
 void basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; 
-	cout << "REN delete_shadow\n";
+	if (DEBUG_EVENTS) 	cout << "REN delete_shadow\n";
 }
 void basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
 	(void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
-	cout << "REN get_shadow (" << x1 << "," << x2 << "," << y1 << "," << y2 << ", dev )\n";
+	if (DEBUG_EVENTS) 	cout << "REN get_shadow (" << x1 << "," << x2 << "," << y1 << "," << y2 << ", dev )\n";
 }
 void basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
 	(void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
-	cout << "REN put_shadow (dev, " << x1 << "," << x2 << "," << y1 << "," << y2 << ")\n";
+	if (DEBUG_EVENTS) 	cout << "REN put_shadow (dev, " << x1 << "," << x2 << "," << y1 << "," << y2 << ")\n";
 }
 void basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 	(void) x1; (void) y1; (void) x2; (void) y2; 
-	cout << "REN apply_shadow (" << x1 << "," << x2 << "," << y1 << "," << y2 << ")\n";
+	if (DEBUG_EVENTS) 	cout << "REN apply_shadow (" << x1 << "," << x2 << "," << y1 << "," << y2 << ")\n";
 }
-#endif
 
 
 
