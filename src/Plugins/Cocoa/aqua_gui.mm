@@ -18,9 +18,10 @@
 #include <locale.h>
 #include "language.hpp"
 #include "message.hpp"
+#include "aqua_renderer.h" // for the_aqua_renderer
 
-extern hashmap<id, pointer> NSWindow_to_window;
-extern window (*get_current_window) (void);
+//extern hashmap<id, pointer> NSWindow_to_window;
+//extern window (*get_current_window) (void);
 
 aqua_gui_rep* the_gui= NULL;
 
@@ -479,6 +480,7 @@ clear_selection (string key) {
 /******************************************************************************
 * Miscellaneous
 ******************************************************************************/
+int char_clip=0;
 
 void 
 beep () {
@@ -496,10 +498,11 @@ bool check_event (int type)
   // we check for keyboard events while repainting windows
 { return the_gui->check_event(type); }
 
-//void image_gc (string name)
+void image_gc (string name) {
   // Garbage collect images of a given name (may use wildcards)
   // This routine only needs to be implemented if you use your own image cache
-//{ the_gui->image_gc(name); }
+  the_aqua_renderer()->image_gc(name); 
+}
 
 void
 show_help_balloon (widget balloon, SI x, SI y) { 
@@ -516,3 +519,11 @@ show_wait_indicator (widget base, string message, string argument) {
   // the indicator should be removed if the message is empty
   the_gui->show_wait_indicator(base,message,argument); 
 }
+
+font x_font (string family, int size, int dpi)
+{
+  (void) family; (void) size; (void) dpi;
+  if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
+  return NULL;
+}
+
