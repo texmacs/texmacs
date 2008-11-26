@@ -441,10 +441,10 @@ qt_renderer_rep::xpm (url file_name, SI x, SI y) {
  * main qt renderer
  ******************************************************************************/
 
-qt_renderer_rep* the_renderer= NULL;
 
 qt_renderer_rep*
 the_qt_renderer () {
+  static qt_renderer_rep* the_renderer= NULL;
 	if (!the_renderer) the_renderer= new qt_renderer_rep ();
 	return the_renderer;
 }
