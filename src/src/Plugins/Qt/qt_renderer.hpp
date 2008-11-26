@@ -69,6 +69,7 @@ public:
 
   QPixmap *xpm_image(url file_name);
 
+  bool  native_draw (int ch, font_glyphs fn, SI x, SI y);
 };
 
 qt_renderer_rep* the_qt_renderer();
