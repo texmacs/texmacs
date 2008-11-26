@@ -37,8 +37,6 @@ void qt_image_size (url image, int& w, int& h);
 * Type checking
 ******************************************************************************/
 
-#pragma mark type checking
-
 inline void
 check_type_void (blackbox bb, string s) {
   if (!is_nil (bb)) {
