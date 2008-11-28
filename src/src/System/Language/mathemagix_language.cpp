@@ -189,10 +189,10 @@ mathemagix_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("*=")= c;
   t ("/=")= c;
   t (":=<gtr>")= c;
+  t (":-<gtr>")= c;
   t ("yield")= c;   
   t (",")= c;
   t (";")= c;
-  // t ("(")= c;
   t (")")= c;
   t ("[")= c;
   t ("]")= c;
@@ -204,35 +204,44 @@ mathemagix_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("<gtr><gtr>")= c;
 }
 
-static void
-parse_identifier (hashmap<string, string>& t, string s, int& pos, bool postfix) {
-  if ('0'<=s[pos] && s[pos]<='9') return;
-  int i=pos;
-  while ((i<N(s)) &&
-	 ((s[i]<='z' && s[i]>='a') ||
-	  (s[i]<='Z' && s[i]>='A') ||
-	  (s[i]<='9' && s[i]>='0') ||
-	  (s[i]=='_' || s[i]=='$') ||
-	  (s[i]=='?') ||
-	  (i==pos && s[i]=='.' && postfix)))
-    i++;
-  if (!(t->contains (s (pos,i)))) pos= i;
+static inline bool
+belongs_to_identifier (char c) {
+  return ((c<='9' && c>='0') ||
+         (c<='Z' && c>='A') ||
+	 (c<='z' && c>='a') ||
+          c=='_' || c=='$'  || c=='?');
 }
 
+static inline bool
+is_number (char c) {
+  return (c>='0' && c<='9');
+}
+
+static void
+parse_identifier (hashmap<string, string>& t,
+		  string s, int& pos, bool postfix) {
+  int i=pos;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  if (postfix && s[i]=='.') i++;
+  while (i<N(s) && belongs_to_identifier (s[i])) i++;
+  if (!(t->contains (s (pos, i)))) pos= i;
+}
 
 static void
 parse_alpha (string s, int& pos) {
   static hashmap<string,string> empty;
-  parse_identifier (empty, s, pos,false);
+  parse_identifier (empty, s, pos, false);
 }
 
 static void
-parse_whitespace (string s, int& pos) {
-  while (s[pos] == ' ') pos++;
+parse_blanks (string s, int& pos) {
+  while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
 }
 
 static void
 parse_string (string s, int& pos) {
+  if (pos>=N(s)) return;
   switch (s[pos])  {
   case '\042':
     do pos++;
@@ -251,16 +260,13 @@ parse_string (string s, int& pos) {
     }
   }
 }
-
+  
 static void
 parse_keyword (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
-  if (s[i]<='9' && s[i]>='0') return;
-  while ((i<N(s)) && 
-	 ((s[i]<='9' && s[i]>='0') ||
-	  (s[i]<='Z' && s[i]>='A') ||
-	  (s[i]<='z' && s[i]>='a') ||
-	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r) && t(r)=="#8020c0") { pos=i; return; }
 }
@@ -268,12 +274,9 @@ parse_keyword (hashmap<string,string>& t, string s, int& pos) {
 static void
 parse_modifier (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
-  if (s[i]<='9' && s[i]>='0') return;
-  while ((i<N(s)) && 
-	 ((s[i]<='9' && s[i]>='0') ||
-	  (s[i]<='Z' && s[i]>='A') ||
-	  (s[i]<='z' && s[i]>='a') ||
-	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r) && t(r)=="modifier") { pos=i; return; }
 }
@@ -281,12 +284,9 @@ parse_modifier (hashmap<string,string>& t, string s, int& pos) {
 static void
 parse_class (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
-  if (s[i]<='9' && s[i]>='0') return;
-  while ((i<N(s)) && 
-	 ((s[i]<='9' && s[i]>='0') ||
-	  (s[i]<='Z' && s[i]>='A') ||
-	  (s[i]<='z' && s[i]>='a') ||
-	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r) && t(r)=="class") { pos=i; return; }
 }
@@ -295,12 +295,9 @@ parse_class (hashmap<string,string>& t, string s, int& pos) {
 static void
 parse_postfix (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
-  if (s[i]<='9' && s[i]>='0') return;
-  while ((i<N(s)) && 
-	 ((s[i]<='9' && s[i]>='0') ||
-	  (s[i]<='Z' && s[i]>='A') ||
-	  (s[i]<='z' && s[i]>='a') ||
-	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r) && t(r)=="postfix") { pos=i; return; }
 }
@@ -308,12 +305,9 @@ parse_postfix (hashmap<string,string>& t, string s, int& pos) {
 static void
 parse_constant (hashmap<string,string>& t, string s, int& pos) {
   int i=pos;
-  if (s[i]<='9' && s[i]>='0') return;
-  while ((i < N(s)) &&
-	 ((s[i]<='9' && s[i]>='0') ||
-	  (s[i]<='Z' && s[i]>='A') ||
-	  (s[i]<='z' && s[i]>='a') ||
-	  s[i]=='_' || s[i]=='$' || s[i]=='?')) i++;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r) && t(r)=="#2060c0") { pos=i; return; }
 }
@@ -331,17 +325,18 @@ parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
 static void
 parse_number (string s, int& pos) {
   int i= pos;
+  if (pos>=N(s)) return;
   if (s[i] == '.') return;
   while (i<N(s) && 
-	 (s[i] >= '0' && s[i]<= '9' ||
+	 (is_number (s[i]) ||
 	  (s[i] == '.' && (i+1<N(s)) &&
-	   ((s[i+1] >= '0' && s[i+1] <= '9') ||
+	   (is_number (s[i+1]) ||
 	    s[i+1] == 'e' || s[i+1] == 'E')))) i++;
   if (i == pos) return;
   if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (s[i] <= '9' && s[i] >= '0')) i++;
+    while (i<N(s) && (is_number (s[i]))) i++;
   }
   pos= i;
 }
@@ -353,6 +348,7 @@ parse_no_declare_type (string s, int& pos) {
 
 static void
 parse_declare_type (string s, int& pos) {
+  if (pos>=N(s)) return;
   if (s[pos]!=':') return;
   if (pos+1<N(s) && s[pos+1]=='=') return;
   pos++;
@@ -362,6 +358,7 @@ parse_declare_type (string s, int& pos) {
 
 static void
 parse_comment (string s, int& pos) {
+  if (pos>=N(s)) return;
   if (s[pos]!='/') return;
   if (pos+1<N(s) && s[pos+1]=='/') {pos=N(s);return;}
   if (pos+1<N(s) && s[pos+1]=='{') {
@@ -380,6 +377,7 @@ parse_end_comment (string s, int& pos) {
 static void
 parse_parenthesized (string s, int& pos) {
   int i=pos;
+  if (pos>=N(s)) return;
   if (s[i]!='(') return;
   int nbpar=0;
   while(i<N(s)) {
@@ -405,6 +403,7 @@ parse_parenthesized (string s, int& pos) {
 
 static void
 parse_backquote (string s, int & pos) {
+  if (pos>=N(s)) return;
   if (s[pos]=='\047') pos++;
 }
 
@@ -471,7 +470,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
       possible_type= possible_future_type;
       possible_class= possible_future_class;
       opos= pos;
-      parse_whitespace (s, pos);
+      parse_blanks (s, pos);
       if (opos<pos) break;
       parse_string (s, pos);
       if (opos<pos) {
@@ -630,7 +629,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
   }
   while (pos<=start);
   if (possible_type) return "dark green";
-  if (type=="string") return "#a06040";// or #d07040
+  if (type=="string") return "#a06040";
   if (type=="comment") return "brown";
   if (type=="keyword" && !after_backquote) return "#8020c0";
   if (type=="other_lexeme") return none;
@@ -646,7 +645,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
     do {
       do {
 	opos=pos;
-	parse_whitespace (s, pos);
+	parse_blanks (s, pos);
 	if (opos<pos) break;
 	parse_identifier (colored, s, pos,false);
 	if (opos<pos) { possible_function= true; break; }
@@ -658,8 +657,6 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
 	if (opos<pos) break;
 	parse_parenthesized (s, pos);
 	if (opos<pos) { possible_function= true; break; }
-	//parse_declare_type (s, pos);
-	//if (opos<pos) break;
       }
       while (false);
     }
@@ -668,7 +665,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
     do {
       do {
 	opos=pos;
-	parse_whitespace (s, pos);
+	parse_blanks (s, pos);
 	if (opos<pos) break;
 	parse_identifier (colored, s, pos,false);
 	if (opos<pos) break;
@@ -688,8 +685,6 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
 	if (opos<pos) return "#00d000";
 	parse_declare_function (s, pos);
 	if (opos<pos) return "#0000e0";
-	//parse_other_lexeme (colored, s, pos);
-	//if (opos<pos) return none;
 	return none;
       }
       while (false);
@@ -700,7 +695,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
   do {
     do {
       opos=pos;
-      parse_whitespace (s, pos);
+      parse_blanks (s, pos);
       if (opos<pos) break;
       parse_identifier (colored, s, pos,false);
       if (opos<pos) break;
@@ -718,8 +713,6 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
       if (opos<pos) break;
       parse_declare_function (s, pos);
       if (opos<pos) return "#0000e0";
-      //parse_other_lexeme (colored, s, pos);
-      //if (opos<pos) return none;
       return none;
     }
     while (false);
