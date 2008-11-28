@@ -59,5 +59,7 @@ prog_language (string s) {
     return make (language, s, new scheme_language_rep (s));
   if (s == "mathemagix")
     return make (language, s, new mathemagix_language_rep (s));
+  if (s == "cpp")
+    return make (language, s, new cpp_language_rep (s));
   return make (language, s, new verb_language_rep (s));
 }
