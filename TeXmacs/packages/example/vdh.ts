@@ -92,11 +92,15 @@
 
     <assign|ssC|<math|<with|math-font-family|tss|C>>>
 
+    <assign|ssF|<math|<with|math-font-family|tss|F>>>
+
     <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
 
     <assign|ssGL|<math|<with|math-font-family|tss|GL>>>
 
     <assign|ssI|<math|<with|math-font-family|tss|I>>>
+
+    <assign|ssIM|<math|<with|math-font-family|tss|IM>>>
 
     <assign|ssL|<math|<with|math-font-family|tss|L>>>
 

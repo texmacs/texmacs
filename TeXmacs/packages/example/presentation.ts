@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.7>
 
 <style|source>
 
@@ -75,6 +75,8 @@
   grey|ornament-shadow-color|dark grey|<ornament|<arg|x>>>>>
 
   <assign|pine|<macro|x|<with|ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>|strong-color|#0c3000|math-color|#500000|<ornament|<arg|x>>>>>
+
+  <assign|ridged|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>|<ornament|<arg|x>>>>>
 
   <assign|input-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>>
 
