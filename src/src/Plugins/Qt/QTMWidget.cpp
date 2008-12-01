@@ -22,11 +22,17 @@
 
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
+#if defined(Q_WS_X11)
 #include <cairo-xlib.h>
 #include <QX11Info>
 extern Drawable qt_x11Handle(const QPaintDevice *pd);
 extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
 #undef KeyPress  // conflict between QEvent::KeyPree and X11 defintion
+#elif defined(Q_WS_MAC)
+#define ID OTHER_ID
+#include <cairo-quartz.h>
+#undef ID
+#endif
 #endif
 
 #include <QEvent>
@@ -176,7 +182,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     Visual *visual = (Visual*)x11Info().visual();
     surf = cairo_xlib_surface_create(dpy, drawable, visual, width(), height());
 #elif defined(Q_WS_MAC)
-    surf = cairo_quartz_surface_create_for_cg_context (this->macCGHandle(), width(), height());
+    surf = cairo_quartz_surface_create_for_cg_context ((CGContextRef)(this->macCGHandle()), width(), height());
 #endif
     cairo_t *ct = cairo_create(surf);
     r->begin (ct);
