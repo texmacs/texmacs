@@ -606,4 +606,4 @@ printer (url ps_file_name, int dpi, int nr_pages,
 }
 #endif
 
-#endif // ifndef USE_CAIRO
+#endif // ifdef USE_CAIRO
