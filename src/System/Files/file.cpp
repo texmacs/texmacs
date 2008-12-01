@@ -491,8 +491,28 @@ search_score (url u, array<string> a) {
 }
 
 /******************************************************************************
-* Miscellaneous
+* Commands on files
 ******************************************************************************/
+
+void
+mkdir (url u) {
+#if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
+  if (exists (u)) return;
+  char *_u= as_charp (concretize (u));
+#if defined(__MINGW__) || defined(__MINGW32__)
+  (void) ::mkdir (_u);
+#else
+  (void) ::mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
+#endif
+  delete [] _u;
+#else
+#if defined(__MINGW__) || defined(__MINGW32__)
+  system ("mkdir", u);
+#else
+  system ("mkdir -p", u);
+#endif
+#endif
+}
 
 void
 ps2pdf (url u1, url u2) {
