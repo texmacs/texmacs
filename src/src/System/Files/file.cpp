@@ -495,6 +495,30 @@ search_score (url u, array<string> a) {
 ******************************************************************************/
 
 void
+move (url u1, url u2) {
+  char *_u1, *_u2;
+  _u1 = as_charp (concretize (u1));
+  _u2 = as_charp (concretize (u2));
+  (void) rename (_u1, _u2);
+  delete [] _u1;
+  delete [] _u2;
+}
+
+void
+copy (url u1, url u2) {
+  string s;
+  if (!load_string (u1, s, false))
+    (void) save_string (u2, s, false);
+}
+
+void
+remove (url u) {
+  char *_u= as_charp (concretize (u));
+  (void) ::remove (_u);
+  delete [] _u;
+}
+
+void
 mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (exists (u)) return;

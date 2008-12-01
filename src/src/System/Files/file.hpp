@@ -48,10 +48,9 @@ inline string eval_system (string which, url u1) {
 inline string eval_system (string which, url u1, url u2) {
   return eval_system (which * " " * concretize (u1) * " " * concretize (u2)); }
 
-inline void move (url from, url to) { system ("mv", from, to); }
-inline void copy (url from, url to) { system ("cp", from, to); }
-inline void append (url from, url to) { system ("cat", from, ">>", to); }
-inline void remove (url what) { system ("rm -f", what); }
+void move (url from, url to);
+void copy (url from, url to);
+void remove (url what);
 void mkdir (url dir);
 void ps2pdf (url u1, url u2);
 

@@ -72,40 +72,48 @@ init_upgrade_scheme () {
 * Generate documentation about changes
 ******************************************************************************/
 
+static string
+string_load (url u) {
+  string s;
+  (void) load_string (u, s, false);
+  return s;
+}
+
 static void
 init_upgrade_doc (string install_version) {
   url from_dir= "$TEXMACS_PATH/doc/about/changes";
   url to= "$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm";
-  copy (from_dir * "changes-pre.en.ptm", to);
+  string s= string_load (from_dir * "changes-pre.en.ptm");
   if (version_inf (install_version, "0.3.3.24"))
-    append (from_dir * "changes-1.en.ptm", to);
+    s << string_load (from_dir * "changes-1.en.ptm");
   if (version_inf_eq (install_version, "0.3.4.9"))
-    append (from_dir * "changes-2.en.ptm", to);
+    s << string_load (from_dir * "changes-2.en.ptm");
   if (version_inf_eq (install_version, "1.0.0.4"))
-    append (from_dir * "changes-3.en.ptm", to);
+    s << string_load (from_dir * "changes-3.en.ptm");
   if (version_inf_eq (install_version, "1.0.0.6"))
-    append (from_dir * "changes-4.en.ptm", to);
+    s << string_load (from_dir * "changes-4.en.ptm");
   if (version_inf_eq (install_version, "1.0.0.11"))
-    append (from_dir * "changes-5.en.ptm", to);
+    s << string_load (from_dir * "changes-5.en.ptm");
   if (version_inf_eq (install_version, "1.0.2.0"))
-    append (from_dir * "changes-6.en.ptm", to);
+    s << string_load (from_dir * "changes-6.en.ptm");
   if (version_inf_eq (install_version, "1.0.2.6"))
-    append (from_dir * "changes-7.en.ptm", to);
+    s << string_load (from_dir * "changes-7.en.ptm");
   if (version_inf_eq (install_version, "1.0.2.8"))
-    append (from_dir * "changes-8.en.ptm", to);
+    s << string_load (from_dir * "changes-8.en.ptm");
   if (version_inf_eq (install_version, "1.0.3.4"))
-    append (from_dir * "changes-9.en.ptm", to);
+    s << string_load (from_dir * "changes-9.en.ptm");
   if (version_inf_eq (install_version, "1.0.4"))
-    append (from_dir * "changes-10.en.ptm", to);
+    s << string_load (from_dir * "changes-10.en.ptm");
   if (version_inf_eq (install_version, "1.0.5.9"))
-    append (from_dir * "changes-11.en.ptm", to);
+    s << string_load (from_dir * "changes-11.en.ptm");
   if (version_inf_eq (install_version, "1.0.5.9"))
-    append (from_dir * "changes-12.en.ptm", to);
+    s << string_load (from_dir * "changes-12.en.ptm");
   if (version_inf_eq (install_version, "1.0.5.9"))
-    append (from_dir * "changes-13.en.ptm", to);
+    s << string_load (from_dir * "changes-13.en.ptm");
   if (version_inf_eq (install_version, "1.0.6.2")) {
-    append (from_dir * "changes-14.en.ptm", to);
-    append (from_dir * "changes-post.en.ptm", to);
+    s << string_load (from_dir * "changes-14.en.ptm");
+    s << string_load (from_dir * "changes-post.en.ptm");
+    save_string (to, s, false);
   }
   else remove (to);
 }
