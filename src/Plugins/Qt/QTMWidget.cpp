@@ -154,9 +154,20 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 
 #ifdef USE_CAIRO
     r = the_cairo_renderer ();
+    cairo_surface_t *surf;
 #ifdef Q_WS_X11
-    r->begin (this);
+    QX11Info *info = qt_X11info(this);
+    Display *dpy = info->display();
+    Drawable drawable = qt_X11Handle(this);
+    Visual *visual = info->visual();
+    surf =  cairo_xlib_surface_create(dpy, drawable, visual, width(), height());
+#elif defined(Q_WS_MAC)
+    surf =  cairo_quartz_surface_create_for_cg_context(this->macCGHandle(), width(), height());
 #endif
+    cairo_t *ct = cairo_create(surf);
+    r->begin (ct);
+    cairo_destroy_surface(surf);
+    cairo_destroy(ct);
 #else
     r = the_qt_renderer();
     r->begin (this);
@@ -175,6 +186,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
       qt_update_flag= true;
     
     r->end();
+    
     tm_widget()->set_current_renderer(NULL);    
     //int end= texmacs_time ();
     //if (end > start) cout << "Repaint " << end - start << "\n";
