@@ -2469,21 +2469,6 @@ tmg_system_copy (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_system_append (SCM arg1, SCM arg2) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "system-append");
-  SCM_ASSERT_URL (arg2, SCM_ARG2, "system-append");
-
-  url in1= scm_to_url (arg1);
-  url in2= scm_to_url (arg2);
-
-  // SCM_DEFER_INTS;
-  append (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_system_remove (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "system-remove");
 
@@ -3682,7 +3667,6 @@ initialize_glue_basic () {
   scm_new_procedure ("string-load", (FN) tmg_string_load, 1, 0, 0);
   scm_new_procedure ("system-move", (FN) tmg_system_move, 2, 0, 0);
   scm_new_procedure ("system-copy", (FN) tmg_system_copy, 2, 0, 0);
-  scm_new_procedure ("system-append", (FN) tmg_system_append, 2, 0, 0);
   scm_new_procedure ("system-remove", (FN) tmg_system_remove, 1, 0, 0);
   scm_new_procedure ("system-mkdir", (FN) tmg_system_mkdir, 1, 0, 0);
   scm_new_procedure ("system-search-score", (FN) tmg_system_search_score, 2, 0, 0);

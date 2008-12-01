@@ -214,7 +214,6 @@
   (string-load string_load (string url))
   (system-move move (void url url))
   (system-copy copy (void url url))
-  (system-append append (void url url))
   (system-remove remove (void url))
   (system-mkdir mkdir (void url))
   (system-search-score search_score (int url array_string))
