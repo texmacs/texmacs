@@ -513,9 +513,17 @@ copy (url u1, url u2) {
 
 void
 remove (url u) {
-  char *_u= as_charp (concretize (u));
-  (void) ::remove (_u);
-  delete [] _u;
+  u= expand (complete (u));
+  if (is_none (u));
+  else if (is_or (u)) {
+    remove (u[1]);
+    remove (u[2]);
+  }
+  else {
+    char *_u= as_charp (concretize (u));
+    (void) ::remove (_u);
+    delete [] _u;
+  }
 }
 
 void
