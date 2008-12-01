@@ -10,14 +10,28 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+
+
+
 #include <QtGui>
+
 #include "QTMWidget.hpp"
 #include "qt_renderer.hpp"
 #include "qt_gui.hpp"
 #include "converter.hpp"
+
 #ifdef USE_CAIRO
-#include "cairo_render.hpp"
+#include "Cairo/cairo_renderer.hpp"
+#include <cairo-xlib.h>
+#include <QX11Info>
+extern Drawable qt_x11Handle(const QPaintDevice *pd);
+extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
+#undef KeyPress  // conflict between QEvent::KeyPree and X11 defintion
 #endif
+
+#include <QEvent>
+
+
 
 #define PIXEL 256
 
@@ -156,17 +170,17 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     r = the_cairo_renderer ();
     cairo_surface_t *surf;
 #ifdef Q_WS_X11
-    QX11Info *info = qt_X11info(this);
-    Display *dpy = info->display();
-    Drawable drawable = qt_X11Handle(this);
-    Visual *visual = info->visual();
+    //const QX11Info & info = x11Info();//qt_x11Info(this);
+    Display *dpy = x11Info().display();
+    Drawable drawable = qt_x11Handle(this);
+    Visual *visual = (Visual*)x11Info().visual();
     surf = cairo_xlib_surface_create(dpy, drawable, visual, width(), height());
 #elif defined(Q_WS_MAC)
     surf = cairo_quartz_surface_create_for_cg_context (this->macCGHandle(), width(), height());
 #endif
     cairo_t *ct = cairo_create(surf);
     r->begin (ct);
-    cairo_destroy_surface(surf);
+    cairo_surface_destroy(surf);
     cairo_destroy(ct);
 #else
     r = the_qt_renderer();
@@ -381,9 +395,12 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
 	 << point.x () << ", " << point.y () << LF;
 }
 
+
 bool
 QTMWidget::event (QEvent* event) {
-  if (event->type() == QEvent::KeyPress) {
+  if (event->type() 
+== 
+QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
     keyPressEvent (ke);
     return true;
