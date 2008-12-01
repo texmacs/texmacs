@@ -547,6 +547,21 @@ mkdir (url u) {
 }
 
 void
+change_mode (url u, int mode) {
+#if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
+  char *_u= as_charp (concretize (u));
+  (void) ::chmod (_u, mode);
+  delete [] _u;
+#else
+  string m0= as_string ((mode >> 9) & 7);
+  string m1= as_string ((mode >> 6) & 7);
+  string m2= as_string ((mode >> 3) & 7);
+  string m3= as_string (mode & 7);
+  system ("chmod -f " * m0 * m1 * m2 * m3, u);
+#endif
+}
+
+void
 ps2pdf (url u1, url u2) {
 #ifdef OS_WIN32
   char *_u1, *_u2;
