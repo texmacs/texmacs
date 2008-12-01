@@ -12,6 +12,7 @@
 
 #ifndef CAIRO_RENDERER_HPP
 #define CAIRO_RENDERER_HPP
+#ifdef USE_CAIRO
 
 #include "basic_renderer.hpp"
 
@@ -47,7 +48,7 @@ public:
 
   void draw_clipped (cairo_surface_t* im, int w, int h, SI x, SI y);
 	
-	bool native_draw (int ch, font_glyphs fn, SI x, SI y);
+  bool native_draw (int ch, font_glyphs fn, SI x, SI y);
 
   void begin (void* c); // c must be a cairo context of type (cairo_t*)
   void end ();
@@ -56,4 +57,5 @@ public:
 
 cairo_renderer_rep* the_cairo_renderer();
 
+#endif // defined USE_CAIRO
 #endif // defined CAIRO_RENDERER_HPP
