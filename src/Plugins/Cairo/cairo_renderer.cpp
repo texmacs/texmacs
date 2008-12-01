@@ -9,7 +9,7 @@
 * If you don't have this file, write to the Free Software Foundation, Inc.,
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
-#ifndef USE_CAIRO
+#ifdef USE_CAIRO
 #include "cairo_renderer.hpp"
 #include "analyze.hpp"
 #include "image_files.hpp"
