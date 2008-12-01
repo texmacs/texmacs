@@ -160,9 +160,9 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     Display *dpy = info->display();
     Drawable drawable = qt_X11Handle(this);
     Visual *visual = info->visual();
-    surf =  cairo_xlib_surface_create(dpy, drawable, visual, width(), height());
+    surf = cairo_xlib_surface_create(dpy, drawable, visual, width(), height());
 #elif defined(Q_WS_MAC)
-    surf =  cairo_quartz_surface_create_for_cg_context(this->macCGHandle(), width(), height());
+    surf = cairo_quartz_surface_create_for_cg_context (this->macCGHandle(), width(), height());
 #endif
     cairo_t *ct = cairo_create(surf);
     r->begin (ct);
