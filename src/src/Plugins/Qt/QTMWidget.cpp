@@ -15,6 +15,9 @@
 #include "qt_renderer.hpp"
 #include "qt_gui.hpp"
 #include "converter.hpp"
+#ifdef USE_CAIRO
+#include "cairo_render.hpp"
+#endif
 
 #define PIXEL 256
 
@@ -148,9 +151,17 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   else {
     //int start= texmacs_time ();
     basic_renderer_rep *r;
-    
+
+#ifdef USE_CAIRO
+    r = the_cairo_renderer ();
+#ifdef Q_WS_X11
+    r->begin (this);
+#endif
+#else
     r = the_qt_renderer();
-    r->begin(this);
+    r->begin (this);
+#endif
+
     tm_widget()->set_current_renderer(r);    
 
     r -> set_clipping
