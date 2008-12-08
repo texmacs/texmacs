@@ -40,7 +40,7 @@
 	     description-align description-long item*
 	     strong em dfn code* samp kbd var abbr acronym
 	     verbatim code tt
-	     doc-title-block
+	     hidden-title doc-title-block
 	     equation* equation-lab equations-base
 	     tmdoc-title tmdoc-flag tmdoc-license key
 	     tmdoc-title* tmdoc-title** tmdoc-copyright

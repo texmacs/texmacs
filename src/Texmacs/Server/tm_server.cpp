@@ -174,7 +174,7 @@ compute_style_menu (url u, int kind) {
   if (is_or (u)) {
     string sep= "\n";
     if (is_atomic (u[1]) &&
-	((is_concat (u[2]) && (u[2][1] != "CVS")) ||
+	((is_concat (u[2]) && (u[2][1] != "CVS") && (u[2][1] != ".svn")) ||
 	 (is_or (u[2]) && is_concat (u[2][1]))))
       sep= "\n---\n";
     return
@@ -184,7 +184,8 @@ compute_style_menu (url u, int kind) {
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
     string sub= compute_style_menu (u[2], kind);
-    if ((dir == "Test") || (dir == "Obsolete") || (dir == "CVS")) return "";
+    if ((dir == "Test") || (dir == "Obsolete") ||
+	(dir == "CVS") || (dir == ".svn")) return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
   if (is_atomic (u)) {

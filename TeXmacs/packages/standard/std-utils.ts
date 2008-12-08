@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.3>
+<TeXmacs|1.0.7>
 
 <style|<tuple|source|std>>
 
@@ -155,6 +155,8 @@
   <assign|concat-tuple|<macro|args|sep|fin|<extern|ext-concat-tuple|<arg|args>|<arg|sep>|<arg|fin>>>>
 
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
+
+  <assign|hidden-title|<macro|t|>>
 
   <assign|wiki-link|<macro|body|name|<style-with|src-compact|none|<action|<arg|body>|<merge|(remote-project-load-by-name
   "|<arg|name>|")>>>>>

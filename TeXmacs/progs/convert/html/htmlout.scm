@@ -81,10 +81,11 @@
   (output-verbatim "\"" (cadr x) "\""))
 
 (define (htmlout-open-tags s l)
-  (htmlout-text "<" (symbol->string s))
-  (for-each htmlout-tag l)
-  (htmlout-text ">")
-  (htmlout-indent s 2))
+  (with ll (ahash-table->list (list->ahash-table l))
+    (htmlout-text "<" (symbol->string s))
+    (for-each htmlout-tag ll)
+    (htmlout-text ">")
+    (htmlout-indent s 2)))
 
 (define (htmlout-close s)
   (htmlout-indent-close s -2)
