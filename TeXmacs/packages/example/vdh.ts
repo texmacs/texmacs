@@ -216,11 +216,10 @@
 
   \;
 
-  <assign|joris-title|<macro|x|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<table|<row|<cell|<very-large|<strong|<name|<arg|x>>>><hidden-title|<arg|x>>>>|<row|<cell|<small|<strong|[
+  <assign|joris-title|<macro|x|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-block|no>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|par-mode|center|<very-large|<strong|<name|<arg|x>>>><hidden-title|<arg|x>>>>>|<row|<cell|<small|<strong|[
   <hlink|Homepage|../main/joris.tm> \| <hlink|Publications|../main/publs.tm>
   \| <hlink|<TeXmacs>|http://www.texmacs.org> \|
-  <hlink|Mathemagix|http://www.mathemagix.org> \|
-  <hlink|Other|../main/other.tm> ]>>>>>>>>>
+  <hlink|Mathemagix|http://www.mathemagix.org> ]>>>>>>>>>
 
   <assign|joris-versions|<macro|name|<hlink|Html|<merge|../|<arg|name>|.tm>>,
   <hlink|<TeXmacs>|../<arg|name>.tm>>>
