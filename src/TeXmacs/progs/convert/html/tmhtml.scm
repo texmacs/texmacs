@@ -117,10 +117,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-find-title doc)
-  (cond ((func? doc 'tmdoc-title 1) (cadr doc))
+  (cond ((npair? doc) #f)
+	((func? doc 'doc-title 1) (cadr doc))
+	((func? doc 'tmdoc-title 1) (cadr doc))
 	((func? doc 'tmdoc-title* 2) (cadr doc))
 	((func? doc 'tmdoc-title** 3) (caddr doc))
-	((npair? doc) #f)
+	((func? doc 'hidden-title 1) (cadr doc))
 	(else (with title (tmhtml-find-title (car doc))
 		(if title title
 		    (tmhtml-find-title (cdr doc)))))))
@@ -156,13 +158,14 @@
 	 (styles (cdadr l))
 	 (lang (caddr l))
 	 (tmpath (cadddr l))
-	 (title (tmhtml-force-string (tmhtml-find-title doc)))
+	 (title (tmhtml-find-title doc))
 	 (css `(h:style (@ (type "text/css")) ,(tmhtml-css-header)))
 	 (body (tmhtml doc)))
     (set! title (cond ((not title) "No title")
 		      ((or (in? "tmdoc" styles) (in? "tmweb" styles))
-		       `(concat ,title " (FSF GNU project)"))
-		      (else title)))
+		       `(concat ,(tmhtml-force-string title)
+				" (FSF GNU project)"))
+		      (else (tmhtml-force-string title))))
     (if (or (in? "tmdoc" styles) (in? "tmweb" styles) (in? "mmxdoc" styles))
 	(with ss (if (in? "mmxdoc" styles)
 		     "http://www.texmacs.org/css/mmxdoc.css"
@@ -1403,6 +1406,7 @@
   (TeX ,(lambda x '("TeX")))
   (LaTeX ,(lambda x '("LaTeX")))
   ;; additional tags
+  (hidden-title ,tmhtml-noop)
   (doc-title-block ,tmhtml-doc-title-block)
   (equation* ,tmhtml-equation*)
   (equation-lab ,tmhtml-equation-lab)
