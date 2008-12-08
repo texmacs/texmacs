@@ -31,7 +31,7 @@
 (define tmhtml-css? #t)
 (define tmhtml-mathml? #f)
 (define tmhtml-images? #f)
-(define tmhtml-serial 0)
+(define tmhtml-image-serial 0)
 (define tmhtml-image-cache (make-ahash-table))
 (define tmhtml-image-root-url (string->url "image"))
 (define tmhtml-image-root-string "image")
@@ -49,10 +49,12 @@
 	 (n (+ (string-length suffix) 1)))
     (if (in? suffix '("html" "xhtml"))
 	(begin
+	  (set! tmhtml-image-serial 0)
 	  (set! tmhtml-image-root-url (url-unglue current-save-target n))
 	  (set! tmhtml-image-root-string
 		(url->string (url-tail tmhtml-image-root-url))))
 	(begin
+	  (set! tmhtml-image-serial 0)
 	  (set! tmhtml-image-root-url (string->url "image"))
 	  (set! tmhtml-image-root-string "image")))))
 
@@ -997,8 +999,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-png-names)
-  (set! tmhtml-serial (+ tmhtml-serial 1))
-  (let* ((postfix (string-append "-" (number->string tmhtml-serial) ".png"))
+  (set! tmhtml-image-serial (+ tmhtml-image-serial 1))
+  (let* ((postfix (string-append
+		   "-" (number->string tmhtml-image-serial) ".png"))
 	 (name-url (url-glue tmhtml-image-root-url postfix))
 	 (name-string (string-append tmhtml-image-root-string postfix)))
     (values name-url name-string)))
@@ -1007,6 +1010,7 @@
   (with cached (ahash-ref tmhtml-image-cache x)
     (if (not cached)
 	(receive (name-url name-string) (tmhtml-png-names)
+	  ;;(display* x " -> " name-url ", " name-string "\n")
 	  (let* ((extents (print-snippet name-url x))
 		 (pixels (inexact->exact (/ (second extents) 2100)))
 		 (valign (number->htmlstring pixels))

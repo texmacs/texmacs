@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (doc tmweb))
+(texmacs-module (doc tmweb)
+  (:use (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building a web site
@@ -20,6 +21,7 @@
 
 (define (tmweb-convert-file tm-file html-file)
   (with-aux tm-file
+    (if (url? html-file) (set! current-save-target html-file))
     (system-mkdir (url-append html-file (url-parent)))
     (texmacs-save-buffer html-file "html")))
 
