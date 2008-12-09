@@ -52,8 +52,9 @@
 	 (u3 (url-append u2 (url-wildcard "*.tm")))
 	 (u4 (url-expand (url-complete u3 "fr")))
 	 (u5 (url-expand (url-complete u1 "fr"))))
-    (for-each (lambda (x) (tmweb-copy-file-dir x tm-dir html-dir))
-	      (list-difference (url->list u5) (url->list u4)))
+    (if (!= html-dir tm-dir)
+	(for-each (lambda (x) (tmweb-copy-file-dir x tm-dir html-dir))
+		  (list-difference (url->list u5) (url->list u4))))
     (for-each (lambda (x) (tmweb-convert-file-dir x tm-dir html-dir))
 	      (url->list u4))))
 

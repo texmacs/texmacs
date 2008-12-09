@@ -92,6 +92,8 @@
 
     <assign|ssC|<math|<with|math-font-family|tss|C>>>
 
+    <assign|ssE|<math|<with|math-font-family|tss|E>>>
+
     <assign|ssF|<math|<with|math-font-family|tss|F>>>
 
     <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
@@ -221,8 +223,12 @@
   \| <hlink|<TeXmacs>|http://www.texmacs.org> \|
   <hlink|Mathemagix|http://www.mathemagix.org> ]>>>>>>>>>
 
-  <assign|joris-versions|<macro|name|<hlink|Html|<merge|../|<arg|name>|.tm>>,
-  <hlink|<TeXmacs>|../<arg|name>.tm>>>
+  <assign|joris-versions*|<macro|name|<hlink|Pdf|<merge|<arg|name>|.pdf>>,
+  <hlink|Bib<TeX>|<merge|<arg|name>|.bib>>>>
+
+  <assign|joris-versions|<macro|name|<hlink|Html|<merge|<arg|name>|.tm>>,
+  <hlink|<TeXmacs>|<merge|<arg|name>|.texmacs>>,
+  <joris-versions*|<arg|name>>>>
 </body>
 
 <\initial>

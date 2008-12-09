@@ -847,6 +847,8 @@
 	  ((string-ends? s ".tm")
 	   (string-append (string-drop-right s 3)
 			  (if tmhtml-mathml? ".xhtml" ".html")))
+	  ((string-ends? s ".texmacs")
+	   (string-append (string-drop-right s 8) ".tm"))
 	  (else s))))
 
 (define (tmhtml-hyperlink l)
