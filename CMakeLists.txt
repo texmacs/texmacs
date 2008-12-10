@@ -37,17 +37,9 @@ SET(WINDOWS_VERSION "1.0.5")
 SET(WINDOWS_RELEASE "1")
 
 #INCLUDE_DIRECTORIES(${TEXMACS_SOURCE_DIR}/cmake/)
-MESSAGE( ${TEXMACS_SOURCE_DIR}/cmake )
+#MESSAGE( ${TEXMACS_SOURCE_DIR}/cmake )
 
 SET(CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
-
-# Recurse into the "src" subdirectory. This does not actually 
-# cause another cmake executable to run. The same process will walk through 
-# the project's entire directory structure. 
-
-
-
-
 
 ### --------------------------------------------------------------------
 ### Include standard modules
@@ -60,13 +52,6 @@ INCLUDE(CheckTypeSize)
 INCLUDE(FindPkgConfig)
 INCLUDE(CheckCSourceCompiles)
 
-
-### --------------------------------------------------------------------
-###  Test for Guile
-### --------------------------------------------------------------------
-
-INCLUDE(FindGuile)
-MY_FIND_GUILE(GUILE_CFLAGS GUILE_LDFLAGS)
 
 ### --------------------------------------------------------------------
 ### Check for standard functionalities
@@ -112,121 +97,6 @@ ENDIF (NOT ${HAVE_DLOPEN})
 IF (${HAVE_DLOPEN})
   SET(DYNAMIC_LINKING 1) # dynamic linking works
 ENDIF (${HAVE_DLOPEN})
-
-### --------------------------------------------------------------------
-### Check for Iconv
-### --------------------------------------------------------------------
-
-INCLUDE(FindIconv)
-
-#SET(ICONV_CFLAGS "-I${ICONV_INCLUDE_DIR}")
-#SET(ICONV_LDFLAGS ICONV_LIBRARIES)
-
-#MESSAGE ( ${ICONV_INCLUDE_DIR} ${ICONV_LIBRARIES})
-
-
-### --------------------------------------------------------------------
-### Check for FreeType2
-### --------------------------------------------------------------------
-
-INCLUDE(FindFreeType2)
-
-# FREETYPE_CFLAGS, FREETYPE_LDFLAGS
-
-
-### --------------------------------------------------------------------
-### Check for Cairo
-### --------------------------------------------------------------------
-
-pkg_check_modules(CAIRO cairo)
-
-SET(CMAKE_REQUIRED_FLAGS ${CAIRO_CFLAGS} ${CAIRO_CFLAGS_OTHERS})
-SET(CMAKE_REQUIRED_INCLUDES ${CAIRO_INCLUDE_DIRS})
-SET(CMAKE_REQUIRED_LIBRARIES ${CAIRO_LIBRARIES})
-SET(CMAKE_REQUIRED_LIBDIRS ${CAIRO_LIBRARY_DIRS})
-
-IF(FALSE)
-FILE(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.c"
-  "#include <cairo.h>
-   void main() {
-    cairo_surface_t *surface;
-    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
-   }")
-
-TRY_COMPILE(_cairo_works
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.c
-  COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
-  CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${CAIRO_CFLAGS} ${CAIRO_CFLAGS_OTHERS}
-              -DINCLUDE_DIRECTORIES:STRING=${CAIRO_INCLUDE_DIRS}
-              -DLINK_DIRECTORIES:STRING=${CAIRO_LIBRARY_DIRS}
-              -DLINK_LIBRARIES:STRING=${CAIRO_LIBRARIES}
-  OUTPUT_VARIABLE OUTPUT )
-ENDIF(FALSE)
-
-CHECK_C_SOURCE_COMPILES(  "#include <cairo.h>
-   void main() {
-    cairo_surface_t *surface;
-    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
-   }" _cairo_works)
-
-IF(_cairo_works)
-  MESSAGE("cairo works")
-ENDIF(_cairo_works)
-
-### --------------------------------------------------------------------
-### Check for Imlib2
-### --------------------------------------------------------------------
-
-IF(${WITH_IMLIB2})
-
-  EXECUTE_PROCESS( COMMAND imlib2-config --cflags
-                   RESULT_VARIABLE _imlib2_config_result
-                   OUTPUT_VARIABLE TMP_IMLIB2_CFLAGS 
-                   ERROR_VARIABLE TMP_IMLIB2_CFLAGS ) 
-
-  EXECUTE_PROCESS( COMMAND imlib2-config --libs
-                   RESULT_VARIABLE _imlib2_config_result
-                   OUTPUT_VARIABLE TMP_IMLIB2_LDFLAGS 
-                   ERROR_VARIABLE TMP_IMLIB2_LDFLAGS ) 
-
-
-  CHECK_INCLUDE_FILE(Imlib2.h HAS_IMLIB2_H)
-
-  SET(CMAKE_REQUIRED_FLAGS ${TMP_IMLIB2_CFLAGS})
-#  SET(CMAKE_REQUIRED_INCLUDES ${CAIRO_INCLUDE_DIRS})
-#  SET(CMAKE_REQUIRED_LIBRARIES ${CAIRO_LIBRARIES})
-  SET(CMAKE_REQUIRED_LIBDIRS ${TMP_IMLIB2_LDFLAGS})
-
-  CHECK_C_SOURCE_COMPILES(
-  "#include <X11/Xlib.h>
-   #include <Imlib2.h>
-   #include <stdio.h>
-   #include <string.h>
-   int main() {
-    Imlib_Image image= imlib_load_image("");
-    return 0;
-   }" _imlib2_works)
-  
-  IF(_imlib2_works)
-    SET(USE_IMLIB2 1)
-    SET(IMLIB2_CFLAGS ${TMP_IMLIB2_CFLAGS})
-    IF(${WITH_IMLIB2} STREQUAL "linked")
-      SET(IMLIB2_LDFLAGS ${TMP_IMLIB2_LDFLAGS})
-      SET(LINKED_IMLIB2 1)
-    ENDIF(${WITH_IMLIB2} STREQUAL "linked")
-  ENDIF(_imlib2_works)
-ENDIF(${WITH_IMLIB2})
-
-IF(NOT USE_IMLIB2)
-  MESSAGE(STATUS "disabling Imlib2 support")
-ENDIF(NOT USE_IMLIB2)
-
-### --------------------------------------------------------------------
-### Check for Axel
-### --------------------------------------------------------------------
-
-### TODO
 
 ### --------------------------------------------------------------------
 ### Handle different systems case by case
@@ -303,50 +173,128 @@ ENDIF(${DISABLE_FASTALLOC})
 
 #  SET(EXPERIMENTAL 1)
 
+### --------------------------------------------------------------------
+###  Test for Libraries
+### --------------------------------------------------------------------
+
+FIND_PACKAGE(Guile REQUIRED)
+FIND_PACKAGE(Iconv)
+FIND_PACKAGE(FreeType2)
+FIND_PACKAGE(Cairo)
+FIND_PACKAGE(Imlib2)
+#FIND_PACKAGE(Axel)
+
+
+
+
+
+### --------------------------------------------------------------------
+###  Some Guile related adjustements
+### --------------------------------------------------------------------
+
+IF(Guile_VERSION_STRING VERSION_LESS 1.6)
+  SET(CONFIG_GUILE_SERIAL "A")
+ELSEIF(Guile_VERSION_STRING VERSION_LESS 1.8)
+  SET(CONFIG_GUILE_SERIAL "B")
+ELSE(Guile_VERSION_STRING VERSION_LESS 1.8)
+  SET(CONFIG_GUILE_SERIAL "C")
+ENDIF(Guile_VERSION_STRING VERSION_LESS 1.6)
+
+
+SET(CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
+SET(CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
+SET(CMAKE_REQUIRED_LIBRARIES ${Guile_LIBRARIES})
+
+MESSAGE(STATUS "Checking the size_t of guile strings")
+
+CHECK_C_SOURCE_COMPILES(  "#include <guile/gh.h>
+  #include <libguile.h>
+  void print_string (SCM s) {
+    int len_r;
+    char* r= gh_scm2newstr (s, &len_r); } int main() { return 0; }
+" _guile_str_size_test)
+
+IF(_guile_str_size_test)
+  SET(guile_str_size_t int)
+ELSE(_guile_str_size_test)
+  SET(guile_str_size_t size_t)
+ENDIF(_guile_str_size_test)
+
+MESSAGE(STATUS "Checking whether ... arguments behave correctly")
+
+CHECK_C_SOURCE_COMPILES(  
+" #include <guile/gh.h>
+  #include <libguile.h>
+  typedef SCM (*FN)(...);
+  static SCM identity (SCM x) { return x; }
+  void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+  int main() { return 0; }
+" _guile_dots_test)
+
+IF(_guile_dots_test)
+  SET(DOTS_OK 1)
+ELSE(_guile_dots_test)
+  SET(DOTS_OK)
+ENDIF(_guile_dots_test)
+
+#MESSAGE(STATUS "Checking if statically linking with guile works")
+##TODO
+
 
 ### --------------------------------------------------------------------
 ### GUI selection
 ### --------------------------------------------------------------------
 
+
 IF(NOT TEXMACS_GUI)
-  SET(TEXMACS_GUI "X11")
+  SET(TEXMACS_GUI "X11" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
 ENDIF(NOT TEXMACS_GUI)
 
-IF(${TEXMACS_GUI} STREQUAL "QT")
+IF(TEXMACS_GUI STREQUAL "Qt")
 
-  INCLUDE(FindQt4)
-
-  IF(CMAKE_BUILD_TYPE STREQUAL "Release")
-    ADD_DEFINITIONS(-DQT_NO_DEBUG)
-  ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
-
-  SET(NO_FAST_ALLOC 1)
-  SET(QTTEXMACS 1)
-  SET(CONFIG_GUI "QT")
-  SET(CONFIG_QT "Qt")
-
-  MESSAGE("-- Enabling experimental  QT port")
+  FIND_PACKAGE(Qt4)
+ 
+  IF(QT4_FOUND)
+    INCLUDE(${QT_USE_FILE})
+    SET(NO_FAST_ALLOC 1)
+    SET(QTTEXMACS 1)
+    SET(CONFIG_GUI "QT")
+    SET(CONFIG_QT "Qt")
+    MESSAGE(STATUS "Enabling experimental  Qt port")
+  ELSE(QT4_FOUND)
+    MESSAGE(ERROR "Qt is required to compile the Qt port")
+  ENDIF(QT4_FOUND)
   
-ELIF(${TEXMACS_GUI} STREQUAL "Aqua")
+ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
 
-  SET(NO_FAST_ALLOC 1)
-  SET(AQUATEXMACS 1)
-  SET(COCOA_CFLAGS "")
-  SET(COCOA_LDFLAGS "-framework COCOA")
-  SET(CONFIG_GUI "COCOA")
-  SET(CONFIG_COCOA "Cocoa")
+  IF (APPLE)
 
-  MESSAGE("-- Enabling experimental Cocoa port")
+    SET(NO_FAST_ALLOC 1)
+    SET(AQUATEXMACS 1)
+    SET(COCOA_CFLAGS "")
+    SET(COCOA_LDFLAGS "-framework COCOA")
+    SET(CONFIG_GUI "COCOA")
+    SET(CONFIG_COCOA "Cocoa")
 
-ELSE(${TEXMACS_GUI} STREQUAL "QT")
+    MESSAGE(STATUS "Enabling experimental Cocoa port")
+
+  ELSE (APPLE)
+  
+    MESSAGE( ERROR "Aqua GUI is not supported on this system")
+    
+  ENDIF (APPLE)
+
+ELSE(TEXMACS_GUI STREQUAL "Qt")
+
+  FIND_PACKAGE(X11)
 
   SET(CONFIG_X11 "X11 Widkit Ghostscript")
   SET(CONFIG_GUI "X11")
   
 
-  MESSAGE("-- Enabling standard X11 interface")
+  MESSAGE(STATUS "Enabling standard X11 interface")
 
-ENDIF(${TEXMACS_GUI} STREQUAL "QT")
+ENDIF(TEXMACS_GUI STREQUAL "Qt")
 
 ### --------------------------------------------------------------------
 ### Debugging options
@@ -367,6 +315,7 @@ ENDIF(${TEXMACS_GUI} STREQUAL "QT")
 ### --------------------------------------------------------------------
 
 CONFIGURE_FILE(${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
+CONFIGURE_FILE(${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
 
 
 ### --------------------------------------------------------------------
