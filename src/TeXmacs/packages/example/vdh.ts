@@ -226,6 +226,9 @@
   <assign|joris-versions*|<macro|name|<hlink|Pdf|<merge|<arg|name>|.pdf>>,
   <hlink|Bib<TeX>|<merge|<arg|name>|.bib>>>>
 
+  <assign|joris-versions**|<macro|name|<hlink|Gzipped
+  Postscript|<merge|<arg|name>|.ps.gz>>, <hlink|Bib<TeX>|<merge|<arg|name>|.bib>>>>
+
   <assign|joris-versions|<macro|name|<hlink|Html|<merge|<arg|name>|.tm>>,
   <hlink|<TeXmacs>|<merge|<arg|name>|.texmacs>>,
   <joris-versions*|<arg|name>>>>

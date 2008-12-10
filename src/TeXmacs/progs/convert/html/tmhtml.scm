@@ -707,12 +707,13 @@
   `((h:font (@ (color ,(tmcolor->htmlcolor val))) ,@(tmhtml arg))))
 
 (define (tmhtml-with-font-size val arg)
-  (let* ((x (* (string->number val) 100))
-	 (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
-		  ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
-		  ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
-		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
-    (if s `((h:font (@ (size ,s)) ,@(tmhtml arg))) (tmhtml arg))))
+  (ahash-with tmhtml-env :mag val
+    (let* ((x (* (string->number val) 100))
+	   (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
+		    ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
+		    ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
+		    ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
+      (if s `((h:font (@ (size ,s)) ,@(tmhtml arg))) (tmhtml arg)))))
 
 (define (tmhtml-with-block style arg)
   (with r (tmhtml (blockify arg))
@@ -1008,19 +1009,23 @@
 	 (name-string (string-append tmhtml-image-root-string postfix)))
     (values name-url name-string)))
 
-(define (tmhtml-png x)
-  (with cached (ahash-ref tmhtml-image-cache x)
-    (if (not cached)
-	(receive (name-url name-string) (tmhtml-png-names)
-	  ;;(display* x " -> " name-url ", " name-string "\n")
-	  (let* ((extents (print-snippet name-url x))
-		 (pixels (inexact->exact (/ (second extents) 2100)))
-		 (valign (number->htmlstring pixels))
-		 (style (string-append "vertical-align: " valign "px")))
-	    ;;(display* x " -> " extents "\n")
-	    (set! cached `((h:img (@ (src ,name-string) (style ,style)))))
-	    (ahash-set! tmhtml-image-cache x cached)))
-	cached)))
+(define (tmhtml-png y)
+  (let* ((mag (ahash-ref tmhtml-env :mag))
+	 (x (if (or (nstring? mag) (== mag "1")) y
+		`(with "font-size" ,mag ,y))))
+    (with cached (ahash-ref tmhtml-image-cache x)
+      (if (not cached)
+	  (receive (name-url name-string) (tmhtml-png-names)
+	    ;;(display* x " -> " name-url ", " name-string "\n")
+	    (let* ((extents (print-snippet name-url x))
+		   ;;(pixels (inexact->exact (/ (second extents) 2100)))
+		   (pixels (inexact->exact (/ (second extents) 2000)))
+		   (valign (number->htmlstring pixels))
+		   (style (string-append "vertical-align: " valign "px")))
+	      ;;(display* x " -> " extents "\n")
+	      (set! cached `((h:img (@ (src ,name-string) (style ,style)))))
+	      (ahash-set! tmhtml-image-cache x cached)))
+	  cached))))
 
 (define (tmhtml-graphics l)
   (tmhtml-png (cons 'graphics l)))
@@ -1240,11 +1245,12 @@
       '()))
 
 (tm-define (tmhtml-root x)
-  (ahash-with tmhtml-env :math #f
-    (ahash-with tmhtml-env :preformatted #f
-      (ahash-with tmhtml-env :left-margin 0
-        (ahash-with tmhtml-env :right-margin 0
-          (tmhtml x))))))
+  (ahash-with tmhtml-env :mag "1"
+    (ahash-with tmhtml-env :math #f
+      (ahash-with tmhtml-env :preformatted #f
+	(ahash-with tmhtml-env :left-margin 0
+	  (ahash-with tmhtml-env :right-margin 0
+	    (tmhtml x)))))))
 
 (define (tmhtml x)
   ;; Main conversion function.
