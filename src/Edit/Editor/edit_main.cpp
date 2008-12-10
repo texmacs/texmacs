@@ -235,7 +235,8 @@ edit_main_rep::print_snippet (url name, tree t) {
   bool ps= suffix (name) == "ps" || suffix (name) == "eps";
   typeset_prepare ();
   int dpi= as_int (printing_dpi);
-  if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
+  //if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
+  if (!ps) t= tree (WITH, MAGNIFICATION, "1.6", PAGE_WIDTH, "40cm", t);
   box b= typeset_as_box (env, t, path ());
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
     if (ps) make_eps (name, b, dpi);
