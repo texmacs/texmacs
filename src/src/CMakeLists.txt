@@ -271,6 +271,7 @@ SET(TeXmacs_Std_Plugins_SRCS
     ./Plugins/Axel/axel.cpp
     ./Plugins/Bibtex/bibtex.cpp
     ./Plugins/Cairo/cairo_renderer.cpp
+    ./Plugins/Cairo/tm_cairo.cpp
     ./Plugins/Freetype/free_type.cpp
     ./Plugins/Freetype/tt_face.cpp
     ./Plugins/Freetype/tt_file.cpp
