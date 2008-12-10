@@ -11,9 +11,10 @@
 ******************************************************************************/
 
 #include "config.h"
+#include "cairo_renderer.hpp"
 
 #ifdef USE_CAIRO
-#include "cairo_renderer.hpp"
+
 #include "analyze.hpp"
 #include "image_files.hpp"
 #include "file.hpp"
@@ -23,6 +24,8 @@
 
 #include "Freetype/tt_file.hpp" // tt_font_find
 #include "Freetype/free_type.hpp"
+#include "tm_cairo.hpp"
+
 #include <cairo-ft.h>
 #include <cairo-ps.h>
 
@@ -36,8 +39,8 @@ struct cairo_image_rep: concrete_struct {
   int w,h;
   cairo_image_rep (cairo_surface_t* img2, SI xo2, SI yo2, int w2, int h2) :
     img (img2), xo (xo2), yo (yo2), w (w2), h (h2) {
-      cairo_surface_reference(img); }
-  ~cairo_image_rep() { cairo_surface_destroy(img); }
+      tm_cairo_surface_reference(img); }
+  ~cairo_image_rep() { tm_cairo_surface_destroy(img); }
 };
 
 class cairo_image {
@@ -59,10 +62,48 @@ static hashmap<string,cairo_image> images;
 * cairo_renderer
 ******************************************************************************/
 
+class cairo_renderer_rep:  public basic_renderer_rep {
+public:
+  cairo_t* context;
+  
+public:
+  cairo_renderer_rep (int w = 0, int h = 0);
+  virtual ~cairo_renderer_rep ();
+  
+  void  draw (int char_code, font_glyphs fn, SI x, SI y);
+  void  set_color (color c);
+  void  set_line_style (SI w, int type=0, bool round=true);
+  void  line (SI x1, SI y1, SI x2, SI y2);
+  void  lines (array<SI> x, array<SI> y);
+  void  clear (SI x1, SI y1, SI x2, SI y2);
+  void  fill (SI x1, SI y1, SI x2, SI y2);
+  void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void  polygon (array<SI> x, array<SI> y, bool convex=true);
+  void  xpm (url file_name, SI x, SI y);
+  void  image (url u, SI w, SI h, SI x, SI y,
+               double cx1, double cy1, double cx2, double cy2);
+  
+  void next_page ();
+  bool is_printer();
+  bool interrupted (bool check);
+  
+  /***** private section *****************************************************/
+  
+  void draw_clipped (cairo_surface_t* im, int w, int h, SI x, SI y);
+	
+  bool native_draw (int ch, font_glyphs fn, SI x, SI y);
+  
+  void begin (void* c); // c must be a cairo context of type (cairo_t*)
+  void end ();
+  
+};
+
+
 cairo_renderer_rep::cairo_renderer_rep (int w2, int h2):
   basic_renderer_rep(w2,h2), context(NULL)
 {
-  cout << "Init cairo renderer" << LF;
+  //cout << "Init cairo renderer" << LF;
 }
 
 cairo_renderer_rep::~cairo_renderer_rep () {
@@ -71,46 +112,46 @@ cairo_renderer_rep::~cairo_renderer_rep () {
 
 void
 cairo_renderer_rep::begin (void* c) { 
-  context = (cairo_t*)c; cairo_reference(context);
+  context = (cairo_t*)c; tm_cairo_reference(context);
   set_clipping (0, -h, w, 0);
 }
 
 void
 cairo_renderer_rep::end () {
   next_page();
-  cairo_destroy(context);
+  tm_cairo_destroy(context);
   context = NULL;
 }
 
 void
 cairo_renderer_rep::next_page () { 
-  cout << "NEXT PAGE" << LF; cairo_show_page (context); 
+  //cout << "NEXT PAGE" << LF; tm_cairo_show_page (context); 
   set_clipping (0, -h, w, 0);
-  // cairo_translate (context, 0, (h*72.0)/pixel);
-  // cairo_scale(context, 1.0, -1.0);
+  // tm_cairo_translate (context, 0, (h*72.0)/pixel);
+  // tm_cairo_scale(context, 1.0, -1.0);
 }
 
 void
-cairo_set_source_color(cairo_t *context, color c) {
+tm_cairo_set_source_color(cairo_t *context, color c) {
   int r,g,b;
   get_rgb_color(c, r, g, b);
-  cairo_set_source_rgba(context, r/255.0, g/255.0, b/255.0, 1.0);
+  tm_cairo_set_source_rgba(context, r/255.0, g/255.0, b/255.0, 1.0);
 }
 
 void
 cairo_renderer_rep::set_color (color c) {
-  cout << "set_color" << LF;
+  //cout << "set_color" << LF;
   basic_renderer_rep::set_color(c);
-  cairo_set_source_color(context, cur_fg);
+  tm_cairo_set_source_color(context, cur_fg);
 }
 
 void
 cairo_renderer_rep::set_line_style (SI lw, int type, bool round) {
   (void) type;
-  cairo_set_line_cap (context,
+  tm_cairo_set_line_cap (context,
 		      round? CAIRO_LINE_CAP_ROUND : CAIRO_LINE_CAP_SQUARE);
-  cairo_set_line_join (context, CAIRO_LINE_JOIN_ROUND);
-  cairo_set_line_width (context,
+  tm_cairo_set_line_join (context, CAIRO_LINE_JOIN_ROUND);
+  tm_cairo_set_line_width (context,
 			lw <= pixel ? 1 : ((lw+thicken) / (1.0*pixel)));
 }
 
@@ -119,23 +160,23 @@ cairo_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   // y1--; y2--; // top-left origin to bottom-left origin conversion
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-  cairo_move_to(context, x1, y1);
-  cairo_line_to(context, x2, y2);
-  cairo_stroke(context);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
+  tm_cairo_move_to(context, x1, y1);
+  tm_cairo_line_to(context, x2, y2);
+  tm_cairo_stroke(context);
 }
 
 void
 cairo_renderer_rep::lines (array<SI> x, array<SI> y) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
   for (i=0; i<n; i++) {
     SI xx= x[i], yy= y[i];
     decode (xx, yy);
-    cairo_line_to (context, xx, yy);
+    tm_cairo_line_to (context, xx, yy);
   }
-  cairo_stroke (context);
+  tm_cairo_stroke (context);
 }
 
 void
@@ -146,11 +187,11 @@ cairo_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
-  cairo_set_source_color(context, cur_bg);
-  cairo_rectangle(context, x1, y2, x2-x1, y1-y2);
-  cairo_fill(context);
-  cairo_set_source_color(context, cur_fg);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
+  tm_cairo_set_source_color(context, cur_bg);
+  tm_cairo_rectangle(context, x1, y2, x2-x1, y1-y2);
+  tm_cairo_fill(context);
+  tm_cairo_set_source_color(context, cur_fg);
 }
 
 void
@@ -174,11 +215,11 @@ cairo_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
-  // cairo_set_source_color(context, cur_fg);
-  cairo_rectangle(context, x1, y2, x2-x1, y1-y2);
-  cout << "fill " << x1 << "," << y2 << "," << x2-x1 << "," << y1-y2 << LF;
-  cairo_fill(context);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
+  // tm_cairo_set_source_color(context, cur_fg);
+  tm_cairo_rectangle(context, x1, y2, x2-x1, y1-y2);
+ // cout << "fill " << x1 << "," << y2 << "," << x2-x1 << "," << y1-y2 << LF;
+  tm_cairo_fill(context);
 }
 
 void
@@ -204,17 +245,17 @@ cairo_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
 
-  cairo_new_path(context);
+  tm_cairo_new_path(context);
   for (i=0; i<n; i++) {
     SI xx= x[i], yy= y[i];
     decode (xx, yy);
-    cairo_line_to(context,xx,yy);
+    tm_cairo_line_to(context,xx,yy);
   }
-  cairo_close_path(context);
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-  // cairo_set_source_color(context, cur_fg);
-  cairo_set_fill_rule(context, convex ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-  cairo_fill(context);
+  tm_cairo_close_path(context);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
+  // tm_cairo_set_source_color(context, cur_fg);
+  tm_cairo_set_fill_rule(context, convex ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+  tm_cairo_fill(context);
 }
 
 /******************************************************************************
@@ -224,9 +265,9 @@ cairo_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 struct cairo_cache_image_rep: cache_image_element_rep {
   cairo_cache_image_rep (int w2, int h2, int time2, cairo_surface_t *ptr2) :
     cache_image_element_rep(w2,h2,time2,ptr2) {
-      cairo_surface_reference ((cairo_surface_t *) ptr); }
+      tm_cairo_surface_reference ((cairo_surface_t *) ptr); }
   virtual ~cairo_cache_image_rep() {
-    cairo_surface_destroy ((cairo_surface_t *) ptr); }
+    tm_cairo_surface_destroy ((cairo_surface_t *) ptr); }
 };
 
 void
@@ -260,8 +301,8 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       // rendering
       string suu = as_string (u);
       char * buf = as_charp(suu);
-      cout << suu << LF;
-      pm = cairo_image_surface_create_from_png(buf);
+      //cout << suu << LF;
+      pm = tm_cairo_image_surface_create_from_png(buf);
       delete buf;
     }
     else if (suffix (u) == "ps" ||
@@ -271,8 +312,8 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       system ("convert", u, temp);
       string suu = as_string (temp);
       char * buf = as_charp(suu); 
-      cout << suu << LF;
-      pm = cairo_image_surface_create_from_png(buf);
+      //cout << suu << LF;
+      pm = tm_cairo_image_surface_create_from_png(buf);
       delete buf;
       remove (temp);
     }
@@ -287,16 +328,16 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     (ci->nr)++;
   }
   
-  int iw= cairo_image_surface_get_width(pm);
-  int ih= cairo_image_surface_get_height(pm);
+  int iw= tm_cairo_image_surface_get_width(pm);
+  int ih= tm_cairo_image_surface_get_height(pm);
 
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
-  cairo_save(context);
-  cairo_translate(context,x,y-h);
-  cairo_scale(context, (1.0*w)/iw, (1.0*h)/ih);
-  cairo_set_source_surface (context, pm, 0, 0);
-  cairo_paint (context);
-  cairo_restore(context);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
+  tm_cairo_save(context);
+  tm_cairo_translate(context,x,y-h);
+  tm_cairo_scale(context, (1.0*w)/iw, (1.0*h)/ih);
+  tm_cairo_set_source_surface (context, pm, 0, 0);
+  tm_cairo_paint (context);
+  tm_cairo_restore(context);
 };
 
 void
@@ -304,13 +345,13 @@ cairo_renderer_rep::draw_clipped (cairo_surface_t* im, int w, int h, SI x, SI y)
   decode (x , y );
   y--; // top-left origin to bottom-left origin conversion
        // clear(x1,y1,x2,y2);
-  cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-  cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
+  tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
+  tm_cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
 
-  // cairo_mask_surface(context, im, x, y);
-  cairo_set_source_surface (context, im, x, y);
+  // tm_cairo_mask_surface(context, im, x, y);
+  tm_cairo_set_source_surface (context, im, x, y);
   
-  cairo_paint (context);
+  tm_cairo_paint (context);
 }  
 
 static hashmap<string,pointer> native_fonts;
@@ -327,11 +368,11 @@ create_font_face_from_file (FT_Library library, const char *file) {
 
   error = FT_New_Face (library, file, 0, &face);
   if (error) return NULL;
-  font_face = cairo_ft_font_face_create_for_ft_face (face, 0);
-  status = cairo_font_face_set_user_data (font_face, &font_face_key,
+  font_face = tm_cairo_ft_font_face_create_for_ft_face (face, 0);
+  status = tm_cairo_font_face_set_user_data (font_face, &font_face_key,
                                           face, (cairo_destroy_func_t) FT_Done_Face);
   if (status) {
-    cairo_font_face_destroy (font_face);
+    tm_cairo_font_face_destroy (font_face);
     FT_Done_Face (face);
     return NULL;
   }
@@ -377,7 +418,7 @@ cairo_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
 	char* _name= as_charp (concretize (u));
 	f = create_font_face_from_file(ft_library,  _name);
 	delete [] _name;
-	if (cairo_font_face_status(f) == CAIRO_STATUS_SUCCESS) {
+	if (tm_cairo_font_face_status(f) == CAIRO_STATUS_SUCCESS) {
 	  // cout << "Font" << u << " loaded " << LF;
 	  native_fonts(name) = f;
 	}        
@@ -392,14 +433,14 @@ cairo_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
   if (f) {
     decode (x , y );
     y--; // top-left origin to bottom-left origin conversion
-    cairo_set_font_face(context, f);
-    cout << "status " << cairo_status_to_string(cairo_status(context)) << LF;
-    cairo_set_font_size(context, size*(PIXEL*600.0/(pixel*72.0)));
+    tm_cairo_set_font_face(context, f);
+    //cout << "status " << tm_cairo_status_to_string(tm_cairo_status(context)) << LF;
+    tm_cairo_set_font_size(context, size*(PIXEL*600.0/(pixel*72.0)));
     //			CGAffineTransform	kHorizontalMatrix = { PIXEL*600.0/(pixel*72.0),  0.0,  0.0,  -PIXEL*600.0/(pixel*72.0),  0.0,  0.0 };
-    cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-    // cairo_set_source_color(context, cur_fg);
+    tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
+    // tm_cairo_set_source_color(context, cur_fg);
     cairo_glyph_t gl = { c, x, y };
-    cairo_show_glyphs(context, &gl, 1 );
+    tm_cairo_show_glyphs(context, &gl, 1 );
   }
 
   return true;
@@ -407,7 +448,7 @@ cairo_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
 
 void
 cairo_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
-  cout << "draw" << LF;
+  //cout << "draw" << LF;
   // get the pixmap
   basic_character xc (c, fng, sfactor, 0, 0);
   cairo_image mi = character_image [xc];
@@ -418,25 +459,25 @@ cairo_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, w= gl->width, h= gl->height;
-    cairo_surface_t *im = cairo_image_surface_create(CAIRO_FORMAT_A8,w,h);
+    cairo_surface_t *im = tm_cairo_image_surface_create(CAIRO_FORMAT_A8,w,h);
     //FIXME: release the surface when done
     {
-      cairo_t* ic = cairo_create(im);
+      cairo_t* ic = tm_cairo_create(im);
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
-      cairo_set_operator(ic, CAIRO_OPERATOR_SOURCE);
+      tm_cairo_set_operator(ic, CAIRO_OPERATOR_SOURCE);
       for (j=0; j<h; j++)
 	for (i=0; i<w; i++) {
 	  int col = gl->get_x (i, j);
-	  cairo_set_source_rgba(ic, 0.0, 0.0, 0.0, ((255*col)/(nr_cols+1))/255.0);
-	  cairo_rectangle(ic,i,j,1,1);
-          cairo_fill(ic);
+	  tm_cairo_set_source_rgba(ic, 0.0, 0.0, 0.0, ((255*col)/(nr_cols+1))/255.0);
+	  tm_cairo_rectangle(ic,i,j,1,1);
+          tm_cairo_fill(ic);
 	}
-      cairo_destroy (ic);
+      tm_cairo_destroy (ic);
     }
     cairo_image mi2 (im, xo, yo, w, h);
     mi = mi2;
-    cairo_surface_destroy (im); // cairo_image retains im
+    tm_cairo_surface_destroy (im); // cairo_image retains im
     character_image (xc)= mi;
   }
   
@@ -446,10 +487,10 @@ cairo_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     int y1 =  y+ mi->yo*sfactor;
     decode (x1, y1);
     y1--; // top-left origin to bottom-left origin conversion
-    cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
-    cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
-    // cairo_set_source_color (context, cur_fg);
-    cairo_mask_surface(context, mi->img, x1, y1);
+    tm_cairo_set_antialias(context, CAIRO_ANTIALIAS_DEFAULT);
+    tm_cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
+    // tm_cairo_set_source_color (context, cur_fg);
+    tm_cairo_mask_surface(context, mi->img, x1, y1);
   }  
 }
 
@@ -503,9 +544,9 @@ xpm_init (url file_name) {
     }  
     pmcs(name)= xpm_to_color(def);
   }
-  cairo_surface_t *im = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,w,h);
-  cairo_t* ic = cairo_create (im);
-  cairo_set_operator (ic, CAIRO_OPERATOR_SOURCE);
+  cairo_surface_t *im = tm_cairo_image_surface_create (CAIRO_FORMAT_ARGB32,w,h);
+  cairo_t* ic = tm_cairo_create (im);
+  tm_cairo_set_operator (ic, CAIRO_OPERATOR_SOURCE);
   // setup pixmap
   for (y=0; y<h; y++) {
     if (N(t)< (y+c+1)) s= "";
@@ -515,12 +556,12 @@ xpm_init (url file_name) {
       if (N(s)<(b*(x+1))) name= first_name;
       else name= s (b*x, b*(x+1));
       color col = pmcs[(pmcs->contains (name) ? name : first_name)];
-      cairo_set_source_color (ic, col);
-      cairo_rectangle (ic,x,y,1,1);
-      cairo_fill (ic);
+      tm_cairo_set_source_color (ic, col);
+      tm_cairo_rectangle (ic,x,y,1,1);
+      tm_cairo_fill (ic);
     }
   }
-  cairo_destroy (ic);
+  tm_cairo_destroy (ic);
   return im;
 }
 
@@ -532,11 +573,11 @@ xpm_image (url file_name) {
   cairo_image mi= images [as_string (file_name)];
   if (is_nil (mi)) {    
     pxm = xpm_init(file_name);
-    cairo_image mi2 (pxm, 0, 0, cairo_image_surface_get_width(pxm),
-		     cairo_image_surface_get_height(pxm));
+    cairo_image mi2 (pxm, 0, 0, tm_cairo_image_surface_get_width(pxm),
+		     tm_cairo_image_surface_get_height(pxm));
     mi= mi2;
     images (as_string (file_name))= mi2;
-    cairo_surface_destroy (pxm);
+    tm_cairo_surface_destroy (pxm);
   }  
   else pxm= mi->img;
   return pxm;
@@ -549,8 +590,8 @@ cairo_renderer_rep::xpm (url file_name, SI x, SI y) {
   if (sfactor != 1)
     fatal_error ("Shrinking factor should be 1", "cairo_renderer_rep::xpm");
   int w, h;
-  w = cairo_image_surface_get_width(image);
-  h = cairo_image_surface_get_height(image);
+  w = tm_cairo_image_surface_get_width(image);
+  h = tm_cairo_image_surface_get_height(image);
   int old_clip= char_clip;
   char_clip= true;
   draw_clipped (image, w, h, x, y);
@@ -573,10 +614,14 @@ cairo_renderer_rep::interrupted (bool check) {
 
 static cairo_renderer_rep* the_renderer= NULL;
 
-cairo_renderer_rep*
+basic_renderer_rep*
 the_cairo_renderer () {
-  if (!the_renderer) the_renderer= new cairo_renderer_rep ();
-  return the_renderer;
+  if (tm_cairo_present()) {
+    if (!the_renderer) the_renderer= new cairo_renderer_rep ();
+    return the_renderer;
+  } else {
+    return NULL;
+  }
 }
 
 #if 0
@@ -590,15 +635,15 @@ printer (url ps_file_name, int dpi, int nr_pages,
   cairo_renderer_rep *ren = new cairo_renderer_rep (w,h);
   char *buf = as_charp(as_string(ps_file_name));
   cairo_surface_t* surface =
-    cairo_ps_surface_create(buf, paper_w/2.54*72.0, paper_h/2.54*72.0);
+    tm_cairo_ps_surface_create(buf, paper_w/2.54*72.0, paper_h/2.54*72.0);
   delete [] buf;
-  cairo_t *context = cairo_create (surface);
-  // cairo_translate (context, 0,  paper_h/2.54*72.0);
-  // cairo_scale(context, 1.0, -1.0);
+  cairo_t *context = tm_cairo_create (surface);
+  // tm_cairo_translate (context, 0,  paper_h/2.54*72.0);
+  // tm_cairo_scale(context, 1.0, -1.0);
 
   ren->begin (context);
-  cairo_destroy (context);
-  cairo_surface_destroy (surface);
+  tm_cairo_destroy (context);
+  tm_cairo_surface_destroy (surface);
   renderer r = ren;
   r->set_color(black);
   r->fill(0,-10000,10000,0);
@@ -607,4 +652,9 @@ printer (url ps_file_name, int dpi, int nr_pages,
 }
 #endif
 
-#endif // ifdef USE_CAIRO
+#else // USE_CAIRO
+basic_renderer_rep*
+the_cairo_renderer () {
+    return NULL;
+}
+#endif // USE_CAIRO
