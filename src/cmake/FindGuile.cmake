@@ -1,74 +1,93 @@
 # - Locate the GNU Guile library
+# Once done, this will define
+#
+#  Guile_FOUND - system has Freetype
+#  Guile_INCLUDE_DIRS - the Freetype include directories
+#  Guile_LIBRARIES - link these to use Freetype
+#  Guile_VERSION_STRING - version of Guile
 
-include(CheckIncludeFile)
-include(CheckLibraryExists)
+FIND_PROGRAM(GUILECONFIG_EXECUTABLE NAMES guile-config )
 
-MACRO(FIND_GUILE GUILE_LDFLAGS)
-  CHECK_INCLUDE_FILE("libguile.h" HAS_LIBGUILE_H)
-  if(HAS_LIBGUILE_H)
-    # Do we have -lguile
-    CHECK_LIBRARY_EXISTS(guile scm_init_guile "" HAS_LIB_GUILE)
-    if(HAS_LIB_GUILE)
-      set(GUILE_LDFLAGS -lguile)
-    endif(HAS_LIB_GUILE)
-  endif(HAS_LIBGUILE_H)
+# if guile-config has been found
+IF(GUILECONFIG_EXECUTABLE)
 
-  if(NOT HAS_LIB_GUILE)
-    message(FATAL_ERROR "guile library not found")
-  endif(NOT HAS_LIB_GUILE)
-ENDMACRO(FIND_GUILE)
+  EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE} link 
+    OUTPUT_VARIABLE _guileconfigDevNull RESULT_VARIABLE _return_VALUE  )
 
-MACRO(MY_FIND_GUILE GUILE_CFLAGS GUILE_LDFLAGS)
-  EXECUTE_PROCESS( COMMAND guile-config link
-                   RESULT_VARIABLE _guile_config_result
-                   OUTPUT_VARIABLE _guile_config_output 
-                   ERROR_VARIABLE _guile_config_output ) 
+  # and if the package of interest also exists for guile-config, then get the information
+  IF(NOT _return_VALUE)
 
-  IF(_guile_config_result)
-    MESSAGE(WARNING " cannot find guile-config; is Guile installed?")
-  ENDIF(_guile_config_result)
- 
+    EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE}  link 
+      OUTPUT_VARIABLE _guileconfig_link )
 
-  EXECUTE_PROCESS( COMMAND guile-config compile
-                   RESULT_VARIABLE _guile_config_result
-                   OUTPUT_VARIABLE GUILE_ORIGINAL_CFLAGS 
-                   ERROR_VARIABLE GUILE_ORIGINAL_CFLAGS ) 
+    EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE}  compile 
+      OUTPUT_VARIABLE _guileconfig_compile )
+
+    EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE}  info libdir 
+      OUTPUT_VARIABLE _guileconfig_libdir )
 
 
-  SET(GUILE_CFLAGS "${GUILE_ORIGINAL_CFLAGS}")
-  SET(GUILE_VARIANT_CFLAGS  "${GUILE_ORIGINAL_CFLAGS} ${GUILE_ORIGINAL_CFLAGS}/guile ${GUILE_ORIGINAL_CFLAGS}/libguile")
-
-
-  EXECUTE_PROCESS( COMMAND guile-config link
-                   RESULT_VARIABLE _guile_config_result
-                   OUTPUT_VARIABLE GUILE_LDFLAGS 
-                   ERROR_VARIABLE GUILE_LDFLAGS ) 
-
-  EXECUTE_PROCESS( COMMAND guile-config info libdir
-                   RESULT_VARIABLE _guile_config_result
-                   OUTPUT_VARIABLE _guile_libdir 
-                   ERROR_VARIABLE _guile_libdir ) 
-
-
-  SET(GUILE_VARIANT_LDFLAGS "-L${_guile_libdir} -lguile -lreadline -ltermcap")
-
-
-  EXECUTE_PROCESS( COMMAND guile-config --version
-                   RESULT_VARIABLE _guile_config_result
-                   OUTPUT_VARIABLE _guile_version 
-                   ERROR_VARIABLE _guile_version ) 
-
-  STRING( REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" QTVERSION "${_guile_version}")
-
-  IF(QTVERSION VERSION_LESS 1.6)
-    SET(CONFIG_GUILE_SERIAL A)
-  ELSEIF(QTVERSION VERSION_LESS "1.8")
-    SET(CONFIG_GUILE_SERIAL B)
-  ELSE(QTVERSION VERSION_LESS 1.8)
-    SET(CONFIG_GUILE_SERIAL C)
-  ENDIF(QTVERSION VERSION_LESS 1.6)
+    EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE}  "--version"
+      OUTPUT_VARIABLE _guileconfig_version ERROR_VARIABLE _guileconfig_version )
+    
   
+    
+    ## parsing  
+          
+            
+    STRING(REGEX MATCHALL "[-][L]([^ ;])+" _guile_libdirs_with_prefix "${_guileconfig_link}" )
+    STRING(REGEX MATCHALL "[-][l]([^ ;])+" _guile_libraries_with_prefix "${_guileconfig_link}" )
+    STRING(REGEX MATCHALL "[-][I]([^ ;])+" _guile_includes_with_prefix "${_guileconfig_compile}" )
+    STRING(REGEX MATCHALL "[-][D]([^ ;])+" _guile_definitions_with_prefix "${_guileconfig_compile}" )
+    STRING(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" Guile_VERSION_STRING "${_guileconfig_version}")
+      
+    STRING(REPLACE "-L" " " _guile_libdirs ${_guile_libdirs_with_prefix} )
+    STRING(REPLACE "-l" " " _guile_lib_list "${_guile_libraries_with_prefix}" )
+    STRING(REPLACE "-I" " " _guile_includes "${_guile_includes_with_prefix}" )
+#    SEPARATE_ARGUMENTS(_guile_libdirs)
+    
+    MESSAGE(STATUS ${_guile_libraries_with_prefix})
+    SET(_guile_libraries "")
 
-#  AC_SUBST(GUILE_CFLAGS)
-#  AC_SUBST(GUILE_LDFLAGS)
-ENDMACRO(MY_FIND_GUILE)
+    FOREACH(i ${_guile_lib_list})
+      STRING(STRIP ${i} i)
+      IF (i)
+        IF(NOT _guile_flag_library_${i}) # avoid copies
+          find_library(_guile_tmp_library_${i}
+            NAMES ${i}
+            PATHS ${_guile_libdirs}
+           )
+         #  MESSAGE(STATUS ">>>>>>>>>" ${_guile_tmp_library_${i}})
+          IF(_guile_tmp_library_${i})   
+            SET(_guile_flag_library_${i})
+            SET(_guile_libraries ${_guile_libraries} ${_guile_tmp_library_${i}})
+          ENDIF(_guile_tmp_library_${i})
+        ENDIF(NOT _guile_flag_library_${i}) 
+      ENDIF (i)
+    ENDFOREACH(i)       
+           
+
+
+    SET(Guile_FOUND YES)
+    SET(Guile_INCLUDE_DIRS ${_guile_includes})
+    SET(Guile_LIBRARIES ${_guile_libraries})
+    SET(Guile_CFLAGS ${_guile_definitions_with_prefix})
+    
+    MESSAGE(">>>" "${Guile_INCLUDE_DIRS}")
+    MESSAGE(">>>" "${Guile_LIBRARIES}")
+    MESSAGE(">>>" "${Guile_CFLAGS}")
+    MESSAGE(">>>" "${_guileconfig_version}")
+    
+  ELSE( NOT _return_VALUE)
+
+    MESSAGE(STATUS "guile-config not working; I assume guile is not installed.")
+
+  ENDIF(NOT _return_VALUE)
+
+ELSE(GUILECONFIG_EXECUTABLE)
+
+    MESSAGE(STATUS "guile-config not found; I assume guile is not installed.")
+
+
+ENDIF(GUILECONFIG_EXECUTABLE)
+
