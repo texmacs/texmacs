@@ -44,6 +44,8 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
     set_access_mode (DRD_ACCESS_SOURCE);
   while (!is_accessible_cursor (et, p) && !in_source ()) {
     path pp;
+    ASSERT (rp <= p, "path outside document");
+    p= rp * closest_inside (subtree (et, rp), p - rp);
     if (forwards ^ inverse)
       pp= rp * next_valid (subtree (et, rp), p - rp);
     else

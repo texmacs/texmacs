@@ -3,6 +3,9 @@
 /* Enable experimental Cocoa port */
 #undef AQUATEXMACS
 
+/* check assertions in code */
+#undef DEBUG_ASSERT
+
 /* Defined if ...-style argument passing works */
 #undef DOTS_OK
 

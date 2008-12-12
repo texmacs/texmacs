@@ -9173,6 +9173,11 @@ echo "${ECHO_T}enabling debugging, $enable_debug" >&6; }
     CONFIG_STRIP="true"
     CONFIG_CXXDEBUG="$enable_debug"
     optimize_default="no"
+
+cat >>confdefs.h <<\_ACEOF
+#define DEBUG_ASSERT 1
+_ACEOF
+
 fi
 
 #--------------------------------------------------------------------

@@ -768,6 +768,7 @@ else
     CONFIG_STRIP="true"
     CONFIG_CXXDEBUG="$enable_debug"
     optimize_default="no"
+    AC_DEFINE(DEBUG_ASSERT, 1, [check assertions in code])
 fi
 
 #--------------------------------------------------------------------
