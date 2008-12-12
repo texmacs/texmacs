@@ -694,6 +694,7 @@ tm_correct (string s) {
 
 void
 tm_char_forwards (string s, int& pos) {
+  ASSERT (pos >= 0 && pos <= N(s), "out of range");
   int n= N(s);
   if (pos == n);
   else if (s[pos] != '<') pos++;
@@ -705,6 +706,7 @@ tm_char_forwards (string s, int& pos) {
 
 void
 tm_char_backwards (string s, int& pos) {
+  ASSERT (pos >= 0 && pos <= N(s), "out of range");
   if (pos == 0);
   else if (s[pos-1] != '>') pos--;
   else {

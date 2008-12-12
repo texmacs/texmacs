@@ -45,6 +45,7 @@ move_any (tree t, path p, bool forward) {
   tree st= subtree (t, q);
   if (is_atomic (st)) {
     string s= st->label;
+    ASSERT (l >= 0 && l <= N(s), "out of range");
     if (forward) {
       if (l<N(s)) {
 	tm_char_forwards (s, l);
@@ -103,6 +104,7 @@ path previous_any (tree t, path p) {
 
 static path
 move_valid (tree t, path p, bool forward) {
+  ASSERT (is_inside (t, p), "invalid cursor");
   path q= p;
   while (true) {
     path r= move_any (t, q, forward);

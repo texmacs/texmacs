@@ -89,6 +89,13 @@ void debug_on (int status);
 #define DEBUG_IO (debug (DEBUG_FLAG_IO))
 #define DEBUG_BENCH (debug (DEBUG_FLAG_BENCH))
 
+#ifdef DEBUG_ASSERT
+#include <assert.h>
+#define ASSERT(cond,msg) assert (cond); // msg
+#else
+#define ASSERT(cond,msg)
+#endif
+
 inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
 inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
