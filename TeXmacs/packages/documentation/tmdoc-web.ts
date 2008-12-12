@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7>
 
 <style|<tuple|source|std>>
 
@@ -74,7 +74,7 @@
   <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Screen
   shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing lists|ml>>>>>
 
-  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|Windows|windows>|<tmweb-link|CVS|cvs>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>>
+  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|Windows|windows>|<tmweb-link|SVN|svn>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>>
 
   <assign|tmweb-help-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorial|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>>>>>
 
