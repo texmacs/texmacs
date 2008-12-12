@@ -19,6 +19,7 @@
 #include "font.hpp" // for the definition of font
 #include "rgb_colors.hpp"
 #include "iterator.hpp"
+#include <string.h>
 
 /******************************************************************************
  * structure for caching font pixmaps
