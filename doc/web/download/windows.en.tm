@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.7>
 
 <style|tmweb>
 
@@ -6,7 +6,7 @@
   <tmweb-current|Download|Windows><tmweb-title|Installing <TeXmacs> under
   <name|Windows>|<tmweb-download-links>>
 
-  In order to install <TeXmacs> under <name|Windows>, you have three options:
+  In order to install <TeXmacs> under <name|Windows>, you have four options:
 
   <\enumerate>
     <item>For simple users, we recommend the installation of
@@ -26,6 +26,9 @@
     <TeXmacs>, which is both small and easy to install. Unfortunately, the
     latest available version is 1.0.5, because we no longer have time or
     volunteers to maintain and further develop this native port.
+
+    <item>If you are a developer, then you may try to build the experimental
+    <hlink|Qt-<TeXmacs> on Windows|winqt.en.tm>.
   </enumerate>
 
   <section|Installation of <TeXmacs>><label|install>

@@ -1,9 +1,17 @@
-<TeXmacs|1.0.6.15>
+<TeXmacs|1.0.7>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
+
+  <section|Changes from version 1.0.7 to 1.0.7.1>
+
+  <\itemize>
+    <item>Several fixes and improvements for <name|Html> export (1.0.7.1).
+
+    <item>Development based on <name|Svn> instead of <name|Cvs> (1.0.7.1).
+  </itemize>
 
   <section|Changes from version 1.0.6 to 1.0.7>
 
