@@ -27,7 +27,7 @@
 
       <hlink|http://ftp.gnu.org/pub/gnu/guile/guile-1.8.4.tar.gz|http://ftp.gnu.org/pub/gnu/guile/guile-1.8.4.tar.gz>
 
-      <hlink|guile.patch|guile.patch>
+      <hlink|ftp://ftp.texmacs.org/pub/TeXmacs/misc/guile.patch|ftp://ftp.texmacs.org/pub/TeXmacs/misc/guile.patch>
 
       <hlink|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>
     </verbatim>
