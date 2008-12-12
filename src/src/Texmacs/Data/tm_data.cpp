@@ -86,9 +86,10 @@ tm_data_rep::new_menu_name (url u) {
 static void
 menu_append_buffer (string& s, tm_buffer buf) {
   if (buf->in_menu) {
-    s << " (\"" << buf->abbr;
-    if (buf->needs_to_be_saved ()) s << " *"; 
-    s << "\" (switch-to-buffer " * scm_quote (as_string (buf->name)) * "))";
+    string name= copy (buf->abbr);
+    if (buf->needs_to_be_saved ()) name << " *"; 
+    s << " (" << scm_quote (name);
+    s << " (switch-to-buffer " * scm_quote (as_string (buf->name)) * "))";
   }
 }
 
@@ -749,8 +750,8 @@ tm_data_rep::get_project_buffer_menu () {
   tm_buffer buf= get_buffer ();
   if (buf->prj == NULL) return eval ("(menu-dynamic)");
   string s ("(menu-dynamic ");
-  s << "(\"" << buf->prj->abbr << "\" ";
-  s << "(switch-to-buffer \"" * as_string (buf->prj->name) * "\"))";
+  s << "(" << scm_quote (buf->prj->abbr) << " ";
+  s << "(switch-to-buffer " * scm_quote (as_string (buf->prj->name)) * "))";
 
   tree t= subtree (the_et, buf->prj->rp);
   int i, j, n= N(t);
@@ -759,8 +760,8 @@ tm_data_rep::get_project_buffer_menu () {
       string name= as_string (head (buf->prj->name) * as_string (t[i][0]));
       for (j=N(name)-1; j>=0; j--)
 	if (name[j]=='/') break;
-      s << " (\"" << name (j+1, N(name)) << "\" ";
-      s << "(switch-to-buffer \"" * name * "\"))";
+      s << " (" << scm_quote (name (j+1, N(name))) << " ";
+      s << "(switch-to-buffer " * scm_quote (name) * "))";
     }
 
   s << ")";
