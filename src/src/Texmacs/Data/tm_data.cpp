@@ -88,7 +88,7 @@ menu_append_buffer (string& s, tm_buffer buf) {
   if (buf->in_menu) {
     s << " (\"" << buf->abbr;
     if (buf->needs_to_be_saved ()) s << " *"; 
-    s << "\" (switch-to-buffer \"" * as_string (buf->name) * "\"))";
+    s << "\" (switch-to-buffer " * scm_quote (as_string (buf->name)) * "))";
   }
 }
 

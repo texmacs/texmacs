@@ -25,6 +25,9 @@ int script_status = 1;
 
 int
 system (string s) {
+#if defined(__MINGW__) || defined(__MINGW32__)
+  if (starts (s, "convert ")) return 1;
+#endif
   // cout << "System: " << s << "\n";
   char* _s= as_charp (s);
 #ifdef OS_WIN32
@@ -47,11 +50,7 @@ eval_system (string s) {
 #endif
   string result;
   bool flag= load_string (temp, result, false);
-#ifdef OS_WIN32
-  system ("rm \"" * temp_s * "\"");
-#else
-  system ("rm " * temp_s);
-#endif
+  remove (temp);
   if (flag) {
 #ifdef OS_WIN32
     cerr << "TeXmacs] failed: " << s * " > " * temp_s << "\n";
