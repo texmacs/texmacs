@@ -124,11 +124,11 @@ TeXmacs_main (int argc, char** argv) {
 	exit (0);
       }
       else if ((s == "-p") || (s == "-path")) {
-	system ("echo $TEXMACS_PATH");
+	cout << get_env ("TEXMACS_PATH") << "\n";
 	exit (0);
       }
       else if ((s == "-bp") || (s == "-binpath")) {
-	system ("echo $TEXMACS_BIN_PATH");
+	cout << get_env ("TEXMACS_BIN_PATH") << "\n";
 	exit (0);
       }
       else if ((s == "-q") || (s == "-quit"))

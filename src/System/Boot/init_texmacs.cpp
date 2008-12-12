@@ -272,7 +272,7 @@ init_env_vars () {
 static void
 init_misc () {
   // Test whether 'which' works
-#ifdef OS_WIN32
+#if defined(__MINGW__) || defined(__MINGW32__) || defined (OS_WIN32)
   use_which = false;
 #else
   use_which= (var_eval_system ("which texmacs 2> /dev/null") != "");
