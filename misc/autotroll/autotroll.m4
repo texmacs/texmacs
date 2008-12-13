@@ -240,7 +240,7 @@ m4_ifval([$3],
   echo "$as_me:$LINENO: Invoking $QMAKE on $pro_file" >&AS_MESSAGE_LOG_FD
   sed 's/^/| /' "$pro_file" >&AS_MESSAGE_LOG_FD
 
-  if $QMAKE -spec macx-g++ ; then :; else
+  if $QMAKE  ; then :; else
     AC_MSG_ERROR([Calling $QMAKE failed.])
   fi
   # Try to compile a simple Qt app.
@@ -323,12 +323,12 @@ instead" >&AS_MESSAGE_LOG_FD
 
   # Find the CFLAGS of Qt (We can use Qt in C?!)
   AC_CACHE_CHECK([for the CFLAGS to use with Qt], [at_cv_env_QT_CFLAGS],
-  [at_cv_env_QT_CFLAGS=`sed "/^CFLAGS@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+  [at_cv_env_QT_CFLAGS=`sed "/^CFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_CFLAGS], [$at_cv_env_QT_CFLAGS])
 
   # Find the CXXFLAGS of Qt.
   AC_CACHE_CHECK([for the CXXFLAGS to use with Qt], [at_cv_env_QT_CXXFLAGS],
-  [at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+  [at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_CXXFLAGS], [$at_cv_env_QT_CXXFLAGS])
 
   # Find the INCPATH of Qt.
@@ -340,7 +340,7 @@ instead" >&AS_MESSAGE_LOG_FD
 
   # Find the LFLAGS of Qt (Should have been named LDFLAGS)
   AC_CACHE_CHECK([for the LDFLAGS to use with Qt], [at_cv_env_QT_LDFLAGS],
-  [at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+  [at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_LFLAGS], [$at_cv_env_QT_LDFLAGS])
   AC_SUBST([QT_LDFLAGS], [$at_cv_env_QT_LDFLAGS])
 
@@ -355,7 +355,7 @@ instead" >&AS_MESSAGE_LOG_FD
 
   # Find the LIBS of Qt.
   AC_CACHE_CHECK([for the LIBS to use with Qt], [at_cv_env_QT_LIBS],
-  [at_cv_env_QT_LIBS=`sed "/^LIBS@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`
+  [at_cv_env_QT_LIBS=`sed "/^LIBS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`
    if test x$at_darwin = xyes; then
      # Fix QT_LIBS: as of today Libtool (GNU Libtool 1.5.23a) doesn't handle
      # -F properly. The "bug" has been fixed on 22 October 2006
