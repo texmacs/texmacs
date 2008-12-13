@@ -240,7 +240,14 @@ m4_ifval([$3],
   echo "$as_me:$LINENO: Invoking $QMAKE on $pro_file" >&AS_MESSAGE_LOG_FD
   sed 's/^/| /' "$pro_file" >&AS_MESSAGE_LOG_FD
 
-  if $QMAKE  ; then :; else
+  additional_qmake_flags=""
+  case $host_os in
+    darwin*)
+      additional_qmake_flags="-spec macx-g++"
+      ;;
+  esac
+
+  if $QMAKE ${additional_qmake_flags} ; then :; else
     AC_MSG_ERROR([Calling $QMAKE failed.])
   fi
   # Try to compile a simple Qt app.
