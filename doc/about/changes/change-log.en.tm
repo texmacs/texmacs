@@ -8,6 +8,8 @@
   <section|Changes from version 1.0.7 to 1.0.7.1>
 
   <\itemize>
+    <item>Upgraded license to GNU GPL version 3 or later (1.0.7.1).
+
     <item>Several fixes and improvements for <name|Html> export (1.0.7.1).
 
     <item>Development based on <name|Svn> instead of <name|Cvs> (1.0.7.1).
