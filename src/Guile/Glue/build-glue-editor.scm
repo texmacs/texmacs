@@ -5,10 +5,9 @@
 ;; DESCRIPTION : Building basic glue for the editor
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
-;; This software falls under the GNU general public licence and comes WITHOUT
-;; ANY WARRENTY WHATSOEVER. See the file $TEXMACS_PATH/LICENCE for details.
-;; If you don't have this file, write to the Free Software Foundation, Inc.,
-;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+;; This software falls under the GNU general public license version 3 or later.
+;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
