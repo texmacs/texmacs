@@ -16,11 +16,11 @@
       </src-copyright>
 
       <\src-license>
-        This <TeXmacs> style file falls under the <hlink|GNU general public
-        license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-        WHATSOEVER. If you do not have a copy of the license, then write to
-        the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-        Boston, MA 02111-1307, USA.
+        This software falls under the <hlink|GNU general public
+        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
+        It comes WITHOUT ANY WARRANTY WHATSOEVER.
+        You should have received a copy of the license which the software.
+        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>

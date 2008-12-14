@@ -1,14 +1,13 @@
 
 /******************************************************************************
- * MODULE     : tm_cairo.hpp
- * DESCRIPTION: Interface with Cairo
- * COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
- *******************************************************************************
- * This software falls under the GNU general public license and comes WITHOUT
- * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
- * If you don't have this file, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- ******************************************************************************/
+* MODULE     : tm_cairo.hpp
+* DESCRIPTION: Interface with Cairo
+* COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #ifndef TM_CAIRO_H
 #define TM_CAIRO_H

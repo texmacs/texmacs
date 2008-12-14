@@ -11,10 +11,9 @@
 ;; combined with usual pattern matching, and the extensibility of Scheme.
 ;; In the future, we also plan to use this facility for search & replace.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; This software falls under the GNU general public license and comes WITHOUT
-;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
-;; If you don't have this file, write to the Free Software Foundation, Inc.,
-;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+;; This software falls under the GNU general public license version 3 or later.
+;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel regexp regexp-select))
