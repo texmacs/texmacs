@@ -22,24 +22,19 @@ void replaceActions(QWidget *dest, QWidget *src);
 
 class qt_widget_rep : public widget_rep {
 public:
-	qt_widget_rep() : widget_rep () { };
+  qt_widget_rep() : widget_rep () { };
 	
-	virtual widget plain_window_widget (string s); 
-	virtual widget make_popup_widget (); 
-	virtual widget popup_window_widget (string s); 
+  virtual widget plain_window_widget (string s); 
+  virtual widget make_popup_widget (); 
+  virtual widget popup_window_widget (string s); 
  
-	virtual QAction *as_qaction() { return NULL; };
-
-//  virtual TMMenuItem *as_menuitem() { return NULL; };
-
+  virtual QAction *as_qaction() { return NULL; };
+  // virtual TMMenuItem *as_menuitem() { return NULL; };
 };
-
-
-
 
 class qt_view_widget_rep: public qt_widget_rep {
 public:	
-	QWidget *view;
+  QWidget *view;
   basic_renderer current_renderer;
   
 public:

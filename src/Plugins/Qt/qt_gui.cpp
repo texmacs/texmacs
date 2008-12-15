@@ -99,7 +99,7 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   if (key == "primary") {
     //if (is_nil (windows_l)) return false;
     //Window win= windows_l->item;
-    if (selection!=NULL) delete [] selection;
+    if (selection != NULL) tm_delete_array (selection);
     //XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
     //if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
     selection= as_charp (s);
@@ -117,7 +117,7 @@ qt_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
   if ((key == "primary") && (selection != NULL)) {
-    delete[] selection;
+    tm_delete_array (selection);
     // FIXME: should we do something with the pasteboard?
     selection= NULL;
   }
@@ -210,8 +210,8 @@ qt_gui_rep::event_loop () {
 void
 gui_open (int argc2, char** argv2) {
   // start the gui
-  new QApplication(argc2,argv2);
-  the_gui = new qt_gui_rep (argc2, argv2);
+  new QApplication (argc2,argv2);
+  the_gui = tm_new<qt_gui_rep> (argc2, argv2);
 }
 
 void
@@ -225,7 +225,7 @@ gui_close () {
   // cleanly close the gui
   if (the_gui == NULL)
     fatal_error ("gui not yet open", "gui_close");
-  delete the_gui;
+  tm_delete (the_gui);
   the_gui=NULL;
 }
 

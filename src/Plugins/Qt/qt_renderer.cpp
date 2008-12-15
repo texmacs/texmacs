@@ -16,27 +16,25 @@
 #include "file.hpp"
 #include <QWidget>
 
-
-
 /******************************************************************************
 * Qt images
 ******************************************************************************/
 
 struct qt_image_rep: concrete_struct {
-	QTMImage *img;
-	SI xo,yo;
-	int w,h;
-	qt_image_rep (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
+  QTMImage *img;
+  SI xo,yo;
+  int w,h;
+  qt_image_rep (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
     img (img2), xo (xo2), yo (yo2), w (w2), h (h2) {};
-	~qt_image_rep()  { delete img; };
-	friend class qt_image;
+  ~qt_image_rep() { delete img; };
+  friend class qt_image;
 };
 
 class qt_image {
-	CONCRETE_NULL(qt_image);
-	qt_image (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
-    rep (new qt_image_rep (img2, xo2, yo2, w2, h2)) {};
-	// qt_image ();
+CONCRETE_NULL(qt_image);
+  qt_image (QTMImage* img2, SI xo2, SI yo2, int w2, int h2):
+    rep (tm_new<qt_image_rep> (img2, xo2, yo2, w2, h2)) {};
+  // qt_image ();
 };
 
 CONCRETE_NULL_CODE(qt_image);
@@ -46,45 +44,37 @@ CONCRETE_NULL_CODE(qt_image);
  ******************************************************************************/
 
 struct qt_pixmap_rep: concrete_struct {
-	QPixmap *img;
-	SI xo,yo;
-	int w,h;
-	qt_pixmap_rep (QPixmap* img2, SI xo2, SI yo2, int w2, int h2):
-  img (img2), xo (xo2), yo (yo2), w (w2), h (h2) {};
-	~qt_pixmap_rep()  { delete img; };
-	friend class qt_pixmap;
+  QPixmap *img;
+  SI xo,yo;
+  int w,h;
+  qt_pixmap_rep (QPixmap* img2, SI xo2, SI yo2, int w2, int h2):
+    img (img2), xo (xo2), yo (yo2), w (w2), h (h2) {};
+  ~qt_pixmap_rep()  { delete img; };
+  friend class qt_pixmap;
 };
 
 class qt_pixmap {
-	CONCRETE_NULL(qt_pixmap);
-	qt_pixmap (QPixmap* img2, SI xo2, SI yo2, int w2, int h2):
-  rep (new qt_pixmap_rep (img2, xo2, yo2, w2, h2)) {};
-	// qt_pixmap ();
+CONCRETE_NULL(qt_pixmap);
+  qt_pixmap (QPixmap* img2, SI xo2, SI yo2, int w2, int h2):
+    rep (tm_new<qt_pixmap_rep> (img2, xo2, yo2, w2, h2)) {};
+  // qt_pixmap ();
 };
 
 CONCRETE_NULL_CODE(qt_pixmap);
 
-
 /******************************************************************************
- * Global support variables for all qt_renderers
- ******************************************************************************/
-
+* Global support variables for all qt_renderers
+******************************************************************************/
 
 static hashmap<basic_character,qt_image> character_image;  // bitmaps of all characters
 static hashmap<string,qt_pixmap> images; 
 
-
-
 /******************************************************************************
- * qt_renderer
- ******************************************************************************/
+* qt_renderer
+******************************************************************************/
 
-
-
-qt_renderer_rep::qt_renderer_rep (int w2, int h2) :
- basic_renderer_rep(w2, h2)
-{
-}
+qt_renderer_rep::qt_renderer_rep (int w2, int h2):
+  basic_renderer_rep(w2, h2) {}
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
@@ -240,9 +230,10 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 ******************************************************************************/
 
 struct qt_cache_image_rep: cache_image_element_rep {
-	qt_cache_image_rep (int w2, int h2, int time2, QImage *ptr2) :
-    cache_image_element_rep(w2,h2,time2,ptr2) {};
-	virtual ~qt_cache_image_rep() { delete static_cast<QImage*>(ptr); };
+  qt_cache_image_rep (int w2, int h2, int time2, QImage *ptr2):
+    cache_image_element_rep (w2, h2, time2, ptr2) {}
+  virtual ~qt_cache_image_rep () {
+    delete static_cast<QImage*> (ptr); }
 };
 
 void
@@ -264,8 +255,8 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
   lookup << as_string (w ) << as_string (h )
-  << as_string (cx1) << as_string (cy1)
-  << as_string (cx2) << as_string (cy2) << "qt-image" ;
+	 << as_string (cx1) << as_string (cy1)
+	 << as_string (cx2) << as_string (cy2) << "qt-image" ;
   cache_image_element ci = get_image_cache(lookup);
   if (!is_nil(ci)) {
     pm= static_cast<QImage*> (ci->ptr);
@@ -281,12 +272,12 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       pm= new QImage (to_qstring (as_string (temp)));
       remove (temp);
     }
-    if (pm == NULL || pm->isNull()) {
+    if (pm == NULL || pm->isNull ()) {
       cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
       if (pm != NULL) delete pm;
       return;
     }
-    ci = new qt_cache_image_rep (w,h, texmacs_time(), pm);
+    ci = tm_new<qt_cache_image_rep> (w,h, texmacs_time(), pm);
     set_image_cache(lookup, ci);
     (ci->nr)++;
   }
@@ -410,7 +401,7 @@ qt_renderer_rep::xpm_image (url file_name) {
     uchar *buf= (uchar*) as_charp (sss);
     pxm= new QPixmap();
     pxm->loadFromData (buf, N(sss));
-    delete buf;
+    tm_delete_array ((char*) buf);
     //out << sss;
     //cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
     qt_pixmap mi2 (pxm, 0, 0, pxm->width(), pxm->height());
@@ -444,6 +435,6 @@ qt_renderer_rep::xpm (url file_name, SI x, SI y) {
 qt_renderer_rep*
 the_qt_renderer () {
   static qt_renderer_rep* the_renderer= NULL;
-	if (!the_renderer) the_renderer= new qt_renderer_rep ();
-	return the_renderer;
+  if (!the_renderer) the_renderer= tm_new<qt_renderer_rep> ();
+  return the_renderer;
 }
