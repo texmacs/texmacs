@@ -409,7 +409,6 @@ QTMLazyMenu::force () {
     replaceActions (this, menu2);
     delete (wid->item);
     wid->item= NULL;
-    DEC_COUNT_NULL (pm);
     pm= NULL;
     forced= true;
   }
