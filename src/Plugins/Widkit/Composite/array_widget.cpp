@@ -122,10 +122,10 @@ horizontal_array_rep::handle_find_child (find_child_event ev) {
 
 wk_widget
 horizontal_array (array<wk_widget> a, int stretch_me) {
-  return new horizontal_array_rep (a, stretch_me);
+  return tm_new<horizontal_array_rep> (a, stretch_me);
 }
 
 wk_widget
 horizontal_array (array<wk_widget> a, array<string> name, int sm) {
-  return new horizontal_array_rep (a, name, sm);
+  return tm_new<horizontal_array_rep> (a, name, sm);
 }

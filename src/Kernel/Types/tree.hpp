@@ -142,17 +142,17 @@ inline tree& tree::operator = (tree x) {
   return *this; }
 
 inline tree::tree ():
-  rep (new atomic_rep (string ())) {}
+  rep (tm_new<atomic_rep> (string ())) {}
 inline tree::tree (const char *s):
-  rep (new atomic_rep (s)) {}
+  rep (tm_new<atomic_rep> (s)) {}
 inline tree::tree (string s):
-  rep (new atomic_rep (s)) {}
+  rep (tm_new<atomic_rep> (s)) {}
 inline tree::tree (tree_label l, int n):
-  rep (new compound_rep (l, array<tree> (n))) {}
+  rep (tm_new<compound_rep> (l, array<tree> (n))) {}
 inline tree::tree (tree_label l, array<tree> a):
-  rep (new compound_rep (l, a)) {}
+  rep (tm_new<compound_rep> (l, a)) {}
 inline tree::tree (tree t, int n):
-  rep (new compound_rep (t.rep->op, array<tree> (n))) {
+  rep (tm_new<compound_rep> (t.rep->op, array<tree> (n))) {
     CHECK_COMPOUND (t, "tree::tree (tree, int)"); }
 
 inline tree& tree::operator [] (int i) {

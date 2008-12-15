@@ -19,18 +19,18 @@ clean_event_rep::clean_event_rep ():
   event_rep (CLEAN_EVENT) {}
 clean_event_rep::operator tree () { return "clean_event"; }
 event emit_clean () {
-  return new clean_event_rep (); }
+  return tm_new<clean_event_rep> (); }
 
 insert_event_rep::insert_event_rep (string s2, wk_widget w2):
   event_rep (INSERT_EVENT), s (s2), w (w2) {}
 insert_event_rep::operator tree () {
   return tree (TUPLE, "insert_event", s); }
 event emit_insert (string s, wk_widget w) {
-  return new insert_event_rep (s, w); }
+  return tm_new<insert_event_rep> (s, w); }
 
 remove_event_rep::remove_event_rep (string s2):
   event_rep (REMOVE_EVENT), s (s2) {}
 remove_event_rep::operator tree () {
   return tree (TUPLE, "remove_event", s); }
 event emit_remove (string s) {
-  return new remove_event_rep (s); }
+  return tm_new<remove_event_rep> (s); }

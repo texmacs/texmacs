@@ -35,7 +35,7 @@ struct lazy_canvas_rep: public lazy_rep {
 struct lazy_canvas {
 EXTEND_NULL(lazy,lazy_canvas);
   inline lazy_canvas (canvas_properties props, lazy par, path ip):
-    rep (new lazy_canvas_rep (props, par, ip)) {
+    rep (tm_new<lazy_canvas_rep> (props, par, ip)) {
       rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_canvas);
@@ -164,7 +164,7 @@ EXTEND_NULL(lazy,lazy_ornament);
   lazy_ornament (edit_env env, lazy par, path ip,
 		 SI w, SI xpad, SI ypad,
 		 tree bg, color sunny, color shadow):
-    rep (new lazy_ornament_rep (env, par, ip, w, xpad, ypad,
+    rep (tm_new<lazy_ornament_rep> (env, par, ip, w, xpad, ypad,
 				bg, sunny, shadow)) {
       rep->ref_count= 1; }
 };

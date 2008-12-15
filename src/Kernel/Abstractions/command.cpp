@@ -27,4 +27,4 @@ std_command_rep::std_command_rep (void (*routine2) (void)):
 void std_command_rep::apply () { routine (); }
 
 command::command (void (*routine) (void)):
-  rep (new std_command_rep (routine)) { rep->ref_count++; }
+  rep (tm_new<std_command_rep> (routine)) { rep->ref_count++; }

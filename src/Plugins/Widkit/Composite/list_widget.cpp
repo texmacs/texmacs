@@ -228,25 +228,25 @@ vertical_list_rep::handle_find_child (find_child_event ev) {
 
 wk_widget
 horizontal_list (array<wk_widget> a) {
-  return new horizontal_list_rep (a);
+  return tm_new<horizontal_list_rep> (a);
 }
 
 wk_widget
 horizontal_list (array<wk_widget> a, array<string> name) {
-  return new horizontal_list_rep (a, name);
+  return tm_new<horizontal_list_rep> (a, name);
 }
 
 wk_widget
 vertical_list (array<wk_widget> a) {
-  return new vertical_list_rep (a);
+  return tm_new<vertical_list_rep> (a);
 }
 
 wk_widget
 vertical_list (array<wk_widget> a, array<string> name) {
-  return new vertical_list_rep (a, name);
+  return tm_new<vertical_list_rep> (a, name);
 }
 
 wk_widget
 vertical_menu (array<wk_widget> a) {
-  return new vertical_list_rep (a, true);
+  return tm_new<vertical_list_rep> (a, true);
 }

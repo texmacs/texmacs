@@ -26,12 +26,12 @@ typesetter_rep::typesetter_rep (edit_env& env2, tree et, path ip):
 
 typesetter
 new_typesetter (edit_env& env, tree et, path ip) {
-  return new typesetter_rep (env, et, ip);
+  return tm_new<typesetter_rep> (env, et, ip);
 }
 
 void
 delete_typesetter (typesetter ttt) {
-  delete ttt;
+  tm_delete (ttt);
 }
 
 /******************************************************************************
@@ -159,10 +159,10 @@ typesetter_rep::typeset () {
   // Typeset
   if (env->complete) env->local_aux= hashmap<string,tree> (UNINIT);
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
-  pager ppp= new pager_rep (br->ip, env, l);
+  pager ppp= tm_new<pager_rep> (br->ip, env, l);
   box b= ppp->make_pages ();
   if (env->complete && paper) determine_page_references (b);
-  delete ppp;
+  tm_delete (ppp);
   env->complete= false;
 
   return b;

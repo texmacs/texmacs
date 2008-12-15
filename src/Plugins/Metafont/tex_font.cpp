@@ -712,33 +712,33 @@ font
 tex_font (string family, int size, int dpi, int dsize) {
   string name= "tex:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (name, TEX_ANY, family, size, dpi, dsize));
+    tm_new<tex_font_rep> (name, TEX_ANY, family, size, dpi, dsize));
 }
 
 font
 tex_cm_font (string family, int size, int dpi, int dsize) {
   string name= "cm:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (name, TEX_CM, family, size, dpi, dsize));
+    tm_new<tex_font_rep> (name, TEX_CM, family, size, dpi, dsize));
 }
 
 font
 tex_ec_font (string family, int size, int dpi, int dsize) {
   string name= "ec:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (name, TEX_EC, family, size, dpi, dsize));
+    tm_new<tex_font_rep> (name, TEX_EC, family, size, dpi, dsize));
 }
 
 font
 tex_la_font (string family, int size, int dpi, int dsize) {
   string name= "la:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (name, TEX_LA, family, size, dpi, dsize));
+    tm_new<tex_font_rep> (name, TEX_LA, family, size, dpi, dsize));
 }
 
 font
 tex_adobe_font (string family, int size, int dpi, int dsize) {
   string name= "adobe:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_font_rep (name, TEX_ADOBE, family, size, dpi, dsize));
+    tm_new<tex_font_rep> (name, TEX_ADOBE, family, size, dpi, dsize));
 }

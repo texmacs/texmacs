@@ -386,10 +386,10 @@ concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 box
 composite_box (path ip, array<box> bs, bool bfl) {
-  return new concrete_composite_box_rep (ip, bs, bfl);
+  return tm_new<concrete_composite_box_rep> (ip, bs, bfl);
 }
 
 box
 composite_box (path ip, array<box> bs, array<SI> x, array<SI> y, bool bfl) {
-  return new concrete_composite_box_rep (ip, bs, x, y, bfl);
+  return tm_new<concrete_composite_box_rep> (ip, bs, x, y, bfl);
 }

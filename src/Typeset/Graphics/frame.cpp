@@ -34,7 +34,7 @@ struct scaling_rep: public frame_rep {
 
 frame
 scaling (double magnify, point shift) {
-  return new scaling_rep (magnify, shift);
+  return tm_new<scaling_rep> (magnify, shift);
 }
 
 /******************************************************************************
@@ -59,7 +59,7 @@ struct rotation_2D_rep: public frame_rep {
 
 frame
 rotation_2D (point center, double angle) {
-  return new rotation_2D_rep (center, angle);
+  return tm_new<rotation_2D_rep> (center, angle);
 }
 
 /******************************************************************************
@@ -96,7 +96,7 @@ struct affine_2D_rep: public frame_rep {
 
 frame
 affine_2D (matrix<double> m) {
-  return new affine_2D_rep (m);
+  return tm_new<affine_2D_rep> (m);
 }
 
 /******************************************************************************
@@ -131,7 +131,7 @@ struct compound_frame_rep: public frame_rep {
 
 frame
 operator * (frame f1, frame f2) {
-  return new compound_frame_rep (f1, f2);
+  return tm_new<compound_frame_rep> (f1, f2);
 }
 
 /******************************************************************************
@@ -156,5 +156,5 @@ struct inverted_frame_rep: public frame_rep {
 
 frame
 invert (frame f) {
-  return new inverted_frame_rep (f);
+  return tm_new<inverted_frame_rep> (f);
 }

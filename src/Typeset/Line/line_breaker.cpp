@@ -26,7 +26,7 @@ struct lb_info_rep: concrete_struct {
 
 struct lb_info {
   CONCRETE(lb_info);
-  lb_info () { rep= new lb_info_rep (); }
+  lb_info () { rep= tm_new<lb_info_rep> (); }
   operator tree () {
     return tuple ((tree) rep->prev,
 		  as_string (rep->pen),
@@ -447,8 +447,8 @@ line_breaks (array<line_item> a, int start, int end,
   int tol= 5;         // extra tolerance of 5tmpt avoid rounding errors when
   line_width += tol;  // the widths of the boxes sum up to precisely 1par
   line_breaker_rep* H=
-    new line_breaker_rep (a, start, end, line_width, first_spc, last_spc);
+    tm_new<line_breaker_rep> (a, start, end, line_width, first_spc, last_spc);
   array<path> ap= ragged? H->compute_ragged_breaks (): H->compute_breaks ();
-  delete H;
+  tm_delete (H);
   return ap;
 }

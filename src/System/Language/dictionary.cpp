@@ -64,7 +64,7 @@ load_dictionary (string from, string to) {
   string name= from * "-" * to;
   if (dictionary::instances -> contains (name))
     return dictionary (name);
-  dictionary dict= new dictionary_rep (from, to);
+  dictionary dict= tm_new<dictionary_rep> (from, to);
   if (from != to) dict->load (name);
   return dict;
 }

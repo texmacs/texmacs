@@ -377,20 +377,20 @@ SI macro_box_rep::get_leaf_offset (string search) {
 
 box
 symbol_box (path ip, box b, int n) {
-  return new symbol_box_rep (ip, b, n);
+  return tm_new<symbol_box_rep> (ip, b, n);
 }
 
 box
 shorter_box (path ip, box b, int len) {
-  return new shorter_box_rep (ip, b, len);
+  return tm_new<shorter_box_rep> (ip, b, len);
 }
 
 box
 frozen_box (path ip, box b) {
-  return new frozen_box_rep (ip, b);
+  return tm_new<frozen_box_rep> (ip, b);
 }
 
 box
 macro_box (path ip, box b, font big_fn) {
-  return new macro_box_rep (ip, b, big_fn);
+  return tm_new<macro_box_rep> (ip, b, big_fn);
 }

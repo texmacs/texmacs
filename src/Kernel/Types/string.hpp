@@ -22,7 +22,7 @@ class string_rep: concrete_struct {
 public:
   inline string_rep (): n(0), a(NULL) {}
          string_rep (int n);
-  inline ~string_rep () { if (n!=0) delete[] a; }
+  inline ~string_rep () { if (n!=0) tm_delete_array (a); }
   void resize (int n);
 
   friend class string;
@@ -31,8 +31,8 @@ public:
 
 class string {
   CONCRETE(string);
-  inline string (): rep (new string_rep()) {}
-  inline string (int n): rep (new string_rep (n)) {}
+  inline string (): rep (tm_new<string_rep> ()) {}
+  inline string (int n): rep (tm_new<string_rep> (n)) {}
   string (char c);
   string (const char *s);
   string (const char *s, int n);

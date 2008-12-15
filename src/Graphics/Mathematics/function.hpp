@@ -81,7 +81,7 @@ public:
 };
 
 TMPL inline function<F,T>::function (T c):
-  rep (new constant_function_rep<F,T> (c)) { rep->ref_count++; }
+  rep (tm_new<constant_function_rep<F,T> > (c)) { rep->ref_count++; }
 
 TMPL
 class coordinate_function_rep: public function_rep<F,T> {
@@ -99,7 +99,7 @@ public:
 
 TMPL inline function<F,T>
 coordinate_function (V var, T c=1) {
-  return new coordinate_function_rep<F,T> (var, c); }
+  return tm_new<coordinate_function_rep<F,T> > (var, c); }
 
 /******************************************************************************
 * Operators on functions
@@ -118,7 +118,7 @@ public:
 
 template<typename F, typename T, typename Op> inline function<F,T>
 unary_function (function<F,T> f) {
-  return new unary_function_rep<F,T,Op> (f); }
+  return tm_new<unary_function_rep<F,T,Op> > (f); }
 
 template<typename F, typename T, typename Op>
 class binary_function_rep: public function_rep<F,T> {
@@ -134,7 +134,7 @@ public:
 
 template<typename F, typename T, typename Op> inline function<F,T>
 binary_function (function<F,T> f, function<F,T> g) {
-  return new binary_function_rep<F,T,Op> (f, g); }
+  return tm_new<binary_function_rep<F,T,Op> > (f, g); }
 
 /******************************************************************************
 * Standard functions

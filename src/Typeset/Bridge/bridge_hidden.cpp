@@ -30,7 +30,7 @@ bridge_hidden_rep::bridge_hidden_rep (typesetter ttt, tree st, path ip):
 
 bridge
 bridge_hidden (typesetter ttt, tree st, path ip) {
-  return new bridge_hidden_rep (ttt, st, ip);
+  return tm_new<bridge_hidden_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

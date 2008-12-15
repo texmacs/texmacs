@@ -705,26 +705,26 @@ concater_rep::concater_rep (edit_env env2): env (env2) {}
 
 array<line_item>
 typeset_concat (edit_env env, tree t, path ip) {
-  concater ccc= new concater_rep (env);
+  concater ccc= tm_new<concater_rep> (env);
   ccc->typeset (t, ip);
   ccc->finish ();
   array<line_item> a= ccc->a;
-  delete ccc;
+  tm_delete (ccc);
   return a;
 }
 
 array<line_item>
 typeset_marker (edit_env env, path ip) {
-  concater ccc= new concater_rep (env);
+  concater ccc= tm_new<concater_rep> (env);
   ccc->marker (ip);
   array<line_item> a= ccc->a;
-  delete ccc;
+  tm_delete (ccc);
   return a;
 }
 
 box
 typeset_as_concat (edit_env env, tree t, path ip) {
-  concater ccc= new concater_rep (env);
+  concater ccc= tm_new<concater_rep> (env);
   ccc->typeset (t, ip);
   ccc->finish ();
   array<line_item> a= ccc->a;
@@ -743,7 +743,7 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   }
   box b= concat_box (ip, items, spc);
 
-  delete ccc;
+  tm_delete (ccc);
   return b;
 }
 

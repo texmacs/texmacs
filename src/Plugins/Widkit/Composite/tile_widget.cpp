@@ -126,10 +126,10 @@ tile_rep::handle_set_coord2 (set_coord2_event ev) {
 
 wk_widget
 tile (array<wk_widget> a, int cols) {
-  return new tile_rep (a, cols);
+  return tm_new<tile_rep> (a, cols);
 }
 
 wk_widget
 tile (array<wk_widget> a, int cols, array<string> name) {
-  return new tile_rep (a, cols, name);
+  return tm_new<tile_rep> (a, cols, name);
 }

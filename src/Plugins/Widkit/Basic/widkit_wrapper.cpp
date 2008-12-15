@@ -51,7 +51,7 @@ public:
 
 promise<widget>
 abstract (promise<wk_widget> pw) {
-  return new abstract_promise_rep (pw);
+  return tm_new<abstract_promise_rep> (pw);
 }
 
 class concrete_promise_rep: public promise_rep<wk_widget> {
@@ -64,7 +64,7 @@ public:
 
 promise<wk_widget>
 concrete (promise<widget> pw) {
-  return new concrete_promise_rep (pw);
+  return tm_new<concrete_promise_rep> (pw);
 }
 
 /******************************************************************************

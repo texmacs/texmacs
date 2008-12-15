@@ -185,7 +185,7 @@ page_box_rep::find_right_box_path () {
 
 box
 scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y) {
-  return new scatter_box_rep (ip, bs, x, y);
+  return tm_new<scatter_box_rep> (ip, bs, x, y);
 }
 
 box
@@ -194,5 +194,5 @@ page_box (path ip, tree page, SI w, SI h,
 	  array<box> decs, array<SI> decs_x, array<SI> decs_y) {
   box dec;
   if (N (decs) > 0) dec= composite_box (ip, decs, decs_x, decs_y, false);
-  return new page_box_rep (ip, page, w, h, bs, bs_x, bs_y, dec);
+  return tm_new<page_box_rep> (ip, page, w, h, bs, bs_x, bs_y, dec);
 }

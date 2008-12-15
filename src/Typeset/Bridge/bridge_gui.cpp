@@ -212,7 +212,7 @@ public:
 
 bridge
 bridge_canvas (typesetter ttt, tree st, path ip) {
-  return new bridge_canvas_rep (ttt, st, ip);
+  return tm_new<bridge_canvas_rep> (ttt, st, ip);
 }
 
 void
@@ -260,7 +260,7 @@ public:
 
 bridge
 bridge_ornament (typesetter ttt, tree st, path ip) {
-  return new bridge_ornament_rep (ttt, st, ip);
+  return tm_new<bridge_ornament_rep> (ttt, st, ip);
 }
 
 void

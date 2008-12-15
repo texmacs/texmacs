@@ -59,7 +59,7 @@ type_box (blackbox bb) {
 
 template<class T> blackbox
 close_box (const T& data) {
-  return new whitebox_rep<T> (data);
+  return tm_new<whitebox_rep<T> > (data);
 }
 
 template<class T> T

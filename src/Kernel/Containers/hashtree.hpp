@@ -103,10 +103,10 @@ public:
   inline hashtree<K,V>& operator= (hashtree<K,V> x);
     
   // default constructor returns a non-NULL node, which does not have a value
-  inline hashtree (): rep (new hashtree_rep<K,V>()) {}
+  inline hashtree (): rep (tm_new<hashtree_rep<K,V> > ()) {}
   
   // returns a non-NULL node, that has value
-  inline hashtree (V val): rep (new hashtree_rep<K,V>(val)) {}
+  inline hashtree (V val): rep (tm_new<hashtree_rep<K,V> > (val)) {}
   
   // returns this node's value
   inline hashtree_rep<K,V>* operator-> (void);

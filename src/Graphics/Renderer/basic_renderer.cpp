@@ -223,11 +223,11 @@ xpm_to_color (string s) {
   char *name = as_charp(s);
   for(int i = 0; i<RGBColorsSize; i++) {
     if (strcmp(name,RGBColors[i].name)==0) {
-      delete [] name;
+      tm_delete_array (name);
       return RGBCOLOR(RGBColors[i].r,RGBColors[i].g,RGBColors[i].b);
     }
   }
-  delete[] name;
+  tm_delete_array (name);
   return RGBCOLOR (0, 0, 0);
 }
 

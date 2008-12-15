@@ -107,7 +107,7 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   unsigned char* _data= (unsigned char*) as_charp (data);
   int _n= N(data);
   XChangeProperty (dpy, gs_win, gh, st, 8, PropModeReplace, _data, _n);
-  delete[] _data;
+  tm_delete_array (_data);
   XSync(dpy, false);
 #endif
 

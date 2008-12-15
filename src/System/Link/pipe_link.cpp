@@ -56,7 +56,7 @@ pipe_link_rep::~pipe_link_rep () {
 
 tm_link
 make_pipe_link (string cmd) {
-  return new pipe_link_rep (cmd);
+  return tm_new<pipe_link_rep> (cmd);
 }
 
 /******************************************************************************
@@ -74,7 +74,7 @@ execute_shell (string s) {
   argv[2] = _s;
   argv[3] = NULL;
   execve ("/bin/sh", argv, environ);
-  delete[] _s;
+  tm_delete_array (_s);
 }
 #endif
 #endif
@@ -90,7 +90,7 @@ pipe_link_rep::start () {
   bool success;
   cmdString = as_charp(cmd);
   success = PIPE_Create(cmdString, &conn);
-  delete [] cmdString;
+  tm_delete_array (cmdString);
   if (!success) return "Error: Could not create pipe";
   else {
 #else
@@ -182,7 +182,7 @@ pipe_link_rep::write (string s, int channel) {
 #else
   ::write (in, _s, N(s));
 #endif
-  delete[] _s;
+  tm_delete_array (_s);
 #endif
 }
 

@@ -65,5 +65,5 @@ xpm_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 wk_widget
 xpm_wk_widget (url name, bool transp) {
-  return new xpm_widget_rep (name, transp, PIXEL, PIXEL);
+  return tm_new<xpm_widget_rep> (name, transp, PIXEL, PIXEL);
 }

@@ -61,7 +61,7 @@ charmap
 any_charmap () {
   if (charmap::instances -> contains ("any"))
     return charmap ("any");
-  return make (charmap, "any", new charmap_rep ("any"));
+  return make (charmap, "any", tm_new<charmap_rep> ("any"));
 }
 
 /******************************************************************************
@@ -80,7 +80,7 @@ charmap
 ec_charmap () {
   if (charmap::instances -> contains ("ec"))
     return charmap ("ec");
-  return make (charmap, "ec", new ec_charmap_rep ());
+  return make (charmap, "ec", tm_new<ec_charmap_rep> ());
 }
 
 struct range_charmap_rep: public charmap_rep {
@@ -102,7 +102,7 @@ charmap
 range_charmap (int start, int end) {
   string name= as_hexadecimal (start) * "--" * as_hexadecimal (end);
   if (charmap::instances -> contains (name)) return charmap (name);
-  return make (charmap, name, new range_charmap_rep (start, end));
+  return make (charmap, name, tm_new<range_charmap_rep> (start, end));
 }
 
 charmap
@@ -134,7 +134,7 @@ charmap
 explicit_charmap (string name) {
   if (charmap::instances -> contains (name))
     return charmap (name);
-  return make (charmap, name, new explicit_charmap_rep (name));
+  return make (charmap, name, tm_new<explicit_charmap_rep> (name));
 }
 
 /******************************************************************************
@@ -190,7 +190,7 @@ join_charmap (charmap* a, int n) {
   string name= join_name (a, n);
   if (charmap::instances -> contains (name))
     return charmap (name);
-  return make (charmap, name, new join_charmap_rep (a, n));
+  return make (charmap, name, tm_new<join_charmap_rep> (a, n));
 }
 
 /******************************************************************************
@@ -200,7 +200,7 @@ join_charmap (charmap* a, int n) {
 charmap
 load_charmap (tree def) {
   int i, n= N (def);
-  charmap* a= new charmap [n];
+  charmap* a= tm_new_array<charmap> (n);
   for (i=0; i<n; i++) {
     //cout << i << "\t" << def[i] << "\n";
     if (def[i] == "any") a[i]= any_charmap ();

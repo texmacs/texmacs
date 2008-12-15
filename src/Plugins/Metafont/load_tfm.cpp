@@ -38,16 +38,16 @@ tex_font_metric_rep::tex_font_metric_rep (string name):
 }
 
 tex_font_metric_rep::~tex_font_metric_rep () {
-  if (header != NULL) delete[] header;
-  if (char_info != NULL) delete[] char_info;
-  if (width != NULL) delete[] width;
-  if (height != NULL) delete[] height;
-  if (depth != NULL) delete[] depth;
-  if (italic != NULL) delete[] italic;
-  if (lig_kern != NULL) delete[] lig_kern;
-  if (kern != NULL) delete[] kern;
-  if (exten != NULL) delete[] exten;
-  if (param != NULL) delete[] param;
+  if (header != NULL) tm_delete_array (header);
+  if (char_info != NULL) tm_delete_array (char_info);
+  if (width != NULL) tm_delete_array (width);
+  if (height != NULL) tm_delete_array (height);
+  if (depth != NULL) tm_delete_array (depth);
+  if (italic != NULL) tm_delete_array (italic);
+  if (lig_kern != NULL) tm_delete_array (lig_kern);
+  if (kern != NULL) tm_delete_array (kern);
+  if (exten != NULL) tm_delete_array (exten);
+  if (param != NULL) tm_delete_array (param);
 }
 
 /******************************************************************************
@@ -367,7 +367,7 @@ print (tex_font_metric tfm) {
 tex_font_metric
 load_tfm (url file_name, string family, int size) {
   tex_font_metric tfm=
-    new tex_font_metric_rep (family * as_string (size) * ".tfm");
+    tm_new<tex_font_metric_rep> (family * as_string (size) * ".tfm");
 
   int i= 0;
   string s;

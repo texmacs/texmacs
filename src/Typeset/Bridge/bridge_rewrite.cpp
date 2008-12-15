@@ -41,7 +41,7 @@ bridge_rewrite_rep::initialize (tree body_t) {
 
 bridge
 bridge_rewrite (typesetter ttt, tree st, path ip) {
-  return new bridge_rewrite_rep (ttt, st, ip);
+  return tm_new<bridge_rewrite_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

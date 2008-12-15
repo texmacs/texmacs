@@ -119,5 +119,5 @@ grid_box_rep::reindex (int i, int item, int n) {
 
 box
 grid_box (path ip, grid g, frame f, SI un, point lim1, point lim2) {
-  return new grid_box_rep (ip, g, f, un, lim1, lim2);
+  return tm_new<grid_box_rep> (ip, g, f, un, lim1, lim2);
 }

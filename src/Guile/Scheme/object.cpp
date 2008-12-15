@@ -123,17 +123,17 @@ bool is_url (object obj) { return scm_is_url (obj->lookup()); }
 * Basic conversions
 ******************************************************************************/
 
-object::object (): rep (new object_rep (SCM_NULL)) {}
-object::object (bool b): rep (new object_rep (bool_to_scm (b))) {}
-object::object (int i): rep (new object_rep (int_to_scm (i))) {}
+object::object (): rep (tm_new<object_rep> (SCM_NULL)) {}
+object::object (bool b): rep (tm_new<object_rep> (bool_to_scm (b))) {}
+object::object (int i): rep (tm_new<object_rep> (int_to_scm (i))) {}
 object::object (const char* s):
-  rep (new object_rep (string_to_scm (string (s)))) {}
-object::object (string s): rep (new object_rep (string_to_scm (s))) {}
-object::object (tree t): rep (new object_rep (tree_to_scm (t))) {}
-object::object (list<string> l): rep (new object_rep(list_string_to_scm(l))) {}
-object::object (list<tree> l): rep (new object_rep (list_tree_to_scm (l))) {}
-object::object (path p): rep (new object_rep (path_to_scm (p))) {}
-object::object (url u): rep (new object_rep (url_to_scm (u))) {}
+  rep (tm_new<object_rep> (string_to_scm (string (s)))) {}
+object::object (string s): rep (tm_new<object_rep> (string_to_scm (s))) {}
+object::object (tree t): rep (tm_new<object_rep> (tree_to_scm (t))) {}
+object::object (list<string> l): rep (tm_new<object_rep> (list_string_to_scm(l))) {}
+object::object (list<tree> l): rep (tm_new<object_rep> (list_tree_to_scm (l))) {}
+object::object (path p): rep (tm_new<object_rep> (path_to_scm (p))) {}
+object::object (url u): rep (tm_new<object_rep> (url_to_scm (u))) {}
 
 bool
 as_bool (object obj) {
@@ -269,7 +269,7 @@ public:
 
 command
 as_command (object obj) {
-  return new object_command_rep (obj);
+  return tm_new<object_command_rep> (obj);
 }
 
 class object_promise_widget_rep: public promise_rep<widget> {
@@ -289,7 +289,7 @@ public:
 
 promise<widget>
 as_promise_widget (object obj) {
-  return new object_promise_widget_rep (obj);
+  return tm_new<object_promise_widget_rep> (obj);
 }
 
 /******************************************************************************

@@ -29,7 +29,7 @@ x_character_rep::x_character_rep (
     c (c2), fng (fng2), sf (sf2), fg (fg2), bg (bg2) {}
 
 x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
-  rep (new x_character_rep (c, fng, sf, fg, bg)) {}
+  rep (tm_new<x_character_rep> (c, fng, sf, fg, bg)) {}
 
 x_character::operator tree () {
   tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
@@ -59,7 +59,7 @@ x_gui_rep::prepare_color (int sf, color fg, color bg) {
     int fR, fG, fB, bR, bG, bB, j;
     get_rgb_color (fg, fR, fG, fB);
     get_rgb_color (bg, bR, bG, bB);
-    cols= new color [nr_cols+1];
+    cols= tm_new_array<color> (nr_cols+1);
     for (j=0; j<=nr_cols; j++)
       cols [nr_cols-j]= rgb_color ((bR*j + fR*(nr_cols-j)) / nr_cols,
 				   (bG*j + fG*(nr_cols-j)) / nr_cols,
@@ -261,7 +261,7 @@ x_gui_rep::set_selection (string key, tree t, string s) {
   if (key == "primary") {
     if (is_nil (windows_l)) return false;
     Window win= windows_l->item;
-    if (selection!=NULL) delete[] selection;
+    if (selection!=NULL) tm_delete_array (selection);
     XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
     if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
     selection= as_charp (s);
@@ -274,7 +274,7 @@ x_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
   if ((key == "primary") && (selection != NULL)) {
-    delete[] selection;
+    tm_delete_array (selection);
     selection= NULL;
   }
 }
@@ -439,10 +439,10 @@ void
 x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
   if (mask_name=="") mask_name= name;
-  x_drawable_rep* dra= new x_drawable_rep (this);
+  x_drawable_rep* dra= tm_new<x_drawable_rep> (this);
   dra->xpm_initialize (name);
   if (mask_name!=name) dra->xpm_initialize (mask_name);
-  delete dra;
+  tm_delete (dra);
   Pixmap curs= (Pixmap) xpm_bitmap [name];
   Pixmap mask= (Pixmap) xpm_bitmap [mask_name];
 
@@ -481,8 +481,8 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   else
     fatal_error ("Unable to allocate bgcolor", "x_gui_rep::set_pointer");
 
-  delete[] bgcolor;
-  delete[] fgcolor;
+  tm_delete_array (bgcolor);
+  tm_delete_array (fgcolor);
 
   SI x= hotspot[0], y= hotspot[1];
   Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);
@@ -517,7 +517,7 @@ x_gui_rep::unmap_balloon () {
   if (!is_nil (balloon_wid)) {
     if (balloon_win != NULL) {
       balloon_win->set_visibility (false);
-      delete balloon_win;
+      tm_delete (balloon_win);
       balloon_win= NULL;
     }
     balloon_wid= widget ();

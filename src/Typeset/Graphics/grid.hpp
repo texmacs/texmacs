@@ -27,7 +27,7 @@ public:
 class grid_curve {
   CONCRETE_NULL(grid_curve);
   inline grid_curve (string col, curve c):
-    rep (new grid_curve_rep (col, c)) {}
+    rep (tm_new<grid_curve_rep> (col, c)) {}
 };
 CONCRETE_NULL_CODE(grid_curve);
 

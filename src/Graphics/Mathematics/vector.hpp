@@ -32,7 +32,7 @@ class vector_rep: concrete_struct {
   T* a;
 public:
   inline vector_rep (T* a2, int n2): n(n2), a(a2) {}
-  inline ~vector_rep () { if (a != NULL) delete[] a; }
+  inline ~vector_rep () { if (a != NULL) tm_delete_array (a); }
   friend class vector<T>;
   friend int N LESSGTR (vector<T> a);
   friend T* A LESSGTR (vector<T> a);
@@ -42,22 +42,22 @@ TMPL
 class vector {
 CONCRETE_TEMPLATE(vector,T);
   inline vector (T *a, int n):
-    rep (new vector_rep<T> (a, n)) {}
+    rep (tm_new<vector_rep<T> > (a, n)) {}
   inline vector (T c, int n) {
-    T* a= (n == 0? (T*) NULL: new T[n]);
+    T* a= (n == 0? (T*) NULL: tm_new_array<T> (n));
     for (int i=0; i<n; i++) a[i]= c;
-    rep= new vector_rep<T> (a, n); }
+    rep= tm_new<vector_rep<T> > (a, n); }
   inline vector () {
-    rep= new vector_rep<T> (NULL, 0); }
+    rep= tm_new<vector_rep<T> > ((T*) NULL, 0); }
   inline vector (T c1) {
-    T* a= new T[1]; a[0]= c1;
-    rep= new vector_rep<T> (a, 1); }
+    T* a= tm_new_array<T> (1); a[0]= c1;
+    rep= tm_new<vector_rep<T> > (a, 1); }
   inline vector (T c1, T c2) {
-    T* a= new T[2]; a[0]= c1; a[1]= c2;
-    rep= new vector_rep<T> (a, 2); }
+    T* a= tm_new_array<T> (2); a[0]= c1; a[1]= c2;
+    rep= tm_new<vector_rep<T> > (a, 2); }
   inline vector (T c1, T c2, T c3) {
-    T* a= new T[3]; a[0]= c1; a[1]= c2; a[2]= c3;
-    rep= new vector_rep<T> (a, 3); }
+    T* a= tm_new_array<T> (3); a[0]= c1; a[1]= c2; a[2]= c3;
+    rep= tm_new<vector_rep<T> > (a, 3); }
   inline T& operator [] (int i) { return rep->a[i]; }
 };
 CONCRETE_TEMPLATE_CODE(vector,typename,T);
@@ -122,7 +122,7 @@ template<typename T, typename Op> vector<T>
 unary (vector<T> v) {
   int i, n= N(v);
   T* a= A(v);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
     r[i]= Op::eval (a[i]);
   return vector<T> (r, n);
@@ -135,7 +135,7 @@ binary (vector<T> v, vector<T> w) {
     fatal_error ("Vector lengths don't match", "binary<T,Op>", "vector.hpp");
   T* a= A(v);
   T* b= A(w);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
     r[i]= Op::eval (a[i], b[i]);
   return vector<T> (r, n);

@@ -88,7 +88,7 @@ public:
 struct lazy_paragraph {
   EXTEND_NULL(lazy,lazy_paragraph);
   inline lazy_paragraph (edit_env env, path ip):
-    rep (new lazy_paragraph_rep (env, ip)) { rep->ref_count= 1; }
+    rep (tm_new<lazy_paragraph_rep> (env, ip)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_paragraph);
 

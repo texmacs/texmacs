@@ -163,11 +163,11 @@ tag_info_rep::tag_info_rep (int a, int x, int am, int cm, bool frozen):
 }
 
 tag_info::tag_info (parent_info pi, array<child_info> ci, tree extra) {
-  rep= new tag_info_rep (pi, ci, extra);
+  rep= tm_new<tag_info_rep> (pi, ci, extra);
 }
 
 tag_info::tag_info (int a, int x, int am, int cm, bool frozen) {
-  rep= new tag_info_rep (a, x, am, cm, frozen);
+  rep= tm_new<tag_info_rep> (a, x, am, cm, frozen);
 }
 
 tag_info::tag_info (tree t) {
@@ -180,7 +180,7 @@ tag_info::tag_info (tree t) {
   array<child_info> ci (n);
   for (i=0; i<n; i++)
     ci[i]= as_string (t[1][i]);
-  rep= new tag_info_rep (pi, ci, N(t)==3? t[2]: tree (""));
+  rep= tm_new<tag_info_rep> (pi, ci, N(t)==3? t[2]: tree (""));
 }
 
 tag_info::operator tree () {

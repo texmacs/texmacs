@@ -42,5 +42,5 @@ superpose_box_rep::reindex (int i, int item, int n) {
 
 box
 superpose_box (path ip, array<box> bs, bool bfl) {
-  return new superpose_box_rep (ip, bs, bfl);
+  return tm_new<superpose_box_rep> (ip, bs, bfl);
 }

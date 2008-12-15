@@ -36,11 +36,11 @@ void
 assoc_environment_rep::write (int key, const tree& val) {
   for (int i=0; i<n; i++)
     if (a[i].key == key) { a[i].val= val; return; }
-  assoc_node* b= new assoc_node[n+1];
+  assoc_node* b= tm_new_array<assoc_node> (n+1);
   for (int i=0; i<n; i++) b[i]= a[i];
   b[n].key= key;
   b[n].val= val;
-  delete[] a;
+  tm_delete_array (a);
   a= b;
   n++;
 }
@@ -49,10 +49,10 @@ void
 assoc_environment_rep::remove (int key) {
   for (int i=0; i<n; i++)
     if (a[i].key == key) {
-      assoc_node* b= new assoc_node[n-1];
+      assoc_node* b= tm_new_array<assoc_node> (n-1);
       for (int j=0; j<i; j++) b[j]= a[j];
       for (int j=i+1; j<n; j++) b[j-1]= a[j];
-      delete[] a;
+      tm_delete_array (a);
       a= b;
       n--;
       return;

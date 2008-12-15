@@ -266,10 +266,10 @@ url_standard (string dir, string name) {
   return url_standard (dir) * url_standard (name);
 }
 
-url::url (const char* name): rep (new url_rep (url_unix (name)->t)) {}
-url::url (string name): rep (new url_rep (url_unix (name)->t)) {}
+url::url (const char* name): rep (tm_new<url_rep> (url_unix (name)->t)) {}
+url::url (string name): rep (tm_new<url_rep> (url_unix (name)->t)) {}
 url::url (string path_name, string name):
-  rep (new url_rep (url_unix (path_name, name)->t)) {}
+  rep (tm_new<url_rep> (url_unix (path_name, name)->t)) {}
 
 /******************************************************************************
 * Computational url constructors

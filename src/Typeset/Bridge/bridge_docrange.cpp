@@ -54,7 +54,7 @@ bridge_docrange (typesetter ttt, tree st, path ip,
 		 array<bridge>& brs, int begin, int end, bool divide= false)
 {
   // cout << "Make range: " << begin << " -- " << end << "\n";
-  return new bridge_docrange_rep (ttt, st, ip, brs, begin, end, divide);
+  return tm_new<bridge_docrange_rep> (ttt, st, ip, brs, begin, end, divide);
 }
 
 bridge_docrange_rep::bridge_docrange_rep (

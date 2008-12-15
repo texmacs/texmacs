@@ -127,7 +127,7 @@ basic_environment_rep::resize (int new_n) {
   int old_n= n;
   hash_node* old_a= a;
   n= new_n;
-  a= new hash_node[n];
+  a= tm_new_array<hash_node> (n);
   size= 0;
   free= 0;
   for (int i=0; i<n; i++)

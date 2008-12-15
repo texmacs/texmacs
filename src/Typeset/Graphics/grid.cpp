@@ -105,7 +105,7 @@ empty_grid_rep::find_closest_point (point p, point pmin, point pmax) {
 
 grid
 empty_grid () {
-  return new empty_grid_rep ();
+  return tm_new<empty_grid_rep> ();
 }
 
 /******************************************************************************
@@ -206,7 +206,7 @@ cartesian_rep::find_closest_point (point p, point pmin, point pmax) {
 
 grid
 cartesian (array<SI> subd, array<string> col, point o, double step) {
-  return new cartesian_rep (subd, col, o, step);
+  return tm_new<cartesian_rep> (subd, col, o, step);
 }
 
 /******************************************************************************
@@ -329,7 +329,7 @@ polar_rep::find_closest_point (point p, point pmin, point pmax) {
 
 grid
 polar (array<SI> subd, array<string> col, point o, double step, SI astep) {
-  return new polar_rep (subd, col, o, step, astep);
+  return tm_new<polar_rep> (subd, col, o, step, astep);
 }
 
 /******************************************************************************
@@ -444,7 +444,7 @@ logarithmic_rep::find_closest_point (point p, point pmin, point pmax) {
 
 grid
 logarithmic (array<SI> subd, array<string> col, point o, double step, SI base) {
-  return new logarithmic_rep (subd, col, o, step, base);
+  return tm_new<logarithmic_rep> (subd, col, o, step, base);
 }
 
 /******************************************************************************

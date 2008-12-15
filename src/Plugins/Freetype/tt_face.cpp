@@ -33,16 +33,16 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
   url u= tt_font_find (name);
   if (is_none (u)) return;
   char* _name= as_charp (concretize (u));
-  if (ft_new_face (ft_library, _name, 0, &ft_face)) { delete[] _name; return; }
+  if (ft_new_face (ft_library, _name, 0, &ft_face)) { tm_delete_array (_name); return; }
   ft_select_charmap (ft_face, ft_encoding_adobe_custom);
-  delete[] _name;
+  tm_delete_array (_name);
   bad_face= false;
 }
 
 tt_face
 load_tt_face (string name) {
   bench_start ("load tt face");
-  tt_face face= make (tt_face, name, new tt_face_rep (name));
+  tt_face face= make (tt_face, name, tm_new<tt_face_rep> (name));
   bench_cumul ("load tt face");
   return face;
 }
@@ -77,7 +77,7 @@ tt_font_metric_rep::get (int i) {
       return error_metric;
     FT_GlyphSlot slot= face->ft_face->glyph;
     if (ft_render_glyph (slot, ft_render_mode_mono)) return error_metric;
-    metric_struct* M= new metric_struct;
+    metric_struct* M= tm_new<metric_struct> ();
     fnm(i)= (pointer) M;
     int w= slot->bitmap.width;
     int h= slot->bitmap.rows;
@@ -102,7 +102,7 @@ font_metric
 tt_font_metric (string family, int size, int dpi) {
   string name= family * as_string (size) * "@" * as_string (dpi);
   return make (font_metric, name,
-	       new tt_font_metric_rep (name, family, size, dpi));
+	       tm_new<tt_font_metric_rep> (name, family, size, dpi));
 }
 
 /******************************************************************************
@@ -160,7 +160,7 @@ tt_font_glyphs (string family, int size, int dpi) {
   string name=
     family * ":" * as_string (size) * "." * as_string (dpi) * "tt";
   return make (font_glyphs, name,
-	       new tt_font_glyphs_rep (name, family, size, dpi));
+	       tm_new<tt_font_glyphs_rep> (name, family, size, dpi));
 }
 
 #endif // USE_FREETYPE

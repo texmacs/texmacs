@@ -34,7 +34,7 @@ class basic_character {
 	CONCRETE(basic_character);
 	basic_character (int c=0, font_glyphs fng= font_glyphs (),
                    int sf=1, color fg= 0, color bg= 1):
-  rep (new basic_character_rep (c, fng, sf, fg, bg)) {};
+  rep (tm_new<basic_character_rep> (c, fng, sf, fg, bg)) {};
 	operator tree ();
 };
 CONCRETE_CODE(basic_character);

@@ -24,7 +24,7 @@ void
 client_start (string host) {
   if (the_client == NULL) {
     (void) eval ("(use-modules (remote texmacs-client))");
-    the_client= new socket_link_rep (host, 6561, SOCKET_CLIENT, -1);
+    the_client= tm_new<socket_link_rep> (host, 6561, SOCKET_CLIENT, -1);
   }
   if (!the_client->alive)
     cout << "TeXmacs] Starting client... " << the_client->start () << "\n";
@@ -34,7 +34,7 @@ void
 client_stop () {
   if (the_client != NULL) {
     the_client->stop ();
-    delete the_client;
+    tm_delete (the_client);
     the_client= NULL;
   }
 }

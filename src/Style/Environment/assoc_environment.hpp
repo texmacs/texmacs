@@ -38,9 +38,9 @@ public:
   assoc_node* a;
 public:
   inline assoc_environment_rep (int n2):
-    n (n2), a (new assoc_node[n]) {}
+    n (n2), a (tm_new_array<assoc_node> (n)) {}
   inline ~assoc_environment_rep () {
-    delete[] a; }
+    tm_delete_array (a); }
   inline void raw_write (int i, int key, const tree& val) {
     a[i].key= key; a[i].val= val; }
   inline void raw_write (int i, const string& key, const tree& val) {
@@ -56,7 +56,7 @@ public:
 class assoc_environment {
   ABSTRACT(assoc_environment);
   inline assoc_environment (int n):
-    rep (new assoc_environment_rep (n)) {}
+    rep (tm_new<assoc_environment_rep> (n)) {}
   inline tree operator [] (int key) {
     return rep->read (key); }
   inline friend environment as_environment (const assoc_environment& env) {

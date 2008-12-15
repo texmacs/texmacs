@@ -112,7 +112,7 @@ eval_scheme_file (string file) {
   if (DEBUG_STD) cout << "TeXmacs] Evaluating " << file << "...\n";
   char* _file= as_charp (file);
   SCM result= TeXmacs_eval_file (_file);
-  delete[] _file;
+  tm_delete_array (_file);
   //int extra= tm->watch (); cumul += extra;
   //cout << extra << "\t" << cumul << "\t" << file << "\n";
   return result;
@@ -141,7 +141,7 @@ eval_scheme (string s) {
   // cout << "Eval] " << s << "\n";
   char* _s= as_charp (s);
   SCM result= TeXmacs_eval_string (_s);
-  delete[] _s;
+  tm_delete_array (_s);
   return result;
 }
 

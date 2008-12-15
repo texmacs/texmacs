@@ -28,7 +28,7 @@ round_length (int n, size_t s) {
 
 template<class T>
 array_rep<T>::array_rep (int n2):
-  n(n2), a((n==0)?((T*) NULL):(new T[round_length(n, sizeof (T))])) {}
+  n(n2), a((n==0)?((T*) NULL):(tm_new_array<T> (round_length(n, sizeof (T))))) {}
 
 template<class T> void
 array_rep<T>::resize (register int m) {
@@ -37,13 +37,13 @@ array_rep<T>::resize (register int m) {
   if (mm != nn) {
     if (mm != 0) {
       register int i, k= (m<n? m: n);
-      T* b= new T[mm];
+      T* b= tm_new_array<T> (mm);
       for (i=0; i<k; i++) b[i]= a[i];
-      if (nn != 0) delete[] a;
+      if (nn != 0) tm_delete_array (a);
       a= b;
     }
     else {
-      if (nn != 0) delete[] a;
+      if (nn != 0) tm_delete_array (a);
       a= NULL;
     }
   }
@@ -53,14 +53,14 @@ array_rep<T>::resize (register int m) {
 template<class T>
 array<T>::array (T* a, int n) {
   register int i;
-  rep= new array_rep<T>(n);
+  rep= tm_new<array_rep<T> > (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
 }
 
 template<class T>
 array<T>::array (T x1, T x2) {
-  rep= new array_rep<T>(2);
+  rep= tm_new<array_rep<T> > (2);
   rep->a[0]= x1;
   rep->a[1]= x2;
 }

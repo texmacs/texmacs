@@ -180,7 +180,7 @@ tree_position_rep::notify_detach (tree& ref, tree closest, bool right) {
 
 observer
 tree_position (tree ref, int index) {
-  return new tree_position_rep (ref, index);
+  return tm_new<tree_position_rep> (ref, index);
 }
 
 path

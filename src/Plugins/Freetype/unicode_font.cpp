@@ -187,7 +187,7 @@ font
 unicode_font (string family, int size, int dpi) {
   string name= "unicode:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new unicode_font_rep (name, family, size, dpi));
+    tm_new<unicode_font_rep> (name, family, size, dpi));
 }
 
 #else

@@ -46,7 +46,7 @@ bridge_with_rep::initialize () {
 
 bridge
 bridge_with (typesetter ttt, tree st, path ip) {
-  return new bridge_with_rep (ttt, st, ip);
+  return tm_new<bridge_with_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

@@ -225,5 +225,5 @@ font
 math_font (scheme_tree t, font base_fn, font error_fn) {
   string full_name= "compound-" * scheme_tree_to_string (t);
   return make (font, full_name,
-    new math_font_rep (full_name, t, base_fn, error_fn));
+    tm_new<math_font_rep> (full_name, t, base_fn, error_fn));
 }

@@ -52,9 +52,9 @@ public:
 canvas_widget_rep::canvas_widget_rep (wk_widget child, gravity grav):
   basic_widget_rep (1), show_scroll_bars (true)
 {
-  a[0] = new scrollable_widget_rep (child, grav);
-  hor  = new hor_scrollbar_widget_rep (a[0]);
-  ver  = new ver_scrollbar_widget_rep (a[0]);
+  a[0] = tm_new<scrollable_widget_rep> (child, grav);
+  hor  = tm_new<hor_scrollbar_widget_rep> (a[0]);
+  ver  = tm_new<ver_scrollbar_widget_rep> (a[0]);
   a[0] << set_hor_bar (NULL); hor_active= false;
   a[0] << set_ver_bar (NULL); ver_active= false;
   ex1= ey1= ex2= ey2= last_w= last_h= 0;
@@ -273,5 +273,5 @@ set_scrollable (wk_widget w) {
 
 wk_widget
 canvas_widget (wk_widget w, gravity grav) {
-  return new canvas_widget_rep (w, grav);
+  return tm_new<canvas_widget_rep> (w, grav);
 }

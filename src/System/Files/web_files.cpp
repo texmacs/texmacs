@@ -102,8 +102,8 @@ get_from_web (url name) {
   tempFilePath = as_charp(as_string(tmp));
 
   if(!URL_Get(urlPath, tempFilePath)){
-    delete [] urlPath;
-    delete [] tempFilePath;
+    tm_delete_array (urlPath);
+    tm_delete_array (tempFilePath);
     return url_none();
   }
 

@@ -49,13 +49,13 @@ public:
 
 CONCRETE_NULL_TEMPLATE_CODE(list,class,T);
 #define TMPL template<class T>
-TMPL inline list<T>::list (T item): rep (new list_rep<T>(item, list<T> ())) {}
+TMPL inline list<T>::list (T item): rep (tm_new<list_rep<T> > (item, list<T> ())) {}
 TMPL inline list<T>::list (T item, list<T> next):
-  rep (new list_rep<T>(item, next)) {}
+  rep (tm_new<list_rep<T> > (item, next)) {}
 TMPL inline list<T>::list (T item1, T item2, list<T> next):
-  rep (new list_rep<T>(item1, list<T> (item2, next))) {}
+  rep (tm_new<list_rep<T> > (item1, list<T> (item2, next))) {}
 TMPL inline list<T>::list (T item1, T item2, T item3, list<T> next):
-  rep (new list_rep<T>(item1, list<T> (item2, item3, next))) {}
+  rep (tm_new<list_rep<T> > (item1, list<T> (item2, item3, next))) {}
 TMPL inline bool is_atom (list<T> l) { return (!is_nil (l)) && is_nil (l->next); }
 TMPL list<T> list<T>::init= list<T> ();
 

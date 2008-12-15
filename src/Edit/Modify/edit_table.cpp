@@ -554,11 +554,11 @@ edit_table_rep::table_bound (
 
   int i, j, ii, jj, nr_rows, nr_cols;
   table_get_extents (fp, nr_rows, nr_cols);
-  tree** rs= new tree*[nr_rows];
-  tree** cs= new tree*[nr_rows];
+  tree** rs= tm_new_array<tree*> (nr_rows);
+  tree** cs= tm_new_array<tree*> (nr_rows);
   for (i=0; i<nr_rows; i++) {
-    rs[i]= new tree[nr_cols];
-    cs[i]= new tree[nr_cols];
+    rs[i]= tm_new_array<tree> (nr_cols);
+    cs[i]= tm_new_array<tree> (nr_cols);
   }
   table_get_format (fp, CELL_ROW_SPAN, rs, nr_rows, nr_cols);
   table_get_format (fp, CELL_COL_SPAN, cs, nr_rows, nr_cols);
@@ -583,11 +583,11 @@ edit_table_rep::table_bound (
     }
   
   for (i=0; i<nr_rows; i++) {
-    delete[] rs[i];
-    delete[] cs[i];
+    tm_delete_array (rs[i]);
+    tm_delete_array (cs[i]);
   }
-  delete[] rs;
-  delete[] cs;
+  tm_delete_array (rs);
+  tm_delete_array (cs);
 }
 
 void

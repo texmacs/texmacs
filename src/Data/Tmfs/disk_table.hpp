@@ -44,7 +44,7 @@ public:
 class disk_table {
 CONCRETE_NULL(disk_table);
   inline disk_table (url u):
-    rep (new disk_table_rep (u)) {}
+    rep (tm_new<disk_table_rep> (u)) {}
 };
 CONCRETE_NULL_CODE(disk_table);
 

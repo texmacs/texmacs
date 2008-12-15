@@ -76,7 +76,7 @@ hashtree_rep<K,V>::get_label () {
 template<class K, class V> inline void
 hashtree<K,V>::realize() {
   if (rep == NULL) {
-    rep = new hashtree_rep<K,V> ();
+    rep = tm_new<hashtree_rep<K,V> > ();
     INC_COUNT(rep);
   }
 }

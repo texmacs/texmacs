@@ -559,32 +559,32 @@ add_frames (array<box>& a, path ip, url u, int w, int h, int msecs) {
 
 box
 anim_constant_box (path ip, box b, int len) {
-  return new anim_constant_box_rep (ip, b, len);
+  return tm_new<anim_constant_box_rep> (ip, b, len);
 }
 
 box
 anim_compose_box (path ip, array<box> bs) {
-  return new anim_compose_box_rep (ip, bs);
+  return tm_new<anim_compose_box_rep> (ip, bs);
 }
 
 box
 anim_repeat_box (path ip, box b) {
-  return new anim_repeat_box_rep (ip, b);
+  return tm_new<anim_repeat_box_rep> (ip, b);
 }
 
 box
 anim_translate_box (path ip, box b, int len, SI sx, SI sy, SI ex, SI ey) {
-  return new anim_translate_box_rep (ip, b, len, sx, sy, ex, ey);
+  return tm_new<anim_translate_box_rep> (ip, b, len, sx, sy, ex, ey);
 }
 
 box
 anim_progressive_box (path ip, box b, int len, rectangle r1, rectangle r2) {
-  return new anim_progressive_box_rep (ip, b, len, r1, r2);
+  return tm_new<anim_progressive_box_rep> (ip, b, len, r1, r2);
 }
 
 box
 sound_box (path ip, url u, SI h) {
-  return new sound_box_rep (ip, u, h);
+  return tm_new<sound_box_rep> (ip, u, h);
 }
 
 box

@@ -49,7 +49,7 @@ edit_main_rep::~edit_main_rep () {
 
 editor
 new_editor (server_rep* sv, tm_buffer buf) {
-  return new edit_main_rep (sv, buf);
+  return tm_new<edit_main_rep> (sv, buf);
 }
 
 /******************************************************************************
@@ -203,7 +203,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
     the_box[0][i]->redraw (ren, path (0), rs);
     if (i<end-1) ren->next_page ();
   }
-  delete ren;
+  tm_delete (ren);
 
   if (pdf) {
     ps2pdf (name, orig);

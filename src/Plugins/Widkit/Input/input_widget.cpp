@@ -370,7 +370,7 @@ get_input_string (string& s) {
 
 wk_widget
 input_text_wk_widget (command call_back) {
-  return new input_widget_rep (call_back);
+  return tm_new<input_widget_rep> (call_back);
 }
 
 wk_widget

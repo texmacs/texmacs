@@ -44,7 +44,7 @@ bridge_expand_as_rep::initialize () {
 
 bridge
 bridge_expand_as (typesetter ttt, tree st, path ip) {
-  return new bridge_expand_as_rep (ttt, st, ip);
+  return tm_new<bridge_expand_as_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

@@ -39,7 +39,7 @@ public:
 
 class stack_border {
   CONCRETE(stack_border);
-  inline stack_border (): rep (new stack_border_rep ()) {}
+  inline stack_border (): rep (tm_new<stack_border_rep> ()) {}
 };
 CONCRETE_CODE(stack_border);
 

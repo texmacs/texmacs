@@ -29,7 +29,7 @@ round_length (int n) {
 }
 
 string_rep::string_rep (int n2):
-  n(n2), a ((n==0)?((char*) NULL):new char[round_length(n)]) {}
+  n(n2), a ((n==0)?((char*) NULL):tm_new_array<char> (round_length(n))) {}
 
 void
 string_rep::resize (register int m) {
@@ -38,31 +38,31 @@ string_rep::resize (register int m) {
   if (mm != nn) {
     if (mm != 0) {
       register int i, k= (m<n? m: n);
-      char* b= new char[mm];
+      char* b= tm_new_array<char> (mm);
       for (i=0; i<k; i++) b[i]= a[i];
-      if (nn != 0) delete[] a;
+      if (nn != 0) tm_delete_array (a);
       a= b;
     }
-    else if (nn != 0) delete[] a;
+    else if (nn != 0) tm_delete_array (a);
   }
   n= m;
 }
 
 string::string (char c) {
-  rep= new string_rep(1);
+  rep= tm_new<string_rep> (1);
   rep->a[0]=c;
 }
 
 string::string (const char* a) {
   register int i, n=strlen(a);
-  rep= new string_rep(n);
+  rep= tm_new<string_rep> (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
 }
 
 string::string (const char* a, int n) {
   register int i;
-  rep= new string_rep(n);
+  rep= tm_new<string_rep> (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
 }
@@ -232,7 +232,7 @@ as_double (string s) {
 char*
 as_charp (string s) {
   int i, n=N(s);
-  char *s2= new char[n+1];
+  char *s2= tm_new_array<char> (n+1);
   for (i=0; i<n; i++) s2[i]=s[i];
   s2[n]= '\0';
   return s2;

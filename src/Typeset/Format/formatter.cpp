@@ -23,34 +23,34 @@ int lazy_count= 0;
 
 format
 make_format_none () {
-  return new format_none_rep ();
+  return tm_new<format_none_rep> ();
 }
 
 format
 make_format_width (SI width) {
-  return new format_width_rep (width);
+  return tm_new<format_width_rep> (width);
 }
 
 format
 make_format_cell (SI width, int vpos, SI depth, SI height) {
-  return new format_cell_rep (width, vpos, depth, height);
+  return tm_new<format_cell_rep> (width, vpos, depth, height);
 }
 
 format
 make_format_vstream (SI w, array<line_item> bef, array<line_item> aft) {
-  return new format_vstream_rep (w, bef, aft);
+  return tm_new<format_vstream_rep> (w, bef, aft);
 }
 
 /*
 format
 make_query_width () {
-  return new format_none_rep (QUERY_WIDTH);
+  return tm_new<format_none_rep> (QUERY_WIDTH);
 }
 */
 
 format
 make_query_vstream_width (array<line_item> bef, array<line_item> aft) {
-  return new query_vstream_width_rep (bef, aft);
+  return tm_new<query_vstream_width_rep> (bef, aft);
 }
 
 /******************************************************************************
@@ -113,5 +113,5 @@ lazy::operator box () {
 
 lazy
 make_lazy_box (box b) {
-  return new lazy_box_rep (b);
+  return tm_new<lazy_box_rep> (b);
 }

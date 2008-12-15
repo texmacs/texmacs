@@ -37,11 +37,11 @@ event emit_bar_set_extents (SI min, SI max) {
 event emit_bar_scroll_to (SI pos) {
   return set_coord1 ("scroll position", pos); }
 event emit_scroll (SI& c1, SI& c2, SI& c3) {
-  return new scroll_event_rep ("this", c1, c2, c3); }
+  return tm_new<scroll_event_rep> ("this", c1, c2, c3); }
 event emit_hor_scroll (SI& c1, SI& c2, SI& c3) {
-  return new scroll_event_rep ("hor-bar", c1, c2, c3); }
+  return tm_new<scroll_event_rep> ("hor-bar", c1, c2, c3); }
 event emit_ver_scroll (SI& c1, SI& c2, SI& c3) {
-  return new scroll_event_rep ("ver-bar", c1, c2, c3); }
+  return tm_new<scroll_event_rep> ("ver-bar", c1, c2, c3); }
 
 /******************************************************************************
 * Exported events

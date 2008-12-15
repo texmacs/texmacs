@@ -52,7 +52,7 @@ load_converter (string from, string to) {
   string name= from * "-" * to;
   if (converter::instances -> contains (name))
     return converter (name);
-  converter conv = new converter_rep (from, to);
+  converter conv = tm_new<converter_rep> (from, to);
   return conv;
 }
 
@@ -213,7 +213,7 @@ template<class T> class auto_array {
   T* value;
 public:
   auto_array (T* x) : value (x) {}
-  ~auto_array () { delete[] value ; }
+  ~auto_array () { tm_delete_array (value ); }
   operator T* () const { return value; }
 };
 
@@ -270,7 +270,7 @@ string apply (iconv_converter &conv, string input) {
   size_t out_counter= 0;
   while (in_left > 0) {
     size_t out_left= max(int(in_left * expansion), 1024);
-    auto_array<char> out_cp= new char[out_left];
+    auto_array<char> out_cp= tm_new_array<char> (out_left);
     char* out_cursor= out_cp;
     size_t r = iconv_adaptor(iconv, conv.cd,
 			     &in_cursor, &in_left, &out_cursor, &out_left);

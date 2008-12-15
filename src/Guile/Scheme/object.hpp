@@ -69,7 +69,7 @@ public:
 
 struct object {
   CONCRETE(object);
-  inline object (SCM obj): rep (new object_rep (obj)) {}
+  inline object (SCM obj): rep (tm_new<object_rep> (obj)) {}
   object ();
   object (bool b);
   object (int i);

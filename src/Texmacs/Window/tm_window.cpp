@@ -35,8 +35,8 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
 }
 
 tm_window_rep::~tm_window_rep () {
-  if (texmacs_menu != NULL) delete[] texmacs_menu;
-  if (texmacs_icon_menu != NULL) delete[] texmacs_icon_menu;
+  if (texmacs_menu != NULL) tm_delete_array (texmacs_menu);
+  if (texmacs_icon_menu != NULL) tm_delete_array (texmacs_icon_menu);
   destroy_window_id (id);
 }
 
@@ -87,7 +87,7 @@ tm_window_rep::unmap () {
 
 void
 tm_window_rep::menu_main (string menu) {
-  if (texmacs_menu == NULL) texmacs_menu= new object[1];
+  if (texmacs_menu == NULL) texmacs_menu= tm_new_array<object> (1);
   object xmenu= call ("menu-expand", eval ("'" * menu));
   if (xmenu == texmacs_menu[0]) return;
   texmacs_menu[0]= xmenu;
@@ -98,7 +98,7 @@ tm_window_rep::menu_main (string menu) {
 void
 tm_window_rep::menu_icons (int which, string menu) {
   if ((which<0) || (which>2)) return;
-  if (texmacs_icon_menu == NULL) texmacs_icon_menu= new object[3];
+  if (texmacs_icon_menu == NULL) texmacs_icon_menu= tm_new_array<object> (3);
   object xmenu= call ("menu-expand", eval ("'" * menu));
   if (xmenu == texmacs_icon_menu[which]) return;
   texmacs_icon_menu[which]= xmenu;
@@ -232,7 +232,7 @@ tm_window_rep::interactive (string name, string type, array<string> def,
   text_ptr = &s;
   call_back= cmd;
   widget tw = text_widget (name, black, false, "english");
-  widget inp= input_text_widget (new ia_command_rep (this), type, def);
+  widget inp= input_text_widget (tm_new<ia_command_rep> (this), type, def);
   set_interactive_prompt (wid, tw);
   set_interactive_input (wid, inp);
   set_interactive_mode (true);

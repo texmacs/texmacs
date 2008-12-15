@@ -51,7 +51,7 @@ edit_env::edit_env (drd_info& drd,
 		    hashmap<string,tree>& global_ref,
 		    hashmap<string,tree>& local_aux,
 		    hashmap<string,tree>& global_aux):
-  rep (new edit_env_rep (drd, base_file_name,
+  rep (tm_new<edit_env_rep> (drd, base_file_name,
 			 local_ref, global_ref, local_aux, global_aux)) {}
 
 void

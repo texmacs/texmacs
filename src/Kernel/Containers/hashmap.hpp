@@ -46,8 +46,8 @@ template<class T, class U> class hashmap_rep: concrete_struct {
 
 public:
   inline hashmap_rep<T,U>(U init2, int n2=1, int max2=1):
-    size(0), n(n2), max(max2), init(init2), a(new list<hashentry<T,U> >[n]) {}
-  inline ~hashmap_rep<T,U> () { delete[] a; }
+    size(0), n(n2), max(max2), init(init2), a(tm_new_array<list<hashentry<T,U> > > (n)) {}
+  inline ~hashmap_rep<T,U> () { tm_delete_array (a); }
   void resize (int n);
   void reset (T x);
   void generate (void (*routine) (T));
@@ -82,9 +82,9 @@ template<class T, class U> class hashmap {
 CONCRETE_TEMPLATE_2(hashmap,T,U);
   static hashmap<T,U> init;
   inline hashmap ():
-    rep (new hashmap_rep<T,U> (type_helper<U>::init, 1, 1)) {}
+    rep (tm_new<hashmap_rep<T,U> > (type_helper<U>::init, 1, 1)) {}
   inline hashmap (U init, int n=1, int max=1):
-    rep (new hashmap_rep<T,U> (init, n, max)) {}
+    rep (tm_new<hashmap_rep<T,U> > (init, n, max)) {}
   // only for hashmap<string,tree>
   hashmap (U init, tree t);
   // end only for hashmap<string,tree>

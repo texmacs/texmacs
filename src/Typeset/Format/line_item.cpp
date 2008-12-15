@@ -29,11 +29,11 @@ line_item_rep::line_item_rep (int type2, box b2,
 line_item_rep::~line_item_rep () {
   DEBUG(line_item_count--); }
 line_item::line_item (int type, box b, int penalty):
-  rep (new line_item_rep (type, b, penalty)) {}
+  rep (tm_new<line_item_rep> (type, b, penalty)) {}
 line_item::line_item (int type, box b, int penalty, language lan):
-  rep (new line_item_rep (type, b, penalty, lan)) {}
+  rep (tm_new<line_item_rep> (type, b, penalty, lan)) {}
 line_item::line_item (int type, box b, int penalty, tree t):
-  rep (new line_item_rep (type, b, penalty, t)) {}
+  rep (tm_new<line_item_rep> (type, b, penalty, t)) {}
 bool line_item::operator == (line_item item2) { return rep==item2.rep; }
 bool line_item::operator != (line_item item2) { return rep!=item2.rep; }
 

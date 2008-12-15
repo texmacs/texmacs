@@ -236,8 +236,8 @@ try_pk (string family, int size, int dpi, int dsize,
       return false;
     }
   }
-  pk = font_glyphs (new pk_font_glyphs_rep (name_pk,
-					    new pk_loader(u, tfm, dpi)));
+  pk = font_glyphs (tm_new<pk_font_glyphs_rep> (name_pk,
+					    tm_new<pk_loader> (u, tfm, dpi)));
   return true;
 }
 

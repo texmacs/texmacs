@@ -210,7 +210,7 @@ SCM
 string_to_scm (string s) {
   char* _s= as_charp (s);
   SCM r= scm_str2scm (_s, N(s));
-  delete[] _s;
+  tm_delete_array (_s);
   return r;
 }
 
@@ -238,7 +238,7 @@ SCM
 symbol_to_scm (string s) {
   char* _s= as_charp (s);
   SCM r= scm_symbol2scm (_s);
-  delete[] _s;
+  tm_delete_array (_s);
   return r;
 }
 
@@ -292,7 +292,7 @@ scm_is_tree (SCM t) {
 SCM
 tree_to_scm (tree t) {
   SCM tree_smob;
-  SET_SMOB (tree_smob, (void*) (new tree (t)), (SCM) tree_tag);
+  SET_SMOB (tree_smob, (void*) (tm_new<tree> (t)), (SCM) tree_tag);
   return tree_smob;
 }
 
@@ -310,7 +310,7 @@ mark_tree (SCM tree_smob) {
 static scm_sizet
 free_tree (SCM tree_smob) {
   tree *ptr = (tree *) SCM_CDR (tree_smob);
-  delete ptr;
+  tm_delete (ptr);
   return 0;
 }
 
@@ -620,7 +620,7 @@ static long observer_tag;
 /*static*/ SCM
 observer_to_scm (observer o) {
   SCM observer_smob;
-  SET_SMOB (observer_smob, (void*) (new observer (o)), (SCM) observer_tag);
+  SET_SMOB (observer_smob, (void*) (tm_new<observer> (o)), (SCM) observer_tag);
   return observer_smob;
 }
 
@@ -638,7 +638,7 @@ mark_observer (SCM observer_smob) {
 static scm_sizet
 free_observer (SCM observer_smob) {
   observer *ptr = (observer *) SCM_CDR (observer_smob);
-  delete ptr;
+  tm_delete (ptr);
   return 0;
 }
 
@@ -680,7 +680,7 @@ scm_is_widget (SCM wid) {
 static SCM
 widget_to_scm (widget wid) {
   SCM widget_smob;
-  SET_SMOB (widget_smob, (void*) (new widget (wid)), (SCM) widget_tag);
+  SET_SMOB (widget_smob, (void*) (tm_new<widget> (wid)), (SCM) widget_tag);
   return widget_smob;
 }
 
@@ -698,7 +698,7 @@ mark_widget (SCM widget_smob) {
 static scm_sizet
 free_widget (SCM widget_smob) {
   widget *ptr = (widget *) SCM_CDR (widget_smob);
-  delete ptr;
+  tm_delete (ptr);
   return 0;
 }
 
@@ -733,7 +733,7 @@ static SCM
 promise_widget_to_scm (promise_widget pw) {
   SCM promise_widget_smob;
   SET_SMOB (promise_widget_smob,
-	    (void*) (new promise_widget (pw)),
+	    (void*) (tm_new<promise_widget> (pw)),
 	    (SCM) promise_widget_tag);
   return promise_widget_smob;
 }
@@ -752,7 +752,7 @@ mark_promise_widget (SCM promise_widget_smob) {
 static scm_sizet
 free_promise_widget (SCM promise_widget_smob) {
   promise_widget *ptr = (promise_widget *) SCM_CDR (promise_widget_smob);
-  delete ptr;
+  tm_delete (ptr);
   // should be replaced by total size of the widget factory
   return 0;
 }
@@ -787,7 +787,7 @@ static long command_tag;
 static SCM
 command_to_scm (command cmd) {
   SCM command_smob;
-  SET_SMOB (command_smob, (void*) (new command (cmd)), (SCM) command_tag);
+  SET_SMOB (command_smob, (void*) (tm_new<command> (cmd)), (SCM) command_tag);
   return command_smob;
 }
 
@@ -805,7 +805,7 @@ mark_command (SCM command_smob) {
 static scm_sizet
 free_command (SCM command_smob) {
   command *ptr = (command *) SCM_CDR (command_smob);
-  delete ptr;
+  tm_delete (ptr);
   return 0;
 }
 
@@ -841,7 +841,7 @@ scm_is_url (SCM u) {
 SCM
 url_to_scm (url u) {
   SCM url_smob;
-  SET_SMOB (url_smob, (void*) (new url (u)), (SCM) url_tag);
+  SET_SMOB (url_smob, (void*) (tm_new<url> (u)), (SCM) url_tag);
   return url_smob;
 }
 
@@ -865,7 +865,7 @@ mark_url (SCM url_smob) {
 static scm_sizet
 free_url (SCM url_smob) {
   url *ptr = (url *) SCM_CDR (url_smob);
-  delete ptr;
+  tm_delete (ptr);
   return 0;
 }
 

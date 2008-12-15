@@ -32,7 +32,7 @@ class polynomial_rep: concrete_struct {
 public:
   inline polynomial_rep (T* a2, int n2): n(n2), a(a2) {
     while (n > 0 && a[n-1] == 0) n--; }
-  inline ~polynomial_rep () { if (a != NULL) delete[] a; }
+  inline ~polynomial_rep () { if (a != NULL) tm_delete_array (a); }
   friend class polynomial<T>;
   friend int N LESSGTR (polynomial<T> a);
   friend T* A LESSGTR (polynomial<T> a);
@@ -42,22 +42,22 @@ TMPL
 class polynomial {
 CONCRETE_TEMPLATE(polynomial,T);
   inline polynomial (T *a, int n):
-    rep (new polynomial_rep<T> (a, n)) {}
+    rep (tm_new<polynomial_rep<T> > (a, n)) {}
   inline polynomial (T c, int n) {
-    T* a= (n == 0? NULL: new T[n]);
+    T* a= (n == 0? NULL: tm_new_array<T> (n));
     for (int i=0; i<n; i++) a[i]= c;
-    rep= new polynomial_rep<T> (a, n); }
+    rep= tm_new<polynomial_rep<T> > (a, n); }
   inline polynomial () {
-    rep= new polynomial_rep<T> (NULL, 0); }
+    rep= tm_new<polynomial_rep<T> > ((T*) NULL, 0); }
   inline polynomial (T c1) {
-    T* a= new T[1]; a[0]= c1;
-    rep= new polynomial_rep<T> (a, 1); }
+    T* a= tm_new_array<T> (1); a[0]= c1;
+    rep= tm_new<polynomial_rep<T> > (a, 1); }
   inline polynomial (T c1, T c2) {
-    T* a= new T[2]; a[0]= c1; a[1]= c2;
-    rep= new polynomial_rep<T> (a, 2); }
+    T* a= tm_new_array<T> (2); a[0]= c1; a[1]= c2;
+    rep= tm_new<polynomial_rep<T> > (a, 2); }
   inline polynomial (T c1, T c2, T c3) {
-    T* a= new T[3]; a[0]= c1; a[1]= c2; a[2]= c3;
-    rep= new polynomial_rep<T> (a, 3); }
+    T* a= tm_new_array<T> (3); a[0]= c1; a[1]= c2; a[2]= c3;
+    rep= tm_new<polynomial_rep<T> > (a, 3); }
   inline T operator [] (int i) { return i<rep->n? rep->a[i]: T(0); }
   T operator () (T c);
   T operator () (T c, int order);
@@ -151,7 +151,7 @@ template<typename T, typename Op> polynomial<T>
 unary (polynomial<T> p) {
   int i, n= N(p);
   T* a= A(p);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
     r[i]= Op::eval (a[i]);
   return polynomial<T> (r, n);
@@ -170,7 +170,7 @@ binary (polynomial<T> p1, polynomial<T> p2) {
   int i, n1= N(p1), n2=N(p2), m= min (n1, n2), n= max (n1, n2);
   T* a= A(p1);
   T* b= A(p2);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<m; i++)
     r[i]= Op::eval (a[i], b[i]);
   if (n1 < n2)
@@ -195,7 +195,7 @@ derive (polynomial<T> p) {
   if (N(p) <= 1) return 0;
   int i, n= N(p);
   T* a= A(p);
-  T* r= new T[n-1];
+  T* r= tm_new_array<T> (n-1);
   for (i=1; i<n; i++)
     r[i-1]= T(i) * a[i];
   return polynomial<T> (r, n-1);
@@ -210,7 +210,7 @@ operator * (polynomial<T> p1, polynomial<T> p2) {
   int i, j, n1= N(p1), n2=N(p2), n= n1+n2;
   T* a= A(p1);
   T* b= A(p2);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++) r[i]= 0;
   for (i=0; i<n1; i++)
     for (j=0; j<n2; j++)
@@ -222,7 +222,7 @@ TMPL polynomial<T>
 operator * (T c, polynomial<T> p) {
   int i, n= N(p);
   T* a= A(p);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
     r[i]= c * a[i];
   return polynomial<T> (r, n);
@@ -237,7 +237,7 @@ operator * (T c, vector<polynomial<T> > v) {
   // TODO: superfluous after more general asymmetric vector multiplication
   int i, n= N(v);
   polynomial<T>* a= A(v);
-  polynomial<T>* r= new polynomial<T> [n];
+  polynomial<T>* r= tm_new_array<polynomial<T> > (n);
   for (i=0; i<n; i++)
     r[i]= c * v[i];
   return vector<polynomial<T> > (r, n);
@@ -248,7 +248,7 @@ operator * (array<T> c, polynomial<T> p) {
   // NOTE: replace array by vector as soon as "points" are vectors
   int i, n= N(c);
   T* a= A(c);
-  polynomial<T>* r= new polynomial<T> [n];
+  polynomial<T>* r= tm_new_array<polynomial<T> > (n);
   for (i=0; i<n; i++)
     r[i]= a[i] * p;
   return vector<polynomial<T> > (r, n);

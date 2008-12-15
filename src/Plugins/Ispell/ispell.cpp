@@ -237,7 +237,7 @@ ispell_eval (string lan, string s) {
 string
 ispell_start (string lan) {
   ispeller sc= ispeller (lan);
-  if (is_nil (sc)) sc= new ispeller_rep (lan);
+  if (is_nil (sc)) sc= tm_new<ispeller_rep> (lan);
   return sc->start ();
 }
 

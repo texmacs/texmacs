@@ -240,7 +240,7 @@ segment_rep::get_control_points (
 
 curve
 segment (point p1, point p2) {
-  return new segment_rep (p1, p2);
+  return tm_new<segment_rep> (p1, p2);
 }
 
 /******************************************************************************
@@ -294,7 +294,7 @@ poly_segment_rep::get_control_points (
 
 curve
 poly_segment (array<point> a, array<path> cip) {
-  return new poly_segment_rep (a, cip);
+  return tm_new<poly_segment_rep> (a, cip);
 }
 
 /******************************************************************************
@@ -639,7 +639,7 @@ spline_rep::get_control_points (
 
 curve
 spline (array<point> a, array<path> cip, bool close, bool interpol) {
-  return new spline_rep (a, cip, close, interpol);
+  return tm_new<spline_rep> (a, cip, close, interpol);
 }
 
 /******************************************************************************
@@ -756,7 +756,7 @@ arc_rep::curvature (double t1, double t2) {
 
 curve
 arc (array<point> a, array<path> cip, bool close) {
-  return new arc_rep (a, cip, close);
+  return tm_new<arc_rep> (a, cip, close);
 }
 
 int
@@ -806,7 +806,7 @@ struct compound_curve_rep: public curve_rep {
 curve
 operator * (curve c1, curve c2) {
   // FIXME: we might want to test whether c1(1.0) is approx equal to c2(0.0)
-  return new compound_curve_rep (c1, c2);
+  return tm_new<compound_curve_rep> (c1, c2);
 }
 
 /******************************************************************************
@@ -851,7 +851,7 @@ inverted_curve_rep::get_control_points (
 
 curve
 invert (curve c) {
-  return new inverted_curve_rep (c);
+  return tm_new<inverted_curve_rep> (c);
 }
 
 /******************************************************************************
@@ -915,10 +915,10 @@ transformed_curve_rep::get_control_points (
 
 curve
 frame::operator () (curve c) {
-  return new transformed_curve_rep (*this, c);
+  return tm_new<transformed_curve_rep> (*this, c);
 }
 
 curve
 frame::operator [] (curve c) {
-  return new transformed_curve_rep (invert (*this), c);
+  return tm_new<transformed_curve_rep> (invert (*this), c);
 }

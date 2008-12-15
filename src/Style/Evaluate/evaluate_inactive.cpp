@@ -193,7 +193,7 @@ public:
 
 inline memorizer
 inactive_memorizer (environment env, tree t, inactive_style sty) {
-  return (memorizer_rep*) new inactive_memorizer_rep (env, t, sty);
+  return (memorizer_rep*) tm_new<inactive_memorizer_rep> (env, t, sty);
 }
 
 /******************************************************************************

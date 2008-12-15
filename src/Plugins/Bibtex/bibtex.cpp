@@ -66,7 +66,7 @@ bibtex_run (string bib, string style, string dir, string fname, tree bib_t) {
 #ifdef OS_WIN32
   char *directory = as_charp(dir);
   RunBibtex(directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
-  delete [] directory;
+  tm_delete_array (directory);
 #else
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
   cmdln << "BIBINPUTS=" << dir << ":$BIBINPUTS "

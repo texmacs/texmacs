@@ -91,5 +91,5 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
 
 wk_widget
 wait_wk_widget (SI width, SI height, string message) {
-  return new wait_widget_rep (width, height, message);
+  return tm_new<wait_widget_rep> (width, height, message);
 }

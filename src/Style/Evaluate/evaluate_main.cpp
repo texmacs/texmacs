@@ -48,7 +48,7 @@ public:
 
 inline memorizer
 evaluate_memorizer (environment env, tree t) {
-  return (memorizer_rep*) new evaluate_memorizer_rep (env, t);
+  return (memorizer_rep*) tm_new<evaluate_memorizer_rep> (env, t);
 }
 
 /******************************************************************************

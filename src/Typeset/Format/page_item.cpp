@@ -28,12 +28,12 @@ page_item_rep::page_item_rep (int tp2, box b2, space spc2, int pen2,
   fl (fl2), nr_cols (nr_cols2), t (t2) {}
 
 page_item::page_item (box b, array<lazy> lz, int nr_cols):
-  rep (new page_item_rep (b, lz, nr_cols)) {}
+  rep (tm_new<page_item_rep> (b, lz, nr_cols)) {}
 page_item::page_item (tree t, int nr_cols):
-  rep (new page_item_rep (t, nr_cols)) {}
+  rep (tm_new<page_item_rep> (t, nr_cols)) {}
 page_item::page_item (int type, box b, space spc, int penalty,
 		      array<lazy> fl, int nr_cols, tree t):
-  rep (new page_item_rep (type, b, spc, penalty, fl, nr_cols, t)) {}
+  rep (tm_new<page_item_rep> (type, b, spc, penalty, fl, nr_cols, t)) {}
 bool page_item::operator == (page_item item2) { return rep==item2.rep; }
 bool page_item::operator != (page_item item2) { return rep!=item2.rep; }
 page_item copy (page_item l) {

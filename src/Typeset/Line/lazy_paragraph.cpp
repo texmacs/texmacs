@@ -28,7 +28,7 @@ line_breaks (array<line_item> a, int start, int end,
 
 lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   lazy_rep (LAZY_PARAGRAPH, ip),
-  env (env2), style (""), sss (new stacker_rep)
+  env (env2), style (""), sss (tm_new<stacker_rep> ())
 {
   sss->ip= ip; // is this necessary?
   style (PAR_FIRST)   = env->read (PAR_FIRST);
@@ -59,7 +59,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
 }
 
 lazy_paragraph_rep::~lazy_paragraph_rep () {
-  delete sss;
+  tm_delete (sss);
 }
 
 lazy_paragraph_rep::operator tree () {

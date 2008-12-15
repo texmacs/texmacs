@@ -65,5 +65,5 @@ glue_widget_rep::handle_repaint (repaint_event ev) {
 
 wk_widget
 glue_wk_widget (bool hflag, bool vflag, SI minw, SI minh) {
-  return new glue_widget_rep (hflag, vflag, minw, minh);
+  return tm_new<glue_widget_rep> (hflag, vflag, minw, minh);
 }

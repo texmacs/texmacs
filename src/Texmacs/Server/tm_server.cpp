@@ -79,7 +79,7 @@ tm_server_rep::tm_server_rep ():
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
 {
-  the_server= new server (this);
+  the_server= tm_new<server> (this);
   initialize_guile ();
   gui_interpose (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
@@ -103,7 +103,7 @@ tm_server_rep::tm_server_rep ():
 }
 
 tm_server_rep::~tm_server_rep () {}
-server::server (): rep (new tm_server_rep ()) {}
+server::server (): rep (tm_new<tm_server_rep> ()) {}
 
 /******************************************************************************
 * Get and set objects associated to server

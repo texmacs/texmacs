@@ -29,16 +29,16 @@ glyph_rep::glyph_rep (int w2, int h2, int xoff2, int yoff2,
   status  = status2;
 
   int i, n= (depth==1? (width*height+7)/8: width*height);
-  raster= new QN [n];
+  raster= tm_new_array<QN> (n);
   for (i=0; i<n; i++) raster[i]=0;
 }
 
 glyph_rep::~glyph_rep () {
-  delete[] raster;
+  tm_delete_array (raster);
 }
 
 glyph::glyph (int w2, int h2, int xoff2, int yoff2, int depth2, int status2) {
-  rep= new glyph_rep (w2, h2, xoff2, yoff2, depth2, status2);
+  rep= tm_new<glyph_rep> (w2, h2, xoff2, yoff2, depth2, status2);
 }
 
 /******************************************************************************

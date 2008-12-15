@@ -60,7 +60,7 @@ std_font_metric_rep::get (int c) {
 font_metric
 std_font_metric (string name, metric* fnm, int bc, int ec) {
   return make (font_metric, name,
-	       new std_font_metric_rep (name, fnm, bc, ec));
+	       tm_new<std_font_metric_rep> (name, fnm, bc, ec));
 }
 
 /******************************************************************************
@@ -102,5 +102,5 @@ std_font_glyphs_rep::get (int c) {
 
 font_glyphs
 std_font_glyphs (string name, glyph* fng, int bc, int ec) {
-  return make (font_glyphs, name, new std_font_glyphs_rep (name, fng, bc, ec));
+  return make (font_glyphs, name, tm_new<std_font_glyphs_rep> (name, fng, bc, ec));
 }

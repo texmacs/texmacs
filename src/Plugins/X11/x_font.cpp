@@ -97,7 +97,7 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
     int i, j, b, on, w= gl->width, h= gl->height;
     int byte_width= ((w-1)>>3)+1;
-    char* data= new char [byte_width * h];
+    char* data= tm_new_array<char> (byte_width * h);
     for (i=0; i<(byte_width * h); i++) data[i]=0;
 
     for (j=0; j<h; j++)
@@ -106,14 +106,14 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 	on= (gl->get_x(i,j)!=0 ? 1:0);
 	if (on) data[b]= data[b] | (1<<(i&7));
       }
-    bm= new Bitmap_rep;
+    bm= tm_new<Bitmap_rep> ();
     bm->bm    = XCreateBitmapFromData (gui->dpy, gui->root, data, w, h);
     bm->width = gl->width;
     bm->height= gl->height;
     bm->xoff  = xo;
     bm->yoff  = yo;
     gui->character_bitmap (xc)= (pointer) bm;
-    delete[] data;
+    tm_delete_array (data);
   }
 
   // draw the character
@@ -263,7 +263,7 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading ps font " << name << "\n";
   char* temp= as_charp (name);
   Font fn = XLoadFont (dpy, temp);
-  delete[] temp;
+  tm_delete_array (temp);
   if (XQueryFont (dpy, fn) == NULL) {
     if (DEBUG_VERBOSE) cout << "TeXmacs] Font " << name << " not found\n";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Using default font instead\n";
@@ -273,8 +273,8 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
   }
 
   int i;
-  metric* texs= new metric[256];
-  glyph * gls = new glyph [256];
+  metric* texs= tm_new_array<metric> (256);
+  glyph * gls = tm_new_array<glyph> (256);
   for (i=0; i<=255; i++)
     get_ps_char (fn, i, texs[i], gls[i]);
   fnm= std_font_metric (fn_name, texs, 0, 255);
@@ -417,5 +417,5 @@ font
 x_font (string family, int size, int dpi) {
   string name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
   if (font::instances -> contains (name)) return font (name);
-  else return new x_font_rep (name, family, size, dpi);
+  else return tm_new<x_font_rep> (name, family, size, dpi);
 }

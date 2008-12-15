@@ -39,7 +39,7 @@ window_widget (wk_widget w) {
   a[0]= w;
   array<string> name (1);
   name[0]= "window";
-  return new window_widget_rep (a, name);
+  return tm_new<window_widget_rep> (a, name);
 }
 
 /******************************************************************************
@@ -78,5 +78,5 @@ void
 destroy_window_widget (wk_widget w) {
   if (!w->is_window_widget ())
     fatal_error ("not a window widget", "destroy_window_widget");
-  delete w->win;
+  tm_delete (w->win);
 }

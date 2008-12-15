@@ -172,5 +172,5 @@ popup_widget_rep::handle (event ev) {
 
 wk_widget
 popup_widget (wk_widget w, gravity quit) {
-  return new popup_widget_rep (w, quit);
+  return tm_new<popup_widget_rep> (w, quit);
 }

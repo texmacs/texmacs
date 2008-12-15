@@ -53,7 +53,7 @@ bridge_argument_rep::initialize (string name2, path pf, tree b_t, path b_ip) {
 
 bridge
 bridge_argument (typesetter ttt, tree st, path ip) {
-  return new bridge_argument_rep (ttt, st, ip);
+  return tm_new<bridge_argument_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

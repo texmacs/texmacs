@@ -59,10 +59,10 @@ public:
 ABSTRACT_NULL_CODE(list_environment);
 inline list_environment::list_environment
   (basic_environment env):
-    rep (new list_environment_rep (env, list_environment ())) {}
+    rep (tm_new<list_environment_rep> (env, list_environment ())) {}
 inline list_environment::list_environment
   (basic_environment env, list_environment next):
-    rep (new list_environment_rep (env, next)) {}
+    rep (tm_new<list_environment_rep> (env, next)) {}
 
 int total_size (list_environment l);
 basic_environment flatten (list_environment l);

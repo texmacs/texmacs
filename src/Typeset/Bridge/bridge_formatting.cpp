@@ -48,7 +48,7 @@ bridge_formatting_rep::initialize () {
 
 bridge
 bridge_formatting (typesetter ttt, tree st, path ip, string v) {
-  return new bridge_formatting_rep (ttt, st, ip, v);
+  return tm_new<bridge_formatting_rep> (ttt, st, ip, v);
 }
 
 /******************************************************************************

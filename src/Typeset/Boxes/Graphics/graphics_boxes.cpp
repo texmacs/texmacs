@@ -595,18 +595,18 @@ box
 graphics_box (
   path ip, array<box> bs, frame f, grid g, point lim1, point lim2)
 {
-  return new graphics_box_rep (ip, bs, f, g, lim1, lim2);
+  return tm_new<graphics_box_rep> (ip, bs, f, g, lim1, lim2);
 }
 
 box
 graphics_group_box (path ip, array<box> bs) {
-  return new graphics_group_box_rep (ip, bs);
+  return tm_new<graphics_group_box_rep> (ip, bs);
 }
 
 box
 point_box (
   path ip, point p, SI r, color col, int fill, color fill_col, string style) {
-  return new point_box_rep (ip, p, r, col, fill, fill_col, style);
+  return tm_new<point_box_rep> (ip, p, r, col, fill, fill_col, style);
 }
 
 box
@@ -615,6 +615,6 @@ curve_box (path ip, curve c, SI width, color col,
   int fill, color fill_col,
   array<box> arrows)
 {
-  return new curve_box_rep (ip, c, width, col,
+  return tm_new<curve_box_rep> (ip, c, width, col,
 			    style, style_unit, fill, fill_col, arrows);
 }

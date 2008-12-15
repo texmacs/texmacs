@@ -55,7 +55,7 @@ bridge_compound_rep::initialize (tree body_t, int delta2, tree fun2) {
 
 bridge
 bridge_compound (typesetter ttt, tree st, path ip) {
-  return new bridge_compound_rep (ttt, st, ip);
+  return tm_new<bridge_compound_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

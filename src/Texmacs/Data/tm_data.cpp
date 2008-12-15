@@ -165,7 +165,7 @@ tm_buffer
 tm_data_rep::new_buffer (url name) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
-  tm_buffer buf= new tm_buffer_rep (name);
+  tm_buffer buf= tm_new<tm_buffer_rep> (name);
   buf->abbr= new_menu_name (name);
   menu_insert_buffer (buf);
   return buf;
@@ -224,7 +224,7 @@ tm_data_rep::delete_buffer (tm_buffer buf) {
   menu_delete_buffer (buf);
   for (i=0; i<N(buf->vws); i++)
     delete_view (buf->vws[i]);
-  delete buf;
+  tm_delete (buf);
 }
 
 void
@@ -286,7 +286,7 @@ tm_data_rep::new_view (url name) {
 
   tm_buffer buf= new_buffer (name);
   editor    ed = new_editor (get_server (), buf);
-  tm_view   vw = new tm_view_rep (buf, ed);
+  tm_view   vw = tm_new<tm_view_rep> (buf, ed);
   buf->vws << vw;
 
   ed->set_style (buf->style);
@@ -332,7 +332,7 @@ tm_data_rep::delete_view (tm_view vw) {
 	else a[j]= buf->vws[j+1];
       buf->vws= a;
     }
-  // delete vw;
+  // tm_delete (vw);
   // FIXME: causes very annoying segfault;
   // recently introduced during reorganization
 }
@@ -384,8 +384,8 @@ tm_data_rep::new_window (bool map_flag, tree geom) {
   if (get_preference ("context dependent icons") == "on") mask += 4;
   if (get_preference ("user provided icons") == "on") mask += 8;
   if (get_preference ("status bar") == "on") mask += 16;
-  command quit= new kill_window_command_rep ();
-  tm_window win= new tm_window_rep (texmacs_widget (mask, quit), geom);
+  command quit= tm_new<kill_window_command_rep> ();
+  tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
   if (map_flag) win->map ();
   return win;
 }
@@ -412,7 +412,7 @@ tm_data_rep::delete_window (tm_window win) {
   while (delete_view_from_window (win));
   win->unmap ();
   destroy_window_widget (win->win);
-  delete win;
+  tm_delete (win);
 }
 
 /******************************************************************************

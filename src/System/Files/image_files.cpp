@@ -161,7 +161,7 @@ ps_load (url image) {
     char *data;
     char *path= as_charp (as_string (name));
     data= XLoadImageAsPS (path);
-    delete[] path;
+    tm_delete_array (path);
     if (!data) s= "";
     else {
       s= string (data);
