@@ -3109,6 +3109,8 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
+
+
 { echo "$as_me:$LINENO: checking whether GNU C++ compiler is default" >&5
 echo $ECHO_N "checking whether GNU C++ compiler is default... $ECHO_C" >&6; }
 case "$GXX" in
@@ -3125,6 +3127,15 @@ echo "${ECHO_T}$GCC_VERSION" >&6; }
 echo $ECHO_N "checking version of g++... $ECHO_C" >&6; }
     { echo "$as_me:$LINENO: result: $GXX_VERSION" >&5
 echo "${ECHO_T}$GXX_VERSION" >&6; }
+    case "$GXX_VERSION" in
+      0* | 1* | 2*)
+        echo "old style GNU compiler"
+        cat >>confdefs.h <<\_ACEOF
+#define OLD_GNU_COMPILER
+_ACEOF
+
+      ;;
+    esac
   ;;
   *)
     GCC_VERSION="none"
