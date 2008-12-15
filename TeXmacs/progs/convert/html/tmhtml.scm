@@ -1000,6 +1000,11 @@
 ;;; Pictures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmhtml-collect-labels x)
+  (cond ((nlist? x) '())
+	((and (func? x 'label 1) (string? (cadr x))) `((id ,(cadr x))))
+	(else (append-map tmhtml-collect-labels (cdr x)))))
+
 (define (tmhtml-png-names)
   (set! tmhtml-image-serial (+ tmhtml-image-serial 1))
   (let* ((postfix (string-append
@@ -1011,7 +1016,9 @@
 (define (tmhtml-png y)
   (let* ((mag (ahash-ref tmhtml-env :mag))
 	 (x (if (or (nstring? mag) (== mag "1")) y
-		`(with "font-size" ,mag ,y))))
+		`(with "font-size" ,mag ,y)))
+	 (l1 (tmhtml-collect-labels y))
+	 (l2 (if (null? l1) l1 (list (car l1)))))
     (with cached (ahash-ref tmhtml-image-cache x)
       (if (not cached)
 	  (receive (name-url name-string) (tmhtml-png-names)
@@ -1022,7 +1029,8 @@
 		   (valign (number->htmlstring pixels))
 		   (style (string-append "vertical-align: " valign "px")))
 	      ;;(display* x " -> " extents "\n")
-	      (set! cached `((h:img (@ (src ,name-string) (style ,style)))))
+	      (set! cached
+		    `((h:img (@ (src ,name-string) (style ,style) ,@l2))))
 	      (ahash-set! tmhtml-image-cache x cached)))
 	  cached))))
 
