@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.11>
+<TeXmacs|1.0.7>
 
 <style|tmweb>
 
@@ -39,6 +39,8 @@
     <item><hlink|R|statistics.en.tm#r>
 
     <item><hlink|Sage|cas.en.tm#sage>
+
+    <item><hlink|TeXgraph|graphics.en.tm#texgraph>
 
     <item><hlink|Xfig|graphics.en.tm#xfig>
 

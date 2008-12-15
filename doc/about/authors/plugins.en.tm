@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.15>
+<TeXmacs|1.0.7>
 
 <style|tmdoc>
 
@@ -57,6 +57,8 @@
     <item*|Scilab>Serge Steer and Claude Gomez.
 
     <item*|Shell>Joris van der Hoeven.
+
+    <item*|TeXgraph>Emmanuël Corcelle.
 
     <item*|XYpic>Nicolas Ratier.
 

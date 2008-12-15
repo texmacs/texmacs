@@ -8,6 +8,14 @@
   <section|Changes from version 1.0.7 to 1.0.7.1>
 
   <\itemize>
+    <item>Progress on the <name|Windows> version of the <name|Qt> port
+    (1.0.7.1).
+
+    <item>Unified memory management for <name|X11> and <name|Qt> version of
+    <TeXmacs> (1.0.7.1).
+
+    <item>Added a plug-in for <TeX>graph (1.0.7.1).
+
     <item>Upgraded license to GNU GPL version 3 or later (1.0.7.1).
 
     <item>Several fixes and improvements for <name|Html> export (1.0.7.1).

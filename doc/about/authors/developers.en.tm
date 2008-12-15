@@ -45,6 +45,10 @@
 
     <item>Stéphane Payrard made an important bugfix for destroying windows.
 
+    <item>Bruno Rino has helperd us migrating from CVS to SVN.
+
+    <item>Fabien Chéreau has helped us with the Qt port of <TeXmacs>.
+
     <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
 
     <item>Bill Page and David Mentré for the support of the free version of
