@@ -27,7 +27,7 @@ template<class T> class array_rep: concrete_struct {
 public:
   inline array_rep (): n(0), a(NULL) {}
          array_rep (int n);
-  inline ~array_rep () { if (n!=0) delete[] a; }
+  inline ~array_rep () { if (n!=0) tm_delete_array (a); }
   void resize (int n);
   friend class array<T>;
   friend int N LESSGTR (array<T> a);
@@ -37,7 +37,7 @@ public:
 
 template<class T> class array {
   CONCRETE_TEMPLATE(array,T);
-  inline array (int n=0): rep (new array_rep<T>(n)) {}
+  inline array (int n=0): rep (tm_new<array_rep<T> > (n)) {}
   array (T *a, int n);
   array (T x1, T x2);
   inline T& operator [] (int i) { return rep->a[i]; }

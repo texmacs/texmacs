@@ -50,7 +50,7 @@ public:
 
 inline memorizer
 rewrite_memorizer (environment env, tree t) {
-  return (memorizer_rep*) new rewrite_memorizer_rep (env, t);
+  return (memorizer_rep*) tm_new<rewrite_memorizer_rep> (env, t);
 }
 
 /******************************************************************************

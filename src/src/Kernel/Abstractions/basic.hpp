@@ -69,8 +69,8 @@ int   mem_used ();
 void  mem_info ();
 
 #if (defined OS_WIN32 || defined __SUNPRO_CC)
-#define STACK_NEW_ARRAY(name,T,size) T* name= new T[size]
-#define STACK_DELETE_ARRAY(name) delete[] name
+#define STACK_NEW_ARRAY(name,T,size) T* name= tm_new_array<T> (size)
+#define STACK_DELETE_ARRAY(name) tm_delete_array (name)
 #else
 #define STACK_NEW_ARRAY(name,T,size) T name[size]
 #define STACK_DELETE_ARRAY(name)
@@ -137,9 +137,9 @@ template<typename T> T   type_helper<T>::init= T ();
 ******************************************************************************/
 
 #define INC_COUNT(R)      { (R)->ref_count++; }
-#define DEC_COUNT(R)      { if(0==--((R)->ref_count)) delete (R); }
+#define DEC_COUNT(R)      { if(0==--((R)->ref_count)) tm_delete (R); }
 #define INC_COUNT_NULL(R) { if ((R)!=NULL) (R)->ref_count++; }
-#define DEC_COUNT_NULL(R) { if ((R)!=NULL && 0==--((R)->ref_count)) delete (R); }
+#define DEC_COUNT_NULL(R) { if ((R)!=NULL && 0==--((R)->ref_count)) tm_delete (R); }
 
 // concrete
 #define CONCRETE(PTR)               \
@@ -368,10 +368,216 @@ tm_new (const A1& a1, const A2& a2) {
   return (C*) ptr;
 }
 
+template<typename C, typename A1, typename A2> inline C*
+tm_new (const A1& a1, A2& a2) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2> inline C*
+tm_new (A1& a1, const A2& a2) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2> inline C*
+tm_new (A1& a1, A2& a2) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2);
+  return (C*) ptr;
+}
+
 template<typename C, typename A1, typename A2, typename A3> inline C*
 tm_new (const A1& a1, const A2& a2, const A3& a3) {
   void* ptr= fast_alloc (sizeof (C));
   (void) new (ptr) C (a1, a2, a3);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3> inline C*
+tm_new (const A1& a1, A2& a2, A3& a3) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3> inline C*
+tm_new (A1& a1, A2& a2, const A3& a3) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3> inline C*
+tm_new (A1& a1, A2& a2, A3& a3) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4> inline C*
+tm_new (const A1& a1, A2& a2, A3& a3, A4& a4) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5> inline C*
+tm_new (const A1& a1, A2& a2, A3& a3, A4& a4, A5& a5) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6> inline C*
+tm_new (A1& a1, const A2& a2, A3& a3, A4& a4, A5& a5, A6& a6) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6, typename A7> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6, typename A7> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	A4& a4, const A5& a5, const A6& a6,
+	const A7& a7) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9,
+	 typename A10> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9,
+	const A10& a10) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9,
+	 typename A10, typename A11> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9,
+	const A10& a10, const A11& a11) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9,
+	 typename A10, typename A11, typename A12> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9,
+	const A10& a10, const A11& a11, const A12& a12) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9,
+	 typename A10, typename A11, typename A12,
+	 typename A13> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9,
+	const A10& a10, const A11& a11, const A12& a12,
+	const A13& a13) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+		      a11, a12, a13);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9,
+	 typename A10, typename A11, typename A12,
+	 typename A13, typename A14> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9,
+	const A10& a10, const A11& a11, const A12& a12,
+	const A13& a13, const A14& a14) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+		      a11, a12, a13, a14);
   return (C*) ptr;
 }
 

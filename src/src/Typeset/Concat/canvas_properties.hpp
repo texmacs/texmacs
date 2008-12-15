@@ -37,7 +37,7 @@ public:
 
 class canvas_properties {
 CONCRETE(canvas_properties);
-  inline canvas_properties (): rep (new canvas_properties_rep ()) {}
+  inline canvas_properties (): rep (tm_new<canvas_properties_rep> ()) {}
 };
 CONCRETE_CODE(canvas_properties);
 

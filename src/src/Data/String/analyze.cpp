@@ -1029,7 +1029,7 @@ parse (string s, int& pos, SI& ret) {
 void
 parse (string s, int& pos, SI*& a, int len) {
   int i;
-  a= new int[len];
+  a= tm_new_array<int> (len);
   for (i=0; i<len; i++) parse (s, pos, a[i]);
 }
 

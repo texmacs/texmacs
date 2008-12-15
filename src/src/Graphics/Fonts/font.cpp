@@ -171,7 +171,7 @@ error_font_rep::draw (renderer ren, string s, SI x, SI y) {
 font
 error_font (font fn) {
   string name= "error-" * fn->res_name;
-  return make (font, name, new error_font_rep (name, fn));
+  return make (font, name, tm_new<error_font_rep> (name, fn));
 }
 
 /******************************************************************************

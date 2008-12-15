@@ -361,5 +361,5 @@ stack_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 
 box
 stack_box (path ip, array<box> bs, array<SI> spc) {
-  return new stack_box_rep (ip, bs, spc);
+  return tm_new<stack_box_rep> (ip, bs, spc);
 }

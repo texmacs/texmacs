@@ -135,5 +135,5 @@ balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
 
 wk_widget
 balloon_widget (wk_widget w, wk_widget help) {
-  return new balloon_widget_rep (w, new balloon_decoration_widget_rep (help));
+  return tm_new<balloon_widget_rep> (w, tm_new<balloon_decoration_widget_rep> (help));
 }

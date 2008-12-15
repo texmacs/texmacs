@@ -58,7 +58,7 @@ bridge_document_rep::initialize_acc () {
 
 bridge
 bridge_document (typesetter ttt, tree st, path ip) {
-  return new bridge_document_rep (ttt, st, ip);
+  return tm_new<bridge_document_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

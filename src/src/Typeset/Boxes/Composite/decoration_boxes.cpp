@@ -154,11 +154,11 @@ scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
 
 box
 specific_box (path ip, box b, bool printer_flag, font fn) {
-  return new specific_box_rep (ip, b, printer_flag, fn);
+  return tm_new<specific_box_rep> (ip, b, printer_flag, fn);
 }
 
 box flag_box (path ip, box b, SI h, SI lw, color dark, color light) {
-  return new flag_box_rep (ip, b, h, lw, dark, light);
+  return tm_new<flag_box_rep> (ip, b, h, lw, dark, light);
 }
 
 box
@@ -168,10 +168,10 @@ flag_box (path ip, string s, font fn, color dark, color light) {
 }
 
 box info_box (path ip, SI h, SI lw, color dark, color light) {
-  return new info_box_rep (ip, h, lw, dark, light);
+  return tm_new<info_box_rep> (ip, h, lw, dark, light);
 }
 
 box
 scrollbar_box (path ip, box b, bool vertical, SI span, tree t) {
-  return new scrollbar_box_rep (ip, b, vertical, span, t);
+  return tm_new<scrollbar_box_rep> (ip, b, vertical, span, t);
 }

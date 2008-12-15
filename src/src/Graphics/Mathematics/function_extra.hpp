@@ -69,7 +69,7 @@ public:
 
 TMPL inline function<F,T>
 pw_function (vector<function<F,T> > v, bool jump_flag) {
-  return new pw_function_rep<F,T> (v, jump_flag);
+  return tm_new<pw_function_rep<F,T> > (v, jump_flag);
 }
 
 /******************************************************************************
@@ -98,14 +98,14 @@ public:
   inline vector_function_rep (vector<function<F,T> > v2): v (v2) {}
   vector<T> apply (F x) {
     int i, n= N(v);
-    T* a= new T[n];
+    T* a= tm_new_array<T> (n);
     for (i=0; i<n; i++)
       a[i]= v[i] (x);
     return vector<T> (a, n);
   }
   ball<vector<T> > apply (ball<F> x) {
     int i, n= N(v);
-    ball<T>* a= new ball<T>[n];
+    ball<T>* a= tm_new_array<ball<T> > (n);
     for (i=0; i<n; i++)
       a[i]= v[i] (x);
     return as_ball (vector<ball<T> > (a, n));
@@ -123,7 +123,7 @@ public:
 
 TMPL inline function<F,vector<T> >
 vector_function (vector<function<F,T> > v) {
-  return new vector_function_rep<F,T> (v);
+  return tm_new<vector_function_rep<F,T> > (v);
 }
 
 /******************************************************************************
@@ -154,7 +154,7 @@ public:
 
 template<typename T> inline function<T,T>
 polynomial_function (polynomial<T> p) {
-  return new polynomial_function_rep<T> (p);
+  return tm_new<polynomial_function_rep<T> > (p);
 }
 
 #undef TMPL

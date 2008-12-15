@@ -23,21 +23,21 @@ get_size_event_rep::operator tree () {
   if (mode== 0) return "get_size_event";
   else          return "get_max_size_event"; }
 event get_size (SI& w, SI& h, int mode) {
-  return new get_size_event_rep (w, h, mode); }
+  return tm_new<get_size_event_rep> (w, h, mode); }
 
 get_widget_event_rep::get_widget_event_rep (string ww, wk_widget& w2):
   event_rep (GET_WIDGET_EVENT), which (ww), w (w2) {}
 get_widget_event_rep::operator tree () {
   return tree (TUPLE, "get_widget_event", which); }
 event get_widget (string which, wk_widget& w) {
-  return new get_widget_event_rep (which, w); }
+  return tm_new<get_widget_event_rep> (which, w); }
 
 set_widget_event_rep::set_widget_event_rep (string ww, wk_widget w2):
   event_rep (SET_WIDGET_EVENT), which (ww), w (w2) {}
 set_widget_event_rep::operator tree () {
   return tree (TUPLE, "set_widget_event", which); }
 event set_widget (string which, wk_widget w) {
-  return new set_widget_event_rep (which, w); }
+  return tm_new<set_widget_event_rep> (which, w); }
 
 /******************************************************************************
 * Structure events
@@ -47,7 +47,7 @@ attach_window_event_rep::attach_window_event_rep (window win2):
   event_rep (ATTACH_WINDOW_EVENT), win (win2) {}
 attach_window_event_rep::operator tree () { return "attach_window_event"; }
 event emit_attach_window (window win) {
-  return new attach_window_event_rep (win); }
+  return tm_new<attach_window_event_rep> (win); }
 
 position_event_rep::position_event_rep ():
   event_rep (POSITION_EVENT), flag (true),
@@ -61,27 +61,27 @@ position_event_rep::operator tree () {
 	       tree (TUPLE, as_string (ox/PIXEL), as_string (oy/PIXEL)),
 	       tree (TUPLE, as_string (w /PIXEL), as_string (h /PIXEL))); }
 event emit_reposition () {
-  return new position_event_rep (); }
+  return tm_new<position_event_rep> (); }
 event emit_position (SI ox, SI oy, SI w, SI h, gravity grav) {
-  return new position_event_rep (ox, oy, w, h, grav); }
+  return tm_new<position_event_rep> (ox, oy, w, h, grav); }
 
 move_event_rep::move_event_rep ():
   event_rep (MOVE_EVENT) {}
 move_event_rep::operator tree () { return "move_event"; }
 event emit_move () {
-  return new move_event_rep (); }
+  return tm_new<move_event_rep> (); }
 
 resize_event_rep::resize_event_rep ():
   event_rep (RESIZE_EVENT) {}
 resize_event_rep::operator tree () { return "resize_event"; }
 event emit_resize () {
-  return new resize_event_rep (); }
+  return tm_new<resize_event_rep> (); }
 
 destroy_event_rep::destroy_event_rep ():
   event_rep (DESTROY_EVENT) {}
 destroy_event_rep::operator tree () { return "destroy_event"; }
 event emit_destroy () {
-  return new destroy_event_rep (); }
+  return tm_new<destroy_event_rep> (); }
 
 /******************************************************************************
 * Input events
@@ -92,16 +92,16 @@ keypress_event_rep::keypress_event_rep (string key2, time_t t2):
 keypress_event_rep::operator tree () {
   return tree (TUPLE, "keypress_event", key); }
 event emit_keypress (string key, time_t t) {
-  return new keypress_event_rep (key, t); }
+  return tm_new<keypress_event_rep> (key, t); }
 event emit_keypress (keypress_event ev, string key) {
-  return new keypress_event_rep (key, ev->t); }
+  return tm_new<keypress_event_rep> (key, ev->t); }
 
 keyboard_focus_event_rep::keyboard_focus_event_rep (bool io, time_t t2):
   event_rep (KEYBOARD_FOCUS_EVENT), flag (io), t (t2) {}
 keyboard_focus_event_rep::operator tree () {
   return tree (TUPLE, "keyboard_focus_event", (char*) (flag? "in": "out")); }
 event emit_keyboard_focus (bool in_out_flag, time_t t) {
-  return new keyboard_focus_event_rep (in_out_flag, t); }
+  return tm_new<keyboard_focus_event_rep> (in_out_flag, t); }
 
 mouse_event_rep::mouse_event_rep (string type2, SI x2, SI y2,
   int mods2, time_t t2): event_rep (MOUSE_EVENT),
@@ -118,16 +118,16 @@ mouse_event_rep::pressed (string s) {
   if (s == "extra2") return (mods&16) != 0;
   return false; }
 event emit_mouse (string type, SI x, SI y, int mods, time_t t) {
-  return new mouse_event_rep (type, x, y, mods, t); }
+  return tm_new<mouse_event_rep> (type, x, y, mods, t); }
 event emit_mouse (mouse_event ev, string type, SI x, SI y) {
-  return new mouse_event_rep (type, x, y, ev->mods, ev->t); }
+  return tm_new<mouse_event_rep> (type, x, y, ev->mods, ev->t); }
 
 alarm_event_rep::alarm_event_rep (string message2, time_t t2):
   event_rep (ALARM_EVENT), message (message2), t (t2) {}
 alarm_event_rep::operator tree () {
   return tree (TUPLE, "alarm_event", message); }
 event emit_alarm (string message, time_t t) {
-  return new alarm_event_rep (message, t); }
+  return tm_new<alarm_event_rep> (message, t); }
 
 /******************************************************************************
 * Output events
@@ -140,7 +140,7 @@ clear_event_rep::operator tree () {
 	       tree (TUPLE, as_string (x1/PIXEL), as_string (y1/PIXEL)),
 	       tree (TUPLE, as_string (x2/PIXEL), as_string (y2/PIXEL))); }
 event emit_clear (SI x1, SI y1, SI x2, SI y2) {
-  return new clear_event_rep (x1, y1, x2, y2); }
+  return tm_new<clear_event_rep> (x1, y1, x2, y2); }
 
 repaint_event_rep::repaint_event_rep (SI x1b, SI y1b, SI x2b, SI y2b, bool& b):
   event_rep (REPAINT_EVENT), x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b), stop(b) {}
@@ -149,7 +149,7 @@ repaint_event_rep::operator tree () {
 	       tree (TUPLE, as_string (x1/PIXEL), as_string (y1/PIXEL)),
 	       tree (TUPLE, as_string (x2/PIXEL), as_string (y2/PIXEL))); }
 event emit_repaint (SI x1, SI y1, SI x2, SI y2, bool& stop) {
-  return new repaint_event_rep (x1, y1, x2, y2, stop); }
+  return tm_new<repaint_event_rep> (x1, y1, x2, y2, stop); }
 
 /******************************************************************************
 * Request some action
@@ -159,7 +159,7 @@ update_event_rep::update_event_rep ():
   event_rep (UPDATE_EVENT) {}
 update_event_rep::operator tree () { return "update_event"; }
 event emit_update () {
-  return new update_event_rep (); }
+  return tm_new<update_event_rep> (); }
 
 invalidate_event_rep::invalidate_event_rep ():
   event_rep (INVALIDATE_EVENT), all_flag (true),
@@ -173,23 +173,23 @@ invalidate_event_rep::operator tree () {
 		    tree (TUPLE, as_string (x1/PIXEL),as_string (y1/PIXEL)),
 		    tree (TUPLE, as_string (x2/PIXEL),as_string (y2/PIXEL))); }
 event emit_invalidate_all () {
-  return new invalidate_event_rep (); }
+  return tm_new<invalidate_event_rep> (); }
 event emit_invalidate (SI x1, SI y1, SI x2, SI y2) {
-  return new invalidate_event_rep (x1, y1, x2, y2); }
+  return tm_new<invalidate_event_rep> (x1, y1, x2, y2); }
 
 keyboard_grab_event_rep::keyboard_grab_event_rep (bool io, time_t t2):
   event_rep (KEYBOARD_GRAB_EVENT), flag (io), t (t2) {}
 keyboard_grab_event_rep::operator tree () {
   return tree (TUPLE, "keyboard_grab_event", (char*) (flag? "in": "out")); }
 event emit_keyboard_grab (bool in_out_flag, time_t t) {
-  return new keyboard_grab_event_rep (in_out_flag, t); }
+  return tm_new<keyboard_grab_event_rep> (in_out_flag, t); }
 
 mouse_grab_event_rep::mouse_grab_event_rep (bool io, time_t t2):
   event_rep (MOUSE_GRAB_EVENT), flag (io), t (t2) {}
 mouse_grab_event_rep::operator tree () {
   return tree (TUPLE, "mouse_grab_event", (char*) (flag? "in": "out")); }
 event emit_mouse_grab (bool in_out_flag, time_t t) {
-  return new mouse_grab_event_rep (in_out_flag, t); }
+  return tm_new<mouse_grab_event_rep> (in_out_flag, t); }
 
 request_alarm_event_rep::request_alarm_event_rep (event ev2, time_t delay2):
   event_rep (REQUEST_ALARM_EVENT), ev (ev2), delay (delay2) {}
@@ -197,7 +197,7 @@ request_alarm_event_rep::operator tree () {
   return tree (TUPLE, "request_alarm_event",
 	       (tree) ev, as_string ((int) delay)); }
 event emit_request_alarm (event ev, time_t delay) {
-  return new request_alarm_event_rep (ev, delay); }
+  return tm_new<request_alarm_event_rep> (ev, delay); }
 
 /******************************************************************************
 * Miscellaneous events
@@ -209,7 +209,7 @@ find_child_event_rep::operator tree () {
   return tree (TUPLE, "find_child_event",
 	       tree (TUPLE, as_string (x/PIXEL), as_string (y/PIXEL))); }
 event emit_find_child (SI x, SI y, int& which) {
-  return new find_child_event_rep (x, y, which); }
+  return tm_new<find_child_event_rep> (x, y, which); }
 
 /******************************************************************************
 * Output routines for the gravity class

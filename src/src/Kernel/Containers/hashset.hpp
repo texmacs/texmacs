@@ -27,10 +27,10 @@ template<class T> class hashset_rep: concrete_struct {
 
 public:
   inline hashset_rep ():
-    size(0), n(1), max(1), a (new list<T>[1]) {}
+    size(0), n(1), max(1), a (tm_new_array<list<T> > (1)) {}
   inline hashset_rep(int n2, int max2=1):
-    size(0), n(n2), max(max2), a (new list<T>[n]) {}
-  inline ~hashset_rep () { delete[] a; }
+    size(0), n(n2), max(max2), a (tm_new_array<list<T> > (n)) {}
+  inline ~hashset_rep () { tm_delete_array (a); }
 
   bool contains (T x);
   void resize (int n);
@@ -47,7 +47,7 @@ public:
 template<class T> class hashset {
 CONCRETE_TEMPLATE(hashset,T);
   inline hashset (int n=1, int max=1):
-    rep (new hashset_rep<T>(n, max)) {}
+    rep (tm_new<hashset_rep<T> > (n, max)) {}
   operator tree ();
 };
 CONCRETE_TEMPLATE_CODE(hashset,class,T);

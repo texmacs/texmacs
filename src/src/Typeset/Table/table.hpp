@@ -91,7 +91,7 @@ public:
 class table {
   CONCRETE_NULL(table);
   inline table (edit_env env, int status= 0, int i0= 0, int j0= 0):
-    rep (new table_rep (env, status, i0, j0)) {}
+    rep (tm_new<table_rep> (env, status, i0, j0)) {}
 };
 CONCRETE_NULL_CODE(table);
 
@@ -153,7 +153,7 @@ public:
 
 class cell {
   CONCRETE_NULL(cell);
-  inline cell (edit_env env): rep (new cell_rep (env)) {}
+  inline cell (edit_env env): rep (tm_new<cell_rep> (env)) {}
 };
 CONCRETE_NULL_CODE(cell);
 

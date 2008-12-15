@@ -41,7 +41,7 @@ symbol_install (string lib, string symb, pointer& f) {
 	const char *err = dlerror();
 	if (err != NULL) out= string ((char *) err);
       }
-      delete[] _lib;
+      tm_delete_array (_lib);
     }
   }
 
@@ -54,7 +54,7 @@ symbol_install (string lib, string symb, pointer& f) {
     f= dyn_linked [tag];
     if (f != NULL) out= "Dynamically linked symbol '" * symb * "'";
     else out= "Can not find symbol '" * symb * "' in  '" * lib * "'";
-    delete[] _symb;
+    tm_delete_array (_symb);
   }
   else {
     f= NULL;
@@ -99,7 +99,7 @@ dyn_link_rep::~dyn_link_rep () {
 
 tm_link
 make_dynamic_link (string lib, string symb, string init, string session) {
-  return new dyn_link_rep (lib, symb, init, session);
+  return tm_new<dyn_link_rep> (lib, symb, init, session);
 }
 
 static TeXmacs_exports_1 TeXmacs= {
@@ -133,7 +133,7 @@ dyn_link_rep::start () {
       ret= string (_message == NULL? ((char*) ""): _message);
       alive= true;
     }
-    delete[] _init;
+    tm_delete_array (_init);
     return ret;
   }
   else return message;
@@ -155,8 +155,8 @@ dyn_link_rep::write (string s, int channel) {
   char* _errors= NULL;
   char* _r= pack->evaluate (_s, _session, &_errors);
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);
-  delete[] _s;
-  delete[] _session;
+  tm_delete_array (_s);
+  tm_delete_array (_session);
 #endif
 }
 

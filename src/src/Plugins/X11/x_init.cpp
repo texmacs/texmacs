@@ -95,7 +95,7 @@ x_init_color_map () {
   if (true_color) return;
 
   int i, r, g, b;
-  the_gui->cmap= new color [CTOTAL];
+  the_gui->cmap= tm_new_array<color> (CTOTAL);
 
   for (i=0; i<=GREYS; i++)
     the_gui->cmap[i]=
@@ -856,14 +856,14 @@ x_gui_rep::~x_gui_rep () {
   clear_selection ("primary");
   XFreeGC (dpy, gc);
   XCloseDisplay (dpy);
-  if (!true_color) delete[] cmap;
+  if (!true_color) tm_delete_array (cmap);
 }
 
 void
 gui_open (int argc2, char** argv2) {
   if (the_gui != NULL)
     fatal_error ("gui already open", "gui_open");
-  the_gui= new x_gui_rep (argc2, argv2);
+  the_gui= tm_new<x_gui_rep> (argc2, argv2);
 }
 
 void
@@ -875,7 +875,7 @@ void
 gui_close () {
   if (the_gui == NULL)
     fatal_error ("gui not yet open", "gui_close");
-  delete the_gui;
+  tm_delete (the_gui);
   the_gui= NULL;
 }
 

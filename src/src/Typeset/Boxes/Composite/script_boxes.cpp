@@ -553,25 +553,25 @@ side_box_rep::find_selection (path lbp, path rbp) {
 
 box
 limit_box (path ip, box ref, box lo, box hi, font fn, bool glued) {
-  return new lim_box_rep (ip, ref, lo, hi, fn, glued);
+  return tm_new<lim_box_rep> (ip, ref, lo, hi, fn, glued);
 }
 
 box
 script_box (path ip, box b1, box b2, font fn) {
-  return new dummy_script_box_rep (ip, b1, b2, fn);
+  return tm_new<dummy_script_box_rep> (ip, b1, b2, fn);
 }
 
 box
 left_script_box (path ip, box ref, box b1, box b2, font fn, int level) {
-  return new side_box_rep (ip, ref, b1, b2, box (), box (), fn, level);
+  return tm_new<side_box_rep> (ip, ref, b1, b2, box (), box (), fn, level);
 }
 
 box
 right_script_box (path ip, box ref, box b1, box b2, font fn, int level) {
-  return new side_box_rep (ip, ref, box (), box (), b1, b2, fn, level);
+  return tm_new<side_box_rep> (ip, ref, box (), box (), b1, b2, fn, level);
 }
 
 box
 side_box (path ip, box ref, box l1, box l2, box r1, box r2, font fn, int l) {
-  return new side_box_rep (ip, ref, l1, l2, r1, r2, fn, l);
+  return tm_new<side_box_rep> (ip, ref, l1, l2, r1, r2, fn, l);
 }

@@ -175,5 +175,5 @@ compound_font (scheme_tree def) {
   array<font> fn (N(def));
   fn[0]= find_font (def[0][1]);
   if (is_nil (fn[0])) return font ();
-  return make (font, name, new compound_font_rep (name, def, fn));
+  return make (font, name, tm_new<compound_font_rep> (name, def, fn));
 }

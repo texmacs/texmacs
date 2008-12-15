@@ -156,7 +156,7 @@ tree_pointer_rep::notify_detach (tree& ref, tree closest, bool right) {
 
 observer
 tree_pointer (tree ref) {
-  return new tree_pointer_rep (ref);
+  return tm_new<tree_pointer_rep> (ref);
 }
 
 tree

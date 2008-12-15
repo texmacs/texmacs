@@ -67,7 +67,7 @@ inputs_list_command_rep::apply () {
 
 command
 inputs_list_command (wk_widget ilw, int i, int n) {
-  return new inputs_list_command_rep (ilw, i, n);
+  return tm_new<inputs_list_command_rep> (ilw, i, n);
 }
 
 /******************************************************************************
@@ -169,5 +169,5 @@ inputs_list_widget_rep::handle_destroy (destroy_event ev) {
 
 wk_widget
 inputs_list_wk_widget (command cmd, array<string> fields) {
-  return new inputs_list_widget_rep (cmd, fields);
+  return tm_new<inputs_list_widget_rep> (cmd, fields);
 }

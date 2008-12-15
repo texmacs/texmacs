@@ -54,7 +54,7 @@ bridge_surround_rep::initialize () {
 
 bridge
 bridge_surround (typesetter ttt, tree st, path ip) {
-  return new bridge_surround_rep (ttt, st, ip);
+  return tm_new<bridge_surround_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

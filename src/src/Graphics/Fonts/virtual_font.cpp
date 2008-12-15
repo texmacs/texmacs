@@ -41,8 +41,8 @@ virtual_font_rep::virtual_font_rep (
     font_rep (name, base), base_fn (base),
     virt (load_translator (vname)), size (size2), dpi (dpi2),
     last (N(virt->virt_def)),
-    fnm (std_font_metric (name, new metric [last], 0, last-1)),
-    fng (std_font_glyphs (name, new glyph  [last], 0, last-1))
+    fnm (std_font_metric (name, tm_new_array<metric> (last), 0, last-1)),
+    fng (std_font_glyphs (name, tm_new_array<glyph> (last), 0, last-1))
 {
   copy_math_pars (base_fn);
   unit= ((size*dpi)/72)*PIXEL;
@@ -236,8 +236,8 @@ subst_sharp (tree t, string by) {
 
 static void
 make_char_font (string name, font_metric& cfnm, font_glyphs& cfng) {
-  cfnm= std_font_metric (name, new metric [1], 0, 0);
-  cfng= std_font_glyphs (name, new glyph [1], 0, 0);
+  cfnm= std_font_metric (name, tm_new_array<metric> (1), 0, 0);
+  cfng= std_font_glyphs (name, tm_new_array<glyph> (1), 0, 0);
 }
 
 /******************************************************************************
@@ -309,5 +309,5 @@ virtual_font (font base, string name, int size, int dpi) {
     base->res_name * "#virtual-" *
     name * as_string (size) * "@" * as_string (dpi);
   return make (font, full_name,
-    new virtual_font_rep (full_name, base, name, size, dpi));
+    tm_new<virtual_font_rep> (full_name, base, name, size, dpi));
 }

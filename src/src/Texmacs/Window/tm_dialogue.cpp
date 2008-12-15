@@ -59,7 +59,7 @@ dialogue_command_rep::apply () {
 
 command
 dialogue_command (server_rep* sv, object fun, int nr_args) {
-  return new dialogue_command_rep (sv, fun, nr_args);
+  return tm_new<dialogue_command_rep> (sv, fun, nr_args);
 }
 
 void
@@ -252,7 +252,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     if (get_window () -> get_interactive_mode ()) beep ();
     else {
       command interactive_cmd=
-	new interactive_command_rep (this, get_window (), fun, p);
+	tm_new<interactive_command_rep> (this, get_window (), fun, p);
       interactive_cmd ();
     }
   }

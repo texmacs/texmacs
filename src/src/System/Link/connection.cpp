@@ -196,16 +196,16 @@ connection_start (string name, string session, bool again) {
     tree t= connection_info (name, session);
     if (is_tuple (t, "pipe", 1)) {
       tm_link ln= make_pipe_link (t[1]->label);
-      con= new connection_rep (name, session, ln);
+      con= tm_new<connection_rep> (name, session, ln);
     }
     else if (is_tuple (t, "socket", 2)) {
       tm_link ln= make_socket_link (t[1]->label, as_int (t[2]->label));
-      con= new connection_rep (name, session, ln);
+      con= tm_new<connection_rep> (name, session, ln);
     }
     else if (is_tuple (t, "dynlink", 3)) {
       tm_link ln=
 	make_dynamic_link (t[1]->label, t[2]->label, t[3]->label, session);
-      con= new connection_rep (name, session, ln);
+      con= tm_new<connection_rep> (name, session, ln);
     }
   }
 

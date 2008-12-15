@@ -117,7 +117,7 @@ invert (hashmap<T,U> patch, hashmap<T,U> base) {
 }
 
 TMPL hashmap<T,U>::hashmap (U init, tree t):
-  rep (new hashmap_rep<T,U>(init, 1, 1))
+  rep (tm_new<hashmap_rep<T,U> > (init, 1, 1))
 {
   int i, n= arity (t);
   for (i=0; i<n; i++)

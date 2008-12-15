@@ -1504,9 +1504,9 @@ break_pages (array<page_item> l, space ph, int qual,
 	     space fn_sep, space fnote_sep, space float_sep, font fn)
 {
   page_breaker_rep* H=
-    new page_breaker_rep (l, ph, qual, fn_sep, fnote_sep, float_sep, fn);
+    tm_new<page_breaker_rep> (l, ph, qual, fn_sep, fnote_sep, float_sep, fn);
   // cout << HRULE << LF;
   skeleton sk= H->make_skeleton ();
-  delete H;
+  tm_delete (H);
   return sk;
 }

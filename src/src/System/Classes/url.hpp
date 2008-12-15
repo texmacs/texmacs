@@ -29,7 +29,7 @@ struct url_rep: concrete_struct {
 class url {
   CONCRETE(url);
 private:
-  url (tree t): rep (new url_rep (t)) {}
+  url (tree t): rep (tm_new<url_rep> (t)) {}
 public:
   url (const char* name);
   url (string name);

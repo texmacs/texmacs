@@ -543,77 +543,77 @@ textat_box_rep::graphical_select (SI x, SI y, SI dist) {
 
 box
 move_box (path ip, box b, SI x, SI y, bool child_flag, bool big_flag) {
-  return new move_box_rep (ip, b, x, y, child_flag, big_flag);
+  return tm_new<move_box_rep> (ip, b, x, y, child_flag, big_flag);
 }
 
 box
 resize_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	    bool child_flag, bool adjust) {
-  return new resize_box_rep (ip, b, x1, y1, x2, y2, child_flag, adjust);
+  return tm_new<resize_box_rep> (ip, b, x1, y1, x2, y2, child_flag, adjust);
 }
 
 box
 clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2) {
-  return new clip_box_rep (ip, b, x1, y1, x2, y2, UNINIT, UNINIT, 0, 0);
+  return tm_new<clip_box_rep> (ip, b, x1, y1, x2, y2, UNINIT, UNINIT, 0, 0);
 }
 
 box
 clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	  tree xt, tree yt, SI scx, SI scy) {
-  return new clip_box_rep (ip, b, x1, y1, x2, y2, xt, yt, scx, scy);
+  return tm_new<clip_box_rep> (ip, b, x1, y1, x2, y2, xt, yt, scx, scy);
 }
 
 box
 vcorrect_box (path ip, box b, SI top_cor, SI bot_cor) {
-  return new vcorrect_box_rep (ip, b, top_cor, bot_cor);
+  return tm_new<vcorrect_box_rep> (ip, b, top_cor, bot_cor);
 }
 
 box
 repeat_box (path ip, box ref, box repeat, SI xoff) {
-  return new repeat_box_rep (ip, ref, repeat, xoff);
+  return tm_new<repeat_box_rep> (ip, ref, repeat, xoff);
 }
 
 box
 cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 	  SI bl, SI br, SI bb, SI bt, color fg, tree bg)
 {
-  box cb= new cell_box_rep (ip, b, x0, y0, x1, y1, x2, y2,
+  box cb= tm_new<cell_box_rep> (ip, b, x0, y0, x1, y1, x2, y2,
 			    bl, br, bb, bt, fg, bg);
   return cb;
 }
 
 box
 remember_box (path ip, box b) {
-  return new remember_box_rep (ip, b);
+  return tm_new<remember_box_rep> (ip, b);
 }
 
 box
 highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
 	       tree bg, color sun, color shad) {
-  return new highlight_box_rep (ip, b, w, xpad, ypad, bg, sun, shad);
+  return tm_new<highlight_box_rep> (ip, b, w, xpad, ypad, bg, sun, shad);
 }
 
 box
 action_box (path ip, box b, tree filter, command cmd, bool ch, path vip) {
-  return new action_box_rep (ip, b, filter, cmd, ch, vip);
+  return tm_new<action_box_rep> (ip, b, filter, cmd, ch, vip);
 }
 
 box
 action_box (path ip, box b, tree filter, command cmd, bool ch) {
-  return new action_box_rep (ip, b, filter, cmd, ch, decorate ());
+  return tm_new<action_box_rep> (ip, b, filter, cmd, ch, decorate ());
 }
 
 box
 locus_box (path ip, box b, list<string> ids, SI pixel) {
-  return new locus_box_rep (ip, b, ids, pixel);
+  return tm_new<locus_box_rep> (ip, b, ids, pixel);
 }
 
 box
 tag_box (path ip, box b, tree keys) {
-  return new tag_box_rep (ip, b, keys);
+  return tm_new<tag_box_rep> (ip, b, keys);
 }
 
 box
 textat_box (path ip, box b, SI x, SI y) {
-  return new textat_box_rep (ip, b, x, y);
+  return tm_new<textat_box_rep> (ip, b, x, y);
 }

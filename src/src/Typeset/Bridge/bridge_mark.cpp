@@ -44,7 +44,7 @@ bridge_mark_rep::initialize () {
 
 bridge
 bridge_mark (typesetter ttt, tree st, path ip) {
-  return new bridge_mark_rep (ttt, st, ip);
+  return tm_new<bridge_mark_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

@@ -24,7 +24,7 @@ void
 server_start () {
   if (the_server == NULL) {
     (void) eval ("(use-modules (remote texmacs-server))");
-    the_server= new socket_server_rep (6561);
+    the_server= tm_new<socket_server_rep> (6561);
   }
   if (!the_server->alive)
     cout << "TeXmacs] Starting server... " << the_server->start () << "\n";
@@ -33,7 +33,7 @@ server_start () {
 void
 server_stop () {
   if (the_server != NULL) {
-    delete the_server;
+    tm_delete (the_server);
     the_server= NULL;
   }
 }

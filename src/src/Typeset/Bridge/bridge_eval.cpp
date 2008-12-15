@@ -41,7 +41,7 @@ bridge_eval_rep::initialize (tree body_t) {
 
 bridge
 bridge_eval (typesetter ttt, tree st, path ip) {
-  return new bridge_eval_rep (ttt, st, ip);
+  return tm_new<bridge_eval_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

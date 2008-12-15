@@ -85,7 +85,7 @@ load_string (url u, string& s, bool fatal) {
       if (read < size) s->resize (read);
       fclose (fin);
     }
-    delete[] _name;
+    tm_delete_array (_name);
     bench_cumul ("load file");
 
     // Cache file contents
@@ -127,7 +127,7 @@ save_string (url u, string s, bool fatal) {
 	fputc (s[i], fout);
       fclose (fout);
     }
-    delete[] _name;
+    tm_delete_array (_name);
 
     // Cache file contents
     bool file_flag= do_cache_file (name);
@@ -179,7 +179,7 @@ get_attributes (url name, struct stat* buf,
   (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
-  delete[] temp;
+  tm_delete_array (temp);
   bench_cumul ("stat");
 
   // Cache stat results
@@ -389,7 +389,7 @@ read_directory (url u, bool& error_flag) {
   DIR* dp;
   char* temp= as_charp (name);
   dp= opendir (temp);
-  delete[] temp;
+  tm_delete_array (temp);
   error_flag= (dp==NULL);
   if (error_flag) return array<string> ();
 
@@ -499,8 +499,8 @@ move (url u1, url u2) {
   _u1 = as_charp (concretize (u1));
   _u2 = as_charp (concretize (u2));
   (void) rename (_u1, _u2);
-  delete [] _u1;
-  delete [] _u2;
+  tm_delete_array (_u1);
+  tm_delete_array (_u2);
 }
 
 void
@@ -521,7 +521,7 @@ remove (url u) {
   else {
     char *_u= as_charp (concretize (u));
     (void) ::remove (_u);
-    delete [] _u;
+    tm_delete_array (_u);
   }
 }
 
@@ -535,7 +535,7 @@ mkdir (url u) {
 #else
   (void) ::mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
 #endif
-  delete [] _u;
+  tm_delete_array (_u);
 #else
 #if defined(__MINGW__) || defined(__MINGW32__)
   system ("mkdir", u);
@@ -550,7 +550,7 @@ change_mode (url u, int mode) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   char *_u= as_charp (concretize (u));
   (void) ::chmod (_u, mode);
-  delete [] _u;
+  tm_delete_array (_u);
 #else
   string m0= as_string ((mode >> 9) & 7);
   string m1= as_string ((mode >> 6) & 7);
@@ -567,8 +567,8 @@ ps2pdf (url u1, url u2) {
   _u1 = as_charp (concretize (u1));
   _u2 = as_charp (concretize (u2));
   XPs2Pdf (_u1, _u2);
-  delete [] _u1;
-  delete [] _u2;
+  tm_delete_array (_u1);
+  tm_delete_array (_u2);
 #else
   system ("ps2pdf", u1, u2);
 #endif

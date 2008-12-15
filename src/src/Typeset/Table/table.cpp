@@ -28,12 +28,12 @@ table_rep::table_rep (edit_env env2, int status2, int i0b, int j0b):
 table_rep::~table_rep () {
   if (T != NULL) {
     int i;
-    for (i=0; i<nr_rows; i++) delete[] T[i];
-    delete[] T;
+    for (i=0; i<nr_rows; i++) tm_delete_array (T[i]);
+    tm_delete_array (T);
   }
-  if (mw != NULL) delete[] mw;
-  if (lw != NULL) delete[] lw;
-  if (rw != NULL) delete[] rw;
+  if (mw != NULL) tm_delete_array (mw);
+  if (lw != NULL) tm_delete_array (lw);
+  if (rw != NULL) tm_delete_array (rw);
 }
 
 void
@@ -87,22 +87,22 @@ table_rep::typeset_table (tree fm, tree t, path ip) {
   int i;
   nr_rows= N(t);
   nr_cols= 0;
-  T= new cell*[nr_rows];
+  T= tm_new_array<cell*> (nr_rows);
   STACK_NEW_ARRAY (subformat, tree, nr_rows);
   extract_format (fm, subformat, nr_rows);
   for (i=0; i<nr_rows; i++)
     typeset_row (i, subformat[i], t[i], descend (ip, i));
   STACK_DELETE_ARRAY (subformat);
-  mw= new SI[nr_cols];
-  lw= new SI[nr_cols];
-  rw= new SI[nr_cols];
+  mw= tm_new_array<SI> (nr_cols);
+  lw= tm_new_array<SI> (nr_cols);
+  rw= tm_new_array<SI> (nr_cols);
 }
 
 void
 table_rep::typeset_row (int i, tree fm, tree t, path ip) {
   int j;
   nr_cols= N(t);
-  T[i]= new cell[nr_cols];
+  T[i]= tm_new_array<cell> (nr_cols);
   STACK_NEW_ARRAY (subformat, tree, nr_cols);
   extract_format (fm, subformat, nr_cols);
   for (j=0; j<nr_cols; j++) {
@@ -245,9 +245,9 @@ table_rep::handle_decorations () {
   int new_rows= nr_rows, new_cols= nr_cols;
   for (i=0; i<nr_rows; i++) new_rows += ex_i1[i] + ex_i2[i];
   for (j=0; j<nr_cols; j++) new_cols += ex_j1[j] + ex_j2[j];
-  U= new cell*[new_rows];
+  U= tm_new_array<cell*> (new_rows);
   for (i=0; i<new_rows; i++)
-    U[i]= new cell[new_cols];
+    U[i]= tm_new_array<cell> (new_cols);
 
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
@@ -273,8 +273,8 @@ table_rep::handle_decorations () {
     }
 
   /*** replace old table by new one ***/
-  for (i=0; i<nr_rows; i++) delete[] T[i];
-  delete[] T;
+  for (i=0; i<nr_rows; i++) tm_delete_array (T[i]);
+  tm_delete_array (T);
   T      = U;
   nr_rows= new_rows;
   nr_cols= new_cols;
@@ -804,7 +804,7 @@ struct lazy_table_rep: public lazy_rep {
 struct lazy_table {
   EXTEND_NULL(lazy,lazy_table);
   inline lazy_table (table T, path ip):
-    rep (new lazy_table_rep (T, ip)) { rep->ref_count= 1; }
+    rep (tm_new<lazy_table_rep> (T, ip)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_table);
 

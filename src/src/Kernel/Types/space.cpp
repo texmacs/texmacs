@@ -26,11 +26,11 @@ space_rep::space_rep (SI def2) {
 }
 
 space::space (SI min, SI def, SI max) {
-  rep= new space_rep (min, def, max);
+  rep= tm_new<space_rep> (min, def, max);
 }
 
 space::space (SI def) {
-  rep= new space_rep (def);
+  rep= tm_new<space_rep> (def);
 }
 
 space::operator tree () {

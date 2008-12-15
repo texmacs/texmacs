@@ -286,10 +286,10 @@ pk_loader::load_pk () {
   register SI yoff;
   
   bench_start ("decode pk");
-  glyph* fng= new glyph [ec+1-bc];
-  char_pos = new int [ec+1-bc];
-  unpacked = new bool [ec+1-bc];
-  char_flag = new HN [ec+1-bc];
+  glyph* fng= tm_new_array<glyph> (ec+1-bc);
+  char_pos = tm_new_array<int> (ec+1-bc);
+  unpacked = tm_new_array<bool> (ec+1-bc);
+  char_flag = tm_new_array<HN> (ec+1-bc);
   for(i=0;i<ec+1-bc;i++) {
     char_pos[i] = 0;
     char_flag[i] = 0;

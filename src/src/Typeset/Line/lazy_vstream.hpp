@@ -33,7 +33,7 @@ public:
 struct lazy_vstream {
   EXTEND_NULL(lazy,lazy_vstream);
   inline lazy_vstream (path ip, tree ch, array<page_item> l, stack_border sb):
-    rep (new lazy_vstream_rep (ip, ch, l, sb)) { rep->ref_count= 1; }
+    rep (tm_new<lazy_vstream_rep> (ip, ch, l, sb)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_vstream);
 

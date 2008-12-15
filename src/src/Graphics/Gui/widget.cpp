@@ -35,7 +35,7 @@ public:
 CONCRETE(widget_connection);
   inline widget_connection (widget_rep* w1, slot s1,
 			    widget_rep* w2, slot s2):
-    rep (new widget_connection_rep (w1, s1, w2, s2)) {}
+    rep (tm_new<widget_connection_rep> (w1, s1, w2, s2)) {}
   inline bool operator == (widget_connection con) {
     return rep->w1 == con->w1 && rep->s1 == con->s1 &&
            rep->w2 == con->w2 && rep->s2 == con->s2; }

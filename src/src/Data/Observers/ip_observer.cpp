@@ -198,5 +198,5 @@ obtain_ip (tree& ref) {
 
 observer
 ip_observer (path ip) {
-  return new ip_observer_rep (ip);
+  return tm_new<ip_observer_rep> (ip);
 }

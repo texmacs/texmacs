@@ -25,7 +25,7 @@ bridge_default_rep::bridge_default_rep (typesetter ttt, tree st, path ip):
 
 bridge
 bridge_default (typesetter ttt, tree st, path ip) {
-  return new bridge_default_rep (ttt, st, ip);
+  return tm_new<bridge_default_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

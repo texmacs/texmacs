@@ -555,10 +555,10 @@ phrase_box_rep::display (renderer ren) {
 
 box
 concat_box (path ip, array<box> bs, array<SI> spc) {
-  return new concat_box_rep (ip, bs, spc);
+  return tm_new<concat_box_rep> (ip, bs, spc);
 }
 
 box
 phrase_box (path ip, array<box> bs, array<SI> spc) {
-  return new phrase_box_rep (ip, bs, spc);
+  return tm_new<phrase_box_rep> (ip, bs, spc);
 }

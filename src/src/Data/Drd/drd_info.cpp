@@ -25,9 +25,9 @@ drd_info_rep::drd_info_rep (string name2):
 drd_info_rep::drd_info_rep (string name2, drd_info base):
   name (name2), info (tag_info (), base->info) {}
 drd_info::drd_info (string name):
-  rep (new drd_info_rep (name)) {}
+  rep (tm_new<drd_info_rep> (name)) {}
 drd_info::drd_info (string name, drd_info base):
-  rep (new drd_info_rep (name, base)) {}
+  rep (tm_new<drd_info_rep> (name, base)) {}
 
 tree
 drd_info_rep::get_locals () {

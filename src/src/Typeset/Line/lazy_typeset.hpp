@@ -26,7 +26,7 @@ struct lazy_document_rep: public lazy_rep {
 struct lazy_document {
   EXTEND_NULL(lazy,lazy_document);
   inline lazy_document (edit_env env, tree t, path ip):
-    rep (new lazy_document_rep (env, t, ip)) { rep->ref_count= 1; }
+    rep (tm_new<lazy_document_rep> (env, t, ip)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_document);
 
@@ -45,10 +45,10 @@ struct lazy_surround_rep: public lazy_rep {
 struct lazy_surround {
   EXTEND_NULL(lazy,lazy_surround);
   inline lazy_surround (edit_env env, tree t, path ip):
-    rep (new lazy_surround_rep (env, t, ip)) { rep->ref_count= 1; }
+    rep (tm_new<lazy_surround_rep> (env, t, ip)) { rep->ref_count= 1; }
   inline lazy_surround (array<line_item> a, array<line_item> b,
 			lazy par, path ip):
-    rep (new lazy_surround_rep (a, b, par, ip)) { rep->ref_count= 1; }
+    rep (tm_new<lazy_surround_rep> (a, b, par, ip)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_surround);
 

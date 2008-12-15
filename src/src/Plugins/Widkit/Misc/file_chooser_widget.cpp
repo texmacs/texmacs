@@ -127,7 +127,7 @@ file_chooser_command_rep::apply () {
 
 command
 file_chooser_command (wk_widget fch, int type) {
-  return new file_chooser_command_rep (fch, type);
+  return tm_new<file_chooser_command_rep> (fch, type);
 }
 
 /******************************************************************************
@@ -431,12 +431,12 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   array<string> cn2 (cw2n);
   cw2[0]= glue_wk_widget (false, true, sep);
   cw2[1]=
-    canvas_widget (wk_widget (new file_list_widget_rep (this, suffix, true)));
+    canvas_widget (wk_widget (tm_new<file_list_widget_rep> (this, suffix, true)));
   cn2[1]= "directories";
   cw2[2]= glue_wk_widget (false, true, sep);
   if (type != "directory") {
     cw2[3]=
-      canvas_widget (wk_widget (new file_list_widget_rep (this,suffix,false)));
+      canvas_widget (wk_widget (tm_new<file_list_widget_rep> (this,suffix,false)));
     cn2[3]= "files";
     cw2[4]= glue_wk_widget (false, true, sep-PIXEL);
   }
@@ -450,7 +450,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
       driveString[0] = x;
       drive_menu << emit_insert (driveString,
 	command_button (text_wk_widget (driveString),
-			new drive_menu_command_rep (this, driveString)));
+			tm_new<drive_menu_command_rep> (this, driveString)));
     }
   array<wk_widget> drw (2);
   drw[0] = pullright_button (text_wk_widget ("Drive"), drive_menu);
@@ -544,7 +544,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
     cw4[1] = vertical_list (imw, ims);
     cn4[1] = "parameters";
     cw4[2] = glue_wk_widget (false, false, sep);
-    cw4[3] = new image_widget_rep ();
+    cw4[3] = tm_new<image_widget_rep> ();
     cn4[3] = "image";
     cw4[4] = glue_wk_widget (false, false, sep);
 
@@ -710,5 +710,5 @@ file_chooser_widget_rep::handle_destroy (destroy_event ev) {
 
 wk_widget
 file_chooser_wk_widget (command cmd, string type, string magn) {
-  return new file_chooser_widget_rep (cmd, type, magn);
+  return tm_new<file_chooser_widget_rep> (cmd, type, magn);
 }

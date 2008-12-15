@@ -555,7 +555,7 @@ box_rep::post_display (renderer &ren) {
 ******************************************************************************/
 
 cursor::cursor (SI x, SI y, SI delta, SI y1, SI y2, double slope, bool valid):
-  rep (new cursor_rep)
+  rep (tm_new<cursor_rep> ())
 {
   rep->ox= x ; rep->oy= y ; rep->delta= delta;
   rep->y1= y1; rep->y2= y2; rep->slope= slope;
@@ -596,7 +596,7 @@ operator << (ostream& out, cursor cu) {
 ******************************************************************************/
 
 selection::selection (rectangles rs, path start, path end, bool valid):
-  rep (new selection_rep)
+  rep (tm_new<selection_rep> ())
 {
   rep->rs   = rs;
   rep->start= start;
@@ -626,7 +626,7 @@ operator << (ostream& out, selection sel) {
 ******************************************************************************/
 
 gr_selection::gr_selection (array<path> cp, SI dist):
-  rep (new gr_selection_rep)
+  rep (tm_new<gr_selection_rep> ())
 {
   rep->cp  = cp;
   rep->dist= dist;
@@ -827,5 +827,5 @@ make_eps (url name, box b, int dpi) {
   ren->set_background (white);
   rectangles rs;
   b->redraw (ren, path (0), rs);
-  delete ren;
+  tm_delete (ren);
 }

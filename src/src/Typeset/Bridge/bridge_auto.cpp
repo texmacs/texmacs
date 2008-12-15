@@ -57,7 +57,7 @@ bridge_auto_rep::initialize () {
 
 bridge
 bridge_auto (typesetter ttt, tree st, path ip, tree f, bool border) {
-  return new bridge_auto_rep (ttt, st, ip, f, border);
+  return tm_new<bridge_auto_rep> (ttt, st, ip, f, border);
 }
 
 /******************************************************************************

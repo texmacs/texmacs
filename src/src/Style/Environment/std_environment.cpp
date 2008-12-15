@@ -67,7 +67,7 @@ public:
 inline std_environment::std_environment
   (bool pure, list_environment env, std_environment next,
    list_environment accel, list_environment args):
-     rep (new std_environment_rep (pure, env, next, accel, args)) {}
+     rep (tm_new<std_environment_rep> (pure, env, next, accel, args)) {}
 ABSTRACT_NULL_CODE(std_environment);
 
 void
@@ -151,7 +151,7 @@ public:
 
 void
 assign (environment& env, assoc_environment local) {
-  memorizer mem= new assign_memorizer_rep (env, local);
+  memorizer mem= tm_new<assign_memorizer_rep> (env, local);
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }
@@ -193,7 +193,7 @@ public:
 
 void
 begin_with (environment& env, assoc_environment local) {
-  memorizer mem= new begin_with_memorizer_rep (env, local);
+  memorizer mem= tm_new<begin_with_memorizer_rep> (env, local);
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }
@@ -242,7 +242,7 @@ public:
 
 void
 end_with (environment& env) {
-  memorizer mem= new end_with_memorizer_rep (env);
+  memorizer mem= tm_new<end_with_memorizer_rep> (env);
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }
@@ -312,14 +312,14 @@ public:
 
 void
 macro_down (environment& env, assoc_environment local) {
-  memorizer mem= new macro_down_memorizer_rep (env, local);
+  memorizer mem= tm_new<macro_down_memorizer_rep> (env, local);
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }
 
 void
 macro_redown (environment& env, basic_environment local) {
-  memorizer mem= new macro_redown_memorizer_rep (env, local);
+  memorizer mem= tm_new<macro_redown_memorizer_rep> (env, local);
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }
@@ -374,7 +374,7 @@ public:
 
 void
 macro_up (environment& env) {
-  memorizer mem= new macro_up_memorizer_rep (env);
+  memorizer mem= tm_new<macro_up_memorizer_rep> (env);
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }

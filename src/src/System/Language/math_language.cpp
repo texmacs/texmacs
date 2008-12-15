@@ -349,7 +349,7 @@ math_language (string name) {
   string s, fname= name * ".syx";
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
   load_string (url ("$TEXMACS_SYNTAX_PATH", fname), s, true);
-  return new math_language_rep (name, s);
+  return tm_new<math_language_rep> (name, s);
 }
 
 string

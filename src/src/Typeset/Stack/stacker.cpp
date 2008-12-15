@@ -344,7 +344,7 @@ box
 typeset_as_stack (edit_env env, tree t, path ip) {
   // cout << "Typeset as stack " << t << "\n";
   int i, n= N(t);
-  stacker sss= new stacker_rep ();
+  stacker sss= tm_new<stacker_rep> ();
   SI sep       = env->get_length (PAR_SEP);
   SI hor_sep   = env->get_length (PAR_HOR_SEP);
   SI ver_sep   = env->get_length (PAR_VER_SEP);
@@ -364,7 +364,7 @@ typeset_as_stack (edit_env env, tree t, path ip) {
     lines_ht[i]= item->spc->def;
   }
 
-  delete sss;
+  tm_delete (sss);
   box b= stack_box (ip, lines_bx, lines_ht);
   SI dy= n==0? 0: b[0]->y2;
   return move_box (ip, stack_box (ip, lines_bx, lines_ht), 0, dy);

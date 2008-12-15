@@ -181,10 +181,10 @@ bracket_box_rep::display (renderer ren) {
 
 box
 empty_box (path ip, int x1, int y1, int x2, int y2) {
-  return new empty_box_rep (ip, x1, y1, x2, y2);
+  return tm_new<empty_box_rep> (ip, x1, y1, x2, y2);
 }
 
 box
 bracket_box (path ip, int br_type, SI penw, color col, SI y1, SI y2) {
-  return new bracket_box_rep (ip, br_type, penw, col, y1, y2);
+  return tm_new<bracket_box_rep> (ip, br_type, penw, col, y1, y2);
 }

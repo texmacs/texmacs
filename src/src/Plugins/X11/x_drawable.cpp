@@ -297,13 +297,13 @@ x_drawable_rep::xpm_initialize (url file_name) {
       int myc= rgb_color (exact.red/256, exact.green/256, exact.blue/256);
       pmcs(name)= CONVERT (myc);
     }
-    delete[] _def;
+    tm_delete_array (_def);
   }
 
   // setup bitmap and pixmap
   Pixmap pm= XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
   int byte_width= ((w-1)>>3)+1;
-  char* data= new char [byte_width * h];
+  char* data= tm_new_array<char> (byte_width * h);
   for (i=0; i<(byte_width * h); i++) data[i]=0;
   for (y=0; y<h; y++) {
     if (N(t)< (y+c+1)) s= "";
@@ -326,7 +326,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
   Pixmap bm= XCreateBitmapFromData (gui->dpy, gui->root, data, w, h);
   gui->xpm_pixmap (as_string (file_name))= (int) pm;
   gui->xpm_bitmap (as_string (file_name))= (int) bm;
-  delete[] data;
+  tm_delete_array (data);
 }
 
 extern bool char_clip;
@@ -385,8 +385,8 @@ x_drawable_rep::image (
     widget dummy = glue_widget (false, false, max_w, max_h);
     widget win   = plain_window_widget (dummy, "Ghostscript");
     gui->gswindow= get_x_window (win);
-    //gui->gswindow= new x_window_rep (dummy, gui, "ghostscript", 0, 0);
-    //gui->gswindow= new x_window_rep (dummy, gui, "ghostscript",
+    //gui->gswindow= tm_new<x_window_rep> (dummy, gui, "ghostscript", 0, 0);
+    //gui->gswindow= tm_new<x_window_rep> (dummy, gui, "ghostscript",
     //max_w, max_h, max_w, max_h, max_w, max_h);
     nr_windows--; // the dummy window should not be counted
   }

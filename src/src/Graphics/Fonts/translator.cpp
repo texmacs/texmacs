@@ -64,7 +64,7 @@ translator
 load_virtual (string name) {
   if (translator::instances -> contains (name))
     return translator (name);
-  translator trl= new translator_rep (name);
+  translator trl= tm_new<translator_rep> (name);
 
   string s, r;
   name= name * ".vfn";
@@ -103,7 +103,7 @@ load_translator (string name) {
   url u ("$TEXMACS_HOME_PATH/fonts/enc:$TEXMACS_PATH/fonts/enc", file_name);
   if (load_string (u, s, false)) return load_virtual (name);
 
-  translator trl= new translator_rep (name);
+  translator trl= tm_new<translator_rep> (name);
   int i, j, num=0;
   for (i=0; i<N(s); i++)
     switch (s[i]) {

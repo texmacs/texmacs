@@ -51,7 +51,7 @@ hashmap_rep<T,U>::resize (int n2) {
   int oldn= n;
   list<hashentry<T,U> >* olda= a;
   n= n2;
-  a= new list<hashentry<T,U> >[n];
+  a= tm_new_array<list<hashentry<T,U> > > (n);
   for (i=0; i<oldn; i++) {
     list<hashentry<T,U> > l(olda[i]);
     while (!is_nil (l)) {
@@ -60,7 +60,7 @@ hashmap_rep<T,U>::resize (int n2) {
       l=l->next;
     }
   }
-  delete[] olda;
+  tm_delete_array (olda);
 }
 
 TMPL bool

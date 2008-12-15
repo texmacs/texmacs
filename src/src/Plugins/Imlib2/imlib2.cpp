@@ -105,7 +105,7 @@ imlib2_load_image (url u) {
   char *_name= as_charp (as_string (name));
   Imlib_Image image;
   image = IMLIB2_load_image (_name);
-  delete[] _name;
+  tm_delete_array (_name);
   return image;
 }
 

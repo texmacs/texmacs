@@ -373,5 +373,5 @@ wide_box (path ip, string s, font fn, color col, SI width) {
 
 box
 text_box (path ip, int pos, string s, font fn, color col) {
-  return new text_box_rep (ip, pos, s, fn, col);
+  return tm_new<text_box_rep> (ip, pos, s, fn, col);
 }

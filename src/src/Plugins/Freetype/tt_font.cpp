@@ -173,7 +173,7 @@ font
 tt_font (string family, int size, int dpi) {
   string name= "tt:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tt_font_rep (name, family, size, dpi));
+    tm_new<tt_font_rep> (name, family, size, dpi));
 }
 
 #else

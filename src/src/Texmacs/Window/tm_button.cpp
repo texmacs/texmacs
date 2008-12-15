@@ -89,7 +89,7 @@ box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
 
 widget
 box_widget (box b, bool tr) {
-  return widget (new box_widget_rep (b, tr, 3*PIXEL, 3*PIXEL));
+  return widget (tm_new<box_widget_rep> (b, tr, 3*PIXEL, 3*PIXEL));
 }
 
 widget

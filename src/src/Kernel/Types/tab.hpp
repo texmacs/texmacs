@@ -29,8 +29,8 @@ public:
 
 class tab {
   CONCRETE(tab);
-  inline tab (): rep (new tab_rep ()) {}
-  inline tab (int pos, tree t): rep (new tab_rep (pos, t)) {}
+  inline tab (): rep (tm_new<tab_rep> ()) {}
+  inline tab (int pos, tree t): rep (tm_new<tab_rep> (pos, t)) {}
 };
 CONCRETE_CODE(tab);
 

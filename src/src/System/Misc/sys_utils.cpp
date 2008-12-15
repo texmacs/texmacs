@@ -34,7 +34,7 @@ system (string s) {
 #else
   int r= system (_s);
 #endif
-  delete[] _s;
+  tm_delete_array (_s);
   return r;
 }
 
@@ -70,7 +70,7 @@ string
 get_env (string var) {
   char* _var= as_charp (var);
   char* _ret= getenv (_var);
-  delete[] _var;
+  tm_delete_array (_var);
   if (_ret==NULL) {
     if (var == "PWD") return get_env ("HOME");
     return "";

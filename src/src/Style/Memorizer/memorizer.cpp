@@ -79,11 +79,11 @@ void
 compound_memorizer_rep::set_children (memorizer* a2, int n2) {
   if (n != 0) {
     n= 0;
-    delete[] a;
+    tm_delete_array (a);
   }
   if (n2 != 0) {
     n= n2;
-    a= new memorizer[n];
+    a= tm_new_array<memorizer> (n);
     for (int i=0; i<n; i++)
       a[i]= a2[i];
   }
@@ -122,10 +122,10 @@ static memorizer* mem_stack;
 
 template<typename T> void
 double_size (T*& in, int& size) {
-  T* out= new T[2*size];
+  T* out= tm_new_array<T> (2*size);
   for (int i=0; i<size; i++)
     out[i]= in[i];
-  delete[] in;
+  tm_delete_array (in);
   in= out;
   size *= 2;
 }
@@ -134,9 +134,9 @@ void
 memorize_initialize () {
   cout << "Memorize initialize" << INDENT << LF;
   mem_max_pos  = 16;
-  mem_pos      = new int[mem_max_pos];
+  mem_pos      = tm_new_array<int> (mem_max_pos);
   mem_max_stack= 16;
-  mem_stack    = new memorizer[mem_max_stack];
+  mem_stack    = tm_new_array<memorizer> (mem_max_stack);
   mem_cur      = 0;
   mem_pos[0]   = 0;
 }
@@ -145,8 +145,8 @@ memorizer
 memorize_finalize () {
   cout << UNINDENT << "Memorize finalize" << LF;
   memorizer mem= mem_stack[0];
-  delete[] mem_pos;
-  delete[] mem_stack;
+  tm_delete_array (mem_pos);
+  tm_delete_array (mem_stack);
   mem_max_pos  = 0;
   mem_pos      = NULL;
   mem_max_stack= 0;
@@ -192,9 +192,9 @@ bigmem_insert (memorizer_ptr ptr) {
       bigmem_bags= 2;
       //bigmem_bags= 1<<24;
       //cout << "Construct bigmem " << bigmem_bags << LF;
-      bigmem_mem = new memorizer_ptrs[bigmem_bags];
-      bigmem_len = new int[bigmem_bags];
-      bigmem_cap = new int[bigmem_bags];
+      bigmem_mem = tm_new_array<memorizer_ptrs> (bigmem_bags);
+      bigmem_len = tm_new_array<int> (bigmem_bags);
+      bigmem_cap = tm_new_array<int> (bigmem_bags);
       for (int i=0; i<bigmem_bags; i++) {
 	bigmem_mem[i]= NULL;
 	bigmem_len[i]= 0;
@@ -205,9 +205,9 @@ bigmem_insert (memorizer_ptr ptr) {
       int new_bags= bigmem_bags << 1;
       //cout << "Larger bigmem " << new_bags << LF;
       int new_bags_mask= new_bags-1;
-      memorizer_ptrs* new_mem= new memorizer_ptrs[new_bags];
-      int* new_len= new int[new_bags];
-      int* new_cap= new int[new_bags];
+      memorizer_ptrs* new_mem= tm_new_array<memorizer_ptrs> (new_bags);
+      int* new_len= tm_new_array<int> (new_bags);
+      int* new_cap= tm_new_array<int> (new_bags);
       for (int i=0; i<bigmem_bags; i++) {
 	int j= i+ bigmem_bags;
 	int len= bigmem_len[i];
@@ -224,8 +224,8 @@ bigmem_insert (memorizer_ptr ptr) {
 	  new_mem[j]= NULL;
 	}
 	else {
-	  new_mem[i]= new memorizer_ptr[cap];
-	  new_mem[j]= new memorizer_ptr[cap];
+	  new_mem[i]= tm_new_array<memorizer_ptr> (cap);
+	  new_mem[j]= tm_new_array<memorizer_ptr> (cap);
 	  for (int k=0; k<len; k++) {
 	    memorizer_ptr mem_ptr= bigmem_mem[i][k];
 	    int h= mem_ptr->hash () & new_bags_mask;
@@ -236,11 +236,11 @@ bigmem_insert (memorizer_ptr ptr) {
 	    new_mem[h][new_len[h]++]= mem_ptr;
 	  }
 	}
-	if (cap != 0) delete[] bigmem_mem[i];
+	if (cap != 0) tm_delete_array (bigmem_mem[i]);
       }
-      delete[] bigmem_mem;
-      delete[] bigmem_len;
-      delete[] bigmem_cap;
+      tm_delete_array (bigmem_mem);
+      tm_delete_array (bigmem_len);
+      tm_delete_array (bigmem_cap);
       bigmem_bags= new_bags;
       bigmem_mem = new_mem;
       bigmem_len = new_len;
@@ -258,14 +258,14 @@ bigmem_insert (memorizer_ptr ptr) {
   int cap= bigmem_cap[h];
   if (len >= cap) {
     if (cap == 0) {
-      a  = new memorizer_ptr[2];
+      a  = tm_new_array<memorizer_ptr> (2);
       cap= 2;
     }
     else {
       int new_cap= cap<<1;
-      memorizer_ptrs b= new memorizer_ptr[new_cap];
+      memorizer_ptrs b= tm_new_array<memorizer_ptr> (new_cap);
       for (i=0; i<len; i++) b[i]= a[i];
-      delete[] a;
+      tm_delete_array (a);
       a  = b;
       cap= new_cap;
     }
@@ -302,14 +302,14 @@ bigmem_remove (memorizer_ptr ptr) {
 memorizer::memorizer (memorizer_rep* ptr) {
   rep= bigmem_insert (ptr);
   //cout << "construct " << ptr << " -> " << rep << LF;
-  if (rep != ptr) delete ptr;
+  if (rep != ptr) tm_delete (ptr);
   //cout << "  set " << mem_pos[mem_cur] << ": " << rep << LF;
   memorizer_rep*& old_rep (mem_stack[mem_pos[mem_cur]++].rep);
   if (rep == old_rep) rep->ref_count++;
   else {
     if (old_rep != NULL) {
       old_rep->ref_count--;
-      if (old_rep->ref_count == 0) delete old_rep;
+      if (old_rep->ref_count == 0) tm_delete (old_rep);
     }
     old_rep= rep;
     rep->ref_count += 2;
@@ -324,7 +324,7 @@ memorizer::~memorizer () {
     //cout << "destroy " << rep << ", " << rep->ref_count << LF;
     if (rep->ref_count == 0) {
       bigmem_remove (rep);
-      delete rep;
+      tm_delete (rep);
     }
   }
 }
@@ -338,7 +338,7 @@ memorizer::operator = (memorizer mem) {
     //cout << "refcount " << rep << ", " << rep->ref_count << "\n";
     if (rep->ref_count == 0) {
       bigmem_remove (rep);
-      delete rep;
+      tm_delete (rep);
     }
   }
   rep= mem.rep;

@@ -20,7 +20,7 @@ rectangle_rep::rectangle_rep (SI x1b, SI y1b, SI x2b, SI y2b):
   x1 (x1b), y1 (y1b), x2 (x2b), y2 (y2b) { }
 
 rectangle::rectangle (SI x1b, SI y1b, SI x2b, SI y2b):
-  rep (new rectangle_rep (x1b, y1b, x2b, y2b)) { }
+  rep (tm_new<rectangle_rep> (x1b, y1b, x2b, y2b)) { }
 
 rectangle::operator tree () {
   return tree (TUPLE,

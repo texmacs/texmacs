@@ -45,7 +45,7 @@ struct cairo_image_rep: concrete_struct {
 class cairo_image {
   CONCRETE_NULL(cairo_image);
   cairo_image (cairo_surface_t* img2, SI xo2, SI yo2, int w2, int h2) :
-    rep (new cairo_image_rep (img2, xo2, yo2, w2, h2)) {};
+    rep (tm_new<cairo_image_rep> (img2, xo2, yo2, w2, h2)) {};
 };
 
 CONCRETE_NULL_CODE(cairo_image);
@@ -302,7 +302,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       char * buf = as_charp(suu);
       //cout << suu << LF;
       pm = tm_cairo_image_surface_create_from_png(buf);
-      delete buf;
+      tm_delete (buf);
     }
     else if (suffix (u) == "ps" ||
 	     suffix (u) == "eps" ||
@@ -313,7 +313,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       char * buf = as_charp(suu); 
       //cout << suu << LF;
       pm = tm_cairo_image_surface_create_from_png(buf);
-      delete buf;
+      tm_delete (buf);
       remove (temp);
     }
 
@@ -322,7 +322,7 @@ cairo_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       return;
     }
     // caching
-    ci = new cairo_cache_image_rep (w,h, texmacs_time(), pm);
+    ci = tm_new<cairo_cache_image_rep> (w,h, texmacs_time(), pm);
     set_image_cache(lookup, ci);
     (ci->nr)++;
   }
@@ -416,7 +416,7 @@ cairo_renderer_rep::native_draw (int ch, font_glyphs fn, SI x, SI y) {
 	//	cout << u << LF;
 	char* _name= as_charp (concretize (u));
 	f = create_font_face_from_file(ft_library,  _name);
-	delete [] _name;
+	tm_delete_array (_name);
 	if (tm_cairo_font_face_status(f) == CAIRO_STATUS_SUCCESS) {
 	  // cout << "Font" << u << " loaded " << LF;
 	  native_fonts(name) = f;
@@ -616,7 +616,7 @@ static cairo_renderer_rep* the_renderer= NULL;
 basic_renderer_rep*
 the_cairo_renderer () {
   if (tm_cairo_present()) {
-    if (!the_renderer) the_renderer= new cairo_renderer_rep ();
+    if (!the_renderer) the_renderer= tm_new<cairo_renderer_rep> ();
     return the_renderer;
   } else {
     return NULL;
@@ -631,11 +631,11 @@ printer (url ps_file_name, int dpi, int nr_pages,
   cout << "PS output to file : " << as_string(ps_file_name) << LF;
   int h = (dpi*PIXEL*paper_h)/2.54;
   int w = (dpi*PIXEL*paper_w)/2.54;
-  cairo_renderer_rep *ren = new cairo_renderer_rep (w,h);
+  cairo_renderer_rep *ren = tm_new<cairo_renderer_rep> (w,h);
   char *buf = as_charp(as_string(ps_file_name));
   cairo_surface_t* surface =
     tm_cairo_ps_surface_create(buf, paper_w/2.54*72.0, paper_h/2.54*72.0);
-  delete [] buf;
+  tm_delete_array (buf);
   cairo_t *context = tm_cairo_create (surface);
   // tm_cairo_translate (context, 0,  paper_h/2.54*72.0);
   // tm_cairo_scale(context, 1.0, -1.0);

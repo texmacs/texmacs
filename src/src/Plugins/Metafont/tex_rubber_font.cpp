@@ -95,7 +95,7 @@ tex_rubber_font (string trl_name,
 		 string family, int size, int dpi, int dsize) {
   string name= "tex-rubber:"*family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
-    new tex_rubber_font_rep (name, trl_name, family, size, dpi, dsize));
+    tm_new<tex_rubber_font_rep> (name, trl_name, family, size, dpi, dsize));
 }
 
 /******************************************************************************
@@ -304,5 +304,5 @@ tex_dummy_rubber_font_rep::draw (renderer ren, string s, SI x, SI y) {
 font
 tex_dummy_rubber_font (font base_fn) {
   string name= "tex-dummy(" * base_fn->res_name * ")";
-  return make (font, name, new tex_dummy_rubber_font_rep (name, base_fn));
+  return make (font, name, tm_new<tex_dummy_rubber_font_rep> (name, base_fn));
 }

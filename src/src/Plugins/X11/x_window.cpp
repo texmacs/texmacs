@@ -263,7 +263,7 @@ x_window_rep::set_name (string name) {
   char* s= as_charp (name);
   XStoreName (dpy, win, s);
   XSetIconName (dpy, win, s);
-  delete[] s;
+  tm_delete_array (s);
   the_name= name;
 }
 
@@ -453,7 +453,7 @@ x_window_rep::set_mouse_pointer (widget wid, string name, string mask) {
 message_rep::message_rep (widget wid2, string s2, time_t t2):
   wid (wid2), s (s2), t (t2) {}
 message::message (widget wid, string s, time_t t):
-  rep (new message_rep (wid, s, t)) {}
+  rep (tm_new<message_rep> (wid, s, t)) {}
 
 ostream&
 operator << (ostream& out, message m) {
@@ -525,9 +525,9 @@ popup_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
   char* _name= as_charp (name);
-  window win= new x_window_rep (w, the_gui, NULL,
-				min_w, min_h, def_w, def_h, max_w, max_h);
-  delete[] _name;
+  window win= tm_new<x_window_rep> (w, the_gui, (char*) NULL,
+				    min_w, min_h, def_w, def_h, max_w, max_h);
+  tm_delete_array (_name);
   return win;
 }
 
@@ -536,8 +536,8 @@ plain_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
   char* _name= as_charp (name);
-  window win= new x_window_rep (w, the_gui, _name,
+  window win= tm_new<x_window_rep> (w, the_gui, _name,
 				min_w, min_h, def_w, def_h, max_w, max_h);
-  delete[] _name;
+  tm_delete_array (_name);
   return win;
 }

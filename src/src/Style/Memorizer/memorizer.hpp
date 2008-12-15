@@ -86,7 +86,7 @@ protected:
   int n;
 public:
   inline compound_memorizer_rep (): memorizer_rep (), a (NULL), n (0) {}
-  inline ~compound_memorizer_rep () { if (n!=0) delete[] a; }
+  inline ~compound_memorizer_rep () { if (n!=0) tm_delete_array (a); }
   void set_children (memorizer* a, int n);
   void get_children (memorizer*& a, int& n);
 };

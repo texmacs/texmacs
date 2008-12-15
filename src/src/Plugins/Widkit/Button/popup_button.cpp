@@ -149,7 +149,7 @@ popup_button_rep::unmap_popup () {
   if (popup == NULL)
     fatal_error ("Unexpected situation", "popup_button_rep::unmap_popup");
   popup->set_visibility (false);
-  delete popup;
+  tm_delete (popup);
   popup= NULL;
   if (!is_nil (prom)) popup_w= wk_widget ();
 
@@ -297,20 +297,20 @@ opposite (gravity grav) {
 
 wk_widget
 pulldown_button (wk_widget w, wk_widget pw, bool button_flag) {
-  return new popup_button_rep (w, pw, south_east, button_flag);
+  return tm_new<popup_button_rep> (w, pw, south_east, button_flag);
 }
 
 wk_widget
 pullright_button (wk_widget w, wk_widget pw, bool button_flag) {
-  return new popup_button_rep (w, pw, east, button_flag);
+  return tm_new<popup_button_rep> (w, pw, east, button_flag);
 }
 
 wk_widget
 pulldown_button (wk_widget w, promise<wk_widget> prom) {
-  return new popup_button_rep (w, prom, south_east);
+  return tm_new<popup_button_rep> (w, prom, south_east);
 }
 
 wk_widget
 pullright_button (wk_widget w, promise<wk_widget> prom) {
-  return new popup_button_rep (w, prom, east);
+  return tm_new<popup_button_rep> (w, prom, east);
 }

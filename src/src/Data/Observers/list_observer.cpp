@@ -179,7 +179,7 @@ observer
 list_observer (observer o1, observer o2) {
   if (is_nil (o1)) return o2;
   if (is_nil (o2)) return o1;
-  return new list_observer_rep (o1, o2);
+  return tm_new<list_observer_rep> (o1, o2);
 }
 
 void

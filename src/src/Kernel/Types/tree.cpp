@@ -20,30 +20,30 @@ tree type_helper<tree>::init (UNINIT);
 
 void
 destroy_tree_rep (tree_rep* rep) {
-  if (rep->op == STRING) delete (static_cast<atomic_rep*> (rep));
-  else delete (static_cast<compound_rep*>(rep));
+  if (rep->op == STRING) tm_delete (static_cast<atomic_rep*> (rep));
+  else tm_delete (static_cast<compound_rep*>(rep));
 }
 
 tree::tree (tree_label l, tree t1):
-  rep (new compound_rep (l, array<tree> (1))) {
+  rep (tm_new<compound_rep> (l, array<tree> (1))) {
   (static_cast<compound_rep*> (rep))->a[0]=t1;
 }
 
 tree::tree (tree_label l, tree t1, tree t2):
-  rep (new compound_rep (l, array<tree> (2))) {
+  rep (tm_new<compound_rep> (l, array<tree> (2))) {
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
 }
 
 tree::tree (tree_label l, tree t1, tree t2, tree t3):
-  rep (new compound_rep (l, array<tree> (3))) {
+  rep (tm_new<compound_rep> (l, array<tree> (3))) {
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
   (static_cast<compound_rep*> (rep))->a[2]=t3;
 }
 
 tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4):
-  rep (new compound_rep (l, array<tree> (4))) {
+  rep (tm_new<compound_rep> (l, array<tree> (4))) {
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
   (static_cast<compound_rep*> (rep))->a[2]=t3;
@@ -51,7 +51,7 @@ tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4):
 }
 
 tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4, tree t5):
-  rep (new compound_rep (l, array<tree> (5))) {
+  rep (tm_new<compound_rep> (l, array<tree> (5))) {
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
   (static_cast<compound_rep*> (rep))->a[2]=t3;
@@ -61,7 +61,7 @@ tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4, tree t5):
 
 tree::tree (tree_label l,
 	    tree t1, tree t2, tree t3, tree t4, tree t5, tree t6):
-  rep (new compound_rep (l, array<tree> (6)))
+  rep (tm_new<compound_rep> (l, array<tree> (6)))
 {
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;

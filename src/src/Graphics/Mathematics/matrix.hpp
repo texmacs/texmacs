@@ -35,7 +35,7 @@ class matrix_rep: concrete_struct {
 public:
   inline matrix_rep (T* a2, int rows2, int cols2):
     rows (rows2), cols (cols2), a (a2) {}
-  inline ~matrix_rep () { if (a != NULL) delete[] a; }
+  inline ~matrix_rep () { if (a != NULL) tm_delete_array (a); }
   friend class matrix<T>;
   friend int NR LESSGTR (matrix<T> m);
   friend int NC LESSGTR (matrix<T> m);
@@ -46,15 +46,15 @@ TMPL
 class matrix {
 CONCRETE_TEMPLATE(matrix,T);
   inline matrix (T *a, int rows, int cols):
-    rep (new matrix_rep<T> (a, rows, cols)) {}
+    rep (tm_new<matrix_rep<T> > (a, rows, cols)) {}
   inline matrix (T c, int rows, int cols) {
     int i, n= rows * cols;
-    T* a= (n == 0? (T*) NULL: new T[n]);
+    T* a= (n == 0? (T*) NULL: tm_new_array<T> (n));
     for (i=0; i<n; i++)
       a[i]= ((i%(cols+1)) == 0? c: T(0));
-    rep= new matrix_rep<T> (a, rows, cols); }
+    rep= tm_new<matrix_rep<T> > (a, rows, cols); }
   inline matrix () {
-    rep= new matrix_rep<T> (NULL, 0, 0); }
+    rep= tm_new<matrix_rep<T> > ((T*) NULL, 0, 0); }
   inline T& operator () (int i, int j) {
     return rep->a[i*rep->cols + j]; }
 };
@@ -143,7 +143,7 @@ template<typename T, typename Op> matrix<T>
 unary (matrix<T> m) {
   int i, n= NR(m) * NC(m);
   T* a= A(m);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
     r[i]= Op::eval (a[i]);
   return matrix<T> (r, NR(m), NC(m));
@@ -164,7 +164,7 @@ binary (matrix<T> m1, matrix<T> m2) {
     fatal_error ("Matrix sizes don't match", "binary<T,Op>", "matrix.hpp");
   T* a= A(m1);
   T* b= A(m2);
-  T* r= new T[n];
+  T* r= tm_new_array<T> (n);
   for (i=0; i<n; i++)
     r[i]= Op::eval (a[i], b[i]);
   return matrix<T> (r, NR(m1), NC(m1));

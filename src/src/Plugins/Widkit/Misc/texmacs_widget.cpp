@@ -468,5 +468,5 @@ texmacs_widget_rep::handle (event ev) {
 
 wk_widget
 texmacs_wk_widget (int mask, command quit) {
-  return new texmacs_widget_rep (mask, quit);
+  return tm_new<texmacs_widget_rep> (mask, quit);
 }

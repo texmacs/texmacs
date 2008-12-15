@@ -44,9 +44,9 @@ struct vpenalty_rep: concrete_struct {
 
 class vpenalty {
   CONCRETE(vpenalty);
-  inline vpenalty (): rep (new vpenalty_rep ()) {}
-  inline vpenalty (int pen): rep (new vpenalty_rep (pen)) {}
-  inline vpenalty (int pen, int exc): rep (new vpenalty_rep (pen, exc)) {}
+  inline vpenalty (): rep (tm_new<vpenalty_rep> ()) {}
+  inline vpenalty (int pen): rep (tm_new<vpenalty_rep> (pen)) {}
+  inline vpenalty (int pen, int exc): rep (tm_new<vpenalty_rep> (pen, exc)) {}
   inline bool operator == (vpenalty pen) {
     return (rep->pen == pen->pen) && (rep->exc == pen->exc); }
   inline bool operator != (vpenalty pen) {

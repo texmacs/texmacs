@@ -75,17 +75,17 @@ CONCRETE_CODE(insertion);
 
 inline
 insertion::insertion () {
-  rep= new insertion_rep ();
+  rep= tm_new<insertion_rep> ();
 }
 
 inline
 insertion::insertion (tree type, path begin, path end) {
-  rep= new insertion_rep (type, begin, end);
+  rep= tm_new<insertion_rep> (type, begin, end);
 }
 
 inline
 insertion::insertion (tree type, skeleton sk) {
-  rep= new insertion_rep (type, sk);
+  rep= tm_new<insertion_rep> (type, sk);
 }
 
 /******************************************************************************
@@ -98,7 +98,7 @@ inline pagelet_rep::pagelet_rep (space ht2): ht (ht2) {}
 
 inline
 pagelet::pagelet (space ht) {
-  rep= new pagelet_rep (ht);
+  rep= tm_new<pagelet_rep> (ht);
 }
 
 inline void

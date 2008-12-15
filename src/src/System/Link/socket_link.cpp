@@ -56,7 +56,7 @@ socket_link_rep::~socket_link_rep () {
 
 tm_link
 make_socket_link (string host, int port, int type, int fd) {
-  return new socket_link_rep (host, port, type, fd);
+  return tm_new<socket_link_rep> (host, port, type, fd);
 }
 
 tm_link
@@ -87,7 +87,7 @@ socket_link_rep::start () {
 #else
   struct hostent *hp = gethostbyname (_host);
 #endif
-  delete[] _host;
+  tm_delete_array (_host);
   if (hp == NULL) return "Error: no connection for '" * host * "'";
 
   // creating socket

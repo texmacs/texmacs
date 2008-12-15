@@ -131,7 +131,7 @@ switch_widget_rep::handle (event ev) {
 
 wk_widget
 switch_widget (array<wk_widget> a, array<string> name, int init) {
-  return new switch_widget_rep (a, name, init);
+  return tm_new<switch_widget_rep> (a, name, init);
 }
 
 wk_widget

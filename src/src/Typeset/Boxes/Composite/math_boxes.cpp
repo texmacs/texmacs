@@ -366,25 +366,25 @@ wide_box_rep::right_slope () {
 
 box
 frac_box (path ip, box b1, box b2, font fn, font sfn, color c) {
-  return new frac_box_rep (ip, b1, b2, fn, sfn, c);
+  return tm_new<frac_box_rep> (ip, b1, b2, fn, sfn, c);
 }
 
 box
 sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, color c) {
-  return new sqrt_box_rep (ip, b1, b2, sqrtb, fn, c);
+  return tm_new<sqrt_box_rep> (ip, b1, b2, sqrtb, fn, c);
 }
 
 box
 neg_box (path ip, box b, font fn, color c) {
-  return new neg_box_rep (ip, b, fn, c);
+  return tm_new<neg_box_rep> (ip, b, fn, c);
 }
 
 box
 tree_box (path ip, array<box> bs, font fn, color line_c) {
-  return new tree_box_rep (ip, bs, fn, line_c);
+  return tm_new<tree_box_rep> (ip, bs, fn, line_c);
 }
 
 box
 wide_box (path ip, box ref, box hi, font fn, SI sep, bool above) {
-  return new wide_box_rep (ip, ref, hi, fn, sep, above);
+  return tm_new<wide_box_rep> (ip, ref, hi, fn, sep, above);
 }

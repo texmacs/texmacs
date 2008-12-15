@@ -754,6 +754,6 @@ renderer
 printer (url ps_file_name, int dpi, int nr_pages,
 	 string page_type, bool landscape, double paper_w, double paper_h)
 {
-  return new printer_rep (ps_file_name, dpi, nr_pages,
+  return tm_new<printer_rep> (ps_file_name, dpi, nr_pages,
 			  page_type, landscape, paper_w, paper_h);
 }

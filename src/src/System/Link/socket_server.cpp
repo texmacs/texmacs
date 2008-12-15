@@ -44,7 +44,7 @@ socket_server_rep::~socket_server_rep () {
 
 tm_link
 make_socket_server (int port) {
-  return new socket_server_rep (port);
+  return tm_new<socket_server_rep> (port);
 }
 
 int

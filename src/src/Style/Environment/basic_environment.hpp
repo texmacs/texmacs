@@ -48,10 +48,10 @@ public:
 
 public:
   inline basic_environment_rep (int n2):
-    size (0), n (n2), a (new hash_node[n]), free (0) {
+    size (0), n (n2), a (tm_new_array<hash_node> (n)), free (0) {
       for (int i=0; i<n; i++) a[i].next= i+1; }
   inline ~basic_environment_rep () {
-    delete[] a; }
+    tm_delete_array (a); }
 
   void raw_insert (int key, const tree& val);
   void raw_write (int key, const tree& val);
@@ -81,9 +81,9 @@ class basic_environment {
   inline tree operator [] (int key) {
     return rep->read (key); }
   inline basic_environment (int n):
-    rep (new basic_environment_rep (n)) {}
+    rep (tm_new<basic_environment_rep> (n)) {}
   inline basic_environment (assoc_environment env):
-    rep (new basic_environment_rep (round_pow2 (env->n))) {
+    rep (tm_new<basic_environment_rep> (round_pow2 (env->n))) {
       for (int i=0; i<env->n; i++)
 	rep->raw_insert (env->a[i].key, env->a[i].val); }
   inline friend environment as_environment (const basic_environment& env) {

@@ -36,7 +36,7 @@ public:
 CONCRETE(soft_link);
 public:
   inline soft_link (tree t):
-    rep (new soft_link_rep (t)) {}
+    rep (tm_new<soft_link_rep> (t)) {}
   inline friend bool operator == (soft_link ln1, soft_link ln2) {
     return ln1.rep == ln2.rep; }
   inline friend bool operator != (soft_link ln1, soft_link ln2) {
@@ -65,7 +65,7 @@ class link_repository {
 ABSTRACT_NULL(link_repository);
 public:
   inline link_repository (bool active):
-    rep (new link_repository_rep ()) { rep->ref_count++; }
+    rep (tm_new<link_repository_rep> ()) { rep->ref_count++; }
 };
 ABSTRACT_NULL_CODE(link_repository);
 

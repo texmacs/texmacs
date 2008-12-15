@@ -19,7 +19,7 @@ hashset_rep<T>::resize (int n2) {
   int oldn= n;
   list<T>* olda= a;
   n= n2;
-  a= new list<T>[n];
+  a= tm_new_array<list<T> > (n);
   for (i=0; i<oldn; i++) {
     list<T> l(olda[i]);
     while (!is_nil(l)) {
@@ -28,7 +28,7 @@ hashset_rep<T>::resize (int n2) {
       l=l->next;
     }
   }
-  delete[] olda;
+  tm_delete_array (olda);
 }
 
 template<class T> static T*

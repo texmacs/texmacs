@@ -52,13 +52,13 @@ x_drawable_rep::new_shadow (renderer& ren) {
     delete_shadow (ren);
   }
   //cout << "Create " << mw << ", " << mh << "\n";
-  ren= (renderer) new x_drawable_rep (gui, mw, mh);
+  ren= (renderer) tm_new<x_drawable_rep> (gui, mw, mh);
 }
 
 void
 x_drawable_rep::delete_shadow (renderer& ren) {
   if (ren != NULL) {
-    delete ren->as_x_drawable ();
+    tm_delete (ren->as_x_drawable ());
     ren= NULL;
   }
 }

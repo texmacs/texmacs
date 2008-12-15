@@ -46,7 +46,7 @@ bridge_locus_rep::initialize () {
 
 bridge
 bridge_locus (typesetter ttt, tree st, path ip) {
-  return new bridge_locus_rep (ttt, st, ip);
+  return tm_new<bridge_locus_rep> (ttt, st, ip);
 }
 
 /******************************************************************************

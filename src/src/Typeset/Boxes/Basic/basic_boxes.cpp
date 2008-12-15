@@ -233,42 +233,42 @@ struct control_lazy_box_rep: public box_rep {
 
 box
 test_box (path ip) {
-  return new test_box_rep (ip);
+  return tm_new<test_box_rep> (ip);
 }
 
 box
 line_box (path ip, SI x1, SI y1, SI x2, SI y2, SI w, SI c) {
-  return new line_box_rep (ip, x1, y1, x2, y2, w, c);
+  return tm_new<line_box_rep> (ip, x1, y1, x2, y2, w, c);
 }
 
 box
 arc_box (path ip, SI x1, SI y1, SI x2, SI y2, int a1, int a2, SI w, SI c) {
-  return new arc_box_rep (ip, x1, y1, x2, y2, a1, a2, w, c);
+  return tm_new<arc_box_rep> (ip, x1, y1, x2, y2, a1, a2, w, c);
 }
 
 box
 polygon_box (path ip, array<SI> x, array<SI> y, SI w, color cf, color cl) {
-  return new polygon_box_rep (ip, x, y, w, cf, cl);
+  return tm_new<polygon_box_rep> (ip, x, y, w, cf, cl);
 }
 
 box
 polygon_box (path ip, array<SI> x, array<SI> y, color c) {
-  return new polygon_box_rep (ip, x, y, 0, c, c);
+  return tm_new<polygon_box_rep> (ip, x, y, 0, c, c);
 }
 
 box
 image_box (path ip, url u, SI w, SI h,
 	   double cx1, double cy1, double cx2, double cy2)
 {
-  return new image_box_rep (ip, u, w, h, cx1, cy1, cx2, cy2);
+  return tm_new<image_box_rep> (ip, u, w, h, cx1, cy1, cx2, cy2);
 }
 
 box
 control_box (path ip, tree t, font fn) {
-  return new control_tree_box_rep (ip, t, fn);
+  return tm_new<control_tree_box_rep> (ip, t, fn);
 }
 
 box
 control_box (path ip, lazy lz, font fn) {
-  return new control_lazy_box_rep (ip, lz, fn);
+  return tm_new<control_lazy_box_rep> (ip, lz, fn);
 }
