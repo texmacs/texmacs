@@ -87,6 +87,13 @@
 	`((,where ,@head ,@(cdr first)) ,@others)
 	`((,where ,@head) ,first ,@others))))
 
+(define (tmconcat-tabs-filter l first?)
+  (cond ((null? l) l)
+	(first? (cons (car l) (tmconcat-tabs-filter (cdr l) #f)))
+	((and (pair? (car l)) (pair? (caar l)) (== (cAr (caar l)) "first"))
+	 (tmconcat-tabs-filter (cdr l) #f))
+	(else (cons (car l) (tmconcat-tabs-filter (cdr l) #f)))))
+
 (define (tmconcat-tabs-sub head tail where)
   ;; FIXME: should better take into account the different types of tabs
   (cond ((null? tail) `((,where ,@head)))
@@ -96,7 +103,7 @@
 	 (tmconcat-tabs-make head tail where where))
 	((tab-right? (caar tail))
 	 (tmconcat-tabs-make head tail where '!right))
-	((and (== where '!left) (> (length tail) 1))
+	((and (== where '!left) (> (length (tmconcat-tabs-filter tail #t)) 1))
 	 (tmconcat-tabs-make head tail where '!middle))
 	(else (tmconcat-tabs-make head tail where '!right))))
 
