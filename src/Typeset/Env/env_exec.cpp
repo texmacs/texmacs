@@ -1436,7 +1436,7 @@ edit_env_rep::exec_set_binding (tree t) {
       }
     }
   }
-  return keys;
+  return tree (HIDDEN, "", keys);
 }
 
 tree
