@@ -34,6 +34,7 @@ AC_SUBST(STABLE_RELEASE)
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG_CPLUSPLUS
+AH_TEMPLATE([OLD_GNU_COMPILER],[Use g++ strictly prior to g++ 3.0])
 AC_MSG_CHECKING(whether GNU C++ compiler is default)
 case "$GXX" in
   yes )
@@ -44,6 +45,12 @@ case "$GXX" in
     AC_MSG_RESULT($GCC_VERSION)
     AC_MSG_CHECKING(version of g++)
     AC_MSG_RESULT($GXX_VERSION)
+    case "$GXX_VERSION" in
+      0* | 1* | 2*)
+        echo "old style GNU compiler"
+        AC_DEFINE([OLD_GNU_COMPILER],[])
+      ;;
+    esac
   ;;
   *)
     GCC_VERSION="none"

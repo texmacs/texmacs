@@ -333,4 +333,73 @@ public:                                    \
   template<TT T> inline PTR<T>::operator BASE () { return BASE (this->rep); }
 // end extend_null
 
+/******************************************************************************
+* Fast new and delete
+******************************************************************************/
+
+#ifdef OLD_GNU_COMPILER
+inline void* operator new   (register size_t s, void* loc) { return loc; }
+inline void* operator new[] (register size_t s, void* loc) { return loc; }
+#else
+#include <new>
+#endif
+
+extern void* fast_alloc (register size_t s);
+extern void  fast_free (register void* ptr, register size_t s);
+
+template<typename C> inline C*
+tm_new () {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C ();
+  return (C*) ptr;
+}
+
+template<typename C, typename A1> inline C*
+tm_new (const A1& a1) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2> inline C*
+tm_new (const A1& a1, const A2& a2) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3) {
+  void* ptr= fast_alloc (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3);
+  return (C*) ptr;
+}
+
+template<typename C> inline void
+tm_delete (C* ptr) {
+  ptr -> ~C ();
+  fast_free ((void*) ptr, sizeof (C));
+}
+
+template<typename C> inline C*
+tm_new_array (int n) {
+  void* ptr= fast_alloc (n * sizeof (C) + 8);
+  *((int*) ptr)= n;
+  ptr= (void*) (((char*) ptr) + 8);
+  C* ctr= (C*) ptr;
+  for (int i=0; i<n; i++, ctr++)
+    (void) new ((void*) ctr) C ();
+  return (C*) ptr;
+}
+
+template<typename C> inline void
+tm_delete_array (C* Ptr) {
+  void* ptr= (void*) Ptr;
+  ptr= (void*) (((char*) ptr) - 8);
+  int n= *((int*) ptr);
+  C* ctr= Ptr+n-1;
+  for (int i=0; i<n; i++, ctr--) ctr -> ~C();
+  fast_free (ptr, n * sizeof (C) + 8);
+}
+
 #endif // defined BASIC_H
