@@ -1,0 +1,21 @@
+---------------------
+Plugin TeXgraph (0.4)
+---------------------
+
+Pour avoir accès aux sessions TeXgraph à l'intérieur de TeXmacs, il vous faut :
+
+1. Installer TeXmacs (voir http://www.texmacs.org/).
+
+2. Installer TeXgraph (voir http://texgraph.tuxfamily.org/) si possible à l'emplacement donné par défaut (/usr/local/share/TeXgraph/) pour bénéficier de l'aide à partir de TeXmacs.
+
+3. Décompresser l'archive dans le dossier ~/.TeXmacs/plugins/.
+
+
+L'ensemble a été testé sous Ubuntu 8.10 avec TeXmacs 1.0.7 et TeXgraph 1.94 beta-7.2
+
+Pour les utilisateurs de windows, il vous faudra copier le fichier texgraph.sty (disponible dans le dossier principal TeXgraph) dans votre arborescence TEX et mettre la base à jour.
+
+--------------------
+Problèmes connus
+--------------------
+Si le répertoire d'installation de TeXgraph n'est pas celui donné par défaut (/usr/local/share/TeXgraph) alors les raccourcis vers les fichiers d'aide disponible dans le menu TeXgraph ne fonctionnent pas.
