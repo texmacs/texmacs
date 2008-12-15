@@ -9,9 +9,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-
-
-
 #include <QtGui>
 
 #include "QTMWidget.hpp"
@@ -35,8 +32,6 @@ extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
 #endif
 
 #include <QEvent>
-
-
 
 #define PIXEL 256
 

@@ -183,7 +183,7 @@ qtmstyle () {
     // s->setParent(NULL);
     // FIXME: if we change style at application level and
     // the old style is deleted the application will crash
-    qtmstyle = new QTMStyle(s);
+    qtmstyle = new QTMStyle (s);
     // QApplication::setStyle(qtmstyle);
   }
   return qtmstyle;

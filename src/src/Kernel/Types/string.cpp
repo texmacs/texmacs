@@ -231,7 +231,7 @@ as_double (string s) {
 
 char*
 as_charp (string s) {
-  int i, n=N(s);
+  int i, n= N(s);
   char *s2= tm_new_array<char> (n+1);
   for (i=0; i<n; i++) s2[i]=s[i];
   s2[n]= '\0';
@@ -240,8 +240,8 @@ as_charp (string s) {
 
 string
 as_string_bool (bool f) {
-    if (f) return string ("true");
-    else return string ("false");
+  if (f) return string ("true");
+  else return string ("false");
 }
 
 string
@@ -249,7 +249,7 @@ as_string (int i) {
   char buf[64];
   sprintf (buf, "%i", i);
   // sprintf (buf, "%i\0", i);
-  return string(buf);
+  return string (buf);
 }
 
 string

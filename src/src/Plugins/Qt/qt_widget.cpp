@@ -300,7 +300,7 @@ qt_view_widget_rep::plain_window_widget (string s) {
   // creates a decorated window with name s and contents w
   view->setWindowTitle (to_qstring (s));
   //return this;
-  widget wid =  new qt_window_widget_rep(view);
+  widget wid= tm_new<qt_window_widget_rep> (view);
   //FIXME: is this the right thing to do?
   return wid; 
 }
@@ -671,7 +671,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_MAIN_MENU");
     {
       QMenu* m= to_qmenu (w);
-      QMenuBar* b=  new QMenuBar();
+      QMenuBar* b= new QMenuBar ();
       replaceActions (b, m);
       tm_mainwindow()->setMenuBar (b);
       delete m;
@@ -1009,7 +1009,7 @@ texmacs_widget (int mask, command quit) {
   // the mask variable indicates whether the menu, icon bars, status bar, etc.
   // are visible or not
   (void) mask; (void) quit; // FIXME: handle correctly mask and quit
-  widget w= new qt_tm_widget_rep(mask);
+  widget w= tm_new<qt_tm_widget_rep> (mask);
   return w; 
 }
 
@@ -1040,7 +1040,7 @@ glue_widget (bool hx, bool vx, SI w, SI h) {
   // resp. vertically extensible if hx resp. vx is true
   NOT_IMPLEMENTED;
   (void) hx; (void) vx; (void) w; (void) h;
-  return new qt_view_widget_rep (new QWidget());
+  return tm_new<qt_view_widget_rep> (new QWidget ());
 }
 
 widget

@@ -62,7 +62,7 @@ QString
 to_qstring (string s) {
   char* p= as_charp (s);
   QString nss (p);
-  delete [] p;	
+  tm_delete_array (p);
   return nss;
 }
 
@@ -78,7 +78,7 @@ to_qstring_utf8 (string s) {
   s= cork_to_utf8 (s);
   char* p= as_charp (s);
   QString nss= QString::fromUtf8 (p, N(s));
-  delete [] p;
+  tm_delete_array (p);
   return nss;
 }
 
