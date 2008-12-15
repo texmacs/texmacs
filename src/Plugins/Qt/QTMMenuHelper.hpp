@@ -25,7 +25,6 @@ class QTMCommand: public QObject {
 public:
   inline QTMCommand (command _cmd):
     cmd (_cmd) {  }
-//  inline ~QTMCommand () {  }
 
 public slots:
   inline void apply() {
@@ -42,7 +41,6 @@ public:
     pm (_pm), forced (false) {
       QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
     }
-//  inline ~QTMLazyMenu() { DEC_COUNT_NULL(pm); }
 
 public slots:
   void force();
