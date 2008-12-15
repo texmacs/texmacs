@@ -492,7 +492,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
       
   case SLOT_SCROLLBARS_VISIBILITY:
-    // ignore this: cocoa handles scrollbars independently
+    // ignore this: qt handles scrollbars independently
     //			send_int (THIS, "scrollbars", val);
     break;
       
@@ -704,7 +704,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       delete m;
     }
     break;
-  
+
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
     int_prompt= concrete (w); 
