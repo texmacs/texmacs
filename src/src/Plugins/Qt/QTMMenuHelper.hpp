@@ -20,31 +20,29 @@
 
 class QTMCommand: public QObject {
   Q_OBJECT
-  command_rep* cmd;
+  command cmd;
 	
 public:
-  inline QTMCommand (command_rep *_cmd):
-    cmd (_cmd) { INC_COUNT_NULL(cmd); }
-  inline ~QTMCommand () {
-    DEC_COUNT_NULL (cmd); }
+  inline QTMCommand (command _cmd):
+    cmd (_cmd) {  }
+//  inline ~QTMCommand () {  }
 
 public slots:
   inline void apply() {
-    if (cmd) cmd->apply(); }
+    if (!is_nil(cmd)) cmd->apply(); }
 };
 
 class QTMLazyMenu: public QMenu {
   Q_OBJECT
-  promise_rep<widget> *pm;
+  promise<widget> pm;
   bool forced;
 
 public:
-  inline QTMLazyMenu (promise_rep<widget>* _pm):
+  inline QTMLazyMenu (promise<widget> _pm):
     pm (_pm), forced (false) {
-      INC_COUNT_NULL (pm); 
       QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
     }
-  inline ~QTMLazyMenu() { DEC_COUNT_NULL(pm); }
+//  inline ~QTMLazyMenu() { DEC_COUNT_NULL(pm); }
 
 public slots:
   void force();
