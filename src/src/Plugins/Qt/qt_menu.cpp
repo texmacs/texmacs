@@ -114,7 +114,7 @@ horizontal_menu (array<widget> arr) {
     a->setParent (m);
   }
   act->setMenu (m);
-  return new qt_menu_rep (act);	
+  return tm_new<qt_menu_rep> (act);	
 }
 
 widget
@@ -230,7 +230,7 @@ tile_menu (array<widget> a, int cols) {
   (void) cols; 
 #if 1
   QWidgetAction* act= new QTMTileAction (NULL, a, cols);  
-  return new qt_menu_rep (act);
+  return tm_new<qt_menu_rep> (act);
 #else
   return horizontal_menu (a); 
 #endif
@@ -242,7 +242,7 @@ menu_separator (bool vertical) {
   (void) vertical;
   QAction* a= new QAction (NULL);
   a->setSeparator (true);
-  return new qt_menu_rep (a); 
+  return tm_new<qt_menu_rep> (a); 
 }
 
 widget
@@ -251,7 +251,7 @@ menu_group (string name, string lan) {
   (void) lan;
   QAction* a= new QAction (to_qstring (name), NULL);
   a->setEnabled (false);
-  return new qt_menu_rep (a);
+  return tm_new<qt_menu_rep> (a);
 }
 
 widget
@@ -260,7 +260,7 @@ pulldown_button (widget w, promise<widget> pw) {
   QAction* a= concrete (w) -> as_qaction ();
   QTMLazyMenu* lm= new QTMLazyMenu (pw.rep);
   a->setMenu (lm);
-  return new qt_menu_rep (a);
+  return tm_new<qt_menu_rep> (a);
 }
 
 widget
@@ -326,14 +326,14 @@ menu_button (widget w, command cmd, string pre, string ks, bool ok) {
   else if (pre == "*") {}
     // [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
   else if (pre == "o") {}
-  return new qt_menu_rep(a);
+  return tm_new<qt_menu_rep> (a);
 }
 
 widget
 balloon_widget (widget w, widget help)  { 
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while
-  return new qt_balloon_widget_rep (w, help);
+  return tm_new<qt_balloon_widget_rep> (w, help);
 }
 
 widget
@@ -341,14 +341,14 @@ text_widget (string s, color col, bool tsp, string lan) {
   // a text widget with a given color, transparency and language
   string t= qt_translate (s);
   if (t == "Help") t= "Help ";
-  return new qt_text_widget_rep (t, col, tsp, lan);
+  return tm_new<qt_text_widget_rep> (t, col, tsp, lan);
 }
 
 widget
 xpm_widget (url file_name) {
   // return widget ();
   // a widget with an X pixmap icon
-  return new qt_image_widget_rep(file_name);
+  return tm_new<qt_image_widget_rep> (file_name);
 }
 
 QMenu*
@@ -403,15 +403,14 @@ simple_widget_rep::as_qaction () {
 void
 QTMLazyMenu::force () {
   if (!forced) {
-//    widget w= pm->eval ();
-    widget w= pm();
+    // widget w= pm->eval ();
+    widget w= pm ();
     qt_menu_rep* wid= (qt_menu_rep*) (w.rep); 
     QMenu* menu2= wid->item->menu ();
     replaceActions (this, menu2);
     delete (wid->item);
     wid->item= NULL;
-//    pm= NULL;
+    // pm= NULL;
     forced= true;
-    QObject::disconnect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
   }
 }
