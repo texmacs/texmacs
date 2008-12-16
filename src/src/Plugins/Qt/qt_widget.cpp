@@ -618,7 +618,8 @@ replaceActions (QWidget* dest, QWidget* src) {
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
     dest->removeAction (a);
-    a->deleteLater();
+    delete a;
+//    a->deleteLater();
   }
   // cout << "replaceActions n:" << src->actions().count() << LF;
   list = src->actions();
