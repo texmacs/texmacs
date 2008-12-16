@@ -38,7 +38,7 @@ public:
   bool flag;
   QPointer<QAction> item;
   qt_menu_rep (QAction* _item): flag (false), item (_item) {}
-  ~qt_menu_rep () {}
+  ~qt_menu_rep () { if (item && !flag) delete item; }
 
   virtual void send (slot s, blackbox val);
   virtual widget make_popup_widget (); 
@@ -114,6 +114,7 @@ horizontal_menu (array<widget> arr) {
     a->setParent (m);
   }
   act->setMenu (m);
+  m->QObject::setParent(act);
   return tm_new<qt_menu_rep> (act);	
 }
 
@@ -258,8 +259,14 @@ widget
 pulldown_button (widget w, promise<widget> pw) {
   // a button w with a lazy pulldown menu pw
   QAction* a= concrete (w) -> as_qaction ();
-  QTMLazyMenu* lm= new QTMLazyMenu (pw.rep);
+  QTMLazyMenu* lm= new QTMLazyMenu (pw);
+  QMenu *old_menu = a->menu();
   a->setMenu (lm);
+  lm->QObject::setParent(a);
+  if (old_menu) {
+    cout << "this should not happen\n";
+    delete old_menu;    
+  }
   return tm_new<qt_menu_rep> (a);
 }
 
@@ -355,6 +362,7 @@ QMenu*
 to_qmenu(widget w) {
   QAction *a = concrete(w)->as_qaction();
   QMenu *m = a->menu(); // the menu has no parent
+  m->setParent(NULL);
   delete a;
   return m;
 }
@@ -410,7 +418,7 @@ QTMLazyMenu::force () {
     replaceActions (this, menu2);
     delete (wid->item);
     wid->item= NULL;
-    // pm= NULL;
+    pm= promise<widget>();
     forced= true;
   }
 }
