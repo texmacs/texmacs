@@ -33,6 +33,15 @@
 
 extern char  *slot_name(slot s); // from qt_widget.cpp
 
+
+// this custom action frees its menu if it does not already have an owner.
+class QTMAction : public QAction {
+public:
+  QTMAction(QObject *parent = NULL) : QAction(parent) {}
+ ~QTMAction() { if (menu() && !(menu()->parent())) delete menu(); } //menu()->deleteLater(); }
+};
+
+
 class qt_menu_rep: public qt_widget_rep {
 public:
   bool flag;
@@ -105,7 +114,8 @@ qt_menu_rep::send (slot s, blackbox val) {
 widget
 horizontal_menu (array<widget> arr) {
   // a horizontal menu made up of the widgets in a
-  QAction* act= new QAction ("Menu", NULL);
+  QAction* act= new QTMAction (NULL);
+  act->setText("Menu");
   QMenu* m= new QMenu ();
   for (int i = 0; i < N(arr); i++) {
     if (is_nil (arr[i])) break;
@@ -114,7 +124,7 @@ horizontal_menu (array<widget> arr) {
     a->setParent (m);
   }
   act->setMenu (m);
-  m->QObject::setParent(act);
+  //m->QObject::setParent(act);
   return tm_new<qt_menu_rep> (act);	
 }
 
@@ -241,7 +251,7 @@ widget
 menu_separator (bool vertical) {
   // a horizontal or vertical menu separator
   (void) vertical;
-  QAction* a= new QAction (NULL);
+  QAction* a= new QTMAction (NULL);
   a->setSeparator (true);
   return tm_new<qt_menu_rep> (a); 
 }
@@ -250,7 +260,8 @@ widget
 menu_group (string name, string lan) {
   // a menu group; the name should be greyed and centered
   (void) lan;
-  QAction* a= new QAction (to_qstring (name), NULL);
+  QAction* a= new QTMAction (NULL);
+  a->setText(to_qstring (name));
   a->setEnabled (false);
   return tm_new<qt_menu_rep> (a);
 }
@@ -262,7 +273,6 @@ pulldown_button (widget w, promise<widget> pw) {
   QTMLazyMenu* lm= new QTMLazyMenu (pw);
   QMenu *old_menu = a->menu();
   a->setMenu (lm);
-  lm->QObject::setParent(a);
   if (old_menu) {
     cout << "this should not happen\n";
     delete old_menu;    
@@ -278,12 +288,14 @@ pullright_button (widget w, promise<widget> pw) {
 
 QAction*
 qt_text_widget_rep::as_qaction () {
-  return new QAction (to_qstring_utf8 (str), NULL);
+  QAction* a= new QTMAction (NULL);
+  a->setText(to_qstring_utf8 (str));
+  return a;
 }
 
 QAction*
 qt_image_widget_rep::as_qaction () {
-  QAction* a= new QAction (NULL);
+  QAction* a= new QTMAction (NULL);
   QPixmap* img= the_qt_renderer () -> xpm_image (image);
   QIcon icon (*img);
   a->setIcon (icon);  
@@ -363,6 +375,7 @@ to_qmenu(widget w) {
   QAction *a = concrete(w)->as_qaction();
   QMenu *m = a->menu(); // the menu has no parent
   m->setParent(NULL);
+  a->setMenu(NULL); // otherwise the deletion of a (really a QTMAction) triggers deletion of m
   delete a;
   return m;
 }
@@ -401,7 +414,7 @@ impress (simple_widget_rep* wid) {
 
 QAction*
 simple_widget_rep::as_qaction () {
-  QAction* a= new QAction (NULL);
+  QAction* a= new QTMAction (NULL);
   QPixmap pxm (impress (this));
   QIcon icon (pxm);
   a->setIcon (icon);
