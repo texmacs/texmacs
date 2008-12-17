@@ -395,7 +395,9 @@ impress (simple_widget_rep* wid) {
     QRect rect = QRect (0, 0, s.width(), s.height());
     //cout << "impress (" << s.width() << "," << s.height() << ")\n";
     pxm.fill (Qt::transparent);
-    the_qt_renderer()->begin (&pxm);
+    the_qt_renderer()->begin (static_cast<QPaintDevice*>(&pxm));
+    wid->set_current_renderer(the_qt_renderer());    
+
     the_qt_renderer()->set_clipping
       (rect.x() * PIXEL, -(rect.y() + rect.height()) * PIXEL, 
        (rect.x() + rect.width()) * PIXEL, -rect.y() * PIXEL);
