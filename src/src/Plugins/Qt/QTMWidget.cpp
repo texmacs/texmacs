@@ -184,7 +184,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     cairo_destroy(ct);
 #else
     r = the_qt_renderer();
-    r->begin (this);
+    r->begin (static_cast<QPaintDevice*>(this));
 #endif
 
     tm_widget()->set_current_renderer(r);    

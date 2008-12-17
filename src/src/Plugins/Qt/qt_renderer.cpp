@@ -80,7 +80,7 @@ qt_renderer_rep::~qt_renderer_rep () {}
 
 void 
 qt_renderer_rep::begin (void* handle) { 
-  QWidget *device = (QWidget*) handle;
+   QPaintDevice *device = (QPaintDevice*)handle;
   painter.begin (device);   
 }
 
