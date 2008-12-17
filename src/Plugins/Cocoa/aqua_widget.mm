@@ -364,7 +364,7 @@ aqua_view_widget_rep::plain_window_widget (string s)
   [nsw setAcceptsMouseMovedEvents:YES];
 	//	[[nsw contentView] addSubview:view];
 //	[nsw setToolbar:((aqua_tm_widget_rep*)w.rep)->toolbar];
-	widget wid =  new aqua_window_widget_rep(nsw);
+	widget wid =  tm_new <aqua_window_widget_rep> (nsw);
 	return wid; 
 }
 
@@ -1195,7 +1195,7 @@ widget texmacs_widget (int mask, command quit)
 {
   (void) mask; (void) quit; // FIXME: handle correctly mask and quit
 
-	widget w = new aqua_tm_widget_rep(mask);
+	widget w = tm_new <aqua_tm_widget_rep> (mask);
 	return w; 
 }
 
@@ -1231,7 +1231,7 @@ glue_widget (bool hx, bool vx, SI w, SI h) {
   // resp. vertically extensible if hx resp. vx is true
   NOT_IMPLEMENTED;
   (void) hx; (void) vx; (void) w; (void) h;
-	return new aqua_view_widget_rep ([[[NSView alloc] initWithFrame:NSMakeRect(0, 0, 50, 50)] autorelease]);
+	return tm_new <aqua_view_widget_rep> ([[[NSView alloc] initWithFrame:NSMakeRect(0, 0, 50, 50)] autorelease]);
 }
 
 widget

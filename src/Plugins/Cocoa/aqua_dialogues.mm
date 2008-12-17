@@ -210,7 +210,7 @@ widget file_chooser_widget (command cmd, string type, string mgn)
 // the widget includes a previsualizer and a default magnification
 // for importation can be specified
 {
-	return new aqua_chooser_widget_rep (cmd,type,mgn);
+	return tm_new <aqua_chooser_widget_rep> (cmd,type,mgn);
 }
 
 #if 0
@@ -381,7 +381,7 @@ aqua_input_widget_rep::aqua_input_widget_rep (command _cmd, array<string> _promp
 : aqua_widget_rep(), cmd(_cmd),  size(coord2(100,100)), position(coord2(0,0)), win_title(""), fields(N(_prompts))
 {
   for(int i=0; i < N(_prompts); i++) {
-   fields[i] = new aqua_field_widget_rep(this);
+   fields[i] = tm_new <aqua_field_widget_rep> (this);
    fields[i]->prompt = _prompts[i];
   }
 }
@@ -620,7 +620,7 @@ widget inputs_list_widget (command call_back, array<string> prompts)
 // a dialogue widget with Ok and Cancel buttons and a series of textual
 // input widgets with specified prompts
 {
-	return new aqua_input_widget_rep (call_back,prompts);
+	return tm_new <aqua_input_widget_rep> (call_back,prompts);
 
 }
 
@@ -630,7 +630,7 @@ widget input_text_widget (command call_back, string type, array<string> def)
 // a textual input widget for input of a given type and a list of suggested
 // default inputs (the first one should be displayed, if there is one)
 {
-  return new aqua_input_text_widget_rep(call_back, type, def);
+  return tm_new <aqua_input_text_widget_rep> (call_back, type, def);
 }
 
 

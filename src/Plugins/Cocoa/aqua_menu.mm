@@ -217,7 +217,7 @@ widget horizontal_menu (array<widget> a)
       [menu addItem: concrete(a[i])->as_menuitem()];
 	};
 	[mi setSubmenu:menu];
-	return new aqua_menu_rep(mi);	
+	return tm_new <aqua_menu_rep> (mi);	
 }
 
 widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
@@ -313,13 +313,13 @@ widget tile_menu (array<widget> a, int cols)
 
 	
 	[mi setView:tv];
-	return new aqua_menu_rep(mi);
+	return tm_new <aqua_menu_rep> (mi);
 	
 }
 
 
 
-widget menu_separator (bool vertical) { return new aqua_menu_rep([NSMenuItem separatorItem]); }
+widget menu_separator (bool vertical) { return tm_new <aqua_menu_rep> ([NSMenuItem separatorItem]); }
 // a horizontal or vertical menu separator
 widget menu_group (string name, string lan) 
 // a menu group; the name should be greyed and centered
@@ -333,7 +333,7 @@ widget menu_group (string name, string lan)
 	[mi setAttributedTitle:[[[NSAttributedString alloc] initWithString:[mi title]
 																													attributes:[NSDictionary dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName,
 																																				 nil]] autorelease]];
-	return new aqua_menu_rep(mi);
+	return tm_new <aqua_menu_rep> (mi);
 }
 
 widget pulldown_button (widget w, promise<widget> pw) 
@@ -347,7 +347,7 @@ widget pulldown_button (widget w, promise<widget> pw)
   TMLazyMenu *lm = [[[TMLazyMenu alloc] init] autorelease];
 	[lm setPromise:pw.rep];
 	[mi setSubmenu: lm];
-	return new aqua_menu_rep(mi);
+	return tm_new <aqua_menu_rep> (mi);
 }
 
 widget pullright_button (widget w, promise<widget> pw)
@@ -410,32 +410,32 @@ widget menu_button (widget w, command cmd, string pre, string ks, bool ok)
 //		[mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
 	} else if (pre == "o") {
 	}
-	return new aqua_menu_rep(mi);
+	return tm_new <aqua_menu_rep> (mi);
 }
 
 widget balloon_widget (widget w, widget help) 
 // given a button widget w, specify a help balloon which should be displayed
 // when the user leaves the mouse pointer on the button for a small while
 { 
-  return new aqua_balloon_widget_rep(w,help);
+  return tm_new <aqua_balloon_widget_rep> (w,help);
 }
 
 widget text_widget (string s, color col, bool tsp, string lan) 
 // a text widget with a given color, transparency and language
 {
-  return new aqua_text_widget_rep(s,col,tsp,lan);
+  return tm_new <aqua_text_widget_rep> (s,col,tsp,lan);
 }
 widget xpm_widget (url file_name)// { return widget(); }
 // a widget with an X pixmap icon
 {
-  return new aqua_image_widget_rep(file_name);
+  return tm_new <aqua_image_widget_rep> (file_name);
 #if 0  
 	NSImage *image = the_aqua_renderer()->xpm_image(file_name);
 //	TMMenuItem *mi = [[[TMMenuItem alloc] initWithTitle:to_nsstring(as_string(file_name)) action:NULL keyEquivalent:@""] autorelease];
 	TMMenuItem *mi = [[[TMMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""] autorelease];
 	[mi setRepresentedObject:image];
 	[mi setImage:image];
-  return new aqua_menu_rep(mi);
+  return tm_new <aqua_menu_rep> (mi);
 //	return new aqua_menu_text_rep(to_nsstring(as_string(file_name)));
 #endif
 }

@@ -62,7 +62,7 @@ NSString *to_nsstring(string s)
 {
 	char *p = as_charp(s);
 	NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
-	delete [] p;	
+	tm_delete_array (p);	
 	return nss;
 }
 
@@ -78,7 +78,7 @@ NSString *to_nsstring_utf8(string s)
   s= cork_to_utf8 (s);
 	char *p = as_charp(s);
 	NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
-	delete [] p;	
+	tm_delete_array (p);	
 	return nss;
 }
 
