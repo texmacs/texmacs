@@ -37,7 +37,7 @@ struct aqua_image_rep: concrete_struct {
 class aqua_image {
 	CONCRETE_NULL(aqua_image);
   aqua_image (NSImage* img2, SI xo2, SI yo2, int w2, int h2):
-  rep (new aqua_image_rep (img2, xo2, yo2, w2, h2)) {}	
+  rep (tm_new <aqua_image_rep> (img2, xo2, yo2, w2, h2)) {}	
 };
 
 CONCRETE_NULL_CODE(aqua_image);
@@ -59,7 +59,7 @@ struct cg_image_rep: concrete_struct {
 class cg_image {
 	CONCRETE_NULL(cg_image);
 	cg_image (CGImageRef img2, SI xo2, SI yo2, int w2, int h2):
-    rep (new cg_image_rep (img2, xo2, yo2, w2, h2)) {}	
+    rep (tm_new <cg_image_rep> (img2, xo2, yo2, w2, h2)) {}	
 };
 
 CONCRETE_NULL_CODE(cg_image);
@@ -283,7 +283,7 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       return;
     }
     // caching
-    ci = new aqua_cache_image_rep (w,h, texmacs_time(), pm);
+    ci = tm_new <aqua_cache_image_rep> (w,h, texmacs_time(), pm);
     set_image_cache(lookup, ci);
     (ci->nr)++;
   }
@@ -566,7 +566,7 @@ void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
 aqua_renderer_rep*
 the_aqua_renderer () {
   static aqua_renderer_rep* the_renderer= NULL;
-	if (!the_renderer) the_renderer= new aqua_renderer_rep ();
+	if (!the_renderer) the_renderer= tm_new <aqua_renderer_rep> ();
 	return the_renderer;
 }
 
