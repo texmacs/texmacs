@@ -20,12 +20,13 @@
 * The x_window class
 ******************************************************************************/
 
-class x_window_rep: public x_drawable_rep, public window_rep {
+class x_window_rep: public window_rep {
 public:
-  widget        w;
-  x_gui         gui;
-  char*         name;
-  string        the_name;
+  widget           w;
+  x_gui            gui;
+  char*            name;
+  string           the_name;
+  x_drawable_rep*  ren;
 
   Display*      dpy;
   Window        win;
@@ -56,6 +57,7 @@ public:
 		SI min_w, SI min_h, SI def_w, SI def_h, SI max_w, SI max_h);
   ~x_window_rep ();
   widget get_widget ();
+  renderer get_renderer ();
   void get_extents (int& w, int& h);
 
   void set_hints (SI min_w, SI min_h, SI max_w, SI max_h);

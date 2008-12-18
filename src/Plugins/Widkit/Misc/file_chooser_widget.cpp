@@ -211,22 +211,23 @@ file_list_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
+  renderer ren= win->get_renderer ();
   int i; 
   metric ex;
-  win->set_background (white);
-  win->clear (0, -h, w, 0);
+  ren->set_background (white);
+  ren->clear (0, -h, w, 0);
   font fn= get_default_font ();
-  win->set_shrinking_factor (3);
+  ren->set_shrinking_factor (3);
   SI y= 0;
   for (i=0; i<N(names); i++)
     if (lids[i]) {
-      win->set_color (black);
-      if (hilight == i) win->set_color (red);
+      ren->set_color (black);
+      if (hilight == i) ren->set_color (red);
       fn->var_get_extents (names[i], ex);
-      fn ->draw (win, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
+      fn ->draw (ren, names[i], 9*PIXEL, y-fn->y2-6*PIXEL);
       y += fn->y1- fn->y2- 12*PIXEL;
     }
-  win->set_shrinking_factor (1);
+  ren->set_shrinking_factor (1);
 }
 
 void
@@ -321,9 +322,10 @@ image_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  win->set_background (white);
-  win->clear (0, 0, w, h);
-  layout_dark_outline (win, 0, 0, w, h);
+  renderer ren= win->get_renderer ();
+  ren->set_background (white);
+  ren->clear (0, 0, w, h);
+  layout_dark_outline (ren, 0, 0, w, h);
   if (file_name != "") {
     SI iw, ih;
     image_size (url_system (file_name), iw, ih);
@@ -335,7 +337,7 @@ image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       else ww= (hh * iw) / ih;
     }
 
-    win->image (url_system (file_name),
+    ren->image (url_system (file_name),
 		ww, hh, PIXEL, PIXEL, 0.0, 0.0, 1.0, 1.0);
   }
 }

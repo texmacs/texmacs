@@ -57,15 +57,16 @@ separator_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 separator_widget_rep::handle_repaint (repaint_event ev) {
-  layout_default (win, ev->x1, ev->y1, ev->x2, ev->y2);
-  win->set_color (layout_dark (win));
-  win->set_line_style (PIXEL);
-  if (vert) win->line (pre+PIXEL, ev->y1, pre+PIXEL, ev->y2);
-  else win->line (ev->x1, -pre-PIXEL, ev->x2, -pre-PIXEL);
-  win->set_color (white);
-  win->set_line_style (PIXEL);
-  if (vert) win->line (pre+2*PIXEL, ev->y1, pre+2*PIXEL, ev->y2);
-  else win->line (ev->x1, -pre-2*PIXEL, ev->x2, -pre-2*PIXEL);
+  renderer ren= win->get_renderer ();
+  layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
+  ren->set_color (layout_dark (ren));
+  ren->set_line_style (PIXEL);
+  if (vert) ren->line (pre+PIXEL, ev->y1, pre+PIXEL, ev->y2);
+  else ren->line (ev->x1, -pre-PIXEL, ev->x2, -pre-PIXEL);
+  ren->set_color (white);
+  ren->set_line_style (PIXEL);
+  if (vert) ren->line (pre+2*PIXEL, ev->y1, pre+2*PIXEL, ev->y2);
+  else ren->line (ev->x1, -pre-2*PIXEL, ev->x2, -pre-2*PIXEL);
 }
 
 void

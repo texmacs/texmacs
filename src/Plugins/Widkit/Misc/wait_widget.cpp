@@ -61,28 +61,29 @@ extern font the_default_wait_font;
 void
 wait_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
-  win->set_background (rgb_color (255, 255, 160));
-  win->clear (0, 0, w, h);
-  win->set_color (black);
-  win->line (0, 0, w-PIXEL, 0);
-  win->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
-  win->line (0, 0, 0, h);
-  win->line (w-PIXEL, 0, w-PIXEL, h-PIXEL);
+  renderer ren= win->get_renderer ();
+  ren->set_background (rgb_color (255, 255, 160));
+  ren->clear (0, 0, w, h);
+  ren->set_color (black);
+  ren->line (0, 0, w-PIXEL, 0);
+  ren->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
+  ren->line (0, 0, 0, h);
+  ren->line (w-PIXEL, 0, w-PIXEL, h-PIXEL);
 
   font fn= the_default_wait_font;
-  win->set_shrinking_factor (3);
+  ren->set_shrinking_factor (3);
   metric ex;
   fn->var_get_extents (wait_s, ex);
   SI x= (3*w - (ex->x1+ex->x2)) >> 1;
   SI y= 2*h - ((ex->y1+ex->y2) >> 1);
-  win->set_color (red);
-  fn->var_draw (win, wait_s, x, y);
+  ren->set_color (red);
+  fn->var_draw (ren, wait_s, x, y);
   fn->var_get_extents (message, ex);
   x= (3*w - (ex->x1+ex->x2)) >> 1;
   y= h - ((ex->y1+ex->y2) >> 1);
-  win->set_color (black);
-  fn->var_draw (win, message, x, y);
-  win->set_shrinking_factor (1);
+  ren->set_color (black);
+  fn->var_draw (ren, message, x, y);
+  ren->set_shrinking_factor (1);
 }
 
 /******************************************************************************

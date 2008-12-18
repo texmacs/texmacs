@@ -12,7 +12,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "renderer.hpp"
+#include "window.hpp"
 #include "Widkit/layout.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/Event/attribute_event.hpp"
@@ -70,10 +70,11 @@ popup_widget_rep::handle_position (position_event ev) {
 
 void
 popup_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  layout_higher (win, 0, -h, w, 0);
-  layout_default (win, PIXEL, PIXEL-h,
+  renderer ren= win->get_renderer ();
+  layout_higher (ren, 0, -h, w, 0);
+  layout_default (ren, PIXEL, PIXEL-h,
 		  w-PIXEL, -PIXEL);
-  layout_default (win, 2*PIXEL, 2*PIXEL-h,
+  layout_default (ren, 2*PIXEL, 2*PIXEL-h,
 		  w-2*PIXEL, -2*PIXEL);
 }
 

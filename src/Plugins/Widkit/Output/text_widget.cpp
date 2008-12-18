@@ -63,12 +63,13 @@ text_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  if (!transparent) layout_default (win, 0, 0, w, h);
-  win->set_color (col);
+  renderer ren= win->get_renderer ();
+  if (!transparent) layout_default (ren, 0, 0, w, h);
+  ren->set_color (col);
   font fn= get_default_font (tt);
-  win->set_shrinking_factor (3);
-  fn ->var_draw (win, s, 3*dw- ex->x1, 3*dh- fn->y1);
-  win->set_shrinking_factor (1);
+  ren->set_shrinking_factor (3);
+  fn ->var_draw (ren, s, 3*dw- ex->x1, 3*dh- fn->y1);
+  ren->set_shrinking_factor (1);
 }
 
 /******************************************************************************

@@ -26,20 +26,28 @@ extern hashmap<tree,string> ps_bbox;
 * Constructors and destructors
 ******************************************************************************/
 
-x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
-  gui (gui2), w (w2), h (h2)
+x_drawable_rep::x_drawable_rep (x_gui gui2, x_window_rep* x_win2):
+  gui (gui2), x_win (x_win2), w (0), h (0)
 {
   dpy         = gui->dpy;
   gc          = gui->gc;
   cur_fg      = black;
   cur_bg      = white;
+}
 
-  if ((w>0) && (h>0))
-    win= (Drawable) XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
+x_drawable_rep::x_drawable_rep (x_gui gui2, int w2, int h2):
+  gui (gui2), x_win (NULL), w (w2), h (h2)
+{
+  dpy         = gui->dpy;
+  gc          = gui->gc;
+  cur_fg      = black;
+  cur_bg      = white;
+  win= (Drawable) XCreatePixmap (gui->dpy, gui->root, w, h, gui->depth);
 }
 
 x_drawable_rep::~x_drawable_rep () {
-  if ((w>0) && (h>0)) XFreePixmap (gui->dpy, (Pixmap) win);
+  if (x_win == NULL)
+    XFreePixmap (gui->dpy, (Pixmap) win);
 }
 
 bool
@@ -54,8 +62,11 @@ x_drawable_rep::as_x_drawable () {
 
 void
 x_drawable_rep::get_extents (int& w2, int& h2) {
-  w2= w;
-  h2= h;
+  if (x_win != NULL) return x_win->get_extents (w2, h2);
+  else {
+    w2= w;
+    h2= h;
+  }
 }
 
 bool

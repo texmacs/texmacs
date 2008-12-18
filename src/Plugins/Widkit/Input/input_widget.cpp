@@ -12,6 +12,7 @@
 #include "analyze.hpp"
 #include "font.hpp"
 #include "file.hpp"
+#include "window.hpp"
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
 
@@ -139,6 +140,7 @@ input_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
+  renderer ren= win->get_renderer ();
   update_draw_s (); 
 
   metric ex;
@@ -159,24 +161,24 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   current -= scroll;
 
   if (got_focus && hilit) {
-    layout_dark (win, 0, 0, w, h);
-    layout_lower (win, 0, 0, w, h);
+    layout_dark (ren, 0, 0, w, h);
+    layout_lower (ren, 0, 0, w, h);
   }
-  else layout_default (win, 0, 0, w, h);
-  win->set_color (black);
-  win->set_shrinking_factor (SHRINK);
-  fn->var_draw (win, draw_s, dw- left, dh- bottom);
+  else layout_default (ren, 0, 0, w, h);
+  ren->set_color (black);
+  ren->set_shrinking_factor (SHRINK);
+  fn->var_draw (ren, draw_s, dw- left, dh- bottom);
   if (got_focus) {
     SI pixel= SHRINK*PIXEL;
-    win->set_color (red);
-    win->line (current+ dw, dh,
+    ren->set_color (red);
+    ren->line (current+ dw, dh,
 	       current+ dw, height- pixel- dh);
-    win->line (current+ dw- pixel, dh,
+    ren->line (current+ dw- pixel, dh,
 	       current+ dw+ pixel, dh);
-    win->line (current+ dw- pixel, height- pixel- dh,
+    ren->line (current+ dw- pixel, height- pixel- dh,
 	       current+ dw+ pixel, height- pixel- dh);
   }
-  win->set_shrinking_factor (1);
+  ren->set_shrinking_factor (1);
 }
 
 void
