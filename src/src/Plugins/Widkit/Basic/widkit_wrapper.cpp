@@ -689,7 +689,7 @@ wk_widget_rep::query (slot s, int type_id) {
     if (type_id != type_helper<renderer>::id)
       fatal_error ("renderer expected (SLOT_RENDERER)",
 		   "wk_widget_rep::query");
-    return close_box<renderer> ((renderer) win);
+    return close_box<renderer> (win->get_renderer ());
   case SLOT_SIZE:
     return query_size (THIS, type_id);
   case SLOT_POSITION:

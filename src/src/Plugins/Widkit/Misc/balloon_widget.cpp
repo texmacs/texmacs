@@ -120,13 +120,14 @@ balloon_decoration_widget_rep::handle_position (position_event ev) {
 void
 balloon_decoration_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
-  win->set_background (rgb_color (255, 255, 160));
-  win->clear (0, 0, w, h);
-  win->set_color (black);
-  win->line (0, 0, w-PIXEL, 0);
-  win->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
-  win->line (0, 0, 0, h);
-  win->line (w-PIXEL, 0, w-PIXEL, h-PIXEL);
+  renderer ren= win->get_renderer ();
+  ren->set_background (rgb_color (255, 255, 160));
+  ren->clear (0, 0, w, h);
+  ren->set_color (black);
+  ren->line (0, 0, w-PIXEL, 0);
+  ren->line (0, h-PIXEL, w-PIXEL, h-PIXEL);
+  ren->line (0, 0, 0, h);
+  ren->line (w-PIXEL, 0, w-PIXEL, h-PIXEL);
 }
 
 /******************************************************************************

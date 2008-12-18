@@ -21,22 +21,25 @@
 * The x_drawable class
 ******************************************************************************/
 
-class x_drawable_rep: virtual public renderer_rep {
-  x_gui     gui;
-  Display*  dpy;
-  Drawable  win;
-  int       w, h;
-  GC        gc;
-  color     cur_fg, cur_bg;
+class x_window_rep;
+class x_drawable_rep: public renderer_rep {
+  x_gui          gui;
+  Display*       dpy;
+  Drawable       win;
+  x_window_rep*  x_win;
+  int            w, h;
+  GC             gc;
+  color          cur_fg, cur_bg;
 
 public:
 
-  x_drawable_rep (x_gui gui, int w=0, int h=0);
+  x_drawable_rep (x_gui gui, x_window_rep* x_win);
+  x_drawable_rep (x_gui gui, int w, int h);
   ~x_drawable_rep ();
 
   bool is_x_drawable ();
   x_drawable_rep* as_x_drawable ();
-  virtual void get_extents (int& w, int& h);
+  void get_extents (int& w, int& h);
   bool interrupted (bool check= false);
 
   void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates

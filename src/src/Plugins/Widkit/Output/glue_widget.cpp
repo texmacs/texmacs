@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "gui.hpp"
+#include "window.hpp"
 #include "Widkit/layout.hpp"
 #include "Widkit/basic_widget.hpp"
 
@@ -56,7 +57,8 @@ glue_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 glue_widget_rep::handle_repaint (repaint_event ev) {
-  layout_default (win, ev->x1, ev->y1, ev->x2, ev->y2);
+  renderer ren= win->get_renderer ();
+  layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
 }
 
 /******************************************************************************

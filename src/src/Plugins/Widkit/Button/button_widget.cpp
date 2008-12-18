@@ -105,13 +105,14 @@ button_widget_rep::handle_position (position_event ev) {
 
 void
 button_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  layout_default (win, 0, 0, w, h);
-  if (button_flag) layout_higher (win, 0, 0, w, h);
+  renderer ren= win->get_renderer ();
+  layout_default (ren, 0, 0, w, h);
+  if (button_flag) layout_higher (ren, 0, 0, w, h);
   if (status) {
-    layout_dark (win, 0, 0, w, h);
-    layout_lower (win, 0, 0, w, h);
+    layout_dark (ren, 0, 0, w, h);
+    layout_lower (ren, 0, 0, w, h);
   }
-  if (rflag) layout_submenu_triangle (win, w-10*PIXEL, h>>1);
+  if (rflag) layout_submenu_triangle (ren, w-10*PIXEL, h>>1);
 }
 
 void

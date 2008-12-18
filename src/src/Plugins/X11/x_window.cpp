@@ -41,7 +41,7 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
 
   // int start_1= texmacs_time ();
   if (!gui->xpm_pixmap->contains ("TeXmacs.xpm"))
-    xpm_initialize ("TeXmacs.xpm");
+    ren->xpm_initialize ("TeXmacs.xpm");
   Pixmap pm= (Pixmap) gui->xpm_pixmap ["TeXmacs.xpm"];
   // cout << "Getting pixmap required " << (texmacs_time ()-start_1) << " ms\n";
 
@@ -83,10 +83,10 @@ x_window_rep::initialize () {
   full_screen_flag= false;
   
   // int start_1= texmacs_time ();
-  set_origin (0, 0);
-  decode (def_w, def_h); def_h= -def_h;
-  decode (min_w, min_h); min_h= -min_h;
-  decode (max_w, max_h); max_h= -max_h;
+  ren->set_origin (0, 0);
+  ren->decode (def_w, def_h); def_h= -def_h;
+  ren->decode (min_w, min_h); min_h= -min_h;
+  ren->decode (max_w, max_h); max_h= -max_h;
   // cout << "Size computation required " << (texmacs_time ()-start_1) << " ms\n";
 
   // int start_2= texmacs_time ();
@@ -106,11 +106,13 @@ x_window_rep::initialize () {
   win= XCreateWindow (dpy, gui->root, win_x, win_y, win_w, win_h, 0,
 		      gui->depth, InputOutput, CopyFromParent,
 		      valuemask, &setattr);
-  x_drawable_rep::win= (Drawable) win;
+  ren->win= (Drawable) win;
   // cout << "XWindow creation required " << (texmacs_time ()-start_2) << " ms\n";
 
-  // cout << "Hints: " << min_w << ", " << min_h << " --- "
-  // << max_w << ", " << max_h << "\n";
+  //cout << "Hints: "
+  //     << min_w << ", " << min_h << " --- "
+  //     << def_w << ", " << def_h << " --- "
+  //     << max_w << ", " << max_h << "\n";
   if (name == NULL) name= const_cast<char*> ("popup");
   if (the_name == "") the_name= name;
   set_hints (min_w, min_h, max_w, max_h);
@@ -152,12 +154,16 @@ x_window_rep::initialize () {
 x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,
 			    SI min_w, SI min_h, SI def_w, SI def_h,
 			    SI max_w, SI max_h):
-  x_drawable_rep (gui2), window_rep (), w (w2), gui (gui2), name (n2),
+  window_rep (), w (w2), gui (gui2), name (n2),
+  ren (tm_new<x_drawable_rep> (gui2, this)),
   Min_w (min_w), Min_h (min_h), Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
   win_x (0), win_y (0), win_w (Def_w/PIXEL), win_h (Def_h/PIXEL),
   kbd_focus (w.rep), has_focus (false)
 {
+  //cout << "Min " << (min_w >> 8) << ", " << (min_h >> 8) << "\n";
+  //cout << "Def " << (def_w >> 8) << ", " << (def_h >> 8) << "\n";
+  //cout << "Max " << (max_w >> 8) << ", " << (max_h >> 8) << "\n";
   initialize ();
   gui->created_window (win);
 }
@@ -168,6 +174,7 @@ x_window_rep::~x_window_rep () {
   XEvent report;
   while (XCheckWindowEvent (dpy, win, 0xffffffff, &report));
 
+  tm_delete (ren);
   if (ic_ok) XDestroyIC (ic);
   Window_to_window->reset (win);
   nr_windows--;
@@ -178,6 +185,11 @@ x_window_rep::~x_window_rep () {
 widget
 x_window_rep::get_widget () {
   return w;
+}
+
+renderer
+x_window_rep::get_renderer () {
+  return (renderer) ren;
 }
 
 void
@@ -254,7 +266,7 @@ x_window_rep::set_position (SI x, SI y) {
 
 void
 x_window_rep::set_size (SI w, SI h) {
-  h=-h; decode (w, h);
+  h=-h; ren->decode (w, h);
   XResizeWindow (dpy, win, w, h);
 }
 
@@ -371,8 +383,8 @@ x_window_rep::focus_out_event () {
 void
 x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
   if (is_nil (gui->grab_ptr) || (get_x_window (gui->grab_ptr->item) == NULL)) {
-    set_origin (0, 0);
-    encode (x, y);
+    ren->set_origin (0, 0);
+    ren->encode (x, y);
     send_mouse (w, ev, x, y, gui->state, t);
   }
   else {
@@ -382,8 +394,8 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
       y += win_y - grab_win->win_y;
       // return;
     }
-    set_origin (0, 0);
-    encode (x, y);
+    ren->set_origin (0, 0);
+    ren->encode (x, y);
     send_mouse (gui->grab_ptr->item, ev, x, y, gui->state, t);
   }
 }
@@ -399,13 +411,13 @@ x_window_rep::repaint_invalid_regions () {
       invalid_regions= rectangles (lub);
   }
   while (!is_nil (invalid_regions)) {
-    set_origin (0, 0);
+    ren->set_origin (0, 0);
     rectangle r= copy (invalid_regions->item);
-    encode (r->x1, r->y1);
-    encode (r->x2, r->y2);
-    x_drawable_rep::set_clipping (r->x1, r->y2, r->x2, r->y1);
+    ren->encode (r->x1, r->y1);
+    ren->encode (r->x2, r->y2);
+    ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
     send_repaint (w, r->x1, r->y2, r->x2, r->y1);
-    if (interrupted ())
+    if (ren->interrupted ())
       new_regions= rectangles (invalid_regions->item, new_regions);
     invalid_regions= invalid_regions->next;
   }
@@ -483,9 +495,9 @@ void
 x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
   SI X1= x1+ dx;
   SI Y2= y2+ dy;
-  decode (x1, y1);
-  decode (x2, y2);
-  decode (X1, Y2);
+  ren->decode (x1, y1);
+  ren->decode (x2, y2);
+  ren->decode (X1, Y2);
   dx= X1- x1;
   dy= Y2- y2;
 
@@ -505,9 +517,9 @@ x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
 
 void
 x_window_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
+  ren->outer_round (x1, y1, x2, y2);
+  ren->decode (x1, y1);
+  ren->decode (x2, y2);
   invalidate_event (x1, y2, x2, y1);
 }
 
@@ -537,7 +549,7 @@ plain_window (widget w, string name, SI min_w, SI min_h,
 {
   char* _name= as_charp (name);
   window win= tm_new<x_window_rep> (w, the_gui, _name,
-				min_w, min_h, def_w, def_h, max_w, max_h);
+				    min_w, min_h, def_w, def_h, max_w, max_h);
   tm_delete_array (_name);
   return win;
 }

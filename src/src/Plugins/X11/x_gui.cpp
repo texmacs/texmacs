@@ -439,7 +439,7 @@ void
 x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
   if (mask_name=="") mask_name= name;
-  x_drawable_rep* dra= tm_new<x_drawable_rep> (this);
+  x_drawable_rep* dra= tm_new<x_drawable_rep> (this, 1, 1);
   dra->xpm_initialize (name);
   if (mask_name!=name) dra->xpm_initialize (mask_name);
   tm_delete (dra);

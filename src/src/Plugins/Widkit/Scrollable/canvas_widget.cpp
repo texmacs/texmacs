@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "renderer.hpp"
+#include "window.hpp"
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/Event/attribute_event.hpp"
 #include "Widkit/scroll_widget.hpp"
@@ -174,28 +174,29 @@ extern void indent ();
 
 void
 canvas_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
+  renderer ren= win->get_renderer ();
   if (!show_scroll_bars);
   else if (hor_active && ver_active) {
-    layout_default (win, w- 16*PIXEL, -h, w, -h+ 16*PIXEL);
-    layout_default (win, 0, -h+ 16*PIXEL, w, -h+ 18*PIXEL);
-    layout_default (win, w- 18*PIXEL, -h, w- 16*PIXEL, 0);
-    layout_lower (win, 0, -h+ 18*PIXEL, w- 18*PIXEL, 0);
+    layout_default (ren, w- 16*PIXEL, -h, w, -h+ 16*PIXEL);
+    layout_default (ren, 0, -h+ 16*PIXEL, w, -h+ 18*PIXEL);
+    layout_default (ren, w- 18*PIXEL, -h, w- 16*PIXEL, 0);
+    layout_lower (ren, 0, -h+ 18*PIXEL, w- 18*PIXEL, 0);
   }
   else if (hor_active && (!ver_active)) {
-    layout_default (win, 0, -h+ 16*PIXEL, w, -h+ 18*PIXEL);
-    layout_dark_outline (win, 0, -h+ 15*PIXEL, w, 0);
-    win->set_line_style (PIXEL);
-    win->set_color (layout_light (win));
-    win->line (PIXEL, -h+ 18*PIXEL, w-2*PIXEL, -h+ 18*PIXEL);
+    layout_default (ren, 0, -h+ 16*PIXEL, w, -h+ 18*PIXEL);
+    layout_dark_outline (ren, 0, -h+ 15*PIXEL, w, 0);
+    ren->set_line_style (PIXEL);
+    ren->set_color (layout_light (ren));
+    ren->line (PIXEL, -h+ 18*PIXEL, w-2*PIXEL, -h+ 18*PIXEL);
   }
   else if ((!hor_active) && ver_active) {
-    layout_default (win, w- 18*PIXEL, -h, w- 16*PIXEL, 0);
-    layout_dark_outline (win, 0, -h, w- 15*PIXEL, 0);
-    win->set_line_style (PIXEL);
-    win->set_color (layout_light (win));
-    win->line (w- 19*PIXEL, -h+PIXEL, w- 19*PIXEL, -2*PIXEL);
+    layout_default (ren, w- 18*PIXEL, -h, w- 16*PIXEL, 0);
+    layout_dark_outline (ren, 0, -h, w- 15*PIXEL, 0);
+    ren->set_line_style (PIXEL);
+    ren->set_color (layout_light (ren));
+    ren->line (w- 19*PIXEL, -h+PIXEL, w- 19*PIXEL, -2*PIXEL);
   }
-  else layout_dark_outline (win, 0, -h, w, 0);
+  else layout_dark_outline (ren, 0, -h, w, 0);
 }
 
 void

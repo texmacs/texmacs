@@ -38,18 +38,19 @@ scrollable_widget_rep::operator tree () {
 
 void
 scrollable_widget_rep::scroll_event_hor (SI& x, SI& bef, SI& af) {
+  renderer ren= win->get_renderer ();
   abs_round (x);
   if ((x + x1() - ox) < ex1) x = ex1 - x1() + ox;
   if ((x + x2() - ox) > ex2) x = ex2 - x2() + ox;
 
   if (attached ()) {
-    win->set_origin (ox, oy);
+    ren->set_origin (ox, oy);
     int dx= max (-w, min (w, x- scx));
     if ((dx>-w) && (dx<w) && (dx!=0)) {
       win->begin_draw ();
-      win->clip (0, -h, w, 0);
+      ren->clip (0, -h, w, 0);
       win->translate (0, -h, w, 0, -dx, 0);
-      win->unclip ();
+      ren->unclip ();
       win->end_draw ();
     }
     if (dx>0) this << emit_invalidate (w- dx, -h, w, 0);
@@ -64,20 +65,21 @@ scrollable_widget_rep::scroll_event_hor (SI& x, SI& bef, SI& af) {
 
 void
 scrollable_widget_rep::scroll_event_ver (SI& y, SI& bef, SI& af) {
+  renderer ren= win->get_renderer ();
   abs_round (y);
   if ((y + y1() - oy) < ey1) y = ey1 - y1() + oy;
   if ((y + y2() - oy) > ey2) y = ey2 - y2() + oy;
 
   if (attached ()) {
-    win->set_origin (ox, oy);
+    ren->set_origin (ox, oy);
     int dy= max (-h, min (h, y- scy));
     if ((dy>-h) && (dy<h) && (dy!=0)) {
       win->begin_draw ();
-      win->clip (0, -h, w, 0);
+      ren->clip (0, -h, w, 0);
       win->translate (0, -h, w, 0, 0, -dy);
       if (dy>0) a[0] << emit_clear (0, -dy, w, 0);
       else a[0] << emit_clear (0, -h, w, -h-dy);
-      win->unclip ();
+      ren->unclip ();
       win->end_draw ();
     }
     if (dy>0) this << emit_invalidate (0, -dy, w, 0);

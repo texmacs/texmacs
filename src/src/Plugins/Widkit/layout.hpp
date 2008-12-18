@@ -13,19 +13,19 @@
 #define LAYOUT_H
 #include "window.hpp"
 
-color layout_light (window win);
-color layout_normal (window win);
-color layout_dark (window win);
-void  layout_default (window win, SI x1, SI y1, SI x2, SI y2);
-void  layout_dark (window win, SI x1, SI y1, SI x2, SI y2);
-void  layout_outline (window win, SI x1, SI y1, SI x2, SI y2);
-void  layout_dark_outline (window win, SI x1, SI y1, SI x2, SI y2);
-void  layout_lower (window win, SI x1, SI y1, SI x2, SI y2);
-void  layout_higher (window win, SI x1, SI y1, SI x2, SI y2);
-void  layout_submenu_triangle (window win, SI x, SI y);
-void  layout_up_arrow (window win, SI x, SI y, SI w, SI h);
-void  layout_down_arrow (window win, SI x, SI y, SI w, SI h);
-void  layout_left_arrow (window win, SI x, SI y, SI w, SI h);
-void  layout_right_arrow (window win, SI x, SI y, SI w, SI h);
+color layout_light (renderer win);
+color layout_normal (renderer win);
+color layout_dark (renderer win);
+void  layout_default (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_dark (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_outline (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_dark_outline (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_lower (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_higher (renderer win, SI x1, SI y1, SI x2, SI y2);
+void  layout_submenu_triangle (renderer win, SI x, SI y);
+void  layout_up_arrow (renderer win, SI x, SI y, SI w, SI h);
+void  layout_down_arrow (renderer win, SI x, SI y, SI w, SI h);
+void  layout_left_arrow (renderer win, SI x, SI y, SI w, SI h);
+void  layout_right_arrow (renderer win, SI x, SI y, SI w, SI h);
 
 #endif // defined LAYOUT_H
