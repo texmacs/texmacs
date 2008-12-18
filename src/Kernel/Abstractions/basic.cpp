@@ -12,6 +12,7 @@
 #include "fast_alloc.hpp"
 #include "basic.hpp"
 
+/*
 #ifndef NO_FAST_ALLOC
 
 void*
@@ -81,6 +82,7 @@ operator delete[] (register void* ptr)
 }
 
 #endif // not defined NO_FAST_ALLOC
+*/
 
 int
 new_type_identifier () {

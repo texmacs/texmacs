@@ -52,6 +52,7 @@ enlarge_malloc (register size_t sz) {
   return ptr;
 }
 
+/*
 void*
 fast_alloc (register size_t sz) {
   sz= (sz+WORD_LENGTH_INC)&WORD_MASK;
@@ -82,6 +83,98 @@ fast_free (register void* ptr, register size_t sz) {
     free (ptr);
     if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
+}
+*/
+
+void*
+fast_alloc (register size_t s) {
+  return malloc (s);
+  /*
+  register void* ptr;
+  s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
+  if (s<MAX_FAST) {
+    ptr= alloc_ptr(s);
+    if (ptr==NULL) ptr= enlarge_malloc (s);
+    else alloc_ptr(s)= ind(ptr);
+  }
+  else {
+    if (DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
+    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    ptr= safe_malloc (s);
+    large_uses += s;
+  }
+  *((size_t *) ptr)=s;
+  return (void*) (((char*) ptr)+ WORD_LENGTH);
+  */
+}
+
+void
+fast_free (register void* ptr, register size_t sz) {
+  free (ptr);
+  /*
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t s= *((size_t *) ptr);
+  sz= (sz+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
+  if (s != sz) {
+    cerr << "At " << ptr << ": " << sz << " -> " << s << "\n";
+    assert (s == sz);
+  }
+  if (s<MAX_FAST) {
+    ind(ptr)    = alloc_ptr(s);
+    alloc_ptr(s)= ptr;
+  }
+  else {
+    if (DEBUG>=3) cout << "Big free of " << s << " bytes\n";
+    free (ptr);
+    large_uses -= s;
+    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+  }
+  */
+}
+
+void*
+fast_new (register size_t s) {
+  return malloc (s);
+  /*
+  register void* ptr;
+  s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
+  if (s<MAX_FAST) {
+    ptr= alloc_ptr(s);
+    if (ptr==NULL) ptr= enlarge_malloc (s);
+    else alloc_ptr(s)= ind(ptr);
+  }
+  else {
+    if (DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
+    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    ptr= safe_malloc (s);
+    if ((((int) ptr) & 15) != 0) cout << "Unaligned " << ptr << "\n";
+    if (ptr == ((void*) 0x31a08d0)) cout << "Allocate\n";
+    large_uses += s;
+  }
+  *((size_t *) ptr)=s;
+  return (void*) (((char*) ptr)+ WORD_LENGTH);
+  */
+}
+
+void
+fast_delete (register void* ptr) {
+  free (ptr);
+  /*
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t s= *((size_t *) ptr);
+  if (s<MAX_FAST) {
+    ind(ptr)    = alloc_ptr(s);
+    alloc_ptr(s)= ptr;
+  }
+  else {
+    if (DEBUG>=3) cout << "Big free of " << s << " bytes\n";
+    if ((((int) ptr) & 15) != 0) cout << "Unaligned " << ptr << "\n";
+    if (ptr == ((void*) 0x31a08d0)) cout << "Disallocate\n";
+    free (ptr);
+    large_uses -= s;
+    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+  }
+  */
 }
 
 /******************************************************************************
