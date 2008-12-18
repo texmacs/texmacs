@@ -52,7 +52,6 @@ enlarge_malloc (register size_t sz) {
   return ptr;
 }
 
-/*
 void*
 fast_alloc (register size_t sz) {
   sz= (sz+WORD_LENGTH_INC)&WORD_MASK;
@@ -84,12 +83,10 @@ fast_free (register void* ptr, register size_t sz) {
     if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
 }
-*/
 
+/*
 void*
 fast_alloc (register size_t s) {
-  return malloc (s);
-  /*
   register void* ptr;
   s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
   if (s<MAX_FAST) {
@@ -105,13 +102,10 @@ fast_alloc (register size_t s) {
   }
   *((size_t *) ptr)=s;
   return (void*) (((char*) ptr)+ WORD_LENGTH);
-  */
 }
 
 void
 fast_free (register void* ptr, register size_t sz) {
-  free (ptr);
-  /*
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
   register size_t s= *((size_t *) ptr);
   sz= (sz+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
@@ -129,13 +123,11 @@ fast_free (register void* ptr, register size_t sz) {
     large_uses -= s;
     if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
-  */
 }
+*/
 
 void*
 fast_new (register size_t s) {
-  return malloc (s);
-  /*
   register void* ptr;
   s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
   if (s<MAX_FAST) {
@@ -153,13 +145,10 @@ fast_new (register size_t s) {
   }
   *((size_t *) ptr)=s;
   return (void*) (((char*) ptr)+ WORD_LENGTH);
-  */
 }
 
 void
 fast_delete (register void* ptr) {
-  free (ptr);
-  /*
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
   register size_t s= *((size_t *) ptr);
   if (s<MAX_FAST) {
@@ -174,7 +163,6 @@ fast_delete (register void* ptr) {
     large_uses -= s;
     if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
-  */
 }
 
 /******************************************************************************
