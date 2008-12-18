@@ -65,22 +65,22 @@ box_widget_rep::handle_get_size_hint (SI& w, SI& h) {
 void
 box_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
   (void) x1; (void) y1; (void) x2; (void) y2;
-  renderer win= get_renderer (this);
+  renderer ren= get_renderer (this);
 #if defined (QTTEXMACS) || defined(AQUATEXMACS)
   SI w,h;
   handle_get_size_hint (w,h);
 #endif
   if (!transparent) {
-    win->set_background (light_grey);
-    win->set_color (light_grey);
-    win->fill (0, -h, w, 0);
+    ren->set_background (light_grey);
+    ren->set_color (light_grey);
+    ren->fill (0, -h, w, 0);
   }
-  win->set_shrinking_factor (SHRINK);
+  ren->set_shrinking_factor (SHRINK);
   rectangles l (rectangle (0, 0, w, h));
   SI x= ((SHRINK*w-b->w())>>1) - b->x1;
   SI y= ((SHRINK*h-b->h())>>1) - b->y1 - SHRINK*h;
-  b->redraw (win, path(), l, x, y);
-  win->set_shrinking_factor (1);
+  b->redraw (ren, path(), l, x, y);
+  ren->set_shrinking_factor (1);
 }
 
 /******************************************************************************
