@@ -137,15 +137,14 @@ edit_interface_rep::draw_graphics (renderer ren) {
       eval ("(graphics-reset-context 'graphics-cursor)");
       draw_graphical_object (ren);
       string tm_curs= as_string (eval ("graphics-texmacs-pointer"));
-      if (tm_curs != "none")
+      if (tm_curs != "none") {
 	if (tm_curs == "graphics-cross") {
 	  ren->set_line_style (pixel);
 	  ren->set_color (red);
 	  ren->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
 	  ren->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
         }
-	else
-	if (tm_curs == "graphics-cross-arrows") {
+	else if (tm_curs == "graphics-cross-arrows") {
 	  static int s= 6*pixel, a= 2*pixel;
 	  ren->set_line_style (pixel);
 	  ren->set_color (red);
@@ -160,6 +159,7 @@ edit_interface_rep::draw_graphics (renderer ren) {
 	  ren->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy+a);
 	  ren->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy-a);
         }
+      }
     }
     else eval ("(graphics-reset-context 'text-cursor)");
   }

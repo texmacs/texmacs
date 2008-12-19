@@ -307,7 +307,7 @@ xml_html_parser::expand_entities (string s) {
       int start= i++;
       if (i<n && s[i] == '#') {
 	i++;
-	if (i<n && s[i] == 'x' || s[i] == 'X') {
+	if (i<n && (s[i] == 'x' || s[i] == 'X')) {
 	  i++;
 	  while (i<n && is_hex_digit (s[i])) i++;
 	}

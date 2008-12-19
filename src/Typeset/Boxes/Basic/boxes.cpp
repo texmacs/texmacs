@@ -295,11 +295,12 @@ box_rep::find_frame (path bp, bool last) {
     b  = b->subbox (bp->item);
     bp = bp->next;
     frame g= b->get_frame ();
-    if (!is_nil (g))
+    if (!is_nil (g)) {
       if (last)
 	f= g;
       else
 	f= scaling (1.0, point (x, y)) * g;
+    }
   }
   return f;
 }

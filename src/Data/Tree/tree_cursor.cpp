@@ -120,7 +120,7 @@ closest_accessible (tree t, path p) {
     int i, k= p->item, n= N(t);
     if (p == 1) k= max (0, n-1);
     for (i=0; i<n; i++) {
-      int j= (i&1 == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
+      int j= ((i&1) == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
       if (the_drd->is_accessible_child (t, j)) {
 	// FIXME: certain tags modify source accessability props
 	// FIXME: cells with non-trivial span may lead to unaccessability
