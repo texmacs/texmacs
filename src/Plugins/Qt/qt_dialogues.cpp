@@ -483,14 +483,14 @@ widget qt_input_widget_rep::plain_window_widget (string s)
 void
 qt_input_widget_rep::perform_dialog() {
   QDialog d (0, Qt::Sheet);
-  QVBoxLayout* vl = new QVBoxLayout;
+  QVBoxLayout* vl = new QVBoxLayout(&d);
   
   QVector<QComboBox*> cbs (N (fields));
   
   for(int i=0; i<N(fields); i++) {
-    QHBoxLayout *hl = new QHBoxLayout;
-    QLabel *lab = new QLabel (to_qstring (fields[i]->prompt));
-    cbs[i] = new QComboBox;
+    QHBoxLayout *hl = new QHBoxLayout(&d);
+    QLabel *lab = new QLabel (to_qstring (fields[i]->prompt),&d);
+    cbs[i] = new QComboBox(&d);
     cbs[i]->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
     cbs[i]->setEditText (to_qstring (fields[i]->input));
     int minlen = 0;
