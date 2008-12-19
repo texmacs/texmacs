@@ -155,8 +155,8 @@ edit_graphics_rep::adjust (point p) {
 	int n= N(sels);
 	for (i=0; i<n; i++) {
 	  point sp= sels[i]->p;
-	  if (N(res)==0 || N(sp)>0 && norm (fp - sp) < 5*get_pixel_size ()
-				   && norm (fp - sp) < norm (fp - res))
+	  if (N(res)==0 || (N(sp)>0 && norm (fp - sp) < 5*get_pixel_size ()
+			            && norm (fp - sp) < norm (fp - res)))
 	    res= sels[i]->p;
 	}
       }

@@ -21,7 +21,7 @@
 * Slots should really be defined in message.hpp
 ******************************************************************************/
 
-typedef enum slot_id {
+enum slot_id {
   SLOT_IDENTIFIER,
   SLOT_WINDOW,
   SLOT_RENDERER,

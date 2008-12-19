@@ -94,9 +94,11 @@ pipe_link_rep::start () {
   if (!success) return "Error: Could not create pipe";
   else {
 #else
-  pipe (pp_in );
-  pipe (pp_out);
-  pipe (pp_err);
+  int err= 0;
+  err= pipe (pp_in ) & err;
+  err= pipe (pp_out) & err;
+  err= pipe (pp_err) & err;
+  if (err) return "Error: Could not create pipe";
   pid= fork ();
   if (pid==0) { // the child
     setsid();
@@ -180,7 +182,8 @@ pipe_link_rep::write (string s, int channel) {
 #ifdef OS_WIN32
   PIPE_WriteStdin(&conn, _s, N(s));
 #else
-  ::write (in, _s, N(s));
+  int err= ::write (in, _s, N(s));
+  (void) err;
 #endif
   tm_delete_array (_s);
 #endif

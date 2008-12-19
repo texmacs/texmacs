@@ -45,6 +45,7 @@ extern "C" charp* environ;
 //#define DATA_BEGIN   "[BEGIN]"
 //#define DATA_END     "[END]"
 //#define DATA_ESCAPE  "[ESCAPE]"
+
 static int pid;
 static int master;
 static char prompt[] = "tmshell$ ";
@@ -60,9 +61,12 @@ static void append (charp &s, char c, int& pos, int& max) {
   }
   s[pos++]= c;
 }
+
 int output_pos;
 charp output;
-static void shell_interrupt (int sig) {
+
+static void
+shell_interrupt (int sig) {
   if (output != NULL) {
     int i;
     for (i=0; i<output_pos; i++) cout << output[i];
@@ -79,7 +83,9 @@ static void shell_interrupt (int sig) {
   wait (NULL);
   exit (0);
 }
-static void shell_output (bool hide= false) {
+
+static void
+shell_output (bool hide= false) {
   static struct timeval tv = {0, 100};
   int output_max= 1024;
   output = (charp) malloc (output_max);
@@ -121,7 +127,8 @@ static void shell_output (bool hide= false) {
       }
     }
 
-    if (output_pos >= promptlen && strncmp(output + output_pos - promptlen, prompt, promptlen) == 0)
+    if (output_pos >= promptlen &&
+	strncmp(output + output_pos - promptlen, prompt, promptlen) == 0)
       {
 	output[output_pos-promptlen]=0;
 	if (hide) hide= false; 
@@ -134,23 +141,32 @@ static void shell_output (bool hide= false) {
   cout << DATA_END << flush;
   free (output);
 }
-static void shell_input () {
+
+static void
+shell_input () {
   char input [10000];
   cin.getline (input, 10000, '\n');
   strcat (input, "\n");
   write (master, input, strlen (input));
 }
-static void child() {
+
+static void
+child() {
   struct termios t;
   tcgetattr(STDIN, &t);
   t.c_lflag &= ~ECHO;
   tcsetattr(STDIN, TCSANOW, &t);
   setenv ("PS1", prompt, true);
-  static charp argv[] = { "sh", "-i", NULL };
+  const charp argv[] = {
+    const_cast<charp> ("sh"),
+    const_cast<charp> ("-i"),
+    NULL };
   execve("/bin/sh", argv, environ);
   exit(127);
 }
-static void parent() {
+
+static void
+parent() {
   signal (SIGINT, shell_interrupt);
   shell_output (true);
   cout << DATA_END << flush;
@@ -159,7 +175,9 @@ static void parent() {
     shell_output ();
   }
 }
-int main () {
+
+int
+main () {
   cout << DATA_BEGIN << "verbatim:" << "Shell session inside TeXmacs" << flush;
   pid = forkpty(&master,NULL,NULL,NULL);
   if (pid==0) child();

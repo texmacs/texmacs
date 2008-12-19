@@ -355,7 +355,7 @@ edit_env_rep::rewrite_inactive_var_active (
   tree r= tree (WITH, MODE, copy (env [MODE]), subvar (var, 0));
   if (flush &&
       (src_compact != COMPACT_ALL) &&
-      (is_multi_paragraph (t[0])) || (src_compact == COMPACT_NONE))
+      (is_multi_paragraph (t[0]) || (src_compact == COMPACT_NONE)))
     r= tree (SURROUND, "", compound ("right-flush"), r);
   return tree (MARK, var, r);
 }
@@ -395,7 +395,7 @@ edit_env_rep::rewrite_inactive_default (
   if ((N(t) == d) ||
       (src_compact == COMPACT_ALL) ||
       ((!block) && (src_compact != COMPACT_NONE)) ||
-      (!is_long (t)) && (src_compact != COMPACT_NONE))
+      ((!is_long (t)) && (src_compact != COMPACT_NONE)))
     {
       tree r (INLINE_TAG, n+1-d);
       r[0]= op;
