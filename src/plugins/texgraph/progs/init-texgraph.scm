@@ -17,7 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (texgraph-initialize)
-  (lazy-menu (texgraph-menus) texgraph-functions-menu)
+  (import-from (texgraph-menus))
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (texgraph-input) texgraph)
   (menu-extend texmacs-extra-menu

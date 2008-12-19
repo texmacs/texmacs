@@ -94,11 +94,9 @@ pipe_link_rep::start () {
   if (!success) return "Error: Could not create pipe";
   else {
 #else
-  int err= 0;
-  err= pipe (pp_in ) & err;
-  err= pipe (pp_out) & err;
-  err= pipe (pp_err) & err;
-  if (err) return "Error: Could not create pipe";
+  int e1= pipe (pp_in ); (void) e1;
+  int e2= pipe (pp_out); (void) e2;
+  int e3= pipe (pp_err); (void) e3;
   pid= fork ();
   if (pid==0) { // the child
     setsid();
