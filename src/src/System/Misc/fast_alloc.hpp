@@ -54,7 +54,7 @@ extern void  mem_info ();
 * Fast new and delete
 ******************************************************************************/
 
-#ifndef NO_FAST_ALLOC
+#if (!defined(NO_FAST_ALLOC)) && (!defined(X11TEXMACS))
 
 #ifdef OLD_GNU_COMPILER
 inline void* operator new   (register size_t s, void* loc) { return loc; }
@@ -324,13 +324,27 @@ tm_delete_array (C* Ptr) {
   fast_free (ptr, n * sizeof (C) + WORD_LENGTH);
 }
 
-#endif // !NO_FAST_ALLOC
+#endif // (!defined(NO_FAST_ALLOC)) && (!defined(X11TEXMACS))
 
 /******************************************************************************
 * Slow new and delete
 ******************************************************************************/
 
-#ifdef NO_FAST_ALLOC
+#if defined(NO_FAST_ALLOC) || defined(X11TEXMACS)
+
+#ifndef NO_FAST_ALLOC
+#ifdef OS_IRIX
+void* operator new (register size_t s) throw(std::bad_alloc);
+void  operator delete (register void* ptr) throw();
+void* operator new[] (register size_t s) throw(std::bad_alloc);
+void  operator delete[] (register void* ptr) throw();
+#else
+void* operator new (register size_t s);
+void  operator delete (register void* ptr);
+void* operator new[] (register size_t s);
+void  operator delete[] (register void* ptr);
+#endif
+#endif // not defined NO_FAST_ALLOC
 
 template<typename C> inline C*
 tm_new () {
@@ -529,6 +543,6 @@ tm_delete_array (C* Ptr) {
   delete[] Ptr;
 }
 
-#endif // NO_FAST_ALLOC
+#endif // defined(NO_FAST_ALLOC) || defined(X11TEXMACS)
 
 #endif // defined FAST_ALLOC_H

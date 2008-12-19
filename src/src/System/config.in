@@ -126,6 +126,9 @@
 /* Use imlib2 library */
 #undef USE_IMLIB2
 
+/* Use standard X11 port */
+#undef X11TEXMACS
+
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
 

@@ -44,22 +44,6 @@ typedef long long int DI;
 #endif
 typedef void* pointer;
 
-/*
-#ifndef NO_FAST_ALLOC
-#ifdef OS_IRIX
-void* operator new (register size_t s) throw(std::bad_alloc);
-void  operator delete (register void* ptr) throw();
-void* operator new[] (register size_t s) throw(std::bad_alloc);
-void  operator delete[] (register void* ptr) throw();
-#else
-void* operator new (register size_t s);
-void  operator delete (register void* ptr);
-void* operator new[] (register size_t s);
-void  operator delete[] (register void* ptr);
-#endif
-#endif // not defined NO_FAST_ALLOC
-*/
-
 #if (defined OS_WIN32 || defined __SUNPRO_CC)
 #define STACK_NEW_ARRAY(name,T,size) T* name= tm_new_array<T> (size)
 #define STACK_DELETE_ARRAY(name) tm_delete_array (name)
