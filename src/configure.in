@@ -672,7 +672,6 @@ case "$enable_qt" in
 	else
 	   AC_MSG_RESULT([enabling experimental Qt port])
            CONFIG_GUI="QT"
-           AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
            AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
         fi
         ;;
@@ -691,7 +690,6 @@ case "$enable_cocoa" in
     yes)
 	AC_MSG_RESULT([enabling experimental Cocoa port])
         AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
-        AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
 	COCOA_CFLAGS=""
 	COCOA_LDFLAGS="-framework Cocoa"
         CONFIG_GUI="COCOA"

@@ -9017,11 +9017,6 @@ echo "${ECHO_T}enabling experimental Qt port" >&6; }
            CONFIG_GUI="QT"
 
 cat >>confdefs.h <<\_ACEOF
-#define NO_FAST_ALLOC 1
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
 #define QTTEXMACS 1
 _ACEOF
 
@@ -9052,11 +9047,6 @@ echo "${ECHO_T}enabling experimental Cocoa port" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define AQUATEXMACS 1
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define NO_FAST_ALLOC 1
 _ACEOF
 
 	COCOA_CFLAGS=""
