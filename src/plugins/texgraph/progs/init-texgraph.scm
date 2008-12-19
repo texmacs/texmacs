@@ -26,9 +26,9 @@
 	(=> "TeXgraph" (link texgraph-functions-menu)))))
 
 (plugin-configure texgraph
-  (:require (url-exists-in-path? "latex"))
+  (:require (and (url-exists-in-path? "latex")
+		 (url-exists-in-path? "TeXgraph")))
   (:initialize (texgraph-initialize))
-;  (:tab-completion #t)
   (:launch "tm_texgraph --texmacs")
   (:session "Texgraph"))
 
