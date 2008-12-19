@@ -9015,11 +9015,6 @@ echo "$as_me: error: cannot find Qt!" >&2;}
 	   { echo "$as_me:$LINENO: result: enabling experimental Qt port" >&5
 echo "${ECHO_T}enabling experimental Qt port" >&6; }
            CONFIG_GUI="QT"
-
-cat >>confdefs.h <<\_ACEOF
-#define QTTEXMACS 1
-_ACEOF
-
         fi
         ;;
     no)
@@ -9044,11 +9039,6 @@ case "$enable_cocoa" in
     yes)
 	{ echo "$as_me:$LINENO: result: enabling experimental Cocoa port" >&5
 echo "${ECHO_T}enabling experimental Cocoa port" >&6; }
-
-cat >>confdefs.h <<\_ACEOF
-#define AQUATEXMACS 1
-_ACEOF
-
 	COCOA_CFLAGS=""
 	COCOA_LDFLAGS="-framework Cocoa"
         CONFIG_GUI="COCOA"
@@ -9067,12 +9057,27 @@ esac
 case "$CONFIG_GUI" in
     X11)
 	CONFIG_X11="X11 Widkit Ghostscript"
+
+cat >>confdefs.h <<\_ACEOF
+#define X11TEXMACS 1
+_ACEOF
+
 	;;
     COCOA)
         CONFIG_COCOA="Cocoa"
+
+cat >>confdefs.h <<\_ACEOF
+#define AQUATEXMACS 1
+_ACEOF
+
 	;;
     QT)
         CONFIG_QT="Qt"
+
+cat >>confdefs.h <<\_ACEOF
+#define QTTEXMACS 1
+_ACEOF
+
 	;;
 esac
 
