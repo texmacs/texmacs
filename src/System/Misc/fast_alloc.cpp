@@ -139,8 +139,7 @@ fast_new (register size_t s) {
     if (DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
     if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
     ptr= safe_malloc (s);
-    if ((((int) ptr) & 15) != 0) cout << "Unaligned " << ptr << "\n";
-    if (ptr == ((void*) 0x31a08d0)) cout << "Allocate\n";
+    //if ((((int) ptr) & 15) != 0) cout << "Unaligned new " << ptr << "\n";
     large_uses += s;
   }
   *((size_t *) ptr)=s;
@@ -157,8 +156,7 @@ fast_delete (register void* ptr) {
   }
   else {
     if (DEBUG>=3) cout << "Big free of " << s << " bytes\n";
-    if ((((int) ptr) & 15) != 0) cout << "Unaligned " << ptr << "\n";
-    if (ptr == ((void*) 0x31a08d0)) cout << "Disallocate\n";
+    //if ((((int) ptr) & 15) != 0) cout << "Unaligned delete " << ptr << "\n";
     free (ptr);
     large_uses -= s;
     if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
@@ -191,9 +189,9 @@ fast_free_mw (register void* ptr, register size_t s)
   else free (ptr);
 }
 
-/*****************************************************************************/
-// Statistics
-/*****************************************************************************/
+/******************************************************************************
+* Statistics
+******************************************************************************/
 
 int
 compute_free (void* ptr) {
@@ -233,3 +231,73 @@ mem_info () {
   cout << "Small mallocs : "
        << ((100*((float) small_uses))/((float) total_uses)) << "%\n";
 }
+
+/******************************************************************************
+* Redefine standard new and delete
+******************************************************************************/
+
+#if defined(X11TEXMACS) && (!defined(NO_FAST_ALLOC))
+
+void*
+operator new (register size_t s) {
+  register void* ptr;
+  s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
+  if (s<MAX_FAST) {
+    ptr= alloc_ptr(s);
+    if (ptr==NULL) ptr= enlarge_malloc (s);
+    else alloc_ptr(s)= ind(ptr);
+  }
+  else {
+    ptr= safe_malloc (s);
+    large_uses += s;
+  }
+  *((size_t *) ptr)=s;
+  return (void*) (((char*) ptr)+ WORD_LENGTH);
+}
+
+void
+operator delete (register void* ptr) {
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t s= *((size_t *) ptr);
+  if (s<MAX_FAST) {
+    ind(ptr)    = alloc_ptr(s);
+    alloc_ptr(s)= ptr;
+  }
+  else {
+    free (ptr);
+    large_uses -= s;
+  }
+}
+
+void*
+operator new[] (register size_t s) {
+  register void* ptr;
+  s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
+  if (s<MAX_FAST) {
+    ptr= alloc_ptr(s);
+    if (ptr==NULL) ptr= enlarge_malloc (s);
+    else alloc_ptr(s)= ind(ptr);
+  }
+  else {
+    ptr= safe_malloc (s);
+    large_uses += s;
+  }
+  *((size_t *) ptr)=s;
+  return (void*) (((char*) ptr)+ WORD_LENGTH);
+}
+
+void
+operator delete[] (register void* ptr) {
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t s= *((size_t *) ptr);
+  if (s<MAX_FAST) {
+    ind(ptr)    = alloc_ptr(s);
+    alloc_ptr(s)= ptr;
+  }
+  else {
+    free (ptr);
+    large_uses -= s;
+  }
+}
+
+#endif // defined(X11TEXMACS) && (!defined(NO_FAST_ALLOC))
