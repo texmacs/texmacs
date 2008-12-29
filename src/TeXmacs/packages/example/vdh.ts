@@ -87,25 +87,39 @@
 
     <assign|ssAlg|<math|<with|math-font-family|tss|Alg>>>
 
+    <assign|ssB|<math|<with|math-font-family|tss|B>>>
+
     <assign|ssBall|<math|<with|math-font-family|tss|Ball>>>
 
     <assign|ssC|<math|<with|math-font-family|tss|C>>>
+
+    <assign|ssD|<math|<with|math-font-family|tss|D>>>
 
     <assign|ssE|<math|<with|math-font-family|tss|E>>>
 
     <assign|ssF|<math|<with|math-font-family|tss|F>>>
 
+    <assign|ssG|<math|<with|math-font-family|tss|G>>>
+
     <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
 
     <assign|ssGL|<math|<with|math-font-family|tss|GL>>>
+
+    <assign|ssH|<math|<with|math-font-family|tss|H>>>
 
     <assign|ssI|<math|<with|math-font-family|tss|I>>>
 
     <assign|ssIM|<math|<with|math-font-family|tss|IM>>>
 
+    <assign|ssJ|<math|<with|math-font-family|tss|J>>>
+
+    <assign|ssK|<math|<with|math-font-family|tss|K>>>
+
     <assign|ssL|<math|<with|math-font-family|tss|L>>>
 
     <assign|ssLin|<math|<with|math-font-family|tss|Lin>>>
+
+    <assign|ssLM|<math|<with|math-font-family|tss|LM>>>
 
     <assign|ssM|<math|<with|math-font-family|tss|M>>>
 
@@ -113,13 +127,37 @@
 
     <assign|ssMM|<math|<with|math-font-family|tss|MM>>>
 
+    <assign|ssMV|<math|<with|math-font-family|tss|MV>>>
+
+    <assign|ssN|<math|<with|math-font-family|tss|N>>>
+
+    <assign|ssO|<math|<with|math-font-family|tss|O>>>
+
+    <assign|ssP|<math|<with|math-font-family|tss|P>>>
+
+    <assign|ssQ|<math|<with|math-font-family|tss|Q>>>
+
     <assign|ssR|<math|<with|math-font-family|tss|R>>>
 
     <assign|ssRM|<math|<with|math-font-family|tss|RM>>>
 
+    <assign|ssS|<math|<with|math-font-family|tss|S>>>
+
     <assign|ssT|<math|<with|math-font-family|tss|T>>>
 
+    <assign|ssU|<math|<with|math-font-family|tss|U>>>
+
+    <assign|ssV|<inactive|<math|<with|math-font-family|tss|V>>>>
+
     <assign|ssVect|<math|<with|math-font-family|tss|Vect>>>
+
+    <assign|ssW|<math|<with|math-font-family|tss|W>>>
+
+    <assign|ssX|<math|<with|math-font-family|tss|X>>>
+
+    <assign|ssY|<math|<with|math-font-family|tss|Y>>>
+
+    <assign|ssZ|<math|<with|math-font-family|tss|Z>>>
 
     \;
 
