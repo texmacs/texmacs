@@ -22,6 +22,7 @@ bool
 is_cruft (string s) {
   return
     s == "CVS" ||
+    s == ".svn" ||
     ends (s, "~");
 }
 
