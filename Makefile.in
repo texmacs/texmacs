@@ -255,6 +255,14 @@ BUNDLE_MAIN: TEXMACS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/CVS
 	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
+	$(RM) -r $(BUNDLE_TEXMACS)/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/.svn
+	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/.svn
 
 define bundle_install_lib
 	$(CP) $(1) $(BUNDLE_RESOURCES)/lib
@@ -291,6 +299,11 @@ CLEAN_DOC:
 	$(RM) -r $(tmdir)/doc/*/*/CVS
 	$(RM) -r $(tmdir)/doc/*/*/*/CVS
 	$(RM) -r $(tmdir)/doc/*/*/*/*/CVS
+	$(RM) -r $(tmdir)/doc/.svn
+	$(RM) -r $(tmdir)/doc/*/.svn
+	$(RM) -r $(tmdir)/doc/*/*/.svn
+	$(RM) -r $(tmdir)/doc/*/*/*/.svn
+	$(RM) -r $(tmdir)/doc/*/*/*/*/.svn
 
 RDISTR:
 	$(RM) $(tmdir)/TEX_PATHS
