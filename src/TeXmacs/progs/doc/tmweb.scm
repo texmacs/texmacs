@@ -40,6 +40,7 @@
 	 (dir (url-expand (url-append u2 (url-parent))))
 	 (dir-name (url->string (url-tail dir))))
     (when (and (!= dir-name "CVS") (!= dir-name ".svn")
+	       (!= dir-name "prop-base") (!= dir-name "text-base")
 	       (not (string-ends? name "~")))
       (system-wait "Copying" (url->string u1))
       (display* "TeXmacs] Copying " (url->string u1) "\n")
