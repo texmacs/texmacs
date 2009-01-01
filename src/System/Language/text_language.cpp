@@ -277,33 +277,40 @@ get_date (string lan, string fm) {
 * Main interface
 ******************************************************************************/
 
+typedef const char* const_char_ptr;
+
+static language
+make_text_language (string s, string h) {
+  return tm_new<text_language_rep> (s, h);
+}
+
 language
 text_language (string s) {
   if (language::instances -> contains (s)) return language (s);
-  if (s == "american") return tm_new<text_language_rep> (s, "us");
-  if (s == "british") return tm_new<text_language_rep> (s, "ukenglish");
-  if (s == "bulgarian") return tm_new<text_language_rep> (s, "bulgarian");
+  if (s == "american") return make_text_language (s, "us");
+  if (s == "british") return make_text_language (s, "ukenglish");
+  if (s == "bulgarian") return make_text_language (s, "bulgarian");
   if (s == "chinese") return tm_new<oriental_language_rep> (s);
-  if (s == "czech") return tm_new<text_language_rep> (s, "czech");
-  if (s == "danish") return tm_new<text_language_rep> (s, "danish");
-  if (s == "dutch") return tm_new<text_language_rep> (s, "dutch");
-  if (s == "english") return tm_new<text_language_rep> (s, "us");
-  if (s == "finnish") return tm_new<text_language_rep> (s, "finnish");
-  if (s == "french") return tm_new<text_language_rep> (s, "french");
-  if (s == "german") return tm_new<text_language_rep> (s, "german");
-  if (s == "hungarian") return tm_new<text_language_rep> (s, "hungarian");
-  if (s == "italian") return tm_new<text_language_rep> (s, "italian");
+  if (s == "czech") return make_text_language (s, "czech");
+  if (s == "danish") return make_text_language (s, "danish");
+  if (s == "dutch") return make_text_language (s, "dutch");
+  if (s == "english") return make_text_language (s, "us");
+  if (s == "finnish") return make_text_language (s, "finnish");
+  if (s == "french") return make_text_language (s, "french");
+  if (s == "german") return make_text_language (s, "german");
+  if (s == "hungarian") return make_text_language (s, "hungarian");
+  if (s == "italian") return make_text_language (s, "italian");
   if (s == "japanese") return tm_new<oriental_language_rep> (s);
   if (s == "korean") return tm_new<oriental_language_rep> (s);
-  if (s == "polish") return tm_new<text_language_rep> (s, "polish");
-  if (s == "portuguese") return tm_new<text_language_rep> (s, "portuguese");
-  if (s == "romanian") return tm_new<text_language_rep> (s, "romanian");
-  if (s == "russian") return tm_new<text_language_rep> (s, "russian");
-  if (s == "slovene") return tm_new<text_language_rep> (s, "slovene");
-  if (s == "spanish") return tm_new<text_language_rep> (s, "spanish");
-  if (s == "swedish") return tm_new<text_language_rep> (s, "swedish");
+  if (s == "polish") return make_text_language (s, "polish");
+  if (s == "portuguese") return make_text_language (s, "portuguese");
+  if (s == "romanian") return make_text_language (s, "romanian");
+  if (s == "russian") return make_text_language (s, "russian");
+  if (s == "slovene") return make_text_language (s, "slovene");
+  if (s == "spanish") return make_text_language (s, "spanish");
+  if (s == "swedish") return make_text_language (s, "swedish");
   if (s == "taiwanese") return tm_new<oriental_language_rep> (s);
-  if (s == "ukrainian") return tm_new<text_language_rep> (s, "ukrainian");
+  if (s == "ukrainian") return make_text_language (s, "ukrainian");
   if (s == "verbatim") return tm_new<verb_language_rep> ("verbatim");
   cerr << "\nThe language was " << s << "\n";
   fatal_error ("unknown language", "text_language");
