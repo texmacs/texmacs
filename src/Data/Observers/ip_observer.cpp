@@ -16,6 +16,7 @@
 #include "path.hpp"
 
 #define DETACHED (-5)
+extern tree the_et;
 
 /******************************************************************************
 * Definition of the ip_observer_rep class
@@ -26,6 +27,15 @@ class ip_observer_rep: public observer_rep {
 public:
   ip_observer_rep (path ip2): ip (ip2) {}
   ostream& print (ostream& out) { return out << " " << ip; }
+
+  void announce_assign      (tree& ref, path p, tree t);
+  void announce_insert      (tree& ref, path p, tree ins);
+  void announce_remove      (tree& ref, path p, int nr);
+  void announce_split       (tree& ref, path p);
+  void announce_join        (tree& ref, path p);
+  void announce_assign_node (tree& ref, path p, tree_label op);
+  void announce_insert_node (tree& ref, path p, tree ins);
+  void announce_remove_node (tree& ref, path p);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -42,6 +52,87 @@ public:
   bool get_ip (path& ip);
   bool set_ip (path ip);
 };
+
+/******************************************************************************
+* Call back routines for announcements
+******************************************************************************/
+
+bool
+has_parent (path ip) {
+  return !is_nil (ip) && last_item (ip) != DETACHED;
+}
+
+void
+ip_observer_rep::announce_assign (tree& ref, path p, tree t) {
+  //cout << "Assign " << ip << ", " << p << ", " << t << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_assign (parent, q, t);
+}
+
+void
+ip_observer_rep::announce_insert (tree& ref, path p, tree ins) {
+  //cout << "Insert " << ip << ", " << p << ", " << ins << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_insert (parent, q, ins);
+}
+
+void
+ip_observer_rep::announce_remove (tree& ref, path p, int nr) {
+  //cout << "Remove " << ip << ", " << p << ", " << nr << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_remove (parent, q, nr);
+}
+
+void
+ip_observer_rep::announce_split (tree& ref, path p) {
+  //cout << "Split " << ip << ", " << p << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_split (parent, q);
+}
+
+void
+ip_observer_rep::announce_join (tree& ref, path p) {
+  //cout << "Join " << ip << ", " << p << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_join (parent, q);
+}
+
+void
+ip_observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
+  //cout << "Assign node " << ip << ", " << p << ", " << tree (op) << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_assign_node (parent, q, op);
+}
+
+void
+ip_observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
+  //cout << "Insert node " << ip << ", " << p << ", " << ins << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_insert_node (parent, q, ins);
+}
+
+void
+ip_observer_rep::announce_remove_node (tree& ref, path p) {
+  //cout << "Remove node " << ip << ", " << p << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_remove_node (parent, q);
+}
 
 /******************************************************************************
 * Call back routines for modifications
@@ -190,6 +281,11 @@ obtain_ip (tree& ref) {
   if (is_nil (ref->obs)) return DETACHED;
   if (!ref->obs->get_ip (ip)) return DETACHED;
   return ip;
+}
+
+bool
+ip_attached (path ip) {
+  return is_nil (ip) || last_item (ip) != DETACHED;
 }
 
 /******************************************************************************

@@ -113,6 +113,7 @@ void
 assign (tree& ref, tree t) {
   // cout << "Assign " << ref << " := " << t << "\n";
   if (!is_nil (ref->obs)) {
+    ref->obs->announce_assign (ref, path (), t);
     ref->obs->notify_assign (ref, t);
     simplify (ref->obs);
   }
@@ -129,6 +130,8 @@ assign (tree& ref, tree t) {
 void
 insert (tree& ref, int pos, tree t) {
   // cout << "Insert " << ref << " += " << t << " at " << pos << "\n";
+  if (!is_nil (ref->obs))
+    ref->obs->announce_insert (ref, path (pos), t);
   if (is_atomic (ref) && is_atomic (t))
     ref->label= ref->label (0, pos) *t->label* ref->label (pos, N(ref->label));
   else {
@@ -151,6 +154,7 @@ void
 remove (tree& ref, int pos, int nr) {
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
   if (!is_nil (ref->obs)) {
+    ref->obs->announce_remove (ref, path (pos), nr);
     ref->obs->notify_remove (ref, pos, nr);
     simplify (ref->obs);
   }
@@ -179,6 +183,8 @@ remove (tree& ref, int pos, int nr) {
 void
 split (tree& ref, int pos, int at) {
   // cout << "Split " << ref << " at " << pos << ", " << at << "\n";
+  if (!is_nil (ref->obs))
+    ref->obs->announce_split (ref, path (pos, at));
   tree t= ref[pos], t1, t2;
   if (is_atomic (ref[pos])) {    
     t1= ref[pos]->label (0, at);
@@ -217,6 +223,8 @@ join (tree& ref, int pos) {
     insert_node (ref[pos+1], 0, tree (L(ref[pos])));
   // end security code
 
+  if (!is_nil (ref->obs))
+    ref->obs->announce_join (ref, path (pos));
   tree t1= ref[pos], t2= ref[pos+1], t;
   int offset= is_atomic (ref)? N(t1->label): N(t1);
   if (is_atomic (t1) && is_atomic (t2)) t= t1->label * t2->label;
@@ -244,6 +252,7 @@ void
 assign_node (tree& ref, tree_label op) {
   // cout << "Assign node " << ref << " : " << tree (op) << "\n";
   if (!is_nil (ref->obs)) {
+    ref->obs->announce_assign_node (ref, path (), op);
     ref->obs->notify_assign_node (ref, op);
     simplify (ref->obs);
   }
@@ -255,6 +264,8 @@ assign_node (tree& ref, tree_label op) {
 void
 insert_node (tree& ref, int pos, tree t) {
   // cout << "Insert node " << ref << " : " << t << " at " << pos << "\n";
+  if (!is_nil (ref->obs))
+    ref->obs->announce_insert_node (ref, path (pos), t);
   int i, n= N(t);
   tree r (t, n+1);
   for (i=0; i<pos; i++) r[i]= t[i];
@@ -273,6 +284,7 @@ void
 remove_node (tree& ref, int pos) {
   // cout << "Remove node " << ref << " : " << pos << "\n";
   if (!is_nil (ref->obs)) {
+    ref->obs->announce_remove_node (ref, path (pos));
     ref->obs->notify_remove_node (ref, pos);
     simplify (ref->obs);
   }
@@ -287,6 +299,46 @@ remove_node (tree& ref, int pos) {
 /******************************************************************************
 * Default virtual routines
 ******************************************************************************/
+
+void
+observer_rep::announce_assign (tree& ref, path p, tree t) {
+  (void) ref; (void) p; (void) t;
+}
+
+void
+observer_rep::announce_insert (tree& ref, path p, tree ins) {
+  (void) ref; (void) p; (void) ins;
+}
+
+void
+observer_rep::announce_remove (tree& ref, path p, int nr) {
+  (void) ref; (void) p; (void) nr;
+}
+
+void
+observer_rep::announce_split (tree& ref, path p) {
+  (void) ref; (void) p;
+}
+
+void
+observer_rep::announce_join (tree& ref, path p) {
+  (void) ref; (void) p;
+}
+
+void
+observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
+  (void) ref; (void) p; (void) op;
+}
+
+void
+observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
+  (void) ref; (void) p; (void) ins;
+}
+
+void
+observer_rep::announce_remove_node (tree& ref, path p) {
+  (void) ref; (void) p;
+}
 
 bool
 observer_rep::get_ip (path& ip) {

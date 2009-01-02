@@ -387,11 +387,6 @@ tree_child_insert (tree t, int pos, tree x) {
 * Document modification routines
 ******************************************************************************/
 
-static inline bool
-ip_attached (path ip) {
-  return is_nil (ip) || last_item (ip) != DETACHED;
-}
-
 tree
 tree_assign (tree r, tree t) {
   path ip= obtain_ip (r);

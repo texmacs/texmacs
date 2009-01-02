@@ -32,6 +32,15 @@ public:
     if (!is_nil (o2)) o2->print (out);
     return out; }
 
+  void announce_assign      (tree& ref, path p, tree t);
+  void announce_insert      (tree& ref, path p, tree ins);
+  void announce_remove      (tree& ref, path p, int nr);
+  void announce_split       (tree& ref, path p);
+  void announce_join        (tree& ref, path p);
+  void announce_assign_node (tree& ref, path p, tree_label op);
+  void announce_insert_node (tree& ref, path p, tree ins);
+  void announce_remove_node (tree& ref, path p);
+
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
   void notify_remove      (tree& ref, int pos, int nr);
@@ -52,6 +61,58 @@ public:
   list<observer> get_tree_pointers ();
   bool get_tree (tree& t);
 };
+
+/******************************************************************************
+* Call back routines for announcements
+******************************************************************************/
+
+void
+list_observer_rep::announce_assign (tree& ref, path p, tree t) {
+  if (!is_nil (o1)) o1->announce_assign (ref, p, t);
+  if (!is_nil (o2)) o2->announce_assign (ref, p, t);
+}
+
+void
+list_observer_rep::announce_insert (tree& ref, path p, tree t) {
+  if (!is_nil (o1)) o1->announce_insert (ref, p, t);
+  if (!is_nil (o2)) o2->announce_insert (ref, p, t);
+}
+
+void
+list_observer_rep::announce_remove (tree& ref, path p, int nr) {
+  if (!is_nil (o1)) o1->announce_remove (ref, p, nr);
+  if (!is_nil (o2)) o2->announce_remove (ref, p, nr);
+}
+
+void
+list_observer_rep::announce_split (tree& ref, path p) {
+  if (!is_nil (o1)) o1->announce_split (ref, p);
+  if (!is_nil (o2)) o2->announce_split (ref, p);
+}
+
+void
+list_observer_rep::announce_join (tree& ref, path p) {
+  if (!is_nil (o1)) o1->announce_join (ref, p);
+  if (!is_nil (o2)) o2->announce_join (ref, p);
+}
+
+void
+list_observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
+  if (!is_nil (o1)) o1->announce_assign_node (ref, p, op);
+  if (!is_nil (o2)) o2->announce_assign_node (ref, p, op);
+}
+
+void
+list_observer_rep::announce_insert_node (tree& ref, path p, tree t) {
+  if (!is_nil (o1)) o1->announce_insert_node (ref, p, t);
+  if (!is_nil (o2)) o2->announce_insert_node (ref, p, t);
+}
+
+void
+list_observer_rep::announce_remove_node (tree& ref, path p) {
+  if (!is_nil (o1)) o1->announce_remove_node (ref, p);
+  if (!is_nil (o2)) o2->announce_remove_node (ref, p);
+}
 
 /******************************************************************************
 * Call back routines for modifications

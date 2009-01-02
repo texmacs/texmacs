@@ -32,6 +32,16 @@ public:
   inline virtual ~observer_rep () { DEBUG(observer_count--); }
   inline virtual ostream& print (ostream& out) { return out; }
 
+  // Announcing modifications in subtrees
+  virtual void announce_assign      (tree& ref, path p, tree t);
+  virtual void announce_insert      (tree& ref, path p, tree ins);
+  virtual void announce_remove      (tree& ref, path p, int nr);
+  virtual void announce_split       (tree& ref, path p);
+  virtual void announce_join        (tree& ref, path p);
+  virtual void announce_assign_node (tree& ref, path p, tree_label op);
+  virtual void announce_insert_node (tree& ref, path p, tree ins);
+  virtual void announce_remove_node (tree& ref, path p);
+
   // Call back routines for tree modifications
   virtual void notify_assign      (tree& ref, tree t) = 0;
   virtual void notify_insert      (tree& ref, int pos, int nr) = 0;
@@ -94,6 +104,7 @@ void remove_observer (observer& o, observer what);
 path obtain_ip (tree& ref);
 void attach_ip (tree& ref, path ip);
 void detach_ip (tree& ref);
+bool ip_attached (path ip);
 
 tree obtain_tree (observer o);
 void attach_pointer (tree& ref, observer o);
