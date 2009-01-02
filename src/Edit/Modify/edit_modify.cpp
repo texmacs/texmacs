@@ -25,235 +25,21 @@ edit_modify_rep::edit_modify_rep () {}
 edit_modify_rep::~edit_modify_rep () {}
 
 /******************************************************************************
-* modification routines
+* Hooks / notify changes to editor
 ******************************************************************************/
 
-// FIXME: the following notification loop is slow when we have many
+// FIXME: the notification might be slow when we have many
 // open buffers. In the future, we might obtain the relevant editors
 // from all possible prefixes of p using a hashtable
 
 // FIXME: the undo system is not safe when a change is made inside
 // a buffer which has no editor attached to it
 
-/*
-#define FOR_ALL_EDITORS_BEGIN(p)			\
-  int i, j;						\
-  for (i=0; i<sv->nr_bufs(); i++) {			\
-    tm_buffer b= sv->get_buf (i);			\
-    if (b->rp <= p)					\
-      for (j=0; j<N(b->vws); j++) {			\
-	editor& ed= ((tm_view) (b->vws[j]))->ed;
-
-#define FOR_ALL_EDITORS_END			\
-      }						\
-  }
-
-#define CHECK_OTHER_EDITOR(cmd)				\
-  if (!(rp <= pp)) {					\
-    tm_buffer other= sv->get_buf (pp);			\
-    if (N(other->vws) != 0) {				\
-      ((tm_view) (other->vws[0]))->ed->cmd;		\
-      return;						\
-    }							\
-    //else system_warning ("Dangerous change")    	\
-  }
-
-void
-edit_modify_rep::assign (path pp, tree u) {
-  CHECK_OTHER_EDITOR (assign (pp, u));
-  path p= copy (pp);
-  // cout << "Assign " << u << " at " << p << "\n";
-  notify_undo ("assign", p, subtree (et, p));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_assign (p, u);
-  FOR_ALL_EDITORS_END
-
-  ::assign (subtree (et, p), u);
-#ifdef EXPERIMENTAL
-  global_notify_assign (p, u);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::insert (path pp, tree u) {
-  CHECK_OTHER_EDITOR (insert (pp, u));
-  path p= copy (pp);
-  // cout << "Insert " << u << " at " << p << "\n";
-  notify_undo ("remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_insert (p, u);
-  FOR_ALL_EDITORS_END
-
-  ::insert (subtree (et, path_up (p)), last_item (p), u);
-#ifdef EXPERIMENTAL
-  global_notify_insert (p, u);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::remove (path pp, int nr) {
-  CHECK_OTHER_EDITOR (remove (pp, nr));
-  if (nr <= 0) return;
-  path p= copy (pp);
-  // cout << "Remove " << nr << " at " << p << "\n";
-  tree& st= subtree (et, path_up (p));
-  int l= last_item (p);
-  if (is_atomic (st)) notify_undo ("insert", p, st->label (l, l+ nr));
-  else notify_undo ("insert", p, st (l, l+ nr));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_remove (p, nr);
-  FOR_ALL_EDITORS_END
-
-  ::remove (subtree (et, path_up (p)), last_item (p), nr);
-#ifdef EXPERIMENTAL
-  global_notify_remove (p, nr);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::split (path pp) {
-  CHECK_OTHER_EDITOR (split (pp));
-  path p= copy (pp);
-  // cout << "Split at " << p << "\n";
-  if (N(p)<2) fatal_error ("path too short in split", "editor::split");
-  tree& st= subtree (et, path_up (path_up (p)));
-  int  l1 = last_item (path_up (p));
-  int  l2 = last_item (p);
-  notify_undo ("join", path_up (p), "");
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_split (p);
-  FOR_ALL_EDITORS_END
-
-  ::split (st, l1, l2);
-#ifdef EXPERIMENTAL
-  global_notify_split (p);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::join (path pp) {
-  CHECK_OTHER_EDITOR (join (pp));
-  path p= copy (pp);
-  // cout << "Join at " << p << "\n";
-  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
-  tree& st= subtree (et, path_up (p));
-  int  l1 = last_item (p);
-  // int  l2 = is_atomic (st[l1])? N (st[l1]->label): N (st[l1]);
-  if (l1+1 >= arity (st)) fatal_error ("invalid join", "editor::join");
-  bool string_mode= is_atomic (st[l1]) && is_atomic (st[l1+1]);
-  int len= string_mode? N (st[l1]->label): arity (st[l1]);
-  notify_undo ("split", p * len, "");
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_join (p);
-  FOR_ALL_EDITORS_END
-
-  ::join (st, l1);
-#ifdef EXPERIMENTAL
-  global_notify_join (p);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::assign_node (path pp, tree_label op) {
-  CHECK_OTHER_EDITOR (assign_node (pp, op));
-  path p= copy (pp);
-  // cout << "Assign node " << get_label (tree (op)) << " at " << p << "\n";
-  tree& st= subtree (et, p);
-  notify_undo ("assign_node", p, get_label (st));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_assign_node (p, op);
-  FOR_ALL_EDITORS_END
-
-  ::assign_node (subtree (et, p), op);
-#ifdef EXPERIMENTAL
-  global_notify_assign_node (p, op);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::insert_node (path pp, tree t) {
-  CHECK_OTHER_EDITOR (insert_node (pp, t));
-  path p= copy (pp);
-  // cout << "Insert node " << t << " at " << p << "\n";
-  notify_undo ("remove_node", p, "");
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_insert_node (p, t);
-  FOR_ALL_EDITORS_END
-
-  ::insert_node (subtree (et, path_up (p)), last_item (p), t);
-#ifdef EXPERIMENTAL
-  global_notify_insert_node (p, t);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::remove_node (path pp) {
-  CHECK_OTHER_EDITOR (remove_node (pp));
-  path p= copy (pp);
-  // cout << "Remove node at " << p << "\n";
-  int pos= last_item (pp);
-  tree& st= subtree (et, path_up (p));
-  notify_undo ("insert_node", p, st (0, pos) * st (pos+1, N(st)));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_remove_node (p);
-  FOR_ALL_EDITORS_END
-
-  ::remove_node (subtree (et, path_up (p)), pos);
-#ifdef EXPERIMENTAL
-  global_notify_remove_node (p);
-#endif
-  finished (pp);
-}
-
-void
-edit_modify_rep::finished (path pp) {
-  // cout << "Finished at " << pp << "\n";
-  FOR_ALL_EDITORS_BEGIN (pp)
-    ed->post_notify (pp);
-  FOR_ALL_EDITORS_END
-}
-*/
-
-/******************************************************************************
-* Hooks / notify changes to editor
-******************************************************************************/
-
-#define FOR_ALL_VIEWS_BEGIN(p)				\
-  int i, j;						\
-  for (i=0; i<ed->sv->nr_bufs(); i++) {			\
-    tm_buffer b= ed->sv->get_buf (i);			\
-    if (b->rp <= p)					\
-      for (j=0; j<N(b->vws); j++) {			\
-	editor& vw= ((tm_view) (b->vws[j]))->ed;
-
-#define FOR_ALL_VIEWS_END			        \
-    }							\
-  }
-
 void
 edit_assign (editor_rep* ed, path pp, tree u) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->notify_assign (p, u);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_assign (p, u);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -261,10 +47,6 @@ edit_insert (editor_rep* ed, path pp, tree u) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->notify_insert (p, u);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_insert (p, u);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -273,10 +55,6 @@ edit_remove (editor_rep* ed, path pp, int nr) {
   ASSERT (ed->rp <= p, "invalid modification");
   if (nr <= 0) return;
   ed->notify_remove (p, nr);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_remove (p, nr);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -284,10 +62,6 @@ edit_split (editor_rep* ed, path pp) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->notify_split (p);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_split (p);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -296,10 +70,6 @@ edit_join (editor_rep* ed, path pp) {
   ASSERT (ed->rp <= p, "invalid modification");
   if (N(p)<1) fatal_error ("path too short in join", "editor::join");
   ed->notify_join (p);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_join (p);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -307,10 +77,6 @@ edit_assign_node (editor_rep* ed, path pp, tree_label op) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->notify_assign_node (p, op);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_assign_node (p, op);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -318,10 +84,6 @@ edit_insert_node (editor_rep* ed, path pp, tree t) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->notify_insert_node (p, t);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_insert_node (p, t);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -329,10 +91,6 @@ edit_remove_node (editor_rep* ed, path pp) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->notify_remove_node (p);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->notify_remove_node (p);
-  //FOR_ALL_VIEWS_END
 }
 
 void
@@ -340,10 +98,6 @@ edit_done (editor_rep* ed, path pp) {
   path p= copy (pp);
   ASSERT (ed->rp <= p, "invalid modification");
   ed->post_notify (p);
-
-  //FOR_ALL_VIEWS_BEGIN (p)
-  //  vw->post_notify (p);
-  //FOR_ALL_VIEWS_END
 }
 
 /******************************************************************************
@@ -425,7 +179,7 @@ edit_modify_rep::post_notify (path p) {
 }
 
 /******************************************************************************
-* Hooks / notify changes to undoer
+* undo and redo handling
 ******************************************************************************/
 
 static tree
@@ -507,156 +261,6 @@ archive (tm_buffer buf, string op, path p, tree t) {
   cout << "last save : " << buf->last_save << "\n";
   */
 }
-
-void
-archive_assign (tm_buffer buf, path pp, tree u) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  archive (buf, "assign", p, subtree (the_et, p));
-
-#ifdef EXPERIMENTAL
-  global_notify_assign (p, u);
-#endif
-}
-
-void
-archive_insert (tm_buffer buf, path pp, tree u) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  archive (buf, "remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
-
-#ifdef EXPERIMENTAL
-  global_notify_insert (p, u);
-#endif
-}
-
-void
-archive_remove (tm_buffer buf, path pp, int nr) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  if (nr <= 0) return;
-  tree& st= subtree (the_et, path_up (p));
-  int l= last_item (p);
-  if (is_atomic (st)) archive (buf, "insert", p, st->label (l, l+ nr));
-  else archive (buf, "insert", p, st (l, l+ nr));
-
-#ifdef EXPERIMENTAL
-  global_notify_remove (p, nr);
-#endif
-}
-
-void
-archive_split (tm_buffer buf, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  if (N(p)<2) fatal_error ("path too short in split", "editor::split");
-  archive (buf, "join", path_up (p), "");
-
-#ifdef EXPERIMENTAL
-  global_notify_split (p);
-#endif
-}
-
-void
-archive_join (tm_buffer buf, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
-  tree& st= subtree (the_et, path_up (p));
-  int  l1 = last_item (p);
-  // int  l2 = is_atomic (st[l1])? N (st[l1]->label): N (st[l1]);
-  if (l1+1 >= arity (st)) fatal_error ("invalid join", "archive_join");
-  bool string_mode= is_atomic (st[l1]) && is_atomic (st[l1+1]);
-  int len= string_mode? N (st[l1]->label): arity (st[l1]);
-  archive (buf, "split", p * len, "");
-
-#ifdef EXPERIMENTAL
-  global_notify_join (p);
-#endif
-}
-
-void
-archive_assign_node (tm_buffer buf, path pp, tree_label op) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  tree& st= subtree (the_et, p);
-  archive (buf, "assign_node", p, get_label (st));
-
-#ifdef EXPERIMENTAL
-  global_notify_assign_node (p, op);
-#endif
-}
-
-void
-archive_insert_node (tm_buffer buf, path pp, tree t) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  archive (buf, "remove_node", p, "");
-
-#ifdef EXPERIMENTAL
-  global_notify_insert_node (p, t);
-#endif
-}
-
-void
-archive_remove_node (tm_buffer buf, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->rp <= p, "invalid modification");
-  int pos= last_item (pp);
-  tree& st= subtree (the_et, path_up (p));
-  archive (buf, "insert_node", p, st (0, pos) * st (pos+1, N(st)));
-
-#ifdef EXPERIMENTAL
-  global_notify_remove_node (p);
-#endif
-}
-
-/******************************************************************************
-* undo and redo handling
-******************************************************************************/
-
-/*
-void
-edit_modify_rep::notify_undo (string op, path p, tree t) {
-  // cout << "Undone by " << op << " " << t << " at " << p << "\n";
-  tree x= encode (op, p, t);
-  if (buf->undo_flag) buf->redo= tree (BACKUP, x, buf->redo);
-  else {
-    if (!buf->redo_flag) {
-      if (buf->redo != "nil") {
-	buf->redo_to_undo ();
-	buf->mark_undo_block ();
-      }
-      if ((max_undo_depth > 0) && (buf->undo_depth >= (2*max_undo_depth)))
-	buf->truncate_undos (max_undo_depth);
-    }
-    if ((op == "remove") &&
-	(buf->needs_to_be_autosaved ()) &&
-	(buf->undo != "nil") && (buf->undo[0] == "") &&
-	(buf->undo[1] != "nil") &&
-	(buf->undo[1][1] != "nil") && (buf->undo[1][1][0] == ""))
-      {
-	string op2; path p2; tree t2;
-	decode (buf->undo[1][0], op2, p2, t2);
-	if ((op2 == "remove") && (p == path_add (p2, as_int (t2)))) {
-	  if (is_atomic (subtree (et, path_up (p)))) {
-	    buf->unmark_undo_block ();
-	    buf->undo= buf->undo [1];
-	    int nr= as_int (t2)+ as_int (t);
-	    x= encode (op, p2, as_string (nr));
-	  }
-	}
-      }
-    buf->undo= tree (BACKUP, x, buf->undo);
-  }
-  //cout << "undo tree : " << buf->undo << "\n";
-  //cout << "redo tree : " << buf->redo << "\n";
-  //cout << "exdo tree : " << buf->exdo << "\n";
-  //cout << "undo depth: " << buf->undo_depth << "\n";
-  //cout << "redo depth: " << buf->redo_depth << "\n";
-  //cout << "last save : " << buf->last_save << "\n";
-}
-*/
 
 void
 edit_modify_rep::mark_undo_blocks () {
@@ -838,47 +442,115 @@ edit_modify_rep::perform_undo_redo (tree x) {
 }
 
 /******************************************************************************
-* handling multiple cursor positions
+* Hooks / notify changes to undoer
 ******************************************************************************/
 
-/*
-int
-edit_modify_rep::position_new () {
-  int i, n= N(pps);
-  for (i=0; i<n; i++)
-    if (!code_to_nr->contains (i))
-      break;
-  pps << copy (tp);
-  nr_to_code << i;
-  code_to_nr (i)= n;
-  return i;
+void
+archive_assign (tm_buffer buf, path pp, tree u) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  archive (buf, "assign", p, subtree (the_et, p));
+
+#ifdef EXPERIMENTAL
+  global_notify_assign (p, u);
+#endif
 }
 
 void
-edit_modify_rep::position_delete (int i) {
-  if (!code_to_nr->contains (i)) return;
-  int j= code_to_nr (i), n= N(pps), k;
-  for (k=j; k<n-1; k++) {
-    int l= nr_to_code[k+1];
-    pps[k]= pps[k+1];
-    nr_to_code[k]= l;
-    code_to_nr(l)= k;
-  }
-  pps->resize (n-1);
-  nr_to_code->resize (n-1);
-  code_to_nr->reset (i);
+archive_insert (tm_buffer buf, path pp, tree u) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  archive (buf, "remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
+
+#ifdef EXPERIMENTAL
+  global_notify_insert (p, u);
+#endif
 }
 
 void
-edit_modify_rep::position_set (int i, path p) {
-  pps[code_to_nr(i)]= copy (p);
+archive_remove (tm_buffer buf, path pp, int nr) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  if (nr <= 0) return;
+  tree& st= subtree (the_et, path_up (p));
+  int l= last_item (p);
+  if (is_atomic (st)) archive (buf, "insert", p, st->label (l, l+ nr));
+  else archive (buf, "insert", p, st (l, l+ nr));
+
+#ifdef EXPERIMENTAL
+  global_notify_remove (p, nr);
+#endif
 }
 
-path
-edit_modify_rep::position_get (int i) {
-  return copy (pps[code_to_nr(i)]);
+void
+archive_split (tm_buffer buf, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  if (N(p)<2) fatal_error ("path too short in split", "editor::split");
+  archive (buf, "join", path_up (p), "");
+
+#ifdef EXPERIMENTAL
+  global_notify_split (p);
+#endif
 }
-*/
+
+void
+archive_join (tm_buffer buf, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
+  tree& st= subtree (the_et, path_up (p));
+  int  l1 = last_item (p);
+  // int  l2 = is_atomic (st[l1])? N (st[l1]->label): N (st[l1]);
+  if (l1+1 >= arity (st)) fatal_error ("invalid join", "archive_join");
+  bool string_mode= is_atomic (st[l1]) && is_atomic (st[l1+1]);
+  int len= string_mode? N (st[l1]->label): arity (st[l1]);
+  archive (buf, "split", p * len, "");
+
+#ifdef EXPERIMENTAL
+  global_notify_join (p);
+#endif
+}
+
+void
+archive_assign_node (tm_buffer buf, path pp, tree_label op) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  tree& st= subtree (the_et, p);
+  archive (buf, "assign_node", p, get_label (st));
+
+#ifdef EXPERIMENTAL
+  global_notify_assign_node (p, op);
+#endif
+}
+
+void
+archive_insert_node (tm_buffer buf, path pp, tree t) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  archive (buf, "remove_node", p, "");
+
+#ifdef EXPERIMENTAL
+  global_notify_insert_node (p, t);
+#endif
+}
+
+void
+archive_remove_node (tm_buffer buf, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  int pos= last_item (pp);
+  tree& st= subtree (the_et, path_up (p));
+  archive (buf, "insert_node", p, st (0, pos) * st (pos+1, N(st)));
+
+#ifdef EXPERIMENTAL
+  global_notify_remove_node (p);
+#endif
+}
+
+/******************************************************************************
+* handling multiple cursor positions
+******************************************************************************/
 
 observer
 edit_modify_rep::position_new (path p) {

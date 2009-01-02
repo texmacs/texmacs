@@ -253,17 +253,6 @@ public:
   virtual void     typeset_invalidate_all () = 0;
 
   /* public routines from edit_modify */
-  /*
-  virtual void assign (path p, tree u) = 0;
-  virtual void insert (path p, tree u) = 0;
-  virtual void remove (path p, int nr) = 0;
-  virtual void split (path p) = 0;
-  virtual void join (path p) = 0;
-  virtual void assign_node (path p, tree_label op) = 0;
-  virtual void insert_node (path p, tree t) = 0;
-  virtual void remove_node (path p) = 0;
-  virtual void finished (path p) = 0;
-  */
   virtual void notify_assign (path p, tree u) = 0;
   virtual void notify_insert (path p, tree u) = 0;
   virtual void notify_remove (path p, int nr) = 0;
@@ -280,7 +269,6 @@ public:
   virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
-  //virtual void notify_undo (string op, path p, tree t) = 0;
   virtual observer position_new (path p) = 0;
   virtual void position_delete (observer o) = 0;
   virtual void position_set (observer o, path p) = 0;
