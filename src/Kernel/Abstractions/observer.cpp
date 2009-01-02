@@ -123,6 +123,8 @@ assign (tree& ref, tree t) {
       detach (ref[i], t, i >= mid);
   }
   ref= t;
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -146,6 +148,8 @@ insert (tree& ref, int pos, tree t) {
     ref->obs->notify_insert (ref, pos, is_atomic (t)? N(t->label): N(t));
     simplify (ref->obs);
   }
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -176,6 +180,8 @@ remove (tree& ref, int pos, int nr) {
       ref[i]= ref[i+nr];
     AR(ref)->resize (n);
   }
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -209,6 +215,8 @@ split (tree& ref, int pos, int at) {
     t->obs->notify_var_split (t, t1, t2);
     simplify (t->obs);
   }
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -244,6 +252,8 @@ join (tree& ref, int pos) {
   for (i=pos+1; i<n; i++)
     ref[i]= ref[i+1];
   AR(ref)->resize (n);
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -257,6 +267,8 @@ assign_node (tree& ref, tree_label op) {
     simplify (ref->obs);
   }
   LR (ref)= op;
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -276,6 +288,8 @@ insert_node (tree& ref, int pos, tree t) {
     ref[pos]->obs->notify_insert_node (ref, pos);
     simplify (ref[pos]->obs);
   }
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -292,6 +306,8 @@ remove_node (tree& ref, int pos) {
     if (i < pos) detach (ref[i], ref[pos], false);
     else if (i > pos) detach (ref[i], ref[pos], true);
   ref= ref[pos];
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -338,6 +354,66 @@ observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
 void
 observer_rep::announce_remove_node (tree& ref, path p) {
   (void) ref; (void) p;
+}
+
+void
+observer_rep::announce_done (tree& ref, path p) {
+  (void) ref; (void) p;
+}
+
+void
+observer_rep::notify_assign (tree& ref, tree t) {
+  (void) ref; (void) t;
+}
+
+void
+observer_rep::notify_insert (tree& ref, int pos, int nr) {
+  (void) ref; (void) pos; (void) nr;
+}
+
+void
+observer_rep::notify_remove (tree& ref, int pos, int nr) {
+  (void) ref; (void) pos; (void) nr;
+}
+
+void
+observer_rep::notify_split (tree& ref, int pos, tree prev) {
+  (void) ref; (void) pos; (void) prev;
+}
+
+void
+observer_rep::notify_var_split (tree& ref, tree t1, tree t2) {
+  (void) ref; (void) t1; (void) t2;
+}
+
+void
+observer_rep::notify_join (tree& ref, int pos, tree next) {
+  (void) ref; (void) pos; (void) next;
+}
+
+void
+observer_rep::notify_var_join (tree& ref, tree t, int offset) {
+  (void) ref; (void) t; (void) offset;
+}
+
+void
+observer_rep::notify_assign_node (tree& ref, tree_label op) {
+  (void) ref; (void) op;
+}
+
+void
+observer_rep::notify_insert_node (tree& ref, int pos) {
+  (void) ref; (void) pos;
+}
+
+void
+observer_rep::notify_remove_node (tree& ref, int pos) {
+  (void) ref; (void) pos;
+}
+
+void
+observer_rep::notify_detach (tree& ref, tree closest, bool right) {
+  (void) ref; (void) closest; (void) right;
 }
 
 bool

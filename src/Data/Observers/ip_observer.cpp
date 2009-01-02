@@ -36,6 +36,7 @@ public:
   void announce_assign_node (tree& ref, path p, tree_label op);
   void announce_insert_node (tree& ref, path p, tree ins);
   void announce_remove_node (tree& ref, path p);
+  void announce_done        (tree& ref, path p);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -132,6 +133,15 @@ ip_observer_rep::announce_remove_node (tree& ref, path p) {
   tree& parent (subtree (the_et, reverse (ip->next)));
   path q (ip->item, p);
   parent->obs->announce_remove_node (parent, q);
+}
+
+void
+ip_observer_rep::announce_done (tree& ref, path p) {
+  //cout << "Done " << ip << ", " << p << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  path q (ip->item, p);
+  parent->obs->announce_done (parent, q);
 }
 
 /******************************************************************************

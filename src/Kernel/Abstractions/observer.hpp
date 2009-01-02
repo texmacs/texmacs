@@ -41,19 +41,20 @@ public:
   virtual void announce_assign_node (tree& ref, path p, tree_label op);
   virtual void announce_insert_node (tree& ref, path p, tree ins);
   virtual void announce_remove_node (tree& ref, path p);
+  virtual void announce_done        (tree& ref, path p);
 
   // Call back routines for tree modifications
-  virtual void notify_assign      (tree& ref, tree t) = 0;
-  virtual void notify_insert      (tree& ref, int pos, int nr) = 0;
-  virtual void notify_remove      (tree& ref, int pos, int nr) = 0;
-  virtual void notify_split       (tree& ref, int pos, tree prev) = 0;
-  virtual void notify_var_split   (tree& ref, tree t1, tree t2) = 0;
-  virtual void notify_join        (tree& ref, int pos, tree next) = 0;
-  virtual void notify_var_join    (tree& ref, tree t, int offset) = 0;
-  virtual void notify_assign_node (tree& ref, tree_label op) = 0;
-  virtual void notify_insert_node (tree& ref, int pos) = 0;
-  virtual void notify_remove_node (tree& ref, int pos) = 0;
-  virtual void notify_detach      (tree& ref, tree closest, bool right) = 0;
+  virtual void notify_assign      (tree& ref, tree t);
+  virtual void notify_insert      (tree& ref, int pos, int nr);
+  virtual void notify_remove      (tree& ref, int pos, int nr);
+  virtual void notify_split       (tree& ref, int pos, tree prev);
+  virtual void notify_var_split   (tree& ref, tree t1, tree t2);
+  virtual void notify_join        (tree& ref, int pos, tree next);
+  virtual void notify_var_join    (tree& ref, tree t, int offset);
+  virtual void notify_assign_node (tree& ref, tree_label op);
+  virtual void notify_insert_node (tree& ref, int pos);
+  virtual void notify_remove_node (tree& ref, int pos);
+  virtual void notify_detach      (tree& ref, tree closest, bool right);
 
   // Extra routines for particular types of observers
   virtual bool get_ip (path& ip);
@@ -79,11 +80,13 @@ ABSTRACT_NULL_CODE(observer);
 
 ostream& operator << (ostream& out, observer o);
 
+class editor_rep;
 extern observer nil_observer;
 observer ip_observer (path ip);
 observer list_observer (observer o1, observer o2);
 observer tree_pointer (tree t);
 observer tree_position (tree t, int index);
+observer edit_observer (editor_rep* ed);
 
 /******************************************************************************
 * Modification routines for trees and other observer-related facilities
@@ -115,6 +118,9 @@ void tree_pointer_delete (observer o);
 path obtain_position (observer o);
 void attach_position (tree& ref, observer o);
 void detach_position (tree& ref, observer o);
+
+void attach_editor (tree& ref, observer o);
+void detach_editor (tree& ref, observer o);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 

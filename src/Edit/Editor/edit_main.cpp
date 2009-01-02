@@ -35,13 +35,15 @@ editor_rep::editor_rep (server_rep* sv2, tm_buffer buf2):
   et (the_et), rp (buf2->rp) {}
 
 edit_main_rep::edit_main_rep (server_rep* sv, tm_buffer buf):
-  editor_rep (sv, buf), props (UNKNOWN)
+  editor_rep (sv, buf), props (UNKNOWN), ed_obs (edit_observer (this))
 {
+  attach_editor (subtree (et, rp), ed_obs);
   notify_change (THE_TREE);
   tp= correct_cursor (et, rp * 0);
 }
 
 edit_main_rep::~edit_main_rep () {
+  detach_editor (subtree (et, rp), ed_obs);
 #ifdef EXPERIMENTAL
   mem= memorizer ();
 #endif

@@ -21,8 +21,7 @@ extern int max_undo_depth;
 * Constructors and destructors
 ******************************************************************************/
 
-edit_modify_rep::edit_modify_rep ():
-  undo_flag (false), redo_flag (false) {}
+edit_modify_rep::edit_modify_rep (): undo_flag (false), redo_flag (false) {}
 edit_modify_rep::~edit_modify_rep () {}
 
 /******************************************************************************
@@ -226,6 +225,167 @@ edit_modify_rep::finished (path pp) {
   FOR_ALL_EDITORS_BEGIN (pp)
     ed->post_notify (pp);
   FOR_ALL_EDITORS_END
+}
+
+/******************************************************************************
+* Hooks implementation
+******************************************************************************/
+
+#define FOR_ALL_VIEWS_BEGIN(p)				\
+  int i, j;						\
+  for (i=0; i<ed->sv->nr_bufs(); i++) {			\
+    tm_buffer b= ed->sv->get_buf (i);			\
+    if (b->rp <= p)					\
+      for (j=0; j<N(b->vws); j++) {			\
+	editor& vw= ((tm_view) (b->vws[j]))->ed;
+
+#define FOR_ALL_VIEWS_END			        \
+    }							\
+  }
+
+void
+edit_assign (editor_rep* ed, path pp, tree u) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  ed->notify_undo ("assign", p, subtree (the_et, p));
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_assign (p, u);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_assign (p, u);
+#endif
+}
+
+void
+edit_insert (editor_rep* ed, path pp, tree u) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  ed->notify_undo ("remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_insert (p, u);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_insert (p, u);
+#endif
+}
+
+void
+edit_remove (editor_rep* ed, path pp, int nr) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  if (nr <= 0) return;
+  tree& st= subtree (the_et, path_up (p));
+  int l= last_item (p);
+  if (is_atomic (st)) ed->notify_undo ("insert", p, st->label (l, l+ nr));
+  else ed->notify_undo ("insert", p, st (l, l+ nr));
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_remove (p, nr);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_remove (p, nr);
+#endif
+}
+
+void
+edit_split (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  if (N(p)<2) fatal_error ("path too short in split", "editor::split");
+  ed->notify_undo ("join", path_up (p), "");
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_split (p);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_split (p);
+#endif
+}
+
+void
+edit_join (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
+  tree& st= subtree (the_et, path_up (p));
+  int  l1 = last_item (p);
+  // int  l2 = is_atomic (st[l1])? N (st[l1]->label): N (st[l1]);
+  if (l1+1 >= arity (st)) fatal_error ("invalid join", "edit_join");
+  bool string_mode= is_atomic (st[l1]) && is_atomic (st[l1+1]);
+  int len= string_mode? N (st[l1]->label): arity (st[l1]);
+  ed->notify_undo ("split", p * len, "");
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_join (p);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_join (p);
+#endif
+}
+
+void
+edit_assign_node (editor_rep* ed, path pp, tree_label op) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  tree& st= subtree (the_et, p);
+  ed->notify_undo ("assign_node", p, get_label (st));
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_assign_node (p, op);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_assign_node (p, op);
+#endif
+}
+
+void
+edit_insert_node (editor_rep* ed, path pp, tree t) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  ed->notify_undo ("remove_node", p, "");
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_insert_node (p, t);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_insert_node (p, t);
+#endif
+}
+
+void
+edit_remove_node (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+  int pos= last_item (pp);
+  tree& st= subtree (the_et, path_up (p));
+  ed->notify_undo ("insert_node", p, st (0, pos) * st (pos+1, N(st)));
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->notify_remove_node (p);
+  FOR_ALL_VIEWS_END
+
+#ifdef EXPERIMENTAL
+  global_notify_remove_node (p);
+#endif
+}
+
+void
+edit_done (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->rp <= p, "invalid modification");
+
+  FOR_ALL_VIEWS_BEGIN (p)
+    vw->post_notify (p);
+  FOR_ALL_VIEWS_END
 }
 
 /******************************************************************************

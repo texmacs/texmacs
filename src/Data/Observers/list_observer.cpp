@@ -40,6 +40,7 @@ public:
   void announce_assign_node (tree& ref, path p, tree_label op);
   void announce_insert_node (tree& ref, path p, tree ins);
   void announce_remove_node (tree& ref, path p);
+  void announce_done        (tree& ref, path p);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -112,6 +113,12 @@ void
 list_observer_rep::announce_remove_node (tree& ref, path p) {
   if (!is_nil (o1)) o1->announce_remove_node (ref, p);
   if (!is_nil (o2)) o2->announce_remove_node (ref, p);
+}
+
+void
+list_observer_rep::announce_done (tree& ref, path p) {
+  if (!is_nil (o1)) o1->announce_done (ref, p);
+  if (!is_nil (o2)) o2->announce_done (ref, p);
 }
 
 /******************************************************************************

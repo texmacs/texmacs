@@ -278,6 +278,7 @@ public:
   virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
+  virtual void notify_undo (string op, path p, tree t) = 0;
   virtual observer position_new (path p) = 0;
   virtual void position_delete (observer o) = 0;
   virtual void position_set (observer o, path p) = 0;

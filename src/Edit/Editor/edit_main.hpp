@@ -39,7 +39,8 @@ class edit_main_rep:
   public edit_replace_rep
 {
 private:
-  hashmap<tree,tree> props; // properties associated to the editor
+  hashmap<tree,tree> props;   // properties associated to the editor
+  observer           ed_obs;  // edit observer attached to root of tree
 
 public:
   edit_main_rep (server_rep* sv, tm_buffer buf);
