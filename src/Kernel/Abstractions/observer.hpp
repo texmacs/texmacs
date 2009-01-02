@@ -21,6 +21,14 @@ template<class T> class array;
 typedef hard_link_rep* weak_link;
 typedef list<int> path;
 
+#define OBSERVER_UNKNOWN    0
+#define OBSERVER_LIST       1
+#define OBSERVER_IP         2
+#define OBSERVER_POINTER    3
+#define OBSERVER_POSITION   4
+#define OBSERVER_EDIT       5
+#define OBSERVER_UNDO       6
+
 /******************************************************************************
 * The observer class
 ******************************************************************************/
@@ -30,6 +38,7 @@ class observer_rep: public abstract_struct {
 public:
   inline observer_rep () { DEBUG(observer_count++); }
   inline virtual ~observer_rep () { DEBUG(observer_count--); }
+  inline virtual int get_type () { return OBSERVER_UNKNOWN; }
   inline virtual ostream& print (ostream& out) { return out; }
 
   // Announcing modifications in subtrees
@@ -81,12 +90,16 @@ ABSTRACT_NULL_CODE(observer);
 ostream& operator << (ostream& out, observer o);
 
 class editor_rep;
+class tm_buffer_rep;
+typedef tm_buffer_rep* tm_buffer;
+
 extern observer nil_observer;
 observer ip_observer (path ip);
 observer list_observer (observer o1, observer o2);
 observer tree_pointer (tree t);
 observer tree_position (tree t, int index);
 observer edit_observer (editor_rep* ed);
+observer undo_observer (tm_buffer buf);
 
 /******************************************************************************
 * Modification routines for trees and other observer-related facilities
@@ -101,8 +114,20 @@ void assign_node (tree& ref, tree_label op);
 void insert_node (tree& ref, int pos, tree t);
 void remove_node (tree& ref, int pos);
 
+void assign      (path p, tree t);
+void insert      (path p, tree ins);
+void remove      (path p, int nr);
+void split       (path p);
+void join        (path p);
+void assign_node (path p, tree_label op);
+void insert_node (path p, tree ins);
+void remove_node (path p);
+
 void insert_observer (observer& o, observer what);
 void remove_observer (observer& o, observer what);
+void attach_observer (tree& ref, observer o);
+void detach_observer (tree& ref, observer o);
+void clean_observers (tree& ref);
 
 path obtain_ip (tree& ref);
 void attach_ip (tree& ref, path ip);
@@ -110,17 +135,10 @@ void detach_ip (tree& ref);
 bool ip_attached (path ip);
 
 tree obtain_tree (observer o);
-void attach_pointer (tree& ref, observer o);
-void detach_pointer (tree& ref, observer o);
 observer tree_pointer_new (tree t);
 void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
-void attach_position (tree& ref, observer o);
-void detach_position (tree& ref, observer o);
-
-void attach_editor (tree& ref, observer o);
-void detach_editor (tree& ref, observer o);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 

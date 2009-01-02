@@ -27,6 +27,7 @@ class list_observer_rep: public observer_rep {
 
 public:
   list_observer_rep (observer o1b, observer o2b): o1 (o1b), o2 (o2b) {}
+  int get_type () { return OBSERVER_LIST; }
   ostream& print (ostream& out) {
     if (!is_nil (o1)) o1->print (out);
     if (!is_nil (o2)) o2->print (out);
@@ -263,4 +264,32 @@ remove_observer (observer& o, observer what) {
     remove_observer (o->get_child (0), what);
     remove_observer (o->get_child (1), what);
   }
+}
+
+void
+clean_observers (observer& o) {
+  if (is_nil (o)) return;
+  if (o->get_type () == OBSERVER_IP) return;
+  if (o->get_type () == OBSERVER_LIST) {
+    clean_observers (o->get_child (0));
+    clean_observers (o->get_child (1));
+    if (is_nil (o->get_child (0))) o= o->get_child (1);
+    else if (is_nil (o->get_child (1))) o= o->get_child (0);
+  }
+  else o= nil_observer;
+}
+
+void
+attach_observer (tree& ref, observer o) {
+  insert_observer (ref->obs, o);
+}
+
+void
+detach_observer (tree& ref, observer o) {
+  remove_observer (ref->obs, o);
+}
+
+void
+clean_observers (tree& ref) {
+  clean_observers (ref->obs);
 }

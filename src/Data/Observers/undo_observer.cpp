@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : edit_observer.cpp
+* MODULE     : undo_observer.cpp
 * DESCRIPTION: Persistently attach inverse paths to trees
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -19,26 +19,25 @@
 * Hooks
 ******************************************************************************/
 
-void edit_assign      (editor_rep* ed, path p, tree t);
-void edit_insert      (editor_rep* ed, path p, tree ins);
-void edit_remove      (editor_rep* ed, path p, int nr);
-void edit_split       (editor_rep* ed, path p);
-void edit_join        (editor_rep* ed, path p);
-void edit_assign_node (editor_rep* ed, path p, tree_label op);
-void edit_insert_node (editor_rep* ed, path p, tree ins);
-void edit_remove_node (editor_rep* ed, path p);
-void edit_done        (editor_rep* ed, path p);
+void archive_assign      (tm_buffer buf, path p, tree t);
+void archive_insert      (tm_buffer buf, path p, tree ins);
+void archive_remove      (tm_buffer buf, path p, int nr);
+void archive_split       (tm_buffer buf, path p);
+void archive_join        (tm_buffer buf, path p);
+void archive_assign_node (tm_buffer buf, path p, tree_label op);
+void archive_insert_node (tm_buffer buf, path p, tree ins);
+void archive_remove_node (tm_buffer buf, path p);
 
 /******************************************************************************
-* Definition of the edit_observer_rep class
+* Definition of the undo_observer_rep class
 ******************************************************************************/
 
-class edit_observer_rep: public observer_rep {
-  editor_rep* ed;
+class undo_observer_rep: public observer_rep {
+  tm_buffer buf;
 public:
-  edit_observer_rep (editor_rep* ed2): ed (ed2) {}
-  int get_type () { return OBSERVER_EDIT; }
-  ostream& print (ostream& out) { return out << " editor<" << ed << ">"; }
+  undo_observer_rep (tm_buffer buf2): buf (buf2) {}
+  int get_type () { return OBSERVER_UNDO; }
+  ostream& print (ostream& out) { return out << " undoer<" << buf << ">"; }
 
   void announce_assign      (tree& ref, path p, tree t);
   void announce_insert      (tree& ref, path p, tree ins);
@@ -48,7 +47,6 @@ public:
   void announce_assign_node (tree& ref, path p, tree_label op);
   void announce_insert_node (tree& ref, path p, tree ins);
   void announce_remove_node (tree& ref, path p);
-  void announce_done        (tree& ref, path p);
 
   void reattach           (tree& ref, tree t);
   void notify_assign      (tree& ref, tree t);
@@ -63,66 +61,60 @@ public:
 ******************************************************************************/
 
 void
-edit_observer_rep::announce_assign (tree& ref, path p, tree t) {
-  //cout << "Assign " << p << ", " << t << "\n";
+undo_observer_rep::announce_assign (tree& ref, path p, tree t) {
+  if (p == path () && t == ref) return;
+  //cout << "Archive assign " << p << ", " << t << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_assign (ed, reverse (obtain_ip (ref)) * p, t);
+    archive_assign (buf, reverse (obtain_ip (ref)) * p, t);
 }
 
 void
-edit_observer_rep::announce_insert (tree& ref, path p, tree ins) {
-  //cout << "Insert " << p << ", " << ins << "\n";
+undo_observer_rep::announce_insert (tree& ref, path p, tree ins) {
+  //cout << "Archive insert " << p << ", " << ins << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_insert (ed, reverse (obtain_ip (ref)) * p, ins);
+    archive_insert (buf, reverse (obtain_ip (ref)) * p, ins);
 }
 
 void
-edit_observer_rep::announce_remove (tree& ref, path p, int nr) {
-  //cout << "Remove " << p << ", " << nr << "\n";
+undo_observer_rep::announce_remove (tree& ref, path p, int nr) {
+  //cout << "Archive remove " << p << ", " << nr << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_remove (ed, reverse (obtain_ip (ref)) * p, nr);
+    archive_remove (buf, reverse (obtain_ip (ref)) * p, nr);
 }
 
 void
-edit_observer_rep::announce_split (tree& ref, path p) {
-  //cout << "Split " << p << "\n";
+undo_observer_rep::announce_split (tree& ref, path p) {
+  //cout << "Archive split " << p << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_split (ed, reverse (obtain_ip (ref)) * p);
+    archive_split (buf, reverse (obtain_ip (ref)) * p);
 }
 
 void
-edit_observer_rep::announce_join (tree& ref, path p) {
-  //cout << "Join " << p << "\n";
+undo_observer_rep::announce_join (tree& ref, path p) {
+  //cout << "Archive join " << p << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_join (ed, reverse (obtain_ip (ref)) * p);
+    archive_join (buf, reverse (obtain_ip (ref)) * p);
 }
 
 void
-edit_observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
-  //cout << "Assign node " << p << ", " << op << "\n";
+undo_observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
+  //cout << "Archive assign node " << p << ", " << op << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_assign_node (ed, reverse (obtain_ip (ref)) * p, op);
+    archive_assign_node (buf, reverse (obtain_ip (ref)) * p, op);
 }
 
 void
-edit_observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
-  //cout << "Insert node " << p << ", " << ins << "\n";
+undo_observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
+  //cout << "Archive insert node " << p << ", " << ins << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_insert_node (ed, reverse (obtain_ip (ref)) * p, ins);
+    archive_insert_node (buf, reverse (obtain_ip (ref)) * p, ins);
 }
 
 void
-edit_observer_rep::announce_remove_node (tree& ref, path p) {
-  //cout << "Remove node " << p << "\n";
+undo_observer_rep::announce_remove_node (tree& ref, path p) {
+  //cout << "Archive remove node " << p << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_remove_node (ed, reverse (obtain_ip (ref)) * p);
-}
-
-void
-edit_observer_rep::announce_done (tree& ref, path p) {
-  //cout << "Done " << p << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_done (ed, reverse (obtain_ip (ref)) * p);
+    archive_remove_node (buf, reverse (obtain_ip (ref)) * p);
 }
 
 /******************************************************************************
@@ -130,7 +122,7 @@ edit_observer_rep::announce_done (tree& ref, path p) {
 ******************************************************************************/
 
 void
-edit_observer_rep::reattach (tree& ref, tree t) {
+undo_observer_rep::reattach (tree& ref, tree t) {
   if (ref.rep != t.rep) {
     remove_observer (ref->obs, observer (this));
     insert_observer (t->obs, observer (this));
@@ -138,38 +130,38 @@ edit_observer_rep::reattach (tree& ref, tree t) {
 }
 
 void
-edit_observer_rep::notify_assign (tree& ref, tree t) {
+undo_observer_rep::notify_assign (tree& ref, tree t) {
   reattach (ref, t);
 }
 
 void
-edit_observer_rep::notify_var_split (tree& ref, tree t1, tree t2) {
+undo_observer_rep::notify_var_split (tree& ref, tree t1, tree t2) {
   (void) t2;
   reattach (ref, t1); // always at the left
 }
 
 void
-edit_observer_rep::notify_var_join (tree& ref, tree t, int offset) {
+undo_observer_rep::notify_var_join (tree& ref, tree t, int offset) {
   (void) ref; (void) offset;
   reattach (ref, t);
 }
 
 void
-edit_observer_rep::notify_remove_node (tree& ref, int pos) {
+undo_observer_rep::notify_remove_node (tree& ref, int pos) {
   reattach (ref, ref[pos]);
 }
 
 void
-edit_observer_rep::notify_detach (tree& ref, tree closest, bool right) {
+undo_observer_rep::notify_detach (tree& ref, tree closest, bool right) {
   (void) right;
   reattach (ref, closest);
 }
 
 /******************************************************************************
-* Creation of edit_observers
+* Creation of undo_observers
 ******************************************************************************/
 
 observer
-edit_observer (editor_rep* ed) {
-  return tm_new<edit_observer_rep> (ed);
+undo_observer (tm_buffer buf) {
+  return tm_new<undo_observer_rep> (buf);
 }

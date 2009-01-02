@@ -27,6 +27,7 @@ class tree_position_rep: public observer_rep {
 
 public:
   tree_position_rep (tree ref, int index2): ptr (ref.rep), index (index2) {}
+  int get_type () { return OBSERVER_POSITION; }
   ostream& print (ostream& out) { return out << " " << index; }
 
   void notify_assign      (tree& ref, tree t);
@@ -59,10 +60,10 @@ tree_position_rep::get_position (tree& t, int& index2) {
 bool
 tree_position_rep::set_position (tree t, int index2) {
   tree ref (ptr);
-  detach_position (ref, observer (this));
+  detach_observer (ref, observer (this));
   ptr  = t.rep;
   index= index2;
-  attach_position (t, observer (this));
+  attach_observer (t, observer (this));
   return true;
 }
 
@@ -191,18 +192,4 @@ obtain_position (observer o) {
   path ip= obtain_ip (t);
   if (ip == path (DETACHED)) return path ();
   return reverse (ip) * index;
-}
-
-void
-attach_position (tree& ref, observer o) {
-  // cout << "Attach position " << ref << ": " << ref->obs << ", " << o;
-  insert_observer (ref->obs, o);
-  // cout << " -> " << ref->obs << "\n";
-}
-
-void
-detach_position (tree& ref, observer o) {
-  // cout << "Detach position " << ref << ": " << ref->obs << ", " << o;
-  remove_observer (ref->obs, o);
-  // cout << " -> " << ref->obs << "\n";
 }

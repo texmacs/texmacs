@@ -96,7 +96,7 @@ link_repository_rep::~link_repository_rep () {
   while (!is_nil (loci)) {
     tree t= obtain_tree (loci->item);
     unregister_pointer (ids->item, loci->item);
-    detach_pointer (t, loci->item);
+    detach_observer (t, loci->item);
     ids= ids->next;
     loci= loci->next;
   }
@@ -110,7 +110,7 @@ void
 link_repository_rep::insert_locus (string id, tree t) {
   observer obs= tree_pointer (t);
   register_pointer (id, obs);
-  attach_pointer (t, obs);
+  attach_observer (t, obs);
   ids= list<string> (id, ids);
   loci= list<observer> (obs, loci);
 }

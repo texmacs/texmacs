@@ -34,14 +34,6 @@ public:
   tm_buffer prj;          // buffer which corresponds to the project
   bool in_menu;           // should the buffer be listed in the menus?
 
-  tree undo;              // for undoing changes
-  tree redo;              // for redoing changes
-  tree exdo;              // for undoing redone changes
-  int  undo_depth;        // number of changes
-  int  redo_depth;        // number of undone changes
-  int  last_save;         // how many changes at last save
-  int  last_autosave;     // how many changes at last autosave
-
   path rp;                    // path to the document's root in the_et
   tree project;               // a project the document belongs to
   tree style;                 // the style of the buffer
@@ -50,18 +42,39 @@ public:
   hashmap<string,tree> ref;   // all labels with references
   hashmap<string,tree> aux;   // auxiliary output: toc, bib, etc.
 
+  observer undo_obs;      // observer for undoing changes
+  tree undo;              // for undoing changes
+  tree redo;              // for redoing changes
+  tree exdo;              // for undoing redone changes
+  int  undo_depth;        // number of changes
+  int  redo_depth;        // number of undone changes
+  bool undo_flag;         // when undoing some text
+  bool redo_flag;         // when redoing some text
+  int  last_save;         // how many changes at last save
+  int  last_autosave;     // how many changes at last autosave
+
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
     fm ("texmacs"), extra (url_none ()), vws (0),
     need_save (false), need_autosave (false),
     read_only (false), secure (is_secure (name2)),
-    prj (NULL), in_menu (true), undo ("nil"), redo ("nil"), exdo ("nil"),
-    undo_depth (0), redo_depth (0), last_save (0), last_autosave (0),
-    rp (new_document ()), project (""), style ("style"),
-    init ("?"), fin ("?"), ref ("?"), aux ("?") {}
+    prj (NULL), in_menu (true),
+    rp (new_document ()),
+    project (""), style ("style"),
+    init ("?"), fin ("?"), ref ("?"), aux ("?"),
+    undo_obs (undo_observer (this)),
+    undo ("nil"), redo ("nil"), exdo ("nil"),
+    undo_depth (0), redo_depth (0),
+    undo_flag (false), redo_flag (false),
+    last_save (0), last_autosave (0)
+  {
+    attach_observer (subtree (the_et, rp), undo_obs);
+  }
 
   inline ~tm_buffer_rep () {
-    delete_document (rp); }
+    detach_observer (subtree (the_et, rp), undo_obs);
+    delete_document (rp);
+  }
 
   void mark_undo_block ();
   void mark_redo_block ();

@@ -391,9 +391,9 @@ tree
 tree_assign (tree r, tree t) {
   path ip= obtain_ip (r);
   //cout << "Assign " << r << ", " << t << " at " << ip << "\n";
-  if (ip_attached (ip)) {
+  if (false && ip_attached (ip)) {
     path p= reverse (ip);
-    get_server()->get_editor()->assign (p, copy (t));
+    //get_server()->get_editor()->assign (p, copy (t));
     return get_server()->get_editor()->the_subtree (p);
   }
   else {
@@ -407,9 +407,10 @@ tree_insert (tree r, int pos, tree t) {
   path ip= obtain_ip (r);
   //cout << "Insert " << r << ", " << pos << ", " << t
   //     << " at " << ip << "\n";
-  if (ip_attached (ip))
-    get_server()->get_editor()->insert (reverse (ip) * pos, copy (t));
-  else insert (r, pos, t);
+  //if (false && ip_attached (ip))
+  //  get_server()->get_editor()->insert (reverse (ip) * pos, copy (t));
+  //else
+    insert (r, pos, t);
   return r;
 }
 
@@ -418,9 +419,10 @@ tree_remove (tree r, int pos, int nr) {
   path ip= obtain_ip (r);
   //cout << "Remove " << r << ", " << pos << ", " << nr
   //     << " at " << ip << "\n";
-  if (ip_attached (ip))
-    get_server()->get_editor()->remove (reverse (ip) * pos, nr);
-  else remove (r, pos, nr);
+  //if (false && ip_attached (ip))
+  //  get_server()->get_editor()->remove (reverse (ip) * pos, nr);
+  //else
+    remove (r, pos, nr);
   return r;
 }
 
@@ -429,9 +431,10 @@ tree_split (tree r, int pos, int at) {
   path ip= obtain_ip (r);
   //cout << "Split " << r << ", " << pos << ", " << at
   //     << " at " << ip << "\n";
-  if (ip_attached (ip))
-    get_server()->get_editor()->split (reverse (ip) * path (pos, at));
-  else split (r, pos, at);
+  //if (false && ip_attached (ip))
+  //  get_server()->get_editor()->split (reverse (ip) * path (pos, at));
+  //else
+    split (r, pos, at);
   return r;
 }
 
@@ -439,9 +442,10 @@ tree
 tree_join (tree r, int pos) {
   path ip= obtain_ip (r);
   //cout << "Join " << r << ", " << pos << " at " << ip << "\n";
-  if (ip_attached (ip))
-    get_server()->get_editor()->join (reverse (ip) * pos);
-  else join (r, pos);
+  //if (false && ip_attached (ip))
+  //  get_server()->get_editor()->join (reverse (ip) * pos);
+  //else
+    join (r, pos);
   return r;
 }
 
@@ -449,9 +453,10 @@ tree
 tree_assign_node (tree r, tree_label op) {
   path ip= obtain_ip (r);
   //cout << "Assign node " << r << ", " << tree (op) << " at " << ip << "\n";
-  if (ip_attached (ip))
-    get_server()->get_editor()->assign_node (reverse (ip), op);
-  else assign_node (r, op);
+  //if (false && ip_attached (ip))
+  //  get_server()->get_editor()->assign_node (reverse (ip), op);
+  //else
+    assign_node (r, op);
   return r;
 }
 
@@ -460,9 +465,9 @@ tree_insert_node (tree r, int pos, tree t) {
   path ip= obtain_ip (r);
   //cout << "Insert node " << r << ", " << pos << ", " << t
   //     << " at " << ip << "\n";
-  if (ip_attached (ip)) {
+  if (false && ip_attached (ip)) {
     path p= reverse (ip);
-    get_server()->get_editor()->insert_node (p * pos, copy (t));
+    //get_server()->get_editor()->insert_node (p * pos, copy (t));
     return get_server()->get_editor()->the_subtree (p);
   }
   else {
@@ -475,9 +480,9 @@ tree
 tree_remove_node (tree r, int pos) {
   path ip= obtain_ip (r);
   //cout << "Remove node " << r << ", " << pos << " at " << ip << "\n";
-  if (ip_attached (ip)) {
+  if (false && ip_attached (ip)) {
     path p= reverse (ip);
-    get_server()->get_editor()->remove_node (p * pos);
+    //get_server()->get_editor()->remove_node (p * pos);
     return get_server()->get_editor()->the_subtree (p);
   }
   else {

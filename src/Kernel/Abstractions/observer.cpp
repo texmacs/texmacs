@@ -16,12 +16,11 @@
 #define DETACHED (-5)
 
 observer nil_observer;
+extern tree the_et;
 
 /******************************************************************************
 * Debugging facilities
 ******************************************************************************/
-
-extern tree the_et;
 
 static void
 consistency_check (tree t, path ip) {
@@ -310,6 +309,53 @@ remove_node (tree& ref, int pos) {
     ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+}
+
+/******************************************************************************
+* Wrappers for trees given by a path
+******************************************************************************/
+
+void
+assign (path p, tree t) {
+  assign (subtree (the_et, p), t);
+}
+
+void
+insert (path p, tree ins) {
+  insert (subtree (the_et, path_up (p)), last_item (p), ins);
+}
+
+void
+remove (path p, int nr) {
+  remove (subtree (the_et, path_up (p)), last_item (p), nr);
+}
+
+void
+split (path p) {
+  tree& st= subtree (the_et, path_up (path_up (p)));
+  int   l1= last_item (path_up (p));
+  int   l2= last_item (p);
+  split (st, l1, l2);  
+}
+
+void
+join (path p) {
+  join (subtree (the_et, path_up (p)), last_item (p));
+}
+
+void
+assign_node (path p, tree_label op) {
+  assign_node (subtree (the_et, p), op);
+}
+
+void
+insert_node (path p, tree ins) {
+  insert_node (subtree (the_et, path_up (p)), last_item (p), ins);
+}
+
+void
+remove_node (path p) {
+  remove_node (subtree (the_et, path_up (p)), last_item (p));
 }
 
 /******************************************************************************

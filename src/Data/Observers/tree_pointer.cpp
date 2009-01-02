@@ -25,6 +25,7 @@ private:
 
 public:
   tree_pointer_rep (tree ref): ptr (ref.rep) {}
+  int get_type () { return OBSERVER_POINTER; }
   ostream& print (ostream& out) { return out << " pointer"; }
 
   void notify_assign      (tree& ref, tree t);
@@ -166,25 +167,15 @@ obtain_tree (observer obs) {
   return t;
 }
 
-void
-attach_pointer (tree& ref, observer o) {
-  insert_observer (ref->obs, o);
-}
-
-void
-detach_pointer (tree& ref, observer o) {
-  remove_observer (ref->obs, o);
-}
-
 observer
 tree_pointer_new (tree ref) {
   observer obs= tree_pointer (ref);
-  attach_pointer (ref, obs);
+  attach_observer (ref, obs);
   return obs;
 }
 
 void
 tree_pointer_delete (observer obs) {
   tree ref= obtain_tree (obs);
-  detach_pointer (ref, obs);
+  detach_observer (ref, obs);
 }

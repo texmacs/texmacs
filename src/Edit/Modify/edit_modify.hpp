@@ -17,14 +17,13 @@ path inner_paragraph (tree t, path p);
 
 class edit_modify_rep: virtual public editor_rep {
 protected:
-  bool     undo_flag;                // when undoing some text
-  bool     redo_flag;                // when redoing some text
-  observer cur_pos;                  // tree_position corresponding to tp
+  observer cur_pos;  // tree_position corresponding to tp
 
 public:
   edit_modify_rep ();
   ~edit_modify_rep ();
 
+  /*
   void assign             (path p, tree u);
   void insert             (path p, tree u);
   void remove             (path p, int nr);
@@ -34,6 +33,7 @@ public:
   void insert_node        (path p, tree t);
   void remove_node        (path p);
   void finished           (path p);
+  */
   void notify_assign      (path p, tree u);
   void notify_insert      (path p, tree u);
   void notify_remove      (path p, int nr);
@@ -44,7 +44,7 @@ public:
   void notify_remove_node (path p);
   void post_notify        (path p);
 
-  void notify_undo (string op, path p, tree t); 
+  //void notify_undo (string op, path p, tree t); 
   void mark_undo_blocks ();
   void remove_undo_mark ();
   void add_undo_mark ();

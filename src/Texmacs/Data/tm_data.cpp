@@ -204,7 +204,7 @@ tm_data_rep::revert_buffer (url name, tree doc) {
   if (N(buf->vws)==0) set_document (buf->rp, extract (doc, "body"));
   else for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
-    if (i==0) vw->ed->assign (vw->ed->rp, extract (doc, "body"));
+    if (i==0) assign (vw->ed->rp, extract (doc, "body"));
     vw->ed->set_style (buf->style);
     vw->ed->set_init  (buf->init);
     vw->ed->set_fin   (buf->fin);
@@ -706,7 +706,7 @@ tm_data_rep::set_buffer_tree (url name, tree doc) {
   if (nr == -1) new_buffer (name, tree (DOCUMENT));
   nr= find_buffer (name);
   tm_buffer buf= bufs[nr];
-  get_editor () -> assign (buf->rp, doc);
+  assign (buf->rp, doc);
 }
 
 tree
@@ -777,7 +777,7 @@ path
 new_document () {
   int i, n= N(the_et);
   for (i=0; i<n; i++)
-    if (the_et[i] == UNINIT && is_nil (the_et[i]->obs)) {
+    if (the_et[i] == UNINIT) {
       assign (the_et[i], tree (DOCUMENT, ""));
       return path (i); // obtain_ip (the_et[i]);
     }
@@ -791,6 +791,7 @@ new_document () {
 void
 delete_document (path rp) {
   assign (subtree (the_et, rp), UNINIT);
+  clean_observers (subtree (the_et, rp));
 #ifdef EXPERIMENTAL
   global_notify_assign (rp, UNINIT);
 #endif
@@ -819,15 +820,15 @@ create_window_id () {
 }
 
 static path
-remove (path p, int i) {
+reset (path p, int i) {
   if (is_nil (p)) return p;
   else if (p->item == i) return p->next;
-  else return path (p->item, remove (p->next, i));
+  else return path (p->item, reset (p->next, i));
 }
 
 void
 destroy_window_id (int i) {
-  the_windows= remove (the_windows, i);
+  the_windows= reset (the_windows, i);
 }
 
 int
