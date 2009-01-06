@@ -70,6 +70,7 @@ void debug_on (int status);
 #else
 #define ASSERT(cond,msg)
 #endif
+#define FAILED(msg) ASSERT(false,msg)
 
 inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
 inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
