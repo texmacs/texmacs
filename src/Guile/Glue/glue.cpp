@@ -389,49 +389,65 @@ tree_child_insert (tree t, int pos, tree x) {
 
 tree
 tree_assign (tree r, tree t) {
-  assign (r, t);
-  return r;
+   path ip= obtain_ip (r);
+   if (ip_attached (ip)) assign (reverse (ip), t);
+   else assign (r, t);
+   return r;
 }
 
 tree
 tree_insert (tree r, int pos, tree t) {
-  insert (r, pos, t);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) insert (reverse (path (pos, ip)), t);
+  else insert (r, pos, t);
   return r;
 }
 
 tree
 tree_remove (tree r, int pos, int nr) {
-  remove (r, pos, nr);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) remove (reverse (path (pos, ip)), nr);
+  else remove (r, pos, nr);
   return r;
 }
 
 tree
 tree_split (tree r, int pos, int at) {
-  split (r, pos, at);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) split (reverse (path (at, pos, ip)));
+  else split (r, pos, at);
   return r;
 }
 
 tree
 tree_join (tree r, int pos) {
-  join (r, pos);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) join (reverse (path (pos, ip)));
+  else join (r, pos);
   return r;
 }
 
 tree
 tree_assign_node (tree r, tree_label op) {
-  assign_node (r, op);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) assign_node (reverse (ip), op);
+  else assign_node (r, op);
   return r;
 }
 
 tree
 tree_insert_node (tree r, int pos, tree t) {
-  insert_node (r, pos, t);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) insert_node (reverse (path (pos, ip)), t);
+  else insert_node (r, pos, t);
   return r;
 }
 
 tree
 tree_remove_node (tree r, int pos) {
-  remove_node (r, pos);
+  path ip= obtain_ip (r);
+  if (ip_attached (ip)) remove_node (reverse (path (pos, ip)));
+  else remove_node (r, pos);
   return r;
 }
 
