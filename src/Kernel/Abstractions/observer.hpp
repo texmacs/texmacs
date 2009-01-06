@@ -105,6 +105,8 @@ observer undo_observer (tm_buffer buf);
 * Modification routines for trees and other observer-related facilities
 ******************************************************************************/
 
+bool is_modifying (tree& ref);
+
 void assign      (tree& ref, tree t);
 void insert      (tree& ref, int pos, tree t);
 void remove      (tree& ref, int pos, int nr);

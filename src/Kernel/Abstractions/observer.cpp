@@ -12,6 +12,7 @@
 #include "tree.hpp"
 #include "path.hpp"
 #include "analyze.hpp"
+#include "hashmap.hpp"
 
 #define DETACHED (-5)
 
@@ -108,8 +109,35 @@ detach (tree& ref, tree closest, bool right) {
   }
 }
 
+static pointer busy_root= NULL;
+static hashmap<pointer,bool> busy_table (false);
+
+bool
+is_modifying (tree& ref) {
+  return busy_table->contains (((void*) (&ref)));
+}
+
+static void
+start_modifications (tree& ref) {
+  //cout << "Start " << busy_root << ", " << ((void*) (&ref)) << "\n";
+  if (busy_root == NULL) busy_root= ((void*) (&ref));
+  busy_table (((void*) (&ref)))= true;
+}
+
+static void
+end_modifications (tree& ref) {
+  //cout << "End " << busy_root << ", " << ((void*) (&ref)) << "\n";
+  if (busy_root != ((void*) (&ref))) return;
+  busy_root = false;
+  busy_table= hashmap<pointer,bool> (false);
+  if (!is_nil (ref->obs))
+    ref->obs->announce_done (ref, path ());
+}
+
 void
 assign (tree& ref, tree t) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Assign " << ref << " := " << t << "\n";
   if (!is_nil (ref->obs)) {
     ref->obs->announce_assign (ref, path (), t);
@@ -122,14 +150,15 @@ assign (tree& ref, tree t) {
       detach (ref[i], t, i >= mid);
   }
   ref= t;
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 insert (tree& ref, int pos, tree t) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Insert " << ref << " += " << t << " at " << pos << "\n";
   if (!is_nil (ref->obs))
     ref->obs->announce_insert (ref, path (pos), t);
@@ -147,14 +176,15 @@ insert (tree& ref, int pos, tree t) {
     ref->obs->notify_insert (ref, pos, is_atomic (t)? N(t->label): N(t));
     simplify (ref->obs);
   }
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 remove (tree& ref, int pos, int nr) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
   if (!is_nil (ref->obs)) {
     ref->obs->announce_remove (ref, path (pos), nr);
@@ -179,14 +209,15 @@ remove (tree& ref, int pos, int nr) {
       ref[i]= ref[i+nr];
     AR(ref)->resize (n);
   }
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 split (tree& ref, int pos, int at) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Split " << ref << " at " << pos << ", " << at << "\n";
   if (!is_nil (ref->obs))
     ref->obs->announce_split (ref, path (pos, at));
@@ -214,14 +245,15 @@ split (tree& ref, int pos, int at) {
     t->obs->notify_var_split (t, t1, t2);
     simplify (t->obs);
   }
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 join (tree& ref, int pos) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Join " << ref << " at " << pos << "\n";
   // the following code is added for security
   if (is_atomic (ref[pos]) && (!is_atomic (ref[pos+1])))
@@ -251,14 +283,15 @@ join (tree& ref, int pos) {
   for (i=pos+1; i<n; i++)
     ref[i]= ref[i+1];
   AR(ref)->resize (n);
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 assign_node (tree& ref, tree_label op) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Assign node " << ref << " : " << tree (op) << "\n";
   if (!is_nil (ref->obs)) {
     ref->obs->announce_assign_node (ref, path (), op);
@@ -266,14 +299,15 @@ assign_node (tree& ref, tree_label op) {
     simplify (ref->obs);
   }
   LR (ref)= op;
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 insert_node (tree& ref, int pos, tree t) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Insert node " << ref << " : " << t << " at " << pos << "\n";
   if (!is_nil (ref->obs))
     ref->obs->announce_insert_node (ref, path (pos), t);
@@ -287,14 +321,15 @@ insert_node (tree& ref, int pos, tree t) {
     ref[pos]->obs->notify_insert_node (ref, pos);
     simplify (ref[pos]->obs);
   }
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 void
 remove_node (tree& ref, int pos) {
+  if (is_modifying (ref)) return;
+  start_modifications (ref);
   // cout << "Remove node " << ref << " : " << pos << "\n";
   if (!is_nil (ref->obs)) {
     ref->obs->announce_remove_node (ref, path (pos));
@@ -305,10 +340,9 @@ remove_node (tree& ref, int pos) {
     if (i < pos) detach (ref[i], ref[pos], false);
     else if (i > pos) detach (ref[i], ref[pos], true);
   ref= ref[pos];
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
   // stretched_print (ref, true, 1);
   // consistency_check ();
+  end_modifications (ref);
 }
 
 /******************************************************************************

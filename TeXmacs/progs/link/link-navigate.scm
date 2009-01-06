@@ -101,7 +101,7 @@
 
 (define (filter-on-bidirectional item)
   (== (link-item-id item)
-      (vertex->id (car link-item-vertices item))))
+      (vertex->id (car (link-item-vertices item)))))
 
 (define (filter-on-type item)
   (navigation-allow-type? (link-item-type item)))

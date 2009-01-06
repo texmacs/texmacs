@@ -61,6 +61,7 @@ public:
   friend inline bool operator != (tree t, string s);
   friend inline bool operator == (tree t, const char* s);
   friend inline bool operator != (tree t, const char* s);
+  friend inline tree_rep* inside (tree t);
   friend inline bool strong_equal (tree t, tree u);
   friend inline bool is_func (tree t, tree_label l);
   friend inline bool is_func (tree t, tree_label l, int i);
@@ -195,8 +196,10 @@ inline bool operator == (tree t, const char* s) {
   return (t.rep->op == STRING) && (t->label == s); }
 inline bool operator != (tree t, const char* s) {
   return (t.rep->op != STRING) || (t->label != s); }
+inline tree_rep* inside (tree t) {
+  return t.rep; }
 inline bool strong_equal (tree t, tree u) {
-  return t.rep == u. rep; }
+  return t.rep == u.rep; }
 
 inline bool is_func (tree t, tree_label l) {
   return (t.rep->op==l) && (N(t)!=0); }
