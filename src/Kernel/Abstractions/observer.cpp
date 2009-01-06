@@ -9,8 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "tree.hpp"
-#include "path.hpp"
+#include "modification.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
 
@@ -130,8 +129,6 @@ end_modifications (tree& ref) {
   if (busy_root != ((void*) (&ref))) return;
   busy_root = false;
   busy_table= hashmap<pointer,bool> (false);
-  if (!is_nil (ref->obs))
-    ref->obs->announce_done (ref, path ());
 }
 
 void
@@ -139,8 +136,9 @@ assign (tree& ref, tree t) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Assign " << ref << " := " << t << "\n";
+  modification mod= mod_assign (path (), t);
   if (!is_nil (ref->obs)) {
-    ref->obs->announce_assign (ref, path (), t);
+    ref->obs->announce (ref, mod);
     ref->obs->notify_assign (ref, t);
     simplify (ref->obs);
   }
@@ -150,6 +148,7 @@ assign (tree& ref, tree t) {
       detach (ref[i], t, i >= mid);
   }
   ref= t;
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -160,8 +159,9 @@ insert (tree& ref, int pos, tree t) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Insert " << ref << " += " << t << " at " << pos << "\n";
+  modification mod= mod_insert (path (), pos, t);
   if (!is_nil (ref->obs))
-    ref->obs->announce_insert (ref, path (pos), t);
+    ref->obs->announce (ref, mod);
   if (is_atomic (ref) && is_atomic (t))
     ref->label= ref->label (0, pos) *t->label* ref->label (pos, N(ref->label));
   else {
@@ -176,6 +176,7 @@ insert (tree& ref, int pos, tree t) {
     ref->obs->notify_insert (ref, pos, is_atomic (t)? N(t->label): N(t));
     simplify (ref->obs);
   }
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -186,8 +187,9 @@ remove (tree& ref, int pos, int nr) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
+  modification mod= mod_remove (path (), pos, nr);
   if (!is_nil (ref->obs)) {
-    ref->obs->announce_remove (ref, path (pos), nr);
+    ref->obs->announce (ref, mod);
     ref->obs->notify_remove (ref, pos, nr);
     simplify (ref->obs);
   }
@@ -209,6 +211,7 @@ remove (tree& ref, int pos, int nr) {
       ref[i]= ref[i+nr];
     AR(ref)->resize (n);
   }
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -219,8 +222,9 @@ split (tree& ref, int pos, int at) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Split " << ref << " at " << pos << ", " << at << "\n";
+  modification mod= mod_split (path (), pos, at);
   if (!is_nil (ref->obs))
-    ref->obs->announce_split (ref, path (pos, at));
+    ref->obs->announce (ref, mod);
   tree t= ref[pos], t1, t2;
   if (is_atomic (ref[pos])) {    
     t1= ref[pos]->label (0, at);
@@ -245,6 +249,7 @@ split (tree& ref, int pos, int at) {
     t->obs->notify_var_split (t, t1, t2);
     simplify (t->obs);
   }
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -262,8 +267,8 @@ join (tree& ref, int pos) {
     insert_node (ref[pos+1], 0, tree (L(ref[pos])));
   // end security code
 
-  if (!is_nil (ref->obs))
-    ref->obs->announce_join (ref, path (pos));
+  modification mod= mod_join (path (), pos);
+  if (!is_nil (ref->obs)) ref->obs->announce (ref, mod);
   tree t1= ref[pos], t2= ref[pos+1], t;
   int offset= is_atomic (ref)? N(t1->label): N(t1);
   if (is_atomic (t1) && is_atomic (t2)) t= t1->label * t2->label;
@@ -283,6 +288,7 @@ join (tree& ref, int pos) {
   for (i=pos+1; i<n; i++)
     ref[i]= ref[i+1];
   AR(ref)->resize (n);
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -293,12 +299,14 @@ assign_node (tree& ref, tree_label op) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Assign node " << ref << " : " << tree (op) << "\n";
+  modification mod= mod_assign_node (path (), op);
   if (!is_nil (ref->obs)) {
-    ref->obs->announce_assign_node (ref, path (), op);
+    ref->obs->announce (ref, mod);
     ref->obs->notify_assign_node (ref, op);
     simplify (ref->obs);
   }
   LR (ref)= op;
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -309,8 +317,8 @@ insert_node (tree& ref, int pos, tree t) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Insert node " << ref << " : " << t << " at " << pos << "\n";
-  if (!is_nil (ref->obs))
-    ref->obs->announce_insert_node (ref, path (pos), t);
+  modification mod= mod_insert_node (path (), pos, t);
+  if (!is_nil (ref->obs)) ref->obs->announce (ref, mod);
   int i, n= N(t);
   tree r (t, n+1);
   for (i=0; i<pos; i++) r[i]= t[i];
@@ -321,6 +329,7 @@ insert_node (tree& ref, int pos, tree t) {
     ref[pos]->obs->notify_insert_node (ref, pos);
     simplify (ref[pos]->obs);
   }
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -331,8 +340,9 @@ remove_node (tree& ref, int pos) {
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Remove node " << ref << " : " << pos << "\n";
+  modification mod= mod_remove_node (path (), pos);
   if (!is_nil (ref->obs)) {
-    ref->obs->announce_remove_node (ref, path (pos));
+    ref->obs->announce (ref, mod);
     ref->obs->notify_remove_node (ref, pos);
     simplify (ref->obs);
   }
@@ -340,6 +350,7 @@ remove_node (tree& ref, int pos) {
     if (i < pos) detach (ref[i], ref[pos], false);
     else if (i > pos) detach (ref[i], ref[pos], true);
   ref= ref[pos];
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
   end_modifications (ref);
@@ -397,6 +408,42 @@ remove_node (path p) {
 ******************************************************************************/
 
 void
+observer_rep::announce (tree& ref, modification mod) {
+  // cout << "Modify: " << mod << "\n";
+  switch (mod->k) {
+  case MOD_ASSIGN:
+    announce_assign (ref, mod->p, mod->t);
+    break;
+  case MOD_INSERT:
+    announce_insert (ref, mod->p, mod->t);
+    break;
+  case MOD_REMOVE:
+    announce_remove (ref, path_up (mod->p), last_item (mod->p));
+    break;
+  case MOD_SPLIT:
+    announce_split (ref, mod->p);
+    break;
+  case MOD_JOIN:
+    announce_join (ref, mod->p);
+    break;
+  case MOD_ASSIGN_NODE:
+    announce_assign_node (ref, mod->p, L(mod->t));
+    break;
+  case MOD_INSERT_NODE:
+    announce_insert_node (ref, mod->p, mod->t);
+    break;
+  case MOD_REMOVE_NODE:
+    announce_remove_node (ref, mod->p);
+    break;
+  }
+}
+
+void
+observer_rep::done (tree& ref, modification mod) {
+  (void) ref; (void) mod;
+}
+
+void
 observer_rep::announce_assign (tree& ref, path p, tree t) {
   (void) ref; (void) p; (void) t;
 }
@@ -433,11 +480,6 @@ observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
 
 void
 observer_rep::announce_remove_node (tree& ref, path p) {
-  (void) ref; (void) p;
-}
-
-void
-observer_rep::announce_done (tree& ref, path p) {
   (void) ref; (void) p;
 }
 

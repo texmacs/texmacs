@@ -16,6 +16,7 @@ enum  tree_label;
 class tree;
 class hard_link_rep;
 class observer;
+class modification;
 template<class T> class list;
 template<class T> class array;
 typedef hard_link_rep* weak_link;
@@ -42,6 +43,7 @@ public:
   inline virtual ostream& print (ostream& out) { return out; }
 
   // Announcing modifications in subtrees
+  virtual void announce             (tree& ref, modification mod);
   virtual void announce_assign      (tree& ref, path p, tree t);
   virtual void announce_insert      (tree& ref, path p, tree ins);
   virtual void announce_remove      (tree& ref, path p, int nr);
@@ -50,20 +52,20 @@ public:
   virtual void announce_assign_node (tree& ref, path p, tree_label op);
   virtual void announce_insert_node (tree& ref, path p, tree ins);
   virtual void announce_remove_node (tree& ref, path p);
-  virtual void announce_done        (tree& ref, path p);
+  virtual void done                 (tree& ref, modification mod);
 
   // Call back routines for tree modifications
-  virtual void notify_assign      (tree& ref, tree t);
-  virtual void notify_insert      (tree& ref, int pos, int nr);
-  virtual void notify_remove      (tree& ref, int pos, int nr);
-  virtual void notify_split       (tree& ref, int pos, tree prev);
-  virtual void notify_var_split   (tree& ref, tree t1, tree t2);
-  virtual void notify_join        (tree& ref, int pos, tree next);
-  virtual void notify_var_join    (tree& ref, tree t, int offset);
-  virtual void notify_assign_node (tree& ref, tree_label op);
-  virtual void notify_insert_node (tree& ref, int pos);
-  virtual void notify_remove_node (tree& ref, int pos);
-  virtual void notify_detach      (tree& ref, tree closest, bool right);
+  virtual void notify_assign        (tree& ref, tree t);
+  virtual void notify_insert        (tree& ref, int pos, int nr);
+  virtual void notify_remove        (tree& ref, int pos, int nr);
+  virtual void notify_split         (tree& ref, int pos, tree prev);
+  virtual void notify_var_split     (tree& ref, tree t1, tree t2);
+  virtual void notify_join          (tree& ref, int pos, tree next);
+  virtual void notify_var_join      (tree& ref, tree t, int offset);
+  virtual void notify_assign_node   (tree& ref, tree_label op);
+  virtual void notify_insert_node   (tree& ref, int pos);
+  virtual void notify_remove_node   (tree& ref, int pos);
+  virtual void notify_detach        (tree& ref, tree closest, bool right);
 
   // Extra routines for particular types of observers
   virtual bool get_ip (path& ip);

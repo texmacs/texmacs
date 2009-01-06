@@ -12,8 +12,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "tree.hpp"
-#include "path.hpp"
+#include "modification.hpp"
 
 #define DETACHED (-5)
 
@@ -33,15 +32,8 @@ public:
     if (!is_nil (o2)) o2->print (out);
     return out; }
 
-  void announce_assign      (tree& ref, path p, tree t);
-  void announce_insert      (tree& ref, path p, tree ins);
-  void announce_remove      (tree& ref, path p, int nr);
-  void announce_split       (tree& ref, path p);
-  void announce_join        (tree& ref, path p);
-  void announce_assign_node (tree& ref, path p, tree_label op);
-  void announce_insert_node (tree& ref, path p, tree ins);
-  void announce_remove_node (tree& ref, path p);
-  void announce_done        (tree& ref, path p);
+  void announce (tree& ref, modification mod);
+  void done     (tree& ref, modification mod);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -69,57 +61,15 @@ public:
 ******************************************************************************/
 
 void
-list_observer_rep::announce_assign (tree& ref, path p, tree t) {
-  if (!is_nil (o1)) o1->announce_assign (ref, p, t);
-  if (!is_nil (o2)) o2->announce_assign (ref, p, t);
+list_observer_rep::announce (tree& ref, modification mod) {
+  if (!is_nil (o1)) o1->announce (ref, mod);
+  if (!is_nil (o2)) o2->announce (ref, mod);
 }
 
 void
-list_observer_rep::announce_insert (tree& ref, path p, tree t) {
-  if (!is_nil (o1)) o1->announce_insert (ref, p, t);
-  if (!is_nil (o2)) o2->announce_insert (ref, p, t);
-}
-
-void
-list_observer_rep::announce_remove (tree& ref, path p, int nr) {
-  if (!is_nil (o1)) o1->announce_remove (ref, p, nr);
-  if (!is_nil (o2)) o2->announce_remove (ref, p, nr);
-}
-
-void
-list_observer_rep::announce_split (tree& ref, path p) {
-  if (!is_nil (o1)) o1->announce_split (ref, p);
-  if (!is_nil (o2)) o2->announce_split (ref, p);
-}
-
-void
-list_observer_rep::announce_join (tree& ref, path p) {
-  if (!is_nil (o1)) o1->announce_join (ref, p);
-  if (!is_nil (o2)) o2->announce_join (ref, p);
-}
-
-void
-list_observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
-  if (!is_nil (o1)) o1->announce_assign_node (ref, p, op);
-  if (!is_nil (o2)) o2->announce_assign_node (ref, p, op);
-}
-
-void
-list_observer_rep::announce_insert_node (tree& ref, path p, tree t) {
-  if (!is_nil (o1)) o1->announce_insert_node (ref, p, t);
-  if (!is_nil (o2)) o2->announce_insert_node (ref, p, t);
-}
-
-void
-list_observer_rep::announce_remove_node (tree& ref, path p) {
-  if (!is_nil (o1)) o1->announce_remove_node (ref, p);
-  if (!is_nil (o2)) o2->announce_remove_node (ref, p);
-}
-
-void
-list_observer_rep::announce_done (tree& ref, path p) {
-  if (!is_nil (o1)) o1->announce_done (ref, p);
-  if (!is_nil (o2)) o2->announce_done (ref, p);
+list_observer_rep::done (tree& ref, modification mod) {
+  if (!is_nil (o1)) o1->done (ref, mod);
+  if (!is_nil (o2)) o2->done (ref, mod);
 }
 
 /******************************************************************************

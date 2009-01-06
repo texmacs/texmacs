@@ -12,8 +12,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "tree.hpp"
-#include "path.hpp"
+#include "modification.hpp"
 
 /******************************************************************************
 * Hooks
@@ -48,7 +47,7 @@ public:
   void announce_assign_node (tree& ref, path p, tree_label op);
   void announce_insert_node (tree& ref, path p, tree ins);
   void announce_remove_node (tree& ref, path p);
-  void announce_done        (tree& ref, path p);
+  void done                 (tree& ref, modification mod);
 
   void reattach           (tree& ref, tree t);
   void notify_assign      (tree& ref, tree t);
@@ -119,10 +118,10 @@ edit_observer_rep::announce_remove_node (tree& ref, path p) {
 }
 
 void
-edit_observer_rep::announce_done (tree& ref, path p) {
-  //cout << "Done " << p << "\n";
+edit_observer_rep::done (tree& ref, modification mod) {
+  //cout << "Done " << mod->p << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_done (ed, reverse (obtain_ip (ref)) * p);
+    edit_done (ed, reverse (obtain_ip (ref)) * mod->p);
 }
 
 /******************************************************************************

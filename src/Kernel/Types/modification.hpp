@@ -64,12 +64,12 @@ ostream& operator << (ostream& out, modification mod);
 * Constructors and accessors
 ******************************************************************************/
 
-inline modification mod_assign (path p) {
-  return modification (MOD_ASSIGN, p); }
+inline modification mod_assign (path p, tree t) {
+  return modification (MOD_ASSIGN, p, t); }
 inline modification mod_insert (path p, int pos, tree t) {
   return modification (MOD_INSERT, p * pos, t); }
 inline modification mod_remove (path p, int pos, int nr) {
-  return modification (MOD_INSERT, p * path (pos, nr)); }
+  return modification (MOD_REMOVE, p * path (pos, nr)); }
 inline modification mod_split (path p, int pos, int at) {
   return modification (MOD_SPLIT, p * path (pos, at)); }
 inline modification mod_join (path p, int pos) {
@@ -80,6 +80,10 @@ inline modification mod_insert_node (path p, int pos, tree t) {
   return modification (MOD_INSERT_NODE, p * pos, t); }
 inline modification mod_remove_node (path p, int pos) {
   return modification (MOD_REMOVE_NODE, p * pos); }
+inline modification operator * (int i, modification mod) {
+  return modification (mod->k, path (i, mod->p), mod->t); }
+inline modification operator * (modification mod, int i) {
+  return modification (mod->k, mod->p * i, mod->t); }
 
 path root (modification mod);
 int index (modification mod);
