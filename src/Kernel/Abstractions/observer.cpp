@@ -184,6 +184,7 @@ insert (tree& ref, int pos, tree t) {
 
 void
 remove (tree& ref, int pos, int nr) {
+  if (nr == 0) return;
   if (is_modifying (ref)) return;
   start_modifications (ref);
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
