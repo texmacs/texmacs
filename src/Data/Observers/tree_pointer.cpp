@@ -16,8 +16,6 @@
 #include "link.hpp"
 #include "list.hpp"
 
-void link_event (observer obs, modification mod);
-
 /******************************************************************************
 * Definition of the tree_pointer_rep class
 ******************************************************************************/
@@ -31,7 +29,7 @@ public:
   int get_type () { return OBSERVER_POINTER; }
   ostream& print (ostream& out) { return out << " pointer"; }
   void announce (tree& ref, modification mod) {
-    link_event (observer (this), mod); }
+    link_announce (observer (this), mod); }
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);

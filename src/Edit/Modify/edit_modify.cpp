@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "modification.hpp"
 #include "edit_modify.hpp"
 #include "tm_window.hpp"
 #ifdef EXPERIMENTAL
@@ -25,83 +26,7 @@ edit_modify_rep::edit_modify_rep () {}
 edit_modify_rep::~edit_modify_rep () {}
 
 /******************************************************************************
-* Hooks / notify changes to editor
-******************************************************************************/
-
-// FIXME: the notification might be slow when we have many
-// open buffers. In the future, we might obtain the relevant editors
-// from all possible prefixes of p using a hashtable
-
-// FIXME: the undo system is not safe when a change is made inside
-// a buffer which has no editor attached to it
-
-void
-edit_assign (editor_rep* ed, path pp, tree u) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->notify_assign (p, u);
-}
-
-void
-edit_insert (editor_rep* ed, path pp, tree u) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->notify_insert (p, u);
-}
-
-void
-edit_remove (editor_rep* ed, path pp, int nr) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  if (nr <= 0) return;
-  ed->notify_remove (p, nr);
-}
-
-void
-edit_split (editor_rep* ed, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->notify_split (p);
-}
-
-void
-edit_join (editor_rep* ed, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
-  ed->notify_join (p);
-}
-
-void
-edit_assign_node (editor_rep* ed, path pp, tree_label op) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->notify_assign_node (p, op);
-}
-
-void
-edit_insert_node (editor_rep* ed, path pp, tree t) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->notify_insert_node (p, t);
-}
-
-void
-edit_remove_node (editor_rep* ed, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->notify_remove_node (p);
-}
-
-void
-edit_done (editor_rep* ed, path pp) {
-  path p= copy (pp);
-  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->post_notify (p);
-}
-
-/******************************************************************************
-* Cursor handling after notification of changes in document
+* Notification of changes in document
 ******************************************************************************/
 
 void
@@ -176,6 +101,113 @@ edit_modify_rep::post_notify (path p) {
   cout << "et= " << et << "\n";
   cout << "tp= " << tp << "\n\n";
   */
+}
+
+/******************************************************************************
+* Hooks / notify changes to editor
+******************************************************************************/
+
+// FIXME: the notification might be slow when we have many
+// open buffers. In the future, we might obtain the relevant editors
+// from all possible prefixes of p using a hashtable
+
+// FIXME: the undo system is not safe when a change is made inside
+// a buffer which has no editor attached to it
+
+void
+edit_assign (editor_rep* ed, path pp, tree u) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_assign (p, u);
+}
+
+void
+edit_insert (editor_rep* ed, path pp, tree u) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_insert (p, u);
+}
+
+void
+edit_remove (editor_rep* ed, path pp, int nr) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  if (nr <= 0) return;
+  ed->notify_remove (p, nr);
+}
+
+void
+edit_split (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_split (p);
+}
+
+void
+edit_join (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
+  ed->notify_join (p);
+}
+
+void
+edit_assign_node (editor_rep* ed, path pp, tree_label op) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_assign_node (p, op);
+}
+
+void
+edit_insert_node (editor_rep* ed, path pp, tree t) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_insert_node (p, t);
+}
+
+void
+edit_remove_node (editor_rep* ed, path pp) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_remove_node (p);
+}
+
+void
+edit_announce (editor_rep* ed, modification mod) {
+  switch (mod->k) {
+  case MOD_ASSIGN:
+    edit_assign (ed, mod->p, mod->t);
+    break;
+  case MOD_INSERT:
+    edit_insert (ed, mod->p, mod->t);
+    break;
+  case MOD_REMOVE:
+    edit_remove (ed, path_up (mod->p), last_item (mod->p));
+    break;
+  case MOD_SPLIT:
+    edit_split (ed, mod->p);
+    break;
+  case MOD_JOIN:
+    edit_join (ed, mod->p);
+    break;
+  case MOD_ASSIGN_NODE:
+    edit_assign_node (ed, mod->p, L(mod));
+    break;
+  case MOD_INSERT_NODE:
+    edit_insert_node (ed, mod->p, mod->t);
+    break;
+  case MOD_REMOVE_NODE:
+    edit_remove_node (ed, mod->p);
+    break;
+  default: FAILED ("invalid modification type");
+  }
+}
+
+void
+edit_done (editor_rep* ed, modification mod) {
+  path p= copy (mod->p);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->post_notify (p);
 }
 
 /******************************************************************************
@@ -546,6 +578,37 @@ archive_remove_node (tm_buffer buf, path pp) {
 #ifdef EXPERIMENTAL
   global_notify_remove_node (p);
 #endif
+}
+
+void
+archive_announce (tm_buffer buf, modification mod) {
+  switch (mod->k) {
+  case MOD_ASSIGN:
+    archive_assign (buf, mod->p, mod->t);
+    break;
+  case MOD_INSERT:
+    archive_insert (buf, mod->p, mod->t);
+    break;
+  case MOD_REMOVE:
+    archive_remove (buf, path_up (mod->p), last_item (mod->p));
+    break;
+  case MOD_SPLIT:
+    archive_split (buf, mod->p);
+    break;
+  case MOD_JOIN:
+    archive_join (buf, mod->p);
+    break;
+  case MOD_ASSIGN_NODE:
+    archive_assign_node (buf, mod->p, L(mod));
+    break;
+  case MOD_INSERT_NODE:
+    archive_insert_node (buf, mod->p, mod->t);
+    break;
+  case MOD_REMOVE_NODE:
+    archive_remove_node (buf, mod->p);
+    break;
+  default: FAILED ("invalid modification type");
+  }
 }
 
 /******************************************************************************

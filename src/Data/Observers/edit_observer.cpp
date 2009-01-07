@@ -15,20 +15,6 @@
 #include "modification.hpp"
 
 /******************************************************************************
-* Hooks
-******************************************************************************/
-
-void edit_assign      (editor_rep* ed, path p, tree t);
-void edit_insert      (editor_rep* ed, path p, tree ins);
-void edit_remove      (editor_rep* ed, path p, int nr);
-void edit_split       (editor_rep* ed, path p);
-void edit_join        (editor_rep* ed, path p);
-void edit_assign_node (editor_rep* ed, path p, tree_label op);
-void edit_insert_node (editor_rep* ed, path p, tree ins);
-void edit_remove_node (editor_rep* ed, path p);
-void edit_done        (editor_rep* ed, path p);
-
-/******************************************************************************
 * Definition of the edit_observer_rep class
 ******************************************************************************/
 
@@ -39,15 +25,8 @@ public:
   int get_type () { return OBSERVER_EDIT; }
   ostream& print (ostream& out) { return out << " editor<" << ed << ">"; }
 
-  void announce_assign      (tree& ref, path p, tree t);
-  void announce_insert      (tree& ref, path p, tree ins);
-  void announce_remove      (tree& ref, path p, int nr);
-  void announce_split       (tree& ref, path p);
-  void announce_join        (tree& ref, path p);
-  void announce_assign_node (tree& ref, path p, tree_label op);
-  void announce_insert_node (tree& ref, path p, tree ins);
-  void announce_remove_node (tree& ref, path p);
-  void done                 (tree& ref, modification mod);
+  void announce (tree& ref, modification mod);
+  void done     (tree& ref, modification mod);
 
   void reattach           (tree& ref, tree t);
   void notify_assign      (tree& ref, tree t);
@@ -62,66 +41,17 @@ public:
 ******************************************************************************/
 
 void
-edit_observer_rep::announce_assign (tree& ref, path p, tree t) {
-  //cout << "Assign " << p << ", " << t << "\n";
+edit_observer_rep::announce (tree& ref, modification mod) {
+  //cout << "Editor " << mod << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_assign (ed, reverse (obtain_ip (ref)) * p, t);
-}
-
-void
-edit_observer_rep::announce_insert (tree& ref, path p, tree ins) {
-  //cout << "Insert " << p << ", " << ins << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_insert (ed, reverse (obtain_ip (ref)) * p, ins);
-}
-
-void
-edit_observer_rep::announce_remove (tree& ref, path p, int nr) {
-  //cout << "Remove " << p << ", " << nr << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_remove (ed, reverse (obtain_ip (ref)) * p, nr);
-}
-
-void
-edit_observer_rep::announce_split (tree& ref, path p) {
-  //cout << "Split " << p << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_split (ed, reverse (obtain_ip (ref)) * p);
-}
-
-void
-edit_observer_rep::announce_join (tree& ref, path p) {
-  //cout << "Join " << p << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_join (ed, reverse (obtain_ip (ref)) * p);
-}
-
-void
-edit_observer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
-  //cout << "Assign node " << p << ", " << op << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_assign_node (ed, reverse (obtain_ip (ref)) * p, op);
-}
-
-void
-edit_observer_rep::announce_insert_node (tree& ref, path p, tree ins) {
-  //cout << "Insert node " << p << ", " << ins << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_insert_node (ed, reverse (obtain_ip (ref)) * p, ins);
-}
-
-void
-edit_observer_rep::announce_remove_node (tree& ref, path p) {
-  //cout << "Remove node " << p << "\n";
-  if (ip_attached (obtain_ip (ref)))
-    edit_remove_node (ed, reverse (obtain_ip (ref)) * p);
+    edit_announce (ed, reverse (obtain_ip (ref)) * mod);
 }
 
 void
 edit_observer_rep::done (tree& ref, modification mod) {
   //cout << "Done " << mod->p << "\n";
   if (ip_attached (obtain_ip (ref)))
-    edit_done (ed, reverse (obtain_ip (ref)) * mod->p);
+    edit_done (ed, reverse (obtain_ip (ref)) * mod);
 }
 
 /******************************************************************************

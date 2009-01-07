@@ -82,6 +82,8 @@ inline modification mod_remove_node (path p, int pos) {
   return modification (MOD_REMOVE_NODE, p * pos); }
 inline modification operator * (int i, modification mod) {
   return modification (mod->k, path (i, mod->p), mod->t); }
+inline modification operator * (path p, modification mod) {
+  return modification (mod->k, p * mod->p, mod->t); }
 inline modification operator * (modification mod, int i) {
   return modification (mod->k, mod->p * i, mod->t); }
 inline modification copy (modification mod) {
@@ -98,5 +100,14 @@ tree_label L (modification mod);
 
 bool is_applicable (tree t, modification mod);
 void apply (tree& t, modification mod);
+
+/******************************************************************************
+* Hooks
+******************************************************************************/
+
+void edit_announce (editor_rep* ed, modification mod);
+void edit_done (editor_rep* ed, modification mod);
+void archive_announce (tm_buffer buf, modification mod);
+void link_announce (observer obs, modification mod);
 
 #endif // defined MODIFICATION_H

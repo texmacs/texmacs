@@ -239,7 +239,7 @@ get_mirrors (tree ln, string id) {
 }
 
 void
-link_event (tree ln, string id, modification mod) {
+link_announce (tree ln, string id, modification mod) {
   //cout << "Link event " << ln << ", " << id << ", " << mod << "\n";
   for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
     if (is_applicable (l->item, mod))
@@ -247,10 +247,10 @@ link_event (tree ln, string id, modification mod) {
 }
 
 void
-link_event (observer obs, modification mod) {
+link_announce (observer obs, modification mod) {
   for (list<string> ids= pointer_resolve [obs];
        !is_nil (ids); ids= ids->next)
     for (list<tree> lns= get_links (compound ("id", ids->item));
 	 !is_nil (lns); lns= lns->next)
-      link_event (lns->item, ids->item, mod);
+      link_announce (lns->item, ids->item, mod);
 }
