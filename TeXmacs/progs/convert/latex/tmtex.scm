@@ -269,7 +269,6 @@
 		       ;;(cv (string-convert qs "Cork" "cp936")) ; Chinese?
 		       ;;(cv (string-convert qs "Cork" "cp950")) ; Taiwanese ?
 		       (cv (string-convert qs "Cork" "UTF-8")))
-		  (set! cv (string-append cv ex))
 		  (list '!widechar (string->symbol cv))))))
 	(else (let ((ss (list (string->symbol s))))
 		(cond ((not (drd-in? (car ss) latex-symbol%))
