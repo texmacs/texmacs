@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "path.hpp"
+#include "modification.hpp"
 #include "link.hpp"
 #include "iterator.hpp"
 #include "vars.hpp"
@@ -204,90 +204,8 @@ has_been_visited (string id) {
 }
 
 /******************************************************************************
-* Checks
-******************************************************************************/
-
-bool
-has_subtree (tree t, path p) {
-  if (is_nil (p)) return true;
-  if (is_atomic (t)) return false;
-  if ((0 > p -> item) || (p -> item >= N(t))) return false;
-  return has_subtree (t[p->item], p->next);
-}
-
-bool
-can_assign (tree t, path p, tree u) {
-  (void) u;
-  return has_subtree (t, p);
-}
-
-bool
-can_insert (tree t, path p, tree u) {
-  if (!has_subtree (t, path_up (p))) return false;
-  tree st= subtree (t, path_up (p));
-  int l= last_item (p);
-  if (is_atomic (st)) return l >= 0 && l <= N(st->label) && is_atomic (u);
-  else return l >= 0 && l >= N(st) && is_compound (u);
-}
-
-bool
-can_remove (tree t, path p, int nr) {
-  if (!has_subtree (t, path_up (p))) return false;
-  tree st= subtree (t, path_up (p));
-  int l= last_item (p);
-  if (is_atomic (st)) return l >= 0 && l+nr <= N(st->label);
-  else return l >= 0 && l+nr >= N(st);
-}
-
-bool
-can_split (tree t, path p) {
-  if (!has_subtree (t, path_up (p))) return false;
-  tree st= subtree (t, path_up (p));
-  int l= last_item (p);
-  if (is_atomic (st)) return l >= 0 && l <= N(st->label);
-  else return l >= 0 && l >= N(st);
-}
-
-bool
-can_join (tree t, path p) {
-  if (!has_subtree (t, path_up (p))) return false;
-  tree st= subtree (t, path_up (p));
-  int l= last_item (p);
-  if (l < 0 || l+1 >= N(st)) return false;
-  if (is_atomic (st[l]) && is_atomic (st[l+1])) return true;
-  if (is_compound (st[l]) && is_compound (st[l+1])) return true;
-  return false;
-}
-
-bool
-can_assign_node (tree t, path p, tree_label op) {
-  return has_subtree (t, p) && is_compound (subtree (t, p));
-}
-
-bool
-can_insert_node (tree t, path p, tree u) {
-  return has_subtree (t, path_up (p)) && is_compound (u) &&
-         last_item (p) >= 0 && last_item (p) <= N(u);
-}
-
-bool
-can_remove_node (tree t, path p) {
-  return has_subtree (t, p) && N(p) >= 1;
-}
-
-/******************************************************************************
 * Link event handlers for tree changes
 ******************************************************************************/
-
-list<string>
-get_ids (observer obs) {
-  return pointer_resolve [obs];
-}
-
-list<tree>
-get_links (string id) {
-  return get_links (compound ("id", id));
-}
 
 tree&
 get_reference (tree& t) {
@@ -321,78 +239,18 @@ get_mirrors (tree ln, string id) {
 }
 
 void
-link_assign (tree ln, string id, path p, tree t) {
-  //cout << "Link assign " << ln << ", " << id
-  //     << ", " << p << ", " << t << "\n";
+link_event (tree ln, string id, modification mod) {
+  //cout << "Link event " << ln << ", " << id << ", " << mod << "\n";
   for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_assign (l->item, p, t))
-      assign (subtree (get_reference (l->item), p), copy (t));
+    if (is_applicable (l->item, mod))
+      apply (get_reference (l->item), copy (mod));
 }
 
 void
-link_insert (tree ln, string id, path p, tree ins) {
-  //cout << "Link insert " << ln << ", " << id
-  //     << ", " << p << ", " << ins << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_insert (l->item, p, ins))
-      insert (subtree (get_reference (l->item), path_up (p)),
-	      last_item (p), copy (ins));
-}
-
-void
-link_remove (tree ln, string id, path p, int nr) {
-  //cout << "Link remove " << ln << ", " << id
-  //     << ", " << p << ", " << nr << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_remove (l->item, p, nr))
-      remove (subtree (get_reference (l->item), path_up (p)),
-	      last_item (p), nr);
-}
-
-void
-link_split (tree ln, string id, path p) {
-  //cout << "Link split " << ln << ", " << id
-  //     << ", " << p << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_split (l->item, p))
-      split (subtree (get_reference (l->item), path_up (path_up (p))),
-	     last_item (path_up (p)), last_item (p));
-}
-
-void
-link_join (tree ln, string id, path p) {
-  //cout << "Link join " << ln << ", " << id
-  //     << ", " << p << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_split (l->item, p))
-      join (subtree (get_reference (l->item), path_up (p)), last_item (p));
-}
-
-void
-link_assign_node (tree ln, string id, path p, tree_label op) {
-  //cout << "Link assign node " << ln << ", " << id
-  //     << ", " << p << ", " << tree (op) << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_assign_node (l->item, p, op))
-      assign_node (subtree (get_reference (l->item), p), op);
-}
-
-void
-link_insert_node (tree ln, string id, path p, tree ins) {
-  //cout << "Link insert node " << ln << ", " << id
-  //     << ", " << p << ", " << ins << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_insert_node (l->item, p, ins))
-      insert_node (subtree (get_reference (l->item), path_up (p)),
-		   last_item (p), ins);
-}
-
-void
-link_remove_node (tree ln, string id, path p) {
-  //cout << "Link remove node " << ln << ", " << id
-  //     << ", " << p << "\n";
-  for (list<tree> l= get_mirrors (ln, id); !is_nil (l); l= l->next)
-    if (can_remove_node (l->item, p))
-      remove_node (subtree (get_reference (l->item), path_up (p)),
-		   last_item (p));
+link_event (observer obs, modification mod) {
+  for (list<string> ids= pointer_resolve [obs];
+       !is_nil (ids); ids= ids->next)
+    for (list<tree> lns= get_links (compound ("id", ids->item));
+	 !is_nil (lns); lns= lns->next)
+      link_event (lns->item, ids->item, mod);
 }

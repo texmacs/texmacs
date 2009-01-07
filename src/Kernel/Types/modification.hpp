@@ -84,11 +84,19 @@ inline modification operator * (int i, modification mod) {
   return modification (mod->k, path (i, mod->p), mod->t); }
 inline modification operator * (modification mod, int i) {
   return modification (mod->k, mod->p * i, mod->t); }
+inline modification copy (modification mod) {
+  return modification (mod->k, mod->p, copy (mod->t)); }
 
 path root (modification mod);
 int index (modification mod);
 int argument (modification mod);
 tree_label L (modification mod);
 
+/******************************************************************************
+* Further routines on modifications
+******************************************************************************/
+
+bool is_applicable (tree t, modification mod);
+void apply (tree& t, modification mod);
 
 #endif // defined MODIFICATION_H

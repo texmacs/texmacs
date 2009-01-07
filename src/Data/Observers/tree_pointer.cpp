@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : tree_pointer.cpp
-* DESCRIPTION: Persistently links between trees
+* DESCRIPTION: Persistently point to trees (also used for linking)
 * COPYRIGHT  : (C) 2005  Joris van der Hoeven
 *******************************************************************************
 * An inverse path observer maintains the inverse path of the position
@@ -12,19 +12,11 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "modification.hpp"
 #include "link.hpp"
 #include "list.hpp"
 
-list<string> get_ids (observer obs);
-list<tree> get_links (string id);
-void link_assign      (tree ln, string id, path p, tree t);
-void link_insert      (tree ln, string id, path p, tree ins);
-void link_remove      (tree ln, string id, path p, int nr);
-void link_split       (tree ln, string id, path p);
-void link_join        (tree ln, string id, path p);
-void link_assign_node (tree ln, string id, path p, tree_label op);
-void link_insert_node (tree ln, string id, path p, tree ins);
-void link_remove_node (tree ln, string id, path p);
+void link_event (observer obs, modification mod);
 
 /******************************************************************************
 * Definition of the tree_pointer_rep class
@@ -38,15 +30,8 @@ public:
   tree_pointer_rep (tree ref): ptr (ref.rep) {}
   int get_type () { return OBSERVER_POINTER; }
   ostream& print (ostream& out) { return out << " pointer"; }
-
-  void announce_assign      (tree& ref, path p, tree t);
-  void announce_insert      (tree& ref, path p, tree ins);
-  void announce_remove      (tree& ref, path p, int nr);
-  void announce_split       (tree& ref, path p);
-  void announce_join        (tree& ref, path p);
-  void announce_assign_node (tree& ref, path p, tree_label op);
-  void announce_insert_node (tree& ref, path p, tree ins);
-  void announce_remove_node (tree& ref, path p);
+  void announce (tree& ref, modification mod) {
+    link_event (observer (this), mod); }
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -66,7 +51,7 @@ public:
 };
 
 /******************************************************************************
-* Specific routines for tree link observers
+* Specific routines for tree_pointer observers
 ******************************************************************************/
 
 list<observer>
@@ -89,66 +74,6 @@ tree_pointer_rep::set_tree (tree t) {
     insert_observer (t->obs, observer (this));
   }
   return true;
-}
-
-/******************************************************************************
-* Propagate announcements of modifications to all links
-******************************************************************************/
-
-void
-tree_pointer_rep::announce_assign (tree& ref, path p, tree t) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_assign (lns->item, ids->item, p, t);
-}
-
-void
-tree_pointer_rep::announce_insert (tree& ref, path p, tree ins) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_insert (lns->item, ids->item, p, ins);
-}
-
-void
-tree_pointer_rep::announce_remove (tree& ref, path p, int nr) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_remove (lns->item, ids->item, p, nr);
-}
-
-void
-tree_pointer_rep::announce_split (tree& ref, path p) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_split (lns->item, ids->item, p);
-}
-
-void
-tree_pointer_rep::announce_join (tree& ref, path p) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_join (lns->item, ids->item, p);
-}
-
-void
-tree_pointer_rep::announce_assign_node (tree& ref, path p, tree_label op) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_assign_node (lns->item, ids->item, p, op);
-}
-
-void
-tree_pointer_rep::announce_insert_node (tree& ref, path p, tree ins) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_insert_node (lns->item, ids->item, p, ins);
-}
-
-void
-tree_pointer_rep::announce_remove_node (tree& ref, path p) {
-  for (list<string> ids= get_ids (this); !is_nil (ids); ids= ids->next)
-    for (list<tree> lns= get_links (ids->item); !is_nil (lns); lns= lns->next)
-      link_remove_node (lns->item, ids->item, p);
 }
 
 /******************************************************************************
