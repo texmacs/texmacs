@@ -15,6 +15,7 @@
   (:use
     (utils edit auto-close)
     (generic format-edit)
+    (generic generic-edit)
     (text std-text-edit)))
 
 (kbd-symbols
@@ -377,7 +378,7 @@
   ("medskip" "Insert medium vertical space" (make-vspace-after "1fn"))
   ("bigskip" "Insert big vertical space" (make-vspace-after "2fn"))
   ("item" "Insert new item or number" (make-item))
-  ("label" "Make label" (make 'label))
+  ("label" "Make label" (make-label))
   ("ref" "Make reference" (make 'reference))
   ("pageref" "Make page reference" (make 'pageref))
   ("footnote" "Insert a footnote" (make 'footnote))

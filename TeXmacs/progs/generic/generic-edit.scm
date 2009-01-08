@@ -296,8 +296,11 @@
   (clipboard-cut "primary"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting miscellaneous content
+;; Inserting various kinds of content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-label)
+  (make 'label))
 
 (tm-define (make-specific s)
   (if (or (== s "texmacs") (in-source?))

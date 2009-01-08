@@ -26,7 +26,7 @@
   matrix det)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Special action of the return key inside equations
+;; Special customizations inside equation environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-return)
@@ -38,6 +38,11 @@
   (:inside equation*)
   (go-end-of 'equation*)
   (insert-return))
+
+(tm-define (make-label)
+  (:inside eqnarray*)
+  (go-end-line)
+  (make 'label))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for moving punctuation symbols around

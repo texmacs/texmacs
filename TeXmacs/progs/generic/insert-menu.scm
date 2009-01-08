@@ -19,7 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-link-menu
-  ("Label" (make 'label))
+  ("Label" (make-label))
   ("Reference" (make 'reference))
   ("Page reference" (make 'pageref))
   ---

@@ -232,7 +232,7 @@
   ("emacs:meta ;" (make 'new-line))
   ("emacs:meta return" (make 'next-line))
   ("emacs:meta /" (make 'no-break))
-  ("emacs:meta !" (make 'label))
+  ("emacs:meta !" (make-label))
   ("emacs:meta ?" (make 'reference))
   ("emacs:meta C-?" (make 'pageref))
 

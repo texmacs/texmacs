@@ -203,7 +203,7 @@
   ("windows:meta ;" (make 'new-line))
   ("windows:meta return" (make 'next-line))
   ("windows:meta /" (make 'no-break))
-  ("windows:meta !" (make 'label))
+  ("windows:meta !" (make-label))
   ("windows:meta ?" (make 'reference))
   ("windows:meta C-?" (make 'pageref))
   ("windows:meta $" (spell-start))
