@@ -68,6 +68,14 @@
        (tree-atomic? (tm-ref t 0 0))
        (tree->string (tm-ref t 0 0))))
 
+(tm-define (locus-set id t)
+  (:synopsis "Replace the contents of all loci with identifier @id by @t.")
+  (with r (tm->tree t)
+    (for-each (lambda (l)
+		(display* l " := " t "\n")
+		(tree-assign! l t))
+	      (id->trees id))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Links at the locus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

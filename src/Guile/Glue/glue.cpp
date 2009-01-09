@@ -391,20 +391,20 @@ extern tree the_et;
 
 tree
 tree_assign (tree r, tree t) {
-   path ip= obtain_ip (r);
-   if (ip_attached (ip)) {
-     assign (reverse (ip), t);
-     return subtree (the_et, reverse (ip));
-   }
-   else {
-     assign (r, t);
-     return r;
-   }
+  path ip= copy (obtain_ip (r));
+  if (ip_attached (ip)) {
+    assign (reverse (ip), t);
+    return subtree (the_et, reverse (ip));
+  }
+  else {
+    assign (r, t);
+    return r;
+  }
 }
 
 tree
 tree_insert (tree r, int pos, tree t) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     insert (reverse (path (pos, ip)), t);
     return subtree (the_et, reverse (ip));
@@ -417,7 +417,7 @@ tree_insert (tree r, int pos, tree t) {
 
 tree
 tree_remove (tree r, int pos, int nr) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     remove (reverse (path (pos, ip)), nr);
     return subtree (the_et, reverse (ip));
@@ -430,7 +430,7 @@ tree_remove (tree r, int pos, int nr) {
 
 tree
 tree_split (tree r, int pos, int at) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     split (reverse (path (at, pos, ip)));
     return subtree (the_et, reverse (ip));
@@ -443,7 +443,7 @@ tree_split (tree r, int pos, int at) {
 
 tree
 tree_join (tree r, int pos) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     join (reverse (path (pos, ip)));
     return subtree (the_et, reverse (ip));
@@ -456,7 +456,7 @@ tree_join (tree r, int pos) {
 
 tree
 tree_assign_node (tree r, tree_label op) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     assign_node (reverse (ip), op);
     return subtree (the_et, reverse (ip));
@@ -469,7 +469,7 @@ tree_assign_node (tree r, tree_label op) {
 
 tree
 tree_insert_node (tree r, int pos, tree t) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     insert_node (reverse (path (pos, ip)), t);
     return subtree (the_et, reverse (ip));
@@ -482,7 +482,7 @@ tree_insert_node (tree r, int pos, tree t) {
 
 tree
 tree_remove_node (tree r, int pos) {
-  path ip= obtain_ip (r);
+  path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
     remove_node (reverse (path (pos, ip)));
     return subtree (the_et, reverse (ip));
