@@ -98,7 +98,7 @@ typedef tm_buffer_rep* tm_buffer;
 extern observer nil_observer;
 observer ip_observer (path ip);
 observer list_observer (observer o1, observer o2);
-observer tree_pointer (tree t);
+observer tree_pointer (tree t, bool flag= false);
 observer tree_position (tree t, int index);
 observer edit_observer (editor_rep* ed);
 observer undo_observer (tm_buffer buf);
@@ -107,7 +107,8 @@ observer undo_observer (tm_buffer buf);
 * Modification routines for trees and other observer-related facilities
 ******************************************************************************/
 
-bool is_modifying (tree& ref);
+extern bool versioning_busy;
+bool busy_tree (tree& ref);
 
 void assign      (tree& ref, tree t);
 void insert      (tree& ref, int pos, tree t);

@@ -115,15 +115,17 @@ can_assign (tree t, path p, tree u) {
 bool
 can_insert (tree t, path p, int pos, tree u) {
   if (!has_subtree (t, p)) return false;
-  if (is_atomic (t)) return pos >= 0 && pos <= N(t->label) && is_atomic (u);
-  else return pos >= 0 && pos <= N(t) && is_compound (u);
+  tree st= subtree (t, p);
+  if (is_atomic (st)) return pos >= 0 && pos <= N(st->label) && is_atomic (u);
+  else return pos >= 0 && pos <= N(st) && is_compound (u);
 }
 
 bool
 can_remove (tree t, path p, int pos, int nr) {
   if (!has_subtree (t, p)) return false;
-  if (is_atomic (t)) return pos >= 0 && pos+nr <= N(t->label);
-  else return pos >= 0 && pos+nr <= N(t);
+  tree st= subtree (t, p);
+  if (is_atomic (st)) return pos >= 0 && pos+nr <= N(st->label);
+  else return pos >= 0 && pos+nr <= N(st);
 }
 
 bool
@@ -137,9 +139,10 @@ can_split (tree t, path p, int pos, int at) {
 bool
 can_join (tree t, path p, int pos) {
   if (!has_subtree (t, p)) return false;
-  if (pos < 0 || pos+1 >= N(t)) return false;
-  if (is_atomic (t[pos]) && is_atomic (t[pos+1])) return true;
-  if (is_compound (t[pos]) && is_compound (t[pos+1])) return true;
+  tree st= subtree (t, p);
+  if (pos < 0 || pos+1 >= N(st)) return false;
+  if (is_atomic (st[pos]) && is_atomic (st[pos+1])) return true;
+  if (is_compound (st[pos]) && is_compound (st[pos+1])) return true;
   return false;
 }
 
@@ -179,35 +182,5 @@ is_applicable (tree t, modification mod) {
     return can_remove_node (t, root (mod), index (mod));
   default:
     return false;
-  }
-}
-
-void
-apply (tree& t, modification mod) {
-  switch (mod->k) {
-  case MOD_ASSIGN:
-    assign (subtree (t, root (mod)), mod->t);
-    break;
-  case MOD_INSERT:
-    insert (subtree (t, root (mod)), index (mod), mod->t);
-    break;
-  case MOD_REMOVE:
-    remove (subtree (t, root (mod)), index (mod), argument (mod));
-    break;
-  case MOD_SPLIT:
-    split (subtree (t, root (mod)), index (mod), argument (mod));
-    break;
-  case MOD_JOIN:
-    join (subtree (t, root (mod)), index (mod));
-    break;
-  case MOD_ASSIGN_NODE:
-    assign_node (subtree (t, root (mod)), L (mod));
-    break;
-  case MOD_INSERT_NODE:
-    insert_node (subtree (t, root (mod)), argument (mod), mod->t);
-    break;
-  case MOD_REMOVE_NODE:
-    remove_node (subtree (t, root (mod)), index (mod));
-    break;
   }
 }

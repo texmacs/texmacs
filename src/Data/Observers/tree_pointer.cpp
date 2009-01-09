@@ -23,9 +23,10 @@
 class tree_pointer_rep: public observer_rep {
 private:
   tree_rep* ptr;
+  bool flag;
 
 public:
-  tree_pointer_rep (tree ref): ptr (ref.rep) {}
+  tree_pointer_rep (tree ref, bool flag2): ptr (ref.rep), flag (flag2) {}
   int get_type () { return OBSERVER_POINTER; }
   ostream& print (ostream& out) { return out << " pointer"; }
   void announce (tree& ref, modification mod) {
@@ -134,9 +135,14 @@ tree_pointer_rep::notify_assign_node (tree& ref, tree_label op) {
 
 void
 tree_pointer_rep::notify_insert_node (tree& ref, int pos) {
-  // cout << "Notify insert node " << ref << ", " << pos << "\n";
+  //cout << "Notify insert node " << ref << ", " << pos << "\n";
   (void) ref; (void) pos;
-  // cout << "position -> " << obtain_position (observer (this)) << "\n";
+  if (flag) {
+    remove_observer (ref[pos]->obs, observer (this));
+    ptr= ref.rep;
+    insert_observer (ref->obs, observer (this));    
+  }
+  //cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
 
 void
@@ -159,8 +165,8 @@ tree_pointer_rep::notify_detach (tree& ref, tree closest, bool right) {
 ******************************************************************************/
 
 observer
-tree_pointer (tree ref) {
-  return tm_new<tree_pointer_rep> (ref);
+tree_pointer (tree ref, bool flag) {
+  return tm_new<tree_pointer_rep> (ref, flag);
 }
 
 tree

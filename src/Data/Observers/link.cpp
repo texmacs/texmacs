@@ -111,7 +111,7 @@ link_repository_rep::~link_repository_rep () {
 
 void
 link_repository_rep::insert_locus (string id, tree t) {
-  observer obs= tree_pointer (t);
+  observer obs= tree_pointer (t, true);
   register_pointer (id, obs);
   attach_observer (t, obs);
   ids= list<string> (id, ids);
@@ -217,13 +217,13 @@ get_reference (tree& t) {
 list<tree>
 not_done (list<tree> l) {
   if (is_nil (l)) return l;
-  else if (is_modifying (get_reference (l->item))) return not_done (l->next);
+  else if (versioning_busy || busy_tree (get_reference (l->item)))
+    return not_done (l->next);
   return list<tree> (l->item, not_done (l->next));
 }
 
 list<tree>
 get_mirrors (tree ln, string id) {
-  /*
   if (!is_compound (ln, "link", 4) ||
       ln[0] != "mirror" ||
       !is_compound (ln[2], "id", 1) ||
@@ -233,9 +233,6 @@ get_mirrors (tree ln, string id) {
     return list<tree> ();
   if (ln[2][0] == id) return not_done (get_trees (ln[3][0]->label));
   if (ln[3][0] == id) return not_done (get_trees (ln[2][0]->label));
-  */
-  (void) ln; (void) id;
-  return list<tree> ();
 }
 
 void
@@ -248,6 +245,7 @@ link_announce (tree ln, string id, modification mod) {
 
 void
 link_announce (observer obs, modification mod) {
+  //cout << "Link event " << mod << "\n";
   for (list<string> ids= pointer_resolve [obs];
        !is_nil (ids); ids= ids->next)
     for (list<tree> lns= get_links (compound ("id", ids->item));

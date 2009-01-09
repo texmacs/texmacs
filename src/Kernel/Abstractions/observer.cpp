@@ -108,33 +108,8 @@ detach (tree& ref, tree closest, bool right) {
   }
 }
 
-static pointer busy_root= NULL;
-static hashmap<pointer,bool> busy_table (false);
-
-bool
-is_modifying (tree& ref) {
-  return busy_table->contains (((void*) (&ref)));
-}
-
-static void
-start_modifications (tree& ref) {
-  //cout << "Start " << busy_root << ", " << ((void*) (&ref)) << "\n";
-  if (busy_root == NULL) busy_root= ((void*) (&ref));
-  busy_table (((void*) (&ref)))= true;
-}
-
-static void
-end_modifications (tree& ref) {
-  //cout << "End " << busy_root << ", " << ((void*) (&ref)) << "\n";
-  if (busy_root != ((void*) (&ref))) return;
-  busy_root = false;
-  busy_table= hashmap<pointer,bool> (false);
-}
-
 void
-assign (tree& ref, tree t) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_assign (tree& ref, tree t) {
   // cout << "Assign " << ref << " := " << t << "\n";
   modification mod= mod_assign (path (), t);
   if (!is_nil (ref->obs)) {
@@ -151,13 +126,10 @@ assign (tree& ref, tree t) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-insert (tree& ref, int pos, tree t) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_insert (tree& ref, int pos, tree t) {
   // cout << "Insert " << ref << " += " << t << " at " << pos << "\n";
   modification mod= mod_insert (path (), pos, t);
   if (!is_nil (ref->obs))
@@ -179,16 +151,13 @@ insert (tree& ref, int pos, tree t) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-remove (tree& ref, int pos, int nr) {
-  if (nr == 0) return;
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_remove (tree& ref, int pos, int nr) {
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
   modification mod= mod_remove (path (), pos, nr);
+  if (nr == 0) return;
   if (!is_nil (ref->obs)) {
     ref->obs->announce (ref, mod);
     ref->obs->notify_remove (ref, pos, nr);
@@ -215,13 +184,10 @@ remove (tree& ref, int pos, int nr) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-split (tree& ref, int pos, int at) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_split (tree& ref, int pos, int at) {
   // cout << "Split " << ref << " at " << pos << ", " << at << "\n";
   modification mod= mod_split (path (), pos, at);
   if (!is_nil (ref->obs))
@@ -253,13 +219,10 @@ split (tree& ref, int pos, int at) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-join (tree& ref, int pos) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_join (tree& ref, int pos) {
   // cout << "Join " << ref << " at " << pos << "\n";
   // the following code is added for security
   if (is_atomic (ref[pos]) && (!is_atomic (ref[pos+1])))
@@ -292,13 +255,10 @@ join (tree& ref, int pos) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-assign_node (tree& ref, tree_label op) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_assign_node (tree& ref, tree_label op) {
   // cout << "Assign node " << ref << " : " << tree (op) << "\n";
   modification mod= mod_assign_node (path (), op);
   if (!is_nil (ref->obs)) {
@@ -310,13 +270,10 @@ assign_node (tree& ref, tree_label op) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-insert_node (tree& ref, int pos, tree t) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_insert_node (tree& ref, int pos, tree t) {
   // cout << "Insert node " << ref << " : " << t << " at " << pos << "\n";
   modification mod= mod_insert_node (path (), pos, t);
   if (!is_nil (ref->obs)) ref->obs->announce (ref, mod);
@@ -333,13 +290,10 @@ insert_node (tree& ref, int pos, tree t) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
 }
 
 void
-remove_node (tree& ref, int pos) {
-  if (is_modifying (ref)) return;
-  start_modifications (ref);
+raw_remove_node (tree& ref, int pos) {
   // cout << "Remove node " << ref << " : " << pos << "\n";
   modification mod= mod_remove_node (path (), pos);
   if (!is_nil (ref->obs)) {
@@ -354,7 +308,131 @@ remove_node (tree& ref, int pos) {
   if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
   // stretched_print (ref, true, 1);
   // consistency_check ();
-  end_modifications (ref);
+}
+
+void
+raw_apply (tree& t, modification mod) {
+  ASSERT (is_applicable (t, mod), "invalid modification");
+  switch (mod->k) {
+  case MOD_ASSIGN:
+    raw_assign (subtree (t, root (mod)), mod->t);
+    break;
+  case MOD_INSERT:
+    raw_insert (subtree (t, root (mod)), index (mod), mod->t);
+    break;
+  case MOD_REMOVE:
+    raw_remove (subtree (t, root (mod)), index (mod), argument (mod));
+    break;
+  case MOD_SPLIT:
+    raw_split (subtree (t, root (mod)), index (mod), argument (mod));
+    break;
+  case MOD_JOIN:
+    raw_join (subtree (t, root (mod)), index (mod));
+    break;
+  case MOD_ASSIGN_NODE:
+    raw_assign_node (subtree (t, root (mod)), L (mod));
+    break;
+  case MOD_INSERT_NODE:
+    raw_insert_node (subtree (t, root (mod)), argument (mod), mod->t);
+    break;
+  case MOD_REMOVE_NODE:
+    raw_remove_node (subtree (t, root (mod)), index (mod));
+    break;
+  }
+}
+
+/******************************************************************************
+* Wrappers which take into account mirroring
+******************************************************************************/
+
+bool versioning_busy= false;
+static bool is_busy= false;
+static list<path> busy_paths;
+static list<modification> upcoming;
+
+bool
+busy_path (path p) {
+  for (list<path> l= busy_paths; !is_nil (l); l= l->next)
+    if (l->item <= p) return true;
+  return false;
+}
+
+bool
+busy_tree (tree& ref) {
+  path ip= obtain_ip (ref);
+  if (ip_attached (ip)) return busy_path (reverse (ip));
+  else return true;
+}
+
+void
+apply (tree& ref, modification mod) {
+  ASSERT (is_applicable (ref, mod), "invalid modification");
+  path ip= obtain_ip (ref);
+  path p = reverse (ip) * root (mod);
+  if (versioning_busy) raw_apply (ref, mod);
+  else if (is_busy) {
+    if (ip_attached (ip) && !busy_path (p)) {
+      //cout << "Postpone " << (reverse (ip) * mod) << "\n";
+      busy_paths= busy_paths * p;
+      upcoming  = upcoming * (reverse (ip) * mod);
+    }
+  }
+  else {
+    if (!ip_attached (ip)) raw_apply (ref, mod);
+    else {
+      is_busy= true;
+      busy_paths= list<path> (p);
+      upcoming  = list<modification> (reverse (ip) * mod);
+      while (!is_nil (upcoming)) {
+	//cout << "Handle " << upcoming->item << "\n";
+	raw_apply (the_et, upcoming->item);
+	//cout << "Done " << upcoming->item << "\n";
+	upcoming= upcoming->next;
+      }
+      busy_paths= list<path> ();
+      is_busy= false;
+    }
+  }
+}
+
+void
+assign (tree& ref, tree t) {
+  apply (ref, mod_assign (path (), t));
+}
+
+void
+insert (tree& ref, int pos, tree t) {
+  apply (ref, mod_insert (path (), pos, t));
+}
+
+void
+remove (tree& ref, int pos, int nr) {
+  apply (ref, mod_remove (path (), pos, nr));
+}
+
+void
+split (tree& ref, int pos, int at) {
+  apply (ref, mod_split (path (), pos, at));
+}
+
+void
+join (tree& ref, int pos) {
+  apply (ref, mod_join (path (), pos));
+}
+
+void
+assign_node (tree& ref, tree_label op) {
+  apply (ref, mod_assign_node (path (), op));
+}
+
+void
+insert_node (tree& ref, int pos, tree t) {
+  apply (ref, mod_insert_node (path (), pos, t));
+}
+
+void
+remove_node (tree& ref, int pos) {
+  apply (ref, mod_remove_node (path (), pos));
 }
 
 /******************************************************************************

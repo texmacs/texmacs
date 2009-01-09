@@ -338,10 +338,12 @@ edit_modify_rep::undo (bool redoable) {
   while ((buf->undo != "nil") && (buf->undo[0] != "")) {
     tree x= buf->undo[0];
     buf->undo= buf->undo[1];
+    versioning_busy= true;
     buf->undo_flag= true;
     buf->exdo= tree (BACKUP, copy (x), buf->exdo);
     perform_undo_redo (x);
     buf->undo_flag= false;
+    versioning_busy= false;
   }
   if (!redoable) {
     buf->unmark_redo_block ();
@@ -388,9 +390,11 @@ edit_modify_rep::redo () {
     tree x= buf->redo[0];
     buf->redo= buf->redo[1];
     buf->exdo= buf->exdo[1];
+    versioning_busy= true;
     buf->redo_flag= true;
     perform_undo_redo (x);
     buf->redo_flag= false;
+    versioning_busy= false;
   }
   buf->unmark_redo_block ();
   if (buf->undo_depth == buf->last_save) {
