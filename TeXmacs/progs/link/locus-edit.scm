@@ -70,11 +70,7 @@
 
 (tm-define (locus-set id t)
   (:synopsis "Replace the contents of all loci with identifier @id by @t.")
-  (with r (tm->tree t)
-    (for-each (lambda (l)
-		(display* l " := " t "\n")
-		(tree-assign! l t))
-	      (id->trees id))))
+  (for-each (lambda (l) (tree-assign! l t)) (id->trees id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Links at the locus
