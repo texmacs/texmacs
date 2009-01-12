@@ -26,7 +26,7 @@
 
 (plugin-configure texgraph
   (:require (and (url-exists-in-path? "latex")
-		 (url-exists-in-path? "TeXgraphCmd")))
+		 (url-exists-in-path? "CmdTeXgraph")))
   (:initialize (texgraph-initialize))
   (:launch "tm_texgraph --texmacs")
   (:session "Texgraph"))
