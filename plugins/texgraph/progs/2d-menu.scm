@@ -41,29 +41,34 @@
 	  (texgraph-insert "Grille(0,1+i), "))
 	("Axes fleches" 
 	  (texgraph-insert "Arrows:=1, Axes(0,1+i), Arrows:=0, "))
-	; add 2 more macros for other kind of axes/grids (mm, log...)
+	; add more macros for other kind of axes/grids (mm, log...)
 	---
 	("Droite horizontale graduee" 
-	  (texgraph-insert "GradDroite({origin=}0,[{unite=}pi,{pas=}1],xyticks,{subdiv=}2,bottom,i,1,\"$\\pi$\", "))
+	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}2,{pas=}1],xyticks,{subdiv=}2,bottom,i,1,\"$a$\"), Arrows:=0, "))
 	("Droite verticale graduee" 
-	  (texgraph-insert "GradDroite({origin=}0,[{unite=}i*pi,{pas=}1],xyticks,{subdiv=}2,top,right,1,\"$\\pi$\", "))
+	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}i*2,{pas=}1],xyticks,{subdiv=}2,top,right,1,\"$a$\"), Arrows:=0, "))
   )
 
   (->"Points et lignes"
+	("Affectations (A:=...)" 
+	  (texgraph-insert "A:=1+2*i, "))
+	---
 	("Point(s)" 
-	  (texgraph-insert "Point(A,B,..), "))
+	  (texgraph-insert "Point(A,B,C), "))
 	("Point et etiquette associee" 
 	  (texgraph-insert "LabelDot(A,\"$A$\",\"NO\",{mark=}1,{dist=}0.25), "))
 	("Barycentre" 
-	  (texgraph-insert "bary([A1,c1,A2,c2,A3,C3]), "))
-	("Segment" 
+	  (texgraph-insert "bary([A1,c1,A2,c2,A3,c3]), "))
+	---
+	("Segment [AB]" 
 	  (texgraph-insert "Seg(A,B), "))
-	("Droite (definie par 2 points)" 
+	("Droite (AB)" 
 	  (texgraph-insert "Droite(A,B), "))
 	("Droite a.x+b.y=c" 
 	  (texgraph-insert "Droite(a,b,c), "))
-	("Demi-droite" 
+	("Demi-droite [AB)" 
 	  (texgraph-insert "Ddroite(A,B), "))
+	---
 	("Cercle (centre-rayon)" 
 	  (texgraph-insert "Cercle(A,{rayon=}4), "))
 	("Cercle (defini par 3 points)" 
@@ -87,17 +92,37 @@
   )
 
   (->"Constructions (droites et polygones)"
-	("Liste des points d'un element graphique (sans le dessin)" "Get"
-	  (texgraph-insert "Get(argument), "))	
+	(->"Objets non dessines"
+		("Parallele" 
+		  (texgraph-insert "parallel([A,B],C), "))
+		("Perpendiculaire" 
+		  (texgraph-insert "perp([A,B],C,{angle_droit=}1), "))
+		("Mediatrice" 
+		  (texgraph-insert "med(A,B,{angle_droit=}1), "))
+		("Bissectrice" 
+		  (texgraph-insert "bissec(B,A,C,{int=}1), "))
+		---
+		("Carre" 
+		  (texgraph-insert "carre(A,B,{sens=}+1), "))
+		("Rectangle" 
+		  (texgraph-insert "rectangle(A,B,C), "))
+		("Parallelogramme" 
+		  (texgraph-insert "parallelo(A,B,C), "))
+		("Polygone regulier" 
+		  (texgraph-insert "polyreg(A,S1,{nb_cotes=}5), "))
+		---
+		("Intersection de deux droites" 
+		  (texgraph-insert "I:=Intersec(Droite(A,B),Droite(C,D)), I1:=I[1], I2:=I[2], Point(I), "))
+		("Intersection droite-cercle (ou ligne-ligne)" 
+		  (texgraph-insert "I:=Intersec(Droite(A,B),Cercle(C,{rayon=}4)),I1:=I[1], I2:=I[2], Point(I), "))
+		("Intersection de deux lignes polygonales" 
+		  (texgraph-insert "I:=Intersec(Ligne([A,B,C],1), Ligne([D,E,F],1)), Point(I), "))
+		---
+		("Liste des points d'un element graphique (sans le dessin)" "Get"
+		  (texgraph-insert "Get(objet), "))
+	)
 	---
-	("Intersection de deux droites" 
-	  (texgraph-insert "[A,B] Inter [C,D] ), "))
-	("Intersection de deux lignes polygonales" 
-	  (texgraph-insert "[A,B,C..] InterL [C,D,E..], "))
-	("Intersection droite-cercle (ou ligne-ligne)" 
-	  (texgraph-insert "I:=Get(Droite(A,B)) InterL Get(Cercle(A,R),0), Point(I), "))
-	---
-	(group "Sans le D, ces commandes ne dessinent pas les objets")
+	(group "Objets dessines")
 	("Parallele" 
 	  (texgraph-insert "Dparallel([A,B],C), "))
 	("Perpendiculaire" 
@@ -115,6 +140,13 @@
 	  (texgraph-insert "Dparallelo(A,B,C), "))
 	("Polygone regulier" 
 	  (texgraph-insert "Dpolyreg(A,S1,{nb_cotes=}5), "))
+	---
+	("Intersection de deux droites" 
+	  (texgraph-insert "I:=Intersec(Droite(A,B),Droite(C,D)), I1:=I[1], I2:=I[2], Point(I), "))
+	("Intersection droite-cercle (ou ligne-ligne)" 
+	  (texgraph-insert "I:=Intersec(Droite(A,B),Cercle(C,{rayon=}4)),I1:=I[1], I2:=I[2], Point(I), "))
+	("Intersection de deux lignes polygonales" 
+	  (texgraph-insert "I:=Intersec(Ligne([A,B,C],1), Ligne([D,E,F],1)), Point(I), "))
   )
 
   (->"Courbes"
@@ -139,7 +171,7 @@
 	  (texgraph-insert "tangenteP(f(t),t0 {,long=}), "))
 	---
 	("Representation de la suite Un+1=f(Un)" 
-	  (texgraph-insert "suite(f(x),U0,n), "))
+	  (texgraph-insert "suite(f(x),{U0=}1,{n=}10), "))
 	("Solution de l'equa diff x'(t)+iy'(t)=f(t,x,y)" 
 	  (texgraph-insert "EquaDif(f(t,x,y),t0,x0+i*y0,{mode=}0), "))
 	("Courbe implicite f(x,y)=0" 
@@ -147,29 +179,63 @@
   )	
 
   (->"Transformations geometriques"
+	(->"Objets non dessines"
+		("Symetrie axiale" 
+		  (texgraph-insert "sym([liste_pts],[A,B]), "))
+		("Rotation" 
+		  (texgraph-insert "rot([liste_pts],A,alpha), "))
+		("Translation" 
+		  (texgraph-insert "ftransform([liste_pts],z+{vect=}v), "))
+		("Homothetie" 
+		  (texgraph-insert "hom([liste_pts],A,k), "))
+		("Projection othogonale" 
+		  (texgraph-insert "proj([liste_pts],[A,B]), "))
+		("Similitude" 
+		  (texgraph-insert "simil([liste_pts],A,k,alpha), "))
+		("Inversion" 
+		  (texgraph-insert "inv([liste_pts],A,rayon), "))
+		---
+		("Symetrie glissee" 
+		  (texgraph-insert "symG([liste_pts],A,vect), "))
+		("Symetrie oblique" 
+		  (texgraph-insert "symG([liste_pts],[A,B],vect), "))
+		("Projection oblique" 
+		  (texgraph-insert "projO([liste_pts],[A,B],vect), "))
+		("Images par une fonction" 
+		  (texgraph-insert "ftransform([liste_pts],f(z)), "))
+		("Affinite" 
+		  (texgraph-insert "affin([liste_pts],[A,B],vect,k), "))
+		---
+		("Application affine" 
+		  (texgraph-insert "defAff(nom,A,A',partie_lineaire), "))
+	)
+	---
+	(group "Objets dessines")
 	("Symetrie axiale" 
-	  (texgraph-insert "sym([liste_pts],[A,B]), "))
+	  (texgraph-insert "M':=sym(M,[A,B]), Point(M'), "))
 	("Rotation" 
-	  (texgraph-insert "rot([liste_pts],A,alpha), "))
+	  (texgraph-insert "M':=rot(M,A,alpha), Point(M'), "))
+	("Translation" 
+	  (texgraph-insert "M':=ftransform(M,z+{vect=}v), Point(M'), "))
 	("Homothetie" 
-	  (texgraph-insert "hom([liste_pts],A,k), "))
+	  (texgraph-insert "M':=hom(M,A,k), Point(M'), "))
 	("Projection othogonale" 
-	  (texgraph-insert "proj([liste_pts],[A,B]), "))
+	  (texgraph-insert "M':=proj(M,[A,B]), Point(M'), "))
 	("Similitude" 
-	  (texgraph-insert "simil([liste_pts],A,k,alpha), "))
+	  (texgraph-insert "M':=simil(M,A,k,alpha), Point(M'), "))
 	("Inversion" 
-	  (texgraph-insert "inv([liste_pts],A,rayon), "))
+	  (texgraph-insert "M':=inv(M,A,rayon), Point(M'), "))
 	---
 	("Symetrie glissee" 
-	  (texgraph-insert "symG([liste_pts],A,vect), "))
+	  (texgraph-insert "M':=symG(M,A,vect), Point(M'), "))
 	("Symetrie oblique" 
-	  (texgraph-insert "symG([liste_pts],[A,B],vect), "))
+	  (texgraph-insert "M':=symG(M,[A,B],vect), Point(M'), "))
 	("Projection oblique" 
-	  (texgraph-insert "projO([liste_pts],[A,B],vect), "))
+	  (texgraph-insert "M':=projO(M,[A,B],vect), Point(M'), "))
 	("Images par une fonction" 
-	  (texgraph-insert "ftransform([liste_pts],f(z)), "))
+	  (texgraph-insert "M':=ftransform(M,f(z)), Point(M'), "))
 	("Affinite" 
-	  (texgraph-insert "affin([liste_pts],[A,B],vect,k), "))
+	  (texgraph-insert "M':=affin(M,[A,B],vect,k), Point(M'), "))
 	---
 	("Application affine" 
 	  (texgraph-insert "defAff(nom,A,A',partie_lineaire), "))
@@ -183,10 +249,10 @@
 	("Secteur angulaire" 
 	  (texgraph-insert "wedge(B,A,C,{rayon=}0.8), "))
 	---
-	("Marquer un angle" 
-	  (texgraph-insert "markangle(B,A,C,{rayon=}0.8,{nb=}2,{esp=}0.1,{long=}0.3), "))
 	("Marquer un segment" 
 	  (texgraph-insert "markseg(A,B,{nb=}2,{esp=}0.1,{long=}0.4), "))
+	("Marquer un angle" 
+	  (texgraph-insert "markangle(B,A,C,{rayon=}0.8,{nb=}2,{esp=}0.1,{long=}0.3), "))
 	("Flecher une ligne polygonale" 
 	  (texgraph-insert "flecher([A,B,..],[pos1,pos2,..]), "))
   )
@@ -198,11 +264,11 @@
 	  (texgraph-insert "LabelDot(A,\"$A$\",\"NO\",{mark=}1,{dist=}0.25), "))
 	---
 	("Droite horizontale graduee" 
-	  (texgraph-insert "GradDroite({origin=}0,[{unite=}3,{pas=}1],xyticks,{subdiv=}2,bottom,i,1,\"$a$\"), "))
+	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}2,{pas=}1],xyticks,{subdiv=}2,bottom,i,1,\"$a$\"), Arrows:=0, "))
 	("Droite verticale graduee" 
-	  (texgraph-insert "GradDroite({origin=}0,[{unite=}i*3,{pas=}1],xyticks,{subdiv=}2,top,right,1,\"$b$\"), "))
+	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}i*2,{pas=}1],xyticks,{subdiv=}2,top,right,1,\"$a$\"), Arrows:=0, "))
 	("Etiquette supplementaire sur Ox" 
-	  (texgraph-insert "LabelAxe(x,pi,\"$\\\\\pi$\",1,{mark=}1), "))
+	  (texgraph-insert "LabelAxe(x,pi,\"$\\\\pi$\",1,{mark=}1), "))
 	("Etiquette supplementaire sur Oy" 
 	  (texgraph-insert "LabelAxe(y,pi,\"$\\\\pi$\",2,{mark=}1), "))
   )

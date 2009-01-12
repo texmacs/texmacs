@@ -43,7 +43,7 @@
 	("Orientation du repere (variables theta et phi)" 
 	  (texgraph-insert "theta:=pi/6, phi:=pi/3, "))
 	("Fenetre graphique 3D" 
-	  (texgraph-insert "view3D(xmin,xmax,yin,ymax,zmin,zmax), "))
+	  (texgraph-insert "view3D(xmin,xmax,ymin,ymax,zmin,zmax), "))
   )
 
   (->"Points, lignes et surfaces"

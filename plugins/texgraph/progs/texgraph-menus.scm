@@ -46,7 +46,7 @@
 	;; FIXME : Problem when TeXgraph isn't installed by user in the default place
 	;; the help files should be looked for in a generic $TEXGRAPH_PATH/doc
 	("Aide (TeXgraph.pdf)" (shell "texdoc /usr/local/share/TeXgraph/doc/TeXgraph.pdf"))
-	;("Aide (html)" (load-buffer "file://usr/local/share/TeXgraph/doc/html/aide.html")) ;;work with TeXmacs 1.0.6.11 but not with 1.0.7
+	;("Aide (html)" (shell "texmacs /usr/local/share/TeXgraph/doc/html/aide.html &"))
   )
 
   (->"Fenetre graphique et marges"
@@ -55,14 +55,14 @@
 	("Fenetre graphique" 
 	  (texgraph-insert "Fenetre(-5+5*i,5-5*i,1+i), "))
 	("Taille de la figure" 
-	  (texgraph-insert "size(largeur+i*hauteur,{ratio x/y=}1), "))
+	  (texgraph-insert "size({largeur=}8+i*{hauteur=}8,{ratio x/y=}1), "))
 	---
 	("Centrer la vue en un point" 
 	  (texgraph-insert "centerView(A), "))
 	("Restreindre a une courbe fermee (clipper)" 
 	  (texgraph-insert "Clip([A,B,C,..]), "))
 	("Bordure" 
-	  (texgraph-insert "Border(0), "))
+	  (texgraph-insert "Border(1{ou0}), "))
   )
 
   ---
@@ -83,14 +83,14 @@
 	)
 	(->"Style des lignes"
 		("Ligne non tracee" (texgraph-insert "LineStyle:=noline, "))
-		("Ligne pleine" (texgraph-insert "LineStyle:=solid, "))
-		("Ligne pointillee _ _ _" (texgraph-insert "LineStyle:=dashed, "))
-		("Ligne pointillee . . ." (texgraph-insert "LineStyle:=dotted, "))
+		("------------------" (texgraph-insert "LineStyle:=solid, "))
+		("---- ---- ---- --" (texgraph-insert "LineStyle:=dashed, "))
+		(". . . . . . . ." (texgraph-insert "LineStyle:=dotted, "))
 	)
 	(->"Fleches"
-		("Pas de fleche" (texgraph-insert "Arrows:=0, "))
-		("Simple fleche" (texgraph-insert "Arrows:=1, "))
-		("Double fleche" (texgraph-insert "Arrows:=2, "))
+		(" ------------------" (texgraph-insert "Arrows:=0, "))
+		(" ------------------>" (texgraph-insert "Arrows:=1, "))
+		("<---------------->" (texgraph-insert "Arrows:=2, "))
 	)
 	---
 	(->"Color"
@@ -106,7 +106,7 @@
 		("Brun" (texgraph-insert "Color:=brown, "))
 		("Pink" (texgraph-insert "Color:=pink, "))
 		---
-		("Eclaircir une couleur" (texgraph-insert "Light(couleur,0.5), "))
+		("Eclaircir une couleur" (texgraph-insert "Color:=Light(couleur,{facteur=}0.5), "))
 		("Autre" (texgraph-insert "Color:=, "))
 	)
   )
@@ -152,7 +152,7 @@
 	("Couleur du fond" (texgraph-insert "background(fillstyle,fillcolor), "))
   )
 
-  (->"Proprietes des aretes cachees (espace)"
+  (->"Proprietes des aretes cachees (3D)"
 	(->"Epaisseur des aretes"
 		("Ligne fine (2 pt)" (texgraph-insert "HideWidth:=thinlines, "))
 		("Ligne epaisse (8 pt)" (texgraph-insert "HideWidth:=thicklines, "))
@@ -162,9 +162,9 @@
 	)
 	(->"Style des lignes"
 		("Ligne non tracee" (texgraph-insert "HideStyle:=noline, "))
-		("Ligne pleine" (texgraph-insert "HideStyle:=solid, "))
-		("Ligne pointillee _ _ _" (texgraph-insert "HideStyle:=dashed, "))
-		("Ligne pointillee . . ." (texgraph-insert "HideStyle:=dotted, "))
+		("------------------" (texgraph-insert "HideStyle:=solid, "))
+		("---- ---- ---- --" (texgraph-insert "HideStyle:=dashed, "))
+		(". . . . . . . ." (texgraph-insert "HideStyle:=dotted, "))
 	)
 	---
 	(->"Color"
@@ -180,7 +180,7 @@
 		("Brun" (texgraph-insert "HideColor:=brown, "))
 		("Pink" (texgraph-insert "HideColor:=pink, "))
 		---
-		("Eclaircir une couleur" (texgraph-insert "Light(couleur,facteur), "))
+		("Eclaircir une couleur" (texgraph-insert "HideColor:=Light(couleur,{facteur=}0.5), "))
 		("Autre" (texgraph-insert "HideColor:=, "))
 	)
   )
@@ -194,7 +194,7 @@
 		("Normal" (texgraph-insert "LabelSize:=normalsize, "))
 		("large" (texgraph-insert "LabelSize:=large, "))
 		("Large" (texgraph-insert "LabelSize:=Large, "))
-		("LARGE" (texgraph-insert "LabelSize:=LARGE, "))
+		("Tres Grand" (texgraph-insert "LabelSize:=LARGE, "))
 		("huge" (texgraph-insert "LabelSize:=huge, "))
 		("Huge" (texgraph-insert "LabelSize:=Huge, "))
 	)
@@ -208,7 +208,7 @@
 		("Texte aligne en bas" (texgraph-insert "LabelStyle:=bottom, "))
 	)
 	---
-	("Angle des etiquettes" (texgraph-insert "LabelAngle:=angle_deg, "))
+	("Angle des etiquettes" (texgraph-insert "LabelAngle:=45{en_degre}, "))
   )
   ---
   (group "Geometrie dans le plan")
