@@ -2769,6 +2769,43 @@ upgrade_mmx (tree t) {
 }
 
 /******************************************************************************
+* Upgrade sessions
+******************************************************************************/
+
+static tree
+upgrade_session (tree t, tree lan, tree ses) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "session", 1))
+    return compound ("session", copy (lan), copy (ses),
+		     upgrade_session (t[0], lan, ses));
+  else if (is_func (t, WITH, 5) &&
+	   t[0] == PROG_LANGUAGE &&
+	   t[2] == PROG_SESSION)
+    return upgrade_session (t[4], t[1], t[3]);
+  else {
+    int i, n= N(t);
+    tree r (L(t));
+    for (i=0; i<n; i++) {
+      if (is_document (t) && is_compound (t[i], "input", 2)) {
+	bool m = is_compound (t[i][1], "math", 1);
+	tree in= (m? t[i][1][0]: t[i][1]);
+	if ((i+1)<n && is_compound (t[i+1], "output", 1)) {
+	  const char* op= (m? "unfolded-io-math": "unfolded-io");
+	  r << compound (op, t[i][0], in, t[i+1][0]);
+	  i++;
+	}
+	else {
+	  const char* op= (m? "folded-io-math": "folded-io");
+	  r << compound (op, t[i][0], in, tree (DOCUMENT));
+	}
+      }
+      else r << upgrade_session (t[i], lan, ses);
+    }
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2882,5 +2919,7 @@ upgrade (tree t, string version) {
     t= upgrade_scheme_doc (t);
   if (version_inf_eq (version, "1.0.6.14"))
     t= upgrade_mmx (t);
+  if (version_inf_eq (version, "1.0.7.1"))
+    t= upgrade_session (t, "scheme", "default");
   return t;
 }

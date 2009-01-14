@@ -65,7 +65,8 @@
 ;; Operations on toggle trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (toggle-toggle t)
+(tm-define (toggle-toggle t)
+  (:synopsis "Toggle a fold/unfold")
   (tree-assign-node! t (ahash-ref toggle-table (tree-label t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

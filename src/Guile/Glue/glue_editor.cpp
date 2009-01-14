@@ -2371,9 +2371,13 @@ tmg_session_split () {
 }
 
 SCM
-tmg_session_complete_tryP () {
+tmg_session_complete_tryP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "session-complete-try?");
+
+  tree in1= scm_to_tree (arg1);
+
   // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->session_complete_try ();
+  bool out= get_server()->get_editor()->session_complete_try (in1);
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
@@ -2982,7 +2986,7 @@ initialize_glue_editor () {
   scm_new_procedure ("session-remove-all-outputs", (FN) tmg_session_remove_all_outputs, 0, 0, 0);
   scm_new_procedure ("session-remove-previous-output", (FN) tmg_session_remove_previous_output, 0, 0, 0);
   scm_new_procedure ("session-split", (FN) tmg_session_split, 0, 0, 0);
-  scm_new_procedure ("session-complete-try?", (FN) tmg_session_complete_tryP, 0, 0, 0);
+  scm_new_procedure ("session-complete-try?", (FN) tmg_session_complete_tryP, 1, 0, 0);
   scm_new_procedure ("connection-busy?", (FN) tmg_connection_busyP, 0, 0, 0);
   scm_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 0, 0, 0);
   scm_new_procedure ("connection-stop", (FN) tmg_connection_stop, 0, 0, 0);

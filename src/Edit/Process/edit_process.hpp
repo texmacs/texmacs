@@ -63,7 +63,7 @@ public:
   void session_remove_all_outputs ();
   void session_remove_previous_output ();
   void session_split ();
-  bool session_complete_try ();
+  bool session_complete_try (tree t);
 
   void generate_bibliography (string bib, string style, string fname);
   void generate_table_of_contents (string toc);

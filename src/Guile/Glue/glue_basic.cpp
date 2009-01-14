@@ -783,6 +783,19 @@ tmg_tree_extents (SCM arg1) {
 }
 
 SCM
+tmg_tree_emptyP (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-empty?");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_empty (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_tree_assign (SCM arg1, SCM arg2) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-assign");
   SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tree-assign");
@@ -1055,6 +1068,36 @@ tmg_path_previous_word (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   path out= previous_word (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_next_node (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-next-node");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-next-node");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= next_node (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_previous_node (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-previous-node");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-previous-node");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= previous_node (in1, in2);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -3545,6 +3588,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-load-inclusion", (FN) tmg_tree_load_inclusion, 1, 0, 0);
   scm_new_procedure ("tree-as-string", (FN) tmg_tree_as_string, 1, 0, 0);
   scm_new_procedure ("tree-extents", (FN) tmg_tree_extents, 1, 0, 0);
+  scm_new_procedure ("tree-empty?", (FN) tmg_tree_emptyP, 1, 0, 0);
   scm_new_procedure ("tree-assign", (FN) tmg_tree_assign, 2, 0, 0);
   scm_new_procedure ("tree-var-insert", (FN) tmg_tree_var_insert, 3, 0, 0);
   scm_new_procedure ("tree-remove", (FN) tmg_tree_remove, 3, 0, 0);
@@ -3563,6 +3607,8 @@ initialize_glue_basic () {
   scm_new_procedure ("path-previous", (FN) tmg_path_previous, 2, 0, 0);
   scm_new_procedure ("path-next-word", (FN) tmg_path_next_word, 2, 0, 0);
   scm_new_procedure ("path-previous-word", (FN) tmg_path_previous_word, 2, 0, 0);
+  scm_new_procedure ("path-next-node", (FN) tmg_path_next_node, 2, 0, 0);
+  scm_new_procedure ("path-previous-node", (FN) tmg_path_previous_node, 2, 0, 0);
   scm_new_procedure ("path-next-tag", (FN) tmg_path_next_tag, 3, 0, 0);
   scm_new_procedure ("path-previous-tag", (FN) tmg_path_previous_tag, 3, 0, 0);
   scm_new_procedure ("path-next-argument", (FN) tmg_path_next_argument, 2, 0, 0);

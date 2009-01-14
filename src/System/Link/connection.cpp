@@ -37,6 +37,7 @@ struct connection_rep: rep<connection> {
   string  session;       // name of the session
   tm_link ln;            // the underlying link
   int     status;        // status of the connection
+  int     prev_status;   // last notified status
   texmacs_input tm_in;   // texmacs input handler for data from child
   texmacs_input tm_err;  // texmacs input handler for errors from child
 
@@ -56,7 +57,8 @@ RESOURCE_CODE(connection);
 
 connection_rep::connection_rep (string name2, string session2, tm_link ln2):
   rep<connection> (name2 * "-" * session2),
-  name (name2), session (session2), ln (ln2), status (CONNECTION_DEAD),
+  name (name2), session (session2), ln (ln2),
+  status (CONNECTION_DEAD), prev_status (CONNECTION_DEAD),
   tm_in ("output"), tm_err ("error") {}
 
 string
@@ -138,11 +140,43 @@ connection_rep::interrupt () {
 ******************************************************************************/
 
 void
+connection_notify (connection con, string ch, tree t) {
+  if (t == "") return;
+  call ("connection-notify",
+	object (con->name),
+	object (con->session),
+	object (ch),
+	object (t));
+}
+
+void
+connection_notify_status (connection con) {
+  int status=
+    (con->status == CONNECTION_DYING? WAITING_FOR_OUTPUT: con->status);
+  if (status == con->prev_status) return;
+  call ("connection-notify-status",
+	object (con->name),
+	object (con->session),
+	object (status));
+  con->prev_status= status;
+}
+
+void
 listen_to_connections () {
   iterator<string> it= iterate (connection::instances);
   while (it->busy()) {
     string name= it->next ();
     connection con (name);
+    connection_notify_status (con);
+    if (con->status != CONNECTION_DEAD) {
+      con->read (LINK_ERR);
+      connection_notify (con, "error", con->tm_err->get ("error"));
+      con->read (LINK_OUT);
+      connection_notify (con, "output", con->tm_in->get ("output"));
+      connection_notify (con, "prompt", con->tm_in->get ("prompt"));
+      connection_notify (con, "input", con->tm_in->get ("input"));
+    }
+    /*
     if ((con->status == WAITING_FOR_INPUT) ||
 	(con->status == WAITING_FOR_OUTPUT))
       {
@@ -154,6 +188,8 @@ listen_to_connections () {
 	  if (doc != "") call (t[i][1]->label, doc);
 	}
       }
+    */
+    connection_notify_status (con);
   }
 }
 

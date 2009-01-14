@@ -328,6 +328,9 @@ object call (const char* fun, object a1, object a2) {
 object call (const char* fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
+object call (const char* fun, object a1, object a2, object a3, object a4) {
+  return object (call_scheme (eval_scheme(fun), a1->lookup(),
+			      a2->lookup(), a3->lookup(), a4->lookup())); }
 object call (const char* fun, array<object> a) {
   return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
@@ -340,6 +343,9 @@ object call (string fun, object a1, object a2) {
 object call (string fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
+object call (string fun, object a1, object a2, object a3, object a4) {
+  return object (call_scheme (eval_scheme(fun), a1->lookup(),
+			      a2->lookup(), a3->lookup(), a4->lookup())); }
 object call (string fun, array<object> a) {
   return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
@@ -352,6 +358,9 @@ object call (object fun, object a1, object a2) {
 object call (object fun, object a1, object a2, object a3) {
   return object (call_scheme (fun->lookup(), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
+object call (object fun, object a1, object a2, object a3, object a4) {
+  return object (call_scheme (fun->lookup(), a1->lookup(),
+			      a2->lookup(), a3->lookup(), a4->lookup())); }
 object call (object fun, array<object> a) {
   return object (call_scheme (fun->lookup(), array_lookup(a))); }
 

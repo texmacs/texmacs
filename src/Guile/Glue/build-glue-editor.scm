@@ -254,7 +254,7 @@
   (session-remove-all-outputs session_remove_all_outputs (void))
   (session-remove-previous-output session_remove_previous_output (void))
   (session-split session_split (void))
-  (session-complete-try? session_complete_try (bool))
+  (session-complete-try? session_complete_try (bool tree))
   (connection-busy? busy_connection (bool))
   (connection-interrupt interrupt_connection (void))
   (connection-stop stop_connection (void))

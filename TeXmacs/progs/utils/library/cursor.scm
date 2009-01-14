@@ -55,14 +55,17 @@
 	(else (label-in-range? lab (cDr p) until))))
 
 (define (check-pattern p l)
-  (with t (path->tree (list-drop-right p (length l)))
-    (cond ((null? l) #t)
-	  ((and (symbol? (car l)) (== (tm-car t) (car l)))
-	   (check-pattern p (cdr l)))
-	  ((and (number? (car l))
-		(== (car l) (list-ref p (- (length p) (length l) 1))))
-	   (check-pattern p (cdr l)))
-	  (else #f))))
+  (or (null? l)
+      (with t (path->tree (list-drop-right p (length l)))
+	(cond ((and (symbol? (car l)) (== (tm-car t) (car l)))
+	       (check-pattern p (cdr l)))
+	      ((and (procedure? (car l)) ((car l) t))
+	       (check-pattern p (cdr l)))
+	      ((and (number? (car l))
+		    (== (car l) (list-ref p (- (length p) (length l) 1)))
+		    (> (length p) 1))
+	       (check-pattern p (cdr l)))
+	      (else #f)))))
 
 (define (innermost-pattern p l)
   (cond ((<= (length p) (length l)) #f)
@@ -73,12 +76,19 @@
   (with p (cursor-path)
     (fun)
     (let* ((q (cursor-path))
-	   (pp (innermost-pattern (cDr p) l))
-	   (qq (innermost-pattern (cDr q) l)))
-      (if (== pp qq) #f
-	  (begin
-	    (go-to p)
-	    #t)))))
+	   (pp (innermost-pattern p l))
+	   (qq (innermost-pattern q l)))
+      (if (!= pp qq) (go-to p)))))
+
+(define (go-to-next-inside-sub fun l)
+  (do ((p (cursor-path) (cursor-path))
+       (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
+      ((or (== p q) (innermost-pattern q l)) (noop))))
+
+(tm-define (go-to-next-inside fun . l)
+  (with p (cursor-path)
+    (go-to-next-inside-sub fun l)
+    (if (not (innermost-pattern (cursor-path) l)) (go-to p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for cursor movement

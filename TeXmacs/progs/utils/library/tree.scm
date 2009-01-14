@@ -280,6 +280,11 @@
   (with p (apply tree->path (cons t l))
     (if p (go-to p))))
 
+(tm-define (tree-cursor-at? t . l)
+  (:synopsis "Is the cursor at the position determined by @l inside @t?")
+  (with p (apply tree->path (cons t l))
+    (== (cursor-path) p)))
+
 (tm-define (tree-select t . l)
   (:synopsis "Select the tree @(tree-ref t . l)")
   (with t (apply tree-ref (cons t l))

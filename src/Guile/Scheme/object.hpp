@@ -152,16 +152,19 @@ object call (const char* fun);
 object call (const char* fun, object a1);
 object call (const char* fun, object a1, object a2);
 object call (const char* fun, object a1, object a2, object a3);
+object call (const char* fun, object a1, object a2, object a3, object a4);
 object call (const char* fun, array<object> a);
 object call (string fun);
 object call (string fun, object a1);
 object call (string fun, object a1, object a2);
 object call (string fun, object a1, object a2, object a3);
+object call (string fun, object a1, object a2, object a3, object a4);
 object call (string fun, array<object> a);
 object call (object fun);
 object call (object fun, object a1);
 object call (object fun, object a1, object a2);
 object call (object fun, object a1, object a2, object a3);
+object call (object fun, object a1, object a2, object a3, object a4);
 object call (object fun, array<object> a);
 
 #endif // defined OBJECT_H

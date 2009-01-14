@@ -51,7 +51,7 @@
 ;; In place asynchroneous plug-in evaluations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (script-eval-at where lan session in . opts)
+(tm-define (script-eval-at where lan session in . opts)
   (when (not (supports-scripts? lan))
     (with s (string-append "Error:#" lan "#is not a scripting language")
       (set-message s "Evaluate")))

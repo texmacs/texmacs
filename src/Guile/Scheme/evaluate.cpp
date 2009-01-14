@@ -209,6 +209,12 @@ call_scheme (SCM fun, SCM a1, SCM a2, SCM a3) {
 }
 
 SCM
+call_scheme (SCM fun, SCM a1, SCM a2, SCM a3, SCM a4) {
+  SCM a[]= { fun, a1, a2, a3, a4 }; arg_list args= { 4, a };
+  return TeXmacs_call_scm (&args);
+}
+
+SCM
 call_scheme (SCM fun, array<SCM> a) {
   const int n= N(a);
   STACK_NEW_ARRAY(scm, SCM, n+1);

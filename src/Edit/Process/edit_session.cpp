@@ -584,9 +584,8 @@ put_cursor (tree t, path p) {
 }
 
 bool
-edit_process_rep::session_complete_try () {
-  path p= search_upwards ("input");
-  if (is_nil (p)) return false;
+edit_process_rep::session_complete_try (tree tt) {
+  path p= reverse (obtain_ip (tt));
   tree st= subtree (et, p);
   if ((N(tp) <= N(p)) || (tp[N(p)] != 1)) return false;
   tree t= put_cursor (st[1], tail (tp, N(p)+1));

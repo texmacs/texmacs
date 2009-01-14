@@ -402,7 +402,7 @@ public:
   virtual void session_remove_all_outputs () = 0;
   virtual void session_remove_previous_output () = 0;
   virtual void session_split () = 0;
-  virtual bool session_complete_try () = 0;
+  virtual bool session_complete_try (tree t) = 0;
 
   virtual void generate_bibliography (string bib, string sty, string fname)= 0;
   virtual void generate_table_of_contents (string toc) = 0;

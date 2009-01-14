@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.0.7.1>
 
 <style|source>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -27,7 +26,13 @@
     </src-comment>
   </active*>
 
-  <assign|session|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-session>>|<merge|<value|prog-language>|-session>|generic-session>>|<value|prog-language>|<arg|body>>>>>
+  <assign|session|<\macro|lan|ses|body>
+    <\with|prog-language|<arg|lan>|prog-session|<arg|ses>>
+      <render-session|<arg|body>>
+    </with>
+  </macro>>
+
+  <assign|render-session|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-session>>|<merge|<value|prog-language>|-session>|generic-session>>|<value|prog-language>|<arg|body>>>>>
 
   <assign|generic-session|<\macro|name|body>
     <\padded-normal|1fn|1fn>
@@ -80,6 +85,9 @@
     </wide-normal>
   </macro>>
 
+  <assign|timing|<macro|s|<compound|small|<htab|5mm><with|color|dark
+  grey|<arg|s>>>>>
+
   <\active*>
     <\src-comment>
       Textual fields.
@@ -92,6 +100,48 @@
     <\wide-normal>
       <arg|body>
     </wide-normal>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Input-output fields
+    </src-comment>
+  </active*>
+
+  <assign|unfolded-io|<\macro|prompt|in|out>
+    <\surround||<right-flush>>
+      <\input|<action|<arg|prompt>|(mouse-fold)|<arg|in>>>
+        <arg|in>
+      </input>
+
+      <\output>
+        <arg|out>
+      </output>
+    </surround>
+  </macro>>
+
+  <assign|folded-io|<\macro|prompt|in|out>
+    <\input|<action|<arg|prompt>|(mouse-unfold)|<arg|in>>>
+      <arg|in>
+    </input>
+  </macro>>
+
+  <assign|unfolded-io-math|<\macro|prompt|in|out>
+    <\surround||<right-flush>>
+      <\input|<action|<arg|prompt>|(mouse-fold)|<arg|in>>>
+        <math|<arg|in>>
+      </input>
+
+      <\output>
+        <arg|out>
+      </output>
+    </surround>
+  </macro>>
+
+  <assign|folded-io-math|<\macro|prompt|in|out>
+    <input|<action|<arg|prompt>|(mouse-unfold)|<arg|prompt>>|<\math>
+      <arg|in>
+    </math>>
   </macro>>
 
   \;

@@ -1,10 +1,10 @@
 /* XPM */
-static char * tm_plugin_input_xpm[] = {
+static char * tm_plugin_output_xpm[] = {
 "17 17 4 1",
 " 	c None",
-"=	c #00000000FFFF",
-"o	c #000000000000",
-"O	c #999999999999",
+"=	c #000000000000",
+"o	c #00000000FFFF",
+"O	c #99999999FFFF",
 "                 ",
 " ==========      ",
 " ==========      ",

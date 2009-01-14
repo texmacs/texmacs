@@ -80,6 +80,7 @@
   (tree-load-inclusion load_inclusion (tree url))
   (tree-as-string var_as_string (string tree))
   (tree-extents tree_extents (tree content))
+  (tree-empty? is_empty (bool content))
 
   (tree-assign tree_assign (tree tree content))
   (tree-var-insert tree_insert (tree tree int content))
@@ -101,6 +102,8 @@
   (path-previous previous_valid (path content path))
   (path-next-word next_word (path content path))
   (path-previous-word previous_word (path content path))
+  (path-next-node next_node (path content path))
+  (path-previous-node previous_node (path content path))
   (path-next-tag next_tag (path content path scheme_tree))
   (path-previous-tag previous_tag (path content path scheme_tree))
   (path-next-argument next_argument (path content path))
