@@ -166,7 +166,7 @@
       (with u (tree-ref t :previous 0)
 	(if (url-exists? (url "$TEXMACS_STYLE_PATH" (string-append lan ".ts")))
 	    (init-add-package lan))
-	(connection-feed lan ses :start u t '())))))
+	(session-feed lan ses :start u t '())))))
 
 (define (io-process-input t)
   (if (tm-func? t 'folded-io)
@@ -182,7 +182,7 @@
     (when (session-output-timings?) (set! opts (cons :timings opts)))
     (when (io-math-context? t) (set! opts (cons :math-input opts)))
     (with u (or (io-next t #t) (io-create t p #t))
-      (connection-feed lan ses in out u opts)
+      (session-feed lan ses in out u opts)
       (tree-go-to u 1 :end))))
 
 (tm-define (kbd-return)
