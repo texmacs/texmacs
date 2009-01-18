@@ -110,7 +110,8 @@ concater_rep::typeset_compound (tree t, path ip) {
 	  i<m? t[i+d]: attach_dip (tree (UNINIT), decorate_right(ip));
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
-    if (is_decoration (ip)) typeset (attach_here (f[n], ip));
+    if (is_decoration (ip))
+      typeset (attach_here (f[n], ip));
     else {
       /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 0));
       typeset (attach_right (f[n], ip));

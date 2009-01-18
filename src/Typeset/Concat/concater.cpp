@@ -144,6 +144,7 @@ concater_rep::with_limits (int status) {
 
 void
 concater_rep::typeset (tree t, path ip) {
+  // cout << "Typeset " << t << "\n";
   // cout << "Typeset " << t << ", " << ip << ", " << obtain_ip (t) << "\n";
 
   /*
