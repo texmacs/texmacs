@@ -105,8 +105,7 @@ SET(TeXmacs_Base_SRCS
     ./Edit/Modify/edit_modify.cpp
     ./Edit/Modify/edit_table.cpp
     ./Edit/Modify/edit_text.cpp
-    ./Edit/Process/edit_aux.cpp
-    ./Edit/Process/edit_session.cpp
+    ./Edit/Process/edit_process.cpp
     ./Edit/Replace/edit_search.cpp
     ./Edit/Replace/edit_select.cpp
     ./Edit/Replace/edit_spell.cpp

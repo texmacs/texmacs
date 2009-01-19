@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : edit_aux.cpp
+* MODULE     : edit_process.cpp
 * DESCRIPTION: incorporate automatically generated data into text
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
