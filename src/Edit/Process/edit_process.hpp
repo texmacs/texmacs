@@ -14,26 +14,9 @@
 #include "editor.hpp"
 
 class edit_process_rep: virtual public editor_rep {
-protected:
-  bool   new_mutators;
-  bool   mutators_updated;
-  int    nr_mutators;
-  time_t next_mutate;
-  time_t mutator_time;
-  bool   math_input;
-  string message_l;
-  string message_r;
-  hashmap<tree,tree> last_prompt;
-
 public:
   edit_process_rep ();
   ~edit_process_rep ();
-
-  void process_mutators ();
-  path get_mutator_path ();
-  time_t get_mutator_time ();
-  void invalidate_mutators ();
-  void insert_mutator (tree body, string cmd);
 
   bool session_complete_try (tree t);
 

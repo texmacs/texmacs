@@ -24,8 +24,6 @@
   (paragraph-tree the_line (tree))
   (cursor-path the_path (path))
   (selection-tree selection_get (tree))
-  (mutator-path get_mutator_path (path))
-  (mutator-time get_mutator_time (int))
 
   ;; low-level modification routines
   (path->tree the_subtree (tree path))

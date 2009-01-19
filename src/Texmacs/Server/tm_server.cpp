@@ -305,10 +305,6 @@ tm_server_rep::interpose_handler () {
     tm_buffer buf= (tm_buffer) bufs[i];
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= (tm_view) buf->vws[j];
-      if (vw->win != NULL) vw->ed->process_mutators ();
-    }
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
       if (vw->win != NULL) vw->ed->apply_changes ();
     }
     for (j=0; j<N(buf->vws); j++) {

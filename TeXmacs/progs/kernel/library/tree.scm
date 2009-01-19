@@ -112,11 +112,3 @@
 (define-public-macro (with-action t . body)
   `(and-with ,t (action-tree)
      ,@body))
-
-(define-public (mutator-tree)
-  (with p (mutator-path)
-    (if (nnull? p) (path->tree p) #f)))
-
-(define-public-macro (with-mutator t . body)
-  `(with ,t (mutator-tree)
-     (if ,t (begin ,@body))))

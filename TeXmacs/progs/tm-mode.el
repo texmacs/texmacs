@@ -38,7 +38,7 @@
     with-result and-let* setup-append-if
     while for repeat when
     drd-group drd-table drd-dispatcher
-    with-cc with-aux with-mutator
+    with-cc with-aux
     with-action with-module with-cursor with-server
     dialogue-user widget-with
     aspect block-input button form

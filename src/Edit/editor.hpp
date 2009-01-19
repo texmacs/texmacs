@@ -371,12 +371,6 @@ public:
   virtual void temp_proof_fix () = 0;
 
   /* public routines from edit_process */
-  virtual void process_mutators () = 0;
-  virtual path get_mutator_path () = 0;
-  virtual time_t get_mutator_time () = 0;
-  virtual void invalidate_mutators () = 0;
-  virtual void insert_mutator (tree body, string cmd) = 0;
-
   virtual bool session_complete_try (tree t) = 0;
 
   virtual void generate_bibliography (string bib, string sty, string fname)= 0;

@@ -21,83 +21,8 @@
 * Constructors and destructors
 ******************************************************************************/
 
-edit_process_rep::edit_process_rep ():
-  new_mutators (false), mutators_updated (false),
-  nr_mutators (0), next_mutate (texmacs_time()), mutator_time (next_mutate),
-  math_input (false), message_l (""), message_r ("") {}
+edit_process_rep::edit_process_rep () {}
 edit_process_rep::~edit_process_rep () {}
-
-/******************************************************************************
-* Mutators
-******************************************************************************/
-
-#define MUTATE_FAST_INTERACTION 100
-#define MUTATE_SLOW_INTERACTION 500
-
-static path mutator_path;
-static string MUTATOR ("mutator");
-
-static int
-mutate (tree t, path ip) {
-  if (is_atomic (t)) return 0;
-  int i, sum=0;
-  if (is_compound (t, MUTATOR, 2) &&
-      (ip == obtain_ip (t)))
-    {
-      mutator_path= reverse (path (0, ip));
-      string s= as_string (t[1]); // eval_secure (s);
-      if (s != "")
-	if (as_bool (eval ("(secure? '" * s * ")"))) {
-	  (void) eval (s);
-	}
-      sum= 1;
-      mutator_path= path ();
-    }
-  for (i=0; i<N(t); i++)
-    sum += mutate (t[i], path (i, ip));
-  return sum;
-}
-
-void
-edit_process_rep::process_mutators () {
-  if (mutators_updated && (nr_mutators == 0)) return;
-  if (texmacs_time()-next_mutate < 0) return;
-  new_mutators= false;
-  mutators_updated= true;
-  mutator_time= texmacs_time ();
-  nr_mutators= mutate (subtree (et, rp), reverse (rp));
-  if (!mutators_updated) {
-    // cout << "Mutation occurred\n";
-    next_mutate= texmacs_time () + MUTATE_FAST_INTERACTION;
-  }
-  else {
-    // cout << "No mutations occurred\n";
-    next_mutate= texmacs_time () + MUTATE_SLOW_INTERACTION;
-  }
-}
-
-path
-edit_process_rep::get_mutator_path () {
-  return mutator_path;
-}
-
-time_t
-edit_process_rep::get_mutator_time () {
-  return mutator_time;
-}
-
-void
-edit_process_rep::invalidate_mutators () {
-  mutators_updated= false;
-  if (new_mutators) next_mutate= texmacs_time ()+ MUTATE_FAST_INTERACTION;
-  else next_mutate= texmacs_time ()+ MUTATE_SLOW_INTERACTION;
-}
-
-void
-edit_process_rep::insert_mutator (tree body, string cmd) {
-  new_mutators= true;
-  insert_tree (compound ("mutator", body, cmd), path (0, end (body)));
-}
 
 /******************************************************************************
 * Tab completion

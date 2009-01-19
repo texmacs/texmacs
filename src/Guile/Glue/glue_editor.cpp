@@ -66,24 +66,6 @@ tmg_selection_tree () {
 }
 
 SCM
-tmg_mutator_path () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->get_mutator_path ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_mutator_time () {
-  // SCM_DEFER_INTS;
-  int out= get_server()->get_editor()->get_mutator_time ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_path_2tree (SCM arg1) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "path->tree");
 
@@ -2572,8 +2554,6 @@ initialize_glue_editor () {
   scm_new_procedure ("paragraph-tree", (FN) tmg_paragraph_tree, 0, 0, 0);
   scm_new_procedure ("cursor-path", (FN) tmg_cursor_path, 0, 0, 0);
   scm_new_procedure ("selection-tree", (FN) tmg_selection_tree, 0, 0, 0);
-  scm_new_procedure ("mutator-path", (FN) tmg_mutator_path, 0, 0, 0);
-  scm_new_procedure ("mutator-time", (FN) tmg_mutator_time, 0, 0, 0);
   scm_new_procedure ("path->tree", (FN) tmg_path_2tree, 1, 0, 0);
   scm_new_procedure ("path-correct", (FN) tmg_path_correct, 1, 0, 0);
   scm_new_procedure ("path-insert-with", (FN) tmg_path_insert_with, 3, 0, 0);
