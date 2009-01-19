@@ -73,7 +73,7 @@
 
 (menu-bind session-menu
   (-> "Input options" (link session-input-menu))
-  (-> "output options" (link session-output-menu))
+  (-> "Output options" (link session-output-menu))
   (-> "Field" (link session-field-menu))
   (-> "Session" (link session-session-menu))
   ---
