@@ -52,24 +52,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (script-eval-at where lan session in . opts)
-  (when (not (supports-scripts? lan))
-    (with s (string-append "Error:#" lan "#is not a scripting language")
-      (set-message s "Evaluate")))
-  (when (supports-scripts? lan)
-    (tree-set! where '(script-busy))
-    (with ptr (tree->tree-pointer where)
-      (dialogue
-	(with r (apply plugin-async-eval (cons* lan session in opts))
-	  (with check (tree-pointer->tree ptr)
-	    (tree-pointer-detach ptr)
-	    (when (== check where)
-	      (with-cursor (tree->path check :end)
-		(tree-select where)
-		(clipboard-cut "dummy")
-		(if (and (in-var-math?) (tm-func? r 'math 1)) (set! r (cadr r)))
-		(if (in? :declaration opts)
-		    (insert in)
-		    (insert r))))))))))
+  (script-feed lan session in where opts))
 
 (tm-define (kbd-return)
   (:inside script-eval)
@@ -194,11 +177,9 @@
 
 (define (script-background-eval in . opts)
   (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session")))
+	 (ses (get-env "prog-session")))
     (when (supports-scripts? lan)
-      (dialogue
-	(with r (apply plugin-async-eval (cons* lan session in opts))
-	  (noop))))))
+      (silent-feed* lan ses in noop opts))))
 
 (tm-define (widget->script cas-var id)
   (with cmd `(concat ,cas-var ":" ,(tree->stree (widget-ref id)))
@@ -207,13 +188,13 @@
 
 (define (script-widget-eval id in . opts)
   (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session"))
+	 (ses (get-env "prog-session"))
 	 (prefix widget-prefix))
     (when (supports-scripts? lan)
-      (dialogue
-	(with r (apply plugin-async-eval (cons* lan session in opts))
-	  (widget-with prefix
-	    (widget-set! id r)))))))
+      (with return (lambda (r)
+		     (widget-with prefix
+		       (widget-set! id r)))
+	(silent-feed* lan ses in return opts)))))
 
 (tm-define (script->widget id cas-expr)
   (script-widget-eval id cas-expr :math-input :simplify-output))

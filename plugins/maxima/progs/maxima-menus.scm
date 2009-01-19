@@ -33,7 +33,7 @@
 	((func? t 'with 1)
 	 (maxima-output-simplify (cAr t)))
 	((func? t 'with)
-	 (append (cDr t) (maxima-output-simplify (cAr t))))
+	 (rcons (cDr t) (maxima-output-simplify (cAr t))))
 	((func? t 'concat)
 	 (apply tmconcat (map maxima-output-simplify (cdr t))))
 	(else (plugin-output-std-simplify "maxima" t))))

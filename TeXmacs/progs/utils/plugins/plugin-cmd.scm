@@ -385,7 +385,7 @@
 		   (var-connection-start lan ses #f)
 		   (connection-next lan ses)))
 	      ((== status 0)
-	       (with p (pending-encode :start (tree "") (tree "") '())
+	       (with p (silent-encode :start noop '())
 		 (pending-set lan ses (cons p l))
 		 (connection-do lan ses)))
 	      (#t
@@ -441,33 +441,33 @@
 ;; Sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (pending-encode in out next opts)
+(define (session-encode in out next opts)
   (list (list session-do session-notify session-next session-cancel)
         (if (tm? in) (tm->stree in) in)
 	(tree->tree-pointer out)
 	(tree->tree-pointer next)
 	opts))
 
-(define (pending-decode l)
+(define (session-decode l)
   (list (second l)
 	(tree-pointer->tree (third l))
 	(tree-pointer->tree (fourth l))
 	(fifth l)))
 
-(define (pending-detach l)
+(define (session-detach l)
   (tree-pointer-detach (third l))
   (tree-pointer-detach (fourth l)))
 
 (tm-define (session-feed lan ses in out next opts)
   (set! in (plugin-preprocess lan ses in opts))
   (tree-assign! out '(document (script-busy)))
-  (with x (pending-encode in out next opts)
+  (with x (session-encode in out next opts)
     (apply connection-feed `(,lan ,ses ,@(car x) ,(cdr x)))))
 
 (tm-define (session-do lan ses)
   (with l (pending-ref lan ses)
-    (with (in out next opts) (pending-decode (car l))
-      ;;(display* "Send " lan ", " ses ", " in "\n")
+    (with (in out next opts) (session-decode (car l))
+      ;;(display* "Session do " lan ", " ses ", " in "\n")
       (if (tree-empty? in)
 	  (connection-next lan ses)
 	  (begin
@@ -476,8 +476,9 @@
 	    (ahash-set! connection-starts (list lan ses) (texmacs-time)))))))
 
 (tm-define (session-next lan ses)
+  ;;(display* "Session next " lan ", " ses "\n")
   (with l (pending-ref lan ses)
-    (with (in out next opts) (pending-decode (car l))
+    (with (in out next opts) (session-decode (car l))
       (when (and (tm-func? out 'document)
 		 (tm-func? (tree-ref out :last) 'script-busy))
 	(let* ((t1 (ahash-ref connection-starts (list lan ses)))
@@ -492,7 +493,7 @@
 	      (tree-remove! out (- (tree-arity out) 1) 1))))
       (when (tree-empty? out)
 	(tree-set! out '(document)))
-      (pending-detach (car l)))))	
+      (session-detach (car l)))))	
 
 (define (var-tree-children t)
   (with r (tree-children t)
@@ -519,9 +520,9 @@
       (session-output (tree-ref t i 0) u))))
 
 (tm-define (session-notify lan ses ch t)
-  ;;(display* "Notify " lan ", " ses ", " ch ", " t "\n")
+  ;;(display* "Session notify " lan ", " ses ", " ch ", " t "\n")
   (with l (pending-ref lan ses)
-    (with (in out next opts) (pending-decode (car l))
+    (with (in out next opts) (session-decode (car l))
       (cond ((== ch "output")
 	     (session-output out t))
 	    ((== ch "error")
@@ -533,10 +534,106 @@
 	     (tree-set! next 1 t))))))
 
 (tm-define (session-cancel lan ses dead?)
+  ;;(display* "Session cancel " lan ", " ses ", " dead? "\n")
   (with l (pending-ref lan ses)
-    (with (in out next opts) (pending-decode (car l))
+    (with (in out next opts) (session-decode (car l))
       (when (and (tm-func? out 'document)
 		 (tm-func? (tree-ref out :last) 'script-busy))
 	(tree-assign (tree-ref out :last)
 		     (if dead? '(script-dead) '(script-interrupted))))
-	(pending-detach (car l)))))
+	(session-detach (car l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Silent evaluation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (silent-encode in return opts)
+  (list (list silent-do silent-notify silent-next silent-cancel)
+        (if (tm? in) (tm->stree in) in)
+	(tree 'document)
+	(tree 'document)
+	return
+	opts))
+
+(define (silent-decode l)
+  (list (second l)
+	(third l)
+	(fourth l)
+	(fifth l)
+	(sixth l)))
+
+(tm-define (silent-feed lan ses in return opts)
+  (set! in (plugin-preprocess lan ses in opts))
+  (with ret (lambda (x)
+	      (return (if (npair? x) x
+			  (cons (plugin-postprocess lan ses (car x) opts)
+				(plugin-postprocess lan ses (cdr x) opts)))))
+    (with x (silent-encode in ret opts)
+      (apply connection-feed `(,lan ,ses ,@(car x) ,(cdr x))))))
+
+(tm-define (silent-feed* lan ses in return opts)
+  (with ret (lambda (x)
+	      (return (cond ((== x :dead) '(script-dead))
+			    ((== x :interrupted) '(script-interrupted))
+			    ((!= (tm-arity (cdr x)) 0)
+			     `(with "color" "red" ,(cdr x)))
+			    (else (car x)))))
+    (silent-feed lan ses in ret opts)))
+
+(tm-define (silent-do lan ses)
+  (with l (pending-ref lan ses)
+    (with (in out err return opts) (silent-decode (car l))
+      ;;(display* "Silent do " lan ", " ses ", " in "\n")
+      (if (tree-empty? in)
+	  (connection-next lan ses)
+	  (var-connection-write lan ses in)))))
+
+(tm-define (silent-next lan ses)
+  ;;(display* "Silent next " lan ", " ses "\n")
+  (with l (pending-ref lan ses)
+    (with (in out err return opts) (silent-decode (car l))
+      (return (cons (tm->stree out) (tm->stree err))))))
+
+(define (silent-output t u)
+  (when (and (tm-func? t 'document) (tm-func? u 'document))
+    (tree-insert! t (tree-arity t) (var-tree-children u))))
+
+(tm-define (silent-notify lan ses ch t)
+  ;;(display* "Silent notify " lan ", " ses ", " ch ", " t "\n")
+  (with l (pending-ref lan ses)
+    (with (in out err return opts) (silent-decode (car l))
+      (cond ((== ch "output")
+	     (silent-output out t))
+	    ((== ch "error")
+	     (silent-output err t))))))
+
+(tm-define (silent-cancel lan ses dead?)
+  ;;(display* "Silent cancel " lan ", " ses ", " dead? "\n")
+  (with l (pending-ref lan ses)
+    (with (in out err return opts) (silent-decode (car l))
+      (return (if dead? :dead :interrupted)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scripts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (script-feed lan ses in out opts)
+  (when (not (supports-scripts? lan))
+    (with s (string-append "Error:#" lan "#is not a scripting language")
+      (set-message s "Evaluate")))
+  (when (supports-scripts? lan)
+    (tree-set! out '(script-busy))
+    (with ptr (tree->tree-pointer out)
+      (with ret (lambda (r)
+		  (with check (tree-pointer->tree ptr)
+		    (tree-pointer-detach ptr)
+		    (when (== check out)
+		      (with-cursor (tree->path check :end)
+			(tree-select out)
+			(clipboard-cut "dummy")
+			(if (and (in-var-math?) (tm-func? r 'math 1))
+			    (set! r (cadr r)))
+			(if (in? :declaration opts)
+			    (insert in)
+			    (insert r))))))
+	(silent-feed* lan ses in ret opts)))))
