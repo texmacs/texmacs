@@ -79,7 +79,7 @@
   ---
   (-> "Evaluate" (link session-evaluate-menu))
   ("Interrupt execution" (plugin-interrupt))
-  ("Close session" (connection-stop)))
+  ("Close session" (plugin-stop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sessions icons
@@ -101,7 +101,7 @@
       ((balloon (icon "tm_stop.xpm") "Interrupt execution")
        (plugin-interrupt))
       ((balloon (icon "tm_clsession.xpm") "Close session")
-       (connection-stop)))
+       (plugin-stop)))
   (if (in-math?)
       |))
 

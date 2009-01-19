@@ -3333,20 +3333,33 @@ tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_connection_read (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-read");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-read");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "connection-read");
+tmg_connection_interrupt (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-interrupt");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-interrupt");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= connection_read (in1, in2, in3);
+  connection_interrupt (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_connection_stop (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-stop");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-stop");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  connection_stop (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -3806,7 +3819,8 @@ initialize_glue_basic () {
   scm_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
   scm_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
   scm_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
-  scm_new_procedure ("connection-read", (FN) tmg_connection_read, 3, 0, 0);
+  scm_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 2, 0, 0);
+  scm_new_procedure ("connection-stop", (FN) tmg_connection_stop, 2, 0, 0);
   scm_new_procedure ("widget-hmenu", (FN) tmg_widget_hmenu, 1, 0, 0);
   scm_new_procedure ("widget-vmenu", (FN) tmg_widget_vmenu, 1, 0, 0);
   scm_new_procedure ("widget-tmenu", (FN) tmg_widget_tmenu, 2, 0, 0);

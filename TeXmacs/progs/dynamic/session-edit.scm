@@ -75,6 +75,108 @@
   (set! session-output-timings (not session-output-timings)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Low-level evaluation management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (session-encode in out next opts)
+  (list (list session-do session-notify session-next session-cancel)
+        (if (tm? in) (tm->stree in) in)
+	(tree->tree-pointer out)
+	(tree->tree-pointer next)
+	opts))
+
+(define (session-decode l)
+  (list (second l)
+	(tree-pointer->tree (third l))
+	(tree-pointer->tree (fourth l))
+	(fifth l)))
+
+(define (session-detach l)
+  (tree-pointer-detach (third l))
+  (tree-pointer-detach (fourth l)))
+
+(tm-define (session-feed lan ses in out next opts)
+  (set! in (plugin-preprocess lan ses in opts))
+  (tree-assign! out '(document (script-busy)))
+  (with x (session-encode in out next opts)
+    (apply plugin-feed `(,lan ,ses ,@(car x) ,(cdr x)))))
+
+(tm-define (session-do lan ses)
+  (with l (pending-ref lan ses)
+    (with (in out next opts) (session-decode (car l))
+      ;;(display* "Session do " lan ", " ses ", " in "\n")
+      (if (tree-empty? in)
+	  (plugin-next lan ses)
+	  (begin
+	    (plugin-write lan ses in)
+	    (tree-set out :up 0 (plugin-prompt lan ses)))))))
+
+(tm-define (session-next lan ses)
+  ;;(display* "Session next " lan ", " ses "\n")
+  (with l (pending-ref lan ses)
+    (with (in out next opts) (session-decode (car l))
+      (when (and (tm-func? out 'document)
+		 (tm-func? (tree-ref out :last) 'script-busy))
+	(let* ((dt (plugin-timing lan ses))
+	       (ts (if (< dt 1000)
+		       (string-append (number->string dt) " msec")
+		       (string-append (number->string (/ dt 1000.0)) " sec"))))
+	  (if (and (in? :timings opts) (>= dt 1))
+	      (tree-set (tree-ref out :last) `(timing ,ts))
+	      (tree-remove! out (- (tree-arity out) 1) 1))))
+      (when (tree-empty? out)
+	(tree-set! out '(document)))
+      (session-detach (car l)))))
+
+(define (var-tree-children t)
+  (with r (tree-children t)
+    (if (and (nnull? r) (tree-empty? (cAr r))) (cDr r) r)))
+
+(define (session-output t u)
+  (when (tm-func? t 'document)
+    (with i (tree-arity t)
+      (if (and (> i 0) (tm-func? (tree-ref t (- i 1)) 'script-busy))
+	  (set! i (- i 1)))
+      (if (and (> i 0) (tm-func? (tree-ref t (- i 1)) 'errput))
+	  (set! i (- i 1)))
+      (if (tm-func? u 'document)
+	  (tree-insert! t i (var-tree-children u))))))
+
+(define (session-errput t u)
+  (when (tm-func? t 'document)
+    (with i (tree-arity t)
+      (if (and (> i 0) (tm-func? (tree-ref t (- i 1)) 'script-busy))
+	  (set! i (- i 1)))
+      (if (and (> i 0) (tm-func? (tree-ref t (- i 1)) 'errput))
+	  (set! i (- i 1))
+	  (tree-insert! t i '((errput (document)))))
+      (session-output (tree-ref t i 0) u))))
+
+(tm-define (session-notify lan ses ch t)
+  ;;(display* "Session notify " lan ", " ses ", " ch ", " t "\n")
+  (with l (pending-ref lan ses)
+    (with (in out next opts) (session-decode (car l))
+      (cond ((== ch "output")
+	     (session-output out t))
+	    ((== ch "error")
+	     (session-errput out t))
+	    ((== ch "prompt")
+	     (if (and (== (length l) 1) (tree-empty? (tree-ref next 1)))
+		 (tree-set! next 0 (tree-copy t))))
+	    ((and (== ch "input") (null? (cdr l)))
+	     (tree-set! next 1 t))))))
+
+(tm-define (session-cancel lan ses dead?)
+  ;;(display* "Session cancel " lan ", " ses ", " dead? "\n")
+  (with l (pending-ref lan ses)
+    (with (in out next opts) (session-decode (car l))
+      (when (and (tm-func? out 'document)
+		 (tm-func? (tree-ref out :last) 'script-busy))
+	(tree-assign (tree-ref out :last)
+		     (if dead? '(script-dead) '(script-interrupted))))
+      (session-detach (car l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Session contexts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

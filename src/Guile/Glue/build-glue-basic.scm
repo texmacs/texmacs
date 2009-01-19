@@ -289,7 +289,8 @@
   (connection-eval connection_eval (tree string string content))
   (connection-cmd connection_cmd (tree string string string))
   (connection-write connection_write (void string string content))
-  (connection-read connection_read (tree string string string))
+  (connection-interrupt connection_interrupt (void string string))
+  (connection-stop connection_stop (void string string))
 
   ;; widgets
   (widget-hmenu horizontal_menu (widget array_widget))
