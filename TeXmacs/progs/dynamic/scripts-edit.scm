@@ -51,6 +51,27 @@
 ;; In place asynchroneous plug-in evaluations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (script-feed lan ses in out opts)
+  (when (not (supports-scripts? lan))
+    (with s (string-append "Error:#" lan "#is not a scripting language")
+      (set-message s "Evaluate")))
+  (when (supports-scripts? lan)
+    (tree-set! out '(script-busy))
+    (with ptr (tree->tree-pointer out)
+      (with ret (lambda (r)
+		  (with check (tree-pointer->tree ptr)
+		    (tree-pointer-detach ptr)
+		    (when (== check out)
+		      (with-cursor (tree->path check :end)
+			(tree-select out)
+			(clipboard-cut "dummy")
+			(if (and (in-var-math?) (tm-func? r 'math 1))
+			    (set! r (cadr r)))
+			(if (in? :declaration opts)
+			    (insert in)
+			    (insert r))))))
+	(silent-feed* lan ses in ret opts)))))
+
 (tm-define (script-eval-at where lan session in . opts)
   (script-feed lan session in where opts))
 

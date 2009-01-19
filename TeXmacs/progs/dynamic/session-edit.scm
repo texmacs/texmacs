@@ -95,13 +95,7 @@
   (tree-pointer-detach (third l))
   (tree-pointer-detach (fourth l)))
 
-(tm-define (session-feed lan ses in out next opts)
-  (set! in (plugin-preprocess lan ses in opts))
-  (tree-assign! out '(document (script-busy)))
-  (with x (session-encode in out next opts)
-    (apply plugin-feed `(,lan ,ses ,@(car x) ,(cdr x)))))
-
-(tm-define (session-do lan ses)
+(define (session-do lan ses)
   (with l (pending-ref lan ses)
     (with (in out next opts) (session-decode (car l))
       ;;(display* "Session do " lan ", " ses ", " in "\n")
@@ -111,7 +105,7 @@
 	    (plugin-write lan ses in)
 	    (tree-set out :up 0 (plugin-prompt lan ses)))))))
 
-(tm-define (session-next lan ses)
+(define (session-next lan ses)
   ;;(display* "Session next " lan ", " ses "\n")
   (with l (pending-ref lan ses)
     (with (in out next opts) (session-decode (car l))
@@ -152,7 +146,7 @@
 	  (tree-insert! t i '((errput (document)))))
       (session-output (tree-ref t i 0) u))))
 
-(tm-define (session-notify lan ses ch t)
+(define (session-notify lan ses ch t)
   ;;(display* "Session notify " lan ", " ses ", " ch ", " t "\n")
   (with l (pending-ref lan ses)
     (with (in out next opts) (session-decode (car l))
@@ -166,7 +160,7 @@
 	    ((and (== ch "input") (null? (cdr l)))
 	     (tree-set! next 1 t))))))
 
-(tm-define (session-cancel lan ses dead?)
+(define (session-cancel lan ses dead?)
   ;;(display* "Session cancel " lan ", " ses ", " dead? "\n")
   (with l (pending-ref lan ses)
     (with (in out next opts) (session-decode (car l))
@@ -175,6 +169,12 @@
 	(tree-assign (tree-ref out :last)
 		     (if dead? '(script-dead) '(script-interrupted))))
       (session-detach (car l)))))
+
+(tm-define (session-feed lan ses in out next opts)
+  (set! in (plugin-preprocess lan ses in opts))
+  (tree-assign! out '(document (script-busy)))
+  (with x (session-encode in out next opts)
+    (apply plugin-feed `(,lan ,ses ,@(car x) ,(cdr x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Session contexts
