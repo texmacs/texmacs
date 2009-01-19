@@ -175,20 +175,15 @@ listen_to_connections () {
       connection_notify (con, "output", con->tm_in->get ("output"));
       connection_notify (con, "prompt", con->tm_in->get ("prompt"));
       connection_notify (con, "input", con->tm_in->get ("input"));
-    }
-    /*
-    if ((con->status == WAITING_FOR_INPUT) ||
-	(con->status == WAITING_FOR_OUTPUT))
-      {
-	tree t= connection_handlers (con->name);
-	int i, n= N(t);
-	if (n>0) con->read (LINK_ERR);
-	for (i=0; i<n; i++) {
-	  tree doc= con->tm_err->get (t[i][0]->label);
-	  if (doc != "") call (t[i][1]->label, doc);
-	}
+      tree t= connection_handlers (con->name);
+      int i, n= N(t);
+      for (i=0; i<n; i++) {
+	tree doc= con->tm_in->get (t[i][0]->label);
+	if (doc != "") call (t[i][1]->label, doc);
+	doc= con->tm_err->get (t[i][0]->label);
+	if (doc != "") call (t[i][1]->label, doc);
       }
-    */
+    }
     connection_notify_status (con);
   }
 }
@@ -221,7 +216,7 @@ connection_handlers (string name) {
 
 string
 connection_start (string name, string session, bool again) {
-  // cout << "Start " << name << ", " << session << ", " << again << "\n";
+  // cout << "Start " << name << ", " << session << "\n";
   if (!connection_declared (name))
     return "Error: connection " * name * " has not been declared";
 

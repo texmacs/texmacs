@@ -3237,16 +3237,18 @@ tmg_enter_secure_mode () {
 }
 
 SCM
-tmg_connection_declaredP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
+tmg_connection_start (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-start");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-start");
 
   string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  bool out= connection_declared (in1);
+  string out= connection_start (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return bool_to_scm (out);
+  return string_to_scm (out);
 }
 
 SCM
@@ -3265,37 +3267,20 @@ tmg_connection_status (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_connection_start (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-start");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-start");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "connection-start");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  bool in3= scm_to_bool (arg3);
-
-  // SCM_DEFER_INTS;
-  string out= connection_start (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_connection_eval (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-eval");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-eval");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-eval");
+tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-write");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
   content in3= scm_to_content (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= connection_eval (in1, in2, in3);
+  connection_write (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -3316,20 +3301,20 @@ tmg_connection_cmd (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-write");
+tmg_connection_eval (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-eval");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-eval");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-eval");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
   content in3= scm_to_content (arg3);
 
   // SCM_DEFER_INTS;
-  connection_write (in1, in2, in3);
+  tree out= connection_eval (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return tree_to_scm (out);
 }
 
 SCM
@@ -3813,12 +3798,11 @@ initialize_glue_basic () {
   scm_new_procedure ("client-read", (FN) tmg_client_read, 0, 0, 0);
   scm_new_procedure ("client-write", (FN) tmg_client_write, 1, 0, 0);
   scm_new_procedure ("enter-secure-mode", (FN) tmg_enter_secure_mode, 0, 0, 0);
-  scm_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
+  scm_new_procedure ("connection-start", (FN) tmg_connection_start, 2, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
-  scm_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);
-  scm_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
-  scm_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
   scm_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
+  scm_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
+  scm_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
   scm_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 2, 0, 0);
   scm_new_procedure ("connection-stop", (FN) tmg_connection_stop, 2, 0, 0);
   scm_new_procedure ("widget-hmenu", (FN) tmg_widget_hmenu, 1, 0, 0);

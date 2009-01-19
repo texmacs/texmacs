@@ -283,12 +283,11 @@
   (enter-secure-mode enter_secure_mode (void))
 
   ;; connections to extern systems
-  (connection-declared? connection_declared (bool string))
+  (connection-start connection_start (string string string))
   (connection-status connection_status (int string string))
-  (connection-start connection_start (string string string bool))
-  (connection-eval connection_eval (tree string string content))
-  (connection-cmd connection_cmd (tree string string string))
   (connection-write connection_write (void string string content))
+  (connection-cmd connection_cmd (tree string string string))
+  (connection-eval connection_eval (tree string string content))
   (connection-interrupt connection_interrupt (void string string))
   (connection-stop connection_stop (void string string))
 

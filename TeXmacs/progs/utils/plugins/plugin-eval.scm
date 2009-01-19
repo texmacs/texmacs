@@ -79,9 +79,9 @@
       (connection-status lan ses)
       2))
 
-(define (plugin-start lan ses again?)
+(define (plugin-start lan ses)
   (if (!= lan "scheme")
-      (connection-start lan ses again?)))
+      (connection-start lan ses)))
 
 (tm-define (plugin-write lan ses t)
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
@@ -101,7 +101,7 @@
       (with status (plugin-status lan ses)
 	(cond ((and (> (length (car l)) 2) (== (second (car l)) :start))
 	       (if (== status 0)
-		   (plugin-start lan ses #f)
+		   (plugin-start lan ses)
 		   (plugin-next lan ses)))
 	      ((== status 0)
 	       (with p (silent-encode :start noop '())
