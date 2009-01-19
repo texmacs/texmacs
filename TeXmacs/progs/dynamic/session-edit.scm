@@ -164,7 +164,7 @@
 (tm-define (make-session lan ses)
   (let* ((ban `(output (document "")))
 	 (l (if (session-math-input?) 'folded-io-math 'folded-io))
-	 (p (connection-prompt lan ses))
+	 (p (plugin-prompt lan ses))
 	 (in `(,l (document ,p) (document "") (document)))
 	 (s `(session ,lan ,ses (document ,ban ,in))))
     (insert-go-to s '(2 1 1 0 0))
@@ -181,7 +181,7 @@
       (tree-assign-node! t 'unfolded-io-math))
   (let* ((lan (get-env "prog-language"))
 	 (ses (get-env "prog-session"))
-	 (p (connection-prompt lan ses))
+	 (p (plugin-prompt lan ses))
 	 (in (tree->stree (tree-ref t 1)))
 	 (out (tree-ref t 2))
 	 (opts '()))
@@ -370,7 +370,7 @@
   (with-innermost t input-context?
     (let* ((lan (get-env "prog-language"))
 	   (ses (get-env "prog-session"))
-	   (p (connection-prompt lan ses)))
+	   (p (plugin-prompt lan ses)))
       (tree-go-to (io-create t p forwards?) 1 :end))))
 
 (tm-define (io-insert-text forward?)

@@ -78,7 +78,7 @@
   (-> "Session" (link session-session-menu))
   ---
   (-> "Evaluate" (link session-evaluate-menu))
-  ("Interrupt execution" (connection-break))
+  ("Interrupt execution" (plugin-interrupt))
   ("Close session" (connection-stop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -99,7 +99,7 @@
       (link session-evaluate-menu))
   (if (!= (get-env "prog-language") "scheme")
       ((balloon (icon "tm_stop.xpm") "Interrupt execution")
-       (connection-break))
+       (plugin-interrupt))
       ((balloon (icon "tm_clsession.xpm") "Close session")
        (connection-stop)))
   (if (in-math?)

@@ -142,7 +142,7 @@ connection_rep::interrupt () {
 void
 connection_notify (connection con, string ch, tree t) {
   if (t == "") return;
-  call ("connection-notify",
+  call ("plugin-notify",
 	object (con->name),
 	object (con->session),
 	object (ch),
@@ -154,7 +154,7 @@ connection_notify_status (connection con) {
   int status=
     (con->status == CONNECTION_DYING? WAITING_FOR_OUTPUT: con->status);
   if (status == con->prev_status) return;
-  call ("connection-notify-status",
+  call ("plugin-notify-status",
 	object (con->name),
 	object (con->session),
 	object (status));
