@@ -114,7 +114,7 @@
 
   <assign|unfolded-io|<\macro|prompt|in|out>
     <\surround||<right-flush>>
-      <\input|<action|<arg|prompt>|(mouse-fold)|<arg|in>>>
+      <\input|<with|locus-color|preserve|<action|<arg|prompt>|(mouse-fold)|<arg|in>>>>
         <arg|in>
       </input>
 
@@ -125,7 +125,7 @@
   </macro>>
 
   <assign|folded-io|<\macro|prompt|in|out>
-    <\input|<action|<arg|prompt>|(mouse-unfold)|<arg|in>>>
+    <\input|<with|locus-color|preserve|<action|<arg|prompt>|(mouse-unfold)|<arg|in>>>>
       <arg|in>
     </input>
   </macro>>
