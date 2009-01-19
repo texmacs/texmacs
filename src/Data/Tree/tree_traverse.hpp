@@ -24,6 +24,8 @@ path next_node (tree t, path p);
 path previous_node (tree t, path p);
 path next_tag (tree t, path p, scheme_tree labs);
 path previous_tag (tree t, path p, scheme_tree labs);
+path next_tag_same_argument (tree t, path p, scheme_tree labs);
+path previous_tag_same_argument (tree t, path p, scheme_tree labs);
 path next_argument (tree t, path p);
 path previous_argument (tree t, path p);
 

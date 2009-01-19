@@ -84,9 +84,10 @@
 	   (tm-func? (tree-ref t :up) 'unfolded)
 	   (== (tree-index t) 1))))
 
+(tm-define io-tags '(unfolded-io folded-io unfolded-io-math folded-io-math))
+
 (tm-define (io-context? t)
-  (and (tree-in? t '(unfolded-io folded-io
-		     unfolded-io-math folded-io-math))
+  (and (tree-in? t io-tags)
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (io-folded-context? t)
@@ -239,18 +240,13 @@
   (with p (cursor-path)
     (go-to-remain-inside go-up io-context? 1)
     (when (== (cursor-path) p)
-      (with-innermost t io-context?
-	(tree-go-to t 1 :start)
-	(go-to-next-inside go-to-previous-node io-context? 1)))))
+      (go-to-previous-tag-same-argument io-tags))))
 
 (define (io-go-down)
   (with p (cursor-path)
     (go-to-remain-inside go-down io-context? 1)
     (when (== (cursor-path) p)
-      (with-innermost t io-context?
-	(tree-go-to t 1 :end)
-	(go-to-next-inside go-to-next-node io-context? 1)
-	(go-end-line)))))
+      (go-to-next-tag-same-argument io-tags))))
 
 (tm-define (kbd-up)
   (:context io-context?)

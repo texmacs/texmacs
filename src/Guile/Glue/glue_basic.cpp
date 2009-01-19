@@ -1138,6 +1138,40 @@ tmg_path_previous_tag (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_path_next_tag_same_argument (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-next-tag-same-argument");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-next-tag-same-argument");
+  SCM_ASSERT_SCHEME_TREE (arg3, SCM_ARG3, "path-next-tag-same-argument");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+  scheme_tree in3= scm_to_scheme_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  path out= next_tag_same_argument (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_previous_tag_same_argument (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-previous-tag-same-argument");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-previous-tag-same-argument");
+  SCM_ASSERT_SCHEME_TREE (arg3, SCM_ARG3, "path-previous-tag-same-argument");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+  scheme_tree in3= scm_to_scheme_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  path out= previous_tag_same_argument (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_path_next_argument (SCM arg1, SCM arg2) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-next-argument");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-next-argument");
@@ -3611,6 +3645,8 @@ initialize_glue_basic () {
   scm_new_procedure ("path-previous-node", (FN) tmg_path_previous_node, 2, 0, 0);
   scm_new_procedure ("path-next-tag", (FN) tmg_path_next_tag, 3, 0, 0);
   scm_new_procedure ("path-previous-tag", (FN) tmg_path_previous_tag, 3, 0, 0);
+  scm_new_procedure ("path-next-tag-same-argument", (FN) tmg_path_next_tag_same_argument, 3, 0, 0);
+  scm_new_procedure ("path-previous-tag-same-argument", (FN) tmg_path_previous_tag_same_argument, 3, 0, 0);
   scm_new_procedure ("path-next-argument", (FN) tmg_path_next_argument, 2, 0, 0);
   scm_new_procedure ("path-previous-argument", (FN) tmg_path_previous_argument, 2, 0, 0);
   scm_new_procedure ("tree->ids", (FN) tmg_tree_2ids, 1, 0, 0);

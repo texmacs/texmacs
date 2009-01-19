@@ -208,23 +208,36 @@ path previous_node (tree t, path p) {
 ******************************************************************************/
 
 static bool
-inside_same_argument (tree t, path p, path q, hashset<int> labs) {
+distinct_tag_or_argument (tree t, path p, path q, hashset<int> labs) {
   path c= common (p, q);
   path r= path_up (q);
   while (!is_nil (r) && (r != c)) {
     r= path_up (r);
-    if (labs->contains ((int) L (subtree (t, r)))) return false;
+    if (labs->contains ((int) L (subtree (t, r)))) return true;
   }
-  return true;
+  return false;
+}
+
+static int
+tag_index (tree t, path p, hashset<int> labs) {
+  p= path_up (p);
+  while (!is_nil (p)) {
+    if (labs->contains ((int) L (subtree (t, path_up (p)))))
+      return last_item (p);
+    else p= path_up (p);
+  }
+  return -1;
 }
 
 static path
-move_tag (tree t, path p, hashset<int> labs, bool forward) {
+move_tag (tree t, path p, hashset<int> labs, bool forward, bool preserve) {
   path q= p;
   while (true) {
     path r= move_node (t, q, forward);
     if (r == q) return p;
-    if (!inside_same_argument (t, p, r, labs)) return r;
+    if (distinct_tag_or_argument (t, p, r, labs) &&
+	(!preserve || tag_index (t, r, labs) == tag_index (t, p, labs)))
+      return r;
     q= r;
   }
 }
@@ -244,9 +257,14 @@ get_labels (scheme_tree t) {
 }
 
 path next_tag (tree t, path p, scheme_tree which) {
-  return move_tag (t, p, get_labels (which), true); }
+  return move_tag (t, p, get_labels (which), true, false); }
 path previous_tag (tree t, path p, scheme_tree which) {
-  return move_tag (t, p, get_labels (which), false); }
+  return move_tag (t, p, get_labels (which), false, false); }
+
+path next_tag_same_argument (tree t, path p, scheme_tree which) {
+  return move_tag (t, p, get_labels (which), true, true); }
+path previous_tag_same_argument (tree t, path p, scheme_tree which) {
+  return move_tag (t, p, get_labels (which), false, true); }
 
 /******************************************************************************
 * Traverse the children of a node

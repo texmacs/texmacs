@@ -106,6 +106,10 @@
   (path-previous-node previous_node (path content path))
   (path-next-tag next_tag (path content path scheme_tree))
   (path-previous-tag previous_tag (path content path scheme_tree))
+  (path-next-tag-same-argument next_tag_same_argument
+			       (path content path scheme_tree))
+  (path-previous-tag-same-argument previous_tag_same_argument
+				   (path content path scheme_tree))
   (path-next-argument next_argument (path content path))
   (path-previous-argument previous_argument (path content path))
 

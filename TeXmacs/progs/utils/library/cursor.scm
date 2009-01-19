@@ -107,9 +107,12 @@
 
 (tm-define (go-to-next-tag lab)
   (go-to-same-buffer (lambda (t p) (path-next-tag t p lab))))
-
 (tm-define (go-to-previous-tag lab)
   (go-to-same-buffer (lambda (t p) (path-previous-tag t p lab))))
+(tm-define (go-to-next-tag-same-argument lab)
+  (go-to-same-buffer (lambda (t p) (path-next-tag-same-argument t p lab))))
+(tm-define (go-to-previous-tag-same-argument lab)
+  (go-to-same-buffer (lambda (t p) (path-previous-tag-same-argument t p lab))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cursor history
