@@ -259,12 +259,12 @@
 (tm-define (kbd-page-up)
   (:context input-context?)
   (for (n 0 5)
-    (go-to-next-inside go-to-previous-node io-context? 1)))
+    (go-to-previous-tag-same-argument io-tags)))
 
 (tm-define (kbd-page-down)
   (:context input-context?)
   (for (n 0 5)
-    (go-to-next-inside go-to-next-node io-context? 1)))
+    (go-to-next-tag-same-argument io-tags)))
 
 (tm-define (kbd-remove forward?)
   (:context input-context?)
