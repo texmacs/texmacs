@@ -18,8 +18,6 @@ public:
   edit_process_rep ();
   ~edit_process_rep ();
 
-  bool session_complete_try (tree t);
-
   void generate_bibliography (string bib, string style, string fname);
   void generate_table_of_contents (string toc);
   void generate_index (string idx);

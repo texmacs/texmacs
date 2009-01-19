@@ -12,6 +12,7 @@
 #include "edit_interface.hpp"
 #include "hashset.hpp"
 #include "analyze.hpp"
+#include "connect.hpp"
 
 /******************************************************************************
 * Finding completions in text
@@ -142,5 +143,71 @@ edit_interface_rep::complete_keypress (string key) {
   remove (path_up (tp) * (end-N(old_s)), N(old_s));
   insert (path_up (tp) * (end-N(old_s)), new_s);
   complete_message ();
+  return true;
+}
+
+/******************************************************************************
+* Tab completion inside sessions
+******************************************************************************/
+
+static string cursor_symbol ("[tmcursor]");
+
+static tree
+put_cursor (tree t, path p) {
+  if (is_atomic (t)) {
+    string s= t->label;
+    return s (0, p->item) * cursor_symbol * s (p->item, N(s));
+  }
+  else {
+    if (p == path (0)) return tree (CONCAT, cursor_symbol, t);
+    else if (p == path (1)) return tree (CONCAT, t, cursor_symbol);
+    else {
+      int i, n= N(t);
+      tree u (t, n);
+      for (i=0; i<n; i++)
+	if (i == p->item) u[i]= put_cursor (t[i], p->next);
+	else u[i]= t[i];
+      return u;
+    }
+  }
+}
+
+bool
+edit_interface_rep::session_complete_try (tree tt) {
+  path p= reverse (obtain_ip (tt));
+  tree st= subtree (et, p);
+  if ((N(tp) <= N(p)) || (tp[N(p)] != 1)) return false;
+  tree t= put_cursor (st[1], tail (tp, N(p)+1));
+  // cout << t << LF;
+
+  (void) eval ("(use-modules (utils plugins plugin-cmd))");
+  string lan= get_env_string (PROG_LANGUAGE);
+  string ses= get_env_string (PROG_SESSION);
+  string s  = as_string (call ("verbatim-serialize", lan, tree_to_stree (t)));
+  s= s (0, N(s)-1);
+
+  int pos= search_forwards (cursor_symbol, s);
+  if (pos == -1) return false;
+  s= s (0, pos) * s (pos + N(cursor_symbol), N(s));
+  // cout << s << ", " << pos << LF;
+
+  string cmd= "(complete " * scm_quote (s) * " " * as_string (pos) * ")";
+  tree r= connection_cmd (lan, ses, cmd);
+
+  if (!is_tuple (r)) return false;
+  int i, n= N(r);
+  string prefix;
+  array<string> compls;
+  for (i=0; i<n; i++)
+    if (is_atomic (r[i])) {
+      string l= r[i]->label;
+      if (is_quoted (l)) l= scm_unquote (l);
+      if (prefix == "") prefix= l;
+      else compls << l;
+    }
+  // cout << prefix << ", " << compls << LF;
+
+  if ((prefix == "") || (N(compls) == 0)) return false;
+  complete_start (prefix, compls);
   return true;
 }

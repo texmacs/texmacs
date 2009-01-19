@@ -133,6 +133,7 @@ public:
   void complete_message ();
   void complete_start (string prefix, array<string> compls);
   bool complete_keypress (string key);
+  bool session_complete_try (tree t);
 
   /* mouse handling */
   void mouse_any (string s, SI x, SI y, int mods, time_t t);

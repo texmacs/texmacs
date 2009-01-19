@@ -143,6 +143,7 @@ public:
   virtual bool complete_try () = 0;
   virtual void complete_start (string prefix, array<string> compls) = 0;
   virtual bool complete_keypress (string key) = 0;
+  virtual bool session_complete_try (tree t) = 0;
   virtual void mouse_any (string s, SI x, SI y, int mods, time_t t) = 0;
   virtual void mouse_click (SI x, SI y) = 0;
   virtual bool mouse_extra_click (SI x, SI y) = 0;
@@ -371,8 +372,6 @@ public:
   virtual void temp_proof_fix () = 0;
 
   /* public routines from edit_process */
-  virtual bool session_complete_try (tree t) = 0;
-
   virtual void generate_bibliography (string bib, string sty, string fname)= 0;
   virtual void generate_table_of_contents (string toc) = 0;
   virtual void generate_index (string idx) = 0;
