@@ -40,6 +40,13 @@
 ;; Script context functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (script-defined?)
+  (with lan (get-env "prog-scripts")
+    (or (connection-defined? lan)
+	(begin
+	  (set-message (string-append "plugin '" lan "' not defined") "")
+	  #f))))
+
 (tm-define (script-evaluable?)
   (or (selection-active-any?)
       (nnot (tree-innermost formula-context? #t))))
@@ -127,35 +134,38 @@
 	  (else #f))))
 
 (define (script-modified-eval fun . opts)
-  (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session"))
-	 (input (script-get-input)))
-    (when input
-      ;;(display* "Evaluating " input "\n")
-      (insert-go-to `(script-status "") '(0 0))
-      (fun)
-      (insert input)
-      (let* ((t (tree-innermost 'script-status))
-	     (cmd (tree->stree (tree-ref t 0)))
-	     (declaration? #f))
-	;;(display* "t= " t "\n")
-	;;(display* "cmd= " cmd "\n")
-	(cond ((and (func? input 'concat) (in? '(script-assign) input))
-	       (set! declaration? #t))
-	      ((and (script-keep-input?) (== opts '(:approx)))
-	       (tree-set! t `(script-approx ,input (script-busy)))
-	       (set! t (tree-ref t 1))
-	       (tree-go-to t :end))
-	      ((script-keep-input?)
-	       (tree-set! t `(script-result ,cmd (script-busy)))
-	       (set! t (tree-ref t 1))
-	       (tree-go-to t :end)))
-	(if declaration?
-	    (script-eval-at t lan session cmd :math-input :declaration)
-	    (script-eval-at t lan session cmd :math-input :simplify-output))))
-    (when (not input)
-      (if (not-in-session?) (make 'script-eval))
-      (fun))))
+  (when (script-defined?)
+    (let* ((lan (get-env "prog-scripts"))
+	   (session (get-env "prog-session"))
+	   (input (script-get-input)))
+      (when input
+	;;(display* "Evaluating " input "\n")
+	(insert-go-to `(script-status "") '(0 0))
+	(fun)
+	(insert input)
+	(let* ((t (tree-innermost 'script-status))
+	       (cmd (tree->stree (tree-ref t 0)))
+	       (declaration? #f))
+	  ;;(display* "t= " t "\n")
+	  ;;(display* "cmd= " cmd "\n")
+	  (cond ((and (func? input 'concat) (in? '(script-assign) input))
+		 (set! declaration? #t))
+		((and (script-keep-input?) (== opts '(:approx)))
+		 (tree-set! t `(script-approx ,input (script-busy)))
+		 (set! t (tree-ref t 1))
+		 (tree-go-to t :end))
+		((script-keep-input?)
+		 (tree-set! t `(script-result ,cmd (script-busy)))
+		 (set! t (tree-ref t 1))
+		 (tree-go-to t :end)))
+	  (if declaration?
+	      (script-eval-at t lan session cmd
+			      :math-input :declaration)
+	      (script-eval-at t lan session cmd
+			      :math-input :simplify-output))))
+      (when (not input)
+	(if (not-in-session?) (make 'script-eval))
+	(fun)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level evaluation and function application via plug-in
