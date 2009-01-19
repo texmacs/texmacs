@@ -343,17 +343,32 @@
   (:context io-context?)
   (go-to-remain-inside go-right io-context? 1))
 
+(define (io-go-to-previous)
+  (with-innermost t io-context?
+    (with u (tree-ref t :previous)
+      (if (and u (io-context? u))
+	  (tree-go-to u 1 :end)
+	  (go-to-previous-tag-same-argument io-tags)))))
+
+(define (io-go-to-next)
+  (with-innermost t io-context?
+    (with u (tree-ref t :next)
+      (if (and u (io-context? u))
+	  (tree-go-to u 1 :start)
+	  (go-to-next-tag-same-argument io-tags))
+      (go-end-line))))
+
 (define (io-go-up)
   (with p (cursor-path)
     (go-to-remain-inside go-up io-context? 1)
     (when (== (cursor-path) p)
-      (go-to-previous-tag-same-argument io-tags))))
+      (io-go-to-previous))))
 
 (define (io-go-down)
   (with p (cursor-path)
     (go-to-remain-inside go-down io-context? 1)
     (when (== (cursor-path) p)
-      (go-to-next-tag-same-argument io-tags))))
+      (io-go-to-next))))
 
 (tm-define (kbd-up)
   (:context io-context?)
@@ -366,12 +381,12 @@
 (tm-define (kbd-page-up)
   (:context input-context?)
   (for (n 0 5)
-    (go-to-previous-tag-same-argument io-tags)))
+    (io-go-to-previous)))
 
 (tm-define (kbd-page-down)
   (:context input-context?)
   (for (n 0 5)
-    (go-to-next-tag-same-argument io-tags)))
+    (io-go-to-next)))
 
 (tm-define (kbd-remove forward?)
   (:context input-context?)
