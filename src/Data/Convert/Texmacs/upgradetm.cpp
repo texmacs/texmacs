@@ -2795,8 +2795,8 @@ upgrade_session (tree t, tree lan, tree ses) {
 	  i++;
 	}
 	else {
-	  const char* op= (m? "folded-io-math": "folded-io");
-	  r << compound (op, t[i][0], in, tree (DOCUMENT));
+	  const char* op= (m? "input-math": "input");
+	  r << compound (op, t[i][0], in);
 	}
       }
       else r << upgrade_session (t[i], lan, ses);

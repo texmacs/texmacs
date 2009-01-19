@@ -118,8 +118,8 @@
 	  (if (and (in? :timings opts) (>= dt 1))
 	      (tree-set (tree-ref out :last) `(timing ,ts))
 	      (tree-remove! out (- (tree-arity out) 1) 1))))
-      (when (tree-empty? out)
-	(tree-set! out '(document)))
+      (when (and (tree-empty? out) (field-context? (tree-ref out :up)))
+	(field-remove-output (tree-ref out :up)))
       (session-detach (car l)))))
 
 (define (var-tree-children t)
@@ -191,7 +191,8 @@
 	   (tm-func? (tree-ref t :up) 'unfolded)
 	   (== (tree-index t) 1))))
 
-(tm-define field-tags '(unfolded-io folded-io unfolded-io-math folded-io-math))
+(tm-define field-tags
+  '(input unfolded-io folded-io input-math unfolded-io-math folded-io-math))
 
 (tm-define (field-context? t)
   (and (tree-in? t field-tags)
@@ -206,14 +207,14 @@
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (field-prog-context? t)
-  (and (tree-in? t '(folded-io unfolded-io))
+  (and (tree-in? t '(input folded-io unfolded-io))
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (field-math-context? t)
-  (and (tree-in? t '(folded-io-math unfolded-io-math))
+  (and (tree-in? t '(input-math folded-io-math unfolded-io-math))
        (tm-func? (tree-ref t :up) 'document)))
 
-(tm-define (input-context? t)
+(tm-define (field-input-context? t)
   (and (field-context? t)
        (== (tree-down-index t) 1)))
 
@@ -230,6 +231,22 @@
     (if (field-context? u) u
 	(field-next u (not last?)))))
 
+(define (field-insert-output t)
+  (cond ((tm-func? t 'input)
+	 (tree-insert! t 2 (list '(document)))
+	 (tree-assign-node! t 'unfolded-io))
+	((tm-func? t 'input-math)
+	 (tree-insert! t 2 (list '(document)))
+	 (tree-assign-node! t 'unfolded-io-math))))
+
+(define (field-remove-output t)
+  (cond ((or (tm-func? t 'folded-io) (tm-func? t 'unfolded-io))
+	 (tree-assign-node! t 'input)
+	 (tree-remove! t 2 1))
+	((or (tm-func? t 'folded-io-math) (tm-func? t 'unfolded-io-math))
+	 (tree-assign-node! t 'input-math)
+	 (tree-remove! t 2 1))))
+
 (define (field-update-math t)
   (if (session-math-input?)
       (when (field-prog-context? t)
@@ -242,8 +259,8 @@
 (define (field-create t p forward?)
   (let* ((d (tree-ref t :up))
 	 (i (+ (tree-index t) (if forward? 1 0)))
-	 (l (if (session-math-input?) 'folded-io-math 'folded-io))
-	 (b `(,l ,p (document "") (document))))
+	 (l (if (session-math-input?) 'input-math 'input))
+	 (b `(,l ,p (document ""))))
     (tree-insert d i (list b))
     (tree-ref d i)))
 
@@ -265,22 +282,23 @@
 
 (tm-define (make-session lan ses)
   (let* ((ban `(output (document "")))
-	 (l (if (session-math-input?) 'folded-io-math 'folded-io))
+	 (l (if (session-math-input?) 'input-math 'input))
 	 (p (plugin-prompt lan ses))
-	 (in `(,l (document ,p) (document "") (document)))
+	 (in `(,l (document ,p) (document "")))
 	 (s `(session ,lan ,ses (document ,ban ,in))))
     (insert-go-to s '(2 1 1 0 0))
-    (with-innermost t input-context?
+    (with-innermost t field-input-context?
       (with u (tree-ref t :previous 0)
 	(if (url-exists? (url "$TEXMACS_STYLE_PATH" (string-append lan ".ts")))
 	    (init-add-package lan))
 	(session-feed lan ses :start u t '())))))
 
 (define (field-process-input t)
-  (if (tm-func? t 'folded-io)
-      (tree-assign-node! t 'unfolded-io))
-  (if (tm-func? t 'folded-io-math)
-      (tree-assign-node! t 'unfolded-io-math))
+  (field-insert-output t)
+  (cond ((tm-func? t 'folded-io)
+	 (tree-assign-node! t 'unfolded-io))
+	((tm-func? t 'folded-io-math)
+	 (tree-assign-node! t 'unfolded-io-math)))
   (let* ((lan (get-env "prog-language"))
 	 (ses (get-env "prog-session"))
 	 (p (plugin-prompt lan ses))
@@ -294,19 +312,19 @@
       (tree-go-to u 1 :end))))
 
 (tm-define (kbd-return)
-  (:context input-context?)
+  (:context field-input-context?)
   (if (session-multiline-input?)
       (insert-return)
       (session-evaluate)))
 
 (tm-define (kbd-shift-return)
-  (:context input-context?)
+  (:context field-input-context?)
   (if (session-multiline-input?)
       (session-evaluate)
       (insert-return)))
 
 (tm-define (session-evaluate)
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (field-process-input t)))
 
 (tm-define (session-evaluate-all)
@@ -316,7 +334,7 @@
 	(field-process-input t)))))
 
 (tm-define (session-evaluate-above)
-  (with-innermost me input-context?
+  (with-innermost me field-input-context?
     (session-forall
       (lambda (t)
 	(when (not (tree-empty? (tree-ref t 1)))
@@ -324,7 +342,7 @@
 	    (field-process-input t)))))))
 
 (tm-define (session-evaluate-below)
-  (with-innermost me input-context?
+  (with-innermost me field-input-context?
     (session-forall
       (lambda (t)
 	(when (not (tree-empty? (tree-ref t 1)))
@@ -379,26 +397,26 @@
   (field-go-down))
 
 (tm-define (kbd-page-up)
-  (:context input-context?)
+  (:context field-input-context?)
   (for (n 0 5)
     (field-go-to-previous)))
 
 (tm-define (kbd-page-down)
-  (:context input-context?)
+  (:context field-input-context?)
   (for (n 0 5)
     (field-go-to-next)))
 
 (tm-define (kbd-remove forward?)
-  (:context input-context?)
-  (with-innermost t input-context?
+  (:context field-input-context?)
+  (with-innermost t field-input-context?
     (cond ((and (tree-cursor-at? t 1 :start) (not forward?)) (noop))
 	  ((and (tree-cursor-at? t 1 :end) forward?) (noop))
 	  (else (remove-text forward?)))))
 
 (tm-define (kbd-tab)
-  (:context input-context?)
+  (:context field-input-context?)
   (:require (plugin-supports-completions? (get-env "prog-language")))
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (session-complete-try? t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -408,35 +426,35 @@
 (define (field-input-simple-context? t)
   (and (nleaf? t)
        (simple-context? (tree-down t))
-       (input-context? t)))
+       (field-input-context? t)))
 
 (tm-define (document-context? t)
   (:case document)
-  (:require (input-context? (tree-ref t :up)))
+  (:require (field-input-context? (tree-ref t :up)))
   #f)
 
 (tm-define (traverse-left)
-  (:context input-context?)
+  (:context field-input-context?)
   (go-to-remain-inside go-to-previous-word field-context? 1))
 
 (tm-define (traverse-right)
-  (:context input-context?)
+  (:context field-input-context?)
   (go-to-remain-inside go-to-next-word field-context? 1))
 
 (tm-define (traverse-up)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-go-up))
 
 (tm-define (traverse-down)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-go-down))
 
 (tm-define (traverse-previous)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-go-up))
 
 (tm-define (traverse-next)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-go-down))
 
 (tm-define (structured-left)
@@ -484,14 +502,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (field-insert forwards?)
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (let* ((lan (get-env "prog-language"))
 	   (ses (get-env "prog-session"))
 	   (p (plugin-prompt lan ses)))
       (tree-go-to (field-create t p forwards?) 1 :end))))
 
 (tm-define (field-insert-text forward?)
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (let* ((d (tree-ref t :up))
 	   (i (+ (tree-index t) (if forward? 1 0)))
 	   (b `(textput (document ""))))
@@ -504,7 +522,7 @@
       (tree-remove! t 0 1))))
 
 (tm-define (field-remove-extreme last?)
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (with u (field-extreme t last?)
       (with v (field-next t (not last?))
 	(if (and (== u t) v)
@@ -513,7 +531,7 @@
 	    (tree-remove (tree-ref u :up) (tree-index u) 1))))))
 
 (tm-define (field-remove forwards?)
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (if forwards?
 	(with u (field-next t #t)
 	  (if u (begin
@@ -525,19 +543,19 @@
 	      (field-remove-banner))))))
 
 (tm-define (structured-insert forwards?)
-  (:context input-context?)
+  (:context field-input-context?)
   (if forwards? (field-insert-fold)))
 
 (tm-define (structured-insert-up)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-insert #f))
 
 (tm-define (structured-insert-down)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-insert #t))
 
 (tm-define (structured-remove forwards?)
-  (:context input-context?)
+  (:context field-input-context?)
   (field-remove forwards?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -545,7 +563,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (session-clear-all)
-  (session-forall (lambda (t) (tree-set! t 2 '(document)))))
+  (session-forall field-remove-output))
 
 (tm-define (session-fold-all)
   (session-forall field-fold))
@@ -554,7 +572,7 @@
   (session-forall field-unfold))
 
 (tm-define (field-insert-fold)
-  (with-innermost t input-context?
+  (with-innermost t field-input-context?
     (tree-set! t `(unfolded (document "") (document ,t)))
     (tree-go-to t 0 :end)))
 
