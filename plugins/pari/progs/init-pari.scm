@@ -12,6 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (lazy-menu (pari-menus) pari-menu)
+(define (cas-supports-completions-set! must-be-pari) (noop)) ;; obsolete
 
 (define (pari-initialize)
   (import-from (utils plugins plugin-convert))
@@ -21,19 +22,17 @@
 	(=> "Pari"
 	    (link pari-menu)))))
 
-(define (cas-supports-completions-set! must-be-pari)
-  ;; Hack for old versions of Pari
-  (define (pari-commander s)
-    (string-append (char->string #\002)
-		   "special:" s
-		   (char->string #\005) "\n"))
-  (plugin-configure pari
-    (:tab-completion #t)
-    (:commander ,pari-commander)))
+(define (pari-commander s)
+  (string-append (char->string #\002)
+		 "special:" s
+		 (char->string #\005) "\n"))
 
 (plugin-configure pari
   (:require (url-exists-in-path? "gp"))
   (:initialize (pari-initialize))
   (:launch "gp --texmacs")
   (:session "Pari")
-  (:scripts "Pari"))
+  (:scripts "Pari")
+  (:tab-completion #t)
+  (:commander ,pari-commander))
+
