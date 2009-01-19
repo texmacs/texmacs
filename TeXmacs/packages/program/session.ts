@@ -127,21 +127,11 @@
   </macro>>
 
   <assign|unfolded-io-math|<\macro|prompt|in|out>
-    <\surround||<right-flush>>
-      <\input|<action|<arg|prompt>|(mouse-fold)|<arg|in>>>
-        <math|<arg|in>>
-      </input>
-
-      <\output>
-        <arg|out>
-      </output>
-    </surround>
+    <unfolded-io|<arg|prompt>|<math|<arg|in>>|<arg|out>>
   </macro>>
 
   <assign|folded-io-math|<\macro|prompt|in|out>
-    <input|<action|<arg|prompt>|(mouse-unfold)|<arg|prompt>>|<\math>
-      <arg|in>
-    </math>>
+    <folded-io|<arg|prompt>|<math|<arg|in>>|<arg|out>>
   </macro>>
 
   \;
