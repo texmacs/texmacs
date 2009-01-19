@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (secure-secure)
-  (:use (utils plugins plugin-cmd)))
+  (:use (utils plugins plugin-eval)))
 
 (tm-define (latexer s)
   (:type (-> tree object))

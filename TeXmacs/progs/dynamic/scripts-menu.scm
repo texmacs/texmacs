@@ -12,8 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic scripts-menu)
-  (:use (dynamic scripts-edit)
-	(utils plugins plugin-cmd)))
+  (:use (dynamic scripts-edit)))
 
 (menu-bind scripts-eval-menu
   (when (script-evaluable?)

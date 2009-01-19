@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (substitute-substitute)
-  (import-from (utils plugins plugin-cmd))
+  (import-from (utils plugins plugin-eval))
   (if (selection-active-any?)
       (let* ((t (tree->stree (selection-tree)))
 	     (u (plugin-eval "substitute" "default" t)))

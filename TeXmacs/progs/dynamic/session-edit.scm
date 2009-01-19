@@ -14,8 +14,8 @@
 (texmacs-module (dynamic session-edit)
   (:use (utils library tree)
 	(utils library cursor)
+	(utils plugins plugin-cmd)
 	(dynamic session-drd)
-	(dynamic scripts-edit)
 	(dynamic fold-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
