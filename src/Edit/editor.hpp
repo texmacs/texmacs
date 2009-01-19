@@ -377,31 +377,6 @@ public:
   virtual void invalidate_mutators () = 0;
   virtual void insert_mutator (tree body, string cmd) = 0;
 
-  virtual void make_session (string lan, string session) = 0;
-  virtual void start_input (string lan, string session, path p) = 0;
-  virtual void process_input () = 0;
-  virtual void start_output () = 0;
-  virtual void session_message (string l, string r) = 0;
-  virtual void session_use_math_input (bool flag) = 0;
-  virtual bool session_is_using_math_input () = 0;
-  virtual int  status_connection () = 0;
-  virtual bool busy_connection () = 0;
-  virtual void interrupt_connection () = 0;
-  virtual void stop_connection () = 0;
-
-  virtual void session_go_up () = 0;
-  virtual void session_go_down () = 0;
-  virtual void session_go_page_up () = 0;
-  virtual void session_go_page_down () = 0;
-  virtual void session_remove (bool forward) = 0;
-  virtual void session_insert_text_field () = 0;
-  virtual void session_insert_input_below () = 0;
-  virtual void session_insert_input_above () = 0;
-  virtual void session_fold_input () = 0;
-  virtual void session_remove_input (bool forward) = 0;
-  virtual void session_remove_all_outputs () = 0;
-  virtual void session_remove_previous_output () = 0;
-  virtual void session_split () = 0;
   virtual bool session_complete_try (tree t) = 0;
 
   virtual void generate_bibliography (string bib, string sty, string fname)= 0;

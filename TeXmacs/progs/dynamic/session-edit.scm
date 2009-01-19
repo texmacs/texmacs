@@ -22,10 +22,15 @@
 ;; Switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define session-math-input #f)
+
+(tm-define (session-math-input?)
+  session-math-input)
+
 (tm-define (toggle-session-math-input)
   (:synopsis "Toggle mathematical input in sessions.")
   (:check-mark "v" session-math-input?)
-  (session-use-math-input (not (session-math-input?)))
+  (set! session-math-input (not session-math-input))
   (with-innermost t io-context?
     (io-update-math t)))
 

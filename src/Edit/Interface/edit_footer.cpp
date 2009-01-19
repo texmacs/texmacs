@@ -70,8 +70,10 @@ edit_interface_rep::set_left_footer () {
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
   if ((N(s)>0) && (s[0] == '#')) s= s (1, N(s));
-  if (inside ("session") && (lan != "scheme"))
-    switch (status_connection ()) {
+  if (inside ("session") && (lan != "scheme")) {
+    string lan    = get_env_string (PROG_LANGUAGE);
+    string session= get_env_string (PROG_SESSION);
+    switch (connection_status (lan, session)) {
     case CONNECTION_DEAD:
       s= s * "#[dead]";
       break;
@@ -83,6 +85,7 @@ edit_interface_rep::set_left_footer () {
       s= s * "#[idle]";
       break;
     }
+  }
   set_left_footer (s);
 }
 

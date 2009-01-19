@@ -236,28 +236,7 @@
   (spell-replace spell_replace (void string))
 
   ;; sessions
-  (make-session make_session (void string string))
-  (start-input start_input (void string string path))
-  (process-input process_input (void))
-  (session-use-math-input session_use_math_input (void bool))
-  (session-math-input? session_is_using_math_input (bool))
-  (session-go-up session_go_up (void))
-  (session-go-down session_go_down (void))
-  (session-go-page-up session_go_page_up (void))
-  (session-go-page-down session_go_page_down (void))
-  (session-remove session_remove (void bool))
-  (session-insert-text-field session_insert_text_field (void))
-  (session-insert-input-above session_insert_input_above (void))
-  (session-insert-input-below session_insert_input_below (void))
-  (session-fold-input session_fold_input (void))
-  (session-remove-input session_remove_input (void bool))
-  (session-remove-all-outputs session_remove_all_outputs (void))
-  (session-remove-previous-output session_remove_previous_output (void))
-  (session-split session_split (void))
   (session-complete-try? session_complete_try (bool tree))
-  (connection-busy? busy_connection (bool))
-  (connection-interrupt interrupt_connection (void))
-  (connection-stop stop_connection (void))
 
   ;; miscellaneous routines
   (view-set-property set_property (void scheme_tree scheme_tree))

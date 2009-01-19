@@ -35,34 +35,6 @@ public:
   void invalidate_mutators ();
   void insert_mutator (tree body, string cmd);
 
-  void make_session (string lan, string session);
-  void start_input (string lan, string session, path p);
-  void process_input ();
-  void start_output ();
-  void session_message (string l, string r);
-  void session_use_math_input (bool flag);
-  bool session_is_using_math_input ();
-  int  status_connection ();
-  bool busy_connection ();
-  void interrupt_connection ();
-  void stop_connection ();
-
-  void session_var_go_up ();
-  void session_var_go_down ();
-  void session_go_up ();
-  void session_go_down ();
-  void session_go_page_up ();
-  void session_go_page_down ();
-  void session_remove (bool forward);
-  void session_insert_text_field ();
-  void session_insert_input_at (path p);
-  void session_insert_input_below ();
-  void session_insert_input_above ();
-  void session_fold_input ();
-  void session_remove_input (bool forward);
-  void session_remove_all_outputs ();
-  void session_remove_previous_output ();
-  void session_split ();
   bool session_complete_try (tree t);
 
   void generate_bibliography (string bib, string style, string fname);
