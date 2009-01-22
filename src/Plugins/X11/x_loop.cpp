@@ -275,26 +275,33 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
     }
   case SelectionRequest:
     {
-      bool flag=true;
       XSelectionRequestEvent& req= ev->xselectionrequest;
-      if (selection==NULL) flag=false;
-      if ((req.target!=AnyPropertyType) && (req.target!=XA_STRING)) flag=false;
-      if (flag)
-	XChangeProperty (dpy, req.requestor, req.property, XA_STRING,
-			 8, PropModeReplace,
-			 (unsigned char*) selection,
-			 strlen (selection));
       XSelectionEvent sel;
       sel.type      = SelectionNotify;
-      sel.serial    = req.serial;
-      sel.send_event= true;
-      sel.display   = dpy;
       sel.requestor = req.requestor;
       sel.selection = req.selection;
       sel.target    = req.target;
-      sel.property  = flag?req.property:None;
       sel.time      = req.time;
-      XSendEvent (dpy, InputFocus, false, 0, (XEvent*) &sel);
+      Atom XA_TARGETS = XInternAtom(dpy, "TARGETS", False);
+      if (selection==NULL)
+        sel.property  = None;
+      else if (req.target==XA_TARGETS) {
+        Atom targets[2];
+        targets[0] = XA_TARGETS;
+        targets[1] = XA_STRING;
+        XChangeProperty (dpy, req.requestor, req.property, XA_ATOM,
+                         32, PropModeReplace,
+                         (unsigned char*)&targets[0],2);
+        sel.property  = req.property;
+      } else if ((req.target==AnyPropertyType) || (req.target==XA_STRING)) {
+        XChangeProperty (dpy, req.requestor, req.property, XA_STRING,
+                         8, PropModeReplace,
+                         (unsigned char*) selection,
+                         strlen (selection));
+        sel.property  = req.property;
+      } else
+        sel.property  = None;
+      XSendEvent (dpy, sel.requestor, false, 0, (XEvent*) &sel);
       break;
     }
   case SelectionClear:
