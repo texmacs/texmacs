@@ -274,7 +274,12 @@ string_arg (tree t) {
     return "_" * string_arg (t[0]);
   else if (is_func (t, RSUP, 1))
     return "^" * string_arg (t[0]);
-  else return "";
+  else if (is_func (t, APPLY, 1) && t[0] == "nbsp")
+    return " ";
+  else {
+    cout << "t= " << t << "\n";
+    return "";
+  }
 }
 
 tree

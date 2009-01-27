@@ -186,7 +186,7 @@ hash (tree t) {
 string
 var_as_string (tree t) {
   if (is_atomic (t)) return t->label;
-  else if (is_concat (t)) {
+  else if (is_concat (t) || is_document (t)) {
     int i, n= N(t);
     string cumul;
     for (i=0; i<n; i++)

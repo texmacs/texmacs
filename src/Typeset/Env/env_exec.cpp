@@ -1094,7 +1094,8 @@ edit_env_rep::exec_merge (tree t) {
   if (is_concat (acc)) acc= var_as_string (acc);
   for (i=1; i<n; i++) {
     tree add= exec (t[i]);
-    if (is_atomic (acc) && (is_atomic (add) || is_concat (add)))
+    if (is_atomic (acc) &&
+	(is_atomic (add) || is_concat (add) || is_document (add)))
       acc= acc->label * var_as_string (add);
     else if (is_tuple (acc) && is_tuple (add))
       acc= acc * add;
@@ -1113,7 +1114,11 @@ edit_env_rep::exec_merge (tree t) {
 	r[N(r)-1]= u;
 	acc= r;
       }
-    else return tree (ERROR, "bad merge");
+    else {
+      //cout << "acc= " << acc << "\n";
+      //cout << "add= " << add << "\n";
+      return tree (ERROR, "bad merge");
+    }
   }
   return acc;
 }
@@ -1394,23 +1399,35 @@ edit_env_rep::exec_set_binding (tree t) {
   tree keys, value;
   if (N(t) == 1) {
     keys= read ("the-tags");
-    if (!is_tuple (keys))
+    if (!is_tuple (keys)) {
+      //cout << "t= " << t << "\n";
+      //cout << "keys= " << keys << "\n";
       return tree (ERROR, "bad set binding");
+    }
     for (int i=0; i<N(keys); i++)
-      if (!is_atomic (keys[i]))
+      if (!is_atomic (keys[i])) {
+	//cout << "t= " << t << "\n";
+	//cout << "keys= " << keys << "\n";
 	return tree (ERROR, "bad set binding");
+      }
     value= exec (t[0]);
     assign (string ("the-tags"), tree (TUPLE));
     assign (string ("the-label"), copy (value));
   }
   else if (N(t) >= 2) {
     tree key= exec (t[0]);
-    if (!is_atomic (key)) 
+    if (!is_atomic (key)) {
+      //cout << "t= " << t << "\n";
+      //cout << "key= " << key << "\n";
       return tree (ERROR, "bad set binding");
+    }
     keys= tuple (key);
     value= exec (t[1]);
   }
-  else return tree (ERROR, "bad set binding");
+  else {
+    //cout << "t= " << t << "\n";
+    return tree (ERROR, "bad set binding");
+  }
 
   for (int i=0; i<N(keys); i++) {
     string key= keys[i]->label;
