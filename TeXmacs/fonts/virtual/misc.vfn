@@ -6,7 +6,7 @@
   (b-Mho (ver-flip (hor-flip b-Omega)))
   (b-backepsilon (ver-flip (hor-flip b-epsilon)))
   (b-Backepsilon (ver-flip (hor-flip b-Epsilon)))
-  (Exists (join (0 0 exists) (0.25 0.01 urcorner) (0.25 0.02 lrcorner)))
+  (Exists (join (0 0 exists) (0.25 -0.01 urcorner) (0.25 0.02 lrcorner)))
 
   (ldots (join (0 0 .) (0.3 0 .) (0.6 0 .)))
   (cdots (join (0 0 cdot) (0.3 0 cdot) (0.6 0 cdot)))
