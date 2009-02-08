@@ -83,6 +83,7 @@
   (Zeta "\\mathrm{Z}")
 
   ;; other extra symbols
+  (Exists "\\exists")
   (bigintwl "\\int")
   (bigointwl "\\oint")
   (bignone "")
