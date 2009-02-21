@@ -69,8 +69,8 @@ to_qstring (string s) {
 string
 from_qstring (QString &s) {
   QByteArray arr= s.toUtf8 (); 
-  const char* cstr= arr;
-  return string ((char*) cstr);
+  const char* cstr= arr.constData ();
+  return utf8_to_cork (string ((char*) cstr));
 }
 
 QString
