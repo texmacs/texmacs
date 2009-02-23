@@ -69,7 +69,7 @@ NSString *to_nsstring(string s)
 string from_nsstring(NSString *s)
 {
 	const char *cstr = [s cStringUsingEncoding:NSUTF8StringEncoding];
-	return string((char*)cstr);
+	return utf8_to_cork(string((char*)cstr));
 }
 
 
