@@ -8250,6 +8250,15 @@ echo "${ECHO_T}final adjustments for cygwin host" >&6; }
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
+  i*86-*-darwin* | x86_64-*-darwin*)
+    echo "$ac_t""final adjustments for an Intel or AMD Darwin host" 1>&6
+    CONFIG_OS="DARWIN"
+    CONFIG_CXXFLAGS="-I${prefix}/include"
+    CONFIG_BSHARED=""
+    CONFIG_BPATH=""
+    CONFIG_SO="dylib"
+    CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
+  ;;
   powerpc-*-linux*)
     { echo "$as_me:$LINENO: result: final adjustments for a PowerPC/GNU-linux host" >&5
 echo "${ECHO_T}final adjustments for a PowerPC/GNU-linux host" >&6; }
