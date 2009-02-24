@@ -191,6 +191,7 @@ qt_gui_rep::event_loop () {
   time_credit= 1000000;
   while (true) {
     timeout_time= texmacs_time () + time_credit;
+//    app->processEvents (QEventLoop::WaitForMoreEvents | QEventLoop::DeferredDeletion);
     app->processEvents (QEventLoop::WaitForMoreEvents);
     //int start= texmacs_time ();
     update ();
