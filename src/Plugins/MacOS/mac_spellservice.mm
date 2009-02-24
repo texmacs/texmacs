@@ -38,15 +38,27 @@ static NSString *to_nsstring_utf8(string s)
 static hashmap<string,string> available_dicts ("");
 static hashmap<string,string> the_dicts ("");
 static string current_lang = "";
+static NSInteger current_tag = 0;
 
-string
-mac_init_dictionary (string lang) {
+static bool mac_spelling_language(string lang)
+{
+  if (available_dicts->contains (lang)) {
+    current_lang = lang;
+    [[NSSpellChecker sharedSpellChecker]  setLanguage: to_nsstring_utf8(available_dicts(lang))];
+    if (DEBUG_EVENTS) cout << "setting lang:"  << lang << LF;
+    return true;
+    }
+  return false;
+}
+
+void
+mac_init_dictionary () {
   if (N(the_dicts) == 0) {
     //FIXME: Complete dictionary list
     the_dicts("en") = "english";
     the_dicts("fr") = "french";
     the_dicts("it") = "italian";
-    
+
     NSArray *arr = [[NSSpellChecker sharedSpellChecker] availableLanguages];
     NSEnumerator *enumerator = [arr objectEnumerator];
     NSString *nsdict;
@@ -56,11 +68,6 @@ mac_init_dictionary (string lang) {
       available_dicts(the_dicts(dict)) = dict;
     }
   }
-  if (available_dicts->contains (lang)) {
-    current_lang = lang;
-    return "ok";
-  }
-  return "Error: no dictionary for#" * lang;
 }
 
 
@@ -71,62 +78,94 @@ mac_init_dictionary (string lang) {
 
 string
 mac_spell_start (string lan) {
+  string r;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  string r = mac_init_dictionary(lan);
+  // we need to be sure that the Cocoa application infrastructure is initialized 
+  // (apparently Qt does not do this properly and the NSSpellChecker instance returns null
+  //  without the following instruction)
+  NSApplication *NSApp=[NSApplication sharedApplication]; (void) NSApp;
+  mac_init_dictionary ();
+  if (mac_spelling_language (lan)) {
+    // warning: we must be sure that the tag is relased by the appropriate message to sharedSpellChecker
+    current_tag = [NSSpellChecker uniqueSpellDocumentTag];
+    r = "ok";
+  } else {
+    r = "Error: no dictionary for#" * lan;
+  }  
   [pool release];
   return r;
 }
 
 tree
 mac_spell_check (string lan, string s) {
+  if (DEBUG_EVENTS) cout << "spell_check " << lan << " :: " << s << LF;
   tree t;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
- 
-  if (lan != current_lang) {
-    if (!(available_dicts->contains (lan))) {
-      [pool release];
-      return "Error: dictionary not available";
-    }
-    current_lang = lan;
-    [[NSSpellChecker sharedSpellChecker]  setLanguage: to_nsstring_utf8(available_dicts(lan))];
-  }
-  
-  NSString *nss = to_nsstring_utf8(s);
-  NSRange r =  [[NSSpellChecker sharedSpellChecker]  
-                checkSpellingOfString: nss
-                startingAt: 0];
-  if (r.length == 0) t = "ok";
-  else {
-    NSArray *arr = [[NSSpellChecker sharedSpellChecker] guessesForWord: nss];
-    if ([arr count] == 0) {
-      t = tree (TUPLE, "0");
-    } else {
-      NSEnumerator *enumerator = [arr objectEnumerator];
-      NSString *sugg;
-      tree a (TUPLE);
-      
-      while ((sugg = (NSString*)[enumerator nextObject])) {
-        a << from_nsstring(sugg);
+  if ((lan != current_lang) && (! mac_spelling_language (lan))) {
+      t = "Error: dictionary not available";
+  } else {
+    NSString *nss = to_nsstring_utf8 (s);
+    NSRange r =  [[NSSpellChecker sharedSpellChecker]  
+                  checkSpellingOfString: nss
+                  startingAt: 0
+                  language: nil
+                  wrap: NO
+                  inSpellDocumentWithTag: current_tag
+                  wordCount: NULL];
+    if (r.length == 0) 
+      t = "ok";
+    else {
+      NSArray *arr = [[NSSpellChecker sharedSpellChecker] guessesForWord: nss];
+      if ([arr count] == 0) {
+        t = tree (TUPLE, "0");
+      } else {
+        NSEnumerator *enumerator = [arr objectEnumerator];
+        NSString *sugg;
+        tree a (TUPLE);
+        while ((sugg = (NSString*)[enumerator nextObject])) {
+          a << from_nsstring (sugg);
+        }
+        t= tree (TUPLE, as_string((int)[arr count]));
+        t << A (a);        
       }
-      t= tree (TUPLE, [arr count]);
-      t << A (a);        
     }
   }
-        
+  [pool release];
+
+  if (DEBUG_EVENTS)   cout << t << LF;     
   return t;
 }
 
 void
 mac_spell_accept (string lan, string s) {
-//  ispell_send (lan, "@" * s);
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  if ((lan != current_lang) && (! mac_spelling_language (lan))) {
+    // do nothing
+    ;
+  } else {
+    [[NSSpellChecker sharedSpellChecker]  ignoreWord:to_nsstring_utf8 (s) inSpellDocumentWithTag:current_tag];
+  }  
+  //  ispell_send (lan, "@" * s);
+  [pool release];
 }
 
 void
 mac_spell_insert (string lan, string s) {
-//  ispell_send (lan, "*" * s);
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  if ((lan != current_lang) && (! mac_spelling_language (lan))) {
+    // do nothing
+    ;
+  } else {
+    [[NSSpellChecker sharedSpellChecker] learnWord:to_nsstring_utf8 (s)];
+  }  
+  //  ispell_send (lan, "*" * s);
+  [pool release];
 }
 
 void
 mac_spell_done (string lan) {
-//  ispell_send (lan, "#");
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:current_tag];
+  current_tag = 0;
+  [pool release];
 }
