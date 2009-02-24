@@ -14,15 +14,15 @@
 
 #include "Cocoa/mac_cocoa.h"
 
-static string from_nsstring(NSString *s)
-{
+static string 
+from_nsstring (NSString *s) {
   const char *cstr = [s cStringUsingEncoding:NSUTF8StringEncoding];
   return utf8_to_cork(string((char*)cstr));
 }
 
 
-static NSString *to_nsstring_utf8(string s)
-{
+static NSString *
+to_nsstring_utf8 (string s) {
   s= cork_to_utf8 (s);
   char *p = as_charp(s);
   NSString *nss = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
@@ -36,7 +36,6 @@ static NSString *to_nsstring_utf8(string s)
 ******************************************************************************/
 
 static hashmap<string,string> available_dicts ("");
-static hashmap<string,string> the_dicts ("");
 static string current_lang = "";
 static NSInteger current_tag = 0;
 
@@ -53,7 +52,9 @@ static bool mac_spelling_language(string lang)
 
 void
 mac_init_dictionary () {
-  if (N(the_dicts) == 0) {
+  if (N(available_dicts) == 0) {
+    hashmap<string,string> the_dicts ("");
+
     //FIXME: Complete dictionary list
     the_dicts("en") = "english";
     the_dicts("fr") = "french";
