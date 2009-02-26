@@ -346,6 +346,7 @@ Members logic-arrow
 Members logic-arrow-lim
 	leftarrowlim rightarrowlim leftrightarrowlim mapstolim
 	longleftarrowlim longrightarrowlim longleftrightarrowlim longmapstolim
+	leftsquigarrowlim rightsquigarrowlim leftrightsquigarrowlim
 
 Members operator-prefix
 	arccos arcsin arctan cos cosh cot

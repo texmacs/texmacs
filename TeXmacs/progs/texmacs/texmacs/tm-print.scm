@@ -25,14 +25,13 @@
 (tm-define (get-default-paper-size)
   (or (getenv "PAPERSIZE")
       (let ((papersizefile (or (getenv "PAPERCONF") '"/etc/papersize")))
-	(if
-	 (access? papersizefile R_OK)
-	 (let ((pps-port (open-input-file papersizefile)))
-	   (let ((size (read-line pps-port)))
-	     (begin
-	       (close-input-port pps-port)
-	       size)))
-	 "a4"))))
+	(if (access? papersizefile R_OK)
+	    (let ((pps-port (open-input-file papersizefile)))
+	      (let ((size (read-line pps-port)))
+		(begin
+		  (close-input-port pps-port)
+		  size)))
+	    "a4"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences
