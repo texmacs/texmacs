@@ -11,6 +11,7 @@
 
 #include "MacOS/mac_spellservice.h"
 #include "converter.hpp"
+#include "language.hpp"
 
 #include "Cocoa/mac_cocoa.h"
 
@@ -66,7 +67,8 @@ mac_init_dictionary () {
     
     while ((nsdict = (NSString*)[enumerator nextObject])) {
       string dict = from_nsstring(nsdict);
-      available_dicts(the_dicts(dict)) = dict;
+//      available_dicts(the_dicts(dict)) = dict;
+      available_dicts (locale_to_language (dict)) = dict;
     }
   }
 }

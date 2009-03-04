@@ -103,7 +103,7 @@ inputs_list_widget_rep::inputs_list_widget_rep (
   buttons_w[2]= glue_wk_widget (false, false, 5*PIXEL);
   buttons_w[3]= command_button (text_wk_widget ("Ok", false, "english"),
 				inputs_list_command (this, n-1, n), true);
-#ifdef OS_DARWIN
+#ifdef OS_MACOS
   buttons_w[4]= glue_wk_widget (false, false, 19*PIXEL);
 #else
   buttons_w[4]= glue_wk_widget (false, false, 5*PIXEL);

@@ -456,6 +456,7 @@ LIBS=""
 
 CONFIG_OS="GNU_LINUX"
 CONFIG_OS_SUFFIX="gnu-linux"
+CONFIG_MACOS=""
 CONFIG_CXXFLAGS=""
 CONFIG_CXXTEMPLATE=""
 CONFIG_STD_SETENV="#define STD_SETENV"
@@ -511,18 +512,18 @@ case "${host}" in
 #    CXX="export CYGWIN=check_case:strict; $CXX"
 #    AC_SUBST(CXX)
   ;;
-  powerpc-*-darwin*)
-    echo "$ac_t""final adjustments for a PowerPC/Darwin host" 1>&6
-    CONFIG_OS="DARWIN"
+  *apple*darwin*)
+    echo "$ac_t""final adjustments for a MacOS host" 1>&6
+    CONFIG_OS="MACOS"
+    CONFIG_MACOS="MacOS"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
-  i*86-*-darwin* | x86_64-*-darwin*)
-    echo "$ac_t""final adjustments for an Intel or AMD Darwin host" 1>&6
-    CONFIG_OS="DARWIN"
+  *darwin*)
+    echo "$ac_t""final adjustments for a generic Darwin host" 1>&6
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
@@ -863,6 +864,7 @@ esac
 
 AC_SUBST(CONFIG_OS)
 AC_SUBST(CONFIG_OS_SUFFIX)
+AC_SUBST(CONFIG_MACOS)
 AC_SUBST(CONFIG_CXXWARNING)
 AC_SUBST(CONFIG_CXXTEMPLATE)
 AC_SUBST(CONFIG_CXXOPTIMIZE)

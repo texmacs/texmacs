@@ -16,6 +16,10 @@
 #include "file.hpp"
 #include <QWidget>
 
+#ifdef OS_MACOS
+#include "MacOS/mac_images.h"
+#endif
+
 /******************************************************************************
 * Qt images
 ******************************************************************************/
@@ -268,7 +272,11 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
              suffix (u) == "eps" ||
              suffix (u) == "pdf") {
       url temp= url_temp (".png");
+#ifdef OS_MACOS
+      mac_image_to_png (u, temp); 
+#else
       system ("convert", u, temp);
+#endif
       pm= new QImage (to_qstring (as_string (temp)));
       remove (temp);
     }

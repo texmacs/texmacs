@@ -129,7 +129,7 @@ make_footer (int mask) {
   F_name[1]= "middle";
   F_name[2]= "right";
   wk_widget ftr= horizontal_array (F, F_name, 1);
-#ifdef OS_DARWIN
+#ifdef OS_MACOS
   F << glue_wk_widget (false, false, 14*PIXEL, 0);
   F_name << "margin";
 #endif

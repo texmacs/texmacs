@@ -95,7 +95,7 @@ plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Cairo Imlib2 \
                                           Ispell Metafont Openssl)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
-cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@)
+cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
 qt_src       := $(call findsrc_in,Plugins,@CONFIG_QT@)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
