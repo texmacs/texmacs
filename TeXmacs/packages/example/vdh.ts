@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7>
+<TeXmacs|1.0.7.2>
 
 <style|source>
 
@@ -61,15 +61,25 @@
 
     <assign|rsD|<with|math-font|cal*|D>>
 
+    <assign|rsE|<with|math-font|cal*|E>>
+
     <assign|rsF|<with|math-font|cal*|F>>
 
     <assign|rsG|<with|math-font|cal*|G>>
 
+    <assign|rsH|<with|math-font|cal*|H>>
+
     <assign|rsI|<with|math-font|cal*|I>>
+
+    <assign|rsJ|<with|math-font|cal*|J>>
+
+    <assign|rsK|<with|math-font|cal*|K>>
 
     <assign|rsL|<with|math-font|cal*|L>>
 
     <assign|rsM|<with|math-font|cal*|M>>
+
+    <assign|rsN|<with|math-font|cal*|N>>
 
     <assign|rsO|<with|math-font|cal*|O>>
 
@@ -77,9 +87,23 @@
 
     <assign|rsQ|<with|math-font|cal*|Q>>
 
+    <assign|rsR|<with|math-font|cal*|R>>
+
     <assign|rsS|<with|math-font|cal*|S>>
 
     <assign|rsT|<with|math-font|cal*|T>>
+
+    <assign|rsU|<with|math-font|cal*|U>>
+
+    <assign|rsV|<with|math-font|cal*|V>>
+
+    <assign|rsW|<with|math-font|cal*|W>>
+
+    <assign|rsX|<with|math-font|cal*|X>>
+
+    <assign|rsY|<with|math-font|cal*|Y>>
+
+    <assign|rsZ|<with|math-font|cal*|Z>>
 
     \;
 
