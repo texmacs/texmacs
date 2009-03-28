@@ -387,8 +387,9 @@ Members arithmetic-minus
 
 Members arithmetic-times
 	cdot times otimes circ
-	ast star boxdot boxtimes dottimes dototimes
+	boxdot boxtimes dottimes dototimes
 	ltimes rtimes atimes btimes join
+	ast star oast
 
 Members arithmetic-invisible-times
 	*
