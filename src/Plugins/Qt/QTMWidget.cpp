@@ -398,12 +398,22 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
 
 bool
 QTMWidget::event (QEvent* event) {
-  if (event->type() 
-== 
-QEvent::KeyPress) {
+  if (event->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
     keyPressEvent (ke);
     return true;
   }  
   return QWidget::event (event);
+}
+
+
+void 
+QTMWidget::focusInEvent ( QFocusEvent * event )
+{
+  cout << "FOCUSIN" << LF;
+  simple_widget_rep *wid = tm_widget ();
+  if (wid) {
+    wid -> handle_keyboard_focus (true, texmacs_time ());
+  }
+  QWidget::focusInEvent(event);
 }
