@@ -342,13 +342,6 @@ static void (*the_warning_handler) (string, string, int) = NULL;
 static void (*the_error_handler) (string, string, int) = NULL;
 
 void
-fatal_error (string message, string routine, string file) {
-  cerr << "\nFatal error: " << message << " in '" << routine << "'\n";
-  if (N(file)!=0) cerr << "See file   : " << file << "\n";
-  abort ();
-}
-
-void
 set_info_handler (void (*routine) (string, string, int)) {
   the_info_handler= routine; }
 

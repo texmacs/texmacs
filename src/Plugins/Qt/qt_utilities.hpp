@@ -40,7 +40,7 @@ inline void
 check_type_void (blackbox bb, string s) {
   if (!is_nil (bb)) {
     cerr << "\nslot type= " << s << "\n";
-    fatal_error ("type mismatch", "check_type");
+    FAILED ("type mismatch");
   }
 }
 
@@ -48,7 +48,7 @@ template<class T> void
 check_type (blackbox bb, string s) {
   if (type_box (bb) != type_helper<T>::id) {
     cerr << "\nslot type= " << s << "\n";
-    fatal_error ("type mismatch", "check_type");
+    FAILED ("type mismatch");
   }
 }
 

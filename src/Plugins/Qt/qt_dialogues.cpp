@@ -22,7 +22,10 @@
 #include <QInputDialog>
 
 extern char  *slot_name(slot s); // in qt_widget.cpp
-#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
+
+#define TYPE_CHECK(b) ASSERT (b, "type mismatch")
+#define NOT_IMPLEMENTED \
+  { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
 
 #pragma mark qt_chooser_widget_rep
 
@@ -80,18 +83,15 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     }
     break;
   case SLOT_SIZE:
-    if (type_box (val) != type_helper<coord2>::id)
-      fatal_error ("type mismatch", "SLOT_SIZE");
+    TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
     size = open_box<coord2> (val);
     break;
   case SLOT_POSITION:
-    if (type_box (val) != type_helper<coord2>::id)
-      fatal_error ("type mismatch", "SLOT_POSITION");
+    TYPE_CHECK (type_box (val) == type_helper<coord2>::id); 
     position = open_box<coord2> (val);
     break;
   case SLOT_KEYBOARD_FOCUS:
-    if (type_box (val) != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
+    TYPE_CHECK (type_box (val) == type_helper<bool>::id);
     perform_dialog ();
     break;		
   case SLOT_STRING_INPUT:
@@ -99,8 +99,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED 
     break;
   case SLOT_INPUT_TYPE:
-    if (type_box (val) != type_helper<string>::id)
-      fatal_error ("type mismatch", "SLOT_DIRECTORY");
+    TYPE_CHECK (type_box (val) != type_helper<string>::id);
     type = open_box<string> (val);
     break;
 #if 0
@@ -114,8 +113,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED 
     break;
   case SLOT_DIRECTORY:
-    if (type_box (val) != type_helper<string>::id)
-      fatal_error ("type mismatch", "SLOT_DIRECTORY");
+    TYPE_CHECK (type_box (val) != type_helper<string>::id);
     directory = open_box<string> (val);
     directory = as_string (url_pwd () * url_system (directory));
     break;
@@ -133,24 +131,18 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_POSITION)",
-		     "qt_chooser_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       return close_box<coord2> (position);
     }
   case SLOT_SIZE:
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_SIZE)",
-		     "qt_chooser_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       return close_box<coord2> (size);
     }
   case SLOT_STRING_INPUT:
     {
-      if (type_id != type_helper<string>::id)
-	fatal_error ("type mismatch (SLOT_STRING_INPUT)",
-		     "qt_chooser_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<string>::id);
       if (DEBUG_EVENTS) cout << "String: " << file << LF;
       return close_box<string> (file);
     }
@@ -314,19 +306,16 @@ qt_field_widget_rep::send (slot s, blackbox val) {
     cout << "qt_field_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
-    if (type_box (val) != type_helper<string>::id)
-      fatal_error ("type mismatch", "SLOT_STRING_INPUT");
+    TYPE_CHECK (type_box (val) != type_helper<string>::id);
     input= open_box<string> (val);
     // send_string (THIS, "input", val);
     break;
   case SLOT_INPUT_TYPE:
-    if (type_box (val) != type_helper<string>::id)
-      fatal_error ("type mismatch", "SLOT_INPUT_TYPE");
+    TYPE_CHECK (type_box (val) != type_helper<string>::id);
     type= open_box<string> (val);
     break;
   case SLOT_INPUT_PROPOSAL:
-    if (type_box (val) != type_helper<string>::id)
-      fatal_error ("type mismatch", "SLOT_INPUT_PROPOSAL");
+    TYPE_CHECK (type_box (val) != type_helper<string>::id);
     proposals << open_box<string> (val);
     // send_string (THIS, "default", val);
     break;
@@ -344,9 +333,7 @@ qt_field_widget_rep::query (slot s, int type_id) {
     cout << "qt_field_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
-    if (type_id != type_helper<string>::id)
-      fatal_error ("type mismatch (SLOT_STRING_INPUT)",
-		   "qt_field_widget_rep::query");
+    TYPE_CHECK (type_id == type_helper<string>::id);
     return close_box<string> (input);
   default:
     return widget_rep::query (s, type_id);
@@ -390,18 +377,15 @@ qt_input_widget_rep::send (slot s, blackbox val) {
     }	
     break;
   case SLOT_SIZE:
-    if (type_box (val) != type_helper<coord2>::id)
-      fatal_error ("type mismatch", "SLOT_SIZE");
+    TYPE_CHECK (type_box (val) != type_helper<coord2>::id);
     size = open_box<coord2> (val);
     break;
   case SLOT_POSITION:
-    if (type_box (val) != type_helper<coord2>::id)
-      fatal_error ("type mismatch", "SLOT_POSITION");
+    TYPE_CHECK (type_box (val) != type_helper<coord2>::id);
     position = open_box<coord2> (val);
     break;
   case SLOT_KEYBOARD_FOCUS:
-    if (type_box (val) != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
+    TYPE_CHECK (type_box (val) != type_helper<bool>::id);
     perform_dialog ();
     break;
   default:
@@ -418,17 +402,13 @@ qt_input_widget_rep::query (slot s, int type_id) {
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_POSITION)",
-		     "qt_input_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       return close_box<coord2> (position);
     }
   case SLOT_SIZE:
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id)
-	fatal_error ("type mismatch (SLOT_SIZE)",
-		     "qt_input_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       return close_box<coord2> (size);
     }
   case SLOT_STRING_INPUT:

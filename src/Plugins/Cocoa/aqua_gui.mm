@@ -392,8 +392,7 @@ void gui_start_loop ()
 void gui_close ()
   // cleanly close the gui
 {
-  if (the_gui == NULL)
-    fatal_error ("gui not yet open", "gui_close");
+  ASSERT (the_gui != NULL, "gui not yet open");
   [pool release];
   tm_delete (the_gui);
   the_gui=NULL;

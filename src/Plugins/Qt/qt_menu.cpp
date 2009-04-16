@@ -82,8 +82,7 @@ qt_menu_rep::send (slot s, blackbox val) {
     cout << "qt_menu_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
-    if (type_box (val) != type_helper<coord2>::id)
-      fatal_error ("type mismatch", "SLOT_POSITION");
+    ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
     break;
   case SLOT_VISIBILITY:
     {	
@@ -99,11 +98,11 @@ qt_menu_rep::send (slot s, blackbox val) {
       (void) flag;
       // [NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (qt_view_widget_rep*)(the_keyboard_focus.rep))->view ];
       if (item->menu ())
-	     item->menu()->exec (QCursor::pos ());
+	item->menu()->exec (QCursor::pos ());
     }	
     break;
   default:
-    fatal_error ("cannot handle slot type", "qt_menu_rep::send");
+    FAILED ("cannot handle slot type");
   }
 }
 

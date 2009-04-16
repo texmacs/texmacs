@@ -54,29 +54,28 @@ widget aqua_menu_rep::popup_window_widget (string s)
 
 void aqua_menu_rep::send (slot s, blackbox val) {
   switch (s) {
-		case SLOT_POSITION:
-		{
-			if (type_box (val) != type_helper<coord2>::id)
-				fatal_error ("type mismatch", "SLOT_POSITION");
-		}
-			break;
-		case SLOT_VISIBILITY:
-		{	
-			check_type<bool> (val, "SLOT_VISIBILITY");
-			bool flag = open_box<bool> (val);
-		}	
-			break;
-		case SLOT_MOUSE_GRAB:
-		{	
-			check_type<bool> (val, "SLOT_MOUSE_GRAB");
-			bool flag = open_box<bool> (val);
-			[NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (aqua_view_widget_rep*)(the_keyboard_focus.rep))->view ];
-		}	
-			//			send_mouse_grab (THIS, val);
-			break;
-
-		default:
-			fatal_error ("cannot handle slot type", "aqua_menu_rep::send");
+  case SLOT_POSITION:
+    {
+      ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
+    }
+    break;
+  case SLOT_VISIBILITY:
+    {	
+      check_type<bool> (val, "SLOT_VISIBILITY");
+      bool flag = open_box<bool> (val);
+    }	
+    break;
+  case SLOT_MOUSE_GRAB:
+    {	
+      check_type<bool> (val, "SLOT_MOUSE_GRAB");
+      bool flag = open_box<bool> (val);
+      [NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (aqua_view_widget_rep*)(the_keyboard_focus.rep))->view ];
+    }	
+    //			send_mouse_grab (THIS, val);
+    break;
+    
+  default:
+    FAILED ("cannot handle slot type");
   }
 }
 

@@ -516,9 +516,10 @@ static CGImageRef xpm_init(url file_name)
 	ok= read_int (s, i, c) && ok;
 	skip_spaces (s, i);
 	ok= read_int (s, i, b) && ok;
-	if ((!ok) || (N(t)<(c+1)) || (c<=0))
-		fatal_error ("Invalid xpm (" * as_string (file_name) * ")",
-					 "aqua_renderer_rep::xpm_initialize");
+	if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
+	  cerr << "File name= " << file_name << "\n";
+	  FAILED ("invalid xpm");
+	}
 	
 	// setup colors
 	string first_name;
@@ -590,9 +591,8 @@ void
 cg_renderer_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   CGImageRef image = xpm_image (file_name);
-  if (sfactor != 1)
-    fatal_error ("Shrinking factor should be 1", "cg_renderer_rep::xpm");
-	int w = CGImageGetWidth(image);
+  ASSERT (sfactor == 1, "shrinking factor should be 1");
+  int w = CGImageGetWidth(image);
   int h = CGImageGetHeight(image);
   int old_clip= char_clip;
   char_clip = true;

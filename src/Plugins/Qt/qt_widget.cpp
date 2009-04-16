@@ -36,9 +36,11 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 
-#define NOT_IMPLEMENTED { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
-widget the_keyboard_focus (NULL);
+#define TYPE_CHECK(b) ASSERT (b, "type mismatch")
+#define NOT_IMPLEMENTED \
+  { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
 
+widget the_keyboard_focus (NULL);
 
 widget
 qt_widget_rep::plain_window_widget (string s) {
@@ -151,8 +153,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_INVALIDATE:
     {
-      if (type_box (val) != type_helper<coord4>::id)
-        fatal_error ("type mismatch", "SLOT_INVALIDATE");
+      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
       if (DEBUG_EVENTS) cout << "Invalidating rect " << rect << LF;
@@ -160,8 +161,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     }
     break;
   case SLOT_INVALIDATE_ALL:
-    if (!is_nil (val))
-      fatal_error ("type mismatch", "SLOT_INVALIDATE_ALL");
+    ASSERT (is_nil (val), "type mismatch");
     view->update(); // [view setNeedsDisplay:YES];
     break;
     
@@ -177,14 +177,13 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 
   case SLOT_KEYBOARD_FOCUS:
     //send_keyboard_focus (THIS, val);
-    if (type_box (val) != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_KEYBOARD_FOCUS");
+    TYPE_CHECK (type_box (val) == type_helper<bool>::id);
     if (open_box<bool> (val)) the_keyboard_focus = this;
       if (DEBUG_EVENTS) cout << "Ignored!\n";
     break;
     			
   default:
-    fatal_error ("unhandled slot type", "qt_view_widget_rep::send");
+    FAILED ("unhandled slot type");
   }
 }
 
@@ -199,17 +198,13 @@ qt_view_widget_rep::query (slot s, int type_id) {
   
   switch (s) {
   case SLOT_IDENTIFIER:
-    if (type_id != type_helper<int>::id)
-      fatal_error ("int expected (SLOT_IDENTIFIER)",
-		   "qt_view_widget_rep::query");
+    TYPE_CHECK (type_id == type_helper<int>::id);
     // return close_box<int> ((int)view->window());
     // we need only to know if the widget is attached to some gui window
     return close_box<int> (view->window() ? 1 : 0);
   case SLOT_RENDERER:
-    if (type_id != type_helper<renderer>::id)
-      fatal_error ("renderer expected (SLOT_RENDERER)",
-		   "qt_view_widget_rep::query");
     {
+      TYPE_CHECK (type_id == type_helper<renderer>::id);
       renderer r = get_current_renderer();
       //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
       if (!r) r = the_qt_renderer();
@@ -218,18 +213,17 @@ qt_view_widget_rep::query (slot s, int type_id) {
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id)
-	      fatal_error ("type mismatch (SLOT_POSITION)", "qt_view_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= view->pos();
-      if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
       
 #if 0
   case SLOT_VISIBLE_PART:
     {
-      if (type_id != type_helper<coord4>::id)
-      	fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
+      TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect = view->visibleRegion().boundingRect();
       coord4 c = from_qrect (rect);
       if (DEBUG_EVENTS) cout << "visibleRegion " << rect << LF;
@@ -238,7 +232,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
 #endif
       
   default:
-    fatal_error ("cannot handle slot type", "qt_view_widget_rep::query");
+    FAILED ("cannot handle slot type");
     return blackbox ();
   }
 }
@@ -268,17 +262,16 @@ qt_view_widget_rep::read (slot s, blackbox index) {
   switch (s) {
     case SLOT_WINDOW: 
       {    
-      check_type_void (index, "SLOT_WINDOW");
-      QWidget* qwin = view->window();
-      QVariant v= qwin->property ("texmacs_window_widget");
-      if (v.canConvert<void*> ()) 
-        return (widget_rep*) (v.value<void*> ());
-      else 
-        fatal_error ("QWidget property not set", "qt_view_widget_rep::read");
+	check_type_void (index, "SLOT_WINDOW");
+	QWidget* qwin = view->window();
+	QVariant v= qwin->property ("texmacs_window_widget");
+	if (v.canConvert<void*> ()) 
+	  return (widget_rep*) (v.value<void*> ());
+	else FAILED ("QWidget property not set");
       }
       break; // not reached	
     default:
-      fatal_error ("cannot handle slot type", "qt_view_widget_rep::read");
+      FAILED ("cannot handle slot type");
       return widget();
   }
 }
@@ -290,7 +283,7 @@ qt_view_widget_rep::write (slot s, blackbox index, widget w) {
     cout << "qt_view_widget_rep::write " << slot_name (s) << LF;
   switch (s) {
   default:
-    fatal_error ("cannot handle slot type", "qt_view_widget_rep::write");
+    FAILED ("cannot handle slot type");
   }
 }
 
@@ -379,8 +372,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_EXTENTS:
     {
-      if (type_box (val) != type_helper<coord4>::id)
-        fatal_error ("type mismatch", "SLOT_EXTENTS");
+      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
       //cout << "p= " << p << "\n";
       QSize sz= to_qrect (p).size ();
@@ -392,8 +384,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_HEADER_VISIBILITY:
     {
-      if (type_box (val) != type_helper<bool>::id)
-        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
       visibility[0] = f;
       updateVisibility();
@@ -401,8 +392,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_MAIN_ICONS_VISIBILITY:
     {
-      if (type_box (val) != type_helper<bool>::id)
-        fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
       visibility[1] = f;
       updateVisibility();
@@ -410,8 +400,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_CONTEXT_ICONS_VISIBILITY:
     {
-      if (type_box (val) != type_helper<bool>::id)
-        fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
       visibility[2] = f;
       updateVisibility();
@@ -419,8 +408,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_USER_ICONS_VISIBILITY:
     {
-      if (type_box (val) != type_helper<bool>::id)
-        fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
       visibility[3] = f;
       updateVisibility();
@@ -428,8 +416,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_FOOTER_VISIBILITY:
     {
-      if (type_box (val) != type_helper<bool>::id)
-        fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
       visibility[4] = f;
       updateVisibility();
@@ -438,8 +425,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
   case SLOT_LEFT_FOOTER:
     {
-      if (type_box (val) != type_helper<string>::id)
-        fatal_error ("type mismatch", "SLOT_LEFT_FOOTER");
+      TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg= open_box<string> (val);
       leftLabel->setText (to_qstring_utf8 (qt_translate (msg)));
       leftLabel->update ();
@@ -447,8 +433,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_RIGHT_FOOTER:
     {
-      if (type_box (val) != type_helper<string>::id)
-        fatal_error ("type mismatch", "SLOT_RIGHT_FOOTER");
+      TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg= open_box<string> (val);
       rightLabel->setText (to_qstring_utf8 (qt_translate (msg)));
       rightLabel->update ();
@@ -457,8 +442,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 			
   case SLOT_SCROLL_POSITION:
     {
-      if (type_box (val) != type_helper<coord2>::id)
-        fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
+      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
       QPoint pt= to_qpoint (p);
       // convert from main widget to canvas coordinates
@@ -498,8 +482,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       
   case SLOT_INTERACTIVE_MODE:
     {
-      if (type_box (val) != type_helper<bool>::id)
-        fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       if (open_box<bool> (val) == true) {
         QTimer::singleShot (0, &helper, SLOT (doit ()));
         // do_interactive_prompt ();
@@ -508,8 +491,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     break;
 
   case SLOT_SHRINKING_FACTOR:
-    if (type_box (val) != type_helper<int>::id)
-      fatal_error ("type mismatch", "SLOT_SHRINKING_FACTOR");
+    TYPE_CHECK (type_box (val) == type_helper<int>::id);
     if (QTMWidget* tmw= qobject_cast<QTMWidget*> (tm_canvas())) {
       int new_sf = open_box<int> (val);
       if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
@@ -536,17 +518,16 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_SCROLL_POSITION:
     {
-      if (type_id != type_helper<coord2>::id)
-        fatal_error ("type mismatch", "SLOT_SCROLL_POSITION");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= tm_canvas()->pos();
-      if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
       return close_box<coord2> (from_qpoint (pt));
     }
 
   case SLOT_EXTENTS:
     {
-      if (type_id != type_helper<coord4>::id)
-	      fatal_error ("type mismatch", "SLOT_EXTENTS");
+      TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect= tm_canvas()->geometry();
       coord4 c= from_qrect (rect);
       if (DEBUG_EVENTS) cout << "Canvas geometry " << rect << LF;
@@ -556,8 +537,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 	
   case SLOT_VISIBLE_PART:
     {
-      if (type_id != type_helper<coord4>::id)
-	      fatal_error ("type mismatch", "SLOT_VISIBLE_PART");
+      TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect= tm_canvas()->visibleRegion().boundingRect();
       coord4 c= from_qrect (rect);
       if (DEBUG_EVENTS) cout << "Visible Region " << rect << LF;
@@ -565,40 +545,33 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     }
 			
   case SLOT_USER_ICONS_VISIBILITY:
-    if (type_id != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_USER_ICONS_VISIBILITY");
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[3]);
 
   case SLOT_CONTEXT_ICONS_VISIBILITY:
-    if (type_id != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_CONTEXT_ICONS_VISIBILITY");
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[2]);
       
   case SLOT_MAIN_ICONS_VISIBILITY:
-    if (type_id != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_MAIN_ICONS_VISIBILITY");
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[1]);
       
   case SLOT_HEADER_VISIBILITY:
-    if (type_id != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_HEADER_VISIBILITY");
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[0]);
 
   case SLOT_FOOTER_VISIBILITY:
-    if (type_id != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_FOOTER_VISIBILITY");
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[4]);
 
   case SLOT_INTERACTIVE_INPUT:
-    if (type_id != type_helper<string>::id)
-      fatal_error ("type mismatch", "SLOT_INTERACTIVE_INPUT");
+    TYPE_CHECK (type_id == type_helper<string>::id);
     return close_box<string>
       (((qt_input_text_widget_rep*) int_input.rep) -> text);
     // return close_box<string> ("FIXME");
  
   case SLOT_INTERACTIVE_MODE:
-    if (type_id != type_helper<bool>::id)
-      fatal_error ("type mismatch", "SLOT_INTERACTIVE_MODE");
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (false); // FIXME: who needs this info?
 
   default:
@@ -747,8 +720,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
   switch (s) {
   case SLOT_SIZE:
     {
-      if (type_box (val) != type_helper<coord2>::id)
-	      fatal_error ("type mismatch", "SLOT_SIZE");
+      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
       if (wid) {
 	      QSize size= to_qsize (p);
@@ -759,8 +731,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 
   case SLOT_POSITION:
     {
-      if (type_box (val) != type_helper<coord2>::id)
-	      fatal_error ("type mismatch", "SLOT_POSITION");
+      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
       if (wid) { 
 	      QPoint pt = to_qpoint (p); 
@@ -811,7 +782,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     break;
 
   default:
-    fatal_error ("cannot handle slot type", "qt_window_widget_rep::send");
+    FAILED ("cannot handle slot type");
   }
 }
 
@@ -821,30 +792,28 @@ qt_window_widget_rep::query (slot s, int type_id) {
     cout << "qt_window_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_IDENTIFIER:
-    if (type_id != type_helper<int>::id)
-      fatal_error ("int expected (SLOT_IDENTIFIER)", "qt_window_widget_rep::query");
+    TYPE_CHECK (type_id == type_helper<int>::id);
     // we need only to know if the widget is attached to some gui window
     return close_box<int> (wid? 1: 0);
     // return close_box<int> ((int)wid);
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id)
-	      fatal_error ("type mismatch (SLOT_POSITION)", "qt_window_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= wid->pos();
-      if (DEBUG_EVENTS) cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
+      if (DEBUG_EVENTS)
+	cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
   case SLOT_SIZE:
     {
       typedef pair<SI,SI> coord2;
-      if (type_id != type_helper<coord2>::id) 
-        fatal_error ("type mismatch (SLOT_SIZE)", "qt_window_widget_rep::query");
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
       QSize s= wid->size();
       return close_box<coord2> (from_qsize (s));
     }
   default:
-    fatal_error ("cannot handle slot type", "qt_window_widget_rep::query");
+    FAILED ("cannot handle slot type");
     return blackbox ();
   }
 }
@@ -867,7 +836,7 @@ qt_window_widget_rep::read (slot s, blackbox index) {
     cout << "qt_window_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   default:
-    fatal_error ("cannot handle slot type", "qt_window_widget_rep::read");
+    FAILED ("cannot handle slot type");
     return widget();
   }
 }
@@ -880,7 +849,7 @@ qt_window_widget_rep::write (slot s, blackbox index, widget w) {
 
   switch (s) {
   default:
-    fatal_error ("cannot handle slot type", "qt_window_widget_rep::write");
+    FAILED ("cannot handle slot type");
   }
 }
 

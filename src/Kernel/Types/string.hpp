@@ -72,9 +72,6 @@ bool   is_charp  (string s);
 bool   is_quoted (string s);
 bool   is_id     (string s);
 
-void  fatal_error (string message= "unknown", string routine= "unknown",
-		   string file= "");
-
 void  set_info_handler (void (*) (string, string, int));
 void  set_wait_handler (void (*) (string, string, int));
 void  set_warning_handler (void (*) (string, string, int));

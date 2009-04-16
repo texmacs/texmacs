@@ -424,8 +424,7 @@ void
 qt_renderer_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   QPixmap* image = xpm_image (file_name);
-  if (sfactor != 1)
-    fatal_error ("Shrinking factor should be 1", "qt_renderer_rep::xpm");
+  ASSERT (sfactor == 1, "shrinking factor should be 1");
   int w, h;
   w = image->width ();
   h = image->height ();

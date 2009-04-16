@@ -453,9 +453,10 @@ NSImage* xpm_init(url file_name)
   ok= read_int (s, i, c) && ok;
   skip_spaces (s, i);
   ok= read_int (s, i, b) && ok;
-  if ((!ok) || (N(t)<(c+1)) || (c<=0))
-    fatal_error ("Invalid xpm (" * as_string (file_name) * ")",
-                 "aqua_renderer_rep::xpm_initialize");
+  if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
+    cerr << "File name= " << file_name << "\n";
+    FAILED ("invalid xpm");
+  }
   
   // setup colors
   string first_name;
@@ -543,8 +544,7 @@ void aqua_renderer_rep::xpm (url file_name, SI x, SI y) {
   ///name = [name stringByDeletingPathExtension];
   NSImage *image = xpm_image(file_name);
   
-  if (sfactor != 1)
-    fatal_error ("Shrinking factor should be 1", "aqua_renderer_rep::xpm");
+  ASSERT (sfactor == 1, "shrinking factor should be 1");
   int w, h;
   NSSize imgSize = [image size];
   w = imgSize.width; h = imgSize.height;
