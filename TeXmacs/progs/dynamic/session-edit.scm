@@ -238,7 +238,8 @@
 
 (tm-define (session-defined?)
   (with lan (get-env "prog-language")
-    (or (connection-defined? lan)
+    (or (== lan "scheme")
+	(connection-defined? lan)
 	(begin
 	  (set-message (string-append "plugin '" lan "' not defined") "")
 	  #f))))

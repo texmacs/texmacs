@@ -23,7 +23,7 @@ tmorig = /Users/vdhoeven/texmacs/src
 tmsrc = /Users/vdhoeven/texmacs/src/TeXmacs
 tmbin = ${exec_prefix}/libexec/TeXmacs
 tmdata = ${datarootdir}/TeXmacs
-so = so
+so = dylib
 os = gnu-linux
 
 MKDIR = mkdir -p
