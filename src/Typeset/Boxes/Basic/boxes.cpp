@@ -395,57 +395,57 @@ box_rep::get_info (tree in) {
 int
 box_rep::get_leaf_left_pos () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("this box is not textual", "get_leaf_left_pos");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("this box is not textual");
+  return 0;
 }
 
 int
 box_rep::get_leaf_right_pos () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("this box is not textual", "get_leaf_right_pos");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("this box is not textual");
+  return 0;
 }
 
 string
 box_rep::get_leaf_string () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("this box is not textual", "get_leaf_string");
-  return ""; // Because of bug in certain versions of g++
+  FAILED ("this box is not textual");
+  return "";
 }
 
 font
 box_rep::get_leaf_font () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("this box is not textual", "get_leaf_font");
-  return font (); // Because of bug in certain versions of g++
+  FAILED ("this box is not textual");
+  return font ();
 }
 
 color
 box_rep::get_leaf_color () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("this box is not textual", "get_leaf_color");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("this box is not textual");
+  return 0;
 }
 
 language
 box_rep::get_leaf_language () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("this box is not textual", "get_leaf_language");
-  return language (); // Because of bug in certain versions of g++
+  FAILED ("this box is not textual");
+  return language ();
 }
 
 tree
 box_rep::get_leaf_tree () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("no tree attached to this box", "get_leaf_tree");
-  return ""; // Because of bug in certain versions of g++
+  FAILED ("no tree attached to this box");
+  return "";
 }
 
 lazy
 box_rep::get_leaf_lazy () {
   cerr << "\nTeXmacs] the box is " << box (this) << "\n";
-  fatal_error ("no lazy attached to this box", "get_leaf_lazy");
-  return lazy (); // Because of bug in certain versions of g++
+  FAILED ("no lazy attached to this box");
+  return lazy ();
 }
 
 SI
@@ -699,7 +699,7 @@ box_rep::anim_finish_now () {
 
 time_t
 box_rep::anim_next_update () {
-  fatal_error ("Invalid situation", "box_rep::anim_next_update");
+  FAILED ("invalid situation");
   return texmacs_time ();
 }
 

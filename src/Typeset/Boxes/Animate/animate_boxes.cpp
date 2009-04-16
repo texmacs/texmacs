@@ -148,9 +148,7 @@ public:
 anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> bs2):
   box_rep (ip), bs (bs2), cum_len (N(bs))
 {
-  if (N(bs) == 0)
-    fatal_error ("Empty animation",
-		 "anim_compose_box_rep::anim_compose_box_rep");
+  ASSERT (N(bs) != 0, "empty animation");
 
   started = false;
   finished= false;

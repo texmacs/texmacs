@@ -56,7 +56,7 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
 	case 0: new_buffer_in_this_window (v, doc); break;
 	case 1: new_buffer_in_new_window (v, doc); break;
 	case 2: new_buffer (v, doc); break;
-	default: fatal_error ("Bad value for 'where'", "load_buffer");
+	default: FAILED ("bad value for 'where'");
 	}
       }
     if (!no_bufs ())
@@ -83,7 +83,7 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   case 0: new_buffer_in_this_window (v, doc); break;
   case 1: new_buffer_in_new_window (v, doc); break;
   case 2: new_buffer (v, doc); break;
-  default: fatal_error ("Bad value for 'where'", "load_buffer");
+  default: FAILED ("bad value for 'where'");
   }
   nr= find_buffer (v);
   if (nr != -1) {

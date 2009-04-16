@@ -470,8 +470,8 @@ spline_rep::S (
   else if (u<U[i+1]) return p1[i](u);
   else if (u<U[i+2]) return p2[i](u);
   else if (u<U[i+3]) return p3[i](u);
-  else fatal_error ("We should **never** go here");
-  return 0.0; // NOT REACHED
+  else FAILED ("we should **never** go here");
+  return 0.0;
 }
 
 point
@@ -627,10 +627,7 @@ spline_rep::get_control_points (
     for (i=0; i<=(close ? n-2 : n); i++)
       p[i]= evaluate (u[i]);
   }
-  else {
-    fatal_error ("Not yet implemented",
-		 "noninterpolated(spline_rep)::get_control_points");
-  }
+  else FAILED ("not yet implemented");
   abs = u;
   pts = p;
   rcip= cip;
@@ -872,9 +869,8 @@ struct transformed_curve_rep: public curve_rep {
   }
   point grad (double t, bool& error);
   double curvature (double t1, double t2) {
-    fatal_error ("Not yet implemented",
-	         "transformed_curve_rep::curvature");
-    return 0.0; // NOT REACHED
+    FAILED ("not yet implemented");
+    return 0.0;
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
@@ -888,8 +884,7 @@ transformed_curve_rep::rectify_cumul (array<point>& a, double eps) {
     int i, k= N(b);
     for (i=0; i<k; i++) a << f(b[i]);
   }
-  else fatal_error ("Not yet implemented",
-		    "transformed_curve_rep::rectify_cumul");
+  else FAILED ("not yet implemented");
 }
 
 point

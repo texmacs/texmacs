@@ -128,8 +128,7 @@ bridge_docrange_rep::rebalance () {
 
 void
 bridge_docrange_rep::notify_assign (path p, tree u) {
-  if (is_nil (p))
-    fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_assign");
+  ASSERT (!is_nil (p), "erroneous nil path");
   if (divide) {
     int i, n= N(acc);
     for (i=0; i<n; i++)
@@ -143,11 +142,10 @@ void
 bridge_docrange_rep::notify_insert (path p, tree u) {
   // cout << "Notify insert " << p << ", " << N(u)
   //      << " [ " << begin << "--" << end << " ]\n";
-  if (is_nil (p))
-    fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_insert");
+  ASSERT (!is_nil (p), "erroneous nil path");
   if (p->item > end) {
     cerr << "\nNotify insert " << u << " at " << p << "\n";
-    fatal_error ("Out of range", "bridge_docrange_rep::notify_insert");
+    FAILED ("out of range");
   }
   if (p->item >= begin) status= CORRUPTED;
   else begin += N(u);
@@ -173,10 +171,8 @@ void
 bridge_docrange_rep::notify_remove (path p, int nr) {
   // cout << "Notify insert " << p << ", " << nr
   //      << " [ " << begin << "--" << end << " ]\n";
-  if (is_nil (p))
-    fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_insert");
-  if (p->item >= end)
-    fatal_error ("Out of range", "bridge_docrange_rep::notify_insert");
+  ASSERT (!is_nil (p), "erroneous nil path");
+  ASSERT (p->item < end, "out of range");
   if (p->item + nr > begin) {
     status= CORRUPTED;
     begin= min (begin , p->item);
@@ -205,8 +201,7 @@ bridge_docrange_rep::notify_remove (path p, int nr) {
 bool
 bridge_docrange_rep::notify_macro (int type, string v, int l, path p, tree u) {
   (void) type; (void) v; (void) l; (void) p; (void) u;
-  fatal_error ("Method should never be called",
-	       "bridge_docrange_rep::notify_macro");
+  FAILED ("method should never be called");
   return false;
 }
 

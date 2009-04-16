@@ -21,12 +21,12 @@ tridiag_solve (array<double> a, array<double> b, array<double> c,
   int i;
   double li;
   li= b[0];
-  if (b[0] == 0) fatal_error ("tridiag_solve(1)");
+  ASSERT (b[0] != 0, "failed tridiag_solve (1)");
   x[0]= y[0]/li;
   for (i=0; i<n-1; i++) {
      u[i]= c[i]/li;
      li= b[i+1] - a[i+1]*u[i];
-     if (li == 0) fatal_error ("tridiag_solve(2)");
+     ASSERT (li != 0, "failed tridiag_solve (2)");
      x[i+1]= (y[i+1] - a[i+1]*x[i]) / li;
   }
   for (i=n-2; i>=0; i--) {

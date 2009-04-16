@@ -219,11 +219,11 @@ sub (array<page_item> l, path p, path q) {
   else {
     if ((N(p) <= 2) || (N(q) <= 2)) {
       cerr << "\nThe paths were " << p << " and " << q << "\n";
-      fatal_error ("paths to short", "sub (array<page_item>, path, path)");
+      FAILED ("paths to short");
     }
     if ((p->item != q->item) || (p->next->item != q->next->item)) {
       cerr << "\nThe paths were " << p << " and " << q << "\n";
-      fatal_error ("paths don't match", "sub (array<page_item>, path, path)");
+      FAILED ("paths don't match");
     }
     page_item item= l[p->item];
     lazy_vstream ins= (lazy_vstream) item->fl[p->next->item];
@@ -461,8 +461,7 @@ page_breaker_rep::generate_breaks (vbreak br, int id, path flb)
 	  best_p  = flow[sid][pos-1];
 	}
       }
-    if (best_sid == -1)
-      fatal_error ("flow not found", "page_breaker_rep::generate_breaks");
+    ASSERT (best_sid != -1, "flow not found");
     brk << generate_breaks (copy (br), best_sid);
   }
 
@@ -1042,8 +1041,8 @@ page_breaker_rep::search_mcol_breaks (
   }
 
   // cout << "Search breaks " << br1 << " -- " << br2 << LF;
-  if ((!brk_nr->contains (br1)) || (!brk_nr->contains (br2)))
-    fatal_error ("break not found", "page_breaker_rep::search_mcol_breaks");
+  ASSERT (brk_nr->contains (br1) && brk_nr->contains (br2),
+	  "break not found");
   i1= brk_nr[br1];
   i2= brk_nr[br2];
 }
@@ -1384,8 +1383,7 @@ void
 page_breaker_rep::assemble_skeleton (skeleton& sk, int last) {
   // cout << "Assemble until " << last << LF;
   if (last == brk_first) return;
-  if (best_prev[last] == -1)
-    fatal_error ("unfinished skeleton", "page_breaker_rep::assemble_skeleton");
+  ASSERT (best_prev[last] != -1, "unfinished skeleton");
   assemble_skeleton (sk, best_prev[last]);
   sk << best_pgs[last];
 }

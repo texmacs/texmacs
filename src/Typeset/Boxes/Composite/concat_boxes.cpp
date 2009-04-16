@@ -73,8 +73,7 @@ concat_box_rep::operator tree () {
 void
 concat_box_rep::position (array<SI> spc) {
   int i;
-  if (N(bs)==0)
-    fatal_error ("concat of zero boxes", "concat_box_rep::position");
+  ASSERT (N(bs) != 0, "concat of zero boxes");
   x1 = bs[0]->x1;
   x2 = 0;
   for (i=0; i<N(bs); i++) {

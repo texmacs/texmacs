@@ -55,8 +55,7 @@ texmacs_wait_handler (string message, string arg, int level) {
 
 server
 get_server () {
-  if (the_server == NULL)
-    fatal_error ("TeXmacs server not yet started", "get_server");
+  ASSERT (the_server != NULL, "TeXmacs server not yet started");
   return *the_server;
 }
 
@@ -126,8 +125,7 @@ tm_server_rep::has_window () {
 
 tm_view
 tm_server_rep::get_view (bool must_be_valid) {
-  if (must_be_valid && (vw==NULL))
-    fatal_error ("No active view", "tm_server_rep::get_view");
+  ASSERT (!must_be_valid || vw != NULL, "no active view");
   return vw;
 }
 
@@ -154,8 +152,7 @@ tm_server_rep::get_editor () {
 tm_window
 tm_server_rep::get_window () {
   tm_view vw= get_view ();
-  if (vw->win==NULL)
-    fatal_error ("No window attached to view", "tm_server_rep::get_window");
+  ASSERT (vw->win != NULL, "no window attached to view");
   return vw->win;
 }
 
@@ -337,7 +334,7 @@ tm_server_rep::focus_on_editor (editor ed) {
       }
     }
   }
-  fatal_error ("Invalid situation", "tm_server_rep::focus_on_editor");
+  FAILED ("invalid situation");
 }
 
 void

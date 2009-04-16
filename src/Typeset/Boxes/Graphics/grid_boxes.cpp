@@ -73,9 +73,9 @@ grid_box_rep::display (renderer ren) {
     L2t= norm (e3t - e2t);
     L3t= norm (e4t - e3t);
     L4t= norm (e1t - e4t);
-    if (fnull (L1t, 1e-6) || fnull (L2t, 1e-6) 
-     || fnull (L3t, 1e-6) || fnull (L4t, 1e-6))
-      fatal_error ("One side of the grid has length zero");
+    ASSERT (!fnull (L1t, 1e-6) && !fnull (L2t, 1e-6) &&
+	    !fnull (L3t, 1e-6) && !fnull (L4t, 1e-6),
+	    "one side of the grid has length zero");
     double u, u1, u2, u3, u4;
     u1= u= L1 / L1t;
     u2= min (u, L2 / L2t);

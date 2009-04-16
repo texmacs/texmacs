@@ -75,23 +75,23 @@ lazy_rep::produce (lazy_type request, format fm) {
 
   cout << "\nThe lazy structure was " << ((tree) (*this)) << "\n";
   cout << "The format was " << ((tree) fm) << "\n";
-  fatal_error ("invalid production", "lazy_rep::produce");
-  return lazy (); // avoids error message when C++ compiler behaves badly
+  FAILED ("invalid production");
+  return lazy ();
 }
 
 format
 lazy_rep::query (lazy_type request, format fm) {
   cout << "\nThe lazy structure was " << ((tree) (*this)) << "\n";
   cout << "The format was " << ((tree) fm) << "\n";
-  fatal_error ("invalid query", "lazy_rep::query");
-  return format (); // avoids error message when C++ compiler behaves badly
+  FAILED ("invalid query");
+  return format ();
 }
 
 void
 lazy_rep::append (lazy lz) {
   (void) lz;
   cout << "\nThe lazy structure was " << ((tree) (*this)) << "\n";
-  fatal_error ("lazy structure is not a stream", "lazy_rep::append");
+  FAILED ("lazy structure is not a stream");
 }
 
 struct lazy_box_rep: public lazy_rep {

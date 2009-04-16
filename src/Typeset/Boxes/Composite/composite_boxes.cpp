@@ -67,7 +67,7 @@ composite_box_rep::position () {
   if (n == 0) {
     x1= y1= x3= y3= 0;
     x2= y2= x4= y4= 0;
-    fatal_error ("empty composite box", "composite_box::position");
+    FAILED ("empty composite box");
   }
   else {
     x1= y1= x3= y3= MAX_SI;

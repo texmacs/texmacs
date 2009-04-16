@@ -48,7 +48,7 @@ tree
 insert_at (tree t, path p, tree u) {
   if (is_atom (p)) {
     if (is_atomic (t)) {
-      if (is_compound (u)) fatal_error ("two atoms expected", "insert");
+      ASSERT (is_atomic (u), "two atoms expected");
       return t->label (0, p->item) *u->label* t->label (p->item, N(t->label));
     }
     else return (t (0, p->item) * u) * t (p->item, N(t));

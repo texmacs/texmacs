@@ -276,8 +276,8 @@ text_box_rep::get_leaf_offset (string search) {
 
 static string
 get_delimiter (string s, font fn, SI height) {
-  if ((N(s)<2) || (s[0]!='<') || (s[N(s)-1]!='>'))
-    fatal_error ("Invalid rubber character", "get_delimiter");
+  ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
+	  "invalid rubber character");
   height -= PIXEL;
   string radical= s (0, N(s)-1) * "-";
   string first  = radical * "0>";
@@ -310,8 +310,8 @@ get_delimiter (string s, font fn, SI height) {
 
 static string
 get_wide (string s, font fn, SI width) {
-  if ((N(s)<2) || (s[0]!='<') || (s[N(s)-1]!='>'))
-    fatal_error ("Invalid rubber character", "get_wide");
+  ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
+	  "invalid rubber character");
   string radical= s (0, N(s)-1) * "-";
   string first  = radical * "0>";
   metric ex;
@@ -352,8 +352,8 @@ delimiter_box (path ip, string s, font fn, color col, SI bot, SI top) {
 
 box
 big_operator_box (path ip, string s, font fn, color col, int n) {
-  if ((N(s)<2) || (s[0]!='<') || (s[N(s)-1]!='>'))
-    fatal_error ("Invalid rubber character", "big_operator_box");
+  ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
+	  "invalid rubber character");
   string r= s (0, N(s)-1) * "-" * as_string (n) * ">";
   metric ex;
   fn->get_extents (r, ex);

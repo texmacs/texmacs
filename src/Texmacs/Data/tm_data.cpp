@@ -343,8 +343,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   vw->win= win;
   widget wid= win->wid;
   set_canvas (wid, vw->ed);
-  if (!is_attached (wid))
-    fatal_error ("widget should be attached", "tm_data_rep::attach_view");
+  ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->resume ();
   win->set_window_name (vw->buf->abbr);
   // cout << "View attached\n";
@@ -357,8 +356,7 @@ tm_data_rep::detach_view (tm_view vw) {
   if (win == NULL) return;
   vw->win= NULL;
   widget wid= win->wid;
-  if (!is_attached (wid))
-    fatal_error ("widget should be attached", "tm_data_rep::attach_view");
+  ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->suspend ();
   set_canvas (wid, glue_widget ());
   win->set_window_name ("TeXmacs");
@@ -546,11 +544,9 @@ tm_data_rep::kill_buffer () {
   if (N(bufs) <= 1) quit();
   tm_buffer buf= get_buffer();
   for (nr=0; nr<N(bufs); nr++) if (buf == bufs[nr]) break;
-  if (nr == N(bufs))
-    fatal_error ("Buffer not found", "tm_data_rep::kill_buffer");
+  ASSERT (nr != N(bufs), "buffer not found");
   for (nr=0; nr<N(bufs); nr++) if (buf != bufs[nr]) break;
-  if (nr == N(bufs))
-    fatal_error ("No suitable new buffer", "tm_data_rep::kill_buffer");
+  ASSERT (nr != N(bufs), "no suitable new buffer");
   tm_buffer new_buf = bufs[nr];
 
   for (i=0; i<N(buf->vws); i++) {

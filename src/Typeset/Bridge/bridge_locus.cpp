@@ -56,10 +56,9 @@ bridge_locus (typesetter ttt, tree st, path ip) {
 void
 bridge_locus_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (is_nil (p) && (!is_func (u, LOCUS)))
-    fatal_error ("Nil path", "bridge_locus_rep::notify_assign");
+  ASSERT (!is_nil (p) || is_func (u, LOCUS), "nil path");
   if (is_nil (p)) {
-    st=u;
+    st= u;
     initialize ();
   }
   else {
@@ -81,7 +80,7 @@ bridge_locus_rep::notify_assign (path p, tree u) {
 void
 bridge_locus_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (is_nil (p)) fatal_error ("Nil path", "bridge_locus_rep::notify_insert");
+  ASSERT (!is_nil (p), "nil path");
   if (is_atom (p) || (p->item != last)) bridge_rep::notify_insert (p, u);
   else {
     bool mp_flag= is_multi_paragraph (st);
@@ -95,7 +94,7 @@ bridge_locus_rep::notify_insert (path p, tree u) {
 void
 bridge_locus_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (is_nil (p)) fatal_error ("Nil path", "bridge_locus_rep::notify_remove");
+  ASSERT (!is_nil (p), "nil path");
   if (is_atom (p) || (p->item != last)) bridge_rep::notify_remove (p, nr);
   else {
     bool mp_flag= is_multi_paragraph (st);

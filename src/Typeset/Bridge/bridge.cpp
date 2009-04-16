@@ -154,8 +154,7 @@ bridge_rep::notify_insert (path p, tree u) {
   int  l= last_item (p);
   tree t= subtree (st, q);
   if (is_atomic (t)) {
-    if (is_compound (u))
-      fatal_error ("two atoms expected", "bridge_rep::notify_insert");
+    ASSERT (is_atomic (u), "two atoms expected");
     t= t->label (0, l) * u->label * t->label (l, N(t->label));
   }
   else t= (t (0, l) * u) * t (l, N(t));

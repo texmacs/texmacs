@@ -226,8 +226,7 @@ interactive_command_rep::apply () {
 
 void
 tm_frame_rep::interactive (object fun, scheme_tree p) {
-  if (!is_tuple (p))
-    fatal_error ("tuple expected", "edit_interface_rep::interactive");
+  ASSERT (is_tuple (p), "tuple expected");
   if (get_preference ("interactive questions") == "popup") {
     int i, n= N(p);
     array<string> prompts (n);

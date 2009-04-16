@@ -141,9 +141,7 @@ get_init_environment (tree doc, drd_info& drd) {
     ok= drd->set_locals (t);
   }
   if (!ok) {
-    if (!is_tuple (style))
-      fatal_error ("tuple expected as style",
-		   "edit_interface_rep::typeset_style_using_cache");
+    ASSERT (is_tuple (style), "tuple expected as style");
     tree t (USE_PACKAGE, A (style));
     env->exec (t);
     env->read_env (H);

@@ -68,8 +68,8 @@ bridge_document (typesetter ttt, tree st, path ip) {
 void
 bridge_document_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (is_nil (p) && (!is_func (u, DOCUMENT)) && (!is_func (u, PARA)))
-    fatal_error ("Nil path", "bridge_document_rep::notify_assign");
+  ASSERT (!is_nil (p) || is_func (u, DOCUMENT) || is_func (u, PARA),
+	  "nil path");
   if (is_nil (p)) { st= u; initialize (); }
   else {
     if (is_atom (p)) {
@@ -88,7 +88,7 @@ bridge_document_rep::notify_assign (path p, tree u) {
 void
 bridge_document_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (is_nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_insert");
+  ASSERT (!is_nil (p), "nil path");
   if (is_atom (p)) {
     int i, j, n= N(brs), pos= p->item, nr= N(u);
     array<bridge> brs2 (n+nr);
@@ -114,7 +114,7 @@ bridge_document_rep::notify_insert (path p, tree u) {
 void
 bridge_document_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (is_nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_remove");
+  ASSERT (!is_nil (p), "nil path");
   if (is_atom (p)) {
     int i, n= N(brs), pos= p->item;
     array<bridge> brs2 (n-nr);

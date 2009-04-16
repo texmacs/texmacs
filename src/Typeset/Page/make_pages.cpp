@@ -47,8 +47,7 @@ pager_rep::pages_format (array<page_item> l, SI ht, SI tcor, SI bcor) {
       spc << item->spc;
     }
   }
-  if (N(bs) == 0)
-    fatal_error ("zero lines in insertion", "pager_rep::pages_format");
+  ASSERT (N(bs) != 0, "zero lines in insertion");
   box b= format_stack (ip, bs, spc, ht, true);
   return vcorrect_box (b->ip, b, tcor, bcor);
 }
@@ -183,7 +182,7 @@ pager_rep::papyrus_make () {
     break_pages (l, ht, quality, fn_sep, fnote_sep, float_sep, env->fn);
   if (N(sk) != 1) {
     cerr << "Number of pages: " << N(sk) << "\n";
-    fatal_error ("unexpected situation", "pager_rep::papyrus_make");
+    FAILED ("unexpected situation");
   }
 
   box sb= pages_format (sk[0]);
