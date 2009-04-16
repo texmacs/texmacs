@@ -8250,6 +8250,7 @@ echo "${ECHO_T}final adjustments for cygwin host" >&6; }
     CONFIG_MACOS="MacOS"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
+    CONFIG_BFLAGS="-framework Cocoa"
     CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
