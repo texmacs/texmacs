@@ -30,20 +30,6 @@
 ;; The Tools menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-extend test-menu
-  (-> "Test"
-      ("Tree" (show-tree))
-      ("Path" (show-path))
-      ("Cursors" (show-cursor))
-      ("Selection" (show-selection))
-      ("Environment" (show-env))
-      ---
-      ("Error" (oops))
-      ("Test" (edit-test))
-      ("Timings" (bench-print-all))
-      ("Backtrace errors" (debug-enable 'backtrace 'debug))
-      ("Memory information" (show-meminfo))))
-
 (menu-bind tools-menu
   (-> "Execute"
       ("Execute system command" (interactive system))
@@ -64,3 +50,28 @@
   (if (nnull? (test-menu))
       ---
       (link test-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Developer features
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (show-memory-information s)
+  (string-append s "#[" (number->string (texmacs-memory)) "#bytes]"))
+
+(menu-extend test-menu
+  (-> "Status"
+      ("Tree" (show-tree))
+      ("Path" (show-path))
+      ("Cursors" (show-cursor))
+      ("Selection" (show-selection))
+      ("Environment" (show-env))
+      ("Memory usage" (show-meminfo)))
+  (-> "Debugging"
+      ("Timings" (bench-print-all))
+      ("Backtrace errors" (debug-enable 'backtrace 'debug))
+      ("Memory information" (set! footer-hook show-memory-information))
+      ("Collect garbage" (gc))
+      ("Continuous gc" (delayed (:idle 1000) (gc))))
+  (-> "Test"
+      ("Provoke error" (oops))
+      ("Test routine" (edit-test))))

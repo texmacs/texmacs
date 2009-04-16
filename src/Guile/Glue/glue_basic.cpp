@@ -195,6 +195,15 @@ tmg_texmacs_time () {
 }
 
 SCM
+tmg_texmacs_memory () {
+  // SCM_DEFER_INTS;
+  int out= mem_used ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_bench_print (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "bench-print");
 
@@ -3576,6 +3585,7 @@ initialize_glue_basic () {
   scm_new_procedure ("var-eval-system", (FN) tmg_var_eval_system, 1, 0, 0);
   scm_new_procedure ("get-locale-language", (FN) tmg_get_locale_language, 0, 0, 0);
   scm_new_procedure ("texmacs-time", (FN) tmg_texmacs_time, 0, 0, 0);
+  scm_new_procedure ("texmacs-memory", (FN) tmg_texmacs_memory, 0, 0, 0);
   scm_new_procedure ("bench-print", (FN) tmg_bench_print, 1, 0, 0);
   scm_new_procedure ("bench-print-all", (FN) tmg_bench_print_all, 0, 0, 0);
   scm_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);

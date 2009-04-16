@@ -48,6 +48,8 @@
 ;; Various tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public footer-hook (lambda (s) s))
+
 (define-macro (benchmark message . args)
   `(let ((start (texmacs-time)))
      (begin ,@args)

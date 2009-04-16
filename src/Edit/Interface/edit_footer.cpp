@@ -86,6 +86,7 @@ edit_interface_rep::set_left_footer () {
       break;
     }
   }
+  s= as_string (call ("footer-hook", object (s)));
   set_left_footer (s);
 }
 
