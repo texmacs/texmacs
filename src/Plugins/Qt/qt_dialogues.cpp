@@ -99,7 +99,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED 
     break;
   case SLOT_INPUT_TYPE:
-    TYPE_CHECK (type_box (val) != type_helper<string>::id);
+    TYPE_CHECK (type_box (val) == type_helper<string>::id);
     type = open_box<string> (val);
     break;
 #if 0
@@ -113,7 +113,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       NOT_IMPLEMENTED 
     break;
   case SLOT_DIRECTORY:
-    TYPE_CHECK (type_box (val) != type_helper<string>::id);
+    TYPE_CHECK (type_box (val) == type_helper<string>::id);
     directory = open_box<string> (val);
     directory = as_string (url_pwd () * url_system (directory));
     break;
@@ -306,16 +306,16 @@ qt_field_widget_rep::send (slot s, blackbox val) {
     cout << "qt_field_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
-    TYPE_CHECK (type_box (val) != type_helper<string>::id);
+    TYPE_CHECK (type_box (val) == type_helper<string>::id);
     input= open_box<string> (val);
     // send_string (THIS, "input", val);
     break;
   case SLOT_INPUT_TYPE:
-    TYPE_CHECK (type_box (val) != type_helper<string>::id);
+    TYPE_CHECK (type_box (val) == type_helper<string>::id);
     type= open_box<string> (val);
     break;
   case SLOT_INPUT_PROPOSAL:
-    TYPE_CHECK (type_box (val) != type_helper<string>::id);
+    TYPE_CHECK (type_box (val) == type_helper<string>::id);
     proposals << open_box<string> (val);
     // send_string (THIS, "default", val);
     break;
@@ -377,15 +377,15 @@ qt_input_widget_rep::send (slot s, blackbox val) {
     }	
     break;
   case SLOT_SIZE:
-    TYPE_CHECK (type_box (val) != type_helper<coord2>::id);
+    TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
     size = open_box<coord2> (val);
     break;
   case SLOT_POSITION:
-    TYPE_CHECK (type_box (val) != type_helper<coord2>::id);
+    TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
     position = open_box<coord2> (val);
     break;
   case SLOT_KEYBOARD_FOCUS:
-    TYPE_CHECK (type_box (val) != type_helper<bool>::id);
+    TYPE_CHECK (type_box (val) == type_helper<bool>::id);
     perform_dialog ();
     break;
   default:
