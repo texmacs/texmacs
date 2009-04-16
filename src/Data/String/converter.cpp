@@ -301,7 +301,7 @@ bool check_using_iconv (string input, string encoding) {
 #else
   (void) input;
   (void) encoding;
-  fatal_error ("iconv not enabled", "check_using_iconv", "converter.cpp");
+  FAILED ("iconv not enabled");
   return false;
 #endif
 }
@@ -315,7 +315,7 @@ convert_using_iconv (string input, string from, string to) {
   (void) input;
   (void) from;
   (void) to;
-  fatal_error ("iconv not enabled", "convert_using_iconv", "converter.cpp");
+  FAILED ("iconv not enabled");
   return "";
 #endif
 }

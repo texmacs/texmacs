@@ -22,6 +22,8 @@
 class tree_rep;
 class atomic_rep;
 class compound_rep;
+tree copy (tree t);
+
 class tree {
   tree_rep* rep; // can be atomic or compound
   inline tree (tree_rep* rep2);
@@ -115,19 +117,19 @@ typedef tree scheme_tree;
 ******************************************************************************/
 
 #ifdef debug_trees
-#define CHECK_ATOMIC(t,s) \
+#define CHECK_ATOMIC(t) \
   if (((t).rep)->op != STRING) { \
     cerr << "\nThe tree : " << (t) << "\n"; \
-    fatal_error ("atomic tree expected", s); \
+    FAILED ("atomic tree expected"); \
   }
-#define CHECK_COMPOUND(t,s) \
+#define CHECK_COMPOUND(t) \
   if (((t).rep)->op == STRING) { \
     cerr << "\nThe tree : " << (t) << "\n"; \
-    fatal_error ("compound tree expected", s); \
+    FAILED ("compound tree expected"); \
   }
 #else
-#define CHECK_ATOMIC(t,s)
-#define CHECK_COMPOUND(t,s)
+#define CHECK_ATOMIC(t)
+#define CHECK_COMPOUND(t)
 #endif
 
 void destroy_tree_rep (tree_rep* rep);
@@ -136,7 +138,7 @@ inline tree::tree (const tree& x): rep (x.rep) { rep->ref_count++; }
 inline tree::~tree () {
   if ((--rep->ref_count)==0) { destroy_tree_rep (rep); rep= NULL; } }
 inline atomic_rep* tree::operator -> () {
-  CHECK_ATOMIC (*this, "tree::operator ->");
+  CHECK_ATOMIC (*this);
   return static_cast<atomic_rep*> (rep); }
 inline tree& tree::operator = (tree x) {
   x.rep->ref_count++;
@@ -156,13 +158,13 @@ inline tree::tree (tree_label l, array<tree> a):
   rep (tm_new<compound_rep> (l, a)) {}
 inline tree::tree (tree t, int n):
   rep (tm_new<compound_rep> (t.rep->op, array<tree> (n))) {
-    CHECK_COMPOUND (t, "tree::tree (tree, int)"); }
+    CHECK_COMPOUND (t); }
 
 inline tree& tree::operator [] (int i) {
-  CHECK_COMPOUND (*this, "tree::operator []");
+  CHECK_COMPOUND (*this);
   return (static_cast<compound_rep*> (rep))->a[i]; }
 inline int N (tree t) {
-  CHECK_COMPOUND (t, "N (tree)");
+  CHECK_COMPOUND (t);
   return N ((static_cast<compound_rep*> (t.rep))->a); }
 inline int arity (tree t) {
   if (t.rep->op == STRING) return 0;
@@ -174,10 +176,10 @@ inline tree_label L (tree t) {
 inline tree_label& LR (tree t) {
   return t.rep->op; }
 inline array<tree> A (tree t) {
-  CHECK_COMPOUND (t, "A (tree)");
+  CHECK_COMPOUND (t);
   return (static_cast<compound_rep*> (t.rep))->a; }
 inline array<tree>& AR (tree t) {
-  CHECK_COMPOUND (t, "AR (tree)");
+  CHECK_COMPOUND (t);
   return (static_cast<compound_rep*> (t.rep))->a; }
 
 inline bool is_atomic (tree t) { return (t.rep->op == STRING); }

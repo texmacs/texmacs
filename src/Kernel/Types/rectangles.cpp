@@ -226,7 +226,7 @@ simplify (rectangles l) {
 
 rectangle
 least_upper_bound (rectangles l) {
-  if (is_nil (l)) fatal_error ("no rectangles in list", "least_upper_bound");
+  ASSERT (!is_nil (l), "no rectangles in list");
   rectangle r1= copy (l->item);
   while (!is_nil (l->next)) {
     l= l->next;

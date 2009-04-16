@@ -783,6 +783,18 @@ else
     CONFIG_STRIP="true"
     CONFIG_CXXDEBUG="$enable_debug"
     optimize_default="no"
+fi
+
+AC_ARG_ENABLE(assert,
+changequote(<<, >>)dnl
+<<  --enable-assert           exit on failed assertions in code>>,
+changequote([, ])dnl
+[], [enable_assert="yes"])
+
+if test "$enable_assert" = "no"; then
+    AC_MSG_RESULT([disabling assertion checking])
+else
+    AC_MSG_RESULT([enabling assertion checking])
     AC_DEFINE(DEBUG_ASSERT, 1, [check assertions in code])
 fi
 

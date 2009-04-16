@@ -14,7 +14,7 @@ RM = rm -f
 all: bin/tm_graphviz
 
 bin/tm_graphviz: src/tm_graphviz.c
-	$(CC) src/tm_graphviz.c -o bin/tm_graphviz
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/tm_graphviz.c -o bin/tm_graphviz
 
 clean:
 	$(RM) bin/tm_graphviz

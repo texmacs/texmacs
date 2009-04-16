@@ -111,7 +111,7 @@ font_rep::var_get_extents (string s, metric& ex) {
 void
 font_rep::var_get_xpositions (string s, SI* xpos) {
   (void) s; (void) xpos;
-  fatal_error ("Not yet implemented", "font_rep::var_get_xpositions");
+  FAILED ("not yet implemented");
 }
 
 void
@@ -133,8 +133,9 @@ font_rep::var_draw (renderer ren, string s, SI x, SI y) {
 
 glyph
 font_rep::get_glyph (string s) {
-  fatal_error ("No bitmap available for " * s, "font_rep::get_glyph");
-  return glyph(); // avoids error message when C++ compiler behaves badly
+  cerr << "glyph name: " << s << "\n";
+  FAILED ("no bitmap available");
+  return glyph ();
 }
 
 /******************************************************************************

@@ -126,8 +126,8 @@ scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
   if (is_atomic (t)) return scm_unquote (t->label);
   else if ((N(t) == 0) || is_compound (t[0])) {
     cerr << "\nTeXmacs] The tree was " << t << "\n";
-    fatal_error ("bad TeXmacs tree", "scheme_tree_to_tree");
-    return ""; // avoids error message when C++ compiler behaves badly
+    FAILED ("bad TeXmacs tree");
+    return "";
   }
   else {
     int i, n= N(t);

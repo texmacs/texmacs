@@ -81,7 +81,7 @@ path_add (path p, int plus, int pos) {
 
 path
 path_up (path p) {
-  if (is_nil (p)) fatal_error ("path too short", "path_up", "path.cpp");
+  ASSERT (!is_nil (p), "path is too short");
   if (is_nil (p->next)) return path ();
   return path (p->item, path_up (p->next));
 }
@@ -129,8 +129,8 @@ path_less_eq (path p1, path p2) {
 path
 operator - (path p, path q) {
   if (is_nil (q)) return p;
-  else if (is_nil (p) || (p->item != q->item))
-    fatal_error ("Path did not start with required path", "path::operator -");
+  else if (is_nil (p) || (p->item != q->item)) {
+    FAILED ("path did not start with required path"); }
   else return p->next - q-> next;
   return path (); // NOT REACHED
 }
@@ -154,7 +154,7 @@ subtree (tree& t, path p) {
 
 tree&
 parent_subtree (tree& t, path p) {
-  if (is_nil (p)) fatal_error ("path too short", "parent_subtree");
+  ASSERT (!is_nil (p), "path too short");
   if (is_nil (p->next)) return t;
   else return parent_subtree (t[p->item], p->next);
 }

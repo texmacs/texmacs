@@ -199,9 +199,7 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
       cerr << "\nString is ";
       for (i=0; i<n; i++) cerr << (char) s[i];
       cerr << "\n";
-      fatal_error ("String too complex for ligature kerning",
-		   "tex_font_metric_rep::execute",
-		   "load-tfm.cpp");
+      FAILED ("string too complex for ligature kerning");
     }
   }
   
@@ -276,9 +274,7 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit, SI* xpos) {
       cerr << "\nString is ";
       for (i=0; i<n; i++) cerr << (char) s[i];
       cerr << "\n";
-      fatal_error ("String too complex for ligature kerning",
-		   "tex_font_metric_rep::get_xpositions",
-		   "load-tfm.cpp");
+      FAILED ("string too complex for ligature kerning");
     }
   }
   STACK_DELETE_ARRAY (stack);
@@ -391,7 +387,7 @@ load_tfm (url file_name, string family, int size) {
       (tfm->lh + (tfm->ec + 1 - tfm->bc) +
        tfm->nw + tfm->nh + tfm->nd + tfm->ni +
        tfm->nl + tfm->nk + tfm->ne + tfm->np))
-    fatal_error ("invalid tfm file", "load_tfm", "load-tfm.cpp");
+    FAILED ("invalid tfm file");
   
   parse (s, i, tfm->header, tfm->lh);
   parse (s, i, tfm->char_info, tfm->ec+1- tfm->bc);

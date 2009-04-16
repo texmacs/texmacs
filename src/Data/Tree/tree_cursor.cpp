@@ -133,6 +133,7 @@ closest_accessible (tree t, path p) {
       return path ();
     }
   }
+  return path ();
 }
 
 bool
@@ -161,7 +162,7 @@ bool
 valid_cursor (tree t, path p, bool start_flag) {
   if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] testing valid cursor " << p << " in " << t << "\n";
-    fatal_error ("bad path", "valid_cursor", "tree_cursor.cpp");
+    FAILED ("bad path");
   }
 
   if (is_nil (p)) return false;
@@ -187,7 +188,7 @@ pre_correct (tree t, path p) {
   // cout << "Precorrect " << p << " in " << t << "\n";
   if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] precorrecting " << p << " in " << t << "\n";
-    fatal_error ("bad path", "pre_correct", "tree_cursor.cpp");
+    FAILED ("bad path");
   }
 
   if (is_nil (p)) return pre_correct (t, path(0));
@@ -227,11 +228,10 @@ pre_correct (tree t, path p) {
 
 static bool
 left_most (tree t, path p) {
-  if (is_nil (p))
-    fatal_error ("invalid nil path", "left_most", "tree_cursor.cpp");
+  if (is_nil (p)) FAILED ("invalid nil path");
   if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] left most " << p << " in " << t << "\n";
-    fatal_error ("bad path", "left_most", "tree_cursor.cpp");
+    FAILED ("bad path");
   }
 
   int i=p->item;
@@ -242,11 +242,10 @@ left_most (tree t, path p) {
 
 static path
 left_correct (tree t, path p) {
-  if (is_nil (p))
-    fatal_error ("invalid nil path", "left_correct", "tree_cursor.cpp");
+  if (is_nil (p)) FAILED ("invalid nil path");
   if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] left correcting " << p << " in " << t << "\n";
-    fatal_error ("bad path", "left_correct", "tree_cursor.cpp");
+    FAILED ("bad path");
   }
 
   int i=p->item;
@@ -259,11 +258,10 @@ left_correct (tree t, path p) {
 
 static bool
 right_most (tree t, path p) {
-  if (is_nil (p))
-    fatal_error ("invalid nil path", "right_most", "tree_cursor.cpp");
+  if (is_nil (p)) FAILED ("invalid nil path");
   if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] right most " << p << " in " << t << "\n";
-    fatal_error ("bad path", "right_most", "tree_cursor.cpp");
+    FAILED ("bad path");
   }
 
   int i=p->item;
@@ -274,11 +272,10 @@ right_most (tree t, path p) {
 
 static path
 right_correct (tree t, path p) {
-  if (is_nil (p))
-    fatal_error ("invalid nil path", "right_correct", "tree_cursor.cpp");
+  if (is_nil (p)) FAILED ("invalid nil path");
   if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] right correcting " << p << " in " << t << "\n";
-    fatal_error ("bad path", "right_correct", "tree_cursor.cpp");
+    FAILED ("bad path");
   }
 
   int i=p->item;
@@ -330,8 +327,8 @@ super_correct (tree t, path p) {
   path q= path_up (p);
   path r= up_correct (t, q);
   if (q != r) {
-    if (is_nil (r)) fatal_error ("Unexpected situation", "super_correct");
-    else if (is_atomic (subtree (t, r))) p= path_up (r) * 0;
+    ASSERT (!is_nil (r), "unexpected situation");
+    if (is_atomic (subtree (t, r))) p= path_up (r) * 0;
     else p= r * 0;
   }
   return correct_cursor (t, p);

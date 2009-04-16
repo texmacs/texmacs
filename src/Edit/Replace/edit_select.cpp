@@ -745,7 +745,7 @@ edit_select_rep::raw_cut (path p1, path p2) {
     cerr << "p = " << p << "\n";
     cerr << "p1= " << p1 << "\n";
     cerr << "p2= " << p2 << "\n";
-    fatal_error ("invalid cut", "edit_select_rep::raw_cut");
+    FAILED ("invalid cut");
   }
 
   if (is_atomic (t)) {
@@ -759,7 +759,7 @@ edit_select_rep::raw_cut (path p1, path p2) {
       cerr << "p = " << p << "\n";
       cerr << "p1= " << p1 << "\n";
       cerr << "p2= " << p2 << "\n";
-      fatal_error ("invalid object cut", "edit_select_rep::raw_cut");
+      FAILED ("invalid object cut");
     }
     assign (p, "");
   }

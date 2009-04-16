@@ -14,7 +14,7 @@ RM = rm -f
 all: bin/maxima_filter
 
 bin/maxima_filter: src/maxima_filter.c
-	$(CC) src/maxima_filter.c -o bin/maxima_filter
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/maxima_filter.c -o bin/maxima_filter
 
 clean:
 	$(RM) bin/maxima_filter

@@ -123,9 +123,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     ok= drd->set_locals (t);
   }
   if (!ok) {
-    if (!is_tuple (style))
-      fatal_error ("tuple expected as style",
-		   "edit_interface_rep::typeset_style_using_cache");
+    if (!is_tuple (style)) FAILED ("tuple expected as style");
     tree t (USE_PACKAGE, A (style));
     env->exec (t);
     env->read_env (H);

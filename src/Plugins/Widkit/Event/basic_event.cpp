@@ -233,6 +233,6 @@ as_tree (gravity grav) {
   case south     : return "south";
   case south_east: return "south east";
   }
-  fatal_error ("unknown gravity", "as_tree", "basic_event.cpp");
-  return ""; // Because of bug in certain versions of g++
+  FAILED ("unknown gravity");
+  return "";
 }

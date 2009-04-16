@@ -1350,6 +1350,7 @@ Optional Features:
   --enable-qt             replace X11 by Qt interface
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-debug=ARG      install a debugging enable executable -ggdb
+  --enable-assert           exit on failed assertions in code
   --enable-warnings       print warning messages during compilation
   --enable-optimize=ARG   compile with optimizations guessed
 
@@ -9197,6 +9198,22 @@ echo "${ECHO_T}enabling debugging, $enable_debug" >&6; }
     CONFIG_STRIP="true"
     CONFIG_CXXDEBUG="$enable_debug"
     optimize_default="no"
+fi
+
+# Check whether --enable-assert was given.
+if test "${enable_assert+set}" = set; then
+  enableval=$enable_assert;
+else
+  enable_assert="yes"
+fi
+
+
+if test "$enable_assert" = "no"; then
+    { echo "$as_me:$LINENO: result: disabling assertion checking" >&5
+echo "${ECHO_T}disabling assertion checking" >&6; }
+else
+    { echo "$as_me:$LINENO: result: enabling assertion checking" >&5
+echo "${ECHO_T}enabling assertion checking" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define DEBUG_ASSERT 1

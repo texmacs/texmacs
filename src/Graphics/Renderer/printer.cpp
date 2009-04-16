@@ -608,7 +608,7 @@ printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 void
 printer_rep::xpm (url file_name, SI x, SI y) {
   (void) file_name; (void) x; (void) y;
-  fatal_error ("Not yet implemented", "printer_rep::xpm");
+  FAILED ("not yet implemented");
 }
 
 /*

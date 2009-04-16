@@ -146,7 +146,7 @@ void
 edit_join (editor_rep* ed, path pp) {
   path p= copy (pp);
   ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
+  if (N(p)<1) FAILED ("path too short in join");
   ed->notify_join (p);
 }
 
@@ -521,7 +521,7 @@ void
 archive_split (tm_buffer buf, path pp) {
   path p= copy (pp);
   ASSERT (buf->rp <= p, "invalid modification");
-  if (N(p)<2) fatal_error ("path too short in split", "editor::split");
+  if (N(p)<2) FAILED ("path too short in split");
   archive (buf, "join", path_up (p), "");
 
 #ifdef EXPERIMENTAL
@@ -533,11 +533,11 @@ void
 archive_join (tm_buffer buf, path pp) {
   path p= copy (pp);
   ASSERT (buf->rp <= p, "invalid modification");
-  if (N(p)<1) fatal_error ("path too short in join", "editor::join");
+  if (N(p)<1) FAILED ("path too short in join");
   tree& st= subtree (the_et, path_up (p));
   int  l1 = last_item (p);
   // int  l2 = is_atomic (st[l1])? N (st[l1]->label): N (st[l1]);
-  if (l1+1 >= arity (st)) fatal_error ("invalid join", "archive_join");
+  if (l1+1 >= arity (st)) FAILED ("invalid join");
   bool string_mode= is_atomic (st[l1]) && is_atomic (st[l1+1]);
   int len= string_mode? N (st[l1]->label): arity (st[l1]);
   archive (buf, "split", p * len, "");

@@ -228,6 +228,7 @@ ispell_eval (string lan, string s) {
     sc->send (s);
     return sc->retrieve ();
   }
+  return "";
 }
 
 /******************************************************************************

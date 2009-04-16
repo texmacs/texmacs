@@ -97,8 +97,7 @@ edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
       for (i=1; i<DELTA; i=i<<1)
 	if (ref_p != tree_path (sp, x0, y0, d0+ dx*i)) break;
       if (i>=DELTA)
-	fatal_error ("inconsistent cursor handling",
-		     "edit_cursor_rep::cursor_move_sub");
+	FAILED ("inconsistent cursor handling");
       for (d=i>>2; d>=1; d=d>>1)
 	if (ref_p != tree_path (sp, x0, y0, d0+ dx*(i-d))) i-=d;
       d0 += dx*i;

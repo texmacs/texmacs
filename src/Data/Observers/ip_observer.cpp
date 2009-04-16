@@ -182,7 +182,7 @@ ip_observer_rep::get_ip (path& ip2) {
 bool
 ip_observer_rep::set_ip (path ip2) {
   if (is_nil (ip) || is_nil (ip2))
-    fatal_error ("cannot alter global root", "ip_observer_rep::set_ip");
+    FAILED ("cannot alter global root");
   ip->item= ip2->item;
   ip->next= ip2->next;
   return true;

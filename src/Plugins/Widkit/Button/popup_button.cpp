@@ -61,8 +61,7 @@ popup_button_rep::popup_button_rep (
     where (wh), require_map (false), stick (false)
 {
   if ((where!=east) && (where!=south) && (where!=south_east))
-    fatal_error ("direction not implemented",
-		 "popup_button_rep::popup_button_rep");
+    WK_FAILED ("direction not implemented");
 }
 
 popup_button_rep::popup_button_rep (
@@ -72,8 +71,7 @@ popup_button_rep::popup_button_rep (
     where (where2), require_map (false), stick (false)
 {
   if ((where!=east) && (where!=south) && (where!=south_east))
-    fatal_error ("direction not implemented",
-		 "popup_button_rep::popup_button_rep");
+    WK_FAILED ("direction not implemented");
 }
 
 void
@@ -92,7 +90,7 @@ popup_button_rep::consistent (string s) {
     cerr << "status     = " << status << "\n";
     cerr << "require map= " << require_map << "\n";
     cerr << "popup      = " << (popup != NULL) << "\n";
-    fatal_error ("Inconsistency in " * s, "popup_button_rep::consistent");
+    WK_FAILED ("inconsistency in " * s);
   }
 }
 
@@ -146,8 +144,7 @@ popup_button_rep::map_popup () {
 
 void
 popup_button_rep::unmap_popup () {
-  if (popup == NULL)
-    fatal_error ("Unexpected situation", "popup_button_rep::unmap_popup");
+  if (popup == NULL) WK_FAILED ("unexpected situation");
   popup->set_visibility (false);
   tm_delete (popup);
   popup= NULL;
@@ -155,8 +152,7 @@ popup_button_rep::unmap_popup () {
 
   this << emit_invalidate_all ();
   if (!wk_has_pointer_grab (this))
-    fatal_error ("I do not have the pointer grab",
-		 "popup_button_rep::unmap_popup");
+    WK_FAILED ("I do not have the pointer grab");
   wk_ungrab_pointer (this);
 }
 
@@ -287,7 +283,7 @@ opposite (gravity grav) {
   case south     : return north;
   case south_east: return north_west;
   }
-  fatal_error ("unknown gravity", "operator -", "popup_button.cpp");
+  FAILED ("unknown gravity");
   return center; // Because of bug in certain versions of g++
 }
 

@@ -206,8 +206,7 @@ hor_scrollbar_widget_rep::handle_alarm (alarm_event ev) {
 
 void
 hor_scrollbar_widget_rep::handle_scroll (scroll_event ev) {
-  if (ev->which != "this")
-    fatal_error ("Invalid scroll", "hor_scrollbar_widget_rep::handle_scroll");
+  if (ev->which != "this") WK_FAILED ("invalid scroll");
   ref << emit_hor_scroll (ev->c1, ev->c2, ev->c3);
 }
 
@@ -354,7 +353,6 @@ ver_scrollbar_widget_rep::handle_alarm (alarm_event ev) {
 
 void
 ver_scrollbar_widget_rep::handle_scroll (scroll_event ev) {
-  if (ev->which != "this")
-    fatal_error ("Invalid scroll", "ver_scrollbar_widget_rep::handle_scroll");
+  if (ev->which != "this") WK_FAILED ("invalid scroll");
   ref << emit_ver_scroll (ev->c1, ev->c2, ev->c3);
 }

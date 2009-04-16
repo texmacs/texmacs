@@ -76,7 +76,6 @@ popup_window_widget (wk_widget wid, string s) {
 
 void
 destroy_window_widget (wk_widget w) {
-  if (!w->is_window_widget ())
-    fatal_error ("not a window widget", "destroy_window_widget");
+  ASSERT (w->is_window_widget (), "not a window widget");
   tm_delete (w->win);
 }

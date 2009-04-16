@@ -56,8 +56,8 @@ insert (list<widget_connection>& l, widget_connection con) {
 
 void
 remove (list<widget_connection>& l, widget_connection con) {
-  if (is_nil (l)) fatal_error ("removal not succeeded", "remove", "widget.cpp");
-  else if (l->item == con) l= l->next;
+  ASSERT (!is_nil (l), "removal not succeeded");
+  if (l->item == con) l= l->next;
   else remove (l->next, con);
 }
 
@@ -99,27 +99,27 @@ widget_rep::deconnect (slot s, widget w2, slot s2) {
 void
 widget_rep::send (slot s, blackbox val) {
   (void) s; (void) val;
-  fatal_error ("No default implementation", "widget_rep::send");
+  FAILED ("no default implementation");
 }
 
 blackbox
 widget_rep::query (slot s, int type_id) {
   (void) s; (void) type_id;
-  fatal_error ("No default implementation", "widget_rep::query");
+  FAILED ("no default implementation");
   return blackbox ();
 }
 
 widget
 widget_rep::read (slot s, blackbox index) {
   (void) s; (void) index;
-  fatal_error ("No default implementation", "widget_rep::read");
+  FAILED ("no default implementation");
   return widget ();
 }
 
 void
 widget_rep::write (slot s, blackbox index, widget w) {
   (void) s; (void) index; (void) w;
-  fatal_error ("No default implementation", "widget_rep::write");
+  FAILED ("no default implementation");
 }
 
 void

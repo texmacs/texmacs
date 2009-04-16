@@ -205,5 +205,5 @@ scrollable_widget_rep::handle_scroll (scroll_event ev) {
     scroll_event_ver (ev->c1, ev->c2, ev->c3);
     return;
   }
-  fatal_error ("Invalid scroll", "scrollable_widget_rep::handle_scroll");
+  WK_FAILED ("invalid scroll");
 }

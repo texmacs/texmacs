@@ -58,10 +58,8 @@ glyph_rep::get_x (int i, int j) {
 
 void
 glyph_rep::set_x (int i, int j, int with) {
-  if ((i<0) || (i>=width))
-    fatal_error ("bad x-index", "glyph_rep::set_x");
-  if ((j<0) || (j>=height))
-    fatal_error ("bad y-index", "glyph_rep::set_x");
+  if ((i<0) || (i>=width)) FAILED ("bad x-index");
+  if ((j<0) || (j>=height)) FAILED ("bad y-index");
   if (depth==1) {
     int bit= j*width+i;
     if (with==0) raster[bit>>3] &= ~(1 << (bit&7));

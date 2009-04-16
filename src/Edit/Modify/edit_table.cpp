@@ -864,7 +864,7 @@ search_decoration (tree T, int& row, int& col) {
       if (C == tree (TMARKER)) return;
     }
   }
-  fatal_error ("decoration not found", "table_undecorate");
+  FAILED ("decoration not found");
 }
 
 static tree
@@ -898,8 +898,8 @@ table_undecorate (tree st, int row, int col) {
 	tree F= table_format_undecorate (st, row, col, dec_row, dec_col);
 	return F * T;
       }
-  fatal_error ("decoration not found", "table_undecorate");
-  return ""; // avoids error message when C++ compiler behaves badly
+  FAILED ("decoration not found");
+  return "";
 }
 
 void

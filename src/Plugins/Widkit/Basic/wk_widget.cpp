@@ -39,8 +39,8 @@ get_dx (gravity grav, SI w) {
   case north_east: case east: case south_east:
     return w;
   }
-  fatal_error ("unknown gravity", "get_dx", "wk_widget.cpp");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("unknown gravity");
+  return 0;
 }
 
 SI
@@ -53,8 +53,8 @@ get_dy (gravity grav, SI h) {
   case south_west: case south: case south_east:
     return -h;
   }
-  fatal_error ("unknown gravity", "get_dy", "wk_widget.cpp");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("unknown gravity");
+  return 0;
 }
 
 SI
@@ -113,14 +113,11 @@ wk_widget_rep::is_window_widget () {
 }
 
 void
-wk_widget_rep::fatal_error (string message, string in, string file_name) {
+wk_widget_rep::wk_error (string message) {
   cerr << "\n------------------------------------------------------------------------------\n";
   cerr << wk_widget (this);
   cerr << "------------------------------------------------------------------------------\n";
-  cerr << "Fatal error: " << message << "\n";
-  if (in != "") cerr << "In function: '" << in << "'\n";
-  if (file_name != "") cerr << "See file   : " << file_name << "\n";
-  exit (1);
+  cerr << "Error: " << message << "\n";
 }
 
 wk_widget
@@ -154,19 +151,18 @@ operator << (ostream& out, wk_widget w) {
 
 void
 wk_grab_pointer (wk_widget w) {
-  if (is_nil (w) || w->win == NULL)
-    fatal_error ("widget should be attached", "wk_grab_pointer");
+  ASSERT (!is_nil (w) && w->win != NULL, "widget should be attached");
   w->win->set_mouse_grab (abstract (w), true);
 }
 
 void
 wk_ungrab_pointer (wk_widget w) {
-  if (is_nil (w) || w->win == NULL)
-    fatal_error ("widget should be attached", "wk_grab_pointer");
+  ASSERT (!is_nil (w) && w->win != NULL, "widget should be attached");
   w->win->set_mouse_grab (abstract (w), false);
 }
 
 bool
 wk_has_pointer_grab (wk_widget w) {
-  return !is_nil (w) && w->win != NULL && w->win->get_mouse_grab (abstract (w));
+  return !is_nil (w) && w->win != NULL &&
+    w->win->get_mouse_grab (abstract (w));
 }

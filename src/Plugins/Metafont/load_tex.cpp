@@ -326,7 +326,6 @@ load_tex (string family, int size, int dpi, int dsize,
 #endif
   string name= family * as_string (size) * "@" * as_string (dpi);
   cerr << "\n\nI could not open " << name << "\n";
-  fatal_error ("Tex seems not to be installed properly",
-	       "load_tex", "load_tex.cpp");
+  FAILED ("Tex seems not to be installed properly");
   bench_cumul ("load tex font");
 }

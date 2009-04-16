@@ -251,7 +251,7 @@ void
 check_type_void (blackbox bb, string s) {
   if (!is_nil (bb)) {
     cerr << "\nslot type= " << s << "\n";
-    fatal_error ("type mismatch", "check_type");
+    FAILED ("type mismatch");
   }
 }
 
@@ -259,7 +259,7 @@ template<class T> void
 check_type (blackbox bb, string s) {
   if (type_box (bb) != type_helper<T>::id) {
     cerr << "\nslot type= " << s << "\n";
-    fatal_error ("type mismatch", "check_type");
+    FAILED ("type mismatch");
   }
 }
 
@@ -282,7 +282,7 @@ principal_widget_check (wk_widget wid) {
   // a window widget.
   if (wid->win != NULL && wid != concrete (wid->win->get_widget ()) [0]) {
     cerr << "Widget= " << wid << "\n";
-    fatal_error ("invalid geometry access", "principal_widget_check");
+    FAILED ("invalid geometry access");
   }
 }
 
@@ -319,30 +319,26 @@ get_geometry (wk_widget wid, SI& x, SI& y, SI& w, SI& h) {
 
 void
 send_bool (wk_widget w, string key, blackbox val) {
-  if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "send_bool");
+  ASSERT (type_box (val) == type_helper<bool>::id, "type mismatch");
   w << set_string (key, open_box<bool> (val)? string ("on"): string ("off"));
 }
 
 void
 send_int (wk_widget w, string key, blackbox val) {
-  if (type_box (val) != type_helper<int>::id)
-    fatal_error ("type mismatch", "send_int");
+  ASSERT (type_box (val) == type_helper<int>::id, "type mismatch");
   w << set_integer (key, open_box<int> (val));
 }
 
 void
 send_string (wk_widget w, string key, blackbox val) {
-  if (type_box (val) != type_helper<string>::id)
-    fatal_error ("type mismatch", "send_string");
+  ASSERT (type_box (val) == type_helper<string>::id, "type mismatch");
   w << set_string (key, open_box<string> (val));
 }
 
 void
 send_coord2 (wk_widget w, string key, blackbox val) {
   typedef pair<SI,SI> coord2;
-  if (type_box (val) != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "send_coord2");
+  ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
   coord2 p= open_box<coord2> (val);
   w << set_coord2 (key, p.x1, p.x2);
 }
@@ -350,8 +346,7 @@ send_coord2 (wk_widget w, string key, blackbox val) {
 void
 send_coord4 (wk_widget w, string key, blackbox val) {
   typedef quartet<SI,SI,SI,SI> coord4;
-  if (type_box (val) != type_helper<coord4>::id)
-    fatal_error ("type mismatch", "send_coord4");
+  ASSERT (type_box (val) == type_helper<coord4>::id, "type mismatch");
   coord4 p= open_box<coord4> (val);
   w << set_coord4 (key, p.x1, p.x2, p.x3, p.x4);
 }
@@ -359,8 +354,7 @@ send_coord4 (wk_widget w, string key, blackbox val) {
 void
 send_position (wk_widget w, blackbox val) {
   typedef pair<SI,SI> coord2;
-  if (type_box (val) != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "send_position");
+  ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
   coord2 p= open_box<coord2> (val);
   if (w->is_window_widget ()) w->win->set_position (p.x1, p.x2);
   else {
@@ -373,8 +367,7 @@ send_position (wk_widget w, blackbox val) {
 void
 send_size (wk_widget w, blackbox val) {
   typedef pair<SI,SI> coord2;
-  if (type_box (val) != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "send_size");
+  ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
   coord2 p= open_box<coord2> (val);
   if (w->is_window_widget ()) w->win->set_size (p.x1, p.x2);
   else {
@@ -386,32 +379,28 @@ send_size (wk_widget w, blackbox val) {
 
 void
 send_update (wk_widget w, blackbox val) {
-  if (!is_nil (val))
-    fatal_error ("type mismatch", "send_update");
+  ASSERT (is_nil (val), "type mismatch");
   w << emit_update ();
 }
 
 void
 send_keyboard (wk_widget w, blackbox val) {
   typedef pair<string,time_t> keypress;
-  if (type_box (val) != type_helper<keypress>::id)
-    fatal_error ("type mismatch", "send_keyboard");
+  ASSERT (type_box (val) == type_helper<keypress>::id, "type mismatch");
   keypress k= open_box<keypress> (val);
   w << emit_keypress (k.x1, k.x2);
 }
 
 void
 send_keyboard_focus (wk_widget w, blackbox val) {
-  if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "send_keyboard_focus");
+  ASSERT (type_box (val) == type_helper<bool>::id, "type mismatch");
   w->win->set_keyboard_focus (abstract (w), open_box<bool> (val));
 }
 
 void
 send_mouse (wk_widget w, blackbox val) {
   typedef quintuple<string,SI,SI,int,time_t> mouse;
-  if (type_box (val) != type_helper<mouse>::id)
-    fatal_error ("type mismatch", "send_mouse");
+  ASSERT (type_box (val) == type_helper<mouse>::id, "type mismatch");
   mouse m= open_box<mouse> (val);
   // FIXME: we should assume the position in the local coordinates
   w << emit_mouse (m.x1, m.x2, m.x3, m.x4, m.x5);
@@ -419,16 +408,14 @@ send_mouse (wk_widget w, blackbox val) {
 
 void
 send_mouse_grab (wk_widget w, blackbox val) {
-  if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "send_mouse_grab");
+  ASSERT (type_box (val) == type_helper<bool>::id, "type mismatch");
   w->win->set_mouse_grab (abstract (w), open_box<bool> (val));
 }
 
 void
 send_mouse_pointer (wk_widget w, blackbox val) {
   typedef pair<string,string> change_pointer;
-  if (type_box (val) != type_helper<change_pointer>::id)
-    fatal_error ("type mismatch", "send_mouse_pointer");
+  ASSERT (type_box (val) == type_helper<change_pointer>::id, "type mismatch");
   change_pointer cp= open_box<change_pointer> (val);
   w->win->set_mouse_pointer (abstract (w), cp.x1, cp.x2);
 }
@@ -436,8 +423,7 @@ send_mouse_pointer (wk_widget w, blackbox val) {
 void
 send_invalidate (wk_widget w, blackbox val) {
   typedef quartet<SI,SI,SI,SI> coord4;
-  if (type_box (val) != type_helper<coord4>::id)
-    fatal_error ("type mismatch", "send_invalidate");
+  ASSERT (type_box (val) == type_helper<coord4>::id, "type mismatch");
   coord4 p= open_box<coord4> (val);
   w << emit_invalidate (w->ox + p.x1, w->oy + p.x2,
 			w->ox + p.x3, w->oy + p.x4);
@@ -445,16 +431,14 @@ send_invalidate (wk_widget w, blackbox val) {
 
 void
 send_invalidate_all (wk_widget w, blackbox val) {
-  if (!is_nil (val))
-    fatal_error ("type mismatch", "send_invalidate_all");
+  ASSERT (is_nil (val), "type mismatch");
   w << emit_invalidate_all ();
 }
 
 void
 send_repaint (wk_widget w, blackbox val) {
   typedef quartet<SI,SI,SI,SI> repaint;
-  if (type_box (val) != type_helper<repaint>::id)
-    fatal_error ("type mismatch", "send_repaint");
+  ASSERT (type_box (val) == type_helper<repaint>::id, "type mismatch");
   repaint r= open_box<repaint> (val);
   bool stop_flag= false;
   // FIXME: we should assume local coordinates for repainting
@@ -464,16 +448,14 @@ send_repaint (wk_widget w, blackbox val) {
 void
 send_delayed_message (wk_widget w, blackbox val) {
   typedef pair<string,time_t> delayed;
-  if (type_box (val) != type_helper<delayed>::id)
-    fatal_error ("type mismatch", "send_delayed_message");
+  ASSERT (type_box (val) == type_helper<delayed>::id, "type mismatch");
   delayed dm= open_box<delayed> (val);
   w << emit_alarm (dm.x1, dm.x2);
 }
 
 void
 send_destroy (wk_widget w, blackbox val) {
-  if (!is_nil (val))
-    fatal_error ("type mismatch", "send_destroy");
+  ASSERT (is_nil (val), "type mismatch");
   w << emit_destroy ();
 }
 
@@ -589,7 +571,7 @@ wk_widget_rep::send (slot s, blackbox val) {
     send_string (THIS, "directory", val);
     break;
   default:
-    fatal_error ("cannot handle slot type", "wk_widget_rep::send");
+    FAILED ("cannot handle slot type");
   }
 }
 
@@ -599,8 +581,7 @@ wk_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 query_bool (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<bool>::id)
-    fatal_error ("type mismatch", "query_bool");
+  ASSERT (type_id == type_helper<bool>::id, "type mismatch");
   string s;
   w << get_string (key, s);
   return close_box<bool> (s == "on");
@@ -608,8 +589,7 @@ query_bool (wk_widget w, string key, int type_id) {
 
 blackbox
 query_int (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<int>::id)
-    fatal_error ("type mismatch", "query_int");
+  ASSERT (type_id == type_helper<int>::id, "type mismatch");
   int i;
   w << get_integer (key, i);
   return close_box<int> (i);
@@ -617,8 +597,7 @@ query_int (wk_widget w, string key, int type_id) {
 
 blackbox
 query_string (wk_widget w, string key, int type_id) {
-  if (type_id != type_helper<string>::id)
-    fatal_error ("type mismatch", "query_string");
+  ASSERT (type_id == type_helper<string>::id, "type mismatch");
   string s;
   w << get_string (key, s);
   return close_box<string> (s);
@@ -627,8 +606,7 @@ query_string (wk_widget w, string key, int type_id) {
 blackbox
 query_coord2 (wk_widget w, string key, int type_id) {
   typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_coord2");
+  ASSERT (type_id == type_helper<coord2>::id, "type mismatch");
   SI c1, c2;
   w << get_coord2 (key, c1, c2);
   return close_box<coord2> (coord2 (c1, c2));
@@ -637,8 +615,7 @@ query_coord2 (wk_widget w, string key, int type_id) {
 blackbox
 query_coord4 (wk_widget w, string key, int type_id) {
   typedef quartet<SI,SI,SI,SI> coord4;
-  if (type_id != type_helper<coord4>::id)
-    fatal_error ("type mismatch", "query_coord4");
+  ASSERT (type_id == type_helper<coord4>::id, "type mismatch");
   SI c1, c2, c3, c4;
   w << get_coord4 (key, c1, c2, c3, c4);
   return close_box<coord4> (coord4 (c1, c2, c3, c4));
@@ -647,8 +624,7 @@ query_coord4 (wk_widget w, string key, int type_id) {
 blackbox
 query_size (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_size");
+  ASSERT (type_id == type_helper<coord2>::id, "type mismatch");
   SI x, y, W, H;
   get_geometry (w, x, y, W, H);
   return close_box<coord2> (coord2 (W, H));
@@ -657,8 +633,7 @@ query_size (wk_widget w, int type_id) {
 blackbox
 query_position (wk_widget w, int type_id) {
   typedef pair<SI,SI> coord2;
-  if (type_id != type_helper<coord2>::id)
-    fatal_error ("type mismatch", "query_position");
+  ASSERT (type_id == type_helper<coord2>::id, "type mismatch");
   SI x, y, W, H;
   get_geometry (w, x, y, W, H);
   return close_box<coord2> (coord2 (x, y));
@@ -666,15 +641,13 @@ query_position (wk_widget w, int type_id) {
 
 blackbox
 query_keyboard_focus (wk_widget w, int type_id) {
-  if (type_id != type_helper<bool>::id)
-    fatal_error ("type mismatch", "query_keyboard_focus");
+  ASSERT (type_id == type_helper<bool>::id, "type mismatch");
   return close_box<bool> (w->win->get_keyboard_focus (abstract (w)));
 }
 
 blackbox
 query_mouse_grab (wk_widget w, int type_id) {
-  if (type_id != type_helper<bool>::id)
-    fatal_error ("type mismatch", "query_mouse_grab");
+  ASSERT (type_id == type_helper<bool>::id, "type mismatch");
   return close_box<bool> (w->win->get_mouse_grab (abstract (w)));
 }
 
@@ -682,13 +655,12 @@ blackbox
 wk_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_IDENTIFIER:
-    if (type_id != type_helper<int>::id)
-      fatal_error ("int expected (SLOT_IDENTIFIER)", "wk_widget_rep::query");
+    ASSERT (type_id == type_helper<int>::id,
+	    "int expected (SLOT_IDENTIFIER)");
     return close_box<int> (get_identifier (win));
   case SLOT_RENDERER:
-    if (type_id != type_helper<renderer>::id)
-      fatal_error ("renderer expected (SLOT_RENDERER)",
-		   "wk_widget_rep::query");
+    ASSERT (type_id == type_helper<renderer>::id,
+	    "renderer expected (SLOT_RENDERER)");
     return close_box<renderer> (win->get_renderer ());
   case SLOT_SIZE:
     return query_size (THIS, type_id);
@@ -726,7 +698,7 @@ wk_widget_rep::query (slot s, int type_id) {
   case SLOT_STRING_INPUT:
     return query_string (THIS, "input", type_id);
   default:
-    fatal_error ("cannot handle slot type", "wk_widget_rep::query");
+    FAILED ("cannot handle slot type");
     return blackbox ();
   }
 }
@@ -737,15 +709,13 @@ wk_widget_rep::query (slot s, int type_id) {
 
 void
 notify_keyboard_focus (wk_widget w, blackbox val) {
-  if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "notify_keyboard_focus");
+  ASSERT (type_box (val) == type_helper<bool>::id, "type mismatch");
   w << emit_keyboard_focus (open_box<bool> (val));
 }
 
 void
 notify_mouse_grab (wk_widget w, blackbox val) {
-  if (type_box (val) != type_helper<bool>::id)
-    fatal_error ("type mismatch", "notify_mouse_grab");
+  ASSERT (type_box (val) == type_helper<bool>::id, "type mismatch");
   w << emit_mouse_grab (open_box<bool> (val));
 }
 
@@ -794,7 +764,8 @@ wk_widget_rep::read (slot s, blackbox index) {
     check_type_void (index, "SLOT_DIRECTORY");
     return abstract (THIS [0] ["directory"] ["input"]);
   default:
-    fatal_error ("cannot handle slot type", "wk_widget_rep::read");
+    FAILED ("cannot handle slot type");
+    return widget ();
   }
 }
 
@@ -830,6 +801,6 @@ wk_widget_rep::write (slot s, blackbox index, widget w) {
     THIS << set_widget ("interactive input", concrete (w));
     break;
   default:
-    fatal_error ("cannot handle slot type", "wk_widget_rep::write");
+    FAILED ("cannot handle slot type");
   }
 }

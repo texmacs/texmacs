@@ -77,8 +77,7 @@ math_font_rep::init_font (int fn_nr, font& fn) {
     fn= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
   else {
     fn= find_font (t);
-    if (is_nil (fn))
-      fatal_error ("Font not found", "math_font_rep::search_font");
+    ASSERT (!is_nil (fn), "font not found");
   }
   fn->copy_math_pars (base_fn);
   font_table [fn_nr]= fn;
@@ -97,8 +96,7 @@ math_font_rep::search_font (string& s, font& fn) {
 	int fn_nr= c/256;
 	if (is_nil (rubber_table [fn_nr])) {
 	  fn= find_font (rubber_name [fn_nr]);
-	  if (is_nil (fn))
-	    fatal_error ("Font not found", "math_font_rep::search_font");
+	  ASSERT (!is_nil (fn), "font not found");
 	  fn->yfrac= base_fn->yfrac;
 	  // fn->copy_math_pars (base_fn);
 	  rubber_table [fn_nr]= fn;

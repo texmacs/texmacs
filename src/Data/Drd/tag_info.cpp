@@ -173,7 +173,7 @@ tag_info::tag_info (int a, int x, int am, int cm, bool frozen) {
 tag_info::tag_info (tree t) {
   if ((!is_func (t, TUPLE)) || (N(t)<2) || (L(t[1]) != TUPLE)) {
     cerr << "\nt= " << t << "\n";
-    fatal_error ("Bad tag_info", "tag_info::tag_info (tree)");
+    FAILED ("bad tag_info");
   }
   parent_info pi (as_string (t[0]));
   int i, n= N(t[1]);

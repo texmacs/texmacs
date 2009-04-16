@@ -141,7 +141,7 @@ void
 popup_widget_rep::handle_set_integer (set_integer_event ev) {
   if (ev->which == "stick") { stick= (ev->i != 0); }
   else if (ev->which == "freeze") { freeze= (ev->i != 0); }
-  else fatal_error ("Could not set integer attribute " * ev->which);
+  else WK_FAILED ("could not set integer attribute " * ev->which);
 }
 
 bool

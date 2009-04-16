@@ -129,14 +129,14 @@ operator * (tree t1, tree t2) {
 
 tree&
 operator << (tree& t, tree t2) {
-  CHECK_COMPOUND (t, "operator << (tree&, tree)");
+  CHECK_COMPOUND (t);
   (static_cast<compound_rep*> (t.rep))->a << t2;
   return t;
 }
 
 tree&
 operator << (tree& t, array<tree> a) {
-  CHECK_COMPOUND (t, "operator << (tree&, array<tree>)");
+  CHECK_COMPOUND (t);
   (static_cast<compound_rep*> (t.rep))->a << a;
   return t;
 }

@@ -57,8 +57,7 @@ compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
     if (is_tuple (t, "virtual", 3))
       fn[ch]= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
     else fn[ch]= find_font (t);
-    if (is_nil (fn[ch]))
-      fatal_error ("Font not found", "compound_font_rep::advance");
+    ASSERT (!is_nil (fn[ch]), "font not found");
     //fn[ch]->copy_math_pars (fn[0]);
   }
 }

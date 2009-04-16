@@ -14,7 +14,7 @@ RM = rm -f
 all: bin/tm_axiom
 
 bin/tm_axiom: src/tm_axiom.c
-	$(CC) src/tm_axiom.c -o bin/tm_axiom
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/tm_axiom.c -o bin/tm_axiom
 
 clean:
 	$(RM) bin/tm_axiom

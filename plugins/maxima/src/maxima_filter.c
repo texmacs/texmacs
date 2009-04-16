@@ -51,4 +51,5 @@ int main()
   }
   if (first) fputs("\2verbatim:",stdout);
   fputs("\2latex:\\red The end\\black\5\5",stdout);
+  return 0;
 }

@@ -56,7 +56,7 @@ operator << (ostream& out, object obj) {
   out.flush ();
   if (out == cout) call ("write", obj);
   else if (out == cerr) call ("write-err", obj);
-  else fatal_error ("Not yet implemented", "object::operator <<", "object.cpp");
+  else FAILED ("not yet implemented");
   call ("force-output");
   return out;
 }
@@ -281,7 +281,7 @@ public:
     SCM result= call_scheme (obj->lookup ());
     if (scm_is_widget (result)) return scm_to_widget (result);
     else {
-      fatal_error ("Widget expected", "eval_as_widget", "object.cpp");
+      FAILED ("widget expected");
       return glue_widget ();
     }
   }

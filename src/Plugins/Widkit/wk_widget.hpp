@@ -44,7 +44,7 @@ public:
   SI    x1 (); SI y1 (); // lower left window coordinates of widget
   SI    x2 (); SI y2 (); // upper right window coordinates of widget
   bool  attached ();
-  void  fatal_error (string message, string in="", string fname="");
+  void  wk_error (string message);
 
   friend class wk_widget;
 };
@@ -73,6 +73,8 @@ wk_widget operator << (wk_widget w, event ev);
 void wk_grab_pointer (wk_widget w);
 void wk_ungrab_pointer (wk_widget w);
 bool wk_has_pointer_grab (wk_widget w);
+
+#define WK_FAILED(msg) { wk_error (msg); FAILED ("widget_error"); }
 
 /******************************************************************************
 * Exported special widgets and window widget destruction

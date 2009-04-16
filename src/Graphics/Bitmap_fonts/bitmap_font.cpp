@@ -22,10 +22,7 @@ font_metric_rep::font_metric_rep (string name):
   rep<font_metric> (name), bad_font_metric (false) {}
 
 font_metric_rep::~font_metric_rep () {
-  fatal_error ("not yet implemented",
-	       "font_metric_rep::~font_metric_rep",
-	       "font_metric.cpp");
-}
+  FAILED ("not yet implemented"); }
 
 /******************************************************************************
 * Standard bitmap metrics
@@ -71,10 +68,7 @@ font_glyphs_rep::font_glyphs_rep (string name):
   rep<font_glyphs> (name), bad_font_glyphs (false) {}
 
 font_glyphs_rep::~font_glyphs_rep () {
-  fatal_error ("not yet implemented",
-	       "font_glyphs_rep::~font_glyphs_rep",
-	       "font_glyphs.cpp");
-}
+  FAILED ("not yet implemented"); }
 
 /******************************************************************************
 * Standard bitmap fonts

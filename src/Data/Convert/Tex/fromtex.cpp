@@ -211,7 +211,7 @@ latex_symbol_to_tree (string s) {
       if (s == "pink") return tree (SET, COLOR, "pink");
 
       cerr << "The symbol was " << s << "\n";
-      fatal_error ("unexpected situation", "latex_symbol_to_tree");
+      FAILED ("unexpected situation");
     }
     if (latex_type (s) == "operator")
       return s(1,N(s));

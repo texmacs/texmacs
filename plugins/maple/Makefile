@@ -15,7 +15,7 @@ RM = rm -f
 all: bin/tm_maple_5
 
 bin/tm_maple_5: src/tm_maple_5.cpp
-	$(CXX) src/tm_maple_5.cpp -o bin/tm_maple_5
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) src/tm_maple_5.cpp -o bin/tm_maple_5
 
 clean:
 	$(RM) *~

@@ -31,37 +31,37 @@ attribute_widget_rep::attribute_widget_rep (
 
 void
 attribute_widget_rep::handle_get_integer (get_integer_event ev) {
-  fatal_error ("Could not get integer attribute " * ev->which);
+  WK_FAILED ("could not get integer attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_get_double (get_double_event ev) {
-  fatal_error ("Could not get double attribute " * ev->which);
+  WK_FAILED ("could not get double attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_get_string (get_string_event ev) {
-  fatal_error ("Could not get string attribute " * ev->which);
+  WK_FAILED ("could not get string attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_get_coord1 (get_coord1_event ev) {
-  fatal_error ("Could not get coord1 attribute " * ev->which);
+  WK_FAILED ("could not get coord1 attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_get_coord2 (get_coord2_event ev) {
-  fatal_error ("Could not get coord2 attribute " * ev->which);
+  WK_FAILED ("could not get coord2 attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_get_coord3 (get_coord3_event ev) {
-  fatal_error ("Could not get coord3 attribute " * ev->which);
+  WK_FAILED ("could not get coord3 attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_get_coord4 (get_coord4_event ev) {
-  fatal_error ("Could not get coord4 attribute " * ev->which);
+  WK_FAILED ("could not get coord4 attribute " * ev->which);
 }
 
 /******************************************************************************
@@ -70,37 +70,37 @@ attribute_widget_rep::handle_get_coord4 (get_coord4_event ev) {
 
 void
 attribute_widget_rep::handle_set_integer (set_integer_event ev) {
-  fatal_error ("Could not set integer attribute " * ev->which);
+  WK_FAILED ("could not set integer attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_set_double (set_double_event ev) {
-  fatal_error ("Could not set double attribute " * ev->which);
+  WK_FAILED ("could not set double attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_set_string (set_string_event ev) {
-  fatal_error ("Could not set string attribute " * ev->which);
+  WK_FAILED ("could not set string attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_set_coord1 (set_coord1_event ev) {
-  fatal_error ("Could not set coord1 attribute " * ev->which);
+  WK_FAILED ("could not set coord1 attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_set_coord2 (set_coord2_event ev) {
-  fatal_error ("Could not set coord2 attribute " * ev->which);
+  WK_FAILED ("could not set coord2 attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_set_coord3 (set_coord3_event ev) {
-  fatal_error ("Could not set coord3 attribute " * ev->which);
+  WK_FAILED ("could not set coord3 attribute " * ev->which);
 }
 
 void
 attribute_widget_rep::handle_set_coord4 (set_coord4_event ev) {
-  fatal_error ("Could not set coord4 attribute " * ev->which);
+  WK_FAILED ("could not set coord4 attribute " * ev->which);
 }
 
 /******************************************************************************

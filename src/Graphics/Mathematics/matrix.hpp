@@ -119,8 +119,7 @@ operator << (ostream& out, matrix<T> m) {
 
 TMPL void
 parse (tree t, matrix<T>& m) {
-  if (!is_tuple (t) || N(t)==0 || !is_tuple (t[0]))
-    fatal_error ("Not a matrix", "parse<matrix<T> >", "matrix.hpp");
+  ASSERT (is_tuple (t) && N(t)>0 && is_tuple (t[0]), "not a matrix");
   int i, j, rows= N(t), cols= N(t[0]);
   m= matrix<T> (T(0), rows, cols);
   for (i=0; i<rows; i++)
@@ -160,8 +159,7 @@ operator - (matrix<T> m) {
 template<typename T, typename Op> matrix<T>
 binary (matrix<T> m1, matrix<T> m2) {
   int i, n= NR(m1) * NC(m1);
-  if (NR(m1) != NR(m2) || NC(m1) != NC(m2))
-    fatal_error ("Matrix sizes don't match", "binary<T,Op>", "matrix.hpp");
+  ASSERT (NR(m1) == NR(m2) && NC(m1) == NC(m2), "matrix sizes don't match");
   T* a= A(m1);
   T* b= A(m2);
   T* r= tm_new_array<T> (n);
@@ -185,8 +183,7 @@ operator - (matrix<T> m1, matrix<T> m2) {
 TMPL inline matrix<T>
 operator * (matrix<T> m1, matrix<T> m2) {
   int i, j, k, rows= NR (m1), aux= NC (m1), cols= NC (m2);
-  if (NR (m2) != aux)
-    fatal_error ("Dimensions don't match", "operator *", "matrix.hpp");
+  ASSERT (NR (m2) == aux, "dimensions don't match");
   matrix<T> prod (T(0), rows, cols);
   for (i=0; i<rows; i++)
     for (j=0; j<cols; j++)
@@ -198,8 +195,7 @@ operator * (matrix<T> m1, matrix<T> m2) {
 TMPL inline vector<T>
 operator * (matrix<T> m, vector<T> v) {
   int i, j, rows= NR (m), cols= NC (m);
-  if (N (v) != cols)
-    fatal_error ("Dimensions don't match", "operator *", "matrix.hpp");
+  ASSERT (N (v) == cols, "dimensions don't match");
   vector<T> prod (T(0), rows);
   for (i=0; i<rows; i++)
     for (j=0; j<cols; j++)
@@ -210,8 +206,7 @@ operator * (matrix<T> m, vector<T> v) {
 TMPL inline array<T>
 operator * (matrix<T> m, array<T> v) {
   int i, j, rows= NR (m), cols= NC (m);
-  if (N (v) != cols)
-    fatal_error ("Dimensions don't match", "operator *", "matrix.hpp");
+  ASSERT (N (v) == cols, "dimensions don't match");
   array<T> prod (T(0), rows);
   for (i=0; i<rows; i++)
     for (j=0; j<cols; j++)

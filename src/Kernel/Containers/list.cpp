@@ -33,8 +33,7 @@ operator << (ostream& out, list<T> l) {
 
 template<class T> T&
 list<T>::operator [] (int i) {
-  if (rep==NULL)
-    fatal_error ("list too short", "list<T>::operator []", "list.cpp");
+  ASSERT (rep != NULL, "list too short");
   if (i==0) return rep->item;
   return rep->next[i-1];
 }
@@ -80,21 +79,21 @@ operator << (T& item, list<T>& l) {
 
 template<class T> T
 last_item (list<T> l) {
-  if (is_nil (l)) fatal_error ("empty path", "last_item", "list.cpp");
+  ASSERT (!is_nil (l), "empty path");
   if (is_nil (l->next)) return l->item;
   return last_item (l->next);
 }
 
 template<class T> T&
 access_last (list<T>& l) {
-  if (is_nil (l)) fatal_error ("empty path", "access_last", "list.cpp");
+  ASSERT (!is_nil (l), "empty path");
   if (is_nil (l->next)) return l->item;
   return access_last (l->next);
 }
 
 template<class T> list<T>&
 suppress_last (list<T>& l) {
-  if (is_nil (l)) fatal_error ("empty path", "suppress_last", "list.cpp");
+  ASSERT (!is_nil (l), "empty path");
   if (is_nil (l->next)) l= list<T> ();
   else suppress_last (l->next);
   return l;
@@ -164,14 +163,14 @@ operator * (list<T> l1, list<T> l2) {
 template<class T> list<T>
 head (list<T> l, int n) {
   if (n==0) return list<T> ();
-  if (is_nil (l)) fatal_error ("list too short", "head", "list.cpp");
+  ASSERT (!is_nil (l), "list too short");
   return list<T> (l->item, head (l->next, n-1));
 }
 
 template<class T> list<T>
 tail (list<T> l, int n) {
   for (; n>0; n--) {
-    if (is_nil (l)) fatal_error ("list too short", "tail", "list.cpp");
+    ASSERT (!is_nil (l), "list too short");
     l=l->next;
   }
   return l;

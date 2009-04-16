@@ -41,7 +41,7 @@ HI
 pk_loader::pkbyte () {
   if (input_pos == N(input_s)) {
     cerr << "\npk file= " << file_name << "\n";
-    fatal_error ("unexpected eof in pk file", "pkbyte", "load-pk.cpp");
+    FAILED ("unexpected eof in pk file");
   }
   return (HI) ((QN) input_s [input_pos++]);
 }
@@ -147,8 +147,8 @@ pk_loader::rest () {
     return i;
   }
   cerr << "\npk file= " << file_name << "\n";
-  fatal_error ("unexpected situation", "rest", "load-pk.cpp");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("unexpected situation");
+  return 0;
 }
 
 HN
@@ -263,8 +263,7 @@ pk_loader::unpack (glyph& gl) {
     }
     if ((rowsleft != 0) || (hbit != gl->width)) {
       cerr << "\npk file= " << file_name << "\n";
-      fatal_error ("more bits than required while unpacking",
-		   "unpack", "load-pk.cpp");
+      FAILED ("more bits than required while unpacking");
     }
   }
 }
@@ -299,11 +298,11 @@ pk_loader::load_pk () {
   // Preamble
   if (pkbyte ()!=247) {
     cerr << "\npk file= " << file_name << "\n";
-    fatal_error ("bad pk file, expected pre", "load_pk", "load-pk.cpp");
+    FAILED ("bad pk file");
   }
   if (pkbyte ()!=89) {
     cerr << "\npk file= " << file_name << "\n";
-    fatal_error ("bad version of pk file", "load_pk", "load-pk.cpp");
+    FAILED ("bad version of pk file");
   }
   for(i=pkbyte (); i>0; i--) (void) pkbyte (); /* creator of pkfile */
   (void) pkquad (); /* design size */
@@ -337,13 +336,13 @@ pk_loader::load_pk () {
       case 5:
 	cerr << "\npk file= " << file_name << "\n";
 	cerr << "last charcode= " << charcode << "\n";
-	fatal_error ("lost sync in pk file (character too big / status = 5)",
-		     "load_pk", "load-pk.cpp");
+	FAILED ("lost sync in pk file (character too big / status = 5)");
+	break;
       case 6:
 	cerr << "\npk file= " << file_name << "\n";
 	cerr << "last charcode= " << charcode << "\n";
-	fatal_error ("lost sync in pk file (character too big / status = 6)",
-		     "load_pk", "load-pk.cpp");
+	FAILED ("lost sync in pk file (character too big / status = 6)");
+	break;
       case 7:
 	length = pkquad ();
 	charcode = pkquad ();
@@ -413,7 +412,7 @@ pk_loader::load_pk () {
 	cerr << "\npk file= " << file_name << "\n";
 	cerr << "last charcode= " << charcode << "\n";
 	cerr << "flagbyte= " << flagbyte << "\n";
-	fatal_error ("lost sync in pk file", "load_pk", "load-pk.cpp");
+	FAILED ("lost sync in pk file");
       }
     }
   }

@@ -1,16 +1,16 @@
-text/texmacs:
+text/x-texmacs
 	description=TeXmacs document
 	[ca]description=document TeXmacs
 	[da]description=TeXmacs-dokument
 	[de]description=TeXmacs-Dokument
-	[el]description=∏„„Ò·ˆÔ TeXmacs
+	[el]description=ŒàŒ≥Œ≥œÅŒ±œÜŒø TeXmacs
 	[es]description=documento de TeXmacs
 	[fi]description=TeXmacs -asiakirja
 	[fr]description=Document TeXmacs
 	[gl]description=Documento de TeXmacs
 	[hu]description=TeXmacs dokumentum
 	[it]description=Documento TeXmacs
-	[ja]description=TeXmacs •…•≠•Â•·•Û•»
+	[ja]description=TeXmacs „Éâ„Ç≠„É•„É°„É≥„Éà
 	[no]description=TeXmacs dokument
 	[pt_BR]description=documento do TeXmacs
 	[ro]description=Document TeXmacs
@@ -18,7 +18,7 @@ text/texmacs:
 	[sl]description=dokument TeXmacs
 	[sv]description=TeXmacs-dokument
 	[tr]description=TeXmacs belgesi
-	[uk]description=ƒœÀ’Õ≈Œ‘ TeXmacs
+	[uk]description=–¥–æ–∫—É–º–µ–Ω—Ç TeXmacs
 	[wa]description=Documint TeXmacs
 	icon_filename=TeXmacs.xpm
 	default_action_type=application

@@ -208,8 +208,8 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
   }
 
   cerr << "TeXmacs] The defining tree is " << t << "\n";
-  fatal_error ("Invalid virtual character", "virtual_font_rep::compile");
-  return glyph(); // avoids error message when C++ compiler behaves badly
+  FAILED ("invalid virtual character");
+  return glyph ();
 }
 
 /******************************************************************************

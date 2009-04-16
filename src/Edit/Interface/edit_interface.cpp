@@ -33,7 +33,7 @@ MODE_LANGUAGE (string mode) {
   else if (mode == "prog") return PROG_LANGUAGE;
   else if (mode == "src") return LANGUAGE;
   cerr << "Mode = " << mode << "\n";
-  fatal_error ("invalid mode", "MODE_LANGUAGE", "edit_interface.cpp");
+  FAILED ("invalid mode");
   return LANGUAGE;
 }
 

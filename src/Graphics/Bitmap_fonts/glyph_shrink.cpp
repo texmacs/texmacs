@@ -18,8 +18,8 @@ log2i (int i) {
   if (i==1) return 0;
   for (l=1; l<30; l++)
     if (i <= (1 << l)) return l;
-  fatal_error ("too large shrinking factor", "shrink", "shrink.cpp");
-  return 0; // Because of bug in certain versions of g++
+  FAILED ("too large shrinking factor");
+  return 0;
 }
 
 static int
@@ -215,7 +215,7 @@ shrink (glyph gl, int xfactor, int yfactor,
 glyph
 shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
   if ((gl->width==0) || (gl->height==0))
-    fatal_error ("zero size character", "shrink", "glyph.cpp");
+    FAILED ("zero size character");
 
   int tx= xfactor/3;
   int ty= yfactor/3;

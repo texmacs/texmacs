@@ -165,8 +165,7 @@ disk_table_rep::open_pending_write () {
   pending_fp= fopen (_name, "a");
 #endif
   if (pending_fp == NULL)
-    fatal_error ("Cannot store pending writes file for TeXmacs file system",
-		 "disk_table_rep::open_pending_write");
+    FAILED ("cannot store pending writes file for TeXmacs file system");
   tm_delete_array (_name);
 }
 

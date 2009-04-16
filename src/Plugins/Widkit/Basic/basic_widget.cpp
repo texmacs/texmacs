@@ -102,7 +102,7 @@ basic_widget_rep::handle_get_widget (get_widget_event ev) {
       ev->w= a[i];
       return;
     }
-  fatal_error ("Could not get widget attribute " * ev->which);
+  WK_FAILED ("could not get widget attribute " * ev->which);
 }
 
 void
@@ -110,7 +110,7 @@ basic_widget_rep::handle_set_widget (set_widget_event ev) {
   int i;
   for (i=0; i<N(a); i++)
     if (name[i] == ev->which) { a[i]= ev->w; return; }
-  fatal_error ("Could not set widget attribute " * ev->which);
+  WK_FAILED ("could not set widget attribute " * ev->which);
 }
 
 /******************************************************************************
@@ -120,11 +120,9 @@ basic_widget_rep::handle_set_widget (set_widget_event ev) {
 void
 basic_widget_rep::handle_attach_window (attach_window_event ev) {
   if ((win!=NULL) && (ev->win!=NULL) && (win!=ev->win))
-    fatal_error ("Widget already attached to another window",
-		 "basic_widget_rep::handle_attach_window");
-  else win= ev->win;
-  int i;
-  for (i=0; i<N(a); i++) a[i] << emit_attach_window (win);
+    WK_FAILED ("widget already attached to another window");
+  win= ev->win;
+  for (int i=0; i<N(a); i++) a[i] << emit_attach_window (win);
 }
 
 void
@@ -234,9 +232,10 @@ basic_widget_rep::handle_find_child (find_child_event ev) {
 
 void
 test_round (wk_widget w, string var, SI num) {
-  if (num != ((num>>8)<<8))
-    w->fatal_error ("Bad rounding of " * var * "=" * as_string (num),
-		    "test_round", "basic_widget.cpp");
+  if (num != ((num>>8)<<8)) {
+    w->wk_error ("Bad rounding of " * var * "=" * as_string (num));
+    FAILED ("bad rounding");
+  }
 }
 
 static void
@@ -245,8 +244,7 @@ test_window_attached (event ev, wk_widget w) {
     cerr << "\n" << HRULE << "\n";
     cerr << ev << " was sent to\n" << w;
     cerr << HRULE << "\n";
-    fatal_error ("widget was not yet attached to window",
-		 "basic_widget::handle", "basic_widget.cpp");
+    FAILED ("widget was not yet attached to window");
   }
 }
 

@@ -325,7 +325,7 @@ texmacs_widget_rep::handle_set_integer (set_integer_event ev) {
     THIS ["canvas"] << set_integer ("shrinking factor", ev->i);
   else if (ev->which == "scrollbars")
     THIS ["canvas"] << set_integer ("scrollbars", ev->i);
-  else fatal_error ("Could not set integer attribute " * ev->which);
+  else WK_FAILED ("could not set integer attribute " * ev->which);
 }
 
 void
@@ -344,7 +344,7 @@ texmacs_widget_rep::handle_set_string (set_string_event ev) {
   else if (ev->which == "footer flag") set_footer_flag (ev->s == "on");
   else if (ev->which == "left footer") set_left_footer (ev->s);
   else if (ev->which == "right footer") set_right_footer (ev->s);
-  else fatal_error ("Could not set string attribute " * ev->which);
+  else WK_FAILED ("could not set string attribute " * ev->which);
 }
 
 void
@@ -367,32 +367,32 @@ texmacs_widget_rep::handle_get_string (get_string_event ev) {
     ev->s= get_footer_flag ()? string ("on"): string ("off");
   else if (ev->which == "interactive input")
     THIS ["footer"] ["interactive"] ["middle"] << get_input_string (ev->s);
-  else fatal_error ("Could not set string attribute " * ev->which);
+  else WK_FAILED ("could not set string attribute " * ev->which);
 }
 
 void
 texmacs_widget_rep::handle_set_coord2 (set_coord2_event ev) {
   if (ev->which == "scroll position") THIS ["canvas"] << ev;
-  else fatal_error ("Could not set coord2 attribute " * ev->which);
+  else WK_FAILED ("could not set coord2 attribute " * ev->which);
 }
 
 void
 texmacs_widget_rep::handle_get_coord2 (get_coord2_event ev) {
   if (ev->which == "scroll position") THIS ["canvas"] << ev;
-  else fatal_error ("Could not get coord2 attribute " * ev->which);
+  else WK_FAILED ("could not get coord2 attribute " * ev->which);
 }
 
 void
 texmacs_widget_rep::handle_set_coord4 (set_coord4_event ev) {
   if (ev->which == "extents") THIS ["canvas"] << ev;
-  else fatal_error ("Could not set coord4 attribute " * ev->which);
+  else WK_FAILED ("could not set coord4 attribute " * ev->which);
 }
 
 void
 texmacs_widget_rep::handle_get_coord4 (get_coord4_event ev) {
   if (ev->which == "extents") THIS ["canvas"] << ev;
   else if (ev->which == "visible") THIS ["canvas"] << ev;
-  else fatal_error ("Could not get coord4 attribute " * ev->which);
+  else WK_FAILED ("could not get coord4 attribute " * ev->which);
 }
 
 void

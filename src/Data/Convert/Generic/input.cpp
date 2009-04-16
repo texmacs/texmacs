@@ -215,7 +215,7 @@ texmacs_input_rep::flush (bool force) {
     xformat_flush (force);
     break;
   default:
-    fatal_error ("invalid mode", "texmacs_input_rep::flush", "input.cpp");
+    FAILED ("invalid mode");
     break;
   }
 }

@@ -12,7 +12,7 @@ RM = rm -f
 all: bin/realpath
 
 bin/realpath: src/realpath.c
-	$(CC) src/realpath.c -o bin/realpath
+	$(CC) $(CPPFLAGS) $(CFLAGS) src/realpath.c -o bin/realpath
 
 clean:
 	rm -f *~
