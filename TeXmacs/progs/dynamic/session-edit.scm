@@ -75,6 +75,23 @@
   (set! session-output-timings (not session-output-timings)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scheme sessions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (var-object->string t)
+  (with s (object->string t)
+    (if (== s "#<unspecified>") "" s)))
+
+(tm-define (scheme-eval t)
+  (let* ((s (texmacs->verbatim (tm->tree t)))
+	 (r (eval (string->object s))))
+    (cond ((and (tree? r) (session-scheme-trees?)) r)
+	  ((session-scheme-math?)
+	   (with m (cas->stree r)
+	     (if (tm? m) (tree 'math (tm->tree m)) (var-object->string r))))
+	  (else (var-object->string r)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low-level evaluation management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

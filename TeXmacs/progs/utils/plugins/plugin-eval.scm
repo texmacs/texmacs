@@ -89,7 +89,7 @@
       (connection-write lan ses t)
       (delayed
 	(connection-notify-status lan ses 3)
-	(with r (package-evaluate lan ses t)
+	(with r (scheme-eval t)
 	  (if (not (func? r 'document))
 	      (set! r (tree 'document r)))
 	  (connection-notify lan ses "output" r))

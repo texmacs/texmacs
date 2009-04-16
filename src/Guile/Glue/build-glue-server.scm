@@ -115,5 +115,4 @@
   (set-message-temp set_message (void string string bool))
   (recall-message recall_message (void))
   (yes? is_yes (bool string))
-  (quit-TeXmacs quit (void))
-  (package-evaluate evaluate (tree string string content)))
+  (quit-TeXmacs quit (void)))

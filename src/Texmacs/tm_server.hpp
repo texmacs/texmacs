@@ -70,7 +70,6 @@ public:
   string translate (string which, string from, string to);
   bool   is_yes (string s);
   void   quit ();
-  tree   evaluate (string name, string session, tree expr);
   void   shell    (string s);
 };
 

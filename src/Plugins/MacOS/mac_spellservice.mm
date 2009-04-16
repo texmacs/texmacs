@@ -9,6 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#ifdef OS_MACOS_DISACTIVATED
+
 #include "MacOS/mac_spellservice.h"
 #include "converter.hpp"
 #include "language.hpp"
@@ -172,3 +174,5 @@ mac_spell_done (string lan) {
   current_tag = 0;
   [pool release];
 }
+
+#endif // OS_MACOS_DISACTIVATED

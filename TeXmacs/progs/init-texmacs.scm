@@ -128,6 +128,7 @@
 (lazy-keyboard (dynamic scripts-kbd) always?)
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic fold-menu) insert-fold-menu)
+(lazy-define (dynamic session-edit) scheme-eval)
 (lazy-menu (dynamic session-menu) insert-session-menu
 	   session-menu session-icons session-help-icons help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu

@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#ifdef OS_MACOS_DISACTIVATED
 #include "MacOS/mac_images.h"
 #include "converter.hpp" // hack: remove as soon as possible
 
@@ -42,3 +43,5 @@ void mac_image_to_png (url img_file, url png_file) {
   [bmp release];
   [pool release];
 }
+
+#endif // OS_MACOS_DISACTIVATED

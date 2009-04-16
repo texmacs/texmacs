@@ -1093,23 +1093,6 @@ tmg_quit_TeXmacs () {
   return SCM_UNSPECIFIED;
 }
 
-SCM
-tmg_package_evaluate (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "package-evaluate");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "package-evaluate");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "package-evaluate");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  content in3= scm_to_content (arg3);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->evaluate (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
 void
 initialize_glue_server () {
   scm_new_procedure ("insert-kbd-wildcard", (FN) tmg_insert_kbd_wildcard, 5, 0, 0);
@@ -1204,5 +1187,4 @@ initialize_glue_server () {
   scm_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);
   scm_new_procedure ("yes?", (FN) tmg_yesP, 1, 0, 0);
   scm_new_procedure ("quit-TeXmacs", (FN) tmg_quit_TeXmacs, 0, 0, 0);
-  scm_new_procedure ("package-evaluate", (FN) tmg_package_evaluate, 3, 0, 0);
 }

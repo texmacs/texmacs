@@ -13,7 +13,7 @@
 #include "Replace/edit_replace.hpp"
 #include "Interface/edit_interface.hpp"
 
-#ifdef OS_MACOS
+#ifdef OS_MACOS_DISACTIVATED
 #include "MacOS/mac_spellservice.h"
 #define ispell_start mac_spell_start
 #define ispell_check mac_spell_check
