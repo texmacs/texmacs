@@ -258,9 +258,10 @@ x_drawable_rep::xpm_initialize (url file_name) {
   ok= read_int (s, i, c) && ok;
   skip_spaces (s, i);
   ok= read_int (s, i, b) && ok;
-  if ((!ok) || (N(t)<(c+1)) || (c<=0))
-    fatal_error ("Invalid xpm (" * as_string (file_name) * ")",
-		 "x_drawable_rep::xpm_initialize");
+  if ((!ok) || (N(t)<(c+1)) || (c<=0)) {
+    cerr << "file_name= " << file_name << "\n";
+    FAILED ("invalid xpm");
+  }
 
   // setup colors
   string first_name;
@@ -347,8 +348,7 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
   y -= pixel; // counter balance shift in draw_clipped
   if (!gui->xpm_pixmap->contains (as_string (file_name)))
     xpm_initialize (file_name);
-  if (sfactor != 1)
-    fatal_error ("Shrinking factor should be 1", "x_drawable_rep::xpm");
+  ASSERT (sfactor == 1, "shrinking factor should be 1");
   int w, h;
   xpm_size (file_name, w, h);
   Pixmap bm= (Pixmap) gui->xpm_bitmap [as_string (file_name)];

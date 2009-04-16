@@ -17,7 +17,7 @@
 
 void
 x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
-  if (ren == NULL) fatal_error ("invalid situation", "x_drawable_rep::fetch");
+  ASSERT (ren != NULL, "invalid situation");
   if (ren->is_printer ()) return;
   x_drawable_rep* src= ren->as_x_drawable ();
   if (src->win == win && x1 == x && y1 == y) return;
@@ -66,8 +66,7 @@ x_drawable_rep::delete_shadow (renderer& ren) {
 void
 x_drawable_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
-  if (ren == NULL)
-    fatal_error ("invalid renderer", "x_drawable_rep::get_shadow");
+  ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
   x_drawable_rep* shadow= ren->as_x_drawable ();
   outer_round (x1, y1, x2, y2);
@@ -91,8 +90,7 @@ x_drawable_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 void
 x_drawable_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
-  if (ren == NULL)
-    fatal_error ("invalid renderer", "x_drawable_rep::put_shadow");
+  ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
   x_drawable_rep* shadow= ren->as_x_drawable ();
   outer_round (x1, y1, x2, y2);

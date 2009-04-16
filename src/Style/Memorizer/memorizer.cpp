@@ -20,17 +20,13 @@ int memorizer_count= 0;
 
 void
 memorizer_rep::compute () {
-  fatal_error ("Memorizer can't compute its own output",
-	       "memorizer_rep::compute",
-	       "memorizer.cpp");
+  FAILED ("memorizer can't compute its own output");
 }
 
 void
 memorizer_rep::set_children (memorizer* a, int n) {
   (void) a; (void) n;
-  fatal_error ("Not a compound memorizer",
-	       "memorizer_rep::set_children",
-	       "memorizer.cpp");
+  FAILED ("not a compound memorizer");
 }
 
 void
@@ -42,32 +38,24 @@ memorizer_rep::get_children (memorizer*& a, int& n) {
 void
 memorizer_rep::set_environment (environment env) {
   (void) env;
-  fatal_error ("Not an environment memorizer",
-	       "memorizer_rep::set_environment",
-	       "memorizer.cpp");
+  FAILED ("not an environment memorizer");
 }
 
 environment
 memorizer_rep::get_environment () {
-  fatal_error ("Not an environment memorizer",
-	       "memorizer_rep::get_environment",
-	       "memorizer.cpp");
+  FAILED ("not an environment memorizer");
   return environment ();
 }
 
 void
 memorizer_rep::set_tree (tree t) {
   (void) t;
-  fatal_error ("Not a tree memorizer",
-	       "memorizer_rep::set_tree",
-	       "memorizer.cpp");
+  FAILED ("not a tree memorizer");
 }
 
 tree
 memorizer_rep::get_tree () {
-  fatal_error ("Not a tree memorizer",
-	       "memorizer_rep::get_tree",
-	       "memorizer.cpp");
+  FAILED ("not a tree memorizer");
   return "";
 }
 
@@ -230,9 +218,7 @@ bigmem_insert (memorizer_ptr ptr) {
 	    memorizer_ptr mem_ptr= bigmem_mem[i][k];
 	    int h= mem_ptr->hash () & new_bags_mask;
 	    //cout << "  insert " << h << LF;
-	    if (h != i && h != j)
-	      fatal_error ("failed assertion", "bigmem_insert",
-			   "memorizer.cpp");
+	    ASSERT (h == i || h == j, "failed assertion");
 	    new_mem[h][new_len[h]++]= mem_ptr;
 	  }
 	}
@@ -296,7 +282,7 @@ bigmem_remove (memorizer_ptr ptr) {
       //cout << LF;
       return;
     }
-  fatal_error ("pointer not found", "bigmem_remove", "memorizer.cpp");
+  FAILED ("pointer not found");
 }
 
 memorizer::memorizer (memorizer_rep* ptr) {

@@ -25,19 +25,16 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
   XSizeHints* size_hints;
   XWMHints*   wm_hints;
   XClassHint* class_hints;
-  if (!(size_hints= XAllocSizeHints ()))
-    fatal_error ("out of memory (X server)", "set_attributes");
-  if (!(wm_hints= XAllocWMHints ()))
-    fatal_error ("out of memory (X server)", "set_attributes");
-  if (!(class_hints= XAllocClassHint ()))
-    fatal_error ("out of memory (X server)", "set_attributes");
+  ASSERT (size_hints= XAllocSizeHints (), "out of memory (X server)");
+  ASSERT (wm_hints= XAllocWMHints (), "out of memory (X server)");
+  ASSERT (class_hints= XAllocClassHint (), "out of memory (X server)");
 
   XTextProperty Window_Name;
   XTextProperty Icon_Name;
-  if (XStringListToTextProperty (&name, 1, &Window_Name) == 0)
-    fatal_error ("out of memory (X server)", "set_attributes");
-  if (XStringListToTextProperty (&name, 1, &Icon_Name) == 0)
-    fatal_error ("out of memory (X server)", "set_attributes");
+  ASSERT (XStringListToTextProperty (&name, 1, &Window_Name) != 0,
+	  "out of memory (X server)");
+  ASSERT (XStringListToTextProperty (&name, 1, &Icon_Name) != 0,
+	  "out of memory (X server)");
 
   // int start_1= texmacs_time ();
   if (!gui->xpm_pixmap->contains ("TeXmacs.xpm"))
@@ -203,7 +200,7 @@ get_Window (widget w) {
   int id= get_identifier (w);
   if (id == 0) {
     cerr << "\nwidget = " << w << "\n";
-    fatal_error ("widget is not attached to a window", "get_Window");
+    FAILED ("widget is not attached to a window");
   }
   return (Window) id;
 }
@@ -426,9 +423,7 @@ x_window_rep::repaint_invalid_regions () {
 
 void
 x_window_rep::set_keyboard_focus (widget wid, bool get_focus) {
-  if (!get_focus)
-    fatal_error ("Explicit loss of keyboard focus not yet implemented",
-		 "x_window_rep::set_keyboard_focus");
+  ASSERT (get_focus, "explicit loss of keyboard focus not yet implemented");
   if (has_focus && (kbd_focus != wid.rep)) {
     notify_keyboard_focus (kbd_focus, false);
     notify_keyboard_focus (wid, true);

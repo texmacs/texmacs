@@ -146,8 +146,10 @@ void
 dyn_link_rep::write (string s, int channel) {
 #ifndef __MINGW32__
   if ((!alive) || (channel != LINK_IN)) return;
-  if (routs==NULL)
-    fatal_error ("'" * lib * "' not installed", "dyn_link_rep::write");
+  if (routs==NULL) {
+    cerr << "Library= " << lib << "\n";
+    FAILED ("library not installed");
+  }
   package_exports_1* pack= (package_exports_1*) routs;
 
   char* _session= as_charp (session);

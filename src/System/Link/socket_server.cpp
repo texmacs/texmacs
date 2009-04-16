@@ -172,7 +172,7 @@ listen_to_servers () {
     tv.tv_sec  = 0;
     tv.tv_usec = 0;
     int nr= select (max_fd, &fds, NULL, NULL, &tv);
-    if (nr == -1) fatal_error ("Call to 'select' failed", "listen_to_servers");
+    ASSERT (nr != -1, "call to 'select' failed");
     if (nr == 0) return;
 
     it= iterate (socket_server_set);

@@ -811,8 +811,8 @@ x_gui_rep::x_gui_rep (int argc2, char** argv2):
   selection (NULL), selection_t ("none"), selection_s ("")
 {
   the_gui= this;
-  if ((dpy= XOpenDisplay (NULL)) == NULL)
-    fatal_error ("I failed to connect to Xserver", "x_gui_rep::x_gui_rep");
+  ASSERT ((dpy= XOpenDisplay (NULL)) != NULL,
+	  "failure to connect to Xserver");
   // XSynchronize (dpy, true);
 
   XGCValues values;
@@ -861,8 +861,7 @@ x_gui_rep::~x_gui_rep () {
 
 void
 gui_open (int argc2, char** argv2) {
-  if (the_gui != NULL)
-    fatal_error ("gui already open", "gui_open");
+  ASSERT (the_gui == NULL, "gui already open");
   the_gui= tm_new<x_gui_rep> (argc2, argv2);
 }
 
@@ -873,8 +872,7 @@ gui_start_loop () {
 
 void
 gui_close () {
-  if (the_gui == NULL)
-    fatal_error ("gui not yet open", "gui_close");
+  ASSERT (the_gui != NULL, "gui not yet open");
   tm_delete (the_gui);
   the_gui= NULL;
 }

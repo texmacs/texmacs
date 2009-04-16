@@ -93,18 +93,16 @@ math_language_rep::get_type (string s, int& i) {
     else {
       cerr << "Attempt to associate type " << r
 	   << " to " << class_name << "\n";
-      fatal_error ("Unknown type", "math_language_rep::get_type");
+      FAILED ("unknown type");
     }
   }
-  else fatal_error ("Type declaration outside class definition",
-		    "math_language_rep::get_type");
+  else FAILED ("type declaration outside class definition");
 }
 
 void
 math_language_rep::get_precedence (string s, int& i) {
   if (class_def) tpr_class(class_name).priority= as_int (get_string (s, i));
-  else fatal_error ("Precedence declaration outside class definition",
-		    "math_language_rep::get_precedence");
+  else FAILED ("precedence declaration outside class definition");
 }
 
 void
@@ -115,8 +113,7 @@ math_language_rep::get_lpenalty (string s, int& i) {
     if (r == "Invalid") tpr_class(class_name).pen_before= HYPH_INVALID;
     else tpr_class(class_name).pen_before= as_int (r);
   }
-  else fatal_error ("Left Penalty declaration outside class definition",
-		    "math_language_rep::get_lpenalty");
+  else FAILED ("left penalty declaration outside class definition");
 }
 
 void
@@ -127,8 +124,7 @@ math_language_rep::get_rpenalty (string s, int& i) {
     if (r == "Invalid") tpr_class(class_name).pen_after= HYPH_INVALID;
     else tpr_class(class_name).pen_after= as_int (r);
   }
-  else fatal_error ("Right Penalty declaration outside class definition",
-		    "math_language_rep::get_rpenalty");
+  else FAILED ("right penalty declaration outside class definition");
 }
 
 void
@@ -152,7 +148,7 @@ math_language_rep::get_spacing (string s, int& i) {
 	else {
 	  cerr << "Attempt to associate space " << l
 	       << " to " << class_name << "\n";
-	  fatal_error ("Unknown space", "math_language_rep::get_type");
+	  FAILED ("unknown space");
 	}
 	if (r == "None")
 	  tpr_class(class_name).spc_after= SPC_NONE;
@@ -163,15 +159,13 @@ math_language_rep::get_spacing (string s, int& i) {
 	else {
 	  cerr << "Attempt to associate space " << r
 	       << " to " << class_name << "\n";
-	  fatal_error ("Unknown space", "math_language_rep::get_type");
+	  FAILED ("unknown space");
 	}
 	return;
       }
-    fatal_error ("Missing comma in Spacing declaration",
-		 "math_language_rep::get_spacing");
+    FAILED ("missing comma in spacing declaration");
   }
-  else fatal_error ("Spacing declaration outside class definition",
-		    "math_language_rep::get_spacing");
+  else FAILED ("spacing declaration outside class definition");
 }
 
 void
@@ -182,8 +176,7 @@ math_language_rep::get_limits (string s, int& i) {
     else if (l == "Always") tpr_class(class_name).limits= LIMITS_ALWAYS;
     else tpr_class(class_name).limits= LIMITS_NONE;
   }
-  else fatal_error ("Limits declaration outside class definition",
-		    "math_language_rep::get_limits");
+  else FAILED ("limits declaration outside class definition");
 }
 
 math_language_rep::math_language_rep (string name, string s):
@@ -227,12 +220,8 @@ math_language_rep::math_language_rep (string name, string s):
 	else {
 	  cerr << "Attempt to insert " << symbol
 	       << " to class " << class_name << "\n";
-	  if (class_def)
-	    fatal_error ("Member declaration inside class definition",
-			 "math_language_rep::get_members");
-	  else
-	    fatal_error ("Unknown class",
-			 "math_language_rep::get_members");
+	  if (!class_def) FAILED ("unknown class");
+	  FAILED ("member declaration inside class definition");
 	}
       }
     }
@@ -298,10 +287,7 @@ math_language_rep::advance (string s, int& pos) {
 
 array<int>
 math_language_rep::get_hyphens (string s) {
-  if (N(s)==0)
-    fatal_error ("hyphenation of empty string",
-		 "math_language_rep::get_hyphens");
-
+  ASSERT (N(s) != 0, "hyphenation of empty string");
   int i, n= N(s)-1;
   bool flag= is_numeric (s);
   array<int> penalty (n);

@@ -96,7 +96,7 @@ lower_case (string s) {
 
 array<int>
 get_hyphens (string s, hashmap<string,string> H) {
-  if (N(s)==0) fatal_error ("hyphenation of empty string", "get_hyphens");
+  ASSERT (N(s) != 0, "hyphenation of empty string");
   s= "." * lower_case (s) * ".";
   // cout << s << "\n";
   int i, j, k, m, len;

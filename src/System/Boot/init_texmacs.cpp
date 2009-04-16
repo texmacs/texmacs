@@ -86,8 +86,7 @@ init_main_paths () {
     cerr << "TeXmacs] 'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
     cerr << "TeXmacs] You may try to set this environment variable manually\n";
     cerr << "TeXmacs]\n";
-    fatal_error ("Installation problem",
-	         "init_main_paths", "init_texmacs.cpp");
+    FAILED ("installation problem");
     exit (1);
   }
 }
@@ -159,8 +158,7 @@ init_guile () {
     cerr << "TeXmacs] be readable and in the directory $TEXMACS_PATH/progs\n";
     cerr << "TeXmacs] or in the directory $GUILE_LOAD_PATH\n";
     cerr << "TeXmacs]\n";
-    fatal_error ("Guile could not be found",
-	         "init_guile", "init_texmacs.cpp");
+    FAILED ("guile could not be found");
   }
 
   /*
@@ -190,8 +188,7 @@ init_guile () {
     set_env_path ("GUILE_LOAD_PATH", guile_path);
     if (!exists ("$GUILE_LOAD_PATH/ice-9/boot-9.scm")) {
       cerr << "\nGUILE_LOAD_PATH=" << guile_path << "\n";
-      fatal_error ("guile seems not to be installed on your system",
-		   "install_texmacs");
+      FAILED ("guile seems not to be installed on your system");
     }
   }
   */
@@ -358,8 +355,7 @@ setup_texmacs () {
     cerr << "Please give me full access control over this file and\n";
     cerr << "rerun 'TeXmacs'.\n";
     cerr << HRULE;
-    fatal_error ("Unable to write settings",
-		 "setup_texmacs", "init_texmacs.cpp");
+    FAILED ("unable to write settings");
   }
   
   cerr << HRULE;

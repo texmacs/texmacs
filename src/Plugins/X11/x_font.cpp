@@ -268,8 +268,7 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
     if (DEBUG_VERBOSE) cout << "TeXmacs] Font " << name << " not found\n";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Using default font instead\n";
     fn = XLoadFont (dpy, "*");
-    if (XQueryFont (dpy, fn) == NULL)
-      fatal_error ("Could not load default X font", "x_ps_font_rep::prepare");
+    ASSERT (XQueryFont (dpy, fn) != NULL, "could not load default X font");
   }
 
   int i;

@@ -313,7 +313,6 @@ text_language (string s) {
   if (s == "ukrainian") return make_text_language (s, "ukrainian");
   if (s == "verbatim") return tm_new<verb_language_rep> ("verbatim");
   cerr << "\nThe language was " << s << "\n";
-  fatal_error ("unknown language", "text_language");
+  FAILED ("unknown language");
   return tm_new<verb_language_rep> ("verbatim");
-  // avoids error message when C++ compiler behaves badly
 }

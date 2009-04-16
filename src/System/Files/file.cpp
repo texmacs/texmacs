@@ -94,8 +94,10 @@ load_string (url u, string& s, bool fatal) {
 	cache_set (cache_type, name, s);
     // End caching
   }
-  if (err && fatal)
-    fatal_error (as_string (u) * " not readable", "load_string");
+  if (err && fatal) {
+    cerr << "File name= " << as_string (u) << "\n";
+    FAILED ("file not readable");
+  }
   return err;
 }
 
@@ -103,8 +105,10 @@ bool
 save_string (url u, string s, bool fatal) {
   if (is_rooted_tmfs (u)) {
     bool err= save_to_server (u, s);
-    if (err && fatal)
-      fatal_error (as_string (u) * " not writeable", "save_string");
+    if (err && fatal) {
+      cerr << "File name= " << as_string (u) << "\n";
+      FAILED ("file not writeable");
+    }
     return err;
   }
 
@@ -140,8 +144,10 @@ save_string (url u, string s, bool fatal) {
     // End caching
   }
 
-  if (err && fatal)
-    fatal_error (as_string (u) * " not writeable", "save_string");
+  if (err && fatal) {
+    cerr << "File name= " << as_string (u) << "\n";
+    FAILED ("file not writeable");
+  }
   return err;
 }
 

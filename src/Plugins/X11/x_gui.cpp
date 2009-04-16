@@ -454,8 +454,7 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
 
   array<string> cnames_curs= xpm_colors (xpm_cache[name]);
   array<SI> hotspot= xpm_hotspot (xpm_cache[name]);
-  if (N(hotspot) == 0)
-    fatal_error ("Missing hotspot", "x_gui_rep::set_pointer");
+  ASSERT (N(hotspot) != 0, "missing hotspot");
   array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
   char* bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
 					      string ("white"));
@@ -468,18 +467,14 @@ x_gui_rep::set_mouse_pointer (widget w, string name, string mask_name) {
   XColor exact1, closest1;
   XLookupColor(dpy, cols, fgcolor, &exact1, &closest1);
   if (XAllocColor (dpy, cols, &exact1)) fg= &exact1;
-  else
-  if (XAllocColor (dpy, cols, &closest1)) fg= &closest1;
-  else
-    fatal_error ("Unable to allocate fgcolor", "x_gui_rep::set_pointer");
+  else if (XAllocColor (dpy, cols, &closest1)) fg= &closest1;
+  else FAILED ("unable to allocate fgcolor");
 
   XColor exact2, closest2;
   XLookupColor(dpy, cols, bgcolor, &exact2, &closest2);
   if (XAllocColor (dpy, cols, &exact2)) bg= &exact2;
-  else
-  if (XAllocColor (dpy, cols, &closest2)) bg= &closest2;
-  else
-    fatal_error ("Unable to allocate bgcolor", "x_gui_rep::set_pointer");
+  else if (XAllocColor (dpy, cols, &closest2)) bg= &closest2;
+  else FAILED ("unable to allocate bgcolor");
 
   tm_delete_array (bgcolor);
   tm_delete_array (fgcolor);
