@@ -182,7 +182,7 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods) {
     invalidate_graphical_object ();
     eval ("(graphics-reset-context 'exit)");
   }
-  if(start_drag) {
+  if (start_drag) {
     path sp= find_innermost_scroll (eb, tp);
     path p0= tree_path (sp, x, y, 0);
     set_selection (p0, p0);

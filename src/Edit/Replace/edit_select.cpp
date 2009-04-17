@@ -102,12 +102,15 @@ edit_select_rep::select_from_cursor () {
     if (path_less (mid_p, tp)) {
       start_p= copy (mid_p);
       end_p  = copy (tp);
-    } else {
+    }
+    else {
       start_p= copy (tp);
       end_p  = copy (mid_p);
     }
     notify_change (THE_SELECTION);
     if (shift_selecting) selecting = false;
+    if (selection_active_any ())
+      selection_set ("visible", selection_get (), true, true);
   }
 }
 
@@ -117,12 +120,16 @@ edit_select_rep::select_from_cursor_if_active () {
     if (path_less (mid_p, tp)) {
       start_p= copy (mid_p);
       end_p  = copy (tp);
-    } else {
+    }
+    else {
       start_p= copy (tp);
       end_p  = copy (mid_p);
     }
     notify_change (THE_SELECTION);
-  } else selection_cancel ();
+    if (selection_active_any ())
+      selection_set ("visible", selection_get (), true, true);
+  }
+  else selection_cancel ();
 }
 
 void
@@ -135,11 +142,8 @@ edit_select_rep::select_from_keyboard (bool flag) {
 
 void
 edit_select_rep::select_from_shift_keyboard () {
-  if ((!shift_selecting) || (end_p == start_p) ||
-      ((tp != start_p) && (tp != end_p)))
-    {
-      mid_p= copy (tp);
-    }
+  if (!shift_selecting || end_p == start_p || (tp != start_p && tp != end_p))
+    mid_p= copy (tp);
   selecting= true;
   shift_selecting= true;
 }
@@ -557,15 +561,14 @@ edit_select_rep::selection_set_end (path p) {
 }
 
 void
-edit_select_rep::selection_set (string key, tree t, bool persistant) {
-  selecting= shift_selecting= false;
+edit_select_rep::selection_set (string key, tree t, bool persist, bool kbd) {
+  if (!kbd) selecting= shift_selecting= false;
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
   tree sel= tuple ("texmacs", t, mode, lan);
-/*TODO: add mode="graphics" somewhere in the context of the <graphics>
-    tag. To be done when implementing the different embeddings for
-    nicely copying graphics into text, text into graphics, etc.
- */
+  /* TODO: add mode="graphics" somewhere in the context of the <graphics>
+     tag. To be done when implementing the different embeddings for
+     nicely copying graphics into text, text into graphics, etc. */
   string s;
   if (key == "primary" || key == "visible") {
     if (selection_export == "verbatim") t= exec_texmacs (t, tp);
@@ -576,7 +579,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
     s= tree_to_generic (t, selection_export * "-snippet");
     s= selection_encode (lan, s);
   }
-  if (::set_selection (key, sel, s) && !persistant)
+  if (::set_selection (key, sel, s) && !persist)
     selection_cancel ();
 }
 
