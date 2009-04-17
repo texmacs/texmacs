@@ -216,6 +216,8 @@ edit_select_rep::select_enlarge () {
     set_message ("selected#" * s, "enlarge selection");
   }
   selecting= shift_selecting= false;
+  if (selection_active_any ())
+    selection_set ("visible", selection_get (), true);
 }
 
 static bool

@@ -87,10 +87,10 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
   if (type == "release-left" || type == "release-right") {
     dragging= right_dragging= false;
     send_mouse_grab (this, false);
-    if ((t >= last_click) && ((t - last_click) <= 250)) {
+    if ((t >= last_click) && ((t - last_click) <= 500)) {
       last_click= t;
       if (mouse_extra_click (x, y))
-	last_click= t- 1000;
+	last_click= t- 2000;
     }
     else {
       last_click= t;
@@ -132,8 +132,6 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
   get_selection (p1, p2);
   if ((p1==p2) || path_less (tp, p1) || path_less (p2, tp)) select (tp, tp);
   select_enlarge ();
-  if (selection_active_any ())
-    selection_set ("visible", selection_get (), true);
   return false;
 }
 
