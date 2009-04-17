@@ -98,21 +98,31 @@ edit_select_rep::select_line () {
 
 void
 edit_select_rep::select_from_cursor () {
-  if (!(selecting || shift_selecting)) return;
-  if (path_less (mid_p, tp)) {
-    start_p= copy (mid_p);
-    end_p  = copy (tp);
+  if (selecting) {
+    if (path_less (mid_p, tp)) {
+      start_p= copy (mid_p);
+      end_p  = copy (tp);
+    } else {
+      start_p= copy (tp);
+      end_p  = copy (mid_p);
+    }
+    notify_change (THE_SELECTION);
+    if (shift_selecting) selecting = false;
   }
-  else {
-    start_p= copy (tp);
-    end_p  = copy (mid_p);
-  }
-  notify_change (THE_SELECTION);
 }
 
 void
 edit_select_rep::select_from_cursor_if_active () {
-  if (selecting) select_from_cursor ();
+  if (selecting) {
+    if (path_less (mid_p, tp)) {
+      start_p= copy (mid_p);
+      end_p  = copy (tp);
+    } else {
+      start_p= copy (tp);
+      end_p  = copy (mid_p);
+    }
+    notify_change (THE_SELECTION);
+  } else selection_cancel ();
 }
 
 void
@@ -128,10 +138,10 @@ edit_select_rep::select_from_shift_keyboard () {
   if ((!shift_selecting) || (end_p == start_p) ||
       ((tp != start_p) && (tp != end_p)))
     {
-      selecting= false;
-      shift_selecting= true;
       mid_p= copy (tp);
     }
+  selecting= true;
+  shift_selecting= true;
 }
 
 /******************************************************************************

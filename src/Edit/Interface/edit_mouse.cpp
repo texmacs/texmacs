@@ -132,6 +132,8 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
   get_selection (p1, p2);
   if ((p1==p2) || path_less (tp, p1) || path_less (p2, tp)) select (tp, tp);
   select_enlarge ();
+  if (selection_active_any ())
+    selection_set ("mouse", selection_get (), true);
   return false;
 }
 
@@ -139,6 +141,7 @@ void
 edit_interface_rep::mouse_drag (SI x, SI y) {
   if (inside_graphics ()) return;
   if (eb->action ("drag", x, y, 0) != "") return;
+  go_to (x, y);
   end_x  = x;
   end_y  = y;
   selection_visible ();
@@ -150,8 +153,8 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
     p1= p2;
     p2= temp;
   }
-  set_selection (p1, p2);
   if ((p1 == p2) && start_drag) return;
+  set_selection (p1, p2);
   start_drag= start_right_drag= false;
   notify_change (THE_SELECTION);
 }
@@ -178,6 +181,12 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods) {
   if (b && (!inside_graphics () || obtain_ip (g) != obtain_ip (g2))) {
     invalidate_graphical_object ();
     eval ("(graphics-reset-context 'exit)");
+  }
+  if(start_drag) {
+    path sp= find_innermost_scroll (eb, tp);
+    path p0= tree_path (sp, x, y, 0);
+    set_selection (p0, p0);
+    notify_change (THE_SELECTION);
   }
   if (selection_active_any ())
     selection_set ("mouse", selection_get (), true);
