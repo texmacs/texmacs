@@ -415,7 +415,7 @@ QTMWidget::focusInEvent ( QFocusEvent * event )
   if (wid) {
     wid -> handle_keyboard_focus (true, texmacs_time ());
   }
-  QWidget::focusInEvent(event);
+  QWidget::focusInEvent (event);
 }
 
 void 
@@ -426,5 +426,5 @@ QTMWidget::focusOutEvent ( QFocusEvent * event )
   if (wid) {
     wid -> handle_keyboard_focus (false, texmacs_time ());
   }
-  QWidget::focusOutEvent(event);
+  QWidget::focusOutEvent (event);
 }
