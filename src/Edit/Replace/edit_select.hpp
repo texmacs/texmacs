@@ -43,6 +43,7 @@ public:
   void select_from_cursor_if_active ();
   void select_from_keyboard (bool flag);
   void select_from_shift_keyboard ();
+  void select_enlarge_text ();
   void select_enlarge ();
   void select_enlarge_environmental ();
 

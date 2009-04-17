@@ -388,6 +388,7 @@ public:
   virtual void select_from_cursor_if_active () = 0;
   virtual void select_from_keyboard (bool flag) = 0;
   virtual void select_from_shift_keyboard () = 0;
+  virtual void select_enlarge_text () = 0;
   virtual void select_enlarge () = 0;
   virtual void select_enlarge_environmental () = 0;
 

@@ -152,37 +152,64 @@ edit_select_rep::select_from_shift_keyboard () {
 * Enlarging an existing selection
 ******************************************************************************/
 
+static int
+breaking_force (char c) {
+  if (c == ' ') return 3;
+  if (is_punctuation (c)) return 2;
+  if (is_iso_alpha (c) || is_digit (c)) return 0;
+  return 1;
+}
+
+void
+edit_select_rep::select_enlarge_text () {
+  path p= common (start_p, end_p);
+  if (start_p == end_p) p= path_up (p);
+  tree st= subtree (et, p);
+  ASSERT (is_atomic (st), "non textual tree");
+  string s= st->label;
+  string mode= get_env_string (MODE);
+  int i1= last_item (start_p), j1= i1;
+  int i2= last_item (end_p), j2= i2;
+  path q= path_up (p);
+
+  if (mode == "text" || mode == "src") {
+    int i, f= 4;
+    if (i1 > 0) {
+      i= i1; tm_char_backwards (s, i);
+      f= min (f, breaking_force (s[i]));
+    }
+    if (i2 < N(s))
+      f= min (f, breaking_force (s[i2]));
+
+    while (i1 > 0) {
+      i= i1; tm_char_backwards (s, i);
+      if (breaking_force (s[i]) > f) break;
+      i1= i;
+    }
+    while (i2 < N(s)) {
+      if (breaking_force (s[i2]) > f) break;
+      tm_char_forwards (s, i2);
+    }
+
+    if (i1 < i2 && (i1 != j1 || i2 != j2)) {
+      if (is_concat (subtree (et, q)) && i1 == 0 && i2 == N(s))
+	select (q * 0, q * 1);
+      else select (p * i1, p * i2);
+      return;
+    }
+  }
+
+  if (is_concat (subtree (et, q)) || (i1 == 0 && i2 == N(s)))
+    select (q * 0, q * 1);
+  else select (p * 0, p * N(s));
+}
+
 void
 edit_select_rep::select_enlarge () {
   if (start_p == end_p) {
     path p = path_up (start_p);
     tree st= subtree (et, p);
-    if (is_atomic (st)) {
-      string s= st->label;
-      string mode= get_env_string (MODE);
-      if (mode == "text" || mode == "src") {
-	int i1= last_item (start_p), i2= i1;
-	while (i1>0) {
-	  if (s[i1-1] == ' ' || is_punctuation (s[i1-1])) break;
-	  tm_char_backwards (s, i1);
-	}
-	while (i2<N(s)) {
-	  if (s[i2] == ' ' || is_punctuation (s[i2])) break;
-	  tm_char_forwards (s, i2);
-	}
-	if (i1<i2) select (p * i1, p * i2);
-	else {
-	  if (s == "") { p= path_up (p); select (p * 0, p * 1); }
-	  else select (p * 0, p * N(s));
-	}
-      }
-      else {
-	path q= path_up (p);
-	if (is_concat (subtree (et, q)) || (s == ""))
-	  select (q * 0, q * 1);
-	else select (p * 0, p * N(s));
-      }
-    }
+    if (is_atomic (st)) select_enlarge_text ();
     else select (p * 0, p * 1);
   }
   else {
@@ -194,11 +221,7 @@ edit_select_rep::select_enlarge () {
     }
     tree st= subtree (et, p);
     path q = path_up (p);
-    int  i1= last_item (start_p);
-    int  i2= last_item (end_p);
-    if (is_atomic (st) && (!is_concat (subtree (et, q))) &&
-	((i1 != 0) || (i2 != N(st->label))))
-      select (p * 0, p * N(st->label));
+    if (is_atomic (st)) select_enlarge_text ();
     else select (q * 0, q * 1);
   }
 
