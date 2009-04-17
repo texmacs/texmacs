@@ -11,6 +11,7 @@
 
 #include "tree.hpp"
 #include "drd_std.hpp"
+#include "hashset.hpp"
 
 /******************************************************************************
 * Main routines for trees
@@ -259,14 +260,22 @@ is_multi_paragraph (tree t) {
   case CANVAS:
     return is_multi_paragraph (t[N(t)-1]);
   default:
-    if (L(t) < START_EXTENSIONS) return false;
-    else {
-      int i, n= N(t);
-      if (as_string (L(t)) == "footnote") return false;
-      for (i=0; i<n; i++)
-	if (is_multi_paragraph (t[i]))
-	  return true;
-      return false;
+    {
+      static hashset<tree_label> inline_set; // FIXME: use drd
+      if (N(inline_set) == 0) {
+	inline_set->insert (make_tree_label ("footnote"));
+	inline_set->insert (make_tree_label ("script-input"));
+	inline_set->insert (make_tree_label ("converter-input"));
+      }
+      if (L(t) < START_EXTENSIONS) return false;
+      else if (inline_set->contains (L(t))) return false;
+      else {
+	int i, n= N(t);
+	for (i=0; i<n; i++)
+	  if (is_multi_paragraph (t[i]))
+	    return true;
+	return false;
+      }
     }
   }
 }
