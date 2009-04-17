@@ -56,7 +56,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       dragging= true;
     }
     else if (dragging && (type == "move"))
-      type2= "dragging"; 
+      type2= "dragging";
     if (dragging && (type == "release-left"))
       type2= "end-drag";
 
@@ -66,7 +66,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       right_dragging= true;
     }
     else if (right_dragging && (type == "move"))
-      type2= "right-dragging"; 
+      type2= "right-dragging";
     if (right_dragging && (type == "release-right"))
       type2= "end-right-drag";
 
@@ -180,14 +180,14 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods) {
     eval ("(graphics-reset-context 'exit)");
   }
   if (selection_active_any ())
-    selection_set ("primary", selection_get (), true);
+    selection_set ("mouse", selection_get (), true);
 }
 
 void
 edit_interface_rep::mouse_paste (SI x, SI y) { (void) x; (void) y;
   if (eb->action ("paste", x, y, 0) != "") return;
-  selection_copy ();
-  selection_paste ();
+  go_to (x, y);
+  selection_paste ("mouse");
 }
 
 void

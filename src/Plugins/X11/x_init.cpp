@@ -443,9 +443,9 @@ x_gui_rep::initialize_keyboard_pointer () {
   Map (XK_Cyrillic_E,   "\xdd");
   Map (XK_Cyrillic_YU,  "\xde");
   Map (XK_Cyrillic_YA,  "\xdf");
-  
+
   //Ukrainian letters in T2A encoding
-  Map (XK_Ukrainian_i,   "i"); // Fall back! 
+  Map (XK_Ukrainian_i,   "i"); // Fall back!
   Map (XK_Ukrainian_I,   "I"); // Fall back!
   Map (XK_Ukrainian_yi,   "\xa8");
   Map (XK_Ukrainian_YI,   "\x88");
@@ -808,7 +808,7 @@ x_gui_rep::x_gui_rep (int argc2, char** argv2):
   character_bitmap (NULL), character_pixmap ((pointer) 0),
   xpm_bitmap (0), xpm_pixmap (0),
   lower_key (""), upper_key (""),
-  selection (NULL), selection_t ("none"), selection_s ("")
+  selection_t ("none"), selection_s ("")
 {
   the_gui= this;
   ASSERT ((dpy= XOpenDisplay (NULL)) != NULL,
@@ -833,6 +833,9 @@ x_gui_rep::x_gui_rep (int argc2, char** argv2):
   balloon_win        = NULL;
   interrupted        = false;
   interrupt_time     = texmacs_time ();
+
+  XA_CLIPBOARD = XInternAtom (dpy, "CLIPBOARD", false);
+  XA_TARGETS = XInternAtom (dpy, "TARGETS", false);
 
   if (XMatchVisualInfo (dpy, scr, depth, TrueColor, &visual) != 0) {
     if (visual.red_mask   == (255 << 16) &&

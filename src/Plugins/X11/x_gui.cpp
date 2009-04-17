@@ -188,7 +188,7 @@ x_gui_rep::has_mouse_grab (widget w) {
 ******************************************************************************/
 
 Bool
-my_predicate (Display* dpy, XEvent* ev, XPointer arg) { (void) dpy;
+my_selnotify_predicate (Display* dpy, XEvent* ev, XPointer arg) { (void) dpy;
   x_window win= (x_window) arg;
   return (win->win==ev->xany.window) && (ev->type==SelectionNotify);
 }
@@ -212,29 +212,41 @@ bool
 x_gui_rep::get_selection (string key, tree& t, string& s) {
   t= "none";
   s= "";
+  bool res=false;
+
   if (selection_t->contains (key)) {
     t= copy (selection_t [key]);
     s= copy (selection_s [key]);
-    return true;
+    res=true;
   }
-  if (key != "primary") return false;
-  if (XGetSelectionOwner (dpy, XA_PRIMARY) == None) return false;
   
-  if (is_nil (windows_l)) return false;
+  Atom xsel;
+  if(key == "primary")
+    xsel = XA_CLIPBOARD;
+  else if (key == "mouse")
+    xsel = XA_PRIMARY;
+  else
+    return res;
+
+  Window selown = XGetSelectionOwner(dpy, xsel);
+  if (selown == None
+  || is_nil (windows_l)
+  || contains(windows_l,selown)) return res;
+
   Window win= windows_l->item;
   x_window x_win= (x_window) Window_to_window[win];
-  Atom data= XInternAtom (dpy, "MY_STRING_SELECTION", false);
-  XConvertSelection (dpy, XA_PRIMARY, XA_STRING, data, win, CurrentTime);
+  Atom prop= XInternAtom (dpy, "MY_STRING_SELECTION", false);
+  XConvertSelection (dpy, xsel, XA_STRING, prop, win, CurrentTime);
 
   int i;
   XEvent ev;
   for (i=0; i<1000000; i++)
-    if (XCheckIfEvent (dpy, &ev, my_predicate, (XPointer) x_win))
+    if (XCheckIfEvent (dpy, &ev, my_selnotify_predicate, (XPointer) x_win))
       break;
-  if (i==1000000) return false;
+  if (i==1000000) return res;
   XSelectionEvent& sel= ev.xselection;
 
-  if (sel.property!=None) {
+  if (sel.property==prop) {
     long offset=0;
     Atom type;
     int fm;
@@ -249,23 +261,27 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
       offset += (n >> 2);
       XFree (ret);
     } while (remains>0);
-  }
-  t= tuple ("extern", s);
-  return true;
+    t= tuple ("extern", s);
+    return true;
+  } else
+    return res;
 }
 
 bool
 x_gui_rep::set_selection (string key, tree t, string s) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
-  if (key == "primary") {
-    if (is_nil (windows_l)) return false;
-    Window win= windows_l->item;
-    if (selection!=NULL) tm_delete_array (selection);
-    XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
-    if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
-    selection= as_charp (s);
-  }
+  Atom xsel;
+  if(key == "primary") {
+    xsel = XA_CLIPBOARD;
+  } else if (key == "mouse") {
+    xsel = XA_PRIMARY;
+  } else
+    return true;
+  if (is_nil (windows_l)) return false;
+  Window win= windows_l->item;
+  XSetSelectionOwner (dpy, xsel, win, CurrentTime);
+  if (XGetSelectionOwner(dpy, xsel)==None) return false;
   return true;
 }
 
@@ -273,10 +289,6 @@ void
 x_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
-  if ((key == "primary") && (selection != NULL)) {
-    tm_delete_array (selection);
-    selection= NULL;
-  }
 }
 
 bool

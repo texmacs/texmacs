@@ -193,4 +193,9 @@ remove (list<T> l, T what) {
   else return list<T> (l->item, remove (l->next, what));
 }
 
+template<class T> bool
+contains (list<T> l, T what) {
+  return (!is_nil(l) && (l->item == what || contains(l->next, what)));
+}
+
 #endif // defined LIST_CC

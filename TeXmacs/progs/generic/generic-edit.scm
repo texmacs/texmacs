@@ -41,7 +41,8 @@
 (tm-define (kbd-remove forward?) (remove-text forward?))
 (tm-define (kbd-remove forward?)
   (:mode with-active-selection?)
-  (clipboard-cut "primary"))
+  (clipboard-cut "nowhere")
+  (clipboard-clear "nowhere"))
 
 (tm-define (kbd-tab)
   (if (not (complete-try?))

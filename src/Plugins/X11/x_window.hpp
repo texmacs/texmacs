@@ -97,7 +97,7 @@ public:
 
   friend class x_gui_rep;
   friend class x_drawable_rep;
-  friend Bool my_predicate (Display* dpy, XEvent* ev, XPointer arg);
+  friend Bool my_selnotify_predicate (Display* dpy, XEvent* ev, XPointer arg);
   friend int get_identifier (window w);
 };
 

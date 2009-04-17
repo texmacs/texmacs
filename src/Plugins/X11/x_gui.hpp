@@ -125,9 +125,11 @@ public:
   hashmap<int,string>          upper_key;
 
   list<Window>                 windows_l;
-  char*                        selection;
   hashmap<string,tree>         selection_t;
   hashmap<string,string>       selection_s;
+
+  Atom XA_CLIPBOARD;
+  Atom XA_TARGETS;
 
 public:
   x_gui_rep (int argc, char** argv);

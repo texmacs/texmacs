@@ -70,6 +70,7 @@ TMPL T&       access_last (list<T>& l);
 TMPL list<T>& suppress_last (list<T>& l);
 TMPL list<T>  reverse (list<T> l);
 TMPL list<T>  remove (list<T> l, T what);
+TMPL bool     contains (list<T> l, T what);
 
 TMPL ostream& operator << (ostream& out, list<T> l);
 TMPL list<T>& operator << (list<T>& l, T item);

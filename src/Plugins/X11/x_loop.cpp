@@ -273,8 +273,7 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
       if (N(key)>0) win->key_event (key);
       break;
     }
-  case SelectionRequest:
-    {
+  case SelectionRequest: {
       XSelectionRequestEvent& req= ev->xselectionrequest;
       XSelectionEvent sel;
       sel.type      = SelectionNotify;
@@ -282,10 +281,14 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
       sel.selection = req.selection;
       sel.target    = req.target;
       sel.time      = req.time;
-      Atom XA_TARGETS = XInternAtom(dpy, "TARGETS", False);
-      if (selection==NULL)
+      string key = "none";
+      if(req.selection == XA_PRIMARY) {
+        key = "mouse";
+      } else if(req.selection == XA_CLIPBOARD)
+        key = "primary";
+      if (!selection_s->contains(key)) {
         sel.property  = None;
-      else if (req.target==XA_TARGETS) {
+      } else if (req.target==XA_TARGETS) {
         Atom targets[2];
         targets[0] = XA_TARGETS;
         targets[1] = XA_STRING;
@@ -294,19 +297,24 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
                          (unsigned char*)&targets[0],2);
         sel.property  = req.property;
       } else if ((req.target==AnyPropertyType) || (req.target==XA_STRING)) {
+        char *txt = as_charp (selection_s(key));
         XChangeProperty (dpy, req.requestor, req.property, XA_STRING,
                          8, PropModeReplace,
-                         (unsigned char*) selection,
-                         strlen (selection));
+                         (unsigned char*) txt,
+                         strlen (txt));
+        tm_delete_array (txt);
         sel.property  = req.property;
       } else
         sel.property  = None;
       XSendEvent (dpy, sel.requestor, false, 0, (XEvent*) &sel);
-      break;
-    }
-  case SelectionClear:
-    clear_selection ("primary");
-    break;
+    } break;
+  case SelectionClear: {
+      XSelectionClearEvent& req= ev->xselectionclear;
+      if(req.selection == XA_PRIMARY) {
+        clear_selection("mouse");
+      } else if(req.selection == XA_CLIPBOARD)
+        clear_selection ("primary");
+    } break;
   case ClientMessage:
     {
       Atom wm_protocols     = XInternAtom(win->dpy, "WM_PROTOCOLS",     1);
