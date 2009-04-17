@@ -63,7 +63,7 @@ public:
 
 class qt_widget {
 public:
-	ABSTRACT_NULL(qt_widget);
+ABSTRACT_NULL(qt_widget);
   inline bool operator == (qt_widget w) { return rep == w.rep; }
   inline bool operator != (qt_widget w) { return rep != w.rep; }
 };

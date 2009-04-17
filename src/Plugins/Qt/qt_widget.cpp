@@ -317,8 +317,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask):
   mw->setCentralWidget (sa);
 
   QStatusBar* bar= new QStatusBar(mw);
-  leftLabel= new QLabel ("", mw);
-  rightLabel= new QLabel ("", mw);
+  leftLabel= new QLabel ("Welcome to TeXmacs", mw);
+  rightLabel= new QLabel ("Booting", mw);
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
   bar->addWidget (leftLabel);
@@ -377,7 +377,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       //cout << "p= " << p << "\n";
       QSize sz= to_qrect (p).size ();
       QSize ws= tm_scrollarea () -> size ();
-      sz.setHeight (max (sz.height (), 7 * ws.height () / 8));
+      sz.setHeight (max (sz.height (), ws.height () - 4));
       tm_scrollarea () -> setAlignment (Qt::AlignCenter);
       tm_canvas () -> setFixedSize (sz);
     }
@@ -533,8 +533,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       if (DEBUG_EVENTS) cout << "Canvas geometry " << rect << LF;
       return close_box<coord4> (c);
     }
-			
-	
+
   case SLOT_VISIBLE_PART:
     {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
