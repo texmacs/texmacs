@@ -223,7 +223,7 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
   Atom xsel;
   if(key == "primary")
     xsel = XA_CLIPBOARD;
-  else if (key == "mouse")
+  else if (key == "visible")
     xsel = XA_PRIMARY;
   else
     return res;
@@ -274,7 +274,7 @@ x_gui_rep::set_selection (string key, tree t, string s) {
   Atom xsel;
   if(key == "primary") {
     xsel = XA_CLIPBOARD;
-  } else if (key == "mouse") {
+  } else if (key == "visible") {
     xsel = XA_PRIMARY;
   } else
     return true;

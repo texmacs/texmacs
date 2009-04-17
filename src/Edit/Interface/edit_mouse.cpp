@@ -133,7 +133,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
   if ((p1==p2) || path_less (tp, p1) || path_less (p2, tp)) select (tp, tp);
   select_enlarge ();
   if (selection_active_any ())
-    selection_set ("mouse", selection_get (), true);
+    selection_set ("visible", selection_get (), true);
   return false;
 }
 
@@ -189,14 +189,14 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods) {
     notify_change (THE_SELECTION);
   }
   if (selection_active_any ())
-    selection_set ("mouse", selection_get (), true);
+    selection_set ("visible", selection_get (), true);
 }
 
 void
 edit_interface_rep::mouse_paste (SI x, SI y) { (void) x; (void) y;
   if (eb->action ("paste", x, y, 0) != "") return;
   go_to (x, y);
-  selection_paste ("mouse");
+  selection_paste ("visible");
 }
 
 void
