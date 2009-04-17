@@ -40,7 +40,7 @@
 
 (tm-define (kbd-remove forward?) (remove-text forward?))
 (tm-define (kbd-remove forward?)
-  (:mode with-active-selection?)
+  (:mode with-any-selection?)
   (clipboard-cut "nowhere")
   (clipboard-clear "nowhere"))
 

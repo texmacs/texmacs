@@ -115,6 +115,7 @@
   (in-tmdoc% (style-has? "tmdoc-style"))
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
+  (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-scheme% (== (get-env "prog-language") "scheme"))
   (in-prog-scheme% #t in-prog% in-scheme%))

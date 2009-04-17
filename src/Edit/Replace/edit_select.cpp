@@ -414,7 +414,8 @@ static void
 selection_bcorrect (drd_info drd, tree t, path i1, path i2, path& o1, path& o2)
 {
   o1= i1; o2= i2;
-  if (is_compound (t) && !is_atom (i1) && !is_atom (i2) && i1->item == i2->item) {
+  if (is_compound (t) && !is_atom (i1) && !is_atom (i2) &&
+      i1->item == i2->item) {
     path O1, O2;
     selection_bcorrect (drd, t[i1->item], i1->next, i2->next, O1, O2);
     if (drd->var_without_border (L(t[i1->item])) && (O1->item != O2->item)) {
