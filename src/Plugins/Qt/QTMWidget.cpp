@@ -410,10 +410,21 @@ QTMWidget::event (QEvent* event) {
 void 
 QTMWidget::focusInEvent ( QFocusEvent * event )
 {
-  cout << "FOCUSIN" << LF;
+  if (DEBUG_EVENTS) cout << "FOCUSIN" << LF;
   simple_widget_rep *wid = tm_widget ();
   if (wid) {
     wid -> handle_keyboard_focus (true, texmacs_time ());
   }
   QWidget::focusInEvent(event);
+}
+
+void 
+QTMWidget::focusOutEvent ( QFocusEvent * event )
+{
+  if (DEBUG_EVENTS)   cout << "FOCUSOUT" << LF;
+  simple_widget_rep *wid = tm_widget ();
+  if (wid) {
+    wid -> handle_keyboard_focus (false, texmacs_time ());
+  }
+  QWidget::focusOutEvent(event);
 }
