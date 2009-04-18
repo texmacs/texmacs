@@ -134,7 +134,12 @@ qt_view_widget_rep::qt_view_widget_rep (QWidget* v):
   qt_widget_rep(), view(v), current_renderer(NULL)  {}
 
 qt_view_widget_rep::~qt_view_widget_rep() { 
-  if (view) delete view;
+  if (view) delete view; 
+  //FIXME: I'm (MG) not sure if we should delete manually all the QWidgets we create 
+  //       or exclusively the top level ones (the windows)
+  //       - Qt spectify that widgets with a parent are deleted by the parent. 
+  //       - Out policy is that qt_view_widget_rep owns the QWidget (so it is responsible to delete it)
+  //       are these two requirements compatible ?
   if (DEBUG_EVENTS) 
     cout << "qt_view_widget_rep::~qt_view_widget_rep()\n";
 }
@@ -207,6 +212,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<renderer>::id);
       renderer r = get_current_renderer();
       //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
+      //       TeXmacs current policy is that we should return NULL only if the widget is not attached (in X11 sense)
       if (!r) r = the_qt_renderer();
       return close_box<renderer> (r);
     }
@@ -960,11 +966,16 @@ popup_window_widget (widget w, string s) {
   return concrete(w)->popup_window_widget (s);
 }
 
+
 void
 destroy_window_widget (widget w) {
   // FIXME: Handle correcly
   // destroys a window as created by the above routines
   (void) w;
+  
+  // In the QT implementation explicitly destroying window widgets should not be necessary
+  // since the widget itself destroy the Qt widget as soon as its destructor is called.
+  // No memory leak should be caused by this trivial implementation.
 }
 
 /******************************************************************************
