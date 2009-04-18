@@ -16,6 +16,7 @@
 #include "qt_gui.hpp"
 #include "converter.hpp"
 
+
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
 #if defined(Q_WS_X11)
@@ -145,7 +146,16 @@ initkeymap () {
 void
 QTMWidget::postponedUpdate () {
   while (!is_nil (delayed_rects)) {
-    update (delayed_rects->item);
+    QRect rect = delayed_rects->item;
+    if (DEBUG_EVENTS) {
+      cout << "postponedUpdate (" << rect.x()
+      << "," <<  rect.y()
+      << "," <<  rect.width()
+      << "," <<  rect.height() << ")\n" ;
+    }
+    update (rect);
+    //FIXME: the call to update is ignored sometimes (usually in long documents). 
+    //       Apparently this is a bug in Qt. Under investigation.
     delayed_rects= delayed_rects->next;
   }
 }
@@ -153,16 +163,21 @@ QTMWidget::postponedUpdate () {
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QRect rect = event->rect ();
+ 
   if (DEBUG_EVENTS) {
     QPainter p(this);
     QBrush brush (QColor ("red"));
     p.fillRect (rect, brush);
     p.end ();
+
+    cout << "paintEvent ("<< rect.x()
+    << "," <<  rect.y()
+    << "," <<  rect.width()
+    << "," <<  rect.height() << ")\n" ;
+    
   }
 
-  if (qt_update_flag)
-    delayed_rects= list<QRect> (rect, delayed_rects);
-  else {
+  if (!qt_update_flag) {
     //int start= texmacs_time ();
     basic_renderer_rep *r;
 
@@ -189,6 +204,8 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 
     tm_widget()->set_current_renderer(r);    
 
+    
+    
     r -> set_clipping
     (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
      (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
@@ -196,9 +213,12 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
      (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
     
-    if (r->interrupted())
+    if (r->interrupted()) {
+      if (DEBUG_EVENTS)
+        cout << "Interrupted\n"; 
       qt_update_flag= true;
-    
+    }
+
     r->end();
     
     tm_widget()->set_current_renderer(NULL);    
@@ -209,23 +229,11 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   if (qt_update_flag) {
     if (DEBUG_EVENTS)
       cout << "Postponed redrawing\n"; 
+    delayed_rects= list<QRect> (rect, delayed_rects);
     QTimer::singleShot (1, this, SLOT (postponedUpdate ()));
   }
 }
 
-/*
-void
-QTMWidget::focusInEvent (QFocusEvent* event) {
-  cout << "Got focus\n";
-  QWidget::focusInEvent (event);
-}
-
-void
-QTMWidget::focusOutEvent (QFocusEvent* event) {
-  cout << "Lost focus\n";
-  QWidget::focusOutEvent (event);
-}
-*/
 
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
