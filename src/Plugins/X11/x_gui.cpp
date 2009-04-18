@@ -221,12 +221,9 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
   }
   
   Atom xsel;
-  if(key == "primary")
-    xsel = XA_CLIPBOARD;
-  else if (key == "visible")
-    xsel = XA_PRIMARY;
-  else
-    return res;
+  if (key == "primary") xsel = XA_CLIPBOARD;
+  else if (key == "mouse") xsel = XA_PRIMARY;
+  else return res;
 
   Window selown = XGetSelectionOwner(dpy, xsel);
   if (selown == None
@@ -272,12 +269,9 @@ x_gui_rep::set_selection (string key, tree t, string s) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
   Atom xsel;
-  if(key == "primary") {
-    xsel = XA_CLIPBOARD;
-  } else if (key == "visible") {
-    xsel = XA_PRIMARY;
-  } else
-    return true;
+  if(key == "primary") xsel = XA_CLIPBOARD;
+  else if (key == "mouse") xsel = XA_PRIMARY;
+  else return true;
   if (is_nil (windows_l)) return false;
   Window win= windows_l->item;
   XSetSelectionOwner (dpy, xsel, win, CurrentTime);

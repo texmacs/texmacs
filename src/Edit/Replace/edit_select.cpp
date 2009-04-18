@@ -109,8 +109,6 @@ edit_select_rep::select_from_cursor () {
     }
     notify_change (THE_SELECTION);
     if (shift_selecting) selecting = false;
-    if (selection_active_any ())
-      selection_set ("visible", selection_get (), true, true);
   }
 }
 
@@ -126,8 +124,6 @@ edit_select_rep::select_from_cursor_if_active () {
       end_p  = copy (mid_p);
     }
     notify_change (THE_SELECTION);
-    if (selection_active_any ())
-      selection_set ("visible", selection_get (), true, true);
   }
   else selection_cancel ();
 }
@@ -239,8 +235,6 @@ edit_select_rep::select_enlarge () {
     set_message ("selected#" * s, "enlarge selection");
   }
   selecting= shift_selecting= false;
-  if (selection_active_any ())
-    selection_set ("visible", selection_get (), true);
 }
 
 static bool
@@ -587,8 +581,8 @@ edit_select_rep::selection_set_end (path p) {
 }
 
 void
-edit_select_rep::selection_set (string key, tree t, bool persist, bool kbd) {
-  if (!kbd) selecting= shift_selecting= false;
+edit_select_rep::selection_set (string key, tree t, bool persistant) {
+  selecting= shift_selecting= false;
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
   tree sel= tuple ("texmacs", t, mode, lan);
@@ -596,7 +590,7 @@ edit_select_rep::selection_set (string key, tree t, bool persist, bool kbd) {
      tag. To be done when implementing the different embeddings for
      nicely copying graphics into text, text into graphics, etc. */
   string s;
-  if (key == "primary" || key == "visible") {
+  if (key == "primary" || key == "mouse") {
     if (selection_export == "verbatim") t= exec_texmacs (t, tp);
     if (selection_export == "html") t= exec_html (t, tp);
     if (selection_export == "latex") t= exec_latex (t, tp);
@@ -605,7 +599,7 @@ edit_select_rep::selection_set (string key, tree t, bool persist, bool kbd) {
     s= tree_to_generic (t, selection_export * "-snippet");
     s= selection_encode (lan, s);
   }
-  if (::set_selection (key, sel, s) && !persist)
+  if (::set_selection (key, sel, s) && !persistant)
     selection_cancel ();
 }
 

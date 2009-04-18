@@ -282,10 +282,9 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
       sel.target    = req.target;
       sel.time      = req.time;
       string key = "none";
-      if (req.selection == XA_PRIMARY) key = "visible";
+      if (req.selection == XA_PRIMARY) key = "mouse";
       else if (req.selection == XA_CLIPBOARD) key = "primary";
-      if (!selection_s->contains(key))
-        sel.property= None;
+      if (!selection_s->contains (key)) sel.property= None;
       else if (req.target==XA_TARGETS) {
         Atom targets[2];
         targets[0] = XA_TARGETS;
@@ -311,7 +310,7 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
   case SelectionClear:
     {
       XSelectionClearEvent& req= ev->xselectionclear;
-      if (req.selection == XA_PRIMARY) clear_selection ("visible");
+      if (req.selection == XA_PRIMARY) clear_selection ("mouse");
       else if (req.selection == XA_CLIPBOARD) clear_selection ("primary");
     }
     break;
