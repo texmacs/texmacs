@@ -104,7 +104,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_INVALIDATE_ALL:
     {
-      if (!is_nil (val));
+      ASSERT (is_nil (val), "type mismatch");
       [view setNeedsDisplay:YES];
     }
     break;
@@ -124,140 +124,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
       if (open_box<bool>(val)) the_keyboard_focus = this;
     }
     break;
-#if 0
-  case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      NSRect rect = to_nsrect(p);
-      //			[[view window] setContentSize:rect.size];
-      [[(NSScrollView*)view documentView] setFrameSize: rect.size];
-    }
-    break;
-    
-  case SLOT_HEADER_VISIBILITY:
-    //			send_bool (THIS, "header", val);
-    break;
-  case SLOT_MAIN_ICONS_VISIBILITY:
-    //			send_bool (THIS, "main icons", val);
-    break;
-  case SLOT_CONTEXT_ICONS_VISIBILITY:
-    //			send_bool (THIS, "context icons", val);
-    break;
-  case SLOT_USER_ICONS_VISIBILITY:
-    //			send_bool (THIS, "user icons", val);
-    break;
-  case SLOT_FOOTER_VISIBILITY:
-    //			send_bool (THIS, "footer flag", val);
-    break;
-    
-  case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      NSPoint pt = to_nspoint(p);
-      [[(NSScrollView*)view documentView] scrollPoint:pt];
-      //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
-    }
-    break;
-  case SLOT_SHRINKING_FACTOR:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<int>::id);
-      //w << set_integer (key, open_box<int> (val));
-      //FIXME: handle sf
-    }
-    break;
-    
-  case SLOT_SIZE:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      NSWindow *win = [view window];
-      if (win) {
-	NSRect frame = [win frame];
-	NSSize s = to_nssize(p);
-	frame.size = s;
-	[win setFrame:frame display:YES];
-      }
-    }
-    break;
-  case SLOT_POSITION:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      NSWindow *win = [view window];
-      if (win) {
-	[win setFrameTopLeftPoint:to_nspoint(p)];
-      }
-    }
-    break;
-  case SLOT_VISIBILITY:
-    {	
-      check_type<bool> (val, "SLOT_VISIBILITY");
-      bool flag = open_box<bool> (val);
-      NSWindow *win = [view window];
-      if (win) {
-	if (flag)
-	  [win makeKeyAndOrderFront:nil] ;
-	else 
-	  [win orderOut:nil]  ;
-      }
-    }	
-    break;
-  case SLOT_IDENTIFIER:
-    check_type<int> (val, "SLOT_IDENTIFIER");
-    THIS << emit_attach_window (get_window (open_box<int> (val)));
-    break;
-  case SLOT_FULL_SCREEN:
-    check_type<bool> (val, "SLOT_FULL_SCREEN");
-    win->set_full_screen (open_box<bool> (val));
-    break;
-  case SLOT_UPDATE:
-    send_update (THIS, val);
-    break;
-  case SLOT_KEYBOARD:
-    send_keyboard (THIS, val);
-    break;
-  case SLOT_MOUSE:
-    send_mouse (THIS, val);
-    break;
-  case SLOT_REPAINT:
-    send_repaint (THIS, val);
-    break;
-  case SLOT_DELAYED_MESSAGE:
-    send_delayed_message (THIS, val);
-    break;
-  case SLOT_DESTROY:
-    send_destroy (THIS, val);
-    break;
-    
-  case SLOT_EXTENTS:
-    send_coord4 (THIS, "extents", val);
-    break;
-  case SLOT_SCROLLBARS_VISIBILITY:
-    send_int (THIS, "scrollbars", val);
-    break;
-    
-  case SLOT_INTERACTIVE_MODE:
-    send_bool (THIS, "interactive mode", val);
-    break;
-    
-  case SLOT_STRING_INPUT:
-    send_string (THIS, "input", val);
-    break;
-  case SLOT_INPUT_TYPE:
-    send_string (THIS, "type", val);
-    break;
-  case SLOT_INPUT_PROPOSAL:
-    send_string (THIS, "default", val);
-    break;
-  case SLOT_FILE:
-    send_string (THIS, "file", val);
-    break;
-  case SLOT_DIRECTORY:
-    send_string (THIS, "directory", val);
-    break;
-#endif			
+	
   default:
     FAILED ("cannot handle slot type");
   }
@@ -272,19 +139,10 @@ aqua_view_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_IDENTIFIER:
     TYPE_CHECK (type_id == type_helper<int>::id);
-    return close_box<int> ((int)[view window] ? 1 : 0);
+    return close_box<int> ([view window] ? 1 : 0);
   case SLOT_RENDERER:
     TYPE_CHECK (type_id == type_helper<renderer>::id);
     return close_box<renderer> ((renderer) the_aqua_renderer());
-#if 0
-  case SLOT_VISIBLE_PART:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      NSRect rect = [view visibleRect];
-      coord4 c = from_nsrect(rect);
-      return close_box<coord4> (c);
-    }
-#endif
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;

@@ -15,7 +15,6 @@
 #include "image_files.hpp"
 #include "file.hpp"
 
-//#include "aqua_rgb.h"
 #include "aqua_utilities.h"
 
 
