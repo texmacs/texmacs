@@ -62,6 +62,8 @@ inline void unscaleSize (NSSize &point)
 @interface TMView (Private)
 - (void)setNeedsDisplayInTMRect:(TMRect*)r;
 - (void)delayedUpdate;
+- (void) focusIn;
+- (void) focusOut;
 @end
 
 
@@ -168,6 +170,9 @@ void initkeymap()
     processingCompose = NO;
     workingText = nil;
     delayed_rects = [[NSMutableArray arrayWithCapacity:100] retain];
+    
+    
+    
   }
   return self;
 }
@@ -176,6 +181,13 @@ void initkeymap()
 {
   [delayed_rects release];
   [self deleteWorkingText];
+  [[NSNotificationCenter defaultCenter] removeObserver: self
+                                                  name: @"NSWindowDidBecomeKeyNotification"
+                                                object: nil];
+  [[NSNotificationCenter defaultCenter] removeObserver: self
+                                                  name: @"NSWindowDidBecomeKeyNotification"
+                                                object: nil];
+  
   [super dealloc];
 }
 
@@ -202,6 +214,43 @@ void initkeymap()
   NSSize s = NSMakeSize(w,h);
   unscaleSize(s);
   [self setFrameSize:s];
+  
+  // register to receive focus in/out notifications  
+  [[NSNotificationCenter defaultCenter] removeObserver: self
+                                                  name: @"NSWindowDidBecomeKeyNotification"
+                                                object: nil];
+  [[NSNotificationCenter defaultCenter] removeObserver: self
+                                                  name: @"NSWindowDidBecomeKeyNotification"
+                                                object: nil];
+  
+  [[NSNotificationCenter defaultCenter] addObserver: self
+                                           selector: @selector(focusIn)
+                                               name: @"NSWindowDidBecomeKeyNotification"
+                                             object: newWindow];
+  
+  [[NSNotificationCenter defaultCenter] addObserver: self
+                                           selector: @selector(focusOut)
+                                               name: @"NSWindowDidResignKeyNotification"
+                                             object: newWindow];
+  
+}
+
+
+
+- (void) focusIn
+{
+  if (DEBUG_EVENTS) cout << "FOCUSIN" << LF;
+  if (wid) {
+    wid -> handle_keyboard_focus (true, texmacs_time ());
+  }
+}
+
+- (void) focusOut
+{
+  if (DEBUG_EVENTS)   cout << "FOCUSOUT" << LF;
+  if (wid) {
+    wid -> handle_keyboard_focus (false, texmacs_time ());
+  }
 }
 
 - (void)delayedUpdate
