@@ -368,7 +368,7 @@ ABSTRACT_NULL_CODE(aqua_field_widget);
 
 
 aqua_input_widget_rep::aqua_input_widget_rep (command _cmd, array<string> _prompts) 
-: aqua_widget_rep(), cmd(_cmd),  size(coord2(100,100)), position(coord2(0,0)), win_title(""), fields(N(_prompts))
+: aqua_widget_rep(), cmd(_cmd), fields(N(_prompts)), size(coord2(100,100)), position(coord2(0,0)), win_title("") 
 {
   for(int i=0; i < N(_prompts); i++) {
     fields[i] = tm_new <aqua_field_widget_rep> (this);
@@ -495,7 +495,47 @@ widget aqua_input_widget_rep::plain_window_widget (string s)
 {
   self = [super init];
   if (self != nil) {
-    [NSBundle loadNibNamed:@"InputPanel" owner:self];
+    NSRect panelRect = NSMakeRect(0, 0, 480, 360);
+    dialog = [[NSWindow alloc] initWithContentRect:panelRect
+                                        styleMask:NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask
+                                          backing:NSBackingStoreBuffered defer:YES];
+    form = [[[NSMatrix alloc] initWithFrame: NSMakeRect(20, 60, 440, 280) ] autorelease];
+    NSButton* cancelButton = [[[NSButton alloc] initWithFrame: NSMakeRect(274, 12, 96, 32) ] autorelease];
+    NSButton* okButton = [[[NSButton alloc] initWithFrame: NSMakeRect(370, 12, 96, 32) ] autorelease];
+    [cancelButton setTitle:@"Cancel"];
+    [okButton setTitle:@"Ok"];
+
+    [okButton setButtonType:   NSMomentaryPushInButton];
+    [cancelButton setButtonType:   NSMomentaryPushInButton];
+
+    [okButton setBezelStyle: NSRoundedBezelStyle];
+    [cancelButton setBezelStyle: NSRoundedBezelStyle];
+    
+    [cancelButton setTag: 1];
+    [okButton setTag: 0];
+    [okButton setTarget: self];
+    [okButton setAction: @selector(doForm:)];
+    [cancelButton setTarget: self];
+    [cancelButton setAction: @selector(doForm:)];
+
+    [okButton setKeyEquivalent:@"\r"];
+    [cancelButton setKeyEquivalent:@"\E"];
+ 
+    [form   setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+    [okButton setAutoresizingMask: NSViewMinXMargin | NSViewMaxYMargin];
+    [cancelButton setAutoresizingMask: NSViewMinXMargin | NSViewMaxYMargin];
+    
+    [[dialog contentView] addSubview: form];
+    [[dialog contentView] addSubview: cancelButton];
+    [[dialog contentView] addSubview: okButton];
+    
+    [dialog makeFirstResponder: form];
+    [form setNextKeyView: cancelButton];
+    [cancelButton setNextKeyView: okButton];
+    [okButton setNextKeyView: form];
+    
+    [form retain];   
+
     [dialog setReleasedWhenClosed:NO];
     wid = NULL;
   }
@@ -504,6 +544,7 @@ widget aqua_input_widget_rep::plain_window_widget (string s)
 - (void) dealloc
 {
   [dialog release];
+  [form release];
   [super dealloc];
 }
 
