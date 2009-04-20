@@ -48,11 +48,8 @@
 
 - (NSSegmentedControl*) newSegment
 {
-  if (!prototype)
-    [NSBundle loadNibNamed:@"Segment" owner:self];
-  NSSegmentedControl *ret = [prototype autorelease]; 
-  //		[barArray addObject:[[[NSSegmentedControl alloc] init] autorelease]];  
-  prototype = nil;
+  NSSegmentedControl *ret =  [[[NSSegmentedControl alloc] init] autorelease];
+  [ret setSegmentStyle: NSSegmentStyleTexturedSquare];
   return ret; 
 }
 
