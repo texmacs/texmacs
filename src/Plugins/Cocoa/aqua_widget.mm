@@ -380,6 +380,7 @@ void aqua_tm_widget_rep::layout()
 
 void aqua_tm_widget_rep::updateVisibility()
 {
+  //FIXME: this implementation is from the Qt port. to be adapted.
 #if 0
   mainToolBar->setVisible (visibility[1] && visibility[0]);
   contextToolBar->setVisible (visibility[2] && visibility[0]);
@@ -403,7 +404,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       NSRect rect = to_nsrect(p);
       NSSize ws = [sv contentSize];
       NSSize sz = rect.size;
-      sz.height = max (sz.height, 7.0 * ws.height / 8.0);
+      sz.height = max (sz.height, ws.height );
       //			[[view window] setContentSize:rect.size];
       [[sv documentView] setFrameSize: sz];
     }
@@ -472,12 +473,9 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       NSPoint pt = to_nspoint(p);
       NSSize sz = [[sv contentView] bounds].size;
-      pt.x += sz.width/2;
-      pt.y += sz.height/2;
-      //cout << "scroll position :" << pt.x << "," << pt.y << LF;
-      
+      if (DEBUG_EVENTS) cout << "Scroll position :" << pt.x << "," << pt.y << LF;
       [[sv documentView] scrollPoint:pt];
-      //			[[(NSScrollView*)view documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
+ //     [[sv documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
     }
     break;
     
@@ -490,7 +488,8 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       if (open_box<bool>(val) == true) {
-	do_interactive_prompt();
+        //FIXME: to postpone once we return to the runloop
+	    do_interactive_prompt();
       }
     }
     break;
@@ -503,13 +502,6 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
       w->handle_set_shrinking_factor (new_sf);
     }
-#if 0        
-    if (QTMWidget* tmw= qobject_cast<QTMWidget*> (tm_canvas())) {
-      int new_sf = open_box<int> (val);
-      if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
-      tmw->tm_widget()->handle_set_shrinking_factor (new_sf);
-    }
-#endif
     break;
         
   default:
@@ -523,7 +515,9 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_SCROLL_POSITION:
     {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
-      NSPoint pt = [[sv contentView] frame].origin;
+      NSPoint pt = [[sv documentView] frame].origin;
+      if (DEBUG_EVENTS)
+        cout << "Position (" << pt.x << "," << pt.y << ")\n"; 
       return close_box<coord2> (from_nspoint(pt));
     }
         
@@ -532,7 +526,11 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       NSRect rect= [[sv documentView] frame];
       coord4 c= from_nsrect (rect);
-      //     if (DEBUG_EVENTS) cout << "Canvas geometry " << rect << LF;
+      if (DEBUG_EVENTS) cout << "Canvas geometry (" << rect.origin.x 
+        << "," << rect.origin.y
+        << "," << rect.size.width
+        << "," << rect.size.height
+        << ")" << LF;
       return close_box<coord4> (c);
     }
         
@@ -542,7 +540,11 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       NSRect rect= [sv documentVisibleRect];
       coord4 c= from_nsrect (rect);
-      //    if (DEBUG_EVENTS) cout << "Visible Region " << rect << LF;
+      if (DEBUG_EVENTS) cout << "Visible region (" << rect.origin.x 
+        << "," << rect.origin.y
+        << "," << rect.size.width
+        << "," << rect.size.height
+        << ")" << LF;
       return close_box<coord4> (c);
     }
 
@@ -576,7 +578,7 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_INTERACTIVE_MODE:
     {
       TYPE_CHECK (type_id == type_helper<bool>::id);
-      return close_box<bool> (false);
+      return close_box<bool> (false);  // FIXME: who needs this info?
     }
     
     
@@ -742,8 +744,8 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       NSWindow *win = [wc window];
       if (win) {
-	NSSize size = to_nssize(p);
-	[win setContentSize:size];
+        NSSize size = to_nssize(p);
+        [win setContentSize:size];
       }
     }
     break;
@@ -753,7 +755,7 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
       coord2 p= open_box<coord2> (val);
       NSWindow *win = [wc window];
       if (win) { 
-	[win setFrameOrigin:to_nspoint(p)];
+        [win setFrameOrigin:to_nspoint(p)];
       }
     }
     break;
@@ -763,8 +765,8 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
       bool flag = open_box<bool> (val);
       NSWindow *win = [wc window];
       if (win) {
-	if (flag) [win makeKeyAndOrderFront:nil] ;
-	else [win orderOut:nil]  ;
+        if (flag) [win makeKeyAndOrderFront:nil] ;
+        else [win orderOut:nil]  ;
       }
     }	
     break;
@@ -774,13 +776,14 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
       string name = open_box<string> (val);
       NSWindow *win = [wc window];
       if (win) {
-	NSString *title = to_nsstring(name);
-	[win setTitle:title];
+        NSString *title = to_nsstring(name);
+        [win setTitle:title];
       }
     }
     break;
   case SLOT_FULL_SCREEN:
     check_type<bool> (val, "SLOT_FULL_SCREEN");
+    //FIXME: Implement fullscreen mode
     // win->set_full_screen (open_box<bool> (val));
     break;
   case SLOT_UPDATE:
@@ -841,36 +844,6 @@ aqua_window_widget_rep::read (slot s, blackbox index) {
 void
 aqua_window_widget_rep::write (slot s, blackbox index, widget w) {
   switch (s) {
-#if 0
-  case SLOT_CANVAS:
-    check_type_void (index, "SLOT_CANVAS");
-    //			[(NSScrollView*)view setDocumentView: concrete (w)->get_nsview()];
-    break;
-  case SLOT_MAIN_MENU:
-    check_type_void (index, "SLOT_MAIN_MENU");
-    //			THIS << set_widget ("menu bar", concrete (w));
-    break;
-  case SLOT_MAIN_ICONS:
-    check_type_void (index, "SLOT_MAIN_ICONS");
-    //			THIS << set_widget ("main icons bar", concrete (w));
-    break;
-  case SLOT_CONTEXT_ICONS:
-    check_type_void (index, "SLOT_CONTEXT_ICONS");
-    //			THIS << set_widget ("context icons bar", concrete (w));
-    break;
-  case SLOT_USER_ICONS:
-    check_type_void (index, "SLOT_USER_ICONS");
-    //			THIS << set_widget ("user icons bar", concrete (w));
-    break;
-  case SLOT_INTERACTIVE_PROMPT:
-    check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
-    //			THIS << set_widget ("interactive prompt", concrete (w));
-    break;
-  case SLOT_INTERACTIVE_INPUT:
-    check_type_void (index, "SLOT_INTERACTIVE_INPUT");
-    //			THIS << set_widget ("interactive input", concrete (w));
-    break;
-#endif
   default:
     FAILED ("cannot handle slot type");
   }

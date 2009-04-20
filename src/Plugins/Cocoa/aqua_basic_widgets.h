@@ -16,7 +16,7 @@ public:
   bool tsp;
   
   aqua_text_widget_rep(string _s, color _col, bool _tsp, string _lan) 
-  : str(_s), col(_col), tsp(_tsp), lan(_lan) {};  
+  : str(_s), lan(_lan), col(_col), tsp(_tsp) {};  
 
   virtual TMMenuItem *as_menuitem();
 
