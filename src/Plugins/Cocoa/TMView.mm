@@ -397,24 +397,41 @@ void initkeymap()
 
 #endif
 
+static unsigned int
+mouse_state (NSEvent* event, bool flag) {
+  unsigned int i= 0;
+  i += 1 << min([event buttonNumber],4);
+  unsigned int mods = [event modifierFlags];
+  if (mods & NSAlternateKeyMask) i = 2;  
+  if (mods & NSCommandKeyMask) i = 4;  
+  if (mods & NSShiftKeyMask) i += 256;  
+  if (mods & NSControlKeyMask) i += 2048;  
+  return i;
+}
+
+static string
+mouse_decode (unsigned int mstate) {
+  if      (mstate & 1 ) return "left";
+  else if (mstate & 2 ) return "middle";
+  else if (mstate & 4 ) return "right";
+  else if (mstate & 8 ) return "up";
+  else if (mstate & 16) return "down";
+  return "unknown";
+}
+
+
+
 - (void)mouseDown:(NSEvent *)theEvent
 {
   if (wid) {
     NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-		scale(point);
-    int flags = [theEvent modifierFlags];
-    if (flags & NSControlKeyMask)
-    {
-			wid -> handle_mouse ("press-right", point.x, point.y,  3, [theEvent timestamp]);
-    }
-    else if (flags & NSAlternateKeyMask)
-		{
-			wid -> handle_mouse ("press-middle", point.x, point.y,  2, [theEvent timestamp]);
-		}
-		else
-		{
-			wid -> handle_mouse ("press-left", point.x, point.y,  1, [theEvent timestamp]);
-		}
+	scale(point);
+    unsigned int mstate= mouse_state (theEvent, false);
+    string s= "press-" * mouse_decode (mstate);
+    wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
+    if (DEBUG_EVENTS)
+      cout << "mouse event: " << s << " at "
+      << point.x << ", " << point.y  << LF;
   }
 }
 
@@ -422,8 +439,13 @@ void initkeymap()
 {
   if (wid) {
     NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-		scale(point);
-		wid -> handle_mouse ("release-left", point.x, point.y,  0, [theEvent timestamp]); // FIXME: rough implementation
+	scale(point);
+    unsigned int mstate= mouse_state (theEvent, true);
+    string s= "release-" * mouse_decode (mstate);
+    wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
+    if (DEBUG_EVENTS)
+      cout << "mouse event: " << s << " at "
+      << point.x  << ", " << point.y  << LF;
   }
 }
 
@@ -432,7 +454,12 @@ void initkeymap()
   if (wid) {
     NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 		scale(point);
-		wid -> handle_mouse ("move", point.x, point.y,  0, [theEvent timestamp]); // FIXME: rough implementation
+    unsigned int mstate= mouse_state (theEvent, false);
+    string s= "move";
+    wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
+    if (DEBUG_EVENTS)
+      cout << "mouse event: " << s << " at "
+      << point.x  << ", " << point.y  << LF;
   }  
 }
 
@@ -441,7 +468,12 @@ void initkeymap()
   if (wid) {
     NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 		scale(point);
-		wid -> handle_mouse ("move", point.x, point.y,  1, [theEvent timestamp]); // FIXME: rough implementation
+    unsigned int mstate= mouse_state (theEvent, false);
+    string s= "move";
+    wid -> handle_mouse (s, point.x , point.y , mstate, texmacs_time ());
+    if (DEBUG_EVENTS)
+      cout << "mouse event: " << s << " at "
+      << point.x  << ", " << point.y  << LF;
   }  
 }
 
@@ -495,7 +527,7 @@ void initkeymap()
   [aString string] : aString;
   
   static char buf[256];
-  for(int i=0; i<[str length]; i++) {
+  for(unsigned int i=0; i<[str length]; i++) {
     [[str substringWithRange:NSMakeRange(i, 1)] getCString:buf maxLength:256 encoding:NSUTF8StringEncoding];
     string rr (buf, strlen(buf));
     string s= utf8_to_cork (rr);          
