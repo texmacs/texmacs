@@ -207,6 +207,20 @@ widget file_chooser_widget (command cmd, string type, string mgn)
   return tm_new <aqua_chooser_widget_rep> (cmd,type,mgn);
 }
 
+
+@interface TMSavePanel : NSSavePanel
+{
+}
+- (BOOL)_overwriteExistingFileCheck:(NSString *)filename;
+@end
+
+@implementation TMSavePanel
+- (BOOL)_overwriteExistingFileCheck:(NSString *)filename
+{
+  return YES;
+}
+@end
+
 #if 0
 void aqua_chooser_widget_rep::perform_dialog()
 {
@@ -238,7 +252,7 @@ void aqua_chooser_widget_rep::perform_dialog()
 {
   int result;
   NSArray *fileTypes = [NSArray arrayWithObject:@"tm"];
-  NSSavePanel *oPanel = [NSSavePanel savePanel];
+  NSSavePanel *oPanel = [TMSavePanel savePanel];
   [oPanel setTitle:to_nsstring(win_title)];
   //  [oPanel setMessage:@"Choose a file."];
   [oPanel setNameFieldLabel:@"File:"];
