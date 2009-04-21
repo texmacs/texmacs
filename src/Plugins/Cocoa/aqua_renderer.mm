@@ -16,6 +16,7 @@
 #include "file.hpp"
 
 #include "aqua_utilities.h"
+#include "MacOS/mac_images.h"
 
 
 
@@ -271,7 +272,8 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
                suffix (u) == "eps" ||
                suffix (u) == "pdf") {
       url temp= url_temp (".png");
-      system ("convert", u, temp);
+      mac_image_to_png (u, temp); 
+//      system ("convert", u, temp);
       string suu = as_string (temp);
       pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
       remove (temp);
