@@ -323,15 +323,17 @@ widget menu_separator (bool vertical) { return tm_new <aqua_menu_rep> ([NSMenuIt
 widget menu_group (string name, string lan) 
 // a menu group; the name should be greyed and centered
 {
-	NSMenuItem* mi = [[alloc_menuitem() initWithTitle:to_nsstring(name) action:NULL keyEquivalent:@""] autorelease];
+	NSMenuItem* mi = [[alloc_menuitem() initWithTitle:to_nsstring_utf8(name) action:NULL keyEquivalent:@""] autorelease];
 
 	//	NSAttributedString *str = [mi attributedTitle];
 	NSMutableParagraphStyle *style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
 //	NSMutableParagraphStyle *style = [(NSParagraphStyle*)[str attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:NULL] mutableCopy];
-	[style setAlignment:NSCenterTextAlignment];
-	[mi setAttributedTitle:[[[NSAttributedString alloc] initWithString:[mi title]
-																													attributes:[NSDictionary dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName,
-																																				 nil]] autorelease]];
+	[style setAlignment: NSCenterTextAlignment];
+	[mi setAttributedTitle:[[[NSAttributedString alloc] 
+                               initWithString: [mi title]
+                                   attributes: [NSDictionary 
+                                      dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil]]
+                                autorelease]];
 	return tm_new <aqua_menu_rep> (mi);
 }
 
@@ -358,7 +360,7 @@ widget pullright_button (widget w, promise<widget> pw)
 
 TMMenuItem * aqua_text_widget_rep::as_menuitem()
 {
-  return [[[TMMenuItem alloc] initWithTitle:to_nsstring(str) action:NULL keyEquivalent:@""] autorelease];
+  return [[[TMMenuItem alloc] initWithTitle:to_nsstring_utf8(str) action:NULL keyEquivalent:@""] autorelease];
 }
 
 TMMenuItem * aqua_image_widget_rep::as_menuitem()
@@ -422,7 +424,8 @@ widget balloon_widget (widget w, widget help)
 widget text_widget (string s, color col, bool tsp, string lan) 
 // a text widget with a given color, transparency and language
 {
-  return tm_new <aqua_text_widget_rep> (s,col,tsp,lan);
+  string t= aqua_translate (s);
+  return tm_new <aqua_text_widget_rep> (t,col,tsp,lan);
 }
 widget xpm_widget (url file_name)// { return widget(); }
 // a widget with an X pixmap icon
