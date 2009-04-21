@@ -153,9 +153,15 @@ QTMWidget::postponedUpdate () {
       << "," <<  rect.width()
       << "," <<  rect.height() << ")\n" ;
     }
+    //FIXME: the call below to update is ignored sometimes (usually in long documents). 
+    //       It is a confirmed Qt/Mac bug (#251792). See
+    //       http://www.qtsoftware.com/developer/task-tracker/index_html?method=entry&id=251792
+#ifdef Q_WS_MAC
+    //FIXME: This is a workaround for the update(rect) bug. Mac specific.
+    update();
+#else
     update (rect);
-    //FIXME: the call to update is ignored sometimes (usually in long documents). 
-    //       Apparently this is a bug in Qt. Under investigation.
+#endif
     delayed_rects= delayed_rects->next;
   }
 }
