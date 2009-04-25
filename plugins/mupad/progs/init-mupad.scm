@@ -11,10 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-menu (mupad-menus) mupad-menu mupad-help-menu)
-
 (define (mupad-initialize)
   (import-from (utils plugins plugin-convert))
+  (import-from (mupad-menus))
   (lazy-input-converter (mupad-input) mupad)
   (menu-extend texmacs-extra-menu
     (if (or (in-mupad?) (and (not-in-session?) (mupad-scripts?)))

@@ -11,11 +11,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-menu (pari-menus) pari-menu)
 (define (cas-supports-completions-set! must-be-pari) (noop)) ;; obsolete
 
 (define (pari-initialize)
   (import-from (utils plugins plugin-convert))
+  (import-from (pari-menus))
   (plugin-input-converters pari)
   (menu-extend texmacs-extra-menu
     (if (or (in-pari?) (and (not-in-session?) (pari-scripts?)))

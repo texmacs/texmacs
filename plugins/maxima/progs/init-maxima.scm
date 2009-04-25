@@ -11,15 +11,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-menu (maxima-menus) maxima-menu maxima-help-icons)
-
 (define maxima-help #f)
-
 (define (maxima-initialize)
   (import-from (utils plugins plugin-convert))
   (import-from (utils plugins plugin-cmd))
   (import-from (dynamic session-menu))
   (import-from (maxima-kbd))
+  (import-from (maxima-menus))
   (lazy-input-converter (maxima-input) maxima)
   (plugin-approx-command-set! "maxima" "float")
   (let ((help-list (string->object (var-eval-system "maxima_detect help"))))

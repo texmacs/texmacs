@@ -11,10 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-menu (reduce-menus) reduce-help-menu)
-
 (define (reduce-initialize)
   (import-from (utils plugins plugin-convert))
+  (import-from (reduce-menus))
   (lazy-input-converter (reduce-input) reduce)
   (menu-extend session-help-icons
     (if (and (in-reduce?) (url-exists? "$reduce/doc/manual/abstract.tex"))
