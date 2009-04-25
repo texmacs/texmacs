@@ -42,6 +42,7 @@
 class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
 class server_rep;
+class modification;
 
 class editor_rep: public simple_widget_rep {
 public:
@@ -56,6 +57,7 @@ protected:
   path        tp;   // path of cursor in tree
 #ifdef EXPERIMENTAL
   environment ste;  // environment for style rewriting
+  tree        cct;  // clean copy of the document tree
   memorizer   mem;  // style converted document tree
 #endif
 
@@ -485,6 +487,8 @@ public:
   friend class tm_data_rep;
   friend class tm_server_rep;
   friend class server_command_rep;
+  friend void  edit_announce (editor_rep* ed, modification mod);
+  friend void  edit_done (editor_rep* ed, modification mod);
 };
 
 class editor {

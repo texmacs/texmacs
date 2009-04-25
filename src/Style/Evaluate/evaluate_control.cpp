@@ -146,7 +146,7 @@ tree
 evaluate_use_module (tree t) {
   int i, n= N(t);
   for (i=0; i<n; i++) {
-    string s= as_string (evaluate (t[i]));
+    string s= evaluate_string (t[i]);
     if (starts (s, "(")) eval ("(use-modules " * s * ")");
     else if (s != "") eval ("(plugin-initialize '" * s * ")");
     tree t= std_env[THE_MODULES] * tuple (s);

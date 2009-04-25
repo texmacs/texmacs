@@ -19,13 +19,16 @@
 * The tree class 'tree'
 ******************************************************************************/
 
+class tree;
 class tree_rep;
 class atomic_rep;
 class compound_rep;
+class generic_rep;
+class blackbox;
 tree copy (tree t);
 
 class tree {
-  tree_rep* rep; // can be atomic or compound
+  tree_rep* rep; // can be atomic or compound or generic
   inline tree (tree_rep* rep2);
 
 public:
@@ -57,6 +60,7 @@ public:
   friend inline array<tree>& AR (tree t);
   friend inline bool is_atomic (tree t);
   friend inline bool is_compound (tree t);
+  friend inline bool is_generic (tree t);
   friend inline bool operator == (tree t, tree_label lab);
   friend inline bool operator != (tree t, tree_label lab);
   friend inline bool operator == (tree t, string s);
@@ -84,6 +88,7 @@ public:
   friend class undo_observer_rep;
   friend class tree_links_rep;
   friend class link_repository_rep;
+  friend blackbox as_blackbox (const tree& t);
 };
 
 class tree_rep: concrete_struct {
@@ -107,6 +112,8 @@ public:
   inline compound_rep (tree_label l, array<tree> a2): tree_rep (l), a (a2) {}
   friend class tree;
 };
+
+// generic_rep in generic_tree.hpp
 
 template<> struct type_helper<tree> { static tree init; };
 
@@ -182,8 +189,9 @@ inline array<tree>& AR (tree t) {
   CHECK_COMPOUND (t);
   return (static_cast<compound_rep*> (t.rep))->a; }
 
-inline bool is_atomic (tree t) { return (t.rep->op == STRING); }
-inline bool is_compound (tree t) { return (t.rep->op != STRING); }
+inline bool is_atomic (tree t) { return (((int) t.rep->op) == 0); }
+inline bool is_compound (tree t) { return (((int) t.rep->op) > STRING); }
+inline bool is_generic (tree t) { return ((int) t.rep->op) < 0; }
 inline string get_label (tree t) {
   return is_atomic (t)? t->label: copy (as_string (L(t))); }
 inline bool operator == (tree t, tree_label lab) {

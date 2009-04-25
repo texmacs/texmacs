@@ -12,6 +12,7 @@
 #include "evaluate_main.hpp"
 #include "memorizer.hpp"
 #include "vars.hpp"
+#include "path.hpp"
 
 environment std_env;
 
@@ -49,6 +50,39 @@ public:
 inline memorizer
 evaluate_memorizer (environment env, tree t) {
   return (memorizer_rep*) tm_new<evaluate_memorizer_rep> (env, t);
+}
+
+/******************************************************************************
+* Ip handling
+******************************************************************************/
+
+// FIXME: from boxes.hpp
+#define DECORATION_RIGHT  (-4)
+#define DETACHED          (-5)
+inline path decorate_right (path ip) {
+  return (is_nil (ip) || (ip->item >= 0))? path (DECORATION_RIGHT, ip): ip; }
+
+void
+transfer_ip (tree src, tree dest) {
+  ASSERT (obtain_ip (dest) == path (DETACHED), "already has an ip");
+  dest->obs= list_observer (ip_observer (obtain_ip (src)), dest->obs);
+}
+
+void
+decorate_ip (tree ref, path ip) {
+  if (obtain_ip (ref) == path (DETACHED)) {
+    ref->obs= list_observer (ip_observer (ip), ref->obs);
+    if (is_compound (ref)) {
+      int i, n= N(ref);
+      for (i=0; i<n; i++)
+	decorate_ip (ref[i], ip);
+    }
+  }
+}
+
+void
+decorate_ip (tree src, tree dest) {
+  decorate_ip (dest, decorate_right (obtain_ip (src)));
 }
 
 /******************************************************************************
@@ -246,6 +280,10 @@ evaluate_impl (tree t) {
     return evaluate_fns_length ();
   case BLS_LENGTH:
     return evaluate_bls_length ();
+  case FNBOT_LENGTH:
+    return evaluate_fnbot_length ();
+  case FNTOP_LENGTH:
+    return evaluate_fntop_length ();
   case SPC_LENGTH:
     return evaluate_spc_length ();
   case XSPC_LENGTH:
@@ -299,6 +337,8 @@ evaluate_impl (tree t) {
     return evaluate_get_binding (t);
 
   /* Graphical primitives */
+  case PATTERN:
+    return evaluate_pattern (t);
   case _POINT:
     return evaluate_point (t);
     /*
@@ -317,13 +357,11 @@ evaluate_impl (tree t) {
       tree r (t, n);
       for (i=0; i<n; i++)
 	r[i]= evaluate (t[i]);
-      //_set_ip (r, _get_ip (t));
-      //cout << "Return " << r << LF;
+      transfer_ip (t, r);
       return r;
     }
     else {
       tree r= evaluate_compound (t);
-      //_set_ip (r, _get_ip (t));
       return r;
     }      
   }
@@ -354,10 +392,18 @@ evaluate_error (string error, array<tree> args) {
 * Main evaluation routines
 ******************************************************************************/
 
+string
+evaluate_string (tree t) {
+  tree r= evaluate (t);
+  if (is_atomic (r)) return r->label;
+  else return "";
+}
+
 tree
 evaluate (tree t) {
   if (is_atomic (t)) return t;
   cout << "Evaluate "
+    // << obtain_ip (t) << " "
        << "[" << (t.operator -> ())
        << ", " << (std_env.operator -> ()) << "] "
        << t << INDENT << LF;
@@ -369,10 +415,13 @@ evaluate (tree t) {
   }
   memorize_start ();
   tree r= evaluate_impl (t);
+  decorate_ip (t, r);
   mem->set_tree (r);
   mem->set_environment (std_env);
   memorize_end ();
-  cout << UNINDENT << "Computed " << mem->get_tree () << LF;
+  cout << UNINDENT << "Computed " << mem->get_tree ()
+    // << " at " << obtain_ip (r);
+       << LF;
   return mem->get_tree ();
 }
 

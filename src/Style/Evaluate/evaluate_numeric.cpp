@@ -59,6 +59,7 @@ evaluate_times_over (tree t) {
   tree prod= evaluate (t[0]);
   if (is_double (prod));
   else if (is_anylen (prod)) prod= as_tmlen (prod);
+  else if (is_percentage (prod)) prod= as_tree (as_percentage (prod));
   else return evaluate_error ("bad times/over");
   if ((n==1) && is_func (t, OVER)) {
     if (is_double (prod)) return as_string (1 / as_double (prod));
@@ -86,6 +87,12 @@ evaluate_times_over (tree t) {
       if (is_double (prod))
 	prod= tmlen_times (as_double (prod), mul);
       else return evaluate_error ("bad times/over");
+    }
+    else if (is_percentage (mul)) {
+      double _mul= as_percentage (mul);
+      if (is_double (prod))
+	prod= as_string (_mul * as_double (prod));
+      else prod= tmlen_times (_mul, prod);
     }
     else return evaluate_error ("bad times/over");
     // cout << "  " << i << "\t" << prod << "\n";

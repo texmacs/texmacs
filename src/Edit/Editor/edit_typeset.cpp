@@ -192,7 +192,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
   typeset_prepare ();
-  exec_until (ttt, p - rp);
+  exec_until (ttt, p / rp);
   env->read_env (cur (p));
 }
 
@@ -487,7 +487,7 @@ void
 edit_typeset_rep::typeset_invalidate (path p) {
   if (rp <= p) {
     notify_change (THE_TREE);
-    ::notify_assign (ttt, p-rp, subtree (et, p));
+    ::notify_assign (ttt, p / rp, subtree (et, p));
   }
 }
 

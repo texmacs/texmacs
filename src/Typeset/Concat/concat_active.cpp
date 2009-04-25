@@ -228,6 +228,24 @@ concater_rep::typeset_flag (tree t, path ip) {
 ******************************************************************************/
 
 bool
+is_percentage (tree t, string s) {
+  return
+    is_atomic (t) &&
+    ends (t->label, s) &&
+    is_double (t->label (0, N (t->label) - 1));
+}
+
+bool
+is_percentage (tree t) {
+  return is_percentage (t, "%");
+}
+
+double
+as_percentage (tree t) {
+  return as_double (t->label (0, N (t->label) - 1)) / 100.0;
+}
+
+bool
 is_magnification (string s) {
   double result;
   if (N(s) == 0) return false;

@@ -450,5 +450,10 @@ tree texmacs_exec (edit_env env, tree cmd);
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp
 tree tree_extents (tree t);
+bool is_percentage (tree t, string s);
+bool is_percentage (tree t);
+double as_percentage (tree t);
+bool is_magnification (string s);
+double get_magnification (string s);
 
 #endif // defined ENV_H

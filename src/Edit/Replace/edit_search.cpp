@@ -262,14 +262,14 @@ edit_replace_rep::step_ascend (bool forward) {
 
   if (forward) {
     if (l == N(st)) {
-      if (is_atom (search_at - rp)) search_at= rp;
+      if (is_atom (search_at / rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
   }
   else {
     if (l == -1) {
-      if (is_atom (search_at - rp)) search_at= rp;
+      if (is_atom (search_at / rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);

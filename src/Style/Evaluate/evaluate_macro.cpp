@@ -324,7 +324,9 @@ evaluate_compound (tree t) {
 	local->raw_write (i, as_string (f[i]), i<m? t[i+d]: uninit);
       //local->print ("");
     }
-    return evaluate (expand (f[n], local));
+    tree e= expand (f[n], local);
+    decorate_ip (t, e);
+    return evaluate (e);
     // FIXME: should we remember partial expansions?
   }
   else return evaluate (f);

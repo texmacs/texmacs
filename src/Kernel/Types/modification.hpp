@@ -86,6 +86,8 @@ inline modification operator * (path p, modification mod) {
   return modification (mod->k, p * mod->p, mod->t); }
 inline modification operator * (modification mod, int i) {
   return modification (mod->k, mod->p * i, mod->t); }
+inline modification operator / (modification mod, path p) {
+  return modification (mod->k, mod->p / p, mod->t); }
 inline modification copy (modification mod) {
   return modification (mod->k, mod->p, copy (mod->t)); }
 

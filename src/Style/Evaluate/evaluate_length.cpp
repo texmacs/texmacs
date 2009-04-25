@@ -13,6 +13,7 @@
 #include "vars.hpp"
 #include "analyze.hpp"
 #include "font.hpp"
+#include "gui.hpp"
 
 /******************************************************************************
 * Length arithmetic
@@ -145,31 +146,28 @@ std_fn () {
   switch (std_mode ()) {
   case 0:
   case 1:
-    return find_font (current_display (),
-		      as_string (std_env [FONT]),
+    return find_font (as_string (std_env [FONT]),
 		      as_string (std_env [FONT_FAMILY]),
 		      as_string (std_env [FONT_SERIES]),
 		      as_string (std_env [FONT_SHAPE]),
 		      script (fs, std_math_level ()),
 		      (int) (std_magnification () * std_dpi ()));
   case 2:
-    return find_font (current_display (),
-		      as_string (std_env [MATH_FONT]),
+    return find_font (as_string (std_env [MATH_FONT]),
 		      as_string (std_env [MATH_FONT_FAMILY]),
 		      as_string (std_env [MATH_FONT_SERIES]),
 		      as_string (std_env [MATH_FONT_SHAPE]),
 		      script (fs, std_math_level ()),
 		      (int) (std_magnification () * std_dpi ()));
   case 3:
-    return find_font (current_display (),
-		      as_string (std_env [PROG_FONT]),
+    return find_font (as_string (std_env [PROG_FONT]),
 		      as_string (std_env [PROG_FONT_FAMILY]),
 		      as_string (std_env [PROG_FONT_SERIES]),
 		      as_string (std_env [PROG_FONT_SHAPE]),
 		      script (fs, std_math_level ()),
 		      (int) (std_magnification () * std_dpi ()));
   default:
-    return current_display ()->default_font ();
+    return get_default_font ();
   }
 }
 
@@ -259,6 +257,16 @@ evaluate_bls_length () {
 	      std_inch () * std_font_size ()) / 72.0;
   return tmlen_plus (tree (TMLEN, as_string (fs)),
 		     tree (as_vspace (std_env [PAR_SEP])));
+}
+
+tree
+evaluate_fnbot_length () {
+  return tree (TMLEN, as_string (std_fn()->y1));
+}
+
+tree
+evaluate_fntop_length () {
+  return tree (TMLEN, as_string (std_fn()->y2));
 }
 
 tree

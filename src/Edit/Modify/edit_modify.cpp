@@ -34,56 +34,56 @@ edit_modify_rep::notify_assign (path p, tree u) {
   (void) u;
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_assign (get_typesetter (), p - rp, u);
+  ::notify_assign (get_typesetter (), p / rp, u);
 }
 
 void
 edit_modify_rep::notify_insert (path p, tree u) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_insert (get_typesetter (), p - rp, u);
+  ::notify_insert (get_typesetter (), p / rp, u);
 }
 
 void
 edit_modify_rep::notify_remove (path p, int nr) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_remove (get_typesetter (), p - rp, nr);
+  ::notify_remove (get_typesetter (), p / rp, nr);
 }
 
 void
 edit_modify_rep::notify_split (path p) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_split (get_typesetter (), p - rp);
+  ::notify_split (get_typesetter (), p / rp);
 }
 
 void
 edit_modify_rep::notify_join (path p) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_join (get_typesetter (), p - rp);
+  ::notify_join (get_typesetter (), p / rp);
 }
 
 void
 edit_modify_rep::notify_assign_node (path p, tree_label op) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_assign_node (get_typesetter (), p - rp, op);
+  ::notify_assign_node (get_typesetter (), p / rp, op);
 }
 
 void
 edit_modify_rep::notify_insert_node (path p, tree t) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_insert_node (get_typesetter (), p - rp, t);
+  ::notify_insert_node (get_typesetter (), p / rp, t);
 }
 
 void
 edit_modify_rep::notify_remove_node (path p) {
   if (!(rp <= p)) return;
   cur_pos= position_new (tp);
-  ::notify_remove_node (get_typesetter (), p - rp);
+  ::notify_remove_node (get_typesetter (), p / rp);
 }
 
 void
@@ -207,6 +207,9 @@ edit_done (editor_rep* ed, modification mod) {
   path p= copy (mod->p);
   ASSERT (ed->the_buffer_path() <= p, "invalid modification");
   ed->post_notify (p);
+#ifdef EXPERIMENTAL
+  copy_announce (subtree (ed->et, ed->rp), ed->cct, mod / ed->rp);
+#endif
 }
 
 /******************************************************************************
@@ -485,10 +488,6 @@ archive_assign (tm_buffer buf, path pp, tree u) {
   path p= copy (pp);
   ASSERT (buf->rp <= p, "invalid modification");
   archive (buf, "assign", p, subtree (the_et, p));
-
-#ifdef EXPERIMENTAL
-  global_notify_assign (p, u);
-#endif
 }
 
 void
@@ -496,10 +495,6 @@ archive_insert (tm_buffer buf, path pp, tree u) {
   path p= copy (pp);
   ASSERT (buf->rp <= p, "invalid modification");
   archive (buf, "remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
-
-#ifdef EXPERIMENTAL
-  global_notify_insert (p, u);
-#endif
 }
 
 void
@@ -511,10 +506,6 @@ archive_remove (tm_buffer buf, path pp, int nr) {
   int l= last_item (p);
   if (is_atomic (st)) archive (buf, "insert", p, st->label (l, l+ nr));
   else archive (buf, "insert", p, st (l, l+ nr));
-
-#ifdef EXPERIMENTAL
-  global_notify_remove (p, nr);
-#endif
 }
 
 void
@@ -523,10 +514,6 @@ archive_split (tm_buffer buf, path pp) {
   ASSERT (buf->rp <= p, "invalid modification");
   if (N(p)<2) FAILED ("path too short in split");
   archive (buf, "join", path_up (p), "");
-
-#ifdef EXPERIMENTAL
-  global_notify_split (p);
-#endif
 }
 
 void
@@ -541,10 +528,6 @@ archive_join (tm_buffer buf, path pp) {
   bool string_mode= is_atomic (st[l1]) && is_atomic (st[l1+1]);
   int len= string_mode? N (st[l1]->label): arity (st[l1]);
   archive (buf, "split", p * len, "");
-
-#ifdef EXPERIMENTAL
-  global_notify_join (p);
-#endif
 }
 
 void
@@ -553,10 +536,6 @@ archive_assign_node (tm_buffer buf, path pp, tree_label op) {
   ASSERT (buf->rp <= p, "invalid modification");
   tree& st= subtree (the_et, p);
   archive (buf, "assign_node", p, get_label (st));
-
-#ifdef EXPERIMENTAL
-  global_notify_assign_node (p, op);
-#endif
 }
 
 void
@@ -564,10 +543,6 @@ archive_insert_node (tm_buffer buf, path pp, tree t) {
   path p= copy (pp);
   ASSERT (buf->rp <= p, "invalid modification");
   archive (buf, "remove_node", p, "");
-
-#ifdef EXPERIMENTAL
-  global_notify_insert_node (p, t);
-#endif
 }
 
 void
@@ -577,10 +552,6 @@ archive_remove_node (tm_buffer buf, path pp) {
   int pos= last_item (pp);
   tree& st= subtree (the_et, path_up (p));
   archive (buf, "insert_node", p, st (0, pos) * st (pos+1, N(st)));
-
-#ifdef EXPERIMENTAL
-  global_notify_remove_node (p);
-#endif
 }
 
 void

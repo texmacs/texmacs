@@ -44,11 +44,11 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
   while (!is_accessible_cursor (et, p) && !in_source ()) {
     path pp;
     ASSERT (rp <= p, "path outside document");
-    p= rp * closest_inside (subtree (et, rp), p - rp);
+    p= rp * closest_inside (subtree (et, rp), p / rp);
     if (forwards ^ inverse)
-      pp= rp * next_valid (subtree (et, rp), p - rp);
+      pp= rp * next_valid (subtree (et, rp), p / rp);
     else
-      pp= rp * previous_valid (subtree (et, rp), p - rp);
+      pp= rp * previous_valid (subtree (et, rp), p / rp);
     if (pp == p) {
       if (inverse) break;
       else { p= start_p; inverse= true; }

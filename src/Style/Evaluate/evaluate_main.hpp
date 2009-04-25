@@ -20,6 +20,7 @@ tree evaluate (tree t);
 tree evaluate_error (string message);
 tree evaluate_error (string message, tree a1);
 tree evaluate_error (string message, array<tree> args);
+string evaluate_string (tree t);
 memorizer evaluate (environment env, tree t);
 tree expand (tree t, bool flag);
 
@@ -124,6 +125,8 @@ tree evaluate_ex_length ();
 tree evaluate_fn_length ();
 tree evaluate_fns_length ();
 tree evaluate_bls_length ();
+tree evaluate_fnbot_length ();
+tree evaluate_fntop_length ();
 tree evaluate_spc_length ();
 tree evaluate_xspc_length ();
 tree evaluate_par_length ();
@@ -144,9 +147,21 @@ tree evaluate_hard_id (tree t);
 tree evaluate_script (tree t);
 tree evaluate_set_binding (tree t);
 tree evaluate_get_binding (tree t);
+tree evaluate_pattern (tree t);
 tree evaluate_point (tree t);
 //tree evaluate_box_info (tree t);
 //tree evaluate_frame_direct (tree t);
 //tree evaluate_frame_inverse (tree t);
+
+/* Other routines */
+class url;
+tree load_inclusion (url u);
+bool is_percentage (tree t, string s);
+bool is_percentage (tree t);
+double as_percentage (tree t);
+bool is_magnification (string s);
+double get_magnification (string s);
+void transfer_ip (tree src, tree dest);
+void decorate_ip (tree src, tree dest);
 
 #endif // defined EVLUATE_MAIN_H

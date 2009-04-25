@@ -192,65 +192,56 @@ clean_remove_node (tree t, path p) {
 }
 
 /******************************************************************************
-* Functional tree modification routines
+* Attaching ips
 ******************************************************************************/
 
-static tree clean_et;
-
 void
-global_notify_assign (path p, tree u) {
-  //cout << "Assign " << p << ", " << u << "\n";
-  clean_et= clean_assign (clean_et, p, u);
+copy_ip (tree src, tree dest) {
+  path src_ip= obtain_ip (src);
+  path dest_ip= obtain_ip (dest);
+  if (dest_ip != src_ip) {
+    dest->obs= list_observer (ip_observer (src_ip), dest->obs);
+    if (is_compound (src)) {
+      int i, n= N(src);
+      for (i=0; i<n; i++)
+	copy_ip (src[i], dest[i]);
+    }
+  }
 }
 
-void
-global_notify_insert (path p, tree u) {
-  //cout << "Insert " << p << ", " << u << "\n";
-  clean_et= clean_insert (clean_et, p, u);
-}
+/******************************************************************************
+* Clean copy callbacks
+******************************************************************************/
 
 void
-global_notify_remove (path p, int nr) {
-  //cout << "Remove " << p << ", " << nr << "\n";
-  clean_et= clean_remove (clean_et, p, nr);
-}
-
-void
-global_notify_split (path p) {
-  //cout << "Split " << p << "\n";
-  clean_et= clean_split (clean_et, p);
-}
-
-void
-global_notify_join (path p) {
-  //cout << "Join " << p << "\n";
-  clean_et= clean_join (clean_et, p);
-}
-
-void
-global_notify_insert_node (path p, tree u) {
-  //cout << "Insert node " << p << ", " << u << "\n";
-  clean_et= clean_insert_node (clean_et, p, u);
-}
-
-void
-global_notify_remove_node (path p) {
-  //cout << "Remove node " << p << "\n";
-  clean_et= clean_remove_node (clean_et, p);
-}
-
-void
-global_notify_assign_node (path p, tree_label op) {
-  //cout << "Assign node " << p << ", " << op << "\n";
-  clean_et= clean_assign_node (clean_et, p, op);
-}
-
-tree
-global_get_subtree (path p) {
-  return subtree (clean_et, p);
-}
-
-void
-global_trace_subtree (path p) {
-  print_tree (subtree (clean_et, p));
+copy_announce (tree src, tree& cct, modification mod) {
+  //cout << "Announce copy " << mod << "\n";
+  switch (mod->k) {
+  case MOD_ASSIGN:
+    cct= clean_assign (cct, mod->p, mod->t);
+    break;
+  case MOD_INSERT:
+    cct= clean_insert (cct, mod->p, mod->t);
+    break;
+  case MOD_REMOVE:
+    cct= clean_remove (cct, path_up (mod->p), last_item (mod->p));
+    break;
+  case MOD_SPLIT:
+    cct= clean_split (cct, mod->p);
+    break;
+  case MOD_JOIN:
+    cct= clean_join (cct, mod->p);
+    break;
+  case MOD_ASSIGN_NODE:
+    cct= clean_assign_node (cct, mod->p, L(mod));
+    break;
+  case MOD_INSERT_NODE:
+    cct= clean_insert_node (cct, mod->p, mod->t);
+    break;
+  case MOD_REMOVE_NODE:
+    cct= clean_remove_node (cct, mod->p);
+    break;
+  default: FAILED ("invalid modification type");
+  }
+  copy_ip (src, cct);
 }

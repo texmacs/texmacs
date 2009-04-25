@@ -20,6 +20,9 @@
 #include "drd_std.hpp"
 #include "message.hpp"
 #include <setjmp.h>
+#ifdef EXPERIMENTAL
+#include "../../Style/Memorizer/clean_copy.hpp"
+#endif
 
 /******************************************************************************
 * Constructors and destructor
@@ -37,6 +40,10 @@ editor_rep::editor_rep (server_rep* sv2, tm_buffer buf2):
 edit_main_rep::edit_main_rep (server_rep* sv, tm_buffer buf):
   editor_rep (sv, buf), props (UNKNOWN), ed_obs (edit_observer (this))
 {
+#ifdef EXPERIMENTAL
+  cct= copy (subtree (et, rp));
+  copy_ip (subtree (et, rp), cct);
+#endif
   attach_observer (subtree (et, rp), ed_obs);
   notify_change (THE_TREE);
   tp= correct_cursor (et, rp * 0);

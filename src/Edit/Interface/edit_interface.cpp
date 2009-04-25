@@ -19,7 +19,6 @@
 #include "drd_mode.hpp"
 #include "message.hpp"
 #ifdef EXPERIMENTAL
-#include "../../Style/Memorizer/clean_copy.hpp"
 #include "../../Style/Evaluate/evaluate_main.hpp"
 #endif
 
@@ -421,13 +420,9 @@ edit_interface_rep::apply_changes () {
   if (env_change & THE_ENVIRONMENT)
     environment_update ();
   if (env_change & THE_TREE) {
-    //global_trace_subtree (rp);
-    tree raw= global_get_subtree (rp);
     cout << HRULE;
-    mem= evaluate (ste, raw);
+    mem= evaluate (ste, cct);
     tree rew= mem->get_tree ();
-    //cout << HRULE;
-    //print_tree (mem);
     cout << HRULE;
     cout << tree_to_texmacs (rew) << LF;
     //print_tree (rew);

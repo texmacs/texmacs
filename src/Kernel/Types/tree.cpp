@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "tree.hpp"
+#include "generic_tree.hpp"
 #include "drd_std.hpp"
 #include "hashset.hpp"
 
@@ -21,30 +21,35 @@ tree type_helper<tree>::init (UNINIT);
 
 void
 destroy_tree_rep (tree_rep* rep) {
-  if (rep->op == STRING) tm_delete (static_cast<atomic_rep*> (rep));
-  else tm_delete (static_cast<compound_rep*>(rep));
+  if (((int) rep->op) == 0) tm_delete (static_cast<atomic_rep*> (rep));
+  else if (((int) rep->op) > 0) tm_delete (static_cast<compound_rep*>(rep));
+  else tm_delete (static_cast<generic_rep*>(rep));
 }
 
 tree::tree (tree_label l, tree t1):
-  rep (tm_new<compound_rep> (l, array<tree> (1))) {
+  rep (tm_new<compound_rep> (l, array<tree> (1)))
+{
   (static_cast<compound_rep*> (rep))->a[0]=t1;
 }
 
 tree::tree (tree_label l, tree t1, tree t2):
-  rep (tm_new<compound_rep> (l, array<tree> (2))) {
+  rep (tm_new<compound_rep> (l, array<tree> (2)))
+{
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
 }
 
 tree::tree (tree_label l, tree t1, tree t2, tree t3):
-  rep (tm_new<compound_rep> (l, array<tree> (3))) {
+  rep (tm_new<compound_rep> (l, array<tree> (3)))
+{
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
   (static_cast<compound_rep*> (rep))->a[2]=t3;
 }
 
 tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4):
-  rep (tm_new<compound_rep> (l, array<tree> (4))) {
+  rep (tm_new<compound_rep> (l, array<tree> (4)))
+{
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
   (static_cast<compound_rep*> (rep))->a[2]=t3;
@@ -52,7 +57,8 @@ tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4):
 }
 
 tree::tree (tree_label l, tree t1, tree t2, tree t3, tree t4, tree t5):
-  rep (tm_new<compound_rep> (l, array<tree> (5))) {
+  rep (tm_new<compound_rep> (l, array<tree> (5)))
+{
   (static_cast<compound_rep*> (rep))->a[0]=t1;
   (static_cast<compound_rep*> (rep))->a[1]=t2;
   (static_cast<compound_rep*> (rep))->a[2]=t3;
@@ -145,7 +151,7 @@ operator << (tree& t, array<tree> a) {
 ostream&
 operator << (ostream& out, tree t) {
   if (is_atomic (t)) return out << t->label;
-  else {
+  else if (is_compound (t)) {
     int i, n= N(t);
     out << as_string (L(t));
     if (n==0) return out << "()";
@@ -155,6 +161,7 @@ operator << (ostream& out, tree t) {
     out << t[i] << ")";
     return out;
   }
+  else out << as_blackbox (t);
 }
 
 void

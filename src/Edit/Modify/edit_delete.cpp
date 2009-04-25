@@ -25,7 +25,7 @@ edit_text_rep::get_deletion_point (
   p= tp;
   if (forward) {
     //cout << HRULE;
-    if ((rp < p) && (N(p-rp) >= 2) &&
+    if ((rp < p) && (N (p / rp) >= 2) &&
 	is_concat (subtree (et, path_up (p, 2))) &&
 	(last_item (p) == right_index (subtree (et, path_up (p)))) &&
 	(last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))

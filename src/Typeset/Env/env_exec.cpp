@@ -931,19 +931,6 @@ edit_env_rep::exec_plus_minus (tree t) {
   else return tree (ERROR, "bad plus/minus");
 }
 
-bool
-is_percentage (tree t, string s= "%") {
-  return
-    is_atomic (t) &&
-    ends (t->label, s) &&
-    is_double (t->label (0, N (t->label) - 1));
-}
-
-double
-as_percentage (tree t) {
-  return as_double (t->label (0, N (t->label) - 1)) / 100.0;
-}
-
 tree
 edit_env_rep::exec_times_over (tree t) {
   int i, n= N(t);
@@ -1469,9 +1456,6 @@ edit_env_rep::exec_get_binding (tree t) {
     system_warning ("Undefined reference", key);
   return value;
 }
-
-bool is_magnification (string s);
-double get_magnification (string s);
 
 tree
 edit_env_rep::exec_pattern (tree t) {

@@ -15,21 +15,25 @@
 #include "analyze.hpp"
 #include "url.hpp"
 #include "../../Typeset/Graphics/frame.hpp"
+#include "image_files.hpp"
+#include "renderer.hpp"
 
 static hashmap<string,tree> local_ref ("?");
 static hashmap<string,tree> global_ref ("?");
 
 tree
 evaluate_formatting (tree t, string v) {
-  int n= N(t);
+  int i, n= N(t);
+  tree r (t, n-1);
+  for (i=0; i<n-1; i++) r[i]= evaluate (t[i]);
   tree oldv= std_env [v];
-  tree newv= oldv * t (0, n-1);
+  tree newv= oldv * r;
   assoc_environment local (1);
   local->raw_write (0, v, newv);
   begin_with (std_env, local);
-  tree r= evaluate (t[n-1]);
+  tree b= evaluate (t[n-1]);
   end_with (std_env);
-  return t (0, n-1) * tree (TFORMAT, r);
+  return r * tree (TFORMAT, b);
 }
 
 tree
@@ -47,9 +51,16 @@ evaluate_table (tree t) {
 
 tree
 evaluate_hard_id (tree t) {
-  t= expand (t, true);
-  pointer ptr= (pointer) t.operator -> ();
-  return "%" * as_hexadecimal (ptr);
+  if (N(t) == 0) {
+    pointer ptr= (pointer) std_env.operator -> ();
+    return "%" * as_hexadecimal (ptr);
+  }
+  else {
+    t= expand (t[0], true);
+    pointer ptr1= (pointer) std_env.operator -> ();
+    pointer ptr2= (pointer) t.operator -> ();
+    return "%" * as_hexadecimal (ptr1) * "-" * as_hexadecimal (ptr2);
+  }
 }
 
 tree
@@ -101,6 +112,7 @@ evaluate_set_binding (tree t) {
 	extra << "#" << part (1, N(part));
       local_ref (key) << extra;
     }
+    /* FIXME:
     if (complete && is_tuple (old_value) && N(old_value) >= 1) {
       string old_s= var_as_string (old_value[0]);
       string new_s= var_as_string (value);
@@ -109,6 +121,7 @@ evaluate_set_binding (tree t) {
 	else system_warning ("Redefined " * key * " as", new_s);
       }
     }
+    */
   }
 
   return ""; // FIXME: do stuff from concater_rep::typeset_set_binding instead
@@ -117,15 +130,66 @@ evaluate_set_binding (tree t) {
 tree
 evaluate_get_binding (tree t) {
   if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad get binding");
-  string key= as_string (evaluate (t[0]));
+  string key= evaluate_string (t[0]);
   tree value= local_ref->contains (key)? local_ref [key]: global_ref [key];
-  int type= (N(t) == 1? 0: as_int (evaluate (t[1])));
+  int type= (N(t) == 1? 0: as_int (evaluate_string (t[1])));
   if (type != 0 && type != 1) type= 0;
   if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
   else if (type == 1) value= tree (UNINIT);
+  /* FIXME:
   if (complete && value == tree (UNINIT))
     system_warning ("Undefined reference", key);
+  */
   return value;
+}
+
+tree
+evaluate_pattern (tree t) {
+  url base_file_name (as_string (std_env ["base-file-name"]));
+  url im= evaluate_string (t[0]);
+  url image= resolve (relative (base_file_name, im));
+  if (is_none (image))
+    image= resolve (url ("$TEXMACS_PATTERN_PATH") * im);
+  if (is_none (image)) return "white";
+  int imw_pt, imh_pt;
+  int dpi= as_int (as_string (std_env ["dpi"]));
+  image_size (image, imw_pt, imh_pt);
+  double pt= ((double) dpi*PIXEL) / 72.0;
+  SI imw= (SI) (((double) imw_pt) * pt);
+  SI imh= (SI) (((double) imh_pt) * pt);
+  if (imw <= 0 || imh <= 0) return "white";
+  string w= evaluate_string (t[1]);
+  string h= evaluate_string (t[2]);
+  if (is_length (w))
+    w= as_string (as_length (w));
+  else if (is_magnification (w))
+    w= as_string ((SI) (get_magnification (w) * ((double) imw)));
+  if (is_length (h))
+    h= as_string (as_length (h));
+  else if (is_magnification (h))
+    h= as_string ((SI) (get_magnification (h) * ((double) imh)));
+  if (w == "" && h != "") {
+    if (is_int (h)) w= as_string ((SI) ((as_double (h) * imw) / imh));
+    else if (is_percentage (h))
+      w= as_string (100.0 * (as_percentage (h) * imw) / imh) * "@";
+    else return "white";
+  }
+  else if (h == "" && w != "") {
+    if (is_int (w)) h= as_string ((SI) ((as_double (w) * imh) / imw));
+    else if (is_percentage (w))
+      h= as_string (100.0 * (as_percentage (w) * imh) / imw) * "@";
+    else return "white";
+  }
+  else if (w == "" && h == "") {
+    w= as_string (imw);
+    h= as_string (imh);
+  }
+  else if ((!is_int (w) && !is_percentage (w)) ||
+	   (!is_int (h) && !is_percentage (h)))
+    return "white";
+  tree r (PATTERN, as_string (image), w, h);
+  if (N(t) == 4) r << evaluate (t[3]);
+  return r;
 }
 
 tree

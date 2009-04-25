@@ -14,10 +14,6 @@
 #include "server.hpp"
 #include "timer.hpp"
 #include "data_cache.hpp"
-#ifdef EXPERIMENTAL
-#include "../../Style/Memorizer/clean_copy.hpp"
-#include "../../Style/Environment/environment.hpp"
-#endif
 #ifdef AQUATEXMACS
 void mac_fix_paths ();
 #endif
@@ -283,9 +279,6 @@ main (int argc, char** argv) {
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
-#ifdef EXPERIMENTAL
-  global_notify_assign (path (), tuple ());
-#endif
   immediate_options (argc, argv);
   cache_initialize ();
   bench_start ("initialize texmacs");

@@ -88,7 +88,7 @@ rewrite_impl (tree t) {
       object expr= null_object ();
       for (i=n-1; i>0; i--)
 	expr= cons (object (r[i]), expr);
-      string fun= as_string (evaluate (t[0]));
+      string fun= evaluate_string (t[0]);
       expr= cons (string_to_object (fun), expr);
       (void) eval ("(lazy-markup-modules-force)");
       bool secure= as_bool (std_env ["secure"]);
@@ -132,6 +132,12 @@ rewrite_impl (tree t) {
       return r;
     }
 #endif // CLASSICAL_MACRO_EXPANSION
+  case INCLUDE:
+    {
+      url base_file_name (as_string (std_env ["base-file-name"]));
+      url file_name= url_system (evaluate_string (t[0]));
+      return load_inclusion (relative (base_file_name, file_name));
+    }
   case REWRITE_INACTIVE:
     {
 #ifdef CLASSICAL_MACRO_EXPANSION      
@@ -185,6 +191,7 @@ rewrite (tree t) {
   }
   memorize_start ();
   tree r= rewrite_impl (t);
+  decorate_ip (t, r);
   mem->set_tree (r);
   mem->set_environment (std_env);
   memorize_end ();

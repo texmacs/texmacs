@@ -16,9 +16,6 @@
 #include "socket_server.hpp"
 #include "message.hpp"
 #include "dictionary.hpp"
-#ifdef EXPERIMENTAL
-#include "../../Style/Memorizer/clean_copy.hpp"
-#endif
 
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
@@ -778,9 +775,6 @@ new_document () {
       return path (i); // obtain_ip (the_et[i]);
     }
   insert (the_et, n, tuple (tree (DOCUMENT, "")));
-#ifdef EXPERIMENTAL
-  global_notify_insert (path (n), tuple (tree (DOCUMENT, "")));
-#endif
   return path (n); // obtain_ip (the_et[n]);
 }
 
@@ -788,18 +782,12 @@ void
 delete_document (path rp) {
   assign (subtree (the_et, rp), UNINIT);
   clean_observers (subtree (the_et, rp));
-#ifdef EXPERIMENTAL
-  global_notify_assign (rp, UNINIT);
-#endif
 }
 
 void
 set_document (path rp, tree t) {
   //assign (subtree (the_et, rp), t);
   assign (subtree (the_et, rp), copy (t));
-#ifdef EXPERIMENTAL
-  global_notify_assign (rp, copy (t));
-#endif
 }
 
 /******************************************************************************
