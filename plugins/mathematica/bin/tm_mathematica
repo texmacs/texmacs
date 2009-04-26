@@ -8,7 +8,7 @@ error() {
 
 if [ ! -x "$TEXMACS_HOME_PATH/bin/tm_mathematica.bin" ]
 then
-    MATH0=`type -p math`
+    MATH0=`which math`
     if [ $? -ne 0 ]
     then error "Mathematica seems not to be installed"
     fi
