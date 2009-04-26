@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : texgraph-menus.scm
 ;; DESCRIPTION : TeXgraph menus
-;; BY	       : Emmanuel Corcelle
+;; COPYRIGHT   : Emmanuel Corcelle (corcelle at gmail dot com)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; BASED ON    : giac-menus.scm
@@ -20,6 +20,8 @@
 
 (lazy-menu (2d-menu) 2d-menu)
 (lazy-menu (3d-menu) 3d-menu)
+(lazy-menu (texgraph-figures-menu) texgraph-figures-menu)
+(lazy-menu (texgraph-scripts-menu) texgraph-scripts-plot-menu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert TeXgraph primitive
@@ -42,28 +44,48 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texgraph-functions-menu
-  (->"Aide"
-	;; FIXME : Problem when TeXgraph isn't installed by user in the default place
-	;; the help files should be looked for in a generic $TEXGRAPH_PATH/doc
-	("Aide (TeXgraph.pdf)" (shell "texdoc /usr/local/share/TeXgraph/doc/TeXgraph.pdf"))
-	;("Aide (html)" (shell "texmacs /usr/local/share/TeXgraph/doc/html/aide.html &"))
-  )
+  (if (not-in-session?)
+      (link scripts-eval-menu)
+      (->"Traceur de courbes et surfaces"
+		(link texgraph-scripts-plot-menu))
+      ---)
 
-  (->"Fenetre graphique et marges"
+;  (->"Aide"
+;	;; FIXME : Problem when TeXgraph isn't installed by user in the default place
+;	;; the help files should be looked for in a generic $TEXGRAPH_PATH/doc
+;	("Aide (TeXgraph.pdf)" (shell "texdoc /usr/local/share/TeXgraph/doc/TeXgraph.pdf"))
+;	;("Aide (html)" (shell "texmacs /usr/local/share/TeXgraph/doc/html/aide.html &"))
+;  )
+
+  (->"Fenetre graphique, marges et export"
 	("Marges" 
 	  (texgraph-insert "Marges(0.25,0.25,0.25,0.25), "))
-	("Fenetre graphique" 
+	("Fentre graphique" 
 	  (texgraph-insert "Fenetre(-5+5*i,5-5*i,1+i), "))
 	("Taille de la figure" 
-	  (texgraph-insert "size({largeur=}8+i*{hauteur=}8,{ratio x/y=}1), "))
+	  (texgraph-insert "size(<{largeur=}>8+i*<{hauteur=}>8,<{ratio x/y=}>1), "))
 	---
 	("Centrer la vue en un point" 
 	  (texgraph-insert "centerView(A), "))
 	("Restreindre a une courbe fermee (clipper)" 
 	  (texgraph-insert "Clip([A,B,C,..]), "))
 	("Bordure" 
-	  (texgraph-insert "Border(1{ou0}), "))
+	  (texgraph-insert "Border(1<{ou0}>), "))
+	---
+	(group "Export")
+	(group "Seuls les 2 premiers cas donnent un affichage ecran correct")
+	("epsc - Export avec compilation des formules LaTeX - Par defaut" 
+	  (texgraph-insert "{export=epsc} "))
+	("eps - Export sans compilation des formules LaTeX" 
+	  (texgraph-insert "{export=eps} "))
+	("pdfc puis eps - Export de la transparence avec compilation des formules LaTeX" 
+	  (texgraph-insert "{export=pdfc} "))
+	("pdf puis eps - Export de la transparence sans compilation des formules LaTeX" 
+	  (texgraph-insert "{export=pdf} "))
   )
+
+
+  (link texgraph-figures-menu)
 
   ---
   (group "Styles et couleurs")
@@ -90,7 +112,7 @@
 	(->"Fleches"
 		(" ------------------" (texgraph-insert "Arrows:=0, "))
 		(" ------------------>" (texgraph-insert "Arrows:=1, "))
-		("<---------------->" (texgraph-insert "Arrows:=2, "))
+		("<{---------------->" (texgraph-insert "Arrows:=2, "))
 	)
 	---
 	(->"Color"
@@ -106,7 +128,7 @@
 		("Brun" (texgraph-insert "Color:=brown, "))
 		("Pink" (texgraph-insert "Color:=pink, "))
 		---
-		("Eclaircir une couleur" (texgraph-insert "Color:=Light(couleur,{facteur=}0.5), "))
+		("Eclaircir une couleur" (texgraph-insert "Color:=Light(couleur,<{facteur=}>0.5), "))
 		("Autre" (texgraph-insert "Color:=, "))
 	)
   )
@@ -180,7 +202,7 @@
 		("Brun" (texgraph-insert "HideColor:=brown, "))
 		("Pink" (texgraph-insert "HideColor:=pink, "))
 		---
-		("Eclaircir une couleur" (texgraph-insert "HideColor:=Light(couleur,{facteur=}0.5), "))
+		("Eclaircir une couleur" (texgraph-insert "HideColor:=Light(couleur,<{facteur=}>0.5), "))
 		("Autre" (texgraph-insert "HideColor:=, "))
 	)
   )
@@ -208,7 +230,7 @@
 		("Texte aligne en bas" (texgraph-insert "LabelStyle:=bottom, "))
 	)
 	---
-	("Angle des etiquettes" (texgraph-insert "LabelAngle:=45{en_degre}, "))
+	("Angle des etiquettes" (texgraph-insert "LabelAngle:=45<{en_degre}>, "))
   )
   ---
   (group "Geometrie dans le plan")

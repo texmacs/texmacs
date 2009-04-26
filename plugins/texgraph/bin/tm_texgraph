@@ -3,7 +3,7 @@
 # MODULE     : tm_texgraph
 # VERSION    : 0.04
 # DESCRIPTION: A simple TeXmacs interface for TeXgraph
-# BY	     : Emmanuel Corcelle (corcelle at gmail dot com)
+# COPYRIGHT  : Emmanuel Corcelle (corcelle at gmail dot com)
 #------------------------------------------------------------------------------
 # Based on   : A simple PSTricks interface for TeXmacs 
 # COPYRIGHT  : (C) 2004 Nicolas Ratier (nicolas DOT ratier AT lpmo DOT edu))
@@ -51,6 +51,7 @@ fi
 
 # defining primary temp file name
 TEMP_FILE=texgraphtmp
+TEMP_MACRO=macrotmp
 	
 # startup banner
 echo -n $DATA_BEGIN
@@ -71,43 +72,75 @@ while [ 1 ]; do
 	# read a line from stdin
 	read input
 
-	# begin creation of TeX file
-	echo -E "\documentclass{article}" >  $TEMP_FILE.tex
-	echo -E "\usepackage{texgraph}"    >> $TEMP_FILE.tex
-	echo -E "\pagestyle{empty}"       >> $TEMP_FILE.tex
-	echo -E "\begin{document}"        >> $TEMP_FILE.tex
-        echo -E "\begin{texgraph}[export=epsc]" >> $TEMP_FILE.tex
-        echo -E "HideStyle:=dashed,"      >> $TEMP_FILE.tex
-        echo -E "Marges(0.25,0.25,0.25,0.25),"      >> $TEMP_FILE.tex
-	# other commands to initialize the graph can be included here
+	# determine which macro to preload
+	echo -E $input > $TEMP_MACRO
+	MACROS=nomacro
+	MACROS=`grep {preload=.*} $TEMP_MACRO | sed 's/{/\n/g' | sed 's/}/\n/g' | grep preload=.* | sed 's/preload=//g' | sed 's/"/\"/g'`  2> tmp_log
 
-	# copy TeXgraph in latex file
-	echo -E $input | tr  "~" "\n" | cat >> $TEMP_FILE.tex
+	# begin creation of teg file
+	echo -E "100#-5#5#-5#5#1#1##"  >> $TEMP_FILE.teg
+	echo -E "101#0.25#0.25#0.5#0.25#0#1#2##"  >> $TEMP_FILE.teg
+	echo -E "18##[theta:=0.5236, phi:=1.0472,OriginalCoord(1),IdMatrix(),IdMatrix3D(),ModelView(ortho)]##"  >> $TEMP_FILE.teg
+	if [ "$MACROS" != "nomacro" ] 
+	then 	echo -E "18##InputMac("$MACROS")##" > $TEMP_FILE.teg
+	fi
+	echo -E ""  >> $TEMP_FILE.teg
+	echo -E "14#TeXmacs#[OriginalCoord(0), "        >> $TEMP_FILE.teg
 
-	# finish TeX file
-	echo -E "\end{texgraph}" >> $TEMP_FILE.tex
-        echo -E "\end{document}" >> $TEMP_FILE.tex
+	# copy TeXgraph in teg file
+	echo -E $input | tr  "~" "\n" | cat >> $TEMP_FILE.teg
 
-	# compile with latex, transform to .eps and cat .eps to TeXmacs.
-	latex --shell-escape --interaction=nonstopmode --draftmode $TEMP_FILE.tex 1> /dev/null 2> tmp_log
- 	if [ -s texgraphtmp1.eps ]
+	# finish .teg file
+	echo -E "]#-1##" >> $TEMP_FILE.teg
+
+	# determine the export type chosen by the user (eps, epsc, jpg, png...)
+	EXP_CHOICE=epsc
+	EXP_CHOICE=`grep {export=.*} $TEMP_FILE.teg | sed 's/{/\n/g' | sed 's/}/\n/g' | grep export=.* | sed 's/export=//g'`
+
+	# compile with CmdTeXgraph, transform to .EXPORT_CHOICE and cat file to TeXmacs.
+	EXPT=epsc
+	if [ "$EXP_CHOICE" = "epsc" ] ; then EXPT='epsc'
+	elif [ "$EXP_CHOICE" = "eps" ] ; then EXPT='eps'
+	elif [ "$EXP_CHOICE" = "pdfc" ] ; then EXPT='pdfc'
+	elif [ "$EXP_CHOICE" = "pdf" ] ; then EXPT='pdf'
+	#elif [ "$EXP_CHOICE" = "jpg" ] ; then EXPT='pdfc'
+	#elif [ "$EXP_CHOICE" = "png" ] ; then EXPT='pdfc'
+	fi
+
+	if [ "$OSTYPE" = "cygwin" ] ; then EXT='.bat'; else EXT=''; fi
+	CmdTeXgraph$EXT $EXPT $TEMP_FILE 2> tmp_log
+
+ 	if [ -s $TEMP_FILE.pdf ] 
+	then
+		#convert -density 600 -depth 8 -quality 75 $TEMP_FILE.pdf $TEMP_FILE.jpg
+		pdftops -eps $TEMP_FILE.pdf $TEMP_FILE.eps
+		echo -n $DATA_BEGIN                             
+ 		echo -n verbatim:
+		echo -n $DATA_BEGIN
+		echo -n ps:
+		cat $TEMP_FILE.eps
+	     	#jpeg2ps -r 0 $TEMP_FILE.jpg
+		echo -n $DATA_END
+		echo -ne "\n"
+		rm $TEMP_FILE.* $EXPT $EXP_CHOICE 2> /dev/null
+ 	elif [ -s $TEMP_FILE.eps ]
 	then
 		echo -n $DATA_BEGIN                             
  		echo -n verbatim:
 		echo -n $DATA_BEGIN
 		echo -n ps:
-		cat texgraphtmp1.eps
+		cat $TEMP_FILE.eps
 		echo -n $DATA_END
 		echo -ne "\n"
-		rm $TEMP_FILE.* texgraphtmp1.* tmp*
+		rm $TEMP_FILE.* $EXPT $EXP_CHOICE 2> /dev/null
 	else
 		echo -n $DATA_BEGIN
 		echo -n verbatim:
-		cat texgraphtmp1.log
+		cat $TEMP_FILE
 		echo -n $DATA_BEGIN
-		echo -n ps:
+		cat $TEMP_FILE.log
 		echo -n $DATA_END
 		echo -ne "\n"
-		rm $TEMP_FILE.*  texgraphtmp1.* tmp*	
+		rm $TEMP_FILE.* $EXPT $EXP_CHOICE 2> /dev/null
 	fi
 done

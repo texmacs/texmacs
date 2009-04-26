@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : 3d-menu.scm
 ;; DESCRIPTION : TeXgraph 3D Geometry menus
-;; BY	       : Emmanuel Corcelle
+;; COPYRIGHT   : Emmanuel Corcelle (corcelle at gmail dot com)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -39,7 +39,7 @@
   (group "Objets dessines                         ")
   (->"Axes3D et orientation" 
 	("Axes3D" 
-	  (texgraph-insert "Arrows:=1, Axes3D(0,0,0,{pas_x=}0,{pas_y=}0,{pas_z=}0), Arrows:=0, "))
+	  (texgraph-insert "Arrows:=1, Axes3D(0,0,0,<{pas_x=}>0,<{pas_y=}>0,<{pas_z=}>0), Arrows:=0, "))
 	("Orientation du repere (variables theta et phi)" 
 	  (texgraph-insert "theta:=pi/6, phi:=pi/3, "))
 	("Fenetre graphique 3D" 
@@ -48,17 +48,17 @@
 
   (->"Points, lignes et surfaces"
 	("Point et etiquette associee" 
-	  (texgraph-insert "LabelDot(Proj3D(A)),\"$A$\",\"NO\",1,{dist=}0.8), "))
+	  (texgraph-insert "LabelDot(Proj3D(A)),\"$A$\",\"NO\",1,<{dist=}>0.8), "))
 	("Droite" 
 	  (texgraph-insert "DrawDroite([A,v]), "))
 	("Segment" 
 	  (texgraph-insert "DrawDroite([A,v],long_gauche,long_droite), "))
 	("Ligne polygonale" 
-	  (texgraph-insert "Ligne3D([A,B,..],{fermee=}1), "))
+	  (texgraph-insert "Ligne3D([A,B,..],<{fermee=}>1), "))
 	("Arc de cercle" 
-	  (texgraph-insert "Arc3D(B,A,C,rayon,{sens=}+1 {,vect_normal}), "))
+	  (texgraph-insert "Arc3D(B,A,C,rayon,<{sens=}>+1 <{,vect_normal}>), "))
 	("Cercle" 
-	  (texgraph-insert "Cercle3D(A,{rayon=}5,{vect_normal=}vecK), "))
+	  (texgraph-insert "Cercle3D(A,<{rayon=}>5,<{vect_normal=}>vecK), "))
 	---
 	("Courbe gauche" 
 	  (texgraph-insert "Courbe3D(x(t),y(t),z(t)), "))
@@ -73,17 +73,17 @@
 	("Parallelepipede" 
 	  (texgraph-insert "pa:=Parallelep(A,vecI,vecJ,vecK), DrawPoly(pa,4), "))
 	("Prisme" 
-	  (texgraph-insert "pr:=Prisme([A,B,C],{transl=}v), DrawPoly(pr,4), "))
+	  (texgraph-insert "pr:=Prisme([A,B,C],<{transl=}>v), DrawPoly(pr,4), "))
 	("Pyramide" 
 	  (texgraph-insert "py:=Pyramide([A,B,C],S), DrawPoly(py,4), "))
 	("Tetraedre" 
 	  (texgraph-insert "te:=Tetra(S,vect1,vect2,vect3), DrawPoly(te,4), "))
 	("Cone" 
-	  (texgraph-insert "Dcone(S,vect_axe,{rayon=}3,{mode=0a}4), "))
+	  (texgraph-insert "Dcone(S,vect_axe,<{rayon=}>3,<{mode=0a}>4), "))
 	("Cylindre" 
-	  (texgraph-insert "Dcylindre(A,vect_axe,{rayon=}3,{mode=0a}4), "))
+	  (texgraph-insert "Dcylindre(A,vect_axe,<{rayon=}>3,<{mode=0a}>4), "))
 	("Sphere" 
-	  (texgraph-insert "Dsphere(O,{rayon=}3,{mode=0a}4), "))
+	  (texgraph-insert "Dsphere(O,<{rayon=}>3,<{mode=0a}>4), "))
   )
 
   (group "Objets non dessines                     ")
@@ -114,24 +114,24 @@
 	("Intersection plan-plan" 
 	  (texgraph-insert "interPP(p1,p2), "))
 	("Restreindre une liste de points a un demi-espace" "Clip3DLine"
-	  (texgraph-insert "Clip3DLine([liste-pts],plan,{fermee=}0), "))
+	  (texgraph-insert "Clip3DLine([liste-pts],plan,<{fermee=}>0), "))
   )
 
   (->"Solides"
 	("Parallelepipede" 
 	  (texgraph-insert "Parallelep(S,vecI,vecJ,vecK), "))
 	("Prisme" 
-	  (texgraph-insert "Prisme([A,B,C],{transl=}v), "))
+	  (texgraph-insert "Prisme([A,B,C],<{transl=}>v), "))
 	("Pyramide" 
 	  (texgraph-insert "Pyramide([A,B,C],S), "))
 	("Tetraedre" 
 	  (texgraph-insert "Tetra(S,vect1,vect2,vect3), "))
 	("Cylindre (polyedre)" 
-	  (texgraph-insert "Cylindre(A,vect_axe,{rayon=}3,{nb_faces=}20), "))
+	  (texgraph-insert "Cylindre(A,vect_axe,<{rayon=}>3,<{nb_faces=}>20), "))
 	("Cone (polyedre)" 
-	  (texgraph-insert "Cone(S,vect_axe,{rayon=}3,{nb_faces=}20), "))
+	  (texgraph-insert "Cone(S,vect_axe,<{rayon=}>3,<{nb_faces=}>20), "))
 	("Sphere (polyedre)" 
-	  (texgraph-insert "Sphere(Origin,{rayon=}3,{nb_fuseaux=}20,{nb_tranches=}20), "))
+	  (texgraph-insert "Sphere(Origin,<{rayon=}>3,<{nb_fuseaux=}>20,<{nb_tranches=}>20), "))
 	---
 	(group "(Inter)sections plan-solide")
 	("Section (plan-polyedre)" 
@@ -161,16 +161,16 @@
 
   (->"Commandes de dessin"
 	("Dessiner un polyedre convexe" "DrawPoly"
-	  (texgraph-insert "DrawPoly(polyedre,{mode=0a}4), "))
+	  (texgraph-insert "DrawPoly(polyedre,<{mode=0a}>4), "))
 	("Dessiner un polyedre non convexe" "DrawPolyNC"
-	  (texgraph-insert "DrawPolyNC(polyedre,{mode=0ou}1), "))
+	  (texgraph-insert "DrawPolyNC(polyedre,<{mode=0ou}>1), "))
 	("Dessiner des aretes" "DrawAretes"
-	  (texgraph-insert "DrawAretes([liste_aretes],{mode=0ou}1), "))
+	  (texgraph-insert "DrawAretes([liste_aretes],<{mode=0ou}>1), "))
 	;("MakePoly" (texgraph-insert ", "))
 	---
 	(group "Dessiner une scene 3D")
 	("Regrouper plusieurs objets 3D ensemble" "Build3D"
-	  (texgraph-insert "Buil3D([1{ou2},white,objet1],[1{ou2},white,objet2],..), "))
+	  (texgraph-insert "Buil3D([1<{ou2}>,white,objet1],[1<{ou2}>,white,objet2],..), "))
 	("Dessiner la scene creee avec Buil3D" "Display3D"
 	  (texgraph-insert "Display3D(), "))
 	("Renvoyer la scene 3D creee avec Build3D" "Get3D" 

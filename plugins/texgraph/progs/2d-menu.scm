@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : 2d-menu.scm
 ;; DESCRIPTION : TeXgraph 2D Geometry menus
-;; BY	       : Emmanuel Corcelle
+;; COPYRIGHT   : Emmanuel Corcelle (corcelle at gmail dot com)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -44,9 +44,9 @@
 	; add more macros for other kind of axes/grids (mm, log...)
 	---
 	("Droite horizontale graduee" 
-	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}2,{pas=}1],xyticks,{subdiv=}2,bottom,i,1,\"$a$\"), Arrows:=0, "))
+	  (texgraph-insert "Arrows:=1, GradDroite([<{origin=}>0,0+i*1],[<{unite=}>2,<{pas=}>1],xyticks,<{subdiv=}>2,bottom,i,1,\"$a$\"), Arrows:=0, "))
 	("Droite verticale graduee" 
-	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}i*2,{pas=}1],xyticks,{subdiv=}2,top,right,1,\"$a$\"), Arrows:=0, "))
+	  (texgraph-insert "Arrows:=1, GradDroite([<{origin=}>0,0+i*1],[<{unite=}>i*2,<{pas=}>1],xyticks,<{subdiv=}>2,top,right,1,\"$a$\"), Arrows:=0, "))
   )
 
   (->"Points et lignes"
@@ -56,7 +56,7 @@
 	("Point(s)" 
 	  (texgraph-insert "Point(A,B,C), "))
 	("Point et etiquette associee" 
-	  (texgraph-insert "LabelDot(A,\"$A$\",\"NO\",{mark=}1,{dist=}0.25), "))
+	  (texgraph-insert "LabelDot(A,\"$A$\",\"NO\",<{mark=}>1,<{dist=}>0.25), "))
 	("Barycentre" 
 	  (texgraph-insert "bary([A1,c1,A2,c2,A3,c3]), "))
 	---
@@ -70,21 +70,21 @@
 	  (texgraph-insert "Ddroite(A,B), "))
 	---
 	("Cercle (centre-rayon)" 
-	  (texgraph-insert "Cercle(A,{rayon=}4), "))
+	  (texgraph-insert "Cercle(A,<{rayon=}>4), "))
 	("Cercle (defini par 3 points)" 
 	  (texgraph-insert "Cercle(A,B,C), "))
 	("Arc de cercle" 
-	  (texgraph-insert "Arc(B,A,C,{rayon=}3,{sens=}+1), "))
+	  (texgraph-insert "Arc(B,A,C,<{rayon=}>3,<{sens=}>+1), "))
 	("Ellipse" 
-	  (texgraph-insert "ellipse(A,a,b,{inclin_deg=}0), "))
+	  (texgraph-insert "ellipse(A,a,b,<{inclin_deg=}>0), "))
 	;("Cercle (centre-rayon) avec Bezier" (texgraph-insert "cercle(A,rayon), "))
 	("Arc d'ellipse" 
-	  (texgraph-insert "ellipseArc(B,A,C,a,b,{sens=}+1,{inclin_deg=}0), "))
+	  (texgraph-insert "ellipseArc(B,A,C,a,b,<{sens=}>+1,<{inclin_deg=}>0), "))
 	---
 	("Ligne polygonale" 
-	  (texgraph-insert "Ligne([A,B,..],{fermee=}0,{rayon=}0), "))
+	  (texgraph-insert "Ligne([A,B,..],<{fermee=}>0,<{rayon=}>0), "))
 	("Chemin (ligne, arc, arc d'ellipse, bezier)" 
-	  (texgraph-insert "Path([A,B,line,M,N,P,{sens=}+1,arc,..],{fermee=}1), "))
+	  (texgraph-insert "Path([A,B,line,M,N,P,<{sens=}>+1,arc,..],<{fermee=}>1), "))
 	("Spline cubique" 
 	  (texgraph-insert "Spline(v0,A0,v1,A1,..), "))
 	("Courbe de Bezier" 
@@ -96,25 +96,25 @@
 		("Parallele" 
 		  (texgraph-insert "parallel([A,B],C), "))
 		("Perpendiculaire" 
-		  (texgraph-insert "perp([A,B],C,{angle_droit=}1), "))
+		  (texgraph-insert "perp([A,B],C,<{angle_droit=}>1), "))
 		("Mediatrice" 
-		  (texgraph-insert "med(A,B,{angle_droit=}1), "))
+		  (texgraph-insert "med(A,B,<{angle_droit=}>1), "))
 		("Bissectrice" 
-		  (texgraph-insert "bissec(B,A,C,{int=}1), "))
+		  (texgraph-insert "bissec(B,A,C,<{int=}>1), "))
 		---
 		("Carre" 
-		  (texgraph-insert "carre(A,B,{sens=}+1), "))
+		  (texgraph-insert "carre(A,B,<{sens=}>+1), "))
 		("Rectangle" 
 		  (texgraph-insert "rectangle(A,B,C), "))
 		("Parallelogramme" 
 		  (texgraph-insert "parallelo(A,B,C), "))
 		("Polygone regulier" 
-		  (texgraph-insert "polyreg(A,S1,{nb_cotes=}5), "))
+		  (texgraph-insert "polyreg(A,S1,<{nb_cotes=}>5), "))
 		---
 		("Intersection de deux droites" 
 		  (texgraph-insert "I:=Intersec(Droite(A,B),Droite(C,D)), I1:=I[1], I2:=I[2], Point(I), "))
 		("Intersection droite-cercle (ou ligne-ligne)" 
-		  (texgraph-insert "I:=Intersec(Droite(A,B),Cercle(C,{rayon=}4)),I1:=I[1], I2:=I[2], Point(I), "))
+		  (texgraph-insert "I:=Intersec(Droite(A,B),Cercle(C,<{rayon=}>4)),I1:=I[1], I2:=I[2], Point(I), "))
 		("Intersection de deux lignes polygonales" 
 		  (texgraph-insert "I:=Intersec(Ligne([A,B,C],1), Ligne([D,E,F],1)), Point(I), "))
 		---
@@ -126,25 +126,25 @@
 	("Parallele" 
 	  (texgraph-insert "Dparallel([A,B],C), "))
 	("Perpendiculaire" 
-	  (texgraph-insert "Dperp([A,B],C,{angle_droit=}1), "))
+	  (texgraph-insert "Dperp([A,B],C,<{angle_droit=}>1), "))
 	("Mediatrice" 
-	  (texgraph-insert "Dmed(A,B,{angle_droit=}1), "))
+	  (texgraph-insert "Dmed(A,B,<{angle_droit=}>1), "))
 	("Bissectrice" 
-	  (texgraph-insert "Dbissec(B,A,C,{int=}1), "))
+	  (texgraph-insert "Dbissec(B,A,C,<{int=}>1), "))
 	---
 	("Carre" 
-	  (texgraph-insert "Dcarre(A,B,{sens=}+1), "))
+	  (texgraph-insert "Dcarre(A,B,<{sens=}>+1), "))
 	("Rectangle" 
 	  (texgraph-insert "Drectangle(A,B,C), "))
 	("Parallelogramme" 
 	  (texgraph-insert "Dparallelo(A,B,C), "))
 	("Polygone regulier" 
-	  (texgraph-insert "Dpolyreg(A,S1,{nb_cotes=}5), "))
+	  (texgraph-insert "Dpolyreg(A,S1,<{nb_cotes=}>5), "))
 	---
 	("Intersection de deux droites" 
 	  (texgraph-insert "I:=Intersec(Droite(A,B),Droite(C,D)), I1:=I[1], I2:=I[2], Point(I), "))
 	("Intersection droite-cercle (ou ligne-ligne)" 
-	  (texgraph-insert "I:=Intersec(Droite(A,B),Cercle(C,{rayon=}4)),I1:=I[1], I2:=I[2], Point(I), "))
+	  (texgraph-insert "I:=Intersec(Droite(A,B),Cercle(C,<{rayon=}>4)),I1:=I[1], I2:=I[2], Point(I), "))
 	("Intersection de deux lignes polygonales" 
 	  (texgraph-insert "I:=Intersec(Ligne([A,B,C],1), Ligne([D,E,F],1)), Point(I), "))
   )
@@ -166,16 +166,16 @@
 	("Domaine entre Cf et Cg entre points d'intersection" 
 	  (texgraph-insert "FillStyle:=bdiag, FillColor:=blue, domaine3(f(t),g(t)), "))
 	("Tangente a Cf en x0" 
-	  (texgraph-insert "tangente(f(x),x0 {,long=}), "))
+	  (texgraph-insert "tangente(f(x),x0 <{,long=}>), "))
 	("Tangente a la courbe parametree par f(t)" 
-	  (texgraph-insert "tangenteP(f(t),t0 {,long=}), "))
+	  (texgraph-insert "tangenteP(f(t),t0 <{,long=}>), "))
 	---
 	("Representation de la suite Un+1=f(Un)" 
-	  (texgraph-insert "suite(f(x),{U0=}1,{n=}10), "))
+	  (texgraph-insert "suite(f(x),<{U0=}>1,<{n=}>10), "))
 	("Solution de l'equa diff x'(t)+iy'(t)=f(t,x,y)" 
-	  (texgraph-insert "EquaDif(f(t,x,y),t0,x0+i*y0,{mode=}0), "))
+	  (texgraph-insert "EquaDif(f(t,x,y),t0,x0+i*y0,<{mode=}>0), "))
 	("Courbe implicite f(x,y)=0" 
-	  (texgraph-insert "Implicit(f(x,y),{n=}25,{m=}25), "))
+	  (texgraph-insert "Implicit(f(x,y),<{n=}>25,<{m=}>25), "))
   )	
 
   (->"Transformations geometriques"
@@ -185,7 +185,7 @@
 		("Rotation" 
 		  (texgraph-insert "rot([liste_pts],A,alpha), "))
 		("Translation" 
-		  (texgraph-insert "ftransform([liste_pts],z+{vect=}v), "))
+		  (texgraph-insert "ftransform([liste_pts],z+<{vect=}>v), "))
 		("Homothetie" 
 		  (texgraph-insert "hom([liste_pts],A,k), "))
 		("Projection othogonale" 
@@ -216,7 +216,7 @@
 	("Rotation" 
 	  (texgraph-insert "M':=rot(M,A,alpha), Point(M'), "))
 	("Translation" 
-	  (texgraph-insert "M':=ftransform(M,z+{vect=}v), Point(M'), "))
+	  (texgraph-insert "M':=ftransform(M,z+<{vect=}>v), Point(M'), "))
 	("Homothetie" 
 	  (texgraph-insert "M':=hom(M,A,k), Point(M'), "))
 	("Projection othogonale" 
@@ -243,16 +243,16 @@
 
   (->"Codage de la figure"
 	("Angle droit" 
-	  (texgraph-insert "angleD(B,A,C,{rayon=}0.8), "))
+	  (texgraph-insert "angleD(B,A,C,<{rayon=}>0.8), "))
 	("Angle (arc de cercle)" 
-	  (texgraph-insert "Arc(B,A,C,{rayon=}0.8,{sens=}+1), "))
+	  (texgraph-insert "Arc(B,A,C,<{rayon=}>0.8,<{sens=}>+1), "))
 	("Secteur angulaire" 
-	  (texgraph-insert "wedge(B,A,C,{rayon=}0.8), "))
+	  (texgraph-insert "wedge(B,A,C,<{rayon=}>0.8), "))
 	---
 	("Marquer un segment" 
-	  (texgraph-insert "markseg(A,B,{nb=}2,{esp=}0.1,{long=}0.4), "))
+	  (texgraph-insert "markseg(A,B,<{nb=}>2,<{esp=}>0.1,<{long=}>0.4), "))
 	("Marquer un angle" 
-	  (texgraph-insert "markangle(B,A,C,{rayon=}0.8,{nb=}2,{esp=}0.1,{long=}0.3), "))
+	  (texgraph-insert "markangle(B,A,C,<{rayon=}>0.8,<{nb=}>2,<{esp=}>0.1,<{long=}>0.3), "))
 	("Flecher une ligne polygonale" 
 	  (texgraph-insert "flecher([A,B,..],[pos1,pos2,..]), "))
   )
@@ -261,16 +261,16 @@
 	("Label(s)" 
 	  (texgraph-insert "Label(A,\"$A$\",B,\"$B$\",..), "))
 	("Point et etiquette associee" 
-	  (texgraph-insert "LabelDot(A,\"$A$\",\"NO\",{mark=}1,{dist=}0.25), "))
+	  (texgraph-insert "LabelDot(A,\"$A$\",\"NO\",<{mark=}>1,<{dist=}>0.25), "))
 	---
 	("Droite horizontale graduee" 
-	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}2,{pas=}1],xyticks,{subdiv=}2,bottom,i,1,\"$a$\"), Arrows:=0, "))
+	  (texgraph-insert "Arrows:=1, GradDroite([<{origin=}>0,0+i*1],[<{unite=}>2,<{pas=}>1],xyticks,<{subdiv=}>2,bottom,i,1,\"$a$\"), Arrows:=0, "))
 	("Droite verticale graduee" 
-	  (texgraph-insert "Arrows:=1, GradDroite([{origin=}0,0+i*1],[{unite=}i*2,{pas=}1],xyticks,{subdiv=}2,top,right,1,\"$a$\"), Arrows:=0, "))
+	  (texgraph-insert "Arrows:=1, GradDroite([<{origin=}>0,0+i*1],[<{unite=}>i*2,<{pas=}>1],xyticks,<{subdiv=}>2,top,right,1,\"$a$\"), Arrows:=0, "))
 	("Etiquette supplementaire sur Ox" 
-	  (texgraph-insert "LabelAxe(x,pi,\"$\\\\pi$\",1,{mark=}1), "))
+	  (texgraph-insert "LabelAxe(x,pi,\"$\\\\pi$\",1,<{mark=}>1), "))
 	("Etiquette supplementaire sur Oy" 
-	  (texgraph-insert "LabelAxe(y,pi,\"$\\\\pi$\",2,{mark=}1), "))
+	  (texgraph-insert "LabelAxe(y,pi,\"$\\\\pi$\",2,<{mark=}>1), "))
   )
 
   (->"Macros complementaires"  
@@ -292,6 +292,23 @@
 		  (texgraph-insert "rapporteur(0,[rayon:=4,dir:=exp(i*45*deg)]), "))
 		("Dessiner une regle" 
 		  (texgraph-insert "regle(0,[long:=4,dir:=1]), "))
+	)
+	(->"Macros Dessin a main levee"
+		("Charger les macros trembling.mac" 
+		  (texgraph-insert "Load(\"trembling.mac\"), "))
+		---
+		("Cercle (centre-rayon)" 
+		  (texgraph-insert "tCercle([A,R], <{pour_R=1_ecart_en_cm=}>0.05), "))
+		("Cercle (defini par 3 points)" 
+		  (texgraph-insert "tCercle([A,B,C]), <{pour_R=1_ecart_en_cm=}>0.05), "))
+		("Droite(AB)" 
+		  (texgraph-insert "tDroite([A,B], <{ecart_en_cm=}>0.1), "))
+		("Droite a.x+b.y=c" 
+		  (texgraph-insert "tDroite([a,b,c], <{ecart_en_cm=}>0.1), "))
+		("Ligne polygonale" 
+		  (texgraph-insert "tLigne(<{commande_ou_liste_de_points}>, <{ferme=0ou}>1, <{ecart_en_cm=}>0.1), "))
+		("Courbe" 
+		  (texgraph-insert "tCourbe(<{commande_ou_liste_de_points}>, <{ouvert=1ou}>0 + i*<{clip=}>1, <{ecart_en_cm=}>0.075), "))
 	)
   )
 )
