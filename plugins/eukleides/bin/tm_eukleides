@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # tm_eukleides 
 # ========== 
@@ -48,7 +48,10 @@ echo -n latex:'$E \Upsilon K \Lambda \tmop{EI} \Delta H \Sigma$'
 echo $DATA_END
 echo -n $DATA_BEGIN
 echo verbatim:A Euclidean Geometry Drawing Language
-echo -n $(eukleides -v)
+echo 1. Angles are followed by \"\:\" \for degrees and \"\<\" \for radians.
+echo 2. Use \"\%\" to comment a line.
+echo $(eukleides -v)
+echo -n $DATA_END 
 
 # prompt-input-eukleides-output loop
 while [ 1 ]; do
