@@ -1,0 +1,286 @@
+200#
+{texgraph_macros_texmacs.mac}
+Var
+    symC = 1;
+    symA = 2;
+    rotat = 3;
+    transl = 4;
+    nombre = 1;
+    pourcent = 2;
+  {les options}
+    dist = 0.35;
+    transfType = 1;
+    transfElem = 0;
+    style1 = [solid, 6, black];
+    style2 = [solid, 6, blue];
+    style3 = [dashed, 4, gray];
+    choixrepresent = 2;
+    decimales = 1;
+    CodCotes = [0,0,0];
+    CodAngles = [1,Nil,Nil];
+    rotation = 0;
+    CodCote = 0;
+    CodAngle = 0;
+
+Mac
+    LabelsPolygone = {LabelsPolygone( liste_des_points, [options], label1, label2, ...) 
+	dessine automatiquement les labels d'une ligne polygonale à une distance donnée
+	options:
+	  dist:= distance point-label}
+	[dist:=0.35, {valeurs par defaut des options}
+	$tmp:=Eval(String(%2)),
+	$L:=%1, $G:=isobar(L),
+	for $k from 1 to Nops(L) do
+	Label(L[k]+dist*(L[k]-G)/Abs(L[k]-G), Args(k+2)) od ];
+
+    ImagePolygone = { ImagePolygone( liste, [options], label1, label2, ...)
+	dessine le polygone (ou un point, un segment, un nuage de points), son image et les traits de constructions
+	options:
+	  transfType:= symC, symA, rotat ou transl
+	  transfElem:= [ .. ] éléments caractéristiques de la transformation
+	  style1:= [linestyle, width, color, Nil ou dotstyle] style des données
+	  style2:= [linestyle, width, color, Nil ou dotstyle] style des images
+	  style3:= [linestyle, width, color] traits de contruction}
+	[transfType:=1, transfElem:=0, style1:=[solid,6,black], style2:=[solid,6,blue], style3:=[dashed, 4, gray],
+	SaveAttr(), $tmp:=%2, {évaluation des options}   
+	{Tracé de la ligne polygonale L}
+	LineStyle:=style1[1], Width:=style1[2], Color:=style1[3],
+	Ligne(%1,1,0), $Nbr:=Nops(%1),
+	if style1[4]<>Nil then  DotStyle:=style1[4], Point(%1) fi,
+	if Nbr>1 then LabelsPolygone(%1,[dist:=0.35],%3,%5,%7,%9,%11,%13,%15) fi,
+
+	{Calcul de la ligne polygonale L', image de L}
+	if transfType=symC then $center:=2*transfElem[1], $L':=ftransform(%1,center-z)
+	elif transfType=symA then $L':=sym(%1,transfElem[1],transfElem[2])
+	elif transfType=rotat then $L':=rot(%1,transfElem[1],transfElem[2])
+	elif transfType=transl then $u:=transfElem[1], $L':=ftransform(%1,z+u) fi,
+	if Nbr=1 then LabelsPolygone([%1[1],L'[1]],[dist:=0.35],%3) fi,
+
+	{Tracé de la ligne polygonale L'}
+	LineStyle:=style2[1], Width:=style2[2], Color:=style2[3],
+	Ligne(L',1,0),
+	if style2[4]<>Nil then  DotStyle:=style2[4], Point(L') fi,
+	if Nbr>1 then LabelsPolygone(L',[dist:=0.35],%4,%6,%8,%10,%12,%14,%16)
+	elif Nbr=1 then LabelsPolygone([%1[1],L'[1]],[dist:=0.35],"",%4) fi,
+	
+	{Tracé des traits de construction}
+	LineStyle:=style3[1], Width:=style3[2], Color:=style3[3],
+	if transfType=symC then
+		Ligne( for $k from 1 to Nbr do %1[k],L'[k],jump od,0),
+	elif transfType=symA then
+		for $k from 1 to Nbr do
+			Seg(%1[k],L'[k]), LineStyle:=solid,
+			angleD(L'[k],(%1[k]+L'[k])/2, rot(L'[k],(%1[k]+L'[k])/2,90*deg),0.3),
+			LineStyle:=style3[1]
+		od
+	elif transfType=rotat then
+		Arrows:=1, $k:=1, $center:=transfElem[1],
+		for $z in %1 do
+			Arc(%1[k],$center,L'[k],Abs($center-z),1), Inc(k,1)
+		od
+	elif transfType=transl then
+		Arrows:=1,
+		Ligne(for $k from 1 to Nbr do  %1[k],L'[k],jump od,0)
+	fi,
+
+	{Calcul de la fenêtre}
+	$rec:=rectangle([rectangle(%1),rectangle(L'),if transfType=rotat then transfElem[1] fi]),
+	Marges(0.5,0.5,0.5,0.5), Fenetre(Copy(rec,1,1)-0.5*(1-i),Copy(rec,2,1)+0.5*(1-i),1+i),
+	RestoreAttr()
+	];
+
+    ImageCercle = { ImageCercle( liste_centre_rayon, [options], labelO, labelO')
+	dessine le cercle, son image et les traits de constructions
+	options:
+	  transfType:= symC, symA, rotat ou transl
+	  transfElem:= [ .. ] éléments caractéristiques de la transformation
+	  style1:= [linestyle, width, color, Nil ou dotstyle] style des données
+	  style2:= [linestyle, width, color, Nil ou dotstyle] style des images
+	  style3:= [linestyle, width, color] traits de contruction}
+	[transfType:=1, transfElem:=0, style1:=[solid,6,black,times], style2:=[solid,6,blue,times], style3:=[dashed, 4, gray],
+	SaveAttr(), $tmp:=%2, {évaluation des options}  
+	{Tracé du cercle C et de son centre}
+	LineStyle:=style1[1], Width:=style1[2], Color:=style1[3], DotStyle:=style1[4],
+	Cercle(%1[1], %1[2]), Point(%1[1]),
+
+	{Calcul de O' image du centre du cercle C}
+	if transfType=symC then $O':=rot(%1[1],transfElem[1],180*deg)
+	elif transfType=symA then $O':=sym(%1[1],transfElem[1,2])
+	elif transfType=rotat then $O':=rot(%1[1],transfElem[1],transfElem[2])
+	elif transfType=transl then $O':=ftransform(%1[1],z+transfElem[1]) fi,
+	LabelsPolygone([%1[1],O'],0.3,%3),
+
+	{Tracé du cercle C' image de C et de son centre O'}
+	LineStyle:=style2[1], Width:=style2[2], Color:=style2[3], DotStyle:=style2[4],
+	Cercle(O', %1[2]), Point(O'), LabelsPolygone([%1[1],O'],0.3,"",%4),
+
+	{Tracé des traits de construction}
+	LineStyle:=style3[1], Width:=style3[2], Color:=style3[3],
+	if transfType=symC then Seg(%1[1],O')
+	elif transfType=symA then
+	      Seg(%1[1],O'), LineStyle:=solid,
+	      angleD(O',(%1[1]+O')/2, rot(O',(%1[1]+O')/2,90*deg),0.3),
+	      LineStyle:=style3[1]
+	elif transfType=rotat then
+	      Arrows:=1, Arc(%1[1],transfElem[1],O',Abs(transfElem[1]-%1[1]),+1), Arrows:=0
+	elif transfType=transl then Arrows:=1, Seg(%1[1],O')
+	fi,
+
+	{Calcul de la fenêtre}
+	$rec:=rectangle([rectangle(%1),rectangle(O'),if transfType=rotat then transfElem[1] fi]),
+	Marges(0.25,0.25,0.25,0.25),
+	Fenetre(Copy(rec,1,1)-(0.5+%1[2])*(1-i),Copy(rec,2,1)+(0.5+%1[2])*(1-i),1+i),
+	];
+
+    ImageDroite = { ImageDroite( liste_M_N, [options], labelM, labelM', labelN, labelN')
+	dessine la droite, son image et les traits de constructions
+	options:
+	  transfType:= symC, symA, rotat ou transl
+	  transfElem:= [ .. ] éléments caractéristiques de la transformation
+	  style1:= [linestyle, width, color, Nil ou dotstyle] style des données
+	  style2:= [linestyle, width, color, Nil ou dotstyle] style des images
+	  style3:= [linestyle, width, color] traits de contruction}
+	[transfType:=1, transfElem:=0, style1:=[solid,6,black,times], style2:=[solid,6,blue,times], style3:=[dashed, 4, gray],
+	SaveAttr(), $tmp:=%2, {évaluation des options}
+	{Tracé de la droite (d)}
+	LineStyle:=style1[1], Width:=style1[2], Color:=style1[3], DotStyle:=style1[4],
+	Droite(%1[1],%1[2]), Point(%1), $Nbr:=Nops(%1),
+
+	{Calcul de la droite (d'), image de la droite (d)}
+	if transfType=symC then $d':=rot(%1,transfElem[1],180*deg)
+	elif transfType=symA then $d':=sym(%1,transfElem[1],transfElem[2])
+	elif transfType=rotat then $d':=rot(%1,transfElem[1],transfElem[2])
+	elif transfType=transl then $d':=ftransform(%1,z+transfElem[1]) fi,
+	LabelsPolygone([%1,d'],[dist:=0.4],%3,%5),
+
+	{Tracé de la droite (d')}
+	LineStyle:=style2[1], Width:=style2[2], Color:=style2[3], DotStyle:=style2[4],
+	Droite(d'[1],d'[2]), Point(d'), LabelsPolygone([%1,d'],[dist:=0.4],"","",%4,%6),
+
+	{Tracé des traits de construction}
+	LineStyle:=style3[1], Width:=style3[2], Color:=style3[3],
+	if transfType=symC then
+	   for $k from 1 to Nbr do Seg(%1[k],d'[k])
+	   od
+	elif transfType=symA then
+	   for $k from 1 to Nbr do
+	      Seg(%1[k],d'[k]), LineStyle:=solid,
+	      angleD(d'[k],(%1[k]+d'[k])/2, rot(d'[k],(%1[k]+d'[k])/2,90*deg),0.3),
+	      LineStyle:=style3[1]
+	   od
+	elif transfType=rotat then
+	   for $k from 1 to Nbr do Arrows:=1,
+	      Arc(%1[k],transfElem[1],d'[k],Abs(transfElem[1]-%1[k]),+1), Arrows:=0
+	   od
+	elif transfType=transl then
+	   Arrows:=1,
+	   Ligne(for $k from 1 to Nbr do %1[k],d'[k], jump od,0)
+	fi,
+
+	{Calcul de la fenêtre}
+	$rec:=rectangle([rectangle(%1),rectangle(d'),if transfType=rotat then transfElem[1] fi]),
+	Marges(0.25,0.25,0.25,0.25),
+	Fenetre(Copy(rec,1,1)-(1)*(1-i),Copy(rec,2,1)+(1)*(1-i),1+i),
+	];
+
+    LancersDes = { LancersDes(nombre_de_dés(1ou2), nombre_de_lancers,[options])
+	options :
+	  choixrepresent:=nombre, pourcent
+	  decimales:=1
+	  color}
+	[choixrepresent:=pourcent, color:=orange, decimales:=1,
+	SaveAttr(), LabelSize:=normal, $tmp:=%3,
+	$ND:=%1, $NL:=%2, $Rep:=Seq(0,k,1,6*ND),
+	view(ND-1,ND*6+1,-2,10), size( min([0.75*(2+5*ND),16])+12*i,0),
+	for $k from 1 to NL do
+		$De:=0,
+		for $p from 1 to ND do $De:=De+Rand(6)+1 od,
+		replace(Rep,De,Rep[De]+1),
+	od,
+	$maxi:=max(Rep),
+	FillStyle:=full, FillColor:=color,
+	for $m from 1*ND to 6*ND do
+		$y:=Rep[m]*(Ymax-1.5)/maxi,
+		Ligne([-0.4+m,0.4+m,0.4+m+i*y,-0.4+m+i*y],1,0.1),
+		if choixrepresent=nombre
+		then $tmp:=round(Rep[m],decimales), Label(m+i*(0.35/Yscale+y),tmp)
+		else $tmp:=round(Rep[m]*100/NL,decimales), Label(m+i*(0.35/Yscale+y),["",tmp," \%"])
+		fi,
+	od,
+	LabelSize:=large, LabelAngle:=0, LabelStyle:=0,
+	for m from ND to 6*ND do  Label(m-0.5*i/Yscale,m) od,
+	Label((6*ND+ND)/2-1.5*i,[NL," lancers"]),
+	RestoreAttr(),
+	];
+
+
+
+
+    TriangleRectangle = { TriangleRectangle( liste_des_sommets, liste_des_cotes, [options], labelSommets1à3, labelCotes1à3, labelAngles1à3 )
+	options :
+	  rotation:= angle de rotation de la figure
+	  CodCotes:= [codage_cote1, codage_cote2, codage_cote3] (0, 1, 2...)
+	  CodAngles:= [codage_angle1, codage_angle2, codage_angle3] (Nil, 0, 1, 2...) }
+	[rotation:=0, CodCotes:=[0,0,0], CodAngles:=[1,Nil,Nil], 
+	SaveAttr(), $tmp:=%3,
+
+	{Triangle et sommets}
+	$A:=%1[1], $B:=%2[1]*exp(i*rotation), $C:=%2[2]*exp(i*(pi/2+rotation)),
+	$L:=[A,B,C], Ligne(L,1,0),
+	LabelsPolygone(L,[dist:=0.4],%4,%5,%6),
+
+	{Côtés}
+	if CodCotes[1]<>Nil then markseg(A,B,{nb=}CodCotes[1],{esp=}0.1,{long=}0.4) fi,
+	if CodCotes[2]<>Nil then markseg(B,C,{nb=}CodCotes[2],{esp=}0.1,{long=}0.4) fi,
+	if CodCotes[3]<>Nil then markseg(C,A,{nb=}CodCotes[3],{esp=}0.1,{long=}0.4) fi,
+	$M:= isobar([A,B]), $N:= isobar([B,C]), $P:=isobar([A,C]),
+	Label(simil(A,M,0.5/Abs(A-M),pi/2),%7),
+	Label(simil(B,N,0.5/Abs(B-N),pi/2),%8),
+	Label(simil(C,P,0.5/Abs(C-P),pi/2),%9),
+
+	{Angles}
+	if CodAngles[1]<>Nil then angleD(B,A,C,0.4) fi,
+	if CodAngles[2]<>Nil then Arc(C,B,A,0.6,+1),markangle(C,B,A,0.6,CodAngles[2],0.1,0.3) fi,
+	if CodAngles[3]<>Nil then Arc(A,C,B,0.6,+1),markangle(A,C,B,0.6,CodAngles[3],0.1,0.3) fi,
+	Label(simil(B,A,1/Abs(A-B),Arg((C-A)/(B-A))/2),%10),
+	Label(simil(C,B,1/Abs(C-B),Arg((A-B)/(C-B))/2),%11),
+	Label(simil(A,C,1/Abs(A-C),Arg((B-C)/(A-C))/2),%12),
+	
+	$rec:=rectangle([A,B,C]), Marges(1,1,1,1), Fenetre(Copy(rec,1,1),Copy(rec,2,1),1+i),
+	RestoreAttr()
+	];
+
+    PolygoneRegulier = { PolygoneRegulier( nb_cotes, longueurs_cotes, [options], label_cote, labels_sommets)
+	options :
+	  rotation:= angle de rotation de la figure
+	  CodCote:=0, 1...
+	  CodAngle:=Nil, 0, 1...
+	}
+	[rotation:=0, cote:=1, angle:=Nil,
+	SaveAttr(), $tmp:=%3,
+	
+	for $k from 0 to %1-1 do
+	Append($L,%2*exp(i*(rotation+2*k*pi/%1))/(2*cos((%1-2)*pi/(2*%1)))) od,
+	Ligne(L,1,0),
+	LabelsPolygone(L,[dist:=0.3],%5,%6,%7,%8,%9,%10,%11,%12,%13,%14),
+	if CodCote>0 then
+	  markseg(L[1],L[%1],{nb=}CodCote,{esp=}0.1,{long=}0.4),
+	  for $k from 1 to %1 do
+	    markseg(L[k],L[k+1],{nb=}CodCote,{esp=}0.1,{long=}0.4),
+	  od
+	fi,
+	if CodAngle<>Nil then
+	  if %1=4 then
+	    angleD(L[2],L[1],L[%1],{rayon=}min([0.1*%2,0.7]),{sens=\}+1)
+	          else
+	    Arc(L[2],L[1],L[%1],{rayon=}min([0.15*%2,0.7]),{sens=}+1),
+	    Arc(L[1],L[%1],L[%1-1],{rayon=}min([0.15*%2,0.7]),{sens=}+1),
+	    for $k from 1 to %1-2 do
+	      Arc(L[k+2],L[k+1],L[k],{rayon=}min([0.15*%2,0.7]),{sens=}+1),
+	    od
+	  fi
+	fi,
+	$M:= isobar([L[1],L[2]]), Label(M+0.6*M/abs(M), %4),
+	$rec:=rectangle(L), Marges(1,1,1,1), Fenetre(Copy(rec,1,1),Copy(rec,2,1),1+i),
+	RestoreAttr()
+	];
