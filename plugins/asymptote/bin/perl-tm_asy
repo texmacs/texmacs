@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+#
+#==============================================================================
+# MODULE     : perl-tm_asy
+# COPYRIGHT  : (C) Yann Dirson <ydirson at altern dot org>.
+#==============================================================================
+
+use strict;
+use warnings;
+
+my $VERSION = "0.1";
+
+use constant {
+  DATA_BEGIN  =>  "\x{2}",
+  DATA_END    =>  "\x{5}",
+  DATA_ESCAPE => "\x{1B}",
+};
+
+####
+
+open (OUTPUT, ">&STDOUT");
+
+sub output($) {
+  my ($str) = @_;
+  print OUTPUT DATA_BEGIN, 'verbatim:', $str, DATA_END;
+  OUTPUT->flush;
+}
+
+sub psoutput($) {
+  my ($str) = @_;
+  output ("ps:$str");
+}
+

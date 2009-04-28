@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+#==============================================================================
+# MODULE     : tm_asy
+# COPYRIGHT  : (C) Yann Dirson <ydirson at altern dot org>.
+#==============================================================================
+# tm_asy
+# ========== 
+# bash script for interfacing Asymptote from TeXmacs
+# needs option --texmacs for compatibility with TeXmacs interface convention and user information
+#
+# Derived from tm_gnuplot
+#
+# usage within TeXmacs:
+# =====================
+# write asymptote commands within the input line, 
+# use as many commands as necessary, 
+# divide them by the ~ chararacter, because the ENTER key terminates the input and sends it to asymptote.
+# output is the graph made by asymptote.
+#
+# History:
+# v0.1 - initial release
+# v0.2 - remove temporary input file, slight adjustments in example
+# v0.3 - catch stderr so that new-style sessions display it (workaround)
+
+if [ "$1" != "--texmacs" ]
+then
+	echo tm_asy. This script should be started only from TeXmacs.
+	exit
+fi	
+
+# control characters
+tmp=`echo DATA_BEGIN=X DATA_END=Y DATA_ESCAPE=Z | tr "XYZ" "\002\005\027" `
+eval $tmp
+
+ASY=asy
+
+# defining temporary postscript file directory
+TEMPDIR=.
+if [ -d $TEMPDIR ]
+then
+	:
+else	
+	mkdir $TEMPDIR
+fi
+
+# defining temporary input and output file name
+TEMP_ASY_NAME=temp.asy
+TEMP_PS_NAME=temp.eps
+TEMP_ERR_NAME=temp.err
+
+# standard initialization of GNUplot
+#init='reset~set terminal postscript eps enhanced ~set output "'$TEMP_DIR$TEMP_PS_NAME'"~set size 1,1~set autoscale~'
+
+# startup banner
+echo -n $DATA_BEGIN
+echo verbatim:This is a TeXmacs interface for Asymptote.
+
+# prompt-input-asy-output loop
+while [ 1 ]; do
+	# prompt
+	echo -n $DATA_BEGIN
+	echo -n channel:prompt
+	echo -n $DATA_END
+	echo -n Asymptote'] '
+	echo -n $DATA_END 
+	 
+	#read a line from stdin
+	read input
+	
+	#concat init string and input string
+	#input=$init$input
+	
+	#for debugging purposes
+	#echo $input | tr  "~" "\n" | tee tm_asy.log | $ASY -o $TEMP_DIR$TEMP_PS_NAME
+	echo -E "$input" | tr  "~" "\n" > $TEMP_DIR$TEMP_ASY_NAME
+	$ASY -o $TEMP_DIR$TEMP_PS_NAME $TEMP_DIR$TEMP_ASY_NAME 2> $TEMP_DIR$TEMP_ERR_NAME
+	
+	echo -n $DATA_BEGIN
+	echo -n verbatim:
+	
+	if [ -r $TEMP_DIR$TEMP_PS_NAME ]; then
+	    echo -n $DATA_BEGIN
+	    echo -n ps:
+	    cat $TEMP_DIR$TEMP_PS_NAME
+	    rm $TEMP_DIR$TEMP_PS_NAME
+	    echo -n $DATA_END 
+	else
+	    echo "Plugin returned no output.  Standard error follows:"
+	    cat $TEMP_DIR$TEMP_ERR_NAME
+	fi
+	echo -ne "\n"
+	
+	rm $TEMP_DIR$TEMP_ASY_NAME $TEMP_DIR$TEMP_ERR_NAME $TEMP_DIR$TEMP_PS_NAME
+done
