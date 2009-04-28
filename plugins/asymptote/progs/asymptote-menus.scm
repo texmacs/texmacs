@@ -4,6 +4,7 @@
 ;; MODULE      : asymptote-menus.scm
 ;; DESCRIPTION : asymptote menus
 ;; BY	       : Emmanuel Corcelle (corcelle at gmail dot com)
+;;               Examples from http://marris.org/asymptote/index.html
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
