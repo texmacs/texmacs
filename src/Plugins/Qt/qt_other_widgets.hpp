@@ -35,9 +35,11 @@ public:
   qt_widget int_input;
 
   bool visibility[5]; 
+  
+  command quit;
 
 public:
-  qt_tm_widget_rep (int mask = 0);
+  qt_tm_widget_rep (int mask, command _quit);
   ~qt_tm_widget_rep ();
 	
   virtual void send (slot s, blackbox val);

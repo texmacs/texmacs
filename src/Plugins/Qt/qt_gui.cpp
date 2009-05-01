@@ -21,6 +21,8 @@
 #include "QTMGuiHelper.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
+#include "socket_server.hpp" // for number_of_servers
+
 extern window (*get_current_window) (void);
 
 qt_gui_rep* the_gui= NULL;
@@ -189,7 +191,7 @@ qt_gui_rep::event_loop () {
   t.start (25);
 
   time_credit= 1000000;
-  while (true) {
+  while (nr_windows > 0 || number_of_servers () != 0) {
     timeout_time= texmacs_time () + time_credit;
 //    app->processEvents (QEventLoop::WaitForMoreEvents | QEventLoop::DeferredDeletion);
     app->processEvents (QEventLoop::WaitForMoreEvents);

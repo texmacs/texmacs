@@ -33,12 +33,15 @@
 #include <QScrollBar>
 
 #include "QTMWidget.hpp"
+#include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
   { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
+
+extern int nr_windows; // the run-loop should exit when the number of windows is zero
 
 widget the_keyboard_focus (NULL);
 
@@ -305,8 +308,8 @@ qt_view_widget_rep::plain_window_widget (string s) {
 }
 
 
-qt_tm_widget_rep::qt_tm_widget_rep(int mask):
-  qt_view_widget_rep (new QMainWindow ()), helper (this)
+qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
+  qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
 {
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
@@ -351,6 +354,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask):
 
   mw->setFocusPolicy (Qt::NoFocus);
   sa->setFocusPolicy (Qt::NoFocus);
+  
+  
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -513,6 +518,11 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 void
 QTMInteractiveInputHelper::doit () {
   wid->do_interactive_prompt();
+}
+
+void
+QTMInteractiveInputHelper::close () {
+  wid->quit();
 }
 
 
@@ -713,9 +723,13 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid):
 {
   wid->setProperty ("texmacs_window_widget",
 		    QVariant::fromValue ((void*) this));
+  nr_windows++;
 }
 
-qt_window_widget_rep::~qt_window_widget_rep () {}
+qt_window_widget_rep::~qt_window_widget_rep () 
+{
+  nr_windows--;
+}
 
 void
 qt_window_widget_rep::send (slot s, blackbox val) {
@@ -989,7 +1003,7 @@ texmacs_widget (int mask, command quit) {
   // the mask variable indicates whether the menu, icon bars, status bar, etc.
   // are visible or not
   (void) mask; (void) quit; // FIXME: handle correctly mask and quit
-  widget w= tm_new<qt_tm_widget_rep> (mask);
+  widget w= tm_new<qt_tm_widget_rep> (mask, quit);
   return w; 
 }
 
