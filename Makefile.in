@@ -220,9 +220,6 @@ BUNDLE_MAIN: TEXMACS
 	$(MKDIR) $(BUNDLE_RESOURCES)
 	$(CP) $(BUNDLE_SRC)/TeXmacs.icns $(BUNDLE_RESOURCES)
 	$(CP) src/Plugins/Cocoa/English.lproj $(BUNDLE_RESOURCES)
-	$(CP) src/Plugins/Cocoa/InputPanel.nib $(BUNDLE_RESOURCES)
-	$(CP) src/Plugins/Cocoa/InputDialog.nib $(BUNDLE_RESOURCES)
-	$(CP) src/Plugins/Cocoa/Segment.nib $(BUNDLE_RESOURCES)
 	$(MKDIR) $(BUNDLE_RESOURCES)/bin
 	$(MKDIR) $(BUNDLE_RESOURCES)/lib
 	$(MKDIR) $(BUNDLE_RESOURCES)/share
