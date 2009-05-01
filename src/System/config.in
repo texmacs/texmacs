@@ -84,6 +84,9 @@
 /* Link imlib2 library with TeXmacs */
 #undef LINKED_IMLIB2
 
+/* Enabling Mac OSX extensions */
+#undef MACOSX_EXTENSIONS
+
 /* Disable fast memory allocator */
 #undef NO_FAST_ALLOC
 

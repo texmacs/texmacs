@@ -696,6 +696,7 @@ host_cpu
 host_vendor
 host_os
 CONFIG_EXPERIMENTAL
+CONFIG_MACOS
 QMAKE
 MOC
 UIC
@@ -722,7 +723,6 @@ CONFIG_GUI
 CONFIG_CXXDIALECT
 CONFIG_OS
 CONFIG_OS_SUFFIX
-CONFIG_MACOS
 CONFIG_CXXWARNING
 CONFIG_CXXTEMPLATE
 CONFIG_CXXOPTIMIZE
@@ -1347,6 +1347,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
+  --enable-macosx-extensions   support new style rewriting code
   --enable-qt             replace X11 by Qt interface
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-debug=ARG      install a debugging enable executable -ggdb
@@ -8247,7 +8248,6 @@ echo "${ECHO_T}final adjustments for cygwin host" >&6; }
   *apple*darwin*)
     echo "$ac_t""final adjustments for a MacOS host" 1>&6
     CONFIG_OS="MACOS"
-    CONFIG_MACOS="MacOS"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
     CONFIG_BFLAGS="-framework Cocoa"
@@ -8424,6 +8424,41 @@ echo "${ECHO_T}disabling experimental style rewriting code" >&6; }
     *)
 	{ { echo "$as_me:$LINENO: error: bad option --enable-experimental=$enable_experimental" >&5
 echo "$as_me: error: bad option --enable-experimental=$enable_experimental" >&2;}
+   { (exit 1); exit 1; }; }
+	;;
+esac
+
+
+#--------------------------------------------------------------------
+# MacOS X extensions (spellchecker, image loading)
+#--------------------------------------------------------------------
+
+# Check whether --enable-macosx-extensions was given.
+if test "${enable_macosx_extensions+set}" = set; then
+  enableval=$enable_macosx_extensions;
+else
+  enable_macosx_extensions="no"
+fi
+
+case "$enable_macosx_extensions" in
+    yes)
+	{ echo "$as_me:$LINENO: result: enabling Mac OSX extensions" >&5
+echo "${ECHO_T}enabling Mac OSX extensions" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define MACOSX_EXTENSIONS 1
+_ACEOF
+
+        CONFIG_MACOS="MacOS"
+        ;;
+    no)
+	{ echo "$as_me:$LINENO: result: disabling Mac OSX extensions" >&5
+echo "${ECHO_T}disabling Mac OSX extensions" >&6; }
+        CONFIG_MACOS=""
+	;;
+    *)
+	{ { echo "$as_me:$LINENO: error: bad option --enable-macosx-extensions=$enable_macosx_extensions" >&5
+echo "$as_me: error: bad option --enable-macosx-extensions=$enable_macosx_extensions" >&2;}
    { (exit 1); exit 1; }; }
 	;;
 esac
@@ -9334,7 +9369,6 @@ esac
 
 
 
-
 #--------------------------------------------------------------------
 # Default paths for installation
 #--------------------------------------------------------------------
@@ -10167,6 +10201,7 @@ host_cpu!$host_cpu$ac_delim
 host_vendor!$host_vendor$ac_delim
 host_os!$host_os$ac_delim
 CONFIG_EXPERIMENTAL!$CONFIG_EXPERIMENTAL$ac_delim
+CONFIG_MACOS!$CONFIG_MACOS$ac_delim
 QMAKE!$QMAKE$ac_delim
 MOC!$MOC$ac_delim
 UIC!$UIC$ac_delim
@@ -10179,7 +10214,6 @@ QT_CFLAGS!$QT_CFLAGS$ac_delim
 QT_CXXFLAGS!$QT_CXXFLAGS$ac_delim
 QT_INCPATH!$QT_INCPATH$ac_delim
 QT_CPPFLAGS!$QT_CPPFLAGS$ac_delim
-QT_LFLAGS!$QT_LFLAGS$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -10221,6 +10255,7 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+QT_LFLAGS!$QT_LFLAGS$ac_delim
 QT_LDFLAGS!$QT_LDFLAGS$ac_delim
 QT_LIBS!$QT_LIBS$ac_delim
 X11_CFLAGS!$X11_CFLAGS$ac_delim
@@ -10234,7 +10269,6 @@ CONFIG_GUI!$CONFIG_GUI$ac_delim
 CONFIG_CXXDIALECT!$CONFIG_CXXDIALECT$ac_delim
 CONFIG_OS!$CONFIG_OS$ac_delim
 CONFIG_OS_SUFFIX!$CONFIG_OS_SUFFIX$ac_delim
-CONFIG_MACOS!$CONFIG_MACOS$ac_delim
 CONFIG_CXXWARNING!$CONFIG_CXXWARNING$ac_delim
 CONFIG_CXXTEMPLATE!$CONFIG_CXXTEMPLATE$ac_delim
 CONFIG_CXXOPTIMIZE!$CONFIG_CXXOPTIMIZE$ac_delim
