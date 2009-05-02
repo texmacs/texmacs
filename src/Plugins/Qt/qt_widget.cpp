@@ -520,12 +520,6 @@ QTMInteractiveInputHelper::doit () {
   wid->do_interactive_prompt();
 }
 
-void
-QTMInteractiveInputHelper::close () {
-  wid->quit();
-}
-
-
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
   if (DEBUG_EVENTS)
