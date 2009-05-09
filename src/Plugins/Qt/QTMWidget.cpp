@@ -43,7 +43,7 @@ extern int timeout_time;
 hashmap<int,string> qtkeymap (0);
 
 inline void
-scale (QPoint& point) {	
+scale (QPoint& point) {
   point.rx() *= PIXEL; point.ry() *= -PIXEL;
 }
 
@@ -140,7 +140,7 @@ initkeymap () {
   // map (Qt::Key_Undo        , "undo" );
   // map (Qt::Key_Redo        , "redo" );
   // map (Qt::Key_Find        , "find" );
-  // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );  
+  // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
 }
 
 void
@@ -153,7 +153,7 @@ QTMWidget::postponedUpdate () {
       << "," <<  rect.width()
       << "," <<  rect.height() << ")\n" ;
     }
-    //FIXME: the call below to update is ignored sometimes (usually in long documents). 
+    //FIXME: the call below to update is ignored sometimes (usually in long documents).
     //       It is a confirmed Qt/Mac bug (#251792). See
     //       http://www.qtsoftware.com/developer/task-tracker/index_html?method=entry&id=251792
 #ifdef Q_WS_MAC
@@ -169,7 +169,7 @@ QTMWidget::postponedUpdate () {
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QRect rect = event->rect ();
- 
+
   if (DEBUG_EVENTS) {
     QPainter p(this);
     QBrush brush (QColor ("red"));
@@ -180,7 +180,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     << "," <<  rect.y()
     << "," <<  rect.width()
     << "," <<  rect.height() << ")\n" ;
-    
+
   }
 
   if (!qt_update_flag) {
@@ -208,33 +208,33 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     r->begin (static_cast<QPaintDevice*>(this));
 #endif
 
-    tm_widget()->set_current_renderer(r);    
+    tm_widget()->set_current_renderer(r);
 
-    
-    
+
+
     r -> set_clipping
-    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL,
      (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
     tm_widget()->handle_repaint
-    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL, 
+    (rect.x()*PIXEL, -(rect.y()+rect.height())*PIXEL,
      (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
-    
+
     if (r->interrupted()) {
       if (DEBUG_EVENTS)
-        cout << "Interrupted\n"; 
+        cout << "Interrupted\n";
       qt_update_flag= true;
     }
 
     r->end();
-    
-    tm_widget()->set_current_renderer(NULL);    
+
+    tm_widget()->set_current_renderer(NULL);
     //int end= texmacs_time ();
     //if (end > start) cout << "Repaint " << end - start << "\n";
   }
 
   if (qt_update_flag) {
     if (DEBUG_EVENTS)
-      cout << "Postponed redrawing\n"; 
+      cout << "Postponed redrawing\n";
     delayed_rects= list<QRect> (rect, delayed_rects);
     QTimer::singleShot (1, this, SLOT (postponedUpdate ()));
   }
@@ -252,12 +252,12 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     initkeymap();
     fInit= true;
   }
-	
+
   if (DEBUG_EVENTS)
     cout << "keypressed\n";
   simple_widget_rep *wid =  tm_widget();
   if (!wid) return;
-  
+
   {
     // char str[256];
     int key = event->key();
@@ -289,21 +289,21 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       unsigned short unic= nss.data()[0].unicode();
       //cout << "unic= " << unic << "\n";
       if (unic < 32 && key < 128) {
-	if ((mods & Qt::ShiftModifier) == 0)
-	  if (((char) key) >= 'A' && ((char) key) <= 'Z')
-	    key= (int) (key + ((int) 'a') - ((int) 'A'));
-	r= string ((char) key);
+        if ((mods & Qt::ShiftModifier) == 0)
+          if (((char) key) >= 'A' && ((char) key) <= 'Z')
+            key= (int) (key + ((int) 'a') - ((int) 'A'));
+        r= string ((char) key);
       }
       else {
-	if (unic == 168) r= "umlaut";
-	if (unic == 96) {
-	  if ((mods & Qt::AltModifier) != 0) r= "grave";
-	  else r= "`";
-	}
-	if (unic == 180) r= "acute";
-	if (unic == 710) r= "hat";
-	if (unic == 732) r= "tilde";
-	flag= false;
+        if (unic == 168) r= "umlaut";
+        if (unic == 96) {
+          if ((mods & Qt::AltModifier) != 0) r= "grave";
+          else r= "`";
+        }
+        if (unic == 180) r= "acute";
+        if (unic == 710) r= "hat";
+        if (unic == 732) r= "tilde";
+        flag= false;
       }
     }
 
@@ -323,7 +323,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (DEBUG_EVENTS)
       cout << "key press: " << r << LF;
     //int start= texmacs_time ();
-    wid -> handle_keypress (r, texmacs_time());        
+    wid -> handle_keypress (r, texmacs_time());
     //int end= texmacs_time ();
     //if (end > start) cout << "Keypress " << end - start << "\n";
     the_gui->update (); // FIXME: remove this line when
@@ -378,7 +378,7 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
   if (DEBUG_EVENTS)
     cout << "mouse event: " << s << " at "
-	 << point.x () << ", " << point.y () << LF;
+         << point.x () << ", " << point.y () << LF;
 }
 
 void
@@ -392,7 +392,7 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
   if (DEBUG_EVENTS)
     cout << "mouse event: " << s << " at "
-	 << point.x () << ", " << point.y () << LF;
+         << point.x () << ", " << point.y () << LF;
 }
 
 void
@@ -406,7 +406,7 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
   if (DEBUG_EVENTS)
     cout << "mouse event: " << s << " at "
-	 << point.x () << ", " << point.y () << LF;
+         << point.x () << ", " << point.y () << LF;
 }
 
 
@@ -416,12 +416,12 @@ QTMWidget::event (QEvent* event) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
     keyPressEvent (ke);
     return true;
-  }  
+  }
   return QWidget::event (event);
 }
 
 
-void 
+void
 QTMWidget::focusInEvent ( QFocusEvent * event )
 {
   if (DEBUG_EVENTS) cout << "FOCUSIN" << LF;
@@ -432,7 +432,7 @@ QTMWidget::focusInEvent ( QFocusEvent * event )
   QWidget::focusInEvent (event);
 }
 
-void 
+void
 QTMWidget::focusOutEvent ( QFocusEvent * event )
 {
   if (DEBUG_EVENTS)   cout << "FOCUSOUT" << LF;

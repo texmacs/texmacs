@@ -11,8 +11,8 @@
 
 #ifndef QTMINTERACTIVEINPUTHELPER_HPP
 #define QTMINTERACTIVEINPUTHELPER_HPP
- 
-//#include "qt_other_widgets.hpp" 
+
+//#include "qt_other_widgets.hpp"
 #include <QObject>
 
 class qt_tm_widget_rep;

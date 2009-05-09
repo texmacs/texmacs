@@ -38,7 +38,7 @@ from_qrect (QRect& rect) {
   c1= rect.x() * PIXEL;
   c2= rect.y() * PIXEL;
   c3= (rect.x() + rect.width()) * PIXEL;
-  c4= (rect.y() + rect.height()) * PIXEL;	
+  c4= (rect.y() + rect.height()) * PIXEL;       
   return coord4 (c1, c2, c3, c4);
 }
 
@@ -68,13 +68,13 @@ to_qstring (string s) {
 
 string
 from_qstring (QString &s) {
-  QByteArray arr= s.toUtf8 (); 
+  QByteArray arr= s.toUtf8 ();
   const char* cstr= arr.constData ();
   return utf8_to_cork (string ((char*) cstr));
 }
 
 QString
-to_qstring_utf8 (string s) { 
+to_qstring_utf8 (string s) {
   s= cork_to_utf8 (s);
   char* p= as_charp (s);
   QString nss= QString::fromUtf8 (p, N(s));

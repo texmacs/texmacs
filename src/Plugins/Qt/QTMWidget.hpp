@@ -12,7 +12,7 @@
 #ifndef QTMWIDGET_HPP
 #define QTMWIDGET_HPP
 
-#include "qt_simple_widget.hpp" 
+#include "qt_simple_widget.hpp"
 #include <QVariant>
 #include <QWidget>
 
@@ -21,7 +21,7 @@ class QTMWidget: public QWidget {
   list<QRect> delayed_rects;
 
 public:
-  inline QTMWidget(simple_widget_rep *_wid): QWidget () { 
+  inline QTMWidget(simple_widget_rep *_wid): QWidget () {
     setObjectName("A QTMWidget");
     setFocusPolicy (Qt::StrongFocus);
     // setBackgroundRole(QPalette::Window);
@@ -34,7 +34,7 @@ public:
   }
 
   inline simple_widget_rep*
-  tm_widget() { 
+  tm_widget() {
     QVariant v= property("texmacs_widget");
     return (simple_widget_rep *)
       (v.canConvert<void*> ()? v.value<void*> (): NULL);
@@ -43,7 +43,7 @@ public:
 public slots:
   void postponedUpdate ();
 
-protected:	
+protected:
   virtual void paintEvent (QPaintEvent* event);
   virtual void focusInEvent (QFocusEvent* event);
   virtual void focusOutEvent (QFocusEvent* event);

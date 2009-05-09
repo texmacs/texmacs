@@ -18,7 +18,7 @@
 class QTMGuiHelper : public QObject {
   Q_OBJECT
   qt_gui_rep* gui;
-  
+
 public:
   inline QTMGuiHelper (qt_gui_rep *_gui) : QObject (), gui (_gui) {}
 

@@ -21,7 +21,7 @@ class QTMProxyStyle: public QStyle {
   Q_OBJECT
 protected:
   QStyle* style;
-		
+                
 public:
   explicit QTMProxyStyle (QStyle* _style);
   ~QTMProxyStyle ();

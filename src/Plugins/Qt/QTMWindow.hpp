@@ -12,7 +12,7 @@
 #ifndef QTMWINDOW_HPP
 #define QTMWINDOW_HPP
 
-#include "qt_other_widgets.hpp" 
+#include "qt_other_widgets.hpp"
 #include <QVariant>
 #include <QMainWindow>
 
@@ -20,19 +20,19 @@ class QTMWindow: public QMainWindow {
   Q_OBJECT
 
 public:
-  inline QTMWindow(qt_tm_widget_rep *_wid): QMainWindow () { 
+  inline QTMWindow(qt_tm_widget_rep *_wid): QMainWindow () {
     setObjectName("A QTMWindow");
     setProperty ("texmacs_tm_widget", QVariant::fromValue ((void*) _wid));
   }
 
   inline qt_tm_widget_rep *
-  tm_widget() { 
+  tm_widget() {
     QVariant v= property("texmacs_tm_widget");
     return (qt_tm_widget_rep *)
       (v.canConvert<void*> ()? v.value<void*> (): NULL);
   }
 
-protected:	
+protected:
   virtual void closeEvent (QCloseEvent *event);
 };
 

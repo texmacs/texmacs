@@ -19,7 +19,7 @@
 #include "timer.hpp"
 #include "gui.hpp"
 #include "font.hpp"
-#include "widget.hpp" 
+#include "widget.hpp"
 #include "array.hpp"
 #include "hashmap.hpp"
 
@@ -51,19 +51,19 @@ public:
 
   /* important routines */
   void event_loop ();
-  
+
   /* interclient communication */
   virtual bool get_selection (string key, tree& t, string& s);
   virtual bool set_selection (string key, tree t, string s);
   virtual void clear_selection (string key);
-  
+
   /* miscellaneous */
   void image_gc (string name= "*");
   void set_mouse_pointer (string name);
   void set_mouse_pointer (string curs_name, string mask_name);
   void show_wait_indicator (widget w, string message, string arg);
   bool check_event (int type);
-  
+
   void update();
   void update_fast ();
 };

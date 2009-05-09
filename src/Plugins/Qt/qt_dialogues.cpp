@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "widget.hpp" 
+#include "widget.hpp"
 #include "message.hpp"
 #include "qt_dialogues.hpp"
 #include "qt_utilities.hpp"
@@ -30,7 +30,7 @@ extern char  *slot_name(slot s); // in qt_widget.cpp
 #pragma mark qt_chooser_widget_rep
 
 class qt_chooser_widget_rep: public qt_widget_rep {
-protected:	
+protected:      
   command cmd;
   string type;
   string mgn;
@@ -39,7 +39,7 @@ protected:
   coord2 position;
   coord2 size;
   string file;
-	
+        
 public:
   qt_chooser_widget_rep (command, string, string);
   ~qt_chooser_widget_rep ();
@@ -64,7 +64,7 @@ qt_chooser_widget_rep::qt_chooser_widget_rep
 {
   if (DEBUG_EVENTS)
     cout << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
-	 << type << "\" mgn=\"" << mgn << "\"" << LF; 
+         << type << "\" mgn=\"" << mgn << "\"" << LF;
 }
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
@@ -75,11 +75,11 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     cout << "qt_chooser_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_VISIBILITY:
-    {	
+    {   
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       (void) flag;
-      NOT_IMPLEMENTED 
+      NOT_IMPLEMENTED
     }
     break;
   case SLOT_SIZE:
@@ -87,16 +87,16 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     size = open_box<coord2> (val);
     break;
   case SLOT_POSITION:
-    TYPE_CHECK (type_box (val) == type_helper<coord2>::id); 
+    TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
     position = open_box<coord2> (val);
     break;
   case SLOT_KEYBOARD_FOCUS:
     TYPE_CHECK (type_box (val) == type_helper<bool>::id);
     perform_dialog ();
-    break;		
+    break;              
   case SLOT_STRING_INPUT:
     // send_string (THIS, "input", val);
-      NOT_IMPLEMENTED 
+      NOT_IMPLEMENTED
     break;
   case SLOT_INPUT_TYPE:
     TYPE_CHECK (type_box (val) == type_helper<string>::id);
@@ -105,19 +105,19 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
 #if 0
   case SLOT_INPUT_PROPOSAL:
     //send_string (THIS, "default", val);
-      NOT_IMPLEMENTED 
+      NOT_IMPLEMENTED
     break;
 #endif
   case SLOT_FILE:
     //send_string (THIS, "file", val);
-      NOT_IMPLEMENTED 
+      NOT_IMPLEMENTED
     break;
   case SLOT_DIRECTORY:
     TYPE_CHECK (type_box (val) == type_helper<string>::id);
     directory = open_box<string> (val);
     directory = as_string (url_pwd () * url_system (directory));
     break;
-      
+
   default:
     qt_widget_rep::send (s, val);
   }
@@ -128,7 +128,7 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
   if (DEBUG_EVENTS)
     cout << "qt_chooser_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
-  case SLOT_POSITION:  
+  case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
@@ -227,18 +227,18 @@ qt_chooser_widget_rep::perform_dialog () {
 
   dialog.setDirectory(to_qstring(directory));
   cout << "Dir: " << directory << LF;
-  
+
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
   cout << "Position :" << pos.x() << "," << pos.y() << LF;
-  
+
   dialog.updateGeometry();
   QSize sz = dialog.sizeHint();
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
   dialog.setGeometry(r);
-  
-  
+
+
   QStringList fileNames;
   if (dialog.exec ()) {
     fileNames = dialog.selectedFiles();
@@ -247,8 +247,8 @@ qt_chooser_widget_rep::perform_dialog () {
       url u = url_system (scm_unquote (file));
       if (type == "image")
         file = "(list (url-system " *
-	  scm_quote (as_string (u)) *
-	  ") \"100\" \"100\" \"0\" \"0\" \"10\" \"10\")";
+          scm_quote (as_string (u)) *
+          ") \"100\" \"100\" \"0\" \"0\" \"10\" \"10\")";
       //FIXME: fake image dimensions
       else
         file = "(url-system " * scm_quote (as_string (u)) * ")";
@@ -256,7 +256,7 @@ qt_chooser_widget_rep::perform_dialog () {
   } else {
     file = "#f";
   }
-  cmd ();	
+  cmd ();       
 }
 
 #pragma mark qt_input_widget_rep
@@ -264,15 +264,15 @@ qt_chooser_widget_rep::perform_dialog () {
 class qt_field_widget;
 
 class qt_input_widget_rep: public qt_widget_rep {
-protected:	
+protected:      
   command cmd;
   array<qt_field_widget> fields;
   coord2 size, position;
-  string win_title; 	
+  string win_title;     
 public:
   qt_input_widget_rep (command, array<string>);
   ~qt_input_widget_rep ();
-	
+        
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
   virtual widget read (slot s, blackbox index);
@@ -369,12 +369,12 @@ qt_input_widget_rep::send (slot s, blackbox val) {
 
   switch (s) {
   case SLOT_VISIBILITY:
-    {	
+    {   
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       (void) flag;
-      NOT_IMPLEMENTED 
-    }	
+      NOT_IMPLEMENTED
+    }   
     break;
   case SLOT_SIZE:
     TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
@@ -399,7 +399,7 @@ qt_input_widget_rep::query (slot s, int type_id) {
   if (DEBUG_EVENTS)
     cout << "qt_input_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
-  case SLOT_POSITION:  
+  case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
@@ -464,9 +464,9 @@ void
 qt_input_widget_rep::perform_dialog() {
   QDialog d (0, Qt::Sheet);
   QVBoxLayout* vl = new QVBoxLayout(&d);
-  
+
   QVector<QComboBox*> cbs (N (fields));
-  
+
   for(int i=0; i<N(fields); i++) {
     QHBoxLayout *hl = new QHBoxLayout(&d);
     QLabel *lab = new QLabel (to_qstring (fields[i]->prompt),&d);
@@ -491,7 +491,7 @@ qt_input_widget_rep::perform_dialog() {
   {
     QDialogButtonBox* buttonBox =
       new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-			    Qt::Horizontal, &d);
+                            Qt::Horizontal, &d);
     QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
     QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
     vl->addWidget (buttonBox);
@@ -501,13 +501,13 @@ qt_input_widget_rep::perform_dialog() {
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
   //cout << "Position :" << pos.x() << "," << pos.y() << LF;
-  
+
   d.updateGeometry();
   QSize sz = d.sizeHint();
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
   d.setGeometry(r);
-  
+
   int result = d.exec ();
   if (result == QDialog::Accepted) {
     for(int i=0; i<N(fields); i++) {
@@ -519,7 +519,7 @@ qt_input_widget_rep::perform_dialog() {
       fields[i]->input = "#f";
     }
   }
-  cmd ();  
+  cmd ();
 }
 
 widget
@@ -547,7 +547,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
   bool ok;
   QString item =
     QInputDialog::getItem (NULL, "Interactive Prompt", label,
-			   items, 0, true, &ok );
+                           items, 0, true, &ok );
   if (ok && !item.isEmpty()) {
     ((qt_input_text_widget_rep*) int_input.rep) -> text=
       scm_quote (from_qstring (item));

@@ -21,7 +21,7 @@
 class QTMCommand: public QObject {
   Q_OBJECT
   command cmd;
-	
+        
 public:
   inline QTMCommand (command _cmd):
     cmd (_cmd) {  }

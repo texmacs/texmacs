@@ -23,20 +23,20 @@ void replaceActions(QWidget *dest, QWidget *src);
 class qt_widget_rep : public widget_rep {
 public:
   qt_widget_rep() : widget_rep () { };
-	
-  virtual widget plain_window_widget (string s); 
-  virtual widget make_popup_widget (); 
-  virtual widget popup_window_widget (string s); 
- 
+
+  virtual widget plain_window_widget (string s);
+  virtual widget make_popup_widget ();
+  virtual widget popup_window_widget (string s);
+
   virtual QAction *as_qaction() { return NULL; };
   // virtual TMMenuItem *as_menuitem() { return NULL; };
 };
 
 class qt_view_widget_rep: public qt_widget_rep {
-public:	
+public:
   QWidget *view;
   basic_renderer current_renderer;
-  
+
 public:
   qt_view_widget_rep (QWidget *v);
   ~qt_view_widget_rep ();
@@ -56,7 +56,7 @@ public:
 //  virtual void deconnect (slot s, widget w2, slot s2);
     // deconnect a state slot s from another slot s2 of another widget w2
 
-	virtual widget plain_window_widget (string s); 
+  virtual widget plain_window_widget (string s);
   void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
   basic_renderer get_current_renderer() {  return current_renderer; }
 };

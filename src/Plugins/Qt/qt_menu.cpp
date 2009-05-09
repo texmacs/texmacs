@@ -16,8 +16,8 @@
 #include "qt_basic_widgets.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
-#include "analyze.hpp" 
-#include "widget.hpp" 
+#include "analyze.hpp"
+#include "widget.hpp"
 #include "message.hpp"
 #include "promise.hpp"
 //#import "TMView.h"
@@ -50,18 +50,18 @@ public:
   ~qt_menu_rep () { if (item && !flag) delete item; }
 
   virtual void send (slot s, blackbox val);
-  virtual widget make_popup_widget (); 
-  virtual widget popup_window_widget (string s); 
+  virtual widget make_popup_widget ();
+  virtual widget popup_window_widget (string s);
   virtual QAction* as_qaction ();
 };
 
 QAction*
-qt_menu_rep::as_qaction() { 
+qt_menu_rep::as_qaction() {
   // FIXME: the convention is that as_qaction give ownership of
   // the action to the caller. However in this case we do not want
   // to replicate the action so we must be sure to be called only once.
-  if (flag) cout << "THIS MUST NOT HAPPEN (CALLED TWICE)!!\n"; 
-  flag = true; 
+  if (flag) cout << "THIS MUST NOT HAPPEN (CALLED TWICE)!!\n";
+  flag = true;
   return item;
 }
 
@@ -85,21 +85,21 @@ qt_menu_rep::send (slot s, blackbox val) {
     ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
     break;
   case SLOT_VISIBILITY:
-    {	
+    {   
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       (void) flag;
-    }	
+    }   
     break;
   case SLOT_MOUSE_GRAB:
-    {	
+    {   
       check_type<bool> (val, "SLOT_MOUSE_GRAB");
       bool flag = open_box<bool> (val);
       (void) flag;
       // [NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (qt_view_widget_rep*)(the_keyboard_focus.rep))->view ];
       if (item->menu ())
-	item->menu()->exec (QCursor::pos ());
-    }	
+        item->menu()->exec (QCursor::pos ());
+    }   
     break;
   default:
     FAILED ("cannot handle slot type");
@@ -124,7 +124,7 @@ horizontal_menu (array<widget> arr) {
   }
   act->setMenu (m);
   //m->QObject::setParent(act);
-  return tm_new<qt_menu_rep> (act);	
+  return tm_new<qt_menu_rep> (act);     
 }
 
 widget
@@ -145,7 +145,7 @@ public:
 
 class QTMToolButton: public QToolButton {
 public:
-  QTMToolButton (QWidget* parent = 0): QToolButton(parent) {}  
+  QTMToolButton (QWidget* parent = 0): QToolButton(parent) {}
   void mouseReleaseEvent(QMouseEvent *event);
   void mousePressEvent(QMouseEvent *event);
   void paintEvent(QPaintEvent *event);
@@ -157,14 +157,14 @@ QTMToolButton::mousePressEvent (QMouseEvent* event) {
   QToolButton::mousePressEvent (event);
   // this one forwards the event to the parent
   // (which eventually is the menu)
-  QWidget::mousePressEvent (event);  
+  QWidget::mousePressEvent (event);
 }
 
 void
 QTMToolButton::mouseReleaseEvent (QMouseEvent* event) {
   // this one triggers the action and untoggles the button
   QToolButton::mouseReleaseEvent (event);
-  // this one forwards the event to the parent 
+  // this one forwards the event to the parent
   // (which eventually is the menu which then close itself)
   QWidget::mouseReleaseEvent (event);
 }
@@ -199,11 +199,11 @@ public:
       QAction *act = concrete(arr[i])->as_qaction();
       act->setParent(this);
       actions.append(act);
-    };      
+    };
   }
   QWidget* createWidget(QWidget* parent);
   // virtual void activate (ActionEvent event) {
-  //   cout << "TRIG\n"; QWidgetAction::activate (event); } 
+  //   cout << "TRIG\n"; QWidgetAction::activate (event); }
 };
 
 // FIXME: QTMTileAction::createWidget is called twice:
@@ -235,14 +235,14 @@ QTMTileAction::createWidget(QWidget* parent) {
 }
 
 widget
-tile_menu (array<widget> a, int cols) { 
+tile_menu (array<widget> a, int cols) {
   // a menu rendered as a table of cols columns wide & made up of widgets in a
-  (void) cols; 
+  (void) cols;
 #if 1
-  QWidgetAction* act= new QTMTileAction (NULL, a, cols);  
+  QWidgetAction* act= new QTMTileAction (NULL, a, cols);
   return tm_new<qt_menu_rep> (act);
 #else
-  return horizontal_menu (a); 
+  return horizontal_menu (a);
 #endif
 }
 
@@ -252,7 +252,7 @@ menu_separator (bool vertical) {
   (void) vertical;
   QAction* a= new QTMAction (NULL);
   a->setSeparator (true);
-  return tm_new<qt_menu_rep> (a); 
+  return tm_new<qt_menu_rep> (a);
 }
 
 widget
@@ -274,7 +274,7 @@ pulldown_button (widget w, promise<widget> pw) {
   a->setMenu (lm);
   if (old_menu) {
     cout << "this should not happen\n";
-    delete old_menu;    
+    delete old_menu;
   }
   return tm_new<qt_menu_rep> (a);
 }
@@ -297,7 +297,7 @@ qt_image_widget_rep::as_qaction () {
   QAction* a= new QTMAction (NULL);
   QPixmap* img= the_qt_renderer () -> xpm_image (image);
   QIcon icon (*img);
-  a->setIcon (icon);  
+  a->setIcon (icon);
   return a;
 }
 
@@ -328,7 +328,7 @@ menu_button (widget w, command cmd, string pre, string ks, bool ok) {
   QTMCommand* c= new QTMCommand (cmd.rep);
   c->setParent (a);
   QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
-		    Qt::QueuedConnection);
+                    Qt::QueuedConnection);
   if (N(ks) > 0) {
     string qtks = conv (ks);
     QKeySequence qks (to_qstring (qtks));
@@ -348,7 +348,7 @@ menu_button (widget w, command cmd, string pre, string ks, bool ok) {
 }
 
 widget
-balloon_widget (widget w, widget help)  { 
+balloon_widget (widget w, widget help)  {
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while
   return tm_new<qt_balloon_widget_rep> (w, help);
@@ -395,10 +395,10 @@ impress (simple_widget_rep* wid) {
     //cout << "impress (" << s.width() << "," << s.height() << ")\n";
     pxm.fill (Qt::transparent);
     the_qt_renderer()->begin (static_cast<QPaintDevice*>(&pxm));
-    wid->set_current_renderer(the_qt_renderer());    
+    wid->set_current_renderer(the_qt_renderer());
 
     the_qt_renderer()->set_clipping
-      (rect.x() * PIXEL, -(rect.y() + rect.height()) * PIXEL, 
+      (rect.x() * PIXEL, -(rect.y() + rect.height()) * PIXEL,
        (rect.x() + rect.width()) * PIXEL, -rect.y() * PIXEL);
     wid->handle_repaint
       (rect.x() * PIXEL, -(rect.y() + rect.height()) * PIXEL,
@@ -427,7 +427,7 @@ QTMLazyMenu::force () {
   if (!forced) {
     // widget w= pm->eval ();
     widget w= pm ();
-    qt_menu_rep* wid= (qt_menu_rep*) (w.rep); 
+    qt_menu_rep* wid= (qt_menu_rep*) (w.rep);
     QMenu* menu2= wid->item->menu ();
     replaceActions (this, menu2);
     delete (wid->item);

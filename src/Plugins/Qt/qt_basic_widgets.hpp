@@ -27,7 +27,7 @@ public:
 class qt_image_widget_rep: public qt_widget_rep {
 public:
   url image;
-  
+
   inline qt_image_widget_rep (url _image): image(_image) {}
   virtual QAction *as_qaction();
 };
@@ -35,7 +35,7 @@ public:
 class qt_balloon_widget_rep: public qt_widget_rep {
 public:
   widget text, hint;
-  
+
   inline qt_balloon_widget_rep (widget _text, widget _hint):
     text (_text), hint (_hint) {}
   virtual QAction* as_qaction ();

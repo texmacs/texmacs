@@ -18,7 +18,7 @@
 class simple_widget_rep: public qt_view_widget_rep {
 public:
   simple_widget_rep ();
-	
+        
   virtual void handle_get_size_hint (SI& w, SI& h);
   virtual void handle_notify_resize (SI w, SI h);
   virtual void handle_keypress (string key, time_t t);

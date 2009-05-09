@@ -53,7 +53,7 @@ void
 qt_gui_rep::get_extents (SI& width, SI& height) {
   QDesktopWidget* d= QApplication::desktop();
   int w = d->width();  // returns desktop width
-  int h = d->height(); // returns desktop height	
+  int h = d->height(); // returns desktop height        
   width = ((SI) w) * PIXEL;
   height= ((SI) h) * PIXEL;
 }
@@ -65,8 +65,8 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 }
 
 
-qt_gui_rep::~qt_gui_rep()  { 
-} 
+qt_gui_rep::~qt_gui_rep()  {
+}
 
 /******************************************************************************
 * interclient communication
@@ -105,11 +105,11 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
     //XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
     //if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
     selection= as_charp (s);
-	
+        
     QClipboard *clipboard = QApplication::clipboard();
     QString originalText = clipboard->text();
-		
-    clipboard->setText(selection);	
+                
+    clipboard->setText(selection);      
   }
   return true;
 }
@@ -180,8 +180,8 @@ qt_gui_rep::update () {
 }
 
 void
-QTMGuiHelper::doUpdate() { 
-  gui->update(); 
+QTMGuiHelper::doUpdate() {
+  gui->update();
 }
 
 void
@@ -232,7 +232,7 @@ gui_close () {
 }
 
 void
-gui_root_extents (SI& width, SI& height) {   
+gui_root_extents (SI& width, SI& height) {
   // get the screen size
   the_gui->get_extents (width, height);
 }
@@ -255,16 +255,16 @@ gui_refresh () {
 
 void
 set_default_font (string name) {
-	(void) name;
+        (void) name;
   // set the name of the default font
   // this is ignored since Qt handles fonts for the widgets
 }
 
 font
 get_default_font (bool tt) {
-	(void) tt;	
+        (void) tt;      
   // get the default font or monospaced font (if tt is true)
-	
+        
   // return a null font since this function is not called in the Qt port.
   if (DEBUG_EVENTS) cout << "get_default_font(): SHOULD NOT BE CALLED\n";
   return NULL;
@@ -276,10 +276,10 @@ get_default_font (bool tt) {
 
 void
 load_system_font (string family, int size, int dpi,
-		  font_metric& fnm, font_glyphs& fng)
+                  font_metric& fnm, font_glyphs& fng)
 {
-	(void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-	if (DEBUG_EVENTS) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
+        (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
+        if (DEBUG_EVENTS) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
 
 /******************************************************************************
@@ -298,7 +298,7 @@ get_selection (string key, tree& t, string& s) {
   // Retrieve the selection 't' with string equivalent 's' from clipboard 'cb'
   // Returns true on success; sets t to (extern s) for external selections
   return the_gui->get_selection (key, t, s);
-} 
+}
 
 void
 clear_selection (string key) {
@@ -332,11 +332,11 @@ check_event (int type) {
 void image_gc (string name) {
 // Garbage collect images of a given name (may use wildcards)
 // This routine only needs to be implemented if you use your own image cache
- the_qt_renderer()->image_gc(name); 
+ the_qt_renderer()->image_gc(name);
 }
 
 void
-show_help_balloon (widget balloon, SI x, SI y) { 
+show_help_balloon (widget balloon, SI x, SI y) {
   // Display a help balloon at position (x, y); the help balloon should
   // disappear as soon as the user presses a key or moves the mouse
   (void) balloon; (void) x; (void) y;
@@ -348,7 +348,7 @@ show_wait_indicator (widget base, string message, string argument) {
   // The indicator might for instance be displayed at the center of
   // the base widget which triggered the lengthy operation;
   // the indicator should be removed if the message is empty
-  the_gui->show_wait_indicator(base,message,argument); 
+  the_gui->show_wait_indicator(base,message,argument);
 }
 
 font x_font (string family, int size, int dpi)

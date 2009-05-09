@@ -19,7 +19,7 @@
 #include <QtGlobal>
 #include <QWidget>
 
-// if QTMPIXMAPS is defined we use QPixmap for characters 
+// if QTMPIXMAPS is defined we use QPixmap for characters
 // otherwise we use QImage (which support alpha also under X11)
 
 #ifdef Q_WS_MAC
@@ -45,8 +45,8 @@ public:
 
   void begin (void* handle);
   void end ();
-  
-  
+
+
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  set_color (color c);
   void  set_line_style (SI w, int type=0, bool round=true);
@@ -59,7 +59,7 @@ public:
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
   void  image (url u, SI w, SI h, SI x, SI y,
-	       double cx1, double cy1, double cx2, double cy2);
+               double cx1, double cy1, double cx2, double cy2);
 
   void draw_clipped (QImage * im, int w, int h, SI x, SI y);
   void draw_clipped (QPixmap * im, int w, int h, SI x, SI y);

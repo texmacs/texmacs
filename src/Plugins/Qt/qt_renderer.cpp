@@ -71,7 +71,7 @@ CONCRETE_NULL_CODE(qt_pixmap);
 ******************************************************************************/
 
 static hashmap<basic_character,qt_image> character_image;  // bitmaps of all characters
-static hashmap<string,qt_pixmap> images; 
+static hashmap<string,qt_pixmap> images;
 
 /******************************************************************************
 * qt_renderer
@@ -82,15 +82,15 @@ qt_renderer_rep::qt_renderer_rep (int w2, int h2):
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
-void 
-qt_renderer_rep::begin (void* handle) { 
+void
+qt_renderer_rep::begin (void* handle) {
    QPaintDevice *device = (QPaintDevice*)handle;
-  painter.begin (device);   
+  painter.begin (device);
 }
 
 void qt_renderer_rep::end () { painter.end (); }
 
-QColor 
+QColor
 qt_color(color c)
 {
   int r, g, b;
@@ -162,7 +162,7 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   if ((x1>=x2) || (y1<=y2)) return;
   QBrush brush (qt_color(cur_bg));
   painter.setRenderHints (0);
-  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);	
+  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);       
 }
 
 void
@@ -177,18 +177,18 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
     y1 -= (d>>1);
     y2 += ((d+1)>>1);
   }
-  
+
   x1= max (x1, cx1-ox); y1= max (y1, cy1-oy);
   x2= min (x2, cx2-ox); y2= min (y2, cy2-oy);
   // outer_round (x1, y1, x2, y2); might still be needed somewhere
   if ((x1>=x2) || (y1>=y2)) return;
-  
+
   decode (x1, y1);
   decode (x2, y2);
 
   QBrush brush (qt_color(cur_fg));
   painter.setRenderHints (0);
-  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);	
+  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);       
 }
 
 void
@@ -210,7 +210,7 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
-qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {  
+qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   QPolygonF poly(n);
@@ -242,25 +242,25 @@ struct qt_cache_image_rep: cache_image_element_rep {
 
 void
 qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-                        double cx1, double cy1, double cx2, double cy2) 
+                        double cx1, double cy1, double cx2, double cy2)
 {
   // Given an image of original size (W, H),
   // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
   // at position (x, y) in a rectangle of size (w, h)
-  
+
   // if (DEBUG_EVENTS) cout << "qt_renderer_rep::image " << as_string(u) << LF;
-  
+
   w= w/pixel; h= h/pixel;
   decode (x, y);
-  
+
   //painter.setRenderHints (0);
   //painter.drawRect (QRect (x, y-h, w, h));
-  
+
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
   lookup << as_string (w ) << as_string (h )
-	 << as_string (cx1) << as_string (cy1)
-	 << as_string (cx2) << as_string (cy2) << "qt-image" ;
+         << as_string (cx1) << as_string (cy1)
+         << as_string (cx2) << as_string (cy2) << "qt-image" ;
   cache_image_element ci = get_image_cache(lookup);
   if (!is_nil(ci)) {
     pm= static_cast<QImage*> (ci->ptr);
@@ -273,7 +273,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
              suffix (u) == "pdf") {
       url temp= url_temp (".png");
 #ifdef MACOSX_EXTENSIONS
-      mac_image_to_png (u, temp); 
+      mac_image_to_png (u, temp);
 #else
       system ("convert", u, temp);
 #endif
@@ -289,7 +289,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     set_image_cache(lookup, ci);
     (ci->nr)++;
   }
-  
+
   int iw= pm->width ();
   int ih= pm->height ();
   int x1= as_int (cx1 * iw);
@@ -298,7 +298,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   int y2= as_int (cy2 * ih);
   int ww= x2 - x1;
   int hh= y2 - y1;
-  
+
   painter.setRenderHints (0);
   //painter.setRenderHints (QPainter::SmoothPixmapTransform);
   painter.drawImage (QRect (x, y-h, w, h), *pm, QRect (x1, hh-y2, ww, hh));
@@ -317,7 +317,7 @@ qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   painter.setRenderHints (0);
   painter.drawImage (x, y, *im);
   // [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
-}  
+}
 
 void
 qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
@@ -327,7 +327,7 @@ qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
   painter.setRenderHints (0);
   painter.drawPixmap (x, y, w, h, *im);
   // [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
-}  
+}
 
 
 
@@ -348,18 +348,18 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
-		  
+                
       QPainter pp(im);
       QPen pen(painter.pen());
-      QBrush brush(pen.color());	
+      QBrush brush(pen.color());        
       pp.setPen(Qt::NoPen);
       im->fill (Qt::transparent);
       for (j=0; j<h; j++)
-	for (i=0; i<w; i++) {
-	  int col = gl->get_x (i, j);
-	  brush.setColor (QColor (r, g, b, (255*col)/(nr_cols+1)));
-	  pp.fillRect (i, j, 1, 1, brush);
-	}
+        for (i=0; i<w; i++) {
+          int col = gl->get_x (i, j);
+          brush.setColor (QColor (r, g, b, (255*col)/(nr_cols+1)));
+          pp.fillRect (i, j, 1, 1, brush);
+        }
       pp.end();
     }
 #else
@@ -371,13 +371,13 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 
       // the following line is disabled because
       // it causes a crash on Qt/X11 4.4.3
-      //im->fill (Qt::transparent); 
+      //im->fill (Qt::transparent);
 
       for (j=0; j<h; j++)
-	for (i=0; i<w; i++) {
-	  int col = gl->get_x (i, j);
-	  im->setPixel (i, j, qRgba (r, g, b, (255*col)/(nr_cols+1)));
-	}
+        for (i=0; i<w; i++) {
+          int col = gl->get_x (i, j);
+          im->setPixel (i, j, qRgba (r, g, b, (255*col)/(nr_cols+1)));
+        }
     }
 #endif
     qt_image mi2 (im, xo, yo, w, h);
@@ -386,7 +386,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     character_image (xc)= mi;
     // FIXME: we must release the image at some point (this should be ok now, see qt_image)
   }
-  
+
   // draw the character
   draw_clipped (mi->img, mi->w, mi->h, x- mi->xo*sfactor, y+ mi->yo*sfactor);
 }
@@ -398,10 +398,10 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 extern int char_clip;
 
 QPixmap*
-qt_renderer_rep::xpm_image (url file_name) { 
+qt_renderer_rep::xpm_image (url file_name) {
   QPixmap *pxm= NULL;
   qt_pixmap mi= images [as_string (file_name)];
-  if (is_nil (mi)) {    
+  if (is_nil (mi)) {
     string sss;
     load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
     if (sss == "")
@@ -415,7 +415,7 @@ qt_renderer_rep::xpm_image (url file_name) {
     qt_pixmap mi2 (pxm, 0, 0, pxm->width(), pxm->height());
     mi= mi2;
     images (as_string (file_name))= mi2;
-  }  
+  }
   else pxm=  mi->img ;
   return pxm;
 }

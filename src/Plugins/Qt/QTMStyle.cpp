@@ -144,14 +144,14 @@ QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *option, Q
   //  if (element == QStyle::PE_FrameStatusBarItem) return;
   if (element == QStyle::PE_FrameStatusBar) return;
   style->drawPrimitive(element,option,painter,widget);
-}  
+}
 
 int
 QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const {
   switch (metric) {
   case PM_ToolBarItemSpacing:
     return 0;
-  default: 
+  default:
     return style->pixelMetric(metric,opt,widget);
   }
 }
@@ -160,9 +160,9 @@ QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidge
 void
 QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const {
   switch (element) {
-  case CE_MenuItem: 
+  case CE_MenuItem:
     if (const QStyleOptionMenuItem *mi =
-	qstyleoption_cast<const QStyleOptionMenuItem *> (option)) {
+       qstyleoption_cast<const QStyleOptionMenuItem *> (option)) {
       QStyleOptionMenuItem mi2(*mi);
       mi2.text= QString ("pippo");
       style->drawControl (element, &mi2, painter, widget);

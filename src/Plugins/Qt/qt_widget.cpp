@@ -17,7 +17,7 @@
 #include "qt_menu.hpp"
 
 #include "gui.hpp"
-#include "widget.hpp" 
+#include "widget.hpp"
 #include "message.hpp"
 #include "promise.hpp"
 #include "analyze.hpp"
@@ -69,7 +69,7 @@ qt_widget_rep::popup_window_widget (string s) {
 ostream&
 operator << (ostream& out, QRect rect) {
   return out << "(" << rect.x() << "," << rect.y() << ","
-	     << rect.width() << "," << rect.height() << ")";
+             << rect.width() << "," << rect.height() << ")";
 }
 
 char*
@@ -94,14 +94,14 @@ slot_name (slot s) {
     "SLOT_REPAINT",
     "SLOT_DELAYED_MESSAGE",
     "SLOT_DESTROY",
-    
+
     "SLOT_SHRINKING_FACTOR",
     "SLOT_EXTENTS",
     "SLOT_VISIBLE_PART",
     "SLOT_SCROLLBARS_VISIBILITY",
     "SLOT_SCROLL_POSITION",
     "SLOT_CANVAS",
-    
+
     "SLOT_HEADER_VISIBILITY",
     "SLOT_MAIN_MENU",
     "SLOT_MAIN_ICONS_VISIBILITY",
@@ -116,7 +116,7 @@ slot_name (slot s) {
     "SLOT_INTERACTIVE_MODE",
     "SLOT_INTERACTIVE_PROMPT",
     "SLOT_INTERACTIVE_INPUT",
-    
+
     "SLOT_FORM_FIELD",
     "SLOT_STRING_INPUT",
     "SLOT_INPUT_TYPE",
@@ -132,18 +132,18 @@ slot_name (slot s) {
 ******************************************************************************/
 
 // policy: qt_view_widget_rep owns the QWidget
- 
+
 qt_view_widget_rep::qt_view_widget_rep (QWidget* v):
   qt_widget_rep(), view(v), current_renderer(NULL)  {}
 
-qt_view_widget_rep::~qt_view_widget_rep() { 
-  if (view) delete view; 
-  //FIXME: I'm (MG) not sure if we should delete manually all the QWidgets we create 
+qt_view_widget_rep::~qt_view_widget_rep() {
+  if (view) delete view;
+  //FIXME: I'm (MG) not sure if we should delete manually all the QWidgets we create
   //       or exclusively the top level ones (the windows)
-  //       - Qt spectify that widgets with a parent are deleted by the parent. 
+  //       - Qt spectify that widgets with a parent are deleted by the parent.
   //       - Out policy is that qt_view_widget_rep owns the QWidget (so it is responsible to delete it)
   //       are these two requirements compatible ?
-  if (DEBUG_EVENTS) 
+  if (DEBUG_EVENTS)
     cout << "qt_view_widget_rep::~qt_view_widget_rep()\n";
 }
 
@@ -153,7 +153,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     cout << "qt_view_widget_rep::send " << slot_name (s) << LF;
   switch (s) {
   case SLOT_NAME:
-    {	
+    {   
       check_type<string> (val, "SLOT_NAME");
       string name = open_box<string> (val);
       view->window() -> setWindowTitle (to_qstring (name));
@@ -172,7 +172,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     ASSERT (is_nil (val), "type mismatch");
     view->update(); // [view setNeedsDisplay:YES];
     break;
-    
+
   case SLOT_MOUSE_GRAB:
     NOT_IMPLEMENTED;
     //send_mouse_grab (THIS, val);
@@ -189,7 +189,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     if (open_box<bool> (val)) the_keyboard_focus = this;
       if (DEBUG_EVENTS) cout << "Ignored!\n";
     break;
-    			
+                        
   default:
     FAILED ("unhandled slot type");
   }
@@ -203,7 +203,7 @@ blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
   if ((DEBUG_EVENTS) && (s != SLOT_RENDERER))
     cout << "qt_view_widget_rep::query " << slot_name(s) << LF;
-  
+
   switch (s) {
   case SLOT_IDENTIFIER:
     TYPE_CHECK (type_id == type_helper<int>::id);
@@ -219,16 +219,16 @@ qt_view_widget_rep::query (slot s, int type_id) {
       if (!r) r = the_qt_renderer();
       return close_box<renderer> (r);
     }
-  case SLOT_POSITION:  
+  case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= view->pos();
       if (DEBUG_EVENTS)
-	cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
+        cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
-      
+
 #if 0
   case SLOT_VISIBLE_PART:
     {
@@ -239,7 +239,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       return close_box<coord4> (c);
     }
 #endif
-      
+
   default:
     FAILED ("cannot handle slot type");
     return blackbox ();
@@ -269,16 +269,16 @@ qt_view_widget_rep::read (slot s, blackbox index) {
     cout << "qt_view_widget_rep::read " << slot_name(s) << LF;
 
   switch (s) {
-    case SLOT_WINDOW: 
-      {    
-	check_type_void (index, "SLOT_WINDOW");
-	QWidget* qwin = view->window();
-	QVariant v= qwin->property ("texmacs_window_widget");
-	if (v.canConvert<void*> ()) 
-	  return (widget_rep*) (v.value<void*> ());
-	else FAILED ("QWidget property not set");
+    case SLOT_WINDOW:
+      {
+        check_type_void (index, "SLOT_WINDOW");
+        QWidget* qwin = view->window();
+        QVariant v= qwin->property ("texmacs_window_widget");
+        if (v.canConvert<void*> ())
+          return (widget_rep*) (v.value<void*> ());
+        else FAILED ("QWidget property not set");
       }
-      break; // not reached	
+      break; // not reached     
     default:
       FAILED ("cannot handle slot type");
       return widget();
@@ -304,7 +304,7 @@ qt_view_widget_rep::plain_window_widget (string s) {
   //return this;
   widget wid= tm_new<qt_window_widget_rep> (view);
   //FIXME: is this the right thing to do?
-  return wid; 
+  return wid;
 }
 
 
@@ -317,10 +317,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   visibility[2] = (mask & 4)  == 4;  // context
   visibility[3] = (mask & 8)  == 8;  // user
   visibility[4] = (mask & 16) == 16; // footer
-  
-  
+
+
   QMainWindow* mw= tm_mainwindow ();
- 
+
   QScrollArea* sa= new QScrollArea (mw);
   sa->setBackgroundRole (QPalette::Dark);
   mw->setCentralWidget (sa);
@@ -349,17 +349,17 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   mw->addToolBarBreak ();
 
   updateVisibility();
-  
+
   mw->setIconSize (QSize (17, 17));
 
   mw->setFocusPolicy (Qt::NoFocus);
   sa->setFocusPolicy (Qt::NoFocus);
-  
-  
+
+
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
-  if (DEBUG_EVENTS) 
+  if (DEBUG_EVENTS)
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
 }
 
@@ -450,7 +450,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       rightLabel->update ();
     }
     break;
-			
+
   case SLOT_SCROLL_POSITION:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
@@ -460,21 +460,21 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       // QPoint pt2= tm_mainwindow()->mapToGlobal (pt);
       // pt= tm_scrollarea()->widget()->mapFromGlobal (pt2);
       if (DEBUG_EVENTS)
-	cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
+        cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
       cout << "scrollarea ("
-	   << tm_scrollarea()->x() << ","
-	   << tm_scrollarea()->y() << "," 
-	   << tm_scrollarea()->width() << ","
-	   << tm_scrollarea()->height() << ")\n";
+           << tm_scrollarea()->x() << ","
+           << tm_scrollarea()->y() << ","
+           << tm_scrollarea()->width() << ","
+           << tm_scrollarea()->height() << ")\n";
       cout << "widget     ("
-	   << tm_scrollarea()->widget()->x() << ","
-	   << tm_scrollarea()->widget()->y() << "," 
-	   << tm_scrollarea()->widget()->width() << ","
-	   << tm_scrollarea()->widget()->height() << ")\n";		
+           << tm_scrollarea()->widget()->x() << ","
+           << tm_scrollarea()->widget()->y() << ","
+           << tm_scrollarea()->widget()->width() << ","
+           << tm_scrollarea()->widget()->height() << ")\n";
       cout << "GOING TO ("
-	   << pt.x()+tm_scrollarea()->width()/2 << ","
-	   << pt.y()+tm_scrollarea()->height()/2 << ")\n";
+           << pt.x()+tm_scrollarea()->width()/2 << ","
+           << pt.y()+tm_scrollarea()->height()/2 << ")\n";
 #endif
       // It is still not very clear to me because this shift of half h/w size works...
       int sx= pt.x () + tm_scrollarea () -> width  () / 2;
@@ -485,12 +485,12 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       tm_scrollarea () -> update();
     }
     break;
-      
+
   case SLOT_SCROLLBARS_VISIBILITY:
     // ignore this: qt handles scrollbars independently
-    //			send_int (THIS, "scrollbars", val);
+    //                send_int (THIS, "scrollbars", val);
     break;
-      
+
   case SLOT_INTERACTIVE_MODE:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
@@ -509,7 +509,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       tmw->tm_widget()->handle_set_shrinking_factor (new_sf);
     }
     break;
-    
+
   default:
     qt_view_widget_rep::send (s, val);
   }
@@ -531,7 +531,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= tm_canvas()->pos();
       if (DEBUG_EVENTS)
-	cout << "Position (" << pt.x() << "," << pt.y() << ")\n"; 
+        cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
 
@@ -552,7 +552,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       if (DEBUG_EVENTS) cout << "Visible Region " << rect << LF;
       return close_box<coord4> (c);
     }
-			
+                        
   case SLOT_USER_ICONS_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[3]);
@@ -560,11 +560,11 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_CONTEXT_ICONS_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[2]);
-      
+
   case SLOT_MAIN_ICONS_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[1]);
-      
+
   case SLOT_HEADER_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[0]);
@@ -578,7 +578,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     return close_box<string>
       (((qt_input_text_widget_rep*) int_input.rep) -> text);
     // return close_box<string> ("FIXME");
- 
+
   case SLOT_INTERACTIVE_MODE:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (false); // FIXME: who needs this info?
@@ -637,12 +637,12 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     cout << "qt_tm_widget_rep::write " << slot_name (s) << LF;
 
   switch (s) {
-  case SLOT_CANVAS: 
+  case SLOT_CANVAS:
     {
       check_type_void (index, "SLOT_CANVAS");
       QWidget* qw= ((qt_view_widget_rep*) w.rep)->view;
-      QWidget* old_canvas= tm_scrollarea()->takeWidget(); 
-      tm_scrollarea()->setWidget (qw);			
+      QWidget* old_canvas= tm_scrollarea()->takeWidget();
+      tm_scrollarea()->setWidget (qw);                  
       (void) old_canvas;
       // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
       qw->setFocusPolicy (Qt::StrongFocus);
@@ -660,7 +660,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       delete m;
     }
     break;
-  
+
   case SLOT_MAIN_ICONS:
     check_type_void (index, "SLOT_MAIN_ICONS");
     {
@@ -669,19 +669,19 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       delete m;
     }
     break;
-  
+
   case SLOT_CONTEXT_ICONS:
     check_type_void (index, "SLOT_CONTEXT_ICONS");
-    {	
+    {   
       QMenu* m= to_qmenu (w);
       replaceButtons (contextToolBar, m);
       delete m;
     }
     break;
-  
+
   case SLOT_USER_ICONS:
     check_type_void (index, "SLOT_USER_ICONS");
-    {	
+    {   
       QMenu* m= to_qmenu (w);
       replaceButtons (userToolBar, m);
       delete m;
@@ -690,14 +690,14 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
 
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
-    int_prompt= concrete (w); 
+    int_prompt= concrete (w);
     break;
-  
+
   case SLOT_INTERACTIVE_INPUT:
     check_type_void (index, "SLOT_INTERACTIVE_INPUT");
     int_input= concrete (w);
     break;
-  
+
   default:
     qt_view_widget_rep::write (s, index, w);
   }
@@ -716,11 +716,11 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid):
   widget_rep(), wid(_wid)
 {
   wid->setProperty ("texmacs_window_widget",
-		    QVariant::fromValue ((void*) this));
+                    QVariant::fromValue ((void*) this));
   nr_windows++;
 }
 
-qt_window_widget_rep::~qt_window_widget_rep () 
+qt_window_widget_rep::~qt_window_widget_rep ()
 {
   nr_windows--;
 }
@@ -736,8 +736,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
       if (wid) {
-	      QSize size= to_qsize (p);
-	      wid->resize (size);
+              QSize size= to_qsize (p);
+              wid->resize (size);
       }
     }
     break;
@@ -746,29 +746,29 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
-      if (wid) { 
-	      QPoint pt = to_qpoint (p); 
-	      pt.ry() += 40;
+      if (wid) {
+              QPoint pt = to_qpoint (p);
+              pt.ry() += 40;
         // to avoid window under menu bar on MAC when moving at (0,0)
-	      if (DEBUG_EVENTS) cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF; 
+              if (DEBUG_EVENTS) cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF;
         wid->move (pt);
       }
     }
     break;
-      
+
   case SLOT_VISIBILITY:
     {
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       if (wid) {
-	      if (flag) wid->show();
-	      else wid->hide();
+              if (flag) wid->show();
+              else wid->hide();
       }
     }
     break;
 
   case SLOT_NAME:
-    {	
+    {   
       check_type<string> (val, "SLOT_NAME");
       string name = open_box<string> (val);
       if (wid) wid->setWindowTitle (to_qstring (name));
@@ -788,7 +788,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     //win->set_full_screen (open_box<bool> (val));
     }
     break;
-      
+
   case SLOT_UPDATE:
     NOT_IMPLEMENTED ;
     //send_update (THIS, val);
@@ -809,13 +809,13 @@ qt_window_widget_rep::query (slot s, int type_id) {
     // we need only to know if the widget is attached to some gui window
     return close_box<int> (wid? 1: 0);
     // return close_box<int> ((int)wid);
-  case SLOT_POSITION:  
+  case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= wid->pos();
       if (DEBUG_EVENTS)
-	cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
+        cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
   case SLOT_SIZE:
@@ -844,7 +844,7 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_window_widget_rep::read (slot s, blackbox index) {
-  (void) index; 
+  (void) index;
   if (DEBUG_EVENTS)
     cout << "qt_window_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
@@ -857,7 +857,7 @@ qt_window_widget_rep::read (slot s, blackbox index) {
 void
 qt_window_widget_rep::write (slot s, blackbox index, widget w) {
   (void) w; (void) index;
-  if (DEBUG_EVENTS)    
+  if (DEBUG_EVENTS)
     cout << "qt_window_widget_rep::write " << slot_name(s) << LF;
 
   switch (s) {
@@ -871,8 +871,8 @@ qt_window_widget_rep::write (slot s, blackbox index, widget w) {
 ******************************************************************************/
 
 simple_widget_rep::simple_widget_rep ():
-  qt_view_widget_rep (new QTMWidget (this)) 
-{ 
+  qt_view_widget_rep (new QTMWidget (this))
+{
   // view->setProperty ("texmacs_widget", QVariant::fromValue ((void*) this));
 }
 
@@ -883,12 +883,12 @@ simple_widget_rep::simple_widget_rep ():
 
 void
 simple_widget_rep::handle_get_size_hint (SI& w, SI& h) {
-  gui_root_extents (w, h);  
+  gui_root_extents (w, h);
 }
 
 void
 simple_widget_rep::handle_notify_resize (SI w, SI h) {
-  (void) w; (void) h; 
+  (void) w; (void) h;
 }
 
 void
@@ -980,7 +980,7 @@ destroy_window_widget (widget w) {
   // FIXME: Handle correcly
   // destroys a window as created by the above routines
   (void) w;
-  
+
   // In the QT implementation explicitly destroying window widgets should not be necessary
   // since the widget itself destroy the Qt widget as soon as its destructor is called.
   // No memory leak should be caused by this trivial implementation.
@@ -998,7 +998,7 @@ texmacs_widget (int mask, command quit) {
   // are visible or not
   (void) mask; (void) quit; // FIXME: handle correctly mask and quit
   widget w= tm_new<qt_tm_widget_rep> (mask, quit);
-  return w; 
+  return w;
 }
 
 widget
@@ -1032,9 +1032,9 @@ glue_widget (bool hx, bool vx, SI w, SI h) {
 }
 
 widget
-wait_widget (SI width, SI height, string message) { 
+wait_widget (SI width, SI height, string message) {
   // a widget of a specified width and height, displaying a wait message
   // this widget is only needed when using the X11 plugin
   (void) width; (void) height; (void) message;
-  return widget(); 
+  return widget();
 }
