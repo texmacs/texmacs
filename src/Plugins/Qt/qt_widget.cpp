@@ -72,9 +72,9 @@ operator << (ostream& out, QRect rect) {
              << rect.width() << "," << rect.height() << ")";
 }
 
-char*
+const char *
 slot_name (slot s) {
-  static char * slot_names[]= {
+  static const char * slot_names[]= {
     "SLOT_IDENTIFIER",
     "SLOT_WINDOW",
     "SLOT_RENDERER",

@@ -12,8 +12,8 @@
 ******************************************************************************/
 
 typedef struct { 
-  char *name;
-  int r,g,b; 
+  const char *name;
+  int r,g,b;
 } rgb_record;
 
 #define RGB(r,g,b)  r, g, b 
