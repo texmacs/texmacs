@@ -172,11 +172,13 @@
 ; vulgar fraction one half "#BD"
 ; vulgar fraction three quarters "#BE"
 ;("<flip-?>"	"#BF") ; see symbol-unicode-math.scm
+;("<AA>"	"#C5") ; see symbol-unicode-math.scm
 ;("<AE>"	"#C6") ; see symbol-unicode-math.scm
 ;("<Thorn>"	"#DE") ; see symbol-unicode-math.scm
 ("<times>"	"#D7")
 ;("<O/>"	"#D8") ; see symbol-unicode-math.scm
 ;("<sz>"	"#DF") ; see symbol-unicode-math.scm
+;("<aa>"	"#E5") ; see symbol-unicode-math.scm
 ;("<ae>"	"#E6") ; see symbol-unicode-math.scm
 ;("<dh>"	"#F0") ; see symbol-unicode-math.scm
 ("<div>"	"#F7")

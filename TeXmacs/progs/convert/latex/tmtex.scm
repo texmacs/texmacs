@@ -20,6 +20,8 @@
 	(convert latex texout)
 	(convert latex latex-tools)))
 
+(use-modules (ice-9 format))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -894,7 +896,13 @@
 	      ((== "par-first" var) (tmtex-make-parmod "0pt" "0pt" val arg))
 	      ((== "par-par-sep" var) (tmtex-make-parsep val arg))
 	      ((== var "color")
-	      	(list '!group (tex-concat (list (list 'color val) " " arg))))
+	        (if (and (= (string-length val) 7) (char=? (string-ref val 0) #\#))
+		  (let* ((r (quotient (* (string->number (substring val 1 3) 16) 1000) 255))
+			 (g (quotient (* (string->number (substring val 3 5) 16) 1000) 255))
+			 (b (quotient (* (string->number (substring val 5 7) 16) 1000) 255))
+			 (rgb (format #f "~,,-3f,~,,-3f,~,,-3f" r g b)))
+		    (list '!group (tex-concat (list (list 'color (list '!option "rgb") rgb) " " arg))))
+		  (list '!group (tex-concat (list (list 'color val) " " arg)))))
 	      (else arg)))))
 
 (define (tmtex-with l)
