@@ -75,7 +75,7 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-fn") || (s == "-font")) {
 	i++;
-	if (i<argc) the_default_font= argv[i];	
+	if (i<argc) the_default_font= argv[i];
       }
       else if ((s == "-g") || (s == "-geometry")) {
 	i++;
@@ -95,7 +95,7 @@ TeXmacs_main (int argc, char** argv) {
 	    geometry_w= max (as_int (g (0, j1)), 320);
 	    geometry_h= max (as_int (g (j1+1, j2)), 200);
 	  }
-	  if (j3<N(g)) { 
+	  if (j3<N(g)) {
 	    if (g[j2] == '-') geometry_x= as_int (g (j2, j3)) - 1;
 	    else geometry_x= as_int (g (j2+1, j3));
 	    if (g[j3] == '-') geometry_y= as_int (g (j3, N(g))) - 1;
@@ -187,6 +187,7 @@ TeXmacs_main (int argc, char** argv) {
   gui_open (argc, argv);
   set_default_font (the_default_font);
   if (DEBUG_STD) cout << "TeXmacs] Starting server...\n";
+  { // opening scope for server sv
   server sv;
 
   for (i=1; i<argc; i++) {
@@ -227,6 +228,9 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   texmacs_started= true;
   gui_start_loop ();
+
+  if (DEBUG_STD) cout << "TeXmacs] Stopping server...\n";
+  } // ending scope for server sv
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";
   gui_close ();
