@@ -132,7 +132,7 @@ public:
   Atom XA_TARGETS;
 
 public:
-  x_gui_rep (int argc, char** argv);
+  x_gui_rep (int& argc, char** argv);
   ~x_gui_rep ();
 
   /******************************* Colors ************************************/

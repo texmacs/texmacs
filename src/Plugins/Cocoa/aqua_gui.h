@@ -36,7 +36,7 @@ public:
   hashmap<string,string>       selection_s;
 
 public:
-  aqua_gui_rep(int argc, char **argv);
+  aqua_gui_rep(int& argc, char **argv);
   virtual ~aqua_gui_rep();
   
   

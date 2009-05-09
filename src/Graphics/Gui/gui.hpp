@@ -30,7 +30,7 @@ typedef int color;
 * Main routines
 ******************************************************************************/
 
-void gui_open (int argc= 0, char** argv= NULL);
+void gui_open (int& argc, char** argv);
   // start the gui
 void gui_interpose (void (*) (void));
   // specify an interpose routine for the main loop

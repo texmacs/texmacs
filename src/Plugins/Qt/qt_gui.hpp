@@ -41,7 +41,7 @@ public:
   hashmap<string,string> selection_s;
 
 public:
-  qt_gui_rep (int argc, char **argv);
+  qt_gui_rep (int &argc, char **argv);
   virtual ~qt_gui_rep ();
 
   /********************* extents, grabbing, selections ***********************/

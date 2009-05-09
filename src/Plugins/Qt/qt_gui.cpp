@@ -36,10 +36,10 @@ int timeout_time;
 * Constructor and geometry
 ******************************************************************************/
 
-qt_gui_rep::qt_gui_rep(int argc2, char **argv2):
+qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   interrupted (false), selection (NULL)
 {
-  (void) argc2; (void) argv2;
+  (void) argc; (void) argv;
   // argc= argc2;
   // argv= argv2;
   interrupted   = false;
@@ -211,10 +211,10 @@ qt_gui_rep::event_loop () {
 ******************************************************************************/
 
 void
-gui_open (int argc2, char** argv2) {
+gui_open (int& argc, char** argv) {
   // start the gui
-  new QApplication (argc2,argv2);
-  the_gui = tm_new<qt_gui_rep> (argc2, argv2);
+  new QApplication (argc,argv);
+  the_gui = tm_new<qt_gui_rep> (argc, argv);
 }
 
 void

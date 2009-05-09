@@ -803,7 +803,7 @@ x_gui_rep::get_max_size (SI& width, SI& height) {
 * Main initialization
 ******************************************************************************/
 
-x_gui_rep::x_gui_rep (int argc2, char** argv2):
+x_gui_rep::x_gui_rep (int& argc2, char** argv2):
   color_scale ((void*) NULL),
   character_bitmap (NULL), character_pixmap ((pointer) 0),
   xpm_bitmap (0), xpm_pixmap (0),
@@ -863,7 +863,7 @@ x_gui_rep::~x_gui_rep () {
 }
 
 void
-gui_open (int argc2, char** argv2) {
+gui_open (int& argc2, char** argv2) {
   ASSERT (the_gui == NULL, "gui already open");
   the_gui= tm_new<x_gui_rep> (argc2, argv2);
 }

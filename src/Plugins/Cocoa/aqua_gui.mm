@@ -36,10 +36,10 @@ int timeout_time;
  ******************************************************************************/
 
 
-aqua_gui_rep::aqua_gui_rep(int argc2, char **argv2): 
+aqua_gui_rep::aqua_gui_rep(int& argc, char** argv): 
   interrupted(false), selection(NULL)
 {
-  (void) argc2; (void) argv2;
+  (void) argc; (void) argv;
 //  argc               = argc2;
 //  argv               = argv2;
   interrupted        = false;
@@ -367,7 +367,7 @@ static NSAutoreleasePool *pool = nil;
 * Main routines
 ******************************************************************************/
 
-void gui_open (int argc2, char** argv2)
+void gui_open (int& argc2, char** argv2)
   // start the gui
 {
   if (!NSApp) {
