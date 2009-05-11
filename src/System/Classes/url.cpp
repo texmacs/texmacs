@@ -701,6 +701,7 @@ complete (url base, url sub, url u, string filter, bool flag) {
 
 url
 complete (url base, url u, string filter, bool flag) {
+ // cout << "complete " << base << " |||| " << u << LF;
   if (is_none (base)) return base;
   if (is_none (u)) return u;
   if ((!is_root (base)) && (!is_rooted_name (base))) {
@@ -866,7 +867,7 @@ string
 materialize (url u, string filter) {
   // Combines resolve and concretize
   url r= resolve (u, filter);
-  if (!(is_rooted (u) || is_here (u) || is_parent (u))) {
+  if (!(is_rooted (r) || is_here (r) || is_parent (r))) {
     cerr << "\nu= " << u << LF;
     FAILED ("url could not be resolved");
   }
