@@ -215,8 +215,7 @@ BUNDLE_MAIN: TEXMACS
 	$(CP) $(BUNDLE_SRC)/Info.plist $(BUNDLE_CONTENTS)
 	$(CP) $(BUNDLE_SRC)/PkgInfo $(BUNDLE_CONTENTS)
 	$(MKDIR) $(BUNDLE_CONTENTS)/MacOS
-	$(CP) $(BUNDLE_SRC)/TeXmacs $(BUNDLE_CONTENTS)/MacOS
-	$(CP) TeXmacs/bin/texmacs.bin $(BUNDLE_CONTENTS)/MacOS
+	$(CP) TeXmacs/bin/texmacs.bin $(BUNDLE_CONTENTS)/MacOS/TeXmacs
 	$(MKDIR) $(BUNDLE_RESOURCES)
 	$(CP) $(BUNDLE_SRC)/TeXmacs.icns $(BUNDLE_RESOURCES)
 	$(CP) src/Plugins/Cocoa/English.lproj $(BUNDLE_RESOURCES)
@@ -226,7 +225,9 @@ BUNDLE_MAIN: TEXMACS
 	$(CP) TeXmacs $(BUNDLE_RESOURCES)/share
 	$(RM) $(BUNDLE_TEXMACS)/bin/texmacs.bin
 	$(RM) -r $(BUNDLE_TEXMACS)/doc
-	$(CP) ../doc $(BUNDLE_TEXMACS)
+	if [ -f ../doc ] ; then \
+	  $(CP) ../doc $(BUNDLE_TEXMACS) ;\
+	fi
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
@@ -272,8 +273,11 @@ bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep 
 BUNDLE_LIBS:
 	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
 
-BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
-
+#BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
+BUNDLE: BUNDLE_MAIN
+	$(BUNDLE_SRC)/bundle-libs.sh $(BUNDLE_CONTENTS)/MacOS/TeXmacs
+    
+    
 DISKIMAGE: BUNDLE
 	$(RM) $(BUNDLE_DMG)
 	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
