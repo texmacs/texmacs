@@ -244,7 +244,11 @@ TeXmacs_main (int argc, char** argv) {
 void
 immediate_options (int argc, char** argv) {
   if (get_env ("TEXMACS_HOME_PATH") == "")
-    set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
+#ifdef __MINGW32__
+    set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "/TeXmacs");
+#else
+  set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
+#endif
   if (get_env ("TEXMACS_HOME_PATH") == "") return;
   for (int i=1; i<argc; i++) {
     string s= argv[i];
@@ -279,6 +283,31 @@ int
 main (int argc, char** argv) {
 #ifdef AQUATEXMACS
   mac_fix_paths ();
+#endif
+#ifdef __MINGW32__
+  // We set some environment variables 
+  // TEXMACS_PATH is set by assuming that the executable is in TeXmacs/bin/
+  // HOME is set to USERPROFILE
+  // PWD is set to HOME
+  // if PWD is lacking the internal TeXmacs path resolution machinery does not work
+  
+  if (get_env ("TEXMACS_PATH") == "") {
+    set_env ("TEXMACS_PATH", as_string(url_system(argv[0]) * "../.."));
+  }
+//  if (get_env ("GUILE_LOAD_PATH") == "") {
+//    set_env ("GUILE_LOAD_PATH", as_string(url_system(argv[0]) * "../../guile/1.8"));
+//  }
+  if (get_env ("HOME") == "") {
+    set_env ("HOME", get_env("USERPROFILE"));
+  }
+  // HACK
+  // In WINE the variable PWD is already in the outer Unix environment 
+  // so we need to override it to have a correct behaviour
+ //  if (get_env ("PWD") == "") 
+  {
+    set_env ("PWD", get_env("HOME"));
+  }
+  //system("set");
 #endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();

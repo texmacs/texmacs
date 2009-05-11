@@ -80,7 +80,11 @@ plugin_list () {
 
 static void
 init_main_paths () {
+#ifdef __MINGW32__
+  if (is_none (get_env_path ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "/TeXmacs"))) {
+#else
   if (is_none (get_env_path ("TEXMACS_HOME_PATH", "~/.TeXmacs"))) {
+#endif
     cerr << "\nTeXmacs]\n";
     cerr << "TeXmacs] Installation problem: please send a bug report.\n";
     cerr << "TeXmacs] 'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
@@ -146,7 +150,6 @@ init_user_dirs () {
 static void
 init_guile () {
   url guile_path= "$TEXMACS_PATH/progs:$GUILE_LOAD_PATH";
-
   if (!exists (guile_path * "init-texmacs.scm")) {
     cerr << "\nTeXmacs]\n";
     cerr << "TeXmacs] Installation problem: please send a bug report.\n";
