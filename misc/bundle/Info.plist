@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>TeXmacs</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.mgubi.TeXmacs</string>
+	<string>org.texmacs.TeXmacs</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
