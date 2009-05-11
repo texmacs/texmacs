@@ -60,11 +60,7 @@ url url_standard (string dir, string name);
 inline url url_none () { return as_url (tuple ("none")); }
 inline url url_here () { return as_url (tree (".")); }
 inline url url_parent () { return as_url (tree ("..")); }
-#ifdef __MINGW32__
-inline url url_pwd () { return url_system ("$TEXMACS_PWD"); }
-#else
 inline url url_pwd () { return url_system ("$PWD"); }
-#endif
 
 url url_root (string protocol);       // root url
 url url_ramdisc (string contents);    // ramdisc with contents contents
