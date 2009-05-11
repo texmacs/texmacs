@@ -282,6 +282,69 @@ DISKIMAGE: BUNDLE
 .PHONY: BUNDLE
 
 ###############################################################################
+# Make a bundle for Windows
+###############################################################################
+
+WIN_BUNDLE_SRC = misc/windows
+WIN_BUNDLE_DIR = ../distr/TeXmacs-Windows
+WIN_BUNDLE_BIN_DIR = $(WIN_BUNDLE_DIR)/bin
+WIN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+
+## WARNING: the following paths needs to be adapted manually 
+WIN_BUNDLE_QT_DLL_DIR = $(HOME)/.wine/drive_c/Qt/4.4.3/bin
+WIN_BUNDLE_LIBS_DLL_DIR = ../local/bin
+
+WIN_BUNDLE_MAIN: TEXMACS
+	$(MKDIR) ../distr
+	$(RM) -r $(WIN_BUNDLE_DIR)
+	$(MKDIR) $(WIN_BUNDLE_DIR)
+	$(CP) TeXmacs/* $(WIN_BUNDLE_DIR)/.
+	$(MV) $(WIN_BUNDLE_DIR)/bin/texmacs.bin $(WIN_BUNDLE_DIR)/bin/texmacs.exe
+	$(RM) -r $(WIN_BUNDLE_DIR)/bin/texmacs
+	$(RM) -r $(WIN_BUNDLE_DIR)/doc
+	$(CP) ../doc $(WIN_BUNDLE_DIR)
+	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
+	export GUILE_DATA_PATH; \
+	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
+	export GUILE_LOAD_PATH; \
+	$(CP) $$GUILE_LOAD_PATH $(WIN_BUNDLE_DIR)/progs/
+	$(CHMOD) 644 $(WIN_BUNDLE_DIR)/progs/ice-9/*
+	$(CHMOD) 755 $(WIN_BUNDLE_DIR)/progs/ice-9
+	$(CHMOD) 755 $(WIN_BUNDLE_DIR)/progs/ice-9/debugger 2>/dev/null || :
+	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
+	  $(CP) ../distr/$(BUNDLE_FONTS) $(WIN_BUNDLE_DIR) ; \
+	  cd $(WIN_BUNDLE_DIR) ; \
+	  tar -zxf $(BUNDLE_FONTS); \
+	  $(RM) $(BUNDLE_FONTS) ; \
+	fi
+#	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
+#	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
+#	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
+	$(RM) -r $(WIN_BUNDLE_DIR)/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
+
+
+WIN_BUNDLE_LIBS:
+	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/QtCore4.dll $(WIN_BUNDLE_BIN_DIR)
+	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/QtGui4.dll $(WIN_BUNDLE_BIN_DIR)
+	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/QtSvg4.dll $(WIN_BUNDLE_BIN_DIR)
+	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/mingwm10.dll $(WIN_BUNDLE_BIN_DIR)
+	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libgmp*.dll $(WIN_BUNDLE_BIN_DIR) 
+	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libguile*.dll $(WIN_BUNDLE_BIN_DIR) 
+	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libfreetype*.dll $(WIN_BUNDLE_BIN_DIR) 
+	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libltdl*.dll $(WIN_BUNDLE_BIN_DIR)
+
+WIN_BUNDLE: WIN_BUNDLE_MAIN WIN_BUNDLE_LIBS 
+
+
+
+###############################################################################
 # Cleaning and backups
 ###############################################################################
 
