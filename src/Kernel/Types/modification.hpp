@@ -101,6 +101,7 @@ tree_label L (modification mod);
 ******************************************************************************/
 
 bool is_applicable (tree t, modification mod);
+tree clean_apply (tree t, modification mod);
 void raw_apply (tree& t, modification mod);      // in observer.cpp
 void apply (tree& t, modification mod);          // in observer.cpp
 
