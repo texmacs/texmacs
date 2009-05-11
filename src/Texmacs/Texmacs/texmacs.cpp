@@ -281,8 +281,14 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
-#ifdef AQUATEXMACS
-  mac_fix_paths ();
+#if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_WS_MAC))
+  // We set some environment variables when the executable is in a .app bundle on MacOSX
+  if (get_env ("TEXMACS_PATH") == "") {
+    set_env ("TEXMACS_PATH", as_string(url("$PWD") * argv[0] * "../../Resources/share/TeXmacs"));
+  }
+  //cout << get_env("PATH") * ":" * as_string(url("$PWD") * argv[0] * "../../Resources/share/TeXmacs/bin") << LF;
+  set_env ("PATH",  get_env("PATH") * ":" * as_string(url("$PWD") * argv[0] * "../../Resources/share/TeXmacs/bin"));
+  //system("set");
 #endif
 #ifdef __MINGW32__
   // We set some environment variables 
