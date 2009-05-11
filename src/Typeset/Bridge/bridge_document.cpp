@@ -52,7 +52,7 @@ bridge_document_rep::initialize () {
 
 void
 bridge_document_rep::initialize_acc () {
-  if (ttt->paper) acc= bridge ();
+  if (true || ttt->paper) acc= bridge ();
   else acc= bridge_docrange (ttt, st, ip, brs, 0, N(st), true);
 }
 
@@ -87,11 +87,13 @@ bridge_document_rep::notify_assign (path p, tree u) {
 
 void
 bridge_document_rep::notify_insert (path p, tree u) {
-  // cout << "Insert " << p << ", " << u << " in " << st << "\n";
+  //cout << "Insert " << p << ", " << u << " in " << st << "\n";
   ASSERT (!is_nil (p), "nil path");
   if (is_atom (p)) {
     int i, j, n= N(brs), pos= p->item, nr= N(u);
     array<bridge> brs2 (n+nr);
+    if (pos>0) brs[pos-1]->notify_change (); // touch in case of surroundings
+    if (pos<n) brs[pos  ]->notify_change (); // touch in case of surroundings
     for (i=0; i<pos; i++) brs2[i]= brs[i];
     for (j=0; j<nr ; j++) brs2[i+j]= make_bridge (ttt, u[j], descend (ip,i+j));
     for (; i<n; i++) {

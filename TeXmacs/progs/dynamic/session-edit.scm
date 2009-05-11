@@ -545,8 +545,9 @@
   (with-innermost t field-input-context?
     (let* ((lan (get-env "prog-language"))
 	   (ses (get-env "prog-session"))
-	   (p (plugin-prompt lan ses)))
-      (tree-go-to (field-create t p forwards?) 1 :end))))
+	   (p (plugin-prompt lan ses))
+	   (t (field-create t p forwards?)))
+      (tree-go-to t 1 :end))))
 
 (tm-define (field-insert-text forward?)
   (with-innermost t field-input-context?
