@@ -468,24 +468,25 @@ qt_input_widget_rep::perform_dialog() {
   QVector<QComboBox*> cbs (N (fields));
 
   for(int i=0; i<N(fields); i++) {
-    QHBoxLayout *hl = new QHBoxLayout(&d);
+    QHBoxLayout *hl = new QHBoxLayout();
+
     QLabel *lab = new QLabel (to_qstring (fields[i]->prompt),&d);
     cbs[i] = new QComboBox(&d);
-    cbs[i]->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
-    cbs[i]->setEditText (to_qstring (fields[i]->input));
+    cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
+    cbs[i] -> setEditText (to_qstring (fields[i]->input));
     int minlen = 0;
     for(int j=0; j < N(fields[i]->proposals); j++) {
       QString str = to_qstring (fields[i]->proposals[j]);
-      cbs[i]->addItem (str);
+      cbs[i] -> addItem (str);
       int c = str.count();
       if (c > minlen) minlen = c;
     }
-    cbs[i]->setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
-    cbs[i]->setEditable (true);
-    lab->setBuddy (cbs[i]);
-    hl->addWidget (lab);
-    hl->addWidget (cbs[i]);
-    vl->addLayout (hl);
+    cbs[i] -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
+    cbs[i] -> setEditable (true);
+    lab -> setBuddy (cbs[i]);
+    hl -> addWidget (lab);
+    hl -> addWidget (cbs[i]);
+    vl -> addLayout (hl);
   }
 
   {
@@ -494,9 +495,9 @@ qt_input_widget_rep::perform_dialog() {
                             Qt::Horizontal, &d);
     QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
     QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
-    vl->addWidget (buttonBox);
+    vl -> addWidget (buttonBox);
   }
-  d.setLayout (vl);
+//  d.setLayout (vl);
   d.setWindowTitle(to_qstring(win_title));
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
@@ -507,16 +508,16 @@ qt_input_widget_rep::perform_dialog() {
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
   d.setGeometry(r);
-
+  
   int result = d.exec ();
   if (result == QDialog::Accepted) {
     for(int i=0; i<N(fields); i++) {
       QString item = cbs[i]->currentText();
-      fields[i]->input = scm_quote (from_qstring (item));
+      fields[i] -> input = scm_quote (from_qstring (item));
     }
   } else {
     for(int i=0; i<N(fields); i++) {
-      fields[i]->input = "#f";
+      fields[i] -> input = "#f";
     }
   }
   cmd ();
