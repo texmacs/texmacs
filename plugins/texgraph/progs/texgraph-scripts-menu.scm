@@ -21,7 +21,9 @@
 	(utils plugins plugin-cmd)))
 
 (menu-bind texgraph-scripts-plot-menu
-  ("Courbes" (make 'texgraph-plot-curve))
+  ("Courbes" 	(init-add-package "texgraph-scripts")
+		(delayed
+		  (:pause 10) (make 'texgraph-plot-curve)))
 ;  ("Surfaces" (make 'texgraph-plot-surface))
 ;  ("Parametric curve" (make 'texgraph-plot-curve*))
 ;  ("Parametric surface" (make 'texgraph-plot-surface*))
