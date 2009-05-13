@@ -281,13 +281,17 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  url exe = url_system(argv[0]);
+  if (! is_rooted(exe)) {
+    exe = url_pwd() * exe;
+  }
 #if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_WS_MAC))
   // We set some environment variables when the executable is in a .app bundle on MacOSX
   if (get_env ("TEXMACS_PATH") == "") {
-    set_env ("TEXMACS_PATH", as_string(url("$PWD") * argv[0] * "../../Resources/share/TeXmacs"));
+    set_env ("TEXMACS_PATH", as_string(exe * "../../Resources/share/TeXmacs"));
   }
   //cout << get_env("PATH") * ":" * as_string(url("$PWD") * argv[0] * "../../Resources/share/TeXmacs/bin") << LF;
-  set_env ("PATH",  get_env("PATH") * ":" * as_string(url("$PWD") * argv[0] * "../../Resources/share/TeXmacs/bin"));
+  set_env ("PATH",  get_env("PATH") * ":" * as_string(exe * "../../Resources/share/TeXmacs/bin"));
   //system("set");
 #endif
 #ifdef __MINGW32__
@@ -298,7 +302,7 @@ main (int argc, char** argv) {
   // if PWD is lacking the internal TeXmacs path resolution machinery does not work
   
   if (get_env ("TEXMACS_PATH") == "") {
-    set_env ("TEXMACS_PATH", as_string(url_system(argv[0]) * "../.."));
+    set_env ("TEXMACS_PATH", as_string(exe * "../.."));
   }
 //  if (get_env ("GUILE_LOAD_PATH") == "") {
 //    set_env ("GUILE_LOAD_PATH", as_string(url_system(argv[0]) * "../../guile/1.8"));
@@ -309,7 +313,7 @@ main (int argc, char** argv) {
   // HACK
   // In WINE the variable PWD is already in the outer Unix environment 
   // so we need to override it to have a correct behaviour
- //  if (get_env ("PWD") == "") 
+  if (get_env ("PWD") == "") 
   {
     set_env ("PWD", get_env("HOME"));
   }
