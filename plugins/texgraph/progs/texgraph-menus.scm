@@ -49,12 +49,12 @@
 		(link texgraph-scripts-plot-menu))
       ---)
 
-;  (->"Aide"
+  (->"Aide"
 ;	;; FIXME : Problem when TeXgraph isn't installed by user in the default place
 ;	;; the help files should be looked for in a generic $TEXGRAPH_PATH/doc
-;	("Aide (TeXgraph.pdf)" (shell "texdoc /usr/local/share/TeXgraph/doc/TeXgraph.pdf"))
-;	;("Aide (html)" (shell "texmacs /usr/local/share/TeXgraph/doc/html/aide.html &"))
-;  )
+	("Aide (TeXgraph.pdf)" (system "texdoc /usr/local/share/TeXgraph/doc/TeXgraph &"))
+
+ )
 
   (->"Fenetre graphique, marges et export"
 	("Marges" 

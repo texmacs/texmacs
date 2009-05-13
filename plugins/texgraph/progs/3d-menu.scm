@@ -217,7 +217,7 @@
   ---
   (->"Macros Polyedres II"
 	("Aide (PolyedresII.pdf)" 
-	  (shell "texdoc /usr/local/share/TeXgraph/doc/PolyedresII.pdf"))
+	  (system "texdoc /usr/local/share/TeXgraph/doc/PolyedresII &"))
 	("Charger les macros PolyedresII.mac" 
 	  (texgraph-insert "Load(\"PolyedresII.mac\"), "))
 		
