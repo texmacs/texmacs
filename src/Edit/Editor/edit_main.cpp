@@ -346,7 +346,10 @@ void
 edit_main_rep::edit_special () {
 }
 
+void test_commute ();
+
 void
 edit_main_rep::edit_test () {
-  cout << "Test !\n";
+  //cout << "Test !\n";
+  test_commute();
 }
