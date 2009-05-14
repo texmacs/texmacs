@@ -74,8 +74,10 @@ tree clean_apply (patch p, tree t);
 void apply (patch p, tree& t);
 patch invert (patch p, tree t);
 
+bool commute (modification m1, modification m2);
+bool swap (modification& m1, modification& m2);
 bool commute (patch p1, patch p2);
-void swap (patch& p1, patch& p2);
+bool swap (patch& p1, patch& p2);
 patch operator << (patch& p1, patch p2);
 
 #endif // defined PATCH_H

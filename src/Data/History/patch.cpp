@@ -157,197 +157,77 @@ apply (patch p, tree& t) {
 }
 
 /******************************************************************************
-* Commutation of modifications
+* Commutation of patches
 ******************************************************************************/
 
-static modification
-dup (modification m) {
-  return modification (m->k, copy (m->p), m->t);
-}
-
 static bool
-swap1 (modification& m1, modification& m2, int i, int d) {
-  modification r1= dup (m2);
-  modification r2= dup (m1);
-  if (m2->p->item >= i) r1->p->item -= d;
-  if (is_nil (r2))
-    switch (m2->k) {
-    case MOD_INSERT:
-      {
-	int b2= m2->p->item;
-	int e2= b2 + N (m2->t);
-	if (b2 <= i) r2->p->item += (e2-b2);
-	break;
-      }
-    case MOD_REMOVE:
-      {
-	int b2= m2->p->item;
-	int e2= b2 + m2->p->next->item;
-	if (b2 < i && e2 > i) return false;
-	if (b2 < i) r2->p->item -= (e2-b2);
-	break;
-      }	      
-    case MOD_SPLIT:
-      if (m2->p->item < i) r2->p->item++;
-      break;
-    case MOD_JOIN:
-      if (m2->p->item == i-1) return false;
-      if (m2->p->item < i) r2->p->item--;
-      break;
-    case MOD_INSERT_NODE:
-    case MOD_REMOVE_NODE:
-      return false;
-    }
-  m1= r1;
-  m2= r2;
-  return true;
-}
-
-static bool
-swap2 (modification& m1, modification& m2, int i, int d) {
-  modification r1= dup (m2);
-  modification r2= dup (m1);
-  if (m1->p->item >= i) r2->p->item += d;
-  m1= r1;
-  m2= r2;
+swap_basic (patch& p1, patch& p2) {
+  patch aux= p1;
+  p1= p2;
+  p2= aux;
   return true;
 }
 
 bool
-swap_basic (modification& m1, modification& m2) {
-  modification aux= m1;
-  m2= m1;
-  m1= aux;
-  return true;
-}
-
-bool
-swap_impl (modification& m1, modification& m2) {
-  path r1= root (m1);
-  path r2= root (m2);
-  if (is_nil (r1))
-    switch (m1->k) {
-    case MOD_ASSIGN:
-      return m1 == m2;
-    case MOD_INSERT:
-      {
-	if (is_nil (m2->p)) return false;
-	int b= m1->p->item;
-	int e= b + N (m1->t);
-	if (m2->p->item >= b && m2->p->item < e)
-	  if (m2->p->item != b || m2->k != MOD_INSERT)
-	    return false;
-	return swap1 (m1, m2, b, e-b);
-      }
-    case MOD_REMOVE:
-      {
-	if (is_nil (m2->p)) return false;
-	int i= m1->p->item;
-	int d= m1->p->next->item;
-	return swap1 (m1, m2, i, -d);
-      }
-    case MOD_SPLIT:
-      {
-	if (is_nil (m2->p)) return false;
-	int i= m1->p->item;
-	if (m2->p->item == i || m2->p->item == i+1) return false;
-	return swap1 (m1, m2, i, 1);
-      }
-    case MOD_JOIN:
-      {
-	if (is_nil (m2->p)) return false;
-	int i= m1->p->item;
-	return swap1 (m1, m2, i, -1);
-      }
-    case MOD_ASSIGN_NODE:
-      {
-	if (!is_nil (root (m2))) return swap_basic (m1, m2);
-	return m1 == m2;
-      }
-    case MOD_INSERT_NODE:
-      {
-	if (is_nil (root (m2))) return false;
-	if (m2->p->item != m1->p->item) return false;
-	modification aux= m1;
-	m1= modification (m2->k, m2->p->next, m2->t);
-	m2= aux;
-	return true;
-      }
-    case MOD_REMOVE_NODE:
-      {
-	if (is_nil (root (m2))) return false;
-	modification aux= m1;
-	m1= modification (m2->k, path (m1->p->item, m2->p), m2->t);
-	m2= aux;
-	return true;
-      }
+swap (patch& p1, patch& p2) {
+  if (get_type (p1) == PATCH_COMPOUND) {
+    int n= N(p1);
+    array<patch> a (n);
+    for (int i=0; i<n; i++) a[i]= p1[i];
+    for (int i=n-1; i>=0; i--) {
+      if (!swap (a[i], p2)) return false;
+      swap_basic (a[i], p2);
     }
-  else if (is_nil (r2))
-    switch (m2->k) {
-    case MOD_ASSIGN:
-      return false;
-    case MOD_INSERT:
-      {
-	int b= m2->p->item;
-	int e= b + N (m2->t);
-	return swap2 (m1, m2, b, e-b);
-      }
-    case MOD_REMOVE:
-      {
-	int b= m2->p->item;
-	int e= b + m2->p->next->item;
-	if (m1->p->item >= b && m1->p->item < e) return false;
-	return swap2 (m1, m2, b, b-e);
-      }
-    case MOD_SPLIT:
-      {
-	int i= m2->p->item;
-	if (m1->p->item == i) return false;
-	return swap2 (m1, m2, i, 1);
-      }
-    case MOD_JOIN:
-      {
-	int i= m2->p->item;
-	if (m1->p->item == i || m1->p->item == i+1) return false;
-	return swap2 (m1, m2, i, -1);
-      }
-    case MOD_ASSIGN_NODE:
-      return swap_basic (m1, m2);
-    case MOD_INSERT_NODE:
-      {
-	modification aux= m2;
-	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
-	m1= aux;
-	return true;
-      }
-    case MOD_REMOVE_NODE:
-      {
-	modification aux= m2;
-	m2= modification (m1->k, m1->p->next, m1->t);
-	m1= aux;
-	return true;
-      }
+    p1= p2;
+    p2= patch (a);
+    return true;
+  }
+  if (get_type (p2) == PATCH_COMPOUND) {
+    int n= N(p2);
+    array<patch> a (n);
+    for (int i=0; i<n; i++) a[i]= p2[i];
+    for (int i=0; i<n; i++) {
+      if (!swap (p1, a[i])) return false;
+      swap_basic (p1, a[i]);
     }
-  else if (r1->item == r2->item) {
-    path h (r1->item);
-    modification s1= m1 / h;
-    modification s2= m2 / h;
-    bool r= swap_impl (s1, s2);
-    m1= h * s1;
-    m2= h * s2;
+    p2= p1;
+    p1= patch (a);
+    return true;
+  }
+  if (get_type (p1) == PATCH_ACTOR) {
+    patch s= p1[0];
+    bool r= swap (s, p2);
+    p2= patch (get_actor (p1), p2);
+    p1= s;
     return r;
   }
-  else return swap_basic (m1, m2);
-}
-
-void
-swap (modification& m1, modification& m2) {
-  (void) swap_impl (m1, m2);
+  if (get_type (p2) == PATCH_ACTOR) {
+    patch s= p2[0];
+    bool r= swap (p1, s);
+    p1= patch (get_actor (p2), p1);
+    p2= s;
+    return r;
+  }
+  if (get_type (p1) == PATCH_BIRTH ||
+      get_type (p2) == PATCH_BIRTH)
+    return swap_basic (p1, p2);
+  if (get_type (p1) == PATCH_MODIFICATION &&
+      get_type (p2) == PATCH_MODIFICATION)
+    {
+      modification m1= get_modification (p1);
+      modification m2= get_modification (p2);
+      bool r= swap (m1, m2);
+      p1= patch (m1);
+      p2= patch (m2);
+      return r;
+    }
+  FAILED ("invalid situaltion");
+  return false;
 }
 
 bool
-commute (modification m1, modification m2) {
-  modification s1= m1;
-  modification s2= m2;
-  return swap_impl (s1, s2);
+commute (patch p1, patch p2) {
+  patch s1= p1;
+  patch s2= p2;
+  return swap (s1, s2);
 }
