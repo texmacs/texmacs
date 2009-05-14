@@ -17,8 +17,8 @@
 
 (texmacs-module (texgraph-menus))
 
-(lazy-menu (2d-menu) 2d-menu)
-(lazy-menu (3d-menu) 3d-menu)
+(lazy-menu (texgraph-2d-menu) texgraph-2d-menu)
+(lazy-menu (texgraph-3d-menu) texgraph-3d-menu)
 (lazy-menu (texgraph-figures-menu) texgraph-figures-menu)
 (lazy-menu (texgraph-scripts-menu) texgraph-scripts-plot-menu)
 
@@ -233,11 +233,11 @@
   )
   ---
   (group "Geometrie dans le plan")
-  (link 2d-menu)
+  (link texgraph-2d-menu)
   
   ---
   (group "Geometrie dans l'espace")
-  (link 3d-menu)
+  (link texgraph-3d-menu)
 )
 
 
