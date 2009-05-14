@@ -17,7 +17,7 @@
 
 (texmacs-module (eukleides-menus))
 
-(lazy-menu (figures-menu) figures-menu)
+(lazy-menu (eukleides-figures-menu) eukleides-figures-menu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert Eukleides primitive
@@ -44,7 +44,7 @@
       (link scripts-eval-menu)
       ---)
 
-  (link figures-menu)
+  (link eukleides-figures-menu)
 
   (->"Numbers"
 	(->"Calculations"
