@@ -30,8 +30,10 @@ static bool
 swap1 (modification& m1, modification& m2, int i, int d) {
   modification r1= dup (m2);
   modification r2= dup (m1);
-  if (m2->p->item >= i) r1->p->item -= d;
-  if (is_nil (r2))
+  if (m2->p->item >= i)
+    if (m2->p->item != i || !is_nil (root (m2)) || m2->k != MOD_INSERT)
+      r1->p->item -= d;
+  if (is_nil (root (m2)))
     switch (m2->k) {
     case MOD_INSERT:
       {
@@ -84,9 +86,9 @@ swap_basic (modification& m1, modification& m2) {
 
 bool
 swap (modification& m1, modification& m2) {
-  path r1= root (m1);
-  path r2= root (m2);
-  if (is_nil (r1))
+  path rp1= root (m1);
+  path rp2= root (m2);
+  if (is_nil (rp1))
     switch (m1->k) {
     case MOD_ASSIGN:
       return m1 == m2;
@@ -98,12 +100,6 @@ swap (modification& m1, modification& m2) {
 	if (m2->p->item >= b && m2->p->item < e) {
 	  if (!is_nil (root (m2)) || m2->p->item != b || m2->k != MOD_INSERT)
 	    return false;
-	  modification r1= m2;
-	  modification r2= dup (m1);
-	  r2->p->item += insert_length (m2->t);
-	  m1= r1;
-	  m2= r2;
-	  return true;
 	}
 	return swap1 (m1, m2, b, e-b);
       }
@@ -118,7 +114,10 @@ swap (modification& m1, modification& m2) {
       {
 	if (is_nil (m2->p)) return false;
 	int i= m1->p->item;
-	if (m2->p->item == i || m2->p->item == i+1) return false;
+	if (m2->p->item == i || m2->p->item == i+1) {
+	  if (!is_nil (root (m2)) || m2->p->item != i || m2->k != MOD_INSERT)
+	    return false;
+	}
 	return swap1 (m1, m2, i, 1);
       }
     case MOD_JOIN:
@@ -150,7 +149,7 @@ swap (modification& m1, modification& m2) {
 	return true;
       }
     }
-  else if (is_nil (r2))
+  else if (is_nil (rp2))
     switch (m2->k) {
     case MOD_ASSIGN:
       return false;
@@ -196,8 +195,8 @@ swap (modification& m1, modification& m2) {
 	return true;
       }
     }
-  else if (r1->item == r2->item) {
-    path h (r1->item);
+  else if (rp1->item == rp2->item) {
+    path h (rp1->item);
     modification s1= m1 / h;
     modification s2= m2 / h;
     bool r= swap (s1, s2);
@@ -262,19 +261,33 @@ test_commute () {
       modification m2= test_modification (j);
       modification t1= m1;
       modification t2= m2;
-      cout << "m1 = " << m1 << "\n";
-      cout << "m2 = " << m2 << "\n";
+      cout << "m1  = " << m1 << "\n";
+      cout << "m2  = " << m2 << "\n";
       bool r= swap (m1, m2);
+      modification u1= m1;
+      modification u2= m2;
       if (!r) cout << "  Modifications do not commute\n";
       else {
-	cout << "m1'= " << m1 << "\n";
-	cout << "m2'= " << m2 << "\n";
+	cout << "m1' = " << m1 << "\n";
+	cout << "m2' = " << m2 << "\n";
 	r= swap (m1, m2);
-	if (r && m1 == t1 && m2 == t2) cout << "  Consistency check succeeded\n";
-	else {
-	  cout << "  Consistency check failed\n";
-	  FAILED ("inconsistency");
+	if (!r || m1 != t1 || m2 != t2) {
+	  cout << "m1''= " << m1 << "\n";
+	  cout << "m2''= " << m2 << "\n";
+	  if (r) {
+	    r= swap (m1, m2);
+	    cout << "m1* = " << m1 << "\n";
+	    cout << "m2* = " << m2 << "\n";
+	    if (!r) cout << "r   = " << r << "\n";
+	    if (m1 != u1 || m2 != u2) r= false;
+	  }
+	  else cout << "r   = " << r << "\n";
+	  if (!r)  {
+	    cout << "  Consistency check failed\n";
+	    FAILED ("inconsistency");
+	  }
 	}
+	cout << "  Consistency check succeeded\n";
       }
       cout << "\n";
     }
