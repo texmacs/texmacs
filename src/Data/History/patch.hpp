@@ -74,7 +74,7 @@ tree clean_apply (patch p, tree t);
 void apply (patch p, tree& t);
 patch invert (patch p, tree t);
 
-bool is_independent (patch p1, patch p2);
+bool commute (patch p1, patch p2);
 void swap (patch& p1, patch& p2);
 patch operator << (patch& p1, patch p2);
 

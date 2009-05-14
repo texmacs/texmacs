@@ -58,6 +58,8 @@ CONCRETE(modification);
 };
 CONCRETE_CODE(modification);
 
+bool operator == (modification m1, modification m2);
+bool operator != (modification m1, modification m2);
 ostream& operator << (ostream& out, modification mod);
 
 /******************************************************************************
@@ -89,7 +91,7 @@ inline modification operator * (modification mod, int i) {
 inline modification operator / (modification mod, path p) {
   return modification (mod->k, mod->p / p, mod->t); }
 inline modification copy (modification mod) {
-  return modification (mod->k, mod->p, copy (mod->t)); }
+  return modification (mod->k, copy (mod->p), copy (mod->t)); }
 
 path root (modification mod);
 int index (modification mod);

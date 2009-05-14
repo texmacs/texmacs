@@ -12,8 +12,18 @@
 #include "modification.hpp"
 
 /******************************************************************************
-* Output
+* Equality and Output
 ******************************************************************************/
+
+bool
+operator == (modification m1, modification m2) {
+  return m1->k == m2->k && m1->p == m2->p && m1->t == m2->t;
+}
+
+bool
+operator != (modification m1, modification m2) {
+  return m1->k != m2->k || m1->p != m2->p || m1->t != m2->t;
+}
 
 ostream&
 operator << (ostream& out, modification mod) {
