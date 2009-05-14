@@ -46,10 +46,12 @@ swap1 (modification& m1, modification& m2, int i, int d) {
       {
 	int b2= m2->p->item;
 	int e2= b2 + m2->p->next->item;
-	if (b2 < i && e2 > i) return false;
+	if (b2 <= i && i < e2)
+	  if (b2 != i || m1->k != MOD_REMOVE)
+	    return false;
 	if (b2 < i) r2->p->item -= (e2-b2);
 	break;
-      }	      
+      }
     case MOD_SPLIT:
       if (m2->p->item < i) r2->p->item++;
       break;
@@ -58,6 +60,12 @@ swap1 (modification& m1, modification& m2, int i, int d) {
       if (m2->p->item < i) r2->p->item--;
       break;
     case MOD_INSERT_NODE:
+      {
+	modification aux= m2;
+	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+	m1= aux;
+	return true;
+      }
     case MOD_REMOVE_NODE:
       return false;
     }
@@ -79,8 +87,8 @@ swap2 (modification& m1, modification& m2, int i, int d) {
 bool
 swap_basic (modification& m1, modification& m2) {
   modification aux= m1;
-  m2= m1;
-  m1= aux;
+  m1= m2;
+  m2= aux;
   return true;
 }
 
@@ -91,16 +99,23 @@ swap (modification& m1, modification& m2) {
   if (is_nil (rp1))
     switch (m1->k) {
     case MOD_ASSIGN:
-      return m1 == m2;
+      {
+	if (m1 == m2) return true;
+	if (!is_nil (rp2) || m2->k != MOD_INSERT_NODE) return false;
+	modification aux= m2;
+	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+	m1= aux;
+	return true;
+      }
     case MOD_INSERT:
       {
 	if (is_nil (m2->p)) return false;
 	int b= m1->p->item;
 	int e= b + insert_length (m1->t);
-	if (m2->p->item >= b && m2->p->item < e) {
+	if (m2->p->item >= b && m2->p->item < e)
 	  if (!is_nil (root (m2)) || m2->p->item != b || m2->k != MOD_INSERT)
-	    return false;
-	}
+	    if (!is_nil (root (m2)) || m2->k != MOD_INSERT_NODE)
+	      return false;
 	return swap1 (m1, m2, b, e-b);
       }
     case MOD_REMOVE:
@@ -114,22 +129,30 @@ swap (modification& m1, modification& m2) {
       {
 	if (is_nil (m2->p)) return false;
 	int i= m1->p->item;
-	if (m2->p->item == i || m2->p->item == i+1) {
+	if (m2->p->item == i || m2->p->item == i+1)
 	  if (!is_nil (root (m2)) || m2->p->item != i || m2->k != MOD_INSERT)
-	    return false;
-	}
+	    if (!is_nil (root (m2)) || m2->k != MOD_INSERT_NODE)
+	      return false;
 	return swap1 (m1, m2, i, 1);
       }
     case MOD_JOIN:
       {
 	if (is_nil (m2->p)) return false;
 	int i= m1->p->item;
+	if (m2->p->item == i)
+	  if (!is_nil (root (m2)) || m2->k != MOD_INSERT)
+	    return false;
 	return swap1 (m1, m2, i, -1);
       }
     case MOD_ASSIGN_NODE:
       {
 	if (!is_nil (root (m2))) return swap_basic (m1, m2);
-	return m1 == m2;
+	if (m1 == m2) return true;
+	if (!is_nil (rp2) || m2->k != MOD_INSERT_NODE) return false;
+	modification aux= m2;
+	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+	m1= aux;
+	return true;
       }
     case MOD_INSERT_NODE:
       {
@@ -137,12 +160,12 @@ swap (modification& m1, modification& m2) {
 	if (m2->p->item != m1->p->item) return false;
 	modification aux= m1;
 	m1= modification (m2->k, m2->p->next, m2->t);
-	m2= aux;
+	if (m2->k != MOD_INSERT_NODE || !is_nil (root (m1))) m2= aux;
+	else m2= modification (aux->k, path (m1->p->item, aux->p), aux->t);
 	return true;
       }
     case MOD_REMOVE_NODE:
       {
-	if (is_nil (root (m2))) return false;
 	modification aux= m1;
 	m1= modification (m2->k, path (m1->p->item, m2->p), m2->t);
 	m2= aux;
@@ -221,7 +244,7 @@ commute (modification m1, modification m2) {
 modification
 test_modification (int i) {
   switch (i) {
-  case  0: return mod_assign (path (), "");
+  case  0: return mod_assign (path (), "Hi");
   case  1: return mod_insert (path (), 0, tree (TUPLE, "a", "b"));
   case  2: return mod_remove (path (), 0, 2);
   case  3: return mod_split (path (), 0, 1);
@@ -266,29 +289,28 @@ test_commute () {
       bool r= swap (m1, m2);
       modification u1= m1;
       modification u2= m2;
-      if (!r) cout << "  Modifications do not commute\n";
+      if (!r) cout << "  Modifications do not commute\n\n";
       else {
 	cout << "m1' = " << m1 << "\n";
 	cout << "m2' = " << m2 << "\n";
 	r= swap (m1, m2);
-	if (!r || m1 != t1 || m2 != t2) {
+	if (!r) cout << "r   = " << r << "\n";
+	else if (m1 != t1 || m2 != t2) {
 	  cout << "m1''= " << m1 << "\n";
 	  cout << "m2''= " << m2 << "\n";
-	  if (r) {
-	    r= swap (m1, m2);
+	  r= swap (m1, m2);
+	  if (!r) cout << "r   = " << r << "\n";
+	  else if (m1 != u1 || m2 != u2) {
 	    cout << "m1* = " << m1 << "\n";
 	    cout << "m2* = " << m2 << "\n";
-	    if (!r) cout << "r   = " << r << "\n";
-	    if (m1 != u1 || m2 != u2) r= false;
-	  }
-	  else cout << "r   = " << r << "\n";
-	  if (!r)  {
-	    cout << "  Consistency check failed\n";
-	    FAILED ("inconsistency");
+	    r= false;
 	  }
 	}
-	cout << "  Consistency check succeeded\n";
+	if (r) cout << "  Consistency check succeeded\n\n";
+	else {
+	  cout << "  Consistency check failed\n\n";
+	  FAILED ("inconsistency");
+	}
       }
-      cout << "\n";
     }
 }
