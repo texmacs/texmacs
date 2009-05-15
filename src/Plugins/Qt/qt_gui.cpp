@@ -213,7 +213,7 @@ qt_gui_rep::event_loop () {
 void
 gui_open (int& argc, char** argv) {
   // start the gui
-  new QApplication (argc,argv);
+ // new QApplication (argc,argv); now in texmacs.cpp
   the_gui = tm_new<qt_gui_rep> (argc, argv);
 }
 

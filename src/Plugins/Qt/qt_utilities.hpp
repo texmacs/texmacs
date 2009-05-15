@@ -26,11 +26,13 @@ coord4 from_qrect (QRect & rect);
 coord2 from_qpoint (QPoint & pt);
 coord2 from_qsize (QSize & s);
 QString to_qstring (string s);
-string from_qstring (QString & s);
+string from_qstring (const QString & s);
 string qt_translate (string s);
 QString to_qstring_utf8 (string s);
 bool qt_supports_image (url u);
 void qt_image_size (url image, int& w, int& h);
+
+string qt_application_directory ();
 
 /******************************************************************************
 * Type checking

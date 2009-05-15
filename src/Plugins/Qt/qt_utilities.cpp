@@ -11,8 +11,11 @@
 
 #include "qt_utilities.hpp"
 #include <QImage>
+#include <QCoreApplication>
 #include "dictionary.hpp"
 #include "converter.hpp"
+
+
 
 QRect
 to_qrect (coord4 p) {
@@ -67,7 +70,7 @@ to_qstring (string s) {
 }
 
 string
-from_qstring (QString &s) {
+from_qstring (const QString &s) {
   QByteArray arr= s.toUtf8 ();
   const char* cstr= arr.constData ();
   return utf8_to_cork (string ((char*) cstr));
@@ -107,3 +110,11 @@ qt_image_size (url image, int& w, int& h) {
     h= im.height ();
   }
 }
+
+
+
+string qt_application_directory ()
+{
+  return from_qstring (QCoreApplication::applicationDirPath ());
+}
+
