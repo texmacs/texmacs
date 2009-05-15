@@ -313,8 +313,9 @@ main (int argc, char** argv) {
   // HACK
   // In WINE the variable PWD is already in the outer Unix environment 
   // so we need to override it to have a correct behaviour
-  if (get_env ("PWD") == "") 
+  if ((get_env ("PWD") == "") || (get_env ("PWD")[0] == '/')) 
   {
+    cout << "TeXmacs] Resetting PWD" << LF;
     set_env ("PWD", get_env("HOME"));
   }
   //system("set");
