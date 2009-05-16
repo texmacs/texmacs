@@ -212,6 +212,7 @@ swap (modification& m1, modification& m2) {
       }
     case MOD_REMOVE_NODE:
       {
+	if (m1->p->item != m2->p->item) return false;
 	modification aux= m2;
 	m2= modification (m1->k, m1->p->next, m1->t);
 	m1= aux;
@@ -241,7 +242,7 @@ commute (modification m1, modification m2) {
 * Test routines
 ******************************************************************************/
 
-modification
+static modification
 test_modification (int i) {
   switch (i) {
   case  0: return mod_assign (path (), "Hi");
@@ -276,8 +277,22 @@ test_modification (int i) {
   }
 }
 
+static tree
+test_tree (int i= 0, int d= 3) {
+  cout << "i= " << i << ", d= " << d << "\n";
+  if (d == 0) return tree (as_string (i));
+  else {
+    int n= 6 + ((int) (2 * sin (1.0 * i * d)));
+    tree t (TUPLE, n);
+    for (int j=0; j<n; i++, j++)
+      t[j]= test_tree (i, d-1);
+    return t;
+  }
+}
+
 void
 test_commute () {
+  tree tt= test_tree ();
   for (int i=0; i<42; i++)
     for (int j=0; j<42; j++) {
       modification m1= test_modification (i);
@@ -293,6 +308,12 @@ test_commute () {
       else {
 	cout << "m1' = " << m1 << "\n";
 	cout << "m2' = " << m2 << "\n";
+	if (clean_apply (clean_apply (tt, t1), t2) !=
+	    clean_apply (clean_apply (tt, m1), m2)) {
+	  cout << "t1  = " << clean_apply (clean_apply (tt, t1), t2) << "\n";
+	  cout << "t2  = " << clean_apply (clean_apply (tt, m1), m2) << "\n";
+	  FAILED ("inconsistency");
+	}
 	r= swap (m1, m2);
 	if (!r) cout << "r   = " << r << "\n";
 	else if (m1 != t1 || m2 != t2) {
