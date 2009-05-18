@@ -56,5 +56,5 @@
 (tm-define (variant-circulate forward?)
   (:mode in-mmxdoc?)
   (:inside cpp)
-  (with-innermost t 'mmx
+  (with-innermost t 'cpp
     (tree-assign-node! t 'verbatim)))
