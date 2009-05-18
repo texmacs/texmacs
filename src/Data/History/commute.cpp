@@ -239,6 +239,47 @@ commute (modification m1, modification m2) {
 }
 
 /******************************************************************************
+* Inversion of modifications
+******************************************************************************/
+
+modification
+invert (modification m, tree t) {
+  ASSERT (is_applicable (t, m), "modification not applicable");
+  path rp= root (m);
+  switch (m->k) {
+  case MOD_ASSIGN:
+    return mod_assign (rp, subtree (t, rp));
+  case MOD_INSERT:
+    return mod_remove (rp, index (m), insert_length (m->t));
+  case MOD_REMOVE:
+    {
+      int i= index (m);
+      int n= argument (m);
+      return mod_insert (rp, i, subtree (t, rp) (i, i+n));
+    }
+  case MOD_SPLIT:
+    return mod_join (rp, index (m));
+  case MOD_JOIN:
+    {
+      int  i= index (m);
+      return mod_split (rp, i, insert_length (subtree (t, rp * i)));
+    }
+  case MOD_ASSIGN_NODE:
+    return mod_assign_node (rp, L (subtree (t, rp)));
+  case MOD_INSERT_NODE:
+    return mod_remove_node (rp, argument (m));
+  case MOD_REMOVE_NODE:
+    {
+      tree u= subtree (t, rp);
+      int  i= index (m);
+      return mod_insert_node (rp, i, u (0, i) * u (i+1, N(u)));
+    }
+  default:
+    FAILED ("unexpected situation");
+  }
+}
+
+/******************************************************************************
 * Test routines
 ******************************************************************************/
 
@@ -279,7 +320,7 @@ test_modification (int i) {
 
 static tree
 test_tree (int i= 0, int d= 3) {
-  cout << "i= " << i << ", d= " << d << "\n";
+  // cout << "i= " << i << ", d= " << d << "\n";
   if (d == 0) return tree (as_string (i));
   else {
     int n= 6 + ((int) (2 * sin (1.0 * i * d)));
@@ -334,4 +375,24 @@ test_commute () {
 	}
       }
     }
+}
+
+void
+test_invert () {
+  tree t1= test_tree ();
+  for (int i=0; i<42; i++) {
+    modification m1= test_modification (i);
+    tree t2= clean_apply (t1, m1);
+    modification m2= invert (m1, t1);
+    tree t3= clean_apply (t2, m2);
+    modification m3= invert (m2, t2);
+    if (m1 != m3 || t1 != t3) {
+      cout << "t1= " << t1 << "\n";
+      cout << "m1= " << m1 << "\n";
+      cout << "t2= " << t2 << "\n";
+      cout << "m2= " << m2 << "\n";
+      cout << "t3= " << t3 << "\n";
+      FAILED ("inconsistency");
+    }
+ }
 }
