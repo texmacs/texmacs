@@ -40,3 +40,21 @@
   (:inside scm)
   (with-innermost t 'scm
     (tree-assign-node! t 'verbatim)))
+
+(tm-define (variant-circulate forward?)
+  (:mode in-mmxdoc?)
+  (:inside verbatim)
+  (with-innermost t 'verbatim
+    (tree-assign-node! t 'mmx)))
+
+(tm-define (variant-circulate forward?)
+  (:mode in-mmxdoc?)
+  (:inside mmx)
+  (with-innermost t 'mmx
+    (tree-assign-node! t 'cpp)))
+
+(tm-define (variant-circulate forward?)
+  (:mode in-mmxdoc?)
+  (:inside cpp)
+  (with-innermost t 'mmx
+    (tree-assign-node! t 'verbatim)))

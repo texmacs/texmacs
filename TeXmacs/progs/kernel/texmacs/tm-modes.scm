@@ -113,6 +113,7 @@
   (in-std% (style-has? "std-dtd"))
   (in-std-text% #t in-text% in-std%)
   (in-tmdoc% (style-has? "tmdoc-style"))
+  (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (with-any-selection% (selection-active-any?))
