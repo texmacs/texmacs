@@ -157,6 +157,35 @@ apply (patch p, tree& t) {
 }
 
 /******************************************************************************
+* Patch inversion
+******************************************************************************/
+
+patch
+invert (patch p, tree t) {
+  switch (get_type (p)) {
+  case PATCH_MODIFICATION:
+    return patch (invert (get_modification (p), t));
+  case PATCH_BIRTH:
+    return p;
+  case PATCH_COMPOUND:
+    {
+      int i, n=N(p);
+      array<patch> r(n);
+      for (i=0; i<n; i++) {
+	r[n-1-i]= invert (p[i], t);
+	t= clean_apply (p[i], t);
+      }
+      return patch (r);
+    }
+  case PATCH_ACTOR:
+    return patch (get_actor (p), invert (p[0], t));
+  default:
+    FAILED ("unsupported patch type");
+    return patch ();
+  }
+}
+
+/******************************************************************************
 * Commutation of patches
 ******************************************************************************/
 

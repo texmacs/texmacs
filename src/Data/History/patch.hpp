@@ -53,6 +53,7 @@ ABSTRACT_NULL_CODE (patch);
 inline patch patch_rep::get_child (int i) {
   FAILED ("not a composite patch"); (void) i; return patch (); }
 ostream& operator << (ostream& out, patch p);
+patch operator << (patch& p1, patch p2);
 
 /******************************************************************************
 * Routines on patches
@@ -72,12 +73,12 @@ inline double get_actor (patch p) {
 bool is_applicable (patch p, tree t);
 tree clean_apply (patch p, tree t);
 void apply (patch p, tree& t);
-patch invert (patch p, tree t);
 
+modification invert (modification m, tree t);
 bool commute (modification m1, modification m2);
 bool swap (modification& m1, modification& m2);
+patch invert (patch p, tree t);
 bool commute (patch p1, patch p2);
 bool swap (patch& p1, patch& p2);
-patch operator << (patch& p1, patch p2);
 
 #endif // defined PATCH_H
