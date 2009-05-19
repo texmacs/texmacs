@@ -18,11 +18,12 @@ extern tree the_et;
 ******************************************************************************/
 
 archiver_rep::archiver_rep ():
-  depth (0),
-  last_save (0),
   before (array<patch> ()),
   current (array<patch> ()),
-  after (array<patch> ()) {}
+  after (array<patch> ()),
+  depth (0),
+  last_save (0),
+  last_autosave (0) {}
 archiver_rep::~archiver_rep () {}
 archiver::archiver (): rep (tm_new<archiver_rep> ()) {}
 
@@ -139,12 +140,36 @@ archiver_rep::redo () {
   }
 }
 
+/******************************************************************************
+* Check changes since last save/autosave
+******************************************************************************/
+
+void
+archiver_rep::needs_save () {
+  last_save= -1;
+}
+
 void
 archiver_rep::notify_save () {
   last_save= depth;
 }
 
 bool
-archiver_rep::no_changes () {
+archiver_rep::conform_save () {
   return last_save == depth;
+}
+
+void
+archiver_rep::needs_autosave () {
+  last_autosave= -1;
+}
+
+void
+archiver_rep::notify_autosave () {
+  last_autosave= depth;
+}
+
+bool
+archiver_rep::conform_autosave () {
+  return last_autosave == depth;
 }

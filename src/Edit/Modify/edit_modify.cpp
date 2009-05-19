@@ -286,14 +286,12 @@ archive (tm_buffer buf, string op, path p, tree t) {
       }
     buf->undo= tree (BACKUP, x, buf->undo);
   }
-  /*
-  cout << "undo tree : " << buf->undo << "\n";
-  cout << "redo tree : " << buf->redo << "\n";
-  cout << "exdo tree : " << buf->exdo << "\n";
-  cout << "undo depth: " << buf->undo_depth << "\n";
-  cout << "redo depth: " << buf->redo_depth << "\n";
-  cout << "last save : " << buf->last_save << "\n";
-  */
+  //cout << "undo tree : " << buf->undo << "\n";
+  //cout << "redo tree : " << buf->redo << "\n";
+  //cout << "exdo tree : " << buf->exdo << "\n";
+  //cout << "undo depth: " << buf->undo_depth << "\n";
+  //cout << "redo depth: " << buf->redo_depth << "\n";
+  //cout << "last save : " << buf->last_save << "\n";
 }
 
 void

@@ -14,11 +14,12 @@
 #include "patch.hpp"
 
 class archiver_rep: public concrete_struct {
-  int   depth;      // history depth
-  int   last_save;  // history depth at last save
-  patch before;     // undo history
-  patch current;    // current sequence of modifications
-  patch after;      // redo future
+  patch before;         // undo history
+  patch current;        // current sequence of modifications
+  patch after;          // redo future
+  int   depth;          // history depth
+  int   last_save;      // history depth at last save
+  int   last_autosave;  // history depth at last autosave
 
 protected:
   void apply (patch p);
@@ -38,8 +39,13 @@ public:
   bool no_more_redo ();
   void undo ();
   void redo ();
+
+  void needs_save ();
+  void needs_autosave ();
   void notify_save ();
-  bool no_changes ();
+  void notify_autosave ();
+  bool conform_save ();
+  bool conform_autosave ();
 };
 
 class archiver {
