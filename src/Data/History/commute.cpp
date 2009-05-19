@@ -283,6 +283,8 @@ invert (modification m, tree t) {
 * Test routines
 ******************************************************************************/
 
+#ifdef UNCOMMENTED
+
 static modification
 test_modification (int i) {
   switch (i) {
@@ -396,3 +398,5 @@ test_invert () {
     }
  }
 }
+
+#endif

@@ -346,12 +346,16 @@ void
 edit_main_rep::edit_special () {
 }
 
+#ifdef UNCOMMENTED
 void test_commute ();
 void test_invert ();
+#endif
 
 void
 edit_main_rep::edit_test () {
   cout << "Test !\n";
-  //test_commute();
+#ifdef UNCOMMENTED
+  test_commute();
   test_invert();
+#endif
 }
