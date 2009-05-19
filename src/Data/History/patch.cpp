@@ -59,6 +59,8 @@ patch::patch (modification mod):
   rep (tm_new<modification_patch_rep> (mod)) {}
 patch::patch (array<patch> a):
   rep (tm_new<compound_patch_rep> (a)) {}
+patch::patch (patch p1, patch p2):
+  rep (tm_new<compound_patch_rep> (array<patch> (p1, p2))) {}
 patch::patch (double actor, bool create):
   rep (tm_new<birth_patch_rep> (actor, create)) {}
 patch::patch (double actor, patch p):
@@ -94,6 +96,28 @@ operator << (ostream& out, patch p) {
     FAILED ("unsupported patch type");
   }
   return out;
+}
+
+patch
+copy (patch p) {
+  switch (get_type (p)) {
+  case PATCH_MODIFICATION:
+    return patch (copy (get_modification (p)));
+  case PATCH_COMPOUND:
+    {
+      int i, n= N(p);
+      array<patch> r (n);
+      for (i=0; i<N(p); i++) r[i]= copy (p[i]);
+      return r;
+    }
+  case PATCH_BIRTH:
+    return p;
+  case PATCH_ACTOR:
+    return patch (get_actor (p), copy (p[0]));
+  default:
+    FAILED ("unsupported patch type");
+  }
+  return p;
 }
 
 /******************************************************************************

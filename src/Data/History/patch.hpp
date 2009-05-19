@@ -43,6 +43,7 @@ class patch {
 ABSTRACT_NULL (patch);
   patch (modification mod);
   patch (array<patch> a);
+  patch (patch p1, patch p2);
   patch (double actor, bool create);
   patch (double actor, patch p);
   inline patch operator [] (int i) {
@@ -53,7 +54,7 @@ ABSTRACT_NULL_CODE (patch);
 inline patch patch_rep::get_child (int i) {
   FAILED ("not a composite patch"); (void) i; return patch (); }
 ostream& operator << (ostream& out, patch p);
-patch operator << (patch& p1, patch p2);
+patch copy (patch p);
 
 /******************************************************************************
 * Routines on patches
