@@ -269,7 +269,6 @@ public:
   virtual void remove_undo_mark () = 0;
   virtual void add_undo_mark () = 0;
   virtual void unredoable_undo () = 0;
-  virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
   virtual observer position_new (path p) = 0;

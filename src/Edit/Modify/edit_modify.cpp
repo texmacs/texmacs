@@ -363,14 +363,6 @@ edit_modify_rep::undo (bool redoable) {
 }
 
 void
-edit_modify_rep::forget_undo () {
-  buf->unmark_undo_block ();
-  while ((buf->undo != "nil") && (buf->undo[0] != ""))
-    buf->undo= buf->undo[1];
-  buf->unmark_undo_block ();
-}
-
-void
 edit_modify_rep::unredoable_undo () {
   undo (false);
 }

@@ -208,7 +208,6 @@
   (remove-undo-mark remove_undo_mark (void))
   (add-undo-mark add_undo_mark (void))
   (unredoable-undo unredoable_undo (void))
-  (forget-undo forget_undo (void))
   (undo undo (void))
   (redo redo (void))
 

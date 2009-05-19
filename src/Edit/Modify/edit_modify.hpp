@@ -38,7 +38,6 @@ public:
   void add_undo_mark ();
   void undo (bool redoable);
   void unredoable_undo ();
-  void forget_undo ();
   void undo ();
   void redo ();
   void perform_undo_redo (tree x);

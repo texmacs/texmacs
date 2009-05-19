@@ -1949,15 +1949,6 @@ tmg_unredoable_undo () {
 }
 
 SCM
-tmg_forget_undo () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->forget_undo ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_undo () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->undo ();
@@ -2713,7 +2704,6 @@ initialize_glue_editor () {
   scm_new_procedure ("remove-undo-mark", (FN) tmg_remove_undo_mark, 0, 0, 0);
   scm_new_procedure ("add-undo-mark", (FN) tmg_add_undo_mark, 0, 0, 0);
   scm_new_procedure ("unredoable-undo", (FN) tmg_unredoable_undo, 0, 0, 0);
-  scm_new_procedure ("forget-undo", (FN) tmg_forget_undo, 0, 0, 0);
   scm_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   scm_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
   scm_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
