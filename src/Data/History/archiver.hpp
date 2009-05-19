@@ -14,8 +14,8 @@
 #include "patch.hpp"
 
 class archiver_rep: public concrete_struct {
-  static patch empty;
-  int   last_save;  // history deptch at last save
+  int   depth;      // history depth
+  int   last_save;  // history depth at last save
   patch before;     // undo history
   patch current;    // current sequence of modifications
   patch after;      // redo future

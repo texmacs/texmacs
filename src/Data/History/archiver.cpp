@@ -18,6 +18,8 @@ extern tree the_et;
 ******************************************************************************/
 
 archiver_rep::archiver_rep ():
+  depth (0),
+  last_save (0),
   before (array<patch> ()),
   current (array<patch> ()),
   after (array<patch> ()) {}
@@ -62,6 +64,8 @@ archiver_rep::confirm () {
     before= patch (current, before);
     current= patch (array<patch> ());
     after= patch (array<patch> ());
+    depth++;
+    if (depth <= last_save) last_save= -1;
   }
 }
 
@@ -71,6 +75,7 @@ archiver_rep::merge () {
     before= patch (patch (current, before[0]), before[1]);
     current= patch (array<patch> ());
     after= patch (array<patch> ());
+    if (depth <= last_save) last_save= -1;
   }
 }
 
@@ -80,6 +85,8 @@ archiver_rep::retract () {
     current= before[0];
     before= before[1];
     after= patch (array<patch> ());
+    if (depth <= last_save) last_save= -1;
+    depth--;
   }
 }
 
@@ -89,6 +96,8 @@ archiver_rep::forget () {
     apply (before[0]);
     before= before[1];
     after= patch (array<patch> ());
+    if (depth <= last_save) last_save= -1;
+    depth--;
   }
 }
 
@@ -114,6 +123,7 @@ archiver_rep::undo () {
     apply (p);
     before= before[1];
     after = patch (q, after);
+    depth--;
   }
 }
 
@@ -125,5 +135,16 @@ archiver_rep::redo () {
     apply (p);
     before= patch (q, before);
     after = after[1];
+    depth++;
   }
+}
+
+void
+archiver_rep::notify_save () {
+  last_save= depth;
+}
+
+bool
+archiver_rep::no_changes () {
+  return last_save == depth;
 }
