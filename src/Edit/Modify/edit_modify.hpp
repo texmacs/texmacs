@@ -38,8 +38,10 @@ public:
   void add_undo_mark ();
   void undo (bool redoable);
   void unredoable_undo ();
-  void undo ();
-  void redo ();
+  int  undo_possibilities ();
+  void undo (int i);
+  int  redo_possibilities ();
+  void redo (int i);
   void perform_undo_redo (tree x);
 
   observer position_new (path p);

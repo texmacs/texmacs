@@ -174,7 +174,7 @@
   (if first?
       (graphics-back-first)
       (if (graphics-state-first?)
-	  (undo)
+	  (undo 0)
 	  (with st (graphics-pop-state)
 	    (graphics-state-set st)
 	    (if (graphics-states-void?)

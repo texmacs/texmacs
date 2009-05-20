@@ -278,7 +278,7 @@
                  `(point ,current-x ,current-y)
 		  moveclick-tolerance))
 	    (begin
-	       (undo)
+	       (undo 0)
 	       (set! choosing #f)
 	       (set! leftclick-waiting #f)
 	       (set! just-started-dragging #f))
@@ -871,7 +871,7 @@
 	   (graphics-group-mode? new-mode)
       )
       (begin
-	 (if sticky-point (undo))
+	 (if sticky-point (undo 0))
 	 (sketch-reset)
 	 (graphics-decorations-reset))))
 

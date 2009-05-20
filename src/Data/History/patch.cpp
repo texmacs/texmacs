@@ -18,53 +18,61 @@
 class modification_patch_rep: public patch_rep {
   modification mod;
 public:
-  inline modification_patch_rep (modification mod2): mod (mod2) {}
-  inline int get_type () { return PATCH_MODIFICATION; }
-  inline modification get_modification () { return mod; }
+  modification_patch_rep (modification mod2): mod (mod2) {}
+  int get_type () { return PATCH_MODIFICATION; }
+  modification get_modification () { return mod; }
 };
 
 class compound_patch_rep: public patch_rep {
   array<patch> a;
 public:
-  inline compound_patch_rep (array<patch> a2): a (a2) {}
-  inline int get_type () { return PATCH_COMPOUND; }
-  inline int get_arity () { return N(a); }
-  inline patch get_child (int i) { return a[i]; }
+  compound_patch_rep (array<patch> a2): a (a2) {}
+  int get_type () { return PATCH_COMPOUND; }
+  int get_arity () { return N(a); }
+  patch get_child (int i) { return a[i]; }
 };
 
 class birth_patch_rep: public patch_rep {
   double actor;
   bool birth;
 public:
-  inline birth_patch_rep (double a2, bool b2): actor (a2), birth (b2) {}
-  inline int get_type () { return PATCH_BIRTH; }
-  inline double get_actor () { return actor; }
-  inline bool get_birth () { return birth; }
+  birth_patch_rep (double a2, bool b2): actor (a2), birth (b2) {}
+  int get_type () { return PATCH_BIRTH; }
+  double get_actor () { return actor; }
+  bool get_birth () { return birth; }
 };
 
 class actor_patch_rep: public patch_rep {
   double actor;
   patch p;
 public:
-  inline actor_patch_rep (double a2, patch p2): actor (a2), p (p2) {}
-  inline int get_type () { return PATCH_ACTOR; }
-  inline int get_arity () { return 1; }
-  inline patch get_child (int i) {
+  actor_patch_rep (double a2, patch p2): actor (a2), p (p2) {}
+  int get_type () { return PATCH_ACTOR; }
+  int get_arity () { return 1; }
+  patch get_child (int i) {
     ASSERT (i == 0, "out of range");
     return p; }
-  inline double get_actor () { return actor; }
+  double get_actor () { return actor; }
 };
 
 patch::patch (modification mod):
-  rep (tm_new<modification_patch_rep> (mod)) {}
+  rep (tm_new<modification_patch_rep> (mod)) { rep->ref_count= 1; }
 patch::patch (array<patch> a):
-  rep (tm_new<compound_patch_rep> (a)) {}
+  rep (tm_new<compound_patch_rep> (a)) { rep->ref_count= 1; }
 patch::patch (patch p1, patch p2):
-  rep (tm_new<compound_patch_rep> (array<patch> (p1, p2))) {}
+  rep (tm_new<compound_patch_rep> (array<patch>(p1,p2))) { rep->ref_count= 1; }
 patch::patch (double actor, bool create):
-  rep (tm_new<birth_patch_rep> (actor, create)) {}
+  rep (tm_new<birth_patch_rep> (actor, create)) { rep->ref_count= 1; }
 patch::patch (double actor, patch p):
-  rep (tm_new<actor_patch_rep> (actor, p)) {}
+  rep (tm_new<actor_patch_rep> (actor, p)) { rep->ref_count= 1; }
+
+array<patch>
+get_children (patch p) {
+  int i, n= N(p);
+  array<patch> a (n);
+  for (i=0; i<N(p); i++) a[i]= p[i];
+  return a;
+}
 
 /******************************************************************************
 * Common routines
@@ -283,4 +291,89 @@ commute (patch p1, patch p2) {
   patch s1= p1;
   patch s2= p2;
   return swap (s1, s2);
+}
+
+/******************************************************************************
+* Other routines
+******************************************************************************/
+
+void
+insert (array<patch>& a, patch p) {
+  if (get_type (p) == PATCH_COMPOUND) {
+    int i, n= N(p);
+    for (i=0; i<n; i++)
+      insert (a, p[i]);
+  }
+  else a << p;
+}
+
+patch
+compactify (patch p) {
+  switch (get_type (p)) {
+  case PATCH_COMPOUND:
+    {
+      array<patch> r;
+      insert (r, p);
+      if (N(r) == 1) return r[0];
+      return patch (r);
+    }
+  case PATCH_ACTOR:
+    return patch (get_actor (p), compactify (p[0]));
+  }
+  return p;
+}
+
+path
+cursor_hint (modification m, tree t) {
+  ASSERT (is_applicable (t, m), "modification not applicable");
+  path rp= root (m);
+  tree st= subtree (t, rp);
+  switch (m->k) {
+  case MOD_ASSIGN:
+    return end (t, rp);
+  case MOD_INSERT:
+    if (is_atomic (st)) return rp * index (m);
+    else if (index (m) == N (st)) return end (t, rp);
+    else return start (t, rp * index (m));
+  case MOD_REMOVE:
+    if (is_atomic (st)) return rp * (index (m) + argument (m));
+    else if (index (m) == N (st)) return end (t, rp);
+    else if (argument (m) == 0) return start (t, rp * index (m));
+    else return end (t, rp * (index (m) + argument (m) - 1));
+  case MOD_SPLIT:
+    if (is_atomic (st [index (m)])) return m->p;
+    else if (argument (m) == N (st [index (m)])) return end (t, rp * index(m));
+    else return start (t, m->p);
+  case MOD_JOIN:
+    return end (t, m->p);
+  case MOD_ASSIGN_NODE:
+    return end (t, rp);
+  case MOD_INSERT_NODE:
+    return end (t, rp);
+  case MOD_REMOVE_NODE:
+    return end (t, rp * index (m));
+  default:
+    FAILED ("unexpected situation");
+    return path ();
+  }
+}
+
+path
+cursor_hint (patch p, tree t) {
+  switch (get_type (p)) {
+  case PATCH_MODIFICATION:
+    return cursor_hint (get_modification (p), t);
+  case PATCH_BIRTH:
+    return path ();
+  case PATCH_COMPOUND:
+  case PATCH_ACTOR:
+    for (int i=0; i<N(p); i++) {
+      path r= cursor_hint (p[i], t);
+      if (!is_nil (r)) return r;
+    }
+    return path ();
+  default:
+    FAILED ("unsupported patch type");
+  }
+  return path ();
 }

@@ -54,11 +54,15 @@ ABSTRACT_NULL_CODE (patch);
 inline patch patch_rep::get_child (int i) {
   FAILED ("not a composite patch"); (void) i; return patch (); }
 ostream& operator << (ostream& out, patch p);
-patch copy (patch p);
 
 /******************************************************************************
 * Routines on patches
 ******************************************************************************/
+
+patch copy (patch p);
+patch compactify (patch p);
+array<patch> get_children (patch p);
+path cursor_hint (patch p, tree t);
 
 inline int get_type (patch p) {
   return p->get_type (); }

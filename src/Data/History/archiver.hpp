@@ -23,25 +23,30 @@ class archiver_rep: public concrete_struct {
 
 protected:
   void apply (patch p);
+  void show_all ();
 
 public:
   archiver_rep ();
   ~archiver_rep ();
 
   void archive (patch p);
+  bool active ();
   void cancel ();    // cancel current series of modifications
   void confirm ();   // move current modifications to history
   void merge ();     // merge current modifications with last history item
   void retract ();   // reopen last history item for further modifications
   void forget ();    // undo and forget about last history item
+  void simplify ();
 
   bool no_more_undo ();
   bool no_more_redo ();
-  void undo ();
-  void redo ();
+  int  undo_possibilities ();
+  int  redo_possibilities ();
+  path undo ();
+  path redo (int i=0);
 
-  void needs_save ();
-  void needs_autosave ();
+  void require_save ();
+  void require_autosave ();
   void notify_save ();
   void notify_autosave ();
   bool conform_save ();

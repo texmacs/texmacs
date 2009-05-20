@@ -115,6 +115,24 @@ operator << (array<T>& a, array<T> b) {
   return a;
 }
 
+template<class T> array<T>
+append (array<T> a, array<T> b) {
+  register int i, k= N(a), l= N(b);
+  array<T> c (k+l);
+  for (i=0; i<k; i++) c[i]= a[i];
+  for (i=0; i<l; i++) c[i+k]= b[i];
+  return c;
+}
+
+template<class T> array<T>
+range (array<T> a, int i, int j) {
+  register int k;
+  ASSERT (i>=0 && j<=N(a), "out of range");
+  array<T> r (j-i);
+  for (k=i; k<j; k++) r[k-i]= a[k];
+  return r;
+}
+
 template<class T> int
 hash (array<T> a) {
   int i, n=N(a), h= 0;

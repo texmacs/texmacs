@@ -12,19 +12,70 @@
 #include "patch.hpp"
 
 /******************************************************************************
-* Commutation of modifications
+* Subroutines
 ******************************************************************************/
-
-static modification
-dup (modification m) {
-  return modification (m->k, copy (m->p), m->t);
-}
 
 static int
 insert_length (tree t) {
   if (is_atomic (t)) return N(t->label);
   else return N(t);
 }
+
+static tree
+insert_range (tree t, int i, int len) {
+  if (is_atomic (t)) return t->label (i, i+len);
+  else return t (i, i+len);
+}
+
+static modification
+dup (modification m) {
+  return modification (m->k, copy (m->p), m->t);
+}
+
+/******************************************************************************
+* Inversion of modifications
+******************************************************************************/
+
+modification
+invert (modification m, tree t) {
+  ASSERT (is_applicable (t, m), "modification not applicable");
+  path rp= root (m);
+  switch (m->k) {
+  case MOD_ASSIGN:
+    return mod_assign (rp, subtree (t, rp));
+  case MOD_INSERT:
+    return mod_remove (rp, index (m), insert_length (m->t));
+  case MOD_REMOVE:
+    {
+      int i= index (m);
+      int n= argument (m);
+      return mod_insert (rp, i, insert_range (subtree (t, rp), i, n));
+    }
+  case MOD_SPLIT:
+    return mod_join (rp, index (m));
+  case MOD_JOIN:
+    {
+      int  i= index (m);
+      return mod_split (rp, i, insert_length (subtree (t, rp * i)));
+    }
+  case MOD_ASSIGN_NODE:
+    return mod_assign_node (rp, L (subtree (t, rp)));
+  case MOD_INSERT_NODE:
+    return mod_remove_node (rp, argument (m));
+  case MOD_REMOVE_NODE:
+    {
+      tree u= subtree (t, rp);
+      int  i= index (m);
+      return mod_insert_node (rp, i, u (0, i) * u (i+1, N(u)));
+    }
+  default:
+    FAILED ("unexpected situation");
+  }
+}
+
+/******************************************************************************
+* Commutation of modifications
+******************************************************************************/
 
 static bool
 swap1 (modification& m1, modification& m2, int i, int d) {
@@ -236,47 +287,6 @@ commute (modification m1, modification m2) {
   modification s1= m1;
   modification s2= m2;
   return swap (s1, s2);
-}
-
-/******************************************************************************
-* Inversion of modifications
-******************************************************************************/
-
-modification
-invert (modification m, tree t) {
-  ASSERT (is_applicable (t, m), "modification not applicable");
-  path rp= root (m);
-  switch (m->k) {
-  case MOD_ASSIGN:
-    return mod_assign (rp, subtree (t, rp));
-  case MOD_INSERT:
-    return mod_remove (rp, index (m), insert_length (m->t));
-  case MOD_REMOVE:
-    {
-      int i= index (m);
-      int n= argument (m);
-      return mod_insert (rp, i, subtree (t, rp) (i, i+n));
-    }
-  case MOD_SPLIT:
-    return mod_join (rp, index (m));
-  case MOD_JOIN:
-    {
-      int  i= index (m);
-      return mod_split (rp, i, insert_length (subtree (t, rp * i)));
-    }
-  case MOD_ASSIGN_NODE:
-    return mod_assign_node (rp, L (subtree (t, rp)));
-  case MOD_INSERT_NODE:
-    return mod_remove_node (rp, argument (m));
-  case MOD_REMOVE_NODE:
-    {
-      tree u= subtree (t, rp);
-      int  i= index (m);
-      return mod_insert_node (rp, i, u (0, i) * u (i+1, N(u)));
-    }
-  default:
-    FAILED ("unexpected situation");
-  }
 }
 
 /******************************************************************************

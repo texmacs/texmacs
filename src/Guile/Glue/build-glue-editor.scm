@@ -208,8 +208,10 @@
   (remove-undo-mark remove_undo_mark (void))
   (add-undo-mark add_undo_mark (void))
   (unredoable-undo unredoable_undo (void))
-  (undo undo (void))
-  (redo redo (void))
+  (undo-possibilities undo_possibilities (int))
+  (undo undo (void int))
+  (redo-possibilities redo_possibilities (int))
+  (redo redo (void int))
 
   ;; graphics
   (in-graphics? inside_graphics (bool))

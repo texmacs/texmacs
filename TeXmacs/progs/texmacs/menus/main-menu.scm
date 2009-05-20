@@ -119,8 +119,8 @@
    (interactive replace-start-forward))
   ((balloon (icon "tm_spell.xpm") "Check text for spelling errors#(M-$)")
    (spell-start))
-  ((balloon (icon "tm_undo.xpm") "Undo last changes#(M-[)") (undo))
-  ((balloon (icon "tm_redo.xpm") "Redo undone changes#(M-])") (redo))
+  ((balloon (icon "tm_undo.xpm") "Undo last changes#(M-[)") (undo 0))
+  ((balloon (icon "tm_redo.xpm") "Redo undone changes#(M-])") (redo 0))
   (if (not (in-graphics?))
       |
       (=> (balloon (icon "tm_table.xpm") "Insert a table")

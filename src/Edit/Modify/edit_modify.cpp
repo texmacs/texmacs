@@ -216,6 +216,7 @@ edit_done (editor_rep* ed, modification mod) {
 * undo and redo handling
 ******************************************************************************/
 
+/*
 static tree
 encode (string op, path p, tree t) {
   string s= copy (op);
@@ -468,11 +469,83 @@ edit_modify_rep::perform_undo_redo (tree x) {
     }
   }
 }
+*/
+
+void
+edit_modify_rep::mark_undo_blocks () {
+  int i;
+  for (i=0; i<sv->nr_bufs(); i++) {
+    tm_buffer b= sv->get_buf (i);
+    b->arch->confirm ();
+    b->arch->simplify ();
+  }
+}
+
+void
+edit_modify_rep::remove_undo_mark () {
+  buf->arch->retract ();
+}
+
+void
+edit_modify_rep::add_undo_mark () {
+  buf->arch->confirm ();
+}
+
+void
+edit_modify_rep::undo (bool redoable) {
+  if (inside_graphics () && !as_bool (eval ("graphics-undo-enabled"))) {
+    eval ("(graphics-reset-context 'undo)"); return; }
+  if (buf->arch->no_more_undo ()) {
+    set_message ("No more undo information available", "undo"); return; }
+  if (redoable) {
+    path p= buf->arch->undo ();
+    if (!is_nil (p)) go_to (p);
+  }
+  else buf->arch->forget ();
+  if (buf->arch->conform_save ()) {
+    set_message ("Your document is back in its original state", "undo");
+    beep (); }
+  if (inside_graphics ())
+    eval ("(graphics-reset-context 'undo)");
+}
+
+void
+edit_modify_rep::unredoable_undo () {
+  undo (false);
+}
+
+int
+edit_modify_rep::undo_possibilities () {
+  return buf->arch->undo_possibilities ();
+}
+
+void
+edit_modify_rep::undo (int i) {
+  ASSERT (i == 0, "invalid undo");
+  undo (true);
+}
+
+int
+edit_modify_rep::redo_possibilities () {
+  return buf->arch->redo_possibilities ();
+}
+
+void
+edit_modify_rep::redo (int i) {
+  if (buf->arch->no_more_redo ()) {
+    set_message ("No more redo information available", "redo"); return; }
+  path p= buf->arch->redo (i);
+  if (!is_nil (p)) go_to (p);
+  if (buf->arch->conform_save ()) {
+    set_message ("Your document is back in its original state", "undo");
+    beep (); }
+}
 
 /******************************************************************************
 * Hooks / notify changes to undoer
 ******************************************************************************/
 
+/*
 void
 archive_assign (tm_buffer buf, path pp, tree u) {
   path p= copy (pp);
@@ -573,6 +646,14 @@ archive_announce (tm_buffer buf, modification mod) {
     break;
   default: FAILED ("invalid modification type");
   }
+}
+*/
+
+void
+archive_announce (tm_buffer buf, modification mod) {
+  ASSERT (buf->rp <= mod->p, "invalid modification");
+  if (!versioning_busy)
+    buf->arch->archive (patch (mod));
 }
 
 /******************************************************************************

@@ -180,7 +180,7 @@
   ("windows v" (clipboard-paste "primary"))
   ("windows w" (safely-kill-buffer))
   ("windows x" (clipboard-cut "primary"))
-  ("windows z" (undo)))
+  ("windows z" (undo 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Windows-ish commands added by TeXmacs

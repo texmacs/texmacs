@@ -211,8 +211,8 @@ tm_data_rep::revert_buffer (url name, tree doc) {
     vw->ed->typeset_invalidate_env ();
   }
   buf->mark_undo_block ();
-  buf->need_save= buf->need_autosave= false;
-  buf->last_save= buf->last_autosave= buf->undo_depth- 1;
+  buf->notify_save ();
+  buf->notify_autosave ();
 }
 
 void
@@ -719,7 +719,8 @@ tm_data_rep::project_attach (string prj_name) {
   int i;
   tm_buffer buf= get_buffer ();
   buf->project= prj_name;
-  buf->need_save= buf->need_autosave= true;
+  buf->require_save ();
+  buf->require_autosave ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
     vw->ed->notify_change (THE_DECORATIONS);
@@ -884,6 +885,7 @@ tm_data_rep::window_focus (int id) {
 * Undo/redo routines for buffers as well as tests for (auto)saves
 ******************************************************************************/
 
+/*
 void
 tm_buffer_rep::mark_undo_block () {
   if ((undo == "nil") || (undo[0] != "")) {
@@ -964,6 +966,28 @@ tm_buffer_rep::truncate_undos (int nr) {
   last_autosave -= del;
 }
 
+void
+tm_buffer_rep::require_save () {
+  need_save= true;
+}
+
+void
+tm_buffer_rep::require_autosave () {
+  need_autosave= true;
+}
+
+void
+tm_buffer_rep::notify_save () {
+  need_save= false;
+  buf->last_save= buf->undo_depth- 1;
+}
+
+void
+tm_buffer_rep::notify_autosave () {
+  need_autosave= false;
+  buf->last_autosave= buf->undo_depth- 1;
+}
+
 bool
 tm_buffer_rep::needs_to_be_saved () {
   if (!in_menu) return false;
@@ -981,4 +1005,45 @@ tm_buffer_rep::needs_to_be_autosaved () {
   if ((undo == "nil") || (undo[0] != ""))
     return (last_autosave != undo_depth);
   else return (last_autosave != (undo_depth-1));
+}
+*/
+
+void
+tm_buffer_rep::mark_undo_block () {
+  arch->confirm ();
+}
+
+void
+tm_buffer_rep::require_save () {
+  arch->require_save ();
+}
+
+void
+tm_buffer_rep::require_autosave () {
+  arch->require_autosave ();
+}
+
+void
+tm_buffer_rep::notify_save () {
+  arch->notify_save ();
+}
+
+void
+tm_buffer_rep::notify_autosave () {
+  arch->notify_autosave ();
+}
+
+bool
+tm_buffer_rep::needs_to_be_saved () {
+  if (!in_menu) return false;
+  if (need_save) return true;
+  return !arch->conform_save ();
+}
+
+bool
+tm_buffer_rep::needs_to_be_autosaved () {
+  if (!in_menu) return false;
+  if (!needs_to_be_saved ()) return false;
+  if (need_autosave) return true;
+  return !arch->conform_autosave ();
 }

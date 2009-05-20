@@ -16,7 +16,7 @@
 	(utils edit selections)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dynamic menus for formats
+;; Dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (extern-clipboard-item fm name action)
@@ -29,13 +29,26 @@
 		    converter-to-menu converter-from-menu)
     `(menu-dynamic ,@(routine "texmacs-snippet" "-snippet" #t item))))
 
+(define (redo-item i)
+  (list (string-append "Branch#" (number->string (+ i 1)))
+	(lambda () (redo i))))
+
+(tm-define (redo-menu)
+  (menu-dynamic
+    ,@(map redo-item (.. 0 (redo-possibilities)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Edit menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind edit-menu
-  ("Undo" (undo))
-  ("Redo" (redo))
+  (when (> (undo-possibilities) 0)
+    ("Undo" (undo 0)))
+  (when (> (redo-possibilities) 0)
+    (if (<= (redo-possibilities) 1)
+	("Redo" (redo 0)))
+    (if (> (redo-possibilities) 1)
+	(-> "Redo" (link redo-menu))))
   ---
   (when (or (selection-active-any?)
 	    (and (in-graphics?)

@@ -426,7 +426,8 @@ edit_typeset_rep::init_style (string name) {
   if ((name == "none") || (name == "") || (name == "style")) the_style= TUPLE;
   else if (arity (the_style) == 0) the_style= tree (TUPLE, name);
   else the_style= tree (TUPLE, name) * the_style (1, N(the_style));
-  buf->need_save= buf->need_autosave= true;
+  buf->require_save ();
+  buf->require_autosave ();
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -438,7 +439,8 @@ edit_typeset_rep::init_add_package (string name) {
       return;
 
   the_style << tree (name);
-  buf->need_save= buf->need_autosave= true;
+  buf->require_save ();
+  buf->require_autosave ();
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -448,7 +450,8 @@ edit_typeset_rep::init_remove_package (string name) {
   tree new_style= tree (TUPLE);
   for (i=0; i<n; i++)
     if (the_style[i] == name) {
-      buf->need_save= buf->need_autosave= true;
+      buf->require_save ();
+      buf->require_autosave ();
       notify_change (THE_ENVIRONMENT);
     }
     else new_style << the_style[i];

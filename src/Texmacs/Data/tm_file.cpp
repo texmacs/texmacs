@@ -255,8 +255,7 @@ tm_data_rep::auto_save () {
 	  call ("set-temporary-message",
 		"saved " * as_string (name), "save TeXmacs file", 2500);
 	  buf->mark_undo_block ();
-	  buf->need_autosave= false;
-	  buf->last_autosave= buf->undo_depth- 1;
+	  buf->notify_autosave ();
 	}
       }
     }
@@ -301,6 +300,6 @@ void
 tm_data_rep::pretend_save_buffer () {
   tm_buffer buf= get_buffer ();
   buf->mark_undo_block ();
-  buf->need_save= buf->need_autosave= false;
-  buf->last_save= buf->last_autosave= buf->undo_depth- 1;
+  buf->notify_save ();
+  buf->notify_autosave ();
 }

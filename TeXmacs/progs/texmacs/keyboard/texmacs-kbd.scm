@@ -35,8 +35,8 @@
   ("M-S-F4" (interactive print-pages-to-file))
   ("C-F9" (toggle-full-screen-mode))
 
-  ("undo" (noop) (undo))
-  ("redo" (noop) (redo))
+  ("undo" (noop) (undo 0))
+  ("redo" (noop) (redo 0))
   ("cancel" (noop) (clipboard-clear "primary"))
   ("cut" (noop) (clipboard-cut "primary"))
   ("paste" (noop) (clipboard-paste "primary"))

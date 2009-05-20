@@ -53,6 +53,8 @@ TMPL inline array<T> copy (array<T> a) {
 TMPL ostream& operator << (ostream& out, array<T> a);
 TMPL array<T>& operator << (array<T>& a, T x);
 TMPL array<T>& operator << (array<T>& a, array<T> b);
+TMPL array<T> append (array<T> a, array<T> b);
+TMPL array<T> range (array<T> a, int i, int j);
 TMPL bool operator == (array<T> a, array<T> b);
 TMPL bool operator != (array<T> a, array<T> b);
 

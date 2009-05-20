@@ -1949,18 +1949,44 @@ tmg_unredoable_undo () {
 }
 
 SCM
-tmg_undo () {
+tmg_undo_possibilities () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->undo ();
+  int out= get_server()->get_editor()->undo_possibilities ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_undo (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "undo");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->undo (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_redo () {
+tmg_redo_possibilities () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->redo ();
+  int out= get_server()->get_editor()->redo_possibilities ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_redo (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "redo");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->redo (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2704,8 +2730,10 @@ initialize_glue_editor () {
   scm_new_procedure ("remove-undo-mark", (FN) tmg_remove_undo_mark, 0, 0, 0);
   scm_new_procedure ("add-undo-mark", (FN) tmg_add_undo_mark, 0, 0, 0);
   scm_new_procedure ("unredoable-undo", (FN) tmg_unredoable_undo, 0, 0, 0);
-  scm_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
-  scm_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
+  scm_new_procedure ("undo-possibilities", (FN) tmg_undo_possibilities, 0, 0, 0);
+  scm_new_procedure ("undo", (FN) tmg_undo, 1, 0, 0);
+  scm_new_procedure ("redo-possibilities", (FN) tmg_redo_possibilities, 0, 0, 0);
+  scm_new_procedure ("redo", (FN) tmg_redo, 1, 0, 0);
   scm_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
   scm_new_procedure ("get-graphical-x", (FN) tmg_get_graphical_x, 0, 0, 0);
   scm_new_procedure ("get-graphical-y", (FN) tmg_get_graphical_y, 0, 0, 0);
