@@ -397,7 +397,7 @@
 				     (if edge
 				        (with l2 (list-head l 2)
 				        (if sticky-point
-					   `(,(list* 'with
+					   `(,(cons* 'with
 					         "point-style"
 					         "square"
 					        `((concat .
@@ -524,7 +524,7 @@
 	)
 	(set! res (append res
 			  (if props
-			     `(,(append props `(,(list* 'concat t))))
+			     `(,(append props `(,(cons* 'concat t))))
 			      t)))))
   )
   res)
