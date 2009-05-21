@@ -19,7 +19,6 @@
 
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
-int max_undo_depth= 100; // should actually be part of tm_data_rep
 
 /******************************************************************************
 * Constructor and destructor
@@ -618,18 +617,6 @@ tm_data_rep::kill_window_and_buffer () {
   if (kill) delete_buffer (buf);
 }
 
-void
-tm_data_rep::set_max_undo_depth (int i) {
-  if (i <  0) i= -1;
-  if (i == 0) i= 1;
-  max_undo_depth= i;
-}
-
-int
-tm_data_rep::get_max_undo_depth () {
-  return max_undo_depth;
-}
-
 bool
 tm_data_rep::no_bufs () {
   return N(bufs) == 0;
@@ -884,129 +871,6 @@ tm_data_rep::window_focus (int id) {
 /******************************************************************************
 * Undo/redo routines for buffers as well as tests for (auto)saves
 ******************************************************************************/
-
-/*
-void
-tm_buffer_rep::mark_undo_block () {
-  if ((undo == "nil") || (undo[0] != "")) {
-    undo= tree (BACKUP, "", undo);
-    undo_depth++;
-  }
-}
-
-void
-tm_buffer_rep::mark_redo_block () {
-  if ((redo == "nil") || (redo[0] != "")) {
-    redo= tree (BACKUP, "", redo);
-    exdo= tree (BACKUP, "", exdo);
-    redo_depth++;
-  }
-}
-
-void
-tm_buffer_rep::unmark_undo_block () {
-  if ((undo != "nil") && undo[0] == "") {
-    undo= undo[1];
-    undo_depth--;
-  }
-}
-
-void
-tm_buffer_rep::unmark_redo_block () {
-  if ((redo != "nil") && redo[0] == "") {
-    redo= redo[1];
-    exdo= exdo[1];
-    redo_depth--;
-  }
-}
-
-void
-tm_buffer_rep::redo_to_undo () {
-  if (redo == "nil") mark_undo_block ();
-  else {
-    tree re= redo[0];
-    tree ex= exdo[0];
-    redo= redo[1];
-    exdo= exdo[1];
-    if (re == "") redo_depth--;
-    if (ex == "") mark_undo_block ();
-    else undo= tree (BACKUP, ex, undo);
-    redo_to_undo ();
-    if (re == "") mark_undo_block ();
-    else undo= tree (BACKUP, re, undo);
-  }
-}
-
-void
-tm_buffer_rep::truncate_undos (int nr) {
-  int i;
-  tree rev= "nil";
-  for (i=0; i<nr; i++) {
-    while (undo[0] != "") {
-      rev= tree (BACKUP, undo[0], rev);
-      undo= undo[1];
-    }
-    rev= tree (BACKUP, undo[0], rev);
-    undo= undo[1];
-  }
-
-  undo= "nil";
-  for (i=0; i<nr; i++) {
-    undo= tree (BACKUP, rev[0], undo);
-    rev= rev[1];
-    while ((rev != "nil") && (rev[0] != "")) {
-      undo= tree (BACKUP, rev[0], undo);
-      rev= rev[1];
-    }
-  }
-
-  int del= undo_depth- nr;
-  undo_depth    -= del;
-  last_save     -= del;
-  last_autosave -= del;
-}
-
-void
-tm_buffer_rep::require_save () {
-  need_save= true;
-}
-
-void
-tm_buffer_rep::require_autosave () {
-  need_autosave= true;
-}
-
-void
-tm_buffer_rep::notify_save () {
-  need_save= false;
-  buf->last_save= buf->undo_depth- 1;
-}
-
-void
-tm_buffer_rep::notify_autosave () {
-  need_autosave= false;
-  buf->last_autosave= buf->undo_depth- 1;
-}
-
-bool
-tm_buffer_rep::needs_to_be_saved () {
-  if (!in_menu) return false;
-  if (need_save) return true;
-  if ((undo == "nil") || (undo[0] != ""))
-    return (last_save != undo_depth);
-  else return (last_save != (undo_depth-1));
-}
-
-bool
-tm_buffer_rep::needs_to_be_autosaved () {
-  if (!in_menu) return false;
-  if (!needs_to_be_saved ()) return false;
-  if (need_autosave) return true;
-  if ((undo == "nil") || (undo[0] != ""))
-    return (last_autosave != undo_depth);
-  else return (last_autosave != (undo_depth-1));
-}
-*/
 
 void
 tm_buffer_rep::mark_undo_block () {

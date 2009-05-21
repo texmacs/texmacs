@@ -45,17 +45,6 @@ public:
 
   observer undo_obs;      // observer for undoing changes
   archiver arch;          // archiver of changes
-  /*
-  tree undo;              // for undoing changes
-  tree redo;              // for redoing changes
-  tree exdo;              // for undoing redone changes
-  int  undo_depth;        // number of changes
-  int  redo_depth;        // number of undone changes
-  bool undo_flag;         // when undoing some text
-  bool redo_flag;         // when redoing some text
-  int  last_save;         // how many changes at last save
-  int  last_autosave;     // how many changes at last autosave
-  */
 
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
@@ -68,10 +57,6 @@ public:
     init ("?"), fin ("?"), ref ("?"), aux ("?"),
     undo_obs (undo_observer (this)),
     arch ()
-    //undo ("nil"), redo ("nil"), exdo ("nil"),
-    //undo_depth (0), redo_depth (0),
-    //undo_flag (false), redo_flag (false),
-    //last_save (0), last_autosave (0)
   {
     attach_observer (subtree (the_et, rp), undo_obs);
   }
@@ -82,11 +67,6 @@ public:
   }
 
   void mark_undo_block ();
-  //void mark_redo_block ();
-  //void unmark_undo_block ();
-  //void unmark_redo_block ();
-  //void redo_to_undo ();
-  //void truncate_undos (int nr);
   void require_save ();
   void require_autosave ();
   void notify_save ();

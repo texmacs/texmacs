@@ -64,8 +64,6 @@
   (clone-window clone_window (void))
   (kill-window kill_window (void))
   (kill-window-and-buffer kill_window_and_buffer (void))
-  (set-maximal-undo-depth set_max_undo_depth (void int))
-  (get-maximal-undo-depth get_max_undo_depth (int))
   (no-name? no_name (bool))
   (help-buffer? help_buffer (bool))
   (set-buffer revert_buffer (void url content))

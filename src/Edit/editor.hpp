@@ -265,6 +265,7 @@ public:
   virtual void notify_insert_node (path p, tree t) = 0;
   virtual void notify_remove_node (path p) = 0;
   virtual void post_notify (path p) = 0;
+  virtual void clear_undo_history () = 0;
   virtual void mark_undo_blocks () = 0;
   virtual void remove_undo_mark () = 0;
   virtual void add_undo_mark () = 0;

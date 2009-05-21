@@ -27,6 +27,16 @@ archiver_rep::archiver_rep ():
 archiver_rep::~archiver_rep () {}
 archiver::archiver (): rep (tm_new<archiver_rep> ()) {}
 
+void
+archiver_rep::clear () {
+  before= array<patch> ();
+  current= array<patch> ();
+  after= array<patch> ();
+  depth= 0;
+  last_save= -1;
+  last_autosave= -1;
+}
+
 /******************************************************************************
 * Internal subroutines
 ******************************************************************************/
@@ -174,6 +184,7 @@ archiver_rep::simplify () {
 	  array<patch> a (1); a[0]= m;
 	  array<patch> c= get_children (before[1]);
 	  before= patch (append (a, range (c, 1, N(c))));
+	  depth--;
 	}
       else if (m1->k == MOD_REMOVE &&
 	       m2->k == MOD_REMOVE &&
@@ -187,6 +198,7 @@ archiver_rep::simplify () {
 	  array<patch> a (1); a[0]= m;
 	  array<patch> c= get_children (before[1]);
 	  before= patch (append (a, range (c, 1, N(c))));
+	  depth--;
 	} 
     }
 }

@@ -73,8 +73,6 @@ public:
   void clone_window ();
   void kill_window ();
   void kill_window_and_buffer ();
-  void set_max_undo_depth (int i);
-  int  get_max_undo_depth ();
   bool no_bufs ();
   bool no_name ();
   bool help_buffer ();

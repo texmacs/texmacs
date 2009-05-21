@@ -33,6 +33,7 @@ public:
   void notify_remove_node (path p);
   void post_notify        (path p);
 
+  void clear_undo_history ();
   void mark_undo_blocks ();
   void remove_undo_mark ();
   void add_undo_mark ();

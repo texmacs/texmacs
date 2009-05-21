@@ -530,28 +530,6 @@ tmg_kill_window_and_buffer () {
 }
 
 SCM
-tmg_set_maximal_undo_depth (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "set-maximal-undo-depth");
-
-  int in1= scm_to_int (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->set_max_undo_depth (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_get_maximal_undo_depth () {
-  // SCM_DEFER_INTS;
-  int out= get_server()->get_max_undo_depth ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_no_nameP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->no_name ();
@@ -1139,8 +1117,6 @@ initialize_glue_server () {
   scm_new_procedure ("clone-window", (FN) tmg_clone_window, 0, 0, 0);
   scm_new_procedure ("kill-window", (FN) tmg_kill_window, 0, 0, 0);
   scm_new_procedure ("kill-window-and-buffer", (FN) tmg_kill_window_and_buffer, 0, 0, 0);
-  scm_new_procedure ("set-maximal-undo-depth", (FN) tmg_set_maximal_undo_depth, 1, 0, 0);
-  scm_new_procedure ("get-maximal-undo-depth", (FN) tmg_get_maximal_undo_depth, 0, 0, 0);
   scm_new_procedure ("no-name?", (FN) tmg_no_nameP, 0, 0, 0);
   scm_new_procedure ("help-buffer?", (FN) tmg_help_bufferP, 0, 0, 0);
   scm_new_procedure ("set-buffer", (FN) tmg_set_buffer, 2, 0, 0);

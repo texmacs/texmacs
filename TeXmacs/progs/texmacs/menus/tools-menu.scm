@@ -47,6 +47,8 @@
       ("Create web site" (tmweb-interactive-build)))
   (-> "Project"
       (link project-manage-menu))
+  (-> "Miscellaneous"
+      ("Clear undo history" (clear-undo-history)))
   (if (nnull? (test-menu))
       ---
       (link test-menu)))

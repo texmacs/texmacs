@@ -123,8 +123,6 @@ public:
   virtual void clone_window () = 0;
   virtual void kill_window () = 0;
   virtual void kill_window_and_buffer () = 0;
-  virtual void set_max_undo_depth (int i) = 0;
-  virtual int  get_max_undo_depth () = 0;
   virtual bool no_bufs () = 0;
   virtual bool no_name () = 0;
   virtual bool help_buffer () = 0;

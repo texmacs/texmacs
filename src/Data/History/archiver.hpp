@@ -28,6 +28,7 @@ protected:
 public:
   archiver_rep ();
   ~archiver_rep ();
+  void clear ();
 
   void archive (patch p);
   bool active ();
