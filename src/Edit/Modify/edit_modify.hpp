@@ -18,10 +18,12 @@ path inner_paragraph (tree t, path p);
 class edit_modify_rep: virtual public editor_rep {
 protected:
   observer cur_pos;  // tree_position corresponding to tp
+  double   author;   // the author identifier associated to this view
 
 public:
   edit_modify_rep ();
   ~edit_modify_rep ();
+  double this_author ();
 
   void notify_assign      (path p, tree u);
   void notify_insert      (path p, tree u);
@@ -34,9 +36,10 @@ public:
   void post_notify        (path p);
 
   void clear_undo_history ();
-  void mark_undo_blocks ();
-  void remove_undo_mark ();
+  void start_editing ();
+  void end_editing ();
   void add_undo_mark ();
+  void remove_undo_mark ();
   void undo (bool redoable);
   void unredoable_undo ();
   int  undo_possibilities ();

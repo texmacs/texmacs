@@ -87,7 +87,7 @@ archiver_rep::show_all () {
 
 void
 archiver_rep::archive (patch p) {
-  // cout << "Archive " << p << "\n";
+  // cout << "Archive [" << get_author () << "] " << p << "\n";
   patch q= copy (invert (p, the_et));
   current= patch (q, current);
 }

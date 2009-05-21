@@ -28,8 +28,6 @@ public:
   string fm;              // buffer format
   url extra;              // for special buffers, like help buffer
   array<tm_view> vws;     // views attached to buffer
-  bool need_save;         // (non textual) modification since last save?
-  bool need_autosave;     // (non textual) modification since last autosave?
   bool read_only;         // buffer is read only?
   bool secure;            // is the buffer secure?
   tm_buffer prj;          // buffer which corresponds to the project
@@ -49,7 +47,6 @@ public:
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
     fm ("texmacs"), extra (url_none ()), vws (0),
-    need_save (false), need_autosave (false),
     read_only (false), secure (is_secure (name2)),
     prj (NULL), in_menu (true),
     rp (new_document ()),
@@ -66,11 +63,6 @@ public:
     delete_document (rp);
   }
 
-  void mark_undo_block ();
-  void require_save ();
-  void require_autosave ();
-  void notify_save ();
-  void notify_autosave ();
   bool needs_to_be_saved ();
   bool needs_to_be_autosaved ();
 };

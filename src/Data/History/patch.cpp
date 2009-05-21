@@ -75,6 +75,29 @@ get_children (patch p) {
 }
 
 /******************************************************************************
+* Author management
+******************************************************************************/
+
+static double current_author= 0.0;
+
+double
+new_author () {
+  static double next_author= 0.0;
+  next_author += 1.0;
+  return next_author;
+}
+
+void
+set_author (double a) {
+  current_author= a;
+}
+
+double
+get_author () {
+  return current_author;
+}
+
+/******************************************************************************
 * Common routines
 ******************************************************************************/
 

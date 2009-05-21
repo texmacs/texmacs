@@ -53,12 +53,16 @@ ABSTRACT_NULL_CODE (patch);
 
 inline patch patch_rep::get_child (int i) {
   FAILED ("not a composite patch"); (void) i; return patch (); }
-ostream& operator << (ostream& out, patch p);
 
 /******************************************************************************
 * Routines on patches
 ******************************************************************************/
 
+double new_author ();
+void set_author (double author);
+double get_author ();
+
+ostream& operator << (ostream& out, patch p);
 patch copy (patch p);
 patch compactify (patch p);
 array<patch> get_children (patch p);

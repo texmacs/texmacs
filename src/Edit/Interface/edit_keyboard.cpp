@@ -177,10 +177,10 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
-  //mark_undo_blocks ();
+  start_editing ();
   key_press (key); (void) t;
   notify_change (THE_DECORATIONS);
-  mark_undo_blocks ();
+  end_editing ();
 }
 
 void

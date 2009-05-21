@@ -254,8 +254,8 @@ tm_data_rep::auto_save () {
 	else {
 	  call ("set-temporary-message",
 		"saved " * as_string (name), "save TeXmacs file", 2500);
-	  buf->mark_undo_block ();
-	  buf->notify_autosave ();
+	  buf->arch->confirm ();
+	  buf->arch->notify_autosave ();
 	}
       }
     }
@@ -299,7 +299,7 @@ tm_data_rep::exists_unsaved_buffer () {
 void
 tm_data_rep::pretend_save_buffer () {
   tm_buffer buf= get_buffer ();
-  buf->mark_undo_block ();
-  buf->notify_save ();
-  buf->notify_autosave ();
+  buf->arch->confirm ();
+  buf->arch->notify_save ();
+  buf->arch->notify_autosave ();
 }

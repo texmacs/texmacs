@@ -548,14 +548,14 @@ edit_interface_rep::full_screen_mode (bool flag) {
 
 void
 edit_interface_rep::before_menu_action () {
-  //mark_undo_blocks ();
+  start_editing ();
   set_input_normal ();
 }
 
 void
 edit_interface_rep::after_menu_action () {
   notify_change (THE_DECORATIONS);
-  mark_undo_blocks ();
+  end_editing ();
 }
 
 /******************************************************************************

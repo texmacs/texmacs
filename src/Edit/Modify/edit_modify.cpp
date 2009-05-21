@@ -16,13 +16,11 @@
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
 
-extern int max_undo_depth;
-
 /******************************************************************************
 * Constructors and destructors
 ******************************************************************************/
 
-edit_modify_rep::edit_modify_rep () {}
+edit_modify_rep::edit_modify_rep (): author (new_author ()) {}
 edit_modify_rep::~edit_modify_rep () {}
 
 /******************************************************************************
@@ -225,8 +223,18 @@ edit_modify_rep::clear_undo_history () {
   }
 }
 
+double
+edit_modify_rep::this_author () {
+  return author;
+}
+
 void
-edit_modify_rep::mark_undo_blocks () {
+edit_modify_rep::start_editing () {
+  set_author (this_author ());
+}
+
+void
+edit_modify_rep::end_editing () {
   int i;
   for (i=0; i<sv->nr_bufs(); i++) {
     tm_buffer b= sv->get_buf (i);
@@ -237,13 +245,13 @@ edit_modify_rep::mark_undo_blocks () {
 }
 
 void
-edit_modify_rep::remove_undo_mark () {
-  buf->arch->retract ();
+edit_modify_rep::add_undo_mark () {
+  buf->arch->confirm ();
 }
 
 void
-edit_modify_rep::add_undo_mark () {
-  buf->arch->confirm ();
+edit_modify_rep::remove_undo_mark () {
+  buf->arch->retract ();
 }
 
 void

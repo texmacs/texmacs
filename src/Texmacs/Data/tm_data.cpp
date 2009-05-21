@@ -209,9 +209,9 @@ tm_data_rep::revert_buffer (url name, tree doc) {
     vw->ed->notify_change (THE_DECORATIONS);
     vw->ed->typeset_invalidate_env ();
   }
-  buf->mark_undo_block ();
-  buf->notify_save ();
-  buf->notify_autosave ();
+  buf->arch->confirm ();
+  buf->arch->notify_save ();
+  buf->arch->notify_autosave ();
 }
 
 void
@@ -706,8 +706,8 @@ tm_data_rep::project_attach (string prj_name) {
   int i;
   tm_buffer buf= get_buffer ();
   buf->project= prj_name;
-  buf->require_save ();
-  buf->require_autosave ();
+  buf->arch->require_save ();
+  buf->arch->require_autosave ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
     vw->ed->notify_change (THE_DECORATIONS);
@@ -869,38 +869,12 @@ tm_data_rep::window_focus (int id) {
 }
 
 /******************************************************************************
-* Undo/redo routines for buffers as well as tests for (auto)saves
+* Check for changes in the buffer
 ******************************************************************************/
-
-void
-tm_buffer_rep::mark_undo_block () {
-  arch->confirm ();
-}
-
-void
-tm_buffer_rep::require_save () {
-  arch->require_save ();
-}
-
-void
-tm_buffer_rep::require_autosave () {
-  arch->require_autosave ();
-}
-
-void
-tm_buffer_rep::notify_save () {
-  arch->notify_save ();
-}
-
-void
-tm_buffer_rep::notify_autosave () {
-  arch->notify_autosave ();
-}
 
 bool
 tm_buffer_rep::needs_to_be_saved () {
   if (!in_menu) return false;
-  if (need_save) return true;
   return !arch->conform_save ();
 }
 
@@ -908,6 +882,5 @@ bool
 tm_buffer_rep::needs_to_be_autosaved () {
   if (!in_menu) return false;
   if (!needs_to_be_saved ()) return false;
-  if (need_autosave) return true;
   return !arch->conform_autosave ();
 }

@@ -267,9 +267,11 @@ public:
   virtual void notify_remove_node (path p) = 0;
   virtual void post_notify (path p) = 0;
   virtual void clear_undo_history () = 0;
-  virtual void mark_undo_blocks () = 0;
-  virtual void remove_undo_mark () = 0;
+  virtual double this_author () = 0;
+  virtual void start_editing () = 0;
+  virtual void end_editing () = 0;
   virtual void add_undo_mark () = 0;
+  virtual void remove_undo_mark () = 0;
   virtual void unredoable_undo () = 0;
   virtual int  undo_possibilities () = 0;
   virtual void undo (int i=0) = 0;
