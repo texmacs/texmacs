@@ -16,7 +16,7 @@
 #define PATCH_MODIFICATION 0
 #define PATCH_COMPOUND     1
 #define PATCH_BIRTH        2
-#define PATCH_ACTOR        3
+#define PATCH_AUTHOR       3
 
 /******************************************************************************
 * Abstract patches
@@ -35,7 +35,7 @@ public:
     FAILED ("not a modification"); return mod_assign (path (), ""); }
   inline virtual bool get_birth () {
     FAILED ("not a birth"); return false; }
-  inline virtual double get_actor () {
+  inline virtual double get_author () {
     return -1; }
 };
 
@@ -44,8 +44,8 @@ ABSTRACT_NULL (patch);
   patch (modification mod);
   patch (array<patch> a);
   patch (patch p1, patch p2);
-  patch (double actor, bool create);
-  patch (double actor, patch p);
+  patch (double author, bool create);
+  patch (double author, patch p);
   inline patch operator [] (int i) {
     return rep->get_child (i); }
 };
@@ -72,8 +72,8 @@ inline modification get_modification (patch p) {
   return p->get_modification (); }
 inline bool get_birth (patch p) {
   return p->get_birth (); }
-inline double get_actor (patch p) {
-  return p->get_actor (); }
+inline double get_author (patch p) {
+  return p->get_author (); }
 
 bool is_applicable (patch p, tree t);
 tree clean_apply (patch p, tree t);
