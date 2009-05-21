@@ -198,6 +198,7 @@
   ("math:large /" (make-separator "/" #t))
   ("math:large \\" (make-separator "\\" #t))
   ("math:large |" (make-separator "|" #t))
+  ("math:large | |" (make-separator "||" #t))
 
   ("math:left (" (make-bracket-open "(" ")" #t))
   ("math:left )" (make-bracket-open ")" "(" #t))
@@ -210,6 +211,7 @@
   ("math:left /" (make-bracket-open "/" "\\" #t))
   ("math:left \\" (make-bracket-open "\\" "/" #t))
   ("math:left |" (make-bracket-open "|" "|" #t))
+  ("math:left | |" (make-bracket-open "||" "||" #t))
   ("math:left ." (make-bracket-open "." "." #t))
 
   ("math:middle (" (make-separator "(" #t))
@@ -223,6 +225,7 @@
   ("math:middle /" (make-separator "/" #t))
   ("math:middle \\" (make-separator "\\" #t))
   ("math:middle |" (make-separator "|" #t))
+  ("math:middle | |" (make-separator "||" #t))
   ("math:middle ." (make-separator "." #t))
 
   ("math:right (" (make-bracket-close "(" ")" #t))
@@ -236,6 +239,7 @@
   ("math:right /" (make-bracket-close "/" "\\" #t))
   ("math:right \\" (make-bracket-close "\\" "/" #t))
   ("math:right |" (make-bracket-close "|" "|" #t))
+  ("math:right | |" (make-bracket-close "||" "||" #t))
   ("math:right ." (make-bracket-close "." "." #t))
 
   ("<" "<less>")

@@ -45,7 +45,7 @@ edit_interface_rep::edit_interface_rep ():
   last_change (texmacs_time()), last_update (last_change-1),
   do_animate (false), next_animate (last_change-1),
   full_screen (false), got_focus (false),
-  sh_s (""), sh_len (0),
+  sh_s (""), sh_busy (false),
   popup_win (),
   sfactor (sv->get_default_shrinking_factor ()),
   pixel (sfactor*PIXEL), copy_always (),

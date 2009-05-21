@@ -24,8 +24,9 @@ edit_interface_rep::get_input_mode () {
 
 void
 edit_interface_rep::set_input_mode (int mode) {
-  sh_s  = string ("");    // avoids keyboard shorthands when
-  sh_len= 0;              // using the menu between two keystrokes
+  sh_s= string ("");
+  sh_busy= false;
+  // avoids keyboard shorthands when using the menu between two keystrokes
 
   if ((mode == INPUT_NORMAL) && (input_mode != INPUT_NORMAL)) {
     selection_cancel ();
@@ -69,36 +70,31 @@ edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
 ******************************************************************************/
 
 bool
+edit_interface_rep::shortcut_active () {
+  return sh_busy;
+}
+
+bool
 edit_interface_rep::try_shortcut (string comb) {
   int     status;
   command cmd;
   string  shorth;
   string  help;
 
-
   sv->get_keycomb (comb, status, cmd, shorth, help);
-  if ((status & 1) == 1) {
-    if (sh_len>0) {
-      tp= path_add (tp, -sh_len);
-      remove (tp, sh_len);
-    }
-    cmd ();
-    sh_s  = string ("");
-    sh_len= 0;
-    return true;
-  }
-  if ((status & 2) == 2) {
+  //cout << "Try " << comb << " -> " << shorth << ", " << help
+  //<< "; " << sh_busy << ", " << status << "\n";
+  if (status != 0) {
+    if (sh_busy && !forget ()) return false;
     sh_s= comb;
-    if (sh_len>0) {
-      tp= path_add (tp, -sh_len);
-      if (sh_len>0) remove (tp, sh_len);
-    }
-    if (N(shorth)>0) insert_tree (shorth);
-    sh_len= N (shorth);
     string rew= sv->kbd_post_rewrite (sh_s);
     if (N(help)>0) set_message (help, rew);
     else set_message ("keyboard shorthand: " * rew, shorth);
-    return true;
+    if ((status & 1) == 1) cmd ();
+    else if (N(shorth) > 0) insert_tree (shorth);
+    sh_busy= modifying ();
+    //cout << "Busy= " << sh_busy << "\n";
+    return true;    
   }
 
   return false;
@@ -143,8 +139,8 @@ edit_interface_rep::key_press (string key) {
   string new_sh= N(sh_s)==0? key: sh_s * " " * key;
   if (try_shortcut (new_sh)) return;
   if (new_sh != key) {
-    sh_s  = string ("");
-    sh_len= 0;
+    sh_s= string ("");
+    sh_busy= false;
     if (try_shortcut (key)) return;
   }
 
@@ -154,8 +150,8 @@ edit_interface_rep::key_press (string key) {
     if ((((i >= 32) && (i <= 127)) || ((i >= 128) && (i <= 255))) &&
 	!inside_active_graphics ())
       insert_tree (rew);
-    sh_s  = string ("");
-    sh_len= 0;
+    sh_s= string ("");
+    sh_busy= false;
   }
 }
 

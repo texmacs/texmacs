@@ -43,7 +43,8 @@ public:
   void undo (int i);
   int  redo_possibilities ();
   void redo (int i);
-  void perform_undo_redo (tree x);
+  bool modifying ();
+  bool forget ();
 
   observer position_new (path p);
   void position_delete (observer o);

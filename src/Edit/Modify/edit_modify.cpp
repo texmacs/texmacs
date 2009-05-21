@@ -231,7 +231,8 @@ edit_modify_rep::mark_undo_blocks () {
   for (i=0; i<sv->nr_bufs(); i++) {
     tm_buffer b= sv->get_buf (i);
     b->arch->confirm ();
-    b->arch->simplify ();
+    if (!shortcut_active ())
+      b->arch->simplify ();
   }
 }
 
@@ -293,6 +294,17 @@ edit_modify_rep::redo (int i) {
   if (buf->arch->conform_save ()) {
     set_message ("Your document is back in its original state", "undo");
     beep (); }
+}
+
+bool
+edit_modify_rep::modifying () {
+  return buf->arch->active ();
+}
+
+bool
+edit_modify_rep::forget () {
+  buf->arch->forget ();
+  return true;
 }
 
 void

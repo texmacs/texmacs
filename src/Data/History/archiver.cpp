@@ -41,6 +41,11 @@ archiver_rep::clear () {
 * Internal subroutines
 ******************************************************************************/
 
+static bool
+is_empty (patch p) {
+  return get_type (p) == PATCH_COMPOUND && N (p) == 0;
+}
+
 void
 archiver_rep::apply (patch p) {
   // apply a patch, while disabling versioning during the modifications
@@ -89,12 +94,13 @@ archiver_rep::archive (patch p) {
 
 bool
 archiver_rep::active () {
-  return N (current) != 0;
+  return !is_empty (current);
 }
 
 void
 archiver_rep::cancel () {
-  if (N (current) != 0) {
+  if (active ()) {
+    // cout << "Cancel " << current << "\n";
     apply (current);
     current= patch (array<patch> ());
   }
@@ -102,7 +108,7 @@ archiver_rep::cancel () {
 
 void
 archiver_rep::confirm () {
-  if (N (current) != 0) {
+  if (active ()) {
     current= compactify (current);
     // cout << "Confirm " << current << "\n";
     before= append (array<patch> (current, before), get_children (after));
@@ -117,7 +123,7 @@ archiver_rep::confirm () {
 
 void
 archiver_rep::merge () {
-  if (N (current) != 0 && N (before) != 0) {
+  if (active () && N (before) != 0) {
     // cout << "Merge " << current << "\n";
     if (N (after) != 0) { confirm (); return; }
     array<patch> a= get_children (before);
@@ -185,6 +191,7 @@ archiver_rep::simplify () {
 	  array<patch> c= get_children (before[1]);
 	  before= patch (append (a, range (c, 1, N(c))));
 	  depth--;
+	  simplify ();
 	}
       else if (m1->k == MOD_REMOVE &&
 	       m2->k == MOD_REMOVE &&
@@ -199,6 +206,7 @@ archiver_rep::simplify () {
 	  array<patch> c= get_children (before[1]);
 	  before= patch (append (a, range (c, 1, N(c))));
 	  depth--;
+	  simplify ();
 	} 
     }
 }
@@ -230,7 +238,7 @@ archiver_rep::redo_possibilities () {
 
 path
 archiver_rep::undo () {
-  if (N (current) == 0 && N (before) != 0) {
+  if (!active () && N (before) != 0) {
     ASSERT (is_applicable (before[0], the_et), "history corrupted");
     patch p= before[0];
     // cout << "p= " << p << "\n";
@@ -251,7 +259,7 @@ archiver_rep::undo () {
 path
 archiver_rep::redo (int i) {
   ASSERT (i >= 0 && ((2*i) < N(after)), "index out of range");
-  if (N (current) == 0 && N (after) != 0) {
+  if (!active () && N (after) != 0) {
     ASSERT (is_applicable (after[2*i], the_et), "future corrupted");
     patch p= after[2*i];
     // cout << "p= " << p << "\n";
