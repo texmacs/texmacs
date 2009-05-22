@@ -298,7 +298,7 @@ main (int argc, char** argv) {
 #else
   url exedir = url_system(argv[0]);
   if (! is_rooted(exedir)) {
-    exedir = url_pwd() * exe * "..";
+    exedir = url_pwd() * exedir * "..";
   }
 #endif
 
