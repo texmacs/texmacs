@@ -88,16 +88,14 @@ is_recursively_up_to_date (url dir) {
 * Which files should be stored in the cache?
 ******************************************************************************/
 
-static url texmacs_path(url_none());
-static url texmacs_doc_path(url_none());
-static url texmacs_home_path(url_none());
-
+static url texmacs_path (url_none ());
+static url texmacs_doc_path (url_none ());
+static url texmacs_home_path (url_none ());
 
 static string texmacs_path_string;
 static string texmacs_doc_path_string;
 static string texmacs_home_path_string;
 static string texmacs_font_path_string;
-
 
 bool
 do_cache_dir (string name) {
@@ -140,7 +138,7 @@ do_cache_doc (string name) {
 void
 cache_save (string buffer) {
   if (cache_changed->contains (buffer)) {
-    url cache_file= texmacs_home_path * "/system/cache/" * buffer;
+    url cache_file= texmacs_home_path * url ("system/cache/" * buffer);
     string cached;
     iterator<tree> it= iterate (cache_data);
     if (buffer == "file_cache" || buffer == "doc_cache") {
@@ -172,7 +170,7 @@ cache_save (string buffer) {
 void
 cache_load (string buffer) {
   if (!cache_loaded->contains (buffer)) {
-    url cache_file = texmacs_home_path * "/system/cache/" * buffer;
+    url cache_file = texmacs_home_path * url ("system/cache/" * buffer);
     //cout << "cache_file "<< cache_file << LF;
     string cached;
     if (!load_string (cache_file, cached, false)) {
@@ -236,10 +234,10 @@ cache_initialize () {
     texmacs_doc_path= url_system ("$TEXMACS_PATH/doc");
   else texmacs_doc_path= url_system ("$TEXMACS_DOC_PATH");
   
-  texmacs_path_string = concretize(texmacs_path);
-  texmacs_home_path_string = concretize(texmacs_home_path);
-  texmacs_doc_path_string = concretize(texmacs_doc_path);
-  texmacs_font_path_string = concretize(texmacs_home_path * "fonts/");
+  texmacs_path_string = concretize (texmacs_path);
+  texmacs_home_path_string = concretize (texmacs_home_path);
+  texmacs_doc_path_string = concretize (texmacs_doc_path);
+  texmacs_font_path_string = concretize (texmacs_home_path * "fonts/");
   
    
   cache_refresh ();
