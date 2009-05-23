@@ -137,18 +137,33 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       else t << s (i-1, i);
       break;
     case '\\':
-      if (((i+7)<n) && (s(i,i+5)=="\\over") && (!is_alpha (s (i+5, i+7)))) {
-	int j;
-	i+=5;
-	tree arg= parse_command (s, i, "\\over");
-	for (j=N(t); j>0 && is_regular (t[j-1]); j--);
-	if (is_tuple (arg, "\\over", 1)) {
-	  tree num= t (j, N(t));
-	  if (N(num) == 0) num= "";
-	  t= t (0, j);
-	  t << tree (TUPLE, "\\frac", num, arg[1]);
+      if (((i+7)<n) && !is_alpha (s (i+5, i+7)) &&
+	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop"))
+	{
+	  string fr_cmd= s(i,i+5);
+	  int j;
+	  i+=5;
+	  tree arg= parse_command (s, i, fr_cmd);
+	  for (j=N(t); j>0 && is_regular (t[j-1]); j--);
+	  while (i<n && (s[i] == ' ' || s[i] == '\t' ||
+			 s[i] == '\012' || s[i] == '\015')) i++;
+	  if (is_tuple (arg, fr_cmd, 1)) {
+	    if (i<n && (s[i] == '_' || s[i] == '^')) {
+	      string sc_cmd= "\\<sub>";
+	      if (s[i] == '^') sc_cmd= "\\<sup>";
+	      i++;
+	      tree sc= parse_command (s, i, sc_cmd);
+	      if (!is_concat (arg[1])) arg[1]= tree (CONCAT, arg[1]);
+	      arg[1] << sc;
+	    }
+	    tree num= t (j, N(t));
+	    if (N(num) == 0) num= "";
+	    t= t (0, j);
+	    if (fr_cmd == "\\over") fr_cmd= "\\frac";
+	    if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
+	    t << tree (TUPLE, fr_cmd, num, arg[1]);
+	  }
 	}
-      }
       else if (((i+5)<n) && (s(i,i+3)=="\\sp") && (!is_alpha(s[i+3]))) {
 	i+=3;
 	t << parse_command (s, i, "\\<sup>");

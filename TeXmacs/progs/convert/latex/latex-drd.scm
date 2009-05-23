@@ -54,7 +54,7 @@
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox text not
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
-  ^ over ~ = u v H t c d b k r thispagestyle ensuremath
+  ^ over atop ~ = u v H t c d b k r thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
   includegraphics url penalty

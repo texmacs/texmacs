@@ -557,31 +557,35 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathit", 1)) return var_m2e (t, MATH_FONT_FAMILY, "it");
   if (is_tuple (t, "\\mathsl", 1)) return var_m2e (t, MATH_FONT_FAMILY, "sl");
   if (is_tuple (t, "\\mathup", 1)) return var_m2e (t, MATH_FONT_FAMILY, "up");
-  if (is_tuple (t, "\\mathcal", 1))  return m2e (t, MATH_FONT, "cal");
+  if (is_tuple (t, "\\mathcal", 1)) return m2e (t, MATH_FONT, "cal");
   if (is_tuple (t, "\\mathfrak", 1)) return m2e (t, MATH_FONT, "Euler");
-  if (is_tuple (t, "\\mathbb", 1))   return m2e (t, MATH_FONT, "Bbb");
-  if (is_tuple (t, "\\mathbbm", 1))   return m2e (t, MATH_FONT, "Bbb*");
+  if (is_tuple (t, "\\mathbb", 1)) return m2e (t, MATH_FONT, "Bbb");
+  if (is_tuple (t, "\\mathbbm", 1)) return m2e (t, MATH_FONT, "Bbb*");
 
-  if (is_tuple (t, "\\prime", 1))  return tree (RPRIME, string_arg (t[1]));
-  if (is_tuple (t, "\\frac", 2))  return tree (FRAC, l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\prime", 1)) return tree (RPRIME, string_arg (t[1]));
+  if (is_tuple (t, "\\frac", 2)) return tree (FRAC, l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\atop", 2)) {
+    cout << "atop " << t << "\n";
+    return compound ("atop", l2e (t[1]), l2e (t[2]));
+  }
   if (is_tuple (t, "\\sqrt", 1))  return tree (SQRT, l2e (t[1]));
   if (is_tuple (t, "\\sqrt*", 2)) return tree (SQRT, l2e (t[2]), l2e (t[1]));
   if (is_tuple (t, "\\<sub>", 1)) return tree (RSUB, l2e (t[1]));
-  if (is_tuple (t, "\\not", 1))   return tree (NEG, l2e (t[1]));
-  if (is_tuple (t, "\\bar", 1))  return tree (WIDE, l2e (t[1]), "<bar>");
-  if (is_tuple (t, "\\hat", 1))  return tree (WIDE, l2e (t[1]), "^");
-  if (is_tuple (t, "\\tilde", 1))  return tree (WIDE, l2e (t[1]), "~");
-  if (is_tuple (t, "\\widehat", 1))  return tree (WIDE, l2e (t[1]), "^");
-  if (is_tuple (t, "\\widetilde", 1))  return tree (WIDE, l2e (t[1]), "~");
-  if (is_tuple (t, "\\dot", 1))  return tree (WIDE, l2e (t[1]), "<dot>");
-  if (is_tuple (t, "\\ddot", 1))  return tree (WIDE, l2e (t[1]), "<ddot>");
-  if (is_tuple (t, "\\dddot", 1))  return tree (WIDE, l2e (t[1]), "<dddot>");
-  if (is_tuple (t, "\\ddddot", 1))  return tree (WIDE, l2e (t[1]), "<ddddot>");
-  if (is_tuple (t, "\\check", 1))  return tree (WIDE, l2e (t[1]), "<check>");
-  if (is_tuple (t, "\\grave", 1))  return tree (WIDE, l2e (t[1]), "<grave>");
-  if (is_tuple (t, "\\acute", 1))  return tree (WIDE, l2e (t[1]), "<acute>");
-  if (is_tuple (t, "\\vec", 1))  return tree (WIDE, l2e (t[1]), "<vect>");
-  if (is_tuple (t, "\\breve", 1))  return tree (WIDE, l2e (t[1]), "<breve>");
+  if (is_tuple (t, "\\not", 1)) return tree (NEG, l2e (t[1]));
+  if (is_tuple (t, "\\bar", 1)) return tree (WIDE, l2e (t[1]), "<bar>");
+  if (is_tuple (t, "\\hat", 1)) return tree (WIDE, l2e (t[1]), "^");
+  if (is_tuple (t, "\\tilde", 1)) return tree (WIDE, l2e (t[1]), "~");
+  if (is_tuple (t, "\\widehat", 1)) return tree (WIDE, l2e (t[1]), "^");
+  if (is_tuple (t, "\\widetilde", 1)) return tree (WIDE, l2e (t[1]), "~");
+  if (is_tuple (t, "\\dot", 1)) return tree (WIDE, l2e (t[1]), "<dot>");
+  if (is_tuple (t, "\\ddot", 1)) return tree (WIDE, l2e (t[1]), "<ddot>");
+  if (is_tuple (t, "\\dddot", 1)) return tree (WIDE, l2e (t[1]), "<dddot>");
+  if (is_tuple (t, "\\ddddot", 1)) return tree (WIDE, l2e (t[1]), "<ddddot>");
+  if (is_tuple (t, "\\check", 1)) return tree (WIDE, l2e (t[1]), "<check>");
+  if (is_tuple (t, "\\grave", 1)) return tree (WIDE, l2e (t[1]), "<grave>");
+  if (is_tuple (t, "\\acute", 1)) return tree (WIDE, l2e (t[1]), "<acute>");
+  if (is_tuple (t, "\\vec", 1)) return tree (WIDE, l2e (t[1]), "<vect>");
+  if (is_tuple (t, "\\breve", 1)) return tree (WIDE, l2e (t[1]), "<breve>");
   if (is_tuple (t, "\\abovering", 1))
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {
@@ -592,7 +596,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1))
     return tree (VSPACE, t2e (t[1]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
-  if (is_tuple (t, "\\ref", 1))   return tree (REFERENCE, t2e (t[1]));
+  if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\mathrel", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\overbrace", 1))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.7.2>
 
 <style|<tuple|source|std>>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -52,6 +51,8 @@
   <drd-props|shrink-inline|arity|1|accessible|all>
 
   <assign|binom|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<left|(><resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||b+2.5sep||t-2.5sep|><right|)>>>>>>
+
+  <assign|ontop|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||b+2.5sep||t-2.5sep|>>>>>>
 
   <assign|choose|<value|binom>>
 
