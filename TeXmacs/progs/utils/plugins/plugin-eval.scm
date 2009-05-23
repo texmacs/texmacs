@@ -67,6 +67,7 @@
 (define plugin-pending (make-ahash-table))
 (define plugin-started (make-ahash-table))
 (define plugin-prompts (make-ahash-table))
+(define plugin-author  (make-ahash-table))
 
 (define (pending-set lan ses l)
   (ahash-set! plugin-pending (list lan ses) l))
@@ -80,13 +81,16 @@
       2))
 
 (define (plugin-start lan ses)
-  (if (!= lan "scheme")
-      (connection-start lan ses)))
+  (when (!= lan "scheme")
+    (ahash-set! plugin-author (list lan ses) (new-author))
+    (connection-start lan ses)))
 
 (tm-define (plugin-write lan ses t)
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
   (if (!= lan "scheme")
-      (connection-write lan ses t)
+      (begin
+	(ahash-set! plugin-author (list lan ses) (new-author))
+	(connection-write lan ses t))
       (delayed
 	(connection-notify-status lan ses 3)
 	(with r (scheme-eval t)
@@ -150,22 +154,31 @@
     (if (!= (connection-status lan ses) 0)
 	(connection-stop lan ses))))
 
+(define-public-macro (with-author a . body)
+  `(with old (get-author)
+     (set-author ,a)
+     (with r (begin ,@body)
+       (set-author old)
+       r)))
+
 (tm-define (connection-notify lan ses ch t)
   ;;(display* "Notify " lan ", " ses ", " ch ", " t "\n")
-  (with l (pending-ref lan ses)
-    (when (nnull? l)
-      (if (== ch "prompt")
-	  (ahash-set! plugin-prompts (list lan ses) (tree-copy t)))
-      ((second (caar l)) lan ses ch t))))
+  (with-author (ahash-ref plugin-author (list lan ses))
+    (with l (pending-ref lan ses)
+      (when (nnull? l)
+	(if (== ch "prompt")
+	    (ahash-set! plugin-prompts (list lan ses) (tree-copy t)))
+	((second (caar l)) lan ses ch t)))))
 
 (tm-define (connection-notify-status lan ses st)
   ;;(display* "Notify status " lan ", " ses ", " st "\n")
-  (when (== st 0)
-    (ahash-remove! plugin-started (list lan ses))
-    (ahash-remove! plugin-prompts (list lan ses))
-    (plugin-cancel lan ses #t))
-  (when (== st 2)
-    (plugin-next lan ses)))
+  (with-author (ahash-ref plugin-author (list lan ses))
+    (when (== st 0)
+      (ahash-remove! plugin-started (list lan ses))
+      (ahash-remove! plugin-prompts (list lan ses))
+      (plugin-cancel lan ses #t))
+    (when (== st 2)
+      (plugin-next lan ses))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Silent evaluation

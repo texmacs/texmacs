@@ -50,6 +50,9 @@
   (get-output-language get_output_language (string))
   (translate translate (string string string string))
   (color named_color (int string))
+  (new-author new_author (double))
+  (set-author set_author (void double))
+  (get-author get_author (double))
 
   ;; routines for trees
   (tree->stree tree_to_scheme_tree (scheme_tree tree))

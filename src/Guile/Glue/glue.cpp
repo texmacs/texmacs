@@ -31,6 +31,7 @@
 #include "Bibtex/bibtex.hpp"
 #include "link.hpp"
 #include "dictionary.hpp"
+#include "patch.hpp"
 #include <string.h>
 #include <libguile.h>
 

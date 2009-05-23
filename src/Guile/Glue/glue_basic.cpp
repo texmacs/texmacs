@@ -393,6 +393,37 @@ tmg_color (SCM arg1) {
 }
 
 SCM
+tmg_new_author () {
+  // SCM_DEFER_INTS;
+  double out= new_author ();
+  // SCM_ALLOW_INTS;
+
+  return double_to_scm (out);
+}
+
+SCM
+tmg_set_author (SCM arg1) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "set-author");
+
+  double in1= scm_to_double (arg1);
+
+  // SCM_DEFER_INTS;
+  set_author (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_author () {
+  // SCM_DEFER_INTS;
+  double out= get_author ();
+  // SCM_ALLOW_INTS;
+
+  return double_to_scm (out);
+}
+
+SCM
 tmg_tree_2stree (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
 
@@ -3601,6 +3632,9 @@ initialize_glue_basic () {
   scm_new_procedure ("get-output-language", (FN) tmg_get_output_language, 0, 0, 0);
   scm_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
   scm_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
+  scm_new_procedure ("new-author", (FN) tmg_new_author, 0, 0, 0);
+  scm_new_procedure ("set-author", (FN) tmg_set_author, 1, 0, 0);
+  scm_new_procedure ("get-author", (FN) tmg_get_author, 0, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
   scm_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);
