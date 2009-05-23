@@ -91,7 +91,11 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
   while ((i<n) && no_error &&
 	 (s[i] != '\0' || N (stop) != 0) &&
 	 (N(stop) != 1 || s[i] != stop[0]) &&
-	 (s[i] != '$' || stop != "$$" || i+1>=n || s[i+1] != '$')) {
+	 (s[i] != '$' || stop != "$$" || i+1>=n || s[i+1] != '$') &&
+	 (stop != "denom" ||
+	  (s[i] != '$' && s[i] != '}' &&
+	   (i+2>n || s(i,i+2) != "\\]") &&
+	   (i+4>n || s(i,i+4) != "\\end")))) {
     switch (s[i]) {
     case '~':
       if (command_type ["!mode"] == "math") t << tuple ("\\sim");
@@ -141,28 +145,17 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop"))
 	{
 	  string fr_cmd= s(i,i+5);
+	  if (fr_cmd == "\\over") fr_cmd= "\\frac";
+	  if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
 	  int j;
-	  i+=5;
-	  tree arg= parse_command (s, i, fr_cmd);
 	  for (j=N(t); j>0 && is_regular (t[j-1]); j--);
-	  while (i<n && (s[i] == ' ' || s[i] == '\t' ||
-			 s[i] == '\012' || s[i] == '\015')) i++;
-	  if (is_tuple (arg, fr_cmd, 1)) {
-	    if (i<n && (s[i] == '_' || s[i] == '^')) {
-	      string sc_cmd= "\\<sub>";
-	      if (s[i] == '^') sc_cmd= "\\<sup>";
-	      i++;
-	      tree sc= parse_command (s, i, sc_cmd);
-	      if (!is_concat (arg[1])) arg[1]= tree (CONCAT, arg[1]);
-	      arg[1] << sc;
-	    }
-	    tree num= t (j, N(t));
-	    if (N(num) == 0) num= "";
-	    t= t (0, j);
-	    if (fr_cmd == "\\over") fr_cmd= "\\frac";
-	    if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
-	    t << tree (TUPLE, fr_cmd, num, arg[1]);
-	  }
+	  tree num= t (j, N(t));
+	  if (N(num) == 0) num= "";
+	  t= t (0, j);
+	  i+=5;
+	  while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
+	  tree den= parse (s, i, "denom");
+	  t << tree (TUPLE, fr_cmd, num, den);
 	}
       else if (((i+5)<n) && (s(i,i+3)=="\\sp") && (!is_alpha(s[i+3]))) {
 	i+=3;
