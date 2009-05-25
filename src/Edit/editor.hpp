@@ -270,6 +270,7 @@ public:
   virtual double this_author () = 0;
   virtual void start_editing () = 0;
   virtual void end_editing () = 0;
+  virtual void start_slave (double a) = 0;
   virtual void add_undo_mark () = 0;
   virtual void remove_undo_mark () = 0;
   virtual void unredoable_undo () = 0;

@@ -80,16 +80,21 @@
       (connection-status lan ses)
       2))
 
+(define (plugin-set-author lan ses)
+  (with l (pending-ref lan ses)
+    (when (nnull? l)
+      (ahash-set! plugin-author (list lan ses) (fifth (caar l))))))
+
 (define (plugin-start lan ses)
   (when (!= lan "scheme")
-    (ahash-set! plugin-author (list lan ses) (new-author))
+    (plugin-set-author lan ses)
     (connection-start lan ses)))
 
 (tm-define (plugin-write lan ses t)
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
   (if (!= lan "scheme")
       (begin
-	(ahash-set! plugin-author (list lan ses) (new-author))
+	(plugin-set-author lan ses)
 	(connection-write lan ses t))
       (delayed
 	(connection-notify-status lan ses 3)
@@ -138,8 +143,13 @@
 
 (tm-define (plugin-feed lan ses do notify next cancel args)
   (with l (pending-ref lan ses)
-    (pending-set lan ses (rcons l (cons (list do notify next cancel) args)))
-    (if (null? l) (plugin-do lan ses))))
+    (with author 0
+      (when (!= lan "scheme")
+	(set! author (new-author))
+	(start-slave author))
+      (with cb (list do notify next cancel author)
+	(pending-set lan ses (rcons l (cons cb args)))
+	(if (null? l) (plugin-do lan ses))))))
 
 (tm-define (plugin-interrupt)
   (let* ((lan (get-env "prog-language"))
@@ -158,6 +168,7 @@
   `(with old (get-author)
      (set-author ,a)
      (with r (begin ,@body)
+       (commit-changes)
        (set-author old)
        r)))
 

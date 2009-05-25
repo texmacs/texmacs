@@ -290,6 +290,39 @@ commute (modification m1, modification m2) {
 }
 
 /******************************************************************************
+* Joining simple modifications when possible
+******************************************************************************/
+
+bool
+join (modification& m1, modification m2, tree t) {
+  if (m1->k == MOD_INSERT &&
+      m2->k == MOD_INSERT &&
+      is_atomic (m1->t) &&
+      root (m1) == root (m2) &&
+      (index (m2) == index (m1) ||
+       index (m2) == index (m1) + N (m1->t->label)))
+    {
+      string s= m1->t->label * m2->t->label;
+      if (index (m2) == index (m1))
+	s= m2->t->label * m1->t->label;
+      m1= mod_insert (root (m1), index (m1), tree (s));
+      return true;
+    }
+  if (m1->k == MOD_REMOVE &&
+      m2->k == MOD_REMOVE &&
+      is_atomic (subtree (t, root (m1))) &&
+      root (m1) == root (m2) &&
+      (index (m1) == index (m2) ||
+       index (m1) == index (m2) + argument (m2)))
+    {
+      m1= mod_remove (root (m2), index (m2),
+		      argument (m1) + argument (m2));
+      return true;
+    }
+  return false;
+}
+
+/******************************************************************************
 * Test routines
 ******************************************************************************/
 

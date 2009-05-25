@@ -245,6 +245,11 @@ edit_modify_rep::end_editing () {
 }
 
 void
+edit_modify_rep::start_slave (double a) {
+  buf->arch->start_slave (a);
+}
+
+void
 edit_modify_rep::add_undo_mark () {
   buf->arch->confirm ();
 }
@@ -258,7 +263,7 @@ void
 edit_modify_rep::undo (bool redoable) {
   if (inside_graphics () && !as_bool (eval ("graphics-undo-enabled"))) {
     eval ("(graphics-reset-context 'undo)"); return; }
-  if (buf->arch->no_more_undo ()) {
+  if (buf->arch->undo_possibilities () == 0) {
     set_message ("No more undo information available", "undo"); return; }
   if (redoable) {
     path p= buf->arch->undo ();
@@ -295,7 +300,7 @@ edit_modify_rep::redo_possibilities () {
 
 void
 edit_modify_rep::redo (int i) {
-  if (buf->arch->no_more_redo ()) {
+  if (buf->arch->redo_possibilities () == 0) {
     set_message ("No more redo information available", "redo"); return; }
   path p= buf->arch->redo (i);
   if (!is_nil (p)) go_to (p);
@@ -319,7 +324,7 @@ void
 archive_announce (tm_buffer buf, modification mod) {
   ASSERT (buf->rp <= mod->p, "invalid modification");
   if (!versioning_busy)
-    buf->arch->archive (patch (mod));
+    buf->arch->add (patch (mod));
 }
 
 /******************************************************************************

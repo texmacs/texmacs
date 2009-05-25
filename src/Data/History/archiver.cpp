@@ -12,15 +12,16 @@
 #include "archiver.hpp"
 
 extern tree the_et;
+static patch empty_patch ();
+static patch make_compound (array<patch> a);
 
 /******************************************************************************
 * Constructors and destructors
 ******************************************************************************/
 
 archiver_rep::archiver_rep ():
-  before (array<patch> ()),
-  current (array<patch> ()),
-  after (array<patch> ()),
+  archive (empty_patch ()),
+  current (make_compound (0)),
   depth (0),
   last_save (0),
   last_autosave (0) {}
@@ -29,22 +30,84 @@ archiver::archiver (): rep (tm_new<archiver_rep> ()) {}
 
 void
 archiver_rep::clear () {
-  before= array<patch> ();
-  current= array<patch> ();
-  after= array<patch> ();
+  archive= empty_patch ();
+  current= make_compound (0);
   depth= 0;
   last_save= -1;
   last_autosave= -1;
 }
 
 /******************************************************************************
-* Internal subroutines
+* Useful subroutines
 ******************************************************************************/
+
+static patch
+empty_patch () {
+  return patch (true, array<patch> ());
+}
 
 static bool
 is_empty (patch p) {
-  return get_type (p) == PATCH_COMPOUND && N (p) == 0;
+  return get_type (p) == PATCH_BRANCH && N (p) == 0;
 }
+
+static patch
+make_compound (array<patch> a) {
+  if (N(a) == 1) return a[0];
+  else return patch (false, a);
+}
+
+static patch
+make_branches (array<patch> a) {
+  if (N(a) == 1) return a[0];
+  else return patch (true, a);
+}
+
+static patch
+append_branches (patch p1, patch p2) {
+  return make_branches (append (branches (p1), branches (p2)));
+}
+
+static patch
+make_history (patch undo, patch redo) {
+  array<patch> a;
+  a << undo << branches (redo);
+  return make_branches (a);
+}
+
+static patch
+car (patch p) {
+  ASSERT (nr_children (branch (p, 0)) == 2, "car unavailable")
+  return child (p, 0);
+}
+
+static patch
+cdr (patch p) {
+  ASSERT (nr_children (branch (p, 0)) == 2, "cdr unavailable")
+  return child (p, 1);
+}
+
+static patch
+get_undo (patch p) {
+  ASSERT (nr_branches (p) > 0, "undo part unavailable");
+  return car (branch (p, 0));
+}
+
+static patch
+get_next (patch p) {
+  ASSERT (nr_branches (p) > 0, "next part unavailable");
+  return cdr (branch (p, 0));
+}
+
+static patch
+get_redo (patch p) {
+  if (nr_branches (p) == 0) return make_branches (array<patch> ());
+  return make_branches (branches (p, 1, nr_branches (p)));
+}
+
+/******************************************************************************
+* Internal subroutines
+******************************************************************************/
 
 void
 archiver_rep::apply (patch p) {
@@ -57,28 +120,31 @@ archiver_rep::apply (patch p) {
   versioning_busy= old;
 }
 
-static void
-show (patch p) {
-  if (N(p) == 0) return;
-  if (N(p) == 2) {
-    cout << p[0] << LF;
-    show (p[1]);
-  }
-  else {
-    for (int i=0; i<N(p); i+=2) {
-      cout << "Possibility " << i/2 << LF << INDENT;
-      cout << p[i] << LF;
-      show (p[i+1]);
-      cout << UNINDENT;
+/*
+static patch
+expose (patch history, double author) {
+  if (N (history) == 2 &&
+      get_author (history[0]) != author &&
+      N (history[1]) == 2)
+    {
+      patch p1= history[0];
+      patch hh= expose (history[1], author);
+      patch p2= hh[0];
+      if (get_author (p2) != author) return history;
+      cout << "p1 < " << p1 << "\n";
+      cout << "p2 < " << p2 << "\n";
+      if (!swap (p1, p2)) return history;
+      cout << "p1 > " << p1 << "\n";
+      cout << "p2 > " << p2 << "\n";
+      return patch (p1, patch (p2, hh[1]));
     }
-  }
+  else return history;
 }
+*/
 
 void
 archiver_rep::show_all () {
-  cout << HRULE;
-  show (before); cout << HRULE;
-  show (after); cout << HRULE << LF;
+  cout << HRULE << archive << LF << HRULE << LF;
 }
 
 /******************************************************************************
@@ -86,15 +152,27 @@ archiver_rep::show_all () {
 ******************************************************************************/
 
 void
-archiver_rep::archive (patch p) {
-  // cout << "Archive [" << get_author () << "] " << p << "\n";
+archiver_rep::add (patch p) {
+  // cout << "Add [" << get_author () << "] " << p << "\n";
   patch q= copy (invert (p, the_et));
+  current= patch (q, current);
+}
+
+void
+archiver_rep::start_slave (double a) {
+  patch q (a, false);
   current= patch (q, current);
 }
 
 bool
 archiver_rep::active () {
-  return !is_empty (current);
+  return nr_children (current) != 0;
+}
+
+bool
+archiver_rep::has_history () {
+  if (is_empty (archive)) return false;
+  else return !is_empty (branch (archive, 0));
 }
 
 void
@@ -102,18 +180,17 @@ archiver_rep::cancel () {
   if (active ()) {
     // cout << "Cancel " << current << "\n";
     apply (current);
-    current= patch (array<patch> ());
+    current= make_compound (0);
   }
 }
 
 void
 archiver_rep::confirm () {
   if (active ()) {
-    current= compactify (current);
+    current= patch (get_author (), compactify (current));
     // cout << "Confirm " << current << "\n";
-    before= append (array<patch> (current, before), get_children (after));
-    current= patch (array<patch> ());
-    after= patch (array<patch> ());
+    archive= patch (current, archive);
+    current= make_compound (0);
     depth++;
     if (depth <= last_save) last_save= -1;
     if (depth <= last_autosave) last_autosave= -1;
@@ -122,35 +199,22 @@ archiver_rep::confirm () {
 }
 
 void
-archiver_rep::merge () {
-  if (active () && N (before) != 0) {
-    // cout << "Merge " << current << "\n";
-    if (N (after) != 0) { confirm (); return; }
-    array<patch> a= get_children (before);
-    array<patch> b (1);
-    b[0]= compactify (patch (current, a[0]));
-    before= patch (append (b, range (a, 1, N(a))));
-    current= patch (array<patch> ());
-    if (depth <= last_save) last_save= -1;
-    if (depth <= last_autosave) last_autosave= -1;
-  }
-}
-
-void
 archiver_rep::retract () {
-  if (N (before) != 0) {
-    // cout << "Retract " << before[0] << "\n";
-    if (active ()) current= compactify (patch (current, before[0]));
-    else current= before[0];
-    array<patch> a;
-    if (N (after) != 0) {
+  if (has_history ()) {
+    patch un= get_undo (archive);
+    patch re= get_redo (archive);
+    patch nx= get_next (archive);
+    //cout << "Retract " << un << "\n";
+    if (active ()) current= compactify (patch (current, un));
+    else current= un;
+    if (nr_branches (re) != 0) {
       patch q= invert (current, the_et);
-      a= array<patch> (q, after);
+      re= patch (q, re);
     }
-    array<patch> c= get_children (before);
-    after= patch (append (a, range (c, 2, N(c))));
-    before= before[1];
+    if (nr_branches (nx) != 0) nx= branch (nx, 0);
+    archive= make_history (nx, append_branches (re, get_redo (nx)));
     depth--;
+    //show_all ();
   }
 }
 
@@ -167,47 +231,24 @@ archiver_rep::forget () {
 
 void
 archiver_rep::simplify () {
-  if (N (before) == 2 &&
-      N (before[1]) >= 2 &&
-      get_type (before[0]) == PATCH_MODIFICATION &&
-      get_type (before[1][0]) == PATCH_MODIFICATION)
+  if (has_history () &&
+      nr_branches (get_next (archive)) == 1 &&
+      nr_children (branch (get_next (archive), 0)) == 2)
     {
-      modification m1= get_modification (before[0]);
-      modification m2= get_modification (before[1][0]);
-      //cout << "m1= " << m1 << "\n";
-      //cout << "m2= " << m2 << "\n";
-      if (m1->k == MOD_INSERT &&
-	  m2->k == MOD_INSERT &&
-	  is_atomic (m1->t) &&
-	  root (m1) == root (m2) &&
-	  (index (m2) == index (m1) ||
-	   index (m2) == index (m1) + N (m1->t->label)))
-	{
-	  string s= m1->t->label * m2->t->label;
-	  if (index (m2) == index (m1))
-	    s= m2->t->label * m1->t->label;
-	  modification m= mod_insert (root (m1), index (m1), tree (s));
-	  array<patch> a (1); a[0]= m;
-	  array<patch> c= get_children (before[1]);
-	  before= patch (append (a, range (c, 1, N(c))));
-	  depth--;
-	  simplify ();
-	}
-      else if (m1->k == MOD_REMOVE &&
-	       m2->k == MOD_REMOVE &&
-	       is_atomic (subtree (the_et, root (m1))) &&
-	       root (m1) == root (m2) &&
-	       (index (m1) == index (m2) ||
-		index (m1) == index (m2) + argument (m2)))
-	{
-	  modification m= mod_remove (root (m2), index (m2),
-				      argument (m1) + argument (m2));
-	  array<patch> a (1); a[0]= m;
-	  array<patch> c= get_children (before[1]);
-	  before= patch (append (a, range (c, 1, N(c))));
-	  depth--;
-	  simplify ();
-	} 
+      patch p1= get_undo (archive);
+      patch p2= get_undo (get_next (archive));
+      //cout << "p1= " << p1 << "\n";
+      //cout << "p2= " << p2 << "\n";
+      bool r= join (p1, p2, the_et);
+      //cout << "pr= " << p1 << "\n";
+      if (r) {
+	patch un= patch (p1, get_next (get_next (archive)));
+	patch re= get_redo (archive);
+	archive= make_history (un, re);
+	//show_all ();
+	depth--;
+	simplify ();
+      }
     }
 }
 
@@ -215,40 +256,38 @@ archiver_rep::simplify () {
 * Undo and redo
 ******************************************************************************/
 
-bool
-archiver_rep::no_more_undo () {
-  return N (before) == 0;
-}
-
-bool
-archiver_rep::no_more_redo () {
-  return N (after) == 0;
-}
-
 int
 archiver_rep::undo_possibilities () {
-  if (no_more_undo ()) return 0;
-  else return 1;
+  if (has_history ()) return 1;
+  else return 0;
 }
 
 int
 archiver_rep::redo_possibilities () {
-  return N (after) >> 1;
+  if (is_empty (archive)) return 0;
+  else return nr_branches (get_redo (archive));
 }
 
 path
-archiver_rep::undo () {
-  if (!active () && N (before) != 0) {
-    ASSERT (is_applicable (before[0], the_et), "history corrupted");
-    patch p= before[0];
-    // cout << "p= " << p << "\n";
+archiver_rep::undo_one (int i) {
+  if (active ()) return path ();
+  if (undo_possibilities () != 0) {
+    ASSERT (i == 0, "index out of range");
+    patch p= get_undo (archive);
+    //cout << "p= " << p << "\n";
+    ASSERT (is_applicable (p, the_et), "history corrupted");
     patch q= invert (p, the_et);
-    // cout << "q= " << q << "\n";
+    //cout << "q= " << q << "\n";
     apply (p);
-    array<patch> c= get_children (before);
-    array<patch> a= range (c, 2, N(c));
-    before= before[1];
-    after= append (array<patch> (q, after), a);
+    patch r= patch (q, get_redo (archive));
+    //cout << "r= " << r << "\n";
+    patch nx= get_next (archive);
+    if (nr_branches (nx) == 0)
+      archive= make_history (nx, r);
+    else {
+      patch s= append_branches (r, get_redo (nx));
+      archive= make_history (branch (nx, 0), s);
+    }
     depth--;
     //show_all ();
     return cursor_hint (q, the_et);
@@ -257,19 +296,24 @@ archiver_rep::undo () {
 }
 
 path
-archiver_rep::redo (int i) {
-  ASSERT (i >= 0 && ((2*i) < N(after)), "index out of range");
-  if (!active () && N (after) != 0) {
-    ASSERT (is_applicable (after[2*i], the_et), "future corrupted");
-    patch p= after[2*i];
-    // cout << "p= " << p << "\n";
+archiver_rep::redo_one (int i) {
+  if (active ()) return path ();
+  int n= redo_possibilities ();
+  if (n != 0) {
+    ASSERT (i >= 0 && i < n, "index out of range");
+    patch un= branch (archive, 0);
+    patch re= get_redo (archive);
+    patch p= car (branch (re, i));
+    //cout << "p= " << p << "\n";
+    ASSERT (is_applicable (p, the_et), "future corrupted");
     patch q= invert (p, the_et);
-    // cout << "q= " << q << "\n";
+    //cout << "q= " << q << "\n";
     apply (p);
-    array<patch> c= get_children (after);
-    array<patch> a= append (range (c, 0, 2*i), range (c, 2*i+2, N(c)));
-    before= patch (append (array<patch> (q, before), a));
-    after = after[2*i+1];
+    patch other= make_branches (append (branches (re, 0, i), branches (re, i+1, n)));
+    //cout << "other= " << other << "\n";
+    patch next= make_history (un, other);
+    //cout << "next= " << next << "\n";
+    archive= make_history (patch (q, next), cdr (branch (re, i)));
     if (depth <= last_save && i != 0) last_save= -1;
     if (depth <= last_autosave && i != 0) last_autosave= -1;
     depth++;
@@ -277,6 +321,40 @@ archiver_rep::redo (int i) {
     return cursor_hint (q, the_et);
   }
   return path ();
+}
+
+path
+archiver_rep::undo (int i) {
+  if (active ()) return path ();
+  double author= get_author ();
+  //before= expose (before, author);
+  while (undo_possibilities () != 0) {
+    ASSERT (i == 0, "index out of range");
+    if (get_author (get_undo (archive)) == author)
+      return undo_one (i);
+    else {
+      (void) undo_one (i);
+      i= 0;
+    }
+  }
+  return path ();
+}
+
+path
+archiver_rep::redo (int i) {
+  if (active ()) return path ();
+  path r;
+  double author= get_author ();
+  while (redo_possibilities () != 0) {
+    ASSERT (i >= 0 && i < redo_possibilities (), "index out of range");
+    bool ok= (get_author (car (branch (get_redo (archive), i))) == author);
+    path p= redo_one (i);
+    if (ok) r= p;
+    i= 0;
+    if (redo_possibilities () == 0) break;
+    if (get_author (car (branch (get_redo (archive), i))) == author) break;
+  }
+  return r;
 }
 
 /******************************************************************************

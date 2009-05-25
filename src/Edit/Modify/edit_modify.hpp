@@ -38,6 +38,7 @@ public:
   void clear_undo_history ();
   void start_editing ();
   void end_editing ();
+  void start_slave (double a);
   void add_undo_mark ();
   void remove_undo_mark ();
   void undo (bool redoable);

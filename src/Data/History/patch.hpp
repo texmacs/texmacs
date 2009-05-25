@@ -15,8 +15,9 @@
 
 #define PATCH_MODIFICATION 0
 #define PATCH_COMPOUND     1
-#define PATCH_BIRTH        2
-#define PATCH_AUTHOR       3
+#define PATCH_BRANCH       2
+#define PATCH_BIRTH        3
+#define PATCH_AUTHOR       4
 
 /******************************************************************************
 * Abstract patches
@@ -43,6 +44,7 @@ class patch {
 ABSTRACT_NULL (patch);
   patch (modification mod);
   patch (array<patch> a);
+  patch (bool par, array<patch> a);
   patch (patch p1, patch p2);
   patch (double author, bool create);
   patch (double author, patch p);
@@ -58,6 +60,15 @@ inline patch patch_rep::get_child (int i) {
 * Routines on patches
 ******************************************************************************/
 
+int nr_children (patch p);
+patch child (patch p, int i);
+array<patch> children (patch p);
+array<patch> children (patch p, int i, int j);
+int nr_branches (patch p);
+patch branch (patch p, int i);
+array<patch> branches (patch p);
+array<patch> branches (patch p, int i, int j);
+
 double new_author ();
 void set_author (double author);
 double get_author ();
@@ -65,7 +76,6 @@ double get_author ();
 ostream& operator << (ostream& out, patch p);
 patch copy (patch p);
 patch compactify (patch p);
-array<patch> get_children (patch p);
 path cursor_hint (patch p, tree t);
 
 inline int get_type (patch p) {
@@ -86,8 +96,10 @@ void apply (patch p, tree& t);
 modification invert (modification m, tree t);
 bool commute (modification m1, modification m2);
 bool swap (modification& m1, modification& m2);
+bool join (modification& m1, modification m2, tree t);
 patch invert (patch p, tree t);
 bool commute (patch p1, patch p2);
 bool swap (patch& p1, patch& p2);
+bool join (patch& p1, patch p2, tree t);
 
 #endif // defined PATCH_H

@@ -206,6 +206,8 @@
 
   ;; undo and redo
   (clear-undo-history clear_undo_history (void))
+  (commit-changes end_editing (void))
+  (start-slave start_slave (void double))
   (remove-undo-mark remove_undo_mark (void))
   (add-undo-mark add_undo_mark (void))
   (unredoable-undo unredoable_undo (void))
