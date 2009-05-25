@@ -59,9 +59,9 @@ TeXmacs_init_paths (int& argc, char** argv) {
 #ifdef QTTEXMACS
   url exedir = url_system (qt_application_directory ());
 #else
-  url exedir = url_system(argv[0]);
+  url exedir = url_system(argv[0]) * ".." ;
   if (! is_rooted(exedir)) {
-    exedir = url_pwd() * exedir * "..";
+    exedir = url_pwd() * exedir ;
   }
 #endif
 
