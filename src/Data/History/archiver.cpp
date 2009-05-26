@@ -266,8 +266,8 @@ archiver_rep::undo_one (int i) {
     patch r= patch (q, get_redo (archive));
     //cout << "r= " << r << "\n";
     patch nx= cdr (get_undo (archive));
-    if (nr_branches (nx) != 0) nx= get_undo (nx);
     patch s= append_branches (r, get_redo (nx));
+    if (nr_branches (nx) != 0) nx= get_undo (nx);
     archive= make_history (nx, s);
     depth--;
     //show_all ();
