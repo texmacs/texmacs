@@ -12,15 +12,15 @@
 #include "archiver.hpp"
 
 extern tree the_et;
-static patch empty_patch ();
 static patch make_compound (array<patch> a);
+static patch make_branches (array<patch> a);
 
 /******************************************************************************
 * Constructors and destructors
 ******************************************************************************/
 
 archiver_rep::archiver_rep ():
-  archive (empty_patch ()),
+  archive (make_branches (0)),
   current (make_compound (0)),
   depth (0),
   last_save (0),
@@ -30,7 +30,7 @@ archiver::archiver (): rep (tm_new<archiver_rep> ()) {}
 
 void
 archiver_rep::clear () {
-  archive= empty_patch ();
+  archive= make_branches (0);
   current= make_compound (0);
   depth= 0;
   last_save= -1;
@@ -40,16 +40,6 @@ archiver_rep::clear () {
 /******************************************************************************
 * Useful subroutines
 ******************************************************************************/
-
-static patch
-empty_patch () {
-  return patch (true, array<patch> ());
-}
-
-static bool
-is_empty (patch p) {
-  return get_type (p) == PATCH_BRANCH && N (p) == 0;
-}
 
 static patch
 make_compound (array<patch> a) {
@@ -76,6 +66,18 @@ make_history (patch undo, patch redo) {
 }
 
 static patch
+get_undo (patch p) {
+  ASSERT (nr_branches (p) > 0, "undo part unavailable");
+  return branch (p, 0);
+}
+
+static patch
+get_redo (patch p) {
+  if (nr_branches (p) == 0) return make_branches (array<patch> ());
+  return make_branches (branches (p, 1, nr_branches (p)));
+}
+
+static patch
 car (patch p) {
   ASSERT (nr_children (branch (p, 0)) == 2, "car unavailable")
   return child (p, 0);
@@ -85,24 +87,6 @@ static patch
 cdr (patch p) {
   ASSERT (nr_children (branch (p, 0)) == 2, "cdr unavailable")
   return child (p, 1);
-}
-
-static patch
-get_undo (patch p) {
-  ASSERT (nr_branches (p) > 0, "undo part unavailable");
-  return car (branch (p, 0));
-}
-
-static patch
-get_next (patch p) {
-  ASSERT (nr_branches (p) > 0, "next part unavailable");
-  return cdr (branch (p, 0));
-}
-
-static patch
-get_redo (patch p) {
-  if (nr_branches (p) == 0) return make_branches (array<patch> ());
-  return make_branches (branches (p, 1, nr_branches (p)));
 }
 
 /******************************************************************************
@@ -171,8 +155,8 @@ archiver_rep::active () {
 
 bool
 archiver_rep::has_history () {
-  if (is_empty (archive)) return false;
-  else return !is_empty (branch (archive, 0));
+  if (nr_branches (archive) == 0) return false;
+  else return nr_branches (get_undo (archive)) != 0;
 }
 
 void
@@ -201,9 +185,9 @@ archiver_rep::confirm () {
 void
 archiver_rep::retract () {
   if (has_history ()) {
-    patch un= get_undo (archive);
+    patch un= car (get_undo (archive));
     patch re= get_redo (archive);
-    patch nx= get_next (archive);
+    patch nx= cdr (get_undo (archive));
     //cout << "Retract " << un << "\n";
     if (active ()) current= compactify (patch (current, un));
     else current= un;
@@ -211,7 +195,7 @@ archiver_rep::retract () {
       patch q= invert (current, the_et);
       re= patch (q, re);
     }
-    if (nr_branches (nx) != 0) nx= branch (nx, 0);
+    if (nr_branches (nx) != 0) nx= get_undo (nx);
     archive= make_history (nx, append_branches (re, get_redo (nx)));
     depth--;
     //show_all ();
@@ -232,17 +216,17 @@ archiver_rep::forget () {
 void
 archiver_rep::simplify () {
   if (has_history () &&
-      nr_branches (get_next (archive)) == 1 &&
-      nr_children (branch (get_next (archive), 0)) == 2)
+      nr_branches (cdr (get_undo (archive))) == 1 &&
+      nr_children (get_undo (cdr (get_undo (archive)))) == 2)
     {
-      patch p1= get_undo (archive);
-      patch p2= get_undo (get_next (archive));
+      patch p1= car (get_undo (archive));
+      patch p2= car (get_undo (cdr (get_undo (archive))));
       //cout << "p1= " << p1 << "\n";
       //cout << "p2= " << p2 << "\n";
       bool r= join (p1, p2, the_et);
       //cout << "pr= " << p1 << "\n";
       if (r) {
-	patch un= patch (p1, get_next (get_next (archive)));
+	patch un= patch (p1, cdr (get_undo (cdr (get_undo (archive)))));
 	patch re= get_redo (archive);
 	archive= make_history (un, re);
 	//show_all ();
@@ -264,7 +248,7 @@ archiver_rep::undo_possibilities () {
 
 int
 archiver_rep::redo_possibilities () {
-  if (is_empty (archive)) return 0;
+  if (nr_branches (archive) == 0) return 0;
   else return nr_branches (get_redo (archive));
 }
 
@@ -273,7 +257,7 @@ archiver_rep::undo_one (int i) {
   if (active ()) return path ();
   if (undo_possibilities () != 0) {
     ASSERT (i == 0, "index out of range");
-    patch p= get_undo (archive);
+    patch p= car (get_undo (archive));
     //cout << "p= " << p << "\n";
     ASSERT (is_applicable (p, the_et), "history corrupted");
     patch q= invert (p, the_et);
@@ -281,13 +265,10 @@ archiver_rep::undo_one (int i) {
     apply (p);
     patch r= patch (q, get_redo (archive));
     //cout << "r= " << r << "\n";
-    patch nx= get_next (archive);
-    if (nr_branches (nx) == 0)
-      archive= make_history (nx, r);
-    else {
-      patch s= append_branches (r, get_redo (nx));
-      archive= make_history (branch (nx, 0), s);
-    }
+    patch nx= cdr (get_undo (archive));
+    if (nr_branches (nx) != 0) nx= get_undo (nx);
+    patch s= append_branches (r, get_redo (nx));
+    archive= make_history (nx, s);
     depth--;
     //show_all ();
     return cursor_hint (q, the_et);
@@ -301,7 +282,7 @@ archiver_rep::redo_one (int i) {
   int n= redo_possibilities ();
   if (n != 0) {
     ASSERT (i >= 0 && i < n, "index out of range");
-    patch un= branch (archive, 0);
+    patch un= get_undo (archive);
     patch re= get_redo (archive);
     patch p= car (branch (re, i));
     //cout << "p= " << p << "\n";
@@ -309,7 +290,8 @@ archiver_rep::redo_one (int i) {
     patch q= invert (p, the_et);
     //cout << "q= " << q << "\n";
     apply (p);
-    patch other= make_branches (append (branches (re, 0, i), branches (re, i+1, n)));
+    patch other= make_branches (append (branches (re, 0, i),
+					branches (re, i+1, n)));
     //cout << "other= " << other << "\n";
     patch next= make_history (un, other);
     //cout << "next= " << next << "\n";
@@ -330,7 +312,7 @@ archiver_rep::undo (int i) {
   //before= expose (before, author);
   while (undo_possibilities () != 0) {
     ASSERT (i == 0, "index out of range");
-    if (get_author (get_undo (archive)) == author)
+    if (get_author (car (get_undo (archive))) == author)
       return undo_one (i);
     else {
       (void) undo_one (i);
