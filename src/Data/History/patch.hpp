@@ -100,6 +100,8 @@ bool join (modification& m1, modification m2, tree t);
 patch invert (patch p, tree t);
 bool commute (patch p1, patch p2);
 bool swap (patch& p1, patch& p2);
+bool push (patch& p1, patch p2);
+bool pull (patch p1, patch& p2);
 bool join (patch& p1, patch p2, tree t);
 
 #endif // defined PATCH_H

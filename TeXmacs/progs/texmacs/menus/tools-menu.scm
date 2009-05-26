@@ -67,6 +67,7 @@
       ("Cursors" (show-cursor))
       ("Selection" (show-selection))
       ("Environment" (show-env))
+      ("History" (show-history))
       ("Memory usage" (show-meminfo)))
   (-> "Debugging"
       ("Timings" (bench-print-all))

@@ -2024,6 +2024,15 @@ tmg_redo (SCM arg1) {
 }
 
 SCM
+tmg_show_history () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->show_history ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_in_graphicsP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->inside_graphics ();
@@ -2768,6 +2777,7 @@ initialize_glue_editor () {
   scm_new_procedure ("undo", (FN) tmg_undo, 1, 0, 0);
   scm_new_procedure ("redo-possibilities", (FN) tmg_redo_possibilities, 0, 0, 0);
   scm_new_procedure ("redo", (FN) tmg_redo, 1, 0, 0);
+  scm_new_procedure ("show-history", (FN) tmg_show_history, 0, 0, 0);
   scm_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
   scm_new_procedure ("get-graphical-x", (FN) tmg_get_graphical_x, 0, 0, 0);
   scm_new_procedure ("get-graphical-y", (FN) tmg_get_graphical_y, 0, 0, 0);

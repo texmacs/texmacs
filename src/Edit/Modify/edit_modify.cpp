@@ -321,6 +321,11 @@ edit_modify_rep::forget () {
 }
 
 void
+edit_modify_rep::show_history () {
+  buf->arch->show_all ();
+}
+
+void
 archive_announce (tm_buffer buf, modification mod) {
   ASSERT (buf->rp <= mod->p, "invalid modification");
   if (!versioning_busy)

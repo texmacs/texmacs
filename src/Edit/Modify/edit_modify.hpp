@@ -49,6 +49,7 @@ public:
   void redo (int i);
   bool modifying ();
   bool forget ();
+  void show_history ();
 
   observer position_new (path p);
   void position_delete (observer o);

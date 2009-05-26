@@ -83,7 +83,7 @@ patch::patch (double author, patch p):
 * Internal subroutines
 ******************************************************************************/
 
-static array<patch>
+array<patch>
 singleton (patch p) {
   array<patch> a (1);
   a[0]= p;
@@ -351,16 +351,40 @@ swap_basic (patch& p1, patch& p2) {
 }
 
 bool
-swap (patch& p1, patch& p2, double a1, double a2) {
-  if (get_type (p1) == PATCH_BRANCH ||
-      get_type (p2) == PATCH_BRANCH)
-    FAILED ("not implemented");
+swap (patch& p1, patch& p2, double a1, double a2, int side) {
+  if (is_nil (p1) || is_nil (p2)) return false;
+  if (get_type (p1) == PATCH_BRANCH) {
+    if (side >= 0) return false;
+    int n= N(p1);
+    array<patch> a (n);
+    for (int i=0; i<n; i++) {
+      patch q= p2;
+      a[i]= p1[i];
+      if (!swap (a[i], q, a1, a2, side)) return false;
+    }
+    p1= patch ();
+    p2= patch (true, a);
+    return true;
+  }
+  if (get_type (p2) == PATCH_BRANCH) {
+    if (side <= 0) return false;
+    int n= N(p2);
+    array<patch> a (n);
+    for (int i=0; i<n; i++) {
+      patch q= p1;
+      a[i]= p2[i];
+      if (!swap (q, a[i], a1, a2, side)) return false;
+    }
+    p2= patch ();
+    p1= patch (true, a);
+    return true;
+  }
   if (get_type (p1) == PATCH_COMPOUND) {
     int n= N(p1);
     array<patch> a (n);
     for (int i=0; i<n; i++) a[i]= p1[i];
     for (int i=n-1; i>=0; i--) {
-      if (!swap (a[i], p2, a1, a2)) return false;
+      if (!swap (a[i], p2, a1, a2, side)) return false;
       swap_basic (a[i], p2);
     }
     p1= p2;
@@ -372,7 +396,7 @@ swap (patch& p1, patch& p2, double a1, double a2) {
     array<patch> a (n);
     for (int i=0; i<n; i++) a[i]= p2[i];
     for (int i=0; i<n; i++) {
-      if (!swap (p1, a[i], a1, a2)) return false;
+      if (!swap (p1, a[i], a1, a2, side)) return false;
       swap_basic (p1, a[i]);
     }
     p2= p1;
@@ -381,14 +405,14 @@ swap (patch& p1, patch& p2, double a1, double a2) {
   }
   if (get_type (p1) == PATCH_AUTHOR) {
     patch s= p1[0];
-    bool r= swap (s, p2, get_author (p1), a2);
+    bool r= swap (s, p2, get_author (p1), a2, side);
     p2= patch (get_author (p1), p2);
     p1= s;
     return r;
   }
   if (get_type (p2) == PATCH_AUTHOR) {
     patch s= p2[0];
-    bool r= swap (p1, s, a1, get_author (p2));
+    bool r= swap (p1, s, a1, get_author (p2), side);
     p1= patch (get_author (p2), p1);
     p2= s;
     return r;
@@ -417,7 +441,7 @@ swap (patch& p1, patch& p2, double a1, double a2) {
 
 bool
 swap (patch& p1, patch& p2) {
-  return swap (p1, p2, 0, 0);
+  return swap (p1, p2, 0, 0, 0);
 }
 
 bool
@@ -425,6 +449,22 @@ commute (patch p1, patch p2) {
   patch s1= p1;
   patch s2= p2;
   return swap (s1, s2);
+}
+
+bool
+push (patch& p1, patch p2) {
+  patch q= p2;
+  if (!swap (p1, q, 0, 0, -1)) return false;
+  p1= q;
+  return true;
+}
+
+bool
+pull (patch p1, patch& p2) {
+  patch q= p1;
+  if (!swap (q, p2, 0, 0, 1)) return false;
+  p2= q;
+  return true;
 }
 
 /******************************************************************************

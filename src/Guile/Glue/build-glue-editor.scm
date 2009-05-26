@@ -215,6 +215,7 @@
   (undo undo (void int))
   (redo-possibilities redo_possibilities (int))
   (redo redo (void int))
+  (show-history show_history (void))
 
   ;; graphics
   (in-graphics? inside_graphics (bool))

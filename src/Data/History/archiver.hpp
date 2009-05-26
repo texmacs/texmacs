@@ -22,12 +22,12 @@ class archiver_rep: public concrete_struct {
 
 protected:
   void apply (patch p);
-  void show_all ();
 
 public:
   archiver_rep ();
   ~archiver_rep ();
   void clear ();
+  void show_all ();
 
   void add (patch p);
   void start_slave (double a);
