@@ -11,16 +11,21 @@
 
 #include "patch.hpp"
 
+int insert_length (tree t);
+
 /******************************************************************************
 * Concrete patches
 ******************************************************************************/
 
 class modification_patch_rep: public patch_rep {
   modification mod;
+  modification inv;
 public:
-  modification_patch_rep (modification mod2): mod (mod2) {}
+  modification_patch_rep (modification mod2, modification inv2):
+    mod (mod2), inv (inv2) {}
   int get_type () { return PATCH_MODIFICATION; }
   modification get_modification () { return mod; }
+  modification get_inverse () { return inv; }
 };
 
 class compound_patch_rep: public patch_rep {
@@ -64,8 +69,8 @@ public:
   double get_author () { return author; }
 };
 
-patch::patch (modification mod):
-  rep (tm_new<modification_patch_rep> (mod)) { rep->ref_count= 1; }
+patch::patch (modification mod, modification inv):
+  rep (tm_new<modification_patch_rep> (mod, inv)) { rep->ref_count= 1; }
 patch::patch (array<patch> a):
   rep (tm_new<compound_patch_rep> (a)) { rep->ref_count= 1; }
 patch::patch (bool branch, array<patch> a):
@@ -163,6 +168,13 @@ new_author () {
   return next_author;
 }
 
+double
+new_marker () {
+  static double next_marker= 0.5;
+  next_marker += 1.0;
+  return next_marker;
+}
+
 void
 set_author (double a) {
   current_author= a;
@@ -181,7 +193,7 @@ ostream&
 operator << (ostream& out, patch p) {
   switch (get_type (p)) {
   case PATCH_MODIFICATION:
-    out << get_modification (p);
+    out << get_modification (p) << " -- " << get_inverse (p);
     break;
   case PATCH_COMPOUND:
     if (N(p) == 0) out << "No children";
@@ -219,7 +231,7 @@ patch
 copy (patch p) {
   switch (get_type (p)) {
   case PATCH_MODIFICATION:
-    return patch (copy (get_modification (p)));
+    return patch (copy (get_modification (p)), copy (get_inverse (p)));
   case PATCH_COMPOUND:
   case PATCH_BRANCH:
     {
@@ -315,7 +327,7 @@ patch
 invert (patch p, tree t) {
   switch (get_type (p)) {
   case PATCH_MODIFICATION:
-    return patch (invert (get_modification (p), t));
+    return patch (get_inverse (p), get_modification (p));
   case PATCH_BRANCH:
     ASSERT (N(p) <= 1, "ambiguous application");
   case PATCH_COMPOUND:
@@ -338,6 +350,38 @@ invert (patch p, tree t) {
   }
 }
 
+bool
+possible_inverse (modification m1, modification m2) {
+  if (root (m1) != root (m2)) return false;
+  switch (m1->k) {
+  case MOD_ASSIGN:
+    return m2->k == MOD_ASSIGN;
+  case MOD_INSERT:
+    return m2->k == MOD_REMOVE && 
+           argument (m2) == insert_length (m1->t);
+  case MOD_REMOVE:
+    return m2->k == MOD_INSERT && 
+           insert_length (m2->t) == argument (m1);
+  case MOD_SPLIT:
+    return m2->k == MOD_JOIN && 
+           index (m2) == index (m1);
+  case MOD_JOIN:
+    return m2->k == MOD_SPLIT && 
+           index (m2) == index (m1);
+  case MOD_ASSIGN_NODE:
+    return m2->k == MOD_ASSIGN_NODE;
+  case MOD_INSERT_NODE:
+    return m2->k == MOD_REMOVE_NODE && 
+           index (m2) == argument (m1);
+  case MOD_REMOVE_NODE:
+    return m2->k == MOD_INSERT_NODE && 
+           argument (m2) == index (m1);
+  default:
+    FAILED ("invalid situation");
+    return false;
+  }
+}
+
 /******************************************************************************
 * Commutation of patches
 ******************************************************************************/
@@ -351,40 +395,18 @@ swap_basic (patch& p1, patch& p2) {
 }
 
 bool
-swap (patch& p1, patch& p2, double a1, double a2, int side) {
+swap (patch& p1, patch& p2, double a1, double a2) {
   if (is_nil (p1) || is_nil (p2)) return false;
-  if (get_type (p1) == PATCH_BRANCH) {
-    if (side >= 0) return false;
-    int n= N(p1);
-    array<patch> a (n);
-    for (int i=0; i<n; i++) {
-      patch q= p2;
-      a[i]= p1[i];
-      if (!swap (a[i], q, a1, a2, side)) return false;
-    }
-    p1= patch ();
-    p2= patch (true, a);
-    return true;
-  }
-  if (get_type (p2) == PATCH_BRANCH) {
-    if (side <= 0) return false;
-    int n= N(p2);
-    array<patch> a (n);
-    for (int i=0; i<n; i++) {
-      patch q= p1;
-      a[i]= p2[i];
-      if (!swap (q, a[i], a1, a2, side)) return false;
-    }
-    p2= patch ();
-    p1= patch (true, a);
-    return true;
-  }
+  if (get_type (p1) == PATCH_BRANCH)
+    return false;
+  if (get_type (p2) == PATCH_BRANCH)
+    return false;
   if (get_type (p1) == PATCH_COMPOUND) {
     int n= N(p1);
     array<patch> a (n);
     for (int i=0; i<n; i++) a[i]= p1[i];
     for (int i=n-1; i>=0; i--) {
-      if (!swap (a[i], p2, a1, a2, side)) return false;
+      if (!swap (a[i], p2, a1, a2)) return false;
       swap_basic (a[i], p2);
     }
     p1= p2;
@@ -396,7 +418,7 @@ swap (patch& p1, patch& p2, double a1, double a2, int side) {
     array<patch> a (n);
     for (int i=0; i<n; i++) a[i]= p2[i];
     for (int i=0; i<n; i++) {
-      if (!swap (p1, a[i], a1, a2, side)) return false;
+      if (!swap (p1, a[i], a1, a2)) return false;
       swap_basic (p1, a[i]);
     }
     p2= p1;
@@ -405,14 +427,14 @@ swap (patch& p1, patch& p2, double a1, double a2, int side) {
   }
   if (get_type (p1) == PATCH_AUTHOR) {
     patch s= p1[0];
-    bool r= swap (s, p2, get_author (p1), a2, side);
+    bool r= swap (s, p2, get_author (p1), a2);
     p2= patch (get_author (p1), p2);
     p1= s;
     return r;
   }
   if (get_type (p2) == PATCH_AUTHOR) {
     patch s= p2[0];
-    bool r= swap (p1, s, a1, get_author (p2), side);
+    bool r= swap (p1, s, a1, get_author (p2));
     p1= patch (get_author (p2), p1);
     p2= s;
     return r;
@@ -430,18 +452,21 @@ swap (patch& p1, patch& p2, double a1, double a2, int side) {
     {
       modification m1= get_modification (p1);
       modification m2= get_modification (p2);
+      modification i1= get_inverse (p1);
+      modification i2= get_inverse (p2);
       bool r= swap (m1, m2);
-      p1= patch (m1);
-      p2= patch (m2);
-      return r;
+      bool v= swap (i2, i1);
+      p1= patch (m1, i1);
+      p2= patch (m2, i2);
+      return r && v && possible_inverse (m1, i1) && possible_inverse (m2, i2);
     }
-  FAILED ("invalid situaltion");
+  FAILED ("invalid situation");
   return false;
 }
 
 bool
 swap (patch& p1, patch& p2) {
-  return swap (p1, p2, 0, 0, 0);
+  return swap (p1, p2, 0, 0);
 }
 
 bool
@@ -449,22 +474,6 @@ commute (patch p1, patch p2) {
   patch s1= p1;
   patch s2= p2;
   return swap (s1, s2);
-}
-
-bool
-push (patch& p1, patch p2) {
-  patch q= p2;
-  if (!swap (p1, q, 0, 0, -1)) return false;
-  p1= q;
-  return true;
-}
-
-bool
-pull (patch p1, patch& p2) {
-  patch q= p1;
-  if (!swap (q, p2, 0, 0, 1)) return false;
-  p2= q;
-  return true;
 }
 
 /******************************************************************************
@@ -489,9 +498,12 @@ join (patch& p1, patch p2, tree t) {
     {
       modification m1= get_modification (p1);
       modification m2= get_modification (p2);
+      modification i2= get_inverse (p2);
+      modification i1= get_inverse (p1);
       bool r= join (m1, m2, t);
-      if (r) p1= patch (m1);
-      return r;
+      bool v= join (i2, i1, clean_apply (p2, clean_apply (p1, t)));
+      if (r && v) p1= patch (m1, i2);
+      return r && v;
     }
   return false;
 }
@@ -507,6 +519,15 @@ insert (array<patch>& a, patch p) {
     for (i=0; i<n; i++)
       insert (a, p[i]);
   }
+  else if (get_type (p) == PATCH_MODIFICATION &&
+	   N(a) > 0 &&
+	   get_type (a[N(a)-1]) == PATCH_MODIFICATION &&
+	   (get_inverse (a[N(a)-1]) == get_modification (p) ||
+	    get_modification (a[N(a)-1]) == get_inverse (p)))
+    {
+      // cout << "Cancel " << a[N(a)-1] << " against " << p << "\n";
+      a->resize (N(a) - 1);
+    }
   else a << p;
 }
 

@@ -15,7 +15,7 @@
 * Subroutines
 ******************************************************************************/
 
-static int
+int
 insert_length (tree t) {
   if (is_atomic (t)) return N(t->label);
   else return N(t);

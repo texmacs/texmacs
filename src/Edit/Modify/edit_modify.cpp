@@ -266,8 +266,14 @@ edit_modify_rep::remove_undo_mark () {
   arch->retract ();
 }
 
+int
+edit_modify_rep::undo_possibilities () {
+  return arch->undo_possibilities ();
+}
+
 void
 edit_modify_rep::undo (bool redoable) {
+  interrupt_shortcut ();
   if (inside_graphics () && !as_bool (eval ("graphics-undo-enabled"))) {
     eval ("(graphics-reset-context 'undo)"); return; }
   if (arch->undo_possibilities () == 0) {
@@ -289,11 +295,6 @@ edit_modify_rep::unredoable_undo () {
   undo (false);
 }
 
-int
-edit_modify_rep::undo_possibilities () {
-  return arch->undo_possibilities ();
-}
-
 void
 edit_modify_rep::undo (int i) {
   ASSERT (i == 0, "invalid undo");
@@ -307,6 +308,7 @@ edit_modify_rep::redo_possibilities () {
 
 void
 edit_modify_rep::redo (int i) {
+  interrupt_shortcut ();
   if (arch->redo_possibilities () == 0) {
     set_message ("No more redo information available", "redo"); return; }
   path p= arch->redo (i);
@@ -314,17 +316,6 @@ edit_modify_rep::redo (int i) {
   if (arch->conform_save ()) {
     set_message ("Your document is back in its original state", "undo");
     beep (); }
-}
-
-bool
-edit_modify_rep::modifying () {
-  return arch->active ();
-}
-
-bool
-edit_modify_rep::forget () {
-  arch->forget ();
-  return true;
 }
 
 void

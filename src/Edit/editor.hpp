@@ -139,6 +139,7 @@ public:
   virtual bool in_search_mode () = 0;
   virtual bool in_replace_mode () = 0;
   virtual bool in_spell_mode () = 0;
+  virtual void interrupt_shortcut () = 0;
   virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
   virtual void key_press (string key) = 0;
   virtual void emulate_keyboard (string keys, string action= "") = 0;
@@ -275,13 +276,11 @@ public:
   virtual void mark_end (double a) = 0;
   virtual void add_undo_mark () = 0;
   virtual void remove_undo_mark () = 0;
-  virtual void unredoable_undo () = 0;
   virtual int  undo_possibilities () = 0;
+  virtual void unredoable_undo () = 0;
   virtual void undo (int i=0) = 0;
   virtual int  redo_possibilities () = 0;
   virtual void redo (int i=0) = 0;
-  virtual bool modifying () = 0;
-  virtual bool forget () = 0;
   virtual void require_save () = 0;
   virtual void notify_save (bool real_save= true) = 0;
   virtual bool need_save (bool real_save= true) = 0;

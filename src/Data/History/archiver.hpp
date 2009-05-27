@@ -13,6 +13,9 @@
 #define ARCHIVER_H
 #include "patch.hpp"
 
+void global_clear_history ();
+void global_confirm ();
+
 class archiver_rep: public concrete_struct {
   patch    archive;        // undo and redo archive
   patch    current;        // current sequence of modifications
@@ -22,7 +25,6 @@ class archiver_rep: public concrete_struct {
   double   the_author;     // the author corresponding to the archiver
   path     rp;             // root path for document
   observer undo_obs;       // observer for undoing changes
-  double   mark;           // 0 or current mark
   bool     versioning;     // true during undo and redo operations
 
 protected:
@@ -34,19 +36,15 @@ public:
   void clear ();
   void show_all ();
 
-  void add (patch p);
+  void add (modification m);
   void start_slave (double a);
   bool active ();
   bool has_history ();
   void cancel ();    // cancel current series of modifications
   void confirm ();   // move current modifications to history
-  void simplify ();
-
   void retract ();   // reopen last history item for further modifications
   void forget ();    // undo and forget about last history item
-  void mark_start (double m);
-  bool mark_cancel (double m);
-  void mark_end (double m);
+  void simplify ();
 
   int  undo_possibilities ();
   int  redo_possibilities ();
@@ -54,6 +52,9 @@ public:
   path redo_one (int i);
   path undo (int i=0);
   path redo (int i=0);
+  void mark_start (double m);
+  bool mark_cancel (double m);
+  void mark_end (double m);
 
   void require_save ();
   void require_autosave ();
@@ -72,6 +73,5 @@ CONCRETE (archiver);
   archiver (double author, path rp);
 };
 CONCRETE_CODE (archiver);
-
 
 #endif // defined ARCHIVER_H

@@ -46,14 +46,12 @@ public:
   void mark_end (double a);
   void add_undo_mark ();
   void remove_undo_mark ();
+  int  undo_possibilities ();
   void undo (bool redoable);
   void unredoable_undo ();
-  int  undo_possibilities ();
   void undo (int i);
   int  redo_possibilities ();
   void redo (int i);
-  bool modifying ();
-  bool forget ();
   void require_save ();
   void notify_save (bool real_save= true);
   bool need_save (bool real_save= true);

@@ -34,6 +34,8 @@ public:
   inline virtual patch get_child (int i);
   inline virtual modification get_modification () {
     FAILED ("not a modification"); return mod_assign (path (), ""); }
+  inline virtual modification get_inverse () {
+    FAILED ("not a modification"); return mod_assign (path (), ""); }
   inline virtual bool get_birth () {
     FAILED ("not a birth"); return false; }
   inline virtual double get_author () {
@@ -42,7 +44,7 @@ public:
 
 class patch {
 ABSTRACT_NULL (patch);
-  patch (modification mod);
+  patch (modification mod, modification inv);
   patch (array<patch> a);
   patch (bool par, array<patch> a);
   patch (patch p1, patch p2);
@@ -70,6 +72,7 @@ array<patch> branches (patch p);
 array<patch> branches (patch p, int i, int j);
 
 double new_author ();
+double new_marker ();
 void set_author (double author);
 double get_author ();
 
@@ -84,6 +87,8 @@ inline int N (patch p) {
   return p->get_arity (); }
 inline modification get_modification (patch p) {
   return p->get_modification (); }
+inline modification get_inverse (patch p) {
+  return p->get_inverse (); }
 inline bool get_birth (patch p) {
   return p->get_birth (); }
 inline double get_author (patch p) {
@@ -100,8 +105,6 @@ bool join (modification& m1, modification m2, tree t);
 patch invert (patch p, tree t);
 bool commute (patch p1, patch p2);
 bool swap (patch& p1, patch& p2);
-bool push (patch& p1, patch p2);
-bool pull (patch p1, patch& p2);
 bool join (patch& p1, patch p2, tree t);
 
 #endif // defined PATCH_H

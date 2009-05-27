@@ -126,7 +126,7 @@ public:
   bool in_replace_mode ();
   bool in_spell_mode ();
   bool kbd_get_command (string which, string& help, command& cmd);
-  void clean_shortcut ();
+  void interrupt_shortcut ();
   bool try_shortcut (string comb);
   void key_press (string key);
   void emulate_keyboard (string keys, string action= "");
