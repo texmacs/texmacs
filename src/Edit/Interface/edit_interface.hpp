@@ -33,7 +33,7 @@ protected:
   bool          full_screen;   // full screen mode ?
   bool          got_focus;     // do we have keyboard focus ?
   string        sh_s;          // current string for shorthands
-  bool          sh_busy;       // undo previous shortcut when extending ?
+  double        sh_mark;       // 0 or mark for undoing shortcut
   widget        popup_win;     // the current popup window
   string        message_l;     // a left message to display
   string        message_r;     // a right message to display
@@ -125,8 +125,8 @@ public:
   bool in_search_mode ();
   bool in_replace_mode ();
   bool in_spell_mode ();
-  bool shortcut_active ();
   bool kbd_get_command (string which, string& help, command& cmd);
+  void clean_shortcut ();
   bool try_shortcut (string comb);
   void key_press (string key);
   void emulate_keyboard (string keys, string action= "");

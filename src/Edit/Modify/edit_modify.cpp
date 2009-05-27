@@ -20,7 +20,9 @@
 * Constructors and destructors
 ******************************************************************************/
 
-edit_modify_rep::edit_modify_rep (): author (new_author ()) {}
+edit_modify_rep::edit_modify_rep ():
+  author (new_author ()),
+  arch (author, rp) {}
 edit_modify_rep::~edit_modify_rep () {}
 
 /******************************************************************************
@@ -216,11 +218,7 @@ edit_done (editor_rep* ed, modification mod) {
 
 void
 edit_modify_rep::clear_undo_history () {
-  int i;
-  for (i=0; i<sv->nr_bufs(); i++) {
-    tm_buffer b= sv->get_buf (i);
-    b->arch->clear ();
-  }
+  global_clear_history ();
 }
 
 double
@@ -235,42 +233,51 @@ edit_modify_rep::start_editing () {
 
 void
 edit_modify_rep::end_editing () {
-  int i;
-  for (i=0; i<sv->nr_bufs(); i++) {
-    tm_buffer b= sv->get_buf (i);
-    b->arch->confirm ();
-    if (!shortcut_active ())
-      b->arch->simplify ();
-  }
+  global_confirm ();
 }
 
 void
 edit_modify_rep::start_slave (double a) {
-  buf->arch->start_slave (a);
+  arch->start_slave (a);
+}
+
+void
+edit_modify_rep::mark_start (double a) {
+  arch->mark_start (a);
+}
+
+bool
+edit_modify_rep::mark_cancel (double a) {
+  return arch->mark_cancel (a);
+}
+
+void
+edit_modify_rep::mark_end (double a) {
+  arch->mark_end (a);
 }
 
 void
 edit_modify_rep::add_undo_mark () {
-  buf->arch->confirm ();
+  arch->confirm ();
 }
 
 void
 edit_modify_rep::remove_undo_mark () {
-  buf->arch->retract ();
+  arch->retract ();
 }
 
 void
 edit_modify_rep::undo (bool redoable) {
   if (inside_graphics () && !as_bool (eval ("graphics-undo-enabled"))) {
     eval ("(graphics-reset-context 'undo)"); return; }
-  if (buf->arch->undo_possibilities () == 0) {
+  if (arch->undo_possibilities () == 0) {
     set_message ("No more undo information available", "undo"); return; }
   if (redoable) {
-    path p= buf->arch->undo ();
+    path p= arch->undo ();
     if (!is_nil (p)) go_to (p);
   }
-  else buf->arch->forget ();
-  if (buf->arch->conform_save ()) {
+  else arch->forget ();
+  if (arch->conform_save ()) {
     set_message ("Your document is back in its original state", "undo");
     beep (); }
   if (inside_graphics ())
@@ -284,7 +291,7 @@ edit_modify_rep::unredoable_undo () {
 
 int
 edit_modify_rep::undo_possibilities () {
-  return buf->arch->undo_possibilities ();
+  return arch->undo_possibilities ();
 }
 
 void
@@ -295,41 +302,54 @@ edit_modify_rep::undo (int i) {
 
 int
 edit_modify_rep::redo_possibilities () {
-  return buf->arch->redo_possibilities ();
+  return arch->redo_possibilities ();
 }
 
 void
 edit_modify_rep::redo (int i) {
-  if (buf->arch->redo_possibilities () == 0) {
+  if (arch->redo_possibilities () == 0) {
     set_message ("No more redo information available", "redo"); return; }
-  path p= buf->arch->redo (i);
+  path p= arch->redo (i);
   if (!is_nil (p)) go_to (p);
-  if (buf->arch->conform_save ()) {
+  if (arch->conform_save ()) {
     set_message ("Your document is back in its original state", "undo");
     beep (); }
 }
 
 bool
 edit_modify_rep::modifying () {
-  return buf->arch->active ();
+  return arch->active ();
 }
 
 bool
 edit_modify_rep::forget () {
-  buf->arch->forget ();
+  arch->forget ();
   return true;
 }
 
 void
-edit_modify_rep::show_history () {
-  buf->arch->show_all ();
+edit_modify_rep::require_save () {
+  arch->require_autosave ();
+  arch->require_save ();
 }
 
 void
-archive_announce (tm_buffer buf, modification mod) {
-  ASSERT (buf->rp <= mod->p, "invalid modification");
-  if (!versioning_busy)
-    buf->arch->add (patch (mod));
+edit_modify_rep::notify_save (bool real_save) {
+  arch->confirm ();
+  arch->notify_autosave ();
+  if (real_save) arch->notify_save ();
+}
+
+bool
+edit_modify_rep::need_save (bool real_save) {
+  if (arch->conform_save ()) return false;
+  if (real_save) return true;
+  return !arch->conform_autosave ();
+}
+
+void
+edit_modify_rep::show_history () {
+  arch->show_all ();
 }
 
 /******************************************************************************

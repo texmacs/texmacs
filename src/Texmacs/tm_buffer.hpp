@@ -12,7 +12,6 @@
 #ifndef TM_BUFFER_H
 #define TM_BUFFER_H
 #include "server.hpp"
-#include "archiver.hpp"
 
 extern tree the_et;
 path new_document ();
@@ -41,9 +40,6 @@ public:
   hashmap<string,tree> ref;   // all labels with references
   hashmap<string,tree> aux;   // auxiliary output: toc, bib, etc.
 
-  observer undo_obs;      // observer for undoing changes
-  archiver arch;          // archiver of changes
-
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
     fm ("texmacs"), extra (url_none ()), vws (0),
@@ -51,17 +47,10 @@ public:
     prj (NULL), in_menu (true),
     rp (new_document ()),
     project (""), style ("style"),
-    init ("?"), fin ("?"), ref ("?"), aux ("?"),
-    undo_obs (undo_observer (this)),
-    arch ()
-  {
-    attach_observer (subtree (the_et, rp), undo_obs);
-  }
+    init ("?"), fin ("?"), ref ("?"), aux ("?") {}
 
   inline ~tm_buffer_rep () {
-    detach_observer (subtree (the_et, rp), undo_obs);
-    delete_document (rp);
-  }
+    delete_document (rp); }
 
   bool needs_to_be_saved ();
   bool needs_to_be_autosaved ();

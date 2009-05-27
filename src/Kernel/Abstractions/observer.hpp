@@ -92,8 +92,7 @@ ABSTRACT_NULL_CODE(observer);
 ostream& operator << (ostream& out, observer o);
 
 class editor_rep;
-class tm_buffer_rep;
-typedef tm_buffer_rep* tm_buffer;
+class archiver_rep;
 
 extern observer nil_observer;
 observer ip_observer (path ip);
@@ -101,7 +100,7 @@ observer list_observer (observer o1, observer o2);
 observer tree_pointer (tree t, bool flag= false);
 observer tree_position (tree t, int index);
 observer edit_observer (editor_rep* ed);
-observer undo_observer (tm_buffer buf);
+observer undo_observer (archiver_rep* arch);
 
 /******************************************************************************
 * Modification routines for trees and other observer-related facilities

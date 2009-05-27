@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : archiver.cpp
-* DESCRIPTION: undo/redo history
+* DESCRIPTION: manage undo/redo history
 * COPYRIGHT  : (C) 2009  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -10,25 +10,42 @@
 ******************************************************************************/
 
 #include "archiver.hpp"
+#include "hashset.hpp"
+#include "iterator.hpp"
 
 extern tree the_et;
 array<patch> singleton (patch p);
 static patch make_compound (array<patch> a);
 static patch make_branches (array<patch> a);
 static patch make_future (patch p1, patch p2);
+static hashset<pointer> archs;
 
 /******************************************************************************
-* Constructors, destructors and printing
+* Constructors, destructors, printing and announcements
 ******************************************************************************/
 
-archiver_rep::archiver_rep ():
+archiver_rep::archiver_rep (double author, path rp2):
   archive (make_branches (0)),
   current (make_compound (0)),
   depth (0),
   last_save (0),
-  last_autosave (0) {}
-archiver_rep::~archiver_rep () {}
-archiver::archiver (): rep (tm_new<archiver_rep> ()) {}
+  last_autosave (0),
+  the_author (author),
+  rp (rp2),
+  undo_obs (undo_observer (this)),
+  mark (0)
+{
+  archs->insert ((pointer) this);
+  attach_observer (subtree (the_et, rp), undo_obs);
+}
+
+archiver_rep::~archiver_rep () {
+  detach_observer (subtree (the_et, rp), undo_obs);
+  archs->remove ((pointer) this);
+}
+
+archiver::archiver (double author, path rp):
+  rep (tm_new<archiver_rep> (author, rp)) {}
 
 void
 archiver_rep::clear () {
@@ -42,6 +59,31 @@ archiver_rep::clear () {
 void
 archiver_rep::show_all () {
   cout << HRULE << archive << LF << HRULE << LF;
+}
+
+void
+archive_announce (archiver_rep* arch, modification mod) {
+  ASSERT (arch->rp <= mod->p, "invalid modification");
+  if (!arch->versioning) arch->add (patch (mod));
+}
+
+void
+global_clear_history () {
+  iterator<pointer> it = iterate (archs);
+  while (it->busy()) {
+    archiver_rep* arch= (archiver_rep*) it->next();
+    arch->clear ();
+  }
+}
+
+void
+global_confirm () {
+  iterator<pointer> it = iterate (archs);
+  while (it->busy()) {
+    archiver_rep* arch= (archiver_rep*) it->next();
+    arch->confirm ();
+    if (arch->mark == 0) arch->simplify ();
+  }
 }
 
 /******************************************************************************
@@ -116,10 +158,10 @@ archiver_rep::apply (patch p) {
   // apply a patch, while disabling versioning during the modifications
   // cout << "Apply " << p << "\n";
   ASSERT (is_applicable (p, the_et), "invalid history");
-  bool old= versioning_busy;
-  versioning_busy= true;
+  bool old= versioning;
+  versioning= true;
   ::apply (p, the_et);
-  versioning_busy= old;
+  versioning= old;
 }
 
 static void
@@ -245,6 +287,36 @@ archiver_rep::confirm () {
 }
 
 void
+archiver_rep::simplify () {
+  if (has_history () &&
+      nr_undo (cdr (get_undo (archive))) == 1 &&
+      nr_redo (cdr (get_undo (archive))) == 0)
+    {
+      patch p1= car (get_undo (archive));
+      patch p2= car (get_undo (cdr (get_undo (archive))));
+      //cout << "p1= " << p1 << "\n";
+      //cout << "p2= " << p2 << "\n";
+      bool r= join (p1, p2, the_et);
+      //cout << "pr= " << p1 << "\n";
+      if (r) {
+	//cout << "\n\nSimplify\n";
+	//show_all ();
+	patch un= patch (p1, cdr (get_undo (cdr (get_undo (archive)))));
+	patch re= get_redo (archive);
+	archive= make_history (un, re);
+	//show_all ();
+	//cout << "\n";
+	depth--;
+	simplify ();
+      }
+    }
+}
+
+/******************************************************************************
+* Marking
+******************************************************************************/
+
+void
 archiver_rep::retract () {
   if (has_history ()) {
     archive= expose (archive, get_author ());
@@ -272,34 +344,21 @@ archiver_rep::forget () {
   cancel ();
 }
 
-/******************************************************************************
-* History simplification
-******************************************************************************/
+void
+archiver_rep::mark_start (double m) {
+  mark= m;
+}
 
 void
-archiver_rep::simplify () {
-  if (has_history () &&
-      nr_undo (cdr (get_undo (archive))) == 1 &&
-      nr_redo (cdr (get_undo (archive))) == 0)
-    {
-      patch p1= car (get_undo (archive));
-      patch p2= car (get_undo (cdr (get_undo (archive))));
-      //cout << "p1= " << p1 << "\n";
-      //cout << "p2= " << p2 << "\n";
-      bool r= join (p1, p2, the_et);
-      //cout << "pr= " << p1 << "\n";
-      if (r) {
-	//cout << "\n\nSimplify\n";
-	//show_all ();
-	patch un= patch (p1, cdr (get_undo (cdr (get_undo (archive)))));
-	patch re= get_redo (archive);
-	archive= make_history (un, re);
-	//show_all ();
-	//cout << "\n";
-	depth--;
-	simplify ();
-      }
-    }
+archiver_rep::mark_end (double m) {
+  mark= 0;
+}
+
+bool
+archiver_rep::mark_cancel (double m) {
+  mark= 0;
+  forget ();
+  return true;
 }
 
 /******************************************************************************

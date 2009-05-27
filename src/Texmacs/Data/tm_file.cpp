@@ -251,13 +251,12 @@ tm_data_rep::auto_save () {
 	if (save_string (name, tree_to_texmacs (doc)))
 	  set_message ("Error: " * as_string (name) * " did not open",
 		       "save TeXmacs file");
-	else {
+	else
 	  call ("set-temporary-message",
 		"saved " * as_string (name), "save TeXmacs file", 2500);
-	  buf->arch->confirm ();
-	  buf->arch->notify_autosave ();
-	}
       }
+      for (int j=0; j<N(buf->vws); j++)
+	buf->vws[j]->ed->notify_save (false);
     }
   }
   call ("delayed-auto-save");
@@ -299,7 +298,6 @@ tm_data_rep::exists_unsaved_buffer () {
 void
 tm_data_rep::pretend_save_buffer () {
   tm_buffer buf= get_buffer ();
-  buf->arch->confirm ();
-  buf->arch->notify_save ();
-  buf->arch->notify_autosave ();
+  for (int i=0; i<N(buf->vws); i++)
+    buf->vws[i]->ed->notify_save ();
 }

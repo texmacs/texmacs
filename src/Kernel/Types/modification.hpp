@@ -113,7 +113,7 @@ void apply (tree& t, modification mod);          // in observer.cpp
 
 void edit_announce (editor_rep* ed, modification mod);
 void edit_done (editor_rep* ed, modification mod);
-void archive_announce (tm_buffer buf, modification mod);
+void archive_announce (archiver_rep* buf, modification mod);
 void link_announce (observer obs, modification mod);
 
 #endif // defined MODIFICATION_H

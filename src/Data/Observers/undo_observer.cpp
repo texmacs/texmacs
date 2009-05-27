@@ -19,11 +19,11 @@
 ******************************************************************************/
 
 class undo_observer_rep: public observer_rep {
-  tm_buffer buf;
+  archiver_rep* arch;
 public:
-  undo_observer_rep (tm_buffer buf2): buf (buf2) {}
+  undo_observer_rep (archiver_rep* arch2): arch (arch2) {}
   int get_type () { return OBSERVER_UNDO; }
-  ostream& print (ostream& out) { return out << " undoer<" << buf << ">"; }
+  ostream& print (ostream& out) { return out << " undoer<" << arch << ">"; }
   void announce (tree& ref, modification mod);
 
   void reattach           (tree& ref, tree t);
@@ -43,7 +43,7 @@ undo_observer_rep::announce (tree& ref, modification mod) {
   if (mod->k == MOD_ASSIGN && mod->p == path () && mod->t == ref) return;
   if (!ip_attached (obtain_ip (ref))) return;
   //cout << "Archive " << mod << "\n";
-  archive_announce (buf, reverse (obtain_ip (ref)) * mod);
+  archive_announce (arch, reverse (obtain_ip (ref)) * mod);
 }
 
 /******************************************************************************
@@ -91,6 +91,6 @@ undo_observer_rep::notify_detach (tree& ref, tree closest, bool right) {
 ******************************************************************************/
 
 observer
-undo_observer (tm_buffer buf) {
-  return tm_new<undo_observer_rep> (buf);
+undo_observer (archiver_rep* arch) {
+  return tm_new<undo_observer_rep> (arch);
 }

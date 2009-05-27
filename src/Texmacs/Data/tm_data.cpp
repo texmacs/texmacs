@@ -208,10 +208,8 @@ tm_data_rep::revert_buffer (url name, tree doc) {
     vw->ed->add_init (buf->init);
     vw->ed->notify_change (THE_DECORATIONS);
     vw->ed->typeset_invalidate_env ();
+    vw->ed->notify_save ();
   }
-  buf->arch->confirm ();
-  buf->arch->notify_save ();
-  buf->arch->notify_autosave ();
 }
 
 void
@@ -706,11 +704,10 @@ tm_data_rep::project_attach (string prj_name) {
   int i;
   tm_buffer buf= get_buffer ();
   buf->project= prj_name;
-  buf->arch->require_save ();
-  buf->arch->require_autosave ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
     vw->ed->notify_change (THE_DECORATIONS);
+    vw->ed->require_save ();
   }
   if (prj_name == "") buf->prj= NULL;
   else {
@@ -875,12 +872,17 @@ tm_data_rep::window_focus (int id) {
 bool
 tm_buffer_rep::needs_to_be_saved () {
   if (!in_menu) return false;
-  return !arch->conform_save ();
+  for (int i=0; i<N(vws); i++)
+    if (vws[i]->ed->need_save ())
+      return true;
+  return false;
 }
 
 bool
 tm_buffer_rep::needs_to_be_autosaved () {
   if (!in_menu) return false;
-  if (!needs_to_be_saved ()) return false;
-  return !arch->conform_autosave ();
+  for (int i=0; i<N(vws); i++)
+    if (vws[i]->ed->need_save (false))
+      return true;
+  return false;
 }
