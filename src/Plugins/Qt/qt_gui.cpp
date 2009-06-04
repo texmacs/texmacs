@@ -18,10 +18,14 @@
 #include "message.hpp"
 #include <QDesktopWidget>
 #include <QClipboard>
+#include <QFileOpenEvent>
 #include "QTMGuiHelper.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
 #include "socket_server.hpp" // for number_of_servers
+
+#include "Guile/Scheme/object.hpp"
+//#include "TeXmacs/server.hpp" // for get_server
 
 extern window (*get_current_window) (void);
 
@@ -180,11 +184,6 @@ qt_gui_rep::update () {
 }
 
 void
-QTMGuiHelper::doUpdate() {
-  gui->update();
-}
-
-void
 qt_gui_rep::event_loop () {
   QApplication *app = (QApplication*) QApplication::instance();
   QTimer t (NULL);
@@ -210,11 +209,18 @@ qt_gui_rep::event_loop () {
 * Main routines
 ******************************************************************************/
 
+QTMGuiHelper *gui_helper;
+
+
 void
 gui_open (int& argc, char** argv) {
   // start the gui
  // new QApplication (argc,argv); now in texmacs.cpp
   the_gui = tm_new<qt_gui_rep> (argc, argv);
+  
+  gui_helper = new QTMGuiHelper (the_gui);
+  qApp -> installEventFilter (gui_helper);
+  
 }
 
 void
@@ -248,6 +254,33 @@ gui_refresh () {
   // update and redraw all windows (e.g. on change of output language)
   // FIXME: add suitable code
 }
+
+
+/******************************************************************************
+ * QTMGuiHelper methods
+ ******************************************************************************/
+
+void
+QTMGuiHelper::doUpdate() {
+  gui->update();
+}
+
+bool
+QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
+   if (event->type() == QEvent::FileOpen) {
+     QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
+     const char *s = openEvent->file().toAscii().constData();
+     qDebug ("File Open Event %s", s);
+     call ("texmacs-load-buffer", object(url_system (s)), object("generic"), object(1), object(false));
+     
+     return true;
+   } else {
+     // standard event processing
+     return QObject::eventFilter(obj, event);
+   }
+}
+
+
 
 /******************************************************************************
 * Font support

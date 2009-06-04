@@ -4,6 +4,25 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>tm</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>TeXmacs-document.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<string>text/x-texmacs</string>
+			<key>CFBundleTypeName</key>
+			<string>TeXmacs Document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>TeXmacs</string>
 	<key>CFBundleIconFile</key>
@@ -20,8 +39,6 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>MGUB</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

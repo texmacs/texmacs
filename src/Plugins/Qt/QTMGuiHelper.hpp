@@ -22,8 +22,12 @@ class QTMGuiHelper : public QObject {
 public:
   inline QTMGuiHelper (qt_gui_rep *_gui) : QObject (), gui (_gui) {}
 
+protected:
+  bool eventFilter (QObject *obj, QEvent *event);
+  
 public slots:
   void doUpdate ();
+  
 };
 
 #endif // QTMGUIHELPER_HPP
