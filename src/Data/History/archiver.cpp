@@ -17,6 +17,7 @@ extern tree the_et;
 array<patch> singleton (patch p);
 static patch make_compound (array<patch> a);
 static patch make_branches (array<patch> a);
+static hashset<double> genuine_authors;
 static hashset<pointer> archs;
 static hashset<pointer> pending_archs;
 
@@ -31,15 +32,18 @@ archiver_rep::archiver_rep (double author, path rp2):
   last_save (0),
   last_autosave (0),
   the_author (author),
+  the_owner (0),
   rp (rp2),
   undo_obs (undo_observer (this)),
   versioning (false)
 {
   archs->insert ((pointer) this);
   attach_observer (subtree (the_et, rp), undo_obs);
+  genuine_authors->insert (the_author);
 }
 
 archiver_rep::~archiver_rep () {
+  genuine_authors->remove (the_author);
   detach_observer (subtree (the_et, rp), undo_obs);
   archs->remove ((pointer) this);
   pending_archs->remove ((pointer) this);
@@ -52,6 +56,7 @@ void
 archiver_rep::clear () {
   archive= make_branches (0);
   current= make_compound (0);
+  the_owner= 0;
   depth= 0;
   last_save= -1;
   last_autosave= -1;
@@ -170,10 +175,8 @@ archiver_rep::apply (patch p) {
   versioning= old;
 }
 
-static patch
-make_future (patch p1, patch p2) {
-  if (nr_branches (p2) == 0 || get_author (p1) == get_author ())
-    return patch (p1, p2);
+void
+archiver_rep::split (patch p1, patch p2, patch& re1, patch& re2) {
   //cout << "p1= " << p1 << "\n";
   //cout << "p2= " << p2 << "\n";
   array<patch> a= branches (p2);
@@ -182,25 +185,33 @@ make_future (patch p1, patch p2) {
   for (int i=0; i<N(a); i++) {
     patch q1= p1;
     patch q2= car (a[i]);
-    if (get_author (q1) == get_author (q2) || !swap (q1, q2)) a1 << a[i];
+    if (get_author (q2) != the_author || !swap (q1, q2)) a1 << a[i];
     else a2 << patch (q1, make_future (q2, cdr (a[i])));
   }
-  patch re1= make_branches (a1);
-  patch re2= make_branches (a2);
+  re1= make_branches (a1);
+  re2= make_branches (a2);
   //cout << "re1= " << re1 << "\n";
   //cout << "re2= " << re2 << "\n";
+}
+
+patch
+archiver_rep::make_future (patch p1, patch p2) {
+  if (nr_branches (p2) == 0 || get_author (p1) == the_author)
+    return patch (p1, p2);
+  patch re1, re2;
+  split (p1, p2, re1, re2);
   if (nr_branches (re1) != 0) re1= patch (p1, re1);
   return append_branches (re1, re2);
 }
 
-static patch
-expose (patch archive, double author) {
+patch
+archiver_rep::expose (patch archive) {
   if (nr_undo (archive) != 0 &&
-      get_author (car (get_undo (archive))) != author &&
+      get_author (car (get_undo (archive))) != the_author &&
       nr_undo (cdr (get_undo (archive))) != 0)
     {
-      patch nx1= expose (cdr (get_undo (archive)), author);
-      if (get_author (car (get_undo (nx1))) != author) return archive;
+      patch nx1= expose (cdr (get_undo (archive)));
+      if (get_author (car (get_undo (nx1))) != the_author) return archive;
       patch un1= car (get_undo (archive));
       patch un2= car (get_undo (nx1));
       patch re1= get_redo (archive);
@@ -217,21 +228,49 @@ expose (patch archive, double author) {
   else return archive;
 }
 
+void
+archiver_rep::normalize () {
+  if (nr_undo (archive) != 0 && nr_redo (cdr (get_undo (archive))) != 0) {
+    patch un1= get_undo (archive);
+    patch re1= get_redo (archive);
+    patch p1 = car (un1);
+    patch nx1= cdr (un1);
+    patch un2= get_undo (nx1);
+    patch re2= get_redo (nx1);
+    patch Re1, Re2;
+    if (get_author (p1) == the_author) return;
+    split (p1, re2, Re1, Re2);
+    patch ar2= make_history (un2, Re1);
+    archive= make_history (patch (p1, ar2), append_branches (re1, Re2));
+  }
+}
+
 /******************************************************************************
 * Routines concerning the current modifications
 ******************************************************************************/
 
 void
 archiver_rep::add (modification m) {
-  // cout << "Add [" << get_author () << "] " << m << "\n";
+  if (the_owner != 0 && the_owner != get_author ()) {
+    //cout << "Change " << the_owner << " -> " << get_author () << "\n";
+    confirm ();
+  }
+  else the_owner= get_author ();
   modification i= invert (m, the_et);
   patch q (i, m);
+  //cout << "Add [" << the_owner << "] " << q << "\n";
   current= patch (q, current);
 }
 
 void
 archiver_rep::start_slave (double a) {
+  if (the_owner != 0 && the_owner != get_author ()) {
+    //cout << "Change " << the_owner << " -> " << get_author () << "\n";
+    confirm ();
+  }
+  else the_owner= get_author ();
   patch q (a, false);
+  //cout << "Add [" << the_owner << "] " << q << "\n";
   current= patch (q, current);
 }
 
@@ -251,49 +290,56 @@ archiver_rep::cancel () {
     // cout << "Cancel " << current << "\n";
     apply (current);
     current= make_compound (0);
+    the_owner= 0;
   }
 }
 
 void
 archiver_rep::confirm () {
   if (active ()) {
-    current= patch (get_author (), compactify (current));
-    // cout << "Confirm " << current << "\n";
+    current= patch (the_owner, compactify (current));
+    //cout << "Confirm " << current << "\n";
     archive= patch (current, archive);
     current= make_compound (0);
+    the_owner= 0;
     depth++;
     if (depth <= last_save) last_save= -1;
     if (depth <= last_autosave) last_autosave= -1;
+    normalize ();
     //show_all ();
   }
 }
 
-void
+bool
 archiver_rep::retract () {
-  if (has_history ()) {
-    archive= expose (archive, the_author);
-    patch un= car (get_undo (archive));
-    patch re= get_redo (archive);
-    patch nx= cdr (get_undo (archive));
-    //cout << "Retract " << un << "\n";
-    if (active ()) current= compactify (patch (current, un));
-    else current= un;
-    if (nr_branches (re) != 0) {
-      patch q= invert (current, the_et);
-      re= patch (q, re);
-    }
-    if (nr_branches (nx) != 0) nx= get_undo (nx);
-    archive= make_history (nx, append_branches (re, get_redo (nx)));
-    depth--;
-    //show_all ();
+  if (!has_history ()) return false;
+  if (the_owner != 0 && the_owner != the_author) return false;
+  archive= expose (archive);
+  patch un= car (get_undo (archive));
+  if (get_author (un) != the_author) return false;
+  patch re= get_redo (archive);
+  patch nx= cdr (get_undo (archive));
+  //cout << "Retract " << un << "\n";
+  if (active ()) current= compactify (patch (current, un));
+  else current= un;
+  the_owner= the_author;
+  if (nr_branches (re) != 0) {
+    patch q= invert (current, the_et);
+    re= patch (q, re);
   }
+  if (nr_branches (nx) != 0) nx= get_undo (nx);
+  archive= make_history (nx, append_branches (re, get_redo (nx)));
+  depth--;
+  //show_all ();
+  return true;
 }
 
-void
+bool
 archiver_rep::forget () {
   cancel ();
-  retract ();
-  cancel ();
+  bool r= retract ();
+  if (r) cancel ();
+  return r;
 }
 
 /******************************************************************************
@@ -386,6 +432,7 @@ archiver_rep::redo_one (int i) {
     if (depth <= last_save && i != 0) last_save= -1;
     if (depth <= last_autosave && i != 0) last_autosave= -1;
     depth++;
+    normalize ();
     //show_all ();
     return cursor_hint (q, the_et);
   }
@@ -398,7 +445,7 @@ archiver_rep::undo (int i) {
   path r;
   while (undo_possibilities () != 0) {
     ASSERT (i == 0, "index out of range");
-    archive= expose (archive, the_author);
+    archive= expose (archive);
     if (get_author (car (get_undo (archive))) == the_author)
       return undo_one (i);
     else {
@@ -413,16 +460,19 @@ path
 archiver_rep::redo (int i) {
   if (active ()) return path ();
   path r;
+  bool first= true;
   while (redo_possibilities () != 0) {
     ASSERT (i >= 0 && i < redo_possibilities (), "index out of range");
     patch re= branch (get_redo (archive), i);
-    bool stop= (nr_branches (cdr (re)) != 1);
-    // bool done= (get_author (car (re)) == the_author);
+    bool done= (get_author (car (re)) == the_author);
     r= redo_one (i);
-    // if (stop || done) break;
-    if (stop) break;
-    if (get_author (car (branch (get_redo (archive), 0))) == the_author) break;
+    if (done && !first) break;
+    if (nr_redo (archive) != 1) break;
     i= 0;
+    first= false;
+    re= branch (get_redo (archive), i);
+    if (get_author (car (re)) == the_author) break;
+    if (done && genuine_authors->contains (get_author (car (re)))) break;
   }
   return r;
 }
@@ -432,18 +482,18 @@ archiver_rep::redo (int i) {
 ******************************************************************************/
 
 static bool
-is_birth (patch p, double author, bool birth) {
+is_marker (patch p, double m, bool birth) {
   if (get_type (p) == PATCH_AUTHOR)
-    return is_birth (p[0], author, birth);
+    return is_marker (p[0], m, birth);
   else if (get_type (p) == PATCH_BIRTH)
-    return get_author (p) == author && get_birth (p) == birth;
+    return get_author (p) == m && get_birth (p) == birth;
   else return false;
 }
 
 static patch
 remove_marker (patch archive, double m) {
   ASSERT (nr_undo (archive) != 0, "marker not found");
-  if (is_birth (car (get_undo (archive)), m, false)) {
+  if (is_marker (car (get_undo (archive)), m, false)) {
     ASSERT (nr_redo (archive) == 0, "cannot remove marker");
     return cdr (get_undo (archive));
   }
@@ -477,8 +527,8 @@ archiver_rep::mark_cancel (double m) {
   //cout << "Mark cancel " << m << "\n";
   cancel ();
   while (nr_undo (archive) != 0) {
-    archive= expose (archive, the_author);
-    if (is_birth (car (get_undo (archive)), m, false)) {
+    archive= expose (archive);
+    if (is_marker (car (get_undo (archive)), m, false)) {
       archive= remove_marker (archive, m);
       depth--;
       simplify ();

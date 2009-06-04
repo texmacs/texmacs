@@ -23,12 +23,17 @@ class archiver_rep: public concrete_struct {
   int      last_save;      // archive depth at last save
   int      last_autosave;  // archive depth at last autosave
   double   the_author;     // the author corresponding to the archiver
+  double   the_owner;      // author of current modifications
   path     rp;             // root path for document
   observer undo_obs;       // observer for undoing changes
   bool     versioning;     // true during undo and redo operations
 
 protected:
   void apply (patch p);
+  void split (patch p1, patch p2, patch& re1, patch& re2);
+  patch make_future (patch p1, patch p2);
+  patch expose (patch archive);
+  void normalize ();
 
 public:
   archiver_rep (double author, path rp);
@@ -42,8 +47,8 @@ public:
   bool has_history ();
   void cancel ();    // cancel current series of modifications
   void confirm ();   // move current modifications to history
-  void retract ();   // reopen last history item for further modifications
-  void forget ();    // undo and forget about last history item
+  bool retract ();   // reopen last history item for further modifications
+  bool forget ();    // undo and forget about last history item
   void simplify ();
 
   int  undo_possibilities ();

@@ -113,9 +113,14 @@
 		   (plugin-start lan ses)
 		   (plugin-next lan ses)))
 	      ((== status 0)
-	       (with p (silent-encode :start noop '())
-		 (pending-set lan ses (cons p l))
-		 (plugin-do lan ses)))
+	       (with author 0
+		 (when (!= lan "scheme")
+		   (set! author (new-author))
+		   (start-slave author))
+		 (with p (silent-encode :start noop '())
+		   (set! p (cons (rcons (car p) author) (cdr p)))
+		   (pending-set lan ses (cons p l))
+		   (plugin-do lan ses))))
 	      (#t
 	       ((first (caar l)) lan ses)))))))
 

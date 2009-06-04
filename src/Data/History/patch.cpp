@@ -522,7 +522,7 @@ insert (array<patch>& a, patch p) {
   else if (get_type (p) == PATCH_MODIFICATION &&
 	   N(a) > 0 &&
 	   get_type (a[N(a)-1]) == PATCH_MODIFICATION &&
-	   (get_inverse (a[N(a)-1]) == get_modification (p) ||
+	   (get_inverse (a[N(a)-1]) == get_modification (p) &&
 	    get_modification (a[N(a)-1]) == get_inverse (p)))
     {
       // cout << "Cancel " << a[N(a)-1] << " against " << p << "\n";
