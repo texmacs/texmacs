@@ -13,6 +13,7 @@
 #include "converter.hpp" // hack: remove as soon as possible
 
 #include "Cocoa/mac_cocoa.h"
+#include "ApplicationServices/ApplicationServices.h"
 
 static NSString *
 to_nsstring_utf8 (string s) {
@@ -25,8 +26,7 @@ to_nsstring_utf8 (string s) {
 
 void mac_image_to_png (url img_file, url png_file) {
   // we need to be sure that the Cocoa application infrastructure is initialized 
-  // (apparently Qt does not do this properly and the NSSpellChecker instance returns null
-  //  without the following instruction)
+  // (apparently Qt does not do this properly)
   NSApplication *NSApp=[NSApplication sharedApplication]; (void) NSApp;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -40,6 +40,46 @@ void mac_image_to_png (url img_file, url png_file) {
   NSData *png_data = [bmp representationUsingType: NSPNGFileType properties: nil ];
   [png_data writeToURL:[NSURL fileURLWithPath: to_nsstring_utf8 ( concretize (png_file))] atomically: YES];
   [bmp release];
+  [pool release];
+}
+
+
+void mac_ps_to_pdf (url ps_file, url pdf_file) 
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSString *inpath = to_nsstring_utf8 ( concretize (ps_file) );
+  NSString *outpath = to_nsstring_utf8 ( concretize (pdf_file) );
+  NSURL *inurl = [NSURL fileURLWithPath:inpath];
+  NSURL *outurl = [NSURL fileURLWithPath: outpath];
+  
+  CGPSConverterCallbacks callbacks = {
+    0, // unsigned int version;
+    nil, // CGPSConverterBeginDocumentCallback beginDocument;
+    nil, // CGPSConverterEndDocumentCallback endDocument;
+    nil, // CGPSConverterBeginPageCallback beginPage;
+    nil, // CGPSConverterEndPageCallback endPage;
+    nil, // CGPSConverterProgressCallback noteProgress;
+    nil, // CGPSConverterMessageCallback noteMessage;
+    nil  // CGPSConverterReleaseInfoCallback releaseInfo;
+  };
+  
+  CGPSConverterRef converter = CGPSConverterCreate (NULL,&callbacks,NULL);  
+  CGDataProviderRef provider = CGDataProviderCreateWithURL ((CFURLRef)inurl);
+  CGDataConsumerRef consumer = CGDataConsumerCreateWithURL ((CFURLRef)outurl);
+  
+  BOOL converted = CGPSConverterConvert (converter,provider,consumer,NULL);
+  
+  if (converted) {
+    NSLog(@"Postscript file converted.\n");
+    //CGDataConsumerRetain(consumer);
+  } else {
+    NSLog(@"Converting postscript failed.\n");
+  }
+  
+  CGDataProviderRelease (provider);
+  CGDataConsumerRelease (consumer);
+  CFRelease (converter);
+  
   [pool release];
 }
 

@@ -32,6 +32,10 @@
 #endif
 #include <sys/types.h>
 
+#ifdef MACOSX_EXTENSIONS
+#include "MacOS/mac_images.h"
+#endif
+
 /******************************************************************************
 * New style loading and saving
 ******************************************************************************/
@@ -576,6 +580,10 @@ ps2pdf (url u1, url u2) {
   tm_delete_array (_u1);
   tm_delete_array (_u2);
 #else
+#ifdef MACOSX_EXTENSIONS
+  mac_ps_to_pdf (u1, u2);
+#else
   system ("ps2pdf", u1, u2);
+#endif
 #endif
 }

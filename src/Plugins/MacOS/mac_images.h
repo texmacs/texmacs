@@ -16,5 +16,6 @@
 
 void mac_image_to_png (url img_file, url png_file) ;
 
+void mac_ps_to_pdf (url ps_file, url pdf_file) ;
 
 #endif // MAC_IMAGES_H
