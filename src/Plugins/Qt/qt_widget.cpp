@@ -31,10 +31,11 @@
 #include <QToolButton>
 #include <QHBoxLayout>
 #include <QScrollBar>
+#include <QTimer>
 
 #include "QTMWidget.hpp"
 #include "QTMWindow.hpp"
-#include "QTMGuiHelper.hpp"
+//#include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
@@ -654,10 +655,10 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_MAIN_MENU");
     {
       QMenu* m= to_qmenu (w);
-      QMenuBar* b= new QMenuBar ();
-      replaceActions (b, m);
-      tm_mainwindow()->setMenuBar (b);
-      delete m;
+      if (m) {
+        replaceActions (tm_mainwindow()->menuBar (), m);
+        delete m;
+      }
     }
     break;
 
