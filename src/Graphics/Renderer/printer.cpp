@@ -371,6 +371,80 @@ find_ps_font_name (string name, string s) {
   return name;
 }
 
+
+#define HEX_PER_LINE 30
+
+static SI parse_length (string pfb, int& pos) {
+  QN c4= (QN) pfb[pos++];
+  QN c3= (QN) pfb[pos++];
+  QN c2= (QN) pfb[pos++];
+  QI c1= (QI) pfb[pos++];
+  return (((((((SI) c1)<<8)+ ((SI) c2))<<8)+ ((SI) c3))<<8)+ c4;
+}
+
+static string pfb_to_pfa (url file) {
+  //cout << "pfb_to_pfa :" << file << LF;
+  string pfb, pfa;
+  QN magic, type = 0;
+  SI length;
+  
+  (void) load_string (file, pfb, true);
+  int pos = 0, size = N(pfb);
+  while ((pos < size) && (type != 3)) {
+    parse (pfb, pos, magic);
+    //cout << "magic:" << as_hexadecimal(magic,2) << LF ;
+    if (magic != 128) {
+      FAILED ("Not a pfb file");
+    }
+    parse (pfb, pos, type);
+    //cout << "type:" << as_hexadecimal(type,2) << LF;
+    switch (type) {
+        
+      case 1 :
+        // plain text
+        length = parse_length (pfb, pos);
+        // parse (pfb, pos, length);
+        //cout << "plain text of size " << length << LF;
+        for (int i=0; i <length; i++) {
+          QI ch;
+          parse(pfb, pos, ch);
+          if (ch == '\r') pfa << "\n";
+          else pfa << ch;
+        }
+        break;
+        
+      case 2 :
+        // binary data
+        length = parse_length (pfb, pos);
+        //        parse (pfb, pos, length);
+        //cout << "binary data of size " << length << LF;
+        for (int i=0; i <length; i++) {
+          QI ch;
+          parse(pfb, pos, ch);
+          pfa << as_hexadecimal (ch, 2);
+          if ((i+1) % HEX_PER_LINE == 0) pfa << "\n"; 
+        }
+        break;
+        
+      case 3 :
+        //cout << "end of file"  << LF;
+        // end of file
+        break;
+        
+      default : 
+        FAILED ("Unknown field type while reading PFB file");
+        break;
+        
+    }
+  }
+  return pfa;
+}
+
+#undef HEX_PER_LINE
+
+
+
+
 void
 printer_rep::generate_tex_fonts () {
   hashset<string> done;
@@ -390,10 +464,7 @@ printer_rep::generate_tex_fonts () {
       root= fn_name (0, pos2);
       url u= tt_font_find (root);
       if (suffix (u) == "pfb") {
-	url v= url_temp (".pfa");
-	system ("pfb2pfa", u, v);
-	(void) load_string (v, ttf, true);
-	remove (v);
+        ttf = pfb_to_pfa (u);
       }
     }
 #endif
