@@ -115,6 +115,7 @@ qt_image_size (url image, int& w, int& h) {
 
 string qt_application_directory ()
 {
-  return from_qstring (QCoreApplication::applicationDirPath ());
+  return  string (QCoreApplication::applicationDirPath () .toAscii() .constData());
+//  return from_qstring (QCoreApplication::applicationDirPath ());
 }
 
