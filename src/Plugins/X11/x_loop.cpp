@@ -26,6 +26,12 @@
 #include <unistd.h>
 #endif
 
+
+#if defined(OS_MACOS) && defined(X11TEXMACS)
+#include "MacOS/mac_app.h"
+#endif
+
+
 extern hashmap<Window,pointer> Window_to_window;
 int  nr_windows= 0;
 
@@ -414,5 +420,11 @@ x_gui_rep::event_loop () {
       }
       messages= not_ready;
     }
+    
+#if defined(OS_MACOS) && defined(X11TEXMACS)
+    process_mac_events ();
+#endif
+    
+    
   }
 }
