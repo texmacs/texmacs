@@ -27,7 +27,7 @@
 #endif
 
 
-#if defined(OS_MACOS) && defined(X11TEXMACS)
+#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
 #include "MacOS/mac_app.h"
 #endif
 
@@ -421,7 +421,7 @@ x_gui_rep::event_loop () {
       messages= not_ready;
     }
     
-#if defined(OS_MACOS) && defined(X11TEXMACS)
+#if defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS)
     process_mac_events ();
 #endif
     

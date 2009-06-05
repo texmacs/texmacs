@@ -24,7 +24,7 @@ void mac_fix_paths ();
 #include <QApplication>
 #endif
 
-#if defined(X11TEXMACS) && defined(OS_MACOS)
+#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
 #include "MacOS/mac_app.h"
 #endif
 
@@ -70,7 +70,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   }
 #endif
 
-#if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_WS_MAC)) || defined (OS_MACOS)
+#if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_WS_MAC)) || (defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS))
   // Mac bundle environment initialization
   // We set some environment variables when the executable
   // is in a .app bundle on MacOSX
@@ -246,7 +246,7 @@ TeXmacs_main (int argc, char** argv) {
   bench_cumul ("initialize plugins");
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
   
-#if defined(X11TEXMACS) && defined(OS_MACOS)
+#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
   init_mac_application ();
 #endif
     
@@ -301,7 +301,7 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";
   gui_close ();
   
-#if defined(X11TEXMACS) && defined(OS_MACOS)
+#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
   finalize_mac_application ();
 #endif
   
