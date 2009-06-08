@@ -181,6 +181,7 @@ void
 qt_gui_rep::update () {
   ::update();
   interrupted = false;
+  qt_update_flag= false;
 }
 
 void
@@ -199,7 +200,6 @@ qt_gui_rep::event_loop () {
     //int end= texmacs_time ();
     //if (end > start) cout << "Update " << end - start << "\n";
     time_credit= min (1000000, 2 * time_credit);
-    qt_update_flag= false;
   }
   //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
   app->sendPostedEvents (0, QEvent::DeferredDelete);
