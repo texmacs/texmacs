@@ -169,6 +169,7 @@ QTMWidget::postponedUpdate () {
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QRect rect = event->rect ();
+  bool partial_redraw = false;
 
   if (DEBUG_EVENTS) {
     QPainter p(this);
@@ -223,6 +224,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
       if (DEBUG_EVENTS)
         cout << "Interrupted\n";
       qt_update_flag= true;
+      partial_redraw = true;
     }
 
     r->end();
@@ -231,8 +233,8 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     //int end= texmacs_time ();
     //if (end > start) cout << "Repaint " << end - start << "\n";
   }
-
-  if (qt_update_flag) {
+  if (partial_redraw) 
+  {
     if (DEBUG_EVENTS)
       cout << "Postponed redrawing\n";
     delayed_rects= list<QRect> (rect, delayed_rects);
