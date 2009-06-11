@@ -59,7 +59,7 @@ printer_rep::printer_rep (
   
   prologue   << "%!PS-Adobe-2.0\n"
 	     << "%%Creator: TeXmacs-" TEXMACS_VERSION "\n"
-	     << "%%Title: " << as_string (ps_file_name) << "\n"
+	     << "%%Title: " << as_string (tail (ps_file_name)) << "\n"
 	     << "%%Pages: " << as_string (nr_pages) << "\n"
 	     << "%%PageOrder: Ascend\n";
   if (page_type != "user")
