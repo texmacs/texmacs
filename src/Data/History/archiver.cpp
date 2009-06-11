@@ -223,9 +223,15 @@ archiver_rep::expose (patch archive) {
       patch nx= make_history (patch (un2, nx2), make_branches (0));
       patch un= patch (un1, nx);
       patch re= append_branches (re1, fut);
+      last_save= last_autosave= -1;
       return make_history (un, re);
     }
   else return archive;
+}
+
+void
+archiver_rep::expose () {
+  archive= expose (archive);
 }
 
 void
@@ -242,6 +248,7 @@ archiver_rep::normalize () {
     split (p1, re2, Re1, Re2);
     patch ar2= make_history (un2, Re1);
     archive= make_history (patch (p1, ar2), append_branches (re1, Re2));
+    last_save= last_autosave= -1;
   }
 }
 
@@ -314,7 +321,7 @@ bool
 archiver_rep::retract () {
   if (!has_history ()) return false;
   if (the_owner != 0 && the_owner != the_author) return false;
-  archive= expose (archive);
+  expose ();
   patch un= car (get_undo (archive));
   if (get_author (un) != the_author) return false;
   patch re= get_redo (archive);
@@ -350,7 +357,8 @@ void
 archiver_rep::simplify () {
   if (has_history () &&
       nr_undo (cdr (get_undo (archive))) == 1 &&
-      nr_redo (cdr (get_undo (archive))) == 0)
+      nr_redo (cdr (get_undo (archive))) == 0 &&
+      depth != last_save + 1)
     {
       patch p1= car (get_undo (archive));
       patch p2= car (get_undo (cdr (get_undo (archive))));
@@ -366,6 +374,7 @@ archiver_rep::simplify () {
 	archive= make_history (un, re);
 	//show_all ();
 	//cout << "\n";
+	if (depth == last_autosave + 1) last_autosave= -1;
 	depth--;
 	simplify ();
       }
@@ -445,7 +454,7 @@ archiver_rep::undo (int i) {
   path r;
   while (undo_possibilities () != 0) {
     ASSERT (i == 0, "index out of range");
-    archive= expose (archive);
+    expose ();
     if (get_author (car (get_undo (archive))) == the_author)
       return undo_one (i);
     else {
@@ -527,7 +536,7 @@ archiver_rep::mark_cancel (double m) {
   //cout << "Mark cancel " << m << "\n";
   cancel ();
   while (nr_undo (archive) != 0) {
-    archive= expose (archive);
+    expose ();
     if (is_marker (car (get_undo (archive)), m, false)) {
       archive= remove_marker (archive, m);
       depth--;
@@ -549,6 +558,17 @@ archiver_rep::mark_cancel (double m) {
 * Check changes since last save/autosave
 ******************************************************************************/
 
+int
+archiver_rep::corrected_depth () {
+  // NOTE : fix depth due to presence of marker
+  // FIXME: implement a more robust check for conformity with saved state
+  if (nr_undo (archive) == 0) return depth;
+  patch p= car (get_undo (archive));
+  if (get_type (p) == PATCH_AUTHOR) p= p[0];
+  if (get_type (p) == PATCH_BIRTH && get_birth (p) == false) return depth - 1;
+  return depth;
+}
+
 void
 archiver_rep::require_save () {
   last_save= -1;
@@ -556,12 +576,12 @@ archiver_rep::require_save () {
 
 void
 archiver_rep::notify_save () {
-  last_save= depth;
+  last_save= corrected_depth ();
 }
 
 bool
 archiver_rep::conform_save () {
-  return last_save == depth;
+  return last_save == corrected_depth ();
 }
 
 void

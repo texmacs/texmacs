@@ -33,7 +33,9 @@ protected:
   void split (patch p1, patch p2, patch& re1, patch& re2);
   patch make_future (patch p1, patch p2);
   patch expose (patch archive);
+  void expose ();
   void normalize ();
+  int corrected_depth ();
 
 public:
   archiver_rep (double author, path rp);
