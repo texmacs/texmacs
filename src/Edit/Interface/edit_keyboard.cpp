@@ -96,6 +96,7 @@ edit_interface_rep::try_shortcut (string comb) {
     mark_start (sh_mark);
     string rew= sv->kbd_post_rewrite (sh_s);
     if (N(help)>0) set_message (help, rew);
+    else if (shorth == rew) set_message ("keyboard shorthand: " * rew);
     else set_message ("keyboard shorthand: " * rew, shorth);
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);

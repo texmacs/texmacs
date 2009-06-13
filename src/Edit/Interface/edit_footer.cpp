@@ -380,8 +380,10 @@ edit_interface_rep::set_footer () {
     set_right_footer();
   }
   else {
-    set_left_footer (message_l);
-    set_right_footer (message_r);
+    if (message_l == "") set_left_footer ();
+    else set_left_footer (message_l);
+    if (message_r == "") set_right_footer ();
+    else set_right_footer (message_r);
     message_l= message_r= "";
   }
 }
