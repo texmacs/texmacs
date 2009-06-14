@@ -12,6 +12,7 @@
 #ifndef SOCKET_SERVER_H
 #define SOCKET_SERVER_H
 #include "tm_link.hpp"
+#include "socket_notifier.hpp"
 
 /******************************************************************************
 * The socket_server class
@@ -22,6 +23,8 @@ struct socket_server_rep: tm_link_rep {
   int server;               // listening socket descriptor
   array<tm_link> incoming;  // list of clients
 
+  socket_notifier sn;
+  
 public:
   socket_server_rep (int port);
   ~socket_server_rep ();

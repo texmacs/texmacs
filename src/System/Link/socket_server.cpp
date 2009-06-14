@@ -23,14 +23,22 @@
 #include <sys/wait.h>
 #endif
 
+
 hashset<pointer> socket_server_set;
+
+
+static void 
+socket_server_callback(void *obj, void *info) {
+  socket_server_rep* ss = (socket_server_rep*) obj;
+  ss->start_client ();
+}
 
 /******************************************************************************
 * Constructors and destructors for socket_servers
 ******************************************************************************/
 
 socket_server_rep::socket_server_rep (int port2):
-  port (port2)
+ port (port2), sn ()
 {
   socket_server_set->insert ((pointer) this);
   server= -1;
@@ -84,6 +92,10 @@ socket_server_rep::start () {
     return "Error: call to 'listen' failed";
 
   alive= true;
+  
+  sn = socket_notifier (server, &socket_server_callback, this, NULL);
+  add_notifier (sn);
+  
   return "ok";
 #else
   return "Error: sockets not implemented";
@@ -107,6 +119,8 @@ socket_server_rep::start_client () {
     incoming= update;
     incoming << make_socket_link (addr, -1, SOCKET_SERVER, client);
   }
+  
+  if (!is_nil (feed_cmd)) feed_cmd->apply (); // call the data processor
 #endif
 }
 
@@ -142,6 +156,8 @@ socket_server_rep::stop () {
   if (!alive) return;
   incoming= array<tm_link> ();
   alive= false;
+  
+  remove_notifier (sn);
   close (server);
   wait (NULL);
 #endif

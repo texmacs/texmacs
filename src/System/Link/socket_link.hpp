@@ -12,6 +12,7 @@
 #ifndef SOCKET_LINK_H
 #define SOCKET_LINK_H
 #include "tm_link.hpp"
+#include "socket_notifier.hpp"
 
 /******************************************************************************
 * The socket_link class
@@ -24,6 +25,8 @@ struct socket_link_rep: tm_link_rep {
   int    io;            // file descriptor for data going to the child
   string outbuf;        // pending output from plugin
 
+  socket_notifier sn;
+  
 public:
   socket_link_rep (string host, int port, int type, int fd);
   ~socket_link_rep ();

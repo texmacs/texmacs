@@ -19,6 +19,7 @@
 #include "socket_link.hpp"
 #include "socket_server.hpp"
 #include "dictionary.hpp"
+#include "socket_notifier.hpp"
 
 server* the_server= NULL;
 bool texmacs_started= false;
@@ -291,10 +292,16 @@ tm_server_rep::style_get_cache (
 
 void
 tm_server_rep::interpose_handler () {
+
+#if 0 // choiche between old and new socket listening methods
   listen_to_servers ();
   listen_to_pipes ();
   listen_to_sockets ();
   listen_to_connections ();
+#else
+  perform_select ();
+#endif
+
   exec_pending_commands ();
 
   int i,j;

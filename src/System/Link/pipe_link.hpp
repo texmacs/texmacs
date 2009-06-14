@@ -12,6 +12,7 @@
 #ifndef PIPE_LINK_H
 #define PIPE_LINK_H
 #include "tm_link.hpp"
+#include "socket_notifier.hpp"
 
 #ifdef OS_WIN32
 #include <sys/pipe.h>
@@ -50,6 +51,8 @@ struct pipe_link_rep: tm_link_rep {
   string outbuf;        // pending output from plugin
   string errbuf;        // pending errors from plugin
 
+  socket_notifier snout, snerr;
+  
 public:
   pipe_link_rep (string cmd);
   ~pipe_link_rep ();

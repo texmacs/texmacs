@@ -12,6 +12,8 @@
 #ifndef TM_LINK_H
 #define TM_LINK_H
 #include "tree.hpp"
+#include "command.hpp"
+
 
 #define CONNECTION_DEAD    0
 #define CONNECTION_DYING   1
@@ -39,6 +41,8 @@ struct tm_link_rep: abstract_struct {
   bool   alive;   // link is alive
   string secret;  // empty string or secret key for encrypted connections
 
+  command feed_cmd; // called when async data available
+  
 public:
   inline tm_link_rep () {}
   inline virtual ~tm_link_rep () {}
@@ -57,6 +61,8 @@ public:
   void secure_server (string cmd);
   void secure_client ();
 
+  void set_command (command _cmd) { feed_cmd = _cmd; }
+  
   friend class tm_link;
 };
 

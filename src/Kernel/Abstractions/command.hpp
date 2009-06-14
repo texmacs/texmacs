@@ -26,6 +26,8 @@ class command {
 public:
   ABSTRACT_NULL(command);
   command (void (*routine) (void));
+  command (void (*_callback) (void*, void*), void *_obj, void *_info = NULL);
+
   inline void   operator () (void);
   inline friend ostream& operator << (ostream& out, command cmd);
 };

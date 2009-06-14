@@ -48,12 +48,21 @@ public:
   void   read (int channel);
   void   stop ();
   void   interrupt ();
+  void   listen ();
 };
 RESOURCE_CODE(connection);
 
 /******************************************************************************
 * Routines for connections
 ******************************************************************************/
+
+static void 
+connection_callback (void *obj, void* info) {
+  //cout << "connection callback " << obj << LF;
+  connection_rep *con = (connection_rep*) obj;
+  con->listen ();
+}
+
 
 connection_rep::connection_rep (string name2, string session2, tm_link ln2):
   rep<connection> (name2 * "-" * session2),
@@ -80,6 +89,9 @@ connection_rep::start (bool again) {
   }
   tm_in ->bof ();
   tm_err->bof ();
+  
+  ln->set_command (command (connection_callback, this));
+  
   return message;
 }
 
@@ -167,25 +179,30 @@ listen_to_connections () {
   while (it->busy()) {
     string name= it->next ();
     connection con (name);
-    connection_notify_status (con);
-    if (con->status != CONNECTION_DEAD) {
-      con->read (LINK_ERR);
-      connection_notify (con, "error", con->tm_err->get ("error"));
-      con->read (LINK_OUT);
-      connection_notify (con, "output", con->tm_in->get ("output"));
-      connection_notify (con, "prompt", con->tm_in->get ("prompt"));
-      connection_notify (con, "input", con->tm_in->get ("input"));
-      tree t= connection_handlers (con->name);
-      int i, n= N(t);
-      for (i=0; i<n; i++) {
-	tree doc= con->tm_in->get (t[i][0]->label);
-	if (doc != "") call (t[i][1]->label, doc);
-	doc= con->tm_err->get (t[i][0]->label);
-	if (doc != "") call (t[i][1]->label, doc);
-      }
+    con->listen ();
+   }
+}
+
+void
+connection_rep::listen () {
+  connection_notify_status (this);
+  if (status != CONNECTION_DEAD) {
+    read (LINK_ERR);
+    connection_notify (this, "error", tm_err->get ("error"));
+    read (LINK_OUT);
+    connection_notify (this, "output", tm_in->get ("output"));
+    connection_notify (this, "prompt", tm_in->get ("prompt"));
+    connection_notify (this, "input", tm_in->get ("input"));
+    tree t= connection_handlers (name);
+    int i, n= N(t);
+    for (i=0; i<n; i++) {
+      tree doc= tm_in->get (t[i][0]->label);
+      if (doc != "") call (t[i][1]->label, doc);
+      doc= tm_err->get (t[i][0]->label);
+      if (doc != "") call (t[i][1]->label, doc);
     }
-    connection_notify_status (con);
   }
+  connection_notify_status (this);  
 }
 
 /******************************************************************************

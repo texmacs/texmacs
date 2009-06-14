@@ -31,6 +31,37 @@
 
 hashset<pointer> pipe_link_set;
 
+static void pipe_callback (void *obj, void *info) {
+  pipe_link_rep* con= (pipe_link_rep*) obj;  
+
+  fd_set rfds;
+  FD_ZERO (&rfds);
+  int max_fd= max (con->err, con->out)+1;
+  FD_SET (con->out, &rfds);
+  FD_SET (con->err, &rfds);
+  
+  struct timeval tv;
+  tv.tv_sec  = 0;
+  tv.tv_usec = 0;
+  select (max_fd, &rfds, NULL, NULL, &tv);
+
+  bool any_update = false;  
+  if (con->alive && FD_ISSET (con->out, &rfds)) {
+    //cout << "pipe_callback OUT" << LF;
+    con->feed (LINK_OUT);
+    any_update = true;
+  }
+  if (con->alive && FD_ISSET (con->err, &rfds)) {
+    //cout << "pipe_callback ERR" << LF;
+    con->feed (LINK_ERR);
+    any_update = true;
+  }
+  if (!is_nil (con->feed_cmd) && any_update) {
+    //cout << "pipe_callback APPLY" << LF;
+    if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
+  }
+}
+
 /******************************************************************************
 * Constructors and destructors for pipe_links
 ******************************************************************************/
@@ -124,6 +155,11 @@ pipe_link_rep::start () {
 #endif
 
     alive= true;
+    snout = socket_notifier (out, &pipe_callback, this, NULL);
+    snerr = socket_notifier (err, &pipe_callback, this, NULL);
+    add_notifier (snout);
+    add_notifier (snerr);
+    
     if (/* !banner */ true) return "ok";
     else {
       int r;
@@ -213,7 +249,10 @@ pipe_link_rep::feed (int channel) {
       killpg(pid,SIGKILL);
     }
 #endif
+
     alive= false;
+    remove_notifier (snout);      
+    remove_notifier (snerr);      
   }
   else {
     if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
@@ -279,11 +318,14 @@ pipe_link_rep::stop () {
     sleep(2);
     killpg(pid,SIGKILL);
   }
-  alive= false;
+  alive= false;    
   close (in);
 #endif
   alive= false;
   wait (NULL);
+
+  remove_notifier (snout);
+  remove_notifier (snerr);
 #endif
 }
 

@@ -34,6 +34,13 @@
 
 hashset<pointer> socket_link_set;
 
+
+static void
+socket_callback (void *obj, void* info) {
+  socket_link_rep* con= (socket_link_rep*) obj;
+  if (con->alive) con->feed (LINK_OUT);
+}
+
 /******************************************************************************
 * Constructors and destructors for socket_links
 ******************************************************************************/
@@ -124,7 +131,8 @@ socket_link_rep::start () {
   if (fcntl (io, F_SETFL, flags) < 0)
 #endif
     return "Error: non working connection to '" * where * "'";
-  alive= true;
+  alive = true;
+  sn = socket_notifier (io, &socket_callback, this, NULL);  
   return "ok";
 #else
   return "Error: sockets not implemented";
@@ -194,6 +202,8 @@ socket_link_rep::feed (int channel) {
     if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
+
+  if (!is_nil(feed_cmd)) (feed_cmd)->apply();
 #endif
 }
 
@@ -242,6 +252,7 @@ socket_link_rep::stop () {
   close (io);
   io= -1;
   alive= false;
+  sn = socket_notifier ();
   wait (NULL);
 #endif
 }
