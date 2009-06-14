@@ -145,18 +145,27 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
       while (true) {
 	register int instr= lig_kern [pc];
 
-	if (byte0 (instr) >= 128) { // halt
-	  // cout << "  Halt\n";
-	  ker [bp]  = 0;
-	  buf [bp++]= stack[sp--];
-	  break;
-	}
+	//if (byte0 (instr) >= 128) { // halt
+	//  // cout << "  Halt\n";
+	//  ker [bp]  = 0;
+	//  buf [bp++]= stack[sp--];
+	//  break;
+	//}
 
 	if (byte1 (instr) != next_char) { // continue
 	  // cout << "  " << (char) byte1 (instr) << " != " << (char) next_char
 	  //      << " => pc := pc + " << (byte0 (instr)+1) << "\n";
-	  pc += byte0 (instr)+1;
-	  continue;
+	  int skip_byte = byte0(instr);
+  	  if (skip_byte >= 128) { // current instruction is the final instruction
+	    // cout << "  Halt\n";
+	    ker [bp]  = 0;
+	    buf [bp++]= stack[sp--];
+	    break;
+	  }
+	  else {
+	    pc += skip_byte+1;
+	    continue;
+	  }
 	}
 
 	// cout << "  " << (char) byte1 (instr) << " == "
