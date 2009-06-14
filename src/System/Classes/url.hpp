@@ -49,6 +49,8 @@ inline url as_url(tree t) { return url(t); }
 * url constructors
 ******************************************************************************/
 
+extern tree none_tuple;
+
 url url_general (string name, int type);
 url url_unix (string name);
 url url_unix (string dir, string name);
@@ -57,7 +59,7 @@ url url_system (string dir, string name);
 url url_standard (string name);
 url url_standard (string dir, string name);
 
-inline url url_none () { return as_url (tuple ("none")); }
+inline url url_none () { return as_url (none_tuple); }
 inline url url_here () { return as_url (tree (".")); }
 inline url url_parent () { return as_url (tree ("..")); }
 inline url url_pwd () { return url_system ("$PWD"); }
@@ -78,7 +80,7 @@ inline url url_parent (url u) { return u * url_parent (); }
 * predicates
 ******************************************************************************/
 
-inline bool is_none (url u) { return u->t == tuple ("none"); }
+inline bool is_none (url u) { return u->t == none_tuple; }
 inline bool is_here (url u) { return u->t == "."; }
 inline bool is_parent (url u) { return u->t == ".."; }
 inline bool is_atomic (url u) { return is_atomic (u->t); }
