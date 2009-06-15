@@ -24,7 +24,7 @@
 
 #include "socket_server.hpp" // for number_of_servers
 
-#include "Guile/Scheme/object.hpp"
+#include "Scheme/object.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
 
 extern window (*get_current_window) (void);
