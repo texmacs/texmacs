@@ -16,21 +16,20 @@
 #include "qt_gui.hpp"
 #include "converter.hpp"
 
+#include "config.h"
 
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
+#include "Cairo/tm_cairo.hpp"
+
 #if defined(Q_WS_X11)
-#include <cairo-xlib.h>
 #include <QX11Info>
 extern Drawable qt_x11Handle(const QPaintDevice *pd);
 extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
-#undef KeyPress  // conflict between QEvent::KeyPree and X11 defintion
-#elif defined(Q_WS_MAC)
-#define ID OTHER_ID
-#include <cairo-quartz.h>
-#undef ID
-#endif
-#endif
+#undef KeyPress  // conflict between QEvent::KeyPrees and X11 defintion
+#endif // Q_WS_X11
+
+#endif // USE_CAIRO
 
 #include <QEvent>
 
@@ -196,14 +195,14 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     Display *dpy = x11Info().display();
     Drawable drawable = qt_x11Handle(this);
     Visual *visual = (Visual*)x11Info().visual();
-    surf = cairo_xlib_surface_create(dpy, drawable, visual, width(), height());
+    surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, width(), height());
 #elif defined(Q_WS_MAC)
-    surf = cairo_quartz_surface_create_for_cg_context ((CGContextRef)(this->macCGHandle()), width(), height());
+    surf = tm_cairo_quartz_surface_create_for_cg_context ((CGContextRef)(this->macCGHandle()), width(), height());
 #endif
-    cairo_t *ct = cairo_create(surf);
+    cairo_t *ct = tm_cairo_create (surf);
     r->begin (ct);
-    cairo_surface_destroy(surf);
-    cairo_destroy(ct);
+    tm_cairo_surface_destroy (surf);
+    tm_cairo_destroy (ct);
 #else
     r = the_qt_renderer();
     r->begin (static_cast<QPaintDevice*>(this));
