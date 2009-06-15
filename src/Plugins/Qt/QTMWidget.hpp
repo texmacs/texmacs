@@ -19,9 +19,11 @@
 class QTMWidget: public QWidget {
   Q_OBJECT
   list<QRect> delayed_rects;
-
+#if defined(Q_WS_X11) && defined(USE_CAIRO)
+  QPixmap backingPixmap;
+#endif
 public:
-  inline QTMWidget(simple_widget_rep *_wid): QWidget () {
+  inline QTMWidget(simple_widget_rep *_wid): QWidget ()  {
     setObjectName("A QTMWidget");
     setFocusPolicy (Qt::StrongFocus);
     // setBackgroundRole(QPalette::Window);
@@ -52,6 +54,7 @@ protected:
   virtual void mouseReleaseEvent (QMouseEvent* event);
   virtual void mouseMoveEvent (QMouseEvent* event);
   virtual bool event (QEvent *event);
+  virtual void resizeEvent (QResizeEvent *event);
 };
 
 #endif // QTMWIDGET_HPP

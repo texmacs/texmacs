@@ -165,8 +165,19 @@ QTMWidget::postponedUpdate () {
   }
 }
 
+
+void QTMWidget::resizeEvent( QResizeEvent* event )
+{
+  //  cout << "resize"<< LF;
+  QWidget::resizeEvent (event);
+#if defined(Q_WS_X11) && defined(USE_CAIRO)
+  backingPixmap = QPixmap(width(),height());
+#endif
+}
+
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
+  //cout << "paint"<< LF;
   QRect rect = event->rect ();
   bool partial_redraw = false;
 
@@ -192,10 +203,13 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     cairo_surface_t *surf;
 #ifdef Q_WS_X11
     //const QX11Info & info = x11Info();//qt_x11Info(this);
-    Display *dpy = x11Info().display();
-    Drawable drawable = qt_x11Handle(this);
-    Visual *visual = (Visual*)x11Info().visual();
-    surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, width(), height());
+    //    Display *dpy = x11Info().display();
+    //backingPixmap = QPixmap(width(),height());
+    //cout << backingPixmap.width() << LF;
+    Display *dpy = QX11Info::display();
+    Drawable drawable = backingPixmap.handle();
+    Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
+    surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, backingPixmap.width (), backingPixmap.height ());
 #elif defined(Q_WS_MAC)
     surf = tm_cairo_quartz_surface_create_for_cg_context ((CGContextRef)(this->macCGHandle()), width(), height());
 #endif
@@ -232,6 +246,17 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     //int end= texmacs_time ();
     //if (end > start) cout << "Repaint " << end - start << "\n";
   }
+
+
+#if defined(Q_WS_X11) && defined(USE_CAIRO)
+  {
+    // copy pixmap to screen
+    QPainter painter (this);
+    painter.drawPixmap (0,0,backingPixmap);
+  }
+#endif
+
+
   if (partial_redraw) 
   {
     if (DEBUG_EVENTS)
