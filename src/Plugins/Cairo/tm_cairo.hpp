@@ -16,8 +16,28 @@
 bool tm_cairo_initialize ();
 bool tm_cairo_present ();
 
+
 #ifdef USE_CAIRO
 #include <cairo.h>
+#ifdef CAIRO_HAS_FT_FONT
+#include <cairo-ft.h>
+#endif
+#ifdef CAIRO_HAS_PS_SURFACE
+#include <cairo-ps.h>
+#endif
+#ifdef CAIRO_HAS_XLIB_SURFACE
+#include <cairo-xlib.h>
+#undef KeyPress  // conflict between QEvent::KeyPrees and X11 defintion
+#endif
+#ifdef CAIRO_HAS_QUARTZ_SURFACE
+#define ID OTHER_ID
+// conflicts with X11 headers
+#undef Status
+#define Cursor OTHER_Cursor
+#include <cairo-quartz.h>
+#undef ID
+#undef Cursor
+#endif
 
 extern void (*tm_cairo_move_to) (cairo_t *cr, double x, double y);
 extern void (*tm_cairo_show_glyphs) (cairo_t *cr, const cairo_glyph_t *glyphs, int num_glyphs);
@@ -30,7 +50,6 @@ extern void (*tm_cairo_set_antialias) (cairo_t *cr, cairo_antialias_t antialias)
 extern void (*tm_cairo_set_font_size) (cairo_t *cr, double size);
 extern void (*tm_cairo_fill) (cairo_t *cr);
 extern void (*tm_cairo_set_source_rgba) (cairo_t *cr, double red, double green, double blue, double alpha);
-extern cairo_surface_t * (*tm_cairo_ps_surface_create) (const char *filename, double width_in_points, double height_in_points);
 extern const char * (*tm_cairo_status_to_string) (cairo_status_t status);
 extern void (*tm_cairo_set_source_rgb) (cairo_t *cr, double red, double green, double blue);
 extern void (*tm_cairo_close_path) (cairo_t *cr);
@@ -40,7 +59,6 @@ extern void (*tm_cairo_set_font_face) (cairo_t *cr, cairo_font_face_t *font_face
 extern void (*tm_cairo_font_face_destroy) (cairo_font_face_t *font_face);
 extern void (*tm_cairo_set_line_width) (cairo_t *cr, double width);
 extern cairo_surface_t * (*tm_cairo_image_surface_create_from_png) (const char *filename);
-extern cairo_font_face_t * (*tm_cairo_ft_font_face_create_for_ft_face) (FT_Face face, int load_flags);
 extern int (*tm_cairo_image_surface_get_width) (cairo_surface_t *surface);
 extern void (*tm_cairo_scale) (cairo_t *cr, double sx, double sy);
 extern void (*tm_cairo_mask) (cairo_t *cr, cairo_pattern_t *pattern);
@@ -63,6 +81,22 @@ extern void (*tm_cairo_save) (cairo_t *cr);
 extern void (*tm_cairo_set_source) (cairo_t *cr, cairo_pattern_t *source);
 extern int (*tm_cairo_image_surface_get_height) (cairo_surface_t *surface);
 extern void (*tm_cairo_mask_surface) (cairo_t *cr, cairo_surface_t *surface, double surface_x, double surface_y);
+
+#ifdef CAIRO_HAS_FT_FONT
+extern cairo_font_face_t * (*tm_cairo_ft_font_face_create_for_ft_face) (FT_Face face, int load_flags);
+#endif
+
+#ifdef CAIRO_HAS_PS_SURFACE
+extern cairo_surface_t * (*tm_cairo_ps_surface_create) (const char *filename, double width_in_points, double height_in_points);
+#endif
+
+#ifdef CAIRO_HAS_XLIB_SURFACE
+extern cairo_surface_t * (*tm_cairo_xlib_surface_create) (Display *dpy, Drawable	drawable, Visual *visual, int width, int height);
+#endif
+
+#ifdef CAIRO_HAS_QUARTZ_SURFACE
+extern  cairo_surface_t * (*tm_cairo_quartz_surface_create_for_cg_context) (CGContextRef cgContext, unsigned int width, unsigned int height);
+#endif
 
 #endif
 

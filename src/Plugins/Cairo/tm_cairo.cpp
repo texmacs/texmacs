@@ -10,11 +10,9 @@
 ******************************************************************************/
 
 #include "dyn_link.hpp"
+#include "tm_cairo.hpp"
 
 #ifdef USE_CAIRO
-#include <cairo.h>
-#include <cairo-ft.h>
-#include <cairo-ps.h>
 
 static bool tm_cairo_initialized= false;
 static bool tm_cairo_error      = true;
@@ -30,7 +28,6 @@ static bool tm_cairo_error      = true;
  void (*tm_cairo_set_font_size) (cairo_t *cr, double size);
  void (*tm_cairo_fill) (cairo_t *cr);
  void (*tm_cairo_set_source_rgba) (cairo_t *cr, double red, double green, double blue, double alpha);
- cairo_surface_t * (*tm_cairo_ps_surface_create) (const char *filename, double width_in_points, double height_in_points);
  const char * (*tm_cairo_status_to_string) (cairo_status_t status);
  void (*tm_cairo_set_source_rgb) (cairo_t *cr, double red, double green, double blue);
  void (*tm_cairo_close_path) (cairo_t *cr);
@@ -40,7 +37,6 @@ static bool tm_cairo_error      = true;
  void (*tm_cairo_font_face_destroy) (cairo_font_face_t *font_face);
  void (*tm_cairo_set_line_width) (cairo_t *cr, double width);
  cairo_surface_t * (*tm_cairo_image_surface_create_from_png) (const char *filename);
- cairo_font_face_t * (*tm_cairo_ft_font_face_create_for_ft_face) (FT_Face face, int load_flags);
  int (*tm_cairo_image_surface_get_width) (cairo_surface_t *surface);
  void (*tm_cairo_scale) (cairo_t *cr, double sx, double sy);
  void (*tm_cairo_mask) (cairo_t *cr, cairo_pattern_t *pattern);
@@ -64,6 +60,22 @@ static bool tm_cairo_error      = true;
  int (*tm_cairo_image_surface_get_height) (cairo_surface_t *surface);
  void (*tm_cairo_mask_surface) (cairo_t *cr, cairo_surface_t *surface, double surface_x, double surface_y);
 
+
+#ifdef CAIRO_HAS_FT_FONT
+  cairo_font_face_t * (*tm_cairo_ft_font_face_create_for_ft_face) (FT_Face face, int load_flags);
+#endif
+
+#ifdef CAIRO_HAS_PS_SURFACE
+  cairo_surface_t * (*tm_cairo_ps_surface_create) (const char *filename, double width_in_points, double height_in_points);
+#endif
+
+#ifdef CAIRO_HAS_XLIB_SURFACE
+ cairo_surface_t * (*tm_cairo_xlib_surface_create) (Display *dpy, Drawable	drawable, Visual *visual, int width, int height);
+#endif
+
+#ifdef CAIRO_HAS_QUARTZ_SURFACE
+  cairo_surface_t * (*tm_cairo_quartz_surface_create_for_cg_context) (CGContextRef cgContext, unsigned int width, unsigned int height);
+#endif
 
 bool
 tm_cairo_initialize () {
@@ -91,7 +103,6 @@ tm_cairo_initialize () {
   CAIRO_LINK(cairo_set_font_size, tm_cairo_set_font_size);
   CAIRO_LINK(cairo_fill, tm_cairo_fill);
   CAIRO_LINK(cairo_set_source_rgba, tm_cairo_set_source_rgba);
-  CAIRO_LINK(cairo_ps_surface_create, tm_cairo_ps_surface_create);
   CAIRO_LINK(cairo_status_to_string, tm_cairo_status_to_string);
   CAIRO_LINK(cairo_set_source_rgb, tm_cairo_set_source_rgb);
   CAIRO_LINK(cairo_close_path, tm_cairo_close_path);
@@ -101,7 +112,6 @@ tm_cairo_initialize () {
   CAIRO_LINK(cairo_font_face_destroy, tm_cairo_font_face_destroy);
   CAIRO_LINK(cairo_set_line_width, tm_cairo_set_line_width);
   CAIRO_LINK(cairo_image_surface_create_from_png, tm_cairo_image_surface_create_from_png);
-  CAIRO_LINK(cairo_ft_font_face_create_for_ft_face, tm_cairo_ft_font_face_create_for_ft_face);
   CAIRO_LINK(cairo_image_surface_get_width, tm_cairo_image_surface_get_width);
   CAIRO_LINK(cairo_scale, tm_cairo_scale);
   CAIRO_LINK(cairo_mask, tm_cairo_mask);
@@ -125,6 +135,20 @@ tm_cairo_initialize () {
   CAIRO_LINK(cairo_image_surface_get_height, tm_cairo_image_surface_get_height);
   CAIRO_LINK(cairo_mask_surface, tm_cairo_mask_surface);
 
+#ifdef CAIRO_HAS_FT_FONT
+  CAIRO_LINK(cairo_ft_font_face_create_for_ft_face, tm_cairo_ft_font_face_create_for_ft_face);
+#endif
+#ifdef CAIRO_HAS_PS_SURFACE
+  CAIRO_LINK(cairo_ps_surface_create, tm_cairo_ps_surface_create);
+#endif
+#ifdef CAIRO_HAS_XLIB_SURFACE
+  CAIRO_LINK(cairo_xlib_surface_create, tm_cairo_xlib_surface_create);
+#endif  
+#ifdef CAIRO_HAS_QUARTZ_SURFACE
+  CAIRO_LINK(cairo_quartz_surface_create_for_cg_context, tm_cairo_quartz_surface_create_for_cg_context) ;
+#endif
+  
+    
 #undef CAIRO_LINK
 #ifdef LINKED_CAIRO
   if (DEBUG_AUTO) cout << "TeXmacs] With linked Cairo support\n";

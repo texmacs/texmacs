@@ -25,9 +25,6 @@
 #include "Freetype/free_type.hpp"
 #include "tm_cairo.hpp"
 
-#include <cairo-ft.h>
-#include <cairo-ps.h>
-
 /******************************************************************************
 * Cairo images
 ******************************************************************************/
@@ -95,7 +92,7 @@ public:
   
   void begin (void* c); // c must be a cairo context of type (cairo_t*)
   void end ();
-  
+    
 };
 
 

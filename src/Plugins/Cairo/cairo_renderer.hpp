@@ -14,7 +14,6 @@
 #include "basic_renderer.hpp"
 
 
-
 basic_renderer_rep* the_cairo_renderer();
 
 #endif // defined CAIRO_RENDERER_HPP
