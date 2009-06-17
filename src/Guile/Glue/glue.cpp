@@ -394,11 +394,11 @@ tree
 tree_assign (tree r, tree t) {
   path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
-    assign (reverse (ip), t);
+    assign (reverse (ip), copy (t));
     return subtree (the_et, reverse (ip));
   }
   else {
-    assign (r, t);
+    assign (r, copy (t));
     return r;
   }
 }
@@ -407,11 +407,11 @@ tree
 tree_insert (tree r, int pos, tree t) {
   path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
-    insert (reverse (path (pos, ip)), t);
+    insert (reverse (path (pos, ip)), copy (t));
     return subtree (the_et, reverse (ip));
   }
   else {
-    insert (r, pos, t);
+    insert (r, pos, copy (t));
     return r;
   }
 }
@@ -472,11 +472,11 @@ tree
 tree_insert_node (tree r, int pos, tree t) {
   path ip= copy (obtain_ip (r));
   if (ip_attached (ip)) {
-    insert_node (reverse (path (pos, ip)), t);
+    insert_node (reverse (path (pos, ip)), copy (t));
     return subtree (the_et, reverse (ip));
   }
   else {
-    insert_node (r, pos, t);
+    insert_node (r, pos, copy (t));
     return r;
   }
 }
