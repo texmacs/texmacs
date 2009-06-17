@@ -82,9 +82,15 @@
   (with s (object->string t)
     (if (== s "#<unspecified>") "" s)))
 
+(define (eval-with-catch x)
+  (catch #t
+	 (lambda () (eval x))
+	 (lambda (key msg . args)
+	   key)))
+
 (tm-define (scheme-eval t)
   (let* ((s (texmacs->verbatim (tm->tree t)))
-	 (r (eval (string->object s))))
+	 (r (eval-with-catch (string->object s))))
     (cond ((and (tree? r) (session-scheme-trees?)) r)
 	  ((session-scheme-math?)
 	   (with m (cas->stree r)
