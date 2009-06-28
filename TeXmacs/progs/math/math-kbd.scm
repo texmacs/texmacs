@@ -1180,6 +1180,7 @@
   ("T var var" "<top>")
   ("U var" "<Upsilon>")
   ("V var" "<Phi>")
+  ("V var var" "<nabla>")
   ("W var" "<Omega>")
   ("W var var" "<Mho>")
   ("X var" "<Xi>")
