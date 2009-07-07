@@ -103,6 +103,8 @@
 
   <assign|math|<macro|x|<with|mode|math|<arg|x>>>>
 
+  <assign|text|<macro|x|<with|mode|text|<arg|x>>>>
+
   <assign|op|<macro|x|<with|math-condensed|true|<arg|x>>>>
 
   <assign|cite*|<macro|x|<with|font-shape|italic|<arg|x>>>>
