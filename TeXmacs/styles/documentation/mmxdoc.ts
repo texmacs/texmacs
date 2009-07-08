@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.7.2>
 
 <style|source>
 
@@ -16,11 +16,10 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>
@@ -33,7 +32,7 @@
     </src-comment>
   </active*>
 
-  <assign|mmxweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|index>|<tmweb-link|Download|download>|<tmweb-link|Language|language>|<tmweb-link|Packages|package_list>|<tmweb-link|Develop|develop>|<tmweb-link|Contact|contact>|<hlink|<with|color|brown|<localize|Search>>|http://www.mathemagix.org/search>>>>>
+  <assign|mmxweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|index>|<tmweb-link|Download|download>|<tmweb-link|Language|language>|<tmweb-link|Packages|package_list>|<tmweb-link|Develop|develop>|<tmweb-link|Contact|contact>|<tmweb-link|Jobs|jobs>|<hlink|<with|color|brown|<localize|Search>>|http://www.mathemagix.org/search>>>>>
 
   <\active*>
     <\src-comment>
