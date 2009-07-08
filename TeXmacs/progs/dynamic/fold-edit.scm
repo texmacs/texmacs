@@ -90,6 +90,10 @@
 (tm-define (fold)
   (:type (-> void))
   (:synopsis "Fold at the current cursor position")
+  (noop))
+
+(tm-define (fold)
+  (:context toggle-second-context?)
   (with-innermost t toggle-second-context?
     (toggle-toggle t)
     (tree-go-to t 0 :start)))
@@ -97,6 +101,10 @@
 (tm-define (unfold)
   (:type (-> void))
   (:synopsis "Unfold at the current cursor position")
+  (noop))
+
+(tm-define (unfold)
+  (:context toggle-first-context?)
   (with-innermost t toggle-first-context?
     (toggle-toggle t)
     (tree-go-to t 1 :start)))
