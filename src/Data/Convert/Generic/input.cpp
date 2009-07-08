@@ -160,7 +160,7 @@ texmacs_input_rep::write (tree u) {
   tree& t= docs (channel);
   if (!is_document (u)) u= tree (DOCUMENT, u);
   if (t[N(t)-1] == "") t[N(t)-1]= u[0];
-  else {
+  else if (u[0] != "") {
     if (!is_concat (t[N(t)-1])) t[N(t)-1]= tree (CONCAT, t[N(t)-1]);
     if (!is_concat (u[0])) u[0]= tree (CONCAT, u[0]);
     t[N(t)-1] << A(u[0]);
