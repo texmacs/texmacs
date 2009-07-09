@@ -118,6 +118,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("fuse")= c;
   t ("generate")= c;
   t ("has")= c;
+  t ("help")= c;
   t ("hidden")= c;
   t ("holds")= c;
   t ("if")= c;
