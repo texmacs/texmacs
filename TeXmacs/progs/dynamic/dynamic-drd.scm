@@ -33,6 +33,7 @@
 (define-fold folded unfolded)
 (define-fold folded-plain unfolded-plain)
 (define-fold folded-std unfolded-std)
+(define-fold folded-explain unfolded-explain)
 (define-fold folded-env unfolded-env)
 (define-fold folded-grouped unfolded-grouped)
 

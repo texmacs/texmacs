@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.2>
 
 <style|<tuple|source|std>>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2005|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -46,6 +45,14 @@
       <\with|default-padded-normal|<value|padded-normal>|padded-normal|<value|folded-padded-normal>>
         <arg|body>
       </with>
+    </surround>
+  </macro>>
+
+  <assign|render-folded-explain|<\macro|tit|body>
+    <\surround|<no-indent><vspace*|0.5fn>|<vspace|0.5fn><right-flush>>
+      <with|font-series|bold|<arg|tit>><vspace|0.5fn>
+
+      <arg|body>
     </surround>
   </macro>>
 
@@ -114,6 +121,18 @@
     </render-folded-env>
   </macro>>
 
+  <assign|folded-explain|<\macro|x|y>
+    <\render-folded-explain|<with|color*|<value|color>|<action|<with|color|<value|color*>|<arg|x>>|(mouse-unfold)|<arg|x>>>>
+      <hidden|<arg|y>>
+    </render-folded-explain>
+  </macro>>
+
+  <assign|unfolded-explain|<\macro|x|y>
+    <\render-folded-explain|<with|color*|<value|color>|<action|<with|color|<value|color*>|<arg|x>>|(mouse-fold)|<arg|x>>>>
+      <arg|y>
+    </render-folded-explain>
+  </macro>>
+
   <assign|folded-grouped|<\macro|x|y>
     <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
       <arg|x>
@@ -141,6 +160,8 @@
   <drd-props|folded-std|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-env|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-explain|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-grouped|arity|2|accessible|0|hidden|1>
 

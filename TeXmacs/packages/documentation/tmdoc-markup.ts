@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.7.2>
 
 <style|source>
 
@@ -13,11 +13,10 @@
     <src-copyright|2001--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -57,12 +56,20 @@
     </src-comment>
   </active*>
 
-  <assign|explain|<\macro|what|body>
+  <assign|explain-header|<\macro|what>
     <\with|par-first|0fn|par-par-sep|0fn>
       <surround|<vspace*|0.5fn>|<no-page-break>|<arg|what>>
     </with>
+  </macro>>
 
+  <assign|explain-body|<\macro|body>
     <surround||<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>
+  </macro>>
+
+  <assign|explain|<\macro|what|body>
+    <explain-header|<arg|what>>
+
+    <explain-body|<arg|body>>
   </macro>>
 
   <assign|explain-macro-sub|<macro|x|pos|<if|<equal|<arg|pos>|0>|<indexed|<src-macro|<arg|x>>>|<src-arg|<arg|x>>>>>
@@ -197,6 +204,10 @@
 
   <assign|mmx-fragment|<\macro|x>
     <quote-env|<framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|x>>>>>
+  </macro>>
+
+  <assign|mmx-fragment*|<\macro|x>
+    <framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|x>>>>
   </macro>>
 
   <\active*>

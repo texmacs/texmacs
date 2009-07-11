@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|tmdoc>
+  <use-package|tmdoc-markup>
 
   <\active*>
     <\src-comment>
