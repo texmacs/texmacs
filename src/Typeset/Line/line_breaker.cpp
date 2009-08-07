@@ -256,8 +256,8 @@ void
 line_breaker_rep::test_better (path new_pos, path old_pos,
 			       int pen, int pen_spc)
 {
-  cout << "Test " << new_pos << ", " << old_pos << ", "
-       << pen << ", " << pen_spc << "\n";
+  //cout << "Test " << new_pos << ", " << old_pos << ", "
+  //<< pen << ", " << pen_spc << "\n";
   if (!best->contains (new_pos)) best (new_pos)= lb_info ();
   lb_info cur= best [new_pos];
   if ((pen < cur->pen) ||
@@ -265,7 +265,7 @@ line_breaker_rep::test_better (path new_pos, path old_pos,
     cur->prev   = old_pos;
     cur->pen    = pen;
     cur->pen_spc= min (pen_spc, 1000000000);
-    cout << "  Saved\n";
+    //cout << "  Better\n";
   }
 }
 
@@ -452,8 +452,6 @@ line_breaks (array<line_item> a, int start, int end,
   line_breaker_rep* H=
     tm_new<line_breaker_rep> (a, start, end, line_width, first_spc, last_spc);
   array<path> ap= ragged? H->compute_ragged_breaks (): H->compute_breaks ();
-  cout << "a = " << a << "\n";
-  cout << "ap= " << ap << "\n";
   tm_delete (H);
   return ap;
 }
