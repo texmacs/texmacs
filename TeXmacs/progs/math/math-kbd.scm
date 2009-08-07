@@ -314,6 +314,7 @@
 
   ("< >" "<lessgtr>")
   ("> <" "<gtrless>")
+  ("> < var" "<join>")
   ("< ~" "<lesssim>")
   ("< ~ ~" "<lessapprox>")
   ("< var ~" "<precsim>")
