@@ -32,7 +32,7 @@
     (and (tree-atomic? ct) (tree-is? dt 'document) dt)))
 
 (tm-define (program-row row)
-  (:synopsis "get the character at a given @row and @column")
+  (:synopsis "get the string at a given @row")
   (and-with doc (program-tree)
     (and-with par (tree-ref doc row)
       (and (tree-atomic? par) (tree->string par)))))
@@ -54,6 +54,57 @@
   (:synopsis "go to the character at a given @row and @col")
   (and-with doc (program-tree)
     (tree-go-to doc row col)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bracket handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (string-bracket-find* s pos inc br ibr level)
+  (cond ((or (< pos 0) (>= pos (string-length s))) (- -1 level))
+	((and (== level 0) (== (string-ref s pos) br)) pos)
+	((== (string-ref s pos) br)
+	 (string-bracket-find* s (+ pos inc) inc br ibr (- level 1)))
+	((== (string-ref s pos) ibr)
+	 (string-bracket-find* s (+ pos inc) inc br ibr (+ level 1)))
+	(else (string-bracket-find* s (+ pos inc) inc br ibr level))))
+
+(define (string-bracket-find s pos inc br ibr level)
+  (with r (string-bracket-find* s pos inc br ibr level)
+    (and (>= r 0) r)))
+
+(define (string-bracket-level s pos inc br ibr)
+  (with ret (string-bracket-find* s pos inc br ibr 0)
+    (if (< ret 0) (- -1 ret)
+	(string-bracket-level s (+ ret inc) br ibr))))
+
+(tm-define (string-bracket-forward s pos br ibr)
+  (:synopsis "find previous bracket @br with inverse @ibr in @s at @pos")
+  (string-bracket-find s pos 1 br ibr 0))
+
+(tm-define (string-bracket-backward s pos br ibr)
+  (:synopsis "find next bracket @br with inverse @ibr in @s at @pos")
+  (string-bracket-find s pos -1 br ibr 0))
+
+(define (program-bracket-find row col inc br ibr level)
+  (and-with s (program-row row)
+    (with ret (string-bracket-find* s col inc br ibr level)
+      (if (>= ret 0) (cons row ret)
+	  (with level* (- -1 ret)
+	    (and-with s* (program-row (+ row inc))
+	      (with col* (if (> inc 0) 0 (- (string-length s*) 1))
+		(program-bracket-find (+ row inc) col* inc
+				      br ibr level*))))))))
+
+(tm-define (program-previous-match row br ibr)
+  (:synopsis "find matching opening row for @row and bracket @br")
+  (let* ((s (program-row row))
+	 (last (- (string-length s) 1)))    
+    (if (not s) row
+	(with ret (string-bracket-level s last -1 br ibr)
+	  (if (== ret 0) row
+	      (with pos (program-bracket-find row last -1 br ibr -1)
+		(if (not pos) row
+		    (car pos))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Whitespace handling

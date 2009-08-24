@@ -11,26 +11,24 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (mathemagix-initialize)
-  (import-from (utils plugins plugin-convert))
-  (lazy-input-converter (mathemagix-input) mathemagix))
-
 (texmacs-modes
+  (in-mathemagix% (== (get-env "prog-language") "mathemagix"))
+  (in-prog-mathemagix% #t in-prog% in-mathemagix%)
   (in-mathemagix-math% #t in-mathemagix% in-math%))
+
+(lazy-keyboard (mathemagix-edit) in-prog-mathemagix?)
 
 (kbd-map
   (:mode in-mathemagix-math?)
   ;;("'" "'")
   ("\"" "\""))
 
-(if (url-exists-in-path? "mmx-light")
-    (plugin-configure mathemagix
-      (:require (url-exists-in-path? "mmx-light"))
-      (:initialize (mathemagix-initialize))
-      (:launch "mmx-light --texmacs")
-      (:session "Mathemagix"))
-    (plugin-configure mathemagix
-      (:require (url-exists-in-path? "mmx-shell"))
-      (:initialize (mathemagix-initialize))
-      (:launch "mmx-shell --texmacs")
-      (:session "Mathemagix")))
+(define (mathemagix-initialize)
+  (import-from (utils plugins plugin-convert))
+  (lazy-input-converter (mathemagix-input) mathemagix))
+
+(plugin-configure mathemagix
+  (:require (url-exists-in-path? "mmx-light"))
+  (:initialize (mathemagix-initialize))
+  (:launch "mmx-light --texmacs")
+  (:session "Mathemagix"))
