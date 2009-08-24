@@ -40,7 +40,7 @@
 	 (rr (min r1 r2 r3)))
     (reference-row-bis rr)))
 
-(define (compute-indentation row)
+(define (compute-indentation-bis row)
   (let* ((prev (max 0 (- row 1)))
 	 (s (program-row prev))
 	 (i (string-get-indent s))
@@ -62,6 +62,13 @@
 	    (with ref (reference-row prev)
 	      (string-get-indent (program-row ref)))))))
 
+(define (compute-indentation row)
+  (let* ((s (program-row row))
+	 (i (string-get-indent s)))
+    (if (and (< i (string-length s)) (== (string-ref s i) #\}))
+	(max 0 (- (compute-indentation-bis row) 2))
+	(compute-indentation-bis row))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for automatic indentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -75,6 +82,7 @@
 
 (tm-define (kbd-tab)
   (:mode in-prog-mathemagix?)
+  (:require (not (inside? 'session)))
   (mathemagix-indent))
 
 (tm-define (insert-return)
