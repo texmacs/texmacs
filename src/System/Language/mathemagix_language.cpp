@@ -12,6 +12,7 @@
 #include "analyze.hpp"
 #include "impl_language.hpp"
 #include "Scheme/object.hpp"
+#define COLOR_MARKUP "#500d04"
 
 static void parse_number (string s, int& pos);
 static void parse_string (string s, int& pos);
@@ -202,6 +203,7 @@ mathemagix_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("<less><less>*")= c;
   t ("<less><less>%")= c;
   t ("<gtr><gtr>")= c;
+  t ("|")= c;
 }
 
 static inline bool
@@ -225,6 +227,21 @@ parse_identifier (hashmap<string, string>& t,
   if (is_number (s[i])) return;
   if (postfix && s[i]=='.') i++;
   while (i<N(s) && belongs_to_identifier (s[i])) i++;
+  if (!(t->contains (s (pos, i)))) pos= i;
+}
+
+static void
+parse_identifier_or_markup (hashmap<string, string>& t,
+		  string s, int& pos, bool postfix, bool& is_markup) {
+  int i=pos;
+  is_markup= false;
+  if (pos>=N(s)) return;
+  if (is_number (s[i])) return;
+  if (postfix && s[i]=='.') i++;
+  while (i<N(s) && belongs_to_identifier (s[i])) {
+    if (s[i]=='$') is_markup= true;
+    i++;
+  }
   if (!(t->contains (s (pos, i)))) pos= i;
 }
 
@@ -444,6 +461,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
   bool possible_future_function= true;
   bool possible_future_class= false;
   string type;
+  bool is_markup;
   do {
     do {
       opos=pos;
@@ -596,9 +614,9 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
 	possible_future_class= false;
 	break;
       }
-      parse_identifier (colored, s, pos, postfix);
+      parse_identifier_or_markup (colored, s, pos, postfix, is_markup);
       if (opos<pos) {
-	type="identifier";
+	if (is_markup) {type= "identifier_markup";} else type= "identifier";
 	backquote= false;
 	postfix= false;
 	possible_future_function=false;
@@ -640,7 +658,10 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
   if (type=="left_parenthesis") return none;
   if (type=="identifier" && possible_function==false && possible_class==false) 
     return none;
-  if (type=="identifier" && possible_function) {
+  if (type=="identifier_markup" && possible_function==false
+      && possible_class==false) 
+    return COLOR_MARKUP;
+  if ( (type=="identifier" || type=="identifier_markup") && possible_function) {
     possible_function= false;
     do {
       do {
@@ -661,7 +682,9 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
       while (false);
     }
     while (opos!=pos);
-    if (!possible_function) return none;
+    if (!possible_function) {
+      if (type=="identifier") {return none;} else return COLOR_MARKUP;
+    }
     do {
       do {
 	opos=pos;
@@ -685,13 +708,13 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
 	if (opos<pos) return "#00d000";
 	parse_declare_function (s, pos);
 	if (opos<pos) return "#0000e0";
-	return none;
+	if (type=="identifier") {return none;} else return COLOR_MARKUP;
       }
       while (false);
     }
     while (pos<N(s));
   }
-  if (type=="identifier" && possible_class) {
+  if ( (type=="identifier" || type=="identifier_markup") && possible_class) {
   do {
     do {
       opos=pos;
@@ -713,7 +736,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
       if (opos<pos) break;
       parse_declare_function (s, pos);
       if (opos<pos) return "#0000e0";
-      return none;
+      if (type=="identifier") {return none;} else return COLOR_MARKUP;
     }
     while (false);
   }
