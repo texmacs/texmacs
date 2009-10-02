@@ -78,19 +78,24 @@
 ;; Scheme sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (replace-newline s)
+  (with l (string-tokenize-by-char s #\newline)
+    (if (<= (length l) 1) s
+	(tm->tree `(document ,@l)))))
+
 (define (var-object->string t)
   (with s (object->string t)
-    (if (== s "#<unspecified>") "" s)))
+    (if (== s "#<unspecified>") "" (replace-newline (string-encode s)))))
 
-(define (eval-with-catch x)
+(define (eval-string-with-catch s)
   (catch #t
-	 (lambda () (eval x))
+	 (lambda () (eval (string->object s)))
 	 (lambda (key msg . args)
 	   key)))
 
 (tm-define (scheme-eval t)
   (let* ((s (texmacs->verbatim (tm->tree t)))
-	 (r (eval-with-catch (string->object s))))
+	 (r (eval-string-with-catch s)))
     (cond ((and (tree? r) (session-scheme-trees?)) (tree-copy r))
 	  ((session-scheme-math?)
 	   (with m (cas->stree r)
