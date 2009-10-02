@@ -143,7 +143,7 @@ scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
     {
       object fun= symbol_object ("tree-set");
       object cmd= list_object (fun, t, u);
-      eval_delayed (cmd);
+      exec_delayed (scheme_cmd (cmd));
     }
   return "done";
 }

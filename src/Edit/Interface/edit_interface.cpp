@@ -195,7 +195,7 @@ edit_interface_rep::cursor_visible () {
 	  if (new_xt != old_xt && is_accessible (obtain_ip (old_xt))) {
 	    object fun= symbol_object ("tree-set");
 	    object cmd= list_object (fun, old_xt, new_xt);
-	    eval_delayed (cmd);
+	    exec_delayed (scheme_cmd (cmd));
 	    temp_invalid_cursor= true;
 	  }
 	}
@@ -216,7 +216,7 @@ edit_interface_rep::cursor_visible () {
 	  if (new_yt != old_yt && is_accessible (obtain_ip (old_yt))) {
 	    object fun= symbol_object ("tree-set");
 	    object cmd= list_object (fun, old_yt, new_yt);
-	    eval_delayed (cmd);
+	    exec_delayed (scheme_cmd (cmd));
 	    temp_invalid_cursor= true;
 	  }
 	}

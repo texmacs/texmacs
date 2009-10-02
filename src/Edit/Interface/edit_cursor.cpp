@@ -501,7 +501,7 @@ edit_cursor_rep::go_to_label (string s) {
       if (i >= 0) part= part (0, i);
       string show= "(show-hidden-part " * scm_quote (part) * ")";
       string jump= "(go-to-label " * scm_quote (s) * ")";
-      eval_delayed ("(if " * show * " (delayed " * jump * "))");
+      exec_delayed (scheme_cmd ("(if " * show * " (delayed " * jump * "))"));
     }
     else {
       url u= relative (buf->name, url (extra));
@@ -509,7 +509,7 @@ edit_cursor_rep::go_to_label (string s) {
 	string new_buf = scm_quote (as_string (u));
 	string load_buf= "(load-buffer (url-system " * new_buf * "))";
 	string jump_to = "(go-to-label " * scm_quote (s) * ")";
-	eval_delayed ("(begin " * load_buf * " " * jump_to * ")");
+	exec_delayed (scheme_cmd ("(begin " * load_buf * " " * jump_to * ")"));
       }
     }
   }
