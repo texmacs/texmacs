@@ -114,44 +114,61 @@
 	 `(let* ((start (texmacs-time))
 		 (proc ,(delayed-sub (cdr body))))
 	    (lambda ()
-	      (and (> (- (texmacs-time) start) ,(cadar body))
-		   (begin (set! start (texmacs-time)) (proc))))))
+	      (with left (- (+ start ,(cadar body)) (texmacs-time))
+		(if (> left 0) left
+		    (begin
+		      (set! start (texmacs-time))
+		      (proc)))))))
 	((== (caar body) :every)
 	 `(let* ((time (+ (texmacs-time) ,(cadar body)))
 		 (proc ,(delayed-sub (cdr body))))
 	    (lambda ()
-	      (and (> (texmacs-time) time)
-		   (begin (set! time (+ (texmacs-time) ,(cadar body))) #t)
-		   (proc)))))
+	      (with left (- time (texmacs-time))
+		(if (> left 0) left
+		    (begin
+		      (set! time (+ (texmacs-time) ,(cadar body)))
+		      (proc)))))))
 	((== (caar body) :idle)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
-	      (and (> (idle-time) ,(cadar body)) (proc)))))
+	      (with left (- ,(cadar body) (idle-time))
+		(if (> left 0) left
+		    (proc))))))
 	((== (caar body) :refresh)
 	 (with sym (gensym)
 	   `(let* ((,sym #f)
 		   (proc ,(delayed-sub (cdr body))))
 	      (lambda ()
-		(and (!= ,sym (change-time))
-		     (> (idle-time) ,(cadar body))
-		     (begin (set! ,sym (change-time)) #t)
-		     (proc))))))
+		(if (!= ,sym (change-time)) 0
+		    (with left (- ,(cadar body) (idle-time))
+		      (if (> left 0) left
+			  (begin
+			    (set! ,sym (change-time))
+			    (proc)))))))))
 	((== (caar body) :require)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
-	      (and ,(cadar body) (proc)))))
+	      (if (not ,(cadar body)) 0
+		  (proc)))))
 	((== (caar body) :while)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
-	      (if ,(cadar body) (begin (proc) #f) #t))))
+	      (if (not ,(cadar body)) #t
+		  (begin (proc) 0)))))
 	((== (caar body) :clean)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
-	      (and (proc) (begin ,(cadar body) #t)))))
+	      (with left (proc)
+		(if (!= left #t) left
+		    (begin ,(cadar body) #t))))))
 	((== (caar body) :permanent)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
-	      (and (proc) (not ,(cadar body))))))
+	      (with left (proc)
+		(if (!= left #t) left
+		    (with next ,(cadar body)
+		      (if (!= next #t) #t
+			  0)))))))
 	((== (caar body) :do)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
@@ -168,7 +185,7 @@
 	      (with r (proc)
 		(if r ((dialogue-machine local-continue) (noop)))
 		r)))))
-      `(exec-delayed ,(delayed-sub body))))
+      `(exec-delayed-pause ,(delayed-sub body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Messages and feedback on the status bar

@@ -143,9 +143,8 @@ object eval (object expr);
 object eval_secure (string expr);
 object eval_file (string name);
 bool   exec_file (url u);
-void   eval_delayed (string expr);
-void   eval_delayed (object expr);
 void   exec_delayed (object cmd);
+void   exec_delayed_pause (object cmd);
 void   exec_pending_commands ();
 
 object call (const char* fun);

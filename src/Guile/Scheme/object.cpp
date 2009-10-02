@@ -369,16 +369,8 @@ object call (object fun, array<object> a) {
 ******************************************************************************/
 
 static array<object> delayed_queue;
-
-void
-eval_delayed (string expr) {
-  delayed_queue << scheme_cmd (expr);
-}
-
-void
-eval_delayed (object expr) {
-  delayed_queue << scheme_cmd (expr);
-}
+static array<object> delayed_pause_queue;
+static array<int>    start_time_queue;
 
 void
 exec_delayed (object cmd) {
@@ -386,13 +378,44 @@ exec_delayed (object cmd) {
 }
 
 void
+exec_delayed_pause (object cmd) {
+  delayed_pause_queue << cmd;
+  start_time_queue << ((int) texmacs_time ());
+}
+
+void
 exec_pending_commands () {
-  array<object> a= delayed_queue;
-  delayed_queue= array<object> (0);
-  int i, n= N(a);
-  for (i=0; i<n; i++) {
-    object obj= call (a[i]);
-    if (is_bool (obj) && !as_bool (obj))
-      delayed_queue << a[i];
+  {
+    array<object> a= delayed_queue;
+    delayed_queue= array<object> (0);
+    int i, n= N(a);
+    for (i=0; i<n; i++) {
+      object obj= call (a[i]);
+      if (is_bool (obj) && !as_bool (obj))
+	delayed_queue << a[i];
+    }
+  }
+
+  {
+    array<object> a= delayed_pause_queue;
+    array<int> b= start_time_queue;
+    delayed_pause_queue= array<object> (0);
+    start_time_queue= array<int> (0);
+    int i, n= N(a);
+    for (i=0; i<n; i++) {
+      int now= (int) texmacs_time ();
+      if (now >= b[i]) {
+	object obj= call (a[i]);
+	if (is_int (obj)) {
+	  //cout << "pause= " << obj << "\n";
+	  delayed_pause_queue << a[i];
+	  start_time_queue << (now + as_int (obj));
+	}
+      }
+      else {
+	delayed_pause_queue << a[i];
+	start_time_queue << b[i];
+      }
+    }
   }
 }
