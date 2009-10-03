@@ -31,7 +31,10 @@ struct tm_reader {
 
   tm_reader (string buf2):
     version (TEXMACS_VERSION),
-    codes (STD_CODE), EXPAND_APPLY (EXPAND), backslash_ok (true),
+    codes (STD_CODE),
+    EXPAND_APPLY (EXPAND),
+    backslash_ok (true),
+    with_extensions (true),
     buf (buf2), pos (0), last ("") {}
   tm_reader (string buf2, string version2):
     version (version2),
