@@ -37,8 +37,8 @@ typedef list<int> path;
 extern int observer_count;
 class observer_rep: public abstract_struct {
 public:
-  inline observer_rep () { DEBUG(observer_count++); }
-  inline virtual ~observer_rep () { DEBUG(observer_count--); }
+  inline observer_rep () { TM_DEBUG(observer_count++); }
+  inline virtual ~observer_rep () { TM_DEBUG(observer_count--); }
   inline virtual int get_type () { return OBSERVER_UNKNOWN; }
   inline virtual ostream& print (ostream& out) { return out; }
 

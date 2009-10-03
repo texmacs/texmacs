@@ -30,7 +30,7 @@ typedef long intptr_t;
 #define LESSGTR <>
 #endif
 
-#define DEBUG(x)
+#define TM_DEBUG(x)
 typedef int SI;
 typedef unsigned int SN;
 typedef short HI;
@@ -90,15 +90,15 @@ ostream& operator << (ostream& out, display_control ctrl);
 extern int concrete_count;
 struct concrete_struct {
   int ref_count;
-  inline concrete_struct (): ref_count (1) { DEBUG(concrete_count++); }
-  virtual inline ~concrete_struct () { DEBUG(concrete_count--); }
+  inline concrete_struct (): ref_count (1) { TM_DEBUG(concrete_count++); }
+  virtual inline ~concrete_struct () { TM_DEBUG(concrete_count--); }
 };
 
 extern int abstract_count;
 struct abstract_struct {
   int ref_count;
-  inline abstract_struct (): ref_count (0) { DEBUG(abstract_count++); }
-  virtual inline ~abstract_struct () { DEBUG(abstract_count--); }
+  inline abstract_struct (): ref_count (0) { TM_DEBUG(abstract_count++); }
+  virtual inline ~abstract_struct () { TM_DEBUG(abstract_count--); }
 };
 
 template<typename T>

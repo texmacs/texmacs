@@ -18,16 +18,16 @@
 
 line_item_rep::line_item_rep (int type2, box b2, int pen2):
   type (type2), b (b2), spc (0), penalty (pen2), limits (false)
-    { DEBUG(line_item_count++); }
+    { TM_DEBUG(line_item_count++); }
 line_item_rep::line_item_rep (int type2, box b2, int pen2, language lan2):
   type (type2), b (b2), spc (0), penalty (pen2), limits (false),
-  lan (lan2) { DEBUG(line_item_count++); }
+  lan (lan2) { TM_DEBUG(line_item_count++); }
 line_item_rep::line_item_rep (int type2, box b2,
   int pen2, tree t2):
   type (type2), b (b2), spc (0), penalty (pen2), limits (false),
-  t (t2) { DEBUG(line_item_count++); }
+  t (t2) { TM_DEBUG(line_item_count++); }
 line_item_rep::~line_item_rep () {
-  DEBUG(line_item_count--); }
+  TM_DEBUG(line_item_count--); }
 line_item::line_item (int type, box b, int penalty):
   rep (tm_new<line_item_rep> (type, b, penalty)) {}
 line_item::line_item (int type, box b, int penalty, language lan):

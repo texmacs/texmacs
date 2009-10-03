@@ -336,7 +336,7 @@ edit_interface_rep::set_hybrid_footer (tree st) {
 * Update footer
 ******************************************************************************/
 
-DEBUG
+TM_DEBUG
 (
   int concrete_count = 0;
   int abstract_count = 0;
@@ -354,7 +354,7 @@ DEBUG
 
 void
 edit_interface_rep::set_footer () {
-  DEBUG
+  TM_DEBUG
   (
     cout << "--------------------------------------------------------------\n";
     cout << "concrete  " << concrete_count << "\n";

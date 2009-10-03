@@ -38,9 +38,9 @@ struct format_rep: public abstract_struct {
   format_type type;
 
   inline  format_rep (format_type t): type (t) {
-    DEBUG (format_count++); }
+    TM_DEBUG (format_count++); }
   inline  virtual ~format_rep () {
-    DEBUG (format_count--); }
+    TM_DEBUG (format_count--); }
 
   virtual operator tree () = 0;
   virtual bool equal (format fm) = 0;
@@ -69,9 +69,9 @@ struct lazy_rep: public abstract_struct {
   path ip;         // source location
 
   inline  lazy_rep (lazy_type type2, path ip2): type (type2), ip (ip2) {
-    DEBUG (lazy_count++); }
+    TM_DEBUG (lazy_count++); }
   inline  virtual ~lazy_rep () {
-    DEBUG (lazy_count--); }
+    TM_DEBUG (lazy_count--); }
 
   virtual operator tree () = 0;
   virtual void append (lazy lz);

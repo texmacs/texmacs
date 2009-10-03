@@ -21,9 +21,9 @@ extern int widget_count;
 wk_widget_rep::wk_widget_rep (
   array<wk_widget> a2, array<string> n2, gravity grav2):
     win (NULL), ox (0), oy (0), w (0), h (0),
-    grav (grav2), a (a2), name (n2) { DEBUG(widget_count++); }
+    grav (grav2), a (a2), name (n2) { TM_DEBUG(widget_count++); }
 
-wk_widget_rep::~wk_widget_rep () { DEBUG(widget_count--); }
+wk_widget_rep::~wk_widget_rep () { TM_DEBUG(widget_count--); }
 
 /******************************************************************************
 * Computing lower left and upper right widget coordinates

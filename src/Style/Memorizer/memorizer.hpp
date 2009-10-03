@@ -34,8 +34,8 @@ extern int memorizer_count;
 class memorizer;
 class memorizer_rep: public abstract_struct {
 public:
-  inline memorizer_rep () { DEBUG (memorizer_count++); }
-  inline virtual ~memorizer_rep () { DEBUG (memorizer_count--); }
+  inline memorizer_rep () { TM_DEBUG (memorizer_count++); }
+  inline virtual ~memorizer_rep () { TM_DEBUG (memorizer_count--); }
 
   virtual void print (ostream& out) = 0;
   virtual int  type () = 0;

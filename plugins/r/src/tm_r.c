@@ -1,3 +1,4 @@
+
 /******************************************************************************
 * MODULE     : tm_r.c
 * DESCRIPTION: Glue between TeXmacs and R
@@ -49,14 +50,14 @@
 
 #ifndef USE_DEBUG
 #define WRITELOG(s,n)
-int DEBUG = (1==0) ;
+int R_DEBUG = (1==0) ;
 
 /* #define VERBOSE_TERM */
 #undef VERBOSE_TERM
 #else
-#define WRITELOG(s,n) {if( DEBUG ) write(LOG,s,n);}
+#define WRITELOG(s,n) {if( R_DEBUG ) write(LOG,s,n);}
 int LOG ;
-int DEBUG = (1==1) ;
+int R_DEBUG = (1==1) ;
 #endif
 
 char st[4096] ;
@@ -347,7 +348,7 @@ int main(int arc, char *argv[])
   struct stat stat_buf;
 
 #ifdef USE_DEBUG
-  if( DEBUG ) {
+  if( R_DEBUG ) {
     unlink("/tmp/log") ;
     LOG = open("/tmp/log",O_CREAT|O_WRONLY) ;
   }

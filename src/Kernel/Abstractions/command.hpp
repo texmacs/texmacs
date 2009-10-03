@@ -16,8 +16,8 @@
 extern int command_count;
 class command_rep: public abstract_struct {
 public:
-  inline command_rep () { DEBUG(command_count++); }
-  inline virtual ~command_rep () { DEBUG(command_count--); }
+  inline command_rep () { TM_DEBUG(command_count++); }
+  inline virtual ~command_rep () { TM_DEBUG(command_count--); }
   inline virtual ostream& print (ostream& out);
   virtual void apply () = 0;
 };

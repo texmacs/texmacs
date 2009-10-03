@@ -31,8 +31,8 @@ enum gravity { north_west, north,  north_east,
 extern int event_count;
 struct event_rep: public abstract_struct {
   int     type;  // the event type
-  inline  event_rep (int type2): type (type2) { DEBUG(event_count++); }
-  inline  virtual ~event_rep () { DEBUG(event_count--); }
+  inline  event_rep (int type2): type (type2) { TM_DEBUG(event_count++); }
+  inline  virtual ~event_rep () { TM_DEBUG(event_count--); }
   virtual operator tree () = 0;   // for displaying events (debugging)
 };
 

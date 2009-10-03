@@ -22,7 +22,7 @@ size_t alloc_remains=0;
 int    allocated=0;
 int    fast_chunks=0;
 int    large_uses=0;
-int    DEBUG=0;
+int    MEM_DEBUG=0;
 int    mem_used ();
 
 /*****************************************************************************/
@@ -62,8 +62,8 @@ fast_alloc (register size_t sz) {
     return ptr;
   }
   else {
-    if (DEBUG>=3) cout << "Big alloc of " << sz << " bytes\n";
-    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Big alloc of " << sz << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
     large_uses += sz;
     return safe_malloc (sz);
   }
@@ -77,10 +77,10 @@ fast_free (register void* ptr, register size_t sz) {
     alloc_ptr (sz)= ptr;
   }
   else {
-    if (DEBUG>=3) cout << "Big free of " << sz << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Big free of " << sz << " bytes\n";
     large_uses -= sz;    
     free (ptr);
-    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
 }
 
@@ -95,8 +95,8 @@ fast_alloc (register size_t s) {
     else alloc_ptr(s)= ind(ptr);
   }
   else {
-    if (DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
-    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
     ptr= safe_malloc (s);
     large_uses += s;
   }
@@ -118,10 +118,10 @@ fast_free (register void* ptr, register size_t sz) {
     alloc_ptr(s)= ptr;
   }
   else {
-    if (DEBUG>=3) cout << "Big free of " << s << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Big free of " << s << " bytes\n";
     free (ptr);
     large_uses -= s;
-    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
 }
 */
@@ -136,8 +136,8 @@ fast_new (register size_t s) {
     else alloc_ptr(s)= ind(ptr);
   }
   else {
-    if (DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
-    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
     ptr= safe_malloc (s);
     //if ((((int) ptr) & 15) != 0) cout << "Unaligned new " << ptr << "\n";
     large_uses += s;
@@ -155,11 +155,11 @@ fast_delete (register void* ptr) {
     alloc_ptr(s)= ptr;
   }
   else {
-    if (DEBUG>=3) cout << "Big free of " << s << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Big free of " << s << " bytes\n";
     //if ((((int) ptr) & 15) != 0) cout << "Unaligned delete " << ptr << "\n";
     free (ptr);
     large_uses -= s;
-    if (DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
+    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
   }
 }
 

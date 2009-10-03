@@ -255,8 +255,8 @@ ABSTRACT_NULL_CODE(box);
 extern int box_count;
 inline box_rep::box_rep (path ip2):
   x0(0), y0(0), x1(0), y1(0), x2(0), y2(0), x3(0), y3(0), x4(0), y4(0),
-  ip (ip2) { DEBUG(box_count++); }
-inline box_rep::~box_rep () { DEBUG(box_count--); }
+  ip (ip2) { TM_DEBUG(box_count++); }
+inline box_rep::~box_rep () { TM_DEBUG(box_count--); }
 inline bool box_rep::test_in (SI x, SI y) {
   return (x>=x1) && (x<x2) && (y>=y1) && (y<y2); }
 inline SI box_rep::w () { return x2-x1; }
