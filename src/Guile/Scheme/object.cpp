@@ -374,7 +374,8 @@ static array<int>    start_time_queue;
 
 void
 exec_delayed (object cmd) {
-  delayed_queue << cmd;
+  delayed_pause_queue << cmd;
+  start_time_queue << (((int) texmacs_time ()) - 1000000000);
 }
 
 void
@@ -385,37 +386,24 @@ exec_delayed_pause (object cmd) {
 
 void
 exec_pending_commands () {
-  {
-    array<object> a= delayed_queue;
-    delayed_queue= array<object> (0);
-    int i, n= N(a);
-    for (i=0; i<n; i++) {
+  array<object> a= delayed_pause_queue;
+  array<int> b= start_time_queue;
+  delayed_pause_queue= array<object> (0);
+  start_time_queue= array<int> (0);
+  int i, n= N(a);
+  for (i=0; i<n; i++) {
+    int now= (int) texmacs_time ();
+    if (now >= b[i]) {
       object obj= call (a[i]);
-      if (is_bool (obj) && !as_bool (obj))
-	delayed_queue << a[i];
-    }
-  }
-
-  {
-    array<object> a= delayed_pause_queue;
-    array<int> b= start_time_queue;
-    delayed_pause_queue= array<object> (0);
-    start_time_queue= array<int> (0);
-    int i, n= N(a);
-    for (i=0; i<n; i++) {
-      int now= (int) texmacs_time ();
-      if (now >= b[i]) {
-	object obj= call (a[i]);
-	if (is_int (obj)) {
-	  //cout << "pause= " << obj << "\n";
-	  delayed_pause_queue << a[i];
-	  start_time_queue << (now + as_int (obj));
-	}
-      }
-      else {
+      if (is_int (obj) && (now - b[i] < 1000000000)) {
+	//cout << "pause= " << obj << "\n";
 	delayed_pause_queue << a[i];
-	start_time_queue << b[i];
+	start_time_queue << (now + as_int (obj));
       }
+    }
+    else {
+      delayed_pause_queue << a[i];
+      start_time_queue << b[i];
     }
   }
 }
