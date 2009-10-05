@@ -315,30 +315,35 @@
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
 
+(define (replace-procedures x)
+  (cond ((procedure? x) (procedure-source x))
+	((list? x) (map replace-procedures x))
+	(else x)))
+
 (tm-define (menu-expand p)
   (:type (-> object object))
   (:synopsis "Expand links and conditional menus in menu @p.")
-  (cond ((npair? p) p)
+  (cond ((npair? p) (replace-procedures p))
 	((string? (car p)) p)
 	((symbol? (car p))
 	 (with result (ahash-ref menu-expand-table (car p))
 	   (if result ((car result) p) p)))
-	((match? (car p) ':menu-wide-label) p)
+	((match? (car p) ':menu-wide-label) (replace-procedures p))
 	(else (menu-expand-list p))))
 
 (define-table menu-expand-table
   (--- ,(lambda (p) `(--- ,@(menu-expand-list (cdr p)))))
   (| ,(lambda (p) `(| ,@(menu-expand-list (cdr p)))))
-  (group ,(lambda (p) p))
-  (symbol ,(lambda (p) p))
+  (group ,replace-procedures)
+  (symbol ,replace-procedures)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
-  (-> ,(lambda (p) p))
-  (=> ,(lambda (p) p))
-  (tile ,(lambda (p) p))
+  (-> ,replace-procedures)
+  (=> ,replace-procedures)
+  (tile ,replace-procedures)
   (if ,menu-expand-if)
-  (when ,(lambda (p) p))
+  (when ,replace-procedures)
   (promise ,menu-expand-promise))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
