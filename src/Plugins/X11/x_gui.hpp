@@ -127,6 +127,7 @@ public:
   list<Window>                 windows_l;
   hashmap<string,tree>         selection_t;
   hashmap<string,string>       selection_s;
+  Window                       selection_w;
 
   Atom XA_CLIPBOARD;
   Atom XA_TARGETS;

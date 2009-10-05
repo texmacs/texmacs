@@ -217,7 +217,7 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
   if (selection_t->contains (key)) {
     t= copy (selection_t [key]);
     s= copy (selection_s [key]);
-    res=true;
+    return true;
   }
   
   Atom xsel;
@@ -226,9 +226,9 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
   else return res;
 
   Window selown = XGetSelectionOwner(dpy, xsel);
-  if (selown == None
-  || is_nil (windows_l)
-  || contains(windows_l,selown)) return res;
+  if (selown == None ||
+      is_nil (windows_l) ||
+      contains (windows_l, selown)) return res;
 
   Window win= windows_l->item;
   x_window x_win= (x_window) Window_to_window[win];
@@ -260,8 +260,8 @@ x_gui_rep::get_selection (string key, tree& t, string& s) {
     } while (remains>0);
     t= tuple ("extern", s);
     return true;
-  } else
-    return res;
+  }
+  else return res;
 }
 
 bool
@@ -274,8 +274,9 @@ x_gui_rep::set_selection (string key, tree t, string s) {
   else return true;
   if (is_nil (windows_l)) return false;
   Window win= windows_l->item;
+  selection_w= win;
   XSetSelectionOwner (dpy, xsel, win, CurrentTime);
-  if (XGetSelectionOwner(dpy, xsel)==None) return false;
+  if (XGetSelectionOwner (dpy, xsel) == None) return false;
   return true;
 }
 

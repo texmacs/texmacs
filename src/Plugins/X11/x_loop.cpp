@@ -316,7 +316,8 @@ x_gui_rep::process_event (x_window win, XEvent* ev) {
   case SelectionClear:
     {
       XSelectionClearEvent& req= ev->xselectionclear;
-      if (req.selection == XA_PRIMARY) clear_selection ("mouse");
+      if (selection_w == req.window) selection_w= (Window) 0;
+      else if (req.selection == XA_PRIMARY) clear_selection ("mouse");
       else if (req.selection == XA_CLIPBOARD) clear_selection ("primary");
     }
     break;
