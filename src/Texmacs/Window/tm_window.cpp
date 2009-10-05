@@ -102,7 +102,8 @@ tm_window_rep::menu_icons (int which, string menu) {
   object xmenu= call ("menu-expand", eval ("'" * menu));
   if (xmenu == texmacs_icon_menu[which]) return;
   texmacs_icon_menu[which]= xmenu;
-  widget w= make_menu_widget (xmenu);
+  object umenu= eval ("'" * menu);
+  widget w= make_menu_widget (umenu);
   if      (which == 0) set_main_icons (wid, w);
   else if (which == 1) set_context_icons (wid, w);
   else if (which == 2) set_user_icons (wid, w);
