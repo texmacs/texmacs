@@ -371,27 +371,26 @@ object call (object fun, array<object> a) {
 
 #ifndef QTTEXMACS
 static array<object> delayed_queue;
-static array<object> delayed_pause_queue;
-static array<int>    start_time_queue;
+static array<int>    start_queue;
 
 void
 exec_delayed (object cmd) {
-  delayed_pause_queue << cmd;
-  start_time_queue << (((int) texmacs_time ()) - 1000000000);
+  delayed_queue << cmd;
+  start_queue << (((int) texmacs_time ()) - 1000000000);
 }
 
 void
 exec_delayed_pause (object cmd) {
-  delayed_pause_queue << cmd;
-  start_time_queue << ((int) texmacs_time ());
+  delayed_queue << cmd;
+  start_queue << ((int) texmacs_time ());
 }
 
 void
 exec_pending_commands () {
-  array<object> a= delayed_pause_queue;
-  array<int> b= start_time_queue;
-  delayed_pause_queue= array<object> (0);
-  start_time_queue= array<int> (0);
+  array<object> a= delayed_queue;
+  array<int> b= start_queue;
+  delayed_queue= array<object> (0);
+  start_queue= array<int> (0);
   int i, n= N(a);
   for (i=0; i<n; i++) {
     int now= (int) texmacs_time ();
@@ -399,13 +398,13 @@ exec_pending_commands () {
       object obj= call (a[i]);
       if (is_int (obj) && (now - b[i] < 1000000000)) {
         //cout << "pause= " << obj << "\n";
-        delayed_pause_queue << a[i];
-        start_time_queue << (now + as_int (obj));
+        delayed_queue << a[i];
+        start_queue << (now + as_int (obj));
       }
     }
     else {
-      delayed_pause_queue << a[i];
-      start_time_queue << b[i];
+      delayed_queue << a[i];
+      start_queue << b[i];
     }
   }
 }
