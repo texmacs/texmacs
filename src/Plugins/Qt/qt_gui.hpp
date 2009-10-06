@@ -22,6 +22,7 @@
 #include "widget.hpp"
 #include "array.hpp"
 #include "hashmap.hpp"
+#include "socket_notifier.hpp"
 
 /******************************************************************************
 * The qt_gui class
@@ -29,12 +30,14 @@
 
 typedef class qt_gui_rep* qt_gui;
 extern qt_gui the_gui;
+class QTMGuiHelper;
 
 class qt_gui_rep {
 public:
   bool interrupted;
   time_t interrupt_time;
-
+  QTMGuiHelper *gui_helper;
+  QTimer *updatetimer;
 
   char*                  selection;
   hashmap<string,tree>   selection_t;
@@ -65,7 +68,9 @@ public:
   bool check_event (int type);
 
   void update();
-  void update_fast ();
+  
+  void add_notifier (socket_notifier);
+  void remove_notifier (socket_notifier);
 };
 
 #endif // defined QT_GUI_HPP

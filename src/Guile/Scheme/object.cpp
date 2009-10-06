@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include "Glue/glue.hpp"
 #include "guile.hpp"
 #include "Scheme/evaluate.hpp"
@@ -368,6 +369,7 @@ object call (object fun, array<object> a) {
 * Delayed evaluation
 ******************************************************************************/
 
+#ifndef QTTEXMACS
 static array<object> delayed_queue;
 static array<object> delayed_pause_queue;
 static array<int>    start_time_queue;
@@ -396,9 +398,9 @@ exec_pending_commands () {
     if (now >= b[i]) {
       object obj= call (a[i]);
       if (is_int (obj) && (now - b[i] < 1000000000)) {
-	//cout << "pause= " << obj << "\n";
-	delayed_pause_queue << a[i];
-	start_time_queue << (now + as_int (obj));
+        //cout << "pause= " << obj << "\n";
+        delayed_pause_queue << a[i];
+        start_time_queue << (now + as_int (obj));
       }
     }
     else {
@@ -407,3 +409,4 @@ exec_pending_commands () {
     }
   }
 }
+#endif // QTTEXMACS

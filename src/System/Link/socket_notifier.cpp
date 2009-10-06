@@ -8,6 +8,7 @@
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
+#include "config.h"
 
 #ifndef __MINGW32__
 #include <unistd.h>
@@ -23,6 +24,11 @@
 #include <sys/misc.h>
 #endif
 
+#ifdef QTTEXMACS
+#include "Qt/qt_gui.hpp"
+#endif
+
+
 #include "socket_notifier.hpp"
 #include "list.hpp"
 #include "iterator.hpp"
@@ -31,11 +37,17 @@ hashset<socket_notifier> notifiers;
 
 void add_notifier (socket_notifier sn)  {
   //cout << "enable notifier " << LF;
-  notifiers -> insert (sn);
+  notifiers->insert (sn);
+#ifdef QTTEXMACS
+  the_gui->add_notifier (sn);
+#endif
 } 
 void remove_notifier (socket_notifier sn)  {
   //cout << "disable notifier " << LF;
-  notifiers -> remove (sn);
+  notifiers->remove (sn);
+#ifdef QTTEXMACS
+  the_gui->remove_notifier (sn);
+#endif
 }
 
 void 

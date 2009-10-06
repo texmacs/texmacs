@@ -322,8 +322,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 
   QMainWindow* mw= tm_mainwindow ();
 
-  QScrollArea* sa= new QScrollArea (mw);
+  QScrollArea* sa= new QTMScrollArea (this);
+  sa->setParent (mw);
   sa->setBackgroundRole (QPalette::Dark);
+  sa->setAlignment (Qt::AlignCenter);
+
   mw->setCentralWidget (sa);
 
   QStatusBar* bar= new QStatusBar(mw);
@@ -390,7 +393,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       QSize sz= to_qrect (p).size ();
       QSize ws= tm_scrollarea () -> size ();
       sz.setHeight (max (sz.height (), ws.height () - 4));
-      tm_scrollarea () -> setAlignment (Qt::AlignCenter);
+      //FIXME: the above adjustment is not very nice and useful only in papyrus mode.
+      //       When setting the size we should ask the GUI of some preferred max size
+      //       and set that without post-processing.
       tm_canvas () -> setFixedSize (sz);
     }
     break;
@@ -665,7 +670,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_MAIN_ICONS:
     check_type_void (index, "SLOT_MAIN_ICONS");
     {
+      //cout << "widget :" << (void*)w.rep << LF;
       QMenu* m= to_qmenu (w);
+      //mainToolBar->setUpdatesEnabled (false);
       replaceButtons (mainToolBar, m);
       delete m;
     }
@@ -676,6 +683,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {   
       QMenu* m= to_qmenu (w);
       replaceButtons (contextToolBar, m);
+      //mainToolBar->setUpdatesEnabled (true);
       delete m;
     }
     break;

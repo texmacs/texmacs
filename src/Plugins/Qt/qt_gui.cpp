@@ -19,6 +19,7 @@
 #include <QDesktopWidget>
 #include <QClipboard>
 #include <QFileOpenEvent>
+#include <QSocketNotifier>
 #include "QTMGuiHelper.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
@@ -31,7 +32,7 @@ extern window (*get_current_window) (void);
 
 qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
-bool qt_update_flag= false;
+bool qt_update_flag = false;
 
 int time_credit;
 int timeout_time;
@@ -49,6 +50,11 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   interrupted   = false;
   interrupt_time= texmacs_time ();
   set_output_language (get_locale_language ());
+  gui_helper = new QTMGuiHelper (this);
+  qApp -> installEventFilter (gui_helper);
+  updatetimer = new QTimer (gui_helper);
+  updatetimer->setSingleShot (true);
+  QObject::connect (updatetimer, SIGNAL(timeout()), gui_helper, SLOT(doUpdate()));
 //  (void) default_font ();
 }
 
@@ -70,6 +76,8 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 
 
 qt_gui_rep::~qt_gui_rep()  {
+  delete gui_helper;
+ // delete updatetimer; we do not need this given that gui_helper is the parent of updatetimer
 }
 
 /******************************************************************************
@@ -169,47 +177,134 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
 }
 
 void (*the_interpose_handler) (void) = NULL;
-//void set_interpose_handler (void (*r) (void)) { the_interpose_handler= r; }
+
 void gui_interpose (void (*r) (void)) { the_interpose_handler= r; }
 
 void
-update () {
-  if (the_interpose_handler) the_interpose_handler();
-}
-
-void
 qt_gui_rep::update () {
-  ::update();
-  interrupted = false;
-  qt_update_flag= false;
-}
+  // this is called by doUpdate, which in turns is fired by a timer activated in 
+  // needs_update, and ensuring that interpose_handler is run during a pass in the eventloop
+  // afterwards we reactivate the timer with a pause (see FIXME below) 
+  
+  if (the_interpose_handler) the_interpose_handler();
+  
+  qt_update_flag = false;
+  interrupted = false;  
+  
+  updatetimer->start (1000/6);
+  
+  // FIXME: we need to ensure that the interpose_handler is run at regular intervals (1/6th of sec)
+  //        so that informations on the footbar are updated. (this should be better handled by 
+  //        promoting code in tm_editor::apply_changes (which is activated only after idle periods)
+  //        at the level of delayed commands in the gui.
+  //        The interval cannot be too small to keep CPU usage low in idle state
+} 
+
+
 
 void
 qt_gui_rep::event_loop () {
   QApplication *app = (QApplication*) QApplication::instance();
-  QTimer t (NULL);
-  t.start (25);
 
-  time_credit= 1000000;
-  while (nr_windows > 0 || number_of_servers () != 0) {
-    timeout_time= texmacs_time () + time_credit;
-//    app->processEvents (QEventLoop::WaitForMoreEvents | QEventLoop::DeferredDeletion);
-    app->processEvents (QEventLoop::WaitForMoreEvents);
-    //int start= texmacs_time ();
-    update ();
-    //int end= texmacs_time ();
-    //if (end > start) cout << "Update " << end - start << "\n";
-    time_credit= min (1000000, 2 * time_credit);
+  updatetimer->start (0); // 0 ms - call immediately when all other events have been processed
+  app->exec();
+}
+
+/******************************************************************************
+ * Sockets notifications
+ ******************************************************************************/
+
+static hashmap<socket_notifier,pointer> read_notifiers;
+static hashmap<socket_notifier,pointer> write_notifiers;
+
+void 
+qt_gui_rep::add_notifier (socket_notifier sn)
+{
+  QSocketNotifier *qsn;
+
+  //  cout << "ADD NOTIFIER" << LF;
+  
+  // replace any already present notifier
+
+  remove_notifier (sn);
+
+  // installs both a read and a write notifier (the texmacs interface does not specify enough its needs)
+  
+  read_notifiers (sn) = (pointer) (qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Read, gui_helper)); 
+  QObject::connect(qsn, SIGNAL(activated(int)), gui_helper, SLOT(doSocketNotification(int)) );
+
+  write_notifiers (sn) = (pointer) (qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Write, gui_helper));
+  QObject::connect(qsn, SIGNAL(activated(int)), gui_helper, SLOT(doSocketNotification(int)) );  
+}
+
+void 
+qt_gui_rep::remove_notifier (socket_notifier sn)
+{  
+  QSocketNotifier *qsn;
+
+  //  cout << "REMOVE NOTIFIER" << LF;
+
+  // disable the (r/w) notifiers to prevent them to fire past this point
+  // and schedule them for deletion at the end of the current runloop
+
+  qsn = (QSocketNotifier *)read_notifiers [sn];
+  if (qsn) {
+    qsn->setEnabled (false);
+    qsn->deleteLater ();
   }
-  //FIXME: QCoreApplication sends aboutToQuit signal before exiting...
-  app->sendPostedEvents (0, QEvent::DeferredDelete);
+  read_notifiers->reset (sn);
+
+  qsn = (QSocketNotifier *)write_notifiers (sn);
+  if (qsn) {
+    qsn->setEnabled (false);
+    qsn->deleteLater ();
+  }
+  write_notifiers->reset (sn);
+}
+
+/******************************************************************************
+ * Delayed commands
+ ******************************************************************************/
+
+QTMCommandHelper::QTMCommandHelper (object _cmd, bool _pause) 
+  : QObject (), cmd (_cmd), pause (_pause), tzero ((int) texmacs_time ()), timer () 
+{
+  QObject::connect (&timer, SIGNAL (timeout()), this, SLOT (doCommand()));
+  timer.setSingleShot (true);
+  timer.start (0);
+}
+
+void
+QTMCommandHelper::doCommand()
+{
+  object obj= call (cmd);
+  if (is_int (obj)) {
+    timer.start (as_int (obj));
+  } 
+  if (!(timer.isActive ())) deleteLater();
+}
+
+void   
+exec_delayed (object cmd)
+{
+  new QTMCommandHelper (cmd, false);
+}
+
+void   
+exec_delayed_pause (object cmd)
+{
+  new QTMCommandHelper (cmd, true);
+}
+
+void   exec_pending_commands ()
+{
+  // just provide empty implementation
+  // this function is not used in TeXmacs/Qt
 }
 
 /******************************************************************************
 * Main routines
 ******************************************************************************/
-
-QTMGuiHelper *gui_helper;
 
 
 void
@@ -217,10 +312,6 @@ gui_open (int& argc, char** argv) {
   // start the gui
  // new QApplication (argc,argv); now in texmacs.cpp
   the_gui = tm_new<qt_gui_rep> (argc, argv);
-  
-  gui_helper = new QTMGuiHelper (the_gui);
-  qApp -> installEventFilter (gui_helper);
-  
 }
 
 void
@@ -256,12 +347,15 @@ gui_refresh () {
 }
 
 
+
+
 /******************************************************************************
  * QTMGuiHelper methods
  ******************************************************************************/
 
 void
-QTMGuiHelper::doUpdate() {
+QTMGuiHelper::doUpdate () {
+//  cout << "UPDATE " << texmacs_time () << LF;
   gui->update();
 }
 
@@ -270,9 +364,8 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
    if (event->type() == QEvent::FileOpen) {
      QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
      const char *s = openEvent->file().toAscii().constData();
-     qDebug ("File Open Event %s", s);
+     //qDebug ("File Open Event %s", s);
      call ("texmacs-load-buffer", object(url_system (s)), object("generic"), object(1), object(false));
-     
      return true;
    } else {
      // standard event processing
@@ -280,6 +373,21 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
    }
 }
 
+
+void
+QTMGuiHelper::doSocketNotification (int socket) {
+//  cout << "SOCKET NOTIFICATION " << socket << " "<< texmacs_time () << LF;
+  iterator<socket_notifier> it = iterate (read_notifiers);
+  while (it->busy ()) {
+    socket_notifier sn= it->next ();
+    if (sn->fd == socket) sn->notify();
+  }
+  it = iterate (write_notifiers);
+  while (it->busy ()) {
+    socket_notifier sn= it->next ();
+    if (sn->fd == socket) sn->notify();
+  }
+}
 
 
 /******************************************************************************
@@ -352,7 +460,9 @@ beep () {
 
 void
 needs_update () {
-  qt_update_flag= true;
+  //cout << "needs_update" << LF;
+  qt_update_flag = true;
+  the_gui->updatetimer->start (0);
 }
 
 bool

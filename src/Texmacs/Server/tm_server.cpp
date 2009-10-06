@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include "tm_server.hpp"
 #include "drd_std.hpp"
 #include "convert.hpp"
@@ -293,7 +294,10 @@ tm_server_rep::style_get_cache (
 void
 tm_server_rep::interpose_handler () {
 
-#if 0 // choiche between old and new socket listening methods
+// TeXmacs/Qt handles delayed messages and socket notification in its own runloop 
+  
+#ifndef QTTEXMACS
+#if 0 // choice between old and new socket listening methods
   listen_to_servers ();
   listen_to_pipes ();
   listen_to_sockets ();
@@ -301,8 +305,9 @@ tm_server_rep::interpose_handler () {
 #else
   perform_select ();
 #endif
-
   exec_pending_commands ();
+#endif
+  
 
   int i,j;
   for (i=0; i<N(bufs); i++) {

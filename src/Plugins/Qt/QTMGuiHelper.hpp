@@ -13,6 +13,7 @@
 #define QTMGUIHELPER_HPP
 
 #include "qt_gui.hpp"
+#include "Scheme/object.hpp"
 #include <QObject>
 
 class QTMGuiHelper : public QObject {
@@ -27,7 +28,22 @@ protected:
   
 public slots:
   void doUpdate ();
+  void doSocketNotification (int socket);  
+};
+
+
+class QTMCommandHelper : public QObject {
+  Q_OBJECT
+  object cmd;
+  bool pause;
+  int tzero;
+  QTimer timer;
   
+public:
+  QTMCommandHelper (object _cmd, bool _pause);
+  
+public slots:
+  void doCommand ();
 };
 
 #endif // QTMGUIHELPER_HPP

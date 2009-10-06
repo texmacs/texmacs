@@ -18,6 +18,8 @@
 #include <QAction>
 #include <QMenu>
 
+#include "gui.hpp"
+
 class QTMCommand: public QObject {
   Q_OBJECT
   command cmd;
@@ -28,7 +30,8 @@ public:
 
 public slots:
   inline void apply() {
-    if (!is_nil(cmd)) cmd->apply(); }
+    if (!is_nil(cmd)) { cmd->apply();  needs_update(); }
+  }
 };
 
 class QTMLazyMenu: public QMenu {

@@ -144,6 +144,17 @@ initkeymap () {
 
 void
 QTMWidget::postponedUpdate () {
+#ifdef Q_WS_MAC
+  //FIXME: the call below to update is ignored sometimes (usually in long documents).
+  //       It is a confirmed Qt/Mac bug (#251792). See
+  //       http://www.qtsoftware.com/developer/task-tracker/index_html?method=entry&id=251792
+  //FIXME: This is a workaround for the update(rect) bug. Mac specific.
+  if (DEBUG_EVENTS) {
+    cout << "postponedUpdate (ALL)\n";
+  }
+  update();
+  delayed_rects= list<QRect>();
+#else
   while (!is_nil (delayed_rects)) {
     QRect rect = delayed_rects->item;
     if (DEBUG_EVENTS) {
@@ -152,23 +163,16 @@ QTMWidget::postponedUpdate () {
       << "," <<  rect.width()
       << "," <<  rect.height() << ")\n" ;
     }
-    //FIXME: the call below to update is ignored sometimes (usually in long documents).
-    //       It is a confirmed Qt/Mac bug (#251792). See
-    //       http://www.qtsoftware.com/developer/task-tracker/index_html?method=entry&id=251792
-#ifdef Q_WS_MAC
-    //FIXME: This is a workaround for the update(rect) bug. Mac specific.
-    update();
-#else
     update (rect);
-#endif
     delayed_rects= delayed_rects->next;
   }
+#endif
 }
 
 
 void QTMWidget::resizeEvent( QResizeEvent* event )
 {
-  //  cout << "resize"<< LF;
+  //cout << "QTMWidget::resizeEvent (" << event->size().width() << "," << event->size().height() << ")" << LF;
   QWidget::resizeEvent (event);
 #if defined(Q_WS_X11) && defined(USE_CAIRO)
   backingPixmap = QPixmap(width(),height());
