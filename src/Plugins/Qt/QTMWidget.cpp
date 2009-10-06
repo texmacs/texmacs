@@ -337,6 +337,8 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       }
     }
 
+    if (r == "") return;
+
 #ifdef Q_WS_MAC
     if (mods & Qt::MetaModifier) r= "C-" * r;
     if (mods & Qt::ControlModifier) r= "Mod1-" * r;
@@ -349,7 +351,6 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (mods & Qt::MetaModifier) r= "Mod4-" * r;
 #endif
 
-    if (r == "") return;
     if (DEBUG_EVENTS)
       cout << "key press: " << r << LF;
     //int start= texmacs_time ();
