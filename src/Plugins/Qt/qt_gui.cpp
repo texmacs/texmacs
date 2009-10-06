@@ -84,6 +84,7 @@ qt_gui_rep::~qt_gui_rep()  {
 * interclient communication
 ******************************************************************************/
 
+#if 0 // old code vs. Nemec patch for correct clipboard handling under X11
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s) {
   t= "none";
@@ -105,6 +106,41 @@ qt_gui_rep::get_selection (string key, tree& t, string& s) {
   t= tuple ("extern", s);
   return true;
 }
+#else
+bool
+qt_gui_rep::get_selection (string key, tree& t, string& s) {
+  QClipboard *cb= QApplication::clipboard();
+  bool owns= true;
+  QClipboard::Mode mode;
+  if (key == "primary") {
+    owns= cb->ownsClipboard();
+    mode= QClipboard::Clipboard;
+  } else if (key == "mouse" && cb->supportsSelection()) {
+    owns= cb->ownsSelection();
+    mode= QClipboard::Selection;
+  }
+  s= "";
+  t= "none";
+  
+  if (owns) {
+    if (selection_t->contains (key)) {
+      t= copy (selection_t [key]);
+      s= copy (selection_s [key]);
+      return true;
+    }
+    return false;
+  }
+  
+  QString originalText = cb->text(mode);
+  QByteArray buf = originalText.toAscii();
+  if (!(buf.isEmpty())) {
+    s << string(buf.constData(), buf.size());
+  }
+  
+  t= tuple ("extern", s);
+  return true;
+}
+#endif
 
 bool
 qt_gui_rep::set_selection (string key, tree t, string s) {
