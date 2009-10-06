@@ -293,10 +293,10 @@ tm_server_rep::style_get_cache (
 
 void
 tm_server_rep::interpose_handler () {
-
-// TeXmacs/Qt handles delayed messages and socket notification in its own runloop 
-  
-#ifndef QTTEXMACS
+#ifdef QTTEXMACS
+  // TeXmacs/Qt handles delayed messages and socket notification
+  // in its own runloop 
+#else
 #if 0 // choice between old and new socket listening methods
   listen_to_servers ();
   listen_to_pipes ();
@@ -307,7 +307,6 @@ tm_server_rep::interpose_handler () {
 #endif
   exec_pending_commands ();
 #endif
-  
 
   int i,j;
   for (i=0; i<N(bufs); i++) {

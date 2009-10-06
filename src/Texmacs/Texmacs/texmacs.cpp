@@ -18,7 +18,6 @@
 void mac_fix_paths ();
 #endif
 
-
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
 #include <QApplication>
@@ -27,7 +26,6 @@ void mac_fix_paths ();
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
 #include "MacOS/mac_app.h"
 #endif
-
 
 extern bool   char_clip;
 extern bool   reverse_colors;
