@@ -60,6 +60,7 @@ public:
   void drawPrimitive (PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
   int pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
   // void drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
+  int styleHint (StyleHint hint, const QStyleOption* option = 0, const QWidget* widget = 0, QStyleHintReturn* returnData = 0) const;
 };
 
 QTMStyle* qtmstyle ();

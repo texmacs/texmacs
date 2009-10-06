@@ -174,6 +174,19 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
 }
 #endif
 
+int
+QTMStyle::styleHint (StyleHint hint, const QStyleOption* option, const QWidget* widget, QStyleHintReturn* returnData) const {
+  switch (hint) {
+    case SH_MenuBar_AltKeyNavigation:
+      return 0;
+      // Set SH_MenuBar_AltKeyNavigation to false. Typically this would be the job of the style that is selected.
+      // However: That mechanism seems to be broken with some Qt versions. Furthermore, the Alt key is heavily
+      // used within TeXmacs, so the menubar navigation gets in the way quite often.
+    default:
+      return style->styleHint (hint, option, widget, returnData);
+  }
+}
+
 QTMStyle*
 qtmstyle () {
   static QTMStyle* qtmstyle= NULL;

@@ -321,6 +321,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 
 
   QMainWindow* mw= tm_mainwindow ();
+  mw->setStyle (qtmstyle ());
+  mw->menuBar()->setStyle (qtmstyle ());
 
   QScrollArea* sa= new QTMScrollArea (this);
   sa->setParent (mw);
