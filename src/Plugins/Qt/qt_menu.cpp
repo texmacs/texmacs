@@ -425,14 +425,13 @@ simple_widget_rep::as_qaction () {
 void
 QTMLazyMenu::force () {
   if (!forced) {
-    // widget w= pm->eval ();
     widget w= pm ();
     qt_menu_rep* wid= (qt_menu_rep*) (w.rep);
     QMenu* menu2= wid->item->menu ();
     replaceActions (this, menu2);
     delete (wid->item);
     wid->item= NULL;
-    pm= promise<widget>();
-    forced= true;
+    //pm= promise<widget>();
+    //forced= true;
   }
 }
