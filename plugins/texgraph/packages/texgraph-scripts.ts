@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.2>
 
 <style|source>
 
@@ -178,8 +178,8 @@
     <no-indent><plot-group|<localize|Fenetre>>
 
     <no-indent><texgraph-plot-choices-3|<small|Largeur
-    (+i*haut.)>|<arg|size>|<small|Echelle sur <math|O
-    x>>|<arg|scale-x>|<small|Echelle sur <math|O y>>|<arg|scale-y>>
+    (+i*haut.)>|<arg|size>|<small|ou échelle / <math|O
+    x>>|<arg|scale-x>|<small|et échelle / <math|O y>>|<arg|scale-y>>
 
     <no-indent><plot-range|x|<arg|start-x>|<arg|end-x>>
 
