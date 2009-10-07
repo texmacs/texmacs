@@ -25,10 +25,10 @@ public:
   int                sfactor;       // the shrinking factor
 
 protected:
-  object*  texmacs_menu;       // accelerate menu rendering
-  object*  texmacs_icon_menu;  // accelerate icon bar rendering
-  string*  text_ptr;           // where the interactive string is returned
-  command  call_back;          // called when typing finished
+  hashmap<int,object>    menu_current;
+  hashmap<object,widget> menu_cache;
+  string*  text_ptr;  // where the interactive string is returned
+  command  call_back; // called when typing finished
 
 public:
   tm_window_rep (widget wid2, tree geom);
@@ -41,6 +41,7 @@ public:
   inline scheme_tree get_property (scheme_tree what) {
     return props [what]; }
 
+  bool get_menu_widget (int which, string menu, widget& w);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
   void set_header_flag (bool flag);

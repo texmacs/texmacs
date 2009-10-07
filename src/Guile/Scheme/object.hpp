@@ -86,6 +86,7 @@ CONCRETE_CODE(object);
 ostream& operator << (ostream& out, object obj);
 bool operator == (object obj1, object obj2);
 bool operator != (object obj1, object obj2);
+int hash (object obj);
 
 object null_object ();
 object list_object (object obj1);

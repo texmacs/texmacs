@@ -28,15 +28,13 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   win (texmacs_window_widget (wid2, geom)),
   wid (wid2), id (create_window_id ()),
   serial (tm_window_serial++),
-  texmacs_menu (NULL), texmacs_icon_menu (NULL),
+  menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
   sfactor= get_server () -> get_default_shrinking_factor ();
 }
 
 tm_window_rep::~tm_window_rep () {
-  if (texmacs_menu != NULL) tm_delete_array (texmacs_menu);
-  if (texmacs_icon_menu != NULL) tm_delete_array (texmacs_icon_menu);
   destroy_window_id (id);
 }
 
@@ -85,28 +83,41 @@ tm_window_rep::unmap () {
 * Menus
 ******************************************************************************/
 
+bool
+tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
+  object xmenu= call ("menu-expand", eval ("'" * menu));
+  //cout << "xmenu= " << xmenu << "\n";
+  if (menu_cache->contains (xmenu)) {
+    if (menu_current[which] == xmenu) return false;
+    menu_current (which)= xmenu;
+#ifndef QTTEXMACS
+    //cout << "Cached " << menu << "\n";
+    w= menu_cache [xmenu];
+    return true;
+#endif
+  }
+  //cout << "Compute " << menu << "\n";
+  object umenu= eval ("'" * menu);
+  w= make_menu_widget (umenu);
+  menu_cache (xmenu)= w;
+  return true;
+}
+
 void
 tm_window_rep::menu_main (string menu) {
-  if (texmacs_menu == NULL) texmacs_menu= tm_new_array<object> (1);
-  object xmenu= call ("menu-expand", eval ("'" * menu));
-  if (xmenu == texmacs_menu[0]) return;
-  texmacs_menu[0]= xmenu;
-  widget w= make_menu_widget (xmenu);
-  ::set_main_menu (wid, w);
+  widget w;
+  if (get_menu_widget (-1, menu, w))
+    ::set_main_menu (wid, w);
 }
 
 void
 tm_window_rep::menu_icons (int which, string menu) {
-  if ((which<0) || (which>2)) return;
-  if (texmacs_icon_menu == NULL) texmacs_icon_menu= tm_new_array<object> (3);
-  object xmenu= call ("menu-expand", eval ("'" * menu));
-  if (xmenu == texmacs_icon_menu[which]) return;
-  texmacs_icon_menu[which]= xmenu;
-  object umenu= eval ("'" * menu);
-  widget w= make_menu_widget (umenu);
-  if      (which == 0) set_main_icons (wid, w);
-  else if (which == 1) set_context_icons (wid, w);
-  else if (which == 2) set_user_icons (wid, w);
+  widget w;
+  if (get_menu_widget (which, menu, w)) {
+    if      (which == 0) set_main_icons (wid, w);
+    else if (which == 1) set_context_icons (wid, w);
+    else if (which == 2) set_user_icons (wid, w);
+  }
 }
 
 void
