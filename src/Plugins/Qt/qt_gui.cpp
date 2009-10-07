@@ -368,12 +368,14 @@ void
 gui_root_extents (SI& width, SI& height) {
   // get the screen size
   the_gui->get_extents (width, height);
+  if (DEBUG_EVENTS) cout << "gui_root_extents (" << width << "," << height << ")" << LF;
 }
 
 void
 gui_maximal_extents (SI& width, SI& height) {
   // get the maximal size of a window (can be larger than the screen size)
   the_gui->get_max_size (width, height);
+  if (DEBUG_EVENTS) cout << "gui_maximal_extents (" << width << "," << height << ")" << LF;
 }
 
 void
