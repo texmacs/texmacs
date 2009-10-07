@@ -14,7 +14,7 @@ RM = rm -f
 all: bin/tm_r
 
 bin/tm_r: src/tm_r.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) src/tm_r.c -o bin/tm_r -lutil
+	$(CC) $(CPPFLAGS) $(CFLAGS) -I../../src/System src/tm_r.c -o bin/tm_r -lutil
 
 clean:
 	$(RM) bin/tm_r

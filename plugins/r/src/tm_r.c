@@ -9,9 +9,12 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include <stdio.h>
 #include <sys/select.h>
+#if HAVE_PTY_H
 #include <pty.h>
+#endif
 #include <utmp.h>
 #include <unistd.h>
 #include <termios.h>
