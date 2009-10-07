@@ -1,5 +1,5 @@
 ---------------------
-Plugin TeXgraph (17/03/09)
+Plugin TeXgraph (04/10/09)
 
 Voir le détail sur http://corcelle.wordpress.com/
 ---------------------
