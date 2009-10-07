@@ -45,14 +45,14 @@
 (menu-bind texgraph-functions-menu
   (if (not-in-session?)
       (link scripts-eval-menu)
-      (->"Traceur de courbes et surfaces"
-		(link texgraph-scripts-plot-menu))
+      (link texgraph-scripts-plot-menu)
       ---)
 
   (->"Aide"
 ;	;; FIXME : Problem when TeXgraph isn't installed by user in the default place
 ;	;; the help files should be looked for in a generic $TEXGRAPH_PATH/doc
-	("Aide (TeXgraph.pdf)" (system "texdoc /usr/local/share/TeXgraph/doc/TeXgraph &"))
+	("Aide TeXgraph.pdf" (system "texdoc /usr/local/share/TeXgraph/doc/TeXgraph &"))
+	("Aide TeXgraph.html (en ligne)" (system "xdg-open http://texgraph.tuxfamily.org/aide/TeXgraph.html &"))
 
  )
 

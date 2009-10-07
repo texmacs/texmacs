@@ -21,7 +21,8 @@
 	(utils plugins plugin-cmd)))
 
 (menu-bind texgraph-scripts-plot-menu
-  ("Courbes" 	(init-add-package "texgraph-scripts")
+  ("Traceur de courbes" 	
+		(init-add-package "texgraph-scripts")
 		(delayed
 		  (:pause 10) (make 'texgraph-plot-curve)))
 ;  ("Surfaces" (make 'texgraph-plot-surface))

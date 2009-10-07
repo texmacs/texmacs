@@ -37,6 +37,7 @@
 		xmaxi:=" ,(tm-ref t 17) "+0*i, if xmaxi=0 then xmaxi:=5 fi, ~
 		ymini:=" ,(tm-ref t 18) "+0*i, if ymini=0 then ymini:=-5 fi, ~
 		Fenetre(xmini+ymaxi*i,xmaxi+ymini*i,Echellex+i*Echelley), ~	
+		Taille:=" ,(tm-ref t 13) "+0*i, size(Taille), ~
 		Gradx:=" ,(tm-ref t 7) "+0*i, if Gradx=0 then Gradx:=1 fi, ~
 		Grady:=" ,(tm-ref t 8) "+0*i, if Grady=0 then Grady:=1 fi, ~
 		Origine:=" ,(tm-ref t 9) "+0*i, ~
@@ -56,8 +57,7 @@
 		Width:=6, Color:=green, LineStyle:=solid, " ,(tm-ref t 5) " ~
 		NewMac(\"h\", \"",(tm-ref t 4)"\",x), Courbe(t+i*h(t)), ~
 		Color:=black, LineStyle:=solid, Width:=6, ~
-		" ,(tm-ref t 20) " ~ 
-		Taille:=" ,(tm-ref t 13) "+0*i, size(Taille), ~"))
+		" ,(tm-ref t 20) " ~ "))
 
 	((== (car t) 'texgraph-plot-curve*)
 	 `(concat "set samples 1000 ~ "
