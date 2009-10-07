@@ -341,18 +341,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   bar->setStyle (qtmstyle ());
   mw->setStatusBar (bar);
 
-  mainToolBar= new QToolBar ("main toolbar", mw);
-  contextToolBar= new QToolBar ("context toolbar", mw);
-  userToolBar= new QToolBar ("user toolbar", mw);
+  mainToolBar= mw->addToolBar ("main toolbar");
+  mw->addToolBarBreak ();
+  contextToolBar= mw->addToolBar ("context toolbar");
+  mw->addToolBarBreak ();
+  userToolBar= mw->addToolBar ("user toolbar");
+  mw->addToolBarBreak ();
+
   mainToolBar->setStyle (qtmstyle ());
   contextToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
-  mw->addToolBar (mainToolBar);
-  mw->addToolBarBreak ();
-  mw->addToolBar (contextToolBar);
-  mw->addToolBarBreak ();
-  mw->addToolBar (userToolBar);
-  mw->addToolBarBreak ();
 
   updateVisibility();
 
