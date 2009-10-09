@@ -192,9 +192,9 @@ QTMStyle::styleHint (StyleHint hint, const QStyleOption* option, const QWidget* 
   }
 }
 
-QTMStyle*
+QStyle*
 qtmstyle () {
-  static QTMStyle* qtmstyle= NULL;
+  static QStyle* qtmstyle= NULL;
   if (!qtmstyle) {
     qtmstyle = new QTMStyle ();
   }
