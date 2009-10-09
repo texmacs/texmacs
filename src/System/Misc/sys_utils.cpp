@@ -86,9 +86,12 @@ set_env (string var, string with) {
   char* _var = as_charp (var);
   char* _with= as_charp (with);
   setenv (_var, _with, 1);
+  tm_delete_array(_var);
+  tm_delete_array(_with);
 #else
   char* _varw= as_charp (var * "=" * with);
   (void) putenv (_varw);
+  // do not delete _varw !!!
+  // -> known memory leak, but solution more complex than it is worth
 #endif
-  // do not delete _var and _with !!!
 }

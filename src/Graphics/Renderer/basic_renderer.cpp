@@ -379,7 +379,7 @@ void basic_renderer_rep::image_auto_gc () {
     fact= fact * fact * fact;
     if ((ci->w * ci->h) < 400) fact= fact * 5;
     if ((ci->w * ci->h)  < 6400) fact= fact * 5;
-    if (diff/fact > 60000) {
+    if (diff > 60000*fact) {
       cache_image->reset (lookup);
       ps_bbox->reset (lookup[0]);
     }

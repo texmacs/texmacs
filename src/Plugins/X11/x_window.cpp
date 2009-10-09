@@ -66,6 +66,12 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
     wm_hints,
     class_hints
   );
+
+  XFree(size_hints);
+  XFree(wm_hints);
+  XFree(class_hints);
+  XFree(Window_Name.value);
+  XFree(Icon_Name.value);
   // cout << "Setting hints required " << (texmacs_time ()-start_2) << " ms\n";
 }
 
@@ -78,7 +84,7 @@ x_window_rep::initialize () {
   dpy= gui->dpy;
   gc = gui->gc;
   full_screen_flag= false;
-  
+
   // int start_1= texmacs_time ();
   ren->set_origin (0, 0);
   ren->decode (def_w, def_h); def_h= -def_h;
@@ -284,7 +290,7 @@ x_window_rep::get_name () {
 void
 x_window_rep::set_visibility (bool flag) {
   if (flag) XMapRaised (dpy, win);
-  else XUnmapWindow (dpy, win);  
+  else XUnmapWindow (dpy, win);
 }
 
 void
