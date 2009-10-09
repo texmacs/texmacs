@@ -29,18 +29,17 @@ protected:
 public slots:
   void doUpdate ();
   void doSocketNotification (int socket);  
+  void doCommands ();
 };
 
 
 class QTMCommandHelper : public QObject {
   Q_OBJECT
   object cmd;
-  bool pause;
-  int tzero;
   QTimer timer;
   
 public:
-  QTMCommandHelper (object _cmd, bool _pause);
+  QTMCommandHelper (object _cmd, int _delay);
   
 public slots:
   void doCommand ();

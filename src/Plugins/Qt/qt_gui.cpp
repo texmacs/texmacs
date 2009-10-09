@@ -302,12 +302,12 @@ qt_gui_rep::remove_notifier (socket_notifier sn)
  * Delayed commands
  ******************************************************************************/
 
-QTMCommandHelper::QTMCommandHelper (object _cmd, bool _pause) 
-  : QObject (), cmd (_cmd), pause (_pause), tzero ((int) texmacs_time ()), timer () 
+QTMCommandHelper::QTMCommandHelper (object _cmd, int delay = 0) 
+  : QObject (), cmd (_cmd),  timer () 
 {
   QObject::connect (&timer, SIGNAL (timeout()), this, SLOT (doCommand()));
   timer.setSingleShot (true);
-  timer.start (0);
+  timer.start (delay);
 }
 
 void
@@ -320,16 +320,42 @@ QTMCommandHelper::doCommand()
   if (!(timer.isActive ())) deleteLater();
 }
 
+static array <object> delayed_commands;
+
+static QTimer *global_timer = NULL;
+
+void
+QTMGuiHelper::doCommands()
+{
+  // guarantee sequential execution of delayed commands 
+  // otherwise some bugs appear in keyboard handling
+  
+  int i, n= N(delayed_commands);
+  for (i=0; i<n; i++) {
+    object obj= call (delayed_commands[i]);
+    if (is_int (obj)) {
+      new QTMCommandHelper(delayed_commands[i], as_int (obj));
+    }
+  }
+  delayed_commands = array<object>(0);
+}
+
 void   
 exec_delayed (object cmd)
 {
-  new QTMCommandHelper (cmd, false);
+  delayed_commands << cmd;
+  if (!global_timer) {
+    global_timer = new QTimer();
+    QObject::connect (global_timer, SIGNAL (timeout()), the_gui->gui_helper, SLOT (doCommands()));
+  }
+  global_timer->start(0);
 }
 
 void   
 exec_delayed_pause (object cmd)
 {
-  new QTMCommandHelper (cmd, true);
+  exec_delayed (cmd);
+//  delayed_commands << cmd;
 }
 
 void   exec_pending_commands ()
