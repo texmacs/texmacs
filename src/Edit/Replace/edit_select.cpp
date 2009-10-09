@@ -801,27 +801,29 @@ edit_select_rep::raw_cut (path p1, path p2) {
 void
 edit_select_rep::selection_cut (string key) {
   if (inside_active_graphics ()) {
-    tree t= as_tree (eval ("(graphics-cut)"));
-    selection_set (key, t);
-    return;
+    if (key != "none") {
+      tree t= as_tree (eval ("(graphics-cut)"));
+      selection_set (key, t);
+    }
   }
-  if (!selection_active_any ()) return;
-  if (selection_active_table ()) {
-    path p1= start_p, p2= end_p;
-    tree sel= selection_get ();
-    selection_set (key, sel);
-    cut (p1, p2);
-  }
-  else {
+  else if (selection_active_any ()) {
     path p1, p2;
-    selection_get (p1, p2);
-    go_to (p2);
-    if (p2 == p1) return;
-
-    tree sel= compute_selection (et, p1, p2);
-    // cout << "Selection " << sel << "\n";
-    selection_set (key, simplify_correct (sel));
-    // cout << "Selected  " << sel << "\n";
+    if (selection_active_table ()) {
+      p1= start_p; p2= end_p;
+      if(key != "none") {
+        tree sel= selection_get ();
+        selection_set (key, sel);
+      }
+    }
+    else {
+      selection_get (p1, p2);
+      go_to (p2);
+      if (p2 == p1) return;
+      if (key != "none") {
+        tree sel= compute_selection (et, p1, p2);
+        selection_set (key, simplify_correct (sel));
+      }
+    }
     cut (p1, p2);
   }
 }
@@ -829,7 +831,7 @@ edit_select_rep::selection_cut (string key) {
 tree
 edit_select_rep::selection_get_cut () {
   tree t= selection_get ();
-  selection_cut ();
+  selection_cut ("none");
   return t;
 }
 
