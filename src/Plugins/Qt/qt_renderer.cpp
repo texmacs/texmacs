@@ -248,13 +248,10 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
   // at position (x, y) in a rectangle of size (w, h)
 
-  // if (DEBUG_EVENTS) cout << "qt_renderer_rep::image " << as_string(u) << LF;
+  if(cx2<=cx1 || cy2<=cy1) return;
 
   w= w/pixel; h= h/pixel;
   decode (x, y);
-
-  //painter.setRenderHints (0);
-  //painter.drawRect (QRect (x, y-h, w, h));
 
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
@@ -266,16 +263,64 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     pm= static_cast<QImage*> (ci->ptr);
   } else {
     // rendering
-    if (qt_supports_image (u))
+    bool needs_crop= false;
+    if (qt_supports_image (u)) {
       pm= new QImage (to_qstring (as_string (u)));
-    else if (suffix (u) == "ps" ||
+      needs_crop= true;
+    } else if (suffix (u) == "ps" ||
              suffix (u) == "eps" ||
              suffix (u) == "pdf") {
-      url temp= url_temp (".png");
+
 #ifdef MACOSX_EXTENSIONS
+      url temp= url_temp (".png");
       mac_image_to_png (u, temp);
+      needs_crop= true;
 #else
-      system ("convert", u, temp);
+      string idstr= eval_system ("identify",u);
+      int i=0;
+      int a=0,b=0;
+      while(i<N(idstr)) {
+        b=0;
+        if(idstr[i]==' ') {
+          i++;
+          a=i;
+          while(i<N(idstr) && idstr[i]>'0' && idstr[i]<'9')
+            i++;
+          if(i>=N(idstr))
+            break;
+          if(idstr[i] != 'x')
+            continue;
+          i++;
+          b=i;
+          while(i<N(idstr) && idstr[i]>'0' && idstr[i]<'9')
+            i++;
+          if(i<N(idstr) && idstr[i]==' ')
+            break;
+        }
+        i++;
+      }
+      int iw,ih;
+      if(b>0) {
+        iw=as_int(idstr(a,b-1));
+        ih=as_int(idstr(b,i));
+      } else {
+        int bbx1,bby1,bbx2,bby2;
+        ps_bounding_box(u,bbx1,bby1,bbx2,bby2);
+        iw=bbx2-bbx1;
+        ih=bby2-bby1;
+      }
+
+//      float resx = 72*w/((bbx2-bbx1)*(cx2-cx1));
+//      float resy = 72*h/((bby2-bby1)*(cy2-cy1));
+      float resx = 144*w/(iw*(cx2-cx1));
+      float resy = 144*h/(ih*(cy2-cy1));
+
+      url temp= url_temp (".png");
+      system ("convert -density " * as_string(resx) * "x" * as_string(resy)
+             * " -scale 50% -crop " * as_string(w) * "x" * as_string(h)
+             * "+" * as_string (cx1*w/(cx2-cx1))
+             * "+" * as_string ((1-cy2)*h/(cy2-cy1))
+             * "! -background white -flatten", u, temp);
 #endif
       pm= new QImage (to_qstring (as_string (temp)));
       remove (temp);
@@ -285,23 +330,27 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       if (pm != NULL) delete pm;
       return;
     }
+
+    if(needs_crop) {
+      int iw= pm->width ();
+      int ih= pm->height ();
+      int x1= as_int (cx1 * iw);
+      int y1= as_int (cy1 * ih);
+      int x2= as_int (cx2 * iw);
+      int y2= as_int (cy2 * ih);
+      int ww= x2 - x1;
+      int hh= y2 - y1;
+
+      (*pm)= pm->copy(QRect (x1, hh-y2, ww, hh));
+      (*pm)= pm->scaled(w,h);
+    }
+
     ci = tm_new<qt_cache_image_rep> (w,h, texmacs_time(), pm);
     set_image_cache(lookup, ci);
     (ci->nr)++;
   }
 
-  int iw= pm->width ();
-  int ih= pm->height ();
-  int x1= as_int (cx1 * iw);
-  int y1= as_int (cy1 * ih);
-  int x2= as_int (cx2 * iw);
-  int y2= as_int (cy2 * ih);
-  int ww= x2 - x1;
-  int hh= y2 - y1;
-
-  painter.setRenderHints (0);
-  //painter.setRenderHints (QPainter::SmoothPixmapTransform);
-  painter.drawImage (QRect (x, y-h, w, h), *pm, QRect (x1, hh-y2, ww, hh));
+  painter.drawImage (x, y-h, *pm);
 };
 
 
@@ -348,10 +397,10 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
-                
+
       QPainter pp(im);
       QPen pen(painter.pen());
-      QBrush brush(pen.color());        
+      QBrush brush(pen.color());
       pp.setPen(Qt::NoPen);
       im->fill (Qt::transparent);
       for (j=0; j<h; j++)
