@@ -40,6 +40,7 @@ extern int time_credit;
 extern int timeout_time;
 
 hashmap<int,string> qtkeymap (0);
+hashmap<int,string> qtdeadmap (0);
 
 inline void
 scale (QPoint& point) {
@@ -49,6 +50,10 @@ scale (QPoint& point) {
 inline void
 map (int code, string name) {
   qtkeymap(code) = name;
+}
+inline void
+deadmap (int code, string name) {
+  qtdeadmap(code) = name;
 }
 
 void
@@ -115,11 +120,11 @@ initkeymap () {
   map (Qt::Key_Execute   , "execute" );
   map (Qt::Key_Help      , "help" );
 
-  map (Qt::Key_Dead_Acute     , "acute");
-  map (Qt::Key_Dead_Grave     , "grave");
-  map (Qt::Key_Dead_Diaeresis , "umlaut");
-  map (Qt::Key_Dead_Circumflex, "hat");
-  map (Qt::Key_Dead_Tilde     , "tilde");
+  deadmap (Qt::Key_Dead_Acute     , "acute");
+  deadmap (Qt::Key_Dead_Grave     , "grave");
+  deadmap (Qt::Key_Dead_Diaeresis , "umlaut");
+  deadmap (Qt::Key_Dead_Circumflex, "hat");
+  deadmap (Qt::Key_Dead_Tilde     , "tilde");
 
   // map (0x0003              , "K-enter");
   // map (Qt::Key_Begin       , "begin" );
@@ -289,14 +294,13 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
   if (!wid) return;
 
   {
-    // char str[256];
     int key = event->key();
-    QString nss = event->text();
     Qt::KeyboardModifiers mods = event->modifiers();
+
     if (DEBUG_EVENTS) {
       cout << "key  : " << key << LF;
-      cout << "text : " << nss.toAscii().data() << LF;
-      cout << "count: " << nss.count() << LF;
+      cout << "text : " << event->text().toAscii().data() << LF;
+      cout << "count: " << event->text().count() << LF;
       if (mods & Qt::ShiftModifier) cout << "shift\n";
       if (mods & Qt::MetaModifier) cout << "meta\n";
       if (mods & Qt::ControlModifier) cout << "control\n";
@@ -304,51 +308,67 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       if (mods & Qt::AltModifier) cout << "alt\n";
     }
 
-    bool flag= true;
     string r;
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
-      if (mods & Qt::ShiftModifier) r= "S-" * r;
-    }
-    else {
-      QByteArray buf= nss.toUtf8();
-      string rr (buf.constData(), buf.count());
-      r= utf8_to_cork (rr);
-      if (r == "<less>") r= "<";
-      if (r == "<gtr>") r= ">";
+    } else if (qtdeadmap->contains (key)) {
+      mods &=~ Qt::ShiftModifier;
+      r = qtdeadmap[key];
+    } else {
+      QString nss = event->text();
       unsigned short unic= nss.data()[0].unicode();
-      //cout << "unic= " << unic << "\n";
       if (unic < 32 && key < 128) {
-        if ((mods & Qt::ShiftModifier) == 0)
-          if (((char) key) >= 'A' && ((char) key) <= 'Z')
+        if (((char) key) >= 'A' && ((char) key) <= 'Z') {
+          if ((mods & Qt::ShiftModifier) == 0)
             key= (int) (key + ((int) 'a') - ((int) 'A'));
-        r= string ((char) key);
-      }
-      else {
-        if (unic == 168) r= "umlaut";
-        if (unic == 96) {
-          if ((mods & Qt::AltModifier) != 0) r= "grave";
-          else r= "`";
         }
-        if (unic == 180) r= "acute";
-        if (unic == 710) r= "hat";
-        if (unic == 732) r= "tilde";
-        flag= false;
+        mods &=~ Qt::ShiftModifier;
+        r= string ((char) key);
+      } else {
+        switch(unic) {
+        case 96:   r= "`"; // unicode to cork conversion not appropriate for this case...
+#ifdef Q_WS_MAC
+          // CHECKME: are these two MAC exceptions really needed?
+                   if (mods & Qt::AltModifier) r= "grave";
+#endif
+                   break;
+        case 168:  r= "umlaut"; break;
+        case 180:  r= "acute"; break;
+        // the following combining characters should be caught by qtdeadmap
+        case 0x300: r= "grave"; break;
+        case 0x301: r= "acute"; break;
+        case 0x302: r= "hat"; break;
+        case 0x308: r= "umlaut"; break;
+        case 0x33e: r= "tilde"; break;
+        default:
+          QByteArray buf= nss.toUtf8();
+          string rr (buf.constData(), buf.count());
+          r= utf8_to_cork (rr);
+          if (r == "<less>") r= "<";
+          if (r == "<gtr>") r= ">";
+        }
+#ifdef Q_WS_MAC
+        // CHECKME: are these two MAC exceptions really needed?
+        mods &=~ Qt::AltModifier;
+#endif
+        mods &=~ Qt::ShiftModifier;
       }
     }
 
     if (r == "") return;
 
 #ifdef Q_WS_MAC
-    if (mods & Qt::MetaModifier) r= "C-" * r;
-    if (mods & Qt::ControlModifier) r= "Mod1-" * r;
+    if (mods & Qt::ShiftModifier) r= "S-" * r;
+    if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
+    if (mods & Qt::ControlModifier) r= "Mod1-" * r;  // The "Command" key
     //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
-    if (flag && ((mods & Qt::AltModifier) != 0)) r= "Mod4-" * r;
+    if (mods & Qt::AltModifier) r= "Mod4-" * r;
 #else
+    if (mods & Qt::ShiftModifier) r= "S-" * r;
     if (mods & Qt::ControlModifier) r= "C-" * r;
     if (mods & Qt::AltModifier) r= "Mod1-" * r;
     //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
-    if (mods & Qt::MetaModifier) r= "Mod4-" * r;
+    if (mods & Qt::MetaModifier) r= "Mod4-" * r;     // The "Windows" key
 #endif
 
     if (DEBUG_EVENTS)
