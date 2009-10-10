@@ -1,7 +1,7 @@
 # CMake file for TeXmacs
 # created by Massimiliano Gubinelli 
 
-# The name of our project is "TeXmacs". CMakeLists files in this project can 
+# The name of our project is "TEXMACS". CMakeLists files in this project can 
 # refer to the root source directory of the project as ${TEXMACS_SOURCE_DIR} and 
 # to the root binary directory of the project as ${TEXMACS_BINARY_DIR}. 
 
@@ -245,6 +245,7 @@ ENDIF(_guile_dots_test)
 ### GUI selection
 ### --------------------------------------------------------------------
 
+SET(GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
 IF(NOT TEXMACS_GUI)
   SET(TEXMACS_GUI "X11" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
@@ -255,6 +256,10 @@ IF(TEXMACS_GUI STREQUAL "Qt")
   FIND_PACKAGE(Qt4)
  
   IF(QT4_FOUND)
+    IF(WIN32)
+     SET(GUI_TYPE WIN32)
+    ENDIF(WIN32)
+
     INCLUDE(${QT_USE_FILE})
     SET(NO_FAST_ALLOC 1)
     SET(QTTEXMACS 1)
@@ -268,6 +273,7 @@ IF(TEXMACS_GUI STREQUAL "Qt")
 ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
 
   IF (APPLE)
+    SET(GUI_TYPE MACOSX_BUNDLE)
 
     SET(NO_FAST_ALLOC 1)
     SET(AQUATEXMACS 1)
@@ -317,10 +323,42 @@ ENDIF(TEXMACS_GUI STREQUAL "Qt")
 CONFIGURE_FILE(${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
 CONFIGURE_FILE(${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
 
+### --------------------------------------------------------------------
+### Set the executable target name and other stuff
+### --------------------------------------------------------------------
+
+SET(TeXmacs_binary_name "texmacs_${TEXMACS_GUI}")
+
+# If we are build a "Debug" version then put that on the built Application
+SET (EXE_DEBUG_EXTENSION "_debug")
 
 ### --------------------------------------------------------------------
 ### Compile sources
 ### --------------------------------------------------------------------
 
 ADD_SUBDIRECTORY(src)
+
+### --------------------------------------------------------------------
+### Complete bundle if MacOSX
+### --------------------------------------------------------------------
+
+IF (APPLE AND NOT TEXMACS_GUI STREQUAL X11)
+  SET(BUNDLE_DEBUG_EXTENSION)
+  IF (DEBUG)
+    SET(BUNDLE_DEBUG_EXTENSION "_debug")
+  ENDIF (DEBUG)  
+  SET(APP_BUNDLE_NAME ${TeXmacs_binary_name}${BUNDLE_DEBUG_EXTENSION}".app")
+  ADD_CUSTOM_TARGET ( bundle
+            mkdir -p  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS 
+    COMMAND mkdir -p  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/Resources
+    COMMAND cp ${TEXMACS_SOURCE_DIR}/misc/bundle/Info.plist ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/Resources
+    COMMAND cp ${TEXMACS_SOURCE_DIR}/misc/bundle/TeXmacs ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS
+    COMMAND chmod a+x  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS/TeXmacs
+  )
+ENDIF (APPLE AND NOT TEXMACS_GUI STREQUAL X11)
+
+
+### --------------------------------------------------------------------
+### Installation
+### --------------------------------------------------------------------
 

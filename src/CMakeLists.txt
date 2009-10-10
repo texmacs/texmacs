@@ -412,7 +412,6 @@ SET(TeXmacs_Cocoa_SRCS
 ### Set variables related to the executable target
 ### --------------------------------------------------------------------
 
-SET(TeXmacs_binary_name "texmacs_${TEXMACS_GUI}")
 
 
 ## setup base source list, library dependencies, include dirs
@@ -446,6 +445,7 @@ IF(TEXMACS_GUI STREQUAL "Qt")
   SET(TeXmacs_Libraries ${TeXmacs_Libraries}  ${QT_LIBRARIES})
   SET(TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} ${QT_INCLUDES})
 
+
 ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
 
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
@@ -453,6 +453,7 @@ ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
   SET(TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Cocoa_SRCS})
   SET(TeXmacs_Libraries ${TeXmacs_Libraries} ${COCOA_LIBRARY})
   SET(TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} ${COCOA_INCLUDE_DIR})
+  
   MARK_AS_ADVANCED(COCOA_LIBRARY)
   MARK_AS_ADVANCED(COCOA_INCLUDE_DIR)
 
@@ -463,14 +464,29 @@ ELSE(TEXMACS_GUI STREQUAL "Qt")
 
 ENDIF(TEXMACS_GUI STREQUAL "Qt")
 
+
+
 ### --------------------------------------------------------------------
 ### initialize executable target with all the infos collected so far
 ### --------------------------------------------------------------------
 
 
 INCLUDE_DIRECTORIES(${TeXmacs_Include_Dirs}) 
-ADD_EXECUTABLE(${TeXmacs_binary_name} ${TeXmacs_All_SRCS})
+
+ADD_EXECUTABLE ( ${TeXmacs_binary_name} ${GUI_TYPE} 
+  ${TeXmacs_All_SRCS}
+)
+
 TARGET_LINK_LIBRARIES(${TeXmacs_binary_name} ${TeXmacs_Libraries})
+
+#--------------------------------------------------------------------------------
+#-- Set the Debug and Release names for the libraries
+SET_TARGET_PROPERTIES(${TeXmacs_binary_name} 
+    PROPERTIES
+    DEBUG_OUTPUT_NAME ${TeXmacs_binary_name}${EXE_DEBUG_EXTENSION}
+    RELEASE_OUTPUT_NAME ${TeXmacs_binary_name}
+    RUNTIME_OUTPUT_DIRECTORY ${TEXMACS_BINARY_DIR}
+)
 
 
 

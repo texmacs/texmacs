@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# Are we using Xcode to compile. If we are then the CMake variable
+# XCODE will be '1' otherwise it will be blank
+Xcode="@XCODE@x"
+InstallPrefix="@CMAKE_INSTALL_PREFIX@"
+ProjectBinaryDir="@binary_dir@"
+OSX_App_Name="@target@"
+
+# Check for a Debug build. Note that the EXE_DEBUG_EXTENSION was set
+# in the CMakeLists.txt file
+if [[ $Xcode == "1x" ]]; then
+  if [[ $BUILD_STYLE == "Debug" ]]; then
+    OSX_App_Name="@target@@EXE_DEBUG_EXTENSION@"
+  fi
+  OSX_App="@EXECUTABLE_OUTPUT_PATH@/$BUILD_STYLE/$OSX_App_Name.app"
+else
+  OSX_App="@EXECUTABLE_OUTPUT_PATH@/$OSX_App_Name.app"
+fi
+
+
+# Remove the previous @target@ app package so we start with a clean bundle
+echo "Removing Previous $OSX_App_Name.app bundle at $InstallPrefix/"
+rm -rf "$InstallPrefix/$OSX_App_Name.app"
+
+# copy the @target@.app bundle to the installation location
+echo "Copying $OSX_App_Name.app from the build tree to $InstallPrefix/"
+cp -Rp "$OSX_App" "$InstallPrefix/"
+
+OSX_App="@CMAKE_INSTALL_PREFIX@/$OSX_App_Name.app"
+ContentsDir="$OSX_App/Contents"
+SupportDir="$OSX_App/Contents/Support"
+LibrariesDir="$OSX_App/Contents/Libraries"
+FrameworksDir="$OSX_App/Contents/Frameworks"
+PluginsDir="$OSX_App/Contents/Plugins"
+
+
+# create directories in the @target@.app bundle
+mkdir -p "$SupportDir"
+if [ ! -e $LibrariesDir ]
+  then
+  mkdir -p "$LibrariesDir"
+fi
+
+
