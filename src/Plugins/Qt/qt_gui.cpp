@@ -320,12 +320,48 @@ QTMCommandHelper::doCommand()
   if (!(timer.isActive ())) deleteLater();
 }
 
-static array <object> delayed_commands;
-
 static QTimer *global_timer = NULL;
+
 
 void
 QTMGuiHelper::doCommands()
+{
+  exec_pending_commands ();
+  the_gui->update ();
+}
+
+void restart_global_timer (int pause = 0) {
+  if (!global_timer) {
+    global_timer = new QTimer();
+    QObject::connect (global_timer, SIGNAL (timeout()), the_gui->gui_helper, SLOT (doCommands()));
+  }
+  global_timer->start(pause);
+}
+
+#if 0
+// the following code causes problems in an unpredicable way
+// especially to keybindings and dead-key hanlding
+// for the moment has been replaced by a unique timer
+// and a queue of delayed commands much in the spirit of the
+// X11 version.
+
+static array <object> delayed_commands;
+
+void   
+exec_delayed (object cmd)
+{ 
+ delayed_commands << cmd;
+  restart_global_timer ();
+}
+
+void   
+exec_delayed_pause (object cmd)
+{
+  delayed_commands << cmd;
+  restart_global_timer ();
+}
+
+void   exec_pending_commands ()
 {
   // guarantee sequential execution of delayed commands 
   // otherwise some bugs appear in keyboard handling
@@ -340,29 +376,60 @@ QTMGuiHelper::doCommands()
   delayed_commands = array<object>(0);
 }
 
-void   
-exec_delayed (object cmd)
-{
-  delayed_commands << cmd;
-  if (!global_timer) {
-    global_timer = new QTimer();
-    QObject::connect (global_timer, SIGNAL (timeout()), the_gui->gui_helper, SLOT (doCommands()));
+#else
+static array<object> delayed_queue;
+static array<int>    start_queue;
+
+void
+exec_delayed (object cmd) {
+  delayed_queue << cmd;
+  start_queue << (((int) texmacs_time ()) - 1000000000);
+  restart_global_timer ();
+}
+
+void
+exec_delayed_pause (object cmd) {
+  delayed_queue << cmd;
+  start_queue << ((int) texmacs_time ());
+  restart_global_timer ();
+}
+
+void
+exec_pending_commands () {
+  array<object> a= delayed_queue;
+  array<int> b= start_queue;
+  delayed_queue= array<object> (0);
+  start_queue= array<int> (0);
+  int i, n= N(a);
+  for (i=0; i<n; i++) {
+    int now= (int) texmacs_time ();
+    if (now >= b[i]) {
+      object obj= call (a[i]);
+      if (is_int (obj) && (now - b[i] < 1000000000)) {
+        int pause = as_int (obj);
+        //cout << "pause= " << obj << "\n";
+        delayed_queue << a[i];
+        start_queue << (now + pause);
+      }
+    }
+    else {
+      delayed_queue << a[i];
+      start_queue << b[i];
+    }
   }
-  global_timer->start(0);
+  if (N(delayed_queue)>0) {
+    int lapse = start_queue[0];
+    int n = N(start_queue);
+    for (i=1; i<n; i++) {
+      if (lapse < start_queue[i]) lapse = start_queue[i];
+    }
+    lapse = lapse - (int) texmacs_time ();
+    if (lapse < 0) lapse = 0;
+    // cout << "restarting :" << lapse << LF;
+    restart_global_timer (lapse);
+  }
 }
-
-void   
-exec_delayed_pause (object cmd)
-{
-  exec_delayed (cmd);
-//  delayed_commands << cmd;
-}
-
-void   exec_pending_commands ()
-{
-  // just provide empty implementation
-  // this function is not used in TeXmacs/Qt
-}
+#endif
 
 /******************************************************************************
 * Main routines
