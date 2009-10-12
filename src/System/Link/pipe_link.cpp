@@ -19,6 +19,10 @@
 #ifdef __MINGW32__
 #ifdef OS_WIN32
 #include <sys/pipe.h>
+#else
+//#define PATTERN WIN_PATTERN
+//#include <winsock.h>
+//#undef PATTERN
 #endif
 #else
 #include <unistd.h>
@@ -32,8 +36,25 @@
 hashset<pointer> pipe_link_set;
 
 static void pipe_callback (void *obj, void *info) {
+#ifndef __MINGW32__
   pipe_link_rep* con= (pipe_link_rep*) obj;  
-
+#ifdef OS_WIN32
+  bool any_update = false;  
+  if (con->alive  && PIPE_CheckStdout (&con->conn)) {
+    //cout << "pipe_callback OUT" << LF;
+    con->feed (LINK_OUT);
+    any_update = true;
+  }
+  if (con->alive  && PIPE_CheckStderr (&con->conn)) {
+    //cout << "pipe_callback ERR" << LF;
+    con->feed (LINK_ERR);
+    any_update = true;
+  }
+  if (!is_nil (con->feed_cmd) && any_update) {
+    //cout << "pipe_callback APPLY" << LF;
+    if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
+  }
+#else
   fd_set rfds;
   FD_ZERO (&rfds);
   int max_fd= max (con->err, con->out)+1;
@@ -60,6 +81,8 @@ static void pipe_callback (void *obj, void *info) {
     //cout << "pipe_callback APPLY" << LF;
     if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
   }
+#endif
+#endif
 }
 
 /******************************************************************************
