@@ -421,7 +421,7 @@ exec_pending_commands () {
     int lapse = start_queue[0];
     int n = N(start_queue);
     for (i=1; i<n; i++) {
-      if (lapse < start_queue[i]) lapse = start_queue[i];
+      if (lapse > start_queue[i]) lapse = start_queue[i];
     }
     lapse = lapse - (int) texmacs_time ();
     if (lapse < 0) lapse = 0;
