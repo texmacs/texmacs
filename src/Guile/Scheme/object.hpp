@@ -147,6 +147,7 @@ bool   exec_file (url u);
 void   exec_delayed (object cmd);
 void   exec_delayed_pause (object cmd);
 void   exec_pending_commands ();
+void   clear_pending_commands ();
 
 object call (const char* fun);
 object call (const char* fun, object a1);

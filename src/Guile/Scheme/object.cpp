@@ -413,4 +413,10 @@ exec_pending_commands () {
     }
   }
 }
+
+void
+clear_pending_commands () {
+  delayed_queue= array<object> (0);
+  start_queue= array<int> (0);
+}
 #endif // QTTEXMACS

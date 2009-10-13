@@ -429,6 +429,12 @@ exec_pending_commands () {
     restart_global_timer (lapse);
   }
 }
+
+void
+clear_pending_commands () {
+  delayed_queue= array<object> (0);
+  start_queue= array<int> (0);
+}
 #endif
 
 /******************************************************************************

@@ -428,6 +428,7 @@ void
 tm_server_rep::quit () {
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
+  clear_pending_commands ();
   exit (0);
 }
 
