@@ -22,7 +22,7 @@ parser::parser (hashmap<tree,tree> g, string s) {
 
 int
 parser_rep::parse (tree parsing_tree, int pos) {
-  if (pos >= N(xstring)) return -1;
+  if (pos >= N(xstring)) return pos;
   pair<tree,int> p(parsing_tree,pos);
   if (evaluated_pair->contains(p)) return evaluated_pair(p);
   if (wanted_pair->contains(p)) return -1;
@@ -109,7 +109,7 @@ parser_rep::parse (tree parsing_tree, int pos) {
     string s;
     s= parsing_tree->label;
     int opos= pos;
-    if (s == xstring(pos,pos+1)) pos++;
+    if (pos+N(s) <= N(xstring) && s == xstring(pos,pos+N(s))) pos+=N(s);
     p= pair<tree, int> (parsing_tree, opos);
     cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
     evaluated_pair(p)= pos;
