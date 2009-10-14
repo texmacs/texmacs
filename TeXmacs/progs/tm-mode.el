@@ -22,7 +22,8 @@
   '(begin cond else call/cc
     values define-preferences menu-dynamic
     case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
-    define-grammar drd-rule drd-rules assume texmacs-modes
+    define-grammar define-regexp-grammar
+    drd-rule drd-rules assume texmacs-modes
     delayed dialogue on-entry on-exit widget-delayed
     association-tile bar concat dense-bar dense-tile document
     header-bar sequence short-bar short-tile tile))

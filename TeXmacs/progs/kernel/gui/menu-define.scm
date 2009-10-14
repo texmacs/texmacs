@@ -23,7 +23,7 @@
 ;; (shortcut :string?) and multiple actions in menu entries.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-grammar
+(define-regexp-grammar
   (:menu-label (:or
     :string?
     (text :tuple? :string?)

@@ -140,14 +140,14 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (define-grammar-decls l)
+(define-public (define-regexp-grammar-decls l)
   (define (insert rule)
     (ahash-set! match-term (car rule) (cdr rule)))
   (for-each insert l))
 
-(define-public-macro (define-grammar . l)
+(define-public-macro (define-regexp-grammar . l)
   `(begin
-     (define-grammar-decls ,(list 'quasiquote l))))
+     (define-regexp-grammar-decls ,(list 'quasiquote l))))
 
 (define-public (match? x pattern)
   "Does @x match the pattern @pat?"

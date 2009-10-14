@@ -20,7 +20,7 @@
 ;; Example of a grammar for regular expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-grammar
+(define-regexp-grammar
   (:a a b c)
   (:b (:repeat :a)))
 
