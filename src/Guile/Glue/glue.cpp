@@ -32,6 +32,7 @@
 #include "link.hpp"
 #include "dictionary.hpp"
 #include "patch.hpp"
+#include "grammar.hpp"
 #include <string.h>
 #include <libguile.h>
 

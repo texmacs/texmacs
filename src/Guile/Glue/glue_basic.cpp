@@ -1758,6 +1758,36 @@ tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_define_grammar_rule (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "define-grammar-rule");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "define-grammar-rule");
+
+  tree in1= scm_to_tree (arg1);
+  tree in2= scm_to_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  define_grammar_rule (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_grammar_parse (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "grammar-parse");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "grammar-parse");
+
+  tree in1= scm_to_tree (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  int out= grammar_parse (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_parse_texmacs (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "parse-texmacs");
 
@@ -3742,6 +3772,8 @@ initialize_glue_basic () {
   scm_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
   scm_new_procedure ("old-xml-cdata->tm", (FN) tmg_old_xml_cdata_2tm, 1, 0, 0);
   scm_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
+  scm_new_procedure ("define-grammar-rule", (FN) tmg_define_grammar_rule, 2, 0, 0);
+  scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   scm_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
   scm_new_procedure ("parse-texmacs-snippet", (FN) tmg_parse_texmacs_snippet, 1, 0, 0);
