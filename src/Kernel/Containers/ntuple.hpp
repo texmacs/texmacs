@@ -24,6 +24,11 @@ public:
   inline bool operator != (const pair& p) { return x1 != p.x1 || x2 != p.x2; }
 };
 
+template<class T1, class T2> int
+hash (const pair<T1,T2>& p) {
+  int h1= hash (p.x1);
+  return (h1 << 11) ^ (h1 >> 21) ^ hash (p.x2); }
+
 template<class T1, class T2> inline ostream&
 operator << (ostream& out, const pair<T1,T2>& p) {
   return out << "[ " << p.x1 << ", " << p.x2 << " ]"; }
@@ -44,6 +49,12 @@ public:
     return x1 != t.x1 || x2 != t.x2 || x3 != t.x3; }
 };
 
+template<class T1, class T2, class T3> int
+hash (const triple<T1,T2,T3>& t) {
+  int h= hash (t.x1);
+  h= (h << 11) ^ (h >> 21) ^ hash (t.x2);
+  return (h << 11) ^ (h >> 21) ^ hash (t.x3); }
+
 template<class T1, class T2, class T3> inline ostream&
 operator << (ostream& out, const triple<T1,T2,T3>& t) {
   return out << "[ " << t.x1 << ", " << t.x2 << ", " << t.x3 << " ]"; }
@@ -63,6 +74,13 @@ public:
   inline bool operator != (const quartet& q) {
     return x1 != q.x1 || x2 != q.x2 || x3 != q.x3 || x4 != q.x4; }
 };
+
+template<class T1, class T2, class T3, class T4> int
+hash (const quartet<T1,T2,T3,T4>& q) {
+  int h= hash (q.x1);
+  h= (h << 11) ^ (h >> 21) ^ hash (q.x2);
+  h= (h << 11) ^ (h >> 21) ^ hash (q.x3);
+  return (h << 11) ^ (h >> 21) ^ hash (q.x4); }
 
 template<class T1, class T2, class T3, class T4> inline ostream&
 operator << (ostream& out, const quartet<T1,T2,T3,T4>& q) {
@@ -87,6 +105,14 @@ public:
     return x1 != q.x1 || x2 != q.x2 || x3 != q.x3 ||
            x4 != q.x4 || x5 != q.x5; }
 };
+
+template<class T1, class T2, class T3, class T4, class T5> int
+hash (const quintuple<T1,T2,T3,T4,T5>& q) {
+  int h= hash (q.x1);
+  h= (h << 11) ^ (h >> 21) ^ hash (q.x2);
+  h= (h << 11) ^ (h >> 21) ^ hash (q.x3);
+  h= (h << 11) ^ (h >> 21) ^ hash (q.x4);
+  return (h << 11) ^ (h >> 21) ^ hash (q.x5); }
 
 template<class T1, class T2, class T3, class T4, class T5> inline ostream&
 operator << (ostream& out, const quintuple<T1,T2,T3,T4,T5>& q) {
