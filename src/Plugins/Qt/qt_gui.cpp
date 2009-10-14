@@ -42,7 +42,7 @@ int timeout_time;
 ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep(int &argc, char **argv):
-  interrupted (false), selection (NULL)
+  interrupted (false)
 {
   (void) argc; (void) argv;
   // argc= argc2;
@@ -146,19 +146,21 @@ bool
 qt_gui_rep::set_selection (string key, tree t, string s) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
-  if (key == "primary") {
-    //if (is_nil (windows_l)) return false;
-    //Window win= windows_l->item;
-    if (selection != NULL) tm_delete_array (selection);
-    //XSetSelectionOwner (dpy, XA_PRIMARY, win, CurrentTime);
-    //if (XGetSelectionOwner(dpy, XA_PRIMARY)==None) return false;
-    selection= as_charp (s);
         
-    QClipboard *clipboard = QApplication::clipboard();
-    QString originalText = clipboard->text();
                 
-    clipboard->setText(selection);      
+  QClipboard *cb = QApplication::clipboard();
+  QClipboard::Mode mode;
+  if (key == "primary") {
+    mode= QClipboard::Clipboard;
+  } else if (key == "mouse" && cb->supportsSelection()) {
+    mode= QClipboard::Selection;
+  } else {
+    return true;
   }
+
+  char *selection = as_charp (s);
+  cb->setText(selection,mode);
+  tm_delete_array (selection);
   return true;
 }
 
@@ -166,11 +168,6 @@ void
 qt_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
-  if ((key == "primary") && (selection != NULL)) {
-    tm_delete_array (selection);
-    // FIXME: should we do something with the pasteboard?
-    selection= NULL;
-  }
 }
 
 /******************************************************************************

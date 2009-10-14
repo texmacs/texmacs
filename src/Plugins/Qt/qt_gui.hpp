@@ -39,7 +39,6 @@ public:
   QTMGuiHelper *gui_helper;
   QTimer *updatetimer;
 
-  char*                  selection;
   hashmap<string,tree>   selection_t;
   hashmap<string,string> selection_s;
 
