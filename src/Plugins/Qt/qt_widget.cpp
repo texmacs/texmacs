@@ -602,18 +602,28 @@ qt_tm_widget_rep::read (slot s, blackbox index) {
 
 void
 replaceActions (QWidget* dest, QWidget* src) {
-  //NOTE: the parent hierachy of the actions is not modified while installing
-  //      the menu in the GUI (see qt_menu.cpp for this memory management policy)
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
     dest->removeAction (a);
+    delete a;
+//    a->deleteLater();
   }
+  // cout << "replaceActions n:" << src->actions().count() << LF;
   list = src->actions();
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
     dest->addAction (a);
+    a->setParent (dest);
   }
+
+  // dest->addActions(src->actions());
+#if 0
+  for(int i=0; i<list.count(); i++)
+  {
+    list[i]->setMenuRole (QAction::ApplicationSpecificRole);
+  }
+#endif
 }
 
 extern void
@@ -649,10 +659,10 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_MAIN_MENU:
     check_type_void (index, "SLOT_MAIN_MENU");
     {
-      main_menu_widget = w;
       QMenu* m= to_qmenu (w);
       if (m) {
         replaceActions (tm_mainwindow()->menuBar (), m);
+        delete m;
       }
     }
     break;
@@ -661,27 +671,29 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_MAIN_ICONS");
     {
       //cout << "widget :" << (void*)w.rep << LF;
-      main_icons_widget = w;
       QMenu* m= to_qmenu (w);
+      //mainToolBar->setUpdatesEnabled (false);
       replaceButtons (mainToolBar, m);
+      delete m;
     }
     break;
 
   case SLOT_CONTEXT_ICONS:
     check_type_void (index, "SLOT_CONTEXT_ICONS");
     {   
-      context_icons_widget = w;
       QMenu* m= to_qmenu (w);
       replaceButtons (contextToolBar, m);
+      //mainToolBar->setUpdatesEnabled (true);
+      delete m;
     }
     break;
 
   case SLOT_USER_ICONS:
     check_type_void (index, "SLOT_USER_ICONS");
     {   
-      user_icons_widget = w;
       QMenu* m= to_qmenu (w);
       replaceButtons (userToolBar, m);
+      delete m;
     }
     break;
 

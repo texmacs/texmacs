@@ -90,9 +90,11 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   if (menu_cache->contains (xmenu)) {
     if (menu_current[which] == xmenu) return false;
     menu_current (which)= xmenu;
+#ifndef QTTEXMACS
     //cout << "Cached " << menu << "\n";
     w= menu_cache [xmenu];
     return true;
+#endif
   }
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);

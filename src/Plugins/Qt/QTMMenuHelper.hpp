@@ -37,10 +37,11 @@ public slots:
 class QTMLazyMenu: public QMenu {
   Q_OBJECT
   promise<widget> pm;
+  bool forced;
 
 public:
   inline QTMLazyMenu (promise<widget> _pm):
-    pm (_pm) {
+    pm (_pm), forced (false) {
       QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
     }
 
