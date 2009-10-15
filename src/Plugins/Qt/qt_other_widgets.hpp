@@ -37,6 +37,8 @@ public:
   bool visibility[5];
 
   command quit;
+  
+  widget main_menu_widget, main_icons_widget, context_icons_widget, user_icons_widget;
 
 public:
   qt_tm_widget_rep (int mask, command _quit);
