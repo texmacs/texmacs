@@ -54,7 +54,7 @@
 (define (latex-replace-catcode s)
   (or (if latex-cyrillic-catcode?
 	  (drd-ref cyrillic-catcodes% s)
-	  (drd-ref iso-latin-catcodes% s))
+	  (drd-ref corkT1-to-latex-catcodes% s))
       s))
 
 (tm-define (latex-expand-catcodes t)

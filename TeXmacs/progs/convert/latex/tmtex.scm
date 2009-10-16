@@ -316,9 +316,6 @@
 	      ((== c #\22) (tmtex-text-sub ",," l))
 	      ((== c #\25) (tmtex-text-sub "--" l))
 	      ((== c #\26) (tmtex-text-sub "---" l))
-	      ((== c #\237) (tmtex-text-sub "\\S" l))
-	      ((== c #\337) (tmtex-text-sub "SS" l))
-	      ((== c #\377) (tmtex-text-sub "ß" l))
 	      (else (cons c (tmtex-text-list (cdr l))))))))
 
 (define (tmtex-math-operator l)
