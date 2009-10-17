@@ -216,30 +216,14 @@ void
 qt_chooser_widget_rep::perform_dialog () {
   // int result;
   // FIXME: the chooser dialog is widely incomplete
-  QFileDialog dialog (NULL);
-  //dialog.setFileMode (QFileDialog::AnyFile);
-  //dialog.setNameFilter ("TeXmacs file (*.tm)");
-  dialog.setViewMode (QFileDialog::Detail);
-  dialog.setWindowTitle (to_qstring (win_title));
-  if (type == "directory") {
-    dialog.setFileMode(QFileDialog::Directory);
-  } else if (type == "image") {
-    dialog.setFileMode(QFileDialog::ExistingFile);
-  } else {
-    dialog.setFileMode(QFileDialog::AnyFile);
-  }
 
-  dialog.setDirectory(to_qstring(directory));
-  if (DEBUG_EVENTS) cout << "Dir: " << directory << LF;
+  QFileDialog dialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
 
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-  if (DEBUG_EVENTS) cout << "Position :" << pos.x() << "," << pos.y() << LF;
-
-  if (file != "") {
-    if (DEBUG_EVENTS) cout << "File :" << file << LF;
-    dialog.selectFile(to_qstring(file));
-    //FIXME: send file name to the dialog. The line above apparently does not work.
+  if (DEBUG_EVENTS) {
+    cout << "Position :" << pos.x() << "," << pos.y() << LF;
+    cout << "Dir: " << directory * "/" * file << LF;
   }
   
   dialog.updateGeometry();
@@ -247,6 +231,17 @@ qt_chooser_widget_rep::perform_dialog () {
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
   dialog.setGeometry(r);
+    
+  //dialog.setFileMode (QFileDialog::AnyFile);
+  //dialog.setNameFilter ("TeXmacs file (*.tm)");
+  dialog.setViewMode (QFileDialog::Detail);
+  if (type == "directory") {
+    dialog.setFileMode(QFileDialog::Directory);
+  } else if (type == "image") {
+    dialog.setFileMode(QFileDialog::ExistingFile);
+  } else {
+    dialog.setFileMode(QFileDialog::AnyFile);
+  }
 
   dialog.setLabelText(QFileDialog::Accept, "Ok");
 
