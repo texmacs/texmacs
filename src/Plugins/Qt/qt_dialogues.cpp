@@ -96,7 +96,9 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
     break;              
   case SLOT_STRING_INPUT:
     // send_string (THIS, "input", val);
-      NOT_IMPLEMENTED
+    TYPE_CHECK (type_box (val) == type_helper<string>::id);
+    if (DEBUG_EVENTS) cout << "string input: " << open_box<string> (val) << LF;
+    NOT_IMPLEMENTED
     break;
   case SLOT_INPUT_TYPE:
     TYPE_CHECK (type_box (val) == type_helper<string>::id);
@@ -110,7 +112,9 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
 #endif
   case SLOT_FILE:
     //send_string (THIS, "file", val);
-      NOT_IMPLEMENTED
+      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      if (DEBUG_EVENTS) cout << "file: " << open_box<string> (val) << LF;
+      file = open_box<string> (val);
     break;
   case SLOT_DIRECTORY:
     TYPE_CHECK (type_box (val) == type_helper<string>::id);
@@ -226,18 +230,25 @@ qt_chooser_widget_rep::perform_dialog () {
   }
 
   dialog.setDirectory(to_qstring(directory));
-  cout << "Dir: " << directory << LF;
+  if (DEBUG_EVENTS) cout << "Dir: " << directory << LF;
 
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-  cout << "Position :" << pos.x() << "," << pos.y() << LF;
+  if (DEBUG_EVENTS) cout << "Position :" << pos.x() << "," << pos.y() << LF;
 
+  if (file != "") {
+    if (DEBUG_EVENTS) cout << "File :" << file << LF;
+    dialog.selectFile(to_qstring(file));
+    //FIXME: send file name to the dialog. The line above apparently does not work.
+  }
+  
   dialog.updateGeometry();
   QSize sz = dialog.sizeHint();
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
   dialog.setGeometry(r);
 
+  dialog.setLabelText(QFileDialog::Accept, "Ok");
 
   QStringList fileNames;
   if (dialog.exec ()) {
