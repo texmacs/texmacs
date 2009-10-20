@@ -34,21 +34,50 @@
 extern char  *slot_name(slot s); // from qt_widget.cpp
 
 
+// REMARK on memory management.
+// the hierarchy of a QMenu has parents correctly set to the proper supermenu
+// this guarantees that deletion of the root menu correclty deletes all the tree below it.
+// the root menu itself (without parent QObject) is "owned" by the associate qt_menu_rep instance
+// and it is deallocated by it. This ensure correct memory management between TeXmacs and Qt
+// since qt_menu_rep is sometimes cached at TeXmacs level.
+// this also mean that when we install some menu in the GUI (in the main menu or in the toolbar)
+// we should just add actions and not reroot the qt parent hierarchy since even if the menu will
+// be eventually removed from the GUI it has some chance to still be cached in the TeXmacs side
+// conventions are as follows:
+// - the method as_qaction passes the ownership of the action and the eventual submenu to the caller 
+//   responsibility. When creating menu hierachy (eg. via the scheme interface) you should use this method
+//   to retrieve the relevant Qt objects.
+// - the method qt_menu_rep::get_menu preserve the onwership of the menu to the called qt_menu_rep
+//   (to guarantee correct caching). when installing menus in the gui you should use this method.
+// Submenus belongs implicilty to the parent QTMAction since it controls if the menu has an explicit parent
+// and in negative case delete the submenu. All submenus in the menu hierarchy should have empty parent widget
+// and be attached to some QTMAction. This guarantees correct memory management.
+
+
 // this custom action frees its menu if it does not already have an owner.
 class QTMAction : public QAction {
 public:
-  QTMAction(QObject *parent = NULL) : QAction(parent) {}
- ~QTMAction() { if (menu() && !(menu()->parent())) delete menu(); } //menu()->deleteLater(); }
+  QTMAction(QObject *parent = NULL) : QAction(parent) {  }
+ ~QTMAction() { 
+    if (menu() && !(menu()->parent())) delete menu(); 
+ }
 };
+
 
 
 class qt_menu_rep: public qt_widget_rep {
 public:
-  bool flag;
-  QPointer<QAction> item;
-  qt_menu_rep (QAction* _item): flag (false), item (_item) {}
-  ~qt_menu_rep () { if (item && !flag) delete item; }
+  QAction  *item;
+  qt_menu_rep (QAction* _item) : item (_item ? _item : new QTMAction (NULL)) {  }
+  ~qt_menu_rep () { 
+    delete item; // the submenu is usually also deleted since item is a QTMAction
+  }
 
+  QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
+  // get_menu doest not give ownership of the menu to the caller
+  // this allow menu caching at the TeXmacs level
+  // get_qmenu is called only by code which attach root menus in the GUI elements
+  
   virtual void send (slot s, blackbox val);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
@@ -60,9 +89,10 @@ qt_menu_rep::as_qaction() {
   // FIXME: the convention is that as_qaction give ownership of
   // the action to the caller. However in this case we do not want
   // to replicate the action so we must be sure to be called only once.
-  if (flag) cout << "THIS MUST NOT HAPPEN (CALLED TWICE)!!\n";
-  flag = true;
-  return item;
+  if (!item) cout << "THIS MUST NOT HAPPEN TWICE" << LF;
+  QAction *ret = item;
+  item = NULL;
+  return ret;
 }
 
 widget
@@ -123,7 +153,6 @@ horizontal_menu (array<widget> arr) {
     a->setParent (m);
   }
   act->setMenu (m);
-  //m->QObject::setParent(act);
   return tm_new<qt_menu_rep> (act);     
 }
 
@@ -371,17 +400,10 @@ xpm_widget (url file_name) {
 
 QMenu*
 to_qmenu(widget w) {
-  QAction *a = concrete(w)->as_qaction();
-  QMenu *m = a->menu(); // the menu has no parent
-  m->setParent(NULL);
-  a->setMenu(NULL); // otherwise the deletion of a (really a QTMAction) triggers deletion of m
-  delete a;
+  //FIXME: the static cast is not sure in general, how we can test for
+  //       the right widget type?
+  QMenu *m = static_cast<qt_menu_rep*>(w.rep)->get_qmenu();
   return m;
-}
-
-QAction*
-to_qaction(widget w) {
-  return concrete(w)->as_qaction();
 }
 
 QPixmap
@@ -423,15 +445,25 @@ simple_widget_rep::as_qaction () {
 }
 
 void
-QTMLazyMenu::force () {
-  if (!forced) {
-    widget w= pm ();
-    qt_menu_rep* wid= (qt_menu_rep*) (w.rep);
-    QMenu* menu2= wid->item->menu ();
-    replaceActions (this, menu2);
-    delete (wid->item);
-    wid->item= NULL;
-    //pm= promise<widget>();
-    //forced= true;
+rerootActions (QWidget* dest, QWidget* src) {
+  QList<QAction *> list = dest->actions();
+  while (!list.isEmpty()) {
+    QAction* a= list.takeFirst();
+    dest->removeAction (a);
+    delete a;
   }
+  list = src->actions();
+  while (!list.isEmpty()) {
+    QAction* a= list.takeFirst();
+    dest->addAction (a);
+    a->setParent (dest);
+  }
+}
+
+
+void
+QTMLazyMenu::force () {
+  widget w= pm ();
+  QMenu *menu2 = to_qmenu(w);
+  rerootActions (this, menu2);
 }
