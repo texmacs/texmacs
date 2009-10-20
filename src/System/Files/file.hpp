@@ -56,4 +56,6 @@ void ps2pdf (url u1, url u2);
 
 int search_score (url u, array<string> a);
 
+array<string> file_completions (url search, url dir);
+
 #endif // defined FILE_H
