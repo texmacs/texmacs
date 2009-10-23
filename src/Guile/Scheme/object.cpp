@@ -399,7 +399,7 @@ exec_pending_commands () {
   int i, n= N(a);
   for (i=0; i<n; i++) {
     int now= (int) texmacs_time ();
-    if (now >= b[i]) {
+    if ((now - b[i]) >= 0) {
       object obj= call (a[i]);
       if (is_int (obj) && (now - b[i] < 1000000000)) {
         //cout << "pause= " << obj << "\n";
