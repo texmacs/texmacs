@@ -493,6 +493,14 @@ qt_input_widget_rep::perform_dialog() {
     hl -> addWidget (lab);
     hl -> addWidget (cbs[i]);
     vl -> addLayout (hl);
+    
+    if (ends (fields[i]->type, "file") || fields[i]->type == "directory") {
+      // autocompletion
+      QCompleter *completer = new QCompleter(cbs[i]);
+      QDirModel *dirModel = new QDirModel(completer);
+      completer->setModel(dirModel);
+      cbs[i]->setCompleter(completer);
+    }
   }
 
   {
@@ -544,6 +552,7 @@ input_text_widget (command call_back, string type, array<string> def) {
   return tm_new<qt_input_text_widget_rep> (call_back, type, def);
 }
 
+#if 0
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
@@ -561,3 +570,70 @@ qt_tm_widget_rep::do_interactive_prompt () {
     ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
   }
 }
+#else
+void
+qt_tm_widget_rep::do_interactive_prompt () {
+  QStringList items;
+  QString label= to_qstring_utf8 (((qt_text_widget_rep*) int_prompt.rep)->str);
+  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
+  if ( N(it->def) == 0) {
+   items << "";
+  } else {
+    for (int j=0; j < N(it->def); j++) {
+      items << to_qstring(it->def[j]);
+    }
+  }
+  QDialog d (0, Qt::Sheet);
+  QVBoxLayout* vl = new QVBoxLayout(&d);
+  
+  QHBoxLayout *hl = new QHBoxLayout();
+    
+  QLabel *lab = new QLabel (label,&d);
+  QComboBox *cb = new QComboBox(&d);
+  cb -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
+  cb -> setEditText (items[0]);
+  int minlen = 0;
+  for(int j=0; j < items.count(); j++) {
+    cb -> addItem (items[j]);
+    int c = items[j].count();
+    if (c > minlen) minlen = c;
+  }
+  cb -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
+  cb -> setEditable (true);
+  lab -> setBuddy (cb);
+  hl -> addWidget (lab);
+  hl -> addWidget (cb);
+  vl -> addLayout (hl);
+    
+  if (ends (it->type, "file") || it->type == "directory") {
+    // autocompletion
+    QCompleter *completer = new QCompleter(&d);
+    QDirModel *dirModel = new QDirModel(&d);
+    completer->setModel(dirModel);
+    cb->setCompleter(completer);
+  }
+
+  
+  {
+    QDialogButtonBox* buttonBox =
+    new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                          Qt::Horizontal, &d);
+    QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
+    QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
+    vl -> addWidget (buttonBox);
+  }
+  //  d.setLayout (vl);
+  d.setWindowTitle("Interactive Prompt");
+  d.updateGeometry();
+  
+  int result = d.exec ();
+  if (result == QDialog::Accepted) {
+    QString item = cb->currentText();
+    ((qt_input_text_widget_rep*) int_input.rep) -> text=
+    scm_quote (from_qstring (item));
+    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
+  } else {
+//    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
+  }
+}
+#endif
