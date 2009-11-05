@@ -70,6 +70,8 @@
   (join (join ltimes rtimes))
   (atimes (0 -0.15 (rot-right ltimes)))
   (btimes (0 -0.15 (rot-left ltimes)))
+  (threelefttimes (ver-flip leftthreetimes))
+  (threerighttimes (ver-flip rightthreetimes))
 
   (cong (enlarge (join (0 -0.15 =) (0 0.25 sim)) 0 0 -0.15 -0.25))
   (subsetsim (join (0 -0.4 sim) (0 0.15 subset)))
