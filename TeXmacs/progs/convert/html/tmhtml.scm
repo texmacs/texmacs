@@ -506,8 +506,7 @@
 (define (tmhtml-hspace l)
   (with len (tmlength->htmllength (if (list-1? l) (car l) (cadr l)) #t)
     (if (not len) '()
-	`((spacer (@ (type "block")
-		     (style ,(string-append "width: " len))))))))
+	`((span (@ (style ,(string-append "margin-left: " len))))))))
 
 (define (tmhtml-vspace l)
   '())
