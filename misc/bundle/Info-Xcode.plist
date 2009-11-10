@@ -28,7 +28,7 @@
 	<key>CFBundleIconFile</key>
 	<string>TeXmacs</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.texmacs.TeXmacs</string>
+	<string>org.texmacs.${PRODUCT_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

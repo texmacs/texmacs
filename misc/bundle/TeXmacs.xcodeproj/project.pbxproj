@@ -131,12 +131,6 @@
 		9C0B4A8610A8CC110097A335 /* tex_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489510A8CC100097A335 /* tex_init.cpp */; };
 		9C0B4A8710A8CC110097A335 /* tex_rubber_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489610A8CC100097A335 /* tex_rubber_font.cpp */; };
 		9C0B4A8910A8CC110097A335 /* openssl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489B10A8CC100097A335 /* openssl.cpp */; };
-		9C0B4A8A10A8CC110097A335 /* moc_QTMGuiHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489E10A8CC100097A335 /* moc_QTMGuiHelper.cpp */; };
-		9C0B4A8B10A8CC110097A335 /* moc_QTMInteractiveInputHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489F10A8CC100097A335 /* moc_QTMInteractiveInputHelper.cpp */; };
-		9C0B4A8C10A8CC110097A335 /* moc_QTMMenuHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48A010A8CC100097A335 /* moc_QTMMenuHelper.cpp */; };
-		9C0B4A8D10A8CC110097A335 /* moc_QTMStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48A110A8CC100097A335 /* moc_QTMStyle.cpp */; };
-		9C0B4A8E10A8CC110097A335 /* moc_QTMWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48A210A8CC100097A335 /* moc_QTMWidget.cpp */; };
-		9C0B4A8F10A8CC110097A335 /* moc_QTMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48A310A8CC100097A335 /* moc_QTMWindow.cpp */; };
 		9C0B4A9110A8CC110097A335 /* qt_dialogues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */; };
 		9C0B4A9210A8CC110097A335 /* qt_gui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48A810A8CC100097A335 /* qt_gui.cpp */; };
 		9C0B4A9310A8CC110097A335 /* qt_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48AA10A8CC100097A335 /* qt_menu.cpp */; };
@@ -282,7 +276,38 @@
 		9C0B4BD010A8D8E40097A335 /* evaluate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B481010A8CC100097A335 /* evaluate.cpp */; };
 		9C0B4BD110A8D8E50097A335 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B481210A8CC100097A335 /* object.cpp */; };
 		9C0B4BDE10A8D9370097A335 /* TeXmacs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C0B430010A8CB4E0097A335 /* TeXmacs */; };
+		9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */; };
+		9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */; };
+		9CC6149210A999460055F808 /* QTMStyle.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B910A8CC100097A335 /* QTMStyle.hpp */; };
+		9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */; };
+		9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */; };
+		9CC614B510A99B100055F808 /* MOCs.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CC6148B10A998BC0055F808 /* MOCs.o */; };
+		9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B410A8CC100097A335 /* QTMGuiHelper.hpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		9CC6148F10A9992D0055F808 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.hpp";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${DERIVED_FILES_DIR}/moc_${INPUT_FILE_BASE}.cpp",
+			);
+			script = "#! /bin/sh\nmkdir -p ${DERIVED_FILES_DIR}\n${TM_MOC} ${TM_MOCFLAGS} ${INPUT_FILE_PATH} -o ${DERIVED_FILES_DIR}/moc_${INPUT_FILE_BASE}.cpp";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		9CC614B110A99A8A0055F808 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9CC6148A10A998BC0055F808;
+			remoteInfo = MOCs;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9C0B355A10A8C67A0097A335 /* CopyFiles */ = {
@@ -571,12 +596,6 @@
 		9C0B489910A8CC100097A335 /* mplayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mplayer.hpp; sourceTree = "<group>"; };
 		9C0B489B10A8CC100097A335 /* openssl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = openssl.cpp; sourceTree = "<group>"; };
 		9C0B489C10A8CC100097A335 /* openssl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = openssl.hpp; sourceTree = "<group>"; };
-		9C0B489E10A8CC100097A335 /* moc_QTMGuiHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = moc_QTMGuiHelper.cpp; sourceTree = "<group>"; };
-		9C0B489F10A8CC100097A335 /* moc_QTMInteractiveInputHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = moc_QTMInteractiveInputHelper.cpp; sourceTree = "<group>"; };
-		9C0B48A010A8CC100097A335 /* moc_QTMMenuHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = moc_QTMMenuHelper.cpp; sourceTree = "<group>"; };
-		9C0B48A110A8CC100097A335 /* moc_QTMStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = moc_QTMStyle.cpp; sourceTree = "<group>"; };
-		9C0B48A210A8CC100097A335 /* moc_QTMWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = moc_QTMWidget.cpp; sourceTree = "<group>"; };
-		9C0B48A310A8CC100097A335 /* moc_QTMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = moc_QTMWindow.cpp; sourceTree = "<group>"; };
 		9C0B48A410A8CC100097A335 /* NOTES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NOTES; sourceTree = "<group>"; };
 		9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_basic_widgets.hpp; sourceTree = "<group>"; };
 		9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_dialogues.cpp; sourceTree = "<group>"; };
@@ -878,10 +897,19 @@
 		9C5DBAD810A8DDD7008B7623 /* makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.in; path = src/makefile.in; sourceTree = "<group>"; };
 		9C5DBADA10A8DE60008B7623 /* Base.xcconfig.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Base.xcconfig.in; sourceTree = "<group>"; };
 		9C5DBADB10A8DF32008B7623 /* configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.in; sourceTree = "<group>"; };
+		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9CC614B510A99B100055F808 /* MOCs.o in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9CC6148910A998BC0055F808 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -895,6 +923,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* TeXmacsQt.app */,
+				9CC6148B10A998BC0055F808 /* MOCs.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1585,12 +1614,6 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
-				9C0B489E10A8CC100097A335 /* moc_QTMGuiHelper.cpp */,
-				9C0B489F10A8CC100097A335 /* moc_QTMInteractiveInputHelper.cpp */,
-				9C0B48A010A8CC100097A335 /* moc_QTMMenuHelper.cpp */,
-				9C0B48A110A8CC100097A335 /* moc_QTMStyle.cpp */,
-				9C0B48A210A8CC100097A335 /* moc_QTMWidget.cpp */,
-				9C0B48A310A8CC100097A335 /* moc_QTMWindow.cpp */,
 				9C0B48A410A8CC100097A335 /* NOTES */,
 				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
 				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
@@ -2250,6 +2273,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "TeXmacsQt" */;
 			buildPhases = (
+				9CC6142E10A9654D0055F808 /* Print Environment */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -2258,12 +2282,30 @@
 			buildRules = (
 			);
 			dependencies = (
+				9CC614B210A99A8A0055F808 /* PBXTargetDependency */,
 			);
 			name = TeXmacsQt;
 			productInstallPath = "$(HOME)/Applications";
 			productName = TeXmacsQt;
 			productReference = 8D1107320486CEB800E47090 /* TeXmacsQt.app */;
 			productType = "com.apple.product-type.application";
+		};
+		9CC6148A10A998BC0055F808 /* MOCs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9CC6148E10A998E50055F808 /* Build configuration list for PBXNativeTarget "MOCs" */;
+			buildPhases = (
+				9CC6148810A998BC0055F808 /* Sources */,
+				9CC6148910A998BC0055F808 /* Frameworks */,
+			);
+			buildRules = (
+				9CC6148F10A9992D0055F808 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = MOCs;
+			productName = MOCs;
+			productReference = 9CC6148B10A998BC0055F808 /* MOCs.o */;
+			productType = "com.apple.product-type.objfile";
 		};
 /* End PBXNativeTarget section */
 
@@ -2278,6 +2320,7 @@
 			projectRoot = ../..;
 			targets = (
 				8D1107260486CEB800E47090 /* TeXmacsQt */,
+				9CC6148A10A998BC0055F808 /* MOCs */,
 			);
 		};
 /* End PBXProject section */
@@ -2293,6 +2336,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9CC6142E10A9654D0055F808 /* Print Environment */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Print Environment";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
@@ -2423,12 +2483,6 @@
 				9C0B4A8610A8CC110097A335 /* tex_init.cpp in Sources */,
 				9C0B4A8710A8CC110097A335 /* tex_rubber_font.cpp in Sources */,
 				9C0B4A8910A8CC110097A335 /* openssl.cpp in Sources */,
-				9C0B4A8A10A8CC110097A335 /* moc_QTMGuiHelper.cpp in Sources */,
-				9C0B4A8B10A8CC110097A335 /* moc_QTMInteractiveInputHelper.cpp in Sources */,
-				9C0B4A8C10A8CC110097A335 /* moc_QTMMenuHelper.cpp in Sources */,
-				9C0B4A8D10A8CC110097A335 /* moc_QTMStyle.cpp in Sources */,
-				9C0B4A8E10A8CC110097A335 /* moc_QTMWidget.cpp in Sources */,
-				9C0B4A8F10A8CC110097A335 /* moc_QTMWindow.cpp in Sources */,
 				9C0B4A9110A8CC110097A335 /* qt_dialogues.cpp in Sources */,
 				9C0B4A9210A8CC110097A335 /* qt_gui.cpp in Sources */,
 				9C0B4A9310A8CC110097A335 /* qt_menu.cpp in Sources */,
@@ -2574,7 +2628,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9CC6148810A998BC0055F808 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */,
+				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
+				9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */,
+				9CC6149210A999460055F808 /* QTMStyle.hpp in Sources */,
+				9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */,
+				9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9CC614B210A99A8A0055F808 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9CC6148A10A998BC0055F808 /* MOCs */;
+			targetProxy = 9CC614B110A99A8A0055F808 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		9C0B486410A8CC100097A335 /* InfoPlist.strings */ = {
@@ -2604,6 +2679,35 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		9CC6148C10A998BC0055F808 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = MOCs;
+			};
+			name = Debug;
+		};
+		9CC6148D10A998BC0055F808 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = MOCs;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2612,9 +2716,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TeXmacs_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = TeXmacsQt;
 				WRAPPER_EXTENSION = app;
@@ -2635,11 +2736,12 @@
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -2656,6 +2758,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9CC6148E10A998E50055F808 /* Build configuration list for PBXNativeTarget "MOCs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9CC6148C10A998BC0055F808 /* Debug */,
+				9CC6148D10A998BC0055F808 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "TeXmacsQt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

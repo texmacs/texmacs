@@ -33,7 +33,12 @@ TM_LDFREETYPE = @FREETYPE_LDFLAGS@
 TM_LDICONV = @ICONV_LDFLAGS@
 TM_LDGUILE = @GUILE_LDFLAGS@
 
-TM_HEADER_SEARCH_PATHS = src/System src/System/Boot src/System/Classes src/System/Files src/System/Link src/System/Misc src/System/Language src/Kernel/Abstractions src/Kernel/Containers src/Kernel/Types src/Data/Convert src/Data/Drd src/Data/History src/Data/Observers src/Data/String src/Data/Tmfs src/Data/Tree src/Guile src/Graphics/Bitmap_fonts src/Graphics/Fonts src/Graphics/Gui src/Graphics/Mathematics src/Graphics/Renderer src/Plugins src/Edit src/Typeset src/Typeset/Bridge src/Typeset/Concat src/Typeset/Page src/Style/Memorizer src/Style/Environment src/Style/Evaluate TeXmacs/include
+TM_MOC = @MOC@
+TM_MOCFLAGS = @QT_CPPFLAGS@
+
+
+TM_BASE = $(SRCROOT)/../..
+TM_HEADER_SEARCH_PATHS = $(TM_BASE)/src/System $(TM_BASE)/src/System/Boot $(TM_BASE)/src/System/Classes $(TM_BASE)/src/System/Files $(TM_BASE)/src/System/Link $(TM_BASE)/src/System/Misc $(TM_BASE)/src/System/Language $(TM_BASE)/src/Kernel/Abstractions $(TM_BASE)/src/Kernel/Containers $(TM_BASE)/src/Kernel/Types $(TM_BASE)/src/Data/Convert $(TM_BASE)/src/Data/Drd $(TM_BASE)/src/Data/History $(TM_BASE)/src/Data/Observers $(TM_BASE)/src/Data/String $(TM_BASE)/src/Data/Tmfs $(TM_BASE)/src/Data/Tree $(TM_BASE)/src/Guile $(TM_BASE)/src/Graphics/Bitmap_fonts $(TM_BASE)/src/Graphics/Fonts $(TM_BASE)/src/Graphics/Gui $(TM_BASE)/src/Graphics/Mathematics $(TM_BASE)/src/Graphics/Renderer $(TM_BASE)/src/Plugins $(TM_BASE)/src/Edit $(TM_BASE)/src/Typeset $(TM_BASE)/src/Typeset/Bridge $(TM_BASE)/src/Typeset/Concat $(TM_BASE)/src/Typeset/Page $(TM_BASE)/src/Style/Memorizer $(TM_BASE)/src/Style/Environment $(TM_BASE)/src/Style/Evaluate $(TM_BASE)/TeXmacs/include
 
 // Basic settings
 
@@ -43,7 +48,7 @@ OTHER_LDFLAGS = $(TM_LDFLAGS) $(TM_LDQT) $(TM_LDFREETYPE) $(TM_LDICONV) $(TM_LDG
 //FRAMEWORK_SEARCH_PATHS = 
 //LIBRARY_SEARCH_PATHS =
 HEADER_SEARCH_PATHS =  $(TM_HEADER_SEARCH_PATHS)
-INFOPLIST_FILE = misc/bundle/Info-Xcode.plist
+INFOPLIST_FILE = $(TM_BASE)/misc/bundle/Info-Xcode.plist
 INFOPLIST_PREPROCESS = YES
 INFOPLIST_EXPAND_BUILD_SETTINGS = YES
 GCC_PRECOMPILE_PREFIX_HEADER = NO
