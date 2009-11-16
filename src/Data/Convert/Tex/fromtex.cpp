@@ -20,6 +20,27 @@ static bool textm_appendices= false;
 static bool textm_unicode   = false;
 static bool textm_natbib    = false;
 
+/*
+bool
+check_tree (tree t) {
+  if (is_atomic (t)) {
+    for (int i=0; i<N(t->label); i++)
+      if (((int) t->label[i]) == 0) {
+	cout << "t= " << t << "\n";
+	return true;
+      }
+  }
+  else {
+    for (int i=0; i<N(t); i++)
+      if (check_tree (t[i])) {
+	if (is_atomic (t[i])) cout << "t= " << t << "\n";
+	return true;
+      }
+  }
+  return false;
+}
+*/
+
 /******************************************************************************
 * Preprocess preamble
 ******************************************************************************/
@@ -408,7 +429,8 @@ is_right_type (tree t) {
 
 static bool
 is_large_delimiter (tree t, int& type) {
-  if ((!is_tuple (t)) || (N(t) != 2) || is_compound (t[0])) return false;
+  if ((!is_tuple (t)) || (N(t) != 2) ||
+      is_compound (t[0]) || is_compound (t[1])) return false;
   string s= t[0]->label;
   if (starts (s, "\\Big")) s= "\\big" * s(4,N(s));
   if (starts (s, "\\bigg")) s= "\\big" * s(5,N(s));
@@ -564,10 +586,8 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\prime", 1)) return tree (RPRIME, string_arg (t[1]));
   if (is_tuple (t, "\\frac", 2)) return tree (FRAC, l2e (t[1]), l2e (t[2]));
-  if (is_tuple (t, "\\atop", 2)) {
-    cout << "atop " << t << "\n";
+  if (is_tuple (t, "\\atop", 2))
     return compound ("atop", l2e (t[1]), l2e (t[2]));
-  }
   if (is_tuple (t, "\\sqrt", 1))  return tree (SQRT, l2e (t[1]));
   if (is_tuple (t, "\\sqrt*", 2)) return tree (SQRT, l2e (t[2]), l2e (t[1]));
   if (is_tuple (t, "\\<sub>", 1)) return tree (RSUB, l2e (t[1]));
