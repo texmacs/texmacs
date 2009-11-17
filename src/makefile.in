@@ -39,6 +39,7 @@ CXXICONV = @ICONV_CFLAGS@
 CXXGUILE = @GUILE_CFLAGS@
 LD = @CXX@
 LDFLAGS = @CONFIG_BFLAGS@ @QT_LDFLAGS@
+LDRT = @LDRT@
 LDSTATIC = @CONFIG_BSTATIC@
 LDSHARED = @CONFIG_BSHARED@
 LDPATH = @CONFIG_BPATH@
@@ -324,7 +325,7 @@ uses_texmacs  := $(texmacs_obj)
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 qt cocoa style typeset edit glue texmacs))
 
-link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) \
+link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) \
   $(LDGUILE) $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin

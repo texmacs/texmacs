@@ -64,9 +64,13 @@ esac
 # Checks for Guile
 #--------------------------------------------------------------------
 
-GUILE_FLAGS
+if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
+  GUILE_FLAGS
+fi
 AC_MSG_CHECKING(version of guile)
-GUILE_VERSION=`guile --version | grep 'Guile \([[0-9]]\)' | sed 's/Guile \([[0-9]]*\)/\1/'`
+if test -z "$GUILE_VERSION" ; then
+  GUILE_VERSION=`guile --version | grep 'Guile \([[0-9]]\)' | sed 's/Guile \([[0-9]]*\)/\1/'`
+fi
 AC_MSG_RESULT($GUILE_VERSION)
 
 case "$GUILE_VERSION" in
@@ -149,6 +153,9 @@ SAVE_LIBS="$LIBS"
 if test "$with_iconv" = "no" ; then
     AC_MSG_RESULT([disabling iconv support])
 else
+    if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
+       CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
+    fi
     if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
        CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
        ICONV_CFLAGS="-I$with_iconv/include"
@@ -182,7 +189,7 @@ else
 ],[
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_ICONV, 1, [Use iconv library])
-      ICONV_LDFLAGS="${ICONV_LDFLAGS} -liconv"
+      ICONV_LDFLAGS="${ICONV_LDFLAGS/-liconv} -liconv"
 ],[
       AC_MSG_RESULT(no)
       AC_MSG_WARN([absence of iconv may crash HTML import])
@@ -193,7 +200,6 @@ CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
 AC_LANG_RESTORE  # restore C++ language
-
 AC_SUBST(ICONV_CFLAGS)
 AC_SUBST(ICONV_LDFLAGS)
 
@@ -213,8 +219,14 @@ SAVE_LIBS="$LIBS"
 if test "$with_freetype" = "no" ; then
     AC_MSG_RESULT([disabling freetype support])
 else
-    CPPFLAGS=`freetype-config --cflags`
-    LIBS=`freetype-config --libs`
+    if test -z "$FREETYPE_CFLAGS"; then
+      FREETYPE_CFLAGS=`freetype-config --cflags`
+    fi
+    CPPFLAGS="$FREETYPE_CFLAGS"
+    if test -z "$FREETYPE_LDFLAGS"; then
+      FREETYPE_LDFLAGS=`freetype-config --libs`
+    fi
+    LIBS="$FREETYPE_LDFLAGS"
     AC_CHECK_HEADER(ft2build.h,
     AC_MSG_CHECKING(for freetype)
     AC_TRY_LINK(
@@ -384,7 +396,11 @@ AC_SUBST(AXEL_LDFLAGS)
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING(whether ... arguments behave correctly)
-CXXFLAGS="`guile-config compile`"
+if test -z "$GUILE_CFLAGS"; then
+  CXXFLAGS="`guile-config compile`"
+else
+  CXXFLAGS="$GUILE_CFLAGS"
+fi
 AC_TRY_COMPILE([
   #include <guile/gh.h>
   #include <libguile.h>
@@ -401,7 +417,11 @@ AC_TRY_COMPILE([
 CXXFLAGS=""
 
 AC_MSG_CHECKING(the size_t of guile strings)
-CXXFLAGS="`guile-config compile`"
+if test -z "$GUILE_CFLAGS"; then
+  CXXFLAGS="`guile-config compile`"
+else
+  CXXFLAGS="$GUILE_CFLAGS"
+fi
 AC_TRY_COMPILE([
   #include <guile/gh.h>
   #include <libguile.h>
@@ -419,6 +439,9 @@ AC_TRY_COMPILE([
 CXXFLAGS=""
 
 AC_MSG_CHECKING([if statically linking with guile works])
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
 CPPFLAGS="$GUILE_CFLAGS"
 LDFLAGS="-static"
 LIBS="$GUILE_LDFLAGS"
@@ -446,9 +469,9 @@ if test "$tm_link_guile_static" = "no" ; then
       fi
    fi
 fi
-CPPFLAGS=""
-LDFLAGS=""
-LIBS=""
+CPPFLAGS="$SAVE_CPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
 
 #--------------------------------------------------------------------
 # Handle different systems case by case
@@ -476,10 +499,9 @@ CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 X11_CFLAGS="$X_CFLAGS"
 X11_LDFLAGS="$X_LIBS -lXext -lX11"
 
+AC_CHECK_SIZEOF(void *)
 AC_MSG_CHECKING(if we are on a 64-bits computer)
-AC_RUN_IFELSE([AC_LANG_PROGRAM([],[return(sizeof(void*))])],
-  [void_size=0],[void_size=$?])
-if test "$void_size" = "8"; then
+if test "$ac_cv_sizeof_void_p" = "8"; then
   AC_MSG_RESULT([yes])
   CONFIG_WORD_LENGTH="8"
   CONFIG_WORD_LENGTH_INC="7"
@@ -504,6 +526,10 @@ case "${host}" in
     CONFIG_CXXOPTIMIZE="-O3"
     CONFIG_BPATH="-Wl,-R,"
     X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
+  ;;
+  *mingw*)
+    AC_MSG_RESULT([final adjustments for mingw host])
+    LDRT="-lmingwex"
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)
@@ -917,6 +943,7 @@ AC_SUBST(CONFIG_SO)
 AC_SUBST(CONFIG_LIB_PATH)
 AC_SUBST(CONFIG_STRIP)
 AC_SUBST(CONFIG_CHMOD)
+AC_SUBST(LDRT)
 
 #--------------------------------------------------------------------
 # Default paths for installation

@@ -296,8 +296,8 @@ WIN_BUNDLE_BIN_DIR = $(WIN_BUNDLE_DIR)/bin
 WIN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 ## WARNING: the following paths needs to be adapted manually 
-WIN_BUNDLE_QT_DLL_DIR = $(HOME)/.wine/drive_c/Qt/4.4.3/bin
-WIN_BUNDLE_LIBS_DLL_DIR = ../local/bin
+WIN_BUNDLE_QT_DLL_DIR = ../distr/dlls
+WIN_BUNDLE_LIBS_DLL_DIR = ../distr/dlls
 
 WIN_BUNDLE_MAIN: TEXMACS
 	$(MKDIR) ../distr
@@ -312,10 +312,8 @@ WIN_BUNDLE_MAIN: TEXMACS
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
 	export GUILE_LOAD_PATH; \
-	$(CP) $$GUILE_LOAD_PATH $(WIN_BUNDLE_DIR)/progs/
-	$(CHMOD) 644 $(WIN_BUNDLE_DIR)/progs/ice-9/*
-	$(CHMOD) 755 $(WIN_BUNDLE_DIR)/progs/ice-9
-	$(CHMOD) 755 $(WIN_BUNDLE_DIR)/progs/ice-9/debugger 2>/dev/null || :
+	for I in $$GUILE_LOAD_PATH ; do $(CP) $$I $(WIN_BUNDLE_DIR)/progs/ ; done
+	find $(WIN_BUNDLE_DIR)/progs/ice-9 -type f -exec $(CHMOD) 644 {} \;
 	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
 	  $(CP) ../distr/$(BUNDLE_FONTS) $(WIN_BUNDLE_DIR) ; \
 	  cd $(WIN_BUNDLE_DIR) ; \

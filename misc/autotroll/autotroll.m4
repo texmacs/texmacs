@@ -115,19 +115,34 @@ dnl Memo: AC_ARG_WITH(package, help-string, [if-given], [if-not-given])
   fi
 
   # Find qmake.
-  AC_PATH_PROGS([QMAKE], [qmake], [missing], [$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths])
+  if test -z "$QMAKE"; then
+    AC_PATH_PROGS([QMAKE], [qmake], [missing], [$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths])
+  else
+    AC_MSG_CHECKING([for the QMAKE to use with Qt])
+    AC_MSG_RESULT([$QMAKE])
+  fi
   if test x"$QMAKE" = xmissing; then
     AC_MSG_ERROR([Cannot find qmake in your PATH. Try using --with-qt.])
   fi
 
   # Find moc (Meta Object Compiler).
-  AC_PATH_PROGS([MOC], [moc], [missing], [$QT_PATH:$PATH:$tmp_qt_paths])
+  if test -z "$MOC"; then
+    AC_PATH_PROGS([MOC], [moc], [missing], [$QT_PATH:$PATH:$tmp_qt_paths])
+  else
+    AC_MSG_CHECKING([for the MOC to use with Qt])
+    AC_MSG_RESULT([$MOC])
+  fi
   if test x"$MOC" = xmissing; then
     AC_MSG_ERROR([Cannot find moc (Meta Object Compiler) in your PATH. Try using --with-qt.])
   fi
 
   # Find uic (User Interface Compiler).
-  AC_PATH_PROGS([UIC], [uic], [missing], [$QT_PATH:$PATH:$tmp_qt_paths])
+  if test -z "$UIC"; then
+    AC_PATH_PROGS([UIC], [uic], [missing], [$QT_PATH:$PATH:$tmp_qt_paths])
+  else
+    AC_MSG_CHECKING([for the UIC to use with Qt])
+    AC_MSG_RESULT([$UIC])
+  fi
   if test x"$UIC" = xmissing; then
     AC_MSG_ERROR([Cannot find uic (User Interface Compiler) in your PATH. Try using --with-qt.])
   fi
@@ -146,6 +161,8 @@ dnl Memo: AC_ARG_WITH(package, help-string, [if-given], [if-not-given])
     AC_MSG_ERROR([Cannot find the path to your Qt install. Use --with-qt.])
   fi
   AC_SUBST([QT_PATH])
+  AC_MSG_CHECKING([for the QT_PATH to use with Qt])
+  AC_MSG_RESULT([$QT_PATH])
 
   # Get ready to build a test-app with Qt.
 
@@ -324,32 +341,58 @@ instead" >&AS_MESSAGE_LOG_FD
   fi
 
   # Find the DEFINES of Qt (should have been named CPPFLAGS).
-  AC_CACHE_CHECK([for the DEFINES to use with Qt], [at_cv_env_QT_DEFINES],
-  [at_cv_env_QT_DEFINES=`sed "/^DEFINES@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
-  AC_SUBST([QT_DEFINES], [$at_cv_env_QT_DEFINES])
+  if test -z "$QT_DEFINES"; then
+    AC_CACHE_CHECK([for the DEFINES to use with Qt], [at_cv_env_QT_DEFINES],
+    [at_cv_env_QT_DEFINES=`sed "/^DEFINES@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+    QT_DEFINES="$at_cv_env_QT_DEFINES"
+  fi
+  AC_SUBST([QT_DEFINES])
+  AC_MSG_CHECKING([for the QT_DEFINES to use with Qt])
+  AC_MSG_RESULT([$QT_DEFINES])
 
   # Find the CFLAGS of Qt (We can use Qt in C?!)
-  AC_CACHE_CHECK([for the CFLAGS to use with Qt], [at_cv_env_QT_CFLAGS],
-  [at_cv_env_QT_CFLAGS=`sed "/^CFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
-  AC_SUBST([QT_CFLAGS], [$at_cv_env_QT_CFLAGS])
+  if test -z "$QT_CFLAGS"; then
+    AC_CACHE_CHECK([for the CFLAGS to use with Qt], [at_cv_env_QT_CFLAGS],
+    [at_cv_env_QT_CFLAGS=`sed "/^CFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+    QT_CFLAGS="$at_cv_env_QT_CFLAGS"
+  fi
+  AC_SUBST([QT_CFLAGS])
+  AC_MSG_CHECKING([for the QT_CFLAGS to use with Qt])
+  AC_MSG_RESULT([$QT_CFLAGS])
 
   # Find the CXXFLAGS of Qt.
-  AC_CACHE_CHECK([for the CXXFLAGS to use with Qt], [at_cv_env_QT_CXXFLAGS],
-  [at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
-  AC_SUBST([QT_CXXFLAGS], [$at_cv_env_QT_CXXFLAGS])
+  if test -z "$QT_CXXFLAGS"; then
+    AC_CACHE_CHECK([for the CXXFLAGS to use with Qt], [at_cv_env_QT_CXXFLAGS],
+    [at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+    QT_CXXFLAGS="$at_cv_env_QT_CXXFLAGS"
+  fi
+  AC_SUBST([QT_CXXFLAGS])
+  AC_MSG_CHECKING([for the QT_CXXFLAGS to use with Qt])
+  AC_MSG_RESULT([$QT_CXXFLAGS])
 
   # Find the INCPATH of Qt.
-  AC_CACHE_CHECK([for the INCPATH to use with Qt], [at_cv_env_QT_INCPATH],
-  [at_cv_env_QT_INCPATH=`sed "/^INCPATH@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
-  AC_SUBST([QT_INCPATH], [$at_cv_env_QT_INCPATH])
-
-  AC_SUBST([QT_CPPFLAGS], ["$at_cv_env_QT_DEFINES $at_cv_env_QT_INCPATH"])
+  if test -z "$QT_INCPATH"; then
+    AC_CACHE_CHECK([for the INCPATH to use with Qt], [at_cv_env_QT_INCPATH],
+    [at_cv_env_QT_INCPATH=`sed "/^INCPATH@<:@^A-Z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+    QT_INCPATH="$at_cv_env_QT_INCPATH"
+  fi
+  AC_SUBST([QT_INCPATH])
+  AC_MSG_CHECKING([for the QT_INCPATH to use with Qt])
+  AC_MSG_RESULT([$QT_INCPATH])
+  
+  QT_CPPFLAGS="$QT_DEFINES $QT_INCPATH"
+  AC_SUBST([QT_CPPFLAGS])
 
   # Find the LFLAGS of Qt (Should have been named LDFLAGS)
-  AC_CACHE_CHECK([for the LDFLAGS to use with Qt], [at_cv_env_QT_LDFLAGS],
-  [at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
-  AC_SUBST([QT_LFLAGS], [$at_cv_env_QT_LDFLAGS])
-  AC_SUBST([QT_LDFLAGS], [$at_cv_env_QT_LDFLAGS])
+  if test -z "$QT_LDFLAGS"; then
+    AC_CACHE_CHECK([for the LDFLAGS to use with Qt], [at_cv_env_QT_LDFLAGS],
+    [at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`])
+    QT_LDFLAGS="$at_cv_env_QT_LDFLAGS"
+  fi
+  AC_SUBST([QT_LDFLAGS])
+  AC_SUBST([QT_LFLAGS], [$QT_LDFLAGS])
+  AC_MSG_CHECKING([for the QT_LDFLAGS to use with Qt])
+  AC_MSG_RESULT([$QT_LDFLAGS])
 
   AC_MSG_CHECKING([whether host operating system is Darwin])
   at_darwin="no"
@@ -361,17 +404,22 @@ instead" >&AS_MESSAGE_LOG_FD
   AC_MSG_RESULT([$at_darwin])
 
   # Find the LIBS of Qt.
-  AC_CACHE_CHECK([for the LIBS to use with Qt], [at_cv_env_QT_LIBS],
-  [at_cv_env_QT_LIBS=`sed "/^LIBS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`
-   if test x$at_darwin = xyes; then
-     # Fix QT_LIBS: as of today Libtool (GNU Libtool 1.5.23a) doesn't handle
-     # -F properly. The "bug" has been fixed on 22 October 2006
-     # by Peter O'Gorman but we provide backward compatibility here.
-     at_cv_env_QT_LIBS=`echo "$at_cv_env_QT_LIBS" \
-                             | sed 's/^-F/-Wl,-F/;s/ -F/ -Wl,-F/g'`
-   fi
-  ])
-  AC_SUBST([QT_LIBS], [$at_cv_env_QT_LIBS])
+  if test -z "$QT_LIBS"; then
+    AC_CACHE_CHECK([for the LIBS to use with Qt], [at_cv_env_QT_LIBS],
+    [at_cv_env_QT_LIBS=`sed "/^LIBS@<:@^A-Za-z@:>@*=/!d;$qt_sed_filter" $at_mfile`
+     if test x$at_darwin = xyes; then
+       # Fix QT_LIBS: as of today Libtool (GNU Libtool 1.5.23a) doesn't handle
+       # -F properly. The "bug" has been fixed on 22 October 2006
+       # by Peter O'Gorman but we provide backward compatibility here.
+       at_cv_env_QT_LIBS=`echo "$at_cv_env_QT_LIBS" \
+                               | sed 's/^-F/-Wl,-F/;s/ -F/ -Wl,-F/g'`
+     fi
+    ])
+    QT_LIBS="$at_cv_env_QT_LIBS"
+  fi
+  AC_SUBST([QT_LIBS])
+  AC_MSG_CHECKING([for the QT_LIBS to use with Qt])
+  AC_MSG_RESULT([$QT_LIBS])
 
   cd "$my_configure_pwd" || echo 'WTF!'
   rm -rf "$my_tmpdir"
