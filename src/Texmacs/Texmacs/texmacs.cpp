@@ -352,6 +352,7 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  set_env ("LC_NUMERIC", "POSIX");
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
   new QApplication (argc, argv);
