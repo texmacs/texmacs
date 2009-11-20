@@ -325,8 +325,8 @@ uses_texmacs  := $(texmacs_obj)
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 qt cocoa style typeset edit glue texmacs))
 
-link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) \
-  $(LDGUILE) $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
+link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
+  $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL) -mwindows
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@

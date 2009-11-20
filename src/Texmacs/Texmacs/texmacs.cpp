@@ -9,6 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include <fstream>
+
 #include "boot.hpp"
 #include "file.hpp"
 #include "server.hpp"
@@ -206,6 +208,7 @@ TeXmacs_main (int argc, char** argv) {
 	i++;
 	if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
       }
+      else if (s == "-log-file") i++;
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
       else if ((s == "-S") || (s == "-setup") ||
@@ -269,7 +272,8 @@ TeXmacs_main (int argc, char** argv) {
 	(s == "-fn") || (s == "-font") ||
 	(s == "-i") || (s == "-initialize") ||
 	(s == "-g") || (s == "-geometry") ||
-	(s == "-x") || (s == "-execute")) i++;
+	(s == "-x") || (s == "-execute") ||
+	(s == "-log-file")) i++;
   }
   if (install_status == 1) {
     if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";
@@ -352,6 +356,26 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  // set log file
+  char* log_file = 0;
+  std::ofstream log_ofstream;
+
+  for (int i = 1; i < argc; i++) {
+    string s = argv[i];
+    if (s == "-log-file") {
+      i++;
+      if (i < argc) log_file = argv[i];
+    }
+  }
+  if (log_file) {
+    log_ofstream.open(log_file, std::ios_base::out | std::ios_base::trunc);
+    if (log_ofstream.rdstate() & std::ofstream::failbit) {
+      cerr << "Error opening " << log_file << std::endl;
+    } else {
+      cout.rdbuf(log_ofstream.rdbuf());
+      cerr.rdbuf(log_ofstream.rdbuf());
+    }
+  }
   set_env ("LC_NUMERIC", "POSIX");
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
