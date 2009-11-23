@@ -1,8 +1,5 @@
 /* src/System/config.in.  Generated from configure.in by autoheader.  */
 
-/* Enable experimental Cocoa port */
-#undef AQUATEXMACS
-
 /* check assertions in code */
 #undef DEBUG_ASSERT
 
@@ -108,8 +105,8 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Enable experimental Qt port */
-#undef QTTEXMACS
+/* The size of `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
@@ -128,9 +125,6 @@
 
 /* Use imlib2 library */
 #undef USE_IMLIB2
-
-/* Use standard X11 port */
-#undef X11TEXMACS
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING

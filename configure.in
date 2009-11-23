@@ -762,15 +762,18 @@ esac
 case "$CONFIG_GUI" in
     X11)
 	CONFIG_X11="X11 Widkit Ghostscript"
-        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
+        CONFIG_GUI_DEFINE="X11TEXMACS"
+#        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
 	;;
     COCOA)
         CONFIG_COCOA="Cocoa"
-        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
+        CONFIG_GUI_DEFINE="AQUATEXMACS"
+#        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
 	;;
     QT)
         CONFIG_QT="Qt"
-        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
+        CONFIG_GUI_DEFINE="QTTEXMACS"
+#        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
 	;;
 esac
 
@@ -783,6 +786,7 @@ AC_SUBST(CONFIG_X11)
 AC_SUBST(CONFIG_COCOA)
 AC_SUBST(CONFIG_QT)
 AC_SUBST(CONFIG_GUI)
+AC_SUBST(CONFIG_GUI_DEFINE)
 
 #--------------------------------------------------------------------
 # Debugging options

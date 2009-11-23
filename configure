@@ -720,6 +720,7 @@ CONFIG_X11
 CONFIG_COCOA
 CONFIG_QT
 CONFIG_GUI
+CONFIG_GUI_DEFINE
 CONFIG_CXXDIALECT
 CONFIG_OS
 CONFIG_OS_SUFFIX
@@ -9545,29 +9546,21 @@ esac
 case "$CONFIG_GUI" in
     X11)
 	CONFIG_X11="X11 Widkit Ghostscript"
-
-cat >>confdefs.h <<\_ACEOF
-#define X11TEXMACS 1
-_ACEOF
-
+        CONFIG_GUI_DEFINE="X11TEXMACS"
+#        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
 	;;
     COCOA)
         CONFIG_COCOA="Cocoa"
-
-cat >>confdefs.h <<\_ACEOF
-#define AQUATEXMACS 1
-_ACEOF
-
+        CONFIG_GUI_DEFINE="AQUATEXMACS"
+#        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
 	;;
     QT)
         CONFIG_QT="Qt"
-
-cat >>confdefs.h <<\_ACEOF
-#define QTTEXMACS 1
-_ACEOF
-
+        CONFIG_GUI_DEFINE="QTTEXMACS"
+#        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
 	;;
 esac
+
 
 
 
@@ -10708,6 +10701,7 @@ CONFIG_X11!$CONFIG_X11$ac_delim
 CONFIG_COCOA!$CONFIG_COCOA$ac_delim
 CONFIG_QT!$CONFIG_QT$ac_delim
 CONFIG_GUI!$CONFIG_GUI$ac_delim
+CONFIG_GUI_DEFINE!$CONFIG_GUI_DEFINE$ac_delim
 CONFIG_CXXDIALECT!$CONFIG_CXXDIALECT$ac_delim
 CONFIG_OS!$CONFIG_OS$ac_delim
 CONFIG_OS_SUFFIX!$CONFIG_OS_SUFFIX$ac_delim
@@ -10744,7 +10738,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 45; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 46; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
