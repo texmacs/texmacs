@@ -3388,7 +3388,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "/Users/Mgubi/t/clean/src/misc/bundle/../../misc/bundle/Info-Xcode copy.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -3401,7 +3400,6 @@
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = "/Users/Mgubi/t/clean/src/misc/bundle/../../misc/bundle/Info-Xcode copy.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				WRAPPER_EXTENSION = app;
 			};
