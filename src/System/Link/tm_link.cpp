@@ -57,7 +57,7 @@ string
 tm_link_rep::read_packet (int channel, int timeout, bool& success) {
   success= false;
   string& r= watch (channel);
-  int start= texmacs_time ();
+  time_t start= texmacs_time ();
   while (!message_complete (r)) {
     int n= N(r);
     if (timeout > 0) listen (timeout);

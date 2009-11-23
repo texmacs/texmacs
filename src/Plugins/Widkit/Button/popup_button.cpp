@@ -100,12 +100,12 @@ popup_button_rep::map_popup () {
   stick      = false;
 
   if (!is_nil (prom)) {
-    // int start_1= texmacs_time ();
+    // time_t start_1= texmacs_time ();
     popup_w= popup_widget (prom (), opposite (where));
     // cout << "Mapping required " << (texmacs_time ()-start_1) << " ms\n";
   }
 
-  // int start_2= texmacs_time ();
+  // time_t start_2= texmacs_time ();
   SI x, y, w=0, h=0;
   win->get_position (x, y);
   popup_w << get_size (w, h);
@@ -128,13 +128,13 @@ popup_button_rep::map_popup () {
   }
   // cout << "Positioning required " << (texmacs_time ()-start_2) << " ms\n";
 
-  // int start_3= texmacs_time ();
+  // time_t start_3= texmacs_time ();
   wk_widget win_wid= popup_window_widget (popup_w, "Popup");
   set_position (abstract (win_wid), x, y);
   popup= win_wid -> win;
   // popup= popup_window (abstract (popup_w), x, y);
   // cout << "Window creation required " << (texmacs_time ()-start_3) << " ms\n";
-  // int start_4= texmacs_time ();
+  // time_t start_4= texmacs_time ();
   popup->set_visibility (true);
   // cout << "Mapping required " << (texmacs_time ()-start_4) << " ms\n";
 

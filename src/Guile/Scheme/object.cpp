@@ -376,29 +376,29 @@ object call (object fun, array<object> a) {
 
 #ifndef QTTEXMACS
 static array<object> delayed_queue;
-static array<int>    start_queue;
+static array<time_t> start_queue;
 
 void
 exec_delayed (object cmd) {
   delayed_queue << cmd;
-  start_queue << (((int) texmacs_time ()) - 1000000000);
+  start_queue << (((time_t) texmacs_time ()) - 1000000000);
 }
 
 void
 exec_delayed_pause (object cmd) {
   delayed_queue << cmd;
-  start_queue << ((int) texmacs_time ());
+  start_queue << ((time_t) texmacs_time ());
 }
 
 void
 exec_pending_commands () {
   array<object> a= delayed_queue;
-  array<int> b= start_queue;
+  array<time_t> b= start_queue;
   delayed_queue= array<object> (0);
-  start_queue= array<int> (0);
+  start_queue  = array<time_t> (0);
   int i, n= N(a);
   for (i=0; i<n; i++) {
-    int now= (int) texmacs_time ();
+    time_t now= (time_t) texmacs_time ();
     if ((now - b[i]) >= 0) {
       object obj= call (a[i]);
       if (is_int (obj) && (now - b[i] < 1000000000)) {
@@ -417,6 +417,6 @@ exec_pending_commands () {
 void
 clear_pending_commands () {
   delayed_queue= array<object> (0);
-  start_queue= array<int> (0);
+  start_queue  = array<time_t> (0);
 }
 #endif // QTTEXMACS

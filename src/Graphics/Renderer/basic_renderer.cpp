@@ -353,9 +353,9 @@ void basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
  ******************************************************************************/
 
 
-static int cache_image_last_gc = 0;
-static int cache_image_tot_size= 0;
-static int cache_image_max_size= 10000;
+static time_t cache_image_last_gc = 0;
+static int    cache_image_tot_size= 0;
+static int    cache_image_max_size= 10000;
 static hashmap<tree,cache_image_element> cache_image;
 
 // to inform texmacs about image sizes we need to fill this structure
@@ -364,7 +364,7 @@ static hashmap<tree,cache_image_element> cache_image;
 extern hashmap<tree,string> ps_bbox; 
 
 void basic_renderer_rep::image_auto_gc () {
-  int time= texmacs_time ();
+  time_t time= texmacs_time ();
   if (time-cache_image_last_gc <= 300000) return;
   cache_image_last_gc= time;
   if (DEBUG_AUTO)

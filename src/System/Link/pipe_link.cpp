@@ -311,7 +311,7 @@ pipe_link_rep::read (int channel) {
 void
 pipe_link_rep::listen (int msecs) {
   if (!alive) return;
-  int wait_until= texmacs_time () + msecs;
+  time_t wait_until= texmacs_time () + msecs;
   while ((outbuf == "") && (errbuf == "")) {
     listen_to_pipes (); // FIXME: should listen more specifically
     if (texmacs_time () - wait_until > 0) break;

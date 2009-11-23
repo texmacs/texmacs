@@ -36,13 +36,13 @@ x_window_rep::set_hints (SI min_w, SI min_h, SI max_w, SI max_h) {
   ASSERT (XStringListToTextProperty (&name, 1, &Icon_Name) != 0,
 	  "out of memory (X server)");
 
-  // int start_1= texmacs_time ();
+  // time_t start_1= texmacs_time ();
   if (!gui->xpm_pixmap->contains ("TeXmacs.xpm"))
     ren->xpm_initialize ("TeXmacs.xpm");
   Pixmap pm= (Pixmap) gui->xpm_pixmap ["TeXmacs.xpm"];
   // cout << "Getting pixmap required " << (texmacs_time ()-start_1) << " ms\n";
 
-  // int start_2= texmacs_time ();
+  // time_t start_2= texmacs_time ();
   size_hints->flags       = PPosition | PSize | PMinSize | PMaxSize;
   size_hints->min_width   = min_w;
   size_hints->min_height  = min_h;
@@ -85,14 +85,14 @@ x_window_rep::initialize () {
   gc = gui->gc;
   full_screen_flag= false;
 
-  // int start_1= texmacs_time ();
+  // time_t start_1= texmacs_time ();
   ren->set_origin (0, 0);
   ren->decode (def_w, def_h); def_h= -def_h;
   ren->decode (min_w, min_h); min_h= -min_h;
   ren->decode (max_w, max_h); max_h= -max_h;
   // cout << "Size computation required " << (texmacs_time ()-start_1) << " ms\n";
 
-  // int start_2= texmacs_time ();
+  // time_t start_2= texmacs_time ();
   unsigned long valuemask= CWOverrideRedirect | CWSaveUnder;
   //unsigned long valuemask= CWOverrideRedirect | CWSaveUnder | CWBackingStore;
   XSetWindowAttributes setattr;

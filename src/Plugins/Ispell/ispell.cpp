@@ -58,13 +58,19 @@ ispeller_rep::start () {
   }
   if (ln->alive) return "ok";
   string message= ln->start ();
-  if (starts (message, "Error: ")) return message;
+  if (DEBUG_IO) cout << "Ispell] Received " << message << "\n";
+  if (starts (message, "Error: ")) {
+    if (ln->alive) ln->stop ();
+    return message;
+  }
   message= retrieve ();
+  if (DEBUG_IO) cout << "Ispell] Received " << message << "\n";
 #ifdef OS_WIN32
   if (search_forwards (message, 0, "@(#)")) return "ok";
 #else
   if (starts (message, "@(#)")) return "ok";
 #endif
+  if (ln->alive) ln->stop ();
   return "Error: no dictionary for#" * lan;
 }
 
@@ -81,7 +87,7 @@ ispeller_rep::retrieve () {
       if (extra == "") return "Error: ispell does not respond";
       ret << extra;
     }
-  return ispell_decode(lan,ret);
+  return ispell_decode (lan, ret);
 }
 
 void
@@ -237,6 +243,7 @@ ispell_eval (string lan, string s) {
 
 string
 ispell_start (string lan) {
+  if (DEBUG_IO) cout << "Ispell] Start " << lan << "\n";
   ispeller sc= ispeller (lan);
   if (is_nil (sc)) sc= tm_new<ispeller_rep> (lan);
   return sc->start ();
@@ -244,6 +251,7 @@ ispell_start (string lan) {
 
 tree
 ispell_check (string lan, string s) {
+  if (DEBUG_IO) cout << "Ispell] Check " << s << "\n";
   ispeller sc= ispeller (lan);
   if (is_nil (sc) || (!sc->ln->alive)) {
     string message= ispell_start (lan);
@@ -256,15 +264,18 @@ ispell_check (string lan, string s) {
 
 void
 ispell_accept (string lan, string s) {
+  if (DEBUG_IO) cout << "Ispell] Accept " << s << "\n";
   ispell_send (lan, "@" * s);
 }
 
 void
 ispell_insert (string lan, string s) {
+  if (DEBUG_IO) cout << "Ispell] Insert " << s << "\n";
   ispell_send (lan, "*" * s);
 }
 
 void
 ispell_done (string lan) {
+  if (DEBUG_IO) cout << "Ispell] End " << lan << "\n";
   ispell_send (lan, "#");
 }

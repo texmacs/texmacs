@@ -333,11 +333,11 @@ is_newer (url which, url than) {
 url
 url_temp (string suffix) {
 #ifdef __MINGW32__
-  int rnd= texmacs_time ();
+  int rnd= raw_time ();
 #else
   static bool initialized= false;
   if (!initialized) {
-    srandom ((int) texmacs_time ());
+    srandom ((int) raw_time ());
     initialized= true;
   }
   int rnd= random ();

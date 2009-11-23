@@ -34,6 +34,7 @@ extern "C" {
 #endif
 #endif
 
+time_t raw_time ();
 time_t texmacs_time ();
 
 void   bench_start (string task);

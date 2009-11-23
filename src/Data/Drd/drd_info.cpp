@@ -464,7 +464,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
 
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env) {
-  // int tt= texmacs_time ();
+  // time_t tt= texmacs_time ();
   bool flag= true;
   int round= 0;
   while (flag) {

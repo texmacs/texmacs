@@ -363,9 +363,9 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
 * Invocation of ghostscript
 ******************************************************************************/
 
-static int cache_image_last_gc = 0;
-static int cache_image_tot_size= 0;
-static int cache_image_max_size= 10000;
+static time_t cache_image_last_gc = 0;
+static int    cache_image_tot_size= 0;
+static int    cache_image_max_size= 10000;
 static hashmap<tree,Pixmap> cache_image (0);
 static hashmap<tree,int> cache_image_w (0);
 static hashmap<tree,int> cache_image_h (0);
@@ -440,7 +440,7 @@ x_drawable_rep::image (
 
 void
 x_gui_rep::image_auto_gc () {
-  int time= texmacs_time ();
+  time_t time= texmacs_time ();
   if (time-cache_image_last_gc <= 300000) return;
   cache_image_last_gc= time;
   if (DEBUG_AUTO)

@@ -42,13 +42,13 @@ static bool request_partial_redraw= false;
 * Hack for getting the remote time
 ******************************************************************************/
 
-static bool time_initialized= false;
-static long time_difference = 0;
+static bool   time_initialized= false;
+static time_t time_difference = 0;
 
 static void
 synchronize_time (Time t) {
   if (time_initialized && time_difference == 0) return;
-  long d= texmacs_time () - ((time_t) t);
+  time_t d= texmacs_time () - ((time_t) t);
   if (time_initialized) {
     if (d < time_difference)
       time_difference= d;
