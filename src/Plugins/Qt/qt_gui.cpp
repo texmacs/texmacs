@@ -34,8 +34,8 @@ qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 bool qt_update_flag = false;
 
-int time_credit;
-int timeout_time;
+time_t time_credit;
+time_t timeout_time;
 
 /******************************************************************************
 * Constructor and geometry
@@ -375,35 +375,35 @@ void   exec_pending_commands ()
 
 #else
 static array<object> delayed_queue;
-static array<int>    start_queue;
+static array<time_t>    start_queue;
 
 void
 exec_delayed (object cmd) {
   delayed_queue << cmd;
-  start_queue << (((int) texmacs_time ()) - 1000000000);
+  start_queue << (((time_t) texmacs_time ()) - 1000000000);
   restart_global_timer ();
 }
 
 void
 exec_delayed_pause (object cmd) {
   delayed_queue << cmd;
-  start_queue << ((int) texmacs_time ());
+  start_queue << ((time_t) texmacs_time ());
   restart_global_timer ();
 }
 
 void
 exec_pending_commands () {
   array<object> a= delayed_queue;
-  array<int> b= start_queue;
+  array<time_t> b= start_queue;
   delayed_queue= array<object> (0);
-  start_queue= array<int> (0);
+  start_queue= array<time_t> (0);
   int i, n= N(a);
   for (i=0; i<n; i++) {
-    int now= (int) texmacs_time ();
+    time_t now= (time_t) texmacs_time ();
     if ((now - b[i]) >= 0) {
       object obj= call (a[i]);
       if (is_int (obj) && (now - b[i] < 1000000000)) {
-        int pause = as_int (obj);
+        time_t pause = as_int (obj);
         //cout << "pause= " << obj << "\n";
         delayed_queue << a[i];
         start_queue << (now + pause);
@@ -415,12 +415,12 @@ exec_pending_commands () {
     }
   }
   if (N(delayed_queue)>0) {
-    int lapse = start_queue[0];
+    time_t lapse = start_queue[0];
     int n = N(start_queue);
     for (i=1; i<n; i++) {
       if (lapse > start_queue[i]) lapse = start_queue[i];
     }
-    lapse = lapse - (int) texmacs_time ();
+    lapse = lapse - (time_t) texmacs_time ();
     if (lapse < 0) lapse = 0;
     // cout << "restarting :" << lapse << LF;
     restart_global_timer (lapse);
@@ -430,7 +430,7 @@ exec_pending_commands () {
 void
 clear_pending_commands () {
   delayed_queue= array<object> (0);
-  start_queue= array<int> (0);
+  start_queue= array<time_t> (0);
 }
 #endif
 

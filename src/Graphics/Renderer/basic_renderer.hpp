@@ -50,9 +50,10 @@ int hash (basic_character xc);
  ******************************************************************************/
 
 struct cache_image_element_rep: concrete_struct {
-	int w,h,nr,time;
+	int w,h,nr;
+  time_t time;
   void *ptr;
-	cache_image_element_rep (int w2, int h2,  int time2, void *ptr2) :
+	cache_image_element_rep (int w2, int h2,  time_t time2, void *ptr2) :
    w(w2), h(h2), nr(0), time(time2), ptr(ptr2) {};
 	virtual ~cache_image_element_rep() {};
 	friend class cache_image_element;

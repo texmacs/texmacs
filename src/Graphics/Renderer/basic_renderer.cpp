@@ -374,7 +374,7 @@ void basic_renderer_rep::image_auto_gc () {
   while (it->busy()) {
     tree lookup= it->next();
     cache_image_element ci = cache_image [lookup];
-    int diff= time- ci->time;
+    time_t diff= time- ci->time;
     int fact= ci->nr;
     fact= fact * fact * fact;
     if ((ci->w * ci->h) < 400) fact= fact * 5;

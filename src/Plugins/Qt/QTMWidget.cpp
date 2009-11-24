@@ -38,8 +38,8 @@ extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
 #define PIXEL 256
 
 extern bool qt_update_flag;
-extern int time_credit;
-extern int timeout_time;
+extern time_t time_credit;
+extern time_t timeout_time;
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
@@ -206,7 +206,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   }
 
   if (!qt_update_flag) {
-    //int start= texmacs_time ();
+    //time_t start= texmacs_time ();
     basic_renderer_rep *r;
 
 #ifdef USE_CAIRO
@@ -254,7 +254,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     r->end();
 
     tm_widget()->set_current_renderer(NULL);
-    //int end= texmacs_time ();
+    //time_t end= texmacs_time ();
     //if (end > start) cout << "Repaint " << end - start << "\n";
   }
 

@@ -234,7 +234,7 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 ******************************************************************************/
 
 struct qt_cache_image_rep: cache_image_element_rep {
-  qt_cache_image_rep (int w2, int h2, int time2, QImage *ptr2):
+  qt_cache_image_rep (int w2, int h2, time_t time2, QImage *ptr2):
     cache_image_element_rep (w2, h2, time2, ptr2) {}
   virtual ~qt_cache_image_rep () {
     delete static_cast<QImage*> (ptr); }

@@ -220,7 +220,7 @@ cg_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 * Image rendering
 ******************************************************************************/
 struct cg_cache_image_rep: cache_image_element_rep {
-	cg_cache_image_rep (int w2, int h2, int time2, CGImageRef ptr2) :
+	cg_cache_image_rep (int w2, int h2, time_t time2, CGImageRef ptr2) :
     cache_image_element_rep(w2,h2,time2,ptr2) {  CGImageRetain((CGImageRef)ptr); };
 	virtual ~cg_cache_image_rep() { CGImageRelease((CGImageRef)ptr); };
 };

@@ -232,7 +232,7 @@ aqua_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
  * Image rendering
  ******************************************************************************/
 struct aqua_cache_image_rep: cache_image_element_rep {
-	aqua_cache_image_rep (int w2, int h2, int time2, NSImage *ptr2) :
+	aqua_cache_image_rep (int w2, int h2, time_t time2, NSImage *ptr2) :
   cache_image_element_rep(w2,h2,time2,ptr2) {  [(NSImage*)ptr retain]; };
 	virtual ~aqua_cache_image_rep() {   [(NSImage*)ptr release]; };
 };

@@ -259,7 +259,7 @@ cairo_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 ******************************************************************************/
 
 struct cairo_cache_image_rep: cache_image_element_rep {
-  cairo_cache_image_rep (int w2, int h2, int time2, cairo_surface_t *ptr2) :
+  cairo_cache_image_rep (int w2, int h2, time_t time2, cairo_surface_t *ptr2) :
     cache_image_element_rep(w2,h2,time2,ptr2) {
       tm_cairo_surface_reference ((cairo_surface_t *) ptr); }
   virtual ~cairo_cache_image_rep() {
