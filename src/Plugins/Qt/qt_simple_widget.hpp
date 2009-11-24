@@ -14,6 +14,7 @@
 
 #include "widget.hpp"
 #include "qt_widget.hpp"
+#include "QTMWidget.hpp"
 
 class simple_widget_rep: public qt_view_widget_rep {
 public:
@@ -40,6 +41,8 @@ public:
 
   virtual QAction* as_qaction();
   // virtual TMMenuItem* as_menuitem();
+  inline QTMWidget* tm_canvas () { return qobject_cast <QTMWidget*>(view); }
+
 };
 
 #endif // defined QT_SIMPLE_WIDGET_HPP

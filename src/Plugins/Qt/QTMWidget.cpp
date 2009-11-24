@@ -14,6 +14,8 @@
 #include "QTMWidget.hpp"
 #include "qt_renderer.hpp"
 #include "qt_gui.hpp"
+#include "qt_simple_widget.hpp"
+
 #include "converter.hpp"
 
 #include "config.h"

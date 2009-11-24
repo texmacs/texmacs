@@ -12,9 +12,12 @@
 #ifndef QTMWIDGET_HPP
 #define QTMWIDGET_HPP
 
-#include "qt_simple_widget.hpp"
+//#include "qt_simple_widget.hpp"
+#include "list.hpp"
 #include <QVariant>
 #include <QWidget>
+
+class simple_widget_rep;
 
 class QTMWidget: public QWidget {
   Q_OBJECT

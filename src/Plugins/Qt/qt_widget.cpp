@@ -160,6 +160,9 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       view->window() -> setWindowTitle (to_qstring (name));
     }
     break;
+#if 0
+  // these messages are apriori relevant only to simple_widget_rep
+  // so they are handled there.
   case SLOT_INVALIDATE:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
@@ -173,7 +176,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     ASSERT (is_nil (val), "type mismatch");
     view->update(); // [view setNeedsDisplay:YES];
     break;
-
+#endif
   case SLOT_MOUSE_GRAB:
     NOT_IMPLEMENTED;
     //send_mouse_grab (THIS, val);
@@ -211,16 +214,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
     // return close_box<int> ((int)view->window());
     // we need only to know if the widget is attached to some gui window
     return close_box<int> (view->window() ? 1 : 0);
-  case SLOT_RENDERER:
-    {
-      TYPE_CHECK (type_id == type_helper<renderer>::id);
-      renderer r = get_current_renderer();
-      //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
-      //       TeXmacs current policy is that we should return NULL only if the widget is not attached (in X11 sense)
-      if (!r) r = the_qt_renderer();
-      return close_box<renderer> (r);
-    }
-  case SLOT_POSITION:
+    case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
@@ -231,7 +225,18 @@ qt_view_widget_rep::query (slot s, int type_id) {
     }
 
 #if 0
-  case SLOT_VISIBLE_PART:
+    // these messages are apriori relevant only to simple_widget_rep
+    // so they are handled there.
+    case SLOT_RENDERER:
+    {
+      TYPE_CHECK (type_id == type_helper<renderer>::id);
+      renderer r = get_current_renderer();
+      //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
+      //       TeXmacs current policy is that we should return NULL only if the widget is not attached (in X11 sense)
+      if (!r) r = the_qt_renderer();
+      return close_box<renderer> (r);
+    }
+    case SLOT_VISIBLE_PART:
     {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect = view->visibleRegion().boundingRect();
@@ -922,7 +927,25 @@ void
 simple_widget_rep::send (slot s, blackbox val) {
   // if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::send " << slot_name(s) << LF;
   if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
-  qt_view_widget_rep::send (s, val);
+  switch (s) {
+    case SLOT_INVALIDATE:
+    {
+      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
+      coord4 p= open_box<coord4> (val);
+      QRect rect = to_qrect(p);
+      if (DEBUG_EVENTS) cout << "Invalidating rect " << rect << LF;
+      view->update (rect);
+    }
+      break;
+    case SLOT_INVALIDATE_ALL:
+      ASSERT (is_nil (val), "type mismatch");
+      view->update(); // [view setNeedsDisplay:YES];
+      break;
+      
+    default:
+      qt_view_widget_rep::send (s, val);
+  }
+  
 }
 
 
@@ -930,7 +953,20 @@ blackbox
 simple_widget_rep::query (slot s, int type_id) {
   if ((DEBUG_EVENTS) && (s != SLOT_RENDERER))
     cout << "[qt_simple_widget_rep] ";
-  return qt_view_widget_rep::query (s, type_id);
+  switch (s) {
+    case SLOT_RENDERER:
+    {
+      TYPE_CHECK (type_id == type_helper<renderer>::id);
+      renderer r = get_current_renderer();
+      //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
+      //       TeXmacs current policy is that we should return NULL only if the widget is not attached (in X11 sense)
+      if (!r) r = the_qt_renderer();
+      return close_box<renderer> (r);
+    }
+    default:
+      return qt_view_widget_rep::query (s, type_id);
+  }
+  
 }
 
 void
