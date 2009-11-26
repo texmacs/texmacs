@@ -277,7 +277,7 @@ init_misc () {
   use_which = (var_eval_system ("which texmacs 2> /dev/null") != "");
 #endif
   string loc= var_eval_system ("locate bin/locate 2> /dev/null");
-  use_locate= (search_forwards (loc, "bin/locate") > 0);
+  use_locate= (search_forwards ("bin/locate", loc) > 0);
 
   // Set extra environment variables for Cygwin
 #ifdef OS_CYGWIN
