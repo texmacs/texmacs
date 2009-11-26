@@ -274,9 +274,10 @@ init_misc () {
 #if defined(__MINGW__) || defined(__MINGW32__) || defined (OS_WIN32)
   use_which = false;
 #else
-  use_which= (var_eval_system ("which texmacs 2> /dev/null") != "");
+  use_which = (var_eval_system ("which texmacs 2> /dev/null") != "");
 #endif
-  use_locate= exists_in_path ("locate");
+  string loc= var_eval_system ("locate bin/locate 2> /dev/null");
+  use_locate= (search_forwards (loc, "bin/locate") > 0);
 
   // Set extra environment variables for Cygwin
 #ifdef OS_CYGWIN

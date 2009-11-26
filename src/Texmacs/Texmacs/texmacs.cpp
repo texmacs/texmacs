@@ -355,6 +355,7 @@ immediate_options (int argc, char** argv) {
       remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
       remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
     }
+#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
     else if (s == "-log-file" && i+1 < argc) {
       i++;
       char* log_file = argv[i];
@@ -366,6 +367,7 @@ immediate_options (int argc, char** argv) {
 	cerr.rdbuf (log_ofstream.rdbuf ());
       }
     }
+#endif
   }
 }
 
