@@ -20,7 +20,7 @@
 
 void QTMWindow::closeEvent ( QCloseEvent *event )
 {
-  if (DEBUG_EVENTS)   cout << "CLOSE WINDOW" << LF;
+  if (DEBUG_QT)   cout << "CLOSE WINDOW" << LF;
   qt_tm_widget_rep *wid = tm_widget ();
   if (wid) {
     wid -> quit ();
@@ -32,7 +32,7 @@ void QTMWindow::closeEvent ( QCloseEvent *event )
 
 void QTMScrollArea::resizeEvent( QResizeEvent* event )
 {
-  if (DEBUG_EVENTS) cout << "RESIZE SCROLLAREA" << LF;
+  if (DEBUG_QT) cout << "RESIZE SCROLLAREA" << LF;
   //FIXME: the following is an hack needed to trigger widget resize at the 
   //       texmacs level when the scrollarea is resized. needed because the 
   //       texmacs canvas minimal geometry in papyrus mode depends on the 

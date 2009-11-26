@@ -108,7 +108,7 @@ qt_menu_rep::popup_window_widget (string s) {
 
 void
 qt_menu_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_menu_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
@@ -243,7 +243,7 @@ public:
 
 QWidget*
 QTMTileAction::createWidget(QWidget* parent) {
-  if (DEBUG_EVENTS) cout << "QTMTileAction::createWidget\n";
+  if (DEBUG_QT) cout << "QTMTileAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
   wid->setLayout (l);
@@ -361,7 +361,7 @@ menu_button (widget w, command cmd, string pre, string ks, bool ok) {
   if (N(ks) > 0) {
     string qtks = conv (ks);
     QKeySequence qks (to_qstring (qtks));
-    if (DEBUG_EVENTS)
+    if (DEBUG_QT)
       cout << "ks: " << ks << " " << qks.toString().toAscii().data() << "\n";
     a->setShortcut (qks);
   }

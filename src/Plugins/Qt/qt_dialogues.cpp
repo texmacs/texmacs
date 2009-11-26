@@ -25,7 +25,7 @@ extern char  *slot_name(slot s); // in qt_widget.cpp
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
-  { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n";  }
+  { if (DEBUG_QT) cout << "STILL NOT IMPLEMENTED\n";  }
 
 #pragma mark qt_chooser_widget_rep
 
@@ -62,7 +62,7 @@ qt_chooser_widget_rep::qt_chooser_widget_rep
     mgn (_mgn), position (coord2 (0, 0)), size (coord2 (100, 100)),
     file ("")
 {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
          << type << "\" mgn=\"" << mgn << "\"" << LF;
 }
@@ -71,7 +71,7 @@ qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
 
 void
 qt_chooser_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_VISIBILITY:
@@ -97,7 +97,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
   case SLOT_STRING_INPUT:
     // send_string (THIS, "input", val);
     TYPE_CHECK (type_box (val) == type_helper<string>::id);
-    if (DEBUG_EVENTS) cout << "string input: " << open_box<string> (val) << LF;
+    if (DEBUG_QT) cout << "string input: " << open_box<string> (val) << LF;
     NOT_IMPLEMENTED
     break;
   case SLOT_INPUT_TYPE:
@@ -113,7 +113,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
   case SLOT_FILE:
     //send_string (THIS, "file", val);
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
-      if (DEBUG_EVENTS) cout << "file: " << open_box<string> (val) << LF;
+      if (DEBUG_QT) cout << "file: " << open_box<string> (val) << LF;
       file = open_box<string> (val);
     break;
   case SLOT_DIRECTORY:
@@ -129,7 +129,7 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_chooser_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
@@ -147,7 +147,7 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
   case SLOT_STRING_INPUT:
     {
       TYPE_CHECK (type_id == type_helper<string>::id);
-      if (DEBUG_EVENTS) cout << "String: " << file << LF;
+      if (DEBUG_QT) cout << "String: " << file << LF;
       return close_box<string> (file);
     }
   default:
@@ -157,7 +157,7 @@ qt_chooser_widget_rep::query (slot s, int type_id) {
 
 void
 qt_chooser_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "[qt_chooser_widget_rep ]";
   switch (s) {
   default: ;
@@ -167,7 +167,7 @@ qt_chooser_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_chooser_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
@@ -189,7 +189,7 @@ qt_chooser_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_chooser_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "[qt_chooser_widget] ";
   switch (s) {
   default:
@@ -221,7 +221,7 @@ qt_chooser_widget_rep::perform_dialog () {
 
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-  if (DEBUG_EVENTS) {
+  if (DEBUG_QT) {
     cout << "Position :" << pos.x() << "," << pos.y() << LF;
     cout << "Dir: " << directory * "/" * file << LF;
   }
@@ -308,7 +308,7 @@ public:
 
 void
 qt_field_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_field_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
@@ -335,7 +335,7 @@ qt_field_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_field_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_field_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_STRING_INPUT:
@@ -370,7 +370,7 @@ qt_input_widget_rep::~qt_input_widget_rep()  {}
 
 void
 qt_input_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_input_widget_rep::send " << slot_name(s) << LF;
 
   switch (s) {
@@ -402,7 +402,7 @@ qt_input_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_input_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_input_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_POSITION:
@@ -426,7 +426,7 @@ qt_input_widget_rep::query (slot s, int type_id) {
 
 void
 qt_input_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "[qt_input_widget_rep] ";
   switch (s) {
   default: ;
@@ -436,7 +436,7 @@ qt_input_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_input_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_input_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   case SLOT_WINDOW:
@@ -452,7 +452,7 @@ qt_input_widget_rep::read (slot s, blackbox index) {
 
 void
 qt_input_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "[qt_input_widget_rep] ";
   switch (s) {
   default:
@@ -541,7 +541,7 @@ widget
 inputs_list_widget (command call_back, array<string> prompts) {
   // a dialogue widget with Ok and Cancel buttons and a series of textual
   // input widgets with specified prompts
-  if (DEBUG_EVENTS) cout << "inputs_list_widget\n";
+  if (DEBUG_QT) cout << "inputs_list_widget\n";
   return tm_new<qt_input_widget_rep> (call_back, prompts);
 }
 

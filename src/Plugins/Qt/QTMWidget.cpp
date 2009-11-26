@@ -156,7 +156,7 @@ QTMWidget::postponedUpdate () {
   //       It is a confirmed Qt/Mac bug (#251792). See
   //       http://www.qtsoftware.com/developer/task-tracker/index_html?method=entry&id=251792
   //FIXME: This is a workaround for the update(rect) bug. Mac specific.
-  if (DEBUG_EVENTS) {
+  if (DEBUG_QT) {
     cout << "postponedUpdate (ALL)\n";
   }
   update();
@@ -164,7 +164,7 @@ QTMWidget::postponedUpdate () {
 #else
   while (!is_nil (delayed_rects)) {
     QRect rect = delayed_rects->item;
-    if (DEBUG_EVENTS) {
+    if (DEBUG_QT) {
       cout << "postponedUpdate (" << rect.x()
       << "," <<  rect.y()
       << "," <<  rect.width()
@@ -192,7 +192,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   QRect rect = event->rect ();
   bool partial_redraw = false;
 
-  if (DEBUG_EVENTS) {
+  if (DEBUG_QT) {
     QPainter p(this);
     QBrush brush (QColor ("red"));
     p.fillRect (rect, brush);
@@ -245,7 +245,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
      (rect.x()+rect.width())*PIXEL, -rect.y()*PIXEL);
 
     if (r->interrupted()) {
-      if (DEBUG_EVENTS)
+      if (DEBUG_QT)
         cout << "Interrupted\n";
       qt_update_flag= true;
       partial_redraw = true;
@@ -270,7 +270,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 
   if (partial_redraw) 
   {
-    if (DEBUG_EVENTS)
+    if (DEBUG_QT)
       cout << "Postponed redrawing\n";
     delayed_rects= list<QRect> (rect, delayed_rects);
     QTimer::singleShot (1, this, SLOT (postponedUpdate ()));
@@ -284,13 +284,13 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
   timeout_time= texmacs_time () + time_credit;
   static bool fInit = false;
   if (!fInit) {
-    if (DEBUG_EVENTS)
+    if (DEBUG_QT)
       cout << "Initializing keymap\n";
     initkeymap();
     fInit= true;
   }
 
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "keypressed\n";
   simple_widget_rep *wid =  tm_widget();
   if (!wid) return;
@@ -299,7 +299,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     int key = event->key();
     Qt::KeyboardModifiers mods = event->modifiers();
 
-    if (DEBUG_EVENTS) {
+    if (DEBUG_QT) {
       cout << "key  : " << key << LF;
       cout << "text : " << event->text().toAscii().data() << LF;
       cout << "count: " << event->text().count() << LF;
@@ -373,7 +373,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (mods & Qt::MetaModifier) r= "Mod4-" * r;     // The "Windows" key
 #endif
 
-    if (DEBUG_EVENTS)
+    if (DEBUG_QT)
       cout << "key press: " << r << LF;
     //int start= texmacs_time ();
     wid -> handle_keypress (r, texmacs_time());
@@ -429,7 +429,7 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "mouse event: " << s << " at "
          << point.x () << ", " << point.y () << LF;
 }
@@ -443,7 +443,7 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   unsigned int mstate= mouse_state (event, true);
   string s= "release-" * mouse_decode (mstate);
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "mouse event: " << s << " at "
          << point.x () << ", " << point.y () << LF;
 }
@@ -457,7 +457,7 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   unsigned int mstate= mouse_state (event, false);
   string s= "move";
   wid -> handle_mouse (s, point.x (), point.y (), mstate, texmacs_time ());
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "mouse event: " << s << " at "
          << point.x () << ", " << point.y () << LF;
 }
@@ -477,7 +477,7 @@ QTMWidget::event (QEvent* event) {
 void
 QTMWidget::focusInEvent ( QFocusEvent * event )
 {
-  if (DEBUG_EVENTS) cout << "FOCUSIN" << LF;
+  if (DEBUG_QT) cout << "FOCUSIN" << LF;
   simple_widget_rep *wid = tm_widget ();
   if (wid) {
     wid -> handle_keyboard_focus (true, texmacs_time ());
@@ -488,7 +488,7 @@ QTMWidget::focusInEvent ( QFocusEvent * event )
 void
 QTMWidget::focusOutEvent ( QFocusEvent * event )
 {
-  if (DEBUG_EVENTS)   cout << "FOCUSOUT" << LF;
+  if (DEBUG_QT)   cout << "FOCUSOUT" << LF;
   simple_widget_rep *wid = tm_widget ();
   if (wid) {
     wid -> handle_keyboard_focus (false, texmacs_time ());

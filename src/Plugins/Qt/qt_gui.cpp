@@ -464,14 +464,14 @@ void
 gui_root_extents (SI& width, SI& height) {
   // get the screen size
   the_gui->get_extents (width, height);
-  if (DEBUG_EVENTS) cout << "gui_root_extents (" << width << "," << height << ")" << LF;
+  if (DEBUG_QT) cout << "gui_root_extents (" << width << "," << height << ")" << LF;
 }
 
 void
 gui_maximal_extents (SI& width, SI& height) {
   // get the maximal size of a window (can be larger than the screen size)
   the_gui->get_max_size (width, height);
-  if (DEBUG_EVENTS) cout << "gui_maximal_extents (" << width << "," << height << ")" << LF;
+  if (DEBUG_QT) cout << "gui_maximal_extents (" << width << "," << height << ")" << LF;
 }
 
 void
@@ -541,7 +541,7 @@ get_default_font (bool tt) {
   // get the default font or monospaced font (if tt is true)
         
   // return a null font since this function is not called in the Qt port.
-  if (DEBUG_EVENTS) cout << "get_default_font(): SHOULD NOT BE CALLED\n";
+  if (DEBUG_QT) cout << "get_default_font(): SHOULD NOT BE CALLED\n";
   return NULL;
   //return tex_font (this, "ecrm", 10, 300, 0);
 }
@@ -554,7 +554,7 @@ load_system_font (string family, int size, int dpi,
                   font_metric& fnm, font_glyphs& fng)
 {
         (void) family; (void) size; (void) dpi; (void) fnm; (void) fng;
-        if (DEBUG_EVENTS) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
+        if (DEBUG_QT) cout << "load_system_font(): SHOULD NOT BE CALLED\n";
 }
 
 /******************************************************************************
@@ -631,7 +631,7 @@ show_wait_indicator (widget base, string message, string argument) {
 font x_font (string family, int size, int dpi)
 {
   (void) family; (void) size; (void) dpi;
-  if (DEBUG_EVENTS) cout << "x_font(): SHOULD NOT BE CALLED\n";
+  if (DEBUG_QT) cout << "x_font(): SHOULD NOT BE CALLED\n";
   return NULL;
 }
 

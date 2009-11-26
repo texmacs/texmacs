@@ -40,7 +40,7 @@
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
-  { if (DEBUG_EVENTS) cout << "STILL NOT IMPLEMENTED\n"; }
+  { if (DEBUG_QT) cout << "STILL NOT IMPLEMENTED\n"; }
 
 extern int nr_windows; // the run-loop should exit when the number of windows is zero
 
@@ -144,13 +144,13 @@ qt_view_widget_rep::~qt_view_widget_rep() {
   //       - Qt spectify that widgets with a parent are deleted by the parent.
   //       - Out policy is that qt_view_widget_rep owns the QWidget (so it is responsible to delete it)
   //       are these two requirements compatible ?
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_view_widget_rep::~qt_view_widget_rep()\n";
 }
 
 void
 qt_view_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_view_widget_rep::send " << slot_name (s) << LF;
   switch (s) {
   case SLOT_NAME:
@@ -168,7 +168,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
-      if (DEBUG_EVENTS) cout << "Invalidating rect " << rect << LF;
+      if (DEBUG_QT) cout << "Invalidating rect " << rect << LF;
       view->update (rect);
     }
     break;
@@ -191,7 +191,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     //send_keyboard_focus (THIS, val);
     TYPE_CHECK (type_box (val) == type_helper<bool>::id);
     if (open_box<bool> (val)) the_keyboard_focus = this;
-      if (DEBUG_EVENTS) cout << "Ignored!\n";
+      if (DEBUG_QT) cout << "Ignored!\n";
     break;
                         
   default:
@@ -205,7 +205,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_view_widget_rep::query (slot s, int type_id) {
-  if ((DEBUG_EVENTS) && (s != SLOT_RENDERER))
+  if ((DEBUG_QT) && (s != SLOT_RENDERER))
     cout << "qt_view_widget_rep::query " << slot_name(s) << LF;
 
   switch (s) {
@@ -219,7 +219,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= view->pos();
-      if (DEBUG_EVENTS)
+      if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
@@ -241,7 +241,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect = view->visibleRegion().boundingRect();
       coord4 c = from_qrect (rect);
-      if (DEBUG_EVENTS) cout << "visibleRegion " << rect << LF;
+      if (DEBUG_QT) cout << "visibleRegion " << rect << LF;
       return close_box<coord4> (c);
     }
 #endif
@@ -260,7 +260,7 @@ qt_view_widget_rep::query (slot s, int type_id) {
 
 void
 qt_view_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_view_widget_rep::notify " << slot_name(s) << LF;
   qt_widget_rep::notify (s, new_val);
 }
@@ -271,7 +271,7 @@ qt_view_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 qt_view_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_view_widget_rep::read " << slot_name(s) << LF;
 
   switch (s) {
@@ -294,7 +294,7 @@ qt_view_widget_rep::read (slot s, blackbox index) {
 void
 qt_view_widget_rep::write (slot s, blackbox index, widget w) {
   (void) index; (void) w;
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_view_widget_rep::write " << slot_name (s) << LF;
   switch (s) {
   default:
@@ -368,7 +368,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
 }
 
@@ -386,7 +386,7 @@ void qt_tm_widget_rep::updateVisibility()
 
 void
 qt_tm_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_tm_widget_rep::send " << slot_name (s) << LF;
 
   switch (s) {
@@ -470,7 +470,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       // convert from main widget to canvas coordinates
       // QPoint pt2= tm_mainwindow()->mapToGlobal (pt);
       // pt= tm_scrollarea()->widget()->mapFromGlobal (pt2);
-      if (DEBUG_EVENTS)
+      if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
 #if 0
       cout << "scrollarea ("
@@ -516,7 +516,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     TYPE_CHECK (type_box (val) == type_helper<int>::id);
     if (QTMWidget* tmw= qobject_cast<QTMWidget*> (tm_canvas())) {
       int new_sf = open_box<int> (val);
-      if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
+      if (DEBUG_QT) cout << "New shrinking factor :" << new_sf << LF;
       tmw->tm_widget()->handle_set_shrinking_factor (new_sf);
     }
     break;
@@ -533,7 +533,7 @@ QTMInteractiveInputHelper::doit () {
 
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_tm_widget_rep::query " << slot_name (s) << LF;
 
   switch (s) {
@@ -541,7 +541,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= tm_canvas()->pos();
-      if (DEBUG_EVENTS)
+      if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
@@ -551,7 +551,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect= tm_canvas()->geometry();
       coord4 c= from_qrect (rect);
-      if (DEBUG_EVENTS) cout << "Canvas geometry " << rect << LF;
+      if (DEBUG_QT) cout << "Canvas geometry " << rect << LF;
       return close_box<coord4> (c);
     }
 
@@ -560,7 +560,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
       QRect rect= tm_canvas()->visibleRegion().boundingRect();
       coord4 c= from_qrect (rect);
-      if (DEBUG_EVENTS) cout << "Visible Region " << rect << LF;
+      if (DEBUG_QT) cout << "Visible Region " << rect << LF;
       return close_box<coord4> (c);
     }
                         
@@ -601,7 +601,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 widget
 qt_tm_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_EVENTS) cout << "[qt_tm_widget_rep] ";
+  if (DEBUG_QT) cout << "[qt_tm_widget_rep] ";
   return qt_view_widget_rep::read (s, index);
 }
 
@@ -634,7 +634,7 @@ replaceButtons(QToolBar* dest, QWidget* src) {
 
 void
 qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_tm_widget_rep::write " << slot_name (s) << LF;
 
   switch (s) {
@@ -729,7 +729,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
 
 void
 qt_window_widget_rep::send (slot s, blackbox val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_window_widget_rep::send " << slot_name (s) << LF;
 
   switch (s) {
@@ -752,7 +752,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
               QPoint pt = to_qpoint (p);
               pt.ry() += 40;
         // to avoid window under menu bar on MAC when moving at (0,0)
-              if (DEBUG_EVENTS) cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF;
+              if (DEBUG_QT) cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF;
         wid->move (pt);
       }
     }
@@ -803,7 +803,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 qt_window_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_window_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
   case SLOT_IDENTIFIER:
@@ -816,7 +816,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
       QPoint pt= wid->pos();
-      if (DEBUG_EVENTS)
+      if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
@@ -839,7 +839,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
 
 void
 qt_window_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_window_widget_rep::notify " << slot_name(s) << LF;
   widget_rep::notify (s, new_val);
 }
@@ -847,7 +847,7 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 widget
 qt_window_widget_rep::read (slot s, blackbox index) {
   (void) index;
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_window_widget_rep::read " << slot_name(s) << LF;
   switch (s) {
   default:
@@ -859,7 +859,7 @@ qt_window_widget_rep::read (slot s, blackbox index) {
 void
 qt_window_widget_rep::write (slot s, blackbox index, widget w) {
   (void) w; (void) index;
-  if (DEBUG_EVENTS)
+  if (DEBUG_QT)
     cout << "qt_window_widget_rep::write " << slot_name(s) << LF;
 
   switch (s) {
@@ -925,15 +925,15 @@ simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
 
 void
 simple_widget_rep::send (slot s, blackbox val) {
-  // if (DEBUG_EVENTS) cout << "qt_simple_widget_rep::send " << slot_name(s) << LF;
-  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+  // if (DEBUG_QT) cout << "qt_simple_widget_rep::send " << slot_name(s) << LF;
+  if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
   switch (s) {
     case SLOT_INVALIDATE:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
       QRect rect = to_qrect(p);
-      if (DEBUG_EVENTS) cout << "Invalidating rect " << rect << LF;
+      if (DEBUG_QT) cout << "Invalidating rect " << rect << LF;
       view->update (rect);
     }
       break;
@@ -951,7 +951,7 @@ simple_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 simple_widget_rep::query (slot s, int type_id) {
-  if ((DEBUG_EVENTS) && (s != SLOT_RENDERER))
+  if ((DEBUG_QT) && (s != SLOT_RENDERER))
     cout << "[qt_simple_widget_rep] ";
   switch (s) {
     case SLOT_RENDERER:
@@ -971,7 +971,7 @@ simple_widget_rep::query (slot s, int type_id) {
 
 void
 simple_widget_rep::notify (slot s, blackbox new_val) {
-  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+  if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
   qt_view_widget_rep::notify (s, new_val);
 }
 
@@ -981,13 +981,13 @@ simple_widget_rep::notify (slot s, blackbox new_val) {
 
 widget
 simple_widget_rep::read (slot s, blackbox index) {
-  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+  if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
   return qt_view_widget_rep::read (s, index);
 }
 
 void
 simple_widget_rep::write (slot s, blackbox index, widget w) {
-  if (DEBUG_EVENTS) cout << "[qt_simple_widget_rep] ";
+  if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
   qt_view_widget_rep::write (s, index, w);
 }
 
