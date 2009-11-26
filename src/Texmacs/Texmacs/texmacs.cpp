@@ -138,7 +138,7 @@ TeXmacs_main (int argc, char** argv) {
 	debug (DEBUG_FLAG_IO, true);
 	debug (DEBUG_FLAG_HISTORY, true);
 	debug (DEBUG_FLAG_BENCH, true);
-  debug (DEBUG_FLAG_QT, true);
+	debug (DEBUG_FLAG_QT, true);
       }
       else if ((s == "-fn") || (s == "-font")) {
 	i++;
