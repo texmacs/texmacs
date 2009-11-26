@@ -492,6 +492,29 @@
   (if (in? mode '(:last :var-last)) (tree-go-to (buffer-tree) :end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transform presentation into slides
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (dynamic-make-slide t)
+  (when (or (tm-func? t 'shown 1) (tm-func? t 'hidden 1))
+    (tree-assign-node! t 'slide))
+  (dynamic-operate (tree-ref t 0) :var-expand))
+
+(tm-define (dynamic-make-slides)
+  (init-remove-package "presentation")
+  (init-add-package "slides")
+  (init-default "page-medium" "page-type" "page-width" "page-height"
+		"page-width-margin" "page-height-margin"
+		"page-odd" "page-even" "page-right"
+		"par-width" "page-odd-shift" "page-even-shift"
+		"page-top" "page-bot" "page-height-margin")
+  (with t (buffer-tree)
+    (when (and (tm-func? t 'document 1) (switch-context? (tree-ref t 0)))
+      (tree-assign-node (tree-ref t 0) 'document)
+      (tree-set! t (tree-ref t 0))
+      (for-each dynamic-make-slide (tree-children t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global navigation in recursive fold/switch structure
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

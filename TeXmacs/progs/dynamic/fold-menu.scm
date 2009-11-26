@@ -115,4 +115,5 @@
       ("Change tags" (dynamic-operate-on-buffer :var-compress)))
   (-> "Expand"
       ("Preserve tags" (dynamic-operate-on-buffer :expand))
-      ("Change tags" (dynamic-operate-on-buffer :var-expand))))
+      ("Change tags" (dynamic-operate-on-buffer :var-expand))
+      ("Make slides" (dynamic-make-slides))))

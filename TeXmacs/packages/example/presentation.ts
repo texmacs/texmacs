@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7>
+<TeXmacs|1.0.7.2>
 
 <style|source>
 
@@ -13,11 +13,10 @@
     <src-copyright|2007--2008|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -52,14 +51,8 @@
   <assign|img|<macro|body|<with|ornament-color|white|<ornament|<arg|body>>>>>
 
   <assign|tit|<macro|body|<with|ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#e0e0e0>|<ornament|<with|font-series|bold|color|dark
-  brown|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|-1|1|-1|cell-lsep|0px>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<cwith|1|-1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<twith|table-lsep|0px>|<twith|table-rsep|0px>|<twith|table-bsep|0px>|<twith|table-tsep|0px>|<table|<row|<cell|<postscript|$HOME/.TeXmacs/misc/pixmaps/right-head.png|/5|/5||||>>|<cell|<arg|body>>|<cell|<postscript|$HOME/.TeXmacs/misc/pixmaps/left-head.png|/5|/5||||>>>>>>>>>>>
-
-  <assign|tit|<macro|body|<with|ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#e0e0e0>|<ornament|<with|font-series|bold|color|dark
-  brown|<postscript|$HOME/.TeXmacs/misc/pixmaps/right-head.png|/5|/5||||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<arg|body>>>|0fn|0.333fn><htab|5mm><postscript|$HOME/.TeXmacs/misc/pixmaps/left-head.png|/5|/5||||>>>>>
-
-  <assign|tit|<macro|body|<with|ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#e0e0e0>|<ornament|<with|font-series|bold|color|dark
-  brown|<postscript|$HOME/.TeXmacs/misc/pixmaps/right-head.png|/4.5|/4.5||||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|dark
-  brown|<arg|body>>>>|0fn|0.333fn><htab|5mm><postscript|$HOME/.TeXmacs/misc/pixmaps/left-head.png|/4.5|/4.5||||>>>>>
+  brown|<postscript|$TEXMACS_PATH/misc/images/right-head.png|/4.5|/4.5||||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|dark
+  brown|<arg|body>>>>|0fn|0.333fn><htab|5mm><postscript|$TEXMACS_PATH/misc/images/left-head.png|/4.5|/4.5||||>>>>>
 
   <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-2.5fn|<yes-indent>><resize|<arg|x>|r-2.5fn||r+0.0fn|>>>>
 

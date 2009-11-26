@@ -32,13 +32,15 @@
 
   <assign|bg-color|white>
 
+  <assign|page-medium|paper>
+
   <assign|slide|<\macro|body>
-    <\surround||<new-page>>
+    <\surround||<new-page><right-flush>>
       <arg|body>
     </surround>
   </macro>>
 
-  <assign|tit|<macro|body|<section|<arg|body>>>>
+  <assign|xtit|<macro|body|<section|<arg|body>>>>
 
   <assign|img|<macro|body|<with|ornament-color|white|<ornament|<arg|body>>>>>
 
