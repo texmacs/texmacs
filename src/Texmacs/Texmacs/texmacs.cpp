@@ -42,7 +42,9 @@ extern int geometry_x, geometry_y;
 extern tree the_et;
 extern bool texmacs_started;
 
+#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
 std::ofstream log_ofstream;
+#endif
 
 /******************************************************************************
 * For testing
