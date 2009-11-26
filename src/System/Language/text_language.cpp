@@ -153,7 +153,7 @@ oriental_language_rep::hyphenate (
 }
 
 /******************************************************************************
-* Miscellaneous language related routines
+* Locales
 ******************************************************************************/
 
 string
@@ -228,6 +228,21 @@ get_locale_language () {
   return "english";
 }
 
+/******************************************************************************
+* Getting a formatted date
+******************************************************************************/
+
+static bool
+invalid_format (string s) {
+  if (N(s) == 0) return true;
+  for (int i=0; i<N(s); i++)
+    if (!(is_alpha (s[i]) || is_numeric (s[i]) ||
+	  s[i] == ' ' || s[i] == '%' || s[i] == '.' || s[i] == ',' ||
+	  s[i] == '+' || s[i] == '-' || s[i] == ':'))
+      return true;
+  return false;
+}
+
 static string
 simplify_date (string s) {
   int i, n=N(s);
@@ -242,7 +257,7 @@ get_date (string lan, string fm) {
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
   return win32::get_date(lan, fm);
 #else
-  if (fm == "") {
+  if (invalid_format (fm)) {
     if ((lan == "british") || (lan == "english") || (lan == "american"))
       fm= "%B %d, %Y";
     else if (lan == "german")
