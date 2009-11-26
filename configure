@@ -1809,7 +1809,7 @@ ac_config_headers="$ac_config_headers src/System/config.h:src/System/config.in"
 
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.7.2"
+DEVEL_VERSION="1.0.7.3"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.7"
 STABLE_RELEASE="1"
