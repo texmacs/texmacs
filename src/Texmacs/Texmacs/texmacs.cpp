@@ -42,6 +42,8 @@ extern int geometry_x, geometry_y;
 extern tree the_et;
 extern bool texmacs_started;
 
+std::ofstream log_ofstream;
+
 /******************************************************************************
 * For testing
 ******************************************************************************/
@@ -353,31 +355,23 @@ immediate_options (int argc, char** argv) {
       remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
       remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
     }
+    else if (s == "-log-file" && i+1 < argc) {
+      i++;
+      char* log_file = argv[i];
+      log_ofstream.open (log_file, std::ios_base::out | std::ios_base::trunc);
+      if (log_ofstream.rdstate() & std::ofstream::failbit)
+	cerr << "TeXmacs] Error: could not open " << log_file << "\n";
+      else {
+	cout.rdbuf (log_ofstream.rdbuf ());
+	cerr.rdbuf (log_ofstream.rdbuf ());
+      }
+    }
   }
 }
 
 int
 main (int argc, char** argv) {
-  // set log file
-  char* log_file = 0;
-  std::ofstream log_ofstream;
-
-  for (int i = 1; i < argc; i++) {
-    string s = argv[i];
-    if (s == "-log-file") {
-      i++;
-      if (i < argc) log_file = argv[i];
-    }
-  }
-  if (log_file) {
-    log_ofstream.open(log_file, std::ios_base::out | std::ios_base::trunc);
-    if (log_ofstream.rdstate() & std::ofstream::failbit) {
-      cerr << "Error opening " << log_file << std::endl;
-    } else {
-      cout.rdbuf(log_ofstream.rdbuf());
-      cerr.rdbuf(log_ofstream.rdbuf());
-    }
-  }
+  immediate_options (argc, argv);
   set_env ("LC_NUMERIC", "POSIX");
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
@@ -387,7 +381,6 @@ main (int argc, char** argv) {
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
-  immediate_options (argc, argv);
   cache_initialize ();
   bench_start ("initialize texmacs");
   init_texmacs ();
