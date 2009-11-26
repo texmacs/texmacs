@@ -55,7 +55,7 @@ namespace {
 
 int
 system (string s) {
-  if (DEBUG_FLAG_STD) cerr << "TeXmacs] System: " << s << std::endl;
+  if (DEBUG_STD) cerr << "TeXmacs] System: " << s << "\n";
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
   return win32::system(s);
 #else
