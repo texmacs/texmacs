@@ -9,7 +9,10 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <fstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "boot.hpp"
 #include "file.hpp"
@@ -41,10 +44,6 @@ extern int geometry_x, geometry_y;
 
 extern tree the_et;
 extern bool texmacs_started;
-
-#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
-std::ofstream log_ofstream;
-#endif
 
 /******************************************************************************
 * For testing
@@ -357,19 +356,17 @@ immediate_options (int argc, char** argv) {
       remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
       remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
     }
-#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
-    else if (s == "-log-file" && i+1 < argc) {
+    else if (s == "-log-file" && i + 1 < argc) {
       i++;
       char* log_file = argv[i];
-      log_ofstream.open (log_file, std::ios_base::out | std::ios_base::trunc);
-      if (log_ofstream.rdstate() & std::ofstream::failbit)
-	cerr << "TeXmacs] Error: could not open " << log_file << "\n";
-      else {
-	cout.rdbuf (log_ofstream.rdbuf ());
-	cerr.rdbuf (log_ofstream.rdbuf ());
-      }
+      int log_fd = creat (log_file, S_IRUSR | S_IWUSR);
+      if (
+        log_fd == -1 ||
+        dup2 (log_fd, 1) == -1 ||
+        dup2 (log_fd, 2) == -1 ||
+        close (log_fd) == -1
+       ) cerr << "TeXmacs] Error: could not open " << log_file << "\n";
     }
-#endif
   }
 }
 
