@@ -317,7 +317,7 @@ basic_renderer_rep::set_background (color c) {
 void
 basic_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   (void) restore;
-  outer_round (x1, y1, x2, y2);
+//  outer_round (x1, y1, x2, y2);
   renderer_rep::set_clipping (x1, y1, x2, y2);
 }
 

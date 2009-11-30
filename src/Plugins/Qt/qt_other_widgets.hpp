@@ -14,11 +14,14 @@
 
 #include "qt_widget.hpp"
 #include "QTMInteractiveInputHelper.hpp"
+#include "QTMWidget.hpp"
 
 #include <QLabel>
 #include <QMainWindow>
-#include <QScrollArea>
+#include <QStackedWidget>
+#include <QAbstractScrollArea>
 #include <QToolBar>
+
 
 class qt_tm_widget_rep: public qt_view_widget_rep {
 public: 
@@ -53,12 +56,14 @@ public:
   // virtual void deconnect (slot s, widget w2, slot s2);
   virtual widget plain_window_widget (string s);
         
-  inline QMainWindow* tm_mainwindow () {
+  QMainWindow* tm_mainwindow () {
     return qobject_cast<QMainWindow*> (view); }
-  inline QScrollArea* tm_scrollarea () {
-    return qobject_cast<QScrollArea*> (tm_mainwindow()->centralWidget()); }
-  inline QWidget* tm_canvas () {
-    return tm_scrollarea()->widget(); }
+  QStackedWidget* tm_centralwidget () {
+    return qobject_cast<QStackedWidget*> (tm_mainwindow()->centralWidget()); }
+  QTMScrollView* tm_scrollarea () {
+    return qobject_cast<QTMScrollView*> (tm_centralwidget()->currentWidget()); }
+  QTMWidget* tm_canvas () {
+    return qobject_cast<QTMWidget*> (tm_scrollarea()); }
 
 
   // void layout();

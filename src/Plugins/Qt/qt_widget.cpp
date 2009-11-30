@@ -32,6 +32,7 @@
 #include <QHBoxLayout>
 #include <QScrollBar>
 #include <QTimer>
+#include <QStackedWidget>
 
 #include "QTMWidget.hpp"
 #include "QTMWindow.hpp"
@@ -42,7 +43,8 @@
 #define NOT_IMPLEMENTED \
   { if (DEBUG_QT) cout << "STILL NOT IMPLEMENTED\n"; }
 
-extern int nr_windows; // the run-loop should exit when the number of windows is zero
+extern int nr_windows; 
+// the run-loop should exit when the number of windows is zero
 
 widget the_keyboard_focus (NULL);
 
@@ -73,60 +75,6 @@ operator << (ostream& out, QRect rect) {
              << rect.width() << "," << rect.height() << ")";
 }
 
-const char *
-slot_name (slot s) {
-  static const char * slot_names[]= {
-    "SLOT_IDENTIFIER",
-    "SLOT_WINDOW",
-    "SLOT_RENDERER",
-    "SLOT_VISIBILITY",
-    "SLOT_FULL_SCREEN",
-    "SLOT_NAME",
-    "SLOT_SIZE",
-    "SLOT_POSITION",
-    "SLOT_UPDATE",
-    "SLOT_KEYBOARD",
-    "SLOT_KEYBOARD_FOCUS",
-    "SLOT_MOUSE",
-    "SLOT_MOUSE_GRAB",
-    "SLOT_MOUSE_POINTER",
-    "SLOT_INVALIDATE",
-    "SLOT_INVALIDATE_ALL",
-    "SLOT_REPAINT",
-    "SLOT_DELAYED_MESSAGE",
-    "SLOT_DESTROY",
-
-    "SLOT_SHRINKING_FACTOR",
-    "SLOT_EXTENTS",
-    "SLOT_VISIBLE_PART",
-    "SLOT_SCROLLBARS_VISIBILITY",
-    "SLOT_SCROLL_POSITION",
-    "SLOT_CANVAS",
-
-    "SLOT_HEADER_VISIBILITY",
-    "SLOT_MAIN_MENU",
-    "SLOT_MAIN_ICONS_VISIBILITY",
-    "SLOT_MAIN_ICONS",
-    "SLOT_CONTEXT_ICONS_VISIBILITY",
-    "SLOT_CONTEXT_ICONS",
-    "SLOT_USER_ICONS_VISIBILITY",
-    "SLOT_USER_ICONS",
-    "SLOT_FOOTER_VISIBILITY",
-    "SLOT_LEFT_FOOTER",
-    "SLOT_RIGHT_FOOTER",
-    "SLOT_INTERACTIVE_MODE",
-    "SLOT_INTERACTIVE_PROMPT",
-    "SLOT_INTERACTIVE_INPUT",
-
-    "SLOT_FORM_FIELD",
-    "SLOT_STRING_INPUT",
-    "SLOT_INPUT_TYPE",
-    "SLOT_INPUT_PROPOSAL",
-    "SLOT_FILE",
-    "SLOT_DIRECTORY"
-  };
-  return slot_names[s.sid];
-}
 
 /******************************************************************************
 * qt_view_widget_rep
@@ -139,11 +87,12 @@ qt_view_widget_rep::qt_view_widget_rep (QWidget* v):
 
 qt_view_widget_rep::~qt_view_widget_rep() {
   if (view) delete view;
-  //FIXME: I'm (MG) not sure if we should delete manually all the QWidgets we create
-  //       or exclusively the top level ones (the windows)
+  //FIXME: I'm (MG) not sure if we should delete manually all the QWidgets we 
+  //       create or exclusively the top level ones (the windows)
   //       - Qt spectify that widgets with a parent are deleted by the parent.
-  //       - Out policy is that qt_view_widget_rep owns the QWidget (so it is responsible to delete it)
-  //       are these two requirements compatible ?
+  //       - Out policy is that qt_view_widget_rep owns the QWidget (so it is 
+  //         responsible to delete it)
+  //       Are these two requirements compatible ?
   if (DEBUG_QT)
     cout << "qt_view_widget_rep::~qt_view_widget_rep()\n";
 }
@@ -160,21 +109,32 @@ qt_view_widget_rep::send (slot s, blackbox val) {
       view->window() -> setWindowTitle (to_qstring (name));
     }
     break;
-#if 0
-  // these messages are apriori relevant only to simple_widget_rep
-  // so they are handled there.
+#if 1
   case SLOT_INVALIDATE:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect(p);
-      if (DEBUG_QT) cout << "Invalidating rect " << rect << LF;
-      view->update (rect);
+      if (DEBUG_QT)
+        cout << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
+      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
+      QTMWidget *canvas = qobject_cast <QTMWidget*>(view);
+      if (ren && canvas) {
+        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
+        ren->outer_round (x1, y1, x2, y2);
+        ren->decode (x1, y1);
+        ren->decode (x2, y2);
+        canvas->invalidate_rect (x1,y2,x2,y1);
+      }
     }
     break;
   case SLOT_INVALIDATE_ALL:
-    ASSERT (is_nil (val), "type mismatch");
-    view->update(); // [view setNeedsDisplay:YES];
+    {
+      ASSERT (is_nil (val), "type mismatch");
+      if (DEBUG_QT)
+        cout << "Invalidating all"<<  LF;
+      QTMWidget *canvas = qobject_cast <QTMWidget*>(view);
+      if (canvas) canvas->invalidate_all ();
+    }
     break;
 #endif
   case SLOT_MOUSE_GRAB:
@@ -214,7 +174,29 @@ qt_view_widget_rep::query (slot s, int type_id) {
     // return close_box<int> ((int)view->window());
     // we need only to know if the widget is attached to some gui window
     return close_box<int> (view->window() ? 1 : 0);
-    case SLOT_POSITION:
+#if 0
+    case SLOT_RENDERER:
+    {
+      TYPE_CHECK (type_id == type_helper<renderer>::id);
+      renderer r = get_current_renderer();
+      //FIXME: sometimes the renderer is queried outside repaint events 
+      //       (see e.g. edit_interface_rep::idle_time)
+      //       TeXmacs current policy is that we should return NULL only 
+      //       if the widget is not attached (in X11 sense)
+      if (!r) 
+        r = the_qt_renderer();
+      
+      QTMWidget *canvas = qobject_cast <QTMWidget*>(view);
+      if (r && canvas) {
+        SI ox = -canvas->backing_pos.x()*PIXEL;
+        SI oy = canvas->backing_pos.y()*PIXEL;
+        r->set_origin(ox,oy);
+      }
+      
+      return close_box<renderer> (r);
+    }      
+#endif
+  case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
@@ -223,29 +205,6 @@ qt_view_widget_rep::query (slot s, int type_id) {
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
     }
-
-#if 0
-    // these messages are apriori relevant only to simple_widget_rep
-    // so they are handled there.
-    case SLOT_RENDERER:
-    {
-      TYPE_CHECK (type_id == type_helper<renderer>::id);
-      renderer r = get_current_renderer();
-      //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
-      //       TeXmacs current policy is that we should return NULL only if the widget is not attached (in X11 sense)
-      if (!r) r = the_qt_renderer();
-      return close_box<renderer> (r);
-    }
-    case SLOT_VISIBLE_PART:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect = view->visibleRegion().boundingRect();
-      coord4 c = from_qrect (rect);
-      if (DEBUG_QT) cout << "visibleRegion " << rect << LF;
-      return close_box<coord4> (c);
-    }
-#endif
-
   default:
     FAILED ("cannot handle slot type");
     return blackbox ();
@@ -329,13 +288,19 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   mw->setStyle (qtmstyle ());
   mw->menuBar()->setStyle (qtmstyle ());
 
+  QStackedWidget* tw = new QStackedWidget ();
+  mw->setCentralWidget(tw);
+  
+#if 0
   QScrollArea* sa= new QTMScrollArea (this);
   sa->setParent (mw);
   sa->setBackgroundRole (QPalette::Dark);
   sa->setAlignment (Qt::AlignCenter);
+  sa->setFocusPolicy (Qt::NoFocus);
 
   mw->setCentralWidget (sa);
-
+#endif
+  
   QStatusBar* bar= new QStatusBar(mw);
   leftLabel= new QLabel ("Welcome to TeXmacs", mw);
   rightLabel= new QLabel ("Booting", mw);
@@ -358,11 +323,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   userToolBar->setStyle (qtmstyle ());
 
   updateVisibility();
-
+#if (defined(Q_WS_MAC)&&(QT_VERSION>=0x040600))
+  mw->setIconSize (QSize (22, 30));  
+#else
   mw->setIconSize (QSize (17, 17));
-
+#endif
   mw->setFocusPolicy (Qt::NoFocus);
-  sa->setFocusPolicy (Qt::NoFocus);
 
 
 }
@@ -390,18 +356,51 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     cout << "qt_tm_widget_rep::send " << slot_name (s) << LF;
 
   switch (s) {
+    case SLOT_INVALIDATE:
+    {
+      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
+      coord4 p= open_box<coord4> (val);
+      if (DEBUG_QT)
+        cout << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
+      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
+      QTMWidget *canvas = qobject_cast <QTMWidget*>(view);
+      if (ren && canvas) {
+        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
+        ren->outer_round (x1, y1, x2, y2);
+        ren->decode (x1, y1);
+        ren->decode (x2, y2);
+        canvas->invalidate_rect (x1,y2,x2,y1);
+      }
+    }
+      break;
+    case SLOT_INVALIDATE_ALL:
+    {
+      ASSERT (is_nil (val), "type mismatch");
+      if (DEBUG_QT)
+        cout << "Invalidating all"<<  LF;
+      QTMWidget *canvas = qobject_cast <QTMWidget*>(view);
+      if (canvas) canvas->invalidate_all ();
+    }
+      break;
+      
   case SLOT_EXTENTS:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
+      QRect rect = to_qrect (p);
+      //NOTE: rect.topLeft is ignored since it is always (0,0)
+      tm_canvas() -> setExtents(rect);
+#if 0
       //cout << "p= " << p << "\n";
       QSize sz= to_qrect (p).size ();
       QSize ws= tm_scrollarea () -> size ();
       sz.setHeight (max (sz.height (), ws.height () - 4));
-      //FIXME: the above adjustment is not very nice and useful only in papyrus mode.
-      //       When setting the size we should ask the GUI of some preferred max size
-      //       and set that without post-processing.
-      tm_canvas () -> setFixedSize (sz);
+      //FIXME: the above adjustment is not very nice and useful only in papyrus 
+      //       mode. When setting the size we should ask the GUI of some 
+      //       preferred max size and set that without post-processing.
+//      tm_canvas () -> setFixedSize (sz);
+      tm_canvas() -> setExtentsSize(sz);
+#endif
     }
     break;
   case SLOT_HEADER_VISIBILITY:
@@ -467,33 +466,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
       QPoint pt= to_qpoint (p);
-      // convert from main widget to canvas coordinates
-      // QPoint pt2= tm_mainwindow()->mapToGlobal (pt);
-      // pt= tm_scrollarea()->widget()->mapFromGlobal (pt2);
       if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n ";
-#if 0
-      cout << "scrollarea ("
-           << tm_scrollarea()->x() << ","
-           << tm_scrollarea()->y() << ","
-           << tm_scrollarea()->width() << ","
-           << tm_scrollarea()->height() << ")\n";
-      cout << "widget     ("
-           << tm_scrollarea()->widget()->x() << ","
-           << tm_scrollarea()->widget()->y() << ","
-           << tm_scrollarea()->widget()->width() << ","
-           << tm_scrollarea()->widget()->height() << ")\n";
-      cout << "GOING TO ("
-           << pt.x()+tm_scrollarea()->width()/2 << ","
-           << pt.y()+tm_scrollarea()->height()/2 << ")\n";
-#endif
-      // It is still not very clear to me because this shift of half h/w size works...
-      int sx= pt.x () + tm_scrollarea () -> width  () / 2;
-      int sy= pt.y () + tm_scrollarea () -> height () / 2;
-      tm_scrollarea () -> ensureVisible (sx - 50, sy - 50);
-      tm_scrollarea () -> ensureVisible (sx + 50, sy + 50);
-      tm_scrollarea () -> ensureVisible (sx, sy);
-      tm_scrollarea () -> update();
+      tm_scrollarea()->setOrigin(pt);
     }
     break;
 
@@ -540,7 +515,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_SCROLL_POSITION:
     {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QPoint pt= tm_canvas()->pos();
+      QPoint pt= tm_canvas()->origin;
       if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
@@ -549,7 +524,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_EXTENTS:
     {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect= tm_canvas()->geometry();
+      QRect rect= tm_canvas()->extents;
       coord4 c= from_qrect (rect);
       if (DEBUG_QT) cout << "Canvas geometry " << rect << LF;
       return close_box<coord4> (c);
@@ -558,9 +533,12 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   case SLOT_VISIBLE_PART:
     {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect= tm_canvas()->visibleRegion().boundingRect();
-      coord4 c= from_qrect (rect);
-      if (DEBUG_QT) cout << "Visible Region " << rect << LF;
+      QSize sz = tm_canvas()->QAbstractScrollArea::viewport()->size();
+      //sz.setWidth(sz.width()-2);
+      QPoint pos = tm_canvas()->backing_pos;
+      coord4 c = from_qrect(QRect(pos,sz));
+      if (DEBUG_QT) 
+        cout << "Visible Region " << c << LF;
       return close_box<coord4> (c);
     }
                         
@@ -607,8 +585,9 @@ qt_tm_widget_rep::read (slot s, blackbox index) {
 
 void
 replaceActions (QWidget* dest, QWidget* src) {
-  //NOTE: the parent hierachy of the actions is not modified while installing
-  //      the menu in the GUI (see qt_menu.cpp for this memory management policy)
+  //NOTE: the parent hierarchy of the actions is not modified while installing
+  //      the menu in the GUI (see qt_menu.cpp for this memory management 
+  //      policy)
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
@@ -641,13 +620,15 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_CANVAS:
     {
       check_type_void (index, "SLOT_CANVAS");
-      QWidget* qw= ((qt_view_widget_rep*) w.rep)->view;
-      QWidget* old_canvas= tm_scrollarea()->takeWidget();
-      tm_scrollarea()->setWidget (qw);                  
-      (void) old_canvas;
-      // old_canvas will be deleted when the corresponding qt_view_widget_rep is destroyed
-      qw->setFocusPolicy (Qt::StrongFocus);
-      qw->setFocus ();
+      QTMWidget* new_canvas= qobject_cast<QTMWidget*>(((qt_view_widget_rep*) w.rep)->view);
+      QTMWidget* old_canvas= tm_canvas();
+      QStackedWidget* tw= tm_centralwidget();
+      if (new_canvas && (new_canvas != old_canvas) ) {
+        tw->addWidget(new_canvas);
+        tw->removeWidget(old_canvas);
+        new_canvas->setFocusPolicy (Qt::StrongFocus);
+        new_canvas->setFocus ();
+      }
     }
     break;
 
@@ -752,7 +733,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
               QPoint pt = to_qpoint (p);
               pt.ry() += 40;
         // to avoid window under menu bar on MAC when moving at (0,0)
-              if (DEBUG_QT) cout << "Moving to (" << pt.x() << "," << pt.y() << ")" << LF;
+              if (DEBUG_QT) 
+                cout << "Moving to (" << pt.x() << "," 
+                    << pt.y() << ")" << LF;
         wid->move (pt);
       }
     }
@@ -925,25 +908,36 @@ simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2) {
 
 void
 simple_widget_rep::send (slot s, blackbox val) {
-  // if (DEBUG_QT) cout << "qt_simple_widget_rep::send " << slot_name(s) << LF;
-  if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
+  if (DEBUG_QT) cout << "qt_simple_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
     case SLOT_INVALIDATE:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
-      QRect rect = to_qrect(p);
-      if (DEBUG_QT) cout << "Invalidating rect " << rect << LF;
-      view->update (rect);
+      if (DEBUG_QT)
+        cout << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
+      qt_renderer_rep* ren = (qt_renderer_rep*)get_renderer (this);
+      if (ren) {
+        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
+        ren->outer_round (x1, y1, x2, y2);
+        ren->decode (x1, y1);
+        ren->decode (x2, y2);
+        tm_canvas()->invalidate_rect (x1,y2,x2,y1);
+      }
     }
       break;
     case SLOT_INVALIDATE_ALL:
+    {
       ASSERT (is_nil (val), "type mismatch");
-      view->update(); // [view setNeedsDisplay:YES];
+      if (DEBUG_QT)
+        cout << "Invalidating all"<<  LF;
+      tm_canvas()->invalidate_all ();
+    }
       break;
-      
     default:
+      if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
       qt_view_widget_rep::send (s, val);
+//      FAILED ("unhandled slot type");
   }
   
 }
@@ -952,21 +946,33 @@ simple_widget_rep::send (slot s, blackbox val) {
 blackbox
 simple_widget_rep::query (slot s, int type_id) {
   if ((DEBUG_QT) && (s != SLOT_RENDERER))
-    cout << "[qt_simple_widget_rep] ";
+    cout << "qt_simple_widget_rep::query " << slot_name(s) << LF;
   switch (s) {
     case SLOT_RENDERER:
     {
       TYPE_CHECK (type_id == type_helper<renderer>::id);
       renderer r = get_current_renderer();
-      //FIXME: sometimes the renderer is queried outside repaint events (see e.g. edit_interface_rep::idle_time)
-      //       TeXmacs current policy is that we should return NULL only if the widget is not attached (in X11 sense)
-      if (!r) r = the_qt_renderer();
+      //FIXME: sometimes the renderer is queried outside repaint events 
+      //       (see e.g. edit_interface_rep::idle_time)
+      //       TeXmacs current policy is that we should return NULL only 
+      //       if the widget is not attached (in X11 sense)
+      if (!r) 
+        r = the_qt_renderer();
+ 
+#if 1
+      QTMWidget *canvas = tm_canvas();
+      if (r && canvas) {
+        SI ox = -canvas->backing_pos.x()*PIXEL;
+        SI oy = canvas->backing_pos.y()*PIXEL;
+        r->set_origin(ox,oy);
+      }
+#endif 
       return close_box<renderer> (r);
     }
+
     default:
-      return qt_view_widget_rep::query (s, type_id);
+      return qt_view_widget_rep::query (s, type_id);      
   }
-  
 }
 
 void
@@ -1059,6 +1065,10 @@ glue_widget (bool hx, bool vx, SI w, SI h) {
   //{ return widget(); }
   // an empty widget of minimal width w and height h and which is horizontally
   // resp. vertically extensible if hx resp. vx is true
+  
+  // glue_widget is used when detaching a canvas from the texmacs window
+  // in view of attaching another one, e.g. when changing buffer.
+  
   NOT_IMPLEMENTED;
   (void) hx; (void) vx; (void) w; (void) h;
   return tm_new<qt_view_widget_rep> (new QWidget ());

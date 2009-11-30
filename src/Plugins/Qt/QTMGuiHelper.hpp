@@ -28,21 +28,10 @@ protected:
   
 public slots:
   void doUpdate ();
-  void doSocketNotification (int socket);  
+  void doReadSocketNotification (int socket);  
+  void doWriteSocketNotification (int socket);  
   void doCommands ();
 };
 
-
-class QTMCommandHelper : public QObject {
-  Q_OBJECT
-  object cmd;
-  QTimer timer;
-  
-public:
-  QTMCommandHelper (object _cmd, int _delay);
-  
-public slots:
-  void doCommand ();
-};
 
 #endif // QTMGUIHELPER_HPP

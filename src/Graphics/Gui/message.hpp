@@ -87,6 +87,8 @@ public:
     return out << s.sid; }
 };
 
+const char * slot_name (const slot s);
+
 //extern bool* slot_state_table;
 //inline bool is_state_slot (slot s) { return slots_state_table[s]; }
 

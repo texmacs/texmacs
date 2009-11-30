@@ -12,31 +12,35 @@
 #ifndef QTMWIDGET_HPP
 #define QTMWIDGET_HPP
 
-//#include "qt_simple_widget.hpp"
-#include "list.hpp"
+#include "QTMScrollView.hpp"
+#include "rectangles.hpp"
 #include <QVariant>
-#include <QWidget>
+#include <QTimer>
+#include <QSet>
 
 class simple_widget_rep;
 
-class QTMWidget: public QWidget {
+class QTMWidget: public QTMScrollView {
+  
   Q_OBJECT
+
   list<QRect> delayed_rects;
-#if defined(Q_WS_X11) && defined(USE_CAIRO)
+  rectangles    invalid_regions;
+
   QPixmap backingPixmap;
-#endif
+  
+  bool fInSync;
+  
+  
 public:
-  inline QTMWidget(simple_widget_rep *_wid): QWidget ()  {
-    setObjectName("A QTMWidget");
-    setFocusPolicy (Qt::StrongFocus);
-    // setBackgroundRole(QPalette::Window);
-    // setAutoFillBackground(true);
-    setAutoFillBackground(false);
-    // setAttribute (Qt::WA_OpaquePaintEvent);
-    setAttribute (Qt::WA_NoSystemBackground);
-    setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
-    setMouseTracking (true);
-  }
+
+  static QSet<QTMWidget*> all_widgets;
+  QPoint backing_pos;
+
+  
+  
+  QTMWidget(simple_widget_rep *_wid) ;
+  ~QTMWidget();
 
   inline simple_widget_rep*
   tm_widget() {
@@ -45,9 +49,13 @@ public:
       (v.canConvert<void*> ()? v.value<void*> (): NULL);
   }
 
-public slots:
-  void postponedUpdate ();
+  
+  void invalidate_rect (int x1, int y1, int x2, int y2);
+  void invalidate_all ();
+  void repaint_invalid_regions ();
 
+  void scrollContentsBy(int dx, int dy);
+  
 protected:
   virtual void paintEvent (QPaintEvent* event);
   virtual void focusInEvent (QFocusEvent* event);

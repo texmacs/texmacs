@@ -18,35 +18,35 @@
 
 
 QRect
-to_qrect (coord4 p) {
+to_qrect (const coord4 & p) {
   float c= 1.0/PIXEL;
-  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1)*c, (p.x4-p.x2)*c);
+  return QRect (p.x1*c, -p.x4*c, (p.x3-p.x1+PIXEL-1)*c, (p.x4-p.x2+PIXEL-1)*c);
 }
 
 QPoint
-to_qpoint (coord2 p) {
+to_qpoint (const coord2 & p) {
   float c= 1.0/PIXEL;
   return QPoint (p.x1*c, -p.x2*c);
 }
 
 QSize
-to_qsize (coord2 p) {
+to_qsize (const coord2 & p) {
   float c= 1.0/PIXEL;
   return QSize (p.x1*c, p.x2*c);
 }
 
 coord4
-from_qrect (QRect& rect) {
+from_qrect (const QRect & rect) {
   SI c1, c2, c3, c4;
   c1= rect.x() * PIXEL;
-  c2= rect.y() * PIXEL;
+  c2= -(rect.y() + rect.height()) * PIXEL;       
   c3= (rect.x() + rect.width()) * PIXEL;
-  c4= (rect.y() + rect.height()) * PIXEL;       
+  c4= -rect.y() * PIXEL;
   return coord4 (c1, c2, c3, c4);
 }
 
 coord2
-from_qpoint (QPoint & pt) {
+from_qpoint (const QPoint & pt) {
   SI c1, c2;
   c1= pt.x() * PIXEL;
   c2= -pt.y() * PIXEL;
@@ -54,7 +54,7 @@ from_qpoint (QPoint & pt) {
 }
 
 coord2
-from_qsize (QSize & s) {
+from_qsize (const QSize & s) {
   SI c1, c2;
   c1= s.width() * PIXEL;
   c2= s.height() * PIXEL;

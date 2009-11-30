@@ -20,7 +20,9 @@
 #include <QClipboard>
 #include <QFileOpenEvent>
 #include <QSocketNotifier>
+#include <QSetIterator>
 #include "QTMGuiHelper.hpp"
+#include "QTMWidget.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
 #include "socket_server.hpp" // for number_of_servers
@@ -28,14 +30,20 @@
 #include "Scheme/object.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
 
+#include "qt_simple_widget.hpp"
+
 extern window (*get_current_window) (void);
 
 qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
-bool qt_update_flag = false;
 
-time_t time_credit;
-time_t timeout_time;
+time_t time_credit;  // interval to interrupt long redrawings
+time_t timeout_time; // new redraw interruption
+time_t lapse = 0; // optimization for delayed commands
+
+double invalid_area, repaint_area; // painting statistics
+
+
 
 /******************************************************************************
 * Constructor and geometry
@@ -47,14 +55,18 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   (void) argc; (void) argv;
   // argc= argc2;
   // argv= argv2;
+
   interrupted   = false;
-  interrupt_time= texmacs_time ();
+  time_credit = 25;
+  timeout_time= texmacs_time () + time_credit;
+
   set_output_language (get_locale_language ());
   gui_helper = new QTMGuiHelper (this);
   qApp -> installEventFilter (gui_helper);
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
-  QObject::connect (updatetimer, SIGNAL(timeout()), gui_helper, SLOT(doUpdate()));
+  QObject::connect ( updatetimer, SIGNAL(timeout()), 
+                     gui_helper, SLOT(doUpdate()));
 //  (void) default_font ();
 }
 
@@ -77,36 +89,14 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 
 qt_gui_rep::~qt_gui_rep()  {
   delete gui_helper;
- // delete updatetimer; we do not need this given that gui_helper is the parent of updatetimer
+ // delete updatetimer; we do not need this given that gui_helper is the 
+ // parent of updatetimer
 }
 
 /******************************************************************************
 * interclient communication
 ******************************************************************************/
 
-#if 0 // old code vs. Nemec patch for correct clipboard handling under X11
-bool
-qt_gui_rep::get_selection (string key, tree& t, string& s) {
-  t= "none";
-  s= "";
-  if (selection_t->contains (key)) {
-    t= copy (selection_t [key]);
-    s= copy (selection_s [key]);
-    return true;
-  }
-  if (key != "primary") return false;
-
-  QClipboard *clipboard = QApplication::clipboard();
-  QString originalText = clipboard->text();
-  QByteArray buf = originalText.toAscii();
-  if (!(buf.isEmpty())) {
-    s << string(buf.constData(), buf.size());
-  }
-
-  t= tuple ("extern", s);
-  return true;
-}
-#else
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s) {
   QClipboard *cb= QApplication::clipboard();
@@ -140,7 +130,6 @@ qt_gui_rep::get_selection (string key, tree& t, string& s) {
   t= tuple ("extern", s);
   return true;
 }
-#endif
 
 bool
 qt_gui_rep::set_selection (string key, tree t, string s) {
@@ -178,31 +167,12 @@ void qt_gui_rep::image_gc (string name) { (void) name; }
 // FIXME: remove this unused function
 void qt_gui_rep::set_mouse_pointer (string name) { (void) name; }
 // FIXME: implement this function
-void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) { (void) curs_name; (void) mask_name; } ;
+void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name) 
+{ (void) curs_name; (void) mask_name; } ;
 
 /******************************************************************************
 * Main loop
 ******************************************************************************/
-
-bool
-qt_gui_rep::check_event (int type) {
-  switch (type) {
-  /*
-  case INTERRUPT_EVENT:
-    if (interrupted) return true;
-    else {
-      time_t now= texmacs_time ();
-      if (now - timeout_time < 0) return false;
-      interrupted= true;
-      return interrupted;
-    }
-  case INTERRUPTED_EVENT:
-    return interrupted;
-  */
-  default:
-    return false;
-  }
-}
 
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
@@ -214,32 +184,10 @@ void (*the_interpose_handler) (void) = NULL;
 void gui_interpose (void (*r) (void)) { the_interpose_handler= r; }
 
 void
-qt_gui_rep::update () {
-  // this is called by doUpdate, which in turns is fired by a timer activated in 
-  // needs_update, and ensuring that interpose_handler is run during a pass in the eventloop
-  // afterwards we reactivate the timer with a pause (see FIXME below) 
-  
-  if (the_interpose_handler) the_interpose_handler();
-  
-  qt_update_flag = false;
-  interrupted = false;  
-  
-  updatetimer->start (1000/6);
-  
-  // FIXME: we need to ensure that the interpose_handler is run at regular intervals (1/6th of sec)
-  //        so that informations on the footbar are updated. (this should be better handled by 
-  //        promoting code in tm_editor::apply_changes (which is activated only after idle periods)
-  //        at the level of delayed commands in the gui.
-  //        The interval cannot be too small to keep CPU usage low in idle state
-} 
-
-
-
-void
 qt_gui_rep::event_loop () {
   QApplication *app = (QApplication*) QApplication::instance();
 
-  updatetimer->start (0); // 0 ms - call immediately when all other events have been processed
+  needs_update();
   app->exec();
 }
 
@@ -255,19 +203,24 @@ qt_gui_rep::add_notifier (socket_notifier sn)
 {
   QSocketNotifier *qsn;
 
-  //  cout << "ADD NOTIFIER" << LF;
+  cout << "ADD NOTIFIER " << sn->fd << LF;
   
   // replace any already present notifier
 
   remove_notifier (sn);
 
-  // installs both a read and a write notifier (the texmacs interface does not specify enough its needs)
+  // installs both a read and a write notifier 
+  // (the texmacs interface does not specify enough its needs)
   
-  read_notifiers (sn) = (pointer) (qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Read, gui_helper)); 
-  QObject::connect(qsn, SIGNAL(activated(int)), gui_helper, SLOT(doSocketNotification(int)) );
+  qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Read, gui_helper);
+  read_notifiers (sn) = (pointer) (qsn); 
+  QObject::connect( qsn, SIGNAL(activated(int)), 
+                    gui_helper, SLOT(doReadSocketNotification(int)) );
 
-  write_notifiers (sn) = (pointer) (qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Write, gui_helper));
-  QObject::connect(qsn, SIGNAL(activated(int)), gui_helper, SLOT(doSocketNotification(int)) );  
+  qsn = new QSocketNotifier(sn->fd, QSocketNotifier::Write, gui_helper);
+  write_notifiers (sn) = (pointer) (qsn);
+  QObject::connect( qsn, SIGNAL(activated(int)), 
+                    gui_helper, SLOT(doWriteSocketNotification(int)) );  
 }
 
 void 
@@ -275,7 +228,7 @@ qt_gui_rep::remove_notifier (socket_notifier sn)
 {  
   QSocketNotifier *qsn;
 
-  //  cout << "REMOVE NOTIFIER" << LF;
+    cout << "REMOVE NOTIFIER" << LF;
 
   // disable the (r/w) notifiers to prevent them to fire past this point
   // and schedule them for deletion at the end of the current runloop
@@ -295,85 +248,34 @@ qt_gui_rep::remove_notifier (socket_notifier sn)
   write_notifiers->reset (sn);
 }
 
+void 
+qt_gui_rep::enable_notifier (socket_notifier sn, bool flag)
+{
+  QSocketNotifier *qsn;
+  qsn = (QSocketNotifier *)read_notifiers (sn);
+  if (qsn) qsn->setEnabled (flag);
+  qsn = (QSocketNotifier *)write_notifiers (sn);
+  if (qsn) qsn->setEnabled (flag);
+}
+
+
+
 /******************************************************************************
  * Delayed commands
  ******************************************************************************/
 
-QTMCommandHelper::QTMCommandHelper (object _cmd, int delay = 0) 
-  : QObject (), cmd (_cmd),  timer () 
-{
-  QObject::connect (&timer, SIGNAL (timeout()), this, SLOT (doCommand()));
-  timer.setSingleShot (true);
-  timer.start (delay);
-}
-
-void
-QTMCommandHelper::doCommand()
-{
-  object obj= call (cmd);
-  if (is_int (obj)) {
-    timer.start (as_int (obj));
-  } 
-  if (!(timer.isActive ())) deleteLater();
-}
-
 static QTimer *global_timer = NULL;
 
-
-void
-QTMGuiHelper::doCommands()
-{
-  exec_pending_commands ();
-  the_gui->update ();
-}
 
 void restart_global_timer (int pause = 0) {
   if (!global_timer) {
     global_timer = new QTimer();
-    QObject::connect (global_timer, SIGNAL (timeout()), the_gui->gui_helper, SLOT (doCommands()));
+    QObject::connect ( global_timer, SIGNAL (timeout()), 
+                       the_gui->gui_helper, SLOT (doCommands()));
   }
   global_timer->start(pause);
 }
 
-#if 0
-// the following code causes problems in an unpredicable way
-// especially to keybindings and dead-key hanlding
-// for the moment has been replaced by a unique timer
-// and a queue of delayed commands much in the spirit of the
-// X11 version.
-
-static array <object> delayed_commands;
-
-void   
-exec_delayed (object cmd)
-{ 
- delayed_commands << cmd;
-  restart_global_timer ();
-}
-
-void   
-exec_delayed_pause (object cmd)
-{
-  delayed_commands << cmd;
-  restart_global_timer ();
-}
-
-void   exec_pending_commands ()
-{
-  // guarantee sequential execution of delayed commands 
-  // otherwise some bugs appear in keyboard handling
-  
-  int i, n= N(delayed_commands);
-  for (i=0; i<n; i++) {
-    object obj= call (delayed_commands[i]);
-    if (is_int (obj)) {
-      new QTMCommandHelper(delayed_commands[i], as_int (obj));
-    }
-  }
-  delayed_commands = array<object>(0);
-}
-
-#else
 static array<object> delayed_queue;
 static array<time_t>    start_queue;
 
@@ -381,14 +283,18 @@ void
 exec_delayed (object cmd) {
   delayed_queue << cmd;
   start_queue << (((time_t) texmacs_time ()) - 1000000000);
-  restart_global_timer ();
+//  restart_global_timer ();
+  lapse = texmacs_time();
+  needs_update();
 }
 
 void
 exec_delayed_pause (object cmd) {
   delayed_queue << cmd;
   start_queue << ((time_t) texmacs_time ());
-  restart_global_timer ();
+  //restart_global_timer ();
+  lapse = texmacs_time();
+  needs_update();
 }
 
 void
@@ -399,7 +305,7 @@ exec_pending_commands () {
   start_queue= array<time_t> (0);
   int i, n= N(a);
   for (i=0; i<n; i++) {
-    time_t now= (time_t) texmacs_time ();
+    time_t now=  texmacs_time ();
     if ((now - b[i]) >= 0) {
       object obj= call (a[i]);
       if (is_int (obj) && (now - b[i] < 1000000000)) {
@@ -415,15 +321,15 @@ exec_pending_commands () {
     }
   }
   if (N(delayed_queue)>0) {
-    time_t lapse = start_queue[0];
+    lapse = start_queue[0];
     int n = N(start_queue);
     for (i=1; i<n; i++) {
       if (lapse > start_queue[i]) lapse = start_queue[i];
     }
-    lapse = lapse - (time_t) texmacs_time ();
-    if (lapse < 0) lapse = 0;
+    //lapse = lapse -  texmacs_time ();
+    //if (lapse < 0) lapse = 0;
     // cout << "restarting :" << lapse << LF;
-    restart_global_timer (lapse);
+    //restart_global_timer (lapse);
   }
 }
 
@@ -432,7 +338,6 @@ clear_pending_commands () {
   delayed_queue= array<object> (0);
   start_queue= array<time_t> (0);
 }
-#endif
 
 /******************************************************************************
 * Main routines
@@ -464,14 +369,16 @@ void
 gui_root_extents (SI& width, SI& height) {
   // get the screen size
   the_gui->get_extents (width, height);
-  if (DEBUG_QT) cout << "gui_root_extents (" << width << "," << height << ")" << LF;
+  if (DEBUG_QT) 
+    cout << "gui_root_extents (" << width << "," << height << ")" << LF;
 }
 
 void
 gui_maximal_extents (SI& width, SI& height) {
   // get the maximal size of a window (can be larger than the screen size)
   the_gui->get_max_size (width, height);
-  if (DEBUG_QT) cout << "gui_maximal_extents (" << width << "," << height << ")" << LF;
+  if (DEBUG_QT) 
+    cout << "gui_maximal_extents (" << width << "," << height << ")" << LF;
 }
 
 void
@@ -488,6 +395,13 @@ gui_refresh () {
  ******************************************************************************/
 
 void
+QTMGuiHelper::doCommands()
+{
+  //exec_pending_commands ();
+  the_gui->process_delayed_commands ();
+}
+
+void
 QTMGuiHelper::doUpdate () {
 //  cout << "UPDATE " << texmacs_time () << LF;
   gui->update();
@@ -499,7 +413,8 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
      QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
      const char *s = openEvent->file().toAscii().constData();
      //qDebug ("File Open Event %s", s);
-     call ("texmacs-load-buffer", object(url_system (s)), object("generic"), object(1), object(false));
+     call ( "texmacs-load-buffer", object(url_system (s)), 
+            object("generic"), object(1), object(false));
      return true;
    } else {
      // standard event processing
@@ -507,21 +422,305 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
    }
 }
 
+void
+QTMGuiHelper::doWriteSocketNotification (int socket) {
+//cout << "WRITE SOCKET NOTIFICATION " << socket << " "<< texmacs_time () << LF;
+  iterator<socket_notifier> it = iterate (write_notifiers);
+  while (it->busy ()) {
+    socket_notifier sn= it->next ();
+    if (sn->fd == socket) {
+      //sn->notify();
+      the_gui->process_socket_notification (sn);
+      the_gui->enable_notifier (sn, false);
+    }
+  }
+}
 
 void
-QTMGuiHelper::doSocketNotification (int socket) {
-//  cout << "SOCKET NOTIFICATION " << socket << " "<< texmacs_time () << LF;
+QTMGuiHelper::doReadSocketNotification (int socket) {
+//cout << "READ SOCKET NOTIFICATION " << socket << " "<< texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (read_notifiers);
   while (it->busy ()) {
     socket_notifier sn= it->next ();
-    if (sn->fd == socket) sn->notify();
-  }
-  it = iterate (write_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) sn->notify();
+    if (sn->fd == socket) {
+      //sn->notify();
+      the_gui->process_socket_notification (sn);
+      the_gui->enable_notifier (sn, false);
+    }
   }
 }
+
+
+/******************************************************************************
+ * Queued processing
+ ******************************************************************************/
+
+enum qp_type_id {
+  QP_NULL,
+  QP_KEYPRESS,
+  QP_KEYBOARD_FOCUS,
+  QP_MOUSE,
+  QP_RESIZE,
+  QP_SOCKET_NOTIFICATION,
+  QP_DELAYED_COMMANDS
+};
+
+class qp_type {
+public:
+  qp_type_id sid;
+  inline qp_type (qp_type_id sid2 = QP_NULL): sid (sid2) {}
+  inline qp_type (const qp_type& s): sid (s.sid) {}
+  inline qp_type& operator = (qp_type s) { sid= s.sid; return *this; }
+  inline operator qp_type_id () { return sid; }
+  inline bool operator == (qp_type_id sid2) { return sid == sid2; }
+  inline bool operator != (qp_type_id sid2) { return sid != sid2; }
+  inline bool operator == (qp_type s) { return sid == s.sid; }
+  inline bool operator != (qp_type s) { return sid != s.sid; }
+  inline friend ostream& operator << (ostream& out, qp_type s) 
+    { return out << s.sid; }
+};
+
+class queued_event : public pair<qp_type, blackbox> 
+{
+public:
+  queued_event(qp_type _type = qp_type(), blackbox _bb = blackbox()) 
+    : pair<qp_type, blackbox>(_type, _bb) {};
+};
+
+
+static array<queued_event> waiting_events;
+
+void
+add_event(const queued_event &ev)
+{
+  waiting_events << ev;
+  //cout << N(waiting_events);
+  if (N(waiting_events) > 5) {
+    //cout << "flushing the queue" << LF;
+    the_gui->update();
+  } else needs_update();
+}
+
+void 
+qt_gui_rep::process_keypress (simple_widget_rep *wid, string key, time_t t) {
+  typedef triple<simple_widget_rep*, string, time_t > T;
+  add_event( queued_event ( QP_KEYPRESS, close_box<T> (T(wid, key, t)))); 
+ // wid -> handle_keypress (key, t);
+ // needs_update ();
+}
+
+void 
+qt_gui_rep::process_keyboard_focus ( simple_widget_rep *wid, bool has_focus, 
+                                     time_t t ) {
+  typedef triple<simple_widget_rep*, bool, time_t > T;
+  add_event( 
+    queued_event ( QP_KEYBOARD_FOCUS, close_box<T> (T(wid, has_focus, t)))); 
+//  wid -> handle_keyboard_focus (has_focus, t);
+//  needs_update ();
+}
+
+void 
+qt_gui_rep::process_mouse ( simple_widget_rep *wid, string kind, SI x, SI y, 
+                            int mods, time_t t ) {
+  typedef quintuple<string, SI, SI, int, time_t > T1;
+  typedef pair<simple_widget_rep*, T1> T;
+  add_event ( 
+    queued_event ( QP_MOUSE, close_box<T> ( T (wid, T1 (kind, x, y, mods, t))))); 
+//  wid -> handle_mouse (kind, x, y, mods, t);
+//  needs_update ();
+}
+
+void 
+qt_gui_rep::process_resize ( simple_widget_rep *wid, SI x, SI y ) {
+  typedef triple<simple_widget_rep*, SI, SI > T;
+  add_event(  queued_event ( QP_RESIZE, close_box<T> (T(wid, x, y)))); 
+//  wid -> handle_notify_resize (x, y);
+//  needs_update ();
+}
+
+void 
+qt_gui_rep::process_socket_notification ( socket_notifier sn ) {
+  add_event ( 
+    queued_event (QP_SOCKET_NOTIFICATION, close_box< socket_notifier > (sn)));
+//  sn -> notify ();
+//  enable_notifier (sn, true);
+//  needs_update ();
+}
+
+void 
+qt_gui_rep::process_delayed_commands () {
+  //add_event( queued_event (QP_DELAYED_COMMANDS, blackbox ()));
+  //needs_update ();
+}
+
+void 
+qt_gui_rep::process_queued_events () {
+
+  array<queued_event> a = waiting_events;
+  waiting_events = array<queued_event> ();
+
+ // bool needs_process_delayed_commands = false;
+  
+  int i, n = N(a);
+
+  for (i=0; i<n; i++) {
+    switch ((qp_type_id) a[i].x1) {
+      case QP_NULL :
+        break;
+      case QP_KEYPRESS :
+      {
+        typedef triple<simple_widget_rep*, string, time_t > T;
+        T x = open_box <T> (a[i].x2) ;
+        x.x1 -> handle_keypress (x.x2, x.x3) ;
+      }
+        break;
+      case QP_KEYBOARD_FOCUS :
+      {
+        typedef triple<simple_widget_rep*, bool, time_t > T;
+        T x = open_box <T> (a[i].x2) ;
+        x.x1 -> handle_keyboard_focus (x.x2, x.x3) ;
+        send_invalidate_all(x.x1);
+        //FIXME: the above invalidate is due to incorrect repainting when
+        //       the widget loose the focus. I should investigate better
+        //       the problem.
+      }
+        break;
+      case QP_MOUSE :
+      {
+        typedef quintuple<string, SI, SI, int, time_t > T1;
+        typedef pair<simple_widget_rep*, T1> T;
+        T x = open_box <T> (a[i].x2) ;
+        x.x1 -> handle_mouse (x.x2.x1, x.x2.x2, x.x2.x3, x.x2.x4, x.x2.x5) ;
+      }
+        break;
+      case QP_RESIZE :
+      {
+        typedef triple<simple_widget_rep*, SI, SI > T;
+        T x = open_box <T> (a[i].x2) ;
+        x.x1 -> handle_notify_resize (x.x2, x.x3) ;
+      }
+        break;
+      case QP_SOCKET_NOTIFICATION :
+      {
+        socket_notifier sn = open_box <socket_notifier> (a[i].x2) ;
+        // cout << "QP_SOCKET_NOTIFICATION " << sn->fd << LF;
+        sn -> notify ();
+        enable_notifier (sn, true);
+      }
+        break;
+#if 0
+      case QP_DELAYED_COMMANDS :
+      {
+        needs_process_delayed_commands = true;
+      }
+        break;
+#endif
+      default:   
+       FAILED("Unexpected queued event");
+    }
+  }
+  
+ // if (needs_process_delayed_commands) exec_pending_commands (); 
+}
+
+
+bool
+qt_gui_rep::check_event (int type) {
+ // return false;
+  switch (type) {
+    case INTERRUPT_EVENT:
+      if ((!interrupted)&&(timeout_time  < texmacs_time()))  {
+          interrupted = true;
+        //cout << "INTERRUPT " << texmacs_time() << "------------------" << LF;
+      }
+    case INTERRUPTED_EVENT:
+      return interrupted;
+    default:
+      return false;
+  }
+}
+
+
+ 
+void
+qt_gui_rep::update () {
+  // this is called by doUpdate, which in turns is fired by a timer activated in 
+  // needs_update, and ensuring that interpose_handler is run during a pass in 
+  // the eventloop afterwards we reactivate the timer with a pause 
+  // (see FIXME below) 
+  
+  static time_t last_event = texmacs_time();
+  time_t now = texmacs_time();
+  time_t interval;
+    interval = (now - last_event)/(N(waiting_events)+1);
+
+  if (N(waiting_events))   last_event = now;
+  interrupted = false;  
+  timeout_time = now + time_credit;
+  
+  // cout << "UPDATE" << LF;
+    
+  process_queued_events ();
+  
+  if (lapse < now) exec_pending_commands();
+  
+  if (the_interpose_handler) the_interpose_handler();
+
+  // repaint invalid regions  
+  
+  double total_area;
+  while (1) {
+    timeout_time = texmacs_time() + time_credit;
+    interrupted = false;
+    
+    invalid_area = 0.0;
+    repaint_area = 0.0;
+  
+  QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
+  while (i.hasNext()) {
+    QTMWidget *w = i.next();
+    w->repaint_invalid_regions();
+  }
+
+   total_area = repaint_area + invalid_area;
+
+    //cout << "RATIO : " << repaint_area/total_area << " " << repaint_area << " " << invalid_area <<  LF;
+    if (repaint_area < 0.3*total_area) {
+      //cout << "+ " << time_credit << LF;
+      time_credit *= 2;
+      if (time_credit > 1000) time_credit = 1000;
+    }  else{ 
+      //cout << "- " << time_credit << LF;
+      time_credit = 0.5*(time_credit + 100);
+      if (time_credit > interval) time_credit = interval;      
+      if (time_credit > 1000) time_credit = 1000;
+      if (time_credit < 25) time_credit = 25;
+      break;
+    }
+  };
+
+  
+  //cout << "Time credit :" << time_credit << LF;
+  
+  if (interrupted) {
+    needs_update ();
+  };
+  
+  if (!(updatetimer->isActive())) {
+    time_t delay = lapse - texmacs_time();
+    if (delay > 1000/6) delay = 1000/6;
+    if (delay < 0) delay = 0;
+    updatetimer->start (delay);
+  }
+  
+  // FIXME: we need to ensure that the interpose_handler is run at regular 
+  //        intervals (1/6th of sec) so that informations on the footbar are 
+  //        updated. (this should be better handled by promoting code in 
+  //        tm_editor::apply_changes (which is activated only after idle 
+  //        periods) at the level of delayed commands in the gui.
+  //        The interval cannot be too small to keep CPU usage low in idle state
+} 
+
 
 
 /******************************************************************************
@@ -594,8 +793,9 @@ beep () {
 
 void
 needs_update () {
+  // 0 ms - call immediately when all other events have 
+  // been processed
   //cout << "needs_update" << LF;
-  qt_update_flag = true;
   the_gui->updatetimer->start (0);
 }
 

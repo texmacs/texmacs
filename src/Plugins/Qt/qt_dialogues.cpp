@@ -21,13 +21,11 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-extern char  *slot_name(slot s); // in qt_widget.cpp
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
   { if (DEBUG_QT) cout << "STILL NOT IMPLEMENTED\n";  }
 
-#pragma mark qt_chooser_widget_rep
 
 class qt_chooser_widget_rep: public qt_widget_rep {
 protected:      
@@ -219,6 +217,11 @@ qt_chooser_widget_rep::perform_dialog () {
 
   QFileDialog dialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
 
+
+#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040600))
+  dialog.setOptions(QFileDialog::DontUseNativeDialog);
+#endif
+  
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
   if (DEBUG_QT) {
@@ -265,7 +268,6 @@ qt_chooser_widget_rep::perform_dialog () {
   cmd ();       
 }
 
-#pragma mark qt_input_widget_rep
 
 class qt_field_widget;
 
@@ -623,8 +625,17 @@ qt_tm_widget_rep::do_interactive_prompt () {
     vl -> addWidget (buttonBox);
   }
   //  d.setLayout (vl);
+  
+  QRect wframe = view->window()->frameGeometry();
+  QPoint pos = QPoint(wframe.x()+wframe.width()/2,wframe.y()+wframe.height()/2);
+  
   d.setWindowTitle("Interactive Prompt");
   d.updateGeometry();
+  QSize sz = d.sizeHint();
+  QRect r; r.setSize(sz);
+  r.moveCenter(pos);
+  d.setGeometry(r);
+  
   
   int result = d.exec ();
   if (result == QDialog::Accepted) {

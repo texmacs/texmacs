@@ -119,7 +119,6 @@
 		9C0B4A7910A8CC110097A335 /* unicode_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487810A8CC100097A335 /* unicode_font.cpp */; };
 		9C0B4A7B10A8CC110097A335 /* imlib2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487D10A8CC100097A335 /* imlib2.cpp */; };
 		9C0B4A7C10A8CC110097A335 /* ispell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488010A8CC100097A335 /* ispell.cpp */; };
-		9C0B4A7D10A8CC110097A335 /* cg_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488310A8CC100097A335 /* cg_renderer.cpp */; };
 		9C0B4A7E10A8CC110097A335 /* mac_app.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488610A8CC100097A335 /* mac_app.mm */; };
 		9C0B4A7F10A8CC110097A335 /* mac_images.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488810A8CC100097A335 /* mac_images.mm */; };
 		9C0B4A8010A8CC110097A335 /* mac_spellservice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488A10A8CC100097A335 /* mac_spellservice.mm */; };
@@ -277,6 +276,8 @@
 		9C0B4BD110A8D8E50097A335 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B481210A8CC100097A335 /* object.cpp */; };
 		9C0B4BDE10A8D9370097A335 /* TeXmacs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C0B430010A8CB4E0097A335 /* TeXmacs */; };
 		9C2C2ADC10BAA420009B855A /* TeXmacsQt.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */; };
+		9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */; };
+		9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */; };
 		9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */; };
 		9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */; };
 		9CC6149210A999460055F808 /* QTMStyle.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B910A8CC100097A335 /* QTMStyle.hpp */; };
@@ -1206,6 +1207,8 @@
 		9C5DBAD810A8DDD7008B7623 /* makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.in; path = src/makefile.in; sourceTree = "<group>"; };
 		9C5DBADA10A8DE60008B7623 /* Base.xcconfig.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Base.xcconfig.in; sourceTree = "<group>"; };
 		9C5DBADB10A8DF32008B7623 /* configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.in; sourceTree = "<group>"; };
+		9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMScrollView.hpp; sourceTree = "<group>"; };
+		9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMScrollView.cpp; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
@@ -1963,6 +1966,8 @@
 				9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */,
 				9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */,
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
+				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
+				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
 				9C0B48BE10A8CC100097A335 /* TODO */,
 			);
 			path = Qt;
@@ -2841,7 +2846,6 @@
 				9C0B4A7910A8CC110097A335 /* unicode_font.cpp in Sources */,
 				9C0B4A7B10A8CC110097A335 /* imlib2.cpp in Sources */,
 				9C0B4A7C10A8CC110097A335 /* ispell.cpp in Sources */,
-				9C0B4A7D10A8CC110097A335 /* cg_renderer.cpp in Sources */,
 				9C0B4A7E10A8CC110097A335 /* mac_app.mm in Sources */,
 				9C0B4A7F10A8CC110097A335 /* mac_images.mm in Sources */,
 				9C0B4A8010A8CC110097A335 /* mac_spellservice.mm in Sources */,
@@ -2995,6 +2999,7 @@
 				9C0B4B4E10A8CC450097A335 /* glue_all.cpp in Sources */,
 				9C0B4BD010A8D8E40097A335 /* evaluate.cpp in Sources */,
 				9C0B4BD110A8D8E50097A335 /* object.cpp in Sources */,
+				9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3002,6 +3007,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
 				9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */,
 				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
 				9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */,
@@ -3437,10 +3443,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -3448,6 +3454,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;

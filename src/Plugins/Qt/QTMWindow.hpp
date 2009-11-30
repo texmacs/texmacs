@@ -15,6 +15,7 @@
 #include "qt_other_widgets.hpp"
 #include <QVariant>
 #include <QMainWindow>
+#include <QScrollArea>
 
 class QTMWindow: public QMainWindow {
   Q_OBJECT
@@ -36,24 +37,5 @@ protected:
   virtual void closeEvent (QCloseEvent *event);
 };
 
-class QTMScrollArea: public QScrollArea {
-  Q_OBJECT
-  
-public:
-  inline QTMScrollArea(qt_tm_widget_rep *_wid): QScrollArea () {
-    setObjectName("A QTMScrollArea");
-    setProperty ("texmacs_tm_widget", QVariant::fromValue ((void*) _wid));
-  }
-  
-  inline qt_tm_widget_rep *
-  tm_widget() {
-    QVariant v= property("texmacs_tm_widget");
-    return (qt_tm_widget_rep *)
-    (v.canConvert<void*> ()? v.value<void*> (): NULL);
-  }
-  
-protected:
-  virtual void resizeEvent (QResizeEvent *event);
-};
 
 #endif // QTMWINDOW_HPP

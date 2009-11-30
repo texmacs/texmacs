@@ -19,12 +19,12 @@
 typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
-QRect to_qrect (coord4 p);
-QPoint to_qpoint (coord2 p);
-QSize to_qsize (coord2 p);
-coord4 from_qrect (QRect & rect);
-coord2 from_qpoint (QPoint & pt);
-coord2 from_qsize (QSize & s);
+QRect to_qrect (const coord4 & p);
+QPoint to_qpoint (const coord2 & p);
+QSize to_qsize (const coord2 & p);
+coord4 from_qrect (const QRect & rect);
+coord2 from_qpoint (const QPoint & pt);
+coord2 from_qsize (const QSize & s);
 QString to_qstring (string s);
 string from_qstring (const QString & s);
 string qt_translate (string s);

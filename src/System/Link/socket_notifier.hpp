@@ -38,6 +38,11 @@ CONCRETE_NULL(socket_notifier);
 };
 CONCRETE_NULL_CODE(socket_notifier);
 
+inline ostream& operator << (ostream& out, socket_notifier sn) {
+  if (is_nil (sn)) return out << "nil socket_notifier";
+else return out << "some socket_notifier"; }
+
+
 void perform_select ();
 void add_notifier (socket_notifier);
 void remove_notifier (socket_notifier);

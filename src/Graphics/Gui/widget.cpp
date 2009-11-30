@@ -12,6 +12,67 @@
 #include "message.hpp"
 
 /******************************************************************************
+ * slot names, useful for debugging
+ ******************************************************************************/
+
+
+const char * 
+slot_name (const slot s) { 
+  const char * slot_names[]= {
+    "SLOT_IDENTIFIER",
+    "SLOT_WINDOW",
+    "SLOT_RENDERER",
+    "SLOT_VISIBILITY",
+    "SLOT_FULL_SCREEN",
+    "SLOT_NAME",
+    "SLOT_SIZE",
+    "SLOT_POSITION",
+    "SLOT_UPDATE",
+    "SLOT_KEYBOARD",
+    "SLOT_KEYBOARD_FOCUS",
+    "SLOT_MOUSE",
+    "SLOT_MOUSE_GRAB",
+    "SLOT_MOUSE_POINTER",
+    "SLOT_INVALIDATE",
+    "SLOT_INVALIDATE_ALL",
+    "SLOT_REPAINT",
+    "SLOT_DELAYED_MESSAGE",
+    "SLOT_DESTROY",
+    
+    "SLOT_SHRINKING_FACTOR",
+    "SLOT_EXTENTS",
+    "SLOT_VISIBLE_PART",
+    "SLOT_SCROLLBARS_VISIBILITY",
+    "SLOT_SCROLL_POSITION",
+    "SLOT_CANVAS",
+    
+    "SLOT_HEADER_VISIBILITY",
+    "SLOT_MAIN_MENU",
+    "SLOT_MAIN_ICONS_VISIBILITY",
+    "SLOT_MAIN_ICONS",
+    "SLOT_CONTEXT_ICONS_VISIBILITY",
+    "SLOT_CONTEXT_ICONS",
+    "SLOT_USER_ICONS_VISIBILITY",
+    "SLOT_USER_ICONS",
+    "SLOT_FOOTER_VISIBILITY",
+    "SLOT_LEFT_FOOTER",
+    "SLOT_RIGHT_FOOTER",
+    "SLOT_INTERACTIVE_MODE",
+    "SLOT_INTERACTIVE_PROMPT",
+    "SLOT_INTERACTIVE_INPUT",
+    
+    "SLOT_FORM_FIELD",
+    "SLOT_STRING_INPUT",
+    "SLOT_INPUT_TYPE",
+    "SLOT_INPUT_PROPOSAL",
+    "SLOT_FILE",
+    "SLOT_DIRECTORY"
+  };
+  
+  return slot_names[s.sid]; 
+}
+
+/******************************************************************************
 * The abstract widget_connection class
 ******************************************************************************/
 

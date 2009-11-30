@@ -14,11 +14,14 @@
 #include "image_files.hpp"
 #include "qt_utilities.hpp"
 #include "file.hpp"
-#include <QWidget>
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_images.h"
 #endif
+
+#include <QObject>
+#include <QWidget>
+#include <QPaintDevice>
 
 /******************************************************************************
 * Qt images
@@ -70,7 +73,9 @@ CONCRETE_NULL_CODE(qt_pixmap);
 * Global support variables for all qt_renderers
 ******************************************************************************/
 
-static hashmap<basic_character,qt_image> character_image;  // bitmaps of all characters
+// bitmaps of all characters
+static hashmap<basic_character,qt_image> character_image;  
+// image cache
 static hashmap<string,qt_pixmap> images;
 
 /******************************************************************************
@@ -84,8 +89,10 @@ qt_renderer_rep::~qt_renderer_rep () {}
 
 void
 qt_renderer_rep::begin (void* handle) {
-   QPaintDevice *device = (QPaintDevice*)handle;
+  QPaintDevice *device = (QPaintDevice*)handle;
   painter.begin (device);
+  w = painter.device()->width();
+  h = painter.device()->height();
 }
 
 void qt_renderer_rep::end () { painter.end (); }
@@ -96,6 +103,15 @@ qt_color(color c)
   int r, g, b;
   get_rgb_color (c,r,g,b);
   return QColor(r, g, b);
+}
+
+void 
+qt_renderer_rep::get_extents (int& w2, int& h2) {  
+  if (painter.device()) {
+    w2 = painter.device()->width(); h2 = painter.device()->height();
+  } else {
+    w2 = w; h2 = h;
+  }
 }
 
 /******************************************************************************
@@ -197,7 +213,8 @@ qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  //FIXME: XDrawArc (dpy, win, gc, x1, y2, x2-x1, y1-y2, alpha, delta);
+  painter.setRenderHints (QPainter::Antialiasing);
+  painter.drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
 }
 
 void
@@ -206,7 +223,8 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  //FIXME: XFillArc (dpy, win, gc, x1, y2, x2-x1, y1-y2, alpha, delta);
+  painter.setRenderHints (QPainter::Antialiasing);
+  painter.drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
 }
 
 void
@@ -365,7 +383,6 @@ qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
        // clear(x1,y1,x2,y2);
   painter.setRenderHints (0);
   painter.drawImage (x, y, *im);
-  // [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }
 
 void
@@ -375,7 +392,6 @@ qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
   // clear(x1,y1,x2,y2);
   painter.setRenderHints (0);
   painter.drawPixmap (x, y, w, h, *im);
-  // [im drawAtPoint:NSMakePoint(x,y) fromRect:NSMakeRect(0,0,w,h) operation:NSCompositeSourceAtop fraction:1.0];
 }
 
 
@@ -398,11 +414,11 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
       int nr_cols= sfactor*sfactor;
       if (nr_cols >= 64) nr_cols= 64;
 
+      im->fill (Qt::transparent);
       QPainter pp(im);
       QPen pen(painter.pen());
       QBrush brush(pen.color());
       pp.setPen(Qt::NoPen);
-      im->fill (Qt::transparent);
       for (j=0; j<h; j++)
         for (i=0; i<w; i++) {
           int col = gl->get_x (i, j);
@@ -433,7 +449,8 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     mi = mi2;
     //[im release]; // qt_image retains im
     character_image (xc)= mi;
-    // FIXME: we must release the image at some point (this should be ok now, see qt_image)
+    // FIXME: we must release the image at some point 
+    //        (this should be ok now, see qt_image)
   }
 
   // draw the character
@@ -460,7 +477,8 @@ qt_renderer_rep::xpm_image (url file_name) {
     pxm->loadFromData (buf, N(sss));
     tm_delete_array ((char*) buf);
     //out << sss;
-    //cout << "pxm: " << file_name << "(" << pxm->size().width() << "," <<  pxm->size().height() << ")\n";
+    //cout << "pxm: " << file_name << "(" << pxm->size().width()
+    //     << "," <<  pxm->size().height() << ")\n";
     qt_pixmap mi2 (pxm, 0, 0, pxm->width(), pxm->height());
     mi= mi2;
     images (as_string (file_name))= mi2;
@@ -491,6 +509,142 @@ qt_renderer_rep::xpm (url file_name, SI x, SI y) {
 qt_renderer_rep*
 the_qt_renderer () {
   static qt_renderer_rep* the_renderer= NULL;
-  if (!the_renderer) the_renderer= tm_new<qt_renderer_rep> ();
+//  if (!the_renderer) the_renderer= tm_new<qt_renderer_rep> ();
+  if (!the_renderer) the_renderer= 
+    tm_new<qt_shadow_renderer_rep> (QPixmap(1,1));
   return the_renderer;
 }
+
+
+/******************************************************************************
+ * shadow qt renderer
+ ******************************************************************************/
+
+
+
+
+qt_shadow_renderer_rep::qt_shadow_renderer_rep (QPixmap _px) 
+// : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
+: qt_renderer_rep (), px(_px) 
+{ 
+  //cout << px.width() << "," << px.height() << " " << LF;
+ // painter.begin(&px);
+}
+
+qt_shadow_renderer_rep::~qt_shadow_renderer_rep () 
+{ 
+  painter.end(); 
+}
+
+void 
+qt_shadow_renderer_rep::new_shadow (renderer& ren) {
+  SI mw, mh, sw, sh;
+  get_extents (mw, mh);
+  if (ren != NULL) {
+    ren->get_extents (sw, sh);
+    if (sw != mw || sh != mh) {
+      delete_shadow (ren);
+      ren= NULL;
+    }
+    else 
+      ((qt_shadow_renderer_rep*)ren)->end();
+    // cout << "Old: " << sw << ", " << sh << "\n";
+  }
+  if (ren == NULL)  ren= (renderer) tm_new<qt_shadow_renderer_rep> (QPixmap (mw, mh));
+
+  // cout << "Create " << mw << ", " << mh << "\n";
+  ((qt_shadow_renderer_rep*)ren)->begin(&(((qt_shadow_renderer_rep*)ren)->px));
+}
+
+void 
+qt_shadow_renderer_rep::delete_shadow (renderer& ren)  {
+  if (ren != NULL) {
+    tm_delete (ren);
+    ren= NULL;
+  }
+}
+
+void 
+qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  // FIXME: we should use the routine fetch later
+  ASSERT (ren != NULL, "invalid renderer");
+  if (ren->is_printer ()) return;
+  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
+  outer_round (x1, y1, x2, y2);
+  x1= max (x1, cx1- ox);
+  y1= max (y1, cy1- oy);
+  x2= min (x2, cx2- ox);
+  y2= min (y2, cy2- oy);
+  shadow->ox= ox;
+  shadow->oy= oy;
+  shadow->cx1= x1+ ox;
+  shadow->cy1= y1+ oy;
+  shadow->cx2= x2+ ox;
+  shadow->cy2= y2+ oy;
+  shadow->master= this;
+  decode (x1, y1);
+  decode (x2, y2);
+  if (x1<x2 && y2<y1) {
+    QRect rect = QRect(x1, y2, x2-x1, y1-y2);
+//    shadow->painter.setCompositionMode(QPainter::CompositionMode_Source);   
+    shadow->painter.drawPixmap (rect, px, rect);
+//    cout << "qt_shadow_renderer_rep::get_shadow " 
+//         << rectangle(x1,y2,x2,y1) << LF;
+//  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  }
+}
+
+void 
+qt_shadow_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  // FIXME: we should use the routine fetch later
+  ASSERT (ren != NULL, "invalid renderer");
+  if (ren->is_printer ()) return;
+  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
+  outer_round (x1, y1, x2, y2);
+  x1= max (x1, cx1- ox);
+  y1= max (y1, cy1- oy);
+  x2= min (x2, cx2- ox);
+  y2= min (y2, cy2- oy);
+  decode (x1, y1);
+  decode (x2, y2);
+  if (x1<x2 && y2<y1) {
+    QRect rect = QRect(x1, y2, x2-x1, y1-y2);
+//    cout << "qt_shadow_renderer_rep::put_shadow " 
+//         << rectangle(x1,y2,x2,y1) << LF;
+//    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.drawPixmap (rect, shadow->px, rect);
+//  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  }
+}
+
+
+void 
+qt_shadow_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
+  if (master == NULL) return;
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  master->encode (x1, y1);
+  master->encode (x2, y2);
+  master->put_shadow (this, x1, y1, x2, y2);
+}
+
+/******************************************************************************
+ * Clipping
+ ******************************************************************************/
+
+void
+qt_shadow_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
+{
+  (void) restore;
+  qt_renderer_rep::set_clipping (x1, y1, x2, y2);
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  if ((x1<x2) && (y2<y1)) {
+    QRect r(x1,y2,x2-x1,y1-y2);
+    painter.setClipRect(r);
+  }
+}
+
+

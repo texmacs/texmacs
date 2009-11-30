@@ -31,6 +31,7 @@
 typedef class qt_gui_rep* qt_gui;
 extern qt_gui the_gui;
 class QTMGuiHelper;
+class simple_widget_rep;
 
 class qt_gui_rep {
 public:
@@ -70,6 +71,24 @@ public:
   
   void add_notifier (socket_notifier);
   void remove_notifier (socket_notifier);
+  void enable_notifier (socket_notifier, bool);
+  
+  /* queued processing */
+  void process_keypress (simple_widget_rep *wid, string key, time_t t);
+  void process_keyboard_focus (simple_widget_rep *wid, bool has_focus, time_t t);
+  void process_mouse (simple_widget_rep *wid, string kind, SI x, SI y, int mods, time_t t);
+  void process_resize (simple_widget_rep *wid, SI x, SI y);
+  void process_socket_notification (socket_notifier sn);
+  void process_delayed_commands (); 
+
+  void process_queued_events ();
+  //void process_get_size_hint (SI& w, SI& h);
+  //void process_notify_resize (SI w, SI h);
+  //void process_set_shrinking_factor (int sf);
+  //void process_clear (SI x1, SI y1, SI x2, SI y2);
+  //void process_repaint (SI x1, SI y1, SI x2, SI y2);
+  
+  
 };
 
 #endif // defined QT_GUI_HPP

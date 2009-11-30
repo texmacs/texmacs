@@ -31,7 +31,6 @@
 #include <QStyleOptionMenuItem>
 #include <QKeySequence>
 
-extern char  *slot_name(slot s); // from qt_widget.cpp
 
 
 // REMARK on memory management.
