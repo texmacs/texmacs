@@ -22,8 +22,6 @@
 #include "promise.hpp"
 #include "analyze.hpp"
 
-#include "editor.hpp"
-
 #include "qt_basic_widgets.hpp"
 #include <QScrollArea>
 #include <QVariant>
