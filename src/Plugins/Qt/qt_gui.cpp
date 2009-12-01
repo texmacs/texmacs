@@ -660,16 +660,19 @@ qt_gui_rep::update () {
   
   // cout << "UPDATE" << LF;
     
-  process_queued_events ();
   
-  if (lapse < now) exec_pending_commands();
-  
-  if (the_interpose_handler) the_interpose_handler();
 
   // repaint invalid regions  
   
   double total_area;
   while (1) {
+    process_queued_events ();
+    
+    if (lapse < now) exec_pending_commands();
+    
+    if (the_interpose_handler) the_interpose_handler();
+
+    
     timeout_time = texmacs_time() + time_credit;
     interrupted = false;
     

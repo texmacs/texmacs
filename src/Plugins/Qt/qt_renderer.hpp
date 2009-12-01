@@ -49,6 +49,8 @@ public:
   //void set_extent (int _w, int _h) { w = _w; h = _h; }
   void get_extents (int& w, int& h);
 
+  void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore = false);
+
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  set_color (color c);
   void  set_line_style (SI w, int type=0, bool round=true);
@@ -76,15 +78,12 @@ public:
 class qt_shadow_renderer_rep:  public qt_renderer_rep {
 public:
   QPixmap px;   
-  qt_shadow_renderer_rep *master;
+  qt_renderer_rep *master;
   
 public:
   qt_shadow_renderer_rep (QPixmap _px = QPixmap());
   ~qt_shadow_renderer_rep ();
   
-  void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore = false);
-  
-
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);

@@ -115,7 +115,27 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
 }
 
 /******************************************************************************
-* Drawing into drawables
+ * Clipping
+ ******************************************************************************/
+
+void
+qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
+{
+  (void) restore;
+  basic_renderer_rep::set_clipping (x1, y1, x2, y2);
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  if ((x1<x2) && (y2<y1)) {
+    QRect r(x1,y2,x2-x1,y1-y2);
+    painter.setClipRect(r);
+  }
+}
+
+
+
+/******************************************************************************
+* Drawing 
 ******************************************************************************/
 
 void
@@ -628,23 +648,4 @@ qt_shadow_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
   master->encode (x2, y2);
   master->put_shadow (this, x1, y1, x2, y2);
 }
-
-/******************************************************************************
- * Clipping
- ******************************************************************************/
-
-void
-qt_shadow_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
-{
-  (void) restore;
-  qt_renderer_rep::set_clipping (x1, y1, x2, y2);
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  if ((x1<x2) && (y2<y1)) {
-    QRect r(x1,y2,x2-x1,y1-y2);
-    painter.setClipRect(r);
-  }
-}
-
 

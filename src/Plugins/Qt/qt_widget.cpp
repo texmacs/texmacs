@@ -22,6 +22,8 @@
 #include "promise.hpp"
 #include "analyze.hpp"
 
+#include "editor.hpp"
+
 #include "qt_basic_widgets.hpp"
 #include <QScrollArea>
 #include <QVariant>
@@ -626,8 +628,11 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (new_canvas && (new_canvas != old_canvas) ) {
         tw->addWidget(new_canvas);
         tw->removeWidget(old_canvas);
+        QTMWidget::all_widgets.insert(new_canvas);
+        if (old_canvas) QTMWidget::all_widgets.remove(old_canvas);
         new_canvas->setFocusPolicy (Qt::StrongFocus);
         new_canvas->setFocus ();
+        
       }
     }
     break;

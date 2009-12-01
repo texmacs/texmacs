@@ -160,12 +160,10 @@ QTMWidget::QTMWidget (simple_widget_rep *_wid)
   QAbstractScrollArea::viewport()->setMouseTracking (true);
   QAbstractScrollArea::viewport()->setFocusPolicy (Qt::StrongFocus);
   backing_pos = origin;
-  all_widgets.insert(this);
 }
 
 
 QTMWidget::~QTMWidget () {
-  all_widgets.remove(this);
 }
 
 void 
