@@ -34,60 +34,7 @@
 #endif
 
 hashset<pointer> pipe_link_set;
-
-static void pipe_callback (void *obj, void *info) {
-#ifndef __MINGW32__
-  pipe_link_rep* con= (pipe_link_rep*) obj;  
-#ifdef OS_WIN32
-  bool any_update = false;  
-  if (con->alive  && PIPE_CheckStdout (&con->conn)) {
-    //cout << "pipe_callback OUT" << LF;
-    con->feed (LINK_OUT);
-    any_update = true;
-  }
-  if (con->alive  && PIPE_CheckStderr (&con->conn)) {
-    //cout << "pipe_callback ERR" << LF;
-    con->feed (LINK_ERR);
-    any_update = true;
-  }
-  if (!is_nil (con->feed_cmd) && any_update) {
-    //cout << "pipe_callback APPLY" << LF;
-    if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
-  }
-#else
-  bool busy= true;
-  bool news= false;
-  while (busy) {
-    fd_set rfds;
-    FD_ZERO (&rfds);
-    int max_fd= max (con->err, con->out) + 1;
-    FD_SET (con->out, &rfds);
-    FD_SET (con->err, &rfds);
-  
-    struct timeval tv;
-    tv.tv_sec  = 0;
-    tv.tv_usec = 0;
-    select (max_fd, &rfds, NULL, NULL, &tv);
-
-    busy= false;
-    if (con->alive && FD_ISSET (con->out, &rfds)) {
-      //cout << "pipe_callback OUT" << LF;
-      con->feed (LINK_OUT);
-      busy= news= true;
-    }
-    if (con->alive && FD_ISSET (con->err, &rfds)) {
-      //cout << "pipe_callback ERR" << LF;
-      con->feed (LINK_ERR);
-      busy= news= true;
-    }
-  }
-  if (!is_nil (con->feed_cmd) && news) {
-    //cout << "pipe_callback APPLY" << LF;
-    if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
-  }
-#endif
-#endif
-}
+void pipe_callback (void *obj, void *info);
 
 /******************************************************************************
 * Constructors and destructors for pipe_links
@@ -353,6 +300,66 @@ pipe_link_rep::stop () {
 
   remove_notifier (snout);
   remove_notifier (snerr);
+#endif
+}
+
+/******************************************************************************
+* Call back for new information on pipe
+******************************************************************************/
+
+void pipe_callback (void *obj, void *info) {
+#ifndef __MINGW32__
+  pipe_link_rep* con= (pipe_link_rep*) obj;  
+#ifdef OS_WIN32
+  bool any_update = false;  
+  if (con->alive  && PIPE_CheckStdout (&con->conn)) {
+    //cout << "pipe_callback OUT" << LF;
+    con->feed (LINK_OUT);
+    any_update = true;
+  }
+  if (con->alive  && PIPE_CheckStderr (&con->conn)) {
+    //cout << "pipe_callback ERR" << LF;
+    con->feed (LINK_ERR);
+    any_update = true;
+  }
+  if (!is_nil (con->feed_cmd) && any_update) {
+    //cout << "pipe_callback APPLY" << LF;
+    if (!is_nil (con->feed_cmd))
+      con->feed_cmd->apply (); // call the data processor
+  }
+#else
+  bool busy= true;
+  bool news= false;
+  while (busy) {
+    fd_set rfds;
+    FD_ZERO (&rfds);
+    int max_fd= max (con->err, con->out) + 1;
+    FD_SET (con->out, &rfds);
+    FD_SET (con->err, &rfds);
+  
+    struct timeval tv;
+    tv.tv_sec  = 0;
+    tv.tv_usec = 0;
+    select (max_fd, &rfds, NULL, NULL, &tv);
+
+    busy= false;
+    if (con->alive && FD_ISSET (con->out, &rfds)) {
+      //cout << "pipe_callback OUT" << LF;
+      con->feed (LINK_OUT);
+      busy= news= true;
+    }
+    if (con->alive && FD_ISSET (con->err, &rfds)) {
+      //cout << "pipe_callback ERR" << LF;
+      con->feed (LINK_ERR);
+      busy= news= true;
+    }
+  }
+  if (!is_nil (con->feed_cmd) && news) {
+    //cout << "pipe_callback APPLY" << LF;
+    if (!is_nil (con->feed_cmd))
+      con->feed_cmd->apply (); // call the data processor
+  }
+#endif
 #endif
 }
 

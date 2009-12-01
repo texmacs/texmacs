@@ -33,13 +33,7 @@
 #endif
 
 hashset<pointer> socket_link_set;
-
-
-static void
-socket_callback (void *obj, void* info) {
-  socket_link_rep* con= (socket_link_rep*) obj;
-  if (con->alive) con->feed (LINK_OUT);
-}
+void socket_callback (void *obj, void* info);
 
 /******************************************************************************
 * Constructors and destructors for socket_links
@@ -254,6 +248,36 @@ socket_link_rep::stop () {
   alive= false;
   sn = socket_notifier ();
   wait (NULL);
+#endif
+}
+
+/******************************************************************************
+* Call back for new information on socket
+******************************************************************************/
+
+void
+socket_callback (void *obj, void* info) {
+#ifndef __MINGW32__
+  socket_link_rep* con= (socket_link_rep*) obj;  
+  bool busy= true;
+  while (busy) {
+    fd_set rfds;
+    FD_ZERO (&rfds);
+    int max_fd= con->io + 1;
+    FD_SET (con->io, &rfds);
+  
+    struct timeval tv;
+    tv.tv_sec  = 0;
+    tv.tv_usec = 0;
+    select (max_fd, &rfds, NULL, NULL, &tv);
+
+    busy= false;
+    if (con->alive && FD_ISSET (con->io, &rfds)) {
+      //cout << "socket_callback OUT" << LF;
+      con->feed (LINK_OUT);
+      busy= true;
+    }
+  }
 #endif
 }
 
