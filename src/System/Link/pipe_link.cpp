@@ -55,29 +55,33 @@ static void pipe_callback (void *obj, void *info) {
     if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
   }
 #else
-  fd_set rfds;
-  FD_ZERO (&rfds);
-  int max_fd= max (con->err, con->out)+1;
-  FD_SET (con->out, &rfds);
-  FD_SET (con->err, &rfds);
+  bool busy= true;
+  bool news= false;
+  while (busy) {
+    fd_set rfds;
+    FD_ZERO (&rfds);
+    int max_fd= max (con->err, con->out) + 1;
+    FD_SET (con->out, &rfds);
+    FD_SET (con->err, &rfds);
   
-  struct timeval tv;
-  tv.tv_sec  = 0;
-  tv.tv_usec = 0;
-  select (max_fd, &rfds, NULL, NULL, &tv);
+    struct timeval tv;
+    tv.tv_sec  = 0;
+    tv.tv_usec = 0;
+    select (max_fd, &rfds, NULL, NULL, &tv);
 
-  bool any_update = false;  
-  if (con->alive && FD_ISSET (con->out, &rfds)) {
-    //cout << "pipe_callback OUT" << LF;
-    con->feed (LINK_OUT);
-    any_update = true;
+    busy= false;
+    if (con->alive && FD_ISSET (con->out, &rfds)) {
+      //cout << "pipe_callback OUT" << LF;
+      con->feed (LINK_OUT);
+      busy= news= true;
+    }
+    if (con->alive && FD_ISSET (con->err, &rfds)) {
+      //cout << "pipe_callback ERR" << LF;
+      con->feed (LINK_ERR);
+      busy= news= true;
+    }
   }
-  if (con->alive && FD_ISSET (con->err, &rfds)) {
-    //cout << "pipe_callback ERR" << LF;
-    con->feed (LINK_ERR);
-    any_update = true;
-  }
-  if (!is_nil (con->feed_cmd) && any_update) {
+  if (!is_nil (con->feed_cmd) && news) {
     //cout << "pipe_callback APPLY" << LF;
     if (!is_nil (con->feed_cmd)) con->feed_cmd->apply (); // call the data processor
   }
