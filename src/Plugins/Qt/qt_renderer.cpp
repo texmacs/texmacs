@@ -82,20 +82,20 @@ static hashmap<string,qt_pixmap> images;
 * qt_renderer
 ******************************************************************************/
 
-qt_renderer_rep::qt_renderer_rep (int w2, int h2):
-  basic_renderer_rep(w2, h2) {}
+qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
+  basic_renderer_rep(w2, h2), painter(_painter) {}
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
 void
 qt_renderer_rep::begin (void* handle) {
   QPaintDevice *device = (QPaintDevice*)handle;
-  painter.begin (device);
-  w = painter.device()->width();
-  h = painter.device()->height();
+  painter->begin (device);
+  w = painter->device()->width();
+  h = painter->device()->height();
 }
 
-void qt_renderer_rep::end () { painter.end (); }
+void qt_renderer_rep::end () { painter->end (); }
 
 QColor
 qt_color(color c)
@@ -107,8 +107,8 @@ qt_color(color c)
 
 void 
 qt_renderer_rep::get_extents (int& w2, int& h2) {  
-  if (painter.device()) {
-    w2 = painter.device()->width(); h2 = painter.device()->height();
+  if (painter->device()) {
+    w2 = painter->device()->width(); h2 = painter->device()->height();
   } else {
     w2 = w; h2 = h;
   }
@@ -128,7 +128,7 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   decode (x2, y2);
   if ((x1<x2) && (y2<y1)) {
     QRect r(x1,y2,x2-x1,y1-y2);
-    painter.setClipRect(r);
+    painter->setClipRect(r);
   }
 }
 
@@ -141,23 +141,23 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 void
 qt_renderer_rep::set_color (color c) {
   basic_renderer_rep::set_color(c);
-  QPen p (painter.pen ());
-  QBrush b (painter.brush ());
+  QPen p (painter->pen ());
+  QBrush b (painter->brush ());
   p.setColor (qt_color(cur_fg));
   b.setColor (qt_color(cur_fg));
-  painter.setPen (p);
-  painter.setBrush (b);
+  painter->setPen (p);
+  painter->setBrush (b);
 }
 
 void
 qt_renderer_rep::set_line_style (SI lw, int type, bool round) {
   (void) type;
-  QPen p (painter.pen ());
+  QPen p (painter->pen ());
   if (lw <= pixel) p.setWidth (0);
   else p.setWidth ((lw+thicken) / (1.0*pixel));
   p.setCapStyle (round? Qt::RoundCap: Qt::SquareCap);
   p.setJoinStyle (Qt::RoundJoin);
-  painter.setPen (p);
+  painter->setPen (p);
 }
 
 void
@@ -165,8 +165,8 @@ qt_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
   // y1--; y2--; // top-left origin to bottom-left origin conversion
-  painter.setRenderHints (QPainter::Antialiasing);
-  painter.drawLine (x1, y1, x2, y2);
+  painter->setRenderHints (QPainter::Antialiasing);
+  painter->drawLine (x1, y1, x2, y2);
 }
 
 void
@@ -180,8 +180,8 @@ qt_renderer_rep::lines (array<SI> x, array<SI> y) {
     pnt[i].rx()= xx;
     pnt[i].ry()= yy;
     if (i>0) {
-      painter.setRenderHints (QPainter::Antialiasing);
-      painter.drawLine (pnt[i-1], pnt[i]); // FIX: hack
+      painter->setRenderHints (QPainter::Antialiasing);
+      painter->drawLine (pnt[i-1], pnt[i]); // FIX: hack
     }
   }
   // XDrawLines (dpy, win, gc, pnt, n, CoordModeOrigin);
@@ -197,8 +197,8 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
   QBrush brush (qt_color(cur_bg));
-  painter.setRenderHints (0);
-  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);       
+  painter->setRenderHints (0);
+  painter->fillRect (x1, y2, x2-x1, y1-y2, brush);       
 }
 
 void
@@ -223,8 +223,8 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
 
   QBrush brush (qt_color(cur_fg));
-  painter.setRenderHints (0);
-  painter.fillRect (x1, y2, x2-x1, y1-y2, brush);       
+  painter->setRenderHints (0);
+  painter->fillRect (x1, y2, x2-x1, y1-y2, brush);       
 }
 
 void
@@ -233,8 +233,8 @@ qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  painter.setRenderHints (QPainter::Antialiasing);
-  painter.drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
+  painter->setRenderHints (QPainter::Antialiasing);
+  painter->drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
 }
 
 void
@@ -243,8 +243,8 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
-  painter.setRenderHints (QPainter::Antialiasing);
-  painter.drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
+  painter->setRenderHints (QPainter::Antialiasing);
+  painter->drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
 }
 
 void
@@ -262,8 +262,8 @@ qt_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   pp.addPolygon (poly);
   pp.closeSubpath ();
   pp.setFillRule (convex? Qt::OddEvenFill: Qt::WindingFill);
-  painter.setRenderHints (QPainter::Antialiasing);
-  painter.fillPath (pp, brush);
+  painter->setRenderHints (QPainter::Antialiasing);
+  painter->fillPath (pp, brush);
 }
 
 
@@ -388,7 +388,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     (ci->nr)++;
   }
 
-  painter.drawImage (x, y-h, *pm);
+  painter->drawImage (x, y-h, *pm);
 };
 
 
@@ -401,8 +401,8 @@ qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
        // clear(x1,y1,x2,y2);
-  painter.setRenderHints (0);
-  painter.drawImage (x, y, *im);
+  painter->setRenderHints (0);
+  painter->drawImage (x, y, *im);
 }
 
 void
@@ -410,8 +410,8 @@ qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
   decode (x , y );
   y--; // top-left origin to bottom-left origin conversion
   // clear(x1,y1,x2,y2);
-  painter.setRenderHints (0);
-  painter.drawPixmap (x, y, w, h, *im);
+  painter->setRenderHints (0);
+  painter->drawPixmap (x, y, w, h, *im);
 }
 
 
@@ -436,7 +436,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 
       im->fill (Qt::transparent);
       QPainter pp(im);
-      QPen pen(painter.pen());
+      QPen pen(painter->pen());
       QBrush brush(pen.color());
       pp.setPen(Qt::NoPen);
       for (j=0; j<h; j++)
@@ -545,15 +545,17 @@ the_qt_renderer () {
 
 qt_shadow_renderer_rep::qt_shadow_renderer_rep (QPixmap _px) 
 // : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
-: qt_renderer_rep (), px(_px) 
+: qt_renderer_rep (new QPainter()), px(_px) 
 { 
   //cout << px.width() << "," << px.height() << " " << LF;
- // painter.begin(&px);
+ // painter->begin(&px);
 }
 
 qt_shadow_renderer_rep::~qt_shadow_renderer_rep () 
 { 
-  painter.end(); 
+  painter->end(); 
+  delete painter;
+  painter = NULL;
 }
 
 void 
@@ -606,8 +608,8 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
-//    shadow->painter.setCompositionMode(QPainter::CompositionMode_Source);   
-    shadow->painter.drawPixmap (rect, px, rect);
+//    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);   
+    shadow->painter->drawPixmap (rect, px, rect);
 //    cout << "qt_shadow_renderer_rep::get_shadow " 
 //         << rectangle(x1,y2,x2,y1) << LF;
 //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
@@ -631,8 +633,8 @@ qt_shadow_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
 //    cout << "qt_shadow_renderer_rep::put_shadow " 
 //         << rectangle(x1,y2,x2,y1) << LF;
-//    painter.setCompositionMode(QPainter::CompositionMode_Source);
-    painter.drawPixmap (rect, shadow->px, rect);
+//    painter->setCompositionMode(QPainter::CompositionMode_Source);
+    painter->drawPixmap (rect, shadow->px, rect);
 //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
   }
 }
