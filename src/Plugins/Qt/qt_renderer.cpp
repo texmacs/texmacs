@@ -521,6 +521,77 @@ qt_renderer_rep::xpm (url file_name, SI x, SI y) {
   char_clip=old_clip;
 }
 
+
+
+void 
+qt_renderer_rep::new_shadow (renderer& ren) {
+  SI mw, mh, sw, sh;
+  get_extents (mw, mh);
+  if (ren != NULL) {
+    ren->get_extents (sw, sh);
+    if (sw != mw || sh != mh) {
+      delete_shadow (ren);
+      ren= NULL;
+    }
+    else 
+      ((qt_shadow_renderer_rep*)ren)->end();
+    // cout << "Old: " << sw << ", " << sh << "\n";
+  }
+  if (ren == NULL)  ren= (renderer) tm_new<qt_shadow_renderer_rep> (QPixmap (mw, mh));
+  
+  // cout << "Create " << mw << ", " << mh << "\n";
+  ((qt_shadow_renderer_rep*)ren)->begin(&(((qt_shadow_renderer_rep*)ren)->px));
+}
+
+void 
+qt_renderer_rep::delete_shadow (renderer& ren)  {
+  if (ren != NULL) {
+    tm_delete (ren);
+    ren= NULL;
+  }
+}
+#if 0
+void 
+qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  // do nothing!
+}
+#endif 
+void 
+qt_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  // FIXME: we should use the routine fetch later
+  ASSERT (ren != NULL, "invalid renderer");
+  if (ren->is_printer ()) return;
+  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
+  outer_round (x1, y1, x2, y2);
+  x1= max (x1, cx1- ox);
+  y1= max (y1, cy1- oy);
+  x2= min (x2, cx2- ox);
+  y2= min (y2, cy2- oy);
+  decode (x1, y1);
+  decode (x2, y2);
+  if (x1<x2 && y2<y1) {
+    QRect rect = QRect(x1, y2, x2-x1, y1-y2);
+    //    cout << "qt_shadow_renderer_rep::put_shadow " 
+    //         << rectangle(x1,y2,x2,y1) << LF;
+    //    painter->setCompositionMode(QPainter::CompositionMode_Source);
+    painter->drawPixmap (rect, shadow->px, rect);
+    //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  }
+}
+
+
+void 
+qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
+  if (master == NULL) return;
+  outer_round (x1, y1, x2, y2);
+  decode (x1, y1);
+  decode (x2, y2);
+  static_cast<qt_renderer_rep*>(master)->encode (x1, y1);
+  static_cast<qt_renderer_rep*>(master)->encode (x2, y2);
+  master->put_shadow (this, x1, y1, x2, y2);
+}
+
+
 /******************************************************************************
  * main qt renderer
  ******************************************************************************/
@@ -535,13 +606,9 @@ the_qt_renderer () {
   return the_renderer;
 }
 
-
 /******************************************************************************
  * shadow qt renderer
  ******************************************************************************/
-
-
-
 
 qt_shadow_renderer_rep::qt_shadow_renderer_rep (QPixmap _px) 
 // : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
@@ -556,34 +623,6 @@ qt_shadow_renderer_rep::~qt_shadow_renderer_rep ()
   painter->end(); 
   delete painter;
   painter = NULL;
-}
-
-void 
-qt_shadow_renderer_rep::new_shadow (renderer& ren) {
-  SI mw, mh, sw, sh;
-  get_extents (mw, mh);
-  if (ren != NULL) {
-    ren->get_extents (sw, sh);
-    if (sw != mw || sh != mh) {
-      delete_shadow (ren);
-      ren= NULL;
-    }
-    else 
-      ((qt_shadow_renderer_rep*)ren)->end();
-    // cout << "Old: " << sw << ", " << sh << "\n";
-  }
-  if (ren == NULL)  ren= (renderer) tm_new<qt_shadow_renderer_rep> (QPixmap (mw, mh));
-
-  // cout << "Create " << mw << ", " << mh << "\n";
-  ((qt_shadow_renderer_rep*)ren)->begin(&(((qt_shadow_renderer_rep*)ren)->px));
-}
-
-void 
-qt_shadow_renderer_rep::delete_shadow (renderer& ren)  {
-  if (ren != NULL) {
-    tm_delete (ren);
-    ren= NULL;
-  }
 }
 
 void 
@@ -616,38 +655,4 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   }
 }
 
-void 
-qt_shadow_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
-  // FIXME: we should use the routine fetch later
-  ASSERT (ren != NULL, "invalid renderer");
-  if (ren->is_printer ()) return;
-  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  decode (x1, y1);
-  decode (x2, y2);
-  if (x1<x2 && y2<y1) {
-    QRect rect = QRect(x1, y2, x2-x1, y1-y2);
-//    cout << "qt_shadow_renderer_rep::put_shadow " 
-//         << rectangle(x1,y2,x2,y1) << LF;
-//    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->drawPixmap (rect, shadow->px, rect);
-//  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-  }
-}
-
-
-void 
-qt_shadow_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
-  if (master == NULL) return;
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  master->encode (x1, y1);
-  master->encode (x2, y2);
-  master->put_shadow (this, x1, y1, x2, y2);
-}
 
