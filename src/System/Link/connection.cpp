@@ -296,6 +296,7 @@ connection_interrupt (string name, string session) {
   connection con= connection (name * "-" * session);
   if (is_nil (con)) return;
   con->interrupt ();
+  con->listen ();
 }
 
 void
@@ -304,6 +305,7 @@ connection_stop (string name, string session) {
   connection con= connection (name * "-" * session);
   if (is_nil (con)) return;
   con->stop ();
+  con->listen ();
 }
 
 int
