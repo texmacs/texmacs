@@ -57,7 +57,6 @@ public:
   void    feed (int channel);
 };
 
-void listen_to_pipes ();
 void close_all_pipes ();
 
 #endif // PIPE_LINK_H

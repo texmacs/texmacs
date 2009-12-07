@@ -57,7 +57,9 @@
 
 (tm-define (plugin-eval name ses t . opts)
   (with u (plugin-preprocess name ses t opts)
+    ;;(display* "u= " u "\n")
     (with r (tree->stree (connection-eval name ses u))
+      ;;(display* "r= " r "\n")
       (plugin-postprocess name ses r (cons :simplify-output opts)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

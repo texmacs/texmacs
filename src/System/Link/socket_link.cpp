@@ -173,8 +173,6 @@ socket_link_rep::feed (int channel) {
     if (DEBUG_IO) cout << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
-
-  if (!is_nil(feed_cmd)) (feed_cmd)->apply();
 #endif
 }
 
@@ -237,6 +235,7 @@ socket_callback (void *obj, void* info) {
 #ifndef __MINGW32__
   socket_link_rep* con= (socket_link_rep*) obj;  
   bool busy= true;
+  bool news= false;
   while (busy) {
     fd_set rfds;
     FD_ZERO (&rfds);
@@ -252,44 +251,10 @@ socket_callback (void *obj, void* info) {
     if (con->alive && FD_ISSET (con->io, &rfds)) {
       //cout << "socket_callback OUT" << LF;
       con->feed (LINK_OUT);
-      busy= true;
+      busy= news= true;
     }
   }
-#endif
-}
-
-/******************************************************************************
-* Listen to all active sockets (may be optimized for speed)
-******************************************************************************/
-
-void
-listen_to_sockets () {
-#ifndef __MINGW32__
-  while (true) {
-    fd_set rfds;
-    FD_ZERO (&rfds);
-    int max_fd= 0;
-    iterator<pointer> it= iterate (socket_link_set);
-    while (it->busy()) {
-      socket_link_rep* con= (socket_link_rep*) it->next();
-      if (con->alive) {
-	FD_SET (con->io, &rfds);
-	if (con->io >= max_fd) max_fd= con->io+1;
-      }
-    }
-    if (max_fd == 0) break;
-
-    struct timeval tv;
-    tv.tv_sec  = 0;
-    tv.tv_usec = 0;
-    int nr= select (max_fd, &rfds, NULL, NULL, &tv);
-    if (nr==0) break;
-
-    it= iterate (socket_link_set);
-    while (it->busy()) {
-      socket_link_rep* con= (socket_link_rep*) it->next();
-      if (con->alive && FD_ISSET (con->io, &rfds)) con->feed (LINK_OUT);
-    }
-  }
+  if (!is_nil (con->feed_cmd) && news)
+    con->feed_cmd->apply ();
 #endif
 }

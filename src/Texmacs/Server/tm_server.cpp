@@ -297,14 +297,7 @@ tm_server_rep::interpose_handler () {
   // TeXmacs/Qt handles delayed messages and socket notification
   // in its own runloop 
 #else
-#if 0 // choice between old and new socket listening methods
-  listen_to_servers ();
-  listen_to_pipes ();
-  listen_to_sockets ();
-  listen_to_connections ();
-#else
   perform_select ();
-#endif
   exec_pending_commands ();
 #endif
 

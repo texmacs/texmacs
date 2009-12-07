@@ -159,6 +159,7 @@ dyn_link_rep::write (string s, int channel) {
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);
   tm_delete_array (_s);
   tm_delete_array (_session);
+  if (!is_nil (this->feed_cmd)) this->feed_cmd->apply ();
 #endif
 }
 

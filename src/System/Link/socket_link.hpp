@@ -42,7 +42,6 @@ public:
   void    feed (int channel);
 };
 
-void listen_to_sockets ();
 void close_all_sockets ();
 
 #endif // SOCKET_LINK_H

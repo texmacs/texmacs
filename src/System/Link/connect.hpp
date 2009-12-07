@@ -27,6 +27,5 @@ int    connection_status (string name, string session);
 tree   connection_eval (string name, string session, string s);
 tree   connection_eval (string name, string session, tree t);
 tree   connection_cmd (string name, string session, string s);
-void   listen_to_connections ();
 
 #endif // defined CONNECT_H

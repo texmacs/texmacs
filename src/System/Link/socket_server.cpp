@@ -23,15 +23,8 @@
 #include <sys/wait.h>
 #endif
 
-
 hashset<pointer> socket_server_set;
-
-
-static void 
-socket_server_callback(void *obj, void *info) {
-  socket_server_rep* ss = (socket_server_rep*) obj;
-  ss->start_client ();
-}
+void socket_server_callback (void *obj, void *info);
 
 /******************************************************************************
 * Constructors and destructors for socket_servers
@@ -119,8 +112,6 @@ socket_server_rep::start_client () {
     incoming= update;
     incoming << make_socket_link (addr, -1, SOCKET_SERVER, client);
   }
-  
-  if (!is_nil (feed_cmd)) feed_cmd->apply (); // call the data processor
 #endif
 }
 
@@ -164,38 +155,35 @@ socket_server_rep::stop () {
 }
 
 /******************************************************************************
-* Listen to all active servers (may be optimized for speed)
+* Call back for new information on server
 ******************************************************************************/
 
-void
-listen_to_servers () {
+void 
+socket_server_callback (void *obj, void *info) {
 #ifndef __MINGW32__
-  while (true) {
-    fd_set fds;
-    FD_ZERO (&fds);
-    int max_fd= 0;
-    iterator<pointer> it= iterate (socket_server_set);
-    while (it->busy()) {
-      socket_server_rep* con= (socket_server_rep*) it->next();
-      if (con->alive) {
-	FD_SET (con->server, &fds);
-	if (con->server >= max_fd) max_fd= con->server+1;
-      }
-    }
-    if (max_fd == 0) break;
-
+  socket_server_rep* ss = (socket_server_rep*) obj;
+  bool busy= true;
+  bool news= false;
+  while (busy) {
+    fd_set rfds;
+    FD_ZERO (&rfds);
+    int max_fd= ss->server + 1;
+    FD_SET (ss->server, &rfds);
+  
     struct timeval tv;
     tv.tv_sec  = 0;
     tv.tv_usec = 0;
-    int nr= select (max_fd, &fds, NULL, NULL, &tv);
-    ASSERT (nr != -1, "call to 'select' failed");
-    if (nr == 0) return;
+    select (max_fd, &rfds, NULL, NULL, &tv);
 
-    it= iterate (socket_server_set);
-    while (it->busy()) {
-      socket_server_rep* con= (socket_server_rep*) it->next();
-      if (con->alive && FD_ISSET (con->server, &fds)) con->start_client ();
+    busy= false;
+    if (ss->alive && FD_ISSET (ss->server, &rfds)) {
+      //cout << "server_callback" << LF;
+      ss->start_client ();
+      busy= news= true;
     }
   }
+  
+  if (!is_nil (ss->feed_cmd) && news)
+    ss->feed_cmd->apply (); // call the data processor
 #endif
 }

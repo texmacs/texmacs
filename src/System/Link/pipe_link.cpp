@@ -223,7 +223,16 @@ pipe_link_rep::listen (int msecs) {
   if (!alive) return;
   time_t wait_until= texmacs_time () + msecs;
   while ((outbuf == "") && (errbuf == "")) {
-    listen_to_pipes (); // FIXME: should listen more specifically
+    fd_set rfds;
+    FD_ZERO (&rfds);
+    FD_SET (out, &rfds);
+    FD_SET (err, &rfds);
+    struct timeval tv;
+    tv.tv_sec  = msecs / 1000;
+    tv.tv_usec = 1000 * (msecs % 1000);
+    int nr= select (max (out, err) + 1, &rfds, NULL, NULL, &tv);
+    if (nr != 0 && FD_ISSET (out, &rfds)) feed (LINK_OUT);
+    if (nr != 0 && FD_ISSET (err, &rfds)) feed (LINK_ERR);
     if (texmacs_time () - wait_until > 0) break;
   }
 }
@@ -251,6 +260,27 @@ pipe_link_rep::stop () {
 
   remove_notifier (snout);
   remove_notifier (snerr);
+#endif
+}
+
+/******************************************************************************
+* Emergency exit for all pipes
+******************************************************************************/
+
+void
+close_all_pipes () {
+#ifndef __MINGW32__
+  iterator<pointer> it= iterate (pipe_link_set);
+  while (it->busy()) {
+    pipe_link_rep* con= (pipe_link_rep*) it->next();
+    if (con->alive) {
+      if (-1 != killpg(con->pid,SIGTERM)) {
+	sleep(2);
+	killpg(con->pid,SIGKILL);
+      }
+      con->alive= false;
+    }
+  }
 #endif
 }
 
@@ -291,66 +321,6 @@ void pipe_callback (void *obj, void *info) {
     //cout << "pipe_callback APPLY" << LF;
     if (!is_nil (con->feed_cmd))
       con->feed_cmd->apply (); // call the data processor
-  }
-#endif
-}
-
-/******************************************************************************
-* Listen to all active pipes (may be optimized for speed)
-******************************************************************************/
-
-void
-listen_to_pipes () {
-#ifndef __MINGW32__
-  while (true) {
-    fd_set rfds;
-    FD_ZERO (&rfds);
-    int max_fd= 0;
-    iterator<pointer> it= iterate (pipe_link_set);
-    while (it->busy()) {
-      pipe_link_rep* con= (pipe_link_rep*) it->next();
-      if (con->alive) {
-	FD_SET (con->out, &rfds);
-	FD_SET (con->err, &rfds);
-	if (con->out >= max_fd) max_fd= con->out+1;
-	if (con->err >= max_fd) max_fd= con->err+1;
-      }
-    }
-    if (max_fd == 0) break;
-
-    struct timeval tv;
-    tv.tv_sec  = 0;
-    tv.tv_usec = 0;
-    int nr= select (max_fd, &rfds, NULL, NULL, &tv);
-    if (nr==0) break;
-
-    it= iterate (pipe_link_set);
-    while (it->busy()) {
-      pipe_link_rep* con= (pipe_link_rep*) it->next();
-      if (con->alive && FD_ISSET (con->out, &rfds)) con->feed (LINK_OUT);
-      if (con->alive && FD_ISSET (con->err, &rfds)) con->feed (LINK_ERR);
-    }
-  }
-#endif
-}
-
-/******************************************************************************
-* Emergency exit for all pipes
-******************************************************************************/
-
-void
-close_all_pipes () {
-#ifndef __MINGW32__
-  iterator<pointer> it= iterate (pipe_link_set);
-  while (it->busy()) {
-    pipe_link_rep* con= (pipe_link_rep*) it->next();
-    if (con->alive) {
-      if (-1 != killpg(con->pid,SIGTERM)) {
-	sleep(2);
-	killpg(con->pid,SIGKILL);
-      }
-      con->alive= false;
-    }
   }
 #endif
 }

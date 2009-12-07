@@ -18,6 +18,7 @@
 
 #include "connect.hpp"
 #include "pipe_link.hpp"
+#include "socket_notifier.hpp"
 #include "iterator.hpp"
 #include "convert.hpp"
 #include "scheme.hpp"
@@ -38,6 +39,7 @@ struct connection_rep: rep<connection> {
   tm_link ln;            // the underlying link
   int     status;        // status of the connection
   int     prev_status;   // last notified status
+  bool    forced_eval;   // forced input evaluation without call backs
   texmacs_input tm_in;   // texmacs input handler for data from child
   texmacs_input tm_err;  // texmacs input handler for errors from child
 
@@ -68,6 +70,7 @@ connection_rep::connection_rep (string name2, string session2, tm_link ln2):
   rep<connection> (name2 * "-" * session2),
   name (name2), session (session2), ln (ln2),
   status (CONNECTION_DEAD), prev_status (CONNECTION_DEAD),
+  forced_eval (false),
   tm_in ("output"), tm_err ("error") {}
 
 string
@@ -89,9 +92,7 @@ connection_rep::start (bool again) {
   }
   tm_in ->bof ();
   tm_err->bof ();
-  
   ln->set_command (command (connection_callback, this));
-  
   return message;
 }
 
@@ -174,17 +175,8 @@ connection_notify_status (connection con) {
 }
 
 void
-listen_to_connections () {
-  iterator<string> it= iterate (connection::instances);
-  while (it->busy()) {
-    string name= it->next ();
-    connection con (name);
-    con->listen ();
-   }
-}
-
-void
 connection_rep::listen () {
+  if (forced_eval) return;
   connection_notify_status (this);
   if (status != CONNECTION_DEAD) {
     read (LINK_ERR);
@@ -340,7 +332,9 @@ connection_retrieve (string name, string session) {
   if (is_nil (con)) return "";
   tree doc (DOCUMENT);
   while (true) {
-    listen_to_pipes ();
+    con->forced_eval= true;
+    perform_select ();
+    con->forced_eval= false;
     tree next= connection_read (name, session);
     if (next == "");
     else if (is_document (next)) doc << A (next);

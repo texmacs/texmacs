@@ -41,7 +41,6 @@ public:
 };
 
 int  number_of_servers ();
-void listen_to_servers ();
 void close_all_servers ();
 
 #endif // SOCKET_SERVER_H
