@@ -245,7 +245,7 @@ tm_data_rep::set_abbr_buffer (string abbr) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL) {
       vw2->win->set_window_name (buf->abbr);
-      vw2->win->set_window_url (buf->name);
+      vw2->win->set_window_url (is_none (buf->extra)? buf->name: buf->extra);
     }
   }
 }
@@ -342,7 +342,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->resume ();
   win->set_window_name (vw->buf->abbr);
-  win->set_window_url (vw->buf->name);
+  win->set_window_url (is_none (vw->buf->extra)? vw->buf->name: vw->buf->extra);
   // cout << "View attached\n";
 }
 
