@@ -26,7 +26,6 @@ public:
 
   parser_rep (hashmap<tree,tree> g, string s);
   int parse (tree parsing_tree, int pos);
-
   friend class parser;
 };
 

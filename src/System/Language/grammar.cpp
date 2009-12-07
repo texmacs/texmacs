@@ -22,12 +22,12 @@ parser::parser (hashmap<tree,tree> g, string s) {
 
 int
 parser_rep::parse (tree parsing_tree, int pos) {
-  if (pos >= N(xstring)) return pos;
+  if (pos >= N(xstring)) return -1;
   pair<tree,int> p(parsing_tree,pos);
   if (evaluated_pair->contains(p)) return evaluated_pair(p);
   if (wanted_pair->contains(p)) return -1;
   if ( L(parsing_tree)==as_tree_label("DOLLAR")) {
-    if (! grammar->contains(parsing_tree)) return pos;
+    if (! grammar->contains(parsing_tree)) return -1;
     tree regle;
     regle= grammar(parsing_tree);
     int opos=pos;
@@ -41,19 +41,19 @@ parser_rep::parse (tree parsing_tree, int pos) {
   }
   if (L(parsing_tree)==as_tree_label("OR") && N(parsing_tree)>=1) {    // or
     tree parsing_tree2;
-    int i=0;
+    int i, j;
     int init_pos= pos;
     int opos;
     p= pair<tree, int> (parsing_tree, init_pos);
     wanted_pair(p)= true;
+    i=0;
     do {
       parsing_tree2= parsing_tree[i];
-      opos=pos;
-      pos= parse(parsing_tree2, pos);
+      pos= parse(parsing_tree2, init_pos);
       i++;
-    } while (opos==pos && i<N(parsing_tree));
-    cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    } while (pos==-1 && i<N(parsing_tree));
     evaluated_pair(p)= pos;
+    cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
     wanted_pair->reset(p);
     return pos;
   }
@@ -61,16 +61,13 @@ parser_rep::parse (tree parsing_tree, int pos) {
     tree parsing_tree2;
     int i=0;
     int init_pos= pos;
-    int opos;
     p= pair<tree, int> (parsing_tree, init_pos);
     wanted_pair(p)= true;
     do {
       parsing_tree2= parsing_tree[i];
-      opos=pos;
       pos=parse(parsing_tree2, pos);
       i++;
-    } while (opos<pos && i<N(parsing_tree));
-    if (opos==pos) pos= init_pos;
+    } while (pos!=-1 && i<N(parsing_tree));
     cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
     evaluated_pair(p)= pos;
     wanted_pair->reset(p);
@@ -86,7 +83,8 @@ parser_rep::parse (tree parsing_tree, int pos) {
     do {
       opos= pos;
       pos= parse(parsing_tree1, pos);
-    } while (opos<pos && pos<N(xstring));
+    } while (pos!=-1 && pos<N(xstring));
+    if (pos==-1) pos= opos;
     cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
     evaluated_pair(p)= pos;
     wanted_pair->reset(p);
@@ -98,7 +96,8 @@ parser_rep::parse (tree parsing_tree, int pos) {
     s2= parsing_tree[1]->label;
     int opos= pos;
     if (s1 <= xstring(pos,pos+1)
-	&& xstring(pos,pos+1) <=s2) pos++;
+	&& xstring(pos,pos+1) <=s2) {pos++;}
+    else pos=-1;
     p= pair<tree, int> (parsing_tree, opos);
     cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
     evaluated_pair(p)= pos;
@@ -109,13 +108,14 @@ parser_rep::parse (tree parsing_tree, int pos) {
     string s;
     s= parsing_tree->label;
     int opos= pos;
-    if (pos+N(s) <= N(xstring) && s == xstring(pos,pos+N(s))) pos+=N(s);
+    if (pos+N(s) <= N(xstring) && s == xstring(pos,pos+N(s))) {pos+=N(s);}
+    else pos= -1;
     p= pair<tree, int> (parsing_tree, opos);
     cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
     evaluated_pair(p)= pos;
     return pos;
   }
-  return pos;
+  return -1;
 }
 
 static hashmap<tree,tree>* global_grammar= NULL;
