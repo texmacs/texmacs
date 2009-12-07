@@ -336,6 +336,7 @@ edit_interface_rep::update_active_loci () {
 
 void
 edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
+  if (is_nil (eb)) apply_changes ();
   start_editing ();
   x *= sfactor;
   y *= sfactor;

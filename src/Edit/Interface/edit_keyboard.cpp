@@ -182,6 +182,7 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
+  if (is_nil (eb)) apply_changes ();
   start_editing ();
   key_press (key); (void) t;
   notify_change (THE_DECORATIONS);
