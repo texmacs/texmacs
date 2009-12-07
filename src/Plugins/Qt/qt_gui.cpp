@@ -187,7 +187,8 @@ void
 qt_gui_rep::event_loop () {
   QApplication *app = (QApplication*) QApplication::instance();
 
-  needs_update();
+  update();
+  //needs_update();
   app->exec();
 }
 
