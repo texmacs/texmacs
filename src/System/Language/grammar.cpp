@@ -41,9 +41,8 @@ parser_rep::parse (tree parsing_tree, int pos) {
   }
   if (L(parsing_tree)==as_tree_label("OR") && N(parsing_tree)>=1) {    // or
     tree parsing_tree2;
-    int i, j;
+    int i;
     int init_pos= pos;
-    int opos;
     p= pair<tree, int> (parsing_tree, init_pos);
     wanted_pair(p)= true;
     i=0;
