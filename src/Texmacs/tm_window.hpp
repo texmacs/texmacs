@@ -34,6 +34,7 @@ public:
   tm_window_rep (widget wid2, tree geom);
   ~tm_window_rep ();
   void set_window_name (string s);
+  void set_window_url (url u);
   void map ();
   void unmap ();
   inline void set_property (scheme_tree what, scheme_tree val) {

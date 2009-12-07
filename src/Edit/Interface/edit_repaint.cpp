@@ -270,7 +270,7 @@ edit_interface_rep::draw_with_stored (rectangle r) {
     draw_with_shadow (r);
     if (!win->interrupted ()) {
       if (inside_active_graphics ()) {
-	win->new_shadow (stored);
+	shadow->new_shadow (stored);
 	shadow->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
 	//stored_rects= /*stored_rects |*/ rectangles (r);
 	stored_rects= simplify (rectangles (r, stored_rects));

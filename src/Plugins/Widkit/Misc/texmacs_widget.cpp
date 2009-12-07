@@ -131,7 +131,7 @@ make_footer (int mask) {
   wk_widget ftr= horizontal_array (F, F_name, 1);
 #ifdef OS_MACOS
   F << glue_wk_widget (false, false, 14*PIXEL, 0);
-  F_name << "margin";
+  F_name << string ("margin");
 #endif
 
   array<wk_widget> I (2);
@@ -331,6 +331,7 @@ texmacs_widget_rep::handle_set_integer (set_integer_event ev) {
 void
 texmacs_widget_rep::handle_set_string (set_string_event ev) {
   if (ev->which == "window name") win->set_name (ev->s);
+  else if (ev->which == "file");
   else if (ev->which == "header")
     set_subwidget_flag (THIS ["header"], ev->s == "on");
   else if (ev->which == "main icons")

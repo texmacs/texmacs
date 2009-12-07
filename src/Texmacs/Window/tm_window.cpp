@@ -70,6 +70,11 @@ tm_window_rep::set_window_name (string s) {
 }
 
 void
+tm_window_rep::set_window_url (url u) {
+  set_file (wid, as_string (u));
+}
+
+void
 tm_window_rep::map () {
   set_visibility (win, true);
 }

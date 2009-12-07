@@ -243,8 +243,10 @@ tm_data_rep::set_abbr_buffer (string abbr) {
   buf->abbr= abbr;
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
-    if (vw2->win != NULL)
+    if (vw2->win != NULL) {
       vw2->win->set_window_name (buf->abbr);
+      vw2->win->set_window_url (buf->name);
+    }
   }
 }
 
@@ -340,6 +342,7 @@ tm_data_rep::attach_view (tm_window win, tm_view vw) {
   ASSERT (is_attached (wid), "widget should be attached");
   vw->ed->resume ();
   win->set_window_name (vw->buf->abbr);
+  win->set_window_url (vw->buf->name);
   // cout << "View attached\n";
 }
 
@@ -354,6 +357,7 @@ tm_data_rep::detach_view (tm_view vw) {
   vw->ed->suspend ();
   set_canvas (wid, glue_widget ());
   win->set_window_name ("TeXmacs");
+  win->set_window_url (url_none ());
   // cout << "View detached\n";
 }
 
