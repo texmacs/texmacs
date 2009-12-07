@@ -17,13 +17,9 @@
 #include <stdio.h>
 #include <string.h>
 #ifdef __MINGW32__
-#ifdef OS_WIN32
-#include <sys/pipe.h>
-#else
 //#define PATTERN WIN_PATTERN
 //#include <winsock.h>
 //#undef PATTERN
-#endif
 #else
 #include <unistd.h>
 #include <signal.h>
@@ -42,13 +38,9 @@ void pipe_callback (void *obj, void *info);
 
 pipe_link_rep::pipe_link_rep (string cmd2): cmd (cmd2) {
   pipe_link_set->insert ((pointer) this);
-#ifdef OS_WIN32
-  memset(&conn, 0, sizeof(PIPE_CONN));
-#else
   in     = pp_in [0]= pp_in [1]= -1;
   out    = pp_out[0]= pp_out[1]= -1;
   err    = pp_err[0]= pp_err[1]= -1;
-#endif
   outbuf = "";
   errbuf = "";
   alive  = false;
@@ -68,7 +60,6 @@ make_pipe_link (string cmd) {
 * Routines for pipe_links
 ******************************************************************************/
 
-#ifndef OS_WIN32
 #ifndef __MINGW32__
 void
 execute_shell (string s) {
@@ -82,7 +73,6 @@ execute_shell (string s) {
   tm_delete_array (_s);
 }
 #endif
-#endif
 
 string
 pipe_link_rep::start () {
@@ -90,15 +80,6 @@ pipe_link_rep::start () {
   if (alive) return "busy";
   if (DEBUG_AUTO) cout << "TeXmacs] Launching '" << cmd << "'\n";
 
-#ifdef OS_WIN32
-  char *cmdString;
-  bool success;
-  cmdString = as_charp(cmd);
-  success = PIPE_Create(cmdString, &conn);
-  tm_delete_array (cmdString);
-  if (!success) return "Error: Could not create pipe";
-  else {
-#else
   int e1= pipe (pp_in ); (void) e1;
   int e2= pipe (pp_out); (void) e2;
   int e3= pipe (pp_err); (void) e3;
@@ -126,7 +107,6 @@ pipe_link_rep::start () {
     close (pp_out [OUT]);
     err= pp_err [IN ];
     close (pp_err [OUT]);
-#endif
 
     alive= true;
     snout = socket_notifier (out, &pipe_callback, this, NULL);
@@ -138,21 +118,13 @@ pipe_link_rep::start () {
     else {
       int r;
       char outbuf[1024];
-#ifdef OS_WIN32
-      r= PIPE_ReadStdout(&conn, outbuf, 1024);
-#else
       r= ::read (out, outbuf, 1024);
-#endif
       if (r == 1 && outbuf[0] == TERMCHAR) return "ok";
       alive= false;
-#ifdef OS_WIN32
-      PIPE_Close(&conn);
-#else
       if (-1 != killpg(pid,SIGTERM)) {
 	sleep(2);
 	killpg(pid,SIGKILL);
       }
-#endif
       wait (NULL);
       if (r == -1) return "Error: the application does not reply";
       else
@@ -187,12 +159,8 @@ pipe_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
   char* _s= as_charp (s);
-#ifdef OS_WIN32
-  PIPE_WriteStdin(&conn, _s, N(s));
-#else
   int err= ::write (in, _s, N(s));
   (void) err;
-#endif
   tm_delete_array (_s);
 #endif
 }
@@ -203,26 +171,17 @@ pipe_link_rep::feed (int channel) {
   if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR))) return;
   int r;
   char tempout[1024];
-#ifdef OS_WIN32
-  if (channel == LINK_OUT) r = PIPE_ReadStdout(&conn, tempout, 1024);
-  else r = PIPE_ReadStderr(&conn, tempout, 1024);
-#else
   if (channel == LINK_OUT) r = ::read (out, tempout, 1024);
   else r = ::read (err, tempout, 1024);
-#endif
   if (r == -1) {
     cerr << "TeXmacs] read failed for#'" << cmd << "'\n";
     wait (NULL);
   }
   else if (r == 0) {
-#ifdef OS_WIN32
-    PIPE_Close(&conn);
-#else
     if (-1 != killpg(pid,SIGTERM)) {
       sleep(2);
       killpg(pid,SIGKILL);
     }
-#endif
 
     alive= false;
     remove_notifier (snout);      
@@ -273,11 +232,7 @@ void
 pipe_link_rep::interrupt () {
 #ifndef __MINGW32__
   if (!alive) return;
-#ifdef OS_WIN32
-  PIPE_Close(&conn);
-#else
   killpg (pid, SIGINT);
-#endif
 #endif
 }
 
@@ -285,16 +240,12 @@ void
 pipe_link_rep::stop () {
 #ifndef __MINGW32__
   if (!alive) return;
-#ifdef OS_WIN32
-  PIPE_Close(&conn);
-#else
   if (-1 != killpg(pid,SIGTERM)) {
     sleep(2);
     killpg(pid,SIGKILL);
   }
   alive= false;    
   close (in);
-#endif
   alive= false;
   wait (NULL);
 
@@ -310,24 +261,6 @@ pipe_link_rep::stop () {
 void pipe_callback (void *obj, void *info) {
 #ifndef __MINGW32__
   pipe_link_rep* con= (pipe_link_rep*) obj;  
-#ifdef OS_WIN32
-  bool any_update = false;  
-  if (con->alive  && PIPE_CheckStdout (&con->conn)) {
-    //cout << "pipe_callback OUT" << LF;
-    con->feed (LINK_OUT);
-    any_update = true;
-  }
-  if (con->alive  && PIPE_CheckStderr (&con->conn)) {
-    //cout << "pipe_callback ERR" << LF;
-    con->feed (LINK_ERR);
-    any_update = true;
-  }
-  if (!is_nil (con->feed_cmd) && any_update) {
-    //cout << "pipe_callback APPLY" << LF;
-    if (!is_nil (con->feed_cmd))
-      con->feed_cmd->apply (); // call the data processor
-  }
-#else
   bool busy= true;
   bool news= false;
   while (busy) {
@@ -360,7 +293,6 @@ void pipe_callback (void *obj, void *info) {
       con->feed_cmd->apply (); // call the data processor
   }
 #endif
-#endif
 }
 
 /******************************************************************************
@@ -370,27 +302,6 @@ void pipe_callback (void *obj, void *info) {
 void
 listen_to_pipes () {
 #ifndef __MINGW32__
-#ifdef OS_WIN32
-  while (true) {
-    int max_fd = 0;
-    iterator<pointer> it = iterate(pipe_link_set);
-    while (it->busy()) {
-      pipe_link_rep* con = (pipe_link_rep*) it->next();
-      if (con->alive) {
-	if (con->conn.isValid && PIPE_CheckStdout (&con->conn)) max_fd++;
-	if (con->conn.isValid && PIPE_CheckStderr (&con->conn)) max_fd++;
-      }
-    }
-    if(max_fd == 0) break;
-	
-    it= iterate (pipe_link_set);
-    while (it->busy()) {
-      pipe_link_rep* con= (pipe_link_rep*) it->next();
-      if (con->alive && PIPE_CheckStdout (&con->conn)) con->feed (LINK_OUT);
-      if (con->alive && PIPE_CheckStderr (&con->conn)) con->feed (LINK_ERR);
-    }
-  }
-#else
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);
@@ -421,7 +332,6 @@ listen_to_pipes () {
     }
   }
 #endif
-#endif
 }
 
 /******************************************************************************
@@ -435,14 +345,10 @@ close_all_pipes () {
   while (it->busy()) {
     pipe_link_rep* con= (pipe_link_rep*) it->next();
     if (con->alive) {
-#ifdef OS_WIN32
-      PIPE_Close (&con->conn);
-#else
       if (-1 != killpg(con->pid,SIGTERM)) {
 	sleep(2);
 	killpg(con->pid,SIGKILL);
       }
-#endif
       con->alive= false;
     }
   }

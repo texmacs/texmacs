@@ -21,9 +21,6 @@
 #include <netdb.h>
 #endif
 #include <errno.h>
-#ifdef OS_WIN32
-#include <sys/misc.h>
-#endif
 
 #ifdef QTTEXMACS
 #include "Qt/qt_gui.hpp"

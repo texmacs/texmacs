@@ -14,12 +14,6 @@
 #include "tm_link.hpp"
 #include "socket_notifier.hpp"
 
-#ifdef OS_WIN32
-#include <sys/pipe.h>
-#else
-extern char **environ;
-#endif
-
 extern char **environ;
 
 #define STDIN 0
@@ -35,10 +29,6 @@ extern char **environ;
 
 struct pipe_link_rep: tm_link_rep {
   string cmd;           // command for launching the pipe
-
-#ifdef OS_WIN32
-  PIPE_CONN conn;
-#else
   int    pid;           // process identifier of the child
   int    pp_in [2];     // for data going to the child
   int    pp_out[2];     // for data coming from the child
@@ -46,7 +36,6 @@ struct pipe_link_rep: tm_link_rep {
   int    in;            // file descriptor for data going to the child
   int    out;           // file descriptor for data coming from the child
   int    err;           // file descriptor for errors coming from the child
-#endif
 
   string outbuf;        // pending output from plugin
   string errbuf;        // pending errors from plugin

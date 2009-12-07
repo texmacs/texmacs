@@ -28,9 +28,6 @@
 #include <netdb.h>
 #endif
 #include <errno.h>
-#ifdef OS_WIN32
-#include <sys/misc.h>
-#endif
 
 hashset<pointer> socket_link_set;
 void socket_callback (void *obj, void* info);
@@ -83,20 +80,12 @@ socket_link_rep::start () {
   
   // getting host
   char* _host= as_charp (host);
-#ifdef OS_WIN32
-  struct hostent *hp = SOCKET_gethostbyname (_host);
-#else
   struct hostent *hp = gethostbyname (_host);
-#endif
   tm_delete_array (_host);
   if (hp == NULL) return "Error: no connection for '" * host * "'";
 
   // creating socket
-#ifdef OS_WIN32
-  io= SOCKET_socket (AF_INET, SOCK_STREAM, 0);
-#else
   io= socket (AF_INET, SOCK_STREAM, 0);
-#endif
   if (io < 0) return "Error: socket could not be created";
 
   // connecting to socket
@@ -104,26 +93,14 @@ socket_link_rep::start () {
   string where= host * ":" * as_string (port);
   memset ((char*) &insock, 0, sizeof (insock));
   insock.sin_family = AF_INET;
-#ifdef OS_WIN32
-  insock.sin_port = SOCKET_htons ((unsigned short) port);
-#else
   insock.sin_port = htons ((unsigned short) port);
-#endif
   memcpy ((char*) &insock.sin_addr, hp->h_addr, hp->h_length);
-#ifdef OS_WIN32
-  if (SOCKET_connect (io, (struct sockaddr*) &insock, sizeof (insock)) < 0)
-#else
   if (connect (io, (struct sockaddr*) &insock, sizeof (insock)) < 0)
-#endif
     return "Error: refused connection to '" * where * "'";
 
   // testing whether it works
   int flags = O_NONBLOCK;
-#ifdef OS_WIN32
-  if (SOCKET_fcntl (io, F_SETFL, flags) < 0)
-#else
   if (fcntl (io, F_SETFL, flags) < 0)
-#endif
     return "Error: non working connection to '" * where * "'";
   alive = true;
   sn = socket_notifier (io, &socket_callback, this, NULL);  
