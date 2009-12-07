@@ -19,26 +19,19 @@
 #include <QSet>
 
 class simple_widget_rep;
+class basic_renderer_rep;
 
 class QTMWidget: public QTMScrollView {
-  
   Q_OBJECT
 
-  list<QRect> delayed_rects;
-  rectangles    invalid_regions;
-
+  rectangles invalid_regions;
   QPixmap backingPixmap;
-  
-  bool fInSync;
-  
   
 public:
 
   static QSet<QTMWidget*> all_widgets;
   QPoint backing_pos;
 
-  
-  
   QTMWidget(simple_widget_rep *_wid) ;
   ~QTMWidget();
 
@@ -56,6 +49,7 @@ public:
 
   void scrollContentsBy(int dx, int dy);
   
+
 protected:
   virtual void paintEvent (QPaintEvent* event);
   virtual void focusInEvent (QFocusEvent* event);
@@ -66,6 +60,9 @@ protected:
   virtual void mouseMoveEvent (QMouseEvent* event);
   virtual bool event (QEvent *event);
   virtual void resizeEvent (QResizeEvent *event);
+
+private:
+  basic_renderer_rep *getRenderer();
 };
 
 #endif // QTMWIDGET_HPP

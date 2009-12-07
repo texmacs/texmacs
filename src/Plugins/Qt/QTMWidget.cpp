@@ -38,8 +38,6 @@ extern const QX11Info *qt_x11Info(const QPaintDevice *pd);
 
 #define PIXEL 256
 
-extern  double invalid_area, repaint_area;
-
 QSet<QTMWidget*> QTMWidget::all_widgets;
 
 
@@ -154,7 +152,7 @@ initkeymap () {
 
 
 QTMWidget::QTMWidget (simple_widget_rep *_wid) 
-  : QTMScrollView (), backingPixmap(100,100), fInSync(false) {
+  : QTMScrollView (), backingPixmap() {
   setObjectName("A QTMWidget");
   setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
   QAbstractScrollArea::viewport()->setMouseTracking (true);
@@ -181,86 +179,55 @@ QTMWidget::invalidate_all () {
   invalidate_rect (0, 0, sz.width(), sz.height());
 }
 
-//FIXME: we should integrate the code below
-//       in repaint_invalid_regions once everything works again.
-#if 0
+
+basic_renderer_rep* 
+QTMWidget::getRenderer() {
 #ifdef USE_CAIRO
-r = the_cairo_renderer ();
-cairo_surface_t *surf;
+  cairo_renderer_rep *ren = the_cairo_renderer ();
+  cairo_surface_t *surf;
 #ifdef Q_WS_X11
-//const QX11Info & info = x11Info();//qt_x11Info(this);
-//    Display *dpy = x11Info().display();
-//backingPixmap = QPixmap(width(),height());
-//cout << backingPixmap.width() << LF;
-Display *dpy = QX11Info::display();
-Drawable drawable = backingPixmap.handle();
-Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
-surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, backingPixmap.width (), backingPixmap.height ());
+  //const QX11Info & info = x11Info();//qt_x11Info(this);
+  //    Display *dpy = x11Info().display();
+  //backingPixmap = QPixmap(width(),height());
+  //cout << backingPixmap.width() << LF;
+  Display *dpy = QX11Info::display();
+  Drawable drawable = backingPixmap.handle();
+  Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
+  surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, 
+                            backingPixmap.width (), backingPixmap.height ());
 #elif defined(Q_WS_MAC)
-surf = tm_cairo_quartz_surface_create_for_cg_context ((CGContextRef)(this->macCGHandle()), width(), height());
+  surf = tm_cairo_quartz_surface_create_for_cg_context (
+                    (CGContextRef)(this->macCGHandle()), width(), height());
 #endif
-cairo_t *ct = tm_cairo_create (surf);
-r->begin (ct);
-tm_cairo_surface_destroy (surf);
-tm_cairo_destroy (ct);
+  cairo_t *ct = tm_cairo_create (surf);
+  ren->begin (ct);
+  tm_cairo_surface_destroy (surf);
+  tm_cairo_destroy (ct);
 #else
+  qt_renderer_rep * ren = the_qt_renderer();
+  ren->begin(&backingPixmap);
 #endif
-#endif
+  return ren;
+}
 
 void
 QTMWidget::repaint_invalid_regions () {
-  rectangles new_regions;
-  if (!is_nil (invalid_regions)) {
-    rectangle lub= least_upper_bound (invalid_regions);
-    if (area (lub) < 1.2 * area (invalid_regions))
-      invalid_regions= rectangles (lub);
-  } else return;  
-  static qt_shadow_renderer_rep * sr = tm_new<qt_shadow_renderer_rep> ();
-  //static qt_renderer_rep * sr = tm_new<qt_renderer_rep> ();
-//  qt_shadow_renderer_rep *sr = (qt_shadow_renderer_rep *)the_qt_renderer();
-  sr->begin(&backingPixmap);
-  tm_widget()->set_current_renderer(sr);
-  
-  SI ox = -backing_pos.x()*PIXEL;
-  SI oy = backing_pos.y()*PIXEL;
-  
-  rectangles rects = invalid_regions;
-  invalid_regions = rectangles();
-  QRegion qrgn;
-  
-  while (!is_nil (rects)) {
-    rectangle r = copy (rects->item);
-    rectangle r0 = rects->item;
-    QRect qr = QRect(r0->x1, r0->y1, r0->x2 - r0->x1, r0->y2 - r0->y1);
-     //cout << "repainting " << r0 << "\n";
-    sr->set_origin(ox,oy); //FIXME: does it is really needed?
-    sr->encode (r->x1, r->y1);
-    sr->encode (r->x2, r->y2);
-    sr->set_clipping (r->x1, r->y2, r->x2, r->y1);
-    tm_widget()->handle_repaint (r->x1, r->y2, r->x2, r->y1);
-    if (sr->interrupted ()) {
-      invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
-      invalid_area += area(r0);
-    }
-    else {
-      repaint_area += area(r0);
-      qrgn += qr;
-    }
-    rects = rects->next;
-  }
 
-//  tm_widget()->set_current_renderer(NULL);
-  sr->end();
-  //backingPixmap.save("/Users/mgubi/Desktop/backingPixmap.png");
-  QAbstractScrollArea::viewport()->repaint(qrgn);
-  //QAbstractScrollArea::viewport()->update(qrgn);
-}
+  // this function is called by the qt_gui::update method to keep the backing
+  // store in sync and propagate the changes to the surface on screen.
+  // first we check that the backing store geometry is right and then we
+  // request to the texmacs canvas widget to repaint the regions which were
+  // marked invalid. Subsequently, for each succesfully repainted region, we
+  // propagate its contents from the backing store to the onscreen surface.
+  // If repaint has been interrupted we do not propagate the changes and proceed
+  // to mark the region invalid again.
 
-void 
-QTMWidget::scrollContentsBy ( int dx, int dy ) {
-  QTMScrollView::scrollContentsBy (dx,dy);
-  
+  QRegion qrgn; 
+  // qrgn is to keep track of the area on the sceen which needs to be updated 
+
+  // update backing store origin wrt. TeXmacs document
   if ( backing_pos != origin ) {
+
     int dx =  origin.x() - backing_pos.x();
     int dy =  origin.y() - backing_pos.y();
     backing_pos = origin;
@@ -278,7 +245,7 @@ QTMWidget::scrollContentsBy ( int dx, int dy ) {
     rectangles invalid;
     while (!is_nil(invalid_regions)) {
       rectangle r = invalid_regions->item ;
-//      rectangle q = rectangle(r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
+      //      rectangle q = rectangle(r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
       rectangle q = rectangle(r->x1-dx,r->y1-dy,r->x2-dx,r->y2-dy);
       invalid = rectangles (q, invalid);
       //cout << r << " ---> " << q << LF;
@@ -302,10 +269,83 @@ QTMWidget::scrollContentsBy ( int dx, int dy ) {
     // this cannot be done directly since interpose handler needs
     // to be run at least once in some situations
     // (for example when scrolling is initiated by TeXmacs itself)
-    the_gui->update();
-    QAbstractScrollArea::viewport()->scroll(-dx,-dy);
- //   QAbstractScrollArea::viewport()->update();
+    //the_gui->update();
+    //  QAbstractScrollArea::viewport()->scroll(-dx,-dy);
+   // QAbstractScrollArea::viewport()->update();
+    qrgn += QRect(QPoint(0,0),sz);
   }
+  
+  // update backing store size
+  {
+    QSize _oldSize = backingPixmap.size();
+    QSize _newSize = QAbstractScrollArea::viewport()->size();
+    if (_newSize != _oldSize) {
+      // cout << "RESIZING BITMAP"<< LF;
+      QPixmap newBackingPixmap (_newSize);
+      //QPainter p (&newBackingPixmap);
+      //p.drawPixmap(0,0,backingPixmap);
+      //p.end();
+      backingPixmap = newBackingPixmap;
+      invalidate_all();
+      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
+    }
+  }
+  
+  // repaint invalid rectangles
+  {
+    rectangles new_regions;
+    if (!is_nil (invalid_regions)) {
+      rectangle lub= least_upper_bound (invalid_regions);
+      if (area (lub) < 1.2 * area (invalid_regions))
+        invalid_regions= rectangles (lub);
+      
+      basic_renderer_rep* ren = getRenderer();
+      tm_widget()->set_current_renderer(ren);
+      
+      SI ox = -backing_pos.x()*PIXEL;
+      SI oy = backing_pos.y()*PIXEL;
+      
+      rectangles rects = invalid_regions;
+      invalid_regions = rectangles();
+      
+      while (!is_nil (rects)) {
+        rectangle r = copy (rects->item);
+        rectangle r0 = rects->item;
+        QRect qr = QRect(r0->x1, r0->y1, r0->x2 - r0->x1, r0->y2 - r0->y1);
+        //cout << "repainting " << r0 << "\n";
+        ren->set_origin(ox,oy); 
+        ren->encode (r->x1, r->y1);
+        ren->encode (r->x2, r->y2);
+        ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
+        tm_widget()->handle_repaint (r->x1, r->y2, r->x2, r->y1);
+        if (ren->interrupted ()) {
+          invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
+        }
+        else {
+          qrgn += qr;
+        }
+        rects = rects->next;
+      }
+      
+      tm_widget()->set_current_renderer(NULL);
+      ren->end();
+    } // !is_nil(invalid_regions)
+    
+  }
+
+  // propagate immediatly the changes to the screen
+  
+  //backingPixmap.save("/Users/mgubi/Desktop/backingPixmap.png");
+  QAbstractScrollArea::viewport()->repaint(qrgn);
+  //QAbstractScrollArea::viewport()->update(qrgn);
+}
+
+void 
+QTMWidget::scrollContentsBy ( int dx, int dy ) {
+  QTMScrollView::scrollContentsBy (dx,dy);
+  // the_gui::update needs to be run as soon as possible to refresh the status
+  // of the widget.
+  needs_update(); 
 }
 
 void 
@@ -313,27 +353,24 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
   // cout << "QTMWidget::resizeEvent (" << event->size().width()
   //      << "," << event->size().height() << ")" << LF;
   QTMScrollView::resizeEvent (event);
-  
-  
-  QSize _oldSize = backingPixmap.size();
-  QSize _newSize = QAbstractScrollArea::viewport()->size();
-  if (_newSize != _oldSize) {
-    // cout << "RESIZING BITMAP"<< LF;
-    QPixmap newBackingPixmap (_newSize);
-    //QPainter p (&newBackingPixmap);
-    //p.drawPixmap(0,0,backingPixmap);
-    //p.end();
-    backingPixmap = newBackingPixmap;
-    invalidate_all();
-    the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
-  }
+  // the_gui::update needs to be run as soon as possible to refresh the status
+  // of the widget.
+  needs_update(); 
 }
 
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
-  QRect rect = event->rect ();
+  // In the current implementation repainting take place during the call to
+  // the widget's repaint_invalid_regions method in the_gui::update. All
+  // we have to do is to take the backing store and put it on screen according
+  // to the QRegion marked invalid. 
+  // CHECK: Maybe just put onscreen all the region bounding rectangle could not 
+  // be so expensive.
+  
+  
   if (DEBUG_QT) 
   {
+    QRect rect = event->rect ();
     cout << "paintEvent ("<< rect.x() << "," <<  rect.y()
     << "," <<  rect.width() << "," <<  rect.height() 
     << ") regions:" << event->region().numRects() << LF ;
@@ -353,8 +390,6 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
-//  time_credit= 25;
-//  timeout_time= texmacs_time () + time_credit;
   static bool fInit = false;
   if (!fInit) {
     if (DEBUG_QT)

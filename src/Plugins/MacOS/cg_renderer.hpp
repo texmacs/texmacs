@@ -50,7 +50,7 @@ public:
   /***** private section *****************************************************/
 
   void draw_clipped (CGImageRef im, int w, int h, SI x, SI y);	
-	bool native_draw (int ch, font_glyphs fn, SI x, SI y);
+  bool native_draw (int ch, font_glyphs fn, SI x, SI y);
 
   CGImageRef xpm_image(url file_name);
 

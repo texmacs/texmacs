@@ -412,19 +412,21 @@ impress (simple_widget_rep* wid) {
     wid->handle_get_size_hint (width, height);
     QSize s = QSize (width/PIXEL, height/PIXEL);
     QPixmap pxm(s);
-    QRect rect = QRect (0, 0, s.width(), s.height());
     //cout << "impress (" << s.width() << "," << s.height() << ")\n";
     pxm.fill (Qt::transparent);
-    the_qt_renderer()->begin (static_cast<QPaintDevice*>(&pxm));
-    wid->set_current_renderer(the_qt_renderer());
-
-    the_qt_renderer()->set_clipping
-      (rect.x() * PIXEL, -(rect.y() + rect.height()) * PIXEL,
-       (rect.x() + rect.width()) * PIXEL, -rect.y() * PIXEL);
-    wid->handle_repaint
-      (rect.x() * PIXEL, -(rect.y() + rect.height()) * PIXEL,
-       (rect.x() + rect.width()) * PIXEL, -rect.y() * PIXEL);
-    the_qt_renderer()->end();
+    {
+      qt_renderer_rep *ren = the_qt_renderer();
+      ren->begin (static_cast<QPaintDevice*>(&pxm));
+      wid->set_current_renderer(the_qt_renderer());
+      rectangle r = rectangle (0, 0, s.width(), s.height());
+      ren->set_origin(0,0);
+      ren->encode (r->x1, r->y1);
+      ren->encode (r->x2, r->y2);
+      ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
+      wid->handle_repaint (r->x1, r->y2, r->x2, r->y1);
+      ren->end();
+      wid->set_current_renderer(NULL);
+    }
     return pxm;
   }
   else {
@@ -458,7 +460,6 @@ rerootActions (QWidget* dest, QWidget* src) {
     a->setParent (dest);
   }
 }
-
 
 void
 QTMLazyMenu::force () {

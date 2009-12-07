@@ -44,12 +44,6 @@ public:
   QPoint viewportToContents ( QPoint const& pos) const { return pos + origin; };
   QPoint contentsToViewport ( QPoint const& pos) const { return pos - origin; };
   
-
-signals:
-  
-  // Contents moving slot.
-  void contentsMoving(int cx, int cy);
-  
 protected:
   
   // Scrollbar stabilization.

@@ -18,8 +18,6 @@
 #include <QWidget>
 #include <QAction>
 
-void replaceActions(QWidget *dest, QWidget *src);
-
 class qt_widget_rep : public widget_rep {
 public:
   qt_widget_rep() : widget_rep () { };

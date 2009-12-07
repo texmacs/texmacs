@@ -496,6 +496,16 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     }
     break;
 
+  case SLOT_FILE:
+    {
+      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      string file = open_box<string> (val);
+      if (DEBUG_QT) cout << "File: " << file << LF;
+      view->window()->setWindowFilePath(to_qstring(file));
+    }
+    break;
+      
+      
   default:
     qt_view_widget_rep::send (s, val);
   }

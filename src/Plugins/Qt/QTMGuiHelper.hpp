@@ -30,7 +30,6 @@ public slots:
   void doUpdate ();
   void doReadSocketNotification (int socket);  
   void doWriteSocketNotification (int socket);  
-  void doCommands ();
 };
 
 

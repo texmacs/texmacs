@@ -71,10 +71,11 @@ public:
   
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
-  
-  
+
   /***** private section *****************************************************/
 
   QPixmap *xpm_image(url file_name);
@@ -94,6 +95,19 @@ public:
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
+
+class qt_proxy_renderer_rep:  public qt_renderer_rep {
+public:
+  qt_renderer_rep *base;
+  
+public:
+  qt_proxy_renderer_rep (qt_renderer_rep *_base) 
+  : qt_renderer_rep(_base->painter), base(_base) {}
+  ~qt_proxy_renderer_rep () {};
+  
+  void new_shadow (renderer& ren);
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+};
 
 qt_renderer_rep* the_qt_renderer();
 

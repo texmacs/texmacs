@@ -22,32 +22,23 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
 	QWidget *_viewport = QAbstractScrollArea::viewport();
 	_viewport->setAttribute(Qt::WA_OpaquePaintEvent);
 	//_viewport->setAttribute(Qt::WA_StaticContents);
-    _viewport->setAttribute(Qt::WA_PaintOnScreen); 
+  //  _viewport->setAttribute(Qt::WA_PaintOnScreen); 
     // the above option disable double-buffering on X11
 	_viewport->setAttribute(Qt::WA_NoSystemBackground);
 	_viewport->setBackgroundRole(QPalette::NoRole);
 	_viewport->setAutoFillBackground(false);
-
-#if 0
-  setAttribute(Qt::WA_StaticContents);
-  setAttribute(Qt::WA_NoSystemBackground);
-  setBackgroundRole(QPalette::NoRole);
-  setAutoFillBackground(false);
-#endif
 }
 
 QTMScrollView::~QTMScrollView (void) { }
 
 void 
 QTMScrollView::setOrigin ( QPoint newOrigin ) {
-	if (newOrigin.x() != origin.x()) {
-		QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(newOrigin.x());
+  if (newOrigin.x() != origin.x()) {
+    QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(newOrigin.x());
   }
-  
   if (newOrigin.y() != origin.y()) {
-		QAbstractScrollArea::verticalScrollBar()->setSliderPosition(newOrigin.y());
+	QAbstractScrollArea::verticalScrollBar()->setSliderPosition(newOrigin.y());
   } 
-  
 }
 
 void 
@@ -74,13 +65,9 @@ QTMScrollView::ensureVisible ( int cx, int cy, int mx, int my ) {
 	if (w < mx * 2) mx = w / 2;
 	if (h < my * 2) my = h / 2;
   
-	if (cw <= w) {
-		mx = 0; dx = 0;
-	}
+	if (cw <= w) { mx = 0; dx = 0; }
   
-	if (ch <= h) {
-		my = 0; dy = 0;
-	}
+	if (ch <= h) { my = 0; dy = 0; }
   
 	if (cx < mx - dx) dx = mx - cx;
 	else if (cx >= w - mx - dx) dx  = w - mx - cx;
@@ -137,20 +124,8 @@ QTMScrollView::wheelEvent ( QWheelEvent *wheelEvent ) {
 
 void
 QTMScrollView::scrollContentsBy ( int dx, int dy ) {
-	bool f_update = false;
-  
-	if (dx) {
-		origin.setX(origin.x() - dx);
-		f_update = true;
-	}
-  
-	if (dy) {
-		origin.setY(origin.y() - dy);
-		f_update = true;
-	}
-  
- // QAbstractScrollArea::viewport()->update ();
-  //QAbstractScrollArea::viewport()->scroll (dx,dy);
+	if (dx) origin.setX(origin.x() - dx);
+	if (dy) origin.setY(origin.y() - dy);
 }
 
 void 
