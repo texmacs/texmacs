@@ -759,8 +759,12 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
       if (wid) {
-              if (flag) wid->show();
-              else wid->hide();
+        if (flag) {
+          wid->show();
+          wid->activateWindow();
+          wid->raise();
+        }
+        else wid->hide();
       }
     }
     break;
