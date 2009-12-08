@@ -519,18 +519,23 @@ process_event (queued_event ev) {
 
 
 void 
-qt_gui_rep::process_queued_events () {
+qt_gui_rep::process_queued_events (int max) {
   
-  array<queued_event> a = waiting_events;
+  array<queued_event> a = waiting_events, b;
   waiting_events = array<queued_event> ();
-  
-  // bool needs_process_delayed_commands = false;
   
   int i, n = N(a);
   
-  for (i=0; i<n; i++) process_event(a[i]);
-  
-  // if (needs_process_delayed_commands) exec_pending_commands (); 
+  //cout << "(" << n << " events)";
+  for (i=0; i<n; i++) {
+    //cout << (int)a[i].x1 << ",";
+    if ((max < 0) || (i<max)) 
+      process_event(a[i]);
+    else 
+      b << a[i];
+  }
+  b << waiting_events;
+  waiting_events = b;
 }
 
 
@@ -590,6 +595,9 @@ qt_gui_rep::process_socket_notification ( socket_notifier sn ) {
 
 bool
 qt_gui_rep::check_event (int type) {
+//FIXME: add more types and refine, compare with X11 version.
+  
+// cout << "."; cout.flush();
 //  return false;
   switch (type) {
     case INTERRUPT_EVENT:
@@ -625,24 +633,46 @@ qt_gui_rep::update () {
   interrupted = false;  
   timeout_time = now + time_credit;
 
-  // cout << "UPDATE" << LF;
     
-  // to be sure that no other user events are pending
-  qApp->processEvents(); 
+  int count_events = N(waiting_events);
+  int max_proc_events = 10;
+  bool partial_redraw = false;
+  
+  do {
+  
+    //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
+    process_queued_events (max_proc_events);
+    //cout << "AND END"  << LF;
 
-  process_queued_events ();
+    // to be sure that no other user events are pending
+    qApp->processEvents(); 
+
+    count_events += N(waiting_events);
     
-  if (lapse <= now) exec_pending_commands();
+    if (count_events > max_proc_events) partial_redraw = true;
     
-  if (the_interpose_handler) the_interpose_handler();
+    if (N(waiting_events) == 0 || partial_redraw) {
+      //cout << "TYPESET START..."; cout.flush();
+      if (lapse <= now) exec_pending_commands();
+      if (the_interpose_handler) the_interpose_handler();
+      //cout << "AND END" << LF;
+      
+      qApp->processEvents(); 
+    }
+    
+  } while (N(waiting_events) && !partial_redraw);
+  
 
   if (nr_windows == 0) {
       qApp->quit();
   }
-    
+
+  
   // repaint invalid regions  
   timeout_time = texmacs_time() + time_credit;
   interrupted = false;
+
+  //cout << "REPAINT START..."; cout.flush();
 
   QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
    while (i.hasNext()) {
@@ -650,6 +680,8 @@ qt_gui_rep::update () {
      w->repaint_invalid_regions();
    }
 
+  //cout << "AND END" << LF;
+    
   updating = false;
 
   time_t delay = lapse - texmacs_time();

@@ -321,9 +321,7 @@ QTMWidget::repaint_invalid_regions () {
         if (ren->interrupted ()) {
           invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
         }
-        else {
-          qrgn += qr;
-        }
+        qrgn += qr;
         rects = rects->next;
       }
       

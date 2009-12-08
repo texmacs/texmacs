@@ -81,7 +81,7 @@ public:
   void process_socket_notification (socket_notifier sn);
   void process_delayed_commands (); 
 
-  void process_queued_events ();
+  void process_queued_events (int max = -1);
   //void process_get_size_hint (SI& w, SI& h);
   //void process_notify_resize (SI w, SI h);
   //void process_set_shrinking_factor (int sf);
