@@ -26,11 +26,9 @@
 #include <unistd.h>
 #endif
 
-
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
 #include "MacOS/mac_app.h"
 #endif
-
 
 extern hashmap<Window,pointer> Window_to_window;
 int  nr_windows= 0;
