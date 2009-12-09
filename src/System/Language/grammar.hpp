@@ -27,6 +27,7 @@ public:
   hashmap<pair<string,string>,bool> dependance;
 
   parser_rep (hashmap<tree,tree> g, string s);
+  void set_closure();
   void set_dependance();
   void set_dependance(string var, tree rule);
   void set_emptyness();

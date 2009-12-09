@@ -19,22 +19,15 @@ parser_rep::parser_rep(hashmap<tree,tree> g, string s) {
   grammar=g; xstring=s;
   set_emptyness(); cout<<can_be_empty_table;
   set_dependance(); cout<<dependance;
+  set_closure(); cout<<dependance;
 }
 
 parser::parser (hashmap<tree,tree> g, string s) { 
   rep= tm_new<parser_rep> (g, s);
 }
 
-/*
-      iterator<src_t> it= iterate (src_to_dest);
-      while (it->busy()) {
-	src_t  src = it->next();
-	dest_t dest= src_to_dest[src];
-	...
-      }
-*/
-
-void parser_rep::set_emptyness() {
+void
+parser_rep::set_emptyness() {
   tree var_tree;
   string var;
   tree rule;
@@ -90,7 +83,8 @@ parser_rep::set_dependance(string var, tree rule) {
   if (L(rule)==as_tree_label("STAR")) set_dependance(var,rule[0]);
   if (L(rule)==as_tree_label("CONCAT")) {
     int i=0;
-    while(i<N(rule) && can_be_empty(rule[i])) {set_dependance(var,rule[i]);i++;}
+    while(i<N(rule) && (i==0 || can_be_empty(rule[i-1])))
+      {set_dependance(var,rule[i]);i++;}
   }
 }
 
@@ -105,6 +99,34 @@ parser_rep::set_dependance() {
     set_dependance(var,grammar(var_tree));
   }
 }
+
+void
+parser_rep::set_closure() {
+  string var1,var2,var3,var4;
+  bool new_dependance;
+  do {
+    new_dependance= false;
+    iterator<pair<string,string> > it12= iterate(dependance);
+    while(it12->busy()) {
+      pair<string,string> p=it12->next();
+      var1=p.x1;
+      var2=p.x2;
+      iterator<pair<string,string> > it34= iterate(dependance);
+      while(it34->busy()) {
+	p=it34->next();
+	var3=p.x1;
+	var4=p.x2;
+	p=pair<string,string>(var1,var4);
+	if (var2==var3 && !dependance->contains(p)) {
+	  new_dependance= true;
+	  dependance(p)=true;
+	}
+      }
+    }
+  }
+  while(new_dependance==true);
+}
+
 
 int
 parser_rep::parse (tree parsing_tree, int pos) {
