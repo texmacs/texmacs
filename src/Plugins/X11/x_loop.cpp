@@ -13,7 +13,7 @@
 #include "X11/x_window.hpp"
 #include "iterator.hpp"
 #include "converter.hpp"
-#include "socket_server.hpp"
+#include "tm_link.hpp"
 #include "message.hpp"
 
 #ifdef OS_WIN32

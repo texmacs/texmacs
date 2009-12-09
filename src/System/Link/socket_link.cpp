@@ -67,6 +67,20 @@ find_socket_link (int fd) {
   return tm_link ();
 }
 
+void
+close_all_sockets () {
+#ifndef __MINGW32__
+  iterator<pointer> it= iterate (socket_link_set);
+  while (it->busy()) {
+    socket_link_rep* con= (socket_link_rep*) it->next();
+    if (con->alive) {
+      // FIXME: cleanly close the connection to the socket here
+      con->alive= false;
+    }
+  }
+#endif
+}
+
 /******************************************************************************
 * Routines for socket_links
 ******************************************************************************/

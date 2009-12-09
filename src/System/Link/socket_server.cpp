@@ -53,6 +53,20 @@ number_of_servers () {
   return N (socket_server_set);
 }
 
+void
+close_all_servers () {
+#ifndef __MINGW32__
+  iterator<pointer> it= iterate (socket_server_set);
+  while (it->busy()) {
+    socket_server_rep* ss= (socket_server_rep*) it->next();
+    if (ss->alive) {
+      // FIXME: cleanly close the connection to the socket here
+      ss->alive= false;
+    }
+  }
+#endif
+}
+
 /******************************************************************************
 * Routines for socket_servers
 ******************************************************************************/

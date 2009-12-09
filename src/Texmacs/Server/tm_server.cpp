@@ -16,10 +16,8 @@
 #include "connect.hpp"
 #include "sys_utils.hpp"
 #include "file.hpp"
-#include "tm_link.hpp"
-#include "socket_link.hpp"
-#include "socket_server.hpp"
 #include "dictionary.hpp"
+#include "tm_link.hpp"
 #include "socket_notifier.hpp"
 
 server* the_server= NULL;

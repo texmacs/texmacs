@@ -40,7 +40,4 @@ public:
   void    start_client ();
 };
 
-int  number_of_servers ();
-void close_all_servers ();
-
 #endif // SOCKET_SERVER_H

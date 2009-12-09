@@ -97,6 +97,23 @@ make_pipe_link (string cmd) {
   return tm_new<pipe_link_rep> (cmd);
 }
 
+void
+close_all_pipes () {
+#ifndef __MINGW32__
+  iterator<pointer> it= iterate (pipe_link_set);
+  while (it->busy()) {
+    pipe_link_rep* con= (pipe_link_rep*) it->next();
+    if (con->alive) {
+      if (-1 != killpg(con->pid,SIGTERM)) {
+	sleep(2);
+	killpg(con->pid,SIGKILL);
+      }
+      con->alive= false;
+    }
+  }
+#endif
+}
+
 /******************************************************************************
 * Routines for pipe_links
 ******************************************************************************/
@@ -301,27 +318,6 @@ pipe_link_rep::stop () {
 
   remove_notifier (snout);
   remove_notifier (snerr);
-#endif
-}
-
-/******************************************************************************
-* Emergency exit for all pipes
-******************************************************************************/
-
-void
-close_all_pipes () {
-#ifndef __MINGW32__
-  iterator<pointer> it= iterate (pipe_link_set);
-  while (it->busy()) {
-    pipe_link_rep* con= (pipe_link_rep*) it->next();
-    if (con->alive) {
-      if (-1 != killpg(con->pid,SIGTERM)) {
-	sleep(2);
-	killpg(con->pid,SIGKILL);
-      }
-      con->alive= false;
-    }
-  }
 #endif
 }
 

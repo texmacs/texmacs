@@ -25,7 +25,7 @@
 #include "QTMWidget.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
-#include "socket_server.hpp" // for number_of_servers
+#include "tm_link.hpp" // for number_of_servers
 
 #include "Scheme/object.hpp"
 //#include "TeXmacs/server.hpp" // for get_server
