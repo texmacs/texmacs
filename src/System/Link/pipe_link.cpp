@@ -9,7 +9,10 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "pipe_link.hpp"
+#if !(defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__)))
+
+#include "tm_link.hpp"
+#include "socket_notifier.hpp"
 #include "sys_utils.hpp"
 #include "hashset.hpp"
 #include "iterator.hpp"
@@ -31,10 +34,48 @@
 
 hashset<pointer> pipe_link_set;
 void pipe_callback (void *obj, void *info);
+extern char **environ;
+
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+#define IN 0
+#define OUT 1
+#define TERMCHAR '\1'
 
 /******************************************************************************
-* Constructors and destructors for pipe_links
+* The pipe_link class
 ******************************************************************************/
+
+struct pipe_link_rep: tm_link_rep {
+  string cmd;           // command for launching the pipe
+  int    pid;           // process identifier of the child
+  int    pp_in [2];     // for data going to the child
+  int    pp_out[2];     // for data coming from the child
+  int    pp_err[2];     // for error messages coming from the child
+  int    in;            // file descriptor for data going to the child
+  int    out;           // file descriptor for data coming from the child
+  int    err;           // file descriptor for errors coming from the child
+
+  string outbuf;        // pending output from plugin
+  string errbuf;        // pending errors from plugin
+
+  socket_notifier snout, snerr;
+  
+public:
+  pipe_link_rep (string cmd);
+  ~pipe_link_rep ();
+
+  string  start ();
+  void    write (string s, int channel);
+  string& watch (int channel);
+  string  read (int channel);
+  void    listen (int msecs);
+  void    interrupt ();
+  void    stop ();
+
+  void    feed (int channel);
+};
 
 pipe_link_rep::pipe_link_rep (string cmd2): cmd (cmd2) {
   pipe_link_set->insert ((pointer) this);
@@ -324,3 +365,5 @@ void pipe_callback (void *obj, void *info) {
   }
 #endif
 }
+
+#endif // !(defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__)))

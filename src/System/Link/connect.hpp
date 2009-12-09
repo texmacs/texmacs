@@ -11,7 +11,7 @@
 
 #ifndef CONNECT_H
 #define CONNECT_H
-#include "pipe_link.hpp"
+#include "tm_link.hpp"
 
 bool   connection_declared (string name);
 tree   connection_info (string name, string session);

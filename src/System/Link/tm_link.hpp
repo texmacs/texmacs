@@ -14,7 +14,6 @@
 #include "tree.hpp"
 #include "command.hpp"
 
-
 #define CONNECTION_DEAD    0
 #define CONNECTION_DYING   1
 #define WAITING_FOR_INPUT  2
@@ -82,5 +81,7 @@ tm_link make_dynamic_link (string lib, string symb, string init, string ses);
 tm_link make_socket_link (string h, int p, int t= SOCKET_DEFAULT, int fd= -1);
 tm_link make_socket_server (int port);
 tm_link find_socket_link (int fd);
+
+void close_all_pipes ();
 
 #endif // TM_LINK_H

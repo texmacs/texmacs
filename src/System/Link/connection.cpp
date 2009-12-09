@@ -17,7 +17,6 @@
 ******************************************************************************/
 
 #include "connect.hpp"
-#include "pipe_link.hpp"
 #include "socket_notifier.hpp"
 #include "iterator.hpp"
 #include "convert.hpp"
