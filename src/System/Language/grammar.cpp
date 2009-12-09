@@ -34,40 +34,39 @@ parser_rep::set_emptyness() {
   bool new_empty;
   do {
     new_empty= false;
-    iterator<tree> it= iterate(grammar);
+    iterator<tree> it= iterate (grammar);
     while (it->busy()) {
       var_tree= it->next();
       var= var_tree[0]->label;
-      if (!(can_be_empty_table->contains(var))) {
-	rule= grammar(var_tree);
-	if (can_be_empty(rule)) {
+      if (!can_be_empty_table->contains (var)) {
+	rule= grammar (var_tree);
+	if (can_be_empty (rule)) {
 	  new_empty= true;
-	  can_be_empty_table(var)= true;
+	  can_be_empty_table (var)= true;
 	}
       }
     }
   }
-  while (new_empty== true);
+  while (new_empty);
 }
 
 bool
-parser_rep::can_be_empty(tree rule) {
-  if (L(rule)==as_tree_label("DOLLAR")) {
-      if (can_be_empty_table->contains(rule[0]->label))
-	{return true; } else return false;}
-  if (L(rule)==as_tree_label("STAR")) return true;
-  if (is_atomic(rule) && rule->label =="") return true;
-  if (is_atomic(rule) && rule->label !="") return false;
-  if (L(rule)==as_tree_label("OR")) {
-    int i=0;
-    while(i<N(rule)) { if (can_be_empty(rule[i])) return true; i++;}
-    }
-  if (L(rule)==as_tree_label("CONCAT")) {
-    int i=0;
-    while(i<N(rule)) { if (can_be_empty(rule[i])==false) return false; i++;}
+parser_rep::can_be_empty (tree rule) {
+  if (is_atomic (rule)) return rule->label == "";
+  if (L(rule) == as_tree_label ("DOLLAR"))
+    return can_be_empty_table->contains (rule[0]->label);
+  if (L(rule) == as_tree_label ("OR")) {
+    for (int i=0; i<N(rule); i++)
+      if (can_be_empty (rule[i])) return true;
+    return false;
+  }
+  if (L(rule) == as_tree_label ("CONCAT")) {
+    for (int i=0; i<N(rule); i++)
+      if (!can_be_empty (rule[i])) return false;
     return true;
   }
-  if (L(rule)==as_tree_label("RANGE")) return false;
+  if (L(rule) == as_tree_label ("STAR")) return true;
+  if (L(rule) == as_tree_label ("RANGE")) return false;
   return false;
 }
 
