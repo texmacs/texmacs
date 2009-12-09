@@ -10,14 +10,86 @@
 ******************************************************************************/
 
 #include "grammar.hpp"
+#include "iterator.hpp"
 #include "analyze.hpp"
 #include "impl_language.hpp"
 #include "Scheme/object.hpp"
 
-parser_rep::parser_rep(hashmap<tree,tree> g, string s) { grammar=g; xstring=s;}
+parser_rep::parser_rep(hashmap<tree,tree> g, string s) {
+  grammar=g; xstring=s;
+  set_emptyness(); cout<<can_be_empty_table;
+}
 
 parser::parser (hashmap<tree,tree> g, string s) { 
   rep= tm_new<parser_rep> (g, s);
+}
+
+/*
+      iterator<src_t> it= iterate (src_to_dest);
+      while (it->busy()) {
+	src_t  src = it->next();
+	dest_t dest= src_to_dest[src];
+	...
+      }
+*/
+
+void parser_rep::set_emptyness() {
+  tree var_tree;
+  string var;
+  tree rule;
+  bool new_empty;
+  do {
+    new_empty= false;
+    iterator<tree> it= iterate(grammar);
+    while (it->busy()) {
+      var_tree= it->next();
+      var= var_tree[0]->label;
+      if (!(can_be_empty_table->contains(var))) {
+	rule= grammar(var_tree);
+	if (can_be_empty(rule)) {
+	  new_empty= true;
+	  can_be_empty_table(var)= true;
+	}
+      }
+    }
+  }
+  while (new_empty== true);
+}
+
+bool parser_rep::can_be_empty(tree rule) {
+  if (L(rule)==as_tree_label("DOLLAR")) {
+      if (can_be_empty_table->contains(rule[0]->label))
+	{return true; } else return false;}
+  if (L(rule)==as_tree_label("DOLLAR")) return false;
+  if (L(rule)==as_tree_label("STAR")) return true;
+  if (is_atomic(rule) && rule->label=="") return true;
+  if (is_atomic(rule) && rule->label!="") return false;
+  if (L(rule)==as_tree_label("OR")) {
+    int i=0;
+    while(i<N(rule)) { if (can_be_empty(rule[i])) return true; i++;}
+    }
+  if (L(rule)==as_tree_label("CONCAT")) {
+    int i=0;
+    while(i<N(rule)) { if (can_be_empty(rule[i])==false) return false; i++;}
+    return true;
+  }
+  if (L(rule)==as_tree_label("RANGE")) return false;
+  return false;
+}
+
+void
+parser_rep::set_dependance(string var, tree rule) {
+  if (L(rule)==as_tree_label("DOLLAR") && N(rule)==1) {
+    pair<string,string> p(var,rule[0]->label);
+    dependance(p)=true;}
+  if (L(rule)==as_tree_label("OR") || L(rule)==as_tree_label("STAR")
+      || L(rule)==as_tree_label("CONCAT")) {
+      int i=0;
+      while(i<N(rule)) {
+	set_dependance(var,rule[i]);
+	i++;
+      }
+  }
 }
 
 int
