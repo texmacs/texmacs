@@ -24,10 +24,10 @@ public:
   hashmap<pair<tree,int>,int> evaluated_pair;
   hashmap<pair<tree,int>,bool> wanted_pair;
   hashmap<string,bool> can_be_empty_table;
-
   hashmap<pair<string,string>,bool> dependance;
 
   parser_rep (hashmap<tree,tree> g, string s);
+  void set_dependance();
   void set_dependance(string var, tree rule);
   void set_emptyness();
   bool can_be_empty(tree rule);

@@ -18,6 +18,7 @@
 parser_rep::parser_rep(hashmap<tree,tree> g, string s) {
   grammar=g; xstring=s;
   set_emptyness(); cout<<can_be_empty_table;
+  set_dependance(); cout<<dependance;
 }
 
 parser::parser (hashmap<tree,tree> g, string s) { 
@@ -56,14 +57,14 @@ void parser_rep::set_emptyness() {
   while (new_empty== true);
 }
 
-bool parser_rep::can_be_empty(tree rule) {
+bool
+parser_rep::can_be_empty(tree rule) {
   if (L(rule)==as_tree_label("DOLLAR")) {
       if (can_be_empty_table->contains(rule[0]->label))
 	{return true; } else return false;}
-  if (L(rule)==as_tree_label("DOLLAR")) return false;
   if (L(rule)==as_tree_label("STAR")) return true;
-  if (is_atomic(rule) && rule->label=="") return true;
-  if (is_atomic(rule) && rule->label!="") return false;
+  if (is_atomic(rule) && rule->label =="") return true;
+  if (is_atomic(rule) && rule->label !="") return false;
   if (L(rule)==as_tree_label("OR")) {
     int i=0;
     while(i<N(rule)) { if (can_be_empty(rule[i])) return true; i++;}
@@ -82,13 +83,26 @@ parser_rep::set_dependance(string var, tree rule) {
   if (L(rule)==as_tree_label("DOLLAR") && N(rule)==1) {
     pair<string,string> p(var,rule[0]->label);
     dependance(p)=true;}
-  if (L(rule)==as_tree_label("OR") || L(rule)==as_tree_label("STAR")
-      || L(rule)==as_tree_label("CONCAT")) {
-      int i=0;
-      while(i<N(rule)) {
-	set_dependance(var,rule[i]);
-	i++;
-      }
+  if (L(rule)==as_tree_label("OR")) {
+    int i=0;
+    while(i<N(rule)) {set_dependance(var,rule[i]);i++;}
+  }
+  if (L(rule)==as_tree_label("STAR")) set_dependance(var,rule[0]);
+  if (L(rule)==as_tree_label("CONCAT")) {
+    int i=0;
+    while(i<N(rule) && can_be_empty(rule[i])) {set_dependance(var,rule[i]);i++;}
+  }
+}
+
+void
+parser_rep::set_dependance() {
+  tree var_tree;
+  string var;
+  iterator<tree> it= iterate(grammar);
+  while (it->busy()) {
+    var_tree=it->next();
+    var=var_tree[0]->label;
+    set_dependance(var,grammar(var_tree));
   }
 }
 
