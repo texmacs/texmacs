@@ -256,14 +256,14 @@ QTMWidget::repaint_invalid_regions () {
                          sz.width(),sz.height())) ;
     
     if (dy<0) 
-      invalidate_rect(0,0,sz.width(),-dy);
+      invalidate_rect(0,0,sz.width(),min(sz.height(),-dy));
     else if (dy>0)
-      invalidate_rect(0,sz.height()-dy,sz.width(),sz.height());
+      invalidate_rect(0,max(0,sz.height()-dy),sz.width(),sz.height());
     
     if (dx<0) 
-      invalidate_rect(0,0,-dx,sz.height());
+      invalidate_rect(0,0,min(-dx,sz.width()),sz.height());
     else if (dx>0)
-      invalidate_rect(sz.width()-dx,0,sz.width(),sz.height());
+      invalidate_rect(max(0,sz.width()-dx),0,sz.width(),sz.height());
     
     // we cal update now to allow repainint of invalid regions
     // this cannot be done directly since interpose handler needs
@@ -319,6 +319,10 @@ QTMWidget::repaint_invalid_regions () {
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
         tm_widget()->handle_repaint (r->x1, r->y2, r->x2, r->y1);
         if (ren->interrupted ()) {
+          //cout << "interrupted repainting of  " << r0 << "\n";
+          //ren->set_color(green);
+          //ren->line(r->x1, r->y1, r->x2, r->y2);
+          //ren->line(r->x1, r->y2, r->x2, r->y1);
           invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
         } 
         qrgn += qr;
@@ -331,11 +335,9 @@ QTMWidget::repaint_invalid_regions () {
     
   }
 
-  // propagate immediatly the changes to the screen
-  
-  //backingPixmap.save("/Users/mgubi/Desktop/backingPixmap.png");
+  // propagate immediatly the changes to the screen  
   QAbstractScrollArea::viewport()->repaint(qrgn);
-  //QAbstractScrollArea::viewport()->update(qrgn);
+  
 }
 
 void 

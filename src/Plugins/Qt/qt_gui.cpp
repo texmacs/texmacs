@@ -623,7 +623,7 @@ qt_gui_rep::check_event (int type) {
         timeout_time= now + (100 / (N(waiting_events) + 1));
         interrupted= (N(waiting_events) > 0);
         //if (interrupted) cout << "INTERRUPT " 
-        //  << texmacs_time() << "------------------" << LF;
+        //  << now << "------------------" << LF;
         return interrupted;
       }
     case INTERRUPTED_EVENT:
@@ -640,21 +640,17 @@ qt_gui_rep::update () {
   // needs_update, and ensuring that interpose_handler is run during a pass in 
   // the eventloop afterwards we reactivate the timer with a pause 
   // (see FIXME below) 
-  time_t now = texmacs_time();
 
   time_credit = 100;
   updating = true;
   updatetimer->stop();
   
-
-    
   int count_events = 0;
   int max_proc_events = 2;
   
   do {
-    interrupted = false;  
+    time_t now = texmacs_time();
     needing_update = false;
-    timeout_time = now + time_credit;
     
     count_events++;
 
@@ -687,10 +683,11 @@ qt_gui_rep::update () {
         w->repaint_invalid_regions();
       }
       
+      if (interrupted) needing_update = true;
       //cout << "AND END" << LF;
     }
-    
-  } while (N(waiting_events) || needing_update);
+  
+  } while ((N(waiting_events)>0) || needing_update);
   
     
   updating = false;

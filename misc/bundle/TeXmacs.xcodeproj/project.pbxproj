@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126710D102B300232476 /* QTMPipeLink.hpp */; };
 		9C0B49F010A8CC110097A335 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476110A8CC0F0097A335 /* generic.cpp */; };
 		9C0B49F110A8CC110097A335 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476210A8CC0F0097A335 /* input.cpp */; };
 		9C0B49F210A8CC110097A335 /* from_scheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476510A8CC0F0097A335 /* from_scheme.cpp */; };
@@ -3015,6 +3016,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
 				9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */,
 				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
