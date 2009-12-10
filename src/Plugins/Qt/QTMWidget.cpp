@@ -320,7 +320,7 @@ QTMWidget::repaint_invalid_regions () {
         tm_widget()->handle_repaint (r->x1, r->y2, r->x2, r->y1);
         if (ren->interrupted ()) {
           invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
-        }
+        } 
         qrgn += qr;
         rects = rects->next;
       }
