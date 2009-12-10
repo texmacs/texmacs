@@ -275,6 +275,8 @@
 		9C0B4BD010A8D8E40097A335 /* evaluate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B481010A8CC100097A335 /* evaluate.cpp */; };
 		9C0B4BD110A8D8E50097A335 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B481210A8CC100097A335 /* object.cpp */; };
 		9C0B4BDE10A8D9370097A335 /* TeXmacs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C0B430010A8CB4E0097A335 /* TeXmacs */; };
+		9C1D126810D102B300232476 /* qt_pipe_link.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126510D102B300232476 /* qt_pipe_link.cpp */; };
+		9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126610D102B300232476 /* QTMPipeLink.cpp */; };
 		9C2C2ADC10BAA420009B855A /* TeXmacsQt.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */; };
 		9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */; };
 		9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */; };
@@ -1052,7 +1054,6 @@
 		9C0B494910A8CC110097A335 /* dyn_link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dyn_link.cpp; sourceTree = "<group>"; };
 		9C0B494A10A8CC110097A335 /* dyn_link.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dyn_link.hpp; sourceTree = "<group>"; };
 		9C0B494B10A8CC110097A335 /* pipe_link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipe_link.cpp; sourceTree = "<group>"; };
-		9C0B494C10A8CC110097A335 /* pipe_link.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pipe_link.hpp; sourceTree = "<group>"; };
 		9C0B494D10A8CC110097A335 /* socket_link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = socket_link.cpp; sourceTree = "<group>"; };
 		9C0B494E10A8CC110097A335 /* socket_link.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = socket_link.hpp; sourceTree = "<group>"; };
 		9C0B494F10A8CC110097A335 /* socket_notifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = socket_notifier.cpp; sourceTree = "<group>"; };
@@ -1203,6 +1204,9 @@
 		9C0B4B5910A8CCA00097A335 /* TeXmacs.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = TeXmacs.icns; sourceTree = "<group>"; };
 		9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		9C0B4B7010A8CE320097A335 /* Info-Xcode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = "Info-Xcode.plist"; sourceTree = "<group>"; };
+		9C1D126510D102B300232476 /* qt_pipe_link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_pipe_link.cpp; sourceTree = "<group>"; };
+		9C1D126610D102B300232476 /* QTMPipeLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMPipeLink.cpp; sourceTree = "<group>"; };
+		9C1D126710D102B300232476 /* QTMPipeLink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMPipeLink.hpp; sourceTree = "<group>"; };
 		9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsQt.xcconfig; sourceTree = "<group>"; };
 		9C5DBAD810A8DDD7008B7623 /* makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.in; path = src/makefile.in; sourceTree = "<group>"; };
 		9C5DBADA10A8DE60008B7623 /* Base.xcconfig.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Base.xcconfig.in; sourceTree = "<group>"; };
@@ -1940,6 +1944,9 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				9C1D126510D102B300232476 /* qt_pipe_link.cpp */,
+				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
+				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
 				9C0B48A410A8CC100097A335 /* NOTES */,
 				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
 				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
@@ -2259,7 +2266,6 @@
 				9C0B494910A8CC110097A335 /* dyn_link.cpp */,
 				9C0B494A10A8CC110097A335 /* dyn_link.hpp */,
 				9C0B494B10A8CC110097A335 /* pipe_link.cpp */,
-				9C0B494C10A8CC110097A335 /* pipe_link.hpp */,
 				9C0B494D10A8CC110097A335 /* socket_link.cpp */,
 				9C0B494E10A8CC110097A335 /* socket_link.hpp */,
 				9C0B494F10A8CC110097A335 /* socket_notifier.cpp */,
@@ -3000,6 +3006,8 @@
 				9C0B4BD010A8D8E40097A335 /* evaluate.cpp in Sources */,
 				9C0B4BD110A8D8E50097A335 /* object.cpp in Sources */,
 				9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */,
+				9C1D126810D102B300232476 /* qt_pipe_link.cpp in Sources */,
+				9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
