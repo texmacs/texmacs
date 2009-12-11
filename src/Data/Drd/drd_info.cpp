@@ -327,7 +327,7 @@ drd_info_rep::get_writability_child (tree t, int i) {
 }
 
 /******************************************************************************
-* Mode determination
+* Environment determination
 ******************************************************************************/
 
 void
@@ -363,49 +363,98 @@ drd_info_rep::get_mode_child (tree t, int i, int mode) {
   return cmode;
 }
 
+static int
+env_to_mode (tree t) {
+  if (t == "") return -1;
+  for (int i=0; i<N(t); i+=2)
+    if (t[i] == MODE) {
+      if (t[i+1] == "text") return MODE_TEXT;
+      if (t[i+1] == "math") return MODE_MATH;
+      if (t[i+1] == "prog") return MODE_PROG;
+      if (t[i+1] == "src" ) return MODE_SRC ;
+    }
+  return MODE_PARENT;
+}
+
+static tree
+mode_to_env (int m) {
+  if (m == -1) return "";
+  if (m == MODE_TEXT) return tree (WITH, MODE, "text");
+  if (m == MODE_MATH) return tree (WITH, MODE, "math");
+  if (m == MODE_PROG) return tree (WITH, MODE, "prog");
+  if (m == MODE_SRC ) return tree (WITH, MODE, "src" );
+  return tree (WITH);
+}
+
+void
+drd_info_rep::set_env (tree_label l, int nr, tree env) {
+  set_mode (l, nr, env_to_mode (env));
+}
+
+tree
+drd_info_rep::get_env (tree_label l, int nr) {
+  return mode_to_env (get_mode (l, nr));
+}
+
+void
+drd_info_rep::freeze_env (tree_label l, int nr) {
+  freeze_mode (l, nr);
+}
+
+tree
+drd_info_rep::get_env_child (tree t, int i, tree env) {
+  return mode_to_env (get_mode_child (t, i, env_to_mode (env)));
+}
+
 /******************************************************************************
 * Heuristic initialization of DRD
 ******************************************************************************/
 
-static int
-arg_access_mode (drd_info_rep* drd, tree t, tree arg, int mode) {
-  // returns -1 if unaccessible and the mode if accessible
-  if (is_atomic (t)) return -1;
-  else if (t == arg) return mode;
+static tree
+arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
+  // returns "" if unaccessible and the env if accessible
+  if (is_atomic (t)) return "";
+  else if (t == arg) return env;
   else if (is_func (t, MAP_ARGS) && (t[2] == arg[0])) {
     if ((N(t) >= 4) && (N(arg) >= 2) && (as_int (t[3]) > as_int (arg[1])))
-      return -1;
+      return "";
     if ((N(t) == 5) && (N(arg) >= 2) && (as_int (t[3]) <= as_int (arg[1])))
-      return -1;
+      return "";
     tree_label inner= make_tree_label (as_string (t[0]));
     tree_label outer= make_tree_label (as_string (t[1]));
     if ((drd->get_nr_indices (inner) > 0) &&
 	(drd->get_accessible (inner, 0) == ACCESSIBLE_ALWAYS) &&
 	drd->all_accessible (outer))
-      return mode;
-    return -1;
+      return env;
+    return "";
   }
-  else if (is_func (t, MACRO)) return -1;
+  else if (is_func (t, MACRO)) return "";
   else if (is_func (t, WITH)) {
-    int i, n= N(t)-1;
+    int i, j, n= N(t)-1;
     for (i=0; i<n; i+=2)
-      if (t[i] == MODE) {
-	if (t[i+1] == "text") mode= MODE_TEXT;
-	if (t[i+1] == "math") mode= MODE_MATH;
-	if (t[i+1] == "prog") mode= MODE_PROG;
-	if (t[i+1] == "src" ) mode= MODE_SRC ;
+      if (is_atomic (t[i])) {
+	for (j=0; j<=N(env); j+=2)
+	  if (j == N(env)) {
+	    env= env * tree (WITH, t[i], t[i+1]);
+	    break;
+	  }
+	  else if (t[i]->label <= env[j]->label) {
+	    if (t[i]->label != env[j]->label)
+	      env= env (0, j) * tree (WITH, t[i], t[i+1]) * env (j, N(env));
+	    break;
+	  }
       }
-    return arg_access_mode (drd, t[n], arg, mode);
+    return arg_access_env (drd, t[n], arg, env);
   }
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (drd->is_accessible_child (t, i)) {
-	int cmode= drd->get_mode_child (t, i, mode);
-	int amode= arg_access_mode (drd, t[i], arg, cmode);
-	if (amode >= 0) return amode;
+	tree cenv= drd->get_env_child (t, i, env);
+	tree aenv= arg_access_env (drd, t[i], arg, cenv);
+	if (aenv != "") return aenv;
       }
-    return -1;
+    return "";
   }
 }
 
@@ -417,10 +466,10 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
   for (i=0; i<n; i++) {
     tree arg (ARG, macro[i]);
-    int mode= arg_access_mode (this, macro[n], arg, MODE_PARENT);
-    if (mode >= 0) {
+    tree env= arg_access_env (this, macro[n], arg, tree (WITH));
+    if (env != "") {
       set_accessible (l, i, ACCESSIBLE_ALWAYS);
-      set_mode (l, i, mode);
+      set_env (l, i, env);
     }
   }
   // if (old_ti != info[l])
@@ -451,10 +500,10 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
   for (i=0; i<=m; i++) {
     tree arg (ARG, xmacro[0], as_string (i));
-    int mode= arg_access_mode (this, xmacro[1], arg, MODE_PARENT);
-    if (mode >= 0) {
+    tree env= arg_access_env (this, xmacro[1], arg, tree (WITH));
+    if (env != "") {
       set_accessible (l, i, ACCESSIBLE_ALWAYS);
-      set_mode (l, i, mode);
+      set_env (l, i, env);
     }
   }
   // if (old_ti != info[l])

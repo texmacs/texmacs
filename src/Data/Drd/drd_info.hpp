@@ -77,6 +77,11 @@ public:
   void freeze_mode (tree_label tag, int nr);
   int  get_mode_child (tree t, int child, int mode);
 
+  void set_env (tree_label tag, int nr, tree mode);
+  tree get_env (tree_label tag, int nr);
+  void freeze_env (tree_label tag, int nr);
+  tree get_env_child (tree t, int child, tree mode);
+
   /* Heuristic initialization */
   bool heuristic_init_macro (string var, tree macro);
   bool heuristic_init_xmacro (string var, tree xmacro);
