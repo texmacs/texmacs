@@ -770,7 +770,7 @@ raw_unquote (string s) {
 
 string
 escape_sh (string s) {
-#ifdef OS_WIN32
+#if defined (__MINGW__) || defined (__MINGW32__) || defined (OS_WIN32)
   return raw_quote (s);
 #else
   int i, n= N(s);

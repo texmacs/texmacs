@@ -724,6 +724,7 @@ CONFIG_GUI_DEFINE
 CONFIG_CXXDIALECT
 CONFIG_OS
 CONFIG_OS_SUFFIX
+CONFIG_OS_COMPAT
 CONFIG_CXXWARNING
 CONFIG_CXXTEMPLATE
 CONFIG_CXXOPTIMIZE
@@ -8041,6 +8042,7 @@ LIBS="$SAVE_LIBS"
 
 CONFIG_OS="GNU_LINUX"
 CONFIG_OS_SUFFIX="gnu-linux"
+CONFIG_OS_COMPAT="Unix"
 CONFIG_MACOS=""
 CONFIG_CXXFLAGS=""
 CONFIG_CXXTEMPLATE=""
@@ -8615,6 +8617,7 @@ echo "${ECHO_T}final adjustments for an Intel or AMS Solaris host" >&6; }
   *mingw*)
     { echo "$as_me:$LINENO: result: final adjustments for mingw host" >&5
 echo "${ECHO_T}final adjustments for mingw host" >&6; }
+    CONFIG_OS_COMPAT="Windows"
     LDRT="-lmingwex"
   ;;
   *-*-cygwin)
@@ -9803,6 +9806,7 @@ esac
 
 
 
+
 #--------------------------------------------------------------------
 # Default paths for installation
 #--------------------------------------------------------------------
@@ -10705,6 +10709,7 @@ CONFIG_GUI_DEFINE!$CONFIG_GUI_DEFINE$ac_delim
 CONFIG_CXXDIALECT!$CONFIG_CXXDIALECT$ac_delim
 CONFIG_OS!$CONFIG_OS$ac_delim
 CONFIG_OS_SUFFIX!$CONFIG_OS_SUFFIX$ac_delim
+CONFIG_OS_COMPAT!$CONFIG_OS_COMPAT$ac_delim
 CONFIG_CXXWARNING!$CONFIG_CXXWARNING$ac_delim
 CONFIG_CXXTEMPLATE!$CONFIG_CXXTEMPLATE$ac_delim
 CONFIG_CXXOPTIMIZE!$CONFIG_CXXOPTIMIZE$ac_delim
@@ -10738,7 +10743,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 46; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 47; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

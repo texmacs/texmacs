@@ -43,9 +43,9 @@ inline void system (string which, url u1, const char* sep, url u2) {
   system (which * " " * sys_concretize (u1) * " " * sep *
 	          " " * sys_concretize (u2)); }
 inline string eval_system (string which, url u1) {
-  return eval_system (which * " " * concretize (u1)); }
+  return eval_system (which * " " * escape_sh (concretize (u1))); }
 inline string eval_system (string which, url u1, url u2) {
-  return eval_system (which * " " * concretize (u1) * " " * concretize (u2)); }
+  return eval_system (which * " " * escape_sh (concretize (u1)) * " " * escape_sh (concretize (u2))); }
 
 void move (url from, url to);
 void copy (url from, url to);

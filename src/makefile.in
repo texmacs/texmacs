@@ -97,6 +97,7 @@ plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Cairo Imlib2 \
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
+os_src       := $(call findsrc_in,Plugins,@CONFIG_OS_COMPAT@)
 qt_src       := $(call findsrc_in,Plugins,@CONFIG_QT@)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
@@ -118,7 +119,7 @@ make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
  $(edit_src) $(guile_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
- $(typeset_src) $(style_src) $(qt_src))
+ $(typeset_src) $(style_src) $(qt_src)) $(os_src)
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 
@@ -137,6 +138,7 @@ graphics_incl := $(system_incl)
 plugins_incl  := $(system_incl)
 x11_incl      := $(system_incl)
 cocoa_incl    := $(system_incl)
+os_incl       := $(system_incl)
 qt_incl       := $(system_incl)
 style_incl    := $(system_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
 typeset_incl  := $(system_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
@@ -217,6 +219,7 @@ graphics_obj := $(call makeobj,$(graphics_src))
 x11_obj      := $(call makeobj,$(x11_src))
 cocoa_m_obj  := $(call makeobj_m,$(cocoa_m_src))
 cocoa_mm_obj := $(call makeobj_mm,$(cocoa_mm_src))
+os_obj       := $(call makeobj,$(os_src))
 moc_obj	     := $(call makeobj,$(qt_moc_src))
 qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
 plugins_obj  := $(call makeobj,$(plugins_src))
@@ -253,6 +256,8 @@ $(plugins_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
+$(os_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(os_incl))
 $(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
@@ -312,6 +317,8 @@ uses_data     := $(data_obj)
 uses_graphics := $(graphics_obj)
 uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
+uses_os       := $(os_obj)
+uses_windows  := $(windows_obj)
 uses_qt       := $(qt_obj) $(moc_obj)
 uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
@@ -323,7 +330,7 @@ uses_texmacs  := $(texmacs_obj)
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 qt cocoa style typeset edit glue texmacs))
+ plugins x11 os qt cocoa style typeset edit glue texmacs))
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
   $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL) -mwindows

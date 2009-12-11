@@ -16,75 +16,40 @@
 #include <sys/misc.h>
 #endif
 
+#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#include "../../Plugins/Qt/qt_sys_utils.hpp"
+#else
+#include "../../Plugins/Unix/unix_sys_utils.hpp"
+#endif
+
 int script_status = 1;
 
 /******************************************************************************
 * System functions
 ******************************************************************************/
 
-#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
-namespace {
-  namespace win32 {
-    #include <windows.h>
-
-    int
-    system (string s) {
-      if (starts(s, "convert ")) return 1;
-      STARTUPINFOW si;
-      PROCESS_INFORMATION pi;
-      
-      char* cs = as_charp(s);
-      WCHAR* wcs = tm_new_array<WCHAR>(N(s));
-      mbstowcs(wcs, cs, N(s)); 
-      ZeroMemory(&si, (sizeof (si)));
-      si.cb = (sizeof (si));
-      ZeroMemory( &pi, (sizeof (pi)));
-      int ret = CreateProcess(L"cmd.exe", wcs, 0, 0, FALSE, CREATE_NO_WINDOW, 0, 0, &si, &pi);
-      if (ret) {
-        WaitForSingleObject(pi.hProcess, INFINITE);
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-      }
-      tm_delete_array(wcs);
-      tm_delete_array(cs);
-      return ret;
-    }
-  }
-}
-#endif
-
 int
 system (string s) {
   if (DEBUG_STD) cerr << "TeXmacs] System: " << s << "\n";
-#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
-  return win32::system(s);
+#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+//  if (starts (s, "convert ")) return 1;
+  string result;
+  return qt_system (s, result);
 #else
-  char* cs = as_charp(s);
-  int ret = system(cs);
-  tm_delete_array(cs);
-  return ret;
+  return unix_system (s);
 #endif
 }
 
 string
 eval_system (string s) {
-  url temp= url_temp ();
-  string temp_s= escape_sh (concretize (temp));
-#ifdef OS_WIN32
-  system (s * " > \"" * temp_s * "\"");
-#else
-  system (s * " > " * temp_s);
-#endif
+#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
   string result;
-  bool flag= load_string (temp, result, false);
-  remove (temp);
-  if (flag) {
-#ifdef OS_WIN32
-    cerr << "TeXmacs] failed: " << s * " > " * temp_s << "\n";
-#endif
-    return "";
-  }
+  qt_system (s, result);
   return result;
+#else
+  return unix_eval_system (s);
+#endif
+
 }
 
 string
