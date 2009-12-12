@@ -182,7 +182,7 @@ edit_typeset_rep::typeset_invalidate_env () {
 
 void
 edit_typeset_rep::typeset_exec_until (path p) {
-  time_t t1= texmacs_time ();
+  //time_t t1= texmacs_time ();
   if (has_changed (THE_TREE + THE_ENVIRONMENT))
     if (p != correct_cursor (et, rp * 0)) {
       if (DEBUG_STD)
@@ -211,8 +211,8 @@ edit_typeset_rep::typeset_exec_until (path p) {
   exec_until (ttt, p / rp);
 #endif
   env->read_env (cur (p));
-  time_t t2= texmacs_time ();
-  if (t2 - t1 >= 10) cout << "typeset_exec_until took " << t2-t1 << "ms\n";
+  //time_t t2= texmacs_time ();
+  //if (t2 - t1 >= 10) cout << "typeset_exec_until took " << t2-t1 << "ms\n";
 }
 
 bool
