@@ -13,6 +13,7 @@
 #include "drd_std.hpp"
 #include "drd_mode.hpp"
 #include "analyze.hpp"
+#include "vars.hpp"
 
 /******************************************************************************
 * Finding a closest cursor inside a tree
@@ -87,7 +88,7 @@ is_accessible_cursor (tree t, path p) {
     return is_modified_accessible (t, p, false, true);
   default:
     if (!the_drd->is_accessible_child (t, p->item)) return false;
-    else if (the_drd->get_mode_child (t, p->item, MODE_PARENT) == MODE_SRC) {
+    else if (the_drd->get_env_child (t, p->item, MODE, "") == "src") {
       int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
       bool r= is_accessible_cursor (t[p->item], p->next);
       set_access_mode (old_mode);

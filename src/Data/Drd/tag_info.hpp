@@ -111,21 +111,16 @@ struct parent_info {
 #define BLOCK_REQUIRE_INLINE  1
 #define BLOCK_REQUIRE_NONE    2
 
-#define MODE_PARENT           0
-#define MODE_TEXT             1
-#define MODE_MATH             2
-#define MODE_PROG             3
-#define MODE_SRC              4
-
 struct child_info {
+  tree     env;
   unsigned accessible        : 2; // child is accessible?
   unsigned writability       : 2; // writability of child
   unsigned block             : 2; // require children to be blocks?
-  unsigned mode              : 3; // in which mode is the child?
+  unsigned env2              : 3; // in which mode is the child?
   unsigned freeze_accessible : 1; // true => disable heuristic determination
   unsigned freeze_writability: 1;
   unsigned freeze_block      : 1;
-  unsigned freeze_mode       : 1;
+  unsigned freeze_env        : 1;
 
   child_info (bool frozen= false);
   child_info (string s);

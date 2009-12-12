@@ -89,11 +89,12 @@ child_info::child_info (bool frozen) {
   accessible         = ACCESSIBLE_NEVER;
   writability        = WRITABILITY_NORMAL;
   block              = 0;
-  mode               = MODE_PARENT;
+  env2               = 0;
   freeze_accessible  = frozen;
   freeze_writability = frozen;
   freeze_block       = frozen;
-  freeze_mode        = frozen;
+  freeze_env         = frozen;
+  env= tree (WITH);
 }
 
 child_info::child_info (string s) {
@@ -101,11 +102,12 @@ child_info::child_info (string s) {
   get_bits (accessible        , 2);
   get_bits (writability       , 2);
   get_bits (block             , 2);
-  get_bits (mode              , 3);
+  get_bits (env2              , 3);
   get_bits (freeze_accessible , 1);
   get_bits (freeze_writability, 1);
   get_bits (freeze_block      , 1);
-  get_bits (freeze_mode       , 1);
+  get_bits (freeze_env        , 1);
+  env= tree (WITH);
 }
 
 child_info::operator string () {
@@ -113,11 +115,11 @@ child_info::operator string () {
   set_bits (accessible        , 2);
   set_bits (writability       , 2);
   set_bits (block             , 2);
-  set_bits (mode              , 3);
+  set_bits (env2              , 3);
   set_bits (freeze_accessible , 1);
   set_bits (freeze_writability, 1);
   set_bits (freeze_block      , 1);
-  set_bits (freeze_mode       , 1);
+  set_bits (freeze_env        , 1);
   return as_string (i);
 }
 
@@ -127,11 +129,11 @@ child_info::operator == (const child_info& ci) {
     (accessible         == ci.accessible        ) &&
     (writability        == ci.writability       ) &&
     (block              == ci.block             ) &&
-    (mode               == ci.mode              ) &&
+    (env2               == ci.env2              ) &&
     (freeze_accessible  == ci.freeze_accessible ) &&
     (freeze_writability == ci.freeze_writability) &&
     (freeze_block       == ci.freeze_block      ) &&
-    (freeze_mode        == ci.freeze_mode       );
+    (freeze_env         == ci.freeze_env        );
 }
 
 bool

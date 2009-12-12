@@ -72,15 +72,11 @@ public:
   int  get_block (tree_label tag, int nr);
   void freeze_block (tree_label tag, int nr);
 
-  void set_mode (tree_label tag, int nr, int mode);
-  int  get_mode (tree_label tag, int nr);
-  void freeze_mode (tree_label tag, int nr);
-  int  get_mode_child (tree t, int child, int mode);
-
-  void set_env (tree_label tag, int nr, tree mode);
+  void set_env (tree_label tag, int nr, tree env);
   tree get_env (tree_label tag, int nr);
   void freeze_env (tree_label tag, int nr);
-  tree get_env_child (tree t, int child, tree mode);
+  tree get_env_child (tree t, int child, tree env);
+  tree get_env_child (tree t, int child, string var, tree val);
 
   /* Heuristic initialization */
   bool heuristic_init_macro (string var, tree macro);

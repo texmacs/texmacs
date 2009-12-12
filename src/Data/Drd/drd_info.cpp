@@ -330,80 +330,67 @@ drd_info_rep::get_writability_child (tree t, int i) {
 * Environment determination
 ******************************************************************************/
 
-void
-drd_info_rep::set_mode (tree_label l, int nr, int mode) {
-  if (!info->contains (l)) info(l)= copy (info[l]);
-  tag_info  & ti= info(l);
-  if (nr >= N(ti->ci)) return;
-  child_info& ci= ti->ci[nr];
-  if (ci.freeze_mode) return;
-  ci.mode= mode;
-}
-
-int
-drd_info_rep::get_mode (tree_label l, int nr) {
-  return info[l]->ci[nr].mode;
-}
-
-void
-drd_info_rep::freeze_mode (tree_label l, int nr) {
-  if (!info->contains (l)) info(l)= copy (info[l]);
-  tag_info  & ti= info(l);
-  child_info& ci= ti->ci[nr];
-  ci.freeze_mode= true;
-}
-
-int
-drd_info_rep::get_mode_child (tree t, int i, int mode) {
-  tag_info ti= info[L(t)];
-  int index= ti->get_index (i, N(t));
-  if ((index<0) || (index>=N(ti->ci))) return -1;
-  int cmode= ti->ci[index].mode;
-  if (cmode == MODE_PARENT) return mode;
-  return cmode;
-}
-
-static int
-env_to_mode (tree t) {
-  if (t == "") return -1;
-  for (int i=0; i<N(t); i+=2)
-    if (t[i] == MODE) {
-      if (t[i+1] == "text") return MODE_TEXT;
-      if (t[i+1] == "math") return MODE_MATH;
-      if (t[i+1] == "prog") return MODE_PROG;
-      if (t[i+1] == "src" ) return MODE_SRC ;
+static tree
+env_merge (tree env, tree t) {
+  int i, j, n= N(t);
+  for (i=0; i<n; i+=2)
+    if (is_atomic (t[i])) {
+      for (j=0; j<=N(env); j+=2)
+	if (j == N(env))
+	  return env * tree (WITH, t[i], t[i+1]);
+	else if (t[i]->label <= env[j]->label) {
+	  if (t[i]->label == env[j]->label) return env;
+	  return env (0, j) * tree (WITH, t[i], t[i+1]) * env (j, N(env));
+	}
     }
-  return MODE_PARENT;
+  return env;
 }
 
 static tree
-mode_to_env (int m) {
-  if (m == -1) return "";
-  if (m == MODE_TEXT) return tree (WITH, MODE, "text");
-  if (m == MODE_MATH) return tree (WITH, MODE, "math");
-  if (m == MODE_PROG) return tree (WITH, MODE, "prog");
-  if (m == MODE_SRC ) return tree (WITH, MODE, "src" );
-  return tree (WITH);
+env_lookup (tree env, string var, tree val) {
+  int i, n= N(env);
+  for (i=0; i<n; i+=2)
+    if (env[i] == var)
+      return env[i+1];
+  return val;
 }
 
 void
 drd_info_rep::set_env (tree_label l, int nr, tree env) {
-  set_mode (l, nr, env_to_mode (env));
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
+  child_info& ci= ti->ci[nr];
+  if (ci.freeze_env) return;
+  ci.env= env;
 }
 
 tree
 drd_info_rep::get_env (tree_label l, int nr) {
-  return mode_to_env (get_mode (l, nr));
+  return info[l]->ci[nr].env;
 }
 
 void
 drd_info_rep::freeze_env (tree_label l, int nr) {
-  freeze_mode (l, nr);
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info  & ti= info(l);
+  child_info& ci= ti->ci[nr];
+  ci.freeze_env= true;
 }
 
 tree
 drd_info_rep::get_env_child (tree t, int i, tree env) {
-  return mode_to_env (get_mode_child (t, i, env_to_mode (env)));
+  tag_info ti= info[L(t)];
+  int index= ti->get_index (i, N(t));
+  if ((index<0) || (index>=N(ti->ci))) return "";
+  tree cenv= ti->ci[index].env;
+  return env_merge (env, cenv);
+}
+
+tree
+drd_info_rep::get_env_child (tree t, int i, string var, tree val) {
+  tree env= get_env_child (t, i, tree (WITH));
+  return env_lookup (env, var, val);
 }
 
 /******************************************************************************
@@ -430,21 +417,9 @@ arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
   }
   else if (is_func (t, MACRO)) return "";
   else if (is_func (t, WITH)) {
-    int i, j, n= N(t)-1;
-    for (i=0; i<n; i+=2)
-      if (is_atomic (t[i])) {
-	for (j=0; j<=N(env); j+=2)
-	  if (j == N(env)) {
-	    env= env * tree (WITH, t[i], t[i+1]);
-	    break;
-	  }
-	  else if (t[i]->label <= env[j]->label) {
-	    if (t[i]->label != env[j]->label)
-	      env= env (0, j) * tree (WITH, t[i], t[i+1]) * env (j, N(env));
-	    break;
-	  }
-      }
-    return arg_access_env (drd, t[n], arg, env);
+    int n= N(t)-1;
+    //cout << "env= " << env_merge (env, t (0, n)) << "\n";
+    return arg_access_env (drd, t[n], arg, env_merge (env, t (0, n)));
   }
   else {
     int i, n= N(t);
