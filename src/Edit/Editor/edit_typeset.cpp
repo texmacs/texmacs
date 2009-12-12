@@ -182,6 +182,7 @@ edit_typeset_rep::typeset_invalidate_env () {
 
 void
 edit_typeset_rep::typeset_exec_until (path p) {
+  time_t t1= texmacs_time ();
   if (has_changed (THE_TREE + THE_ENVIRONMENT))
     if (p != correct_cursor (et, rp * 0)) {
       if (DEBUG_STD)
@@ -192,8 +193,26 @@ edit_typeset_rep::typeset_exec_until (path p) {
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
   typeset_prepare ();
+#ifdef XXX_QTTEXMACS
+  tree t= subtree (et, rp);
+  path q= path_up (p / rp);
+  while (!is_nil (q)) {
+    int i= q->item;
+    tree w= drd->get_env_child (t, i, tree (WITH));
+    if (w == "") break;
+    for (int j=0; j<N(w); j+=2) {
+      //cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
+      env->write (w[j]->label, env->exec (w[j+1]));
+    }
+    t= t[i];
+    q= q->next;
+  }
+#else
   exec_until (ttt, p / rp);
+#endif
   env->read_env (cur (p));
+  time_t t2= texmacs_time ();
+  if (t2 - t1 >= 10) cout << "typeset_exec_until took " << t2-t1 << "ms\n";
 }
 
 bool

@@ -357,6 +357,7 @@ env_lookup (tree env, string var, tree val) {
 
 void
 drd_info_rep::set_env (tree_label l, int nr, tree env) {
+  // cout << as_string (l) << ", " << nr << " -> " << env << "\n";
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -380,17 +381,32 @@ drd_info_rep::freeze_env (tree_label l, int nr) {
 
 tree
 drd_info_rep::get_env_child (tree t, int i, tree env) {
-  tag_info ti= info[L(t)];
-  int index= ti->get_index (i, N(t));
-  if ((index<0) || (index>=N(ti->ci))) return "";
-  tree cenv= ti->ci[index].env;
-  return env_merge (env, cenv);
+  if (L(t) == WITH && i == N(t)-1)
+    return env_merge (env, t (0, N(t)-1));
+  else {
+    tag_info ti= info[L(t)];
+    int index= ti->get_index (i, N(t));
+    if ((index<0) || (index>=N(ti->ci))) return "";
+    tree cenv= ti->ci[index].env;
+    //cout << t << ", " << i << " -> " << env_merge (env, cenv) << "\n";
+    return env_merge (env, cenv);
+  }
 }
 
 tree
 drd_info_rep::get_env_child (tree t, int i, string var, tree val) {
   tree env= get_env_child (t, i, tree (WITH));
   return env_lookup (env, var, val);
+}
+
+tree
+drd_info_rep::get_env_descendant (tree t, path p, tree env) {
+  if (is_nil (p) || env == "") return env;
+  int  i= p->item;
+  path q= p->next;
+  if (is_compound (t) && i >= 0 && i < N(t))
+    return get_env_descendant (t[i], q, get_env_child (t, i, env));
+  return "";
 }
 
 /******************************************************************************

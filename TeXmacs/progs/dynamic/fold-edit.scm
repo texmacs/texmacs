@@ -454,7 +454,7 @@
 	 (cond ((== mode :var-last)
 		(switch-set-range t 1 :last #f)
 		(switch-set t 0 #t)
-		(tree-insert-unary t 0 '(traversed)))
+		(tree-insert-node t 0 '(traversed)))
 	       ((== mode :first)
 		(switch-set-range t 1 :last #f)
 		(switch-set t 0 #t))

@@ -77,6 +77,7 @@ public:
   void freeze_env (tree_label tag, int nr);
   tree get_env_child (tree t, int child, tree env);
   tree get_env_child (tree t, int child, string var, tree val);
+  tree get_env_descendant (tree t, path p, tree env);
 
   /* Heuristic initialization */
   bool heuristic_init_macro (string var, tree macro);
