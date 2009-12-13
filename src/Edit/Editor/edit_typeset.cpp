@@ -201,6 +201,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
       int i= q->item;
       tree w= drd->get_env_child (t, i, tree (WITH));
       if (w == "") break;
+      //cout << "w= " << w << "\n";
       for (int j=0; j<N(w); j+=2) {
 	//cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
 	env->write (w[j]->label, env->exec (w[j+1]));

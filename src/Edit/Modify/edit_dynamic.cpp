@@ -82,7 +82,7 @@ contains_table_format (tree t, tree var) {
 
 void
 edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
-  // cout << "Make compound " << as_string (l) << "\n";
+  //cout << "Make compound " << as_string (l) << "\n";
   if (n == -1) {
     for (n=0; true; n++) {
       if (drd->correct_arity (l, n) &&

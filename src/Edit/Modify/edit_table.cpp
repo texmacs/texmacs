@@ -994,6 +994,7 @@ edit_table_rep::table_ver_decorate (path fp, int row, int rbef, int raft) {
 
 void
 edit_table_rep::make_table (int nr_rows, int nr_cols) {
+  //cout << "make_table " << nr_rows << ", " << nr_cols << "\n";
   tree T= empty_table (nr_rows, nr_cols);
   path p (0, 0, 0, 0);
   tree format_T (TFORMAT, T);

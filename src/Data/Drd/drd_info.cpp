@@ -331,23 +331,29 @@ drd_info_rep::get_writability_child (tree t, int i) {
 ******************************************************************************/
 
 static tree
-env_merge (tree env, tree t) {
-  int i, j, n= N(t);
-  for (i=0; i<n; i+=2)
-    if (is_atomic (t[i])) {
-      for (j=0; j<=N(env); j+=2)
-	if (j == N(env))
-	  return env * tree (WITH, t[i], t[i+1]);
-	else if (t[i]->label <= env[j]->label) {
-	  if (t[i]->label == env[j]->label) return env;
-	  return env (0, j) * tree (WITH, t[i], t[i+1]) * env (j, N(env));
-	}
+env_write (tree env, string var, tree val) {
+  for (int i=0; i<=N(env); i+=2)
+    if (i == N(env))
+      return env * tree (WITH, var, val);
+    else if (var <= env[i]->label) {
+      if (var == env[i]->label)
+	return env (0, i) * tree (WITH, var, val) * env (i+2, N(env));
+      return env (0, i) * tree (WITH, var, val) * env (i, N(env));
     }
   return env;
 }
 
 static tree
-env_lookup (tree env, string var, tree val) {
+env_merge (tree env, tree t) {
+  int i, n= N(t);
+  for (i=0; i<n; i+=2)
+    if (is_atomic (t[i]))
+      env= env_write (env, t[i]->label, t[i+1]);
+  return env;
+}
+
+static tree
+env_read (tree env, string var, tree val) {
   int i, n= N(env);
   for (i=0; i<n; i+=2)
     if (env[i] == var)
@@ -357,7 +363,7 @@ env_lookup (tree env, string var, tree val) {
 
 void
 drd_info_rep::set_env (tree_label l, int nr, tree env) {
-  // cout << as_string (l) << ", " << nr << " -> " << env << "\n";
+  //cout << as_string (l) << ", " << nr << " -> " << env << "\n";
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -388,7 +394,6 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
     int index= ti->get_index (i, N(t));
     if ((index<0) || (index>=N(ti->ci))) return "";
     tree cenv= drd_decode (ti->ci[index].env);
-    //cout << t << ", " << i << " -> " << env_merge (env, cenv) << "\n";
     return env_merge (env, cenv);
   }
 }
@@ -396,7 +401,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
 tree
 drd_info_rep::get_env_child (tree t, int i, string var, tree val) {
   tree env= get_env_child (t, i, tree (WITH));
-  return env_lookup (env, var, val);
+  return env_read (env, var, val);
 }
 
 tree
@@ -438,6 +443,14 @@ arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
     //cout << "env= " << env_merge (env, t (0, n)) << "\n";
     return arg_access_env (drd, t[n], arg, env_merge (env, t (0, n)));
   }
+  else if (is_func (t, TFORMAT)) {
+    int n= N(t)-1;
+    tree oldf= env_read (env, CELL_FORMAT, tree (TFORMAT));
+    tree newf= oldf * tree (TFORMAT, A (t (0, n)));
+    tree w   = tree (WITH, CELL_FORMAT, newf);
+    tree cenv= drd->get_env_child (t, n, env_merge (env, w));
+    return arg_access_env (drd, t[n], arg, cenv);
+  }
   else if (is_func (t, COMPOUND) && N(t) >= 1 && is_atomic (t[0]))
     return arg_access_env (drd, compound (t[0]->label, A (t (1, N(t)))),
 			   arg , env);
@@ -464,6 +477,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
     tree arg (ARG, macro[i]);
     tree env= arg_access_env (this, macro[n], arg, tree (WITH));
     if (env != "") {
+      //if (var == "eqnarray*")
+      //cout << var << " -> " << env << "\n";
       set_accessible (l, i, ACCESSIBLE_ALWAYS);
       set_env (l, i, env);
     }
