@@ -43,6 +43,7 @@ class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
 class server_rep;
 class modification;
+extern bool enable_fastenv;
 
 class editor_rep: public simple_widget_rep {
 public:

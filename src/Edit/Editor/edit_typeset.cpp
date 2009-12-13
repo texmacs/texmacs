@@ -21,6 +21,7 @@
 #endif // EXPERIMENTAL
 
 //box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
+bool enable_fastenv= false;
 
 /******************************************************************************
 * Contructors, destructors and notification of modifications
@@ -193,23 +194,22 @@ edit_typeset_rep::typeset_exec_until (path p) {
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
   typeset_prepare ();
-#ifdef XXX_QTTEXMACS
-  tree t= subtree (et, rp);
-  path q= path_up (p / rp);
-  while (!is_nil (q)) {
-    int i= q->item;
-    tree w= drd->get_env_child (t, i, tree (WITH));
-    if (w == "") break;
-    for (int j=0; j<N(w); j+=2) {
-      //cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
-      env->write (w[j]->label, env->exec (w[j+1]));
+  if (enable_fastenv) {
+    tree t= subtree (et, rp);
+    path q= path_up (p / rp);
+    while (!is_nil (q)) {
+      int i= q->item;
+      tree w= drd->get_env_child (t, i, tree (WITH));
+      if (w == "") break;
+      for (int j=0; j<N(w); j+=2) {
+	//cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
+	env->write (w[j]->label, env->exec (w[j+1]));
+      }
+      t= t[i];
+      q= q->next;
     }
-    t= t[i];
-    q= q->next;
   }
-#else
-  exec_until (ttt, p / rp);
-#endif
+  else exec_until (ttt, p / rp);
   env->read_env (cur (p));
   //time_t t2= texmacs_time ();
   //if (t2 - t1 >= 10) cout << "typeset_exec_until took " << t2-t1 << "ms\n";

@@ -141,6 +141,7 @@ TeXmacs_main (int argc, char** argv) {
 	debug (DEBUG_FLAG_BENCH, true);
 	debug (DEBUG_FLAG_QT, true);
       }
+      else if (s == "-enable-fastenv") enable_fastenv= true;
       else if ((s == "-fn") || (s == "-font")) {
 	i++;
 	if (i<argc) the_default_font= argv[i];
