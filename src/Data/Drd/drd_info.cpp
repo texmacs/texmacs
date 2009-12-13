@@ -416,6 +416,7 @@ drd_info_rep::get_env_descendant (tree t, path p, tree env) {
 static tree
 arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
   // returns "" if unaccessible and the env if accessible
+  //cout << "  arg_access_env " << t << ", " << arg << ", " << env << "\n";
   if (is_atomic (t)) return "";
   else if (t == arg) return env;
   else if (is_func (t, MAP_ARGS) && (t[2] == arg[0])) {
@@ -437,6 +438,9 @@ arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
     //cout << "env= " << env_merge (env, t (0, n)) << "\n";
     return arg_access_env (drd, t[n], arg, env_merge (env, t (0, n)));
   }
+  else if (is_func (t, COMPOUND) && N(t) >= 1 && is_atomic (t[0]))
+    return arg_access_env (drd, compound (t[0]->label, A (t (1, N(t)))),
+			   arg , env);
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)
@@ -451,6 +455,7 @@ arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
 
 bool
 drd_info_rep::heuristic_init_macro (string var, tree macro) {
+  //cout << "init_macro " << var << " -> " << macro << "\n";
   tree_label l = make_tree_label (var);
   tag_info old_ti= copy (info[l]);
   int i, n= N(macro)-1;

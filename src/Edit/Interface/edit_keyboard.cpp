@@ -182,11 +182,14 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
+  //time_t t1= texmacs_time ();
   if (is_nil (eb)) apply_changes ();
   start_editing ();
   key_press (key); (void) t;
   notify_change (THE_DECORATIONS);
   end_editing ();
+  //time_t t2= texmacs_time ();
+  //if (t2 - t1 >= 10) cout << "handle_keypress took " << t2-t1 << "ms\n";
 }
 
 void
