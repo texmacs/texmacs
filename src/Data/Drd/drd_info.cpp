@@ -363,12 +363,12 @@ drd_info_rep::set_env (tree_label l, int nr, tree env) {
   if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   if (ci.freeze_env) return;
-  ci.env= env;
+  ci.env= drd_encode (env);
 }
 
 tree
 drd_info_rep::get_env (tree_label l, int nr) {
-  return info[l]->ci[nr].env;
+  return drd_decode (info[l]->ci[nr].env);
 }
 
 void
@@ -387,7 +387,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
     tag_info ti= info[L(t)];
     int index= ti->get_index (i, N(t));
     if ((index<0) || (index>=N(ti->ci))) return "";
-    tree cenv= ti->ci[index].env;
+    tree cenv= drd_decode (ti->ci[index].env);
     //cout << t << ", " << i << " -> " << env_merge (env, cenv) << "\n";
     return env_merge (env, cenv);
   }

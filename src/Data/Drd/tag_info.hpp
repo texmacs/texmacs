@@ -13,6 +13,9 @@
 #define TAG_INFO_H
 #include "tree.hpp"
 
+int  drd_encode (tree t);
+tree drd_decode (int i);
+
 /******************************************************************************
 * The parent_info class contains outer information about tags
 *
@@ -67,9 +70,9 @@ struct parent_info {
   unsigned freeze_block     : 1;
 
   parent_info (int arity, int extra, int amode, int cmode, bool frozen= false);
-  parent_info (string s);
+  parent_info (tree t);
   inline ~parent_info () {}
-  operator string ();
+  operator tree ();
   bool operator == (const parent_info& pi);
   bool operator != (const parent_info& pi);
   friend ostream& operator << (ostream& out, parent_info pi);
@@ -112,20 +115,19 @@ struct parent_info {
 #define BLOCK_REQUIRE_NONE    2
 
 struct child_info {
-  tree     env;
-  unsigned accessible        : 2; // child is accessible?
-  unsigned writability       : 2; // writability of child
-  unsigned block             : 2; // require children to be blocks?
-  unsigned env2              : 3; // in which mode is the child?
-  unsigned freeze_accessible : 1; // true => disable heuristic determination
-  unsigned freeze_writability: 1;
-  unsigned freeze_block      : 1;
-  unsigned freeze_env        : 1;
+  unsigned accessible        :  2; // child is accessible?
+  unsigned writability       :  2; // writability of child
+  unsigned block             :  2; // require children to be blocks?
+  unsigned env               : 16; // environment of the child?
+  unsigned freeze_accessible :  1; // true => disable heuristic determination
+  unsigned freeze_writability:  1;
+  unsigned freeze_block      :  1;
+  unsigned freeze_env        :  1;
 
   child_info (bool frozen= false);
-  child_info (string s);
+  child_info (tree t);
   inline ~child_info () {}
-  operator string ();
+  operator tree ();
   bool operator == (const child_info& pi);
   bool operator != (const child_info& pi);
   friend ostream& operator << (ostream& out, child_info ci);

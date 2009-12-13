@@ -10,9 +10,34 @@
 ******************************************************************************/
 
 #include "tag_info.hpp"
+#include "hashmap.hpp"
 
 #define get_bits(which,nr) which=i&((1<<nr)-1);i=i>>nr
 #define set_bits(which,nr) i+=((int)which)<<offset;offset+=nr
+
+/******************************************************************************
+* Compact representation for environment changes
+******************************************************************************/
+
+static hashmap<tree,int> encode_table (-1);
+static array<tree>       decode_table;
+
+int
+drd_encode (tree t) {
+  if (encode_table->contains (t))
+    return encode_table[t];
+  int n= N(decode_table);
+  ASSERT (n < (1 << 16), "drd_encode overflow");
+  encode_table (t) = n;
+  decode_table << t;
+  return n;
+}
+
+tree
+drd_decode (int i) {
+  ASSERT (i >= 0 && i < N (decode_table), "out of range");
+  return decode_table[i];
+}
 
 /******************************************************************************
 * Properties of the tag
@@ -30,8 +55,8 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
   freeze_block     = frozen;
 }
 
-parent_info::parent_info (string s) {
-  int i= as_int (s);
+parent_info::parent_info (tree t) {
+  int i= as_int (t);
   get_bits (arity_mode      , 2);
   get_bits (arity_base      , 6);
   get_bits (arity_extra     , 4);
@@ -43,7 +68,7 @@ parent_info::parent_info (string s) {
   get_bits (freeze_block    , 1);
 }
 
-parent_info::operator string () {
+parent_info::operator tree () {
   int i=0, offset=0;
   set_bits (arity_mode      , 2);
   set_bits (arity_base      , 6);
@@ -78,7 +103,7 @@ parent_info::operator != (const parent_info& pi) {
 
 ostream&
 operator << (ostream& out, parent_info pi) {
-  return out << ((string) pi);
+  return out << ((tree) pi);
 }
 
 /******************************************************************************
@@ -89,38 +114,37 @@ child_info::child_info (bool frozen) {
   accessible         = ACCESSIBLE_NEVER;
   writability        = WRITABILITY_NORMAL;
   block              = 0;
-  env2               = 0;
+  env                = drd_encode (tree (WITH));
   freeze_accessible  = frozen;
   freeze_writability = frozen;
   freeze_block       = frozen;
   freeze_env         = frozen;
-  env= tree (WITH);
 }
 
-child_info::child_info (string s) {
-  int i= as_int (s);
-  get_bits (accessible        , 2);
-  get_bits (writability       , 2);
-  get_bits (block             , 2);
-  get_bits (env2              , 3);
-  get_bits (freeze_accessible , 1);
-  get_bits (freeze_writability, 1);
-  get_bits (freeze_block      , 1);
-  get_bits (freeze_env        , 1);
-  env= tree (WITH);
+child_info::child_info (tree t) {
+  int i= as_int (is_atomic (t)? t: t[N(t)-1]);
+  get_bits (accessible        ,  2);
+  get_bits (writability       ,  2);
+  get_bits (block             ,  2);
+  get_bits (freeze_accessible ,  1);
+  get_bits (freeze_writability,  1);
+  get_bits (freeze_block      ,  1);
+  get_bits (freeze_env        ,  1);
+  if (is_atomic (t)) env= drd_encode (tree (WITH));
+  else env= drd_encode (t (0, N(t)-1));
 }
 
-child_info::operator string () {
+child_info::operator tree () {
   int i=0, offset=0;
-  set_bits (accessible        , 2);
-  set_bits (writability       , 2);
-  set_bits (block             , 2);
-  set_bits (env2              , 3);
-  set_bits (freeze_accessible , 1);
-  set_bits (freeze_writability, 1);
-  set_bits (freeze_block      , 1);
-  set_bits (freeze_env        , 1);
-  return as_string (i);
+  set_bits (accessible        ,  2);
+  set_bits (writability       ,  2);
+  set_bits (block             ,  2);
+  set_bits (freeze_accessible ,  1);
+  set_bits (freeze_writability,  1);
+  set_bits (freeze_block      ,  1);
+  set_bits (freeze_env        ,  1);
+  if (drd_decode (env) == tree (WITH)) return as_string (i);
+  else return drd_decode (env) * tree (WITH, as_string (i));
 }
 
 bool
@@ -129,7 +153,7 @@ child_info::operator == (const child_info& ci) {
     (accessible         == ci.accessible        ) &&
     (writability        == ci.writability       ) &&
     (block              == ci.block             ) &&
-    (env2               == ci.env2              ) &&
+    (env                == ci.env               ) &&
     (freeze_accessible  == ci.freeze_accessible ) &&
     (freeze_writability == ci.freeze_writability) &&
     (freeze_block       == ci.freeze_block      ) &&
@@ -143,7 +167,7 @@ child_info::operator != (const child_info& ci) {
 
 ostream&
 operator << (ostream& out, child_info ci) {
-  return out << ((string) ci);
+  return out << ((tree) ci);
 }
 
 /******************************************************************************
@@ -177,17 +201,17 @@ tag_info::tag_info (tree t) {
     cerr << "\nt= " << t << "\n";
     FAILED ("bad tag_info");
   }
-  parent_info pi (as_string (t[0]));
+  parent_info pi (t[0]);
   int i, n= N(t[1]);
   array<child_info> ci (n);
   for (i=0; i<n; i++)
-    ci[i]= as_string (t[1][i]);
+    ci[i]= child_info (t[1][i]);
   rep= tm_new<tag_info_rep> (pi, ci, N(t)==3? t[2]: tree (""));
 }
 
 tag_info::operator tree () {
-  if (rep->extra == "") return tree (TUPLE, (string) rep->pi, (tree) rep->ci);
-  else return tree (TUPLE, (string) rep->pi, (tree) rep->ci, rep->extra);
+  if (rep->extra == "") return tree (TUPLE, (tree) rep->pi, (tree) rep->ci);
+  else return tree (TUPLE, (tree) rep->pi, (tree) rep->ci, rep->extra);
 }
 
 /******************************************************************************
