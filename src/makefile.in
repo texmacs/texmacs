@@ -119,7 +119,7 @@ make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
  $(edit_src) $(guile_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
- $(typeset_src) $(style_src) $(qt_src)) $(os_src)
+ $(typeset_src) $(style_src) $(qt_src) $(os_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 
@@ -318,7 +318,6 @@ uses_graphics := $(graphics_obj)
 uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
 uses_os       := $(os_obj)
-uses_windows  := $(windows_obj)
 uses_qt       := $(qt_obj) $(moc_obj)
 uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
