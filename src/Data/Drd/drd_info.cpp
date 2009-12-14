@@ -363,6 +363,7 @@ env_read (tree env, string var, tree val) {
 
 void
 drd_info_rep::set_env (tree_label l, int nr, tree env) {
+  //if (as_string (l) == "section")
   //cout << as_string (l) << ", " << nr << " -> " << env << "\n";
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
@@ -454,6 +455,8 @@ arg_access_env (drd_info_rep* drd, tree t, tree arg, tree env) {
   else if (is_func (t, COMPOUND) && N(t) >= 1 && is_atomic (t[0]))
     return arg_access_env (drd, compound (t[0]->label, A (t (1, N(t)))),
 			   arg , env);
+  else if ((is_func (t, IF) || is_func (t, VAR_IF)) && N(t) >= 2)
+    return arg_access_env (drd, t[1], arg, env);
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)
@@ -476,6 +479,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   for (i=0; i<n; i++) {
     tree arg (ARG, macro[i]);
     tree env= arg_access_env (this, macro[n], arg, tree (WITH));
+    //if (var == "section" || var == "section-title")
+    //cout << var << " -> " << env << ", " << macro << "\n";
     if (env != "") {
       //if (var == "eqnarray*")
       //cout << var << " -> " << env << "\n";
