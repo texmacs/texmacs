@@ -656,7 +656,7 @@
 ("keyboard" "клавиатура")
 ("keyboard equivalent" "клавиатурный эквивалент")
 ("keyboard modifiers" "клавиатурные модификаторы")
-("keyboard shorthand" "клавиатурное сокращение")
+("keyboard shortcut" "клавиатурное сокращение")
 ("keymaps" "keymaps")
 ("keyword" "ключевое слово")
 ("keywords" "ключевые слова")

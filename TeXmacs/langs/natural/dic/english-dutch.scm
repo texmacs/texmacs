@@ -719,7 +719,7 @@
 ("keyboard" "toetsenbord")
 ("keyboard equivalent" "via toetsenbord")
 ("keyboard modifiers" "toetsenbordwijzigingen")
-("keyboard shorthand" "toetsenbordafkorting")
+("keyboard shortcut" "toetsenbordafkorting")
 ("keymaps" "toetsenbord")
 ("keyword" "sleutelwoord")
 ("keywords" "sleutelwoorden")

@@ -605,7 +605,7 @@
 ("keyboard" "klawiatura")
 ("keyboard equivalent" "skrót klawiszowy")
 ("keyboard modifiers" "modyfikatory klawiatury")
-("keyboard shorthand" "skrót klawiszowy")
+("keyboard shortcut" "skrót klawiszowy")
 ("keymaps" "mapa klawiszy")
 ("keyword" "sªowo kluczowe")
 ("keywords" "sªowa kluczowe")

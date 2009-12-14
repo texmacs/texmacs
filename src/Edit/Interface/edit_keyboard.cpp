@@ -26,7 +26,7 @@ edit_interface_rep::get_input_mode () {
 void
 edit_interface_rep::set_input_mode (int mode) {
   interrupt_shortcut ();
-  // avoids keyboard shorthands when using the menu between two keystrokes
+  // avoids keyboard shortcuts when using the menu between two keystrokes
 
   if ((mode == INPUT_NORMAL) && (input_mode != INPUT_NORMAL)) {
     selection_cancel ();
@@ -96,8 +96,8 @@ edit_interface_rep::try_shortcut (string comb) {
     mark_start (sh_mark);
     string rew= sv->kbd_post_rewrite (sh_s);
     if (N(help)>0) set_message (help, rew);
-    else if (shorth == rew) set_message ("keyboard shorthand: " * rew);
-    else set_message ("keyboard shorthand: " * rew, shorth);
+    else if (shorth == rew) set_message ("keyboard shortcut: " * rew);
+    else set_message ("keyboard shortcut: " * rew, shorth);
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);
     //cout << "Mark= " << sh_mark << "\n";

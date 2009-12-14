@@ -622,7 +622,7 @@
 ("keyboard" "teclado")
 ("keyboard equivalent" "equivalencia de teclado")
 ("keyboard modifiers" "modificadores de teclado")
-("keyboard shorthand" "atajo de teclado")
+("keyboard shortcut" "atajo de teclado")
 ("keymaps" "disposición del teclado")
 ("keyword" "palabra clave")
 ("keywords" "palabras clave")

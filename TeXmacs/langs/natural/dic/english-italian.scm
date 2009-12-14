@@ -598,7 +598,7 @@
 ("keyboard" "tastiera")
 ("keyboard equivalent" "equivalente da tastiera")
 ("keyboard modifiers" "modificatori da tastiera")
-("keyboard shorthand" "scorciatoia da tastiera")
+("keyboard shortcut" "scorciatoia da tastiera")
 ("keymaps" "mappe di tastiera")
 ("keyword" "parola chiave")
 ("keywords" "parole chiave")

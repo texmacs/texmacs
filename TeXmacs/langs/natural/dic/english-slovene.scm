@@ -665,7 +665,7 @@
 ("justify text" "poravnaj besedilo obojestransko")
 ("keyboard equivalent" "ekvivalent na tipkovnici")
 ("keyboard modifiers" "modifikator tipkovnice")
-("keyboard shorthand" "okraj²ava na tipkovnici")
+("keyboard shortcut" "okraj²ava na tipkovnici")
 ("keyboard" "tipkovnica")
 ("keymaps" "razporeditve tipk")
 ("key" "tipka")

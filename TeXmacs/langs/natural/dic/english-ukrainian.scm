@@ -587,7 +587,7 @@
 ("justify text" "вирiвняти текст")
 ("keyboard equivalent" "клавiатурний еквiвалент")
 ("keyboard modifiers" "модифiкатори клавiатури")
-("keyboard shorthand" "клавiатурне скорочення")
+("keyboard shortcut" "клавiатурне скорочення")
 ("keyboard" "клавiатура")
 ("keymaps" "мапи клавiш")
 ("keywords" "ключовi слова")

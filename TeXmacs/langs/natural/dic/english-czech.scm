@@ -597,7 +597,7 @@
 ("keyboard" "klávesnice")
 ("keyboard equivalent" "klávesová zkratka")
 ("keyboard modifiers" "klávesové modifikátory")
-("keyboard shorthand" "klávesová zkratka")
+("keyboard shortcut" "klávesová zkratka")
 ("keymaps" "mapování kláves")
 ("keyword" "klí£ové slovo")
 ("keywords" "klí£ová slova")

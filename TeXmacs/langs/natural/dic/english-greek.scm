@@ -503,7 +503,7 @@
 ("justify text" "πλήρης ευθυγράμμιση κειμένου")
 ("keyboard" "πληκτρολόγιο")
 ("keyboard equivalent" "αντίστοιχο πλήκτρο")
-("keyboard shorthand" "πλήκτρο συντόμευσης")
+("keyboard shortcut" "πλήκτρο συντόμευσης")
 ("keymaps" "keymaps")
 ("kill" "εξουδετέρωση")
 ("known bugs" "γνωστά bugs")

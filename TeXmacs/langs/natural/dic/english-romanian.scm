@@ -598,7 +598,7 @@
 ("keyboard" "tastatur ")
 ("keyboard equivalent" "echivalent tastatur ")
 ("keyboard modifiers" "modoficatori de tastatur ")
-("keyboard shorthand" "scurt tur ")
+("keyboard shortcut" "scurt tur ")
 ("keymaps" "tastaturi")
 ("keyword" "cuvânt cheie")
 ("keywords" "cuvinte cheie")

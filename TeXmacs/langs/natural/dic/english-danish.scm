@@ -600,7 +600,7 @@
 ("keyboard" "tastatur")
 ("keyboard equivalent" "tastaturgenvej")
 ("keyboard modifiers" "kombitaster")
-("keyboard shorthand" "tastaturgenvej")
+("keyboard shortcut" "tastaturgenvej")
 ("keymaps" "tastaturlayout")
 ("keyword" "nøgleord")
 ("keywords" "nøgleord")

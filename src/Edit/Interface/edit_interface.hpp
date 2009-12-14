@@ -32,7 +32,7 @@ protected:
   time_t        next_animate;  // time for next animation
   bool          full_screen;   // full screen mode ?
   bool          got_focus;     // do we have keyboard focus ?
-  string        sh_s;          // current string for shorthands
+  string        sh_s;          // current string for shortcuts
   double        sh_mark;       // 0 or mark for undoing shortcut
   widget        popup_win;     // the current popup window
   string        message_l;     // a left message to display

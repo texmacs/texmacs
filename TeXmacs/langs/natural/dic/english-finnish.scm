@@ -586,7 +586,7 @@
 ("keyboard" "näppäimistö")
 ("keyboard equivalent" "vastine näppäimistöllä")
 ("keyboard modifiers" "näppäinmuuntimet")
-("keyboard shorthand" "näppäimistölyhenne")
+("keyboard shortcut" "näppäimistölyhenne")
 ("keymaps" "näppäinkartat")
 ("keyword" "avainsana")
 ("keywords" "avainsanat")

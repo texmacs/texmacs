@@ -712,7 +712,7 @@
 ("keyboard" "")
 ("keyboard equivalent" "")
 ("keyboard modifiers" "")
-("keyboard shorthand" "")
+("keyboard shortcut" "")
 ("keymaps" "")
 ("keyword" "")
 ("keywords" "")

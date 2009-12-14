@@ -660,7 +660,7 @@
 ("keyboard" "Tastatur")
 ("keyboard equivalent" "Tastenkombination")
 ("keyboard modifiers" "Tastatur-Modifikator")
-("keyboard shorthand" "Tastenkombination")
+("keyboard shortcut" "Tastenkombination")
 ("keymaps" "Tastatur Mappings")
 ("keyword" "Stichwort")
 ("keywords" "Stichworte")
