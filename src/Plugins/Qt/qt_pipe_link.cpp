@@ -15,6 +15,7 @@
 #include "QTMPipeLink.hpp"
 #include "hashset.hpp"
 #include "iterator.hpp"
+#include "timer.hpp"
 
 #include <sys/types.h>
 #include <signal.h>
@@ -116,8 +117,12 @@ qt_pipe_link_rep::read (int channel) {
 void
 qt_pipe_link_rep::listen (int msecs) {
   if (!alive) return;
-  PipeLink.listenChannel (QProcess::StandardOutput, msecs / 2);
-  PipeLink.listenChannel (QProcess::StandardError, msecs / 2);
+  time_t wait_until= texmacs_time () + msecs;
+  while ((PipeLink.getOutbuf() == "") && (PipeLink.getErrbuf() == "")) {
+    PipeLink.listenChannel (QProcess::StandardOutput, 0);
+    PipeLink.listenChannel (QProcess::StandardError, 0);
+    if (texmacs_time () - wait_until > 0) break;
+  }
 }
 
 bool
