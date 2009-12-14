@@ -96,15 +96,10 @@ edit_interface_rep::try_shortcut (string comb) {
     mark_start (sh_mark);
     string rew= sv->kbd_post_rewrite (sh_s);
     if (N(help)>0) set_message (help, rew);
-    else if (shorth == rew) {
-      //set_message ("keyboard shortcut: " * rew, "", true);
-      call ("set-temporary-message", "keyboard shortcut: " * rew, "", 2500);
-    }
-    else {
-      //set_message ("keyboard shortcut: " * rew, shorth, true);
-      call ("set-temporary-message", "keyboard shortcut: " * rew, shorth, 2500);
-      //eval ("(kbd-shortcut-notify)");
-    }
+    string rhs= (shorth == rew? string (""): shorth);
+    if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
+	(search_forwards ("-", comb) >= 0 && comb != "-"))
+      call ("set-temporary-message", "keyboard shortcut: " * rew, rhs, 3000);
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);
     //cout << "Mark= " << sh_mark << "\n";
