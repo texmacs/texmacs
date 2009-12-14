@@ -70,7 +70,8 @@ class bridge {
   bool operator == (bridge br2);
   bool operator != (bridge br2);
   friend bridge make_bridge (typesetter ttt, tree st, path ip);
-  friend void   replace_bridge (bridge& br, tree st, path ip);
+  friend void replace_bridge (bridge& br, tree st, path ip);
+  friend void replace_bridge (bridge& br, path p, tree ot, tree nt, path ip);
 };
 ABSTRACT_NULL_CODE(bridge);
 

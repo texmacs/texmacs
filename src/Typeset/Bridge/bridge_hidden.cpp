@@ -30,6 +30,7 @@ bridge_hidden_rep::bridge_hidden_rep (typesetter ttt, tree st, path ip):
 
 bridge
 bridge_hidden (typesetter ttt, tree st, path ip) {
+  //cout << "Construct " << st << "\n";
   return tm_new<bridge_hidden_rep> (ttt, st, ip);
 }
 
@@ -39,13 +40,14 @@ bridge_hidden (typesetter ttt, tree st, path ip) {
 
 void
 bridge_hidden_rep::notify_assign (path p, tree u) {
-  // cout << "Assign " << p << ", " << u << " in " << st << "\n";
+  //cout << "Assign " << p << ", " << u << " in " << st << "\n";
   status= CORRUPTED;
   st= substitute (st, p, u);
 }
 
 bool
 bridge_hidden_rep::notify_macro (int tp, string var, int l, path p, tree u) {
+  //cout << "Notify macro in " << st << "\n";
   (void) tp; (void) p; (void) u;
   bool flag= env->depends (st, var, l);
   if (flag) status= CORRUPTED;
@@ -54,6 +56,7 @@ bridge_hidden_rep::notify_macro (int tp, string var, int l, path p, tree u) {
 
 void
 bridge_hidden_rep::notify_change () {
+  //cout << "Notify change in " << st << "\n";
   status= CORRUPTED;
 }
 

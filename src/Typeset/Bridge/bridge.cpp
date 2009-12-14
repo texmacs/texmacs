@@ -57,8 +57,8 @@ make_inactive_bridge (typesetter ttt, tree st, path ip) {
 
 bridge
 make_bridge (typesetter ttt, tree st, path ip) {
-  // cout << "Make bridge " << st << ", " << ip << "\n";
-  // cout << "Preamble mode= " << ttt->env->preamble << "\n";
+  // cout << "Make bridge " << st << ", " << ip << LF;
+  // cout << "Preamble mode= " << ttt->env->preamble << LF;
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
@@ -126,6 +126,18 @@ replace_bridge (bridge& br, tree st, path ip) {
   bridge new_br= make_bridge (br->ttt, st, ip);
   new_br->changes= br->changes;
   br= new_br;
+}
+
+void
+replace_bridge (bridge& br, path p, tree oldt, tree newt, path ip) {
+  if (oldt == newt) return;
+  if (is_atomic (newt) || L(oldt) != L(newt) || N(oldt) != N(newt)) {
+    if (is_nil (p)) replace_bridge (br, newt, ip);
+    else br->notify_assign (p, newt);
+  }
+  else
+    for (int i=0; i<N(newt); i++)
+      replace_bridge (br, p * i, oldt[i], newt[i], ip);
 }
 
 bool
@@ -279,13 +291,13 @@ bridge_rep::typeset (int desired_status) {
 
   //cout << "Typesetting " << st << ", " << desired_status << LF << INDENT;
   if ((status==desired_status) && (N(ttt->old_patch)==0)) {
-    // cout << "  cached\n";
+    //cout << "cached" << LF;
     env->monitored_patch_env (changes);
-    // cout << "  changes       = " << changes << "\n";
+    // cout << "changes       = " << changes << LF;
   }
   else {
-    // cout << "Typesetting " << st << ", " << desired_status << "\n";
-    // cout << "  recomputing\n";
+    // cout << "Typesetting " << st << ", " << desired_status << LF << INDENT;
+    //cout << "recomputing" << LF;
     hashmap<string,tree> prev_back (UNINIT);
     my_clean_links ();
     link_repository old_link_env= env->link_env;
@@ -298,11 +310,11 @@ bridge_rep::typeset (int desired_status) {
     ttt->local_end (l, sb);
     env->link_env= old_link_env;
     status= desired_status;
-    // cout << "  old_patch     = " << ttt->old_patch << "\n";
-    // cout << "  changes       = " << changes << "\n";
-    // cout << "Typesetted " << st << ", " << desired_status << "\n";
+    // cout << "old_patch     = " << ttt->old_patch << LF;
+    // cout << "changes       = " << changes << LF;
+    // cout << UNINDENT << "Typesetted " << st << ", " << desired_status << LF;
   }
-  // cout << "Typesetted " << st << ", " << desired_status << "\n";
+  //cout << UNINDENT << "Typesetted " << st << ", " << desired_status << LF;
 
   // ttt->insert_stack (l, sb);
   //if (N(l) == 0); else
@@ -333,7 +345,6 @@ bridge_rep::typeset (int desired_status) {
     }
   }
 
-  //cout << UNINDENT;
   //cout << "l   = " << l << LF;
   //cout << "sb  = " << sb << LF;
   //cout << "l   = " << ttt->l << LF;

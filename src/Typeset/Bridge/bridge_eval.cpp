@@ -17,6 +17,7 @@
 
 class bridge_eval_rep: public bridge_rep {
 protected:
+  tree   bt;
   bridge body;
 
 public:
@@ -36,7 +37,8 @@ bridge_eval_rep::bridge_eval_rep (typesetter ttt, tree st, path ip):
 void
 bridge_eval_rep::initialize (tree body_t) {
   if (is_nil (body)) body= make_bridge (ttt, attach_right (body_t, ip));
-  else replace_bridge (body, attach_right (body_t, ip));
+  else replace_bridge (body, path (), bt, attach_right (body_t, ip));
+  bt= copy (body_t);
 }
 
 bridge
