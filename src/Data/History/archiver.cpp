@@ -69,7 +69,7 @@ archiver_rep::show_all () {
 
 void
 archive_announce (archiver_rep* arch, modification mod) {
-  // cout << "Archive " << mod << "\n";
+  //cout << "Archive " << mod << "\n";
   if (DEBUG_HISTORY) cout << "Archive " << mod << "\n";
   ASSERT (arch->rp <= mod->p, "invalid modification");
   if (!arch->versioning) {

@@ -495,17 +495,21 @@ edit_typeset_rep::init_default (string var) {
 
 void
 edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
+  //time_t t1= texmacs_time ();
   typeset_prepare ();
   eb= empty_box (reverse (rp));
   // saves memory, also necessary for change_log update
   bench_start ("typeset");
   eb= ::typeset (ttt, x1, y1, x2, y2);
   bench_end ("typeset");
+  //time_t t2= texmacs_time ();
+  //if (t2 - t1 >= 12) cout << "typeset took " << t2-t1 << "ms\n";
 }
 
 void
 edit_typeset_rep::typeset_invalidate (path p) {
   if (rp <= p) {
+    //cout << "Invalidate " << p << "\n";
     notify_change (THE_TREE);
     ::notify_assign (ttt, p / rp, subtree (et, p));
   }
@@ -513,6 +517,7 @@ edit_typeset_rep::typeset_invalidate (path p) {
 
 void
 edit_typeset_rep::typeset_invalidate_all () {
+  //cout << "Invalidate all\n";
   notify_change (THE_ENVIRONMENT);
   typeset_preamble ();
   ::notify_assign (ttt, path(), subtree (et, rp));

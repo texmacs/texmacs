@@ -373,6 +373,7 @@ x_gui_rep::event_loop () {
 	  report.type == NoExpose) continue;
 
     // Wait for events on all channels and interpose
+    //time_t t1= texmacs_time ();
     if (wait) {
       struct timeval tv;
       tv.tv_sec  = delay/1000;
@@ -384,6 +385,8 @@ x_gui_rep::event_loop () {
     else wait= true;
     if (the_interpose_handler != NULL) the_interpose_handler ();
     if (nr_windows == 0) continue;
+    //time_t t2= texmacs_time ();
+    //if (t2 - t1 >= 12) cout << "interpose took " << t2-t1 << "ms\n";
 
     // Popup help balloons
     if (!is_nil (balloon_wid))
