@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : qt_system.cpp
+* MODULE     : qt_sys_utils.cpp
 * DESCRIPTION: external command launcher
 * COPYRIGHT  : (C) 2009  David MICHEL
 *******************************************************************************
