@@ -78,6 +78,7 @@ public:
   void process_keyboard_focus (simple_widget_rep *wid, bool has_focus, time_t t);
   void process_mouse (simple_widget_rep *wid, string kind, SI x, SI y, int mods, time_t t);
   void process_resize (simple_widget_rep *wid, SI x, SI y);
+  void process_command (command _cmd);
   void process_socket_notification (socket_notifier sn);
   void process_delayed_commands (); 
 

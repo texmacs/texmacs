@@ -336,6 +336,19 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_QT)
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
+  
+  // we must detach the QTMWidget canvas from the Qt widget hierarchy otherwise
+  // it will be destroyed when the view member of this object is deallocated
+  // this is another problem related to our choice of letting qt_widget own its
+  // underlying QWidget.
+
+  QTMWidget *canvas = tm_canvas();
+  QStackedWidget* tw= tm_centralwidget();
+  if (canvas) {
+    tw->removeWidget(canvas);
+    canvas->setParent(NULL);
+    QTMWidget::all_widgets.remove(canvas);
+  }
 }
 
 void qt_tm_widget_rep::updateVisibility()
@@ -637,7 +650,10 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         tw->addWidget(new_canvas);
         tw->removeWidget(old_canvas);
         QTMWidget::all_widgets.insert(new_canvas);
-        if (old_canvas) QTMWidget::all_widgets.remove(old_canvas);
+        if (old_canvas) {
+          old_canvas->setParent(NULL);
+          QTMWidget::all_widgets.remove(old_canvas);
+        }
         new_canvas->setFocusPolicy (Qt::StrongFocus);
         new_canvas->setFocus ();
         

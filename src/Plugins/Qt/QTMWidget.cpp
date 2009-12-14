@@ -162,6 +162,7 @@ QTMWidget::QTMWidget (simple_widget_rep *_wid)
 
 
 QTMWidget::~QTMWidget () {
+  if (DEBUG_QT) cout << "destroying " << this << LF;
 }
 
 void 

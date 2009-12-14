@@ -44,6 +44,10 @@ time_t lapse = 0; // optimization for delayed commands
 // marshalling flags between update, needs_update and check_event.
 bool updating = false;
 bool needing_update = false;
+bool wait_for_delayed_commands = true;
+// this flag is used in update() to insert QP_DELAYED_COMMANDS events in TeXmacs 
+// event queue so to have delayed command handling properly interspersed with 
+// the other events
 
 /******************************************************************************
 * Constructor and geometry
@@ -438,7 +442,9 @@ enum qp_type_id {
   QP_KEYBOARD_FOCUS,
   QP_MOUSE,
   QP_RESIZE,
-  QP_SOCKET_NOTIFICATION
+  QP_SOCKET_NOTIFICATION,
+  QP_COMMAND,
+  QP_DELAYED_COMMANDS
 };
 
 class qp_type {
@@ -466,6 +472,7 @@ public:
 
 static array<queued_event> waiting_events;
 
+
 void
 process_event (queued_event ev) {
   switch ((qp_type_id) ev.x1) {
@@ -473,16 +480,16 @@ process_event (queued_event ev) {
       break;
     case QP_KEYPRESS :
     {
-      typedef triple<simple_widget_rep*, string, time_t > T;
+      typedef triple<widget, string, time_t > T;
       T x = open_box <T> (ev.x2) ;
-      x.x1 -> handle_keypress (x.x2, x.x3) ;
+      concrete_simple_widget(x.x1) -> handle_keypress (x.x2, x.x3) ;
     }
       break;
     case QP_KEYBOARD_FOCUS :
     {
-      typedef triple<simple_widget_rep*, bool, time_t > T;
+      typedef triple<widget, bool, time_t > T;
       T x = open_box <T> (ev.x2) ;
-      x.x1 -> handle_keyboard_focus (x.x2, x.x3) ;
+      concrete_simple_widget(x.x1) -> handle_keyboard_focus (x.x2, x.x3) ;
       send_invalidate_all(x.x1);
       //FIXME: the above invalidate is due to incorrect repainting when
       //       the widget loose the focus. I should investigate better
@@ -492,16 +499,16 @@ process_event (queued_event ev) {
     case QP_MOUSE :
     {
       typedef quintuple<string, SI, SI, int, time_t > T1;
-      typedef pair<simple_widget_rep*, T1> T;
+      typedef pair<widget, T1> T;
       T x = open_box <T> (ev.x2) ;
-      x.x1 -> handle_mouse (x.x2.x1, x.x2.x2, x.x2.x3, x.x2.x4, x.x2.x5) ;
+      concrete_simple_widget(x.x1) -> handle_mouse (x.x2.x1, x.x2.x2, x.x2.x3, x.x2.x4, x.x2.x5) ;
     }
       break;
     case QP_RESIZE :
     {
-      typedef triple<simple_widget_rep*, SI, SI > T;
+      typedef triple<widget, SI, SI > T;
       T x = open_box <T> (ev.x2) ;
-      x.x1 -> handle_notify_resize (x.x2, x.x3) ;
+      concrete_simple_widget(x.x1) -> handle_notify_resize (x.x2, x.x3) ;
     }
       break;
     case QP_SOCKET_NOTIFICATION :
@@ -512,6 +519,20 @@ process_event (queued_event ev) {
       the_gui->enable_notifier (sn, true);
     }
       break;
+    case QP_COMMAND :
+    {
+      command cmd = open_box <command> (ev.x2) ;
+      // cout << "QP_COMMAND" << LF;
+      cmd->apply();
+    }
+      break;
+    case QP_DELAYED_COMMANDS :
+    {
+      // cout << "QP_DELAYED_COMMANDS" << LF;
+      exec_pending_commands();
+      wait_for_delayed_commands = true;
+    }
+      break;
     default:   
       FAILED("Unexpected queued event");
   }
@@ -520,18 +541,35 @@ process_event (queued_event ev) {
 
 void 
 qt_gui_rep::process_queued_events (int max) {
+  // we process a maximum of max events. There are two kind of events: those
+  // which need a pass on interpose_handler just after and the others. We count
+  // only the first kind of events. In update() we call this function with
+  // max=1 so that only one of these "sensible" events is handled. Otherwise
+  // updating of internal TeXmacs structure become very slow. This can be 
+  // considerer a limitation of the current implementation of interpose_handler
+  // Likewise this function is just an hack to get things working properly.
   
   array<queued_event> a = waiting_events, b;
   waiting_events = array<queued_event> ();
   
   int i, n = N(a);
-  
+  int count = 0;
   //cout << "(" << n << " events)";
   for (i=0; i<n; i++) {
     //cout << (int)a[i].x1 << ",";
-    if ((max < 0) || (i<max)) 
+    if ((max < 0) || (count<max))  {
       process_event(a[i]);
-    else 
+      switch (a[i].x1) {
+        case QP_COMMAND:
+        case QP_SOCKET_NOTIFICATION:
+        case QP_RESIZE:
+        case QP_DELAYED_COMMANDS:
+          break;
+        default:
+          count++;
+          break;
+      }
+    } else 
       b << a[i];
   }
   b << waiting_events;
@@ -547,14 +585,15 @@ add_event(const queued_event &ev)
     needing_update = true;
     //needs_update();
   } else {
-    process_event(ev);
+    waiting_events << ev;
+//    process_event(ev);
     the_gui->update();
   }
 }
 
 void 
 qt_gui_rep::process_keypress (simple_widget_rep *wid, string key, time_t t) {
-  typedef triple<simple_widget_rep*, string, time_t > T;
+  typedef triple<widget, string, time_t > T;
   add_event( queued_event ( QP_KEYPRESS, close_box<T> (T(wid, key, t)))); 
  // wid -> handle_keypress (key, t);
  // needs_update ();
@@ -563,7 +602,7 @@ qt_gui_rep::process_keypress (simple_widget_rep *wid, string key, time_t t) {
 void 
 qt_gui_rep::process_keyboard_focus ( simple_widget_rep *wid, bool has_focus, 
                                      time_t t ) {
-  typedef triple<simple_widget_rep*, bool, time_t > T;
+  typedef triple<widget, bool, time_t > T;
   add_event( 
     queued_event ( QP_KEYBOARD_FOCUS, close_box<T> (T(wid, has_focus, t)))); 
 //  wid -> handle_keyboard_focus (has_focus, t);
@@ -574,7 +613,7 @@ void
 qt_gui_rep::process_mouse ( simple_widget_rep *wid, string kind, SI x, SI y, 
                             int mods, time_t t ) {
   typedef quintuple<string, SI, SI, int, time_t > T1;
-  typedef pair<simple_widget_rep*, T1> T;
+  typedef pair<widget, T1> T;
   add_event ( 
     queued_event ( QP_MOUSE, close_box<T> ( T (wid, T1 (kind, x, y, mods, t))))); 
 //  wid -> handle_mouse (kind, x, y, mods, t);
@@ -583,7 +622,7 @@ qt_gui_rep::process_mouse ( simple_widget_rep *wid, string kind, SI x, SI y,
 
 void 
 qt_gui_rep::process_resize ( simple_widget_rep *wid, SI x, SI y ) {
-  typedef triple<simple_widget_rep*, SI, SI > T;
+  typedef triple<widget, SI, SI > T;
   add_event(  queued_event ( QP_RESIZE, close_box<T> (T(wid, x, y)))); 
 //  wid -> handle_notify_resize (x, y);
 //  needs_update ();
@@ -596,6 +635,18 @@ qt_gui_rep::process_socket_notification ( socket_notifier sn ) {
 //  sn -> notify ();
 //  enable_notifier (sn, true);
 // needs_update ();
+}
+
+void 
+qt_gui_rep::process_command (command _cmd) {
+  add_event ( 
+             queued_event (QP_COMMAND, close_box< command > (_cmd)));
+}
+
+void 
+qt_gui_rep::process_delayed_commands () {
+  add_event ( 
+             queued_event (QP_DELAYED_COMMANDS, blackbox()));
 }
 
 
@@ -654,6 +705,8 @@ qt_gui_rep::update () {
     
     count_events++;
 
+    if (wait_for_delayed_commands && (lapse <= now)) process_delayed_commands();
+
     if (N(waiting_events) > 0) {
       //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
       process_queued_events (1);
@@ -661,7 +714,7 @@ qt_gui_rep::update () {
     };
     
     //cout << "TYPESET START..."; cout.flush();
-    if (lapse <= now) exec_pending_commands();
+//    if ((N(waiting_events)==0) && (lapse <= now)) exec_pending_commands();
     if (the_interpose_handler) the_interpose_handler();
     //cout << "AND END" << LF;
 

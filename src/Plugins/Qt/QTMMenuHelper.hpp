@@ -18,7 +18,7 @@
 #include <QAction>
 #include <QMenu>
 
-#include "gui.hpp"
+#include "qt_gui.hpp"
 
 class QTMCommand: public QObject {
   Q_OBJECT
@@ -29,8 +29,9 @@ public:
     cmd (_cmd) {  }
 
 public slots:
-  inline void apply() {
-    if (!is_nil(cmd)) { cmd->apply();  needs_update(); }
+  void apply() {
+//    if (!is_nil(cmd)) { cmd->apply();  needs_update(); }
+    if (!is_nil(cmd)) { the_gui->process_command(cmd); }
   }
 };
 
