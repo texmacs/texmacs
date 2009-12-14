@@ -394,6 +394,7 @@ edit_interface_rep::set_footer () {
 
 void
 edit_interface_rep::set_message (string l, string r, bool temp) {
+  eval ("(set-message-notify)");
   message_l= l;
   message_r= r;
   if (!temp) {

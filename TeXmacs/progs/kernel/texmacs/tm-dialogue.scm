@@ -191,11 +191,21 @@
 ;; Messages and feedback on the status bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public message-serial 0)
+
+(define-public (set-message-notify)
+  (set! message-serial (+ message-serial 1)))
+
+(define-public (recall-message-after len)
+  (with current message-serial
+    (delayed
+      (:idle len)
+      (when (== message-serial current)
+	(recall-message)))))
+
 (define-public (set-temporary-message left right len)
   (set-message-temp left right #t)
-  (delayed
-    (:pause len)
-    (recall-message)))
+  (recall-message-after len))
 
 (define-public (texmacs-banner)
   (with tmv (string-append "GNU TeXmacs " (texmacs-version))
