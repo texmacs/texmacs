@@ -1499,7 +1499,7 @@
 		9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMScrollView.hpp; sourceTree = "<group>"; };
 		9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMScrollView.cpp; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
-		9CCC751410D303D900E88D90 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CCC751410D303D900E88D90 /* TeXmacsCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CCC751610D303D900E88D90 /* Info-Xcode copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Xcode copy.plist"; path = "../../misc/bundle/Info-Xcode copy.plist"; sourceTree = "<group>"; };
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1547,7 +1547,7 @@
 				8D1107320486CEB800E47090 /* TeXmacsQt.app */,
 				9CC6148B10A998BC0055F808 /* MOCs.o */,
 				9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */,
-				9CCC751410D303D900E88D90 /* TeXmacsQt.app */,
+				9CCC751410D303D900E88D90 /* TeXmacsCocoa.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2970,7 +2970,7 @@
 			name = TeXmacsCocoa;
 			productInstallPath = "$(HOME)/Applications";
 			productName = TeXmacsQt;
-			productReference = 9CCC751410D303D900E88D90 /* TeXmacsQt.app */;
+			productReference = 9CCC751410D303D900E88D90 /* TeXmacsCocoa.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9CD4E5EB10B14AB300E0DD5C /* TeXmacsX11 */ = {
@@ -4024,16 +4024,14 @@
 		};
 		9CCC751210D303D900E88D90 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */;
+			baseConfigurationReference = 9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "/Users/mgubi/t/clean-wd/src/misc/bundle/../../misc/bundle/Info-Xcode copy.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = TeXmacsQt;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -4045,9 +4043,7 @@
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = "/Users/mgubi/t/clean-wd/src/misc/bundle/../../misc/bundle/Info-Xcode copy.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = TeXmacsQt;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
