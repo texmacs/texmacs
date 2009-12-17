@@ -1500,7 +1500,6 @@
 		9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMScrollView.cpp; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CCC751410D303D900E88D90 /* TeXmacsCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9CCC751610D303D900E88D90 /* Info-Xcode copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Xcode copy.plist"; path = "../../misc/bundle/Info-Xcode copy.plist"; sourceTree = "<group>"; };
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
@@ -2896,7 +2895,6 @@
 				9C0B4B7010A8CE320097A335 /* Info-Xcode.plist */,
 				9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */,
 				9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */,
-				9CCC751610D303D900E88D90 /* Info-Xcode copy.plist */,
 				9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */,
 			);
 			name = bundle;
