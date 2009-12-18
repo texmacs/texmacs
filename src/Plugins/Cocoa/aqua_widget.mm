@@ -503,7 +503,17 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
       w->handle_set_shrinking_factor (new_sf);
     }
     break;
-        
+
+  case SLOT_FILE:
+    {
+      TYPE_CHECK (type_box (val) == type_helper<string>::id);
+      string file = open_box<string> (val);
+      if (DEBUG_EVENTS) cout << "File: " << file << LF;
+//      view->window()->setWindowFilePath(to_qstring(file));
+    }
+      break;
+      
+      
   default:
     aqua_view_widget_rep::send(s,val);
   }
