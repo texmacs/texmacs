@@ -21,6 +21,7 @@ QTMScrollView::QTMScrollView ( QWidget *_parent )
   : QAbstractScrollArea (_parent) {
 	QWidget *_viewport = QAbstractScrollArea::viewport();
 	_viewport->setAttribute(Qt::WA_OpaquePaintEvent);
+    _viewport->setAttribute(Qt::WA_MacNoClickThrough);
 	//_viewport->setAttribute(Qt::WA_StaticContents);
   //  _viewport->setAttribute(Qt::WA_PaintOnScreen); 
     // the above option disable double-buffering on X11

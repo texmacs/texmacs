@@ -286,8 +286,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
+#ifndef Q_WS_MAC
   mw->menuBar()->setStyle (qtmstyle ());
-
+#endif
+  
   QStackedWidget* tw = new QStackedWidget ();
   mw->setCentralWidget(tw);
   
@@ -667,7 +669,16 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_menu_widget = w;
       QMenu* m= to_qmenu (w);
       if (m) {
-        replaceActions (tm_mainwindow()->menuBar (), m);
+#ifdef Q_WS_MAC
+        static QMenuBar *app_menubar = NULL;
+        if (!app_menubar) {
+          app_menubar = new QMenuBar(NULL);
+          app_menubar->setStyle (qtmstyle ());
+        }
+        if (app_menubar) replaceActions (app_menubar, m);
+#else
+        replaceActions (tm_mainwindow()->menuBar(), m);
+#endif
       }
     }
     break;
