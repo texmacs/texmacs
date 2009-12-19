@@ -373,8 +373,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   {
     QRect rect = event->rect ();
     cout << "paintEvent ("<< rect.x() << "," <<  rect.y()
-    << "," <<  rect.width() << "," <<  rect.height() 
-    << ") regions:" << event->region().numRects() << LF ;
+    << "," <<  rect.width() << "," <<  rect.height() << ")" << LF ;
   }
     
   {    
