@@ -19,7 +19,8 @@ parser_rep::parser_rep(hashmap<tree,tree> g, string s) {
   grammar=g; xstring=s;
   set_emptyness(); cout<<can_be_empty_table;
   set_dependance(); cout<<dependance;
-  set_closure(); cout<<dependance;
+  closure=set_closure(dependance); cout<<closure;
+  set_dag(); cout<<dag;
 }
 
 parser::parser (hashmap<tree,tree> g, string s) { 
@@ -34,15 +35,15 @@ parser_rep::set_emptyness() {
   bool new_empty;
   do {
     new_empty= false;
-    iterator<tree> it= iterate (grammar);
+    iterator<tree> it= iterate(grammar);
     while (it->busy()) {
       var_tree= it->next();
       var= var_tree[0]->label;
-      if (!can_be_empty_table->contains (var)) {
-	rule= grammar (var_tree);
-	if (can_be_empty (rule)) {
+      if (!(can_be_empty_table->contains(var))) {
+	rule= grammar(var_tree);
+	if (can_be_empty(rule)) {
 	  new_empty= true;
-	  can_be_empty_table (var)= true;
+	  can_be_empty_table(var)= true;
 	}
       }
     }
@@ -51,22 +52,23 @@ parser_rep::set_emptyness() {
 }
 
 bool
-parser_rep::can_be_empty (tree rule) {
-  if (is_atomic (rule)) return rule->label == "";
-  if (L(rule) == as_tree_label ("DOLLAR"))
-    return can_be_empty_table->contains (rule[0]->label);
-  if (L(rule) == as_tree_label ("OR")) {
-    for (int i=0; i<N(rule); i++)
-      if (can_be_empty (rule[i])) return true;
-    return false;
-  }
-  if (L(rule) == as_tree_label ("CONCAT")) {
-    for (int i=0; i<N(rule); i++)
-      if (!can_be_empty (rule[i])) return false;
+parser_rep::can_be_empty(tree rule) {
+  if (L(rule)==as_tree_label("DOLLAR")) {
+      if (can_be_empty_table->contains(rule[0]->label))
+	{return true; } else return false;}
+  if (L(rule)==as_tree_label("STAR")) return true;
+  if (is_atomic(rule) && rule->label =="") return true;
+  if (is_atomic(rule) && rule->label !="") return false;
+  if (L(rule)==as_tree_label("OR")) {
+    int i=0;
+    while(i<N(rule)) { if (can_be_empty(rule[i])) return true; i++;}
+    }
+  if (L(rule)==as_tree_label("CONCAT")) {
+    int i=0;
+    while(i<N(rule)) { if (can_be_empty(rule[i])==false) return false; i++;}
     return true;
   }
-  if (L(rule) == as_tree_label ("STAR")) return true;
-  if (L(rule) == as_tree_label ("RANGE")) return false;
+  if (L(rule)==as_tree_label("RANGE")) return false;
   return false;
 }
 
@@ -74,7 +76,8 @@ void
 parser_rep::set_dependance(string var, tree rule) {
   if (L(rule)==as_tree_label("DOLLAR") && N(rule)==1) {
     pair<string,string> p(var,rule[0]->label);
-    dependance(p)=true;}
+    dependance(p)=true;
+    closure(p)=true;}
   if (L(rule)==as_tree_label("OR")) {
     int i=0;
     while(i<N(rule)) {set_dependance(var,rule[i]);i++;}
@@ -99,103 +102,187 @@ parser_rep::set_dependance() {
   }
 }
 
-void
-parser_rep::set_closure() {
+hashmap <pair<string,string>, bool>
+parser_rep::set_closure(hashmap <pair<string,string>,bool> r) {
   string var1,var2,var3,var4;
   bool new_dependance;
+  hashmap<pair<string,string>,bool> c;
+  c=copy(r);
   do {
     new_dependance= false;
-    iterator<pair<string,string> > it12= iterate(dependance);
+    iterator<pair<string,string> > it12= iterate(c);
     while(it12->busy()) {
       pair<string,string> p=it12->next();
       var1=p.x1;
       var2=p.x2;
-      iterator<pair<string,string> > it34= iterate(dependance);
+      iterator<pair<string,string> > it34= iterate(c);
       while(it34->busy()) {
 	p=it34->next();
 	var3=p.x1;
 	var4=p.x2;
 	p=pair<string,string>(var1,var4);
-	if (var2==var3 && !dependance->contains(p)) {
+	if (var2==var3 && !c->contains(p)) {
 	  new_dependance= true;
-	  dependance(p)=true;
+	  c(p)=true;
 	}
       }
     }
   }
-  while(new_dependance==true);
+  while(new_dependance);
+  return c;
 }
 
+void
+parser_rep::set_dag() {
+  string var1, var2;
+  hashmap<pair<string,string>,bool> closure_dag;
+  iterator<pair<string,string> > it= iterate(dependance);
+  while(it->busy()) {
+    pair<string,string> p= it->next();
+    dag(p)= true;
+    closure_dag= set_closure(dag);
+    pair<string,string> p1(p.x1,p.x1);
+    if (closure_dag->contains(p1)) dag->reset(p);
+  }
+}
 
 int
-parser_rep::parse (tree parsing_tree, int pos) {
+parser_rep::parse_level(bool not_decomposition, string calling_letter,
+			int level, tree parsing_tree, int pos) {
   if (pos >= N(xstring)) return -1;
-  pair<tree,int> p(parsing_tree,pos);
-  if (evaluated_pair->contains(p)) return evaluated_pair(p);
-  if (wanted_pair->contains(p)) return -1;
-  if ( L(parsing_tree)==as_tree_label("DOLLAR")) {
+  if (level >= N(xstring)) return -1;
+  triple <string, int, int> t(calling_letter, level, pos);
+  if (evaluated_triple->contains(t)) return evaluated_triple(t);
+  if (L(parsing_tree)==as_tree_label("DOLLAR")) {
     if (! grammar->contains(parsing_tree)) return -1;
-    tree regle;
-    regle= grammar(parsing_tree);
-    int opos=pos;
-    p= pair<tree,int> (parsing_tree, opos);
-    wanted_pair(p)= true;
-    pos= parse(regle, pos);
-    cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";  //effacer wanted_pair apres
-    evaluated_pair(p)= pos;
-    wanted_pair->reset(p);
+    int opos= pos;
+    string called_letter= parsing_tree[0]->label;
+    pair<string,string> p1(calling_letter,called_letter);
+    pair<string,string> p2(called_letter,calling_letter);
+    tree rule= grammar(parsing_tree);
+    if (closure->contains(p1) && closure->contains(p2)) {
+      if (! dag->contains(p1) && level==0) {pos=-1;}
+      else {
+	if (! dag->contains(p1)) level--;
+	pos= parse_level(true, called_letter, level, rule, pos);
+      }
+    }
+    else {pos= parse(parsing_tree,opos);}
+    if (not_decomposition) evaluated_triple(t)= pos;
+    //cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
     return pos;
   }
   if (L(parsing_tree)==as_tree_label("OR") && N(parsing_tree)>=1) {    // or
     tree parsing_tree2;
     int i;
     int init_pos= pos;
-    p= pair<tree, int> (parsing_tree, init_pos);
-    wanted_pair(p)= true;
     i=0;
     do {
       parsing_tree2= parsing_tree[i];
-      pos= parse(parsing_tree2, init_pos);
+      pos= parse_level(false,calling_letter, level, parsing_tree2, init_pos);
       i++;
     } while (pos==-1 && i<N(parsing_tree));
-    evaluated_pair(p)= pos;
-    cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
-    wanted_pair->reset(p);
+    //cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    if (not_decomposition) evaluated_triple(t)= pos;
     return pos;
   }
   if (L(parsing_tree)==as_tree_label("CONCAT") && N(parsing_tree)>=1) { 
     tree parsing_tree2;
     int i=0;
     int init_pos= pos;
-    p= pair<tree, int> (parsing_tree, init_pos);
-    wanted_pair(p)= true;
     do {
       parsing_tree2= parsing_tree[i];
-      pos=parse(parsing_tree2, pos);
+      if (init_pos==pos) { pos=parse_level(false, calling_letter, level, parsing_tree2, pos);}
+      else {pos=parse(parsing_tree2, pos);}
       i++;
     } while (pos!=-1 && i<N(parsing_tree));
-    cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
-    evaluated_pair(p)= pos;
-    wanted_pair->reset(p);
+    // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    if (not_decomposition) evaluated_triple(t)= pos;
     return pos;
   }
   if (L(parsing_tree)==as_tree_label("STAR") && N(parsing_tree)==1) {
     tree parsing_tree1;
     parsing_tree1= parsing_tree[0];
     int init_pos= pos;
-    int opos;
-    p= pair<tree, int> (parsing_tree, init_pos);    
-    wanted_pair(p)= true;
+    int opos;    
     do {
       opos= pos;
-      pos= parse(parsing_tree1, pos);
+      if(init_pos==pos) {pos= parse_level(false, calling_letter, level, parsing_tree1, pos);}
+      else {pos=parse(parsing_tree1, pos);}
     } while (pos!=-1 && pos<N(xstring));
     if (pos==-1) pos= opos;
-    cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
-    evaluated_pair(p)= pos;
-    wanted_pair->reset(p);
+    //cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    if (not_decomposition) evaluated_triple(t)= pos;
     return pos;
   }
+  pos= parse(parsing_tree, pos);
+  if (not_decomposition) evaluated_triple(t)= pos;
+  return pos;
+}
+
+int
+parser_rep::parse(tree parsing_tree, int pos) {
+  pair<tree, int> p(parsing_tree, pos);
+  // cout<<evaluated_triple;
+  if (pos >= N(xstring)) return -1;
+  if (evaluated_pair->contains(p)) return evaluated_pair(p);
+  if(L(parsing_tree)==as_tree_label("DOLLAR")) {
+    int init_pos= pos;
+    pos=-1;
+    int opos;
+    int i=0;
+    string letter= parsing_tree[0]->label;
+    tree rule=grammar(parsing_tree);
+    do {
+      opos=pos; //cout << "test"<<i;
+      pos=parse_level(true,letter,i,rule, init_pos);
+      triple<string, int, int> t(letter,i,init_pos);
+      //evaluated_triple(t)=pos;
+      i++;
+    }
+    while (pos > opos);
+    pos= opos;
+    //    evaluated_pair(p)= pos;
+    return pos;
+  }
+  if (L(parsing_tree)==as_tree_label("OR") && N(parsing_tree)>=1) {    // or
+    tree parsing_tree2;
+    int i;
+    int init_pos= pos;
+    i=0;
+    do {
+      parsing_tree2= parsing_tree[i];
+      pos= parse(parsing_tree2, init_pos);
+      i++;
+    } while (pos==-1 && i<N(parsing_tree));
+    // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    return pos;
+  }
+  if (L(parsing_tree)==as_tree_label("CONCAT") && N(parsing_tree)>=1) { 
+    tree parsing_tree2;
+    int i=0;
+    int init_pos= pos;
+    do {
+      parsing_tree2= parsing_tree[i];
+      pos=parse(parsing_tree2, pos);
+      i++;
+    } while (pos!=-1 && i<N(parsing_tree));
+    // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    return pos;
+  }
+  if (L(parsing_tree)==as_tree_label("STAR") && N(parsing_tree)==1) {
+    tree parsing_tree1;
+    parsing_tree1= parsing_tree[0];
+    int init_pos= pos;
+    int opos;    
+    do {
+      opos= pos;
+      pos=parse(parsing_tree1, pos);
+    } while (pos!=-1 && pos<N(xstring));
+    if (pos==-1) pos= opos;
+    // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    return pos;
+  }  
   if (L(parsing_tree)==as_tree_label("RANGE") && N(parsing_tree)==2) {
     string s1,s2;
     s1= parsing_tree[0]->label;
@@ -204,10 +291,8 @@ parser_rep::parse (tree parsing_tree, int pos) {
     if (s1 <= xstring(pos,pos+1)
 	&& xstring(pos,pos+1) <=s2) {pos++;}
     else pos=-1;
-    p= pair<tree, int> (parsing_tree, opos);
-    cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
-    evaluated_pair(p)= pos;
-    wanted_pair->reset(p);
+    //cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
+    //evaluated_pair(p)= pos;
     return pos;
   }
   if (is_atomic(parsing_tree)) {
@@ -216,13 +301,14 @@ parser_rep::parse (tree parsing_tree, int pos) {
     int opos= pos;
     if (pos+N(s) <= N(xstring) && s == xstring(pos,pos+N(s))) {pos+=N(s);}
     else pos= -1;
-    p= pair<tree, int> (parsing_tree, opos);
-    cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
-    evaluated_pair(p)= pos;
+    // cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
+    //evaluated_pair(p)= pos;
     return pos;
   }
   return -1;
 }
+
+
 
 static hashmap<tree,tree>* global_grammar= NULL;
 
