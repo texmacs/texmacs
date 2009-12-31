@@ -21,17 +21,21 @@ class parser_rep: concrete_struct {
 public:
   hashmap<tree,tree> grammar;
   string xstring;
-  hashmap<pair<tree,int>,int> evaluated_pair;
-  hashmap<pair<tree,int>,bool> wanted_pair;
+  hashmap<triple<string,int,int>,int> evaluated_triple;
+  hashmap<pair<tree, int>, int> evaluated_pair;
   hashmap<string,bool> can_be_empty_table;
   hashmap<pair<string,string>,bool> dependance;
+  hashmap<pair<string,string>,bool> closure;
+  hashmap<pair<string,string>,bool> dag;
 
   parser_rep (hashmap<tree,tree> g, string s);
-  void set_closure();
+  hashmap<pair<string,string>,bool> set_closure(hashmap<pair<string,string>,bool> r);
   void set_dependance();
   void set_dependance(string var, tree rule);
   void set_emptyness();
   bool can_be_empty(tree rule);
+  void set_dag();
+  int parse_level(bool not_decomposition, string calling_letter, int level, tree parsing_tree, int pos);
   int parse (tree parsing_tree, int pos);
   friend class parser;
 };
