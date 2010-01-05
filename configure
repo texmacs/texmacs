@@ -6243,6 +6243,80 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
   # compile C to avoid the 'const char**' problem
+
+
+
+{ echo "$as_me:$LINENO: checking for iconv in -liconv" >&5
+echo $ECHO_N "checking for iconv in -liconv... $ECHO_C" >&6; }
+if test "${ac_cv_lib_iconv_iconv+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-liconv  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char iconv ();
+int
+main ()
+{
+return iconv ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_lib_iconv_iconv=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_iconv_iconv=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_lib_iconv_iconv" >&5
+echo "${ECHO_T}$ac_cv_lib_iconv_iconv" >&6; }
+if test $ac_cv_lib_iconv_iconv = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBICONV 1
+_ACEOF
+
+  LIBS="-liconv $LIBS"
+
+fi
+
+
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
@@ -6252,9 +6326,11 @@ echo "${ECHO_T}disabling iconv support" >&6; }
 else
     if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
        CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
+       LDFLAGS="$ICONV_LDFLAGS"
     fi
     if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
        CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
+       LDFLAGS="-L$with_iconv/lib"
        ICONV_CFLAGS="-I$with_iconv/include"
        ICONV_LDFLAGS="-L$with_iconv/lib"
     fi
@@ -6618,8 +6694,7 @@ fi
 if test $ac_cv_header_iconv_h = yes; then
   { echo "$as_me:$LINENO: checking for iconv" >&5
 echo $ECHO_N "checking for iconv... $ECHO_C" >&6; }
-
-cat >conftest.$ac_ext <<_ACEOF
+    cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -6676,7 +6751,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
 echo "${ECHO_T}no" >&6; }
     { echo "$as_me:$LINENO: checking for iconv in -liconv" >&5
 echo $ECHO_N "checking for iconv in -liconv... $ECHO_C" >&6; }
-    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
+#    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
     LIBS="-liconv"                # for AC_TRY_LINK
     cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -6783,11 +6858,11 @@ else
     if test -z "$FREETYPE_CFLAGS"; then
       FREETYPE_CFLAGS=`freetype-config --cflags`
     fi
-    CPPFLAGS="$FREETYPE_CFLAGS"
+    CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
     if test -z "$FREETYPE_LDFLAGS"; then
       FREETYPE_LDFLAGS=`freetype-config --libs`
     fi
-    LIBS="$FREETYPE_LDFLAGS"
+    LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
     if test "${ac_cv_header_ft2build_h+set}" = set; then
   { echo "$as_me:$LINENO: checking for ft2build.h" >&5
 echo $ECHO_N "checking for ft2build.h... $ECHO_C" >&6; }
@@ -8032,7 +8107,7 @@ echo "$as_me: WARNING: unable to link statically with guile" >&2;}
       fi
    fi
 fi
-CPPFLAGS="$SAVE_CPFLAGS"
+CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
 
@@ -9563,6 +9638,8 @@ case "$CONFIG_GUI" in
 #        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
 	;;
 esac
+
+
 
 
 

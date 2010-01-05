@@ -147,6 +147,7 @@ changequote([, ])dnl
 # Modified from GNOME's libxml2 configure.in
 AC_LANG_SAVE
 AC_LANG_C  # compile C to avoid the 'const char**' problem
+
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
@@ -155,9 +156,11 @@ if test "$with_iconv" = "no" ; then
 else
     if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
        CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
+       LDFLAGS="$ICONV_LDFLAGS"
     fi
     if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
        CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
+       LDFLAGS="-L$with_iconv/lib"
        ICONV_CFLAGS="-I$with_iconv/include"
        ICONV_LDFLAGS="-L$with_iconv/lib"
     fi
@@ -177,7 +180,7 @@ else
 ],[
     AC_MSG_RESULT(no)
     AC_MSG_CHECKING(for iconv in -liconv)
-    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
+#    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
     LIBS="-liconv"                # for AC_TRY_LINK
     AC_TRY_LINK(
 [
@@ -222,11 +225,11 @@ else
     if test -z "$FREETYPE_CFLAGS"; then
       FREETYPE_CFLAGS=`freetype-config --cflags`
     fi
-    CPPFLAGS="$FREETYPE_CFLAGS"
+    CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
     if test -z "$FREETYPE_LDFLAGS"; then
       FREETYPE_LDFLAGS=`freetype-config --libs`
     fi
-    LIBS="$FREETYPE_LDFLAGS"
+    LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
     AC_CHECK_HEADER(ft2build.h,
     AC_MSG_CHECKING(for freetype)
     AC_TRY_LINK(
@@ -469,7 +472,7 @@ if test "$tm_link_guile_static" = "no" ; then
       fi
    fi
 fi
-CPPFLAGS="$SAVE_CPFLAGS"
+CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
 
@@ -531,7 +534,7 @@ case "${host}" in
   *mingw*)
     AC_MSG_RESULT([final adjustments for mingw host])
     CONFIG_OS_COMPAT="Windows"
-    LDRT="-lmingwex"
+    LDRT="-lmingw32 -lmingwex"
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)
@@ -779,6 +782,8 @@ case "$CONFIG_GUI" in
 	;;
 esac
 
+AC_SUBST(CPPFLAGS)
+AC_SUBST(LDFLAGS)
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LDFLAGS)
 AC_SUBST(COCOA_CFLAGS)
