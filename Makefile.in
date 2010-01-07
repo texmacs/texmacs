@@ -47,8 +47,8 @@ TEXMACS: EMPTY_DIRS
 	$(CP) misc/scripts/tm_gs $(tmdir)/bin
 	$(CHMOD) 755 $(tmdir)/bin/*
 	$(CHMOD) 755 plugins/*/bin/*
-	$(RM) $(tmdir)/plugins
-	$(LN) -s ../plugins $(tmdir)/plugins
+	$(RM) -r $(tmdir)/plugins
+	$(CP) plugins $(tmdir)/plugins
 	@echo ----------------------------------------------------
 	@echo dynamic TeXmacs has been successfully compiled
 
@@ -61,8 +61,8 @@ STATIC_TEXMACS: EMPTY_DIRS
 	$(CP) misc/scripts/tm_gs $(tmdir)/bin
 	$(CHMOD) 755 $(tmdir)/bin/*
 	$(CHMOD) 755 plugins/*/bin/*
-	$(RM) $(tmdir)/plugins
-	$(LN) -s ../plugins $(tmdir)/plugins
+	$(RM) -r $(tmdir)/plugins
+	$(CP) plugins $(tmdir)/plugins
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
@@ -295,9 +295,12 @@ WIN_BUNDLE_DIR = ../distr/TeXmacs-Windows
 WIN_BUNDLE_BIN_DIR = $(WIN_BUNDLE_DIR)/bin
 WIN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
-## WARNING: the following paths needs to be adapted manually 
-WIN_BUNDLE_QT_DLL_DIR = ../distr/dlls
-WIN_BUNDLE_LIBS_DLL_DIR = ../distr/dlls
+## WARNING: the following path list needs to be adapted manually 
+DLLPATH = $(PATH)
+
+DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
+DLL_LIST = QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll
+DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
 WIN_BUNDLE_MAIN: TEXMACS
 	$(MKDIR) ../distr
@@ -334,15 +337,8 @@ WIN_BUNDLE_MAIN: TEXMACS
 
 
 WIN_BUNDLE_LIBS:
-	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/QtCore4.dll $(WIN_BUNDLE_BIN_DIR)
-	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/QtGui4.dll $(WIN_BUNDLE_BIN_DIR)
-	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/QtSvg4.dll $(WIN_BUNDLE_BIN_DIR)
-	$(CP) $(WIN_BUNDLE_QT_DLL_DIR)/mingwm10.dll $(WIN_BUNDLE_BIN_DIR)
-	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libgmp*.dll $(WIN_BUNDLE_BIN_DIR) 
-	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libguile*.dll $(WIN_BUNDLE_BIN_DIR) 
-	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libfreetype*.dll $(WIN_BUNDLE_BIN_DIR) 
-	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libltdl*.dll $(WIN_BUNDLE_BIN_DIR)
-	$(CP) $(WIN_BUNDLE_LIBS_DLL_DIR)/libiconv*.dll $(WIN_BUNDLE_BIN_DIR)	
+	for DLL in $(DLLS) ; do $(CP) $$DLL $(WIN_BUNDLE_BIN_DIR) ; done
+
 
 WIN_BUNDLE: WIN_BUNDLE_MAIN WIN_BUNDLE_LIBS 
 

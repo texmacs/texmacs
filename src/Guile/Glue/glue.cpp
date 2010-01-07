@@ -96,7 +96,7 @@ gui_is_qt () {
 
 bool
 os_win32 () {
-#ifdef OS_WIN32
+#if defined (OS_WIN32)
   return true;
 #else
   return false;
@@ -105,7 +105,7 @@ os_win32 () {
 
 bool
 os_mingw () {
-#ifdef __MINGW32__
+#if defined (__MINGW__) || defined (__MINGW32__)
   return true;
 #else
   return false;
