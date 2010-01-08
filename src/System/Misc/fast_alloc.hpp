@@ -14,12 +14,7 @@
 #include "tm_configure.hpp"
 #include <stdlib.h>
 
-// g++ >= 3.2 requires
-#include <iostream>
-using std::ostream;
-using std::cout;
-using std::cerr;
-// instead of include <iostream.h>
+#include "tm_ostream.hpp"
 
 #define BLOCK_SIZE 65536 // should be >>> MAX_FAST
 

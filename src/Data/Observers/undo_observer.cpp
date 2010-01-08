@@ -23,7 +23,7 @@ class undo_observer_rep: public observer_rep {
 public:
   undo_observer_rep (archiver_rep* arch2): arch (arch2) {}
   int get_type () { return OBSERVER_UNDO; }
-  ostream& print (ostream& out) { return out << " undoer<" << arch << ">"; }
+  tm_ostream& print (tm_ostream& out) { return out << " undoer<" << arch << ">"; }
   void announce (tree& ref, modification mod);
 
   void reattach           (tree& ref, tree t);

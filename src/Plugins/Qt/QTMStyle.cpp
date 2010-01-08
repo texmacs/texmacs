@@ -12,7 +12,7 @@
 #include "QTMStyle.hpp"
 #include <QApplication>
 #include <QStyleOptionMenuItem>
-#include <iostream>
+#include "tm_ostream.hpp"
 
 /******************************************************************************
 * QTMProxyStyle (does not own *style)

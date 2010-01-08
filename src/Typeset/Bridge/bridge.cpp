@@ -150,8 +150,8 @@ bridge::operator != (bridge item2) {
   return rep != item2.rep;
 }
 
-ostream&
-operator << (ostream& out, bridge br) {
+tm_ostream&
+operator << (tm_ostream& out, bridge br) {
   return out << "bridge [" << br->st << ", " << br->ip << "]";
 }
 

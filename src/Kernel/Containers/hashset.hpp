@@ -16,7 +16,7 @@
 template<class T> class hashset;
 template<class T> class hashset_iterator_rep;
 template<class T> int N (hashset<T> h);
-template<class T> ostream& operator << (ostream& out, hashset<T> h);
+template<class T> tm_ostream& operator << (tm_ostream& out, hashset<T> h);
 template<class T> bool operator <= (hashset<T> h1, hashset<T> h2);
 
 template<class T> class hashset_rep: concrete_struct {
@@ -39,7 +39,7 @@ public:
 
   friend class hashset<T>;
   friend int N LESSGTR (hashset<T> h);
-  friend ostream& operator << LESSGTR (ostream& out, hashset<T> h);
+  friend tm_ostream& operator << LESSGTR (tm_ostream& out, hashset<T> h);
   friend bool operator <= LESSGTR (hashset<T> h1, hashset<T> h2);
   friend class hashset_iterator_rep<T>;
 };

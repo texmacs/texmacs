@@ -26,7 +26,7 @@ class ip_observer_rep: public observer_rep {
 public:
   ip_observer_rep (path ip2): ip (ip2) {}
   int get_type () { return OBSERVER_IP; }
-  ostream& print (ostream& out) { return out << " " << ip; }
+  tm_ostream& print (tm_ostream& out) { return out << " " << ip; }
 
   void announce (tree& ref, modification mod);
   void done     (tree& ref, modification mod);

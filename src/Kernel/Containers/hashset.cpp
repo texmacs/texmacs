@@ -89,8 +89,8 @@ operator == (hashset<T> h1, hashset<T> h2) {
   return (N(h1)==N(h2)) && (h1<=h2);
 }
 
-template<class T> ostream&
-operator << (ostream& out, hashset<T> h) {
+template<class T> tm_ostream&
+operator << (tm_ostream& out, hashset<T> h) {
   int i=0, j=0, n=h->n, size=h->size;
   out << "{ ";
   for (; i<n; i++) {

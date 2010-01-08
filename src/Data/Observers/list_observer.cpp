@@ -27,7 +27,7 @@ class list_observer_rep: public observer_rep {
 public:
   list_observer_rep (observer o1b, observer o2b): o1 (o1b), o2 (o2b) {}
   int get_type () { return OBSERVER_LIST; }
-  ostream& print (ostream& out) {
+  tm_ostream& print (tm_ostream& out) {
     if (!is_nil (o1)) o1->print (out);
     if (!is_nil (o2)) o2->print (out);
     return out; }

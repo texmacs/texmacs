@@ -28,7 +28,7 @@ private:
 public:
   tree_pointer_rep (tree ref, bool flag2): ptr (ref.rep), flag (flag2) {}
   int get_type () { return OBSERVER_POINTER; }
-  ostream& print (ostream& out) { return out << " pointer"; }
+  tm_ostream& print (tm_ostream& out) { return out << " pointer"; }
   void announce (tree& ref, modification mod) {
     link_announce (observer (this), mod); }
 

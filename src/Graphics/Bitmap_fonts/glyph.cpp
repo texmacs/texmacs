@@ -100,8 +100,8 @@ glyph_rep::adjust_top () {
 * Text output
 ******************************************************************************/
 
-ostream&
-operator << (ostream& out, glyph gl) {
+tm_ostream&
+operator << (tm_ostream& out, glyph gl) {
   int i, j;
   out << "Size  : (" << gl->width << ", " << gl->height << ")\n";
   out << "Offset: (" << gl->xoff << ", " << gl->yoff << ")\n";

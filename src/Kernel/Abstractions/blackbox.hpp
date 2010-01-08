@@ -19,7 +19,7 @@ public:
   inline virtual ~blackbox_rep () {}
   virtual int get_type () = 0;
   virtual bool equal (blackbox_rep* ptr) = 0;
-  virtual ostream& display (ostream& out) = 0;
+  virtual tm_ostream& display (tm_ostream& out) = 0;
 };
 
 class blackbox {
@@ -39,7 +39,7 @@ public:
   inline bool equal (blackbox_rep* ptr) {
     return ptr != NULL && ptr->get_type () == type_helper<T>::id &&
            ((whitebox_rep<T>*) ptr)->data == data; }
-  inline ostream& display (ostream& out) { return out << data; }
+  inline tm_ostream& display (tm_ostream& out) { return out << data; }
 };
 
 inline bool operator == (blackbox bb1, blackbox bb2) {
@@ -48,7 +48,7 @@ inline bool operator == (blackbox bb1, blackbox bb2) {
 inline bool operator != (blackbox bb1, blackbox bb2) {
   if (is_nil (bb1)) return !is_nil (bb2);
   else return !bb1->equal (bb2.rep); }
-inline ostream& operator << (ostream& out, blackbox bb) {
+inline tm_ostream& operator << (tm_ostream& out, blackbox bb) {
   if (is_nil (bb)) return out << "nil";
   else return bb->display (out); }
 

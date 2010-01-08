@@ -37,7 +37,7 @@ public:
   inline memorizer_rep () { TM_DEBUG (memorizer_count++); }
   inline virtual ~memorizer_rep () { TM_DEBUG (memorizer_count--); }
 
-  virtual void print (ostream& out) = 0;
+  virtual void print (tm_ostream& out) = 0;
   virtual int  type () = 0;
   virtual int  hash () = 0;
   virtual bool equal (memorizer_rep* mem) = 0;
@@ -72,7 +72,7 @@ public:
     return o1.rep->type () != o2.rep->type () || !o1.rep->equal (o2.rep); }
   inline friend int hash (memorizer o1) {
     return o1.rep->hash (); }
-  inline friend ostream& operator << (ostream& out, memorizer mem) {
+  inline friend tm_ostream& operator << (tm_ostream& out, memorizer mem) {
     mem->print (out); return out; }
 };
 

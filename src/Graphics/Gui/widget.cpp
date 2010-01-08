@@ -196,7 +196,7 @@ widget_rep::notify (slot s, blackbox new_val) {
 * Miscellaneous
 ******************************************************************************/
 
-ostream&
-widget_rep::print (ostream& out) {
+tm_ostream&
+widget_rep::print (tm_ostream& out) {
   return out << "widget";
 }

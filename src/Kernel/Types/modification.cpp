@@ -25,8 +25,8 @@ operator != (modification m1, modification m2) {
   return m1->k != m2->k || m1->p != m2->p || m1->t != m2->t;
 }
 
-ostream&
-operator << (ostream& out, modification mod) {
+tm_ostream&
+operator << (tm_ostream& out, modification mod) {
   switch (mod->k) {
   case MOD_ASSIGN:
     return out << "assign (" << root (mod)

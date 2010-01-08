@@ -583,8 +583,8 @@ operator != (cursor cu1, cursor cu2) {
   return ! (cu1 == cu2);
 }
 
-ostream&
-operator << (ostream& out, cursor cu) {
+tm_ostream&
+operator << (tm_ostream& out, cursor cu) {
   out << "cursor (" << (cu->ox>>8) << ", " << (cu->oy>>8) << ": "
       << cu->delta << ": "
       << (cu->y1>>8) << ", " << (cu->y2>>8) << ": "
@@ -617,8 +617,8 @@ operator != (selection sel1, selection sel2) {
   return !(sel1 == sel2);
 }
 
-ostream&
-operator << (ostream& out, selection sel) {
+tm_ostream&
+operator << (tm_ostream& out, selection sel) {
   return out << "selection (" << sel->start << ", " << sel->end << ")";
 }
 
@@ -633,8 +633,8 @@ gr_selection::gr_selection (array<path> cp, SI dist):
   rep->dist= dist;
 }
 
-ostream&
-operator << (ostream& out, gr_selection sel) {
+tm_ostream&
+operator << (tm_ostream& out, gr_selection sel) {
   return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
 }
 
@@ -778,7 +778,7 @@ bool box::operator == (box b2) { return rep==b2.rep; }
 bool box::operator != (box b2) { return rep!=b2.rep; }
 
 box::operator tree () { return tree (*rep); }
-ostream& operator << (ostream& out, box b) { return out << ((tree) b); }
+tm_ostream& operator << (tm_ostream& out, box b) { return out << ((tree) b); }
 
 path
 descend_decode (path ip, int side) {

@@ -135,7 +135,7 @@ public:
     in (as_std_environment (env)), local (ch), out (in),
     h (weak_hash (env) ^ weak_hash (ch)) {}
 
-  void print (ostream& out) { out << "assign_memorizer"; }
+  void print (tm_ostream& out) { out << "assign_memorizer"; }
   int type () { return MEMORIZE_ASSIGN; }
   int hash () { return h; }
   bool equal (memorizer_rep* mem) {
@@ -177,7 +177,7 @@ public:
     in (as_std_environment (env)), local (ch), out (in),
     h (weak_hash (env) ^ weak_hash (ch)) {}
 
-  void print (ostream& out) { out << "begin_with_memorizer"; }
+  void print (tm_ostream& out) { out << "begin_with_memorizer"; }
   int type () { return MEMORIZE_BEGIN_WITH; }
   int hash () { return h; }
   bool equal (memorizer_rep* mem) {
@@ -225,7 +225,7 @@ public:
   inline end_with_memorizer_rep (environment env):
     in (as_std_environment (env)), out (in) {}
 
-  void print (ostream& out) { out << "end_with_memorizer"; }
+  void print (tm_ostream& out) { out << "end_with_memorizer"; }
   int type () { return MEMORIZE_END_WITH; }
   int hash () { return weak_hash (in); }
   bool equal (memorizer_rep* mem) {
@@ -269,7 +269,7 @@ public:
     in (as_std_environment (env)), local (ch), out (in),
     h (weak_hash (env) ^ weak_hash (ch)) {}
 
-  void print (ostream& out) { out << "macro_down_memorizer"; }
+  void print (tm_ostream& out) { out << "macro_down_memorizer"; }
   int type () { return MEMORIZE_MACRO_DOWN; }
   int hash () { return h; }
   bool equal (memorizer_rep* mem) {
@@ -294,7 +294,7 @@ public:
     in (as_std_environment (env)), local (ch), out (in),
     h (weak_hash (env) ^ weak_hash (as_environment (ch))) {}
 
-  void print (ostream& out) { out << "macro_redown_memorizer"; }
+  void print (tm_ostream& out) { out << "macro_redown_memorizer"; }
   int type () { return MEMORIZE_MACRO_DOWN; }
   int hash () { return h; }
   bool equal (memorizer_rep* mem) {
@@ -357,7 +357,7 @@ public:
   inline macro_up_memorizer_rep (environment env):
     in (as_std_environment (env)), out (in) {}
 
-  void print (ostream& out) { out << "macro_up_memorizer"; }
+  void print (tm_ostream& out) { out << "macro_up_memorizer"; }
   int type () { return MEMORIZE_MACRO_UP; }
   int hash () { return weak_hash (in); }
   bool equal (memorizer_rep* mem) {

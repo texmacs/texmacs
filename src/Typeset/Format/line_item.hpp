@@ -64,6 +64,6 @@ class line_item {
 };
 CONCRETE_NULL_CODE(line_item);
 
-ostream& operator << (ostream& out, line_item item);
+tm_ostream& operator << (tm_ostream& out, line_item item);
 
 #endif // defined LINE_ITEM_H

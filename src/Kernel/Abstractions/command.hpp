@@ -18,7 +18,7 @@ class command_rep: public abstract_struct {
 public:
   inline command_rep () { TM_DEBUG(command_count++); }
   inline virtual ~command_rep () { TM_DEBUG(command_count--); }
-  inline virtual ostream& print (ostream& out);
+  inline virtual tm_ostream& print (tm_ostream& out);
   virtual void apply () = 0;
 };
 
@@ -29,15 +29,15 @@ public:
   command (void (*_callback) (void*, void*), void *_obj, void *_info = NULL);
 
   inline void   operator () (void);
-  inline friend ostream& operator << (ostream& out, command cmd);
+  inline friend tm_ostream& operator << (tm_ostream& out, command cmd);
 };
 ABSTRACT_NULL_CODE(command);
 
-inline ostream& command_rep::print (ostream& out) { return out << "command"; }
+inline tm_ostream& command_rep::print (tm_ostream& out) { return out << "command"; }
 inline void     command::operator () (void) { rep->apply(); }
 inline bool     operator == (command cmd1, command cmd2) {
   return cmd1.rep == cmd2.rep; }
-inline ostream& operator << (ostream& out, command cmd) {
+inline tm_ostream& operator << (tm_ostream& out, command cmd) {
   if (is_nil(cmd)) return out << "(null)"; else return cmd->print(out); }
 
 #endif // defined COMMAND_H

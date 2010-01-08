@@ -60,8 +60,8 @@ operator < (insertion ins1, insertion ins2) {
   return !var_path_inf_eq (ins2->begin, ins1->begin);
 }
 
-ostream&
-operator << (ostream& out, insertion ins) {
+tm_ostream&
+operator << (tm_ostream& out, insertion ins) {
   if (ins->type != "") out << ins->type << " ";
   out << "insertion [ " << ins->begin << " -- " << ins->end;
   if (N(ins->sk)>0) out << "; " << ins->sk;
@@ -80,8 +80,8 @@ operator != (pagelet pg1, pagelet pg2) {
   return (pg1->ins != pg2->ins);
 }
 
-ostream&
-operator << (ostream& out, pagelet pg) {
+tm_ostream&
+operator << (tm_ostream& out, pagelet pg) {
   return out << "pagelet " << pg->ins;
 }
 

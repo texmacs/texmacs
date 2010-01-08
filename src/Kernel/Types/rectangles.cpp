@@ -28,8 +28,8 @@ rectangle::operator tree () {
 	       as_string (rep->x2), as_string (rep->y2));
 }
 
-ostream&
-operator << (ostream& out, rectangle r) {
+tm_ostream&
+operator << (tm_ostream& out, rectangle r) {
   out << "rectangle ("
       << r->x1 << ", " << r->y1 << ", "
       << r->x2 << ", " << r->y2 << ")";

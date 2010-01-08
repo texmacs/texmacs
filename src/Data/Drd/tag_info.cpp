@@ -101,8 +101,8 @@ parent_info::operator != (const parent_info& pi) {
   return !(operator == (pi));
 }
 
-ostream&
-operator << (ostream& out, parent_info pi) {
+tm_ostream&
+operator << (tm_ostream& out, parent_info pi) {
   return out << ((tree) pi);
 }
 
@@ -165,8 +165,8 @@ child_info::operator != (const child_info& ci) {
   return !(operator == (ci));
 }
 
-ostream&
-operator << (ostream& out, child_info ci) {
+tm_ostream&
+operator << (tm_ostream& out, child_info ci) {
   return out << ((tree) ci);
 }
 
@@ -308,8 +308,8 @@ tag_info::operator () (int child, int n) {
 * Usual extra routines
 ******************************************************************************/
 
-ostream&
-operator << (ostream& out, tag_info ti) {
+tm_ostream&
+operator << (tm_ostream& out, tag_info ti) {
   out << "[ " << ti->pi << ", " << ti->ci;
   if (ti->extra != "") out << ", " << ti->extra << "\n";
   return out << " ]";

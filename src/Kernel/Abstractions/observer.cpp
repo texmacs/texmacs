@@ -62,8 +62,8 @@ stretched_print (tree t, bool ips, int indent) {
   }
 }
 
-ostream&
-operator << (ostream& out, observer o) {
+tm_ostream&
+operator << (tm_ostream& out, observer o) {
   out << "<observer";
   if (is_nil (o)) out << " null";
   else o->print (out);

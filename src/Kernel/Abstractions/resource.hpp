@@ -61,12 +61,12 @@ template<class R>
 inline bool is_nil (const resource_ptr<R>& res) { return res.rep == NULL; }
 
 template<class R>
-ostream& operator << (ostream& out, const resource_ptr<R>& t);
+tm_ostream& operator << (tm_ostream& out, const resource_ptr<R>& t);
 
 #define make(T,s,im) ((T::instances -> contains (s))? T(s): T(im))
 
 template<class T>
-ostream& operator << (ostream& out, const resource_ptr<T>& t) {
+tm_ostream& operator << (tm_ostream& out, const resource_ptr<T>& t) {
   return out << t->res_name;
 }
 

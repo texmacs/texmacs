@@ -54,7 +54,7 @@ TMPL inline function<F,T> derive (function<F,T> f, V var) {
   return f->derive (var); }
 TMPL inline tree as_tree (function<F,T> f) {
   return f->expression (); }
-TMPL inline ostream& operator << (ostream& out, function<F,T> f) {
+TMPL inline tm_ostream& operator << (tm_ostream& out, function<F,T> f) {
   return out << as_math_string (as_tree (f)); }
 
 TMPL

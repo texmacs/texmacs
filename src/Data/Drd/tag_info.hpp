@@ -75,7 +75,7 @@ struct parent_info {
   operator tree ();
   bool operator == (const parent_info& pi);
   bool operator != (const parent_info& pi);
-  friend ostream& operator << (ostream& out, parent_info pi);
+  friend tm_ostream& operator << (tm_ostream& out, parent_info pi);
 };
 
 /******************************************************************************
@@ -130,7 +130,7 @@ struct child_info {
   operator tree ();
   bool operator == (const child_info& pi);
   bool operator != (const child_info& pi);
-  friend ostream& operator << (ostream& out, child_info ci);
+  friend tm_ostream& operator << (tm_ostream& out, child_info ci);
 };
 
 class tag_info;
@@ -175,7 +175,7 @@ CONCRETE_CODE(tag_info);
 
 bool operator == (tag_info ti1, tag_info ti2);
 bool operator != (tag_info ti1, tag_info ti2);
-ostream& operator << (ostream& out, tag_info ti);
+tm_ostream& operator << (tm_ostream& out, tag_info ti);
 tag_info copy (tag_info ti);
 
 #endif // defined TAG_INFO_H

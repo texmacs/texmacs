@@ -76,7 +76,7 @@ double new_marker ();
 void set_author (double author);
 double get_author ();
 
-ostream& operator << (ostream& out, patch p);
+tm_ostream& operator << (tm_ostream& out, patch p);
 patch copy (patch p);
 patch compactify (patch p);
 path cursor_hint (patch p, tree t);

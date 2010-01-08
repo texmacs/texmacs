@@ -226,7 +226,7 @@ class ia_command_rep: public command_rep {
 public:
   ia_command_rep (tm_window_rep* win2): win (win2) {}
   void apply () { win->interactive_return (); }
-  ostream& print (ostream& out) { return out << "tm_window command"; }
+  tm_ostream& print (tm_ostream& out) { return out << "tm_window command"; }
 };
 
 bool

@@ -41,7 +41,7 @@ public:
     return ln1.rep == ln2.rep; }
   inline friend bool operator != (soft_link ln1, soft_link ln2) {
     return ln1.rep != ln2.rep; }
-  inline friend ostream& operator << (ostream& out, soft_link ln) {
+  inline friend tm_ostream& operator << (tm_ostream& out, soft_link ln) {
     return out << "soft_link (" << ln.rep << ")"; }
 };
 CONCRETE_CODE(soft_link);

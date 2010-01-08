@@ -102,8 +102,8 @@ test (parse_string s, string what) {
   return s->test (what);
 }
 
-ostream&
-operator << (ostream& out, parse_string s) {
+tm_ostream&
+operator << (tm_ostream& out, parse_string s) {
   list<string> l= s->l;
   list<int>    p= s->p;
   while (!is_nil (l)) {

@@ -40,7 +40,7 @@ public:
   inline observer_rep () { TM_DEBUG(observer_count++); }
   inline virtual ~observer_rep () { TM_DEBUG(observer_count--); }
   inline virtual int get_type () { return OBSERVER_UNKNOWN; }
-  inline virtual ostream& print (ostream& out) { return out; }
+  inline virtual tm_ostream& print (tm_ostream& out) { return out; }
 
   // Announcing modifications in subtrees
   virtual void announce             (tree& ref, modification mod);
@@ -89,7 +89,7 @@ public:
 };
 ABSTRACT_NULL_CODE(observer);
 
-ostream& operator << (ostream& out, observer o);
+tm_ostream& operator << (tm_ostream& out, observer o);
 
 class editor_rep;
 class archiver_rep;

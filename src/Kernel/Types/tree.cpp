@@ -148,8 +148,8 @@ operator << (tree& t, array<tree> a) {
   return t;
 }
 
-ostream&
-operator << (ostream& out, tree t) {
+tm_ostream&
+operator << (tm_ostream& out, tree t) {
   if (is_atomic (t)) return out << t->label;
   else if (is_compound (t)) {
     int i, n= N(t);

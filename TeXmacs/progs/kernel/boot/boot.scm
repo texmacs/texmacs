@@ -28,6 +28,25 @@
 (define dialogue-error #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Redirect standard output
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define original-display display)
+(define original-write write)
+
+(define (display . l)
+  "display one object on the standard output or a specified port."
+  (if (or (null? l) (not (null? (cdr l))))
+      (apply original-display l)
+      (tm-output (display-to-string (car l)))))
+
+(define (write . l)
+  "write an object to the standard output or a specified port."
+  (if (or (null? l) (not (null? (cdr l))))
+      (apply original-write l)
+      (tm-output (object->string (car l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Provide functions if not defined and public macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

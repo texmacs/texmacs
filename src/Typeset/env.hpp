@@ -429,7 +429,7 @@ public:
     return named_color (as_string (t)); }
 
   friend class edit_env;
-  friend ostream& operator << (ostream& out, edit_env env);
+  friend tm_ostream& operator << (tm_ostream& out, edit_env env);
 };
 
 class edit_env {
@@ -445,7 +445,7 @@ class edit_env {
 };
 CONCRETE_NULL_CODE(edit_env);
 
-ostream& operator << (ostream& out, edit_env env);
+tm_ostream& operator << (tm_ostream& out, edit_env env);
 tree texmacs_exec (edit_env env, tree cmd);
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp

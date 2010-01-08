@@ -45,7 +45,7 @@ class abstract_promise_rep: public promise_rep<widget> {
   promise<wk_widget> p;
 public:
   abstract_promise_rep (promise<wk_widget> p2): p (p2) {}
-  ostream& print (ostream& out) { return out << p; }
+  tm_ostream& print (tm_ostream& out) { return out << p; }
   widget eval () { return abstract (p ()); }
 };
 
@@ -58,7 +58,7 @@ class concrete_promise_rep: public promise_rep<wk_widget> {
   promise<widget> p;
 public:
   concrete_promise_rep (promise<widget> p2): p (p2) {}
-  ostream& print (ostream& out) { return out << p; }
+  tm_ostream& print (tm_ostream& out) { return out << p; }
   wk_widget eval () { return concrete (p ()); }
 };
 

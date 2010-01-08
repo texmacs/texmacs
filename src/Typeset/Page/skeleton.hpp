@@ -29,7 +29,7 @@ struct insertion {
   inline insertion (tree type, array<pagelet> sk);
   friend bool operator == (insertion ins1, insertion ins2);
   friend bool operator != (insertion ins1, insertion ins2);
-  friend ostream& operator << (ostream& out, insertion ins);
+  friend tm_ostream& operator << (tm_ostream& out, insertion ins);
 };
 struct pagelet_rep: concrete_struct {
   array<insertion> ins;
@@ -47,7 +47,7 @@ struct pagelet {
   void operator << (space ht);
   friend bool operator == (pagelet pg1, pagelet pg2);
   friend bool operator != (pagelet pg1, pagelet pg2);
-  friend ostream& operator << (ostream& out, pagelet pg);
+  friend tm_ostream& operator << (tm_ostream& out, pagelet pg);
 };
 typedef array<pagelet> skeleton;
 
@@ -115,6 +115,6 @@ pagelet::operator << (space spc) {
 
 bool operator == (pagelet pg1, pagelet pg2);
 bool operator != (pagelet pg1, pagelet pg2);
-ostream& operator << (ostream& out, pagelet pg);
+tm_ostream& operator << (tm_ostream& out, pagelet pg);
 
 #endif // defined SKELETON_H

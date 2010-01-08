@@ -65,6 +65,8 @@
 #include "file.hpp"
 #include "analyze.hpp"
 
+#include <ctype.h>
+
 #if defined(OS_WIN32)  || defined(__MINGW32__)
 #define WINPATHS
 #endif
@@ -479,8 +481,8 @@ as_string (url u, int type) {
   return "";
 }
 
-ostream&
-operator << (ostream& out, url u) {
+tm_ostream&
+operator << (tm_ostream& out, url u) {
   return out << as_string (u, URL_SYSTEM);
 }
 

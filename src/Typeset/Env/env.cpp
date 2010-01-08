@@ -171,7 +171,7 @@ edit_env_rep::local_end (hashmap<string,tree>& prev_back) {
   back= prev_back;
 }
 
-ostream&
-operator << (ostream& out, edit_env env) {
+tm_ostream&
+operator << (tm_ostream& out, edit_env env) {
   return out << env->env;
 }

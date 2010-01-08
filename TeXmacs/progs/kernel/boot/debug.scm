@@ -23,7 +23,7 @@
 
 (define-public (display-err x)
   "Display @x to the error port."
-  (display x (current-error-port)))
+  (tm-errput (display-to-string x)))
 
 (define-public (display-err* . l)
   "Display all objects in @l to the error port."
@@ -38,7 +38,7 @@
 
 (define-public (write-err x)
   "Write @x to the error port."
-  (write x (current-error-port)))
+  (tm-errput (object->string x)))
 
 (define-public (write-err* . l)
   "Write all objects in @l to the error port."

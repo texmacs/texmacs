@@ -71,7 +71,7 @@ glyph_rep::set_1 (int i, int j, int with) {
   else raster[bit>>3] |= (1 << (bit&7));
 }
 
-ostream& operator << (ostream& out, glyph gl);
+tm_ostream& operator << (tm_ostream& out, glyph gl);
 
 glyph shrink     (glyph gl, int xf, int yf, SI& xo, SI& yo);
 glyph join       (glyph gl1, glyph gl2);

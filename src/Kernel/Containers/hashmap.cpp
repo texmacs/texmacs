@@ -25,8 +25,8 @@ TMPL H::hashentry (int code2, T key2, U im2):
 TMPL H::operator tree () {
   return tree (ASSOCIATE, as_tree(key), as_tree(im)); }
 
-TMPL ostream&
-operator << (ostream& out, H h) {
+TMPL tm_ostream&
+operator << (tm_ostream& out, H h) {
   out << h.key << "->" << h.im;
   return out;
 }
@@ -135,8 +135,8 @@ hashmap_rep<T,U>::generate (void (*routine) (T)) {
   }
 }
 
-TMPL ostream&
-operator << (ostream& out, hashmap<T,U> h) {
+TMPL tm_ostream&
+operator << (tm_ostream& out, hashmap<T,U> h) {
   int i= 0, j= 0, n= h->n, size= h->size;
   out << "{ ";
   for (; i<n; i++) {

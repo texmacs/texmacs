@@ -40,8 +40,8 @@ page_item copy (page_item l) {
   return page_item (l->type, l->b, l->spc, l->penalty,
 		    l->fl, l->nr_cols, l->t); }
 
-ostream&
-operator << (ostream& out, page_item item) {
+tm_ostream&
+operator << (tm_ostream& out, page_item item) {
   switch (item->type) {
   case PAGE_LINE_ITEM:
     return out << "line (" << item->b << ")";

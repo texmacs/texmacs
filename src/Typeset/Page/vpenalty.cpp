@@ -11,8 +11,8 @@
 
 #include "vpenalty.hpp"
 
-ostream&
-operator << (ostream& out, vpenalty pen) {
+tm_ostream&
+operator << (tm_ostream& out, vpenalty pen) {
   return out << "[ " << pen->pen << ", " << pen->exc << " ]";
 }
 

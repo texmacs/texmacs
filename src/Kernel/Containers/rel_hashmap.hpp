@@ -54,7 +54,7 @@ TMPL inline rel_hashmap<T,U>::rel_hashmap
   (hashmap<T,U> item, rel_hashmap<T,U> next):
     rep (tm_new<rel_hashmap_rep<T,U> > (item, next)) {}
 
-TMPL ostream& operator << (ostream& out, rel_hashmap<T,U> H);
+TMPL tm_ostream& operator << (tm_ostream& out, rel_hashmap<T,U> H);
 #undef TMPL
 
 #include "rel_hashmap.cpp"

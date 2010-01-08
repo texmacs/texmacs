@@ -29,8 +29,8 @@ hash (const pair<T1,T2>& p) {
   int h1= hash (p.x1);
   return (h1 << 11) ^ (h1 >> 21) ^ hash (p.x2); }
 
-template<class T1, class T2> inline ostream&
-operator << (ostream& out, const pair<T1,T2>& p) {
+template<class T1, class T2> inline tm_ostream&
+operator << (tm_ostream& out, const pair<T1,T2>& p) {
   return out << "[ " << p.x1 << ", " << p.x2 << " ]"; }
 
 template<class T1, class T2, class T3>
@@ -55,8 +55,8 @@ hash (const triple<T1,T2,T3>& t) {
   h= (h << 11) ^ (h >> 21) ^ hash (t.x2);
   return (h << 11) ^ (h >> 21) ^ hash (t.x3); }
 
-template<class T1, class T2, class T3> inline ostream&
-operator << (ostream& out, const triple<T1,T2,T3>& t) {
+template<class T1, class T2, class T3> inline tm_ostream&
+operator << (tm_ostream& out, const triple<T1,T2,T3>& t) {
   return out << "[ " << t.x1 << ", " << t.x2 << ", " << t.x3 << " ]"; }
 
 template<class T1, class T2, class T3, class T4>
@@ -82,8 +82,8 @@ hash (const quartet<T1,T2,T3,T4>& q) {
   h= (h << 11) ^ (h >> 21) ^ hash (q.x3);
   return (h << 11) ^ (h >> 21) ^ hash (q.x4); }
 
-template<class T1, class T2, class T3, class T4> inline ostream&
-operator << (ostream& out, const quartet<T1,T2,T3,T4>& q) {
+template<class T1, class T2, class T3, class T4> inline tm_ostream&
+operator << (tm_ostream& out, const quartet<T1,T2,T3,T4>& q) {
   return out << "[ " << q.x1 << ", " << q.x2
 	     << ", " << q.x3 << ", " << q.x4 << " ]"; }
 
@@ -114,8 +114,8 @@ hash (const quintuple<T1,T2,T3,T4,T5>& q) {
   h= (h << 11) ^ (h >> 21) ^ hash (q.x4);
   return (h << 11) ^ (h >> 21) ^ hash (q.x5); }
 
-template<class T1, class T2, class T3, class T4, class T5> inline ostream&
-operator << (ostream& out, const quintuple<T1,T2,T3,T4,T5>& q) {
+template<class T1, class T2, class T3, class T4, class T5> inline tm_ostream&
+operator << (tm_ostream& out, const quintuple<T1,T2,T3,T4,T5>& q) {
   return out << "[ " << q.x1 << ", " << q.x2 << ", " << q.x3
 	     << ", " << q.x4 << ", " << q.x5 << " ]"; }
 

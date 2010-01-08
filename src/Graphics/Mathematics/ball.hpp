@@ -38,7 +38,7 @@ TMPL inline R lower (const ball<C>& b) { return norm (b.cen) - b.rad; }
 
 TMPL inline tree as_tree (const ball<C>& b) {
   return compound ("ball", as_tree (center (b)), as_tree (radius (b))); }
-TMPL inline ostream& operator << (ostream& out, const ball<C>& b) {
+TMPL inline tm_ostream& operator << (tm_ostream& out, const ball<C>& b) {
   return out << as_math_string (as_tree (b)); }
 
 TMPL

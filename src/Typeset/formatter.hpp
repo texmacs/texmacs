@@ -90,7 +90,7 @@ struct lazy {
   inline void operator << (lazy lz) { rep->append (lz); }
   inline bool operator == (lazy lz) { return rep == lz.rep; }
   inline bool operator != (lazy lz) { return rep != lz.rep; }
-  inline friend ostream& operator << (ostream& out, lazy lz) {
+  inline friend tm_ostream& operator << (tm_ostream& out, lazy lz) {
     return out << ((tree) lz); }
 };
 ABSTRACT_NULL_CODE(lazy);

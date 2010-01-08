@@ -215,8 +215,8 @@ event emit_find_child (SI x, SI y, int& which) {
 * Output routines for the gravity class
 ******************************************************************************/
 
-ostream&
-operator << (ostream& out, gravity grav) {
+tm_ostream&
+operator << (tm_ostream& out, gravity grav) {
   return out << as_tree (grav);
 }
 

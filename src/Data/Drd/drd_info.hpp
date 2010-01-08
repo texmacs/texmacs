@@ -85,7 +85,7 @@ public:
   void heuristic_init (hashmap<string,tree> env);
 
   friend class drd_info;
-  friend ostream& operator << (ostream& out, drd_info drd);
+  friend tm_ostream& operator << (tm_ostream& out, drd_info drd);
 };
 
 class drd_info {

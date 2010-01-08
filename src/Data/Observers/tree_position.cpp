@@ -28,7 +28,7 @@ class tree_position_rep: public observer_rep {
 public:
   tree_position_rep (tree ref, int index2): ptr (ref.rep), index (index2) {}
   int get_type () { return OBSERVER_POSITION; }
-  ostream& print (ostream& out) { return out << " " << index; }
+  tm_ostream& print (tm_ostream& out) { return out << " " << index; }
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);

@@ -37,8 +37,8 @@ line_item::line_item (int type, box b, int penalty, tree t):
 bool line_item::operator == (line_item item2) { return rep==item2.rep; }
 bool line_item::operator != (line_item item2) { return rep!=item2.rep; }
 
-ostream&
-operator << (ostream& out, line_item item) {
+tm_ostream&
+operator << (tm_ostream& out, line_item item) {
   switch (item->type) {
   case OBSOLETE_ITEM: return out << "obsolete";
   case CONTROL_ITEM: return out << "control (" << item->t << ")";

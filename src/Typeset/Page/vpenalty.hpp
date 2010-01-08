@@ -62,6 +62,6 @@ class vpenalty {
 };
 CONCRETE_CODE(vpenalty);
 
-ostream& operator << (ostream& out, vpenalty pen);
+tm_ostream& operator << (tm_ostream& out, vpenalty pen);
 
 #endif // defined VPENALTY_H

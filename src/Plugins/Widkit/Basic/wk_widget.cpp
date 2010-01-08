@@ -129,7 +129,7 @@ operator << (wk_widget w, event ev) {
 }
 
 static void
-print_tree (ostream& out, tree t, int tab) {
+print_tree (tm_ostream& out, tree t, int tab) {
   int i;
   for (i=0; i<tab; i++) out << "| ";
   if (is_atomic (t)) out << as_string (t) << "\n";
@@ -139,8 +139,8 @@ print_tree (ostream& out, tree t, int tab) {
   }
 }
 
-ostream&
-operator << (ostream& out, wk_widget w) {
+tm_ostream&
+operator << (tm_ostream& out, wk_widget w) {
   print_tree (out, (tree) w, 0);
   return out;
 }

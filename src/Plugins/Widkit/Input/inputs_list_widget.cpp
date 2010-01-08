@@ -46,7 +46,7 @@ public:
   inputs_list_command_rep (wk_widget w, int i2, int n2):
     ilw (w.rep), i (i2), n (n2) {}
   void apply ();
-  ostream& print (ostream& out) {
+  tm_ostream& print (tm_ostream& out) {
     return out << "Input list command (" << i << ")"; }
 };
 

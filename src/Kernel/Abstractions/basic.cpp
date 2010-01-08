@@ -44,8 +44,8 @@ debug_on (int status) {
 
 static int current_indent= 0;
 
-ostream&
-operator << (ostream& out, display_control ctrl) {
+tm_ostream&
+operator << (tm_ostream& out, display_control ctrl) {
   int i;
   switch (ctrl) {
   case INDENT:

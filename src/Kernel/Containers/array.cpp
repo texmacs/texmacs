@@ -87,8 +87,8 @@ operator != (array<T> a, array<T> b) {
   return false;
 }
 
-template<class T> ostream&
-operator << (ostream& out, array<T> a) {
+template<class T> tm_ostream&
+operator << (tm_ostream& out, array<T> a) {
   int i;
   
   if (N(a)==0) return out << "[ ]";

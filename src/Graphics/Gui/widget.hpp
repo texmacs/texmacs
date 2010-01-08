@@ -38,7 +38,7 @@ protected:
 public:
   widget_rep ();
   virtual ~widget_rep ();
-  virtual ostream& print (ostream& out);
+  virtual tm_ostream& print (tm_ostream& out);
 
   virtual void send (slot s, blackbox val);
     // send a message val to the slot s
@@ -66,8 +66,8 @@ ABSTRACT_NULL(widget);
 };
 ABSTRACT_NULL_CODE(widget);
 
-inline ostream&
-operator << (ostream& out, widget w) {
+inline tm_ostream&
+operator << (tm_ostream& out, widget w) {
   if (is_nil (w)) return out << "nil";
   else return w->print (out);
 }

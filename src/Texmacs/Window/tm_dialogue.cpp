@@ -30,7 +30,7 @@ public:
   dialogue_command_rep (server_rep* sv2, object fun2, int nr_args2):
     sv (sv2), fun (fun2), nr_args (nr_args2) {}
   void apply ();
-  ostream& print (ostream& out) {
+  tm_ostream& print (tm_ostream& out) {
     return out << "Dialogue"; }
 };
 
@@ -195,7 +195,7 @@ public:
     server_rep* sv2, tm_window win2, object fun2, scheme_tree p2):
       sv (sv2), win (win2), fun (fun2), p (p2), i (0), s (N(p)) {}
   void apply ();
-  ostream& print (ostream& out) {
+  tm_ostream& print (tm_ostream& out) {
     return out << "interactive command " << p; }
 };
 

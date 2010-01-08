@@ -60,7 +60,7 @@ CONCRETE_CODE(modification);
 
 bool operator == (modification m1, modification m2);
 bool operator != (modification m1, modification m2);
-ostream& operator << (ostream& out, modification mod);
+tm_ostream& operator << (tm_ostream& out, modification mod);
 
 /******************************************************************************
 * Constructors and accessors

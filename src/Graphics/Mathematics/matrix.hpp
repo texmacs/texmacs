@@ -112,8 +112,8 @@ as_tree (matrix<T> m) {
   return t;
 }
 
-TMPL inline ostream&
-operator << (ostream& out, matrix<T> m) {
+TMPL inline tm_ostream&
+operator << (tm_ostream& out, matrix<T> m) {
   return out << as_math_string (as_tree (m));
 }
 

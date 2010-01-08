@@ -58,7 +58,7 @@ struct position_event_rep: public event_rep {
   operator tree ();
 };
 tree as_tree (gravity grav);
-ostream& operator << (ostream& out, gravity grav);
+tm_ostream& operator << (tm_ostream& out, gravity grav);
 EVENT(position_event);
 
 struct move_event_rep: public event_rep {

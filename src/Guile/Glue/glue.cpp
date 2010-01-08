@@ -49,6 +49,10 @@ extern void initialize_glue_basic ();
 extern void initialize_glue_editor ();
 extern void initialize_glue_server ();
 
+/******************************************************************************
+* Miscellaneous routines for use by glue only
+******************************************************************************/
+
 string
 scheme_dialect () {
 #ifdef GUILE_A
@@ -116,6 +120,18 @@ void
 win32_display (string s) {
   cout << s;
   cout.flush ();
+}
+
+void
+tm_output (string s) {
+  cout << s;
+  cout.flush ();
+}
+
+void
+tm_errput (string s) {
+  cerr << s;
+  cerr.flush ();
 }
 
 #ifdef GUILE_C

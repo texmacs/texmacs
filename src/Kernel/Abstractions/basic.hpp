@@ -86,7 +86,7 @@ inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 
 enum display_control { INDENT, UNINDENT, HRULE, LF };
-ostream& operator << (ostream& out, display_control ctrl);
+tm_ostream& operator << (tm_ostream& out, display_control ctrl);
 
 extern int concrete_count;
 struct concrete_struct {

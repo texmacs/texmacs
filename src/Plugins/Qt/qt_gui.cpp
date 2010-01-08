@@ -458,7 +458,7 @@ public:
   inline bool operator != (qp_type_id sid2) { return sid != sid2; }
   inline bool operator == (qp_type s) { return sid == s.sid; }
   inline bool operator != (qp_type s) { return sid != s.sid; }
-  inline friend ostream& operator << (ostream& out, qp_type s) 
+  inline friend tm_ostream& operator << (tm_ostream& out, qp_type s) 
     { return out << s.sid; }
 };
 

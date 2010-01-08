@@ -72,7 +72,7 @@ TMPL list<T>  reverse (list<T> l);
 TMPL list<T>  remove (list<T> l, T what);
 TMPL bool     contains (list<T> l, T what);
 
-TMPL ostream& operator << (ostream& out, list<T> l);
+TMPL tm_ostream& operator << (tm_ostream& out, list<T> l);
 TMPL list<T>& operator << (list<T>& l, T item);
 TMPL list<T>& operator << (list<T>& l1, list<T> l2);
 TMPL list<T>& operator >> (T item, list<T>& l);

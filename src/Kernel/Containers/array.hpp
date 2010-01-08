@@ -50,7 +50,7 @@ TMPL inline int N (array<T> a) { return a->n; }
 TMPL inline T*  A (array<T> a) { return a->a; }
 TMPL inline array<T> copy (array<T> a) {
   return array<T> (a->a, a->n); }
-TMPL ostream& operator << (ostream& out, array<T> a);
+TMPL tm_ostream& operator << (tm_ostream& out, array<T> a);
 TMPL array<T>& operator << (array<T>& a, T x);
 TMPL array<T>& operator << (array<T>& a, array<T> b);
 TMPL array<T> append (array<T> a, array<T> b);

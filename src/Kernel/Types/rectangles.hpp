@@ -30,7 +30,7 @@ class rectangle {
 };
 CONCRETE_CODE(rectangle);
 
-ostream& operator << (ostream& out, rectangle r);
+tm_ostream& operator << (tm_ostream& out, rectangle r);
 rectangle copy (rectangle r);
 bool operator == (rectangle r1, rectangle r2);
 bool operator != (rectangle r1, rectangle r2);

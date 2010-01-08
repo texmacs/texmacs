@@ -60,8 +60,8 @@ operator != (space spc1, space spc2) {
     (spc1->max != spc2->max);
 }
 
-ostream&
-operator << (ostream& out, space spc) {
+tm_ostream&
+operator << (tm_ostream& out, space spc) {
   out << "[ " << spc->min << ", " << spc->def << ", " << spc->max << " ]";
   return out;
 }

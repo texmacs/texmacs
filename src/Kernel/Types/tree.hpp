@@ -78,7 +78,7 @@ public:
   friend bool operator != (tree t, tree u);
   friend tree& operator << (tree& t, tree t2);
   friend tree& operator << (tree& t, array<tree> a);
-  friend ostream& operator << (ostream& out, tree t);
+  friend tm_ostream& operator << (tm_ostream& out, tree t);
   friend tree operator * (tree t1, tree t2);
   friend void print_tree (tree t, int tab=0);
   friend list<tree> as_trees (list<pointer> l);

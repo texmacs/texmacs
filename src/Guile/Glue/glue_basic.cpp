@@ -76,6 +76,32 @@ tmg_qt_guiP () {
 }
 
 SCM
+tmg_tm_output (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm-output");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tm_output (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_errput (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm-errput");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tm_errput (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_win32_display (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "win32-display");
 
@@ -3648,6 +3674,8 @@ initialize_glue_basic () {
   scm_new_procedure ("os-mingw?", (FN) tmg_os_mingwP, 0, 0, 0);
   scm_new_procedure ("x-gui?", (FN) tmg_x_guiP, 0, 0, 0);
   scm_new_procedure ("qt-gui?", (FN) tmg_qt_guiP, 0, 0, 0);
+  scm_new_procedure ("tm-output", (FN) tmg_tm_output, 1, 0, 0);
+  scm_new_procedure ("tm-errput", (FN) tmg_tm_errput, 1, 0, 0);
   scm_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
   scm_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   scm_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);

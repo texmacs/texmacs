@@ -54,7 +54,7 @@ CONCRETE_CODE(cursor);
 cursor copy (cursor cu);
 bool operator == (cursor cu1, cursor cu2);
 bool operator != (cursor cu1, cursor cu2);
-ostream& operator << (ostream& out, cursor cu);
+tm_ostream& operator << (tm_ostream& out, cursor cu);
 
 /******************************************************************************
 * The selection class
@@ -77,7 +77,7 @@ CONCRETE_CODE(selection);
 
 bool operator == (selection sel1, selection sel2);
 bool operator != (selection sel1, selection sel2);
-ostream& operator << (ostream& out, selection sel);
+tm_ostream& operator << (tm_ostream& out, selection sel);
 
 /******************************************************************************
 * The graphical selection class
@@ -89,7 +89,7 @@ struct gr_selection {
   gr_selection (array<path> cp= array<path> (), SI dist= 0);
 };
 
-ostream& operator << (ostream& out, gr_selection sel);
+tm_ostream& operator << (tm_ostream& out, gr_selection sel);
 
 typedef array<gr_selection> gr_selections;
 tree as_tree (gr_selections sels);
@@ -274,7 +274,7 @@ inline SI box_rep::sy4 (int i) { box b= subbox(i); return b->y0+ b->y4; }
 
 inline box box::operator [] (int i) { return rep->subbox(i); }
 inline int N (box b) { return b.rep->subnr(); }
-ostream& operator << (ostream& out, box b);
+tm_ostream& operator << (tm_ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
 void make_eps (url dest, box b, int dpi);

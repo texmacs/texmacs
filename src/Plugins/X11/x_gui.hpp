@@ -81,7 +81,7 @@ class message {
 };
 CONCRETE_CODE(message);
 
-ostream& operator << (ostream& out, message m);
+tm_ostream& operator << (tm_ostream& out, message m);
 
 /******************************************************************************
 * The x_gui class

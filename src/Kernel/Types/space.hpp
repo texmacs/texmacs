@@ -39,7 +39,7 @@ CONCRETE_CODE(space);
 
 bool operator == (space spc1, space spc2);
 bool operator != (space spc1, space spc2);
-ostream& operator << (ostream& out, space spc);
+tm_ostream& operator << (tm_ostream& out, space spc);
 space copy (space spc);
 space operator + (space spc1, space spc2);
 space operator - (space spc1, space spc2);

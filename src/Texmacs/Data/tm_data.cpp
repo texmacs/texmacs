@@ -369,7 +369,7 @@ class kill_window_command_rep: public command_rep {
 public:
   inline kill_window_command_rep () {}
   inline void apply () { exec_delayed (scheme_cmd ("(safely-kill-window)")); }
-  ostream& print (ostream& out) { return out << "kill window"; }
+  tm_ostream& print (tm_ostream& out) { return out << "kill window"; }
 };
 
 tm_window

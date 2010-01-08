@@ -83,7 +83,7 @@ public:
   inline bool operator != (slot_id sid2) { return sid != sid2; }
   inline bool operator == (slot s) { return sid == s.sid; }
   inline bool operator != (slot s) { return sid != s.sid; }
-  inline friend ostream& operator << (ostream& out, slot s) {
+  inline friend tm_ostream& operator << (tm_ostream& out, slot s) {
     return out << s.sid; }
 };
 

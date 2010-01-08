@@ -30,8 +30,8 @@ iterator<T>::operator tree () {
   return t;
 }
 
-template<class T> ostream&
-operator << (ostream& out, iterator<T> it) {
+template<class T> tm_ostream&
+operator << (tm_ostream& out, iterator<T> it) {
   bool flag=false;
   out << "[ ";
   while (it->busy ()) {

@@ -138,8 +138,8 @@ as_tree (polynomial<T> p) {
   return sum;
 }
 
-TMPL inline ostream&
-operator << (ostream& out, polynomial<T> p) {
+TMPL inline tm_ostream&
+operator << (tm_ostream& out, polynomial<T> p) {
   return out << as_math_string (as_tree (p));
 }
 

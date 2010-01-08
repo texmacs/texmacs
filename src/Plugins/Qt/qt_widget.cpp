@@ -69,8 +69,8 @@ qt_widget_rep::popup_window_widget (string s) {
 * some debugging infrastucture
 ******************************************************************************/
 
-ostream&
-operator << (ostream& out, QRect rect) {
+tm_ostream&
+operator << (tm_ostream& out, QRect rect) {
   return out << "(" << rect.x() << "," << rect.y() << ","
              << rect.width() << "," << rect.height() << ")";
 }

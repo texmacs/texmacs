@@ -468,8 +468,8 @@ message_rep::message_rep (widget wid2, string s2, time_t t2):
 message::message (widget wid, string s, time_t t):
   rep (tm_new<message_rep> (wid, s, t)) {}
 
-ostream&
-operator << (ostream& out, message m) {
+tm_ostream&
+operator << (tm_ostream& out, message m) {
   return out << "message " << m->s << " to " << m->wid
 	     << "at time " << m->t << "\n";
 }

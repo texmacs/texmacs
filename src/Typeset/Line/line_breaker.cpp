@@ -34,8 +34,8 @@ struct lb_info {
 };
 CONCRETE_CODE(lb_info);
 
-ostream&
-operator << (ostream& out, lb_info hi) {
+tm_ostream&
+operator << (tm_ostream& out, lb_info hi) {
   return out << "[ " << hi->prev << ", "
 	     << hi->pen << ", " << hi->pen_spc << " ]";
 }

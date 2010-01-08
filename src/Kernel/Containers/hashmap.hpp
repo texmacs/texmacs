@@ -21,7 +21,7 @@ template<class T,class U> class rel_hashmap_rep;
 template<class T,class U> class hashmap_iterator_rep;
 
 template<class T,class U> int N (hashmap<T,U> a);
-template<class T,class U> ostream& operator << (ostream& out, hashmap<T,U> h);
+template<class T,class U> tm_ostream& operator << (tm_ostream& out, hashmap<T,U> h);
 template<class T,class U> hashmap<T,U> copy (hashmap<T,U> h);
 template<class T,class U> hashmap<T,U> changes (hashmap<T,U> p,hashmap<T,U> b);
 template<class T,class U> hashmap<T,U> invert (hashmap<T,U> p, hashmap<T,U> b);
@@ -62,7 +62,7 @@ public:
   friend class rel_hashmap_rep<T,U>;
   friend class hashmap_iterator_rep<T,U>;
   friend int N LESSGTR (hashmap<T,U> h);
-  friend ostream& operator << LESSGTR (ostream& out, hashmap<T,U> h);
+  friend tm_ostream& operator << LESSGTR (tm_ostream& out, hashmap<T,U> h);
 
   // only for hashmap<string,tree>
   void write_back (T x, hashmap<T,U> base);

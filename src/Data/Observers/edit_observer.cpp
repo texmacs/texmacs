@@ -23,7 +23,7 @@ class edit_observer_rep: public observer_rep {
 public:
   edit_observer_rep (editor_rep* ed2): ed (ed2) {}
   int get_type () { return OBSERVER_EDIT; }
-  ostream& print (ostream& out) { return out << " editor<" << ed << ">"; }
+  tm_ostream& print (tm_ostream& out) { return out << " editor<" << ed << ">"; }
 
   void announce (tree& ref, modification mod);
   void done     (tree& ref, modification mod);

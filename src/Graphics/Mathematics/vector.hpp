@@ -109,8 +109,8 @@ as_tree (vector<T> v) {
   return t;
 }
 
-TMPL inline ostream&
-operator << (ostream& out, vector<T> v) {
+TMPL inline tm_ostream&
+operator << (tm_ostream& out, vector<T> v) {
   return out << as_math_string (as_tree (v));
 }
 

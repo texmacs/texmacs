@@ -17,8 +17,8 @@
 * output and convertion
 ******************************************************************************/
 
-template<class T> ostream&
-operator << (ostream& out, list<T> l) {
+template<class T> tm_ostream&
+operator << (tm_ostream& out, list<T> l) {
   out << "[";
   if (!is_nil (l)) {
     out << " " << l->item;

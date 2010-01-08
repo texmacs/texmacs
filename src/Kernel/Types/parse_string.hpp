@@ -33,7 +33,7 @@ public:
   bool test (string s);
 
   friend class parse_string;
-  friend ostream& operator << (ostream& out, parse_string s);
+  friend tm_ostream& operator << (tm_ostream& out, parse_string s);
   friend bool test (parse_string s, string what);
 };
 

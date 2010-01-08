@@ -43,7 +43,7 @@ ABSTRACT(event);
 };
 ABSTRACT_CODE(event);
 
-inline ostream& operator << (ostream& out, event ev) {
+inline tm_ostream& operator << (tm_ostream& out, event ev) {
   return out << ((tree) ev); }
 
 /******************************************************************************

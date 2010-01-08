@@ -52,8 +52,8 @@ object_rep::lookup () {
 * Routines on objects
 ******************************************************************************/
 
-ostream&
-operator << (ostream& out, object obj) {
+tm_ostream&
+operator << (tm_ostream& out, object obj) {
   out.flush ();
   if (out == cout) call ("write", obj);
   else if (out == cerr) call ("write-err", obj);
@@ -270,7 +270,7 @@ class object_command_rep: public command_rep {
 public:
   object_command_rep (object obj2): obj (obj2) {}
   void apply () { (void) call_scheme (obj->lookup ()); }
-  ostream& print (ostream& out) { return out << obj; }
+  tm_ostream& print (tm_ostream& out) { return out << obj; }
 };
 
 command
@@ -282,7 +282,7 @@ class object_promise_widget_rep: public promise_rep<widget> {
   object obj;
 public:
   object_promise_widget_rep (object obj2): obj (obj2) {}
-  ostream& print (ostream& out) { return out << obj; }
+  tm_ostream& print (tm_ostream& out) { return out << obj; }
   widget eval () {
     SCM result= call_scheme (obj->lookup ());
     if (scm_is_widget (result)) return scm_to_widget (result);

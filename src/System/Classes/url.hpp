@@ -41,7 +41,7 @@ public:
 };
 CONCRETE_CODE(url);
 
-ostream& operator << (ostream& out, url u);
+tm_ostream& operator << (tm_ostream& out, url u);
 string as_string (url u, int type= URL_SYSTEM);
 inline url as_url(tree t) { return url(t); }
 

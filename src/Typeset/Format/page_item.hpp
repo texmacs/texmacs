@@ -50,6 +50,6 @@ class page_item {
 };
 CONCRETE_NULL_CODE(page_item);
 
-ostream& operator << (ostream& out, page_item item);
+tm_ostream& operator << (tm_ostream& out, page_item item);
 
 #endif // defined PAGE_ITEM_H

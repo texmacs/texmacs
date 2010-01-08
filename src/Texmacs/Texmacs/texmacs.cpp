@@ -45,6 +45,9 @@ extern int geometry_x, geometry_y;
 extern tree the_et;
 extern bool texmacs_started;
 
+tm_ostream& cout= tm_ostream::cout;
+tm_ostream& cerr= tm_ostream::cerr;
+
 /******************************************************************************
 * For testing
 ******************************************************************************/
@@ -360,16 +363,14 @@ immediate_options (int argc, char** argv) {
     else if (s == "-log-file" && i + 1 < argc) {
       i++;
       char* log_file = argv[i];
-      int log_fd = creat (log_file, S_IRUSR | S_IWUSR);
-      if (
-        log_fd == -1 ||
-        dup2 (log_fd, 1) == -1 ||
-        dup2 (log_fd, 2) == -1 ||
-        close (log_fd) == -1
-       ) cerr << "TeXmacs] Error: could not open " << log_file << "\n";
+      FILE* f= fopen (log_file, "w");
+      if (! f || ! cout.open (f) || ! cerr.open (f))
+        cerr << "TeXmacs] Error: could not open " << log_file << "\n";
     }
   }
 }
+
+#include <cstdio>
 
 int
 main (int argc, char** argv) {
@@ -394,5 +395,7 @@ main (int argc, char** argv) {
 //  test_environments ();
 //#endif
   start_guile (argc, argv, TeXmacs_main);
+  cout.close ();
+  cerr.close ();
   return 0;
 }

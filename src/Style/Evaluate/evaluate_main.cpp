@@ -32,7 +32,7 @@ class evaluate_memorizer_rep: public compound_memorizer_rep {
 public:
   inline evaluate_memorizer_rep (environment env, tree t):
     env_in (env), t_in (t), env_out (), t_out (no_tree) {}
-  void print (ostream& out) {
+  void print (tm_ostream& out) {
     out << "evaluate_memorizer (" << t_in << ")"; }
 
   int type () { return MEMORIZE_EVALUATE; }

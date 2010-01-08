@@ -76,7 +76,7 @@ class bridge {
 ABSTRACT_NULL_CODE(bridge);
 
 bridge make_bridge (typesetter ttt, tree t, path p);
-ostream& operator << (ostream& out, bridge br);
+tm_ostream& operator << (tm_ostream& out, bridge br);
 extern bridge nil_bridge;
 tree substitute (tree t, path p, tree u);
 

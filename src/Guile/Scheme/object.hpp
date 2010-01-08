@@ -83,7 +83,7 @@ struct object {
 };
 CONCRETE_CODE(object);
 
-ostream& operator << (ostream& out, object obj);
+tm_ostream& operator << (tm_ostream& out, object obj);
 bool operator == (object obj1, object obj2);
 bool operator != (object obj1, object obj2);
 int hash (object obj);

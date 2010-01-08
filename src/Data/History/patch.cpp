@@ -189,8 +189,8 @@ get_author () {
 * Common routines
 ******************************************************************************/
 
-ostream&
-operator << (ostream& out, patch p) {
+tm_ostream&
+operator << (tm_ostream& out, patch p) {
   switch (get_type (p)) {
   case PATCH_MODIFICATION:
     out << get_modification (p) << " -- " << get_inverse (p);

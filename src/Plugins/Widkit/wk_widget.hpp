@@ -67,7 +67,7 @@ inline wk_widget concrete (widget w) {
 array<widget> abstract (array<wk_widget> a);
 array<wk_widget> concrete (array<widget> a);
 
-ostream& operator << (ostream& out, wk_widget w);
+tm_ostream& operator << (tm_ostream& out, wk_widget w);
 wk_widget operator << (wk_widget w, event ev);
 
 void wk_grab_pointer (wk_widget w);

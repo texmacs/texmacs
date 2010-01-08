@@ -50,7 +50,7 @@ class file_chooser_command_rep: public command_rep {
 public:
   file_chooser_command_rep (wk_widget w, int t): fch(w.rep), type(t) {}
   void apply ();
-  ostream& print (ostream& out) {
+  tm_ostream& print (tm_ostream& out) {
     return out << "File chooser command (" << type << ")"; }
 };
 
