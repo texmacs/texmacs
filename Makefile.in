@@ -390,7 +390,7 @@ DISTR: RDISTR
 
 RCLEAN: RDISTR
 	$(RM) $(tmdir)/examples/plugins/bin/* 2>/dev/null || :
-	$(RM) $(tmdir)/plugins
+	$(RM) -r $(tmdir)/plugins
 	$(RM) $(tmdir)/lib/* 2>/dev/null || :
 	$(RM) $(tmdir)/bin/* 2>/dev/null || :
 	$(RM) -r $(tmdir)/misc/images/.xvpics

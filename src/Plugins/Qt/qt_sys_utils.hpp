@@ -20,8 +20,8 @@
  * data sent to stdout-stderr in /result/. We get the exit code of
  * the command in /exitcode/.
  */
-int
-qt_system (string, string&);
+int qt_system (string);
+int qt_system (string, string&);
 
 #endif // defined QT_SYS_UTILS_H
 

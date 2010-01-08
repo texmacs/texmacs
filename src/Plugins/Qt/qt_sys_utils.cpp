@@ -17,6 +17,12 @@
 #include <QString>
 
 int
+qt_system (string cmd) {
+  string result;
+  return qt_system (cmd, result);
+}
+
+int
 qt_system (string cmd, string& result) {
   QProcess proc;
 

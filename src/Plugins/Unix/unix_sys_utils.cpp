@@ -21,17 +21,16 @@ unix_system (string s) {
   return ret;
 }
 
-string
-unix_eval_system (string s) {
+int
+unix_system (string cmd, string& result) {
   url temp= url_temp ();
   string temp_s= escape_sh (concretize (temp));
-  system (s * " > " * temp_s);
-  string result;
+  char* _cmd = as_charp (cmd * " > " * temp_s * " 2>&1");
+  int ret = system (_cmd);
+  tm_delete_array (_cmd);
   bool flag= load_string (temp, result, false);
   remove (temp);
-  if (flag) {
-    return "";
-  }
-  return result;
+  if (flag) result= "";
+  return ret;
 }
 

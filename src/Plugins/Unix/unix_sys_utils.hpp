@@ -14,11 +14,8 @@
 
 #include "string.hpp"
 
-int
-unix_system (string);
-
-string
-unix_eval_system (string);
+int unix_system (string);
+int unix_system (string, string&);
 
 #endif // defined UNIX_SYS_UTILS_H
 

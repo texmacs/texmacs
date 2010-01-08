@@ -13,13 +13,13 @@
 #include "file.hpp"
 #include "tree.hpp"
 #ifdef OS_WIN32
-#include <sys/misc.h>
+#  include <sys/misc.h>
 #endif
 
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-#include "../../Plugins/Qt/qt_sys_utils.hpp"
+#  include "Qt/qt_sys_utils.hpp"
 #else
-#include "../../Plugins/Unix/unix_sys_utils.hpp"
+#  include "Unix/unix_sys_utils.hpp"
 #endif
 
 int script_status = 1;
@@ -28,28 +28,40 @@ int script_status = 1;
 * System functions
 ******************************************************************************/
 
+static int
+system (string s, string& result) {
+#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+  int r= qt_system (s, result);
+#else
+  int r= unix_system (s, result);
+#endif  
+  return r;
+}
+
 int
 system (string s) {
   if (DEBUG_STD) cerr << "TeXmacs] System: " << s << "\n";
+  if (DEBUG_VERBOSE) {
+    string result;
+    int r= system (s, result);
+    cerr << result;
+    return r;
+  }
+  else {
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-//  if (starts (s, "convert ")) return 1;
-  string result;
-  return qt_system (s, result);
+    // if (starts (s, "convert ")) return 1;
+    return qt_system (s);
 #else
-  return unix_system (s);
+    return unix_system (s);
 #endif
+  }
 }
 
 string
 eval_system (string s) {
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
   string result;
-  qt_system (s, result);
+  (void) system (s, result);
   return result;
-#else
-  return unix_eval_system (s);
-#endif
-
 }
 
 string
