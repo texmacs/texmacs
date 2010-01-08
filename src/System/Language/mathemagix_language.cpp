@@ -743,5 +743,5 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
   }
   while (pos<N(s));
   }
-  return none;
+  if (type=="identifier") {return none;} else return COLOR_MARKUP;
 }
