@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.3>
 
 <style|source>
 
@@ -61,6 +61,8 @@
   <assign|aldor-fragment|<value|scheme-fragment>>
 
   <assign|caml-fragment|<value|scheme-fragment>>
+
+  <assign|todo|<macro|x|<with|color|red|To do: <arg|x>>>>
 
   \;
 </body>
