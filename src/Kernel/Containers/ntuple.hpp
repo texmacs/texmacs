@@ -65,7 +65,7 @@ public:
   T1 x1; T2 x2; T3 x3; T4 x4;
   inline quartet (const quartet& q):
     x1 (q.x1), x2 (q.x2), x3 (q.x3), x4 (q.x4) {}
-  inline quartet (const T1& y1, const T2& y2, const T3& y3, const T3& y4):
+  inline quartet (const T1& y1, const T2& y2, const T3& y3, const T4& y4):
     x1 (y1), x2 (y2), x3 (y3), x4 (y4) {}
   inline quartet& operator = (const quartet& q) {
     x1= q.x1; x2= q.x2; x3= q.x3; x4= q.x4; return *this; }

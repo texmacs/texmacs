@@ -151,7 +151,8 @@ parser_rep::parse_level(string calling_letter,
 			int level, tree parsing_tree, int pos) {
   if (pos > N(xstring)) return -1;
   if (level > N(xstring)) return -1;
-  quartet <string,int,tree,int> t(calling_letter,level,parsing_tree,pos);
+  quartet <string,int,tree,int> t=
+    quartet <string,int,tree,int> (calling_letter,level,parsing_tree,pos);
   if (evaluated_quartet->contains(t)) return evaluated_quartet(t);
   if (L(parsing_tree)==as_tree_label("DOLLAR")) {
     if (! grammar->contains(parsing_tree)) return -1;
@@ -262,7 +263,7 @@ parser_rep::parse(tree parsing_tree, int pos) {
   if (L(parsing_tree)==as_tree_label("CONCAT") && N(parsing_tree)>=1) { 
     tree parsing_tree2;
     int i=0;
-    int init_pos= pos;
+    // int init_pos= pos;
     do {
       parsing_tree2= parsing_tree[i];
       pos=parse(parsing_tree2, pos);
@@ -275,7 +276,7 @@ parser_rep::parse(tree parsing_tree, int pos) {
   if (L(parsing_tree)==as_tree_label("STAR") && N(parsing_tree)==1) {
     tree parsing_tree1;
     parsing_tree1= parsing_tree[0];
-    int init_pos= pos;
+    // int init_pos= pos;
     int opos;    
     do {
       opos= pos;
@@ -290,18 +291,18 @@ parser_rep::parse(tree parsing_tree, int pos) {
     string s1,s2;
     s1= parsing_tree[0]->label;
     s2= parsing_tree[1]->label;
-    int opos= pos;
+    // int opos= pos;
     if (pos+1 <= N(xstring) && s1 <= xstring(pos,pos+1)
 	&& xstring(pos,pos+1) <=s2) {pos++;}
     else pos=-1;
-    //cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
+    // cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
     evaluated_pair(p)= pos;
     return pos;
   }
   if (is_atomic(parsing_tree)) {
     string s;
     s= parsing_tree->label;
-    int opos= pos;
+    // int opos= pos;
     if (pos+N(s) <= N(xstring) && s == xstring(pos,pos+N(s))) {pos+=N(s);}
     else pos= -1;
     // cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
