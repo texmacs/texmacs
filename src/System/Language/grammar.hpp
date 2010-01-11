@@ -21,7 +21,7 @@ class parser_rep: concrete_struct {
 public:
   hashmap<tree,tree> grammar;
   string xstring;
-  hashmap<triple<string,int,int>,int> evaluated_triple;
+  hashmap<quartet<string,int,tree,int>,int> evaluated_quartet;
   hashmap<pair<tree, int>, int> evaluated_pair;
   hashmap<string,bool> can_be_empty_table;
   hashmap<pair<string,string>,bool> dependance;
@@ -35,7 +35,7 @@ public:
   void set_emptyness();
   bool can_be_empty(tree rule);
   void set_dag();
-  int parse_level(bool not_decomposition, string calling_letter, int level, tree parsing_tree, int pos);
+  int parse_level(string calling_letter, int level, tree parsing_tree, int pos);
   int parse (tree parsing_tree, int pos);
   friend class parser;
 };

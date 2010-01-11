@@ -147,12 +147,12 @@ parser_rep::set_dag() {
 }
 
 int
-parser_rep::parse_level(bool not_decomposition, string calling_letter,
+parser_rep::parse_level(string calling_letter,
 			int level, tree parsing_tree, int pos) {
   if (pos > N(xstring)) return -1;
   if (level > N(xstring)) return -1;
-  triple <string, int, int> t(calling_letter, level, pos);
-  if (evaluated_triple->contains(t)) return evaluated_triple(t);
+  quartet <string,int,tree,int> t(calling_letter,level,parsing_tree,pos);
+  if (evaluated_quartet->contains(t)) return evaluated_quartet(t);
   if (L(parsing_tree)==as_tree_label("DOLLAR")) {
     if (! grammar->contains(parsing_tree)) return -1;
     int opos= pos;
@@ -164,11 +164,11 @@ parser_rep::parse_level(bool not_decomposition, string calling_letter,
       if ((! dag->contains(p1)) && level==0) {pos=-1;}
       else {
 	if (! dag->contains(p1)) level--;
-	pos= parse_level(true, called_letter, level, rule, pos);
+	pos= parse_level(called_letter, level, rule, pos);
       }
     }
     else {pos= parse(parsing_tree,opos);}
-    if (not_decomposition) evaluated_triple(t)= pos;
+    evaluated_quartet(t)= pos;
     //cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
     return pos;
   }
@@ -179,11 +179,11 @@ parser_rep::parse_level(bool not_decomposition, string calling_letter,
     i=0;
     do {
       parsing_tree2= parsing_tree[i];
-      pos= parse_level(false,calling_letter, level, parsing_tree2, init_pos);
+      pos= parse_level(calling_letter, level, parsing_tree2, init_pos);
       i++;
     } while (pos==-1 && i<N(parsing_tree));
     //cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
-    if (not_decomposition) evaluated_triple(t)= pos;
+    evaluated_quartet(t)= pos;
     return pos;
   }
   if (L(parsing_tree)==as_tree_label("CONCAT") && N(parsing_tree)>=1) { 
@@ -192,12 +192,12 @@ parser_rep::parse_level(bool not_decomposition, string calling_letter,
     int init_pos= pos;
     do {
       parsing_tree2= parsing_tree[i];
-      if (init_pos==pos) { pos=parse_level(false, calling_letter, level, parsing_tree2, pos);}
+      if (init_pos==pos) { pos=parse_level(calling_letter, level, parsing_tree2, pos);}
       else {pos=parse(parsing_tree2, pos);}
       i++;
     } while (pos!=-1 && i<N(parsing_tree));
     // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
-    if (not_decomposition) evaluated_triple(t)= pos;
+    evaluated_quartet(t)= pos;
     return pos;
   }
   if (L(parsing_tree)==as_tree_label("STAR") && N(parsing_tree)==1) {
@@ -207,16 +207,16 @@ parser_rep::parse_level(bool not_decomposition, string calling_letter,
     int opos;    
     do {
       opos= pos;
-      if(init_pos==pos) {pos= parse_level(false, calling_letter, level, parsing_tree1, pos);}
+      if(init_pos==pos) {pos= parse_level(calling_letter, level, parsing_tree1, pos);}
       else {pos=parse(parsing_tree1, pos);}
     } while (pos!=-1 && pos<N(xstring));
     if (pos==-1) pos= opos;
     // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
-    if (not_decomposition) evaluated_triple(t)= pos;
+    evaluated_quartet(t)= pos;
     return pos;
   }
   pos= parse(parsing_tree, pos);
-  if (not_decomposition) evaluated_triple(t)= pos;
+  evaluated_quartet(t)= pos;
   return pos;
 }
 
@@ -235,8 +235,8 @@ parser_rep::parse(tree parsing_tree, int pos) {
     tree rule=grammar(parsing_tree);
     do {
       opos=pos; //cout << "test"<<i;
-      pos=parse_level(true,letter,i,rule, init_pos);
-      triple<string, int, int> t(letter,i,init_pos);
+      pos=parse_level(letter,i,rule, init_pos);
+      //triple<string, int, int> t(letter,i,init_pos);
       //evaluated_triple(t)=pos;
       i++;
     }
@@ -255,6 +255,7 @@ parser_rep::parse(tree parsing_tree, int pos) {
       pos= parse(parsing_tree2, init_pos);
       i++;
     } while (pos==-1 && i<N(parsing_tree));
+    evaluated_pair(p)= pos;
     // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
     return pos;
   }
@@ -268,6 +269,7 @@ parser_rep::parse(tree parsing_tree, int pos) {
       i++;
     } while (pos!=-1 && i<N(parsing_tree));
     // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    evaluated_pair(p)= pos;
     return pos;
   }
   if (L(parsing_tree)==as_tree_label("STAR") && N(parsing_tree)==1) {
@@ -281,6 +283,7 @@ parser_rep::parse(tree parsing_tree, int pos) {
     } while (pos!=-1 && pos<N(xstring));
     if (pos==-1) pos= opos;
     // cout<<parsing_tree<<" "<<init_pos<<" "<<pos<<"\n";
+    evaluated_pair(p)= pos;
     return pos;
   }  
   if (L(parsing_tree)==as_tree_label("RANGE") && N(parsing_tree)==2) {
@@ -292,7 +295,7 @@ parser_rep::parse(tree parsing_tree, int pos) {
 	&& xstring(pos,pos+1) <=s2) {pos++;}
     else pos=-1;
     //cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
-    //evaluated_pair(p)= pos;
+    evaluated_pair(p)= pos;
     return pos;
   }
   if (is_atomic(parsing_tree)) {
@@ -302,13 +305,77 @@ parser_rep::parse(tree parsing_tree, int pos) {
     if (pos+N(s) <= N(xstring) && s == xstring(pos,pos+N(s))) {pos+=N(s);}
     else pos= -1;
     // cout<<parsing_tree<<" "<<opos<<" "<<pos<<"\n";
-    //evaluated_pair(p)= pos;
+    evaluated_pair(p)= pos;
     return pos;
   }
   return -1;
 }
-
-
+/*
+string
+parser_rep::translate_rec(tree t, int pos) {
+  if (L(t)==as_tree_label("DOLLAR")) {
+      return translate_rec(grammar(t));
+    }
+  if (is_atomic(t)) {
+    string s;
+    s=t->label;
+    return s;
+  }
+  if (L(t)==as_tree_label("RANGE")) {
+    return xstring(pos,pos+1);
+  }
+  if (L(t)==as_tree_label("STAR")) {
+    string s="";
+    int opos;
+    do {
+      opos=pos;
+      pos=parse(t[0],opos);
+      if (pos !=-1) { s=s*translate_rec(t[0],opos);}
+    } 
+    while(pos!=-1);
+    return s;
+  }
+  if (L(t)==as_tree_label("OR")) {
+    int opos=pos;
+    int i=0;
+    do {
+      pos=parse(t[i],opos);
+      i++;
+    } while(pos == -1);
+    return translate_rec(t[i-1],opos);
+  }
+  if (L(t)==as_tree_label("CONCAT")) {
+    string s="";
+    int i;
+    for(i=0;i<N(t);i++) {
+      s=s*translate_rec(t[i],pos);
+      pos=parse(t[i],pos);
+    }
+    return s;
+  }
+  if (L(t)==as_tree_label("TRANSLATE")) {
+    hashmap<int, string> sub;
+    tree c=t[0];
+    tree r=t[1];
+    string s;
+    int i;
+    if (is_atomic(c)) {sub(1)=translate_rec(c,pos); }
+    else {
+      for(i=1;i<N(c);i++) {
+	sub(i)=translate_rec(c[i],pos);
+	pos=parse(c[i],pos);
+      }
+    }
+    if (is_atomic(r)) return r->label;
+    for(i=0;i<N(r);i++) {
+      if (is_atomic(r[i])) {s=s*(r[i]->label);}
+      else if (L(r[i])==as_tree_label("INT")) s=s*sub(as_int(r[i][0]->label));
+    }
+    return s;
+  }
+  return "";
+}
+*/
 
 static hashmap<tree,tree>* global_grammar= NULL;
 
