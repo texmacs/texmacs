@@ -333,6 +333,19 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   mw->setFocusPolicy (Qt::NoFocus);
 
 
+  // handles visibility
+  // at this point all the toolbars are empty so we avoid showing them
+  // same for the menu bar if we are not on the Mac (where we do not have
+  // other options)
+  
+  mainToolBar->setVisible (false);
+  contextToolBar->setVisible (false);
+  userToolBar->setVisible (false);
+  tm_mainwindow()->statusBar()->setVisible (true);
+#ifndef Q_WS_MAC
+  tm_mainwindow()->menuBar()->setVisible (false);
+#endif  
+
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -679,6 +692,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
 #else
         replaceActions (tm_mainwindow()->menuBar(), m);
 #endif
+        updateVisibility();
       }
     }
     break;
@@ -690,6 +704,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_icons_widget = w;
       QMenu* m= to_qmenu (w);
       replaceButtons (mainToolBar, m);
+      updateVisibility();
     }
     break;
 
@@ -699,6 +714,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       context_icons_widget = w;
       QMenu* m= to_qmenu (w);
       replaceButtons (contextToolBar, m);
+      updateVisibility();
     }
     break;
 
@@ -708,6 +724,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       user_icons_widget = w;
       QMenu* m= to_qmenu (w);
       replaceButtons (userToolBar, m);
+      updateVisibility();
     }
     break;
 
