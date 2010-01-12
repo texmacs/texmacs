@@ -16,6 +16,7 @@
 #include "rectangles.hpp"
 #include "path.hpp"
 #include "renderer.hpp"
+#include "timer.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "hashmap.hpp"

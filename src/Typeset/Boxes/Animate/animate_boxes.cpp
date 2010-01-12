@@ -11,7 +11,6 @@
 
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
-#include "timer.hpp"
 #include "file.hpp"
 
 /******************************************************************************
