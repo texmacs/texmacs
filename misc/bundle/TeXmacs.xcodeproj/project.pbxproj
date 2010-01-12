@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
+		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
+		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126710D102B300232476 /* QTMPipeLink.hpp */; };
 		9C0B49F010A8CC110097A335 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476110A8CC0F0097A335 /* generic.cpp */; };
 		9C0B49F110A8CC110097A335 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476210A8CC0F0097A335 /* input.cpp */; };
@@ -916,6 +919,8 @@
 
 /* Begin PBXFileReference section */
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
+		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
 		9C0B430010A8CB4E0097A335 /* TeXmacs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TeXmacs; sourceTree = "<group>"; };
 		9C0B475F10A8CC0F0097A335 /* convert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convert.hpp; sourceTree = "<group>"; };
 		9C0B476110A8CC0F0097A335 /* generic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = generic.cpp; sourceTree = "<group>"; };
@@ -2523,6 +2528,8 @@
 		9C0B492E10A8CC110097A335 /* Files */ = {
 			isa = PBXGroup;
 			children = (
+				9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */,
+				9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */,
 				9C0B492F10A8CC110097A335 /* file.cpp */,
 				9C0B493010A8CC110097A335 /* file.hpp */,
 				9C0B493110A8CC110097A335 /* image_files.cpp */,
@@ -3362,6 +3369,7 @@
 				9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */,
 				9C722BED10D2F7C700C41915 /* qt_sys_utils.cpp in Sources */,
 				9C722C0F10D2F88900C41915 /* unix_sys_utils.cpp in Sources */,
+				9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3648,6 +3656,7 @@
 				9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */,
 				9CCC752410D304EB00E88D90 /* mac_utilities.mm in Sources */,
 				9CCC752510D304EB00E88D90 /* TMView.mm in Sources */,
+				9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3950,6 +3959,7 @@
 				9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */,
 				9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */,
 				9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */,
+				9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
