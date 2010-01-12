@@ -162,6 +162,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("raise")= c;
   t ("require")= c;
   t ("return")= c ;
+  t ("sequel")= c;
   t ("split")= c;
   t ("step")= c;
   t ("supports?")= c;
