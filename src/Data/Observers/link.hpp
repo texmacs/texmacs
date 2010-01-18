@@ -64,8 +64,8 @@ public:
 class link_repository {
 ABSTRACT_NULL(link_repository);
 public:
-  inline link_repository (bool active):
-    rep (tm_new<link_repository_rep> ()) { rep->ref_count++; }
+  inline link_repository (bool active) :
+    rep (tm_new<link_repository_rep> ()) { (void) active; rep->ref_count++; }
 };
 ABSTRACT_NULL_CODE(link_repository);
 

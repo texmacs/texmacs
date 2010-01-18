@@ -98,18 +98,21 @@ grid_box_rep::display (renderer ren) {
 
 gr_selections
 grid_box_rep::graphical_select (SI x, SI y, SI dist) {
+  (void) x; (void) y; (void) dist;
   gr_selections res;
   return res;
 }
 
 gr_selections
 grid_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2;
   gr_selections res;
   return res;
 }
 
 int
 grid_box_rep::reindex (int i, int item, int n) {
+  (void) item; (void) n;
   return i;
 }
 

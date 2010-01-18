@@ -82,6 +82,7 @@ graphics_box_rep::post_display (renderer &ren) {
 
 int
 graphics_box_rep::reindex (int i, int item, int n) {
+  (void) item; (void) n;
   return i;
 }
 
@@ -165,6 +166,7 @@ graphics_group_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 
 int
 graphics_group_box_rep::reindex (int i, int item, int n) {
+  (void) item; (void) n;
   return i;
 }
 

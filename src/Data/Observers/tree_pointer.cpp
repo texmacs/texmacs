@@ -30,7 +30,7 @@ public:
   int get_type () { return OBSERVER_POINTER; }
   tm_ostream& print (tm_ostream& out) { return out << " pointer"; }
   void announce (tree& ref, modification mod) {
-    link_announce (observer (this), mod); }
+    (void) ref; link_announce (observer (this), mod); }
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -82,7 +82,7 @@ tree_pointer_rep::set_tree (tree t) {
 void
 tree_pointer_rep::notify_assign (tree& ref, tree t) {
   // cout << "Notify assign " << ref << ", " << t << "\n";
-  (void) set_tree (t);
+  (void) ref; (void) set_tree (t);
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
 
@@ -108,7 +108,7 @@ tree_pointer_rep::notify_split (tree& ref, int pos, tree prev) {
 void
 tree_pointer_rep::notify_var_split (tree& ref, tree t1, tree t2) {
   // cout << "Notify var split " << ref << ", " << t1 << ", " << t2 << "\n";
-  (void) t2;
+  (void) t2; (void) ref;
   (void) set_tree (t1); // always at the left
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
@@ -155,7 +155,7 @@ tree_pointer_rep::notify_remove_node (tree& ref, int pos) {
 void
 tree_pointer_rep::notify_detach (tree& ref, tree closest, bool right) {
   // cout << "Notify detach " << ref << ", " << closest <<", "<< right << "\n";
-  (void) right;
+  (void) right; (void) ref;
   (void) set_tree (closest);
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
