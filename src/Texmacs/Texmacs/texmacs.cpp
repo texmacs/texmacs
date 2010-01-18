@@ -25,6 +25,7 @@ void mac_fix_paths ();
 
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
+#include <QCoreApplication>
 #include <QApplication>
 #endif
 
@@ -76,6 +77,24 @@ TeXmacs_init_paths (int& argc, char** argv) {
   }
 #endif
 
+#if (defined(QTTEXMACS) && defined(Q_WS_MAC)) 
+  // inibith external plugin loading
+  QCoreApplication::setLibraryPaths(QStringList());
+  {
+    // ensure that private versions of the Qt frameworks have priority on
+    // other instances.
+    // in the event that we load qt plugins which could possibly link to
+    // other instances of the Qt libraries
+    string buf;
+    buf = as_string(exedir * "../Frameworks");
+    if (get_env("DYLD_FRAMEWORK_PATH") != "") buf = buf * ":" * get_env("DYLD_FRAMEWORK_PATH");    
+    set_env ("DYLD_FRAMEWORK_PATH", buf);    
+    buf = as_string(exedir * "../Resources/lib");
+    if (get_env("DYLD_LIBRARY_PATH") != "") buf = buf * ":" * get_env("DYLD_LIBRARY_PATH");    
+    set_env ("DYLD_LIBRARY_PATH", buf);    
+  }
+#endif
+
 #if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_WS_MAC)) || (defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS))
   // Mac bundle environment initialization
   // We set some environment variables when the executable
@@ -86,7 +105,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // * "../../Resources/share/TeXmacs/bin") << LF;
   set_env ("PATH", get_env("PATH") * ":" *
 	           as_string (exedir * "../Resources/share/TeXmacs/bin"));
-  //system("set");
+  system("set");
 #endif
 
 #ifdef __MINGW32__
