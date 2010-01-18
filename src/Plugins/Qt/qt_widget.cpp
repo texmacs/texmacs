@@ -46,6 +46,13 @@
 extern int nr_windows; 
 // the run-loop should exit when the number of windows is zero
 
+
+#ifdef Q_WS_MAC
+static QMenuBar *app_menubar = NULL;
+#endif
+
+
+
 widget the_keyboard_focus (NULL);
 
 widget
@@ -286,7 +293,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
-#ifndef Q_WS_MAC
+
+#ifdef Q_WS_MAC
+  // on the Mac there is only the system menu bar which is globally allocated.
+  // do not call QMainWindow::menuBar()
+  if (!app_menubar) {
+    app_menubar = new QMenuBar (0);
+  }
+  app_menubar->setStyle (qtmstyle ());
+#else
   mw->menuBar()->setStyle (qtmstyle ());
 #endif
   
@@ -345,7 +360,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 #ifndef Q_WS_MAC
   tm_mainwindow()->menuBar()->setVisible (false);
 #endif  
-
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -372,7 +386,9 @@ void qt_tm_widget_rep::updateVisibility()
   contextToolBar->setVisible (visibility[2] && visibility[0]);
   userToolBar->setVisible (visibility[3] && visibility[0]);
   tm_mainwindow()->statusBar()->setVisible (visibility[4]);
-#ifndef Q_WS_MAC
+#ifdef Q_WS_MAC
+  app_menubar->setVisible(true);
+#else
   tm_mainwindow()->menuBar()->setVisible (visibility[0]);
 #endif
 }
@@ -626,6 +642,7 @@ replaceActions (QWidget* dest, QWidget* src) {
   //NOTE: the parent hierarchy of the actions is not modified while installing
   //      the menu in the GUI (see qt_menu.cpp for this memory management 
   //      policy)
+  dest->setUpdatesEnabled(false);
   QList<QAction *> list = dest->actions();
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
@@ -636,17 +653,20 @@ replaceActions (QWidget* dest, QWidget* src) {
     QAction* a= list.takeFirst();
     dest->addAction (a);
   }
+  dest->setUpdatesEnabled(true);
 }
 
 extern void
 replaceButtons(QToolBar* dest, QWidget* src) {
   replaceActions (dest, src);
+  dest->setUpdatesEnabled(false);
   QList<QObject*> list= dest->children();
   for (int i=0; i<list.count(); i++) {
     QToolButton* button= qobject_cast<QToolButton*> (list[i]);
     if (button)
       button->setPopupMode (QToolButton::InstantPopup);
   }
+  dest->setUpdatesEnabled(true);
 }
 
 void
@@ -683,12 +703,10 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QMenu* m= to_qmenu (w);
       if (m) {
 #ifdef Q_WS_MAC
-        static QMenuBar *app_menubar = NULL;
-        if (!app_menubar) {
-          app_menubar = new QMenuBar(NULL);
-          app_menubar->setStyle (qtmstyle ());
+        if (app_menubar) {
+          replaceActions (app_menubar, m);
+          app_menubar->repaint();
         }
-        if (app_menubar) replaceActions (app_menubar, m);
 #else
         replaceActions (tm_mainwindow()->menuBar(), m);
 #endif
