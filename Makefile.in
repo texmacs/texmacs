@@ -237,6 +237,7 @@ BUNDLE_MAIN: TEXMACS
 	$(CHMOD) 644 $(BUNDLE_TEXMACS)/progs/ice-9/*
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
+	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugging 2>/dev/null || :
 	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
 	$(CP) ../distr/$(BUNDLE_FONTS) $(BUNDLE_TEXMACS) ; \
 	cd $(BUNDLE_TEXMACS) ; \
