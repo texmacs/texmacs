@@ -106,7 +106,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // * "../../Resources/share/TeXmacs/bin") << LF;
   set_env ("PATH", get_env("PATH") * ":" *
 	           as_string (exedir * "../Resources/share/TeXmacs/bin"));
-  system("set");
+  // system("set");
 #endif
 
 #ifdef __MINGW32__

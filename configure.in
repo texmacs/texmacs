@@ -495,14 +495,13 @@ CONFIG_BSTATIC="-Wl,-Bstatic"
 CONFIG_BSHARED="-Wl,-Bdynamic"
 CONFIG_BFLAGS=""
 CONFIG_BPATH="-Wl,-rpath,"
+CONFIG_LDRT=""
 CONFIG_WORD_LENGTH="4"
 CONFIG_WORD_LENGTH_INC="3"
 CONFIG_WORD_MASK="0xfffffffc"
 CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
-
 # tweak for XCode project
 CONFIG_NATIVE_ARCH_TAG="NATIVE_ARCH"
-
 
 X11_CFLAGS="$X_CFLAGS"
 X11_LDFLAGS="$X_LIBS -lXext -lX11"
@@ -538,7 +537,7 @@ case "${host}" in
   *mingw*)
     AC_MSG_RESULT([final adjustments for mingw host])
     CONFIG_OS_COMPAT="Windows"
-    LDRT="-lmingw32 -lmingwex"
+    CONFIG_LDRT="-lmingw32 -lmingwex"
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)
@@ -644,14 +643,12 @@ case "${host}" in
   ;;
 esac
 
-
 case "${host}" in
   *apple*darwin10*)
     echo "$ac_t""Xcode 3.2 project tweak (only MacOSX 10.6)" 1>&6
     CONFIG_NATIVE_ARCH_TAG="NATIVE_ARCH_ACTUAL"
   ;;
 esac
-
 
 #--------------------------------------------------------------------
 # Temporary fix for link problem
@@ -968,8 +965,7 @@ AC_SUBST(CONFIG_SO)
 AC_SUBST(CONFIG_LIB_PATH)
 AC_SUBST(CONFIG_STRIP)
 AC_SUBST(CONFIG_CHMOD)
-AC_SUBST(LDRT)
-
+AC_SUBST(CONFIG_LDRT)
 AC_SUBST(CONFIG_NATIVE_ARCH_TAG)
 
 #--------------------------------------------------------------------
