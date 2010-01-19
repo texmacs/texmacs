@@ -399,7 +399,7 @@ edit_env_rep::update_dash_style () {
   dash_style= array<bool>(0);
   if (is_string (t)) {
     string s= as_string (t);
-    if (s == "none") ;
+    if (s == "none") {}
   }
   else
   if (is_tuple (t)) {
@@ -428,7 +428,7 @@ edit_env_rep::update_line_arrows () {
   line_arrows= array<box>(2);
   if (is_string (t)) {
     string s= as_string (t);
-    if (s == "none") ;
+    if (s == "none") {}
   }
   else
   if (is_tuple (t) && N(t)<=2 && N(t)>0) {

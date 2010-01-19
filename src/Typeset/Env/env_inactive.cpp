@@ -235,6 +235,7 @@ tree
 edit_env_rep::rewrite_inactive_raw_data (
   tree t, tree var, bool block, bool flush)
 {
+  (void) t; (void) block;
   return rewrite_inactive_default (tree (RAW_DATA), var, block, flush);
 }
 

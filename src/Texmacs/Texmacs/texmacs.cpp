@@ -68,6 +68,7 @@ test_routines () {
 
 void
 TeXmacs_init_paths (int& argc, char** argv) {
+  (void) argc; (void) argv;
 #ifdef QTTEXMACS
   url exedir = url_system (qt_application_directory ());
 #else

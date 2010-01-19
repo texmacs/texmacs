@@ -205,15 +205,17 @@ struct segment_rep: public curve_rep {
   path cip1, cip2;
   segment_rep (point p1b, point p2b): p1 (p1b), p2 (p2b) {}
   point evaluate (double t) { return (1.0-t)*p1 + t*p2; }
-  void rectify_cumul (array<point>& a, double eps) { a << p2; }
+  void rectify_cumul (array<point>& a, double eps) { (void) eps; a << p2; }
   double bound (double t, double eps) {
     return curve_rep::bound (t, eps);
   }
   point grad (double t, bool& error) {
+    (void) t;
     error= false;
     return p2 - p1;
   }
   double curvature (double t1, double t2) {
+    (void) t1; (void) t2;
     return tm_infinity;
   }
   int get_control_points (

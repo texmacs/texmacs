@@ -63,6 +63,7 @@ bool tmfs_allows (string id, string type, string user);
 
 bool
 tmfs_allows_via (string id, string type, string user, string via) {
+  (void) id;
   //cout << "Allows? " << id << ", " << type << ", " << user
   //<< " via " << via << LF;
   if (user == via) return true;

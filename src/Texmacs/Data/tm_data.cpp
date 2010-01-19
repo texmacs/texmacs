@@ -405,7 +405,7 @@ tm_data_rep::delete_view_from_window (tm_window win) {
 
 void
 tm_data_rep::delete_window (tm_window win) {
-  while (delete_view_from_window (win));
+  while (delete_view_from_window (win)) {}
   win->unmap ();
   destroy_window_widget (win->win);
   tm_delete (win);

@@ -54,7 +54,7 @@ string::string (char c) {
 }
 
 string::string (const char* a) {
-  register int i, n=strlen(a);
+  int i, n=strlen(a);
   rep= tm_new<string_rep> (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];

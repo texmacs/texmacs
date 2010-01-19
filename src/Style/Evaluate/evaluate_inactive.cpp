@@ -232,6 +232,7 @@ rewrite_inactive_arg (tree t, int i, inactive_style sty) {
 
 tree
 rewrite_inactive_raw_data (tree t, inactive_style sty) {
+  (void) t;
   return rewrite_inactive_default (tree (RAW_DATA), sty);
 }
 
@@ -295,6 +296,7 @@ rewrite_inactive_symbol (tree t, inactive_style sty) {
 
 tree
 rewrite_inactive_style_with (tree t, inactive_style sty, bool once) {
+  (void) once;
   int /*i,*/ n= N(t);
   tree recover= tuple ();
   /*

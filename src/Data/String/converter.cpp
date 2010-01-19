@@ -503,7 +503,7 @@ convert_char_entity (string s, int& start, bool& success) {
 
 string
 encode_as_utf8 (unsigned int code) {
-  if (0x0 <= code && code <= 0x7F) {
+  if (/* 0x0 <= code && */ code <= 0x7F) {
     // 0x0ddddddd
     return string((char) code);
   }

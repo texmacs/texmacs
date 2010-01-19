@@ -26,7 +26,7 @@ is_inside (tree t, path p) {
     string s= t->label;
     int i, n= N(s), k= p->item;
     if (!is_atom (p) || k<0 || k>n) return false;
-    for (i=0; i<k; tm_char_forwards (s, i));
+    for (i=0; i<k; tm_char_forwards (s, i)) {}
     return i == k;
   }
   else if (is_atom (p)) return p->item == 0 || p->item == 1;
@@ -42,7 +42,7 @@ closest_inside (tree t, path p) {
   else if (is_atomic (t)) {
     string s= t->label;
     int i, n= N(s), k= max (0, min (n, p->item));
-    for (i=0; i<k; tm_char_forwards (s, i));
+    for (i=0; i<k; tm_char_forwards (s, i)) {}
     return i;
   }
   else if (is_atom (p) || p->item < 0 || p->item >= N(t))

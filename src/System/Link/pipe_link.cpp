@@ -327,6 +327,7 @@ pipe_link_rep::stop () {
 
 void pipe_callback (void *obj, void *info) {
 #ifndef __MINGW32__
+  (void) info;
   pipe_link_rep* con= (pipe_link_rep*) obj;  
   bool busy= true;
   bool news= false;

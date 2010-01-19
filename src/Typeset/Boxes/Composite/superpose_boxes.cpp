@@ -33,6 +33,7 @@ superpose_box_rep::operator tree () {
 
 int
 superpose_box_rep::reindex (int i, int item, int n) {
+  (void) item; (void) n;
   return i;
 }
 

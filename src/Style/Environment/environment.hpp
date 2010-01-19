@@ -62,7 +62,7 @@ public:
     return read ((int) make_tree_label (key)); }
   inline void write (const string& key, const tree& val) {
     write ((int) make_tree_label (key), val); }
-  inline bool remove (const string& key) {
+  inline void remove (const string& key) {
     remove ((int) make_tree_label (key)); }
 
   friend class environment;

@@ -665,6 +665,7 @@ printer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 
 void
 printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
+  (void) convex;
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   print (x[0], y[0]);

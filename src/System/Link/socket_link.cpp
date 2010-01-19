@@ -247,6 +247,7 @@ socket_link_rep::stop () {
 void
 socket_callback (void *obj, void* info) {
 #ifndef __MINGW32__
+  (void) info;
   socket_link_rep* con= (socket_link_rep*) obj;  
   bool busy= true;
   bool news= false;

@@ -169,6 +169,7 @@ tree_position_rep::notify_remove_node (tree& ref, int pos) {
 
 void
 tree_position_rep::notify_detach (tree& ref, tree closest, bool right) {
+  (void) ref;
   // cout << "Notify detach " << ref << ", " << closest <<", "<< right << "\n";
   if (right) reattach_right (this, closest);
   else reattach_left (this, closest);

@@ -81,6 +81,7 @@ lazy_rep::produce (lazy_type request, format fm) {
 
 format
 lazy_rep::query (lazy_type request, format fm) {
+  (void) request;
   cout << "\nThe lazy structure was " << ((tree) (*this)) << "\n";
   cout << "The format was " << ((tree) fm) << "\n";
   FAILED ("invalid query");

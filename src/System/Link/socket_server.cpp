@@ -175,6 +175,7 @@ socket_server_rep::stop () {
 void 
 socket_server_callback (void *obj, void *info) {
 #ifndef __MINGW32__
+  (void) info;
   socket_server_rep* ss = (socket_server_rep*) obj;
   bool busy= true;
   bool news= false;

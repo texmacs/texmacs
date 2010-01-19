@@ -158,6 +158,7 @@ can_join (tree t, path p, int pos) {
 
 bool
 can_assign_node (tree t, path p, tree_label op) {
+  (void) op;
   return has_subtree (t, p) && is_compound (subtree (t, p));
 }
 

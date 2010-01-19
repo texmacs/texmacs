@@ -162,6 +162,7 @@ operator << (tm_ostream& out, tree t) {
     return out;
   }
   else out << as_blackbox (t);
+  return out;
 }
 
 void

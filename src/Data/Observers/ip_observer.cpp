@@ -58,6 +58,7 @@ has_parent (path ip) {
 
 void
 ip_observer_rep::announce (tree& ref, modification mod) {
+  (void) ref;
   //cout << "Announce " << ip << ", " << p << "\n";
   if (!has_parent (ip)) return;
   tree& parent (subtree (the_et, reverse (ip->next)));
@@ -66,6 +67,7 @@ ip_observer_rep::announce (tree& ref, modification mod) {
 
 void
 ip_observer_rep::done (tree& ref, modification mod) {
+  (void) ref;
   //cout << "Done " << ip << ", " << p << "\n";
   if (!has_parent (ip)) return;
   tree& parent (subtree (the_et, reverse (ip->next)));

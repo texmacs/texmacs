@@ -69,6 +69,7 @@ anim_constant_box_rep::anim_constant_box_rep (path ip, box b, int length2):
 
 void
 anim_constant_box_rep::pre_display (renderer& ren) {
+  (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
     finished= (texmacs_time () - (started_at+length) >= 0);
@@ -208,6 +209,7 @@ anim_compose_box_rep::find_tag (string name) {
 
 void
 anim_compose_box_rep::pre_display (renderer& ren) {
+  (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
     time_t now= texmacs_time ();
@@ -329,6 +331,7 @@ anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b):
 
 void
 anim_repeat_box_rep::pre_display (renderer& ren) {
+  (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (length > 0) {
     time_t now= texmacs_time ();
@@ -507,6 +510,7 @@ struct sound_box_rep: public box_rep {
       system ("play", u, "&");
     started= true; }
   void pre_display (renderer& ren) {
+    (void) ren;
     if (!started) anim_start_at (texmacs_time ()); }
   int  anim_length () { return 0; }
   bool anim_started () { return started; }

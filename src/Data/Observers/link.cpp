@@ -233,6 +233,7 @@ get_mirrors (tree ln, string id) {
     return list<tree> ();
   if (ln[2][0] == id) return not_done (get_trees (ln[3][0]->label));
   if (ln[3][0] == id) return not_done (get_trees (ln[2][0]->label));
+  return list<tree> ();
 }
 
 void

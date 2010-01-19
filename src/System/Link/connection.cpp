@@ -59,6 +59,7 @@ RESOURCE_CODE(connection);
 
 static void 
 connection_callback (void *obj, void* info) {
+  (void) info;
   //cout << "connection callback " << obj << LF;
   connection_rep *con = (connection_rep*) obj;
   con->listen ();

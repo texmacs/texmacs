@@ -145,7 +145,7 @@ unicode_font_rep::get_extents (string s, metric& ex) {
 
 void
 unicode_font_rep::get_xpositions (string s, SI* xpos) {
-  register int i= 0, n= N(s);
+  int i= 0, n= N(s);
   if (n == 0) return;
   
   register SI x= 0;

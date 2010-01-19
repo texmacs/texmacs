@@ -148,7 +148,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	  if (fr_cmd == "\\over") fr_cmd= "\\frac";
 	  if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
 	  int j;
-	  for (j=N(t); j>0 && is_regular (t[j-1]); j--);
+	  for (j=N(t); j>0 && is_regular (t[j-1]); j--) {}
 	  tree num= t (j, N(t));
 	  if (N(num) == 0) num= "";
 	  t= t (0, j);

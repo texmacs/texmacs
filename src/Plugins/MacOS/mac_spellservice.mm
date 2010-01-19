@@ -168,6 +168,7 @@ mac_spell_insert (string lan, string s) {
 
 void
 mac_spell_done (string lan) {
+  (void) lan;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:current_tag];
   current_tag = 0;

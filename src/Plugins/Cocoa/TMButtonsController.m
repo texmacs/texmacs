@@ -124,7 +124,7 @@
     r.origin.x = baseX;
     NSArray *arr = [barArray objectAtIndex:i];
     float currHeight = 0.0;
-    for(j=0; j<[arr count]; j++) {
+    for(j=0; j<((int) [arr count]); j++) {
       NSSegmentedControl *sc = [arr objectAtIndex:j];
       if (![sc superview]) [view addSubview:sc];
       r.size = [sc frame].size;

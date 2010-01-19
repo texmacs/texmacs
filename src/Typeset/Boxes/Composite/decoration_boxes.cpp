@@ -122,6 +122,7 @@ struct scrollbar_box_rep: public composite_box_rep {
 
 tree
 scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
+  (void) type; (void) delta;
   tree u= t;
   if (vertical) {
     double p= 100.0;

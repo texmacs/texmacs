@@ -280,6 +280,7 @@ swap (modification& m1, modification& m2) {
     return r;
   }
   else return swap_basic (m1, m2);
+  FAILED ("unexpected situation");
 }
 
 bool

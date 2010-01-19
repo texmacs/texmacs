@@ -85,7 +85,7 @@ font_rep::var_get_extents (string s, metric& ex) {
   int start=0, end;
   get_extents ("", ex);
   while (start<N(s)) {
-    for (end=start; (end<N(s)) && (s[end]!=' '); end++);
+    for (end=start; (end<N(s)) && (s[end]!=' '); end++) {}
     if (start<end) {
       metric ey;
       get_extents (s (start, end), ey);
@@ -119,7 +119,7 @@ font_rep::var_draw (renderer ren, string s, SI x, SI y) {
   SI dx=0;
   int start=0, end;
   while (start<N(s)) {
-    for (end=start; (end<N(s)) && (s[end]!=' '); end++);
+    for (end=start; (end<N(s)) && (s[end]!=' '); end++) {}
     if (start<end) {
       metric ex;
       draw (ren, s (start, end), x+dx, y);
