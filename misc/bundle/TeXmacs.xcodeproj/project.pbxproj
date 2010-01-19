@@ -1501,6 +1501,11 @@
 		9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_sys_utils.hpp; sourceTree = "<group>"; };
 		9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unix_sys_utils.cpp; sourceTree = "<group>"; };
 		9C722C0E10D2F88800C41915 /* unix_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unix_sys_utils.hpp; sourceTree = "<group>"; };
+		9C7AC3381105DE4A00A7D07F /* fig2ps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps; sourceTree = "<group>"; };
+		9C7AC3391105DE4A00A7D07F /* fig2ps.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps.in; sourceTree = "<group>"; };
+		9C7AC33A1105DE4A00A7D07F /* texmacs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs; sourceTree = "<group>"; };
+		9C7AC33B1105DE4A00A7D07F /* texmacs.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs.in; sourceTree = "<group>"; };
+		9C7AC33C1105DE4A00A7D07F /* tm_gs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = tm_gs; sourceTree = "<group>"; };
 		9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMScrollView.hpp; sourceTree = "<group>"; };
 		9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMScrollView.cpp; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1589,6 +1594,7 @@
 		9C0B475B10A8CBE40097A335 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9C7AC3371105DE4A00A7D07F /* scripts */,
 				9CFE66E910A99E700028F6F8 /* Makefile */,
 				9CFE66EA10A99E700028F6F8 /* Makefile.in */,
 				9C5DBADB10A8DF32008B7623 /* configure.in */,
@@ -2917,6 +2923,19 @@
 			path = Unix;
 			sourceTree = "<group>";
 		};
+		9C7AC3371105DE4A00A7D07F /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				9C7AC3381105DE4A00A7D07F /* fig2ps */,
+				9C7AC3391105DE4A00A7D07F /* fig2ps.in */,
+				9C7AC33A1105DE4A00A7D07F /* texmacs */,
+				9C7AC33B1105DE4A00A7D07F /* texmacs.in */,
+				9C7AC33C1105DE4A00A7D07F /* tm_gs */,
+			);
+			name = scripts;
+			path = misc/scripts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2929,6 +2948,7 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				9C0B355A10A8C67A0097A335 /* CopyFiles */,
+				9C7E7A821105E553004482BB /* Bundle scripts */,
 			);
 			buildRules = (
 			);
@@ -2967,6 +2987,7 @@
 				9CCC73FE10D303D900E88D90 /* Sources */,
 				9CCC750D10D303D900E88D90 /* Frameworks */,
 				9CCC750F10D303D900E88D90 /* CopyFiles */,
+				9C7E7A841105E579004482BB /* Bundle scripts */,
 			);
 			buildRules = (
 			);
@@ -2987,6 +3008,7 @@
 				9CD4E5F210B14AB300E0DD5C /* Sources */,
 				9CD4E6FD10B14AB300E0DD5C /* Frameworks */,
 				9CD4E6FF10B14AB300E0DD5C /* CopyFiles */,
+				9C7AC3481105DEB800A7D07F /* Bundle scripts */,
 			);
 			buildRules = (
 			);
@@ -3050,6 +3072,48 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		9C7AC3481105DEB800A7D07F /* Bundle scripts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle scripts";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\ncp -f $TM_BASE/misc/scripts/fig2ps  $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\ncp -f $TM_BASE/misc/scripts/tm_gs  $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\nchmod 755 $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin/*\n";
+		};
+		9C7E7A821105E553004482BB /* Bundle scripts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle scripts";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\ncp -f $TM_BASE/misc/scripts/fig2ps  $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\ncp -f $TM_BASE/misc/scripts/tm_gs  $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\nchmod 755 $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin/*\n";
+		};
+		9C7E7A841105E579004482BB /* Bundle scripts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle scripts";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\ncp -f $TM_BASE/misc/scripts/fig2ps  $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\ncp -f $TM_BASE/misc/scripts/tm_gs  $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin\nchmod 755 $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/share/TeXmacs/bin/*\n";
+		};
 		9CC6142E10A9654D0055F808 /* Print Environment */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
