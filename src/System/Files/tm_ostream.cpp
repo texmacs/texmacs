@@ -29,9 +29,8 @@ tm_ostream::operator= (const tm_ostream& out) { // private
     file= out.file;
     is_w= out.is_w;
     is_mine= false;
-  } else {
-    return *this;
   }
+  return *this;
 }
 
 tm_ostream&
@@ -60,6 +59,7 @@ tm_ostream::open () {
   file= 0;
   is_w= true;
   is_mine= true;
+  return is_w;
 }
 
 /*
