@@ -89,6 +89,7 @@ struct empty_grid_rep: public grid_rep {
   empty_grid_rep ():
     grid_rep () {}
   array<grid_curve> get_curves (point lim1, point lim2, double u, bool b) {
+    (void) lim1; (void) lim2; (void) u; (void) b;
     array<grid_curve> res;
     return res; }
   operator tree () { return "empty_grid"; }
@@ -97,6 +98,7 @@ struct empty_grid_rep: public grid_rep {
 
 point
 empty_grid_rep::find_closest_point (point p, point pmin, point pmax) {
+  (void) pmin; (void) pmax;
 /*double x= floor (10.0*p[0] + 0.5);
   double y= floor (10.0*p[1] + 0.5);
   return point (x / 10.0, y / 10.0);*/
@@ -238,6 +240,7 @@ create_arc (
 
 array<grid_curve>
 polar_rep::get_curves (point lim1, point lim2, double u, bool b) {
+  (void) b;
   array<grid_curve> res;
   if (N(subd)<1) return res;
   double x1= min (lim1[0], lim2[0]);
@@ -348,6 +351,7 @@ struct logarithmic_rep: public grid_rep {
 
 array<grid_curve>
 logarithmic_rep::get_curves (point lim1, point lim2, double u, bool b) {
+  (void) b;
   array<grid_curve> res;
   if (N(subd)<1) return res;
   double x1= min (lim1[0], lim2[0]);

@@ -28,8 +28,8 @@ struct scaling_rep: public frame_rep {
     (void) p; error= false; return magnify * v; }
   point jacobian_of_inverse (point p, point v, bool &error) {
     (void) p; error= false; return v / magnify; }
-  double direct_bound (point p, double eps) { return eps / magnify; }
-  double inverse_bound (point p, double eps) { return eps * magnify; }
+  double direct_bound (point p, double eps) { (void) p; return eps / magnify; }
+  double inverse_bound (point p, double eps) { (void) p; return eps * magnify; }
 };
 
 frame
@@ -53,8 +53,8 @@ struct rotation_2D_rep: public frame_rep {
     (void) p; error= false; return rotate_2D (v, point (0.0, 0.0), angle); }
   point jacobian_of_inverse (point p, point v, bool &error) {
     (void) p; error= false; return rotate_2D (v, point (0.0, 0.0), -angle); }
-  double direct_bound (point p, double eps) { return eps; }
-  double inverse_bound (point p, double eps) { return eps; }
+  double direct_bound (point p, double eps) { (void) p; return eps; }
+  double inverse_bound (point p, double eps) { (void) p; return eps; }
 };
 
 frame
@@ -89,8 +89,8 @@ struct affine_2D_rep: public frame_rep {
     (void) p; (void) v; (void) error;
     FAILED ("not yet implemented");
     return p;}
-  double direct_bound (point p, double eps) { return eps; }
-  double inverse_bound (point p, double eps) { return eps; }
+  double direct_bound (point p, double eps) { (void) p; return eps; }
+  double inverse_bound (point p, double eps) { (void) p; return eps; }
 };
 
 frame

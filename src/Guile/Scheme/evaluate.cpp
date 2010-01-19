@@ -30,6 +30,7 @@ SCM object_stack;
 static void (*old_call_back) (int, char**)= NULL;
 static void
 new_call_back (void *closure, int argc, char** argv) {
+  (void) closure;
   old_call_back (argc, argv);
 }
 #endif

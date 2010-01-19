@@ -61,6 +61,7 @@ tm_ostream::open () {
   is_w= true;
   is_mine= true;
 }
+
 /*
 bool
 tm_ostream::open (url u) {
@@ -73,6 +74,7 @@ tm_ostream::open (url u) {
   return is_w;
 }
 */ 
+
 bool
 tm_ostream::open (char* fn) {
   if (file && is_mine) fclose (file);

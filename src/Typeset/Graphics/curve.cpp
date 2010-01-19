@@ -261,14 +261,15 @@ struct poly_segment_rep: public curve_rep {
     return (i+1 - n*t)*a[i] + (n*t - i)*a[i+1];
   }
   void rectify_cumul (array<point>& cum, double eps) {
-    int i;
-    for (i=0; i<n; i++)
+    (void) eps;
+    for (int i=0; i<n; i++)
       cum << a[i+1];
   }
   double bound (double t, double eps) {
     return curve_rep::bound (t, eps);
   }
   double curvature (double t1, double t2) {
+    (void) t1; (void) t2;
     return tm_infinity;
   }
   point grad (double t, bool& error) {
@@ -747,6 +748,7 @@ arc_rep::grad (double t, bool& error) {
 
 double
 arc_rep::curvature (double t1, double t2) {
+  (void) t1; (void) t2;
   if (r1 >= r2)
     return fnull (r1,1.0e-6) ? tm_infinity : square(r2)/r1;
   else
@@ -871,6 +873,7 @@ struct transformed_curve_rep: public curve_rep {
   }
   point grad (double t, bool& error);
   double curvature (double t1, double t2) {
+    (void) t1; (void) t2;
     FAILED ("not yet implemented");
     return 0.0;
   }
