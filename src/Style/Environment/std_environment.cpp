@@ -25,8 +25,7 @@ class std_environment {
      list_environment accel, list_environment args);
   inline friend environment as_environment (const std_environment& env) {
     return environment ((environment_rep*) env.rep); }
-  inline friend std_environment as_std_environment (const environment& env) {
-    return std_environment ((std_environment_rep*) as_pointer (env)); }
+  inline friend std_environment as_std_environment (const environment& env);
   inline friend int weak_hash (std_environment env) {
     return hash ((void*) env.rep); }
   inline friend bool weak_equal (std_environment env1, std_environment env2) {
@@ -82,6 +81,9 @@ std_environment_rep::print (const string& prefix) {
   if (total_size (args) != 0)
     args->print (prefix * "|o ");
 }
+
+inline std_environment as_std_environment (const environment& env) {
+    return std_environment ((std_environment_rep*) as_pointer (env)); }
 
 /******************************************************************************
 * Primitive environments

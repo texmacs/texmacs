@@ -102,7 +102,7 @@ public:
     return (inactive_style_rep*) ((void*) &rep); }
   inline bool operator == (inactive_style sty) { return rep == sty.rep; }
   inline bool operator != (inactive_style sty) { return rep != sty.rep; }
-  inline friend int hash (inactive_style sty) { return sty.rep; }
+	inline friend int hash (inactive_style sty);
 };
 
 inline inactive_style set_bf (inactive_style sty, bool block, bool flush) {
@@ -117,6 +117,8 @@ inline inactive_style reset_bf (inactive_style sty) {
   new_sty->flush= 0;
   return new_sty; }
 
+inline int hash (inactive_style sty) {
+  return sty.rep; }
 
 inactive_style
 retrieve (environment env) {
