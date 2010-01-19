@@ -42,7 +42,8 @@ TM_HEADER_SEARCH_PATHS = $(TM_BASE)/src/System $(TM_BASE)/src/System/Boot $(TM_B
 
 
 // Disable universal binaries
-ARCHS = $(NATIVE_ARCH)
+//ARCHS = $(NATIVE_ARCH)
+ARCHS = $(@CONFIG_NATIVE_ARCH_TAG@)
 ONLY_ACTIVE_ARCH = YES
 
 

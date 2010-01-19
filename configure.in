@@ -500,6 +500,10 @@ CONFIG_WORD_LENGTH_INC="3"
 CONFIG_WORD_MASK="0xfffffffc"
 CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 
+# tweak for XCode project
+CONFIG_NATIVE_ARCH_TAG="NATIVE_ARCH"
+
+
 X11_CFLAGS="$X_CFLAGS"
 X11_LDFLAGS="$X_LIBS -lXext -lX11"
 
@@ -639,6 +643,15 @@ case "${host}" in
     AC_MSG_RESULT(final adjustments for a generic host)
   ;;
 esac
+
+
+case "${host}" in
+  *apple*darwin10*)
+    echo "$ac_t""Xcode 3.2 project tweak (only MacOSX 10.6)" 1>&6
+    CONFIG_NATIVE_ARCH_TAG="NATIVE_ARCH_ACTUAL"
+  ;;
+esac
+
 
 #--------------------------------------------------------------------
 # Temporary fix for link problem
@@ -956,6 +969,8 @@ AC_SUBST(CONFIG_LIB_PATH)
 AC_SUBST(CONFIG_STRIP)
 AC_SUBST(CONFIG_CHMOD)
 AC_SUBST(LDRT)
+
+AC_SUBST(CONFIG_NATIVE_ARCH_TAG)
 
 #--------------------------------------------------------------------
 # Default paths for installation
