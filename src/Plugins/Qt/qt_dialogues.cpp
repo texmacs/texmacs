@@ -257,7 +257,7 @@ qt_chooser_widget_rep::perform_dialog () {
       if (type == "image")
         file = "(list (url-system " *
           scm_quote (as_string (u)) *
-          ") \"100\" \"100\" \"0\" \"0\" \"10\" \"10\")";
+          ") \"\" \"\" \"\" \"\" \"\" \"\")";
       //FIXME: fake image dimensions
       else
         file = "(url-system " * scm_quote (as_string (u)) * ")";
