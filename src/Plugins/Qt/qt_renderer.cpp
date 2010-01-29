@@ -235,7 +235,7 @@ qt_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   decode (x1, y1);
   decode (x2, y2);
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
+  painter->drawArc (x1, y2, x2-x1, y1-y2, alpha / 4, delta / 4);
 }
 
 void
@@ -244,8 +244,14 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
   decode (x1, y1);
   decode (x2, y2);
+  QBrush brush(qt_color(cur_fg));
+  QPainterPath pp;
+  pp.arcMoveTo (x1, y2, x2-x1, y1-y2, alpha / 64);
+  pp.arcTo (x1, y2, x2-x1, y1-y2, alpha / 64, delta / 64);
+  pp.closeSubpath ();
+  pp.setFillRule (Qt::WindingFill);
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->drawArc (x1, y2, x2-x1, y1-y2, alpha/4, (delta-alpha)/4);
+  painter->fillPath (pp, brush);
 }
 
 void
