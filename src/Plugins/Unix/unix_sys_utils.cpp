@@ -15,7 +15,7 @@
 
 int
 unix_system (string s) {
-  char* _s = as_charp (s);
+  char* _s = as_charp (s * " > /dev/null 2>&1");
   int ret = system (_s);
   tm_delete_array (_s);  
   return ret;
