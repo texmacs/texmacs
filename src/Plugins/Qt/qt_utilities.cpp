@@ -16,7 +16,6 @@
 #include "converter.hpp"
 
 
-
 QRect
 to_qrect (const coord4 & p) {
   float c= 1.0/PIXEL;
@@ -100,7 +99,7 @@ qt_supports_image (url u) {
 
 void
 qt_image_size (url image, int& w, int& h) {
-  QImage im (to_qstring (as_string (image)));
+  QImage im (to_qstring (sys_concretize (image)));
   if (im.isNull ()) {
     cerr << "Cannot read image file '" << image << "'" << LF;
     w= 35; h= 35;
@@ -111,7 +110,16 @@ qt_image_size (url image, int& w, int& h) {
   }
 }
 
-
+void
+qt_convert_image (url image, url dest) {
+  QImage im (to_qstring (sys_concretize (image)));
+  if (im.isNull ()) {
+    cerr << "Cannot read image file '" << image << "'" << LF;
+  }
+  else {
+    im.save (to_qstring (sys_concretize (dest)));
+  }
+}
 
 string qt_application_directory ()
 {

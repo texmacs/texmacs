@@ -371,7 +371,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
       remove (temp);
     }
     if (pm == NULL || pm->isNull ()) {
-      cout << "TeXmacs] warning: cannot render " << as_string (u) << "\n";
+      cout << "TeXmacs] warning: cannot render " << sys_concretize (u) << "\n";
       if (pm != NULL) delete pm;
       return;
     }

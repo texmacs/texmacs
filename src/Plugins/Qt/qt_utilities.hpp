@@ -31,6 +31,7 @@ string qt_translate (string s);
 QString to_qstring_utf8 (string s);
 bool qt_supports_image (url u);
 void qt_image_size (url image, int& w, int& h);
+void qt_convert_image (url image, url dest);
 
 string qt_application_directory ();
 
