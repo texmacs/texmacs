@@ -64,14 +64,12 @@ load_string (url u, string& s, bool fatal) {
     bench_start ("load file");
     char* _name= as_charp (name);
     // cout << "OPEN :" << _name << LF;
-#ifdef OS_WIN32
+#if defined (OS_WIN32)
     FILE* fin= _fopen (_name, "rb");
-#else
-#ifdef __MINGW32__
+#elif defined (__MINGW__) || defined (__MINGW32__)
     FILE* fin= fopen (_name, "rb");
 #else
-	FILE* fin= fopen (_name, "r");
-#endif
+    FILE* fin= fopen (_name, "r");
 #endif
     if (fin == NULL) err= true;
     int size= 0;
@@ -123,8 +121,10 @@ save_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     char* _name= as_charp (name);
-#ifdef OS_WIN32
+#if defined (OS_WIN32)
     FILE* fout= _fopen (_name, "wb");
+#elif defined (__MINGW__) || defined (__MINGW32__)
+    FILE* fout= fopen (_name, "wb");
 #else
     FILE* fout= fopen (_name, "w");
 #endif
@@ -253,7 +253,7 @@ is_of_type (url name, string filter) {
     return true;
 
   // Normal files
-#ifdef OS_WIN32
+#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
   if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
     name = glue (name, ".exe");
 #endif
@@ -293,7 +293,7 @@ is_of_type (url name, string filter) {
 #endif
       break;
     case 'x':
-#ifdef OS_WIN32
+#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
       if (suffix(name) == "bat") break;
 #endif
 #ifndef __MINGW32__

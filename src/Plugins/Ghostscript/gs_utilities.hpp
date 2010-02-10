@@ -1,28 +1,27 @@
 
 /******************************************************************************
-* MODULE     : ghostscript.hpp
-* DESCRIPTION: interface with ghostscript
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* MODULE     : gs_utilities.hpp
+* DESCRIPTION: Utilities for GhostScript
+* COPYRIGHT  : (C) 2010 David MICHEL
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#ifndef GHOSTSCRIPT_H
-#define GHOSTSCRIPT_H
+#ifndef GS_UTILITIES_HPP
+#define GS_UTILITIES_HPP
 
-#ifdef X11TEXMACS
+#include "tm_configure.hpp"
+#ifdef USE_GS
 
 #include "url.hpp"
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
 
-bool ghostscript_bugged ();
-void ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
-		      url image, SI w, SI h,
-		      double cx1, double cy1, double cx2, double cy2);
+void gs_image_size (url image, int& w_pt, int& h_pt);
+void gs_to_png (url image, url png, int w_px, int h_px);
+void gs_to_eps (url pdf, url eps);
 
-#endif // X11TEXMACS
+#endif // USE_GS
 
-#endif // GHOSTSCRIPT_H
+#endif // GS_UTILITIES_HPP
+

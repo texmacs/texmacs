@@ -14,10 +14,7 @@
 #include "image_files.hpp"
 #include "qt_utilities.hpp"
 #include "file.hpp"
-
-#ifdef MACOSX_EXTENSIONS
-#include "MacOS/mac_images.h"
-#endif
+#include "image_files.hpp"
 
 #include <QObject>
 #include <QWidget>
@@ -310,17 +307,15 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     // rendering
     bool needs_crop= false;
     if (qt_supports_image (u)) {
-      pm= new QImage (to_qstring (sys_concretize (u)));
+      pm= new QImage (to_qstring (concretize (u)));
       needs_crop= true;
     } else if (suffix (u) == "ps" ||
              suffix (u) == "eps" ||
              suffix (u) == "pdf") {
-
-#ifdef MACOSX_EXTENSIONS
       url temp= url_temp (".png");
-      mac_image_to_png (u, temp);
+      image_to_png (u, temp, w, h);
       needs_crop= true;
-#else
+/*
       string idstr= eval_system ("identify",u);
       int i=0;
       int a=0,b=0;
@@ -366,12 +361,12 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
              * "+" * as_string (cx1*w/(cx2-cx1))
              * "+" * as_string ((1-cy2)*h/(cy2-cy1))
              * "! -background white -flatten", u, temp);
-#endif
+*/
       pm= new QImage (to_qstring (as_string (temp)));
       remove (temp);
     }
     if (pm == NULL || pm->isNull ()) {
-      cout << "TeXmacs] warning: cannot render " << sys_concretize (u) << "\n";
+      cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
       if (pm != NULL) delete pm;
       return;
     }

@@ -11,10 +11,15 @@
 
 #include "qt_utilities.hpp"
 #include <QImage>
+#include <QPrinter>
+#include <QPainter>
 #include <QCoreApplication>
 #include "dictionary.hpp"
 #include "converter.hpp"
 
+#ifdef USE_GS
+#include "Ghostscript/gs_utilities.hpp"
+#endif
 
 QRect
 to_qrect (const coord4 & p) {
@@ -99,7 +104,7 @@ qt_supports_image (url u) {
 
 void
 qt_image_size (url image, int& w, int& h) {
-  QImage im (to_qstring (sys_concretize (image)));
+  QImage im= QImage (to_qstring (concretize (image)));
   if (im.isNull ()) {
     cerr << "Cannot read image file '" << image << "'" << LF;
     w= 35; h= 35;
@@ -111,13 +116,66 @@ qt_image_size (url image, int& w, int& h) {
 }
 
 void
-qt_convert_image (url image, url dest) {
-  QImage im (to_qstring (sys_concretize (image)));
+qt_convert_image (url image, url dest, int w, int h) {
+  QImage im (to_qstring (concretize (image)));
   if (im.isNull ()) {
     cerr << "Cannot read image file '" << image << "'" << LF;
   }
   else {
-    im.save (to_qstring (sys_concretize (dest)));
+    if (w > 0 && h > 0) im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    im.scaled (w, h).save (to_qstring (concretize (dest)));
+  }
+}
+
+void
+qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
+  static const char* d= "0123456789ABCDEF";
+  QImage im (to_qstring (concretize (image)));
+  if (im.isNull ()) {
+    cerr << "Cannot read image file '" << image << "'" << LF;
+  }
+  else {
+    if (dpi > 0 && w_pt > 0 && h_pt > 0) {
+      int ww= w_pt * dpi / 72;
+      int hh= h_pt * dpi / 72;
+      if (ww < im.width () || hh < im.height ()) {
+        im= im.scaled (ww, hh, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+      }
+    }
+    string res;
+    string sw= as_string (im.width ());
+    string sh= as_string (im.height ());
+    res << "%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: TeXmacs\n%%BoundingBox: ";
+    res << "0 0 " << sw << " " << sh << "\n";
+    res << "%%LanguageLevel: 2\n%%Pages: 1\n%%DocumentData: Clean7Bit\n";
+    res <<  sw << " " << sh << " scale\n";
+    res <<  sw << " " << sh << " 8 [" << sw << " 0 0 -" << sh << " 0 " << sh << "]\n";
+    res << "{currentfile 3 " << sw << " mul string readhexstring pop} bind\nfalse 3 colorimage\n";
+    int v, i= 0, j= 0, l= 0;
+    for (j= 0; j < im.height (); j++) {
+      for (i=0; i < im.width (); i++) {
+        l++;
+        QRgb p= im.pixel (i, j);
+        v= qRed (p);
+        res << d [(v >> 4)] << d [v % 16];
+        v= qGreen (p);
+        res << d [(v >> 4)] << d [v % 16];
+        v= qBlue (p);
+        res << d [(v >> 4)] << d [v % 16];
+        if (l > 10) {
+          res << "\n";
+          l= 0;
+        }
+      }
+    }
+    res << "\n%%EOF";
+    save_string (eps, res);
+#ifdef USE_GS
+    url temp= url_temp (".eps");
+    gs_to_eps (eps, temp);
+    copy (temp, eps);
+    remove (temp);
+#endif
   }
 }
 

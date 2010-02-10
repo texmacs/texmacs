@@ -120,6 +120,9 @@
 /* Use freetype library */
 #undef USE_FREETYPE
 
+/* Use ghostscript library */
+#undef USE_GS
+
 /* Use iconv library */
 #undef USE_ICONV
 

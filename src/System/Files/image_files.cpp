@@ -16,15 +16,22 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "scheme.hpp"
-#include "../Plugins/Imlib2/imlib2.hpp"
+#include "Imlib2/imlib2.hpp"
+
+#ifdef MACOSX_EXTENSIONS
+#include "MacOS/mac_images.h"
+#endif
 
 #ifdef QTTEXMACS
-bool qt_supports_image (url u);
-void qt_image_size (url image, int& w, int& h);
+#include "Qt/qt_utilities.hpp"
 #endif
 
 #ifdef OS_WIN32
 #include <x11/xlib.h>
+#endif
+
+#ifdef USE_GS
+#include "Ghostscript/gs_utilities.hpp"
 #endif
 
 hashmap<tree,string> ps_bbox ("");
@@ -221,16 +228,86 @@ void
 image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports_image (image)) {
-    qt_image_size (image, w, h);
+    qt_image_size (image, w, h); // default to 72 dpi
+    w= w / 2; // 144 dpi
+    h= h / 2; // 144 dpi
     return;
   }
 #endif
   if (imlib2_supports (image))
     imlib2_image_size (image, w, h);
   else {
+#ifdef USE_GS 
+    gs_image_size (image, w, h);
+#else
     int x1, y1, x2, y2;
     ps_bounding_box (image, x1, y1, x2, y2);
     w= x2 - x1;
     h= y2 - y1;
+#endif
   }
 }
+
+void
+image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
+  if (suffix (eps) != "eps") {
+    cerr << "TeXmacs] warning: " << concretize (eps) << " has no .eps suffix\n";
+    return;
+  }
+#ifdef QTTEXMACS
+  if (qt_supports_image (image)) {
+    qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
+    return;
+  }
+#endif
+  string s= suffix (image);
+#ifdef USE_GS
+  if (s == "ps" || s == "eps" || s == "pdf") {
+    gs_to_eps (image, eps);
+    return;
+  }
+#endif
+  string cmd= "convert";
+  if (s != "pdf" && s != "ps" && s != "eps" && dpi > 0 && w_pt > 0 && h_pt > 0) {
+    int ww= w_pt * dpi / 72;
+    int hh= h_pt * dpi / 72;
+    string sz= eval_system ("identify -format \"%[fx:w] %[fx:h]\"", image);
+    int w_px, h_px, ok= true, pos= 0;
+    ok= read_int (sz, pos, w_px);
+    skip_spaces (sz, pos);  
+    ok= ok && read_int (sz, pos, h_px);
+    if (ok && (ww < w_px || hh < h_px)) {
+      cmd << " -resize " * as_string (ww) * "x" * as_string (hh) * "!";
+    }
+  }
+  system (cmd, image, eps);
+}
+
+void
+image_to_png (url image, url png, int w, int h) {
+  if (suffix (png) != "png") {
+    cerr << "TeXmacs] warning: " << concretize (png) << " has no .png suffix\n";
+    return;
+  }
+#ifdef MACOSX_EXTENSIONS
+  mac_image_to_png (image, png);
+#else
+#ifdef QTTEXMACS
+  if (qt_supports_image (image)) {
+    qt_convert_image (image, png);
+    return;
+  }
+#endif
+#ifdef USE_GS
+  string s= suffix (image);
+  if (s == "ps" || s == "eps" || s == "pdf") {
+    gs_to_png (image, png, w, h);
+    return;
+  }
+#endif
+  string cmd= "convert";
+  if (w > 0 && h > 0) cmd << " -resize " * as_string(w) * "x" * as_string(h) * "!";
+  system (cmd, image, png);
+#endif
+}
+

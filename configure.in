@@ -27,6 +27,8 @@ AC_SUBST(DEVEL_RELEASE)
 AC_SUBST(STABLE_VERSION)
 AC_SUBST(STABLE_RELEASE)
 
+AC_CANONICAL_HOST
+
 #--------------------------------------------------------------------
 # Checks for C++ compiler
 #--------------------------------------------------------------------
@@ -393,6 +395,32 @@ LIBS="$SAVE_LIBS"
 
 AC_SUBST(AXEL_CFLAGS)
 AC_SUBST(AXEL_LDFLAGS)
+
+#--------------------------------------------------------------------
+# Checks for ghostscript library
+#--------------------------------------------------------------------
+
+case "${host}" in
+  *mingw* | *-*-cygwin)
+    GS_EXE="gswin32c.exe"
+    GS_DLL="gsdll32.dll"
+    AC_CHECK_PROG([HAS_GS_EXE], [${GS_EXE}], [yes], [no])
+    AC_CHECK_PROG([HAS_GS_LIB], [${GS_DLL}], [yes], [no])
+  ;;
+  *)
+    AC_CHECK_PROG([HAS_GS_EXE], [gs], [yes], [no])
+    HAS_GS_LIB="yes"
+  ;;
+esac
+if test "x${HAS_GS_EXE}" = "xyes" -a "x${HAS_GS_LIB}" = "xyes"; then
+  AC_DEFINE([USE_GS], [1], [Use ghostscript])
+  CONFIG_GS="Ghostscript"
+  AC_SUBST([CONFIG_GS])
+  AC_SUBST([GS_EXE])
+  AC_SUBST([GS_DLL])
+else
+  AC_MSG_RESULT([disabling ghostscript support])
+fi
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems

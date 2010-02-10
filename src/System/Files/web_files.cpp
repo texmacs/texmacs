@@ -164,7 +164,7 @@ get_from_ramdisc (url u) {
   if (!is_ramdisc (u)) return url_none ();
   url res= get_cache (u);
   if (!is_none (res)) return (res);
-  url tmp= url_temp ();
+  url tmp= url_temp (string (".") * suffix (u));
   save_string (tmp, u[1][2]->t->label);
   return set_cache (u, tmp);
 }

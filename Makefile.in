@@ -21,6 +21,8 @@ tmtgz = @tmtgz@
 tmbin = @tmbin@
 tmdata = @tmdata@
 so = @CONFIG_SO@
+GS_EXE= @GS_EXE@
+GS_DLL= @GS_DLL@
 
 DESTDIR =
 
@@ -300,7 +302,7 @@ WIN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 DLLPATH = $(PATH)
 
 DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
-DLL_LIST = QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll
+DLL_LIST = QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll $(GS_EXE) $(GS_DLL)
 DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
 WIN_BUNDLE_MAIN: TEXMACS

@@ -99,6 +99,7 @@ cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
 os_src       := $(call findsrc_in,Plugins,@CONFIG_OS_COMPAT@)
 qt_src       := $(call findsrc_in,Plugins,@CONFIG_QT@)
+gs_src       := $(call findsrc_in,Plugins,@CONFIG_GS@)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
@@ -119,7 +120,7 @@ make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
  $(edit_src) $(guile_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
- $(typeset_src) $(style_src) $(qt_src) $(os_src))
+ $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 
@@ -140,6 +141,7 @@ x11_incl      := $(system_incl)
 cocoa_incl    := $(system_incl)
 os_incl       := $(system_incl)
 qt_incl       := $(system_incl)
+gs_incl       := $(system_incl)
 style_incl    := $(system_incl) $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
 typeset_incl  := $(system_incl) $(call incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
 guile_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
@@ -222,6 +224,7 @@ cocoa_mm_obj := $(call makeobj_mm,$(cocoa_mm_src))
 os_obj       := $(call makeobj,$(os_src))
 moc_obj	     := $(call makeobj,$(qt_moc_src))
 qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
+gs_obj       := $(call makeobj,$(gs_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
@@ -262,6 +265,8 @@ $(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT))
+$(gs_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(gs_incl))
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
@@ -306,7 +311,7 @@ endif
 # Compilation of objects
 #
 # The 'uses' function must be used as a prerequisite of a link rule
-# (whose body is a link_bin functian call). It takes a number of
+# (whose body is a link_bin function call). It takes a number of
 # module names in parameters.
 
 uses = $(sort $(foreach use,$(patsubst %,uses_%,$(1)),$($(use))))
@@ -319,6 +324,7 @@ uses_plugins  := $(plugins_obj)
 uses_x11      := $(x11_obj)
 uses_os       := $(os_obj)
 uses_qt       := $(qt_obj) $(moc_obj)
+uses_gs       := $(gs_obj)
 uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
 uses_style    := $(style_obj)
@@ -329,7 +335,7 @@ uses_texmacs  := $(texmacs_obj)
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 os qt cocoa style typeset edit glue texmacs))
+ plugins x11 os qt gs cocoa style typeset edit glue texmacs))
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDGUILE) \
   $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL) -mwindows

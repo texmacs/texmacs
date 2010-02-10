@@ -18,6 +18,7 @@
 #include "iterator.hpp"
 #include "merge_sort.hpp"
 #include "scheme.hpp"
+#include "image_files.hpp"
 
 string PS_CLIP_PUSH ("gsave");
 string PS_CLIP_POP ("grestore");
@@ -706,8 +707,16 @@ printer_rep::image (
   url u, SI w, SI h, SI x, SI y,
   double cx1, double cy1, double cx2, double cy2)
 {
+  url psfile= u;
+  int tmpurl= false;
+  if (suffix (u) != "eps") {
+    psfile= url_temp (".eps");
+    image_to_eps (u, psfile, w*72/PIXEL/dpi, h*72/PIXEL/dpi, dpi);
+    tmpurl= true;
+  }
+
   int bx1, by1, bx2, by2;
-  ps_bounding_box (u, bx1, by1, bx2, by2);
+  ps_bounding_box (psfile, bx1, by1, bx2, by2);
   int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
   int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
   int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
@@ -754,8 +763,8 @@ printer_rep::image (
   /* @beginspecial 0 @llx 0 @lly 613.291260 @urx 613.291260 @ury 6110 @rwi
      @clip @setspecial */
   
-  string ps_image= ps_load (u);
-  string imtext= is_ramdisc (u)? "inline image": as_string (u);
+  string ps_image= ps_load (psfile);
+  string imtext= is_ramdisc (psfile)? "inline image": as_string (psfile);
   body << "%%BeginDocument: " << imtext  << "\n";
   body << ps_image; // incorporate_postscript (ps_image);
   body << "%%EndDocument";
@@ -785,6 +794,7 @@ printer_rep::image (
      248 3155 a 660 3073 a ... */
 
   (void) w; (void) h;
+//  if (tmpurl) remove (psfile);
 }
 
 void

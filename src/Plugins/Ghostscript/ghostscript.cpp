@@ -10,6 +10,9 @@
 ******************************************************************************/
 
 #include "Ghostscript/ghostscript.hpp"
+
+#ifdef X11TEXMACS
+
 #include "file.hpp"
 #include "image_files.hpp"
 
@@ -119,3 +122,6 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   system ("tm_gs", temp_name);
   remove (temp_name);
 }
+
+#endif // X11TEXMACS
+
