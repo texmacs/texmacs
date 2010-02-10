@@ -20,6 +20,7 @@
 #include <QtGui>
 #include <QFileDialog>
 #include <QInputDialog>
+#include "QTMFileDialog.hpp"
 
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
@@ -215,11 +216,16 @@ qt_chooser_widget_rep::perform_dialog () {
   // int result;
   // FIXME: the chooser dialog is widely incomplete
 
-  QFileDialog dialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
-
+  QTMFileDialog *dialog;
+  QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
+  
+  if (type  == "image")
+    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
+  else
+    dialog= new QTMFileDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
 
 #if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040600))
-  dialog.setOptions(QFileDialog::DontUseNativeDialog);
+  dialog->setOptions(QFileDialog::DontUseNativeDialog);
 #endif
   
   QPoint pos = to_qpoint(position);
@@ -229,43 +235,44 @@ qt_chooser_widget_rep::perform_dialog () {
     cout << "Dir: " << directory * "/" * file << LF;
   }
   
-  dialog.updateGeometry();
-  QSize sz = dialog.sizeHint();
+  dialog->updateGeometry();
+  QSize sz = dialog->sizeHint();
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
-  dialog.setGeometry(r);
+  dialog->setGeometry(r);
     
-  //dialog.setFileMode (QFileDialog::AnyFile);
-  //dialog.setNameFilter ("TeXmacs file (*.tm)");
-  dialog.setViewMode (QFileDialog::Detail);
+  //dialog->setFileMode (QFileDialog::AnyFile);
+  //dialog->setNameFilter ("TeXmacs file (*.tm)");
+  dialog->setViewMode (QFileDialog::Detail);
   if (type == "directory") {
-    dialog.setFileMode(QFileDialog::Directory);
+    dialog->setFileMode(QFileDialog::Directory);
   } else if (type == "image") {
-    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog->setFileMode(QFileDialog::ExistingFile);
   } else {
-    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog->setFileMode(QFileDialog::AnyFile);
   }
-
-  dialog.setLabelText(QFileDialog::Accept, "Ok");
+  dialog->setLabelText(QFileDialog::Accept, "Ok");
 
   QStringList fileNames;
-  if (dialog.exec ()) {
-    fileNames = dialog.selectedFiles();
+  if (dialog->exec ()) {
+    fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
       file = from_qstring (fileNames[0]);
       url u = url_system (scm_unquote (file));
       if (type == "image")
         file = "(list (url-system " *
           scm_quote (as_string (u)) *
-          ") \"\" \"\" \"\" \"\" \"\" \"\")";
-      //FIXME: fake image dimensions
+          ") " * imgdialog->getParamsAsString () * ")";
       else
         file = "(url-system " * scm_quote (as_string (u)) * ")";
     }
   } else {
     file = "#f";
   }
-  cmd ();       
+
+  delete dialog;
+
+  cmd ();
 }
 
 

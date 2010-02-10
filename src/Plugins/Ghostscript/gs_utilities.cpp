@@ -23,7 +23,7 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
 #else
   string cmd= "gs ";
 #endif
-  cmd << "-dQUIET -dNOPAUSE -dBATCH -dEPSCrop -sDEVICE=bbox ";
+  cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -dEPSCrop -sDEVICE=bbox ";
   cmd << sys_concretize (image);
   string buf= eval_system (cmd);
   int pos= 0;
@@ -56,11 +56,16 @@ gs_to_png (url image, url png, int w, int h) {
   string cmd= "gs ";
 #endif
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-  cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dFIXEDRESOLUTION -dEPSCrop ";
+  cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dEPSCrop ";
   cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
   int bbw, bbh;
+  double rw, rh;
   gs_image_size (image, bbw, bbh);
-  cmd << "-r" << as_string (w*72/bbw) << "x" << as_string (h*72/bbh) << " ";  
+  rw= (double)w*72/bbw;
+  rh= (double)h*72/bbh;
+  if ((int)rw < rw) rw= (int)rw+1; else rw= (int)rw;
+  if ((int)rh < rh) rh= (int)rh+1; else rh= (int)rh;
+  cmd << "-r" << as_string (rw) << "x" << as_string (rh) << " ";  
   cmd << "-sOutputFile=" << sys_concretize (png) << " ";
   cmd << sys_concretize (image);
   system (cmd);

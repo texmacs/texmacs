@@ -158,7 +158,7 @@ texmacs_incl  := $(guile_incl)
 ifeq "@CONFIG_QT@" ""
 qt_moc := 
 else
-qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp QTMPipeLink.hpp
+qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp QTMPipeLink.hpp QTMFileDialog.hpp
 endif
 
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))
