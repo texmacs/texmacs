@@ -24,6 +24,10 @@
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
 
+#ifdef USE_GS
+#include "Ghostscript/gs_utilities.hpp"
+#endif
+
 /******************************************************************************
 * Constructors and destructor
 ******************************************************************************/
@@ -153,7 +157,9 @@ void
 edit_main_rep::print (url name, bool conform, int first, int last) {
   bool pdf= (suffix (name) == "pdf");
   url orig= resolve (name, "");
+#ifdef USE_GS
   if (pdf) name= url_temp (".ps");
+#endif
 
   string medium = env->get_string (PAGE_MEDIUM);
   if (conform && (medium != "paper")) conform= false;
@@ -214,10 +220,12 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   }
   tm_delete (ren);
 
+#ifdef USE_GS
   if (pdf) {
-    ps2pdf (name, orig);
+    gs_to_pdf (name, orig);
     ::remove (name);
   }
+#endif
 }
 
 void

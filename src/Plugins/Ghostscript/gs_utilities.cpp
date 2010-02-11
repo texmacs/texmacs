@@ -85,5 +85,18 @@ gs_to_eps (url image, url eps) {
   system (cmd);
 }
 
+void
+gs_to_pdf (url doc, url pdf) {
+#if defined (__MINGW__) || defined (__MINGW32__)
+  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+#else
+  string cmd= "gs ";
+#endif
+  cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+  cmd << "-sOutputFile=" << sys_concretize (pdf) << " ";
+  cmd << sys_concretize (doc);
+  system (cmd);
+}
+
 #endif
 
