@@ -8810,7 +8810,7 @@ echo "${ECHO_T}final adjustments for an Intel or AMS Solaris host" >&6; }
     { echo "$as_me:$LINENO: result: final adjustments for mingw host" >&5
 echo "${ECHO_T}final adjustments for mingw host" >&6; }
     CONFIG_OS_COMPAT="Windows"
-    CONFIG_LDRT="-lmingw32 -lmingwex"
+    CONFIG_LDRT="-lmingw32 -lmingwex -mwindows"
   ;;
   *-*-cygwin)
     { echo "$as_me:$LINENO: result: final adjustments for cygwin host" >&5

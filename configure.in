@@ -563,7 +563,7 @@ case "${host}" in
   *mingw*)
     AC_MSG_RESULT([final adjustments for mingw host])
     CONFIG_OS_COMPAT="Windows"
-    CONFIG_LDRT="-lmingw32 -lmingwex"
+    CONFIG_LDRT="-lmingw32 -lmingwex -mwindows"
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)
