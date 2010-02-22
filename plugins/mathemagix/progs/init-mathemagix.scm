@@ -27,8 +27,16 @@
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mathemagix-input) mathemagix))
 
+(define (mathemagix-serialize lan t)
+  (import-from (utils plugins plugin-cmd))
+  (with u (pre-serialize lan t)
+    (with v (texmacs->verbatim (stree->tree u))
+      (with w (string-replace v "\n" "/{CR}/")
+	(string-append (escape-verbatim w) "\n")))))
+
 (plugin-configure mathemagix
   (:require (url-exists-in-path? "mmx-light"))
+  (:serializer ,mathemagix-serialize)
   (:initialize (mathemagix-initialize))
   (:launch "mmx-light --texmacs")
   (:session "Mathemagix"))

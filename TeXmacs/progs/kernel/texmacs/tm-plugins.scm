@@ -251,6 +251,7 @@
 	(if (url-exists? u)
 	    (with fname (url-materialize u "r")
 	      ;;(display* "loading plugin " name* "\n")
+	      ;;(display* "loading plugin " fname "\n")
 	      (load fname)))
 	(if (plugin-all-initialized?) (plugin-save-setup)))))
 
