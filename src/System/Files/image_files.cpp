@@ -229,8 +229,6 @@ image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports_image (image)) {
     qt_image_size (image, w, h); // default to 72 dpi
-    w= w / 2; // 144 dpi
-    h= h / 2; // 144 dpi
     return;
   }
 #endif
@@ -250,8 +248,8 @@ image_size (url image, int& w, int& h) {
 
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
-  if (suffix (eps) != "eps") {
-    cerr << "TeXmacs] warning: " << concretize (eps) << " has no .eps suffix\n";
+  if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
+    cerr << "TeXmacs] warning: " << concretize (eps) << " has no .eps or .ps suffix\n";
     return;
   }
 #ifdef QTTEXMACS
