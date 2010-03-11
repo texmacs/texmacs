@@ -143,7 +143,7 @@
 
 (define (stm-table-cell-content x)
   ;; assert (func? x 'cell)
-  (second x))
+  (if (func? x 'cell) (second x) x))
 
 (define (stm-table-row->list x)
   ;; assert (func? x 'row)
