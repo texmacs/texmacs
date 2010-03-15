@@ -96,7 +96,7 @@ qt_translate (string s) {
 }
 
 bool
-qt_supports_image (url u) {
+qt_supports (url u) {
   string s= suffix (u);
   if (s == "ps" || s == "eps" || s == "pdf") return false;
   return true;

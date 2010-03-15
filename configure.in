@@ -399,6 +399,15 @@ AC_SUBST(AXEL_LDFLAGS)
 # Checks for ghostscript library
 #--------------------------------------------------------------------
 
+AC_ARG_WITH(gs,
+changequote(<<, >>)dnl
+<<  --with-gs[=ARG]       with ghostscript support [ARG=yes]>>dnl
+changequote([, ])dnl
+)
+
+if test "$with_gs" = "no" ; then
+    AC_MSG_RESULT([disabling ghostscript support])
+else
 case "${host}" in
   *mingw* | *-*-cygwin)
     GS_EXE="gswin32c.exe"
@@ -419,6 +428,7 @@ if test "x${HAS_GS_EXE}" = "xyes" -a "x${HAS_GS_LIB}" = "xyes"; then
   AC_SUBST([GS_DLL])
 else
   AC_MSG_RESULT([disabling ghostscript support])
+fi
 fi
 
 #--------------------------------------------------------------------
@@ -802,7 +812,10 @@ esac
 
 case "$CONFIG_GUI" in
     X11)
-	CONFIG_X11="X11 Widkit Ghostscript"
+	CONFIG_X11="X11 Widkit"
+        if test "x${CONFIG_GS}" != "xGhostscript"; then
+          CONFIG_X11="$CONFIG_X11 Ghostscript"
+        fi
         CONFIG_GUI_DEFINE="X11TEXMACS"
 #        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
 	;;

@@ -227,23 +227,27 @@ ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2) {
 void
 image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
-  if (qt_supports_image (image)) {
+  if (qt_supports (image)) {
     qt_image_size (image, w, h); // default to 72 dpi
     return;
   }
 #endif
-  if (imlib2_supports (image))
+#ifdef USE_IMLIB2
+  if (imlib2_supports (image)) {
     imlib2_image_size (image, w, h);
-  else {
-#ifdef USE_GS 
-    gs_image_size (image, w, h);
-#else
-    int x1, y1, x2, y2;
-    ps_bounding_box (image, x1, y1, x2, y2);
-    w= x2 - x1;
-    h= y2 - y1;
-#endif
+    return;
   }
+#endif
+#ifdef USE_GS
+  if (gs_supports (image)) {
+    gs_image_size (image, w, h);
+    return;
+  }
+#endif
+  int x1, y1, x2, y2;
+  ps_bounding_box (image, x1, y1, x2, y2);
+  w= x2 - x1;
+  h= y2 - y1;
 }
 
 void
@@ -253,18 +257,18 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
     return;
   }
 #ifdef QTTEXMACS
-  if (qt_supports_image (image)) {
+  if (qt_supports (image)) {
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
     return;
   }
 #endif
-  string s= suffix (image);
 #ifdef USE_GS
-  if (s == "ps" || s == "eps" || s == "pdf") {
+  if (gs_supports (image)) {
     gs_to_eps (image, eps);
     return;
   }
 #endif
+  string s= suffix (image);
   string cmd= "convert";
   if (s != "pdf" && s != "ps" && s != "eps" && dpi > 0 && w_pt > 0 && h_pt > 0) {
     int ww= w_pt * dpi / 72;
@@ -291,14 +295,13 @@ image_to_png (url image, url png, int w, int h) {
   mac_image_to_png (image, png);
 #else
 #ifdef QTTEXMACS
-  if (qt_supports_image (image)) {
+  if (qt_supports (image)) {
     qt_convert_image (image, png);
     return;
   }
 #endif
 #ifdef USE_GS
-  string s= suffix (image);
-  if (s == "ps" || s == "eps" || s == "pdf") {
+  if (gs_supports (image)) {
     gs_to_png (image, png, w, h);
     return;
   }

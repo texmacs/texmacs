@@ -10,6 +10,9 @@
 ******************************************************************************/
 
 #include "Ghostscript/ghostscript.hpp"
+#ifdef USE_GS
+#include "Ghostscript/gs_utilities.hpp"
+#endif
 
 #ifdef X11TEXMACS
 
@@ -119,7 +122,11 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   nice_ps= encapsulate_postscript (raw_ps);
   url temp_name= url_temp ();
   save_string (temp_name, nice_ps, true);
+#ifdef USE_GS
+  tm_gs (temp_name);
+#else
   system ("tm_gs", temp_name);
+#endif
   remove (temp_name);
 }
 

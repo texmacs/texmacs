@@ -16,6 +16,13 @@
 #include "analyze.hpp"
 #include "file.hpp"
 
+bool
+gs_supports (url image) {
+  string s= suffix (image);
+  if (s == "ps" || s == "eps" || s == "pdf") return true;
+  return false;
+}
+
 void
 gs_image_size (url image, int& w_pt, int& h_pt) {
 #if defined (__MINGW__) || defined (__MINGW32__)
@@ -95,6 +102,18 @@ gs_to_pdf (url doc, url pdf) {
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
   cmd << "-sOutputFile=" << sys_concretize (pdf) << " ";
   cmd << sys_concretize (doc);
+  system (cmd);
+}
+
+void
+tm_gs (url image) {
+#if defined (__MINGW__) || defined (__MINGW32__)
+  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+#else
+  string cmd= "gs ";
+#endif
+  cmd << "-q -sDEVICE=x11alpha -dBATCH -dNOPAUSE -dSAFER -dNOEPS ";
+  cmd << sys_concretize (image);
   system (cmd);
 }
 

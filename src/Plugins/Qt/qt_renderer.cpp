@@ -306,7 +306,7 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   } else {
     // rendering
     bool needs_crop= false;
-    if (qt_supports_image (u)) {
+    if (qt_supports (u)) {
       pm= new QImage (to_qstring (concretize (u)));
       needs_crop= true;
     } else if (suffix (u) == "ps" ||

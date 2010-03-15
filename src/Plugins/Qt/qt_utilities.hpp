@@ -29,7 +29,7 @@ QString to_qstring (string s);
 string from_qstring (const QString & s);
 string qt_translate (string s);
 QString to_qstring_utf8 (string s);
-bool qt_supports_image (url u);
+bool qt_supports (url u);
 void qt_image_size (url image, int& w, int& h);
 void qt_convert_image (url image, url dest, int w =0, int h =0);
 void qt_image_to_eps (url image, url eps, int w_pt =0, int h_pt =0, int dpi= 0);

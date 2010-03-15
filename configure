@@ -649,11 +649,6 @@ LIBS
 build_alias
 host_alias
 target_alias
-PACKAGE
-DEVEL_VERSION
-DEVEL_RELEASE
-STABLE_VERSION
-STABLE_RELEASE
 build
 build_cpu
 build_vendor
@@ -662,6 +657,11 @@ host
 host_cpu
 host_vendor
 host_os
+PACKAGE
+DEVEL_VERSION
+DEVEL_RELEASE
+STABLE_VERSION
+STABLE_RELEASE
 CC
 CFLAGS
 LDFLAGS
@@ -1373,6 +1373,7 @@ Optional Packages:
   --with-cairo=ARG        with cairo support ARG=no
   --with-imlib2=ARG       with imlib2 support ARG=no
   --with-axel=ARG       with axel support ARG=no
+  --with-gs=ARG       with ghostscript support ARG=yes
   --with-qt               Path to Qt [Look in PATH and /usr/local/Trolltech]
 
 Some influential environment variables:
@@ -1814,20 +1815,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 ac_config_headers="$ac_config_headers src/System/config.h:src/System/config.in"
 
-
-PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.7.3"
-DEVEL_RELEASE="1"
-STABLE_VERSION="1.0.7"
-STABLE_RELEASE="1"
-WINDOWS_VERSION="1.0.5"
-WINDOWS_RELEASE="1"
-
-
-
-
-
-
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
   if test -f "$ac_dir/install-sh"; then
@@ -1940,6 +1927,19 @@ shift; shift
 host_os=$*
 IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+
+PACKAGE="TeXmacs"
+DEVEL_VERSION="1.0.7.3"
+DEVEL_RELEASE="1"
+STABLE_VERSION="1.0.7"
+STABLE_RELEASE="1"
+WINDOWS_VERSION="1.0.5"
+WINDOWS_RELEASE="1"
+
+
+
 
 
 
@@ -7806,6 +7806,17 @@ LIBS="$SAVE_LIBS"
 # Checks for ghostscript library
 #--------------------------------------------------------------------
 
+
+# Check whether --with-gs was given.
+if test "${with_gs+set}" = set; then
+  withval=$with_gs;
+fi
+
+
+if test "$with_gs" = "no" ; then
+    { echo "$as_me:$LINENO: result: disabling ghostscript support" >&5
+echo "${ECHO_T}disabling ghostscript support" >&6; }
+else
 case "${host}" in
   *mingw* | *-*-cygwin)
     GS_EXE="gswin32c.exe"
@@ -7942,6 +7953,7 @@ _ACEOF
 else
   { echo "$as_me:$LINENO: result: disabling ghostscript support" >&5
 echo "${ECHO_T}disabling ghostscript support" >&6; }
+fi
 fi
 
 #--------------------------------------------------------------------
@@ -8750,43 +8762,6 @@ else
   { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
 fi
-
-{ echo "$as_me:$LINENO: checking host system type" >&5
-echo $ECHO_N "checking host system type... $ECHO_C" >&6; }
-if test "${ac_cv_host+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&5
-echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&2;}
-   { (exit 1); exit 1; }; }
-fi
-
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_host" >&5
-echo "${ECHO_T}$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) { { echo "$as_me:$LINENO: error: invalid value of canonical host" >&5
-echo "$as_me: error: invalid value of canonical host" >&2;}
-   { (exit 1); exit 1; }; };;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
 
 case "${host}" in
   i*86-*-linux* | x86_64-*-linux*)
@@ -9747,7 +9722,10 @@ esac
 
 case "$CONFIG_GUI" in
     X11)
-	CONFIG_X11="X11 Widkit Ghostscript"
+	CONFIG_X11="X11 Widkit"
+        if test "x${CONFIG_GS}" != "xGhostscript"; then
+          CONFIG_X11="$CONFIG_X11 Ghostscript"
+        fi
         CONFIG_GUI_DEFINE="X11TEXMACS"
 #        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
 	;;
@@ -10795,11 +10773,6 @@ LIBS!$LIBS$ac_delim
 build_alias!$build_alias$ac_delim
 host_alias!$host_alias$ac_delim
 target_alias!$target_alias$ac_delim
-PACKAGE!$PACKAGE$ac_delim
-DEVEL_VERSION!$DEVEL_VERSION$ac_delim
-DEVEL_RELEASE!$DEVEL_RELEASE$ac_delim
-STABLE_VERSION!$STABLE_VERSION$ac_delim
-STABLE_RELEASE!$STABLE_RELEASE$ac_delim
 build!$build$ac_delim
 build_cpu!$build_cpu$ac_delim
 build_vendor!$build_vendor$ac_delim
@@ -10808,6 +10781,11 @@ host!$host$ac_delim
 host_cpu!$host_cpu$ac_delim
 host_vendor!$host_vendor$ac_delim
 host_os!$host_os$ac_delim
+PACKAGE!$PACKAGE$ac_delim
+DEVEL_VERSION!$DEVEL_VERSION$ac_delim
+DEVEL_RELEASE!$DEVEL_RELEASE$ac_delim
+STABLE_VERSION!$STABLE_VERSION$ac_delim
+STABLE_RELEASE!$STABLE_RELEASE$ac_delim
 CC!$CC$ac_delim
 CFLAGS!$CFLAGS$ac_delim
 LDFLAGS!$LDFLAGS$ac_delim
