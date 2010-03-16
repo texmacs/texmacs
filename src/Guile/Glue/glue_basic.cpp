@@ -463,6 +463,19 @@ tmg_get_author () {
 }
 
 SCM
+tmg_image_2psdoc (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "image->psdoc");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= image_to_psdoc (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_tree_2stree (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
 
@@ -3707,6 +3720,7 @@ initialize_glue_basic () {
   scm_new_procedure ("new-author", (FN) tmg_new_author, 0, 0, 0);
   scm_new_procedure ("set-author", (FN) tmg_set_author, 1, 0, 0);
   scm_new_procedure ("get-author", (FN) tmg_get_author, 0, 0, 0);
+  scm_new_procedure ("image->psdoc", (FN) tmg_image_2psdoc, 1, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
   scm_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);

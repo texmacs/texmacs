@@ -16,6 +16,7 @@
 #include "connect.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "image_files.hpp"
 #include "sys_utils.hpp"
 #include "tmfs.hpp"
 #include "client_server.hpp"

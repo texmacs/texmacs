@@ -21,6 +21,7 @@ void	      ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
 string 	      ps_load (url image);
 void          image_size (url image, int& w, int& h);
 void          image_to_eps (url image, url eps, int w_pt= 0, int h_pt= 0, int dpi= 0);
+string        image_to_psdoc (url image);
 void          image_to_png (url image, url png, int w= 0, int h= 0);
 
 #endif // defined IMAGE_FILES_H

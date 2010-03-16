@@ -57,6 +57,9 @@
   (set-author set_author (void double))
   (get-author get_author (double))
 
+  ;; routines for images
+  (image->psdoc image_to_psdoc (string url))
+
   ;; routines for trees
   (tree->stree tree_to_scheme_tree (scheme_tree tree))
   (stree->tree scheme_tree_to_tree (tree scheme_tree))

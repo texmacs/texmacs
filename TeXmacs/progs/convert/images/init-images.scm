@@ -67,56 +67,61 @@
   (:suffix "xpm"))
 
 (converter xpm-file ppm-file
-  (:require (url-exists-in-path? "xpmtoppm"))
-  (:shell "xpmtoppm" from ">" to))
+  (:require (url-exists-in-path? "convert"))
+  (:shell "convert" from to))
 
 (define-format jpeg
   (:name "Jpeg")
   (:suffix "jpg" "jpeg"))
 
-(converter jpeg-file postscript-file
-  (:shell "convert" from to))
-
-(converter jpeg-file postscript-file
-  (:shell "jpeg2ps" from ">" to))
+(converter jpeg-file postscript-document
+  (:function image->psdoc))
 
 (converter jpeg-file pnm-file
-  (:shell "djpeg" "-pnm" from ">" to))
+  (:require (url-exists-in-path? "convert"))
+  (:shell "convert" from to))
 
 (define-format tif
   (:name "Tif")
   (:suffix "tif"))
 
-(converter tif-file postscript-file
-  (:shell "tiff2ps" from ">" to))
+(converter tif-file postscript-document
+  (:function image->psdoc))
 
 (define-format ppm
   (:name "Ppm")
   (:suffix "ppm"))
 
 (converter ppm-file gif-file
-  (:shell "ppmtogif" from ">" to))
+  (:require (url-exists-in-path? "convert"))
+  (:shell "convert" from to))
 
 (define-format gif
   (:name "Gif")
   (:suffix "gif"))
 
+(converter gif-file postscript-document
+  (:function image->psdoc))
+
 (converter gif-file pnm-file
-  (:shell "giftopnm" from "| cat >" to))
+  (:require (url-exists-in-path? "convert"))
+  (:shell "convert" from to))
 
 (define-format png
   (:name "Png")
   (:suffix "png"))
 
+(converter png-file postscript-document
+  (:function image->psdoc))
+
 (converter png-file pnm-file
-  (:shell "pngtopnm" from ">" to))
+  (:require (url-exists-in-path? "convert"))
+  (:shell "convert" from to))
 
 (define-format pnm
   (:name "Pnm")
   (:suffix "pnm"))
 
 (converter pnm-file postscript-document
-  (:require (url-exists-in-path? "pnmtops"))
-  (:function (lambda (file)
-	       (eval-system (string-append "pnmtops -noturn "
-					   (url->string file))))))
+  (:function image->psdoc))
+

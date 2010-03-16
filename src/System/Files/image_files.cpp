@@ -250,12 +250,15 @@ image_size (url image, int& w, int& h) {
   h= y2 - y1;
 }
 
+/******************************************************************************
+* Converting image formats
+******************************************************************************/
+
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
-  if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
+/*  if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
     cerr << "TeXmacs] warning: " << concretize (eps) << " has no .eps or .ps suffix\n";
-    return;
-  }
+  }*/
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
@@ -285,12 +288,21 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   system (cmd, image, eps);
 }
 
+string
+image_to_psdoc (url image) {
+  url psfile= url_temp (".eps");
+  image_to_eps (image, psfile);
+  string psdoc;
+  load_string (psfile, psdoc, false);
+  remove (psfile);
+  return psdoc;
+}
+
 void
 image_to_png (url image, url png, int w, int h) {
-  if (suffix (png) != "png") {
+/*  if (suffix (png) != "png") {
     cerr << "TeXmacs] warning: " << concretize (png) << " has no .png suffix\n";
-    return;
-  }
+  }*/
 #ifdef MACOSX_EXTENSIONS
   mac_image_to_png (image, png);
 #else
