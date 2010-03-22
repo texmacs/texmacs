@@ -340,7 +340,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   userToolBar->setStyle (qtmstyle ());
 
   updateVisibility();
-#if (defined(Q_WS_MAC)&&(QT_VERSION>=0x040600))
+	
+  // there is a bug in the early implementation of toolbars in Qt 4.6
+  // which has been fixed in 4.6.2 (at least)
+  // this is why we change dimension of icons
+	
+#if (defined(Q_WS_MAC)&&(QT_VERSION>=QT_VERSION_CHECK(4,6,0))&&(QT_VERSION<QT_VERSION_CHECK(4,6,2)))
   mw->setIconSize (QSize (22, 30));  
 #else
   mw->setIconSize (QSize (17, 17));
