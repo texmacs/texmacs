@@ -29,8 +29,7 @@ qt_system (string cmd, string& result) {
   proc.setProcessChannelMode (QProcess::MergedChannels);
   char* _cmd = as_charp (cmd);
 #if defined (__MINGW__) || defined (__MINGW32__)
-  QString qcmd = "CMD /S /C ";
-  qcmd += _cmd;
+  QString qcmd = _cmd;
 #else
   QString qcmd = "sh -c \"";
   qcmd += _cmd;

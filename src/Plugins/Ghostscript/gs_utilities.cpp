@@ -26,7 +26,8 @@ gs_supports (url image) {
 void
 gs_image_size (url image, int& w_pt, int& h_pt) {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+  string cmd= "\"";
+  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
   string cmd= "gs ";
 #endif
@@ -58,7 +59,8 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
 void
 gs_to_png (url image, url png, int w, int h) {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+  string cmd= "\"";
+  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
   string cmd= "gs ";
 #endif
@@ -81,7 +83,8 @@ gs_to_png (url image, url png, int w, int h) {
 void
 gs_to_eps (url image, url eps) {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+  string cmd= "\"";
+  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
   string cmd= "gs ";
 #endif
@@ -95,7 +98,8 @@ gs_to_eps (url image, url eps) {
 void
 gs_to_pdf (url doc, url pdf) {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+  string cmd= "\"";
+  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
   string cmd= "gs ";
 #endif
@@ -108,7 +112,8 @@ gs_to_pdf (url doc, url pdf) {
 void
 tm_gs (url image) {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= get_env ("TEXMACS_PATH") * string ("\\bin\\gswin32c ");
+  string cmd= "\"";
+  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
   string cmd= "gs ";
 #endif
