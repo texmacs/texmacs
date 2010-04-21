@@ -193,7 +193,8 @@
 	    ---
 	    (link scripts-preferences-menu))
 	(toggle ("Remote connections" "remote connections"))
-	(toggle ("Linking tool" "linking tool")))
+	(toggle ("Linking tool" "linking tool"))
+	(toggle ("Versioning tool" "versioning tool")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")

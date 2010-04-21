@@ -36,6 +36,7 @@
   ("executable" "cmd e")
   ("inactive" "cmd i")
   ("link" "cmd l")
+  ("version" "cmd #")
   ("table" "cmd t")
   ("script" "cmd *")
   ("text:symbol" "S-F5" #t)

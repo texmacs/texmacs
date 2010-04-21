@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.4>
 
 <style|<tuple|source|std>>
 
@@ -354,6 +354,30 @@
   <drd-props|show-part|border|no>
 
   <drd-props|hide-part|border|no|arity|3|hidden|1>
+
+  <\active*>
+    <\src-comment>
+      Different versions of parts of documents.
+    </src-comment>
+  </active*>
+
+  <assign|render-old|<macro|x|<with|color|dark red|<arg|x>>>>
+
+  <assign|render-new|<macro|x|<with|color|dark green|<arg|x>>>>
+
+  <assign|version-old|<macro|x|y|<render-old|<arg|x>>>>
+
+  <assign|version-new|<macro|x|y|<render-new|<arg|y>>>>
+
+  <assign|version-both-small|<macro|x|y|<render-old|<arg|x>><render-new|<arg|y>>>>
+
+  <assign|version-both-big|<\macro|x|y>
+    <render-old|<arg|x>>
+
+    <surround||<right-flush>|<render-new|<arg|y>>>
+  </macro>>
+
+  <assign|version-both|<macro|x|y|<compound|<if|<equal|<get-label|<arg|x>>|document>|version-both-big|version-both-small>|<arg|x>|<arg|y>>>>
 
   \;
 </body>

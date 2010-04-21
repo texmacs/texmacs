@@ -242,6 +242,27 @@
   `(let ((,t (tree-innermost ,x)))
      (if ,t (begin ,@body))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Recursive replacement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-replace t what by)
+  (cond ((and (procedure? what) (procedure? by))
+	 (if (what t) (by t)
+	     (if (tree-compound? t)
+		 (for-each (lambda (u) (tree-replace u what by))
+			   (tree-children t)))))
+	((symbol? what)
+	 (tree-replace t (lambda (u) (tree-is? u what)) by))
+	((symbol? by)
+	 (tree-replace t what
+	   (lambda (u) (if (tree-compound? u) (tree-assign-node u by)))))
+	(else
+	  (let* ((w (tm->tree what))
+		 (b (tm->tree by)))
+	    (tree-replace t (lambda (u) (== u w))
+			    (lambda (u) (tree-assign u (tree-copy b))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further routines for trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

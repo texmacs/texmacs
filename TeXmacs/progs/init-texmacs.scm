@@ -182,6 +182,11 @@
 	     get-link-locations register-link-locations)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
+;(display "Booting versioning facilities\n")
+(lazy-menu (version version-menu) version-menu)
+(lazy-keyboard (version version-kbd) with-versioning-tool?)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
 ;(display "Booting plugins\n")
 (for-each lazy-plugin-initialize (plugin-list))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

@@ -59,7 +59,8 @@
   ("bibtex command" "bibtex" notify-bibtex-command)
   ("scripting language" "none" notify-scripting-language)
   ("remote connections" "off" noop)
-  ("linking tool" "off" noop))
+  ("linking tool" "off" noop)
+  ("versioning tool" "off" noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
