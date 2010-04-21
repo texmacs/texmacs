@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (version version-kbd)
-  (:use (version version-edit)))
+  (:use (version version-compare)))
 
 (kbd-map
   (:mode with-versioning-tool?)
