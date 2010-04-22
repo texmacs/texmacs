@@ -48,7 +48,11 @@
     (-> "Retain"
 	("Current version" (version-retain 'current))
 	("Old version" (version-retain 0))
-	("New version" (version-retain 1)))
-    (-> "Reactualize"
-	("Differences" (reactualize-differences #f))
-	("Rough differences" (reactualize-differences #t)))))
+	("New version" (version-retain 1))))
+  ---
+  (-> "Grain"
+      ("Detailed" (version-set-grain "detailed"))
+      ("Block" (version-set-grain "block"))
+      ("Rough" (version-set-grain "rough")))
+  (when (or (inside-version?) (selection-active-any?))
+    ("Reactualize" (reactualize-differences))))

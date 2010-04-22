@@ -15,6 +15,21 @@
   (:use (version version-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Versioning grain
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define version-grain "detailed")
+
+(tm-define (version-test-grain? w)
+  (== version-grain w))
+
+(tm-define (version-set-grain w)
+  (:synopsis "Set versioning grain.")
+  (:argument w "detailed")
+  (:check-mark "*" version-test-grain?)
+  (set! version-grain w))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines for document comparison
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -178,6 +193,12 @@
 (tm-define (compare-versions t1 t2)
   ;;(display* "compare-versions " t1 ", " t2 "\n\n")
   (cond ((== t1 t2) t1)
+	((== version-grain "rough") (diff t1 t2))
+	((and (== version-grain "block")
+	      (not (tree-multi-paragraph? (tm->tree t1)))
+	      (not (tree-multi-paragraph? (tm->tree t2))))
+	 (diff (if (tree-multi-paragraph? (tm->tree t1)) t1 `(document ,t1))
+	       (if (tree-multi-paragraph? (tm->tree t2)) t2 `(document ,t2))))
 	((and (string? t1) (string? t2))
 	 (compare-versions `(concat ,t1) `(concat ,t2)))
 	((and (not (tm-is? t1 'concat)) (tm-is? t2 'concat))
@@ -234,7 +255,7 @@
 	  (with args (map (lambda (x) (version-get x which)) (cdr t))
 	    (normalize (cons (car t) args))))))
 
-(define (reactualize-differences-sub rough?)
+(define (reactualize-differences-sub)
   (when (selection-active-any?)
     (let* ((t (selection-tree))
 	   (v1 (version-get (tree->stree t) 0))
@@ -242,13 +263,11 @@
       (if (== v1 v2) (insert t)
 	  (begin
 	    (clipboard-cut "dummy")
-	    (if rough?
-		(insert (diff v1 v2))
-		(insert (compare-versions v1 v2))))))))
+	    (insert (compare-versions v1 v2)))))))
 
-(tm-define (reactualize-differences rough?)
+(tm-define (reactualize-differences)
   (if (selection-active-any?)
-      (reactualize-differences-sub rough?)
+      (reactualize-differences-sub)
       (when (inside-version?)
 	(tree-select (tree-innermost version-context?))
-	(reactualize-differences-sub rough?))))
+	(reactualize-differences-sub))))
