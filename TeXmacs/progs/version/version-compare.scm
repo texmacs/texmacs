@@ -80,6 +80,9 @@
 	 (diff t1 `(document ,t2)))
 	(else `(version-both ,t1 ,t2))))
 
+(define (list-diff t1 t2)
+  (if (== t1 t2) (list) (list (diff t1 t2))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding a long common subsequence where to break
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -88,21 +91,30 @@
   (if (or (null? l1) (null? l2) (!= (car l1) (car l2))) 0
       (+ (common (cdr l1) (cdr l2)) 1)))
 
+(define (longest-common-bis l1 l2)
+  (let* ((i (list-find-index l2 (lambda (x) (== x (car l1)))))
+	 (r2 (list-tail l2 i))
+	 (n (common l1 r2)))
+    (if (or (>= n 25) (not (in? (car l1) (cdr r2)))) (values 0 i n)
+	;; NOTE: truncate for efficiency reasons
+	(receive (i1 i2 nn) (longest-common-bis l1 (cdr r2))
+	  (if (>= n nn)
+	      (values 0 i n)
+	      (values i1 (+ i2 i 1) nn))))))
+
 (define (longest-common l1 l2)
-  ;;(display* "longest-common " l1 ", " l2 "\n")
+  ;;(display* "longest-common, " l1 ", " l2 "\n")
   (cond ((or (null? l1) (null? l2))
 	 (values 0 0 0))
 	((and (in? (car l1) l2) (!= (car l1) " "))
 	 ;; NOTE: don't consider breaks at spaces
-	 (let* ((i (list-find-index l2 (lambda (x) (== x (car l1)))))
-		(r2 (list-tail l2 i))
-		(n (common l1 r2)))
-	   (if (>= n 25) (values 0 i n)
+	 (receive (i1 i2 n) (longest-common-bis l1 l2)
+	   (if (>= n 25) (values i1 i2 n)
 	       ;; NOTE: truncate for efficiency reasons
-	       (receive (i1 i2 nn) (longest-common l1 (cdr r2))
-		 (if (>= n nn)
-		     (values 0 i n)
-		     (values i1 (+ i2 i 1) nn))))))
+	       (receive (j1 j2 m) (longest-common (cdr l1) l2)
+		 (if (>= n m)
+		     (values i1 i2 n)
+		     (values (+ j1 1) j2 m))))))
 	(else
 	  (receive (i1 i2 n) (longest-common (cdr l1) l2)
 	    (values (+ i1 1) i2 n)))))
@@ -126,16 +138,17 @@
 (define (compare-versions-list tag l1 l2)
   ;;(display* "compare-versions-list " tag ", " l1 ", " l2 "\n\n")
   (cond ((and (null? l1) (null? l2)) '())
-	((null? l1) (list (diff "" (normalize `(,tag ,@l2)))))
-	((null? l2) (list (diff (normalize `(,tag ,@l1)) "")))
+	((null? l1) (list-diff "" (normalize `(,tag ,@l2))))
+	((null? l2) (list-diff (normalize `(,tag ,@l1)) ""))
 	((== (car l1) (car l2))
 	 (cons (car l1) (compare-versions-list tag (cdr l1) (cdr l2))))
 	(else
 	  (receive (i1 i2 n) (var-longest-common l1 l2)
+	    ;;(display* "  common " (sublist l1 i1 (+ i1 n)) "\n")
 	    ;;(display* "  break at " i1 ", " i2 ", " n "\n\n")
 	    (cond ((== n 0)
-		   (list (diff (normalize `(,tag ,@l1))
-			       (normalize `(,tag ,@l2)))))
+		   (list-diff (normalize `(,tag ,@l1))
+			      (normalize `(,tag ,@l2))))
 		  ((and (== n (length l1)) (== n (length l2)))
 		   (map compare-versions l1 l2))
 		  (else
@@ -182,6 +195,10 @@
 			       (map compare-versions (cdr t1) (cdr t2)))))))))
 	(else (diff t1 t2))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Top-level interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (compare-file old)
   (let* ((t1 (tree-load-inclusion old))
 	 (t2 (buffer-tree))
@@ -193,3 +210,30 @@
     ;;(display* "rt= " rt "\n")
     (tree-set (buffer-tree) rt)
     (version-first-difference)))
+
+(define (version-get t which)
+  (cond ((string? t) t)
+	((tm-in? t '(version-old version-new version-both))
+	 (version-get (tm-ref t which) which))
+	(else
+	  (cons (car t)
+		(map (lambda (x) (version-get x which)) (cdr t))))))
+
+(define (reactualize-differences-sub rough?)
+  (when (selection-active-any?)
+    (let* ((t (selection-tree))
+	   (v1 (version-get (tree->stree t) 0))
+	   (v2 (version-get (tree->stree t) 1)))
+      (if (== v1 v2) (insert t)
+	  (begin
+	    (clipboard-cut "dummy")
+	    (if rough?
+		(insert (diff v1 v2))
+		(insert (compare-versions v1 v2))))))))
+
+(tm-define (reactualize-differences rough?)
+  (if (selection-active-any?)
+      (reactualize-differences-sub rough?)
+      (when (inside-version?)
+	(tree-select (tree-innermost version-context?))
+	(reactualize-differences-sub rough?))))

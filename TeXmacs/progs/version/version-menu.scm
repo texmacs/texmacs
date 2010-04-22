@@ -48,4 +48,7 @@
     (-> "Retain"
 	("Current version" (version-retain 'current))
 	("Old version" (version-retain 0))
-	("New version" (version-retain 1)))))
+	("New version" (version-retain 1)))
+    (-> "Reactualize"
+	("Differences" (reactualize-differences #f))
+	("Rough differences" (reactualize-differences #t)))))
