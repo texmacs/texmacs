@@ -62,29 +62,15 @@
 ;; Moving across the differences between both versions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (version-empty?)
-  (and (inside-version?)
-       (with-innermost t version-context?
-	 (with u (tree-down t)
-	   (== u (tree ""))))))
-
 (tm-define (version-first-difference)
   (go-start)
   (version-next-difference))
 
 (tm-define (version-previous-difference)
-  (go-to-previous-tag (group-resolve 'version-tag))
-  (when (version-empty?)
-    (go-to-previous-tag (group-resolve 'version-tag))
-    (when (version-empty?)
-      (go-to-previous-tag (group-resolve 'version-tag)))))
+  (go-to-previous-tag (group-resolve 'version-tag)))
 
 (tm-define (version-next-difference)
-  (go-to-next-tag (group-resolve 'version-tag))
-  (when (version-empty?)
-    (go-to-next-tag (group-resolve 'version-tag))
-    (when (version-empty?)
-      (go-to-next-tag (group-resolve 'version-tag)))))
+  (go-to-next-tag (group-resolve 'version-tag)))
 
 (tm-define (version-last-difference)
   (go-end)
@@ -121,18 +107,23 @@
 	  (when (!= c (tree-children t))
 	    (tree-assign t `(,(tree-label t) ,@c))))))))
 
+(define (retain-version t new)
+  (cond ((== new (tm->tree '(version-suppressed)))
+	 (tree-set t ""))
+	((== new (tm->tree '(document (version-suppressed))))
+	 (tree-set t '(document)))
+	(else (tree-set t new))))
+
 (define (version-retain-version where which)
   (with p (if (version-context? where) (tree-up where) where)
     (tree-replace where version-context?
 		  (lambda (t)
-		    (let* ((p (tree-up t))
-			   (i (tree-index t)))
-		      (cond ((number? which)
-			     (tree-set t (tree-ref t which)))
-			    ((tree-is? t 'version-old)
-			     (tree-set t (tree-ref t 0)))
-			    (else
-			      (tree-set t (tree-ref t 1)))))))
+		    (cond ((number? which)
+			   (retain-version t (tree-ref t which)))
+			  ((tree-is? t 'version-old)
+			   (retain-version t (tree-ref t 0)))
+			  (else
+			   (retain-version t (tree-ref t 1))))))
     (tree-normalize p)))
 
 (tm-define (version-retain which)

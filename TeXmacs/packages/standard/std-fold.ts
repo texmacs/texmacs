@@ -379,7 +379,7 @@
 
   <assign|version-both|<macro|x|y|<compound|<if|<equal|<get-label|<arg|x>>|document>|version-both-big|version-both-small>|<arg|x>|<arg|y>>>>
 
-  \;
+  <assign|version-suppressed|<macro|<math|<op|\<times\>>>>>
 </body>
 
 <\initial>

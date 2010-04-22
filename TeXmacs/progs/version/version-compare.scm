@@ -146,8 +146,8 @@
 (define (compare-versions-list tag l1 l2)
   ;;(display* "compare-versions-list " tag ", " l1 ", " l2 "\n\n")
   (cond ((and (null? l1) (null? l2)) '())
-	((null? l1) (list-diff "" (normalize `(,tag ,@l2))))
-	((null? l2) (list-diff (normalize `(,tag ,@l1)) ""))
+	((null? l1) (list-diff '(version-suppressed) (normalize `(,tag ,@l2))))
+	((null? l2) (list-diff (normalize `(,tag ,@l1)) '(version-suppressed)))
 	((== (car l1) (car l2))
 	 (cons (car l1) (compare-versions-list tag (cdr l1) (cdr l2))))
 	(else
@@ -226,6 +226,8 @@
 
 (define (version-get t which)
   (cond ((string? t) t)
+	((== t '(version-suppressed)) "")
+	((== t '(document (version-suppressed))) "")
 	((tm-in? t '(version-old version-new version-both))
 	 (normalize (version-get (tm-ref t which) which)))
 	(else
