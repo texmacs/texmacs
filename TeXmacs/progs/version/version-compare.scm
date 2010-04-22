@@ -19,13 +19,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (denormalize-string s)
-  (with d (string-index s #\space)
-    (if (or (not d) (== s " ")) (list s)
-	(let ((h (substring s 0 d))
-	      (t (denormalize-string (substring s (+ 1 d) (string-length s)))))
-	  (cond ((== d 0) (cons " " t))
-		((== d (- (string-length s) 1)) (list h " "))
-		(else (cons h (cons " " t))))))))
+  (if (== s "") (list)
+      (with d (string-index s #\space)
+	(if (or (not d) (== s " ")) (list s)
+	    (let ((h (substring s 0 d))
+		  (t (denormalize-string
+		      (substring s (+ 1 d) (string-length s)))))
+	      (cond ((== d 0) (cons " " t))
+		    ((== d (- (string-length s) 1)) (list h " "))
+		    (else (cons h (cons " " t)))))))))
 
 (define (denormalize-concat l)
   (cond ((null? l) l)
@@ -45,29 +47,29 @@
 	 `(document ,@(map denormalize (cdr t))))
 	(else t)))
 
-(define (normalize-concat l)
+(define (normalize-list tag l)
   (cond ((null? l) l)
-	((tm-is? (car l) 'concat)
-	 (normalize-concat (append (cdar l) (cdr l))))
-	(else (cons (car l) (normalize-concat (cdr l))))))
+	((tm-is? (car l) tag)
+	 (normalize-list tag (append (cdar l) (cdr l))))
+	(else (cons (car l) (normalize-list tag (cdr l))))))
 
-(define (normalize-concat-string l)
+(define (normalize-strings l)
   (with i (list-find-index l nstring?)
     (if (not i) (set! i (length l)))
     (if (== i 0)
-	(if (null? l) l (cons (car l) (normalize-concat-string (cdr l))))
+	(if (null? l) l (cons (car l) (normalize-strings (cdr l))))
 	(cons (apply string-append (sublist l 0 i))
-	      (normalize-concat-string (list-tail l i))))))
+	      (normalize-strings (list-tail l i))))))
 
 (define (normalize t)
   (cond ((string? t) t)
 	((tm-is? t 'concat)
-	 (with l (normalize-concat-string (normalize-concat (cdr t)))
+	 (with l (normalize-strings (normalize-list 'concat (cdr t)))
 	   (cond ((null? l) "")
 		 ((null? (cdr l)) (car l))
 		 (else `(concat ,@l)))))
 	((tm-is? t 'document)
-	 (cons 'document (map normalize (cdr t))))
+	 (cons 'document (normalize-list 'document (map normalize (cdr t)))))
 	(else t)))
 
 (define (diff t1 t2)
@@ -102,12 +104,14 @@
 	      (values 0 i n)
 	      (values i1 (+ i2 i 1) nn))))))
 
+(define prohibited-breaks '(" " "" (concat)))
+
 (define (longest-common l1 l2)
   ;;(display* "longest-common, " l1 ", " l2 "\n")
   (cond ((or (null? l1) (null? l2))
 	 (values 0 0 0))
-	((and (in? (car l1) l2) (!= (car l1) " "))
-	 ;; NOTE: don't consider breaks at spaces
+	((and (in? (car l1) l2) (nin? (car l1) prohibited-breaks))
+	 ;; NOTE: don't consider breaks at spaces and empty lines
 	 (receive (i1 i2 n) (longest-common-bis l1 l2)
 	   (if (>= n 25) (values i1 i2 n)
 	       ;; NOTE: truncate for efficiency reasons
@@ -123,13 +127,17 @@
   (cond ((string? t) t)
 	((tm-is? t 'concat)
 	 (with f (list-find (cdr t) (lambda (x) (!= x " ")))
-	   (if f (skeleton f) '(concat 0))))
+	   (if f (skeleton f) "")))
 	(else (list (car t) (- (length t) 1)))))
 
 (define (var-longest-common l1 l2)
   (receive (i1 i2 n) (longest-common l1 l2)
     (if (> n 0) (values i1 i2 n)
 	(longest-common (map skeleton l1) (map skeleton l2)))))
+
+(define (long-common? l1 l2)
+  (receive (i1 i2 n) (var-longest-common l1 l2)
+    (> (* 4 n) (min (length l1) (length l2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Show old and new versions into a single document
@@ -146,7 +154,12 @@
 	  (receive (i1 i2 n) (var-longest-common l1 l2)
 	    ;;(display* "  common " (sublist l1 i1 (+ i1 n)) "\n")
 	    ;;(display* "  break at " i1 ", " i2 ", " n "\n\n")
-	    (cond ((== n 0)
+	    (cond ((and (== n 0) (== tag 'document)
+			(== (length l1) 1) (== (length l2) 1)
+			(tm-is? (car l1) 'concat) (tm-is? (car l2) 'concat)
+			(long-common? (cdar l1) (cdar l2)))
+		   (map compare-versions l1 l2))
+		  ((== n 0)
 		   (list-diff (normalize `(,tag ,@l1))
 			      (normalize `(,tag ,@l2))))
 		  ((and (== n (length l1)) (== n (length l2)))
@@ -214,10 +227,10 @@
 (define (version-get t which)
   (cond ((string? t) t)
 	((tm-in? t '(version-old version-new version-both))
-	 (version-get (tm-ref t which) which))
+	 (normalize (version-get (tm-ref t which) which)))
 	(else
-	  (cons (car t)
-		(map (lambda (x) (version-get x which)) (cdr t))))))
+	  (with args (map (lambda (x) (version-get x which)) (cdr t))
+	    (normalize (cons (car t) args))))))
 
 (define (reactualize-differences-sub rough?)
   (when (selection-active-any?)

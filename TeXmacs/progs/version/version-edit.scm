@@ -108,15 +108,32 @@
 ;; Retaining only one version
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tree-normalize t)
+  (when (tree-compound? t)
+    (for-each tree-normalize (tree-children t))
+    (when (tree-in? t '(concat document))
+      (with fun
+	  (lambda (u)
+	    (cond ((tree-is? u (tree-label t)) (tree-children u))
+		  ((and (== u (tree "")) (tree-is? t 'concat)) (list))
+		  (else (list u))))
+	(with c (apply append (map fun (tree-children t)))
+	  (when (!= c (tree-children t))
+	    (tree-assign t `(,(tree-label t) ,@c))))))))
+
 (define (version-retain-version where which)
-  (tree-replace where version-context?
-		(lambda (t)
-		  (cond ((number? which)
-			 (tree-set t (tree-ref t which)))
-			((tree-is? t 'version-old)
-			 (tree-set t (tree-ref t 0)))
-			(else
-			 (tree-set t (tree-ref t 1)))))))
+  (with p (if (version-context? where) (tree-up where) where)
+    (tree-replace where version-context?
+		  (lambda (t)
+		    (let* ((p (tree-up t))
+			   (i (tree-index t)))
+		      (cond ((number? which)
+			     (tree-set t (tree-ref t which)))
+			    ((tree-is? t 'version-old)
+			     (tree-set t (tree-ref t 0)))
+			    (else
+			      (tree-set t (tree-ref t 1)))))))
+    (tree-normalize p)))
 
 (tm-define (version-retain which)
   (cond ((selection-active-any?)
