@@ -260,10 +260,8 @@
     (let* ((t (selection-tree))
 	   (v1 (version-get (tree->stree t) 0))
 	   (v2 (version-get (tree->stree t) 1)))
-      (if (== v1 v2) (insert t)
-	  (begin
-	    (clipboard-cut "dummy")
-	    (insert (compare-versions v1 v2)))))))
+      (clipboard-cut "dummy")
+      (insert (if (== v1 v2) v1 (compare-versions v1 v2))))))
 
 (tm-define (reactualize-differences)
   (if (selection-active-any?)
