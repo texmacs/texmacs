@@ -1697,6 +1697,7 @@
 	(else (list-or (map (cut find? <> what) x)))))
 
 (tm-define (texmacs->latex x opts)
+  ;;(display* "texmacs->latex [" opts "], " x "\n")
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))

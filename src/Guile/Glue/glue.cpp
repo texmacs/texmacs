@@ -30,6 +30,7 @@
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Bibtex/bibtex.hpp"
+#include "Bibtex/bibtex_functions.hpp"
 #include "link.hpp"
 #include "dictionary.hpp"
 #include "patch.hpp"

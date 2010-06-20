@@ -184,6 +184,7 @@
   (latex->texmacs latex_to_tree (tree tree))
   (parse-xml parse_xml (scheme_tree string))
   (parse-html parse_html (scheme_tree string))
+  (parse-bib parse_bib (tree string))
   (upgrade-tmml tmml_upgrade (tree scheme_tree))
 
   ;; routines for urls
@@ -319,4 +320,19 @@
   (widget-text text_widget (widget string int bool string))
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
-  (object->promise-widget as_promise_widget (promise_widget object)))
+  (object->promise-widget as_promise_widget (promise_widget object))
+
+  ;; routines for BibTeX
+  (bib-add-period bib_add_period (scheme_tree scheme_tree))
+  (bib-upcase-first bib_upcase_first (scheme_tree scheme_tree))
+  (bib-locase bib_locase (scheme_tree scheme_tree))
+  (bib-upcase bib_upcase (scheme_tree scheme_tree))
+  (bib-default bib_default (scheme_tree scheme_tree))
+  (bib-purify bib_purify (string scheme_tree))
+  (bib-text-length bib_text_length (int scheme_tree))
+  (bib-prefix bib_prefix (string scheme_tree int))
+  (bib-empty? bib_empty (bool scheme_tree string))
+  (bib-field bib_field (scheme_tree scheme_tree string))
+  (bib-abbreviate bib_abbreviate (scheme_tree scheme_tree scheme_tree scheme_tree))
+  )
+

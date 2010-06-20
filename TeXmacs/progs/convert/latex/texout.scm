@@ -80,7 +80,7 @@
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texout-document l)
+(tm-define (texout-document l)
   (if (nnull? l)
       (begin
 	(texout (car l))
@@ -258,7 +258,8 @@
 ;; Main output routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texout x)
+(tm-define (texout x)
+  ;; (display* "texout " x "\n")
   (cond ((string? x) (output-text x))
 	((== (car x) '!widechar) (output-text (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
@@ -286,3 +287,4 @@
 (tm-define (serialize-latex x)
   (texout x)
   (output-produce))
+

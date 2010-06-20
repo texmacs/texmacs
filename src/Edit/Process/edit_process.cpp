@@ -14,6 +14,10 @@
 #include "tm_buffer.hpp"
 #include "merge_sort.hpp"
 #include "Bibtex/bibtex.hpp"
+#include "Bibtex/bibtex_functions.hpp"
+#include "file.hpp"
+#include "convert.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -33,11 +37,20 @@ edit_process_rep::generate_bibliography (
   if (DEBUG_AUTO)
     cout << "TeXmacs] Generating bibliography"
 	 << " [" << bib << ", " << style << ", " << fname << "]\n";
-
   tree bib_t= buf->aux[bib];
   if (buf->prj != NULL) bib_t= buf->prj->aux[bib];
-  string dir= concretize (head (buf->name));
-  tree t= bibtex_run (bib, style, dir, fname, bib_t);
+  tree t;
+  if (N(style)>=3 && style (0, 3) == "tm-") {
+    string sbib;
+    load_string (url (fname), sbib, false);
+    tree te= bib_entries (parse_bib (sbib), bib_t);
+    object ot= tree_to_stree (te);
+    t= stree_to_tree (call (string ("bibstyle"), style (3, N(style)), ot));
+  }
+  else {
+    string dir= concretize (head (buf->name));
+    t= bibtex_run (bib, style, dir, fname, bib_t);
+  }
   if (is_atomic (t)) {
     if (starts (t->label, "Error:"))
       set_message (t->label, "compile bibliography");

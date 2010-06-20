@@ -2034,6 +2034,19 @@ tmg_parse_html (SCM arg1) {
 }
 
 SCM
+tmg_parse_bib (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "parse-bib");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= parse_bib (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_upgrade_tmml (SCM arg1) {
   SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "upgrade-tmml");
 
@@ -3679,6 +3692,159 @@ tmg_object_2promise_widget (SCM arg1) {
   return promise_widget_to_scm (out);
 }
 
+SCM
+tmg_bib_add_period (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-add-period");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_add_period (in1);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_bib_upcase_first (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-upcase-first");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_upcase_first (in1);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_bib_locase (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-locase");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_locase (in1);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_bib_upcase (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-upcase");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_upcase (in1);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_bib_default (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-default");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_default (in1);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_bib_purify (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-purify");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= bib_purify (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_bib_text_length (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-text-length");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= bib_text_length (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_bib_prefix (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-prefix");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "bib-prefix");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= bib_prefix (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_bib_emptyP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-empty?");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "bib-empty?");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= bib_empty (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_bib_field (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-field");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "bib-field");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_field (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_bib_abbreviate (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-abbreviate");
+  SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "bib-abbreviate");
+  SCM_ASSERT_SCHEME_TREE (arg3, SCM_ARG3, "bib-abbreviate");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+  scheme_tree in2= scm_to_scheme_tree (arg2);
+  scheme_tree in3= scm_to_scheme_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= bib_abbreviate (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
 void
 initialize_glue_basic () {
   scm_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
@@ -3831,6 +3997,7 @@ initialize_glue_basic () {
   scm_new_procedure ("latex->texmacs", (FN) tmg_latex_2texmacs, 1, 0, 0);
   scm_new_procedure ("parse-xml", (FN) tmg_parse_xml, 1, 0, 0);
   scm_new_procedure ("parse-html", (FN) tmg_parse_html, 1, 0, 0);
+  scm_new_procedure ("parse-bib", (FN) tmg_parse_bib, 1, 0, 0);
   scm_new_procedure ("upgrade-tmml", (FN) tmg_upgrade_tmml, 1, 0, 0);
   scm_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   scm_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
@@ -3951,4 +4118,15 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
+  scm_new_procedure ("bib-add-period", (FN) tmg_bib_add_period, 1, 0, 0);
+  scm_new_procedure ("bib-upcase-first", (FN) tmg_bib_upcase_first, 1, 0, 0);
+  scm_new_procedure ("bib-locase", (FN) tmg_bib_locase, 1, 0, 0);
+  scm_new_procedure ("bib-upcase", (FN) tmg_bib_upcase, 1, 0, 0);
+  scm_new_procedure ("bib-default", (FN) tmg_bib_default, 1, 0, 0);
+  scm_new_procedure ("bib-purify", (FN) tmg_bib_purify, 1, 0, 0);
+  scm_new_procedure ("bib-text-length", (FN) tmg_bib_text_length, 1, 0, 0);
+  scm_new_procedure ("bib-prefix", (FN) tmg_bib_prefix, 2, 0, 0);
+  scm_new_procedure ("bib-empty?", (FN) tmg_bib_emptyP, 2, 0, 0);
+  scm_new_procedure ("bib-field", (FN) tmg_bib_field, 2, 0, 0);
+  scm_new_procedure ("bib-abbreviate", (FN) tmg_bib_abbreviate, 3, 0, 0);
 }

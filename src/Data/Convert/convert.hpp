@@ -64,4 +64,7 @@ tree   parse_xml (string s);
 tree   parse_html (string s);
 tree   tmml_upgrade (scheme_tree t);
 
+/*** BibTeX ***/
+tree   parse_bib (string s);
+
 #endif // defined CONVERT_H
