@@ -393,8 +393,8 @@ tree_active (tree t) {
 
 tree
 tree_child_insert (tree t, int pos, tree x) {
-  cout << "t= " << t << "\n";
-  cout << "x= " << x << "\n";
+  //cout << "t= " << t << "\n";
+  //cout << "x= " << x << "\n";
   int i, n= N(t);
   tree r (t, n+1);
   for (i=0; i<pos; i++) r[i]= t[i];

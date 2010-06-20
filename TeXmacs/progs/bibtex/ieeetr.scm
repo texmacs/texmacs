@@ -115,8 +115,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(if (bib-empty? x "author") (format-editor x) (format-author x))
@@ -140,8 +139,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -158,8 +156,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(if (bib-empty? x "author") (format-editor x) (format-author x))
@@ -183,8 +180,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -207,8 +203,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -232,8 +227,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,@(if (bib-empty? x "author")
@@ -255,8 +249,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -274,8 +267,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -289,8 +281,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -308,8 +299,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(if (bib-empty? x "editor")
@@ -329,8 +319,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)
@@ -346,8 +335,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (new-sentence
 	    `(,(format-author x)

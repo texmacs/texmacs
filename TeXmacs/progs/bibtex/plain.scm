@@ -177,8 +177,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block
@@ -198,8 +197,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (if (bib-empty? x "author")
 	       (format-editor x)
@@ -210,8 +208,7 @@
 	      ,(format-bvolume x))))
 	 ,(new-block
 	   (if (bib-empty? x "crossref")
-	       (new-list
-		" "
+	       (new-list-spc
 		`(,(new-sentence
 		    `(,(format-number-series x)))
 		  ,(new-sentence
@@ -233,8 +230,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block
@@ -249,8 +245,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (if (bib-empty? x "author") (format-editor x)
 			 (format-author x)))
 	 ,(new-block
@@ -260,8 +255,7 @@
 	      ,(format-chapter-pages x))))
 	 ,(new-block
 	   (if (bib-empty? x "crossref")
-	       (new-list
-		" "
+	       (new-list-spc
 		`(,(new-sentence `(,(format-number-series x)))
 		  ,(new-sentence
 		    `(,(format-field x "publisher")
@@ -281,14 +275,12 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block
 	   (if (bib-empty? x "crossref")
-	       (new-list
-		" "
+	       (new-list-spc
 		`(,(new-sentence
 		    `(,(format-in-ed-booktitle x)
 		      ,(format-bvolume x)
@@ -309,14 +301,12 @@
   `(concat
     ,(format-bibitem n x)
     (label ,(string-append "bib-" (list-ref x 2)))
-    ,(new-list
-      " "
+    ,(new-list-spc
       `(,(new-block (format-author x))
 	,(new-block (format-field-Locase x "title"))
 	,(new-block
 	  (if (bib-empty? x "crossref")
-	      (new-list
-	       " "
+	      (new-list-spc
 	       `(,(new-sentenc
 		   `(,(format-in-ed-booktitle x)
 		     ,(format-bvolume x)
@@ -327,8 +317,7 @@
 		       `(,(format-field x "organization")
 			 ,(format-field x "publisher")
 			 ,(format-date x)))
-		      (new-list
-		       " "
+		      (new-list-spc
 		       `(,(new-sentence
 			   `(,(format-field x "address")
 			     ,(format-date x)))
@@ -346,8 +335,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (if (bib-empty? x "author")
 	       (if (bib-empty? x "organization") ""
@@ -371,8 +359,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block
@@ -390,8 +377,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block
@@ -405,14 +391,13 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (emphasize (format-field x "title")))
 	 ,(new-block
 	   (new-sentence
 	    `(,(if (bib-empty? x "type")
-		   ,(bib-translate "PhD thesis")
+		   (bib-translate "PhD thesis")
 		   (format-field-Locase x "type"))
 	      ,(format-field x "school")
 	      ,(format-field x "address")
@@ -424,8 +409,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block
 	   (if (bib-empty? x "editor")
 	       (format-field x "organization")
@@ -442,8 +426,7 @@
 		       (format-field x "organization"))
 		  ,(format-field x "publisher")
 		  ,(format-date x)))
-	       (new-list
-		" "
+	       (new-list-spc
 		`(,(new-sentence
 		    `(,(format-field x "address")
 		      ,(format-date x)))
@@ -458,8 +441,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block
@@ -475,8 +457,7 @@
   `(concat
      ,(format-bibitem n x)
      (label ,(string-append "bib-" (list-ref x 2)))
-     ,(new-list
-       " "
+     ,(new-list-spc
        `(,(new-block (format-author x))
 	 ,(new-block (format-field-Locase x "title"))
 	 ,(new-block

@@ -298,7 +298,7 @@ string_arg (tree t) {
   else if (is_func (t, APPLY, 1) && t[0] == "nbsp")
     return " ";
   else {
-    cout << "t= " << t << "\n";
+    //cout << "t= " << t << "\n";
     return "";
   }
 }

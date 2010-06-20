@@ -203,8 +203,7 @@
 
 (menu-bind automatic-menu
   ("Table of contents" (make-aux "table-of-contents" "toc"))
-  ("Bibliography" (interactive make-bib
-		    "Bibliography style" "Bibliography file"))
+  ("Bibliography" (interactive make-bib))
   ("Index" (make-aux "the-index" "idx"))
   ("Glossary" (make-aux "the-glossary" "gly"))
   ;;("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))

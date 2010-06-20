@@ -46,6 +46,7 @@ edit_process_rep::generate_bibliography (
     tree te= bib_entries (parse_bib (sbib), bib_t);
     object ot= tree_to_stree (te);
     t= stree_to_tree (call (string ("bibstyle"), style (3, N(style)), ot));
+    //cout << "t= " << t << "\n";
   }
   else {
     string dir= concretize (head (buf->name));

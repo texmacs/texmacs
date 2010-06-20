@@ -199,5 +199,8 @@
       (insert (list (string->symbol env) aux name '(document "")))))
 
 (tm-define (make-bib style file-name)
+  (:argument style "Bibliography style")
+  (:proposals style '("tm-plain" "tm-alpha" "tm-ieeetr" "tm-siam"))
+  (:argument file-name "Bibliography file")
   (if (not (make-return-after))
       (insert (list 'bibliography "bib" style file-name '(document "")))))
