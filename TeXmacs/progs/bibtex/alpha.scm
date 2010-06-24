@@ -115,3 +115,4 @@
   (let ((label (hash-ref bib-key-table (list-ref x 2)))
 	(lplain (bib-with-style "plain" bib-sort-key x)))
     (string-append (invert-label label) "    " lplain)))
+

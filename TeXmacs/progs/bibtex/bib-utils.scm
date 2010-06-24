@@ -106,8 +106,11 @@
 (tm-define (new-list-spc x)
   (new-list-rec " " (elim-empty x)))
 
+(tm-define (new-list c x)
+  (new-list-rec c (elim-empty x)))
+
 (tm-define (new-sentence x)
-  (bib-add-period (bib-upcase-first (new-list-rec ", " (elim-empty x)))))
+  (bib-add-period (bib-upcase-first (new-list ", " x))))
 
 (tm-define (format-field x s)
   (with e (bib-field x s)
@@ -122,3 +125,4 @@
 
 (tm-define (bib-translate s)
   (translate s "english" (get-env "language")))
+

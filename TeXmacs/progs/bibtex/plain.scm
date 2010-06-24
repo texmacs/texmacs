@@ -307,7 +307,7 @@
 	,(new-block
 	  (if (bib-empty? x "crossref")
 	      (new-list-spc
-	       `(,(new-sentenc
+	       `(,(new-sentence
 		   `(,(format-in-ed-booktitle x)
 		     ,(format-bvolume x)
 		     ,(format-number-series x)
@@ -528,3 +528,4 @@
     (string-append pre "    "
 		   (bib-field x "year") "    "
 		   (bib-purify (bib-field x "title")))))
+

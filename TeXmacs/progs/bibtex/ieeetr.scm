@@ -344,3 +344,4 @@
 	   (new-sentence
 	    `(,(format-field x "note")
 	      ,(format-date x))))))))
+

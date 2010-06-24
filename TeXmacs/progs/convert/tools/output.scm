@@ -45,6 +45,7 @@
     (set! output-space-flag #f)
     (set! output-break-flag #t)
     (set! output-tail "")
+;;    (display* "OUTPUT\n" r "\n")
     r))
 
 (tm-define (output-indent plus)
@@ -140,3 +141,4 @@
   ;(display-err* "Output text " ss "\n")
   (let ((s (apply string-append (cons output-tail ss))))
     (output-sub s 0)))
+

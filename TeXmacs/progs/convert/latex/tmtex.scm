@@ -1695,8 +1695,6 @@
   (cond ((== x what) #t)
 	((nlist? x) #f)
 	(else (list-or (map (cut find? <> what) x)))))
-
-(tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
@@ -1722,3 +1720,4 @@
 	  (if (not tmtex-use-catcodes?)
 	      (set! r (latex-expand-catcodes r)))
 	  r))))
+

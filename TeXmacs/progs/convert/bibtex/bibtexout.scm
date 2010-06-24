@@ -267,3 +267,4 @@
 (tm-define (serialize-bibtex x)
   (bibtexout x)
   (output-produce))
+

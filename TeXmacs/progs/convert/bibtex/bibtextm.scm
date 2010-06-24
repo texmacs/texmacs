@@ -34,3 +34,4 @@
   (let* ((snippet? (not (func? bib '!file 1)))
 	 (body (if snippet? bib (cadr bib))))
     body))
+
