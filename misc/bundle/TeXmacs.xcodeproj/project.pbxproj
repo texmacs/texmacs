@@ -863,6 +863,12 @@
 		9CD4E73010B14AEE00E0DD5C /* x_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490210A8CC100097A335 /* x_window.cpp */; };
 		9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48EF10A8CC100097A335 /* xpm_widget.cpp */; };
 		9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487A10A8CC100097A335 /* ghostscript.cpp */; };
+		9CFEB3F711D79783005C12C4 /* bibtex_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */; };
+		9CFEB3F811D79783005C12C4 /* bibtex_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */; };
+		9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */; };
+		9CFEB40011D79AF6005C12C4 /* parsebib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3FF11D79AF6005C12C4 /* parsebib.cpp */; };
+		9CFEB40111D79AF6005C12C4 /* parsebib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3FF11D79AF6005C12C4 /* parsebib.cpp */; };
+		9CFEB40211D79AF6005C12C4 /* parsebib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3FF11D79AF6005C12C4 /* parsebib.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1524,6 +1530,9 @@
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
 		9CFE66E910A99E700028F6F8 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		9CFE66EA10A99E700028F6F8 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
+		9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bibtex_functions.cpp; sourceTree = "<group>"; };
+		9CFEB3F611D79783005C12C4 /* bibtex_functions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bibtex_functions.hpp; sourceTree = "<group>"; };
+		9CFEB3FF11D79AF6005C12C4 /* parsebib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parsebib.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1632,6 +1641,7 @@
 		9C0B475E10A8CC0F0097A335 /* Convert */ = {
 			isa = PBXGroup;
 			children = (
+				9CFEB3FE11D79AF6005C12C4 /* BibTeX */,
 				9C0B475F10A8CC0F0097A335 /* convert.hpp */,
 				9C0B476010A8CC0F0097A335 /* Generic */,
 				9C0B476410A8CC0F0097A335 /* Scheme */,
@@ -2115,6 +2125,8 @@
 		9C0B484B10A8CC100097A335 /* Bibtex */ = {
 			isa = PBXGroup;
 			children = (
+				9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */,
+				9CFEB3F611D79783005C12C4 /* bibtex_functions.hpp */,
 				9C0B484C10A8CC100097A335 /* bibtex.cpp */,
 				9C0B484D10A8CC100097A335 /* bibtex.hpp */,
 			);
@@ -2949,6 +2961,14 @@
 			path = misc/scripts;
 			sourceTree = "<group>";
 		};
+		9CFEB3FE11D79AF6005C12C4 /* BibTeX */ = {
+			isa = PBXGroup;
+			children = (
+				9CFEB3FF11D79AF6005C12C4 /* parsebib.cpp */,
+			);
+			path = BibTeX;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3449,6 +3469,8 @@
 				9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C7E7AA21105EA7D004482BB /* QTMFileDialog.cpp in Sources */,
 				9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */,
+				9CFEB3F711D79783005C12C4 /* bibtex_functions.cpp in Sources */,
+				9CFEB40011D79AF6005C12C4 /* parsebib.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3738,6 +3760,8 @@
 				9CCC752510D304EB00E88D90 /* TMView.mm in Sources */,
 				9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C6061EC112442BD00054149 /* gs_utilities.cpp in Sources */,
+				9CFEB3F811D79783005C12C4 /* bibtex_functions.cpp in Sources */,
+				9CFEB40111D79AF6005C12C4 /* parsebib.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4042,6 +4066,8 @@
 				9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */,
 				9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */,
+				9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */,
+				9CFEB40211D79AF6005C12C4 /* parsebib.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
