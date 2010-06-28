@@ -57,13 +57,6 @@
 
 ;; BibTeX style modules
 (use-modules (bibtex bib-utils))
-(use-modules (bibtex plain))
-(use-modules (bibtex alpha))
-(use-modules (bibtex abbrv))
-(use-modules (bibtex acm))
-(use-modules (bibtex ieeetr))
-(use-modules (bibtex siam))
-(use-modules (bibtex elsart-num))
 
 ;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)

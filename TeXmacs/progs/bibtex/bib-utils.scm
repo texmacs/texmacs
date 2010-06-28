@@ -25,7 +25,7 @@
 
 (define (format-entries n x)
   (if (and (list? x) (nnull? x))
-      (cons (format-entry n (car x)) (format-entries (+ n 1) (cdr x)))
+      (cons (bib-format-entry n (car x)) (format-entries (+ n 1) (cdr x)))
       `()))
 
 (define (bib-with-sort-key t)
@@ -47,7 +47,7 @@
   (bib-preprocessing (cdr t))
   (if (and (list? t) (func? t 'document))
       (with ts (bib-sorted-entries (cdr t))
-	(simplify
+	(bib-simplify
 	 `(bib-list
 	   ,(number->string (length ts))
 	   (document ,@(format-entries 1 ts)))))))
@@ -77,50 +77,50 @@
       (set! bib-style tmp-s)
       res)))
 
-(tm-define (empty? x)
+(tm-define (bib-null? x)
   (cond
     ((list? x) (equal? x `()))
     ((string? x) (equal? x ""))
     ((symbol? x) (equal? x '#{}#))
     (else #f)))
 
-(tm-define (simplify x)
+(tm-define (bib-simplify x)
   (tree->stree (tree-simplify (stree->tree x))))
 
-(tm-define (new-block x)
-  (if (empty? x) ""
+(tm-define (bib-new-block x)
+  (if (bib-null? x) ""
       `(concat ,(bib-add-period (bib-upcase-first x)) (newblock))))
 
 (define (elim-empty x)
-  (if (empty? x) `()
-      (if (empty? (car x)) (elim-empty (cdr x))
+  (if (bib-null? x) `()
+      (if (bib-null? (car x)) (elim-empty (cdr x))
 	  `(,(car x) ,@(elim-empty (cdr x))))))
 
 (define (new-list-rec s x)
-  (if (empty? x) ""
-      (if (empty? (car x))
+  (if (bib-null? x) ""
+      (if (bib-null? (car x))
 	  (new-list-rec s (cdr x))
 	  `(concat ,(car x) ,@(if (nnull? (cdr x))
 				  `(,s ,(new-list-rec s (cdr x))) `())))))
 
-(tm-define (new-list-spc x)
+(tm-define (bib-new-list-spc x)
   (new-list-rec " " (elim-empty x)))
 
-(tm-define (new-list c x)
+(tm-define (bib-new-list c x)
   (new-list-rec c (elim-empty x)))
 
-(tm-define (new-sentence x)
-  (bib-add-period (bib-upcase-first (new-list ", " x))))
+(tm-define (bib-new-sentence x)
+  (bib-add-period (bib-upcase-first (bib-new-list ", " x))))
 
-(tm-define (format-field x s)
+(tm-define (bib-format-field x s)
   (with e (bib-field x s)
-    (if (empty? e) "" (bib-default e))))
+    (if (bib-null? e) "" (bib-default e))))
 
-(tm-define (format-field-Locase x s)
+(tm-define (bib-format-field-Locase x s)
   (with e (bib-field x s)
-    (if (empty? e) "" (bib-upcase-first (bib-locase e)))))
+    (if (bib-null? e) "" (bib-upcase-first (bib-locase e)))))
 
-(tm-define (emphasize x)
+(tm-define (bib-emphasize x)
   `(with "font-shape" "italic" ,x))
 
 (tm-define (bib-translate s)
