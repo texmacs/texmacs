@@ -1691,11 +1691,6 @@
   (if (== (car sty) "generic") (set! sty (cons "letter" (cdr sty))))
   sty)
 
-(define (find? x what)
-  (cond ((== x what) #t)
-	((nlist? x) #f)
-	(else (list-or (map (cut find? <> what) x)))))
-
 (tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
   (if (tmfile? x)
