@@ -118,6 +118,15 @@ os_mingw () {
 #endif
 }
 
+bool
+os_macos () {
+#if defined (OS_MACOS)
+  return true;
+#else
+  return false;
+#endif
+}
+
 void
 win32_display (string s) {
   cout << s;

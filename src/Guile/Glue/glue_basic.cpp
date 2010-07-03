@@ -58,6 +58,15 @@ tmg_os_mingwP () {
 }
 
 SCM
+tmg_os_macosP () {
+  // SCM_DEFER_INTS;
+  bool out= os_macos ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_x_guiP () {
   // SCM_DEFER_INTS;
   bool out= gui_is_x ();
@@ -3851,6 +3860,7 @@ initialize_glue_basic () {
   scm_new_procedure ("version-before?", (FN) tmg_version_beforeP, 2, 0, 0);
   scm_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
   scm_new_procedure ("os-mingw?", (FN) tmg_os_mingwP, 0, 0, 0);
+  scm_new_procedure ("os-macos?", (FN) tmg_os_macosP, 0, 0, 0);
   scm_new_procedure ("x-gui?", (FN) tmg_x_guiP, 0, 0, 0);
   scm_new_procedure ("qt-gui?", (FN) tmg_qt_guiP, 0, 0, 0);
   scm_new_procedure ("tm-output", (FN) tmg_tm_output, 1, 0, 0);

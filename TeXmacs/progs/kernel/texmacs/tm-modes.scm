@@ -163,6 +163,7 @@
 (texmacs-modes
   (like-emacs% (== (get-preference "look and feel") "emacs"))
   (like-windows% (== (get-preference "look and feel") "windows"))
+  (like-macos% (== (get-preference "look and feel") "macos"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
   (with-linking-tool% (== (get-preference "linking tool") "on"))
