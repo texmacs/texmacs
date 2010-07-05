@@ -9,7 +9,7 @@
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert bibtex bibtexout)
   (:use (convert tools output))
@@ -39,7 +39,7 @@
 		   ("texmacs->latex:use-catcodes" "off")
 		   ("texmacs->latex:use-macros" "on"))))
     (with old (output-set-exact #t)
-      (output-exact! #t)
+      (output-set-exact #t)
       (output-flush)
       (texout (texmacs->latex (bibtex-remove-keepcase x) options))
       (output-set-exact old))))
