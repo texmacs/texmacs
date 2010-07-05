@@ -207,13 +207,14 @@ void
 qt_gui_rep::add_notifier (socket_notifier sn)
 {
   QSocketNotifier *qsn;
-
-  if (DEBUG_QT) cout << "ADD NOTIFIER " << sn->fd << LF;
   
   // replace any already present notifier
 
   remove_notifier (sn);
 
+  if (DEBUG_QT) cout << "ADD NOTIFIER " << sn->fd << LF;
+
+  
   // installs both a read and a write notifier 
   // (the texmacs interface does not specify enough its needs)
   
@@ -405,7 +406,9 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
 
 void
 QTMGuiHelper::doWriteSocketNotification (int socket) {
-//cout << "WRITE SOCKET NOTIFICATION " << socket << " "<< texmacs_time () << LF;
+  if (DEBUG_QT) 
+    cout << "WRITE SOCKET NOTIFICATION " << socket << " "
+         << texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (write_notifiers);
   while (it->busy ()) {
     socket_notifier sn= it->next ();
@@ -419,7 +422,9 @@ QTMGuiHelper::doWriteSocketNotification (int socket) {
 
 void
 QTMGuiHelper::doReadSocketNotification (int socket) {
-//cout << "READ SOCKET NOTIFICATION " << socket << " "<< texmacs_time () << LF;
+  if (DEBUG_QT) 
+    cout << "READ SOCKET NOTIFICATION " << socket << " "
+         << texmacs_time () << LF;
   iterator<socket_notifier> it = iterate (read_notifiers);
   while (it->busy ()) {
     socket_notifier sn= it->next ();
@@ -605,8 +610,8 @@ qt_gui_rep::process_keyboard_focus ( simple_widget_rep *wid, bool has_focus,
   typedef triple<widget, bool, time_t > T;
   add_event( 
     queued_event ( QP_KEYBOARD_FOCUS, close_box<T> (T(wid, has_focus, t)))); 
-//  wid -> handle_keyboard_focus (has_focus, t);
-//  needs_update ();
+  //wid -> handle_keyboard_focus (has_focus, t);
+  //needs_update ();
 }
 
 void 
