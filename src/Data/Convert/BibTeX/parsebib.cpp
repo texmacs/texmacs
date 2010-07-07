@@ -132,8 +132,11 @@ bib_arg (string s, int& pos, string ce, tree& arg) {
     bib_atomic_arg (s, pos, ce, a);
     arg << a;
     bib_blank (s, pos);
-    if (bib_ok (s, pos) && s[pos] == '#') pos++;
-    bib_blank (s, pos);
+    if (bib_ok (s, pos) && s[pos] == '#') {
+      pos++;
+      bib_blank (s, pos);
+    }
+    else break;
   }
 }
 
@@ -163,6 +166,9 @@ bib_fields (string s, int& pos, string ce, string tag, tree& fields) {
     arg= simplify_correct (arg);
     fields << compound (tag, param, arg);
     bib_blank (s, pos);
+    string cend= ce;
+    cend << ",";
+    while (bib_ok (s, pos) && !bib_is_in (s[pos], cend)) pos++;
     while (bib_ok (s, pos) && s[pos] == ',') {
       pos++;
       bib_blank (s, pos);

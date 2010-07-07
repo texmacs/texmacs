@@ -16,7 +16,7 @@
 ******************************************************************************/
 
 static string
-bib_parse_char (string s, int& pos, int& depth, bool& special) {
+bib_parse_char (string s, int& pos, int& depth, bool& special, int& math) {
   switch (s[pos]) {
     case '{': {
       pos++;
@@ -51,6 +51,19 @@ bib_parse_char (string s, int& pos, int& depth, bool& special) {
       }
       return r;
     }
+    case '$': {
+      pos++;
+      if (pos < N(s) && s[pos] == '$') {
+        if (math == 2) math= 0;
+        else math= 2;
+        return "$$";
+      }
+      else {
+        if (math == 1) math= 0;
+        else math= 1;
+        return "$";
+      }
+    }
     default: {
       string r;
       r << s[pos];
@@ -62,10 +75,11 @@ bib_parse_char (string s, int& pos, int& depth, bool& special) {
 
 static string
 bib_get_char (string s, int pos) {
-  int d;
-  bool sp;
+  int d= 0;
+  bool sp= false;
+  int m= 0;
   int p= pos;
-  return bib_parse_char (s, p, d, sp);
+  return bib_parse_char (s, p, d, sp, m);
 }
 
 static bool
@@ -247,8 +261,9 @@ static bool
 search_and_keyword (string s, int& pos) {
   int depth= 0;
   bool special= false;
+  int math= 0;
   while (pos < N(s)) {
-    string ch= bib_parse_char (s, pos, depth, special);
+    string ch= bib_parse_char (s, pos, depth, special, math);
     if (bib_is_space (ch) && depth == 0) {
       while (pos < N(s) && is_space (s[pos])) pos++;
       if (pos < N(s)-3 && s (pos, pos+3) == "and" && is_space (s[pos+3])) {
@@ -350,9 +365,10 @@ get_words (string s) {
   int pos= 0;
   int depth= 0;
   bool special= false;
+  int math= 0;
   while (pos < N(s) && is_space (s[pos])) pos++;
   while (pos < N(s)) {
-    string ch= bib_parse_char (s, pos, depth, special);
+    string ch= bib_parse_char (s, pos, depth, special, math);
     if (bib_is_space (ch) && depth == 0) {
       while (pos < N(s) && is_space (s[pos])) pos++;
       curr >> words;
@@ -369,9 +385,10 @@ first_is_locase (string s) {
   int pos= 0;
   int depth= 0;
   bool special= false;
+  int math= 0;
   while (pos < N(s) && is_space (s[pos])) pos++;
   while (pos < N(s)) {
-    string ch= bib_parse_char (s, pos, depth, special);
+    string ch= bib_parse_char (s, pos, depth, special, math);
     if (bib_is_normal (ch))
       return (special || depth == 0) && is_locase (ch[0]);
   }
@@ -482,10 +499,11 @@ get_first_von_last (string s) {
 }
 
 string
-bib_names (string s) {
+bib_names (string s, int& nbfields) {
   string res;
   int pos= 0;
   res << "\\bibnames\\\\\n";
+  nbfields++;
   while (pos < N(s)) {
     string name;
     int deb= pos;
@@ -494,6 +512,7 @@ bib_names (string s) {
     if (pos < N(s)) pos -= 5;
     if (pos <= N(s) && deb < pos) name= s (deb, pos);
     res << get_first_von_last (name);
+    nbfields += 5;
     pos= pos2;
   }
   return res;
@@ -698,27 +717,35 @@ bib_field_pages (string p) {
   return res;
 }
 
-static void
+static int
 bib_get_fields (tree t, string& latex) {
+  int nbfields= 0;
   for (int i= 0; i<N(t); i++) {
     if (bib_is_entry (t[i])) {
       for (int j= 0; j<N(t[i][2]); j++) {
         tree f= t[i][2][j];
         if (bib_is_field (f)) {
           if ((f[0]->label == "author" || f[0]->label == "editor") &&
-	      is_atomic (f[1]))
-            latex << bib_names (f[1]->label);
+	      is_atomic (f[1])) {
+            latex << bib_names (f[1]->label, nbfields);
+          }
 	  else if (is_atomic (f[1]) && f[0]->label != "pages") {
-            if (!bib_is_blank_string (f[1]->label))
+            if (!bib_is_blank_string (f[1]->label)) {
 	      latex << f[1]->label << "\\\\\n";
-            else latex << "\\\\\n";
+              nbfields++;;
+            }
+            else {
+              latex << "\\\\\n";
+              nbfields++;
+            }
           }
         }
       }
     }
     else if (bib_is_comment (t[i]))
-      bib_get_fields (t[i], latex);
+      nbfields += bib_get_fields (t[i], latex);
   }
+  return nbfields;
 }
 
 static void
@@ -761,9 +788,10 @@ bib_to_latex (string s) {
   int pos= 0;
   int depth= 0;
   bool special= false;
+  int math= 0;
   while (pos < N(s)) {
-    string ch= bib_parse_char (s, pos, depth, special);
-    if (special) r << ch;
+    string ch= bib_parse_char (s, pos, depth, special, math);
+    if (special || math) r << ch;
     else if (bib_is_char (ch, '{') && depth > 0 &&
 	     bib_get_char (s, pos) != "\\")
       r << "\\keepcase{";
@@ -776,11 +804,11 @@ void
 bib_parse_fields (tree& t) {
   string fields;
   int i= 0;
-  bib_get_fields (t, fields);
+  int nb= bib_get_fields (t, fields);
   string latex;
   latex << "\\begin{array}\n" << bib_to_latex (fields) << "\\end{array}";
   tree parsed_latex= latex_to_tree (parse_latex (latex));
-  bib_set_fields (t, parsed_latex, i);
+  if (nb == N(parsed_latex[0][0])) bib_set_fields (t, parsed_latex, i);
 }
 
 /******************************************************************************
