@@ -105,6 +105,10 @@
 
   <assign|keepcase|<macro|x|<underline|<arg|x>>>>
 
+  <assign|first-last|<macro|x|<extern|ext-first-last|<arg|x>>>>
+
+  <drd-props|first-last|arity|1|accessible|0>
+
   <\active*>
     <\src-comment>
       Markup for BibTeX compatibility

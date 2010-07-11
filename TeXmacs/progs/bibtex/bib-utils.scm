@@ -126,3 +126,16 @@
 (tm-define (bib-translate s)
   (translate s "english" (get-env "language")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sample function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (ext-first-last t)
+  (:secure #t)
+  (if (tree-compound? t) t
+      (let* ((s (tree->string t))
+	     (i (string-search-forwards " " 0 s))
+	     (m (number->string i))
+	     (e (number->string (string-length s))))
+	(if (< i 0) t
+	    `(concat (range ,t "0" ,m) (name (range ,t ,m ,e)))))))

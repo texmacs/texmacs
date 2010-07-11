@@ -55,8 +55,9 @@
 (lazy-define (utils cas cas-out) cas->stree)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
-;; BibTeX style modules
+;(display "Booting BibTeX style modules\n")
 (use-modules (bibtex bib-utils))
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
@@ -163,16 +164,6 @@
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex textm) textm-finalize)
 (lazy-define (convert latex tmtex) tmtex-env-patch)
-;(display* "time: " (- (texmacs-time) boot-start) "\n")
-
-;(display "Booting BibTeX styles\n")
-(use-modules (bibtex bib-utils))
-(use-modules (bibtex plain))
-(use-modules (bibtex alpha))
-;;(use-modules (bibtex abbrv))
-;;(use-modules (bibtex acm))
-(use-modules (bibtex ieeetr))
-(use-modules (bibtex siam))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
