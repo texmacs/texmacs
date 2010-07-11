@@ -80,20 +80,21 @@ concater_rep::typeset_colored_substring
   }
 
 void
-concater_rep::typeset_text_string (string s, path ip) {
-  int    start, pos=0;
+concater_rep::typeset_text_string (string s, path ip, int pos, int end) {
+  int    start;
   space  spc= env->fn->spc;
   space  extra= env->fn->extra;
 
   do {
     start= pos;
     text_property tp= env->lan->advance (s, pos);
+    if (pos > end) pos= end;
     if ((pos>start) && (s[start]==' ')) { // spaces
       if (start==0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);
-      if ((pos==N(s)) || (s[pos]==' '))
+      if ((pos==end) || (s[pos]==' '))
 	typeset_substring ("", ip, pos);
     }
     else { // strings
@@ -103,12 +104,12 @@ concater_rep::typeset_text_string (string s, path ip) {
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_after)
     }
-  } while (pos<N(s));
+  } while (pos<end);
 }
 
 void
-concater_rep::typeset_math_string (string s, path ip) {
-  int    start, pos=0;
+concater_rep::typeset_math_string (string s, path ip, int pos, int end) {
+  int    start;
   space  spc= env->fn->spc;
   space  extra= env->fn->extra;
   bool   condensed= env->math_condensed;
@@ -116,12 +117,13 @@ concater_rep::typeset_math_string (string s, path ip) {
   do {
     start= pos;
     text_property tp= env->lan->advance (s, pos);
+    if (pos > end) pos= end;
     if ((pos>start) && (s[start]==' ')) { // spaces
       if (start==0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);
-      if ((pos==N(s)) || (s[pos]==' '))
+      if ((pos==end) || (s[pos]==' '))
 	typeset_substring ("", ip, pos);
     }
     else { // strings
@@ -134,25 +136,26 @@ concater_rep::typeset_math_string (string s, path ip) {
       if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
       else PRINT_SPACE (tp->spc_after)
     }
-  } while (pos<N(s));
+  } while (pos<end);
 }
 
 void
-concater_rep::typeset_prog_string (tree t, path ip) {
+concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
   string s= t->label;
-  int    start, pos=0;
+  int    start;
   space  spc= env->fn->spc;
   space  extra= env->fn->extra;
 
   do {
     start= pos;
     text_property tp= env->lan->advance (s, pos);
+    if (pos > end) pos= end;
     if ((pos>start) && (s[start]==' ')) { // spaces
       if (start==0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);
-      if ((pos==N(s)) || (s[pos]==' '))
+      if ((pos==end) || (s[pos]==' '))
 	typeset_substring ("", ip, pos);
     }
     else { // strings
@@ -163,7 +166,7 @@ concater_rep::typeset_prog_string (tree t, path ip) {
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_after)
     }
-  } while (pos<N(s));
+  } while (pos<end);
 }
 
 /******************************************************************************

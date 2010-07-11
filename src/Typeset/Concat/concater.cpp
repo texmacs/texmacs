@@ -161,12 +161,13 @@ concater_rep::typeset (tree t, path ip) {
 
   if (is_atomic (t)) {
     if (env->mode == 1)
-      typeset_text_string (t->label, ip);
+      typeset_text_string (t->label, ip, 0, N(t->label));
     else if (env->mode == 2)
-      typeset_math_string (t->label, ip);
+      typeset_math_string (t->label, ip, 0, N(t->label));
     else if (env->mode == 3)
-      typeset_prog_string (t, ip);
-    else typeset_text_string (t->label, ip);
+      typeset_prog_string (t       , ip, 0, N(t->label));
+    else
+      typeset_text_string (t->label, ip, 0, N(t->label));
     return;
   }
 
@@ -490,7 +491,11 @@ concater_rep::typeset (tree t, path ip) {
   case TAN:
   case MERGE:
   case LENGTH:
+    typeset_executable (t, ip);
+    break;
   case RANGE:
+    typeset_range (t, ip);
+    break;
   case NUMBER:
   case _DATE:
   case TRANSLATE:

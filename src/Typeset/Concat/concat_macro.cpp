@@ -344,3 +344,45 @@ concater_rep::typeset_dynamic (tree t, path ip) {
     cout << i << ": " << a[i]->b << ", " << a[i]->b->ip << "\n";
   */
 }
+
+void
+concater_rep::typeset_range (tree t, path ip) {
+  if (N(t) != 3)
+    typeset_dynamic (tree (ERROR, "bad range"), ip);
+  else {
+    tree t1= env->exec (t[0]);
+    tree t2= env->exec (t[1]);
+    tree t3= env->exec (t[2]);
+    if (!(is_int (t2) && is_int (t3)))
+      typeset_dynamic (tree (ERROR, "bad range"), ip);
+    else if (is_compound (t1)) {
+      if (is_tuple (t1)) {
+	int i1= max (0, as_int (t2));
+	int i2= min (N (t1), as_int (t3));
+	i2 = max (i1, i2);
+	typeset_dynamic (t1 (i1, i2), ip);
+      }
+      else typeset_dynamic (tree (ERROR, "bad range"), ip);
+    }
+    else {
+      int i1= max (0, as_int (t2));
+      int i2= min (N(t1->label), as_int (t3));
+      i2 = max (i1, i2);
+      path ip1= obtain_ip (t1);
+      if (is_decoration (ip1))
+	typeset_dynamic (t1->label (i1, i2), ip);
+      else {
+	marker (descend (ip, 0));
+	if (env->mode == 1)
+	  typeset_text_string (t1->label, ip1, i1, i2);
+	else if (env->mode == 2)
+	  typeset_math_string (t1->label, ip1, i1, i2);
+	else if (env->mode == 3)
+	  typeset_prog_string (t1       , ip1, i1, i2);
+	else
+	  typeset_text_string (t1->label, ip1, i1, i2);
+	marker (descend (ip, 1));
+      }
+    }
+  }
+}

@@ -207,7 +207,7 @@ init_std_drd () {
   init (TAN, "tan", fixed (1));
   init (MERGE, "merge", repeat (2, 1));
   init (LENGTH, "length", fixed (1));
-  init (RANGE, "range", fixed (3));
+  init (RANGE, "range", fixed (1, 2, BIFORM) -> accessible (0));
   init (NUMBER, "number", fixed (2));
   init (_DATE, "date", options (0, 2));
   init (TRANSLATE, "translate", fixed (3));

@@ -42,9 +42,9 @@ class concater_rep {
   // textual markup
   void typeset_substring (string s, path ip, int pos);
   void typeset_colored_substring (string s, path ip, int pos, string col);
-  void typeset_text_string (string s, path ip);
-  void typeset_math_string (string s, path ip);
-  void typeset_prog_string (tree t, path ip);
+  void typeset_text_string (string s, path ip, int start, int end);
+  void typeset_math_string (string s, path ip, int start, int end);
+  void typeset_prog_string (tree t, path ip, int start, int end);
   void typeset_document (tree t, path ip);
   void typeset_paragraph (tree t, path ip);
   void typeset_surround (tree t, path ip);
@@ -109,6 +109,7 @@ class concater_rep {
   void typeset_if (tree t, path ip);
   void typeset_var_if (tree t, path ip);
   void typeset_case (tree t, path ip);
+  void typeset_range (tree t, path ip);
   void typeset_locus (tree t, path ip);
   void typeset_set_binding (tree t, path ip);
   void typeset_write (tree t, path ip);
