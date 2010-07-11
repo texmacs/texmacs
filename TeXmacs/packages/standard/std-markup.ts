@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.4>
 
 <style|<tuple|source|std>>
 
@@ -120,6 +120,58 @@
   <assign|acronym|<macro|x|<with|font-shape|small-caps|<arg|x>>>>
 
   <assign|person|<macro|x|<with|font-shape|small-caps|<arg|x>>>>
+
+  <\active*>
+    <\src-comment>
+      Common language tags.
+    </src-comment>
+  </active*>
+
+  <assign|british|<macro|x|<with|language|british|<arg|x>>>>
+
+  <assign|bulgarian|<macro|x|<with|language|bulgarian|<arg|x>>>>
+
+  <assign|chinese|<macro|x|<with|language|chinese|<arg|x>>>>
+
+  <assign|czech|<macro|x|<with|language|czech|<arg|x>>>>
+
+  <assign|danish|<macro|x|<with|language|danish|<arg|x>>>>
+
+  <assign|dutch|<macro|x|<with|language|dutch|<arg|x>>>>
+
+  <assign|english|<macro|x|<with|language|english|<arg|x>>>>
+
+  <assign|finnish|<macro|x|<with|language|finnish|<arg|x>>>>
+
+  <assign|french|<macro|x|<with|language|french|<arg|x>>>>
+
+  <assign|german|<macro|x|<with|language|german|<arg|x>>>>
+
+  <assign|hungarian|<macro|x|<with|language|hungarian|<arg|x>>>>
+
+  <assign|italian|<macro|x|<with|language|italian|<arg|x>>>>
+
+  <assign|japanese|<macro|x|<with|language|japanese|<arg|x>>>>
+
+  <assign|korean|<macro|x|<with|language|korean|<arg|x>>>>
+
+  <assign|polish|<macro|x|<with|language|polish|<arg|x>>>>
+
+  <assign|portuguese|<macro|x|<with|language|portuguese|<arg|x>>>>
+
+  <assign|romanian|<macro|x|<with|language|romanian|<arg|x>>>>
+
+  <assign|russian|<macro|x|<with|language|russian|<arg|x>>>>
+
+  <assign|slovene|<macro|x|<with|language|slovene|<arg|x>>>>
+
+  <assign|spanish|<macro|x|<with|language|spanish|<arg|x>>>>
+
+  <assign|swedish|<macro|x|<with|language|swedish|<arg|x>>>>
+
+  <assign|taiwanese|<macro|x|<with|language|taiwanese|<arg|x>>>>
+
+  <assign|ukrainian|<macro|x|<with|language|ukrainian|<arg|x>>>>
 
   <\active*>
     <\src-comment>
