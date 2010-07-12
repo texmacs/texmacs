@@ -135,9 +135,9 @@ namespace win32 {
     string old = get_env("LANG");
     set_env("LANG", loc);
     WCHAR* format = string_to_WCHARP(fm);
-    int size = 1 + GetDateFormat(language_to_LCID(lan), 0, &localtime, format, 0, 0);
+    int size = 1 + GetDateFormatW(language_to_LCID(lan), 0, &localtime, format, 0, 0);
     WCHAR* wcdate = tm_new_array<WCHAR>(size);
-    GetDateFormat(language_to_LCID(lan), 0, &localtime, format, wcdate, size);
+    GetDateFormatW(language_to_LCID(lan), 0, &localtime, format, wcdate, size);
     tm_delete_array(format);
     string date = WCHARP_to_string(wcdate);
     tm_delete_array(wcdate);
