@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.7.4>
 
 <style|<tuple|source|std-pattern>>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -169,8 +168,10 @@
   <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
   ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
 
+  <assign|msc-ref|<macro|x|<style-with|src-compact|none|<hlink|<arg|x>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|x>|&submit=Search>>>>>>
+
   <assign|doc-AMS-class|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
-  ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
+  ><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >>>>
 
   \;
 
