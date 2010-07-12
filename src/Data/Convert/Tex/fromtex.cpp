@@ -731,7 +731,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\natexlab", 1)) return t2e (t[1]);
   if (is_tuple (t, "\\penalty", 1)) return "";
   if (is_tuple (t, "\\url", 1))
-    return tree (APPLY, "slink", t2e (t[1]));
+    return tree (APPLY, "href", t2e (t[1]));
   if (is_tuple (t, "\\href", 2))
     return tree (APPLY, "hlink", l2e (t[2]), t2e (t[1]));
 

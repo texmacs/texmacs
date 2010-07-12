@@ -1274,7 +1274,7 @@
 (define (tmtex-hlink s l)
   (list 'href (tmtex (cadr l)) (tmtex (car l))))
 
-(define (tmtex-slink s l)
+(define (tmtex-href s l)
   (tmtex-function 'url l))
 
 (define (tmtex-action s l)
@@ -1606,7 +1606,7 @@
   (output (,tmtex-output 1))
   (hlink (,tmtex-hlink 2))
   (action (,tmtex-action 2))
-  (slink (,tmtex-slink 1))
+  (href (,tmtex-href 1))
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))

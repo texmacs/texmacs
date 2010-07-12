@@ -268,7 +268,7 @@
 
   \;
 
-  <assign|slink|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
+  <assign|href|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
 </body>
 
 <\initial>

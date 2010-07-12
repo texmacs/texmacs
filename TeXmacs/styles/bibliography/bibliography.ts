@@ -43,7 +43,7 @@
   <assign|bib-entry-env|<\macro|mfield|cfg|cbg|cid|pre|type|id|body>
     <\padded-normal|0.25em|1.5em>
       <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
-        <with|color|<arg|cfg>|<arg|pre>><with|font-series|bold|<with|color|<arg|cfg>|<arg|type>:
+        <with|color|<arg|cfg>|<arg|pre>><with|font-series|bold|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:
         ><with|color|<arg|cid>|<arg|id>>>
       </wide-std-framed-colored>
 
@@ -63,6 +63,8 @@
     </with>
   </macro>>
 
+  <drd-props|bib-entry|arity|3|unaccessible|0|accessible|1|accessible|2>
+
   <\active*>
     <\src-comment>
       Bibliography fields.
@@ -71,7 +73,7 @@
 
   <assign|bib-field-env|<\macro|ctype|cval|mvar|pre|type|val>
     <\surround||<right-flush>>
-      <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|-1|2|2|cell-hyphen|t>|<cwith|1|-1|1|1|cell-width|10em>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|1|1|cell-lsep|1.5em>|<cwith|1|-1|2|2|cell-rsep|0em>|<cwith|1|-1|2|2|cell-hpart|1>|<table|<row|<cell|<with|color|<arg|ctype>|<arg|pre><strong|<arg|type>>>>|<\cell>
+      <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|-1|2|2|cell-hyphen|t>|<cwith|1|-1|1|1|cell-width|10em>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|1|1|cell-lsep|1.5em>|<cwith|1|-1|2|2|cell-rsep|0em>|<cwith|1|-1|2|2|cell-hpart|1>|<table|<row|<cell|<with|color|<arg|ctype>|<arg|pre><strong|<copy|<change-case|<arg|type>|Upcase>>>>>|<\cell>
         <with|color|<arg|cval>|bib-var|<arg|mvar>|<arg|val>>
       </cell>>>>>
     </surround>
@@ -81,6 +83,8 @@
     <bib-field-env|dark red|red|<macro|b|<with|color|dark
     red|<strong|<arg|b>>>>||<arg|type>|<arg|val>>
   </macro>>
+
+  <drd-props|bib-field|arity|2|unaccessible|0|accessible|1>
 
   <\active*>
     <\src-comment>
