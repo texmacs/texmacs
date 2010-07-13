@@ -106,6 +106,13 @@ gs_to_pdf (url doc, url pdf) {
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
   cmd << "-sOutputFile=" << sys_concretize (pdf) << " ";
   cmd << sys_concretize (doc);
+  cmd << " -c '[ /Title (" << as_string (tail(pdf)) << ") /DOCINFO pdfmark' ";
+
+  // NOTE: when converting from ps to pdf the title of the document is 
+  // incorrectly referring to the name of the temporary file
+  // so we add some PS code to override the PDF document title with
+  // the name of the PDF file.
+  
   system (cmd);
 }
 
