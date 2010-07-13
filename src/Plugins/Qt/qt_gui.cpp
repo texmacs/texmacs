@@ -115,7 +115,7 @@ qt_gui_rep::get_selection (string key, tree& t, string& s) {
     mode= QClipboard::Selection;
   }
   const QMimeData *md= cb->mimeData (mode);
-  if (md) owns = md->hasFormat ("application/x-texmacs");  
+  if (md) owns = md->hasFormat ("application/x-texmacs-clipboard");  
   
   s= "";
   t= "none";
@@ -153,7 +153,7 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   cb->setText (selection, mode);
   QByteArray ba (selection);
   QMimeData *md= new QMimeData;
-  md->setData ("application/x-texmacs", ba);
+  md->setData ("application/x-texmacs-clipboard", ba);
   md->setText (selection);
   cb->setMimeData (md, mode); 
   // according to the docs, ownership of mimedata is transferred to clipboard
