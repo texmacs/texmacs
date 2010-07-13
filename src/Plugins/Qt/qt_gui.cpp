@@ -104,35 +104,34 @@ qt_gui_rep::~qt_gui_rep()  {
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s) {
   QClipboard *cb= QApplication::clipboard();
-  bool owns= true;
+  bool owns= false;
   QClipboard::Mode mode;
   if (key == "primary") {
-    owns= cb->ownsClipboard();
+    //owns= cb->ownsClipboard(); // This does not work on Mac/Win
     mode= QClipboard::Clipboard;
-  } else if (key == "mouse" && cb->supportsSelection()) {
-    owns= cb->ownsSelection();
+  }
+  else if (key == "mouse" && cb->supportsSelection()) {
+    //owns= cb->ownsSelection();
     mode= QClipboard::Selection;
   }
+  const QMimeData *md= cb->mimeData (mode);
+  if (md) owns = md->hasFormat ("application/x-texmacs");  
+  
   s= "";
   t= "none";
-  
   if (owns) {
-    if (selection_t->contains (key)) {
-      t= copy (selection_t [key]);
-      s= copy (selection_s [key]);
-      return true;
-    }
-    return false;
+    if (!selection_t->contains (key)) return false;
+    t= copy (selection_t [key]);
+    s= copy (selection_s [key]);
+    return true;
   }
-  
-  QString originalText = cb->text(mode);
-  QByteArray buf = originalText.toAscii();
-  if (!(buf.isEmpty())) {
-    s << string(buf.constData(), buf.size());
+  else {
+    QString originalText= cb->text (mode);
+    QByteArray buf= originalText.toAscii ();
+    if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
+    t= tuple ("extern", s);
+    return true;
   }
-  
-  t= tuple ("extern", s);
-  return true;
 }
 
 bool
@@ -140,20 +139,27 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
         
-                
-  QClipboard *cb = QApplication::clipboard();
+  QClipboard *cb= QApplication::clipboard();
   QClipboard::Mode mode;
-  if (key == "primary") {
+  
+  if (key == "primary")
     mode= QClipboard::Clipboard;
-  } else if (key == "mouse" && cb->supportsSelection()) {
+  else if (key == "mouse" && cb->supportsSelection())
     mode= QClipboard::Selection;
-  } else {
-    return true;
-  }
+  else return true;
+  cb->clear (mode);
 
   char *selection = as_charp (s);
-  cb->setText(selection,mode);
+  cb->setText (selection, mode);
+  QByteArray ba (selection);
+  QMimeData *md= new QMimeData;
+  md->setData ("application/x-texmacs", ba);
+  md->setText (selection);
+  cb->setMimeData (md, mode); 
+  // according to the docs, ownership of mimedata is transferred to clipboard
+  // so no memory leak here
   tm_delete_array (selection);
+
   return true;
 }
 
@@ -161,6 +167,20 @@ void
 qt_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
+  
+  QClipboard *cb= QApplication::clipboard();
+  QClipboard::Mode mode;
+  bool owns = false;
+  
+  if (key == "primary")
+    mode= QClipboard::Clipboard;
+  else if (key == "mouse" && cb->supportsSelection())
+    mode= QClipboard::Selection;
+  
+  const QMimeData *md = cb->mimeData(mode);
+  if (md) owns= md->hasFormat ("application/x-texmacs");
+  if (owns) cb->clear (mode);
+  
 }
 
 /******************************************************************************
