@@ -326,6 +326,21 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   bar->addWidget (leftLabel);
   bar->addPermanentWidget (rightLabel);
   bar->setStyle (qtmstyle ());
+
+  // NOTE (mg): the following setMinimumWidth command disable automatic 
+  // enlarging of the status bar and consequently of the main window due to 
+  // long messages in the left label. I found this strange solution here
+  // http://www.archivum.info/qt-interest@trolltech.com/2007-05/01453/Re:-QStatusBar-size.html
+  // The solution if due to Martin Petricek. He adds:
+  //    The docs says: If minimumSize() is set, the minimum size hint will be ignored.
+  //    Probably the minimum size hint was size of the lengthy message and
+  //    internal layout was enlarging the satusbar and the main window
+  //    Maybe the notice about QLayout that is at minimumSizeHint should be
+  //    also at minimumSize, didn't notice it first time and spend lot of time
+  //    trying to figure this out :)
+
+  bar->setMinimumWidth(2);
+  
   mw->setStatusBar (bar);
 
   mainToolBar= mw->addToolBar ("main toolbar");
