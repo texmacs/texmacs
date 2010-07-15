@@ -103,19 +103,15 @@ qt_gui_rep::~qt_gui_rep()  {
 
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s) {
-  QClipboard *cb= QApplication::clipboard();
+  QClipboard *cb= QApplication::clipboard ();
+  QClipboard::Mode mode= QClipboard::Clipboard;
   bool owns= false;
-  QClipboard::Mode mode;
-  if (key == "primary") {
-    //owns= cb->ownsClipboard(); // This does not work on Mac/Win
-    mode= QClipboard::Clipboard;
+  if (key == "primary" || (key == "mouse" && cb->supportsSelection ())) {
+    if (key == "mouse") mode= QClipboard::Selection;
+    const QMimeData *md= cb->mimeData (mode);
+    if (md) owns= md->hasFormat ("application/x-texmacs-clipboard");  
   }
-  else if (key == "mouse" && cb->supportsSelection()) {
-    //owns= cb->ownsSelection();
-    mode= QClipboard::Selection;
-  }
-  const QMimeData *md= cb->mimeData (mode);
-  if (md) owns = md->hasFormat ("application/x-texmacs-clipboard");  
+  else owns= true;
   
   s= "";
   t= "none";
@@ -139,11 +135,9 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
         
-  QClipboard *cb= QApplication::clipboard();
-  QClipboard::Mode mode;
-  
-  if (key == "primary")
-    mode= QClipboard::Clipboard;
+  QClipboard *cb= QApplication::clipboard ();
+  QClipboard::Mode mode= QClipboard::Clipboard;
+  if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
     mode= QClipboard::Selection;
   else return true;
@@ -159,7 +153,6 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   // according to the docs, ownership of mimedata is transferred to clipboard
   // so no memory leak here
   tm_delete_array (selection);
-
   return true;
 }
 
@@ -169,18 +162,16 @@ qt_gui_rep::clear_selection (string key) {
   selection_s->reset (key);
   
   QClipboard *cb= QApplication::clipboard();
-  QClipboard::Mode mode;
-  bool owns = false;
-  
-  if (key == "primary")
-    mode= QClipboard::Clipboard;
+  QClipboard::Mode mode= QClipboard::Clipboard;
+  bool owns= false;
+  if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
     mode= QClipboard::Selection;
-  
-  const QMimeData *md = cb->mimeData(mode);
+  else return;
+
+  const QMimeData *md= cb->mimeData (mode);
   if (md) owns= md->hasFormat ("application/x-texmacs");
   if (owns) cb->clear (mode);
-  
 }
 
 /******************************************************************************
