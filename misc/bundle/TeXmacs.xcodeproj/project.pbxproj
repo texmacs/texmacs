@@ -863,6 +863,174 @@
 		9CD4E73010B14AEE00E0DD5C /* x_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490210A8CC100097A335 /* x_window.cpp */; };
 		9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48EF10A8CC100097A335 /* xpm_widget.cpp */; };
 		9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487A10A8CC100097A335 /* ghostscript.cpp */; };
+		9CEE09DF11EDDB3100403342 /* agl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096411EDDB3100403342 /* agl.c */; };
+		9CEE09E011EDDB3100403342 /* bmpimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096611EDDB3100403342 /* bmpimage.c */; };
+		9CEE09E111EDDB3100403342 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096811EDDB3100403342 /* cff.c */; };
+		9CEE09E211EDDB3100403342 /* cff_dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096A11EDDB3100403342 /* cff_dict.c */; };
+		9CEE09E311EDDB3100403342 /* cid.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096F11EDDB3100403342 /* cid.c */; };
+		9CEE09E411EDDB3100403342 /* cidtype0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097311EDDB3100403342 /* cidtype0.c */; };
+		9CEE09E511EDDB3100403342 /* cidtype2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097511EDDB3100403342 /* cidtype2.c */; };
+		9CEE09E611EDDB3100403342 /* cmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097711EDDB3100403342 /* cmap.c */; };
+		9CEE09E711EDDB3100403342 /* cmap_read.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097A11EDDB3100403342 /* cmap_read.c */; };
+		9CEE09E811EDDB3100403342 /* cmap_write.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097C11EDDB3100403342 /* cmap_write.c */; };
+		9CEE09E911EDDB3100403342 /* cs_type2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097E11EDDB3100403342 /* cs_type2.c */; };
+		9CEE09EA11EDDB3100403342 /* dpxcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098011EDDB3100403342 /* dpxcrypt.c */; };
+		9CEE09EB11EDDB3100403342 /* dpxfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098211EDDB3100403342 /* dpxfile.c */; };
+		9CEE09EC11EDDB3100403342 /* dpxutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098411EDDB3100403342 /* dpxutil.c */; };
+		9CEE09ED11EDDB3100403342 /* epdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098711EDDB3100403342 /* epdf.c */; };
+		9CEE09EE11EDDB3100403342 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098911EDDB3100403342 /* error.c */; };
+		9CEE09EF11EDDB3100403342 /* fontmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098B11EDDB3100403342 /* fontmap.c */; };
+		9CEE09F011EDDB3100403342 /* jpegimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098D11EDDB3100403342 /* jpegimage.c */; };
+		9CEE09F111EDDB3100403342 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098F11EDDB3100403342 /* mem.c */; };
+		9CEE09F211EDDB3100403342 /* mfileio.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099111EDDB3100403342 /* mfileio.c */; };
+		9CEE09F411EDDB3100403342 /* numbers.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099511EDDB3100403342 /* numbers.c */; };
+		9CEE09F511EDDB3100403342 /* otl_conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099711EDDB3100403342 /* otl_conf.c */; };
+		9CEE09F611EDDB3100403342 /* otl_opt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099911EDDB3100403342 /* otl_opt.c */; };
+		9CEE09F711EDDB3100403342 /* pdfcolor.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099B11EDDB3100403342 /* pdfcolor.c */; };
+		9CEE09F811EDDB3100403342 /* pdfdev.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099D11EDDB3100403342 /* pdfdev.c */; };
+		9CEE09F911EDDB3100403342 /* pdfdoc.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099F11EDDB3100403342 /* pdfdoc.c */; };
+		9CEE09FA11EDDB3100403342 /* pdfdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A111EDDB3100403342 /* pdfdraw.c */; };
+		9CEE09FB11EDDB3100403342 /* pdfencoding.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A311EDDB3100403342 /* pdfencoding.c */; };
+		9CEE09FC11EDDB3100403342 /* pdfencrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A511EDDB3100403342 /* pdfencrypt.c */; };
+		9CEE09FD11EDDB3100403342 /* pdffont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A711EDDB3100403342 /* pdffont.c */; };
+		9CEE09FE11EDDB3100403342 /* pdfnames.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AA11EDDB3100403342 /* pdfnames.c */; };
+		9CEE09FF11EDDB3100403342 /* pdfobj.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AC11EDDB3100403342 /* pdfobj.c */; };
+		9CEE0A0011EDDB3100403342 /* pdfparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AE11EDDB3100403342 /* pdfparse.c */; };
+		9CEE0A0111EDDB3100403342 /* pdfresource.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B011EDDB3100403342 /* pdfresource.c */; };
+		9CEE0A0211EDDB3100403342 /* pdfximage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B211EDDB3100403342 /* pdfximage.c */; };
+		9CEE0A0311EDDB3100403342 /* pkfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B411EDDB3100403342 /* pkfont.c */; };
+		9CEE0A0411EDDB3100403342 /* pngimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B611EDDB3100403342 /* pngimage.c */; };
+		9CEE0A0511EDDB3100403342 /* pst.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B811EDDB3100403342 /* pst.c */; };
+		9CEE0A0611EDDB3100403342 /* pst_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BA11EDDB3100403342 /* pst_obj.c */; };
+		9CEE0A0711EDDB3100403342 /* sfnt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BC11EDDB3100403342 /* sfnt.c */; };
+		9CEE0A0811EDDB3100403342 /* subfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BE11EDDB3100403342 /* subfont.c */; };
+		9CEE0A0911EDDB3100403342 /* t1_char.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C111EDDB3100403342 /* t1_char.c */; };
+		9CEE0A0A11EDDB3100403342 /* t1_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C311EDDB3100403342 /* t1_load.c */; };
+		9CEE0A0B11EDDB3100403342 /* tfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C511EDDB3100403342 /* tfm.c */; };
+		9CEE0A0C11EDDB3100403342 /* truetype.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C711EDDB3100403342 /* truetype.c */; };
+		9CEE0A0D11EDDB3100403342 /* tt_aux.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C911EDDB3100403342 /* tt_aux.c */; };
+		9CEE0A0E11EDDB3100403342 /* tt_cmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CB11EDDB3100403342 /* tt_cmap.c */; };
+		9CEE0A0F11EDDB3100403342 /* tt_glyf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CD11EDDB3100403342 /* tt_glyf.c */; };
+		9CEE0A1011EDDB3100403342 /* tt_gsub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CF11EDDB3100403342 /* tt_gsub.c */; };
+		9CEE0A1111EDDB3100403342 /* tt_post.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D111EDDB3100403342 /* tt_post.c */; };
+		9CEE0A1211EDDB3100403342 /* tt_table.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D311EDDB3100403342 /* tt_table.c */; };
+		9CEE0A1311EDDB3100403342 /* type0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D511EDDB3100403342 /* type0.c */; };
+		9CEE0A1411EDDB3100403342 /* type1.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D711EDDB3100403342 /* type1.c */; };
+		9CEE0A1511EDDB3100403342 /* type1c.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D911EDDB3100403342 /* type1c.c */; };
+		9CEE0A1611EDDB3100403342 /* unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DB11EDDB3100403342 /* unicode.c */; };
+		9CEE0A1711EDDB3100403342 /* pdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */; };
+		9CEE0A1811EDDB3100403342 /* agl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096411EDDB3100403342 /* agl.c */; };
+		9CEE0A1911EDDB3100403342 /* bmpimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096611EDDB3100403342 /* bmpimage.c */; };
+		9CEE0A1A11EDDB3100403342 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096811EDDB3100403342 /* cff.c */; };
+		9CEE0A1B11EDDB3100403342 /* cff_dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096A11EDDB3100403342 /* cff_dict.c */; };
+		9CEE0A1C11EDDB3100403342 /* cid.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096F11EDDB3100403342 /* cid.c */; };
+		9CEE0A1D11EDDB3100403342 /* cidtype0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097311EDDB3100403342 /* cidtype0.c */; };
+		9CEE0A1E11EDDB3100403342 /* cidtype2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097511EDDB3100403342 /* cidtype2.c */; };
+		9CEE0A1F11EDDB3100403342 /* cmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097711EDDB3100403342 /* cmap.c */; };
+		9CEE0A2011EDDB3100403342 /* cmap_read.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097A11EDDB3100403342 /* cmap_read.c */; };
+		9CEE0A2111EDDB3100403342 /* cmap_write.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097C11EDDB3100403342 /* cmap_write.c */; };
+		9CEE0A2211EDDB3100403342 /* cs_type2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097E11EDDB3100403342 /* cs_type2.c */; };
+		9CEE0A2311EDDB3100403342 /* dpxcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098011EDDB3100403342 /* dpxcrypt.c */; };
+		9CEE0A2411EDDB3100403342 /* dpxfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098211EDDB3100403342 /* dpxfile.c */; };
+		9CEE0A2511EDDB3100403342 /* dpxutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098411EDDB3100403342 /* dpxutil.c */; };
+		9CEE0A2611EDDB3100403342 /* epdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098711EDDB3100403342 /* epdf.c */; };
+		9CEE0A2711EDDB3100403342 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098911EDDB3100403342 /* error.c */; };
+		9CEE0A2811EDDB3100403342 /* fontmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098B11EDDB3100403342 /* fontmap.c */; };
+		9CEE0A2911EDDB3100403342 /* jpegimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098D11EDDB3100403342 /* jpegimage.c */; };
+		9CEE0A2A11EDDB3100403342 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098F11EDDB3100403342 /* mem.c */; };
+		9CEE0A2B11EDDB3100403342 /* mfileio.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099111EDDB3100403342 /* mfileio.c */; };
+		9CEE0A2D11EDDB3100403342 /* numbers.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099511EDDB3100403342 /* numbers.c */; };
+		9CEE0A2E11EDDB3100403342 /* otl_conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099711EDDB3100403342 /* otl_conf.c */; };
+		9CEE0A2F11EDDB3100403342 /* otl_opt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099911EDDB3100403342 /* otl_opt.c */; };
+		9CEE0A3011EDDB3100403342 /* pdfcolor.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099B11EDDB3100403342 /* pdfcolor.c */; };
+		9CEE0A3111EDDB3100403342 /* pdfdev.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099D11EDDB3100403342 /* pdfdev.c */; };
+		9CEE0A3211EDDB3100403342 /* pdfdoc.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099F11EDDB3100403342 /* pdfdoc.c */; };
+		9CEE0A3311EDDB3100403342 /* pdfdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A111EDDB3100403342 /* pdfdraw.c */; };
+		9CEE0A3411EDDB3100403342 /* pdfencoding.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A311EDDB3100403342 /* pdfencoding.c */; };
+		9CEE0A3511EDDB3100403342 /* pdfencrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A511EDDB3100403342 /* pdfencrypt.c */; };
+		9CEE0A3611EDDB3100403342 /* pdffont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A711EDDB3100403342 /* pdffont.c */; };
+		9CEE0A3711EDDB3100403342 /* pdfnames.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AA11EDDB3100403342 /* pdfnames.c */; };
+		9CEE0A3811EDDB3100403342 /* pdfobj.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AC11EDDB3100403342 /* pdfobj.c */; };
+		9CEE0A3911EDDB3100403342 /* pdfparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AE11EDDB3100403342 /* pdfparse.c */; };
+		9CEE0A3A11EDDB3100403342 /* pdfresource.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B011EDDB3100403342 /* pdfresource.c */; };
+		9CEE0A3B11EDDB3100403342 /* pdfximage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B211EDDB3100403342 /* pdfximage.c */; };
+		9CEE0A3C11EDDB3100403342 /* pkfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B411EDDB3100403342 /* pkfont.c */; };
+		9CEE0A3D11EDDB3100403342 /* pngimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B611EDDB3100403342 /* pngimage.c */; };
+		9CEE0A3E11EDDB3100403342 /* pst.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B811EDDB3100403342 /* pst.c */; };
+		9CEE0A3F11EDDB3100403342 /* pst_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BA11EDDB3100403342 /* pst_obj.c */; };
+		9CEE0A4011EDDB3100403342 /* sfnt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BC11EDDB3100403342 /* sfnt.c */; };
+		9CEE0A4111EDDB3100403342 /* subfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BE11EDDB3100403342 /* subfont.c */; };
+		9CEE0A4211EDDB3100403342 /* t1_char.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C111EDDB3100403342 /* t1_char.c */; };
+		9CEE0A4311EDDB3100403342 /* t1_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C311EDDB3100403342 /* t1_load.c */; };
+		9CEE0A4411EDDB3100403342 /* tfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C511EDDB3100403342 /* tfm.c */; };
+		9CEE0A4511EDDB3100403342 /* truetype.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C711EDDB3100403342 /* truetype.c */; };
+		9CEE0A4611EDDB3100403342 /* tt_aux.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C911EDDB3100403342 /* tt_aux.c */; };
+		9CEE0A4711EDDB3100403342 /* tt_cmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CB11EDDB3100403342 /* tt_cmap.c */; };
+		9CEE0A4811EDDB3100403342 /* tt_glyf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CD11EDDB3100403342 /* tt_glyf.c */; };
+		9CEE0A4911EDDB3100403342 /* tt_gsub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CF11EDDB3100403342 /* tt_gsub.c */; };
+		9CEE0A4A11EDDB3100403342 /* tt_post.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D111EDDB3100403342 /* tt_post.c */; };
+		9CEE0A4B11EDDB3100403342 /* tt_table.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D311EDDB3100403342 /* tt_table.c */; };
+		9CEE0A4C11EDDB3100403342 /* type0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D511EDDB3100403342 /* type0.c */; };
+		9CEE0A4D11EDDB3100403342 /* type1.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D711EDDB3100403342 /* type1.c */; };
+		9CEE0A4E11EDDB3100403342 /* type1c.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D911EDDB3100403342 /* type1c.c */; };
+		9CEE0A4F11EDDB3100403342 /* unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DB11EDDB3100403342 /* unicode.c */; };
+		9CEE0A5011EDDB3100403342 /* pdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */; };
+		9CEE0A5111EDDB3100403342 /* agl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096411EDDB3100403342 /* agl.c */; };
+		9CEE0A5211EDDB3100403342 /* bmpimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096611EDDB3100403342 /* bmpimage.c */; };
+		9CEE0A5311EDDB3100403342 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096811EDDB3100403342 /* cff.c */; };
+		9CEE0A5411EDDB3100403342 /* cff_dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096A11EDDB3100403342 /* cff_dict.c */; };
+		9CEE0A5511EDDB3100403342 /* cid.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096F11EDDB3100403342 /* cid.c */; };
+		9CEE0A5611EDDB3100403342 /* cidtype0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097311EDDB3100403342 /* cidtype0.c */; };
+		9CEE0A5711EDDB3100403342 /* cidtype2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097511EDDB3100403342 /* cidtype2.c */; };
+		9CEE0A5811EDDB3100403342 /* cmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097711EDDB3100403342 /* cmap.c */; };
+		9CEE0A5911EDDB3100403342 /* cmap_read.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097A11EDDB3100403342 /* cmap_read.c */; };
+		9CEE0A5A11EDDB3100403342 /* cmap_write.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097C11EDDB3100403342 /* cmap_write.c */; };
+		9CEE0A5B11EDDB3100403342 /* cs_type2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE097E11EDDB3100403342 /* cs_type2.c */; };
+		9CEE0A5C11EDDB3100403342 /* dpxcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098011EDDB3100403342 /* dpxcrypt.c */; };
+		9CEE0A5D11EDDB3100403342 /* dpxfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098211EDDB3100403342 /* dpxfile.c */; };
+		9CEE0A5E11EDDB3100403342 /* dpxutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098411EDDB3100403342 /* dpxutil.c */; };
+		9CEE0A5F11EDDB3100403342 /* epdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098711EDDB3100403342 /* epdf.c */; };
+		9CEE0A6011EDDB3100403342 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098911EDDB3100403342 /* error.c */; };
+		9CEE0A6111EDDB3100403342 /* fontmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098B11EDDB3100403342 /* fontmap.c */; };
+		9CEE0A6211EDDB3100403342 /* jpegimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098D11EDDB3100403342 /* jpegimage.c */; };
+		9CEE0A6311EDDB3100403342 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE098F11EDDB3100403342 /* mem.c */; };
+		9CEE0A6411EDDB3100403342 /* mfileio.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099111EDDB3100403342 /* mfileio.c */; };
+		9CEE0A6611EDDB3100403342 /* numbers.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099511EDDB3100403342 /* numbers.c */; };
+		9CEE0A6711EDDB3100403342 /* otl_conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099711EDDB3100403342 /* otl_conf.c */; };
+		9CEE0A6811EDDB3100403342 /* otl_opt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099911EDDB3100403342 /* otl_opt.c */; };
+		9CEE0A6911EDDB3100403342 /* pdfcolor.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099B11EDDB3100403342 /* pdfcolor.c */; };
+		9CEE0A6A11EDDB3100403342 /* pdfdev.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099D11EDDB3100403342 /* pdfdev.c */; };
+		9CEE0A6B11EDDB3100403342 /* pdfdoc.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE099F11EDDB3100403342 /* pdfdoc.c */; };
+		9CEE0A6C11EDDB3100403342 /* pdfdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A111EDDB3100403342 /* pdfdraw.c */; };
+		9CEE0A6D11EDDB3100403342 /* pdfencoding.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A311EDDB3100403342 /* pdfencoding.c */; };
+		9CEE0A6E11EDDB3100403342 /* pdfencrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A511EDDB3100403342 /* pdfencrypt.c */; };
+		9CEE0A6F11EDDB3100403342 /* pdffont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09A711EDDB3100403342 /* pdffont.c */; };
+		9CEE0A7011EDDB3100403342 /* pdfnames.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AA11EDDB3100403342 /* pdfnames.c */; };
+		9CEE0A7111EDDB3100403342 /* pdfobj.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AC11EDDB3100403342 /* pdfobj.c */; };
+		9CEE0A7211EDDB3100403342 /* pdfparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09AE11EDDB3100403342 /* pdfparse.c */; };
+		9CEE0A7311EDDB3100403342 /* pdfresource.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B011EDDB3100403342 /* pdfresource.c */; };
+		9CEE0A7411EDDB3100403342 /* pdfximage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B211EDDB3100403342 /* pdfximage.c */; };
+		9CEE0A7511EDDB3100403342 /* pkfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B411EDDB3100403342 /* pkfont.c */; };
+		9CEE0A7611EDDB3100403342 /* pngimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B611EDDB3100403342 /* pngimage.c */; };
+		9CEE0A7711EDDB3100403342 /* pst.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09B811EDDB3100403342 /* pst.c */; };
+		9CEE0A7811EDDB3100403342 /* pst_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BA11EDDB3100403342 /* pst_obj.c */; };
+		9CEE0A7911EDDB3100403342 /* sfnt.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BC11EDDB3100403342 /* sfnt.c */; };
+		9CEE0A7A11EDDB3100403342 /* subfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09BE11EDDB3100403342 /* subfont.c */; };
+		9CEE0A7B11EDDB3100403342 /* t1_char.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C111EDDB3100403342 /* t1_char.c */; };
+		9CEE0A7C11EDDB3100403342 /* t1_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C311EDDB3100403342 /* t1_load.c */; };
+		9CEE0A7D11EDDB3100403342 /* tfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C511EDDB3100403342 /* tfm.c */; };
+		9CEE0A7E11EDDB3100403342 /* truetype.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C711EDDB3100403342 /* truetype.c */; };
+		9CEE0A7F11EDDB3100403342 /* tt_aux.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09C911EDDB3100403342 /* tt_aux.c */; };
+		9CEE0A8011EDDB3100403342 /* tt_cmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CB11EDDB3100403342 /* tt_cmap.c */; };
+		9CEE0A8111EDDB3100403342 /* tt_glyf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CD11EDDB3100403342 /* tt_glyf.c */; };
+		9CEE0A8211EDDB3100403342 /* tt_gsub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09CF11EDDB3100403342 /* tt_gsub.c */; };
+		9CEE0A8311EDDB3100403342 /* tt_post.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D111EDDB3100403342 /* tt_post.c */; };
+		9CEE0A8411EDDB3100403342 /* tt_table.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D311EDDB3100403342 /* tt_table.c */; };
+		9CEE0A8511EDDB3100403342 /* type0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D511EDDB3100403342 /* type0.c */; };
+		9CEE0A8611EDDB3100403342 /* type1.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D711EDDB3100403342 /* type1.c */; };
+		9CEE0A8711EDDB3100403342 /* type1c.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D911EDDB3100403342 /* type1c.c */; };
+		9CEE0A8811EDDB3100403342 /* unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DB11EDDB3100403342 /* unicode.c */; };
+		9CEE0A8911EDDB3100403342 /* pdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */; };
 		9CFEB3F711D79783005C12C4 /* bibtex_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */; };
 		9CFEB3F811D79783005C12C4 /* bibtex_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */; };
 		9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */; };
@@ -1528,6 +1696,127 @@
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
+		9CEE096411EDDB3100403342 /* agl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = agl.c; sourceTree = "<group>"; };
+		9CEE096511EDDB3100403342 /* agl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = agl.h; sourceTree = "<group>"; };
+		9CEE096611EDDB3100403342 /* bmpimage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmpimage.c; sourceTree = "<group>"; };
+		9CEE096711EDDB3100403342 /* bmpimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmpimage.h; sourceTree = "<group>"; };
+		9CEE096811EDDB3100403342 /* cff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cff.c; sourceTree = "<group>"; };
+		9CEE096911EDDB3100403342 /* cff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cff.h; sourceTree = "<group>"; };
+		9CEE096A11EDDB3100403342 /* cff_dict.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cff_dict.c; sourceTree = "<group>"; };
+		9CEE096B11EDDB3100403342 /* cff_dict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cff_dict.h; sourceTree = "<group>"; };
+		9CEE096C11EDDB3100403342 /* cff_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cff_limits.h; sourceTree = "<group>"; };
+		9CEE096D11EDDB3100403342 /* cff_stdstr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cff_stdstr.h; sourceTree = "<group>"; };
+		9CEE096E11EDDB3100403342 /* cff_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cff_types.h; sourceTree = "<group>"; };
+		9CEE096F11EDDB3100403342 /* cid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cid.c; sourceTree = "<group>"; };
+		9CEE097011EDDB3100403342 /* cid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cid.h; sourceTree = "<group>"; };
+		9CEE097111EDDB3100403342 /* cid_basefont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cid_basefont.h; sourceTree = "<group>"; };
+		9CEE097211EDDB3100403342 /* cid_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cid_p.h; sourceTree = "<group>"; };
+		9CEE097311EDDB3100403342 /* cidtype0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cidtype0.c; sourceTree = "<group>"; };
+		9CEE097411EDDB3100403342 /* cidtype0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cidtype0.h; sourceTree = "<group>"; };
+		9CEE097511EDDB3100403342 /* cidtype2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cidtype2.c; sourceTree = "<group>"; };
+		9CEE097611EDDB3100403342 /* cidtype2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cidtype2.h; sourceTree = "<group>"; };
+		9CEE097711EDDB3100403342 /* cmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmap.c; sourceTree = "<group>"; };
+		9CEE097811EDDB3100403342 /* cmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmap.h; sourceTree = "<group>"; };
+		9CEE097911EDDB3100403342 /* cmap_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmap_p.h; sourceTree = "<group>"; };
+		9CEE097A11EDDB3100403342 /* cmap_read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmap_read.c; sourceTree = "<group>"; };
+		9CEE097B11EDDB3100403342 /* cmap_read.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmap_read.h; sourceTree = "<group>"; };
+		9CEE097C11EDDB3100403342 /* cmap_write.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmap_write.c; sourceTree = "<group>"; };
+		9CEE097D11EDDB3100403342 /* cmap_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmap_write.h; sourceTree = "<group>"; };
+		9CEE097E11EDDB3100403342 /* cs_type2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs_type2.c; sourceTree = "<group>"; };
+		9CEE097F11EDDB3100403342 /* cs_type2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cs_type2.h; sourceTree = "<group>"; };
+		9CEE098011EDDB3100403342 /* dpxcrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dpxcrypt.c; sourceTree = "<group>"; };
+		9CEE098111EDDB3100403342 /* dpxcrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dpxcrypt.h; sourceTree = "<group>"; };
+		9CEE098211EDDB3100403342 /* dpxfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dpxfile.c; sourceTree = "<group>"; };
+		9CEE098311EDDB3100403342 /* dpxfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dpxfile.h; sourceTree = "<group>"; };
+		9CEE098411EDDB3100403342 /* dpxutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dpxutil.c; sourceTree = "<group>"; };
+		9CEE098511EDDB3100403342 /* dpxutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dpxutil.h; sourceTree = "<group>"; };
+		9CEE098611EDDB3100403342 /* dvipdfmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvipdfmx.h; sourceTree = "<group>"; };
+		9CEE098711EDDB3100403342 /* epdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = epdf.c; sourceTree = "<group>"; };
+		9CEE098811EDDB3100403342 /* epdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = epdf.h; sourceTree = "<group>"; };
+		9CEE098911EDDB3100403342 /* error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = error.c; sourceTree = "<group>"; };
+		9CEE098A11EDDB3100403342 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		9CEE098B11EDDB3100403342 /* fontmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fontmap.c; sourceTree = "<group>"; };
+		9CEE098C11EDDB3100403342 /* fontmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontmap.h; sourceTree = "<group>"; };
+		9CEE098D11EDDB3100403342 /* jpegimage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jpegimage.c; sourceTree = "<group>"; };
+		9CEE098E11EDDB3100403342 /* jpegimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jpegimage.h; sourceTree = "<group>"; };
+		9CEE098F11EDDB3100403342 /* mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mem.c; sourceTree = "<group>"; };
+		9CEE099011EDDB3100403342 /* mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mem.h; sourceTree = "<group>"; };
+		9CEE099111EDDB3100403342 /* mfileio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mfileio.c; sourceTree = "<group>"; };
+		9CEE099211EDDB3100403342 /* mfileio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mfileio.h; sourceTree = "<group>"; };
+		9CEE099511EDDB3100403342 /* numbers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = numbers.c; sourceTree = "<group>"; };
+		9CEE099611EDDB3100403342 /* numbers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = numbers.h; sourceTree = "<group>"; };
+		9CEE099711EDDB3100403342 /* otl_conf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = otl_conf.c; sourceTree = "<group>"; };
+		9CEE099811EDDB3100403342 /* otl_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = otl_conf.h; sourceTree = "<group>"; };
+		9CEE099911EDDB3100403342 /* otl_opt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = otl_opt.c; sourceTree = "<group>"; };
+		9CEE099A11EDDB3100403342 /* otl_opt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = otl_opt.h; sourceTree = "<group>"; };
+		9CEE099B11EDDB3100403342 /* pdfcolor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfcolor.c; sourceTree = "<group>"; };
+		9CEE099C11EDDB3100403342 /* pdfcolor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfcolor.h; sourceTree = "<group>"; };
+		9CEE099D11EDDB3100403342 /* pdfdev.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfdev.c; sourceTree = "<group>"; };
+		9CEE099E11EDDB3100403342 /* pdfdev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfdev.h; sourceTree = "<group>"; };
+		9CEE099F11EDDB3100403342 /* pdfdoc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfdoc.c; sourceTree = "<group>"; };
+		9CEE09A011EDDB3100403342 /* pdfdoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfdoc.h; sourceTree = "<group>"; };
+		9CEE09A111EDDB3100403342 /* pdfdraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfdraw.c; sourceTree = "<group>"; };
+		9CEE09A211EDDB3100403342 /* pdfdraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfdraw.h; sourceTree = "<group>"; };
+		9CEE09A311EDDB3100403342 /* pdfencoding.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfencoding.c; sourceTree = "<group>"; };
+		9CEE09A411EDDB3100403342 /* pdfencoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfencoding.h; sourceTree = "<group>"; };
+		9CEE09A511EDDB3100403342 /* pdfencrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfencrypt.c; sourceTree = "<group>"; };
+		9CEE09A611EDDB3100403342 /* pdfencrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfencrypt.h; sourceTree = "<group>"; };
+		9CEE09A711EDDB3100403342 /* pdffont.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdffont.c; sourceTree = "<group>"; };
+		9CEE09A811EDDB3100403342 /* pdffont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdffont.h; sourceTree = "<group>"; };
+		9CEE09A911EDDB3100403342 /* pdflimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdflimits.h; sourceTree = "<group>"; };
+		9CEE09AA11EDDB3100403342 /* pdfnames.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfnames.c; sourceTree = "<group>"; };
+		9CEE09AB11EDDB3100403342 /* pdfnames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfnames.h; sourceTree = "<group>"; };
+		9CEE09AC11EDDB3100403342 /* pdfobj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfobj.c; sourceTree = "<group>"; };
+		9CEE09AD11EDDB3100403342 /* pdfobj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfobj.h; sourceTree = "<group>"; };
+		9CEE09AE11EDDB3100403342 /* pdfparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfparse.c; sourceTree = "<group>"; };
+		9CEE09AF11EDDB3100403342 /* pdfparse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfparse.h; sourceTree = "<group>"; };
+		9CEE09B011EDDB3100403342 /* pdfresource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfresource.c; sourceTree = "<group>"; };
+		9CEE09B111EDDB3100403342 /* pdfresource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfresource.h; sourceTree = "<group>"; };
+		9CEE09B211EDDB3100403342 /* pdfximage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pdfximage.c; sourceTree = "<group>"; };
+		9CEE09B311EDDB3100403342 /* pdfximage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdfximage.h; sourceTree = "<group>"; };
+		9CEE09B411EDDB3100403342 /* pkfont.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pkfont.c; sourceTree = "<group>"; };
+		9CEE09B511EDDB3100403342 /* pkfont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkfont.h; sourceTree = "<group>"; };
+		9CEE09B611EDDB3100403342 /* pngimage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngimage.c; sourceTree = "<group>"; };
+		9CEE09B711EDDB3100403342 /* pngimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngimage.h; sourceTree = "<group>"; };
+		9CEE09B811EDDB3100403342 /* pst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pst.c; sourceTree = "<group>"; };
+		9CEE09B911EDDB3100403342 /* pst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pst.h; sourceTree = "<group>"; };
+		9CEE09BA11EDDB3100403342 /* pst_obj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pst_obj.c; sourceTree = "<group>"; };
+		9CEE09BB11EDDB3100403342 /* pst_obj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pst_obj.h; sourceTree = "<group>"; };
+		9CEE09BC11EDDB3100403342 /* sfnt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfnt.c; sourceTree = "<group>"; };
+		9CEE09BD11EDDB3100403342 /* sfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfnt.h; sourceTree = "<group>"; };
+		9CEE09BE11EDDB3100403342 /* subfont.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = subfont.c; sourceTree = "<group>"; };
+		9CEE09BF11EDDB3100403342 /* subfont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = subfont.h; sourceTree = "<group>"; };
+		9CEE09C011EDDB3100403342 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		9CEE09C111EDDB3100403342 /* t1_char.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = t1_char.c; sourceTree = "<group>"; };
+		9CEE09C211EDDB3100403342 /* t1_char.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t1_char.h; sourceTree = "<group>"; };
+		9CEE09C311EDDB3100403342 /* t1_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = t1_load.c; sourceTree = "<group>"; };
+		9CEE09C411EDDB3100403342 /* t1_load.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t1_load.h; sourceTree = "<group>"; };
+		9CEE09C511EDDB3100403342 /* tfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tfm.c; sourceTree = "<group>"; };
+		9CEE09C611EDDB3100403342 /* tfm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tfm.h; sourceTree = "<group>"; };
+		9CEE09C711EDDB3100403342 /* truetype.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = truetype.c; sourceTree = "<group>"; };
+		9CEE09C811EDDB3100403342 /* truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = truetype.h; sourceTree = "<group>"; };
+		9CEE09C911EDDB3100403342 /* tt_aux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tt_aux.c; sourceTree = "<group>"; };
+		9CEE09CA11EDDB3100403342 /* tt_aux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tt_aux.h; sourceTree = "<group>"; };
+		9CEE09CB11EDDB3100403342 /* tt_cmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tt_cmap.c; sourceTree = "<group>"; };
+		9CEE09CC11EDDB3100403342 /* tt_cmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tt_cmap.h; sourceTree = "<group>"; };
+		9CEE09CD11EDDB3100403342 /* tt_glyf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tt_glyf.c; sourceTree = "<group>"; };
+		9CEE09CE11EDDB3100403342 /* tt_glyf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tt_glyf.h; sourceTree = "<group>"; };
+		9CEE09CF11EDDB3100403342 /* tt_gsub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tt_gsub.c; sourceTree = "<group>"; };
+		9CEE09D011EDDB3100403342 /* tt_gsub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tt_gsub.h; sourceTree = "<group>"; };
+		9CEE09D111EDDB3100403342 /* tt_post.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tt_post.c; sourceTree = "<group>"; };
+		9CEE09D211EDDB3100403342 /* tt_post.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tt_post.h; sourceTree = "<group>"; };
+		9CEE09D311EDDB3100403342 /* tt_table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tt_table.c; sourceTree = "<group>"; };
+		9CEE09D411EDDB3100403342 /* tt_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tt_table.h; sourceTree = "<group>"; };
+		9CEE09D511EDDB3100403342 /* type0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = type0.c; sourceTree = "<group>"; };
+		9CEE09D611EDDB3100403342 /* type0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type0.h; sourceTree = "<group>"; };
+		9CEE09D711EDDB3100403342 /* type1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = type1.c; sourceTree = "<group>"; };
+		9CEE09D811EDDB3100403342 /* type1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type1.h; sourceTree = "<group>"; };
+		9CEE09D911EDDB3100403342 /* type1c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = type1c.c; sourceTree = "<group>"; };
+		9CEE09DA11EDDB3100403342 /* type1c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type1c.h; sourceTree = "<group>"; };
+		9CEE09DB11EDDB3100403342 /* unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unicode.c; sourceTree = "<group>"; };
+		9CEE09DC11EDDB3100403342 /* unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode.h; sourceTree = "<group>"; };
+		9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pdf_renderer.cpp; sourceTree = "<group>"; };
+		9CEE09DE11EDDB3100403342 /* pdf_renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pdf_renderer.hpp; sourceTree = "<group>"; };
 		9CFE66E910A99E700028F6F8 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		9CFE66EA10A99E700028F6F8 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
 		9CFEB3F511D79783005C12C4 /* bibtex_functions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bibtex_functions.cpp; sourceTree = "<group>"; };
@@ -2092,6 +2381,7 @@
 		9C0B484710A8CC100097A335 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				9C82C0FF11ED2CC200BC4BBE /* Pdf */,
 				9C722C0C10D2F88800C41915 /* Unix */,
 				9C0B484810A8CC100097A335 /* Axel */,
 				9C0B484B10A8CC100097A335 /* Bibtex */,
@@ -2961,6 +3251,142 @@
 			path = misc/scripts;
 			sourceTree = "<group>";
 		};
+		9C82C0FF11ED2CC200BC4BBE /* Pdf */ = {
+			isa = PBXGroup;
+			children = (
+				9CEE096311EDDB3100403342 /* dvipdfmx */,
+				9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */,
+				9CEE09DE11EDDB3100403342 /* pdf_renderer.hpp */,
+			);
+			path = Pdf;
+			sourceTree = "<group>";
+		};
+		9CEE096311EDDB3100403342 /* dvipdfmx */ = {
+			isa = PBXGroup;
+			children = (
+				9CEE096411EDDB3100403342 /* agl.c */,
+				9CEE096511EDDB3100403342 /* agl.h */,
+				9CEE096611EDDB3100403342 /* bmpimage.c */,
+				9CEE096711EDDB3100403342 /* bmpimage.h */,
+				9CEE096811EDDB3100403342 /* cff.c */,
+				9CEE096911EDDB3100403342 /* cff.h */,
+				9CEE096A11EDDB3100403342 /* cff_dict.c */,
+				9CEE096B11EDDB3100403342 /* cff_dict.h */,
+				9CEE096C11EDDB3100403342 /* cff_limits.h */,
+				9CEE096D11EDDB3100403342 /* cff_stdstr.h */,
+				9CEE096E11EDDB3100403342 /* cff_types.h */,
+				9CEE096F11EDDB3100403342 /* cid.c */,
+				9CEE097011EDDB3100403342 /* cid.h */,
+				9CEE097111EDDB3100403342 /* cid_basefont.h */,
+				9CEE097211EDDB3100403342 /* cid_p.h */,
+				9CEE097311EDDB3100403342 /* cidtype0.c */,
+				9CEE097411EDDB3100403342 /* cidtype0.h */,
+				9CEE097511EDDB3100403342 /* cidtype2.c */,
+				9CEE097611EDDB3100403342 /* cidtype2.h */,
+				9CEE097711EDDB3100403342 /* cmap.c */,
+				9CEE097811EDDB3100403342 /* cmap.h */,
+				9CEE097911EDDB3100403342 /* cmap_p.h */,
+				9CEE097A11EDDB3100403342 /* cmap_read.c */,
+				9CEE097B11EDDB3100403342 /* cmap_read.h */,
+				9CEE097C11EDDB3100403342 /* cmap_write.c */,
+				9CEE097D11EDDB3100403342 /* cmap_write.h */,
+				9CEE097E11EDDB3100403342 /* cs_type2.c */,
+				9CEE097F11EDDB3100403342 /* cs_type2.h */,
+				9CEE098011EDDB3100403342 /* dpxcrypt.c */,
+				9CEE098111EDDB3100403342 /* dpxcrypt.h */,
+				9CEE098211EDDB3100403342 /* dpxfile.c */,
+				9CEE098311EDDB3100403342 /* dpxfile.h */,
+				9CEE098411EDDB3100403342 /* dpxutil.c */,
+				9CEE098511EDDB3100403342 /* dpxutil.h */,
+				9CEE098611EDDB3100403342 /* dvipdfmx.h */,
+				9CEE098711EDDB3100403342 /* epdf.c */,
+				9CEE098811EDDB3100403342 /* epdf.h */,
+				9CEE098911EDDB3100403342 /* error.c */,
+				9CEE098A11EDDB3100403342 /* error.h */,
+				9CEE098B11EDDB3100403342 /* fontmap.c */,
+				9CEE098C11EDDB3100403342 /* fontmap.h */,
+				9CEE098D11EDDB3100403342 /* jpegimage.c */,
+				9CEE098E11EDDB3100403342 /* jpegimage.h */,
+				9CEE098F11EDDB3100403342 /* mem.c */,
+				9CEE099011EDDB3100403342 /* mem.h */,
+				9CEE099111EDDB3100403342 /* mfileio.c */,
+				9CEE099211EDDB3100403342 /* mfileio.h */,
+				9CEE099511EDDB3100403342 /* numbers.c */,
+				9CEE099611EDDB3100403342 /* numbers.h */,
+				9CEE099711EDDB3100403342 /* otl_conf.c */,
+				9CEE099811EDDB3100403342 /* otl_conf.h */,
+				9CEE099911EDDB3100403342 /* otl_opt.c */,
+				9CEE099A11EDDB3100403342 /* otl_opt.h */,
+				9CEE099B11EDDB3100403342 /* pdfcolor.c */,
+				9CEE099C11EDDB3100403342 /* pdfcolor.h */,
+				9CEE099D11EDDB3100403342 /* pdfdev.c */,
+				9CEE099E11EDDB3100403342 /* pdfdev.h */,
+				9CEE099F11EDDB3100403342 /* pdfdoc.c */,
+				9CEE09A011EDDB3100403342 /* pdfdoc.h */,
+				9CEE09A111EDDB3100403342 /* pdfdraw.c */,
+				9CEE09A211EDDB3100403342 /* pdfdraw.h */,
+				9CEE09A311EDDB3100403342 /* pdfencoding.c */,
+				9CEE09A411EDDB3100403342 /* pdfencoding.h */,
+				9CEE09A511EDDB3100403342 /* pdfencrypt.c */,
+				9CEE09A611EDDB3100403342 /* pdfencrypt.h */,
+				9CEE09A711EDDB3100403342 /* pdffont.c */,
+				9CEE09A811EDDB3100403342 /* pdffont.h */,
+				9CEE09A911EDDB3100403342 /* pdflimits.h */,
+				9CEE09AA11EDDB3100403342 /* pdfnames.c */,
+				9CEE09AB11EDDB3100403342 /* pdfnames.h */,
+				9CEE09AC11EDDB3100403342 /* pdfobj.c */,
+				9CEE09AD11EDDB3100403342 /* pdfobj.h */,
+				9CEE09AE11EDDB3100403342 /* pdfparse.c */,
+				9CEE09AF11EDDB3100403342 /* pdfparse.h */,
+				9CEE09B011EDDB3100403342 /* pdfresource.c */,
+				9CEE09B111EDDB3100403342 /* pdfresource.h */,
+				9CEE09B211EDDB3100403342 /* pdfximage.c */,
+				9CEE09B311EDDB3100403342 /* pdfximage.h */,
+				9CEE09B411EDDB3100403342 /* pkfont.c */,
+				9CEE09B511EDDB3100403342 /* pkfont.h */,
+				9CEE09B611EDDB3100403342 /* pngimage.c */,
+				9CEE09B711EDDB3100403342 /* pngimage.h */,
+				9CEE09B811EDDB3100403342 /* pst.c */,
+				9CEE09B911EDDB3100403342 /* pst.h */,
+				9CEE09BA11EDDB3100403342 /* pst_obj.c */,
+				9CEE09BB11EDDB3100403342 /* pst_obj.h */,
+				9CEE09BC11EDDB3100403342 /* sfnt.c */,
+				9CEE09BD11EDDB3100403342 /* sfnt.h */,
+				9CEE09BE11EDDB3100403342 /* subfont.c */,
+				9CEE09BF11EDDB3100403342 /* subfont.h */,
+				9CEE09C011EDDB3100403342 /* system.h */,
+				9CEE09C111EDDB3100403342 /* t1_char.c */,
+				9CEE09C211EDDB3100403342 /* t1_char.h */,
+				9CEE09C311EDDB3100403342 /* t1_load.c */,
+				9CEE09C411EDDB3100403342 /* t1_load.h */,
+				9CEE09C511EDDB3100403342 /* tfm.c */,
+				9CEE09C611EDDB3100403342 /* tfm.h */,
+				9CEE09C711EDDB3100403342 /* truetype.c */,
+				9CEE09C811EDDB3100403342 /* truetype.h */,
+				9CEE09C911EDDB3100403342 /* tt_aux.c */,
+				9CEE09CA11EDDB3100403342 /* tt_aux.h */,
+				9CEE09CB11EDDB3100403342 /* tt_cmap.c */,
+				9CEE09CC11EDDB3100403342 /* tt_cmap.h */,
+				9CEE09CD11EDDB3100403342 /* tt_glyf.c */,
+				9CEE09CE11EDDB3100403342 /* tt_glyf.h */,
+				9CEE09CF11EDDB3100403342 /* tt_gsub.c */,
+				9CEE09D011EDDB3100403342 /* tt_gsub.h */,
+				9CEE09D111EDDB3100403342 /* tt_post.c */,
+				9CEE09D211EDDB3100403342 /* tt_post.h */,
+				9CEE09D311EDDB3100403342 /* tt_table.c */,
+				9CEE09D411EDDB3100403342 /* tt_table.h */,
+				9CEE09D511EDDB3100403342 /* type0.c */,
+				9CEE09D611EDDB3100403342 /* type0.h */,
+				9CEE09D711EDDB3100403342 /* type1.c */,
+				9CEE09D811EDDB3100403342 /* type1.h */,
+				9CEE09D911EDDB3100403342 /* type1c.c */,
+				9CEE09DA11EDDB3100403342 /* type1c.h */,
+				9CEE09DB11EDDB3100403342 /* unicode.c */,
+				9CEE09DC11EDDB3100403342 /* unicode.h */,
+			);
+			path = dvipdfmx;
+			sourceTree = "<group>";
+		};
 		9CFEB3FE11D79AF6005C12C4 /* BibTeX */ = {
 			isa = PBXGroup;
 			children = (
@@ -3471,6 +3897,62 @@
 				9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F711D79783005C12C4 /* bibtex_functions.cpp in Sources */,
 				9CFEB40011D79AF6005C12C4 /* parsebib.cpp in Sources */,
+				9CEE09DF11EDDB3100403342 /* agl.c in Sources */,
+				9CEE09E011EDDB3100403342 /* bmpimage.c in Sources */,
+				9CEE09E111EDDB3100403342 /* cff.c in Sources */,
+				9CEE09E211EDDB3100403342 /* cff_dict.c in Sources */,
+				9CEE09E311EDDB3100403342 /* cid.c in Sources */,
+				9CEE09E411EDDB3100403342 /* cidtype0.c in Sources */,
+				9CEE09E511EDDB3100403342 /* cidtype2.c in Sources */,
+				9CEE09E611EDDB3100403342 /* cmap.c in Sources */,
+				9CEE09E711EDDB3100403342 /* cmap_read.c in Sources */,
+				9CEE09E811EDDB3100403342 /* cmap_write.c in Sources */,
+				9CEE09E911EDDB3100403342 /* cs_type2.c in Sources */,
+				9CEE09EA11EDDB3100403342 /* dpxcrypt.c in Sources */,
+				9CEE09EB11EDDB3100403342 /* dpxfile.c in Sources */,
+				9CEE09EC11EDDB3100403342 /* dpxutil.c in Sources */,
+				9CEE09ED11EDDB3100403342 /* epdf.c in Sources */,
+				9CEE09EE11EDDB3100403342 /* error.c in Sources */,
+				9CEE09EF11EDDB3100403342 /* fontmap.c in Sources */,
+				9CEE09F011EDDB3100403342 /* jpegimage.c in Sources */,
+				9CEE09F111EDDB3100403342 /* mem.c in Sources */,
+				9CEE09F211EDDB3100403342 /* mfileio.c in Sources */,
+				9CEE09F411EDDB3100403342 /* numbers.c in Sources */,
+				9CEE09F511EDDB3100403342 /* otl_conf.c in Sources */,
+				9CEE09F611EDDB3100403342 /* otl_opt.c in Sources */,
+				9CEE09F711EDDB3100403342 /* pdfcolor.c in Sources */,
+				9CEE09F811EDDB3100403342 /* pdfdev.c in Sources */,
+				9CEE09F911EDDB3100403342 /* pdfdoc.c in Sources */,
+				9CEE09FA11EDDB3100403342 /* pdfdraw.c in Sources */,
+				9CEE09FB11EDDB3100403342 /* pdfencoding.c in Sources */,
+				9CEE09FC11EDDB3100403342 /* pdfencrypt.c in Sources */,
+				9CEE09FD11EDDB3100403342 /* pdffont.c in Sources */,
+				9CEE09FE11EDDB3100403342 /* pdfnames.c in Sources */,
+				9CEE09FF11EDDB3100403342 /* pdfobj.c in Sources */,
+				9CEE0A0011EDDB3100403342 /* pdfparse.c in Sources */,
+				9CEE0A0111EDDB3100403342 /* pdfresource.c in Sources */,
+				9CEE0A0211EDDB3100403342 /* pdfximage.c in Sources */,
+				9CEE0A0311EDDB3100403342 /* pkfont.c in Sources */,
+				9CEE0A0411EDDB3100403342 /* pngimage.c in Sources */,
+				9CEE0A0511EDDB3100403342 /* pst.c in Sources */,
+				9CEE0A0611EDDB3100403342 /* pst_obj.c in Sources */,
+				9CEE0A0711EDDB3100403342 /* sfnt.c in Sources */,
+				9CEE0A0811EDDB3100403342 /* subfont.c in Sources */,
+				9CEE0A0911EDDB3100403342 /* t1_char.c in Sources */,
+				9CEE0A0A11EDDB3100403342 /* t1_load.c in Sources */,
+				9CEE0A0B11EDDB3100403342 /* tfm.c in Sources */,
+				9CEE0A0C11EDDB3100403342 /* truetype.c in Sources */,
+				9CEE0A0D11EDDB3100403342 /* tt_aux.c in Sources */,
+				9CEE0A0E11EDDB3100403342 /* tt_cmap.c in Sources */,
+				9CEE0A0F11EDDB3100403342 /* tt_glyf.c in Sources */,
+				9CEE0A1011EDDB3100403342 /* tt_gsub.c in Sources */,
+				9CEE0A1111EDDB3100403342 /* tt_post.c in Sources */,
+				9CEE0A1211EDDB3100403342 /* tt_table.c in Sources */,
+				9CEE0A1311EDDB3100403342 /* type0.c in Sources */,
+				9CEE0A1411EDDB3100403342 /* type1.c in Sources */,
+				9CEE0A1511EDDB3100403342 /* type1c.c in Sources */,
+				9CEE0A1611EDDB3100403342 /* unicode.c in Sources */,
+				9CEE0A1711EDDB3100403342 /* pdf_renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3762,6 +4244,62 @@
 				9C6061EC112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F811D79783005C12C4 /* bibtex_functions.cpp in Sources */,
 				9CFEB40111D79AF6005C12C4 /* parsebib.cpp in Sources */,
+				9CEE0A5111EDDB3100403342 /* agl.c in Sources */,
+				9CEE0A5211EDDB3100403342 /* bmpimage.c in Sources */,
+				9CEE0A5311EDDB3100403342 /* cff.c in Sources */,
+				9CEE0A5411EDDB3100403342 /* cff_dict.c in Sources */,
+				9CEE0A5511EDDB3100403342 /* cid.c in Sources */,
+				9CEE0A5611EDDB3100403342 /* cidtype0.c in Sources */,
+				9CEE0A5711EDDB3100403342 /* cidtype2.c in Sources */,
+				9CEE0A5811EDDB3100403342 /* cmap.c in Sources */,
+				9CEE0A5911EDDB3100403342 /* cmap_read.c in Sources */,
+				9CEE0A5A11EDDB3100403342 /* cmap_write.c in Sources */,
+				9CEE0A5B11EDDB3100403342 /* cs_type2.c in Sources */,
+				9CEE0A5C11EDDB3100403342 /* dpxcrypt.c in Sources */,
+				9CEE0A5D11EDDB3100403342 /* dpxfile.c in Sources */,
+				9CEE0A5E11EDDB3100403342 /* dpxutil.c in Sources */,
+				9CEE0A5F11EDDB3100403342 /* epdf.c in Sources */,
+				9CEE0A6011EDDB3100403342 /* error.c in Sources */,
+				9CEE0A6111EDDB3100403342 /* fontmap.c in Sources */,
+				9CEE0A6211EDDB3100403342 /* jpegimage.c in Sources */,
+				9CEE0A6311EDDB3100403342 /* mem.c in Sources */,
+				9CEE0A6411EDDB3100403342 /* mfileio.c in Sources */,
+				9CEE0A6611EDDB3100403342 /* numbers.c in Sources */,
+				9CEE0A6711EDDB3100403342 /* otl_conf.c in Sources */,
+				9CEE0A6811EDDB3100403342 /* otl_opt.c in Sources */,
+				9CEE0A6911EDDB3100403342 /* pdfcolor.c in Sources */,
+				9CEE0A6A11EDDB3100403342 /* pdfdev.c in Sources */,
+				9CEE0A6B11EDDB3100403342 /* pdfdoc.c in Sources */,
+				9CEE0A6C11EDDB3100403342 /* pdfdraw.c in Sources */,
+				9CEE0A6D11EDDB3100403342 /* pdfencoding.c in Sources */,
+				9CEE0A6E11EDDB3100403342 /* pdfencrypt.c in Sources */,
+				9CEE0A6F11EDDB3100403342 /* pdffont.c in Sources */,
+				9CEE0A7011EDDB3100403342 /* pdfnames.c in Sources */,
+				9CEE0A7111EDDB3100403342 /* pdfobj.c in Sources */,
+				9CEE0A7211EDDB3100403342 /* pdfparse.c in Sources */,
+				9CEE0A7311EDDB3100403342 /* pdfresource.c in Sources */,
+				9CEE0A7411EDDB3100403342 /* pdfximage.c in Sources */,
+				9CEE0A7511EDDB3100403342 /* pkfont.c in Sources */,
+				9CEE0A7611EDDB3100403342 /* pngimage.c in Sources */,
+				9CEE0A7711EDDB3100403342 /* pst.c in Sources */,
+				9CEE0A7811EDDB3100403342 /* pst_obj.c in Sources */,
+				9CEE0A7911EDDB3100403342 /* sfnt.c in Sources */,
+				9CEE0A7A11EDDB3100403342 /* subfont.c in Sources */,
+				9CEE0A7B11EDDB3100403342 /* t1_char.c in Sources */,
+				9CEE0A7C11EDDB3100403342 /* t1_load.c in Sources */,
+				9CEE0A7D11EDDB3100403342 /* tfm.c in Sources */,
+				9CEE0A7E11EDDB3100403342 /* truetype.c in Sources */,
+				9CEE0A7F11EDDB3100403342 /* tt_aux.c in Sources */,
+				9CEE0A8011EDDB3100403342 /* tt_cmap.c in Sources */,
+				9CEE0A8111EDDB3100403342 /* tt_glyf.c in Sources */,
+				9CEE0A8211EDDB3100403342 /* tt_gsub.c in Sources */,
+				9CEE0A8311EDDB3100403342 /* tt_post.c in Sources */,
+				9CEE0A8411EDDB3100403342 /* tt_table.c in Sources */,
+				9CEE0A8511EDDB3100403342 /* type0.c in Sources */,
+				9CEE0A8611EDDB3100403342 /* type1.c in Sources */,
+				9CEE0A8711EDDB3100403342 /* type1c.c in Sources */,
+				9CEE0A8811EDDB3100403342 /* unicode.c in Sources */,
+				9CEE0A8911EDDB3100403342 /* pdf_renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4068,6 +4606,62 @@
 				9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */,
 				9CFEB40211D79AF6005C12C4 /* parsebib.cpp in Sources */,
+				9CEE0A1811EDDB3100403342 /* agl.c in Sources */,
+				9CEE0A1911EDDB3100403342 /* bmpimage.c in Sources */,
+				9CEE0A1A11EDDB3100403342 /* cff.c in Sources */,
+				9CEE0A1B11EDDB3100403342 /* cff_dict.c in Sources */,
+				9CEE0A1C11EDDB3100403342 /* cid.c in Sources */,
+				9CEE0A1D11EDDB3100403342 /* cidtype0.c in Sources */,
+				9CEE0A1E11EDDB3100403342 /* cidtype2.c in Sources */,
+				9CEE0A1F11EDDB3100403342 /* cmap.c in Sources */,
+				9CEE0A2011EDDB3100403342 /* cmap_read.c in Sources */,
+				9CEE0A2111EDDB3100403342 /* cmap_write.c in Sources */,
+				9CEE0A2211EDDB3100403342 /* cs_type2.c in Sources */,
+				9CEE0A2311EDDB3100403342 /* dpxcrypt.c in Sources */,
+				9CEE0A2411EDDB3100403342 /* dpxfile.c in Sources */,
+				9CEE0A2511EDDB3100403342 /* dpxutil.c in Sources */,
+				9CEE0A2611EDDB3100403342 /* epdf.c in Sources */,
+				9CEE0A2711EDDB3100403342 /* error.c in Sources */,
+				9CEE0A2811EDDB3100403342 /* fontmap.c in Sources */,
+				9CEE0A2911EDDB3100403342 /* jpegimage.c in Sources */,
+				9CEE0A2A11EDDB3100403342 /* mem.c in Sources */,
+				9CEE0A2B11EDDB3100403342 /* mfileio.c in Sources */,
+				9CEE0A2D11EDDB3100403342 /* numbers.c in Sources */,
+				9CEE0A2E11EDDB3100403342 /* otl_conf.c in Sources */,
+				9CEE0A2F11EDDB3100403342 /* otl_opt.c in Sources */,
+				9CEE0A3011EDDB3100403342 /* pdfcolor.c in Sources */,
+				9CEE0A3111EDDB3100403342 /* pdfdev.c in Sources */,
+				9CEE0A3211EDDB3100403342 /* pdfdoc.c in Sources */,
+				9CEE0A3311EDDB3100403342 /* pdfdraw.c in Sources */,
+				9CEE0A3411EDDB3100403342 /* pdfencoding.c in Sources */,
+				9CEE0A3511EDDB3100403342 /* pdfencrypt.c in Sources */,
+				9CEE0A3611EDDB3100403342 /* pdffont.c in Sources */,
+				9CEE0A3711EDDB3100403342 /* pdfnames.c in Sources */,
+				9CEE0A3811EDDB3100403342 /* pdfobj.c in Sources */,
+				9CEE0A3911EDDB3100403342 /* pdfparse.c in Sources */,
+				9CEE0A3A11EDDB3100403342 /* pdfresource.c in Sources */,
+				9CEE0A3B11EDDB3100403342 /* pdfximage.c in Sources */,
+				9CEE0A3C11EDDB3100403342 /* pkfont.c in Sources */,
+				9CEE0A3D11EDDB3100403342 /* pngimage.c in Sources */,
+				9CEE0A3E11EDDB3100403342 /* pst.c in Sources */,
+				9CEE0A3F11EDDB3100403342 /* pst_obj.c in Sources */,
+				9CEE0A4011EDDB3100403342 /* sfnt.c in Sources */,
+				9CEE0A4111EDDB3100403342 /* subfont.c in Sources */,
+				9CEE0A4211EDDB3100403342 /* t1_char.c in Sources */,
+				9CEE0A4311EDDB3100403342 /* t1_load.c in Sources */,
+				9CEE0A4411EDDB3100403342 /* tfm.c in Sources */,
+				9CEE0A4511EDDB3100403342 /* truetype.c in Sources */,
+				9CEE0A4611EDDB3100403342 /* tt_aux.c in Sources */,
+				9CEE0A4711EDDB3100403342 /* tt_cmap.c in Sources */,
+				9CEE0A4811EDDB3100403342 /* tt_glyf.c in Sources */,
+				9CEE0A4911EDDB3100403342 /* tt_gsub.c in Sources */,
+				9CEE0A4A11EDDB3100403342 /* tt_post.c in Sources */,
+				9CEE0A4B11EDDB3100403342 /* tt_table.c in Sources */,
+				9CEE0A4C11EDDB3100403342 /* type0.c in Sources */,
+				9CEE0A4D11EDDB3100403342 /* type1.c in Sources */,
+				9CEE0A4E11EDDB3100403342 /* type1c.c in Sources */,
+				9CEE0A4F11EDDB3100403342 /* unicode.c in Sources */,
+				9CEE0A5011EDDB3100403342 /* pdf_renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
