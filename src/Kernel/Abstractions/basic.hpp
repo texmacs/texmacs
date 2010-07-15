@@ -58,6 +58,9 @@ enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_VERBOSE, DEBUG_FLAG_EVENTS,
 bool debug (int which, bool write_flag= false);
 int  debug_off ();
 void debug_on (int status);
+class string;
+void debug_set (string s, bool flag);
+bool debug_get (string s);
 #define DEBUG_AUTO (debug (DEBUG_FLAG_AUTO))
 #define DEBUG_VERBOSE (debug (DEBUG_FLAG_VERBOSE))
 #define DEBUG_EVENTS (debug (DEBUG_FLAG_EVENTS))

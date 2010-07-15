@@ -49,32 +49,7 @@
       (link project-manage-menu))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history)))
-  (if (nnull? (test-menu))
-      ---
-      (link test-menu)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Developer features
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (show-memory-information s)
-  (string-append s "#[" (number->string (texmacs-memory)) "#bytes]"))
-
-(menu-extend test-menu
-  (-> "Status"
-      ("Tree" (show-tree))
-      ("Path" (show-path))
-      ("Cursors" (show-cursor))
-      ("Selection" (show-selection))
-      ("Environment" (show-env))
-      ("History" (show-history))
-      ("Memory usage" (show-meminfo)))
-  (-> "Debugging"
-      ("Timings" (bench-print-all))
-      ("Backtrace errors" (debug-enable 'backtrace 'debug))
-      ("Memory information" (set! footer-hook show-memory-information))
-      ("Collect garbage" (gc))
-      ("Continuous gc" (delayed (:idle 1000) (gc))))
-  (-> "Test"
-      ("Provoke error" (oops))
-      ("Test routine" (edit-test))))
+  ---
+  ("Debugging tool" (toggle-preference "debugging tool"))
+  ("Linking tool" (toggle-preference "linking tool"))
+  ("Versioning tool" (toggle-preference "versioning tool")))

@@ -188,14 +188,15 @@
 	    (enum ("Encoding" "verbatim->texmacs:encoding")
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8"))))
-    (-> "Utilities"
-	(-> "Scripts"
-	    ("None" (set-preference "scripting language" "none"))
-	    ---
-	    (link scripts-preferences-menu))
-	(toggle ("Remote connections" "remote connections"))
+    (-> "Scripts"
+	("None" (set-preference "scripting language" "none"))
+	---
+	(link scripts-preferences-menu))
+    (-> "Tools"
+	(toggle ("Debugging tool" "debugging tool"))
 	(toggle ("Linking tool" "linking tool"))
-	(toggle ("Versioning tool" "versioning tool")))
+	(toggle ("Versioning tool" "versioning tool"))
+	(toggle ("Remote connections" "remote connections")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")

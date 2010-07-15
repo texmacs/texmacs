@@ -57,6 +57,8 @@
   (new-author new_author (double))
   (set-author set_author (void double))
   (get-author get_author (double))
+  (debug-set debug_set (void string bool))
+  (debug-get debug_get (bool string))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))

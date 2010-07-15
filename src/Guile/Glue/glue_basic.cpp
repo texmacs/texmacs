@@ -472,6 +472,34 @@ tmg_get_author () {
 }
 
 SCM
+tmg_debug_set (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "debug-set");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "debug-set");
+
+  string in1= scm_to_string (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  debug_set (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_debug_get (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "debug-get");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= debug_get (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_image_2psdoc (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "image->psdoc");
 
@@ -3896,6 +3924,8 @@ initialize_glue_basic () {
   scm_new_procedure ("new-author", (FN) tmg_new_author, 0, 0, 0);
   scm_new_procedure ("set-author", (FN) tmg_set_author, 1, 0, 0);
   scm_new_procedure ("get-author", (FN) tmg_get_author, 0, 0, 0);
+  scm_new_procedure ("debug-set", (FN) tmg_debug_set, 2, 0, 0);
+  scm_new_procedure ("debug-get", (FN) tmg_debug_get, 1, 0, 0);
   scm_new_procedure ("image->psdoc", (FN) tmg_image_2psdoc, 1, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);

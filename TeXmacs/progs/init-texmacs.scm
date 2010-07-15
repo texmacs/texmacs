@@ -193,6 +193,10 @@
 (lazy-keyboard (version version-kbd) with-versioning-tool?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
+;(display "Booting debugging facilities\n")
+(lazy-menu (texmacs menus debug-menu) debug-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
 ;(display "Booting plugins\n")
 (for-each lazy-plugin-initialize (plugin-list))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
