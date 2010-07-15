@@ -75,4 +75,5 @@
   ("io" (debug-toggle "io"))
   ("bench" (debug-toggle "bench"))
   ("history" (debug-toggle "history"))
-  ("qt" (debug-toggle "qt")))
+  ("qt" (debug-toggle "qt"))
+  ("keyboard" (debug-toggle "keyboard")))

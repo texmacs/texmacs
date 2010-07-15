@@ -54,7 +54,7 @@ typedef void* pointer;
 
 enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_VERBOSE, DEBUG_FLAG_EVENTS,
        DEBUG_FLAG_STD, DEBUG_FLAG_IO, DEBUG_FLAG_BENCH,
-       DEBUG_FLAG_HISTORY, DEBUG_FLAG_QT };
+       DEBUG_FLAG_HISTORY, DEBUG_FLAG_QT, DEBUG_FLAG_KEYBOARD };
 bool debug (int which, bool write_flag= false);
 int  debug_off ();
 void debug_on (int status);
@@ -69,6 +69,7 @@ bool debug_get (string s);
 #define DEBUG_BENCH (debug (DEBUG_FLAG_BENCH))
 #define DEBUG_HISTORY (debug (DEBUG_FLAG_HISTORY))
 #define DEBUG_QT (debug (DEBUG_FLAG_QT))
+#define DEBUG_KEYBOARD (debug (DEBUG_FLAG_KEYBOARD))
 
 #ifdef DEBUG_ASSERT
 #include <assert.h>

@@ -184,6 +184,8 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
+  if (DEBUG_KEYBOARD)
+    cout << "Keyboard] Pressed " << key << " at " << t << "\n";
   //time_t t1= texmacs_time ();
   if (is_nil (eb)) apply_changes ();
   start_editing ();
@@ -196,6 +198,10 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
 
 void
 edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
+  if (DEBUG_KEYBOARD) {
+    if (has_focus) cout << "Keyboard] Got focus at " << t << "\n";
+    else cout << "Keyboard] Lost focus at " << t << "\n";
+  }
   got_focus= has_focus; (void) t;
   notify_change (THE_FOCUS);
   if (got_focus) {
