@@ -219,7 +219,11 @@
 	    ("TeXmacs extensions to scheme and utilities"
 	     (load-help-article "devel/scheme/utils/scheme-utils"))
 	    ("Programming routines for editing documents"
-	     (load-help-article "devel/scheme/edit/scheme-edit")))))
+	     (load-help-article "devel/scheme/edit/scheme-edit"))
+	    ("Scheme interface for the graphical mode"
+	     (load-help-article "devel/scheme/graphics/scheme-graphics"))
+	    ("Writing TeXmacs bibliography styles"
+	     (load-help-article "devel/scheme/bibliography/bibliography")))))
   ---
   (-> "Search"
       ("Documentation" (interactive docgrep-in-doc))
