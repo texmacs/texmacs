@@ -16,7 +16,6 @@
 #include "gui.hpp"
 #include "hashmap.hpp"
 #include "url.hpp"
-#include "file.hpp"
 
 class pdf_renderer_rep: public renderer_rep {
   static const int default_dpi= 72;

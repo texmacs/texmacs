@@ -24,11 +24,11 @@
 
 extern "C" {
   
-#include "pdfdoc.h"
-#include "pdfdev.h"
-#include "pdfdraw.h"  
-#include "pdffont.h"
-#include "pdfximage.h"
+#include "dvipdfmx/pdfdoc.h"
+#include "dvipdfmx/pdfdev.h"
+#include "dvipdfmx/pdfdraw.h"  
+#include "dvipdfmx/pdffont.h"
+#include "dvipdfmx/pdfximage.h"
   
 void error_cleanup (void) ;
   
