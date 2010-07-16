@@ -50,6 +50,8 @@
 
 #include "epdf.h"
 
+int compat_mode; //FIXME: Unused in TeXmacs. Remove.
+
 int
 pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 {
