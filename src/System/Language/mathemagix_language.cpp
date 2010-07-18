@@ -77,6 +77,13 @@ mathemagix_color_setup_constants (hashmap<string, string> & t) {
   t ("mmout")= c;
   t ("mmin")= c;
   t ("mmerr")= c;
+  t ("blank")= c;
+  t ("stroke")= c;
+  t ("indent")= c;
+  t ("unindent")= c;
+  t ("lf")= c;
+  t ("hrule")= c;
+  t ("flush_now")= c;
   t ("nil")= c;
 }
 
