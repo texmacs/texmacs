@@ -296,7 +296,7 @@ static double font_size (string name) {
 
 void
 pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
- // cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
+  cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
   if (cfn != fn->res_name) {
@@ -319,15 +319,20 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
       }
       if (!is_none (u)) {
         int pos= search_forwards (".", fn->res_name);
-        string fname= (pos==-1? fn->res_name: fn->res_name (0, pos));
+        string rname= (pos==-1? fn->res_name: fn->res_name (0, pos));
         double fsize= font_size (fn->res_name);
 
-        char *_fname = as_charp(fname);
+        url utfm =  resolve_tex(fname * ".tfm") ;
+   
+        char *_rname = as_charp(fname);
         char* _u= as_charp (concretize (u));
-        cout << "DEVFONT " << _fname << " " << fsize << " " << _u << LF;
-        int font_id = pdf_dev_physical_font(_fname,fsize*dpi*PIXEL/default_dpi,_u); 
-        tm_delete_array(_fname);
+        char* _utfm= NULL;
+        if (!is_none(utfm)) _utfm = as_charp (concretize (utfm));
+        cout << "DEVFONT " << _rname << " " << fsize << " " << u << " " << utfm << LF;
+        int font_id = pdf_dev_physical_font(_rname,fsize*dpi*PIXEL/default_dpi,_u,_utfm); 
+        tm_delete_array(_rname);
         tm_delete_array(_u);
+        if (_utfm) tm_delete_array(_utfm);
         if (font_id >= 0) {
           tex_fonts(fn->res_name)= font_id+1;
         }  else {
@@ -340,12 +345,14 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
       cfid = tex_fonts(cfn) -1;
     } else cfid = 0;
   }
-  
-  //pdf_dev_set_raw_glyph(to_x(x), to_y(y), ch, cfid);
-  unsigned char buf[2] = { ch, 0 };
+
   y += oy;  x += ox;
+#if 1
+  pdf_dev_set_raw_glyph(x, y, ch, cfid);
+#else
+  unsigned char buf[2] = { ch, 0 };
   pdf_dev_set_string(x, y, buf, 1, w, cfid, 1);
-  
+#endif
 //  cerr << "char " << ch << " " << x << " " << y << " font " << cfid << " width " << w << LF;
   
 }
