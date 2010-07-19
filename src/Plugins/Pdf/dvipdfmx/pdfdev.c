@@ -1561,7 +1561,7 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
 }
 
 int
-pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_file)
+pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_file, const char *tfm_file)
 {
   int              i;
   fontmap_rec     *mrec = NULL;
@@ -1598,7 +1598,7 @@ pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_fil
   if (verbose > 1)
     print_fontmap(font_name, mrec);
   
-  font->font_id = pdf_font_physical(font_name, ptsize * dev_unit.dvi2pts, font_file);
+  font->font_id = pdf_font_physical(font_name, ptsize * dev_unit.dvi2pts, font_file, tfm_file);
   if (font->font_id < 0)
     return  -1;
   

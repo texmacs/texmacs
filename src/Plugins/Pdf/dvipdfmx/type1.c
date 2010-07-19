@@ -338,7 +338,13 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
       pdf_release_obj(tmp_array);
       return;
     }
-    tfm_id = tfm_open(pdf_font_get_mapname(font), 0);
+    { 
+      char *tfmfile = pdf_font_get_tfmfile(font);
+      if (tfmfile) 
+        tfm_id = tfm_open(tfmfile, 0); 
+      else 
+        tfm_id = tfm_open(pdf_font_get_mapname(font), 0);       
+    }
     for (code = firstchar; code <= lastchar; code++) {
       if (usedchars[code]) {
         double width;

@@ -130,6 +130,7 @@ struct pdf_font
 
   
   char *fontfile;
+  char *tfmfile;
   
   /*
    * PDF font resource objects
@@ -160,6 +161,7 @@ pdf_init_font_struct (pdf_font *font)
   font->font_id  = -1; /* Type0 ID */
   font->fontname = NULL;
   font->fontfile = NULL;
+  font->tfmfile = NULL;
   memset(font->uniqueID, 0, 7);
   font->index    = 0;
 
@@ -218,6 +220,7 @@ pdf_flush_font (pdf_font *font)
     }
   }
 
+
   if (font->resource)
     pdf_release_obj(font->resource);
   if (font->descriptor)
@@ -244,6 +247,8 @@ pdf_clean_font_struct (pdf_font *font)
       RELEASE(font->fontname);
     if (font->fontfile)
       RELEASE(font->fontfile);
+    if (font->tfmfile)
+      RELEASE(font->tfmfile);
     if (font->usedchars)
       RELEASE(font->usedchars);
 
@@ -258,6 +263,7 @@ pdf_clean_font_struct (pdf_font *font)
     font->map_name  = NULL;
     font->fontname  = NULL;
     font->fontfile  = NULL;
+    font->tfmfile  = NULL;
     font->usedchars = NULL;
   }
 
@@ -797,7 +803,7 @@ pdf_font_findresource (const char *tex_name,
 
 int
 pdf_font_physical (const char *tex_name,
-                       double font_scale, const char *font_file)
+                       double font_scale, const char *font_file, const char *tfm_file)
 {
   int          font_id = -1;
   pdf_font    *font;
@@ -981,10 +987,14 @@ pdf_font_physical (const char *tex_name,
       font->map_name    = NEW(strlen(tex_name) + 1, char);
       strcpy(font->map_name, tex_name);
       font->index       = (mrec && mrec->opt.index) ? mrec->opt.index : 0;
-  
-      font->fontfile       = NEW(strlen(font_file) + 1, char);
-      strcpy(font->fontfile, font_file);
-
+      if (font_file) {  
+        font->fontfile       = NEW(strlen(font_file) + 1, char);
+        strcpy(font->fontfile, font_file);
+      }
+      if (tfm_file) {
+        font->tfmfile       = NEW(strlen(tfm_file) + 1, char);
+        strcpy(font->tfmfile, tfm_file);
+      }
       if (pdf_font_open_type1(font) >= 0) {
         font->subtype = PDF_FONT_FONTTYPE_TYPE1;
       } else if (pdf_font_open_type1c(font) >= 0) {
@@ -1187,6 +1197,14 @@ pdf_font_get_fontfile (pdf_font *font)
   ASSERT(font);
   
   return font->fontfile;
+}
+
+char *
+pdf_font_get_tfmfile (pdf_font *font)
+{
+  ASSERT(font);
+  
+  return font->tfmfile;
 }
 
 pdf_obj *

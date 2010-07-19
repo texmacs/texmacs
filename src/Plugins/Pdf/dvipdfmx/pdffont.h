@@ -64,7 +64,7 @@ extern int      pdf_font_findresource  (const char *font_name,
 
 
 extern int       pdf_font_physical (const char *tex_name,
-          double font_scale, const char *file_name);
+          double font_scale, const char *file_name, const char *tfm_file);
 
 
 extern int      pdf_get_font_subtype   (int font_id);
@@ -85,6 +85,7 @@ extern char    *pdf_font_get_ident      (pdf_font *font);
 extern char    *pdf_font_get_mapname    (pdf_font *font);
 extern char    *pdf_font_get_fontname   (pdf_font *font); /* without unique tag */
 extern char    *pdf_font_get_fontfile   (pdf_font *font);
+extern char    *pdf_font_get_tfmfile   (pdf_font *font);
 extern char    *pdf_font_get_uniqueTag  (pdf_font *font);
 
 extern pdf_obj *pdf_font_get_resource   (pdf_font *font);

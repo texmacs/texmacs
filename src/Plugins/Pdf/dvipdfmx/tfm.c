@@ -813,10 +813,10 @@ read_tfm (struct font_metric *fm, FILE *tfm_file, UNSIGNED_QUAD tfm_file_size)
   return;
 }
 
+#if 0
 int
-tfm_open (const char *tfm_name, int must_exist)
+tfm_open_old (const char *tfm_name, int must_exist)
 {
-#ifdef NOKPSE
   FILE *tfm_file;
   int i, format = TFM_FORMAT;
   UNSIGNED_QUAD tfm_file_size;
@@ -892,11 +892,7 @@ tfm_open (const char *tfm_name, int must_exist)
       return -1;
     }
   }
-
   tfm_file = MFOPEN(file_name, FOPEN_RBIN_MODE);
-  if (!tfm_file) {
-    ERROR("Could not open specified TFM/OFM file \"%s\".", tfm_name);
-  }
 
   if (verbose) {
     if (format == TFM_FORMAT)
@@ -906,13 +902,20 @@ tfm_open (const char *tfm_name, int must_exist)
     if (verbose > 1)
       MESG("[%s]", file_name);
   }
-
+  
   RELEASE(file_name);
+  
 
   tfm_file_size = file_size(tfm_file);
   if (tfm_file_size < 24) {
     ERROR("TFM/OFM file too small to be a valid file.");
   }
+  
+  
+  if (!tfm_file) {
+    ERROR("Could not open specified TFM/OFM file \"%s\".", tfm_name);
+  }
+
 
   fms_need(numfms + 1);
   fm_init(fms + numfms);
@@ -935,10 +938,81 @@ tfm_open (const char *tfm_name, int must_exist)
     MESG(")");
 
   return numfms++;
-#else
-  return -1;
-#endif
 }
+
+#endif
+
+int
+tfm_open (const char *tfm_name, int must_exist)
+{
+  FILE *tfm_file;
+  int i;
+  UNSIGNED_QUAD tfm_file_size;
+  char *tex_name = NULL;
+
+  {
+    // find tex_name
+    int i = strlen(tfm_name)-1;
+    while (i>=0) {
+      if (tfm_name[i] != '/') i--;
+      else break;
+    }
+    i++;
+    tex_name = NEW(strlen(tfm_name+i),char);
+    strcpy(tex_name,tfm_name+i);
+  }
+  
+  
+  for (i = 0; i < numfms; i++) {
+    if (!strcmp(tex_name, fms[i].tex_name))
+      return i;
+  }
+
+  tfm_file = MFOPEN(tfm_name, FOPEN_RBIN_MODE);
+  
+#if 0
+  if (verbose) {
+    if (format == TFM_FORMAT)
+      MESG("(TFM:%s", tfm_name);
+    else if (format == OFM_FORMAT)
+      MESG("(OFM:%s", tfm_name);
+    if (verbose > 1)
+      MESG("[%s]", file_name);
+  }
+#endif
+  
+  
+  tfm_file_size = file_size(tfm_file);
+  if (tfm_file_size < 24) {
+    ERROR("TFM file too small to be a valid file.");
+  }
+  
+  
+  if (!tfm_file) {
+    ERROR("Could not open specified TFM file \"%s\".", tfm_name);
+  }
+  
+  
+  fms_need(numfms + 1);
+  fm_init(fms + numfms);
+  
+  {
+    read_tfm(&fms[numfms], tfm_file, tfm_file_size);
+  }
+  
+  MFCLOSE(tfm_file);
+  
+  fms[numfms].tex_name = NEW(strlen(tex_name)+1, char);
+  strcpy(fms[numfms].tex_name, tex_name);
+  
+  if (verbose) 
+    MESG(")");
+  
+  RELEASE(tex_name);
+  
+  return numfms++;
+}
+
 
 void
 tfm_close_all (void)

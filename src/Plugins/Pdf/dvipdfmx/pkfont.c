@@ -70,11 +70,14 @@ truedpi (const char *ident, double point_size, unsigned bdpi)
   double    design_size;
   int       tfm_id;
 
-  tfm_id = tfm_open(ident, 0);
+  tfm_id = MFOPEN(ident, FOPEN_RBIN_MODE);
   if (tfm_id < 0)
     return  dpi;
 
   design_size = tfm_get_design_size(tfm_id);
+
+  MFCLOSE(tfm_id);
+
   if (design_size <= 0.0)
     WARN("DESGIN_SIZE <= 0.0? (TFM=\"%s\")", ident);
   else {
@@ -121,14 +124,20 @@ pdf_font_open_pkfont (pdf_font *font)
   if (!ident || point_size <= 0.0)
     return  -1;
 
-  dpi = truedpi(ident, point_size, base_dpi);
   {
     char *fontfile =   pdf_font_get_fontfile  (font);
+    char *tfmfile =   pdf_font_get_tfmfile  (font);
     
     if (fontfile)
       fp = MFOPEN(fontfile, FOPEN_RBIN_MODE);
     else
       fp = dpx_open_pk_font_at(ident, dpi);
+
+    if (tfmfile) 
+      dpi = truedpi(tfmfile, point_size, base_dpi);
+    else 
+      dpi = base_dpi;
+  
   }
   
   if (!fp)

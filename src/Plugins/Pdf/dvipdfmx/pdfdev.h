@@ -157,7 +157,7 @@ extern int    pdf_dev_put_image  (int xobj_id,
  */
 extern int    pdf_dev_locate_font (const char *font_name, spt_t ptsize);
 
-extern int    pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_file);
+extern int    pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_file, const char *tfm_file);
 
 
 extern int    pdf_dev_setfont     (const char *font_name, spt_t ptsize);
