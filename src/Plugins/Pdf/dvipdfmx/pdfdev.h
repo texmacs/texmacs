@@ -143,6 +143,8 @@ extern void   pdf_dev_set_string (spt_t xpos, spt_t ypos,
 				  spt_t text_width,
 				  int   font_id, int ctype);
 
+extern spt_t pdf_dev_string_width(int font_id, unsigned char *str, unsigned len);
+
 extern void   pdf_dev_set_raw_glyph (spt_t xpos, spt_t ypos, 
                                      unsigned char glyph, int font_id);
 

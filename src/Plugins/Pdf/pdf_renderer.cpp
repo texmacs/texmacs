@@ -29,6 +29,7 @@ extern "C" {
 #include "dvipdfmx/pdfdraw.h"  
 #include "dvipdfmx/pdffont.h"
 #include "dvipdfmx/pdfximage.h"
+#include "dvipdfmx/tfm.h"
   
 void error_cleanup (void) ;
   
@@ -295,7 +296,7 @@ static double font_size (string name) {
 }
 
 void
-pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
+pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   //cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
@@ -347,11 +348,12 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
   }
 
   y += oy;  x += ox;
-#if 1
+#if 0
   pdf_dev_set_raw_glyph(x, y, ch, cfid);
 #else
   unsigned char buf[2] = { ch, 0 };
-  pdf_dev_set_string(x, y, buf, 1, w, cfid, 1);
+  fixword width = pdf_dev_string_width(cfid, buf, 1);
+  pdf_dev_set_string(x, y, buf, 1, width, cfid, 1);
 #endif
 //  cerr << "char " << ch << " " << x << " " << y << " font " << cfid << " width " << w << LF;
   

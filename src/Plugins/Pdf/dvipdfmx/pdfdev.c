@@ -486,6 +486,8 @@ struct dev_font {
   int      ucs_plane;
 
   int      is_unicode;
+  
+  int   tfm_id;
 };
 static struct dev_font *dev_fonts = NULL;
 
@@ -1002,6 +1004,17 @@ void pdf_dev_push_coord(double xpos, double ypos)
 void pdf_dev_pop_coord(void)
 {
   if (num_dev_coords > 0) num_dev_coords--;
+}
+
+
+spt_t pdf_dev_string_width(int   font_id, unsigned char *str, unsigned len)
+{
+  if (font_id < 0 || font_id >= num_dev_fonts) {
+    ERROR("Invalid font: %d (%d)", font_id, num_dev_fonts);
+    return;
+  }
+  
+  return tfm_string_width(GET_FONT(font_id)->tfm_id, str, len);
 }
 
 /*
@@ -1638,6 +1651,8 @@ pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_fil
   font->is_unicode = 0;
   font->ucs_group  = 0;
   font->ucs_plane  = 0;
+  
+  font->tfm_id = tfm_open(tfm_file, 1);
   
   if (mrec) {
     font->extend = mrec->opt.extend;

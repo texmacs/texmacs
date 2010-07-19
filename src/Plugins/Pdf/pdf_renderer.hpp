@@ -59,7 +59,7 @@ public:
   color get_background ();
   void  set_color (color c);
   void  set_background (color c);
-  void  draw (int char_code, font_glyphs fn, SI x, SI y, SI w);
+  void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  lines (array<SI> x, array<SI> y);
