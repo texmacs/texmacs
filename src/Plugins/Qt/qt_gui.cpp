@@ -23,6 +23,7 @@
 #include <QSetIterator>
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
+#include "QTMWindow.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
 #include "tm_link.hpp" // for number_of_servers
@@ -385,8 +386,11 @@ gui_maximal_extents (SI& width, SI& height) {
 
 void
 gui_refresh () {
-  // update and redraw all windows (e.g. on change of output language)
-  // FIXME: add suitable code
+  // called upon chnage of output language
+  // emit a signal which force every QTMAction to change his text
+  // according to the new language
+
+  the_gui->gui_helper->doRefresh();
 }
 
 
@@ -398,6 +402,11 @@ void
 QTMGuiHelper::doUpdate () {
 //  cout << "UPDATE " << texmacs_time () << LF;
   gui->update();
+}
+
+void
+QTMGuiHelper::doRefresh () {
+  emit refresh();
 }
 
 bool

@@ -32,6 +32,8 @@
 #include <QKeySequence>
 
 
+#include "QTMGuiHelper.hpp"
+#include "qt_gui.hpp"
 
 // REMARK on memory management.
 // the hierarchy of a QMenu has parents correctly set to the proper supermenu
@@ -53,16 +55,25 @@
 // and be attached to some QTMAction. This guarantees correct memory management.
 
 
-// this custom action frees its menu if it does not already have an owner.
-class QTMAction : public QAction {
-public:
-  QTMAction(QObject *parent = NULL) : QAction(parent) {  }
- ~QTMAction() { 
-    if (menu() && !(menu()->parent())) delete menu(); 
- }
-};
+
+QTMAction::QTMAction(QObject *parent) : QAction(parent) { 
+  QObject::connect(the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
+}
+
+QTMAction::~QTMAction() { 
+  QObject::disconnect(the_gui->gui_helper, 0, this, 0);
+  if (menu() && !(menu()->parent())) delete menu(); 
+}
 
 
+void 
+QTMAction::doRefresh() {
+  if (N(str)) {
+    string t= qt_translate (str);
+    if (t == "Help") t= "Help ";
+    setText(to_qstring_utf8 (t));
+  }
+}
 
 class qt_menu_rep: public qt_widget_rep {
 public:
@@ -315,8 +326,11 @@ pullright_button (widget w, promise<widget> pw) {
 
 QAction*
 qt_text_widget_rep::as_qaction () {
-  QAction* a= new QTMAction (NULL);
-  a->setText(to_qstring_utf8 (str));
+  QTMAction* a= new QTMAction (NULL);
+  string t= qt_translate (str);
+  if (t == "Help") t= "Help ";
+  a->setText(to_qstring_utf8 (t));
+  a->str = str;
   return a;
 }
 
@@ -385,9 +399,7 @@ balloon_widget (widget w, widget help)  {
 widget
 text_widget (string s, color col, bool tsp, string lan) {
   // a text widget with a given color, transparency and language
-  string t= qt_translate (s);
-  if (t == "Help") t= "Help ";
-  return tm_new<qt_text_widget_rep> (t, col, tsp, lan);
+  return tm_new<qt_text_widget_rep> (s, col, tsp, lan);
 }
 
 widget

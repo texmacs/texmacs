@@ -15,6 +15,7 @@
 #include "qt_gui.hpp"
 #include "Scheme/object.hpp"
 #include <QObject>
+#include <QAction>
 
 class QTMGuiHelper : public QObject {
   Q_OBJECT
@@ -28,9 +29,29 @@ protected:
   
 public slots:
   void doUpdate ();
+  void doRefresh ();
   void doReadSocketNotification (int socket);  
   void doWriteSocketNotification (int socket);  
+  
+signals:
+  void refresh ();  
 };
 
+
+// this custom action frees its menu if it does not already have an owner.
+class QTMAction : public QAction {
+  
+  Q_OBJECT
+  
+public:
+  string str;
+  
+  QTMAction(QObject *parent = NULL);
+  ~QTMAction();
+  
+  public slots:
+  void doRefresh();
+  
+};
 
 #endif // QTMGUIHELPER_HPP
