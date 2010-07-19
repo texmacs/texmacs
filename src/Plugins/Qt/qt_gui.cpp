@@ -386,7 +386,7 @@ gui_maximal_extents (SI& width, SI& height) {
 
 void
 gui_refresh () {
-  // called upon chnage of output language
+  // called upon change of output language
   // emit a signal which force every QTMAction to change his text
   // according to the new language
 
