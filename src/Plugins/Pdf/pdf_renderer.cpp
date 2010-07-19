@@ -296,7 +296,7 @@ static double font_size (string name) {
 
 void
 pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
-  cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
+  //cerr << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
   if (cfn != fn->res_name) {
@@ -328,7 +328,7 @@ pdf_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y, SI w) {
         char* _u= as_charp (concretize (u));
         char* _utfm= NULL;
         if (!is_none(utfm)) _utfm = as_charp (concretize (utfm));
-        cout << "DEVFONT " << _rname << " " << fsize << " " << u << " " << utfm << LF;
+        //cout << "DEVFONT " << _rname << " " << fsize << " " << u << " " << utfm << LF;
         int font_id = pdf_dev_physical_font(_rname,fsize*dpi*PIXEL/default_dpi,_u,_utfm); 
         tm_delete_array(_rname);
         tm_delete_array(_u);
