@@ -72,8 +72,10 @@ public:
 };
 
 class qt_window_widget_rep: public widget_rep {
-  QWidget *wid;
 public:
+
+  QWidget *wid;
+
   qt_window_widget_rep (QWidget* _wid);
   ~qt_window_widget_rep ();
 

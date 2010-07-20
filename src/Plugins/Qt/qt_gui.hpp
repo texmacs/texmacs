@@ -15,6 +15,8 @@
 #include <QPixmap>
 #include <QApplication>
 #include <QTimer>
+#include <QLabel>
+#include <QList>
 
 #include "timer.hpp"
 #include "gui.hpp"
@@ -39,6 +41,7 @@ public:
   time_t interrupt_time;
   QTMGuiHelper *gui_helper;
   QTimer *updatetimer;
+  QList<QLabel*> waitDialogs;
 
   hashmap<string,tree>   selection_t;
   hashmap<string,string> selection_s;
