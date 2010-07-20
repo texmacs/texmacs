@@ -498,6 +498,11 @@ qt_input_widget_rep::perform_dialog() {
     }
     cbs[i] -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
     cbs[i] -> setEditable (true);
+    // apparently the following flag prevents Qt from substituting an history item
+    // for an input when they differ only from the point of view of case (upper/lower)
+    // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
+    // will retain the string aAAAAa    
+    cbs[i]->setDuplicatesEnabled(true); 
     lab -> setBuddy (cbs[i]);
     hl -> addWidget (lab);
     hl -> addWidget (cbs[i]);
@@ -609,11 +614,16 @@ qt_tm_widget_rep::do_interactive_prompt () {
   }
   cb -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
   cb -> setEditable (true);
+  // apparently the following flag prevents Qt from substituting an history item
+  // for an input when they differ only from the point of view of case (upper/lower)
+  // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
+  // will retain the string aAAAAa
+  cb->setDuplicatesEnabled(true); 
   lab -> setBuddy (cb);
   hl -> addWidget (lab);
   hl -> addWidget (cb);
   vl -> addLayout (hl);
-    
+  
   if (ends (it->type, "file") || it->type == "directory") {
     // autocompletion
     QCompleter *completer = new QCompleter(&d);
@@ -621,7 +631,6 @@ qt_tm_widget_rep::do_interactive_prompt () {
     completer->setModel(dirModel);
     cb->setCompleter(completer);
   }
-
   
   {
     QDialogButtonBox* buttonBox =
