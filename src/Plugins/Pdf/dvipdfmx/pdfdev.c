@@ -1652,7 +1652,7 @@ pdf_dev_physical_font (const char *font_name, spt_t ptsize, const char *font_fil
   font->ucs_group  = 0;
   font->ucs_plane  = 0;
   
-  font->tfm_id = tfm_open(tfm_file, 1);
+  font->tfm_id = (tfm_file ? tfm_open(tfm_file, 1) : -1);
   
   if (mrec) {
     font->extend = mrec->opt.extend;
