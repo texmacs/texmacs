@@ -52,6 +52,11 @@
 (define (notify-bibtex-command var val)
   (set-bibtex-command val))
 
+(define (notify-tool var val)
+  ;; FIXME: the menus sometimes don't get updated,
+  ;; but the fix below does not work
+  (if (has-view?) (notify-change 1)))
+
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" (get-default-look-and-feel) notify-look-and-feel)
@@ -61,10 +66,10 @@
   ("security" "prompt on scripts" notify-security)
   ("bibtex command" "bibtex" notify-bibtex-command)
   ("scripting language" "none" notify-scripting-language)
-  ("debugging tool" "off" noop)
-  ("linking tool" "off" noop)
-  ("versioning tool" "off" noop)
-  ("remote connections" "off" noop))
+  ("debugging tool" "off" notify-tool)
+  ("linking tool" "off" notify-tool)
+  ("versioning tool" "off" notify-tool)
+  ("remote connections" "off" notify-tool))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines

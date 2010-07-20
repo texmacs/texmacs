@@ -2343,6 +2343,19 @@ tmg_notify_page_change () {
 }
 
 SCM
+tmg_notify_change (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "notify-change");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->notify_change (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_print_to_file (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "print-to-file");
 
@@ -2806,6 +2819,7 @@ initialize_glue_editor () {
   scm_new_procedure ("generate-all-aux", (FN) tmg_generate_all_aux, 0, 0, 0);
   scm_new_procedure ("generate-aux", (FN) tmg_generate_aux, 1, 0, 0);
   scm_new_procedure ("notify-page-change", (FN) tmg_notify_page_change, 0, 0, 0);
+  scm_new_procedure ("notify-change", (FN) tmg_notify_change, 1, 0, 0);
   scm_new_procedure ("print-to-file", (FN) tmg_print_to_file, 1, 0, 0);
   scm_new_procedure ("print-pages-to-file", (FN) tmg_print_pages_to_file, 3, 0, 0);
   scm_new_procedure ("print", (FN) tmg_print, 0, 0, 0);

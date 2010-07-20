@@ -252,6 +252,7 @@
   (generate-all-aux generate_aux (void))
   (generate-aux generate_aux (void string))
   (notify-page-change notify_page_change (void))
+  (notify-change notify_change (void int))
   (print-to-file print_to_file (void url))
   (print-pages-to-file print_to_file (void url string string))
   (print print_buffer (void))
