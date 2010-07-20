@@ -24,6 +24,10 @@
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
 
+#ifdef PDF_RENDERER
+#include "Pdf/pdf_renderer.hpp"
+#endif
+
 #ifdef USE_GS
 #include "Ghostscript/gs_utilities.hpp"
 #endif
@@ -157,10 +161,13 @@ void
 edit_main_rep::print (url name, bool conform, int first, int last) {
   bool pdf= (suffix (name) == "pdf");
   url orig= resolve (name, "");
+
+#ifndef PDF_RENDERER
 #ifdef USE_GS
   if (pdf) name= url_temp (".ps");
 #endif
-
+#endif
+  
   string medium = env->get_string (PAGE_MEDIUM);
   if (conform && (medium != "paper")) conform= false;
   // FIXME: better command for conform printing
@@ -204,8 +211,15 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   // Print pages
 
   int i;
-  renderer ren=
-    printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
+  
+#ifdef PDF_RENDERER
+  renderer ren = (pdf ? 
+    pdf_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm) :
+    printer (name, dpi, pages, page_type, landsc, w/cm, h/cm) );
+#else
+  renderer ren = printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
+#endif
+  
   for (i=start; i<end; i++) {
     tree bg= env->read (BG_COLOR);
     ren->set_background_pattern (bg);
@@ -220,11 +234,13 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   }
   tm_delete (ren);
 
+#ifndef PDF_RENDERER
 #ifdef USE_GS
   if (pdf) {
     gs_to_pdf (name, orig);
     ::remove (name);
   }
+#endif
 #endif
 }
 

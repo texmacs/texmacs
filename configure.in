@@ -763,6 +763,29 @@ esac
 AC_SUBST(CONFIG_MACOS)
 
 #--------------------------------------------------------------------
+# Experimental PDF renderer
+#--------------------------------------------------------------------
+
+AC_ARG_ENABLE(pdf-renderer,
+[  --enable-pdf-renderer   use experimental PDF renderer for pdf export],
+    [], [enable_pdf_renderer="no"])
+case "$enable_pdf_renderer" in
+    yes)
+	AC_MSG_RESULT([enabling experimental PDF renderer])
+        AC_DEFINE(PDF_RENDERER, 1, [Enabling experimental PDF renderer])
+        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+        ;;
+    no)
+	AC_MSG_RESULT([disabling experimental PDF renderer])
+        CONFIG_PDF=""
+	;;
+    *)
+	AC_MSG_ERROR([bad option --enable-pdf-renderer=$enable_pdf_renderer])
+	;;
+esac
+AC_SUBST(CONFIG_PDF)
+
+#--------------------------------------------------------------------
 # Gui selection
 #--------------------------------------------------------------------
 

@@ -11,6 +11,7 @@ default: all
 vpath %.cpp $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
 vpath %.m $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
 vpath %.mm $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
+vpath %.c $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
 
 ###############################################################################
 # Configuration variables
@@ -20,6 +21,7 @@ tmsrc = @tmsrc@
 SO_SUFFIX= @CONFIG_SO@
 CONFIG_OS= @CONFIG_OS@
 
+CC = @CC@
 CXX = @CXX@
 CXXWARNING = @CONFIG_CXXWARNING@
 CXXTEMPLATE = @CONFIG_CXXTEMPLATE@
@@ -87,13 +89,17 @@ $(notdir $(wildcard $(dir)/*.m $(dir)/*/*.m)))
 findmm_in = \
 $(foreach dir,$(patsubst %,$(1)/%,$(2)),\
 $(notdir $(wildcard $(dir)/*.mm $(dir)/*/*.mm)))
+findc_in = \
+$(foreach dir,$(patsubst %,$(1)/%,$(2)),\
+$(notdir $(wildcard $(dir)/*.c)))
 
 kernel_src   := $(call findsrc,Kernel)
 system_src   := $(call findsrc,System)
 data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Freetype Cairo Imlib2 \
-                                          Ispell Metafont Openssl)
+                                          Ispell Metafont Openssl @CONFIG_PDF@)
+plugins_c_src:= $(call findc_in,Plugins,@CONFIG_PDF@)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
@@ -114,6 +120,7 @@ guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
 # compiles.
 
 make_cpp_deps = $(patsubst %.cpp,Deps/%.d,$(notdir $(1)))
+make_c_deps = $(patsubst %.c,Deps/%.d,$(notdir $(1)))
 make_m_deps = $(patsubst %.m,Deps/%.d,$(notdir $(1)))
 make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 
@@ -123,8 +130,9 @@ texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)
  $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
+texmacs_c_deps += $(call make_c_deps,$(plugins_c_src))
 
-deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
+deps += $(texmacs_cpp_deps) $(texmacs_c_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
 ###############################################################################
 # Include files
@@ -211,6 +219,7 @@ endif
 makeobj = $(patsubst %.cpp,Objects/%.o,$(1))
 makeobj_m = $(patsubst %.m,Objects/%.o,$(1))
 makeobj_mm = $(patsubst %.mm,Objects/%.o,$(1))
+makeobj_c = $(patsubst %.c,Objects/%.o,$(1))
 
 system_obj   := $(call makeobj,$(system_src))
 kernel_obj   := $(call makeobj,$(kernel_src))
@@ -226,6 +235,7 @@ moc_obj	     := $(call makeobj,$(qt_moc_src))
 qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
 gs_obj       := $(call makeobj,$(gs_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
+plugins_c_obj:= $(call makeobj_c,$(plugins_c_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
 style_obj    := $(call makeobj,$(style_src))
@@ -237,11 +247,15 @@ style_obj    := $(call makeobj,$(style_src))
 
 
 %.o: %.cpp # Disable implicit compilation rule
+%.o: %.c # Disable implicit compilation rule
 
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
 cxx_incl     = $(call cxx_flags,$(1) \
   $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
   $(CXXGUILE) $(CPPFLAGS) $(CXXFLAGS)) 
+cc_flags    = $(strip $(CC) $(1) -c $< -o $@)
+cc_incl     = $(call cc_flags,$(1) \
+  $(CPPFLAGS) $(CXXFLAGS)) 
 
 $(system_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include)
@@ -257,6 +271,8 @@ $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(plugins_incl))
+$(plugins_c_obj): Objects/%.o: %.c
+	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11))
 $(os_obj): Objects/%.o: %.cpp
@@ -320,7 +336,7 @@ uses_system   := $(system_obj)
 uses_kernel   := $(kernel_obj)
 uses_data     := $(data_obj)
 uses_graphics := $(graphics_obj)
-uses_plugins  := $(plugins_obj)
+uses_plugins  := $(plugins_obj) $(plugins_c_obj)
 uses_x11      := $(x11_obj)
 uses_os       := $(os_obj)
 uses_qt       := $(qt_obj) $(moc_obj)

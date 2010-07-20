@@ -702,6 +702,7 @@ GS_EXE
 GS_DLL
 CONFIG_EXPERIMENTAL
 CONFIG_MACOS
+CONFIG_PDF
 QMAKE
 MOC
 UIC
@@ -1357,6 +1358,7 @@ Optional Features:
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
   --enable-macosx-extensions   support new style rewriting code
+  --enable-pdf-renderer   use experimental PDF renderer for pdf export
   --enable-qt             replace X11 by Qt interface
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-debug=ARG      install a debugging enable executable -ggdb
@@ -3879,7 +3881,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   ac_cv_header_stdc=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 
@@ -3900,7 +3902,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   ac_cv_header_stdc=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 
@@ -4280,7 +4282,7 @@ _ACEOF
       eval "ac_im_$ac_var=\`\${MAKE-make} $ac_var 2>/dev/null | sed -n 's/^$ac_var=//p'\`"
     done
     # Open Windows xmkmf reportedly sets LIBDIR instead of USRLIBDIR.
-    for ac_extension in a so sl; do
+    for ac_extension in a so sl dylib la dll; do
       if test ! -f "$ac_im_usrlibdir/libX11.$ac_extension" &&
 	 test -f "$ac_im_libdir/libX11.$ac_extension"; then
 	ac_im_usrlibdir=$ac_im_libdir; break
@@ -4433,7 +4435,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
 for ac_dir in `echo "$ac_x_includes $ac_x_header_dirs" | sed s/include/lib/g`
 do
   # Don't even attempt the hair of trying to link an X program!
-  for ac_extension in a so sl; do
+  for ac_extension in a so sl dylib la dll; do
     if test -r "$ac_dir/libX11.$ac_extension"; then
       ac_x_libraries=$ac_dir
       break 2
@@ -9022,6 +9024,41 @@ esac
 
 
 #--------------------------------------------------------------------
+# Experimental PDF renderer
+#--------------------------------------------------------------------
+
+# Check whether --enable-pdf-renderer was given.
+if test "${enable_pdf_renderer+set}" = set; then
+  enableval=$enable_pdf_renderer;
+else
+  enable_pdf_renderer="no"
+fi
+
+case "$enable_pdf_renderer" in
+    yes)
+	{ echo "$as_me:$LINENO: result: enabling experimental PDF renderer" >&5
+echo "${ECHO_T}enabling experimental PDF renderer" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define PDF_RENDERER 1
+_ACEOF
+
+        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+        ;;
+    no)
+	{ echo "$as_me:$LINENO: result: disabling experimental PDF renderer" >&5
+echo "${ECHO_T}disabling experimental PDF renderer" >&6; }
+        CONFIG_PDF=""
+	;;
+    *)
+	{ { echo "$as_me:$LINENO: error: bad option --enable-pdf-renderer=$enable_pdf_renderer" >&5
+echo "$as_me: error: bad option --enable-pdf-renderer=$enable_pdf_renderer" >&2;}
+   { (exit 1); exit 1; }; }
+	;;
+esac
+
+
+#--------------------------------------------------------------------
 # Gui selection
 #--------------------------------------------------------------------
 
@@ -10826,13 +10863,13 @@ GS_EXE!$GS_EXE$ac_delim
 GS_DLL!$GS_DLL$ac_delim
 CONFIG_EXPERIMENTAL!$CONFIG_EXPERIMENTAL$ac_delim
 CONFIG_MACOS!$CONFIG_MACOS$ac_delim
+CONFIG_PDF!$CONFIG_PDF$ac_delim
 QMAKE!$QMAKE$ac_delim
 MOC!$MOC$ac_delim
 UIC!$UIC$ac_delim
 RCC!$RCC$ac_delim
 QT_PATH!$QT_PATH$ac_delim
 TMPDIR!$TMPDIR$ac_delim
-QT_VERSION_MAJOR!$QT_VERSION_MAJOR$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -10874,6 +10911,7 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+QT_VERSION_MAJOR!$QT_VERSION_MAJOR$ac_delim
 QT_DEFINES!$QT_DEFINES$ac_delim
 QT_CFLAGS!$QT_CFLAGS$ac_delim
 QT_CXXFLAGS!$QT_CXXFLAGS$ac_delim
@@ -10929,7 +10967,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 53; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 54; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
