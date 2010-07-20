@@ -12,6 +12,7 @@
 #include "iterator.hpp"
 #include "dictionary.hpp"
 #include "qt_gui.hpp"
+#include "qt_utilities.hpp"
 #include "analyze.hpp"
 #include <locale.h>
 #include "language.hpp"
@@ -19,6 +20,7 @@
 #include <QDesktopWidget>
 #include <QClipboard>
 #include <QFileOpenEvent>
+#include <QLabel>
 #include <QSocketNotifier>
 #include <QSetIterator>
 #include "QTMGuiHelper.hpp"
@@ -193,6 +195,28 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   (void) w; (void) message; (void) arg;
+
+  
+  //FIXME: we must center the wait widget wrt the current active window
+  
+  static QLabel *waitDialog = NULL;
+
+  if (N(message)) {
+    if (!waitDialog) {
+      waitDialog = new QLabel;
+      waitDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+      waitDialog->setMargin(15);
+    }
+    waitDialog->setText(to_qstring_utf8(qt_translate(message * " " * arg)));
+    waitDialog->show();
+  }
+  else {
+    if (waitDialog) {
+      waitDialog->close();
+      delete waitDialog;
+      waitDialog = NULL;
+    }
+  }
 }
 
 void (*the_interpose_handler) (void) = NULL;
