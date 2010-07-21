@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7>
+<TeXmacs|1.0.7.5>
 
 <style|<tuple|source|std>>
 
@@ -14,11 +14,10 @@
     <src-copyright|2003--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -74,7 +73,7 @@
   <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Screen
   shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing lists|ml>>>>>
 
-  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|Windows|windows>|<tmweb-link|SVN|svn>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>>
+  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|MacOS|macosx>|<tmweb-link|Windows|windows>|<tmweb-link|SVN|svn>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>>
 
   <assign|tmweb-help-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorial|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>>>>>
 
