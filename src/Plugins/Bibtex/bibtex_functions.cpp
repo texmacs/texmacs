@@ -37,13 +37,28 @@ bib_parse_char (string s, int& pos, int& depth, bool& special, int& math) {
         r << s[pos];
         pos++;
       }
-      else if (special) {
+      else /* if (special) */ {
         if (pos < N(s) && !is_alpha (s[pos]) && !is_digit (s[pos])) {
           r << s[pos];
           pos++;
         }
 	else {
           while (pos < N(s) && (is_alpha (s[pos]) || is_digit (s[pos]))) {
+            r << s[pos];
+            pos++;
+          }
+        }
+        if (pos < N(s) && (is_alpha (s[pos]) || is_digit (s[pos]))) {
+          r << s[pos];
+          pos++;
+        }
+        else if (pos < N(s) && s[pos] == '{') {
+          int d= 1;
+          r << s[pos];
+          pos++;
+          while (pos < N(s) && d > 0) {
+            if (s[pos] == '{') d++;
+            if (s[pos] == '}') d--;
             r << s[pos];
             pos++;
           }
@@ -56,6 +71,7 @@ bib_parse_char (string s, int& pos, int& depth, bool& special, int& math) {
       if (pos < N(s) && s[pos] == '$') {
         if (math == 2) math= 0;
         else math= 2;
+        pos++;
         return "$$";
       }
       else {
@@ -108,6 +124,48 @@ bib_is_digit (string s) {
 static bool
 bib_is_char (string s, char c) {
   return (N(s) == 1) && (s[0] == c);
+}
+
+static string
+bib_to_latex (string s) {
+  string r= "{";
+  int pos= 0;
+  int depth= 0;
+  bool special= false;
+  bool specialsav= special;
+  int math= 0;
+  int keepcase= -1;
+  while (pos < N(s)) {
+    specialsav= special;
+    string ch= bib_parse_char (s, pos, depth, special, math);
+//    cerr << ch << " " << as_string (keepcase) << " " << as_string (depth) << "\n";
+    if (ch == "$$") r << "$";
+    else if (special || math) r << ch;
+    else if (bib_is_space (ch)) {
+      if (keepcase == depth+1) {
+        r << "} ";
+        keepcase= -1;
+      }
+      else r << " ";
+    }
+    else if (ch == "%") r << "\\%";
+    else if (bib_is_char (ch, '{') && depth > 0 &&
+	     bib_get_char (s, pos) != "\\") {
+      if (keepcase == -1) {
+        r << "\\keepcase{";
+        keepcase= depth;
+      }
+      else if (keepcase < depth) r << "{";
+    }
+    else if (bib_is_char (ch, '}')) {
+      if (keepcase <= depth || specialsav) r << ch;
+    }
+    else  r << ch;
+  }
+  for (int i= keepcase; i>0; i--) r << "}";
+  r << "}";
+//  cerr << r << "\n";
+  return r;
 }
 
 /******************************************************************************
@@ -270,7 +328,6 @@ search_and_keyword (string s, int& pos) {
         pos += 4;
         return true;
       }
-      else pos++;
     }
   }
   return false;
@@ -427,10 +484,9 @@ get_fvl (string sfvl) {
       f= w << " " << f;
     }
   }
-  res << "\\bibname\\\\\n";
-  res << f << "\\\\\n";
-  res << v << "\\\\\n";
-  res << l << "\\\\\n";
+  res << "\\section{}" << bib_to_latex (f);
+  res << "\\section{}" << bib_to_latex (v);
+  res << "\\section{}" << bib_to_latex (l);
   return res;
 }
 
@@ -454,10 +510,9 @@ get_vl_f (string svl, string sf) {
     w << words;
     f= w << " " << f;
   }
-  res << "\\bibname\\\\\n";
-  res << f << "\\\\\n";
-  res << v << "\\\\\n";
-  res << l << "\\\\\n";
+  res << "\\section{}" << bib_to_latex (f);
+  res << "\\section{}" << bib_to_latex (v);
+  res << "\\section{}" << bib_to_latex (l);
   return res;
 }
 
@@ -472,7 +527,21 @@ get_vl_j_f (string svl, string sj, string sf) {
     w << words;
     j= w << " " << j;
   }
-  res << j << "\\\\\n";
+  res << "\\section{}" << bib_to_latex (j);
+  return res;
+}
+
+static string
+get_until_char (string s, int& pos, string c) {
+  string res;
+  int depth= 0;
+  bool special= false;
+  int math= 0;
+  while (pos < N(s)) {
+    string ch= bib_parse_char (s, pos, depth, special, math);
+    if (ch == c && depth == 0 && !special && math == 0) return res;
+    else res << ch;
+  }
   return res;
 }
 
@@ -480,19 +549,17 @@ static string
 get_first_von_last (string s) {
   string a, b, c;
   int pos= 0;
-  for (; pos < N(s) && s[pos] != ','; pos++) a << s[pos];
-  pos++;
-  for (; pos < N(s) && s[pos] != ','; pos++) b << s[pos];
-  pos++;
-  for (; pos < N(s); pos++) c << s[pos];
+  a= get_until_char (s, pos, ",");
+  b= get_until_char (s, pos, ",");
+  c= get_until_char (s, pos, "");
   if (a != "" && b == "" && c == "") {
     string res= get_fvl (a);
-    res <<  "\\\\\n";
+    res << "\\section{}";
     return res;
   }
   if (a != "" && b != "" && c == "") {
     string res= get_vl_f (a, b);
-    res <<  "\\\\\n";
+    res << "\\section{}";
     return res;
   }
   if (a != "" && b != "" && c != "") return get_vl_j_f (a, b, c);
@@ -502,8 +569,8 @@ string
 bib_names (string s, int& nbfields) {
   string res;
   int pos= 0;
-  res << "\\bibnames\\\\\n";
   nbfields++;
+  res << "\\section{}{\\bibnames}";
   while (pos < N(s)) {
     string name;
     int deb= pos;
@@ -511,6 +578,7 @@ bib_names (string s, int& nbfields) {
     int pos2= pos;
     if (pos < N(s)) pos -= 5;
     if (pos <= N(s) && deb < pos) name= s (deb, pos);
+    res << "\\section{}{\\bibname}";
     res << get_first_von_last (name);
     nbfields += 5;
     pos= pos2;
@@ -731,11 +799,11 @@ bib_get_fields (tree t, string& latex) {
           }
 	  else if (is_atomic (f[1]) && f[0]->label != "pages") {
             if (!bib_is_blank_string (f[1]->label)) {
-	      latex << f[1]->label << "\\\\\n";
+	      latex << "\\section{}" << bib_to_latex (f[1]->label);
               nbfields++;;
             }
             else {
-              latex << "\\\\\n";
+              latex << "\\section{}";
               nbfields++;
             }
           }
@@ -749,7 +817,7 @@ bib_get_fields (tree t, string& latex) {
 }
 
 static void
-bib_set_fields (tree& t, tree latex, int& ind) {
+bib_set_fields (tree& t, array<tree> latex, int& ind) {
   for (int i= 0; i<N(t); i++) {
     if (bib_is_entry (t[i])) {
       for (int j= 0; j<N(t[i][2]); j++) {
@@ -758,12 +826,12 @@ bib_set_fields (tree& t, tree latex, int& ind) {
           if ((f[0]->label == "author" || f[0]->label == "editor") &&
 	      is_atomic (f[1])) {
             tree res= compound ("bib-names"); ind++;
-            while (latex[0][0][ind][0][0] == compound ("bibname")) {
+            while (latex[ind] == compound ("bibname")) {
               tree name= compound ("bib-name"); ind++;
-              name << latex[0][0][ind][0][0]; ind++;
-              name << latex[0][0][ind][0][0]; ind++;
-              name << latex[0][0][ind][0][0]; ind++;
-              name << latex[0][0][ind][0][0]; ind++;
+              name << latex[ind]; ind++;
+              name << latex[ind]; ind++;
+              name << latex[ind]; ind++;
+              name << latex[ind]; ind++;
               res << name;
             }
             f[1]= res;
@@ -771,7 +839,7 @@ bib_set_fields (tree& t, tree latex, int& ind) {
 	  else if (f[0]->label == "pages" && is_atomic (f[1]))
             f[1]= bib_field_pages (f[1]->label);
 	  else {
-            f[1]= latex[0][0][ind][0][0];
+            f[1]= latex[ind];
             ind++;
           }
         }
@@ -782,22 +850,29 @@ bib_set_fields (tree& t, tree latex, int& ind) {
   }
 }
 
-static string
-bib_to_latex (string s) {
-  string r;
-  int pos= 0;
-  int depth= 0;
-  bool special= false;
-  int math= 0;
-  while (pos < N(s)) {
-    string ch= bib_parse_char (s, pos, depth, special, math);
-    if (special || math) r << ch;
-    else if (bib_is_char (ch, '{') && depth > 0 &&
-	     bib_get_char (s, pos) != "\\")
-      r << "\\keepcase{";
-    else r << ch;
+static array<tree>
+bib_latex_array (tree latex) {
+  int i= 0;
+  array<tree> res;
+  while (i < N(latex) && latex[i] == compound ("section", tree ())) {
+    i++;
+    if (i < N(latex)) {
+      if (latex[i] == compound ("bibnames")
+          || latex[i] == compound ("bibname")) {
+        res << simplify_correct (latex[i]);
+        i++;
+      }
+      else {
+        tree elt (CONCAT);
+        while (i < N(latex) && latex[i] != compound ("section", tree ())) {
+          elt << latex[i];
+          i++;
+        }
+        res << simplify_correct (elt);
+      }
+    }
   }
-  return r;
+  return res;
 }
 
 void
@@ -805,10 +880,8 @@ bib_parse_fields (tree& t) {
   string fields;
   int i= 0;
   int nb= bib_get_fields (t, fields);
-  string latex;
-  latex << "\\begin{array}\n" << bib_to_latex (fields) << "\\end{array}";
-  tree parsed_latex= latex_to_tree (parse_latex (latex));
-  if (nb == N(parsed_latex[0][0])) bib_set_fields (t, parsed_latex, i);
+  array<tree> latex= bib_latex_array (latex_to_tree (parse_latex (fields)));
+  if (nb == N(latex)) bib_set_fields (t, latex, i);
 }
 
 /******************************************************************************
@@ -860,6 +933,27 @@ bib_preamble (tree t) {
 hashmap<string,string>
 bib_strings_dict (tree t) {
   hashmap<string,string> dict ("");
+  dict("acmcs"
+      )= "ACM Computing Surveys";
+  dict("acta")= "Acta Informatica";
+  dict("cacm")= "Communications of the ACM";
+  dict("ibmjrd")= "IBM Journal of Research and Development";
+  dict("ibmsj")= "IBM Systems Journal";
+  dict("ieeese")= "IEEE Transactions on Software Engineering";
+  dict("ieeetc")= "IEEE Transactions on Computers";
+  dict("ieeetcad")= "IEEE Transactions on Computer-Aided Design of Integrated Circuits";
+  dict("ipl")= "Information Processing Letters";
+  dict("jacm")= "Journal of the ACM";
+  dict("jcss")= "Journal of Computer and System Sciences";
+  dict("scp")= "Science of Computer Programming";
+  dict("sicomp")= "SIAM Journal on Computing";
+  dict("tocs")= "ACM Transactions on Computer Systems";
+  dict("tods")= "ACM Transactions on Database Systems";
+  dict("tog")= "ACM Transactions on Graphics";
+  dict("toms")= "ACM Transactions on Mathematical Software";
+  dict("toois")= "ACM Transactions on Office Information Systems";
+  dict("toplas")= "ACM Transactions on Programming Languages and Systems";
+  dict("tcs")= "Theoretical Computer Science";
   if (L(t) == DOCUMENT) {
     tree str (DOCUMENT);
     for (int i= 0; i<N(t); i++) {
@@ -870,7 +964,7 @@ bib_strings_dict (tree t) {
     }
     for (int i= 0; i<N(str); i++) {
       if (bib_is_assign (str[i])) {
-        string key= str[i][0]->label;
+        string key= locase_all (str[i][0]->label);
         tree val= str[i][1];
         if (L(val) == CONCAT) {
           string sval;
@@ -894,14 +988,14 @@ bib_subst_str (tree t, hashmap<string,string> dict) {
   else if (L(t) == CONCAT) {
     string s;
     for (int i= 0; i<N(t); i++) {
-      if (bib_is_var (t[i])) s << dict[t[i][0]->label];
+      if (bib_is_var (t[i])) s << dict[locase_all (t[i][0]->label)];
       else if (is_atomic (t[i])) s << t[i]->label;
       else s << bib_subst_str (t[i], dict);
     }
     return s;
   }
   else if (bib_is_var (t))
-    return dict[t[0]->label];
+    return dict[locase_all (t[0]->label)];
   else return "";
 }
 

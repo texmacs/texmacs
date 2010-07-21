@@ -123,8 +123,7 @@
 (tm-define (bib-emphasize x)
   `(with "font-shape" "italic" ,x))
 
-(tm-define (bib-translate s)
-  (translate s "english" (get-env "language")))
+(tm-define (bib-translate s) `(localize ,s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sample function

@@ -45,9 +45,8 @@ edit_process_rep::generate_bibliography (
     load_string (url (fname), sbib, false);
     tree te= bib_entries (parse_bib (sbib), bib_t);
     object ot= tree_to_stree (te);
-    eval ("(use-modules (bibtex " * style * "))");
+    eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
     t= stree_to_tree (call (string ("bibstyle"), style (3, N(style)), ot));
-    //cout << "t= " << t << "\n";
   }
   else {
     string dir= concretize (head (buf->name));
