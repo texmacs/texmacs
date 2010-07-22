@@ -169,7 +169,7 @@ void
 QTMWidget::invalidate_rect (int x1, int y1, int x2, int y2) {
   // larger rectangle is needed to avoid artifacts during cursor movements
   // see bug #28664
-  rectangle r = rectangle (x1-1, y1-1, x2+2, y2+1);
+  rectangle r = rectangle (x1-3, y1-1, x2+4, y2+1);
   // cout << "invalidating " << r << LF;
   invalid_regions = invalid_regions | rectangles (r);
 }
