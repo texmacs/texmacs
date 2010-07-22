@@ -361,12 +361,17 @@
     "    \\end{center}\n"
     "  \\end{minipage}}\n")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Plain style theorems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-macro (latex-texmacs-thmenv prim name before after)
   (with env-sym (string->symbol (string-append "begin-" prim))
     `(begin
        (drd-table latex-texmacs-env-preamble%
 	 (,prim (!append ,@before (newtheorem ,prim (!translate ,name))
-			 ,@after "\n")))
+			 ,@after "\n")
+		no-amsthm-package%))
        ;;;
        (drd-group latex-texmacs-tag% ,env-sym)
        (drd-group latex-environment-0% ,env-sym))))
@@ -397,6 +402,42 @@
 (latex-texmacs-remark "warning" "Warning")
 (latex-texmacs-exercise "exercise" "Exercise")
 (latex-texmacs-exercise "problem" "Problem")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AMS style theorems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (ams-texmacs-theorem abbr full)
+  `(begin
+     (drd-table latex-texmacs-env-preamble%
+       (,abbr (!append "\\theoremstyle{plain}\n"
+		       (newtheorem ,abbr (!translate ,full))
+		       "\n")
+	      amsthm-package%))))
+
+(define-macro (ams-texmacs-remark abbr full)
+  `(begin
+     (drd-table latex-texmacs-env-preamble%
+       (,abbr (!append "\\theoremstyle{remark}\n"
+		       (newtheorem ,abbr (!translate ,full))
+		       "\n")
+	      amsthm-package%))))
+
+(ams-texmacs-theorem "theorem" "Theorem")
+(ams-texmacs-theorem "proposition" "Proposition")
+(ams-texmacs-theorem "lemma" "Lemma")
+(ams-texmacs-theorem "corollary" "Corollary")
+(ams-texmacs-theorem "axiom" "Axiom")
+(ams-texmacs-theorem "definition" "Definition")
+(ams-texmacs-theorem "notation" "Notation")
+(ams-texmacs-theorem "conjecture" "Conjecture")
+(ams-texmacs-remark "remark" "Remark")
+(ams-texmacs-remark "note" "Note")
+(ams-texmacs-remark "example" "Example")
+(ams-texmacs-remark "convention" "Convention")
+(ams-texmacs-remark "warning" "Warning")
+(ams-texmacs-remark "exercise" "Exercise")
+(ams-texmacs-remark "problem" "Problem")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style-dependent extra macros

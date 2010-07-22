@@ -29,6 +29,10 @@
   (with l (select body '(:* abstract))
     (set! elsevier-abstract (and (nnull? l) (list-2? (car l)) (cadar l)))))
 
+(tm-define (tmtex-style-init body)
+  (:mode elsevier-style?)
+  (init-elsevier body))
+
 (define (elsevier-label)
   (set! elsevier-counter (+ elsevier-counter 1))
   (number->string elsevier-counter))
@@ -88,7 +92,7 @@
   "")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Elsevier style is very ugly.
+;; The Elsevier style is quite ugly.
 ;; Transform equations into eqnarray* for more uniform alignment.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -101,3 +105,13 @@
 	(list (list '!begin "eqnarray") r)  ;; FIXME: why do elsequation
 	(list (list '!begin "eqnarray*") r) ;; and elsequation* not work?
 	)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizations for JSC
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-style-init body)
+  (:mode jsc-style?)
+  (init-elsevier body)
+  (set! tmtex-packages (cons "natbib" tmtex-packages))
+  (latex-set-packages '("amsthm" "yjsco" "natbib")))

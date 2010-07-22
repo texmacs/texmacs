@@ -37,13 +37,15 @@
 	 (doc-misc (append '(!concat) doc-preamble (list doc-body))))
 
     (receive
-	(tm-uses tm-init tm-preamble)
+	(tm-style-options tm-uses tm-init tm-preamble)
 	(latex-preamble doc-misc style lan init)
       (if (and (== lan "japanese") (== style "article"))
 	  (set! style "jarticle"))
       (if (and (== lan "japanese") (== style "book"))
 	  (set! style "jbook"))
-      (output-verbatim "\\documentclass{" style "}\n")
+      (output-verbatim "\\documentclass")
+      (output-verbatim tm-style-options)
+      (output-verbatim "{" style "}\n")
       (if (== lan "korean")
 	  (output-verbatim "\\usepackage{dhucs}\n"))
       (if (in? lan '("chinese" "taiwanese"))

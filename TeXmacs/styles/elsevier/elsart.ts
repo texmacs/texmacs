@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.7.5>
 
 <style|source>
 
@@ -16,11 +16,10 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>
@@ -92,6 +91,22 @@
   <assign|tex-below-display-short-skip|<macro|<tex-len|3.5pt|2pt|2pt>>>
 
   <active*|<\src-comment>
+    Headers and footers.
+  </src-comment>>
+
+  <set-header|>
+
+  <set-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>
+
+  <assign|header-title|<macro|name|>>
+
+  <assign|header-author|<macro|name|>>
+
+  <assign|header-primary|<macro|name|nr|what|>>
+
+  <assign|header-secondary|<macro|name|nr|what|>>
+
+  <active*|<\src-comment>
     Sizes.
   </src-comment>>
 
@@ -101,7 +116,7 @@
 
   <assign|small|<macro|x|<style-with|src-compact|none|<with|font-base-size|11|par-sep|2.6pt|tex-above-display-skip|<macro|<tex-len|11pt|3pt|6pt>>|tex-below-display-skip|<macro|<tex-len|11pt|3pt|6pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|3pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|6.5pt|3.5pt|3pt>>|<arg|x>>>>>
 
-  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|12|par-sep|0.2em|tex-above-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-below-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-above-dislplay-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|texs-below-display-short-skip|<macro|<tex-len|3.5pt|2pt|2pt>>|<arg|x>>>>>
+  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|12|par-sep|0.2em|tex-above-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-below-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|texs-below-display-short-skip|<macro|<tex-len|3.5pt|2pt|2pt>>|<arg|x>>>>>
 
   <assign|large|<macro|x|<with|font-base-size|14|par-sep|4pt|<arg|x>>>>
 
@@ -257,7 +272,7 @@
 
   <assign|by-text|<macro|<localize|>>>
 
-  <assign|abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
+  <assign|doc-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
     <\with|par-first|10pt|par-par-sep|5pt|font-base-size|9>
       <\surround|<hrule><next-line>|<next-line><hrule><yes-indent>>
         <no-indent><with|font-series|bold|<abstract-text>><vspace|5pt><no-page-break>

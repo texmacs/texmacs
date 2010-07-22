@@ -24,6 +24,8 @@
 (define latex-cyrillic-catcode? #f)
 (define latex-style "generic")
 (define latex-style-hyp 'generic-style%)
+(define latex-packages '())
+(define latex-amsthm-hyp 'no-amsthm-package%)
 
 (define latex-uses-table (make-ahash-table))
 (define latex-catcode-table (make-ahash-table))
@@ -43,6 +45,11 @@
 (tm-define (latex-set-style sty)
   (set! latex-style sty)
   (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
+
+(tm-define (latex-set-packages ps)
+  (set! latex-packages ps)
+  (when (in? "amsthm" ps)
+    (set! latex-amsthm-hyp 'amsthm-package%)))
 
 (tm-define (latex-book-style?)
   (in? latex-style '("book")))
@@ -112,12 +119,16 @@
   (if (npair? t) t
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
-	     (body  (drd-ref latex-texmacs-macro% head latex-style-hyp))
-	     (arity (drd-ref latex-texmacs-arity% head latex-style-hyp))
+	     (body  (drd-ref latex-texmacs-macro% head
+			     latex-style-hyp latex-amsthm-hyp))
+	     (arity (drd-ref latex-texmacs-arity% head
+			     latex-style-hyp latex-amsthm-hyp))
 	     (env   (and (func? head '!begin)
-			 (drd-ref latex-texmacs-environment% (cadr head))))
+			 (drd-ref latex-texmacs-environment% (cadr head)
+				  latex-style-hyp latex-amsthm-hyp)))
 	     (envar (and (func? head '!begin)
-			 (drd-ref latex-texmacs-env-arity% (cadr head)))))
+			 (drd-ref latex-texmacs-env-arity% (cadr head)
+				  latex-style-hyp latex-amsthm-hyp))))
 	(cond ((and body (== (length tail) arity))
 	       (latex-substitute body t))
 	      ((and env (== (length tail) 1) (== (length (cddr head)) envar))
@@ -139,8 +150,10 @@
 (define (latex-macro-defs-sub t)
   (when (pair? t)
     (for-each latex-macro-defs-sub (cdr t))
-    (let* ((body  (drd-ref latex-texmacs-macro% (car t) latex-style-hyp))
-	   (arity (drd-ref latex-texmacs-arity% (car t) latex-style-hyp)))
+    (let* ((body  (drd-ref latex-texmacs-macro% (car t)
+			   latex-style-hyp latex-amsthm-hyp))
+	   (arity (drd-ref latex-texmacs-arity% (car t)
+			   latex-style-hyp latex-amsthm-hyp)))
       (when (and body (== (length t) (+ arity 1)))
 	(ahash-set! latex-macro-table (car t)
 		    (list arity (latex-expand-def body)))
@@ -153,9 +166,11 @@
 	(ahash-set! latex-env-table (cadar t)
 		    (list arity (latex-expand-def body)))
 	(latex-macro-defs-sub body)))
-    (with body (or (drd-ref latex-texmacs-preamble% (car t))
+    (with body (or (drd-ref latex-texmacs-preamble% (car t)
+			    latex-style-hyp latex-amsthm-hyp)
 		   (and (func? (car t) '!begin)
-			(drd-ref latex-texmacs-env-preamble% (cadar t))))
+			(drd-ref latex-texmacs-env-preamble% (cadar t)
+				 latex-style-hyp latex-amsthm-hyp)))
       (when body
 	(ahash-set! latex-preamble-table (car t) body)))))
 
@@ -246,16 +261,22 @@
 	 (vr (if tr tr 999999)))
     (< vl vr)))
 
-(tm-define (latex-use-package-command doc)
-  (:synopsis "Return the usepackage command for @doc")
-  (set! latex-uses-table (make-ahash-table))
-  (latex-use-which-package doc)
-  (let* ((l1 (map car (ahash-table->list latex-uses-table)))
-	 (l2 (sort l1 latex-use-package-compare))
+(define (latex-as-use-package l1)
+  (let* ((l2 (sort l1 latex-use-package-compare))
 	 (l3 (map force-string l2))
 	 (l4 (list-intersperse l3 ","))
 	 (s  (apply string-append l4)))
     (if (== s "") "" (string-append "\\usepackage{" s "}\n"))))
+
+(tm-define (latex-use-package-command doc)
+  (:synopsis "Return the usepackage command for @doc")
+  (set! latex-uses-table (make-ahash-table))
+  (latex-use-which-package doc)
+  (let* ((l1 latex-packages)
+	 (s1 (latex-as-use-package (list-difference l1 '("amsthm"))))
+	 (l2 (map car (ahash-table->list latex-uses-table)))
+	 (s2 (latex-as-use-package (list-difference l2 l1))))
+    (string-append s1 s2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page size settings
@@ -287,6 +308,7 @@
 	 (pre-catcode  (latex-catcode-defs Text))
 	 (pre-uses     (latex-use-package-command Text)))
     (values
+      (if (in? "amsthm" latex-packages) "[amsthm]" "")
       (string-append pre-uses)
       (string-append pre-page)
       (string-append pre-language pre-catcode pre-macro))))

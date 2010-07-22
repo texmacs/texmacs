@@ -26,8 +26,8 @@
 ;; Global variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define tmtex-style "generic")
-(define tmtex-packages '())
+(define-public tmtex-style "generic")
+(define-public tmtex-packages '())
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
 (define tmtex-auto-produce 0)
@@ -48,13 +48,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (elsevier-style% (in? tmtex-style '("elsart")))
+  (elsevier-style% (in? tmtex-style '("elsart" "jsc")))
+  (jsc-style% (in? tmtex-style '("jsc")) elsevier-style%)
   (natbib-package% (in? "cite-author-year" tmtex-packages)))
 
-(define (tmtex-set-style style body)
-  (set! tmtex-style (car style))
-  (set! tmtex-packages (cdr style))
-  (if (elsevier-style?) (init-elsevier body)))
+(tm-define (tmtex-style-init body)
+  (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language
@@ -1254,7 +1253,7 @@
   '(!nbsp))
 
 (define (tmtex-session s l)
-  (tmtex (car l)))
+  (tmtex (cAr l)))
 
 (define (tmtex-input s l)
   (let ((prompt (car l)) (x (cadr l)))
@@ -1601,11 +1600,11 @@
   (item* (,tmtex-item-arg 1))
   (render-proof (,tmtex-render-proof 2))
   (nbsp (,tmtex-nbsp 0))
-  (session (,tmtex-session 1))
+  (session (,tmtex-session -1))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
   (hlink (,tmtex-hlink 2))
-  (action (,tmtex-action 2))
+  (action (,tmtex-action -1))
   (href (,tmtex-href 1))
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
@@ -1701,11 +1700,17 @@
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(latex-set-style main-style)
+	(latex-set-packages '())
 	(latex-set-language lan)
-	(tmtex-set-style style body)
+	(set! tmtex-style (car style))
+	(set! tmtex-packages (cdr style))
+	(when (elsevier-style?)
+	  (import-from (convert latex tmtex-elsevier)))
+	(tmtex-style-init body)
 	(tmtex-set-language lan)
 	(with result (texmacs->latex doc opts)
-	  (tmtex-set-style '("generic") "")
+	  (set! tmtex-style "generic")
+	  (set! tmtex-packages '())
 	  (tmtex-set-language "english")
 	  result))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
