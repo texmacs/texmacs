@@ -933,8 +933,7 @@ bib_preamble (tree t) {
 hashmap<string,string>
 bib_strings_dict (tree t) {
   hashmap<string,string> dict ("");
-  dict("acmcs"
-      )= "ACM Computing Surveys";
+  dict("acmcs")= "ACM Computing Surveys";
   dict("acta")= "Acta Informatica";
   dict("cacm")= "Communications of the ACM";
   dict("ibmjrd")= "IBM Journal of Research and Development";
@@ -994,8 +993,11 @@ bib_subst_str (tree t, hashmap<string,string> dict) {
     }
     return s;
   }
-  else if (bib_is_var (t))
-    return dict[locase_all (t[0]->label)];
+  else if (bib_is_var (t)) {
+    string key= locase_all (t[0]->label);
+    if (dict->contains (key)) return dict[locase_all (t[0]->label)];
+    else return t[0]->label;
+  }
   else return "";
 }
 

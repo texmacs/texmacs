@@ -236,7 +236,7 @@ bib_entry (string s, int& pos, tree type, tree& t) {
   if (!bib_ok (s, pos)) return;
   tree entry;
   tree fields= tree (DOCUMENT);
-  string cs= ", \t\n\r";
+  string cs= ",\t\n\r";
   char cend;
   switch (s[pos]) {
     case '{': cend= '}'; break;
@@ -324,6 +324,7 @@ bib_list (string s, int& pos, tree& t) {
           }
 	  else {
             tree te;
+            if (stype == "comment") comment= true;
             if (comment) te= tree (DOCUMENT);
             else te= tentry;
             bib_entry (s, pos, stype, te);
