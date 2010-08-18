@@ -57,7 +57,7 @@ QTMPipeLink::launchCmd () {
 
 int
 QTMPipeLink::writeStdin (string s) {
-  if (DEBUG_IO) cout << "[INPUTTTTTT]" << s;
+  if (DEBUG_IO) cout << "[INPUT]" << s;
   char* _s= as_charp (s);
   int err= QIODevice::write (_s, N(s));
   tm_delete_array (_s);
