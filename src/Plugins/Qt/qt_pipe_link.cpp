@@ -172,4 +172,13 @@ close_all_pipes () {
   }
 }
 
+void
+process_all_pipes () {
+  iterator<pointer> it= iterate (pipe_link_set);
+  while (it->busy()) {
+    qt_pipe_link_rep* con= (qt_pipe_link_rep*) it->next();
+    if (con->alive) con->apply_command ();
+  }
+}
+
 #endif // defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))

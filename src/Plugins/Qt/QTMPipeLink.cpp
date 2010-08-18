@@ -32,7 +32,6 @@ void
 QTMPipeLink::readErrOut () {
   feedBuf (QProcess::StandardError);
   feedBuf (QProcess::StandardOutput);
-  if (!is_nil (*feed_cmd)) (*feed_cmd)->apply ();
 }
 
 QTMPipeLink::QTMPipeLink (string cmd2) : cmd (cmd2), outbuf (""), errbuf ("") {}

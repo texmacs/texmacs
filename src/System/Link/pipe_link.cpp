@@ -116,6 +116,15 @@ close_all_pipes () {
 #endif
 }
 
+void
+process_all_pipes () {
+  iterator<pointer> it= iterate (pipe_link_set);
+  while (it->busy()) {
+    pipe_link_rep* con= (pipe_link_rep*) it->next();
+    if (con->alive) con->apply_command ();
+  }
+}
+
 /******************************************************************************
 * Routines for pipe_links
 ******************************************************************************/

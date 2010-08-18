@@ -61,6 +61,7 @@ public:
   void secure_client ();
 
   void set_command (command _cmd) { feed_cmd = _cmd; }
+  void apply_command () { if (!is_nil (feed_cmd)) feed_cmd->apply (); }
   
   friend class tm_link;
 };
@@ -83,6 +84,7 @@ tm_link make_socket_server (int port);
 tm_link find_socket_link (int fd);
 
 void close_all_pipes ();
+void process_all_pipes ();
 void close_all_sockets ();
 void close_all_servers ();
 int  number_of_servers ();
