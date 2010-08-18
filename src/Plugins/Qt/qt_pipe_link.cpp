@@ -9,7 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "config.h"
+#include "basic.hpp"
+
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__) || defined (QTPIPES))
 
 #include "tm_link.hpp"
