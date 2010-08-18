@@ -57,6 +57,7 @@ QTMPipeLink::launchCmd () {
 
 int
 QTMPipeLink::writeStdin (string s) {
+  if (DEBUG_IO) cout << "[INPUTTTTTT]" << s;
   char* _s= as_charp (s);
   int err= QIODevice::write (_s, N(s));
   tm_delete_array (_s);
@@ -69,7 +70,7 @@ QTMPipeLink::feedBuf (ProcessChannel channel) {
   QByteArray tempout = QIODevice::readAll ();
   if (channel == QProcess::StandardOutput) outbuf << tempout.constData ();
   else errbuf << tempout.constData ();
-  if (DEBUG_IO) cout << channel << " " << debug_io_string (tempout.constData ());
+  if (DEBUG_IO) cout << channel << " " << debug_io_string (tempout.constData ()) << "\n";
 }
 
 bool

@@ -84,6 +84,9 @@
 /* Enabling Mac OSX extensions */
 #undef MACOSX_EXTENSIONS
 
+/* Enabling Qt pipes */
+#undef QTPIPES
+
 /* Disable fast memory allocator */
 #undef NO_FAST_ALLOC
 

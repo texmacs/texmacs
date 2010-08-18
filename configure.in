@@ -815,6 +815,29 @@ case "$enable_qt" in
 	;;
 esac
 
+AC_ARG_ENABLE(qtpipes,
+[  --enable-qtpipes             replace UNIX pipes by Qt pipes],
+    [], [enable_qtpipes="no"])
+
+case "$enable_qtpipes" in
+    yes)
+        if test x"$CONFIG_GUI" = xQT; then
+           AC_DEFINE(QTPIPES, 1, [Enabling Qt pipes])
+           AC_MSG_RESULT([enabling Qt pipes])
+        else
+           AC_MSG_ERROR([QT not enabled!])
+        fi
+        ;;
+    no)
+        if test x"$CONFIG_GUI" = xQT; then
+           AC_MSG_RESULT([disabling Qt pipes])
+        fi
+	;;
+    *)
+	AC_MSG_ERROR([bad option --enable-qtpipes=$enable_qt])
+	;;
+esac
+
 AC_ARG_ENABLE(cocoa,
 [  --enable-cocoa          replace X11 by Cocoa interface],
     [], [enable_cocoa="no"])
