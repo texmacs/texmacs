@@ -44,8 +44,8 @@
       (begin
 	(if (and (== (car opts) :math-input)
 		 (plugin-supports-math-input-ref name))
-	    (set! t (plugin-math-input (list 'tuple name t))))
-	(plugin-preprocess name ses t (cdr opts)))))
+	    (set! t (plugin-math-input (list 'tuple name t)))))
+	(plugin-preprocess name ses t (cdr opts))))
 
 (tm-define (plugin-postprocess name ses r opts)
   ;;(display* "Postprocess " r "\n")
