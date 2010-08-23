@@ -303,6 +303,7 @@
   ;; connections to extern systems
   (connection-start connection_start (string string string))
   (connection-status connection_status (int string string))
+  (connection-write-string connection_write (void string string string))
   (connection-write connection_write (void string string content))
   (connection-cmd connection_cmd (tree string string string))
   (connection-eval connection_eval (tree string string content))

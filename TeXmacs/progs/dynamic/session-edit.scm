@@ -487,7 +487,12 @@
   (:context field-input-context?)
   (:require (session-supports-completions?))
   (with-innermost t field-input-context?
-    (session-complete-try? t)))
+    (let* ((lan (get-env "prog-language"))
+	   (ses (get-env "prog-session"))
+	   (cmd (session-complete-command t))
+	   (ret (lambda (x) (custom-complete (tm->tree x)))))
+      (when (!= cmd "")
+	(plugin-command lan ses cmd ret '())))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured keyboard movements

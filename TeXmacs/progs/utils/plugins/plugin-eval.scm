@@ -95,9 +95,11 @@
 (tm-define (plugin-write lan ses t)
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
   (if (!= lan "scheme")
-      (begin
-	(plugin-set-author lan ses)
-	(connection-write lan ses t))
+      (if (string? t)
+	  (connection-write-string lan ses t)
+	  (begin
+	    (plugin-set-author lan ses)
+	    (connection-write lan ses t)))
       (delayed
 	(connection-notify-status lan ses 3)
 	(with r (scheme-eval t)
@@ -273,3 +275,13 @@
 			     `(with "color" "red" ,(cdr x)))
 			    (else (car x)))))
     (silent-feed lan ses in ret opts)))
+
+(define (plugin-command-answer x)
+  (if (tm-func? x 'document 1) (plugin-command-answer (cadr x))
+      x))
+
+(tm-define (plugin-command lan ses in return opts)
+  (let* ((cmd (format-command lan in))
+	 (ret (lambda (x) (return (plugin-command-answer (car x)))))
+	 (x (silent-encode cmd ret opts)))
+    (apply plugin-feed `(,lan ,ses ,@(car x) ,(cdr x)))))

@@ -172,11 +172,11 @@ put_cursor (tree t, path p) {
   }
 }
 
-bool
-edit_interface_rep::session_complete_try (tree tt) {
+string
+edit_interface_rep::session_complete_command (tree tt) {
   path p= reverse (obtain_ip (tt));
   tree st= subtree (et, p);
-  if ((N(tp) <= N(p)) || (tp[N(p)] != 1)) return false;
+  if ((N(tp) <= N(p)) || (tp[N(p)] != 1)) return "";
   tree t= put_cursor (st[1], tail (tp, N(p)+1));
   // cout << t << LF;
 
@@ -187,14 +187,15 @@ edit_interface_rep::session_complete_try (tree tt) {
   s= s (0, N(s)-1);
 
   int pos= search_forwards (cursor_symbol, s);
-  if (pos == -1) return false;
+  if (pos == -1) return "";
   s= s (0, pos) * s (pos + N(cursor_symbol), N(s));
   // cout << s << ", " << pos << LF;
+  return "(complete " * scm_quote (s) * " " * as_string (pos) * ")";
+}
 
-  string cmd= "(complete " * scm_quote (s) * " " * as_string (pos) * ")";
-  tree r= connection_cmd (lan, ses, cmd);
-
-  if (!is_tuple (r)) return false;
+void
+edit_interface_rep::custom_complete (tree r) {
+  if (!is_tuple (r)) return;
   int i, n= N(r);
   string prefix;
   array<string> compls;
@@ -207,7 +208,6 @@ edit_interface_rep::session_complete_try (tree tt) {
     }
   // cout << prefix << ", " << compls << LF;
 
-  if ((prefix == "") || (N(compls) == 0)) return false;
+  if ((prefix == "") || (N(compls) == 0)) return;
   complete_start (prefix, compls);
-  return true;
 }

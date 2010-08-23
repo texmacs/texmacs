@@ -2222,16 +2222,29 @@ tmg_spell_replace (SCM arg1) {
 }
 
 SCM
-tmg_session_complete_tryP (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "session-complete-try?");
+tmg_session_complete_command (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "session-complete-command");
 
   tree in1= scm_to_tree (arg1);
 
   // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->session_complete_try (in1);
+  string out= get_server()->get_editor()->session_complete_command (in1);
   // SCM_ALLOW_INTS;
 
-  return bool_to_scm (out);
+  return string_to_scm (out);
+}
+
+SCM
+tmg_custom_complete (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "custom-complete");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->custom_complete (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2808,7 +2821,8 @@ initialize_glue_editor () {
   scm_new_procedure ("replace-start", (FN) tmg_replace_start, 3, 0, 0);
   scm_new_procedure ("spell-start", (FN) tmg_spell_start, 0, 0, 0);
   scm_new_procedure ("spell-replace", (FN) tmg_spell_replace, 1, 0, 0);
-  scm_new_procedure ("session-complete-try?", (FN) tmg_session_complete_tryP, 1, 0, 0);
+  scm_new_procedure ("session-complete-command", (FN) tmg_session_complete_command, 1, 0, 0);
+  scm_new_procedure ("custom-complete", (FN) tmg_custom_complete, 1, 0, 0);
   scm_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);
   scm_new_procedure ("view-get-property", (FN) tmg_view_get_property, 1, 0, 0);
   scm_new_procedure ("clear-buffer", (FN) tmg_clear_buffer, 0, 0, 0);

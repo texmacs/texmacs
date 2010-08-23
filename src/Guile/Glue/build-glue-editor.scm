@@ -239,7 +239,8 @@
   (spell-replace spell_replace (void string))
 
   ;; sessions
-  (session-complete-try? session_complete_try (bool tree))
+  (session-complete-command session_complete_command (string tree))
+  (custom-complete custom_complete (void tree))
 
   ;; miscellaneous routines
   (view-set-property set_property (void scheme_tree scheme_tree))

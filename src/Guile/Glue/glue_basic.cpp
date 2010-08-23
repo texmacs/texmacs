@@ -3439,6 +3439,23 @@ tmg_connection_status (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_connection_write_string (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write-string");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write-string");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "connection-write-string");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  connection_write (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write");
@@ -4139,6 +4156,7 @@ initialize_glue_basic () {
   scm_new_procedure ("enter-secure-mode", (FN) tmg_enter_secure_mode, 0, 0, 0);
   scm_new_procedure ("connection-start", (FN) tmg_connection_start, 2, 0, 0);
   scm_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
+  scm_new_procedure ("connection-write-string", (FN) tmg_connection_write_string, 3, 0, 0);
   scm_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
   scm_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
   scm_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
