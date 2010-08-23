@@ -14,11 +14,14 @@
 
 //#include "url.hpp"
 #include <cstdio>
+class string;
 
 class tm_ostream {
   FILE *file;
+  string *buf;
   bool is_w;
   bool is_mine;
+  bool is_buf;
 
   static tm_ostream private_cout;
   static tm_ostream private_cerr;
@@ -40,8 +43,11 @@ public:
   bool open (char*);
   bool open (FILE*);
   bool is_writable () const;
+  bool is_buffered () const;
   void flush ();
   void close ();
+  void buffer ();
+  string unbuffer ();
 
   tm_ostream& operator << (bool);
   tm_ostream& operator << (char);

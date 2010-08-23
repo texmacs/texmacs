@@ -21,7 +21,7 @@
 
 (define (convert-test)
   (set! current-plugin-input-stree (tree->stree (selection-tree)))
-  (write (with-output-to-string plugin-input-caller))
+  (write (tm-with-output-to-string plugin-input-caller))
   (display "\n"))
 
 (tm-define (plugin-math-input l)
@@ -29,7 +29,7 @@
   (:argument l "A list of the form @(tuple plugin expr)")
   (set! current-plugin-input-stree (caddr l))
   (set! plugin-input-current-plugin (cadr l))
-  (with-output-to-string plugin-input-caller))
+  (tm-with-output-to-string plugin-input-caller))
 
 (define (plugin-input-caller)
   (plugin-input current-plugin-input-stree))

@@ -282,3 +282,13 @@
 
 (define-public (buffer-list)
   (url->list (get-all-buffers)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Redirections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (tm-with-output-to-string p)
+  (cout-buffer)
+  (p)
+  (cout-unbuffer))
+

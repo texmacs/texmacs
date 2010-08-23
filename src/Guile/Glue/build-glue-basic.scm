@@ -59,6 +59,8 @@
   (get-author get_author (double))
   (debug-set debug_set (void string bool))
   (debug-get debug_get (bool string))
+  (cout-buffer cout_buffer (void))
+  (cout-unbuffer cout_unbuffer (string))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))
