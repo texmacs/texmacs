@@ -84,7 +84,10 @@ ispeller_rep::retrieve () {
       string mess = ln->read (LINK_ERR);
       string extra= ln->read (LINK_OUT);
       if (mess  != "") cerr << "TeXmacs] ispell error: " << mess << "\n";
-      if (extra == "") return "Error: ispell does not respond";
+      if (extra == "") {
+	ln->stop ();
+	return "Error: ispell does not respond";
+      }
       ret << extra;
     }
   return ispell_decode (lan, ret);
@@ -92,7 +95,7 @@ ispeller_rep::retrieve () {
 
 void
 ispeller_rep::send (string cmd) {
-  ln->write (ispell_encode(lan,cmd) * "\n", LINK_IN);
+  ln->write (ispell_encode (lan, cmd) * "\n", LINK_IN);
 }
 
 /******************************************************************************
