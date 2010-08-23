@@ -282,6 +282,8 @@
 
 (tm-define (plugin-command lan ses in return opts)
   (let* ((cmd (format-command lan in))
-	 (ret (lambda (x) (return (plugin-command-answer (car x)))))
+	 (ret (lambda (x)
+		(and (pair? x)
+		     (return (plugin-command-answer (car x))))))
 	 (x (silent-encode cmd ret opts)))
     (apply plugin-feed `(,lan ,ses ,@(car x) ,(cdr x)))))

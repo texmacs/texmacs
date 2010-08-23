@@ -490,7 +490,7 @@
     (let* ((lan (get-env "prog-language"))
 	   (ses (get-env "prog-session"))
 	   (cmd (session-complete-command t))
-	   (ret (lambda (x) (custom-complete (tm->tree x)))))
+	   (ret (lambda (x) (when x (custom-complete (tm->tree x))))))
       (when (!= cmd "")
 	(plugin-command lan ses cmd ret '())))))
 
