@@ -60,7 +60,6 @@ QTMPipeLink::writeStdin (string s) {
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (_s);
   int err= QIODevice::write (_s, N(s));
   tm_delete_array (_s);
-  waitForReadyRead (0);
   return err;
 }
 
