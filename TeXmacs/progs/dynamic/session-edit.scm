@@ -264,13 +264,28 @@
 ;; Subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (session-defined?)
+(tm-define (session-defined? . err-flag?)
   (with lan (get-env "prog-language")
     (or (== lan "scheme")
 	(connection-defined? lan)
 	(begin
-	  (set-message (string-append "plugin '" lan "' not defined") "")
+	  (if err-flag?
+	      (set-message (string-append "plugin '" lan "' not defined") ""))
 	  #f))))
+
+(tm-define (session-status)
+  (let* ((lan (get-env "prog-language"))
+	 (ses (get-env "prog-session")))
+    (cond ((== lan "scheme") 2)
+	  ((not (connection-defined? lan)) 0)
+	  (else (connection-status lan ses)))))
+
+(tm-define (session-alive?)
+  (> (session-status) 1))
+
+(tm-define (session-supports-completions?)
+  (and (session-alive?)
+       (plugin-supports-completions? (get-env "prog-language"))))
 
 (define (field-next t forward?)
   (and-with u (tree-ref t (if forward? :next :previous))
@@ -348,7 +363,7 @@
 	(session-feed lan ses :start u t '())))))
 
 (define (field-process-input t)
-  (when (session-defined?)
+  (when (session-defined? #t)
     (field-insert-output t)
     (cond ((tm-func? t 'folded-io)
 	   (tree-assign-node! t 'unfolded-io))
@@ -470,7 +485,7 @@
 
 (tm-define (kbd-tab)
   (:context field-input-context?)
-  (:require (plugin-supports-completions? (get-env "prog-language")))
+  (:require (session-supports-completions?))
   (with-innermost t field-input-context?
     (session-complete-try? t)))
 
