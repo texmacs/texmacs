@@ -148,7 +148,7 @@
 
   <assign|subparagraph-title|<macro|name|<paragraph-title|<arg|name>>>>
 
-  <assign|section-clean|<macro|<reset-subsection><reset-std-env>>>
+  <assign|section-clean|<macro|<reset-subsection>>>
 
   <style-with|src-compact|all|<assign|display-std-env|<\macro|nr>
     <arg|nr>
@@ -162,9 +162,11 @@
     Theorem-like environments.
   </src-comment>>
 
-  <assign|theorem-sep| >
+  <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
-  <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|enunciation-sep|. >
+
+  <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
 
   <new-theorem|claim|<localize|Claim>>
 
@@ -216,6 +218,34 @@
     Rendering of floating objects.
   </src-comment>>
 
+  <\active*>
+    <\src-comment>
+      Bibliographies.
+    </src-comment>
+  </active*>
+
+  <assign|bib-list|<\macro|largest|body>
+    <\with|par-left|1em|par-first|-1em|font-size|1>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <active*|<\src-comment>
+    Title rendering.
+  </src-comment>>
+
+  <assign|by-text|<macro|<localize|>>>
+
+  <assign|doc-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
+    <\with|par-first|10pt|par-par-sep|5pt|font-base-size|9>
+      <\surround|<hrule><next-line>|<next-line><hrule><yes-indent>>
+        <no-indent><with|font-series|bold|<abstract-text>><vspace|5pt><no-page-break>
+
+        <arg|body>
+      </surround>
+    </with>
+  </surround>>>
+
   <active*|<\src-comment>
     Specific macros for Elsevier styles.
   </src-comment>>
@@ -265,22 +295,6 @@
 
     <assign|FMSlash|<macro|sym|<neg|<resize|<arg|sym>|l-0.1fn|b-0.1fn|r+0.1fn|t+0.1fn|>>>>
   </with>>
-
-  <active*|<\src-comment>
-    Title rendering.
-  </src-comment>>
-
-  <assign|by-text|<macro|<localize|>>>
-
-  <assign|doc-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
-    <\with|par-first|10pt|par-par-sep|5pt|font-base-size|9>
-      <\surround|<hrule><next-line>|<next-line><hrule><yes-indent>>
-        <no-indent><with|font-series|bold|<abstract-text>><vspace|5pt><no-page-break>
-
-        <arg|body>
-      </surround>
-    </with>
-  </surround>>>
 
   \;
 </body>

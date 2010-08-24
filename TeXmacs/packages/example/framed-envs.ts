@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.8>
+<TeXmacs|1.0.7.5>
 
 <style|source>
 
@@ -13,11 +13,10 @@
     <src-copyright|2007|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -53,9 +52,9 @@
     </src-comment>
   </active*>
 
-  <assign|unframed-render-remark|<value|render-remark>>
+  <assign|unframed-render-enunciation|<value|render-enunciation>>
 
-  <assign|render-remark|<\macro|which|body>
+  <assign|render-enunciation|<\macro|which|body>
     <\padded-normal|1fn|1fn>
       <\wide-std-framed-colored|dark blue|pastel yellow>
         <\unframed-render-remark|<arg|which>>

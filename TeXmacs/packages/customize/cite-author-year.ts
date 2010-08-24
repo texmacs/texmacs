@@ -121,7 +121,11 @@
 
   <assign|cite-detail|<macro|x|y|<render-cite-detail|<cite-raw-1|<arg|x>>|<arg|y>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<natbib-author*|<arg|text>>,
+  \;
+
+  <assign|render-natbibitem|<macro|x|>>
+
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-natbibitem|<natbib-author*|<arg|text>>,
   <natbib-year|<arg|text>>><set-binding|<arg|text>>>>>
 
   \;

@@ -1258,17 +1258,22 @@
 (define (tmtex-input s l)
   (let ((prompt (car l)) (x (cadr l)))
     (tex-concat
-     (list `(!group (!concat (color "red") (ttfamily ,(tmtex prompt))))
+     (list '(noindent)
+	   `(!group (!concat (color "red") (ttfamily ,(tmtex prompt))))
 	   (cond ((func? x 'math 1)
 		  (tmtex-env-set "mode" "math")
 		  (let ((r (tmtex (cadr x))))
 		    (tmtex-env-reset "mode")
 		    `(!math (!group (!concat (color "blue") ,r)))))
 		 (else `(!group (!concat (color "blue")
-					 (!verb ,(tmtex-tt x))))))))))
+					 (!verb ,(tmtex-tt x))))))
+	   '(smallskip)))))
 
 (define (tmtex-output s l)
-  (list '!group (list 'ttfamily (tmtex (car l)))))
+  (tex-concat
+   (list '(noindent)
+	 (list '!group (list 'ttfamily (tmtex (car l))))
+	 '(medskip))))
 
 (define (tmtex-hlink s l)
   (list 'href (tmtex (cadr l)) (tmtex (car l))))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.11>
+<TeXmacs|1.0.7.5>
 
 <style|source>
 
@@ -13,21 +13,28 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
-  <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
-  <assign|theorem-sep|<macro|. >>
+  <assign|enunciation-sep|<macro|. >>
 
-  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|theorem-name|<macro|name|<enunciation-name|<arg|name>>>>
 
-  <assign|exercise-sep|<macro|. >>
+  <assign|theorem-sep|<macro|<enunciation-sep>>>
+
+  <assign|remark-name|<macro|name|<enunciation-name|<arg|name>>>>
+
+  <assign|remark-sep|<macro|<enunciation-sep>>>
+
+  <assign|exercise-name|<macro|name|<enunciation-name|<arg|name>>>>
+
+  <assign|exercise-sep|<macro|<enunciation-sep>>>
 
   <\active*>
     <\src-comment>
@@ -35,12 +42,16 @@
     </src-comment>
   </active*>
 
+  <assign|render-enunciation|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<arg|which>||<arg|body>>>
+  </macro>>
+
   <assign|render-remark|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<arg|body>>>
+    <render-enunciation|<remark-name|<arg|which><remark-sep>>|<arg|body>>
   </macro>>
 
   <assign|render-theorem|<\macro|which|body>
-    <render-remark|<arg|which>|<with|font-shape|italic|<arg|body>>>
+    <render-enunciation|<theorem-name|<arg|which><theorem-sep>>|<with|font-shape|italic|<arg|body>>>
   </macro>>
 
   <assign|render-exercise|<\macro|which|body>
