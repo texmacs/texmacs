@@ -291,4 +291,3 @@
   (cout-buffer)
   (p)
   (cout-unbuffer))
-

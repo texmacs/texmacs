@@ -95,7 +95,7 @@
 (tm-define (plugin-write lan ses t)
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
   (if (!= lan "scheme")
-      (if (string? t)
+      (if (tm-func? t 'command 1)
 	  (connection-write-string lan ses t)
 	  (begin
 	    (plugin-set-author lan ses)
@@ -281,7 +281,7 @@
       x))
 
 (tm-define (plugin-command lan ses in return opts)
-  (let* ((cmd (format-command lan in))
+  (let* ((cmd `(command ,(format-command lan in)))
 	 (ret (lambda (x)
 		(and (pair? x)
 		     (return (plugin-command-answer (car x))))))
