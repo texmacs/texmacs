@@ -367,13 +367,12 @@ void pipe_callback (void *obj, void *info) {
     }
   }
   /* FIXME: find out the appropriate place to call the callback
-     Currently, the callback is called in tm_server_rep::interpose_handler
+     Currently, the callback is called in tm_server_rep::interpose_handler */
   if (!is_nil (con->feed_cmd) && news) {
     //cout << "pipe_callback APPLY" << LF;
     if (!is_nil (con->feed_cmd))
       con->feed_cmd->apply (); // call the data processor
   }
-  */
 #endif
 }
 
