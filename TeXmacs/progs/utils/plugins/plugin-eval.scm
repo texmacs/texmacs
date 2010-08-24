@@ -96,7 +96,7 @@
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
   (if (!= lan "scheme")
       (if (tm-func? t 'command 1)
-	  (connection-write-string lan ses t)
+	  (connection-write-string lan ses (cadr t))
 	  (begin
 	    (plugin-set-author lan ses)
 	    (connection-write lan ses t)))
