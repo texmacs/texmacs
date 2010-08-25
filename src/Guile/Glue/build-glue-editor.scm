@@ -147,8 +147,7 @@
 
   ;; keyboard handling
   (key-press key_press (void string))
-  (emulate-keyboard emulate_keyboard (void string))
-  (emulate-keyboard-message emulate_keyboard (void string string))
+  (raw-emulate-keyboard emulate_keyboard (void string))
   (complete-try? complete_try (bool))
   
   ;; moving the cursor

@@ -295,7 +295,7 @@ archiver_rep::has_history () {
 void
 archiver_rep::cancel () {
   if (active ()) {
-    // cout << "Cancel " << current << "\n";
+    //cout << "Cancel " << current << "\n";
     apply (current);
     current= make_compound (0);
     the_owner= 0;

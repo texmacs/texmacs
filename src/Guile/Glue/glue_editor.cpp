@@ -1376,28 +1376,13 @@ tmg_key_press (SCM arg1) {
 }
 
 SCM
-tmg_emulate_keyboard (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "emulate-keyboard");
+tmg_raw_emulate_keyboard (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "raw-emulate-keyboard");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->emulate_keyboard (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_emulate_keyboard_message (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "emulate-keyboard-message");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "emulate-keyboard-message");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->emulate_keyboard (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2741,8 +2726,7 @@ initialize_glue_editor () {
   scm_new_procedure ("cell-del-format", (FN) tmg_cell_del_format, 1, 0, 0);
   scm_new_procedure ("table-test", (FN) tmg_table_test, 0, 0, 0);
   scm_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
-  scm_new_procedure ("emulate-keyboard", (FN) tmg_emulate_keyboard, 1, 0, 0);
-  scm_new_procedure ("emulate-keyboard-message", (FN) tmg_emulate_keyboard_message, 2, 0, 0);
+  scm_new_procedure ("raw-emulate-keyboard", (FN) tmg_raw_emulate_keyboard, 1, 0, 0);
   scm_new_procedure ("complete-try?", (FN) tmg_complete_tryP, 0, 0, 0);
   scm_new_procedure ("go-to-path", (FN) tmg_go_to_path, 1, 0, 0);
   scm_new_procedure ("go-left", (FN) tmg_go_left, 0, 0, 0);

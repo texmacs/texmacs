@@ -248,3 +248,6 @@
     (list s (string-append "insert#<" s ">")
 	  (list 'insert (string-append "<" s ">"))))
   `(kbd-commands ,@(map fun l)))
+
+(define-public (emulate-keyboard k)
+  (delayed (raw-emulate-keyboard k)))
