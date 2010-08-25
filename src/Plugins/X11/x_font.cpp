@@ -262,15 +262,15 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
 
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading ps font " << name << "\n";
   char* temp= as_charp (name);
-  Font fn = XLoadFont (dpy, temp);
+  XFontStruct *xfs = XLoadQueryFont (dpy, temp);
   tm_delete_array (temp);
-  if (XQueryFont (dpy, fn) == NULL) {
+  if (xfs == NULL) {
     if (DEBUG_VERBOSE) cout << "TeXmacs] Font " << name << " not found\n";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Using default font instead\n";
-    fn = XLoadFont (dpy, "*");
-    ASSERT (XQueryFont (dpy, fn) != NULL, "could not load default X font");
+    xfs = XLoadQueryFont (dpy, "*");
+    ASSERT (xfs != NULL, "could not load default X font");
   }
-
+  Font fn = xfs->fid;
   int i;
   metric* texs= tm_new_array<metric> (256);
   glyph * gls = tm_new_array<glyph> (256);
@@ -278,6 +278,8 @@ x_gui_rep::load_system_font (string family, int size, int dpi,
     get_ps_char (fn, i, texs[i], gls[i]);
   fnm= std_font_metric (fn_name, texs, 0, 255);
   fng= std_font_glyphs (fn_name, gls , 0, 255);
+
+  XFreeFont(dpy, xfs);
 }
 
 void
