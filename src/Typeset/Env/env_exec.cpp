@@ -46,12 +46,14 @@ edit_env_rep::rewrite (tree t) {
   case EXTERN:
     {
       int i, n= N(t);
+      if (n == 0) return tree (ERROR, "invalid extern");
       tree r (TUPLE, n);
       for (i=0; i<n; i++)
 	r[i]= exec (t[i]);
       object expr= null_object ();
       for (i=n-1; i>0; i--)
 	expr= cons (object (r[i]), expr);
+      if (N(t) < 1) return tree (ERROR, "invalid extern");
       string fun= exec_string (t[0]);
       expr= cons (string_to_object (fun), expr);
       (void) eval ("(lazy-markup-modules-force)");
@@ -67,7 +69,8 @@ edit_env_rep::rewrite (tree t) {
     }
   case MAP_ARGS:
     {
-      if (!(is_atomic (t[0]) && is_atomic (t[1]) && is_atomic (t[2])))
+      if (N(t) < 3 ||
+	  !(is_atomic (t[0]) && is_atomic (t[1]) && is_atomic (t[2])))
 	return tree (ERROR, "invalid map arguments");
       if (is_nil (macro_arg) || (!macro_arg->item->contains (t[2]->label)))
 	return tree (ERROR, "map arguments " * t[2]->label);
@@ -95,11 +98,14 @@ edit_env_rep::rewrite (tree t) {
     }
   case INCLUDE:
     {
+      if (N(t) == 0) return tree (ERROR, "invalid include");
       url file_name= url_system (exec_string (t[0]));
       return load_inclusion (relative (base_file_name, file_name));
     }
   case REWRITE_INACTIVE:
     {
+      if (N(t) == 0 || N(t[0]) == 0)
+	return tree (ERROR, "invalid rewrite-inactive");
       if ((!is_func (t[0], ARG)) ||
 	  is_compound (t[0][0]) ||
 	  is_nil (macro_arg) ||
@@ -112,6 +118,8 @@ edit_env_rep::rewrite (tree t) {
 	if ((j>=0) && (j<N(val))) val= val[j];
 	else return tree (ERROR, "invalid rewrite-inactive");
       }
+      if (N(t) < 2)
+	return tree (ERROR, "invalid rewrite-inactive");
       if (t[1] == "recurse") inactive_mode= INACTIVE_INLINE_RECURSE;
       else if (t[1] == "recurse*") inactive_mode= INACTIVE_BLOCK_RECURSE;
       else if (t[1] == "once") inactive_mode= INACTIVE_INLINE_ONCE;
@@ -205,21 +213,40 @@ edit_env_rep::exec (tree t) {
   case EVAL_ARGS:
     return exec_eval_args (t);
   case MARK:
+    if (N(t) < 2)
+      return tree (ERROR, "invalid mark");
     return tree (MARK, copy (t[0]), exec (t[1]));
   case EXPAND_AS:
+    if (N(t) < 2)
+      return tree (ERROR, "invalid expand-as");
     return exec (t[1]);
   case EVAL:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid eval");
     return exec (exec (t[0]));
   case QUOTE:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid quote");
     return t[0];
   case QUASI:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid quasi");
     return exec (exec_quasiquoted (t[0]));
   case QUASIQUOTE:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid quasiquote");
     return exec_quasiquoted (t[0]);
   case UNQUOTE:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid unquote");
+    return exec (t[0]);
   case VAR_UNQUOTE:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid var-unquote");
     return exec (t[0]);
   case COPY:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid copy");
     return copy (exec (t[0]));
   case IF:
   case VAR_IF:
@@ -371,6 +398,8 @@ edit_env_rep::exec (tree t) {
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:
+    if (N(t) < 1)
+      return tree (ERROR, "invalid style-with");
     return exec (t[N(t)-1]);
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
@@ -422,6 +451,8 @@ edit_env_rep::exec (tree t) {
 tree
 edit_env_rep::exec_formatting (tree t, string v) {
   int i, n= N(t);
+  if (n < 1)
+    return tree (ERROR, "bad formatting");
   tree r (t, n);
   for (i=0; i<n-1; i++) r[i]= exec (t[i]);
   tree oldv= read (v);
@@ -448,9 +479,9 @@ edit_env_rep::exec_table (tree t) {
 
 tree
 edit_env_rep::exec_assign (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad assignment");
+  if (N(t)!=2) return tree (ERROR, "bad assign");
   tree r= exec (t[0]);
-  if (is_compound (r)) return tree (ERROR, "bad assignment");
+  if (is_compound (r)) return tree (ERROR, "bad assign");
   assign (r->label, copy (t[1]));
   return tree (ASSIGN, r, tree (QUOTE, read (r->label)));
 }
@@ -499,6 +530,7 @@ tree
 edit_env_rep::exec_compound (tree t) {
   int d; tree f;
   if (L(t) == COMPOUND) {
+    if (N(t)<1) return tree (ERROR, "bad compound");
     d= 1;
     f= t[0];
     if (is_compound (f)) f= exec (f);
@@ -604,6 +636,7 @@ edit_env_rep::exec_drd_props (tree t) {
 
 tree
 edit_env_rep::exec_provides (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad provides");
   tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad provides");
   if (provides (r->label)) return "true"; else return "false";
@@ -611,6 +644,7 @@ edit_env_rep::exec_provides (tree t) {
 
 tree
 edit_env_rep::exec_value (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad value");
   tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad value");
   return exec (read (r->label));
@@ -618,16 +652,18 @@ edit_env_rep::exec_value (tree t) {
 
 tree
 edit_env_rep::exec_quote_value (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad quote-value");
   tree r= exec (t[0]);
-  if (is_compound (r)) return tree (ERROR, "bad quoted value");
+  if (is_compound (r)) return tree (ERROR, "bad quote-value");
   return read (r->label);
 }
 
 tree
 edit_env_rep::exec_arg (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad arg");
   tree r= t[0];
   if (is_compound (r))
-    return tree (ERROR, "bad argument application");
+    return tree (ERROR, "bad arg");
   if (is_nil (macro_arg) || (!macro_arg->item->contains (r->label)))
     return tree (ERROR, "argument " * r->label);
   r= macro_arg->item [r->label];
@@ -655,9 +691,10 @@ static bool quote_substitute= false;
 
 tree
 edit_env_rep::exec_quote_arg (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad quote-arg");
   tree r= t[0];
   if (is_compound (r))
-    return tree (ERROR, "bad quoted argument application");
+    return tree (ERROR, "bad quote-arg");
   if (is_nil (macro_arg) || (!macro_arg->item->contains (r->label)))
     return tree (ERROR, "quoted argument " * r->label);
   r= macro_arg->item [r->label];
@@ -683,18 +720,21 @@ edit_env_rep::exec_quote_arg (tree t) {
 
 tree
 edit_env_rep::exec_get_label (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad get-label");
   tree r= exec (t[0]);
   return copy (as_string (L(r)));
 }
 
 tree
 edit_env_rep::exec_get_arity (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad get-arity");
   tree r= exec (t[0]);
   return as_string (arity (r));
 }
 
 tree
 edit_env_rep::exec_eval_args (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad eval-args");
   tree v= macro_arg->item [as_string (t[0])];
   if (is_atomic (v) || is_nil (macro_arg))
     return tree (ERROR, "eval arguments " * t[0]->label);
@@ -781,10 +821,10 @@ edit_env_rep::exec_while (tree t) {
 
 tree
 edit_env_rep::exec_for_each (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad for each");
+  if (N(t)!=2) return tree (ERROR, "bad for-each");
   tree fun = exec (t[0]);
   tree args= exec (t[1]);
-  if (!is_tuple (args)) return tree (ERROR, "bad for each");
+  if (!is_tuple (args)) return tree (ERROR, "bad for-each");
   int i, n= N(args);
   for (i=0; i<n; i++)
     exec (tree (COMPOUND, fun, args[i]));
@@ -981,6 +1021,7 @@ edit_env_rep::exec_times_over (tree t) {
 
 tree
 edit_env_rep::exec_divide (tree t) {
+  /* this doesn't match the documentation */
   if (N(t)!=2) return tree (ERROR, "bad divide");
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
@@ -1459,6 +1500,7 @@ edit_env_rep::exec_get_binding (tree t) {
 
 tree
 edit_env_rep::exec_pattern (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad pattern");
   url im= exec_string (t[0]);
   url image= resolve (relative (base_file_name, im));
   if (is_none (image))
@@ -1470,6 +1512,7 @@ edit_env_rep::exec_pattern (tree t) {
   SI imw= (SI) (((double) imw_pt) * pt);
   SI imh= (SI) (((double) imh_pt) * pt);
   if (imw <= 0 || imh <= 0) return "white";
+  if (N(t)<3) return tree (ERROR, "bad pattern");
   string w= exec_string (t[1]);
   string h= exec_string (t[2]);
   if (is_length (w))
@@ -1516,6 +1559,7 @@ edit_env_rep::exec_point (tree t) {
 
 tree
 edit_env_rep::exec_box_info (tree t) {
+  if (N(t)<2) return tree (ERROR, "bad box-info");
   tree t1= t[0];
   tree t2= t[1];
   if (!is_string (t2))
@@ -1525,12 +1569,14 @@ edit_env_rep::exec_box_info (tree t) {
 
 tree
 edit_env_rep::exec_frame_direct (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad frame-direct");
   tree t1= exec (t[0]);
   return as_tree (!is_nil (fr) ? fr (::as_point (t1)) : point ());
 }
 
 tree
 edit_env_rep::exec_frame_inverse (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad frame-inverse");
   tree t1= exec (t[0]);
   return as_tree (!is_nil (fr) ? fr [::as_point (t1)] : point ());
 }
@@ -2081,6 +2127,8 @@ tree
 edit_env_rep::expand (tree t, bool search_accessible) {
   if (is_atomic (t) || is_nil (macro_arg)) return t;
   else if (is_func (t, ARG) || is_func (t, QUOTE_ARG)) {
+    if (N(t) < 1)
+      return tree (ERROR, "bad argument application");
     if (is_compound (t[0]))
       return tree (ERROR, "bad argument application");
     if (!macro_arg->item->contains (t[0]->label))
@@ -2106,9 +2154,11 @@ edit_env_rep::expand (tree t, bool search_accessible) {
     macro_src= old_src;
     return r;
   }
-  else if (is_func (t, EXPAND_AS, 2))
+  else if (is_func (t, EXPAND_AS, 2)) {
+    if (N(t) < 1)
+      return tree (ERROR, "bad argument application");
     return expand (t[0], search_accessible);
-  else if (search_accessible && is_accessible (obtain_ip (t)))
+  } else if (search_accessible && is_accessible (obtain_ip (t)))
     return t;
   else {
     int i, n= N(t);
