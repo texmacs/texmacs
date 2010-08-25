@@ -60,7 +60,7 @@
   session-scheme-math)
 
 (tm-define (toggle-session-scheme-math)
-  (:synopsis "Toggle pretty tree output in scheme sessions.")
+  (:synopsis "Toggle pretty math output in scheme sessions.")
   (:check-mark "v" session-scheme-math?)
   (set! session-scheme-math (not session-scheme-math)))
 

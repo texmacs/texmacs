@@ -69,7 +69,7 @@
     (and (pair? p) (cAr p))))
 
 (define-public (tree-down-index t)
-  "Get the number the child where the cursor is."
+  "Get the number of the child where the cursor is."
   (let ((p (tree->path t))
 	(q (cDr (cursor-path))))
     (and (list-starts? (cDr q) p)

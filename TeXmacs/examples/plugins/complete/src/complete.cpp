@@ -10,7 +10,7 @@
 ******************************************************************************/
 
 #include <stdio.h>
-#include <iostream.h>
+#include <iostream>
 
 #define DATA_BEGIN   ((char) 2)
 #define DATA_END     ((char) 5)

@@ -12,7 +12,7 @@
 
 ;;; Synonyms for other symbols
 
-;; Alternate symbol names. There use the same glyph and are converted to the
+;; Alternate symbol names. They use the same glyph and are converted to the
 ;; same unicode character as another symbol.
 
 ("<dag>"	"#2020") ; see <dagger>
@@ -93,7 +93,7 @@
 ;;; Big delimiters
 
 ;; These symbols should only be used internally by TeXmacs in the
-;; LEFT, RIGHT, MID and BIG primitive. If they are explicitely
+;; LEFT, RIGHT, MID and BIG primitive. If they are explicitly
 ;; present, they are exported as a regular-sized character.	
 
 ("<large-less-0>"	"<")

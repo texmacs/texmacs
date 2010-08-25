@@ -18,7 +18,7 @@
 
 ;; General Remark about Unicode symbols
 ;;
-;; Most Unicode symbols are intentionnaly defined as shape-based
+;; Most Unicode symbols are intentionally defined as shape-based
 ;; instead of meaning based. For example U+22C8 (bowtie) maps to
 ;; symbol <join> and U+2A1D (join, large bowtie) maps to symbol
 ;; <Bowtie> because <join> is the small variant of <Bowtie>.

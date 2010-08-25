@@ -55,7 +55,7 @@
   (tm-in? t '(script-eval script-result script-approx)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; In place asynchroneous plug-in evaluations
+;; In place asynchronous plug-in evaluations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (script-feed lan ses in out opts)
