@@ -86,7 +86,7 @@ shell_interrupt (int sig) {
 
 static void
 shell_output (bool hide= false) {
-  static struct timeval tv = {0, 100};
+  static struct timeval tv;
   int output_max= 1024;
   output = (charp) malloc (output_max);
   output_pos= 0;
@@ -95,6 +95,8 @@ shell_output (bool hide= false) {
     fd_set rfds;
     FD_ZERO (&rfds);
     FD_SET (master, &rfds);
+    tv.tv_sec = 0;
+    tv.tv_usec = 10000;
     int r = select (master+1, &rfds, NULL, NULL, &tv);
     if (r == 0) continue;
     if (r == -1) continue;
