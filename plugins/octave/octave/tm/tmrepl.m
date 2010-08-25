@@ -11,7 +11,7 @@ function tmrepl()
 		r=sprintf("%ctexmacs%c; %s;",39,39,r);
 		eval(r,"tmlasterr");
 		if dispans & isnewans(ans)
-			tmdisp(ans);
+                       tmdisp(ans);
 		endif
 		r=input(prompt,'s');
 	endwhile
