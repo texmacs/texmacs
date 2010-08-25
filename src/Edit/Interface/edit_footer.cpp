@@ -155,39 +155,50 @@ get_with_text (tree t) {
 
 string
 edit_interface_rep::compute_operation_footer (tree st) {
-  string r;
-  switch (L (st)) {
-  case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-  case MID: r= "separator#" * as_symbol (st[0]); break;
-  case RIGHT: r= "close#" * as_symbol (st[0]); break;
-  case BIG: r= "big#" * as_symbol (st[0]); break;
-  case LPRIME: r= "left prime#" * as_string (st[0]); break;
-  case RPRIME: r= "prime#" * as_string (st[0]); break;
-  case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
-  case WIDE: r=  get_accent_type (as_string (st[1])); break;
-  case VAR_WIDE: r= "under#" * get_accent_type (as_string (st[1])); break;
-  case TFORMAT: r= "table"; break;
-  case ASSIGN: r= "assign#" * as_string (st[0]); break;
-  case WITH: r= "with#" * get_with_text (st); break;
-  case PROVIDES: r= "provides#" * as_string (st[0]); break;
-  case VALUE: r= "value#" * as_string (st[0]); break;
-  case QUOTE_VALUE: r= "quoted value#" * as_string (st[0]); break;
-  case ARG: r= "argument#" * as_string (st[0]); break;
-  case QUOTE_ARG: r= "quoted argument#" * as_string (st[0]); break;
-  case COMPOUND:
-    if (is_atomic (st[0])) r= as_string (st[0]);
-    else r= "compound";
-    break;
-  case INCLUDE: r= "include#" * as_string (st[0]); break;
-  case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
-  case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
-  case LABEL: r= "label: " * as_string (st[0]); break;
-  case REFERENCE: r= "reference: " * as_string (st[0]); break;
-  case PAGEREF: r=  "page reference: " * as_string (st[0]); break;
-  case WRITE: r= "write to " * as_string (st[0]); break;
-  case SPECIFIC: r= "specific " * as_string (st[0]); break;
-  case POSTSCRIPT: r= "postscript image"; break;
-  default: r= drd->get_name (L(st));
+  string r = "";
+  if (N(st) >= 2) {
+    switch (L (st)) {
+    case VAR_WIDE: r= "under#" * get_accent_type (as_string (st[1])); break;
+    default: ;
+    }
+  }
+  if (r == "" && N(st) >= 1) {
+    switch (L (st)) {
+    case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
+    case MID: r= "separator#" * as_symbol (st[0]); break;
+    case RIGHT: r= "close#" * as_symbol (st[0]); break;
+    case BIG: r= "big#" * as_symbol (st[0]); break;
+    case LPRIME: r= "left prime#" * as_string (st[0]); break;
+    case RPRIME: r= "prime#" * as_string (st[0]); break;
+    case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
+    case WIDE: r=  get_accent_type (as_string (st[1])); break;
+    case ASSIGN: r= "assign#" * as_string (st[0]); break;
+    case WITH: r= "with#" * get_with_text (st); break;
+    case PROVIDES: r= "provides#" * as_string (st[0]); break;
+    case VALUE: r= "value#" * as_string (st[0]); break;
+    case QUOTE_VALUE: r= "quoted value#" * as_string (st[0]); break;
+    case ARG: r= "argument#" * as_string (st[0]); break;
+    case QUOTE_ARG: r= "quoted argument#" * as_string (st[0]); break;
+    case COMPOUND:
+      if (is_atomic (st[0])) r= as_string (st[0]);
+      else r= "compound";
+      break;
+    case INCLUDE: r= "include#" * as_string (st[0]); break;
+    case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
+    case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
+    case LABEL: r= "label: " * as_string (st[0]); break;
+    case REFERENCE: r= "reference: " * as_string (st[0]); break;
+    case PAGEREF: r=  "page reference: " * as_string (st[0]); break;
+    case WRITE: r= "write to " * as_string (st[0]); break;
+    case SPECIFIC: r= "specific " * as_string (st[0]); break;
+    default: ;
+    }
+  }
+  if (r == "") {
+    switch (L (st)) {
+    case POSTSCRIPT: r= "postscript image"; break;
+    default: r= drd->get_name (L(st));
+    }
   }
   if (last_item (tp) == 0) r= "before#" * r;
   return r;
@@ -216,7 +227,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     if (l==0) return up * "resize#";
     else return up;
   case _FLOAT:
-    if (is_atomic (st[0])) return up * st[0]->label * "#";
+    if (N(st) >= 1 && is_atomic (st[0])) return up * st[0]->label * "#";
     else return up * "float#";
   case BELOW:
     if (l==0) return up * "body#";
@@ -232,9 +243,12 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     if (l==0) return up * "root#";
     else return up * "index#";
   case WIDE:
-    return up * get_accent_type (as_string (st[1])) * "#";
+    if (N(st) >= 1) return up * get_accent_type (as_string (st[1])) * "#";
+    else return up * "wide#";
   case VAR_WIDE:
-    return up * "under#" * get_accent_type (as_string (st[1])) * "#";
+    if (N(st) >= 1)
+      return up * "under#" * get_accent_type (as_string (st[1])) * "#";
+    else return up * "var-wide#";
   case TREE:
     if (l==0) return up * "root#";
     else return up * "branch(" * as_string (l) * ")#";
@@ -253,10 +267,11 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
     return up * "value(" * as_string (l/2) * ")#";
   case COMPOUND:
-    if (is_atomic (st[0])) return up * as_string (st[0]) * "#";
+    if (N(st) >= 1 && is_atomic (st[0])) return up * as_string (st[0]) * "#";
     else return up * "compound#";
   case HLINK:
-    return up * "hyperlink(" * as_string (st[1]) * ")#";
+    if (N(st) >= 2) return up * "hyperlink(" * as_string (st[1]) * ")#";
+    else return up * "#hyperlink";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
