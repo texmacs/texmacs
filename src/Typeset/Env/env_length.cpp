@@ -113,7 +113,7 @@ edit_env_rep::as_tmlen (tree t) {
   if (is_func (t, TMLEN)) {
     if (N(t) == 0) return t;
     if (is_double (t[0])) return t;
-    if (N(t) < 3) return t;
+    if (N(t) < 3) return as_tmlen (t[0]);
     tree _min= as_tmlen (t[0]);
     tree _def= as_tmlen (t[1]);
     tree _max= as_tmlen (t[2]);
