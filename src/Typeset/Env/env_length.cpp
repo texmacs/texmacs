@@ -39,6 +39,7 @@ edit_env_rep::tmlen_plus (tree t1, tree t2) {
     return tree (TMLEN, as_string (as_double (t1[0]) + as_double (t2[0])));
   if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
   if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
+  if (N(t1) < 3 || N(t2) < 3) return tree (ERROR, "invalid tmlen-plus");
   tree _min= as_string (as_double (t1[0]) + as_double (t2[0]));
   tree _def= as_string (as_double (t1[1]) + as_double (t2[1]));
   tree _max= as_string (as_double (t1[2]) + as_double (t2[2]));
@@ -48,6 +49,7 @@ edit_env_rep::tmlen_plus (tree t1, tree t2) {
 tree
 edit_env_rep::tmlen_times (double sc, tree t) {
   if (N(t) == 1) return tree (TMLEN, as_string (sc * as_double (t[0])));
+  if (N(t) < 3) return tree (ERROR, "invalid tmlen-times");
   tree _min= as_string (sc * as_double (t[0]));
   tree _def= as_string (sc * as_double (t[1]));
   tree _max= as_string (sc * as_double (t[2]));
@@ -109,11 +111,15 @@ edit_env_rep::divide_lengths (string s1, string s2) {
 tree
 edit_env_rep::as_tmlen (tree t) {
   if (is_func (t, TMLEN)) {
+    if (N(t) == 0) return t;
     if (is_double (t[0])) return t;
-    if (N(t) < 3) return as_tmlen (t[0]);
+    if (N(t) < 3) return t;
     tree _min= as_tmlen (t[0]);
     tree _def= as_tmlen (t[1]);
     tree _max= as_tmlen (t[2]);
+    if (N(_min) < 1) return t;
+    if (N(_def) < 1) return t;
+    if (N(_max) < 1) return t;
     _min= _min[N(_min) == 3? 1: 0];
     _def= _def[N(_def) == 3? 1: 0];
     _max= _max[N(_max) == 3? 1: 0];
@@ -138,6 +144,7 @@ edit_env_rep::as_tmlen (tree t) {
 SI
 edit_env_rep::as_length (tree t) {
   tree r= as_tmlen (t);
+  if (N(r) < 1) return 0;
   string s= r[N(r)==1? 0: 1]->label;
   return (SI) (as_double (s));
 }
@@ -147,6 +154,8 @@ edit_env_rep::as_hspace (tree t) {
   tree r= as_tmlen (t);
   if (N(r) == 1)
     return space ((SI) (as_double (r[0]->label)));
+  else if (N(r) < 3)
+    return 0;
   else {
     SI _min= (SI) as_double (r[0]->label);
     SI _def= (SI) as_double (r[1]->label);
@@ -160,6 +169,8 @@ edit_env_rep::as_vspace (tree t) {
   tree r= as_tmlen (t);
   if (N(r) == 1)
     return space ((SI) (as_double (r[0]->label)));
+  else if (N(r) < 3)
+    return 0;
   else {
     SI _min= (SI) as_double (r[0]->label);
     SI _def= (SI) as_double (r[1]->label);
