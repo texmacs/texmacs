@@ -46,13 +46,20 @@ ispeller_rep::ispeller_rep (string lan2): rep<ispeller> (lan2), lan (lan2) {}
 string
 ispeller_rep::start () {
   if (is_nil (ln)) {
+    string cmd;
 #ifdef OS_WIN32
     string prg= "\"$TEXMACS_PATH/bin/aspell/aspell.exe\"";
-    string cmd= prg * " --data-dir=.%//data --dict-dir=.%//dict -a";
+    cmd= prg * " --data-dir=.%//data --dict-dir=.%//dict -a";
 #else
-    string cmd= "ispell -a -d " * ispell_dictionary (lan)
-      * ispell_extra_args (lan);
-    if (exists_in_path ("aspell")) cmd[0]= 'a';
+    if (exists_in_path ("aspell")) cmd= "aspell";
+    else
+#if defined (__MINGW__) || defined (__MINGW32__)
+      if (exists (url_system ("C:\\Program Files\\Aspell\\bin\\aspell.exe")))
+        cmd= "\"C:\\Program Files\\Aspell\\bin\\aspell.exe\"";
+      else
+#endif
+        cmd= "ispell";
+    cmd << " -a -d " * ispell_dictionary (lan) * ispell_extra_args (lan);
 #endif
     ln= make_pipe_link (cmd);
   }
@@ -201,7 +208,11 @@ ispell_decode (string lan, string s) {
 
 static tree
 parse_ispell (string s) {
+#if defined (__MINGW__) || defined (__MINGW32__)
+  while (ends (s, "\r\n")) s= s (0, N(s)-2);
+#else
   while (ends (s, "\n")) s= s (0, N(s)-1);
+#endif
   bool flag= true;
   int i, j;
   tree t (TUPLE);
