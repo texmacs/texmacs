@@ -84,8 +84,13 @@ ispeller_rep::start () {
 string
 ispeller_rep::retrieve () {
   string ret;
+#if defined (__MINGW__) || defined (__MINGW32__)
+  while ((ret != "\r\n") && (!ends (ret, "\r\n\r\n")) &&
+	 ((!ends (ret, "\r\n")) || (!starts (ret, "@(#)"))))
+#else
   while ((ret != "\n") && (!ends (ret, "\n\n")) &&
 	 ((!ends (ret, "\n")) || (!starts (ret, "@(#)"))))
+#endif
     {
       ln->listen (10000);
       string mess = ln->read (LINK_ERR);
