@@ -1,16 +1,16 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.6>
 
 <style|source>
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|slides|1.0|slides|1.0>
+    <src-package-dtd|ornaments|1.0|ornaments|1.0>
 
     <\src-purpose>
-      Style for paper versions of presentations.
+      Special ornaments for presentations.
     </src-purpose>
 
-    <src-copyright|2009|Joris van der Hoeven>
+    <src-copyright|2007--2010|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -20,29 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|presentation>
-
   <\active*>
     <\src-comment>
       Customizations
     </src-comment>
   </active*>
-
-  <assign|font-family|ss>
-
-  <assign|bg-color|white>
-
-  <assign|page-medium|paper>
-
-  <assign|slide|<\macro|body>
-    <\surround||<new-page><right-flush>>
-      <arg|body>
-    </surround>
-  </macro>>
-
-  <assign|xtit|<macro|body|<section|<arg|body>>>>
-
-  <assign|img|<macro|body|<with|ornament-color|white|<ornament|<arg|body>>>>>
 
   <assign|granite|<macro|x|<with|ornament-color|<pattern|granite-dark.png|*3/5|*3/5|#101010>|color|white|strong-color|#f0ffb0|math-color|#ffd4c0|ornament-sunny-color|light
   grey|ornament-shadow-color|dark grey|<ornament|<arg|x>>>>>
@@ -51,11 +33,7 @@
 
   <assign|ridged|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>|<ornament|<arg|x>>>>>
 
-  <assign|input-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>>
-
-  <assign|fold-bar-color|<pattern|wood-light.png|*3/5|*3/5|#e0b050>>
-
-  <assign|fold-title-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+  <assign|metal|<macro|x|<with|ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>|ornament-sunny-color|#e0e0e8|ornament-shadow-color|#9090ac|<ornament|<arg|x>>>>>
 
   \;
 </body>
