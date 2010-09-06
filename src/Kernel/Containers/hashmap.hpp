@@ -55,6 +55,7 @@ public:
   bool empty ();
   U    bracket_ro (T x);
   U&   bracket_rw (T x);
+  U&   bracket_rw_debug (T x);
   void join (hashmap<T,U> H);
 
   friend class hashmap<T,U>;

@@ -35,6 +35,7 @@
 #include "dictionary.hpp"
 #include "patch.hpp"
 #include "grammar.hpp"
+#include "packrat.hpp"
 #include <string.h>
 #include <libguile.h>
 
