@@ -742,7 +742,7 @@
 
 (define (tmhtml-with-par-par-sep val arg)
   (with x (tmlength->px val)
-    (if (== (inexact->exact x) 0)
+    (if (and x (== (inexact->exact x) 0))
 	`((h:div (@ (class "compact-block")) ,@(tmhtml arg)))
 	(tmhtml arg))))
 
