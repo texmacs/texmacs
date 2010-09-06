@@ -13,9 +13,14 @@
 #include "array.hpp"
 #include "hashmap.hpp"
 #include "analyze.hpp"
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
 #define C int32_t
 #define D int64_t
+#else
+#define C int
+#define D long long int
+#endif
 
 /******************************************************************************
 * Important constants
@@ -187,7 +192,7 @@ left_tail (string s, tree t) {
       if (u == compound ("or")) return u;
       else if (is_compound (u, "concat")) r << A(u);
       else r << u;
-      r << t (1, N(t));
+      r << A (t (1, N(t)));
       return r;
     }
   }
@@ -230,8 +235,6 @@ packrat_define (tree t) {
 	<< encode_token (t[1]->label);
   else if (is_compound (t, "or", 1))
     ret << packrat_define (t[0]);
-  else if (is_compound (t, "concat", 1))
-    ret << packrat_define (t[0]);
   else {
     if (is_compound (t, "or")) ret << PACKRAT_OR;
     else if (is_compound (t, "concat")) ret << PACKRAT_CONCAT;
@@ -248,6 +251,7 @@ packrat_define (tree t) {
 
 void
 packrat_define (string s, tree t) {
+  //cout << "Define " << s << " := " << t << "\n";
   if (left_recursive (s, t)) {
     string s1= s * "-head";
     string s2= s * "-tail";
@@ -256,7 +260,7 @@ packrat_define (string s, tree t) {
     packrat_define (s1, t1);
     packrat_define (s2, t2);
     tree   u1= compound ("symbol", s1);
-    tree   u2= compound ("repeat", compound ("symbol", s2));
+    tree   u2= compound ("while", compound ("symbol", s2));
     packrat_define (s, compound ("concat", u1, u2));
   }
   else {
