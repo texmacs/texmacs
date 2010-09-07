@@ -131,7 +131,8 @@
   (with l (pending-ref lan ses)
     (with (in out next opts) (session-decode (car l))
       ;;(display* "Session do " lan ", " ses ", " in "\n")
-      (if (or (tree-empty? in) (not (session-coherent? out next)))
+      (if (or (and (tree-empty? in) (!= lan "r"))
+	      (not (session-coherent? out next)))
 	  (plugin-next lan ses)
 	  (begin
 	    (plugin-write lan ses in)
