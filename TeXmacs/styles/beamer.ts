@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|generic|ridged-paper>
+  <use-package|generic|presentation|ridged-paper>
 
   \;
 </body>

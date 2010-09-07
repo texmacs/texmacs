@@ -2817,7 +2817,7 @@ upgrade_presentation (tree t) {
     int n= N(t);
     tree r (t, n);
     for (i=0; i<n; i++)
-      if (t[i] == "presentation") r[i]= "ridged-paper";
+      if (t[i] == "presentation") r[i]= "presentation-ridged-paper";
       else r[i]= upgrade_presentation (t[i]);
     return r;
   }
