@@ -247,7 +247,7 @@ texmacs_input_rep::latex_flush (bool force) {
 void
 texmacs_input_rep::html_flush (bool force) {
   if (force || ends (buf, "</P>")) {
-    write (generic_to_tree (buf, "html-snippet"));
+    write (compound ("html-text", generic_to_tree (buf, "html-snippet")));
     buf= "";
   }
 }

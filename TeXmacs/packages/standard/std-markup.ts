@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.4>
+<TeXmacs|1.0.7.6>
 
 <style|<tuple|source|std>>
 
@@ -106,6 +106,8 @@
   <assign|math|<macro|x|<with|mode|math|<arg|x>>>>
 
   <assign|text|<macro|x|<with|mode|text|<arg|x>>>>
+
+  <assign|html-text|<macro|x|<with|mode|text|par-mode|justify|font-family|ss|par-indent|0em|par-par-sep|0.33em|<arg|x>>>>
 
   <assign|op|<macro|x|<with|math-condensed|true|<arg|x>>>>
 
