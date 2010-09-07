@@ -4,5 +4,5 @@ Version: 0.1
 Author: Michael Lachmann Tamarlin
 Description: This package provides a couple of functions for inserting
         graphs into TeXmacs.
-Maintainer: Michael Lachmann Tamarlin <dirk@santafe.edu>
+Maintainer: Michael Lachmann Tamarlin <mlachmann@gmail.com>
 License: GPL

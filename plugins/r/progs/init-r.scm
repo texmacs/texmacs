@@ -30,7 +30,19 @@
   (:initialize (r-initialize))
   (:serializer ,r-serialize)
   (:launch "exec tm_r")
-;;  (:tab-completion #t)
-  (:session "R"))
+  (:tab-completion #t)
+  (:session "R")
+  (:scripts "R")
+  )
 
+
+(menu-bind r-menu
+  ("update menu" (insert "t.update.menus(max.len=30)"))
+  ("R help in TeXmacs" (insert "t.start.help()"))  
+  )
+
+(menu-extend texmacs-extra-menu
+    (if (in-r?)
+          (=> "R" (link r-menu))))
+	  
 
