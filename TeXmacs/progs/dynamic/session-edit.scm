@@ -319,11 +319,17 @@
 (define (field-update-math t)
   (if (session-math-input?)
       (when (field-prog-context? t)
-	(tree-assign-node! t 'folded-io-math)
-	(tree-assign (tree-ref t 1) '(document "")))
+	(if (tm-func? t 'input)
+	    (tree-assign-node! t 'input-math)
+	    (begin
+	      (tree-assign-node! t 'folded-io-math)
+	      (tree-assign (tree-ref t 1) '(document "")))))
       (when (field-math-context? t)
-	(tree-assign-node! t 'folded-io)
-	(tree-assign (tree-ref t 1) '(document "")))))
+	(if (tm-func? t 'input-math)
+	    (tree-assign-node! t 'input)
+	    (begin
+	      (tree-assign-node! t 'folded-io)
+	      (tree-assign (tree-ref t 1) '(document "")))))))
 
 (define (field-create t p forward?)
   (let* ((d (tree-ref t :up))
