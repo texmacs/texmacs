@@ -228,7 +228,7 @@ BUNDLE_MAIN: TEXMACS
 	$(CP) TeXmacs $(BUNDLE_RESOURCES)/share
 	$(RM) $(BUNDLE_TEXMACS)/bin/texmacs.bin
 	$(RM) -r $(BUNDLE_TEXMACS)/doc
-	if [ -f ../doc ] ; then \
+	if [ -d ../doc ] ; then \
 	  $(CP) ../doc $(BUNDLE_TEXMACS) ;\
 	fi
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
