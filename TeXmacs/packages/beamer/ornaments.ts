@@ -35,9 +35,11 @@
 
   <assign|pine|<macro|x|<with|ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>|strong-color|#0c3000|math-color|#500000|<ornament|<arg|x>>>>>
 
-  <assign|ridged-paper|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>|<ornament|<arg|x>>>>>
+  <assign|ridged-paper|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcdc>|ornament-sunny-color|#f0e0e0|ornament-shadow-color|#d0a0a0|<ornament|<arg|x>>>>>
 
-  <assign|rough-paper|<macro|x|<with|ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#e8dcd0>|<ornament|<arg|x>>>>>
+  <assign|rough-paper|<macro|x|<with|ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>|ornament-sunny-color|#e0e0e0|ornament-shadow-color|#a0a0a0|<ornament|<arg|x>>>>>
+
+  \;
 
   \;
 </body>
