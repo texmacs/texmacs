@@ -53,6 +53,8 @@
 	     (load-help-article "main/editing/man-editing-tools"))
 	    ("Advanced layout features"
 	     (load-help-article "main/layout/man-layout"))
+	    ("Laptop presentations"
+	     (load-help-article "main/beamer/man-beamer"))
 	    ("TeXmacs plugins"
 	     (load-help-article "devel/plugin/plugins"))
 	    ("TeXmacs as an interface"
