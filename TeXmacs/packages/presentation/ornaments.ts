@@ -31,7 +31,7 @@
 
   <assign|pine|<macro|x|<with|ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>|strong-color|#0c3000|math-color|#500000|<ornament|<arg|x>>>>>
 
-  <assign|ridged|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>|<ornament|<arg|x>>>>>
+  <assign|ridged-paper|<macro|x|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>|<ornament|<arg|x>>>>>
 
   <assign|metal|<macro|x|<with|ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>|ornament-sunny-color|#e0e0e8|ornament-shadow-color|#9090ac|<ornament|<arg|x>>>>>
 

@@ -82,3 +82,11 @@
 
 (define-group expanded-tag
   expanded slides)
+
+;; ornaments
+
+(define-group ornament-tag
+  granite metal pine ridged-paper)
+
+(define-group variant-tag (ornament-tag))
+(define-group similar-tag (ornament-tag))

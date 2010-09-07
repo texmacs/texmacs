@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|presentation|alt-colors|ornaments|varsession>
+  <use-package|alt-colors|ornaments|varsession|presentation>
 
   <\active*>
     <\src-comment>
