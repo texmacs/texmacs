@@ -41,6 +41,29 @@ void mac_image_to_png (url img_file, url png_file) {
   [png_data writeToURL:[NSURL fileURLWithPath: to_nsstring_utf8 ( concretize (png_file))] atomically: YES];
   [bmp release];
   [pool release];
+} 
+
+
+bool mac_image_size (url img_file, int& w, int& h) 
+{
+  bool res = false;
+  
+  // we need to be sure that the Cocoa application infrastructure is initialized 
+  // (apparently Qt does not do this properly)
+  NSApplication *NSApp=[NSApplication sharedApplication]; (void) NSApp;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  NSImage *image = [[NSImage alloc] initWithContentsOfFile: to_nsstring_utf8 ( concretize (img_file) )];
+  if (image) {
+    NSSize size = [image size];
+    [image release];
+    //NSLog(@"Probing  image size %f %f.\n", size.width, size.height);
+    w = size.width;
+    h = size.height;
+    res = true;
+  }
+  [pool release];
+  return res;
 }
 
 

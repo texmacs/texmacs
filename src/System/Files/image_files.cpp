@@ -232,6 +232,11 @@ image_size (url image, int& w, int& h) {
     return;
   }
 #endif
+#ifdef MACOSX_EXTENSIONS 
+  if ( mac_image_size (image, w, h) ) {
+    return;
+  }
+#endif
 #ifdef USE_IMLIB2
   if (imlib2_supports (image)) {
     imlib2_image_size (image, w, h);

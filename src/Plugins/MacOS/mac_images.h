@@ -15,6 +15,7 @@
 #include "file.hpp"
 
 void mac_image_to_png (url img_file, url png_file) ;
+bool mac_image_size (url img_file, int& w, int& h) ;
 
 void mac_ps_to_pdf (url ps_file, url pdf_file) ;
 
