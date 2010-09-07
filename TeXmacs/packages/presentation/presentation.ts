@@ -10,7 +10,7 @@
       Presentation style.
     </src-purpose>
 
-    <src-copyright|2007--2008|Joris van der Hoeven>
+    <src-copyright|2007--2010|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -19,8 +19,6 @@
       which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
-
-  <use-package|varsession|alt-colors|ornaments|ridged-paper>
 
   <\active*>
     <\src-comment>

@@ -20,6 +20,8 @@
     </src-license>
   </src-title>>
 
+  <use-package|presentation|alt-colors|ornaments|varsession>
+
   <\active*>
     <\src-comment>
       Background

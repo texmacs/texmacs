@@ -2806,6 +2806,31 @@ upgrade_session (tree t, tree lan, tree ses) {
 }
 
 /******************************************************************************
+* Upgrade presentation style
+******************************************************************************/
+
+tree
+upgrade_presentation (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "style") || is_compound (t, "tuple")) {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      if (t[i] == "presentation") r[i]= "ridged-paper";
+      else r[i]= upgrade_presentation (t[i]);
+    return r;
+  }
+  else {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_presentation (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2921,5 +2946,7 @@ upgrade (tree t, string version) {
     t= upgrade_mmx (t);
   if (version_inf_eq (version, "1.0.7.1"))
     t= upgrade_session (t, "scheme", "default");
+  if (version_inf_eq (version, "1.0.7.6"))
+    t= upgrade_presentation (t);
   return t;
 }
