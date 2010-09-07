@@ -58,7 +58,7 @@ function(width=0,height=0,file=0,...){
 }
 
 
-t.cat.in2out<-function (filename, before="\002ps: ", after = "\n\005\n",fix.html.bugs=F)
+t.cat.in2out<-function (filename, before="\002ps:width=0.75par\nheight=0.75par\n", after = "\n\005\n",fix.html.bugs=F)
 {
     con <- file(filename, "r")
     on.exit(close(con), add = T)
@@ -101,7 +101,7 @@ function(width=F,height=F,...) {
   }
   if( op$nox11 ) {
     dev.off()
-#    cat("\2ps:") ;
+#    cat("\2ps:width=0.75par\nheight=0.75par\n") ;
 #    system(paste("cat",op$file))
 #    cat("\5\n") 
     try(    t.cat.in2out( op$file ), silent=T )

@@ -255,8 +255,22 @@ texmacs_input_rep::html_flush (bool force) {
 void
 texmacs_input_rep::ps_flush (bool force) {
   if (force) {
-    tree t (POSTSCRIPT, tuple (tree (RAW_DATA, copy (buf)), "ps"));
-    t << "" << "" << "" << "" << "" << "";
+    string w= "";
+    string h= "";
+    string b= copy (buf);
+    while (true)
+      if (starts (b, "width=") || starts (b, "height=")) {
+	int i=0;
+	for (i=0; i<N(b); i++)
+	  if (b[i] == '\n') break;
+	if (i == N(b)) break;
+	if (b[0] == 'w') w= b (6, i);
+	else h= b (7, i);
+	b= b (i+1, N(b));
+      }
+      else break;
+    tree t (POSTSCRIPT, tuple (tree (RAW_DATA, b), "ps"));
+    t << w << h << "" << "" << "" << "";
     write (t);
     buf= "";
   }
