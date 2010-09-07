@@ -424,22 +424,24 @@ int main(int arc, char *argv[])
   TXB = init_buffer( 4096 ) ;
   RB = init_buffer( 4096 ) ;
   TEMPB = init_buffer( 4096 ) ;
-  
-  
-  TEXMACS_PATH = getenv("TEXMACS_HOME_PATH") ;
+
+  HOME = getenv ("HOME") ;
+  if( HOME == NULL ) HOME = "~" ;
+  /*fprintf (stderr, "HOME=%s\n", HOME) ;*/
+
+  TEXMACS_PATH = getenv("TEXMACS_PATH") ;
   if( TEXMACS_PATH == NULL ) {
-	/*    HOME = getenv("HOME") ;*/
-	HOME = "~" ;
     TEXMACS_PATH = (char *)malloc( 4096 ) ;
     snprintf(TEXMACS_PATH,4096,"%s/.TeXmacs",HOME) ;
   }
+  /*fprintf (stderr, "TEXMACS_PATH=%s\n", TEXMACS_PATH) ;*/
   
   /* Lazy installing the TeXmacs package */
   TEXMACS_LIB = (char *)malloc(4096);
   snprintf(TEXMACS_LIB,4096,"%s/plugins/r/r",TEXMACS_PATH);
   if (stat(TEXMACS_LIB,&stat_buf))
 	system("r_install"); 
-  
+  /*fprintf (stderr, "TEXMACS_LIB=%s\n", TEXMACS_LIB) ;*/
   
   TEXMACS_R = getenv("TEXMACS_CMD") ;
   if( TEXMACS_R == NULL ) {
@@ -452,20 +454,20 @@ int main(int arc, char *argv[])
   }
   
   TEXMACS_SEND_E = getenv("TEXMACS_SEND") ;
-  
   TEXMACS_SEND = (char *)malloc( 4096 ) ;
-  
 #if 1
   if( TEXMACS_SEND_E == NULL ) {
-    snprintf(TEXMACS_SEND,4096,"library(TeXmacs,lib.loc=paste(Sys.getenv(\"HOME\"),\"/.TeXmacs/plugins/r/r/\",sep=\"\"))\n") ;
+    /*snprintf(TEXMACS_SEND,4096,"library(TeXmacs,lib.loc=paste(Sys.getenv(\"HOME\"),\"/.TeXmacs/plugins/r/r/\",sep=\"\"))\n") ; */
+    snprintf(TEXMACS_SEND,4096,"library(TeXmacs,lib.loc=\"%s\")\n",
+	     TEXMACS_LIB) ;
   } else {
     snprintf(TEXMACS_SEND,4096,"%s\n",TEXMACS_SEND_E) ;
   }
 #endif
+  /*fprintf (stderr, "TEXMACS_SEND=%s\n", TEXMACS_SEND) ;*/
   
   /* prepare for the string to be sent to the process */
   copy_to_B( RB, st, snprintf( st,4096, "%s",TEXMACS_SEND) ) ;
-  
   
   if( (childpid=forkpty( &master, name, NULL, NULL ))==0 ) {
     /* I'm the child - I'll run the command */
