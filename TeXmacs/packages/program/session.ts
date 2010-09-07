@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.6>
 
 <style|source>
 
@@ -137,6 +137,14 @@
   <assign|folded-io-math|<\macro|prompt|in|out>
     <folded-io|<arg|prompt>|<math|<arg|in>>|<arg|out>>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Importing various formats
+    </src-comment>
+  </active*>
+
+  <assign|html-text|<macro|x|<with|mode|text|par-mode|justify|font-family|ss|par-indent|0em|par-par-sep|0.33em|<arg|x>>>>
 
   \;
 </body>

@@ -107,8 +107,6 @@
 
   <assign|text|<macro|x|<with|mode|text|<arg|x>>>>
 
-  <assign|html-text|<macro|x|<with|mode|text|par-mode|justify|font-family|ss|par-indent|0em|par-par-sep|0.33em|<arg|x>>>>
-
   <assign|op|<macro|x|<with|math-condensed|true|<arg|x>>>>
 
   <assign|cite*|<macro|x|<with|font-shape|italic|<arg|x>>>>
