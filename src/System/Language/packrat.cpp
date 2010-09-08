@@ -55,8 +55,8 @@ hashmap<D,C>      current_cache (PACKRAT_UNDEFINED);
 tree              tree_uninit (UNINIT);
 hashmap<D,tree>   current_production (tree_uninit);
 string            current_string;
-hashmap<path,int> current_start (0);
-hashmap<path,int> current_end (0);
+hashmap<path,int> current_start (-1);
+hashmap<path,int> current_end (-1);
 
 /******************************************************************************
 * Forward definitions
@@ -366,7 +366,7 @@ packrat_parse (string s, string in) {
     tm_char_forwards (in, i);
     k++;
   }
-  return k;
+  return i;
 }
 
 /******************************************************************************
@@ -397,15 +397,16 @@ packrat_add_input (tree t, path p) {
 void
 packrat_set_input (tree t) {
   current_string= "";
-  current_start = hashmap<path,int> (0);
-  current_end   = hashmap<path,int> (0);
+  current_start = hashmap<path,int> (-1);
+  current_end   = hashmap<path,int> (-1);
   packrat_add_input (t, path ());
 }
 
 path
 packrat_get_path (tree t, path p, int pos) {
-  int rel= pos - current_start[p];
-  if (is_atomic (t)) return p * rel;
+  //cout << "Search " << pos << " in " << t << ", " << p << "\n";
+  //cout << "Range " << current_start[p] << " -- " << current_end[p] << "\n";
+  if (is_atomic (t)) return p * (pos - current_start[p]);
   else {
     for (int i=0; i<N(t); i++)
       if (pos >= current_start[p*i] && pos <= current_end[p*i])
@@ -419,6 +420,7 @@ packrat_get_path (tree t, path p, int pos) {
 path
 packrat_parse (string s, tree in) {
   packrat_set_input (in);
+  //cout << "input= " << current_string << "\n";
   int pos= packrat_parse (s, current_string);
   if (pos < 0) return path (pos);
   return packrat_get_path (in, path (), pos);

@@ -14,6 +14,11 @@
 (define-public (scheme->packrat x)
   (cond ((string? x) (string->tree x))
 	((symbol? x) (tree 'symbol (string->tree (symbol->string x))))
+	((== x :/) (string->tree "<|>"))
+	((== x :>) (string->tree "</>"))
+	((keyword? x)
+	 (with s (string-drop (keyword->string x) 1)
+	   (string->tree (string-append "<\\" s ">"))))
 	((func? x 'or) (tm->tree `(or ,@(map scheme->packrat (cdr x)))))
 	((func? x '* 1) (tm->tree `(while ,@(map scheme->packrat (cdr x)))))
 	((func? x '+ 1) (tm->tree `(repeat ,@(map scheme->packrat (cdr x)))))
@@ -40,4 +45,4 @@
   `(with in ,x
      (if (string? in)
 	 (cpp-packrat-parse (symbol->string ',gr) in)
-	 (cpp-packrat-parse-tree (symbol->string ',gr) in))))
+	 (cpp-packrat-parse-tree (symbol->string ',gr) (tm->tree in)))))
