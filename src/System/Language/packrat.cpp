@@ -54,6 +54,9 @@ array<C>          current_input;
 hashmap<D,C>      current_cache (PACKRAT_UNDEFINED);
 tree              tree_uninit (UNINIT);
 hashmap<D,tree>   current_production (tree_uninit);
+string            current_string;
+hashmap<path,int> current_start (0);
+hashmap<path,int> current_end (0);
 
 /******************************************************************************
 * Forward definitions
@@ -364,4 +367,59 @@ packrat_parse (string s, string in) {
     k++;
   }
   return k;
+}
+
+/******************************************************************************
+* Packrat parsing of trees
+******************************************************************************/
+
+void
+packrat_add_input (tree t, path p) {
+  current_start (p)= N(current_string);
+  if (is_atomic (t)) current_string << t->label;
+  else if (is_func (t, CONCAT) || is_func (t, DOCUMENT)) {
+    for (int i=0; i<N(t); i++) {
+      packrat_add_input (t[i], p * i);
+      if (is_func (t, DOCUMENT)) current_string << "\n";
+    }
+  }
+  else {
+    current_string << "<\\" << as_string (L(t)) << ">";
+    for (int i=0; i<N(t); i++) {
+      if (i != 0) current_string << "<|>";
+      packrat_add_input (t[i], p * i);
+    }
+    current_string << "</>";
+  }
+  current_end (p)= N(current_string);
+}
+
+void
+packrat_set_input (tree t) {
+  current_string= "";
+  current_start = hashmap<path,int> (0);
+  current_end   = hashmap<path,int> (0);
+  packrat_add_input (t, path ());
+}
+
+path
+packrat_get_path (tree t, path p, int pos) {
+  int rel= pos - current_start[p];
+  if (is_atomic (t)) return p * rel;
+  else {
+    for (int i=0; i<N(t); i++)
+      if (pos >= current_start[p*i] && pos <= current_end[p*i])
+	return packrat_get_path (t[i], p * i, pos);
+    if (pos <= current_start[p]) return p * 0;
+    if (pos >= current_end[p]) return p * 1;
+    return p * 0;
+  }
+}
+
+path
+packrat_parse (string s, tree in) {
+  packrat_set_input (in);
+  int pos= packrat_parse (s, current_string);
+  if (pos < 0) return path (pos);
+  return packrat_get_path (in, path (), pos);
 }

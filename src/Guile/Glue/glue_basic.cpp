@@ -1912,6 +1912,21 @@ tmg_cpp_packrat_parse (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_cpp_packrat_parse_tree (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cpp-packrat-parse-tree");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "cpp-packrat-parse-tree");
+
+  string in1= scm_to_string (arg1);
+  tree in2= scm_to_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= packrat_parse (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_parse_texmacs (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "parse-texmacs");
 
@@ -4091,6 +4106,7 @@ initialize_glue_basic () {
   scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("cpp-packrat-define", (FN) tmg_cpp_packrat_define, 2, 0, 0);
   scm_new_procedure ("cpp-packrat-parse", (FN) tmg_cpp_packrat_parse, 2, 0, 0);
+  scm_new_procedure ("cpp-packrat-parse-tree", (FN) tmg_cpp_packrat_parse_tree, 2, 0, 0);
   scm_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   scm_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
   scm_new_procedure ("parse-texmacs-snippet", (FN) tmg_parse_texmacs_snippet, 1, 0, 0);

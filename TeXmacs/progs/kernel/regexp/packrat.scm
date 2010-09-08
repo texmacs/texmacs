@@ -36,5 +36,8 @@
 (define-public-macro (packrat-grammar . gr)
   `(packrat-define-grammar ',gr))
 
-(define-public-macro (packrat-parse gr s)
-  `(cpp-packrat-parse (symbol->string ',gr) ,s))
+(define-public-macro (packrat-parse gr x)
+  `(with in ,x
+     (if (string? in)
+	 (cpp-packrat-parse (symbol->string ',gr) in)
+	 (cpp-packrat-parse-tree (symbol->string ',gr) in))))
