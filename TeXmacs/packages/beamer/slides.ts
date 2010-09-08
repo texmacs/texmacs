@@ -20,8 +20,6 @@
     </src-license>
   </src-title>>
 
-  <use-package|presentation>
-
   <\active*>
     <\src-comment>
       Global layout
