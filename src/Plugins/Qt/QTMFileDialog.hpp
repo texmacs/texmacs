@@ -44,6 +44,8 @@ public:
 #endif
   void setViewMode (QFileDialog::ViewMode mode) { return file->setViewMode (mode); };
   void setFileMode (QFileDialog::FileMode mode) { return file->setFileMode (mode); };
+  void setNameFilter (const QString & filter) { return file->setNameFilter (filter);}
+  void setDefaultSuffix (const QString & suffix) { return file->setDefaultSuffix (suffix);}
   void setLabelText (QFileDialog::DialogLabel label, const QString& text) { return file->setLabelText (label, text); };
 };
 
