@@ -863,6 +863,9 @@
 		9CD4E73010B14AEE00E0DD5C /* x_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490210A8CC100097A335 /* x_window.cpp */; };
 		9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48EF10A8CC100097A335 /* xpm_widget.cpp */; };
 		9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487A10A8CC100097A335 /* ghostscript.cpp */; };
+		9CE4F0051238FAF800993AF7 /* packrat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4F0031238FAF800993AF7 /* packrat.cpp */; };
+		9CE4F0061238FAF900993AF7 /* packrat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4F0031238FAF800993AF7 /* packrat.cpp */; };
+		9CE4F0071238FAF900993AF7 /* packrat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4F0031238FAF800993AF7 /* packrat.cpp */; };
 		9CEE09DF11EDDB3100403342 /* agl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096411EDDB3100403342 /* agl.c */; };
 		9CEE09E011EDDB3100403342 /* bmpimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096611EDDB3100403342 /* bmpimage.c */; };
 		9CEE09E111EDDB3100403342 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096811EDDB3100403342 /* cff.c */; };
@@ -1696,6 +1699,8 @@
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
+		9CE4F0031238FAF800993AF7 /* packrat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat.cpp; sourceTree = "<group>"; };
+		9CE4F0041238FAF800993AF7 /* packrat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat.hpp; sourceTree = "<group>"; };
 		9CEE096411EDDB3100403342 /* agl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = agl.c; sourceTree = "<group>"; };
 		9CEE096511EDDB3100403342 /* agl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = agl.h; sourceTree = "<group>"; };
 		9CEE096611EDDB3100403342 /* bmpimage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmpimage.c; sourceTree = "<group>"; };
@@ -2864,6 +2869,8 @@
 		9C0B493510A8CC110097A335 /* Language */ = {
 			isa = PBXGroup;
 			children = (
+				9CE4F0031238FAF800993AF7 /* packrat.cpp */,
+				9CE4F0041238FAF800993AF7 /* packrat.hpp */,
 				9C0B493610A8CC110097A335 /* cpp_language.cpp */,
 				9C0B493710A8CC110097A335 /* dictionary.cpp */,
 				9C0B493810A8CC110097A335 /* dictionary.hpp */,
@@ -3953,6 +3960,7 @@
 				9CEE0A1511EDDB3100403342 /* type1c.c in Sources */,
 				9CEE0A1611EDDB3100403342 /* unicode.c in Sources */,
 				9CEE0A1711EDDB3100403342 /* pdf_renderer.cpp in Sources */,
+				9CE4F0051238FAF800993AF7 /* packrat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4300,6 +4308,7 @@
 				9CEE0A8711EDDB3100403342 /* type1c.c in Sources */,
 				9CEE0A8811EDDB3100403342 /* unicode.c in Sources */,
 				9CEE0A8911EDDB3100403342 /* pdf_renderer.cpp in Sources */,
+				9CE4F0071238FAF900993AF7 /* packrat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4662,6 +4671,7 @@
 				9CEE0A4E11EDDB3100403342 /* type1c.c in Sources */,
 				9CEE0A4F11EDDB3100403342 /* unicode.c in Sources */,
 				9CEE0A5011EDDB3100403342 /* pdf_renderer.cpp in Sources */,
+				9CE4F0061238FAF900993AF7 /* packrat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4816,7 +4826,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
@@ -4827,7 +4836,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
