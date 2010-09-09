@@ -104,8 +104,14 @@ TeXmacs_init_paths (int& argc, char** argv) {
     set_env ("TEXMACS_PATH", as_string(exedir * "../Resources/share/TeXmacs"));
   //cout << get_env("PATH") * ":" * as_string(url("$PWD") * argv[0]
   // * "../../Resources/share/TeXmacs/bin") << LF;
-  set_env ("PATH", get_env("PATH") * ":" *
-	           as_string (exedir * "../Resources/share/TeXmacs/bin"));
+  if (exists("/bin/bash")) {
+    string shell_env =  eval_system("PATH='' /bin/bash -l -c 'echo $PATH'");
+    set_env ("PATH", get_env("PATH") * ":" * shell_env * ":" *
+           as_string (exedir * "../Resources/share/TeXmacs/bin"));
+  } else {
+    set_env ("PATH", get_env("PATH") * ":" *
+               as_string (exedir * "../Resources/share/TeXmacs/bin"));
+  }
   // system("set");
 #endif
 
