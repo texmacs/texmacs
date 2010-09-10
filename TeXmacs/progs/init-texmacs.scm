@@ -45,7 +45,7 @@
 		 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
 		 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
 		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
-		 (kernel texmacs tm-file-system))
+		 (kernel texmacs tm-language)  (kernel texmacs tm-file-system))
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define) (kernel gui gui-widget)
 		 (kernel gui gui-factory) (kernel gui gui-form))

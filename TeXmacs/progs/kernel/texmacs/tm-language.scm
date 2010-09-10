@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; MODULE      : packrat.scm
-;; DESCRIPTION : packrat grammars
+;; MODULE      : tm-language.scm
+;; DESCRIPTION : formal language support based on packrat grammars
 ;; COPYRIGHT   : (C) 2010  Joris van der Hoeven
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -9,9 +9,10 @@
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel regexp packrat))
+(texmacs-module (kernel texmacs tm-language)
+  (:use (kernel texmacs tm-define)))
 
-(define-public (scheme->packrat x)
+(define (scheme->packrat x)
   (cond ((string? x) (string->tree x))
 	((symbol? x) (tree 'symbol (string->tree (symbol->string x))))
 	((== x :/) (string->tree "<|>"))
@@ -26,22 +27,21 @@
 	((list? x) (tm->tree `(concat ,@(map scheme->packrat x))))
         (else (error "invalid packrat"))))
 
-(define-public (packrat-define-rule sym l)
+(define (define-rule-impl lan sym l)
   (with gr `(or ,@l)
     ;;(display* "Define " sym " := " l "\n")
     ;;(display* "Packrat= " (scheme->packrat gr) "\n")
     (cpp-packrat-define (symbol->string sym) (scheme->packrat gr))))
 
-(define-public (packrat-define-grammar gr)
-  (for-each (lambda (x) (packrat-define-rule (car x) (cdr x))) gr))
+(tm-define (define-language-impl lan gr)
+  (for-each (lambda (x) (define-rule-impl lan (car x) (cdr x))) gr))
 
-(define-public-macro (packrat-rule sym . l)
-  `(packrat-define-rule ',sym ',l))
+(tm-define-macro (define-language lan . gr)
+  (:synopsis "Define the formal language @lan")
+  `(define-language-impl ',lan ',gr))
 
-(define-public-macro (packrat-grammar . gr)
-  `(packrat-define-grammar ',gr))
-
-(define-public-macro (packrat-parse gr x)
+(tm-define-macro (semantic-end lan gr x)
+  (:synopsis "Get rightmost path until where @x can be parsed in @lan")
   `(with in ,x
      (if (string? in)
 	 (cpp-packrat-parse (symbol->string ',gr) in)

@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (math std-math)
-  (:use (math std-symbols)))
+(texmacs-module (language std-math)
+  (:use (language std-symbols)))
 
 (define-language std-math-grammar
   (Expression

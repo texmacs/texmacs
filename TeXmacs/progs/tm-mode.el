@@ -50,7 +50,8 @@
     texmacs-module provide-public define-group
     tm-define tm-define-macro tm-property request-handler
     tm-build tm-build-macro tm-build-widget
-    menu-bind menu-extend define-table define-format))
+    menu-bind menu-extend define-table
+    define-format define-language))
 
 (setq unary-no-highlight
   '(format interactive))
