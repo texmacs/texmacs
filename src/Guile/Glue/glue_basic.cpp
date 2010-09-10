@@ -1882,45 +1882,51 @@ tmg_grammar_parse (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_cpp_packrat_define (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cpp-packrat-define");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "cpp-packrat-define");
+tmg_packrat_define (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-define");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-define");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "packrat-define");
 
   string in1= scm_to_string (arg1);
-  tree in2= scm_to_tree (arg2);
+  string in2= scm_to_string (arg2);
+  tree in3= scm_to_tree (arg3);
 
   // SCM_DEFER_INTS;
-  packrat_define (in1, in2);
+  packrat_define (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_cpp_packrat_parse (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cpp-packrat-parse");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "cpp-packrat-parse");
+tmg_packrat_parse (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-parse");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-parse");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "packrat-parse");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  int out= packrat_parse (in1, in2);
+  int out= packrat_parse (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
 }
 
 SCM
-tmg_cpp_packrat_parse_tree (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cpp-packrat-parse-tree");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "cpp-packrat-parse-tree");
+tmg_packrat_parse_tree (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-parse-tree");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-parse-tree");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "packrat-parse-tree");
 
   string in1= scm_to_string (arg1);
-  tree in2= scm_to_tree (arg2);
+  string in2= scm_to_string (arg2);
+  tree in3= scm_to_tree (arg3);
 
   // SCM_DEFER_INTS;
-  path out= packrat_parse (in1, in2);
+  path out= packrat_parse (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -4104,9 +4110,9 @@ initialize_glue_basic () {
   scm_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
   scm_new_procedure ("define-grammar-rule", (FN) tmg_define_grammar_rule, 2, 0, 0);
   scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
-  scm_new_procedure ("cpp-packrat-define", (FN) tmg_cpp_packrat_define, 2, 0, 0);
-  scm_new_procedure ("cpp-packrat-parse", (FN) tmg_cpp_packrat_parse, 2, 0, 0);
-  scm_new_procedure ("cpp-packrat-parse-tree", (FN) tmg_cpp_packrat_parse_tree, 2, 0, 0);
+  scm_new_procedure ("packrat-define", (FN) tmg_packrat_define, 3, 0, 0);
+  scm_new_procedure ("packrat-parse", (FN) tmg_packrat_parse, 3, 0, 0);
+  scm_new_procedure ("packrat-parse-tree", (FN) tmg_packrat_parse_tree, 3, 0, 0);
   scm_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   scm_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
   scm_new_procedure ("parse-texmacs-snippet", (FN) tmg_parse_texmacs_snippet, 1, 0, 0);

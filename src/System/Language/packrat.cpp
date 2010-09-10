@@ -253,18 +253,19 @@ packrat_define (tree t) {
 }
 
 void
-packrat_define (string s, tree t) {
+packrat_define (string lan, string s, tree t) {
+  (void) lan;
   //cout << "Define " << s << " := " << t << "\n";
   if (left_recursive (s, t)) {
     string s1= s * "-head";
     string s2= s * "-tail";
     tree   t1= left_head (s, t);
     tree   t2= left_tail (s, t);
-    packrat_define (s1, t1);
-    packrat_define (s2, t2);
+    packrat_define (lan, s1, t1);
+    packrat_define (lan, s2, t2);
     tree   u1= compound ("symbol", s1);
     tree   u2= compound ("while", compound ("symbol", s2));
-    packrat_define (s, compound ("concat", u1, u2));
+    packrat_define (lan, s, compound ("concat", u1, u2));
   }
   else {
     C sym= encode_symbol (s);
@@ -356,7 +357,8 @@ packrat_parse (C sym, C pos) {
 }
 
 int
-packrat_parse (string s, string in) {
+packrat_parse (string lan, string s, string in) {
+  (void) lan;
   packrat_set_input (encode_tokens (in));
   //cout << "Input= " << current_input << LF;
   C pos= packrat_parse (encode_symbol (s), 0);
@@ -418,10 +420,10 @@ packrat_get_path (tree t, path p, int pos) {
 }
 
 path
-packrat_parse (string s, tree in) {
+packrat_parse (string lan, string s, tree in) {
   packrat_set_input (in);
   //cout << "input= " << current_string << "\n";
-  int pos= packrat_parse (s, current_string);
+  int pos= packrat_parse (lan, s, current_string);
   if (pos < 0) return path (pos);
   return packrat_get_path (in, path (), pos);
 }

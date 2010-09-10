@@ -13,8 +13,8 @@
 #define PACKRAT_H
 #include "tree.hpp"
 
-void packrat_define (string s, tree t);
-int  packrat_parse (string s, string in);
-path packrat_parse (string s, tree in);
+void packrat_define (string lan, string s, tree t);
+int  packrat_parse (string lan, string s, string in);
+path packrat_parse (string lan, string s, tree in);
 
 #endif // PACKRAT_H

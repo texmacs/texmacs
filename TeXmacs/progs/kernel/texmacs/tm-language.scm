@@ -31,18 +31,20 @@
   (with gr `(or ,@l)
     ;;(display* "Define " sym " := " l "\n")
     ;;(display* "Packrat= " (scheme->packrat gr) "\n")
-    (cpp-packrat-define (symbol->string sym) (scheme->packrat gr))))
+    (packrat-define lan (symbol->string sym) (scheme->packrat gr))))
 
 (tm-define (define-language-impl lan gr)
   (for-each (lambda (x) (define-rule-impl lan (car x) (cdr x))) gr))
 
 (tm-define-macro (define-language lan . gr)
   (:synopsis "Define the formal language @lan")
-  `(define-language-impl ',lan ',gr))
+  `(define-language-impl (symbol->string ',lan) ',gr))
 
-(tm-define-macro (semantic-end lan gr x)
+(tm-define-macro (semantic-end lan gr in)
   (:synopsis "Get rightmost path until where @x can be parsed in @lan")
-  `(with in ,x
-     (if (string? in)
-	 (cpp-packrat-parse (symbol->string ',gr) in)
-	 (cpp-packrat-parse-tree (symbol->string ',gr) (tm->tree in)))))
+  `(let* ((lan2 (symbol->string ',lan))
+	  (gr2 (symbol->string ',gr))
+	  (in2 ,in))
+     (if (string? in2)
+	 (packrat-parse lan2 gr2 in2)
+	 (packrat-parse-tree lan2 gr2 (tm->tree in2)))))
