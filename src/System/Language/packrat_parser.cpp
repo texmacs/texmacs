@@ -35,7 +35,7 @@ make_packrat_parser (string lan, string in) {
   if (lan != last_lan || in != last_in) {
     packrat_grammar gr= make_packrat_grammar (lan);
     last_lan= lan;
-    last_in = in;
+    last_in = copy (in);
     last_par= packrat_parser (gr, in);
   }
   return last_par;
@@ -49,7 +49,7 @@ make_packrat_parser (string lan, tree in) {
   if (lan != last_lan || in != last_in) {
     packrat_grammar gr= make_packrat_grammar (lan);
     last_lan= lan;
-    last_in = in;
+    last_in = copy (in);
     last_par= packrat_parser (gr, in);
   }
   return last_par;
@@ -91,7 +91,7 @@ packrat_parser_rep::set_input (tree t) {
   current_string= "";
   current_tree  = t;
   add_input (t, path ());
-  //cout << "Input= " << current_string << "\n";
+  //cout << "Input " << current_string << "\n";
   current_input= encode_tokens (current_string);
 }
 
@@ -115,13 +115,15 @@ int
 packrat_parser_rep::encode_path (tree t, path p, path pos) {
   //cout << "Search " << pos << " in " << t << ", " << p << "\n";
   //cout << "Range " << current_start[p] << " -- " << current_end[p] << "\n";
-  if (is_nil (pos) || pos->item < 0 || pos->item > right_index (t))
-    return -1;
-  else if (is_atomic (t))
+  if (is_nil (pos)) return -1;
+  else if (is_atomic (t)) {
+    if (pos->item < 0 || pos->item > N(t->label)) return -1;
     return current_start[p] + pos->item;
+  }
   else {
     if (pos == path (0)) return current_start[p];
     if (pos == path (1)) return current_end[p];
+    if (pos->item < 0 || pos->item > N(t) || is_nil (pos->next)) return -1;
     return encode_path (t[pos->item], p * pos->item, pos->next);
   }
 }
@@ -252,10 +254,10 @@ packrat_parser_rep::parse (C sym, C pos) {
 
 void
 packrat_parser_rep::context
-  (C sym, C pos, C where, array<C>& kind, array<C>& begin, array<C>& end)
+  (C sym, C pos, C w1, C w2, array<C>& kind, array<C>& begin, array<C>& end)
 {
   C next= parse (sym, pos);
-  if (next < 0 || pos >= where || next <= where) return;
+  if (next < 0 || pos > w1 || next < w2) return;
 
   int n= N(kind);
   if (n >= 1 && begin[n-1] == pos && end[n-1] == next) kind[n-1]= sym;
@@ -272,15 +274,15 @@ packrat_parser_rep::context
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
 	if (parse (inst[i], pos) != PACKRAT_FAILED)
-	  context (inst[i], pos, where, kind, begin, end);
+	  context (inst[i], pos, w1, w2, kind, begin, end);
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
 	next= parse (inst[i], pos);
 	if (next == PACKRAT_FAILED) break;
-	if (pos < where || where < next)
-	  context (inst[i], pos, where, kind, begin, end);
-	if (next >= where) break;
+	if (pos <= w1 && w2 <= next)
+	  context (inst[i], pos, w1, w2, kind, begin, end);
+	if (next > w2) break;
 	pos= next;
       }
       break;
@@ -289,9 +291,9 @@ packrat_parser_rep::context
       while (true) {
 	C next= parse (inst[1], pos);
 	if (next == PACKRAT_FAILED) break;
-	if (pos < where || where < next)
-	  context (inst[1], pos, where, kind, begin, end);
-	if (next >= where) break;
+	if (pos <= w1 && w2 <= next)
+	  context (inst[1], pos, w1, w2, kind, begin, end);
+	if (next > w2) break;
 	pos= next;
       }
       break;
@@ -300,7 +302,7 @@ packrat_parser_rep::context
     case PACKRAT_UNKNOWN:
       break;
     default:
-      context (inst[0], pos, where, kind, begin, end);
+      context (inst[0], pos, w1, w2, kind, begin, end);
       break;
     }
   }
@@ -313,14 +315,17 @@ packrat_parser_rep::compress
   array<C> new_kind, new_begin, new_end;
   for (int i=0; i<N(kind); i++) {
     int n= N(new_kind);
-    if (is_compound (packrat_decode[kind[i]], "symbol", 1)) {
-      if (N(new_kind) == 0 ||
-	  new_kind [n-1] != kind[i] ||
-	  (new_begin[n-1] != begin[i] && new_end[n-1] != end[i])) {
-	new_kind  << kind[i];
-	new_begin << begin[i];
-	new_end   << end[i];
-      }
+    tree t= packrat_decode[kind[i]];
+    if (is_compound (t, "symbol", 1)) {
+      string s= t[0]->label;
+      if (!ends (s, "-head") && !ends (s, "-tail")) 
+	if (N(new_kind) == 0 ||
+	    new_kind [n-1] != kind[i] ||
+	    (new_begin[n-1] != begin[i] && new_end[n-1] != end[i])) {
+	  new_kind  << kind[i];
+	  new_begin << begin[i];
+	  new_end   << end[i];
+	}
     }
   }
   kind = new_kind;
@@ -332,36 +337,11 @@ packrat_parser_rep::compress
 * User interface
 ******************************************************************************/
 
-int
-packrat_parse (string lan, string sym, string in) {
-  packrat_parser par= make_packrat_parser (lan, in);
-  C pos= par->parse (encode_symbol (compound ("symbol", sym)), 0);
-  return par->decode_string_position (pos);
-}
-
 path
 packrat_parse (string lan, string sym, tree in) {
   packrat_parser par= make_packrat_parser (lan, in);
   C pos= par->parse (encode_symbol (compound ("symbol", sym)), 0);
   return par->decode_tree_position (pos);
-}
-
-object
-packrat_context (string lan, string s, string in, int in_pos) {
-  packrat_parser par= make_packrat_parser (lan, in);
-  C sym= encode_symbol (compound ("symbol", s));
-  C pos= par->encode_string_position (in_pos);
-  array<C> kind, begin, end;
-  par->context (sym, 0, pos, kind, begin, end);
-  par->compress (kind, begin, end);
-  object ret= null_object ();
-  for (int i=0; i<N(kind); i++) {
-    object x1 (symbol_object (packrat_decode[kind[i]][0]->label));
-    object x2 (par->decode_string_position (begin[i]));
-    object x3 (par->decode_string_position (end[i]));
-    ret= cons (list_object (x1, x2, x3), ret);
-  }
-  return ret;
 }
 
 object
@@ -373,7 +353,7 @@ packrat_context (string lan, string s, tree in, path in_pos) {
   C pos= par->encode_tree_position (in_pos);
   if (pos == PACKRAT_FAILED) return object (false);
   array<C> kind, begin, end;
-  par->context (sym, 0, pos, kind, begin, end);
+  par->context (sym, 0, pos-1, pos+1, kind, begin, end);
   par->compress (kind, begin, end);
   object ret= null_object ();
   for (int i=0; i<N(kind); i++) {
@@ -383,4 +363,36 @@ packrat_context (string lan, string s, tree in, path in_pos) {
     ret= cons (list_object (x1, x2, x3), ret);
   }
   return ret;
+}
+
+bool
+packrat_enlarge (string lan, string s, tree in, path& p1, path& p2) {
+  //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
+  //<< " (" << lan << ", " << s << ")" << LF;
+  packrat_parser par= make_packrat_parser (lan, in);
+  C sym = encode_symbol (compound ("symbol", s));
+  C pos1= par->encode_tree_position (p1);
+  C pos2= par->encode_tree_position (p2);
+  //cout << "Encoded " << pos1 << " -- " << pos2
+  //<< " in " << par->current_string << LF;
+  if (par->parse (sym, 0) != N(par->current_input)) return false;
+  if (pos1 == PACKRAT_FAILED || pos2 == PACKRAT_FAILED) return false;
+  array<C> kind, begin, end;
+  par->context (sym, 0, pos1, pos2, kind, begin, end);
+  par->compress (kind, begin, end);
+  /*
+  for (int i=0; i<N(kind); i++)
+    cout << i << ":\t"
+	 << par->decode_tree_position (begin[i]) << "\t"
+	 << par->decode_tree_position (end[i]) << "\t"
+	 << packrat_decode[kind[i]] << LF;
+  */
+  int n= N(kind);
+  if (n == 0) return false;
+  if (pos1 == begin[n-1] && pos2 == end[n-1]) n--;
+  if (n == 0) return false;
+  p1= par->decode_tree_position (begin[n-1]);
+  p2= par->decode_tree_position (end[n-1]);
+  //cout << "Selected " << packrat_decode[kind[n-1]] << LF;
+  return true;
 }

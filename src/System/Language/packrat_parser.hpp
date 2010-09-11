@@ -45,7 +45,7 @@ public:
   path decode_tree_position (C pos);
   C    encode_tree_position (path p);
   C    parse (C sym, C pos);
-  void context (C sym, C pos, C where,
+  void context (C sym, C pos, C left, C right,
 		array<C>& kind, array<C>& begin, array<C>& end);
   void compress (array<C>& kind, array<C>& begin, array<C>& end);
 

@@ -12,6 +12,7 @@
 #include "Replace/edit_select.hpp"
 #include "Interface/edit_interface.hpp"
 #include "convert.hpp"
+#include "packrat.hpp"
 
 /******************************************************************************
 * Internationalization
@@ -216,8 +217,28 @@ edit_select_rep::select_enlarge () {
     }
     sq= path_up (sp);
   }
-  if (is_atomic (subtree (et, sp))) select_enlarge_text ();
-  else select (sq * 0, sq * 1);
+  bool semantic_select= false;
+#if 1
+  path pp= sp;
+  if (start_p == pp * 0 && end_p == pp * right_index (subtree (et, pp)))
+    if (!is_nil (pp)) pp= path_up (pp);
+  if (is_script (subtree (et, pp)))
+    if (!is_nil (pp)) pp= path_up (pp);
+  while (!is_nil (pp) && is_format (subtree (et, path_up (pp))))
+    pp= path_up (pp);
+  if (get_env_value (MODE, pp * right_index (subtree (et, pp))) == "math") {
+    eval ("(use-modules (language std-math))");
+    path p1= start_p / pp, p2= end_p / pp;
+    if (packrat_enlarge ("std-math", "Expression", subtree (et, pp), p1, p2)) {
+      semantic_select= true;
+      select (pp * p1, pp * p2);
+    }
+  }
+#endif
+  if (!semantic_select) {
+    if (is_atomic (subtree (et, sp))) select_enlarge_text ();
+    else select (sq * 0, sq * 1);
+  }
 
   path p = common (start_p, end_p);
   tree st= subtree (et, p);

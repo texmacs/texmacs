@@ -1914,23 +1914,6 @@ tmg_packrat_inherit (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_packrat_parse_string (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-parse-string");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-parse-string");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "packrat-parse-string");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  int out= packrat_parse (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_packrat_parse (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-parse");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-parse");
@@ -1945,25 +1928,6 @@ tmg_packrat_parse (SCM arg1, SCM arg2, SCM arg3) {
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
-}
-
-SCM
-tmg_packrat_context_string (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-context-string");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-context-string");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "packrat-context-string");
-  SCM_ASSERT_INT (arg4, SCM_ARG4, "packrat-context-string");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-  int in4= scm_to_int (arg4);
-
-  // SCM_DEFER_INTS;
-  object out= packrat_context (in1, in2, in3, in4);
-  // SCM_ALLOW_INTS;
-
-  return object_to_scm (out);
 }
 
 SCM
@@ -4165,9 +4129,7 @@ initialize_glue_basic () {
   scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("packrat-define", (FN) tmg_packrat_define, 3, 0, 0);
   scm_new_procedure ("packrat-inherit", (FN) tmg_packrat_inherit, 2, 0, 0);
-  scm_new_procedure ("packrat-parse-string", (FN) tmg_packrat_parse_string, 3, 0, 0);
   scm_new_procedure ("packrat-parse", (FN) tmg_packrat_parse, 3, 0, 0);
-  scm_new_procedure ("packrat-context-string", (FN) tmg_packrat_context_string, 4, 0, 0);
   scm_new_procedure ("packrat-context", (FN) tmg_packrat_context, 4, 0, 0);
   scm_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   scm_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);

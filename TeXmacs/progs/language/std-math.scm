@@ -25,16 +25,16 @@
    Product)
 
   (Product
-   (Product Times-symbol Power)
-   (Product Over-symbol Power)
-   Power)
+   (Product Times-symbol Postfixed)
+   (Product Over-symbol Postfixed)
+   Postfixed)
 
-  (Power
-   (Application :<rsup Expression :>)
+  (Postfixed
+   (Postfixed :<rsup Expression :>)
    Application)
 
   (Application
-   (Applicaton Open-symbol Expression Close-symbol)
+   (Application Open-symbol Expression Close-symbol)
    Radical)
 
   (Radical
@@ -47,7 +47,7 @@
    (+ (or (- "a" "z") (- "A" "Z"))))
 
   (Number
-   ((+ (- "0" "9")) "-") (or "" ("." (+ (- "0" "9"))))))
+   ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9")))))))
 
 (define-language std-math
   (inherit std-symbols)
