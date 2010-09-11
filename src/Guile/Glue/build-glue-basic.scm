@@ -173,6 +173,7 @@
   (define-grammar-rule define_grammar_rule (void tree tree))
   (grammar-parse grammar_parse (int tree string))
   (packrat-define packrat_define (void string string tree))
+  (packrat-inherit packrat_inherit (void string string))
   (packrat-parse packrat_parse (int string string string))
   (packrat-parse-tree packrat_parse (path string string tree))
 

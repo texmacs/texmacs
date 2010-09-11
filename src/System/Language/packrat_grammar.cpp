@@ -11,6 +11,7 @@
 
 #include "packrat_grammar.hpp"
 #include "analyze.hpp"
+#include "iterator.hpp"
 
 int               packrat_nr_tokens= 256;
 int               packrat_nr_symbols= 0;
@@ -179,7 +180,7 @@ make_packrat_grammar (string s) {
 
 array<C>
 packrat_grammar_rep::define (tree t) {
-  cout << "Define " << t << INDENT << LF;
+  //cout << "Define " << t << INDENT << LF;
   array<C> def;
   if (t == "")
     def << PACKRAT_CONCAT;
@@ -187,7 +188,7 @@ packrat_grammar_rep::define (tree t) {
     int pos= 0;
     string s= t->label;
     tm_char_forwards (s, pos);
-    if (pos > 0 && pos == N(s)) def << encode_token (s);
+    if (pos > 0 && pos == N(s)) def << encode_symbol (s);
     else def << PACKRAT_CONCAT << encode_tokens (s);
   }
   else if (is_compound (t, "symbol", 1))
@@ -212,12 +213,11 @@ packrat_grammar_rep::define (tree t) {
       def << encode_symbol (t[i]);
     }
   }
-  if (!is_compound (t, "symbol", 1))
-    if (!is_atomic (t) || def[0] != PACKRAT_CONCAT) {
-      C sym= encode_symbol (t);
-      grammar (sym)= def;
-    }
-  cout << UNINDENT << "Defined " << t << " -> " << def << LF;
+  if (N (def) != 1 || def[0] != encode_symbol (t)) {
+    C sym= encode_symbol (t);
+    grammar (sym)= def;
+  }
+  //cout << UNINDENT << "Defined " << t << " -> " << def << LF;
   return def;
 }
 
@@ -250,4 +250,17 @@ void
 packrat_define (string lan, string s, tree t) {
   packrat_grammar gr= make_packrat_grammar (lan);
   gr->define (s, t);
+}
+
+void
+packrat_inherit (string lan, string from) {
+  packrat_grammar gr = make_packrat_grammar (lan);
+  packrat_grammar inh= make_packrat_grammar (from);
+  iterator<C>     it = iterate (inh->grammar);
+  while (it->busy ()) {
+    C sym= it->next ();
+    //cout << "Inherit " << sym << " -> " << inh->grammar (sym) << LF;
+    gr->grammar (sym)= inh->grammar (sym);
+    gr->productions (sym)= inh->productions (sym);
+  }
 }

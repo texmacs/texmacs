@@ -26,9 +26,7 @@
 
   (Product
    (Product Times-symbol Power)
-   (Product Invisible-times-symbol Power)
    (Product Over-symbol Power)
-   (Product Condensed-over-symbol Power)
    Power)
 
   (Power

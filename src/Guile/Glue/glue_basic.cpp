@@ -1899,6 +1899,21 @@ tmg_packrat_define (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_packrat_inherit (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-inherit");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-inherit");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  packrat_inherit (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_packrat_parse (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-parse");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-parse");
@@ -4111,6 +4126,7 @@ initialize_glue_basic () {
   scm_new_procedure ("define-grammar-rule", (FN) tmg_define_grammar_rule, 2, 0, 0);
   scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("packrat-define", (FN) tmg_packrat_define, 3, 0, 0);
+  scm_new_procedure ("packrat-inherit", (FN) tmg_packrat_inherit, 2, 0, 0);
   scm_new_procedure ("packrat-parse", (FN) tmg_packrat_parse, 3, 0, 0);
   scm_new_procedure ("packrat-parse-tree", (FN) tmg_packrat_parse_tree, 3, 0, 0);
   scm_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);

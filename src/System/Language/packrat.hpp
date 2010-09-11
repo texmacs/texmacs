@@ -14,6 +14,7 @@
 #include "tree.hpp"
 
 void packrat_define (string lan, string s, tree t);
+void packrat_inherit (string lan, string from);
 int  packrat_parse (string lan, string s, string in);
 path packrat_parse (string lan, string s, tree in);
 
