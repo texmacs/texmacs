@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+/*
 #include "packrat.hpp"
 #include "array.hpp"
 #include "hashmap.hpp"
@@ -21,11 +22,13 @@
 #define C int
 #define D long long int
 #endif
+*/
 
 /******************************************************************************
 * Important constants
 ******************************************************************************/
 
+/*
 #define PACKRAT_TOKENS    ((C)         0)
 #define PACKRAT_OR        ((C) 100000000)
 #define PACKRAT_CONCAT    ((C) 100000001)
@@ -38,11 +41,13 @@
 
 #define PACKRAT_UNDEFINED ((C) (-2))
 #define PACKRAT_FAILED    ((C) (-1))
+*/
 
 /******************************************************************************
 * Global variables
 ******************************************************************************/
 
+/*
 array<array<C> >  packrat_grammar;
 array<tree>       packrat_production;
 int               packrat_nr_tokens= 256;
@@ -57,18 +62,22 @@ hashmap<D,tree>   current_production (tree_uninit);
 string            current_string;
 hashmap<path,int> current_start (-1);
 hashmap<path,int> current_end (-1);
+*/
 
 /******************************************************************************
 * Forward definitions
 ******************************************************************************/
 
+/*
 array<C> encode_tokens (string s);
 array<C> packrat_define (tree t);
+*/
 
 /******************************************************************************
 * Encoding tokens and symbols
 ******************************************************************************/
 
+/*
 C
 new_token (string s) {
   if (N(s) == 1)
@@ -126,11 +135,13 @@ encode_symbol (string s) {
   }
   return packrat_symbols[s];
 }
+*/
 
 /******************************************************************************
 * Left recursion
 ******************************************************************************/
 
+/*
 bool
 left_recursive (string s, tree t) {
   if (is_atomic (t))
@@ -201,11 +212,13 @@ left_tail (string s, tree t) {
   }
   else compound ("or");
 }
+*/
 
 /******************************************************************************
 * Definition of grammars
 ******************************************************************************/
 
+/*
 C
 packrat_define_one (tree t) {
   //cout << "Define one " << t << LF;
@@ -272,11 +285,13 @@ packrat_define (string lan, string s, tree t) {
     packrat_grammar[sym - PACKRAT_SYMBOLS]= packrat_define (t);
   }
 }
+*/
 
 /******************************************************************************
 * Packrat parsing
 ******************************************************************************/
 
+/*
 void
 packrat_set_input (const array<C>& in) {
   current_input     = in;
@@ -370,11 +385,13 @@ packrat_parse (string lan, string s, string in) {
   }
   return i;
 }
+*/
 
 /******************************************************************************
 * Packrat parsing of trees
 ******************************************************************************/
 
+/*
 void
 packrat_add_input (tree t, path p) {
   current_start (p)= N(current_string);
@@ -427,3 +444,4 @@ packrat_parse (string lan, string s, tree in) {
   if (pos < 0) return path (pos);
   return packrat_get_path (in, path (), pos);
 }
+*/
