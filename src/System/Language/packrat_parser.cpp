@@ -66,13 +66,6 @@ packrat_parser_rep::set_input (string s) {
 }
 
 void
-packrat_parser_rep::set_input (tree t) {
-  current_string= "";
-  add_input (t, path ());
-  current_input= encode_tokens (current_string);
-}
-
-void
 packrat_parser_rep::add_input (tree t, path p) {
   current_start (p)= N(current_string);
   if (is_atomic (t)) current_string << t->label;
@@ -93,6 +86,15 @@ packrat_parser_rep::add_input (tree t, path p) {
   current_end (p)= N(current_string);
 }
 
+void
+packrat_parser_rep::set_input (tree t) {
+  current_string= "";
+  current_tree  = t;
+  add_input (t, path ());
+  //cout << "Input= " << current_string << "\n";
+  current_input= encode_tokens (current_string);
+}
+
 /******************************************************************************
 * Encoding and decoding of cursor positions in the input
 ******************************************************************************/
@@ -107,18 +109,6 @@ packrat_parser_rep::encode_string_position (int i) {
     k++;
   }
   return k;
-}
-
-int
-packrat_parser_rep::decode_string_position (C pos) {
-  if (pos == PACKRAT_FAILED) return -1;
-  int i=0;
-  C k=0;
-  while (i<N(current_string) && k<pos) {
-    tm_char_forwards (current_string, i);
-    k++;
-  }
-  return i;
 }
 
 int
@@ -141,6 +131,19 @@ packrat_parser_rep::encode_tree_position (path p) {
   if (is_nil (p) || p->item < 0) return PACKRAT_FAILED;
   int i= encode_path (current_tree, path (), p);
   return encode_string_position (i);
+}
+
+int
+packrat_parser_rep::decode_string_position (C pos) {
+  //cout << "Decode " << pos << "\n";
+  if (pos == PACKRAT_FAILED) return -1;
+  int i=0;
+  C k=0;
+  while (i<N(current_string) && k<pos) {
+    tm_char_forwards (current_string, i);
+    k++;
+  }
+  return i;
 }
 
 path
@@ -343,7 +346,7 @@ packrat_parse (string lan, string sym, tree in) {
   return par->decode_tree_position (pos);
 }
 
-void
+object
 packrat_context (string lan, string s, string in, int in_pos) {
   packrat_parser par= make_packrat_parser (lan, in);
   C sym= encode_symbol (compound ("symbol", s));
@@ -351,9 +354,31 @@ packrat_context (string lan, string s, string in, int in_pos) {
   array<C> kind, begin, end;
   par->context (sym, 0, pos, kind, begin, end);
   par->compress (kind, begin, end);
-  for (int i=0; i<N(kind); i++)
-    cout << i << ":\t"
-	 << par->decode_string_position (begin[i]) << "\t"
-	 << par->decode_string_position (end[i]) << "\t"
-	 << packrat_decode[kind[i]] << LF;
+  object ret= null_object ();
+  for (int i=0; i<N(kind); i++) {
+    object x1 (symbol_object (packrat_decode[kind[i]][0]->label));
+    object x2 (par->decode_string_position (begin[i]));
+    object x3 (par->decode_string_position (end[i]));
+    ret= cons (list_object (x1, x2, x3), ret);
+  }
+  return ret;
+}
+
+object
+packrat_context (string lan, string s, tree in, path in_pos) {
+  packrat_parser par= make_packrat_parser (lan, in);
+  C sym= encode_symbol (compound ("symbol", s));
+  C pos= par->encode_tree_position (in_pos);
+  if (pos == PACKRAT_FAILED) return object (false);
+  array<C> kind, begin, end;
+  par->context (sym, 0, pos, kind, begin, end);
+  par->compress (kind, begin, end);
+  object ret= null_object ();
+  for (int i=0; i<N(kind); i++) {
+    object x1 (symbol_object (packrat_decode[kind[i]][0]->label));
+    object x2 (par->decode_tree_position (begin[i]));
+    object x3 (par->decode_tree_position (end[i]));
+    ret= cons (list_object (x1, x2, x3), ret);
+  }
+  return ret;
 }

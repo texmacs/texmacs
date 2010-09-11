@@ -53,7 +53,7 @@
 	  (in2 ,in))
      (if (string? in2)
 	 (packrat-parse lan2 gr2 in2)
-	 (packrat-parse-tree lan2 gr2 (tm->tree in2)))))
+	 (packrat-parse-tree lan2 gr2 in2))))
 
 (tm-define-macro (semantic-context lan gr in pos)
   (:synopsis "Get semantic selections englobing @in at @pos")
@@ -61,4 +61,6 @@
 	  (gr2 (symbol->string ',gr))
 	  (in2 ,in)
 	  (pos2 ,pos))
-     (packrat-context lan2 gr2 in2 pos2)))
+     (if (string? in2)
+	 (packrat-context lan2 gr2 in2 pos2)
+	 (packrat-context-tree lan2 gr2 in2 pos2))))
