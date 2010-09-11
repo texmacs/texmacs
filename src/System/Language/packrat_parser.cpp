@@ -211,15 +211,15 @@ packrat_parser_rep::parse (C sym, C pos) {
 ******************************************************************************/
 
 int
-packrat_parse (string lan, string s, string in) {
+packrat_parse (string lan, string sym, string in) {
   packrat_parser par= make_packrat_parser (lan, in);
-  C pos= par->parse (encode_symbol (compound ("symbol", s)), 0);
+  C pos= par->parse (encode_symbol (compound ("symbol", sym)), 0);
   return par->decode_string_position (pos);
 }
 
 path
-packrat_parse (string lan, string s, tree in) {
+packrat_parse (string lan, string sym, tree in) {
   packrat_parser par= make_packrat_parser (lan, in);
-  C pos= par->parse (encode_symbol (compound ("symbol", s)), 0);
+  C pos= par->parse (encode_symbol (compound ("symbol", sym)), 0);
   return par->decode_tree_position (pos);
 }
