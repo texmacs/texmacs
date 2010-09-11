@@ -176,6 +176,7 @@
   (packrat-inherit packrat_inherit (void string string))
   (packrat-parse packrat_parse (int string string string))
   (packrat-parse-tree packrat_parse (path string string tree))
+  (packrat-context packrat_context (void string string string int))
 
   ;; further conversion routines for trees and strings
   (parse-texmacs texmacs_document_to_tree (tree string))

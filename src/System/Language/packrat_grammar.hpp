@@ -49,6 +49,7 @@ extern int               packrat_nr_tokens;
 extern int               packrat_nr_symbols;
 extern hashmap<string,C> packrat_tokens;
 extern hashmap<tree,C>   packrat_symbols;
+extern hashmap<C,tree>   packrat_decode;
 extern tree              packrat_uninit;
 
 C        encode_token  (string s);

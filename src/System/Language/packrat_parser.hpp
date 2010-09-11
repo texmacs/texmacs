@@ -34,14 +34,20 @@ protected:
   void set_input (string s);
   void add_input (tree t, path p);
   void set_input (tree t);
-  path get_path (tree t, path p, int pos);
+  path decode_path (tree t, path p, int pos);
+  int  encode_path (tree t, path p, path pos);
 
 public:
   packrat_parser_rep (packrat_grammar gr);
 
-  C    parse (C sym, C pos);
   int  decode_string_position (C pos);
+  C    encode_string_position (int i);
   path decode_tree_position (C pos);
+  C    encode_tree_position (path p);
+  C    parse (C sym, C pos);
+  void context (C sym, C pos, C where,
+		array<C>& kind, array<C>& begin, array<C>& end);
+  void compress (array<C>& kind, array<C>& begin, array<C>& end);
 
   friend class packrat_parser;
 };

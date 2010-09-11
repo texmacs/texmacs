@@ -13,11 +13,12 @@
 #include "analyze.hpp"
 #include "iterator.hpp"
 
+tree              packrat_uninit (UNINIT);
 int               packrat_nr_tokens= 256;
 int               packrat_nr_symbols= 0;
 hashmap<string,C> packrat_tokens;
 hashmap<tree,C>   packrat_symbols;
-tree              packrat_uninit (UNINIT);
+hashmap<C,tree>   packrat_decode (packrat_uninit);
 
 RESOURCE_CODE(packrat_grammar);
 
@@ -42,7 +43,9 @@ encode_token (string s) {
     int pos= 0;
     tm_char_forwards (s, pos);
     if (pos == 0 || pos != N(s)) return -1;
-    packrat_tokens (s)= new_token (s);
+    C sym= new_token (s);
+    packrat_tokens (s)= sym;
+    packrat_decode (sym)= s;
   }
   return packrat_tokens[s];
 }
@@ -72,8 +75,11 @@ new_symbol (tree t) {
 
 C
 encode_symbol (tree t) {
-  if (!packrat_symbols->contains (t))
-    packrat_symbols (t)= new_symbol (t);
+  if (!packrat_symbols->contains (t)) {
+    C sym= new_symbol (t);
+    packrat_symbols (t)= sym;
+    packrat_decode  (sym)= t;
+  }
   return packrat_symbols[t];
 }
 
