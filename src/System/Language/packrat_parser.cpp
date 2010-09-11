@@ -366,6 +366,8 @@ packrat_context (string lan, string s, string in, int in_pos) {
 
 object
 packrat_context (string lan, string s, tree in, path in_pos) {
+  //cout << "Context " << in << " at " << in_pos
+  //<< " (" << lan << ", " << s << ")" << LF;
   packrat_parser par= make_packrat_parser (lan, in);
   C sym= encode_symbol (compound ("symbol", s));
   C pos= par->encode_tree_position (in_pos);
