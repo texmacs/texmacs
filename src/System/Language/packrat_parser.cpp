@@ -13,7 +13,7 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Setting up the input
+* Constructor
 ******************************************************************************/
 
 packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
@@ -26,6 +26,38 @@ packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
   current_input (),
   current_cache (PACKRAT_UNDEFINED),
   current_production (packrat_uninit) {}
+
+packrat_parser
+make_packrat_parser (string lan, string in) {
+  static string         last_lan= "";
+  static string         last_in = "";
+  static packrat_parser last_par;
+  if (lan != last_lan || in != last_in) {
+    packrat_grammar gr= make_packrat_grammar (lan);
+    last_lan= lan;
+    last_in = in;
+    last_par= packrat_parser (gr, in);
+  }
+  return last_par;
+}
+
+packrat_parser
+make_packrat_parser (string lan, tree in) {
+  static string         last_lan= "";
+  static tree           last_in = "";
+  static packrat_parser last_par;
+  if (lan != last_lan || in != last_in) {
+    packrat_grammar gr= make_packrat_grammar (lan);
+    last_lan= lan;
+    last_in = in;
+    last_par= packrat_parser (gr, in);
+  }
+  return last_par;
+}
+
+/******************************************************************************
+* Setting up the input
+******************************************************************************/
 
 void
 packrat_parser_rep::set_input (string s) {
@@ -180,16 +212,14 @@ packrat_parser_rep::parse (C sym, C pos) {
 
 int
 packrat_parse (string lan, string s, string in) {
-  packrat_grammar gr= make_packrat_grammar (lan);
-  packrat_parser  par (gr, in);
+  packrat_parser par= make_packrat_parser (lan, in);
   C pos= par->parse (encode_symbol (compound ("symbol", s)), 0);
   return par->decode_string_position (pos);
 }
 
 path
 packrat_parse (string lan, string s, tree in) {
-  packrat_grammar gr= make_packrat_grammar (lan);
-  packrat_parser  par (gr, in);
+  packrat_parser par= make_packrat_parser (lan, in);
   C pos= par->parse (encode_symbol (compound ("symbol", s)), 0);
   return par->decode_tree_position (pos);
 }

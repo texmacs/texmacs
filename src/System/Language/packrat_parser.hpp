@@ -47,11 +47,11 @@ public:
 };
 
 class packrat_parser {
-  CONCRETE (packrat_parser);
+  CONCRETE_NULL (packrat_parser);
   inline packrat_parser (packrat_grammar gr, string s);
   inline packrat_parser (packrat_grammar gr, tree t);
 };
-CONCRETE_CODE (packrat_parser);
+CONCRETE_NULL_CODE (packrat_parser);
 
 inline packrat_parser::packrat_parser (packrat_grammar gr, string s):
   rep (tm_new<packrat_parser_rep> (gr)) { rep->set_input (s); }
