@@ -202,24 +202,22 @@ edit_select_rep::select_enlarge_text () {
 
 void
 edit_select_rep::select_enlarge () {
+  path sp, sq;
   if (start_p == end_p) {
-    path p = path_up (start_p);
-    tree st= subtree (et, p);
-    if (is_atomic (st)) select_enlarge_text ();
-    else select (p * 0, p * 1);
+    sp= path_up (start_p);
+    sq= sp;
   }
   else {
-    path p= common (start_p, end_p);
-    if (!(rp < p)) {
+    sp= common (start_p, end_p);
+    if (!(rp < sp)) {
       selection_cancel ();
       set_message ("", "");
       return;
     }
-    tree st= subtree (et, p);
-    path q = path_up (p);
-    if (is_atomic (st)) select_enlarge_text ();
-    else select (q * 0, q * 1);
+    sq= path_up (sp);
   }
+  if (is_atomic (subtree (et, sp))) select_enlarge_text ();
+  else select (sq * 0, sq * 1);
 
   path p = common (start_p, end_p);
   tree st= subtree (et, p);
