@@ -366,7 +366,9 @@ packrat_context (string lan, string s, tree in, path in_pos) {
 }
 
 bool
-packrat_enlarge (string lan, string s, tree in, path& p1, path& p2) {
+packrat_select (string lan, string s, tree in,
+		path& p1, path& p2, bool strict)
+{
   //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
   //<< " (" << lan << ", " << s << ")" << LF;
   packrat_parser par= make_packrat_parser (lan, in);
@@ -389,8 +391,10 @@ packrat_enlarge (string lan, string s, tree in, path& p1, path& p2) {
   */
   int n= N(kind);
   if (n == 0) return false;
-  if (pos1 == begin[n-1] && pos2 == end[n-1]) n--;
-  if (n == 0) return false;
+  if (strict) {
+    if (pos1 == begin[n-1] && pos2 == end[n-1]) n--;
+    if (n == 0) return false;
+  }
   p1= par->decode_tree_position (begin[n-1]);
   p2= par->decode_tree_position (end[n-1]);
   //cout << "Selected " << packrat_decode[kind[n-1]] << LF;

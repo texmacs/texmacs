@@ -35,6 +35,10 @@ public:
   edit_select_rep ();
   ~edit_select_rep ();
 
+  path semantic_root (path p);
+  bool semantic_active (path p);
+  bool semantic_select (path p, path& q1, path& q2, bool strict);
+
   void select (path p);
   void select (path start, path end);
   void select_all ();

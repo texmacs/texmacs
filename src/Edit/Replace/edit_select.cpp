@@ -60,6 +60,40 @@ edit_select_rep::edit_select_rep ():
 edit_select_rep::~edit_select_rep () {}
 
 /******************************************************************************
+* Semantic selections
+******************************************************************************/
+
+path
+edit_select_rep::semantic_root (path p) {
+  while (!is_nil (p) && is_script (subtree (et, p)))
+    p= path_up (p);
+  while (!is_nil (p) && is_format (subtree (et, path_up (p))))
+    p= path_up (p);
+  return p;
+}
+
+bool
+edit_select_rep::semantic_active (path p) {
+  p= semantic_root (p);
+  return get_env_value (MODE, p * right_index (subtree (et, p))) == "math";
+}
+
+bool
+edit_select_rep::semantic_select (path p, path& q1, path& q2, bool strict) {
+  if (!semantic_active (p)) return false;
+  p= semantic_root (p);
+  eval ("(use-modules (language std-math))");
+  path p1= q1 / p, p2= q2 / p;
+  tree st= subtree (et, p);
+  bool ret= packrat_select ("std-math", "Expression", st, p1, p2, strict);
+  if (ret) {
+    q1= p * p1;
+    q2= p * p2;
+  }
+  return ret;
+}
+
+/******************************************************************************
 * Selecting particular things
 ******************************************************************************/
 
@@ -203,25 +237,12 @@ edit_select_rep::select_enlarge () {
     }
     sq= path_up (sp);
   }
-  bool semantic_select= false;
-#if 1
-  path pp= sp;
+  path pp= sp, p1= start_p, p2= end_p;
   if (start_p == pp * 0 && end_p == pp * right_index (subtree (et, pp)))
     if (!is_nil (pp)) pp= path_up (pp);
-  if (is_script (subtree (et, pp)))
-    if (!is_nil (pp)) pp= path_up (pp);
-  while (!is_nil (pp) && is_format (subtree (et, path_up (pp))))
-    pp= path_up (pp);
-  if (get_env_value (MODE, pp * right_index (subtree (et, pp))) == "math") {
-    eval ("(use-modules (language std-math))");
-    path p1= start_p / pp, p2= end_p / pp;
-    if (packrat_enlarge ("std-math", "Expression", subtree (et, pp), p1, p2)) {
-      semantic_select= true;
-      select (pp * p1, pp * p2);
-    }
-  }
-#endif
-  if (!semantic_select) {
+  if (semantic_select (pp, p1, p2, true))
+    select (p1, p2);
+  else {
     if (is_atomic (subtree (et, sp))) select_enlarge_text ();
     else select (sq * 0, sq * 1);
   }
