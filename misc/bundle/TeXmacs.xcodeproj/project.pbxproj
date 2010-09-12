@@ -288,6 +288,14 @@
 		9C722BED10D2F7C700C41915 /* qt_sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */; };
 		9C722C0F10D2F88900C41915 /* unix_sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */; };
 		9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */; };
+		9C74D95F123BF892008959D1 /* packrat_grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95A123BF892008959D1 /* packrat_grammar.cpp */; };
+		9C74D960123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
+		9C74D962123BF892008959D1 /* packrat_grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95A123BF892008959D1 /* packrat_grammar.cpp */; };
+		9C74D963123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
+		9C74D964123BF892008959D1 /* win32_get_date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95E123BF892008959D1 /* win32_get_date.cpp */; };
+		9C74D965123BF892008959D1 /* packrat_grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95A123BF892008959D1 /* packrat_grammar.cpp */; };
+		9C74D966123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
+		9C74D967123BF892008959D1 /* win32_get_date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95E123BF892008959D1 /* win32_get_date.cpp */; };
 		9C7E7AA21105EA7D004482BB /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */; };
 		9C7E7AAA1105EBB1004482BB /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */; };
 		9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */; };
@@ -863,9 +871,6 @@
 		9CD4E73010B14AEE00E0DD5C /* x_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490210A8CC100097A335 /* x_window.cpp */; };
 		9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48EF10A8CC100097A335 /* xpm_widget.cpp */; };
 		9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487A10A8CC100097A335 /* ghostscript.cpp */; };
-		9CE4F0051238FAF800993AF7 /* packrat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4F0031238FAF800993AF7 /* packrat.cpp */; };
-		9CE4F0061238FAF900993AF7 /* packrat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4F0031238FAF800993AF7 /* packrat.cpp */; };
-		9CE4F0071238FAF900993AF7 /* packrat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE4F0031238FAF800993AF7 /* packrat.cpp */; };
 		9CEE09DF11EDDB3100403342 /* agl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096411EDDB3100403342 /* agl.c */; };
 		9CEE09E011EDDB3100403342 /* bmpimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096611EDDB3100403342 /* bmpimage.c */; };
 		9CEE09E111EDDB3100403342 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096811EDDB3100403342 /* cff.c */; };
@@ -1685,6 +1690,11 @@
 		9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_sys_utils.hpp; sourceTree = "<group>"; };
 		9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unix_sys_utils.cpp; sourceTree = "<group>"; };
 		9C722C0E10D2F88800C41915 /* unix_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unix_sys_utils.hpp; sourceTree = "<group>"; };
+		9C74D95A123BF892008959D1 /* packrat_grammar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_grammar.cpp; sourceTree = "<group>"; };
+		9C74D95B123BF892008959D1 /* packrat_grammar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat_grammar.hpp; sourceTree = "<group>"; };
+		9C74D95C123BF892008959D1 /* packrat_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_parser.cpp; sourceTree = "<group>"; };
+		9C74D95D123BF892008959D1 /* packrat_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat_parser.hpp; sourceTree = "<group>"; };
+		9C74D95E123BF892008959D1 /* win32_get_date.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = win32_get_date.cpp; sourceTree = "<group>"; };
 		9C7AC3381105DE4A00A7D07F /* fig2ps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps; sourceTree = "<group>"; };
 		9C7AC3391105DE4A00A7D07F /* fig2ps.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps.in; sourceTree = "<group>"; };
 		9C7AC33A1105DE4A00A7D07F /* texmacs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs; sourceTree = "<group>"; };
@@ -1699,7 +1709,6 @@
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
-		9CE4F0031238FAF800993AF7 /* packrat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat.cpp; sourceTree = "<group>"; };
 		9CE4F0041238FAF800993AF7 /* packrat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat.hpp; sourceTree = "<group>"; };
 		9CEE096411EDDB3100403342 /* agl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = agl.c; sourceTree = "<group>"; };
 		9CEE096511EDDB3100403342 /* agl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = agl.h; sourceTree = "<group>"; };
@@ -2869,7 +2878,11 @@
 		9C0B493510A8CC110097A335 /* Language */ = {
 			isa = PBXGroup;
 			children = (
-				9CE4F0031238FAF800993AF7 /* packrat.cpp */,
+				9C74D95A123BF892008959D1 /* packrat_grammar.cpp */,
+				9C74D95B123BF892008959D1 /* packrat_grammar.hpp */,
+				9C74D95C123BF892008959D1 /* packrat_parser.cpp */,
+				9C74D95D123BF892008959D1 /* packrat_parser.hpp */,
+				9C74D95E123BF892008959D1 /* win32_get_date.cpp */,
 				9CE4F0041238FAF800993AF7 /* packrat.hpp */,
 				9C0B493610A8CC110097A335 /* cpp_language.cpp */,
 				9C0B493710A8CC110097A335 /* dictionary.cpp */,
@@ -3960,7 +3973,8 @@
 				9CEE0A1511EDDB3100403342 /* type1c.c in Sources */,
 				9CEE0A1611EDDB3100403342 /* unicode.c in Sources */,
 				9CEE0A1711EDDB3100403342 /* pdf_renderer.cpp in Sources */,
-				9CE4F0051238FAF800993AF7 /* packrat.cpp in Sources */,
+				9C74D95F123BF892008959D1 /* packrat_grammar.cpp in Sources */,
+				9C74D960123BF892008959D1 /* packrat_parser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4308,7 +4322,9 @@
 				9CEE0A8711EDDB3100403342 /* type1c.c in Sources */,
 				9CEE0A8811EDDB3100403342 /* unicode.c in Sources */,
 				9CEE0A8911EDDB3100403342 /* pdf_renderer.cpp in Sources */,
-				9CE4F0071238FAF900993AF7 /* packrat.cpp in Sources */,
+				9C74D965123BF892008959D1 /* packrat_grammar.cpp in Sources */,
+				9C74D966123BF892008959D1 /* packrat_parser.cpp in Sources */,
+				9C74D967123BF892008959D1 /* win32_get_date.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4671,7 +4687,9 @@
 				9CEE0A4E11EDDB3100403342 /* type1c.c in Sources */,
 				9CEE0A4F11EDDB3100403342 /* unicode.c in Sources */,
 				9CEE0A5011EDDB3100403342 /* pdf_renderer.cpp in Sources */,
-				9CE4F0061238FAF900993AF7 /* packrat.cpp in Sources */,
+				9C74D962123BF892008959D1 /* packrat_grammar.cpp in Sources */,
+				9C74D963123BF892008959D1 /* packrat_parser.cpp in Sources */,
+				9C74D964123BF892008959D1 /* win32_get_date.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
