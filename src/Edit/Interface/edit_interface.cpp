@@ -372,11 +372,10 @@ edit_interface_rep::apply_changes () {
   }
   if (sb != cur_sb) {
     cur_sb= sb;
-	if (get_server()->has_window())
-	{
-		tm_window win= get_server () -> get_window ();
-		win -> set_scrollbars (sb);
-	}
+    if (get_server() -> has_window()) {
+      tm_window win= get_server () -> get_window ();
+      win -> set_scrollbars (sb);
+    }
   }
 
   // window decorations (menu bar, icon bars, footer)
@@ -461,6 +460,13 @@ edit_interface_rep::apply_changes () {
 
     rectangles old_rects= env_rects;
     env_rects= rectangles ();
+    path p1= tp, p2= tp;
+    if (semantic_select (path_up (tp), p1, p2, true)) {
+      path q1, q2;
+      selection_correct (et, p1, p2, q1, q2);
+      selection sel= eb->find_check_selection (q1, q2);
+      env_rects << outline (sel->rs, pixel);
+    }
     compute_env_rects (path_up (tp), env_rects, true);
     if (env_rects != old_rects) {
       invalidate (old_rects);
