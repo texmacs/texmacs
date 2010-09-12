@@ -66,12 +66,15 @@ edit_select_rep::~edit_select_rep () {}
 void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
-  if (path_less (p2, p1)) select (p2, p1);
-  else {
+  if (path_less (p1, p2)) {
     start_p= copy (p1);
     end_p  = copy (p2);
-    notify_change (THE_SELECTION);
   }
+  else {
+    start_p= copy (p2);
+    end_p  = copy (p1);
+  }
+  notify_change (THE_SELECTION);
 }
 
 void
@@ -101,32 +104,14 @@ void edit_select_rep::set_selection (path start, path end) {
 void
 edit_select_rep::select_from_cursor () {
   if (selecting) {
-    if (path_less (mid_p, tp)) {
-      start_p= copy (mid_p);
-      end_p  = copy (tp);
-    }
-    else {
-      start_p= copy (tp);
-      end_p  = copy (mid_p);
-    }
-    notify_change (THE_SELECTION);
+    select (mid_p, tp);
     if (shift_selecting) selecting = false;
   }
 }
 
 void
 edit_select_rep::select_from_cursor_if_active () {
-  if (selecting) {
-    if (path_less (mid_p, tp)) {
-      start_p= copy (mid_p);
-      end_p  = copy (tp);
-    }
-    else {
-      start_p= copy (tp);
-      end_p  = copy (mid_p);
-    }
-    notify_change (THE_SELECTION);
-  }
+  if (selecting) select (mid_p, tp);
   else selection_cancel ();
 }
 
@@ -585,19 +570,17 @@ edit_select_rep::selection_raw_get (string key) {
 
 void
 edit_select_rep::selection_set_start (path p) {
-  bool flag= selection_active_any ();
-  if (rp < p) start_p= p;
-  else start_p= tp;
-  if (path_less_eq (end_p, start_p) || (!flag)) end_p= start_p;
-  notify_change (THE_SELECTION);
+  if (!selection_active_any ()) select (start_p, start_p);
+  if (is_nil (p)) selection_set_start (tp);
+  else if (path_less_eq (end_p, p)) select (p, p);
+  else if (rp < p) select (p, end_p);
 }
 
 void
 edit_select_rep::selection_set_end (path p) {
-  if (rp < p) end_p= p;
-  else end_p= tp;
-  if (path_less_eq (end_p, start_p)) start_p= end_p;
-  notify_change (THE_SELECTION);
+  if (is_nil (p)) selection_set_end (tp);
+  else if (path_less_eq (p, start_p)) select (p, p);
+  else if (rp < p) select (start_p, p);
 }
 
 void
@@ -698,8 +681,7 @@ void
 edit_select_rep::selection_cancel () {
   selecting= shift_selecting= false;
   if (end_p == start_p) return;
-  end_p= start_p;
-  notify_change (THE_SELECTION);
+  select (start_p, start_p);
 }
 
 void
