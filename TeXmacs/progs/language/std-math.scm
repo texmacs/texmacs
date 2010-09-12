@@ -15,8 +15,37 @@
   (:use (language std-symbols)))
 
 (define-language std-math-grammar
+  (Main
+   (Main Ponctuation-symbol)
+   Expression)
+
   (Expression
-   (Sum Ponctuation-symbol Expression)
+   (Modeling Ponctuation-symbol Expression)
+   Modeling)
+
+  (Modeling
+   (Sum Model-symbol Quantified)
+   Quantified)
+
+  (Quantified
+   ((+ (Quantifier-symbol Relation)) Ponctuation-symbol Quantified)
+   ((Open-symbol Quantifier-symbol Relation Close-symbol) Quantified)
+   Implication)
+
+  (Implication
+   (Implication Imply-symbol Disjunction)
+   Disjunction)
+
+  (Disjunction
+   (Disjunction Or-symbol Conjunction)
+   Conjunction)
+
+  (Conjunction
+   (Conjunction And-symbol Relation)
+   Relation)
+
+  (Relation
+   (Relation Relation-symbol Sum)
    Sum)
 
   (Sum
@@ -25,12 +54,30 @@
    Product)
 
   (Product
-   (Product Times-symbol Postfixed)
-   (Product Over-symbol Postfixed)
+   (Product Times-symbol Special)
+   (Product Over-symbol Special)
+   Special)
+
+  (Special
+   (:<frac Expression :/ Expression :>)
+   (:<sqrt Expression :>)
+   (:<sqrt Expression :/ Expression :>)
+   Prefixed)
+
+  (Prefixed
+   (Prefix-symbol Prefixed)
+   (Not-symbol Prefixed)
+   (Minus-symbol Prefixed)
    Postfixed)
 
   (Postfixed
+   (Postfixed Postfix-symbol)
+   (Postfixed :<rsub Expression :>)
    (Postfixed :<rsup Expression :>)
+   Operation)
+
+  (Operation
+   (Application Space-symbol Operation)
    Application)
 
   (Application
