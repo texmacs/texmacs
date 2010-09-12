@@ -58,29 +58,25 @@ edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
   selection_import ("texmacs"), selection_export ("texmacs") {}
 edit_select_rep::~edit_select_rep () {}
-void edit_select_rep::get_selection (path& start, path& end) {
-  start= copy (start_p); end= copy (end_p); }
-void edit_select_rep::set_selection (path start, path end) {
-  start_p= copy (start); end_p= copy (end); }
 
 /******************************************************************************
 * Selecting particular things
 ******************************************************************************/
 
 void
-edit_select_rep::select (path p) {
-  select (start (et, p), end (et, p));
+edit_select_rep::select (path p1, path p2) {
+  if (start_p == p1 && end_p == p2) return;
+  if (path_less (p2, p1)) select (p2, p1);
+  else {
+    start_p= copy (p1);
+    end_p  = copy (p2);
+    notify_change (THE_SELECTION);
+  }
 }
 
 void
-edit_select_rep::select (path p1, path p2) {
-  start_p= p1;
-  end_p  = p2;
-  if (path_less_eq (end_p, start_p)) {
-    start_p= p2;
-    end_p  = p1;
-  }
-  notify_change (THE_SELECTION);
+edit_select_rep::select (path p) {
+  select (start (et, p), end (et, p));
 }
 
 void
@@ -92,6 +88,11 @@ void
 edit_select_rep::select_line () {
   select (search_parent_upwards (DOCUMENT));
 }
+
+void edit_select_rep::get_selection (path& start, path& end) {
+  start= copy (start_p); end= copy (end_p); }
+void edit_select_rep::set_selection (path start, path end) {
+  select (start, end); }
 
 /******************************************************************************
 * For interface with cursor movement
