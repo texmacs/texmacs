@@ -10,12 +10,19 @@
 ******************************************************************************/
 
 #include "qt_utilities.hpp"
+
 #include <QImage>
 #include <QPrinter>
 #include <QPainter>
 #include <QCoreApplication>
+#include <QLocale>
+#include <QDateTime>
+
+
+
 #include "dictionary.hpp"
 #include "converter.hpp"
+#include "language.hpp"
 
 #ifdef USE_GS
 #include "Ghostscript/gs_utilities.hpp"
@@ -183,5 +190,34 @@ string qt_application_directory ()
 {
   return  string (QCoreApplication::applicationDirPath () .toAscii() .constData());
 //  return from_qstring (QCoreApplication::applicationDirPath ());
+}
+
+
+string
+qt_get_date (string lan, string fm) {
+  QDateTime localtime = QDateTime::currentDateTime();
+  if (fm == "") {
+    if ((lan == "british") || (lan == "english") || (lan ==  
+                                                     "american"))
+      fm = "MMMM d, yyyy";
+    else if (lan == "german")
+      fm = "d. MMMM yyyy";
+    else if (lan == "chinese" || lan == "japanese" ||
+             lan == "korean" || lan == "taiwanese")
+    {
+      string y = as_string(localtime.date().year());
+      string m = as_string(localtime.date().month());
+      string d = as_string(localtime.date().day());
+      if (lan == "japanese")
+        return y * "<#5e74>" * m * "<#6708>" * d * "<#65e5>";
+      if (lan == "korean")
+        return y * "<#b144> " * m * "<#c6d4> " * d * "<#c77c>";
+      return y * "," * m * "," * d;
+    }
+    else fm = "d MMMM yyyy";
+  }
+  QLocale loc = QLocale(to_qstring(language_to_locale(lan)));
+  QString date = loc.toString(localtime, to_qstring(fm));
+  return from_qstring(date);
 }
 
