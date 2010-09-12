@@ -156,8 +156,9 @@ QTMWidget::QTMWidget (simple_widget_rep *_wid)
   setObjectName("A QTMWidget");
   setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
   QAbstractScrollArea::viewport()->setMouseTracking (true);
-  QAbstractScrollArea::viewport()->setFocusPolicy (Qt::StrongFocus);
+  setFocusPolicy (Qt::StrongFocus);
   backing_pos = origin;
+  setAttribute(Qt::WA_InputMethodEnabled);
 }
 
 
@@ -533,6 +534,20 @@ mouse_decode (unsigned int mstate) {
   else if (mstate & 16) return "down";
   return "unknown";
 }
+
+
+void
+QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
+  QString const & commit_string = event->commitString();
+  if (!commit_string.isEmpty()) {
+    int key = 0;
+    for (int i = 0; i < commit_string.size(); ++i) {
+      QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
+      keyPressEvent(&ev);
+    }
+  }
+  event->accept();
+}  
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
