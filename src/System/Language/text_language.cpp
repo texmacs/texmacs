@@ -13,7 +13,9 @@
 #include "hyphenate.hpp"
 #include "impl_language.hpp"
 #include "sys_utils.hpp"
-
+#ifdef QTTEXMACS
+#include "Qt/qt_utilities.hpp"
+#endif
 /******************************************************************************
 * Western text languages
 ******************************************************************************/
@@ -254,8 +256,10 @@ simplify_date (string s) {
 
 string
 get_date (string lan, string fm) {
-#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
-  return win32::get_date(lan, fm);
+//#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
+//  return win32::get_date(lan, fm);
+#ifdef QTTEXMACS
+  return qt_get_date(lan, fm);
 #else
   if (invalid_format (fm)) {
     if ((lan == "british") || (lan == "english") || (lan == "american"))
