@@ -75,7 +75,11 @@ edit_select_rep::semantic_root (path p) {
 bool
 edit_select_rep::semantic_active (path p) {
   p= semantic_root (p);
+#if 1
   return get_env_value (MODE, p * right_index (subtree (et, p))) == "math";
+#else
+  return false;
+#endif
 }
 
 bool
@@ -100,6 +104,8 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, bool strict) {
 void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
+  if (p1 != p2)
+    (void) semantic_select (common (p1, p2), p1, p2, false);
   if (path_less (p1, p2)) {
     start_p= copy (p1);
     end_p  = copy (p2);
