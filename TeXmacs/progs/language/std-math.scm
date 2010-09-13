@@ -16,11 +16,15 @@
 
 (define-language std-math-grammar
   (Main
-   (Main Ponctuation-symbol)
+   (Main Separator)
    Expression)
 
   (Expression
-   (Modeling Ponctuation-symbol Expression)
+   (Assignment Separator Expression)
+   Assignment)
+
+  (Assignment
+   (Modeling Assign-symbol Assignment)
    Modeling)
 
   (Modeling
@@ -45,7 +49,20 @@
    Relation)
 
   (Relation
-   (Relation Relation-symbol Sum)
+   (Relation Relation-symbol Arrow)
+   Arrow)
+
+  (Arrow
+   (Arrow Arrow-symbol Union)
+   Union)
+
+  (Union
+   (Union Union-symbol Intersection)
+   (Union Exclude-symbol Intersection)
+   Intersection)
+
+  (Intersection
+   (Intersection Intersection-symbol Sum)
    Sum)
 
   (Sum
@@ -54,8 +71,12 @@
    Product)
 
   (Product
-   (Product Times-symbol Big)
-   (Product Over-symbol Big)
+   (Product Times-symbol Power)
+   (Product Over-symbol Power)
+   Power)
+
+  (Power
+   (Big Power-symbol Big)
    Big)
 
   (Big-open
@@ -95,8 +116,11 @@
    (Postfixed :<rprime (* Prime-symbol) :>)
    Operation)
 
+  (Space
+   (* (or Space-symbol " ")))
+
   (Operation
-   (Application Space-symbol Operation)
+   (Application Space Operation)
    Application)
 
   (Application
@@ -108,11 +132,17 @@
    Identifier
    Number
    Variable-symbol
+   Suspension-symbol
    Miscellaneous-symbol)
 
   (Open
    Open-symbol
    (:<left Open-symbol :>))
+
+  (Separator
+   Ponctuation-symbol
+   Bar-symbol
+   (:<mid Bar-symbol :>))
 
   (Close
    Close-symbol

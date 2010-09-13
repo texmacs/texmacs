@@ -184,6 +184,7 @@ packrat_parser_rep::parse (C sym, C pos) {
   }
   current_cache (key)= PACKRAT_FAILED;
   //cout << "Parse " << sym << " at " << pos << INDENT << LF;
+  //cout << "Parse " << packrat_decode[sym] << " at " << pos << INDENT << LF;
   if (sym >= PACKRAT_SYMBOLS) {
     array<C> inst= grammar [sym];
     //cout << "Parse " << inst << " at " << pos << LF;
@@ -243,6 +244,8 @@ packrat_parser_rep::parse (C sym, C pos) {
     else im= PACKRAT_FAILED;
   }
   current_cache (key)= im;
+  //cout << UNINDENT << "Parsed " << packrat_decode[sym]
+  //<< " at " << pos << " -> " << im << LF;
   //cout << UNINDENT << "Parsed " << sym << " at " << pos << " -> " << im << LF;
   //cout << "cache= " << current_cache << LF;
   return im;

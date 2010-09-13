@@ -134,38 +134,13 @@
   (Arrow-symbol
    Arrow-nolim-symbol Arrow-lim-symbol)
 
-  (Prefix-operator
-   "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
-   "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
-   "lg" "ln""log" "sec" "sin" "sinh" "tan" "tanh")
+  (Union-symbol
+   "<cup>" "<Cup>" "<doublecup>")
 
-  (Infix-operator
-   "div" "mod")
+  (Intersection-symbol
+   "<cap>" "<Cap>" "<doublecap>")
 
-  (Big-operator
-   "inf" "lim" "liminf" "limsup" "max" "min" "sup")
-
-  (Big-nolim-symbol
-   "<big-int>" "<big-oint>")
-
-  (Big-lim-symbol
-   "<big-sum>" "<big-prod>" "<big-amalg>" "<big-intlim>" "<big-ointlim>"
-   "<big-cap>" "<big-cup>" "<big-sqcup>" "<big-vee>" "<big-wedge>"
-   "<big-odot>" "<big-otimes>" "<big-oplus>" "<big-uplus>"
-   "<big-triangleup>" "<big-triangledown>")
-
-  (Big-symbol
-   Big-nolim-symbol Big-lim-symbol)
-
-  (Big-symbol-variant
-   "int" "oint" "sum" "prod" "amalg" "intlim" "ointlim"
-   "cap" "cup" "sqcup" "vee" "wedge" "odot" "otimes" "oplus" "uplus"
-   "triangleup" "triangledown")
-
-  (Set-symmetric-symbol
-   "<cap>" "<cup>" "<Cap>" "<Cup>" "<doublecap>" "<doublecup>")
-
-  (Set-minus-symbol
+  (Exclude-symbol
    "<setminus>" "<smallsetminus>")
 
   (Plus-symbol
@@ -194,14 +169,34 @@
   (Over-symbol
    Regular-over-symbol Condensed-over-symbol)
 
-  (Prefix-symbol
-   "<um>" "<upl>" "<upm>" "<ump>" "<card>")
-
   (Power-symbol
    "^")
 
+  (Big-nolim-symbol
+   "<big-int>" "<big-oint>")
+
+  (Big-lim-symbol
+   "<big-sum>" "<big-prod>" "<big-amalg>" "<big-intlim>" "<big-ointlim>"
+   "<big-cap>" "<big-cup>" "<big-sqcup>" "<big-vee>" "<big-wedge>"
+   "<big-odot>" "<big-otimes>" "<big-oplus>" "<big-uplus>"
+   "<big-triangleup>" "<big-triangledown>")
+
+  (Big-symbol
+   Big-nolim-symbol Big-lim-symbol)
+
+  (Big-symbol-variant
+   "int" "oint" "sum" "prod" "amalg" "intlim" "ointlim"
+   "cap" "cup" "sqcup" "vee" "wedge" "odot" "otimes" "oplus" "uplus"
+   "triangleup" "triangledown")
+
+  (Prefix-symbol
+   "<um>" "<upl>" "<upm>" "<ump>" "<card>")
+
   (Postfix-symbol
    "!")
+
+  (Prime-symbol
+   "'" "`" "<dag>" "<ddag>")
 
   (Open-symbol
    "(" "[" "{" "<lfloor>" "<lceil>" "<langle>"
@@ -233,12 +228,6 @@
 
   (Suspension-symbol
    Suspension-nolim-symbol Suspension-lim-symbol)
-  
-  (Spacing-symbol
-   "<spc>")
-
-  (Prime-symbol
-   "'" "`" "<dag>" "<ddag>")
 
   (Variable-symbol
    "<alpha>" "<beta>" "<gamma>" "<delta>" "<varepsilon>"
@@ -332,4 +321,18 @@
    "<triangleq>" "<ulcorner>" "<urcorner>" "<varkappa>"
    "<varnothing>" "<vartriangle>" "<veebar>" "<yen>"
 
-   "<comma>"))
+   "<comma>")
+
+  (Spacing-symbol
+   "<spc>")
+
+  (Prefix-operator
+   "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
+   "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
+   "lg" "ln""log" "sec" "sin" "sinh" "tan" "tanh")
+
+  (Infix-operator
+   "div" "mod")
+
+  (Big-operator
+   "inf" "lim" "liminf" "limsup" "max" "min" "sup"))
