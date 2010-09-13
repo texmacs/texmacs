@@ -98,19 +98,20 @@
    Prefixed)
 
   (Space
-   (* (or Space-symbol " ")))
+   (+ (or Space-symbol " ")))
 
   (Prefixed
    (Prefix-symbol Post Prefixed)
    (Not-symbol Post Prefixed)
-   (Minus-symbol Post Prefixed)
+   ;;(Minus-symbol Post Prefixed)
    (Pre-one Prefixed)
-   (Prefixed Space Prefixed)
+   (Postfixed Space Prefixed)
    Postfixed)
 
   (Postfixed
    (Postfixed Postfix-symbol)
    (Postfixed Post-one)
+   (Postfixed Open Close)
    (Postfixed Open Expression Close)
    Radical)
 
@@ -121,12 +122,14 @@
    ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9"))))))
 
   (Radical
+   (Open Close)
    (Open Expression Close)
    Identifier
    Number
    Variable-symbol
    Suspension-symbol
-   Miscellaneous-symbol)
+   Miscellaneous-symbol
+   (((not Reserved) :<) :args :>))
 
   (Open
    Open-symbol
@@ -141,14 +144,24 @@
    Close-symbol
    (:<right :args :>))
 
+  (Script
+   Expression
+   Relation-symbol
+   Arrow-symbol
+   Plus-symbol
+   Minus-symbol
+   Times-symbol
+   Over-symbol
+   Power-symbol)
+
   (Pre-one
-   (:<lsub Expression :>)
-   (:<lsup Expression :>)
+   (:<lsub Script :>)
+   (:<lsup Script :>)
    (:<lprime (* Prime-symbol) :>))
 
   (Post-one
-   (:<rsub Expression :>)
-   (:<rsup Expression :>)
+   (:<rsub Script :>)
+   (:<rsup Script :>)
    (:<rprime (* Prime-symbol) :>))
 
   (Pre

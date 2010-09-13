@@ -330,4 +330,9 @@
    "div" "mod")
 
   (Big-operator
-   "inf" "lim" "liminf" "limsup" "max" "min" "sup"))
+   "inf" "lim" "liminf" "limsup" "max" "min" "sup")
+
+  (Reserved
+   :<frac :<sqrt :<wide
+   :<left :<mid :<right :<big
+   :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime))
