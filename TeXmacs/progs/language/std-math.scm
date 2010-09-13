@@ -17,6 +17,7 @@
 (define-language std-math-grammar
   (Main
    (Main Separator)
+   (Main "\n")
    Expression)
 
   (Expression
@@ -24,11 +25,11 @@
    Assignment)
 
   (Assignment
-   (Modeling Assign-symbol Assignment)
+   (Modeling Assign-symbol Post Assignment)
    Modeling)
 
   (Modeling
-   (Sum Model-symbol Quantified)
+   (Sum Model-symbol Post Quantified)
    Quantified)
 
   (Quantified
@@ -37,95 +38,87 @@
    Implication)
 
   (Implication
-   (Implication Imply-symbol Disjunction)
+   (Implication Imply-symbol Post Disjunction)
    Disjunction)
 
   (Disjunction
-   (Disjunction Or-symbol Conjunction)
+   (Disjunction Or-symbol Post Conjunction)
    Conjunction)
 
   (Conjunction
-   (Conjunction And-symbol Relation)
+   (Conjunction And-symbol Post Relation)
    Relation)
 
   (Relation
-   (Relation Relation-symbol Arrow)
+   (Relation Relation-symbol Post Arrow)
    Arrow)
 
   (Arrow
-   (Arrow Arrow-symbol Union)
+   (Arrow Arrow-symbol Post Union)
    Union)
 
   (Union
-   (Union Union-symbol Intersection)
-   (Union Exclude-symbol Intersection)
+   (Union Union-symbol Post Intersection)
+   (Union Exclude-symbol Post Intersection)
    Intersection)
 
   (Intersection
-   (Intersection Intersection-symbol Sum)
+   (Intersection Intersection-symbol Post Sum)
    Sum)
 
   (Sum
-   (Sum Plus-symbol Product)
-   (Sum Minus-symbol Product)
+   (Sum Plus-symbol Post Product)
+   (Sum Minus-symbol Post Product)
    Product)
 
   (Product
-   (Product Times-symbol Power)
-   (Product Over-symbol Power)
+   (Product Times-symbol Post Power)
+   (Product Over-symbol Post Power)
    Power)
 
   (Power
-   (Big Power-symbol Big)
+   (Big Power-symbol Post Big)
    Big)
 
   (Big-open
-   (:<big Big-symbol-variant :>))
-
-  (Big-modifier
-   (:<rsub Expression :>)
-   (:<rsup Expression :>)
-   (:<rprime (* Prime-symbol) :>))
+   (:<big ((not ".") :args) :>))
 
   (Big-close
    (:<big "." :>))
 
   (Big
-   (Big-open (* Big-modifier) Expression Big-close)
+   (Big-open Post Expression Big-close)
    Special)
 
   (Special
    (:<frac Expression :/ Expression :>)
    (:<sqrt Expression :>)
    (:<sqrt Expression :/ Expression :>)
+   (:<wide Expression :/ :args :>)
    Prefixed)
-
-  (Prefixed
-   (Prefix-symbol Prefixed)
-   (Not-symbol Prefixed)
-   (Minus-symbol Prefixed)
-   (Postfixed :<lsub Expression :>)
-   (Postfixed :<lsup Expression :>)
-   (Postfixed :<lprime (* Prime-symbol) :>)
-   Postfixed)
-
-  (Postfixed
-   (Postfixed Postfix-symbol)
-   (Postfixed :<rsub Expression :>)
-   (Postfixed :<rsup Expression :>)
-   (Postfixed :<rprime (* Prime-symbol) :>)
-   Operation)
 
   (Space
    (* (or Space-symbol " ")))
 
-  (Operation
-   (Application Space Operation)
-   Application)
+  (Prefixed
+   (Prefix-symbol Post Prefixed)
+   (Not-symbol Post Prefixed)
+   (Minus-symbol Post Prefixed)
+   (Pre-one Prefixed)
+   (Prefixed Space Prefixed)
+   Postfixed)
 
-  (Application
-   (Application Open Expression Close)
+  (Postfixed
+   (Postfixed Postfix-symbol)
+   (Postfixed Post-one)
+   (Postfixed Open Expression Close)
    Radical)
+
+  (Identifier
+   (+ (or (- "a" "z") (- "A" "Z"))))
+
+  (Number
+   ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9"))))))
 
   (Radical
    (Open Expression Close)
@@ -137,22 +130,32 @@
 
   (Open
    Open-symbol
-   (:<left Open-symbol :>))
+   (:<left :args :>))
 
   (Separator
    Ponctuation-symbol
    Bar-symbol
-   (:<mid Bar-symbol :>))
+   (:<mid :args :>))
 
   (Close
    Close-symbol
-   (:<right Close-symbol :>))
+   (:<right :args :>))
 
-  (Identifier
-   (+ (or (- "a" "z") (- "A" "Z"))))
+  (Pre-one
+   (:<lsub Expression :>)
+   (:<lsup Expression :>)
+   (:<lprime (* Prime-symbol) :>))
 
-  (Number
-   ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9")))))))
+  (Post-one
+   (:<rsub Expression :>)
+   (:<rsup Expression :>)
+   (:<rprime (* Prime-symbol) :>))
+
+  (Pre
+   (* Pre-one))
+
+  (Post
+   (* Post-one)))
 
 (define-language std-math
   (inherit std-symbols)

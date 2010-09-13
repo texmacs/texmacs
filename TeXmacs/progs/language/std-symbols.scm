@@ -184,11 +184,6 @@
   (Big-symbol
    Big-nolim-symbol Big-lim-symbol)
 
-  (Big-symbol-variant
-   "int" "oint" "sum" "prod" "amalg" "intlim" "ointlim"
-   "cap" "cup" "sqcup" "vee" "wedge" "odot" "otimes" "oplus" "uplus"
-   "triangleup" "triangledown")
-
   (Prefix-symbol
    "<um>" "<upl>" "<upm>" "<ump>" "<card>")
 
