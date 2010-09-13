@@ -29,7 +29,7 @@
 
   (Quantified
    ((+ (Quantifier-symbol Relation)) Ponctuation-symbol Quantified)
-   ((Open-symbol Quantifier-symbol Relation Close-symbol) Quantified)
+   ((Open Quantifier-symbol Relation Close) Quantified)
    Implication)
 
   (Implication
@@ -68,12 +68,16 @@
    (Prefix-symbol Prefixed)
    (Not-symbol Prefixed)
    (Minus-symbol Prefixed)
+   (Postfixed :<lsub Expression :>)
+   (Postfixed :<lsup Expression :>)
+   (Postfixed :<lprime (* Prime-symbol) :>)
    Postfixed)
 
   (Postfixed
    (Postfixed Postfix-symbol)
    (Postfixed :<rsub Expression :>)
    (Postfixed :<rsup Expression :>)
+   (Postfixed :<rprime (* Prime-symbol) :>)
    Operation)
 
   (Operation
@@ -81,14 +85,23 @@
    Application)
 
   (Application
-   (Application Open-symbol Expression Close-symbol)
+   (Application Open Expression Close)
    Radical)
 
   (Radical
-   (Open-symbol Expression Close-symbol)
+   (Open Expression Close)
    Identifier
    Number
-   Basic-symbol)
+   Variable-symbol
+   Miscellaneous-symbol)
+
+  (Open
+   Open-symbol
+   (:<left Open-symbol :>))
+
+  (Close
+   Close-symbol
+   (:<right Close-symbol :>))
 
   (Identifier
    (+ (or (- "a" "z") (- "A" "Z"))))
