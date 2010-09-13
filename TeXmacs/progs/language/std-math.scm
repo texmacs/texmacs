@@ -54,8 +54,23 @@
    Product)
 
   (Product
-   (Product Times-symbol Special)
-   (Product Over-symbol Special)
+   (Product Times-symbol Big)
+   (Product Over-symbol Big)
+   Big)
+
+  (Big-open
+   (:<big Big-symbol-variant :>))
+
+  (Big-modifier
+   (:<rsub Expression :>)
+   (:<rsup Expression :>)
+   (:<rprime (* Prime-symbol) :>))
+
+  (Big-close
+   (:<big "." :>))
+
+  (Big
+   (Big-open (* Big-modifier) Expression Big-close)
    Special)
 
   (Special

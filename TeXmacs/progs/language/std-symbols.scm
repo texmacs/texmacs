@@ -85,7 +85,8 @@
    "<vartriangleleft>" "<vartriangleright>" "<triangleleft>" "<triangleright>"
    "<trianglelefteq>" "<trianglerighteq>" "<trianglelefteqslant>"
    "<trianglerighteqslant>" "<blacktriangleleft>" "<blacktriangleright>"
-   "<ntriangleleft>" "<ntriangleright>" "<ntrianglelefteq>" "<ntrianglerighteq>"
+   "<ntriangleleft>" "<ntriangleright>"
+   "<ntrianglelefteq>" "<ntrianglerighteq>"
    "<ntrianglelefteqslant>" "<ntrianglerighteqslant>"
 
    "<precprec>" "<precpreceq>" "<precprecprec>" "<precprecpreceq>"
@@ -155,6 +156,11 @@
 
   (Big-symbol
    Big-nolim-symbol Big-lim-symbol)
+
+  (Big-symbol-variant
+   "int" "oint" "sum" "prod" "amalg" "intlim" "ointlim"
+   "cap" "cup" "sqcup" "vee" "wedge" "odot" "otimes" "oplus" "uplus"
+   "triangleup" "triangledown")
 
   (Set-symmetric-symbol
    "<cap>" "<cup>" "<Cap>" "<Cup>" "<doublecap>" "<doublecup>")
