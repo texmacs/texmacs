@@ -24,14 +24,15 @@ to_nsstring_utf8 (string s) {
   return nss;
 }
 
-void mac_image_to_png (url img_file, url png_file) {
+void mac_image_to_png (url img_file, url png_file, int w, int h) {
   // we need to be sure that the Cocoa application infrastructure is initialized 
   // (apparently Qt does not do this properly)
   NSApplication *NSApp=[NSApplication sharedApplication]; (void) NSApp;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSImage *image = [[NSImage alloc] initWithContentsOfFile: to_nsstring_utf8 ( concretize (img_file) )];
-  NSSize size = [image size];
+  NSSize size = NSMakeSize(w,h);
+  [image setSize: size];
   [image lockFocus];
   NSBitmapImageRep *bmp = [[NSBitmapImageRep alloc] initWithFocusedViewRect:
                           NSMakeRect(0,0,size.width,size.height)];

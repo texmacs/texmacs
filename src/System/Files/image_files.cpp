@@ -309,11 +309,11 @@ image_to_png (url image, url png, int w, int h) {
     cerr << "TeXmacs] warning: " << concretize (png) << " has no .png suffix\n";
   }*/
 #ifdef MACOSX_EXTENSIONS
-  mac_image_to_png (image, png);
+  mac_image_to_png (image, png, w, h);
 #else
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-    qt_convert_image (image, png);
+    qt_convert_image (image, png, w, h);
     return;
   }
 #endif
