@@ -163,16 +163,23 @@ left_tail (string s, tree t) {
 ******************************************************************************/
 
 array<C>
-empty_rule () {
+singleton (C c) {
   array<C> ret;
-  ret << PACKRAT_OR;
+  ret << c;
   return ret;
 }
 
 packrat_grammar_rep::packrat_grammar_rep (string s):
   rep<packrat_grammar> (s),
-  grammar (empty_rule ()),
-  productions (packrat_uninit) {}
+  grammar (singleton (PACKRAT_TM_FAIL)),
+  productions (packrat_uninit)
+{
+  grammar (PACKRAT_TM_OPEN)= singleton (PACKRAT_TM_OPEN);
+  grammar (PACKRAT_TM_ANY )= singleton (PACKRAT_TM_ANY );
+  grammar (PACKRAT_TM_ARGS)= singleton (PACKRAT_TM_ARGS);
+  grammar (PACKRAT_TM_LEAF)= singleton (PACKRAT_TM_LEAF);
+  grammar (PACKRAT_TM_FAIL)= singleton (PACKRAT_TM_FAIL);
+}
 
 packrat_grammar
 make_packrat_grammar (string s) {
@@ -213,7 +220,11 @@ packrat_grammar_rep::define (tree t) {
     else if (is_compound (t, "while")) def << PACKRAT_WHILE;
     else if (is_compound (t, "repeat")) def << PACKRAT_REPEAT;
     else if (is_compound (t, "not")) def << PACKRAT_NOT;
-    else def << PACKRAT_UNKNOWN;
+    else if (is_compound (t, "tm-open")) def << PACKRAT_TM_OPEN;
+    else if (is_compound (t, "tm-any")) def << PACKRAT_TM_ANY;
+    else if (is_compound (t, "tm-args")) def << PACKRAT_TM_ARGS;
+    else if (is_compound (t, "tm-leaf")) def << PACKRAT_TM_LEAF;
+    else def << PACKRAT_TM_FAIL;
     for (int i=0; i<N(t); i++) {
       (void) define (t[i]);
       def << encode_symbol (t[i]);

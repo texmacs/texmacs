@@ -174,6 +174,11 @@ packrat_parser_rep::decode_tree_position (C pos) {
 * Packrat parsing
 ******************************************************************************/
 
+bool
+starts (tree t, string s) {
+  return is_atomic (t) && starts (t->label, s);
+}
+
 C
 packrat_parser_rep::parse (C sym, C pos) {
   D key= (((D) sym) << 32) + ((D) (sym^pos));
@@ -185,7 +190,7 @@ packrat_parser_rep::parse (C sym, C pos) {
   current_cache (key)= PACKRAT_FAILED;
   //cout << "Parse " << sym << " at " << pos << INDENT << LF;
   //cout << "Parse " << packrat_decode[sym] << " at " << pos << INDENT << LF;
-  if (sym >= PACKRAT_SYMBOLS) {
+  if (sym >= PACKRAT_TM_OPEN) {
     array<C> inst= grammar [sym];
     //cout << "Parse " << inst << " at " << pos << LF;
     switch (inst[0]) {
@@ -231,7 +236,37 @@ packrat_parser_rep::parse (C sym, C pos) {
       if (parse (inst[1], pos) == PACKRAT_FAILED) im= pos;
       else im= PACKRAT_FAILED;
       break;
-    case PACKRAT_UNKNOWN:
+    case PACKRAT_TM_OPEN:
+      if (pos < N (current_input) &&
+	  starts (packrat_decode[current_input[pos]], "<\\"))
+	im= pos + 1;
+      else im= PACKRAT_FAILED;
+      break;
+    case PACKRAT_TM_ANY:
+      im= parse (PACKRAT_TM_OPEN, pos);
+      if (im == PACKRAT_FAILED)
+	im= parse (PACKRAT_TM_LEAF, pos);
+      else {
+	im= parse (PACKRAT_TM_ARGS, im);
+	if (im != PACKRAT_FAILED)
+	  im= parse (encode_token ("</>"), im);
+      }
+      break;
+    case PACKRAT_TM_ARGS:
+      im= parse (PACKRAT_TM_ANY, pos);
+      while (im < N (current_input))
+	if (current_input[im] != encode_token ("<|>")) break;
+	else im= parse (PACKRAT_TM_ANY, im + 1);
+      break;
+    case PACKRAT_TM_LEAF:
+      im= pos;
+      while (im < N (current_input)) {
+	tree t= packrat_decode[current_input[im]];
+	if (starts (t, "<\\") || t == "<|>" || t == "</>") break;
+	else im++;
+      }
+      break;
+    case PACKRAT_TM_FAIL:
       im= PACKRAT_FAILED;
       break;
     default:
@@ -270,7 +305,7 @@ packrat_parser_rep::context
     end   << next;
   }
 
-  if (sym >= PACKRAT_SYMBOLS) {
+  if (sym >= PACKRAT_TM_OPEN) {
     array<C> inst= grammar [sym];
     //cout << "Parse " << inst << " at " << pos << LF;
     switch (inst[0]) {
@@ -302,7 +337,11 @@ packrat_parser_rep::context
       break;
     case PACKRAT_RANGE:
     case PACKRAT_NOT:
-    case PACKRAT_UNKNOWN:
+    case PACKRAT_TM_OPEN:
+    case PACKRAT_TM_ANY:
+    case PACKRAT_TM_ARGS:
+    case PACKRAT_TM_LEAF:
+    case PACKRAT_TM_FAIL:
       break;
     default:
       context (inst[0], pos, w1, w2, kind, begin, end);

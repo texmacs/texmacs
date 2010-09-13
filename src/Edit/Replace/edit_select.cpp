@@ -76,7 +76,8 @@ bool
 edit_select_rep::semantic_active (path p) {
   p= semantic_root (p);
 #if 1
-  return get_env_value (MODE, p * right_index (subtree (et, p))) == "math";
+  //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
+  return get_env_value (MODE, end (et, p)) == "math";
 #else
   return false;
 #endif
