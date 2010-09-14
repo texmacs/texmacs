@@ -55,6 +55,8 @@ protected:
   bool          table_selection;
   rectangles    selection_rects;
   rectangles    env_rects;
+  rectangles    sem_rects;
+  bool          sem_correct;
   cursor        oc;
   bool          temp_invalid_cursor;
   array<string> completions;

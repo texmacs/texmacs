@@ -41,6 +41,13 @@ edit_interface_rep::draw_env (renderer ren) {
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }
+    rs= sem_rects;
+    while (!is_nil (rs)) {
+      if (sem_correct) ren->set_color (rgb_color (112, 208, 112));
+      else ren->set_color (rgb_color (208, 112, 112));
+      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
+      rs= rs->next;
+    }
   }
 }
 
