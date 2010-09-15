@@ -429,7 +429,9 @@ packrat_select (string lan, string s, tree in,
   if (par->parse (sym, 0) != N(par->current_input)) return false;
   if (pos1 == PACKRAT_FAILED || pos2 == PACKRAT_FAILED) return false;
   array<C> kind, begin, end;
-  par->context (sym, 0, pos1, pos2, kind, begin, end);
+  C pos0= pos1;
+  if ((mode == 1 && pos1 == pos2) || mode == 2) pos0= max (pos1 - 1, 0);
+  par->context (sym, 0, pos0, pos2, kind, begin, end);
   par->compress (kind, begin, end);
   /*
   for (int i=0; i<N(kind); i++)
