@@ -185,18 +185,28 @@ edit_cursor_rep::go_right_physical () {
 void
 edit_cursor_rep::go_up () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  path scroll_p= find_innermost_scroll (eb, tp);
+  path start_p= tree_path (scroll_p, -(1 << 30), 1 << 30, 0);
+  if (tp == start_p) return;
+  path old_p= tp;
   adjust_ghost_cursor (HORIZONTAL);
   cursor_move (0, 1);
   notify_cursor_moved (VERTICAL);
+  if (tp == old_p) tp= start_p;
   select_from_cursor_if_active ();
 }
 
 void
 edit_cursor_rep::go_down () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  path scroll_p= find_innermost_scroll (eb, tp);
+  path end_p= tree_path (scroll_p, 1 << 30, -(1 << 30), 0);
+  if (tp == end_p) return;
+  path old_p= tp;
   adjust_ghost_cursor (HORIZONTAL);
   cursor_move (0, -1);
   notify_cursor_moved (VERTICAL);
+  if (tp == old_p) tp= end_p;
   select_from_cursor_if_active ();
 }
 
