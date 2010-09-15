@@ -17,6 +17,7 @@
 (define-language std-math-grammar
   (Main
    (Main Separator)
+   (Main ".")
    (Main "\n")
    Expression)
 
