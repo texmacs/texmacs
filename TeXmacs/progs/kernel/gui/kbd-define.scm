@@ -11,20 +11,21 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel gui kbd-define))
+(texmacs-module (kernel gui kbd-define)
+  (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy keyboard bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define lazy-keyboard-waiting '())
-(define-public lazy-keyboard-done (make-ahash-table))
+(tm-define lazy-keyboard-done (make-ahash-table))
 
-(define-public (lazy-keyboard-do module mode*)
+(tm-define (lazy-keyboard-do module mode*)
   (with mode (texmacs-mode-mode mode*)
     (set! lazy-keyboard-waiting (acons mode module lazy-keyboard-waiting))))
 
-(define-public-macro (lazy-keyboard module . modes)
+(tm-define-macro (lazy-keyboard module . modes)
   (for-each (lambda (mode) (lazy-keyboard-do module mode)) modes)
   `(delayed
      (:idle 250)
@@ -41,7 +42,7 @@
 	 (lazy-keyboard-force-do (cdr l)))
 	(else (cons (car l) (lazy-keyboard-force-do (cdr l))))))
 
-(define-public (lazy-keyboard-force)
+(tm-define (lazy-keyboard-force)
   (set! lazy-keyboard-waiting
 	(reverse (lazy-keyboard-force-do (reverse lazy-keyboard-waiting)))))
 
@@ -59,15 +60,15 @@
 	(insert-kbd-wildcard key im post left right)
 	(kbd-wildcards-sub (cdr l) post))))
 
-(define-public (kbd-wildcards-body l)
-  "Helper routine for kbd-wildcards macro"
+(tm-define (kbd-wildcards-body l)
+  (:synopsis "Helper routine for kbd-wildcards macro")
   (cond ((null? l) (noop))
 	((== (car l) 'pre) (kbd-wildcards-sub (cdr l) #f))
 	((== (car l) 'post) (kbd-wildcards-sub (cdr l) #t))
 	(else (kbd-wildcards-sub l #t))))
 
-(define-public-macro (kbd-wildcards . l)
-  "Add entries in @l to the keyboard wildcard table"
+(tm-define-macro (kbd-wildcards . l)
+  (:synopsis "Add entries in @l to the keyboard wildcard table")
   `(kbd-wildcards-body ,(list 'quasiquote l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,41 +77,54 @@
 
 (define kbd-map-table (make-ahash-table))
 (define kbd-inv-table (make-ahash-table))
+(define kbd-rev-table (make-ahash-table))
 (define (kbd-set-map! key im) (ahash-set! kbd-map-table key im))
 (define (kbd-set-inv! key im) (ahash-set! kbd-inv-table key im))
+(define (kbd-set-rev! key im) (ahash-set! kbd-rev-table key im))
 (define (kbd-get-map key) (ahash-ref kbd-map-table key))
 (define (kbd-get-inv key) (ahash-ref kbd-inv-table key))
+(define (kbd-get-rev key) (ahash-ref kbd-rev-table key))
 (define (kbd-remove-map! key) (ahash-remove! kbd-map-table key))
 
 (define (kbd-source cmd)
-  (if (procedure? cmd) (promise-source cmd) cmd))
+  (if (procedure? cmd) (object->string (promise-source cmd)) cmd))
+
+(define (simple-insert l x)
+  (if (nlist? l) (list x)
+      (list-union (list x) l)))
+
+(define (simple-remove l x)
+  (if (nlist? l) (list)
+      (list-difference l (list x))))
 
 (define (kbd-insert-key-binding conds key im)
-  ;;(display* "Binding '" key "' when " conds " to " im "\n")
   (with com (kbd-source (car im))
+    ;;(display* "Binding '" key "' when " conds " to " com "\n")
     (kbd-delete-key-binding2 conds key)
     (kbd-set-map! key (ovl-insert (kbd-get-map key) im conds))
     (kbd-set-inv! com (ovl-insert (kbd-get-inv com) key conds))
+    (kbd-set-rev! com (simple-insert (kbd-get-rev com) key))
     ;;(display* key ": " (kbd-get-map key) "\n")
     ;;(display* com "] " (kbd-get-inv com) "\n")
     ))
 
-(define-public (kbd-delete-key-binding2 conds key)
+(tm-define (kbd-delete-key-binding2 conds key)
   ;;(display* "Deleting binding '" key "' when " conds "\n")
   (with im (ovl-find (kbd-get-map key) conds)
     (if im
 	(with com (kbd-source (car im))
 	  (kbd-set-map! key (ovl-remove (kbd-get-map key) conds))
-	  (kbd-set-inv! com (ovl-remove (kbd-get-inv com) conds))))))
+	  (kbd-set-inv! com (ovl-remove (kbd-get-inv com) conds))
+	  (kbd-set-rev! com (simple-remove (kbd-get-inv com) key))))))
 
-(define-public (kbd-find-key-binding key)
-  "Find the command associated to the keystroke @key"
+(tm-define (kbd-find-key-binding key)
+  (:synopsis "Find the command associated to the keystroke @key")
   ;;(display* "Find binding '" key "'\n")
   (lazy-keyboard-force)
   (ovl-resolve (kbd-get-map key) #f))
 
-(define-public (kbd-find-inv-binding com)
-  "Find keyboard binding for command @com"
+(tm-define (kbd-find-inv-binding com)
+  (:synopsis "Find keyboard binding for command @com")
   ;;(display* "Find inverse binding '" com "'\n")
   (lazy-keyboard-force)
   (with r (ovl-resolve (kbd-get-inv com) #f)
@@ -121,6 +135,17 @@
   ;; FIXME: we really need an ovl-find which does mode inference
   (or (ovl-find (kbd-get-map key) conds)
       (ovl-find (kbd-get-map key) '())))
+
+(tm-define (kbd-shortcut com)
+  (:secure #t)
+  (cond ((tree? com)
+	 (kbd-shortcut (tree->stree com)))
+	((string? com)
+	 (with l (kbd-get-rev (object->string (string->object com)))
+	   (if (and l (nnull? l))
+	       `(key ,(string-encode (car l)))
+	       '(key (with "color" "red" "?")))))
+	(else '(key (with "color" "red" "?")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yet more subroutines for the definition of keyboard shortcuts
@@ -154,8 +179,8 @@
 (define (kbd-sub-bindings conds s)
   (kbd-sub-bindings-sub conds s 0 0))
 
-(define-public (kbd-binding conds key2 cmd help)
-  "Helper routine for kbd-map macro"
+(tm-define (kbd-binding conds key2 cmd help)
+  (:synopsis "Helper routine for kbd-map macro")
   ;;(display* conds ", " key2 ", " cmd ", " help "\n")
   (with key (kbd-pre-rewrite key2)
     (kbd-sub-bindings conds key)
@@ -196,8 +221,8 @@
 	 (kbd-map-body (kbd-add-condition conds (car l)) (cdr l)))
 	(else (map (lambda (x) (kbd-map-one conds x)) l))))
 
-(define-public-macro (kbd-map . l)
-  "Add entries in @l to the keyboard mapping"
+(tm-define-macro (kbd-map . l)
+  (:synopsis "Add entries in @l to the keyboard mapping")
   `(begin ,@(kbd-map-body '() l)))
 
 (define (kbd-remove-one conds key)
@@ -211,8 +236,8 @@
 	 (kbd-remove-body (kbd-add-condition conds (car l)) (cdr l)))
 	(else (map (lambda (x) (kbd-remove-one conds x)) l))))
 
-(define-public-macro (kbd-remove . l)
-  "Remove entries in @l from keyboard mapping"
+(tm-define-macro (kbd-remove . l)
+  (:synopsis "Remove entries in @l from keyboard mapping")
   `(begin ,@(kbd-remove-body '() l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -224,30 +249,30 @@
 (define (kbd-set-command! key im)
   (ahash-set! kbd-command-table key im))
 
-(define-public (kbd-get-command key)
+(tm-define (kbd-get-command key)
   (lazy-keyboard-force)
   (ahash-ref kbd-command-table key))
 
-(define-public (kbd-command-pre arg)
-  "Helper routine for kbd-commands macro"
+(tm-define (kbd-command-pre arg)
+  (:synopsis "Helper routine for kbd-commands macro")
   (with (cmd help . action) arg
     (list cmd help (list 'unquote `(lambda () ,@action)))))
 
-(define-public (kbd-command arg)
-  "Helper routine for kbd-commands macro"
+(tm-define (kbd-command arg)
+  (:synopsis "Helper routine for kbd-commands macro")
   (with (cmd help action) arg
     (kbd-set-command! cmd (cons help action))))
 
-(define-public-macro (kbd-commands . l)
-  "Add backslashed commands in @l to keyboard mapping"
+(tm-define-macro (kbd-commands . l)
+  (:synopsis "Add backslashed commands in @l to keyboard mapping")
   `(for-each kbd-command ,(list 'quasiquote (map kbd-command-pre l))))
 
-(define-public-macro (kbd-symbols . l)
-  "Add symbols in @l to keyboard mapping"
+(tm-define-macro (kbd-symbols . l)
+  (:synopsis "Add symbols in @l to keyboard mapping")
   (define (fun s)
     (list s (string-append "insert#<" s ">")
 	  (list 'insert (string-append "<" s ">"))))
   `(kbd-commands ,@(map fun l)))
 
-(define-public (emulate-keyboard k)
+(tm-define (emulate-keyboard k)
   (delayed (raw-emulate-keyboard k)))
