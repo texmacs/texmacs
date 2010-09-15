@@ -19,6 +19,6 @@ void   packrat_inherit (string lan, string from);
 path   packrat_parse (string lan, string s, tree in);
 object packrat_context (string lan, string s, tree in, path in_pos);
 bool   packrat_select (string lan, string s, tree in,
-		       path& p1, path& p2, bool strict);
+		       path& p1, path& p2, int mode);
 
 #endif // PACKRAT_H

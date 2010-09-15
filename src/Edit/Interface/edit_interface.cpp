@@ -473,7 +473,7 @@ edit_interface_rep::apply_changes () {
     sem_rects= rectangles ();
     sem_correct= true;
     if (semantic_active (path_up (tp))) {
-      sem_correct= semantic_select (path_up (tp), p1, p2, true);
+      sem_correct= semantic_select (path_up (tp), p1, p2, 2);
       if (!sem_correct) {
 	path sr= semantic_root (path_up (tp));
 	p1= start (et, sr);

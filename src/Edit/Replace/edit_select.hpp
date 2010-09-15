@@ -37,7 +37,7 @@ public:
 
   path semantic_root (path p);
   bool semantic_active (path p);
-  bool semantic_select (path p, path& q1, path& q2, bool strict);
+  bool semantic_select (path p, path& q1, path& q2, int mode);
 
   void select (path p);
   void select (path start, path end);

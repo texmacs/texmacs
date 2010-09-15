@@ -97,8 +97,6 @@
   ("M-end" (positioning-end))
   ("M-pageup" (positioning-top))
   ("M-pagedown" (positioning-bottom))
-  ("M-A-home" (selection-set-start) (select-from-keyboard #t))
-  ("M-A-end" (selection-set-end) (select-from-keyboard #f))
   ("H-left" (structured-left))
   ("H-right" (structured-right))
   ("H-up" (structured-up))

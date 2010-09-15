@@ -84,13 +84,13 @@ edit_select_rep::semantic_active (path p) {
 }
 
 bool
-edit_select_rep::semantic_select (path p, path& q1, path& q2, bool strict) {
+edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   if (!semantic_active (p)) return false;
   p= semantic_root (p);
   eval ("(use-modules (language std-math))");
   path p1= q1 / p, p2= q2 / p;
   tree st= subtree (et, p);
-  bool ret= packrat_select ("std-math", "Main", st, p1, p2, strict);
+  bool ret= packrat_select ("std-math", "Main", st, p1, p2, mode);
   if (ret) {
     q1= p * p1;
     q2= p * p2;
@@ -106,7 +106,7 @@ void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
   if (p1 != p2)
-    (void) semantic_select (common (p1, p2), p1, p2, false);
+    (void) semantic_select (common (p1, p2), p1, p2, 0);
   if (path_less (p1, p2)) {
     start_p= copy (p1);
     end_p  = copy (p2);
@@ -160,7 +160,11 @@ void
 edit_select_rep::select_from_keyboard (bool flag) {
   selecting= flag;
   shift_selecting= false;
-  if (flag) mid_p= copy (tp);
+  if (flag) {
+    start_p= copy (tp);
+    mid_p  = copy (tp);
+    end_p  = copy (tp);
+  }
   else mid_p= rp;
 }
 
@@ -247,7 +251,7 @@ edit_select_rep::select_enlarge () {
   path pp= sp, p1= start_p, p2= end_p;
   if (start_p == pp * 0 && end_p == pp * right_index (subtree (et, pp)))
     if (!is_nil (pp)) pp= path_up (pp);
-  if (semantic_select (pp, p1, p2, true))
+  if (semantic_select (pp, p1, p2, 1))
     select (p1, p2);
   else {
     if (is_atomic (subtree (et, sp))) select_enlarge_text ();

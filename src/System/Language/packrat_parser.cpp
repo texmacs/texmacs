@@ -290,6 +290,14 @@ packrat_parser_rep::parse (C sym, C pos) {
 * Finding all enclosing structures at a given position
 ******************************************************************************/
 
+bool
+packrat_parser_rep::is_selectable (C sym) {
+  tree t= packrat_decode[sym];
+  if (!is_compound (t, "symbol", 1)) return false;
+  string s= t[0]->label;
+  return !ends (s, "-head") && !ends (s, "-tail");
+}
+
 void
 packrat_parser_rep::context
   (C sym, C pos, C w1, C w2, array<C>& kind, array<C>& begin, array<C>& end)
@@ -298,7 +306,10 @@ packrat_parser_rep::context
   if (next < 0 || pos > w1 || next < w2) return;
 
   int n= N(kind);
-  if (n >= 1 && begin[n-1] == pos && end[n-1] == next) kind[n-1]= sym;
+  if (n >= 1 && begin[n-1] == pos && end[n-1] == next) {
+    if (is_selectable (sym) || !is_selectable (kind[n-1]))
+      kind[n-1]= sym;
+  }
   else {
     kind  << sym;
     begin << pos;
@@ -357,18 +368,14 @@ packrat_parser_rep::compress
   array<C> new_kind, new_begin, new_end;
   for (int i=0; i<N(kind); i++) {
     int n= N(new_kind);
-    tree t= packrat_decode[kind[i]];
-    if (is_compound (t, "symbol", 1)) {
-      string s= t[0]->label;
-      if (!ends (s, "-head") && !ends (s, "-tail")) 
-	if (N(new_kind) == 0 ||
-	    new_kind [n-1] != kind[i] ||
-	    (new_begin[n-1] != begin[i] && new_end[n-1] != end[i])) {
-	  new_kind  << kind[i];
-	  new_begin << begin[i];
-	  new_end   << end[i];
-	}
-    }
+    if (is_selectable (kind[i]))
+      if (N(new_kind) == 0 ||
+	  new_kind [n-1] != kind[i] ||
+	  (new_begin[n-1] != begin[i] && new_end[n-1] != end[i])) {
+	new_kind  << kind[i];
+	new_begin << begin[i];
+	new_end   << end[i];
+      }
   }
   kind = new_kind;
   begin= new_begin;
@@ -409,7 +416,7 @@ packrat_context (string lan, string s, tree in, path in_pos) {
 
 bool
 packrat_select (string lan, string s, tree in,
-		path& p1, path& p2, bool strict)
+		path& p1, path& p2, int mode)
 {
   //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
   //<< " (" << lan << ", " << s << ")" << LF;
@@ -433,10 +440,11 @@ packrat_select (string lan, string s, tree in,
   */
   int n= N(kind);
   if (n == 0) return false;
-  if (strict) {
+  if (mode == 1) {
     if (pos1 == begin[n-1] && pos2 == end[n-1]) n--;
     if (n == 0) return false;
   }
+  else if (mode == 2 && n > 1) n--;
   p1= par->decode_tree_position (begin[n-1]);
   p2= par->decode_tree_position (end[n-1]);
   //cout << "Selected " << packrat_decode[kind[n-1]] << LF;

@@ -399,7 +399,7 @@ public:
   /* public routines from edit_select */
   virtual path semantic_root (path p) = 0;
   virtual bool semantic_active (path p) = 0;
-  virtual bool semantic_select (path p, path& q1, path& q2, bool strict) = 0;
+  virtual bool semantic_select (path p, path& q1, path& q2, int mode) = 0;
 
   virtual void select (path p) = 0;
   virtual void select (path start, path end) = 0;
