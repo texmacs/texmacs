@@ -232,6 +232,18 @@ edit_select_rep::select_enlarge_text () {
   else select (p * 0, p * N(s));
 }
 
+bool
+incomplete_script_selection (tree t, path lp, path rp) {
+  if (!is_func (t, CONCAT)) return false;
+  if (N(lp) < 2 || N(rp) < 2) return false;
+  int l= lp->item, r= rp->item;
+  if (is_func (t[l], RSUB) || is_func (t[l], RSUP)) return true;
+  if (is_func (t[r], LSUB) || is_func (t[r], LSUP)) return true;
+  if (l  >0    && (is_func (t[l-1], LSUB) || is_func (t[l-1], LSUP))) return true;
+  if (r+1<N(t) && (is_func (t[r+1], RSUB) || is_func (t[r+1], RSUP))) return true;
+  return false;
+}
+
 void
 edit_select_rep::select_enlarge () {
   path sp, sq;
@@ -260,8 +272,11 @@ edit_select_rep::select_enlarge () {
 
   path p = common (start_p, end_p);
   tree st= subtree (et, p);
-  if (is_func (st, TFORMAT) || is_func (st, DOCUMENT, 1) ||
-      drd->var_without_border (L(st)))
+  if (drd->var_without_border (L(st)) ||
+      is_func (st, TFORMAT) ||
+      is_func (st, DOCUMENT, 1) ||
+      is_script (st) ||
+      incomplete_script_selection (st, start_p / p, end_p / p))
     select_enlarge ();
   else {
     string s;
