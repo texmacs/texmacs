@@ -152,7 +152,7 @@ initkeymap () {
 
 
 QTMWidget::QTMWidget (simple_widget_rep *_wid) 
-  : QTMScrollView (), backingPixmap() {
+  : QTMScrollView (), backingPixmap(), imwidget(NULL) {
   setObjectName("A QTMWidget");
   setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
   QAbstractScrollArea::viewport()->setMouseTracking (true);
@@ -164,6 +164,7 @@ QTMWidget::QTMWidget (simple_widget_rep *_wid)
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT) cout << "destroying " << this << LF;
+  if (imwidget) delete imwidget;
 }
 
 void 
@@ -430,7 +431,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     } else {
       QString nss = event->text();
       unsigned short unic= nss.data()[0].unicode();
-      if (unic < 32 && key < 128) {
+      if (unic < 32 && key < 128 && key > 0) {
         if (((char) key) >= 'A' && ((char) key) <= 'Z') {
           if ((mods & Qt::ShiftModifier) == 0)
             key= (int) (key + ((int) 'a') - ((int) 'A'));
@@ -535,18 +536,65 @@ mouse_decode (unsigned int mstate) {
   return "unknown";
 }
 
+static void setRoundedMask(QWidget *widget)
+{
+	QPixmap pixmap(widget->size());
+	QPainter painter(&pixmap);
+	painter.fillRect(pixmap.rect(), Qt::white);
+	painter.setBrush(Qt::black);
+	painter.drawRoundedRect(pixmap.rect(),8,8, Qt::AbsoluteSize);
+	widget->setMask(pixmap.createMaskFromColor(Qt::white));
+}
 
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
+  if (! imwidget) {   
+    imwidget = new QLabel(this);
+    imwidget->setAutoFillBackground(true);
+    QPalette pal = imwidget->palette();
+    pal.setColor(QPalette::Window, QColor(0,0,255,80));
+    pal.setColor(QPalette::WindowText, Qt::white);
+    imwidget->setPalette(pal);
+    QFont f = imwidget->font();
+    f.setPointSize(30);
+    imwidget->setFont(f);
+    imwidget->setMargin(5);
+  }
+
+  QString const & preedit_string = event->preeditString();
   QString const & commit_string = event->commitString();
+
+  if (preedit_string.isEmpty()) {
+    imwidget->hide();
+  } else {
+    if (DEBUG_QT)  cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+    imwidget->setText(preedit_string);
+    imwidget->adjustSize();
+    QSize sz = size();
+    QRect g = imwidget->geometry();
+    g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
+    imwidget->setGeometry(g);
+    setRoundedMask(imwidget);
+    imwidget->show();
+  }
+  
   if (!commit_string.isEmpty()) {
+    if (DEBUG_QT)  cout << "IM committing :" << commit_string.toUtf8().data() << LF;
+
     int key = 0;
+#if 1
     for (int i = 0; i < commit_string.size(); ++i) {
       QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
       keyPressEvent(&ev);
     }
+#else
+    QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string);
+    keyPressEvent(&ev);
+#endif
   }
+  
   event->accept();
+
 }  
 
 void

@@ -17,6 +17,7 @@
 #include <QVariant>
 #include <QTimer>
 #include <QSet>
+#include <QLabel>
 
 class simple_widget_rep;
 class basic_renderer_rep;
@@ -32,6 +33,9 @@ public:
   static QSet<QTMWidget*> all_widgets;
   QPoint backing_pos;
 
+  
+  QLabel *imwidget;
+  
   QTMWidget(simple_widget_rep *_wid) ;
   ~QTMWidget();
 
