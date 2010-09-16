@@ -55,7 +55,8 @@ tt_locate (string name) {
 	   !starts (name, "bbm") &&
 	   !starts (name, "stmary") &&
 	   !starts (name, "rsfs") &&
-	   !starts (name, "grmn")
+	   !starts (name, "grmn") &&
+	   !starts (name, "mac-")
 	   // FIXME: better caching of missed tt_locates would be better
 	   )
     {
@@ -70,12 +71,16 @@ tt_locate (string name) {
 	}
     }
 
-  url tt_path= search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype");
+  url tt_path=
+    search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype") |
+    search_sub_dirs ("$HOME/Library/Fonts") |
+    search_sub_dirs ("/Library/Fonts");
   return resolve (tt_path * name);
 }
 
 url
 tt_font_find (string name) {
+  //cout << "tt_font_find " << name << "\n";
   url u= tt_locate (name * ".pfb");
   //if (!is_none (u)) cout << name << " -> " << u << "\n";
   if (!is_none (u)) return u;
