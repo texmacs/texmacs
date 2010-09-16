@@ -565,7 +565,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
+#if (QT_VERSION >= 0x040600)
       view->window()->setWindowFilePath(to_qstring(file));
+#endif
     }
     break;
       

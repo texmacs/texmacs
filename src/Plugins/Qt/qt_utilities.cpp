@@ -18,8 +18,6 @@
 #include <QLocale>
 #include <QDateTime>
 
-
-
 #include "dictionary.hpp"
 #include "converter.hpp"
 #include "language.hpp"
@@ -186,19 +184,16 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   }
 }
 
-string qt_application_directory ()
-{
+string qt_application_directory () {
   return  string (QCoreApplication::applicationDirPath () .toAscii() .constData());
-//  return from_qstring (QCoreApplication::applicationDirPath ());
+  // return from_qstring (QCoreApplication::applicationDirPath ());
 }
-
 
 string
 qt_get_date (string lan, string fm) {
   QDateTime localtime = QDateTime::currentDateTime();
   if (fm == "") {
-    if ((lan == "british") || (lan == "english") || (lan ==  
-                                                     "american"))
+    if ((lan == "british") || (lan == "english") || (lan == "american"))
       fm = "MMMM d, yyyy";
     else if (lan == "german")
       fm = "d. MMMM yyyy";
@@ -217,7 +212,11 @@ qt_get_date (string lan, string fm) {
     else fm = "d MMMM yyyy";
   }
   QLocale loc = QLocale(to_qstring(language_to_locale(lan)));
+#if (QT_VERSION >= 0x040600)
   QString date = loc.toString(localtime, to_qstring(fm));
+#else
+  QString date = localtime.toString(to_qstring(fm));
+#endif
   return from_qstring(date);
 }
 

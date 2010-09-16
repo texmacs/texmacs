@@ -538,12 +538,16 @@ mouse_decode (unsigned int mstate) {
 
 static void setRoundedMask(QWidget *widget)
 {
-	QPixmap pixmap(widget->size());
-	QPainter painter(&pixmap);
-	painter.fillRect(pixmap.rect(), Qt::white);
-	painter.setBrush(Qt::black);
-	painter.drawRoundedRect(pixmap.rect(),8,8, Qt::AbsoluteSize);
-	widget->setMask(pixmap.createMaskFromColor(Qt::white));
+  QPixmap pixmap(widget->size());
+  QPainter painter(&pixmap);
+  painter.fillRect(pixmap.rect(), Qt::white);
+  painter.setBrush(Qt::black);
+#if (QT_VERSION >= 0x040600)
+  painter.drawRoundedRect(pixmap.rect(),8,8, Qt::AbsoluteSize);
+#else
+  painter.drawRect(pixmap.rect());
+#endif
+  widget->setMask(pixmap.createMaskFromColor(Qt::white));
 }
 
 void
