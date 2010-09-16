@@ -516,7 +516,11 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_DESTROY:
     send_destroy (THIS, val);
     break;
-
+  case SLOT_CURSOR:
+   // send_coord2 (THIS, "cursor", val); 
+    // this message is currently ignored. Used only in TeXmacs/Qt
+    break;
+      
   case SLOT_SHRINKING_FACTOR:
     send_int (THIS, "shrinking factor", val);
     break;

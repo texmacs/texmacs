@@ -1035,6 +1035,15 @@ simple_widget_rep::send (slot s, blackbox val) {
       tm_canvas()->invalidate_all ();
     }
       break;
+    case SLOT_CURSOR:
+    {
+      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+      coord2 p= open_box<coord2> (val);
+      QPoint pt = to_qpoint(p);
+      tm_canvas() -> setCursorPos(pt);
+    }
+      break;
+      
     default:
       if (DEBUG_QT) cout << "[qt_simple_widget_rep] ";
       qt_view_widget_rep::send (s, val);

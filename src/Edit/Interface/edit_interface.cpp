@@ -336,25 +336,25 @@ edit_interface_rep::apply_changes () {
   //cout << HRULE << "\n";
   if (env_change == 0) {
     if (last_change-last_update > 0 &&
-	idle_time (INTERRUPTED_EVENT) >= 1000/6)
-      {
-	SERVER (menu_main ("(horizontal (link texmacs-menu))"));
-	SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
-	set_footer ();
-	if (!get_renderer (this) -> interrupted ()) drd_update ();
-	cache_memorize ();
-	last_update= last_change;
-      }
+        idle_time (INTERRUPTED_EVENT) >= 1000/6)
+    {
+      SERVER (menu_main ("(horizontal (link texmacs-menu))"));
+      SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
+      SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
+      SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+      set_footer ();
+      if (!get_renderer (this) -> interrupted ()) drd_update ();
+      cache_memorize ();
+      last_update= last_change;
+    }
     return;
   }
-
+  
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
-
+  
   // cout << "Always\n";
   update_visible ();
-
+  
   // cout << "Handling automatic resizing\n";
   int sb= 1;
   if (is_attached (this) && get_init_string (PAGE_MEDIUM) == "automatic") {
@@ -377,7 +377,7 @@ edit_interface_rep::apply_changes () {
       win -> set_scrollbars (sb);
     }
   }
-
+  
   // window decorations (menu bar, icon bars, footer)
   int wb= 2;
   if (is_attached (this)) {
@@ -388,21 +388,21 @@ edit_interface_rep::apply_changes () {
     if (wb != cur_wb) {
       cur_wb= wb;
       if (wb != 2) {
-	get_server () -> show_header (wb);
-	get_server () -> show_footer (wb);
+        get_server () -> show_header (wb);
+        get_server () -> show_footer (wb);
       }
     }
   }
-
+  
   // cout << "Handling selection\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION)) {
     if (made_selection) invalidate (selection_rects);
   }
-
+  
   // cout << "Handling environment\n";
   if (env_change & THE_ENVIRONMENT)
     typeset_invalidate_all ();
-
+  
   // cout << "Handling tree\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT)) {
     typeset_invalidate_env ();
@@ -417,7 +417,7 @@ edit_interface_rep::apply_changes () {
     // check_data_integrety ();
     the_ghost_cursor()= eb->find_check_cursor (tp);
   }
-
+  
 #ifdef EXPERIMENTAL
   if (env_change & THE_ENVIRONMENT)
     environment_update ();
@@ -430,33 +430,37 @@ edit_interface_rep::apply_changes () {
     //print_tree (rew);
   }
 #endif
-
+  
   // cout << "Handling extents\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS))
     set_extents (eb->x1, eb->y1, eb->x2, eb->y2);
-
+  
   // cout << "Cursor\n";
   temp_invalid_cursor= false;
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+
-		    THE_CURSOR+THE_FOCUS)) {
+                    THE_CURSOR+THE_FOCUS)) {
     SI /*P1= pixel,*/ P2= 2*pixel, P3= 3*pixel;
     int THE_CURSOR_BAK= env_change & THE_CURSOR;
     go_to_here ();
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+THE_CURSOR))
       if (!inside_active_graphics ())
-	cursor_visible ();
-
+        cursor_visible ();
+    
+    
     cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
-		   oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);
+                   oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);
     copy_always= rectangles (ocr, copy_always);
     invalidate (ocr->x1, ocr->y1, ocr->x2, ocr->y2);
     rectangle ncr (cu->ox+ ((SI) (cu->y1*cu->slope))- P3, cu->oy+ cu->y1- P3,
-		   cu->ox+ ((SI) (cu->y2*cu->slope))+ P2, cu->oy+ cu->y2+ P3);
+                   cu->ox+ ((SI) (cu->y2*cu->slope))+ P2, cu->oy+ cu->y2+ P3);
     invalidate (ncr->x1, ncr->y1, ncr->x2, ncr->y2);
     copy_always= rectangles (ncr, copy_always);
     oc= copy (cu);
+   
+    // set hot spot in the gui
+    send_cursor (this, (cu->ox-sfactor+1)/sfactor, (cu->oy-sfactor+1)/sfactor);
 
     rectangles old_rects= env_rects;
     env_rects= rectangles ();
@@ -467,7 +471,7 @@ edit_interface_rep::apply_changes () {
       invalidate (env_rects);
     }
     else if (env_change & THE_FOCUS) invalidate (env_rects);
-
+    
     old_rects= sem_rects;
     bool old_correct= sem_correct;
     sem_rects= rectangles ();
@@ -475,9 +479,9 @@ edit_interface_rep::apply_changes () {
     if (semantic_active (path_up (tp))) {
       sem_correct= semantic_select (path_up (tp), p1, p2, 2);
       if (!sem_correct) {
-	path sr= semantic_root (path_up (tp));
-	p1= start (et, sr);
-	p2= end (et, sr);
+        path sr= semantic_root (path_up (tp));
+        p1= start (et, sr);
+        p2= end (et, sr);
       }
       path q1, q2;
       selection_correct (et, p1, p2, q1, q2);
@@ -492,7 +496,7 @@ edit_interface_rep::apply_changes () {
     
     invalidate_graphical_object ();
   }
-
+  
   // cout << "Handling selection\n";
   if (env_change & THE_SELECTION) {
     made_selection= selection_active_any ();
@@ -500,15 +504,15 @@ edit_interface_rep::apply_changes () {
       table_selection= selection_active_table ();
       selection sel; selection_get (sel);
       /*
-      selection_rects=
-	simplify (::correct (thicken (sel->rs, pixel, pixel) - sel->rs));
-      */
+       selection_rects=
+       simplify (::correct (thicken (sel->rs, pixel, pixel) - sel->rs));
+       */
       selection_rects= simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
-					    thicken (sel->rs, 0, 2*pixel)));
+                                            thicken (sel->rs, 0, 2*pixel)));
       invalidate (selection_rects);
     }
   }
-
+  
   // cout << "Handling locus highlighting\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS))
     update_active_loci ();
@@ -519,7 +523,7 @@ edit_interface_rep::apply_changes () {
       locus_rects= locus_new_rects;
     }
   }
-
+  
   // cout << "Handling backing store\n";
   if (!is_nil (stored_rects)) {
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION+THE_EXTENTS))
@@ -530,14 +534,14 @@ edit_interface_rep::apply_changes () {
     if (find_graphical_region (gx1, gy1, gx2, gy2)) {
       rectangle gr= rectangle (gx1, gy1, gx2, gy2);
       if (!is_nil (gr - stored_rects))
-	invalidate (gx1, gy1, gx2, gy2);
+        invalidate (gx1, gy1, gx2, gy2);
     }
   }
-
+  
   // cout << "Handling environment changes\n";
   if (env_change & THE_ENVIRONMENT)
     send_invalidate_all (this);
-
+  
   // cout << "Applied changes\n";
   env_change  = 0;
   last_change = texmacs_time ();

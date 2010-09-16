@@ -164,7 +164,6 @@ QTMWidget::QTMWidget (simple_widget_rep *_wid)
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT) cout << "destroying " << this << LF;
-  if (imwidget) delete imwidget;
 }
 
 void 
@@ -554,9 +553,13 @@ void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   if (! imwidget) {   
     imwidget = new QLabel(this);
-    imwidget->setAutoFillBackground(true);
+    imwidget->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
+  //  imwidget->setAttribute(Qt::WA_TranslucentBackground);
+//    imwidget->setAutoFillBackground(false);
+    imwidget->setWindowOpacity(0.5);
     QPalette pal = imwidget->palette();
-    pal.setColor(QPalette::Window, QColor(0,0,255,80));
+//    pal.setColor(QPalette::Window, QColor(0,0,255,80));
+    pal.setColor(QPalette::Window, QColor(0,0,255,255));
     pal.setColor(QPalette::WindowText, Qt::white);
     imwidget->setPalette(pal);
     QFont f = imwidget->font();
@@ -576,9 +579,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     imwidget->adjustSize();
     QSize sz = size();
     QRect g = imwidget->geometry();
-    g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
+    QPoint c = mapToGlobal(cursor_pos);
+//    g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
+    g.moveCenter(c);
+    cout << "POS: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
     imwidget->setGeometry(g);
-    setRoundedMask(imwidget);
+  //  setRoundedMask(imwidget);
     imwidget->show();
   }
   
@@ -600,6 +606,17 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   event->accept();
 
 }  
+
+
+QVariant 
+QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
+  switch (query) {
+    case Qt::ImMicroFocus :
+      return QVariant(QRect(cursor_pos + QPoint(10,10),QSize(20,20)));
+    default:
+      return QVariant();
+  }
+}
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {

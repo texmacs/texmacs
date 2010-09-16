@@ -35,6 +35,7 @@ public:
 
   
   QLabel *imwidget;
+  QPoint cursor_pos;
   
   QTMWidget(simple_widget_rep *_wid) ;
   ~QTMWidget();
@@ -52,7 +53,7 @@ public:
   void repaint_invalid_regions ();
 
   void scrollContentsBy(int dx, int dy);
-  
+  void setCursorPos(QPoint pos) { cursor_pos = pos; };
 
 protected:
   virtual void paintEvent (QPaintEvent* event);
@@ -66,6 +67,7 @@ protected:
   virtual bool event (QEvent *event);
   virtual void resizeEvent (QResizeEvent *event);
 
+  virtual QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const ;
 private:
   basic_renderer_rep *getRenderer();
 };

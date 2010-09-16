@@ -48,6 +48,7 @@ enum slot_id {
   SLOT_SCROLLBARS_VISIBILITY,
   SLOT_SCROLL_POSITION,
   SLOT_CANVAS,
+  SLOT_CURSOR,
 
   SLOT_HEADER_VISIBILITY,
   SLOT_MAIN_MENU,
@@ -447,6 +448,12 @@ inline void
 set_canvas (widget w, widget cv) {
   // set the scrollable canvas itself
   write (w, SLOT_CANVAS, cv);
+}
+
+inline void
+send_cursor (widget w, SI x1, SI y1) {
+  // send current cursor coordinates
+  send<SI,SI> (w, SLOT_CURSOR, x1, y1);
 }
 
 /******************************************************************************
