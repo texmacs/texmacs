@@ -353,11 +353,19 @@ qt_balloon_widget_rep::as_qaction() {
 string
 conv (const string ks) {
   string r(ks);
+#ifdef Q_WS_MAC
+  r = replace (r, "C-", "Meta+");
+  r = replace (r, "M-", "Alt+");
+  r = replace (r, "A-", "Ctrl+");
+  r = replace (r, "S-", "Shift+");
+  r = replace (r, " ", ",");
+#else
   r = replace (r, "C-", "Ctrl+");
   r = replace (r, "M-", "Meta+");
   r = replace (r, "A-", "Alt+");
   r = replace (r, "S-", "Shift+");
   r = replace (r, " ", ",");
+#endif
   return r;
 }
 

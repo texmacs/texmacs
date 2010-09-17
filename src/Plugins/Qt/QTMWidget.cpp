@@ -574,7 +574,8 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   if (preedit_string.isEmpty()) {
     imwidget->hide();
   } else {
-    if (DEBUG_QT)  cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+    if (DEBUG_QT)
+      cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
     imwidget->setText(preedit_string);
     imwidget->adjustSize();
     QSize sz = size();
@@ -582,14 +583,16 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     QPoint c = mapToGlobal(cursor_pos);
     // g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
     g.moveCenter(c);
-    //cout << "POS: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
+    if (DEBUG_QT)
+      cout << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
     imwidget->setGeometry(g);
     // setRoundedMask(imwidget);
     imwidget->show();
   }
   
   if (!commit_string.isEmpty()) {
-    if (DEBUG_QT)  cout << "IM committing :" << commit_string.toUtf8().data() << LF;
+    if (DEBUG_QT)
+      cout << "IM committing :" << commit_string.toUtf8().data() << LF;
 
     int key = 0;
 #if 1
