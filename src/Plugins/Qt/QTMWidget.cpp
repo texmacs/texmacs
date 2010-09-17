@@ -535,6 +535,7 @@ mouse_decode (unsigned int mstate) {
   return "unknown";
 }
 
+#if 0 // NOT USED
 static void setRoundedMask(QWidget *widget)
 {
   QPixmap pixmap(widget->size());
@@ -548,6 +549,7 @@ static void setRoundedMask(QWidget *widget)
 #endif
   widget->setMask(pixmap.createMaskFromColor(Qt::white));
 }
+#endif
 
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
