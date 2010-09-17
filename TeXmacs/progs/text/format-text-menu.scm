@@ -131,6 +131,8 @@
 		  ("Gothic" (make-with "font" "apple-gothic")))
 	      (if (font-exists-in-tt? "Gulim")
 		  ("Gulim" (make-with "font" "gulim")))
+	      (if (font-exists-in-tt? "ipam")
+		  ("Ipa" (make-with "font" "ipa")))
 	      (if (font-exists-in-tt? "kochi-mincho")
 		  ("Kochi" (make-with "font" "kochi")))
 	      (if (font-exists-in-tt? "wqy-microhei")
@@ -172,8 +174,6 @@
 	  ("Cyrillic" (make-with "font" "cyrillic"))
 	  (if (url-exists-in-tex? "dvng10.mf")
 	      ("Devangari" (make-with "font" "devangari")))
-	  (if (font-exists-in-tt? "ipam")
-	      ("Ipa" (make-with "font" "ipa")))
 	  (if (url-exists-in-tex? "mxed.mf")
 	      (-> "Georgian"
 		  ("Mxedruli" (make-with "font" "mxedruli"))
