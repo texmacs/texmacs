@@ -351,7 +351,7 @@ qt_balloon_widget_rep::as_qaction() {
 }
 
 string
-conv (const string ks) {
+conv_sub (string ks) {
   string r(ks);
 #ifdef Q_WS_MAC
   r = replace (r, "C-", "Meta+");
@@ -366,6 +366,24 @@ conv (const string ks) {
   r = replace (r, "S-", "Shift+");
   r = replace (r, " ", ",");
 #endif
+  if (N(r) == 1 || (N(r) > 2 && r[N(r)-2] == '+')) {
+    if (is_locase (r[N(r)-1]))
+      r= r (0, N(r)-1) * upcase_all (r (N(r)-1, N(r)));
+    else if (is_upcase (r[N(r)-1]))
+      r= r (0, N(r)-1) * "Shift+" * upcase_all (r (N(r)-1, N(r)));
+  }
+  return r;
+}
+
+string
+conv (string s) {
+  int i=0, k;
+  string r;
+  for (k=0; k<=N(s); k++)
+    if (k == N(s) || s[k] == ' ') {
+      r << conv_sub (s (i, k));
+      i= k;
+    }
   return r;
 }
 
