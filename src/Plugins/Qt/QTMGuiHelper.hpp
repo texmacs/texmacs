@@ -16,6 +16,7 @@
 #include "Scheme/object.hpp"
 #include <QObject>
 #include <QAction>
+#include <QTranslator>
 
 class QTMGuiHelper : public QObject {
   Q_OBJECT
@@ -52,6 +53,17 @@ public:
   public slots:
   void doRefresh();
   
+};
+
+
+class QTMTranslator : public QTranslator {
+  
+  Q_OBJECT
+  
+public:
+  QTMTranslator(QObject * parent = NULL ) : QTranslator(parent) {};
+  virtual QString translate ( const char * context, const char * sourceText, 
+                             const char * disambiguation = 0 ) const ;  
 };
 
 #endif // QTMGUIHELPER_HPP

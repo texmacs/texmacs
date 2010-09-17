@@ -72,6 +72,10 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   set_output_language (get_locale_language ());
   gui_helper = new QTMGuiHelper (this);
   qApp -> installEventFilter (gui_helper);
+  
+  
+  qApp-> installTranslator(new QTMTranslator(qApp));
+  
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
   QObject::connect ( updatetimer, SIGNAL(timeout()), 
@@ -983,5 +987,18 @@ font x_font (string family, int size, int dpi)
   (void) family; (void) size; (void) dpi;
   if (DEBUG_QT) cout << "x_font(): SHOULD NOT BE CALLED\n";
   return NULL;
+}
+
+
+QString 
+QTMTranslator::translate ( const char * context, const char * sourceText, 
+                           const char * disambiguation ) const 
+{
+  (void) disambiguation;
+  if (DEBUG_QT) {
+    cout << "Translating: " << sourceText << LF;
+    cout << "Translation: " << qt_translate(sourceText) << LF;
+  }
+  return QString(to_qstring_utf8(qt_translate(sourceText)));
 }
 

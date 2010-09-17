@@ -518,7 +518,7 @@ qt_input_widget_rep::perform_dialog() {
   for(int i=0; i<N(fields); i++) {
     QHBoxLayout *hl = new QHBoxLayout();
 
-    QLabel *lab = new QLabel (to_qstring_utf8 (fields[i]->prompt),&d);
+    QLabel *lab = new QLabel (to_qstring_utf8 (qt_translate( (fields[i]->prompt))),&d);
     cbs[i] = new QComboBox(&d);
     cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
     cbs[i] -> setEditText (to_qstring_utf8 (fields[i]->input));
@@ -621,7 +621,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
-  QString label= to_qstring_utf8 (((qt_text_widget_rep*) int_prompt.rep)->str);
+  QString label= to_qstring_utf8 (qt_translate(((qt_text_widget_rep*) int_prompt.rep)->str));
   qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
   if ( N(it->def) == 0) {
    items << "";
