@@ -580,11 +580,11 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     QSize sz = size();
     QRect g = imwidget->geometry();
     QPoint c = mapToGlobal(cursor_pos);
-//    g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
+    // g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
     g.moveCenter(c);
-    cout << "POS: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
+    //cout << "POS: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
     imwidget->setGeometry(g);
-  //  setRoundedMask(imwidget);
+    // setRoundedMask(imwidget);
     imwidget->show();
   }
   
