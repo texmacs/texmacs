@@ -224,7 +224,7 @@ qt_chooser_widget_rep::perform_dialog () {
   else
     dialog= new QTMFileDialog (NULL, to_qstring_utf8 (win_title), to_qstring_utf8(directory * "/" * file));
 
-#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040600))
+#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
   dialog->setOptions(QFileDialog::DontUseNativeDialog);
 #endif
   
@@ -250,7 +250,7 @@ qt_chooser_widget_rep::perform_dialog () {
     dialog->setFileMode(QFileDialog::AnyFile);
   }
 
-#if (QT_VERSION >= 0x040600)
+#if (QT_VERSION >= 0x040400)
   if (type == "directory") {  
   } else if (type == "texmacs") {
   dialog->setNameFilter ("TeXmacs file (*.tm *.ts *.tp)");

@@ -214,7 +214,7 @@ qt_get_date (string lan, string fm) {
     else fm = "d MMMM yyyy";
   }
   QLocale loc = QLocale(to_qstring(language_to_locale(lan)));
-#if (QT_VERSION >= 0x040600)
+#if (QT_VERSION >= 0x040400)
   QString date = loc.toString(localtime, to_qstring(fm));
 #else
   QString date = localtime.toString(to_qstring(fm));

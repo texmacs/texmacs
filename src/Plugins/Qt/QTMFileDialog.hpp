@@ -39,12 +39,12 @@ public:
   QTMFileDialog (QWidget* parent= 0, const QString & caption = QString(),
       const QString & directory = QString(), const QString & filter = QString());
   QStringList selectedFiles () { return file->selectedFiles (); };
-#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040600))
+#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
   void setOptions (QFileDialog::Options opts) { return file->setOptions (opts); };
 #endif
   void setViewMode (QFileDialog::ViewMode mode) { return file->setViewMode (mode); };
   void setFileMode (QFileDialog::FileMode mode) { return file->setFileMode (mode); };
-#if (QT_VERSION >= 0x040600)
+#if (QT_VERSION >= 0x040400)
   void setNameFilter (const QString & filter) { return file->setNameFilter (filter);}
 #endif
   void setDefaultSuffix (const QString & suffix) { return file->setDefaultSuffix (suffix);}

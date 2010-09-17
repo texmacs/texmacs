@@ -542,7 +542,7 @@ static void setRoundedMask(QWidget *widget)
   QPainter painter(&pixmap);
   painter.fillRect(pixmap.rect(), Qt::white);
   painter.setBrush(Qt::black);
-#if (QT_VERSION >= 0x040600)
+#if (QT_VERSION >= 0x040400)
   painter.drawRoundedRect(pixmap.rect(),8,8, Qt::AbsoluteSize);
 #else
   painter.drawRect(pixmap.rect());
