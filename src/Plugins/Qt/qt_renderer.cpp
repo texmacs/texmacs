@@ -295,6 +295,10 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   w= w/pixel; h= h/pixel;
   decode (x, y);
 
+  // safety check
+  url ru = resolve(u);
+  u = is_none (ru) ? "$TEXMACS_PATH/misc/pixmaps/unknown.ps" : ru;
+  
   QImage *pm = NULL;
   tree lookup= tuple (u->t);
   lookup << as_string (w ) << as_string (h )
