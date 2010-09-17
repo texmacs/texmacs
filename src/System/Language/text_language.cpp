@@ -234,6 +234,13 @@ get_locale_language () {
 * Getting a formatted date
 ******************************************************************************/
 
+#ifdef QTTEXMACS
+string
+get_date (string lan, string fm) {
+  return qt_get_date(lan, fm);
+}
+#else
+
 static bool
 invalid_format (string s) {
   if (N(s) == 0) return true;
@@ -258,9 +265,6 @@ string
 get_date (string lan, string fm) {
 //#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
 //  return win32::get_date(lan, fm);
-#ifdef QTTEXMACS
-  return qt_get_date(lan, fm);
-#else
   if (invalid_format (fm)) {
     if ((lan == "british") || (lan == "english") || (lan == "american"))
       fm= "%B %d, %Y";
@@ -289,8 +293,8 @@ get_date (string lan, string fm) {
   // if (lan == "ru_RU") date= iso_to_koi8 (date);
   set_env ("LANG", old);
   return date;
-#endif
 }
+#endif
 
 /******************************************************************************
 * Main interface
