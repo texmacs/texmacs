@@ -38,6 +38,9 @@
 ;; Overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (define-option-profile opt decl)
+  (if (in? (look-and-feel) opt) decl '(begin)))
+
 (define (conditions-insert! kind opt)
   (set! ovl-conds (conditions-insert ovl-conds kind opt)))
 
@@ -80,6 +83,7 @@
     `(lambda ,(cdadr decl) ,(car opt))
     decl))
 
+(hash-set! define-option-table :profile define-option-profile)
 (hash-set! define-option-table :mode define-option-mode)
 (hash-set! define-option-table :context define-option-context)
 (hash-set! define-option-table :inside define-option-inside)
