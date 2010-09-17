@@ -38,9 +38,10 @@ simple_input (string s, QLineEdit* ledit, QWidget* parent= 0) {
   QWidget* widget= new QWidget (parent);
   QHBoxLayout* layout= new QHBoxLayout (widget);
   layout->setContentsMargins (0, 0, 0, 0);
-  string in_lan= get_input_language ();
-  string out_lan= get_output_language ();
-  QLabel* label= new QLabel (to_qstring (tm_var_encode (translate (s, in_lan, out_lan))), parent);
+//  string in_lan= get_input_language ();
+//  string out_lan= get_output_language ();
+//  QLabel* label= new QLabel (to_qstring (tm_var_encode (translate (s, in_lan, out_lan))), parent);
+  QLabel* label= new QLabel (to_qstring_utf8 (qt_translate (s)), parent);
   layout->addWidget (label);
   layout->addWidget (ledit);
   widget->setLayout (layout);

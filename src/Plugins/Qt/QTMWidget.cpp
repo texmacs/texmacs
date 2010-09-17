@@ -581,8 +581,9 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     QSize sz = size();
     QRect g = imwidget->geometry();
     QPoint c = mapToGlobal(cursor_pos);
+    c += QPoint(5,5);
     // g.moveCenter(QPoint(sz.width()/2,sz.height()/2));
-    g.moveCenter(c);
+    g.moveTopLeft(c);
     if (DEBUG_QT)
       cout << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
     imwidget->setGeometry(g);
@@ -615,7 +616,7 @@ QVariant
 QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
   switch (query) {
     case Qt::ImMicroFocus :
-      return QVariant(QRect(cursor_pos + QPoint(10,10),QSize(20,20)));
+      return QVariant(QRect(cursor_pos + QPoint(10,10),QSize(20,40)));
     default:
       return QVariant();
   }

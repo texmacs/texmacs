@@ -112,7 +112,7 @@ qt_menu_rep::make_popup_widget () {
 
 widget
 qt_menu_rep::popup_window_widget (string s) {
-  item->menu()->setWindowTitle (to_qstring (s));
+  item->menu()->setWindowTitle (to_qstring_utf8 (s));
   return this;
 }
 
@@ -299,7 +299,7 @@ menu_group (string name, string lan) {
   // a menu group; the name should be greyed and centered
   (void) lan;
   QAction* a= new QTMAction (NULL);
-  a->setText(to_qstring (name));
+  a->setText(to_qstring_utf8(qt_translate ((name))));
   a->setEnabled (false);
   return tm_new<qt_menu_rep> (a);
 }
@@ -346,7 +346,7 @@ qt_image_widget_rep::as_qaction () {
 QAction*
 qt_balloon_widget_rep::as_qaction() {
   QAction* a= concrete(text)->as_qaction();
-  a->setToolTip (to_qstring (((qt_text_widget_rep*) hint.rep) -> str));
+  a->setToolTip (to_qstring_utf8 (((qt_text_widget_rep*) hint.rep) -> str));
   return a;
 }
 
