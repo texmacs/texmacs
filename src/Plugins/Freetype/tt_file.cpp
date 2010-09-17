@@ -73,8 +73,15 @@ tt_locate (string name) {
 
   url tt_path=
     search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype") |
+#if defined __MINGW32__
+    search_sub_dirs ("$windir/Fonts");
+#elif defined OS_MACOS
     search_sub_dirs ("$HOME/Library/Fonts") |
     search_sub_dirs ("/Library/Fonts");
+#else
+    search_sub_dirs ("/usr/share/fonts/truetype") |
+    search_sub_dirs ("/usr/local/share/fonts/truetype");
+#endif
   return resolve (tt_path * name);
 }
 
@@ -87,6 +94,8 @@ tt_font_find (string name) {
   u= tt_locate (name * ".ttf");
   //if (!is_none (u)) cout << name << " -> " << u << "\n";
   //else cout << name << " -> ???\n";
+  if (!is_none (u)) return u;
+  u= tt_locate (name * ".ttc");
   return u;
 }
 
