@@ -994,7 +994,7 @@ QString
 QTMTranslator::translate ( const char * context, const char * sourceText, 
                            const char * disambiguation ) const 
 {
-  (void) disambiguation;
+  (void) disambiguation;  (void) context;
   if (DEBUG_QT) {
     cout << "Translating: " << sourceText << LF;
     cout << "Translation: " << qt_translate(sourceText) << LF;
