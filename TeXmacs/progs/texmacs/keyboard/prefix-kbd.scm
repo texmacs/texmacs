@@ -118,7 +118,6 @@
   ("M-G" "A-G"))
 
 (kbd-map
-  ("h o p" "" "Fancy command")
   ("emacs" "" "Emacs command")
   ("emacs:contextual" "" "Emacs mode specific prefix command")
   ("emacs:prefix" "" "Emacs prefix command"))
