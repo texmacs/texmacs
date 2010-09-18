@@ -18,20 +18,17 @@
 
   (define Assign-symbol
     (:type infix)
-    (:precedence 3)
     (:penalty 3)
     (:spacing default default)
     "<assign>" "<plusassign>" "<minusassign>" "<astassign>" "<overassign>")
   
   (define Flux-symbol
     (:type associative-infix)
-    (:precedence 3)
     (:spacing default default)
     "<lflux>" "<gflux>")
 
   (define Models-symbol
     (:type infix)
-    (:precedence 7)
     (:spacing default default)
     "<models>" "<vdash>" "<dashv>" "<vDash>" "<Vdash>" "<Vvdash>" "<VDash>"
     "<longvdash>" "<longdashv>" "<longvDash>"
@@ -40,12 +37,10 @@
 
   (define Quantifier-symbol
     (:type prefix)
-    (:precedence 10)
     "<forall>" "<exists>" "<nexists>")
 
   (define Imply-nolim-symbol
     (:type infix)
-    (:precedence 20)
     (:penalty 10)
     (:spacing default default)
     "<implies>" "<equivalent>" "<Leftarrow>" "<Rightarrow>" "<Leftrightarrow>"
@@ -55,7 +50,6 @@
 
   (define Imply-lim-symbol
     (:type infix)
-    (:precedence 20)
     (:penalty 10)
     (:spacing default default)
     (:limits always)
@@ -67,27 +61,23 @@
 
   (define Or-symbol
     (:type associative-infix)
-    (:precedence 30)
     (:penalty 10)
     (:spacing default default)
     "<vee>" "<curlyvee>")
 
   (define And-symbol
     (:type associative-infix)
-    (:precedence 30)
     (:penalty 10)
     (:spacing default default)
     "<wedge>" "<curlywedge>")
 
   (define Not-symbol
     (:type prefix)
-    (:precedence 40)
     (:penalty 10)
     "<neg>")
 
   (define Relation-nolim-symbol
     (:type infix)
-    (:precedence 50)
     (:penalty 20)
     (:spacing default default)
 
@@ -138,7 +128,6 @@
 
   (define Relation-lim-symbol
     (:type infix)
-    (:precedence 50)
     (:penalty 20)
     (:spacing default default)
     (:limits always)
@@ -149,7 +138,6 @@
 
   (define Arrow-nolim-symbol
     (:type infix)
-    (:precedence 50)
     (:penalty 20)
     (:spacing default default)
 
@@ -177,7 +165,6 @@
   
   (define Arrow-lim-symbol
     (:type infix)
-    (:precedence 50)
     (:penalty 20)
     (:spacing default default)
     (:limits always)
@@ -191,42 +178,36 @@
 
   (define Union-symbol
     (:type associative-infix)
-    (:precedence 90)
     (:penalty 30)
     (:spacing default default)
     "<cup>" "<Cup>" "<doublecup>")
 
   (define Intersection-symbol
     (:type associative-infix)
-    (:precedence 90)
     (:penalty 30)
     (:spacing default default)
     "<cap>" "<Cap>" "<doublecap>")
 
   (define Exclude-symbol
     (:type left-associative-infix)
-    (:precedence 85)
     (:penalty 30)
     (:spacing default default)
     "<setminus>" "<smallsetminus>")
 
   (define Plus-symbol
     (:type associative-infix)
-    (:precedence 100)
     (:penalty 30)
     (:spacing default default)
     "+" "<amalg>" "<oplus>" "<boxplus>" "<dotplus>" "<dotamalg>" "<dotoplus>")
 
   (define Minus-symbol
     (:type left-associative-infix)
-    (:precedence 100)
     (:penalty 30)
     (:spacing default default)
     "-" "<pm>" "<mp>" "<ominus>" "<boxminus>")
 
   (define Times-visible-symbol
     (:type associative-infix)
-    (:precedence 110)
     (:penalty 40)
     (:spacing default default)
     "<cdot>" "<times>" "<otimes>" "<circ>" "<boxdot>" "<boxtimes>"
@@ -235,7 +216,6 @@
 
   (define Times-invisible-symbol
     (:type associative-infix)
-    (:precedence 110)
     (:penalty invalid)
     (:spacing none default)
     "*")
@@ -245,14 +225,12 @@
 
   (define Over-regular-symbol
     (:type left-associative-infix)
-    (:precedence 110)
     (:penalty 40)
     (:spacing default default)
     "<oover>")
 
   (define Over-condensed-symbol
     (:type left-associative-infix)
-    (:precedence 110)
     (:penalty 40)
     "/")
 
@@ -261,26 +239,22 @@
 
   (define Power-symbol
     (:type infix)
-    (:precedence 120)
     (:penalty 50)
     "^")
 
   (define Index-symbol
     (:type infix)
-    (:precedence 130)
     (:penalty 50)
     "_")
 
   (define Big-nolim-symbol
     (:type prefix)
-    (:precedence 80)
     (:penalty panic)
     (:spacing none big)
     "<big-int>" "<big-oint>")
 
   (define Big-lim-symbol
     (:type prefix)
-    (:precedence 80)
     (:penalty panic)
     (:spacing none big)
     (:limits display)
@@ -294,26 +268,22 @@
 
   (define Prefix-symbol
     (:type prefix)
-    (:precedence 115)
     (:penalty invalid)
     (:spacing none none)
     "<um>" "<upl>" "<upm>" "<ump>" "<card>")
 
   (define Postfix-symbol
     (:type postfix)
-    (:precedence 140)
     (:penalty panic)
     "!")
 
   (define Prime-symbol
     (:type symbol)
-    (:precedence 1000)
     (:penalty panic)
     "'" "`" "<dag>" "<ddag>")
 
   (define Open-symbol
     (:type opening-bracket)
-    (:precedence 160)
     "(" "[" "{" "<lfloor>" "<lceil>" "<langle>"
     "<left-(>" "<left-[>" "<left-{>" "<left-less>"
     "<left-}>" "<left-]>" "<left-)>" "<left-gtr>"
@@ -323,19 +293,16 @@
   
   (define Ponctuation-symbol
     (:type separator)
-    (:precedence 0)
     (:spacing none default)
     (:penalty 0)
     "," ";" ":")
 
   (define Bar-symbol
     (:type symbol)
-    (:precedence 160)
     "|" "<||>" "<mid-|>" "<mid-||>")
 
   (define Close-symbol
     (:type closing-bracket)
-    (:precedence 160)
     "}" "]" ")" "<rfloor>" "<rceil>" "<rangle>"
     "<right-(>" "<right-[>" "<right-{>" "<right-less>"
     "<right-}>" "<right-]>" "<right-)>" "<right-gtr>"
@@ -345,13 +312,11 @@
 
   (define Suspension-nolim-symbol
     (:type symbol)
-    (:precedence 0)
     (:penalty invalid invalid)
     "<ldots>" "<cdots>" "<udots>" "<vdots>" "<ddots>" "<mdots>" "<colons>")
   
   (define Suspension-lim-symbol
     (:type symbol)
-    (:precedence 0)
     (:penalty invalid invalid)
     (:limits always)
     "<cdotslim>")
@@ -361,7 +326,6 @@
 
   (define Variable-symbol
     (:type symbol)
-    (:precedence 1000)
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<varepsilon>"
     "<epsilon>" "<zeta>" "<eta>" "<theta>" "<iota>"
     "<kappa>" "<lambda>" "<mu>" "<nu>" "<xi>" "<omikron>"
@@ -426,7 +390,6 @@
   
   (define Miscellaneous-symbol
     (:type symbol)
-    (:precedence 1000)
 
     "<ldot>" "<udot>"
 
@@ -462,13 +425,11 @@
 
   (define Spacing-symbol
     (:type symbol)
-    (:precedence 1000)
     (:spacing big none)
     "<spc>")
 
   (define Prefix-operator
     (:type prefix)
-    (:precedence 150)
     (:penalty panic)
     (:spacing none default)
     "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
@@ -477,14 +438,12 @@
 
   (define Infix-operator
     (:type infix)
-    (:precedence 60)
     (:penalty panic)
     (:spacing default default)
     "div" "mod")
 
   (define Big-operator
     (:type prefix)
-    (:precedence 70)
     (:penalty panic)
     (:spacing none default)
     (:limits display)

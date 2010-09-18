@@ -27,7 +27,6 @@ struct math_language_rep: language_rep {
 
   math_language_rep (string name);
   void set_type (string cl, string s);
-  void set_precedence (string cl, string s);
   void set_left_penalty (string cl, string s);
   void set_right_penalty (string cl, string s);
   void set_left_spacing (string cl, string s);
@@ -63,15 +62,6 @@ math_language_rep::set_type (string cl, string s) {
   else {
     cerr << "Attempt to associate type " << s << " to " << cl << "\n";
     FAILED ("invalid type");
-  }
-}
-
-void
-math_language_rep::set_precedence (string cl, string s) {
-  if (is_int (s)) tpr_class(cl).priority= as_int (s);
-  else {
-    cerr << "Attempt to associate precedence " << s << " to " << cl << "\n";
-    FAILED ("invalid precedence");
   }
 }
 
@@ -138,7 +128,6 @@ math_language_rep::math_language_rep (string name):
 {
   language::instances (name)= (pointer) this;
   tpr_class("symbol").op_type = OP_SYMBOL;
-  tpr_class("symbol").priority= 1000;
 
   packrat_grammar gr= find_packrat_grammar (name);
   hashmap<tree,string> props= gr->properties;
@@ -151,7 +140,6 @@ math_language_rep::math_language_rep (string name):
     string val= props[p];
     //cout << cl << ", " << var << " -> " << val << "\n";
     if (var == "type") { set_type (cl, val); cls (cl)= true; }
-    else if (var == "precedence") set_precedence (cl, val);
     else if (var == "left-penalty") set_left_penalty (cl, val);
     else if (var == "right-penalty") set_right_penalty (cl, val);
     else if (var == "left-spacing") set_left_spacing (cl, val);
