@@ -14,6 +14,7 @@
 #include "impl_language.hpp"
 #include "file.hpp"
 #include "iterator.hpp"
+#include "packrat_grammar.hpp"
 
 /******************************************************************************
 * Mathematical languages
@@ -23,19 +24,15 @@ struct math_language_rep: language_rep {
   hashmap<string,string>            group;
   hashmap<string,text_property_rep> tpr_class;
   hashmap<string,text_property_rep> tpr_member;
-  string class_name;            // current type name
-  bool   class_def;             // in class definition phase
 
-  math_language_rep (string name, string s);
-  string get_string (string s, int& i);
-  void get_class (string s, int& i);
-  void get_members (string s, int& i);
-  void get_type (string s, int& i);
-  void get_precedence (string s, int& i);
-  void get_lpenalty (string s, int& i);
-  void get_rpenalty (string s, int& i);
-  void get_spacing (string s, int& i);
-  void get_limits (string s, int& i);
+  math_language_rep (string name);
+  void set_type (string cl, string s);
+  void set_precedence (string cl, string s);
+  void set_left_penalty (string cl, string s);
+  void set_right_penalty (string cl, string s);
+  void set_left_spacing (string cl, string s);
+  void set_right_spacing (string cl, string s);
+  void set_limits (string cl, string s);
 
   void skip_spaces (string s, int& pos, space fn_spc, space& spc);
   string next_word (string s, int& pos);
@@ -50,180 +47,125 @@ struct math_language_rep: language_rep {
 * Load a mathematical language
 ******************************************************************************/
 
-string
-math_language_rep::get_string (string s, int& i) {
-  while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n')) i++;
-  while ((i<N(s)) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='='))) i++;
-  int start= i;
-  while ((i<N(s)) && (s[i]!='\n')) i++;
-  int end= i;
-  while ((end>start) && ((s[end-1]==' ') || (s[end-1]=='\t'))) end--;
-  // cout << "String= " << s (start, end) << "\n";
-  return s (start, end);
-}
-
 void
-math_language_rep::get_class (string s, int& i) {
-  class_name= get_string (s, i);
-  class_def = true;
-}
-
-void
-math_language_rep::get_members (string s, int& i) {
-  class_name= get_string (s, i);
-  class_def = false;
-  // cout << "Members " << class_name << "\n";
-}
-
-void
-math_language_rep::get_type (string s, int& i) {
-  if (class_def) {
-    string r= get_string (s, i);
-    int &ot= tpr_class(class_name).op_type;
-    if (r == "Symbol") ot= OP_SYMBOL;
-    else if (r == "Prefix") ot= OP_PREFIX;
-    else if (r == "Postfix") ot= OP_POSTFIX;
-    else if (r == "Infix") ot= OP_INFIX;
-    else if (r == "Left Associative Infix") ot= OP_LEFT_ASS_INFIX;
-    else if (r == "Right Associative Infix") ot= OP_RIGHT_ASS_INFIX;
-    else if (r == "Associative Infix") ot= OP_ASS_INFIX;
-    else if (r == "Opening Bracket") ot= OP_OPENING_BRACKET;
-    else if (r == "Separator") ot= OP_SEPARATOR;
-    else if (r == "Closing Bracket") ot= OP_CLOSING_BRACKET;
-    else {
-      cerr << "Attempt to associate type " << r
-	   << " to " << class_name << "\n";
-      FAILED ("unknown type");
-    }
+math_language_rep::set_type (string cl, string s) {
+  int &ot= tpr_class(cl).op_type;
+  if (s == "symbol") ot= OP_SYMBOL;
+  else if (s == "prefix") ot= OP_PREFIX;
+  else if (s == "postfix") ot= OP_POSTFIX;
+  else if (s == "infix") ot= OP_INFIX;
+  else if (s == "left-associative-infix") ot= OP_LEFT_ASS_INFIX;
+  else if (s == "right-associative-infix") ot= OP_RIGHT_ASS_INFIX;
+  else if (s == "associative-infix") ot= OP_ASS_INFIX;
+  else if (s == "opening-bracket") ot= OP_OPENING_BRACKET;
+  else if (s == "separator") ot= OP_SEPARATOR;
+  else if (s == "closing-bracket") ot= OP_CLOSING_BRACKET;
+  else {
+    cerr << "Attempt to associate type " << s << " to " << cl << "\n";
+    FAILED ("invalid type");
   }
-  else FAILED ("type declaration outside class definition");
 }
 
 void
-math_language_rep::get_precedence (string s, int& i) {
-  if (class_def) tpr_class(class_name).priority= as_int (get_string (s, i));
-  else FAILED ("precedence declaration outside class definition");
-}
-
-void
-math_language_rep::get_lpenalty (string s, int& i) {
-  if (class_def) {
-    string r= get_string (s, i);
-    if (r == "Panic")   tpr_class(class_name).pen_before= HYPH_PANIC;
-    if (r == "Invalid") tpr_class(class_name).pen_before= HYPH_INVALID;
-    else tpr_class(class_name).pen_before= as_int (r);
+math_language_rep::set_precedence (string cl, string s) {
+  if (is_int (s)) tpr_class(cl).priority= as_int (s);
+  else {
+    cerr << "Attempt to associate precedence " << s << " to " << cl << "\n";
+    FAILED ("invalid precedence");
   }
-  else FAILED ("left penalty declaration outside class definition");
 }
 
 void
-math_language_rep::get_rpenalty (string s, int& i) {
-  if (class_def) {
-    string r= get_string (s, i);
-    if (r == "Panic") tpr_class(class_name).pen_after= HYPH_PANIC;
-    if (r == "Invalid") tpr_class(class_name).pen_after= HYPH_INVALID;
-    else tpr_class(class_name).pen_after= as_int (r);
+math_language_rep::set_left_penalty (string cl, string s) {
+  if (is_int (s)) tpr_class(cl).pen_before= as_int (s);
+  else if (s == "panic")   tpr_class(cl).pen_before= HYPH_PANIC;
+  else if (s == "invalid") tpr_class(cl).pen_before= HYPH_INVALID;
+  else {
+    cerr << "Attempt to associate left penalty " << s << " to " << cl << "\n";
+    FAILED ("invalid penalty");
   }
-  else FAILED ("right penalty declaration outside class definition");
 }
 
 void
-math_language_rep::get_spacing (string s, int& i) {
-  if (class_def) {
-    int j;
-    string both= get_string (s, i);
-    for (j=0; j<N(both); j++)
-      if (both[j]==',') {
-	string l= both (0, j);
-	string r= both (j+1, N(both));
-	while ((N(l)>0) && ((l[N(l)-1] == ' ') || (l[N(l)-1] == '\t')))
-	  l= l(0, N(l)-1);
-	while ((N(r)>0) && ((r[0]==' ') || (r[0]=='\t'))) r= r(1, N(r));
-	if (l == "None")
-	  tpr_class(class_name).spc_before= SPC_NONE;
-	else if (l == "Default")
-	  tpr_class(class_name).spc_before= SPC_OPERATOR;
-	else if (l == "Big")
-	  tpr_class(class_name).spc_before= SPC_BIGOP;
-	else {
-	  cerr << "Attempt to associate space " << l
-	       << " to " << class_name << "\n";
-	  FAILED ("unknown space");
-	}
-	if (r == "None")
-	  tpr_class(class_name).spc_after= SPC_NONE;
-	else if (r == "Default")
-	  tpr_class(class_name).spc_after= SPC_OPERATOR;
-	else if (r == "Big")
-	  tpr_class(class_name).spc_after= SPC_BIGOP;
-	else {
-	  cerr << "Attempt to associate space " << r
-	       << " to " << class_name << "\n";
-	  FAILED ("unknown space");
-	}
-	return;
-      }
-    FAILED ("missing comma in spacing declaration");
+math_language_rep::set_right_penalty (string cl, string s) {
+  if (is_int (s)) tpr_class(cl).pen_after= as_int (s);
+  else if (s == "panic")   tpr_class(cl).pen_after= HYPH_PANIC;
+  else if (s == "invalid") tpr_class(cl).pen_after= HYPH_INVALID;
+  else {
+    cerr << "Attempt to associate right penalty " << s << " to " << cl << "\n";
+    FAILED ("invalid penalty");
   }
-  else FAILED ("spacing declaration outside class definition");
 }
 
 void
-math_language_rep::get_limits (string s, int& i) {
-  if (class_def) {
-    string l= get_string (s, i);
-    if (l == "Display") tpr_class(class_name).limits= LIMITS_DISPLAY;
-    else if (l == "Always") tpr_class(class_name).limits= LIMITS_ALWAYS;
-    else tpr_class(class_name).limits= LIMITS_NONE;
+math_language_rep::set_left_spacing (string cl, string s) {
+  if      (s == "none")    tpr_class(cl).spc_before= SPC_NONE;
+  else if (s == "default") tpr_class(cl).spc_before= SPC_OPERATOR;
+  else if (s == "big")     tpr_class(cl).spc_before= SPC_BIGOP;
+  else {
+    cerr << "Attempt to associate left spacing " << s << " to " << cl << "\n";
+    FAILED ("invalid spacing");
   }
-  else FAILED ("limits declaration outside class definition");
 }
 
-math_language_rep::math_language_rep (string name, string s):
+void
+math_language_rep::set_right_spacing (string cl, string s) {
+  if      (s == "none")    tpr_class(cl).spc_after= SPC_NONE;
+  else if (s == "default") tpr_class(cl).spc_after= SPC_OPERATOR;
+  else if (s == "big")     tpr_class(cl).spc_after= SPC_BIGOP;
+  else {
+    cerr << "Attempt to associate right spacing " << s << " to " << cl << "\n";
+    FAILED ("invalid spacing");
+  }
+}
+
+void
+math_language_rep::set_limits (string cl, string s) {
+  if      (s == "display") tpr_class(cl).spc_after= LIMITS_DISPLAY;
+  else if (s == "always")  tpr_class(cl).spc_after= LIMITS_ALWAYS;
+  else {
+    cerr << "Attempt to associate limits " << s << " to " << cl << "\n";
+    FAILED ("invalid limits");
+  }
+}
+
+//math_language_rep::math_language_rep (string name, string s):
+math_language_rep::math_language_rep (string name):
   language_rep (name),
   group ("symbol"),
   tpr_class (text_property_rep ()),
-  tpr_member (text_property_rep ()),
-  class_name ("symbol"), class_def (true)
+  tpr_member (text_property_rep ())
 {
   language::instances (name)= (pointer) this;
   tpr_class("symbol").op_type = OP_SYMBOL;
   tpr_class("symbol").priority= 1000;
 
-  int i;
-  for (i=0; i<N(s); i++) {
-    while ((i<N(s)) && ((s[i]==' ') || (s[i]=='\t'))) i++;
-    if ((i+5<N(s)) && (s(i,i+5)=="Class")) get_class (s, i);
-    else if ((i+7<N(s)) && (s(i,i+7)=="Members")) get_members (s, i);
-    else if ((i+4<N(s)) && (s(i,i+4)=="Type")) get_type (s, i);
-    else if ((i+10<N(s)) && (s(i,i+10)=="Precedence")) get_precedence (s, i);
-    else if ((i+12<N(s)) && (s(i,i+12)=="Left-Penalty")) get_lpenalty (s, i);
-    else if ((i+7<N(s)) && (s(i,i+7)=="Penalty")) get_rpenalty (s, i);
-    else if ((i+13<N(s)) && (s(i,i+13)=="Right-Penalty")) get_rpenalty (s, i);
-    else if ((i+7<N(s)) && (s(i,i+7)=="Spacing")) get_spacing (s, i);
-    else if ((i+6<N(s)) && (s(i,i+6)=="Limits")) get_limits (s, i);
-    else if ((i+2<N(s)) && (s(i,i+2)=="##")) (void) get_string (s, i);
-    else {
-      while ((i<N(s)) && (s[i]!='\n')) {
-	while ((i<N(s)) && ((s[i]==' ') || (s[i]=='\t'))) i++;
-	int start= i;
-	while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n')) i++;
-	string symbol= s (start, i);
-	if ((N(symbol)>1) &&
-	    (class_def || (class_name != "operator-with-limits")))
-	  symbol= "<" * symbol * ">";
-	// cout << "  Member: " << symbol << "\n";
-	if ((!class_def) && (tpr_class->contains (class_name))) {
-	  group (symbol)= class_name;
-	  tpr_member (symbol)= tpr_class [class_name];
-	}
-	else {
-	  cerr << "Attempt to insert " << symbol
-	       << " to class " << class_name << "\n";
-	  if (!class_def) FAILED ("unknown class");
-	  FAILED ("member declaration inside class definition");
-	}
-      }
+  packrat_grammar gr= find_packrat_grammar (name);
+  hashmap<tree,string> props= gr->properties;
+  hashmap<string,bool> cls (false);
+  iterator<tree> it= iterate (props);
+  while (it->busy ()) {
+    tree p= it->next ();
+    string cl = p[0]->label;
+    string var= p[1]->label;
+    string val= props[p];
+    //cout << cl << ", " << var << " -> " << val << "\n";
+    if (var == "type") { set_type (cl, val); cls (cl)= true; }
+    else if (var == "precedence") set_precedence (cl, val);
+    else if (var == "left-penalty") set_left_penalty (cl, val);
+    else if (var == "right-penalty") set_right_penalty (cl, val);
+    else if (var == "left-spacing") set_left_spacing (cl, val);
+    else if (var == "right-spacing") set_right_spacing (cl, val);
+    else if (var == "limits") set_limits (cl, val);
+  }
+
+  iterator<string> it2= iterate (cls);
+  while (it2->busy ()) {
+    string cl= it2->next ();
+    array<string> a= gr->members (cl);
+    for (int i=0; i<N(a); i++) {
+      group (a[i])= cl;
+      tpr_member (a[i])= tpr_class [cl];
     }
   }
 }
@@ -332,10 +274,7 @@ math_language_rep::get_members (string g) {
 language
 math_language (string name) {
   if (language::instances -> contains (name)) return language (name);
-  string s, fname= name * ".syx";
-  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
-  load_string (url ("$TEXMACS_SYNTAX_PATH", fname), s, true);
-  return tm_new<math_language_rep> (name, s);
+  return tm_new<math_language_rep> (name);
 }
 
 string
