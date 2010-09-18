@@ -26,6 +26,7 @@
 (set-variant-keys "tab" "S-tab")
 
 (kbd-wildcards pre
+  ("windows" "C-" #t)
   ("cmd" "M-")
   ("font" "M-A-")
   ("text" "A-")
@@ -40,14 +41,11 @@
   ("table" "cmd t")
   ("script" "cmd *")
   ("text:symbol" "S-F5" #t)
+  ("copyto" "windows C")
+  ("cutto" "windows X")
+  ("pastefrom" "windows V")
   ("var" "tab" #t)
   ("unvar" "S-tab" #t)
-
-  ("windows" "C-" #t)
-  ("windows:meta" "M-" #t)
-  ("windows:copyto" "windows C")
-  ("windows:cutto" "windows X")
-  ("windows:pastefrom" "windows V")
 
   ("accent:tilde" "A-~")
   ("accent:hat" "A-^")
@@ -119,6 +117,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
+  ("windows" "" "Windows command")
+  ("copyto" "" "Copy to (1, 2, 3, s:search, r:replace, *:other)")
+  ("cutto" "" "Cut to (1, 2, 3, s:search, r:replace,*:other)")
+  ("pastefrom" "" "Paste from (1, 2, 3, s:search, r:replace, *:other)")
   ("cmd" "" "Execute a TeXmacs command")
   ("noop" (set-message "" ""))
   ("symbol" "" "Insert a TeXmacs symbol")
@@ -128,11 +130,6 @@
   ("text:symbol" "" "Insert a TeXmacs symbol")
   ("special" "" "Special command")
   ("script" "" "Evaluate function or insert evaluation tag")
-
-  ("windows" "" "Windows command")
-  ("windows:copyto" "" "Copy to (1, 2, 3, s:search, r:replace, *:other)")
-  ("windows:cutto" "" "Cut to (1, 2, 3, s:search, r:replace,*:other)")
-  ("windows:pastefrom" "" "Paste from (1, 2, 3, s:search, r:replace, *:other)")
 
   ("table" "" "Table command")
   ("table N" "" "New table (t: tabular, b: block)")
@@ -164,66 +161,3 @@
   ("math:symbol" "" "Insert a mathematical symbol")
   ("math:symbol:circled" "" "Insert a big circled operator")
   ("math:symbol:limits" "" "Insert a mathematical symbol with limits"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Standard Windows commands
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(kbd-map
-  ("windows c" (clipboard-copy "primary"))
-  ("windows f" (search-start #t))
-  ("windows n" (new-buffer))
-  ("windows o" (choose-file load-buffer "Load file" ""))
-  ("windows p" (preview-with-ghostview))
-  ("windows q" (safely-quit-TeXmacs))
-  ("windows r" (interactive replace-start-forward))
-  ("windows s" (save-buffer))
-  ("windows v" (clipboard-paste "primary"))
-  ("windows w" (safely-kill-buffer))
-  ("windows x" (clipboard-cut "primary"))
-  ("windows z" (undo 0)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Windows-ish commands added by TeXmacs
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(kbd-map
-  ("windows g" (selection-cancel))
-  ("windows k" (kill-paragraph))
-  ("windows F" (search-start #f))
-  ("windows space" (kbd-select-enlarge))
-
-  ("windows:meta a" (make-tree))
-  ("windows:meta g" (clipboard-clear "primary"))
-  ("windows:meta q" (make 'symbol))
-  ("windows:meta x" (interactive footer-eval))
-  ("windows:meta R" (make-group))
-  ("windows:meta <" (go-start))
-  ("windows:meta >" (go-end))
-  ("windows:meta :" (make 'line-break))
-  ("windows:meta ;" (make 'new-line))
-  ("windows:meta return" (make 'next-line))
-  ("windows:meta /" (make 'no-break))
-  ("windows:meta !" (make-label))
-  ("windows:meta ?" (make 'reference))
-  ("windows:meta C-?" (make 'pageref))
-  ("windows:meta $" (spell-start))
-
-  ("windows:copyto 1" (noop) (clipboard-copy "primary"))
-  ("windows:copyto 2" (clipboard-copy "secondary"))
-  ("windows:copyto 3" (clipboard-copy "ternary"))
-  ("windows:copyto s" (clipboard-copy "search"))
-  ("windows:copyto r" (clipboard-copy "replace"))
-  ("windows:copyto *" (interactive clipboard-copy))
-  ("windows:cutto 1" (noop) (clipboard-cut "primary"))
-  ("windows:cutto 2" (clipboard-cut "secondary"))
-  ("windows:cutto 3" (clipboard-cut "ternary"))
-  ("windows:cutto s" (clipboard-cut "search"))
-  ("windows:cutto r" (clipboard-cut "replace"))
-  ("windows:cutto *" (interactive clipboard-cut))
-  ("windows:pastefrom 1" (noop) (clipboard-paste "primary"))
-  ("windows:pastefrom 2" (clipboard-paste "secondary"))
-  ("windows:pastefrom 3" (clipboard-paste "ternary"))
-  ("windows:pastefrom s" (clipboard-paste "search"))
-  ("windows:pastefrom r" (clipboard-paste "replace"))
-  ("windows:pastefrom *" (interactive clipboard-paste)))

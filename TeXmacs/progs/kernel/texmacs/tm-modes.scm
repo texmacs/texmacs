@@ -161,9 +161,9 @@
   (== (get-preference "cyrillic input method") what))
 
 (texmacs-modes
-  (like-emacs% (== (get-preference "look and feel") "emacs"))
-  (like-windows% (== (get-preference "look and feel") "windows"))
-  (like-macos% (== (get-preference "look and feel") "macos"))
+  (like-emacs% (== (get-look-and-feel) "emacs"))
+  (like-windows% (== (get-look-and-feel) "windows"))
+  (like-macos% (== (get-look-and-feel) "macos"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))

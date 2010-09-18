@@ -18,14 +18,8 @@
 ;; Preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-default-look-and-feel)
-  (cond ((os-win32?) "windows")
-	((os-mingw?) "windows")
-	;;((os-macos?) "macos")
-	(else "emacs")))
-
 (define (get-default-interactive-questions)
-  (if (== (get-preference "look and feel") "windows") "popups" "footer"))
+  (if (or (like-macos?) (like-windows?)) "popups" "footer"))
 
 (define (notify-look-and-feel var val)
   (set-message "Restart in order to let the new look and feel take effect"

@@ -220,7 +220,7 @@
 	((symbol? (car l))
 	 (kbd-map-body (list 0 (car l)) (cdr l)))
 	((and (pair? (car l)) (== (caar l) :profile))
-	 (if (nin? (get-look-and-feel) (cdar l)) '()
+	 (if (nin? (string->symbol (get-look-and-feel)) (cdar l)) '()
 	     (kbd-map-body conds (cdr l))))
 	((and (pair? (car l)) (keyword? (caar l)))
 	 (kbd-map-body (kbd-add-condition conds (car l)) (cdr l)))
