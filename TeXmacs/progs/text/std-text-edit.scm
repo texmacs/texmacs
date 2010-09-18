@@ -136,13 +136,15 @@
 
 (tm-define (kbd-return)
   (:context section-context?)
-  (go-end-line)
-  (insert-return))
+  (with-innermost t section-context?
+    (tree-go-to t :end)
+    (insert-return)))
 
 (tm-define (make-label)
   (:context section-context?)
-  (go-end-line)
-  (make 'label))
+  (with-innermost t section-context?
+    (tree-go-to t :end)
+    (make 'label)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
