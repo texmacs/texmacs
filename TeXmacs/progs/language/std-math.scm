@@ -15,6 +15,8 @@
   (:use (language std-symbols)))
 
 (define-language std-math-grammar
+  (:synopsis "default syntax for mathematical formulas")
+
   (define Main
     (Main Separator)
     (Main ".")
@@ -172,5 +174,6 @@
     (* Post-one)))
 
 (define-language std-math
+  (:synopsis "default semantics for mathematical formulas")
   (inherit std-symbols)
   (inherit std-math-grammar))

@@ -298,4 +298,11 @@ packrat_inherit (string lan, string from) {
     gr->grammar (sym)= inh->grammar (sym);
     gr->productions (sym)= inh->productions (sym);
   }
+
+  iterator<tree> it2 = iterate (inh->properties);
+  while (it2->busy ()) {
+    tree p= it2->next ();
+    //cout << "Inherit " << p << " -> " << inh->properties (p) << LF;
+    gr->properties (p)= inh->properties (p);
+  }
 }
