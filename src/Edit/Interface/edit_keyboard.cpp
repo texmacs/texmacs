@@ -99,7 +99,8 @@ edit_interface_rep::try_shortcut (string comb) {
     string rhs= (shorth == rew? string (""): shorth);
     if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
 	(search_forwards ("-", comb) >= 0 && comb != "-"))
-      call ("set-temporary-message", "keyboard shortcut: " * rew, rhs, 3000);
+      call ("set-temporary-message", "keyboard shortcut: " * rew, rhs,
+	    shorth == ""? 1: 3000);
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);
     //cout << "Mark= " << sh_mark << "\n";

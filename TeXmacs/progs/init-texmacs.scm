@@ -64,9 +64,7 @@
 	     (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard wildcards-kbd) always?)
-(cond ((like-windows?) (lazy-keyboard (texmacs keyboard windows-kbd) always?))
-      ((like-macos?) (lazy-keyboard (texmacs keyboard macos-kbd) always?))
-      (else (lazy-keyboard (texmacs keyboard emacs-kbd) always?)))
+(lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard texmacs-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
 (lazy-menu (texmacs menus file-menu) file-menu go-menu

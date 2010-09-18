@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : emacs-kbd.scm
-;; DESCRIPTION : keyboard shortcuts for emacs look and feel
+;; MODULE      : prefix-kbd.scm
+;; DESCRIPTION : prefixes for keyboard shortcuts
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard emacs-kbd)
+(texmacs-module (texmacs keyboard prefix-kbd)
   (:use
     (utils library cursor)
     (utils edit selections)
@@ -19,11 +19,13 @@
     (texmacs texmacs tm-files)
     (generic generic-edit)))
 
+(set-variant-keys "tab" "S-tab")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Wildcards
+;; Emacs prefixes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(set-variant-keys "tab" "S-tab")
+(when (like-emacs?)
 
 (kbd-wildcards pre
   ("emacs" "C-" #t)
@@ -115,15 +117,201 @@
   ("M-." "A-.")
   ("M-G" "A-G"))
 
+(kbd-map
+  ("h o p" "" "Fancy command")
+  ("emacs" "" "Emacs command")
+  ("emacs:contextual" "" "Emacs mode specific prefix command")
+  ("emacs:prefix" "" "Emacs prefix command"))
+
+) ;; end when (like-emacs?)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mac OS prefixes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (like-macos?)
+
+(kbd-wildcards pre
+  ("macos" "A-" #t)
+  ("cmd" "M-")
+  ("font" "M-C-")
+  ("text" "C-")
+  ("math" "C-")
+  ("prog" "C-")
+  ("special" "H-")
+  ("symbol" "S-F5" #t)
+  ("executable" "cmd e")
+  ("inactive" "cmd i")
+  ("link" "cmd l")
+  ("version" "cmd v")
+  ("table" "cmd t")
+  ("script" "cmd *")
+  ("text:symbol" "S-F5" #t)
+  ("copyto" "macos C")
+  ("cutto" "macos X")
+  ("pastefrom" "macos V")
+  ("var" "tab" #t)
+  ("unvar" "S-tab" #t)
+
+  ("accent:tilde" "M-~")
+  ("accent:hat" "M-^")
+  ("accent:umlaut" "M-\"")
+  ("accent:acute" "M-'")
+  ("accent:grave" "M-`")
+  ("accent:cedilla" "M-C")
+  ("accent:breve" "M-U")
+  ("accent:check" "M-V")
+  ("accent:doubleacute" "M-H")
+  ("accent:abovering" "M-O")
+  ("accent:abovedot" "M-.")
+  ("accent:ogonek" "M-G")
+
+  ("math:greek" "F5" #t)
+  ("math:bold" "F6" #t)
+  ("math:bold:greek" "math:bold math:greek" #t)
+  ("math:bold:cal" "math:bold math:cal" #t)
+  ("math:cal" "F7" #t)
+  ("math:frak" "F8" #t)
+  ("math:bbb" "S-F6" #t)
+  ("math:symbol" "S-F5" #t)
+  ("math:symbol:circled" "math:symbol @" #t)
+  ("math:symbol:limits" "math:symbol L" #t)
+  ("math:over" "math o" #t)
+  ("math:under" "math u" #t)
+  ("math:large" "math" #t)
+  ("math:left" "math l" #t)
+  ("math:middle" "math m" #t)
+  ("math:right" "math r" #t))
+
+(kbd-wildcards
+  ("escape" "M-" #t)
+  ("escape escape" "A-" #t)
+  ("escape escape escape" "H-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "A-" #t)
+  ("C-escape" "H-" #t)
+
+  ("tilde" "M-~")
+  ("hat" "accent:deadhat") ;; needed for dead ^ in math mode
+  ("umlaut" "M-\"")
+  ("acute" "M-'")
+  ("grave" "M-`")
+  ("cedilla" "M-C")
+  ("breve" "M-U")
+  ("check" "M-V")
+  ("doubleacute" "M-H")
+  ("abovering" "M-O")
+  ("abovedot" "M-.")
+  ("ogonek" "M-G"))
+
+(kbd-map
+  ("macos" "" "MacOS command"))
+
+) ;; end when (like-macos?)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Windows prefixes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (like-emacs?)
+
+(kbd-wildcards pre
+  ("windows" "C-" #t)
+  ("cmd" "M-")
+  ("font" "M-A-")
+  ("text" "A-")
+  ("math" "A-")
+  ("prog" "A-")
+  ("special" "H-")
+  ("symbol" "S-F5" #t)
+  ("executable" "cmd e")
+  ("inactive" "cmd i")
+  ("link" "cmd l")
+  ("version" "cmd v")
+  ("table" "cmd t")
+  ("script" "cmd *")
+  ("text:symbol" "S-F5" #t)
+  ("copyto" "windows C")
+  ("cutto" "windows X")
+  ("pastefrom" "windows V")
+  ("var" "tab" #t)
+  ("unvar" "S-tab" #t)
+
+  ("accent:tilde" "A-~")
+  ("accent:hat" "A-^")
+  ("accent:umlaut" "A-\"")
+  ("accent:acute" "A-'")
+  ("accent:grave" "A-`")
+  ("accent:cedilla" "A-C")
+  ("accent:breve" "A-U")
+  ("accent:check" "A-V")
+  ("accent:doubleacute" "A-H")
+  ("accent:abovering" "A-O")
+  ("accent:abovedot" "A-.")
+  ("accent:ogonek" "A-G")
+
+  ("math:greek" "F5" #t)
+  ("math:bold" "F6" #t)
+  ("math:bold:greek" "math:bold math:greek" #t)
+  ("math:bold:cal" "math:bold math:cal" #t)
+  ("math:cal" "F7" #t)
+  ("math:frak" "F8" #t)
+  ("math:bbb" "S-F6" #t)
+  ("math:symbol" "S-F5" #t)
+  ("math:symbol:circled" "math:symbol @" #t)
+  ("math:symbol:limits" "math:symbol L" #t)
+  ("math:over" "math o" #t)
+  ("math:under" "math u" #t)
+  ("math:large" "math" #t)
+  ("math:left" "math l" #t)
+  ("math:middle" "math m" #t)
+  ("math:right" "math r" #t))
+
+(kbd-wildcards
+  ("escape" "M-" #t)
+  ("escape escape" "A-" #t)
+  ("escape escape escape" "H-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "A-" #t)
+  ("C-escape" "H-" #t)
+
+  ("tilde" "A-~")
+  ("hat" "accent:deadhat") ;; needed for dead ^ in math mode
+  ("umlaut" "A-\"")
+  ("acute" "A-'")
+  ("grave" "A-`")
+  ("cedilla" "A-C")
+  ("breve" "A-U")
+  ("check" "A-V")
+  ("doubleacute" "A-H")
+  ("abovering" "A-O")
+  ("abovedot" "A-.")
+  ("ogonek" "A-G")
+
+  ;; for convenience
+  ("M-~" "A-~")
+  ("M-^" "A-^")
+  ("M-\"" "A-\"")
+  ("M-'" "A-'")
+  ("M-`" "A-`")
+  ("M-C" "A-C")
+  ("M-U" "A-U")
+  ("M-V" "A-V")
+  ("M-H" "A-H")
+  ("M-O" "A-O")
+  ("M-." "A-.")
+  ("M-G" "A-G"))
+
+(kbd-map
+  ("windows" "" "Windows command"))
+
+) ;; end when (like-windows?)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Explain prefixes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  ("emacs" "" "Emacs command")
-  ("emacs:contextual" "" "Emacs mode specific prefix command")
-  ("emacs:prefix" "" "Emacs prefix command")
-
   ("cmd" "" "Execute a TeXmacs command")
   ("noop" (set-message "" ""))
   ("symbol" "" "Insert a TeXmacs symbol")
