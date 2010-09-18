@@ -51,7 +51,7 @@
     tm-define tm-define-macro tm-property request-handler
     tm-build tm-build-macro tm-build-widget
     menu-bind menu-extend define-table
-    define-format define-language))
+    define-format define-language properties))
 
 (setq unary-no-highlight
   '(format interactive))
@@ -74,7 +74,7 @@
   ternary-keywords)
 
 (setq other-keywords
-  '(for if
+  '(for if inherit
     define-secure-symbols map-in-order link promise plugin-configure
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-format lazy-input-converter
