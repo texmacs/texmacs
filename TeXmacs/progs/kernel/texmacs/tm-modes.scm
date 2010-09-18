@@ -162,8 +162,9 @@
 
 (texmacs-modes
   (like-emacs% (== (get-look-and-feel) "emacs"))
-  (like-windows% (== (get-look-and-feel) "windows"))
+  (like-gnome% (== (get-look-and-feel) "gnome"))
   (like-macos% (== (get-look-and-feel) "macos"))
+  (like-windows% (== (get-look-and-feel) "windows"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))

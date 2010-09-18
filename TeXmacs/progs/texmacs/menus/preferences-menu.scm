@@ -48,7 +48,7 @@
   `((enum ("Look and feel" "look and feel")
 	  ("Default" "default")
 	  ("Emacs" "emacs")
-	  ;;("Linux" "linux")
+	  ("Gnome" "gnome")
 	  ("Mac OS" "macos")
 	  ("Windows" "windows"))
 ;   (enum ("Profile" "profile")

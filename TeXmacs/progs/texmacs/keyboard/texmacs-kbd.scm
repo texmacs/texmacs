@@ -180,11 +180,11 @@
   ("M->" (go-end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Windows keymap
+;; Gnome and windows keymaps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  (:profile windows)
+  (:profile gnome windows)
 
   ;; standard Window shortcuts
   ("windows c" (clipboard-copy "primary"))

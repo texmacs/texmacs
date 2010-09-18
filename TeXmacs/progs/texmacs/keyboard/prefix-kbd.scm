@@ -210,10 +210,10 @@
 ) ;; end when (like-macos?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Windows prefixes
+;; Linux and Windows prefixes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (like-emacs?)
+(when (or (like-gnome?) (like-windows?))
 
 (kbd-wildcards pre
   ("windows" "C-" #t)
@@ -305,7 +305,7 @@
 (kbd-map
   ("windows" "" "Windows command"))
 
-) ;; end when (like-windows?)
+) ;; end when (or (like-gnome?) (like-windows?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Explain prefixes
