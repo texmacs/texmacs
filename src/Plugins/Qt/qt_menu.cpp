@@ -397,6 +397,9 @@ menu_button (widget w, command cmd, string pre, string ks, bool ok) {
   c->setParent (a);
   QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
                     Qt::QueuedConnection);
+#ifdef Q_WS_MAC
+  if (search_forwards (" ", ks) != -1) ks= "";
+#endif
   if (N(ks) > 0) {
     string qtks = conv (ks);
     QKeySequence qks (to_qstring (qtks));
