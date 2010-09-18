@@ -75,7 +75,6 @@ struct packrat_grammar_rep: rep<packrat_grammar> {
   void     define (string s, tree t);  
 };
 
-packrat_grammar make_packrat_grammar (string s);
-packrat_grammar get_packrat_grammar (string s);
+packrat_grammar find_packrat_grammar (string s);
 
 #endif // PACKRAT_GRAMMAR_H

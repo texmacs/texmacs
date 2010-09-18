@@ -67,9 +67,9 @@
   (when (not (ahash-ref lazy-language-done lan))
     (and-with m (ahash-ref lazy-language-waiting lan)
       ;;(display* "Lazy definition of " lan " in " m "\n")
-      (module-load m)
       (ahash-remove! lazy-language-waiting lan)
-      (ahash-set! lazy-language-done lan #t))))
+      (ahash-set! lazy-language-done lan #t)
+      (module-load m))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for language definition

@@ -33,7 +33,7 @@ make_packrat_parser (string lan, string in) {
   static string         last_in = "";
   static packrat_parser last_par;
   if (lan != last_lan || in != last_in) {
-    packrat_grammar gr= get_packrat_grammar (lan);
+    packrat_grammar gr= find_packrat_grammar (lan);
     last_lan= lan;
     last_in = copy (in);
     last_par= packrat_parser (gr, in);
@@ -47,7 +47,7 @@ make_packrat_parser (string lan, tree in) {
   static tree           last_in = "";
   static packrat_parser last_par;
   if (lan != last_lan || in != last_in) {
-    packrat_grammar gr= get_packrat_grammar (lan);
+    packrat_grammar gr= find_packrat_grammar (lan);
     last_lan= lan;
     last_in = copy (in);
     last_par= packrat_parser (gr, in);
