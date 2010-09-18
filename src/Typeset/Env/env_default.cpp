@@ -64,7 +64,7 @@ initialize_default_env () {
   env (XOFF_DECORATIONS) = "0tmpt";     // hor. placement of decorations
   env (YOFF_DECORATIONS) = "0tmpt";     // vert. placement of decorations
 
-  env (MATH_LANGUAGE)    = "texmath";   // the default mathematical language
+  env (MATH_LANGUAGE)    = "std-math";  // the default mathematical language
   env (MATH_FONT)        = "roman";     // the font name in math mode
   env (MATH_FONT_FAMILY) = "mr";        // the font family in math mode
   env (MATH_FONT_SERIES) = "medium";    // the font series in math mode

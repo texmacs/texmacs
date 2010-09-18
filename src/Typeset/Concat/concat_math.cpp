@@ -32,7 +32,7 @@ concater_rep::typeset_large (tree t, path ip, int type, string prefix) {
     string s= prefix * t[0]->label * ">";
     box b= text_box (ip, 0, s, env->fn, env->col);
     print (type, b);
-    // temporarary: use parameters from group-open class in texmath.syx
+    // temporarary: use parameters from group-open class in std-math.syx
     // bug: allow hyphenation after ) and before *
   }
   else if ((N(t) == 2) && is_atomic (t[0]) && is_int (t[1])) {
@@ -73,7 +73,7 @@ concater_rep::typeset_bigop (tree t, path ip) {
     penalty_min (HYPH_PANIC);
     if ((l != "int") && (l != "oint")) with_limits (LIMITS_DISPLAY);
     if (flag) print (spc);
-    // temporarary: use parameters from operator-big class in texmath.syx
+    // temporarary: use parameters from operator-big class in std-math.syx
   }
 }
 
