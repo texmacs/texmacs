@@ -120,11 +120,11 @@
 
 (define (tmconcat-opening? x)
   (or (func? x 'left)
-      (and (string? x) (== (math-symbol-type x) "opening bracket"))))
+      (and (string? x) (== (math-symbol-type x) "opening-bracket"))))
 
 (define (tmconcat-closing? x)
   (or (func? x 'right)
-      (and (string? x) (== (math-symbol-type x) "closing bracket"))))
+      (and (string? x) (== (math-symbol-type x) "closing-bracket"))))
 
 (define (tmconcat-brackets-sub l)
   ;; used for instance in MathML generation
