@@ -59,7 +59,7 @@
 
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
-  ("look and feel" (get-default-look-and-feel) notify-look-and-feel)
+  ("look and feel" "default" notify-look-and-feel)
   ("detailed menus" "detailed" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)

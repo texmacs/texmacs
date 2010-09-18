@@ -39,7 +39,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (define-option-profile opt decl)
-  (if (in? (look-and-feel) opt) decl '(begin)))
+  (if (in? (get-look-and-feel) opt) decl '(begin)))
 
 (define (conditions-insert! kind opt)
   (set! ovl-conds (conditions-insert ovl-conds kind opt)))
