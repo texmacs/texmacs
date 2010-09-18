@@ -152,7 +152,9 @@
 	      ("Spanish" "spanish")
 	      ("Swiss" "swiss"))
 	(toggle ("Automatically close brackets"
-		 "automatically close brackets")))
+		 "automatically close brackets"))
+	(toggle ("Semantic editing"
+		 "semantic editing")))
     (-> "Printer" . ,page-setup-tree)
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")

@@ -75,12 +75,11 @@ edit_select_rep::semantic_root (path p) {
 bool
 edit_select_rep::semantic_active (path p) {
   p= semantic_root (p);
-#if 1
-  //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
-  return get_env_value (MODE, end (et, p)) == "math";
-#else
-  return false;
-#endif
+  if (as_string (eval ("(get-preference \"semantic editing\")")) == "on") {
+    //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
+    return get_env_value (MODE, end (et, p)) == "math";
+  }
+  else return false;
 }
 
 bool
