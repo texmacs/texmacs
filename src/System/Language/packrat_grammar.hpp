@@ -76,5 +76,6 @@ struct packrat_grammar_rep: rep<packrat_grammar> {
 };
 
 packrat_grammar make_packrat_grammar (string s);
+packrat_grammar get_packrat_grammar (string s);
 
 #endif // PACKRAT_GRAMMAR_H

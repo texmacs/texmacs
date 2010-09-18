@@ -128,6 +128,10 @@
 	     graphics-dragging graphics-end-drag)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
+;(display "Booting formal languages\n")
+(lazy-language (language std-math) std-math)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
 ;(display "Booting dynamic features\n")
 (lazy-keyboard (dynamic fold-kbd) always?)
 (lazy-keyboard (dynamic scripts-kbd) always?)

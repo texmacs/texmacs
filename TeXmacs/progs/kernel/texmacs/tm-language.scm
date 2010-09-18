@@ -12,6 +12,10 @@
 (texmacs-module (kernel texmacs tm-language)
   (:use (kernel texmacs tm-define)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language definition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (scheme->packrat x)
   (cond ((string? x) (string->tree x))
 	((symbol? x) (tree 'symbol (string->tree (symbol->string x))))
@@ -49,9 +53,43 @@
 (tm-define (define-language-impl lan gr)
   (for-each (lambda (x) (define-rule-impl lan x)) gr))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy language definition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define lazy-language-waiting (make-hash-table))
+(define lazy-language-done (make-ahash-table))
+
+(tm-define (lazy-language-impl lan m)
+  (ahash-set! lazy-language-waiting lan m))
+
+(tm-define (lazy-language-force-impl lan)
+  (when (not (ahash-ref lazy-language-done lan))
+    (and-with m (ahash-ref lazy-language-waiting lan)
+      ;;(display* "Lazy definition of " lan " in " m "\n")
+      (module-load m)
+      (ahash-remove! lazy-language-waiting lan)
+      (ahash-set! lazy-language-done lan #t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface for language definition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define-macro (define-language lan . gr)
   (:synopsis "Define the formal language @lan")
   `(define-language-impl (symbol->string ',lan) ',gr))
+
+(tm-define-macro (lazy-language m . lans)
+  (:synopsis "Promise that the languages @lans are defined in the module @m")
+  `(for-each (lambda (lan) (lazy-language-impl lan ',m)) ',lans))
+
+(tm-define-macro (lazy-language-force lan)
+  (:synopsis "Execute promise to define the language @lan")
+  `(lazy-language-force-impl ',lan))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Semantic routines based on current language
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define-macro (semantic-end lan gr in)
   (:synopsis "Get rightmost path until where @x can be parsed in @lan")

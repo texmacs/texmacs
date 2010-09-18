@@ -87,7 +87,6 @@ bool
 edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   if (!semantic_active (p)) return false;
   p= semantic_root (p);
-  eval ("(use-modules (language std-math))");
   path p1= q1 / p, p2= q2 / p;
   tree st= subtree (et, p);
   bool ret= packrat_select ("std-math", "Main", st, p1, p2, mode);

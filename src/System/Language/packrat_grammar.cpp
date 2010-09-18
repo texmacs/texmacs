@@ -187,6 +187,13 @@ make_packrat_grammar (string s) {
   return make (packrat_grammar, s, tm_new<packrat_grammar_rep> (s));
 }
 
+packrat_grammar
+get_packrat_grammar (string s) {
+  if (packrat_grammar::instances -> contains (s)) return packrat_grammar (s);
+  eval ("(lazy-language-force " * s * ")");
+  return make (packrat_grammar, s, tm_new<packrat_grammar_rep> (s));
+}
+
 /******************************************************************************
 * Definition of grammars
 ******************************************************************************/
