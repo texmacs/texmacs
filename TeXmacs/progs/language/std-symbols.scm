@@ -14,28 +14,51 @@
 (texmacs-module (language std-symbols))
 
 (define-language std-symbols
+  (:synopsis "default semantics for mathematical symbols")
+
   (define Assign-symbol
+    (:type infix)
+    (:precedence 3)
+    (:penalty 3)
+    (:spacing default default)
     "<assign>" "<plusassign>" "<minusassign>" "<astassign>" "<overassign>")
   
   (define Flux-symbol
+    (:type associative-infix)
+    (:precedence 3)
+    (:spacing default default)
     "<lflux>" "<gflux>")
 
   (define Models-symbol
+    (:type infix)
+    (:precedence 7)
+    (:spacing default default)
     "<models>" "<vdash>" "<dashv>" "<vDash>" "<Vdash>" "<Vvdash>" "<VDash>"
     "<longvdash>" "<longdashv>" "<longvDash>"
     "<longVdash>" "<longVvdash>" "<longVDash>"
     "<nvdash>" "<ndashv>" "<nvDash>" "<nVdash>" "<nVvdash>" "<nVDash>")
 
   (define Quantifier-symbol
+    (:type prefix)
+    (:precedence 10)
     "<forall>" "<exists>" "<nexists>")
 
   (define Imply-nolim-symbol
+    (:type infix)
+    (:precedence 20)
+    (:penalty 10)
+    (:spacing default default)
     "<implies>" "<equivalent>" "<Leftarrow>" "<Rightarrow>" "<Leftrightarrow>"
     "<Longleftarrow>" "<Longrightarrow>" "<Longleftrightarrow>"
     "<Lleftarrow>" "<Rrightarrow>"
     "<nLeftarrow>" "<nRightarrow>" "<nLeftrightarrow>")
 
   (define Imply-lim-symbol
+    (:type infix)
+    (:precedence 20)
+    (:penalty 10)
+    (:spacing default default)
+    (:limits always)
     "<Leftarrowlim>" "<Rightarrowlim>" "<Leftrightarrowlim>"
     "<Longleftarrowlim>" "<Longrightarrowlim>" "<Longleftrightarrowlim>")
   
@@ -43,15 +66,31 @@
     Imply-nolim-symbol Imply-symbol)
 
   (define Or-symbol
+    (:type associative-infix)
+    (:precedence 30)
+    (:penalty 10)
+    (:spacing default default)
     "<vee>" "<curlyvee>")
 
   (define And-symbol
+    (:type associative-infix)
+    (:precedence 30)
+    (:penalty 10)
+    (:spacing default default)
     "<wedge>" "<curlywedge>")
 
   (define Not-symbol
+    (:type prefix)
+    (:precedence 40)
+    (:penalty 10)
     "<neg>")
 
   (define Relation-nolim-symbol
+    (:type infix)
+    (:precedence 50)
+    (:penalty 20)
+    (:spacing default default)
+
     "=" "<ne>" "<neq>" "<longequal>" "<less>" "<gtr>" "<le>" "<leq>"
     "<prec>" "<preceq>" "<ll>" "<lleq>" "<subset>" "<subseteq>"
     "<sqsubset>" "<sqsubseteq>" "<in>" "<ge>" "<geq>" "<succ>" "<succeq>"
@@ -98,12 +137,22 @@
     "<notin>" "<notni>" "<precdot>" "<preceqdot>" "<dotsucc>" "<dotsucceq>")
 
   (define Relation-lim-symbol
+    (:type infix)
+    (:precedence 50)
+    (:penalty 20)
+    (:spacing default default)
+    (:limits always)
     "<equallim>" "<longequallim>")
 
   (define Relation-symbol
     Relation-nolim-symbol Relaton-symbol)
 
   (define Arrow-nolim-symbol
+    (:type infix)
+    (:precedence 50)
+    (:penalty 20)
+    (:spacing default default)
+
     "<to>" "<into>" "<from>" "<transtype>" "<leftarrow>" "<rightarrow>"
     "<leftrightarrow>" "<mapsto>" "<mapsfrom>"
     "<hookleftarrow>" "<hookrightarrow>"
@@ -127,6 +176,11 @@
     "<twoheadrightarrow>" "<upharpoonleft>" "<upharpoonright>" "<upuparrows>")
   
   (define Arrow-lim-symbol
+    (:type infix)
+    (:precedence 50)
+    (:penalty 20)
+    (:spacing default default)
+    (:limits always)
     "<leftarrowlim>" "<rightarrowlim>" "<leftrightarrowlim>"
     "<longleftarrowlim>" "<longrightarrowlim>" "<longleftrightarrowlim>"
     "<mapstolim>" "<longmapstolim>"
@@ -136,47 +190,100 @@
     Arrow-nolim-symbol Arrow-lim-symbol)
 
   (define Union-symbol
+    (:type associative-infix)
+    (:precedence 90)
+    (:penalty 30)
+    (:spacing default default)
     "<cup>" "<Cup>" "<doublecup>")
 
   (define Intersection-symbol
+    (:type associative-infix)
+    (:precedence 90)
+    (:penalty 30)
+    (:spacing default default)
     "<cap>" "<Cap>" "<doublecap>")
 
   (define Exclude-symbol
+    (:type left-associative-infix)
+    (:precedence 85)
+    (:penalty 30)
+    (:spacing default default)
     "<setminus>" "<smallsetminus>")
 
   (define Plus-symbol
+    (:type associative-infix)
+    (:precedence 100)
+    (:penalty 30)
+    (:spacing default default)
     "+" "<amalg>" "<oplus>" "<boxplus>" "<dotplus>" "<dotamalg>" "<dotoplus>")
 
   (define Minus-symbol
+    (:type left-associative-infix)
+    (:precedence 100)
+    (:penalty 30)
+    (:spacing default default)
     "-" "<pm>" "<mp>" "<ominus>" "<boxminus>")
 
-  (define Regular-times-symbol
+  (define Times-visible-symbol
+    (:type associative-infix)
+    (:precedence 110)
+    (:penalty 40)
+    (:spacing default default)
     "<cdot>" "<times>" "<otimes>" "<circ>" "<boxdot>" "<boxtimes>"
     "<dottimes>" "<dototimes>" "<ltimes>" "<rtimes>" "<atimes>" "<btimes>"
     "<join>" "<ast>" "<star>" "<oast>")
 
-  (define Invisible-times-symbol
+  (define Times-invisible-symbol
+    (:type associative-infix)
+    (:precedence 110)
+    (:penalty invalid)
+    (:spacing none default)
     "*")
 
   (define Times-symbol
-    Regular-times-symbol Invisible-times-symbol)
+    Times-visible-symbol Times-invisible-symbol)
 
-  (define Regular-over-symbol
+  (define Over-regular-symbol
+    (:type left-associative-infix)
+    (:precedence 110)
+    (:penalty 40)
+    (:spacing default default)
     "<oover>")
 
-  (define Condensed-over-symbol
+  (define Over-condensed-symbol
+    (:type left-associative-infix)
+    (:precedence 110)
+    (:penalty 40)
     "/")
 
   (define Over-symbol
-    Regular-over-symbol Condensed-over-symbol)
+    Over-regular-symbol Over-condensed-symbol)
 
   (define Power-symbol
+    (:type infix)
+    (:precedence 120)
+    (:penalty 50)
     "^")
 
+  (define Index-symbol
+    (:type infix)
+    (:precedence 130)
+    (:penalty 50)
+    "_")
+
   (define Big-nolim-symbol
+    (:type prefix)
+    (:precedence 80)
+    (:penalty panic)
+    (:spacing none big)
     "<big-int>" "<big-oint>")
 
   (define Big-lim-symbol
+    (:type prefix)
+    (:precedence 80)
+    (:penalty panic)
+    (:spacing none big)
+    (:limits display)
     "<big-sum>" "<big-prod>" "<big-amalg>" "<big-intlim>" "<big-ointlim>"
     "<big-cap>" "<big-cup>" "<big-sqcup>" "<big-vee>" "<big-wedge>"
     "<big-odot>" "<big-otimes>" "<big-oplus>" "<big-uplus>"
@@ -186,15 +293,27 @@
     Big-nolim-symbol Big-lim-symbol)
 
   (define Prefix-symbol
+    (:type prefix)
+    (:precedence 115)
+    (:penalty invalid)
+    (:spacing none none)
     "<um>" "<upl>" "<upm>" "<ump>" "<card>")
 
   (define Postfix-symbol
+    (:type postfix)
+    (:precedence 140)
+    (:penalty panic)
     "!")
 
   (define Prime-symbol
+    (:type symbol)
+    (:precedence 1000)
+    (:penalty panic)
     "'" "`" "<dag>" "<ddag>")
 
   (define Open-symbol
+    (:type opening-bracket)
+    (:precedence 160)
     "(" "[" "{" "<lfloor>" "<lceil>" "<langle>"
     "<left-(>" "<left-[>" "<left-{>" "<left-less>"
     "<left-}>" "<left-]>" "<left-)>" "<left-gtr>"
@@ -203,12 +322,20 @@
     "<left-langle>" "<left-rangle>")
   
   (define Ponctuation-symbol
+    (:type separator)
+    (:precedence 0)
+    (:spacing none default)
+    (:penalty 0)
     "," ";" ":")
 
   (define Bar-symbol
+    (:type symbol)
+    (:precedence 160)
     "|" "<||>" "<mid-|>" "<mid-||>")
 
   (define Close-symbol
+    (:type closing-bracket)
+    (:precedence 160)
     "}" "]" ")" "<rfloor>" "<rceil>" "<rangle>"
     "<right-(>" "<right-[>" "<right-{>" "<right-less>"
     "<right-}>" "<right-]>" "<right-)>" "<right-gtr>"
@@ -217,15 +344,24 @@
     "<right-langle>" "<right-rangle>")
 
   (define Suspension-nolim-symbol
+    (:type symbol)
+    (:precedence 0)
+    (:penalty invalid invalid)
     "<ldots>" "<cdots>" "<udots>" "<vdots>" "<ddots>" "<mdots>" "<colons>")
   
   (define Suspension-lim-symbol
+    (:type symbol)
+    (:precedence 0)
+    (:penalty invalid invalid)
+    (:limits always)
     "<cdotslim>")
 
   (define Suspension-symbol
     Suspension-nolim-symbol Suspension-lim-symbol)
 
   (define Variable-symbol
+    (:type symbol)
+    (:precedence 1000)
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<varepsilon>"
     "<epsilon>" "<zeta>" "<eta>" "<theta>" "<iota>"
     "<kappa>" "<lambda>" "<mu>" "<nu>" "<xi>" "<omikron>"
@@ -289,6 +425,9 @@
     "<bbb-V>" "<bbb-W>" "<bbb-X>" "<bbb-Y>" "<bbb-Z>")
   
   (define Miscellaneous-symbol
+    (:type symbol)
+    (:precedence 1000)
+
     "<ldot>" "<udot>"
 
     "<uparrow>" "<Uparrow>" "<downarrow>" "<Downarrow>"
@@ -322,17 +461,33 @@
     "<comma>")
 
   (define Spacing-symbol
+    (:type symbol)
+    (:precedence 1000)
+    (:spacing big none)
     "<spc>")
 
   (define Prefix-operator
+    (:type prefix)
+    (:precedence 150)
+    (:penalty panic)
+    (:spacing none default)
     "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
     "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
-    "lg" "ln""log" "sec" "sin" "sinh" "tan" "tanh")
+    "lg" "ln" "log" "sec" "sin" "sinh" "tan" "tanh")
 
   (define Infix-operator
+    (:type infix)
+    (:precedence 60)
+    (:penalty panic)
+    (:spacing default default)
     "div" "mod")
 
   (define Big-operator
+    (:type prefix)
+    (:precedence 70)
+    (:penalty panic)
+    (:spacing none default)
+    (:limits display)
     "inf" "lim" "liminf" "limsup" "max" "min" "sup")
 
   (define Reserved

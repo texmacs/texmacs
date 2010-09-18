@@ -266,6 +266,11 @@ packrat_grammar_rep::define (string s, tree t) {
   }
 }
 
+void
+packrat_grammar_rep::property (string s, string var, string val) {
+  properties (tuple (s, var))= val;
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
@@ -274,6 +279,12 @@ void
 packrat_define (string lan, string s, tree t) {
   packrat_grammar gr= find_packrat_grammar (lan);
   gr->define (s, t);
+}
+
+void
+packrat_property (string lan, string s, string var, string val) {
+  packrat_grammar gr= find_packrat_grammar (lan);
+  gr->property (s, var, val);
 }
 
 void

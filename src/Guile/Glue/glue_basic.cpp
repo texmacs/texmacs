@@ -1899,6 +1899,25 @@ tmg_packrat_define (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_packrat_property (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-property");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-property");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "packrat-property");
+  SCM_ASSERT_STRING (arg4, SCM_ARG4, "packrat-property");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+  string in4= scm_to_string (arg4);
+
+  // SCM_DEFER_INTS;
+  packrat_property (in1, in2, in3, in4);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_packrat_inherit (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-inherit");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-inherit");
@@ -4128,6 +4147,7 @@ initialize_glue_basic () {
   scm_new_procedure ("define-grammar-rule", (FN) tmg_define_grammar_rule, 2, 0, 0);
   scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("packrat-define", (FN) tmg_packrat_define, 3, 0, 0);
+  scm_new_procedure ("packrat-property", (FN) tmg_packrat_property, 4, 0, 0);
   scm_new_procedure ("packrat-inherit", (FN) tmg_packrat_inherit, 2, 0, 0);
   scm_new_procedure ("packrat-parse", (FN) tmg_packrat_parse, 3, 0, 0);
   scm_new_procedure ("packrat-context", (FN) tmg_packrat_context, 4, 0, 0);

@@ -173,6 +173,7 @@
   (define-grammar-rule define_grammar_rule (void tree tree))
   (grammar-parse grammar_parse (int tree string))
   (packrat-define packrat_define (void string string tree))
+  (packrat-property packrat_property (void string string string string))
   (packrat-inherit packrat_inherit (void string string))
   (packrat-parse packrat_parse (path string string content))
   (packrat-context packrat_context (object string string content path))
@@ -343,6 +344,5 @@
   (bib-prefix bib_prefix (string scheme_tree int))
   (bib-empty? bib_empty (bool scheme_tree string))
   (bib-field bib_field (scheme_tree scheme_tree string))
-  (bib-abbreviate bib_abbreviate (scheme_tree scheme_tree scheme_tree scheme_tree))
-  )
-
+  (bib-abbreviate bib_abbreviate
+		  (scheme_tree scheme_tree scheme_tree scheme_tree)))
