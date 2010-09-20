@@ -290,6 +290,35 @@
 ;; Extra editing functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (spacing-context? t)
+  (and-with u (tree-down t)
+    (and (tm-func? u 'space 1)
+	 (tm-length? (tree-ref u 0)))))
+
+(define (add-space factor)
+  (let* ((t (tree-ref (tree-innermost 'space #t) 0))
+	 (l (tree->string t))
+	 (v (tm-length-value l))
+	 (u (tm-length-unit l))
+	 (a (if (== u "spc") 0.2 1))
+	 (new-v (+ v (* factor a)))
+	 (new-l (tm-make-length new-v u)))
+    (tree-set t new-l)))
+
+(tm-define (kbd-space)
+  (insert " "))
+
+(tm-define (kbd-shift-space)
+  (insert " "))
+
+(tm-define (kbd-space)
+  (:context spacing-context?)
+  (add-space 1))
+
+(tm-define (kbd-shift-space)
+  (:context spacing-context?)
+  (add-space -1))
+
 (tm-define (kill-paragraph)
   (selection-set-start)
   (go-end-paragraph)

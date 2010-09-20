@@ -20,19 +20,15 @@
     (source source-edit)))
 
 (kbd-map
-  ("space" " ")
+  ("space" (kbd-space))
   ("space var" (make 'nbsp))
   ("space var var" (make-space "0.2spc"))
-  ("space var var var" (make-space "0.4spc"))
-  ("space var var var var" (make-space "0.6spc"))
-  ("space space" (make-space "1em"))
-  ("space space var" (make 'indent))
-  ("space space space" (make-space "2em"))
+  ("space var var var" (make-space "1em"))
   ("return" (kbd-return))
   ("backspace" (kbd-remove #f))
   ("delete" (kbd-remove #t))
   ("tab" (kbd-tab))
-  ("S-space" (insert " "))
+  ("S-space" (kbd-shift-space))
   ("S-return" (kbd-shift-return))
   ("S-backspace" (kbd-remove #f))
   ("S-delete" (kbd-remove #t))
@@ -157,10 +153,3 @@
   ("table N T" (make 'tabular*))
   ("table N b" (make 'block))
   ("table N B" (make 'block*)))
-
-(kbd-map
-  (:mode in-prog?)
-  ("space" " ")
-  ("space space" "  ")
-  ("space space space" "   ")
-  ("space space space space" "    "))
