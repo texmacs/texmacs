@@ -16,7 +16,7 @@
     <key|<with|mode|math|\<ast\>>> and you can circle back using
     <key|shift-tab>.
 
-    <item>Greek characters are now typed using <key|A-C->, <key|F5>, or the
+    <item>Greek characters are now typed using <key|A-C->, <shortcut|math:greek>, or the
     hyper modifier, which can be configured in
     <samp|Edit><with|mode|math|\<rightarrow\>><samp|Preferences>. You may
     also obtain Greek characters as variants of Latin characters. For

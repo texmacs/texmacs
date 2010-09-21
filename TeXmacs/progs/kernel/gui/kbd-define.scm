@@ -57,6 +57,7 @@
 	     (im (cadr w))
 	     (left (if (>= (length w) 3) (caddr w) #f))
 	     (right (if (>= (length w) 4) (cadddr w) #t)))
+	(kbd-set-rev! key (simple-insert (kbd-get-rev key) im))
 	(insert-kbd-wildcard key im post left right)
 	(kbd-wildcards-sub (cdr l) post))))
 
@@ -83,7 +84,7 @@
 (define (kbd-set-rev! key im) (ahash-set! kbd-rev-table key im))
 (define (kbd-get-map key) (ahash-ref kbd-map-table key))
 (define (kbd-get-inv key) (ahash-ref kbd-inv-table key))
-(define (kbd-get-rev key) (ahash-ref kbd-rev-table key))
+(tm-define (kbd-get-rev key) (ahash-ref kbd-rev-table key))
 (define (kbd-remove-map! key) (ahash-remove! kbd-map-table key))
 
 (define (kbd-source cmd)
@@ -99,14 +100,15 @@
 
 (define (kbd-insert-key-binding conds key im)
   (let* ((com (kbd-source (car im)))
-	 (cmd (object->string com)))
+	 (cmd (if (string? com) com (object->string com))))
     ;;(display* "Binding '" key "' when " conds " to " com "\n")
     (kbd-delete-key-binding2 conds key)
     (kbd-set-map! key (ovl-insert (kbd-get-map key) im conds))
     (kbd-set-inv! com (ovl-insert (kbd-get-inv com) key conds))
     (kbd-set-rev! cmd (simple-insert (kbd-get-rev cmd) key))
-    ;;(display* key ": " (kbd-get-map key) "\n")
-    ;;(display* com "] " (kbd-get-inv com) "\n")
+    ;;(display* key " > " (kbd-get-map key) "\n")
+    ;;(display* com " < " (kbd-get-inv com) "\n")
+    ;;(display* cmd " < " (kbd-get-rev cmd) "\n")
     ))
 
 (tm-define (kbd-delete-key-binding2 conds key)
@@ -140,6 +142,7 @@
 
 (tm-define (kbd-shortcut cmd)
   (:secure #t)
+  (lazy-keyboard-force)
   (cond ((tree? cmd)
 	 (kbd-shortcut (tree->stree cmd)))
 	((string? cmd)

@@ -71,7 +71,7 @@
   ("Clone window" (clone-window)))
 
 (menu-bind load-menu
-  ("Load" (choose-file load-buffer "Load file" ""))
+  ("Load" (open-buffer))
   ("Revert" (revert-buffer))
   ("Load in new window" (choose-file load-in-new-window "Load file" ""))
   ---
@@ -90,7 +90,7 @@
 (menu-bind print-menu
   ("Preview with ghostview" (preview-with-ghostview))
   ---
-  ("Print all" (print))
+  ("Print all" (print-buffer))
   ("Print page selection" (interactive print-pages))
   ("Print all to file"
    (choose-file print-to-file "Print all to file" "postscript"))
@@ -108,7 +108,7 @@
 
 (menu-bind file-menu
   ("New" (new-buffer))
-  ("Load" (choose-file load-buffer "Load file" ""))
+  ("Load" (open-buffer))
   ;("Load in new window" (choose-file "Load file" "" 'load-in-new-window))
   ("Save" (save-buffer))
   ("Save as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))

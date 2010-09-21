@@ -137,3 +137,11 @@
 (tm-define (load-in-new-window s) (load-buffer s 1))
 (tm-define (load-browse-buffer s)
   (if (help-buffer?) (load-buffer s "help") (load-buffer s)))
+
+(tm-define (open-buffer)
+  (:synopsis "Open a new file")
+  (choose-file load-buffer "Load file" ""))
+
+(tm-define (print-buffer)
+  (:synopsis "Print the current buffer")
+  (print))
