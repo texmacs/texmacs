@@ -139,12 +139,9 @@
   ("qquad" "Insert a qquad space" (make-space "2em"))
   ("\\" "Go to the next line" (make 'next-line))
 
-  ("[" "Insert equation"
-   (begin (make 'equation*) (temp-proof-fix)))
-  ("equation" "Insert numbered equation"
-   (begin (make 'equation) (temp-proof-fix)))
-  ("eqnarray*" "Insert equation array"
-   (begin (make 'eqnarray*) (temp-proof-fix)))
+  ("[" "Insert equation" (make-equation*))
+  ("equation" "Insert numbered equation" (make-equation))
+  ("eqnarray*" "Insert equation array" (make-eqnarray*))
 
   ("cC" "Make Ç" (emulate-keyboard "cedilla C"))
   ("cc" "Make ç" (emulate-keyboard "cedilla c"))

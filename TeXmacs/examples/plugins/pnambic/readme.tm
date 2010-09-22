@@ -110,7 +110,7 @@
   Now you can type in this second window all bytes which the plugin sends to
   <TeXmacs>. Use the same syntax: any byte can be written as two hex digits
   in brackets; if you want to send <code*|[> or <code*|]>, type <code*|[[> or
-  <code*|]]>. Note that when you press <key|<key-return>> it does <em|not>
+  <code*|]]>. Note that when you press <shortcut|(kbd-return)> it does <em|not>
   send a newline to <TeXmacs>; to do this, use <code*|[0a]>. Follow the
   <TeXmacs> communication protocol: say something like
 
@@ -122,7 +122,7 @@
 
   In the <TeXmacs> window, you will see the greeting and the prompt. Now you
   can write something after this prompt in the <TeXmacs> window and press
-  <key|<key-return>>. This input will appear in the first <code*|xterm>
+  <shortcut|(kbd-return)>. This input will appear in the first <code*|xterm>
   window (remember? it's where you said <code*|cat out>). Now you pretend
   that you are a CAS, think about this user input, go to the second
   <code*|xterm> window and write the result of your thinking in a form

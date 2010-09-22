@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.6>
 
 <style|<tuple|source|std>>
 
@@ -59,6 +59,8 @@
   <assign|cfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
 
   <assign|tfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
+
+  <assign|frac*|<macro|x|y|<lsup|<arg|x>><resize|/|l+0.1em|b+0.5em|r-0.1em|t-0.5em><rsub|<arg|y>>>>
 
   <\active*>
     <\src-comment>

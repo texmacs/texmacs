@@ -26,8 +26,8 @@
   (if (style-has? "env-math-dtd")
       (when (in-text?)
 	    ---
-	    ("Equation" (begin (make 'equation*) (temp-proof-fix)))
-	    ("Equations" (begin (make 'eqnarray*) (temp-proof-fix))))))
+	    ("Equation" (make-equation*))
+	    ("Equations" (make-eqnarray*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Mathematics menu

@@ -18,8 +18,8 @@
 (kbd-map
   (:mode in-std-text?)
   ("$" (if (inside? 'hybrid) (insert "$") (make 'math)))
-  ("text $" (make 'equation*) (temp-proof-fix))
-  ("text &" (make 'eqnarray*) (temp-proof-fix))
+  ("text $" (make-equation*))
+  ("text &" (make-eqnarray*))
 
   ("text a" (make 'abbr))
   ("text d" (make-tmlist 'description))
