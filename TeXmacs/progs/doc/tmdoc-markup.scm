@@ -26,6 +26,6 @@
   (:secure #t)
   (cond ((string? s)
 	 (with r (kbd-find-rev-binding s)
-	   (tmdoc-key r)))
+	   (if r (tmdoc-key r) (tmdoc-key s))))	       
 	((tree? s) (tmdoc-shortcut (tree->stree s)))
 	(else '(render-key (with "color" "red" "?")))))
