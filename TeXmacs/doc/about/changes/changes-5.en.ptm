@@ -4,19 +4,19 @@
   of the major changes:
 
   <\itemize>
-    <item>The <key|E-> prefix has been renamed to <key|M->.
+    <item>The <key|E-> prefix has been renamed to <prefix|M->.
 
-    <item><key|escape> is equivalent to <key|M-> and
-    <key|escape>-<key|escape> to <key|A->.
+    <item><key|escape> is equivalent to <prefix|M-> and
+    <key|escape>-<key|escape> to <prefix|A->.
 
-    <item>Mode dependent commands are now prefixed by <key|A->. In
-    particular, accents are typed using <key|A-> instead of <key|E->.
+    <item>Mode dependent commands are now prefixed by <prefix|A->. In
+    particular, accents are typed using <prefix|A-> instead of <key|E->.
 
     <item>Variants are now obtained using <key|tab> instead of
     <key|<with|mode|math|\<ast\>>> and you can circle back using
     <key|S-tab>.
 
-    <item>Greek characters are now typed using <key|A-C->, <shortcut|math:greek>, or the
+    <item>Greek characters are now typed using <prefix|A-C->, <prefix|math:greek>, or the
     hyper modifier, which can be configured in
     <samp|Edit><with|mode|math|\<rightarrow\>><samp|Preferences>. You may
     also obtain Greek characters as variants of Latin characters. For

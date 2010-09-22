@@ -30,71 +30,7 @@
 
   <assign|shortcut|<macro|cmd|<extern|tmdoc-shortcut|<arg|cmd>>>>
 
-  \;
-
-  <assign|kbd-gen|<macro|x|<key|M-<arg|x>>>>
-
-  <assign|kbd-text|<macro|x|<key|A-<arg|x>>>>
-
-  <assign|kbd-math|<macro|x|<key|A-<arg|x>>>>
-
-  <assign|kbd-symb|<macro|x|<key|S-F5 <arg|x>>>>
-
-  <assign|kbd-big|<macro|x|<key|S-F5 <arg|x>>>>
-
-  <assign|kbd-large|<macro|x|<key|A-<arg|x>>>>
-
-  <assign|kbd-ia|<macro|x|<key|M-i <arg|x>>>>
-
-  <assign|kbd-exec|<macro|x|<key|M-e <arg|x>>>>
-
-  <assign|kbd-table|<macro|x|<key|M-t <arg|x>>>>
-
-  \;
-
-  <assign|key-shift|<macro|<localize|shift>>>
-
-  <assign|key-caps-lock|<macro|<localize|caps-lock>>>
-
-  <assign|key-control|<macro|<localize|control>>>
-
-  <assign|key-alternate|<macro|<localize|alternate>>>
-
-  <assign|key-meta|<macro|<localize|meta>>>
-
-  <assign|key-hyper|<macro|<localize|hyper>>>
-
-  <assign|key-windows|<macro|<localize|windows>>>
-
-  <assign|key-escape|<macro|<localize|escape>>>
-
-  <assign|key-space|<macro|<localize|space>>>
-
-  <assign|key-variant|<macro|<localize|tab>>>
-
-  <assign|key-tab|<macro|<localize|tab>>>
-
-  <assign|key-return|<macro|<localize|return>>>
-
-  <assign|key-backspace|<macro|<localize|backspace>>>
-
-  <assign|key-delete|<macro|<localize|delete>>>
-
-  <assign|key-left|<macro|<localize|left>>>
-
-  <assign|key-right|<macro|<localize|right>>>
-
-  <assign|key-up|<macro|<localize|up>>>
-
-  <assign|key-down|<macro|<localize|down>>>
-
-  <assign|key-home|<macro|<localize|home>>>
-
-  <assign|key-end|<macro|<localize|end>>>
-
-  <assign|key-pageup|<macro|<localize|pageup>>>
-
-  <assign|key-pagedown|<macro|<localize|pagedown>>>
+  <assign|prefix|<macro|x|<extern|tmdoc-key|<arg|x>>>>
 
   \;
 </body>
