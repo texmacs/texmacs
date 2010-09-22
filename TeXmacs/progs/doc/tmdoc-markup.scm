@@ -17,8 +17,8 @@
   (:secure #t)
   (cond ((string? s)
 	 (let* ((s2 (kbd-pre-rewrite s))
-		(s3 (kbd-post-rewrite s #f)))
-	   (kbd-system-rewrite s)))
+		(s3 (kbd-post-rewrite s2 #f)))
+	   (kbd-system-rewrite s3)))
 	((tree? s) (tmdoc-key (tree->stree s)))
 	(else '(render-key (with "color" "red" "?")))))
 
