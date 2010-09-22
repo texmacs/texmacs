@@ -51,6 +51,8 @@
 	  (if (or (font-exists-in-tt? "luxirr")
 		  (font-exists-in-tt? "Apple Symbols"))
 	      (-> "True type"
+		  (if (font-exists-in-tt? "LucidaGrande")
+		      ("Lucida Grande" (make-with "font" "apple-lucida")))
 		  (if (font-exists-in-tt? "luxirr")
 		      ("Luxi" (make-with "font" "luxi")))
 		  (if (font-exists-in-tt? "Apple Symbols")
