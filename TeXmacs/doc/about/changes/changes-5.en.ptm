@@ -13,7 +13,7 @@
     particular, accents are typed using <prefix|A-> instead of <key|E->.
 
     <item>Variants are now obtained using <key|tab> instead of
-    <key|<with|mode|math|\<ast\>>> and you can circle back using
+    <key|*> and you can circle back using
     <key|S-tab>.
 
     <item>Greek characters are now typed using <prefix|A-C->, <prefix|math:greek>, or the
