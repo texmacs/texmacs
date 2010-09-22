@@ -57,7 +57,6 @@
 	     (im (cadr w))
 	     (left (if (>= (length w) 3) (caddr w) #f))
 	     (right (if (>= (length w) 4) (cadddr w) #t)))
-	(kbd-set-rev! key (simple-insert (kbd-get-rev key) im))
 	(insert-kbd-wildcard key im post left right)
 	(kbd-wildcards-sub (cdr l) post))))
 
@@ -134,23 +133,22 @@
   (with r (ovl-resolve (kbd-get-inv com) #f)
     (if r r "")))
 
+(tm-define (kbd-find-rev-binding cmd)
+  (:synopsis "Find modeless keyboard binding for command @cmd")
+  ;;(display* "Find reverse binding '" com "'\n")
+  (lazy-keyboard-force)
+  (cond ((tree? cmd)
+	 (kbd-find-rev-binding (tree->stree cmd)))
+	((string? cmd)
+	 (with l (kbd-get-rev (object->string (string->object cmd)))
+	   (and l (nnull? l) (string? (car l)) (string-encode (car l)))))
+	(else #f)))
+
 (define (kbd-find-key-binding2 conds key)
   ;;(display* "Find binding '" key "' when " conds "\n")
   ;; FIXME: we really need an ovl-find which does mode inference
   (or (ovl-find (kbd-get-map key) conds)
       (ovl-find (kbd-get-map key) '())))
-
-(tm-define (kbd-shortcut cmd)
-  (:secure #t)
-  (lazy-keyboard-force)
-  (cond ((tree? cmd)
-	 (kbd-shortcut (tree->stree cmd)))
-	((string? cmd)
-	 (with l (kbd-get-rev (object->string (string->object cmd)))
-	   (if (and l (nnull? l))
-	       `(key ,(string-encode (car l)))
-	       '(key (with "color" "red" "?")))))
-	(else '(key (with "color" "red" "?")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yet more subroutines for the definition of keyboard shortcuts

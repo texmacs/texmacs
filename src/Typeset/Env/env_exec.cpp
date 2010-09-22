@@ -56,7 +56,6 @@ edit_env_rep::rewrite (tree t) {
       if (N(t) < 1) return tree (ERROR, "invalid extern");
       string fun= exec_string (t[0]);
       expr= cons (string_to_object (fun), expr);
-      (void) eval ("(lazy-markup-modules-force)");
       if (!secure && script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");

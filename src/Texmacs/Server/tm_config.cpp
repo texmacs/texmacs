@@ -152,8 +152,8 @@ tm_config_rep::kbd_pre_rewrite (string s) {
 }
 
 string
-tm_config_rep::kbd_post_rewrite (string s) {
-  variant_simplification (s);
+tm_config_rep::kbd_post_rewrite (string s, bool var_flag) {
+  if (var_flag) variant_simplification (s);
   return apply_wildcards (s, post_kbd_wildcards);
 }
 
@@ -187,4 +187,140 @@ tm_config_rep::get_keycomb (
     shorth= as_string (car (obj));
     help  = as_string (cadr (obj));
   }
+}
+
+/******************************************************************************
+* System dependent rendering of keyboard shortcuts
+******************************************************************************/
+
+static tree
+localize (string s, bool mod_flag= false) {
+  if (mod_flag) return tree (CONCAT, localize (s), "+");
+  else return compound ("localize", s);
+}
+
+static tree
+mathop (string s) {
+  return compound ("math", compound ("op", s));
+}
+
+static void
+system_kbd_initialize (hashmap<string,tree>& h) {
+  if (N(h) != 0) return;
+#ifdef OS_MACOS
+  h ("S-")= "<#21E7>";
+  h ("C-")= "<#2303>";
+  h ("A-")= "<#2318>";
+  h ("M-")= "<#2325>";
+  h ("H-")= localize ("Hyper");
+  h ("windows")= localize ("Windows");
+  h ("capslock")= "<#21EA>";
+  h ("return")= "<#21A9>";
+  h ("delete")= "<#2326>";
+  h ("backspace")= "<#232B>";
+  h ("clear")= "<#2327>";
+  h ("escape")= "<#238B>";
+  h ("space")= "Space";
+  h ("var")= "<#21E5>";
+  h ("tab")= "<#21E5>";
+  h ("left")= "<#2190>";
+  h ("right")= "<#2192>";
+  h ("up")= "<#2191>";
+  h ("down")= "<#2193>";
+  h ("home")= "<#2196>";
+  h ("end")= "<#2198>";
+  h ("pageup")= "<#21DE>";
+  h ("pagedown")= "<#21DF>";
+  h ("<less>")= "<#3C>";
+  h ("<gtr>")= "<#3E>";
+#else
+#ifdef QTTEXMACS
+  h ("S-")= localize ("Shift", true);
+  h ("C-")= localize ("Ctrl", true);
+  h ("A-")= localize ("Alt", true);
+  h ("M-")= localize ("Meta", true);
+  h ("H-")= localize ("Hyper", true);
+  h ("windows")= localize ("Windows");
+  h ("capslock")= localize ("Capslock");
+  h ("return")= localize ("Return");
+  h ("delete")= localize ("Delete");
+  h ("backspace")= localize ("Backspace");
+  h ("escape")= localize ("Escape");
+  h ("space")= localize ("Space");
+  h ("var")= localize ("Tab");
+  h ("tab")= localize ("Tab");
+  h ("left")= mathop ("<leftarrow>");
+  h ("right")= mathop ("<rightarrow>");
+  h ("up")= mathop ("<uparrow>");
+  h ("down")= mathop ("<downarrow>");
+  h ("home")= localize ("Home");
+  h ("end")= localize ("End");
+  h ("pageup")= localize ("PageUp");
+  h ("pagedown")= localize ("PageDown");
+#else
+  h ("S-")= "S-";
+  h ("C-")= "C-";
+  h ("A-")= "A-";
+  h ("M-")= "M-";
+  h ("H-")= "H-";
+  h ("windows")= localize ("windows");
+  h ("capslock")= localize ("capslock");
+  h ("return")= localize ("return");
+  h ("delete")= localize ("delete");
+  h ("backspace")= localize ("backspace");
+  h ("escape")= localize ("escape");
+  h ("space")= localize ("space");
+  h ("var")= localize ("tab");
+  h ("tab")= localize ("tab");
+  h ("left")= mathop ("<leftarrow>");
+  h ("right")= mathop ("<rightarrow>");
+  h ("up")= mathop ("<uparrow>");
+  h ("down")= mathop ("<downarrow>");
+  h ("home")= localize ("home");
+  h ("end")= localize ("end");
+  h ("pageup")= localize ("pageup");
+  h ("pagedown")= localize ("pagedown");
+#endif
+#endif
+}
+
+static tree
+kbd_render (tree t) {
+#ifdef OS_MACOS
+  t= tree (WITH, "font", "apple-symbols", t);
+#else
+  t= compound ("font-zoom", "0.841", t);
+#endif
+  return compound ("render-key", t);
+}
+
+tree
+tm_config_rep::kbd_system_rewrite (string s) {
+  system_kbd_initialize (system_kbd_decode);
+  tree k (CONCAT);
+  tree r (CONCAT);
+  int start= 0, i= 0;
+  while (true)
+    if (i == N(s) || s[i] == '-' || s[i] == ' ') {
+      if (i < N(s) && s[i] == '-') i++;
+      string ss= s (start, i);
+      if (system_kbd_decode->contains (ss)) r << system_kbd_decode[ss];
+#ifdef QTTEXMACS
+      else if (N(ss) == 1) {
+	if (is_locase (ss[0])) r << upcase_all (ss);
+	else if (is_upcase (ss[0])) r << system_kbd_decode ("S-") << ss;
+	else r << ss;
+      }
+#endif
+      else r << ss;
+      if (i == N(s) || s[i] == ' ') {
+	k << kbd_render (simplify_concat (r));
+	r= tree (CONCAT);
+	if (i == N(s)) break;
+	i++;
+      }
+      start= i;
+    }
+    else i++;
+  return simplify_concat (k);
 }

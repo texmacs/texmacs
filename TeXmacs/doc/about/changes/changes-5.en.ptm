@@ -14,7 +14,7 @@
 
     <item>Variants are now obtained using <key|tab> instead of
     <key|<with|mode|math|\<ast\>>> and you can circle back using
-    <key|shift-tab>.
+    <key|S-tab>.
 
     <item>Greek characters are now typed using <key|A-C->, <shortcut|math:greek>, or the
     hyper modifier, which can be configured in

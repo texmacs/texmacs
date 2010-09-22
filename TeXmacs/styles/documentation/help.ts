@@ -45,7 +45,7 @@
 
   <assign|key|<macro|which|<block*|<tformat|<table|<row|<cell|<arg|which>>>>>>>>
 
-  <assign|skey|<macro|x|<key|shift-<arg|x>>>>
+  <assign|skey|<macro|x|<key|S-<arg|x>>>>
 
   <assign|ckey|<macro|x|<key|ctrl-<arg|x>>>>
 

@@ -90,7 +90,6 @@ rewrite_impl (tree t) {
 	expr= cons (object (r[i]), expr);
       string fun= evaluate_string (t[0]);
       expr= cons (string_to_object (fun), expr);
-      (void) eval ("(lazy-markup-modules-force)");
       bool secure= as_bool (std_env ["secure"]);
       if (!secure && script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))

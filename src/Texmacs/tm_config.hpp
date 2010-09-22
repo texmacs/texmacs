@@ -17,10 +17,11 @@
 
 class tm_config_rep: virtual public server_rep {
 protected:
-  string var_suffix;                         // space + the variant key
-  string unvar_suffix;                       // space + the unvariant key
-  hashmap<string,tree>   pre_kbd_wildcards;  // wildcards applied to defns
-  hashmap<string,tree>   post_kbd_wildcards; // wildcards applied at lookup
+  string var_suffix;                        // space + the variant key
+  string unvar_suffix;                      // space + the unvariant key
+  hashmap<string,tree> pre_kbd_wildcards;   // wildcards applied to defns
+  hashmap<string,tree> post_kbd_wildcards;  // wildcards applied at lookup
+  hashmap<string,tree> system_kbd_decode;   // for printing of shortcuts
 
 public:
   tm_config_rep ();
@@ -38,7 +39,8 @@ public:
   void insert_kbd_wildcard (string key, string im, bool post, bool l, bool r);
   object find_key_binding (string key);
   string kbd_pre_rewrite (string l);
-  string kbd_post_rewrite (string l);
+  string kbd_post_rewrite (string l, bool var_flag);
+  tree kbd_system_rewrite (string l);
   void set_variant_keys (string var, string unvar);
   void variant_simplification (string& which);
   void get_keycomb (string& which, int& status,

@@ -146,17 +146,3 @@
     `(begin
        (define-module ,name)
        ,@l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Lazy modules for extern mactos in style packages
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define markup-modules-list '((utils misc markup-funcs)))
-
-(define-macro (lazy-markup-modules . l)
-  `(set! markup-modules-list (append markup-modules-list ',l)))
-
-(define-macro (lazy-markup-modules-force)
-  `(begin
-     (use-modules ,@markup-modules-list)
-     (set! markup-modules-list '())))

@@ -85,6 +85,10 @@
 
   <assign|really-huge|<macro|x|<with|font-size|2|<arg|x>>>>
 
+  <assign|font-zoom|<macro|factor|x|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|x>>>>
+
+  <assign|font-unzoom|<macro|factor|x|<with|font-size|<over|<value|font-size>|<arg|factor>>|<arg|x>>>>
+
   <\active*>
     <\src-comment>
       Below follow some frequently used content tags.

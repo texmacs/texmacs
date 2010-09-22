@@ -61,16 +61,31 @@ tmg_kbd_pre_rewrite (SCM arg1) {
 }
 
 SCM
-tmg_kbd_post_rewrite (SCM arg1) {
+tmg_kbd_post_rewrite (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "kbd-post-rewrite");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "kbd-post-rewrite");
+
+  string in1= scm_to_string (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= get_server()->kbd_post_rewrite (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_kbd_system_rewrite (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "kbd-system-rewrite");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  string out= get_server()->kbd_post_rewrite (in1);
+  tree out= get_server()->kbd_system_rewrite (in1);
   // SCM_ALLOW_INTS;
 
-  return string_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -1076,7 +1091,8 @@ initialize_glue_server () {
   scm_new_procedure ("insert-kbd-wildcard", (FN) tmg_insert_kbd_wildcard, 5, 0, 0);
   scm_new_procedure ("set-variant-keys", (FN) tmg_set_variant_keys, 2, 0, 0);
   scm_new_procedure ("kbd-pre-rewrite", (FN) tmg_kbd_pre_rewrite, 1, 0, 0);
-  scm_new_procedure ("kbd-post-rewrite", (FN) tmg_kbd_post_rewrite, 1, 0, 0);
+  scm_new_procedure ("kbd-post-rewrite", (FN) tmg_kbd_post_rewrite, 2, 0, 0);
+  scm_new_procedure ("kbd-system-rewrite", (FN) tmg_kbd_system_rewrite, 1, 0, 0);
   scm_new_procedure ("set-font-rules", (FN) tmg_set_font_rules, 1, 0, 0);
   scm_new_procedure ("window-get-id", (FN) tmg_window_get_id, 0, 0, 0);
   scm_new_procedure ("window-set-property", (FN) tmg_window_set_property, 2, 0, 0);

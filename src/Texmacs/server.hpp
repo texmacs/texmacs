@@ -55,7 +55,8 @@ public:
   virtual void   insert_kbd_wildcard (string key, string im,
 				      bool post, bool l, bool r) = 0;
   virtual string kbd_pre_rewrite (string l) = 0;
-  virtual string kbd_post_rewrite (string l) = 0;
+  virtual string kbd_post_rewrite (string l, bool var_flag= true) = 0;
+  virtual tree   kbd_system_rewrite (string l) = 0;
   virtual void   set_variant_keys (string var, string unvar) = 0;
   virtual void   get_keycomb (string& s, int& status,
 			      command& cmd, string& sh, string& help) = 0;

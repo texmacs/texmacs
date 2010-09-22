@@ -20,7 +20,8 @@
   (insert-kbd-wildcard insert_kbd_wildcard (void string string bool bool bool))
   (set-variant-keys set_variant_keys (void string string))
   (kbd-pre-rewrite kbd_pre_rewrite (string string))
-  (kbd-post-rewrite kbd_post_rewrite (string string))
+  (kbd-post-rewrite kbd_post_rewrite (string string bool))
+  (kbd-system-rewrite kbd_system_rewrite (tree string))
   (set-font-rules set_font_rules (void scheme_tree))
 
   (window-get-id get_window_id (int))
