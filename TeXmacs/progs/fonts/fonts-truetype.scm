@@ -61,6 +61,7 @@
     ((ms-verdana rm $a $b $s $d) (truetype verdana $s $d))
 
     ((apple-gothic $v $a $b $s $d) (unicode AppleGothic $s $d))
+    ((apple-lucida $v $a $b $s $d) (unicode LucidaGrande $s $d))
     ((apple-mingliu $v $a $b $s $d) (unicode PMingLiU $s $d))
     ((apple-symbols $v $a $b $s $d) (unicode #{Apple Symbols}# $s $d))
     ((apple-simsun $v $a $b $s $d) (unicode SimSun $s $d))
