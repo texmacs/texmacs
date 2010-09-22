@@ -287,7 +287,7 @@ system_kbd_initialize (hashmap<string,tree>& h) {
 static tree
 kbd_render (tree t) {
 #ifdef OS_MACOS
-  t= tree (WITH, "font", "apple-symbols", t);
+  t= tree (WITH, "font", "apple-lucida", t);
 #else
   t= compound ("font-zoom", "0.841", t);
 #endif
