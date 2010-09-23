@@ -129,6 +129,11 @@ os_macos () {
 }
 
 void
+set_fast_environments (bool b) {
+  enable_fastenv= true;
+}
+
+void
 win32_display (string s) {
   cout << s;
   cout.flush ();

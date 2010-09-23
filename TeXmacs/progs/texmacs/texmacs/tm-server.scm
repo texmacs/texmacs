@@ -51,12 +51,16 @@
   ;; but the fix below does not work
   (if (has-view?) (notify-change 1)))
 
+(define (notify-fast-environments var val)
+  (set-fast-environments (== val "on")))
+
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "default" notify-look-and-feel)
   ("detailed menus" "detailed" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
+  ("fast environments" "off" notify-fast-environments)
   ("semantic editing" "off" (lambda args (noop)))
   ("security" "prompt on scripts" notify-security)
   ("bibtex command" "bibtex" notify-bibtex-command)

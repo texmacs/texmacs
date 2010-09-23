@@ -111,9 +111,7 @@
 	      ("Spanish" "spanish")
 	      ("Swiss" "swiss"))
 	(toggle ("Automatically close brackets"
-		 "automatically close brackets"))
-	(toggle ("Semantic editing"
-		 "semantic editing")))
+		 "automatically close brackets")))
     (-> "Printer" . ,page-setup-tree)
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
@@ -158,6 +156,9 @@
 	(toggle ("Linking tool" "linking tool"))
 	(toggle ("Versioning tool" "versioning tool"))
 	(toggle ("Remote connections" "remote connections")))
+    (-> "Miscellaneous"
+	(toggle ("Fast environments" "fast environments"))
+	(toggle ("Semantic editing" "semantic editing")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")

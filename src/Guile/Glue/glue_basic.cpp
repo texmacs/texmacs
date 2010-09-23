@@ -151,6 +151,19 @@ tmg_plugin_list () {
 }
 
 SCM
+tmg_set_fast_environments (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "set-fast-environments");
+
+  bool in1= scm_to_bool (arg1);
+
+  // SCM_DEFER_INTS;
+  set_fast_environments (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_get_font_type () {
   // SCM_DEFER_INTS;
   int out= get_font_type ();
@@ -4019,6 +4032,7 @@ initialize_glue_basic () {
   scm_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   scm_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
   scm_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
+  scm_new_procedure ("set-fast-environments", (FN) tmg_set_fast_environments, 1, 0, 0);
   scm_new_procedure ("get-font-type", (FN) tmg_get_font_type, 0, 0, 0);
   scm_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
   scm_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
