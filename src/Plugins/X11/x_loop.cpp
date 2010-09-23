@@ -90,11 +90,8 @@ x_gui_rep::look_up_key (XKeyEvent* ev) {
   /* other keyboard modifiers */
   if (N(s)==0) return s;
   if (ev->state&4) s= "C-" * s;
-  if (ev->state&8) s= "Mod1-" * s;
-  if (ev->state&16) s= "Mod2-" * s;
-  if (ev->state&32) s= "Mod3-" * s;
-  if (ev->state&64) s= "Mod4-" * s;
-  if (ev->state&128) s= "Mod5-" * s;
+  if (ev->state&8) s= "A-" * s;
+  if (ev->state&240) s= "M-" * s;
   // cout << "key press: " << s << LF;
   return s;
 }

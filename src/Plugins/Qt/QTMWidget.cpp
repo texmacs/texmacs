@@ -474,15 +474,15 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 #ifdef Q_WS_MAC
     if (mods & Qt::ShiftModifier) r= "S-" * r;
     if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
-    if (mods & Qt::ControlModifier) r= "Mod1-" * r;  // The "Command" key
-    //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
-    if (mods & Qt::AltModifier) r= "Mod4-" * r;
+    if (mods & Qt::AltModifier) r= "A-" * r;
+    if (mods & Qt::ControlModifier) r= "M-" * r;  // The "Command" key
+    //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #else
     if (mods & Qt::ShiftModifier) r= "S-" * r;
     if (mods & Qt::ControlModifier) r= "C-" * r;
-    if (mods & Qt::AltModifier) r= "Mod1-" * r;
-    //if (mods & Qt::KeypadModifier) r= "Mod3-" * r;
-    if (mods & Qt::MetaModifier) r= "Mod4-" * r;     // The "Windows" key
+    if (mods & Qt::AltModifier) r= "A-" * r;
+    if (mods & Qt::MetaModifier) r= "M-" * r;     // The "Windows" key
+    //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #endif
 
     if (DEBUG_QT)

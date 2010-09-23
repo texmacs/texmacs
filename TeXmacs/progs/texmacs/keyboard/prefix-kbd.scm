@@ -19,7 +19,33 @@
     (texmacs texmacs tm-files)
     (generic generic-edit)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global prefixes for all modes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (set-variant-keys "tab" "S-tab")
+
+(kbd-wildcards
+  ("tilde tilde" "tilde")
+  ("hat hat" "hat")
+  ("umlaut umlaut" "umlaut")
+  ("acute acute" "acute")
+  ("grave grave" "grave")
+  ("cedilla cedilla" "cedilla")
+  ("breve breve" "breve")
+  ("check check" "check")
+  ("doubleacute doubleacute" "doubleacute")
+  ("abovering abovering" "abovering")
+  ("abovedot abovedot" "abovedot")
+  ("ogonek ogonek" "ogonek"))
+
+(kbd-wildcards pre
+  ("S-C-" "C-S-" #t)
+  ("S-A-" "A-S-" #t)
+  ("S-M-" "M-S-" #t)
+  ("C-A-" "A-C-" #t)
+  ("C-M-" "M-C-" #t)
+  ("A-M-" "M-A-" #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs prefixes

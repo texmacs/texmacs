@@ -354,16 +354,18 @@ string
 conv_sub (string ks) {
   string r(ks);
 #ifdef Q_WS_MAC
-  r = replace (r, "C-", "Meta+");
-  r = replace (r, "M-", "Alt+");
-  r = replace (r, "A-", "Ctrl+");
   r = replace (r, "S-", "Shift+");
+  r = replace (r, "C-", "Meta+");
+  r = replace (r, "A-", "Alt+");
+  r = replace (r, "M-", "Ctrl+");
+  //r = replace (r, "K-", "");
   r = replace (r, " ", ",");
 #else
-  r = replace (r, "C-", "Ctrl+");
-  r = replace (r, "M-", "Meta+");
-  r = replace (r, "A-", "Alt+");
   r = replace (r, "S-", "Shift+");
+  r = replace (r, "C-", "Ctrl+");
+  r = replace (r, "A-", "Alt+");
+  r = replace (r, "M-", "Meta+");
+  //r = replace (r, "K-", "");
   r = replace (r, " ", ",");
 #endif
   if (N(r) == 1 || (N(r) > 2 && r[N(r)-2] == '+')) {

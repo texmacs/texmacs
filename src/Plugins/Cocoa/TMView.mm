@@ -350,11 +350,11 @@ void initkeymap()
         /* other keyboard modifiers */
         if (N(s)!=0) {
           if (mods & NSControlKeyMask ) s= "C-" * s;
-          if (mods & NSAlternateKeyMask) s= "Mod1-" * s;
-          if (mods & NSCommandKeyMask) s= "Mod2-" * s;
-          //   if (mods & NSNumericPadKeyMask) s= "Mod3-" * s;
-          if (mods & NSHelpKeyMask) s= "Mod4-" * s;
-          //    if (mods & NSFunctionKeyMask) s= "Mod5-" * s;
+          if (mods & NSAlternateKeyMask) s= "A-" * s;
+          if (mods & NSCommandKeyMask) s= "M-" * s;
+          // if (mods & NSNumericPadKeyMask) s= "K-" * s;
+	  // if (mods & NSHelpKeyMask) s= "H-" * s;
+          // if (mods & NSFunctionKeyMask) s= "F-" * s;
         }
         cout << "key press: " << s << LF;
         wid -> handle_keypress (s, texmacs_time());    
@@ -398,10 +398,11 @@ void initkeymap()
     string modstr;
     
     if (mods & NSControlKeyMask ) modstr= "C-" * modstr;
-    //    if (mods & NSAlternateKeyMask) modstr= "Mod1-" * modstr;
-    if (mods & NSCommandKeyMask) modstr= "Mod1-" * modstr;
-    //   if (mods & NSNumericPadKeyMask) s= "Mod3-" * s;
-    if (mods & NSHelpKeyMask) modstr= "Mod4-" * modstr;
+    if (mods & NSAlternateKeyMask) modstr= "A-" * modstr;
+    if (mods & NSCommandKeyMask) modstr= "M-" * modstr;
+    // if (mods & NSNumericPadKeyMask) modstr= "K-" * modstr;
+    // if (mods & NSHelpKeyMask) modstr= "H-" * modstr;
+    // if (mods & NSFunctionKeyMask) modstr= "F-" * modstr;
     
     //    if (!processingCompose)
     {

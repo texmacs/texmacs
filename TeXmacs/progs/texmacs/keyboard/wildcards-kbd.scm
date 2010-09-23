@@ -13,25 +13,3 @@
 
 (texmacs-module (texmacs keyboard wildcards-kbd)
   (:use (texmacs keyboard config-kbd)))
-
-(kbd-wildcards
-  ("Mod1-" "" #t)
-  ("Mod2-" "" #t)
-  ("Mod3-" "" #t)
-  ("Mod4-" "" #t)
-  ("Mod5-" "" #t)
-
-  ("tilde tilde" "tilde")
-  ("hat hat" "hat")
-  ("umlaut umlaut" "umlaut")
-  ("acute acute" "acute")
-  ("grave grave" "grave")
-  ("cedilla cedilla" "cedilla")
-  ("breve breve" "breve")
-  ("check check" "check")
-  ("doubleacute doubleacute" "doubleacute")
-  ("abovering abovering" "abovering")
-  ("abovedot abovedot" "abovedot")
-  ("ogonek ogonek" "ogonek")
-
-  ,@(compute-wildcard-lines))

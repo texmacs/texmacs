@@ -64,7 +64,6 @@
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
 	     (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
-(lazy-keyboard (texmacs keyboard wildcards-kbd) always?)
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard texmacs-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
