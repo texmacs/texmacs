@@ -201,7 +201,7 @@
   (temp-proof-fix))
 
 (tm-define (make-eqnarray*)
-  (make 'equation*)
+  (make 'eqnarray*)
   (temp-proof-fix))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
