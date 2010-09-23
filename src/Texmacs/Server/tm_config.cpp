@@ -163,14 +163,15 @@ tm_config_rep::get_keycomb (
   string& which, int& status, command& cmd, string& shorth, string& help)
 {
   string orig= which;
-  // cout << which;
+  //cout << which;
   variant_simplification (which);
-  // cout << " -> " << which;
+  //cout << " -> " << which;
   string rew= apply_wildcards (which, post_kbd_wildcards);
-  // cout << " -> " << rew << LF;
+  //cout << " -> " << rew << LF;
   object obj= find_key_binding (rew);
-  // cout << rew << " => " << obj << LF;
-  if (obj == object (false) || (orig != which && !is_string (car (obj)))) {
+  //cout << rew << " => " << obj << LF;
+  //if (obj == object (false) || (orig != which && !is_string (car (obj)))) {
+  if (obj == object (false)) {
     status= 0;
     cmd   = command ();
     shorth= copy (rew);

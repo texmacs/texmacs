@@ -242,7 +242,6 @@
   ("emacs ]" (abort-recursive-edit))
   ("emacs _" (undo 0))
   ("emacs /" (undo 0))
-  ("emacs tab" (kbd-select-environment))
 
   ("cmd v" (kbd-page-up))
   ("cmd w" (clipboard-copy "primary"))
