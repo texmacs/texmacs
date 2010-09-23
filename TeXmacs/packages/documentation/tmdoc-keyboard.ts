@@ -28,6 +28,8 @@
 
   <assign|key|<macro|x|<extern|tmdoc-key|<arg|x>>>>
 
+  <assign|key*|<macro|x|<extern|tmdoc-key*|<arg|x>>>>
+
   <assign|shortcut|<macro|cmd|<extern|tmdoc-shortcut|<arg|cmd>>>>
 
   <assign|prefix|<macro|x|<extern|tmdoc-key|<arg|x>>>>

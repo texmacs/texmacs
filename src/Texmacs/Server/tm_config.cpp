@@ -210,8 +210,8 @@ system_kbd_initialize (hashmap<string,tree>& h) {
 #ifdef OS_MACOS
   h ("S-")= "<#21E7>";
   h ("C-")= "<#2303>";
-  h ("A-")= "<#2318>";
-  h ("M-")= "<#2325>";
+  h ("A-")= "<#2325>";
+  h ("M-")= "<#2318>";
   h ("H-")= localize ("Hyper");
   h ("windows")= localize ("Windows");
   h ("capslock")= "<#21EA>";

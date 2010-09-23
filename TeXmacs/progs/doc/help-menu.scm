@@ -29,8 +29,6 @@
 	    ---
 	    ("Introduction"
 	     (load-help-article "main/config/man-intro"))
-	    ("Keyboard modifiers"
-	     (load-help-article "main/config/man-config-kbd-modkeys"))
 	    ("Users of Cyrillic languages"
 	     (load-help-article "main/config/man-russian"))
 	    ("Users of oriental languages"

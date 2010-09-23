@@ -60,10 +60,10 @@
 
   ("cmd" "M-")
   ("font" "M-A-")
+  ("special" "M-A-")
   ("text" "A-")
   ("math" "A-")
   ("prog" "A-")
-  ("special" "H-")
   ("symbol" "S-F5" #t)
   ("executable" "cmd e")
   ("inactive" "cmd i")
@@ -111,10 +111,8 @@
 (kbd-wildcards
   ("escape" "M-" #t)
   ("escape escape" "A-" #t)
-  ("escape escape escape" "H-" #t)
+  ("escape escape escape" "M-A-" #t)
   ("escape escape escape escape" "noop" #t)
-  ("S-escape" "A-" #t)
-  ("C-escape" "H-" #t)
 
   ("tilde" "A-~")
   ("hat" "accent:deadhat") ;; needed for dead ^ in math mode
@@ -160,10 +158,10 @@
   ("macos" "A-" #t)
   ("cmd" "M-")
   ("font" "M-C-")
+  ("special" "M-A-")
   ("text" "C-")
   ("math" "C-")
   ("prog" "C-")
-  ("special" "H-")
   ("symbol" "S-F5" #t)
   ("executable" "cmd e")
   ("inactive" "cmd i")
@@ -211,10 +209,8 @@
 (kbd-wildcards
   ("escape" "M-" #t)
   ("escape escape" "A-" #t)
-  ("escape escape escape" "H-" #t)
+  ("escape escape escape" "M-A-" #t)
   ("escape escape escape escape" "noop" #t)
-  ("S-escape" "A-" #t)
-  ("C-escape" "H-" #t)
 
   ("tilde" "M-~")
   ("hat" "accent:deadhat") ;; needed for dead ^ in math mode
@@ -244,10 +240,10 @@
   ("windows" "C-" #t)
   ("cmd" "M-")
   ("font" "M-A-")
+  ("special" "M-A-")
   ("text" "A-")
   ("math" "A-")
   ("prog" "A-")
-  ("special" "H-")
   ("symbol" "S-F5" #t)
   ("executable" "cmd e")
   ("inactive" "cmd i")
@@ -295,10 +291,8 @@
 (kbd-wildcards
   ("escape" "M-" #t)
   ("escape escape" "A-" #t)
-  ("escape escape escape" "H-" #t)
+  ("escape escape escape" "M-A-" #t)
   ("escape escape escape escape" "noop" #t)
-  ("S-escape" "A-" #t)
-  ("C-escape" "H-" #t)
 
   ("tilde" "A-~")
   ("hat" "accent:deadhat") ;; needed for dead ^ in math mode
