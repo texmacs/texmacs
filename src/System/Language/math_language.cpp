@@ -111,8 +111,9 @@ math_language_rep::set_right_spacing (string cl, string s) {
 
 void
 math_language_rep::set_limits (string cl, string s) {
-  if      (s == "display") tpr_class(cl).spc_after= LIMITS_DISPLAY;
-  else if (s == "always")  tpr_class(cl).spc_after= LIMITS_ALWAYS;
+  if      (s == "none")    tpr_class(cl).limits= LIMITS_NONE;
+  else if (s == "display") tpr_class(cl).limits= LIMITS_DISPLAY;
+  else if (s == "always")  tpr_class(cl).limits= LIMITS_ALWAYS;
   else {
     cerr << "Attempt to associate limits " << s << " to " << cl << "\n";
     FAILED ("invalid limits");
