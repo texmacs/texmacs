@@ -882,15 +882,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-icons
-  ((balloon (icon "tm_fraction.xpm") "Insert a fraction#(A-f)")
+  ((balloon (icon "tm_fraction.xpm") "Insert a fraction")
    (make-fraction))
-  ((balloon (icon "tm_sqrt.xpm") "Insert a square root#(A-s)")
+  ((balloon (icon "tm_sqrt.xpm") "Insert a square root")
    (make-sqrt))
-  ((balloon (icon "tm_root.xpm") "Insert an n-th root#(A-S)")
+  ((balloon (icon "tm_root.xpm") "Insert an n-th root")
    (make-var-sqrt))
-  ((balloon (icon "tm_sub.xpm") "Make a subscript#(_)")
+  ((balloon (icon "tm_sub.xpm") "Make a subscript")
    (make-script #f #t))
-  ((balloon (icon "tm_sup.xpm") "Make a superscript#(^)")
+  ((balloon (icon "tm_sup.xpm") "Make a superscript")
    (make-script #t #t))
   (=> (balloon (icon "tm_hat.xpm") "Insert an accent")
       ((icon "tm_hat.xpm") "A-^" (make-wide "^"))

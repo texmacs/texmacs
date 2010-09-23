@@ -308,5 +308,5 @@
       (=> (balloon (icon "tm_description.xpm") "Description")
 	  (link description-menu))
       (if (inside-list-tag?)
-	  ((balloon (icon "tm_item.xpm") "Insert a new item#(A-;)")
+	  ((balloon (icon "tm_item.xpm") "Insert a new item")
 	   (make-item)))))

@@ -54,11 +54,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind prog-format-icons
-  ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
+  ((balloon (icon "tm_italic.xpm") "Write italic text")
    (make-with "prog-font-shape" "italic"))
-  ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")
+  ((balloon (icon "tm_bold.xpm") "Write bold text")
    (make-with "prog-font-series" "bold"))
-  ((balloon (icon "tm_sansserif.xpm") "Use a sans serif font#(A-C-s)")
+  ((balloon (icon "tm_sansserif.xpm") "Use a sans serif font")
    (make-with "prog-font-family" "ss"))
   (if (not (in-graphics?))
       (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
