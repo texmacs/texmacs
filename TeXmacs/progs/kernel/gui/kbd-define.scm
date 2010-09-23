@@ -32,19 +32,20 @@
      (ahash-set! lazy-keyboard-done ',module #t)
      (import-from ,module)))
 
-(define (lazy-keyboard-force-do l)
+(define (lazy-keyboard-force-do l flag?)
   (cond ((null? l) l)
 	((ahash-ref lazy-keyboard-done (cdar l))
-	 (lazy-keyboard-force-do (cdr l)))
-	((texmacs-in-mode? (caar l))
+	 (lazy-keyboard-force-do (cdr l) flag?))
+	((or flag? (texmacs-in-mode? (caar l)))
 	 (module-load (cdar l))
 	 (ahash-set! lazy-keyboard-done (cdar l) #t)
-	 (lazy-keyboard-force-do (cdr l)))
-	(else (cons (car l) (lazy-keyboard-force-do (cdr l))))))
+	 (lazy-keyboard-force-do (cdr l) flag?))
+	(else (cons (car l) (lazy-keyboard-force-do (cdr l) flag?)))))
 
-(tm-define (lazy-keyboard-force)
+(tm-define (lazy-keyboard-force . opt)
   (set! lazy-keyboard-waiting
-	(reverse (lazy-keyboard-force-do (reverse lazy-keyboard-waiting)))))
+	(reverse (lazy-keyboard-force-do (reverse lazy-keyboard-waiting)
+					 (nnull? opt)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard wildcards

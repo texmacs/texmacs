@@ -94,6 +94,7 @@ void
 tm_config_rep::insert_kbd_wildcard (
   string key, string im, bool post, bool l, bool r)
 {
+  //cout << "Wildcard " << key << " -> " << im << "\n";
   tree t= tuple (im,
 		 l? string ("*"): string (""),
 		 r? string ("*"): string (""));

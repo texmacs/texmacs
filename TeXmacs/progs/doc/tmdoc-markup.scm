@@ -15,7 +15,7 @@
 
 (tm-define (tmdoc-key s)
   (:secure #t)
-  (lazy-keyboard-force)
+  (lazy-keyboard-force #t)
   (cond ((string? s)
 	 (let* ((s2 (kbd-pre-rewrite s))
 		(s3 (kbd-post-rewrite s2 #f)))
@@ -25,14 +25,14 @@
 
 (tm-define (tmdoc-key* s)
   (:secure #t)
-  (lazy-keyboard-force)
+  (lazy-keyboard-force #t)
   (cond ((string? s) (kbd-system-rewrite s))
 	((tree? s) (tmdoc-key* (tree->stree s)))
 	(else '(render-key (with "color" "red" "?")))))
 
 (tm-define (tmdoc-shortcut s)
   (:secure #t)
-  (lazy-keyboard-force)
+  (lazy-keyboard-force #t)
   (cond ((string? s)
 	 (with r (kbd-find-rev-binding s)
 	   (tmdoc-key r)))
