@@ -65,7 +65,6 @@
 	     (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
-(lazy-keyboard (texmacs keyboard texmacs-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
 (lazy-menu (texmacs menus file-menu) file-menu go-menu
 	   new-file-menu load-menu save-menu print-menu close-menu)
