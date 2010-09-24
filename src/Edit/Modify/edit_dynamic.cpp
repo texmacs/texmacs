@@ -53,7 +53,8 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
   int n= arity (t);
   if (is_document (t) || is_func (t, PARA) || is_func (t, SURROUND))
     return true;
-  if (is_func (t, MACRO) || is_func (t, WITH) || is_func (t, LOCUS) ||
+  if (is_func (t, MACRO) || is_func (t, WITH) ||
+      is_func (t, HIGHLIGHT) || is_func (t, LOCUS) ||
       is_func (t, CANVAS) || is_func (t, ORNAMENT))
     return is_multi_paragraph_macro (t [n-1]);
   if (is_extension (t) && (!is_compound (t, "footnote"))) {
@@ -404,7 +405,9 @@ edit_dynamic_rep::remove_with (path p, string var) {
 void
 edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
-      ((is_func (t, WITH) || is_func (t, LOCUS)) && in_source ()))
+      ((is_func (t, WITH) ||
+	is_func (t, HIGHLIGHT) ||
+	is_func (t, LOCUS)) && in_source ()))
     back_in_general (t, p, forward);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");

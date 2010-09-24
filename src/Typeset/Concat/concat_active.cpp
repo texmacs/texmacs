@@ -223,6 +223,17 @@ concater_rep::typeset_flag (tree t, path ip) {
   }
 }
 
+void
+concater_rep::typeset_highlight (tree t, path ip) {
+  if (N(t) != 1)
+    typeset_dynamic (tree (ERROR, "bad highlight", t), ip);
+  else {
+    marker (descend (ip, 0));
+    typeset (t[0], descend (ip, 0));
+    marker (descend (ip, 1));
+  }
+}
+
 /******************************************************************************
 * Typesetting postscript images
 ******************************************************************************/

@@ -273,6 +273,7 @@ init_std_drd () {
   init (SYMBOL, "symbol", fixed (1));
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
+  init (HIGHLIGHT, "highlight", fixed (1) -> accessible (0));
 
   init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
   init (ID, "id", repeat (1, 1) -> accessible (0));

@@ -25,6 +25,7 @@ bridge bridge_mark (typesetter, tree, path);
 bridge bridge_expand_as (typesetter, tree, path);
 bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
+bridge bridge_highlight (typesetter, tree, path);
 bridge bridge_locus (typesetter, tree, path);
 bridge bridge_ornament (typesetter, tree, path);
 bridge bridge_canvas (typesetter, tree, path);
@@ -106,6 +107,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_auto (ttt, st, ip, var_inactive_m, true);
   case REWRITE_INACTIVE:
     return bridge_rewrite (ttt, st, ip);
+  case HIGHLIGHT:
+    return bridge_highlight (ttt, st, ip);
   case LOCUS:
     return bridge_locus (ttt, st, ip);
   case HLINK:

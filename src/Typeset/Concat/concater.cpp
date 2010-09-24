@@ -566,6 +566,9 @@ concater_rep::typeset (tree t, path ip) {
   case HYBRID:
     typeset_inactive (t, ip);
     break;
+  case HIGHLIGHT:
+    typeset_highlight (t, ip);
+    break;
 
   case LOCUS:
     typeset_locus (t, ip);
