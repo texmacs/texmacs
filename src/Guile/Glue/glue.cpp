@@ -130,7 +130,7 @@ os_macos () {
 
 void
 set_fast_environments (bool b) {
-  enable_fastenv= true;
+  enable_fastenv= b;
 }
 
 void
