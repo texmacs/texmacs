@@ -365,6 +365,8 @@ void
 drd_info_rep::set_env (tree_label l, int nr, tree env) {
   //if (as_string (l) == "section")
   //cout << as_string (l) << ", " << nr << " -> " << env << "\n";
+  //if (as_string (l) == "session")
+  //cout << as_string (l) << ", " << nr << " -> " << env << "\n";
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -395,6 +397,9 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
     int index= ti->get_index (i, N(t));
     if ((index<0) || (index>=N(ti->ci))) return "";
     tree cenv= drd_decode (ti->ci[index].env);
+    if (is_compound (t, "session") && i == 2)
+      cenv= tree (WITH, PROG_LANGUAGE, copy (t[0]),
+		        "prog-session", copy (t[1]));
     return env_merge (env, cenv);
   }
 }
