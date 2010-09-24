@@ -69,6 +69,9 @@
 	((and (func? (car l) :limits 1) (symbol? (cadar l)))
 	 (packrat-property lan sym "limits" (symbol->string (cadar l)))
 	 (define-rule-one lan sym (cdr l)))
+	((and (func? (car l) :highlight 1) (symbol? (cadar l)))
+	 (packrat-property lan sym "highlight" (symbol->string (cadar l)))
+	 (define-rule-one lan sym (cdr l)))
 	(else
 	  ;;(display* "Define " sym " := " l "\n")
 	  ;;(display* "Packrat= " (scheme->packrat `(or ,@l)) "\n")

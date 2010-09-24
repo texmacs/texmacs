@@ -77,7 +77,9 @@ edit_select_rep::semantic_active (path p) {
   p= semantic_root (p);
   if (as_string (eval ("(get-preference \"semantic editing\")")) == "on") {
     //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
-    return get_env_value (MODE, end (et, p)) == "math";
+    tree mode= get_env_value (MODE, end (et, p));
+    tree plan= get_env_value (PROG_LANGUAGE, end (et, p));
+    return mode == "math" || (mode == "prog" && plan == "simple");
   }
   else return false;
 }
@@ -86,7 +88,8 @@ bool
 edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   if (!semantic_active (p)) return false;
   p= semantic_root (p);
-  tree lt= get_env_value (MATH_LANGUAGE, end (et, p));
+  tree mt= get_env_value (MODE, end (et, p));
+  tree lt= get_env_value (MODE_LANGUAGE (mt->label), end (et, p));
   string lan= (is_atomic (lt)? lt->label: string ("std-math"));
   path p1= q1 / p, p2= q2 / p;
   tree st= subtree (et, p);

@@ -22,6 +22,8 @@
     </src-license>
   </src-title>>
 
+  <assign|simple-prog|<macro|x|<with|mode|prog|prog-language|simple|<highlight|<arg|x>>>>>
+
   <assign|algo|<macro|name|<with|font-family|tt|math-font-family|ttt|<arg|name>>>>
 
   <assign|algorithm|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>>
