@@ -139,8 +139,10 @@ tree_position_rep::notify_var_join (tree& ref, tree t, int offset) {
   if (is_atomic (ref))
     reattach_at (this, t, index + offset);
   else {
-    if (index == 0) reattach_right (this, t[offset-1]);
-    else reattach_right (this, t);
+    if (index != 0) reattach_right (this, t);
+    else if (offset > 0) reattach_right (this, t[offset-1]);
+    else if (N(t) != 0) reattach_left (this, t[0]);
+    else reattach_left (this, t);
   }
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
