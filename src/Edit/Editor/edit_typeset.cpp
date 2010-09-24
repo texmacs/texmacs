@@ -209,6 +209,8 @@ edit_typeset_rep::typeset_exec_until (path p) {
       t= t[i];
       q= q->next;
     }
+    if (env->read (PREAMBLE) == "true")
+      env->write (MODE, "src");
   }
   else exec_until (ttt, p / rp);
   env->read_env (cur (p));

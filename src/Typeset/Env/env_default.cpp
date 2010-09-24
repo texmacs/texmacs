@@ -287,12 +287,16 @@ initialize_default_env () {
     tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "once"));
   env ("inactive*")=
     tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "recurse"));
-  env ("indent")=
+  env ("right-flush")=
+    tree (MACRO, tree (HTAB, "0fn", "first"));
+  env ("indent*")=
     tree (MACRO, "x",
 	  tree (WITH, PAR_LEFT, tree (PLUS, tree (VALUE, PAR_LEFT), "1.5fn"),
 		tree (ARG, "x")));
-  env ("rightflush")=
-    tree (MACRO, tree (HTAB, "0fn", "first"));
+  env ("indent")=
+    tree (MACRO, "x",
+	  tree (SURROUND, "", compound ("right-flush"),
+		compound ("indent*", tree (ARG, "x"))));
   env ("mutator")=
     tree (MACRO, "x", "y", tree (ARG, "x"));
 

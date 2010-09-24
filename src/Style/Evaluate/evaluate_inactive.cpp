@@ -392,7 +392,7 @@ rewrite_inactive_default (tree t, inactive_style sty) {
 	if (i==d) doc << tree (OPEN_TAG, op);
 	inactive_style ss= set_bf (sty, true, sty->close >= CLOSE_LONG);
 	next= rewrite_inactive_arg (t, i, ss);
-	next= compound ("indent", next);
+	next= compound ("indent*", next);
 	i++;
       }
 

@@ -414,7 +414,7 @@ edit_env_rep::rewrite_inactive_default (
       if ((!compact) || is_long_arg (t, i)) {
 	if (i==d) doc << tree (OPEN_TAG, op);
 	next= rewrite_inactive_arg (t, var, i, true, src_close >= CLOSE_LONG);
-	next= compound ("indent", next);
+	next= compound ("indent*", next);
 	i++;
       }
 

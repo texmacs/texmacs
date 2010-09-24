@@ -33,10 +33,18 @@
   <assign|body|<macro|body|<surround|<vspace*|0.5fn>||<with|item*|<macro|name|<vspace*|0.5fn><with|font-series|bold|math-font-series|bold|<arg|name>
   >>|<arg|body>>>>>
 
-  <assign|indent|<\macro|body>
+  <assign|indent*|<\macro|body>
     <\with|par-left|<plus|<value|par-left>|1.5fn>>
-      <surround||<right-flush>|<arg|body>>
+      <arg|body>
     </with>
+  </macro>>
+
+  <assign|indent|<\macro|body>
+    <\surround||<right-flush>>
+      <\indent*>
+        <arg|body>
+      </indent*>
+    </surround>
   </macro>>
 
   <assign|pile|<macro|x|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|x>>>>
