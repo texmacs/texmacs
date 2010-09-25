@@ -20,6 +20,7 @@ class packrat_parser_rep: concrete_struct {
 public:
   hashmap<C,array<C> >  grammar;
   hashmap<C,tree>       productions;
+  hashmap<tree,string>  properties;
 
   tree                  current_tree;
   string                current_string;
@@ -49,6 +50,8 @@ public:
   void context (C sym, C pos, C left, C right,
 		array<C>& kind, array<C>& begin, array<C>& end);
   void compress (array<C>& kind, array<C>& begin, array<C>& end);
+  void highlight (tree t, path p1, path p2, string col);
+  void highlight (C sym, C pos);
 
   friend class packrat_parser;
 };

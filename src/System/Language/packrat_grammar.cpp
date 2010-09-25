@@ -268,6 +268,7 @@ packrat_grammar_rep::define (string s, tree t) {
 
 void
 packrat_grammar_rep::property (string s, string var, string val) {
+  //cout << "Set property " << s << ", " << var << " -> " << val << "\n";
   properties (tuple (s, var))= val;
 }
 

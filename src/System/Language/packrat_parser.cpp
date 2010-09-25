@@ -19,6 +19,7 @@
 packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
   grammar (gr->grammar),
   productions (gr->productions),
+  properties (gr->properties),
   current_tree (packrat_uninit),
   current_string (""),
   current_start (-1),
@@ -383,6 +384,89 @@ packrat_parser_rep::compress
 }
 
 /******************************************************************************
+* Syntax highlighting
+******************************************************************************/
+
+void
+packrat_parser_rep::highlight (tree t, path p1, path p2, string col) {
+  if (p1 == p2);
+  else if (is_atomic (t)) {
+    string s= t->label;
+    ASSERT (is_atom (p1) && is_atom (p2), "invalid selection");
+    ASSERT (0 <= p1->item && p1->item <= p2->item && p2->item <= N(s),
+	    "invalid selection");
+    cout << "highlight " << col << ": " << s (p1->item, p2->item) << "\n";
+  }
+  else if (N(t) == 0);
+  else {
+    ASSERT (!is_nil (p1) && !is_nil (p2) && p1->item <= p2->item,
+	    "invalid selection");
+    if (p1 == path (0)) p1= path (0, 0);
+    if (p2 == path (1)) p2= path (N(t) - 1, right_index (t[N(t) -1]));
+    for (int i= max (0, p1->item); i <= min (p2->item, N(t)-1); i++) {
+      path q1= (i == p1->item? p1->next: path (0));
+      path q2= (i == p2->item? p2->next: path (right_index (t[i])));
+      highlight (t[i], q1, q2, col);
+    }
+  }
+}
+
+void
+packrat_parser_rep::highlight (C sym, C pos) {
+  C next= parse (sym, pos);
+  if (next < 0) return;
+  tree symt= packrat_decode[sym];
+  if (is_compound (symt, "symbol", 1) && is_atomic (symt[0])) {
+    tree key= tuple (symt[0]->label, "highlight");
+    if (properties->contains (key)) {
+      string col= properties [key];
+      path start= decode_tree_position (pos);
+      path end= decode_tree_position (next);
+      highlight (current_tree, start, end, col);
+    }
+  }
+
+  if (sym >= PACKRAT_TM_OPEN) {
+    array<C> inst= grammar [sym];
+    //cout << "Parse " << inst << " at " << pos << LF;
+    switch (inst[0]) {
+    case PACKRAT_OR:
+      for (int i=1; i<N(inst); i++)
+	if (parse (inst[i], pos) != PACKRAT_FAILED)
+	  highlight (inst[i], pos);
+      break;
+    case PACKRAT_CONCAT:
+      for (int i=1; i<N(inst); i++) {
+	next= parse (inst[i], pos);
+	highlight (inst[i], pos);
+	pos= next;
+      }
+      break;
+    case PACKRAT_WHILE:
+    case PACKRAT_REPEAT:
+      while (true) {
+	C next= parse (inst[1], pos);
+	if (next == PACKRAT_FAILED) break;
+	highlight (inst[1], pos);
+	pos= next;
+      }
+      break;
+    case PACKRAT_RANGE:
+    case PACKRAT_NOT:
+    case PACKRAT_TM_OPEN:
+    case PACKRAT_TM_ANY:
+    case PACKRAT_TM_ARGS:
+    case PACKRAT_TM_LEAF:
+    case PACKRAT_TM_FAIL:
+      break;
+    default:
+      highlight (inst[0], pos);
+      break;
+    }
+  }
+}
+
+/******************************************************************************
 * User interface
 ******************************************************************************/
 
@@ -451,4 +535,12 @@ packrat_select (string lan, string s, tree in,
   p2= par->decode_tree_position (end[n-1]);
   //cout << "Selected " << packrat_decode[kind[n-1]] << LF;
   return true;
+}
+
+void
+packrat_highlight (string lan, string s, tree in) {
+  packrat_parser par= make_packrat_parser (lan, in);
+  C sym = encode_symbol (compound ("symbol", s));
+  if (par->parse (sym, 0) == N(par->current_input))
+    par->highlight (sym, 0);
 }
