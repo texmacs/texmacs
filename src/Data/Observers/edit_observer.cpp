@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : edit_observer.cpp
-* DESCRIPTION: Persistently attach inverse paths to trees
+* DESCRIPTION: Persistently attach editors to trees
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * An inverse path observer maintains the inverse path of the position

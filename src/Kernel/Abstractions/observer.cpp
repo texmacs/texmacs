@@ -657,3 +657,18 @@ observer_rep::get_tree (tree& t) {
   (void) t;
   return false;
 }
+
+bool
+observer_rep::set_highlight (int col, int start, int end) {
+  (void) col; (void) start; (void) end;
+  return false;
+}
+
+array<int>
+observer_rep::get_highlight () {
+  return array<int> ();
+}
+
+void
+observer_rep::reset_highlight (tree& ref) {
+}
