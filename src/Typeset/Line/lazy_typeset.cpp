@@ -15,6 +15,7 @@
 #include "Stack/stacker.hpp"
 #include "Boxes/construct.hpp"
 #include "analyze.hpp"
+#include "packrat.hpp"
 
 array<line_item> typeset_marker (edit_env env, path ip);
 array<line_item> typeset_concat (edit_env, tree t, path ip);
@@ -439,9 +440,12 @@ make_lazy_expand_as (edit_env env, tree t, path ip) {
 
 lazy
 make_lazy_highlight (edit_env env, tree t, path ip) {
+  tree u= env->expand (t[0]);
+  packrat_highlight (env->get_string (PROG_LANGUAGE), "Main", u);
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
   lazy par= make_lazy (env, t[0], descend (ip, 0));
+  detach_highlight (u);
   return lazy_surround (a, b, par, ip);
 }
 

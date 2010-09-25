@@ -10,13 +10,16 @@
 ******************************************************************************/
 
 #include "bridge.hpp"
+#include "packrat.hpp"
 
 class bridge_highlight_rep: public bridge_rep {
 protected:
   bridge body;
+  tree ht;
 
 public:
   bridge_highlight_rep (typesetter ttt, tree st, path ip);
+  ~bridge_highlight_rep ();
   void initialize ();
 
   void notify_assign (path p, tree u);
@@ -34,6 +37,10 @@ bridge_highlight_rep::bridge_highlight_rep (typesetter ttt, tree st, path ip):
   bridge_rep (ttt, st, ip)
 {
   initialize ();
+}
+
+bridge_highlight_rep::~bridge_highlight_rep () {
+  detach_highlight (ht);
 }
 
 void
@@ -134,6 +141,9 @@ bridge_highlight_rep::my_typeset_will_be_complete () {
 
 void
 bridge_highlight_rep::my_typeset (int desired_status) {
+  detach_highlight (ht);
+  ht= env->expand (st[0]);
+  packrat_highlight (env->get_string (PROG_LANGUAGE), "Main", ht);
   ttt->insert_marker (st, ip);
   body->typeset (desired_status);
 }

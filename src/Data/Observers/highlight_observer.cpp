@@ -71,7 +71,7 @@ void
 attach_highlight (tree& ref, int col, int start, int end) {
   ASSERT (is_atomic (ref), "compound trees cannot be highlighted");
   ASSERT (0 <= start && start <= end && end <= N(ref->label), "out of range");
-  if (!ref->obs->set_highlight (col, start, end)) {
+  if (is_nil (ref->obs) || !ref->obs->set_highlight (col, start, end)) {
     array<int> cols (N(ref->label));
     for (int i=0; i<N(ref->label); i++) cols[i]= 0;
     for (int i=start; i<end; i++) cols[i]= col;
@@ -81,11 +81,15 @@ attach_highlight (tree& ref, int col, int start, int end) {
 
 array<int>
 obtain_highlight (tree& ref) {
+  if (is_nil (ref->obs)) return array<int> ();
   return ref->obs->get_highlight ();
 }
 
 void
 detach_highlight (tree& ref) {
-  if (is_atomic (ref)) ref->obs->reset_highlight (ref);
-  else for (int i=0; i<N(ref); i++) detach_highlight (ref[i]);
+  if (is_compound (ref))
+    for (int i=0; i<N(ref); i++)
+      detach_highlight (ref[i]);
+  else if (!is_nil (ref->obs))
+    ref->obs->reset_highlight (ref);
 }
