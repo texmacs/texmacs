@@ -17,7 +17,8 @@ verb_language_rep::verb_language_rep (string name):
   language_rep (name) {}
 
 text_property
-verb_language_rep::advance (string s, int& pos) {
+verb_language_rep::advance (tree t, int& pos) {
+  string s= t->label;
   if (pos==N(s)) return &tp_normal_rep;
   if (s[pos]==' ') {
     pos++;
@@ -27,7 +28,15 @@ verb_language_rep::advance (string s, int& pos) {
     pos++;
     return &tp_hyph_rep;
   }
-  while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) pos++;
+  array<int> cols= obtain_highlight (t);
+  if (N(cols) == 0)
+    while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) pos++;
+  else if ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) {
+    pos++;
+    while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-') &&
+	   cols[pos] == cols[pos-1]) pos++;
+  }
+    
   return &tp_normal_rep;
 }
 
@@ -45,6 +54,15 @@ verb_language_rep::hyphenate (
 { 
   left = s(0, after);
   right= s(after, N(s));
+}
+
+
+string
+verb_language_rep::get_color (tree t, int start, int end) {
+  if (start >= end) return "";
+  array<int> cols= obtain_highlight (t);
+  if (start < N(cols) && cols[start] != 0) return "blue";
+  return "";
 }
 
 /******************************************************************************

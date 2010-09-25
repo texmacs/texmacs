@@ -30,7 +30,8 @@ mathemagix_language_rep::mathemagix_language_rep (string name):
 }
 
 text_property
-mathemagix_language_rep::advance (string s, int& pos) {
+mathemagix_language_rep::advance (tree t, int& pos) {
+  string s= t->label;
   if (pos==N(s)) return &tp_normal_rep;
   char c= s[pos];
   if (c == ' ') {

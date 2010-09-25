@@ -25,7 +25,8 @@ scheme_language_rep::scheme_language_rep (string name):
 }
 
 text_property
-scheme_language_rep::advance (string s, int& pos) {
+scheme_language_rep::advance (tree t, int& pos) {
+  string s= t->label;
   if (pos==N(s)) return &tp_normal_rep;
   switch (s[pos]) {
   case ' ':

@@ -395,7 +395,8 @@ packrat_parser_rep::highlight (tree t, path p1, path p2, string col) {
     ASSERT (is_atom (p1) && is_atom (p2), "invalid selection");
     ASSERT (0 <= p1->item && p1->item <= p2->item && p2->item <= N(s),
 	    "invalid selection");
-    cout << "highlight " << col << ": " << s (p1->item, p2->item) << "\n";
+    // FIXME: use col
+    attach_highlight (t, 1, p1->item, p2->item);
   }
   else if (N(t) == 0);
   else {

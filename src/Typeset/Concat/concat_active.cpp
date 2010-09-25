@@ -234,6 +234,7 @@ concater_rep::typeset_highlight (tree t, path ip) {
     marker (descend (ip, 0));
     typeset (t[0], descend (ip, 0));
     marker (descend (ip, 1));
+    detach_highlight (u);
   }
 }
 

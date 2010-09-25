@@ -23,15 +23,16 @@ extern text_property_rep tp_shortop_rep;
 
 struct verb_language_rep: language_rep {
   verb_language_rep (string name);
-  text_property advance (string s, int& pos);
+  text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
+  string get_color (tree t, int start, int end);
 };
 
 struct scheme_language_rep: language_rep {
   hashmap<string,string> colored;
   scheme_language_rep (string name);
-  text_property advance (string s, int& pos);
+  text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
@@ -40,7 +41,7 @@ struct scheme_language_rep: language_rep {
 struct mathemagix_language_rep: language_rep {
   hashmap<string,string> colored;
   mathemagix_language_rep (string name);
-  text_property advance (string s, int& pos);
+  text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
@@ -49,7 +50,7 @@ struct mathemagix_language_rep: language_rep {
 struct cpp_language_rep: language_rep {
   hashmap<string,string> colored;
   cpp_language_rep (string name);
-  text_property advance (string s, int& pos);
+  text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
