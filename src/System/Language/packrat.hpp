@@ -14,6 +14,9 @@
 #include "tree.hpp"
 #include "Scheme/object.hpp"
 
+int    encode_color (string s);
+string decode_color (int c);
+
 void   packrat_define (string lan, string s, tree t);
 void   packrat_property (string lan, string s, string var, string val);
 void   packrat_inherit (string lan, string from);

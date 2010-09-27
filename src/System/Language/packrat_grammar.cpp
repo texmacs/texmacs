@@ -13,17 +13,19 @@
 #include "analyze.hpp"
 #include "iterator.hpp"
 
-tree              packrat_uninit (UNINIT);
-int               packrat_nr_tokens= 256;
-int               packrat_nr_symbols= 0;
-hashmap<string,C> packrat_tokens;
-hashmap<tree,C>   packrat_symbols;
-hashmap<C,tree>   packrat_decode (packrat_uninit);
+tree                 packrat_uninit (UNINIT);
+int                  packrat_nr_tokens= 256;
+int                  packrat_nr_symbols= 0;
+hashmap<string,C>    packrat_tokens;
+hashmap<tree,C>      packrat_symbols;
+hashmap<C,tree>      packrat_decode (packrat_uninit);
+hashmap<string,int>  color_encoding;
+hashmap<int,string>  color_decoding;
 
 RESOURCE_CODE(packrat_grammar);
 
 /******************************************************************************
-* Encoding tokens and symbols
+* Encoding and decoding of tokens and symbols
 ******************************************************************************/
 
 C
@@ -81,6 +83,75 @@ encode_symbol (tree t) {
     packrat_decode  (sym)= t;
   }
   return packrat_symbols[t];
+}
+
+/******************************************************************************
+* Encode and decode colors for syntax highlighting
+******************************************************************************/
+
+void
+initialize_color_encodings () {
+  color_encoding ("comment")= 1;
+  color_encoding ("constant")= 10;
+  color_encoding ("constant_identifier")= 11;
+  color_encoding ("constant_function")= 12;
+  color_encoding ("constant_type")= 13;
+  color_encoding ("constant_category")= 14;
+  color_encoding ("constant_module")= 15;
+  color_encoding ("constant_number")= 16;
+  color_encoding ("constant_string")= 17;
+  color_encoding ("variable")= 20;
+  color_encoding ("variable_identifier")= 21;
+  color_encoding ("variable_function")= 22;
+  color_encoding ("variable_type")= 23;
+  color_encoding ("variable_category")= 24;
+  color_encoding ("variable_module")= 25;
+  color_encoding ("declare")= 30;
+  color_encoding ("declare_identifier")= 31;
+  color_encoding ("declare_function")= 32;
+  color_encoding ("declare_type")= 33;
+  color_encoding ("declare_category")= 34;
+  color_encoding ("declare_module")= 35;
+}
+
+void
+initialize_color_decodings () {
+  color_decoding (-1)= "red";
+  color_decoding (1)= "brown";
+  color_decoding (10)= "#4040c0";
+  color_decoding (11)= "#4040c0";
+  color_decoding (12)= "#4040c0";
+  color_decoding (13)= "#4040c0";
+  color_decoding (14)= "#4040c0";
+  color_decoding (15)= "#4040c0";
+  color_decoding (16)= "#4040c0";
+  color_decoding (17)= "#4040c0";
+  color_decoding (20)= "#606060";
+  color_decoding (21)= "#606060";
+  color_decoding (22)= "#606060";
+  color_decoding (23)= "#00c000";
+  color_decoding (24)= "#00c000";
+  color_decoding (25)= "#00c000";
+  color_decoding (30)= "#0000c0";
+  color_decoding (31)= "#0000c0";
+  color_decoding (32)= "#0000c0";
+  color_decoding (33)= "#0000c0";
+  color_decoding (34)= "#0000c0";
+  color_decoding (35)= "#0000c0";
+}
+
+int
+encode_color (string s) {
+  if (N(color_encoding) == 0) initialize_color_encodings ();
+  if (color_encoding->contains (s)) return color_encoding[s];
+  else return -1;
+}
+
+string
+decode_color (int c) {
+  if (N(color_decoding) == 0) initialize_color_decodings ();
+  if (color_decoding->contains (c)) return color_decoding[c];
+  else return "";
 }
 
 /******************************************************************************

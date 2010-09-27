@@ -388,7 +388,7 @@ packrat_parser_rep::compress
 ******************************************************************************/
 
 void
-packrat_parser_rep::highlight (tree t, path p1, path p2, string col) {
+packrat_parser_rep::highlight (tree t, path p1, path p2, int col) {
   if (p1 == p2);
   else if (is_atomic (t)) {
     string s= t->label;
@@ -396,7 +396,7 @@ packrat_parser_rep::highlight (tree t, path p1, path p2, string col) {
     ASSERT (0 <= p1->item && p1->item <= p2->item && p2->item <= N(s),
 	    "invalid selection");
     // FIXME: use col
-    attach_highlight (t, 1, p1->item, p2->item);
+    attach_highlight (t, col, p1->item, p2->item);
   }
   else if (N(t) == 0);
   else {
@@ -420,9 +420,9 @@ packrat_parser_rep::highlight (C sym, C pos) {
     static C hl= encode_symbol (compound ("property", "highlight"));
     D key= (((D) hl) << 32) + ((D) (sym ^ hl));
     if (properties->contains (key)) {
-      string col  = properties [key];
-      path   start= decode_tree_position (pos);
-      path   end  = decode_tree_position (next);
+      int  col  = encode_color (properties [key]);
+      path start= decode_tree_position (pos);
+      path end  = decode_tree_position (next);
       highlight (current_tree, start, end, col);
     }
   }

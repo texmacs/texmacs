@@ -50,7 +50,7 @@ public:
   void context (C sym, C pos, C left, C right,
 		array<C>& kind, array<C>& begin, array<C>& end);
   void compress (array<C>& kind, array<C>& begin, array<C>& end);
-  void highlight (tree t, path p1, path p2, string col);
+  void highlight (tree t, path p1, path p2, int col);
   void highlight (C sym, C pos);
 
   friend class packrat_parser;

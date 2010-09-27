@@ -29,7 +29,7 @@
     Lhs-radical)
 
   (define Lhs-radical
-    (:highlight definition)
+    (:highlight declare)
     Radical)
 
   (define Expression
@@ -69,11 +69,11 @@
     Radical)
 
   (define Identifier
-    (:highlight identifier)
+    (:highlight variable_identifier)
     (+ (or (- "a" "z") (- "A" "Z"))))
 
   (define Number
-    (:highlight constant)
+    (:highlight constant_number)
     ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9"))))))
 
   (define Radical
