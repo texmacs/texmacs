@@ -60,7 +60,7 @@ bridge_highlight (typesetter ttt, tree st, path ip) {
 
 void
 bridge_highlight_rep::notify_assign (path p, tree u) {
-  // cout << "Assign " << p << ", " << u << " in " << st << "\n";
+  //cout << "Assign " << p << ", " << u << " in " << st << "\n";
   ASSERT (!is_nil (p) || is_func (u, HIGHLIGHT), "nil path");
   if (is_nil (p)) {
     st= u;
@@ -78,13 +78,14 @@ bridge_highlight_rep::notify_assign (path p, tree u) {
       body->notify_change ();
     }
     if (mp_flag != is_multi_paragraph (st)) initialize ();
+    initialize ();
   }
   status= CORRUPTED;
 }
 
 void
 bridge_highlight_rep::notify_insert (path p, tree u) {
-  // cout << "Insert " << p << ", " << u << " in " << st << "\n";
+  //cout << "Insert " << p << ", " << u << " in " << st << "\n";
   ASSERT (!is_nil (p), "nil path");
   if (is_atom (p) || (p->item != 0)) bridge_rep::notify_insert (p, u);
   else {
@@ -93,12 +94,13 @@ bridge_highlight_rep::notify_insert (path p, tree u) {
     st= substitute (st, 0, body->st);
     if (mp_flag != is_multi_paragraph (st)) initialize ();
   }
+  initialize ();
   status= CORRUPTED;
 }
 
 void
 bridge_highlight_rep::notify_remove (path p, int nr) {
-  // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
+  //cout << "Remove " << p << ", " << nr << " in " << st << "\n";
   ASSERT (!is_nil (p), "nil path");
   if (is_atom (p) || (p->item != 0)) bridge_rep::notify_remove (p, nr);
   else {
@@ -107,13 +109,18 @@ bridge_highlight_rep::notify_remove (path p, int nr) {
     st= substitute (st, 0, body->st);
     if (mp_flag != is_multi_paragraph (st)) initialize ();
   }
+  initialize ();
   status= CORRUPTED;
 }
 
 bool
 bridge_highlight_rep::notify_macro (int type, string var, int l, path p, tree u) {
+  //cout << "Macro argument " << var << " [action=" << type
+  //     << ", level=" << l << "] " << p << ", " << u << " in " << st << "\n";
   bool flag= body->notify_macro (type, var, l, p, u);
+  flag= true;
   if (flag) status= CORRUPTED;
+  initialize ();
   return flag;
 }
 
