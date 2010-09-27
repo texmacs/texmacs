@@ -68,14 +68,16 @@ struct packrat_grammar_rep: rep<packrat_grammar> {
   string                 lan_name;  // name of the packrat_grammar
   hashmap<C,array<C> >   grammar;
   hashmap<C,tree>        productions;
-  hashmap<tree,string>   properties;
+  hashmap<D,string>      properties;
 
   packrat_grammar_rep (string s);
 
   void accelerate (array<C>& def);
   array<C> define (tree t);
   void define (string s, tree t);  
-  void property (string s, string var, string val);  
+  void set_property (string s, string var, string val);
+  bool has_property (string s, string var);
+  string get_property (string s, string var);
 
   string decode_as_string (C sym);
   array<string> decode_as_array_string (C sym);

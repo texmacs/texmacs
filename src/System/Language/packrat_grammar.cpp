@@ -311,9 +311,12 @@ packrat_grammar_rep::define (string s, tree t) {
 }
 
 void
-packrat_grammar_rep::property (string s, string var, string val) {
+packrat_grammar_rep::set_property (string s, string var, string val) {
   //cout << "Set property " << s << ", " << var << " -> " << val << "\n";
-  properties (tuple (s, var))= val;
+  C sym = encode_symbol (compound ("symbol", s));
+  C prop= encode_symbol (compound ("property", var));
+  D key = (((D) prop) << 32) + ((D) (sym ^ prop));
+  properties (key)= val;
 }
 
 /******************************************************************************
@@ -378,7 +381,7 @@ packrat_define (string lan, string s, tree t) {
 void
 packrat_property (string lan, string s, string var, string val) {
   packrat_grammar gr= find_packrat_grammar (lan);
-  gr->property (s, var, val);
+  gr->set_property (s, var, val);
 }
 
 void
@@ -393,9 +396,9 @@ packrat_inherit (string lan, string from) {
     gr->productions (sym)= inh->productions (sym);
   }
 
-  iterator<tree> it2 = iterate (inh->properties);
+  iterator<D> it2 = iterate (inh->properties);
   while (it2->busy ()) {
-    tree p= it2->next ();
+    D p= it2->next ();
     //cout << "Inherit " << p << " -> " << inh->properties (p) << LF;
     gr->properties (p)= inh->properties (p);
   }

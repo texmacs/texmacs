@@ -416,13 +416,13 @@ void
 packrat_parser_rep::highlight (C sym, C pos) {
   C next= parse (sym, pos);
   if (next < 0) return;
-  tree symt= packrat_decode[sym];
-  if (is_compound (symt, "symbol", 1) && is_atomic (symt[0])) {
-    tree key= tuple (symt[0]->label, "highlight");
+  if (sym >= PACKRAT_SYMBOLS) {
+    static C hl= encode_symbol (compound ("property", "highlight"));
+    D key= (((D) hl) << 32) + ((D) (sym ^ hl));
     if (properties->contains (key)) {
-      string col= properties [key];
-      path start= decode_tree_position (pos);
-      path end= decode_tree_position (next);
+      string col  = properties [key];
+      path   start= decode_tree_position (pos);
+      path   end  = decode_tree_position (next);
       highlight (current_tree, start, end, col);
     }
   }

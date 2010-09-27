@@ -20,7 +20,7 @@ class packrat_parser_rep: concrete_struct {
 public:
   hashmap<C,array<C> >  grammar;
   hashmap<C,tree>       productions;
-  hashmap<tree,string>  properties;
+  hashmap<D,string>     properties;
 
   tree                  current_tree;
   string                current_string;

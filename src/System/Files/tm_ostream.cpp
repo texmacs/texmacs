@@ -258,6 +258,30 @@ tm_ostream::operator << (unsigned long ul) {
 }
 
 tm_ostream&
+tm_ostream::operator << (long long int l) {
+  if (is_buf) {
+    char _buf[64];
+    sprintf (_buf, "%lld", l);
+    *buf << _buf;
+  }
+  else if (file && is_w)
+    if (0 > fprintf (file, "%lld", l)) is_w= false;
+  return *this;
+}
+
+tm_ostream&
+tm_ostream::operator << (unsigned long long int ul) {
+  if (is_buf) {
+    char _buf[64];
+    sprintf (_buf, "%llu", ul);
+    *buf << _buf;
+  }
+  else if (file && is_w)
+    if (0 > fprintf (file, "%llu", ul)) is_w= false;
+  return *this;
+}
+
+tm_ostream&
 tm_ostream::operator << (float f) {
   if (is_buf) {
     char _buf[32];

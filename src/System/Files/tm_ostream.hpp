@@ -57,6 +57,8 @@ public:
   tm_ostream& operator << (unsigned int);
   tm_ostream& operator << (long);
   tm_ostream& operator << (unsigned long);
+  tm_ostream& operator << (long long int);
+  tm_ostream& operator << (unsigned long long int);
   tm_ostream& operator << (float);
   tm_ostream& operator << (double);
   tm_ostream& operator << (long double);

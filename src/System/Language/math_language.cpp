@@ -131,14 +131,19 @@ math_language_rep::math_language_rep (string name):
   tpr_class("symbol").op_type = OP_SYMBOL;
 
   packrat_grammar gr= find_packrat_grammar (name);
-  hashmap<tree,string> props= gr->properties;
+  hashmap<D,string> props= gr->properties;
   hashmap<string,bool> cls (false);
-  iterator<tree> it= iterate (props);
+  iterator<D> it= iterate (props);
   while (it->busy ()) {
-    tree p= it->next ();
-    string cl = p[0]->label;
-    string var= p[1]->label;
-    string val= props[p];
+    D key = it->next ();
+    C prop= ((C) (key >> 32));
+    C sym = ((C) (key & 0xffffffff)) ^ prop;
+    ASSERT (is_compound (packrat_decode[sym], "symbol", 1) &&
+	    is_compound (packrat_decode[prop], "property", 1),
+	    "invalid symbol or property");
+    string cl = packrat_decode[sym ][0]->label;
+    string var= packrat_decode[prop][0]->label;
+    string val= props[key];
     //cout << cl << ", " << var << " -> " << val << "\n";
     if (var == "type") { set_type (cl, val); cls (cl)= true; }
     else if (var == "left-penalty") set_left_penalty (cl, val);
