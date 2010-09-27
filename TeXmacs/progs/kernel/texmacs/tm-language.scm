@@ -72,6 +72,12 @@
 	((and (func? (car l) :highlight 1) (symbol? (cadar l)))
 	 (packrat-property lan sym "highlight" (symbol->string (cadar l)))
 	 (define-rule-one lan sym (cdr l)))
+	((func? (car l) :atomic 0)
+	 (packrat-property lan sym "atomic" "true")
+	 (define-rule-one lan sym (cdr l)))
+	((func? (car l) :operator 0)
+	 (packrat-property lan sym "operator" "true")
+	 (define-rule-one lan sym (cdr l)))
 	(else
 	  ;;(display* "Define " sym " := " l "\n")
 	  ;;(display* "Packrat= " (scheme->packrat `(or ,@l)) "\n")

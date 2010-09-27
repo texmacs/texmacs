@@ -28,11 +28,11 @@
     Assignment)
 
   (define Assignment
-    (Modeling Assign-symbol Post Assignment)
+    (Modeling Assign-infix Assignment)
     Modeling)
 
   (define Modeling
-    (Sum Model-symbol Post Quantified)
+    (Sum Model-infix Quantified)
     Quantified)
 
   (define Quantified
@@ -41,56 +41,50 @@
     Implication)
 
   (define Implication
-    (Implication Imply-symbol Post Disjunction)
+    (Implication Imply-infix Disjunction)
     Disjunction)
 
   (define Disjunction
-    (Disjunction Or-symbol Post Conjunction)
+    (Disjunction Or-infix Conjunction)
     Conjunction)
 
   (define Conjunction
-    (Conjunction And-symbol Post Relation)
+    (Conjunction And-infix Relation)
     Relation)
 
   (define Relation
-    (Relation Relation-symbol Post Arrow)
+    (Relation Relation-infix Arrow)
     Arrow)
 
   (define Arrow
-    (Arrow Arrow-symbol Post Union)
+    (Arrow Arrow-infix Union)
     Union)
 
   (define Union
-    (Union Union-symbol Post Intersection)
-    (Union Exclude-symbol Post Intersection)
+    (Union Union-infix Intersection)
+    (Union Exclude-infix Intersection)
     Intersection)
 
   (define Intersection
-    (Intersection Intersection-symbol Post Sum)
+    (Intersection Intersection-infix Sum)
     Sum)
 
   (define Sum
-    (Sum Plus-symbol Post Product)
-    (Sum Minus-symbol Post Product)
+    (Sum Plus-infix Product)
+    (Sum Minus-infix Product)
     Product)
 
   (define Product
-    (Product Times-symbol Post Power)
-    (Product Over-symbol Post Power)
+    (Product Times-infix Power)
+    (Product Over-infix Power)
     Power)
 
   (define Power
-    (Big Power-symbol Post Big)
+    (Big Power-infix Big)
     Big)
 
-  (define Big-open
-    (:<big ((not ".") :args) :>))
-
-  (define Big-close
-    (:<big "." :>))
-
   (define Big
-    (Big-open Post Expression Big-close)
+    (Big-open Expression Big-close)
     Special)
 
   (define Special
@@ -100,22 +94,19 @@
     (:<wide Expression :/ :args :>)
     Prefixed)
 
-  (define Space
-    (+ (or Space-symbol " ")))
-
   (define Prefixed
-    (Prefix-symbol Post Prefixed)
-    (Not-symbol Post Prefixed)
-    ;;(Minus-symbol Post Prefixed)
-    (Pre-one Prefixed)
-    (Postfixed Space Prefixed)
+    (Prefix-prefix Prefixed)
+    (Not-prefix Prefixed)
+    ;;(Minus-prefix Prefixed)
+    (Pre Prefixed)
+    (Postfixed Space-infix Prefixed)
     Postfixed)
 
   (define Postfixed
-    (Postfixed Postfix-symbol)
-    (Postfixed Post-one)
-    (Postfixed Open Close)
-    (Postfixed Open Expression Close)
+    (Postfixed Postfix-postfix)
+    (Postfixed Post)
+    (Postfixed (* Pre) Open Close)
+    (Postfixed (* Pre) Open Expression Close)
     Radical)
 
   (define Identifier
@@ -133,20 +124,7 @@
     Suspension-symbol
     Miscellaneous-symbol
     (((not Reserved) :<) :args :>))
-
-  (define Open
-    Open-symbol
-    (:<left :args :>))
-
-  (define Separator
-    Ponctuation-symbol
-    Bar-symbol
-    (:<mid :args :>))
-
-  (define Close
-    Close-symbol
-    (:<right :args :>))
-
+  
   (define Script
     Expression
     Relation-symbol
@@ -157,21 +135,152 @@
     Over-symbol
     Power-symbol)
 
-  (define Pre-one
+  (define Pre
     (:<lsub Script :>)
     (:<lsup Script :>)
     (:<lprime (* Prime-symbol) :>))
 
-  (define Post-one
+  (define Post
     (:<rsub Script :>)
     (:<rsup Script :>)
     (:<rprime (* Prime-symbol) :>))
 
-  (define Pre
-    (* Pre-one))
+  (define Assign-infix
+    (:operator)
+    (Assign-infix Post)
+    (Pre Assign-infix)
+    Assign-symbol)
+
+  (define Model-infix
+    (:operator)
+    (Model-infix Post)
+    (Pre Model-infix)
+    Model-symbol)
+
+  (define Imply-infix
+    (:operator)
+    (Imply-infix Post)
+    (Pre Imply-infix)
+    Imply-symbol)
+
+  (define Or-infix
+    (:operator)
+    (Or-infix Post)
+    (Pre Or-infix)
+    Or-symbol)
+
+  (define And-infix
+    (:operator)
+    (And-infix Post)
+    (Pre And-infix)
+    And-symbol)
+
+  (define Relation-infix
+    (:operator)
+    (Relation-infix Post)
+    (Pre Relation-infix)
+    Relation-symbol)
+
+  (define Arrow-infix
+    (:operator)
+    (Arrow-infix Post)
+    (Pre Arrow-infix)
+    Arrow-symbol)
+
+  (define Union-infix
+    (:operator)
+    (Union-infix Post)
+    (Pre Union-infix)
+    Union-symbol)
+
+  (define Exclude-infix
+    (:operator)
+    (Exclude-infix Post)
+    (Pre Exclude-infix)
+    Exclude-symbol)
+
+  (define Intersection-infix
+    (:operator)
+    (Intersection-infix Post)
+    (Pre Intersection-infix)
+    Intersection-symbol)
+
+  (define Plus-infix
+    (:operator)
+    (Plus-infix Post)
+    (Pre Plus-infix)
+    Plus-symbol)
+
+  (define Minus-infix
+    (:operator)
+    (Minus-infix Post)
+    (Pre Minus-infix)
+    Minus-symbol)
+
+  (define Times-infix
+    (:operator)
+    (Times-infix Post)
+    (Pre Times-infix)
+    Times-symbol)
+
+  (define Over-infix
+    (:operator)
+    (Over-infix Post)
+    (Pre Over-infix)
+    Over-symbol)
+
+  (define Power-infix
+    (:operator)
+    (Power-infix Post)
+    (Pre Power-infix)
+    Power-symbol)
+
+  (define Space-infix
+    (:operator)
+    (+ (or Space-symbol " ")))
+
+  (define Prefix-prefix
+    (:operator)
+    (Prefix-prefix Post)
+    Prefix-symbol)
+
+  (define Not-prefix
+    (:operator)
+    (Not-prefix Post)
+    Not-symbol)
+
+  (define Postfix-postfix
+    (:operator)
+    (Pre Postfix-postfix)
+    Postfix-symbol)
+
+  (define Big-open
+    (:operator)
+    (Big-open Post)
+    (:<big ((not ".") :args) :>))
+
+  (define Big-close
+    (:operator)
+    (Pre Big-close)
+    (:<big "." :>))
   
-  (define Post
-    (* Post-one)))
+  (define Open
+    (:operator)
+    (Open Post)
+    Open-symbol
+    (:<left :args :>))
+
+  (define Separator
+    (:operator)
+    Ponctuation-symbol
+    Bar-symbol
+    (:<mid :args :>))
+
+  (define Close
+    (:operator)
+    (Pre Close)
+    Close-symbol
+    (:<right :args :>)))
 
 (define-language std-math
   (:synopsis "default semantics for mathematical formulas")

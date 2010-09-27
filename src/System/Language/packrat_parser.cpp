@@ -301,10 +301,17 @@ packrat_parser_rep::is_selectable (C sym) {
 
 void
 packrat_parser_rep::context
-  (C sym, C pos, C w1, C w2, array<C>& kind, array<C>& begin, array<C>& end)
+  (C sym, C pos, C w1, C w2, int mode,
+   array<C>& kind, array<C>& begin, array<C>& end)
 {
   C next= parse (sym, pos);
   if (next < 0 || pos > w1 || next < w2) return;
+
+  if (mode == 2) {
+    static C prop= encode_symbol (compound ("property", "operator"));
+    D key = (((D) prop) << 32) + ((D) (sym ^ prop));
+    if (properties->contains (key)) return;
+  }
 
   int n= N(kind);
   if (n >= 1 && begin[n-1] == pos && end[n-1] == next) {
@@ -317,6 +324,12 @@ packrat_parser_rep::context
     end   << next;
   }
 
+  if (mode >= 0) {
+    static C prop= encode_symbol (compound ("property", "atomic"));
+    D key = (((D) prop) << 32) + ((D) (sym ^ prop));
+    if (properties->contains (key)) return;
+  }
+
   if (sym >= PACKRAT_TM_OPEN) {
     array<C> inst= grammar [sym];
     //cout << "Parse " << inst << " at " << pos << LF;
@@ -324,14 +337,14 @@ packrat_parser_rep::context
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
 	if (parse (inst[i], pos) != PACKRAT_FAILED)
-	  context (inst[i], pos, w1, w2, kind, begin, end);
+	  context (inst[i], pos, w1, w2, mode, kind, begin, end);
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
 	next= parse (inst[i], pos);
 	if (next == PACKRAT_FAILED) break;
 	if (pos <= w1 && w2 <= next)
-	  context (inst[i], pos, w1, w2, kind, begin, end);
+	  context (inst[i], pos, w1, w2, mode, kind, begin, end);
 	if (next > w2) break;
 	pos= next;
       }
@@ -342,7 +355,7 @@ packrat_parser_rep::context
 	C next= parse (inst[1], pos);
 	if (next == PACKRAT_FAILED) break;
 	if (pos <= w1 && w2 <= next)
-	  context (inst[1], pos, w1, w2, kind, begin, end);
+	  context (inst[1], pos, w1, w2, mode, kind, begin, end);
 	if (next > w2) break;
 	pos= next;
       }
@@ -356,7 +369,7 @@ packrat_parser_rep::context
     case PACKRAT_TM_FAIL:
       break;
     default:
-      context (inst[0], pos, w1, w2, kind, begin, end);
+      context (inst[0], pos, w1, w2, mode, kind, begin, end);
       break;
     }
   }
@@ -417,8 +430,8 @@ packrat_parser_rep::highlight (C sym, C pos) {
   C next= parse (sym, pos);
   if (next < 0) return;
   if (sym >= PACKRAT_SYMBOLS) {
-    static C hl= encode_symbol (compound ("property", "highlight"));
-    D key= (((D) hl) << 32) + ((D) (sym ^ hl));
+    static C prop= encode_symbol (compound ("property", "highlight"));
+    D key = (((D) prop) << 32) + ((D) (sym ^ prop));
     if (properties->contains (key)) {
       int  col  = encode_color (properties [key]);
       path start= decode_tree_position (pos);
@@ -487,7 +500,7 @@ packrat_context (string lan, string s, tree in, path in_pos) {
   C pos= par->encode_tree_position (in_pos);
   if (pos == PACKRAT_FAILED) return object (false);
   array<C> kind, begin, end;
-  par->context (sym, 0, pos-1, pos+1, kind, begin, end);
+  par->context (sym, 0, pos-1, pos+1, 0, kind, begin, end);
   par->compress (kind, begin, end);
   object ret= null_object ();
   for (int i=0; i<N(kind); i++) {
@@ -516,7 +529,7 @@ packrat_select (string lan, string s, tree in,
   array<C> kind, begin, end;
   C pos0= pos1;
   if ((mode == 1 && pos1 == pos2) || mode == 2) pos0= max (pos1 - 1, 0);
-  par->context (sym, 0, pos0, pos2, kind, begin, end);
+  par->context (sym, 0, pos0, pos2, mode, kind, begin, end);
   par->compress (kind, begin, end);
   /*
   for (int i=0; i<N(kind); i++)
@@ -531,7 +544,7 @@ packrat_select (string lan, string s, tree in,
     if (pos1 == begin[n-1] && pos2 == end[n-1]) n--;
     if (n == 0) return false;
   }
-  else if (mode == 2 && n > 1) n--;
+  //else if (mode == 2 && n > 1) n--;
   p1= par->decode_tree_position (begin[n-1]);
   p2= par->decode_tree_position (end[n-1]);
   //cout << "Selected " << packrat_decode[kind[n-1]] << LF;
