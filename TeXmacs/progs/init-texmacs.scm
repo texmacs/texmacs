@@ -126,7 +126,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting formal languages\n")
-(lazy-language (language simple) simple)
+(lazy-language (language minimal) minimal)
 (lazy-language (language std-math) std-math)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 

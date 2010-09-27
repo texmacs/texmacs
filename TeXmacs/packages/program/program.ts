@@ -22,8 +22,6 @@
     </src-license>
   </src-title>>
 
-  <assign|simple-prog|<macro|x|<with|mode|prog|prog-language|simple|<highlight|<arg|x>>>>>
-
   <assign|algo|<macro|name|<with|font-family|tt|math-font-family|ttt|<arg|name>>>>
 
   <assign|algorithm|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>>
@@ -48,6 +46,8 @@
   </macro>>
 
   <assign|pile|<macro|x|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|x>>>>
+
+  <assign|minimal|<macro|x|<with|mode|prog|prog-language|minimal|<highlight|<arg|x>>>>>
 
   \;
 </body>

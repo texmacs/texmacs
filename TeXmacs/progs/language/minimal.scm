@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : simple.scm
-;; DESCRIPTION : syntax of a simple test language
+;; MODULE      : minimal.scm
+;; DESCRIPTION : syntax of a minimal test language
 ;; COPYRIGHT   : (C) 2010  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,10 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (language simple))
+(texmacs-module (language minimal))
 
-(define-language simple
-  (:synopsis "syntax for a simple test language")
+(define-language minimal
+  (:synopsis "syntax for a minimal test language")
 
   (define Main
     (Spc Definition Main)
