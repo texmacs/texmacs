@@ -195,6 +195,49 @@ find_packrat_grammar (string s) {
 }
 
 /******************************************************************************
+* Accelerate big lists of consecutive symbols
+******************************************************************************/
+
+void
+packrat_grammar_rep::accelerate (array<C>& def) {
+  if (N(def) == 0 || def[0] != PACKRAT_OR) return;
+  hashmap<C,bool> all;
+  for (int i=1; i<N(def); i++)
+    if (def[i] >= PACKRAT_OR) return;
+    else all (def[i])= true;
+  array<C> ret;
+  ret << PACKRAT_OR;
+  hashmap<C,bool> done;
+  for (int i=1; i<N(def); i++) {
+    C c= def[i];
+    if (done->contains (c)) continue;
+    C start= c;
+    while (start > 0 && all->contains (start-1)) start--;
+    C end= c;
+    while (end+1 < PACKRAT_OR && all->contains (end+1)) end++;
+    if (end == start) ret << c;
+    else {
+      tree t= compound ("range", packrat_decode[start], packrat_decode[end]);
+      C sym= encode_symbol (t);
+      array<C> rdef;
+      rdef << PACKRAT_RANGE << start << end;
+      grammar (sym)= rdef;
+      ret << sym;
+      //cout << "Made range " << packrat_decode[start]
+      //<< "--" << packrat_decode[end] << "\n";
+    }
+    for (int j=start; j<=end; j++) done(j)= true;
+  }
+  if (N(ret) == 2) {
+    ret= range (ret, 1, 2);
+    if (ret[0] >= PACKRAT_SYMBOLS) ret= grammar[ret[0]];
+  }
+  //cout << "Was: " << def << "\n";
+  //cout << "Is : " << ret << "\n";
+  def= ret;
+}
+
+/******************************************************************************
 * Definition of grammars
 ******************************************************************************/
 
@@ -236,6 +279,7 @@ packrat_grammar_rep::define (tree t) {
       (void) define (t[i]);
       def << encode_symbol (t[i]);
     }
+    accelerate (def);
   }
   if (N (def) != 1 || def[0] != encode_symbol (t)) {
     C sym= encode_symbol (t);
@@ -307,6 +351,9 @@ packrat_grammar_rep::decode_as_array_string (C sym) {
   else if (N(def) >= 1 && def[0] == PACKRAT_OR)
     for (int i=1; i<N(def); i++)
       r << decode_as_array_string (def[i]);
+  else if (N(def) == 3 && def[0] == PACKRAT_RANGE)
+    for (C c=def[1]; c<=def[2]; c++)
+      r << decode_as_string (c);
   else r << decode_as_string (sym);
   return r;
 }

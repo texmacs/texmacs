@@ -103,7 +103,7 @@
     "<ngtr>" "<nleq>" "<nleqq>" "<nleqslant>" "<nless>" "<nprec>" "<npreceq>"
     "<nsim>" "<nasymp>" "<nsubset>" "<nsupset>" "<nsqsubset>" "<nsqsupset>"
     "<nsqsubseteq>" "<nsqsupseteq>" "<nsubseteq>" "<nsucc>" "<nsucceq>"
-    "<nsupseteq>" "<nsupseteqq>" "<nvdash>" "<precapprox>" "<preccurlyeq>"
+    "<nsupseteq>" "<nsupseteqq>" "<precapprox>" "<preccurlyeq>"
     "<npreccurlyeq>" "<precnapprox>" "<precneqq>" "<precnsim>" "<risingdoteq>"
     "<Subset>" "<subseteqq>" "<subsetneq>" "<subsetneqq>" "<succapprox>"
     "<succcurlyeq>" "<nsucccurlyeq>" "<succnapprox>" "<succneqq>"

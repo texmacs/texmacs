@@ -72,6 +72,7 @@ struct packrat_grammar_rep: rep<packrat_grammar> {
 
   packrat_grammar_rep (string s);
 
+  void accelerate (array<C>& def);
   array<C> define (tree t);
   void define (string s, tree t);  
   void property (string s, string var, string val);  
