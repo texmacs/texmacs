@@ -544,7 +544,6 @@ packrat_select (string lan, string s, tree in,
     if (pos1 == begin[n-1] && pos2 == end[n-1]) n--;
     if (n == 0) return false;
   }
-  //else if (mode == 2 && n > 1) n--;
   p1= par->decode_tree_position (begin[n-1]);
   p2= par->decode_tree_position (end[n-1]);
   //cout << "Selected " << packrat_decode[kind[n-1]] << LF;
