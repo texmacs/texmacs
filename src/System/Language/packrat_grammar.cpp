@@ -92,6 +92,7 @@ encode_symbol (tree t) {
 void
 initialize_color_encodings () {
   color_encoding ("comment")= 1;
+  color_encoding ("keyword")= 2;
   color_encoding ("constant")= 10;
   color_encoding ("constant_identifier")= 11;
   color_encoding ("constant_function")= 12;
@@ -118,6 +119,7 @@ void
 initialize_color_decodings () {
   color_decoding (-1)= "red";
   color_decoding (1)= "brown";
+  color_decoding (2)= "dark green";
   color_decoding (10)= "#4040c0";
   color_decoding (11)= "#4040c0";
   color_decoding (12)= "#4040c0";

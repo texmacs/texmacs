@@ -79,7 +79,7 @@ edit_select_rep::semantic_active (path p) {
     //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
     tree mode= get_env_value (MODE, end (et, p));
     tree plan= get_env_value (PROG_LANGUAGE, end (et, p));
-    return mode == "math" || (mode == "prog" && plan == "simple");
+    return mode == "math" || (mode == "prog" && plan == "minimal");
   }
   else return false;
 }
