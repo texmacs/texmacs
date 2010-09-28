@@ -14,127 +14,8 @@
 (texmacs-module (language std-math)
   (:use (language std-symbols)))
 
-(define-language std-math-grammar
-  (:synopsis "default syntax for mathematical formulas")
-
-  (define Main
-    (Main Separator)
-    (Main ".")
-    (Main "\n")
-    Expression)
-
-  (define Expression
-    (Assignment Separator Expression)
-    Assignment)
-
-  (define Assignment
-    (Modeling Assign-infix Assignment)
-    Modeling)
-
-  (define Modeling
-    (Sum Model-infix Quantified)
-    Quantified)
-
-  (define Quantified
-    ((+ (Quantifier-symbol Relation)) Ponctuation-symbol Quantified)
-    ((Open Quantifier-symbol Relation Close) Quantified)
-    Implication)
-
-  (define Implication
-    (Implication Imply-infix Disjunction)
-    Disjunction)
-
-  (define Disjunction
-    (Disjunction Or-infix Conjunction)
-    Conjunction)
-
-  (define Conjunction
-    (Conjunction And-infix Relation)
-    Relation)
-
-  (define Relation
-    (Relation Relation-infix Arrow)
-    Arrow)
-
-  (define Arrow
-    (Arrow Arrow-infix Union)
-    Union)
-
-  (define Union
-    (Union Union-infix Intersection)
-    (Union Exclude-infix Intersection)
-    Intersection)
-
-  (define Intersection
-    (Intersection Intersection-infix Sum)
-    Sum)
-
-  (define Sum
-    (Sum Plus-infix Product)
-    (Sum Minus-infix Product)
-    Product)
-
-  (define Product
-    (Product Times-infix Power)
-    (Product Over-infix Power)
-    Power)
-
-  (define Power
-    (Big Power-infix Big)
-    Big)
-
-  (define Big
-    (Big-open Expression Big-close)
-    Special)
-
-  (define Special
-    (:<frac Expression :/ Expression :>)
-    (:<sqrt Expression :>)
-    (:<sqrt Expression :/ Expression :>)
-    (:<wide Expression :/ :args :>)
-    Prefixed)
-
-  (define Prefixed
-    (Prefix-prefix Prefixed)
-    (Not-prefix Prefixed)
-    ;;(Minus-prefix Prefixed)
-    (Pre Prefixed)
-    (Postfixed Space-infix Prefixed)
-    Postfixed)
-
-  (define Postfixed
-    (Postfixed Postfix-postfix)
-    (Postfixed Post)
-    (Postfixed (* Pre) Open Close)
-    (Postfixed (* Pre) Open Expression Close)
-    Radical)
-
-  (define Identifier
-    (+ (or (- "a" "z") (- "A" "Z"))))
-
-  (define Number
-    ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9"))))))
-
-  (define Radical
-    (Open Close)
-    (Open Expression Close)
-    Identifier
-    Number
-    Variable-symbol
-    Suspension-symbol
-    Miscellaneous-symbol
-    (((not Reserved) :<) :args :>)
-    :cursor)
-  
-  (define Script
-    Expression
-    Relation-symbol
-    Arrow-symbol
-    Plus-symbol
-    Minus-symbol
-    Times-symbol
-    Over-symbol
-    Power-symbol)
+(define-language std-math-operators
+  (:synopsis "standard mathematical operators")
 
   (define Pre
     (:<lsub Script :>)
@@ -145,6 +26,16 @@
     (:<rsub Script :>)
     (:<rsup Script :>)
     (:<rprime (* Prime-symbol) :>))
+  
+  (define Script
+    Expression
+    Relation-symbol
+    Arrow-symbol
+    Plus-symbol
+    Minus-symbol
+    Times-symbol
+    Over-symbol
+    Power-symbol)
 
   (define Assign-infix
     (:operator)
@@ -175,6 +66,11 @@
     (And-infix Post)
     (Pre And-infix)
     And-symbol)
+
+  (define Not-prefix
+    (:operator)
+    (Not-prefix Post)
+    Not-symbol)
 
   (define Relation-infix
     (:operator)
@@ -212,10 +108,22 @@
     (Pre Plus-infix)
     Plus-symbol)
 
+  (define Plus-prefix
+    (:operator)
+    (Plus-prefix Post)
+    Plus-prefix-symbol
+    Plus-symbol)
+
   (define Minus-infix
     (:operator)
     (Minus-infix Post)
     (Pre Minus-infix)
+    Minus-symbol)
+
+  (define Minus-prefix
+    (:operator)
+    (Minus-prefix Post)
+    Minus-prefix-symbol
     Minus-symbol)
 
   (define Times-infix
@@ -244,11 +152,6 @@
     (:operator)
     (Prefix-prefix Post)
     Prefix-symbol)
-
-  (define Not-prefix
-    (:operator)
-    (Not-prefix Post)
-    Not-symbol)
 
   (define Postfix-postfix
     (:operator)
@@ -283,7 +186,121 @@
     Close-symbol
     (:<right :args :>)))
 
+(define-language std-math-grammar
+  (:synopsis "default syntax for mathematical formulas")
+
+  (define Main
+    (Main Separator)
+    (Main ".")
+    (Main "\n")
+    Expression)
+
+  (define Expression
+    (Assignment Separator Expression)
+    Assignment)
+
+  (define Assignment
+    (Modeling Assign-infix Assignment)
+    Modeling)
+
+  (define Modeling
+    (Sum Model-infix Quantified)
+    Quantified)
+
+  (define Quantified
+    ((+ (Quantifier-symbol Relation)) Ponctuation-symbol Quantified)
+    ((Open Quantifier-symbol Relation Close) Quantified)
+    Implication)
+
+  (define Implication
+    (Implication Imply-infix Disjunction)
+    Disjunction)
+
+  (define Disjunction
+    (Disjunction Or-infix Conjunction)
+    Conjunction)
+
+  (define Conjunction
+    (Conjunction And-infix Negation)
+    Negation)
+
+  (define Negation
+    ((+ Not-prefix) Prefixed)
+    Relation)
+
+  (define Relation
+    (Relation Relation-infix Arrow)
+    Arrow)
+
+  (define Arrow
+    (Arrow Arrow-infix Union)
+    Union)
+
+  (define Union
+    (Union Union-infix Intersection)
+    (Union Exclude-infix Intersection)
+    Intersection)
+
+  (define Intersection
+    (Intersection Intersection-infix Sum)
+    Sum)
+
+  (define Sum
+    (Sum Plus-infix Product)
+    (Sum Minus-infix Product)
+    Sum-prefix)
+
+  (define Sum-prefix
+    (Plus-prefix Sum-prefix)
+    (Minus-prefix Sum-prefix)
+    Product)
+
+  (define Product
+    (Product Times-infix Power)
+    (Product Over-infix Power)
+    (:<frac Expression :/ Expression :>)
+    Power)
+
+  (define Power
+    (Prefixed Power-infix Prefixed)
+    (:<sqrt Expression :>)
+    (:<sqrt Expression :/ Expression :>)
+    Prefixed)
+
+  (define Prefixed
+    (Prefix-prefix Prefixed)
+    (Pre Prefixed)
+    (Postfixed Space-infix Prefixed)
+    Postfixed)
+
+  (define Postfixed
+    (Postfixed Postfix-postfix)
+    (Postfixed Post)
+    (Postfixed Open Close)
+    (Postfixed Open Expression Close)
+    Radical)
+
+  (define Radical
+    (Open Close)
+    (Open Expression Close)
+    (Big-open Expression Big-close)
+    (:<wide Expression :/ :args :>)
+    Identifier
+    Number
+    Variable-symbol
+    Suspension-symbol
+    Miscellaneous-symbol
+    ((except :< Reserved) :args :>)
+    :cursor)
+
+  (define Identifier
+    (+ (or (- "a" "z") (- "A" "Z"))))
+
+  (define Number
+    ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9")))))))
+
 (define-language std-math
   (:synopsis "default semantics for mathematical formulas")
   (inherit std-symbols)
+  (inherit std-math-operators)
   (inherit std-math-grammar))

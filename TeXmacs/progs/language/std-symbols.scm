@@ -198,13 +198,26 @@
     (:type associative-infix)
     (:penalty 30)
     (:spacing default default)
-    "+" "<amalg>" "<oplus>" "<boxplus>" "<dotplus>" "<dotamalg>" "<dotoplus>")
+    "+" "<amalg>" "<oplus>" "<boxplus>"
+    "<dotplus>" "<dotamalg>" "<dotoplus>")
+
+  (define Plus-prefix-symbol
+    (:type prefix)
+    (:penalty invalid)
+    (:spacing none none)
+    "<upl>")
 
   (define Minus-symbol
     (:type left-associative-infix)
     (:penalty 30)
     (:spacing default default)
     "-" "<pm>" "<mp>" "<ominus>" "<boxminus>")
+
+  (define Minus-prefix-symbol
+    (:type prefix)
+    (:penalty invalid)
+    (:spacing none none)
+    "<um>" "<upm>" "<ump>")
 
   (define Times-visible-symbol
     (:type associative-infix)
@@ -270,7 +283,7 @@
     (:type prefix)
     (:penalty invalid)
     (:spacing none none)
-    "<um>" "<upl>" "<upm>" "<ump>" "<card>")
+    "<card>")
 
   (define Postfix-symbol
     (:type postfix)

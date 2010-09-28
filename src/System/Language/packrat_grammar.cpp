@@ -196,7 +196,7 @@ left_head (string s, tree t) {
     return r;
   }
   else if (is_compound (t, "concat")) {
-    if (N(t) == 0) return t;
+    if (N(t) == 0 || !left_recursive (s, t)) return t;
     else return left_head (s, t[0]);
   }
   else return t;
@@ -219,7 +219,7 @@ left_tail (string s, tree t) {
     return r;
   }
   else if (is_compound (t, "concat")) {
-    if (N(t) == 0) return compound ("or");
+    if (N(t) == 0 || !left_recursive (s, t)) return compound ("or");
     else {
       tree r= compound ("concat");
       tree u= left_tail (s, t[0]);
