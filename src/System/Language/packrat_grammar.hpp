@@ -31,21 +31,22 @@ RESOURCE(packrat_grammar);
 * Important constants
 ******************************************************************************/
 
-#define PACKRAT_TOKENS    ((C)         0)
-#define PACKRAT_OR        ((C) 100000000)
-#define PACKRAT_CONCAT    ((C) 100000001)
-#define PACKRAT_WHILE     ((C) 100000002)
-#define PACKRAT_REPEAT    ((C) 100000003)
-#define PACKRAT_RANGE     ((C) 100000004)
-#define PACKRAT_NOT       ((C) 100000005)
-#define PACKRAT_EXCEPT    ((C) 100000006)
-#define PACKRAT_TM_OPEN   ((C) 100000010)
-#define PACKRAT_TM_ANY    ((C) 100000011)
-#define PACKRAT_TM_ARGS   ((C) 100000012)
-#define PACKRAT_TM_LEAF   ((C) 100000013)
-#define PACKRAT_TM_CHAR   ((C) 100000014)
-#define PACKRAT_TM_FAIL   ((C) 100000015)
-#define PACKRAT_SYMBOLS   ((C) 100000020)
+#define PACKRAT_TOKENS     ((C)         0)
+#define PACKRAT_OR         ((C) 100000000)
+#define PACKRAT_CONCAT     ((C) 100000001)
+#define PACKRAT_WHILE      ((C) 100000002)
+#define PACKRAT_REPEAT     ((C) 100000003)
+#define PACKRAT_RANGE      ((C) 100000004)
+#define PACKRAT_NOT        ((C) 100000005)
+#define PACKRAT_EXCEPT     ((C) 100000006)
+#define PACKRAT_TM_OPEN    ((C) 100000010)
+#define PACKRAT_TM_ANY     ((C) 100000011)
+#define PACKRAT_TM_ARGS    ((C) 100000012)
+#define PACKRAT_TM_LEAF    ((C) 100000013)
+#define PACKRAT_TM_CHAR    ((C) 100000014)
+#define PACKRAT_TM_CURSOR  ((C) 100000015)
+#define PACKRAT_TM_FAIL    ((C) 100000016)
+#define PACKRAT_SYMBOLS    ((C) 100000020)
 
 /******************************************************************************
 * Encoding of tokens and symbols

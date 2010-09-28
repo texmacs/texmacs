@@ -26,6 +26,7 @@
 	((== x :args) (tm->tree '(tm-args)))
 	((== x :leaf) (tm->tree '(tm-leaf)))
 	((== x :char) (tm->tree '(tm-char)))
+	((== x :cursor) (tm->tree '(tm-cursor)))
 	((and (keyword? x) (string-starts? (keyword->string x) "<"))
 	 (with s (string-drop (keyword->string x) 1)
 	   (string->tree (string-append "<\\" s ">"))))

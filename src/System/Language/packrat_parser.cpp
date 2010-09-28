@@ -24,34 +24,22 @@ packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
   current_string (""),
   current_start (-1),
   current_end (-1),
+  current_cursor (-1),
   current_input (),
   current_cache (PACKRAT_UNDEFINED),
   current_production (packrat_uninit) {}
 
 packrat_parser
-make_packrat_parser (string lan, string in) {
-  static string         last_lan= "";
-  static string         last_in = "";
+make_packrat_parser (string lan, tree in, path in_pos= path ()) {
+  static string         last_lan   = "";
+  static tree           last_in    = "";
+  static path           last_in_pos= path ();
   static packrat_parser last_par;
-  if (lan != last_lan || in != last_in) {
+  if (lan != last_lan || in != last_in || in_pos != last_in_pos) {
     packrat_grammar gr= find_packrat_grammar (lan);
     last_lan= lan;
     last_in = copy (in);
-    last_par= packrat_parser (gr, in);
-  }
-  return last_par;
-}
-
-packrat_parser
-make_packrat_parser (string lan, tree in) {
-  static string         last_lan= "";
-  static tree           last_in = "";
-  static packrat_parser last_par;
-  if (lan != last_lan || in != last_in) {
-    packrat_grammar gr= find_packrat_grammar (lan);
-    last_lan= lan;
-    last_in = copy (in);
-    last_par= packrat_parser (gr, in);
+    last_par= packrat_parser (gr, in, in_pos);
   }
   return last_par;
 }
@@ -59,12 +47,6 @@ make_packrat_parser (string lan, tree in) {
 /******************************************************************************
 * Setting up the input
 ******************************************************************************/
-
-void
-packrat_parser_rep::set_input (string s) {
-  current_string= s;
-  current_input = encode_tokens (s);
-}
 
 void
 packrat_parser_rep::add_input (tree t, path p) {
@@ -94,6 +76,13 @@ packrat_parser_rep::set_input (tree t) {
   add_input (t, path ());
   //cout << "Input " << current_string << "\n";
   current_input= encode_tokens (current_string);
+}
+
+void
+packrat_parser_rep::set_cursor (path p) {
+  if (is_nil (p)) current_cursor= -1;
+  else current_cursor= encode_tree_position (p);
+  //cout << current_input << ", " << current_cursor << "\n";
 }
 
 /******************************************************************************
@@ -281,6 +270,10 @@ packrat_parser_rep::parse (C sym, C pos) {
 	else im= pos + 1;
       }
       break;
+    case PACKRAT_TM_CURSOR:
+      if (pos == current_cursor) im= pos;
+      else im= PACKRAT_FAILED;
+      break;
     case PACKRAT_TM_FAIL:
       im= PACKRAT_FAILED;
       break;
@@ -386,6 +379,8 @@ packrat_parser_rep::context
     case PACKRAT_TM_ANY:
     case PACKRAT_TM_ARGS:
     case PACKRAT_TM_LEAF:
+    case PACKRAT_TM_CHAR:
+    case PACKRAT_TM_CURSOR:
     case PACKRAT_TM_FAIL:
       break;
     default:
@@ -500,6 +495,8 @@ packrat_parser_rep::highlight (C sym, C pos) {
     case PACKRAT_TM_ANY:
     case PACKRAT_TM_ARGS:
     case PACKRAT_TM_LEAF:
+    case PACKRAT_TM_CHAR:
+    case PACKRAT_TM_CURSOR:
     case PACKRAT_TM_FAIL:
       break;
     default:
@@ -524,7 +521,7 @@ object
 packrat_context (string lan, string s, tree in, path in_pos) {
   //cout << "Context " << in << " at " << in_pos
   //     << " (" << lan << ", " << s << ")" << LF;
-  packrat_parser par= make_packrat_parser (lan, in);
+  packrat_parser par= make_packrat_parser (lan, in, in_pos);
   C sym= encode_symbol (compound ("symbol", s));
   C pos= par->encode_tree_position (in_pos);
   if (pos == PACKRAT_FAILED) return object (false);
@@ -542,12 +539,12 @@ packrat_context (string lan, string s, tree in, path in_pos) {
 }
 
 bool
-packrat_select (string lan, string s, tree in,
+packrat_select (string lan, string s, tree in, path in_pos,
 		path& p1, path& p2, int mode)
 {
   //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
   //     << " (" << lan << ", " << s << ")" << LF;
-  packrat_parser par= make_packrat_parser (lan, in);
+  packrat_parser par= make_packrat_parser (lan, in, in_pos);
   C sym = encode_symbol (compound ("symbol", s));
   C pos1= par->encode_tree_position (p1);
   C pos2= par->encode_tree_position (p2);

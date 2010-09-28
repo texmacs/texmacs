@@ -123,7 +123,8 @@
     Variable-symbol
     Suspension-symbol
     Miscellaneous-symbol
-    (((not Reserved) :<) :args :>))
+    (((not Reserved) :<) :args :>)
+    :cursor)
   
   (define Script
     Expression

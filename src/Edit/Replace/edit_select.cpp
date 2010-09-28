@@ -92,8 +92,9 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   tree lt= get_env_value (MODE_LANGUAGE (mt->label), end (et, p));
   string lan= (is_atomic (lt)? lt->label: string ("std-math"));
   path p1= q1 / p, p2= q2 / p;
+  path cp= (p <= tp? tp / p: path ());
   tree st= subtree (et, p);
-  bool ret= packrat_select (lan, "Main", st, p1, p2, mode);
+  bool ret= packrat_select (lan, "Main", st, cp, p1, p2, mode);
   if (ret) {
     q1= p * p1;
     q2= p * p2;

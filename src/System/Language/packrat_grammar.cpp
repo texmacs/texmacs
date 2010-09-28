@@ -351,6 +351,7 @@ packrat_grammar_rep::define (tree t) {
     else if (is_compound (t, "tm-args")) def << PACKRAT_TM_ARGS;
     else if (is_compound (t, "tm-leaf")) def << PACKRAT_TM_LEAF;
     else if (is_compound (t, "tm-char")) def << PACKRAT_TM_CHAR;
+    else if (is_compound (t, "tm-cursor")) def << PACKRAT_TM_CURSOR;
     else def << PACKRAT_TM_FAIL;
     for (int i=0; i<N(t); i++) {
       (void) define (t[i]);
