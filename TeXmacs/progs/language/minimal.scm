@@ -101,7 +101,19 @@
     (Spc ")"))
 
   (define Open-close
-    ("(" Spc ")")))
+    ("(" Spc ")"))
+
+  (define Error-curly
+    (:operator)
+    (:highlight error)
+    (* (or ("{" Error-curly "}")
+	   (except :char (or "{" "}")))))
+
+  (define Error-semi
+    (:operator)
+    (:highlight error)
+    (* (or ("{" Error-curly "}")
+	   (except :char (or "{" "}" ";"))))))
 
 (define-language minimal-grammar
   (:synopsis "grammar for a minimal test language")
@@ -112,11 +124,13 @@
 
   (define Instruction
     ("{" Main "}")
+    ("{" Error-curly "}")
     (Lhs Declare-infix Instruction)
     (If-prefix Expression Then-infix Instruction)
     (While-prefix Expression Do-infix Instruction)
+    ";"
     (Expression End)
-    ";")
+    (Error-semi End))
   
   (define Lhs
     (Lhs Spc Open Expression Close)

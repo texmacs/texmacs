@@ -237,6 +237,12 @@ packrat_parser_rep::parse (C sym, C pos) {
       if (parse (inst[1], pos) == PACKRAT_FAILED) im= pos;
       else im= PACKRAT_FAILED;
       break;
+    case PACKRAT_EXCEPT:
+      im= parse (inst[1], pos);
+      if (im != PACKRAT_FAILED)
+	if (parse (inst[2], pos) != PACKRAT_FAILED)
+	  im= PACKRAT_FAILED;
+      break;
     case PACKRAT_TM_OPEN:
       if (pos < N (current_input) &&
 	  starts (packrat_decode[current_input[pos]], "<\\"))
@@ -265,6 +271,14 @@ packrat_parser_rep::parse (C sym, C pos) {
 	tree t= packrat_decode[current_input[im]];
 	if (starts (t, "<\\") || t == "<|>" || t == "</>") break;
 	else im++;
+      }
+      break;
+    case PACKRAT_TM_CHAR:
+      if (pos >= N (current_input)) im= PACKRAT_FAILED;
+      else {
+	tree t= packrat_decode[current_input[pos]];
+	if (starts (t, "<\\") || t == "<|>" || t == "</>") im= PACKRAT_FAILED;
+	else im= pos + 1;
       }
       break;
     case PACKRAT_TM_FAIL:
@@ -336,8 +350,10 @@ packrat_parser_rep::context
     switch (inst[0]) {
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
-	if (parse (inst[i], pos) != PACKRAT_FAILED)
+	if (parse (inst[i], pos) != PACKRAT_FAILED) {
 	  context (inst[i], pos, w1, w2, mode, kind, begin, end);
+	  break;
+	}
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
@@ -362,6 +378,10 @@ packrat_parser_rep::context
       break;
     case PACKRAT_RANGE:
     case PACKRAT_NOT:
+      break;
+    case PACKRAT_EXCEPT:
+      context (inst[1], pos, w1, w2, mode, kind, begin, end);
+      break;
     case PACKRAT_TM_OPEN:
     case PACKRAT_TM_ANY:
     case PACKRAT_TM_ARGS:
@@ -437,6 +457,9 @@ packrat_parser_rep::highlight (C sym, C pos) {
       path start= decode_tree_position (pos);
       path end  = decode_tree_position (next);
       highlight (current_tree, start, end, col);
+      static C prop= encode_symbol (compound ("property", "transparent"));
+      D key = (((D) prop) << 32) + ((D) (sym ^ prop));
+      if (!properties->contains (key)) return;
     }
   }
 
@@ -446,8 +469,10 @@ packrat_parser_rep::highlight (C sym, C pos) {
     switch (inst[0]) {
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
-	if (parse (inst[i], pos) != PACKRAT_FAILED)
+	if (parse (inst[i], pos) != PACKRAT_FAILED) {
 	  highlight (inst[i], pos);
+	  break;
+	}
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
@@ -467,6 +492,10 @@ packrat_parser_rep::highlight (C sym, C pos) {
       break;
     case PACKRAT_RANGE:
     case PACKRAT_NOT:
+      break;
+    case PACKRAT_EXCEPT:
+      highlight (inst[1], pos);
+      break;      
     case PACKRAT_TM_OPEN:
     case PACKRAT_TM_ANY:
     case PACKRAT_TM_ARGS:
@@ -494,7 +523,7 @@ packrat_parse (string lan, string sym, tree in) {
 object
 packrat_context (string lan, string s, tree in, path in_pos) {
   //cout << "Context " << in << " at " << in_pos
-  //<< " (" << lan << ", " << s << ")" << LF;
+  //     << " (" << lan << ", " << s << ")" << LF;
   packrat_parser par= make_packrat_parser (lan, in);
   C sym= encode_symbol (compound ("symbol", s));
   C pos= par->encode_tree_position (in_pos);
@@ -517,13 +546,13 @@ packrat_select (string lan, string s, tree in,
 		path& p1, path& p2, int mode)
 {
   //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
-  //<< " (" << lan << ", " << s << ")" << LF;
+  //     << " (" << lan << ", " << s << ")" << LF;
   packrat_parser par= make_packrat_parser (lan, in);
   C sym = encode_symbol (compound ("symbol", s));
   C pos1= par->encode_tree_position (p1);
   C pos2= par->encode_tree_position (p2);
   //cout << "Encoded " << pos1 << " -- " << pos2
-  //<< " in " << par->current_string << LF;
+  //     << " in " << par->current_string << LF;
   if (par->parse (sym, 0) != N(par->current_input)) return false;
   if (pos1 == PACKRAT_FAILED || pos2 == PACKRAT_FAILED) return false;
   array<C> kind, begin, end;
@@ -552,6 +581,7 @@ packrat_select (string lan, string s, tree in,
 
 void
 packrat_highlight (string lan, string s, tree in) {
+  //cout << "Highlight " << lan << ", " << s << " in " << in << "\n";
   packrat_parser par= make_packrat_parser (lan, in);
   C sym = encode_symbol (compound ("symbol", s));
   if (par->parse (sym, 0) == N(par->current_input))

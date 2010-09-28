@@ -38,12 +38,14 @@ RESOURCE(packrat_grammar);
 #define PACKRAT_REPEAT    ((C) 100000003)
 #define PACKRAT_RANGE     ((C) 100000004)
 #define PACKRAT_NOT       ((C) 100000005)
-#define PACKRAT_TM_OPEN   ((C) 100000006)
-#define PACKRAT_TM_ANY    ((C) 100000007)
-#define PACKRAT_TM_ARGS   ((C) 100000008)
-#define PACKRAT_TM_LEAF   ((C) 100000009)
-#define PACKRAT_TM_FAIL   ((C) 100000010)
-#define PACKRAT_SYMBOLS   ((C) 100000011)
+#define PACKRAT_EXCEPT    ((C) 100000006)
+#define PACKRAT_TM_OPEN   ((C) 100000010)
+#define PACKRAT_TM_ANY    ((C) 100000011)
+#define PACKRAT_TM_ARGS   ((C) 100000012)
+#define PACKRAT_TM_LEAF   ((C) 100000013)
+#define PACKRAT_TM_CHAR   ((C) 100000014)
+#define PACKRAT_TM_FAIL   ((C) 100000015)
+#define PACKRAT_SYMBOLS   ((C) 100000020)
 
 /******************************************************************************
 * Encoding of tokens and symbols

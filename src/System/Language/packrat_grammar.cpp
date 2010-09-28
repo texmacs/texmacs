@@ -93,6 +93,7 @@ void
 initialize_color_encodings () {
   color_encoding ("comment")= 1;
   color_encoding ("keyword")= 2;
+  color_encoding ("error")= 3;
   color_encoding ("constant")= 10;
   color_encoding ("constant_identifier")= 11;
   color_encoding ("constant_function")= 12;
@@ -120,6 +121,7 @@ initialize_color_decodings () {
   color_decoding (-1)= "red";
   color_decoding (1)= "brown";
   color_decoding (2)= "dark green";
+  color_decoding (3)= "dark red";
   color_decoding (10)= "#4040c0";
   color_decoding (11)= "#4040c0";
   color_decoding (12)= "#4040c0";
@@ -343,10 +345,12 @@ packrat_grammar_rep::define (tree t) {
     else if (is_compound (t, "while")) def << PACKRAT_WHILE;
     else if (is_compound (t, "repeat")) def << PACKRAT_REPEAT;
     else if (is_compound (t, "not")) def << PACKRAT_NOT;
+    else if (is_compound (t, "except")) def << PACKRAT_EXCEPT;
     else if (is_compound (t, "tm-open")) def << PACKRAT_TM_OPEN;
     else if (is_compound (t, "tm-any")) def << PACKRAT_TM_ANY;
     else if (is_compound (t, "tm-args")) def << PACKRAT_TM_ARGS;
     else if (is_compound (t, "tm-leaf")) def << PACKRAT_TM_LEAF;
+    else if (is_compound (t, "tm-char")) def << PACKRAT_TM_CHAR;
     else def << PACKRAT_TM_FAIL;
     for (int i=0; i<N(t); i++) {
       (void) define (t[i]);
