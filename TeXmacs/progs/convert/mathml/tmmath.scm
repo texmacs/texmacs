@@ -57,7 +57,7 @@
 ;; Mathematics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmmath-group l)
+(define (tmmath-rigid l)
   `(m:mrow ,(tmmath (car l))))
 
 (define (tmmath-large x)
@@ -276,7 +276,7 @@
   ;; Mathematics
   (concat tmmath-concat)
   (concat! tmmath-concat!)
-  (group tmmath-group)
+  (rigid tmmath-rigid)
   (left tmmath-left)
   (mid tmmath-mid)
   (right tmmath-right)

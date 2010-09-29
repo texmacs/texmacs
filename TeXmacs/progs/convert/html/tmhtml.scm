@@ -1316,7 +1316,7 @@
   (new-dpage* tmhtml-noop)
   (new-dpage tmhtml-noop)
 
-  (group tmhtml-id)
+  (rigid tmhtml-id)
   (left tmhtml-id)
   (mid tmhtml-id)
   (right tmhtml-id)

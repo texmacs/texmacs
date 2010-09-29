@@ -26,7 +26,7 @@
      (if (not (null? x))
 	 (if (equal? (car x) 'keepcase)
 	     (if (null? (cdr x)) "{}"
-		 `(group ,(bibtex-remove-keepcase (cadr x))))
+		 `(rigid ,(bibtex-remove-keepcase (cadr x))))
 	     (cons (car x) (map bibtex-remove-keepcase (cdr x))))
 	 `()))
     ((string? x) x)))

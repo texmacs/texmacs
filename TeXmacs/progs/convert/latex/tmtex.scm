@@ -504,7 +504,7 @@
       (tex-concat (tmtex-math-concat-spaces (tmtex-list l)))
       (tex-concat (tmtex-list (tmtex-rewrite-no-break l)))))
 
-(define (tmtex-group l)
+(define (tmtex-rigid l)
   (tmtex-function '!group l))
 
 (define (tmtex-no-first-indentation l) (tex-apply 'noindent))
@@ -1432,7 +1432,7 @@
   (para tmtex-para)
   (surround tmtex-surround)
   (concat tmtex-concat)
-  (group tmtex-group)
+  (rigid tmtex-rigid)
   (hidden tmtex-noop)
   (hspace tmtex-hspace)
   (vspace* tmtex-noop)
