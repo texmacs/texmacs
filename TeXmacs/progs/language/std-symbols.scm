@@ -462,7 +462,7 @@
     (:limits display)
     "inf" "lim" "liminf" "limsup" "max" "min" "sup")
 
-  (define Reserved
+  (define Reserved-symbol
     :<frac :<sqrt :<wide
     :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime))

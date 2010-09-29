@@ -17,12 +17,18 @@
 (define-language std-math-operators
   (:synopsis "standard mathematical operators")
 
+  (define Skip
+    (:operator)
+    ((except :< Reserved-symbol) :args :>))
+
   (define Pre
+    (:operator)
     (:<lsub Script :>)
     (:<lsup Script :>)
     (:<lprime (* Prime-symbol) :>))
 
   (define Post
+    (:operator)
     (:<rsub Script :>)
     (:<rsup Script :>)
     (:<rprime (* Prime-symbol) :>))
@@ -193,6 +199,7 @@
     (Main Separator)
     (Main ".")
     (Main "\n")
+    (Main Skip)
     Expression)
 
   (define Expression
@@ -258,24 +265,23 @@
   (define Product
     (Product Times-infix Power)
     (Product Over-infix Power)
-    (:<frac Expression :/ Expression :>)
     Power)
 
   (define Power
     (Prefixed Power-infix Prefixed)
-    (:<sqrt Expression :>)
-    (:<sqrt Expression :/ Expression :>)
     Prefixed)
 
   (define Prefixed
     (Prefix-prefix Prefixed)
     (Pre Prefixed)
+    (Skip Prefixed)
     (Postfixed Space-infix Prefixed)
     Postfixed)
 
   (define Postfixed
     (Postfixed Postfix-postfix)
     (Postfixed Post)
+    (Postfixed Skip)
     (Postfixed Open Close)
     (Postfixed Open Expression Close)
     Radical)
@@ -284,13 +290,16 @@
     (Open Close)
     (Open Expression Close)
     (Big-open Expression Big-close)
-    (:<wide Expression :/ :args :>)
     Identifier
     Number
     Variable-symbol
     Suspension-symbol
     Miscellaneous-symbol
-    ((except :< Reserved) :args :>)
+    (:<frac Expression :/ Expression :>)
+    (:<sqrt Expression :>)
+    (:<sqrt Expression :/ Expression :>)
+    (:<wide Expression :/ :args :>)
+    Skip
     :cursor)
 
   (define Identifier
