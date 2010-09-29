@@ -103,7 +103,7 @@
   (length-divide divide_lengths (double string string))
 
   ;; modify mathematics
-  (make-group make_group (void))
+  (make-rigid make_rigid (void))
   (make-lprime make_lprime (void string))
   (make-rprime make_rprime (void string))
   (make-below make_below (void))

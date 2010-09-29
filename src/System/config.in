@@ -84,9 +84,6 @@
 /* Enabling Mac OSX extensions */
 #undef MACOSX_EXTENSIONS
 
-/* Enabling Qt pipes */
-#undef QTPIPES
-
 /* Disable fast memory allocator */
 #undef NO_FAST_ALLOC
 
@@ -105,11 +102,17 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
 /* Enabling experimental PDF renderer */
 #undef PDF_RENDERER
+
+/* Enabling Qt pipes */
+#undef QTPIPES
 
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P

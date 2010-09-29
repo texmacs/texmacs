@@ -187,7 +187,7 @@ concater_rep::typeset (tree t, path ip) {
   case CONCAT:
     typeset_concat (t, ip);
     break;
-  case GROUP:
+  case RIGID:
     typeset_group (t, ip);
     break;
   case HIDDEN:

@@ -105,7 +105,7 @@ evaluate_number (tree t) {
   if (s2 == "alpha") return alpha_nr (nr);
   if (s2 == "Alpha") return Alpha_nr (nr);
   if (s2 == "fnsymbol")
-    return tree (WITH, MODE, "math", tree (GROUP, fnsymbol_nr (nr)));
+    return tree (WITH, MODE, "math", tree (RIGID, fnsymbol_nr (nr)));
   return evaluate_error ("bad number");
 }
 

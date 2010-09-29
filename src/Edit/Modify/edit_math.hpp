@@ -18,7 +18,7 @@ public:
   edit_math_rep ();
   ~edit_math_rep ();
 
-  void make_group ();
+  void make_rigid ();
   void make_lprime (string s);
   void make_rprime (string s);
   void make_below ();

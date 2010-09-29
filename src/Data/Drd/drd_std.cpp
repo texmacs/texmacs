@@ -67,7 +67,7 @@ init_std_drd () {
 	repeat (1, 1) -> no_border () -> accessible (0) -> name ("paragraph"));
   init (SURROUND, "surround", fixed (3) -> accessible (0));
   init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
-  init (GROUP, "group", fixed (1) -> accessible (0));
+  init (RIGID, "rigid", fixed (1) -> accessible (0));
   init (HIDDEN, "hidden", fixed (1) -> no_border () -> hidden (0));
   init (FREEZE, "freeze", fixed (1) -> no_border ());
   init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> no_border ());

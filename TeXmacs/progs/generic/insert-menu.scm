@@ -215,7 +215,7 @@
 	  (-> "Macro" (link source-transformational-menu))
 	  (-> "Executable" (link source-executable-menu)))
       (-> "Special"
-	  ("Group" (make-group))
+	  ("Group" (make-rigid))
 	  ("Superpose" (make 'superpose))
 	  ("Move object" (interactive make-move))
 	  ("Resize object" (interactive make-resize))

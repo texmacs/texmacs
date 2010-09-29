@@ -24,11 +24,11 @@ edit_math_rep::~edit_math_rep () {}
 ******************************************************************************/
 
 void
-edit_math_rep::make_group () {
+edit_math_rep::make_rigid () {
   if (selection_active_small ())
-    insert_tree (tree (GROUP, selection_get_cut ()));
+    insert_tree (tree (RIGID, selection_get_cut ()));
   else {
-    insert_tree (tree (GROUP, ""), path (0, 0));
+    insert_tree (tree (RIGID, ""), path (0, 0));
     set_message ("move to the right when finished", "group");
   }
 }

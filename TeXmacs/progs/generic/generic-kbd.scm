@@ -263,7 +263,7 @@
 
   ("cmd a" (make-tree))
   ("cmd g" (clipboard-clear "primary"))
-  ("cmd R" (make-group))
+  ("cmd R" (make-rigid))
   ("cmd [" (undo 0))
   ("cmd ]" (redo 0))
   ("cmd :" (make 'line-break))
@@ -306,7 +306,7 @@
   ("C-q" (make 'symbol))
 
   ("cmd a" (make-tree))
-  ("cmd R" (make-group))
+  ("cmd R" (make-rigid))
   ("cmd x" (interactive exec-interactive-command))
   ("cmd X" (interactive footer-eval))
   ("cmd :" (make 'line-break))
@@ -349,7 +349,7 @@
   ("cmd g" (clipboard-clear "primary"))
   ("cmd q" (make 'symbol))
   ("cmd x" (interactive footer-eval))
-  ("cmd R" (make-group))
+  ("cmd R" (make-rigid))
   ("cmd <" (go-start))
   ("cmd >" (go-end))
   ("cmd :" (make 'line-break))

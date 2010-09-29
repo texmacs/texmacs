@@ -321,7 +321,7 @@ public:
 				string x2, string y2) = 0;
 
   /* public routines from edit_math */
-  virtual void make_group () = 0;
+  virtual void make_rigid () = 0;
   virtual void make_lprime (string s) = 0;
   virtual void make_rprime (string s) = 0;
   virtual void make_below () = 0;

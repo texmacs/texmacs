@@ -924,7 +924,7 @@ tmg_length_divide (SCM arg1, SCM arg2) {
 SCM
 tmg_make_group () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_group ();
+  get_server()->get_editor()->make_rigid ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2686,7 +2686,7 @@ initialize_glue_editor () {
   scm_new_procedure ("length-mult", (FN) tmg_length_mult, 2, 0, 0);
   scm_new_procedure ("length?", (FN) tmg_lengthP, 1, 0, 0);
   scm_new_procedure ("length-divide", (FN) tmg_length_divide, 2, 0, 0);
-  scm_new_procedure ("make-group", (FN) tmg_make_group, 0, 0, 0);
+  scm_new_procedure ("make-rigid", (FN) tmg_make_group, 0, 0, 0);
   scm_new_procedure ("make-lprime", (FN) tmg_make_lprime, 1, 0, 0);
   scm_new_procedure ("make-rprime", (FN) tmg_make_rprime, 1, 0, 0);
   scm_new_procedure ("make-below", (FN) tmg_make_below, 0, 0, 0);

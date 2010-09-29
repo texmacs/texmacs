@@ -2713,7 +2713,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.7.6"
+DEVEL_VERSION="1.0.7.7"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.7"
 STABLE_RELEASE="1"
