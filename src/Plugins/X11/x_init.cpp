@@ -856,25 +856,27 @@ x_gui_rep::x_gui_rep (int& argc2, char** argv2):
 	int nr= ((int) (s[3] - '0'));
 	int mask= 4 << nr;
 	if (occurs ("Alt_L", s) || occurs ("Alt_R", s)) {
-	  //cout << "alt_mask= " << mask << "\n";
+	  cout << "alt_mask= " << mask << "\n";
 	  alt_mask= mask;
 	}
 	else if (alt_mask == 0 && occurs ("Mode_switch", s)) {
-	  //cout << "alt_mask= " << mask << "\n";
+	  cout << "alt_mask= " << mask << "\n";
 	  alt_mask= mask;
 	}
 	else if (occurs ("Meta_L", s) || occurs ("Meta_R", s)) {
-	  //cout << "meta_mask= " << mask << "\n";
+	  cout << "meta_mask= " << mask << "\n";
 	  meta_mask= mask;
 	}
 	else if (meta_mask == 0 &&
 		 (occurs ("Super_L", s) || occurs ("Super_R", s))) {
-	  //cout << "meta_mask= " << mask << "\n";
+	  cout << "meta_mask= " << mask << "\n";
 	  meta_mask= mask;
 	}
       }
       start= i+1;
     }
+  if (alt_mask == 0) alt_mask= 8;
+  if (meta_mask == 0) meta_mask= 16;
 
   //get_xmodmap ();
   x_initialize_colors ();
