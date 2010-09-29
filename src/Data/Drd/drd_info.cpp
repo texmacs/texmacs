@@ -393,6 +393,19 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
   if (L(t) == WITH && i == N(t)-1)
     return env_merge (env, t (0, N(t)-1));
   else {
+    if (L(t) == DOCUMENT && N(t) > 0 &&
+	(is_compound (t[0], "hide-preamble", 1) ||
+	 is_compound (t[0], "show-preamble", 1)))
+      {
+	tree u= t[0][0];
+	if (!is_func (u, DOCUMENT)) u= tree (DOCUMENT, u);
+	tree cenv (WITH);
+	for (int i=0; i<N(u); i++)
+	  if (is_func (u[i], ASSIGN, 2))
+	    cenv << copy (u[i][0]) << copy (u[i][1]);
+	env= env_merge (env, cenv);
+      }
+
     tag_info ti= info[L(t)];
     int index= ti->get_index (i, N(t));
     if ((index<0) || (index>=N(ti->ci))) return "";

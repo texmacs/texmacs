@@ -125,21 +125,7 @@
   ("doubleacute" "M-H")
   ("abovering" "M-O")
   ("abovedot" "M-.")
-  ("ogonek" "M-G")
-
-  ;; for convenience
-  ("A-~" "M-~")
-  ("A-^" "M-^")
-  ("A-\"" "M-\"")
-  ("A-'" "M-'")
-  ("A-`" "M-`")
-  ("A-C" "M-C")
-  ("A-U" "M-U")
-  ("A-V" "M-V")
-  ("A-H" "M-H")
-  ("A-O" "M-O")
-  ("A-." "M-.")
-  ("A-G" "M-G"))
+  ("ogonek" "M-G"))
 
 (kbd-map
   ("emacs" "" "Emacs command")
@@ -305,21 +291,7 @@
   ("doubleacute" "M-H")
   ("abovering" "M-O")
   ("abovedot" "M-.")
-  ("ogonek" "M-G")
-
-  ;; for convenience
-  ("A-~" "M-~")
-  ("A-^" "M-^")
-  ("A-\"" "M-\"")
-  ("A-'" "M-'")
-  ("A-`" "M-`")
-  ("A-C" "M-C")
-  ("A-U" "M-U")
-  ("A-V" "M-V")
-  ("A-H" "M-H")
-  ("A-O" "M-O")
-  ("A-." "M-.")
-  ("A-G" "M-G"))
+  ("ogonek" "M-G"))
 
 (kbd-map
   ("windows" "" "Windows command"))
