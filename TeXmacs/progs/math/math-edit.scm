@@ -119,6 +119,8 @@
       (concat-isolate! t)
       (if (tree-is? t :up 'document)
 	  (begin
+	    (if (not r) (set! r ""))
+	    (if (not l) (set! l ""))
 	    (tree-set! t `(equation* (document ,(tree-ref t 0))))
 	    (while (string-ends? r " ")
 	      (set! r (string-drop-right r 1)))

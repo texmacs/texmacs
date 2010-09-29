@@ -239,13 +239,18 @@ packrat_parser_rep::parse (C sym, C pos) {
       else im= PACKRAT_FAILED;
       break;
     case PACKRAT_TM_ANY:
-      im= parse (PACKRAT_TM_OPEN, pos);
-      if (im == PACKRAT_FAILED)
-	im= parse (PACKRAT_TM_LEAF, pos);
-      else {
-	im= parse (PACKRAT_TM_ARGS, im);
-	if (im != PACKRAT_FAILED)
-	  im= parse (encode_token ("</>"), im);
+      im= pos;
+      while (true) {
+	C old= im;
+	im= parse (PACKRAT_TM_OPEN, old);
+	if (im == PACKRAT_FAILED)
+	  im= parse (PACKRAT_TM_LEAF, old);
+	else {
+	  im= parse (PACKRAT_TM_ARGS, im);
+	  if (im != PACKRAT_FAILED)
+	    im= parse (encode_token ("</>"), im);
+	}
+	if (old == im) break;
       }
       break;
     case PACKRAT_TM_ARGS:
