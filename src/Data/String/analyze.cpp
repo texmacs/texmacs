@@ -1054,6 +1054,11 @@ search_forwards (string s, string in) {
   return search_forwards (s, 0, in);
 }
 
+bool
+occurs (string what, string in) {
+  return search_forwards (what, 0, in) >= 0;
+}
+
 int
 search_backwards (string s, int pos, string in) {
   while (pos >= 0) {
