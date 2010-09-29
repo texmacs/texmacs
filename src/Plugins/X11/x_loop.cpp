@@ -32,6 +32,8 @@
 
 extern hashmap<Window,pointer> Window_to_window;
 int  nr_windows= 0;
+int  alt_mask= 0;
+int  meta_mask= 0;
 
 static int  kbd_count= 0;
 static bool request_partial_redraw= false;
@@ -89,9 +91,9 @@ x_gui_rep::look_up_key (XKeyEvent* ev) {
 
   /* other keyboard modifiers */
   if (N(s)==0) return s;
-  if (ev->state&4) s= "C-" * s;
-  if (ev->state&8) s= "A-" * s;
-  if (ev->state&240) s= "M-" * s;
+  if (ev->state & 4) s= "C-" * s;
+  if (ev->state & alt_mask) s= "A-" * s;
+  if (ev->state & meta_mask) s= "M-" * s;
   // cout << "key press: " << s << LF;
   return s;
 }

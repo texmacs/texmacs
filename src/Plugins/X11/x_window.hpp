@@ -104,5 +104,7 @@ public:
 typedef x_window_rep* x_window;
 Window get_Window (widget w);
 x_window get_x_window (widget w);
+extern int alt_mask;
+extern int meta_mask;
 
 #endif // defined X_WINDOW_H

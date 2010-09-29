@@ -16,6 +16,7 @@
 #include "dictionary.hpp"
 #include "iterator.hpp"
 #include "message.hpp"
+#include "sys_utils.hpp"
 #include <locale.h>
 
 x_gui_rep* the_gui= NULL;
@@ -845,6 +846,35 @@ x_gui_rep::x_gui_rep (int& argc2, char** argv2):
   }
 
   XSetGraphicsExposures (dpy, gc, true);
+
+  int start= 0;
+  string xmm= eval_system ("xmodmap");
+  for (int i=0; i<=N(xmm); i++)
+    if (i == N(xmm) || xmm[i] == '\n') {
+      string s= xmm (start, i);
+      if (starts (s, "mod") && N(s)>3 && s[3] >= '1' && s[3] <= '5') {
+	int nr= ((int) (s[3] - '0'));
+	int mask= 4 << nr;
+	if (occurs ("Alt_L", s) || occurs ("Alt_R", s)) {
+	  //cout << "alt_mask= " << mask << "\n";
+	  alt_mask= mask;
+	}
+	else if (alt_mask == 0 && occurs ("Mode_switch", s)) {
+	  //cout << "alt_mask= " << mask << "\n";
+	  alt_mask= mask;
+	}
+	else if (occurs ("Meta_L", s) || occurs ("Meta_R", s)) {
+	  //cout << "meta_mask= " << mask << "\n";
+	  meta_mask= mask;
+	}
+	else if (meta_mask == 0 &&
+		 (occurs ("Super_L", s) || occurs ("Super_R", s))) {
+	  //cout << "meta_mask= " << mask << "\n";
+	  meta_mask= mask;
+	}
+      }
+      start= i+1;
+    }
 
   //get_xmodmap ();
   x_initialize_colors ();
