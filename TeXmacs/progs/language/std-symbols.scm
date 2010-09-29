@@ -465,4 +465,7 @@
   (define Reserved-symbol
     :<frac :<sqrt :<wide
     :<left :<mid :<right :<big
-    :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime))
+    :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime)
+
+  (define Skip-symbol
+    :<space :<label :<eq-number))

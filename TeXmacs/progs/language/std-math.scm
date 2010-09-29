@@ -299,7 +299,7 @@
     (:<sqrt Expression :>)
     (:<sqrt Expression :/ Expression :>)
     (:<wide Expression :/ :args :>)
-    Skip
+    ((except :< Reserved-symbol) :args :>)
     :cursor)
 
   (define Identifier
