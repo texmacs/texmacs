@@ -58,6 +58,7 @@ debug_set (string s, bool on) {
   else if (s == "history") debug_set (DEBUG_FLAG_HISTORY, on);
   else if (s == "qt") debug_set (DEBUG_FLAG_QT, on);
   else if (s == "keyboard") debug_set (DEBUG_FLAG_KEYBOARD, on);
+  else if (s == "packrat") debug_set (DEBUG_FLAG_PACKRAT, on);
 }
 
 static bool
@@ -76,6 +77,7 @@ debug_get (string s) {
   else if (s == "history") return debug_get (DEBUG_FLAG_HISTORY);
   else if (s == "qt") return debug_get (DEBUG_FLAG_QT);
   else if (s == "keyboard") return debug_get (DEBUG_FLAG_KEYBOARD);
+  else if (s == "packrat") return debug_get (DEBUG_FLAG_PACKRAT);
   else return false;
 }
 

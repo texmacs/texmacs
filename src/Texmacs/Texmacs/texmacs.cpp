@@ -163,6 +163,7 @@ TeXmacs_main (int argc, char** argv) {
       else if (s == "-debug-history") debug (DEBUG_FLAG_HISTORY, true);
       else if (s == "-debug-qt") debug (DEBUG_FLAG_QT, true);
       else if (s == "-debug-keyboard") debug (DEBUG_FLAG_KEYBOARD, true);
+      else if (s == "-debug-packrat") debug (DEBUG_FLAG_PACKRAT, true);
       else if (s == "-debug-all") {
 	debug (DEBUG_FLAG_EVENTS, true);
 	debug (DEBUG_FLAG_STD, true);
