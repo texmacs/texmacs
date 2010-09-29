@@ -279,13 +279,13 @@
   (define Big-symbol
     Big-nolim-symbol Big-lim-symbol)
 
-  (define Prefix-symbol
+  (define Other-prefix-symbol
     (:type prefix)
     (:penalty invalid)
     (:spacing none none)
     "<card>")
 
-  (define Postfix-symbol
+  (define Other-postfix-symbol
     (:type postfix)
     (:penalty panic)
     "!")
@@ -461,6 +461,31 @@
     (:spacing none default)
     (:limits display)
     "inf" "lim" "liminf" "limsup" "max" "min" "sup")
+
+  (define Prefix-symbol
+    Minus-prefix-symbol
+    Plus-prefix-symbol
+    Other-prefix-symbol)
+
+  (define Postfix-symbol
+    Other-postfix-symbol)
+
+  (define Infix-symbol
+    Assign-symbol
+    Model-symbol
+    Imply-symbol
+    Or-symbol
+    And-symbol
+    Relation-symbol
+    Arrow-symbol
+    Union-symbol
+    Intersection-symbol
+    Exclude-symbol
+    Plus-symbol
+    Minus-symbol
+    Times-symbol
+    Over-symbol
+    Power-symbol)
 
   (define Reserved-symbol
     :<frac :<sqrt :<wide

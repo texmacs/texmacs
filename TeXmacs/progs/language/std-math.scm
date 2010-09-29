@@ -19,7 +19,7 @@
 
   (define Skip
     (:operator)
-    ((except :< Reserved-symbol) :args :>))
+    (Skip-symbol :args :>))
 
   (define Pre
     (:operator)
@@ -34,14 +34,26 @@
     (:<rprime (* Prime-symbol) :>))
   
   (define Script
-    Expression
-    Relation-symbol
-    Arrow-symbol
-    Plus-symbol
-    Minus-symbol
-    Times-symbol
-    Over-symbol
-    Power-symbol)
+    (Separator Relaxed-expression Separator)
+    (Separator Relaxed-expression)
+    (Relaxed-expression Separator)
+    Relaxed-expression)
+
+  (define Infix
+    (:operator)
+    (Infix Post)
+    (Pre Infix)
+    Infix-symbol)
+
+  (define Prefix
+    (:operator)
+    (Prefix Post)
+    Prefix-symbol)
+
+  (define Postfix
+    (:operator)
+    (Pre Postfix)
+    Postfix-symbol)
 
   (define Assign-infix
     (:operator)
@@ -49,10 +61,20 @@
     (Pre Assign-infix)
     Assign-symbol)
 
+  (define Assign-prefix
+    (:operator)
+    (Assign-prefix Post)
+    Assign-symbol)
+
   (define Model-infix
     (:operator)
     (Model-infix Post)
     (Pre Model-infix)
+    Model-symbol)
+
+  (define Model-prefix
+    (:operator)
+    (Model-prefix Post)
     Model-symbol)
 
   (define Imply-infix
@@ -84,10 +106,20 @@
     (Pre Relation-infix)
     Relation-symbol)
 
+  (define Relation-prefix
+    (:operator)
+    (Relation-prefix Post)
+    Relation-symbol)
+
   (define Arrow-infix
     (:operator)
     (Arrow-infix Post)
     (Pre Arrow-infix)
+    Arrow-symbol)
+
+  (define Arrow-prefix
+    (:operator)
+    (Arrow-prefix Post)
     Arrow-symbol)
 
   (define Union-infix
@@ -138,16 +170,31 @@
     (Pre Times-infix)
     Times-symbol)
 
+  (define Times-prefix
+    (:operator)
+    (Times-prefix Post)
+    Times-symbol)
+
   (define Over-infix
     (:operator)
     (Over-infix Post)
     (Pre Over-infix)
     Over-symbol)
 
+  (define Over-prefix
+    (:operator)
+    (Over-prefix Post)
+    Over-symbol)
+
   (define Power-infix
     (:operator)
     (Power-infix Post)
     (Pre Power-infix)
+    Power-symbol)
+
+  (define Power-prefix
+    (:operator)
+    (Power-prefix Post)
     Power-symbol)
 
   (define Space-infix
@@ -157,12 +204,12 @@
   (define Prefix-prefix
     (:operator)
     (Prefix-prefix Post)
-    Prefix-symbol)
+    Other-prefix-symbol)
 
   (define Postfix-postfix
     (:operator)
     (Pre Postfix-postfix)
-    Postfix-symbol)
+    Other-postfix-symbol)
 
   (define Big-open
     (:operator)
@@ -200,7 +247,23 @@
     (Main ".")
     (Main "\n")
     (Main Skip)
-    Expression)
+    Relaxed-expression)
+
+  (define Relaxed-expression
+    (Relaxed-assignment Separator Relaxed-expression)
+    Relaxed-assignment)
+
+  (define Relaxed-assignment
+    Assignment
+    (Assign-prefix Modeling)
+    (Relation-prefix Arrow)
+    (Arrow-prefix Union)
+    (Times-prefix Power)
+    (Over-prefix Power)
+    (Power-prefix Prefixed)
+    Infix
+    Prefix
+    Postfix)
 
   (define Expression
     (Assignment Separator Expression)
@@ -212,6 +275,7 @@
 
   (define Modeling
     (Sum Model-infix Quantified)
+    (Model-prefix Quantified)
     Quantified)
 
   (define Quantified

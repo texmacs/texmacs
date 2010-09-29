@@ -178,8 +178,8 @@ packrat_parser_rep::parse (C sym, C pos) {
     return im;
   }
   current_cache (key)= PACKRAT_FAILED;
-  //cout << "Parse " << sym << " at " << pos << INDENT << LF;
-  //cout << "Parse " << packrat_decode[sym] << " at " << pos << INDENT << LF;
+  if (DEBUG_PACKRAT)
+    cout << "Parse " << packrat_decode[sym] << " at " << pos << INDENT << LF;
   if (sym >= PACKRAT_TM_OPEN) {
     array<C> inst= grammar [sym];
     //cout << "Parse " << inst << " at " << pos << LF;
@@ -287,10 +287,9 @@ packrat_parser_rep::parse (C sym, C pos) {
     else im= PACKRAT_FAILED;
   }
   current_cache (key)= im;
-  //cout << UNINDENT << "Parsed " << packrat_decode[sym]
-  //<< " at " << pos << " -> " << im << LF;
-  //cout << UNINDENT << "Parsed " << sym << " at " << pos << " -> " << im << LF;
-  //cout << "cache= " << current_cache << LF;
+  if (DEBUG_PACKRAT)
+    cout << UNINDENT << "Parsed " << packrat_decode[sym]
+	 << " at " << pos << " -> " << im << LF;
   return im;
 }
 
@@ -521,8 +520,10 @@ object
 packrat_context (string lan, string s, tree in, path in_pos) {
   //cout << "Context " << in << " at " << in_pos
   //     << " (" << lan << ", " << s << ")" << LF;
-  packrat_parser par= make_packrat_parser (lan, in, in_pos);
+  packrat_parser par= make_packrat_parser (lan, in);
   C sym= encode_symbol (compound ("symbol", s));
+  if (par->parse (sym, 0) != N(par->current_input))
+    par= make_packrat_parser (lan, in, in_pos);
   C pos= par->encode_tree_position (in_pos);
   if (pos == PACKRAT_FAILED) return object (false);
   array<C> kind, begin, end;
@@ -544,8 +545,10 @@ packrat_select (string lan, string s, tree in, path in_pos,
 {
   //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
   //     << " (" << lan << ", " << s << ")" << LF;
-  packrat_parser par= make_packrat_parser (lan, in, in_pos);
+  packrat_parser par= make_packrat_parser (lan, in);
   C sym = encode_symbol (compound ("symbol", s));
+  if (par->parse (sym, 0) != N(par->current_input))
+    par= make_packrat_parser (lan, in, in_pos);
   C pos1= par->encode_tree_position (p1);
   C pos2= par->encode_tree_position (p2);
   //cout << "Encoded " << pos1 << " -- " << pos2
