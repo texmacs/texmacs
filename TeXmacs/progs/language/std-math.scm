@@ -261,6 +261,7 @@
     (Times-prefix Power)
     (Over-prefix Power)
     (Power-prefix Prefixed)
+    Quantifier-symbol
     Infix
     Prefix
     Postfix)
