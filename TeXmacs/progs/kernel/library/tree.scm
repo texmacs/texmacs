@@ -43,6 +43,10 @@
 	 (and (or (null? ip) (!= (cAr ip) -5))
 	      (reverse ip)))))
 
+(define-public (tree-func? t . args)
+  (and (compound-tree? t)
+       (apply func? (cons (tree->list t) args))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

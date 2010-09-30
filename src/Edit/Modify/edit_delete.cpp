@@ -325,6 +325,11 @@ edit_text_rep::remove_structure_upwards () {
   int last= last_item (p);
   p= path_up (p);
   tree st= subtree (et, p);
+  if (is_func (st, GROUP)) {
+    eval ("(use-modules (math math-edit))");
+    call ("group-set-left", st, "");
+    call ("group-set-right", st, "");
+  }
   bool recurse=
     is_func (st, TFORMAT) || is_func (st, TABLE) ||
     is_func (st, ROW) || is_func (st, CELL) ||

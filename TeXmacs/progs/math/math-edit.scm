@@ -165,3 +165,37 @@
 (tm-define (variant-circulate forward?)
   (:inside equation equation*)
   (equation*->math))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Management of groups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (group-set-left t l)
+  (cond ((tree-func? t 'group 1)
+	 (tree-assign-node t 'rigid)
+	 (group-set-left (tree-ref t 0) l)
+	 (tree-assign-node t 'group))
+	((and (tree-func? t 'concat) (> (tree-arity t) 0))
+	 (group-set-left (tree-ref t 0) l))
+	((or (tree-func? t 'left)
+	     (and (tree-atomic? t) (!= (tree->string t) "")))
+	 (with-cursor (tree->path t :start)
+	   (remove-text #t)
+	   (insert l)))
+	(else (texmacs-error "group-set-left"
+			     "cannot set left parenthesis in ~S" t))))
+
+(tm-define (group-set-right t r)
+  (cond ((tree-func? t 'group 1)
+	 (tree-assign-node t 'rigid)
+	 (group-set-right (tree-ref t 0) r)
+	 (tree-assign-node t 'group))
+	((and (tree-func? t 'concat) (> (tree-arity t) 0))
+	 (group-set-right (tree-ref t :last) r))
+	((or (tree-func? t 'right)
+	     (and (tree-atomic? t) (!= (tree->string t) "")))
+	 (with-cursor (tree->path t :end)
+	   (remove-text #f)
+	   (insert r)))
+	(else (texmacs-error "group-set-right"
+			     "cannot set right parenthesis in ~S" t))))
