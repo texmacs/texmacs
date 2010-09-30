@@ -180,33 +180,41 @@ drd_info_rep::is_dynamic (tree t) {
 ******************************************************************************/
 
 void
-drd_info_rep::set_no_border (tree_label l, bool has_no_border) {
-  if (info[l]->pi.freeze_no_border) return;
+drd_info_rep::set_border (tree_label l, int mode) {
+  if (info[l]->pi.freeze_border) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
-  ti->pi.no_border= has_no_border;
+  ti->pi.border_mode= mode;
 }
 
-bool
-drd_info_rep::get_no_border (tree_label l) {
-  return info[l]->pi.no_border;
+int
+drd_info_rep::get_border (tree_label l) {
+  return info[l]->pi.border_mode;
 }
 
 void
-drd_info_rep::freeze_no_border (tree_label l) {
+drd_info_rep::freeze_border (tree_label l) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
-  ti->pi.freeze_no_border= true;
+  ti->pi.freeze_border= true;
 }
 
 bool
 drd_info_rep::is_child_enforcing (tree t) {
-  return info[L(t)]->pi.no_border && (N(t) != 0);
+  return ((info[L(t)]->pi.border_mode & BORDER_INNER) != 0) &&
+         (N(t) != 0);
+}
+
+bool
+drd_info_rep::is_parent_enforcing (tree t) {
+  return ((info[L(t)]->pi.border_mode & BORDER_OUTER) != 0) &&
+         (N(t) != 0);
 }
 
 bool
 drd_info_rep::var_without_border (tree_label l) {
-  return info[l]->pi.no_border && (!std_contains (as_string (l)));
+  return ((info[l]->pi.border_mode & BORDER_INNER) != 0) &&
+         (!std_contains (as_string (l)));
 }
 
 /******************************************************************************

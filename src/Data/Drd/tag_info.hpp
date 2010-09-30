@@ -32,9 +32,9 @@ tree drd_decode (int i);
 *    o CHILD_BIFORM  : two types of properties (corresponds to base/extra)
 *    o CHILD_DETAILED: as many as arity_base+arity_extra types of properties
 *
-* - The no_border field specifies whether the cursor may be put behind and
+* - The border_mode field specifies whether the cursor may be put behind and
 *   before the tag or not (the 0 and 1 paths). For instance, this field
-*   is true for CONCAT and false for FRAC.
+*   is BORDER_INNER for CONCAT and BORDER_YES for FRAC.
 *
 * - The block field specifies when the parent should be considered
 *   as a block. In the case of BLOCK_OR, the parent is a block
@@ -58,15 +58,20 @@ tree drd_decode (int i);
 #define BLOCK_YES             1
 #define BLOCK_OR              2
 
+#define BORDER_YES            0
+#define BORDER_INNER          1
+#define BORDER_OUTER          2
+#define BORDER_NO             3
+
 struct parent_info {
   unsigned arity_mode       : 2; // arity layout
   unsigned arity_base       : 6; // base arity (minimal arity)
   unsigned arity_extra      : 4; // extra arity (optional, repeated, etc.)
   unsigned child_mode       : 2; // child layout
-  unsigned no_border        : 1; // is the border inaccessible?
+  unsigned border_mode      : 2; // is the border inaccessible?
   unsigned block            : 2; // is a block structure?
   unsigned freeze_arity     : 1; // true => disable heuristic determination
-  unsigned freeze_no_border : 1;
+  unsigned freeze_border    : 1;
   unsigned freeze_block     : 1;
 
   parent_info (int arity, int extra, int amode, int cmode, bool frozen= false);
@@ -144,7 +149,8 @@ public:
   tag_info_rep (int arity, int extra, int amode, int cmode, bool frozen);
   inline ~tag_info_rep () {}
 
-  tag_info no_border ();
+  tag_info inner_border ();
+  tag_info outer_border ();
   tag_info accessible (int i);
   tag_info hidden (int i);
   tag_info disable_writable (int i);

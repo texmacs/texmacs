@@ -202,6 +202,12 @@ concater_rep::typeset_concat (tree t, path ip) {
     typeset (t[i], descend (ip, i));
 }
 
+void
+concater_rep::typeset_rigid (tree t, path ip) {
+  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  print (STD_ITEM, move_box (ip, b, 0, 0, true));
+}
+
 /******************************************************************************
 * Typesetting space
 ******************************************************************************/

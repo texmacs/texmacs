@@ -49,6 +49,7 @@ class concater_rep {
   void typeset_paragraph (tree t, path ip);
   void typeset_surround (tree t, path ip);
   void typeset_concat (tree t, path ip);
+  void typeset_rigid (tree t, path ip);
   void typeset_hspace (tree t, path ip);
   void typeset_space (tree t, path ip);
   void typeset_move (tree t, path ip);

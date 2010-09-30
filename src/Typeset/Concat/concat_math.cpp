@@ -13,16 +13,6 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Grouping markup
-******************************************************************************/
-
-void
-concater_rep::typeset_group (tree t, path ip) {
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  print (STD_ITEM, move_box (ip, b, 0, 0, true));
-}
-
-/******************************************************************************
 * Typesetting special mathematical symbols
 ******************************************************************************/
 
@@ -265,8 +255,15 @@ concater_rep::typeset_neg (tree t, path ip) {
 }
 
 /******************************************************************************
-* Trees and tables
+* Other markup
 ******************************************************************************/
+
+void
+concater_rep::typeset_group (tree t, path ip) {
+  marker (descend (ip, 0));
+  typeset (t[0], descend (ip, 0));
+  marker (descend (ip, 1));
+}
 
 void
 concater_rep::typeset_tree (tree t, path ip) {

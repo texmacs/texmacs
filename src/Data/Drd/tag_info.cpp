@@ -48,10 +48,10 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
   arity_base       = a;
   arity_extra      = x;
   child_mode       = cm;
-  no_border        = false;
+  border_mode      = BORDER_YES;
   block            = false;
   freeze_arity     = frozen;
-  freeze_no_border = frozen;
+  freeze_border    = frozen;
   freeze_block     = frozen;
 }
 
@@ -61,10 +61,10 @@ parent_info::parent_info (tree t) {
   get_bits (arity_base      , 6);
   get_bits (arity_extra     , 4);
   get_bits (child_mode      , 2);
-  get_bits (no_border       , 1);
+  get_bits (border_mode     , 2);
   get_bits (block           , 2);
   get_bits (freeze_arity    , 1);
-  get_bits (freeze_no_border, 1);
+  get_bits (freeze_border   , 1);
   get_bits (freeze_block    , 1);
 }
 
@@ -74,10 +74,10 @@ parent_info::operator tree () {
   set_bits (arity_base      , 6);
   set_bits (arity_extra     , 4);
   set_bits (child_mode      , 2);
-  set_bits (no_border       , 1);
+  set_bits (border_mode     , 2);
   set_bits (block           , 2);
   set_bits (freeze_arity    , 1);
-  set_bits (freeze_no_border, 1);
+  set_bits (freeze_border   , 1);
   set_bits (freeze_block    , 1);
   return as_string (i);
 }
@@ -89,10 +89,10 @@ parent_info::operator == (const parent_info& pi) {
     (arity_base       == pi.arity_base      ) &&
     (arity_extra      == pi.arity_extra     ) &&
     (child_mode       == pi.child_mode      ) &&
-    (no_border        == pi.no_border       ) &&
+    (border_mode      == pi.border_mode     ) &&
     (block            == pi.block           ) &&
     (freeze_arity     == pi.freeze_arity    ) &&
-    (freeze_no_border == pi.freeze_no_border) &&
+    (freeze_border    == pi.freeze_border   ) &&
     (freeze_block     == pi.freeze_block    );
 }
 
@@ -219,8 +219,14 @@ tag_info::operator tree () {
 ******************************************************************************/
 
 tag_info
-tag_info_rep::no_border () {
-  pi.no_border= true;
+tag_info_rep::inner_border () {
+  pi.border_mode= BORDER_INNER;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::outer_border () {
+  pi.border_mode= BORDER_OUTER;
   return tag_info (pi, ci, extra);
 }
 

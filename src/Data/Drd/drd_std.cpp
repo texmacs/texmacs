@@ -44,7 +44,7 @@ init (tree_label l, string name, tag_info ti) {
   make_tree_label (l, name);
   std_drd->info (l)= ti;
   std_drd->freeze_arity (l);
-  std_drd->freeze_no_border (l);
+  std_drd->freeze_border (l);
   // std_drd->freeze_block (l);
   // FIXME: freeze children properties
 }
@@ -62,15 +62,15 @@ init_std_drd () {
   init (ERROR, "error", fixed (1));
   init (RAW_DATA, "raw-data", fixed (1));
 
-  init (DOCUMENT, "document", repeat (1, 1) -> no_border () -> accessible (0));
+  init (DOCUMENT, "document", repeat (1, 1) -> inner_border () -> accessible (0));
   init (PARA, "para",
-	repeat (1, 1) -> no_border () -> accessible (0) -> name ("paragraph"));
+	repeat (1, 1) -> inner_border () -> accessible (0) -> name ("paragraph"));
   init (SURROUND, "surround", fixed (3) -> accessible (0));
-  init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
+  init (CONCAT, "concat", repeat (1, 1) -> inner_border () -> accessible (0));
   init (RIGID, "rigid", fixed (1) -> accessible (0));
-  init (HIDDEN, "hidden", fixed (1) -> no_border () -> hidden (0));
-  init (FREEZE, "freeze", fixed (1) -> no_border ());
-  init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> no_border ());
+  init (HIDDEN, "hidden", fixed (1) -> inner_border () -> hidden (0));
+  init (FREEZE, "freeze", fixed (1) -> inner_border ());
+  init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> inner_border ());
   init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
 	options (1, 2) -> name ("vertical space before"));
@@ -116,6 +116,7 @@ init_std_drd () {
 	fixed (0) -> name ("new double page before"));
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
+  init (GROUP, "group", fixed (1) -> outer_border () -> accessible (0));
   init (LEFT, "left", options (1, 2));
   init (MID, "mid", options (1, 2));
   init (RIGHT, "right", options (1, 2));
@@ -141,17 +142,17 @@ init_std_drd () {
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
 
   init (TFORMAT, "tformat",
-	var_repeat (1, 1, BIFORM) -> no_border () -> accessible (1) ->
+	var_repeat (1, 1, BIFORM) -> inner_border () -> accessible (1) ->
 	name ("table format"));
   init (TWITH, "twith",
 	fixed (2) -> accessible (0) -> name ("table property"));
   init (CWITH, "cwith",
 	fixed (6) -> accessible (0) -> name ("cell property"));
   init (TMARKER, "tmarker", fixed (0) -> name ("table marker"));
-  init (TABLE, "table", repeat (1, 1) -> no_border () -> accessible (0));
-  init (ROW, "row", repeat (1, 1) -> no_border () -> accessible (0));
-  init (CELL, "cell", fixed (1) -> no_border () -> accessible (0));
-  init (SUBTABLE, "subtable", fixed (1) -> no_border () -> accessible (0));
+  init (TABLE, "table", repeat (1, 1) -> inner_border () -> accessible (0));
+  init (ROW, "row", repeat (1, 1) -> inner_border () -> accessible (0));
+  init (CELL, "cell", fixed (1) -> inner_border () -> accessible (0));
+  init (SUBTABLE, "subtable", fixed (1) -> inner_border () -> accessible (0));
 
   init (ASSIGN, "assign", fixed (2));
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
@@ -349,7 +350,7 @@ init_std_drd () {
   init (RESET, "reset", fixed (1));
   init (EXPAND, "expand", repeat (1, 1, BIFORM) -> accessible (1));
   init (VAR_EXPAND, "expand*",
-	repeat (1, 1, BIFORM) -> no_border () -> accessible (1));
+	repeat (1, 1, BIFORM) -> inner_border () -> accessible (1));
   init (HIDE_EXPAND, "hide-expand", repeat (2, 1, DETAILED) -> accessible (1));
   init (APPLY, "apply", repeat (1, 1));
   init (BEGIN, "begin", repeat (1, 1));
@@ -359,6 +360,6 @@ init_std_drd () {
   init (AUTHORIZE, "authorize", fixed (2));
 
   init (make_tree_label ("shown"), "shown",
-	fixed (1) -> accessible (0) -> no_border ());
-  init (make_tree_label ("ignore"), "ignore", fixed (1) -> no_border ());
+	fixed (1) -> accessible (0) -> inner_border ());
+  init (make_tree_label ("ignore"), "ignore", fixed (1) -> inner_border ());
 }

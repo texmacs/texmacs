@@ -188,7 +188,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_concat (t, ip);
     break;
   case RIGID:
-    typeset_group (t, ip);
+    typeset_rigid (t, ip);
     break;
   case HIDDEN:
     //(void) env->exec (t);
@@ -310,6 +310,9 @@ concater_rep::typeset (tree t, path ip) {
       break;
     }
 
+  case GROUP:
+    typeset_group (t, ip);
+    break;
   case LEFT:
     typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");
     break;
