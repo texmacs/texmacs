@@ -89,6 +89,10 @@ is_accessible_cursor (tree t, path p) {
     else return !the_drd->is_child_enforcing (t);
   }
   else if (0 > p->item || p->item >= N(t)) return false;
+  else if (the_drd->is_parent_enforcing (t) &&
+	   ((p->item == 0 && p->next == start (t[0])) ||
+	    (p->item == N(t)-1 && p->next == end (t[p->item]))))
+    return false;
   else switch (L(t)) {
     case CONCAT:
       if (!is_accessible_cursor (t[p->item], p->next)) return false;
@@ -145,8 +149,18 @@ closest_accessible (tree t, path p) {
 	  return path (j, p->item * (j < k? N (t[j]->label): 0));
 	path sp= (is_atom (p)? (j < k? path (1): path (0)): p->next);
 	path r= closest_accessible (t[j], sp);
-	if (!is_nil (r)) r= path (j, r);
-	if (!is_concat (t) || !next_without_border (t, r)) return r;
+	if (!is_nil (r)) {
+	  r= path (j, r);
+	  if (!is_concat (t) || !next_without_border (t, r)) {
+	    if (the_drd->is_parent_enforcing (t)) {
+	      if (r->item == 0 && r->next == start (t[0]))
+		return path (0);
+	      if (r->item == N(t)-1 && r->next == end (t[r->item]))
+		return path (1);	    
+	    }
+	    return r;
+	  }
+	}
       }
     }
     return path ();
@@ -177,7 +191,8 @@ is_shifted (tree t, path p, int dir= -1, bool flag= false) {
 
 bool
 valid_cursor (tree t, path p, bool start_flag) {
-  if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+  if ((!is_nil (p)) && (!is_atom (p)) &&
+      ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] testing valid cursor " << p << " in " << t << "\n";
     FAILED ("bad path");
   }
@@ -188,6 +203,10 @@ valid_cursor (tree t, path p, bool start_flag) {
     if (start_flag) return (p->item!=0);
     return true;
   }
+  if (the_drd->is_parent_enforcing (t))
+    if ((p->item == 0 && p->next == start (t[0])) ||
+	(p->item == N(t)-1 && p->next == end (t[p->item])))
+      return false;
   if (is_concat (t)) {
     if (next_without_border (t, p)) return false;
     return valid_cursor (t[p->item], p->next, start_flag || (p->item!=0));
@@ -242,7 +261,12 @@ pre_correct (tree t, path p) {
       int i= (p->next->item == 0? 0: right_index (t[1][0]));
       return path (1, 0, pre_correct (t[1][0], path (i)));
     }
-  return path (p->item, pre_correct (t[p->item], p->next));
+  path r (p->item, pre_correct (t[p->item], p->next));
+  if (the_drd->is_parent_enforcing (t)) {
+    if (r->item == 0 && r->next == start (t[0])) return path (0);
+    if (r->item == N(t)-1 && r->next == end (t[r->item])) return path (1);
+  }
+  return r;
 }
 
 static bool
