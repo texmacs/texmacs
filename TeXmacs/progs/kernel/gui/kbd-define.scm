@@ -142,7 +142,7 @@
 	 (kbd-find-rev-binding (tree->stree cmd)))
 	((string? cmd)
 	 (with l (kbd-get-rev (object->string (string->object cmd)))
-	   (and l (nnull? l) (string? (car l)) (string-encode (car l)))))
+	   (and l (nnull? l) (string? (car l)) (string->tmstring (car l)))))
 	(else #f)))
 
 (define (kbd-find-key-binding2 conds key)

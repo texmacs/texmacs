@@ -1662,32 +1662,6 @@ tmg_string_minus (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_string_encode (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-encode");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= tm_encode (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_decode (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-decode");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= tm_decode (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_escape_generic (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-generic");
 
@@ -1862,6 +1836,131 @@ tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
+}
+
+SCM
+tmg_string_2tmstring (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->tmstring");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_encode (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmstring_2string (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmstring->string");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_decode (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmstring_length (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmstring-length");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= tm_string_length (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_tmstring_ref (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmstring-ref");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tmstring-ref");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= tm_forward_access (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmstring_reverse_ref (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmstring-reverse-ref");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tmstring-reverse-ref");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= tm_backward_access (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tmstring_2list (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tmstring->list");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  array_string out= tm_tokenize (in1);
+  // SCM_ALLOW_INTS;
+
+  return array_string_to_scm (out);
+}
+
+SCM
+tmg_list_2tmstring (SCM arg1) {
+  SCM_ASSERT_ARRAY_STRING (arg1, SCM_ARG1, "list->tmstring");
+
+  array_string in1= scm_to_array_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_recompose (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_next (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-next");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "string-next");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  int out= tm_char_next (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_string_previous (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-previous");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "string-previous");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  int out= tm_char_previous (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
 }
 
 SCM
@@ -4143,8 +4242,6 @@ initialize_glue_basic () {
   scm_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
   scm_new_procedure ("string-union", (FN) tmg_string_union, 2, 0, 0);
   scm_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
-  scm_new_procedure ("string-encode", (FN) tmg_string_encode, 1, 0, 0);
-  scm_new_procedure ("string-decode", (FN) tmg_string_decode, 1, 0, 0);
   scm_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   scm_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
   scm_new_procedure ("escape-shell", (FN) tmg_escape_shell, 1, 0, 0);
@@ -4158,6 +4255,15 @@ initialize_glue_basic () {
   scm_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
   scm_new_procedure ("old-xml-cdata->tm", (FN) tmg_old_xml_cdata_2tm, 1, 0, 0);
   scm_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
+  scm_new_procedure ("string->tmstring", (FN) tmg_string_2tmstring, 1, 0, 0);
+  scm_new_procedure ("tmstring->string", (FN) tmg_tmstring_2string, 1, 0, 0);
+  scm_new_procedure ("tmstring-length", (FN) tmg_tmstring_length, 1, 0, 0);
+  scm_new_procedure ("tmstring-ref", (FN) tmg_tmstring_ref, 2, 0, 0);
+  scm_new_procedure ("tmstring-reverse-ref", (FN) tmg_tmstring_reverse_ref, 2, 0, 0);
+  scm_new_procedure ("tmstring->list", (FN) tmg_tmstring_2list, 1, 0, 0);
+  scm_new_procedure ("list->tmstring", (FN) tmg_list_2tmstring, 1, 0, 0);
+  scm_new_procedure ("string-next", (FN) tmg_string_next, 2, 0, 0);
+  scm_new_procedure ("string-previous", (FN) tmg_string_previous, 2, 0, 0);
   scm_new_procedure ("define-grammar-rule", (FN) tmg_define_grammar_rule, 2, 0, 0);
   scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("packrat-define", (FN) tmg_packrat_define, 3, 0, 0);

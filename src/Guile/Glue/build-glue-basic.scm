@@ -154,8 +154,6 @@
   (locase-all locase_all (string string))
   (string-union string_union (string string string))
   (string-minus string_minus (string string string))
-  (string-encode tm_encode (string string))
-  (string-decode tm_decode (string string))
   (escape-generic escape_generic (string string))
   (escape-verbatim escape_verbatim (string string))
   (escape-shell escape_sh (string string))
@@ -169,6 +167,17 @@
   (xml-name->tm xml_name_to_tm (string string))
   (old-xml-cdata->tm old_xml_cdata_to_tm (string string))
   (xml-unspace xml_unspace (string string bool bool))
+
+  ;; routines for strings in the TeXmacs encoding
+  (string->tmstring tm_encode (string string))
+  (tmstring->string tm_decode (string string))
+  (tmstring-length tm_string_length (int string))
+  (tmstring-ref tm_forward_access (string string int))
+  (tmstring-reverse-ref tm_backward_access (string string int))
+  (tmstring->list tm_tokenize (array_string string))
+  (list->tmstring tm_recompose (string array_string))
+  (string-next tm_char_next (int string int))
+  (string-previous tm_char_previous (int string int))
 
   ;; Packrat grammar and parsing tools
   (define-grammar-rule define_grammar_rule (void tree tree))
