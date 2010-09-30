@@ -62,9 +62,11 @@ init_std_drd () {
   init (ERROR, "error", fixed (1));
   init (RAW_DATA, "raw-data", fixed (1));
 
-  init (DOCUMENT, "document", repeat (1, 1) -> inner_border () -> accessible (0));
+  init (DOCUMENT, "document",
+	repeat (1, 1) -> inner_border () -> accessible (0));
   init (PARA, "para",
-	repeat (1, 1) -> inner_border () -> accessible (0) -> name ("paragraph"));
+	repeat (1, 1) -> inner_border () -> accessible (0) ->
+	name ("paragraph"));
   init (SURROUND, "surround", fixed (3) -> accessible (0));
   init (CONCAT, "concat", repeat (1, 1) -> inner_border () -> accessible (0));
   init (RIGID, "rigid", fixed (1) -> accessible (0));

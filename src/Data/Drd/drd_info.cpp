@@ -247,6 +247,41 @@ drd_info_rep::get_name (tree_label l) {
 }
 
 /******************************************************************************
+* Children's mode
+******************************************************************************/
+
+void
+drd_info_rep::set_type (tree_label l, int nr, int tp) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
+  child_info& ci= ti->ci[nr];
+  if (ci.freeze_type) return;
+  ci.type= tp;
+}
+
+int
+drd_info_rep::get_type (tree_label l, int nr) {
+  return info[l]->ci[nr].type;
+}
+
+void
+drd_info_rep::freeze_type (tree_label l, int nr) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info  & ti= info(l);
+  child_info& ci= ti->ci[nr];
+  ci.freeze_type= true;
+}
+
+int
+drd_info_rep::get_type_child (tree t, int i) {
+  tag_info ti= info[L(t)];
+  int index= ti->get_index (i, N(t));
+  if ((index<0) || (index>=N(ti->ci))) return TYPE_INVALID;
+  return ti->ci[index].type;
+}
+
+/******************************************************************************
 * Children's accessability related methods
 ******************************************************************************/
 

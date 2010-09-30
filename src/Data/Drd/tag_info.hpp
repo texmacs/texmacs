@@ -87,6 +87,9 @@ struct parent_info {
 * The child_info class contains more detailed information about each of
 * the children of the tag.
 *
+* - The type field specifies the type of the field.
+*   Fields with regular content admit TYPE_REGULAR as their type.
+*
 * - The accessible field specifies whether the field can be accessed.
 *   ACCESSIBLE_ALWAYS children can always be accessed, ACCESSIBLE_NEVER
 *   children can only be accessed in source mode and ACCESSIBLE_HIDDEN
@@ -107,6 +110,20 @@ struct parent_info {
 *   missing drd information.
 ******************************************************************************/
 
+#define TYPE_INVALID         -1
+#define TYPE_REGULAR          0
+#define TYPE_RAW              1
+#define TYPE_ADHOC            2
+#define TYPE_VARIABLE         3
+#define TYPE_ARGUMENT         4
+#define TYPE_BOOLEAN          5
+#define TYPE_NUMERIC          6
+#define TYPE_LENGTH           7
+#define TYPE_STRING           8
+#define TYPE_URL              9
+#define TYPE_GRAPHICAL       10
+#define TYPE_POINT           11
+
 #define ACCESSIBLE_NEVER      0
 #define ACCESSIBLE_HIDDEN     1
 #define ACCESSIBLE_ALWAYS     2
@@ -120,11 +137,13 @@ struct parent_info {
 #define BLOCK_REQUIRE_NONE    2
 
 struct child_info {
+  unsigned type              :  4; // argument type
   unsigned accessible        :  2; // child is accessible?
   unsigned writability       :  2; // writability of child
   unsigned block             :  2; // require children to be blocks?
   unsigned env               : 16; // environment of the child?
-  unsigned freeze_accessible :  1; // true => disable heuristic determination
+  unsigned freeze_type       :  1; // true => disable heuristic determination
+  unsigned freeze_accessible :  1;
   unsigned freeze_writability:  1;
   unsigned freeze_block      :  1;
   unsigned freeze_env        :  1;
@@ -151,6 +170,7 @@ public:
 
   tag_info inner_border ();
   tag_info outer_border ();
+  tag_info set_type (int i, int tp);
   tag_info accessible (int i);
   tag_info hidden (int i);
   tag_info disable_writable (int i);

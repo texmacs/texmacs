@@ -111,10 +111,12 @@ operator << (tm_ostream& out, parent_info pi) {
 ******************************************************************************/
 
 child_info::child_info (bool frozen) {
+  type               = TYPE_ADHOC;
   accessible         = ACCESSIBLE_NEVER;
   writability        = WRITABILITY_NORMAL;
   block              = 0;
   env                = drd_encode (tree (WITH));
+  freeze_type        = frozen;
   freeze_accessible  = frozen;
   freeze_writability = frozen;
   freeze_block       = frozen;
@@ -123,9 +125,11 @@ child_info::child_info (bool frozen) {
 
 child_info::child_info (tree t) {
   int i= as_int (is_atomic (t)? t: t[N(t)-1]);
+  get_bits (type              ,  4);
   get_bits (accessible        ,  2);
   get_bits (writability       ,  2);
   get_bits (block             ,  2);
+  get_bits (freeze_type       ,  1);
   get_bits (freeze_accessible ,  1);
   get_bits (freeze_writability,  1);
   get_bits (freeze_block      ,  1);
@@ -136,9 +140,11 @@ child_info::child_info (tree t) {
 
 child_info::operator tree () {
   int i=0, offset=0;
+  set_bits (type              ,  4);
   set_bits (accessible        ,  2);
   set_bits (writability       ,  2);
   set_bits (block             ,  2);
+  set_bits (freeze_type       ,  1);
   set_bits (freeze_accessible ,  1);
   set_bits (freeze_writability,  1);
   set_bits (freeze_block      ,  1);
@@ -150,10 +156,12 @@ child_info::operator tree () {
 bool
 child_info::operator == (const child_info& ci) {
   return
+    (type               == ci.type              ) &&
     (accessible         == ci.accessible        ) &&
     (writability        == ci.writability       ) &&
     (block              == ci.block             ) &&
     (env                == ci.env               ) &&
+    (freeze_type        == ci.freeze_type       ) &&
     (freeze_accessible  == ci.freeze_accessible ) &&
     (freeze_writability == ci.freeze_writability) &&
     (freeze_block       == ci.freeze_block      ) &&
@@ -227,6 +235,12 @@ tag_info_rep::inner_border () {
 tag_info
 tag_info_rep::outer_border () {
   pi.border_mode= BORDER_OUTER;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::set_type (int i, int tp) {
+  ci[i].type= tp;
   return tag_info (pi, ci, extra);
 }
 
