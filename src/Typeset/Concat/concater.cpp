@@ -38,7 +38,7 @@ concater_rep::marker (path ip) {
   int sz= script (env->fn_size, env->index_level);
   font gfn (tex_font (fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (ip->next, ip->item, "", gfn, blue);
-  a << line_item (STD_ITEM, b, HYPH_INVALID);
+  a << line_item (MARKER_ITEM, b, HYPH_INVALID);
 }
 
 void

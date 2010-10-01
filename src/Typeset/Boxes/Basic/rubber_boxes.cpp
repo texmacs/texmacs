@@ -30,7 +30,7 @@
 #define Absolute        1031
 
 /*****************************************************************************/
-// The empty box
+// Empty boxes
 /*****************************************************************************/
 
 struct empty_box_rep: public box_rep {
@@ -38,6 +38,35 @@ struct empty_box_rep: public box_rep {
     x3=x4=y3=y4=0; x1= x1b; y1=y1b; x2=x2b; y2=y2b; }
   operator tree () { return "empty"; }
   void display (renderer ren) { (void) ren; }
+};
+
+struct marker_box_rep: public box_rep {
+  int pos;
+  marker_box_rep (path ip2, int x1b, int y1b, int x2b, int y2b):
+    box_rep (is_accessible (ip2)? ip2->next: ip2),
+    pos (is_accessible (ip2)? ip2->item: 0) {
+      x3= x4= y3= y4= 0; x1= x1b; y1= y1b; x2= x2b; y2= y2b; }
+  operator tree () { return "marker"; }
+  void display (renderer ren) { (void) ren; }
+  path find_box_path (SI x, SI y, SI delta, bool force) {
+    (void) x; (void) y; (void) delta; (void) force; return path (0); }
+  path find_lip () {
+    return is_accessible (ip)? descend (ip, pos): ip; }
+  path find_rip () {
+    return is_accessible (ip)? descend (ip, pos): ip; }
+  path find_right_box_path () {
+    return path (0); }
+  path find_box_path (path p, bool& found) {
+    found= !is_nil (p) && is_accessible (ip);
+    return path (0); }
+  path find_tree_path (path bp) {
+    if (is_accessible (ip)) return reverse (descend (ip, pos));
+    else return reverse (descend_decode (ip, 0)); }
+  cursor find_cursor (path bp) {
+    (void) bp; return cursor (0, 0, 0, y1, y2); }
+  selection find_selection (path lbp, path rbp) {
+    return selection (rectangles (),
+		      find_tree_path (lbp), find_tree_path (rbp)); }
 };
 
 /*****************************************************************************/
@@ -182,6 +211,11 @@ bracket_box_rep::display (renderer ren) {
 box
 empty_box (path ip, int x1, int y1, int x2, int y2) {
   return tm_new<empty_box_rep> (ip, x1, y1, x2, y2);
+}
+
+box
+marker_box (path ip, int x1, int y1, int x2, int y2) {
+  return tm_new<marker_box_rep> (ip, x1, y1, x2, y2);
 }
 
 box

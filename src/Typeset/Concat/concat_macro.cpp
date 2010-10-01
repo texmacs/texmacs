@@ -323,7 +323,9 @@ concater_rep::typeset_dynamic (tree t, path ip) {
     a[i]->b->relocate (decorate_left (ip));
   if (i<end) {
     if (a[i]->b->decoration ())
-      if ((a[i]->type==STD_ITEM) || (a[i]->type==STRING_ITEM))
+      if ((a[i]->type==STD_ITEM) ||
+          (a[i]->type == MARKER_ITEM) ||
+	  (a[i]->type==STRING_ITEM))
 	a[i]->b= macro_box (decorate_right (ip), a[i]->b);
     a[i]->b->relocate (decorate_middle (ip));
     i++;

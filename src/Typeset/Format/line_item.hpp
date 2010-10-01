@@ -19,22 +19,23 @@
 
 #define OBSOLETE_ITEM          0
 #define STD_ITEM               1
-#define STRING_ITEM            2
-#define LEFT_BRACKET_ITEM      3
-#define MIDDLE_BRACKET_ITEM    4
-#define RIGHT_BRACKET_ITEM     5
-#define CONTROL_ITEM           6
-#define FLOAT_ITEM             7
+#define MARKER_ITEM            2
+#define STRING_ITEM            3
+#define LEFT_BRACKET_ITEM      4
+#define MIDDLE_BRACKET_ITEM    5
+#define RIGHT_BRACKET_ITEM     6
+#define CONTROL_ITEM           7
+#define FLOAT_ITEM             8
 
-#define LSUB_ITEM              8
-#define LSUP_ITEM              9
-#define RSUB_ITEM             10
-#define RSUP_ITEM             11
-#define GLUE_LSUBS_ITEM       12
-#define GLUE_RSUBS_ITEM       13
-#define GLUE_LEFT_ITEM        14
-#define GLUE_RIGHT_ITEM       15
-#define GLUE_BOTH_ITEM        16
+#define LSUB_ITEM              9
+#define LSUP_ITEM             11
+#define RSUB_ITEM             12
+#define RSUP_ITEM             13
+#define GLUE_LSUBS_ITEM       14
+#define GLUE_RSUBS_ITEM       15
+#define GLUE_LEFT_ITEM        16
+#define GLUE_RIGHT_ITEM       17
+#define GLUE_BOTH_ITEM        18
 
 extern int line_item_count;
 class line_item;

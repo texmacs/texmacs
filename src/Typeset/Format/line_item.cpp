@@ -41,8 +41,8 @@ tm_ostream&
 operator << (tm_ostream& out, line_item item) {
   switch (item->type) {
   case OBSOLETE_ITEM: return out << "obsolete";
-  case CONTROL_ITEM: return out << "control (" << item->t << ")";
   case STD_ITEM: return out << "std";
+  case MARKER_ITEM: return out << "marker";
   case STRING_ITEM: return out << item->b->get_leaf_string ();
   case LEFT_BRACKET_ITEM:
     return out << "left" << item->b->get_leaf_string ();
@@ -50,6 +50,7 @@ operator << (tm_ostream& out, line_item item) {
     return out << "middle" << item->b->get_leaf_string ();
   case RIGHT_BRACKET_ITEM:
     return out << "right" << item->b->get_leaf_string ();
+  case CONTROL_ITEM: return out << "control (" << item->t << ")";
   case FLOAT_ITEM:
     return out << "float (" << item->b->get_leaf_lazy () << ")";
   case LSUB_ITEM: return out << "lsub";

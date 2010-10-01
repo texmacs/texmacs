@@ -182,6 +182,8 @@ concater_rep::clean_and_correct () {
 
 void
 concater_rep::handle_matching (int start, int end) {
+  //cout << "matching " << start << " -- " << end << "\n";
+  //cout << a << "\n\n";
   int i;
   SI y1= min (a[start]->b->y1, a[end]->b->y2);
   SI y2= max (a[start]->b->y1, a[end]->b->y2);
@@ -197,10 +199,11 @@ concater_rep::handle_matching (int start, int end) {
     y2= max (y2, a[i]->b->y2);
     a[i]->penalty++;
   }
-  for (i=start; i<=end; i++)
-    if ((a[i]->type==LEFT_BRACKET_ITEM) ||
-	(a[i]->type==MIDDLE_BRACKET_ITEM) ||
-	(a[i]->type==RIGHT_BRACKET_ITEM))
+  for (i=start; i<=end; i++) {
+    int tp= a[i]->type;
+    if (tp == LEFT_BRACKET_ITEM ||
+	tp == MIDDLE_BRACKET_ITEM ||
+	tp == RIGHT_BRACKET_ITEM)
       {
 	// make symmetric and prevent from too large delimiters if possible
 	font fn = a[i]->b->get_leaf_font ();
@@ -215,6 +218,27 @@ concater_rep::handle_matching (int start, int end) {
 				fn, a[i]->b->get_leaf_color (), Y1, Y2);
 	a[i]->type= STD_ITEM;
       }
+    if (tp == LEFT_BRACKET_ITEM)
+      for (int j= i-1; j>=0; j--) {
+	if (a[j]->type == MARKER_ITEM) {
+	  SI Y1= a[i]->b->y1;
+	  SI Y2= a[i]->b->y2;
+	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2);
+	  a[j]->type= STD_ITEM;
+	}
+	else if (a[j]->type != CONTROL_ITEM) break;
+      }
+    if (tp == RIGHT_BRACKET_ITEM)
+      for (int j= i+1; j<N(a); j++) {
+	if (a[j]->type == MARKER_ITEM) {
+	  SI Y1= a[i]->b->y1;
+	  SI Y2= a[i]->b->y2;
+	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2);
+	  a[j]->type= STD_ITEM;
+	}
+	else if (a[j]->type != CONTROL_ITEM) break;
+      }
+  }
 }
 
 void
