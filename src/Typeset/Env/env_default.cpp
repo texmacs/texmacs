@@ -322,7 +322,7 @@ initialize_default_env () {
   env ("src-length")=
     tree (MACRO, "x", tree (WITH, COLOR, "#288", tree (ARG, "x")));
   env ("src-unknown")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#864", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, COLOR, "#C68", tree (ARG, "x")));
   env ("src-error")=
     tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
 

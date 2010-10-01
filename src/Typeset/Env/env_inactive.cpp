@@ -154,6 +154,8 @@ highlight (tree t, tree orig, int kind) {
     return compound ("src-unknown", t);
   case TYPE_UNKNOWN:
     return compound ("src-unknown", t);
+  case TYPE_ERROR:
+    return compound ("src-error", t);
   default:
     return compound ("src-error", t);
   }

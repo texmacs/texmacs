@@ -103,7 +103,7 @@ init_std_drd () {
 	options (1, 2) -> length (0));
   // space markup has arity 1 or 3
   init (HTAB, "htab",
-	options (1, 1) -> length (0) ->	name ("tab"));
+	options (1, 1, BIFORM) -> length (0) -> name ("tab"));
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
   init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
@@ -171,12 +171,12 @@ init_std_drd () {
 	var_repeat (1, 1, BIFORM) -> inner_border () -> accessible (1) ->
 	name ("table format"));
   init (TWITH, "twith",
-	fixed (2) -> accessible (0) -> string_type (0) ->
+	fixed (2) -> accessible (0) -> binding (0) ->
 	name ("table property"));
   init (CWITH, "cwith",
 	fixed (4, 2, BIFORM) ->
 	accessible (0) -> integer (0) ->
-	accessible (1) -> string_type (1) ->
+	accessible (1) -> binding (1) ->
 	name ("cell property"));
   init (TMARKER, "tmarker", fixed (0) -> name ("table marker"));
   init (TABLE, "table", repeat (1, 1) -> inner_border () -> accessible (0));

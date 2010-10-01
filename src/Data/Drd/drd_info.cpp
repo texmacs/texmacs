@@ -532,7 +532,7 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
       tree cenv = get_env_child (t, i, env);
       tree aenv = arg_access (t[i], arg, cenv, ctype);
       if (aenv != "") {
-	type= ctype;
+	if (ctype != TYPE_INVALID) type= ctype;
 	if (is_accessible_child (t, i)) return aenv;
       }
     }

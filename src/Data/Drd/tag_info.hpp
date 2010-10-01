@@ -131,6 +131,7 @@ struct parent_info {
 #define TYPE_DURATION        17
 #define TYPE_OBSOLETE        18
 #define TYPE_UNKNOWN         19
+#define TYPE_ERROR           20
 
 #define ACCESSIBLE_NEVER      0
 #define ACCESSIBLE_HIDDEN     1
