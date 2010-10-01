@@ -112,8 +112,10 @@ is_long (tree t) {
 static tree
 highlight (tree t, tree orig, int kind) {
   switch (kind) {
+  case TYPE_INVALID:
+    return compound ("src-unknown", t);
   case TYPE_REGULAR:
-    return t;
+    return compound ("src-regular", t);
   case TYPE_ADHOC:
     return compound ("src-textual", t);
   case TYPE_RAW:
@@ -122,6 +124,8 @@ highlight (tree t, tree orig, int kind) {
     return compound ("src-var", t);
   case TYPE_ARGUMENT:
     return compound ("src-arg", t);
+  case TYPE_BINDING:
+    return compound ("src-regular", t);
   case TYPE_BOOLEAN:
     return compound ("src-numeric", t);
   case TYPE_INTEGER:
@@ -139,13 +143,17 @@ highlight (tree t, tree orig, int kind) {
   case TYPE_URL:
     return compound ("src-tt", t);
   case TYPE_GRAPHICAL:
-    return t;
+    return compound ("src-regular", t);
   case TYPE_POINT:
-    return t;
+    return compound ("src-regular", t);
   case TYPE_ANIMATION:
-    return t;
+    return compound ("src-regular", t);
   case TYPE_DURATION:
     return compound ("src-length", t);
+  case TYPE_OBSOLETE:
+    return compound ("src-unknown", t);
+  case TYPE_UNKNOWN:
+    return compound ("src-unknown", t);
   default:
     return compound ("src-error", t);
   }

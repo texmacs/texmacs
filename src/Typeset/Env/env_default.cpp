@@ -301,6 +301,8 @@ initialize_default_env () {
     tree (MACRO, "x", "y", tree (ARG, "x"));
 
   /* syntactic highlighting */
+  env ("src-regular")=
+    tree (MACRO, "x", tree (WITH, COLOR, "black", tree (ARG, "x")));
   env ("src-macro")=
     tree (MACRO, "x", tree (WITH, COLOR, "blue",
 			    FONT_FAMILY, "ss", tree (ARG, "x")));
@@ -316,9 +318,11 @@ initialize_default_env () {
   env ("src-numeric")=
     tree (MACRO, "x", tree (WITH, COLOR, "#848", tree (ARG, "x")));
   env ("src-textual")=
-    tree (MACRO, "x", tree (ARG, "x"));
+    tree (MACRO, "x", tree (WITH, COLOR, "black", tree (ARG, "x")));
   env ("src-length")=
     tree (MACRO, "x", tree (WITH, COLOR, "#288", tree (ARG, "x")));
+  env ("src-unknown")=
+    tree (MACRO, "x", tree (WITH, COLOR, "#864", tree (ARG, "x")));
   env ("src-error")=
     tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
 
