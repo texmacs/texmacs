@@ -570,6 +570,29 @@ edit_env_rep::exec_compound (tree t) {
   else return exec (f);
 }
 
+static int
+decode_type (string s) {
+  if (s == "regular") return TYPE_REGULAR;
+  else if (s == "adhoc") return TYPE_ADHOC;
+  else if (s == "variable") return TYPE_VARIABLE;
+  else if (s == "argument") return TYPE_ARGUMENT;
+  else if (s == "boolean") return TYPE_BOOLEAN;
+  else if (s == "integer") return TYPE_INTEGER;
+  else if (s == "string") return TYPE_STRING;
+  else if (s == "length") return TYPE_LENGTH;
+  else if (s == "numeric") return TYPE_NUMERIC;
+  else if (s == "code") return TYPE_CODE;
+  else if (s == "identifier") return TYPE_IDENTIFIER;
+  else if (s == "url") return TYPE_URL;
+  else if (s == "graphical") return TYPE_GRAPHICAL;
+  else if (s == "point") return TYPE_POINT;
+  else if (s == "animation") return TYPE_ANIMATION;
+  else if (s == "duration") return TYPE_DURATION;
+  else if (s == "unknown") return TYPE_UNKNOWN;
+  else if (s == "error") return TYPE_ERROR;
+  else return -1;
+}
+
 tree
 edit_env_rep::exec_drd_props (tree t) {
   int i, n= N(t);
@@ -589,14 +612,14 @@ edit_env_rep::exec_drd_props (tree t) {
 			  ARITY_NORMAL, CHILD_DETAILED);
 	drd->freeze_arity (l);
       }
-      if (prop == "border") {
+      else if (prop == "border") {
 	if (val == "yes") drd->set_border (l, BORDER_YES);
 	if (val == "inner") drd->set_border (l, BORDER_INNER);
 	if (val == "outer") drd->set_border (l, BORDER_OUTER);
 	if (val == "no") drd->set_border (l, BORDER_INNER);
 	drd->freeze_border (l);
       }
-      if (prop == "unaccessible" ||
+      else if (prop == "unaccessible" ||
 	  prop == "hidden" ||
 	  prop == "accessible")
 	{
@@ -604,8 +627,11 @@ edit_env_rep::exec_drd_props (tree t) {
 	  if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
 	  if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
 	  if (val == "none") prop_code= ACCESSIBLE_NEVER;
-	  if (is_int (val))
-	    drd->set_accessible (l, as_int (val), prop_code);
+	  if (is_int (val)) {
+	    int i= as_int (val);
+	    drd->set_accessible (l, i, prop_code);
+	    drd->freeze_accessible (l, i);
+	  }
 	  else if (val == "none" || val == "all") {
 	    int i, n= drd->get_nr_indices (l);
 	    for (i=0; i<n; i++) {
@@ -614,15 +640,18 @@ edit_env_rep::exec_drd_props (tree t) {
 	    }
 	  }
 	}
-      if (prop == "normal-writability" ||
+      else if (prop == "normal-writability" ||
 	  prop == "disable-writability" ||
 	  prop == "enable-writability")
 	{
 	  int prop_code= WRITABILITY_NORMAL;
 	  if (prop == "disable-writability") prop_code= WRITABILITY_DISABLE;
 	  if (prop == "enable-writability") prop_code= WRITABILITY_ENABLE;
-	  if (is_int (val))
-	    drd->set_writability (l, as_int (val), prop_code);
+	  if (is_int (val)) {
+	    int i= as_int (val);
+	    drd->set_writability (l, i, prop_code);
+	    drd->freeze_writability (l, i);
+	  }
 	  else if (val == "all") {
 	    int i, n= drd->get_nr_indices (l);
 	    for (i=0; i<n; i++) {
@@ -631,6 +660,25 @@ edit_env_rep::exec_drd_props (tree t) {
 	    }
 	  }
 	}
+      else if (prop == "returns" && decode_type (as_string (val)) >= 0) {
+	drd->set_type (l, decode_type (as_string (val)));
+	drd->freeze_type (l);
+      }
+      else if (decode_type (prop) >= 0) {
+	int tp= decode_type (prop);
+	if (is_int (val)) {
+	  int i= as_int (val);
+	  drd->set_type (l, i, tp);
+	  drd->freeze_type (l, i);
+	}
+	else if (val == "all") {
+	  int i, n= drd->get_nr_indices (l);
+	  for (i=0; i<n; i++) {
+	    drd->set_type (l, i, tp);
+	    drd->freeze_type (l, i);
+	  }
+	}
+      }
     }
   return t;
 }
