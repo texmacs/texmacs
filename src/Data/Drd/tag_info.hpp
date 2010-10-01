@@ -16,12 +16,40 @@
 int  drd_encode (tree t);
 tree drd_decode (int i);
 
+#define TYPE_INVALID         -1
+#define TYPE_REGULAR          0
+#define TYPE_ADHOC            1
+#define TYPE_RAW              2
+#define TYPE_VARIABLE         3
+#define TYPE_ARGUMENT         4
+#define TYPE_BINDING          5
+#define TYPE_BOOLEAN          6
+#define TYPE_INTEGER          7
+#define TYPE_STRING           8
+#define TYPE_LENGTH           9
+#define TYPE_NUMERIC         10
+#define TYPE_CODE            11
+#define TYPE_IDENTIFIER      12
+#define TYPE_URL             13
+#define TYPE_GRAPHICAL       14
+#define TYPE_POINT           15
+#define TYPE_ANIMATION       16
+#define TYPE_DURATION        17
+#define TYPE_OBSOLETE        18
+#define TYPE_UNKNOWN         19
+#define TYPE_ERROR           20
+
 /******************************************************************************
 * The parent_info class contains outer information about tags
 *
-* -  The arity fields together with the child_mode determine the possible
-*    arities and how to convert logical indices of children to
-*    physical indices in the array 'ci'.
+* - The type field specifies the type of the return value of the tag.
+*   For instance, regular content has the type TYPE_REGULAR and
+*   the tag PLUS which performs a numerical operation admits
+*   the type TYPE_NUMERIC.
+*
+* - The arity fields together with the child_mode determine the possible
+*   arities and how to convert logical indices of children to
+*   physical indices in the array 'ci'.
 *
 *    o ARITY_NORMAL    : the arity is given by arity_base+arity_extra
 *    o ARITY_OPTIONS   : arity_base <= arity < arity_base+arity_extra
@@ -64,13 +92,15 @@ tree drd_decode (int i);
 #define BORDER_NO             3
 
 struct parent_info {
+  unsigned type             : 5; // the type
   unsigned arity_mode       : 2; // arity layout
   unsigned arity_base       : 6; // base arity (minimal arity)
   unsigned arity_extra      : 4; // extra arity (optional, repeated, etc.)
   unsigned child_mode       : 2; // child layout
   unsigned border_mode      : 2; // is the border inaccessible?
   unsigned block            : 2; // is a block structure?
-  unsigned freeze_arity     : 1; // true => disable heuristic determination
+  unsigned freeze_type      : 1; // true => disable heuristic determination
+  unsigned freeze_arity     : 1;
   unsigned freeze_border    : 1;
   unsigned freeze_block     : 1;
 
@@ -109,29 +139,6 @@ struct parent_info {
 *   fields may not be overwritten during the heuristic determination of
 *   missing drd information.
 ******************************************************************************/
-
-#define TYPE_INVALID         -1
-#define TYPE_REGULAR          0
-#define TYPE_ADHOC            1
-#define TYPE_RAW              2
-#define TYPE_VARIABLE         3
-#define TYPE_ARGUMENT         4
-#define TYPE_BINDING          5
-#define TYPE_BOOLEAN          6
-#define TYPE_INTEGER          7
-#define TYPE_STRING           8
-#define TYPE_LENGTH           9
-#define TYPE_NUMERIC         10
-#define TYPE_CODE            11
-#define TYPE_IDENTIFIER      12
-#define TYPE_URL             13
-#define TYPE_GRAPHICAL       14
-#define TYPE_POINT           15
-#define TYPE_ANIMATION       16
-#define TYPE_DURATION        17
-#define TYPE_OBSOLETE        18
-#define TYPE_UNKNOWN         19
-#define TYPE_ERROR           20
 
 #define ACCESSIBLE_NEVER      0
 #define ACCESSIBLE_HIDDEN     1
@@ -179,6 +186,7 @@ public:
 
   tag_info inner_border ();
   tag_info outer_border ();
+  tag_info type (int tp);
   tag_info type (int i, int tp);
   tag_info accessible (int i);
   tag_info hidden (int i);

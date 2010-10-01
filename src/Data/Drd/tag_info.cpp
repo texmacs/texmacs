@@ -44,6 +44,7 @@ drd_decode (int i) {
 ******************************************************************************/
 
 parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
+  type             = TYPE_REGULAR;
   arity_mode       = am;
   arity_base       = a;
   arity_extra      = x;
@@ -57,12 +58,14 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
 
 parent_info::parent_info (tree t) {
   int i= as_int (t);
+  get_bits (type            , 5);
   get_bits (arity_mode      , 2);
   get_bits (arity_base      , 6);
   get_bits (arity_extra     , 4);
   get_bits (child_mode      , 2);
   get_bits (border_mode     , 2);
   get_bits (block           , 2);
+  get_bits (freeze_type     , 1);
   get_bits (freeze_arity    , 1);
   get_bits (freeze_border   , 1);
   get_bits (freeze_block    , 1);
@@ -70,12 +73,14 @@ parent_info::parent_info (tree t) {
 
 parent_info::operator tree () {
   int i=0, offset=0;
+  set_bits (type            , 5);
   set_bits (arity_mode      , 2);
   set_bits (arity_base      , 6);
   set_bits (arity_extra     , 4);
   set_bits (child_mode      , 2);
   set_bits (border_mode     , 2);
   set_bits (block           , 2);
+  set_bits (freeze_type     , 1);
   set_bits (freeze_arity    , 1);
   set_bits (freeze_border   , 1);
   set_bits (freeze_block    , 1);
@@ -85,6 +90,7 @@ parent_info::operator tree () {
 bool
 parent_info::operator == (const parent_info& pi) {
   return
+    (type             == pi.type            ) &&
     (arity_mode       == pi.arity_mode      ) &&
     (arity_base       == pi.arity_base      ) &&
     (arity_extra      == pi.arity_extra     ) &&
@@ -235,6 +241,12 @@ tag_info_rep::inner_border () {
 tag_info
 tag_info_rep::outer_border () {
   pi.border_mode= BORDER_OUTER;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::type (int tp) {
+  pi.type= tp;
   return tag_info (pi, ci, extra);
 }
 

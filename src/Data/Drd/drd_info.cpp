@@ -63,6 +63,35 @@ operator << (tm_ostream& out, drd_info drd) {
 }
 
 /******************************************************************************
+* Tag types
+******************************************************************************/
+
+void
+drd_info_rep::set_type (tree_label l, int tp) {
+  if (info[l]->pi.freeze_type) return;
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.type= tp;
+}
+
+int
+drd_info_rep::get_type (tree_label l) {
+  return info[l]->pi.type;
+}
+
+void
+drd_info_rep::freeze_type (tree_label l) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.freeze_type= true;
+}
+
+int
+drd_info_rep::get_type (tree t) {
+  return info[L(t)]->pi.type;
+}
+
+/******************************************************************************
 * Arity related methods
 ******************************************************************************/
 

@@ -37,6 +37,17 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define animation(i) type (i, TYPE_ANIMATION)
 #define duration(i) type (i, TYPE_DURATION)
 
+#define returns_adhoc() type (TYPE_ADHOC)
+#define returns_boolean() type (TYPE_BOOLEAN)
+#define returns_integer() type (TYPE_INTEGER)
+#define returns_string() type (TYPE_STRING)
+#define returns_numeric() type (TYPE_NUMERIC)
+#define returns_length() type (TYPE_LENGTH)
+#define returns_url() type (TYPE_URL)
+#define returns_identifier() type (TYPE_IDENTIFIER)
+#define returns_animation() type (TYPE_ANIMATION)
+#define returns_graphical() type (TYPE_GRAPHICAL)
+
 static tag_info
 fixed (int arity, int extra=0, int child_mode= CHILD_UNIFORM) {
   return tag_info (arity, extra, ARITY_NORMAL, child_mode, true);
@@ -75,7 +86,7 @@ init_std_drd () {
   if (std_drd_initialized) return;
   std_drd_initialized=true;
 
-  init (STRING, "string", fixed (0));
+  init (STRING, "string", fixed (0) -> returns_string ());
   init (UNKNOWN, "unknown", fixed (0));
   init (UNINIT, "uninit", fixed (0));
   init (ERROR, "error", fixed (1));
@@ -168,13 +179,15 @@ init_std_drd () {
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
 
   init (TFORMAT, "tformat",
-	var_repeat (1, 1, BIFORM) -> inner_border () -> accessible (1) ->
+	var_repeat (1, 1, BIFORM) -> inner_border () ->
+	accessible (1) ->
 	name ("table format"));
   init (TWITH, "twith",
-	fixed (2) -> accessible (0) -> binding (0) ->
+	fixed (2) -> returns_adhoc () ->
+	accessible (0) -> binding (0) ->
 	name ("table property"));
   init (CWITH, "cwith",
-	fixed (4, 2, BIFORM) ->
+	fixed (4, 2, BIFORM) -> returns_adhoc () ->
 	accessible (0) -> integer (0) ->
 	accessible (1) -> binding (1) ->
 	name ("cell property"));
@@ -188,13 +201,15 @@ init_std_drd () {
 	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
   init (WITH, "with",
 	var_repeat (2, 1, BIFORM) -> binding (0) -> accessible (1));
-  init (PROVIDES, "provides", fixed (1) -> string_type (0));
+  init (PROVIDES, "provides",
+	fixed (1) -> returns_boolean () -> string_type (0));
   init (VALUE, "value", fixed (1) -> variable (0));
   init (QUOTE_VALUE, "quote-value",
 	fixed (1) -> variable (0) -> name ("quoted value"));
   init (MACRO, "macro",
 	var_repeat (1, 1, BIFORM) -> argument (0) -> regular (1));
-  init (DRD_PROPS, "drd-props", repeat (3, 2) -> name ("drd properties"));
+  init (DRD_PROPS, "drd-props",
+	repeat (3, 2) -> name ("drd properties"));
   init (QUOTE_ARG, "quote-arg",
 	repeat (1, 1, BIFORM) -> argument (0) -> name ("quoted argument"));
   init (ARG, "arg",
@@ -204,8 +219,8 @@ init_std_drd () {
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"
   init (XMACRO, "xmacro",
 	fixed (1, 1, BIFORM) -> argument (0) -> regular (1));
-  init (GET_LABEL, "get-label", fixed (1));
-  init (GET_ARITY, "get-arity", fixed (1));
+  init (GET_LABEL, "get-label", fixed (1) -> returns_string ());
+  init (GET_ARITY, "get-arity", fixed (1) -> returns_integer ());
   init (MAP_ARGS, "map-args",
 	options (3, 2, DETAILED) ->
 	variable (0) ->                       // macro to be applied
@@ -243,82 +258,93 @@ init_std_drd () {
   init (USE_PACKAGE, "use-package", repeat (1, 1) -> string_type (0));
   init (USE_MODULE, "use-module", repeat (1, 1) -> code (0));
 
-  init (OR, "or", repeat (2, 1) -> boolean (0));
-  init (XOR, "xor", fixed (2) -> boolean (0));
-  init (AND, "and", repeat (2, 1) -> boolean (0));
-  init (NOT, "not", fixed (1) -> boolean (0));
-  init (PLUS, "plus", repeat (2, 1) -> numeric (0));
-  init (MINUS, "minus", repeat (1, 1) -> numeric (0));
-  init (TIMES, "times", repeat (2, 1) -> numeric (0));
-  init (OVER, "over", repeat (1, 1) -> numeric (0));
-  init (DIV, "div", fixed (2) -> numeric (0) -> name ("divide"));
-  init (MOD, "mod", fixed (2) -> numeric (0) -> name ("modulo"));
-  init (MATH_SQRT, "math-sqrt", fixed (1) -> numeric (0));
-  init (EXP, "exp", fixed (1) -> numeric (0));
-  init (LOG, "log", fixed (1) -> numeric (0));
-  init (POW, "pow", fixed (2) -> numeric (0));
-  init (COS, "cos", fixed (1) -> numeric (0));
-  init (SIN, "sin", fixed (1) -> numeric (0));
-  init (TAN, "tan", fixed (1) -> numeric (0));
-  init (MERGE, "merge", repeat (2, 1));
-  init (LENGTH, "length", fixed (1));
-  init (RANGE, "range", fixed (1, 2, BIFORM) -> accessible (0));
-  init (NUMBER, "number", fixed (2) -> string_type (0));
-  init (_DATE, "date", options (0, 2) -> string_type (0));
-  init (TRANSLATE, "translate", fixed (3) -> string_type (0));
+  init (OR, "or", repeat (2, 1) -> returns_boolean () -> boolean (0));
+  init (XOR, "xor", fixed (2) -> returns_boolean () -> boolean (0));
+  init (AND, "and", repeat (2, 1) -> returns_boolean () -> boolean (0));
+  init (NOT, "not", fixed (1) -> returns_boolean () -> boolean (0));
+  init (PLUS, "plus", repeat (2, 1) -> returns_numeric () -> numeric (0));
+  init (MINUS, "minus", repeat (1, 1) -> returns_numeric () -> numeric (0));
+  init (TIMES, "times", repeat (2, 1) -> returns_numeric () -> numeric (0));
+  init (OVER, "over", repeat (1, 1) -> returns_numeric () -> numeric (0));
+  init (DIV, "div",
+	fixed (2) -> returns_numeric () -> numeric (0) -> name ("divide"));
+  init (MOD, "mod",
+	fixed (2) -> returns_numeric () -> numeric (0) -> name ("modulo"));
+  init (MATH_SQRT, "math-sqrt",
+	fixed (1) -> returns_numeric () -> numeric (0) ->
+	name ("square root"));
+  init (EXP, "exp", fixed (1) -> returns_numeric () -> numeric (0));
+  init (LOG, "log", fixed (1) -> returns_numeric () -> numeric (0));
+  init (POW, "pow", fixed (2) -> returns_numeric () -> numeric (0));
+  init (COS, "cos", fixed (1) -> returns_numeric () -> numeric (0));
+  init (SIN, "sin", fixed (1) -> returns_numeric () -> numeric (0));
+  init (TAN, "tan", fixed (1) -> returns_numeric () -> numeric (0));
+  init (MERGE, "merge", repeat (2, 1) -> returns_adhoc ());
+  init (LENGTH, "length", fixed (1) -> returns_integer ());
+  init (RANGE, "range",
+	fixed (1, 2, BIFORM) -> returns_adhoc () -> accessible (0));
+  init (NUMBER, "number",
+	fixed (2) -> returns_string () -> string_type (0));
+  init (_DATE, "date",
+	options (0, 2) -> returns_string () -> string_type (0));
+  init (TRANSLATE, "translate",
+	fixed (3) -> returns_string () -> string_type (0));
   init (CHANGE_CASE, "change-case",
 	fixed (1, 1, BIFORM) -> accessible (0) -> string_type (1));
   init (FIND_FILE, "find-file",
-	var_repeat (1, 1) -> url_type (0)); // dirs and file
+	var_repeat (1, 1) -> returns_url () -> url_type (0)); // dirs and file
   init (IS_TUPLE, "is-tuple",
-	fixed (1) -> regular (0) -> name ("tuple?"));
+	fixed (1) -> returns_boolean () -> regular (0) -> name ("tuple?"));
   init (LOOK_UP, "look-up",
 	fixed (1, 1, BIFORM) -> regular (0) -> integer (1));
   init (EQUAL, "equal",
-	fixed (2) -> regular (0));
+	fixed (2) -> returns_boolean () -> regular (0));
   init (UNEQUAL, "unequal",
-	fixed (2) -> regular (0) -> name ("not equal"));
+	fixed (2) -> returns_boolean () -> regular (0) ->
+	name ("not equal"));
   init (LESS, "less",
-	fixed (2) -> regular (0));
+	fixed (2) -> returns_boolean () -> regular (0));
   init (LESSEQ, "lesseq",
-	fixed (2) -> regular (0) -> name ("less or equal"));
+	fixed (2) -> returns_boolean () -> regular (0) ->
+	name ("less or equal"));
   init (GREATER, "greater",
-	fixed (2) -> regular (0));
+	fixed (2) -> returns_boolean () -> regular (0));
   init (GREATEREQ, "greatereq",
-	fixed (2) -> regular (0) -> name ("greater or equal"));
+	fixed (2) -> returns_boolean () -> regular (0) ->
+	name ("greater or equal"));
 
-  init (CM_LENGTH, "cm-length", fixed (0));
-  init (MM_LENGTH, "mm-length", fixed (0));
-  init (IN_LENGTH, "in-length", fixed (0));
-  init (PT_LENGTH, "pt-length", fixed (0));
-  init (BP_LENGTH, "bp-length", fixed (0));
-  init (DD_LENGTH, "dd-length", fixed (0));
-  init (PC_LENGTH, "pc-length", fixed (0));
-  init (CC_LENGTH, "cc-length", fixed (0));
-  init (FS_LENGTH, "fs-length", fixed (0));
-  init (FBS_LENGTH, "fbs-length", fixed (0));
-  init (EM_LENGTH, "em-length", fixed (0));
-  init (LN_LENGTH, "ln-length", fixed (0));
-  init (SEP_LENGTH, "sep-length", fixed (0));
-  init (YFRAC_LENGTH, "yfrac-length", fixed (0));
-  init (EX_LENGTH, "ex-length", fixed (0));
-  init (FN_LENGTH, "fn-length", fixed (0));
-  init (FNS_LENGTH, "fns-length", fixed (0));
-  init (BLS_LENGTH, "bls-length", fixed (0));
-  init (FNBOT_LENGTH, "fnbot-length", fixed (0));
-  init (FNTOP_LENGTH, "fntop-length", fixed (0));
-  init (SPC_LENGTH, "spc-length", fixed (0));
-  init (XSPC_LENGTH, "xspc-length", fixed (0));
-  init (PAR_LENGTH, "par-length", fixed (0));
-  init (PAG_LENGTH, "pag-length", fixed (0));
-  init (GW_LENGTH, "gw-length", fixed (0));
-  init (GH_LENGTH, "gh-length", fixed (0));
-  init (TMPT_LENGTH, "tmpt-length", fixed (0));
-  init (PX_LENGTH, "px-length", fixed (0));
-  init (MSEC_LENGTH, "msec-length", fixed (0));
-  init (SEC_LENGTH, "sec-length", fixed (0));
-  init (MIN_LENGTH, "min-length", fixed (0));
-  init (H_LENGTH, "h-length", fixed (0));
+  init (CM_LENGTH, "cm-length", fixed (0) -> returns_length ());
+  init (MM_LENGTH, "mm-length", fixed (0) -> returns_length ());
+  init (IN_LENGTH, "in-length", fixed (0) -> returns_length ());
+  init (PT_LENGTH, "pt-length", fixed (0) -> returns_length ());
+  init (BP_LENGTH, "bp-length", fixed (0) -> returns_length ());
+  init (DD_LENGTH, "dd-length", fixed (0) -> returns_length ());
+  init (PC_LENGTH, "pc-length", fixed (0) -> returns_length ());
+  init (CC_LENGTH, "cc-length", fixed (0) -> returns_length ());
+  init (FS_LENGTH, "fs-length", fixed (0) -> returns_length ());
+  init (FBS_LENGTH, "fbs-length", fixed (0) -> returns_length ());
+  init (EM_LENGTH, "em-length", fixed (0) -> returns_length ());
+  init (LN_LENGTH, "ln-length", fixed (0) -> returns_length ());
+  init (SEP_LENGTH, "sep-length", fixed (0) -> returns_length ());
+  init (YFRAC_LENGTH, "yfrac-length", fixed (0) -> returns_length ());
+  init (EX_LENGTH, "ex-length", fixed (0) -> returns_length ());
+  init (FN_LENGTH, "fn-length", fixed (0) -> returns_length ());
+  init (FNS_LENGTH, "fns-length", fixed (0) -> returns_length ());
+  init (BLS_LENGTH, "bls-length", fixed (0) -> returns_length ());
+  init (FNBOT_LENGTH, "fnbot-length", fixed (0) -> returns_length ());
+  init (FNTOP_LENGTH, "fntop-length", fixed (0) -> returns_length ());
+  init (SPC_LENGTH, "spc-length", fixed (0) -> returns_length ());
+  init (XSPC_LENGTH, "xspc-length", fixed (0) -> returns_length ());
+  init (PAR_LENGTH, "par-length", fixed (0) -> returns_length ());
+  init (PAG_LENGTH, "pag-length", fixed (0) -> returns_length ());
+  init (GW_LENGTH, "gw-length", fixed (0) -> returns_length ());
+  init (GH_LENGTH, "gh-length", fixed (0) -> returns_length ());
+  init (TMPT_LENGTH, "tmpt-length", fixed (0) -> returns_length ());
+  init (PX_LENGTH, "px-length", fixed (0) -> returns_length ());
+  init (MSEC_LENGTH, "msec-length", fixed (0) -> returns_length ());
+  init (SEC_LENGTH, "sec-length", fixed (0) -> returns_length ());
+  init (MIN_LENGTH, "min-length", fixed (0) -> returns_length ());
+  init (H_LENGTH, "h-length", fixed (0) -> returns_length ());
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> binding (0) -> accessible (1));
@@ -349,21 +375,24 @@ init_std_drd () {
   init (HIGHLIGHT, "highlight", fixed (1) -> accessible (0));
 
   init (LOCUS, "locus",
-	var_repeat (1, 1, BIFORM) -> accessible (1));
+	var_repeat (1, 1, BIFORM) ->
+	accessible (1));
   init (ID, "id",
-	repeat (1, 1) -> accessible (0) -> identifier (0));
+	repeat (1, 1) -> returns_adhoc () ->
+	accessible (0) -> identifier (0));
   init (HARD_ID, "hard-id",
-	options (0, 1) -> regular (0));
+	options (0, 1) -> returns_identifier () ->
+	regular (0));
   init (LINK, "link",
-	repeat (1, 1, BIFORM) ->
+	repeat (1, 1, BIFORM) -> returns_adhoc () ->
 	accessible (0) -> string_type (0) ->  // link type
 	accessible (1));                      // participants
   init (URL, "url",
-	options (1, 1, BIFORM) ->
+	options (1, 1, BIFORM) -> returns_adhoc () ->
 	accessible (0) -> url_type (0) ->     // the URL
 	accessible (1) -> regular (1));       // FIXME: location?
   init (SCRIPT, "script",
-	options (1, 1, BIFORM) ->
+	options (1, 1, BIFORM) -> returns_adhoc () ->
 	accessible (0) -> code (0) ->         // the script
 	accessible (1) -> regular (1));       // location for evaluation
   init (HLINK, "hlink",
@@ -399,7 +428,8 @@ init_std_drd () {
 	repeat (2, 2) -> accessible (0) -> binding (0) ->
 	name ("attributes"));
   init (TMLEN, "tmlen",
-	options (1, 2) -> length (0) -> name ("TeXmacs length"));
+	options (1, 2) -> returns_length () ->
+	length (0) -> name ("TeXmacs length"));
   init (COLLECTION, "collection",
 	repeat (1, 1) -> regular (0));
   init (ASSOCIATE, "associate",
@@ -421,17 +451,20 @@ init_std_drd () {
 	argument (2));                        // source of flag
 
   init (ANIM_COMPOSE, "anim-compose",
-	repeat (1, 1) -> animation (0));
+	repeat (1, 1) -> returns_animation () ->
+	animation (0));
   init (ANIM_REPEAT, "anim-repeat",
-	fixed (1) -> accessible (0) -> animation (0));
+	fixed (1) -> returns_animation () ->
+	accessible (0) -> animation (0));
   init (ANIM_CONSTANT, "anim-constant",
-	fixed (1, 1, BIFORM) -> accessible (0) -> duration (1));
+	fixed (1, 1, BIFORM) -> returns_animation () ->
+	accessible (0) -> duration (1));
   init (ANIM_TRANSLATE, "anim-translate",
-	fixed (1, 3, DETAILED) ->
+	fixed (1, 3, DETAILED) -> returns_animation () ->
 	accessible (0) -> animation (0) ->
 	duration (1));
   init (ANIM_PROGRESSIVE, "anim-progressive",
-	fixed (1, 3, DETAILED) ->
+	fixed (1, 3, DETAILED) -> returns_animation () ->
 	accessible (0) -> animation (0) ->
 	duration (1));
   init (VIDEO, "video",
@@ -444,27 +477,29 @@ init_std_drd () {
   init (SUPERPOSE, "superpose",
 	repeat (1, 1) -> accessible (0));
   init (GR_GROUP, "gr-group",
-	repeat (1, 1));
+	repeat (1, 1) -> returns_graphical () -> graphical (0));
   init (GR_LINEAR_TRANSFORM, "gr-linear-transform",
-	fixed (2));
+	fixed (1, 1, BIFORM) -> returns_graphical () ->
+	graphical (0));
   init (TEXT_AT, "text-at",
-	fixed (1, 1, BIFORM) -> accessible (0) -> point_type (1));
+	fixed (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> point_type (1));
   init (_POINT, "point",
-	repeat (1, 1) -> point_type (0));
+	repeat (1, 1) -> returns_graphical () -> point_type (0));
   init (LINE, "line",
-	repeat (2, 1) -> point_type (0));
+	repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (CLINE, "cline",
-	repeat (3, 1) -> point_type (0));
+	repeat (3, 1) -> returns_graphical () -> point_type (0));
   init (ARC, "arc",
-	repeat (3, 1) -> point_type (0));
+	repeat (3, 1) -> returns_graphical () -> point_type (0));
   init (CARC, "carc",
-	repeat (3, 1) -> point_type (0));
+	repeat (3, 1) -> returns_graphical () -> point_type (0));
   init (SPLINE, "spline",
-	repeat (2, 1) -> point_type (0));
+	repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (VAR_SPLINE, "spline*",
-	repeat (2, 1) -> point_type (0));
+	repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (CSPLINE, "cspline",
-	repeat (2, 1) -> point_type (0));
+	repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (FILL, "fill",
 	repeat (1, 1));                       // Not yet implemented
   init (POSTSCRIPT, "postscript",
