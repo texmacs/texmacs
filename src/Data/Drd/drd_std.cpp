@@ -60,7 +60,7 @@ init_std_drd () {
   init (UNKNOWN, "unknown", fixed (0));
   init (UNINIT, "uninit", fixed (0));
   init (ERROR, "error", fixed (1));
-  init (RAW_DATA, "raw-data", fixed (1));
+  init (RAW_DATA, "raw-data", fixed (1) -> type (0, TYPE_RAW));
 
   init (DOCUMENT, "document",
 	repeat (1, 1) -> inner_border () -> accessible (0));
@@ -71,15 +71,24 @@ init_std_drd () {
   init (CONCAT, "concat", repeat (1, 1) -> inner_border () -> accessible (0));
   init (RIGID, "rigid", fixed (1) -> accessible (0));
   init (HIDDEN, "hidden", fixed (1) -> inner_border () -> hidden (0));
-  init (FREEZE, "freeze", fixed (1) -> inner_border ());
+  init (FREEZE, "freeze",
+	fixed (1) -> inner_border () -> type (0, TYPE_REGULAR));
   init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> inner_border ());
-  init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
+  init (HSPACE, "hspace",
+	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
+	name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
-	options (1, 2) -> name ("vertical space before"));
-  init (VSPACE, "vspace", options (1, 2) -> name ("vertical space"));
-  init (SPACE, "space", options (1, 2)); // arity 1 or 3
+	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
+	name ("vertical space before"));
+  init (VSPACE, "vspace",
+	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
+	name ("vertical space"));
+  init (SPACE, "space",
+	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH));
   // space markup has arity 1 or 3
-  init (HTAB, "htab", options (1, 1) -> name ("tab"));
+  init (HTAB, "htab",
+	options (1, 1) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
+	name ("tab"));
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
   init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));

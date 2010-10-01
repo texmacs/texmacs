@@ -278,7 +278,10 @@ drd_info_rep::get_type_child (tree t, int i) {
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
   if ((index<0) || (index>=N(ti->ci))) return TYPE_INVALID;
-  return ti->ci[index].type;
+  int r= ti->ci[index].type;
+  if (r != TYPE_BINDING) return r;
+  if (i & 1 == 0) return TYPE_VARIABLE;
+  return TYPE_REGULAR;
 }
 
 /******************************************************************************

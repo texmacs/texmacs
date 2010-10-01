@@ -112,17 +112,20 @@ struct parent_info {
 
 #define TYPE_INVALID         -1
 #define TYPE_REGULAR          0
-#define TYPE_RAW              1
-#define TYPE_ADHOC            2
+#define TYPE_ADHOC            1
+#define TYPE_RAW              2
 #define TYPE_VARIABLE         3
 #define TYPE_ARGUMENT         4
-#define TYPE_BOOLEAN          5
-#define TYPE_NUMERIC          6
-#define TYPE_LENGTH           7
+#define TYPE_BINDING          5
+#define TYPE_BOOLEAN          6
+#define TYPE_INTEGER          7
 #define TYPE_STRING           8
-#define TYPE_URL              9
-#define TYPE_GRAPHICAL       10
-#define TYPE_POINT           11
+#define TYPE_LENGTH           9
+#define TYPE_NUMERIC         10
+#define TYPE_CODE            11
+#define TYPE_URL             12
+#define TYPE_GRAPHICAL       13
+#define TYPE_POINT           14
 
 #define ACCESSIBLE_NEVER      0
 #define ACCESSIBLE_HIDDEN     1
@@ -170,7 +173,7 @@ public:
 
   tag_info inner_border ();
   tag_info outer_border ();
-  tag_info set_type (int i, int tp);
+  tag_info type (int i, int tp);
   tag_info accessible (int i);
   tag_info hidden (int i);
   tag_info disable_writable (int i);

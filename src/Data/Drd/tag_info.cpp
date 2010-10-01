@@ -239,19 +239,21 @@ tag_info_rep::outer_border () {
 }
 
 tag_info
-tag_info_rep::set_type (int i, int tp) {
+tag_info_rep::type (int i, int tp) {
   ci[i].type= tp;
   return tag_info (pi, ci, extra);
 }
 
 tag_info
 tag_info_rep::accessible (int i) {
+  ci[i].type= TYPE_REGULAR;
   ci[i].accessible= ACCESSIBLE_ALWAYS;
   return tag_info (pi, ci, extra);
 }
 
 tag_info
 tag_info_rep::hidden (int i) {
+  ci[i].type= TYPE_REGULAR;
   ci[i].accessible= ACCESSIBLE_HIDDEN;
   return tag_info (pi, ci, extra);
 }
