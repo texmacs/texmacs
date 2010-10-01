@@ -165,22 +165,30 @@ init_std_drd () {
   init (CELL, "cell", fixed (1) -> inner_border () -> accessible (0));
   init (SUBTABLE, "subtable", fixed (1) -> inner_border () -> accessible (0));
 
-  init (ASSIGN, "assign", fixed (2));
-  init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
-  init (PROVIDES, "provides", fixed (1));
-  init (VALUE, "value", fixed (1));
-  init (QUOTE_VALUE, "quote-value", fixed (1) -> name ("quoted value"));
-  init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
+  init (ASSIGN, "assign", fixed (2) -> type (0, TYPE_BINDING));
+  init (WITH, "with",
+	var_repeat (2, 1, BIFORM) -> accessible (1) ->
+	type (0, TYPE_BINDING));
+  init (PROVIDES, "provides", fixed (1) -> type (0, TYPE_STRING));
+  init (VALUE, "value", fixed (1) -> type (0, TYPE_VARIABLE));
+  init (QUOTE_VALUE, "quote-value",
+	fixed (1) -> type (0, TYPE_VARIABLE) -> name ("quoted value"));
+  init (MACRO, "macro",
+	var_repeat (1, 1) -> accessible (0) -> type (1, TYPE_ARGUMENT));
   init (DRD_PROPS, "drd-props", repeat (3, 2) -> name ("drd properties"));
-  init (QUOTE_ARG, "quote-arg", repeat (1, 1) -> name ("quoted argument"));
-  init (ARG, "arg", repeat (1, 1) -> name ("argument"));
-  init (COMPOUND, "compound", repeat (1, 1, BIFORM) -> accessible (1));
+  init (QUOTE_ARG, "quote-arg",
+	repeat (1, 1) -> type (0, TYPE_ARGUMENT) -> name ("quoted argument"));
+  init (ARG, "arg",
+	repeat (1, 1) -> type (0, TYPE_ARGUMENT) -> name ("argument"));
+  init (COMPOUND, "compound",
+	repeat (1, 1, BIFORM) -> accessible (1) -> type (0, TYPE_VARIABLE));
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"
   init (XMACRO, "xmacro", fixed (2) -> accessible (0));
   init (GET_LABEL, "get-label", fixed (1));
   init (GET_ARITY, "get-arity", fixed (1));
   init (MAP_ARGS, "map-args", options (3, 2) -> name ("map arguments"));
-  init (EVAL_ARGS, "eval-args", fixed (1) -> name ("evaluate arguments"));
+  init (EVAL_ARGS, "eval-args",
+	fixed (1) -> type (0, TYPE_ARGUMENT) -> name ("evaluate arguments"));
   init (MARK, "mark", fixed (2));
   init (EXPAND_AS, "expand-as", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
@@ -210,20 +218,21 @@ init_std_drd () {
   init (OVER, "over", repeat (1, 1));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
-  init (MATH_SQRT, "math-sqrt", fixed (1));
-  init (EXP, "exp", fixed (1));
-  init (LOG, "log", fixed (1));
-  init (POW, "pow", fixed (2));
-  init (COS, "cos", fixed (1));
-  init (SIN, "sin", fixed (1));
-  init (TAN, "tan", fixed (1));
+  init (MATH_SQRT, "math-sqrt", fixed (1) -> type (0, TYPE_NUMERIC));
+  init (EXP, "exp", fixed (1) -> type (0, TYPE_NUMERIC));
+  init (LOG, "log", fixed (1) -> type (0, TYPE_NUMERIC));
+  init (POW, "pow", fixed (2) -> type (0, TYPE_NUMERIC));
+  init (COS, "cos", fixed (1) -> type (0, TYPE_NUMERIC));
+  init (SIN, "sin", fixed (1) -> type (0, TYPE_NUMERIC));
+  init (TAN, "tan", fixed (1) -> type (0, TYPE_NUMERIC));
   init (MERGE, "merge", repeat (2, 1));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (1, 2, BIFORM) -> accessible (0));
   init (NUMBER, "number", fixed (2));
   init (_DATE, "date", options (0, 2));
-  init (TRANSLATE, "translate", fixed (3));
-  init (CHANGE_CASE, "change-case", fixed (1, 1, BIFORM) -> accessible (0));
+  init (TRANSLATE, "translate", fixed (3) -> type (0, TYPE_STRING));
+  init (CHANGE_CASE, "change-case",
+	fixed (1, 1, BIFORM) -> accessible (0) -> type (1, TYPE_STRING));
   init (FIND_FILE, "find-file", var_repeat (1, 1)); // dirs and file
   init (IS_TUPLE, "is-tuple", fixed (1) -> name ("tuple?"));
   init (LOOK_UP, "look-up", fixed (2));
