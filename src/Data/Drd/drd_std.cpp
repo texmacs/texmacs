@@ -171,9 +171,13 @@ init_std_drd () {
 	var_repeat (1, 1, BIFORM) -> inner_border () -> accessible (1) ->
 	name ("table format"));
   init (TWITH, "twith",
-	fixed (2) -> accessible (0) -> name ("table property"));
+	fixed (2) -> accessible (0) -> string_type (0) ->
+	name ("table property"));
   init (CWITH, "cwith",
-	fixed (6) -> accessible (0) -> name ("cell property"));
+	fixed (4, 2, BIFORM) ->
+	accessible (0) -> integer (0) ->
+	accessible (1) -> string_type (1) ->
+	name ("cell property"));
   init (TMARKER, "tmarker", fixed (0) -> name ("table marker"));
   init (TABLE, "table", repeat (1, 1) -> inner_border () -> accessible (0));
   init (ROW, "row", repeat (1, 1) -> inner_border () -> accessible (0));
@@ -183,7 +187,7 @@ init_std_drd () {
   init (ASSIGN, "assign",
 	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
   init (WITH, "with",
-	var_repeat (2, 1, BIFORM) -> accessible (1) -> binding (0));
+	var_repeat (2, 1, BIFORM) -> binding (0) -> accessible (1));
   init (PROVIDES, "provides", fixed (1) -> string_type (0));
   init (VALUE, "value", fixed (1) -> variable (0));
   init (QUOTE_VALUE, "quote-value",

@@ -86,6 +86,7 @@ public:
   tree get_env_descendant (tree t, path p, tree env);
 
   /* Heuristic initialization */
+  tree arg_access (tree t, tree arg, tree env);
   bool heuristic_init_macro (string var, tree macro);
   bool heuristic_init_xmacro (string var, tree xmacro);
   void heuristic_init (hashmap<string,tree> env);

@@ -163,7 +163,7 @@ tm_config_rep::get_keycomb (
   string& which, int& status, command& cmd, string& shorth, string& help)
 {
   string orig= which;
-  cout << which;
+  //cout << which;
   variant_simplification (which);
   //cout << " -> " << which;
   string rew= apply_wildcards (which, post_kbd_wildcards);
