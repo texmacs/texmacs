@@ -18,6 +18,17 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define BIFORM   CHILD_BIFORM
 #define DETAILED CHILD_DETAILED
 
+#define regular(i) type (i, TYPE_REGULAR)
+#define argument(i) type (i, TYPE_ARGUMENT)
+#define variable(i) type (i, TYPE_VARIABLE)
+#define binding(i) type (i, TYPE_BINDING)
+#define boolean(i) type (i, TYPE_BOOLEAN)
+#define numeric(i) type (i, TYPE_NUMERIC)
+#define length(i) type (i, TYPE_LENGTH)
+#define code(i) type (i, TYPE_CODE)
+#define string_type(i) type (i, TYPE_STRING)
+#define url_type(i) type (i, TYPE_URL)
+
 static tag_info
 fixed (int arity, int extra=0, int child_mode= CHILD_UNIFORM) {
   return tag_info (arity, extra, ARITY_NORMAL, child_mode, true);
@@ -72,23 +83,19 @@ init_std_drd () {
   init (RIGID, "rigid", fixed (1) -> accessible (0));
   init (HIDDEN, "hidden", fixed (1) -> inner_border () -> hidden (0));
   init (FREEZE, "freeze",
-	fixed (1) -> inner_border () -> type (0, TYPE_REGULAR));
+	fixed (1) -> inner_border () -> regular (0));
   init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> inner_border ());
   init (HSPACE, "hspace",
-	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
-	name ("horizontal space"));
+	options (1, 2) -> length (0) ->	name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
-	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
-	name ("vertical space before"));
+	options (1, 2) -> length (0) ->	name ("vertical space before"));
   init (VSPACE, "vspace",
-	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
-	name ("vertical space"));
+	options (1, 2) -> length (0) ->	name ("vertical space"));
   init (SPACE, "space",
-	options (1, 2) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH));
+	options (1, 2) -> length (0));
   // space markup has arity 1 or 3
   init (HTAB, "htab",
-	options (1, 1) -> type (0, TYPE_LENGTH) -> type (1, TYPE_LENGTH) ->
-	name ("tab"));
+	options (1, 1) -> length (0) ->	name ("tab"));
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
   init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
@@ -165,48 +172,55 @@ init_std_drd () {
   init (CELL, "cell", fixed (1) -> inner_border () -> accessible (0));
   init (SUBTABLE, "subtable", fixed (1) -> inner_border () -> accessible (0));
 
-  init (ASSIGN, "assign", fixed (2) -> type (0, TYPE_BINDING));
+  init (ASSIGN, "assign",
+	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
   init (WITH, "with",
-	var_repeat (2, 1, BIFORM) -> accessible (1) ->
-	type (0, TYPE_BINDING));
-  init (PROVIDES, "provides", fixed (1) -> type (0, TYPE_STRING));
-  init (VALUE, "value", fixed (1) -> type (0, TYPE_VARIABLE));
+	var_repeat (2, 1, BIFORM) -> accessible (1) -> binding (0));
+  init (PROVIDES, "provides", fixed (1) -> string_type (0));
+  init (VALUE, "value", fixed (1) -> variable (0));
   init (QUOTE_VALUE, "quote-value",
-	fixed (1) -> type (0, TYPE_VARIABLE) -> name ("quoted value"));
+	fixed (1) -> variable (0) -> name ("quoted value"));
   init (MACRO, "macro",
-	var_repeat (1, 1) -> accessible (0) -> type (1, TYPE_ARGUMENT));
+	var_repeat (1, 1, BIFORM) -> argument (0) -> regular (1));
   init (DRD_PROPS, "drd-props", repeat (3, 2) -> name ("drd properties"));
   init (QUOTE_ARG, "quote-arg",
-	repeat (1, 1) -> type (0, TYPE_ARGUMENT) -> name ("quoted argument"));
+	repeat (1, 1, BIFORM) -> argument (0) -> name ("quoted argument"));
   init (ARG, "arg",
-	repeat (1, 1) -> type (0, TYPE_ARGUMENT) -> name ("argument"));
+	repeat (1, 1, BIFORM) -> argument (0) -> name ("argument"));
   init (COMPOUND, "compound",
-	repeat (1, 1, BIFORM) -> accessible (1) -> type (0, TYPE_VARIABLE));
+	repeat (1, 1, BIFORM) -> variable (0) -> accessible (1));
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"
-  init (XMACRO, "xmacro", fixed (2) -> accessible (0));
+  init (XMACRO, "xmacro",
+	fixed (1, 1, BIFORM) -> argument (0) -> regular (1));
   init (GET_LABEL, "get-label", fixed (1));
   init (GET_ARITY, "get-arity", fixed (1));
   init (MAP_ARGS, "map-args", options (3, 2) -> name ("map arguments"));
   init (EVAL_ARGS, "eval-args",
-	fixed (1) -> type (0, TYPE_ARGUMENT) -> name ("evaluate arguments"));
+	fixed (1) -> argument (0) -> name ("evaluate arguments"));
   init (MARK, "mark", fixed (2));
   init (EXPAND_AS, "expand-as", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
-  init (QUOTE, "quote", fixed (1));
-  init (QUASI, "quasi", fixed (1));
-  init (QUASIQUOTE, "quasiquote", fixed (1));
-  init (UNQUOTE, "unquote", fixed (1));
-  init (VAR_UNQUOTE, "unquote*", fixed (1));
-  init (COPY, "copy", fixed (1));
-  init (IF, "if", options (2, 1));
-  init (VAR_IF, "if*", fixed (2));
-  init (CASE, "case", repeat (2, 1));
-  init (WHILE, "while", fixed (2));
-  init (FOR_EACH, "for-each", fixed (2));
-  init (EXTERN, "extern", repeat (1, 1)); // func and args
-  init (INCLUDE, "include", fixed (1));
-  init (USE_PACKAGE, "use-package", repeat (1, 1));
-  init (USE_MODULE, "use-module", repeat (1, 1));
+  init (QUOTE, "quote", fixed (1) -> regular (0));
+  init (QUASI, "quasi", fixed (1) -> regular (0));
+  init (QUASIQUOTE, "quasiquote", fixed (1) -> regular (0));
+  init (UNQUOTE, "unquote", fixed (1) -> regular (0));
+  init (VAR_UNQUOTE, "unquote*", fixed (1) -> regular (0));
+  init (COPY, "copy", fixed (1) -> regular (0));
+  init (IF, "if",
+	options (2, 1));
+  init (VAR_IF, "if*",
+	fixed (1, 1, BIFORM) -> boolean (0) -> regular (1));
+  init (CASE, "case",
+	repeat (2, 1));
+  init (WHILE, "while",
+	fixed (1, 1, BIFORM) -> boolean (0) -> regular (1));
+  init (FOR_EACH, "for-each",
+	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
+  init (EXTERN, "extern",
+	repeat (1, 1, BIFORM) -> code (0) -> regular (1)); // func and args
+  init (INCLUDE, "include", fixed (1) -> url_type (0));
+  init (USE_PACKAGE, "use-package", repeat (1, 1) -> string_type (0));
+  init (USE_MODULE, "use-module", repeat (1, 1) -> code (0));
 
   init (OR, "or", repeat (2, 1));
   init (XOR, "xor", fixed (2));
@@ -218,21 +232,21 @@ init_std_drd () {
   init (OVER, "over", repeat (1, 1));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
-  init (MATH_SQRT, "math-sqrt", fixed (1) -> type (0, TYPE_NUMERIC));
-  init (EXP, "exp", fixed (1) -> type (0, TYPE_NUMERIC));
-  init (LOG, "log", fixed (1) -> type (0, TYPE_NUMERIC));
-  init (POW, "pow", fixed (2) -> type (0, TYPE_NUMERIC));
-  init (COS, "cos", fixed (1) -> type (0, TYPE_NUMERIC));
-  init (SIN, "sin", fixed (1) -> type (0, TYPE_NUMERIC));
-  init (TAN, "tan", fixed (1) -> type (0, TYPE_NUMERIC));
+  init (MATH_SQRT, "math-sqrt", fixed (1) -> numeric (0));
+  init (EXP, "exp", fixed (1) -> numeric (0));
+  init (LOG, "log", fixed (1) -> numeric (0));
+  init (POW, "pow", fixed (2) -> numeric (0));
+  init (COS, "cos", fixed (1) -> numeric (0));
+  init (SIN, "sin", fixed (1) -> numeric (0));
+  init (TAN, "tan", fixed (1) -> numeric (0));
   init (MERGE, "merge", repeat (2, 1));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (1, 2, BIFORM) -> accessible (0));
   init (NUMBER, "number", fixed (2));
   init (_DATE, "date", options (0, 2));
-  init (TRANSLATE, "translate", fixed (3) -> type (0, TYPE_STRING));
+  init (TRANSLATE, "translate", fixed (3) -> string_type (0));
   init (CHANGE_CASE, "change-case",
-	fixed (1, 1, BIFORM) -> accessible (0) -> type (1, TYPE_STRING));
+	fixed (1, 1, BIFORM) -> accessible (0) -> string_type (1));
   init (FIND_FILE, "find-file", var_repeat (1, 1)); // dirs and file
   init (IS_TUPLE, "is-tuple", fixed (1) -> name ("tuple?"));
   init (LOOK_UP, "look-up", fixed (2));
