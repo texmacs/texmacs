@@ -320,6 +320,31 @@ initialize_default_env () {
   env ("src-error")=
     tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
 
+  /*
+  env ("src-macro")=
+    tree (MACRO, "x", tree (WITH, COLOR, "blue",
+			    FONT_FAMILY, "ss", tree (ARG, "x")));
+  env ("src-var")=
+    tree (MACRO, "x", tree (WITH, COLOR, "dark green",
+			    FONT_SHAPE, "italic", tree (ARG, "x")));
+  env ("src-arg")=
+    tree (MACRO, "x", tree (WITH, COLOR, "brown",
+			    FONT_SHAPE, "italic", tree (ARG, "x")));
+  env ("src-tt")=
+    tree (MACRO, "x", tree (WITH, COLOR, "#224",
+			    FONT_FAMILY, "tt", tree (ARG, "x")));
+  env ("src-numeric")=
+    tree (MACRO, "x", tree (WITH, COLOR, "#444", tree (ARG, "x")));
+  env ("src-textual")=
+    tree (MACRO, "x", tree (ARG, "x"));
+  env ("src-length")=
+    tree (MACRO, "x", tree (WITH, COLOR, "#244", tree (ARG, "x")));
+  env ("src-error")=
+    tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
+  */
+
+
+
   /* for correct importation of style files and packages */
   env ("src-title")= identity_m;
   env ("src-style-file")=

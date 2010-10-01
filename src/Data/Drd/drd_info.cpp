@@ -322,6 +322,7 @@ drd_info_rep::all_accessible (tree_label l) {
 
 bool
 drd_info_rep::is_accessible_child (tree t, int i) {
+  //cout << "l= " << as_string (L(t)) << "\n";
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
   if ((index<0) || (index>=N(ti->ci))) return false;

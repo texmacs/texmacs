@@ -123,9 +123,13 @@ struct parent_info {
 #define TYPE_LENGTH           9
 #define TYPE_NUMERIC         10
 #define TYPE_CODE            11
-#define TYPE_URL             12
-#define TYPE_GRAPHICAL       13
-#define TYPE_POINT           14
+#define TYPE_IDENTIFIER      12
+#define TYPE_URL             13
+#define TYPE_GRAPHICAL       14
+#define TYPE_POINT           15
+#define TYPE_ANIMATION       16
+#define TYPE_DURATION        17
+#define TYPE_OBSOLETE        18
 
 #define ACCESSIBLE_NEVER      0
 #define ACCESSIBLE_HIDDEN     1
@@ -140,7 +144,7 @@ struct parent_info {
 #define BLOCK_REQUIRE_NONE    2
 
 struct child_info {
-  unsigned type              :  4; // argument type
+  unsigned type              :  5; // argument type
   unsigned accessible        :  2; // child is accessible?
   unsigned writability       :  2; // writability of child
   unsigned block             :  2; // require children to be blocks?

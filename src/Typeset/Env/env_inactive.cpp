@@ -200,6 +200,53 @@ highlight (tree t, tree orig, string kind) {
   return t;
 }
 
+int
+new_arg_type (drd_info drd, tree t, int i) {
+  return drd->get_type_child (t, i);
+}
+
+static tree
+new_highlight (tree t, tree orig, int kind) {
+  switch (kind) {
+  case TYPE_REGULAR:
+    return t;
+  case TYPE_ADHOC:
+    return compound ("src-textual", t);
+  case TYPE_RAW:
+    return compound ("src-error", t);
+  case TYPE_VARIABLE:
+    return compound ("src-var", t);
+  case TYPE_ARGUMENT:
+    return compound ("src-arg", t);
+  case TYPE_BOOLEAN:
+    return compound ("src-numeric", t);
+  case TYPE_INTEGER:
+    return compound ("src-numeric", t);
+  case TYPE_STRING:
+    return compound ("src-textual", t);
+  case TYPE_LENGTH:
+    return compound ("src-length", t);
+  case TYPE_NUMERIC:
+    return compound ("src-numeric", t);
+  case TYPE_CODE:
+    return compound ("src-tt", t);
+  case TYPE_IDENTIFIER:
+    return compound ("src-tt", t);
+  case TYPE_URL:
+    return compound ("src-tt", t);
+  case TYPE_GRAPHICAL:
+    return t;
+  case TYPE_POINT:
+    return t;
+  case TYPE_ANIMATION:
+    return t;
+  case TYPE_DURATION:
+    return compound ("src-length", t);
+  default:
+    return t;
+  }
+}
+
 /******************************************************************************
 * Compute rendering of inactive markup
 ******************************************************************************/
@@ -228,6 +275,7 @@ edit_env_rep::rewrite_inactive_arg (
       }
       else r= rewrite_inactive (t[i], r, block, flush);
     }
+  //return new_highlight (r, t[i], new_arg_type (drd, t, i));
   return highlight (r, t[i], arg_type (t, i));
 }
 

@@ -125,7 +125,7 @@ child_info::child_info (bool frozen) {
 
 child_info::child_info (tree t) {
   int i= as_int (is_atomic (t)? t: t[N(t)-1]);
-  get_bits (type              ,  4);
+  get_bits (type              ,  5);
   get_bits (accessible        ,  2);
   get_bits (writability       ,  2);
   get_bits (block             ,  2);
@@ -140,7 +140,7 @@ child_info::child_info (tree t) {
 
 child_info::operator tree () {
   int i=0, offset=0;
-  set_bits (type              ,  4);
+  set_bits (type              ,  5);
   set_bits (accessible        ,  2);
   set_bits (writability       ,  2);
   set_bits (block             ,  2);
@@ -187,7 +187,7 @@ tag_info_rep::tag_info_rep (parent_info pi2, array<child_info> ci2, tree x):
 
 tag_info_rep::tag_info_rep (int a, int x, int am, int cm, bool frozen):
   pi (a, x, am, cm, frozen),
-  ci ((a+x)==0? 0: (cm==CHILD_UNIFORM? 1: (cm==CHILD_BIFORM? 2: (am+cm))))
+  ci ((a+x)==0? 0: (cm==CHILD_UNIFORM? 1: (cm==CHILD_BIFORM? 2: (a+x))))
 {
   if (frozen) {
     int i, n= N(ci);
@@ -240,12 +240,16 @@ tag_info_rep::outer_border () {
 
 tag_info
 tag_info_rep::type (int i, int tp) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
   ci[i].type= tp;
   return tag_info (pi, ci, extra);
 }
 
 tag_info
 tag_info_rep::accessible (int i) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
   ci[i].type= TYPE_REGULAR;
   ci[i].accessible= ACCESSIBLE_ALWAYS;
   return tag_info (pi, ci, extra);
@@ -253,6 +257,8 @@ tag_info_rep::accessible (int i) {
 
 tag_info
 tag_info_rep::hidden (int i) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
   ci[i].type= TYPE_REGULAR;
   ci[i].accessible= ACCESSIBLE_HIDDEN;
   return tag_info (pi, ci, extra);
@@ -260,12 +266,16 @@ tag_info_rep::hidden (int i) {
 
 tag_info
 tag_info_rep::disable_writable (int i) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
   ci[i].writability= WRITABILITY_DISABLE;
   return tag_info (pi, ci, extra);
 }
 
 tag_info
 tag_info_rep::enable_writable (int i) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
   ci[i].writability= WRITABILITY_ENABLE;
   return tag_info (pi, ci, extra);
 }
@@ -294,36 +304,51 @@ tag_info_rep::get_attribute (string which) {
 
 int
 tag_info_rep::get_index (int child, int n) {
+  int r= 0;
   switch (pi.child_mode) {
   case CHILD_UNIFORM:
-    return 0;
+    r= 0;
+    break;
   case CHILD_BIFORM:
     if (pi.arity_mode != ARITY_VAR_REPEAT) {
-      if (child < ((int) pi.arity_base)) return 0;
-      else return 1;
+      if (child < ((int) pi.arity_base)) r= 0;
+      else r= 1;
     }
     else {
-      if (child < (n-((int) pi.arity_base))) return 0;
-      else return 1;
+      if (child < (n-((int) pi.arity_base))) r= 0;
+      else r= 1;
     }
+    break;
   case CHILD_DETAILED:
     if (((int) pi.arity_mode) <= ARITY_OPTIONS)
-      return child;
+      r= child;
     else if (pi.arity_mode == ARITY_REPEAT) {
-      if (child < ((int) pi.arity_base)) return child;
-      else return (child - pi.arity_base) % pi.arity_extra + pi.arity_base;
+      if (child < ((int) pi.arity_base)) r= child;
+      else r= (child - pi.arity_base) % pi.arity_extra + pi.arity_base;
     }
     else {
-      if (child < (n-((int) pi.arity_base))) return child % pi.arity_extra;
-      else return pi.arity_base + pi.arity_extra + child - n;
+      if (child < (n-((int) pi.arity_base))) r= child % pi.arity_extra;
+      else r= pi.arity_base + pi.arity_extra + child - n;
     }
+    break;
   }
-  return 0;
+  return r;
 }
 
 child_info&
 tag_info::operator () (int child, int n) {
-  return rep->ci [rep->get_index (child, n)];
+  int index= rep->get_index (child, n);
+  if (index < 0 || index >= N(rep->ci)) {
+    cout << "child       = " << child << "\n";
+    cout << "out of      = " << n << "\n";
+    cout << "child_mode  = " << rep->pi.child_mode << "\n";
+    cout << "arity_mode  = " << rep->pi.arity_mode << "\n";
+    cout << "arity_base  = " << rep->pi.arity_base << "\n";
+    cout << "arity_extra = " << rep->pi.arity_extra << "\n";
+    cout << "N(ci)       = " << N(rep->ci) << "\n";
+    ASSERT (false, "index out of range");
+  }
+  return rep->ci [index];
 }
 
 /******************************************************************************
