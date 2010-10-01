@@ -163,10 +163,12 @@ tm_config_rep::get_keycomb (
   string& which, int& status, command& cmd, string& shorth, string& help)
 {
   string orig= which;
-  //cout << which;
+  cout << which;
   variant_simplification (which);
   //cout << " -> " << which;
   string rew= apply_wildcards (which, post_kbd_wildcards);
+  if (rew * var_suffix == orig) rew= var_suffix (1, N(var_suffix));
+  if (rew * unvar_suffix == orig) rew= unvar_suffix (1, N(unvar_suffix));
   //cout << " -> " << rew << LF;
   object obj= find_key_binding (rew);
   //cout << rew << " => " << obj << LF;
@@ -201,7 +203,7 @@ localize (string s, bool mod_flag= false) {
   else return compound ("localize", s);
 }
 
-static tree
+tree
 mathop (string s) {
   return compound ("math", compound ("op", s));
 }
