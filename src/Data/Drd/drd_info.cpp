@@ -587,6 +587,7 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   tag_info old_ti= copy (info[l]);
   int i, n= N(macro)-1;
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
+  set_type (l, get_type (macro[n]));
   for (i=0; i<n; i++) {
     int  type= TYPE_UNKNOWN;
     tree arg (ARG, macro[i]);
@@ -630,6 +631,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   tag_info old_ti= copy (info[l]);
   int i, m= minimal_arity (xmacro[1], xmacro[0]);
   set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
+  set_type (l, get_type (xmacro[1]));
   for (i=0; i<=m; i++) {
     int type= TYPE_UNKNOWN;
     tree arg (ARG, xmacro[0], as_string (i));
