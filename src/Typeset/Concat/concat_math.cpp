@@ -266,6 +266,15 @@ concater_rep::typeset_group (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_around (tree t, path ip) {
+  marker (descend (ip, 0));
+  typeset (t[0], descend (ip, 0));
+  typeset (t[1], descend (ip, 1));
+  typeset (t[2], descend (ip, 2));
+  marker (descend (ip, 1));
+}
+
+void
 concater_rep::typeset_tree (tree t, path ip) {
   int i, n= N(t);
   array<box> bs(n);

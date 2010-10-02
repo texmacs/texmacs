@@ -313,6 +313,9 @@ concater_rep::typeset (tree t, path ip) {
   case GROUP:
     typeset_group (t, ip);
     break;
+  case AROUND:
+    typeset_around (t, ip);
+    break;
   case LEFT:
     typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");
     break;
