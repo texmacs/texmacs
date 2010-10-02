@@ -302,6 +302,12 @@
     (:penalty panic)
     "'" "`" "<dag>" "<ddag>")
 
+  (define Ponctuation-symbol
+    (:type separator)
+    (:spacing none default)
+    (:penalty 0)
+    "," ";" ":")
+
   (define Open-symbol
     (:type opening-bracket)
     "(" "[" "{" "<lfloor>" "<lceil>" "<langle>" "<lnone>"
@@ -311,14 +317,8 @@
     "<left-lfloor>" "<left-lceil>" "<left-rfloor>" "<left-rceil>"
     "<left-langle>" "<left-rangle>")
   
-  (define Ponctuation-symbol
-    (:type separator)
-    (:spacing none default)
-    (:penalty 0)
-    "," ";" ":")
-
-  (define Bar-symbol
-    (:type symbol)
+  (define Middle-symbol
+    (:type middle-bracket)
     "|" "<||>" "<mid-|>" "<mid-||>")
 
   (define Close-symbol

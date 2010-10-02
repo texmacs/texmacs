@@ -56,8 +56,9 @@ math_language_rep::set_type (string cl, string s) {
   else if (s == "left-associative-infix") ot= OP_LEFT_ASS_INFIX;
   else if (s == "right-associative-infix") ot= OP_RIGHT_ASS_INFIX;
   else if (s == "associative-infix") ot= OP_ASS_INFIX;
-  else if (s == "opening-bracket") ot= OP_OPENING_BRACKET;
   else if (s == "separator") ot= OP_SEPARATOR;
+  else if (s == "opening-bracket") ot= OP_OPENING_BRACKET;
+  else if (s == "middle-bracket") ot= OP_MIDDLE_BRACKET;
   else if (s == "closing-bracket") ot= OP_CLOSING_BRACKET;
   else {
     cerr << "Attempt to associate type " << s << " to " << cl << "\n";
@@ -306,10 +307,12 @@ math_symbol_type (string sym, string lang) {
     return "right-associative-infix";
   case OP_ASS_INFIX:
     return "associative-infix";
-  case OP_OPENING_BRACKET:
-    return "opening-bracket";
   case OP_SEPARATOR:
     return "separator";
+  case OP_OPENING_BRACKET:
+    return "opening-bracket";
+  case OP_MIDDLE_BRACKET:
+    return "middle-bracket";
   case OP_CLOSING_BRACKET:
     return "closing-bracket";
   }

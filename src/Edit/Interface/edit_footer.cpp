@@ -165,7 +165,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   if (r == "" && N(st) >= 1) {
     switch (L (st)) {
     case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-    case MID: r= "separator#" * as_symbol (st[0]); break;
+    case MID: r= "middle#" * as_symbol (st[0]); break;
     case RIGHT: r= "close#" * as_symbol (st[0]); break;
     case BIG: r= "big#" * as_symbol (st[0]); break;
     case LPRIME: r= "left prime#" * as_string (st[0]); break;

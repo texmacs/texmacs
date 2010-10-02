@@ -230,7 +230,7 @@
   (define Separator
     (:operator)
     Ponctuation-symbol
-    Bar-symbol
+    Middle-symbol
     (:<mid :args :>))
 
   (define Close
