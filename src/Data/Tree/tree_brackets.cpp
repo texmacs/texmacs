@@ -153,7 +153,7 @@ upgrade_probable (array<int> tp_in) {
   array<int> tp= copy (tp_in);
   // FIXME: combinations such as OPEN MIDDLE
   for (int i=0; i<N(tp); i++)
-    if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_DUBIOUS_CLOSE) {
+    if (tp[i] >= SYMBOL_PROBABLE_OPEN) {
       if (i == 0 ||
 	  tp[i-1] == SYMBOL_PREFIX ||
 	  tp[i-1] == SYMBOL_INFIX ||
@@ -228,18 +228,18 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
 	  (last_open == -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
 	last_open= i;
       else if (tp[i] == SYMBOL_PROBABLE_CLOSE ||
-	       tp[i] == SYMBOL_DUBIOUS_CLOSE ||
 	       (last_open != -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
 	{
-	  if (a[i] == a[last_open])
-	    if (insist ||
-		(a[last_open] == SYMBOL_PROBABLE_OPEN) ||
-		(a[i] == SYMBOL_PROBABLE_CLOSE))
-	      {
-		tp[last_open]= SYMBOL_OPEN;
-		tp[i]= SYMBOL_CLOSE;
-	      }
-	  last_open= -1;
+	  if (a[i] == a[last_open] &&
+	      (insist ||
+	       (a[last_open] == SYMBOL_PROBABLE_OPEN) ||
+	       (a[i] == SYMBOL_PROBABLE_CLOSE)))
+	    {
+	      tp[last_open]= SYMBOL_OPEN;
+	      tp[i]= SYMBOL_CLOSE;
+	    }
+	  else if (tp[i] == SYMBOL_PROBABLE_MIDDLE) last_open= i;
+	  else last_open= -1;
 	}
       else last_open= -1;
     }
