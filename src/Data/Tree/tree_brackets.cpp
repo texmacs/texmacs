@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "tree_brackets.hpp"
+#include "language.hpp"
 
 #ifdef UPGRADE_BRACKETS
 
@@ -21,7 +22,7 @@ static array<tree>
 concat_tokenize (tree t) {
   array<tree> r;
   if (is_atomic (t)) {
-    language lan= math_language ("std-math");
+    static language lan= math_language ("std-math");
     int i= 0;
     while (i<N(t->label)) {
       int start= i;
@@ -77,7 +78,8 @@ concat_recompose (array<tree> a) {
 #define SYMBOL_DUBIOUS_CLOSE     15
 
 static int
-bracket_type (language lan, tree t) {
+bracket_type (tree t) {
+  static language lan= math_language ("std-math");
   if (is_atomic (t)) {
     int pos= 0;
     text_property prop= lan->advance (t, pos);
@@ -112,8 +114,18 @@ bracket_type (language lan, tree t) {
   else return SYMBOL_BASIC;
 }
 
-static void
-downgrade_dubious (array<int>& tp) {
+static array<int>
+bracket_types (array<tree> a) {
+  array<int> tp (N(a));
+  for (int i=0; i<N(a); i++)
+    tp[i]= bracket_type (a[i]);
+  return tp;
+}
+
+static array<int>
+downgrade_dubious (array<int> tp_in) {
+  array<int> tp= copy (tp_in);
+  // FIXME: combinations such as OPEN MIDDLE
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_PROBABLE_CLOSE) {
       if (i == 0 ||
@@ -133,10 +145,13 @@ downgrade_dubious (array<int>& tp) {
 	  if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
 	}
     }
+  return tp;
 }
 
-static void
-upgrade_probable (array<int>& tp) {
+static array<int>
+upgrade_probable (array<int> tp_in) {
+  array<int> tp= copy (tp_in);
+  // FIXME: combinations such as OPEN MIDDLE
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_DUBIOUS_CLOSE) {
       if (i == 0 ||
@@ -150,15 +165,34 @@ upgrade_probable (array<int>& tp) {
 	  tp[i+1] == SYMBOL_SEPARATOR)
 	tp[i]= SYMBOL_PROBABLE_CLOSE;
     }
+  return tp;
+}
+
+static array<int>
+confirm_all (array<int> tp_in) {
+  array<int> tp= upgrade_probable (tp_in);
+  for (int i=0; i<N(tp); i++)
+    if (tp[i] == SYMBOL_PROBABLE_OPEN) tp[i]= SYMBOL_OPEN;
+    else if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_MIDDLE;
+    else if (tp[i] == SYMBOL_PROBABLE_CLOSE) tp[i]= SYMBOL_CLOSE;
+  return tp;
+}
+
+static bool
+admits_brackets (array<int> tp) {
+  for (int i=0; i<N(tp); i++)
+    if (tp[i] >= SYMBOL_OPEN) return true;
+  return false;
 }
 
 /******************************************************************************
 * Heuristic determination of several bracket notations
 ******************************************************************************/
 
-static void
-detect_french_interval (array<tree> a, array<int>& tp) {
-  upgrade_probable (tp);
+static array<int>
+detect_french_interval (array<tree> a, array<int> tp_in) {
+  // FIXME: only allow [ and ]
+  array<int> tp= upgrade_probable (tp_in);
   int last_open= -1, last_comma= -1;
   for (int i=0; i<N(tp); i++)
     if (tp[i] == SYMBOL_SEPARATOR) {
@@ -180,11 +214,12 @@ detect_french_interval (array<tree> a, array<int>& tp) {
       else if (tp[i] == SYMBOL_MIDDLE || tp[i] == SYMBOL_PROBABLE_MIDDLE);
       else last_open= last_comma= -1;
     }
+  return tp;
 }
 
-static void
-detect_absolute (array<tree> a, array<int>& tp, bool insist) {
-  upgrade_probable (tp);
+static array<int>
+detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
+  array<int> tp= upgrade_probable (tp_in);
   int last_open= -1;
   for (int i=0; i<N(tp); i++)
     if (tp[i] == SYMBOL_SEPARATOR) last_open= -1;
@@ -208,11 +243,12 @@ detect_absolute (array<tree> a, array<int>& tp, bool insist) {
 	}
       else last_open= -1;
     }
+  return tp;
 }
 
-static void
-detect_probable (array<tree> a, array<int>& tp) {
-  upgrade_probable (tp);
+static array<int>
+detect_probable (array<tree> a, array<int> tp_in) {
+  array<int> tp= upgrade_probable (tp_in);
   int last_open= -1;
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_OPEN) {
@@ -228,25 +264,23 @@ detect_probable (array<tree> a, array<int>& tp) {
       else if (tp[i] == SYMBOL_MIDDLE || tp[i] == SYMBOL_PROBABLE_MIDDLE);
       else last_open= -1;
     }
-}
-
-static void
-detect_missing (array<tree> a, array<int>& tp) {
+  return tp;
 }
 
 /******************************************************************************
-* 
+* Find matching brackets
 ******************************************************************************/
 
 static void
-simplify_matching (array<tree>& a, array<int>& tp, bool french, int level) {
+simplify_matching (array<tree> a, array<int> tp_in, int level) {
+  array<int> tp= copy (tp_in);
   int last_open= -1;
   for (int i=0; i<N(tp); i++) {
     if (tp[i] == SYMBOL_OPEN) last_open= i;
     else if (tp[i] >= SYMBOL_PROBABLE_OPEN) last_open= -1;
     else if (tp[i] == SYMBOL_CLOSE && last_open != -1) {
       array<tree> b= range (a, last_open+1, i);
-      b= upgrade_brackets (b, french, level+1);
+      b= upgrade_brackets (b, level+1);
       tree body= concat_recompose (b);
       a[last_open]= tree (AROUND, a[last_open], body, i);
       tp[last_open]= SYMBOL_BASIC;
@@ -255,24 +289,63 @@ simplify_matching (array<tree>& a, array<int>& tp, bool french, int level) {
     }
   }
 
-  array<tree> a2;
-  array<int> tp2;
+  array<tree> r;
   for (int i=0; i<N(tp); i++)
-    if (tp[i] != SYMBOL_DELETED) {
-      a2 << a[i];
-      tp2 << t[i];
-    }
-
-  if (N(tp2) != N(tp)) {
-    a= a2;
-    tp= tp2;
-    simplify_matching (a, tp, french, level);
-  }
+    if (tp[i] != SYMBOL_DELETED)
+      r << a[i];
+  return r;
 }
 
 static array<tree>
-upgrade_brackets (array<tree> t, bool french, int level) {
-  
+add_missing_left (array<tree> a, array<int> tp) {
+  array<tree> b;
+  for (int i=0; i<N(tp); i++)
+    if (tp[i] == SYMBOL_CLOSE) {
+      tree body= concat_recompose (b);
+      b= array<tree> ();
+      if (is_atomic (a[i])) b << tree (AROUND, "<lnone>", body, a[i]);
+      else b << tree (AROUND, tree (LEFT, "."), body, a[i]);
+    }
+    else b << a[i];
+  return b;
+}
+
+static array<tree>
+add_missing_right (array<tree> a, array<int> tp) {
+  array<tree> b;
+  for (int i=N(tp)-1; i>=0; i--)
+    if (tp[i] == SYMBOL_OPEN) {
+      tree body= concat_recompose (reverse (b));
+      b= array<tree> ();
+      if (is_atomic (a[i])) b << tree (AROUND, a[i], body, "<rnone>");
+      else b << tree (AROUND, a[i], body, tree (RIGHT, "."));
+    }
+    else b << a[i];
+  return reverse (b);
+}
+
+static array<tree>
+upgrade_brackets (array<tree> a, int level) {
+  array<int> tp= bracket_types (a);
+  if (admits_brackets (tp)) {
+    array<tree> r= simplify_matching (a, downgrade_dubious (tp), level);
+    if (r != a) return upgrade_brackets (r, level);
+    r= simplify_matching (a, detect_french_interval (a, tp), level);
+    if (r != a) return upgrade_brackets (r, level);
+    r= simplify_matching (a, detect_absolute (a, tp, false), level);
+    if (r != a) return upgrade_brackets (r, level);
+    r= simplify_matching (a, detect_absolute (a, tp, true), level);
+    if (r != a) return upgrade_brackets (r, level);
+    r= simplify_matching (a, detect_probable (a, tp), level);
+    if (r != a) return upgrade_brackets (r, level);
+    r= simplify_matching (a, confirm_all (a), level);
+    if (r != a) return upgrade_brackets (r, level);
+    r= add_missing_left (a, tp);
+    if (r != a) return upgrade_brackets (r, level);
+    r= add_missing_right (a, tp);
+    if (r != a) return upgrade_brackets (r, level);
+  }
+  return a;
 }
 
 /******************************************************************************
@@ -280,19 +353,19 @@ upgrade_brackets (array<tree> t, bool french, int level) {
 ******************************************************************************/
 
 static tree
-upgrade_brackets (tree t, bool math, bool french) {
+upgrade_brackets (tree t, bool math) {
   if (math && (is_atomic (t) || is_concat (t))) {
     array<tree> a= concat_tokenize (t);
-    a= upgrade_brackets (a, french);
+    a= upgrade_brackets (a);
     return concat_recompose (a);
   }
   else return t;
 }
 
 tree
-upgrade_brackets (drd_info drd, tree t, bool math, bool french) {
+upgrade_brackets (drd_info drd, tree t, bool math) {
   if (is_atomic (t))
-    return upgrade_brackets (t, math, french);
+    return upgrade_brackets (t, math);
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -300,9 +373,9 @@ upgrade_brackets (drd_info drd, tree t, bool math, bool french) {
       // TODO: mode
       // TODO: check type != ADHOC, RAW.
       // (in particular: do not enter AROUND, LEFT, MIDDLE, ...)
-      r[i]= upgrade_brackets (drd, t[i], math, french);
+      r[i]= upgrade_brackets (drd, t[i], math);
     }
-    return upgrade_brackets (r, math, french);
+    return upgrade_brackets (r, math);
   }
 }
 
