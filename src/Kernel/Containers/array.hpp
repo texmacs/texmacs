@@ -55,6 +55,7 @@ TMPL array<T>& operator << (array<T>& a, T x);
 TMPL array<T>& operator << (array<T>& a, array<T> b);
 TMPL array<T> append (array<T> a, array<T> b);
 TMPL array<T> range (array<T> a, int i, int j);
+TMPL array<T> reverse (array<T> a);
 TMPL bool operator == (array<T> a, array<T> b);
 TMPL bool operator != (array<T> a, array<T> b);
 

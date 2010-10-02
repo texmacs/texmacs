@@ -133,6 +133,14 @@ range (array<T> a, int i, int j) {
   return r;
 }
 
+template<class T> array<T>
+reverse (array<T> a) {
+  register int i, n= N(a);
+  array<T> r (n);
+  for (i=0; i<n; i++) r[i]= a[n-1-i];
+  return r;
+}
+
 template<class T> int
 hash (array<T> a) {
   int i, n=N(a), h= 0;

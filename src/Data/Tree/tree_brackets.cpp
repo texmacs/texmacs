@@ -12,7 +12,7 @@
 #include "tree_brackets.hpp"
 #include "language.hpp"
 
-#ifdef UPGRADE_BRACKETS
+static array<tree> upgrade_brackets (array<tree> a, int level);
 
 /******************************************************************************
 * Tokenize mathematical concats and recomposition
@@ -27,7 +27,7 @@ concat_tokenize (tree t) {
     while (i<N(t->label)) {
       int start= i;
       (void) lan->advance (t, i);
-      r << t->label (start, i);
+      r << tree (t->label (start, i));
     }
   }
   else if (is_concat (t))
@@ -45,11 +45,11 @@ concat_recompose (array<tree> a) {
   for (int i=0; i<N(a); i++)
     if (is_atomic (a[i])) s << a[i]->label;
     else {
-      if (s != "") r << s;
+      if (s != "") r << tree (s);
       r << a[i];
       s= "";
     }
-  if (s != "") r << s;
+  if (s != "") r << tree (s);
   if (N(r) == 0) return "";
   else if (N(r) == 1) return r[0];
   else return tree (CONCAT, r);
@@ -105,9 +105,9 @@ bracket_type (tree t) {
       return SYMBOL_BASIC;
     }
   }
-  else if (is_func (t, OPEN)) return SYMBOL_OPEN;
-  else if (is_func (t, MIDDLE)) return SYMBOL_MIDDLE;
-  else if (is_func (t, CLOSE)) return SYMBOL_CLOSE;
+  else if (is_func (t, LEFT)) return SYMBOL_OPEN;
+  else if (is_func (t, MID)) return SYMBOL_MIDDLE;
+  else if (is_func (t, RIGHT)) return SYMBOL_CLOSE;
   else if (is_func (t, BIG, 1) && t[0] == ".") return SYMBOL_CLOSE_BIG;
   else if (is_func (t, BIG)) return SYMBOL_OPEN_BIG;
   // TODO: extra bracket markup from vdh.ts and elsewhere
@@ -271,7 +271,7 @@ detect_probable (array<tree> a, array<int> tp_in) {
 * Find matching brackets
 ******************************************************************************/
 
-static void
+static array<tree>
 simplify_matching (array<tree> a, array<int> tp_in, int level) {
   array<int> tp= copy (tp_in);
   int last_open= -1;
@@ -282,7 +282,7 @@ simplify_matching (array<tree> a, array<int> tp_in, int level) {
       array<tree> b= range (a, last_open+1, i);
       b= upgrade_brackets (b, level+1);
       tree body= concat_recompose (b);
-      a[last_open]= tree (AROUND, a[last_open], body, i);
+      a[last_open]= tree (AROUND, a[last_open], body, a[i]);
       tp[last_open]= SYMBOL_BASIC;
       for (int j= last_open+1; j<=i; j++) tp[j]= SYMBOL_DELETED;
       last_open= -1;
@@ -338,7 +338,7 @@ upgrade_brackets (array<tree> a, int level) {
     if (r != a) return upgrade_brackets (r, level);
     r= simplify_matching (a, detect_probable (a, tp), level);
     if (r != a) return upgrade_brackets (r, level);
-    r= simplify_matching (a, confirm_all (a), level);
+    r= simplify_matching (a, confirm_all (tp), level);
     if (r != a) return upgrade_brackets (r, level);
     r= add_missing_left (a, tp);
     if (r != a) return upgrade_brackets (r, level);
@@ -356,7 +356,7 @@ static tree
 upgrade_brackets (tree t, bool math) {
   if (math && (is_atomic (t) || is_concat (t))) {
     array<tree> a= concat_tokenize (t);
-    a= upgrade_brackets (a);
+    a= upgrade_brackets (a, 0);
     return concat_recompose (a);
   }
   else return t;
@@ -378,5 +378,3 @@ upgrade_brackets (drd_info drd, tree t, bool math) {
     return upgrade_brackets (r, math);
   }
 }
-
-#endif
