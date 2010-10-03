@@ -279,9 +279,11 @@
     (:spacing none big)
     (:limits display)
     "<big-sum>" "<big-prod>" "<big-amalg>" "<big-intlim>" "<big-ointlim>"
-    "<big-cap>" "<big-cup>" "<big-sqcup>" "<big-vee>" "<big-wedge>"
+    "<big-cap>" "<big-cup>" "<big-sqcap>" "<big-sqcup>"
+    "<big-vee>" "<big-wedge>" "<big-curlyvee>" "<big-curlywedge>"
     "<big-odot>" "<big-otimes>" "<big-oplus>" "<big-uplus>"
-    "<big-triangleup>" "<big-triangledown>")
+    "<big-triangleup>" "<big-triangledown>"
+    "<big-box>" "<big-parallel>" "<big-interleave>")
 
   (define Big-symbol
     Big-nolim-symbol Big-lim-symbol)

@@ -11,6 +11,7 @@
 
 #include "tree_brackets.hpp"
 #include "language.hpp"
+#include "analyze.hpp"
 
 static array<tree> upgrade_brackets (array<tree> a, int level);
 
@@ -20,9 +21,9 @@ static array<tree> upgrade_brackets (array<tree> a, int level);
 
 static array<tree>
 concat_tokenize (tree t) {
+  static language lan= math_language ("std-math");
   array<tree> r;
   if (is_atomic (t)) {
-    static language lan= math_language ("std-math");
     int i= 0;
     while (i<N(t->label)) {
       int start= i;
@@ -65,20 +66,21 @@ concat_recompose (array<tree> a) {
 #define SYMBOL_POSTFIX            2
 #define SYMBOL_INFIX              3
 #define SYMBOL_SEPARATOR          4
-#define SYMBOL_OPEN_BIG           5
-#define SYMBOL_CLOSE_BIG          6
-#define SYMBOL_OPEN               7
-#define SYMBOL_MIDDLE             8
-#define SYMBOL_CLOSE              9
-#define SYMBOL_PROBABLE_OPEN     10
-#define SYMBOL_PROBABLE_MIDDLE   11
-#define SYMBOL_PROBABLE_CLOSE    12
-#define SYMBOL_DUBIOUS_OPEN      13
-#define SYMBOL_DUBIOUS_MIDDLE    14
-#define SYMBOL_DUBIOUS_CLOSE     15
+#define SYMBOL_SKIP               5
+#define SYMBOL_OPEN_BIG           6
+#define SYMBOL_CLOSE_BIG          7
+#define SYMBOL_OPEN               8
+#define SYMBOL_MIDDLE             9
+#define SYMBOL_CLOSE             10
+#define SYMBOL_PROBABLE_OPEN     11
+#define SYMBOL_PROBABLE_MIDDLE   12
+#define SYMBOL_PROBABLE_CLOSE    13
+#define SYMBOL_DUBIOUS_OPEN      14
+#define SYMBOL_DUBIOUS_MIDDLE    15
+#define SYMBOL_DUBIOUS_CLOSE     16
 
 static int
-bracket_type (tree t) {
+symbol_type (tree t) {
   static language lan= math_language ("std-math");
   if (is_atomic (t)) {
     int pos= 0;
@@ -110,15 +112,23 @@ bracket_type (tree t) {
   else if (is_func (t, RIGHT)) return SYMBOL_CLOSE;
   else if (is_func (t, BIG, 1) && t[0] == ".") return SYMBOL_CLOSE_BIG;
   else if (is_func (t, BIG)) return SYMBOL_OPEN_BIG;
-  // TODO: extra bracket markup from vdh.ts and elsewhere
+  else if (is_func (t, SPACE)) return SYMBOL_SKIP;
+  else if (is_func (t, HSPACE)) return SYMBOL_SKIP;
+  else if (is_func (t, VSPACE)) return SYMBOL_SKIP;
+  else if (is_func (t, VAR_VSPACE)) return SYMBOL_SKIP;
+  else if (is_func (t, LABEL)) return SYMBOL_SKIP;
+  else if (is_compound (t, "text")) return SYMBOL_SKIP;
+  else if (is_compound (t, "eq-number")) return SYMBOL_SKIP;
+  else if (is_compound (t, "bl")) return SYMBOL_OPEN;
+  else if (is_compound (t, "br")) return SYMBOL_CLOSE;
   else return SYMBOL_BASIC;
 }
 
 static array<int>
-bracket_types (array<tree> a) {
+symbol_types (array<tree> a) {
   array<int> tp (N(a));
   for (int i=0; i<N(a); i++)
-    tp[i]= bracket_type (a[i]);
+    tp[i]= symbol_type (a[i]);
   return tp;
 }
 
@@ -126,6 +136,7 @@ static array<int>
 downgrade_dubious (array<int> tp_in) {
   array<int> tp= copy (tp_in);
   // FIXME: combinations such as OPEN MIDDLE
+  // FIMXE: handle whitespace and decorations (scripts, etc).
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_PROBABLE_CLOSE) {
       if (i == 0 ||
@@ -183,6 +194,95 @@ admits_brackets (array<int> tp) {
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_OPEN) return true;
   return false;
+}
+
+static bool
+admits_bigops (array<int> tp) {
+  for (int i=0; i<N(tp); i++)
+    if (tp[i] == SYMBOL_OPEN_BIG) return true;
+  return false;
+}
+
+/******************************************************************************
+* Determine symbol priority
+******************************************************************************/
+
+#define PRIORITY_SEPARATOR          0
+#define PRIORITY_ASSIGN             1
+#define PRIORITY_FLUX               2
+#define PRIORITY_MODELS             3
+#define PRIORITY_IMPLY              4
+#define PRIORITY_OR                 5
+#define PRIORITY_AND                6
+#define PRIORITY_RELATION           7
+#define PRIORITY_ARROW              8
+#define PRIORITY_UNION              9
+#define PRIORITY_INTERSECTION      10
+#define PRIORITY_PLUS              11
+#define PRIORITY_TIMES             12
+#define PRIORITY_POWER             13
+#define PRIORITY_RADICAL           14
+
+static int
+symbol_priority (tree t) {
+  static language lan= math_language ("std-math");
+  if (is_atomic (t)) {
+    string g= lan->get_group (t->label);
+    if (starts (g, "Separator")) return PRIORITY_ASSIGN;
+    if (starts (g, "Assign")) return PRIORITY_ASSIGN;
+    if (starts (g, "Flux")) return PRIORITY_FLUX;
+    if (starts (g, "Models")) return PRIORITY_MODELS;
+    if (starts (g, "Imply")) return PRIORITY_IMPLY;
+    if (starts (g, "Or")) return PRIORITY_OR;
+    if (starts (g, "And")) return PRIORITY_AND;
+    if (starts (g, "Relation")) return PRIORITY_RELATION;
+    if (starts (g, "Arrow")) return PRIORITY_ARROW;
+    if (starts (g, "Union")) return PRIORITY_UNION;
+    if (starts (g, "Exclude")) return PRIORITY_UNION;
+    if (starts (g, "Intersection")) return PRIORITY_INTERSECTION;
+    if (starts (g, "Plus")) return PRIORITY_PLUS;
+    if (starts (g, "Minus")) return PRIORITY_PLUS;
+    if (starts (g, "Times")) return PRIORITY_TIMES;
+    if (starts (g, "Over")) return PRIORITY_TIMES;
+    if (starts (g, "Power")) return PRIORITY_POWER;
+    return PRIORITY_RADICAL;
+  }
+  else if (is_func (t, BIG, 1) and is_atomic (t[0])) {
+    string s= t[0]->label;
+    if (s == "parallel") return PRIORITY_SEPARATOR;
+    if (s == "interleave") return PRIORITY_SEPARATOR;
+    if (s == "vee") return PRIORITY_OR;
+    if (s == "curlyvee") return PRIORITY_OR;
+    if (s == "wedge") return PRIORITY_AND;
+    if (s == "curlywedge") return PRIORITY_AND;
+    if (s == "cup") return PRIORITY_UNION;
+    if (s == "sqcup") return PRIORITY_UNION;
+    if (s == "amalg") return PRIORITY_UNION;
+    if (s == "uplus") return PRIORITY_UNION;
+    if (s == "box") return PRIORITY_UNION;
+    if (s == "cap") return PRIORITY_INTERSECTION;
+    if (s == "sqcap") return PRIORITY_INTERSECTION;
+    if (s == "int") return PRIORITY_PLUS;
+    if (s == "oint") return PRIORITY_PLUS;
+    if (s == "intlim") return PRIORITY_PLUS;
+    if (s == "ointlim") return PRIORITY_PLUS;
+    if (s == "sum") return PRIORITY_PLUS;
+    if (s == "oplus") return PRIORITY_PLUS;
+    if (s == "triangledown") return PRIORITY_PLUS;
+    if (s == "prod") return PRIORITY_TIMES;
+    if (s == "otimes") return PRIORITY_TIMES;
+    if (s == "odot") return PRIORITY_TIMES;
+    if (s == "triangleup") return PRIORITY_TIMES;
+  }
+  else return PRIORITY_RADICAL;
+}
+
+static array<int>
+symbol_priorities (array<tree> a) {
+  array<int> tp (N(a));
+  for (int i=0; i<N(a); i++)
+    tp[i]= symbol_priority (a[i]);
+  return tp;
 }
 
 /******************************************************************************
@@ -268,7 +368,7 @@ detect_probable (array<tree> a, array<int> tp_in) {
 }
 
 /******************************************************************************
-* Find matching brackets
+* Process matching brackets
 ******************************************************************************/
 
 static array<tree>
@@ -324,9 +424,70 @@ add_missing_right (array<tree> a, array<int> tp) {
   return reverse (b);
 }
 
+/******************************************************************************
+* Splitting concats with big operators
+******************************************************************************/
+
+static array<tree>
+prefix_split (array<tree> a, array<int> tp, int level) {
+  for (int i=1; i<N(tp); i++)
+    if (tp[i] == SYMBOL_OPEN_BIG) {
+      array<tree> r= range (a, 0, i);
+      r << upgrade_brackets (range (a, i, N(tp)), level);
+      return r;
+    }
+  return a;
+}
+
+static array<tree>
+infix_split (array<tree> a, array<int> tp_in, array<int> pri, int level) {
+  array<int> tp= upgrade_probable (tp_in);
+  int weakest= PRIORITY_RADICAL;
+  for (int i=0; i<N(tp); i++)
+    if (tp[i] == SYMBOL_OPEN_BIG)
+      weakest= min (weakest, pri[i]);
+    else if (tp[i] == SYMBOL_INFIX ||
+	     tp[i] == SYMBOL_SEPARATOR ||
+	     tp[i] == SYMBOL_MIDDLE ||
+	     tp[i] == SYMBOL_PROBABLE_MIDDLE)
+      if (pri[i] <= weakest) {
+	array<tree> r= upgrade_brackets (range (a, 0, i), level);
+	r << range (a, i, i+1);
+	r << upgrade_brackets (range (a, i+1, N(a)), level);
+	return r;
+      }
+  return a;
+}
+
+static array<tree>
+postfix_split (array<tree> a, array<int> tp_in, int level) {
+  array<int> tp= upgrade_probable (tp_in);
+  int i= N(a);
+  while (i>0 &&
+	 (tp[i-1] == SYMBOL_PREFIX ||
+	  tp[i-1] == SYMBOL_INFIX ||
+	  tp[i-1] == SYMBOL_SEPARATOR ||
+	  tp[i-1] == SYMBOL_OPEN ||
+	  tp[i-1] == SYMBOL_MIDDLE ||
+	  tp[i-1] == SYMBOL_PROBABLE_OPEN ||
+	  tp[i-1] == SYMBOL_PROBABLE_MIDDLE ||
+	  tp[i-1] == SYMBOL_SKIP))
+    i--;
+  if (i != N(a)) {
+    array<tree> r= upgrade_brackets (range (a, 0, i), level);
+    r << range (a, i, N(a));
+    return r;
+  }
+  return a;
+}
+
+/******************************************************************************
+* Master routines
+******************************************************************************/
+
 static array<tree>
 upgrade_brackets (array<tree> a, int level) {
-  array<int> tp= bracket_types (a);
+  array<int> tp= symbol_types (a);
   if (admits_brackets (tp)) {
     array<tree> r= simplify_matching (a, downgrade_dubious (tp), level);
     if (r != a) return upgrade_brackets (r, level);
@@ -345,12 +506,22 @@ upgrade_brackets (array<tree> a, int level) {
     r= add_missing_right (a, tp);
     if (r != a) return upgrade_brackets (r, level);
   }
+  if (admits_bigops (tp)) {
+    array<tree> r= prefix_split (a, tp, level);
+    if (r != a) return r;
+    r= infix_split (a, tp, symbol_priorities (a), level);
+    if (r != a) return r;
+    r= postfix_split (a, tp, level);
+    if (r != a) return r;
+    ASSERT (tp[0] == SYMBOL_OPEN_BIG, "invalid situation");
+    r= upgrade_brackets (range (a, 1, N(a)), level + 1);
+    tree body= concat_recompose (r);
+    r= array<tree> ();
+    r << tree (AROUND, a[0], body, tree (BIG, "."));
+    return r;
+  }
   return a;
 }
-
-/******************************************************************************
-* Master routines
-******************************************************************************/
 
 static tree
 upgrade_brackets (tree t, bool math) {
