@@ -475,7 +475,8 @@ postfix_split (array<tree> a, array<int> tp_in, int level) {
 	  tp[i-1] == SYMBOL_MIDDLE ||
 	  tp[i-1] == SYMBOL_PROBABLE_OPEN ||
 	  tp[i-1] == SYMBOL_PROBABLE_MIDDLE ||
-	  tp[i-1] == SYMBOL_SKIP))
+	  tp[i-1] == SYMBOL_SKIP ||
+	  a[i-1] == "."))
     i--;
   if (i != N(a)) {
     array<tree> r= upgrade_brackets (range (a, 0, i), level);
@@ -512,11 +513,11 @@ upgrade_brackets (array<tree> a, int level) {
   }
   if (admits_bigops (tp)) {
     array<tree> r= prefix_split (a, tp, level);
-    if (r != a) return r;
+    if (r != a) return upgrade_brackets (r, level);
     r= infix_split (a, tp, symbol_priorities (a), level);
-    if (r != a) return r;
+    if (r != a) return upgrade_brackets (r, level);
     r= postfix_split (a, tp, level);
-    if (r != a) return r;
+    if (r != a) return upgrade_brackets (r, level);
     ASSERT (tp[0] == SYMBOL_OPEN_BIG, "invalid situation");
     r= upgrade_brackets (range (a, 1, N(a)), level + 1);
     tree body= concat_recompose (r);
@@ -529,7 +530,7 @@ upgrade_brackets (array<tree> a, int level) {
 
 static tree
 upgrade_brackets (drd_info drd, tree t, string mode) {
-  cout << "Upgrade " << t << ", " << mode << "\n";
+  //cout << "Upgrade " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
@@ -578,7 +579,5 @@ upgrade_brackets (tree t) {
   //cout << "Upgrade " << t << "\n";
   hashmap<string,tree> H= get_style_env (tree (TUPLE, "generic"));
   drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-  cout << "math -> " << H ("math") << LF;
-  cout << "equation* -> " << H ("equation*") << LF;
   return upgrade_brackets (drd, t, "text");
 }

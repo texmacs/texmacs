@@ -146,10 +146,9 @@ static hashmap<tree,hashmap<string,tree> > style_cached (style_void);
 hashmap<string,tree>
 get_style_env (tree style) {
   if (style_cached->contains (style)) {
-    cout << "Cached environment of " << style << LF;
+    //cout << "Cached environment of " << style << LF;
     return style_cached[style];
   }
-  cout << "Get environment of " << style << INDENT << LF;
   ASSERT (is_tuple (style), "style tuple expected");
   bool busy= false;
   for (int i=0; i<N(style); i++)
@@ -158,10 +157,14 @@ get_style_env (tree style) {
   for (int i=0; i<N(style); i++)
     style_busy (as_string (style[i]))= true;
   hashmap<string,tree> H;
-  //tree t;
-  //bool ok;
-  //get_server () -> style_get_cache (style, H, t, ok);
-  //if (ok) return H;
+  tree t;
+  bool ok;
+  get_server () -> style_get_cache (style, H, t, ok);
+  if (ok) {
+    //cout << "Cached environment of " << style << LF;
+    return H;
+  }
+  //cout << "Get environment of " << style << INDENT << LF;
   drd_info drd ("none", std_drd);
   url none= url ("$PWD/none");
   hashmap<string,tree> lref;
