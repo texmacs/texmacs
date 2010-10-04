@@ -32,20 +32,31 @@
      (ahash-set! lazy-keyboard-done ',module #t)
      (import-from ,module)))
 
-(define (lazy-keyboard-force-do l flag?)
+(define lazy-force-all? #f)
+(define lazy-force-busy? #f)
+
+(define (lazy-keyboard-force-do l)
   (cond ((null? l) l)
 	((ahash-ref lazy-keyboard-done (cdar l))
-	 (lazy-keyboard-force-do (cdr l) flag?))
-	((or flag? (texmacs-in-mode? (caar l)))
+	 (lazy-keyboard-force-do (cdr l)))
+	((or lazy-force-all? (texmacs-in-mode? (caar l)))
 	 (module-load (cdar l))
 	 (ahash-set! lazy-keyboard-done (cdar l) #t)
-	 (lazy-keyboard-force-do (cdr l) flag?))
-	(else (cons (car l) (lazy-keyboard-force-do (cdr l) flag?)))))
+	 (lazy-keyboard-force-do (cdr l)))
+	(else (cons (car l) (lazy-keyboard-force-do (cdr l))))))
 
 (tm-define (lazy-keyboard-force . opt)
-  (set! lazy-keyboard-waiting
-	(reverse (lazy-keyboard-force-do (reverse lazy-keyboard-waiting)
-					 (nnull? opt)))))
+  (set! lazy-force-all? (or lazy-force-all? (nnull? opt)))
+  (when (not lazy-force-busy?)
+    (set! lazy-force-busy? #t)
+    (let* ((l1 (reverse lazy-keyboard-waiting))
+	   (l2 (lazy-keyboard-force-do l1)))
+      (set! lazy-keyboard-waiting (reverse l2))
+      (set! lazy-force-busy? #f)
+      (when (null? lazy-keyboard-waiting)
+	(set! lazy-force-all? #f))
+      (when (and lazy-force-all? (nnull? lazy-keyboard-waiting))
+	(lazy-keyboard-force #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard wildcards
