@@ -14,6 +14,7 @@
 #include "analyze.hpp"
 #include "vars.hpp"
 
+hashmap<string,tree> get_style_env (tree style);
 drd_info get_style_drd (tree style);
 static array<tree> upgrade_brackets (array<tree> a, int level);
 
@@ -332,7 +333,8 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
       else if (tp[i] == SYMBOL_PROBABLE_CLOSE ||
 	       (last_open != -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
 	{
-	  if (a[i] == a[last_open] &&
+	  if (last_open != -1 &&
+	      a[i] == a[last_open] &&
 	      (insist ||
 	       (a[last_open] == SYMBOL_PROBABLE_OPEN) ||
 	       (a[i] == SYMBOL_PROBABLE_CLOSE)))
@@ -527,6 +529,7 @@ upgrade_brackets (array<tree> a, int level) {
 
 static tree
 upgrade_brackets (drd_info drd, tree t, string mode) {
+  cout << "Upgrade " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
@@ -535,17 +538,30 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
       tree tmode= drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
       int type= drd->get_type_child (t, i);
-      switch (type) {
-      case TYPE_INVALID:
-      case TYPE_REGULAR:
-      case TYPE_GRAPHICAL:
-      case TYPE_ANIMATION:
-      case TYPE_UNKNOWN:
-	r[i]= upgrade_brackets (drd, t[i], mode);
-	break;
-      default:
-	break;
+      if (is_compound (t, "body", 1)) type= TYPE_REGULAR;
+      if (is_concat (t)) {
+	if (is_func (t[i], AROUND) ||
+	    is_func (t[i], LEFT) ||
+	    is_func (t[i], MID) ||
+	    is_func (t[i], RIGHT) ||
+	    is_func (t[i], BIG))
+	  r[i]= t[i];
+	else
+	  r[i]= upgrade_brackets (drd, t[i], smode);
       }
+      else
+	switch (type) {
+	case TYPE_INVALID:
+	case TYPE_REGULAR:
+	case TYPE_GRAPHICAL:
+	case TYPE_ANIMATION:
+	case TYPE_UNKNOWN:
+	  r[i]= upgrade_brackets (drd, t[i], smode);
+	  break;
+	default:
+	  r[i]= t[i];
+	  break;
+	}
     }
   }
   if (mode == "math") {
@@ -559,6 +575,10 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
 tree
 upgrade_brackets (tree t) {
   return t;
-  //drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-  //return upgrade_brackets (drd, t, "text");
+  //cout << "Upgrade " << t << "\n";
+  hashmap<string,tree> H= get_style_env (tree (TUPLE, "generic"));
+  drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+  cout << "math -> " << H ("math") << LF;
+  cout << "equation* -> " << H ("equation*") << LF;
+  return upgrade_brackets (drd, t, "text");
 }
