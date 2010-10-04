@@ -12,6 +12,7 @@
 #include "tree_brackets.hpp"
 #include "language.hpp"
 #include "analyze.hpp"
+#include "vars.hpp"
 
 static array<tree> upgrade_brackets (array<tree> a, int level);
 
@@ -523,29 +524,33 @@ upgrade_brackets (array<tree> a, int level) {
   return a;
 }
 
-static tree
-upgrade_brackets (tree t, bool math) {
-  if (math && (is_atomic (t) || is_concat (t))) {
-    array<tree> a= concat_tokenize (t);
+tree
+upgrade_brackets (drd_info drd, tree t, string mode) {
+  tree r= t;
+  if (is_compound (t)) {
+    int i, n= N(t);
+    r= tree (t, n);
+    for (i=0; i<n; i++) {
+      tree tmode= drd->get_env_child (t, i, MODE, mode);
+      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      int type= drd->get_type_child (t, i);
+      switch (type) {
+      case TYPE_INVALID:
+      case TYPE_REGULAR:
+      case TYPE_GRAPHICAL:
+      case TYPE_ANIMATION:
+      case TYPE_UNKNOWN:
+	r[i]= upgrade_brackets (drd, t[i], mode);
+	break;
+      default:
+	break;
+      }
+    }
+  }
+  if (mode == "math") {
+    array<tree> a= concat_tokenize (r);
     a= upgrade_brackets (a, 0);
     return concat_recompose (a);
   }
-  else return t;
-}
-
-tree
-upgrade_brackets (drd_info drd, tree t, bool math) {
-  if (is_atomic (t))
-    return upgrade_brackets (t, math);
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++) {
-      // TODO: mode
-      // TODO: check type != ADHOC, RAW.
-      // (in particular: do not enter AROUND, LEFT, MIDDLE, ...)
-      r[i]= upgrade_brackets (drd, t[i], math);
-    }
-    return upgrade_brackets (r, math);
-  }
+  else return r;
 }
