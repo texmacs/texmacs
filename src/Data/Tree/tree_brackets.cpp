@@ -70,17 +70,18 @@ concat_recompose (array<tree> a) {
 #define SYMBOL_INFIX              3
 #define SYMBOL_SEPARATOR          4
 #define SYMBOL_SKIP               5
-#define SYMBOL_OPEN_BIG           6
-#define SYMBOL_CLOSE_BIG          7
-#define SYMBOL_OPEN               8
-#define SYMBOL_MIDDLE             9
-#define SYMBOL_CLOSE             10
-#define SYMBOL_PROBABLE_OPEN     11
-#define SYMBOL_PROBABLE_MIDDLE   12
-#define SYMBOL_PROBABLE_CLOSE    13
-#define SYMBOL_DUBIOUS_OPEN      14
-#define SYMBOL_DUBIOUS_MIDDLE    15
-#define SYMBOL_DUBIOUS_CLOSE     16
+#define SYMBOL_SCRIPT             6
+#define SYMBOL_OPEN_BIG           7
+#define SYMBOL_CLOSE_BIG          8
+#define SYMBOL_OPEN               9
+#define SYMBOL_MIDDLE            10
+#define SYMBOL_CLOSE             11
+#define SYMBOL_PROBABLE_OPEN     12
+#define SYMBOL_PROBABLE_MIDDLE   13
+#define SYMBOL_PROBABLE_CLOSE    14
+#define SYMBOL_DUBIOUS_OPEN      15
+#define SYMBOL_DUBIOUS_MIDDLE    16
+#define SYMBOL_DUBIOUS_CLOSE     17
 
 static int
 symbol_type (tree t) {
@@ -115,6 +116,12 @@ symbol_type (tree t) {
   else if (is_func (t, RIGHT)) return SYMBOL_CLOSE;
   else if (is_func (t, BIG, 1) && t[0] == ".") return SYMBOL_CLOSE_BIG;
   else if (is_func (t, BIG)) return SYMBOL_OPEN_BIG;
+  else if (is_func (t, LSUB)) return SYMBOL_SCRIPT;
+  else if (is_func (t, LSUP)) return SYMBOL_SCRIPT;
+  else if (is_func (t, LPRIME)) return SYMBOL_SCRIPT;
+  else if (is_func (t, RSUB)) return SYMBOL_SCRIPT;
+  else if (is_func (t, RSUP)) return SYMBOL_SCRIPT;
+  else if (is_func (t, RPRIME)) return SYMBOL_SCRIPT;
   else if (is_func (t, SPACE)) return SYMBOL_SKIP;
   else if (is_func (t, HSPACE)) return SYMBOL_SKIP;
   else if (is_func (t, VSPACE)) return SYMBOL_SKIP;
@@ -139,21 +146,26 @@ static array<int>
 downgrade_dubious (array<int> tp_in) {
   array<int> tp= copy (tp_in);
   // FIXME: combinations such as OPEN MIDDLE
-  // FIMXE: handle whitespace and decorations (scripts, etc).
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_PROBABLE_CLOSE) {
-      if (i == 0 ||
-	  tp[i-1] == SYMBOL_PREFIX ||
-	  tp[i-1] == SYMBOL_INFIX ||
-	  tp[i-1] == SYMBOL_SEPARATOR)
+      int j= i-1;
+      while (j >= 0 && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
+	j--;
+      if (j < 0 ||
+	  tp[j] == SYMBOL_PREFIX ||
+	  tp[j] == SYMBOL_INFIX ||
+	  tp[j] == SYMBOL_SEPARATOR)
 	{
 	  if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
 	  if (tp[i] == SYMBOL_PROBABLE_CLOSE) tp[i]= SYMBOL_DUBIOUS_CLOSE;
 	}
-      if (i == N(tp)-1 ||
-	  tp[i+1] == SYMBOL_POSTFIX ||
-	  tp[i+1] == SYMBOL_INFIX ||
-	  tp[i+1] == SYMBOL_SEPARATOR)
+      j= i+1;
+      while (j < N(tp) && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
+	j++;
+      if (j >= N(tp) ||
+	  tp[j] == SYMBOL_POSTFIX ||
+	  tp[j] == SYMBOL_INFIX ||
+	  tp[j] == SYMBOL_SEPARATOR)
 	{
 	  if (tp[i] == SYMBOL_PROBABLE_OPEN) tp[i]= SYMBOL_DUBIOUS_OPEN;
 	  if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
@@ -165,18 +177,23 @@ downgrade_dubious (array<int> tp_in) {
 static array<int>
 upgrade_probable (array<int> tp_in) {
   array<int> tp= copy (tp_in);
-  // FIXME: combinations such as OPEN MIDDLE
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN) {
-      if (i == 0 ||
-	  tp[i-1] == SYMBOL_PREFIX ||
-	  tp[i-1] == SYMBOL_INFIX ||
-	  tp[i-1] == SYMBOL_SEPARATOR)
+      int j= i-1;
+      while (j >= 0 && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
+	j--;
+      if (j < 0 ||
+	  tp[j] == SYMBOL_PREFIX ||
+	  tp[j] == SYMBOL_INFIX ||
+	  tp[j] == SYMBOL_SEPARATOR)
 	tp[i]= SYMBOL_PROBABLE_OPEN;
-      if (i == N(tp)-1 ||
-	  tp[i+1] == SYMBOL_POSTFIX ||
-	  tp[i+1] == SYMBOL_INFIX ||
-	  tp[i+1] == SYMBOL_SEPARATOR)
+      j= i+1;
+      while (j < N(tp) && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
+	j++;
+      if (j >= N(tp) ||
+	  tp[j] == SYMBOL_POSTFIX ||
+	  tp[j] == SYMBOL_INFIX ||
+	  tp[j] == SYMBOL_SEPARATOR)
 	tp[i]= SYMBOL_PROBABLE_CLOSE;
     }
   return tp;
@@ -377,6 +394,7 @@ detect_probable (array<tree> a, array<int> tp_in) {
 
 static array<tree>
 simplify_matching (array<tree> a, array<int> tp_in, int level) {
+  //cout << "Simplify matching " << a << ", " << tp_in << "\n";
   array<int> tp= copy (tp_in);
   int last_open= -1;
   for (int i=0; i<N(tp); i++) {
@@ -493,6 +511,7 @@ postfix_split (array<tree> a, array<int> tp_in, int level) {
 static array<tree>
 upgrade_brackets (array<tree> a, int level) {
   array<int> tp= symbol_types (a);
+  //cout << "Upgrade " << a << ", " << tp << "\n";
   if (admits_brackets (tp)) {
     array<tree> r= simplify_matching (a, downgrade_dubious (tp), level);
     if (r != a) return upgrade_brackets (r, level);
@@ -541,11 +560,14 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
       int type= drd->get_type_child (t, i);
       if (is_compound (t, "body", 1)) type= TYPE_REGULAR;
       if (is_concat (t)) {
-	if (is_func (t[i], AROUND) ||
+	if (is_atomic (t[i]) ||
+	    is_func (t[i], AROUND) ||
 	    is_func (t[i], LEFT) ||
 	    is_func (t[i], MID) ||
 	    is_func (t[i], RIGHT) ||
-	    is_func (t[i], BIG))
+	    is_func (t[i], BIG) ||
+	    is_compound (t[i], "bl") ||
+	    is_compound (t[i], "br"))
 	  r[i]= t[i];
 	else
 	  r[i]= upgrade_brackets (drd, t[i], smode);
