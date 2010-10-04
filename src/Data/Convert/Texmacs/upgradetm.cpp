@@ -16,6 +16,7 @@
 #include "drd_std.hpp"
 #include <stdio.h>
 #include "Scheme/object.hpp"
+#include "tree_brackets.hpp"
 
 /******************************************************************************
 * Retrieve older operator hashmap
@@ -2862,6 +2863,7 @@ upgrade_tex (tree t) {
   t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
   t= upgrade_doc_info (t);
   t= upgrade_bibliography (t);
+  t= upgrade_brackets (t);
   return t;
 }
 
@@ -2952,5 +2954,7 @@ upgrade (tree t, string version) {
     t= upgrade_session (t, "scheme", "default");
   if (version_inf_eq (version, "1.0.7.6"))
     t= upgrade_presentation (t);
+  if (version_inf_eq (version, "1.0.7.6"))
+    t= upgrade_brackets (t);
   return t;
 }

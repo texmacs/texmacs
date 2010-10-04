@@ -14,6 +14,7 @@
 #include "analyze.hpp"
 #include "vars.hpp"
 
+drd_info get_style_drd (tree style);
 static array<tree> upgrade_brackets (array<tree> a, int level);
 
 /******************************************************************************
@@ -524,7 +525,7 @@ upgrade_brackets (array<tree> a, int level) {
   return a;
 }
 
-tree
+static tree
 upgrade_brackets (drd_info drd, tree t, string mode) {
   tree r= t;
   if (is_compound (t)) {
@@ -553,4 +554,11 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
     return concat_recompose (a);
   }
   else return r;
+}
+
+tree
+upgrade_brackets (tree t) {
+  return t;
+  //drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+  //return upgrade_brackets (drd, t, "text");
 }

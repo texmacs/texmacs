@@ -14,6 +14,7 @@
 #include "file.hpp"
 #include "convert.hpp"
 #include "merge_sort.hpp"
+#include "drd_std.hpp"
 
 /******************************************************************************
 * Loading files
@@ -132,6 +133,58 @@ load_inclusion (url name) {
   tree doc= extract_document (get_server() -> load_tree (name, "generic"));
   if (!is_func (doc, ERROR)) document_inclusions (name_s)= doc;
   return doc;
+}
+
+/******************************************************************************
+* Get environment and drd of style files
+******************************************************************************/
+
+static hashmap<string,bool> style_busy (false);
+static hashmap<string,tree> style_void (UNINIT);
+static hashmap<tree,hashmap<string,tree> > style_cached (style_void);
+
+hashmap<string,tree>
+get_style_env (tree style) {
+  if (style_cached->contains (style)) {
+    cout << "Cached environment of " << style << LF;
+    return style_cached[style];
+  }
+  cout << "Get environment of " << style << INDENT << LF;
+  ASSERT (is_tuple (style), "style tuple expected");
+  bool busy= false;
+  for (int i=0; i<N(style); i++)
+    busy= busy || style_busy->contains (as_string (style[i]));
+  hashmap<string,bool> old_busy= copy (style_busy);
+  for (int i=0; i<N(style); i++)
+    style_busy (as_string (style[i]))= true;
+  hashmap<string,tree> H;
+  //tree t;
+  //bool ok;
+  //get_server () -> style_get_cache (style, H, t, ok);
+  //if (ok) return H;
+  drd_info drd ("none", std_drd);
+  url none= url ("$PWD/none");
+  hashmap<string,tree> lref;
+  hashmap<string,tree> gref;
+  hashmap<string,tree> laux;
+  hashmap<string,tree> gaux;
+  edit_env env (drd, none, lref, gref, laux, gaux);
+  env->style_init_env ();
+  if (!busy) env->exec (tree (USE_PACKAGE, A (style)));
+  env->read_env (H);
+  if (!busy) style_cached (style)= H;
+  style_busy= old_busy;
+  cout << UNINDENT << "Got environment of " << style << LF;
+  return H;
+}
+
+drd_info
+get_style_drd (tree style) {
+  init_std_drd ();
+  drd_info drd ("none", std_drd);
+  hashmap<string,tree> H= get_style_env (style);
+  drd->heuristic_init (H);
+  return drd;
 }
 
 /******************************************************************************
