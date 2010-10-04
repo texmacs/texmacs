@@ -2062,6 +2062,23 @@ tmg_packrat_parse (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_packrat_correctP (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-correct?");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-correct?");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "packrat-correct?");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  bool out= packrat_correct (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_packrat_context (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-context");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-context");
@@ -4270,6 +4287,7 @@ initialize_glue_basic () {
   scm_new_procedure ("packrat-property", (FN) tmg_packrat_property, 4, 0, 0);
   scm_new_procedure ("packrat-inherit", (FN) tmg_packrat_inherit, 2, 0, 0);
   scm_new_procedure ("packrat-parse", (FN) tmg_packrat_parse, 3, 0, 0);
+  scm_new_procedure ("packrat-correct?", (FN) tmg_packrat_correctP, 3, 0, 0);
   scm_new_procedure ("packrat-context", (FN) tmg_packrat_context, 4, 0, 0);
   scm_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   scm_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);

@@ -521,6 +521,13 @@ packrat_parse (string lan, string sym, tree in) {
   return par->decode_tree_position (pos);
 }
 
+bool
+packrat_correct (string lan, string sym, tree in) {
+  packrat_parser par= make_packrat_parser (lan, in);
+  C pos= par->parse (encode_symbol (compound ("symbol", sym)), 0);
+  return pos == N(par->current_input);
+}
+
 object
 packrat_context (string lan, string s, tree in, path in_pos) {
   //cout << "Context " << in << " at " << in_pos

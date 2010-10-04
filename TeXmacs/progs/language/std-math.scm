@@ -19,7 +19,8 @@
 
   (define Skip
     (:operator)
-    (Skip-symbol :args :>))
+    (Skip-symbol :args :>)
+    (:<with "mode" :/ :args :>))
 
   (define Pre
     (:operator)
@@ -349,12 +350,16 @@
     (Postfixed Skip)
     (Postfixed Open Close)
     (Postfixed Open Expression Close)
+    (Postfixed :<around :any :/ (* Post) (* Pre) :/ :any :>)
+    (Postfixed :<around :any :/ (* Post) Expression (* Pre) :/ :any :>)
     Radical)
 
   (define Radical
     (Open Close)
     (Open Expression Close)
     (Big-open Expression Big-close)
+    (:<around :any :/ (* Post) (* Pre) :/ :any :>)
+    (:<around :any :/ (* Post) Expression (* Pre) :/ :any :>)
     Identifier
     Number
     Variable-symbol
@@ -371,7 +376,7 @@
     (+ (or (- "a" "z") (- "A" "Z"))))
 
   (define Number
-    ((+ (- "0" "9")) (or "" ("." (+ (- "0" "9")))))))
+    ((+ (- "0" "9")) (or ("." (+ (- "0" "9"))) ""))))
 
 (define-language std-math
   (:synopsis "default semantics for mathematical formulas")

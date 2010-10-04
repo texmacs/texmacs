@@ -168,7 +168,7 @@
     "<leftsquigarrow>" "<rightsquigarrow>" "<leftrightsquigarrow>"
     "<Rsh>" "<twoheadleftarrow>" "<twoheadrightarrow>"
     "<upharpoonleft>" "<upharpoonright>" "<upuparrows>"
-    "<pointer>")
+    "<leftrightmap>" "<pointer>")
   
   (define Arrow-lim-symbol
     (:type infix)
@@ -503,8 +503,9 @@
 
   (define Reserved-symbol
     :<frac :<sqrt :<wide
-    :<left :<mid :<right :<big
+    :<around :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime)
 
   (define Skip-symbol
-    :<space :<label :<eq-number :<text))
+    :<space :<hspace :<vspace :<vspace* :<htab
+    :<label :<eq-number :<text :<assign :<hidden))

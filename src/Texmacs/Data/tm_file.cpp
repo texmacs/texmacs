@@ -177,7 +177,7 @@ get_style_env (tree style) {
   env->read_env (H);
   if (!busy) style_cached (style)= H;
   style_busy= old_busy;
-  cout << UNINDENT << "Got environment of " << style << LF;
+  //cout << UNINDENT << "Got environment of " << style << LF;
   return H;
 }
 

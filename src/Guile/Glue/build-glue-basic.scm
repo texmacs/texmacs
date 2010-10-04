@@ -186,6 +186,7 @@
   (packrat-property packrat_property (void string string string string))
   (packrat-inherit packrat_inherit (void string string))
   (packrat-parse packrat_parse (path string string content))
+  (packrat-correct? packrat_correct (bool string string content))
   (packrat-context packrat_context (object string string content path))
 
   ;; further conversion routines for trees and strings
