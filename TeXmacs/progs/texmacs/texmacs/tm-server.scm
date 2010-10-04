@@ -61,6 +61,7 @@
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("fast environments" "off" notify-fast-environments)
+  ("matching brackets" "off" (lambda args (noop)))
   ("semantic editing" "off" (lambda args (noop)))
   ("security" "prompt on scripts" notify-security)
   ("bibtex command" "bibtex" notify-bibtex-command)

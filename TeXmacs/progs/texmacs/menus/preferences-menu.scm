@@ -158,6 +158,7 @@
 	(toggle ("Remote connections" "remote connections")))
     (-> "Miscellaneous"
 	(toggle ("Fast environments" "fast environments"))
+	(toggle ("Force matching brackets" "matching brackets"))
 	(toggle ("Semantic editing" "semantic editing")))
     ---
     (enum ("Autosave" "autosave")

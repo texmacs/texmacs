@@ -13,6 +13,7 @@
 #include "language.hpp"
 #include "analyze.hpp"
 #include "vars.hpp"
+#include "Scheme/object.hpp"
 
 hashmap<string,tree> get_style_env (tree style);
 drd_info get_style_drd (tree style);
@@ -145,7 +146,7 @@ symbol_types (array<tree> a) {
 static array<int>
 downgrade_dubious (array<int> tp_in) {
   array<int> tp= copy (tp_in);
-  // FIXME: combinations such as OPEN MIDDLE
+  // NOTE: we also might forbid combinations such as OPEN MIDDLE
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_PROBABLE_CLOSE) {
       int j= i-1;
@@ -311,7 +312,7 @@ symbol_priorities (array<tree> a) {
 
 static array<int>
 detect_french_interval (array<tree> a, array<int> tp_in) {
-  // FIXME: only allow [ and ]
+  // NOTE: we might only allow [ and ]
   array<int> tp= upgrade_probable (tp_in);
   int last_open= -1, last_comma= -1;
   for (int i=0; i<N(tp); i++)
@@ -597,9 +598,10 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
 
 tree
 upgrade_brackets (tree t) {
-  return t;
-  //cout << "Upgrade " << t << "\n";
-  hashmap<string,tree> H= get_style_env (tree (TUPLE, "generic"));
-  drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-  return upgrade_brackets (drd, t, "text");
+  if (call ("get-preference", "matching brackets") == object ("on")) {
+    //cout << "Upgrade " << t << "\n";
+    drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+    return upgrade_brackets (drd, t, "text");
+  }
+  else return t;
 }
