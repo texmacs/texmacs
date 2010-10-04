@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text cyrillic translit-kbd))
+(texmacs-module (text cyrillic translit-kbd)
+  (:use (text text-kbd)))
 
 (kbd-map
   (:mode in-cyrillic-translit?)

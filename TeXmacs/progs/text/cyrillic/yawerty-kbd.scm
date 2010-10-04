@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text cyrillic yawerty-kbd))
+(texmacs-module (text cyrillic yawerty-kbd)
+  (:use (text text-kbd)))
 
 (kbd-map
   (:mode in-cyrillic-yawerty?)

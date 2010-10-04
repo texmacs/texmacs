@@ -12,7 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic fold-kbd)
-  (:use (dynamic fold-edit)))
+  (:use
+    (generic generic-kbd)
+    (dynamic fold-edit)))
 
 (kbd-map
   ("F9" (dynamic-operate-on-buffer :first))

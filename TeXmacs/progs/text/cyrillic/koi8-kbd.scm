@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text cyrillic koi8-kbd))
+(texmacs-module (text cyrillic koi8-kbd)
+  (:use (text text-kbd)))
 
 (kbd-map
   (:mode in-cyrillic-koi8?)

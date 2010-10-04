@@ -12,7 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (source source-kbd)
-  (:use (source source-edit)))
+  (:use
+    (generic generic-kbd)
+    (source source-edit)))
 
 (kbd-map
   ("cmd )" (make-style-with "src-compact" "none"))

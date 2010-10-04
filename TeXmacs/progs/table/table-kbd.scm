@@ -12,7 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (table table-kbd)
-  (:use (table table-edit)))
+  (:use
+    (generic generic-kbd)
+    (table table-edit)))
 
 (kbd-map
   (:mode in-table?)

@@ -13,6 +13,7 @@
 
 (texmacs-module (generic generic-kbd)
   (:use
+    (texmacs keyboard prefix-kbd)
     (utils edit variants)
     (utils edit auto-close)
     (utils library cursor)

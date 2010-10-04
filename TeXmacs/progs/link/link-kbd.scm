@@ -12,7 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link link-kbd)
-  (:use (link link-edit) (link link-navigate) (link link-extract)))
+  (:use
+    (generic generic-kbd)
+    (link link-edit)
+    (link link-navigate)
+    (link link-extract)))
 
 (kbd-map
   (:mode with-linking-tool?)

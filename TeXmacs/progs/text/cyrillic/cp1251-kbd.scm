@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text cyrillic cp1251-kbd))
+(texmacs-module (text cyrillic cp1251-kbd)
+  (:use (text text-kbd)))
 
 (kbd-map
   (:mode in-cyrillic-cp1251?)

@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (maxima-kbd))
+(texmacs-module (maxima-kbd)
+  (:use (dynamic scripts-kbd)))
 
 (texmacs-modes
   (maxima-scripts-math% #t maxima-scripts% in-math%))
