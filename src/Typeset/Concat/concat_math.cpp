@@ -265,13 +265,27 @@ concater_rep::typeset_group (tree t, path ip) {
   marker (descend (ip, 1));
 }
 
+static string
+bracket_color (int nl) {
+  switch (nl % 3) {
+  case 0 : return "#662266";
+  case 1 : return "#226666";
+  default: return "#663322";
+  }
+}
+
 void
 concater_rep::typeset_around (tree t, path ip) {
+  int nl= env->get_int (MATH_NESTING_LEVEL);
+  tree old_col= env->local_begin (COLOR, bracket_color (nl));
+  tree old_nl = env->local_begin (MATH_NESTING_LEVEL, as_string (nl+1));
   marker (descend (ip, 0));
   typeset (t[0], descend (ip, 0));
   typeset (t[1], descend (ip, 1));
   typeset (t[2], descend (ip, 2));
   marker (descend (ip, 1));
+  env->local_end (MATH_NESTING_LEVEL, old_nl);
+  env->local_end (COLOR, old_col);
 }
 
 void

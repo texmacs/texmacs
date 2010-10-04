@@ -60,6 +60,7 @@ string MATH_LEVEL ("math-level");
 string MATH_DISPLAY ("math-display");
 string MATH_CONDENSED ("math-condensed");
 string MATH_VPOS ("math-vpos");
+string MATH_NESTING_LEVEL ("math-nesting-level");
 
 string PROG_LANGUAGE ("prog-language");
 string PROG_SCRIPTS ("prog-scripts");
