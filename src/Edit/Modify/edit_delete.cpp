@@ -164,6 +164,16 @@ edit_text_rep::remove_text (bool forward) {
     case VSPACE:
     case SPACE:
     case HTAB:
+      back_monolithic (p);
+      return;
+    case AROUND: {
+      int i= (forward? 0: 2);
+      if (is_compound (t[i], "deleted", 1)) {
+	remove_node (t[i], 0);
+	go_to_border (p * 1, forward);
+      }
+      else insert_node (t[i], 0, compound ("deleted"));
+      break; }
     case LEFT:
     case MID:
     case RIGHT:
@@ -207,6 +217,18 @@ edit_text_rep::remove_text (bool forward) {
   // deletion depends on children u
   if (last == (forward? rix: 0)) {
     switch (L (u)) {
+    case AROUND: {
+      int i= (forward? 2: 0);
+      if (is_empty (t)) {
+	assign (u, "");
+	correct (path_up (p, 2));
+      }
+      else if (is_compound (u[i], "deleted", 1)) {
+	remove_node (u[i], 0);
+	go_to_border (path_up (p), !forward);
+      }
+      else insert_node (u[i], 0, compound ("deleted"));
+      return; }
     case WIDE:
     case VAR_WIDE:
       back_in_wide (u, p, forward);
@@ -329,6 +351,31 @@ edit_text_rep::remove_structure_upwards () {
     eval ("(use-modules (math math-edit))");
     call ("group-set-left", st, "");
     call ("group-set-right", st, "");
+  }
+  if (is_func (st, AROUND, 3)) {
+    if (is_script (st[1]) || is_prime (st[1])) assign (st[1], "");
+    else if (is_concat (st[1]) && N(st[1]) > 0) {
+      int li= 0, ri= N(st[1])-1;
+      while (li<N(st[1])) {
+	tree sst= st[1][li];
+	if (!is_func (sst, RSUB) &&
+	    !is_func (sst, RSUP) &&
+	    !is_func (sst, RPRIME))
+	  break;
+	li++;
+      }
+      while (ri >= 0) {
+	tree sst= st[1][ri];
+	if (!is_func (sst, LSUB) &&
+	    !is_func (sst, LSUP) &&
+	    !is_func (sst, LPRIME))
+	  break;
+	ri--;
+      }
+      if (ri != N(st[1])-1) remove (p * path (1, ri+1), N(st[1])-1-ri);
+      if (li != 0) remove (p * path (1, 0), li);
+      correct (p * 1);
+    }
   }
   bool recurse=
     is_func (st, TFORMAT) || is_func (st, TABLE) ||

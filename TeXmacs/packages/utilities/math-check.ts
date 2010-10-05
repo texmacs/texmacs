@@ -28,6 +28,8 @@
     </src-comment>
   </active*>
 
+  <assign|math-nesting-mode|colored>
+
   <assign|math-error|<macro|x|<with|ornament-color|#ffc0c0|ornament-sunny-color|#ffe0e0|ornament-shadow-color|#ff8080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<ornament|<arg|x>>>>>
 
   <assign|math-check|<macro|x|<extern|math-check|<arg|x>>>>

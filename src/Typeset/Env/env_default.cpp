@@ -73,6 +73,8 @@ initialize_default_env () {
   env (MATH_DISPLAY)     = "false";     // true if we are in display style
   env (MATH_CONDENSED)   = "false";     // ignore spaces between operators ?
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
+  env (MATH_NESTING_MODE)= "off";       // color nested brackets?
+  env (MATH_NESTING_LEVEL)= "0";        // nesting level inside brackets
 
   env (PROG_LANGUAGE)    = "scheme";    // the default programming language
   env (PROG_SCRIPTS)     = "scheme";    // the scripting language
@@ -243,6 +245,8 @@ initialize_default_env () {
   env ("shown")= identity_m;
   env ("ignore")=
     tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
+  env ("deleted")= 
+    tree (MACRO, "x", tree (WITH, COLOR, "#AAD", tree (ARG, "x")));
 
   /* linking macros */
   tree src_id (ID, tree (HARD_ID, tree (ARG, "x")));
