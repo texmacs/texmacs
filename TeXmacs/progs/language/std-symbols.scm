@@ -508,4 +508,6 @@
 
   (define Skip-symbol
     :<space :<hspace :<vspace :<vspace* :<htab
+    :<with-limits :<line-break :<new-line :<next-line :<no-break
+    :<no-indent :<yes-indent :<no-indent* :<yes-indent*
     :<label :<eq-number :<text :<assign :<hidden))
