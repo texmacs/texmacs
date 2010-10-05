@@ -2836,6 +2836,56 @@ upgrade_presentation (tree t) {
 }
 
 /******************************************************************************
+* Upgrade mathematical formulas
+******************************************************************************/
+
+bool
+can_upgrade_math (tree doc) {
+  tree style= extract (doc, "style");
+  if (!is_tuple (style) || N(style) == 0 || !is_atomic (style[0]))
+    return false;
+  for (int i=0; i<N(style); i++)
+    if (style[i] == "source") return false;
+  string ms= style[0]->label;
+  return
+    (starts (ms, "tm")) ||
+    (starts (ms, "lycee")) ||
+    (ms == "article") ||
+    (ms == "beamer") ||
+    (ms == "book") ||
+    (ms == "exam") ||
+    (ms == "generic") ||
+    (ms == "letter") ||
+    (ms == "seminar") ||
+    (ms == "bibliography") ||
+    (ms == "browser") ||
+    (ms == "help") ||
+    (ms == "manual") ||
+    (ms == "mmxdoc") ||
+    (ms == "elsart") ||
+    (ms == "ifac") ||
+    (ms == "jsc") ||
+    (ms == "acmconf") ||
+    (ms == "svjour") ||
+    (ms == "svmono");
+}
+
+tree
+upgrade_math (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_func (t, WITH, 3) && t[0] == MODE && t[1] == "math")
+    return compound ("math", t[2]);
+  else {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_math (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2954,6 +3004,8 @@ upgrade (tree t, string version) {
     t= upgrade_session (t, "scheme", "default");
   if (version_inf_eq (version, "1.0.7.6"))
     t= upgrade_presentation (t);
+  if (version_inf_eq (version, "1.0.7.6") && can_upgrade_math (t))
+    t= upgrade_math (t);
   if (version_inf_eq (version, "1.0.7.6"))
     t= upgrade_brackets (t);
   return t;
