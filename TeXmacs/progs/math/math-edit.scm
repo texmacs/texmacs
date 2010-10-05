@@ -231,7 +231,7 @@
 
 (tm-define (math-bracket-close rb lb large?)
   (when (!= (get-preference "matching brackets") "on")
-    (make-bracket-close lb rb large?))
+    (make-bracket-close rb lb large?))
   (when (== (get-preference "matching brackets") "on")
     (let* ((t (find-adjacent-around #t))
 	   (u (find-adjacent-around #f)))
@@ -253,6 +253,6 @@
 
 (tm-define (math-big-operator op)
   (when (!= (get-preference "matching brackets") "on")
-    (make-big-operator op rb))
+    (make-big-operator op))
   (when (== (get-preference "matching brackets") "on")
     (insert-go-to `(around (big ,op) "" (big ".")) '(1 0))))
