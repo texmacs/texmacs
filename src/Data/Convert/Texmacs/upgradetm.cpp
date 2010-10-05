@@ -2840,7 +2840,7 @@ upgrade_presentation (tree t) {
 ******************************************************************************/
 
 bool
-can_upgrade_math (tree doc) {
+is_non_style_document (tree doc) {
   tree style= extract (doc, "style");
   if (!is_tuple (style) || N(style) == 0 || !is_atomic (style[0]))
     return false;
@@ -3004,9 +3004,9 @@ upgrade (tree t, string version) {
     t= upgrade_session (t, "scheme", "default");
   if (version_inf_eq (version, "1.0.7.6"))
     t= upgrade_presentation (t);
-  if (version_inf_eq (version, "1.0.7.6") && can_upgrade_math (t))
+  if (version_inf_eq (version, "1.0.7.6") && is_non_style_document (t))
     t= upgrade_math (t);
-  if (version_inf_eq (version, "1.0.7.6"))
+  if (version_inf_eq (version, "1.0.7.6") && is_non_style_document (t))
     t= upgrade_brackets (t);
   return t;
 }

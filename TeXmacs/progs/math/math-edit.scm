@@ -227,17 +227,7 @@
   (when (!= (get-preference "matching brackets") "on")
     (make-separator sep large?))
   (when (== (get-preference "matching brackets") "on")
-    (with t (find-adjacent-around #t)
-      (cond ((and t (tree-is? t 0 'deleted))
-	     (if large? (set! sep `(left ,sep)))
-	     (tree-assign (tree-ref t 0) sep)
-	     (tree-go-to t 1 :start))
-	    ((and t (tree-is? t 2 'deleted))
-	     (if large? (set! sep `(right ,sep)))
-	     (tree-assign (tree-ref t 2) sep)
-	     (tree-go-to t :end))
-	    (else
-	      (make-separator sep large?))))))
+    (make-separator sep large?)))
 
 (tm-define (math-bracket-close rb lb large?)
   (when (!= (get-preference "matching brackets") "on")
@@ -260,3 +250,9 @@
 	    (else
 	      (set-message "Error: bracket does not match"
 			   (force-string rb)))))))
+
+(tm-define (math-big-operator op)
+  (when (!= (get-preference "matching brackets") "on")
+    (make-big-operator op rb))
+  (when (== (get-preference "matching brackets") "on")
+    (insert-go-to `(around (big ,op) "" (big ".")) '(1 0))))

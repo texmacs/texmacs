@@ -96,7 +96,11 @@
   varodot varogreaterthan varolessthan varominus varoplus varoslash
   varotimes varovee varowedge vartimes Ydown Yleft Yright Yup)
 
+(drd-group latex-mathabx-symbols%
+  divides ndivides)
+
 (drd-rules
   ((latex-needs% 'x "amssymb") (latex-ams-symbol% 'x))
   ((latex-needs% 'x "wasysym") (latex-wasy-symbol% 'x))
-  ((latex-needs% 'x "stmaryrd") (latex-stmary-symbol% 'x)))
+  ((latex-needs% 'x "stmaryrd") (latex-stmary-symbol% 'x))
+  ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x)))

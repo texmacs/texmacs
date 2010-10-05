@@ -86,6 +86,8 @@
   (llangle (join (0 0 langle) (0.2 0 langle)))
   (rrangle (join (0 0 rangle) (0.2 0 rangle)))
   (mid |)
+  (divides |)
+  (ndivides nmid)
   (vect (enlarge varvect -0.2 0.1 0 0))
   (bind (enlarge varbind -0.6 0 0 0))
 

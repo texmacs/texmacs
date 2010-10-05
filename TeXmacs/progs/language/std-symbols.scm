@@ -89,7 +89,7 @@
     "<subsetsim>" "<supsetsim>" "<doteq>" "<propto>" "<varpropto>"
     "<perp>" "<bowtie>" "<Join>" "<smile>" "<frown>" "<signchange>"
     "<mid>" "<parallel>" "<shortmid>" "<shortparallel>" "<nmid>"
-    "<nparallel>" "<nshortmid>" "<nshortparallel>"
+    "<nparallel>" "<nshortmid>" "<nshortparallel>" "<divides>" "<ndivides>"
 
     "<approxeq>" "<backsim>" "<backsimeq>" "<Bumpeq>" "<bumpeq>" "<circeq>"
     "<curlyeqprec>" "<curlyeqsucc>" "<Doteq>" "<doteqdot>" "<eqcirc>"
@@ -312,7 +312,8 @@
 
   (define Open-symbol
     (:type opening-bracket)
-    "(" "[" "{" "<lfloor>" "<lceil>" "<langle>" "<lnone>"
+    "(" "[" "{" "<lfloor>" "<lceil>" "<langle>"
+    "<llbracket>" "<llangle>" "<lnone>"
     "<left-(>" "<left-[>" "<left-{>" "<left-less>"
     "<left-}>" "<left-]>" "<left-)>" "<left-gtr>"
     "<left-|>" "<left-||>" "<left-.>"
@@ -325,7 +326,8 @@
 
   (define Close-symbol
     (:type closing-bracket)
-    "}" "]" ")" "<rfloor>" "<rceil>" "<rangle>" "<rnone>"
+    "}" "]" ")" "<rfloor>" "<rceil>" "<rangle>"
+    "<rrbracket>" "<rrangle>" "<rnone>"
     "<right-(>" "<right-[>" "<right-{>" "<right-less>"
     "<right-}>" "<right-]>" "<right-)>" "<right-gtr>"
     "<right-|>" "<right-||>" "<right-.>"

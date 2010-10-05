@@ -173,11 +173,14 @@ edit_math_rep::make_neg () {
 void
 edit_math_rep::back_around (tree t, path p, bool forward) {
   int i= (forward? 0: 2);
-  if (is_compound (t[i], "deleted", 1)) {
+  if (is_func (t[i], BIG))
+    go_to_border (p * 1, forward);
+  else if (!is_compound (t[i], "deleted", 1))
+    insert_node (t[i], 0, compound ("deleted"));
+  else {
     remove_node (t[i], 0);
     go_to_border (p * 1, forward);
   }
-  else insert_node (t[i], 0, compound ("deleted"));
 }
 
 void
@@ -212,11 +215,14 @@ edit_math_rep::back_in_around (tree t, path p, bool forward) {
     assign (t, "");
     correct (path_up (p, 2));
   }
-  else if (is_compound (t[i], "deleted", 1)) {
+  else if (is_func (t[i], BIG))
+    go_to_border (path_up (p), !forward);
+  else if (!is_compound (t[i], "deleted", 1))
+    insert_node (t[i], 0, compound ("deleted"));
+  else {
     remove_node (t[i], 0);
     go_to_border (path_up (p), !forward);
   }
-  else insert_node (t[i], 0, compound ("deleted"));
 }
 
 void

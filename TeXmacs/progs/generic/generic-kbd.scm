@@ -176,6 +176,7 @@
   ("symbol _" "_")
   ("symbol ^" "^")
   ("symbol \"" "\"")
+  ("symbol |" "|")
 
   ("undo" (noop) (undo 0))
   ("redo" (noop) (redo 0))

@@ -17,6 +17,6 @@
 
 (kbd-map
   (:mode in-tmdoc?)
-  ("S-F5" (make 'scm-arg))
   ("S-F7" (make 'scm))
+  ("C-F7" (make 'scm-arg))
   ("M-F7" (make 'scm-fragment)))
