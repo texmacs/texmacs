@@ -171,6 +171,16 @@ edit_math_rep::make_neg () {
 ******************************************************************************/
 
 void
+edit_math_rep::back_around (tree t, path p, bool forward) {
+  int i= (forward? 0: 2);
+  if (is_compound (t[i], "deleted", 1)) {
+    remove_node (t[i], 0);
+    go_to_border (p * 1, forward);
+  }
+  else insert_node (t[i], 0, compound ("deleted"));
+}
+
+void
 edit_math_rep::back_prime (tree t, path p, bool forward) {
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= t[0]->label;
@@ -196,6 +206,20 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
 }
 
 void
+edit_math_rep::back_in_around (tree t, path p, bool forward) {
+  int i= (forward? 2: 0);
+  if (is_empty (t[1])) {
+    assign (t, "");
+    correct (path_up (p, 2));
+  }
+  else if (is_compound (t[i], "deleted", 1)) {
+    remove_node (t[i], 0);
+    go_to_border (path_up (p), !forward);
+  }
+  else insert_node (t[i], 0, compound ("deleted"));
+}
+
+void
 edit_math_rep::back_in_wide (tree t, path p, bool forward) {
   int i= last_item (p);
   if ((i == 0) && is_empty (t[0])) {
@@ -203,6 +227,34 @@ edit_math_rep::back_in_wide (tree t, path p, bool forward) {
     correct (path_up (p, 2));
   }
   else go_to_border (path_up (p), !forward);
+}
+
+void
+edit_math_rep::pre_remove_around (path p) {
+  tree st= subtree (et, p);
+  if (is_script (st[1]) || is_prime (st[1])) assign (st[1], "");
+  else if (is_concat (st[1]) && N(st[1]) > 0) {
+    int li= 0, ri= N(st[1])-1;
+    while (li<N(st[1])) {
+      tree sst= st[1][li];
+      if (!is_func (sst, RSUB) &&
+	  !is_func (sst, RSUP) &&
+	  !is_func (sst, RPRIME))
+	break;
+      li++;
+    }
+    while (ri >= 0) {
+      tree sst= st[1][ri];
+      if (!is_func (sst, LSUB) &&
+	  !is_func (sst, LSUP) &&
+	  !is_func (sst, LPRIME))
+	break;
+      ri--;
+    }
+    if (ri != N(st[1])-1) remove (p * path (1, ri+1), N(st[1])-1-ri);
+    if (li != 0) remove (p * path (1, 0), li);
+    correct (p * 1);
+  }
 }
 
 /******************************************************************************

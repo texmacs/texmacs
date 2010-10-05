@@ -258,13 +258,6 @@ concater_rep::typeset_neg (tree t, path ip) {
 * Other markup
 ******************************************************************************/
 
-void
-concater_rep::typeset_group (tree t, path ip) {
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0));
-  marker (descend (ip, 1));
-}
-
 static string
 bracket_color (int nl) {
   switch (nl % 3) {

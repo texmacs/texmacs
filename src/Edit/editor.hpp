@@ -93,9 +93,12 @@ protected:
   virtual void   typeset (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
 
   /* protected subroutines for deletion of content */
+  virtual void back_around (tree t, path p, bool forward) = 0;
   virtual void back_prime (tree t, path p, bool forward) = 0;
+  virtual void back_in_around (tree t, path p, bool forward) = 0;
   virtual void back_in_wide (tree t, path p, bool forward) = 0;
   virtual void back_in_tree (tree t, path p, bool forward) = 0;
+  virtual void pre_remove_around (path p) = 0;
   virtual void back_table (path p, bool forward) = 0;
   virtual void back_in_table (tree t, path p, bool forward) = 0;
   virtual void back_monolithic (path p) = 0;

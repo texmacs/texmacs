@@ -310,9 +310,6 @@ concater_rep::typeset (tree t, path ip) {
       break;
     }
 
-  case GROUP:
-    typeset_group (t, ip);
-    break;
   case AROUND:
     typeset_around (t, ip);
     break;
