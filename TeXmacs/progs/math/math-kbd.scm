@@ -369,8 +369,6 @@
   (". > var" "<dotsucc>")
   ("< var = ." "<preceqdot>")
   (". > var =" "<dotsucceq>")
-  ("< < var var" "<llangle>")
-  ("> > var var" "<rrangle>")
 
   ("< >" "<lessgtr>")
   ("> <" "<gtrless>")
@@ -726,10 +724,10 @@
   ("< var var var var = /" "<nsqsubseteq>")
   ("> var var var var = /" "<nsqsupseteq>")
 
-  ("< var var var var var" "<langle>")
-  ("> var var var var var" "<rangle>")
-  ("< var var var var var var" "<leftslice>")
-  ("> var var var var var var" "<rightslice>")
+  ("< var var var var var" (math-bracket-open "<langle>" "<rangle>" #f))
+  ("> var var var var var" (math-bracket-close "<rangle>" "<langle>" #f))
+  ("< < var var" (math-bracket-open "<llangle>" "<rrangle>" #f))
+  ("> > var var" (math-bracket-close "<rrangle>" "<llangle>" #f))
 
   ("# var" "<sharp>")
   ("# var var" "<natural>")
