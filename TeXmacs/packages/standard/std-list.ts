@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7>
+<TeXmacs|1.0.7.7>
 
-<style|source>
+<style|<tuple|source|std>>
 
 <\body>
   <active*|<\src-title>
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -71,11 +70,11 @@
 
   <new-counter|item>
 
-  <assign|last-item|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<group|\<ast\>>>>>>
+  <assign|last-item|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<rigid|\<ast\>>>>>>
 
   <assign|current-item|<value|aligned-space-item>>
 
-  <assign|transform-item|<macro|x|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <assign|transform-item|<macro|x|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   <assign|the-item|<macro|<transform-item|<value|<counter-item>>>>>
 
@@ -125,9 +124,9 @@
 
   <new-list|itemize-1|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-2|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|\<circ\>>>>>>
+  <new-list|itemize-2|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<rigid|\<circ\>>>>>>
 
-  <new-list|itemize-3|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-3|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
   <assign|itemize|<\macro|body>
     <\with|itemize-level|<plus|<mod|<value|itemize-level>|3>|1>>
@@ -173,11 +172,11 @@
     </src-comment>
   </active*>
 
-  <new-list|itemize-minus|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-minus|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
   <new-list|itemize-dot|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-arrow|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|\<rightarrow\>>>>>>
+  <new-list|itemize-arrow|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<rigid|\<rightarrow\>>>>>>
 
   <new-list|enumerate-numeric|<value|aligned-dot-item>|<value|identity>>
 
@@ -189,15 +188,15 @@
 
   <new-list|enumerate-Alpha|<value|aligned-bracket-item>|<macro|x|<number|<arg|x>|Alpha>>>
 
-  <new-list|description-compact|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-compact|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-aligned|<value|aligned-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-aligned|<value|aligned-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-dash|<value|compact-strong-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-dash|<value|compact-strong-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-long|<value|long-compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-long|<value|long-compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   \;
 </body>

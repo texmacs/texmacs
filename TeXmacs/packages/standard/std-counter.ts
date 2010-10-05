@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.8>
+<TeXmacs|1.0.7.7>
 
-<style|source>
+<style|<tuple|source|std>>
 
 <\body>
   <active*|<\src-title>
@@ -13,11 +13,10 @@
     <src-copyright|2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -50,7 +49,7 @@
     </src-comment>
   </active*>
 
-  <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-nr>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|<arg|x>|-nr>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>><assign|<unquote|<merge|next-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|inc-|<arg|x>>>><assign|the-label|<compound|<unquote|<merge|the-|<arg|x>>>>>>>>>>>>
+  <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-nr>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|<arg|x>|-nr>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>><assign|<unquote|<merge|next-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|inc-|<arg|x>>>><set-binding|<compound|<unquote|<merge|the-|<arg|x>>>>>>>>>>>>
 
   <assign|reset-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|reset-|<arg|x>>>>>>
 
