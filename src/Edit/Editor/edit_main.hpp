@@ -76,6 +76,7 @@ public:
   tree the_subtree (path p);
   path the_buffer_path ();
   path the_path ();
+  path the_shifted_path ();
 
   void show_tree ();
   void show_env ();

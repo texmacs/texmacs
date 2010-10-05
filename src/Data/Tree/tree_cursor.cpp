@@ -167,6 +167,10 @@ closest_accessible (tree t, path p) {
   }
 }
 
+/******************************************************************************
+* Shifting the cursor
+******************************************************************************/
+
 bool
 is_shifted (tree t, path p, int dir= -1, bool flag= false) {
   if (dir == 0) return true;
@@ -183,6 +187,24 @@ is_shifted (tree t, path p, int dir= -1, bool flag= false) {
     return is_shifted (t[i], p->next, dir, sflag);
   }
   else return is_shifted (t[p->item], p->next, dir, false);
+}
+
+static path
+extreme (tree t, int dir) {
+  if (dir < 0) return start (t);
+  else return end (t);
+}
+
+path
+shift (tree t, path p, int dir) {
+  if (dir == 0 || is_nil (p) || is_atom (p)) return p;
+  else if (is_concat (t) && p->next == extreme (t[p->item], dir)) {
+    for (int i= p->item + dir; i >= 0 && i < N(t); i += dir)
+      if (the_drd -> is_accessible_child (t, i))
+	return path (i, extreme (t[i], -dir));
+    return p;
+  }
+  else return path (p->item, shift (t[p->item], p->next, dir));
 }
 
 /******************************************************************************

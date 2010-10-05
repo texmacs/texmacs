@@ -173,7 +173,8 @@
 
 (define (find-adjacent-around deleted?)
   (let* ((ret #f)
-	 (p (cursor-path)))
+	 (p (cursor-path))
+	 (p* (cursor-path*)))
     (with t (tree-innermost 'around)
       (when t
 	(when (== p (tree->path t 1 :start))
@@ -190,6 +191,12 @@
 	      (set! ret t)))
 	  (when (== (cAr p) 1)
 	    (when (or (not deleted?) (tree-is? t 2 'deleted))
+	      (set! ret t))))))
+    (when (and (not ret) (!= p p*))
+      (with t (path->tree (cDr p*))
+	(when (tree-is? t 'around)
+	  (when (== (cAr p*) 0)
+	    (when (tree-is? t 0 'deleted)
 	      (set! ret t))))))
     ret))
 
@@ -220,8 +227,17 @@
   (when (!= (get-preference "matching brackets") "on")
     (make-separator sep large?))
   (when (== (get-preference "matching brackets") "on")
-    (if large? (set! sep `(mid ,sep)))
-    (make-separator sep large?)))
+    (with t (find-adjacent-around #t)
+      (cond ((and t (tree-is? t 0 'deleted))
+	     (if large? (set! sep `(left ,sep)))
+	     (tree-assign (tree-ref t 0) sep)
+	     (tree-go-to t 1 :start))
+	    ((and t (tree-is? t 2 'deleted))
+	     (if large? (set! sep `(right ,sep)))
+	     (tree-assign (tree-ref t 2) sep)
+	     (tree-go-to t :end))
+	    (else
+	      (make-separator sep large?))))))
 
 (tm-define (math-bracket-close rb lb large?)
   (when (!= (get-preference "matching brackets") "on")

@@ -79,11 +79,15 @@
 
 (define translate-name
   (lambda (s)
-    (string-append "tmg_"
-      (list->string
-        (translate-name-sub
-          (string->list
-	    (symbol->string s)))))))
+    (let* ((S (symbol->string s))
+	   (l (- (string-length S) 1)))
+      (if (and (>= l 0) (equal? (string-ref S l) #\*))
+	  (set! s (string->symbol (string-append (substring S 0 l) "_dot"))))
+      (string-append "tmg_"
+        (list->string
+	  (translate-name-sub
+            (string->list
+	      (symbol->string s))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for building a glue code subroutine

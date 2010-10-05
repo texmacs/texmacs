@@ -23,6 +23,7 @@
   (buffer-tree the_buffer (tree))
   (paragraph-tree the_line (tree))
   (cursor-path the_path (path))
+  (cursor-path* the_shifted_path (path))
   (selection-tree selection_get (tree))
 
   ;; low-level modification routines

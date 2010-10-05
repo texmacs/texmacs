@@ -57,6 +57,15 @@ tmg_cursor_path () {
 }
 
 SCM
+tmg_cursor_path_dot () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->the_shifted_path ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_selection_tree () {
   // SCM_DEFER_INTS;
   tree out= get_server()->get_editor()->selection_get ();
@@ -922,7 +931,7 @@ tmg_length_divide (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_make_group () {
+tmg_make_rigid () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->make_rigid ();
   // SCM_ALLOW_INTS;
@@ -2621,6 +2630,7 @@ initialize_glue_editor () {
   scm_new_procedure ("buffer-tree", (FN) tmg_buffer_tree, 0, 0, 0);
   scm_new_procedure ("paragraph-tree", (FN) tmg_paragraph_tree, 0, 0, 0);
   scm_new_procedure ("cursor-path", (FN) tmg_cursor_path, 0, 0, 0);
+  scm_new_procedure ("cursor-path*", (FN) tmg_cursor_path_dot, 0, 0, 0);
   scm_new_procedure ("selection-tree", (FN) tmg_selection_tree, 0, 0, 0);
   scm_new_procedure ("path->tree", (FN) tmg_path_2tree, 1, 0, 0);
   scm_new_procedure ("path-correct", (FN) tmg_path_correct, 1, 0, 0);
@@ -2686,7 +2696,7 @@ initialize_glue_editor () {
   scm_new_procedure ("length-mult", (FN) tmg_length_mult, 2, 0, 0);
   scm_new_procedure ("length?", (FN) tmg_lengthP, 1, 0, 0);
   scm_new_procedure ("length-divide", (FN) tmg_length_divide, 2, 0, 0);
-  scm_new_procedure ("make-rigid", (FN) tmg_make_group, 0, 0, 0);
+  scm_new_procedure ("make-rigid", (FN) tmg_make_rigid, 0, 0, 0);
   scm_new_procedure ("make-lprime", (FN) tmg_make_lprime, 1, 0, 0);
   scm_new_procedure ("make-rprime", (FN) tmg_make_rprime, 1, 0, 0);
   scm_new_procedure ("make-below", (FN) tmg_make_below, 0, 0, 0);

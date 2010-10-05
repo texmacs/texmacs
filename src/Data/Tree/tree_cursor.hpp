@@ -26,5 +26,6 @@ path start (tree t);
 path end (tree t);
 path correct_cursor (tree t, path p);
 path super_correct (tree t, path p);
+path shift (tree t, path p, int dir);
 
 #endif // defined TREE_CURSOR_H

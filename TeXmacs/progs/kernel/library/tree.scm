@@ -92,6 +92,9 @@
 (define-public (cursor-tree)
   (path->tree (cDr (cursor-path))))
 
+(define-public (cursor-tree*)
+  (path->tree (cDr (cursor-path*))))
+
 (define-public (table-cell-tree row col)
   (path->tree (table-cell-path row col)))
 
