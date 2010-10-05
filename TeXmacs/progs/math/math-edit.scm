@@ -13,7 +13,8 @@
 
 (texmacs-module (math math-edit)
   (:use (utils library tree)
-	(utils library cursor)))
+	(utils library cursor)
+	(utils edit auto-close)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some drd properties, which should go into table-drd.scm later on
@@ -170,3 +171,76 @@
 ;; Matching brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (find-adjacent-around deleted?)
+  (let* ((ret #f)
+	 (p (cursor-path)))
+    (with t (tree-innermost 'around)
+      (when t
+	(when (== p (tree->path t 1 :start))
+	  (when (tree-is? t 0 'deleted)
+	    (set! ret t)))
+	(when (== p (tree->path t 1 :end))
+	  (when (or (not deleted?) (tree-is? t 2 'deleted))
+	    (set! ret t)))))
+    (when (not ret)
+      (with t (path->tree (cDr p))
+	(when (tree-is? t 'around)
+	  (when (== (cAr p) 0)
+	    (when (tree-is? t 0 'deleted)
+	      (set! ret t)))
+	  (when (== (cAr p) 1)
+	    (when (or (not deleted?) (tree-is? t 2 'deleted))
+	      (set! ret t))))))
+    ret))
+
+(tm-define (math-bracket-open lb rb large?)
+  (when (!= (get-preference "matching brackets") "on")
+    (make-bracket-open lb rb large?))
+  (when (== (get-preference "matching brackets") "on")
+    (let* ((t (find-adjacent-around #t))
+	   (u (find-adjacent-around #f)))
+      (cond ((and t (tree-is? t 0 'deleted))
+	     (if large? (set! lb `(left ,lb)))
+	     (tree-assign (tree-ref t 0) lb)
+	     (tree-go-to t 1 :start))
+	    ((and t (tree-is? t 2 'deleted))
+	     (if large? (set! lb `(right ,lb)))
+	     (tree-assign (tree-ref t 2) lb)
+	     (tree-go-to t :end))
+	    ((and u (== lb rb))
+	     (if large? (set! rb `(right ,rb)))
+	     (tree-assign (tree-ref u 2) rb)
+	     (tree-go-to u :end))
+	    (else
+	      (if large? (set! lb `(left ,lb)))
+	      (if large? (set! rb `(right ,rb)))
+	      (insert-go-to `(around ,lb "" ,rb) '(1 0)))))))
+
+(tm-define (math-separator sep large?)
+  (when (!= (get-preference "matching brackets") "on")
+    (make-separator sep large?))
+  (when (== (get-preference "matching brackets") "on")
+    (if large? (set! sep `(mid ,sep)))
+    (make-separator sep large?)))
+
+(tm-define (math-bracket-close rb lb large?)
+  (when (!= (get-preference "matching brackets") "on")
+    (make-bracket-close lb rb large?))
+  (when (== (get-preference "matching brackets") "on")
+    (let* ((t (find-adjacent-around #t))
+	   (u (find-adjacent-around #f)))
+      (cond ((and t (tree-is? t 0 'deleted))
+	     (if large? (set! rb `(left ,rb)))
+	     (tree-assign (tree-ref t 0) rb)
+	     (tree-go-to t 1 :start))
+	    ((and t (tree-is? t 2 'deleted))
+	     (if large? (set! rb `(right ,rb)))
+	     (tree-assign (tree-ref t 2) rb)
+	     (tree-go-to t :end))
+	    (u
+	     (if large? (set! rb `(right ,rb)))
+	     (tree-assign (tree-ref u 2) rb)
+	     (tree-go-to u :end))
+	    (else
+	      (set-message "Error: bracket does not match"
+			   (force-string rb)))))))

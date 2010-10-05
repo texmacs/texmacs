@@ -12,11 +12,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs keyboard latex-kbd)
-  (:use
-    (utils edit auto-close)
-    (generic format-edit)
-    (generic generic-edit)
-    (text std-text-edit)))
+  (:use (utils edit auto-close)
+	(generic format-edit)
+	(generic generic-edit)
+	(text std-text-edit)))
 
 (kbd-symbols
   "alpha" "beta" "gamma" "delta" "epsilon"

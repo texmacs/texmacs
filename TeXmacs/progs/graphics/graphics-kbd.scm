@@ -12,14 +12,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-kbd)
-  (:use
-    (utils library cursor)
-    (utils library tree)
-    (generic generic-kbd)
-    (graphics graphics-utils)
-    (graphics graphics-main)
-    (graphics graphics-env) 
-    (graphics graphics-edit)))
+  (:use (utils library cursor)
+	(utils library tree)
+	(generic generic-kbd)
+	(graphics graphics-utils)
+	(graphics graphics-main)
+	(graphics graphics-env) 
+	(graphics graphics-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard handling

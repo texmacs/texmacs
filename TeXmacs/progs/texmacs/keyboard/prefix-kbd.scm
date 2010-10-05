@@ -12,12 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs keyboard prefix-kbd)
-  (:use
-    (utils library cursor)
-    (utils edit selections)
-    (texmacs texmacs tm-server)
-    (texmacs texmacs tm-files)
-    (generic generic-edit)))
+  (:use (utils library cursor)
+	(utils edit selections)
+	(texmacs texmacs tm-server)
+	(texmacs texmacs tm-files)
+	(generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global prefixes for all modes

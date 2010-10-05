@@ -12,9 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic scripts-kbd)
-  (:use
-    (math math-kbd)
-    (dynamic scripts-edit)))
+  (:use (math math-kbd)
+	(dynamic scripts-edit)))
 
 (kbd-map
   ("C-return" (script-eval))
