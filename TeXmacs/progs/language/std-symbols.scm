@@ -313,7 +313,7 @@
   (define Open-symbol
     (:type opening-bracket)
     "(" "[" "{" "<lfloor>" "<lceil>" "<langle>"
-    "<llbracket>" "<llangle>" "<lnone>"
+    "<llbracket>" "<llangle>"
     "<left-(>" "<left-[>" "<left-{>" "<left-less>"
     "<left-}>" "<left-]>" "<left-)>" "<left-gtr>"
     "<left-|>" "<left-||>" "<left-.>"
@@ -322,12 +322,12 @@
   
   (define Middle-symbol
     (:type middle-bracket)
-    "|" "<||>" "<mid-|>" "<mid-||>")
+    "|" "<||>" "<none>" "<mid-|>" "<mid-||>" "<mid-.>")
 
   (define Close-symbol
     (:type closing-bracket)
     "}" "]" ")" "<rfloor>" "<rceil>" "<rangle>"
-    "<rrbracket>" "<rrangle>" "<rnone>"
+    "<rrbracket>" "<rrangle>"
     "<right-(>" "<right-[>" "<right-{>" "<right-less>"
     "<right-}>" "<right-]>" "<right-)>" "<right-gtr>"
     "<right-|>" "<right-||>" "<right-.>"

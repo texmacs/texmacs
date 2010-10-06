@@ -426,7 +426,7 @@ add_missing_left (array<tree> a, array<int> tp) {
     if (tp[i] == SYMBOL_CLOSE) {
       tree body= concat_recompose (b);
       b= array<tree> ();
-      if (is_atomic (a[i])) b << tree (AROUND, "<lnone>", body, a[i]);
+      if (is_atomic (a[i])) b << tree (AROUND, "<none>", body, a[i]);
       else b << tree (AROUND, tree (LEFT, "."), body, a[i]);
     }
     else b << a[i];
@@ -440,7 +440,7 @@ add_missing_right (array<tree> a, array<int> tp) {
     if (tp[i] == SYMBOL_OPEN) {
       tree body= concat_recompose (reverse (b));
       b= array<tree> ();
-      if (is_atomic (a[i])) b << tree (AROUND, a[i], body, "<rnone>");
+      if (is_atomic (a[i])) b << tree (AROUND, a[i], body, "<none>");
       else b << tree (AROUND, a[i], body, tree (RIGHT, "."));
     }
     else b << a[i];

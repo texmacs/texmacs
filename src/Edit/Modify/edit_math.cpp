@@ -170,16 +170,47 @@ edit_math_rep::make_neg () {
 * Deleting mathematical objects
 ******************************************************************************/
 
+static bool
+is_deleted (tree t) {
+  return t == "<none>" || t == tree (LEFT, ".") || t == tree (RIGHT, ".");
+}
+
 void
 edit_math_rep::back_around (tree t, path p, bool forward) {
   int i= (forward? 0: 2);
-  if (is_func (t[i], BIG))
-    go_to_border (p * 1, forward);
-  else if (!is_compound (t[i], "deleted", 1))
-    insert_node (t[i], 0, compound ("deleted"));
-  else {
-    remove_node (t[i], 0);
-    go_to_border (p * 1, forward);
+  if (is_func (t[i], BIG) || is_deleted (t[i]));
+  else if (is_atomic (t[i]))
+    assign (t[i], "<none>");
+  else if (is_func (t[i], LEFT))
+    assign (t[i], tree (LEFT, "."));
+  else if (is_func (t[i], RIGHT))
+    assign (t[i], tree (RIGHT, "."));
+  go_to_border (p * 1, forward);
+  if (is_deleted (t[0]) && is_deleted (t[2])) {
+    remove_node (t, 1);
+    correct (path_up (p));
+  }
+}
+
+void
+edit_math_rep::back_in_around (tree t, path p, bool forward) {
+  int i= (forward? 2: 0);
+  if (is_empty (t[1])) {
+    assign (t, "");
+    correct (path_up (p, 2));
+    return;
+  }
+  if (is_func (t[i], BIG) || is_deleted (t[i]));
+  else if (is_atomic (t[i]))
+    assign (t[i], "<none>");
+  else if (is_func (t[i], LEFT))
+    assign (t[i], tree (LEFT, "."));
+  else if (is_func (t[i], RIGHT))
+    assign (t[i], tree (RIGHT, "."));
+  go_to_border (path_up (p), !forward);
+  if (is_deleted (t[0]) && is_deleted (t[2])) {
+    remove_node (t, 1);
+    correct (path_up (p, 2));
   }
 }
 
@@ -205,23 +236,6 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
       }
       else remove (p * path (0, i), n-i);
     }
-  }
-}
-
-void
-edit_math_rep::back_in_around (tree t, path p, bool forward) {
-  int i= (forward? 2: 0);
-  if (is_empty (t[1])) {
-    assign (t, "");
-    correct (path_up (p, 2));
-  }
-  else if (is_func (t[i], BIG))
-    go_to_border (path_up (p), !forward);
-  else if (!is_compound (t[i], "deleted", 1))
-    insert_node (t[i], 0, compound ("deleted"));
-  else {
-    remove_node (t[i], 0);
-    go_to_border (path_up (p), !forward);
   }
 }
 
