@@ -60,6 +60,11 @@
 (define (tmmath-rigid l)
   `(m:mrow ,(tmmath (car l))))
 
+(define (tmmath-around l)
+  (if (!= (length l) 3) (tmmath-concat l)
+      (with cc (lambda (x) (if (func? x 'concat) (cdr x) (list x)))
+	(tmmath-concat `(,(car l) ,@(cc (cadr l)) ,(caddr l))))))
+
 (define (tmmath-large x)
   (with y (drd-ref tm->mathml-large% x)
     (if y y (cork->utf8 x))))
@@ -277,7 +282,7 @@
   (concat tmmath-concat)
   (concat! tmmath-concat!)
   (rigid tmmath-rigid)
-  (around tmmath-concat)
+  (around tmmath-around)
   (left tmmath-left)
   (mid tmmath-mid)
   (right tmmath-right)
