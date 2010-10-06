@@ -245,8 +245,6 @@ initialize_default_env () {
   env ("shown")= identity_m;
   env ("ignore")=
     tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
-  env ("deleted")= 
-    tree (MACRO, "x", tree (WITH, COLOR, "#AAD", tree (ARG, "x")));
 
   /* linking macros */
   tree src_id (ID, tree (HARD_ID, tree (ARG, "x")));
