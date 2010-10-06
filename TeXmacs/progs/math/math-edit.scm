@@ -168,7 +168,7 @@
   (equation*->math))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying the size of brackets
+;; Modifying the size and shape of brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-small br)
@@ -210,6 +210,51 @@
 (tm-define (toggle-variant)
   (:inside around)
   (around-toggle-size))
+
+(define brackets
+  '(("(" ")")
+    ("[" "]")
+    ("{" "}")
+    ("<langle>" "<rangle>")
+    ("|" "|")
+    ("<||>" "<||>")
+    ("<lfloor>" "<rfloor>")
+    ("<lceil>" "<rceil>")
+    ("<llbracket>" "<rrbracket>")))
+
+(define bigops
+  '("int" "intlim" "oint" "ointlim"
+    "sum" "prod" "amalg"
+    "cap" "cup" "sqcap" "sqcup"
+    "vee" "wedge" "curlyvee" "curlywedge"
+    "odot" "otimes" "oplus"
+    "triangleup" "triangledown"
+    "box" "parallel" "interleave"))
+
+(tm-define (variant-circulate forward?)
+  (:inside around)
+  (with-innermost t 'around
+    (if (tree-is? t 0 'big)
+	(when (and (== (tree-arity (tree-ref t 0)) 1)
+		   (tree-atomic? (tree-ref t 0 0)))
+	  (with s (tree->string (tree-ref t 0 0))
+	    (when (in? s bigops)
+	      (let* ((i (list-find-index bigops (lambda (x) (== x s))))
+		     (j (modulo (+ i (if forward? 1 -1)) (length bigops)))
+		     (ns (list-ref bigops j)))
+		(tree-assign (tree-ref t 0 0) ns)))))
+	(let* ((l (make-small (tree-ref t 0)))
+	       (r (make-small (tree-ref t 2)))
+	       (p (list l r)))
+	  (when (in? p brackets)
+	    (let* ((i (list-find-index brackets (lambda (x) (== x p))))
+		   (j (modulo (+ i (if forward? 1 -1)) (length brackets)))
+		   (sl (car (list-ref brackets j)))
+		   (sr (cadr (list-ref brackets j)))
+		   (nl (if (string? (tree-ref t 0)) sl (make-large sl 0)))
+		   (nr (if (string? (tree-ref t 2)) sr (make-large sr 2))))
+	      (tree-assign (tree-ref t 0) nl)
+	      (tree-assign (tree-ref t 2) nr)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Matching brackets
