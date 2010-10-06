@@ -529,7 +529,8 @@
   (define Reserved-symbol
     :<frac :<sqrt :<wide
     :<around :<left :<mid :<right :<big
-    :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime)
+    :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime
+    :<Prefix)
 
   (define Skip-symbol
     :<space :<hspace :<vspace :<vspace* :<htab

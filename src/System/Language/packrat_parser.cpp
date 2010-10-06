@@ -58,6 +58,8 @@ packrat_parser_rep::add_input (tree t, path p) {
       if (is_func (t, DOCUMENT)) current_string << "\n";
     }
   }
+  else if (t == tree (VALUE, "I"))
+    current_string << "<\\Prefix>value<|>I</>";
   else {
     current_string << "<\\" << as_string (L(t)) << ">";
     for (int i=0; i<N(t); i++) {

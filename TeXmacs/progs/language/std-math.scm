@@ -200,12 +200,13 @@
 
   (define Space-infix
     (:operator)
-    Space-symbol)
+    Spacing-symbol)
 
   (define Prefix-prefix
     (:operator)
     (Prefix-prefix Post)
-    Other-prefix-symbol)
+    Other-prefix-symbol
+    (:<Prefix :args :>))
 
   (define Postfix-postfix
     (:operator)
