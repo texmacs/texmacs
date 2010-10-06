@@ -80,6 +80,7 @@
   ("C-tab" (variant-circulate #t))
   ("C-S-tab" (variant-circulate #f))
   ("C-*" (hidden-variant))
+  ("C-%" (toggle-variant))
   ("C-left" (traverse-left))
   ("C-right" (traverse-right))
   ("C-up" (traverse-up))

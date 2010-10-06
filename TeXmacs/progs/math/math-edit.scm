@@ -168,29 +168,56 @@
   (equation*->math))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Modifying the size of brackets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (make-small br)
+  (cond ((tree? br) (make-small (tree->stree br)))
+	((string? br) br)
+	((not (or (tm-func? br 'left) (tm-func? br 'right))) "<nomid>")
+	(else
+	  (with s (tm-ref br 0)
+	    (cond ((nstring? s) "<nomid>")
+		  ((== s ".") "<nomid>")
+		  ((== (string-length s) 1) s)
+		  (else (string-append "<" s ">")))))))
+
+(define (make-large s pos)
+  (with type (if (== pos 0) 'left 'right)
+    (cond ((tree? s) (make-large (tree->stree s) pos))
+	  ((or (tm-func? s 'left) (tm-func? s 'right)) s)
+	  ((nstring? s) `(,type "."))
+	  ((== s "<nomid>") `(,type "."))
+	  ((== (string-length s) 1) `(,type ,s))
+	  ((and (string-starts? s "<") (string-ends? s ">"))
+	   `(,type ,(substring s 1 (- (string-length s) 1))))
+	  (else `(,type ".")))))
+
+(tm-define (around-toggle-size . opt)
+  (with-innermost t 'around
+    (cond ((or (!= (tree-arity t) 3) (tree-is? t 0 'big)) (noop))
+	  ((== opt '(#t))
+	   (tree-assign (tree-ref t 0) (make-large (tree-ref t 0) 0))
+	   (tree-assign (tree-ref t 2) (make-large (tree-ref t 2) 2)))
+	  ((== opt '(#f))
+	   (tree-assign (tree-ref t 0) (make-small (tree-ref t 0)))
+	   (tree-assign (tree-ref t 2) (make-small (tree-ref t 2))))
+	  ((tree-atomic? (tree-ref t 0))
+	   (around-toggle-size #t))
+	  (else
+	   (around-toggle-size #f)))))
+
+(tm-define (toggle-variant)
+  (:inside around)
+  (around-toggle-size))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Matching brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (deleted? t i)
   (in? (tm->stree (tree-ref t i))
        '("<nomid>" (left ".") (right "."))))
-
-(define (make-small br)
-  (if (not (or (tm-func? br 'left) (tm-func? br 'right))) "<nomid>"
-      (with s (tm-ref br 0)
-	(cond ((nstring? s) "<nomid>")
-	      ((== s ".") "<nomid>")
-	      ((== (string-length s) 1) s)
-	      (else (string-append "<" s ">"))))))
-
-(define (make-large s pos)
-  (with type (if (== pos 0) 'left 'right)
-    (cond ((nstring? s) `(,type "."))
-	  ((== s "<nomid>") `(,type "."))
-	  ((== (string-length s) 1) `(,type ,s))
-	  ((and (string-starts? s "<") (string-ends? s ">"))
-	   `(,type ,(substring s 1 (- (string-length s) 1))))
-	  (else `(,type ".")))))
 
 (define (modify-bracket t i new)
   (with old (tm->stree (tree-ref t i))
