@@ -173,20 +173,20 @@
 
 (define (deleted? t i)
   (in? (tm->stree (tree-ref t i))
-       '("<none>" (left ".") (right "."))))
+       '("<nomid>" (left ".") (right "."))))
 
 (define (make-small br)
-  (if (not (or (tm-func? br 'left) (tm-func? br 'right))) "<none>"
+  (if (not (or (tm-func? br 'left) (tm-func? br 'right))) "<nomid>"
       (with s (tm-ref br 0)
-	(cond ((nstring? s) "<none>")
-	      ((== s ".") "<none>")
+	(cond ((nstring? s) "<nomid>")
+	      ((== s ".") "<nomid>")
 	      ((== (string-length s) 1) s)
 	      (else (string-append "<" s ">"))))))
 
 (define (make-large s pos)
   (with type (if (== pos 0) 'left 'right)
     (cond ((nstring? s) `(,type "."))
-	  ((== s "<none>") `(,type "."))
+	  ((== s "<nomid>") `(,type "."))
 	  ((== (string-length s) 1) `(,type ,s))
 	  ((and (string-starts? s "<") (string-ends? s ">"))
 	   `(,type ,(substring s 1 (- (string-length s) 1))))

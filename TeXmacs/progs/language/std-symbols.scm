@@ -304,11 +304,20 @@
     (:penalty panic)
     "'" "`" "<dag>" "<ddag>")
 
-  (define Ponctuation-symbol
+  (define Ponctuation-visible-symbol
     (:type separator)
-    (:spacing none default)
     (:penalty 0)
-    "," ";" ":")
+    (:spacing none default)
+    "," ";" ":" "<point>")
+
+  (define Ponctuation-invisible-symbol
+    (:type separator)
+    (:penalty invalid)
+    (:spacing none none)
+    "<nocomma>")
+
+  (define Ponctuation-symbol
+    Ponctuation-visible-symbol Ponctuation-invisible-symbol)
 
   (define Open-symbol
     (:type opening-bracket)
@@ -322,7 +331,7 @@
   
   (define Middle-symbol
     (:type middle-bracket)
-    "|" "<||>" "<none>" "<mid-|>" "<mid-||>" "<mid-.>")
+    "|" "<||>" "<nomid>" "<mid-|>" "<mid-||>" "<mid-.>")
 
   (define Close-symbol
     (:type closing-bracket)
@@ -452,10 +461,24 @@
     "<triangleq>" "<ulcorner>" "<urcorner>" "<varkappa>"
     "<varnothing>" "<vartriangle>" "<veebar>" "<yen>")
 
-  (define Spacing-symbol
+  (define Spacing-visible-symbol
+    (:type symbol)
+    (:spacing default none)
+    " ")
+
+  (define Spacing-wide-symbol
     (:type symbol)
     (:spacing big none)
-    "<spc>")
+    "<space>")
+
+  (define Spacing-invisible-symbol
+    (:type symbol)
+    (:penalty invalid)
+    (:spacing none none)
+    "<nospace>")
+
+  (define Spacing-symbol
+    Spacing-visible-symbol Spacing-wide-symbol Spacing-invisible-symbol)
 
   (define Prefix-operator
     (:type prefix)

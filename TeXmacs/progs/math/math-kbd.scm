@@ -136,10 +136,14 @@
   ("threequarters" (insert '(frac "3" "4")))
 
   ("space" (kbd-space))
-  ("space var" "<nonesep>")
-  ("space var var" (make-space "0.2spc"))
-  ("space var var var" (make-space "1em"))
+  ("space var" "<space>")
+  ("space var var" "<nospace>")
+  ("space var var var" (make-space "0.2spc"))
+  ("space var var var var" (make-space "1em"))
   (", var" "<comma>")
+  (", var var" "<nocomma>")
+  ("." ".")
+  (". var" "<point>")
 
   ("math:symbol a" "<amalg>")
   ("math:symbol d" "<partial>")

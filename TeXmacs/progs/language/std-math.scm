@@ -200,7 +200,7 @@
 
   (define Space-infix
     (:operator)
-    (+ (or Space-symbol " ")))
+    Space-symbol)
 
   (define Prefix-prefix
     (:operator)
