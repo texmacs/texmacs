@@ -506,6 +506,52 @@ postfix_split (array<tree> a, array<int> tp_in, int level) {
 }
 
 /******************************************************************************
+* Extra subroutines for big operators
+******************************************************************************/
+
+static bool
+is_concat_big (tree t) {
+  if (!is_concat (t) || N(t) == 0 || !is_func (t[0], BIG)) return false;
+  for (int i=1; i<N(t); i++)
+    if (!is_func (t[i], RSUB, 1) && !is_func (t[i], RSUP, 1))
+      return false;
+  return true;
+}
+
+tree
+upgrade_above_below (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_concat (t)) {
+    tree r (CONCAT);
+    for (int i=0; i<N(t); i++) {
+      tree x= upgrade_above_below (t[i]);
+      if (is_concat (x)) r << A(x);
+      else r << x;
+    }
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_above_below (t[i]);
+    if (is_func (r, ABOVE, 2)) {
+      if (is_func (r[0], BIG))
+	r= tree (CONCAT, r[0], tree (RSUP, r[1]));
+      else if (is_concat_big (r[0]))
+	r= tree (r[0] * tree (CONCAT, tree (RSUP, r[1])));
+    }
+    if (is_func (r, BELOW, 2)) {
+      if (is_func (r[0], BIG))
+	r= tree (CONCAT, r[0], tree (RSUB, r[1]));
+      else if (is_concat_big (r[0]))
+	r= tree (r[0] * tree (CONCAT, tree (RSUB, r[1])));
+    }
+    return r;
+  }
+}
+
+/******************************************************************************
 * Master routines
 ******************************************************************************/
 
@@ -588,6 +634,7 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
 	}
     }
   }
+      
   if (mode == "math") {
     array<tree> a= concat_tokenize (r);
     a= upgrade_brackets (a, 0);
@@ -601,6 +648,7 @@ upgrade_brackets (tree t, string mode) {
   if (call ("get-preference", "matching brackets") == object ("on")) {
     //cout << "Upgrade " << t << "\n";
     drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+    t= upgrade_above_below (t);
     return upgrade_brackets (drd, t, mode);
   }
   else return t;

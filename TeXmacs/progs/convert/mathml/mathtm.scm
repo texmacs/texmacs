@@ -43,7 +43,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathtm-math env a c)
-  `((with "mode" "math" ,(mathtm-args-serial env c))))
+  (let* ((m (mathtm-args-serial env c))
+	 (r (tree->stree (upgrade-mathml m))))
+    `((math ,r))))
 
 (define (mathtm-none env a c)
   '())
@@ -139,8 +141,9 @@
 (define (mathtm-mfenced env a c)
   (let* ((open (car (or (assoc-ref a 'open) '("("))))
 	 (close (car (or (assoc-ref a 'close) '(")"))))
-	 (seps (string-tokenize-by-char (car (or (assoc-ref a 'separators) '("")))
-				#\space)))
+	 (seps (string-tokenize-by-char
+		(car (or (assoc-ref a 'separators) '("")))
+		#\space)))
     (if (== seps '("")) (set! seps '()))
     (mathtm env `(m:mrow (m:mo ,open)
 			 ,@(mathtm-sep-list c seps)
@@ -149,7 +152,8 @@
 (define (mathtm-menclose env a c)
   (let* ((args (mathtm-args env c))
 	 (notation (car (or (assoc-ref a 'notation) '(""))))
-	 (l (if (== notation "") '() (string-tokenize-by-char notation #\space))))
+	 (l (if (== notation "") '()
+		(string-tokenize-by-char notation #\space))))
     (if (in? "updiagonalstrike" l)
 	`((neg ,(mathtm-serial env args)))
 	args)))
