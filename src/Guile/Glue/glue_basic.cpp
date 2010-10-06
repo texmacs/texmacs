@@ -2331,6 +2331,19 @@ tmg_upgrade_tmml (SCM arg1) {
 }
 
 SCM
+tmg_upgrade_mathml (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "upgrade-mathml");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= upgrade_mathml (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_string_2url (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->url");
 
@@ -4306,6 +4319,7 @@ initialize_glue_basic () {
   scm_new_procedure ("parse-html", (FN) tmg_parse_html, 1, 0, 0);
   scm_new_procedure ("parse-bib", (FN) tmg_parse_bib, 1, 0, 0);
   scm_new_procedure ("upgrade-tmml", (FN) tmg_upgrade_tmml, 1, 0, 0);
+  scm_new_procedure ("upgrade-mathml", (FN) tmg_upgrade_mathml, 1, 0, 0);
   scm_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   scm_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
   scm_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);

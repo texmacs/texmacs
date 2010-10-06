@@ -541,6 +541,6 @@
   ;; Collapse whitespaces.
   ;; TODO: consolidate with htmltm-serial
   (with c (apply tmconcat l)
-    (if (func? c 'concat)
-	(stm-concat (cdr c) htmltm-make-concat)
-	c)))
+    (with r (if (not (func? c 'concat)) c
+		(stm-concat (cdr c) htmltm-make-concat))
+      (tree->stree (upgrade-mathml r)))))

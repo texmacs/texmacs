@@ -1281,6 +1281,7 @@
   (para tmhtml-paragraph)
   (surround tmhtml-surround)
   (concat tmhtml-concat)
+  (rigid tmhtml-id)
   (format tmhtml-noop)
   (hspace tmhtml-hspace)
   (vspace* tmhtml-vspace)
@@ -1316,7 +1317,7 @@
   (new-dpage* tmhtml-noop)
   (new-dpage tmhtml-noop)
 
-  (rigid tmhtml-id)
+  (around tmhtml-concat)
   (left tmhtml-id)
   (mid tmhtml-id)
   (right tmhtml-id)

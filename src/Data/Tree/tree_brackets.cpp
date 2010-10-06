@@ -597,11 +597,11 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
 }
 
 tree
-upgrade_brackets (tree t) {
+upgrade_brackets (tree t, string mode) {
   if (call ("get-preference", "matching brackets") == object ("on")) {
     //cout << "Upgrade " << t << "\n";
     drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-    return upgrade_brackets (drd, t, "text");
+    return upgrade_brackets (drd, t, mode);
   }
   else return t;
 }

@@ -46,6 +46,8 @@
 	((== (car l) 'concat)
 	 (let ((complete (tmtm-match-brackets-concat (cdr l))))
 	   (cons 'concat (map tmtm-match-brackets-bis complete))))
+	((func? l 'around 3)
+	 `(concat ,(cadr l) ,(tmtm-match-brackets (caddr l)) ,(cadddr l)))
 	(else (cons (car l) (map tmtm-match-brackets (cdr l))))))
 
 (tm-define (tmtm-match-brackets l)

@@ -1463,6 +1463,7 @@
   (new-dpage* tmtex-noop)
   (new-dpage tmtex-noop)
 
+  (around tmtex-concat)
   (left tmtex-left)
   (mid tmtex-mid)
   (right tmtex-right)

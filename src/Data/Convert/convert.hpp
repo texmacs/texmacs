@@ -59,10 +59,11 @@ tree   parse_latex (string s);
 tree   parse_latex_document (string s);
 tree   latex_to_tree (tree t);
 
-/*** Xml / Html ***/
+/*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
 tree   parse_html (string s);
 tree   tmml_upgrade (scheme_tree t);
+tree   upgrade_mathml (tree t);
 
 /*** BibTeX ***/
 tree   parse_bib (string s);

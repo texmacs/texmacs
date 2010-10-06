@@ -207,6 +207,7 @@
   (parse-html parse_html (scheme_tree string))
   (parse-bib parse_bib (tree string))
   (upgrade-tmml tmml_upgrade (tree scheme_tree))
+  (upgrade-mathml upgrade_mathml (tree content))
 
   ;; routines for urls
   (string->url url (url string))

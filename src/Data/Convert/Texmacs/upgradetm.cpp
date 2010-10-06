@@ -2918,6 +2918,12 @@ upgrade_tex (tree t) {
 }
 
 tree
+upgrade_mathml (tree t) {
+  t= upgrade_brackets (t, "math");
+  return t;
+}
+
+tree
 upgrade (tree t, string version) {
   // cout << "Upgrade from " << version << "\n";
   if (version_inf (version, "0.3.1.9")) {

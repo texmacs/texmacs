@@ -13,6 +13,6 @@
 #define TREE_BRACKETS_H
 #include "drd_std.hpp"
 
-tree upgrade_brackets (tree t);
+tree upgrade_brackets (tree t, string mode= "text");
 
 #endif // defined TREE_BRACKETS_H

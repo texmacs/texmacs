@@ -277,6 +277,7 @@
   (concat tmmath-concat)
   (concat! tmmath-concat!)
   (rigid tmmath-rigid)
+  (around tmmath-concat)
   (left tmmath-left)
   (mid tmmath-mid)
   (right tmmath-right)
