@@ -12,6 +12,9 @@
 #include "packrat_parser.hpp"
 #include "analyze.hpp"
 
+extern tree the_et;
+bool packrat_invalid_colors= false;
+
 /******************************************************************************
 * Constructor
 ******************************************************************************/
@@ -422,15 +425,22 @@ packrat_parser_rep::compress
 ******************************************************************************/
 
 void
-packrat_parser_rep::highlight (tree t, path p1, path p2, int col) {
+packrat_parser_rep::highlight (tree t, path tp, path p1, path p2, int col) {
   if (p1 == p2);
   else if (is_atomic (t)) {
     string s= t->label;
     ASSERT (is_atom (p1) && is_atom (p2), "invalid selection");
     ASSERT (0 <= p1->item && p1->item <= p2->item && p2->item <= N(s),
 	    "invalid selection");
-    // FIXME: use col
-    attach_highlight (t, col, p1->item, p2->item);
+    if (!current_colors->contains (tp)) {
+      array<int> cols (N(s));
+      for (int i=0; i<N(s); i++) cols[i]= 0;
+      current_colors (tp)= cols;
+    }
+    array<int>& cols (current_colors (tp));
+    for (int i=p1->item; i<p2->item; i++)
+      cols[i]= col;
+    //attach_highlight (t, col, p1->item, p2->item);
   }
   else if (N(t) == 0);
   else {
@@ -441,7 +451,7 @@ packrat_parser_rep::highlight (tree t, path p1, path p2, int col) {
     for (int i= max (0, p1->item); i <= min (p2->item, N(t)-1); i++) {
       path q1= (i == p1->item? p1->next: path (0));
       path q2= (i == p2->item? p2->next: path (right_index (t[i])));
-      highlight (t[i], q1, q2, col);
+      highlight (t[i], tp * i, q1, q2, col);
     }
   }
 }
@@ -457,7 +467,7 @@ packrat_parser_rep::highlight (C sym, C pos) {
       int  col  = encode_color (properties [key]);
       path start= decode_tree_position (pos);
       path end  = decode_tree_position (next);
-      highlight (current_tree, start, end, col);
+      highlight (current_tree, path (), start, end, col);
       static C prop= encode_symbol (compound ("property", "transparent"));
       D key = (((D) prop) << 32) + ((D) (sym ^ prop));
       if (!properties->contains (key)) return;
@@ -510,6 +520,25 @@ packrat_parser_rep::highlight (C sym, C pos) {
       break;
     }
   }
+}
+
+packrat_parser
+highlight_packrat (string lan, string s, path ip, bool force) {
+  static string last_lan;
+  static string last_s;
+  static path last_ip;
+  static packrat_parser last_par;
+  tree in= subtree (the_et, reverse (ip));
+  if (last_lan != lan || last_s != s || last_ip != ip || force) {
+    last_lan= lan;
+    last_s= s;
+    last_ip= ip;
+    last_par= make_packrat_parser (lan, in);
+    C sym = encode_symbol (compound ("symbol", s));
+    if (last_par->parse (sym, 0) == N(last_par->current_input))
+      last_par->highlight (sym, 0);
+  }
+  return last_par;
 }
 
 /******************************************************************************
@@ -600,4 +629,24 @@ packrat_highlight (string lan, string s, tree in) {
   C sym = encode_symbol (compound ("symbol", s));
   if (par->parse (sym, 0) == N(par->current_input))
     par->highlight (sym, 0);
+}
+
+array<int>
+packrat_colors (string lan, string s, tree t) {
+  //cout << "Highlight " << lan << ", " << s << " in " << t << "\n";
+  if (!is_atomic (t)) return array<int> ();
+  path tp;
+  path ip= obtain_ip (t);
+  if (is_nil (ip) || last_item (ip) < 0) return array<int> ();
+  while (!is_nil (ip)) {
+    tree pt= subtree (the_et, reverse (ip->next));
+    if (!is_format (pt)) break;
+    tp= path (ip->item, tp);
+    ip= ip->next;
+  }
+  packrat_parser par= highlight_packrat (lan, s, ip, packrat_invalid_colors);
+  packrat_invalid_colors= false;
+  if (par->current_colors->contains (tp))
+    return par->current_colors [tp];
+  else return array<int> ();
 }

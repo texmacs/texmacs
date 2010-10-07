@@ -29,7 +29,9 @@ verb_language_rep::advance (tree t, int& pos) {
     pos++;
     return &tp_hyph_rep;
   }
-  array<int> cols= obtain_highlight (t);
+
+  //array<int> cols= obtain_highlight (t);
+  array<int> cols= packrat_colors (res_name, "Main", t);
   if (N(cols) == 0)
     while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) pos++;
   else if ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) {
@@ -61,7 +63,8 @@ verb_language_rep::hyphenate (
 string
 verb_language_rep::get_color (tree t, int start, int end) {
   if (start >= end) return "";
-  array<int> cols= obtain_highlight (t);
+  //array<int> cols= obtain_highlight (t);
+  array<int> cols= packrat_colors (res_name, "Main", t);
   if (start < N(cols) && cols[start] != 0)
     return decode_color (cols[start]);
   return "";

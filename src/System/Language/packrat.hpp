@@ -14,17 +14,19 @@
 #include "tree.hpp"
 #include "Scheme/object.hpp"
 
-int    encode_color (string s);
-string decode_color (int c);
-
 void   packrat_define (string lan, string s, tree t);
 void   packrat_property (string lan, string s, string var, string val);
 void   packrat_inherit (string lan, string from);
+
 path   packrat_parse (string lan, string s, tree in);
 bool   packrat_correct (string lan, string s, tree in);
-void   packrat_highlight (string lan, string s, tree in);
 object packrat_context (string lan, string s, tree in, path in_pos);
 bool   packrat_select (string lan, string s, tree in, path in_pos,
 		       path& p1, path& p2, int mode);
+
+int    encode_color (string s);
+string decode_color (int c);
+array<int> packrat_colors (string lan, string s, tree t);
+void   packrat_highlight (string lan, string s, tree in);
 
 #endif // PACKRAT_H

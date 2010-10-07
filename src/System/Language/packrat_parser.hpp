@@ -18,19 +18,20 @@
 
 class packrat_parser_rep: concrete_struct {
 public:
-  hashmap<C,array<C> >  grammar;
-  hashmap<C,tree>       productions;
-  hashmap<D,string>     properties;
+  hashmap<C,array<C> >      grammar;
+  hashmap<C,tree>           productions;
+  hashmap<D,string>         properties;
 
-  tree                  current_tree;
-  string                current_string;
-  hashmap<path,int>     current_start;
-  hashmap<path,int>     current_end;
-  C                     current_cursor;
+  tree                      current_tree;
+  string                    current_string;
+  hashmap<path,int>         current_start;
+  hashmap<path,int>         current_end;
+  C                         current_cursor;
 
-  array<C>              current_input;
-  hashmap<D,C>          current_cache;
-  hashmap<D,tree>       current_production;
+  array<C>                  current_input;
+  hashmap<D,C>              current_cache;
+  hashmap<D,tree>           current_production;
+  hashmap<path,array<int> > current_colors;
 
 protected:
   void add_input (tree t, path p);
@@ -51,7 +52,7 @@ public:
   void context (C sym, C pos, C left, C right, int mode,
 		array<C>& kind, array<C>& begin, array<C>& end);
   void compress (array<C>& kind, array<C>& begin, array<C>& end);
-  void highlight (tree t, path p1, path p2, int col);
+  void highlight (tree t, path tp, path p1, path p2, int col);
   void highlight (C sym, C pos);
 
   friend class packrat_parser;
