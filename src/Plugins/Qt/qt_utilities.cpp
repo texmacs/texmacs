@@ -18,6 +18,10 @@
 #include <QLocale>
 #include <QDateTime>
 
+#include <QPrinter>
+#include <QPrintDialog>
+
+
 #include "dictionary.hpp"
 #include "converter.hpp"
 #include "language.hpp"
@@ -186,7 +190,8 @@ qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   }
 }
 
-string qt_application_directory () {
+string 
+qt_application_directory () {
   return  string (QCoreApplication::applicationDirPath () .toAscii() .constData());
   // return from_qstring (QCoreApplication::applicationDirPath ());
 }
@@ -220,5 +225,19 @@ qt_get_date (string lan, string fm) {
   QString date = localtime.toString(to_qstring(fm));
 #endif
   return from_qstring(date);
+}
+
+
+void 
+qt_print () {
+  static QPrinter *printer = NULL;
+  if (!printer) {
+    printer = new QPrinter;
+  }
+  QPrintDialog pdialog(printer);
+  if (pdialog.exec()) {
+    cout << "Printer :" << printer->printerName().toAscii().constData() << LF;
+    cout << "File :" << printer->outputFileName().toAscii().constData() << LF;
+  }
 }
 
