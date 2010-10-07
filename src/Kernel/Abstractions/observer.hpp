@@ -29,7 +29,6 @@ typedef list<int> path;
 #define OBSERVER_POSITION   4
 #define OBSERVER_EDIT       5
 #define OBSERVER_UNDO       6
-#define OBSERVER_HIGHLIGHT  7
 
 /******************************************************************************
 * The observer class
@@ -76,9 +75,6 @@ public:
   virtual observer& get_child (int which);
   virtual list<observer> get_tree_pointers ();
   virtual bool get_tree (tree& t);
-  virtual bool set_highlight (int col, int start, int end);
-  virtual array<int> get_highlight ();
-  virtual void reset_highlight (tree& ref);
 };
 
 class observer {
@@ -147,10 +143,6 @@ observer tree_pointer_new (tree t);
 void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
-
-void attach_highlight (tree& ref, int col, int start, int end);
-array<int> obtain_highlight (tree& ref);
-void detach_highlight (tree& ref);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 

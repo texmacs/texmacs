@@ -264,7 +264,6 @@ is_multi_paragraph (tree t) {
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;
-  case HIGHLIGHT:
   case LOCUS:
   case CANVAS:
     return is_multi_paragraph (t[N(t)-1]);

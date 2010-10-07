@@ -374,7 +374,6 @@ init_std_drd () {
   init (SYMBOL, "symbol", fixed (1) -> code (0));
   init (LATEX, "latex", fixed (1) -> code (0));
   init (HYBRID, "hybrid", options (1, 1) -> variable (0));
-  init (HIGHLIGHT, "highlight", fixed (1) -> accessible (0));
 
   init (LOCUS, "locus",
 	var_repeat (1, 1, BIFORM) ->

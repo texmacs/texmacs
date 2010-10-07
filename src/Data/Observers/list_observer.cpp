@@ -54,9 +54,6 @@ public:
   observer& get_child (int which);
   list<observer> get_tree_pointers ();
   bool get_tree (tree& t);
-  bool set_highlight (int col, int start, int end);
-  array<int> get_highlight ();
-  void reset_highlight (tree& ref);
 };
 
 /******************************************************************************
@@ -191,27 +188,6 @@ bool
 list_observer_rep::get_tree (tree& t) {
   return (!is_nil (o1) && o1->get_tree (t)) |
          (!is_nil (o2) && o2->get_tree (t));
-}
-
-bool
-list_observer_rep::set_highlight (int col, int start, int end) {
-  return (!is_nil (o1) && o1->set_highlight (col, start, end)) |
-         (!is_nil (o2) && o2->set_highlight (col, start, end));
-}
-
-array<int>
-list_observer_rep::get_highlight () {
-  array<int> r;
-  if (!is_nil (o1)) r= o1->get_highlight ();
-  if (N(r) != 0) return r;
-  if (!is_nil (o2)) r= o2->get_highlight ();  
-  return r;
-}
-
-void
-list_observer_rep::reset_highlight (tree& ref) {
-  if (!is_nil (o1)) o1->reset_highlight (ref);
-  if (!is_nil (o2)) o2->reset_highlight (ref);
 }
 
 /******************************************************************************

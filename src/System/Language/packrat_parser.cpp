@@ -622,15 +622,6 @@ packrat_select (string lan, string s, tree in, path in_pos,
   return true;
 }
 
-void
-packrat_highlight (string lan, string s, tree in) {
-  //cout << "Highlight " << lan << ", " << s << " in " << in << "\n";
-  packrat_parser par= make_packrat_parser (lan, in);
-  C sym = encode_symbol (compound ("symbol", s));
-  if (par->parse (sym, 0) == N(par->current_input))
-    par->highlight (sym, 0);
-}
-
 array<int>
 packrat_colors (string lan, string s, tree t) {
   //cout << "Highlight " << lan << ", " << s << " in " << t << "\n";

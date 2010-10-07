@@ -435,21 +435,6 @@ make_lazy_expand_as (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Highlight
-******************************************************************************/
-
-lazy
-make_lazy_highlight (edit_env env, tree t, path ip) {
-  tree u= env->expand (t[0]);
-  packrat_highlight (env->get_string (PROG_LANGUAGE), "Main", u);
-  array<line_item> a= typeset_marker (env, descend (ip, 0));
-  array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, t[0], descend (ip, 0));
-  detach_highlight (u);
-  return lazy_surround (a, b, par, ip);
-}
-
-/******************************************************************************
 * Locus
 ******************************************************************************/
 
@@ -541,8 +526,6 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_auto (env, t, ip, var_inactive_m);
   case REWRITE_INACTIVE:
     return make_lazy_rewrite (env, t, ip);
-  case HIGHLIGHT:
-    return make_lazy_highlight (env, t, ip);
   case LOCUS:
     return make_lazy_locus (env, t, ip);
   case HLINK:

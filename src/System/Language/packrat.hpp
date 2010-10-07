@@ -27,6 +27,5 @@ bool   packrat_select (string lan, string s, tree in, path in_pos,
 int    encode_color (string s);
 string decode_color (int c);
 array<int> packrat_colors (string lan, string s, tree t);
-void   packrat_highlight (string lan, string s, tree in);
 
 #endif // PACKRAT_H
