@@ -17,7 +17,7 @@
 ;; Transform into old-style brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-large l s)
+(tm-define (large-bracket l s)
   (cond ((nstring? s) `(,l "."))
 	((<= (string-length s) 1) `(,l ,s))
 	((== s "<nomid>") `(,l "."))
@@ -25,16 +25,24 @@
 	 `(,l ,(substring s 1 (- (string-length s) 1))))
 	(else `(,l "."))))
 
+(tm-define (small-bracket s)
+  (cond ((or (func? s 'left) (func? s 'mid) (func? s 'right) (func? s 'big))
+	 (small-bracket (cadr s)))
+	((nstring? s) "<nomid>")
+	((== s ".") "<nomid>")
+	((<= (string-length s) 1) s)
+	(else (string-append "<" s ">"))))
+
 (tm-define (downgrade-brackets t)
   (with cc (lambda (x) (if (func? x 'concat) (cdr x) (list x)))
     (cond ((func? t 'around 3)
 	   `(concat ,(cadr t) ,@(cc (caddr t)) ,(cadddr t)))
 	  ((func? t 'around* 3)
-	   `(concat ,(make-large 'left (cadr t))
+	   `(concat ,(large-bracket 'left (cadr t))
 		    ,@(cc (caddr t))
-		    ,(make-large 'right (cadddr t))))
+		    ,(large-bracket 'right (cadddr t))))
 	  ((func? t 'big-around 2)
-	   `(concat ,(make-large 'big (cadr t)) ,@(cc (caddr t))))
+	   `(concat ,(large-bracket 'big (cadr t)) ,@(cc (caddr t))))
 	  (else t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -80,3 +88,48 @@
 	((func? l 'left 1) `(concat ,l (right ".")))
 	((func? l 'right 1) `(concat (left ".") ,l))
 	(else (tmtm-match-brackets-bis l))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Utility functions for big operators
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (big-name b)
+  (and (func? b 'big-around 2)
+       (cadr (large-bracket 'big (cadr b)))))
+
+(tm-define (big-subscript b)
+  (and (func? b 'big-around 2)
+       (with cc (caddr b)
+	 (and (func? cc 'concat)
+	      (>= (length cc) 3)
+	      (or (and (func? (cadr cc) 'rsub 1)
+		       (cadr (cadr cc)))
+		  (and (func? (cadr cc) 'rsup 1)
+		       (func? (caddr cc) 'rsub 1)
+		       (cadr (caddr cc))))))))
+
+(tm-define (big-supscript b)
+  (and (func? b 'big-around 2)
+       (with cc (caddr b)
+	 (and (func? cc 'concat)
+	      (>= (length cc) 3)
+	      (or (and (func? (cadr cc) 'rsup 1)
+		       (cadr (cadr cc)))
+		  (and (func? (cadr cc) 'rsub 1)
+		       (func? (caddr cc) 'rsup 1)
+		       (cadr (caddr cc))))))))
+
+(define (remove-scripts l)
+  (cond ((null? l) l)
+	((func? (car l) 'rsub 1) (remove-scripts (cdr l)))
+	((func? (car l) 'rsup 1) (remove-scripts (cdr l)))
+	(else l)))
+
+(tm-define (big-body b)
+  (and (func? b 'big-around 2)
+       (with cc (caddr b)
+	 (if (not (func? cc 'concat)) cc
+	     (with l (remove-scripts (cdr cc))
+	       (cond ((null? l) "")
+		     ((list-1? l) (car l))
+		     (else `(concat ,@l))))))))

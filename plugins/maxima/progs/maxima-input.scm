@@ -113,14 +113,22 @@
         (display ","))
       (display "integrate(")))
 
-(define (maxima-input-big args)
-  (let ((op (car args)))
-       (cond
-         ((== op ".") (display ")"))
-         ((== op "sum")  (maxima-input-sum (cdr args)))
-         ((== op "prod") (maxima-input-prod (cdr args)))
-         ((== op "int")  (maxima-input-int (cdr args)))
-         (else (display op) (display "(")))))
+
+(define (maxima-input-big-around args)
+  (let* ((b `(big-around ,@args))
+	 (op (big-name b))
+	 (sub (big-subscript b))
+	 (sup (big-supscript b))
+	 (body (big-body b))
+	 (l (cond ((and sub sup) (list sub sup))
+		  (sub (list sub))
+		  (else (list)))))
+    (cond ((== op "sum")  (maxima-input-sum l))
+	  ((== op "prod") (maxima-input-prod l))
+	  ((== op "int")  (maxima-input-int l))
+	  (else (display op) (display "(")))
+    (plugin-input body)
+    (display ")")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
@@ -130,7 +138,7 @@
   (rows maxima-input-rows)
   (det maxima-input-det)
   (sqrt maxima-input-sqrt)
-  (big maxima-input-big)
+  (big-around maxima-input-big-around)
   (binom maxima-input-binom)
 
   ("<infty>"      "inf")

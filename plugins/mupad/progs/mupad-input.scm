@@ -57,6 +57,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; big operators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (mupad-input-big args)
   (if (== (car args) ".")
       (display ")")
@@ -74,6 +75,19 @@
 		  (begin (display "..")
 			 (plugin-input (caddr args))
 			 (display ","))))))))
+
+(define (mupad-input-big-around args)
+  (let* ((b `(big-around ,@args))
+	 (op (big-name b))
+	 (sub (big-subscript b))
+	 (sup (big-supscript b))
+	 (body (big-body b))
+	 (l (cond ((and sub sup) (list op sub sup))
+		  (sub (list op sub))
+		  (else (list op)))))
+    (mupad-input-big l)
+    (plugin-input body)
+    (display ")")))
 
 ;; TODO: Check for the type of primes.
 (define (mupad-input-rprime args)
@@ -261,7 +275,7 @@
 (plugin-input-converters mupad
   (rows mupad-input-rows)
   (det mupad-input-det)
-  (big mupad-input-big)
+  (big-around mupad-input-big-around)
   (wide mupad-input-wide)
   (wide* mupad-input-wide-under)
   (rprime mupad-input-rprime)

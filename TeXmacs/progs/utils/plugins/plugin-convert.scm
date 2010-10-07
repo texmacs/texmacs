@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils plugins plugin-convert))
+(texmacs-module (utils plugins plugin-convert)
+  (:use (convert rewrite tmtm-brackets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main conversion routines
@@ -103,35 +104,17 @@
       (plugin-input (car args))
       (plugin-input-with (cdr args))))
 
-(define (plugin-input-concat-big args)
-  (cond ((== (caar args) ".")
-	 (plugin-input (car args))
-	 (plugin-input-concat (cdr args)))
-        ((and (nnull? (cddr args))
-	      (func? (cadr args) 'rsub)
-	      (func? (caddr args) 'rsup))
-	 (plugin-input `(big ,(cadr (car args))
-			     ,(cadr (cadr args))
-			     ,(cadr (caddr args))))
-	 (plugin-input-concat (cdddr args)))
-	((and (nnull? (cddr args))
-	      (func? (cadr args) 'rsup)
-	      (func? (caddr args) 'rsub))
-	 (plugin-input `(big ,(cadr (car args))
-			     ,(cadr (caddr args))
-			     ,(cadr (cadr args))))
-	 (plugin-input-concat (cdddr args)))
-	((func? (cadr args) 'rsub)
-	 (plugin-input `(big ,(cadr (car args)) ,(cadr (cadr args))))
-	 (plugin-input-concat (cddr args)))
-	(else
-	 (plugin-input (car args))
-	 (plugin-input-concat (cdr args)))))
+(define (plugin-input-concat-big op args)
+  (let* ((i (list-find-index args (lambda (x) (== x '(big ".")))))
+	 (head (if i (sublist args 0 i) args))
+	 (tail (if i (sublist args (+ i 1) (length args)) '()))
+	 (bigop `(big-around ,(small-bracket op) (concat ,@head))))
+    (plugin-input `(concat ,bigop ,@tail))))
 
 (define (plugin-input-concat args)
   (cond ((null? args) (noop))
 	((and (func? (car args) 'big) (nnull? (cdr args)))
-	 (plugin-input-concat-big args))
+	 (plugin-input-concat-big (car args) (cdr args)))
 	(else
 	 (plugin-input (car args))
 	 (plugin-input-concat (cdr args)))))
@@ -164,23 +147,31 @@
   (display "^")
   (plugin-input-arg (car args)))
 
+(define (plugin-input-around args)
+  (plugin-input (downgrade-brackets (cons 'around args))))
+
+(define (plugin-input-around* args)
+  (plugin-input (downgrade-brackets (cons 'around* args))))
+
+(define (plugin-input-big-around args)
+  (let* ((b `(big-around ,@args))
+	 (name (big-name b))
+	 (sub (big-subscript b))
+	 (sup (big-supscript b))
+	 (body (big-body b)))
+    (display name)
+    (display "(")
+    (when sub
+      (plugin-input sub)
+      (display ","))
+    (when (and sub sup)
+      (plugin-input sup)
+      (display ","))
+    (plugin-input body)
+    (display ")")))
+
 (define (plugin-input-large args)
   (display (car args)))
-
-(define (plugin-input-big args)
-  (if (== (car args) ".")
-      (display ")")
-      (begin
-	(display (car args))
-	(display "(")
-	(if (nnull? (cdr args))
-	    (begin
-	      (plugin-input (cadr args))
-	      (display ",")
-	      (if (nnull? (cddr args))
-		  (begin
-		    (plugin-input (caddr args))
-		    (display ","))))))))
 
 (define (plugin-input-script-assign args)
   (display ":="))
@@ -294,10 +285,12 @@
   (sqrt plugin-input-sqrt)
   (rsub plugin-input-rsub)
   (rsup plugin-input-rsup)
+  (around plugin-input-around)
+  (around* plugin-input-around*)
+  (big-around plugin-input-big-around)
   (left plugin-input-large)
   (middle plugin-input-large)
   (right plugin-input-large)
-  (big plugin-input-big)
   (tabular plugin-input-descend-last)
   (tabular* plugin-input-descend-last)
   (block plugin-input-descend-last)
