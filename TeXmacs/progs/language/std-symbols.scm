@@ -528,7 +528,7 @@
 
   (define Reserved-symbol
     :<frac :<sqrt :<wide
-    :<around :<left :<mid :<right :<big
+    :<around :<around* :<big-around :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime
     :<Prefix)
 

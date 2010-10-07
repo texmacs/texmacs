@@ -267,26 +267,49 @@ bracket_color (int nl) {
   }
 }
 
+static tree
+make_large (tree_label l, tree t) {
+  if (!is_atomic (t)) return tree (l, ".");
+  string s= t->label;
+  if (N(s) <= 1) return tree (l, s);
+  if (s[0] != '<' || s[N(s)-1] != '>' || s == "<nomid>") return tree (l, ".");
+  return tree (l, s (1, N(s)-1));
+}
+
 void
-concater_rep::typeset_around (tree t, path ip) {
-  if (env->get_string (MATH_NESTING_MODE) == "off") {
-    marker (descend (ip, 0));
-    typeset (t[0], descend (ip, 0));
-    typeset (t[1], descend (ip, 1));
-    typeset (t[2], descend (ip, 2));
-    marker (descend (ip, 1));
-  }
-  else {
+concater_rep::typeset_around (tree t, path ip, bool colored) {
+  if (colored) {
     int nl= env->get_int (MATH_NESTING_LEVEL);
     tree old_col= env->local_begin (COLOR, bracket_color (nl));
     tree old_nl = env->local_begin (MATH_NESTING_LEVEL, as_string (nl+1));
-    marker (descend (ip, 0));
-    typeset (t[0], descend (ip, 0));
-    typeset (t[1], descend (ip, 1));
-    typeset (t[2], descend (ip, 2));
-    marker (descend (ip, 1));
+    typeset_around (t, ip, false);
     env->local_end (MATH_NESTING_LEVEL, old_nl);
     env->local_end (COLOR, old_col);
+  }
+  else {
+    marker (descend (ip, 0));
+    switch (L(t)) {
+    case AROUND:
+      typeset (t[0], descend (ip, 0));
+      typeset (t[1], descend (ip, 1));
+      typeset (t[2], descend (ip, 2));
+      break;
+    case VAR_AROUND:
+      typeset (make_large (LEFT, t[0]),
+	       decorate_middle (descend (ip, 0)));
+      typeset (t[1], descend (ip, 1));
+      typeset (make_large (RIGHT, t[2]),
+	       decorate_middle (descend (ip, 2)));
+      break;
+    case BIG_AROUND:
+      typeset (make_large (BIG, t[0]),
+	       decorate_middle (descend (ip, 0)));
+      typeset (t[1], descend (ip, 1));
+      break;
+    default:
+      break;
+    }
+    marker (descend (ip, 1));
   }
 }
 

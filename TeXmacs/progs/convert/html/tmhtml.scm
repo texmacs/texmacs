@@ -1317,7 +1317,7 @@
   (new-dpage* tmhtml-noop)
   (new-dpage tmhtml-noop)
 
-  (around tmhtml-concat)
+  ((:or around around* big-around) tmhtml-concat)
   (left tmhtml-id)
   (mid tmhtml-id)
   (right tmhtml-id)

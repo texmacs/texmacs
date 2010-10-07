@@ -311,7 +311,9 @@ concater_rep::typeset (tree t, path ip) {
     }
 
   case AROUND:
-    typeset_around (t, ip);
+  case VAR_AROUND:
+  case BIG_AROUND:
+    typeset_around (t, ip, env->get_string (MATH_NESTING_MODE) != "off");
     break;
   case LEFT:
     typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");

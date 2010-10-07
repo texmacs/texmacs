@@ -358,7 +358,9 @@
     (Postfixed Open Close)
     (Postfixed Open Expressions Close)
     (Postfixed :<around :any :/ (* Post) (* Pre) :/ :any :>)
+    (Postfixed :<around* :any :/ (* Post) (* Pre) :/ :any :>)
     (Postfixed :<around :any :/ (* Post) Expressions (* Pre) :/ :any :>)
+    (Postfixed :<around* :any :/ (* Post) Expressions (* Pre) :/ :any :>)
     Radical)
 
   (define Radical
@@ -366,7 +368,10 @@
     (Open Expressions Close)
     (Big-open Expressions Big-close)
     (:<around :any :/ (* Post) (* Pre) :/ :any :>)
+    (:<around* :any :/ (* Post) (* Pre) :/ :any :>)
     (:<around :any :/ (* Post) Expressions (* Pre) :/ :any :>)
+    (:<around* :any :/ (* Post) Expressions (* Pre) :/ :any :>)
+    (:<big-around :any :/ (* Post) Expressions :>)
     Identifier
     Number
     Variable-symbol

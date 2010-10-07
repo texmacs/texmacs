@@ -14,6 +14,30 @@
 (texmacs-module (convert rewrite tmtm-brackets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transform into old-style brackets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (make-large l s)
+  (cond ((nstring? s) `(,l "."))
+	((<= (string-length s) 1) `(,l ,s))
+	((== s "<nomid>") `(,l "."))
+	((and (string-starts? s "<") (string-ends? s ">"))
+	 `(,l ,(substring s 1 (- (string-length s) 1))))
+	(else `(,l "."))))
+
+(tm-define (downgrade-brackets t)
+  (with cc (lambda (x) (if (func? x 'concat) (cdr x) (list x)))
+    (cond ((func? t 'around 3)
+	   `(concat ,(cadr t) ,@(cc (caddr t)) ,(cadddr t)))
+	  ((func? t 'around* 3)
+	   `(concat ,(make-large 'left (cadr t))
+		    ,@(cc (caddr t))
+		    ,(make-large 'right (cadddr t))))
+	  ((func? t 'big-around 2)
+	   `(concat ,(make-large 'big (cadr t)) ,@(cc (caddr t))))
+	  (else t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket matching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -46,8 +70,8 @@
 	((== (car l) 'concat)
 	 (let ((complete (tmtm-match-brackets-concat (cdr l))))
 	   (cons 'concat (map tmtm-match-brackets-bis complete))))
-	((func? l 'around 3)
-	 `(concat ,(cadr l) ,(tmtm-match-brackets (caddr l)) ,(cadddr l)))
+	((or (func? l 'around 3) (func? l 'around* 3) (func? l 'big-around 2))
+	 (tmtm-match-brackets (downgrade-brackets l)))
 	(else (cons (car l) (map tmtm-match-brackets (cdr l))))))
 
 (tm-define (tmtm-match-brackets l)

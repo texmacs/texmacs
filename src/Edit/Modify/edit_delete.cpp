@@ -167,6 +167,8 @@ edit_text_rep::remove_text (bool forward) {
       back_monolithic (p);
       return;
     case AROUND:
+    case VAR_AROUND:
+    case BIG_AROUND:
       back_around (t, p, forward);
       return;
     case LEFT:
@@ -213,6 +215,8 @@ edit_text_rep::remove_text (bool forward) {
   if (last == (forward? rix: 0)) {
     switch (L (u)) {
     case AROUND:
+    case VAR_AROUND:
+    case BIG_AROUND:
       back_in_around (u, p, forward);
       return;
     case WIDE:
@@ -333,7 +337,10 @@ edit_text_rep::remove_structure_upwards () {
   int last= last_item (p);
   p= path_up (p);
   tree st= subtree (et, p);
-  if (is_func (st, AROUND, 3)) pre_remove_around (p);
+  if (is_func (st, AROUND, 3) ||
+      is_func (st, VAR_AROUND, 3) ||
+      is_func (st, BIG_AROUND, 2))
+    pre_remove_around (p);
   bool recurse=
     is_func (st, TFORMAT) || is_func (st, TABLE) ||
     is_func (st, ROW) || is_func (st, CELL) ||

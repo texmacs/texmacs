@@ -177,8 +177,12 @@ is_deleted (tree t) {
 
 void
 edit_math_rep::back_around (tree t, path p, bool forward) {
+  if (is_func (t, BIG_AROUND)) {
+    go_to_border (p * 1, forward);
+    return;
+  }
   int i= (forward? 0: 2);
-  if (is_func (t[i], BIG) || is_deleted (t[i]));
+  if (is_deleted (t[i]));
   else if (is_atomic (t[i]))
     assign (t[i], "<nomid>");
   else if (is_func (t[i], LEFT))
@@ -194,13 +198,17 @@ edit_math_rep::back_around (tree t, path p, bool forward) {
 
 void
 edit_math_rep::back_in_around (tree t, path p, bool forward) {
-  int i= (forward? 2: 0);
   if (is_empty (t[1])) {
     assign (t, "");
     correct (path_up (p, 2));
     return;
   }
-  if (is_func (t[i], BIG) || is_deleted (t[i]));
+  if (is_func (t, BIG_AROUND)) {
+    go_to_border (path_up (p), !forward);
+    return;
+  }
+  int i= (forward? 2: 0);
+  if (is_deleted (t[i]));
   else if (is_atomic (t[i]))
     assign (t[i], "<nomid>");
   else if (is_func (t[i], LEFT))

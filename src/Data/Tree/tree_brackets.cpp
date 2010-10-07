@@ -393,6 +393,34 @@ detect_probable (array<tree> a, array<int> tp_in) {
 * Process matching brackets
 ******************************************************************************/
 
+static tree
+make_small (tree br) {
+  if (is_atomic (br)) return br;
+  if (is_func (br, LEFT) ||
+      is_func (br, MID) ||
+      is_func (br, RIGHT) ||
+      is_func (br, BIG))
+    if (N(br) > 0 && is_atomic (br[0])) {
+      string s= br[0]->label;
+      if (s == ".") return "<nomid>";
+      if (N(s) <= 1) return s;
+      return "<" * s * ">";
+    }
+  return "<nomid>";
+}
+
+static tree
+make_around (tree l, tree m, tree r) {
+  tree_label kind= VAR_AROUND;
+  if (is_atomic (l) && is_atomic (r)) kind= AROUND;
+  return tree (kind, make_small (l), m, make_small (r));
+}
+
+static tree
+make_around (tree l, tree m) {
+  return tree (BIG_AROUND, make_small (l), m);
+}
+
 static array<tree>
 simplify_matching (array<tree> a, array<int> tp_in, int level) {
   //cout << "Simplify matching " << a << ", " << tp_in << "\n";
@@ -405,7 +433,7 @@ simplify_matching (array<tree> a, array<int> tp_in, int level) {
       array<tree> b= range (a, last_open+1, i);
       b= upgrade_brackets (b, level+1);
       tree body= concat_recompose (b);
-      a[last_open]= tree (AROUND, a[last_open], body, a[i]);
+      a[last_open]= make_around (a[last_open], body, a[i]);
       tp[last_open]= SYMBOL_BASIC;
       for (int j= last_open+1; j<=i; j++) tp[j]= SYMBOL_DELETED;
       last_open= -1;
@@ -426,8 +454,8 @@ add_missing_left (array<tree> a, array<int> tp) {
     if (tp[i] == SYMBOL_CLOSE) {
       tree body= concat_recompose (b);
       b= array<tree> ();
-      if (is_atomic (a[i])) b << tree (AROUND, "<none>", body, a[i]);
-      else b << tree (AROUND, tree (LEFT, "."), body, a[i]);
+      if (is_atomic (a[i])) b << make_around ("<nomid>", body, a[i]);
+      else b << make_around (tree (LEFT, "."), body, a[i]);
     }
     else b << a[i];
   return b;
@@ -440,8 +468,8 @@ add_missing_right (array<tree> a, array<int> tp) {
     if (tp[i] == SYMBOL_OPEN) {
       tree body= concat_recompose (reverse (b));
       b= array<tree> ();
-      if (is_atomic (a[i])) b << tree (AROUND, a[i], body, "<none>");
-      else b << tree (AROUND, a[i], body, tree (RIGHT, "."));
+      if (is_atomic (a[i])) b << make_around (a[i], body, "<nomid>");
+      else b << make_around (a[i], body, tree (RIGHT, "."));
     }
     else b << a[i];
   return reverse (b);
@@ -588,7 +616,7 @@ upgrade_brackets (array<tree> a, int level) {
     r= upgrade_brackets (range (a, 1, N(a)), level + 1);
     tree body= concat_recompose (r);
     r= array<tree> ();
-    r << tree (AROUND, a[0], body, tree (BIG, "."));
+    r << make_around (a[0], body);
     return r;
   }
   return a;
@@ -609,6 +637,8 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
       if (is_concat (t)) {
 	if (is_atomic (t[i]) ||
 	    is_func (t[i], AROUND) ||
+	    is_func (t[i], VAR_AROUND) ||
+	    is_func (t[i], BIG_AROUND) ||
 	    is_func (t[i], LEFT) ||
 	    is_func (t[i], MID) ||
 	    is_func (t[i], RIGHT) ||

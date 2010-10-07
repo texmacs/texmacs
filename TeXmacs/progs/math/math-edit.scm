@@ -193,23 +193,15 @@
 	   `(,type ,(substring s 1 (- (string-length s) 1))))
 	  (else `(,type ".")))))
 
-(tm-define (around-toggle-size . opt)
-  (with-innermost t 'around
-    (cond ((or (!= (tree-arity t) 3) (tree-is? t 0 'big)) (noop))
-	  ((== opt '(#t))
-	   (tree-assign (tree-ref t 0) (make-large (tree-ref t 0) 0))
-	   (tree-assign (tree-ref t 2) (make-large (tree-ref t 2) 2)))
-	  ((== opt '(#f))
-	   (tree-assign (tree-ref t 0) (make-small (tree-ref t 0)))
-	   (tree-assign (tree-ref t 2) (make-small (tree-ref t 2))))
-	  ((tree-atomic? (tree-ref t 0))
-	   (around-toggle-size #t))
-	  (else
-	   (around-toggle-size #f)))))
-
 (tm-define (toggle-variant)
   (:inside around)
-  (around-toggle-size))
+  (with-innermost t 'around
+    (tree-assign-node t 'around*)))
+
+(tm-define (toggle-variant)
+  (:inside around*)
+  (with-innermost t 'around*
+    (tree-assign-node t 'around)))
 
 (define brackets
   '(("(" ")")
@@ -222,64 +214,62 @@
     ("<lceil>" "<rceil>")
     ("<llbracket>" "<rrbracket>")))
 
+(tm-define (variant-circulate forward?)
+  (:inside around around*)
+  (with-innermost t '(around around*)
+    (when (and (== (tree-arity t) 3)
+	       (tree-atomic? (tree-ref t 0))
+	       (tree-atomic? (tree-ref t 2)))
+      (let* ((l (tree->string (tree-ref t 0)))
+	     (r (tree->string (tree-ref t 2)))
+	     (p (list l r)))
+	(when (in? p brackets)
+	  (let* ((i (list-find-index brackets (lambda (x) (== x p))))
+		 (j (modulo (+ i (if forward? 1 -1)) (length brackets)))
+		 (nl (car (list-ref brackets j)))
+		 (nr (cadr (list-ref brackets j))))
+	    (tree-assign (tree-ref t 0) nl)
+	    (tree-assign (tree-ref t 2) nr)))))))
+
 (define bigops
-  '("int" "intlim" "oint" "ointlim"
-    "sum" "prod" "amalg"
-    "cap" "cup" "sqcap" "sqcup"
-    "vee" "wedge" "curlyvee" "curlywedge"
-    "odot" "otimes" "oplus"
-    "triangleup" "triangledown"
-    "box" "parallel" "interleave"))
+  '("<int>" "<intlim>" "<oint>" "<ointlim>"
+    "<sum>" "<prod>" "<amalg>"
+    "<cap>" "<cup>" "<sqcap>" "<sqcup>"
+    "<vee>" "<wedge>" "<curlyvee>" "<curlywedge>"
+    "<odot>" "<otimes>" "<oplus>"
+    "<triangleup>" "<triangledown>"
+    "<box>" "<parallel>" "<interleave>"))
 
 (tm-define (variant-circulate forward?)
-  (:inside around)
-  (with-innermost t 'around
-    (if (tree-is? t 0 'big)
-	(when (and (== (tree-arity (tree-ref t 0)) 1)
-		   (tree-atomic? (tree-ref t 0 0)))
-	  (with s (tree->string (tree-ref t 0 0))
-	    (when (in? s bigops)
-	      (let* ((i (list-find-index bigops (lambda (x) (== x s))))
-		     (j (modulo (+ i (if forward? 1 -1)) (length bigops)))
-		     (ns (list-ref bigops j)))
-		(tree-assign (tree-ref t 0 0) ns)))))
-	(let* ((l (make-small (tree-ref t 0)))
-	       (r (make-small (tree-ref t 2)))
-	       (p (list l r)))
-	  (when (in? p brackets)
-	    (let* ((i (list-find-index brackets (lambda (x) (== x p))))
-		   (j (modulo (+ i (if forward? 1 -1)) (length brackets)))
-		   (sl (car (list-ref brackets j)))
-		   (sr (cadr (list-ref brackets j)))
-		   (nl (if (string? (tree-ref t 0)) sl (make-large sl 0)))
-		   (nr (if (string? (tree-ref t 2)) sr (make-large sr 2))))
-	      (tree-assign (tree-ref t 0) nl)
-	      (tree-assign (tree-ref t 2) nr)))))))
+  (:inside big-around)
+  (with-innermost t 'big-around
+    (when (and (== (tree-arity t) 2)
+	       (tree-atomic? (tree-ref t 0)))
+      (with s (tree->string (tree-ref t 0))
+	(when (in? s bigops)
+	  (let* ((i (list-find-index bigops (lambda (x) (== x s))))
+		 (j (modulo (+ i (if forward? 1 -1)) (length bigops)))
+		 (ns (list-ref bigops j)))
+	    (tree-assign (tree-ref t 0) ns)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Matching brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (deleted? t i)
-  (in? (tm->stree (tree-ref t i))
-       '("<nomid>" (left ".") (right "."))))
+  (== (tm->stree (tree-ref t i)) "<nomid>"))
 
-(define (modify-bracket t i new)
-  (with old (tm->stree (tree-ref t i))
-    (cond ((and (string? old) (string? new))
-	   (tree-assign (tree-ref t i) new))
-	  ((and (nstring? old) (nstring? new))
-	   (tree-assign (tree-ref t i) new))
-	  ((and (string? old) (nstring? new))
-	   (tree-assign (tree-ref t i) (make-small new)))
-	  ((and (nstring? old) (string? new))
-	   (tree-assign (tree-ref t i) (make-large new i))))))
+(define (make-small s)
+  (cond ((nstring? s) "<nomid>")
+	((== s ".") "<nomid>")
+	((<= (string-length s) 1) s)
+	(else (string-append "<" s ">"))))
 
 (define (find-adjacent-around del?)
   (let* ((ret #f)
 	 (p (cursor-path))
 	 (p* (cursor-path*)))
-    (with t (tree-innermost 'around)
+    (with t (tree-innermost '(around around*))
       (when t
 	(when (== p (tree->path t 1 :start))
 	  (when (deleted? t 0)
@@ -289,7 +279,7 @@
 	    (set! ret t)))))
     (when (not ret)
       (with t (path->tree (cDr p))
-	(when (tree-is? t 'around)
+	(when (tree-in? t '(around around*))
 	  (when (== (cAr p) 0)
 	    (when (deleted? t 0)
 	      (set! ret t)))
@@ -298,7 +288,7 @@
 	      (set! ret t))))))
     (when (and (not ret) (!= p p*))
       (with t (path->tree (cDr p*))
-	(when (tree-is? t 'around)
+	(when (tree-in? t '(around around*))
 	  (when (== (cAr p*) 0)
 	    (when (deleted? t 0)
 	      (set! ret t))))))
@@ -308,24 +298,25 @@
   (when (!= (get-preference "matching brackets") "on")
     (make-bracket-open lb rb large?))
   (when (== (get-preference "matching brackets") "on")
+    (if large? (set! lb (make-small lb)))
+    (if large? (set! rb (make-small rb)))
     (let* ((t (find-adjacent-around #t))
 	   (u (find-adjacent-around #f)))
       (cond ((and t (deleted? t 0))
-	     (if large? (set! lb `(left ,lb)))
-	     (modify-bracket t 0 lb)
+	     (tree-set t 0 lb)
 	     (tree-go-to t 1 :start))
 	    ((and t (deleted? t 2))
-	     (if large? (set! lb `(right ,lb)))
-	     (modify-bracket t 2 lb)
+	     (tree-set t 2 lb)
 	     (tree-go-to t :end))
-	    ((and u (== lb rb))
-	     (if large? (set! rb `(right ,rb)))
-	     (modify-bracket u 2 rb)
+	    ((and u (== (tree->stree (tree-ref u 2)) rb))
 	     (tree-go-to u :end))
-	    (else
-	      (if large? (set! lb `(left ,lb)))
-	      (if large? (set! rb `(right ,rb)))
-	      (insert-go-to `(around ,lb "" ,rb) '(1 0)))))))
+	    ((and u (== (tree->stree (tree-ref u 0)) "<langle>") (== rb "|"))
+	     (tree-set u 2 rb)
+	     (tree-go-to u :end))
+	    ((not large?)
+	     (insert-go-to `(around ,lb "" ,rb) '(1 0)))
+	    (large?
+	     (insert-go-to `(around* ,lb "" ,rb) '(1 0)))))))
 
 (tm-define (math-separator sep large?)
   (when (!= (get-preference "matching brackets") "on")
@@ -337,19 +328,18 @@
   (when (!= (get-preference "matching brackets") "on")
     (make-bracket-close rb lb large?))
   (when (== (get-preference "matching brackets") "on")
+    (if large? (set! rb (make-small rb)))
+    (if large? (set! lb (make-small lb)))
     (let* ((t (find-adjacent-around #t))
 	   (u (find-adjacent-around #f)))
       (cond ((and t (deleted? t 0))
-	     (if large? (set! rb `(left ,rb)))
-	     (modify-bracket t 0 rb)
+	     (tree-set t 0 rb)
 	     (tree-go-to t 1 :start))
 	    ((and t (deleted? t 2))
-	     (if large? (set! rb `(right ,rb)))
-	     (modify-bracket t 2 rb)
+	     (tree-set t 2 rb)
 	     (tree-go-to t :end))
 	    (u
-	     (if large? (set! rb `(right ,rb)))
-	     (modify-bracket u 2 rb)
+	     (tree-set u 2 rb)
 	     (tree-go-to u :end))
 	    (else
 	      (set-message "Error: bracket does not match"
@@ -359,4 +349,4 @@
   (when (!= (get-preference "matching brackets") "on")
     (make-big-operator op))
   (when (== (get-preference "matching brackets") "on")
-    (insert-go-to `(around (big ,op) "" (big ".")) '(1 0))))
+    (insert-go-to `(big-around ,(make-small op) "") '(1 0))))

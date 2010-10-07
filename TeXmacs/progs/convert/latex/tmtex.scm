@@ -584,6 +584,15 @@
 ;; Mathematics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmtex-around l)
+  (tmtex-concat (cdr (downgrade-brackets (cons 'around l)))))
+
+(define (tmtex-around* l)
+  (tmtex-concat (cdr (downgrade-brackets (cons 'around* l)))))
+
+(define (tmtex-big-around l)
+  (tmtex-concat (cdr (downgrade-brackets (cons 'big-around l)))))
+
 (define (tmtex-large-decode s)
   (cond ((nstring? s) ".")
         ((in? s '("(" ")" "[" "]" "|" "/" ".")) s)
@@ -1463,7 +1472,9 @@
   (new-dpage* tmtex-noop)
   (new-dpage tmtex-noop)
 
-  (around tmtex-concat)
+  (around tmtex-around)
+  (around* tmtex-around*)
+  (big-around tmtex-big-around)
   (left tmtex-left)
   (mid tmtex-mid)
   (right tmtex-right)

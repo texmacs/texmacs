@@ -154,6 +154,8 @@ init_std_drd () {
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
   init (AROUND, "around", fixed (3, 0, DETAILED) -> accessible (1));
+  init (VAR_AROUND, "around*", fixed (3, 0, DETAILED) -> accessible (1));
+  init (BIG_AROUND, "big-around", fixed (2, 0, DETAILED) -> accessible (1));
   init (LEFT, "left", options (1, 2));
   init (MID, "mid", options (1, 2));
   init (RIGHT, "right", options (1, 2));
