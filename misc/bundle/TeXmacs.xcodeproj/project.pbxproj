@@ -144,23 +144,6 @@
 		9C0B4A9810A8CC110097A335 /* QTMStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B810A8CC100097A335 /* QTMStyle.cpp */; };
 		9C0B4A9910A8CC110097A335 /* QTMWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BA10A8CC100097A335 /* QTMWidget.cpp */; };
 		9C0B4A9A10A8CC110097A335 /* QTMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */; };
-		9C0B4AC410A8CC110097A335 /* assoc_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490610A8CC100097A335 /* assoc_environment.cpp */; };
-		9C0B4AC510A8CC110097A335 /* basic_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490810A8CC100097A335 /* basic_environment.cpp */; };
-		9C0B4AC610A8CC110097A335 /* list_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490B10A8CC100097A335 /* list_environment.cpp */; };
-		9C0B4AC710A8CC110097A335 /* std_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490D10A8CC100097A335 /* std_environment.cpp */; };
-		9C0B4AC810A8CC110097A335 /* evaluate_boolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491010A8CC100097A335 /* evaluate_boolean.cpp */; };
-		9C0B4AC910A8CC110097A335 /* evaluate_control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491110A8CC100097A335 /* evaluate_control.cpp */; };
-		9C0B4ACA10A8CC110097A335 /* evaluate_inactive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491210A8CC100097A335 /* evaluate_inactive.cpp */; };
-		9C0B4ACB10A8CC110097A335 /* evaluate_length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491310A8CC100097A335 /* evaluate_length.cpp */; };
-		9C0B4ACC10A8CC110097A335 /* evaluate_macro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491410A8CC100097A335 /* evaluate_macro.cpp */; };
-		9C0B4ACD10A8CC110097A335 /* evaluate_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491510A8CC100097A335 /* evaluate_main.cpp */; };
-		9C0B4ACE10A8CC110097A335 /* evaluate_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491710A8CC100097A335 /* evaluate_misc.cpp */; };
-		9C0B4ACF10A8CC110097A335 /* evaluate_numeric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491810A8CC100097A335 /* evaluate_numeric.cpp */; };
-		9C0B4AD010A8CC110097A335 /* evaluate_quote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491910A8CC100097A335 /* evaluate_quote.cpp */; };
-		9C0B4AD110A8CC110097A335 /* evaluate_rewrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491A10A8CC100097A335 /* evaluate_rewrite.cpp */; };
-		9C0B4AD210A8CC110097A335 /* evaluate_textual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491B10A8CC100097A335 /* evaluate_textual.cpp */; };
-		9C0B4AD310A8CC110097A335 /* clean_copy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491D10A8CC100097A335 /* clean_copy.cpp */; };
-		9C0B4AD410A8CC110097A335 /* memorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491F10A8CC100097A335 /* memorizer.cpp */; };
 		9C0B4AD510A8CC110097A335 /* init_texmacs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492410A8CC110097A335 /* init_texmacs.cpp */; };
 		9C0B4AD610A8CC110097A335 /* init_upgrade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492510A8CC110097A335 /* init_upgrade.cpp */; };
 		9C0B4AD710A8CC110097A335 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492710A8CC110097A335 /* timer.cpp */; };
@@ -871,6 +854,9 @@
 		9CD4E73010B14AEE00E0DD5C /* x_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490210A8CC100097A335 /* x_window.cpp */; };
 		9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48EF10A8CC100097A335 /* xpm_widget.cpp */; };
 		9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487A10A8CC100097A335 /* ghostscript.cpp */; };
+		9CE18E83125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
+		9CE18E84125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
+		9CE18E85125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
 		9CEE09DF11EDDB3100403342 /* agl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096411EDDB3100403342 /* agl.c */; };
 		9CEE09E011EDDB3100403342 /* bmpimage.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096611EDDB3100403342 /* bmpimage.c */; };
 		9CEE09E111EDDB3100403342 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE096811EDDB3100403342 /* cff.c */; };
@@ -1709,6 +1695,8 @@
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
+		9CE18E81125E685D00641CFC /* tree_brackets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_brackets.cpp; sourceTree = "<group>"; };
+		9CE18E82125E685D00641CFC /* tree_brackets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_brackets.hpp; sourceTree = "<group>"; };
 		9CE4F0041238FAF800993AF7 /* packrat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat.hpp; sourceTree = "<group>"; };
 		9CEE096411EDDB3100403342 /* agl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = agl.c; sourceTree = "<group>"; };
 		9CEE096511EDDB3100403342 /* agl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = agl.h; sourceTree = "<group>"; };
@@ -2092,6 +2080,8 @@
 		9C0B47A310A8CC100097A335 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				9CE18E81125E685D00641CFC /* tree_brackets.cpp */,
+				9CE18E82125E685D00641CFC /* tree_brackets.hpp */,
 				9C0B47A410A8CC100097A335 /* tree_correct.cpp */,
 				9C0B47A510A8CC100097A335 /* tree_correct.hpp */,
 				9C0B47A610A8CC100097A335 /* tree_cursor.cpp */,
@@ -3506,7 +3496,14 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* TeXmacs */;
 			projectDirPath = "";
 			projectRoot = ../..;
@@ -3775,23 +3772,6 @@
 				9C0B4A9810A8CC110097A335 /* QTMStyle.cpp in Sources */,
 				9C0B4A9910A8CC110097A335 /* QTMWidget.cpp in Sources */,
 				9C0B4A9A10A8CC110097A335 /* QTMWindow.cpp in Sources */,
-				9C0B4AC410A8CC110097A335 /* assoc_environment.cpp in Sources */,
-				9C0B4AC510A8CC110097A335 /* basic_environment.cpp in Sources */,
-				9C0B4AC610A8CC110097A335 /* list_environment.cpp in Sources */,
-				9C0B4AC710A8CC110097A335 /* std_environment.cpp in Sources */,
-				9C0B4AC810A8CC110097A335 /* evaluate_boolean.cpp in Sources */,
-				9C0B4AC910A8CC110097A335 /* evaluate_control.cpp in Sources */,
-				9C0B4ACA10A8CC110097A335 /* evaluate_inactive.cpp in Sources */,
-				9C0B4ACB10A8CC110097A335 /* evaluate_length.cpp in Sources */,
-				9C0B4ACC10A8CC110097A335 /* evaluate_macro.cpp in Sources */,
-				9C0B4ACD10A8CC110097A335 /* evaluate_main.cpp in Sources */,
-				9C0B4ACE10A8CC110097A335 /* evaluate_misc.cpp in Sources */,
-				9C0B4ACF10A8CC110097A335 /* evaluate_numeric.cpp in Sources */,
-				9C0B4AD010A8CC110097A335 /* evaluate_quote.cpp in Sources */,
-				9C0B4AD110A8CC110097A335 /* evaluate_rewrite.cpp in Sources */,
-				9C0B4AD210A8CC110097A335 /* evaluate_textual.cpp in Sources */,
-				9C0B4AD310A8CC110097A335 /* clean_copy.cpp in Sources */,
-				9C0B4AD410A8CC110097A335 /* memorizer.cpp in Sources */,
 				9C0B4AD510A8CC110097A335 /* init_texmacs.cpp in Sources */,
 				9C0B4AD610A8CC110097A335 /* init_upgrade.cpp in Sources */,
 				9C0B4AD710A8CC110097A335 /* timer.cpp in Sources */,
@@ -3975,6 +3955,7 @@
 				9CEE0A1711EDDB3100403342 /* pdf_renderer.cpp in Sources */,
 				9C74D95F123BF892008959D1 /* packrat_grammar.cpp in Sources */,
 				9C74D960123BF892008959D1 /* packrat_parser.cpp in Sources */,
+				9CE18E83125E685D00641CFC /* tree_brackets.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4325,6 +4306,7 @@
 				9C74D965123BF892008959D1 /* packrat_grammar.cpp in Sources */,
 				9C74D966123BF892008959D1 /* packrat_parser.cpp in Sources */,
 				9C74D967123BF892008959D1 /* win32_get_date.cpp in Sources */,
+				9CE18E85125E685D00641CFC /* tree_brackets.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4690,6 +4672,7 @@
 				9C74D962123BF892008959D1 /* packrat_grammar.cpp in Sources */,
 				9C74D963123BF892008959D1 /* packrat_parser.cpp in Sources */,
 				9C74D964123BF892008959D1 /* win32_get_date.cpp in Sources */,
+				9CE18E84125E685D00641CFC /* tree_brackets.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
