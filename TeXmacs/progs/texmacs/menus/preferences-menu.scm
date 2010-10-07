@@ -156,7 +156,7 @@
 	(toggle ("Linking tool" "linking tool"))
 	(toggle ("Versioning tool" "versioning tool"))
 	(toggle ("Remote connections" "remote connections")))
-    (-> "Miscellaneous"
+    (-> "Experimental"
 	(toggle ("Fast environments" "fast environments"))
 	(toggle ("Force matching brackets" "matching brackets"))
 	(toggle ("Semantic editing" "semantic editing")))
