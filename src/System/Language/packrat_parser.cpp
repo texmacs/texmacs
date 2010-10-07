@@ -522,17 +522,98 @@ packrat_parser_rep::highlight (C sym, C pos) {
   }
 }
 
-packrat_parser
-highlight_packrat (string lan, string s, path ip, bool force) {
+/******************************************************************************
+* Memoized and accelerated highlighting
+******************************************************************************/
+
+static bool
+empty_line (tree t) {
+  if (!is_atomic (t)) return false;
+  string s= t->label;
+  for (int i=0; i<N(s); i++)
+    if (s[i] != ' ') return false;
+  return true;
+}
+
+static bool
+consistent_portion (tree t, int begin, int end) {
+  int level= 0;
+  for (int i=begin; i<=end; i++)
+    if (is_atomic (t[i])) {
+      string s= t[i]->label;
+      for (int j=0; j<N(s); j++)
+	switch (s[j]) {
+	case '(': level++; break;
+	case ')': if (level <= 0) return false; level--; break;
+	case '[': level++; break;
+	case ']': if (level <= 0) return false; level--; break;
+	case '{': level++; break;
+	case '}': if (level <= 0) return false; level--; break;
+	default : break;
+	}
+    }
+  return level == 0;
+}
+
+static void
+consistent_enlargement (tree t, int& begin, int& end) {
+  while (begin > 0 || end < N(t)-1) {
+    while (begin > 0 && !empty_line (t[begin-1])) begin--;
+    while (end+1 < N(t) && !empty_line (t[end+1])) end++;
+    if (consistent_portion (t, begin, end)) return;
+    //cout << "Inconsistent " << begin << " -- " << end << "\n";
+    begin= max (0     , begin - max (end - begin, 1));
+    end  = min (N(t)-1, end   + max (end - begin, 1));
+    //cout << "  Try " << begin << " -- " << end << "\n";
+  }
+}
+
+static packrat_parser
+highlight_packrat (string lan, string s, path ip, path tp, bool force) {
   static string last_lan;
   static string last_s;
   static path last_ip;
+  static int last_begin= -1;
+  static int last_end= -1;
   static packrat_parser last_par;
-  tree in= subtree (the_et, reverse (ip));
-  if (last_lan != lan || last_s != s || last_ip != ip || force) {
+
+  if (last_lan != lan || last_s != s || last_ip != ip) force= true;
+  if (force) last_begin= last_end= -1;
+
+  tree st= subtree (the_et, reverse (ip));
+  int begin= -1, end= -1;
+  if (is_func (st, DOCUMENT) && is_atom (tp)) {
+    begin= tp->item;
+    end= tp->item;
+    if (last_begin <= begin && end <= last_end) {
+      begin= last_begin;
+      end  = last_end;
+    }
+    else {
+      consistent_enlargement (st, begin, end);
+      if (!(last_end < begin || end < last_begin)) {
+	begin= min (begin, last_begin);
+	end  = max (end  , last_end);
+	consistent_enlargement (st, begin, end);
+      }
+    }
+  }
+
+  if (force || last_begin != begin || last_end != end) {
+    tree in= st;
+    if (begin != -1) {
+      //cout << "Range= " << begin << " -- " << end << "\n";
+      int i;
+      in= tree (st, N(st));
+      for (i=0; i<begin; i++) in[i]= "";
+      for (i=begin; i<=end; i++) in[i]= st[i];
+      for (i=end+1; i<N(st); i++) in[i]= "";
+    }
     last_lan= lan;
     last_s= s;
     last_ip= ip;
+    last_begin= begin;
+    last_end= end;
     last_par= make_packrat_parser (lan, in);
     C sym = encode_symbol (compound ("symbol", s));
     if (last_par->parse (sym, 0) == N(last_par->current_input))
@@ -635,7 +716,8 @@ packrat_colors (string lan, string s, tree t) {
     tp= path (ip->item, tp);
     ip= ip->next;
   }
-  packrat_parser par= highlight_packrat (lan, s, ip, packrat_invalid_colors);
+  packrat_parser par=
+    highlight_packrat (lan, s, ip, tp, packrat_invalid_colors);
   packrat_invalid_colors= false;
   if (par->current_colors->contains (tp))
     return par->current_colors [tp];
