@@ -32,6 +32,10 @@
 #include "Ghostscript/gs_utilities.hpp"
 #endif
 
+#ifdef QTTEXMACS
+#include "Qt/qt_utilities.hpp"
+#endif
+
 /******************************************************************************
 * Constructors and destructor
 ******************************************************************************/
@@ -251,10 +255,30 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 
 void
 edit_main_rep::print_buffer (string first, string last) {
+#ifdef 0
+//#ifdef QTTEXMACS // disabled for the moment
+  // in Qt this is the main entry point to the printing subsystem.
+  // the other routines (print_to_file, ...) are overriden since all fine tuning 
+  // is made here via the Qt print dialog
+  bool to_file, landscape;
+  url name = url_none();
+  string printer;
+  string paper_type;
+  if (qt_print (to_file, landscape, printer, name, first, last, paper_type)) {
+      if (!to_file) name = url_temp (".ps");
+      print (name, false, as_int (first), as_int (last));
+      if (!to_file) {
+        string cmd = printing_cmd * " -P" * printer;
+        system (cmd, name);  
+        ::remove (name);
+      }
+  }
+#else
   url temp= url_temp (".ps");
   print (temp, false, as_int (first), as_int (last));
   system (printing_cmd, temp);
   ::remove (temp);
+#endif
 }
 
 void
