@@ -159,6 +159,9 @@ concater_rep::typeset (tree t, path ip) {
       ip= ip2;
   }
 
+  if (env->hl_lan != 0)
+    env->lan->highlight (t);
+
   if (is_atomic (t)) {
     if      (env->mode == 1) typeset_text_string (t, ip, 0, N(t->label));
     else if (env->mode == 2) typeset_math_string (t, ip, 0, N(t->label));

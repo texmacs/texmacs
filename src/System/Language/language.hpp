@@ -89,17 +89,16 @@ typedef text_property_rep* text_property;
 
 struct language_rep: rep<language> {
   string lan_name;  // name of the language
-  inline language_rep (string s);
+  int hl_lan;
+  language_rep (string s);
   virtual text_property advance (tree t, int& pos) = 0;
   virtual array<int> get_hyphens (string s) = 0;
   virtual void hyphenate (string s, int after, string& l, string& r) = 0;
   virtual string get_group (string s);
   virtual array<string> get_members (string s);
+  virtual void highlight (tree t);
   virtual string get_color (tree t, int start, int end);
 };
-
-inline language_rep::language_rep (string s):
-  rep<language> (s) {}
 
 language text_language (string s);
 language math_language (string s);

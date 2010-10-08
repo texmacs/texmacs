@@ -34,6 +34,7 @@ public:
 
   void announce (tree& ref, modification mod);
   void done     (tree& ref, modification mod);
+  void touched  (tree& ref, path p);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -54,6 +55,8 @@ public:
   observer& get_child (int which);
   list<observer> get_tree_pointers ();
   bool get_tree (tree& t);
+  bool set_highlight (int lan, int col, int start, int end);
+  bool get_highlight (int lan, array<int>& cols);
 };
 
 /******************************************************************************
@@ -70,6 +73,12 @@ void
 list_observer_rep::done (tree& ref, modification mod) {
   if (!is_nil (o1)) o1->done (ref, mod);
   if (!is_nil (o2)) o2->done (ref, mod);
+}
+
+void
+list_observer_rep::touched (tree& ref, path p) {
+  if (!is_nil (o1)) o1->touched (ref, p);
+  if (!is_nil (o2)) o2->touched (ref, p);
 }
 
 /******************************************************************************
@@ -188,6 +197,18 @@ bool
 list_observer_rep::get_tree (tree& t) {
   return (!is_nil (o1) && o1->get_tree (t)) |
          (!is_nil (o2) && o2->get_tree (t));
+}
+
+bool
+list_observer_rep::set_highlight (int lan, int col, int start, int end) {
+  return (!is_nil (o1) && o1->set_highlight (lan, col, start, end)) |
+         (!is_nil (o2) && o2->set_highlight (lan, col, start, end));
+}
+
+bool
+list_observer_rep::get_highlight (int lan, array<int>& cols) {
+  return (!is_nil (o1) && o1->get_highlight (lan, cols)) |
+         (!is_nil (o2) && o2->get_highlight (lan, cols));
 }
 
 /******************************************************************************

@@ -481,3 +481,18 @@ packrat_inherit (string lan, string from) {
     gr->properties (p)= inh->properties (p);
   }
 }
+
+int
+packrat_abbreviation (string lan, string s) {
+  static int nr= 1;
+  static hashmap<string,int> abbrs (-1);
+  string key= lan * ":" * s;
+  int r= abbrs[key];
+  if (r >= 0) return r;
+  packrat_grammar gr= find_packrat_grammar (lan);
+  C sym= encode_symbol (compound ("symbol", s));
+  if (gr->grammar->contains (sym)) r= nr++;
+  else r= 0;
+  abbrs (key)= r;
+  return r;
+}

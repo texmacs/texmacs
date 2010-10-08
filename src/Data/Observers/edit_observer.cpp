@@ -27,6 +27,7 @@ public:
 
   void announce (tree& ref, modification mod);
   void done     (tree& ref, modification mod);
+  void touched  (tree& ref, path p);
 
   void reattach           (tree& ref, tree t);
   void notify_assign      (tree& ref, tree t);
@@ -52,6 +53,13 @@ edit_observer_rep::done (tree& ref, modification mod) {
   //cout << "Done " << mod->p << "\n";
   if (ip_attached (obtain_ip (ref)))
     edit_done (ed, reverse (obtain_ip (ref)) * mod);
+}
+
+void
+edit_observer_rep::touched (tree& ref, path p) {
+  //cout << "Touched " << p << "\n";
+  if (ip_attached (obtain_ip (ref)))
+    edit_touch (ed, reverse (obtain_ip (ref)) * p);
 }
 
 /******************************************************************************

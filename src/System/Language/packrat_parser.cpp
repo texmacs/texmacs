@@ -432,15 +432,7 @@ packrat_parser_rep::highlight (tree t, path tp, path p1, path p2, int col) {
     ASSERT (is_atom (p1) && is_atom (p2), "invalid selection");
     ASSERT (0 <= p1->item && p1->item <= p2->item && p2->item <= N(s),
 	    "invalid selection");
-    if (!current_colors->contains (tp)) {
-      array<int> cols (N(s));
-      for (int i=0; i<N(s); i++) cols[i]= 0;
-      current_colors (tp)= cols;
-    }
-    array<int>& cols (current_colors (tp));
-    for (int i=p1->item; i<p2->item; i++)
-      cols[i]= col;
-    //attach_highlight (t, col, p1->item, p2->item);
+    attach_highlight (t, current_hl_lan, col, p1->item, p2->item);
   }
   else if (N(t) == 0);
   else {
@@ -703,23 +695,31 @@ packrat_select (string lan, string s, tree in, path in_pos,
   return true;
 }
 
-array<int>
-packrat_colors (string lan, string s, tree t) {
-  //cout << "Highlight " << lan << ", " << s << " in " << t << "\n";
-  if (!is_atomic (t)) return array<int> ();
-  path tp;
-  path ip= obtain_ip (t);
-  if (is_nil (ip) || last_item (ip) < 0) return array<int> ();
-  while (!is_nil (ip)) {
-    tree pt= subtree (the_et, reverse (ip->next));
-    if (!is_format (pt)) break;
-    tp= path (ip->item, tp);
-    ip= ip->next;
+void
+packrat_highlight_subtree (string lan, string s, tree in) {
+  //cout << "Highlight " << lan << ", " << s << " in " << in << "\n";
+  int hl_lan= packrat_abbreviation (lan, s);
+  if (hl_lan == 0) return;
+  packrat_parser par= make_packrat_parser (lan, in);
+  C sym = encode_symbol (compound ("symbol", s));
+  if (par->parse (sym, 0) == N(par->current_input)) {
+    par->current_hl_lan= hl_lan;
+    par->highlight (sym, 0);
   }
-  packrat_parser par=
-    highlight_packrat (lan, s, ip, tp, packrat_invalid_colors);
-  packrat_invalid_colors= false;
-  if (par->current_colors->contains (tp))
-    return par->current_colors [tp];
-  else return array<int> ();
+}
+
+void
+packrat_highlight (string lan, string s, tree in) {
+  int hl_lan= packrat_abbreviation (lan, s);
+  if (hl_lan == 0) return;
+  //cout << "Highlight " << in << "\n";
+  //if (is_func (in, DOCUMENT)) {
+  //}
+  //else {
+  if (is_compound (in))
+    for (int i=0; i<N(in); i++)
+      detach_highlight (in[i], hl_lan);
+  attach_highlight (in, hl_lan);
+  packrat_highlight_subtree (lan, s, in);
+  //}
 }

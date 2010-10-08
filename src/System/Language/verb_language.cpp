@@ -15,7 +15,10 @@
 #include "packrat.hpp"
 
 verb_language_rep::verb_language_rep (string name):
-  language_rep (name) {}
+  language_rep (name)
+{
+  hl_lan= packrat_abbreviation (res_name, "Main");
+}
 
 text_property
 verb_language_rep::advance (tree t, int& pos) {
@@ -30,7 +33,7 @@ verb_language_rep::advance (tree t, int& pos) {
     return &tp_hyph_rep;
   }
 
-  array<int> cols= packrat_colors (res_name, "Main", t);
+  array<int> cols= obtain_highlight (t, hl_lan);
   if (N(cols) == 0)
     while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) pos++;
   else if ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-')) {
@@ -38,7 +41,6 @@ verb_language_rep::advance (tree t, int& pos) {
     while ((pos<N(s)) && (s[pos]!=' ') && (s[pos]!='-') &&
 	   cols[pos] == cols[pos-1]) pos++;
   }
-    
   return &tp_normal_rep;
 }
 
@@ -62,7 +64,7 @@ verb_language_rep::hyphenate (
 string
 verb_language_rep::get_color (tree t, int start, int end) {
   if (start >= end) return "";
-  array<int> cols= packrat_colors (res_name, "Main", t);
+  array<int> cols= obtain_highlight (t, hl_lan);
   if (start < N(cols) && cols[start] != 0)
     return decode_color (cols[start]);
   return "";

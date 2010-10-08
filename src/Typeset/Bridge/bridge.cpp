@@ -304,6 +304,7 @@ bridge_rep::typeset (int desired_status) {
     env->link_env= link_env;
     ttt->local_start (l, sb);
     env->local_start (prev_back);
+    if (env->hl_lan != 0) env->lan->highlight (st);
     my_typeset (desired_status);
     env->local_update (ttt->old_patch, changes);
     env->local_end (prev_back);

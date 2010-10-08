@@ -30,6 +30,7 @@ public:
 
   void announce (tree& ref, modification mod);
   void done     (tree& ref, modification mod);
+  void touched  (tree& ref, path p);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -72,6 +73,15 @@ ip_observer_rep::done (tree& ref, modification mod) {
   if (!has_parent (ip)) return;
   tree& parent (subtree (the_et, reverse (ip->next)));
   parent->obs->done (parent, ip->item * mod);
+}
+
+void
+ip_observer_rep::touched (tree& ref, path p) {
+  (void) ref;
+  //cout << "Touched " << ip << ", " << p << "\n";
+  if (!has_parent (ip)) return;
+  tree& parent (subtree (the_et, reverse (ip->next)));
+  parent->obs->touched (parent, path (ip->item, p));
 }
 
 /******************************************************************************

@@ -304,6 +304,7 @@ edit_env_rep::update_language () {
     lan= prog_language (get_string (PROG_LANGUAGE));
     break;
   }
+  hl_lan= lan->hl_lan;
 }
 
 void

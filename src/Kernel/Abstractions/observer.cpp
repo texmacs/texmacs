@@ -437,6 +437,13 @@ remove_node (tree& ref, int pos) {
   apply (ref, mod_remove_node (path (), pos));
 }
 
+void
+touch (tree& ref) {
+  //cout << "Touch " << ref << "\n";
+  if (!is_nil (ref->obs))
+    ref->obs->touched (ref, path ());
+}
+
 /******************************************************************************
 * Wrappers for trees given by a path
 ******************************************************************************/
@@ -484,6 +491,11 @@ remove_node (path p) {
   remove_node (subtree (the_et, path_up (p)), last_item (p));
 }
 
+void
+touch (path p) {
+  touch (subtree (the_et, p));
+}
+
 /******************************************************************************
 * Default virtual routines
 ******************************************************************************/
@@ -522,6 +534,11 @@ observer_rep::announce (tree& ref, modification mod) {
 void
 observer_rep::done (tree& ref, modification mod) {
   (void) ref; (void) mod;
+}
+
+void
+observer_rep::touched (tree& ref, path p) {
+  (void) ref; (void) p;
 }
 
 void
@@ -658,4 +675,15 @@ bool
 observer_rep::get_tree (tree& t) {
   (void) t;
   return false;
+}
+
+bool
+observer_rep::set_highlight (int lan, int col, int start, int end) {
+  (void) col; (void) start; (void) end;
+  return false;
+}
+
+bool
+observer_rep::get_highlight (int lan, array<int>& cols) {
+  (void) lan; (void) cols; return false;
 }

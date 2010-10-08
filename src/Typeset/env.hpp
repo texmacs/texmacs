@@ -138,6 +138,7 @@ public:
   double       flexibility;
   int          mode;
   language     lan;
+  int          hl_lan;
   font         fn;
   int          fn_size;
   int          index_level;

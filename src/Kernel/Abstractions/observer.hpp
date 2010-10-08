@@ -29,6 +29,7 @@ typedef list<int> path;
 #define OBSERVER_POSITION   4
 #define OBSERVER_EDIT       5
 #define OBSERVER_UNDO       6
+#define OBSERVER_HIGHLIGHT  7
 
 /******************************************************************************
 * The observer class
@@ -53,6 +54,7 @@ public:
   virtual void announce_insert_node (tree& ref, path p, tree ins);
   virtual void announce_remove_node (tree& ref, path p);
   virtual void done                 (tree& ref, modification mod);
+  virtual void touched              (tree& ref, path p);
 
   // Call back routines for tree modifications
   virtual void notify_assign        (tree& ref, tree t);
@@ -75,6 +77,8 @@ public:
   virtual observer& get_child (int which);
   virtual list<observer> get_tree_pointers ();
   virtual bool get_tree (tree& t);
+  virtual bool set_highlight (int lan, int col, int start, int end);
+  virtual bool get_highlight (int lan, array<int>& cols);
 };
 
 class observer {
@@ -101,6 +105,7 @@ observer tree_pointer (tree t, bool flag= false);
 observer tree_position (tree t, int index);
 observer edit_observer (editor_rep* ed);
 observer undo_observer (archiver_rep* arch);
+observer highlight_observer (int lan, array<int> cols);
 
 /******************************************************************************
 * Modification routines for trees and other observer-related facilities
@@ -117,6 +122,7 @@ void join        (tree& ref, int pos);
 void assign_node (tree& ref, tree_label op);
 void insert_node (tree& ref, int pos, tree t);
 void remove_node (tree& ref, int pos);
+void touch       (tree& ref);
 
 void assign      (path p, tree t);
 void insert      (path p, tree ins);
@@ -126,6 +132,7 @@ void join        (path p);
 void assign_node (path p, tree_label op);
 void insert_node (path p, tree ins);
 void remove_node (path p);
+void touch       (path p);
 
 void insert_observer (observer& o, observer what);
 void remove_observer (observer& o, observer what);
@@ -143,6 +150,12 @@ observer tree_pointer_new (tree t);
 void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
+
+void attach_highlight (tree& ref, int lan);
+void attach_highlight (tree& ref, int lan, int col, int start, int end);
+bool has_highlight (tree& ref, int lan);
+array<int> obtain_highlight (tree& ref, int lan);
+void detach_highlight (tree& ref, int lan);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 

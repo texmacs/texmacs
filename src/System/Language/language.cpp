@@ -9,6 +9,7 @@
 ******************************************************************************/
 
 #include "impl_language.hpp"
+#include "packrat.hpp"
 
 RESOURCE_CODE(language);
 
@@ -61,6 +62,9 @@ operator != (text_property_rep tpr1, text_property_rep tpr2) {
 * Default group of a string
 ******************************************************************************/
 
+language_rep::language_rep (string s):
+  rep<language> (s), hl_lan (0) {}
+
 string
 language_rep::get_group (string s) {
   (void) s;
@@ -71,6 +75,12 @@ array<string>
 language_rep::get_members (string s) {
   (void) s;
   return array<string> ();
+}
+
+void
+language_rep::highlight (tree t) {
+  if (hl_lan != 0 && !has_highlight (t, hl_lan))
+    packrat_highlight (res_name, "Main", t);
 }
 
 string

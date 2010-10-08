@@ -27,11 +27,11 @@ public:
   hashmap<path,int>         current_start;
   hashmap<path,int>         current_end;
   C                         current_cursor;
+  int                       current_hl_lan;
 
   array<C>                  current_input;
   hashmap<D,C>              current_cache;
   hashmap<D,tree>           current_production;
-  hashmap<path,array<int> > current_colors;
 
 protected:
   void add_input (tree t, path p);

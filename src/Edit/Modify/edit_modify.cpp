@@ -212,6 +212,13 @@ edit_done (editor_rep* ed, modification mod) {
 #endif
 }
 
+void
+edit_touch (editor_rep* ed, path p) {
+  //cout << "Touch " << p << "\n";
+  ASSERT (ed->the_buffer_path() <= p, "invalid touch");
+  ed -> typeset_invalidate (p);
+}
+
 /******************************************************************************
 * undo and redo handling
 ******************************************************************************/

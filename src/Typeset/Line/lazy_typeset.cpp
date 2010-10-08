@@ -481,6 +481,9 @@ make_lazy (edit_env env, tree t, path ip) {
       ip= ip2;
   }
 
+  if (env->hl_lan != 0)
+    env->lan->highlight (t);
+
   switch (L(t)) {
   case DOCUMENT:
     return lazy_document (env, t, ip);
