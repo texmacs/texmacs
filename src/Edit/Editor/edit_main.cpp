@@ -255,7 +255,7 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 
 void
 edit_main_rep::print_buffer (string first, string last) {
-#ifdef 0
+#if 0
 //#ifdef QTTEXMACS // disabled for the moment
   // in Qt this is the main entry point to the printing subsystem.
   // the other routines (print_to_file, ...) are overriden since all fine tuning 
