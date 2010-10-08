@@ -211,7 +211,8 @@
   (define Postfix-postfix
     (:operator)
     (Pre Postfix-postfix)
-    Other-postfix-symbol)
+    Other-postfix-symbol
+    (:<Postfix :args :>))
 
   (define Big-open
     (:operator)

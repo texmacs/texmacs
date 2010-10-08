@@ -11,6 +11,7 @@
 
 #include "packrat_parser.hpp"
 #include "analyze.hpp"
+#include "drd_std.hpp"
 
 extern tree the_et;
 bool packrat_invalid_colors= false;
@@ -61,8 +62,22 @@ packrat_parser_rep::add_input (tree t, path p) {
       if (is_func (t, DOCUMENT)) current_string << "\n";
     }
   }
-  else if (t == tree (VALUE, "I"))
-    current_string << "<\\Prefix>value<|>I</>";
+  else if (the_drd->get_attribute (L(t), "type") != "") {
+    tree tp= the_drd->get_attribute (L(t), "type");
+    current_string << "<\\" << tp->label << ">" << as_string (L(t));
+    for (int i=0; i<N(t); i++) {
+      current_string << "<|>";
+      add_input (t[i], p * i);
+    }
+    current_string << "</>";
+  }
+  else if (is_func (t, VALUE, 1) && is_atomic (t[0])) {
+    string name= t[0]->label;
+    tree   tp  = the_drd->get_attribute (make_tree_label (name), "class");
+    cout << name << " -> " << tp << "\n";
+    if (tp == "") current_string << "<\\value>" << name << "</>";
+    else current_string << "<\\" << tp->label << ">" << name << "</>";
+  }
   else {
     current_string << "<\\" << as_string (L(t)) << ">";
     for (int i=0; i<N(t); i++) {

@@ -530,7 +530,7 @@
     :<frac :<sqrt :<wide
     :<around :<around* :<big-around :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime
-    :<Prefix)
+    :<Prefix :<Postfix)
 
   (define Skip-symbol
     :<space :<hspace :<vspace :<vspace* :<htab

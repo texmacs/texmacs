@@ -612,6 +612,17 @@ edit_env_rep::exec_drd_props (tree t) {
 			  ARITY_NORMAL, CHILD_DETAILED);
 	drd->freeze_arity (l);
       }
+      else if (prop == "name") {
+	if (is_atomic (val))
+	  drd->set_attribute (l, prop, val->label);
+      }
+      else if (prop == "class") {
+	if (is_atomic (val)) {
+	  drd->set_attribute (l, prop, val->label);
+	  cout << "Attribute " << as_string (l) << ": "
+	       << prop << " -> " << val << "\n";
+	}
+      }
       else if (prop == "border") {
 	if (val == "yes") drd->set_border (l, BORDER_YES);
 	if (val == "inner") drd->set_border (l, BORDER_INNER);
