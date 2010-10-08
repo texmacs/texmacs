@@ -1505,6 +1505,7 @@ edit_env_rep::exec_set_binding (tree t) {
     //cout << "t= " << t << "\n";
     return tree (ERROR, "bad set binding");
   }
+  //cout << t << ": " << keys << " -> " << value << "\n";
 
   for (int i=0; i<N(keys); i++) {
     string key= keys[i]->label;
@@ -1544,6 +1545,7 @@ edit_env_rep::exec_get_binding (tree t) {
   else if (type == 1) value= tree (UNINIT);
   if (complete && value == tree (UNINIT))
     system_warning ("Undefined reference", key);
+  //cout << t << ": " << key << " -> " << value << "\n";
   return value;
 }
 

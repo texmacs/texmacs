@@ -53,7 +53,7 @@
   </macro>>
 
   <assign|equation|<\macro|body>
-    <\surround|<next-equation><set-binding|<arg|lab>>|>
+    <\surround|<next-equation><set-binding|<the-equation>>|>
       <\surround||<space|5mm><with|mode|text|font-shape|right|(<the-equation>)>>
         <\with|mode|math|math-display|true|par-ver-sep|<eqn-ver-sep>>
           <style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-short-above>><no-indent><htab|0fn>|<htab|0fn><vspace|<eqn-short-below>><no-indent*>|<extern|math-check|<quote-arg|body>>>>
