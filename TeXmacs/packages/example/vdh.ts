@@ -219,6 +219,12 @@
 
     <drd-props|gb|arity|1|class|Postfix>
 
+    <drd-props|cgb|arity|1|class|Postfix>
+
+    <drd-props|gbt|arity|1|class|Postfix>
+
+    <drd-props|cgbt|arity|1|class|Postfix>
+
     \;
 
     <assign|head|<macro|x|<arg|x><rsup|\<sharp\>>>>

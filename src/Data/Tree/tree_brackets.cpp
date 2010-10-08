@@ -23,7 +23,7 @@ static array<tree> upgrade_brackets (array<tree> a, int level);
 * Tokenize mathematical concats and recomposition
 ******************************************************************************/
 
-static array<tree>
+array<tree>
 concat_tokenize (tree t) {
   static language lan= math_language ("std-math");
   array<tree> r;
@@ -43,7 +43,19 @@ concat_tokenize (tree t) {
   return r;
 }
 
-static tree
+array<tree>
+concat_decompose (tree t) {
+  array<tree> r;
+  if (t == "");
+  else if (is_atomic (t)) r << t;
+  else if (is_concat (t))
+    for (int i=0; i<N(t); i++)
+      r << concat_decompose (t[i]);
+  else r << t;
+  return r;
+}
+
+tree
 concat_recompose (array<tree> a) {
   array<tree> r;
   string s;

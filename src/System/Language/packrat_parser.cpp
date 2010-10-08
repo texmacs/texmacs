@@ -74,7 +74,6 @@ packrat_parser_rep::add_input (tree t, path p) {
   else if (is_func (t, VALUE, 1) && is_atomic (t[0])) {
     string name= t[0]->label;
     tree   tp  = the_drd->get_attribute (make_tree_label (name), "class");
-    cout << name << " -> " << tp << "\n";
     if (tp == "") current_string << "<\\value>" << name << "</>";
     else current_string << "<\\" << tp->label << ">" << name << "</>";
   }
