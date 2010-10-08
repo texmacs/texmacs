@@ -530,7 +530,7 @@ empty_line (tree t) {
 static bool
 consistent_portion (tree t, int begin, int end) {
   int level= 0;
-  for (int i=begin; i<=end; i++)
+  for (int i=begin; i<end; i++)
     if (is_atomic (t[i])) {
       string s= t[i]->label;
       for (int j=0; j<N(s); j++)
@@ -549,69 +549,15 @@ consistent_portion (tree t, int begin, int end) {
 
 static void
 consistent_enlargement (tree t, int& begin, int& end) {
-  while (begin > 0 || end < N(t)-1) {
-    while (begin > 0 && !empty_line (t[begin-1])) begin--;
-    while (end+1 < N(t) && !empty_line (t[end+1])) end++;
+  while (begin > 0 || end < N(t)) {
+    while (begin > 0    && !empty_line (t[begin-1])) begin--;
+    while (end   < N(t) && !empty_line (t[end    ])) end++;
     if (consistent_portion (t, begin, end)) return;
     //cout << "Inconsistent " << begin << " -- " << end << "\n";
-    begin= max (0     , begin - max (end - begin, 1));
-    end  = min (N(t)-1, end   + max (end - begin, 1));
+    begin= max (0   , begin - max (end - begin, 1));
+    end  = min (N(t), end   + max (end - begin, 1));
     //cout << "  Try " << begin << " -- " << end << "\n";
   }
-}
-
-static packrat_parser
-highlight_packrat (string lan, string s, path ip, path tp, bool force) {
-  static string last_lan;
-  static string last_s;
-  static path last_ip;
-  static int last_begin= -1;
-  static int last_end= -1;
-  static packrat_parser last_par;
-
-  if (last_lan != lan || last_s != s || last_ip != ip) force= true;
-  if (force) last_begin= last_end= -1;
-
-  tree st= subtree (the_et, reverse (ip));
-  int begin= -1, end= -1;
-  if (is_func (st, DOCUMENT) && is_atom (tp)) {
-    begin= tp->item;
-    end= tp->item;
-    if (last_begin <= begin && end <= last_end) {
-      begin= last_begin;
-      end  = last_end;
-    }
-    else {
-      consistent_enlargement (st, begin, end);
-      if (!(last_end < begin || end < last_begin)) {
-	begin= min (begin, last_begin);
-	end  = max (end  , last_end);
-	consistent_enlargement (st, begin, end);
-      }
-    }
-  }
-
-  if (force || last_begin != begin || last_end != end) {
-    tree in= st;
-    if (begin != -1) {
-      //cout << "Range= " << begin << " -- " << end << "\n";
-      int i;
-      in= tree (st, N(st));
-      for (i=0; i<begin; i++) in[i]= "";
-      for (i=begin; i<=end; i++) in[i]= st[i];
-      for (i=end+1; i<N(st); i++) in[i]= "";
-    }
-    last_lan= lan;
-    last_s= s;
-    last_ip= ip;
-    last_begin= begin;
-    last_end= end;
-    last_par= make_packrat_parser (lan, in);
-    C sym = encode_symbol (compound ("symbol", s));
-    if (last_par->parse (sym, 0) == N(last_par->current_input))
-      last_par->highlight (sym, 0);
-  }
-  return last_par;
 }
 
 /******************************************************************************
@@ -713,13 +659,25 @@ packrat_highlight (string lan, string s, tree in) {
   int hl_lan= packrat_abbreviation (lan, s);
   if (hl_lan == 0) return;
   //cout << "Highlight " << in << "\n";
-  //if (is_func (in, DOCUMENT)) {
-  //}
-  //else {
-  if (is_compound (in))
-    for (int i=0; i<N(in); i++)
+  if (is_func (in, DOCUMENT)) {
+    int i, begin, end;
+    for (begin=0; begin<N(in); begin++)
+      if (!has_highlight (in[begin], hl_lan))
+	break;
+    for (end=N(in)-1; end>begin; end--)
+      if (!has_highlight (in[end-1], hl_lan))
+	break;
+    consistent_enlargement (in, begin, end);    
+    for (i=begin; i<end; i++)
       detach_highlight (in[i], hl_lan);
-  attach_highlight (in, hl_lan);
-  packrat_highlight_subtree (lan, s, in);
-  //}
+    attach_highlight (in, hl_lan);
+    packrat_highlight_subtree (lan, s, in (begin, end));
+  }
+  else {
+    if (is_compound (in))
+      for (int i=0; i<N(in); i++)
+	detach_highlight (in[i], hl_lan);
+    attach_highlight (in, hl_lan);
+    packrat_highlight_subtree (lan, s, in);
+  }
 }
