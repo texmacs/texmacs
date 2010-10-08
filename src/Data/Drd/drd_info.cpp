@@ -306,6 +306,10 @@ int
 drd_info_rep::get_type_child (tree t, int i) {
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
+  if (is_func (t, EXTERN) && N(t)>0 && is_atomic (t[0])) {
+    ti= info[make_tree_label ("extern:" * t[0]->label)];
+    index= ti->get_index (i-1, N(t));
+  }
   if ((index<0) || (index>=N(ti->ci))) return TYPE_INVALID;
   int r= ti->ci[index].type;
   if (r != TYPE_BINDING) return r;
@@ -354,6 +358,10 @@ drd_info_rep::is_accessible_child (tree t, int i) {
   //cout << "l= " << as_string (L(t)) << "\n";
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
+  if (is_func (t, EXTERN) && N(t)>0 && is_atomic (t[0])) {
+    ti= info[make_tree_label ("extern:" * t[0]->label)];
+    index= ti->get_index (i-1, N(t));
+  }
   if ((index<0) || (index>=N(ti->ci))) return false;
   switch (get_access_mode ()) {
   case DRD_ACCESS_NORMAL:
@@ -398,6 +406,10 @@ int
 drd_info_rep::get_writability_child (tree t, int i) {
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
+  if (is_func (t, EXTERN) && N(t)>0 && is_atomic (t[0])) {
+    ti= info[make_tree_label ("extern:" * t[0]->label)];
+    index= ti->get_index (i-1, N(t));
+  }
   if ((index<0) || (index>=N(ti->ci))) return WRITABILITY_DISABLE;
   return ti->ci[index].writability;
 }
@@ -522,6 +534,8 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
   //cout << "  arg_access " << t << ", " << arg << ", " << env << "\n";
   if (is_atomic (t)) return "";
   else if (t == arg) return env;
+  else if (is_func (t, QUOTE_ARG, 1) && N(arg) == 1 && t[0] == arg[0])
+    return env;
   else if (is_func (t, MAP_ARGS) && (t[2] == arg[0])) {
     if ((N(t) >= 4) && (N(arg) >= 2) && (as_int (t[3]) > as_int (arg[1])))
       return "";

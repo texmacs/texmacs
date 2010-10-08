@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.7>
 
 <style|source>
 
@@ -27,8 +27,6 @@
 
     <assign|D|\<cal-D\>>
 
-    <assign|I|<with|math-display|false|<op|<big|int>>>>
-
     <assign|L|\<cal-L\>>
 
     <assign|R|\<cal-R\>>
@@ -50,6 +48,12 @@
     <assign|Mlt|<with|math-font|cal*|T>>
 
     <assign|Set|<with|math-font|cal*|S>>
+
+    \;
+
+    <assign|I|<with|math-display|false|<op|<big|int>>>>
+
+    <drd-props|I|arity|0|class|Prefix>
 
     \;
 
@@ -213,6 +217,8 @@
 
     <assign|cgbt|<macro|x|<with|math-font-family|mt|{<space|-0.6spc>{<space|-0.6spc>{><arg|x><with|math-font-family|mt|}<space|-0.6spc>}<space|-0.6spc>}>>>
 
+    <drd-props|gb|arity|1|class|Postfix>
+
     \;
 
     <assign|head|<macro|x|<arg|x><rsup|\<sharp\>>>>
@@ -258,12 +264,12 @@
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Rightarrow\>>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
+  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Rightarrow\>>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
 
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>|<arg|y>>
+    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|x>

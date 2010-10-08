@@ -62,8 +62,8 @@ packrat_parser_rep::add_input (tree t, path p) {
       if (is_func (t, DOCUMENT)) current_string << "\n";
     }
   }
-  else if (the_drd->get_attribute (L(t), "type") != "") {
-    tree tp= the_drd->get_attribute (L(t), "type");
+  else if (the_drd->get_attribute (L(t), "class") != "") {
+    tree tp= the_drd->get_attribute (L(t), "class");
     current_string << "<\\" << tp->label << ">" << as_string (L(t));
     for (int i=0; i<N(t); i++) {
       current_string << "<|>";
