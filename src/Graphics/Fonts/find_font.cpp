@@ -75,6 +75,16 @@ find_font_bis (tree t) {
   if (is_tuple (t, "unicode", 3))
     return unicode_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
+  if (is_tuple (t, "unimath", 3)) {
+    font up= find_font (t[1]);
+    font it= find_font (t[2]);
+    font rb= find_font (t[3]);
+    if (is_nil (up)) return up;
+    if (is_nil (it)) return it;
+    if (is_nil (rb)) return rb;
+    return unicode_math_font (up, it, rb);
+  }
+
   if (is_tuple (t, "x", 3))
     return x_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
