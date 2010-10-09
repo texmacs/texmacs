@@ -308,7 +308,7 @@
 	    ((and t (deleted? t 2))
 	     (tree-set t 2 lb)
 	     (tree-go-to t :end))
-	    ((and u (== (tree->stree (tree-ref u 2)) rb))
+	    ((and u (== lb rb) (== (tree->stree (tree-ref u 2)) rb))
 	     (tree-go-to u :end))
 	    ((and u (== (tree->stree (tree-ref u 0)) "<langle>") (== rb "|"))
 	     (tree-set u 2 rb)
