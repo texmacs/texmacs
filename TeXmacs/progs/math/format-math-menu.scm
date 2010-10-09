@@ -35,6 +35,8 @@
 	  ("Concrete" (make-with "math-font" "concrete")))
       (if (url-exists-in-tex? "eurm10.mf")
 	  ("New Roman" (make-with "math-font" "ENR")))
+      (if (font-exists-in-tt? "STIXGeneral")
+	  ("Stix" (make-with "math-font" "math-stix")))
       ---
       (if (url-exists-in-tex? "rpsyr.tfm")
 	  ("Adobe" (make-with "math-font" "adobe")))

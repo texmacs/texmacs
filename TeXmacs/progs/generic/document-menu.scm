@@ -218,6 +218,8 @@
 	      (if (font-exists-in-tt? "luxirr")
 		  ("Luxi" (init-env "font" "luxi"))))
 	  ("Lucida" (init-env "font" "x-lucida"))
+	  (if (font-exists-in-tt? "STIXGeneral")
+	      ("Stix" (init-env "font" "stix")))
 	  ("Utopia" (init-env "font" "x-utopia")))
       (-> "Mathematical font"
 	  ("Default" (init-default "math-font"))
@@ -225,7 +227,9 @@
 	  ("Roman" (init-env "math-font" "roman"))
 	  ("Concrete" (init-env "math-font" "concrete"))
 	  ("Euler new roman" (init-env "math-font" "ENR"))
-	  ("Adobe" (init-env "math-font" "adobe")))
+	  ("Adobe" (init-env "math-font" "adobe"))
+	  (if (font-exists-in-tt? "STIXGeneral")
+	      ("Stix" (init-env "math-font" "math-stix"))))
       (-> "Program font"
 	  ("Default" (init-default "prog-font"))
 	  ---

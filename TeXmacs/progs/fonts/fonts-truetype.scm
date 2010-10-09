@@ -94,4 +94,9 @@
     ((unbatang $v $a $b $s $d) (unicode UnBatang $s $d))
     ((wqy-microhei $v $a $b $s $d) (unicode wqy-microhei $s $d))
     ((wqy-zenhei $v bold $b $s $d) (unicode wqy-microhei $s $d))
-    ((wqy-zenhei $v $a $b $s $d) (unicode wqy-zenhei $s $d))))
+    ((wqy-zenhei $v $a $b $s $d) (unicode wqy-zenhei $s $d))
+
+    ((stix $v bold italic $s $d) (unicode STIXGeneralBolIta $s $d))
+    ((stix $v bold $b $s $d) (unicode STIXGeneralBol $s $d))
+    ((stix $v $a italic $s $d) (unicode STIXGeneralItalic $s $d))
+    ((stix $v $a $b $s $d) (unicode STIXGeneral $s $d))))

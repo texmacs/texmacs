@@ -290,3 +290,13 @@
 
     ((ENR mr medium normal $s $d) (math-enr eurm $s $d))
     ((ENR mr bold normal $s $d) (math-enr eurb $s $d))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stix fonts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(set-font-rules
+ `(((math-stix mr bold italic $s $d) (unicode STIXGeneralBolIta $s $d))
+   ((math-stix mr bold $b $s $d) (unicode STIXGeneralBol $s $d))
+   ((math-stix mr $a italic $s $d) (unicode STIXGeneralItalic $s $d))
+   ((math-stix mr $a $b $s $d) (unicode STIXGeneral $s $d))))

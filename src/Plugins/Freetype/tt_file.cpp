@@ -97,6 +97,8 @@ tt_font_find (string name) {
   //else cout << name << " -> ???\n";
   if (!is_none (u)) return u;
   u= tt_locate (name * ".ttc");
+  if (!is_none (u)) return u;
+  u= tt_locate (name * ".otf");
   return u;
 }
 
