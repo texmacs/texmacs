@@ -14,6 +14,7 @@
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_face.hpp"
 #include "analyze.hpp"
+#include "converter.hpp"
 
 #ifdef USE_FREETYPE
 
@@ -107,10 +108,24 @@ unicode_font_rep::unicode_font_rep (string name,
 static unsigned int
 read_unicode_char (string s, int& i) {
   if (s[i] == '<') {
-    i++; if (s[i] == '#') i++;
+    i++;
     int start= i;
     while (s[i] != '>') i++;
-    return (unsigned int) from_hexadecimal (s (start, i++));
+    if (s[start] == '#') {
+      start++;
+      return (unsigned int) from_hexadecimal (s (start, i++));
+    }
+    else {
+      string ss= s (start-1, ++i);
+      string uu= cork_to_utf8 (ss);
+      if (uu == ss) {
+	cout << "TeXmacs] warning: invalid symbol " << ss
+	     << " in unicode string\n";
+	return '?';
+      }
+      int j= 0;
+      return decode_from_utf8 (uu, j);
+    }
   }
   else return (unsigned int) s[i++];
 }

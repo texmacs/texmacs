@@ -150,4 +150,5 @@ with_correct (tree t) {
 
 // Remove top-level text and with-mode-text tags
 // Replace with-mode-text by text inside math
+// Redundant mode-tags (i.e., math inside equation, equation*)
 // Trailing and double white-space
