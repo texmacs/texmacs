@@ -295,16 +295,14 @@
 ;; Stix fonts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;(set-font-rules
-; `(((math-stix mr bold italic $s $d) (unicode STIXGeneralBolIta $s $d))
-;   ((math-stix mr bold $b $s $d) (unicode STIXGeneralBol $s $d))
-;   ((math-stix mr $a italic $s $d) (unicode STIXGeneralItalic $s $d))
-;   ((math-stix mr $a $b $s $d) (unicode STIXGeneral $s $d))))
-
-
 (set-font-rules
-  '(((math-stix mr $a $b $s $d)
-     (unimath
-      (unicode STIXGeneral $s $d)
-      (unicode STIXGeneralItalic $s $d)
-      (roman mr $a $b $s $d)))))
+ '(((unicode-math $up $it $t $a $b $s $d)
+    (unimath
+     (unicode $up $s $d)
+     (unicode $it $s $d)
+     (roman $t $a $b $s $d)))
+
+   ((math-stix $t bold $b $s $d)
+    (unicode-math STIXGeneralBol STIXGeneralBolIta $t bold $b $s $d))
+   ((math-stix $t $a $b $s $d)
+    (unicode-math STIXGeneral STIXGeneralItalic $t $a $b $s $d))))

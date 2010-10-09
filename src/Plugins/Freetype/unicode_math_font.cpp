@@ -56,6 +56,11 @@ unicode_math_font_rep::unicode_math_font_rep
 * Find the font and the corresponding character
 ******************************************************************************/
 
+static bool
+unicode_provides (string s) {
+  return cork_to_utf8 (s) != s;
+}
+
 static unsigned int
 cork_to_unicode (string s) {
   int i= 0;
@@ -81,12 +86,7 @@ unicode_math_font_rep::search_font_sub (string s) {
     return 1;
   }
   else if (s[0] == '<' && s[N(s)-1] == '>') {
-    if (starts (s, "<left-") ||
-	starts (s, "<mid-") ||
-	starts (s, "<right-") ||
-	starts (s, "<big-"))
-      return 4;
-    if ((N(s)>=9) && (s[N(s)-2]>='0') && (s[N(s)-2]<='9')) return 4;
+    if (!unicode_provides (s)) return 4;
     unsigned int c= cork_to_unicode (s);
     if (c >= 0x3ac && c <= 0x3d6) return 3;
     return 1;
