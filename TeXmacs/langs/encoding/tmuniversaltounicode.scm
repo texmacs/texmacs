@@ -440,10 +440,10 @@
 ; small contains as member "#220D"
 ; end of proof		"#220E"
 ("<prod>"		"#220F")
-("<big-prod-1>"	        "#220F")
-("<big-amalg-1>"        "#2210")
+("<big-prod>"		"#220F")
+("<big-amalg>"          "#2210")
 ("<sum>"		"#2211")
-("<big-sum-1>"	        "#2211")
+("<big-sum>"		"#2211")
 ("<minus>"		"#2212")
 ("<mp>"			"#2213")
 ("<dotplus>"		"#2214")
@@ -470,9 +470,10 @@
 ("<cap>"		"#2229")
 ("<cup>"		"#222A")
 ("<int>"		"#222B")
+("<big-int>"		"#222B")
 ; double integral	"#222E"
 ; triple integral	"#222D"
-; <oint>		"#222E"
+("<big-oint>"		"#222E")
 ; surface integral	"#222F"
 ; volume integral	"#2230"
 ; clockwise integral	"#2231"
@@ -642,10 +643,10 @@
 ; <barvee>		"#22BD"
 ; right angle with arc	"#22BE"
 ; right triangle	"#22BF"
-; <big-wedge>		"#22C0"  ; does not render
-; <big-vee>		"#22C1"  ; does not render
-; <big-cap>		"#22C2"  ; does not render
-; <bigcup>"		"#22C3"  ; does not render
+("<big-wedge>"	        "#22C0")
+("<big-vee>"		"#22C1")
+("<big-cap>"		"#22C2")
+("<big-cup>"		"#22C3")
 ("<diamond>"		"#22C4") ; TODO: define as arithmetic-times
 ("<cdot>"		"#22C5") ; not MIDDLE DOT
 ("<star>"		"#22C6")
@@ -1095,6 +1096,12 @@
 
 ;;; Supplemental Mathematical Operators		2A00--2AFF
 
+("<big-odot>"		"#2A00")
+("<big-oplus>"		"#2A01")
+("<big-otimes>"		"#2A02")
+("<big-pluscup>"	"#2A04")
+("<big-sqcap>"   	"#2A05")
+("<big-sqcup>"  	"#2A06")
 ("<merge>"		"#2A07")
 ("<Bowtie>"		"#2A1D")
 ("<amalg>"		"#2A3F")

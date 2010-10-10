@@ -104,8 +104,8 @@ unicode_math_font_rep::search_font_sub (string s) {
       rewriter (s)= s;
       return 6;
     }
-    if (starts (s, "<big-") && ends (s, "-2>")) {
-      string ss= s (0, N(s)-3) * "-1>";
+    if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
+      string ss= s (0, N(s)-3) * ">";
       if (unicode_provides (ss)) {
 	unsigned int c= search_font_sub (ss);
 	rewriter (s)= ss;
