@@ -21,7 +21,8 @@ RESOURCE_CODE(font);
 font_rep::font_rep (string s):
   rep<font> (s),
   spc       (0),
-  extra     (0)
+  extra     (0),
+  tex_flag  (false)
 {
 }
 
@@ -33,7 +34,8 @@ font_rep::font_rep (string s, font fn):
   slope        (fn->slope),
   spc          (fn->spc),
   extra        (fn->extra),
-  sep          (fn->sep)
+  sep          (fn->sep),
+  tex_flag     (fn->tex_flag)
 {
   copy_math_pars (fn);
 }

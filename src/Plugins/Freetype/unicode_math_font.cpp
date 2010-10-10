@@ -83,11 +83,20 @@ int
 unicode_math_font_rep::search_font_sub (string s) {
   //cout << "Searching " << s << "\n";
   if (N(s) == 0) return 1;
+  else if (s == "*" || starts (s, "<big-.") ||
+	   s == "<nomid>" || s == "<nocomma>" || s == "<nospace>") {
+    rewriter(s)= "";
+    return 2;
+  }
+  else if (s == "'") {
+    rewriter (s)= "<#2B9>";
+    return 2;
+  }
+  else if (s == "`") {
+    rewriter (s)= "<backprime>";
+    return 2;
+  }
   else if (N(s) == 1) {
-    if (s[0] == '*') {
-      rewriter(s)= "";
-      return 2;
-    }
     if (s[0] >= 'a' && s[0] <= 'z') return 3;
     if (s[0] >= 'A' && s[0] <= 'Z') return 3;
     return 1;
@@ -106,6 +115,24 @@ unicode_math_font_rep::search_font_sub (string s) {
     }
     if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
       string ss= s (0, N(s)-3) * ">";
+      //cout << "Search " << ss << "\n";
+      if (unicode_provides (ss)) {
+	unsigned int c= search_font_sub (ss);
+	rewriter (s)= ss;
+	if (c == 1) return 2;
+	return c;
+      }
+      ss= "<big" * s (5, N(s)-3) * ">";
+      //cout << "Search " << ss << "\n";
+      if (unicode_provides (ss)) {
+	unsigned int c= search_font_sub (ss);
+	rewriter (s)= ss;
+	if (c == 1) return 2;
+	return c;
+      }
+      ss= "<" * s (5, N(s)-3) * ">";
+      if (ends (ss, "lim>")) ss= ss (0, N(ss)-4) * ">";
+      //cout << "Search " << ss << "\n";
       if (unicode_provides (ss)) {
 	unsigned int c= search_font_sub (ss);
 	rewriter (s)= ss;

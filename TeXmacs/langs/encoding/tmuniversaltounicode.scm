@@ -440,10 +440,8 @@
 ; small contains as member "#220D"
 ; end of proof		"#220E"
 ("<prod>"		"#220F")
-("<big-prod>"		"#220F")
 ("<big-amalg>"          "#2210")
 ("<sum>"		"#2211")
-("<big-sum>"		"#2211")
 ("<minus>"		"#2212")
 ("<mp>"			"#2213")
 ("<dotplus>"		"#2214")
@@ -470,7 +468,6 @@
 ("<cap>"		"#2229")
 ("<cup>"		"#222A")
 ("<int>"		"#222B")
-("<big-int>"		"#222B")
 ; double integral	"#222E"
 ; triple integral	"#222D"
 ("<big-oint>"		"#222E")

@@ -83,6 +83,7 @@ tex_font_rep::tex_font_rep (string name, int status2,
   extra->min   = extra->min >> 1;
   extra->max   = extra->min << 1;
   sep          = ((((dpi*PIXEL)/72)*design_size) >> 8) / 10;
+  tex_flag     = true;
 
   y1           = conv (-262080);   // -0.25 quad
   y2           = y1+ display_size; //  0.75 quad

@@ -30,6 +30,7 @@ struct font_rep: rep<font> {
   space    spc;              // usual space between words
   space    extra;            // extra space at end of words
   SI       sep;              // separation space between close components
+  bool     tex_flag;         // for TeX fonts
 
   SI       y1;               // bottom y position
   SI       y2;               // top y position

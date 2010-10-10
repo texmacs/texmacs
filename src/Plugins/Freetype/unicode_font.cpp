@@ -32,6 +32,8 @@ struct unicode_font_rep: font_rep {
   void get_xpositions (string s, SI* xpos);
   void draw (renderer ren, string s, SI x, SI y);
   glyph get_glyph (string s);
+  SI get_left_correction  (string s);
+  SI get_right_correction  (string s);
 };
 
 /******************************************************************************
@@ -199,6 +201,22 @@ unicode_font_rep::get_glyph (string s) {
   glyph gl= fng->get (uc);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
+}
+
+SI
+unicode_font_rep::get_left_correction  (string s) {
+  metric ex;
+  get_extents (s, ex);
+  if (ex->x3 < ex->x1) return ex->x1 - ex->x3;
+  return 0;
+}
+
+SI
+unicode_font_rep::get_right_correction (string s) {
+  metric ex;
+  get_extents (s, ex);
+  if (ex->x4 > ex->x2) return ex->x4 - ex->x2;
+  return 0;
 }
 
 /******************************************************************************

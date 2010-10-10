@@ -111,16 +111,16 @@
   ("odot" "&CircleDot;")
   ("oplus" "&CirclePlus;")
   ("otimes" "&CircleTimes;")
-;;  ("sqcap" "&SquareIntersection;")
-;;  ("sqcup" "&SquareUnion;")
-;;  ("curlywedge" "&CurlyWedge;")
-;;  ("curlyvee" "&CurlyVee;")
-;;  ("triangleup" "&TriangleUp;")
-;;  ("triangledown" "&TriangleDown;")
-;;  ("box" "&Box;")
+  ("sqcap" "&SquareIntersection;")     ;; FIXME: displayed too small
+  ("sqcup" "&SquareUnion;")            ;; FIXME: displayed too small
+  ;;("curlywedge" "&CurlyWedge;")
+  ;;("curlyvee" "&CurlyVee;")
+  ;;("triangleup" "&TriangleUp;")
+  ;;("triangledown" "&TriangleDown;")
+  ;;("box" "&Box;")
   ("pluscup" "&UnionPlus;")
-;;  ("parallel" "&Parallel;")
-;;  ("interleave" "&Interleave;")
+  ;;("parallel" "&Parallel;")
+  ;;("interleave" "&Interleave;")
 )
 
 (drd-table tmtm-big%
