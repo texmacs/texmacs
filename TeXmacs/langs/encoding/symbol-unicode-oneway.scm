@@ -139,7 +139,6 @@
 
 ("<large-sqrt-0>"	"#221A") ; FIXME: wrong baseline
 
-
 ;;; Limit symbols
 
 ;; These symbols are displayed in the same as their base variant, but TeXmacs

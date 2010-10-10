@@ -97,12 +97,21 @@ unicode_math_font_rep::search_font_sub (string s) {
     if (starts (s, "<b-")) {
       string ss= s (3, N(s)-1);
       if (N(ss) != 1) ss= "<" * ss * ">";
-      int c= search_font_sub (ss);
+      unsigned int c= search_font_sub (ss);
       rewriter (s)= ss;
       if (c == 1 || c == 2) return 4;
       if (c == 3) return 5;
       rewriter (s)= s;
       return 6;
+    }
+    if (starts (s, "<big-") && ends (s, "-2>")) {
+      string ss= s (0, N(s)-3) * "-1>";
+      if (unicode_provides (ss)) {
+	unsigned int c= search_font_sub (ss);
+	rewriter (s)= ss;
+	if (c == 1) return 2;
+	return c;
+      }
     }
     if (!unicode_provides (s)) return 6;
     unsigned int c= cork_to_unicode (s);

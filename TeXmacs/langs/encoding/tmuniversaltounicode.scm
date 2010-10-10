@@ -440,8 +440,10 @@
 ; small contains as member "#220D"
 ; end of proof		"#220E"
 ("<prod>"		"#220F")
-; n-ary coproduct
+("<big-prod-1>"	        "#220F")
+("<big-amalg-1>"        "#2210")
 ("<sum>"		"#2211")
+("<big-sum-1>"	        "#2211")
 ("<minus>"		"#2212")
 ("<mp>"			"#2213")
 ("<dotplus>"		"#2214")
