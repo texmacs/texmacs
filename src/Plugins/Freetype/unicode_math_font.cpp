@@ -21,11 +21,16 @@
 struct unicode_math_font_rep: font_rep {
   font upright;
   font italic;
-  font rubber;
+  font bold_upright;
+  font bold_italic;
+  font fall_back;
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
 
-  unicode_math_font_rep (string name, font upright, font italic, font rubber);
+  unicode_math_font_rep (string name,
+			 font upright, font italic,
+			 font bold_upright, font bold_italic,
+			 font fall_back);
   int search_font_sub (string s);
   font search_font (string& s);
 
@@ -45,8 +50,10 @@ struct unicode_math_font_rep: font_rep {
 ******************************************************************************/
 
 unicode_math_font_rep::unicode_math_font_rep
-(string name, font up, font it, font rb):
-    font_rep (name, it), upright (up), italic (it), rubber (rb),
+  (string name, font up, font it, font bup, font bit, font fb):
+    font_rep (name, it),
+    upright (up), italic (it),
+    bold_upright (bup), bold_italic (bit), fall_back (fb),
     mapper (0), rewriter ("")
 {
   this->copy_math_pars (it);
@@ -86,7 +93,18 @@ unicode_math_font_rep::search_font_sub (string s) {
     return 1;
   }
   else if (s[0] == '<' && s[N(s)-1] == '>') {
-    if (!unicode_provides (s)) return 4;
+    if (starts (s, "<cal-")) return 6; // Temporary fix
+    if (starts (s, "<b-")) {
+      string ss= s (3, N(s)-1);
+      if (N(ss) != 1) ss= "<" * ss * ">";
+      int c= search_font_sub (ss);
+      rewriter (s)= ss;
+      if (c == 1 || c == 2) return 4;
+      if (c == 3) return 5;
+      rewriter (s)= s;
+      return 6;
+    }
+    if (!unicode_provides (s)) return 6;
     unsigned int c= cork_to_unicode (s);
     if (c >= 0x3ac && c <= 0x3d6) return 3;
     return 1;
@@ -111,7 +129,13 @@ unicode_math_font_rep::search_font (string& s) {
     case 3:
       return italic;
     case 4:
-      return rubber;
+      s= rewriter[s];
+      return bold_upright;
+    case 5:
+      s= rewriter[s];
+      return bold_italic;
+    case 6:
+      return fall_back;
     default:
       return upright;
     }
@@ -186,25 +210,29 @@ unicode_math_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-unicode_math_font (font upright, font italic, font rubber) {
+unicode_math_font (font up, font it, font bup, font bit, font fb) {
   string name=
     "unimath[" *
-    upright->res_name * "," *
-    italic->res_name * "," *
-    rubber->res_name * "]";
+    up->res_name * "," *
+    it->res_name * "," *
+    bup->res_name * "," *
+    bit->res_name * "," *
+    fb->res_name * "]";
   return make (font, name,
-    tm_new<unicode_math_font_rep> (name, upright, italic, rubber));
+    tm_new<unicode_math_font_rep> (name, up, it, bup, bit, fb));
 }
 
 #else
 
 font
-unicode_math_font (font upright, font italic, font rubber) {
+unicode_math_font (font up, font it, font bup, font bit, font fb) {
   string name=
     "unimath[" *
-    upright->res_name * "," *
-    italic->res_name * "," *
-    rubber->res_name * "]";
+    up->res_name * "," *
+    it->res_name * "," *
+    bup->res_name * "," *
+    bit->res_name * "," *
+    fb->res_name * "]";
   cerr << "\n\nFont name= " << name << "\n";
   FAILED ("true type support was disabled");
   return font ();

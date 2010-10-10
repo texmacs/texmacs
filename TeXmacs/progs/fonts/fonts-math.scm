@@ -296,13 +296,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (set-font-rules
- '(((unicode-math $up $it $t $a $b $s $d)
+ '(((unicode-math $up $it $bup $bit $t $a $b $s $d)
     (unimath
      (unicode $up $s $d)
      (unicode $it $s $d)
+     (unicode $bup $s $d)
+     (unicode $bit $s $d)
      (roman $t $a $b $s $d)))
 
    ((math-stix $t bold $b $s $d)
-    (unicode-math STIXGeneralBol STIXGeneralBolIta $t bold $b $s $d))
+    (unicode-math STIXGeneralBol STIXGeneralBolIta
+		  STIXGeneralBol STIXGeneralBolIta
+		  $t bold $b $s $d))
    ((math-stix $t $a $b $s $d)
-    (unicode-math STIXGeneral STIXGeneralItalic $t $a $b $s $d))))
+    (unicode-math STIXGeneral STIXGeneralItalic
+		  STIXGeneralBol STIXGeneralBolIta
+		  $t $a $b $s $d))))
