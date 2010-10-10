@@ -46,6 +46,7 @@ unicode_font_rep::unicode_font_rep (string name,
   string family, int size2, int dpi):
   font_rep (name)
 {
+  type= FONT_TYPE_UNICODE;
   size= size2;
   fnm = tt_font_metric (family, size, dpi);
   fng = tt_font_glyphs (family, size, dpi);

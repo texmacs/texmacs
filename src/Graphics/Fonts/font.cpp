@@ -20,22 +20,22 @@ RESOURCE_CODE(font);
 
 font_rep::font_rep (string s):
   rep<font> (s),
+  type      (FONT_TYPE_TEX),
   spc       (0),
-  extra     (0),
-  tex_flag  (false)
+  extra     (0)
 {
 }
 
 font_rep::font_rep (string s, font fn):
   rep<font>    (s),
+  type         (fn->type),
   size         (fn->size),
   design_size  (fn->design_size),
   display_size (fn->display_size),
   slope        (fn->slope),
   spc          (fn->spc),
   extra        (fn->extra),
-  sep          (fn->sep),
-  tex_flag     (fn->tex_flag)
+  sep          (fn->sep)
 {
   copy_math_pars (fn);
 }

@@ -71,7 +71,7 @@ void
 concater_rep::typeset_lprime (tree t, path ip) {
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= t[0]->label;
-    bool flag= !env->fn->tex_flag;
+    bool flag= (env->fn->type == FONT_TYPE_UNICODE);
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
@@ -94,7 +94,7 @@ void
 concater_rep::typeset_rprime (tree t, path ip) {
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= t[0]->label;
-    bool flag= !env->fn->tex_flag;
+    bool flag= (env->fn->type == FONT_TYPE_UNICODE);
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');

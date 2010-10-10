@@ -18,11 +18,16 @@ RESOURCE(font);
 
 struct glyph;
 
+#define FONT_TYPE_TEX      0
+#define FONT_TYPE_UNICODE  1
+#define FONT_TYPE_OTHER    2
+
 /******************************************************************************
 * The font structure
 ******************************************************************************/
 
 struct font_rep: rep<font> {
+  int      type;             // font type
   SI       size;             // requested size
   SI       design_size;      // design size in points/256
   SI       display_size;     // display size in points/PIXEL
@@ -30,7 +35,6 @@ struct font_rep: rep<font> {
   space    spc;              // usual space between words
   space    extra;            // extra space at end of words
   SI       sep;              // separation space between close components
-  bool     tex_flag;         // for TeX fonts
 
   SI       y1;               // bottom y position
   SI       y2;               // top y position
