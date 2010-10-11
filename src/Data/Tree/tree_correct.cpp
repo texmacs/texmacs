@@ -11,6 +11,7 @@
 
 #include "tree_correct.hpp"
 #include "tree_analyze.hpp"
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * DRD based correction
@@ -93,13 +94,13 @@ with_recompose (tree w, array<tree> a) {
 ******************************************************************************/
 
 tree
-with_correct (tree t) {
+with_correct_bis (tree t) {
   if (is_atomic (t)) return t;
   else {
     //cout << "Correcting " << t << LF << INDENT;
     tree u (t, N(t));
     for (int k=0; k<N(t); k++)
-      u[k]= with_correct (t[k]);
+      u[k]= with_correct_bis (t[k]);
     array<tree> a= concat_decompose (u);
     int i, n= N(a);
     array<tree> r;
@@ -138,6 +139,13 @@ with_correct (tree t) {
 }
 
 tree
+with_correct (tree t) {
+  if (call ("get-preference", "with correct") == object ("on"))
+    return with_correct_bis (t);
+  else return t;
+}
+
+tree
 superfluous_with_correct (drd_info drd, tree t, tree env) {
   if (is_atomic (t)) return t;
   else {
@@ -168,8 +176,11 @@ superfluous_with_correct (drd_info drd, tree t, tree env) {
 
 tree
 superfluous_with_correct (tree t) {
-  drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-  return superfluous_with_correct (drd, t, tree (WITH, MODE, "text"));
+  if (call ("get-preference", "with correct") == object ("on")) {
+    drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+    return superfluous_with_correct (drd, t, tree (WITH, MODE, "text"));
+  }
+  else return t;
 }
 
 /******************************************************************************
@@ -180,7 +191,7 @@ array<tree>
 superfluous_invisible_correct (array<tree> a) {
   array<int>  tp= symbol_types (a);
   array<tree> r;
-  //cout << a << ", " << tp << "\n";
+  cout << a << ", " << tp << "\n";
   for (int i=0; i<N(a); i++)
     if (a[i] == " " || a[i] == "*") {
       int j1, j2;
@@ -190,7 +201,8 @@ superfluous_invisible_correct (array<tree> a) {
       for (j2= i+1; j2<N(a); j2++)
 	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT)
 	  if (a[j2] != " " && a[j2] != "*") break;
-      //cout << "  " << i << ": " << j1 << ", " << j2 << "\n";
+      cout << "  " << i << ": " << j1 << ", " << j2
+	   << "; " << tp[j1] << ", " << tp[j2] << "\n";
       if (j1 < 0 || j2 >= N(a));
       else if (a[j1] == " " || a[j1] == "*");
       else if (tp[j1] == SYMBOL_PREFIX ||
@@ -207,7 +219,7 @@ superfluous_invisible_correct (array<tree> a) {
 
 tree
 superfluous_invisible_correct (drd_info drd, tree t, string mode) {
-  //cout << "Correct " << t << ", " << mode << "\n";
+  cout << "Correct " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
@@ -243,6 +255,12 @@ superfluous_invisible_correct (drd_info drd, tree t, string mode) {
 
 tree
 superfluous_invisible_correct (tree t, string mode) {
-  drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-  return superfluous_invisible_correct (drd, t, mode);
+  return t;
+  /*
+  if (call ("get-preference", "invisible correct") == object ("on")) {
+    drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+    return superfluous_invisible_correct (drd, t, mode);
+  }
+  else return t;
+  */
 }

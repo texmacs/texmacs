@@ -158,6 +158,8 @@
 	(toggle ("Remote connections" "remote connections")))
     (-> "Experimental"
 	(toggle ("Fast environments" "fast environments"))
+	(toggle ("Correct presentation markup" "with correct"))
+	(toggle ("Correct invisible markup" "invisible correct"))
 	(toggle ("Force matching brackets" "matching brackets"))
 	(toggle ("Semantic editing" "semantic editing")))
     ---

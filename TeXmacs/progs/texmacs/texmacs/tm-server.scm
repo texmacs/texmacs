@@ -61,6 +61,8 @@
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("fast environments" "off" notify-fast-environments)
+  ("with correct" "off" (lambda args (noop)))
+  ("invisible correct" "off" (lambda args (noop)))
   ("matching brackets" "off" (lambda args (noop)))
   ("semantic editing" "off" (lambda args (noop)))
   ("security" "prompt on scripts" notify-security)

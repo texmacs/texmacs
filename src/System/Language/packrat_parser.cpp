@@ -93,7 +93,7 @@ packrat_parser_rep::set_input (tree t) {
   current_string= "";
   current_tree  = t;
   add_input (t, path ());
-  cout << "Input " << current_string << "\n";
+  //cout << "Input " << current_string << "\n";
   current_input= encode_tokens (current_string);
 }
 
