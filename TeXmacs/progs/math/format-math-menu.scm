@@ -30,11 +30,19 @@
 
 (menu-bind math-font-menu
   (-> "Name"
-      ("Roman" (make-with "math-font" "roman"))
+      (if (font-exists-in-tt? "Apple Symbols")
+	  ("Apple symbols" (make-with "math-font" "math-apple")))
+      (if (font-exists-in-tt? "Asana-Math")
+	  ("Asana" (make-with "math-font" "math-asana")))
       (if (url-exists-in-tex? "ccr10.mf")
 	  ("Concrete" (make-with "math-font" "concrete")))
+      (if (font-exists-in-tt? "DejaVuSerif")
+	  ("Dejavu" (make-with "math-font" "math-dejavu"))) 
+      (if (font-exists-in-tt? "LucidaGrande")
+	  ("Lucida" (make-with "math-font" "math-lucida")))
       (if (url-exists-in-tex? "eurm10.mf")
 	  ("New Roman" (make-with "math-font" "ENR")))
+      ("Roman" (make-with "math-font" "roman"))
       (if (font-exists-in-tt? "STIXGeneral")
 	  ("Stix" (make-with "math-font" "math-stix")))
       ---

@@ -311,4 +311,42 @@
    ((math-stix $t $a $b $s $d)
     (unicode-math STIXGeneral STIXGeneralItalic
 		  STIXGeneralBol STIXGeneralBolIta
+		  $t $a $b $s $d))
+
+   ((math-asana $t $a $b $s $d)
+    (unicode-math Asana-Math Asana-Math
+		  Asana-Math Asana-Math
+		  $t $a $b $s $d))
+   ((math-lucida $t $a $b $s $d)
+    (unicode-math LucidaGrande LucidaGrande
+		  LucidaGrande LucidaGrande
+		  $t $a $b $s $d))
+   ((math-apple $t $a $b $s $d)
+    (unicode-math #{Apple Symbols}# #{Apple Symbols}#
+		  #{Apple Symbols}# #{Apple Symbols}#
+		  $t $a $b $s $d))
+
+   ((math-dejavu ms bold $b $s $d)
+    (unicode-math DejaVuSans-Bold DejaVuSans-BoldOblique
+		  DejaVuSans-Bold DejaVuSans-BoldOblique
+		  ms bold $b $s $d))
+   ((math-dejavu ms $a $b $s $d)
+    (unicode-math DejaVuSans DejaVuSans-Oblique
+		  DejaVuSans-Bold DejaVuSans-BoldOblique
+		  ms $a $b $s $d))
+   ((math-dejavu mt bold $b $s $d)
+    (unicode-math DejaVuSansMono-Bold DejaVuSansMono-BoldOblique
+		  DejaVuSansMono-Bold DejaVuSansMono-BoldOblique
+		  mt bold $b $s $d))
+   ((math-dejavu mt $a $b $s $d)
+    (unicode-math DejaVuSansMono DejaVuSansMono-Oblique
+		  DejaVuSansMono-Bold DejaVuSansMono-BoldOblique
+		  mt $a $b $s $d))
+   ((math-dejavu $t bold $b $s $d)
+    (unicode-math DejaVuSerif-Bold DejaVuSerif-BoldItalic
+		  DejaVuSerif-Bold DejaVuSerif-BoldItalic
+		  $t bold $b $s $d))
+   ((math-dejavu $t $a $b $s $d)
+    (unicode-math DejaVuSerif DejaVuSerif-Italic
+		  DejaVuSerif-Bold DejaVuSerif-BoldItalic
 		  $t $a $b $s $d))))

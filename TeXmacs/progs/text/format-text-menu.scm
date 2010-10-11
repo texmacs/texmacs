@@ -52,6 +52,8 @@
 		  (font-exists-in-tt? "Apple Symbols")
 		  (font-exists-in-tt? "STIXGeneral"))
 	      (-> "True type"
+		  (if (font-exists-in-tt? "DejaVuSerif")
+		      ("Dejavu" (make-with "font" "dejavu")))
 		  (if (font-exists-in-tt? "LucidaGrande")
 		      ("Lucida Grande" (make-with "font" "apple-lucida")))
 		  (if (font-exists-in-tt? "luxirr")

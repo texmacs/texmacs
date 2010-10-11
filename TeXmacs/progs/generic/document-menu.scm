@@ -203,10 +203,10 @@
       (-> "Text font"
 	  ("Default" (init-default "font"))
 	  ---
-	  ("Roman" (init-env "font" "roman"))
-	  ("Pandora" (init-env "font" "pandora"))
 	  ("Concrete" (init-env "font" "concrete"))
 	  ("Cyrillic" (init-env "font" "cyrillic"))
+	  ("Pandora" (init-env "font" "pandora"))
+	  ("Roman" (init-env "font" "roman"))
 	  ---
 	  ("Bookman" (init-env "font" "bookman"))
 	  ("Courier" (init-env "font" "courier"))
@@ -214,28 +214,38 @@
 	  ("Palatino" (init-env "font" "palatino"))
 	  ("Times" (init-env "font" "times"))
 	  ---
+	  (if (font-exists-in-tt? "DejaVuSerif")
+	      ("Dejavu" (init-env "font" "dejavu")))
+	  ("Lucida" (init-env "font" "x-lucida"))
 	  (if (> (get-font-type) 0)
 	      (if (font-exists-in-tt? "luxirr")
 		  ("Luxi" (init-env "font" "luxi"))))
-	  ("Lucida" (init-env "font" "x-lucida"))
 	  (if (font-exists-in-tt? "STIXGeneral")
 	      ("Stix" (init-env "font" "stix")))
 	  ("Utopia" (init-env "font" "x-utopia")))
       (-> "Mathematical font"
 	  ("Default" (init-default "math-font"))
 	  ---
-	  ("Roman" (init-env "math-font" "roman"))
-	  ("Concrete" (init-env "math-font" "concrete"))
-	  ("Euler new roman" (init-env "math-font" "ENR"))
 	  ("Adobe" (init-env "math-font" "adobe"))
+	  (if (font-exists-in-tt? "Apple Symbols")
+	      ("Apple symbols" (init-env "math-font" "math-apple")))
+	  (if (font-exists-in-tt? "Asana-Math")
+	      ("Asana" (init-env "math-font" "math-asana")))
+	  ("Concrete" (init-env "math-font" "concrete"))
+	  (if (font-exists-in-tt? "DejaVuSerif")
+	      ("Dejavu" (init-env "math-font" "math-dejavu")))
+	  ("Euler new roman" (init-env "math-font" "ENR"))
+	  (if (font-exists-in-tt? "LucidaGrande")
+	      ("Lucida" (init-env "math-font" "math-lucida")))
+	  ("Roman" (init-env "math-font" "roman"))
 	  (if (font-exists-in-tt? "STIXGeneral")
 	      ("Stix" (init-env "math-font" "math-stix"))))
       (-> "Program font"
 	  ("Default" (init-default "prog-font"))
 	  ---
-	  ("Roman" (init-env "prog-font" "roman"))
-	  ("Pandora" (init-env "prog-font" "pandora"))
 	  ("Concrete" (init-env "prog-font" "concrete"))
+	  ("Pandora" (init-env "prog-font" "pandora"))
+	  ("Roman" (init-env "prog-font" "roman"))
 	  ("Times" (init-env "prog-font" "times")))
       ---
       (-> "Size"
