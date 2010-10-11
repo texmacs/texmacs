@@ -15,5 +15,6 @@
 
 tree drd_correct (drd_info drd, tree t);
 tree with_correct (tree t);
+tree superfluous_with_correct (tree t);
 
 #endif // defined TREE_CORRECT_H

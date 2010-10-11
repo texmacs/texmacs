@@ -2877,6 +2877,8 @@ upgrade_math (tree t) {
   if (is_atomic (t)) return t;
   else if (is_func (t, WITH, 3) && t[0] == MODE && t[1] == "math")
     return compound ("math", t[2]);
+  else if (is_func (t, WITH, 3) && t[0] == MODE && t[1] == "text")
+    return compound ("text", t[2]);
   else {
     int n= N(t);
     tree r (t, n);
@@ -2914,6 +2916,7 @@ upgrade_tex (tree t) {
   t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
   t= upgrade_doc_info (t);
   t= upgrade_bibliography (t);
+  t= upgrade_math (t);
   t= upgrade_brackets (t);
   return t;
 }
@@ -3016,5 +3019,6 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.0.7.6") && is_non_style_document (t))
     t= upgrade_brackets (t);
   //t= with_correct (t);
+  t= superfluous_with_correct (t);
   return t;
 }

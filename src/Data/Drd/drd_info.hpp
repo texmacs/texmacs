@@ -108,4 +108,8 @@ class drd_info {
 };
 CONCRETE_CODE(drd_info);
 
+tree drd_env_write (tree env, string var, tree val);
+tree drd_env_merge (tree env, tree t);
+tree drd_env_read (tree env, string var, tree val= tree (UNINIT));
+
 #endif // defined DRD_INFO_H

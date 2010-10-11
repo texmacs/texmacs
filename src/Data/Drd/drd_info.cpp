@@ -418,8 +418,8 @@ drd_info_rep::get_writability_child (tree t, int i) {
 * Environment determination
 ******************************************************************************/
 
-static tree
-env_write (tree env, string var, tree val) {
+tree
+drd_env_write (tree env, string var, tree val) {
   for (int i=0; i<=N(env); i+=2)
     if (i == N(env))
       return env * tree (WITH, var, val);
@@ -431,17 +431,17 @@ env_write (tree env, string var, tree val) {
   return env;
 }
 
-static tree
-env_merge (tree env, tree t) {
+tree
+drd_env_merge (tree env, tree t) {
   int i, n= N(t);
   for (i=0; i<n; i+=2)
     if (is_atomic (t[i]))
-      env= env_write (env, t[i]->label, t[i+1]);
+      env= drd_env_write (env, t[i]->label, t[i+1]);
   return env;
 }
 
-static tree
-env_read (tree env, string var, tree val) {
+tree
+drd_env_read (tree env, string var, tree val) {
   int i, n= N(env);
   for (i=0; i<n; i+=2)
     if (env[i] == var)
@@ -479,7 +479,7 @@ drd_info_rep::freeze_env (tree_label l, int nr) {
 tree
 drd_info_rep::get_env_child (tree t, int i, tree env) {
   if (L(t) == WITH && i == N(t)-1)
-    return env_merge (env, t (0, N(t)-1));
+    return drd_env_merge (env, t (0, N(t)-1));
   else {
     if (L(t) == DOCUMENT && N(t) > 0 &&
 	(is_compound (t[0], "hide-preamble", 1) ||
@@ -491,7 +491,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
 	for (int i=0; i<N(u); i++)
 	  if (is_func (u[i], ASSIGN, 2))
 	    cenv << copy (u[i][0]) << copy (u[i][1]);
-	env= env_merge (env, cenv);
+	env= drd_env_merge (env, cenv);
       }
 
     tag_info ti= info[L(t)];
@@ -504,14 +504,14 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
 	int j= as_int (cenv[i][0]);
 	if (j>=0 && j<N(t)) cenv[i]= copy (t[j]);
       }
-    return env_merge (env, cenv);
+    return drd_env_merge (env, cenv);
   }
 }
 
 tree
 drd_info_rep::get_env_child (tree t, int i, string var, tree val) {
   tree env= get_env_child (t, i, tree (WITH));
-  return env_read (env, var, val);
+  return drd_env_read (env, var, val);
 }
 
 tree
@@ -552,15 +552,15 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
   else if (is_func (t, MACRO)) return "";
   else if (is_func (t, WITH)) {
     int n= N(t)-1;
-    //cout << "env= " << env_merge (env, t (0, n)) << "\n";
-    return arg_access (t[n], arg, env_merge (env, t (0, n)), type);
+    //cout << "env= " << drd_env_merge (env, t (0, n)) << "\n";
+    return arg_access (t[n], arg, drd_env_merge (env, t (0, n)), type);
   }
   else if (is_func (t, TFORMAT)) {
     int n= N(t)-1;
-    tree oldf= env_read (env, CELL_FORMAT, tree (TFORMAT));
+    tree oldf= drd_env_read (env, CELL_FORMAT, tree (TFORMAT));
     tree newf= oldf * tree (TFORMAT, A (t (0, n)));
     tree w   = tree (WITH, CELL_FORMAT, newf);
-    tree cenv= get_env_child (t, n, env_merge (env, w));
+    tree cenv= get_env_child (t, n, drd_env_merge (env, w));
     return arg_access (t[n], arg, cenv, type);
   }
   else if (is_func (t, COMPOUND) && N(t) >= 1 && is_atomic (t[0]))

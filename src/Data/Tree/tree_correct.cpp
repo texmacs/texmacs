@@ -10,9 +10,12 @@
 ******************************************************************************/
 
 #include "tree_correct.hpp"
+#include "drd_info.hpp"
+#include "vars.hpp"
 
 array<tree> concat_decompose (tree t);
 tree concat_recompose (array<tree> a);
+drd_info get_style_drd (tree style);
 
 /******************************************************************************
 * DRD based correction
@@ -91,42 +94,34 @@ with_recompose (tree w, array<tree> a) {
 }
 
 /******************************************************************************
-* Correct superfluous WITHs or WITH-like macros
+* Correct WITHs or WITH-like macros
 ******************************************************************************/
 
 tree
 with_correct (tree t) {
   if (is_atomic (t)) return t;
   else {
-    cout << "Correcting " << t << LF << INDENT;
+    //cout << "Correcting " << t << LF << INDENT;
     tree u (t, N(t));
     for (int k=0; k<N(t); k++)
       u[k]= with_correct (t[k]);
-    cout << "u= " << u << LF;
     array<tree> a= concat_decompose (u);
     int i, n= N(a);
     array<tree> r;
-    cout << "a= " << a << LF;
     for (i=0; i<n; i++) {
       if (is_with_like (a[i])) {
-	cout << "a[" << i << "]= " << a[i] << LF;
 	array<tree> b= with_decompose (a[i], with_body (a[i]));
-	cout << "b= " << b << LF;
 	int p= N(b), k1, k2;
-	cout << "p= " << p << LF;
 	for (k1=0; k1<p ; k1++)
 	  if (is_with_like (b[k1]) && with_similar_type (a[i], b[k1]));
 	  else break;
 	for (k2=p; k2>k1; k2--)
 	  if (is_with_like (b[k2-1]) && with_similar_type (a[i], b[k2-1]));
 	  else break;
-	cout << "k1= " << k1 << LF;
-	cout << "k2= " << k2 << LF;
 	array<tree> x;
 	if (0  < k1) x << range (b, 0, k1);
 	if (k1 < k2) x << with_recompose (a[i], range (b, k1, k2));
 	if (k2 < p ) x << range (b, k2, p);
-	cout << "x= " << x << LF;
 	if (N(x) == 0) continue;
 	if (N(r) != 0 &&
 	    is_with_like (r[N(r)-1]) &&
@@ -141,14 +136,43 @@ with_correct (tree t) {
       }
       else r << a[i];
     }
-    cout << "r= " << r << LF;
-    cout << UNINDENT << "Corrected " << t << " -> "
-	 << concat_recompose (r) << LF;
+    //cout << UNINDENT << "Corrected " << t << " -> "
+    //<< concat_recompose (r) << LF;
     return concat_recompose (r);
   }
 }
 
-// Remove top-level text and with-mode-text tags
-// Replace with-mode-text by text inside math
-// Redundant mode-tags (i.e., math inside equation, equation*)
-// Trailing and double white-space
+tree
+superfluous_with_correct (drd_info drd, tree t, tree env) {
+  if (is_atomic (t)) return t;
+  else {
+    //cout << "Superfluous correcting " << t << ", " << env << LF;
+    if (is_compound (t, "body", 1))
+      return compound ("body", superfluous_with_correct (drd, t[0], env));
+    tree r (t, N(t));
+    for (int i=0; i<N(t); i++)
+      r[i]= superfluous_with_correct
+	      (drd, t[i], drd->get_env_child (t, i, env));
+    if (is_compound (r, "math", 1) && drd_env_read (env, MODE) == "math")
+      return r[0];
+    else if (is_compound (r, "text", 1) && drd_env_read (env, MODE) == "text")
+      return r[0];
+    else if (is_func (r, WITH)) {
+      for (int i=0; i+1<N(r); i+=2)
+	if (!is_atomic (r[i])) return r;
+	else if (drd_env_read (env, r[i]->label) != r[i+1]) return r;
+      return r[N(r)-1];
+    }
+    else if (is_func (r, CONCAT)) {
+      array<tree> a= concat_decompose (r);
+      return concat_recompose (a);
+    }
+    return r;
+  }
+}
+
+tree
+superfluous_with_correct (tree t) {
+  drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+  return superfluous_with_correct (drd, t, tree (WITH, MODE, "text"));
+}
