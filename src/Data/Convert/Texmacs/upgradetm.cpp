@@ -3019,6 +3019,7 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.0.7.6") && is_non_style_document (t))
     t= upgrade_brackets (t);
   //t= with_correct (t);
-  t= superfluous_with_correct (t);
+  //t= superfluous_with_correct (t);
+  //t= superfluous_invisible_correct (t);
   return t;
 }

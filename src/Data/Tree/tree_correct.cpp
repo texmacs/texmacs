@@ -10,12 +10,7 @@
 ******************************************************************************/
 
 #include "tree_correct.hpp"
-#include "drd_info.hpp"
-#include "vars.hpp"
-
-array<tree> concat_decompose (tree t);
-tree concat_recompose (array<tree> a);
-drd_info get_style_drd (tree style);
+#include "tree_analyze.hpp"
 
 /******************************************************************************
 * DRD based correction
@@ -175,4 +170,78 @@ tree
 superfluous_with_correct (tree t) {
   drd_info drd= get_style_drd (tree (TUPLE, "generic"));
   return superfluous_with_correct (drd, t, tree (WITH, MODE, "text"));
+}
+
+/******************************************************************************
+* Remove incorrect spaces and multiplications
+******************************************************************************/
+
+array<tree>
+superfluous_invisible_correct (array<tree> a) {
+  array<int>  tp= symbol_types (a);
+  array<tree> r;
+  cout << a << ", " << tp << "\n";
+  for (int i=0; i<N(a); i++)
+    if (a[i] == " " || a[i] == "*") {
+      int j1, j2;
+      for (j1= i-1; j1>=0; j1--)
+	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
+	else if (a[j1] == " ") break;
+      for (j2= i+1; j2<N(a); j2++)
+	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
+	else if (a[j2] == " ") break;
+      cout << "  " << i << ": " << j1 << ", " << j2 << "\n";
+      if (j1 >= 0 && (a[j1] == " " || a[j1] == "*")) r << a[i];
+      else if (j1 < 0 || j2 >= N(a));
+      else if (a[j2] == " " || a[j2] == "*");
+      else if (tp[j1] == SYMBOL_PREFIX ||
+	       tp[j1] == SYMBOL_INFIX ||
+	       tp[j1] == SYMBOL_SEPARATOR);
+      else if (tp[j2] == SYMBOL_POSTFIX ||
+	       tp[j2] == SYMBOL_INFIX ||
+	       tp[j2] == SYMBOL_SEPARATOR);
+      else r << a[i];
+    }
+    else r << a[i];
+  return r;
+}
+
+tree
+superfluous_invisible_correct (drd_info drd, tree t, string mode) {
+  tree r= t;
+  if (is_compound (t)) {
+    int i, n= N(t);
+    r= tree (t, n);
+    for (i=0; i<n; i++) {
+      tree tmode= drd->get_env_child (t, i, MODE, mode);
+      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      int type= drd->get_type_child (t, i);
+      if (is_compound (t, "body", 1)) type= TYPE_REGULAR;
+      switch (type) {
+      case TYPE_INVALID:
+      case TYPE_REGULAR:
+      case TYPE_GRAPHICAL:
+      case TYPE_ANIMATION:
+      case TYPE_UNKNOWN:
+	r[i]= superfluous_invisible_correct (drd, t[i], smode);
+	break;
+      default:
+	r[i]= t[i];
+	break;
+      }
+    }
+  }
+  
+  if (mode == "math") {
+    array<tree> a= concat_tokenize (r);
+    a= superfluous_invisible_correct (a);
+    return concat_recompose (a);
+  }
+  else return r;
+}
+
+tree
+superfluous_invisible_correct (tree t, string mode) {
+  drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+  return superfluous_invisible_correct (drd, t, mode);
 }
