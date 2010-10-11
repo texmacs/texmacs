@@ -142,7 +142,7 @@ unicode_math_font_rep::search_font_sub (string s) {
     }
     if (!unicode_provides (s)) return 6;
     unsigned int c= cork_to_unicode (s);
-    if (c >= 0x3ac && c <= 0x3d6) return 3;
+    if (c >= 0x3ac && c <= 0x3d6 && !starts (s, "<math")) return 3;
     return 1;
   }
   else {

@@ -12,6 +12,18 @@
 
 ;;; Synonyms for other symbols
 
+;; Mathematical constants are displayed upright in TeXmacs
+;; Admit variants <mathD*>, <mathd*>, etc.
+
+("<mathD>"	   "#44")   ; Derivation operator
+("<mathd>"	   "#64")   ; differential (for d x inside integrals)
+("<mathe>"	   "#65")   ; exp(1)
+("<mathi>"	   "#69")   ; imaginary unit
+("<mathj>"	   "#6A")   ; variant of imaginary unit
+("<mathpi>"	   "#03C0") ;
+("<matheuler>"	   "#03B3") ; Euler constant
+("<mathcatalan>"   "#69")   ; Catalan constant
+
 ;; Alternate symbol names. They use the same glyph and are converted to the
 ;; same unicode character as another symbol.
 
@@ -131,13 +143,32 @@
 ("<large-langle-0>"	"#27E8")
 ("<large-rangle-0>"	"#27E9")
 
+("<large-sqrt-0>"	"#221A") ; FIXME: wrong baseline
+
 ;;; Big Operators
 
 ;; These symbols should only be use internally by TeXmacs in BIG
 ;; primitives or other special constructs. If they are explicitely
 ;; present, they are exported as a regular-sized character.
 
-("<large-sqrt-0>"	"#221A") ; FIXME: wrong baseline
+("<prod>"		"#220F")
+("<sum>"		"#2211")
+("<int>"		"#222B")
+("<big-prod-1>"		"#220F")
+("<big-amalg-1>"        "#2210")
+("<big-sum-1>"		"#2211")
+("<big-int-1>"		"#222B")
+("<big-oint-1>"		"#222E")
+("<big-wedge-1>"        "#22C0")
+("<big-vee-1>"		"#22C1")
+("<big-cap-1>"		"#22C2")
+("<big-cup-1>"		"#22C3")
+("<big-odot-1>"		"#2A00")
+("<big-oplus-1>"	"#2A01")
+("<big-otimes-1>"	"#2A02")
+("<big-pluscup-1>"	"#2A04")
+("<big-sqcap-1>"   	"#2A05")
+("<big-sqcup-1>"  	"#2A06")
 
 ;;; Limit symbols
 
