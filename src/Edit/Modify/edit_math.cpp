@@ -172,7 +172,7 @@ edit_math_rep::make_neg () {
 
 static bool
 is_deleted (tree t) {
-  return t == "<nomid>" || t == tree (LEFT, ".") || t == tree (RIGHT, ".");
+  return t == "<nobracket>" || t == tree (LEFT, ".") || t == tree (RIGHT, ".");
 }
 
 void
@@ -184,7 +184,7 @@ edit_math_rep::back_around (tree t, path p, bool forward) {
   int i= (forward? 0: 2);
   if (is_deleted (t[i]));
   else if (is_atomic (t[i]))
-    assign (t[i], "<nomid>");
+    assign (t[i], "<nobracket>");
   else if (is_func (t[i], LEFT))
     assign (t[i], tree (LEFT, "."));
   else if (is_func (t[i], RIGHT))
@@ -210,7 +210,7 @@ edit_math_rep::back_in_around (tree t, path p, bool forward) {
   int i= (forward? 2: 0);
   if (is_deleted (t[i]));
   else if (is_atomic (t[i]))
-    assign (t[i], "<nomid>");
+    assign (t[i], "<nobracket>");
   else if (is_func (t[i], LEFT))
     assign (t[i], tree (LEFT, "."));
   else if (is_func (t[i], RIGHT))

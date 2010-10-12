@@ -100,6 +100,15 @@ admits_bigops (array<int> tp) {
   return false;
 }
 
+static array<tree>
+replace_dummies (array<tree> a) {
+  array<tree> b (N(a));
+  for (int i=0; i<N(a); i++)
+    if (a[i] == "<cdot>") b[i]= "<cdummy>";
+    else b[i]= a[i];
+  return b;
+}
+
 /******************************************************************************
 * Heuristic determination of several bracket notations
 ******************************************************************************/
@@ -196,11 +205,11 @@ make_small (tree br) {
       is_func (br, BIG))
     if (N(br) > 0 && is_atomic (br[0])) {
       string s= br[0]->label;
-      if (s == ".") return "<nomid>";
+      if (s == ".") return "<nobracket>";
       if (N(s) <= 1) return s;
       return "<" * s * ">";
     }
-  return "<nomid>";
+  return "<nobracket>";
 }
 
 static tree
@@ -248,7 +257,7 @@ add_missing_left (array<tree> a, array<int> tp) {
     if (tp[i] == SYMBOL_CLOSE) {
       tree body= concat_recompose (b);
       b= array<tree> ();
-      if (is_atomic (a[i])) b << make_around ("<nomid>", body, a[i]);
+      if (is_atomic (a[i])) b << make_around ("<nobracket>", body, a[i]);
       else b << make_around (tree (LEFT, "."), body, a[i]);
     }
     else b << a[i];
@@ -262,7 +271,7 @@ add_missing_right (array<tree> a, array<int> tp) {
     if (tp[i] == SYMBOL_OPEN) {
       tree body= concat_recompose (reverse (b));
       b= array<tree> ();
-      if (is_atomic (a[i])) b << make_around (a[i], body, "<nomid>");
+      if (is_atomic (a[i])) b << make_around (a[i], body, "<nobracket>");
       else b << make_around (a[i], body, tree (RIGHT, "."));
     }
     else b << a[i];
@@ -392,6 +401,12 @@ upgrade_brackets (array<tree> a, int level) {
     if (r != a) return upgrade_brackets (r, level);
     r= simplify_matching (a, detect_probable (a, tp), level);
     if (r != a) return upgrade_brackets (r, level);
+    if (replace_dummies (a) != a) {
+      array<tree> a2= replace_dummies (a);
+      array<int> tp2= symbol_types (a2);
+      r= simplify_matching (a2, detect_probable (a2, tp2), level);
+      if (r != a2) return upgrade_brackets (r, level);
+    }
     r= simplify_matching (a, confirm_all (tp), level);
     if (r != a) return upgrade_brackets (r, level);
     r= add_missing_left (a, tp);
@@ -426,43 +441,18 @@ upgrade_brackets (drd_info drd, tree t, string mode) {
     for (i=0; i<n; i++) {
       tree tmode= drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
-      int type= drd->get_type_child (t, i);
-      if (is_compound (t, "body", 1)) type= TYPE_REGULAR;
-      if (is_concat (t)) {
-	if (is_atomic (t[i]) ||
-	    is_func (t[i], AROUND) ||
-	    is_func (t[i], VAR_AROUND) ||
-	    is_func (t[i], BIG_AROUND) ||
-	    is_func (t[i], LEFT) ||
-	    is_func (t[i], MID) ||
-	    is_func (t[i], RIGHT) ||
-	    is_func (t[i], BIG) ||
-	    is_compound (t[i], "bl") ||
-	    is_compound (t[i], "br"))
-	  r[i]= t[i];
-	else
-	  r[i]= upgrade_brackets (drd, t[i], smode);
-      }
-      else
-	switch (type) {
-	case TYPE_INVALID:
-	case TYPE_REGULAR:
-	case TYPE_GRAPHICAL:
-	case TYPE_ANIMATION:
-	case TYPE_UNKNOWN:
-	  r[i]= upgrade_brackets (drd, t[i], smode);
-	  break;
-	default:
-	  r[i]= t[i];
-	  break;
-	}
+      if (is_correctable_child (drd, t, i, true))
+	r[i]= upgrade_brackets (drd, t[i], smode);
+      else r[i]= t[i];
     }
   }
       
   if (mode == "math") {
     array<tree> a= concat_tokenize (r);
     a= upgrade_brackets (a, 0);
-    return concat_recompose (a);
+    tree ret= concat_recompose (a);
+    //if (ret != r) cout << "< " << r << LF << "> " << ret << LF;
+    return ret;
   }
   else return r;
 }

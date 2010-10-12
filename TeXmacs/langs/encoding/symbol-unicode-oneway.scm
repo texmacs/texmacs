@@ -27,6 +27,7 @@
 ;; Alternate symbol names. They use the same glyph and are converted to the
 ;; same unicode character as another symbol.
 
+("<cdummy>"	"#22C5") ; see <cdot>
 ("<dag>"	"#2020") ; see <dagger>
 ("<ddag>"	"#2021") ; see <ddagger>
 ("<Im>"		"#2111") ; see <frak-I>
@@ -210,7 +211,7 @@
 ("<Longdownarrow>"		"#21D3")
 ("<Longupdownarrow>"		"#21D5")
 ("<longhookrightarrow>"		"#21AA")
-;("<longmapsup>"			"")
+;("<longmapsup>"		"")
 ;("<longmapsdown>"		"")
 
 ;;; Unary operator variants
@@ -220,6 +221,7 @@
 ;; should take care of using unary operators where appropriate.
 
 ("<upm>"	"#B1")   ; see <pm>
+("<upl>"	"#2B")   ; see +
 ("<um>"		"#2212") ; see <minus>
 ("<ump>"	"#2213") ; see <mp>
 
@@ -232,3 +234,11 @@
 ("<b-backepsilon>"	"#03F6") ; see <backepsilon>
 ("<b-ell>"		"#2113") ; see <ell>
 ("<b-Mho>"		"#2127") ; see <Mho>
+
+;;; Extra invisible symbols
+
+;; Unicode lacks supports for invisible brackets and invisible symbols.
+;; For the moment, we export them as "zero width space"
+
+("<nobracket>"    "#200B")
+("<nosymbol>"     "#200B")

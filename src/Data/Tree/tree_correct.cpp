@@ -191,7 +191,7 @@ array<tree>
 superfluous_invisible_correct (array<tree> a) {
   array<int>  tp= symbol_types (a);
   array<tree> r;
-  cout << a << ", " << tp << "\n";
+  //cout << a << ", " << tp << "\n";
   for (int i=0; i<N(a); i++)
     if (a[i] == " " || a[i] == "*") {
       int j1, j2;
@@ -201,25 +201,31 @@ superfluous_invisible_correct (array<tree> a) {
       for (j2= i+1; j2<N(a); j2++)
 	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT)
 	  if (a[j2] != " " && a[j2] != "*") break;
-      cout << "  " << i << ": " << j1 << ", " << j2
-	   << "; " << tp[j1] << ", " << tp[j2] << "\n";
+      //cout << "  " << i << ": " << j1 << ", " << j2
+      //<< "; " << tp[j1] << ", " << tp[j2] << "\n";
       if (j1 < 0 || j2 >= N(a));
       else if (a[j1] == " " || a[j1] == "*");
-      else if (tp[j1] == SYMBOL_PREFIX ||
-	       tp[j1] == SYMBOL_INFIX ||
-	       tp[j1] == SYMBOL_SEPARATOR);
-      else if (tp[j2] == SYMBOL_POSTFIX ||
-	       tp[j2] == SYMBOL_INFIX ||
-	       tp[j2] == SYMBOL_SEPARATOR);
+      else if ((tp[j1] == SYMBOL_PREFIX ||
+		tp[j1] == SYMBOL_INFIX ||
+		tp[j1] == SYMBOL_SEPARATOR) &&
+	       (!is_atomic (a[j1]) || !is_iso_alpha (a[j1]->label)));
+      else if ((tp[j2] == SYMBOL_POSTFIX ||
+		tp[j2] == SYMBOL_INFIX ||
+		tp[j2] == SYMBOL_SEPARATOR) &&
+	       (!is_atomic (a[j2]) || !is_iso_alpha (a[j2]->label)));
       else r << a[i];
     }
+    else if (is_func (a[i], SQRT, 2) && a[i][1] == "")
+      r << tree (SQRT, a[i][0]);
+    else if (is_script (a[i]) && a[i][0] == "")
+      r << tree (L(a[i]), "<nosymbol>");
     else r << a[i];
   return r;
 }
 
 tree
 superfluous_invisible_correct (drd_info drd, tree t, string mode) {
-  cout << "Correct " << t << ", " << mode << "\n";
+  //cout << "Correct " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
@@ -227,40 +233,35 @@ superfluous_invisible_correct (drd_info drd, tree t, string mode) {
     for (i=0; i<n; i++) {
       tree tmode= drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
-      int type= drd->get_type_child (t, i);
-      //cout << "  " << i << ": " << type << ", " << smode << "\n";
-      if (is_compound (t, "body", 1)) type= TYPE_REGULAR;
-      switch (type) {
-      case TYPE_INVALID:
-      case TYPE_REGULAR:
-      case TYPE_GRAPHICAL:
-      case TYPE_ANIMATION:
-      case TYPE_UNKNOWN:
-	r[i]= superfluous_invisible_correct (drd, t[i], smode);
-	break;
-      default:
+      //cout << "  " << i << ": " << is_correctable_child (drd, t, i)
+      //<< ", " << smode << "\n";
+      if (is_func (t, WITH) && i != N(t)-1)
 	r[i]= t[i];
-	break;
-      }
+      else if (is_correctable_child (drd, t, i))
+	r[i]= superfluous_invisible_correct (drd, t[i], smode);
+      else r[i]= t[i];
     }
   }
   
-  if (mode == "math") {
+  if (is_func (r, INACTIVE, 1) && is_func (r[0], RIGID))
+    return r[0];
+  else if (mode == "math") {
     array<tree> a= concat_tokenize (r);
     a= superfluous_invisible_correct (a);
-    return concat_recompose (a);
+    tree ret= concat_recompose (a);
+    //if (ret != r) cout << "< " << r << " >" << LF
+    //<< "> " << ret << " <" << LF;
+    return ret;
   }
   else return r;
 }
 
 tree
 superfluous_invisible_correct (tree t, string mode) {
-  return t;
-  /*
+  //return t;
   if (call ("get-preference", "invisible correct") == object ("on")) {
     drd_info drd= get_style_drd (tree (TUPLE, "generic"));
     return superfluous_invisible_correct (drd, t, mode);
   }
   else return t;
-  */
 }

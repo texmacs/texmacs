@@ -16,10 +16,8 @@
 #include "analyze.hpp"
 #include "vars.hpp"
 
-drd_info get_style_drd (tree style);
-
 /******************************************************************************
-* Concatenations
+* Concatenations and other
 ******************************************************************************/
 
 array<tree> concat_tokenize (tree t);
@@ -75,5 +73,12 @@ array<int> symbol_types (array<tree> a);
 
 int symbol_priority (tree t);
 array<int> symbol_priorities (array<tree> a);
+
+/******************************************************************************
+* DRD-based
+******************************************************************************/
+
+drd_info get_style_drd (tree style);
+bool is_correctable_child (drd_info drd, tree t, int i, bool noaround= false);
 
 #endif // defined TREE_ANALYZE_H

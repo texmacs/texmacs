@@ -213,11 +213,16 @@
 ("<bullet>"	"#2022")
 
 ;; General punctuation
+("<ldots>"	"#2026")
 ;("<permil>"	"#2030") ; see symbol-unicode-math.scm
 ("<prime>"	"#2032")
 ("<backprime>"	"#2035")
-("<ldots>"	"#2026")
 
+;; Invisible operators
+("<nospace>"    "#2061")
+("<notimes>"    "#2062")
+("<nocomma>"    "#2063")
+("<noplus>"     "#2064")
 
 ;;; Letterlike Symbols				2100--214F
 

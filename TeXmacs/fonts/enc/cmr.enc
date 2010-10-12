@@ -36,5 +36,7 @@
 254 "space"
 254 "nospace"
 254 "nocomma"
-254 "nomid"
+254 "noplus"
+254 "nobracket"
+254 "nosymbol"
 254 "large-.-0"

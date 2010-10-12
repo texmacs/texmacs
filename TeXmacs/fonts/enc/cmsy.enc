@@ -18,6 +18,7 @@
     "sqsubseteq" "sqsupseteq" "paragraph" "dag" "ddag"
     "endofline" "clubsuit" "diamondsuit" "heartsuit" "spadesuit"
 0   "um"
+1   "cdummy"
 3   "asterisk"
 6   "upm" "ump"
 14  "circle"

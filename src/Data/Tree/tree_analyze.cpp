@@ -208,3 +208,37 @@ symbol_priorities (array<tree> a) {
     tp[i]= symbol_priority (a[i]);
   return tp;
 }
+
+/******************************************************************************
+* Further routines
+******************************************************************************/
+
+bool
+is_correctable_child (drd_info drd, tree t, int i, bool noaround) {
+  int type= drd->get_type_child (t, i);
+  if (is_compound (t, "body", 1)) return true;
+  else if (!is_concat (t)) {
+    switch (type) {
+    case TYPE_INVALID:
+    case TYPE_REGULAR:
+    case TYPE_GRAPHICAL:
+    case TYPE_ANIMATION:
+    case TYPE_UNKNOWN:
+      return true;
+    default:
+      return false;
+    }
+  }
+  else if (is_atomic (t[i]) ||
+	   (noaround && is_func (t[i], AROUND)) ||
+	   (noaround && is_func (t[i], VAR_AROUND)) ||
+	   (noaround && is_func (t[i], BIG_AROUND)) ||
+	   is_func (t[i], LEFT) ||
+	   is_func (t[i], MID) ||
+	   is_func (t[i], RIGHT) ||
+	   is_func (t[i], BIG) ||
+	   is_compound (t[i], "bl") ||
+	   is_compound (t[i], "br"))
+    return false;
+  else return true;
+}

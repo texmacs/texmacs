@@ -177,6 +177,12 @@
   ("symbol _" "_")
   ("symbol ^" "^")
   ("symbol \"" "\"")
+  ("symbol (" "(")
+  ("symbol )" ")")
+  ("symbol [" "[")
+  ("symbol ]" "]")
+  ("symbol {" "{")
+  ("symbol }" "}")
   ("symbol |" "|")
 
   ("undo" (noop) (undo 0))

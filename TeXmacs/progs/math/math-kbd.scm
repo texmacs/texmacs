@@ -144,6 +144,8 @@
   (", var var" "<nocomma>")
   ("." ".")
   (". var" "<point>")
+  (". var var" "<cdummy>")
+  (". var var var" "<nosymbol>")
 
   ("math:symbol a" "<amalg>")
   ("math:symbol d" "<partial>")
@@ -200,7 +202,7 @@
   ("symbol | | var /" "<nshortparallel>")
 
   ("(" (math-bracket-open "(" ")" #f))
-  ("( var" (math-bracket-open "<nomid>" "<nomid>" #f))
+  ("( var" (math-bracket-open "<nobracket>" "<nobracket>" #f))
   (")" (math-bracket-close ")" "(" #f))
   ("[" (math-bracket-open "[" "]" #f))
   ("[ var" (math-bracket-open "[" "[" #f))
@@ -669,9 +671,10 @@
   ("| > var = var /" "<ntrianglerighteq>")
     
   ("+ var" "<upl>")
-  ("+ var var" "<kreuz>")
-  ("+ var var var" "<dag>")
-  ("+ var var var var" "<ddag>")
+  ("+ var var" "<noplus>")
+  ("+ var var var" "<kreuz>")
+  ("+ var var var var" "<dag>")
+  ("+ var var var var var" "<ddag>")
   ("- var" "<um>")
   ("+ -" "<pm>")
   ("+ - var" "<upm>")

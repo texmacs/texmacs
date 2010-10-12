@@ -291,7 +291,8 @@ make_large (tree_label l, tree t) {
   if (!is_atomic (t)) return tree (l, ".");
   string s= t->label;
   if (N(s) <= 1) return tree (l, s);
-  if (s[0] != '<' || s[N(s)-1] != '>' || s == "<nomid>") return tree (l, ".");
+  if (s[0] != '<' || s[N(s)-1] != '>' || s == "<nobracket>")
+    return tree (l, ".");
   return tree (l, s (1, N(s)-1));
 }
 

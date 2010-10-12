@@ -84,18 +84,15 @@ unicode_math_font_rep::search_font_sub (string s) {
   //cout << "Searching " << s << "\n";
   if (N(s) == 0) return 1;
   else if (s == "*" || starts (s, "<big-.") ||
-	   s == "<nomid>" || s == "<nocomma>" || s == "<nospace>") {
+	   s == "<noplus>" || s == "<nocomma>" || s == "<nospace>" ||
+	   s == "<nobracket>" || s == "<nosymbol>") {
     rewriter(s)= "";
     return 2;
   }
-  else if (s == "'") {
-    rewriter (s)= "<#2B9>";
-    return 2;
-  }
-  else if (s == "`") {
-    rewriter (s)= "<backprime>";
-    return 2;
-  }
+  else if (s == "-") { rewriter (s)= "<minus>"; return 2; }
+  else if (s == "|") { rewriter (s)= "<mid>"; return 2; }
+  else if (s == "'") { rewriter (s)= "<#2B9>"; return 2; }
+  else if (s == "`") { rewriter (s)= "<backprime>"; return 2; }
   else if (N(s) == 1) {
     if (s[0] >= 'a' && s[0] <= 'z') return 3;
     if (s[0] >= 'A' && s[0] <= 'Z') return 3;
