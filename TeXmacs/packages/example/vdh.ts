@@ -53,7 +53,11 @@
 
     <assign|I|<with|math-display|false|<op|<big|int>>>>
 
-    <drd-props|I|arity|0|class|Prefix>
+    <drd-props|value:I|class|Prefix>
+
+    <drd-props|symbol:\<uparrow\>|class|Postfix>
+
+    <drd-props|symbol:\<downarrow\>|class|Postfix>
 
     \;
 

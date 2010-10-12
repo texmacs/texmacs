@@ -267,7 +267,9 @@
     Quantifier-symbol
     Infix
     Prefix
-    Postfix)
+    Postfix
+    (:<Prefix :args :>)
+    (:<Postfix :args :>))
 
   (define Expressions
     (Expression Separator Expressions)

@@ -275,6 +275,21 @@ drd_info_rep::get_name (tree_label l) {
   return as_string (get_attribute (l, "name"));
 }
 
+string
+drd_info_rep::get_class (tree t) {
+  if (is_atomic (t)) {
+    string s= "symbol:" * t->label;
+    if (!existing_tree_label (s)) return "";
+    return as_string (get_attribute (make_tree_label (s), "class"));
+  }
+  else if (is_func (t, VALUE, 1) && is_atomic (t[0])) {
+    string s= "value:" * t[0]->label;
+    if (!existing_tree_label (s)) return "";
+    return as_string (get_attribute (make_tree_label (s), "class"));
+  }
+  return as_string (get_attribute (L(t), "class"));
+}
+
 /******************************************************************************
 * Children's mode
 ******************************************************************************/

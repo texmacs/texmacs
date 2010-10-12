@@ -78,7 +78,7 @@ array<int> symbol_priorities (array<tree> a);
 * DRD-based
 ******************************************************************************/
 
-drd_info get_style_drd (tree style);
-bool is_correctable_child (drd_info drd, tree t, int i, bool noaround= false);
+drd_info get_document_drd (tree doc);
+bool is_correctable_child (tree t, int i, bool noaround= false);
 
 #endif // defined TREE_ANALYZE_H

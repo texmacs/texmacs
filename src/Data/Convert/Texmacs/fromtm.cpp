@@ -370,6 +370,7 @@ texmacs_document_to_tree (string s) {
     int n= arity (t);
 
     tree doc (DOCUMENT);
+    doc << compound ("TeXmacs", version);
     if (n<3) return error;
     else if (n<4)
       doc << compound ("body", t[2])
@@ -402,6 +403,12 @@ texmacs_document_to_tree (string s) {
 	is_apply (doc, "TeXmacs", 1))
       doc= tree (DOCUMENT, doc);
     if (!is_document (doc)) return error;
+    if (N(doc) == 0 || !is_compound (doc[0], "TeXmacs", 1)) {
+      tree d (DOCUMENT);
+      d << compound ("TeXmacs", version);
+      d << A(doc);
+      doc= d;
+    }
     return upgrade (doc, version);
   }
   return error;
@@ -431,6 +438,7 @@ extract (tree doc, string attr) {
 	return r;
       }
 
+  if (attr == "TeXmacs") return "";
   if (attr == "body") return tree (DOCUMENT, "");
   if (attr == "project") return "";
   if (attr == "style") return tree (TUPLE);

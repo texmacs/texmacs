@@ -61,6 +61,7 @@ public:
   tree get_attribute (tree_label tag, string which);
   void set_name (tree_label tag, string val);
   string get_name (tree_label tag);
+  string get_class (tree t);
 
   /* Properties of the children of the tag */
   void set_type (tree_label tag, int nr, int tp);

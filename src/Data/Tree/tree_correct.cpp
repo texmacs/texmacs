@@ -93,7 +93,7 @@ with_recompose (tree w, array<tree> a) {
 * Correct WITHs or WITH-like macros
 ******************************************************************************/
 
-tree
+static tree
 with_correct_bis (tree t) {
   if (is_atomic (t)) return t;
   else {
@@ -145,17 +145,17 @@ with_correct (tree t) {
   else return t;
 }
 
-tree
-superfluous_with_correct (drd_info drd, tree t, tree env) {
+static tree
+superfluous_with_correct (tree t, tree env) {
   if (is_atomic (t)) return t;
   else {
     //cout << "Superfluous correcting " << t << ", " << env << LF;
     if (is_compound (t, "body", 1))
-      return compound ("body", superfluous_with_correct (drd, t[0], env));
+      return compound ("body", superfluous_with_correct (t[0], env));
     tree r (t, N(t));
     for (int i=0; i<N(t); i++)
       r[i]= superfluous_with_correct
-	      (drd, t[i], drd->get_env_child (t, i, env));
+	      (t[i], the_drd->get_env_child (t, i, env));
     if (is_compound (r, "math", 1) && drd_env_read (env, MODE) == "math")
       return r[0];
     else if (is_compound (r, "text", 1) && drd_env_read (env, MODE) == "text")
@@ -177,8 +177,8 @@ superfluous_with_correct (drd_info drd, tree t, tree env) {
 tree
 superfluous_with_correct (tree t) {
   if (call ("get-preference", "with correct") == object ("on")) {
-    drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-    return superfluous_with_correct (drd, t, tree (WITH, MODE, "text"));
+    with_drd drd (get_document_drd (t));
+    return superfluous_with_correct (t, tree (WITH, MODE, "text"));
   }
   else return t;
 }
@@ -187,7 +187,7 @@ superfluous_with_correct (tree t) {
 * Remove incorrect spaces and multiplications
 ******************************************************************************/
 
-array<tree>
+static array<tree>
 superfluous_invisible_correct (array<tree> a) {
   array<int>  tp= symbol_types (a);
   array<tree> r;
@@ -223,22 +223,22 @@ superfluous_invisible_correct (array<tree> a) {
   return r;
 }
 
-tree
-superfluous_invisible_correct (drd_info drd, tree t, string mode) {
+static tree
+superfluous_invisible_correct (tree t, string mode) {
   //cout << "Correct " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
     r= tree (t, n);
     for (i=0; i<n; i++) {
-      tree tmode= drd->get_env_child (t, i, MODE, mode);
+      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
-      //cout << "  " << i << ": " << is_correctable_child (drd, t, i)
+      //cout << "  " << i << ": " << is_correctable_child (t, i)
       //<< ", " << smode << "\n";
       if (is_func (t, WITH) && i != N(t)-1)
 	r[i]= t[i];
-      else if (is_correctable_child (drd, t, i))
-	r[i]= superfluous_invisible_correct (drd, t[i], smode);
+      else if (is_correctable_child (t, i))
+	r[i]= superfluous_invisible_correct (t[i], smode);
       else r[i]= t[i];
     }
   }
@@ -257,11 +257,10 @@ superfluous_invisible_correct (drd_info drd, tree t, string mode) {
 }
 
 tree
-superfluous_invisible_correct (tree t, string mode) {
-  //return t;
+superfluous_invisible_correct (tree t) {
   if (call ("get-preference", "invisible correct") == object ("on")) {
-    drd_info drd= get_style_drd (tree (TUPLE, "generic"));
-    return superfluous_invisible_correct (drd, t, mode);
+    with_drd drd (get_document_drd (t));
+    return superfluous_invisible_correct (t, "text");
   }
   else return t;
 }

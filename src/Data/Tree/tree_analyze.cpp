@@ -10,6 +10,9 @@
 ******************************************************************************/
 
 #include "tree_analyze.hpp"
+#include "convert.hpp"
+
+drd_info get_style_drd (tree style);
 
 /******************************************************************************
 * Tokenize mathematical concats and recomposition
@@ -71,7 +74,14 @@ concat_recompose (array<tree> a) {
 int
 symbol_type (tree t) {
   static language lan= math_language ("std-math");
-  if (is_atomic (t)) {
+  if (the_drd->get_class (t) != "") {
+    string cl= the_drd->get_class (t);
+    //cout << "Class " << t << " -> " << cl << "\n";
+    if (cl == "Prefix") return SYMBOL_PREFIX;
+    else if (cl == "Postfix") return SYMBOL_POSTFIX;
+    else return SYMBOL_BASIC;
+  }
+  else if (is_atomic (t)) {
     int pos= 0;
     text_property prop= lan->advance (t, pos);
     switch (prop->op_type) {
@@ -213,9 +223,18 @@ symbol_priorities (array<tree> a) {
 * Further routines
 ******************************************************************************/
 
+drd_info
+get_document_drd (tree doc) {
+  tree style= extract (doc, "style");
+  if (extract (doc, "TeXmacs") == "")
+    style= tree (TUPLE, "generic");
+  //cout << "style= " << style << "\n";
+  return get_style_drd (style);
+}
+
 bool
-is_correctable_child (drd_info drd, tree t, int i, bool noaround) {
-  int type= drd->get_type_child (t, i);
+is_correctable_child (tree t, int i, bool noaround) {
+  int type= the_drd->get_type_child (t, i);
   if (is_compound (t, "body", 1)) return true;
   else if (!is_concat (t)) {
     switch (type) {

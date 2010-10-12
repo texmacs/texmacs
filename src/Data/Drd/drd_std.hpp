@@ -21,4 +21,10 @@ inline bool std_contains (string s) { return STD_CODE->contains (s); }
 
 void init_std_drd ();
 
+struct with_drd {
+  drd_info old_drd;
+  inline with_drd (drd_info new_drd): old_drd (the_drd) { the_drd= new_drd; }
+  inline ~with_drd () { the_drd= old_drd; }
+};
+
 #endif // defined DRD_STD_H

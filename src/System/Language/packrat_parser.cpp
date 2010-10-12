@@ -55,35 +55,42 @@ make_packrat_parser (string lan, tree in, path in_pos= path ()) {
 void
 packrat_parser_rep::add_input (tree t, path p) {
   current_start (p)= N(current_string);
-  if (is_atomic (t)) current_string << t->label;
+  if (is_atomic (t)) {
+    int pos=0;
+    string s= t->label;
+    while (pos<N(s)) {
+      int start= pos;
+      tm_char_forwards (s, pos);
+      if (pos == start+1)
+	current_string << s[start];
+      else {
+	string ss= s (start, pos);
+	string cl= the_drd->get_class (ss);
+	//if (cl != "") cout << "Class " << ss << " -> " << cl << "\n";
+	if (cl == "") current_string << ss;
+	else current_string << "<\\" << cl << ">" << ss << "</>";
+      }
+    }
+  }
+  else if (is_func (t, RAW_DATA, 1))
+    current_string << "<\\rawdata></>";
   else if (is_func (t, CONCAT) || is_func (t, DOCUMENT)) {
     for (int i=0; i<N(t); i++) {
       add_input (t[i], p * i);
       if (is_func (t, DOCUMENT)) current_string << "\n";
     }
   }
-  else if (the_drd->get_attribute (L(t), "class") != "") {
-    tree tp= the_drd->get_attribute (L(t), "class");
-    current_string << "<\\" << tp->label << ">" << as_string (L(t));
-    for (int i=0; i<N(t); i++) {
-      current_string << "<|>";
-      add_input (t[i], p * i);
-    }
-    current_string << "</>";
-  }
-  else if (is_func (t, VALUE, 1) && is_atomic (t[0])) {
-    string name= t[0]->label;
-    tree   tp  = the_drd->get_attribute (make_tree_label (name), "class");
-    if (tp == "") current_string << "<\\value>" << name << "</>";
-    else current_string << "<\\" << tp->label << ">" << name << "</>";
-  }
   else {
+    string cl= the_drd->get_class (t);
+    //if (cl != "") cout << "Class " << t << " -> " << cl << "\n";
+    if (cl != "") current_string << "<\\" << cl << ">";
     current_string << "<\\" << as_string (L(t)) << ">";
     for (int i=0; i<N(t); i++) {
       if (i != 0) current_string << "<|>";
       add_input (t[i], p * i);
     }
     current_string << "</>";
+    if (cl != "") current_string << "</>";
   }
   current_end (p)= N(current_string);
 }

@@ -432,17 +432,17 @@ upgrade_brackets (array<tree> a, int level) {
 }
 
 static tree
-upgrade_brackets (drd_info drd, tree t, string mode) {
+upgrade_brackets_bis (tree t, string mode) {
   //cout << "Upgrade " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
     r= tree (t, n);
     for (i=0; i<n; i++) {
-      tree tmode= drd->get_env_child (t, i, MODE, mode);
+      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
-      if (is_correctable_child (drd, t, i, true))
-	r[i]= upgrade_brackets (drd, t[i], smode);
+      if (is_correctable_child (t, i, true))
+	r[i]= upgrade_brackets_bis (t[i], smode);
       else r[i]= t[i];
     }
   }
@@ -461,9 +461,9 @@ tree
 upgrade_brackets (tree t, string mode) {
   if (call ("get-preference", "matching brackets") == object ("on")) {
     //cout << "Upgrade " << t << "\n";
-    drd_info drd= get_style_drd (tree (TUPLE, "generic"));
+    with_drd drd (get_document_drd (t));
     t= upgrade_above_below (t);
-    return upgrade_brackets (drd, t, mode);
+    return upgrade_brackets_bis (t, mode);
   }
   else return t;
 }
