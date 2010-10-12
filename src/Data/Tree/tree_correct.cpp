@@ -472,8 +472,9 @@ invisible_corrector::correct (array<tree> a) {
       if (ins == " ")
 	if (is_func (a[j], AROUND, 3) || is_func (a[j], VAR_AROUND, 3))
 	  ins= "";
-      while (i+1 < N(a) &&
-	     (is_func (a[i+1], RSUB, 1) || is_func (a[i+1], RSUP, 1))) {
+      while (i+1 < N(a) && (is_func (a[i+1], RSUB, 1) ||
+			    is_func (a[i+1], RSUP, 1) ||
+			    is_func (a[i+1], RPRIME, 1))) {
 	i++;
 	r << a[i];
       }

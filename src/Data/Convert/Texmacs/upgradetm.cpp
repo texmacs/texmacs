@@ -2918,6 +2918,8 @@ upgrade_tex (tree t) {
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
   t= upgrade_brackets (t);
+  t= superfluous_invisible_correct (t);
+  t= missing_invisible_correct (t);
   return t;
 }
 
