@@ -3021,6 +3021,7 @@ upgrade (tree t, string version) {
     t= superfluous_with_correct (t);
     t= upgrade_brackets (t);
     t= superfluous_invisible_correct (t);
+    t= missing_invisible_correct (t);
   }
   return t;
 }

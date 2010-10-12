@@ -366,8 +366,14 @@
   (define Suspension-symbol
     Suspension-nolim-symbol Suspension-lim-symbol)
 
-  (define Variable-symbol
+  (define Letter-symbol
     (:type symbol)
+
+    "<mathd>" "<mathe>" "<mathi>" "<mathpi>"
+    "<mathD>" "<matheuler>" "<mathcatalan>"
+    "<aleph>" "<beth>" "<gimel>" "<daleth>"
+    "<hbar>" "<hslash>" "<imath>" "<jmath>" "<ell>"
+    "<wp>" "<digamma>"
 
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<epsilon>"
     "<varepsilon>" "<zeta>" "<eta>" "<theta>" "<vartheta>"
@@ -439,9 +445,6 @@
   (define Miscellaneous-symbol
     (:type symbol)
 
-    "<mathd>" "<mathe>" "<mathi>" "<mathpi>"
-    "<mathD>" "<matheuler>" "<mathcatalan>"
-
     "<ldot>" "<udot>" "<comma>" "<cdummy>" "<nosymbol>"
 
     "<uparrow>" "<Uparrow>" "<downarrow>" "<Downarrow>"
@@ -450,8 +453,7 @@
     "<longdownarrow>" "<Longdownarrow>" "<longupdownarrow>" "<Longupdownarrow>"
     "<longmapsup>" "<longmapsdown>" "<longhookuparrow>" "<longhookdownarrow>"
 
-    "<aleph>" "<hbar>" "<imath>" "<jmath>" "<ell>"
-    "<wp>" "<Re>" "<Im>" "<prime>" "<emptyset>"
+    "<Re>" "<Im>" "<prime>" "<emptyset>"
     "<nabla>" "<surd>" "<top>" "<bot>" "<angle>"
     "<flat>" "<natural>" "<sharp>" "<backslash>"
     "<partial>" "<infty>" "<infty>" "<Box>" "<Diamont>"
@@ -462,12 +464,12 @@
     "<kreuz>" "<recorder>" "<phone>" "<checked>" "<bell>"
 
     "<backprime>" "<barwedge>" "<because>"
-    "<beth>" "<between>" "<bigstar>" "<blacklozenge>"
+    "<between>" "<bigstar>" "<blacklozenge>"
     "<blacksquare>" "<blacktriangle>" "<blacktriangledown>"
     "<centerdot>" "<checkmark>" "<circledast>" "<circledcirc>"
-    "<circleddash>" "<complement>" "<daleth>" "<digamma>"
-    "<divideontimes>" "<doublebarwedge>" "<gimel>"
-    "<hbar>" "<hslash>" "<intercal>" "<leftthreetimes>" "<llcorner>"
+    "<circleddash>" "<complement>"
+    "<divideontimes>" "<doublebarwedge>"
+    "<intercal>" "<leftthreetimes>" "<llcorner>"
     "<lozenge>" "<lrcorner>" "<maltese>" "<measuredangle>"
     "<pitchfork>" "<rightthreetimes>"
     "<smallfrown>" "<smallsmile>" "<sphericalangle>"

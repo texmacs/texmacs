@@ -377,7 +377,7 @@
     (:<big-around :any :/ (* Post) Expressions :>)
     Identifier
     Number
-    Variable-symbol
+    Letter-symbol
     Suspension-symbol
     Miscellaneous-symbol
     (:<frac Expression :/ Expression :>)

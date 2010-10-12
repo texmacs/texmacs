@@ -264,3 +264,261 @@ superfluous_invisible_correct (tree t) {
   }
   else return t;
 }
+
+/******************************************************************************
+* Insert missing multiplications or function applications
+******************************************************************************/
+
+#define SURE_NOTHING     0
+#define SURE_TIMES       1
+#define SURE_SPACE       2
+#define PROBABLE_TIMES   3
+#define PROBABLE_SPACE   4
+#define BOTH_WAYS        5
+
+struct invisible_corrector {
+  bool force;
+  hashmap<string,int> times_before;
+  hashmap<string,int> times_after;
+  hashmap<string,int> space_before;
+  hashmap<string,int> space_after;
+
+protected:
+  bool is_letter_like (string s);
+  bool contains_infix (tree t);
+  bool contains_plus_like (tree t);
+  void count_invisible (array<tree> a);
+  void count_invisible (tree t, string mode);
+  int  get_status (tree t, bool left);
+  array<tree> correct (array<tree> a);
+
+public:
+  inline invisible_corrector (tree t, bool force2):
+    force (force2), times_before (0), times_after (0), space_after (0) {
+      count_invisible (t, "text"); }
+  tree correct (tree t, string mode);
+};
+
+bool
+invisible_corrector::is_letter_like (string s) {
+  static language lan= math_language ("std-math");
+  if (s != "" && is_iso_alpha (s)) return true;
+  return lan->get_group (s) == "Letter-symbol";
+}
+
+bool
+invisible_corrector::contains_infix (tree t) {
+  array<int> tp= symbol_types (concat_tokenize (t));
+  for (int i=0; i<N(tp); i++)
+    if (tp[i] == SYMBOL_INFIX)
+      return true;
+  return false;
+}
+
+bool
+invisible_corrector::contains_plus_like (tree t) {
+  array<tree> a= concat_tokenize (t);
+  for (int i=1; i<N(a)-1; i++)
+    if (a[i] == "+" || a[i] == "-")
+      return true;
+  return false;
+}
+
+void
+invisible_corrector::count_invisible (array<tree> a) {
+  array<int>  tp= symbol_types (a);
+  for (int i=0; i<N(a); i++)
+    if (is_atomic (a[i]) && is_letter_like (a[i]->label)) {
+      int j1, j2;
+      for (j1= i-1; j1>=0; j1--)
+	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
+	else if (a[j1] == " ") break;
+      for (j2= i+1; j2<N(a); j2++)
+	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
+	else if (a[j2] == " ") break;
+      string s= a[i]->label;
+      if (j1 >= 0) {
+	if (a[j1] == "*")
+	  times_before (s)= times_before[s] + 1;
+	if (a[j1] == " ")
+	  space_before (s)= space_before[s] + 1;
+      }
+      if (j2 < N(a)) {
+	if (a[j2] == "*")
+	  times_after (s)= times_after[s] + 1;
+	if (a[j2] == " ")
+	  space_after (s)= space_after[s] + 1;
+	if (is_func (a[j2], AROUND, 3) || is_func (a[j2], VAR_AROUND, 3))
+	  if (a[j2][0] == "(" && !contains_infix (a[j2][1]))
+	    space_after (s)= space_after[s] + 1;
+      }
+    }
+}
+
+void
+invisible_corrector::count_invisible (tree t, string mode) {
+  if (is_compound (t)) {
+    int i, n= N(t);
+    for (i=0; i<n; i++) {
+      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
+      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      if (is_func (t, WITH) && i != N(t)-1);
+      else if (is_correctable_child (t, i))
+	count_invisible (t[i], smode);
+    }
+  }
+  if (mode == "math")
+    count_invisible (concat_tokenize (t));
+}
+
+int
+invisible_corrector::get_status (tree t, bool left) {
+  if (is_atomic (t)) {
+    string s= t->label;
+    if (is_numeric (s))
+      return (left? SURE_TIMES: SURE_NOTHING);
+    else if (N(s) > 1 && is_iso_alpha (s)) {
+      int tp= symbol_type (t);
+      if (tp == SYMBOL_INFIX) return SURE_SPACE;
+      if (tp == SYMBOL_PREFIX)
+	return (left? SURE_SPACE: BOTH_WAYS);
+    }
+    else if (is_letter_like (s)) {
+      if (left) {
+	if (times_after[s] > 0 && space_after[s] == 0)
+	  return SURE_TIMES;
+	else if (space_after[s] > 0 && times_after[s] == 0)
+	  return SURE_SPACE;
+	else if (times_after[s] > space_after[s])
+	  return PROBABLE_TIMES;
+	else if (space_after[s] > times_after[s])
+	  return PROBABLE_SPACE;
+	else if (N(s)>1 && is_iso_alpha (s))
+	  return PROBABLE_SPACE;
+	else return BOTH_WAYS;
+      }
+      else {
+	if (space_before[s] > times_before[s])
+	  return PROBABLE_SPACE;
+	else if (times_before[s] > space_before[s])
+	  return PROBABLE_TIMES;
+	else if (times_after[s] > 0 && space_after[s] == 0)
+	  return PROBABLE_TIMES;
+	else return BOTH_WAYS;
+      }
+    }
+    else if (s == "<cdots>" || s == "<ldots>")
+      return PROBABLE_TIMES;
+    else return (force? BOTH_WAYS: SURE_NOTHING);
+  }
+  else {
+    if (is_func (t, AROUND, 3) || is_func (t, VAR_AROUND, 3)) {
+      if (left && contains_plus_like (t[1]))
+	return (force? SURE_TIMES: PROBABLE_TIMES);
+      else if (contains_plus_like (t[1]))
+	return (force? PROBABLE_TIMES: BOTH_WAYS);
+      else if (!contains_infix (t[1]))
+	return (left? PROBABLE_SPACE: SURE_SPACE);
+      else return BOTH_WAYS;
+    }
+    else if (is_func (t, FRAC) ||
+	     is_func (t, SQRT))
+      return (left? SURE_TIMES: BOTH_WAYS);
+    else if (!left && is_func (t, BIG_AROUND))
+      return PROBABLE_TIMES;
+    else return (force? BOTH_WAYS: SURE_NOTHING);
+  }
+}
+
+array<tree>
+invisible_corrector::correct (array<tree> a) {
+  array<tree> r;
+  array<int> tp= symbol_types (a);
+  for (int i=0; i<N(a); i++) {
+    r << a[i];
+    if ((is_atomic (a[i]) && is_iso_alpha (a[i]->label)) ||
+	(a[i] != " " && tp[i] == SYMBOL_BASIC)) {
+      int j;
+      for (j= i+1; j<N(a); j++)
+	if (tp[j] != SYMBOL_SKIP && tp[j] != SYMBOL_SCRIPT) break;
+	else if (a[j] == " ") break;
+      if (j >= N(tp) || a[j] == " " || tp[j] != SYMBOL_BASIC)
+	continue;
+      
+      string ins= "";
+      int sti= get_status (a[i], true);
+      int stj= get_status (a[j], false);
+      //cout << "Pair (" << a[i] << ", " << a[j] << ")"
+      //<< " -> (" << sti << ", " << stj << ")" << LF;
+      if (sti == SURE_NOTHING || stj == SURE_NOTHING)
+	ins= "";
+      else if (sti == SURE_TIMES && stj != SURE_SPACE)
+	ins= "*";
+      else if (sti == SURE_SPACE && stj != SURE_TIMES)
+	ins= " ";
+      else if (sti == PROBABLE_TIMES && stj == PROBABLE_TIMES)
+	ins= "*";
+      else if (sti == PROBABLE_SPACE && stj == PROBABLE_SPACE)
+	ins= " ";
+      else if (sti == PROBABLE_TIMES && stj == BOTH_WAYS)
+	ins= "*";
+      else if (sti == PROBABLE_SPACE && stj == BOTH_WAYS)
+	ins= " ";
+      else if (sti == BOTH_WAYS && stj == PROBABLE_TIMES)
+	ins= "*";
+      else if (sti == BOTH_WAYS && stj == PROBABLE_SPACE)
+	ins= " ";
+
+      if (ins == " ")
+	if (is_func (a[j], AROUND, 3) || is_func (a[j], VAR_AROUND, 3))
+	  ins= "";
+      while (i+1 < N(a) &&
+	     (is_func (a[i+1], RSUB, 1) || is_func (a[i+1], RSUP, 1))) {
+	i++;
+	r << a[i];
+      }
+      if (ins != "") r << tree (ins);
+    }
+  }
+  return r;
+}
+
+tree
+invisible_corrector::correct (tree t, string mode) {
+  tree r= t;
+  if (is_compound (t)) {
+    int i, n= N(t);
+    r= tree (t, n);
+    for (i=0; i<n; i++) {
+      tree tmode= the_drd->get_env_child (t, i, MODE, mode);
+      string smode= (is_atomic (tmode)? tmode->label: string ("text"));
+      if (is_func (t, WITH) && i != N(t)-1)
+	r[i]= t[i];
+      else if (is_correctable_child (t, i))
+	r[i]= correct (t[i], smode);
+      else r[i]= t[i];
+    }
+  }
+  
+  if (mode == "math") {
+    array<tree> a= concat_tokenize (r);
+    a= correct (a);
+    tree ret= concat_recompose (a);
+    //if (ret != r) cout << "<< " << r << " >>" << LF
+    //<< ">> " << ret << " <<" << LF;
+    return ret;
+  }
+  else return r;
+}
+
+tree
+missing_invisible_correct (tree t, bool force) {
+  if (call ("get-preference", "invisible correct") == object ("on")) {
+    with_drd drd (get_document_drd (t));
+    invisible_corrector corrector (t, force);
+    //cout << "Times " << corrector.times_after << "\n";
+    //cout << "Space " << corrector.space_after << "\n";
+    return corrector.correct (t, "text");
+  }
+  else return t;
+}
