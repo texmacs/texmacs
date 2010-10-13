@@ -243,6 +243,25 @@ superfluous_invisible_correct (tree t, string mode) {
     }
   }
   
+  if (is_func (r, CONCAT)) {
+    bool ok= true;
+    int i, found= -1;
+    for (i=0; i<N(r); i++)
+      if (is_compound (r[i], "hide-preamble") ||
+	  is_compound (r[i], "show-preamble"))
+	{
+	  ok= (found == -1);
+	  found= i;
+	}
+      else if (!is_atomic (r[i])) ok= false;
+      else {
+	string s= r[i]->label;
+	for (int j=0; j<N(s); j++)
+	  if (s[j] != ' ') ok= false;
+      }
+    if (ok) r= r[found];
+  }
+
   if (is_func (r, INACTIVE, 1) && is_func (r[0], RIGID))
     return r[0];
   else if (mode == "math") {
@@ -277,7 +296,7 @@ superfluous_invisible_correct (tree t) {
 #define BOTH_WAYS        5
 
 struct invisible_corrector {
-  bool force;
+  int force;
   hashmap<string,int> times_before;
   hashmap<string,int> times_after;
   hashmap<string,int> space_before;
@@ -293,7 +312,7 @@ protected:
   array<tree> correct (array<tree> a);
 
 public:
-  inline invisible_corrector (tree t, bool force2):
+  inline invisible_corrector (tree t, int force2):
     force (force2), times_before (0), times_after (0), space_after (0) {
       count_invisible (t, "text"); }
   tree correct (tree t, string mode);
@@ -376,7 +395,7 @@ invisible_corrector::get_status (tree t, bool left) {
   if (is_atomic (t)) {
     string s= t->label;
     if (is_numeric (s))
-      return (left? SURE_TIMES: SURE_NOTHING);
+      return (left? SURE_TIMES: PROBABLE_TIMES);
     else if (N(s) > 1 && is_iso_alpha (s)) {
       int tp= symbol_type (t);
       if (tp == SYMBOL_INFIX) return SURE_SPACE;
@@ -409,14 +428,14 @@ invisible_corrector::get_status (tree t, bool left) {
     }
     else if (s == "<cdots>" || s == "<ldots>")
       return PROBABLE_TIMES;
-    else return (force? BOTH_WAYS: SURE_NOTHING);
+    else return ((force > 0)? BOTH_WAYS: SURE_NOTHING);
   }
   else {
     if (is_func (t, AROUND, 3) || is_func (t, VAR_AROUND, 3)) {
       if (left && contains_plus_like (t[1]))
-	return (force? SURE_TIMES: PROBABLE_TIMES);
+	return ((force > 0)? SURE_TIMES: PROBABLE_TIMES);
       else if (contains_plus_like (t[1]))
-	return (force? PROBABLE_TIMES: BOTH_WAYS);
+	return ((force > 0)? PROBABLE_TIMES: BOTH_WAYS);
       else if (!contains_infix (t[1]))
 	return (left? PROBABLE_SPACE: SURE_SPACE);
       else return BOTH_WAYS;
@@ -426,7 +445,7 @@ invisible_corrector::get_status (tree t, bool left) {
       return (left? SURE_TIMES: BOTH_WAYS);
     else if (!left && is_func (t, BIG_AROUND))
       return PROBABLE_TIMES;
-    else return (force? BOTH_WAYS: SURE_NOTHING);
+    else return ((force > 0)? BOTH_WAYS: SURE_NOTHING);
   }
 }
 
@@ -468,10 +487,14 @@ invisible_corrector::correct (array<tree> a) {
 	ins= "*";
       else if (sti == BOTH_WAYS && stj == PROBABLE_SPACE)
 	ins= " ";
+      else if (sti == BOTH_WAYS && stj == BOTH_WAYS && force == 1 &&
+	       (is_atomic (a[i]) || is_atomic (a[j])))
+	ins= "*";
 
-      if (ins == " ")
-	if (is_func (a[j], AROUND, 3) || is_func (a[j], VAR_AROUND, 3))
+      if (is_func (a[j], AROUND, 3) || is_func (a[j], VAR_AROUND, 3))
+	if (ins == " " || (ins == "*" && force == -1))
 	  ins= "";
+      if (a[j] == ".") ins= "";
       while (i+1 < N(a) && (is_func (a[i+1], RSUB, 1) ||
 			    is_func (a[i+1], RSUP, 1) ||
 			    is_func (a[i+1], RPRIME, 1))) {
@@ -513,7 +536,10 @@ invisible_corrector::correct (tree t, string mode) {
 }
 
 tree
-missing_invisible_correct (tree t, bool force) {
+missing_invisible_correct (tree t, int force) {
+  // force = -1, only correct when sure, and when old markup is incorrect
+  // force = 0 , only correct when pretty sure
+  // force = 1 , correct whenever reasonable (used for LaTeX import)
   if (call ("get-preference", "invisible correct") == object ("on")) {
     with_drd drd (get_document_drd (t));
     invisible_corrector corrector (t, force);
