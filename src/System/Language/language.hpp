@@ -48,12 +48,12 @@ RESOURCE(language);
 
 #define OP_UNKNOWN            0
 #define OP_SYMBOL             1
-#define OP_PREFIX             2
-#define OP_POSTFIX            3
-#define OP_INFIX              4
-#define OP_LEFT_ASS_INFIX     5
-#define OP_RIGHT_ASS_INFIX    6
-#define OP_ASS_INFIX          7
+#define OP_UNARY              2
+#define OP_BINARY             3
+#define OP_N_ARY              4
+#define OP_PREFIX             5
+#define OP_POSTFIX            6
+#define OP_INFIX              7
 #define OP_SEPARATOR          8
 #define OP_OPENING_BRACKET    9
 #define OP_MIDDLE_BRACKET    10

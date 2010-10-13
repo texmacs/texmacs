@@ -85,14 +85,17 @@ symbol_type (tree t) {
     int pos= 0;
     text_property prop= lan->advance (t, pos);
     switch (prop->op_type) {
+    case OP_UNKNOWN:
+    case OP_SYMBOL:
+    case OP_UNARY:
+    case OP_BINARY:
+    case OP_N_ARY:
+      return SYMBOL_BASIC;
     case OP_PREFIX:
       return SYMBOL_PREFIX;
     case OP_POSTFIX:
       return SYMBOL_POSTFIX;
     case OP_INFIX:
-    case OP_LEFT_ASS_INFIX:
-    case OP_RIGHT_ASS_INFIX:
-    case OP_ASS_INFIX:
       return SYMBOL_INFIX;
     case OP_SEPARATOR:
       return SYMBOL_SEPARATOR;

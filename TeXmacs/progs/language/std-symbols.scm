@@ -23,7 +23,7 @@
     "<assign>" "<plusassign>" "<minusassign>" "<astassign>" "<overassign>")
   
   (define Flux-symbol
-    (:type associative-infix)
+    (:type infix)
     (:spacing default default)
     "<lflux>" "<gflux>")
 
@@ -60,13 +60,13 @@
     Imply-nolim-symbol Imply-symbol)
 
   (define Or-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty 10)
     (:spacing default default)
     "<vee>" "<curlyvee>")
 
   (define And-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty 10)
     (:spacing default default)
     "<wedge>" "<curlywedge>")
@@ -184,32 +184,32 @@
     Arrow-nolim-symbol Arrow-lim-symbol)
 
   (define Union-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty 30)
     (:spacing default default)
     "<cup>" "<Cup>" "<doublecup>" "<uplus>" "<sqcup>")
 
   (define Intersection-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty 30)
     (:spacing default default)
     "<cap>" "<Cap>" "<doublecap>" "<sqcap>")
 
   (define Exclude-symbol
-    (:type left-associative-infix)
+    (:type infix)
     (:penalty 30)
     (:spacing default default)
     "<setminus>" "<smallsetminus>")
 
   (define Plus-visible-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty 30)
     (:spacing default default)
     "+" "<amalg>" "<oplus>" "<boxplus>"
     "<dotplus>" "<dotamalg>" "<dotoplus>")
 
   (define Plus-invisible-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty invalid)
     (:spacing none default)
     "<noplus>")
@@ -224,7 +224,7 @@
     "<upl>")
 
   (define Minus-symbol
-    (:type left-associative-infix)
+    (:type infix)
     (:penalty 30)
     (:spacing default default)
     "-" "<pm>" "<mp>" "<ominus>" "<boxminus>")
@@ -236,7 +236,7 @@
     "<um>" "<upm>" "<ump>")
 
   (define Times-visible-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty 40)
     (:spacing default default)
     "<cdot>" "<times>" "<otimes>" "<circ>" "<boxdot>" "<boxtimes>"
@@ -244,7 +244,7 @@
     "<join>" "<ast>" "<star>" "<oast>")
 
   (define Times-invisible-symbol
-    (:type associative-infix)
+    (:type infix)
     (:penalty invalid)
     (:spacing none default)
     "*")
@@ -253,13 +253,13 @@
     Times-visible-symbol Times-invisible-symbol)
 
   (define Over-regular-symbol
-    (:type left-associative-infix)
+    (:type infix)
     (:penalty 40)
     (:spacing default default)
     "<div>" "<oover>")
 
   (define Over-condensed-symbol
-    (:type left-associative-infix)
+    (:type infix)
     (:penalty 40)
     "/")
 
@@ -445,9 +445,6 @@
   (define Miscellaneous-symbol
     (:type symbol)
 
-    "<partial>" "<nabla>" "<Re>" "<Im>" "<complement>"
-    ;; NOTE: might need to become prefix
-
     "<ldot>" "<udot>" "<comma>" "<cdummy>" "<nosymbol>"
 
     "<uparrow>" "<Uparrow>" "<downarrow>" "<Downarrow>"
@@ -498,22 +495,32 @@
   (define Spacing-symbol
     Spacing-visible-symbol Spacing-wide-symbol Spacing-invisible-symbol)
 
-  (define Prefix-operator
-    (:type prefix)
+  (define Unary-operator-glyph-symbol
+    (:type unary)
+    (:penalty panic)
+    (:spacing none none)
+    "<partial>" "<nabla>" "<Re>" "<Im>" "<complement>")
+
+  (define Unary-operator-textual-symbol
+    (:type unary)
     (:penalty panic)
     (:spacing none default)
     "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
     "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
     "lg" "ln" "log" "sec" "sin" "sinh" "tan" "tanh")
 
-  (define Infix-operator
-    (:type infix)
+  (define Unary-operator-symbol
+    Unary-operator-glyph-symbol
+    Unary-operator-textual-symbol)
+
+  (define Binary-operator-symbol
+    (:type binary)
     (:penalty panic)
     (:spacing default default)
     "div" "mod")
 
-  (define Big-operator
-    (:type prefix)
+  (define N-ary-operator-symbol
+    (:type n-ary)
     (:penalty panic)
     (:spacing none default)
     (:limits display)

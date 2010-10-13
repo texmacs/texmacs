@@ -50,12 +50,12 @@ void
 math_language_rep::set_type (string cl, string s) {
   int &ot= tpr_class(cl).op_type;
   if (s == "symbol") ot= OP_SYMBOL;
+  else if (s == "unary") ot= OP_UNARY;
+  else if (s == "binary") ot= OP_BINARY;
+  else if (s == "n-ary") ot= OP_N_ARY;
   else if (s == "prefix") ot= OP_PREFIX;
   else if (s == "postfix") ot= OP_POSTFIX;
   else if (s == "infix") ot= OP_INFIX;
-  else if (s == "left-associative-infix") ot= OP_LEFT_ASS_INFIX;
-  else if (s == "right-associative-infix") ot= OP_RIGHT_ASS_INFIX;
-  else if (s == "associative-infix") ot= OP_ASS_INFIX;
   else if (s == "separator") ot= OP_SEPARATOR;
   else if (s == "opening-bracket") ot= OP_OPENING_BRACKET;
   else if (s == "middle-bracket") ot= OP_MIDDLE_BRACKET;
@@ -295,18 +295,18 @@ math_symbol_type (string sym, string lang) {
     return "unknown";
   case OP_SYMBOL:
     return "symbol";
+  case OP_UNARY:
+    return "unary";
+  case OP_BINARY:
+    return "binary";
+  case OP_N_ARY:
+    return "n-ary";
   case OP_PREFIX:
     return "prefix";
   case OP_POSTFIX:
     return "postfix";
   case OP_INFIX:
     return "infix";
-  case OP_LEFT_ASS_INFIX:
-    return "left-associative-infix";
-  case OP_RIGHT_ASS_INFIX:
-    return "right-associative-infix";
-  case OP_ASS_INFIX:
-    return "associative-infix";
   case OP_SEPARATOR:
     return "separator";
   case OP_OPENING_BRACKET:

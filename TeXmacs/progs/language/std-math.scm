@@ -380,6 +380,7 @@
     Letter-symbol
     Suspension-symbol
     Miscellaneous-symbol
+    Unary-operator-glyph-symbol
     (:<frac Expression :/ Expression :>)
     (:<sqrt Expression :>)
     (:<sqrt Expression :/ Expression :>)

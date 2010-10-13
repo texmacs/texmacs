@@ -205,14 +205,12 @@ superfluous_invisible_correct (array<tree> a) {
       //<< "; " << tp[j1] << ", " << tp[j2] << "\n";
       if (j1 < 0 || j2 >= N(a));
       else if (a[j1] == " " || a[j1] == "*");
-      else if ((tp[j1] == SYMBOL_PREFIX ||
-		tp[j1] == SYMBOL_INFIX ||
-		tp[j1] == SYMBOL_SEPARATOR) &&
-	       (!is_atomic (a[j1]) || !is_iso_alpha (a[j1]->label)));
-      else if ((tp[j2] == SYMBOL_POSTFIX ||
-		tp[j2] == SYMBOL_INFIX ||
-		tp[j2] == SYMBOL_SEPARATOR) &&
-	       (!is_atomic (a[j2]) || !is_iso_alpha (a[j2]->label)));
+      else if (tp[j1] == SYMBOL_PREFIX ||
+	       tp[j1] == SYMBOL_INFIX ||
+	       tp[j1] == SYMBOL_SEPARATOR);
+      else if (tp[j2] == SYMBOL_POSTFIX ||
+	       tp[j2] == SYMBOL_INFIX ||
+	       tp[j2] == SYMBOL_SEPARATOR);
       else r << a[i];
     }
     else if (is_func (a[i], SQRT, 2) && a[i][1] == "")
@@ -392,15 +390,17 @@ invisible_corrector::count_invisible (tree t, string mode) {
 int
 invisible_corrector::get_status (tree t, bool left) {
   if (is_atomic (t)) {
+    static language lan= math_language ("std-math");
     string s= t->label;
+    string g= lan->get_group (t->label);
     if (is_numeric (s))
       return (left? SURE_TIMES: PROBABLE_TIMES);
-    else if (N(s) > 1 && is_iso_alpha (s)) {
-      int tp= symbol_type (t);
-      if (tp == SYMBOL_INFIX) return SURE_SPACE;
-      if (tp == SYMBOL_PREFIX)
-	return (left? SURE_SPACE: BOTH_WAYS);
-    }
+    else if (starts (g, "Unary-operator"))
+      return (left? SURE_SPACE: BOTH_WAYS);
+    else if (starts (g, "Binary-operator"))
+      return SURE_SPACE;
+    else if (starts (g, "N-ary-operator"))
+      return (left? SURE_SPACE: BOTH_WAYS);
     else if (is_letter_like (s)) {
       if (left) {
 	if (times_after[s] > 0 && space_after[s] == 0)
@@ -455,14 +455,12 @@ invisible_corrector::correct (array<tree> a) {
   array<int> tp= symbol_types (a);
   for (int i=0; i<N(a); i++) {
     r << a[i];
-    if ((is_atomic (a[i]) && is_iso_alpha (a[i]->label)) ||
-	(a[i] != " " && tp[i] == SYMBOL_BASIC)) {
+    if (a[i] != " " && tp[i] == SYMBOL_BASIC) {
       int j;
       for (j= i+1; j<N(a); j++)
 	if (tp[j] != SYMBOL_SKIP && tp[j] != SYMBOL_SCRIPT) break;
 	else if (a[j] == " ") break;
-      if (j >= N(a) || a[j] == " " ||
-	  (!is_iso_alpha (a[j]->label) && tp[j] != SYMBOL_BASIC))
+      if (j >= N(a) || a[j] == " " || tp[j] != SYMBOL_BASIC)
 	continue;
       
       string ins= "";
