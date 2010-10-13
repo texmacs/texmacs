@@ -356,12 +356,23 @@ latex_concat_to_tree (tree t, bool& new_flag) {
 	    continue;
 	}
 	else {
-	  if ((t[i] != tree (TUPLE, "\\ ")) && (i>0) && (is_tuple (t[i-1]))) {
-	    string s= t[i-1][0]->label;
-	    if ((s[0] == '\\') && (latex_type (s) == "command") &&
-		(s!="\\end-math") && (s!="\\end-displaymath"))
-	      if ((arity(t[i-1])==1) || (s=="\\label"))
+	  if ((t[i] != tree (TUPLE, "\\ "))) {
+	    if (i>0 && is_tuple (t[i-1])) {
+	      string s= t[i-1][0]->label;
+	      if ((s[0] == '\\') && (latex_type (s) == "command") &&
+		  (s!="\\end-math") && (s!="\\end-displaymath"))
+		if ((arity(t[i-1])==1) || (s=="\\label"))
+		  continue;
+	      if (starts (s, "\\begin-") &&
+		  (command_type["!verbatim"] != "true"))
 		continue;
+	    }
+	    if (i+1<N(t) && is_tuple (t[i+1])) {
+	      string s= t[i+1][0]->label;
+	      if (starts (s, "\\end-") &&
+		  (command_type["!verbatim"] != "true"))
+		continue;
+	    }
 	  }
 	}
       }
