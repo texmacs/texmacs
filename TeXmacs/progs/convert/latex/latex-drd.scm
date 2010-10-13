@@ -97,7 +97,7 @@
   documentclass documentstyle sqrt bibitem cite)
 
 (drd-group latex-command-2*%
-  def newcommand renewcommand frac)
+  def newcommand renewcommand newtheorem frac)
 
 (drd-group latex-command-3*%
   newenvironment renewenvironment)

@@ -425,10 +425,11 @@ latex_parser::parse_symbol (string s, int& i) {
 
 static bool
 is_math_environment (tree t) {
+  //cout << "t= " << t << "\n";
   tree b= t[N(t)-2];
   tree e= t[N(t)-1];
   if (!is_concat (b)) b= tree (CONCAT, b);
-  if (!is_concat (e)) b= tree (CONCAT, e);
+  if (!is_concat (e)) e= tree (CONCAT, e);
   int i, j;
   for (i=N(b)-1; i>=0; i--)
     if (is_tuple (b[i]) && N(b[i])>0 && is_atomic (b[i][0]))
@@ -547,6 +548,14 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     command_type  (var)= "user";
     command_arity (var)= as_int (t[2]);
     command_def   (var)= as_string (u[3]);
+  }
+  if (is_tuple (t, "\\newtheorem", 2)) {
+    string var= "\\begin-" * string_arg (t[1]);
+    command_type  (var)= "user";
+    command_arity (var)= 0;
+    var= "\\end-" * string_arg (t[1]);
+    command_type  (var)= "user";
+    command_arity (var)= 0;
   }
   if (is_tuple (t, "\\newenvironment", 3)) {
     string var= "\\begin-" * string_arg (t[1]);

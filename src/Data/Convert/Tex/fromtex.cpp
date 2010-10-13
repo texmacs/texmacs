@@ -72,6 +72,8 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\newtheorem"))
+	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\newenvironment") ||
 	       is_tuple (u, "\\newenvironment*"))
 	preamble << u << "\n" << "\n";
@@ -508,6 +510,12 @@ latex_command_to_tree (tree t) {
     for (i=1; i<=arity; i++) f << as_string (i);
     f << l2e (t[3]);
     return tree (ASSIGN, var, f);
+  }
+
+  if (is_tuple (t, "\\newtheorem", 2)) {
+    string var= l2e(t[1])->label;
+    string val= l2e(t[2])->label;
+    return compound ("new-theorem", var, val);
   }
 
   if (is_tuple (t, "\\newenvironment", 3)) {
