@@ -445,6 +445,9 @@
   (define Miscellaneous-symbol
     (:type symbol)
 
+    "<partial>" "<nabla>" "<Re>" "<Im>" "<complement>"
+    ;; NOTE: might need to become prefix
+
     "<ldot>" "<udot>" "<comma>" "<cdummy>" "<nosymbol>"
 
     "<uparrow>" "<Uparrow>" "<downarrow>" "<Downarrow>"
@@ -453,10 +456,10 @@
     "<longdownarrow>" "<Longdownarrow>" "<longupdownarrow>" "<Longupdownarrow>"
     "<longmapsup>" "<longmapsdown>" "<longhookuparrow>" "<longhookdownarrow>"
 
-    "<Re>" "<Im>" "<prime>" "<emptyset>"
-    "<nabla>" "<surd>" "<top>" "<bot>" "<angle>"
+    "<prime>" "<emptyset>"
+    "<surd>" "<top>" "<bot>" "<angle>"
     "<flat>" "<natural>" "<sharp>" "<backslash>"
-    "<partial>" "<infty>" "<infty>" "<Box>" "<Diamont>"
+    "<infty>" "<infty>" "<Box>" "<Diamont>"
     "<triangle>" "<clubsuit>" "<diamondsuit>" "<heartsuit>"
     "<spadesuit>" "<diamond>" "<box>" "<bullet>"
     "<eigthnote>" "<quarternote>" "<halfnote>" "<fullnote>" "<twonotes>"
@@ -467,8 +470,7 @@
     "<between>" "<bigstar>" "<blacklozenge>"
     "<blacksquare>" "<blacktriangle>" "<blacktriangledown>"
     "<centerdot>" "<checkmark>" "<circledast>" "<circledcirc>"
-    "<circleddash>" "<complement>"
-    "<divideontimes>" "<doublebarwedge>"
+    "<circleddash>" "<divideontimes>" "<doublebarwedge>"
     "<intercal>" "<leftthreetimes>" "<llcorner>"
     "<lozenge>" "<lrcorner>" "<maltese>" "<measuredangle>"
     "<pitchfork>" "<rightthreetimes>"
