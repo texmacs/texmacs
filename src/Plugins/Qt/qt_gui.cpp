@@ -208,12 +208,19 @@ void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   (void) w; (void) message; (void) arg;
   
-  cout << "show_wait_indicator \"" << message << "\"\"" << arg << "\"" << LF;
+  if (DEBUG_QT)  cout << "show_wait_indicator \"" << message << "\"\"" << arg << "\"" << LF;
+
+  qt_window_widget_rep *wid = static_cast<qt_window_widget_rep*> (w.rep);
+
+  // we move the texmacs window during an operation. 
+  // We need to disable updates of the window to avoid erasure of the canvas
+  // area
+  //  wid->wid->setUpdatesEnabled(false);
   
   //FIXME: we must center the wait widget wrt the current active window
   
   if (waitDialogs.count()) {
-    waitDialogs.last()->hide();
+    waitDialogs.last()->close();
   }
   
   if (N(message)) {
@@ -221,45 +228,46 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     // push a new wait message in the list
     
     if (arg != "") message= message * "#" * arg * "...";
-    
-    qt_window_widget_rep *wid = static_cast<qt_window_widget_rep*> (w.rep);
-    
-    QLabel* lab = new QLabel(wid->wid->window());
-    lab->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint );
-    lab->setWindowModality(Qt::ApplicationModal);
+        
+    QLabel* lab = new  QLabel(); //(wid->wid->window());
+    lab->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    //lab->setWindowModality(Qt::ApplicationModal);
+    lab->setFocusPolicy(Qt::NoFocus);
     lab->setMargin(15);
     lab->setText(to_qstring_utf8(qt_translate(message)));
     QSize sz = lab->sizeHint();
     QRect rect = QRect(QPoint(0,0),sz);
     //HACK: 
     // processEvents is needed to let Qt update windows coordinates in the case
-    // we move the texmacs window during an operation. 
-    // We need to disable updates of the window to avoid erasure of the canvas
-    // area
-    wid->wid->setUpdatesEnabled(false);
     qApp->processEvents();
-    wid->wid->setUpdatesEnabled(true);
     //ENDHACK
     QPoint pt = wid->wid->window()->geometry().center();
     rect.moveCenter(pt);
     lab->move(rect.topLeft());
-    lab->show();
     waitDialogs << lab;
     
-    // next time we do update the dialog will disappear
-    needs_update();  
   } else {
     // pop the next wait message from the list
-
     if (waitDialogs.count()) {
-      waitDialogs.last()->close();
       waitDialogs.last()->deleteLater();
       waitDialogs.removeLast();
     }    
-    if (waitDialogs.count()) {
-      waitDialogs.last()->show();
-    }
   }
+
+  if (waitDialogs.count()) {
+    waitDialogs.last()->show();
+    waitDialogs.last()->raise();
+    qApp->processEvents();
+    waitDialogs.last()->repaint();
+    qApp->processEvents();
+    QApplication::flush();
+
+  }
+
+  //    wid->wid->setUpdatesEnabled(true);
+
+  // next time we do update the dialog will disappear
+  needs_update();  
 }
 
 void (*the_interpose_handler) (void) = NULL;
@@ -790,7 +798,7 @@ qt_gui_rep::update () {
   // if we are here then the long operation is finished.
   
   while (waitDialogs.count()) {
-  //  waitDialogs.last()->close();
+    waitDialogs.last()->close();
     waitDialogs.last()->deleteLater();
     waitDialogs.removeLast();
   }
