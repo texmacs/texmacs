@@ -870,7 +870,7 @@ upgrade_env_args (tree t, tree env) {
 
 static tree
 upgrade_set_begin_env (tree t) {
-  // cout << "in  : " << t << "\n";
+  //cout << "in  : " << t << "\n";
   int i, n= N(t);
   tree u (MACRO, n);
   for (i=0; i<n-2; i++)
@@ -885,15 +885,15 @@ upgrade_set_begin_env (tree t) {
   else if (!is_concat (begin)) begin= tree (CONCAT, begin);
   if (end == "") end= tree (CONCAT);
   else if (!is_concat (end)) end= tree (CONCAT, end);
-  body << A (begin) << tree (ARG, copy (s)) << A (end);
-  // cout << "mid1: " << body << "\n";
+  body << A(begin) << tree (ARG, copy (s)) << A(end);
+  //cout << "mid1: " << body << "\n";
   body= upgrade_set_begin_concat (body);
   body= upgrade_env_args (body, t);
-  // cout << "mid2: " << body << "\n";
+  //cout << "mid2: " << body << "\n";
   bool found= false;
   u[n-1]= upgrade_set_begin_surround (body, tree (ARG, s), found);
-  // cout << "out : " << u << "\n";
-  // cout << "-------------------------------------------------------------\n";
+  //cout << "out : " << u << "\n";
+  //cout << "-------------------------------------------------------------\n";
   return u;
 }
 
@@ -2918,8 +2918,6 @@ upgrade_tex (tree t) {
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
   t= upgrade_brackets (t);
-  t= superfluous_invisible_correct (t);
-  t= missing_invisible_correct (t, 1);
   return t;
 }
 

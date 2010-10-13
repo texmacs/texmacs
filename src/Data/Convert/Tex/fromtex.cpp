@@ -1285,6 +1285,31 @@ handle_improper_matches (tree& r, tree t, int& pos) {
 }
 
 tree
+env_hacks (tree t) {
+  int i, n= N(t);
+  tree beg= t[n-2], end= t[n-1];
+  if (beg == "") beg= tree (CONCAT);
+  else if (!is_concat (beg)) beg= tree (CONCAT, beg);
+  if (end == "") end= tree (CONCAT);
+  else if (!is_concat (end)) end= tree (CONCAT, end);
+  for (i=N(beg); i>0 && is_func (beg[i-1], RESET, 1); i--);
+  bool ok= (i<<1) >= N(beg);
+  for (int k=0; k<N(beg)-i; k++) {
+    ok= ok && is_func (beg[i-k-1], SET, 2) && beg[i-k-1][0] == beg[i+k][0];
+    //cout << "Matched " << beg[i-k-1] << " and " << beg[i+k] << "\n";
+  }
+  if (ok && i<N(beg)) {
+    tree r= t (0, n);
+    r[n-2]= simplify_concat (beg (0, i));
+    r[n-1]= simplify_concat (beg (i, N(beg)) * end);
+    //cout << "<< " << t << "\n";
+    //cout << ">> " << r << "\n";
+    t= r;
+  }
+  return t;
+}
+
+tree
 handle_improper_matches (tree t) {
   if (is_atomic (t)) return t;
   else {
@@ -1301,6 +1326,8 @@ handle_improper_matches (tree t) {
       if (N(u)==1) return u[0];
       return u;
     }
+    else if (is_func (r, ENV) && N(r) >= 2)
+      return env_hacks (r);
     return r;
   }
 }
@@ -1371,6 +1398,17 @@ finalize_textm (tree t) {
 }
 
 /******************************************************************************
+* Final corrections
+******************************************************************************/
+
+tree
+tex_correct (tree t) {
+  t= superfluous_invisible_correct (t);
+  t= missing_invisible_correct (t, 1);
+  return t;
+}
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -1397,7 +1435,7 @@ latex_to_tree (tree t1) {
   tree t5= is_document? finalize_preamble (t4, style): t4;
   // cout << "\n\nt5= " << t5 << "\n\n";
   tree t6= handle_improper_matches (t5);
-  // cout << "\n\nt6= " << t6 << "\n\n";
+  //cout << "\n\nt6= " << t6 << "\n\n";
   if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
   // cout << "\n\nt7= " << t7 << "\n\n";
@@ -1408,7 +1446,9 @@ latex_to_tree (tree t1) {
   tree t10= drd_correct (std_drd, t9);
   // cout << "\n\nt10= " << t10 << "\n\n";
   tree t11= simplify_correct (t10);
-  // cout << "\n\nt11= " << t11 << "\n\n";
+  //cout << "\n\nt11= " << t11 << "\n\n";
+  tree t12= simplify_correct (t11);
+  //cout << "\n\nt12= " << t12 << "\n\n";
 
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
@@ -1427,7 +1467,7 @@ latex_to_tree (tree t1) {
     mods << tree (LANGUAGE) << tree (lan);
   }
   if (is_document) {
-    tree the_body   = compound ("body", t11);
+    tree the_body   = compound ("body", t12);
     tree the_style  = compound ("style", style);
     tree the_initial= compound ("initial", initial);
     if (textm_natbib)
