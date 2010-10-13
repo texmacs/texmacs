@@ -256,7 +256,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
 
   if (waitDialogs.count()) {
     waitDialogs.last()->show();
-    waitDialogs.last()->raise();
+    //waitDialogs.last()->raise();
     qApp->processEvents();
     waitDialogs.last()->repaint();
     qApp->processEvents();
