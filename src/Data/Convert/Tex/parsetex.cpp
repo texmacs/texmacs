@@ -799,6 +799,7 @@ latex_parser::parse (string s, bool change) {
     command_arity->shorten ();
     command_def  ->shorten ();
   }
+  //cout << "Parsed " << t << "\n";
   return t;
 }
 

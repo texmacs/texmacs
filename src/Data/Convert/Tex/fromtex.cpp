@@ -168,6 +168,8 @@ latex_symbol_to_tree (string s) {
       if (s == "\\rang") return "<rangle>";
       if (s == "\\tableofcontents")
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
+      if (s == "\\bgroup") return "";
+      if (s == "\\egroup") return "";
     }
 
     if (latex_type (s) == "texmacs") {
