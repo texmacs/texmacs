@@ -19,6 +19,8 @@
 #include "tree_brackets.hpp"
 #include "tree_correct.hpp"
 
+static bool upgrade_tex_flag= false;
+
 /******************************************************************************
 * Retrieve older operator hashmap
 ******************************************************************************/
@@ -822,6 +824,8 @@ static tree
 upgrade_set_begin_surround (tree t, tree search, bool& found) {
   if (t == search) {
     found= true;
+    if (upgrade_tex_flag)
+      return tree (DOCUMENT, copy (t));
     return copy (t);
   }
   if (is_func (t, WITH) || is_func (t, EXPAND)) {
@@ -2894,6 +2898,7 @@ upgrade_math (tree t) {
 
 tree
 upgrade_tex (tree t) {
+  upgrade_tex_flag= true;
   t= upgrade_apply_expand_value (t);
   t= upgrade_new_environments (t);
   t= upgrade_items (t);
@@ -2918,6 +2923,7 @@ upgrade_tex (tree t) {
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
   t= upgrade_brackets (t);
+  upgrade_tex_flag= false;
   return t;
 }
 

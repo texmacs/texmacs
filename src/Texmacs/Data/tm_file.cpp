@@ -211,6 +211,46 @@ get_style_drd (tree style) {
   }
 }
 
+tree
+get_document_preamble (tree t) {
+  if (is_atomic (t)) return "";
+  else if (is_compound (t, "hide-preamble", 1)) return t[0];
+  else if (is_compound (t, "show-preamble", 1)) return t[0];
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++) {
+      tree p= get_document_preamble (t[i]);
+      if (p != "") return p;
+    }
+    return "";
+  }
+}
+
+drd_info
+get_document_drd (tree doc) {
+  tree style= extract (doc, "style");
+  if (extract (doc, "TeXmacs") == "")
+    style= tree (TUPLE, "generic");
+  //cout << "style= " << style << "\n";
+  drd_info drd= get_style_drd (style);
+  tree p= get_document_preamble (doc);
+  if (p != "") {
+    drd= drd_info ("preamble", drd);
+    url none= url ("$PWD/none");
+    hashmap<string,tree> lref;
+    hashmap<string,tree> gref;
+    hashmap<string,tree> laux;
+    hashmap<string,tree> gaux;
+    edit_env env (drd, none, lref, gref, laux, gaux);
+    hashmap<string,tree> H;
+    env->exec (tree (USE_PACKAGE, A (style)));
+    env->exec (p);
+    env->read_env (H);
+    drd->heuristic_init (H);
+  }
+  return drd;
+}
+
 /******************************************************************************
 * Saving files
 ******************************************************************************/

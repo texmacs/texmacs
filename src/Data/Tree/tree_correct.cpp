@@ -437,7 +437,7 @@ invisible_corrector::get_status (tree t, bool left) {
       else if (contains_plus_like (t[1]))
 	return ((force > 0)? PROBABLE_TIMES: BOTH_WAYS);
       else if (!contains_infix (t[1]))
-	return (left? PROBABLE_SPACE: SURE_SPACE);
+	return (left? BOTH_WAYS: SURE_SPACE);
       else return BOTH_WAYS;
     }
     else if (is_func (t, FRAC) ||
@@ -451,6 +451,7 @@ invisible_corrector::get_status (tree t, bool left) {
 
 array<tree>
 invisible_corrector::correct (array<tree> a) {
+  //cout << "Correct " << a << "\n";
   array<tree> r;
   array<int> tp= symbol_types (a);
   for (int i=0; i<N(a); i++) {
@@ -461,7 +462,8 @@ invisible_corrector::correct (array<tree> a) {
       for (j= i+1; j<N(a); j++)
 	if (tp[j] != SYMBOL_SKIP && tp[j] != SYMBOL_SCRIPT) break;
 	else if (a[j] == " ") break;
-      if (j >= N(tp) || a[j] == " " || tp[j] != SYMBOL_BASIC)
+      if (j >= N(a) || a[j] == " " ||
+	  (!is_iso_alpha (a[j]->label) && tp[j] != SYMBOL_BASIC))
 	continue;
       
       string ins= "";

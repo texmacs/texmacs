@@ -203,6 +203,7 @@
   (parse-latex parse_latex (tree string))
   (parse-latex-document parse_latex_document (tree string))
   (latex->texmacs latex_to_tree (tree tree))
+  (latex-document->texmacs latex_document_to_tree (tree string))
   (parse-xml parse_xml (scheme_tree string))
   (parse-html parse_html (scheme_tree string))
   (parse-bib parse_bib (tree string))

@@ -223,15 +223,6 @@ symbol_priorities (array<tree> a) {
 * Further routines
 ******************************************************************************/
 
-drd_info
-get_document_drd (tree doc) {
-  tree style= extract (doc, "style");
-  if (extract (doc, "TeXmacs") == "")
-    style= tree (TUPLE, "generic");
-  //cout << "style= " << style << "\n";
-  return get_style_drd (style);
-}
-
 bool
 is_correctable_child (tree t, int i, bool noaround) {
   int type= the_drd->get_type_child (t, i);

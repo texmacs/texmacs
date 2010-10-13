@@ -351,6 +351,7 @@ edit_interface_rep::apply_changes () {
   }
   
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
+  // time_t t1= texmacs_time ();
   
   // cout << "Always\n";
   update_visible ();
@@ -543,6 +544,8 @@ edit_interface_rep::apply_changes () {
     send_invalidate_all (this);
   
   // cout << "Applied changes\n";
+  // time_t t2= texmacs_time ();
+  // if (t2 - t1 >= 10) cout << "apply_changes took " << t2-t1 << "ms\n";
   env_change  = 0;
   last_change = texmacs_time ();
   last_update = last_change-1;

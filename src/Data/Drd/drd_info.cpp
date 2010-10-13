@@ -496,6 +496,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
   if (L(t) == WITH && i == N(t)-1)
     return drd_env_merge (env, t (0, N(t)-1));
   else {
+    /* makes cursor movement (is_accessible_cursor) slow for large preambles
     if (L(t) == DOCUMENT && N(t) > 0 &&
 	(is_compound (t[0], "hide-preamble", 1) ||
 	 is_compound (t[0], "show-preamble", 1)))
@@ -508,6 +509,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
 	    cenv << copy (u[i][0]) << copy (u[i][1]);
 	env= drd_env_merge (env, cenv);
       }
+    */
 
     tag_info ti= info[L(t)];
     int index= ti->get_index (i, N(t));

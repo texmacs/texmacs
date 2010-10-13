@@ -196,6 +196,10 @@ edit_typeset_rep::typeset_exec_until (path p) {
   typeset_prepare ();
   if (enable_fastenv) {
     tree t= subtree (et, rp);
+    if (is_func (t, DOCUMENT) && N(t) > 0)
+      if (is_compound (t[0], "hide-preamble", 1) ||
+	  is_compound (t[0], "show-preamble", 1))
+	env->exec (t[0][0]);
     path q= path_up (p / rp);
     while (!is_nil (q)) {
       int i= q->item;
@@ -505,7 +509,7 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   eb= ::typeset (ttt, x1, y1, x2, y2);
   bench_end ("typeset");
   //time_t t2= texmacs_time ();
-  //if (t2 - t1 >= 12) cout << "typeset took " << t2-t1 << "ms\n";
+  //if (t2 - t1 >= 10) cout << "typeset took " << t2-t1 << "ms\n";
 }
 
 void

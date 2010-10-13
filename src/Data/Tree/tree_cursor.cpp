@@ -69,6 +69,7 @@ is_modified_accessible (tree t, path p, bool activate, bool persistent) {
 
 static bool
 next_without_border (tree t, path p) {
+  return false;
   // Assuming that t is a concat, check whether p does not correspond
   // to an inaccessible border position
   int i= p->item + 1;

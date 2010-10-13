@@ -385,7 +385,7 @@ x_gui_rep::event_loop () {
     if (the_interpose_handler != NULL) the_interpose_handler ();
     if (nr_windows == 0) continue;
     //time_t t2= texmacs_time ();
-    //if (t2 - t1 >= 12) cout << "interpose took " << t2-t1 << "ms\n";
+    //if (t2 - t1 >= 10) cout << "interpose took " << t2-t1 << "ms\n";
 
     // Popup help balloons
     if (!is_nil (balloon_wid))
@@ -394,6 +394,7 @@ x_gui_rep::event_loop () {
 	  map_balloon ();
 
     // Redraw invalid windows
+    //time_t t3= texmacs_time ();
     if (XPending (dpy) == 0 || request_partial_redraw) {
       interrupted= false;
       interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
@@ -408,6 +409,8 @@ x_gui_rep::event_loop () {
 	if (!win->has_focus) win->repaint_invalid_regions();
       }
     }
+    //time_t t4= texmacs_time ();
+    //if (t4 - t3 >= 10) cout << "redraw took " << t4-t3 << "ms\n";
 
     // Handle alarm messages
     if (!is_nil (messages)) {

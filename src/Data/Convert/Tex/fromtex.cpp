@@ -1285,13 +1285,57 @@ handle_improper_matches (tree& r, tree t, int& pos) {
 }
 
 tree
+remove_env_spaces (tree t, bool& done) {
+  if (is_atomic (t)) {
+    done= done || (t != "" && t != " ");
+    return t;
+  }
+  else if (is_func (t, CONCAT)) {
+    array<tree> r;
+    for (int i=0; i<N(t); i++)
+      if (!done && t[i] == "");
+      else if (!done && t[i] == " ");
+      else r << remove_env_spaces (t[i], done);
+    return simplify_concat (tree (CONCAT, r));
+  }
+  else if (is_func (t, WITH)) {
+    tree r= t (0, N(t));
+    r[N(t)-1]= remove_env_spaces (r[N(t)-1], done);
+    return r;
+  }
+  else return t;
+}
+
+tree
 env_hacks (tree t) {
   int i, n= N(t);
-  tree beg= t[n-2], end= t[n-1];
+  bool done= false;
+  tree beg= remove_env_spaces (t[n-2], done);
+  tree end= remove_env_spaces (t[n-1], done);
   if (beg == "") beg= tree (CONCAT);
   else if (!is_concat (beg)) beg= tree (CONCAT, beg);
   if (end == "") end= tree (CONCAT);
   else if (!is_concat (end)) end= tree (CONCAT, end);
+  array<tree> ba;
+  array<tree> ea;
+  for (i=0; i<N(beg); i++)
+    if (is_func (beg[i], VSPACE))
+      ba << tree (VAR_VSPACE, A(beg[i]));
+    else if (is_func (beg[i], PAGE_BREAK))
+      ba << tree (VAR_PAGE_BREAK, A(beg[i]));
+    else if (is_func (beg[i], NO_PAGE_BREAK))
+      ba << tree (VAR_NO_PAGE_BREAK, A(beg[i]));
+    else if (is_func (beg[i], NEW_PAGE))
+      ba << tree (VAR_NEW_PAGE, A(beg[i]));
+    else ba << beg[i];
+  for (i=0; i<N(end); i++)
+    if (is_func (end[i], NO_INDENT))
+      ea << tree (VAR_NO_INDENT, A(end[i]));
+    else if (is_func (end[i], YES_INDENT))
+      ea << tree (VAR_YES_INDENT, A(end[i]));
+    else ea << end[i];
+  beg= tree (CONCAT, ba);
+  end= tree (CONCAT, ea);
   for (i=N(beg); i>0 && is_func (beg[i-1], RESET, 1); i--);
   bool ok= (i<<1) >= N(beg);
   for (int k=0; k<N(beg)-i; k++) {
@@ -1447,7 +1491,7 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt10= " << t10 << "\n\n";
   tree t11= simplify_correct (t10);
   //cout << "\n\nt11= " << t11 << "\n\n";
-  tree t12= simplify_correct (t11);
+  tree t12= tex_correct (t11);
   //cout << "\n\nt12= " << t12 << "\n\n";
 
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
@@ -1479,4 +1523,17 @@ latex_to_tree (tree t1) {
     if (N (mods) > 0) { mods << t10; return mods; }
     return t10;
   }
+}
+
+tree
+latex_document_to_tree (string s) {
+  command_type ->extend ();
+  command_arity->extend ();
+  command_def  ->extend ();
+  tree t= parse_latex_document (s, true);
+  tree r= latex_to_tree (t);
+  command_type ->shorten ();
+  command_arity->shorten ();
+  command_def  ->shorten ();
+  return r;
 }

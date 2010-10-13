@@ -36,7 +36,12 @@ scatter_box_rep::scatter_box_rep (
 }
 
 scatter_box_rep::operator tree () {
-  return "scattered"; }
+  int i, n= N(bs);
+  tree t (TUPLE, n+1);
+  t[0]= "scattered";
+  for (i=0; i<n; i++) t[i+1]= (tree) bs[i];
+  return t;
+}
 
 int
 scatter_box_rep::find_child (SI x, SI y, SI delta, bool force) {
@@ -117,7 +122,13 @@ page_box_rep::page_box_rep (path ip2, tree page2, SI w, SI h,
 }
 
 page_box_rep::operator tree () {
-  return tuple ("page", page); }
+  int i, n= N(bs);
+  tree t (TUPLE, n+1);
+  if (is_atomic (page)) t[0]= "page-" * page->label;
+  else t[0]= "page";
+  for (i=0; i<n; i++) t[i+1]= (tree) bs[i];
+  return t;
+}
 
 int
 page_box_rep::find_child (SI x, SI y, SI delta, bool force) {

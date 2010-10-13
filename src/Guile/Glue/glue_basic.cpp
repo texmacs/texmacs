@@ -2279,6 +2279,19 @@ tmg_latex_2texmacs (SCM arg1) {
 }
 
 SCM
+tmg_latex_document_2texmacs (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "latex-document->texmacs");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= latex_document_to_tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_parse_xml (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "parse-xml");
 
@@ -4315,6 +4328,7 @@ initialize_glue_basic () {
   scm_new_procedure ("parse-latex", (FN) tmg_parse_latex, 1, 0, 0);
   scm_new_procedure ("parse-latex-document", (FN) tmg_parse_latex_document, 1, 0, 0);
   scm_new_procedure ("latex->texmacs", (FN) tmg_latex_2texmacs, 1, 0, 0);
+  scm_new_procedure ("latex-document->texmacs", (FN) tmg_latex_document_2texmacs, 1, 0, 0);
   scm_new_procedure ("parse-xml", (FN) tmg_parse_xml, 1, 0, 0);
   scm_new_procedure ("parse-html", (FN) tmg_parse_html, 1, 0, 0);
   scm_new_procedure ("parse-bib", (FN) tmg_parse_bib, 1, 0, 0);

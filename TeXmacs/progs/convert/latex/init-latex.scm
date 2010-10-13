@@ -48,6 +48,9 @@
 (converter latex-document latex-tree
   (:function parse-latex-document))
 
+(converter latex-document texmacs-tree
+  (:function latex-document->texmacs))
+
 (converter latex-stree latex-document
   (:function serialize-latex))
 

@@ -36,6 +36,7 @@ static bool searching_forwards;
 
 path
 edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
+  //time_t t1= texmacs_time ();
   path start_p= p;
   bool inverse= false;
   int old_mode= get_access_mode ();
@@ -56,6 +57,8 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
     else p= pp;
   }
   set_access_mode (old_mode);
+  //time_t t2= texmacs_time ();
+  //if (t2-t1 >= 1) cout << "made_cursor_accessible took " << t2-t1 << "ms\n";
   return p;
 }
 
@@ -128,7 +131,11 @@ edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
 
 void
 edit_cursor_rep::cursor_move (SI dx, SI dy) {
+  //time_t t1= texmacs_time ();
+  //stretched_print ((tree) eb, false);
   cursor_move_sub (mv->ox, mv->oy, mv->delta, dx, dy);
+  //time_t t2= texmacs_time ();
+  //if (t2 - t1 >= 10) cout << "cursor_move took " << t2-t1 << "ms\n";
 }
 
 /******************************************************************************
