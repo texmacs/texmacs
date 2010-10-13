@@ -493,10 +493,13 @@ latex_parser::parse_command (string s, int& i, string cmd) {
     if (option && (s[j]=='[')) {
       j++;
       i=j;
-      t << parse (s, i, "]");
+      tree opt= parse (s, i, "]");
+      if (cmd != "\\newtheorem")
+	t << opt;
       u << s (j, i);
       if ((i<n) && (s[i]==']')) i++;
-      t[0]->label= t[0]->label * "*";
+      if (cmd != "\\newtheorem")
+	t[0]->label= t[0]->label * "*";
       option= false;
     }
     else if ((arity>0) && (s[j]=='{')) {
