@@ -416,9 +416,7 @@ invisible_corrector::get_status (tree t, bool left) {
 	else return BOTH_WAYS;
       }
       else {
-	if (space_before[s] > times_before[s])
-	  return PROBABLE_SPACE;
-	else if (times_before[s] > space_before[s])
+	if (times_before[s] > space_before[s])
 	  return PROBABLE_TIMES;
 	else if (times_after[s] > 0 && space_after[s] == 0)
 	  return PROBABLE_TIMES;

@@ -515,6 +515,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       arity--;
       if (arity == 0) option= false;
     }
+    else if (s[j] == '}') break;
     else if (option && (s[j]=='#') && (cmd == "\\def")) {
       while ((j+3 <= n) && is_numeric (s[j+1]) && (s[j+2] == '#')) j+=2;
       if (j+2<=n) {
