@@ -69,9 +69,14 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\documentstyle") ||
 	       is_tuple (u, "\\documentstyle*"))
 	r << u;
-      else if (is_tuple (u, "\\def") || is_tuple (u, "\\def*"))
+      else if (is_tuple (u, "\\def") ||
+	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
-      else if (is_tuple (u, "\\title") || is_tuple (u, "\\author") ||
+      else if (is_tuple (u, "\\newenvironment") ||
+	       is_tuple (u, "\\newenvironment*"))
+	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\title") ||
+	       is_tuple (u, "\\author") ||
 	       is_tuple (u, "\\address"))
 	title_info << u;
     }
@@ -617,6 +622,18 @@ latex_command_to_tree (tree t) {
     return tree (VSPACE, t2e (t[1]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, t2e (t[1]));
+  if (is_tuple (t, "\\newcounter", 1))
+    return compound ("new-counter", v2e (t[1]));
+  if (is_tuple (t, "\\value", 1))
+    return compound ("value-counter", v2e (t[1]));
+  if (is_tuple (t, "\\stepcounter", 1))
+    return compound ("inc-counter", v2e (t[1]));
+  if (is_tuple (t, "\\refstepcounter", 1))
+    return compound ("next-counter", v2e (t[1]));
+  if (is_tuple (t, "\\setcounter", 2)) // FIXME: only reset works
+    return compound ("reset-counter", v2e (t[1]));
+  if (is_tuple (t, "\\addtocounter", 2)) // FIXME: only inc works
+    return compound ("inc-counter", v2e (t[1]));
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\mathrel", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\overbrace", 1))

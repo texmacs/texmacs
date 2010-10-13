@@ -60,6 +60,7 @@
   includegraphics url penalty
   title author thanks
   phantom hphantom vphantom smash
+  newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear)
 
@@ -69,6 +70,7 @@
 (drd-group latex-command-2%
   binom choose cfrac tfrac
   sideset stackrel citeauthoryear setcounter equal
+  setcounter addtocounter
   href)
 
 (drd-group latex-command-3%

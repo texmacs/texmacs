@@ -51,7 +51,13 @@
 
   <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-nr>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|<arg|x>|-nr>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>><assign|<unquote|<merge|next-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|inc-|<arg|x>>>><set-binding|<compound|<unquote|<merge|the-|<arg|x>>>>>>>>>>>>
 
+  <assign|value-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|counter-|<arg|x>>>>>>
+
   <assign|reset-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|reset-|<arg|x>>>>>>
+
+  <assign|inc-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|inc-|<arg|x>>>>>>
+
+  <assign|next-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|next-|<arg|x>>>>>>
 
   <\active*>
     <\src-comment>
