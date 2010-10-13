@@ -625,6 +625,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
     tree env= arg_access (macro[n], arg, tree (WITH), type);
     //if (var == "section" || var == "section-title")
     //cout << var << " -> " << env << ", " << macro << "\n";
+    //if (var == "math")
+    //cout << var << ", " << i << " -> " << env << ", " << macro << "\n";
     set_type (l, i, type);
     if (env != "") {
       //if (var == "eqnarray*")
