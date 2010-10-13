@@ -543,11 +543,6 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, var, e);
   }
 
-  if (is_tuple (t, "\\setcounter", 2)) {
-    tree u= l2e (t[1]);
-    if (is_compound (u)) return "";
-    else return tree (ASSIGN, u->label * "nr", l2e (t[2]));
-  }
   if (is_tuple (t, "\\arabic", 1)) {
     tree u= l2e (t[1]);
     if (is_compound (u)) return "";
@@ -653,6 +648,9 @@ latex_command_to_tree (tree t) {
     return compound ("reset-counter", v2e (t[1]));
   if (is_tuple (t, "\\addtocounter", 2)) // FIXME: only inc works
     return compound ("inc-counter", v2e (t[1]));
+  if (is_tuple (t, "\\setlength")) return "";
+  if (is_tuple (t, "\\addtolength")) return "";
+  if (is_tuple (t, "\\enlargethispage")) return "";
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\mathrel", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\overbrace", 1))

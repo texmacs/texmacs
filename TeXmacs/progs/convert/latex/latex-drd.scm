@@ -57,21 +57,22 @@
   ^ over atop ~ = u v H t c d b k r thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
-  includegraphics url penalty
   title author thanks
   phantom hphantom vphantom smash
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
-  citetext citeauthor citeauthor* citeyear)
+  citetext citeauthor citeauthor* citeyear
+  includegraphics url penalty
+  enlargethispage)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
 
 (drd-group latex-command-2%
   binom choose cfrac tfrac
-  sideset stackrel citeauthoryear setcounter equal
-  setcounter addtocounter
-  href)
+  sideset stackrel citeauthoryear
+  equal href
+  setcounter addtocounter setlength addtolength)
 
 (drd-group latex-command-3%
   ifthenelse)
