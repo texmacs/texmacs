@@ -367,9 +367,8 @@ invisible_corrector::count_invisible (array<tree> a) {
 	  times_after (s)= times_after[s] + 1;
 	if (a[j2] == " ")
 	  space_after (s)= space_after[s] + 1;
-	if (is_func (a[j2], AROUND, 3) || is_func (a[j2], VAR_AROUND, 3))
-	  if (a[j2][0] == "(" && !contains_infix (a[j2][1]))
-	    space_after (s)= space_after[s] + 1;
+	if (is_around (a[j2]) && a[j2][0] == "(" && !contains_infix (a[j2][1]))
+	  space_after (s)= space_after[s] + 1;
       }
     }
 }
@@ -431,7 +430,7 @@ invisible_corrector::get_status (tree t, bool left) {
     else return ((force > 0)? BOTH_WAYS: SURE_NOTHING);
   }
   else {
-    if (is_func (t, AROUND, 3) || is_func (t, VAR_AROUND, 3)) {
+    if (is_around (t)) {
       if (left && contains_plus_like (t[1]))
 	return ((force > 0)? SURE_TIMES: PROBABLE_TIMES);
       else if (contains_plus_like (t[1]))
@@ -445,7 +444,9 @@ invisible_corrector::get_status (tree t, bool left) {
       return (left? SURE_TIMES: BOTH_WAYS);
     else if (!left && is_func (t, BIG_AROUND))
       return PROBABLE_TIMES;
-    else return ((force > 0)? BOTH_WAYS: SURE_NOTHING);
+    else if (is_func (t, WIDE, 2))
+      return get_status (t[0], left);
+    else return SURE_NOTHING;
   }
 }
 
@@ -490,10 +491,11 @@ invisible_corrector::correct (array<tree> a) {
       else if (sti == BOTH_WAYS && stj == PROBABLE_SPACE)
 	ins= " ";
       else if (sti == BOTH_WAYS && stj == BOTH_WAYS && force == 1 &&
-	       (is_atomic (a[i]) || is_atomic (a[j])))
+	       (is_atomic (a[i]) || is_around (a[i])) &&
+	       (is_atomic (a[j]) || is_around (a[j])))
 	ins= "*";
 
-      if (is_func (a[j], AROUND, 3) || is_func (a[j], VAR_AROUND, 3))
+      if (is_around (a[j]))
 	if (ins == " " || (ins == "*" && force == -1))
 	  ins= "";
       if (a[j] == ".") ins= "";

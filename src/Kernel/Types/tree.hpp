@@ -251,6 +251,7 @@ bool is_formatting (tree t);
 bool is_table (tree t);
 bool is_table_format (tree t);
 bool is_multi_paragraph (tree t);
+bool is_around (tree t);
 bool is_script (tree t);
 bool is_script (tree t, bool& right);
 bool is_prime (tree t);

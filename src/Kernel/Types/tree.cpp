@@ -289,6 +289,11 @@ is_multi_paragraph (tree t) {
 }
 
 bool
+is_around (tree t) {
+  return is_func (t, AROUND, 3) || is_func (t, VAR_AROUND, 3);
+}
+
+bool
 is_script (tree t) {
   return
     is_func (t, LSUB) || is_func (t, LSUP) ||
