@@ -45,6 +45,12 @@
   (go-end-line)
   (make 'label))
 
+(tm-define (math-make-math)
+  (if (inside? 'math)
+      (go-end-of 'math)
+      (set-message (string-append "Warning: already inside mathematics")
+		   (string-append "make 'math'"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for moving punctuation symbols around
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
