@@ -167,8 +167,15 @@ tm_config_rep::get_keycomb (
   variant_simplification (which);
   //cout << " -> " << which;
   string rew= apply_wildcards (which, post_kbd_wildcards);
-  if (rew * var_suffix == orig) rew= var_suffix (1, N(var_suffix));
-  if (rew * unvar_suffix == orig) rew= unvar_suffix (1, N(unvar_suffix));
+  bool no_var= false;
+  if (rew * var_suffix == orig) {
+    no_var= true;
+    rew= var_suffix (1, N(var_suffix));
+  }
+  if (rew * unvar_suffix == orig) {
+    no_var= true;
+    rew= unvar_suffix (1, N(unvar_suffix));
+  }
   //cout << " -> " << rew << LF;
   object obj= find_key_binding (rew);
   //cout << rew << " => " << obj << LF;
@@ -191,6 +198,7 @@ tm_config_rep::get_keycomb (
     shorth= as_string (car (obj));
     help  = as_string (cadr (obj));
   }
+  if (no_var) status += 3;
 }
 
 /******************************************************************************

@@ -87,9 +87,16 @@ edit_interface_rep::try_shortcut (string comb) {
   //cout << "Try " << comb << " -> " << shorth << ", " << help
   //<< "; " << sh_mark << ", " << status << "\n";
   if (status != 0) {
-    if (sh_mark != 0 && !mark_cancel (sh_mark)) {
-      sh_mark= 0;
-      return false;
+    if (status >= 3) {
+      interrupt_shortcut ();
+      status -= 3;
+      if (status == 0) return false;
+    }
+    else {
+      if (sh_mark != 0 && !mark_cancel (sh_mark)) {
+	sh_mark= 0;
+	return false;
+      }
     }
     sh_s= comb;
     sh_mark= new_marker ();
