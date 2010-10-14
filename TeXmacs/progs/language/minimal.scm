@@ -62,7 +62,7 @@
 
   (define Relation-infix
     (:operator)
-    (Spc (or "=" "!=" "<less>" "<lesseq>" "<gtr>" "<gtreq>") Spc))
+    (Spc (or "=" "!=" "<less>" "<less>=" "<gtr>" "<gtr>=") Spc))
 
   (define Plus-infix
     (:operator)
