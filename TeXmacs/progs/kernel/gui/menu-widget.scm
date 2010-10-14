@@ -165,34 +165,28 @@
 ;; Symbol fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-symbol-button e? symstring opt-symobj)
-  (let* ((col (color (if e? "black" "dark grey")))
-	 (sym (if opt-symobj opt-symobj symstring)))
-    (widget-menu-button (widget-box '() symstring col #t #f)
-			(make-menu-command (insert sym)) "" "" e?)))
+(define (make-menu-symbol-button e? sym opt-cmd)
+  (with col (color (if e? "black" "dark grey"))
+    (if opt-cmd
+	(widget-menu-button (widget-box '() sym col #t #f)
+			    (make-menu-command (apply opt-cmd '())) "" "" e?)
+	(widget-menu-button (widget-box '() sym col #t #f)
+			    (make-menu-command (insert sym)) "" "" e?))))
 
 (define (make-menu-symbol p e?)
   "Make @(symbol :string? :*) menu item."
   ;; Possibilities for p:
-  ;;   <menu-symbol> :: (symbol <symbol-string> [<symbol-object>] [<shortcut>])
-  ;;   <symbol-object> :: (<symbol-type> <symbol-name>)
-  ;;   <symbol-type> :: left | right | mid | big
-  ;;   <symbol-name> :: <string>
+  ;;   <menu-symbol> :: (symbol <symbol-string> [<cmd>])
   (with (tag symstring . opt) p
-    (let ((error? #f) (opt-shortcut #f) (opt-symobj #f))
-      (for-each
-       (lambda (x)
-	 (cond (error? (noop))
-	       ((pair? x) (set! opt-symobj x))
-	       ((string? x) (set! opt-shortcut x))
-	       (else (set! error? #t))))
-       opt)
-      (if error? (make-menu-error "invalid symbol attribute in " p)
-	  (let ((sh (or opt-shortcut (kbd-find-shortcut symstring))))
+    (with opt-cmd (and (nnull? opt) (car opt))
+      (if (and opt-cmd (not (procedure? opt-cmd)))
+	  (make-menu-error "invalid symbol command in " p)
+	  (let* ((source (and opt-cmd (promise-source opt-cmd)))
+		 (sh (kbd-find-shortcut (if source source symstring))))
 	    (if (== sh "")
-		(make-menu-symbol-button e? symstring opt-symobj)
+		(make-menu-symbol-button e? symstring opt-cmd)
 		(widget-balloon
-		 (make-menu-symbol-button e? symstring opt-symobj)
+		 (make-menu-symbol-button e? symstring opt-cmd)
 		 (make-menu-label (string-append "Keyboard equivalent: " sh)
 				  e?))))))))
 

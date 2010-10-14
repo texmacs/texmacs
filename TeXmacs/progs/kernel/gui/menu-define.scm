@@ -129,7 +129,10 @@
 
 (define-table menu-pre-table
   (group (:string?) ,(lambda (p) p))
-  (symbol (:string? :*) ,(lambda (p) p))
+  (symbol (:string? :*)
+    ,(lambda (p)
+       (if (<= (length p) 2) p
+	   `(symbol ,(cadr p) ,(make-promise (caddr p))))))
   (link (:%1) ,(lambda (p) p))
   (horizontal (:*)
     ,(lambda (p) `(horizontal ,@(menu-pre-list (cdr p)))))
