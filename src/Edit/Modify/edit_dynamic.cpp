@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "edit_dynamic.hpp"
+#include "tree_analyze.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -84,6 +85,7 @@ contains_table_format (tree t, tree var) {
 void
 edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
   //cout << "Make compound " << as_string (l) << "\n";
+  eval ("(use-modules (generic generic-edit))");
   if (n == -1) {
     for (n=0; true; n++) {
       if (drd->correct_arity (l, n) &&
@@ -95,6 +97,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
   tree t (l, n);
   path p (0, 0);
   if (n == 0) insert_tree (t, 1);
+  else if (is_with_like (t) && as_bool (call ("with-like-check-insert", t)));
   else {
     tree f= get_env_value (as_string (l));
     bool block_macro= (N(f) == 2) && is_multi_paragraph_macro (f);

@@ -17,12 +17,19 @@
 #include "vars.hpp"
 
 /******************************************************************************
-* Concatenations and other
+* Concatenations and with-like structures
 ******************************************************************************/
 
 array<tree> concat_tokenize (tree t);
 array<tree> concat_decompose (tree t);
 tree concat_recompose (array<tree> a);
+
+bool is_with_like (tree t);
+tree& with_body (tree w);
+bool with_same_type (tree w1, tree w2);
+bool with_similar_type (tree w1, tree w2);
+array<tree> with_decompose (tree w, tree t);
+tree with_recompose (tree w, array<tree> a);
 
 /******************************************************************************
 * Symbol types

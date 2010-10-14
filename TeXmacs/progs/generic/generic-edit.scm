@@ -17,6 +17,34 @@
 	(utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting new tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (with-like-search t)
+  (if (with-like? t) t
+      (and (or (tree-atomic? t) (tree-in? t '(concat document)))
+	   (and-with p (tree-ref t :up)
+	     (with-like-search p)))))
+
+(tm-define (with-like-check-insert t)
+  (cond ((with u (cursor-tree)
+	   (and (with-like? u) (with-same-type? t u)))
+	 (with u (cursor-tree)
+	   (tree-go-to u :last (if (== (cAr (cursor-path)) 0) :start :end))
+	   #t))
+	((with u (cursor-tree*)
+	   (and (with-like? u) (with-same-type? t u)))
+	 (with u (cursor-tree*)
+	   (tree-go-to u :last :start)
+	   #t))
+	((and-with u (with-like-search (cursor-tree)) (with-same-type? t u))
+	 (with sym (symbol->string (tree-label t))
+	   (set-message (string-append "Warning: already inside '" sym "'")
+			(string-append "make '" sym "'"))
+	   #t))
+	(else #f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic editing via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

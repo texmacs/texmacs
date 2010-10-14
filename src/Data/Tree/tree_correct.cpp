@@ -33,63 +33,6 @@ drd_correct (drd_info drd, tree t) {
 }
 
 /******************************************************************************
-* Subroutines for WITH-like macros
-******************************************************************************/
-
-bool
-is_with_like (tree w) {
-  return
-    is_func (w, WITH) ||
-    is_compound (w, "math", 1) ||
-    is_compound (w, "text", 1);
-}
-
-tree&
-with_body (tree w) {
-  return w[N(w)-1];
-}
-
-bool
-with_same_type (tree w1, tree w2) {
-  ASSERT (is_with_like (w1) && is_with_like (w2), "with-like trees expected");
-  return w1 (0, N(w1)-1) == w2 (0, N(w2)-1);
-}
-
-bool
-with_similar_type (tree w1, tree w2) {
-  ASSERT (is_with_like (w1) && is_with_like (w2), "with-like trees expected");
-  if (is_compound (w1, "math") || is_compound (w1, "text"))
-    return is_compound (w2, "math") || is_compound (w2, "text");
-  if (!is_func (w1, WITH) || !is_func (w2, WITH))
-    return with_same_type (w1, w2);
-  if (N(w1) != N(w2)) return false;
-  for (int i=0; i<N(w1)-1; i+=2)
-    if (w1[i] != w2[i]) return false;
-  return true;
-}
-
-array<tree>
-with_decompose (tree w, tree t) {
-  array<tree> r;
-  if (t == "");
-  else if (is_atomic (t)) r << t;
-  else if (is_concat (t))
-    for (int i=0; i<N(t); i++)
-      r << with_decompose (w, t[i]);
-  else if (is_with_like (t) && with_same_type (w, t))
-    r << with_decompose (w, with_body (t));
-  else r << t;
-  return r;
-}
-
-tree
-with_recompose (tree w, array<tree> a) {
-  tree r= w (0, N(w));
-  with_body (r)= concat_recompose (a);
-  return r;
-}
-
-/******************************************************************************
 * Correct WITHs or WITH-like macros
 ******************************************************************************/
 

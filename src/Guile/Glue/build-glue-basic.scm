@@ -107,6 +107,18 @@
   (tree-insert-node tree_insert_node (tree tree int content))
   (tree-remove-node tree_remove_node (tree tree int))
 
+  ;; extra routines for content
+  (concat-tokenize-math concat_tokenize (array_tree content))
+  (concat-decompose concat_decompose (array_tree content))
+  (concat-recompose concat_recompose (tree array_tree))
+  (with-like? is_with_like (bool content))
+  (with-same-type? with_same_type (bool content content))
+  (with-similar-type? with_similar_type (bool content content))
+  (with-correct with_correct (tree content))
+  (with-correct-superfluous superfluous_with_correct (tree content))
+  (invisible-correct-superfluous superfluous_invisible_correct (tree content))
+  (invisible-correct-missing missing_invisible_correct (tree content int))
+
   ;; paths
   (path-inf? path_inf (bool path path))
   (path-inf-eq? path_inf_eq (bool path path))

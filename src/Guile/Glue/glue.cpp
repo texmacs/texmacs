@@ -22,6 +22,8 @@
 #include "client_server.hpp"
 #include "analyze.hpp"
 #include "tree_traverse.hpp"
+#include "tree_analyze.hpp"
+#include "tree_correct.hpp"
 #include "tm_frame.hpp"
 #include "Concat/concater.hpp"
 #include "converter.hpp"
