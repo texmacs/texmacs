@@ -202,7 +202,8 @@ init_std_drd () {
   init (ASSIGN, "assign",
 	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
   init (WITH, "with",
-	var_repeat (2, 1, BIFORM) -> binding (0) -> accessible (1));
+	var_repeat (2, 1, BIFORM) -> with_like () ->
+	binding (0) -> accessible (1));
   init (PROVIDES, "provides",
 	fixed (1) -> returns_boolean () -> string_type (0));
   init (VALUE, "value", fixed (1) -> variable (0));

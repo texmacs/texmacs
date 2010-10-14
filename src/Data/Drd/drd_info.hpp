@@ -57,6 +57,11 @@ public:
   int  get_block (tree_label tag);
   void freeze_block (tree_label tag);
 
+  void set_with_like (tree_label tag, bool is_with_like);
+  bool get_with_like (tree_label tag);
+  void freeze_with_like (tree_label tag);
+  bool is_with_like (tree t);
+
   void set_attribute (tree_label tag, string which, tree val);
   tree get_attribute (tree_label tag, string which);
   void set_name (tree_label tag, string val);

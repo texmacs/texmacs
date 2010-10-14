@@ -99,10 +99,12 @@ struct parent_info {
   unsigned child_mode       : 2; // child layout
   unsigned border_mode      : 2; // is the border inaccessible?
   unsigned block            : 2; // is a block structure?
+  unsigned with_like        : 1; // is only an environment modifier?
   unsigned freeze_type      : 1; // true => disable heuristic determination
   unsigned freeze_arity     : 1;
   unsigned freeze_border    : 1;
   unsigned freeze_block     : 1;
+  unsigned freeze_with      : 1;
 
   parent_info (int arity, int extra, int amode, int cmode, bool frozen= false);
   parent_info (tree t);
@@ -186,6 +188,7 @@ public:
 
   tag_info inner_border ();
   tag_info outer_border ();
+  tag_info with_like ();
   tag_info type (int tp);
   tag_info type (int i, int tp);
   tag_info accessible (int i);

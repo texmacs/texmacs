@@ -247,6 +247,36 @@ drd_info_rep::var_without_border (tree_label l) {
 }
 
 /******************************************************************************
+* With-like structures correspond to macros which just modify
+* the current environment, such as the 'strong' tag
+******************************************************************************/
+
+void
+drd_info_rep::set_with_like (tree_label l, bool is_with_like) {
+  if (info[l]->pi.freeze_with) return;
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.with_like= is_with_like;
+}
+
+bool
+drd_info_rep::get_with_like (tree_label l) {
+  return info[l]->pi.with_like;
+}
+
+void
+drd_info_rep::freeze_with_like (tree_label l) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.freeze_with= true;
+}
+
+bool
+drd_info_rep::is_with_like (tree t) {
+  return info[L(t)]->pi.with_like && N(t) > 0;
+}
+
+/******************************************************************************
 * Other attributes
 ******************************************************************************/
 

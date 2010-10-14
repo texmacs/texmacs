@@ -50,10 +50,12 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
   arity_extra      = x;
   child_mode       = cm;
   border_mode      = BORDER_YES;
-  block            = false;
+  block            = BLOCK_NO;
+  with_like        = false;
   freeze_arity     = frozen;
   freeze_border    = frozen;
   freeze_block     = frozen;
+  freeze_with      = frozen;
 }
 
 parent_info::parent_info (tree t) {
@@ -65,10 +67,12 @@ parent_info::parent_info (tree t) {
   get_bits (child_mode      , 2);
   get_bits (border_mode     , 2);
   get_bits (block           , 2);
+  get_bits (with_like       , 1);
   get_bits (freeze_type     , 1);
   get_bits (freeze_arity    , 1);
   get_bits (freeze_border   , 1);
   get_bits (freeze_block    , 1);
+  get_bits (freeze_with     , 1);
 }
 
 parent_info::operator tree () {
@@ -80,10 +84,12 @@ parent_info::operator tree () {
   set_bits (child_mode      , 2);
   set_bits (border_mode     , 2);
   set_bits (block           , 2);
+  set_bits (with_like       , 1);
   set_bits (freeze_type     , 1);
   set_bits (freeze_arity    , 1);
   set_bits (freeze_border   , 1);
   set_bits (freeze_block    , 1);
+  set_bits (freeze_with     , 1);
   return as_string (i);
 }
 
@@ -97,9 +103,11 @@ parent_info::operator == (const parent_info& pi) {
     (child_mode       == pi.child_mode      ) &&
     (border_mode      == pi.border_mode     ) &&
     (block            == pi.block           ) &&
+    (with_like        == pi.with_like       ) &&
     (freeze_arity     == pi.freeze_arity    ) &&
     (freeze_border    == pi.freeze_border   ) &&
-    (freeze_block     == pi.freeze_block    );
+    (freeze_block     == pi.freeze_block    ) &&
+    (freeze_with      == pi.freeze_with     );
 }
 
 bool
@@ -241,6 +249,12 @@ tag_info_rep::inner_border () {
 tag_info
 tag_info_rep::outer_border () {
   pi.border_mode= BORDER_OUTER;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::with_like () {
+  pi.with_like= true;
   return tag_info (pi, ci, extra);
 }
 
