@@ -642,6 +642,19 @@ rewrite_symbolic_arguments (tree macro, tree& env) {
 }
 
 bool
+drd_info_rep::heuristic_with_like (tree t, tree arg) {
+  if (arg == "") {
+    if (!is_func (t, MACRO) || N(t) < 2) return false;
+    return heuristic_with_like (t[N(t)-1], t[N(t)-2]);
+  }
+  else if (t == tree (ARG, arg))
+    return true;
+  else if (is_with_like (t))
+    return heuristic_with_like (t[N(t)-1], arg);
+  else return false;
+}
+
+bool
 drd_info_rep::heuristic_init_macro (string var, tree macro) {
   //cout << "init_macro " << var << " -> " << macro << "\n";
   tree_label l = make_tree_label (var);
@@ -649,6 +662,9 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   int i, n= N(macro)-1;
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
   set_type (l, get_type (macro[n]));
+  set_with_like (l, heuristic_with_like (macro, ""));
+  //if (heuristic_with_like (macro, ""))
+  //cout << "With-like: " << var << LF;
   for (i=0; i<n; i++) {
     int  type= TYPE_UNKNOWN;
     tree arg (ARG, macro[i]);

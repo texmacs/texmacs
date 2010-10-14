@@ -98,6 +98,7 @@ public:
 
   /* Heuristic initialization */
   tree arg_access (tree t, tree arg, tree env, int& type);
+  bool heuristic_with_like (tree t, tree arg);
   bool heuristic_init_macro (string var, tree macro);
   bool heuristic_init_xmacro (string var, tree xmacro);
   void heuristic_init (hashmap<string,tree> env);
