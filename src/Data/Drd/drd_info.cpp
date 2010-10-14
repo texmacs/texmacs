@@ -407,7 +407,11 @@ drd_info_rep::is_accessible_child (tree t, int i) {
     ti= info[make_tree_label ("extern:" * t[0]->label)];
     index= ti->get_index (i-1, N(t));
   }
-  if ((index<0) || (index>=N(ti->ci))) return false;
+  if ((index<0) || (index>=N(ti->ci))) {
+    if (get_access_mode () == DRD_ACCESS_SOURCE)
+      return !is_atomic (t) && i >= 0 && i < N(t);
+    else return false;
+  }
   switch (get_access_mode ()) {
   case DRD_ACCESS_NORMAL:
     return ti->ci[index].accessible == ACCESSIBLE_ALWAYS;
