@@ -59,7 +59,6 @@
   (activate-latex activate_latex (void))
   (activate-hybrid activate_hybrid (void bool))
   (activate-symbol activate_symbol (void))
-  (activate-compound activate_compound (void))
   (make-return-before make_return_before (void))
   (make-return-after make_return_after (bool))
   (temp-proof-fix temp_proof_fix (void))

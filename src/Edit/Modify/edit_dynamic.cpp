@@ -584,18 +584,6 @@ edit_dynamic_rep::activate_symbol () {
   correct (path_up (p));
 }
 
-void
-edit_dynamic_rep::activate_compound () {
-  path p= search_upwards (COMPOUND);
-  if (!is_nil (p)) {
-    tree st= subtree (et, p);
-    tree u (make_tree_label (st[0]->label));
-    u << A (st (1, N(st)));
-    assign (p, u);
-    go_to (end (et, p));
-  }
-}
-
 /******************************************************************************
 * Temporary fixes for block structures
 ******************************************************************************/

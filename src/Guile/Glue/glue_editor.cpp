@@ -433,15 +433,6 @@ tmg_activate_symbol () {
 }
 
 SCM
-tmg_activate_compound () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->activate_compound ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_make_return_before () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->make_return_before ();
@@ -2660,7 +2651,6 @@ initialize_glue_editor () {
   scm_new_procedure ("activate-latex", (FN) tmg_activate_latex, 0, 0, 0);
   scm_new_procedure ("activate-hybrid", (FN) tmg_activate_hybrid, 1, 0, 0);
   scm_new_procedure ("activate-symbol", (FN) tmg_activate_symbol, 0, 0, 0);
-  scm_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   scm_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
   scm_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);
   scm_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);

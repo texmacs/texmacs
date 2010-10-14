@@ -386,7 +386,6 @@ public:
   virtual bool activate_latex () = 0;
   virtual void activate_hybrid (bool with_args_hint) = 0;
   virtual void activate_symbol () = 0;
-  virtual void activate_compound () = 0;
   virtual bool make_return_before () = 0;
   virtual bool make_return_after () = 0;
   virtual void temp_proof_fix () = 0;

@@ -48,7 +48,6 @@ public:
   bool activate_latex ();
   void activate_hybrid (bool with_args_hint);
   void activate_symbol ();
-  void activate_compound ();
 
   bool make_return_before ();
   bool make_return_after ();

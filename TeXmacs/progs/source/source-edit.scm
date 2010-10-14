@@ -33,10 +33,6 @@
   (:inside inactive)
   (activate))
 
-(tm-define (kbd-return)
-  (:inside compound)
-  (activate-compound))
-
 (tm-define (kbd-tab)
   (:inside hybrid)
   (activate-hybrid #t))
