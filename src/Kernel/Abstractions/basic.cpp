@@ -11,6 +11,7 @@
 
 #include "string.hpp"
 #include "scheme.hpp"
+#include "Freetype/tt_file.hpp"
 
 /******************************************************************************
 * debugging
@@ -168,7 +169,8 @@ use_macos_fonts () {
 #ifdef OS_MACOS
   if (gui_is_qt ()) return true;
   string s= get_preference ("look and feel");
-  return s == "default" || s == "macos";
+  if (s != "default" && s != "macos") return false;
+  return tt_font_exists ("LucidaGrande");
 #else
   return false;
 #endif

@@ -19,7 +19,21 @@
 
 string
 edit_interface_rep::flatten_message (tree t, bool localize) {
-  if (is_atomic (t)) return t->label;
+  if (is_atomic (t)) {
+    if (gui_is_qt ()) {
+      if (t == "<leftarrow>") return "Left";
+      if (t == "<rightarrow>") return "Right";
+      if (t == "<uparrow>") return "Up";
+      if (t == "<downarrow>") return "Down";
+    }
+    else {
+      if (t == "<leftarrow>") return "left";
+      if (t == "<rightarrow>") return "right";
+      if (t == "<uparrow>") return "up";
+      if (t == "<downarrow>") return "down";
+    }
+    return t->label;
+  }
   else if (is_concat (t)) {
     string s;
     for (int i=0; i<N(t); i++) {
@@ -41,6 +55,10 @@ edit_interface_rep::flatten_message (tree t, bool localize) {
     return flatten_message (t[0], localize);
   else if (is_func (t, WITH))
     return flatten_message (t[N(t)-1], localize);
+  else if (is_compound (t, "math", 1))
+    return flatten_message (t[0], localize);
+  else if (is_compound (t, "op", 1))
+    return flatten_message (t[0], localize);
   else {
     cout << "TeXmacs] warning, bad message: " << t << "\n";
     return "";

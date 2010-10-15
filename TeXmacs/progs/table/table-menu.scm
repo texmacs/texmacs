@@ -267,16 +267,16 @@
 
 (menu-bind table-insert-icons
   ((balloon (icon "tm_table_arow.xpm")
-	    "Insert row above (A-up)")
+	    "Insert row above")
    (table-insert-row #f))
   ((balloon (icon "tm_table_brow.xpm")
-	    "Insert row below (A-down)")
+	    "Insert row below")
    (table-insert-row #t))
   ((balloon (icon "tm_table_lcol.xpm")
-	    "Insert column to the left (A-left)")
+	    "Insert column to the left")
    (table-insert-column #f))
   ((balloon (icon "tm_table_rcol.xpm")
-	    "Insert column to the right (A-right)")
+	    "Insert column to the right")
    (table-insert-column #t))
   ---
   ((balloon (icon "tm_table_drow.xpm")

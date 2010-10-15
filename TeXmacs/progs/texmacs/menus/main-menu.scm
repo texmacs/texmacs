@@ -150,11 +150,11 @@
 		       "Start an interactive session")
 	      (link insert-session-menu))))
   |
-  ((balloon (icon "tm_back.xpm") "Browse back (C-<)")
+  ((balloon (icon "tm_back.xpm") "Browse back")
    (cursor-history-backward))
-  ((balloon (icon "tm_reload.xpm") "Reload (C-F2)")
+  ((balloon (icon "tm_reload.xpm") "Reload")
    (revert-buffer))
-  ((balloon (icon "tm_forward.xpm") "Browse forward (C->)")
+  ((balloon (icon "tm_forward.xpm") "Browse forward")
    (cursor-history-forward)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
