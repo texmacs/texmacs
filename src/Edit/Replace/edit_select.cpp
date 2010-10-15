@@ -283,12 +283,12 @@ edit_select_rep::select_enlarge () {
       incomplete_script_selection (st, start_p / p, end_p / p))
     select_enlarge ();
   else {
-    string s;
+    tree s;
     if (is_atomic (st)) s= "text";
     else if (is_func (st, COMPOUND)) s= as_string (st[0]);
-    else if (is_func (st, WITH)) s= "with#" * as_string (st[0]);
+    else if (is_func (st, WITH)) s= concat ("with ", as_string (st[0]));
     else s= as_string (L(st));
-    set_message ("selected#" * s, "enlarge selection");
+    set_message (concat ("selected ", s), "enlarge selection");
   }
   selecting= shift_selecting= false;
 }

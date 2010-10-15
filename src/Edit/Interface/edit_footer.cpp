@@ -12,10 +12,22 @@
 #include "edit_interface.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
+#include "dictionary.hpp"
 
 /******************************************************************************
 * Convert structured messages into straight messages
 ******************************************************************************/
+
+tree
+edit_interface_rep::kbd (string s) {
+  return sv->kbd_system_rewrite (s);
+}
+
+tree
+edit_interface_rep::kbd_shortcut (string cmd) {
+  string s= as_string (eval ("(kbd-find-inv-binding '" * cmd * ")"));
+  return kbd (s);
+}
 
 string
 edit_interface_rep::flatten_message (tree t, bool localize) {
@@ -32,17 +44,19 @@ edit_interface_rep::flatten_message (tree t, bool localize) {
       if (t == "<uparrow>") return "up";
       if (t == "<downarrow>") return "down";
     }
-    return t->label;
+    if (!localize) return t->label;
+    else return translate (t->label, "english", get_output_language ());
   }
   else if (is_concat (t)) {
     string s;
     for (int i=0; i<N(t); i++) {
       tree u= t[i];
       while (is_concat (u) && N(u) > 0) u= u[0];
-      if (i > 0 && is_compound (u, "render-key")) {
-	if (use_macos_fonts () || gui_is_qt ()) s << "  ";
-	else s << " ";
-      }
+      if (i > 0 && is_compound (u, "render-key"))
+	if (!is_atomic (t[i-1]) || !ends (t[i-1]->label, " ")) {
+	  if (use_macos_fonts () || gui_is_qt ()) s << "  ";
+	  else s << " ";
+	}
       s << flatten_message (t[i], localize);
     }
     return s;
@@ -70,75 +84,76 @@ edit_interface_rep::flatten_message (tree t, bool localize) {
 ******************************************************************************/
 
 void
-edit_interface_rep::set_left_footer (string s) {
-  SERVER (set_left_footer (s));
+edit_interface_rep::set_left_footer (tree l) {
+  SERVER (set_left_footer (flatten_message (l)));
 }
 
 void
-edit_interface_rep::append_left_footer (string& s, string env_var) {
+edit_interface_rep::append_left_footer (tree& l, string env_var) {
+  if (!is_concat (l)) l= concat (l);
   string i= get_init_string (env_var);
   string c= get_env_string (env_var);
-  if (c != i) s= s * "#" * c;
+  if (c != i) l << (" " * c);
 }
 
 void
 edit_interface_rep::set_left_footer () {
   int i;
-  string s, r, e;
+  tree s= concat ();
   double base_sz= get_env_int (FONT_BASE_SIZE);
   double sz= get_env_double (FONT_SIZE);
   tree the_style= get_style ();
   for (i=0; i<arity (the_style); i++)
-    s= s * "#" * as_string (the_style[i]);
+    s << " " << as_string (the_style[i]);
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
-  if (mode == "prog") s= s * "#program";
+  if (mode == "prog") s << " program";
   else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
-    s= s * "#" * lan;
-  else s= s * "#" * mode;
+    s << " " << lan;
+  else s << " " << mode;
   if ((mode == "text") || (mode == "src")) {
-    s= s * "#" * get_env_string (FONT);
+    s << " " << get_env_string (FONT);
     append_left_footer (s, FONT_FAMILY);
-    s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
+    s << " " << as_string ((int) ((base_sz+0.5)*sz));
     append_left_footer (s, FONT_SERIES);
     append_left_footer (s, FONT_SHAPE);
   }
   else if (mode == "math") {
-    s= s * "#" * get_env_string (MATH_FONT);
+    s << " " << get_env_string (MATH_FONT);
     append_left_footer (s, MATH_FONT_FAMILY);
-    s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
+    s << " " << as_string ((int) ((base_sz+0.5)*sz));
     append_left_footer (s, MATH_FONT_SERIES);
     append_left_footer (s, MATH_FONT_SHAPE);
   }
   else if (mode == "prog") {
     string session_name= get_env_string (PROG_SESSION);
-    if (session_name != "default") s= s * "-" * session_name;
-    s= s * "#" * get_env_string (PROG_FONT);
+    if (session_name != "default") s << "-" << session_name;
+    s << " " << get_env_string (PROG_FONT);
     append_left_footer (s, PROG_FONT_FAMILY);
-    s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
+    s << " " << as_string ((int) ((base_sz+0.5)*sz));
     append_left_footer (s, PROG_FONT_SERIES);
     append_left_footer (s, PROG_FONT_SHAPE);
   }
-  r= get_env_string (COLOR);
-  if (r != "black") s= s * "#" * r;
-  if ((N(s)>0) && (s[0] == '#')) s= s (1, N(s));
+  string r= get_env_string (COLOR);
+  if (r != "black") s << " " << r;
+  if (N(s) > 0 && s[0] == " ") s= s (1, N(s));
   if (inside ("session") && (lan != "scheme")) {
     string lan    = get_env_string (PROG_LANGUAGE);
     string session= get_env_string (PROG_SESSION);
     switch (connection_status (lan, session)) {
     case CONNECTION_DEAD:
-      s= s * "#[dead]";
+      s= s << " [dead]";
       break;
     case CONNECTION_DYING:
     case WAITING_FOR_OUTPUT:
-      s= s * "#[busy]";
+      s= s << " [busy]";
       break;
     case WAITING_FOR_INPUT:
-      s= s * "#[idle]";
+      s= s << " [idle]";
       break;
     }
   }
-  s= as_string (call ("footer-hook", object (s)));
+  s= as_tree (call ("footer-hook", object (s)));
   set_left_footer (s);
 }
 
@@ -147,11 +162,11 @@ edit_interface_rep::set_left_footer () {
 ******************************************************************************/
 
 void
-edit_interface_rep::set_right_footer (string s) {
-  SERVER (set_right_footer (s));
+edit_interface_rep::set_right_footer (tree r) {
+  SERVER (set_right_footer (flatten_message (r)));
 }
 
-string
+tree
 edit_interface_rep::compute_text_footer (tree st) {
   string r;
   language lan= get_env_language ();
@@ -180,14 +195,14 @@ as_symbol (tree t) {
   else return "<" * s * ">";
 }
 
-static string
+static tree
 get_with_text (tree t) {
   int i, n=N(t), k=(n-1)/2;
   if ((n&1)!=1) return "";
-  string s;
+  tree s= concat ();
   for (i=0; i<k; i++)
     if (is_atomic (t[2*i]) && (t[2*i]!="") && is_atomic (t[2*i+1])) {
-      if (i>0) s << "#";
+      if (i>0) s << " ";
       string var= t[2*i]->label;
       if ((var!=MODE) && (var!=COLOR) && (var!=PAR_MODE) &&
 	  (var!=LANGUAGE) && (var!=FONT) &&
@@ -199,50 +214,74 @@ get_with_text (tree t) {
 	  (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
 	  (var!=PROG_FONT_SERIES) &&
 	  (var!=PROG_SESSION))
-	s << var << "=";
-      s << t[2*i+1]->label;
+	s << (var * "=" * t[2*i+1]->label);
+      else s << t[2*i+1]->label;
     }
   return s;
 }
 
-string
+tree
 edit_interface_rep::compute_operation_footer (tree st) {
-  string r = "";
+  tree r= "";
   if (N(st) >= 2) {
     switch (L (st)) {
-    case VAR_WIDE: r= "under#" * get_accent_type (as_string (st[1])); break;
+    case VAR_WIDE:
+      r= concat ("under ", get_accent_type (as_string (st[1]))); break;
     default: ;
     }
   }
   if (r == "" && N(st) >= 1) {
     switch (L (st)) {
-    case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-    case MID: r= "middle#" * as_symbol (st[0]); break;
-    case RIGHT: r= "close#" * as_symbol (st[0]); break;
-    case BIG: r= "big#" * as_symbol (st[0]); break;
-    case LPRIME: r= "left prime#" * as_string (st[0]); break;
-    case RPRIME: r= "prime#" * as_string (st[0]); break;
-    case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
-    case WIDE: r=  get_accent_type (as_string (st[1])); break;
-    case ASSIGN: r= "assign#" * as_string (st[0]); break;
-    case WITH: r= "with#" * get_with_text (st); break;
-    case PROVIDES: r= "provides#" * as_string (st[0]); break;
-    case VALUE: r= "value#" * as_string (st[0]); break;
-    case QUOTE_VALUE: r= "quoted value#" * as_string (st[0]); break;
-    case ARG: r= "argument#" * as_string (st[0]); break;
-    case QUOTE_ARG: r= "quoted argument#" * as_string (st[0]); break;
+    case _FLOAT:
+      r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
+    case MID:
+      r= concat ("middle ", as_symbol (st[0])); break;
+    case RIGHT:
+      r= concat ("close ", as_symbol (st[0])); break;
+    case BIG:
+      r= concat ("big ", as_symbol (st[0])); break;
+    case LPRIME:
+      r= concat ("left prime ", as_string (st[0])); break;
+    case RPRIME:
+      r= concat ("prime ", as_string (st[0])); break;
+    case SQRT:
+      r= tree ((char*) ((N(st)==1)? "square root": "n-th root")); break;
+    case WIDE:
+      r= tree (get_accent_type (as_string (st[1]))); break;
+    case ASSIGN:
+      r= concat ("assign ", as_string (st[0])); break;
+    case WITH:
+      r= concat ("with ", get_with_text (st)); break;
+    case PROVIDES:
+      r= concat ("provides ", as_string (st[0])); break;
+    case VALUE:
+      r= concat ("value ", as_string (st[0])); break;
+    case QUOTE_VALUE:
+      r= concat ("quoted value ", as_string (st[0])); break;
+    case ARG:
+      r= concat ("argument ", as_string (st[0])); break;
+    case QUOTE_ARG:
+      r= concat ("quoted argument ", as_string (st[0])); break;
     case COMPOUND:
       if (is_atomic (st[0])) r= as_string (st[0]);
       else r= "compound";
       break;
-    case INCLUDE: r= "include#" * as_string (st[0]); break;
-    case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
-    case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
-    case LABEL: r= "label: " * as_string (st[0]); break;
-    case REFERENCE: r= "reference: " * as_string (st[0]); break;
-    case PAGEREF: r=  "page reference: " * as_string (st[0]); break;
-    case WRITE: r= "write to " * as_string (st[0]); break;
-    case SPECIFIC: r= "specific " * as_string (st[0]); break;
+    case INCLUDE:
+      r= concat ("include ", as_string (st[0])); break;
+    case INACTIVE:
+      r= concat ("inactive ", drd->get_name (L(st[0]))); break;
+    case VAR_INACTIVE:
+      r= concat ("inactive ", drd->get_name (L(st[0]))); break;
+    case LABEL:
+      r= concat ("label: ", as_string (st[0])); break;
+    case REFERENCE:
+      r= concat ("reference: ", as_string (st[0])); break;
+    case PAGEREF:
+      r= concat ("page reference: ", as_string (st[0])); break;
+    case WRITE:
+      r= concat ("write to ", as_string (st[0])); break;
+    case SPECIFIC:
+      r= concat ("specific ", as_string (st[0])); break;
     default: ;
     }
   }
@@ -252,14 +291,14 @@ edit_interface_rep::compute_operation_footer (tree st) {
     default: r= drd->get_name (L(st));
     }
   }
-  if (last_item (tp) == 0) r= "before#" * r;
+  if (last_item (tp) == 0) r= concat ("before ", r);
   return r;
 }
 
-string
+tree
 edit_interface_rep::compute_compound_footer (tree t, path p) {
   if (!(rp < p)) return "";
-  string up= compute_compound_footer (t, path_up (p));
+  tree up= compute_compound_footer (t, path_up (p));
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
   switch (L (st)) {
@@ -267,82 +306,94 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case PARA:
     return up;
   case SURROUND:
-    if (l == 0) return up * "left surrounding#";
-    if (l == 1) return up * "right surrounding#";
+    if (l == 0) return concat (up, "left surrounding ");
+    if (l == 1) return concat (up, "right surrounding ");
     return up;
   case CONCAT:
     return up;
   case MOVE:
-    if (l==0) return up * "move#";
+    if (l==0) return concat (up, "move ");
     else return up;
   case RESIZE:
-    if (l==0) return up * "resize#";
+    if (l==0) return concat (up, "resize ");
     else return up;
   case _FLOAT:
-    if (N(st) >= 1 && is_atomic (st[0])) return up * st[0]->label * "#";
-    else return up * "float#";
+    if (N(st) >= 1 && is_atomic (st[0]))
+      return concat (up, st[0]->label * " ");
+    else return concat (up, "float ");
   case BELOW:
-    if (l==0) return up * "body#";
-    else return up * "script below#";
+    if (l==0) return concat (up, "body ");
+    else return concat (up, "script below ");
   case ABOVE:
-    if (l==0) return up * "body#";
-    else return up * "script above#";
+    if (l==0) return concat (up, "body ");
+    else return concat (up, "script above ");
   case FRAC:
-    if (l==0) return up * "numerator#";
-    else return up * "denominator#";
+    if (l==0) return concat (up, "numerator ");
+    else return concat (up, "denominator ");
   case SQRT:
-    if (N(st)==1) return up * "square root#";
-    if (l==0) return up * "root#";
-    else return up * "index#";
+    if (N(st)==1) return concat (up, "square root ");
+    if (l==0) return concat (up, "root ");
+    else return concat (up, "index ");
   case WIDE:
-    if (N(st) >= 1) return up * get_accent_type (as_string (st[1])) * "#";
-    else return up * "wide#";
+    if (N(st) >= 1)
+      return concat (up, get_accent_type (as_string (st[1])) * " ");
+    else
+      return concat (up, "wide ");
   case VAR_WIDE:
     if (N(st) >= 1)
-      return up * "under#" * get_accent_type (as_string (st[1])) * "#";
-    else return up * "var-wide#";
+      return concat (up, "under " * get_accent_type (as_string (st[1])) * " ");
+    else
+      return concat (up, "var-wide ");
   case TREE:
-    if (l==0) return up * "root#";
-    else return up * "branch(" * as_string (l) * ")#";
+    if (l==0) return concat (up, "root ");
+    else return concat (up, "branch(" * as_string (l) * ") ");
   case TFORMAT:
     return up;
   case TABLE:
-    return up * "(" * as_string (l+1) * ",";
+    return concat (up, "(" * as_string (l+1) * ",");
   case ROW:
-    return up * as_string (l+1) * ")#";
+    return concat (up, as_string (l+1) * ") ");
   case CELL:
     return up;
   case WITH:
-    return up * get_with_text (st) * "#";
+    return concat (up, get_with_text (st), " ");
   case DRD_PROPS:
-    if (l == 0) return up * "drd property(variable)" * "#";
-    if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
-    return up * "value(" * as_string (l/2) * ")#";
+    if (l == 0)
+      return concat (up, "drd property(variable) ");
+    if ((l&1) == 1)
+      return concat (up, "drd property(" * as_string (l/2+1) * ") ");
+    return concat (up, "value(" * as_string (l/2) * ") ");
   case COMPOUND:
-    if (N(st) >= 1 && is_atomic (st[0])) return up * as_string (st[0]) * "#";
-    else return up * "compound#";
+    if (N(st) >= 1 && is_atomic (st[0]))
+      return concat (up, as_string (st[0]) * " ");
+    else
+      return concat (up, "compound ");
   case HLINK:
-    if (N(st) >= 2) return up * "hyperlink(" * as_string (st[1]) * ")#";
-    else return up * "#hyperlink";
+    if (N(st) >= 2)
+      return concat (up, "hyperlink(" * as_string (st[1]) * ") ");
+    else
+      return concat (up, "hyperlink ");
   case TUPLE:
-    return up * "tuple(" * as_string (l+1) * ")#";
+    return concat (up, "tuple(" * as_string (l+1) * ") ");
   case ATTR:
-    if ((l&1) == 0) return up * "variable(" * as_string (l/2+1) * ")#";
-    else return up * "value(" * as_string (l/2+1) * ")#";
+    if ((l&1) == 0)
+      return concat (up, "variable(" * as_string (l/2+1) * ") ");
+    else
+      return concat (up, "value(" * as_string (l/2+1) * ") ");
   case SPECIFIC:
-    return up * "texmacs#";
+    return concat (up, "texmacs ");
   default:
-    return up * drd->get_name (L(st)) * "#";
+    return concat (up, drd->get_name (L(st)) * " ");
   }
 }
 
 void
 edit_interface_rep::set_right_footer () {
-  string s, r;
+  tree r;
   tree st= subtree (et, path_up (tp));
   if (is_atomic (st)) r= compute_text_footer (st);
   else r= compute_operation_footer (st);
-  r= compute_compound_footer (et, path_up (tp)) * r;
+  r= concat (compute_compound_footer (et, path_up (tp)), r);
   set_right_footer (r);
 }
 
@@ -359,7 +410,7 @@ edit_interface_rep::set_latex_footer (tree st) {
       string help;
       command cmd;
       if (sv->kbd_get_command (s, help, cmd)) {
-	set_left_footer ("return:#" * help);
+	set_left_footer (concat (kbd ("return"), ": " * help));
 	set_right_footer ("latex command");
 	return true;
       }
@@ -381,18 +432,22 @@ edit_interface_rep::set_hybrid_footer (tree st) {
 	int i, n= N(mt)-1;
 	for (i=0; i<n; i++)
 	  if (mt[i] == name) {
-	    set_message ("return:#insert argument#" * name, "hybrid command");
+	    set_message (concat (kbd ("return"), ": insert argument ", name),
+			 "hybrid command");
 	    return true;
 	  }
       }
       // macro application
       tree f= get_env_value (name);
       if (drd->contains (name) && (f == UNINIT))
-	set_message("return:#insert primitive#" * name, "hybrid command");
+	set_message (concat (kbd ("return"), ": insert primitive ", name),
+		     "hybrid command");
       else if (is_func (f, MACRO) || is_func (f, XMACRO))
-	set_message("return:#insert macro#" * name, "hybrid command");
+	set_message (concat (kbd ("return"), ": insert macro ", name),
+		     "hybrid command");
       else if (f != UNINIT)
-	set_message("return:#insert value#" * name, "hybrid command");
+	set_message (concat (kbd ("return"), ": insert value ", name),
+		     "hybrid command");
       else return false;
       return true;
     }

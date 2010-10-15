@@ -107,6 +107,8 @@ protected:
   virtual void back_in_general (tree t, path p, bool forward) = 0;
 
   /* other protected subroutines */
+  virtual tree kbd (string s) = 0;
+  virtual tree kbd_shortcut (string s) = 0;
   virtual path tree_path (path sp, SI x, SI y, SI delta) = 0;
   virtual void apply_changes () = 0;
   virtual void animate () = 0;

@@ -198,7 +198,7 @@
 	 (l2 (assoc (string-append name " *") m)))
     (cond (l1 ((cadr l1)))
 	  (l2 ((cadr l2)))
-	  (else (set-message (string-append "No buffer#" name)
+	  (else (set-message `(concat "Error: no buffer " ,name)
 			     "switch to buffer")))))
 
 (tm-define (with-active-buffer-sub name cmd)

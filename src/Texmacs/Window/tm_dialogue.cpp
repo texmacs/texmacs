@@ -212,7 +212,7 @@ interactive_command_rep::apply () {
     call ("learn-interactive", fun, learn);
     string ret= object_to_string (call (fun, params));
     if (ret != "" && ret != "<unspecified>" && ret != "#<unspecified>")
-      sv->set_message (ret, "interactive command");
+      sv->set_message (verbatim (ret), "interactive command");
   }
   else {
     s[i]= string ("");

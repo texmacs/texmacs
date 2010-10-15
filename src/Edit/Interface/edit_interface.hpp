@@ -154,17 +154,19 @@ public:
   void update_active_loci ();
 
   /* the footer */
-  string compute_text_footer (tree st);
-  string compute_operation_footer (tree st);
-  string compute_compound_footer (tree t, path p);
+  tree   compute_text_footer (tree st);
+  tree   compute_operation_footer (tree st);
+  tree   compute_compound_footer (tree t, path p);
   bool   set_latex_footer (tree st);
   bool   set_hybrid_footer (tree st);
-  void   set_left_footer (string l);
-  void   append_left_footer (string& s, string env_var);
+  void   set_left_footer (tree l);
+  void   append_left_footer (tree& l, string env_var);
   void   set_left_footer ();
-  void   set_right_footer (string r);
+  void   set_right_footer (tree r);
   void   set_right_footer ();
   void   set_footer ();
+  tree   kbd (string s);
+  tree   kbd_shortcut (string s);
   string flatten_message (tree t, bool localize= true);
   void   set_message (tree l, tree r= "", bool temp= false);
   void   recall_message ();

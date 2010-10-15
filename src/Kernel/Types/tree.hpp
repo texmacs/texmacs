@@ -310,6 +310,35 @@ inline bool is_tuple (tree t, const char* s, int n) {
   return (L(t) == TUPLE) && (N(t) == (n+1)) && (t[0] == s); }
 
 /******************************************************************************
+* Other frequent markup
+******************************************************************************/
+
+inline tree concat () {
+  return tree (CONCAT); }
+inline tree concat (tree t1) {
+  return tree (CONCAT, t1); }
+inline tree concat (tree t1, tree t2) {
+  return tree (CONCAT, t1, t2); }
+inline tree concat (tree t1, tree t2, tree t3) {
+  return tree (CONCAT, t1, t2, t3); }
+inline tree concat (tree t1, tree t2, tree t3, tree t4) {
+  return tree (CONCAT, t1, t2, t3, t4); }
+
+inline tree document () {
+  return tree (DOCUMENT); }
+inline tree document (tree t1) {
+  return tree (DOCUMENT, t1); }
+inline tree document (tree t1, tree t2) {
+  return tree (DOCUMENT, t1, t2); }
+inline tree document (tree t1, tree t2, tree t3) {
+  return tree (DOCUMENT, t1, t2, t3); }
+inline tree document (tree t1, tree t2, tree t3, tree t4) {
+  return tree (DOCUMENT, t1, t2, t3, t4); }
+
+inline tree verbatim (tree t1) {
+  return compound ("verbatim", t1); }
+
+/******************************************************************************
 * Miscellaneous
 ******************************************************************************/
 

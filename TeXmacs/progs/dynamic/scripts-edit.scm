@@ -44,7 +44,7 @@
   (with lan (get-env "prog-scripts")
     (or (connection-defined? lan)
 	(begin
-	  (set-message (string-append "plugin '" lan "' not defined") "")
+	  (set-message `(concat "undefined plugin: " (verbatim ,lan)) "")
 	  #f))))
 
 (tm-define (script-evaluable?)
@@ -60,8 +60,8 @@
 
 (tm-define (script-feed lan ses in out opts)
   (when (not (supports-scripts? lan))
-    (with s (string-append "Error:#" lan "#is not a scripting language")
-      (set-message s "Evaluate")))
+    (with m `(concat "Error: " (verbatim ,lan) " is not a scripting language")
+      (set-message m "Evaluate")))
   (when (supports-scripts? lan)
     (tree-set! out '(script-busy))
     (with ptr (tree->tree-pointer out)

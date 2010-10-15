@@ -373,15 +373,15 @@ edit_text_rep::make_postscript (
   }
   else {
     string s;
+    tree vim= verbatim (as_string (image));
     load_string (relative (get_name (), image), s, false);
     if (s == "") {
-      set_message ("File#'" * as_string (image) * "' not found", "make image");
+      set_message (concat ("File '", vim, "' not found"), "make image");
       return;
     }
     type= suffix (image);
     if (type == "") {
-      set_message ("File#'" * as_string (image) * "' is not an image",
-		   "make image");
+      set_message (concat ("File '", vim, "' is not an image"), "make image");
       return;
     }
     t << tuple (tree (RAW_DATA, s), type);

@@ -132,7 +132,9 @@ edit_math_rep::make_var_sqrt () {
   }
   else {
     insert_tree (tree (SQRT, "", ""), path (0, 0));
-    set_message ("left: set n, right: when finished", "n-th root");
+    set_message (concat (kbd ("left"), ": set n",
+			 kbd ("right"), ": when finished"),
+		 "n-th root");
   }
 }
 
@@ -295,7 +297,9 @@ edit_math_rep::make_tree () {
     insert_tree (tree (TREE, selection_get_cut (), ""), path (1, 0));
   else {
     insert_tree (tree (TREE, "", ""), path (0, 0));
-    set_message ("E-right: insert a new branch", "tree");
+    set_message (concat (kbd_shortcut ("(structured-insert #t)"),
+			 ": insert a new branch"),
+		 "tree");
   }
 }
 

@@ -39,8 +39,8 @@
 	   #t))
 	((and-with u (with-like-search (cursor-tree)) (with-same-type? t u))
 	 (with sym (symbol->string (tree-label t))
-	   (set-message (string-append "Warning: already inside '" sym "'")
-			(string-append "make '" sym "'"))
+	   (set-message `(concat "Warning: already inside '" ,sym "'")
+			`(concat "make '" ,sym "'"))
 	   #t))
 	(else #f)))
 
@@ -74,7 +74,9 @@
 
 (tm-define (kbd-tab)
   (if (not (complete-try?))
-      (set-message "Use M-tab in order to insert a tab" "tab")))
+      (with sh (kbd-system-rewrite (kbd-find-inv-binding '(make-htab "5mm")))
+	(set-message `(concat "Use " ,sh " in order to insert a tab")
+		     "tab"))))
 
 (tm-define (kbd-tab)
   (:inside label reference)

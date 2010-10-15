@@ -120,15 +120,15 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
     insert_tree (t, p);
     if (table_macro) make_table (1, 1);
     if (sel != "") insert_tree (sel, end (sel));
-
-    string mess;
+    
+    tree mess= concat ();
     if (drd->get_arity_mode (l) != ARITY_NORMAL)
-      mess= "A-right: insert argument";
+      mess= concat (kbd ("A-right"), ": insert argument");
     if (!drd->all_accessible (l)) {
       if (mess != "") mess << ", ";
-      mess << "return: activate";
+      mess << kbd ("return") << ": activate";
     }
-    if (mess == "") mess= "Move to the right when finished";
+    if (mess == concat ()) mess= "Move to the right when finished";
     set_message (mess, drd->get_name (l));
   }
 }
@@ -482,7 +482,8 @@ edit_dynamic_rep::make_hybrid () {
   path p= end (t, path (0));
   if (in_source ()) insert_tree (t, p);
   else insert_tree (tree (INACTIVE, t), path (0, p));
-  set_message ("return: activate symbol or macro", "hybrid");
+  set_message (concat (kbd ("return"), ": activate symbol or macro"),
+	       "hybrid");
 }
 
 bool
@@ -502,7 +503,8 @@ edit_dynamic_rep::activate_latex () {
       if (N(st) == 2) insert_tree (copy (st[1]));
       return true;
     }
-    set_message ("Error: not a command name", "activate latex command");
+    set_message ("Error: not a command name",
+		 "activate latex command");
   }
   return false;
 }
@@ -555,7 +557,8 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
     make_compound (make_tree_label (name), with_args_hint? 1: 0);
     if (N(st) == 2) insert_tree (st[1]);
   }
-  else set_message ("Error: unknown command", "activate hybrid command");
+  else set_message ("Error: unknown command",
+		    "activate hybrid command");
   env_locked= old_locked;
 }
 

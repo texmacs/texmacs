@@ -56,7 +56,7 @@
 (define (load-help-buffer-sub s type)
   (let ((name (url-resolve-help s)))
     (if (url-none? name)
-	(set-message (string-append "Error: help file#'" s "'#not found")
+	(set-message `(concat "Error: help file " (verbatim ,s) " not found")
 		     "load help file")
 	(cond ((== type "normal")
 	       (let ((doc (texmacs-load-tree name "help")))

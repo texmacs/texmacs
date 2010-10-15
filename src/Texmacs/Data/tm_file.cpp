@@ -26,7 +26,8 @@ tm_data_rep::load_tree (url u, string fm) {
   string action= "load " * fm * " file";
   u= resolve (u);
   if (is_none (u) || load_string (u, s, false)) {
-    set_message ("Error: file#" * as_string (u) * "#not found", action);
+    tree vname= verbatim (as_string (u));
+    set_message (concat ("Error: file ", vname, " not found"), action);
     return "error";
   }
   if ((fm == "generic") || (fm == "help")) fm= get_format (s, suf);
@@ -41,6 +42,7 @@ void
 tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   // cout << "Load= " << u << ", " << fm << "\n";
   string name= as_string (tail (u));
+  tree vname= verbatim (name);
   string action= "load " * fm * " file";
   if (fm == "generic")
     action= "load " * suffix_to_format (suffix (u)) * " file";
@@ -61,7 +63,7 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
 	}
       }
     if (!no_bufs ())
-      set_message ("Error: file#" * name * "#not found", action);
+      set_message (concat ("Error: file ", vname, " not found"), action);
     return;
   }
 
@@ -310,6 +312,7 @@ tm_data_rep::make_document (tm_view vw, string fm) {
 void
 tm_data_rep::save_buffer (url u, string fm) {
   string name= as_string (u);
+  tree vname= verbatim (name);
   if (fm == "generic") {
     fm= suffix_to_format (suffix (u));
     if (fm == "generic") fm= "verbatim";
@@ -317,7 +320,7 @@ tm_data_rep::save_buffer (url u, string fm) {
   string action= "save " * fm * " file";
   u= resolve (u, "");
   if (is_none (u)) {
-    set_message ("Error: can't save file#" * name, action);
+    set_message (concat ("Error: can't save file ", vname), action);
     return;
   }
 
@@ -339,9 +342,9 @@ tm_data_rep::save_buffer (url u, string fm) {
   string s= tree_to_generic (doc, fm * "-document");
   if (s != "* error: unknown format *") {
     if (save_string (u, s))
-      set_message ("Error:#" * name * "#did not open", action);
+      set_message (concat ("Error: ", vname, " did not open"), action);
     else {
-      set_message ("saved " * name, action);
+      set_message (concat ("saved ", vname), action);
       if (fm == "texmacs") {
 	if (no_name () && exists (get_name_buffer ()))
 	  remove (get_name_buffer ());
@@ -361,12 +364,13 @@ tm_data_rep::auto_save () {
     tm_buffer buf= bufs[i];
     if ((buf->needs_to_be_autosaved () && (!buf->read_only))) {
       url name= buf->name;
+      tree vname= verbatim (as_string (name));
       if (!is_scratch (name))
 	name= glue (buf->name, "~");
       if (N(buf->vws)!=0) {
 	tree doc= make_document (buf->vws[0]);
 	if (save_string (name, tree_to_texmacs (doc)))
-	  set_message ("Error: " * as_string (name) * " did not open",
+	  set_message (concat ("Error: ", vname, " did not open"),
 		       "save TeXmacs file");
 	else
 	  call ("set-temporary-message",

@@ -72,8 +72,9 @@ edit_replace_rep::spell_end () {
   else if (nr_replaced == 1)
     set_message ("one spelling error has been corrected", "correct text");
   else if (nr_replaced > 1)
-    set_message (as_string (nr_replaced) *
-		 "#spelling errors have been corrected", "correct text");
+    set_message (concat (as_string (nr_replaced),
+			 " spelling errors have been corrected"),
+		 "correct text");
   else set_message ("spell checking complete", "correct text");
   beep ();
   set_input_normal ();

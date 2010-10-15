@@ -402,10 +402,10 @@ edit_replace_rep::search_next (bool forward) {
 
   next_match (forward);
   if (search_at == rp) {
-    set_message ("No more matches for#" * w, r);
+    set_message (concat ("No more matches for ", verbatim (w)), r);
     beep ();
   }
-  else set_message ("Searching#" * w, r);
+  else set_message (concat ("Searching ", verbatim (w)), r);
 }
 
 void
@@ -539,7 +539,7 @@ edit_replace_rep::replace_next () {
 
   next_match (forward);
   if (search_at == rp) {
-    string l= "Replaced#" * as_string (nr_replaced) * "#occurrences";
+    tree l= concat ("Replaced ", as_string (nr_replaced), " occurrences");
     if (nr_replaced == 0) l= "No matches found";
     if (nr_replaced == 1) l= "Replaced one occurrence";
     set_message (l, r);

@@ -108,7 +108,7 @@ edit_interface_rep::try_shortcut (string comb) {
     if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
 	(search_forwards ("-", comb) >= 0 && comb != "-"))
       call ("set-temporary-message",
-	    tree (CONCAT, "keyboard shortcut:", rew), rhs,
+	    tree (CONCAT, "keyboard shortcut: ", rew), rhs,
 	    shorth == ""? 1: 3000);
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);
@@ -183,9 +183,9 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
     if (i<N(s)) i++;
     s= s (i, N(s));
   }
-  if (N(action) != 0)
-    set_message ("You can also obtain#" * action *
-		 "#by typing#" * keys, action);
+  if (N (action) != 0)
+    set_message (concat ("You can also obtain ", action, " by typing ", keys),
+		 action);
 }
 
 /******************************************************************************

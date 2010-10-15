@@ -1032,7 +1032,11 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
   }
 
   table_correct_block_content ();
-  set_message ("E-down: new row, E-right: new column", "table");
+  set_message (concat (kbd_shortcut ("(structured-insert-down)"),
+		       ": new row",
+		       kbd_shortcut ("(structured-insert #t)"),
+		       ": new column"),
+	       "table");
 }
 
 void
@@ -1048,7 +1052,11 @@ edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
   assign (cp * 0, T);
   go_to (cp * path (0, p));
   table_correct_block_content ();
-  set_message ("E-down: new row, E-right: new column", "table");
+  set_message (concat (kbd_shortcut ("(structured-insert-down)"),
+		       ": new row",
+		       kbd_shortcut ("(structured-insert #t)"),
+		       ": new column"),
+	       "table");
 }
 
 void

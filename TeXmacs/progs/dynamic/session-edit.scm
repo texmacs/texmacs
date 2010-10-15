@@ -271,7 +271,7 @@
 	(connection-defined? lan)
 	(begin
 	  (if err-flag?
-	      (set-message (string-append "plugin '" lan "' not defined") ""))
+	      (set-message `(concat "undefined plugin: " (verbatim ,lan)) ""))
 	  #f))))
 
 (tm-define (session-status)
