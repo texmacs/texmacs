@@ -29,10 +29,20 @@ public:
     cmd (_cmd) {  }
 
 public slots:
-  void apply() {
-//    if (!is_nil(cmd)) { cmd->apply();  needs_update(); }
-    if (!is_nil(cmd)) { the_gui->process_command(cmd); }
-  }
+  void apply();
+};
+
+
+class QTMKeyCommand: public QObject {
+  Q_OBJECT
+  string ks;
+  
+public:
+  inline QTMKeyCommand (string _ks):
+  ks (_ks) {  }
+  
+public slots:
+  void apply();
 };
 
 class QTMLazyMenu: public QMenu {
