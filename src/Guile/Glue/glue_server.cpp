@@ -1025,11 +1025,11 @@ tmg_update_all_buffers () {
 
 SCM
 tmg_set_message (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "set-message");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "set-message");
 
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
+  content in1= scm_to_content (arg1);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->set_message (in1, in2);
@@ -1040,12 +1040,12 @@ tmg_set_message (SCM arg1, SCM arg2) {
 
 SCM
 tmg_set_message_temp (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message-temp");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message-temp");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "set-message-temp");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "set-message-temp");
   SCM_ASSERT_BOOL (arg3, SCM_ARG3, "set-message-temp");
 
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
+  content in1= scm_to_content (arg1);
+  content in2= scm_to_content (arg2);
   bool in3= scm_to_bool (arg3);
 
   // SCM_DEFER_INTS;

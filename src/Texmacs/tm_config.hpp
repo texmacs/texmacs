@@ -27,9 +27,6 @@ public:
   tm_config_rep ();
   ~tm_config_rep ();
 
-  /* User preferences */
-  string get_preference (string var);
-
   /* Font setup */
   void set_font_rules (scheme_tree rules);
 

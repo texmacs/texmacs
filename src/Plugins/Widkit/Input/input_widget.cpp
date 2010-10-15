@@ -69,7 +69,15 @@ input_widget_rep::input_widget_rep (command call_back2):
   s (""), draw_s (""), type ("default"), def (), call_back (call_back2),
   ok (true), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
-  got_focus (false), hilit (false) { dw*=SHRINK; dh*= SHRINK; }
+  got_focus (false), hilit (false)
+{
+  if (use_macos_fonts ()) {
+    dw += PIXEL;
+    dh += 3*PIXEL;
+  }
+  dw *= SHRINK;
+  dh *= SHRINK;
+}
 
 input_widget_rep::operator tree () {
   return tree (TUPLE, "input", s);

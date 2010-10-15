@@ -134,3 +134,4 @@
   (fill-dictionary preferences-table saved-preferences))
 
 (retrieve-preferences)
+(notify-preferences-loaded)

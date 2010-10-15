@@ -49,7 +49,6 @@ public:
 	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
 
   /* Control global server parameters */
-  virtual string get_preference (string var) = 0;
   virtual void   set_font_rules (scheme_tree rules) = 0;
   virtual bool   kbd_get_command (string s, string& help, command& cmd) = 0;
   virtual void   insert_kbd_wildcard (string key, string im,
@@ -96,7 +95,7 @@ public:
   virtual bool visible_footer () = 0;
   virtual void set_left_footer (string s) = 0;
   virtual void set_right_footer (string s) = 0;
-  virtual void set_message (string left, string right, bool temp= false) = 0;
+  virtual void set_message (tree left, tree right, bool temp= false) = 0;
   virtual void recall_message () = 0;
   virtual void dialogue_start (string name, widget wid) = 0;
   virtual void dialogue_inquire (int i, string& arg) = 0;

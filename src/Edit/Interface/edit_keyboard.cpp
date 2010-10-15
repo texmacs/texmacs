@@ -101,12 +101,14 @@ edit_interface_rep::try_shortcut (string comb) {
     sh_s= comb;
     sh_mark= new_marker ();
     mark_start (sh_mark);
-    string rew= sv->kbd_post_rewrite (sh_s);
+    string rew_s= sv->kbd_post_rewrite (sh_s);
+    tree rew= sv->kbd_system_rewrite (rew_s);
     if (N(help)>0) set_message (help, rew);
-    string rhs= (shorth == rew? string (""): shorth);
+    tree rhs= (shorth == rew_s? tree (""): sv->kbd_system_rewrite (shorth));
     if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
 	(search_forwards ("-", comb) >= 0 && comb != "-"))
-      call ("set-temporary-message", "keyboard shortcut: " * rew, rhs,
+      call ("set-temporary-message",
+	    tree (CONCAT, "keyboard shortcut: ", rew), rhs,
 	    shorth == ""? 1: 3000);
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);

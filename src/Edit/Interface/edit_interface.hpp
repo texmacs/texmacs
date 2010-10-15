@@ -35,10 +35,10 @@ protected:
   string        sh_s;          // current string for shortcuts
   double        sh_mark;       // 0 or mark for undoing shortcut
   widget        popup_win;     // the current popup window
-  string        message_l;     // a left message to display
-  string        message_r;     // a right message to display
-  string        last_l;        // last displayed left message
-  string        last_r;        // last displayed right message
+  tree          message_l;     // a left message to display
+  tree          message_r;     // a right message to display
+  tree          last_l;        // last displayed left message
+  tree          last_r;        // last displayed right message
   int           sfactor;       // the current shrinking factor
   SI            pixel;         // sfactor*PIXEL
   rectangles    copy_always;   // for wiping out cursor
@@ -165,7 +165,8 @@ public:
   void   set_right_footer (string r);
   void   set_right_footer ();
   void   set_footer ();
-  void   set_message (string l, string r= "", bool temp= false);
+  string flatten_message (tree t, bool localize= true);
+  void   set_message (tree l, tree r= "", bool temp= false);
   void   recall_message ();
 
   /* event handlers */

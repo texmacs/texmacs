@@ -382,6 +382,7 @@ Guile/Glue/glue_%.cpp: Guile/Glue/build-glue-%.scm
 gluesrc = Guile/Glue
 
 GLUE: $(gluesrc)/glue_basic.cpp $(gluesrc)/glue_editor.cpp $(gluesrc)/glue_server.cpp
+	$(RM) Objects/glue_all.o
 
 .PHONY: GLUE
 

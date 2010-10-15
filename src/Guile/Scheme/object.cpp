@@ -371,6 +371,24 @@ object call (object fun, array<object> a) {
   return object (call_scheme (fun->lookup(), array_lookup(a))); }
 
 /******************************************************************************
+* User preferences
+******************************************************************************/
+
+static bool preferences_ok= false;
+
+void
+notify_preferences_loaded () {
+  preferences_ok= true;
+}
+
+
+string
+get_preference (string var) {
+  if (!preferences_ok) return "uninitialized";
+  else return as_string (call ("get-preference", var));
+}
+
+/******************************************************************************
 * Delayed evaluation
 ******************************************************************************/
 

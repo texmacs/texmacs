@@ -168,4 +168,7 @@ object call (object fun, object a1, object a2, object a3);
 object call (object fun, object a1, object a2, object a3, object a4);
 object call (object fun, array<object> a);
 
+void notify_preferences_loaded ();
+string get_preference (string var);
+
 #endif // defined OBJECT_H

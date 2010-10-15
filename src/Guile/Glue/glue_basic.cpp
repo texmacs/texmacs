@@ -380,6 +380,15 @@ tmg_exec_delayed_pause (SCM arg1) {
 }
 
 SCM
+tmg_notify_preferences_loaded () {
+  // SCM_DEFER_INTS;
+  notify_preferences_loaded ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_set_input_language (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-input-language");
 
@@ -4329,6 +4338,7 @@ initialize_glue_basic () {
   scm_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
   scm_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
   scm_new_procedure ("exec-delayed-pause", (FN) tmg_exec_delayed_pause, 1, 0, 0);
+  scm_new_procedure ("notify-preferences-loaded", (FN) tmg_notify_preferences_loaded, 0, 0, 0);
   scm_new_procedure ("set-input-language", (FN) tmg_set_input_language, 1, 0, 0);
   scm_new_procedure ("get-input-language", (FN) tmg_get_input_language, 0, 0, 0);
   scm_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);

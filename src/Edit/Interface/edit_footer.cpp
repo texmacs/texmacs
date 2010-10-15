@@ -14,6 +14,40 @@
 #include "connect.hpp"
 
 /******************************************************************************
+* Convert structured messages into straight messages
+******************************************************************************/
+
+string
+edit_interface_rep::flatten_message (tree t, bool localize) {
+  if (is_atomic (t)) return t->label;
+  else if (is_concat (t)) {
+    string s;
+    for (int i=0; i<N(t); i++) {
+      tree u= t[i];
+      while (is_concat (u) && N(u) > 0) u= u[0];
+      if (i > 0 && is_compound (u, "render-key")) {
+	if (use_macos_fonts () || gui_is_qt ()) s << "  ";
+	else s << " ";
+      }
+      s << flatten_message (t[i], localize);
+    }
+    return s;
+  }
+  else if (is_compound (t, "verbatim", 1))
+    return flatten_message (t[0], false);
+  else if (is_compound (t, "localize", 1))
+    return flatten_message (t[0], true);
+  else if (is_compound (t, "render-key", 1))
+    return flatten_message (t[0], localize);
+  else if (is_func (t, WITH))
+    return flatten_message (t[N(t)-1], localize);
+  else {
+    cout << "TeXmacs] warning, bad message: " << t << "\n";
+    return "";
+  }
+}
+
+/******************************************************************************
 * Set left footer with information about environment variables
 ******************************************************************************/
 
@@ -386,7 +420,7 @@ edit_interface_rep::set_footer () {
     cout << "instance  " << instance_count << "\n";
   )
 
-  if ((N(message_l) == 0) && (N(message_r) == 0)) {
+  if ((message_l == "") && (message_r == "")) {
     last_l= ""; last_r= "";
     tree st= subtree (et, path_up (tp));
     if (set_latex_footer (st)) return;
@@ -396,9 +430,9 @@ edit_interface_rep::set_footer () {
   }
   else {
     if (message_l == "") set_left_footer ();
-    else set_left_footer (message_l);
+    else set_left_footer (flatten_message (message_l));
     if (message_r == "") set_right_footer ();
-    else set_right_footer (message_r);
+    else set_right_footer (flatten_message (message_r));
     message_l= message_r= "";
   }
 }
@@ -408,7 +442,7 @@ edit_interface_rep::set_footer () {
 ******************************************************************************/
 
 void
-edit_interface_rep::set_message (string l, string r, bool temp) {
+edit_interface_rep::set_message (tree l, tree r, bool temp) {
   eval ("(set-message-notify)");
   message_l= l;
   message_r= r;

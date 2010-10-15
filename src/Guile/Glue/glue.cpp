@@ -85,51 +85,6 @@ texmacs_version (string which) {
   return TEXMACS_VERSION;
 }
 
-bool
-gui_is_x () {
-#ifdef QTTEXMACS
-  return false;
-#else
-  return true;
-#endif
-}
-
-bool
-gui_is_qt () {
-#ifdef QTTEXMACS
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool
-os_win32 () {
-#if defined (OS_WIN32)
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool
-os_mingw () {
-#if defined (__MINGW__) || defined (__MINGW32__)
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool
-os_macos () {
-#if defined (OS_MACOS)
-  return true;
-#else
-  return false;
-#endif
-}
-
 void
 set_fast_environments (bool b) {
   enable_fastenv= b;

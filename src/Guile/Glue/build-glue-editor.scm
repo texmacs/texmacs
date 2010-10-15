@@ -266,6 +266,7 @@
   (change-time change_time (int))
   (menu-before-action before_menu_action (void))
   (menu-after-action after_menu_action (void))
+  (flatten-message flatten_message (string content))
 
   (show-tree show_tree (void))
   (show-env show_env (void))

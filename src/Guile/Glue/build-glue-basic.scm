@@ -49,6 +49,7 @@
   (object->command as_command (command object))
   (exec-delayed exec_delayed (void object))
   (exec-delayed-pause exec_delayed_pause (void object))
+  (notify-preferences-loaded notify_preferences_loaded (void))
   (set-input-language set_input_language (void string))
   (get-input-language get_input_language (string))
   (set-output-language gui_set_output_language (void string))

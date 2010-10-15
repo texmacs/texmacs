@@ -62,7 +62,7 @@ public:
   bool visible_footer ();
   void set_left_footer (string s);
   void set_right_footer (string s);
-  void set_message (string left, string right, bool temp= false);
+  void set_message (tree left, tree right, bool temp= false);
   void recall_message ();
   void dialogue_start (string name, widget wid);
   void dialogue_inquire (int i, string& arg);

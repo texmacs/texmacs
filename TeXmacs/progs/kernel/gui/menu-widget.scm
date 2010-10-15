@@ -38,19 +38,23 @@
 		    ,cmd
 		    (menu-after-action))))
 
-(define (kbd-find-shortcut what)
+(define (kbd-system shortcut menu-flag?)
+  (cond ((nstring? shortcut) "")
+	((and (qt-gui?) menu-flag?) shortcut)
+	(else (flatten-message (kbd-system-rewrite shortcut)))))
+
+(define (kbd-find-shortcut what menu-flag?)
   (with r (kbd-find-inv-binding what)
-    (if (string-contains? r "accent:")
-	(begin
-	  (set! r (string-replace r "accent:deadhat" "^"))
-	  (set! r (string-replace r "accent:tilde" "~"))
-	  (set! r (string-replace r "accent:acute" "'"))
-	  (set! r (string-replace r "accent:grave" "`"))
-	  (set! r (string-replace r "accent:umlaut" "\""))
-	  (set! r (string-replace r "accent:abovedot" "."))
-	  (set! r (string-replace r "accent:breve" "U"))
-	  (set! r (string-replace r "accent:check" "C"))))
-    r))
+    (when (string-contains? r "accent:")
+      (set! r (string-replace r "accent:deadhat" "^"))
+      (set! r (string-replace r "accent:tilde" "~"))
+      (set! r (string-replace r "accent:acute" "'"))
+      (set! r (string-replace r "accent:grave" "`"))
+      (set! r (string-replace r "accent:umlaut" "\""))
+      (set! r (string-replace r "accent:abovedot" "."))
+      (set! r (string-replace r "accent:breve" "U"))
+      (set! r (string-replace r "accent:check" "C")))
+    (kbd-system r menu-flag?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu labels
@@ -107,10 +111,10 @@
       (widget-menu-button (make-menu-label label e?) command check short e?)))
 
 (define (make-menu-entry-shortcut label action opt-key)
-  (cond (opt-key opt-key)
+  (cond (opt-key (kbd-system opt-key #t))
 	((pair? label) "")
 	(else (with source (promise-source action)
-		(if source (kbd-find-shortcut source) "")))))
+		(if source (kbd-find-shortcut source #t) "")))))
 
 (define (make-menu-entry-check-sub result propose)
   (cond ((string? result) result)
@@ -156,9 +160,14 @@
   (let ((but (make-menu-entry-sub p e? bar?))
 	(label (car p)))
     (if (tuple? label 'balloon 2)
-	(widget-balloon but
-			(widget-text (caddr label) (color "black")
-				     #t "english"))
+	(let* ((text (caddr label))
+	       (cmd (and (nnull? (cdr p)) (procedure? (cadr p)) (cadr p)))
+	       (src (and cmd (promise-source cmd)))
+	       (sh (and src (kbd-find-shortcut src #f)))
+	       (txt (if (or (not sh) (== sh "")) text
+			(string-append text " (" sh ")")))
+	       (twid (widget-text txt (color "black") #t "english")))
+	  (widget-balloon but twid))
 	but)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -182,7 +191,7 @@
       (if (and opt-cmd (not (procedure? opt-cmd)))
 	  (make-menu-error "invalid symbol command in " p)
 	  (let* ((source (and opt-cmd (promise-source opt-cmd)))
-		 (sh (kbd-find-shortcut (if source source symstring))))
+		 (sh (kbd-find-shortcut (if source source symstring) #f)))
 	    (if (== sh "")
 		(make-menu-symbol-button e? symstring opt-cmd)
 		(widget-balloon

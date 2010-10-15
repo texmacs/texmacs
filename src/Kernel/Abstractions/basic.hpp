@@ -44,6 +44,10 @@ typedef long long int DI;
 #endif
 typedef void* pointer;
 
+/******************************************************************************
+* debugging
+******************************************************************************/
+
 #if (defined OS_WIN32 || defined __SUNPRO_CC)
 #define STACK_NEW_ARRAY(name,T,size) T* name= tm_new_array<T> (size)
 #define STACK_DELETE_ARRAY(name) tm_delete_array (name)
@@ -81,6 +85,10 @@ bool debug_get (string s);
 #endif
 #define FAILED(msg) ASSERT(false,msg)
 
+/******************************************************************************
+* miscellaneous routines
+******************************************************************************/
+
 inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
 inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
@@ -93,6 +101,27 @@ inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 
 enum display_control { INDENT, UNINDENT, HRULE, LF };
 tm_ostream& operator << (tm_ostream& out, display_control ctrl);
+
+bool gui_is_x ();
+bool gui_is_qt ();
+bool os_win32 ();
+bool os_mingw ();
+bool os_macos ();
+bool use_macos_fonts ();
+
+template<typename T>
+struct type_helper {
+  static int id;
+  static T   init;
+};
+
+int new_type_identifier ();
+template<typename T> int type_helper<T>::id  = new_type_identifier ();
+template<typename T> T   type_helper<T>::init= T ();
+
+/******************************************************************************
+* concrete and abstract base structures
+******************************************************************************/
 
 extern int concrete_count;
 struct concrete_struct {
@@ -107,16 +136,6 @@ struct abstract_struct {
   inline abstract_struct (): ref_count (0) { TM_DEBUG(abstract_count++); }
   virtual inline ~abstract_struct () { TM_DEBUG(abstract_count--); }
 };
-
-template<typename T>
-struct type_helper {
-  static int id;
-  static T   init;
-};
-
-int new_type_identifier ();
-template<typename T> int type_helper<T>::id  = new_type_identifier ();
-template<typename T> T   type_helper<T>::init= T ();
 
 /******************************************************************************
 * indirect structures

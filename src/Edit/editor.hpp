@@ -163,7 +163,8 @@ public:
   virtual cursor get_cursor () = 0;
   virtual void set_pointer (string name) = 0;
   virtual void set_pointer (string curs_name, string mask_name) = 0;
-  virtual void set_message (string l, string r= "", bool temp= false) = 0;
+  virtual string flatten_message (tree t, bool localize= true) = 0;
+  virtual void set_message (tree l, tree r= "", bool temp= false) = 0;
   virtual void recall_message () = 0;
 
   /* public routines from edit_cursor */

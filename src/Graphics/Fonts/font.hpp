@@ -91,9 +91,9 @@ font find_font (scheme_tree t);
 font find_font (string family, string fn_class,
 		string series, string shape, int sz, int dpi);
 
-int  script (int sz, int level);
-
 font math_font (scheme_tree t, font base_fn, font error_fn);
 font compound_font (scheme_tree def);
+
+int  script (int sz, int level);
 
 #endif // defined FONT_H

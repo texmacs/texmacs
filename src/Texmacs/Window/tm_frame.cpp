@@ -207,7 +207,7 @@ tm_frame_rep::set_right_footer (string s) {
 }
 
 void
-tm_frame_rep::set_message (string left, string right, bool temp) {
+tm_frame_rep::set_message (tree left, tree right, bool temp) {
   if (!has_window ()) return;
   get_editor() -> set_message (left, right, temp);
 }

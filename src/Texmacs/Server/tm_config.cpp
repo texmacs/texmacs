@@ -22,15 +22,6 @@ tm_config_rep::tm_config_rep ():
 tm_config_rep::~tm_config_rep () {}
 
 /******************************************************************************
-* User preferences
-******************************************************************************/
-
-string
-tm_config_rep::get_preference (string var) {
-  return as_string (call ("get-preference", var));
-}
-
-/******************************************************************************
 * Setup TeXmacs fonts
 ******************************************************************************/
 
@@ -218,89 +209,88 @@ mathop (string s) {
 
 static void
 system_kbd_initialize (hashmap<string,tree>& h) {
-  if (N(h) != 0) return;
-#ifdef OS_MACOS
-  h ("S-")= "<#21E7>";
-  h ("C-")= "<#2303>";
-  h ("A-")= "<#2325>";
-  h ("M-")= "<#2318>";
-  h ("H-")= localize ("Hyper");
-  h ("windows")= localize ("Windows");
-  h ("capslock")= "<#21EA>";
-  h ("return")= "<#21A9>";
-  h ("delete")= "<#2326>";
-  h ("backspace")= "<#232B>";
-  h ("clear")= "<#2327>";
-  h ("escape")= "<#238B>";
-  h ("space")= "Space";
-  h ("var")= "<#21E5>";
-  h ("tab")= "<#21E5>";
-  h ("left")= "<#2190>";
-  h ("right")= "<#2192>";
-  h ("up")= "<#2191>";
-  h ("down")= "<#2193>";
-  h ("home")= "<#2196>";
-  h ("end")= "<#2198>";
-  h ("pageup")= "<#21DE>";
-  h ("pagedown")= "<#21DF>";
-  h ("<less>")= "<#3C>";
-  h ("<gtr>")= "<#3E>";
-#else
-#ifdef QTTEXMACS
-  h ("S-")= localize ("Shift", true);
-  h ("C-")= localize ("Ctrl", true);
-  h ("A-")= localize ("Alt", true);
-  h ("M-")= localize ("Meta", true);
-  h ("H-")= localize ("Hyper", true);
-  h ("windows")= localize ("Windows");
-  h ("capslock")= localize ("Capslock");
-  h ("return")= localize ("Return");
-  h ("delete")= localize ("Delete");
-  h ("backspace")= localize ("Backspace");
-  h ("escape")= localize ("Escape");
-  h ("space")= localize ("Space");
-  h ("var")= localize ("Tab");
-  h ("tab")= localize ("Tab");
-  h ("left")= mathop ("<leftarrow>");
-  h ("right")= mathop ("<rightarrow>");
-  h ("up")= mathop ("<uparrow>");
-  h ("down")= mathop ("<downarrow>");
-  h ("home")= localize ("Home");
-  h ("end")= localize ("End");
-  h ("pageup")= localize ("PageUp");
-  h ("pagedown")= localize ("PageDown");
-#else
-  h ("S-")= "S-";
-  h ("C-")= "C-";
-  h ("A-")= "A-";
-  h ("M-")= "M-";
-  h ("H-")= "H-";
-  h ("windows")= localize ("windows");
-  h ("capslock")= localize ("capslock");
-  h ("return")= localize ("return");
-  h ("delete")= localize ("delete");
-  h ("backspace")= localize ("backspace");
-  h ("escape")= localize ("escape");
-  h ("space")= localize ("space");
-  h ("var")= localize ("tab");
-  h ("tab")= localize ("tab");
-  h ("left")= mathop ("<leftarrow>");
-  h ("right")= mathop ("<rightarrow>");
-  h ("up")= mathop ("<uparrow>");
-  h ("down")= mathop ("<downarrow>");
-  h ("home")= localize ("home");
-  h ("end")= localize ("end");
-  h ("pageup")= localize ("pageup");
-  h ("pagedown")= localize ("pagedown");
-#endif
-#endif
+  if (N(h) != 0);
+  else if (use_macos_fonts ()) {
+    h ("S-")= "<#21E7>";
+    h ("C-")= "<#2303>";
+    h ("A-")= "<#2325>";
+    h ("M-")= "<#2318>";
+    h ("H-")= localize ("Hyper");
+    h ("windows")= localize ("Windows");
+    h ("capslock")= "<#21EA>";
+    h ("return")= "<#21A9>";
+    h ("delete")= "<#2326>";
+    h ("backspace")= "<#232B>";
+    h ("clear")= "<#2327>";
+    h ("escape")= "<#238B>";
+    h ("space")= "Space";
+    h ("var")= "<#21E5>";
+    h ("tab")= "<#21E5>";
+    h ("left")= "<#2190>";
+    h ("right")= "<#2192>";
+    h ("up")= "<#2191>";
+    h ("down")= "<#2193>";
+    h ("home")= "<#2196>";
+    h ("end")= "<#2198>";
+    h ("pageup")= "<#21DE>";
+    h ("pagedown")= "<#21DF>";
+    h ("<less>")= "<#3C>";
+    h ("<gtr>")= "<#3E>";
+  }
+  else if (gui_is_qt ()) {
+    h ("S-")= localize ("Shift", true);
+    h ("C-")= localize ("Ctrl", true);
+    h ("A-")= localize ("Alt", true);
+    h ("M-")= localize ("Meta", true);
+    h ("H-")= localize ("Hyper", true);
+    h ("windows")= localize ("Windows");
+    h ("capslock")= localize ("Capslock");
+    h ("return")= localize ("Return");
+    h ("delete")= localize ("Delete");
+    h ("backspace")= localize ("Backspace");
+    h ("escape")= localize ("Escape");
+    h ("space")= localize ("Space");
+    h ("var")= localize ("Tab");
+    h ("tab")= localize ("Tab");
+    h ("left")= mathop ("<leftarrow>");
+    h ("right")= mathop ("<rightarrow>");
+    h ("up")= mathop ("<uparrow>");
+    h ("down")= mathop ("<downarrow>");
+    h ("home")= localize ("Home");
+    h ("end")= localize ("End");
+    h ("pageup")= localize ("PageUp");
+    h ("pagedown")= localize ("PageDown");
+  }
+  else {
+    h ("S-")= "S-";
+    h ("C-")= "C-";
+    h ("A-")= "A-";
+    h ("M-")= "M-";
+    h ("H-")= "H-";
+    h ("windows")= localize ("windows");
+    h ("capslock")= localize ("capslock");
+    h ("return")= localize ("return");
+    h ("delete")= localize ("delete");
+    h ("backspace")= localize ("backspace");
+    h ("escape")= localize ("escape");
+    h ("space")= localize ("space");
+    h ("var")= localize ("tab");
+    h ("tab")= localize ("tab");
+    h ("left")= mathop ("<leftarrow>");
+    h ("right")= mathop ("<rightarrow>");
+    h ("up")= mathop ("<uparrow>");
+    h ("down")= mathop ("<downarrow>");
+    h ("home")= localize ("home");
+    h ("end")= localize ("end");
+    h ("pageup")= localize ("pageup");
+    h ("pagedown")= localize ("pagedown");
+  }
 }
 
 static tree
 kbd_render (tree t) {
-#ifdef OS_MACOS
-  t= tree (WITH, "font", "apple-lucida", t);
-#endif
+  if (use_macos_fonts ())
+    t= tree (WITH, "font", "apple-lucida", t);
   return compound ("render-key", t);
 }
 
@@ -315,13 +305,11 @@ tm_config_rep::kbd_system_rewrite (string s) {
       if (i < N(s) && s[i] == '-') i++;
       string ss= s (start, i);
       if (system_kbd_decode->contains (ss)) r << system_kbd_decode[ss];
-#ifdef QTTEXMACS
-      else if (N(ss) == 1) {
+      else if (N(ss) == 1 && (use_macos_fonts () || gui_is_qt ())) {
 	if (is_locase (ss[0])) r << upcase_all (ss);
 	else if (is_upcase (ss[0])) r << system_kbd_decode ("S-") << ss;
 	else r << ss;
       }
-#endif
       else r << ss;
       if (i == N(s) || s[i] == ' ') {
 	k << kbd_render (simplify_concat (r));
