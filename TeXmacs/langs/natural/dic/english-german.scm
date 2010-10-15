@@ -1013,6 +1013,7 @@
 ("quasi" "Substitution")
 ("quasiquote" "Substitution ohne Evaluierung")
 ("query replace" "ersetzen mit Rückfragen")
+("question" "Frage")
 ("quit" "verlassen")
 ("quotation" "Zitat")
 ("quote" "zitieren")
