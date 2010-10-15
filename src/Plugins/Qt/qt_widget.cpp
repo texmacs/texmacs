@@ -512,7 +512,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg= open_box<string> (val);
-      leftLabel->setText (to_qstring_utf8 (qt_translate (msg)));
+      leftLabel->setText (to_qstring_utf8 (tm_var_encode (msg)));
       leftLabel->update ();
     }
     break;
@@ -520,7 +520,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg= open_box<string> (val);
-      rightLabel->setText (to_qstring_utf8 (qt_translate (msg)));
+      rightLabel->setText (to_qstring_utf8 (tm_var_encode (msg)));
       rightLabel->update ();
     }
     break;

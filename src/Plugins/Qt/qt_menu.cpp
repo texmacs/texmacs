@@ -69,7 +69,7 @@ QTMAction::~QTMAction() {
 void 
 QTMAction::doRefresh() {
   if (N(str)) {
-    string t= qt_translate (str);
+    string t= tm_var_encode (str);
     if (t == "Help") t= "Help ";
     setText(to_qstring_utf8 (t));
   }
@@ -299,7 +299,7 @@ menu_group (string name, string lan) {
   // a menu group; the name should be greyed and centered
   (void) lan;
   QAction* a= new QTMAction (NULL);
-  a->setText(to_qstring_utf8(qt_translate ((name))));
+  a->setText(to_qstring_utf8(tm_var_encode ((name))));
   a->setEnabled (false);
   return tm_new<qt_menu_rep> (a);
 }
@@ -327,7 +327,7 @@ pullright_button (widget w, promise<widget> pw) {
 QAction*
 qt_text_widget_rep::as_qaction () {
   QTMAction* a= new QTMAction (NULL);
-  string t= qt_translate (str);
+  string t= tm_var_encode (str);
   if (t == "Help") t= "Help ";
   a->setText(to_qstring_utf8 (t));
   a->str = str;
