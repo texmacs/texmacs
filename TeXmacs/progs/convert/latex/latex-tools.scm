@@ -110,7 +110,7 @@
 	((func? t '!recurse 1)
 	 (latex-expand-macros (latex-substitute (cadr t) args)))
 	((func? t '!translate 1)
-	 (translate (cadr t) "english" latex-language))
+	 (translate-from-to (cadr t) "english" latex-language))
 	((list? t) (map (cut latex-substitute <> args) t))
 	(else t)))
 
@@ -143,7 +143,8 @@
   (cond ((== t '---) "#-#-#")
 	((number? t) (string-append "#" (number->string t)))
 	((func? t '!recurse 1) (latex-expand-def (cadr t)))
-	((func? t '!translate 1) (translate (cadr t) "english" latex-language))
+	((func? t '!translate 1)
+	 (translate-from-to (cadr t) "english" latex-language))
 	((list? t) (map latex-expand-def t))
 	(else t)))
 

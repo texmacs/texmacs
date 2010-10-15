@@ -433,10 +433,23 @@ tmg_get_output_language () {
 }
 
 SCM
-tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
+tmg_translate (SCM arg1) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "translate");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "translate");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= translate (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_translate_from_to (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "translate-from-to");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate-from-to");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "translate-from-to");
 
   content in1= scm_to_content (arg1);
   string in2= scm_to_string (arg2);
@@ -450,10 +463,23 @@ tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_tree_translate (SCM arg1, SCM arg2, SCM arg3) {
+tmg_tree_translate (SCM arg1) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-translate");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tree-translate");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "tree-translate");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= tree_translate (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_translate_from_to (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-translate-from-to");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tree-translate-from-to");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "tree-translate-from-to");
 
   content in1= scm_to_content (arg1);
   string in2= scm_to_string (arg2);
@@ -4360,8 +4386,10 @@ initialize_glue_basic () {
   scm_new_procedure ("get-input-language", (FN) tmg_get_input_language, 0, 0, 0);
   scm_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);
   scm_new_procedure ("get-output-language", (FN) tmg_get_output_language, 0, 0, 0);
-  scm_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
-  scm_new_procedure ("tree-translate", (FN) tmg_tree_translate, 3, 0, 0);
+  scm_new_procedure ("translate", (FN) tmg_translate, 1, 0, 0);
+  scm_new_procedure ("translate-from-to", (FN) tmg_translate_from_to, 3, 0, 0);
+  scm_new_procedure ("tree-translate", (FN) tmg_tree_translate, 1, 0, 0);
+  scm_new_procedure ("tree-translate-from-to", (FN) tmg_tree_translate_from_to, 3, 0, 0);
   scm_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
   scm_new_procedure ("new-author", (FN) tmg_new_author, 0, 0, 0);
   scm_new_procedure ("set-author", (FN) tmg_set_author, 1, 0, 0);
