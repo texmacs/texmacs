@@ -358,7 +358,7 @@
 	   (execute-at cmd opt-location))
 	  ((== (get-preference "security") "prompt on scripts")
 	   (dialogue
-	     (if (dialogue-confirm? (string-append "Execute#" s "?") #f)
+	     (if (dialogue-confirm? `(concat "Execute " ,s "?") #f)
 		 (execute-at cmd opt-location))))
 	  (else (set-message "Unsecure script refused" "Evaluate script")))))
 
