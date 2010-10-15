@@ -20,6 +20,7 @@
 #include "image_files.hpp"
 #include "analyze.hpp"
 #include "scheme.hpp"
+#include "dictionary.hpp"
 
 #ifdef OS_WIN32
 #include <X11/Xlib.h>
@@ -401,7 +402,7 @@ wk_widget
 file_chooser_widget_rep::input_widget (string what, int type) {
   array<wk_widget> ww (2);
   array<string> nn (2);
-  ww[0]= text_wk_widget (what, false, "english");
+  ww[0]= text_wk_widget (translate (what));
   ww[1]= input_text_wk_widget (file_chooser_command (this, type));
   nn[1]= "input";
   if (type == CHANGE_DIR) ww[1] << set_string ("type", "directory");
@@ -410,7 +411,7 @@ file_chooser_widget_rep::input_widget (string what, int type) {
 
 wk_widget
 file_chooser_widget_rep::button_widget (string what, int type) {
-  return command_button (text_wk_widget (what, false, "english"),
+  return command_button (text_wk_widget (translate (what)),
 			 file_chooser_command (this, type), true);
 }
 
@@ -455,7 +456,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
 			tm_new<drive_menu_command_rep> (this, driveString)));
     }
   array<wk_widget> drw (2);
-  drw[0] = pullright_button (text_wk_widget ("Drive"), drive_menu);
+  drw[0] = pullright_button (text_wk_widget (translate ("Drive")), drive_menu);
   drw[1] = text_wk_widget("");
   // drw[1]= glue_wk_widget (false, true, sep);
 #endif
@@ -466,7 +467,8 @@ file_chooser_widget_rep::file_chooser_widget_rep (
 #ifdef OS_WIN32
   array<wk_widget> cw3 (11);
   cw3[0]= glue_wk_widget (false, false, sep);
-  cw3[1]= pulldown_button (text_wk_widget ("Drive"), drive_menu, true);
+  cw3[1]= pulldown_button (text_wk_widget (translate ("Drive")),
+			   drive_menu, true);
   cw3[2]= glue_wk_widget (false, false, sep);
   cw3[3]= button_widget ("Home", BUTTON_HOME);
   cw3[4]= glue_wk_widget (false, false, sep);

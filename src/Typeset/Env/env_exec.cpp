@@ -1181,12 +1181,12 @@ edit_env_rep::exec_merge (tree t) {
   int i, n= N(t);
   if (n == 0) return "";
   tree acc= exec (t[0]);
-  if (is_concat (acc)) acc= var_as_string (acc);
+  if (is_concat (acc)) acc= tree_as_string (acc);
   for (i=1; i<n; i++) {
     tree add= exec (t[i]);
     if (is_atomic (acc) &&
 	(is_atomic (add) || is_concat (add) || is_document (add)))
-      acc= acc->label * var_as_string (add);
+      acc= acc->label * tree_as_string (add);
     else if (is_tuple (acc) && is_tuple (add))
       acc= acc * add;
     else if (is_func (acc, MACRO) && is_func (add, MACRO) &&
@@ -1536,8 +1536,8 @@ edit_env_rep::exec_set_binding (tree t) {
       local_ref (key) << extra;
     }
     if (complete && is_tuple (old_value) && N(old_value) >= 1) {
-      string old_s= var_as_string (old_value[0]);
-      string new_s= var_as_string (value);
+      string old_s= tree_as_string (old_value[0]);
+      string new_s= tree_as_string (value);
       if (new_s != old_s && !starts (key, "auto-")) {
 	if (new_s == "") system_warning ("Redefined", key);
 	else system_warning ("Redefined " * key * " as", new_s);

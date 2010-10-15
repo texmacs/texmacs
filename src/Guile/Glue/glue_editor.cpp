@@ -2515,19 +2515,6 @@ tmg_menu_after_action () {
 }
 
 SCM
-tmg_flatten_message (SCM arg1) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "flatten-message");
-
-  content in1= scm_to_content (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_editor()->flatten_message (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_show_tree () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->show_tree ();
@@ -2844,7 +2831,6 @@ initialize_glue_editor () {
   scm_new_procedure ("change-time", (FN) tmg_change_time, 0, 0, 0);
   scm_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);
   scm_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
-  scm_new_procedure ("flatten-message", (FN) tmg_flatten_message, 1, 0, 0);
   scm_new_procedure ("show-tree", (FN) tmg_show_tree, 0, 0, 0);
   scm_new_procedure ("show-env", (FN) tmg_show_env, 0, 0, 0);
   scm_new_procedure ("show-path", (FN) tmg_show_path, 0, 0, 0);

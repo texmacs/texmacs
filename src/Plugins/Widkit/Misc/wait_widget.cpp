@@ -41,8 +41,8 @@ wait_widget_rep::wait_widget_rep (SI width, SI height, string s):
 {
   w= width; h= height;
   string out_lan= get_output_language ();
-  wait_s = translate ("please wait", "english", out_lan);
-  message= tm_var_encode (translate (s, "english", out_lan));
+  wait_s = translate ("please wait");
+  message= tm_var_encode (s);
   wait_s= upcase_all (wait_s);
 }
 

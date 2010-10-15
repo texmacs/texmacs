@@ -37,6 +37,13 @@ void set_input_language (string s);
 string get_input_language ();
 void set_output_language (string s);
 string get_output_language ();
-string translate (string lan, string from, string to);
+
+string translate (string s, string from, string to);
+string translate (string s);
+string translate (const char* s);
+tree   tree_translate (tree t, string from, string to);
+tree   tree_translate (tree s);
+string translate (tree t, string from, string to);
+string translate (tree t);
 
 #endif // defined DICTIONARY_H

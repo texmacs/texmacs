@@ -114,8 +114,8 @@ evaluate_set_binding (tree t) {
     }
     /* FIXME:
     if (complete && is_tuple (old_value) && N(old_value) >= 1) {
-      string old_s= var_as_string (old_value[0]);
-      string new_s= var_as_string (value);
+      string old_s= tree_as_string (old_value[0]);
+      string new_s= tree_as_string (value);
       if (new_s != old_s && !starts (key, "auto-")) {
 	if (new_s == "") system_warning ("Redefined", key);
 	else system_warning ("Redefined " * key * " as", new_s);

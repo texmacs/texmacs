@@ -232,7 +232,7 @@ inline double as_double (tree t) {
 inline string as_string (tree t) {
   if (is_atomic (t)) return t->label;
   else return ""; }
-string var_as_string (tree t);
+string tree_as_string (tree t);
 template<class T> inline tree as_tree(T x) { return (tree) x; }
 template<> inline tree as_tree(int x) { return as_string (x); }
 template<> inline tree as_tree(double x) { return as_string (x); }

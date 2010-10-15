@@ -77,7 +77,7 @@ string
 connection_rep::start (bool again) {
   string message;
   if (ln->alive) {
-    message= "Continuation of#" * name * "#session";
+    message= "Continuation of '" * name * "' session";
     status = WAITING_FOR_INPUT;
   }
   else {

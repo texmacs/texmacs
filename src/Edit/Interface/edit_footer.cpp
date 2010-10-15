@@ -15,77 +15,12 @@
 #include "dictionary.hpp"
 
 /******************************************************************************
-* Convert structured messages into straight messages
-******************************************************************************/
-
-tree
-edit_interface_rep::kbd (string s) {
-  return sv->kbd_system_rewrite (s);
-}
-
-tree
-edit_interface_rep::kbd_shortcut (string cmd) {
-  string s= as_string (eval ("(kbd-find-inv-binding '" * cmd * ")"));
-  return kbd (s);
-}
-
-string
-edit_interface_rep::flatten_message (tree t, bool localize) {
-  if (is_atomic (t)) {
-    if (gui_is_qt ()) {
-      if (t == "<leftarrow>") return "Left";
-      if (t == "<rightarrow>") return "Right";
-      if (t == "<uparrow>") return "Up";
-      if (t == "<downarrow>") return "Down";
-    }
-    else {
-      if (t == "<leftarrow>") return "left";
-      if (t == "<rightarrow>") return "right";
-      if (t == "<uparrow>") return "up";
-      if (t == "<downarrow>") return "down";
-    }
-    if (!localize) return t->label;
-    else return translate (t->label, "english", get_output_language ());
-  }
-  else if (is_concat (t)) {
-    string s;
-    for (int i=0; i<N(t); i++) {
-      tree u= t[i];
-      while (is_concat (u) && N(u) > 0) u= u[0];
-      if (i > 0 && is_compound (u, "render-key"))
-	if (!is_atomic (t[i-1]) || !ends (t[i-1]->label, " ")) {
-	  if (use_macos_fonts () || gui_is_qt ()) s << "  ";
-	  else s << " ";
-	}
-      s << flatten_message (t[i], localize);
-    }
-    return s;
-  }
-  else if (is_compound (t, "verbatim", 1))
-    return flatten_message (t[0], false);
-  else if (is_compound (t, "localize", 1))
-    return flatten_message (t[0], true);
-  else if (is_compound (t, "render-key", 1))
-    return flatten_message (t[0], localize);
-  else if (is_func (t, WITH))
-    return flatten_message (t[N(t)-1], localize);
-  else if (is_compound (t, "math", 1))
-    return flatten_message (t[0], localize);
-  else if (is_compound (t, "op", 1))
-    return flatten_message (t[0], localize);
-  else {
-    cout << "TeXmacs] warning, bad message: " << t << "\n";
-    return "";
-  }
-}
-
-/******************************************************************************
 * Set left footer with information about environment variables
 ******************************************************************************/
 
 void
 edit_interface_rep::set_left_footer (tree l) {
-  SERVER (set_left_footer (flatten_message (l)));
+  SERVER (set_left_footer (translate (l)));
 }
 
 void
@@ -163,7 +98,7 @@ edit_interface_rep::set_left_footer () {
 
 void
 edit_interface_rep::set_right_footer (tree r) {
-  SERVER (set_right_footer (flatten_message (r)));
+  SERVER (set_right_footer (translate (r)));
 }
 
 tree
@@ -503,9 +438,9 @@ edit_interface_rep::set_footer () {
   }
   else {
     if (message_l == "") set_left_footer ();
-    else set_left_footer (flatten_message (message_l));
+    else set_left_footer (translate (message_l));
     if (message_r == "") set_right_footer ();
-    else set_right_footer (flatten_message (message_r));
+    else set_right_footer (translate (message_r));
     message_l= message_r= "";
   }
 }

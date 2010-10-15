@@ -535,7 +535,7 @@ x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
   // to return to the main loop to map and redraw it.
   x_window ww= get_x_window (w);
   if (ww == NULL || message == "") return;
-  if (arg != "") message= message * "#" * arg * "...";
+  if (arg != "") message= message * " " * arg * "...";
   SI width= 400*PIXEL, height= 160*PIXEL;
   widget wait_wid= wait_widget (width, height, message);
   SI mid_x= (ww->win_w>>1)*PIXEL, mid_y= -(ww->win_h>>1)*PIXEL + height;

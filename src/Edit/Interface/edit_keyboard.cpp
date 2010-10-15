@@ -189,6 +189,21 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 }
 
 /******************************************************************************
+* Retrieving keyboard shortcuts
+******************************************************************************/
+
+tree
+edit_interface_rep::kbd (string s) {
+  return sv->kbd_system_rewrite (s);
+}
+
+tree
+edit_interface_rep::kbd_shortcut (string cmd) {
+  string s= as_string (eval ("(kbd-find-inv-binding '" * cmd * ")"));
+  return kbd (s);
+}
+
+/******************************************************************************
 * Event handlers
 ******************************************************************************/
 

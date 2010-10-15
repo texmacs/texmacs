@@ -94,7 +94,7 @@ wk_widget switch_widget (array<wk_widget> a, array<string> name, int init= 0);
 wk_widget optional_widget (wk_widget w, bool on= true);
 wk_widget glue_wk_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);
 wk_widget separator_wk_widget (SI pre=0, SI post=0, bool vert=false);
-wk_widget text_wk_widget (string s, bool tsp= false, string lan="");
+wk_widget text_wk_widget (string s, bool tsp= false, string lan= "");
 wk_widget menu_text_wk_widget (string s, color col, bool tsp=true,
 			       string lan="", bool tt= false);
 wk_widget xpm_wk_widget (url file_name, bool transp= true);

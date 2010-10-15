@@ -58,8 +58,7 @@ text_widget_rep::operator tree () {
 
 void
 text_widget_rep::handle_get_size (get_size_event ev) {
-  string out_lan= get_output_language ();
-  s= tm_var_encode (translate (original, in_lan, out_lan));
+  s= original;
   font fn= get_default_font (tt);
   fn->var_get_extents (s, ex);
   ev->w = ((ex->x2- ex->x1+ 2)/3)+ 2*dw;

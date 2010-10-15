@@ -41,7 +41,7 @@
 (define (kbd-system shortcut menu-flag?)
   (cond ((nstring? shortcut) "")
 	((and (qt-gui?) menu-flag?) shortcut)
-	(else (flatten-message (kbd-system-rewrite shortcut)))))
+	(else (translate (kbd-system-rewrite shortcut)))))
 
 (define (kbd-find-shortcut what menu-flag?)
   (with r (kbd-find-inv-binding what)
@@ -77,7 +77,7 @@
   (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
     (cond ((string? p)			; "text"
-	   (widget-text p col #t "english"))
+	   (widget-text (translate p) col #t "english"))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) e? tt?))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
@@ -166,7 +166,8 @@
 	       (sh (and src (kbd-find-shortcut src #f)))
 	       (txt (if (or (not sh) (== sh "")) text
 			(string-append text " (" sh ")")))
-	       (twid (widget-text txt (color "black") #t "english")))
+	       (ftxt (translate txt))
+	       (twid (widget-text ftxt (color "black") #t "english")))
 	  (widget-balloon but twid))
 	but)))
 
@@ -221,9 +222,10 @@
 	    (object->promise-widget
 	     (lambda () (make-menu-widget (list 'vertical items) e?))))))
       (if (tuple? label 'balloon 2)
-	  (widget-balloon button
-			  (widget-text (caddr label) (color "black")
-				       #t "english"))
+	  (let* ((text (caddr label))
+		 (ftxt (translate text))
+		 (twid (widget-text ftxt (color "black") #t "english")))
+	    (widget-balloon button twid))
 	  button))))
 
 (define (make-menu-tile p e?)

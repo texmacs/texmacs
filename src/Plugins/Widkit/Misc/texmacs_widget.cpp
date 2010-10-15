@@ -13,6 +13,7 @@
 #include "Widkit/basic_widget.hpp"
 #include "Widkit/Event/attribute_event.hpp"
 #include "message.hpp"
+#include "dictionary.hpp"
 
 #define THIS (wk_widget (this))
 
@@ -122,9 +123,9 @@ static wk_widget
 make_footer (int mask) {
   array<wk_widget> F (3);
   array<string> F_name (3);
-  F[0]= text_wk_widget ("Welcome to TeXmacs!", false, "english");
+  F[0]= text_wk_widget (translate ("Welcome to TeXmacs!"));
   F[1]= glue_wk_widget (true, false);
-  F[2]= text_wk_widget ("TeXmacs#" TEXMACS_VERSION, false, "english");
+  F[2]= text_wk_widget ("TeXmacs " TEXMACS_VERSION);
   F_name[0]= "left";
   F_name[1]= "middle";
   F_name[2]= "right";
@@ -136,7 +137,7 @@ make_footer (int mask) {
 
   array<wk_widget> I (2);
   array<string> I_name (2);
-  I[0]= text_wk_widget ("Input:", false, "english");
+  I[0]= text_wk_widget (translate ("Input:"));
   I[1]= glue_wk_widget (true, false);
   I_name[0]= "left";
   I_name[1]= "middle";
@@ -219,13 +220,13 @@ texmacs_widget_rep::set_subwidget_flag (wk_widget w, bool on) {
 
 void
 texmacs_widget_rep::set_left_footer (string s) {
-  wk_widget tw= text_wk_widget (s, false, "english");
+  wk_widget tw= text_wk_widget (s);
   set_subwidget (THIS ["footer"], "left", tw);
 }
 
 void
 texmacs_widget_rep::set_right_footer (string s) {
-  wk_widget tw= text_wk_widget (s, false, "english");
+  wk_widget tw= text_wk_widget (s);
   set_subwidget (THIS ["footer"], "right", tw);
 }
 

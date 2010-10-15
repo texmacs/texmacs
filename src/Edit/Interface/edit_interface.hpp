@@ -130,6 +130,8 @@ public:
   bool kbd_get_command (string which, string& help, command& cmd);
   void interrupt_shortcut ();
   bool try_shortcut (string comb);
+  tree kbd (string s);
+  tree kbd_shortcut (string s);
   void key_press (string key);
   void emulate_keyboard (string keys, string action= "");
   bool complete_try ();
@@ -154,22 +156,19 @@ public:
   void update_active_loci ();
 
   /* the footer */
-  tree   compute_text_footer (tree st);
-  tree   compute_operation_footer (tree st);
-  tree   compute_compound_footer (tree t, path p);
-  bool   set_latex_footer (tree st);
-  bool   set_hybrid_footer (tree st);
-  void   set_left_footer (tree l);
-  void   append_left_footer (tree& l, string env_var);
-  void   set_left_footer ();
-  void   set_right_footer (tree r);
-  void   set_right_footer ();
-  void   set_footer ();
-  tree   kbd (string s);
-  tree   kbd_shortcut (string s);
-  string flatten_message (tree t, bool localize= true);
-  void   set_message (tree l, tree r= "", bool temp= false);
-  void   recall_message ();
+  tree compute_text_footer (tree st);
+  tree compute_operation_footer (tree st);
+  tree compute_compound_footer (tree t, path p);
+  bool set_latex_footer (tree st);
+  bool set_hybrid_footer (tree st);
+  void set_left_footer (tree l);
+  void append_left_footer (tree& l, string env_var);
+  void set_left_footer ();
+  void set_right_footer (tree r);
+  void set_right_footer ();
+  void set_footer ();
+  void set_message (tree l, tree r= "", bool temp= false);
+  void recall_message ();
 
   /* event handlers */
   void handle_get_size_hint (SI& w, SI& h);

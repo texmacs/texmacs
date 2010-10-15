@@ -53,8 +53,7 @@ string
 tm_data_rep::new_menu_name (url u) {
   string name= as_string (tail (u));
   if (starts (name, "no_name_") && ends (name, ".tm")) {
-    string lan= get_output_language ();
-    string no_name= translate ("No name", "english", lan);
+    string no_name= translate ("No name");
     for (int i=0; i<N(no_name); i++)
       if (((unsigned char) (no_name[i])) >= (unsigned char) 128)
 	{ no_name= "No name"; break; }

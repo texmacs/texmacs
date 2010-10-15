@@ -54,7 +54,8 @@
   (get-input-language get_input_language (string))
   (set-output-language gui_set_output_language (void string))
   (get-output-language get_output_language (string))
-  (translate translate (string string string string))
+  (translate translate (string content string string))
+  (tree-translate tree_translate (tree content string string))
   (color named_color (int string))
   (new-author new_author (double))
   (set-author set_author (void double))
@@ -95,7 +96,7 @@
   (tree-accessible-child? is_accessible_child (bool tree int))
   (tree-accessible-children accessible_children (array_tree tree))
   (tree-load-inclusion load_inclusion (tree url))
-  (tree-as-string var_as_string (string tree))
+  (tree-as-string tree_as_string (string content))
   (tree-extents tree_extents (tree content))
   (tree-empty? is_empty (bool content))
 

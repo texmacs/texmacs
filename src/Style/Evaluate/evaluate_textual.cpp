@@ -26,11 +26,11 @@ evaluate_merge (tree t) {
   int i, n= N(t);
   if (n == 0) return "";
   tree acc= evaluate (t[0]);
-  if (is_concat (acc)) acc= var_as_string (acc);
+  if (is_concat (acc)) acc= tree_as_string (acc);
   for (i=1; i<n; i++) {
     tree add= evaluate (t[i]);
     if (is_atomic (acc) && (is_atomic (add) || is_concat (add)))
-      acc= acc->label * var_as_string (add);
+      acc= acc->label * tree_as_string (add);
     else if (is_tuple (acc) && is_tuple (add))
       acc= acc * add;
     else if (is_func (acc, MACRO) && is_func (add, MACRO) &&

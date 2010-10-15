@@ -434,11 +434,11 @@ tmg_get_output_language () {
 
 SCM
 tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "translate");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "translate");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
   SCM_ASSERT_STRING (arg3, SCM_ARG3, "translate");
 
-  string in1= scm_to_string (arg1);
+  content in1= scm_to_content (arg1);
   string in2= scm_to_string (arg2);
   string in3= scm_to_string (arg3);
 
@@ -447,6 +447,23 @@ tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
+}
+
+SCM
+tmg_tree_translate (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-translate");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tree-translate");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "tree-translate");
+
+  content in1= scm_to_content (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  tree out= tree_translate (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
 }
 
 SCM
@@ -927,12 +944,12 @@ tmg_tree_load_inclusion (SCM arg1) {
 
 SCM
 tmg_tree_as_string (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-as-string");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-as-string");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
-  string out= var_as_string (in1);
+  string out= tree_as_string (in1);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -4344,6 +4361,7 @@ initialize_glue_basic () {
   scm_new_procedure ("set-output-language", (FN) tmg_set_output_language, 1, 0, 0);
   scm_new_procedure ("get-output-language", (FN) tmg_get_output_language, 0, 0, 0);
   scm_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
+  scm_new_procedure ("tree-translate", (FN) tmg_tree_translate, 3, 0, 0);
   scm_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
   scm_new_procedure ("new-author", (FN) tmg_new_author, 0, 0, 0);
   scm_new_procedure ("set-author", (FN) tmg_set_author, 1, 0, 0);

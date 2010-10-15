@@ -21,40 +21,37 @@
 #include <string.h>
 
 /******************************************************************************
- * structure for caching font pixmaps
- ******************************************************************************/
-
+* structure for caching font pixmaps
+******************************************************************************/
 
 basic_character::operator tree () {
-	tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
-	t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
-	return t;
+  tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
+  t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
+  return t;
 }
 
 bool
 operator == (basic_character xc1, basic_character xc2) {
-	return
+  return
     (xc1->c==xc2->c) && (xc1->fng.rep==xc2->fng.rep) &&
     (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg);
 }
 
 bool
 operator != (basic_character xc1, basic_character xc2) {
-	return
+  return
     (xc1->c!=xc2->c) || (xc1->fng.rep!=xc2->fng.rep) ||
     (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg);
 }
 
 int
 hash (basic_character xc) {
-	return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf;
+  return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf;
 }
 
-
-
 /******************************************************************************
- * Set up colors
- ******************************************************************************/
+* Set up colors
+******************************************************************************/
 
 bool reverse_colors= false;
 
@@ -78,124 +75,120 @@ int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
 color
 rgb_color (int r, int g, int b) {
-	if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
-	else {
-		r= (r*CSCALES+ 128)/255;
-		g= (g*CSCALES+ 128)/255;
-		b= (b*CSCALES+ 128)/255;
-		return r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
-	}
+  if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
+  else {
+    r= (r*CSCALES+ 128)/255;
+    g= (g*CSCALES+ 128)/255;
+    b= (b*CSCALES+ 128)/255;
+    return r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
+  }
 }
 
 void
 get_rgb_color (color col, int& r, int& g, int& b) {
-	if (col <= GREYS) {
-		r= (col*255)/GREYS;
-		g= (col*255)/GREYS;
-		b= (col*255)/GREYS;
-	}
-	else {
-		int rr, gg, bb;
-		col-= (GREYS+1);
-		bb  = col % CFACTOR;
-		gg  = (col/CFACTOR) % CFACTOR;
-		rr  = (col/(CFACTOR*CFACTOR)) % CFACTOR;
-		r   = (rr*255)/CSCALES;
-		g   = (gg*255)/CSCALES;
-		b   = (bb*255)/CSCALES;
-	}
+  if (col <= GREYS) {
+    r= (col*255)/GREYS;
+    g= (col*255)/GREYS;
+    b= (col*255)/GREYS;
+  }
+  else {
+    int rr, gg, bb;
+    col-= (GREYS+1);
+    bb  = col % CFACTOR;
+    gg  = (col/CFACTOR) % CFACTOR;
+    rr  = (col/(CFACTOR*CFACTOR)) % CFACTOR;
+    r   = (rr*255)/CSCALES;
+    g   = (gg*255)/CSCALES;
+    b   = (bb*255)/CSCALES;
+  }
 }
 
+color	black   = rgb_color (0, 0, 0);
+color	white   = rgb_color (255, 255, 255);
+color	red     = rgb_color (255, 0, 0);
+color	blue    = rgb_color (0, 0, 255);
+color	yellow  = rgb_color (255, 255, 0);
+color	green   = rgb_color (0, 255, 0);
+color	magenta = rgb_color (255, 0, 255);
+color	orange  = rgb_color (255, 128, 0);
+color	brown   = rgb_color (128, 32, 0);
+color	pink    = rgb_color (255, 128, 128);
 
-
- color	black   = rgb_color (0, 0, 0);
- color	white   = rgb_color (255, 255, 255);
- color	red     = rgb_color (255, 0, 0);
- color	blue    = rgb_color (0, 0, 255);
- color	yellow  = rgb_color (255, 255, 0);
- color	green   = rgb_color (0, 255, 0);
- color	magenta = rgb_color (255, 0, 255);
- color	orange  = rgb_color (255, 128, 0);
- color	brown   = rgb_color (128, 32, 0);
- color	pink    = rgb_color (255, 128, 128);
-	
- color	light_grey = rgb_color (208, 208, 208);
- color	grey       = rgb_color (184, 184, 184);
- color	dark_grey  = rgb_color (112, 112, 112);
+color	light_grey = rgb_color (208, 208, 208);
+color	grey       = rgb_color (184, 184, 184);
+color	dark_grey  = rgb_color (112, 112, 112);
 
 
 
 color
 named_color (string s) {
-	if ((N(s) == 4) && (s[0]=='#')) {
-		int r= 17 * from_hexadecimal (s (1, 2));
-		int g= 17 * from_hexadecimal (s (2, 3));
-		int b= 17 * from_hexadecimal (s (3, 4));
-		return rgb_color (r, g, b);
-	}
-	if ((N(s) == 7) && (s[0]=='#')) {
-		int r= from_hexadecimal (s (1, 3));
-		int g= from_hexadecimal (s (3, 5));
-		int b= from_hexadecimal (s (5, 7));
-		return rgb_color (r, g, b);
-	}
-	unsigned int depth = 65535;
-	int pastel= (depth>=16? 223: 191);
+  if ((N(s) == 4) && (s[0]=='#')) {
+    int r= 17 * from_hexadecimal (s (1, 2));
+    int g= 17 * from_hexadecimal (s (2, 3));
+    int b= 17 * from_hexadecimal (s (3, 4));
+    return rgb_color (r, g, b);
+  }
+  if ((N(s) == 7) && (s[0]=='#')) {
+    int r= from_hexadecimal (s (1, 3));
+    int g= from_hexadecimal (s (3, 5));
+    int b= from_hexadecimal (s (5, 7));
+    return rgb_color (r, g, b);
+  }
+  unsigned int depth = 65535;
+  int pastel= (depth>=16? 223: 191);
+  
+  if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s))))) {
+    int level, i=5;
+    if (read_int(s,i,level)) {
+      level = (level*255) /100;
+      return rgb_color(level,level,level);
+    }
+  }
 	
-	if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s))))) {
-		int level, i=5;
-		if (read_int(s,i,level)) {
-			level = (level*255) /100;
-			return rgb_color(level,level,level);
-		}
-	}
-	
-	if (s == "black")          return black;
-	if (s == "white")          return white;
-	if (s == "grey")           return grey;
-	if (s == "red")            return red;
-	if (s == "blue")           return blue;
-	if (s == "yellow")         return yellow;
-	if (s == "green")          return green;
-	if (s == "magenta")        return magenta;
-	if (s == "cyan")           return rgb_color (0, 255, 255);
-	if (s == "orange")         return orange;
-	if (s == "brown")          return brown;
-	if (s == "pink")           return pink;
-	if (s == "broken white")   return rgb_color (255, 255, pastel);
-	if (s == "light grey")     return light_grey;
-	if (s == "dark grey")      return dark_grey;
-	if (s == "dark red")       return rgb_color (128, 0, 0);
-	if (s == "dark blue")      return rgb_color (0, 0, 128);
-	if (s == "dark yellow")    return rgb_color (128, 128, 0);
-	if (s == "dark green")     return rgb_color (0, 128, 0);
-	if (s == "dark magenta")   return rgb_color (128, 0, 128);
-	if (s == "dark cyan")      return rgb_color (0, 128, 128);
-	if (s == "dark orange")    return rgb_color (128, 64, 0);
-	if (s == "dark brown")     return rgb_color (64, 16, 0);
-	if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
-	if (s == "pastel red")     return rgb_color (255, pastel, pastel);
-	if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
-	if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
-	if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
-	if (s == "pastel magenta") return rgb_color (255, pastel, 255);
-	if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
-	if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
-	if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
-	return black;
+  if (s == "black")          return black;
+  if (s == "white")          return white;
+  if (s == "grey")           return grey;
+  if (s == "red")            return red;
+  if (s == "blue")           return blue;
+  if (s == "yellow")         return yellow;
+  if (s == "green")          return green;
+  if (s == "magenta")        return magenta;
+  if (s == "cyan")           return rgb_color (0, 255, 255);
+  if (s == "orange")         return orange;
+  if (s == "brown")          return brown;
+  if (s == "pink")           return pink;
+  if (s == "broken white")   return rgb_color (255, 255, pastel);
+  if (s == "light grey")     return light_grey;
+  if (s == "dark grey")      return dark_grey;
+  if (s == "dark red")       return rgb_color (128, 0, 0);
+  if (s == "dark blue")      return rgb_color (0, 0, 128);
+  if (s == "dark yellow")    return rgb_color (128, 128, 0);
+  if (s == "dark green")     return rgb_color (0, 128, 0);
+  if (s == "dark magenta")   return rgb_color (128, 0, 128);
+  if (s == "dark cyan")      return rgb_color (0, 128, 128);
+  if (s == "dark orange")    return rgb_color (128, 64, 0);
+  if (s == "dark brown")     return rgb_color (64, 16, 0);
+  if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
+  if (s == "pastel red")     return rgb_color (255, pastel, pastel);
+  if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
+  if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
+  if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
+  if (s == "pastel magenta") return rgb_color (255, pastel, 255);
+  if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
+  if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
+  if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
+  return black;
 }
 
 string
 get_named_color (color c) {
-	SI r, g, b;
-	get_rgb_color (c, r, g, b);
-	return "#" *
+  SI r, g, b;
+  get_rgb_color (c, r, g, b);
+  return "#" *
     as_hexadecimal (r, 2) *
     as_hexadecimal (g, 2) *
     as_hexadecimal (b, 2);
 }
-
-
 
 #define RGBCOLOR(r,g,b) rgb_color(r,g,b)
 
@@ -236,8 +229,8 @@ xpm_to_color (string s) {
 
 
 /******************************************************************************
- * Conversion between window and postscript coordinates
- ******************************************************************************/
+* Conversion between window and postscript coordinates
+******************************************************************************/
 
 void
 basic_renderer_rep::encode (SI& x, SI& y) {
@@ -313,7 +306,6 @@ basic_renderer_rep::set_background (color c) {
 }
 
 
-
 void
 basic_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   (void) restore;
@@ -322,36 +314,55 @@ basic_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 }
 
 /* shadowing and copying rectangular regions across devices defaults to nothing */
-void basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer dev, SI x, SI y) {
-	(void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; 
-	if (DEBUG_EVENTS) cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2 << ", dev ," << x << "," << y << ")\n";
-}
-void basic_renderer_rep::new_shadow (renderer& dev) { dev =  this; 
-	if (DEBUG_EVENTS) 	cout << "REN new_shadow\n";
-}
-void basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; 
-	if (DEBUG_EVENTS) 	cout << "REN delete_shadow\n";
-}
-void basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
-	(void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
-	if (DEBUG_EVENTS) 	cout << "REN get_shadow (" << x1 << "," << x2 << "," << y1 << "," << y2 << ", dev )\n";
-}
-void basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
-	(void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
-	if (DEBUG_EVENTS) 	cout << "REN put_shadow (dev, " << x1 << "," << x2 << "," << y1 << "," << y2 << ")\n";
-}
-void basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
-	(void) x1; (void) y1; (void) x2; (void) y2; 
-	if (DEBUG_EVENTS) 	cout << "REN apply_shadow (" << x1 << "," << x2 << "," << y1 << "," << y2 << ")\n";
+
+void
+basic_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2,
+			   renderer dev, SI x, SI y)
+{
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; (void) x; (void) y; 
+  if (DEBUG_EVENTS)
+    cout << "REN fetch (" << x1 << "," << x2 << "," << y1 << "," << y2
+	 << ", dev ," << x << "," << y << ")\n";
 }
 
+void
+basic_renderer_rep::new_shadow (renderer& dev) {
+  dev = this; 
+  if (DEBUG_EVENTS) cout << "REN new_shadow\n";
+}
 
+void
+basic_renderer_rep::delete_shadow (renderer& dev) { dev= NULL; 
+  if (DEBUG_EVENTS) cout << "REN delete_shadow\n";
+}
 
+void
+basic_renderer_rep::get_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
+  if (DEBUG_EVENTS)
+    cout << "REN get_shadow (" << x1 << "," << x2
+	 << "," << y1 << "," << y2 << ", dev )\n";
+}
+
+void
+basic_renderer_rep::put_shadow (renderer dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; (void) dev; 
+  if (DEBUG_EVENTS)
+    cout << "REN put_shadow (dev, " << x1 << "," << x2
+	 << "," << y1 << "," << y2 << ")\n";
+}
+
+void
+basic_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
+  (void) x1; (void) y1; (void) x2; (void) y2; 
+  if (DEBUG_EVENTS)
+    cout << "REN apply_shadow (" << x1 << "," << x2
+	 << "," << y1 << "," << y2 << ")\n";
+}
 
 /******************************************************************************
- * Image cache
- ******************************************************************************/
-
+* Image cache
+******************************************************************************/
 
 static time_t cache_image_last_gc = 0;
 static int    cache_image_tot_size= 0;
