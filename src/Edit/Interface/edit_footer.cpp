@@ -111,7 +111,6 @@ edit_interface_rep::compute_text_footer (tree st) {
   r= st->label (start, end);
   if (r == "") r= "start";
   if (r == " ") r= "space";
-  if (r == "#") r= "sharp";
   return r;
 }
 
@@ -167,6 +166,14 @@ edit_interface_rep::compute_operation_footer (tree st) {
   }
   if (r == "" && N(st) >= 1) {
     switch (L (st)) {
+    case HSPACE:
+      r= concat ("space (", as_string (st[0]), ") "); break;
+    case VAR_VSPACE:
+      r= concat ("vertical space before (", as_string (st[0]), ") "); break;
+    case VSPACE:
+      r= concat ("vertical space after (", as_string (st[0]), ") "); break;
+    case SPACE:
+      r= concat ("space (", as_string (st[0]), ") "); break;
     case _FLOAT:
       r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
     case MID:
