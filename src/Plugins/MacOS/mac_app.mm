@@ -14,7 +14,9 @@
 #include "converter.hpp"
 #include "../Guile/scheme.hpp"
 
+#ifdef QTTEXMACS
 #include <QtGui>
+#endif
 
 static string 
 from_nsstring (NSString *s) {
@@ -75,6 +77,7 @@ void process_mac_events ()
   
 }
 
+#ifdef QTTEXMACS
 #if 1
 //HACK:
 // the following code fixes a bug in Qt/Cocoa which do not correctly handle
@@ -135,3 +138,4 @@ void mac_install_filter() {
 }
 
 #endif // HACK
+#endif

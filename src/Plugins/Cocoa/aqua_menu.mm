@@ -19,8 +19,11 @@
 
 #include "widget.hpp" 
 #include "message.hpp"
+#include "analyze.hpp"
 
 #include "promise.hpp"
+#include <typeinfo>
+
 #import "TMView.h"
 
 NSMenu *alloc_menu() { return [NSMenu alloc]; }
@@ -63,12 +66,14 @@ void aqua_menu_rep::send (slot s, blackbox val) {
     {	
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
+      (void) flag;
     }	
     break;
   case SLOT_MOUSE_GRAB:
     {	
       check_type<bool> (val, "SLOT_MOUSE_GRAB");
       bool flag = open_box<bool> (val);
+      (void) flag;
       [NSMenu popUpContextMenu:[item submenu] withEvent:[NSApp currentEvent] forView:( (aqua_view_widget_rep*)(the_keyboard_focus.rep))->view ];
     }	
     //			send_mouse_grab (THIS, val);

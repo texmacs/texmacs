@@ -23,6 +23,7 @@
 #include "widget.hpp" 
 #include "message.hpp"
 #include "promise.hpp"
+#include "analyze.hpp"
 
 #include "aqua_basic_widgets.h"
 
@@ -126,6 +127,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     break;
 	
   default:
+    cout << "slot type= " << slot_name (s) << "\n";
     FAILED ("cannot handle slot type");
   }
 }
@@ -495,14 +497,16 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     break;
     
   case SLOT_SHRINKING_FACTOR:
-    TYPE_CHECK (type_box (val) == type_helper<int>::id);
-    simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
-    if (w) {
-      int new_sf = open_box<int> (val);
-      if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
-      w->handle_set_shrinking_factor (new_sf);
+    {
+      TYPE_CHECK (type_box (val) == type_helper<int>::id);
+      simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
+      if (w) {
+        int new_sf = open_box<int> (val);
+        if (DEBUG_EVENTS) cout << "New shrinking factor :" << new_sf << LF;
+        w->handle_set_shrinking_factor (new_sf);
+      }
+      break;
     }
-    break;
 
   case SLOT_FILE:
     {
@@ -812,7 +816,7 @@ aqua_window_widget_rep::query (slot s, int type_id) {
   switch (s) {
   case SLOT_IDENTIFIER:
     TYPE_CHECK (type_id == type_helper<int>::id);
-    return close_box<int> ((int)[wc window] ? 1 : 0);
+    return close_box<int> ((intptr_t) [wc window] ? 1 : 0);
   case SLOT_POSITION:  
     {
       typedef pair<SI,SI> coord2;

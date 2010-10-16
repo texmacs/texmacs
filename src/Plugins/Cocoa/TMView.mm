@@ -21,7 +21,7 @@ extern bool aqua_update_flag;
 extern int time_credit;
 extern int timeout_time;
 
-hashmap<int,string> nskeymap(NULL);
+hashmap<int,string> nskeymap("");
 
 inline void scale (NSPoint &point)
 {	

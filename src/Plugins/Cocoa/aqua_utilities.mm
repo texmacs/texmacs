@@ -12,6 +12,7 @@
 #include "aqua_utilities.h"
 #include "dictionary.hpp"
 #include "converter.hpp"
+#include "analyze.hpp"
 
 NSRect to_nsrect(coord4 p)
 {

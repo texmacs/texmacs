@@ -272,7 +272,7 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
                suffix (u) == "eps" ||
                suffix (u) == "pdf") {
       url temp= url_temp (".png");
-      mac_image_to_png (u, temp); 
+      mac_image_to_png (u, temp, w, h);
 //      system ("convert", u, temp);
       string suu = as_string (temp);
       pm = [[NSImage alloc] initWithContentsOfFile:to_nsstring(suu)];
