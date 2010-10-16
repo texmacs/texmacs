@@ -58,7 +58,7 @@ text_widget_rep::operator tree () {
 
 void
 text_widget_rep::handle_get_size (get_size_event ev) {
-  s= original;
+  s= tm_var_encode (original);
   font fn= get_default_font (tt);
   fn->var_get_extents (s, ex);
   ev->w = ((ex->x2- ex->x1+ 2)/3)+ 2*dw;
