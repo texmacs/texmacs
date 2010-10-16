@@ -29,7 +29,7 @@
 
 (define (import-item fm name)
   (define (rw s) (if (== s "verbatim") "" s))
-  (let* ((import-text (string-append "Import#" name))
+  (let* ((import-text `(concat "Import " ,name))
 	 (load-text (string-append "Load " (string-downcase name) " file"))
 	 (routine `(buffer-loader ,fm)))
     `(,import-text (choose-file ,routine ,load-text ,(rw fm)))))
@@ -46,7 +46,7 @@
 			  (if flag? import-item import-item*))))
 
 (define (export-item fm name)
-  (let* ((export-text (string-append "Export as#" name))
+  (let* ((export-text `(concat "Export as " ,name))
 	 (load-text (string-append "Save " (string-downcase name) " file"))
 	 (routine `(buffer-saver ,fm)))
     `(,export-text (choose-file ,routine ,load-text ,fm))))
@@ -83,8 +83,9 @@
   ---
   (promise (export-menu-promise #t))
   ---
-  ("Export as#Pdf" (choose-file print-to-file "Save pdf file" "pdf"))
-  ("Export as#PostScript"
+  ((concat "Export as " "Pdf")
+   (choose-file print-to-file "Save pdf file" "pdf"))
+  ((concat "Export as " "PostScript")
    (choose-file print-to-file "Save postscript file" "postscript")))
 
 (menu-bind print-menu
@@ -122,7 +123,7 @@
       (promise (export-menu-promise #f))
       ---
       ("Pdf" (choose-file print-to-file "Save pdf file" "pdf"))
-      ("PostScript"
+      ("Postscript"
        (choose-file print-to-file "Save postscript file" "postscript")))
   ---
   ("Close document" (safely-kill-buffer))

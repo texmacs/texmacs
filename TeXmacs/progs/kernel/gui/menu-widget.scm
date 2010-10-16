@@ -60,6 +60,9 @@
 ;; Menu labels
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (translatable? s)
+  (or (string? s) (func? s 'concat) (func? s 'verbatim)))
+
 (define (make-menu-label p e? . opt)
   "Make widget for menu label @p."
   ;; Possibilities for p:
@@ -76,7 +79,7 @@
   ;;     Pixmap menu label, the <string> is the name of the pixmap.
   (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
-    (cond ((string? p)			; "text"
+    (cond ((translatable? p)		; "text"
 	   (widget-text (translate p) col #t "english"))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) e? tt?))
@@ -270,7 +273,8 @@
 (define (make-menu-items p e? bar?)
   "Make menu items @p. The items are on a bar if @bar? and greyed if not @e?."
   (if (pair? p)
-      (cond ((string? (car p)) (list (make-menu-entry p e? bar?)))
+      (cond ((translatable? (car p))
+	     (list (make-menu-entry p e? bar?)))
 	    ((symbol? (car p))
 	     (with result (ahash-ref make-menu-items-table (car p))
 	       (if (or (not result) (not (match? (cdr p) (car result))))

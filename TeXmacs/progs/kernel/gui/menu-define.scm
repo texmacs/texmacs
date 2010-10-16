@@ -26,6 +26,8 @@
 (define-regexp-grammar
   (:menu-label (:or
     :string?
+    (concat :*)
+    (verbatim :%1)
     (text :tuple? :string?)
     (icon :string?)
     (balloon :menu-label :string?)))
@@ -73,6 +75,10 @@
 
 (define-public (menu-label-add-dots l)
   (cond ((match? l ':string?) (string-append l "..."))
+	((match? l '(concat :*))
+	 `(,@(cDr l) ,(menu-label-add-dots (cAr l))))
+	((match? l '(verbatim :*))
+	 `(,@(cDr l) ,(menu-label-add-dots (cAr l))))
 	((match? l '(text :tuple? :string?))
 	 `(text ,(cadr l) ,(string-append (caddr l) "...")))
 	((match? l '(icon :string?)) l)

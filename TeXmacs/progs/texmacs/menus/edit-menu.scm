@@ -30,7 +30,7 @@
     `(menu-dynamic ,@(routine "texmacs-snippet" "-snippet" #t item))))
 
 (define (redo-item i)
-  (list (string-append "Branch#" (number->string (+ i 1)))
+  (list `(concat "Branch " ,(number->string (+ i 1)))
 	(lambda () (redo i))))
 
 (tm-define (redo-menu)

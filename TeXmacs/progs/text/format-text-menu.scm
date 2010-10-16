@@ -108,7 +108,7 @@
 	  (if (url-exists-in-tex? "punk20.mf")
 	      ("Punk" (make-with "font" "punk")))
 	  (if (url-exists-in-tex? "twcal14.mf")
-	      ("Tw#Calligraphic" (make-with "font" "twcal")))
+	      ("Tw Calligraphic" (make-with "font" "twcal")))
 	  (if (url-exists-in-tex? "va14.mf")
 	      ("Va" (make-with "font" "va"))))
       (-> "Gothic"
