@@ -37,6 +37,7 @@ public:
   void set_window_url (url u);
   void map ();
   void unmap ();
+  void refresh ();
   inline void set_property (scheme_tree what, scheme_tree val) {
     props (what)= val; }
   inline scheme_tree get_property (scheme_tree what) {

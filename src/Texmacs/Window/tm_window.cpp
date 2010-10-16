@@ -85,6 +85,11 @@ tm_window_rep::unmap () {
   set_visibility (win, false);
 }
 
+void
+tm_window_rep::refresh () {
+  menu_cache= hashmap<object,widget> (widget ());
+}
+
 /******************************************************************************
 * Menus
 ******************************************************************************/

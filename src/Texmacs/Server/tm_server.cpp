@@ -67,6 +67,7 @@ get_subtree (path p) {
 void
 gui_set_output_language (string lan) {
   set_output_language (lan);
+  get_server () -> refresh ();
   gui_refresh ();
 }
 
@@ -288,6 +289,17 @@ tm_server_rep::style_get_cache (
 /******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
+
+void
+tm_server_rep::refresh () {
+  path p= windows_list ();
+  while (!is_nil (p)) {
+    tm_view vw= window_find_view (p->item);
+    vw->win->refresh ();
+    p= p->next;
+  }
+  
+}
 
 void
 tm_server_rep::interpose_handler () {
