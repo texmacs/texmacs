@@ -82,6 +82,5 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|sfactor|3>
   </collection>
 </initial>
