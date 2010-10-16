@@ -174,7 +174,7 @@
 	(else (output-verb "\\verb¤" x "¤"))))
 
 (define (texout-verbatim x)
-  (output-lf-verbatim "\\begin{verbatim}\n" x "\n\\end{verbatim}"))
+  (output-lf-verbatim "\\begin{alltt}\n" x "\n\\end{alltt}"))
 
 (define (texout-group x)
   (output-text "{")

@@ -425,13 +425,22 @@
 	((== (car l) 'hide-preamble) "")
 	(else (cons (car l) (map tmtex-filter-body (cdr l))))))
 
+(define (tmtex-apply-init body init)
+  ;;(display* "init= " init "\n")
+  (cond ((== (assoc-ref init "language") "verbatim")
+	 (with init* (assoc-remove! init "language")
+	   (tmtex-apply-init `(verbatim ,body) init*)))
+	(else body)))
+
 (define (tmtex-file l)
   (let* ((doc (car l))
 	 (styles (cadr l))
 	 (lang (caddr l))
 	 (init (cadddr l))
+	 (init-bis (map (lambda (x) (cons (cadr x) (caddr x))) (cdr init)))
 	 (doc-preamble (tmtex-filter-preamble doc))
-	 (doc-body (tmtex-filter-body doc)))
+	 (doc-body-pre (tmtex-filter-body doc))
+	 (doc-body (tmtex-apply-init doc-body-pre init-bis)))
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
 	(set! doc-preamble '()))
     (if (null? styles) (tmtex doc)
@@ -1701,7 +1710,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-get-style sty)
-  (cond ((string? sty) (set! sty (list sty)))
+  (cond ((not sty) (set! sty (list "generic")))
+	((string? sty) (set! sty (list sty)))
 	((func? sty 'tuple) (set! sty (cdr sty)))
 	((null? sty) (set! sty '("letter"))))
   (if (== (car sty) "generic") (set! sty (cons "letter" (cdr sty))))

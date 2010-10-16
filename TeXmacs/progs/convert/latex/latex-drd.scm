@@ -299,6 +299,8 @@
   ("hyperref" 140))
 
 (drd-table latex-needs%
+  (!verbatim "alltt")
+
   (geometry "geometry")
   (epsfig "epsfig")
   (includegraphics "graphicx")
