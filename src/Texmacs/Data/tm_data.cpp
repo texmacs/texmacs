@@ -82,7 +82,7 @@ menu_append_buffer (string& s, tm_buffer buf) {
   if (buf->in_menu) {
     string name= copy (buf->abbr);
     if (buf->needs_to_be_saved ()) name << " *"; 
-    s << " (" << scm_quote (name);
+    s << " ((verbatim " << scm_quote (name) << ")";
     s << " (switch-to-buffer " * scm_quote (as_string (buf->name)) * "))";
   }
 }
@@ -740,7 +740,7 @@ tm_data_rep::get_project_buffer_menu () {
       string name= as_string (head (buf->prj->name) * as_string (t[i][0]));
       for (j=N(name)-1; j>=0; j--)
 	if (name[j]=='/') break;
-      s << " (" << scm_quote (name (j+1, N(name))) << " ";
+      s << " ((verbatim " << scm_quote (name (j+1, N(name))) << ") ";
       s << "(switch-to-buffer " * scm_quote (name) * "))";
     }
 

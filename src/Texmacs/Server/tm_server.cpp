@@ -191,7 +191,7 @@ compute_style_menu (url u, int kind) {
     string cmd ("init-style");
     if (kind == 1) cmd= "init-add-package";
     if (kind == 2) cmd= "init-remove-package";
-    return "(\"" * l * "\" (" * cmd * " \"" * l * "\"))";
+    return "((verbatim \"" * l * "\") (" * cmd * " \"" * l * "\"))";
   }
   return "";
 }
