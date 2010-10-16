@@ -314,9 +314,8 @@ menu_separator (bool vertical) {
 }
 
 widget
-menu_group (string name, string lan) {
+menu_group (string name) {
   // a menu group; the name should be greyed and centered
-  (void) lan;
   QAction* a= new QTMAction (NULL);
   a->setText(to_qstring_utf8(tm_var_encode ((name))));
   a->setEnabled (false);
@@ -452,9 +451,9 @@ balloon_widget (widget w, widget help)  {
 }
 
 widget
-text_widget (string s, color col, bool tsp, string lan) {
-  // a text widget with a given color, transparency and language
-  return tm_new<qt_text_widget_rep> (s, col, tsp, lan);
+text_widget (string s, color col, bool tsp) {
+  // a text widget with a given color and transparency
+  return tm_new<qt_text_widget_rep> (s, col, tsp);
 }
 
 widget
