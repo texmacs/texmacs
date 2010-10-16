@@ -82,7 +82,9 @@ menu_append_buffer (string& s, tm_buffer buf) {
   if (buf->in_menu) {
     string name= copy (buf->abbr);
     if (buf->needs_to_be_saved ()) name << " *"; 
-    s << " ((verbatim " << scm_quote (name) << ")";
+    string mname= scm_quote (name);
+    if (!starts (name, "Help")) mname= "(verbatim " * mname * ")";
+    s << " (" << mname;
     s << " (switch-to-buffer " * scm_quote (as_string (buf->name)) * "))";
   }
 }
