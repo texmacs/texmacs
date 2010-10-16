@@ -454,7 +454,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg = open_box<string> (val);
-      [leftField setStringValue:to_nsstring_utf8(aqua_translate(msg))];
+      [leftField setStringValue:to_nsstring_utf8 (tm_var_encode (msg))];
       [leftField displayIfNeeded];
     }
     break;
@@ -462,7 +462,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg = open_box<string> (val);
-      [rightField setStringValue:to_nsstring_utf8(aqua_translate(msg))];
+      [rightField setStringValue:to_nsstring_utf8 (tm_var_encode (msg))];
       [rightField displayIfNeeded];
     }
     break;

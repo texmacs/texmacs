@@ -320,7 +320,7 @@ widget tile_menu (array<widget> a, int cols)
 
 widget menu_separator (bool vertical) { return tm_new <aqua_menu_rep> ([NSMenuItem separatorItem]); }
 // a horizontal or vertical menu separator
-widget menu_group (string name, string lan) 
+widget menu_group (string name) 
 // a menu group; the name should be greyed and centered
 {
 	NSMenuItem* mi = [[alloc_menuitem() initWithTitle:to_nsstring_utf8(name) action:NULL keyEquivalent:@""] autorelease];
@@ -421,11 +421,11 @@ widget balloon_widget (widget w, widget help)
   return tm_new <aqua_balloon_widget_rep> (w,help);
 }
 
-widget text_widget (string s, color col, bool tsp, string lan) 
+widget text_widget (string s, color col, bool tsp) 
 // a text widget with a given color, transparency and language
 {
-  string t= aqua_translate (s);
-  return tm_new <aqua_text_widget_rep> (t,col,tsp,lan);
+  string t= tm_var_encode (s);
+  return tm_new <aqua_text_widget_rep> (t,col,tsp);
 }
 widget xpm_widget (url file_name)// { return widget(); }
 // a widget with an X pixmap icon

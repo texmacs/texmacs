@@ -115,7 +115,7 @@ widget tile_menu (array<widget> a, int cols);
   // a menu rendered as a table of cols columns wide & made up of widgets in a
 widget menu_separator (bool vertical);
   // a horizontal or vertical menu separator
-widget menu_group (string name, string lan= "");
+widget menu_group (string name);
   // a menu group; the name should be greyed and centered
 
 widget pulldown_button (widget w, promise<widget> pw);
@@ -129,8 +129,8 @@ widget balloon_widget (widget w, widget help);
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while
 
-widget text_widget (string s, color col, bool tsp= true, string lan="");
-  // a text widget with a given color, transparency and language
+widget text_widget (string s, color col, bool tsp= true);
+  // a text widget with a given color and transparency
 widget xpm_widget (url file_name);
   // a widget with an X pixmap icon
 

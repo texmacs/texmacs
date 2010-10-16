@@ -24,14 +24,13 @@ class text_widget_rep: public basic_widget_rep {
   string  original, s;
   color   col;
   bool    transparent;
-  string  in_lan;
   bool    tt;
   metric  ex;
   int     dw, dh;
 
 public:
   text_widget_rep (string s, color col, bool trans,
-		   string lan, bool tt, int dw, int dh);
+		   bool tt, int dw, int dh);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -40,10 +39,10 @@ public:
 
 text_widget_rep::text_widget_rep (
   string s2, color c2, bool t2,
-  string l2, bool tt2, int dw2, int dh2):
+  bool tt2, int dw2, int dh2):
     basic_widget_rep (south_west),
     original (s2), s (s2), col (c2),
-    transparent (t2), in_lan (l2), tt (tt2),
+    transparent (t2), tt (tt2),
     dw (dw2+2*PIXEL), dh (dh2+2*PIXEL)
 {
   if (use_macos_fonts ()) {
@@ -82,11 +81,11 @@ text_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 ******************************************************************************/
 
 wk_widget
-text_wk_widget (string s, bool tsp, string lan) {
-  return tm_new<text_widget_rep> (s, black, tsp, lan, false, 3*PIXEL, 0);
+text_wk_widget (string s, bool tsp) {
+  return tm_new<text_widget_rep> (s, black, tsp, false, 3*PIXEL, 0);
 }
 
 wk_widget
-menu_text_wk_widget (string s, color col, bool tsp, string lan, bool tt) {
-  return tm_new<text_widget_rep> (s, col, tsp, lan, tt, 3*PIXEL, 0);
+menu_text_wk_widget (string s, color col, bool tsp, bool tt) {
+  return tm_new<text_widget_rep> (s, col, tsp, tt, 3*PIXEL, 0);
 }

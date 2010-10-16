@@ -22,7 +22,7 @@
 
 (define (make-menu-error . args)
   (apply tm-display-error args)
-  (widget-text "Error" (color "black") #t "english"))
+  (widget-text "Error" (color "black") #t))
 
 (define (make-menu-bad-format p e?)
   (make-menu-error "menu has bad format in " (object->string p)))
@@ -80,7 +80,7 @@
   (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
     (cond ((translatable? p)		; "text"
-	   (widget-text (translate p) col #t "english"))
+	   (widget-text (translate p) col #t))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) e? tt?))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
@@ -102,7 +102,7 @@
 
 (define (make-menu-group s)
   "Make @(group :string?) menu item."
-  (widget-menu-group s "english"))
+  (widget-menu-group s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
@@ -170,7 +170,7 @@
 	       (txt (if (or (not sh) (== sh "")) text
 			(string-append text " (" sh ")")))
 	       (ftxt (translate txt))
-	       (twid (widget-text ftxt (color "black") #t "english")))
+	       (twid (widget-text ftxt (color "black") #t)))
 	  (widget-balloon but twid))
 	but)))
 
@@ -227,7 +227,7 @@
       (if (tuple? label 'balloon 2)
 	  (let* ((text (caddr label))
 		 (ftxt (translate text))
-		 (twid (widget-text ftxt (color "black") #t "english")))
+		 (twid (widget-text ftxt (color "black") #t)))
 	    (widget-balloon button twid))
 	  button))))
 

@@ -11,12 +11,12 @@
 
 class aqua_text_widget_rep : public aqua_widget_rep {
 public:
-  string str, lan;
+  string str;
   color col;
   bool tsp;
   
-  aqua_text_widget_rep(string _s, color _col, bool _tsp, string _lan) 
-  : str(_s), lan(_lan), col(_col), tsp(_tsp) {};  
+  aqua_text_widget_rep(string _s, color _col, bool _tsp) 
+  : str(_s), col(_col), tsp(_tsp) {};  
 
   virtual TMMenuItem *as_menuitem();
 

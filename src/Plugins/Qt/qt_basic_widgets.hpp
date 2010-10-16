@@ -15,12 +15,12 @@
 
 class qt_text_widget_rep: public qt_widget_rep {
 public:
-  string str, lan;
+  string str;
   color col;
   bool tsp;
 
-  inline qt_text_widget_rep (string _s, color _col, bool _tsp, string _lan):
-    str (_s), lan (_lan), col (_col), tsp (_tsp) {}
+  inline qt_text_widget_rep (string _s, color _col, bool _tsp):
+    str (_s), col (_col), tsp (_tsp) {}
   virtual QAction* as_qaction ();
 };
 

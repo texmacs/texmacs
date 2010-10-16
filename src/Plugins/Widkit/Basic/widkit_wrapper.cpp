@@ -122,18 +122,18 @@ menu_separator (bool vert) {
 }
 
 widget
-text_widget (string s, bool tsp, string lan) {
-  return abstract (text_wk_widget (s, tsp, lan));
+text_widget (string s, bool tsp) {
+  return abstract (text_wk_widget (s, tsp));
 }
 
 widget
-menu_text_widget (string s, color col, bool tsp, string lan, bool tt) {
-  return abstract (menu_text_wk_widget (s, col, tsp, lan, tt));
+menu_text_widget (string s, color col, bool tsp, bool tt) {
+  return abstract (menu_text_wk_widget (s, col, tsp, tt));
 }
 
 widget
-text_widget (string s, color col, bool tsp, string lan) {
-  return menu_text_widget (s, col, tsp, lan, false);
+text_widget (string s, color col, bool tsp) {
+  return menu_text_widget (s, col, tsp, false);
 }
 
 widget
@@ -153,9 +153,9 @@ command_button (widget lw, widget cw, widget rw, command cmd, bool e, bool c) {
 }
 
 widget
-menu_group (string name, string lan) {
+menu_group (string name) {
   widget lw= empty_widget ();
-  widget cw= text_widget (name, dark_grey, false, lan);
+  widget cw= text_widget (name, dark_grey, false);
   widget rw= empty_widget ();
   return command_button (lw, cw, rw, noop, false, true);
 }
@@ -166,7 +166,7 @@ menu_button (widget w, command cmd, string pre, string ks, bool ok) {
   else {
     color  c = ok? black: dark_grey;
     widget lw= empty_widget ();
-    widget rw= menu_text_widget (ks, c, true, "english", true);
+    widget rw= menu_text_widget (ks, c, true, true);
     if (pre != "") {
       string s= "";
       if (pre == "v") s= "<checked>";

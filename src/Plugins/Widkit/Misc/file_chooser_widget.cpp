@@ -457,7 +457,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
     }
   array<wk_widget> drw (2);
   drw[0] = pullright_button (text_wk_widget (translate ("Drive")), drive_menu);
-  drw[1] = text_wk_widget("");
+  drw[1] = text_wk_widget ("");
   // drw[1]= glue_wk_widget (false, true, sep);
 #endif
 

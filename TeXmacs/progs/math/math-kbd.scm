@@ -54,6 +54,7 @@
   ("math:left _" (make-script #f #f))
   ("math:left ^" (make-script #t #f))
   ("math f" (make-fraction))
+  ("math f var" (make 'frac*))
   ("math s" (make-sqrt))
   ("math S" (make-var-sqrt))
   ("math n" (make-neg))
