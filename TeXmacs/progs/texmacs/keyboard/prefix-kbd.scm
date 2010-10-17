@@ -121,10 +121,10 @@
   ("cutto" "std X")
   ("pastefrom" "std V")
   ("accent" "M-" #t)
-  ("structured:cmd" "C-")
-  ("structured:move" "M-A-")
-  ("structured:insert" "A-")
-  ("structured:geometry" "M-"))
+  ("structured:cmd" "A-")
+  ("structured:move" "A-C-")
+  ("structured:insert" "C-")
+  ("structured:geometry" "M-A-"))
 
 (kbd-map
   ("macos" "" "MacOS command")
