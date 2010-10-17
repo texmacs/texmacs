@@ -29,7 +29,7 @@
 (kbd-map
   ("F1" (interactive docgrep-in-doc))
   ("S-F1" (noop)) ;; FIXME: S-F1 should be 'What is This?'
-  ("C-F1" (load-help-buffer "about/welcome/welcome"))
+  ("M-F1" (load-help-buffer "about/welcome/welcome"))
   ("C-F9" (toggle-full-screen-mode))
 
   ("<" "<less>")
