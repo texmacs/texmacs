@@ -28,7 +28,7 @@
 
 (kbd-map
   ("F1" (interactive docgrep-in-doc))
-  ("S-F1" (noop)) ;; FIXME: should be: 'What is This?'
+  ("S-F1" (noop)) ;; FIXME: S-F1 should be 'What is This?'
   ("C-F1" (load-help-buffer "about/welcome/welcome"))
   ("C-F9" (toggle-full-screen-mode))
 
@@ -41,6 +41,15 @@
   ("{" (make-bracket-open "{" "}"))
   ("}" (make-bracket-close "}" "{"))
   ("\\" (if (or (inside? 'hybrid) (in-prog?)) (insert "\\") (make-hybrid)))
+
+  ("space" (kbd-space))
+  ("space var" (make 'nbsp))
+  ("space var var" (make-space "0.2spc"))
+  ("space var var var" (make-space "1em"))
+  ("tab" (kbd-tab))
+  ("return" (kbd-return))
+  ("S-space" (kbd-shift-space))
+  ("S-return" (kbd-shift-return))
 
   ("backspace" (kbd-remove #f))
   ("delete" (kbd-remove #t))
@@ -62,26 +71,6 @@
   ("S-end" (kbd-select kbd-end-line))
   ("S-pageup" (kbd-select kbd-page-up))
   ("S-pagedown" (kbd-select kbd-page-down))
-
-  ("space" (kbd-space))
-  ("space var" (make 'nbsp))
-  ("space var var" (make-space "0.2spc"))
-  ("space var var var" (make-space "1em"))
-  ("tab" (kbd-tab))
-  ("return" (kbd-return))
-  ("S-space" (kbd-shift-space))
-  ("S-return" (kbd-shift-return))
-
-  ("C-*" (hidden-variant))
-  ("C-%" (toggle-variant))
-  ("A-*" (toggle-number))
-  ("A-tab" (make-htab "5mm"))
-  ("A-space" (make-space "0.2spc"))
-  ("A-S-space" (make-space "-0.2spc"))
-  ("M-space" (make-space "0.2spc"))
-  ("M-S-space" (make-space "-0.2spc"))
-  ("M-tab" (make-htab "5mm"))
-  ("escape tab" (noop) (make-htab "5mm"))
 
   ("structured:cmd backspace" (remove-structure-upwards))
   ("structured:cmd delete" (remove-structure-upwards))
@@ -105,6 +94,9 @@
   ("structured:cmd space" (kbd-select-enlarge))
   ("structured:cmd tab" (variant-circulate #t))
   ("structured:cmd S-tab" (variant-circulate #f))
+  ("structured:cmd *" (toggle-variant))
+  ("structured:cmd #" (toggle-number))
+  ("structured:cmd %" (hidden-variant))
 
   ("structured:move backspace" (structured-exit-left))
   ("structured:move delete" (structured-exit-right))
@@ -286,7 +278,14 @@
   ("M-S-F4" (interactive print-pages-to-file))
 
   ("C-<" (cursor-history-backward))
-  ("C->" (cursor-history-forward)))
+  ("C->" (cursor-history-forward))
+  ("A-*" (toggle-number))
+  ("A-tab" (make-htab "5mm"))
+  ("A-space" (make-space "0.2spc"))
+  ("A-S-space" (make-space "-0.2spc"))
+  ("M-space" (make-space "0.2spc"))
+  ("M-S-space" (make-space "-0.2spc"))
+  ("M-tab" (make-htab "5mm")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Standard cross-platform keybindings
@@ -334,7 +333,12 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
   ("altcmd <" (go-start))
-  ("altcmd >" (go-end)))
+  ("altcmd >" (go-end))
+
+  ;; further shortcuts for Gnome look and feel
+  ("M-tab" (make-htab "5mm"))
+  ("M-space" (make-space "0.2spc"))
+  ("M-S-space" (make-space "-0.2spc")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; KDE keymap
@@ -359,7 +363,12 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
   ("altcmd <" (go-start))
-  ("altcmd >" (go-end)))
+  ("altcmd >" (go-end))
+
+  ;; further shortcuts for KDE look and feel
+  ("M-tab" (make-htab "5mm"))
+  ("M-space" (make-space "0.2spc"))
+  ("M-S-space" (make-space "-0.2spc")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mac OS keymap
@@ -382,7 +391,12 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive footer-eval))
   ("altcmd <" (go-start))
-  ("altcmd >" (go-end)))
+  ("altcmd >" (go-end))
+
+  ;; further shortcuts for MacOS look and feel
+  ("C-tab" (make-htab "5mm"))
+  ("C-space" (make-space "0.2spc"))
+  ("C-S-space" (make-space "-0.2spc")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Windows keymap
@@ -407,4 +421,9 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
   ("altcmd <" (go-start))
-  ("altcmd >" (go-end)))
+  ("altcmd >" (go-end))
+
+  ;; further shortcuts for Windows look and feel
+  ("M-tab" (make-htab "5mm"))
+  ("M-space" (make-space "0.2spc"))
+  ("M-S-space" (make-space "-0.2spc")))
