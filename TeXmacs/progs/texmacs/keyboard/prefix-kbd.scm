@@ -30,19 +30,14 @@
   ("emacs" "C-" #t)
   ("emacs:contextual" "emacs c")
   ("emacs:prefix" "emacs x")
-
-  ("specific" "M-")
+  ("texmacs" "A-")
   ("cmd" "M-")
-  ("font" "M-A-")
+  ("specific" "M-")
   ("special" "M-A-")
-  ("text" "A-")
-  ("math" "A-")
-  ("prog" "A-")
-  ("symbol" "S-F5" #t)
+  ("accent" "M-" #t)
   ("copyto" "M-W")
   ("cutto" "emacs W")
-  ("pastefrom" "emacs Y")
-  ("accent" "M-" #t))
+  ("pastefrom" "emacs Y"))
 
 (kbd-map
   ("emacs" "" "Emacs command")
@@ -60,18 +55,14 @@
 (kbd-wildcards pre
   ("gnome" "C-" #t)
   ("std" "C-" #t)
+  ("texmacs" "A-")
   ("cmd" "M-")
   ("specific" "M-")
-  ("font" "M-A-")
   ("special" "M-A-")
-  ("text" "A-")
-  ("math" "A-")
-  ("prog" "A-")
-  ("symbol" "S-F5" #t)
+  ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
-  ("pastefrom" "std V")
-  ("accent" "M-" #t))
+  ("pastefrom" "std V"))
 
 (kbd-map
   ("gnome" "" "Gnome command")
@@ -88,18 +79,14 @@
 (kbd-wildcards pre
   ("kde" "C-" #t)
   ("std" "C-" #t)
+  ("texmacs" "A-")
   ("cmd" "M-")
   ("specific" "M-")
-  ("font" "M-A-")
   ("special" "M-A-")
-  ("text" "A-")
-  ("math" "A-")
-  ("prog" "A-")
-  ("symbol" "S-F5" #t)
+  ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
-  ("pastefrom" "std V")
-  ("accent" "M-" #t))
+  ("pastefrom" "std V"))
 
 (kbd-map
   ("kde" "" "KDE command")
@@ -116,14 +103,10 @@
 (kbd-wildcards pre
   ("macos" "M-" #t)
   ("std" "M-" #t)
+  ("texmacs" "C-")
   ("cmd" "A-")
   ("specific" "A-")
-  ("font" "M-C-")
   ("special" "M-A-")
-  ("text" "C-")
-  ("math" "C-")
-  ("prog" "C-")
-  ("symbol" "S-F5" #t)
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
@@ -144,18 +127,14 @@
 (kbd-wildcards pre
   ("windows" "C-" #t)
   ("std" "C-" #t)
+  ("texmacs" "A-")
   ("cmd" "M-")
   ("specific" "M-")
-  ("font" "M-A-")
   ("special" "M-A-")
-  ("text" "A-")
-  ("math" "A-")
-  ("prog" "A-")
-  ("symbol" "S-F5" #t)
+  ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
-  ("pastefrom" "std V")
-  ("accent" "M-" #t))
+  ("pastefrom" "std V"))
 
 (kbd-map
   ("windows" "" "Windows command")
@@ -177,6 +156,13 @@
 
   ("var" "tab" #t)
   ("unvar" "S-tab" #t)  
+
+  ("font" "special" #t)
+  ("symbol" "S-F5" #t)
+
+  ("text" "texmacs" #t)
+  ("math" "texmacs" #t)
+  ("prog" "texmacs" #t)
 
   ("executable" "specific e")
   ("inactive" "specific i")
@@ -257,15 +243,15 @@
   ("cmd" "" "Execute a TeXmacs command")
   ("noop" (set-message "" ""))
   ("symbol" "" "Insert a TeXmacs symbol")
-  ("executable" "" "Insert executable markup")
-  ("inactive" "" "Insert inactive markup")
-  ("text" "" "Insert structural markup")
-  ("text:symbol" "" "Insert a TeXmacs symbol")
   ("special" "" "Special command")
+  ("texmacs" "" "TeXmacs command")
   ("script" "" "Evaluate function or insert evaluation tag")
   ("copyto" "" "Copy to (1, 2, 3, *:other)")
   ("cutto" "" "Cut to (1, 2, 3, *:other)")
   ("pastefrom" "" "Paste from (1, 2, 3, *:other)")
+
+  ("executable" "" "Insert executable markup")
+  ("inactive" "" "Insert inactive markup")
 
   ("table" "" "Table command")
   ("table N" "" "New table (t: tabular, b: block)")
@@ -278,6 +264,11 @@
   ("table v" "" "Vertical cell alignment: (b: bottom, c: center, t: top)")
   ("table b" "" "Modify cell border (options: =, l, r, b, t)")
   ("table p" "" "Modify cell padding (options: =, l, r, b, t)"))
+
+(kbd-map
+  (:mode in-text?)
+  ("text" "" "Insert textual markup")
+  ("text:symbol" "" "Insert a TeXmacs symbol"))
 
 (kbd-map
   (:mode in-math?)
