@@ -47,6 +47,7 @@
 (tm-define preferences-tree
   `((enum ("Look and feel" "look and feel")
 	  ("Default" "default")
+	  ---
 	  ("Emacs" "emacs")
 	  ("Gnome" "gnome")
 	  ("KDE" "kde")
@@ -68,6 +69,7 @@
 	(toggle ("Context dependent icons" "context dependent icons"))
 	(toggle ("User provided icons" "user provided icons"))
 	(toggle ("Status bar" "status bar"))
+	---
 	(enum ("Shrinking factor" "shrinking factor")
 	      "1" "2" "3" "4" "5" "7" "10" *))
     ---
@@ -104,6 +106,7 @@
 	      ("Cp1251" "cp1251"))
 	(enum ("Automatic quotes" "automatic quotes")
 	      ("Default" "default")
+	      ---
 	      ("None" "none")
 	      ("Dutch" "dutch")
 	      ("English" "english")
@@ -169,6 +172,7 @@
 	  ("30 s" "30")
 	  ("120 s" "120")
 	  ("300 s" "300")
+	  ---
 	  ("Disable" "0"))
     (enum ("Bibtex command" "bibtex command")
 	  "bibtex" "rubibtex" *)))
@@ -191,6 +195,8 @@
   (cond ((null? l) l)
 	((== (car l) '*)
 	 (list '--- (list "Other" (compute-preferences-entry s))))
+	((== (car l) '---)
+	 (cons '--- (compute-preferences-enum s (cdr l))))
 	(else (cons (list (id-or-car (car l))
 			  `(set-preference ,s ,(id-or-cadr (car l))))
 		    (compute-preferences-enum s (cdr l))))))

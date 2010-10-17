@@ -37,7 +37,11 @@
   ("accent" "M-" #t)
   ("copyto" "M-W")
   ("cutto" "emacs W")
-  ("pastefrom" "emacs Y"))
+  ("pastefrom" "emacs Y")
+  ("structured:cmd" "C-")
+  ("structured:move" "M-A-")
+  ("structured:insert" "A-")
+  ("structured:geometry" "M-"))
 
 (kbd-map
   ("emacs" "" "Emacs command")
@@ -62,7 +66,11 @@
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
-  ("pastefrom" "std V"))
+  ("pastefrom" "std V")
+  ("structured:cmd" "C-")
+  ("structured:move" "M-A-")
+  ("structured:insert" "A-")
+  ("structured:geometry" "M-"))
 
 (kbd-map
   ("gnome" "" "Gnome command")
@@ -85,7 +93,11 @@
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
-  ("pastefrom" "std V"))
+  ("pastefrom" "std V")
+  ("structured:cmd" "C-")
+  ("structured:move" "M-A-")
+  ("structured:insert" "A-")
+  ("structured:geometry" "M-"))
 
 (kbd-map
   ("kde" "" "KDE command")
@@ -108,7 +120,11 @@
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
-  ("accent" "M-" #t))
+  ("accent" "M-" #t)
+  ("structured:cmd" "C-")
+  ("structured:move" "M-A-")
+  ("structured:insert" "A-")
+  ("structured:geometry" "M-"))
 
 (kbd-map
   ("macos" "" "MacOS command")
@@ -131,7 +147,11 @@
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
-  ("pastefrom" "std V"))
+  ("pastefrom" "std V")
+  ("structured:cmd" "C-")
+  ("structured:move" "M-A-")
+  ("structured:insert" "A-")
+  ("structured:geometry" "M-"))
 
 (kbd-map
   ("windows" "" "Windows command")
