@@ -161,12 +161,12 @@
   (== (get-preference "cyrillic input method") what))
 
 (texmacs-modes
-  (like-emacs% (== (get-look-and-feel) "emacs"))
-  (like-gnome% (== (get-look-and-feel) "gnome"))
-  (like-kde% (== (get-look-and-feel) "kde"))
-  (like-macos% (== (get-look-and-feel) "macos"))
-  (like-windows% (== (get-look-and-feel) "windows"))
-  (like-std% (!= (get-look-and-feel) "emacs"))
+  (like-emacs% (has-look-and-feel? "emacs"))
+  (like-gnome% (has-look-and-feel? "gnome"))
+  (like-kde% (has-look-and-feel? "kde"))
+  (like-macos% (has-look-and-feel? "macos"))
+  (like-windows% (has-look-and-feel? "windows"))
+  (like-std% (has-look-and-feel? "std"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))

@@ -86,11 +86,19 @@
 	((os-macos?) "macos")
 	(else "emacs")))
 
-(define (look-and-feel)
+(define-public (look-and-feel)
   (with s (get-preference "look and feel")
     (if (== s "default") (get-default-look-and-feel) s)))
 
-(set! get-look-and-feel look-and-feel)
+(define (test-look-and-feel t)
+  ;;(display* "Check look and feel " t "\n")
+  (cond ((list? t) (list-or (map test-look-and-feel t)))
+	((symbol? t) (test-look-and-feel (symbol->string t)))
+	(else
+	  (with s (look-and-feel)
+	    (or (== t s) (and (== t "std") (!= s "emacs")))))))
+
+(set! has-look-and-feel? test-look-and-feel)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Applying preferences

@@ -285,13 +285,13 @@
   ("emacs:meta ]" (redo 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mac OS keymap
+;; Standard cross-platform keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  (:profile macos)
+  (:profile std)
 
-  ;; standard Mac OS keyboard shortcuts
+  ;; standard cross-platform shortcuts
   ("std c" (clipboard-copy "primary"))
   ("std f" (search-start #t))
   ("std n" (new-buffer))
@@ -306,41 +306,70 @@
   ("std x" (clipboard-cut "primary"))
   ("std z" (undo 0))
   ("std Z" (redo 0))
-  ("std ;" (spell-start))
-  ("std ?" (interactive docgrep-in-doc))
 
-  ;; extra MacOS-like shortcuts
+  ;; extra cross-platform shortcuts
   ("std F" (search-start #f))
 
-  ("C-g" (selection-cancel))
-  ("C-k" (kill-paragraph))
-  ("C-q" (make 'symbol))
-
-  ("altcmd x" (interactive exec-interactive-command))
-  ("altcmd X" (interactive footer-eval))
+  ("altcmd x" (interactive footer-eval))
   ("altcmd <" (go-start))
   ("altcmd >" (go-end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Gnome keymap
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
+  (:profile gnome)
+
+  ;; extra gnome-ish shortcuts
+  ("std g" (selection-cancel))
+  ("std k" (kill-paragraph))
+  ("std F" (search-start #f))
+
+  ("altcmd g" (clipboard-clear "primary"))
+  ("altcmd q" (make 'symbol))
+  ("altcmd $" (spell-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gnome and windows keymaps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  (:profile gnome kde windows)
+  (:profile kde)
 
-  ;; standard Window shortcuts
-  ("std c" (clipboard-copy "primary"))
-  ("std f" (search-start #t))
-  ("std n" (new-buffer))
-  ("std o" (open-buffer))
-  ("std p" (preview-with-ghostview))
-  ("std q" (safely-quit-TeXmacs))
-  ("std r" (interactive replace-start-forward))
-  ("std s" (save-buffer))
-  ("std v" (clipboard-paste "primary"))
-  ("std w" (safely-kill-buffer))
-  ("std x" (clipboard-cut "primary"))
-  ("std z" (undo 0))
+  ;; extra kde-ish shortcuts
+  ("std g" (selection-cancel))
+  ("std k" (kill-paragraph))
+  ("std F" (search-start #f))
+
+  ("altcmd g" (clipboard-clear "primary"))
+  ("altcmd q" (make 'symbol))
+  ("altcmd $" (spell-start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mac OS keymap
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
+  (:profile macos)
+
+  ;; standard Mac OS keyboard shortcuts
+  ("std ;" (spell-start))
+  ("std ?" (interactive docgrep-in-doc))
+
+  ;; extra MacOS-like shortcuts
+  ("C-g" (selection-cancel))
+  ("C-k" (kill-paragraph))
+  ("C-q" (make 'symbol))
+
+  ("altcmd X" (interactive footer-eval)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Windows keymap
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
+  (:profile windows)
 
   ;; extra Window-ish shortcuts
   ("std g" (selection-cancel))
@@ -349,7 +378,4 @@
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
-  ("altcmd x" (interactive footer-eval))
-  ("altcmd <" (go-start))
-  ("altcmd >" (go-end))
   ("altcmd $" (spell-start)))

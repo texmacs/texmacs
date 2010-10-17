@@ -21,7 +21,7 @@
 (define (guile-c?) (equal? (scheme-dialect) "guile-c"))
 (define (guile-b-c?) (or (guile-b?) (guile-c?)))
 (if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
-(define get-look-and-feel (lambda () 'emacs))
+(define has-look-and-feel? (lambda (x) (== x "emacs")))
 
 ;; Should be defined 
 (define dialogue-break #f)
