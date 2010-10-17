@@ -25,11 +25,10 @@ void mac_fix_paths ();
 
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
-#include <QCoreApplication>
 #include <QApplication>
 #endif
 
-#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
+#ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_app.h"
 #endif
 
@@ -403,6 +402,16 @@ int
 main (int argc, char** argv) {
   immediate_options (argc, argv);
   set_env ("LC_NUMERIC", "POSIX");
+#ifdef MACOSX_EXTENSIONS
+  // Reset TeXmacs if Alt is pressed during startup
+  if (mac_alternate_startup()) {
+    cout << "TeXmacs] Performing setup (Alt on startup)" << LF; 
+    remove (url ("$TEXMACS_HOME_PATH/system/settings.scm"));
+    remove (url ("$TEXMACS_HOME_PATH/system/setup.scm"));
+    remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("*"));
+    remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));    
+  }
+#endif
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
   new QApplication (argc, argv);

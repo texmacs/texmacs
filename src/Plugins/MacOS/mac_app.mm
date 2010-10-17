@@ -138,4 +138,11 @@ void mac_install_filter() {
 }
 
 #endif // HACK
-#endif
+#endif // QTTEXMACS
+
+bool 
+mac_alternate_startup() {
+  NSUInteger nsmods = [NSEvent modifierFlags];
+  return (nsmods &  NSAlternateKeyMask);
+}
+

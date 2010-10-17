@@ -18,4 +18,6 @@ void finalize_mac_application ();
 
 void process_mac_events ();
 
+bool mac_alternate_startup();
+
 #endif // MAC_APP_H
