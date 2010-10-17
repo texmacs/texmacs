@@ -49,6 +49,7 @@
   ("tab" (kbd-tab))
   ("return" (kbd-return))
   ("S-space" (kbd-shift-space))
+  ("S-tab" (kbd-shift-tab))
   ("S-return" (kbd-shift-return))
 
   ("backspace" (kbd-remove #f))
@@ -301,14 +302,25 @@
   ("std o" (open-buffer))
   ("std p" (preview-with-ghostview))
   ("std q" (safely-quit-TeXmacs))
-  ("std r" (interactive replace-start-forward))
   ("std s" (save-buffer))
   ("std S" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ("std v" (clipboard-paste "primary"))
   ("std w" (safely-kill-buffer))
   ("std x" (clipboard-cut "primary"))
   ("std z" (undo 0))
-  ("std Z" (redo 0)))
+  ("std Z" (redo 0))
+
+  ;; not yet implemented
+  ;;("std a" (select-all))
+  ;;("std b" (make-bold))
+  ;;("std i" (make-italic))
+  ;;("std t" (add-tab))
+  ;;("std u" (make-underlined))
+  ;;("std tab" (next-tab))
+  ;;("std S-tab" (previous-tab))
+  ;;("std +" (zoom-in))
+  ;;("std -" (zoom-out))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gnome keymap
@@ -318,24 +330,43 @@
   (:profile gnome)
 
   ;; standard Gnome shortcuts
+  ("gnome d" (remove-text #t))
+  ("gnome h" (interactive replace-start-forward))
+  ("gnome k" (kill-paragraph))
   ("gnome left" (traverse-left))
   ("gnome right" (traverse-right))
+  ("gnome home" (go-start))
+  ("gnome end" (go-end))
+  ("gnome S-left" (kbd-select traverse-left))
+  ("gnome S-right" (kbd-select traverse-right))
+  ("gnome S-home" (kbd-select go-start))
+  ("gnome S-end" (kbd-select go-end))
+
+  ("F14" (undo 0))
+  ("F16" (clipboard-copy "primary"))
+  ("F18" (clipboard-paste "primary"))
+  ("F20" (clipboard-cut "primary"))
+  ("C-insert" (clipboard-copy "primary"))
+  ("S-insert" (clipboard-paste "primary"))
+  ("S-delete" (clipboard-cut "primary"))
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ;; extra gnome-ish shortcuts
-  ("std g" (selection-cancel))
-  ("std k" (kill-paragraph))
-  ("std F" (search-start #f))
+  ;; not yet implemented
+  ;;("gnome backspace" (delete-start-word))
+  ;;("gnome delete" (delete-end-word))
+  ;;("forward" (next-tab))
+  ;;("back" (previous-tab))
+
+  ;; further shortcuts for Gnome look and feel
+  ("gnome g" (selection-cancel))
+  ("gnome F" (search-start #f))
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
-  ("altcmd <" (go-start))
-  ("altcmd >" (go-end))
 
-  ;; further shortcuts for Gnome look and feel
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -348,24 +379,44 @@
   (:profile kde)
 
   ;; standard KDE shortcuts
+  ("kde d" (remove-text #t))
+  ("kde k" (kill-paragraph))
+  ("kde r" (interactive replace-start-forward))
   ("kde left" (traverse-left))
   ("kde right" (traverse-right))
+  ("kde home" (go-start))
+  ("kde end" (go-end))
+  ("kde S-left" (kbd-select traverse-left))
+  ("kde S-right" (kbd-select traverse-right))
+  ("kde S-home" (kbd-select go-start))
+  ("kde S-end" (kbd-select go-end))
+
+  ("F14" (undo 0))
+  ("F16" (clipboard-copy "primary"))
+  ("F18" (clipboard-paste "primary"))
+  ("F20" (clipboard-cut "primary"))
+  ("C-insert" (clipboard-copy "primary"))
+  ("S-insert" (clipboard-paste "primary"))
+  ("S-delete" (clipboard-cut "primary"))
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ;; extra kde-ish shortcuts
-  ("std g" (selection-cancel))
-  ("std k" (kill-paragraph))
-  ("std F" (search-start #f))
+  ;; not yet implemented
+  ;;("kde N" (add-tab))
+  ;;("kde backspace" (delete-start-word))
+  ;;("kde delete" (delete-end-word))
+  ;;("forward" (next-tab))
+  ;;("back" (previous-tab))
+
+  ;; further shortcuts for KDE look and feel
+  ("kde g" (selection-cancel))
+  ("kde F" (search-start #f))
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
-  ("altcmd <" (go-start))
-  ("altcmd >" (go-end))
 
-  ;; further shortcuts for KDE look and feel
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -382,18 +433,36 @@
   ("macos ?" (interactive docgrep-in-doc))
   ("macos [" (cursor-history-backward))
   ("macos ]" (cursor-history-forward))
+  ("macos F4" (safely-kill-buffer))
+  ("macos left" (kbd-start-line))
+  ("macos right" (kbd-end-line))
+  ("macos up" (go-start))
+  ("macos down" (go-end))
+  ("macos S-left" (kbd-select kbd-start-line))
+  ("macos S-right" (kbd-select kbd-end-line))
+  ("macos S-up" (kbd-select go-start))
+  ("macos S-down" (kbd-select go-end))
 
-  ;; extra MacOS-like shortcuts
-  ("C-g" (selection-cancel))
-  ("C-k" (kill-paragraph))
-  ("C-q" (make 'symbol))
+  ("C-a" (go-start-paragraph)) ;; NOTE: can use A-up instead
+  ("C-d" (remove-text #t)) ;; NOTE: can use delete instead
+  ("C-e" (go-end-paragraph)) ;; NOTE: can use A-down instead
+  ("C-A" (kbd-select go-start-paragraph)) ;; NOTE: can use A-S-up instead
+  ("C-E" (kbd-select go-end-paragraph)) ;; NOTE: can use A-S-down instead
+
+  ;; not yet supported
+  ;;("macos ," (open-preferences))
+  ;;("macos }" (next-tab))
+  ;;("macos {" (previous-tab))
+
+  ;; further shortcuts for MacOS look and feel
+  ("macos r" (interactive replace-start-forward))
 
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive footer-eval))
-  ("altcmd <" (go-start))
-  ("altcmd >" (go-end))
 
-  ;; further shortcuts for MacOS look and feel
+  ("C-g" (selection-cancel))
+  ("C-k" (kill-paragraph))
+  ("C-q" (make 'symbol))
   ("C-tab" (make-htab "5mm"))
   ("C-space" (make-space "0.2spc"))
   ("C-S-space" (make-space "-0.2spc")))
@@ -406,24 +475,42 @@
   (:profile windows)
 
   ;; standard Windows shortcuts
+  ("windows h" (interactive replace-start-forward))
+  ("windows y" (redo 0))
+  ("windows F4" (safely-kill-buffer))
   ("windows left" (traverse-left))
   ("windows right" (traverse-right))
+  ("windows home" (go-start))
+  ("windows end" (go-end))
+  ("windows S-left" (kbd-select traverse-left))
+  ("windows S-right" (kbd-select traverse-right))
+  ("windows S-home" (kbd-select go-start))
+  ("windows S-end" (kbd-select go-end))
+
+  ("C-insert" (clipboard-copy "primary"))
+  ("S-insert" (clipboard-paste "primary"))
+  ("S-delete" (clipboard-cut "primary"))
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ;; extra Window-ish shortcuts
-  ("std g" (selection-cancel))
-  ("std k" (kill-paragraph))
-  ("std F" (search-start #f))
+  ;; not yet implemented
+  ;;("windows F6" (next-tab))
+  ;;("windows S-F6" (previous-tab))
+  ;;("windows backspace" (delete-start-word))
+  ;;("windows delete" (delete-end-word))
+  ;;("forward" (next-tab))
+  ;;("back" (previous-tab))
+
+  ;; further shortcuts for Windows look and feel
+  ("windows g" (selection-cancel))
+  ("windows k" (kill-paragraph))
+  ("windows F" (search-start #f))
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
-  ("altcmd <" (go-start))
-  ("altcmd >" (go-end))
 
-  ;; further shortcuts for Windows look and feel
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))

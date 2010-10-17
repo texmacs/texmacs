@@ -78,7 +78,14 @@
 	(set-message `(concat "Use " ,sh " in order to insert a tab")
 		     "tab"))))
 
+(tm-define (kbd-shift-tab)
+  (complete-try?))
+
 (tm-define (kbd-tab)
+  (:inside label reference)
+  (if (complete-try?) (noop)))
+
+(tm-define (kbd-shift-tab)
   (:inside label reference)
   (if (complete-try?) (noop)))
 
