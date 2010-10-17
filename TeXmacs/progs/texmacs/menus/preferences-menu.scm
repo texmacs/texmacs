@@ -49,6 +49,7 @@
 	  ("Default" "default")
 	  ("Emacs" "emacs")
 	  ("Gnome" "gnome")
+	  ("KDE" "kde")
 	  ("Mac OS" "macos")
 	  ("Windows" "windows"))
 ;   (enum ("Profile" "profile")
