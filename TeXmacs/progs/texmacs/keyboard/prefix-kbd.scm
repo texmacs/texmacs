@@ -30,9 +30,9 @@
   ("emacs" "C-" #t)
   ("emacs:contextual" "emacs c")
   ("emacs:prefix" "emacs x")
-  ("texmacs" "A-")
-  ("cmd" "M-")
-  ("specific" "M-")
+  ("emacs:meta" "M-" #t)
+  ("cmd" "A-")
+  ("altcmd" "M-")
   ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "M-W")
@@ -42,7 +42,8 @@
 (kbd-map
   ("emacs" "" "Emacs command")
   ("emacs:contextual" "" "Emacs mode specific prefix command")
-  ("emacs:prefix" "" "Emacs prefix command"))
+  ("emacs:prefix" "" "Emacs prefix command")
+  ("emacs:meta" "Emacs meta"))
 
 ) ;; end when (like-emacs?)
 
@@ -55,9 +56,8 @@
 (kbd-wildcards pre
   ("gnome" "C-" #t)
   ("std" "C-" #t)
-  ("texmacs" "A-")
-  ("cmd" "M-")
-  ("specific" "M-")
+  ("cmd" "A-")
+  ("altcmd" "M-")
   ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "std C")
@@ -79,9 +79,8 @@
 (kbd-wildcards pre
   ("kde" "C-" #t)
   ("std" "C-" #t)
-  ("texmacs" "A-")
-  ("cmd" "M-")
-  ("specific" "M-")
+  ("cmd" "A-")
+  ("altcmd" "M-")
   ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "std C")
@@ -103,9 +102,8 @@
 (kbd-wildcards pre
   ("macos" "M-" #t)
   ("std" "M-" #t)
-  ("texmacs" "C-")
-  ("cmd" "A-")
-  ("specific" "A-")
+  ("cmd" "C-")
+  ("altcmd" "A-")
   ("special" "M-A-")
   ("copyto" "std C")
   ("cutto" "std X")
@@ -127,9 +125,8 @@
 (kbd-wildcards pre
   ("windows" "C-" #t)
   ("std" "C-" #t)
-  ("texmacs" "A-")
-  ("cmd" "M-")
-  ("specific" "M-")
+  ("cmd" "A-")
+  ("altcmd" "M-")
   ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "std C")
@@ -160,16 +157,16 @@
   ("font" "special" #t)
   ("symbol" "S-F5" #t)
 
-  ("text" "texmacs" #t)
-  ("math" "texmacs" #t)
-  ("prog" "texmacs" #t)
+  ("text" "cmd" #t)
+  ("math" "cmd" #t)
+  ("prog" "cmd" #t)
 
-  ("executable" "specific e")
-  ("inactive" "specific i")
-  ("link" "specific l")
-  ("version" "specific #")
-  ("table" "specific t")
-  ("script" "specific *")
+  ("executable" "altcmd e")
+  ("inactive" "altcmd i")
+  ("link" "altcmd l")
+  ("version" "altcmd #")
+  ("table" "altcmd t")
+  ("script" "altcmd *")
 
   ("accent:tilde" "accent ~")
   ("accent:hat" "accent ^")
@@ -240,18 +237,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  ("cmd" "" "Execute a TeXmacs command")
-  ("noop" (set-message "" ""))
-  ("symbol" "" "Insert a TeXmacs symbol")
+  ("cmd" "" "TeXmacs command")
+  ("altcmd" "" "Alternate TeXmacs command")
   ("special" "" "Special command")
-  ("texmacs" "" "TeXmacs command")
-  ("script" "" "Evaluate function or insert evaluation tag")
+  ("symbol" "" "Insert a TeXmacs symbol")
   ("copyto" "" "Copy to (1, 2, 3, *:other)")
   ("cutto" "" "Cut to (1, 2, 3, *:other)")
   ("pastefrom" "" "Paste from (1, 2, 3, *:other)")
+  ("noop" (set-message "" ""))
 
   ("executable" "" "Insert executable markup")
   ("inactive" "" "Insert inactive markup")
+  ("script" "" "Evaluate function or insert evaluation tag")
 
   ("table" "" "Table command")
   ("table N" "" "New table (t: tabular, b: block)")
@@ -268,7 +265,7 @@
 (kbd-map
   (:mode in-text?)
   ("text" "" "Insert textual markup")
-  ("text:symbol" "" "Insert a TeXmacs symbol"))
+  ("text:symbol" "" "Insert a special character"))
 
 (kbd-map
   (:mode in-math?)

@@ -16,14 +16,14 @@
 	(source source-edit)))
 
 (kbd-map
-  ("cmd )" (make-style-with "src-compact" "none"))
-  ("cmd (" (make-style-with "src-compact" "all"))
-  ("cmd @" (make-mod-active 'style-only*))
-  ("cmd -" (make-mod-active 'inactive*))
-  ("cmd +" (make-mod-active 'active*))
-  ("cmd C-@" (make-mod-active 'style-only))
-  ("cmd C--" (make-mod-active 'inactive))
-  ("cmd C-+" (make-mod-active 'active))
+  ("altcmd )" (make-style-with "src-compact" "none"))
+  ("altcmd (" (make-style-with "src-compact" "all"))
+  ("altcmd @" (make-mod-active 'style-only*))
+  ("altcmd -" (make-mod-active 'inactive*))
+  ("altcmd +" (make-mod-active 'active*))
+  ("altcmd C-@" (make-mod-active 'style-only))
+  ("altcmd C--" (make-mod-active 'inactive))
+  ("altcmd C-+" (make-mod-active 'active))
 
   ("inactive a" (make 'arg))
   ("inactive A" (make 'map-args))
