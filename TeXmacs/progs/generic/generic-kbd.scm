@@ -309,14 +309,7 @@
   ("std w" (safely-kill-buffer))
   ("std x" (clipboard-cut "primary"))
   ("std z" (undo 0))
-  ("std Z" (redo 0))
-
-  ;; extra cross-platform shortcuts
-  ("std F" (search-start #f))
-
-  ("altcmd x" (interactive footer-eval))
-  ("altcmd <" (go-start))
-  ("altcmd >" (go-end)))
+  ("std Z" (redo 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gnome keymap
@@ -338,7 +331,10 @@
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
-  ("altcmd $" (spell-start)))
+  ("altcmd x" (interactive footer-eval))
+  ("altcmd $" (spell-start))
+  ("altcmd <" (go-start))
+  ("altcmd >" (go-end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; KDE keymap
@@ -360,7 +356,10 @@
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
-  ("altcmd $" (spell-start)))
+  ("altcmd x" (interactive footer-eval))
+  ("altcmd $" (spell-start))
+  ("altcmd <" (go-start))
+  ("altcmd >" (go-end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mac OS keymap
@@ -380,7 +379,10 @@
   ("C-k" (kill-paragraph))
   ("C-q" (make 'symbol))
 
-  ("altcmd X" (interactive footer-eval)))
+  ("altcmd x" (interactive footer-eval))
+  ("altcmd X" (interactive footer-eval))
+  ("altcmd <" (go-start))
+  ("altcmd >" (go-end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Windows keymap
@@ -402,4 +404,7 @@
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
-  ("altcmd $" (spell-start)))
+  ("altcmd x" (interactive footer-eval))
+  ("altcmd $" (spell-start))
+  ("altcmd <" (go-start))
+  ("altcmd >" (go-end)))
