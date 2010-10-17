@@ -160,7 +160,17 @@
   ("{" (make-bracket-open "{" "}"))
   ("}" (make-bracket-close "}" "{"))
   ("\\" (if (or (inside? 'hybrid) (in-prog?)) (insert "\\") (make-hybrid)))
+
   ("altcmd \\" (make-hybrid))
+  ("altcmd a" (make-tree))
+  ("altcmd R" (make-rigid))
+  ("altcmd :" (make 'line-break))
+  ("altcmd ;" (make 'new-line))
+  ("altcmd return" (make 'next-line))
+  ("altcmd /" (make 'no-break))
+  ("altcmd !" (make-label))
+  ("altcmd ?" (make 'reference))
+  ("altcmd C-?" (make 'pageref))
 
   ("accent:hat" "^")
   ("accent:deadhat" "^")
@@ -270,18 +280,9 @@
   ;; extra Emacs-ish shortcuts
   ("emacs =" (interactive replace-start-forward))
 
-  ("altcmd a" (make-tree))
-  ("altcmd g" (clipboard-clear "primary"))
-  ("altcmd R" (make-rigid))
-  ("altcmd [" (undo 0))
-  ("altcmd ]" (redo 0))
-  ("altcmd :" (make 'line-break))
-  ("altcmd ;" (make 'new-line))
-  ("altcmd return" (make 'next-line))
-  ("altcmd /" (make 'no-break))
-  ("altcmd !" (make-label))
-  ("altcmd ?" (make 'reference))
-  ("altcmd C-?" (make 'pageref)))
+  ("emacs:meta g" (clipboard-clear "primary"))
+  ("emacs:meta [" (undo 0))
+  ("emacs:meta ]" (redo 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mac OS keymap
@@ -315,17 +316,8 @@
   ("C-k" (kill-paragraph))
   ("C-q" (make 'symbol))
 
-  ("altcmd a" (make-tree))
-  ("altcmd R" (make-rigid))
   ("altcmd x" (interactive exec-interactive-command))
   ("altcmd X" (interactive footer-eval))
-  ("altcmd :" (make 'line-break))
-  ("altcmd ;" (make 'new-line))
-  ("altcmd return" (make 'next-line))
-  ("altcmd /" (make 'no-break))
-  ("altcmd !" (make-label))
-  ("altcmd ?" (make 'reference))
-  ("altcmd C-?" (make 'pageref))
   ("altcmd <" (go-start))
   ("altcmd >" (go-end)))
 
@@ -334,7 +326,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  (:profile gnome windows)
+  (:profile gnome kde windows)
 
   ;; standard Window shortcuts
   ("std c" (clipboard-copy "primary"))
@@ -355,18 +347,9 @@
   ("std k" (kill-paragraph))
   ("std F" (search-start #f))
 
-  ("altcmd a" (make-tree))
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
-  ("altcmd R" (make-rigid))
   ("altcmd <" (go-start))
   ("altcmd >" (go-end))
-  ("altcmd :" (make 'line-break))
-  ("altcmd ;" (make 'new-line))
-  ("altcmd return" (make 'next-line))
-  ("altcmd /" (make 'no-break))
-  ("altcmd !" (make-label))
-  ("altcmd ?" (make 'reference))
-  ("altcmd C-?" (make 'pageref))
   ("altcmd $" (spell-start)))
