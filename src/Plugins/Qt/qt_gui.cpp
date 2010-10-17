@@ -73,9 +73,9 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   gui_helper = new QTMGuiHelper (this);
   qApp -> installEventFilter (gui_helper);
   
-#if (defined(MACOSX_EXTENSIONS) && defined(QT_MAC_USE_COCOA))
+#ifdef QT_MAC_USE_COCOA
   //HACK: this filter is needed to overcome a bug in Qt/Cocoa
-  extern void mac_install_filter();
+  extern void mac_install_filter(); // defined in src/Plugins/MacOS/mac_app.mm
   mac_install_filter();
 #endif
   
