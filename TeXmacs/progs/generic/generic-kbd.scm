@@ -72,13 +72,8 @@
   ("S-space" (kbd-shift-space))
   ("S-return" (kbd-shift-return))
 
-  ("C-space" (kbd-select-enlarge))
-  ("C-tab" (variant-circulate #t))
-  ("C-S-tab" (variant-circulate #f))
   ("C-*" (hidden-variant))
   ("C-%" (toggle-variant))
-  ("C-<" (cursor-history-backward))
-  ("C->" (cursor-history-forward))
   ("A-*" (toggle-number))
   ("A-tab" (make-htab "5mm"))
   ("A-space" (make-space "0.2spc"))
@@ -107,6 +102,9 @@
   ("structured:cmd S-end" (kbd-select traverse-last))
   ("structured:cmd S-pageup" (kbd-select traverse-previous))
   ("structured:cmd S-pagedown" (kbd-select traverse-next))
+  ("structured:cmd space" (kbd-select-enlarge))
+  ("structured:cmd tab" (variant-circulate #t))
+  ("structured:cmd S-tab" (variant-circulate #f))
 
   ("structured:move backspace" (structured-exit-left))
   ("structured:move delete" (structured-exit-right))
@@ -285,7 +283,10 @@
   ("S-F4" (print-buffer))
   ("C-F4" (interactive print-to-file))
   ("M-F4" (interactive print-pages))
-  ("M-S-F4" (interactive print-pages-to-file)))
+  ("M-S-F4" (interactive print-pages-to-file))
+
+  ("C-<" (cursor-history-backward))
+  ("C->" (cursor-history-forward)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Standard cross-platform keybindings
@@ -324,6 +325,12 @@
 (kbd-map
   (:profile gnome)
 
+  ;; standard Gnome shortcuts
+  ("gnome left" (traverse-left))
+  ("gnome right" (traverse-right))
+  ("A-left" (cursor-history-backward))
+  ("A-right" (cursor-history-forward))
+
   ;; extra gnome-ish shortcuts
   ("std g" (selection-cancel))
   ("std k" (kill-paragraph))
@@ -334,11 +341,17 @@
   ("altcmd $" (spell-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Gnome and windows keymaps
+;; KDE keymap
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
   (:profile kde)
+
+  ;; standard KDE shortcuts
+  ("kde left" (traverse-left))
+  ("kde right" (traverse-right))
+  ("A-left" (cursor-history-backward))
+  ("A-right" (cursor-history-forward))
 
   ;; extra kde-ish shortcuts
   ("std g" (selection-cancel))
@@ -357,8 +370,10 @@
   (:profile macos)
 
   ;; standard Mac OS keyboard shortcuts
-  ("std ;" (spell-start))
-  ("std ?" (interactive docgrep-in-doc))
+  ("macos ;" (spell-start))
+  ("macos ?" (interactive docgrep-in-doc))
+  ("macos [" (cursor-history-backward))
+  ("macos ]" (cursor-history-forward))
 
   ;; extra MacOS-like shortcuts
   ("C-g" (selection-cancel))
@@ -373,6 +388,12 @@
 
 (kbd-map
   (:profile windows)
+
+  ;; standard Windows shortcuts
+  ("windows left" (traverse-left))
+  ("windows right" (traverse-right))
+  ("A-left" (cursor-history-backward))
+  ("A-right" (cursor-history-forward))
 
   ;; extra Window-ish shortcuts
   ("std g" (selection-cancel))

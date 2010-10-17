@@ -67,10 +67,10 @@
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
-  ("structured:cmd" "C-")
+  ("structured:cmd" "A-")
   ("structured:move" "M-A-")
-  ("structured:insert" "A-")
-  ("structured:geometry" "M-"))
+  ("structured:insert" "M-")
+  ("structured:geometry" "M-C-"))
 
 (kbd-map
   ("gnome" "" "Gnome command")
@@ -94,10 +94,10 @@
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
-  ("structured:cmd" "C-")
+  ("structured:cmd" "A-")
   ("structured:move" "M-A-")
-  ("structured:insert" "A-")
-  ("structured:geometry" "M-"))
+  ("structured:insert" "M-")
+  ("structured:geometry" "M-C-"))
 
 (kbd-map
   ("kde" "" "KDE command")
@@ -148,10 +148,10 @@
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
-  ("structured:cmd" "C-")
+  ("structured:cmd" "A-")
   ("structured:move" "M-A-")
-  ("structured:insert" "A-")
-  ("structured:geometry" "M-"))
+  ("structured:insert" "M-")
+  ("structured:geometry" "M-C-"))
 
 (kbd-map
   ("windows" "" "Windows command")
