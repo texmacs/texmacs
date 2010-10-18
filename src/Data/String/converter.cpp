@@ -126,7 +126,16 @@ converter_rep::load () {
     hashtree_from_dictionary (dic, "HTMLspecial", CHAR_ENTITY, ENTITY_NAME, true);
     hashtree_from_dictionary (dic, "HTMLsymbol" , CHAR_ENTITY, ENTITY_NAME, true);
     ht = dic;
-  }
+  } else if ( from=="T2A" && to=="UTF-8" ) {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, UTF8, false);
+    ht = dic;
+  }  
 }
 
 /******************************************************************************
@@ -185,6 +194,22 @@ utf8_to_cork (string input) {
 string
 cork_to_utf8 (string input) {
   converter conv= load_converter ("Cork", "UTF-8");
+  int start= 0, i, n= N(input);
+  string r;
+  for (i=0; i<n; i++)
+    if (input[i] == '<' && i+1<n && input[i+1] == '#') {
+      r << apply (conv, input (start, i));
+      start= i= i+2;
+      while (i<n && input[i] != '>') i++;
+      r << encode_as_utf8 (from_hexadecimal (input (start, i)));
+      start= i+1;
+    }
+  return r * apply (conv, input (start, n));
+}
+
+string
+t2a_to_utf8 (string input) {
+  converter conv= load_converter ("T2A", "UTF-8");
   int start= 0, i, n= N(input);
   string r;
   for (i=0; i<n; i++)
