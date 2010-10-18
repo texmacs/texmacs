@@ -266,11 +266,11 @@
 
   <assign|overline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
-  <drd-props|overline|arity|1|accessible|all>
+  <drd-props|overline|with-like|yes|arity|1|accessible|all>
 
   <assign|underline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
-  <drd-props|underline|arity|1|accessible|all>
+  <drd-props|underline|with-like|yes|arity|1|accessible|all>
 
   \;
 

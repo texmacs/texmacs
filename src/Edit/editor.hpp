@@ -112,7 +112,6 @@ protected:
   virtual path tree_path (path sp, SI x, SI y, SI delta) = 0;
   virtual void apply_changes () = 0;
   virtual void animate () = 0;
-  virtual void correct_concat (path p, int done=0) = 0;
   virtual path search_format (int& row, int& col) = 0;
   virtual void table_bound (path fp, int& i1, int& j1, int& i2, int& j2) = 0;
   virtual tree table_get_subtable (path p, int i1, int j1, int i2, int j2) = 0;
@@ -299,6 +298,7 @@ public:
 
   /* public routines from edit_text */
   virtual void correct (path p) = 0;
+  virtual void correct_concat (path p, int done=0) = 0;
   virtual bool insert_return () = 0;
   virtual void remove_return (path p) = 0;
   virtual void insert_tree (tree t, path p_in_t) = 0;

@@ -314,6 +314,19 @@
 	  (selection-set-start-path (tree->path t :start))
 	  (selection-set-end-path (tree->path t :end))))))
 
-(tm-define (tree-correct t . l)
+(tm-define (tree-correct-old t . l)
+  (:synopsis "Deprecated old tree correction routine")
   (with p (apply tree->path (cons t l))
     (if p (path-correct p))))
+
+(tm-define (tree-correct-node t . l)
+  (:synopsis "Make the node @(tree-ref t . l) correct")
+  (cpp-tree-correct-node (apply tree-ref (cons t l))))
+
+(tm-define (tree-correct-downwards t . l)
+  (:synopsis "Correct the tree @(tree-ref t . l) and its descendants")
+  (cpp-tree-correct-downwards (apply tree-ref (cons t l))))
+
+(tm-define (tree-correct-upwards t . l)
+  (:synopsis "Correct the tree @(tree-ref t . l) and its ancestors")
+  (cpp-tree-correct-upwards (apply tree-ref (cons t l))))

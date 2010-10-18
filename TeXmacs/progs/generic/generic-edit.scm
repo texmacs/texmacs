@@ -17,7 +17,7 @@
 	(utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting new tags
+;; Inserting new with-like tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (with-like-search t)
@@ -43,6 +43,41 @@
 			`(concat "make '" ,sym "'"))
 	   #t))
 	(else #f)))
+
+(tm-define (make-with-like w)
+  (cond ((func? w 'with 3)
+	 (make-with (cadr w) (caddr w)))
+	((and (tm-compound? w) (== (tm-arity w) 1))
+	 (make (car w)))
+	((selection-active-any?)
+	 (let* ((selection (selection-tree))
+		(ins `(,@(cDr w) ,selection))
+		(end (path-end ins '())))
+	   (clipboard-cut "nowhere")
+	   (insert-go-to ins (cons (- (tm-arity ins) 1) end))))
+	(else
+	  (insert-go-to w (list (- (tm-arity w) 1) 0)))))
+
+(tm-define (toggle-with-like w)
+  (with t (if (and (selection-active-any?)
+		   (== (selection-tree) (path->tree (selection-path))))
+	      (path->tree (selection-path))
+	      (with-like-search (tree-ref (cursor-tree) :up)))
+    ;;(display* "t= " t "\n")
+    (if (and t (with-like? t) (with-same-type? t w))
+	(begin
+	  (tree-remove-node! t (- (tree-arity t) 1))
+	  (tree-correct-node (tree-ref t :up)))
+	(make-with-like w))))
+
+(tm-define (toggle-bold)
+  (toggle-with-like '(with "font-series" "bold" "")))
+
+(tm-define (toggle-italic)
+  (toggle-with-like '(with "font-shape" "italic" "")))
+
+(tm-define (toggle-underlined)
+  (toggle-with-like '(underline "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic editing via the keyboard

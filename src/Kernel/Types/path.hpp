@@ -48,6 +48,7 @@ path common (path start, path end);
 * Getting subtrees from paths
 ******************************************************************************/
 
+bool  has_subtree (tree t, path p);
 tree& subtree (tree& t, path p);
 tree& parent_subtree (tree& t, path p);
 

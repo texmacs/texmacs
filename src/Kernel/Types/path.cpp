@@ -146,6 +146,13 @@ common (path start, path end) {
 * Main modification routines
 ******************************************************************************/
 
+bool
+has_subtree (tree t, path p) {
+  if (is_nil (p)) return true;
+  int i= p->item;
+  return is_compound (t) && i >= 0 && i < N(t) && has_subtree (t[i], p->next);
+}
+
 tree&
 subtree (tree& t, path p) {
   if (is_nil (p)) return t;

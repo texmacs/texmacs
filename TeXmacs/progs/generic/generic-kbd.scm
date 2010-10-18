@@ -296,14 +296,17 @@
   (:profile std)
 
   ;; standard cross-platform shortcuts
+  ("std b" (toggle-bold))
   ("std c" (clipboard-copy "primary"))
   ("std f" (search-start #t))
+  ("std i" (toggle-italic))
   ("std n" (new-buffer))
   ("std o" (open-buffer))
   ("std p" (preview-with-ghostview))
   ("std q" (safely-quit-TeXmacs))
   ("std s" (save-buffer))
   ("std S" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
+  ("std u" (toggle-underlined))
   ("std v" (clipboard-paste "primary"))
   ("std w" (safely-kill-buffer))
   ("std x" (clipboard-cut "primary"))
@@ -312,10 +315,7 @@
 
   ;; not yet implemented
   ;;("std a" (select-all))
-  ;;("std b" (make-bold))
-  ;;("std i" (make-italic))
   ;;("std t" (add-tab))
-  ;;("std u" (make-underlined))
   ;;("std tab" (next-tab))
   ;;("std S-tab" (previous-tab))
   ;;("std +" (zoom-in))
@@ -442,12 +442,6 @@
   ("macos S-right" (kbd-select kbd-end-line))
   ("macos S-up" (kbd-select go-start))
   ("macos S-down" (kbd-select go-end))
-
-  ("C-a" (go-start-paragraph)) ;; NOTE: can use A-up instead
-  ("C-d" (remove-text #t)) ;; NOTE: can use delete instead
-  ("C-e" (go-end-paragraph)) ;; NOTE: can use A-down instead
-  ("C-A" (kbd-select go-start-paragraph)) ;; NOTE: can use A-S-up instead
-  ("C-E" (kbd-select go-end-paragraph)) ;; NOTE: can use A-S-down instead
 
   ;; not yet supported
   ;;("macos ," (open-preferences))

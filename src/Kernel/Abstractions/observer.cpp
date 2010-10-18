@@ -370,7 +370,8 @@ void
 apply (tree& ref, modification mod) {
   ASSERT (is_applicable (ref, mod), "invalid modification");
   path ip= obtain_ip (ref);
-  path p = reverse (ip) * root (mod);
+  path rp= reverse (ip);
+  path p = rp * root (mod);
   if (versioning_busy) raw_apply (ref, mod);
   else if (is_busy) {
     if (ip_attached (ip) && !busy_path (p)) {
@@ -393,6 +394,8 @@ apply (tree& ref, modification mod) {
       }
       busy_paths= list<path> ();
       is_busy= false;
+      if (has_subtree (the_et, rp))
+	ref= subtree (the_et, rp);
     }
   }
 }

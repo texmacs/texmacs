@@ -1136,6 +1136,45 @@ tmg_tree_remove_node (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_cpp_tree_correct_node (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "cpp-tree-correct-node");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  correct_node (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_cpp_tree_correct_downwards (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "cpp-tree-correct-downwards");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  correct_downwards (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_cpp_tree_correct_upwards (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "cpp-tree-correct-upwards");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  correct_upwards (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_concat_tokenize_math (SCM arg1) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "concat-tokenize-math");
 
@@ -4433,6 +4472,9 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-assign-node", (FN) tmg_tree_assign_node, 2, 0, 0);
   scm_new_procedure ("tree-insert-node", (FN) tmg_tree_insert_node, 3, 0, 0);
   scm_new_procedure ("tree-remove-node", (FN) tmg_tree_remove_node, 2, 0, 0);
+  scm_new_procedure ("cpp-tree-correct-node", (FN) tmg_cpp_tree_correct_node, 1, 0, 0);
+  scm_new_procedure ("cpp-tree-correct-downwards", (FN) tmg_cpp_tree_correct_downwards, 1, 0, 0);
+  scm_new_procedure ("cpp-tree-correct-upwards", (FN) tmg_cpp_tree_correct_upwards, 1, 0, 0);
   scm_new_procedure ("concat-tokenize-math", (FN) tmg_concat_tokenize_math, 1, 0, 0);
   scm_new_procedure ("concat-decompose", (FN) tmg_concat_decompose, 1, 0, 0);
   scm_new_procedure ("concat-recompose", (FN) tmg_concat_recompose, 1, 0, 0);

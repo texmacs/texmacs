@@ -109,14 +109,6 @@ L (modification mod) {
 ******************************************************************************/
 
 bool
-has_subtree (tree t, path p) {
-  if (is_nil (p)) return true;
-  if (is_atomic (t)) return false;
-  if ((0 > p -> item) || (p -> item >= N(t))) return false;
-  return has_subtree (t[p->item], p->next);
-}
-
-bool
 can_assign (tree t, path p, tree u) {
   (void) u;
   return has_subtree (t, p);

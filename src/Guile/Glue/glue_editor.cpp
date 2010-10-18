@@ -88,8 +88,8 @@ tmg_path_2tree (SCM arg1) {
 }
 
 SCM
-tmg_path_correct (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-correct");
+tmg_path_correct_old (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-correct-old");
 
   path in1= scm_to_path (arg1);
 
@@ -2624,7 +2624,7 @@ initialize_glue_editor () {
   scm_new_procedure ("cursor-path*", (FN) tmg_cursor_path_dot, 0, 0, 0);
   scm_new_procedure ("selection-tree", (FN) tmg_selection_tree, 0, 0, 0);
   scm_new_procedure ("path->tree", (FN) tmg_path_2tree, 1, 0, 0);
-  scm_new_procedure ("path-correct", (FN) tmg_path_correct, 1, 0, 0);
+  scm_new_procedure ("path-correct-old", (FN) tmg_path_correct_old, 1, 0, 0);
   scm_new_procedure ("path-insert-with", (FN) tmg_path_insert_with, 3, 0, 0);
   scm_new_procedure ("path-remove-with", (FN) tmg_path_remove_with, 2, 0, 0);
   scm_new_procedure ("position-new-path", (FN) tmg_position_new_path, 1, 0, 0);

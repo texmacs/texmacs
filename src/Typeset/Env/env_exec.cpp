@@ -630,7 +630,7 @@ edit_env_rep::exec_drd_props (tree t) {
       else if (prop == "with-like") {
 	if (val == "yes") drd->set_with_like (l, true);
 	if (val == "no") drd->set_with_like (l, false);
-	drd->freeze_border (l);
+	drd->freeze_with_like (l);
       }
       else if (prop == "unaccessible" ||
 	  prop == "hidden" ||

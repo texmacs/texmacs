@@ -56,7 +56,7 @@ edit_text_rep::correct_concat (path p, int done) {
       if (subtree (et, p * 1) == tree (CONCAT)) remove (p * 1, 1);
       else join (p * 0);
       remove_node (p * 0);
-      correct_concat (p, i);
+      correct_concat (p, max (i-1, 0));
       return;
     }
     else if (is_multi_paragraph (t[i]) &&
