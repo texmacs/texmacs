@@ -680,23 +680,6 @@
 		9CD4E66C10B14AB300E0DD5C /* tex_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489510A8CC100097A335 /* tex_init.cpp */; };
 		9CD4E66D10B14AB300E0DD5C /* tex_rubber_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489610A8CC100097A335 /* tex_rubber_font.cpp */; };
 		9CD4E66E10B14AB300E0DD5C /* openssl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489B10A8CC100097A335 /* openssl.cpp */; };
-		9CD4E67910B14AB300E0DD5C /* assoc_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490610A8CC100097A335 /* assoc_environment.cpp */; };
-		9CD4E67A10B14AB300E0DD5C /* basic_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490810A8CC100097A335 /* basic_environment.cpp */; };
-		9CD4E67B10B14AB300E0DD5C /* list_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490B10A8CC100097A335 /* list_environment.cpp */; };
-		9CD4E67C10B14AB300E0DD5C /* std_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490D10A8CC100097A335 /* std_environment.cpp */; };
-		9CD4E67D10B14AB300E0DD5C /* evaluate_boolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491010A8CC100097A335 /* evaluate_boolean.cpp */; };
-		9CD4E67E10B14AB300E0DD5C /* evaluate_control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491110A8CC100097A335 /* evaluate_control.cpp */; };
-		9CD4E67F10B14AB300E0DD5C /* evaluate_inactive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491210A8CC100097A335 /* evaluate_inactive.cpp */; };
-		9CD4E68010B14AB300E0DD5C /* evaluate_length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491310A8CC100097A335 /* evaluate_length.cpp */; };
-		9CD4E68110B14AB300E0DD5C /* evaluate_macro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491410A8CC100097A335 /* evaluate_macro.cpp */; };
-		9CD4E68210B14AB300E0DD5C /* evaluate_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491510A8CC100097A335 /* evaluate_main.cpp */; };
-		9CD4E68310B14AB300E0DD5C /* evaluate_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491710A8CC100097A335 /* evaluate_misc.cpp */; };
-		9CD4E68410B14AB300E0DD5C /* evaluate_numeric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491810A8CC100097A335 /* evaluate_numeric.cpp */; };
-		9CD4E68510B14AB300E0DD5C /* evaluate_quote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491910A8CC100097A335 /* evaluate_quote.cpp */; };
-		9CD4E68610B14AB300E0DD5C /* evaluate_rewrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491A10A8CC100097A335 /* evaluate_rewrite.cpp */; };
-		9CD4E68710B14AB300E0DD5C /* evaluate_textual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491B10A8CC100097A335 /* evaluate_textual.cpp */; };
-		9CD4E68810B14AB300E0DD5C /* clean_copy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491D10A8CC100097A335 /* clean_copy.cpp */; };
-		9CD4E68910B14AB300E0DD5C /* memorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491F10A8CC100097A335 /* memorizer.cpp */; };
 		9CD4E68A10B14AB300E0DD5C /* init_texmacs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492410A8CC110097A335 /* init_texmacs.cpp */; };
 		9CD4E68B10B14AB300E0DD5C /* init_upgrade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492510A8CC110097A335 /* init_upgrade.cpp */; };
 		9CD4E68C10B14AB300E0DD5C /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492710A8CC110097A335 /* timer.cpp */; };
@@ -854,6 +837,9 @@
 		9CD4E73010B14AEE00E0DD5C /* x_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490210A8CC100097A335 /* x_window.cpp */; };
 		9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48EF10A8CC100097A335 /* xpm_widget.cpp */; };
 		9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B487A10A8CC100097A335 /* ghostscript.cpp */; };
+		9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CDA725C126CC926006E8028 /* tree_modify.cpp */; };
+		9CDA725F126CC926006E8028 /* tree_modify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CDA725C126CC926006E8028 /* tree_modify.cpp */; };
+		9CDA7260126CC926006E8028 /* tree_modify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CDA725C126CC926006E8028 /* tree_modify.cpp */; };
 		9CE18E83125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
 		9CE18E84125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
 		9CE18E85125E685D00641CFC /* tree_brackets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CE18E81125E685D00641CFC /* tree_brackets.cpp */; };
@@ -1704,6 +1690,8 @@
 		9CCC751910D3042700E88D90 /* TeXmacsCocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsCocoa.xcconfig; sourceTree = "<group>"; };
 		9CD4E70410B14AB300E0DD5C /* TeXmacsX11.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsX11.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD4E73410B14B4D00E0DD5C /* TeXmacsX11.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsX11.xcconfig; sourceTree = "<group>"; };
+		9CDA725C126CC926006E8028 /* tree_modify.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_modify.cpp; sourceTree = "<group>"; };
+		9CDA725D126CC926006E8028 /* tree_modify.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_modify.hpp; sourceTree = "<group>"; };
 		9CE18E81125E685D00641CFC /* tree_brackets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_brackets.cpp; sourceTree = "<group>"; };
 		9CE18E82125E685D00641CFC /* tree_brackets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_brackets.hpp; sourceTree = "<group>"; };
 		9CE4F0041238FAF800993AF7 /* packrat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat.hpp; sourceTree = "<group>"; };
@@ -2094,6 +2082,8 @@
 		9C0B47A310A8CC100097A335 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				9CDA725C126CC926006E8028 /* tree_modify.cpp */,
+				9CDA725D126CC926006E8028 /* tree_modify.hpp */,
 				9CEDAA2E1264FF6C009630CC /* tree_analyze.cpp */,
 				9CEDAA2F1264FF6C009630CC /* tree_analyze.hpp */,
 				9CE18E81125E685D00641CFC /* tree_brackets.cpp */,
@@ -3976,6 +3966,7 @@
 				9CF78E0D125FBF9700CA5846 /* highlight_observer.cpp in Sources */,
 				9CEDAA301264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA361264FF88009630CC /* unicode_math_font.cpp in Sources */,
+				9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4330,6 +4321,7 @@
 				9CF78E0F125FBF9700CA5846 /* highlight_observer.cpp in Sources */,
 				9CEDAA321264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA381264FF88009630CC /* unicode_math_font.cpp in Sources */,
+				9CDA7260126CC926006E8028 /* tree_modify.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4458,23 +4450,6 @@
 				9CD4E66C10B14AB300E0DD5C /* tex_init.cpp in Sources */,
 				9CD4E66D10B14AB300E0DD5C /* tex_rubber_font.cpp in Sources */,
 				9CD4E66E10B14AB300E0DD5C /* openssl.cpp in Sources */,
-				9CD4E67910B14AB300E0DD5C /* assoc_environment.cpp in Sources */,
-				9CD4E67A10B14AB300E0DD5C /* basic_environment.cpp in Sources */,
-				9CD4E67B10B14AB300E0DD5C /* list_environment.cpp in Sources */,
-				9CD4E67C10B14AB300E0DD5C /* std_environment.cpp in Sources */,
-				9CD4E67D10B14AB300E0DD5C /* evaluate_boolean.cpp in Sources */,
-				9CD4E67E10B14AB300E0DD5C /* evaluate_control.cpp in Sources */,
-				9CD4E67F10B14AB300E0DD5C /* evaluate_inactive.cpp in Sources */,
-				9CD4E68010B14AB300E0DD5C /* evaluate_length.cpp in Sources */,
-				9CD4E68110B14AB300E0DD5C /* evaluate_macro.cpp in Sources */,
-				9CD4E68210B14AB300E0DD5C /* evaluate_main.cpp in Sources */,
-				9CD4E68310B14AB300E0DD5C /* evaluate_misc.cpp in Sources */,
-				9CD4E68410B14AB300E0DD5C /* evaluate_numeric.cpp in Sources */,
-				9CD4E68510B14AB300E0DD5C /* evaluate_quote.cpp in Sources */,
-				9CD4E68610B14AB300E0DD5C /* evaluate_rewrite.cpp in Sources */,
-				9CD4E68710B14AB300E0DD5C /* evaluate_textual.cpp in Sources */,
-				9CD4E68810B14AB300E0DD5C /* clean_copy.cpp in Sources */,
-				9CD4E68910B14AB300E0DD5C /* memorizer.cpp in Sources */,
 				9CD4E68A10B14AB300E0DD5C /* init_texmacs.cpp in Sources */,
 				9CD4E68B10B14AB300E0DD5C /* init_upgrade.cpp in Sources */,
 				9CD4E68C10B14AB300E0DD5C /* timer.cpp in Sources */,
@@ -4699,6 +4674,7 @@
 				9CF78E0E125FBF9700CA5846 /* highlight_observer.cpp in Sources */,
 				9CEDAA311264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA371264FF88009630CC /* unicode_math_font.cpp in Sources */,
+				9CDA725F126CC926006E8028 /* tree_modify.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
