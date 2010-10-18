@@ -33,7 +33,7 @@
   ("emacs:meta" "M-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
-  ("special" "M-A-")
+  ("special" "M-C-")
   ("accent" "M-" #t)
   ("copyto" "M-W")
   ("cutto" "emacs W")
@@ -42,6 +42,15 @@
   ("structured:move" "M-A-")
   ("structured:insert" "A-")
   ("structured:geometry" "M-"))
+
+(kbd-wildcards
+  ("escape" "M-" #t)
+  ("escape escape" "A-" #t)
+  ("escape escape escape" "C-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "M-A-" #t)
+  ("S-escape S-escape" "M-C-" #t)
+  ("S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("emacs" "" "Emacs command")
@@ -62,7 +71,6 @@
   ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
-  ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
@@ -71,6 +79,15 @@
   ("structured:move" "M-A-")
   ("structured:insert" "M-")
   ("structured:geometry" "M-C-"))
+
+(kbd-wildcards
+  ("escape" "M-" #t)
+  ("escape escape" "A-" #t)
+  ("escape escape escape" "C-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "M-C-" #t)
+  ("S-escape S-escape" "M-A-" #t)
+  ("S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("gnome" "" "Gnome command")
@@ -89,7 +106,6 @@
   ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
-  ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
@@ -98,6 +114,15 @@
   ("structured:move" "M-A-")
   ("structured:insert" "M-")
   ("structured:geometry" "M-C-"))
+
+(kbd-wildcards
+  ("escape" "M-" #t)
+  ("escape escape" "A-" #t)
+  ("escape escape escape" "C-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "M-C-" #t)
+  ("S-escape S-escape" "M-A-" #t)
+  ("S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("kde" "" "KDE command")
@@ -116,7 +141,6 @@
   ("std" "M-" #t)
   ("cmd" "C-")
   ("altcmd" "A-")
-  ("special" "M-A-")
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
@@ -125,6 +149,15 @@
   ("structured:move" "A-C-")
   ("structured:insert" "C-")
   ("structured:geometry" "M-A-"))
+
+(kbd-wildcards
+  ("escape" "A-" #t)
+  ("escape escape" "C-" #t)
+  ("escape escape escape" "M-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "M-A-" #t)
+  ("S-escape S-escape" "A-C-" #t)
+  ("S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("macos" "" "MacOS command")
@@ -143,7 +176,6 @@
   ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
-  ("special" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
@@ -152,6 +184,15 @@
   ("structured:move" "M-A-")
   ("structured:insert" "M-")
   ("structured:geometry" "M-C-"))
+
+(kbd-wildcards
+  ("escape" "M-" #t)
+  ("escape escape" "A-" #t)
+  ("escape escape escape" "C-" #t)
+  ("escape escape escape escape" "noop" #t)
+  ("S-escape" "M-C-" #t)
+  ("S-escape S-escape" "M-A-" #t)
+  ("S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("windows" "" "Windows command")
@@ -174,13 +215,11 @@
   ("var" "tab" #t)
   ("unvar" "S-tab" #t)  
 
-  ("font" "special" #t)
-  ("symbol" "S-F5" #t)
-
   ("text" "cmd" #t)
   ("math" "cmd" #t)
   ("prog" "cmd" #t)
 
+  ("font" "altcmd f")
   ("executable" "altcmd e")
   ("inactive" "altcmd i")
   ("link" "altcmd l")
@@ -200,6 +239,7 @@
   ("accent:abovering" "accent O")
   ("accent:abovedot" "accent .")
 
+  ("symbol" "S-F5" #t)
   ("text:symbol" "S-F5" #t)
 
   ("math:greek" "F5" #t)
@@ -221,11 +261,6 @@
   ("math:right" "math r" #t))
 
 (kbd-wildcards
-  ("escape" "M-" #t)
-  ("escape escape" "A-" #t)
-  ("escape escape escape" "M-A-" #t)
-  ("escape escape escape escape" "noop" #t)
-
   ("tilde tilde" "tilde")
   ("hat hat" "hat")
   ("umlaut umlaut" "umlaut")
@@ -259,32 +294,30 @@
 (kbd-map
   ("cmd" "" "TeXmacs command")
   ("altcmd" "" "Alternate TeXmacs command")
-  ("special" "" "Special command")
+  ("structured:move" "" "Structured move")
+  ("structured:geometry" "" "Structured position or resize")
   ("symbol" "" "Insert a TeXmacs symbol")
   ("copyto" "" "Copy to (1, 2, 3, *:other)")
   ("cutto" "" "Cut to (1, 2, 3, *:other)")
   ("pastefrom" "" "Paste from (1, 2, 3, *:other)")
   ("noop" (set-message "" ""))
 
+  ("font" "" "Change font")
   ("executable" "" "Insert executable markup")
   ("inactive" "" "Insert inactive markup")
   ("script" "" "Evaluate function or insert evaluation tag")
+  ("link" "" "Linking command")
+  ("version" "" "Versioning command")
+  ("table" "" "Table command"))
 
-  ("table" "" "Table command")
-  ("table N" "" "New table (t: tabular, b: block)")
-  ("table H" "" "Horizontal table alignment (l: left, c: center, r: right)")
-  ("table V" "" "Vertical table alignment: (b: bottom, c: center, t: top)")
-  ("table B" "" "Modify table border (options: =, l, r, b, t)")
-  ("table P" "" "Modify table padding (options: =, l, r, b, t)")
-  ("table m" "" "Set cell mode (c: cell, h: row, v: column, t: table)")
-  ("table h" "" "Horizontal cell alignment (l: left, c: center, r: right)")
-  ("table v" "" "Vertical cell alignment: (b: bottom, c: center, t: top)")
-  ("table b" "" "Modify cell border (options: =, l, r, b, t)")
-  ("table p" "" "Modify cell padding (options: =, l, r, b, t)"))
+(kbd-map
+  (:profile emacs)
+  ("altcmd" "" "Alternate TeXmacs command")
+  ("special" "" "Special command"))
 
 (kbd-map
   (:mode in-text?)
-  ("text" "" "Insert textual markup")
+  ("text" "" "TeXmacs command")
   ("text:symbol" "" "Insert a special character"))
 
 (kbd-map
@@ -305,3 +338,7 @@
   ("math:symbol" "" "Insert a mathematical symbol")
   ("math:symbol:circled" "" "Insert a big circled operator")
   ("math:symbol:limits" "" "Insert a mathematical symbol with limits"))
+
+(kbd-map
+  (:mode in-prog?)
+  ("prog" "" "TeXmacs command"))

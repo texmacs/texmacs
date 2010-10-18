@@ -19,7 +19,6 @@
 
 (kbd-map
   (:mode with-linking-tool?)
-  ("link" "" "Linking command")
   ("link L" (make-locus))
   ("link 1" (set-link-mode "simple"))
   ("link 2" (set-link-mode "bidirectional"))

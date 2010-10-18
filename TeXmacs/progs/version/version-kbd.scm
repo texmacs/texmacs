@@ -17,7 +17,6 @@
 
 (kbd-map
   (:mode with-versioning-tool?)
-  ("version" "" "Versioning command")
   ("version home" (version-first-difference))
   ("version pageup" (version-previous-difference))
   ("version pagedown" (version-next-difference))

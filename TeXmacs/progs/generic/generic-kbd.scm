@@ -223,21 +223,16 @@
   ("emacs g" (selection-cancel))
   ("emacs j" (insert-return))
   ("emacs k" (kill-paragraph))
-  ("emacs l" (recenter-window))
   ("emacs m" (insert-return))
   ("emacs n" (kbd-down))
-  ("emacs o" (open-line))
   ("emacs p" (kbd-up))
   ("emacs q" (make 'symbol))
   ("emacs r" (search-start #f))
   ("emacs s" (search-start #t))
-  ("emacs t" (transpose-chars))
   ("emacs v" (kbd-page-down))
   ("emacs w" (clipboard-cut "primary"))
   ("emacs y" (clipboard-paste "primary"))
   ("emacs insert" (clipboard-copy "primary"))
-  ("emacs \\" (toggle-input-method))
-  ("emacs ]" (abort-recursive-edit))
   ("emacs _" (undo 0))
   ("emacs /" (undo 0))
 
@@ -256,12 +251,12 @@
   ("emacs:prefix C-s" (save-buffer))
   ("emacs:prefix C-w" (interactive save-buffer))
 
-  ;; extra Emacs-ish shortcuts
-  ("emacs =" (interactive replace-start-forward))
-
-  ("emacs:meta g" (clipboard-clear "primary"))
-  ("emacs:meta [" (undo 0))
-  ("emacs:meta ]" (redo 0))
+  ;; not implemented
+  ;;("emacs l" (recenter-window))
+  ;;("emacs o" (open-line))
+  ;;("emacs t" (transpose-chars))
+  ;;("emacs \\" (toggle-input-method))
+  ;;("emacs ]" (abort-recursive-edit))
 
   ;; further shortcuts for the Emacs mode
   ("F2" (open-buffer))
@@ -277,6 +272,11 @@
   ("C-F4" (interactive print-to-file))
   ("M-F4" (interactive print-pages))
   ("M-S-F4" (interactive print-pages-to-file))
+
+  ("emacs =" (interactive replace-start-forward))
+  ("emacs:meta g" (clipboard-clear "primary"))
+  ("emacs:meta [" (undo 0))
+  ("emacs:meta ]" (redo 0))
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))

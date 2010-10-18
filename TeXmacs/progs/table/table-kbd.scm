@@ -17,6 +17,17 @@
 
 (kbd-map
   (:mode in-table?)
+  ("table N" "" "New table (t: tabular, b: block)")
+  ("table H" "" "Horizontal table alignment (l: left, c: center, r: right)")
+  ("table V" "" "Vertical table alignment: (b: bottom, c: center, t: top)")
+  ("table B" "" "Modify table border (options: =, l, r, b, t)")
+  ("table P" "" "Modify table padding (options: =, l, r, b, t)")
+  ("table m" "" "Set cell mode (c: cell, h: row, v: column, t: table)")
+  ("table h" "" "Horizontal cell alignment (l: left, c: center, r: right)")
+  ("table v" "" "Vertical cell alignment: (b: bottom, c: center, t: top)")
+  ("table b" "" "Modify cell border (options: =, l, r, b, t)")
+  ("table p" "" "Modify cell padding (options: =, l, r, b, t)")
+
   ("table S" (make-subtable))
   ("table H l" (table-set-halign "l"))
   ("table H c" (table-set-halign "c"))
