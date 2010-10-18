@@ -51,7 +51,8 @@
   ("escape escape escape escape" "noop" #t)
   ("S-escape" "M-A-" #t)
   ("S-escape S-escape" "M-C-" #t)
-  ("S-escape S-escape S-escape" "noop" #t))
+  ("S-escape S-escape S-escape" "A-C-" #t)
+  ("S-escape S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("emacs" "" "Emacs command")
@@ -72,6 +73,7 @@
   ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
+  ("special" "A-C-")
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
@@ -87,8 +89,9 @@
   ("escape escape escape" "C-" #t)
   ("escape escape escape escape" "noop" #t)
   ("S-escape" "M-C-" #t)
-  ("S-escape S-escape" "M-A-" #t)
-  ("S-escape S-escape S-escape" "noop" #t))
+  ("S-escape S-escape" "A-C-" #t)
+  ("S-escape S-escape S-escape" "M-A-" #t)
+  ("S-escape S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("gnome" "" "Gnome command")
@@ -107,6 +110,7 @@
   ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
+  ("special" "A-C-")
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
@@ -122,8 +126,9 @@
   ("escape escape escape" "C-" #t)
   ("escape escape escape escape" "noop" #t)
   ("S-escape" "M-C-" #t)
-  ("S-escape S-escape" "M-A-" #t)
-  ("S-escape S-escape S-escape" "noop" #t))
+  ("S-escape S-escape" "A-C-" #t)
+  ("S-escape S-escape S-escape" "M-A-" #t)
+  ("S-escape S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("kde" "" "KDE command")
@@ -142,12 +147,13 @@
   ("std" "M-" #t)
   ("cmd" "C-")
   ("altcmd" "A-")
+  ("special" "A-C-")
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
   ("accent" "M-" #t)
   ("structured:cmd" "A-")
-  ("structured:move" "A-C-")
+  ("structured:move" "M-C-")
   ("structured:insert" "C-")
   ("structured:geometry" "M-A-"))
 
@@ -158,7 +164,8 @@
   ("escape escape escape escape" "noop" #t)
   ("S-escape" "M-A-" #t)
   ("S-escape S-escape" "A-C-" #t)
-  ("S-escape S-escape S-escape" "noop" #t))
+  ("S-escape S-escape S-escape" "M-C-" #t)
+  ("S-escape S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("macos" "" "MacOS command")
@@ -177,6 +184,7 @@
   ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
+  ("special" "A-C-")
   ("accent" "M-" #t)
   ("copyto" "std C")
   ("cutto" "std X")
@@ -192,8 +200,9 @@
   ("escape escape escape" "C-" #t)
   ("escape escape escape escape" "noop" #t)
   ("S-escape" "M-C-" #t)
-  ("S-escape S-escape" "M-A-" #t)
-  ("S-escape S-escape S-escape" "noop" #t))
+  ("S-escape S-escape" "A-C-" #t)
+  ("S-escape S-escape S-escape" "M-A-" #t)
+  ("S-escape S-escape S-escape S-escape" "noop" #t))
 
 (kbd-map
   ("windows" "" "Windows command")
@@ -295,6 +304,7 @@
 (kbd-map
   ("cmd" "" "TeXmacs command")
   ("altcmd" "" "Alternate TeXmacs command")
+  ("special" "" "Special command")
   ("structured:move" "" "Structured move")
   ("structured:geometry" "" "Structured position or resize")
   ("symbol" "" "Insert a TeXmacs symbol")
@@ -313,8 +323,7 @@
 
 (kbd-map
   (:profile emacs)
-  ("altcmd" "" "Alternate TeXmacs command")
-  ("special" "" "Special command"))
+  ("altcmd" "" "Alternate TeXmacs command"))
 
 (kbd-map
   (:mode in-text?)

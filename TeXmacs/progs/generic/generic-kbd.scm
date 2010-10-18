@@ -52,8 +52,8 @@
   ("S-tab" (kbd-shift-tab))
   ("S-return" (kbd-shift-return))
 
-  ("backspace" (kbd-remove #f))
   ("delete" (kbd-remove #t))
+  ("backspace" (kbd-remove #f))
   ("left" (kbd-left))
   ("right" (kbd-right))
   ("up" (kbd-up))
@@ -62,8 +62,8 @@
   ("end" (kbd-end-line))
   ("pageup" (kbd-page-up))
   ("pagedown" (kbd-page-down))
-  ("S-backspace" (kbd-remove #f))
   ("S-delete" (kbd-remove #t))
+  ("S-backspace" (kbd-remove #f))
   ("S-left" (kbd-select kbd-left))
   ("S-right" (kbd-select kbd-right))
   ("S-up" (kbd-select kbd-up))
@@ -73,8 +73,8 @@
   ("S-pageup" (kbd-select kbd-page-up))
   ("S-pagedown" (kbd-select kbd-page-down))
 
-  ("structured:cmd backspace" (remove-structure-upwards))
   ("structured:cmd delete" (remove-structure-upwards))
+  ("structured:cmd backspace" (remove-structure-upwards))
   ("structured:cmd left" (traverse-left))
   ("structured:cmd right" (traverse-right))
   ("structured:cmd up" (traverse-up))
@@ -99,8 +99,8 @@
   ("structured:cmd #" (toggle-number))
   ("structured:cmd %" (hidden-variant))
 
-  ("structured:move backspace" (structured-exit-left))
   ("structured:move delete" (structured-exit-right))
+  ("structured:move backspace" (structured-exit-left))
   ("structured:move left" (structured-left))
   ("structured:move right" (structured-right))
   ("structured:move up" (structured-up))
@@ -118,8 +118,8 @@
   ("structured:move S-pageup" (kbd-select structured-top))
   ("structured:move S-pagedown" (kbd-select structured-bottom))
 
-  ("structured:insert backspace" (structured-remove #f))
   ("structured:insert delete" (structured-remove #t))
+  ("structured:insert backspace" (structured-remove #f))
   ("structured:insert left" (structured-insert #f))
   ("structured:insert right" (structured-insert #t))
   ("structured:insert up" (structured-insert-up))
@@ -129,8 +129,8 @@
   ("structured:insert pageup" (structured-insert-top))
   ("structured:insert pagedown" (structured-insert-bottom))
 
-  ("structured:geometry backspace" (positioning-default))
   ("structured:geometry delete" (positioning-default))
+  ("structured:geometry backspace" (positioning-default))
   ("structured:geometry left" (positioning-left))
   ("structured:geometry right" (positioning-right))
   ("structured:geometry up" (positioning-up))
@@ -353,8 +353,8 @@
   ("A-right" (cursor-history-forward))
 
   ;; not yet implemented
-  ;;("gnome backspace" (delete-start-word))
   ;;("gnome delete" (delete-end-word))
+  ;;("gnome backspace" (delete-start-word))
   ;;("forward" (next-tab))
   ;;("back" (previous-tab))
 
@@ -403,8 +403,8 @@
 
   ;; not yet implemented
   ;;("kde N" (add-tab))
-  ;;("kde backspace" (delete-start-word))
   ;;("kde delete" (delete-end-word))
+  ;;("kde backspace" (delete-start-word))
   ;;("forward" (next-tab))
   ;;("back" (previous-tab))
 
@@ -490,8 +490,8 @@
   ;; not yet implemented
   ;;("windows F6" (next-tab))
   ;;("windows S-F6" (previous-tab))
-  ;;("windows backspace" (delete-start-word))
   ;;("windows delete" (delete-end-word))
+  ;;("windows backspace" (delete-start-word))
   ;;("forward" (next-tab))
   ;;("back" (previous-tab))
 
