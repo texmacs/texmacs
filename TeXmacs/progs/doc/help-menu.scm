@@ -27,8 +27,10 @@
 	(-> "Configuration"
 	    ("Browse" (load-help-buffer "main/config/man-configuration"))
 	    ---
-	    ("Introduction"
-	     (load-help-article "main/config/man-intro"))
+	    ("User preferences"
+	     (load-help-article "main/config/man-preferences"))
+	    ("Keyboard configuration"
+	     (load-help-article "main/config/man-config-keyboard"))
 	    ("Users of Cyrillic languages"
 	     (load-help-article "main/config/man-russian"))
 	    ("Users of oriental languages"

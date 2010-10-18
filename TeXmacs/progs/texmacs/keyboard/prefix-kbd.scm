@@ -31,6 +31,7 @@
   ("emacs:contextual" "emacs c")
   ("emacs:prefix" "emacs x")
   ("emacs:meta" "M-" #t)
+  ("std" "C-" #t)
   ("cmd" "A-")
   ("altcmd" "M-")
   ("special" "M-C-")
