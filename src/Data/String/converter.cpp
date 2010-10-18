@@ -204,7 +204,8 @@ cork_to_utf8 (string input) {
       r << encode_as_utf8 (from_hexadecimal (input (start, i)));
       start= i+1;
     }
-  return r * apply (conv, input (start, n));
+  r << apply (conv, input (start, n));
+  return r;
 }
 
 string
@@ -220,7 +221,8 @@ t2a_to_utf8 (string input) {
       r << encode_as_utf8 (from_hexadecimal (input (start, i)));
       start= i+1;
     }
-  return r * apply (conv, input (start, n));
+  r << apply (conv, input (start, n));
+  return r;
 }
 
 string
