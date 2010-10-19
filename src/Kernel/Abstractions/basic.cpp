@@ -184,6 +184,8 @@ static const char*
 default_look_and_feel_impl () {
   if (os_mingw () || os_win32 ()) return "windows";
   else if (os_macos ()) return "macos";
+  else if (get_env ("KDE_FULL_SESSION") != "") return "kde";
+  else if (get_env ("GNOME_DESKTOP_SESSION_ID") != "") return "gnome";
   else if (eval_system ("pidof ksmserver") != "") return "kde";
   else if (eval_system ("pidof gnome-session") != "") return "gnome";
   //else if (eval_system ("pidof xfce-mcs-manage") != "") return "xfce";
