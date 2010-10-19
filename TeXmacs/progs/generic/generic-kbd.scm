@@ -439,6 +439,8 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
 
+  ("M-A-C-home" (traverse-first))
+  ("M-A-C-end" (traverse-last))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -491,6 +493,8 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
 
+  ("M-A-C-home" (traverse-first))
+  ("M-A-C-end" (traverse-last))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -680,6 +684,8 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd $" (spell-start))
 
+  ("M-A-C-home" (traverse-first))
+  ("M-A-C-end" (traverse-last))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
