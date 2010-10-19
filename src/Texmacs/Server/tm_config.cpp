@@ -294,12 +294,34 @@ kbd_render (tree t) {
   return compound ("render-key", t);
 }
 
+static string
+kbd_system_prevails (string s) {
+  if (os_macos () && starts (s, "A-")) {
+    string ss= s (2, N(s));
+    string r = "escape " * ss;
+    if (starts (ss, "S-")) ss= ss (2, N(ss));
+    if (N(ss) == 1) return r;
+    else return s;
+  }
+  else return s;
+}
+
 tree
 tm_config_rep::kbd_system_rewrite (string s) {
   system_kbd_initialize (system_kbd_decode);
+  int start= 0, i;
+  for (i=0; i <= N(s); i++)
+    if (i == N(s) || s[i] == ' ') {
+      string ss= s (start, i);
+      string rr= kbd_system_prevails (ss);
+      if (rr != ss)
+	return kbd_system_rewrite (s (0, start) * rr * s (i, N(s)));
+      start= i+1;
+    }
+
   tree k (CONCAT);
   tree r (CONCAT);
-  int start= 0, i= 0;
+  start= i= 0;
   while (true)
     if (i == N(s) || s[i] == '-' || s[i] == ' ') {
       if (i < N(s) && s[i] == '-') i++;
