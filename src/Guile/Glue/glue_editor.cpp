@@ -1398,6 +1398,67 @@ tmg_complete_tryP () {
 }
 
 SCM
+tmg_get_input_mode () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->get_editor()->get_input_mode ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_key_press_search (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "key-press-search");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->search_keypress (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_key_press_replace (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "key-press-replace");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->replace_keypress (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_key_press_spell (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "key-press-spell");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->spell_keypress (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_key_press_complete (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "key-press-complete");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->complete_keypress (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_mouse_any (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "mouse-any");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "mouse-any");
@@ -2749,6 +2810,11 @@ initialize_glue_editor () {
   scm_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
   scm_new_procedure ("raw-emulate-keyboard", (FN) tmg_raw_emulate_keyboard, 1, 0, 0);
   scm_new_procedure ("complete-try?", (FN) tmg_complete_tryP, 0, 0, 0);
+  scm_new_procedure ("get-input-mode", (FN) tmg_get_input_mode, 0, 0, 0);
+  scm_new_procedure ("key-press-search", (FN) tmg_key_press_search, 1, 0, 0);
+  scm_new_procedure ("key-press-replace", (FN) tmg_key_press_replace, 1, 0, 0);
+  scm_new_procedure ("key-press-spell", (FN) tmg_key_press_spell, 1, 0, 0);
+  scm_new_procedure ("key-press-complete", (FN) tmg_key_press_complete, 1, 0, 0);
   scm_new_procedure ("mouse-any", (FN) tmg_mouse_any, 5, 0, 0);
   scm_new_procedure ("set-mouse-pointer", (FN) tmg_set_mouse_pointer, 2, 0, 0);
   scm_new_procedure ("set-predef-mouse-pointer", (FN) tmg_set_predef_mouse_pointer, 1, 0, 0);

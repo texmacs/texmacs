@@ -561,3 +561,49 @@
 	(if (== rep "no") (set! rep "false"))
 	(insert `(video ,(url->string u) ,w ,h ,len ,rep)))
     "Width" "Height" "Length" "Repeat?"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Search, replace, spell and tab-completion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (key-press-command key)
+  ;; FIXME: this routine should do exactly the same as key-press,
+  ;; without modification of the internal state and without executing
+  ;; the actual shortcut. It should rather return a command which
+  ;; does all this, or #f
+  (and-with p (kbd-find-key-binding key)
+    (car p)))
+
+(tm-define (keyboard-press key time)
+  (:mode search-mode?)
+  (with cmd (key-press-command (string-append "search " key))
+    (cond (cmd (cmd))
+	  ((key-press-search key) (noop))
+	  (else (key-press key)))))
+
+(tm-define (search-next)
+  (key-press-search "next"))
+
+(tm-define (search-previous)
+  (key-press-search "previous"))
+
+(tm-define (keyboard-press key time)
+  (:mode replace-mode?)
+  (with cmd (key-press-command (string-append "replace " key))
+    (cond (cmd (cmd))
+	  ((key-press-replace key) (noop))
+	  (else (key-press key)))))
+
+(tm-define (keyboard-spell key time)
+  (:mode replace-mode?)
+  (with cmd (key-press-command (string-append "spell " key))
+    (cond (cmd (cmd))
+	  ((key-press-spell key) (noop))
+	  (else (key-press key)))))
+
+(tm-define (keyboard-complete key time)
+  (:mode replace-mode?)
+  (with cmd (key-press-command (string-append "complete " key))
+    (cond (cmd (cmd))
+	  ((key-press-complete key) (noop))
+	  (else (key-press key)))))

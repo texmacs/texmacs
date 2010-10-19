@@ -126,14 +126,19 @@ edit_interface_rep::complete_start (string prefix, array<string> compls) {
 
 bool
 edit_interface_rep::complete_keypress (string key) {
-  if ((key != "tab") && (key != "S-tab")) return false;
+  set_message ("", "");
+  if (key == "space") key= " ";
+  if ((key != "tab") && (key != "S-tab")) {
+    set_input_normal (); return false; }
   tree st= subtree (et, path_up (tp));
-  if (is_compound (st)) return false;
+  if (is_compound (st)) {
+    set_input_normal (); return false; }
   string s= st->label;
   int end= last_item (tp);
   string old_s= completions [completion_pos];
   string test= completion_prefix * old_s;
-  if ((end<N(test)) || (s (end-N(test), end) != test)) return false;
+  if ((end<N(test)) || (s (end-N(test), end) != test)) {
+    set_input_normal (); return false; }
 
   if (key == "tab") completion_pos++;
   else completion_pos--;

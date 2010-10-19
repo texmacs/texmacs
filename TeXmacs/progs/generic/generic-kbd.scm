@@ -184,6 +184,8 @@
   ("paste" (noop) (clipboard-paste "primary"))
   ("copy" (noop) (clipboard-copy "primary"))
   ("find" (noop) (search-start #t))
+  ("search find" (search-next))
+  ("search again" (search-next))
 
   ("copyto 1" (noop) (clipboard-copy "primary"))
   ("copyto 2" (clipboard-copy "secondary"))
@@ -255,6 +257,9 @@
   ("emacs:prefix C-f" (interactive load-buffer))
   ("emacs:prefix C-s" (save-buffer))
   ("emacs:prefix C-w" (interactive save-buffer))
+
+  ("search emacs s" (search-next))
+  ("search emacs r" (search-previous))
 
   ;; not implemented
   ;;("emacs h ..." (help ...))
@@ -420,13 +425,14 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
+  ("search F3" (search-next))
+  ("search S-F3" (search-previous))
+  ("search gnome g" (search-next))
+  ("search gnome G" (search-previous))
+
   ;; not yet implemented
-  ;;("F3" (search-next))
-  ;;("S-F3" (search-previous))
   ;;("gnome delete" (delete-end-word))
   ;;("gnome backspace" (delete-start-word))
-  ;;("gnome g" (search-next))
-  ;;("gnome G" (search-previous))
   ;;("forward" (next-tab))
   ;;("back" (previous-tab))
 
@@ -467,8 +473,6 @@
   ("kde S-home" (kbd-select go-start))
   ("kde S-end" (kbd-select go-end))
 
-  ("F3" (search-next))
-  ("S-F3" (search-previous))
   ("F14" (undo 0))
   ("F16" (clipboard-copy "primary"))
   ("F18" (clipboard-paste "primary"))
@@ -478,6 +482,9 @@
   ("S-delete" (clipboard-cut "primary"))
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
+
+  ("search F3" (search-next))
+  ("search S-F3" (search-previous))
 
   ;; not yet implemented
   ;;("kde N" (add-tab))
@@ -525,6 +532,9 @@
   ("macos S-up" (kbd-select go-start))
   ("macos S-down" (kbd-select go-end))
 
+  ("search macos g" (search-next))
+  ("search macos G" (search-previous))
+
   ;; not yet supported
   ;;("macos :" (display-spelling-window))
   ;;("macos ," (open-preferences))
@@ -539,8 +549,6 @@
   ;;("macos C-d" (show-definition-word))
   ;;("macos A-d" (toggle-doc))
   ;;("macos e" (search-selection))
-  ;;("macos g" (search-next))
-  ;;("macos G" (search-previous))
   ;;("macos h" (hide-window))
   ;;("macos A-h" (hide-other-windows))
   ;;("macos A-i" (show-inspector-window))
@@ -612,9 +620,12 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
+  ("search windows g" (search-next))
+  ("search windows G" (search-previous))
+  ("search F3" (search-next))
+  ("search S-F3" (search-previous))
+
   ;; not yet implemented
-  ;;("F3" (search-next))
-  ;;("S-F3" (search-previous))
   ;;("F4" (go-to-different-folder))
   ;;("F5" (refresh-window))
   ;;("F6" (switch-to-next-pane))
@@ -636,8 +647,6 @@
   ;;("windows D" (insert-endnote))
   ;;("windows E" (review-toggle-track-changes))
   ;;("windows g" (go-to-location))
-  ;;("windows g" (search-next))
-  ;;("windows G" (search-previous))
   ;;("windows A-m" (review-insert-comment))
   ;;("windows V" (paste-formatting))
   ;;("windows A-y" (search-repeat))

@@ -159,6 +159,8 @@ edit_replace_rep::spell_replace (string by) {
 
 bool
 edit_replace_rep::spell_keypress (string s) {
+  set_message ("", "");
+  if (s == "space") s= " ";
   if ((s == "C-c") || (s == "C-g") || (s == "escape"))
     spell_end ();
   else if ((s == "a") || (s == "A")) {

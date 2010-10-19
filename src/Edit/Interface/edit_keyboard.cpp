@@ -119,42 +119,8 @@ edit_interface_rep::try_shortcut (string comb) {
   return false;
 }
 
-static string
-simplify_key_press (string key) {
-  while ((N(key) >= 5) && (key(0,3) == "Mod") && (key[4] == '-') &&
-	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
-  if (key == "space") key= " ";
-  return key;
-}
-
 void
 edit_interface_rep::key_press (string key) {
-  if (contains_unicode_char (key)) {
-    if (input_mode == INPUT_NORMAL) insert_tree (key);
-    return;
-  }
-
-  set_message ("", "");
-  if (input_mode != INPUT_NORMAL)
-    key= simplify_key_press (key);
-  switch (input_mode) {
-  case INPUT_NORMAL:
-    break;
-  case INPUT_SEARCH:
-    if (search_keypress (key)) return;
-    break;
-  case INPUT_REPLACE:
-    if (replace_keypress (key)) return;
-    break;
-  case INPUT_SPELL:
-    if (spell_keypress (key)) return;
-    break;
-  case INPUT_COMPLETE:
-    if (complete_keypress (key)) return;
-    set_input_normal ();
-    break;
-  }
-
   string new_sh= N(sh_s)==0? key: sh_s * " " * key;
   if (try_shortcut (new_sh)) return;
   if (new_sh != key) {
@@ -163,12 +129,16 @@ edit_interface_rep::key_press (string key) {
   }
 
   string rew= sv->kbd_post_rewrite (key);
-  if (N(rew)==1) {
+  if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
-    if ((((i >= 32) && (i <= 127)) || ((i >= 128) && (i <= 255))) &&
-	!inside_active_graphics ())
-      insert_tree (rew);
+    if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255))
+      if (!inside_active_graphics ())
+	insert_tree (rew);
     interrupt_shortcut ();
+  }
+  else if (contains_unicode_char (rew)) {
+    insert_tree (key);
+    interrupt_shortcut ();    
   }
 }
 

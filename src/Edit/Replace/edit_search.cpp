@@ -433,7 +433,9 @@ edit_replace_rep::search_button_next () {
 
 bool
 edit_replace_rep::search_keypress (string s) {
-  if (N(s)==1) {
+  set_message ("", "");
+  if (s == "space") s= " ";
+  if (N(s) == 1) {
     if (is_atomic (search_what))
       search_next (as_string (search_what) * s, forward, false);
   }
@@ -448,18 +450,16 @@ edit_replace_rep::search_keypress (string s) {
       }
     else if ((s == "C-c") || (s == "C-g"))
       search_stop ();
-    else if ((s == "C-r") || (s == "C-s") ||
-	     (s == "C-f") || (s == "F3") ||
-	     (s == "find") || (s == "again")) {
+    else if ((s == "next") || (s == "previous")) {
       if (search_what == "") {
 	tree t= selection_raw_get ("search");
 	if (is_tuple (t, "texmacs", 3) &&
 	    (t[1] != "") &&
 	    (t[2] == search_mode) &&
 	    (t[3] == search_lan))
-	  search_next (t[1], s != "C-r", true);
+	  search_next (t[1], s != "previous", true);
       }
-      else search_next (search_what, s != "C-r", true);
+      else search_next (search_what, s != "previous", true);
     }
     else if ((s == "delete") || (s == "backspace")) {
       if (is_nil (where_stack))
@@ -551,6 +551,8 @@ edit_replace_rep::replace_next () {
 
 bool
 edit_replace_rep::replace_keypress (string s) {
+  set_message ("", "");
+  if (s == "space") s= " ";
   if ((s == "C-c") || (s == "C-g") || (s == "escape"))
     set_input_normal ();
   else if (s == "y") {
