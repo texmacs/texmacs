@@ -13,6 +13,7 @@
 #include "scheme.hpp"
 #include "Freetype/tt_file.hpp"
 #include "dictionary.hpp"
+#include "sys_utils.hpp"
 
 /******************************************************************************
 * debugging
@@ -177,4 +178,20 @@ use_macos_fonts () {
 #else
   return false;
 #endif
+}
+
+static const char*
+default_look_and_feel_impl () {
+  if (os_mingw () || os_win32 ()) return "windows";
+  else if (os_macos ()) return "macos";
+  else if (eval_system ("pidof ksmserver") != "") return "kde";
+  else if (eval_system ("pidof gnome-session") != "") return "gnome";
+  //else if (eval_system ("pidof xfce-mcs-manage") != "") return "xfce";
+  else return "emacs";
+}
+
+const char*
+default_look_and_feel () {
+  static const char* ret= default_look_and_feel_impl ();
+  return ret;
 }

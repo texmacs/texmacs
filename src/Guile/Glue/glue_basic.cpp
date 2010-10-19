@@ -85,6 +85,15 @@ tmg_qt_guiP () {
 }
 
 SCM
+tmg_default_look_and_feel () {
+  // SCM_DEFER_INTS;
+  string out= default_look_and_feel ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_tm_output (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm-output");
 
@@ -4391,6 +4400,7 @@ initialize_glue_basic () {
   scm_new_procedure ("os-macos?", (FN) tmg_os_macosP, 0, 0, 0);
   scm_new_procedure ("x-gui?", (FN) tmg_x_guiP, 0, 0, 0);
   scm_new_procedure ("qt-gui?", (FN) tmg_qt_guiP, 0, 0, 0);
+  scm_new_procedure ("default-look-and-feel", (FN) tmg_default_look_and_feel, 0, 0, 0);
   scm_new_procedure ("tm-output", (FN) tmg_tm_output, 1, 0, 0);
   scm_new_procedure ("tm-errput", (FN) tmg_tm_errput, 1, 0, 0);
   scm_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);

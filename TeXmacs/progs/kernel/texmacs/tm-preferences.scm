@@ -80,15 +80,9 @@
 ;; Look and feel
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-default-look-and-feel)
-  (cond ((os-win32?) "windows")
-	((os-mingw?) "windows")
-	((os-macos?) "macos")
-	(else "emacs")))
-
 (define-public (look-and-feel)
   (with s (get-preference "look and feel")
-    (if (== s "default") (get-default-look-and-feel) s)))
+    (if (== s "default") (default-look-and-feel) s)))
 
 (define (test-look-and-feel t)
   ;;(display* "Check look and feel " t "\n")

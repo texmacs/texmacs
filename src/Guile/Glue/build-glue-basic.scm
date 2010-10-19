@@ -24,6 +24,7 @@
   (os-macos? os_macos (bool))
   (x-gui? gui_is_x (bool))
   (qt-gui? gui_is_qt (bool))
+  (default-look-and-feel default_look_and_feel (string))
   (tm-output tm_output (void string))
   (tm-errput tm_errput (void string))
   (win32-display win32_display (void string))
