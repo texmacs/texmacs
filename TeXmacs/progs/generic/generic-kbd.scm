@@ -243,8 +243,11 @@
   ("emacs:meta <" (go-start))
   ("emacs:meta >" (go-end))
   ("emacs:meta $" (spell-start))
+  ("emacs:meta %" (interactive replace-start-forward))
 
+  ("emacs:prefix tab" (make 'indent))
   ("emacs:prefix b" (interactive go-to-buffer))
+  ("emacs:prefix h" (select-all))
   ("emacs:prefix k" (safely-kill-buffer))
   ("emacs:prefix C-c" (safely-quit-TeXmacs))
   ("emacs:prefix C-f" (interactive load-buffer))
@@ -252,11 +255,74 @@
   ("emacs:prefix C-w" (interactive save-buffer))
 
   ;; not implemented
+  ;;("emacs h ..." (help ...))
   ;;("emacs l" (recenter-window))
   ;;("emacs o" (open-line))
   ;;("emacs t" (transpose-chars))
+  ;;("emacs u" (universal-argument))
+  ;;("emacs z" (suspend-texmacs))
   ;;("emacs \\" (toggle-input-method))
   ;;("emacs ]" (abort-recursive-edit))
+  ;;("emacs:meta !" (shell-command))
+  ;;("emacs:meta (" (insert-parentheses))
+  ;;("emacs:meta )" (move-past-closed-and-reindent))
+  ;;("emacs:meta *" (pop-tag-mark))                  ;; conflict altcmd *
+  ;;("emacs:meta ," (loops-tag-continue))
+  ;;("emacs:meta ." (find-tag))
+  ;;("emacs:meta /" (dabbrev-expand))                ;; conflict altcmd /
+  ;;("emacs:meta \\" (delete-horizontal-space))      ;; conflict altcmd \
+  ;;("emacs:meta :" (interactive footer-eval))       ;; conflict altcmd :
+  ;;("emacs:meta ;" (comment-dwim))                  ;; conflict altcmd ;
+  ;;("emacs:meta =" (count-lines-region))
+  ;;("emacs:meta {" (backward-paragraph))
+  ;;("emacs:meta |" (shell-command-on-region))
+  ;;("emacs:meta }" (forward-paragraph))
+  ;;("emacs:meta @" (mark-word))
+  ;;("emacs:meta a" (traverse-up))                   ;; conflict altcmd a
+  ;;("emacs:meta b" (traverse-left))
+  ;;("emacs:meta c" (capitalize-word))
+  ;;("emacs:meta e" (traverse-down))                 ;; conflict altcmd e
+  ;;("emacs:meta f" (traverse-right))                ;; conflict altcmd f
+  ;;("emacs:meta h" (mark-paragraph))
+  ;;("emacs:meta i" (tab-to-tab-stop))               ;; conflict altcmd i
+  ;;("emacs:meta j" (indent-new-command-line))
+  ;;("emacs:meta l" (downcase-word))                 ;; conflict altcmd l
+  ;;("emacs:meta m" (back-to-indentation))
+  ;;("emacs:meta q" (fill-paragraph))
+  ;;("emacs:meta r" (move-to-window-line))
+  ;;("emacs:meta t" (transpose-words))               ;; conflict altcmd t
+  ;;("emacs:meta u" (upcase-word))
+  ;;("emacs:meta y" (yank-pop))
+  ;;("emacs:meta z" (zap-to-char))
+  ;;("emacs:prefix delete" (backward-kill-sentence))
+  ;;("emacs:prefix `" (next-error))
+  ;;("emacs:prefix 0" (delete-window))
+  ;;("emacs:prefix 1" (delete-other-windows))
+  ;;("emacs:prefix 2" (split-window-vertically))
+  ;;("emacs:prefix 3" (split-window-horizontally))
+  ;;("emacs:prefix d" (dired))
+  ;;("emacs:prefix f" (set-fill-column))
+  ;;("emacs:prefix i" (interactive insert-buffer))
+  ;;("emacs:prefix l" (count-lines-page))
+  ;;("emacs:prefix m" (compose-mail))
+  ;;("emacs:prefix o" (other-window))
+  ;;("emacs:prefix s" (save-some-buffers))
+  ;;("emacs:prefix u" (advertised-undo))
+  ;;("emacs:prefix z" (repeat))
+  ;;("emacs:prefix C-@" (pop-global-mark))
+  ;;("emacs:prefix C-d" (list-directory))
+  ;;("emacs:prefix C-e" (eval-last-expression))
+  ;;("emacs:prefix C-l" (downcase-region))
+  ;;("emacs:prefix C-n" (set-goal-column))
+  ;;("emacs:prefix C-o" (delete-blank-lines))
+  ;;("emacs:prefix C-p" (mark-page))
+  ;;("emacs:prefix C-q" (toggle-read-only))
+  ;;("emacs:prefix C-r" (interactive load-readonly-buffer))
+  ;;("emacs:prefix C-t" (transpose-lines))
+  ;;("emacs:prefix C-u" (upcase-region))
+  ;;("emacs:prefix C-v" (interactive load-alternate-buffer))
+  ;;("emacs:prefix C-x" (exchange-point-and-mark))
+  ;;("emacs:prefix C-z" (suspend-texmacs))
 
   ;; further shortcuts for the Emacs mode
   ("F2" (open-buffer))
