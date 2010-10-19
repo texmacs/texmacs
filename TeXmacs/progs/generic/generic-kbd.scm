@@ -441,6 +441,8 @@
 
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
+  ("M-A-C-S-home" (kbd-select traverse-first))
+  ("M-A-C-S-end" (kbd-select traverse-last))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -495,6 +497,8 @@
 
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
+  ("M-A-C-S-home" (kbd-select traverse-first))
+  ("M-A-C-S-end" (kbd-select traverse-last))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
@@ -686,6 +690,8 @@
 
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
+  ("M-A-C-S-home" (kbd-select traverse-first))
+  ("M-A-C-S-end" (kbd-select traverse-last))
   ("M-tab" (make-htab "5mm"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
