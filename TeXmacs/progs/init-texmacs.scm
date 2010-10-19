@@ -47,8 +47,9 @@
 		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
 		 (kernel texmacs tm-language)  (kernel texmacs tm-file-system))
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
-		 (kernel gui kbd-define) (kernel gui gui-widget)
-		 (kernel gui gui-factory) (kernel gui gui-form))
+		 (kernel gui kbd-define) (kernel gui kbd-handlers)
+		 (kernel gui gui-widget) (kernel gui gui-factory)
+		 (kernel gui gui-form))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting utilities\n")

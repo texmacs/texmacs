@@ -194,13 +194,13 @@ scm_to_int (SCM i) {
 #define SCM_ASSERT_DOUBLE(i,arg,rout) \
   SCM_ASSERT (SCM_REALP (i), i, arg, rout);
 
-static SCM
+SCM
 double_to_scm (double i) {
   return scm_double2scm (i);
 }
 
 #ifndef GUILE_C
-static double
+double
 scm_to_double (SCM i) {
   return scm_scm2double (i);
 }

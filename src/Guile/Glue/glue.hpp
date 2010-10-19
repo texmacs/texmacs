@@ -33,6 +33,7 @@ bool scm_is_widget (SCM obj);
 
 SCM bool_to_scm (bool b);
 SCM int_to_scm (int i);
+SCM double_to_scm (double i);
 SCM string_to_scm (string s);
 SCM symbol_to_scm (string s);
 SCM tree_to_scm (tree t);
@@ -45,6 +46,7 @@ SCM scheme_tree_to_scm (scheme_tree t);
 #ifndef GUILE_C
 int scm_to_bool (SCM obj);
 int scm_to_int (SCM obj);
+double scm_to_double (SCM i);
 #endif
 string scm_to_string (SCM obj);
 string scm_to_symbol (SCM obj);

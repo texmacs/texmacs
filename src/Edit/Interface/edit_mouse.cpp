@@ -24,6 +24,7 @@
 
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
+  cout << "t3= " << t << "\n";
   last_x= x; last_y= y;
   if (type != "move" || (is_attached (this) && !check_event (MOTION_EVENT)))
     update_active_loci ();
@@ -336,12 +337,16 @@ edit_interface_rep::update_active_loci () {
 
 void
 edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
+  cout << "t1= " << t << "\n";
   if (is_nil (eb)) apply_changes ();
   start_editing ();
   x *= sfactor;
   y *= sfactor;
   //cout << kind << " (" << x << ", " << y << "; " << m << ")"
   //<< " at " << t << "\n";
-  mouse_any (kind, x, y, m, t);
+  array<object> args;
+  args << object (kind) << object (x) << object (y)
+       << object (m) << object ((double) t);
+  call ("mouse-event", args);
   end_editing ();
 }

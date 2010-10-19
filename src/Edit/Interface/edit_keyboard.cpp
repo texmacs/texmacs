@@ -179,7 +179,7 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
     int i;
     for (i=1; i<N(s); i++)
       if (s[i]==' ') break;
-    key_press (s (0, i));
+    call ("keyboard-press", object (s (0, i)), object ((double) 0));
     if (i<N(s)) i++;
     s= s (i, N(s));
   }
@@ -214,7 +214,7 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
   //time_t t1= texmacs_time ();
   if (is_nil (eb)) apply_changes ();
   start_editing ();
-  key_press (key); (void) t;
+  call ("keyboard-press", object (key), object ((double) t));
   notify_change (THE_DECORATIONS);
   end_editing ();
   //time_t t2= texmacs_time ();
@@ -233,4 +233,5 @@ edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
     focus_on_this_editor ();
     notify_change (THE_DECORATIONS);
   }
+  call ("keyboard-focus", object (has_focus), object ((double) t));
 }

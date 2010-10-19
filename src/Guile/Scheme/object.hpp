@@ -73,6 +73,7 @@ struct object {
   object ();
   object (bool b);
   object (int i);
+  object (double x);
   object (const char* s);
   object (string s);
   object (tree t);
@@ -107,6 +108,7 @@ bool is_null (object obj);
 bool is_list (object obj);
 bool is_bool (object obj);
 bool is_int (object obj);
+bool is_double (object obj);
 bool is_string (object obj);
 bool is_symbol (object obj);
 bool is_tree (object obj);
@@ -115,6 +117,7 @@ bool is_url (object obj);
 
 bool as_bool (object obj);
 int as_int (object obj);
+double as_double (object obj);
 string as_string (object obj);
 string as_symbol (object obj);
 tree as_tree (object obj);

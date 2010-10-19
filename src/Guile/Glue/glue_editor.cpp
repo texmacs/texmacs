@@ -1398,6 +1398,55 @@ tmg_complete_tryP () {
 }
 
 SCM
+tmg_mouse_any (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "mouse-any");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "mouse-any");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "mouse-any");
+  SCM_ASSERT_INT (arg4, SCM_ARG4, "mouse-any");
+  SCM_ASSERT_DOUBLE (arg5, SCM_ARG5, "mouse-any");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+  int in4= scm_to_int (arg4);
+  double in5= scm_to_double (arg5);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->mouse_any (in1, in2, in3, in4, in5);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_mouse_pointer (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-mouse-pointer");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-mouse-pointer");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_pointer (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_predef_mouse_pointer (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-predef-mouse-pointer");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_pointer (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_go_to_path (SCM arg1) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "go-to-path");
 
@@ -2586,34 +2635,6 @@ tmg_edit_test () {
   return SCM_UNSPECIFIED;
 }
 
-SCM
-tmg_set_mouse_pointer (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-mouse-pointer");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-mouse-pointer");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_pointer (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_set_predef_mouse_pointer (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-predef-mouse-pointer");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_pointer (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
 void
 initialize_glue_editor () {
   scm_new_procedure ("root-tree", (FN) tmg_root_tree, 0, 0, 0);
@@ -2728,6 +2749,9 @@ initialize_glue_editor () {
   scm_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
   scm_new_procedure ("raw-emulate-keyboard", (FN) tmg_raw_emulate_keyboard, 1, 0, 0);
   scm_new_procedure ("complete-try?", (FN) tmg_complete_tryP, 0, 0, 0);
+  scm_new_procedure ("mouse-any", (FN) tmg_mouse_any, 5, 0, 0);
+  scm_new_procedure ("set-mouse-pointer", (FN) tmg_set_mouse_pointer, 2, 0, 0);
+  scm_new_procedure ("set-predef-mouse-pointer", (FN) tmg_set_predef_mouse_pointer, 1, 0, 0);
   scm_new_procedure ("go-to-path", (FN) tmg_go_to_path, 1, 0, 0);
   scm_new_procedure ("go-left", (FN) tmg_go_left, 0, 0, 0);
   scm_new_procedure ("go-right", (FN) tmg_go_right, 0, 0, 0);
@@ -2839,6 +2863,4 @@ initialize_glue_editor () {
   scm_new_procedure ("show-meminfo", (FN) tmg_show_meminfo, 0, 0, 0);
   scm_new_procedure ("edit-special", (FN) tmg_edit_special, 0, 0, 0);
   scm_new_procedure ("edit-test", (FN) tmg_edit_test, 0, 0, 0);
-  scm_new_procedure ("set-mouse-pointer", (FN) tmg_set_mouse_pointer, 2, 0, 0);
-  scm_new_procedure ("set-predef-mouse-pointer", (FN) tmg_set_predef_mouse_pointer, 1, 0, 0);
 }

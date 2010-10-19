@@ -145,10 +145,13 @@
   (cell-del-format cell_del_format (void string))
   (table-test table_test (void))
 
-  ;; keyboard handling
+  ;; keyboard and mouse handling
   (key-press key_press (void string))
   (raw-emulate-keyboard emulate_keyboard (void string))
   (complete-try? complete_try (bool))
+  (mouse-any mouse_any (void string int int int double))
+  (set-mouse-pointer set_pointer (void string string))
+  (set-predef-mouse-pointer set_pointer (void string))
   
   ;; moving the cursor
   (go-to-path go_to (void path))
@@ -274,7 +277,4 @@
   (show-selection show_selection (void))
   (show-meminfo show_meminfo (void))
   (edit-special edit_special (void))
-  (edit-test edit_test (void))
-
-  (set-mouse-pointer set_pointer (void string string))
-  (set-predef-mouse-pointer set_pointer (void string)))
+  (edit-test edit_test (void)))

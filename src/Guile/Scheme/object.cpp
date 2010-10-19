@@ -119,6 +119,7 @@ bool is_null (object obj) { return scm_is_null (obj->lookup()); }
 bool is_list (object obj) { return scm_is_list (obj->lookup()); }
 bool is_bool (object obj) { return scm_is_bool (obj->lookup()); }
 bool is_int (object obj) { return scm_is_int (obj->lookup()); }
+bool is_double (object obj) { return scm_is_double (obj->lookup()); }
 bool is_string (object obj) { return scm_is_string (obj->lookup()); }
 bool is_symbol (object obj) { return scm_is_symbol (obj->lookup()); }
 bool is_tree (object obj) { return scm_is_tree (obj->lookup()); }
@@ -132,12 +133,15 @@ bool is_url (object obj) { return scm_is_url (obj->lookup()); }
 object::object (): rep (tm_new<object_rep> (SCM_NULL)) {}
 object::object (bool b): rep (tm_new<object_rep> (bool_to_scm (b))) {}
 object::object (int i): rep (tm_new<object_rep> (int_to_scm (i))) {}
+object::object (double x): rep (tm_new<object_rep> (double_to_scm (x))) {}
 object::object (const char* s):
   rep (tm_new<object_rep> (string_to_scm (string (s)))) {}
 object::object (string s): rep (tm_new<object_rep> (string_to_scm (s))) {}
 object::object (tree t): rep (tm_new<object_rep> (tree_to_scm (t))) {}
-object::object (list<string> l): rep (tm_new<object_rep> (list_string_to_scm(l))) {}
-object::object (list<tree> l): rep (tm_new<object_rep> (list_tree_to_scm (l))) {}
+object::object (list<string> l):
+  rep (tm_new<object_rep> (list_string_to_scm(l))) {}
+object::object (list<tree> l):
+  rep (tm_new<object_rep> (list_tree_to_scm (l))) {}
 object::object (path p): rep (tm_new<object_rep> (path_to_scm (p))) {}
 object::object (url u): rep (tm_new<object_rep> (url_to_scm (u))) {}
 
@@ -153,6 +157,13 @@ as_int (object obj) {
   SCM i= obj->lookup();
   if (!scm_is_int (i)) return 0;
   return scm_to_int (i);
+}
+
+double
+as_double (object obj) {
+  SCM x= obj->lookup();
+  if (!scm_is_double (x)) return 0.0;
+  return scm_to_double (x);
 }
 
 string
