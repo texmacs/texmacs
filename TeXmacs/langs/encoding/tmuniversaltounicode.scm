@@ -206,6 +206,7 @@
 ;("<--->"	"#0214") ; see symbol-unicode-math.scm
 
 ;; General punctuation
+("<nbhyph>"	"#2011")
 ("<||>"		"#2016")
 ;("<``>"	"#201C") ; see symbol-unicode-math.scm
 ("<dagger>"	"#2020")

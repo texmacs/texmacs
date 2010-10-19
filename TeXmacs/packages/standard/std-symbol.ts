@@ -67,8 +67,9 @@
 
   \;
 
-  <assign|nbsp|<macro|<style-with|src-compact|none|
-  <no-break><specific|screen|<resize|<move|<with|color|#A0A0FF|->|-0.3em|>|0em||0em||>>>>>
+  <assign|nbsp|<macro| <no-break><specific|screen|<resize|<move|<with|color|#A0A0FF|->|-0.3em|>|0em||0em||>>>>
+
+  <assign|nbhyph|<macro|-<no-break>>>
 
   \;
 </body>

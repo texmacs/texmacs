@@ -76,6 +76,9 @@
 (tm-define (toggle-italic)
   (toggle-with-like '(with "font-shape" "italic" "")))
 
+(tm-define (toggle-small-caps)
+  (toggle-with-like '(with "font-shape" "small-caps" "")))
+
 (tm-define (toggle-underlined)
   (toggle-with-like '(underline "")))
 

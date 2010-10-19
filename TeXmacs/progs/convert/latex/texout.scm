@@ -139,6 +139,7 @@
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)
 		(func? x1 '&) (func? x2 '&)
 		(func? x1 '!nbsp) (func? x2 '!nbsp)
+		(func? x1 '!nbhyph) (func? x2 '!nbhyph)
 		(and (== x1 "'") (nlist? x2))))
        (or (in? x1 '("," ";" ":"))
 	   (func? x1 'tmop) (func? x2 'tmop)
@@ -163,6 +164,9 @@
 
 (define (texout-nbsp)
   (output-text "~"))
+
+(define (texout-nbhyph)
+  (output-text "\\mbox{-}"))
 
 (define (texout-verb x)
   (cond ((not (string-index x #\|)) (output-verb "\\verb|" x "|"))
@@ -274,6 +278,7 @@
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
 	((== (car x) '!nbsp) (texout-nbsp))
+	((== (car x) '!nbhyph) (texout-nbhyph))
 	((== (car x) '!verb) (texout-verb (cadr x)))
 	((== (car x) '!verbatim) (texout-verbatim (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))

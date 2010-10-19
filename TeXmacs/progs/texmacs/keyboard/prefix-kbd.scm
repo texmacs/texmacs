@@ -189,7 +189,7 @@
   ("copyto" "std C")
   ("cutto" "std X")
   ("pastefrom" "std V")
-  ("structured:cmd" "A-")
+  ("structured:cmd" "C-")
   ("structured:move" "M-A-")
   ("structured:insert" "M-")
   ("structured:geometry" "M-C-"))

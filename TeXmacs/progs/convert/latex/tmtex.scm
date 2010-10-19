@@ -1270,6 +1270,9 @@
 (define (tmtex-nbsp s l)
   '(!nbsp))
 
+(define (tmtex-nbhyph s l)
+  '(!nbhyph))
+
 (define (tmtex-session s l)
   (tmtex (cAr l)))
 
@@ -1626,6 +1629,7 @@
   (item* (,tmtex-item-arg 1))
   (render-proof (,tmtex-render-proof 2))
   (nbsp (,tmtex-nbsp 0))
+  (nbhyph (,tmtex-nbhyph 0))
   (session (,tmtex-session -1))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
