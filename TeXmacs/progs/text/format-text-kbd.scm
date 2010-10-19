@@ -30,3 +30,11 @@
   ("font o" (make 'overline))
   ("font p" (make-with "font-shape" "small-caps"))
   ("font u" (make 'underline)))
+
+(kbd-map
+  (:profile macos)
+  (:mode in-text?)
+  ("macos {" (make-line-with "par-mode" "left"))
+  ("macos |" (make-line-with "par-mode" "center"))
+  ("macos }" (make-line-with "par-mode" "right"))
+  ("macos C-{" (make-line-with "par-mode" "justify")))

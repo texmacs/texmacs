@@ -296,6 +296,7 @@
   (:profile std)
 
   ;; standard cross-platform shortcuts
+  ("std a" (select-all))
   ("std b" (toggle-bold))
   ("std c" (clipboard-copy "primary"))
   ("std f" (search-start #t))
@@ -314,7 +315,6 @@
   ("std Z" (redo 0))
 
   ;; not yet implemented
-  ;;("std a" (select-all))
   ;;("std t" (add-tab))
   ;;("std tab" (next-tab))
   ;;("std S-tab" (previous-tab))
@@ -429,11 +429,11 @@
   (:profile macos)
 
   ;; standard Mac OS keyboard shortcuts
+  ("macos F4" (safely-kill-buffer))
   ("macos ;" (spell-start))
   ("macos ?" (interactive docgrep-in-doc))
   ("macos [" (cursor-history-backward))
   ("macos ]" (cursor-history-forward))
-  ("macos F4" (safely-kill-buffer))
   ("macos left" (kbd-start-line))
   ("macos right" (kbd-end-line))
   ("macos up" (go-start))
@@ -444,9 +444,35 @@
   ("macos S-down" (kbd-select go-end))
 
   ;; not yet supported
+  ;;("macos :" (display-spelling-window))
   ;;("macos ," (open-preferences))
-  ;;("macos }" (next-tab))
-  ;;("macos {" (previous-tab))
+  ;;("macos A-/" (toggle-antialising))
+  ;;("macos #" (capture-screen-to-file))
+  ;;("macos C-#" (capture-screen-to-clipboard))
+  ;;("macos $" (capture-selection-to-file))
+  ;;("macos C-$" (capture-selection-to-clipboard))
+  ;;("macos C" (show-colors-window))
+  ;;("macos C-c" (copy-style))
+  ;;("macos A-c" (copy-formatting))
+  ;;("macos C-d" (show-definition-word))
+  ;;("macos A-d" (toggle-doc))
+  ;;("macos e" (search-selection))
+  ;;("macos h" (hide-window))
+  ;;("macos A-h" (hide-other-windows))
+  ;;("macos A-i" (show-inspector-window))
+  ;;("macos j" (scroll-to-selection))
+  ;;("macos m" (minimize-window))
+  ;;("macos A-m" (minimize-all-windows))
+  ;;("macos P" (printer-setup))
+  ;;("macos t" (show-fonts-window))
+  ;;("macos A-t" (toggle-toolbar))
+  ;;("macos C-v" (paste-style))
+  ;;("macos C-V" (paste-match-style))
+  ;;("macos A-v" (paste-formatting))
+  ;;("macos W" (safely-kill-buffer-windows))
+  ;;("macos A-w" (safely-kill-all-windows))
+  ;;("macos C-x" (cut-style))       ;; TeXmacs addition
+  ;;("macos A-x" (cut-formatting))  ;; TeXmacs addition
 
   ;; further shortcuts for MacOS look and feel
   ("macos r" (interactive replace-start-forward))
