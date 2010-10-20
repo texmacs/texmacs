@@ -136,7 +136,7 @@
   ("onehalf" (insert '(frac "1" "2")))
   ("threequarters" (insert '(frac "3" "4")))
 
-  ("space" (kbd-space))
+  ("space" " ")
   ("space var" "<space>")
   ("space var var" "<nospace>")
   ("space var var var" (make-space "0.2spc"))

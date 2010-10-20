@@ -260,15 +260,15 @@
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (positioning-default) (noop))
-(tm-define (positioning-left) (noop))
-(tm-define (positioning-right) (noop))
-(tm-define (positioning-up) (noop))
-(tm-define (positioning-down) (noop))
-(tm-define (positioning-start) (noop))
-(tm-define (positioning-end) (noop))
-(tm-define (positioning-top) (noop))
-(tm-define (positioning-bottom) (noop))
+(tm-define (geometry-default) (noop))
+(tm-define (geometry-left) (noop))
+(tm-define (geometry-right) (noop))
+(tm-define (geometry-up) (noop))
+(tm-define (geometry-down) (noop))
+(tm-define (geometry-start) (noop))
+(tm-define (geometry-end) (noop))
+(tm-define (geometry-top) (noop))
+(tm-define (geometry-bottom) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing
@@ -362,37 +362,84 @@
 	(branch-go-to t (quotient (tree-arity t) 2) :start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra editing functions
+;; Resizing spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (spacing-context? t)
+(tm-define (space-context? t)
   (and-with u (tree-down t)
-    (and (tm-func? u 'space 1)
+    (and (tm-func? u 'space)
 	 (tm-length? (tree-ref u 0)))))
 
-(define (add-space factor)
-  (let* ((t (tree-ref (tree-innermost 'space #t) 0))
-	 (l (tree->string t))
-	 (v (tm-length-value l))
-	 (u (tm-length-unit l))
-	 (a (if (== u "spc") 0.2 1))
-	 (new-v (+ v (* factor a)))
-	 (new-l (tm-make-length new-v u)))
-    (tree-set t new-l)))
+(tm-define (vspace-context? t)
+  (and-with u (tree-down t)
+    (and (or (tm-func? u 'vspace 1) (tm-func? u 'vspace* 1))
+	 (tm-length? (tree-ref u 0)))))
 
-(tm-define (kbd-space)
-  (insert " "))
+(define (add-space t factor)
+  (when (tm-length? t)
+    (let* ((l (tree->string t))
+	   (v (tm-length-value l))
+	   (u (tm-length-unit l))
+	   (a (if (== u "spc") 0.2 1))
+	   (new-v (+ v (* factor a)))
+	   (new-l (tm-make-length new-v u)))
+      (tree-set t new-l))))
 
-(tm-define (kbd-shift-space)
-  (insert " "))
+(define (space-make-ternary t)
+  (cond ((== (tm-arity t) 1) (tree-insert t 1 '("0ex" "1ex")))
+	((== (tm-arity t) 2) (tree-insert t 1 '("1ex")))))
 
-(tm-define (kbd-space)
-  (:context spacing-context?)
-  (add-space 1))
+(tm-define (geometry-left)
+  (:context space-context?)
+  (with-innermost t space-context?
+    (add-space (tree-ref t :down 0) -1)))
 
-(tm-define (kbd-shift-space)
-  (:context spacing-context?)
-  (add-space -1))
+(tm-define (geometry-right)
+  (:context space-context?)
+  (with-innermost t space-context?
+    (add-space (tree-ref t :down 0) 1)))
+
+(tm-define (geometry-up)
+  (:context space-context?)
+  (with-innermost p space-context?
+    (with t (tree-ref p :down)
+      (space-make-ternary t)
+      (add-space (tree-ref t 2) 1))))
+
+(tm-define (geometry-down)
+  (:context space-context?)
+  (with-innermost p space-context?
+    (with t (tree-ref p :down)
+      (space-make-ternary t)
+      (add-space (tree-ref t 2) -1))))
+
+(tm-define (geometry-top)
+  (:context space-context?)
+  (with-innermost p space-context?
+    (with t (tree-ref p :down)
+      (space-make-ternary t)
+      (add-space (tree-ref t 1) 1))))
+
+(tm-define (geometry-bottom)
+  (:context space-context?)
+  (with-innermost p space-context?
+    (with t (tree-ref p :down)
+      (space-make-ternary t)
+      (add-space (tree-ref t 1) -1))))
+
+(tm-define (geometry-up)
+  (:context vspace-context?)
+  (with-innermost t vspace-context?
+    (add-space (tree-ref t :down 0) -1)))
+
+(tm-define (geometry-down)
+  (:context vspace-context?)
+  (with-innermost t vspace-context?
+    (add-space (tree-ref t :down 0) 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra editing functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kill-paragraph)
   (selection-set-start)

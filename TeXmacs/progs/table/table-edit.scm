@@ -59,23 +59,23 @@
 ;; Posititioning
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (positioning-default)
+(tm-define (geometry-default)
   (:inside table)
   (cell-del-format ""))
 
-(tm-define (positioning-left)
+(tm-define (geometry-left)
   (:inside table)
   (cell-halign-left))
 
-(tm-define (positioning-right)
+(tm-define (geometry-right)
   (:inside table)
   (cell-halign-right))
 
-(tm-define (positioning-up)
+(tm-define (geometry-up)
   (:inside table)
   (cell-valign-up))
 
-(tm-define (positioning-down)
+(tm-define (geometry-down)
   (:inside table)
   (cell-valign-down))
 
