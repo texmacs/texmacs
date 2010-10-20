@@ -89,19 +89,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define-macro (wrap-selection-any . actions)
-  `(if (selection-active-any)
+  `(if (selection-active-any?)
        (begin
 	 (clipboard-cut "wrapbuf")
 	 ,@actions
 	 (clipboard-paste "wrapbuf"))
        (begin
+	 (selection-cancel)
 	 ,@actions)))
 
 (tm-define-macro (wrap-selection-small . actions)
-  `(if (selection-active-small)
+  `(if (selection-active-small?)
        (begin
 	 (clipboard-cut "wrapbuf")
 	 ,@actions
 	 (clipboard-paste "wrapbuf"))
        (begin
+	 (selection-cancel)
 	 ,@actions)))
