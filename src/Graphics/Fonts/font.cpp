@@ -11,6 +11,7 @@
 
 #include "font.hpp"
 #include "gui.hpp"
+#include "Freetype/tt_file.hpp"
 
 RESOURCE_CODE(font);
 
@@ -188,4 +189,31 @@ script (int sz, int level) {
   if (level>2) level=2;
   for (i=0; i<level; i++) sz= (sz*2+2)/3;
   return sz;
+}
+
+string
+default_chinese_font_name () {
+  if (tt_font_exists ("fireflysung")) return "fireflysung";
+  if (tt_font_exists ("儷黑 Pro")) return "lihei";
+  if (tt_font_exists ("华文细黑")) return "heiti";
+  if (tt_font_exists ("simsun")) return "simsun";
+  if (tt_font_exists ("SimSun")) return "apple-simsun";
+  return "roman";
+}
+
+string
+default_japanese_font_name () {
+  if (tt_font_exists ("ipam")) return "modern";
+  if (tt_font_exists ("ヒラギノ明朝 ProN W6")) return "kaku";
+  if (tt_font_exists ("MS PGothic")) return "ms-gothic";
+  if (tt_font_exists ("MS PMincho")) return "ms-mincho";
+  return "roman";  
+}
+
+string
+default_korean_font_name () {
+  if (tt_font_exists ("unbatang")) return "modern";
+  if (tt_font_exists ("AppleGothic")) return "apple-gothic";
+  if (tt_font_exists ("Gulim")) return "gulim";
+  return "roman";
 }

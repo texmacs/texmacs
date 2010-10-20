@@ -84,13 +84,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (supports-chinese?)
-  (font-exists-in-tt? "fireflysung"))
+  (!= (default-chinese-font) "roman"))
 
 (define-public (supports-japanese?)
-  (font-exists-in-tt? "ipam"))
+  (!= (default-japanese-font) "roman"))
 
 (define-public (supports-korean?)
-  (font-exists-in-tt? "UnBatang"))
+  (!= (default-korean-font) "roman"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related

@@ -71,6 +71,10 @@ struct font_rep: rep<font> {
   virtual glyph get_glyph (string s);
 };
 
+string default_chinese_font_name ();
+string default_japanese_font_name ();
+string default_korean_font_name ();
+
 font error_font (font fn);
 font virtual_font (font base, string family, int size, int dpi);
 font tt_font (string family, int size, int dpi);
