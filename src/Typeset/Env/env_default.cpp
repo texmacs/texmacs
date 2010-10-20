@@ -301,6 +301,10 @@ initialize_default_env () {
 		compound ("indent*", tree (ARG, "x"))));
   env ("mutator")=
     tree (MACRO, "x", "y", tree (ARG, "x"));
+  env ("math")=
+    tree (MACRO, "x", tree (WITH, MODE, "math", tree (ARG, "x")));
+  env ("text")=
+    tree (MACRO, "x", tree (WITH, MODE, "text", tree (ARG, "x")));
 
   /* syntactic highlighting */
   env ("src-regular")=
