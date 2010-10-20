@@ -263,6 +263,9 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   else {
     SI sep= above? -env->fn->yx: env->fn->sep;
     box wideb= text_box (decorate_middle (ip), 0, s, env->fn, env->col);
+    if (env->fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
+      wideb= shift_box (decorate_middle (ip), wideb,
+			(SI) (-0.5 * b->right_slope () * env->fn->yx), 0);
     print (STD_ITEM, wide_box (ip, b, wideb, env->fn, sep, above));
   }
 }
