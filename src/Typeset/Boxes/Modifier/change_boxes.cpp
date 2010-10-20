@@ -111,6 +111,22 @@ move_box_rep::move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
   finalize ();
 }
 
+struct shift_box_rep: public change_box_rep {
+  shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2);
+  int get_type () { return MOVE_BOX; }
+  operator tree () { return tree (TUPLE, "shift", (tree) bs[0]); }
+};
+
+shift_box_rep::shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
+  change_box_rep (ip, fl1, fl2)
+{
+  insert (b, x, y);
+  position ();
+  x1 -= x; y1 -= y;
+  x2 -= x; y2 -= y;
+  finalize ();
+}
+
 /******************************************************************************
 * Resizing boxes
 ******************************************************************************/
@@ -544,6 +560,11 @@ textat_box_rep::graphical_select (SI x, SI y, SI dist) {
 box
 move_box (path ip, box b, SI x, SI y, bool child_flag, bool big_flag) {
   return tm_new<move_box_rep> (ip, b, x, y, child_flag, big_flag);
+}
+
+box
+shift_box (path ip, box b, SI x, SI y, bool child_flag, bool big_flag) {
+  return tm_new<shift_box_rep> (ip, b, x, y, child_flag, big_flag);
 }
 
 box

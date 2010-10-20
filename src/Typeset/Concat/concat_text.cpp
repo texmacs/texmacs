@@ -240,12 +240,22 @@ concater_rep::typeset_space (tree t, path ip) {
 
 void
 concater_rep::typeset_move (tree t, path ip) {
-  // IDEA: set left, right, bottom, top environment variables
-  //       and allow doing computations with them
-  box  b= typeset_as_concat (env, t[0], descend (ip, 0));
-  SI   x= env->as_length (env->exec (t[1]));
-  SI   y= env->as_length (env->exec (t[2]));
+  box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
+  tree old= env->local_begin_extents (b);
+  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1])));
+  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2])));
+  env->local_end_extents (old);
   print (STD_ITEM, move_box (ip, b, x, y, true));
+}
+
+void
+concater_rep::typeset_shift (tree t, path ip) {
+  box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
+  tree old= env->local_begin_extents (b);
+  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1])));
+  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2])));
+  env->local_end_extents (old);
+  print (STD_ITEM, shift_box (ip, b, x, y, true));
 }
 
 SI

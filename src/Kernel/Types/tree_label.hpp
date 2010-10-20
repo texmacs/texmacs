@@ -23,9 +23,9 @@ enum tree_label {
   // basic formatting tags
   DOCUMENT, PARA, SURROUND, CONCAT,
   RIGID, HIDDEN, FREEZE, UNFREEZE,
-  HSPACE, VAR_VSPACE, VSPACE, SPACE,
-  HTAB, MOVE, RESIZE, CLIPPED, REPEAT, _FLOAT,
-  DATOMS, DLINES, DPAGES, DBOX,
+  HSPACE, VAR_VSPACE, VSPACE, SPACE, HTAB,
+  MOVE, SHIFT, RESIZE, CLIPPED,
+  REPEAT, _FLOAT, DATOMS, DLINES, DPAGES, DBOX,
 
   // zero-ary formatting directives
   // modify is_formatting predicate when inserting new tags
@@ -74,7 +74,7 @@ enum tree_label {
   PAR_LENGTH, PAG_LENGTH,                         // other
   GW_LENGTH, GH_LENGTH,                           // width & height of graphics
   TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
-  MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, H_LENGTH,  // durations
+  MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, HR_LENGTH,  // durations
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,

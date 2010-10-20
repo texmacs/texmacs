@@ -17,6 +17,7 @@
 	(utils edit auto-close)
 	(utils library cursor)
 	(generic generic-edit)
+	(generic format-edit)
 	(source source-edit)
 	(texmacs texmacs tm-files)
 	(texmacs texmacs tm-print)

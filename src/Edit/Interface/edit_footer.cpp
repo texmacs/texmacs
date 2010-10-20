@@ -256,6 +256,9 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case MOVE:
     if (l==0) return concat (up, "move ");
     else return up;
+  case SHIFT:
+    if (l==0) return concat (up, "shift ");
+    else return up;
   case RESIZE:
     if (l==0) return concat (up, "resize ");
     else return up;

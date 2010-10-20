@@ -790,40 +790,6 @@ tmg_make_var_vspace_after (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_make_move (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-move");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-move");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_move (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_resize (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-resize");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-resize");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-resize");
-  SCM_ASSERT_STRING (arg4, SCM_ARG4, "make-resize");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-  string in4= scm_to_string (arg4);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_resize (in1, in2, in3, in4);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_make_postscript (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6, SCM arg7, SCM arg8) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-postscript");
   SCM_ASSERT_BOOL (arg2, SCM_ARG2, "make-postscript");
@@ -2760,8 +2726,6 @@ initialize_glue_editor () {
   scm_new_procedure ("make-var-vspace-before", (FN) tmg_make_var_vspace_before, 3, 0, 0);
   scm_new_procedure ("make-vspace-after", (FN) tmg_make_vspace_after, 1, 0, 0);
   scm_new_procedure ("make-var-vspace-after", (FN) tmg_make_var_vspace_after, 3, 0, 0);
-  scm_new_procedure ("make-move", (FN) tmg_make_move, 2, 0, 0);
-  scm_new_procedure ("make-resize", (FN) tmg_make_resize, 4, 0, 0);
   scm_new_procedure ("make-postscript", (FN) tmg_make_postscript, 8, 0, 0);
   scm_new_procedure ("length-decode", (FN) tmg_length_decode, 1, 0, 0);
   scm_new_procedure ("length-add", (FN) tmg_length_add, 2, 0, 0);

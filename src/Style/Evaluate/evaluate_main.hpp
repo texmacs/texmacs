@@ -138,7 +138,7 @@ tree evaluate_px_length ();
 tree evaluate_msec_length ();
 tree evaluate_sec_length ();
 tree evaluate_min_length ();
-tree evaluate_h_length ();
+tree evaluate_hr_length ();
 
 /* Miscellaneous primitives */
 tree evaluate_formatting (tree t, string v);

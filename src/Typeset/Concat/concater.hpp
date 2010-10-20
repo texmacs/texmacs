@@ -53,6 +53,7 @@ class concater_rep {
   void typeset_hspace (tree t, path ip);
   void typeset_space (tree t, path ip);
   void typeset_move (tree t, path ip);
+  void typeset_shift (tree t, path ip);
   void typeset_resize (tree t, path ip);
   void typeset_clipped (tree t, path ip);
   void typeset_float (tree t, path ip);

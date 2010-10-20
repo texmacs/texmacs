@@ -343,20 +343,6 @@ edit_text_rep::make_htab (string spc) {
 }
 
 void
-edit_text_rep::make_move (string x, string y) {
-  insert_tree (tree (MOVE, "", x, y), path (0, 0));
-}
-
-void
-edit_text_rep::make_resize (string x1, string y1, string x2, string y2) {
-  tree t (RESIZE, 5);
-  t[0]= "";
-  t[1]= x1; t[2]= y1;
-  t[3]= x2; t[4]= y2;
-  insert_tree (t, path (0, 0));
-}
-
-void
 edit_text_rep::make_postscript (
   string file_name, bool link, string w, string h,
   string x1, string y1, string x2, string y2)

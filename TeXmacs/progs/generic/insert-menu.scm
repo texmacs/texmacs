@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic insert-menu)
-  (:use (generic generic-edit) (generic format-edit)))
+  (:use (generic generic-edit)
+	(generic format-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert objects
@@ -217,8 +218,12 @@
       (-> "Special"
 	  ("Group" (make-rigid))
 	  ("Superpose" (make 'superpose))
+	  ---
 	  ("Move object" (interactive make-move))
+	  ("Shift object" (interactive make-shift))
 	  ("Resize object" (interactive make-resize))
+	  ("Clip object" (interactive make-clipped))
+	  ---
 	  ("Repeat object" (make 'repeat))
 ;;        ---
 	  ("Decorate atoms" (make-arity 'datoms 2))

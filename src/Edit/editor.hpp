@@ -318,8 +318,6 @@ public:
   virtual void make_vspace_after (string s) = 0;
   virtual void make_vspace_after (string smin, string sdef, string smax) = 0;
   virtual void make_htab (string spc) = 0;
-  virtual void make_move (string x, string y) = 0;
-  virtual void make_resize (string x1, string y1, string x2, string y2) = 0;
   virtual void make_postscript (string file_name, bool link,
 				string w, string h,
 				string x1, string y1,

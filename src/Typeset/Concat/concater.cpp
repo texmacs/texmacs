@@ -230,6 +230,9 @@ concater_rep::typeset (tree t, path ip) {
   case MOVE:
     typeset_move (t, ip);
     break;
+  case SHIFT:
+    typeset_shift (t, ip);
+    break;
   case RESIZE:
     typeset_resize (t, ip);
     break;

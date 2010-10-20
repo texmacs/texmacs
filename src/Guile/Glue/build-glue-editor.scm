@@ -91,8 +91,6 @@
     (void string string string))
   (make-vspace-after make_vspace_after (void string))
   (make-var-vspace-after make_vspace_after (void string string string))
-  (make-move make_move (void string string))
-  (make-resize make_resize (void string string string string))
   (make-postscript make_postscript
     (void string bool string string string string string string))
 

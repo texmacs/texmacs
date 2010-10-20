@@ -392,8 +392,8 @@ edit_env_rep::exec (tree t) {
     return exec_sec_length ();
   case MIN_LENGTH:
     return exec_min_length ();
-  case H_LENGTH:
-    return exec_h_length ();
+  case HR_LENGTH:
+    return exec_hr_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:

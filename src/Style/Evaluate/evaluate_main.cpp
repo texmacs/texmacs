@@ -306,8 +306,8 @@ evaluate_impl (tree t) {
     return evaluate_sec_length ();
   case MIN_LENGTH:
     return evaluate_min_length ();
-  case H_LENGTH:
-    return evaluate_h_length ();
+  case HR_LENGTH:
+    return evaluate_hr_length ();
 
   /* Primitives for stylesheet editing */
   case STYLE_WITH:

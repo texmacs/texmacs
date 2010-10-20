@@ -116,6 +116,7 @@ init_std_drd () {
   init (HTAB, "htab",
 	options (1, 1, BIFORM) -> length (0) -> name ("tab"));
   init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
+  init (SHIFT, "shift", fixed (1, 2, BIFORM) -> accessible (0));
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
   init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
@@ -347,7 +348,7 @@ init_std_drd () {
   init (MSEC_LENGTH, "msec-length", fixed (0) -> returns_length ());
   init (SEC_LENGTH, "sec-length", fixed (0) -> returns_length ());
   init (MIN_LENGTH, "min-length", fixed (0) -> returns_length ());
-  init (H_LENGTH, "h-length", fixed (0) -> returns_length ());
+  init (HR_LENGTH, "hr-length", fixed (0) -> returns_length ());
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> binding (0) -> accessible (1));

@@ -328,4 +328,4 @@ evaluate_gh_length () {
 tree evaluate_msec_length () { return tree (TMLEN, "1"); }
 tree evaluate_sec_length () { return tree (TMLEN, "1000"); }
 tree evaluate_min_length () { return tree (TMLEN, "60000"); }
-tree evaluate_h_length () { return tree (TMLEN, "3600000"); }
+tree evaluate_hr_length () { return tree (TMLEN, "3600000"); }

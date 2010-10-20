@@ -104,6 +104,31 @@ edit_env_rep::assign (string s, tree t) {
 }
 */
 
+tree
+edit_env_rep::local_begin_extents (box b) {
+  tree old= tree (TUPLE,
+		  env ["w-length"], env ["h-length"],
+		  env ["l-length"], env ["b-length"],
+		  env ["r-length"], env ["t-length"]);
+  env ("w-length")= as_string (b->w ()) * "tmpt";
+  env ("h-length")= as_string (b->h ()) * "tmpt";
+  env ("l-length")= as_string (b->x1) * "tmpt";
+  env ("b-length")= as_string (b->y1) * "tmpt";
+  env ("r-length")= as_string (b->x2) * "tmpt";
+  env ("t-length")= as_string (b->y2) * "tmpt";
+  return old;
+}
+
+void
+edit_env_rep::local_end_extents (tree t) {
+  env ("w-length")= t[0];
+  env ("h-length")= t[1];
+  env ("l-length")= t[2];
+  env ("b-length")= t[3];
+  env ("r-length")= t[4];
+  env ("t-length")= t[5];
+}
+
 /******************************************************************************
 * Global manipulations of the environment
 ******************************************************************************/

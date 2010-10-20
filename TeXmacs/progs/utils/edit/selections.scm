@@ -83,3 +83,25 @@
 	(selection-set-start)
 	(select-from-keyboard #t)
 	(select-enlarge-environmental))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Useful macros for operating on selections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (wrap-selection-any ,@actions)
+  `(if (selection-active-any)
+       (begin
+	 (clipboard-cut "wrapbuf")
+	 ,@actions
+	 (clipboard-paste "wrapbuf"))
+       (begin
+	 ,@actions)))
+
+(tm-define-macro (wrap-selection-small ,@actions)
+  `(if (selection-active-small)
+       (begin
+	 (clipboard-cut "wrapbuf")
+	 ,@actions
+	 (clipboard-paste "wrapbuf"))
+       (begin
+	 ,@actions)))

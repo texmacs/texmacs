@@ -26,7 +26,8 @@
     drd-rule drd-rules assume texmacs-modes
     delayed dialogue on-entry on-exit widget-delayed
     association-tile bar concat dense-bar dense-tile document
-    header-bar sequence short-bar short-tile tile))
+    header-bar sequence short-bar short-tile tile
+    wrap-selection-any wrap-selection-small))
 
 (setq nullary-misc
   '(:use :inherit))

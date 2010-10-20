@@ -286,7 +286,7 @@ private:
   tree exec_msec_length ();
   tree exec_sec_length ();
   tree exec_min_length ();
-  tree exec_h_length ();
+  tree exec_hr_length ();
 
   tree exec_hard_id (tree t);
   tree exec_script (tree t);
@@ -355,6 +355,8 @@ public:
       back->write_back (s, env); val= t; update (s); } }
   inline bool provides (string s) { return env->contains (s); }
   inline tree read (string s) { return env [s]; }
+  tree local_begin_extents (box b);
+  void local_end_extents (tree t);
 
   void write_default_env ();
   void write_env (hashmap<string,tree> user_env);
