@@ -88,7 +88,7 @@
 ;; Useful macros for operating on selections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define-macro (wrap-selection-any ,@actions)
+(tm-define-macro (wrap-selection-any . actions)
   `(if (selection-active-any)
        (begin
 	 (clipboard-cut "wrapbuf")
@@ -97,7 +97,7 @@
        (begin
 	 ,@actions)))
 
-(tm-define-macro (wrap-selection-small ,@actions)
+(tm-define-macro (wrap-selection-small . actions)
   `(if (selection-active-small)
        (begin
 	 (clipboard-cut "wrapbuf")
