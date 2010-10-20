@@ -203,7 +203,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
     path q= path_up (p / rp);
     while (!is_nil (q)) {
       int i= q->item;
-      tree w= drd->get_env_child (t, i, tree (WITH));
+      tree w= drd->get_env_child (t, i, tree (ATTR));
       if (w == "") break;
       //cout << "w= " << w << "\n";
       for (int j=0; j<N(w); j+=2) {

@@ -471,11 +471,11 @@ tree
 drd_env_write (tree env, string var, tree val) {
   for (int i=0; i<=N(env); i+=2)
     if (i == N(env))
-      return env * tree (WITH, var, val);
+      return env * tree (ATTR, var, val);
     else if (var <= env[i]->label) {
       if (var == env[i]->label)
-	return env (0, i) * tree (WITH, var, val) * env (i+2, N(env));
-      return env (0, i) * tree (WITH, var, val) * env (i, N(env));
+	return env (0, i) * tree (ATTR, var, val) * env (i+2, N(env));
+      return env (0, i) * tree (ATTR, var, val) * env (i, N(env));
     }
   return env;
 }
@@ -527,7 +527,7 @@ drd_info_rep::freeze_env (tree_label l, int nr) {
 
 tree
 drd_info_rep::get_env_child (tree t, int i, tree env) {
-  if (L(t) == WITH && i == N(t)-1)
+  if (L(t) == ATTR && i == N(t)-1)
     return drd_env_merge (env, t (0, N(t)-1));
   else {
     /* makes cursor movement (is_accessible_cursor) slow for large preambles
@@ -537,7 +537,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
       {
 	tree u= t[0][0];
 	if (!is_func (u, DOCUMENT)) u= tree (DOCUMENT, u);
-	tree cenv (WITH);
+	tree cenv (ATTR);
 	for (int i=0; i<N(u); i++)
 	  if (is_func (u[i], ASSIGN, 2))
 	    cenv << copy (u[i][0]) << copy (u[i][1]);
@@ -561,7 +561,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
 
 tree
 drd_info_rep::get_env_child (tree t, int i, string var, tree val) {
-  tree env= get_env_child (t, i, tree (WITH));
+  tree env= get_env_child (t, i, tree (ATTR));
   return drd_env_read (env, var, val);
 }
 
@@ -610,7 +610,7 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
     int n= N(t)-1;
     tree oldf= drd_env_read (env, CELL_FORMAT, tree (TFORMAT));
     tree newf= oldf * tree (TFORMAT, A (t (0, n)));
-    tree w   = tree (WITH, CELL_FORMAT, newf);
+    tree w   = tree (ATTR, CELL_FORMAT, newf);
     tree cenv= get_env_child (t, n, drd_env_merge (env, w));
     return arg_access (t[n], arg, cenv, type);
   }
@@ -636,7 +636,7 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
 
 static void
 rewrite_symbolic_arguments (tree macro, tree& env) {
-  if (!is_func (env, WITH)) return;
+  if (!is_func (env, ATTR)) return;
   for (int i=1; i<N(env); i+=2)
     if (is_func (env[i], ARG, 1)) {
       for (int j=0; j+1<N(macro); j++)
@@ -672,7 +672,7 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   for (i=0; i<n; i++) {
     int  type= TYPE_UNKNOWN;
     tree arg (ARG, macro[i]);
-    tree env= arg_access (macro[n], arg, tree (WITH), type);
+    tree env= arg_access (macro[n], arg, tree (ATTR), type);
     //if (var == "section" || var == "section-title")
     //cout << var << " -> " << env << ", " << macro << "\n";
     //if (var == "math")
@@ -718,7 +718,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   for (i=0; i<=m; i++) {
     int type= TYPE_UNKNOWN;
     tree arg (ARG, xmacro[0], as_string (i));
-    tree env= arg_access (xmacro[1], arg, tree (WITH), type);
+    tree env= arg_access (xmacro[1], arg, tree (ATTR), type);
     set_type (l, i, type);
     if (env != "") {
       set_accessible (l, i, ACCESSIBLE_ALWAYS);

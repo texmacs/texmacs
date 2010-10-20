@@ -49,6 +49,10 @@ public:
   tree (tree_label l, tree t1, tree t2, tree t3, tree t4);
   tree (tree_label l, tree t1, tree t2, tree t3, tree t4, tree t5);
   tree (tree_label l, tree t1, tree t2, tree t3, tree t4, tree t5, tree t6);
+  tree (tree_label l, tree t1, tree t2, tree t3, tree t4,
+	              tree t5, tree t6, tree t7);
+  tree (tree_label l, tree t1, tree t2, tree t3, tree t4,
+	              tree t5, tree t6, tree t7, tree t8);
   inline tree& operator [] (int i);
   tree operator () (int start, int end);
 

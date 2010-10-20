@@ -78,6 +78,34 @@ tree::tree (tree_label l,
   (static_cast<compound_rep*> (rep))->a[5]=t6;
 }
 
+tree::tree (tree_label l,
+	    tree t1, tree t2, tree t3, tree t4, tree t5, tree t6, tree t7):
+  rep (tm_new<compound_rep> (l, array<tree> (7)))
+{
+  (static_cast<compound_rep*> (rep))->a[0]=t1;
+  (static_cast<compound_rep*> (rep))->a[1]=t2;
+  (static_cast<compound_rep*> (rep))->a[2]=t3;
+  (static_cast<compound_rep*> (rep))->a[3]=t4;
+  (static_cast<compound_rep*> (rep))->a[4]=t5;
+  (static_cast<compound_rep*> (rep))->a[5]=t6;
+  (static_cast<compound_rep*> (rep))->a[6]=t7;
+}
+
+tree::tree (tree_label l,
+	    tree t1, tree t2, tree t3, tree t4,
+	    tree t5, tree t6, tree t7, tree t8):
+  rep (tm_new<compound_rep> (l, array<tree> (8)))
+{
+  (static_cast<compound_rep*> (rep))->a[0]=t1;
+  (static_cast<compound_rep*> (rep))->a[1]=t2;
+  (static_cast<compound_rep*> (rep))->a[2]=t3;
+  (static_cast<compound_rep*> (rep))->a[3]=t4;
+  (static_cast<compound_rep*> (rep))->a[4]=t5;
+  (static_cast<compound_rep*> (rep))->a[5]=t6;
+  (static_cast<compound_rep*> (rep))->a[6]=t7;
+  (static_cast<compound_rep*> (rep))->a[7]=t8;
+}
+
 tree
 tree::operator () (int begin, int end) {
   int i;

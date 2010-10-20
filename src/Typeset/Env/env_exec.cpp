@@ -632,9 +632,16 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (val == "no") drd->set_with_like (l, false);
 	drd->freeze_with_like (l);
       }
+      else if (prop == "locals") {
+	int i, n= drd->get_nr_indices (l);
+	for (i=0; i<n; i++) {
+	  drd->set_env (l, i, val);
+	  drd->freeze_env (l, i);
+	}
+      }
       else if (prop == "unaccessible" ||
-	  prop == "hidden" ||
-	  prop == "accessible")
+	       prop == "hidden" ||
+	       prop == "accessible")
 	{
 	  int prop_code= ACCESSIBLE_NEVER;
 	  if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;

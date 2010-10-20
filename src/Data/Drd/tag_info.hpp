@@ -195,6 +195,7 @@ public:
   tag_info hidden (int i);
   tag_info disable_writable (int i);
   tag_info enable_writable (int i);
+  tag_info locals (int i, string var, string val);
   tag_info name (string s);
   int      get_index (int child, int n);
   void     set_attribute (string which, tree val);

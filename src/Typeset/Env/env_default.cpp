@@ -310,23 +310,26 @@ initialize_default_env () {
   env ("src-regular")=
     tree (MACRO, "x", tree (WITH, COLOR, "black", tree (ARG, "x")));
   env ("src-macro")=
-    tree (MACRO, "x", tree (WITH, COLOR, "blue",
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "blue",
 			    FONT_FAMILY, "ss", tree (ARG, "x")));
   env ("src-var")=
-    tree (MACRO, "x", tree (WITH, COLOR, "dark green",
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "dark green",
 			    FONT_SHAPE, "italic", tree (ARG, "x")));
   env ("src-arg")=
-    tree (MACRO, "x", tree (WITH, COLOR, "brown",
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "brown",
 			    FONT_SHAPE, "italic", tree (ARG, "x")));
   env ("src-tt")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#228",
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "#228",
 			    FONT_FAMILY, "tt", tree (ARG, "x")));
   env ("src-numeric")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#848", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "#848",
+			    tree (ARG, "x")));
   env ("src-textual")=
-    tree (MACRO, "x", tree (WITH, COLOR, "black", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "black",
+			    tree (ARG, "x")));
   env ("src-length")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#288", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "#288",
+			    tree (ARG, "x")));
   env ("src-unknown")=
     tree (MACRO, "x", tree (WITH, COLOR, "#C68", tree (ARG, "x")));
   env ("src-error")=

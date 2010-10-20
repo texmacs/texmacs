@@ -372,9 +372,14 @@ init_std_drd () {
   init (CLOSE_TAG, "close-tag",
 	repeat (1, 1, BIFORM) ->
 	variable (0) -> accessible (1));
-  init (SYMBOL, "symbol", fixed (1) -> code (0));
-  init (LATEX, "latex", fixed (1) -> code (0));
-  init (HYBRID, "hybrid", options (1, 1) -> variable (0));
+  init (SYMBOL, "symbol",
+	fixed (1) -> code (0) -> locals (0, "mode", "src"));
+  init (LATEX, "latex",
+	fixed (1) -> code (0) -> locals (0, "mode", "src"));
+  init (HYBRID, "hybrid",
+	options (1, 1, BIFORM) ->
+	variable (0) -> locals (0, "mode", "src") ->
+	accessible (1));
 
   init (LOCUS, "locus",
 	var_repeat (1, 1, BIFORM) ->
