@@ -114,6 +114,28 @@ edit_interface_rep::compute_text_footer (tree st) {
   return r;
 }
 
+static tree
+footer_len (tree t) {
+  if (t == "") return "-";
+  else if (is_atomic (t)) return t;
+  else if (is_func (t, PLUS, 2))
+    return concat (footer_len (t[0]), "+", footer_len (t[1]));
+  else if (is_func (t, MINUS, 2))
+    return concat (footer_len (t[0]), "-", footer_len (t[1]));
+  else if (is_func (t, MINIMUM, 2))
+    return concat ("min (", footer_len (t[0]), ", ", footer_len (t[1]), ")");
+  else if (is_func (t, MAXIMUM, 2))
+    return concat ("max (", footer_len (t[0]), ", ", footer_len (t[1]), ")");
+  else return "*";
+}
+
+static tree
+footer_rubber_len (tree t) {
+  if (N(t) != 3) return footer_len (t[0]);
+  return concat (footer_len (t[0]), "/",
+		 footer_len (t[1]), "/", footer_len (t[2]));
+}
+
 static string
 get_accent_type (string s) {
   if (s == "^") return "hat";
@@ -167,11 +189,12 @@ edit_interface_rep::compute_operation_footer (tree st) {
   if (r == "" && N(st) >= 1) {
     switch (L (st)) {
     case HSPACE:
-      r= concat ("space (", as_string (st[0]), ") "); break;
+      r= concat ("space (", footer_rubber_len (st), ") "); break;
     case VAR_VSPACE:
-      r= concat ("vertical space before (", as_string (st[0]), ") "); break;
+      r= concat ("vertical space before (", footer_rubber_len (st), ") ");
+      break;
     case VSPACE:
-      r= concat ("vertical space after (", as_string (st[0]), ") "); break;
+      r= concat ("vertical space (", footer_rubber_len (st), ") "); break;
     case SPACE:
       r= concat ("space (", as_string (st[0]), ") "); break;
     case _FLOAT:
@@ -238,29 +261,14 @@ edit_interface_rep::compute_operation_footer (tree st) {
 }
 
 static tree
-footer_size (tree t) {
-  if (t == "") return "-";
-  else if (is_atomic (t)) return t;
-  else if (is_func (t, PLUS, 2))
-    return concat (footer_size (t[0]), "+", footer_size (t[1]));
-  else if (is_func (t, MINUS, 2))
-    return concat (footer_size (t[0]), "-", footer_size (t[1]));
-  else if (is_func (t, MINIMUM, 2))
-    return concat ("min (", footer_size (t[0]), ", ", footer_size (t[1]), ")");
-  else if (is_func (t, MAXIMUM, 2))
-    return concat ("max (", footer_size (t[0]), ", ", footer_size (t[1]), ")");
-  else return "*";
-}
-
-static tree
 footer_move (tree t) {
-  return concat (footer_size (t[1]), ", ", footer_size (t[2]));
+  return concat (footer_len (t[1]), ", ", footer_len (t[2]));
 }
 
 static tree
 footer_resize (tree t) {
-  return concat (concat (footer_size (t[1]), ", ", footer_size (t[2])), "; ",
-		 concat (footer_size (t[3]), ", ", footer_size (t[4])));
+  return concat (concat (footer_len (t[1]), ", ", footer_len (t[2])), "; ",
+		 concat (footer_len (t[3]), ", ", footer_len (t[4])));
 }
 
 tree
