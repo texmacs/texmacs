@@ -263,7 +263,6 @@ is_graphical (tree t) {
 
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
-  p= path_up (p);
   if (p == rp) return;
   tree st= subtree (et, p);
   if (is_atomic (st) ||
@@ -276,7 +275,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       (is_func (st, WITH) && is_func (st[N(st)-1], TEXT_AT)) ||
       (is_compound (st, "math", 1) &&
        is_compound (subtree (et, path_up (p)), "input")))
-    compute_env_rects (p, rs, recurse);
+    compute_env_rects (path_up (p), rs, recurse);
   else {
     int new_mode= DRD_ACCESS_NORMAL;
     if (get_init_string (MODE) == "src") new_mode= DRD_ACCESS_SOURCE;
@@ -295,7 +294,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       rs << outline (sel->rs, pixel);
     }
     set_access_mode (old_mode);
-    if (recurse) compute_env_rects (p, rs, recurse);
+    if (recurse) compute_env_rects (path_up (p), rs, recurse);
   }
 }
 
@@ -466,8 +465,12 @@ edit_interface_rep::apply_changes () {
 
     rectangles old_rects= env_rects;
     env_rects= rectangles ();
-    path p1= tp, p2= tp;
-    compute_env_rects (path_up (tp), env_rects, true);
+    path pp= path_up (tp);
+    tree pt= subtree (et, pp);
+    if (is_func (pt, SPACE) || is_func (pt, HSPACE) ||
+	is_func (pt, POSTSCRIPT));
+    else pp= path_up (pp);
+    compute_env_rects (pp, env_rects, true);
     if (env_rects != old_rects) {
       invalidate (old_rects);
       invalidate (env_rects);
@@ -479,6 +482,7 @@ edit_interface_rep::apply_changes () {
     sem_rects= rectangles ();
     sem_correct= true;
     if (semantic_active (path_up (tp))) {
+      path p1= tp, p2= tp;
       sem_correct= semantic_select (path_up (tp), p1, p2, 2);
       if (!sem_correct) {
         path sr= semantic_root (path_up (tp));
