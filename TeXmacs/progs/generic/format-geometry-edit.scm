@@ -16,6 +16,75 @@
 	(generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizable step changes for length modifications
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-preferences
+  ("w increase" "0.05" noop)
+  ("h increase" "0.05" noop)
+  ("em increase" "0.1" noop)
+  ("ex increase" "0.1" noop)
+  ("spc increase" "0.2" noop)
+  ("fn increase" "0.5" noop)
+  ("mm increase" "0.5" noop)
+  ("cm increase" "0.1" noop)
+  ("inch increase" "0.05" noop)
+  ("pt increase" "10" noop)
+  ("msec increase" "50" noop)
+  ("sec increase" "1" noop)
+  ("min increase" "0.1" noop)
+  ("default unit" "spc" noop))
+
+(define step-table (make-ahash-table))
+(define step-list
+  '(0.005 0.01 0.02 0.05 0.1 0.2 0.5 1 2 5 10 20 50 100 200 500))
+(define unit-list '("spc" "cm" "in" "em" "ex" "pt"))
+
+(define (get-step unit)
+  (when (not (ahash-ref step-table unit))
+    (with pref (get-preference (string-append unit " increase"))
+      (with step (if pref (string->number pref) 0.1)
+	(ahash-set! step-table unit step))))
+  (ahash-ref step-table unit))
+
+(define (set-step unit step)
+  (ahash-set! step-table unit step)
+  (when (get-preference (string-append unit " increase"))
+    (set-preference (string-append unit " increase") (number->string step))))
+
+(define (change-step unit plus)
+  (let* ((step (get-step unit))
+	 (i (list-find-index step-list (lambda (x) (== x step))))
+	 (j (and i (max 0 (min (+ i plus) (- (length step-list) 1)))))
+	 (next (if j (list-ref step-list j) 0.1)))
+    (set-step unit next)
+    (set-message `(concat "Current step-size: " ,(number->string next) ,unit)
+		 "Change step-size")))
+
+(define (length-increase-step len)
+  (with t (length-rightmost len)
+    (when (tm-length? t)
+      (change-step (tm-length-unit t) 1))))
+
+(define (length-decrease-step len)
+  (with t (length-rightmost len)
+    (when (tm-length? t)
+      (change-step (tm-length-unit t) -1))))
+
+(define (get-unit) (get-preference "default unit"))
+(define (get-zero-unit) (string-append "0" (get-preference "default unit")))
+(define (set-unit unit) (set-preference "default unit" unit))
+
+(define (circulate-unit plus)
+  (let* ((unit (get-unit))
+	 (i (list-find-index unit-list (lambda (x) (== x unit))))
+	 (j (and i (modulo (+ i plus) (length unit-list))))
+	 (next (if j (list-ref unit-list j) "spc")))
+    (set-unit next)
+    (set-message `(concat "Default unit: " ,next)
+		 "Change default unit")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines for length manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -28,7 +97,7 @@
 	 (let* ((l (tree->string t))
 		(v (tm-length-value l))
 		(u (tm-length-unit l))
-		(a (if (== u "spc") 0.2 1))
+		(a (get-step u))
 		(new-v (+ v (* by a)))
 		(new-l (tm-make-length new-v u)))
 	   (tree-set t new-l)))))
@@ -64,6 +133,16 @@
 (define (space-consistent? t)
   (and (== (tm-arity t) 3)
        (lengths-consistent? (tree-ref t 1) (tree-ref t 2))))
+
+(tm-define (geometry-slower)
+  (:context space-context?)
+  (with-innermost t space-context?
+    (length-decrease-step (tree-ref t :down 0))))
+
+(tm-define (geometry-faster)
+  (:context space-context?)
+  (with-innermost t space-context?
+    (length-increase-step (tree-ref t :down 0))))
 
 (tm-define (geometry-left)
   (:context space-context?)
@@ -128,6 +207,16 @@
       (length-increase (tree-ref t 1) by)
       (length-increase (tree-ref t 2) by))))
 
+(tm-define (geometry-slower)
+  (:context hspace-context?)
+  (with-innermost t hspace-context?
+    (length-decrease-step (tree-ref t :down 0))))
+
+(tm-define (geometry-faster)
+  (:context hspace-context?)
+  (with-innermost t hspace-context?
+    (length-increase-step (tree-ref t :down 0))))
+
 (tm-define (geometry-left)
   (:context hspace-context?)
   (with-innermost t hspace-context?
@@ -145,6 +234,16 @@
 (tm-define (vspace-context? t)
   (and-with u (tree-down t)
     (or (tm-func? u 'vspace) (tm-func? u 'vspace*))))
+
+(tm-define (geometry-slower)
+  (:context vspace-context?)
+  (with-innermost t vspace-context?
+    (length-decrease-step (tree-ref t :down 0))))
+
+(tm-define (geometry-faster)
+  (:context vspace-context?)
+  (with-innermost t vspace-context?
+    (length-increase-step (tree-ref t :down 0))))
 
 (tm-define (geometry-up)
   (:context vspace-context?)
@@ -175,28 +274,46 @@
   (wrap-selection-small
     (insert-go-to `(shift "" ,hor ,ver) '(0 0))))
 
+(tm-define (geometry-slower)
+  (:context move-context?)
+  (with-innermost t move-context?
+    (length-decrease-step (tree-ref t 1))
+    (when (not (lengths-consistent? (tree-ref t 1) (tree-ref t 2)))
+      (length-decrease-step (tree-ref t 2)))))
+
+(tm-define (geometry-faster)
+  (:context move-context?)
+  (with-innermost t move-context?
+    (length-increase-step (tree-ref t 1))
+    (when (not (lengths-consistent? (tree-ref t 1) (tree-ref t 2)))
+      (length-increase-step (tree-ref t 2)))))
+
+(tm-define (geometry-variant forward?)
+  (:context move-context?)
+  (circulate-unit (if forward? 1 -1)))
+
 (tm-define (geometry-left)
   (:context move-context?)
   (with-innermost t move-context?
-    (replace-empty t 1 "0em")
+    (replace-empty t 1 (get-zero-unit))
     (length-increase (tree-ref t 1) -1)))
 
 (tm-define (geometry-right)
   (:context move-context?)
   (with-innermost t move-context?
-    (replace-empty t 1 "0em")
+    (replace-empty t 1 (get-zero-unit))
     (length-increase (tree-ref t 1) 1)))
 
 (tm-define (geometry-down)
   (:context move-context?)
   (with-innermost t move-context?
-    (replace-empty t 2 "0ex")
+    (replace-empty t 2 (get-zero-unit))
     (length-increase (tree-ref t 2) -1)))
 
 (tm-define (geometry-up)
   (:context move-context?)
   (with-innermost t move-context?
-    (replace-empty t 2 "0ex")
+    (replace-empty t 2 (get-zero-unit))
     (length-increase (tree-ref t 2) 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -223,12 +340,12 @@
     (insert-go-to `(clipped "" ,l ,b ,r ,t) '(0 0))))
 
 (define (replace-empty-horizontal t)
-  (replace-empty t 1 '(plus "1l" "0em"))
-  (replace-empty t 3 '(plus "1r" "0em")))
+  (replace-empty t 1 `(plus "1l" ,(get-zero-unit)))
+  (replace-empty t 3 `(plus "1r" ,(get-zero-unit))))
 
 (define (replace-empty-vertical t)
-  (replace-empty t 2 '(plus "1b" "0em"))
-  (replace-empty t 4 '(plus "1t" "0em")))
+  (replace-empty t 2 `(plus "1b" ,(get-zero-unit)))
+  (replace-empty t 4 `(plus "1t" ,(get-zero-unit))))
 
 (define (resize-consistent-horizontal? t)
   (replace-empty-horizontal t)
@@ -237,6 +354,24 @@
 (define (resize-consistent-vertical? t)
   (replace-empty-vertical t)
   (lengths-consistent? (tree-ref t 2) (tree-ref t 4)))
+
+(tm-define (geometry-slower)
+  (:context resize-context?)
+  (with-innermost t resize-context?
+    (length-decrease-step (tree-ref t 3))
+    (when (not (lengths-consistent? (tree-ref t 3) (tree-ref t 4)))
+      (length-decrease-step (tree-ref t 4)))))
+
+(tm-define (geometry-faster)
+  (:context resize-context?)
+  (with-innermost t resize-context?
+    (length-increase-step (tree-ref t 3))
+    (when (not (lengths-consistent? (tree-ref t 3) (tree-ref t 4)))
+      (length-increase-step (tree-ref t 3)))))
+
+(tm-define (geometry-variant forward?)
+  (:context resize-context?)
+  (circulate-unit (if forward? 1 -1)))
 
 (tm-define (geometry-left)
   (:context resize-context?)

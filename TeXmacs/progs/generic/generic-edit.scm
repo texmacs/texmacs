@@ -203,6 +203,9 @@
 (tm-define (geometry-end) (noop))
 (tm-define (geometry-top) (noop))
 (tm-define (geometry-bottom) (noop))
+(tm-define (geometry-slower) (noop))
+(tm-define (geometry-faster) (noop))
+(tm-define (geometry-variant) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing
