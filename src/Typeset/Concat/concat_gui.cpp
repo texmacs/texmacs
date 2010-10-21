@@ -14,7 +14,51 @@
 #include "analyze.hpp"
 #include "Concat/canvas_properties.hpp"
 
-SI resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size);
+/******************************************************************************
+* Old-style resize function
+******************************************************************************/
+
+static SI
+resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
+  if (!is_atomic (new_size)) return old;
+  string s= new_size->label;
+  if (N(s)<2) return old;
+  if (s[0] == '@') s= s (1, N(s));
+
+  bool flag;
+  SI   offset;
+  switch (s[0]) {
+  case 'l':
+  case 'b':
+    flag  = true;
+    offset= minimum;
+    break;
+  case 'c':
+    flag  = true;
+    offset= (minimum + maximum) >> 1;
+    break;
+  case 'r':
+  case 't':
+    flag  = true;
+    offset= maximum;
+    break;
+  default:
+    flag  = false;
+    offset= 0;
+  }
+
+  if (flag) {
+    SI arg= env->as_length (s (2, N(s)));
+    switch (s[1]) {
+    case '+': return offset + arg;
+    case '-': return offset - arg;
+    case '[': return min (offset, arg);
+    case ']': return max (offset, arg);
+    default : return arg;  
+    }
+  }
+  else return env->as_length (s);
+}
 
 /******************************************************************************
 * Scrollable canvases

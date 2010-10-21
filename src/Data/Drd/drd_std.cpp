@@ -115,10 +115,14 @@ init_std_drd () {
   // space markup has arity 1 or 3
   init (HTAB, "htab",
 	options (1, 1, BIFORM) -> length (0) -> name ("tab"));
-  init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
-  init (SHIFT, "shift", fixed (1, 2, BIFORM) -> accessible (0));
-  init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
-  init (CLIPPED, "clipped", fixed (4, 1, BIFORM) -> accessible (1));
+  init (MOVE, "move",
+	fixed (1, 2, BIFORM) -> accessible (0) -> length (1));
+  init (SHIFT, "shift",
+	fixed (1, 2, BIFORM) -> accessible (0) -> length (1));
+  init (RESIZE, "resize",
+	fixed (1, 4, BIFORM) -> accessible (0) -> length (1));
+  init (CLIPPED, "clipped",
+	fixed (1, 4, BIFORM) -> accessible (0) -> length (1));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DATOMS, "datoms",

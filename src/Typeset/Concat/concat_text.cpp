@@ -272,7 +272,7 @@ concater_rep::typeset_resize (tree t, path ip) {
 
 void
 concater_rep::typeset_clipped (tree t, path ip) {
-  box  b = typeset_as_concat (env, t[4], descend (ip, 4));
+  box  b = typeset_as_concat (env, t[0], descend (ip, 0));
   tree old= env->local_begin_extents (b);
   SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1])));
   SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2])));
