@@ -18,6 +18,7 @@
 	(utils library cursor)
 	(generic generic-edit)
 	(generic format-edit)
+	(generic format-geometry-edit)
 	(source source-edit)
 	(texmacs texmacs tm-files)
 	(texmacs texmacs tm-print)

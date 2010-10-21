@@ -13,7 +13,8 @@
 
 (texmacs-module (generic insert-menu)
   (:use (generic generic-edit)
-	(generic format-edit)))
+	(generic format-edit)
+	(generic format-geometry-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert objects
