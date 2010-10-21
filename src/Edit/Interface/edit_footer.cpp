@@ -237,6 +237,32 @@ edit_interface_rep::compute_operation_footer (tree st) {
   return r;
 }
 
+static tree
+footer_size (tree t) {
+  if (t == "") return "-";
+  else if (is_atomic (t)) return t;
+  else if (is_func (t, PLUS, 2))
+    return concat (footer_size (t[0]), "+", footer_size (t[1]));
+  else if (is_func (t, MINUS, 2))
+    return concat (footer_size (t[0]), "-", footer_size (t[1]));
+  else if (is_func (t, MINIMUM, 2))
+    return concat ("min (", footer_size (t[0]), ", ", footer_size (t[1]), ")");
+  else if (is_func (t, MAXIMUM, 2))
+    return concat ("max (", footer_size (t[0]), ", ", footer_size (t[1]), ")");
+  else return "*";
+}
+
+static tree
+footer_move (tree t) {
+  return concat (footer_size (t[1]), ", ", footer_size (t[2]));
+}
+
+static tree
+footer_resize (tree t) {
+  return concat (concat (footer_size (t[1]), ", ", footer_size (t[2])), "; ",
+		 concat (footer_size (t[3]), ", ", footer_size (t[4])));
+}
+
 tree
 edit_interface_rep::compute_compound_footer (tree t, path p) {
   if (!(rp < p)) return "";
@@ -254,13 +280,16 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case CONCAT:
     return up;
   case MOVE:
-    if (l==0) return concat (up, "move ");
+    if (l == 0) return concat (up, "move (", footer_move (st), ") ");
     else return up;
   case SHIFT:
-    if (l==0) return concat (up, "shift ");
+    if (l==0) return concat (up, "shift (", footer_move (st), ") ");
     else return up;
   case RESIZE:
-    if (l==0) return concat (up, "resize ");
+    if (l==0) return concat (up, "resize (", footer_resize (st), ") ");
+    else return up;
+  case CLIPPED:
+    if (l==0) return concat (up, "clipped (", footer_resize (st), ") ");
     else return up;
   case _FLOAT:
     if (N(st) >= 1 && is_atomic (st[0]))
