@@ -694,8 +694,8 @@ concater_rep::typeset (tree t, path ip) {
   case FILL:
     typeset_fill (t, ip);
     break;
-  case POSTSCRIPT:
-    typeset_postscript (t, ip);
+  case IMAGE:
+    typeset_image (t, ip);
     break;
 
   case CANVAS:

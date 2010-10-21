@@ -343,7 +343,7 @@ edit_text_rep::make_htab (string spc) {
 }
 
 void
-edit_text_rep::make_postscript (
+edit_text_rep::make_image (
   string file_name, bool link, string w, string h,
   string x1, string y1, string x2, string y2)
 {
@@ -352,7 +352,7 @@ edit_text_rep::make_postscript (
   if (is_rooted (image))
     image= delta (get_name (), image);
 
-  tree t (POSTSCRIPT);
+  tree t (IMAGE);
   if (link) {
     if (is_rooted (image, "default")) image= reroot (image, "file");
     t << as_string (image, URL_STANDARD);

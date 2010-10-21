@@ -252,7 +252,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   }
   if (r == "") {
     switch (L (st)) {
-    case POSTSCRIPT: r= "postscript image"; break;
+    case IMAGE: r= "image"; break;
     default: r= drd->get_name (L(st));
     }
   }

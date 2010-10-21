@@ -518,7 +518,7 @@ init_std_drd () {
 	repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (FILL, "fill",
 	repeat (1, 1));                       // Not yet implemented
-  init (POSTSCRIPT, "postscript",
+  init (IMAGE, "image",
 	fixed (1, 6, BIFORM) -> url_type (0));
   init (BOX_INFO, "box-info",
 	fixed (1, 1, BIFORM) ->
@@ -579,6 +579,8 @@ init_std_drd () {
 	argument (0));
   init (AUTHORIZE, "authorize",
 	fixed (2));
+  init (POSTSCRIPT, "postscript",
+	fixed (1, 6, BIFORM) -> url_type (0));
 
   init (make_tree_label ("shown"), "shown",
 	fixed (1) -> accessible (0) -> inner_border ());

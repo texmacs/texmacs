@@ -139,7 +139,7 @@
   when converted to LaTeX. We conclude with a picture:
 
   <\with|par-mode|center>
-    <postscript|../../misc/pixmaps/TeXmacs-solid.xpm||||||>
+    <image|../../misc/pixmaps/TeXmacs-solid.xpm||||||>
   </with>
 
   \;

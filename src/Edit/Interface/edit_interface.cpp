@@ -467,7 +467,7 @@ edit_interface_rep::apply_changes () {
     env_rects= rectangles ();
     path pp= path_up (tp);
     tree pt= subtree (et, pp);
-    if (is_func (pt, SPACE) || is_func (pt, POSTSCRIPT));
+    if (is_func (pt, SPACE) || is_func (pt, IMAGE));
     else pp= path_up (pp);
     compute_env_rects (pp, env_rects, true);
     if (env_rects != old_rects) {

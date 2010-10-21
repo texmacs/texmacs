@@ -269,7 +269,7 @@ texmacs_input_rep::ps_flush (bool force) {
 	b= b (i+1, N(b));
       }
       else break;
-    tree t (POSTSCRIPT, tuple (tree (RAW_DATA, b), "ps"));
+    tree t (IMAGE, tuple (tree (RAW_DATA, b), "ps"));
     t << w << h << "" << "" << "" << "";
     write (t);
     buf= "";

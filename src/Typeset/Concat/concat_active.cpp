@@ -225,7 +225,7 @@ concater_rep::typeset_flag (tree t, path ip) {
 }
 
 /******************************************************************************
-* Typesetting postscript images
+* Typesetting images
 ******************************************************************************/
 
 bool
@@ -270,20 +270,20 @@ get_magnification (string s) {
   return magn;
 }
 
-#define error_postscript(t) { \
-  typeset_dynamic (tree (ERROR, "bad postscript", t), ip); \
+#define error_image(t) { \
+  typeset_dynamic (tree (ERROR, "bad image", t), ip); \
   return; \
 }
 
 void
-concater_rep::typeset_postscript (tree t, path ip) {
+concater_rep::typeset_image (tree t, path ip) {
   // determine the image url
-  if (N(t)!=7) error_postscript ("parameters");
+  if (N(t)!=7) error_image ("parameters");
   tree image_tree= env->exec (t[0]);
   url image= url_none ();
   if (is_atomic (image_tree)) {
     if (N(image_tree->label)==0)
-      error_postscript (tree (WITH, "color", "red", "no image"));
+      error_image (tree (WITH, "color", "red", "no image"));
     url im= image_tree->label;
     image= resolve (relative (env->base_file_name, im));
     if (is_none (image)) image= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
@@ -292,7 +292,7 @@ concater_rep::typeset_postscript (tree t, path ip) {
 	     is_atomic (image_tree[0][0]) && is_atomic (image_tree[1])) {
     image= url_ramdisc (image_tree[0][0]->label) *
            url ("image." * image_tree[1]->label);
-  } else error_postscript (image_tree);
+  } else error_image (image_tree);
 
   // determine the original size of the image
   int iw, ih;
@@ -304,19 +304,19 @@ concater_rep::typeset_postscript (tree t, path ip) {
   tree ty1= env->exec (t[4]);
   tree tx2= env->exec (t[5]);
   tree ty2= env->exec (t[6]);
-  if (is_compound (tx1)) error_postscript (tx1);
-  if (is_compound (ty1)) error_postscript (ty1);
-  if (is_compound (tx2)) error_postscript (tx2);
-  if (is_compound (ty2)) error_postscript (ty2);
+  if (is_compound (tx1)) error_image (tx1);
+  if (is_compound (ty1)) error_image (ty1);
+  if (is_compound (tx2)) error_image (tx2);
+  if (is_compound (ty2)) error_image (ty2);
 
   string sx1= tx1->label;
   string sy1= ty1->label;
   string sx2= tx2->label;
   string sy2= ty2->label;
-  if (sx1 != "" && ! env->is_length (sx1)) error_postscript (sx1);
-  if (sy1 != "" && ! env->is_length (sy1)) error_postscript (sy1);
-  if (sx2 != "" && ! env->is_length (sx2)) error_postscript (sx2);
-  if (sy2 != "" && ! env->is_length (sy2)) error_postscript (sy2);
+  if (sx1 != "" && ! env->is_length (sx1)) error_image (sx1);
+  if (sy1 != "" && ! env->is_length (sy1)) error_image (sy1);
+  if (sx2 != "" && ! env->is_length (sx2)) error_image (sx2);
+  if (sy2 != "" && ! env->is_length (sy2)) error_image (sy2);
 
   int x1, y1, x2, y2;
   if (sx1 == "") x1= 0;
@@ -328,7 +328,7 @@ concater_rep::typeset_postscript (tree t, path ip) {
   if (sy2 == "") y2= ih;
   else y2= ((SI) (((double) env->as_length (sy2)) / pt));
   if ((x1>=x2) || (y1>=y2))
-    error_postscript (tree (WITH, "color", "red", "null box"));
+    error_image (tree (WITH, "color", "red", "null box"));
 
   double cx1= ((double) x1) / ((double) iw);
   double cy1= ((double) y1) / ((double) ih);
@@ -338,14 +338,14 @@ concater_rep::typeset_postscript (tree t, path ip) {
   // determine the width and the height
   tree tw= env->exec (t[1]);
   tree th= env->exec (t[2]);
-  if (is_compound (tw)) error_postscript (tw);
-  if (is_compound (th)) error_postscript (th);
+  if (is_compound (tw)) error_image (tw);
+  if (is_compound (th)) error_image (th);
   string ws= tw->label;
   string hs= th->label;
   if (! (N(ws)==0 || env->is_length (ws) || is_magnification (ws)))
-    error_postscript (ws);
+    error_image (ws);
   if (! (N(hs)==0 || env->is_length (hs) || is_magnification (hs)))
-    error_postscript (hs);
+    error_image (hs);
   
   SI w= 0, h= 0;
   bool ws_is_len= env->is_length (ws);
@@ -367,10 +367,10 @@ concater_rep::typeset_postscript (tree t, path ip) {
   if (hs_is_mag && N(ws)==0) w= (SI) (((double) w) * get_magnification (hs));
 
   if (w <= 0 || h <= 0)
-    error_postscript (tree (WITH, "color", "red", "null box"));
+    error_image (tree (WITH, "color", "red", "null box"));
 
   // print the box
   print (STD_ITEM, image_box (ip, image, w, h, cx1, cy1, cx2, cy2));
 }
 
-#undef error_postscript
+#undef error_image

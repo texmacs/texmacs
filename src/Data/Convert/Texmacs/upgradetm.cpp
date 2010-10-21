@@ -44,6 +44,7 @@ get_codes (string version) {
   if (version_inf ("1.0.7.6", version)) return H;
 
   rename_feature (H, "group", "rigid");
+  rename_feature (H, "postscript", "image");
 
   if (version_inf ("1.0.6.9", version)) return H;
 

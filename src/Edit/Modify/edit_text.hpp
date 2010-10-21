@@ -47,7 +47,7 @@ public:
   void make_vspace_after (string s);
   void make_vspace_after (string smin, string sdef, string smax);
   void make_htab (string spc);
-  void make_postscript (string file_name, bool link, string w, string h,
+  void make_image (string file_name, bool link, string w, string h,
 			string x1, string y1, string x2, string y2);
 };
 

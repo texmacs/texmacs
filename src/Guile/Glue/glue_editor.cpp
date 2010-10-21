@@ -791,14 +791,14 @@ tmg_make_var_vspace_after (SCM arg1, SCM arg2, SCM arg3) {
 
 SCM
 tmg_make_postscript (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6, SCM arg7, SCM arg8) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-postscript");
-  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "make-postscript");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-postscript");
-  SCM_ASSERT_STRING (arg4, SCM_ARG4, "make-postscript");
-  SCM_ASSERT_STRING (arg5, SCM_ARG5, "make-postscript");
-  SCM_ASSERT_STRING (arg6, SCM_ARG6, "make-postscript");
-  SCM_ASSERT_STRING (arg7, SCM_ARG7, "make-postscript");
-  SCM_ASSERT_STRING (arg8, SCM_ARG8, "make-postscript");
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-image");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "make-image");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-image");
+  SCM_ASSERT_STRING (arg4, SCM_ARG4, "make-image");
+  SCM_ASSERT_STRING (arg5, SCM_ARG5, "make-image");
+  SCM_ASSERT_STRING (arg6, SCM_ARG6, "make-image");
+  SCM_ASSERT_STRING (arg7, SCM_ARG7, "make-image");
+  SCM_ASSERT_STRING (arg8, SCM_ARG8, "make-image");
 
   string in1= scm_to_string (arg1);
   bool in2= scm_to_bool (arg2);
@@ -810,7 +810,7 @@ tmg_make_postscript (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6,
   string in8= scm_to_string (arg8);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_postscript (in1, in2, in3, in4, in5, in6, in7, in8);
+  get_server()->get_editor()->make_image (in1, in2, in3, in4, in5, in6, in7, in8);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2726,7 +2726,7 @@ initialize_glue_editor () {
   scm_new_procedure ("make-var-vspace-before", (FN) tmg_make_var_vspace_before, 3, 0, 0);
   scm_new_procedure ("make-vspace-after", (FN) tmg_make_vspace_after, 1, 0, 0);
   scm_new_procedure ("make-var-vspace-after", (FN) tmg_make_var_vspace_after, 3, 0, 0);
-  scm_new_procedure ("make-postscript", (FN) tmg_make_postscript, 8, 0, 0);
+  scm_new_procedure ("make-image", (FN) tmg_make_postscript, 8, 0, 0);
   scm_new_procedure ("length-decode", (FN) tmg_length_decode, 1, 0, 0);
   scm_new_procedure ("length-add", (FN) tmg_length_add, 2, 0, 0);
   scm_new_procedure ("length-mult", (FN) tmg_length_mult, 2, 0, 0);

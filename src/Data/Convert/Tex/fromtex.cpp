@@ -136,6 +136,7 @@ latex_symbol_to_tree (string s) {
       if (s == "\\noindent")  return tree (FORMAT, "no first indentation");
       if (s == "\\linebreak")  return tree (FORMAT, "line break");
       if (s == "\\newline")  return tree (FORMAT, "new line");
+      if (s == "\\nobreak")  return tree (FORMAT, "no line break");
       if (s == "\\nolinebreak")  return tree (FORMAT, "no line break");
       if (s == "\\pagebreak")  return tree (FORMAT, "page break");
       if (s == "\\nopagebreak")  return tree (FORMAT, "no page break after");
@@ -247,10 +248,10 @@ latex_symbol_to_tree (string s) {
       return s(1,N(s));
     if (latex_type (s) == "control") return s(1,N(s));
     if ((s == "\\ldots") && (command_type ("!mode") != "math")) return "...";
+    if (s == "\\bignone") return tree (BIG, ".");
     if (latex_type (s) == "symbol")  return "<" * s(1,N(s)) * ">";
     if (latex_type (s) == "big-symbol") {
-      if (s == "\\bignone") return tree (BIG, ".");
-      else if (s(0,4)=="\\big") return tree (BIG, s(4,N(s)));
+      if (s(0,4)=="\\big") return tree (BIG, s(4,N(s)));
       else return tree (BIG, s(1,N(s)));
     }
 
@@ -509,6 +510,31 @@ latex_accent (tree t, string acc) {
 }
 
 tree
+latex_eps_get (tree t, string var) {
+  if (!is_atomic (t)) return "";
+  string s= t->label;
+  int start=0, i, n=N(s);
+  for (i=0; i <= n; i++)
+    if (i == n || s[i] == ',') {
+      string ss= s (start, i);
+      while (starts (ss, " ")) ss= ss (1, N(ss));
+      while (ends (ss, " ")) ss= ss (0, N(ss) - 1);
+      int j, k= N(ss);
+      for (j=0; j<k; j++)
+	if (ss[j] == '=') break;
+      string v= ss (0, j);
+      while (ends (v, " ")) v= v (0, N(v) - 1);
+      if (j < k && v == var) {
+	string val= ss (j+1, N(ss));
+	while (starts (val, " ")) val= val (1, N(val));
+	return val;
+      }
+      start= i+1;
+    }
+  return "";
+}
+
+tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= string_arg (t[1]);
@@ -756,8 +782,22 @@ latex_command_to_tree (tree t) {
     tree name= v2e (t[1]);
     if (name == "") return "";
     else {
-      tree g (POSTSCRIPT, 7);
+      tree g (IMAGE, 7);
       g[0]= name;
+      return g;
+    }
+  }
+  if (is_tuple (t, "\\epsfig", 1)) {
+    tree data  = v2e (t[1]);
+    tree name  = latex_eps_get (data, "file");
+    tree width = latex_eps_get (data, "width");
+    tree height= latex_eps_get (data, "height");
+    if (name == "") return "";
+    else {
+      tree g (IMAGE, 7);
+      g[0]= name;
+      g[1]= width;
+      g[2]= height;
       return g;
     }
   }
@@ -1081,7 +1121,7 @@ finalize_layout (tree t) {
 
       if (is_func (v, BEGIN, 1) && (v[0] == "picture")) {
 	for (; i<n; i++)
-	  if (is_func (u[i], POSTSCRIPT)) r << u[i];
+	  if (is_func (u[i], IMAGE)) r << u[i];
 	  else if (is_func (u[i], END, 1) && (u[i][0] == "picture"))
 	    break;
 	continue;

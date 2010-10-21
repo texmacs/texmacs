@@ -29,7 +29,7 @@
   - / [ ] ! * | i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o th pounds
   quad qquad par smallskip medskip bigskip
-  noindent newline linebreak nolinebreak
+  noindent newline linebreak nobreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix nolimits dots
   maketitle tableofcontents TeX LaTeX
@@ -62,7 +62,7 @@
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear
-  includegraphics url penalty
+  includegraphics epsfig url penalty
   enlargethispage)
 
 (drd-group latex-command-1% ;; . needs a special treatment
