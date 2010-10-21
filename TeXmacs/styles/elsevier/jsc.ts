@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.5>
+<TeXmacs|1.0.7.7>
 
 <style|source>
 
@@ -98,7 +98,9 @@
     </src-comment>
   </active*>
 
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-25pt|<yes-indent>><resize|<arg|x>|r-20pt|||><hspace|5pt>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-25pt|<yes-indent>><resize|<arg|x>|<minus|1r|20pt>|||><hspace|5pt>>>>
+
+  <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-12.5pt|<yes-indent>><resize|<arg|x>|||<maximum|1r|12.5pt>|>>>>
 
   <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><no-indent*>|<with|par-left|<plus|<value|par-left>|25pt>|par-par-sep|<tex-len|4.5pt|2pt|1pt>|<arg|body>>>>>
 

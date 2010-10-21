@@ -2912,7 +2912,9 @@ upgrade_resize_arg (tree t) {
     cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
     return t;
   }
-  if (is_func (t, ARG, 1))
+  if (is_func (t, ARG, 1) ||
+      is_func (t, PLUS, 2) || is_func (t, MINUS, 2) ||
+      is_func (t, MINIMUM, 2) || is_func (t, MAXIMUM, 2))
     return t;
   if (!is_atomic (t)) {
     cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
@@ -3000,7 +3002,6 @@ upgrade_mathml (tree t) {
 
 tree
 upgrade (tree t, string version) {
-  // cout << "Upgrade from " << version << "\n";
   if (version_inf (version, "0.3.1.9")) {
     path p;
     t= upgrade_textual (t, p);
