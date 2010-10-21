@@ -356,6 +356,10 @@
   ("emacs:meta g" (clipboard-clear "primary"))
   ("emacs:meta [" (undo 0))
   ("emacs:meta ]" (redo 0))
+  ("emacs:meta C-tab" (geometry-variant #t))
+  ("emacs:meta C-S-tab" (geometry-variant #f))
+  ("emacs:meta C-[" (geometry-slower))
+  ("emacs:meta C-]" (geometry-faster))
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))
