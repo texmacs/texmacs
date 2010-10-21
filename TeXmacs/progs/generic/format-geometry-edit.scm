@@ -424,3 +424,78 @@
     (when (resize-consistent-vertical? t)
       (length-increase (tree-ref t 2) 1)
       (length-increase (tree-ref t 4) 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Animations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (anim-context? t)
+  (tree-in? t '(anim-constant anim-translate anum-progressive)))
+
+(tm-define (make-anim-constant duration)
+  (:argument duration "Duration")
+  (insert-go-to `(anim-constant "" ,duration) '(0 0)))
+
+(define (make-anim-translate duration start)
+  (insert-go-to `(anim-translate "" ,duration ,start "") '(0 0)))
+
+(tm-define (make-anim-translate-right duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "-1.0" "0.0")))
+
+(tm-define (make-anim-translate-left duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "1.0" "0.0")))
+
+(tm-define (make-anim-translate-up duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "0.0" "-1.0")))
+
+(tm-define (make-anim-translate-down duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "0.0" "1.0")))
+
+(define (make-anim-progressive duration start)
+  (insert-go-to `(anim-progressive "" ,duration ,start "") '(0 0)))
+
+(tm-define (make-anim-progressive-right duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "0.0" "0.0" "1.0")))
+
+(tm-define (make-anim-progressive-left duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "1.0" "0.0" "1.0" "1.0")))
+
+(tm-define (make-anim-progressive-up duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "0.0" "1.0" "0.0")))
+
+(tm-define (make-anim-progressive-down duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "1.0" "1.0" "1.0")))
+
+(tm-define (make-anim-progressive-center duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.5" "0.5" "0.5" "0.5")))
+
+(tm-define (geometry-slower)
+  (:context anim-context?)
+  (with-innermost t anim-context?
+    (length-decrease-step (tree-ref t 1))))
+
+(tm-define (geometry-faster)
+  (:context anim-context?)
+  (with-innermost t anim-context?
+    (length-increase-step (tree-ref t 1))))
+
+(tm-define (geometry-left)
+  (:context anim-context?)
+  (with-innermost t anim-context?
+    (replace-empty t 1 "1sec")
+    (length-increase (tree-ref t 1) -1)))
+
+(tm-define (geometry-right)
+  (:context anim-context?)
+  (with-innermost t anim-context?
+    (replace-empty t 1 "1sec")
+    (length-increase (tree-ref t 1) 1)))

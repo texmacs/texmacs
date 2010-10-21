@@ -145,7 +145,7 @@
   ("structured:geometry pagedown" (geometry-bottom))
   ("structured:geometry tab" (geometry-variant #t))
   ("structured:geometry S-tab" (geometry-variant #f))
-  ("structured:geometry ]" (geometry-faster))
+  ("structured:geometry [" (geometry-slower))
   ("structured:geometry ]" (geometry-faster))
 
   ("altcmd \\" (make-hybrid))

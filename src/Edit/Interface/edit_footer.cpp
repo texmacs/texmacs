@@ -364,6 +364,18 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
       return concat (up, "value(" * as_string (l/2+1) * ") ");
   case SPECIFIC:
     return concat (up, "texmacs ");
+  case ANIM_CONSTANT:
+    if (l == 0)
+      return concat (up, "anim-constant (", footer_len (st[1]), ") ");
+    else return up;
+  case ANIM_TRANSLATE:
+    if (l == 0)
+      return concat (up, "anim-translate (", footer_len (st[1]), ") ");
+    else return up;
+  case ANIM_PROGRESSIVE:
+    if (l == 0)
+      return concat (up, "anim-progressive (", footer_len (st[1]), ") ");
+    else return up;
   default:
     return concat (up, drd->get_name (L(st)) * " ");
   }
