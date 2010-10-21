@@ -2893,6 +2893,67 @@ upgrade_math (tree t) {
 }
 
 /******************************************************************************
+* Upgrade resize and clipped
+******************************************************************************/
+
+tree
+upgrade_resize_arg (tree t) {
+  if (is_func (t, MERGE, 2)) {
+    if (is_atomic (t[0]) && is_atomic (t[1]))
+      return upgrade_resize_arg (t[0]->label * t[1]->label);
+    tree u= upgrade_resize_arg (t[0]);
+    if (is_func (u, PLUS, 2) || is_func (u, MINUS, 2) ||
+	is_func (u, MINIMUM, 2) || is_func (u, MAXIMUM, 2))
+      if (u[1] == "") {
+	u[1]= upgrade_resize_arg (t[1]);
+	return u;
+      }
+    cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
+    return t;
+  }
+  if (is_func (t, ARG, 1))
+    return t;
+  if (!is_atomic (t)) {
+    cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
+    return t;
+  }
+  string s= t->label;
+  if (starts (s, "c")) {
+    cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
+    return t;
+  }
+  if (N(s) < 2) return t;
+  if (s[0] != 'l' && s[0] != 'b' && s[0] != 'r' && s[0] != 't') return t;
+  string s1= "1" * s (0, 1);
+  string s2= s (2, N(s));
+  if (s[1] == '+') return tree (PLUS, s1, s2);
+  if (s[1] == '-') return tree (MINUS, s1, s2);
+  if (s[1] == '[') return tree (MINIMUM, s1, s2);
+  if (s[1] == ']') return tree (MAXIMUM, s1, s2);
+  return t;
+}
+
+tree
+upgrade_resize_clipped (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, RESIZE, 5) || is_func (t, CLIPPED, 5)) {
+    int i, n= N(t);
+    tree r (t, n);
+    r[0]= upgrade_resize_clipped (t[0]);
+    for (i=1; i<n; i++)
+      r[i]= upgrade_resize_arg (t[i]);
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_resize_clipped (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2922,6 +2983,7 @@ upgrade_tex (tree t) {
   t= upgrade_doc_info (t);
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
+  t= upgrade_resize_clipped (t);
   t= upgrade_brackets (t);
   upgrade_tex_flag= false;
   return t;
@@ -3022,6 +3084,8 @@ upgrade (tree t, string version) {
     t= upgrade_presentation (t);
   if (version_inf_eq (version, "1.0.7.6") && is_non_style_document (t))
     t= upgrade_math (t);
+  if (version_inf_eq (version, "1.0.7.7"))
+    t= upgrade_resize_clipped (t);
   if (version_inf_eq (version, "1.0.7.7") && is_non_style_document (t)) {
     t= with_correct (t);
     t= superfluous_with_correct (t);

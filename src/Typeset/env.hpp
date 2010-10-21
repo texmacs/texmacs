@@ -227,6 +227,7 @@ private:
   tree exec_and (tree t);
   tree exec_not (tree t);
   tree exec_plus_minus (tree t);
+  tree exec_min_max (tree t);
   tree exec_times_over (tree t);
   tree exec_divide (tree t);
   tree exec_modulo (tree t);
@@ -390,6 +391,8 @@ public:
   bool      is_length (string s);
   bool      is_anylen (tree t);
   tree      tmlen_plus (tree t1, tree t2);
+  tree      tmlen_min (tree t1, tree t2);
+  tree      tmlen_max (tree t1, tree t2);
   tree      tmlen_times (double sc, tree t);
   tree      tmlen_over (tree t1, tree t2);
 

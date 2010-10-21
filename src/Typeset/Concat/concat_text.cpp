@@ -258,70 +258,27 @@ concater_rep::typeset_shift (tree t, path ip) {
   print (STD_ITEM, shift_box (ip, b, x, y, true));
 }
 
-SI
-resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
-  if (!is_atomic (new_size)) return old;
-  string s= new_size->label;
-  if (N(s)<2) return old;
-  if (s[0] == '@') s= s (1, N(s));
-
-  bool flag;
-  SI   offset;
-  switch (s[0]) {
-  case 'l':
-  case 'b':
-    flag  = true;
-    offset= minimum;
-    break;
-  case 'c':
-    flag  = true;
-    offset= (minimum + maximum) >> 1;
-    break;
-  case 'r':
-  case 't':
-    flag  = true;
-    offset= maximum;
-    break;
-  default:
-    flag  = false;
-    offset= 0;
-  }
-
-  if (flag) {
-    SI arg= env->as_length (s (2, N(s)));
-    switch (s[1]) {
-    case '+': return offset + arg;
-    case '-': return offset - arg;
-    case '[': return min (offset, arg);
-    case ']': return max (offset, arg);
-    default : return arg;  
-    }
-  }
-  else return env->as_length (s);
-}
-
 void
 concater_rep::typeset_resize (tree t, path ip) {
-  // IDEA: set left, right, bottom, top environment variables
-  //       and allow doing computations with them
   box  b = typeset_as_concat (env, t[0], descend (ip, 0));
-  SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[1]));
-  SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[2]));
-  SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[3]));
-  SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[4]));
-  bool fl= is_atomic (t[1]) && (N(t[1]->label)!=0) && (t[1]->label[0]=='@');
-  print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, !fl));
+  tree old= env->local_begin_extents (b);
+  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1])));
+  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2])));
+  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3])));
+  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4])));
+  env->local_end_extents (old);
+  print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, true));
 }
 
 void
 concater_rep::typeset_clipped (tree t, path ip) {
-  // IDEA: set left, right, bottom, top environment variables
-  //       and allow doing computations with them
   box  b = typeset_as_concat (env, t[4], descend (ip, 4));
-  SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[0]));
-  SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[1]));
-  SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[2]));
-  SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[3]));
+  tree old= env->local_begin_extents (b);
+  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1])));
+  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2])));
+  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3])));
+  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4])));
+  env->local_end_extents (old);
   print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
 }
 

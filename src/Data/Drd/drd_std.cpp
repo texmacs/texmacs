@@ -274,6 +274,10 @@ init_std_drd () {
 	fixed (2) -> returns_numeric () -> numeric (0) -> name ("divide"));
   init (MOD, "mod",
 	fixed (2) -> returns_numeric () -> numeric (0) -> name ("modulo"));
+  init (MINIMUM, "minimum",
+	repeat (2, 1) -> returns_numeric () -> numeric (0));
+  init (MAXIMUM, "maximum",
+	repeat (1, 1) -> returns_numeric () -> numeric (0));
   init (MATH_SQRT, "math-sqrt",
 	fixed (1) -> returns_numeric () -> numeric (0) ->
 	name ("square root"));

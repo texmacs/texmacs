@@ -283,6 +283,9 @@ edit_env_rep::exec (tree t) {
     return exec_divide (t);
   case MOD:
     return exec_modulo (t);
+  case MINIMUM:
+  case MAXIMUM:
+    return exec_min_max (t);
   case MATH_SQRT:
     return exec_math_sqrt (t);
   case EXP:
@@ -1038,6 +1041,43 @@ edit_env_rep::exec_plus_minus (tree t) {
     return acc;
   }
   else return tree (ERROR, "bad plus/minus");
+}
+
+tree
+edit_env_rep::exec_min_max (tree t) {
+  int i, n= N(t);
+  if (n==0) return tree (ERROR, "bad min/max");
+  tree first= exec (t[0]);
+  if (is_double (first)) {
+    double ret= as_double (first);
+    for (i=1; i<n; i++) {
+      tree next= exec (t[i]);
+      if (!is_double (next))
+	return tree (ERROR, "bad min/max");
+      if (is_func (t, MINIMUM))
+	ret= min (ret, as_double (next));
+      else
+	ret= max (ret, as_double (next));
+    }
+    return as_string (ret);
+  }
+  else if (is_anylen (first)) {
+    tree ret= as_tmlen (first);
+    if ((n==1) && is_func (t, MINUS))
+      ret= tmlen_times (-1, ret);
+    for (i=1; i<n; i++) {
+      tree next= exec (t[i]);
+      if (!is_anylen (next))
+	return tree (ERROR, "bad min/max");
+      next= as_tmlen (next);
+      if (is_func (t, MINIMUM))
+	ret= tmlen_min (ret, next);
+      else
+	ret= tmlen_max (ret, next);
+    }
+    return ret;
+  }
+  else return tree (ERROR, "bad min/max");
 }
 
 tree

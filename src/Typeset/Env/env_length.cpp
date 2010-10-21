@@ -47,6 +47,32 @@ edit_env_rep::tmlen_plus (tree t1, tree t2) {
 }
 
 tree
+edit_env_rep::tmlen_min (tree t1, tree t2) {
+  if ((N(t1) == 1) && (N(t2) == 1))
+    return tree (TMLEN, as_string (min (as_double(t1[0]), as_double(t2[0]))));
+  if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
+  if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
+  if (N(t1) < 3 || N(t2) < 3) return tree (ERROR, "invalid tmlen-plus");
+  tree _min= as_string (min (as_double (t1[0]), as_double (t2[0])));
+  tree _def= as_string (min (as_double (t1[1]), as_double (t2[1])));
+  tree _max= as_string (min (as_double (t1[2]), as_double (t2[2])));
+  return tree (TMLEN, _min, _def, _max);
+}
+
+tree
+edit_env_rep::tmlen_max (tree t1, tree t2) {
+  if ((N(t1) == 1) && (N(t2) == 1))
+    return tree (TMLEN, as_string (max (as_double(t1[0]), as_double(t2[0]))));
+  if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
+  if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
+  if (N(t1) < 3 || N(t2) < 3) return tree (ERROR, "invalid tmlen-plus");
+  tree _min= as_string (max (as_double (t1[0]), as_double (t2[0])));
+  tree _def= as_string (max (as_double (t1[1]), as_double (t2[1])));
+  tree _max= as_string (max (as_double (t1[2]), as_double (t2[2])));
+  return tree (TMLEN, _min, _def, _max);
+}
+
+tree
 edit_env_rep::tmlen_times (double sc, tree t) {
   if (N(t) == 1) return tree (TMLEN, as_string (sc * as_double (t[0])));
   if (N(t) < 3) return tree (ERROR, "invalid tmlen-times");
