@@ -107,7 +107,7 @@
 ;; Lazy language definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define lazy-language-waiting (make-hash-table))
+(define lazy-language-waiting (make-ahash-table))
 (define lazy-language-done (make-ahash-table))
 
 (tm-define (lazy-language-impl lan m)
