@@ -238,7 +238,7 @@ symbol_priority (tree t) {
     if (starts (g, "Power")) return PRIORITY_POWER;
     return PRIORITY_RADICAL;
   }
-  else if (is_func (t, BIG, 1) and is_atomic (t[0])) {
+  else if (is_func (t, BIG, 1) && is_atomic (t[0])) {
     string s= t[0]->label;
     if (s == "parallel") return PRIORITY_SEPARATOR;
     if (s == "interleave") return PRIORITY_SEPARATOR;
