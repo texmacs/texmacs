@@ -20,14 +20,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (length-increase t by)
-  (when (tm-length? t)
-    (let* ((l (tree->string t))
-	   (v (tm-length-value l))
-	   (u (tm-length-unit l))
-	   (a (if (== u "spc") 0.2 1))
-	   (new-v (+ v (* by a)))
-	   (new-l (tm-make-length new-v u)))
-      (tree-set t new-l))))
+  (cond ((tree-in? t '(plus minus minimum maximum))
+	 (length-increase (tree-ref t :last) by))
+	((tm-length? t)
+	 (let* ((l (tree->string t))
+		(v (tm-length-value l))
+		(u (tm-length-unit l))
+		(a (if (== u "spc") 0.2 1))
+		(new-v (+ v (* by a)))
+		(new-l (tm-make-length new-v u)))
+	   (tree-set t new-l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Horizontal spaces
@@ -161,6 +163,9 @@
 ;; Resize and clipped
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (resize-context? t)
+  (tree-in? t '(resize clipped)))
+
 (tm-define (make-resize l b r t)
   (:argument l "Left")
   (:argument b "Bottom")
@@ -176,3 +181,31 @@
   (:argument t "Top")
   (wrap-selection-small
     (insert-go-to `(clipped "" ,l ,b ,r ,t) '(0 0))))
+
+(tm-define (geometry-left)
+  (:context resize-context?)
+  (with-innermost t resize-context?
+    (replace-empty t 1 '(plus "1l" "0em"))
+    (replace-empty t 3 '(plus "1r" "0em"))
+    (length-increase (tree-ref t 3) -1)))
+
+(tm-define (geometry-right)
+  (:context resize-context?)
+  (with-innermost t resize-context?
+    (replace-empty t 1 '(plus "1l" "0em"))
+    (replace-empty t 3 '(plus "1r" "0em"))
+    (length-increase (tree-ref t 3) 1)))
+
+(tm-define (geometry-down)
+  (:context resize-context?)
+  (with-innermost t resize-context?
+    (replace-empty t 2 '(plus "1b" "0ex"))
+    (replace-empty t 4 '(plus "1t" "0ex"))
+    (length-increase (tree-ref t 4) -1)))
+
+(tm-define (geometry-up)
+  (:context resize-context?)
+  (with-innermost t resize-context?
+    (replace-empty t 2 '(plus "1b" "0ex"))
+    (replace-empty t 4 '(plus "1t" "0ex"))
+    (length-increase (tree-ref t 4) 1)))
