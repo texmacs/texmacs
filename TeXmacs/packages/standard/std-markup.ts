@@ -44,6 +44,8 @@
 
   <assign|hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
 
+  <assign|pre-edit|<macro|x|<with|ornament-color|#ffffc0|ornament-sunny-color|#fff0e0|ornament-shadow-color|#ffc080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<smash|<ornament|<with|color|#4040c0|<arg|x>>>>>>>
+
   <\active*>
     <\src-comment>
       Size tags (very-small: scriptsize, smaller: footnotesize, larger:
@@ -240,15 +242,15 @@
 
   <assign|hresize|<macro|x|left|right|<resize|<arg|x>|<arg|left>||<arg|right>|>>>
 
-  <assign|hextend|<macro|x|right|<resize|<arg|x>|||<merge|r]|<arg|right>>|>>>
+  <assign|hextend|<macro|x|right|<resize|<arg|x>|||<maximum|1r|<arg|right>>|>>>
 
   <assign|vresize|<macro|x|bottom|top|<resize|<arg|x>||<arg|bottom>||<arg|top>>>>
 
-  <assign|bcorrect|<macro|x|<resize|<arg|x>||<merge|b[|1fnbot>||>>>
+  <assign|bcorrect|<macro|x|<resize|<arg|x>||<minimum|1b|1fnbot>||>>>
 
-  <assign|tcorrect|<macro|x|<resize|<arg|x>||||<merge|t]|1fntop>>>>
+  <assign|tcorrect|<macro|x|<resize|<arg|x>||||<maximum|1t|1fntop>>>>
 
-  <assign|vcorrect|<macro|x|<resize|<arg|x>||<merge|b[|1fnbot>||<merge|t]|1fntop>>>>
+  <assign|vcorrect|<macro|x|<resize|<arg|x>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
 
   <assign|smash|<macro|x|<vresize|<arg|x>|0ex|1ex>>>
 
