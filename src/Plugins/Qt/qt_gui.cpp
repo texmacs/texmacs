@@ -799,6 +799,19 @@ qt_gui_rep::update () {
   // the eventloop afterwards we reactivate the timer with a pause 
   // (see FIXME below) 
 
+  if (updating) {
+    cout << "NESTED UPDATING: This should not happen" << LF;
+    needs_update();
+    return;
+  }
+      
+  time_credit = 100;
+  updatetimer->stop();
+  updating = true;
+  
+  int count_events = 0;
+  int max_proc_events = 2;
+
   
   // preamble:
   // check if a wait dialog is active and in the case remove it.
@@ -812,13 +825,6 @@ qt_gui_rep::update () {
   
   // now the serious business
     
-  time_credit = 100;
-  updating = true;
-  updatetimer->stop();
-  
-  int count_events = 0;
-  int max_proc_events = 2;
-  
   do {
     time_t now = texmacs_time();
     needing_update = false;
