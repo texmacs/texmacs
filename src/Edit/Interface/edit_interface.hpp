@@ -34,6 +34,8 @@ protected:
   bool          got_focus;     // do we have keyboard focus ?
   string        sh_s;          // current string for shortcuts
   double        sh_mark;       // 0 or mark for undoing shortcut
+  string        pre_edit_s;    // pre-edit string
+  double        pre_edit_mark; // 0 or mark for undoing pre-edit
   widget        popup_win;     // the current popup window
   tree          message_l;     // a left message to display
   tree          message_r;     // a right message to display

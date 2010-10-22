@@ -121,6 +121,23 @@ edit_interface_rep::try_shortcut (string comb) {
 
 void
 edit_interface_rep::key_press (string key) {
+  if (pre_edit_mark != 0) {
+    ASSERT (sh_mark == 0, "invalid shortcut during pre-edit");
+    mark_end (pre_edit_mark);
+    pre_edit_s= "";
+    pre_edit_mark= 0;
+  }
+  if (starts (key, "pre-edit:") ) {
+    interrupt_shortcut ();
+    string s= key (9, N(key));
+    if (s == "") return;
+    pre_edit_s= s;
+    pre_edit_mark= new_marker ();
+    mark_start (pre_edit_mark);
+    insert_tree (compound ("pre-edit", s));
+    return;
+  }
+
   string new_sh= N(sh_s)==0? key: sh_s * " " * key;
   if (try_shortcut (new_sh)) return;
   if (new_sh != key) {

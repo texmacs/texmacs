@@ -299,12 +299,14 @@ initialize_default_env () {
     tree (MACRO, "x",
 	  tree (SURROUND, "", compound ("right-flush"),
 		compound ("indent*", tree (ARG, "x"))));
-  env ("mutator")=
-    tree (MACRO, "x", "y", tree (ARG, "x"));
   env ("math")=
     tree (MACRO, "x", tree (WITH, MODE, "math", tree (ARG, "x")));
   env ("text")=
     tree (MACRO, "x", tree (WITH, MODE, "text", tree (ARG, "x")));
+  env ("pre-edit")=
+    tree (MACRO, "x", tree (WITH, COLOR, "#4040c0", tree (ARG, "x")));
+  env ("mutator")=
+    tree (MACRO, "x", "y", tree (ARG, "x"));
 
   /* syntactic highlighting */
   env ("src-regular")=
