@@ -558,7 +558,9 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     imwidget->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
   //  imwidget->setAttribute(Qt::WA_TranslucentBackground);
 //    imwidget->setAutoFillBackground(false);
+       imwidget->setAutoFillBackground(true);
     imwidget->setWindowOpacity(0.5);
+    imwidget->setFocusPolicy(Qt::NoFocus);
     QPalette pal = imwidget->palette();
 //    pal.setColor(QPalette::Window, QColor(0,0,255,80));
     pal.setColor(QPalette::Window, QColor(0,0,255,255));
@@ -591,6 +593,14 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     imwidget->setGeometry(g);
     // setRoundedMask(imwidget);
     imwidget->show();
+#ifdef QT_MAC_USE_COCOA
+    // HACK: we unexplicably loose the focus even when showing the small window,
+    // so we need to restore it manually.....
+    // The following fixes the problem (but I do not really understand why it 
+    // happens)
+    // Maybe this is a Qt/Cocoa bug.
+    this->window()->activateWindow();
+#endif    
   }
   
   if (!commit_string.isEmpty()) {
