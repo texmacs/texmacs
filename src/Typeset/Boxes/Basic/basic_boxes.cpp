@@ -181,28 +181,21 @@ arc_box_rep::display (renderer ren) {
 
 struct image_box_rep: public box_rep {
   url u;
-  double cx1, cy1, cx2, cy2;
-
-  image_box_rep (path ip, url u2, SI w, SI h,
-		 double cx1, double cy1, double cx2, double cy2);
+  image_box_rep (path ip, url u2, SI w, SI h);
   operator tree () { return "image"; }
   void display (renderer ren);
 };
 
-image_box_rep::image_box_rep (
-  path ip, url u2,
-  SI w, SI h, double cx1b, double cy1b, double cx2b, double cy2b):
-    box_rep (ip), u (u2)
+image_box_rep::image_box_rep (path ip, url u2, SI w, SI h):
+  box_rep (ip), u (u2)
 {
-  cx1= cx1b; cy1= cy1b;
-  cx2= cx2b; cy2= cy2b;
   x1= x3= 0; y1= y3= 0;
   x2= x4= w; y2= y4= h;
 }
 
 void
 image_box_rep::display (renderer ren) {
-  ren->image (u, x2, y2, 0, 0, cx1, cy1, cx2, cy2);
+  ren->image (u, x2, y2, 0, 0, 0.0, 0.0, 1.0, 1.0);
 }
 
 /******************************************************************************
@@ -257,10 +250,8 @@ polygon_box (path ip, array<SI> x, array<SI> y, color c) {
 }
 
 box
-image_box (path ip, url u, SI w, SI h,
-	   double cx1, double cy1, double cx2, double cy2)
-{
-  return tm_new<image_box_rep> (ip, u, w, h, cx1, cy1, cx2, cy2);
+image_box (path ip, url u, SI w, SI h) {
+  return tm_new<image_box_rep> (ip, u, w, h);
 }
 
 box

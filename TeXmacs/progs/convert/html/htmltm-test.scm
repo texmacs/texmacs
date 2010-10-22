@@ -516,7 +516,7 @@
 	 '(hlink (concat (label "eggs") (label "foo") "baz") "bar"))))
 
 (define (regtest-htmltm-objects)
-  (define (image s w h) `(image ,s ,w ,h "" "" "" ""))
+  (define (image s w h) `(image ,s ,w ,h "" ""))
   (regression-test-group
    "htmltm, object images and applets" "objects"
    shtml->stm :none
@@ -733,7 +733,7 @@
 	 `(hlink ,stm1 "<less>z<gtr>"))
    (test "image source"
 	 "<img src='<z>'>"
-	 '(image "<less>z<gtr>" "*6383/10000" "" "" "" "" ""))))
+	 '(image "<less>z<gtr>" "*6383/10000" "" "" ""))))
 
 ;; Utilities for testing url-decoding
 
@@ -807,7 +807,7 @@
 	 '(hlink "`how are you?`" "`hello world`"))
    (test "img element"
 	 '(img (@ (src "%60hello%60")))
-	 '(image "`hello`" "*6383/10000" "" "" "" "" ""))
+	 '(image "`hello`" "*6383/10000" "" "" ""))
    ;; No test for htmltm-with-color of 1.0.1.16, since it is mostly broken.
    (test "anchor element"
 	 '(a (@ (name "%60hello%60")) "`world`")

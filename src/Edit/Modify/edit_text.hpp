@@ -47,8 +47,8 @@ public:
   void make_vspace_after (string s);
   void make_vspace_after (string smin, string sdef, string smax);
   void make_htab (string spc);
-  void make_image (string file_name, bool link, string w, string h,
-			string x1, string y1, string x2, string y2);
+  void make_image (string file_name, bool link,
+		   string w, string h, string x, string y);
 };
 
 #endif // defined EDIT_TEXT_H

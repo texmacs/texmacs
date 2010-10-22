@@ -323,8 +323,8 @@
     (list (xmltm-label-decorate
 	   a 'id
 	   (if (not (and (string-null? w) (string-null? h)))
-	       `(image ,s ,w ,h "" "" "" "")
-	       `(image ,s "*6383/10000" "" "" "" "" ""))))))
+	       `(image ,s ,w ,h "" "")
+	       `(image ,s "*6383/10000" "" "" ""))))))
 
 (define (htmltm-font env a c)
   ;; WARNING: do as old filter, but is fragile and not conformant

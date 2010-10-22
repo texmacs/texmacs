@@ -2959,6 +2959,24 @@ upgrade_resize_clipped (tree t) {
 }
 
 /******************************************************************************
+* Upgrade images
+******************************************************************************/
+
+tree
+upgrade_image (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, IMAGE, 7))
+    return tree (IMAGE, t[0], t[1], t[2], "", "");
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_image (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2990,6 +3008,7 @@ upgrade_tex (tree t) {
   t= upgrade_math (t);
   t= upgrade_resize_clipped (t);
   t= upgrade_brackets (t);
+  t= upgrade_image (t);
   upgrade_tex_flag= false;
   return t;
 }
@@ -3090,6 +3109,8 @@ upgrade (tree t, string version) {
     t= upgrade_math (t);
   if (version_inf_eq (version, "1.0.7.7"))
     t= upgrade_resize_clipped (t);
+  if (version_inf_eq (version, "1.0.7.7"))
+    t= upgrade_image (t);
   if (version_inf_eq (version, "1.0.7.7") && is_non_style_document (t)) {
     t= with_correct (t);
     t= superfluous_with_correct (t);

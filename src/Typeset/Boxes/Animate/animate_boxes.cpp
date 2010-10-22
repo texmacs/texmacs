@@ -549,7 +549,7 @@ add_frames (array<box>& a, path ip, url u, int w, int h, int msecs) {
     add_frames (a, ip, u[2], w, h, msecs);
   }
   else {
-    box imb= image_box (ip, u, w, h, 0.0, 0.0, 1.0, 1.0);
+    box imb= image_box (ip, u, w, h);
     a << anim_constant_box (ip, imb, msecs);
   }
 }

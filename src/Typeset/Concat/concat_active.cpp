@@ -278,7 +278,7 @@ get_magnification (string s) {
 void
 concater_rep::typeset_image (tree t, path ip) {
   // determine the image url
-  if (N(t)!=7) error_image ("parameters");
+  if (N(t)!=5) error_image ("parameters");
   tree image_tree= env->exec (t[0]);
   url image= url_none ();
   if (is_atomic (image_tree)) {
@@ -299,42 +299,6 @@ concater_rep::typeset_image (tree t, path ip) {
   image_size (image, iw, ih);
   double pt= ((double) env->dpi*PIXEL) / 72.0;
 
-  // determine the clipping rectangle
-  tree tx1= env->exec (t[3]);
-  tree ty1= env->exec (t[4]);
-  tree tx2= env->exec (t[5]);
-  tree ty2= env->exec (t[6]);
-  if (is_compound (tx1)) error_image (tx1);
-  if (is_compound (ty1)) error_image (ty1);
-  if (is_compound (tx2)) error_image (tx2);
-  if (is_compound (ty2)) error_image (ty2);
-
-  string sx1= tx1->label;
-  string sy1= ty1->label;
-  string sx2= tx2->label;
-  string sy2= ty2->label;
-  if (sx1 != "" && ! env->is_length (sx1)) error_image (sx1);
-  if (sy1 != "" && ! env->is_length (sy1)) error_image (sy1);
-  if (sx2 != "" && ! env->is_length (sx2)) error_image (sx2);
-  if (sy2 != "" && ! env->is_length (sy2)) error_image (sy2);
-
-  int x1, y1, x2, y2;
-  if (sx1 == "") x1= 0;
-  else x1= ((SI) (((double) env->as_length (sx1)) / pt));
-  if (sy1 == "") y1= 0;
-  else y1= ((SI) (((double) env->as_length (sy1)) / pt));
-  if (sx2 == "") x2= iw;
-  else x2= ((SI) (((double) env->as_length (sx2)) / pt));
-  if (sy2 == "") y2= ih;
-  else y2= ((SI) (((double) env->as_length (sy2)) / pt));
-  if ((x1>=x2) || (y1>=y2))
-    error_image (tree (WITH, "color", "red", "null box"));
-
-  double cx1= ((double) x1) / ((double) iw);
-  double cy1= ((double) y1) / ((double) ih);
-  double cx2= ((double) x2) / ((double) iw);
-  double cy2= ((double) y2) / ((double) ih);
-
   // determine the width and the height
   tree tw= env->exec (t[1]);
   tree th= env->exec (t[2]);
@@ -352,11 +316,11 @@ concater_rep::typeset_image (tree t, path ip) {
   bool hs_is_len= env->is_length (hs);    
   if (ws_is_len) w= env->as_length (ws);
   if (hs_is_len) h= env->as_length (hs);
-  if (ws_is_len && !hs_is_len) h= (w * (y2-y1)) / (x2-x1);
-  if (hs_is_len && !ws_is_len) w= (h * (x2-x1)) / (y2-y1);
+  if (ws_is_len && !hs_is_len) h= (w * ih) / iw;
+  if (hs_is_len && !ws_is_len) w= (h * iw) / ih;
   if (!ws_is_len && !hs_is_len) {
-    w= (SI) (((double) (x2-x1)) * pt);
-    h= (SI) (((double) (y2-y1)) * pt);
+    w= (SI) (((double) iw) * pt);
+    h= (SI) (((double) ih) * pt);
   }
 
   bool ws_is_mag= is_magnification (ws);
@@ -370,7 +334,7 @@ concater_rep::typeset_image (tree t, path ip) {
     error_image (tree (WITH, "color", "red", "null box"));
 
   // print the box
-  print (STD_ITEM, image_box (ip, image, w, h, cx1, cy1, cx2, cy2));
+  print (STD_ITEM, image_box (ip, image, w, h));
 }
 
 #undef error_image

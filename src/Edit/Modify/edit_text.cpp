@@ -344,8 +344,7 @@ edit_text_rep::make_htab (string spc) {
 
 void
 edit_text_rep::make_image (
-  string file_name, bool link, string w, string h,
-  string x1, string y1, string x2, string y2)
+  string file_name, bool link, string w, string h, string x, string y)
 {
   url image= url_system (file_name);
   string type= "";
@@ -372,6 +371,6 @@ edit_text_rep::make_image (
     }
     t << tuple (tree (RAW_DATA, s), type);
   }
-  t << w << h << tree (x1) << tree (y1) << tree (x2) << tree (y2);
+  t << tree (w) << tree (h) << tree (x) << tree (y);
   insert_tree (t);
 }

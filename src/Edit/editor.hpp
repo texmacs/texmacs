@@ -319,9 +319,7 @@ public:
   virtual void make_vspace_after (string smin, string sdef, string smax) = 0;
   virtual void make_htab (string spc) = 0;
   virtual void make_image (string file_name, bool link,
-				string w, string h,
-				string x1, string y1,
-				string x2, string y2) = 0;
+			   string w, string h, string x, string y) = 0;
 
   /* public routines from edit_math */
   virtual void make_rigid () = 0;

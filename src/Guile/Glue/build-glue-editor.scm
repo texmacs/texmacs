@@ -91,8 +91,7 @@
     (void string string string))
   (make-vspace-after make_vspace_after (void string))
   (make-var-vspace-after make_vspace_after (void string string string))
-  (make-image make_image
-    (void string bool string string string string string string))
+  (make-image make_image (void string bool string string string string))
 
   (length-decode as_length (int string))
   (length-add add_lengths (string string string))

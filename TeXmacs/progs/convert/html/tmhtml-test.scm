@@ -362,7 +362,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (regtest-tmhtml-picture)
-  (define (make-result l) (tmhtml-root `(image ,@l "" "" "" "")))
+  (define (make-result l) (tmhtml-root `(image ,@l "" "")))
   (define (make-expected l) (if (null? l) '() (apply make-expected-sub l)))
   (define (make-expected-sub f w h)
     `((h:img (@ (src ,f)
