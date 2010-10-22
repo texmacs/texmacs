@@ -625,7 +625,19 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   event->accept();
 
 }  
+
+QVariant 
+QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
+  switch (query) {
+    case Qt::ImMicroFocus :
+      return QVariant(QRect(cursor_pos + QPoint(10,10),QSize(20,40)));
+    default:
+      return QVariant();
+  }
+}
+
 #else
+
 // NEW INPUT METHOD PREVIEW
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
@@ -661,18 +673,21 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   }
   event->accept();
 }  
-#endif
-
 
 QVariant 
 QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
   switch (query) {
     case Qt::ImMicroFocus :
-      return QVariant(QRect(cursor_pos + QPoint(10,10),QSize(20,40)));
+      return QVariant(QRect(cursor_pos ,QSize(5,5)));
     default:
       return QVariant();
   }
 }
+
+
+#endif // input method variants
+
+
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
