@@ -694,7 +694,14 @@ add_event(const queued_event &ev)
   } else {
     waiting_events << ev;
 //    process_event(ev);
-    the_gui->update();
+//    the_gui->update();
+    needs_update();
+    // NOTE: we cannot update now since sometimes this seems to give problems
+    // to the update of the window size after a resize. In that situation
+    // sometimes when the window take again focus, update will be called for the
+    // focus_in event and interpose_handler is run which send a slot_extent
+    // message to the widget causing a wrong resize of the window.
+    // this seems to cure the problem.
   }
 }
 
