@@ -1042,7 +1042,7 @@
 	    (convert-to-file u fm "postscript-file" name-url)
 	    (list 'includegraphics name-string))))))
 
-(define (tmtex-postscript l)
+(define (tmtex-image l)
   (let* ((fig (tmtex-as-eps (force-string (car l))))
 	 (hor (if (== (cadr l) "") "!" (tmtex-decode-length (cadr l))))
 	 (ver (if (== (caddr l) "") "!" (tmtex-decode-length (caddr l)))))
@@ -1561,7 +1561,7 @@
   (superpose tmtex-noop)
   ((:or gr-group gr-linear-transform
 	text-at cline arc carc spline spine* cspline fill) tmtex-noop)
-  (postscript tmtex-postscript)
+  (image tmtex-image)
   ((:or box-info frame-direct frame-inverse) tmtex-noop)
 
   ((:or format line-sep split delay hold release

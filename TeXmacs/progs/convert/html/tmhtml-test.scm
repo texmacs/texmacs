@@ -362,14 +362,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (regtest-tmhtml-picture)
-  (define (make-result l) (tmhtml-root `(postscript ,@l "" "" "" "")))
+  (define (make-result l) (tmhtml-root `(image ,@l "" "" "" "")))
   (define (make-expected l) (if (null? l) '() (apply make-expected-sub l)))
   (define (make-expected-sub f w h)
     `((h:img (@ (src ,f)
 		,@(if w `((width ,w)) '())
 		,@(if h `((height ,h)) '())))))
   (regression-test-group
-   "tmhtml, pictures" "postscript"
+   "tmhtml, pictures" "image"
    make-result make-expected
    (test "simple link" '("foo.png" "" "") '("foo.png" #f #f))
    (test "inclusion" '((tuple (raw-data "...") "png") "" "") '())

@@ -358,7 +358,7 @@
 
 (define (make-thumbnails-sub l)
   (define (mapper x)
-    `(postscript ,(url->string x) "0.22par" "" "" "" "" ""))
+    `(image ,(url->string x) "0.22par" "" "" "" "" ""))
   (let* ((l1 (map mapper l))
 	 (l2 (make-rows l1 4))
 	 (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))

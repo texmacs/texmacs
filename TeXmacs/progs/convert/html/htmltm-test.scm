@@ -516,17 +516,17 @@
 	 '(hlink (concat (label "eggs") (label "foo") "baz") "bar"))))
 
 (define (regtest-htmltm-objects)
-  (define (postscript s w h) `(postscript ,s ,w ,h "" "" "" ""))
+  (define (image s w h) `(image ,s ,w ,h "" "" "" ""))
   (regression-test-group
    "htmltm, object images and applets" "objects"
    shtml->stm :none
-   (test "img" '(img (@ (src "foo"))) (postscript "foo" "*6383/10000" ""))
+   (test "img" '(img (@ (src "foo"))) (image "foo" "*6383/10000" ""))
    (test "img, px px"
 	 '(img (@ (src "foo") (width "100") (height "50")))
-	 (postscript "foo" "100px" "50px"))
+	 (image "foo" "100px" "50px"))
    (test "img, %"
 	 '(img (@ (src "foo") (width "50%")))
-	 (postscript "foo" "0.5par" ""))))
+	 (image "foo" "0.5par" ""))))
 
 (define (regtest-htmltm-alignement)
   (regression-test-group
@@ -733,7 +733,7 @@
 	 `(hlink ,stm1 "<less>z<gtr>"))
    (test "image source"
 	 "<img src='<z>'>"
-	 '(postscript "<less>z<gtr>" "*6383/10000" "" "" "" "" ""))))
+	 '(image "<less>z<gtr>" "*6383/10000" "" "" "" "" ""))))
 
 ;; Utilities for testing url-decoding
 
@@ -807,7 +807,7 @@
 	 '(hlink "`how are you?`" "`hello world`"))
    (test "img element"
 	 '(img (@ (src "%60hello%60")))
-	 '(postscript "`hello`" "*6383/10000" "" "" "" "" ""))
+	 '(image "`hello`" "*6383/10000" "" "" "" "" ""))
    ;; No test for htmltm-with-color of 1.0.1.16, since it is mostly broken.
    (test "anchor element"
 	 '(a (@ (name "%60hello%60")) "`world`")

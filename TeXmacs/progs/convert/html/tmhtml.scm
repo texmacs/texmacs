@@ -1036,7 +1036,7 @@
 (define (tmhtml-graphics l)
   (tmhtml-png (cons 'graphics l)))
 
-(define (tmhtml-postscript-name name)
+(define (tmhtml-image-name name)
   (with u (url-relative current-save-target (string->url name))
     (if (and (or (string-ends? name ".ps") (string-ends? name ".eps"))
 	     (url-exists? u))
@@ -1045,12 +1045,12 @@
 	  name-string)
 	name)))
 
-(define (tmhtml-postscript l)
+(define (tmhtml-image l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
   (if (nstring? (first l))
-      (tmhtml-png (cons 'postscript l))
-      (let* ((s (tmhtml-postscript-name (cork->html (first l))))
+      (tmhtml-png (cons 'image l))
+      (let* ((s (tmhtml-image-name (cork->html (first l))))
 	     (w (tmlength->htmllength (second l) #f))
 	     (h (tmlength->htmllength (third l) #f)))
 	`((h:img (@ (src ,s)
@@ -1379,7 +1379,7 @@
   ((:or switch fold exclusive progressive superposed) tmhtml-noop)
   (graphics tmhtml-graphics)
   ((:or point line arc bezier) tmhtml-noop)
-  (postscript tmhtml-postscript)
+  (image tmhtml-image)
 
   (!file tmhtml-file))
 
