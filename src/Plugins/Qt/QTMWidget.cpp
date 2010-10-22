@@ -551,6 +551,9 @@ static void setRoundedMask(QWidget *widget)
 }
 #endif
 
+
+#if 0 
+// OLD INPUT METHOD PREVIEW
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   if (! imwidget) {   
@@ -622,6 +625,43 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   event->accept();
 
 }  
+#else
+// NEW INPUT METHOD PREVIEW
+void
+QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
+  
+  QString const & preedit_string = event->preeditString();
+  QString const & commit_string = event->commitString();
+  
+  if (!commit_string.isEmpty()) {
+    if (DEBUG_QT)
+      cout << "IM committing :" << commit_string.toUtf8().data() << LF;
+    
+    int key = 0;
+#if 1
+    for (int i = 0; i < commit_string.size(); ++i) {
+      QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
+      keyPressEvent(&ev);
+    }
+#else
+    QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, commit_string);
+    keyPressEvent(&ev);
+#endif
+  }
+  
+  if (!preedit_string.isEmpty()) {
+    if (DEBUG_QT)
+      cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+
+    
+    string r = "pre-edit:" * from_qstring(preedit_string);
+    simple_widget_rep *wid =  tm_widget();
+    if (wid)
+      the_gui -> process_keypress (wid, r, texmacs_time());
+  }
+  event->accept();
+}  
+#endif
 
 
 QVariant 
