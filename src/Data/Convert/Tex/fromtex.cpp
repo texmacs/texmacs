@@ -794,7 +794,7 @@ latex_command_to_tree (tree t) {
     tree height= latex_eps_get (data, "height");
     if (name == "") return "";
     else {
-      tree g (IMAGE, 7);
+      tree g (IMAGE, 5);
       g[0]= name;
       g[1]= width;
       g[2]= height;

@@ -136,6 +136,21 @@ footer_rubber_len (tree t) {
 		 footer_len (t[1]), "/", footer_len (t[2]));
 }
 
+static tree
+footer_image (tree t) {
+  if (N(t) != 5) return "";
+  tree name= "-";
+  if (is_atomic (t[0]))
+    name= as_string (tail (url (t[0]->label)));
+  tree w= footer_len (t[1]);
+  tree h= footer_len (t[2]);
+  tree c= concat (name, ", ", w, ", ", h);
+  if (t[3] == "" && t[4] == "") return c;
+  tree x= footer_len (t[3]);
+  tree y= footer_len (t[4]);
+  return concat (c, "; ", x, ", ", y);
+}
+
 static string
 get_accent_type (string s) {
   if (s == "^") return "hat";
@@ -247,6 +262,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("write to ", as_string (st[0])); break;
     case SPECIFIC:
       r= concat ("specific ", as_string (st[0])); break;
+    case IMAGE:
+      r= concat ("image (", footer_image (st), ") "); break;
     default: ;
     }
   }

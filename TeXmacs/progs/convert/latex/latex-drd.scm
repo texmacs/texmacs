@@ -69,13 +69,13 @@
   ,(string->symbol "."))
 
 (drd-group latex-command-2%
-  binom choose cfrac tfrac
+  binom choose cfrac tfrac equal href
   sideset stackrel citeauthoryear
-  equal href
-  setcounter addtocounter setlength addtolength)
+  setcounter addtocounter setlength addtolength
+  scalebox)
 
 (drd-group latex-command-3%
-  ifthenelse)
+  ifthenelse resizebox)
 
 (drd-rules
   ((latex-command% 'x) (latex-command-0% 'x))

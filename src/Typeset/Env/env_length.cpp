@@ -175,6 +175,18 @@ edit_env_rep::as_length (tree t) {
   return (SI) (as_double (s));
 }
 
+SI
+edit_env_rep::as_length (tree t, string perc) {
+  if (is_atomic (t) && N(t->label) > 0 && t->label [N(t->label) - 1] == '%')
+    return as_length (t->label (0, N(t->label) - 1) * perc) / 100;
+  else {
+    tree r= as_tmlen (t);
+    if (N(r) < 1) return 0;
+    string s= r[N(r)==1? 0: 1]->label;
+    return (SI) (as_double (s));
+  }
+}
+
 space
 edit_env_rep::as_hspace (tree t) {
   tree r= as_tmlen (t);
@@ -219,6 +231,52 @@ edit_env_rep::as_point (tree t) {
     return fr[p];
   }
   return point ();
+}
+
+/******************************************************************************
+* Percentages and magnifications
+******************************************************************************/
+
+bool
+is_percentage (tree t, string s) {
+  return
+    is_atomic (t) &&
+    ends (t->label, s) &&
+    is_double (t->label (0, N (t->label) - 1));
+}
+
+bool
+is_percentage (tree t) {
+  return is_percentage (t, "%");
+}
+
+double
+as_percentage (tree t) {
+  return as_double (t->label (0, N (t->label) - 1)) / 100.0;
+}
+
+bool
+is_magnification (string s) {
+  double result;
+  if (N(s) == 0) return false;
+  for (int i=0; i<N(s); /*nop*/) {
+    if (s[i]=='*') { i++; read_double (s, i, result); }
+    else if (s[i]=='/') { i++; read_double (s, i, result); }
+    else return false;
+  }
+  return true;
+}
+
+double
+get_magnification (string s) {
+  int i=0;
+  double magn= 1.0, result;
+  while (i<N(s)) {
+    if (s[i]=='*') { i++; read_double (s, i, result); magn *= result; }
+    else if (s[i]=='/') { i++; read_double (s, i, result); magn /= result; }
+    else return magn;
+  }
+  return magn;
 }
 
 /******************************************************************************

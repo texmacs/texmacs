@@ -403,6 +403,7 @@ public:
 
   tree      as_tmlen (tree t);
   SI        as_length (tree t);
+  SI        as_length (tree t, string perc);
   space     as_hspace (tree t);
   space     as_vspace (tree t);
   point     as_point (tree t);

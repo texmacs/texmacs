@@ -33,6 +33,7 @@
   ("msec increase" "50" noop)
   ("sec increase" "1" noop)
   ("min increase" "0.1" noop)
+  ("% increase" "5" noop)
   ("default unit" "spc" noop))
 
 (define step-table (make-ahash-table))
@@ -423,6 +424,66 @@
   (with-innermost t resize-context?
     (when (resize-consistent-vertical? t)
       (length-increase (tree-ref t 2) 1)
+      (length-increase (tree-ref t 4) 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Images
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (image-context? t)
+  (and-with u (tree-down t)
+    (tm-func? u 'image 5)))
+
+(tm-define (geometry-slower)
+  (:context image-context?)
+  (with-innermost t image-context?
+    (length-decrease-step (tree-ref t :down 0))))
+
+(tm-define (geometry-faster)
+  (:context image-context?)
+  (with-innermost t image-context?
+    (length-increase-step (tree-ref t :down 0))))
+
+(tm-define (geometry-left)
+  (:context image-context?)
+  (with-innermost p image-context?
+    (with t (tree-ref p :down)
+      (replace-empty t 1 "1w")
+      (length-increase (tree-ref t 1) -1))))
+
+(tm-define (geometry-right)
+  (:context image-context?)
+  (with-innermost p image-context?
+    (with t (tree-ref p :down)
+      (replace-empty t 1 "1w")
+      (length-increase (tree-ref t 1) 1))))
+
+(tm-define (geometry-down)
+  (:context image-context?)
+  (with-innermost p image-context?
+    (with t (tree-ref p :down)
+      (replace-empty t 2 "1h")
+      (length-increase (tree-ref t 2) -1))))
+
+(tm-define (geometry-up)
+  (:context image-context?)
+  (with-innermost p image-context?
+    (with t (tree-ref p :down)
+      (replace-empty t 2 "1h")
+      (length-increase (tree-ref t 2) 1))))
+
+(tm-define (geometry-bottom)
+  (:context image-context?)
+  (with-innermost p image-context?
+    (with t (tree-ref p :down)
+      (replace-empty t 4 "0h")
+      (length-increase (tree-ref t 4) -1))))
+
+(tm-define (geometry-top)
+  (:context image-context?)
+  (with-innermost p image-context?
+    (with t (tree-ref p :down)
+      (replace-empty t 4 "0h")
       (length-increase (tree-ref t 4) 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

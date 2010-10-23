@@ -228,48 +228,6 @@ concater_rep::typeset_flag (tree t, path ip) {
 * Typesetting images
 ******************************************************************************/
 
-bool
-is_percentage (tree t, string s) {
-  return
-    is_atomic (t) &&
-    ends (t->label, s) &&
-    is_double (t->label (0, N (t->label) - 1));
-}
-
-bool
-is_percentage (tree t) {
-  return is_percentage (t, "%");
-}
-
-double
-as_percentage (tree t) {
-  return as_double (t->label (0, N (t->label) - 1)) / 100.0;
-}
-
-bool
-is_magnification (string s) {
-  double result;
-  if (N(s) == 0) return false;
-  for (int i=0; i<N(s); /*nop*/) {
-    if (s[i]=='*') { i++; read_double (s, i, result); }
-    else if (s[i]=='/') { i++; read_double (s, i, result); }
-    else return false;
-  }
-  return true;
-}
-
-double
-get_magnification (string s) {
-  int i=0;
-  double magn= 1.0, result;
-  while (i<N(s)) {
-    if (s[i]=='*') { i++; read_double (s, i, result); magn *= result; }
-    else if (s[i]=='/') { i++; read_double (s, i, result); magn /= result; }
-    else return magn;
-  }
-  return magn;
-}
-
 #define error_image(t) { \
   typeset_dynamic (tree (ERROR, "bad image", t), ip); \
   return; \
@@ -278,63 +236,56 @@ get_magnification (string s) {
 void
 concater_rep::typeset_image (tree t, path ip) {
   // determine the image url
-  if (N(t)!=5) error_image ("parameters");
+  if (N(t) != 5) error_image ("parameters");
   tree image_tree= env->exec (t[0]);
   url image= url_none ();
   if (is_atomic (image_tree)) {
-    if (N(image_tree->label)==0)
+    if (N (image_tree->label) == 0)
       error_image (tree (WITH, "color", "red", "no image"));
     url im= image_tree->label;
     image= resolve (relative (env->base_file_name, im));
     if (is_none (image)) image= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
-  } else if (is_func (image_tree, TUPLE, 2) &&
+  }
+  else if (is_func (image_tree, TUPLE, 2) &&
 	     is_func (image_tree[0], RAW_DATA, 1) &&
 	     is_atomic (image_tree[0][0]) && is_atomic (image_tree[1])) {
     image= url_ramdisc (image_tree[0][0]->label) *
            url ("image." * image_tree[1]->label);
-  } else error_image (image_tree);
+  }
+  else error_image (image_tree);
 
   // determine the original size of the image
   int iw, ih;
   image_size (image, iw, ih);
   double pt= ((double) env->dpi*PIXEL) / 72.0;
+  SI w= (SI) (((double) iw) * pt);
+  SI h= (SI) (((double) ih) * pt);
 
   // determine the width and the height
-  tree tw= env->exec (t[1]);
-  tree th= env->exec (t[2]);
-  if (is_compound (tw)) error_image (tw);
-  if (is_compound (th)) error_image (th);
-  string ws= tw->label;
-  string hs= th->label;
-  if (! (N(ws)==0 || env->is_length (ws) || is_magnification (ws)))
-    error_image (ws);
-  if (! (N(hs)==0 || env->is_length (hs) || is_magnification (hs)))
-    error_image (hs);
-  
-  SI w= 0, h= 0;
-  bool ws_is_len= env->is_length (ws);
-  bool hs_is_len= env->is_length (hs);    
-  if (ws_is_len) w= env->as_length (ws);
-  if (hs_is_len) h= env->as_length (hs);
-  if (ws_is_len && !hs_is_len) h= (w * ih) / iw;
-  if (hs_is_len && !ws_is_len) w= (h * iw) / ih;
-  if (!ws_is_len && !hs_is_len) {
-    w= (SI) (((double) iw) * pt);
-    h= (SI) (((double) ih) * pt);
-  }
-
-  bool ws_is_mag= is_magnification (ws);
-  bool hs_is_mag= is_magnification (hs);
-  if (ws_is_mag) w= (SI) (((double) w) * get_magnification (ws));
-  if (hs_is_mag) h= (SI) (((double) h) * get_magnification (hs));
-  if (ws_is_mag && N(hs)==0) h= (SI) (((double) h) * get_magnification (ws));
-  if (hs_is_mag && N(ws)==0) w= (SI) (((double) w) * get_magnification (hs));
-
-  if (w <= 0 || h <= 0)
+  tree old_w= env->local_begin ("w-length", as_string (w) * "tmpt");
+  tree old_h= env->local_begin ("h-length", as_string (h) * "tmpt");
+  SI imw= (t[1] == ""? w: env->as_length (env->exec (t[1]), "w"));
+  SI imh= (t[2] == ""? h: env->as_length (env->exec (t[2]), "h"));
+  if (t[1] == "" && t[2] != "" && ih != 0)
+    imw= (SI) ((iw * ((double) imh)) / ih);
+  if (t[1] != "" && t[2] == "" && iw != 0)
+    imh= (SI) ((ih * ((double) imw)) / iw);
+  if (imw <= 0 || imh <= 0)
     error_image (tree (WITH, "color", "red", "null box"));
-
+  env->local_end ("w-length", old_w);
+  env->local_end ("h-length", old_h);
+  
+  // determine the offset
+  old_w= env->local_begin ("w-length", as_string (imw) * "tmpt");
+  old_h= env->local_begin ("h-length", as_string (imh) * "tmpt");
+  SI imx= (t[3] == ""? 0: env->as_length (env->exec (t[3]), "w"));
+  SI imy= (t[4] == ""? 0: env->as_length (env->exec (t[4]), "h"));
+  env->local_end ("w-length", old_w);
+  env->local_end ("h-length", old_h);
+  
   // print the box
-  print (STD_ITEM, image_box (ip, image, w, h));
+  box imb= image_box (ip, image, imw, imh);
+  print (STD_ITEM, move_box (ip, imb, imx, imy, true));
 }
 
 #undef error_image

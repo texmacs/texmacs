@@ -88,6 +88,7 @@
   (cond ((nstring? s) #f)
 	((>= pos (string-length s)) #f)
 	((char-alphabetic? (string-ref s pos)) pos)
+	((== (string-ref s pos) #\%) pos)
 	(else (tm-length-unit-search s (+ pos 1)))))
 
 (define-public (tm-make-length val unit)
@@ -97,8 +98,10 @@
   (if (tree? s)
       (and (tree-atomic? s) (tm-length? (tree->string s)))
       (and-with pos (tm-length-unit-search s 0)
-	(and (string-number? (substring s 0 pos))
-	     (string-locase-alpha? (substring s pos (string-length s)))))))
+	(let ((s1 (substring s 0 pos))
+	      (s2 (substring s pos (string-length s))))
+	  (and (string-number? s1)
+	       (or (string-locase-alpha? s2) (== s2 "%")))))))
 
 (define-public (tm-length-value s)
   (if (tree? s)

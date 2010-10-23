@@ -242,8 +242,8 @@ void
 concater_rep::typeset_move (tree t, path ip) {
   box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
   tree old= env->local_begin_extents (b);
-  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1])));
-  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2])));
+  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
+  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
   env->local_end_extents (old);
   print (STD_ITEM, move_box (ip, b, x, y, true));
 }
@@ -252,8 +252,8 @@ void
 concater_rep::typeset_shift (tree t, path ip) {
   box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
   tree old= env->local_begin_extents (b);
-  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1])));
-  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2])));
+  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
+  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
   env->local_end_extents (old);
   print (STD_ITEM, shift_box (ip, b, x, y, true));
 }
@@ -262,10 +262,10 @@ void
 concater_rep::typeset_resize (tree t, path ip) {
   box  b = typeset_as_concat (env, t[0], descend (ip, 0));
   tree old= env->local_begin_extents (b);
-  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1])));
-  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2])));
-  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3])));
-  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4])));
+  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1]), "w"));
+  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2]), "h"));
+  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
+  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
   env->local_end_extents (old);
   print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, true));
 }
@@ -274,10 +274,10 @@ void
 concater_rep::typeset_clipped (tree t, path ip) {
   box  b = typeset_as_concat (env, t[0], descend (ip, 0));
   tree old= env->local_begin_extents (b);
-  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1])));
-  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2])));
-  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3])));
-  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4])));
+  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1]), "w"));
+  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2]), "h"));
+  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
+  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
   env->local_end_extents (old);
   print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
 }

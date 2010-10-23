@@ -616,7 +616,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
       array<string> ps_suffix;
       ps_suffix << string (".ps") << string (".eps");
       wk_widget par_wid= a[0]["image"]["parameters"];
-      if (has_suffix (name, ps_suffix)) {
+      if (true || has_suffix (name, ps_suffix)) {
 	par_wid["hsize"]["input"] << set_string ("input", "");
 	par_wid["vsize"]["input"] << set_string ("input", "");
       }

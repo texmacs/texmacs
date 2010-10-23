@@ -683,7 +683,7 @@
 	   (string-append (number->htmlstring val) "px"))
 	  (css? len)
 	  (else (number->htmlstring (* cmpx val incm))))))
-
+ 
 (define (tmlength->px len)
   (and-let* ((tmlen (string->tmlength len))
 	     (dummy? (not (tmlength-null? tmlen)))
@@ -1037,6 +1037,7 @@
   (tmhtml-png (cons 'graphics l)))
 
 (define (tmhtml-image-name name)
+  ;; FIXME: we should replace ~, environment variables, etc.
   (with u (url-relative current-save-target (string->url name))
     (if (and (or (string-ends? name ".ps") (string-ends? name ".eps"))
 	     (url-exists? u))

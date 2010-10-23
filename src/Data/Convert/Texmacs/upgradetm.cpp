@@ -20,6 +20,7 @@
 #include "tree_correct.hpp"
 
 static bool upgrade_tex_flag= false;
+double get_magnification (string s);
 
 /******************************************************************************
 * Retrieve older operator hashmap
@@ -2963,10 +2964,24 @@ upgrade_resize_clipped (tree t) {
 ******************************************************************************/
 
 tree
+upgrade_image_length (tree t, string unit) {
+  if (!is_atomic (t)) return t;
+  string s= t->label;
+  if (starts (s, "*") || starts (s, "/")) {
+    double mag= get_magnification (s);
+    return as_string (mag) * unit;
+  }
+  else return t;
+}
+
+tree
 upgrade_image (tree t) {
   if (is_atomic (t)) return t;
   else if (is_func (t, IMAGE, 7))
-    return tree (IMAGE, t[0], t[1], t[2], "", "");
+    return tree (IMAGE, t[0],
+		 upgrade_image_length (t[1], "w"),
+		 upgrade_image_length (t[2], "h"),
+		 "", "");
   else {
     int i, n= N(t);
     tree r (t, n);

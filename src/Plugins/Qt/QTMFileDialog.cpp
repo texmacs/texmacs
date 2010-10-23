@@ -80,11 +80,18 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
 void
 QTMImagePreview::setImage (const QString& file) {
   QImage img;
+  wid->setText ("");
+  hei->setText ("");
+
   leb->setText ("");
   lob->setText ("");
   rib->setText ("");
   upb->setText ("");
-  if (file.endsWith (".ps") || file.endsWith (".eps")  || file.endsWith (".pdf")) {
+
+  /*
+  if (file.endsWith (".ps") ||
+      file.endsWith (".eps") ||
+      file.endsWith (".pdf")) {
     url temp= url_temp (".png");
     url image_url= url_system (scm_unquote (from_qstring (file)));
     int w_pt, h_pt;
@@ -94,7 +101,8 @@ QTMImagePreview::setImage (const QString& file) {
       w= 98;
       h= h_pt*98/w_pt;
       if ((int)h < h) h= (int)h+1; else h= (int)h;
-    } else {
+    }
+    else {
       w= w_pt*98/h_pt;
       if ((int)w < w) w= (int)w+1; else w= (int)w;
       h= 98;
@@ -104,16 +112,20 @@ QTMImagePreview::setImage (const QString& file) {
     image_to_png (image_url, temp, w, h);
     img.load (to_qstring (as_string (temp)));
     remove (temp);
-  } else {
+  }
+  else {
     img.load (file);
     if (!img.isNull()) {
       wid->setText (QString::number (img.width ()) + "px");
       hei->setText (QString::number (img.height ()) + "px");
-    } else {
+    }
+    else {
       wid->setText ("");
       hei->setText ("");
     }
   }
+  */
+
   if (img.isNull()) {
     QImage vide (100, 100, QImage::Format_RGB32);
     QPainter painter;
@@ -128,9 +140,9 @@ QTMImagePreview::setImage (const QString& file) {
     painter.drawRect (0, 0, 99, 99);
     painter.end ();
     image->setPixmap(QPixmap::fromImage(vide));
-  } else {
-    image->setPixmap(QPixmap::fromImage(img.scaled (98, 98, Qt::KeepAspectRatio, Qt::FastTransformation)));
   }
+  else
+    image->setPixmap (QPixmap::fromImage (img.scaled (98, 98, Qt::KeepAspectRatio, Qt::FastTransformation)));
 }
 
 QTMImageDialog::QTMImageDialog (QWidget* parent, const QString& caption, const QString& directory, const QString& filter)
