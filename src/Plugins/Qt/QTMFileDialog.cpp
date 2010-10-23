@@ -61,14 +61,10 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
   vbox->addWidget (simple_input ("Width:", wid, this));
   hei= new QLineEdit (this);
   vbox->addWidget (simple_input ("Height:", hei, this));
-  leb= new QLineEdit (this);
-  vbox->addWidget (simple_input ("Left border:", leb, this));
-  lob= new QLineEdit (this);
-  vbox->addWidget (simple_input ("Lower border:", lob, this));
-  rib= new QLineEdit (this);
-  vbox->addWidget (simple_input ("Right border:", rib, this));
-  upb= new QLineEdit (this);
-  vbox->addWidget (simple_input ("Upper border:", upb, this));
+  xps= new QLineEdit (this);
+  vbox->addWidget (simple_input ("X-position:", xps, this));
+  yps= new QLineEdit (this);
+  vbox->addWidget (simple_input ("Y-position:", yps, this));
   vbox->addStretch ();
   vbox->addStretch ();
   setLayout (vbox);
@@ -82,11 +78,8 @@ QTMImagePreview::setImage (const QString& file) {
   QImage img;
   wid->setText ("");
   hei->setText ("");
-
-  leb->setText ("");
-  lob->setText ("");
-  rib->setText ("");
-  upb->setText ("");
+  xps->setText ("");
+  yps->setText ("");
 
   /*
   if (file.endsWith (".ps") ||
@@ -158,10 +151,9 @@ QTMImageDialog::getParamsAsString () {
   string params;
   params << "\"" << from_qstring (preview->wid->text ()) << "\" ";
   params << "\"" << from_qstring (preview->hei->text ()) << "\" ";
-  params << "\"" << from_qstring (preview->leb->text ()) << "\" ";
-  params << "\"" << from_qstring (preview->lob->text ()) << "\" ";
-  params << "\"" << from_qstring (preview->rib->text ()) << "\" ";
-  params << "\"" << from_qstring (preview->upb->text ()) << "\"";
+  params << "\"" << from_qstring (preview->xps->text ()) << "\" ";
+  params << "\"" << from_qstring (preview->yps->text ()) << "\" ";
+  params << "\"\" ";
+  params << "\"\"";
   return params;
 }
-

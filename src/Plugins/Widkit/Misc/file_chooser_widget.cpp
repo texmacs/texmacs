@@ -39,11 +39,9 @@
 #define BUTTON_CANCEL    6
 #define IMAGE_HSIZE      7
 #define IMAGE_VSIZE      8
-#define IMAGE_CLIP_X1    9
-#define IMAGE_CLIP_Y1   10
-#define IMAGE_CLIP_X2   11
-#define IMAGE_CLIP_Y2   12
-#define CHANGE_SUFFIXES 13
+#define IMAGE_XPOS       9
+#define IMAGE_YPOS      10
+#define CHANGE_SUFFIXES 11
 
 class file_chooser_command_rep: public command_rep {
   wk_widget_rep* fch;
@@ -113,10 +111,9 @@ file_chooser_command_rep::apply () {
       string which, s;
       if (type == IMAGE_HSIZE) which= "hsize";
       else if (type == IMAGE_VSIZE) which= "vsize";
-      else if (type == IMAGE_CLIP_X1) which= "clip-x1";
-      else if (type == IMAGE_CLIP_Y1) which= "clip-y1";
-      else if (type == IMAGE_CLIP_X2) which= "clip-x2";
-      else which= "clip-y2";
+      else if (type == IMAGE_XPOS) which= "xpos";
+      else if (type == IMAGE_YPOS) which= "ypos";
+      else break;
       wk_widget inp= fch_wid[0]["image"]["parameters"][which]["input"];
       inp << get_string ("input", s);
       if (s == "#f") fch_wid << set_string ("return", "#f");
@@ -522,25 +519,19 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   }
 
   if (type == "image") {
-    array<wk_widget> imw (11);
-    array<string> ims (11);
+    array<wk_widget> imw (7);
+    array<string> ims (7);
     imw[ 0]= input_widget ("width:", IMAGE_HSIZE);
     ims[ 0]= "hsize";
     imw[ 1]= glue_wk_widget (true, false, 0, sep);
     imw[ 2]= input_widget ("height:", IMAGE_VSIZE);
     ims[ 2]= "vsize";
     imw[ 3]= glue_wk_widget (true, false, 0, sep);
-    imw[ 4]= input_widget ("left border:", IMAGE_CLIP_X1);
-    ims[ 4]= "clip-x1";
+    imw[ 4]= input_widget ("x-position:", IMAGE_XPOS);
+    ims[ 4]= "xpos";
     imw[ 5]= glue_wk_widget (true, false, 0, sep);
-    imw[ 6]= input_widget ("lower border:", IMAGE_CLIP_Y1);
-    ims[ 6]= "clip-y1";
-    imw[ 7]= glue_wk_widget (true, false, 0, sep);
-    imw[ 8]= input_widget ("right border:", IMAGE_CLIP_X2);
-    ims[ 8]= "clip-x2";
-    imw[ 9]= glue_wk_widget (true, false, 0, sep);
-    imw[10]= input_widget ("upper border:", IMAGE_CLIP_Y2);
-    ims[10]= "clip-y2";
+    imw[ 6]= input_widget ("y-position:", IMAGE_YPOS);
+    ims[ 6]= "ypos";
 
     array<wk_widget> cw4 (5);
     array<string> cn4 (5);
@@ -686,17 +677,15 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       ev->s= "(url-system " * scm_quote (as_string (u)) * ")";
     }
     if (type == "image") {
-      string hsize, vsize, cx1, cy1, cx2, cy2;
+      string hsize, vsize, xpos, ypos;
       wk_widget par= a[0]["image"]["parameters"];
       par["hsize"]["input"] << get_string ("input", hsize);
       par["vsize"]["input"] << get_string ("input", vsize);
-      par["clip-x1"]["input"] << get_string ("input", cx1);
-      par["clip-y1"]["input"] << get_string ("input", cy1);
-      par["clip-x2"]["input"] << get_string ("input", cx2);
-      par["clip-y2"]["input"] << get_string ("input", cy2);
+      par["xpos"]["input"] << get_string ("input", xpos);
+      par["ypos"]["input"] << get_string ("input", ypos);
       ev->s=
 	"(list " * ev->s * " " * hsize * " " * vsize * " "
-	         * cx1 * " " * cy1 * " " * cx2 * " " * cy2 * ")";
+	         * xpos * " " * ypos * " \"\" \"\")";
     }
   }
   else attribute_widget_rep::handle_get_string (ev);

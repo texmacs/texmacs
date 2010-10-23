@@ -60,10 +60,8 @@ class QTMImagePreview : public QWidget
 public:
   QLineEdit* wid;
   QLineEdit* hei;
-  QLineEdit* leb;
-  QLineEdit* lob;
-  QLineEdit* rib;
-  QLineEdit* upb;
+  QLineEdit* xps;
+  QLineEdit* yps;
 
 public slots:
   void setImage (const QString&);
