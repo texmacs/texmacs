@@ -92,10 +92,10 @@ widget texmacs_widget (int mask, command quit);
   // the main TeXmacs widget and a command which is called on exit
   // the mask variable indicates whether the menu, icon bars, status bar, etc.
   // are visible or not
-widget file_chooser_widget (command cmd, string type="texmacs", string mgn="");
-  // file chooser widget for files of a given type; for files of type "image",
-  // the widget includes a previsualizer and a default magnification
-  // for importation can be specified
+widget file_chooser_widget (command cmd, string type, bool save);
+  // file chooser widget for files of a given 'type';
+  // for files of type "image", the widget includes a previsualizer for images
+  // 'save' indicates whether we intend to save the file
 widget inputs_list_widget (command call_back, array<string> prompts);
   // a dialogue widget with Ok and Cancel buttons and a series of textual
   // input widgets with specified prompts

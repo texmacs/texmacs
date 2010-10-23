@@ -357,10 +357,9 @@ class file_chooser_widget_rep: public attribute_widget_rep {
   command       cmd;
   string        type;
   array<string> suffix;
-  string        magn;
 
 public:
-  file_chooser_widget_rep (command cmd, string type, string magn);
+  file_chooser_widget_rep (command cmd, string type);
   operator tree ();
 
   wk_widget input_widget (string what, int type);
@@ -413,8 +412,8 @@ file_chooser_widget_rep::button_widget (string what, int type) {
 }
 
 file_chooser_widget_rep::file_chooser_widget_rep (
-  command cmd2, string type2, string magn2):
-  attribute_widget_rep (1), cmd (cmd2), type (type2), magn (magn2)
+  command cmd2, string type2):
+  attribute_widget_rep (1), cmd (cmd2), type (type2)
 {
   ref_count++;
 
@@ -607,14 +606,6 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
       array<string> ps_suffix;
       ps_suffix << string (".ps") << string (".eps");
       wk_widget par_wid= a[0]["image"]["parameters"];
-      if (true || has_suffix (name, ps_suffix)) {
-	par_wid["hsize"]["input"] << set_string ("input", "");
-	par_wid["vsize"]["input"] << set_string ("input", "");
-      }
-      else {
-	par_wid["hsize"]["input"] << set_string ("input", magn);
-	par_wid["vsize"]["input"] << set_string ("input", magn);
-      }
     }
   }
   else if (ev->which == "return") {
@@ -701,6 +692,6 @@ file_chooser_widget_rep::handle_destroy (destroy_event ev) {
 ******************************************************************************/
 
 wk_widget
-file_chooser_wk_widget (command cmd, string type, string magn) {
-  return tm_new<file_chooser_widget_rep> (cmd, type, magn);
+file_chooser_wk_widget (command cmd, string type) {
+  return tm_new<file_chooser_widget_rep> (cmd, type);
 }

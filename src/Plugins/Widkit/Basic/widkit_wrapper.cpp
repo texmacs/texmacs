@@ -209,8 +209,8 @@ inputs_list_widget (command call_back, array<string> prompts) {
 }
 
 widget
-file_chooser_widget (command cmd, string type, string mgn) {
-  return abstract (file_chooser_wk_widget (cmd, type, mgn));
+file_chooser_widget (command cmd, string type, bool save) {
+  return abstract (file_chooser_wk_widget (cmd, type));
 }
 
 widget

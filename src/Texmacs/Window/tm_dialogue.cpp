@@ -111,22 +111,10 @@ gcd (int i, int j) {
 
 void
 tm_frame_rep::choose_file (object fun, string title, string type) {
-  string magn;
-  if (type == "image") {
-    editor ed   = get_editor ();
-    int dpi     = as_int (ed->get_env_string (DPI));
-    int sfactor = get_window () -> get_shrinking_factor ();
-    int num     = 75*sfactor;
-    int den     = dpi;
-    int g       = gcd (num, den);
-    num /= g; den /= g;
-    if (num != 1) magn << "*" << as_string (num);
-    if (den != 1) magn << "/" << as_string (den);
-  }
-
   url      name= get_name_buffer ();
   command  cb  = dialogue_command (get_server(), fun, 1);
-  widget   wid = file_chooser_widget (cb, type, magn);
+  bool     save= starts (title, "Save") || starts (title, "Export");
+  widget   wid = file_chooser_widget (cb, type, save);
   if (!is_scratch (name)) {
     set_directory (wid, as_string (head (name)));
     if ((type != "image") && (type != "")) {

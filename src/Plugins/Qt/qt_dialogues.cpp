@@ -32,7 +32,7 @@ class qt_chooser_widget_rep: public qt_widget_rep {
 protected:      
   command cmd;
   string type;
-  string mgn;
+  bool   save;
   string win_title;
   string directory;
   coord2 position;
@@ -56,14 +56,14 @@ public:
 };
 
 qt_chooser_widget_rep::qt_chooser_widget_rep
-  (command _cmd, string _type, string _mgn):
+  (command _cmd, string _type, bool _save):
     qt_widget_rep (), cmd (_cmd), type (_type),
-    mgn (_mgn), position (coord2 (0, 0)), size (coord2 (100, 100)),
+    save (_save), position (coord2 (0, 0)), size (coord2 (100, 100)),
     file ("")
 {
   if (DEBUG_QT)
     cout << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
-         << type << "\" mgn=\"" << mgn << "\"" << LF;
+         << type << "\" save=\"" << save << "\"" << LF;
 }
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
@@ -204,11 +204,11 @@ qt_chooser_widget_rep::plain_window_widget (string s)
 }
 
 widget
-file_chooser_widget (command cmd, string type, string mgn)  {
+file_chooser_widget (command cmd, string type, bool save)  {
   // file chooser widget for files of a given type; for files of type "image",
   // the widget includes a previsualizer and a default magnification
   // for importation can be specified
-  return tm_new<qt_chooser_widget_rep> (cmd, type, mgn);
+  return tm_new<qt_chooser_widget_rep> (cmd, type, save);
 }
 
 void

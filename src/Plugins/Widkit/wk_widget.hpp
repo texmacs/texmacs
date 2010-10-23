@@ -111,8 +111,7 @@ wk_widget canvas_widget (wk_widget w, gravity grav=north_west);
 wk_widget input_text_wk_widget (command call_back);
 wk_widget input_text_wk_widget (command cb, string type, array<string> def);
 wk_widget inputs_list_wk_widget (command call_back, array<string> prompts);
-wk_widget file_chooser_wk_widget (command cmd, string type="texmacs",
-				  string mgn="");
+wk_widget file_chooser_wk_widget (command cmd, string type);
 wk_widget balloon_widget (wk_widget w, wk_widget help);
 wk_widget wait_wk_widget (SI w, SI h, string message);
 wk_widget texmacs_wk_widget (int mask, command quit);
