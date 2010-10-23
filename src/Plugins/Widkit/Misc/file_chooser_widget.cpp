@@ -683,9 +683,8 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       par["vsize"]["input"] << get_string ("input", vsize);
       par["xpos"]["input"] << get_string ("input", xpos);
       par["ypos"]["input"] << get_string ("input", ypos);
-      ev->s=
-	"(list " * ev->s * " " * hsize * " " * vsize * " "
-	         * xpos * " " * ypos * " \"\" \"\")";
+      ev->s= "(list " * ev->s * " " * hsize * " " * vsize * " " *
+	                xpos * " " * ypos * ")";
     }
   }
   else attribute_widget_rep::handle_get_string (ev);

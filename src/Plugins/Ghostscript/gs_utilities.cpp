@@ -52,7 +52,8 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
       return;
     }
   }
-  cerr << "Cannot read image file '" << image << "'" << LF;
+  cerr << "TeXmacs Cannot read image file '" << image << "'"
+       << " in gs_image_size" << LF;
   w_pt= 35; h_pt= 35;
 }
 

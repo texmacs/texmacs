@@ -125,7 +125,8 @@ void
 qt_image_size (url image, int& w, int& h) {
   QImage im= QImage (to_qstring (concretize (image)));
   if (im.isNull ()) {
-    cerr << "Cannot read image file '" << image << "'" << LF;
+    cerr << "TeXmacs] cannot read image file '" << image << "'" 
+	 << " in qt_image_size" << LF;
     w= 35; h= 35;
   }
   else {
@@ -137,9 +138,9 @@ qt_image_size (url image, int& w, int& h) {
 void
 qt_convert_image (url image, url dest, int w, int h) {
   QImage im (to_qstring (concretize (image)));
-  if (im.isNull ()) {
-    cerr << "Cannot read image file '" << image << "'" << LF;
-  }
+  if (im.isNull ())
+    cerr << "TeXmacs] cannot read image file '" << image << "'"
+	 << " in qt_convert_image" << LF;
   else {
     if (w > 0 && h > 0) im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     im.scaled (w, h).save (to_qstring (concretize (dest)));
@@ -150,9 +151,9 @@ void
 qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   static const char* d= "0123456789ABCDEF";
   QImage im (to_qstring (concretize (image)));
-  if (im.isNull ()) {
-    cerr << "Cannot read image file '" << image << "'" << LF;
-  }
+  if (im.isNull ())
+    cerr << "TeXmacs Cannot read image file '" << image << "'"
+	 << " in qt_image_to_eps" << LF;
   else {
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
       int ww= w_pt * dpi / 72;

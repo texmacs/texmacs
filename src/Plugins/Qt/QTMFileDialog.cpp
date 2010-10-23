@@ -81,7 +81,6 @@ QTMImagePreview::setImage (const QString& file) {
   xps->setText ("");
   yps->setText ("");
 
-  /*
   if (file.endsWith (".ps") ||
       file.endsWith (".eps") ||
       file.endsWith (".pdf")) {
@@ -100,8 +99,6 @@ QTMImagePreview::setImage (const QString& file) {
       if ((int)w < w) w= (int)w+1; else w= (int)w;
       h= 98;
     }
-    wid->setText (to_qstring (as_string (w_pt) * "pt"));
-    hei->setText (to_qstring (as_string (h_pt) * "pt"));
     image_to_png (image_url, temp, w, h);
     img.load (to_qstring (as_string (temp)));
     remove (temp);
@@ -112,12 +109,7 @@ QTMImagePreview::setImage (const QString& file) {
       wid->setText (QString::number (img.width ()) + "px");
       hei->setText (QString::number (img.height ()) + "px");
     }
-    else {
-      wid->setText ("");
-      hei->setText ("");
-    }
   }
-  */
 
   if (img.isNull()) {
     QImage vide (100, 100, QImage::Format_RGB32);
@@ -152,8 +144,6 @@ QTMImageDialog::getParamsAsString () {
   params << "\"" << from_qstring (preview->wid->text ()) << "\" ";
   params << "\"" << from_qstring (preview->hei->text ()) << "\" ";
   params << "\"" << from_qstring (preview->xps->text ()) << "\" ";
-  params << "\"" << from_qstring (preview->yps->text ()) << "\" ";
-  params << "\"\" ";
-  params << "\"\"";
+  params << "\"" << from_qstring (preview->yps->text ()) << "\"";
   return params;
 }

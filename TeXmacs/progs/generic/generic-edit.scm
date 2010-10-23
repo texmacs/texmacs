@@ -327,10 +327,10 @@
   (insert `(include ,(url->string u))))
 
 (tm-define (make-inline-image l)
-  (apply make-image (cDDr (cons* (url->string (car l)) #f (cdr l)))))
+  (apply make-image (cons* (url->string (car l)) #f (cdr l))))
 
 (tm-define (make-link-image l)
-  (apply make-image (cDDr (cons* (url->string (car l)) #t (cdr l)))))
+  (apply make-image (cons* (url->string (car l)) #t (cdr l))))
 
 (tm-define (make-graphics-over-selection)
   (if (selection-active-any?)
