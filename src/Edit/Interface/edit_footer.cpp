@@ -142,6 +142,8 @@ footer_image (tree t) {
   tree name= "-";
   if (is_atomic (t[0]))
     name= as_string (tail (url (t[0]->label)));
+  else if (is_func (t[0], TUPLE, 2) && is_func (t[0][0], RAW_DATA))
+    name= "included";
   tree w= footer_len (t[1]);
   tree h= footer_len (t[2]);
   tree c= concat (name, ", ", w, ", ", h);
