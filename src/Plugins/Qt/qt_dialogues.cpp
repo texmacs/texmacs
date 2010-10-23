@@ -40,7 +40,7 @@ protected:
   string file;
         
 public:
-  qt_chooser_widget_rep (command, string, string);
+  qt_chooser_widget_rep (command, string, bool);
   ~qt_chooser_widget_rep ();
 
   virtual void send (slot s, blackbox val);
