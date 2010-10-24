@@ -265,6 +265,7 @@
     (Over-prefix Power)
     (Power-prefix Prefixed)
     Quantifier-symbol
+    Prime-symbol
     Infix
     Prefix
     Postfix
