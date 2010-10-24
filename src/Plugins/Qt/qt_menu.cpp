@@ -191,7 +191,7 @@ vertical_menu (array<widget> a) {
   return horizontal_menu (a);
 }
 
-#if 0
+#if 1
 class QTMAuxMenu: public QMenu {
 public:
   QTMAuxMenu (): QMenu() {}
@@ -231,7 +231,7 @@ void
 QTMToolButton::paintEvent(QPaintEvent* event) {
   (void) event;
   QPainter p (this);
-#if 0
+#if 1
   QStyleOptionMenuItem option;
   QAction *action = defaultAction ();
   QTMAuxMenu m;

@@ -413,11 +413,25 @@
     "<b-H>" "<b-I>" "<b-J>" "<b-K>" "<b-L>" "<b-M>" "<b-N>"
     "<b-O>" "<b-P>" "<b-Q>" "<b-R>" "<b-S>" "<b-T>" "<b-U>"
     "<b-V>" "<b-W>" "<b-X>" "<b-Y>" "<b-Z>"
+
+    "<b-0>" "<b-1>" "<b-2>" "<b-3>" "<b-4>"
+    "<b-5>" "<b-6>" "<b-7>" "<b-8>" "<b-9>"
+    
+    "<cal-a>" "<cal-b>" "<cal-c>" "<cal-d>" "<cal-e>" "<cal-f>" "<cal-g>"
+    "<cal-h>" "<cal-i>" "<cal-j>" "<cal-k>" "<cal-l>" "<cal-m>" "<cal-n>"
+    "<cal-o>" "<cal-p>" "<cal-q>" "<cal-r>" "<cal-s>" "<cal-t>" "<cal-u>"
+    "<cal-v>" "<cal-w>" "<cal-x>" "<cal-y>" "<cal-z>"
     
     "<cal-A>" "<cal-B>" "<cal-C>" "<cal-D>" "<cal-E>" "<cal-F>" "<cal-G>"
     "<cal-H>" "<cal-I>" "<cal-J>" "<cal-K>" "<cal-L>" "<cal-M>" "<cal-N>"
     "<cal-O>" "<cal-P>" "<cal-Q>" "<cal-R>" "<cal-S>" "<cal-T>" "<cal-U>"
     "<cal-V>" "<cal-W>" "<cal-X>" "<cal-Y>" "<cal-Z>"
+    
+    "<b-cal-a>" "<b-cal-b>" "<b-cal-c>" "<b-cal-d>" "<b-cal-e>" "<b-cal-f>"
+    "<b-cal-g>" "<b-cal-h>" "<b-cal-i>" "<b-cal-j>" "<b-cal-k>" "<b-cal-l>"
+    "<b-cal-m>" "<b-cal-n>" "<b-cal-o>" "<b-cal-p>" "<b-cal-q>" "<b-cal-r>"
+    "<b-cal-s>" "<b-cal-t>" "<b-cal-u>" "<b-cal-v>" "<b-cal-w>" "<b-cal-x>"
+    "<b-cal-y>" "<b-cal-z>"
 
     "<b-cal-A>" "<b-cal-B>" "<b-cal-C>" "<b-cal-D>" "<b-cal-E>" "<b-cal-F>"
     "<b-cal-G>" "<b-cal-H>" "<b-cal-I>" "<b-cal-J>" "<b-cal-K>" "<b-cal-L>"
@@ -437,10 +451,18 @@
     "<frak-S>" "<frak-T>" "<frak-U>" "<frak-V>" "<frak-W>" "<frak-X>"
     "<frak-Y>" "<frak-Z>"
 
+    "<bbb-a>" "<bbb-b>" "<bbb-c>" "<bbb-d>" "<bbb-e>" "<bbb-f>" "<bbb-g>"
+    "<bbb-h>" "<bbb-i>" "<bbb-j>" "<bbb-k>" "<bbb-l>" "<bbb-m>" "<bbb-n>"
+    "<bbb-o>" "<bbb-p>" "<bbb-q>" "<bbb-r>" "<bbb-s>" "<bbb-t>" "<bbb-u>"
+    "<bbb-v>" "<bbb-w>" "<bbb-x>" "<bbb-y>" "<bbb-z>"
+
     "<bbb-A>" "<bbb-B>" "<bbb-C>" "<bbb-D>" "<bbb-E>" "<bbb-F>" "<bbb-G>"
     "<bbb-H>" "<bbb-I>" "<bbb-J>" "<bbb-K>" "<bbb-L>" "<bbb-M>" "<bbb-N>"
     "<bbb-O>" "<bbb-P>" "<bbb-Q>" "<bbb-R>" "<bbb-S>" "<bbb-T>" "<bbb-U>"
-    "<bbb-V>" "<bbb-W>" "<bbb-X>" "<bbb-Y>" "<bbb-Z>")
+    "<bbb-V>" "<bbb-W>" "<bbb-X>" "<bbb-Y>" "<bbb-Z>"
+
+    "<bbb-0>" "<bbb-1>" "<bbb-2>" "<bbb-3>" "<bbb-4>"
+    "<bbb-5>" "<bbb-6>" "<bbb-7>" "<bbb-8>" "<bbb-9>")
   
   (define Miscellaneous-symbol
     (:type symbol)
