@@ -133,10 +133,17 @@ edit_interface_rep::key_press (string gkey) {
     interrupt_shortcut ();
     string s= key (9, N(key));
     if (s == "") return;
+    int i, n= N(s), pos= N(s);
+    for (i=0; i<n; i++)
+      if (s[i] == ':' && is_int (s (0, i))) {
+	pos= as_int (s (0, i));
+	s= s (i+1, n);
+	break;
+      }
     pre_edit_s= s;
     pre_edit_mark= new_marker ();
     mark_start (pre_edit_mark);
-    insert_tree (compound ("pre-edit", s));
+    insert_tree (compound ("pre-edit", s), path (0, pos));
     return;
   }
 
