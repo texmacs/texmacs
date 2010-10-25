@@ -2940,7 +2940,7 @@ upgrade_resize_arg (tree t) {
 tree
 upgrade_resize_clipped (tree t) {
   if (is_atomic (t)) return t;
-  else if (is_func (t, RESIZE, 5) || is_func (t, CLIPPED, 5)) {
+  else if (N(t) >= 5 && (is_func (t, RESIZE) || is_func (t, CLIPPED))) {
     if (is_func (t, CLIPPED))
       t= tree (CLIPPED, t[4], t[0], t[1], t[2], t[3]);
     int i, n= N(t);
