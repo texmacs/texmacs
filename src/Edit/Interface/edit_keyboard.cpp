@@ -136,8 +136,11 @@ edit_interface_rep::key_press (string gkey) {
     int i, n= N(s), pos= N(s);
     for (i=0; i<n; i++)
       if (s[i] == ':' && is_int (s (0, i))) {
-	pos= as_int (s (0, i));
+	int k= as_int (s (0, i));
 	s= s (i+1, n);
+	pos= 0;
+	for (int j=0; j<k && pos<N(s); j++)
+	  tm_char_forwards (s, pos);
 	break;
       }
     pre_edit_s= s;
