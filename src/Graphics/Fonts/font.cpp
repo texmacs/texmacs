@@ -194,6 +194,7 @@ script (int sz, int level) {
 string
 default_chinese_font_name () {
   if (tt_font_exists ("fireflysung")) return "fireflysung";
+  if (tt_font_exists ("uming")) return "uming";
   if (tt_font_exists ("儷黑 Pro")) return "lihei";
   if (tt_font_exists ("华文细黑")) return "heiti";
   if (tt_font_exists ("simsun")) return "simsun";
@@ -204,6 +205,8 @@ default_chinese_font_name () {
 string
 default_japanese_font_name () {
   if (tt_font_exists ("ipam")) return "modern";
+  if (tt_font_exists ("sazanami")) return "sazanami";
+  if (tt_font_exists ("ttf-japanese-gothic")) return "ttf-japanese";
   if (tt_font_exists ("ヒラギノ明朝 ProN W6")) return "kaku";
   if (tt_font_exists ("MS PGothic")) return "ms-gothic";
   if (tt_font_exists ("MS PMincho")) return "ms-mincho";
@@ -213,6 +216,7 @@ default_japanese_font_name () {
 string
 default_korean_font_name () {
   if (tt_font_exists ("unbatang")) return "modern";
+  if (tt_font_exists ("UnBatang")) return "modern";
   if (tt_font_exists ("AppleGothic")) return "apple-gothic";
   if (tt_font_exists ("Gulim")) return "gulim";
   return "roman";
