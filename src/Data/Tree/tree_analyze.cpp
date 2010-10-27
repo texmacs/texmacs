@@ -219,7 +219,8 @@ symbol_priority (tree t) {
   static language lan= math_language ("std-math");
   if (is_atomic (t)) {
     string g= lan->get_group (t->label);
-    if (starts (g, "Separator")) return PRIORITY_ASSIGN;
+    if (starts (g, "Separator")) return PRIORITY_SEPARATOR;
+    if (starts (g, "Ponctuation")) return PRIORITY_SEPARATOR;
     if (starts (g, "Assign")) return PRIORITY_ASSIGN;
     if (starts (g, "Flux")) return PRIORITY_FLUX;
     if (starts (g, "Models")) return PRIORITY_MODELS;
