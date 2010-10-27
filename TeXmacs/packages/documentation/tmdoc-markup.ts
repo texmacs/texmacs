@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.7>
 
 <style|source>
 
@@ -166,6 +166,16 @@
 
   <\active*>
     <\src-comment>
+      Fragments of verbatim code.
+    </src-comment>
+  </active*>
+
+  <assign|verbatim-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Fragments of shell code.
     </src-comment>
   </active*>
@@ -225,9 +235,9 @@
     </src-comment>
   </active*>
 
-  <assign|icon|<macro|name|<postscript|<find-file|$TEXMACS_PATH/misc/pixmaps|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>|/2|/2||||>>>
+  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>|0.5w|0.5h||>>>
 
-  <assign|screenshot|<macro|name|<postscript|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|/2|/2||||>>>
+  <assign|screenshot|<macro|name|<image|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|0.5w|0.5h||>>>
 
   \;
 
