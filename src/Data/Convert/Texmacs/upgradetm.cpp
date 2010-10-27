@@ -16,7 +16,6 @@
 #include "drd_std.hpp"
 #include <stdio.h>
 #include "Scheme/object.hpp"
-#include "tree_brackets.hpp"
 #include "tree_correct.hpp"
 
 static bool upgrade_tex_flag= false;
@@ -3022,7 +3021,8 @@ upgrade_tex (tree t) {
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
   t= upgrade_resize_clipped (t);
-  t= upgrade_brackets (t);
+  if (call ("get-preference", "matching brackets") == object ("on"))
+    t= upgrade_brackets (t);
   t= upgrade_image (t);
   upgrade_tex_flag= false;
   return t;
@@ -3126,12 +3126,7 @@ upgrade (tree t, string version) {
     t= upgrade_resize_clipped (t);
   if (version_inf_eq (version, "1.0.7.7"))
     t= upgrade_image (t);
-  if (version_inf_eq (version, "1.0.7.7") && is_non_style_document (t)) {
-    t= with_correct (t);
-    t= superfluous_with_correct (t);
-    t= upgrade_brackets (t);
-    t= superfluous_invisible_correct (t);
-    t= missing_invisible_correct (t);
-  }
+  if (is_non_style_document (t))
+    t= automatic_correct (t, version);
   return t;
 }

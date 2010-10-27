@@ -98,7 +98,8 @@
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
-(lazy-menu (math math-menu) math-menu math-icons insert-math-menu)
+(lazy-menu (math math-menu) math-menu math-icons
+	   insert-math-menu math-correct-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting programming modes\n")

@@ -36,14 +36,14 @@ drd_correct (drd_info drd, tree t) {
 * Correct WITHs or WITH-like macros
 ******************************************************************************/
 
-static tree
-with_correct_bis (tree t) {
+tree
+with_correct (tree t) {
   if (is_atomic (t)) return t;
   else {
     //cout << "Correcting " << t << LF << INDENT;
     tree u (t, N(t));
     for (int k=0; k<N(t); k++)
-      u[k]= with_correct_bis (t[k]);
+      u[k]= with_correct (t[k]);
     array<tree> a= concat_decompose (u);
     int i, n= N(a);
     array<tree> r;
@@ -81,13 +81,6 @@ with_correct_bis (tree t) {
   }
 }
 
-tree
-with_correct (tree t) {
-  if (call ("get-preference", "with correct") == object ("on"))
-    return with_correct_bis (t);
-  else return t;
-}
-
 static tree
 superfluous_with_correct (tree t, tree env) {
   if (is_atomic (t)) return t;
@@ -119,11 +112,8 @@ superfluous_with_correct (tree t, tree env) {
 
 tree
 superfluous_with_correct (tree t) {
-  if (call ("get-preference", "with correct") == object ("on")) {
-    with_drd drd (get_document_drd (t));
-    return superfluous_with_correct (t, tree (WITH, MODE, "text"));
-  }
-  else return t;
+  with_drd drd (get_document_drd (t));
+  return superfluous_with_correct (t, tree (WITH, MODE, "text"));
 }
 
 /******************************************************************************
@@ -218,11 +208,8 @@ superfluous_invisible_correct (tree t, string mode) {
 
 tree
 superfluous_invisible_correct (tree t) {
-  if (call ("get-preference", "invisible correct") == object ("on")) {
-    with_drd drd (get_document_drd (t));
-    return superfluous_invisible_correct (t, "text");
-  }
-  else return t;
+  with_drd drd (get_document_drd (t));
+  return superfluous_invisible_correct (t, "text");
 }
 
 /******************************************************************************
@@ -483,12 +470,60 @@ missing_invisible_correct (tree t, int force) {
   // force = -1, only correct when sure, and when old markup is incorrect
   // force = 0 , only correct when pretty sure
   // force = 1 , correct whenever reasonable (used for LaTeX import)
-  if (call ("get-preference", "invisible correct") == object ("on")) {
-    with_drd drd (get_document_drd (t));
-    invisible_corrector corrector (t, force);
-    //cout << "Times " << corrector.times_after << "\n";
-    //cout << "Space " << corrector.space_after << "\n";
-    return corrector.correct (t, "text");
+  with_drd drd (get_document_drd (t));
+  invisible_corrector corrector (t, force);
+  //cout << "Times " << corrector.times_after << "\n";
+  //cout << "Space " << corrector.space_after << "\n";
+  return corrector.correct (t, "text");
+}
+
+/******************************************************************************
+* Master routines
+******************************************************************************/
+
+bool
+enabled_preference (string s) {
+  return call ("get-preference", s) == object ("on");
+}
+
+tree
+latex_correct (tree t) {
+  // NOTE: matching brackets corrected in upgrade_tex
+  if (enabled_preference ("remove superfluous invisible"))
+    t= superfluous_invisible_correct (t);
+  if (enabled_preference ("insert missing invisible"))
+    t= missing_invisible_correct (t, 1);
+  return t;
+}
+
+tree
+automatic_correct (tree t, string version) {
+  if (version_inf_eq (version, "1.0.7.7")) {
+    if (enabled_preference ("with correct"))
+      t= with_correct (t);
+    if (enabled_preference ("with correct"))
+      t= superfluous_with_correct (t);
+    if (enabled_preference ("matching brackets"))
+      t= upgrade_brackets (t);
+    if (enabled_preference ("remove superfluous invisible"))
+      t= superfluous_invisible_correct (t);
+    if (enabled_preference ("insert missing invisible"))
+      t= missing_invisible_correct (t);
   }
-  else return t;
+  return t;
+}
+
+tree
+manual_correct (tree t) {
+  if (enabled_preference ("manual with correct"))
+    t= with_correct (t);
+  if (enabled_preference ("manual with correct"))
+    t= superfluous_with_correct (t);
+  if (enabled_preference ("manual matching brackets"))
+    t= upgrade_brackets (t);
+  if (enabled_preference ("manual remove superfluous invisible"))
+    t= superfluous_invisible_correct (t);
+  if (enabled_preference ("manual insert missing invisible"))
+    t= missing_invisible_correct (t);
+  return t;
 }

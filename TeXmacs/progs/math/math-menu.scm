@@ -100,6 +100,25 @@
       (when #f ("Number equation" (toggle-number)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu for syntax and other corrections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind math-correct-menu
+  ("Correct all" (math-correct-all))
+  (when (with-versioning-tool?)
+    ("Correct manually" (math-correct-manually)))
+  ---
+  (group "Options")
+  ("Force matching brackets"
+   (toggle-preference "manual matching brackets"))
+  ("Correct presentation markup"
+   (toggle-preference "manual with correct"))
+  ("Remove superfluous invisible operators"
+   (toggle-preference "manual remove superfluous invisible"))
+  ("Insert missing invisible operators"
+   (toggle-preference "manual insert missing invisible")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical Symbol menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

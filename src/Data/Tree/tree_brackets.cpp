@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "tree_brackets.hpp"
+#include "tree_correct.hpp"
 #include "tree_analyze.hpp"
 #include "Scheme/object.hpp"
 
@@ -459,11 +459,8 @@ upgrade_brackets_bis (tree t, string mode) {
 
 tree
 upgrade_brackets (tree t, string mode) {
-  if (call ("get-preference", "matching brackets") == object ("on")) {
-    //cout << "Upgrade " << t << "\n";
-    with_drd drd (get_document_drd (t));
-    t= upgrade_above_below (t);
-    return upgrade_brackets_bis (t, mode);
-  }
-  else return t;
+  //cout << "Upgrade " << t << "\n";
+  with_drd drd (get_document_drd (t));
+  t= upgrade_above_below (t);
+  return upgrade_brackets_bis (t, mode);
 }

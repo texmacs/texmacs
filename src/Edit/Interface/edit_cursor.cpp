@@ -350,11 +350,11 @@ edit_cursor_rep::adjust_cursor () {
 void
 edit_cursor_rep::go_to_here () {
   cu= eb->find_check_cursor (tp);
-  if (!cu->valid) {
+  if (!cu->valid || !valid_cursor (et, tp)) {
     tp= super_correct (et, tp);
     cu= eb->find_check_cursor (tp);
   }
-  if (!cu->valid) {
+  if (!cu->valid || !valid_cursor (et, tp)) {
     tp= make_cursor_accessible (tp, false);
     cu= eb->find_check_cursor (tp);
   }

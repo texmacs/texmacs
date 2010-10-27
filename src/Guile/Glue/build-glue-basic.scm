@@ -130,6 +130,8 @@
   (with-correct-superfluous superfluous_with_correct (tree content))
   (invisible-correct-superfluous superfluous_invisible_correct (tree content))
   (invisible-correct-missing missing_invisible_correct (tree content int))
+  (automatic-correct automatic_correct (tree content string))
+  (manual-correct manual_correct (tree content))
 
   ;; paths
   (path-inf? path_inf (bool path path))

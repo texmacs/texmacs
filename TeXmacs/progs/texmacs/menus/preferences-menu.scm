@@ -162,10 +162,14 @@
 	(toggle ("Remote connections" "remote connections")))
     (-> "Experimental"
 	(toggle ("Fast environments" "fast environments"))
-	(toggle ("Correct presentation markup" "with correct"))
-	(toggle ("Correct invisible markup" "invisible correct"))
+	(toggle ("Semantic editing" "semantic editing"))
+	---
 	(toggle ("Force matching brackets" "matching brackets"))
-	(toggle ("Semantic editing" "semantic editing")))
+	(toggle ("Correct presentation markup" "with correct"))
+	(toggle ("Remove superfluous invisible operators"
+		 "remove superfluous invisible"))
+	(toggle ("Insert missing invisible operators"
+		 "insert missing invisible")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")

@@ -1347,6 +1347,34 @@ tmg_invisible_correct_missing (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_automatic_correct (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "automatic-correct");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "automatic-correct");
+
+  content in1= scm_to_content (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  tree out= automatic_correct (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_manual_correct (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "manual-correct");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= manual_correct (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_path_infP (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf?");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf?");
@@ -4525,6 +4553,8 @@ initialize_glue_basic () {
   scm_new_procedure ("with-correct-superfluous", (FN) tmg_with_correct_superfluous, 1, 0, 0);
   scm_new_procedure ("invisible-correct-superfluous", (FN) tmg_invisible_correct_superfluous, 1, 0, 0);
   scm_new_procedure ("invisible-correct-missing", (FN) tmg_invisible_correct_missing, 2, 0, 0);
+  scm_new_procedure ("automatic-correct", (FN) tmg_automatic_correct, 2, 0, 0);
+  scm_new_procedure ("manual-correct", (FN) tmg_manual_correct, 1, 0, 0);
   scm_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   scm_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   scm_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);

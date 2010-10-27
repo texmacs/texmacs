@@ -246,7 +246,7 @@ valid_cursor (tree t, path p, bool start_flag) {
 
 static path
 pre_correct (tree t, path p) {
-  // cout << "Precorrect " << p << " in " << t << "\n";
+  //cout << "Precorrect " << p << " in " << t << "\n";
   if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] precorrecting " << p << " in " << t << "\n";
     FAILED ("bad path");
@@ -308,6 +308,7 @@ left_most (tree t, path p) {
 
 static path
 left_correct (tree t, path p) {
+  //cout << "Left correct " << p << " in " << t << "\n";
   if (is_nil (p)) FAILED ("invalid nil path");
   if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] left correcting " << p << " in " << t << "\n";
@@ -358,20 +359,20 @@ right_correct (tree t, path p) {
 
 path
 correct_cursor (tree t, path p) {
-  // cout << "Correct cursor " << p << " in " << t << "\n";
+  //cout << "Correct cursor " << p << " in " << t << "\n";
   return left_correct (t, pre_correct (t, p));
 }
 
 path
 start (tree t, path p) {
-  // cout << "Start " << p << " in " << t << "\n";
+  //cout << "Start " << p << " in " << t << "\n";
   if ((!is_nil (p)) && (arity (parent_subtree (t, p)) == 0)) return p;
   return correct_cursor (t, p * 0);
 }
 
 path
 end (tree t, path p) {
-  // cout << "End " << p << " in " << t << "\n";
+  //cout << "End " << p << " in " << t << "\n";
   if ((!is_nil (p)) && (arity (parent_subtree (t, p)) == 0)) return p;
   return correct_cursor (t, p * right_index (subtree (t, p)));
 }
@@ -381,6 +382,7 @@ path end (tree t) { return end (t, path ()); }
 
 path
 up_correct (tree t, path p, bool active= true) {
+  //cout << "Up correct " << p << " in " << t << "\n";
   if (is_nil (p)) return p;
   if ((p->item<0) || (p->item>=N(t))) return path ();
   if (active && (!the_drd->is_accessible_child (t, p->item))) return path ();

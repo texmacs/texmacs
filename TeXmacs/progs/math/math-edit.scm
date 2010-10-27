@@ -356,3 +356,49 @@
     (make-big-operator op))
   (when (== (get-preference "matching brackets") "on")
     (insert-go-to `(big-around ,(make-small op) "") '(1 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Correction of mathematical formulas
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (manual-correct-math t)
+  (with mode (tree->stree (get-env-tree-at "mode" (tree->path t :start)))
+    (if (!= mode "math")
+	(manual-correct t)
+	(with r (manual-correct `(math ,t))
+	  (if (tm-func? r 'math 1) (tm-ref r 0) r)))))
+
+(define (math-correct-tree t)
+  (with r (manual-correct-math t)
+    (when (!= r t)
+      (tree-set! t r))))
+
+(define (math-manually-correct-tree t)
+  (with r (manual-correct-math t)
+    (when (!= r t)
+      (import-from (version version-compare))
+      (let* ((t1 (tree->stree t))
+	     (t2 (tree->stree r))
+	     (tb (compare-versions t1 t2))
+	     (rt (stree->tree tb)))
+	(tree-set! t rt)
+	(tree-go-to t :start)
+	(version-next-difference)))))
+
+(tm-define (math-correct-all)
+  (:synopsis "Correct selected formula or all formulas in document")
+  (if (selection-active-any?)
+      (if (== (selection-tree) (path->tree (selection-path)))
+	  (math-correct-tree (path->tree (selection-path)))
+	  (set-message "Only implemented for complete subtrees"
+		       "correct formula"))
+      (math-correct-tree (buffer-tree))))
+
+(tm-define (math-correct-manually)
+  (:synopsis "Manually correct selected formula or all formulas in document")
+  (if (selection-active-any?)
+      (if (== (selection-tree) (path->tree (selection-path)))
+	  (math-manually-correct-tree (path->tree (selection-path)))
+	  (set-message "Only implemented for complete subtrees"
+		       "correct formula"))
+      (math-manually-correct-tree (buffer-tree))))

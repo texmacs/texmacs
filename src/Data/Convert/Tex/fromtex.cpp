@@ -1501,17 +1501,6 @@ finalize_textm (tree t) {
 }
 
 /******************************************************************************
-* Final corrections
-******************************************************************************/
-
-tree
-tex_correct (tree t) {
-  t= superfluous_invisible_correct (t);
-  t= missing_invisible_correct (t, 1);
-  return t;
-}
-
-/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -1550,7 +1539,7 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt10= " << t10 << "\n\n";
   tree t11= simplify_correct (t10);
   //cout << "\n\nt11= " << t11 << "\n\n";
-  tree t12= tex_correct (t11);
+  tree t12= latex_correct (t11);
   //cout << "\n\nt12= " << t12 << "\n\n";
 
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))

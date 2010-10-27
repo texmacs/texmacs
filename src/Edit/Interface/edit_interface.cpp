@@ -448,7 +448,6 @@ edit_interface_rep::apply_changes () {
       if (!inside_active_graphics ())
         cursor_visible ();
     
-    
     cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
                    oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);

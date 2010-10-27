@@ -18,5 +18,10 @@ tree with_correct (tree t);
 tree superfluous_with_correct (tree t);
 tree superfluous_invisible_correct (tree t);
 tree missing_invisible_correct (tree t, int force= -1);
+tree upgrade_brackets (tree t, string mode= "text");
+
+tree latex_correct (tree t);
+tree automatic_correct (tree t, string version);
+tree manual_correct (tree t);
 
 #endif // defined TREE_CORRECT_H
