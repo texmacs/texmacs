@@ -116,7 +116,9 @@
   ("Remove superfluous invisible operators"
    (toggle-preference "manual remove superfluous invisible"))
   ("Insert missing invisible operators"
-   (toggle-preference "manual insert missing invisible")))
+   (toggle-preference "manual insert missing invisible"))
+  ("Synonym substitutions"
+   (toggle-preference "manual synonym correct")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical Symbol menu

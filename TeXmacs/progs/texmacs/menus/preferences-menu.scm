@@ -169,7 +169,9 @@
 	(toggle ("Remove superfluous invisible operators"
 		 "remove superfluous invisible"))
 	(toggle ("Insert missing invisible operators"
-		 "insert missing invisible")))
+		 "insert missing invisible"))
+	(toggle ("Synonym substitutions"
+		 "synonym correct")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")

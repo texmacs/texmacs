@@ -120,37 +120,28 @@ superfluous_with_correct (tree t) {
 * Replace symbols by appropriate synonyms
 ******************************************************************************/
 
-/*
 static array<tree>
 synonym_correct (array<tree> a) {
   array<int>  tp= symbol_types (a);
   array<tree> r;
   //cout << a << ", " << tp << "\n";
   for (int i=0; i<N(a); i++)
-    if (a[i] == " " || a[i] == "*") {
+    if (a[i] == "\\" || a[i] == "<backslash>") {
       int j1, j2;
       for (j1= i-1; j1>=0; j1--)
 	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
-	else if (a[j1] == " ") break;
       for (j2= i+1; j2<N(a); j2++)
-	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT)
-	  if (a[j2] != " " && a[j2] != "*") break;
-      //cout << "  " << i << ": " << j1 << ", " << j2
-      //<< "; " << tp[j1] << ", " << tp[j2] << "\n";
+	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
       if (j1 < 0 || j2 >= N(a));
-      else if (a[j1] == " " || a[j1] == "*");
-      else if (tp[j1] == SYMBOL_PREFIX ||
-	       tp[j1] == SYMBOL_INFIX ||
-	       tp[j1] == SYMBOL_SEPARATOR);
-      else if (tp[j2] == SYMBOL_POSTFIX ||
-	       tp[j2] == SYMBOL_INFIX ||
-	       tp[j2] == SYMBOL_SEPARATOR);
+      else if ((a[i] == "\\" ||
+		a[i] == "<backslash>") &&
+	       ((tp[j1] == SYMBOL_BASIC) ||
+		(tp[j1] == SYMBOL_POSTFIX)) &&
+	       ((tp[j2] == SYMBOL_BASIC) ||
+		(tp[j2] == SYMBOL_PREFIX)))
+	r << tree ("<setminus>");
       else r << a[i];
     }
-    else if (is_func (a[i], SQRT, 2) && a[i][1] == "")
-      r << tree (SQRT, a[i][0]);
-    else if (is_script (a[i]) && a[i][0] == "")
-      r << tree (L(a[i]), "<nosymbol>");
     else r << a[i];
   return r;
 }
@@ -165,33 +156,10 @@ synonym_correct (tree t, string mode) {
     for (i=0; i<n; i++) {
       tree tmode= the_drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
-      //cout << "  " << i << ": " << is_correctable_child (t, i)
-      //<< ", " << smode << "\n";
-      if (is_func (t, WITH) && i != N(t)-1)
-	r[i]= t[i];
-      else if (is_correctable_child (t, i))
+      if (is_correctable_child (t, i))
 	r[i]= synonym_correct (t[i], smode);
       else r[i]= t[i];
     }
-  }
-  
-  if (is_func (r, CONCAT)) {
-    bool ok= true;
-    int i, found= -1;
-    for (i=0; i<N(r); i++)
-      if (is_compound (r[i], "hide-preamble") ||
-	  is_compound (r[i], "show-preamble"))
-	{
-	  ok= (found == -1);
-	  found= i;
-	}
-      else if (!is_atomic (r[i])) ok= false;
-      else {
-	string s= r[i]->label;
-	for (int j=0; j<N(s); j++)
-	  if (s[j] != ' ') ok= false;
-      }
-    if (ok) r= r[found];
   }
 
   if (mode == "math") {
@@ -210,7 +178,6 @@ synonym_correct (tree t) {
   with_drd drd (get_document_drd (t));
   return synonym_correct (t, "text");
 }
-*/
 
 /******************************************************************************
 * Remove incorrect spaces and multiplications
@@ -587,6 +554,8 @@ latex_correct (tree t) {
   // NOTE: matching brackets corrected in upgrade_tex
   if (enabled_preference ("remove superfluous invisible"))
     t= superfluous_invisible_correct (t);
+  if (enabled_preference ("synonym correct"))
+    t= synonym_correct (t);
   if (enabled_preference ("insert missing invisible"))
     t= missing_invisible_correct (t, 1);
   return t;
@@ -603,6 +572,8 @@ automatic_correct (tree t, string version) {
       t= upgrade_brackets (t);
     if (enabled_preference ("remove superfluous invisible"))
       t= superfluous_invisible_correct (t);
+    if (enabled_preference ("synonym correct"))
+      t= synonym_correct (t);
     if (enabled_preference ("insert missing invisible"))
       t= missing_invisible_correct (t);
   }
@@ -619,6 +590,8 @@ manual_correct (tree t) {
     t= upgrade_brackets (t);
   if (enabled_preference ("manual remove superfluous invisible"))
     t= superfluous_invisible_correct (t);
+  if (enabled_preference ("manual synonym correct"))
+    t= synonym_correct (t);
   if (enabled_preference ("manual insert missing invisible"))
     t= missing_invisible_correct (t);
   return t;
