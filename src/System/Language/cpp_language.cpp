@@ -246,7 +246,7 @@ parse_string (string s, int& pos) {
   case '\042':
     do pos++;
     while((pos<N(s)) &&
-	  (s[pos-1]=='\\' && s[pos]=='\042' || s[pos]!='\042'));
+	  ((s[pos-1]=='\\' && s[pos]=='\042') || s[pos]!='\042'));
     if (s[pos]=='\042') pos++;
     return;
   case '/':
