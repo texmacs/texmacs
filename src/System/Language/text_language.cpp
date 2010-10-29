@@ -331,13 +331,16 @@ get_date (string lan, string fm) {
     else fm= "%d %B %Y";
   }
   lan= language_to_locale (lan);
-  string old= get_env ("LANG");
-  set_env ("LANG", lan);
+  string lvar= "LC_TIME";
+  if (get_env (lvar) == "") lvar= "LC_ALL";
+  if (get_env (lvar) == "") lvar= "LANG";
+  string old= get_env (lvar);
+  set_env (lvar, lan);
   string date= simplify_date (var_eval_system ("date +\"" * fm * "\""));
   if ((lan == "cz_CZ") || (lan == "hu_HU") || (lan == "pl_PL"))
     date= il2_to_cork (date);
   // if (lan == "ru_RU") date= iso_to_koi8 (date);
-  set_env ("LANG", old);
+  set_env (lvar, old);
   return date;
 }
 #endif
