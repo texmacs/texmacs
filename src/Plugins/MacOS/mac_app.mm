@@ -142,7 +142,12 @@ void mac_install_filter() {
 
 bool 
 mac_alternate_startup() {
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
   NSUInteger nsmods = [NSEvent modifierFlags];
   return (nsmods &  NSAlternateKeyMask);
+#else
+  return ((CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState) 
+                & NSDeviceIndependentModifierFlagsMask) == kCGEventFlagMaskAlternate);
+#endif
 }
 
