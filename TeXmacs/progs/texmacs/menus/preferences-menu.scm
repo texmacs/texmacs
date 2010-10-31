@@ -170,8 +170,8 @@
 		 "remove superfluous invisible"))
 	(toggle ("Insert missing invisible operators"
 		 "insert missing invisible"))
-	(toggle ("Synonym substitutions"
-		 "synonym correct")))
+	(toggle ("Homoglyph substitutions"
+		 "homoglyph correct")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")
