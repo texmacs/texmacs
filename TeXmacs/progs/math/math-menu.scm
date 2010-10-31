@@ -49,7 +49,7 @@
       ("Right superscript" (make-script #t #t))
       ("Script below" (make-below))
       ("Script above" (make-above)))
-  (-> "Accent#above"
+  (-> "Accent above"
       ("Tilda" (make-wide "~"))
       ("Hat" (make-wide "^"))
       ("Bar" (make-wide "<bar>"))
@@ -69,7 +69,7 @@
       ("Right arrow" (make-wide "<wide-varrightarrow>"))
       ("Left arrow" (make-wide "<wide-varleftarrow>"))
       ("Wide bar" (make-wide "<wide-bar>")))
-  (-> "Accent#below"
+  (-> "Accent below"
       ("Tilda" (make-wide-under "~"))
       ("Hat" (make-wide-under "^"))
       ("Bar" (make-wide-under "<bar>"))
