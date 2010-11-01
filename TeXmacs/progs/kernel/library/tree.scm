@@ -95,6 +95,28 @@
 (define-public (cursor-tree*)
   (path->tree (cDr (cursor-path*))))
 
+(define-public (before-cursor)
+  (let* ((t (cursor-tree))
+	 (i (cAr (cursor-path))))
+    (cond ((and (tree-atomic? t) (> i 0))
+	   (with s (tree->string t)
+	     (with j (string-previous s i)
+	       (substring s j i))))
+	  ((tree-atomic? t) #f)
+	  ((> i 0) t)
+	  (else #f))))
+
+(define-public (after-cursor)
+  (let* ((t (cursor-tree*))
+	 (i (cAr (cursor-path*))))
+    (cond ((and (tree-atomic? t) (< i (string-length (tree->string t))))
+	   (with s (tree->string t)
+	     (with j (string-next s i)
+	       (substring s i j))))
+	  ((tree-atomic? t) #f)
+	  ((== i 0) t)
+	  (else #f))))
+
 (define-public (table-cell-tree row col)
   (path->tree (table-cell-path row col)))
 

@@ -83,8 +83,9 @@
 
     "=" "<ne>" "<neq>" "<longequal>" "<less>" "<gtr>" "<le>" "<leq>"
     "<prec>" "<preceq>" "<ll>" "<lleq>" "<subset>" "<subseteq>"
-    "<sqsubset>" "<sqsubseteq>" "<in>" "<ge>" "<geq>" "<succ>" "<succeq>"
-    "<gg>" "<ggeq>" "<supset>" "<supseteq>" "<sqsupset>" "<sqsupseteq>" "<ni>"
+    "<sqsubset>" "<sqsubseteq>" "<in>" "<ni>" "<of>"
+    "<ge>" "<geq>" "<succ>" "<succeq>"
+    "<gg>" "<ggeq>" "<supset>" "<supseteq>" "<sqsupset>" "<sqsupseteq>"
     "<equiv>" "<nequiv>" "<sim>" "<simeq>" "<asymp>" "<approx>" "<cong>"
     "<subsetsim>" "<supsetsim>" "<doteq>" "<propto>" "<varpropto>"
     "<perp>" "<bowtie>" "<Join>" "<smile>" "<frown>" "<signchange>"
