@@ -54,11 +54,13 @@
   (complete-try?))
 
 (tm-define (kbd-tab)
-  (:inside label reference)
+  (:mode in-source?)
+  (:inside label reference pageref)
   (if (complete-try?) (noop)))
 
 (tm-define (kbd-shift-tab)
-  (:inside label reference)
+  (:mode in-source?)
+  (:inside label reference pageref)
   (if (complete-try?) (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

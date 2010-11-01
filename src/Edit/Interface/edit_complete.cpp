@@ -62,7 +62,7 @@ edit_interface_rep::complete_try () {
   string s= st->label, ss;
   int end= last_item (tp);
   array<string> a;
-  if (inside (LABEL) || inside (REFERENCE)) {
+  if (inside (LABEL) || inside (REFERENCE) || inside (PAGEREF)) {
     if (end != N(s)) return false;
     ss= copy (s);
     tree t= get_labels ();
