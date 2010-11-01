@@ -527,7 +527,7 @@ drd_info_rep::freeze_env (tree_label l, int nr) {
 
 tree
 drd_info_rep::get_env_child (tree t, int i, tree env) {
-  if (L(t) == ATTR && i == N(t)-1)
+  if (L(t) == WITH && i == N(t)-1)
     return drd_env_merge (env, t (0, N(t)-1));
   else {
     /* makes cursor movement (is_accessible_cursor) slow for large preambles
