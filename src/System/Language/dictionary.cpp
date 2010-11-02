@@ -160,10 +160,15 @@ translate (const char* s) {
 
 tree
 tree_translate (tree t, string from, string to) {
+  //cout << "Translating " << t << " from " << from << " into " << to << "\n";
   if (is_atomic (t))
     return translate (t->label, from, to);
   else if (is_compound (t, "verbatim", 1))
     return t[0];
+  else if (is_compound (t, "localize", 1))
+    return tree_translate (t[0], "english", out_lan);
+  else if (is_compound (t, "render-key", 1))
+    return compound ("render-key", tree_translate (t[0], from, to));
   else {
     tree r (t, N(t));
     for (int i=0; i<N(t); i++)
