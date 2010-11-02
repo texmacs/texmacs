@@ -389,9 +389,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind graphics-icons
-  (=> (balloon (icon "tm_cell_size.xpm") "Graphics geometry")
+  (=> (balloon (icon "tm_graphics_geometry.xpm") "Graphics geometry")
       (link graphics-geometry-menu))
-  (=> (balloon (icon "tm_table.xpm") "Graphics grids")
+  (=> (balloon (icon "tm_graphics_grid.xpm") "Graphics grids")
       (link graphics-grids-menu))
   |
   ;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
@@ -427,8 +427,8 @@
       (link graphics-fill-color-menu))
   (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
       (link graphics-text-align-menu))
-  (=> (balloon (icon "tm_toggle_change_props.xpm") "Enable change property")
-      (link graphics-enable-change-properties-menu))
+  ;;(=> (balloon (icon "tm_toggle_change_props.xpm") "Enable change property")
+  ;;    (link graphics-enable-change-properties-menu))
   |
   (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
       (graphics-set-mode '(group-edit props)))
