@@ -66,7 +66,8 @@ while [ 1 ]; do
 	
 	#for debugging purposes
 	#echo $input | tr  "~" "\n" | tee tm_gnuplot.log | $GNUPLOT_PATH$PIPE_GNUPLOT 
-	echo -E "$input" | tr  "~" "\n" | $GNUPLOT_PATH$PIPE_GNUPLOT
+	#echo -E "$input" | tr  "~" "\n" | $GNUPLOT_PATH$PIPE_GNUPLOT
+	echo "$input" | tr  "~" "\n" | $GNUPLOT_PATH$PIPE_GNUPLOT
 	
 	echo -n $DATA_BEGIN
 	echo -n verbatim:
@@ -75,7 +76,8 @@ while [ 1 ]; do
 	echo -n ps:
 	cat $TEMP_DIR$TEMP_PS_NAME 
 	echo -n $DATA_END 
-	echo -ne "\n"	
+	#echo -ne "\n"	
+	echo -n "\n"	
 	
 	rm $TEMP_DIR$TEMP_PS_NAME
 done
