@@ -34,6 +34,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-menu
+  (if (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*)
+	  (inside? 'equation) (inside? 'equation*))
+      (if (not (numbered?)) ("Number equation" (toggle-number)))
+      (if (numbered?) ("Remove number" (toggle-number)))
+      ---)
   ("Fraction" (make-fraction))
   ("Square root" (make-sqrt))
   ("N-th root" (make-var-sqrt))
@@ -89,15 +94,7 @@
       ("Right arrow" (make-wide-under "<wide-varrightarrow>"))
       ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
       ("Wide bar" (make-wide-under "<wide-bar>")))
-  (-> "Symbol" (link symbol-menu))
-  ---
-  (if (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*)
-	  (inside? 'equation) (inside? 'equation*))
-      (if (not (numbered?)) ("Number equation" (toggle-number)))
-      (if (numbered?) ("Remove number" (toggle-number))))
-  (if (not (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*)
-	       (inside? 'equation) (inside? 'equation*)))
-      (when #f ("Number equation" (toggle-number)))))
+  (-> "Symbol" (link symbol-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu for syntax and other corrections

@@ -14,7 +14,7 @@
   </shell-fragment>
 
   and move the binary to some place in your path. When starting <TeXmacs>,
-  you will see a <menu|Mycas> entry in the <menu|Text|Session> menu. Below,
+  you will see a <menu|Mycas> entry in the <menu|Insert|Session> menu. Below,
   we briefly explain how the <name|Mycas> plug-in works. For more details on
   how to write your own plug-ins, look at <menu|Help|Interfacing>. A lot of
   additional examples are provided in <verbatim|$TEXMACS_PATH/examples/plugins>.

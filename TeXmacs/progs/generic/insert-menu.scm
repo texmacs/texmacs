@@ -113,6 +113,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-menu
+  (if (in-text?) (link text-menu))
+  (if (in-math?) (link math-menu))
+  ---
   (-> "Table" (link insert-table-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Link" (link insert-link-menu))
