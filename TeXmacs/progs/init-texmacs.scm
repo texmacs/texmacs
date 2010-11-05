@@ -78,13 +78,17 @@
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
-(lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
+(lazy-menu (generic format-menu) format-menu
+	   font-size-menu color-menu horizontal-space-menu
+	   vertical-space-menu indentation-menu line-break-menu
+	   page-header-menu page-footer-menu page-numbering-menu
+	   page-break-menu page-insertion-menu
+	   insert-page-insertion-menu position-float-menu)
 (lazy-menu (generic document-menu) document-menu
 	   project-menu document-style-menu global-language-menu)
 (lazy-menu (generic document-part) document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu
-	   insert-link-menu insert-image-menu insert-animation-menu
-	   insert-page-insertion-menu position-float-menu)
+	   insert-link-menu insert-image-menu insert-animation-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting text mode\n")

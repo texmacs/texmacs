@@ -101,16 +101,16 @@
 ;; Spacing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-property (make-var-space spc base top)
-  (:argument spc "Horizontal space")
-  (:argument base "Base level")
-  (:argument top "Top level"))
-
 (tm-property (make-hspace spc)
   (:argument spc "Horizontal space"))
 
 (tm-property (make-space spc)
   (:argument spc "Horizontal space"))
+
+(tm-property (make-var-space spc base top)
+  (:argument spc "Horizontal space")
+  (:argument base "Base level")
+  (:argument top "Top level"))
 
 (tm-property (make-htab spc)
   (:argument spc "Minimal space"))

@@ -128,10 +128,13 @@
   (if (simple-menus?)
       (-> "Color" (link color-menu)))
   ---
-  (group "Content")
+  (group "Text")
   (if (detailed-menus?)
       (-> "Color" (link color-menu))
       (-> "Scripts" (link local-supported-scripts-menu)))
+  (-> "Space" (link horizontal-space-menu))
+  ---
+  (group "Special")
   (link math-special-format-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
