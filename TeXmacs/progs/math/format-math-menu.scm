@@ -172,6 +172,8 @@
       (tile 13 (link bbb-menu))
       ---
       ("use the blackboard bold font" (make-with "math-font" "Bbb*")))
+  ((balloon (icon "tm_textual.xpm") "Insert plain text")
+   (make 'text))
   (if (not (in-graphics?))
       (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
 	  (link color-menu))))

@@ -22,7 +22,7 @@ static char *magick[] = {
 ", c #b4b4b4",
 "< c gray73",
 "1 c gray77",
-"  c #d0d0d0",
+"  c None",
 /* pixels */
 "          ",
 "          ",

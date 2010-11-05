@@ -15,7 +15,7 @@ static char *magick[] = {
 "& c gray73",
 "* c #c5c5c5",
 "= c #cbcbcb",
-"  c #d0d0d0",
+"  c None",
 /* pixels */
 "        ",
 "        ",
