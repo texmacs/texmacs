@@ -146,7 +146,7 @@
   ("macos" "M-" #t)
   ("std" "M-" #t)
   ("cmd" "C-")
-  ("altcmd" "A-")
+  ("altcmd" "M-C-")
   ("special" "A-C-")
   ("copyto" "std C")
   ("cutto" "std X")

@@ -156,7 +156,7 @@
   ("altcmd /" (make 'no-break))
   ("altcmd !" (make-label))
   ("altcmd ?" (make 'reference))
-  ("altcmd C-?" (make 'pageref))
+  ("altcmd P" (make 'pageref))
 
   ("accent:hat" "^")
   ("accent:deadhat" "^")
@@ -586,7 +586,9 @@
   ("C-q" (make 'symbol))
   ("C-tab" (make-htab "5mm"))
   ("C-space" (make-space "0.2spc"))
-  ("C-S-space" (make-space "-0.2spc")))
+  ("C-S-space" (make-space "-0.2spc"))
+  ("C-!" (make-label))
+  ("C-?" (make 'reference)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Windows keymap

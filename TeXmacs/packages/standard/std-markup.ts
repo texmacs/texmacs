@@ -32,7 +32,7 @@
 
   <assign|TeXmacs-version-release|<macro|type|<extern|texmacs-version-release*|<quote-arg|type>>>>
 
-  <assign|made-by-TeXmacs|<macro|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<active*|<move|<image|local:$TEXMACS_PATH/misc/images/tm_gnu3.ps||1fn||||>|0fn|-0.2fn>><space|2spc><localize|This
+  <assign|made-by-TeXmacs|<macro|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<active*|<move|<image|local:$TEXMACS_PATH/misc/images/tm_gnu3.ps||1fn||>|0fn|-0.2fn>><space|2spc><localize|This
   document has been produced using> GNU <TeXmacs> (<localize|see>
   <with|font-family|tt|http://www.texmacs.org>).<right-flush>>>>>
 
@@ -45,6 +45,8 @@
   <assign|hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
 
   <assign|pre-edit|<macro|x|<with|ornament-color|#ffffc0|ornament-sunny-color|#fff0e0|ornament-shadow-color|#ffc080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<smash|<ornament|<with|color|#4040c0|<arg|x>>>>>>>
+
+  <drd-props|pre-edit|arity|1|border|no>
 
   <\active*>
     <\src-comment>
