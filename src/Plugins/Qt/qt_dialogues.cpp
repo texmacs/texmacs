@@ -617,7 +617,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
     ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
   }
 }
-#else
+#elif 1
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
@@ -696,4 +696,29 @@ qt_tm_widget_rep::do_interactive_prompt () {
 //    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
   }
 }
+#else
+
+#include "QTMInteractivePrompt.hpp"
+
+void
+qt_tm_widget_rep::do_interactive_prompt () {
+	QString label = to_qstring_utf8 (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+	QStringList items;
+  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
+  if ( N(it->def) == 0)
+		items << "";
+  else for (int j=0; j < N(it->def); j++)
+		items << to_qstring_utf8(it->def[j]);
+
+	QTMInteractivePrompt _prompt(label, items, to_qstring(it->type), tm_mainwindow());
+	
+	if (_prompt.exec() == QDialog::Accepted) {
+		QString text = _prompt.currentText();
+    ((qt_input_text_widget_rep*) int_input.rep) -> text = scm_quote (from_qstring (text));
+    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
+  } else {
+		//    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
+  }
+}
+
 #endif

@@ -12,12 +12,12 @@ TODO
 * qt_chooser_widget_rep is only partially implemented (e.g. crop images, filters, ... does not work)
 * Russian menus.
 * Visually indicate when a icon menu button is pressed.
-* Implement "minibuffer" interactions (currently a dialog pop up instead) 
 * Paint interrupts on slow machines.
 * Implement image_gc
 
 DONE
 
+* Implement "minibuffer" interactions (in the status bar)
 * Missing image support.
 * Remove boxes around left and right footer.
 * Horizontal distance between icons too large.

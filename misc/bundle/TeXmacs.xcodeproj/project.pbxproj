@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */; };
 		9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
+		9C066E6612849FD900DE2F84 /* QTMInteractivePrompt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */; };
 		9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126710D102B300232476 /* QTMPipeLink.hpp */; };
 		9C0B49F010A8CC110097A335 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476110A8CC0F0097A335 /* generic.cpp */; };
 		9C0B49F110A8CC110097A335 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476210A8CC0F0097A335 /* input.cpp */; };
@@ -1088,6 +1090,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMInteractivePrompt.hpp; sourceTree = "<group>"; };
+		4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMInteractivePrompt.cpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
@@ -2579,6 +2583,8 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
+				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
 				9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */,
 				9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */,
 				9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */,
@@ -3972,6 +3978,7 @@
 				9CEDAA361264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */,
 				9C646EBE12842B7A000ABCDF /* mac_utilities.mm in Sources */,
+				9C066E6612849FD900DE2F84 /* QTMInteractivePrompt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3979,6 +3986,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */,
 				9C7E7AAA1105EBB1004482BB /* QTMFileDialog.hpp in Sources */,
 				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
@@ -4733,6 +4741,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = MOCs;
+				TM_LDQT = "-Wl,-F/Library/Frameworks -L/Library/Frameworks -framework QtGui -framework QtCore";
 			};
 			name = Debug;
 		};
@@ -4835,9 +4844,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C0B4B5A10A8CCA00097A335 /* Base.xcconfig */;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
+				TM_LDQT = "-Wl,-F/Library/Frameworks -L/Library/Frameworks -framework QtGui  -framework QtCore";
 			};
 			name = Debug;
 		};
