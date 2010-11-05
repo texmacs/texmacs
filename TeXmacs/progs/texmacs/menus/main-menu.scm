@@ -36,7 +36,7 @@
   (=> "File" (link file-menu))
   (=> "Edit" (link edit-menu))
   (if (not (in-graphics?)) (=> "Insert" (link insert-menu)))
-  (if (in-source?) (=> "Source" (link source-menu)))
+  (if (or (in-source?) (with-source-tool?)) (=> "Source" (link source-menu)))
   (if (in-text?) (=> "Text" (link text-menu)))
   (if (in-math?) (=> "Mathematics" (link math-menu)))
   (if (in-session?) (=> "Session" (link session-menu)))
@@ -64,7 +64,6 @@
       (=> "Test" (link test-menu)))
   (=> "Help" (link help-menu)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs popup menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -73,7 +72,7 @@
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
   (if (not (in-graphics?)) (-> "Insert" (link insert-menu)))
-  (if (in-source?) (-> "Source" (link source-menu)))
+  (if (or (in-source?) (with-source-tool?)) (-> "Source" (link source-menu)))
   (if (in-text?) (-> "Text" (link text-menu)))
   (if (in-math?) (-> "Mathematics" (link math-menu)))
   (if (in-graphics?) (-> "Graphics" (link graphics-menu)))

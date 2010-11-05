@@ -46,11 +46,22 @@
 (menu-bind prog-format-menu
   (group "Font")
   (link prog-font-menu)
-  ---
-  (group "Text")
-  (-> "Color" (link color-menu))
-  (-> "Scripts" (link local-supported-scripts-menu))
-  (-> "Space" (link horizontal-space-menu)))
+  (if (simple-menus?)
+      (-> "Color" (link color-menu)))
+  (if (detailed-menus?)
+      ---
+      (group "Text")
+      (-> "Color" (link color-menu))
+      (-> "Scripts" (link local-supported-scripts-menu))
+      (-> "Space" (link horizontal-space-menu))
+      (-> "Transform" (link transform-menu))
+      (-> "Specific" (link specific-menu))
+      ---
+      (group "Paragraph")
+      (link paragraph-menu)
+      ---
+      (group "Page")
+      (link page-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties

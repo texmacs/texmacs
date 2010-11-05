@@ -62,6 +62,28 @@
   ("Tab" (make-htab "5mm"))
   ("Custom tab" (interactive make-htab)))
 
+(menu-bind transform-menu
+  ("Move object" (interactive make-move))
+  ("Shift object" (interactive make-shift))
+  ("Resize object" (interactive make-resize))
+  ("Clip object" (interactive make-clipped))
+  ---
+  ("Group" (make-rigid))
+  ("Superpose" (make 'superpose))
+  ("Repeat object" (make 'repeat))
+  ("Decorate atoms" (make-arity 'datoms 2))
+  ;;("Decorate lines" (make-arity 'dlines 2))
+  ;;("Decorate pages" (make-arity 'dpages 2))
+  )
+
+(menu-bind specific-menu
+  ("TeXmacs" (make-specific "texmacs"))
+  ("LaTeX" (make-specific "latex"))
+  ("HTML" (make-specific "html"))
+  ("Screen" (make-specific "screen"))
+  ("Printer" (make-specific "printer"))
+  ("Image" (make-specific "image")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for paragraph formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

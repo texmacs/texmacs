@@ -109,23 +109,6 @@
   ("Sound" (choose-file make-sound "Load file" "sound")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insert floating content
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind insert-page-insertion-menu
-  ("Footnote" (make 'footnote))
-  ---
-  ("Floating object" (make-insertion "float"))
-  ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
-  ("Floating table" (begin (make-insertion "float") (make 'big-table))))
-
-(menu-bind position-float-menu
-  ("Top" (toggle-insertion-positioning "t"))
-  ("Here" (toggle-insertion-positioning "h"))
-  ("Bottom" (toggle-insertion-positioning "b"))
-  ("Other pages" (toggle-insertion-positioning-not "f")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Insert menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -139,33 +122,4 @@
       (-> "Animation" (link insert-animation-menu)))
   (-> "Mathematics" (link insert-math-menu))
   (if (and (style-has? "program-dtd") (detailed-menus?))
-      (-> "Session" (link insert-session-menu)))
-  (if (detailed-menus?)
-      ---
-      (-> "Specific"
-	  ("TeXmacs" (make-specific "texmacs"))
-	  ("LaTeX" (make-specific "latex"))
-	  ("HTML" (make-specific "html"))
-	  ("Screen" (make-specific "screen"))
-	  ("Printer" (make-specific "printer"))
-	  ("Image" (make-specific "image")))
-      (if (not (in-source?))
-	  (-> "Macro" (link source-transformational-menu))
-	  (-> "Executable" (link source-executable-menu)))
-      (-> "Special"
-	  ("Group" (make-rigid))
-	  ("Superpose" (make 'superpose))
-	  ---
-	  ("Move object" (interactive make-move))
-	  ("Shift object" (interactive make-shift))
-	  ("Resize object" (interactive make-resize))
-	  ("Clip object" (interactive make-clipped))
-	  ---
-	  ("Repeat object" (make 'repeat))
-;;        ---
-	  ("Decorate atoms" (make-arity 'datoms 2))
-;;        ("decorate lines" (make-arity 'dlines 2))
-;;        ("decorate pages" (make-arity 'dpages 2))
-;;        ---
-;;        ("page insertion" (make 'float))
-	  )))
+      (-> "Session" (link insert-session-menu))))

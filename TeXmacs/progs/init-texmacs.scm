@@ -80,6 +80,7 @@
 (lazy-keyboard (generic generic-kbd) always?)
 (lazy-menu (generic format-menu) format-menu
 	   font-size-menu color-menu horizontal-space-menu
+	   transform-menu specific-menu
 	   vertical-space-menu indentation-menu line-break-menu
 	   page-header-menu page-footer-menu page-numbering-menu
 	   page-break-menu page-insertion-menu

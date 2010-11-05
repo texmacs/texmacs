@@ -171,6 +171,7 @@
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))
   (with-linking-tool% (== (get-preference "linking tool") "on"))
+  (with-source-tool% (== (get-preference "source tool") "on"))
   (with-versioning-tool% (== (get-preference "versioning tool") "on"))
   (with-remote-connections% (== (get-preference "remote connections") "on"))
   (search-mode% (== (get-input-mode) 1))

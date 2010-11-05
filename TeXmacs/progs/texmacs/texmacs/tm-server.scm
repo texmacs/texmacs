@@ -77,6 +77,7 @@
   ("scripting language" "none" notify-scripting-language)
   ("debugging tool" "off" notify-tool)
   ("linking tool" "off" notify-tool)
+  ("source tool" "off" notify-tool)
   ("versioning tool" "off" notify-tool)
   ("remote connections" "off" notify-tool))
 
