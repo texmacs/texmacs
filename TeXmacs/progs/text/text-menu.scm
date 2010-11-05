@@ -234,16 +234,27 @@
   (if (style-has? "section-base-dtd")
       (-> "Automatic" (link automatic-menu)))
   ---
-  (if (style-has? "std-list-dtd")
-      (-> "Itemize" (link itemize-menu))
-      (-> "Enumerate" (link enumerate-menu))
-      (-> "Description" (link description-menu))
-      (when (inside-list-tag?) ("New item" (make-item)))
-      ---)
   (if (style-has? "std-markup-dtd")
       (-> "Content tag" (link content-tag-menu))
       (-> "Size tag" (link size-tag-menu)))
-  (-> "Presentation tag" (link presentation-tag-menu)))
+  (-> "Presentation tag" (link presentation-tag-menu))
+  (if (style-has? "std-list-dtd")
+      ---
+      (-> "Itemize" (link itemize-menu))
+      (-> "Enumerate" (link enumerate-menu))
+      (-> "Description" (link description-menu))
+      (when (inside-list-tag?) ("New item" (make-item))))
+  ---
+  (-> "Mathematics" (link insert-math-menu))
+  (-> "Table" (link insert-table-menu))
+  (-> "Image" (link insert-image-menu))
+  (-> "Link" (link insert-link-menu))
+  (if (detailed-menus?)
+      (if (style-has? "std-fold-dtd")
+	  (-> "Fold" (link insert-fold-menu)))
+      (-> "Animation" (link insert-animation-menu)))
+  (if (and (style-has? "program-dtd") (detailed-menus?))
+      (-> "Session" (link insert-session-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for text mode

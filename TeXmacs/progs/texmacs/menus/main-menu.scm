@@ -135,6 +135,8 @@
   ((balloon (icon "tm_redo.xpm") "Redo undone changes") (redo 0))
   (if (not (in-graphics?))
       |
+      (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
+	  (link insert-math-menu))
       (=> (balloon (icon "tm_table.xpm") "Insert a table")
 	  (link insert-table-menu))
       (=> (balloon (icon "tm_image.xpm") "Insert a picture")
@@ -147,8 +149,6 @@
 		  (link insert-fold-menu)))
 	  (=> (balloon (icon "tm_animate.xpm") "Animation")
 	      (link insert-animation-menu)))
-      (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
-	  (link insert-math-menu))
       (if (and (style-has? "program-dtd") (detailed-menus?))
 	  (=> (balloon (icon "tm_shell.xpm")
 		       "Start an interactive session")

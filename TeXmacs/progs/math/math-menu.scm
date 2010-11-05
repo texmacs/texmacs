@@ -19,15 +19,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-math-menu
-  (when (not (in-math?))
-	("Formula" "$" (begin (noop) (make-with "mode" "math"))))
-  (when (in-math?)
-	("Text" "A-$" (begin (noop) (make-with "mode" "text"))))
+  ("Formula" "$" (begin (noop) (make 'math)))
   (if (style-has? "env-math-dtd")
-      (when (in-text?)
-	    ---
-	    ("Equation" (make-equation*))
-	    ("Equations" (make-eqnarray*)))))
+      ("Equation" (make-equation*))
+      ("Equations" (make-eqnarray*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Mathematics menu
@@ -44,7 +39,7 @@
   ("N-th root" (make-var-sqrt))
   ("Negation" (make-neg))
   ("Tree" (make-tree))
-  ("Text" (make-with "mode" "text"))
+  ("Text" (make 'text))
   ---
   (-> "Size tag" (link size-tag-menu))
   (-> "Script"
@@ -94,7 +89,15 @@
       ("Right arrow" (make-wide-under "<wide-varrightarrow>"))
       ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
       ("Wide bar" (make-wide-under "<wide-bar>")))
-  (-> "Symbol" (link symbol-menu)))
+  (-> "Symbol" (link symbol-menu))
+  ---
+  (-> "Table" (link insert-table-menu))
+  (-> "Image" (link insert-image-menu))
+  (-> "Link" (link insert-link-menu))
+  (if (detailed-menus?)
+      (if (style-has? "std-fold-dtd")
+	  (-> "Fold" (link insert-fold-menu)))
+      (-> "Animation" (link insert-animation-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu for syntax and other corrections
