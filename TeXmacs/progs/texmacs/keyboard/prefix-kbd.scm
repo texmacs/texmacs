@@ -169,7 +169,8 @@
 
 (kbd-map
   ("macos" "" "MacOS command")
-  ("std" "" "MacOS command"))
+  ("std" "" "MacOS command")
+  ("A-" "" "MacOS option"))
 
 ) ;; end when (like-macos?)
 
