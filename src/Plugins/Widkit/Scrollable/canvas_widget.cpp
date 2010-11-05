@@ -34,6 +34,7 @@ public:
   operator tree ();
   void set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2);
 
+  bool handle_canvas_mouse (mouse_event ev);
   void handle_get_size (get_size_event ev);
   void handle_get_widget (get_widget_event ev);
   void handle_set_widget (set_widget_event ev);
@@ -122,6 +123,12 @@ canvas_widget_rep::set_extents (SI Ex1, SI Ey1, SI Ex2, SI Ey2) {
 /******************************************************************************
 * Event handling
 ******************************************************************************/
+
+bool
+canvas_widget_rep::handle_canvas_mouse (mouse_event ev) {
+  if (ev->type == "press-left") win->set_keyboard_focus (this);
+  return basic_widget_rep::handle (ev);
+}
 
 void
 canvas_widget_rep::handle_get_size (get_size_event ev) {
@@ -233,7 +240,11 @@ canvas_widget_rep::handle (event ev) {
   case POSITION_EVENT:
   case UPDATE_EVENT:
   case INVALIDATE_EVENT:
-  case MOUSE_EVENT:
+    return basic_widget_rep::handle (ev);
+  case MOUSE_EVENT: {
+    mouse_event e (ev);
+    return handle_canvas_mouse (e);
+  }
   case REPAINT_EVENT:
   case FIND_CHILD_EVENT:
     return basic_widget_rep::handle (ev);
