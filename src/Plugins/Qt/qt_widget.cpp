@@ -92,19 +92,25 @@ QTMGuiHelper::aboutToShowMainMenu() {
 
 void 
 QTMGuiHelper::aboutToHideMainMenu() {
-  //  cout << "Hide" << LF;
   menu_count--;
+  cout << "Hide :" << menu_count << " " << N(waiting_widgets) <<  LF;
   if (menu_count <= 0) {
     menu_count = 0;
-    if (!is_nil(waiting_widgets)) {
-      if (DEBUG_QT)
-        cout << "Installing postponed menu" << LF;
-      
-      waiting_widgets->item->install_main_menu();
-      waiting_widgets = waiting_widgets->next;
-    }
+    QTimer::singleShot (0, the_gui->gui_helper, SLOT (doPopWaitingWidgets ()));
   }
 }
+
+void 
+QTMGuiHelper::doPopWaitingWidgets() {
+  if (!is_nil(waiting_widgets)) {
+    //if (DEBUG_QT)
+    cout << "Installing postponed menu" << LF;
+    qApp->sendPostedEvents();
+    waiting_widgets->item->install_main_menu();
+    waiting_widgets = waiting_widgets->next;
+  }
+}
+
 
 /******************************************************************************
 * some debugging infrastucture
