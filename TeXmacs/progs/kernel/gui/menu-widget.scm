@@ -106,6 +106,12 @@
   "Make @(group :string?) menu item."
   (widget-menu-group s))
 
+(define (make-menu-input p)
+  "Make @(input :%1) menu item."
+  (with (tag cmd type props) p
+    (widget-input (object->command cmd) type (props))))
+;;(widget-input (make-menu-command cmd) type (props))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -275,7 +281,9 @@
 (define (make-menu-items p e? bar?)
   "Make menu items @p. The items are on a bar if @bar? and greyed if not @e?."
   (if (pair? p)
-      (cond ((translatable? (car p))
+      (cond ((match? p '(input :%1 :string? :%1))
+	     (list (make-menu-input p)))
+	    ((translatable? (car p))
 	     (list (make-menu-entry p e? bar?)))
 	    ((symbol? (car p))
 	     (with result (ahash-ref make-menu-items-table (car p))
@@ -284,7 +292,8 @@
 		   ((cadr result) p e? bar?))))
 	    ((match? (car p) ':menu-wide-label)
 	     (list (make-menu-entry p e? bar?)))
-	    (else (make-menu-items-list p e? bar?)))
+	    (else
+	     (make-menu-items-list p e? bar?)))
       (cond ((== p '---) (list (make-menu-hsep)))
 	    ((== p '|) (list (make-menu-vsep)))
 	    ((== p '()) p)
@@ -293,6 +302,7 @@
 (define-table make-menu-items-table
   (group (:string?) ,(lambda (p e? bar?) (list (make-menu-group (cadr p)))))
   (symbol (:string? :*) ,(lambda (p e? bar?) (list (make-menu-symbol p e?))))
+  (input (:%1 :string? :%1) ,(lambda (p e? bar?) (list (make-menu-input p))))
   (link (:%1) ,(lambda (p e? bar?) (make-menu-link p e? bar?)))
   (horizontal (:*) ,(lambda (p e? bar?) (list (make-menu-horizontal p e?))))
   (vertical (:*) ,(lambda (p e? bar?) (list (make-menu-vertical p e?))))
@@ -347,6 +357,7 @@
   (| ,(lambda (p) `(| ,@(menu-expand-list (cdr p)))))
   (group ,replace-procedures)
   (symbol ,replace-procedures)
+  (input ,replace-procedures)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
@@ -356,36 +367,6 @@
   (if ,menu-expand-if)
   (when ,replace-procedures)
   (promise ,menu-expand-promise))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Debugging
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; (set-trace-level! make-menu-entry-button)
-; (set-trace-level! make-menu-entry-shortcut)
-; (set-trace-level! make-menu-entry-check)
-
-; (set-trace-point! make-menu-hsep          "case: ---")
-; (set-trace-point! make-menu-vsep          "case: |")
-; (set-trace-point! make-menu-group         "case: group")
-; (set-trace-point! make-menu-items-list    "case: list")
-; (set-trace-point! make-menu-if            "case: if")
-; (set-trace-point! make-menu-when          "case: when")
-; (set-trace-point! make-menu-submenu       "case: =>/->")
-; (set-trace-point! make-menu-tile          "case: tile")
-; (set-trace-point! make-menu-link          "case: link")
-; (set-trace-point! make-menu-promise       "case: promise")
-; (set-trace-point! make-menu-entry         "case: item")
-; (set-trace-point! make-menu-symbol        "case: symbol")
-
-; (set-trace-level! make-menu-widget)
-; (set-trace-level! make-menu-entry-sub)
-; (set-trace-level! make-menu-items)
-
-; (set-trace-point! make-menu-horizontal    "case: horizontal")
-; (set-trace-point! make-menu-vertical      "case: vertical")
-; (set-trace-point! make-menu-linked-menu   "case: link")
-; (set-trace-point! make-menu-promised-menu "case: promise")
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

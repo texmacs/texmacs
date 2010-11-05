@@ -41,6 +41,7 @@
     (group :string?)
     (:menu-wide-label :%1)
     (symbol :string? :*)
+    (input :%1 :string? :%1)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
     (-> :menu-label :menu-item-list)
@@ -135,6 +136,11 @@
 
 (define-table menu-pre-table
   (group (:string?) ,(lambda (p) p))
+  (input (:%1 :string? :%1)
+    ,(lambda (p)
+       `(input ,(make-promise (cadr p))
+	       ,(caddr p)
+	       ,(make-promise (cadddr p)))))
   (symbol (:string? :*)
     ,(lambda (p)
        (if (<= (length p) 2) p

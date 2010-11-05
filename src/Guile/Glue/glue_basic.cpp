@@ -4247,6 +4247,23 @@ tmg_widget_text (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_widget_input (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "widget-input");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "widget-input");
+  SCM_ASSERT_ARRAY_STRING (arg3, SCM_ARG3, "widget-input");
+
+  command in1= scm_to_command (arg1);
+  string in2= scm_to_string (arg2);
+  array_string in3= scm_to_array_string (arg3);
+
+  // SCM_DEFER_INTS;
+  widget out= input_text_widget (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_widget_xpm (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "widget-xpm");
 
@@ -4761,6 +4778,7 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-empty", (FN) tmg_widget_empty, 0, 0, 0);
   scm_new_procedure ("widget-text", (FN) tmg_widget_text, 3, 0, 0);
+  scm_new_procedure ("widget-input", (FN) tmg_widget_input, 3, 0, 0);
   scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);

@@ -100,6 +100,7 @@ input_widget_rep::handle_get_size (get_size_event ev) {
   ev->h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
   abs_round (ev->w, ev->h);
   if (ev->mode == 1) gui_maximal_extents (ev->w, dummy);
+  //ev->w= min (ev->w, 200 * PIXEL);
 }
 
 void
