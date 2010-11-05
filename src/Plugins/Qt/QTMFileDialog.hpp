@@ -34,6 +34,10 @@ class QTMFileDialog : public QDialog
 protected:
   QHBoxLayout* hbox;
   QFileDialog *file;
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dragMoveEvent(QDragMoveEvent *event);
+  void dragLeaveEvent(QDragLeaveEvent *event);
+  void dropEvent(QDropEvent *event);	
 
 public:
   QTMFileDialog (QWidget* parent= 0, const QString & caption = QString(),

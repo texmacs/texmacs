@@ -13,6 +13,12 @@
 #include <QPainter>
 #include <QLineEdit>
 #include <QIntValidator>
+#include <QMimeData>
+#include <QUrl>
+#include <QDrag>
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "qt_utilities.hpp"
@@ -28,10 +34,41 @@ QTMFileDialog::QTMFileDialog (QWidget * parent, const QString & caption, const Q
   file= new QMyFileDialog (0, caption, directory, filter);
   hbox->addWidget (file);
   setLayout (hbox);
+  setAcceptDrops(true);
   connect(file, SIGNAL(accepted()), this, SLOT(accept()));
   connect(file, SIGNAL(finished(int)), this, SLOT(done(int)));
   connect(file, SIGNAL(rejected()), this, SLOT(reject()));
 }
+
+void QTMFileDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+	event->acceptProposedAction();
+}
+
+void QTMFileDialog::dragMoveEvent(QDragMoveEvent *event)
+{
+	event->acceptProposedAction();
+}
+
+void QTMFileDialog::dropEvent(QDropEvent *event)
+{
+	const QMimeData *mimeData = event->mimeData();
+	
+	foreach (QString format, mimeData->formats()) {
+		if (format == "text/uri-list") {
+			file->selectFile(mimeData->urls().at(0).toLocalFile());
+			break;
+		}
+	}
+	
+	event->acceptProposedAction();
+}
+
+void QTMFileDialog::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	event->accept();
+}
+
 
 static QWidget*
 simple_input (string s, QLineEdit* ledit, QWidget* parent= 0) {
