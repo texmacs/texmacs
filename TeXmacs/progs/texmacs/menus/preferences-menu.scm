@@ -158,8 +158,9 @@
     (-> "Tools"
 	(toggle ("Debugging tool" "debugging tool"))
 	(toggle ("Linking tool" "linking tool"))
-	(toggle ("Versioning tool" "versioning tool"))
-	(toggle ("Remote connections" "remote connections")))
+	(toggle ("Remote connections" "remote connections"))
+	(toggle ("Source macros tool" "source tool"))
+	(toggle ("Versioning tool" "versioning tool")))
     (-> "Experimental"
 	(toggle ("Fast environments" "fast environments"))
 	(toggle ("Semantic editing" "semantic editing"))
