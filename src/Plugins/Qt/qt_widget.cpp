@@ -794,8 +794,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_MAIN_MENU:
     check_type_void (index, "SLOT_MAIN_MENU");
     {
-      widget tmp = main_menu_widget;
-      main_menu_widget = w;
+      waiting_main_menu_widget = w;
       if (menu_count <=0) {
         install_main_menu();
       } else { 
