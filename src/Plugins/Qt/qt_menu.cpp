@@ -517,7 +517,8 @@ rerootActions (QWidget* dest, QWidget* src) {
   while (!list.isEmpty()) {
     QAction* a= list.takeFirst();
     dest->removeAction (a);
-    delete a;
+//    delete a;
+    a->deleteLater();
   }
   list = src->actions();
   while (!list.isEmpty()) {
@@ -529,6 +530,8 @@ rerootActions (QWidget* dest, QWidget* src) {
 
 void
 QTMLazyMenu::force () {
+  if (DEBUG_QT)  
+    cout << "Force lazy menu" << LF;
   widget w= pm ();
   QMenu *menu2 = to_qmenu(w);
   rerootActions (this, menu2);

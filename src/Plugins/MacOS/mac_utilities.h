@@ -1,23 +1,17 @@
 /******************************************************************************
- * MODULE     : mac_app.h
- * DESCRIPTION: NSApplication related function for the X11 interface
- * COPYRIGHT  : (C) 2009  Massimiliano Gubinelli
+ * MODULE     : mac_utilities.h
+ * DESCRIPTION: Cocoa related utilites (also for TeXmacs/Qt)
+ * COPYRIGHT  : (C) 2010  Massimiliano Gubinelli
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
  * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#ifndef MAC_APP_H
-#define MAC_APP_H
+#ifndef MAC_UTILITIES_H
+#define MAC_UTILITIES_H
 
 
-void init_mac_application ();
+bool mac_alternate_startup();
 
-void finalize_mac_application ();
-
-void process_mac_events ();
-
-
-
-#endif // MAC_APP_H
+#endif // MAC_UTILITIES_H

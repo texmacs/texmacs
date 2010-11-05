@@ -15,12 +15,14 @@
 #include "qt_renderer.hpp"
 #include "qt_utilities.hpp"
 #include "qt_menu.hpp"
+#include "qt_gui.hpp"
 
 #include "gui.hpp"
 #include "widget.hpp"
 #include "message.hpp"
 #include "promise.hpp"
 #include "analyze.hpp"
+#include "list.hpp"
 
 #include "qt_basic_widgets.hpp"
 #include <QScrollArea>
@@ -38,6 +40,8 @@
 #include "QTMWindow.hpp"
 //#include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
+#include "QTMMenuHelper.hpp"
+#include "QTMGuiHelper.hpp"
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \
@@ -50,8 +54,6 @@ extern int nr_windows;
 #ifdef Q_WS_MAC
 static QMenuBar *app_menubar = NULL;
 #endif
-
-
 
 widget the_keyboard_focus (NULL);
 
@@ -70,6 +72,38 @@ widget
 qt_widget_rep::popup_window_widget (string s) {
   (void) s;
   return widget ();
+}
+
+/******************************************************************************
+ * infrastructure for delayed menu installation 
+ ******************************************************************************/
+
+
+int  menu_count = 0; // positive is main menu is busy
+list <qt_tm_widget_rep*> waiting_widgets;
+// this widget is the last wanting to install his menu bar
+
+
+void
+QTMGuiHelper::aboutToShowMainMenu() {
+  //  cout << "Show" << LF;
+  menu_count++;
+}
+
+void 
+QTMGuiHelper::aboutToHideMainMenu() {
+  //  cout << "Hide" << LF;
+  menu_count--;
+  if (menu_count <= 0) {
+    menu_count = 0;
+    if (!is_nil(waiting_widgets)) {
+      if (DEBUG_QT)
+        cout << "Installing postponed menu" << LF;
+      
+      waiting_widgets->item->install_main_menu();
+      waiting_widgets = waiting_widgets->next;
+    }
+  }
 }
 
 /******************************************************************************
@@ -298,9 +332,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   // on the Mac there is only the system menu bar which is globally allocated.
   // do not call QMainWindow::menuBar()
   if (!app_menubar) {
-    app_menubar = new QMenuBar (0);
+   // app_menubar = new QMenuBar (0);
+  //  app_menubar = mw->menuBar();
   }
-  app_menubar->setStyle (qtmstyle ());
+//  app_menubar->setStyle (qtmstyle ());
+  mw->menuBar()->setStyle (qtmstyle ());
 #else
   mw->menuBar()->setStyle (qtmstyle ());
 #endif
@@ -386,6 +422,10 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
   if (DEBUG_QT)
     cout << "qt_tm_widget_rep::~qt_tm_widget_rep\n";
   
+  
+  // clear any residual waiting menu installation
+  waiting_widgets = remove(waiting_widgets, this);
+
   // we must detach the QTMWidget canvas from the Qt widget hierarchy otherwise
   // it will be destroyed when the view member of this object is deallocated
   // this is another problem related to our choice of letting qt_widget own its
@@ -407,7 +447,7 @@ void qt_tm_widget_rep::updateVisibility()
   userToolBar->setVisible (visibility[3] && visibility[0]);
   tm_mainwindow()->statusBar()->setVisible (visibility[4]);
 #ifdef Q_WS_MAC
-  app_menubar->setVisible(true);
+  //app_menubar->setVisible(true);
 #else
   tm_mainwindow()->menuBar()->setVisible (visibility[0]);
 #endif
@@ -691,6 +731,35 @@ replaceButtons(QToolBar* dest, QWidget* src) {
   dest->setUpdatesEnabled(true);
 }
 
+
+
+void
+qt_tm_widget_rep::install_main_menu () {
+  QMenu* m= to_qmenu (main_menu_widget);
+  if (m) {
+    {
+      QMenuBar *dest = tm_mainwindow()->menuBar();
+      QWidget *src = m;
+      dest->setUpdatesEnabled(false);
+      dest->clear();
+      QList<QAction*> list = src->actions();
+      while (!list.isEmpty()) {
+        QAction* a= list.takeFirst();
+        dest->addAction (a);
+        if (a->menu()) {
+          QObject::connect(a->menu(), SIGNAL(aboutToShow()),
+                           the_gui->gui_helper, SLOT(aboutToShowMainMenu()));
+          QObject::connect(a->menu(), SIGNAL(aboutToHide()),
+                           the_gui->gui_helper, SLOT(aboutToHideMainMenu()));
+        }
+        
+      }
+      dest->setUpdatesEnabled(true);            
+    }
+    updateVisibility();
+  }
+}
+
 void
 qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   if (DEBUG_QT)
@@ -721,18 +790,17 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_MAIN_MENU:
     check_type_void (index, "SLOT_MAIN_MENU");
     {
+      widget tmp = main_menu_widget;
       main_menu_widget = w;
-      QMenu* m= to_qmenu (w);
-      if (m) {
-#ifdef Q_WS_MAC
-        if (app_menubar) {
-          replaceActions (app_menubar, m);
-          app_menubar->repaint();
-        }
-#else
-        replaceActions (tm_mainwindow()->menuBar(), m);
-#endif
-        updateVisibility();
+      if (menu_count <=0) {
+        install_main_menu();
+      } else { 
+        // menu interaction ongoing.
+        // postpone menu installation when the menu interaction is done
+        if (DEBUG_QT)
+          cout << "Main menu is busy: postponing menu installation" << LF;
+
+        waiting_widgets << this;
       }
     }
     break;

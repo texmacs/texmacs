@@ -268,6 +268,9 @@
 		9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
 		9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
 		9C6061EC112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
+		9C646EBE12842B7A000ABCDF /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C646EBD12842B7A000ABCDF /* mac_utilities.mm */; };
+		9C646EBF12842B7A000ABCDF /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C646EBD12842B7A000ABCDF /* mac_utilities.mm */; };
+		9C646EC012842B7A000ABCDF /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C646EBD12842B7A000ABCDF /* mac_utilities.mm */; };
 		9C722BED10D2F7C700C41915 /* qt_sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */; };
 		9C722C0F10D2F88900C41915 /* unix_sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */; };
 		9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */; };
@@ -555,7 +558,6 @@
 		9CCC752110D304EB00E88D90 /* aqua_renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B485E10A8CC100097A335 /* aqua_renderer.mm */; };
 		9CCC752210D304EB00E88D90 /* aqua_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486110A8CC100097A335 /* aqua_utilities.mm */; };
 		9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486310A8CC100097A335 /* aqua_widget.mm */; };
-		9CCC752410D304EB00E88D90 /* mac_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486B10A8CC100097A335 /* mac_utilities.mm */; };
 		9CCC752510D304EB00E88D90 /* TMView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486F10A8CC100097A335 /* TMView.mm */; };
 		9CD4E5F010B14AB300E0DD5C /* TeXmacs-document.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C0B4B5810A8CCA00097A335 /* TeXmacs-document.icns */; };
 		9CD4E5F110B14AB300E0DD5C /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C0B4B5910A8CCA00097A335 /* TeXmacs.icns */; };
@@ -1319,7 +1321,6 @@
 		9C0B486710A8CC100097A335 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		9C0B486910A8CC100097A335 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Window.nib; sourceTree = "<group>"; };
 		9C0B486A10A8CC100097A335 /* mac_cocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac_cocoa.h; sourceTree = "<group>"; };
-		9C0B486B10A8CC100097A335 /* mac_utilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mac_utilities.mm; sourceTree = "<group>"; };
 		9C0B486C10A8CC100097A335 /* TMButtonsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMButtonsController.h; sourceTree = "<group>"; };
 		9C0B486D10A8CC100097A335 /* TMButtonsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMButtonsController.m; sourceTree = "<group>"; };
 		9C0B486E10A8CC100097A335 /* TMView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMView.h; sourceTree = "<group>"; };
@@ -1667,6 +1668,8 @@
 		9C5DBADB10A8DF32008B7623 /* configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.in; sourceTree = "<group>"; };
 		9C6061E8112442BC00054149 /* gs_utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gs_utilities.cpp; sourceTree = "<group>"; };
 		9C6061E9112442BC00054149 /* gs_utilities.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gs_utilities.hpp; sourceTree = "<group>"; };
+		9C646EBC12842B7A000ABCDF /* mac_utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac_utilities.h; sourceTree = "<group>"; };
+		9C646EBD12842B7A000ABCDF /* mac_utilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mac_utilities.mm; sourceTree = "<group>"; };
 		9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_sys_utils.cpp; sourceTree = "<group>"; };
 		9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_sys_utils.hpp; sourceTree = "<group>"; };
 		9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unix_sys_utils.cpp; sourceTree = "<group>"; };
@@ -2467,7 +2470,6 @@
 				9C0B486610A8CC100097A335 /* MainMenu.nib */,
 				9C0B486810A8CC100097A335 /* Window.nib */,
 				9C0B486A10A8CC100097A335 /* mac_cocoa.h */,
-				9C0B486B10A8CC100097A335 /* mac_utilities.mm */,
 				9C0B486C10A8CC100097A335 /* TMButtonsController.h */,
 				9C0B486D10A8CC100097A335 /* TMButtonsController.m */,
 				9C0B486E10A8CC100097A335 /* TMView.h */,
@@ -2532,6 +2534,8 @@
 				9C0B488810A8CC100097A335 /* mac_images.mm */,
 				9C0B488910A8CC100097A335 /* mac_spellservice.h */,
 				9C0B488A10A8CC100097A335 /* mac_spellservice.mm */,
+				9C646EBC12842B7A000ABCDF /* mac_utilities.h */,
+				9C646EBD12842B7A000ABCDF /* mac_utilities.mm */,
 			);
 			path = MacOS;
 			sourceTree = "<group>";
@@ -3967,6 +3971,7 @@
 				9CEDAA301264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA361264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */,
+				9C646EBE12842B7A000ABCDF /* mac_utilities.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4252,7 +4257,6 @@
 				9CCC752110D304EB00E88D90 /* aqua_renderer.mm in Sources */,
 				9CCC752210D304EB00E88D90 /* aqua_utilities.mm in Sources */,
 				9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */,
-				9CCC752410D304EB00E88D90 /* mac_utilities.mm in Sources */,
 				9CCC752510D304EB00E88D90 /* TMView.mm in Sources */,
 				9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C6061EC112442BD00054149 /* gs_utilities.cpp in Sources */,
@@ -4322,6 +4326,7 @@
 				9CEDAA321264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA381264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA7260126CC926006E8028 /* tree_modify.cpp in Sources */,
+				9C646EC012842B7A000ABCDF /* mac_utilities.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4675,6 +4680,7 @@
 				9CEDAA311264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA371264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA725F126CC926006E8028 /* tree_modify.cpp in Sources */,
+				9C646EBF12842B7A000ABCDF /* mac_utilities.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

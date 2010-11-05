@@ -34,6 +34,9 @@ public slots:
   void doReadSocketNotification (int socket);  
   void doWriteSocketNotification (int socket);  
   
+  void aboutToShowMainMenu();
+  void aboutToHideMainMenu();
+    
 signals:
   void refresh ();  
 };

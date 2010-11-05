@@ -29,6 +29,10 @@ void mac_fix_paths ();
 #endif
 
 #ifdef MACOSX_EXTENSIONS
+#include "MacOS/mac_utilities.h"
+#endif
+
+#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
 #include "MacOS/mac_app.h"
 #endif
 

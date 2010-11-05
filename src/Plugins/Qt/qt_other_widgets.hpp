@@ -69,6 +69,7 @@ public:
   // void layout();
   void updateVisibility();
   void do_interactive_prompt ();
+  void install_main_menu ();
 };
 
 class qt_window_widget_rep: public widget_rep {
