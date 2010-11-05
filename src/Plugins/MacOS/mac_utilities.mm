@@ -18,7 +18,7 @@
 #endif
 
 bool 
-mac_alternate_startup() {
+mac_alternate_startup () {
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
   NSUInteger nsmods = [NSEvent modifierFlags];
   return (nsmods &  NSAlternateKeyMask);
@@ -29,8 +29,8 @@ mac_alternate_startup() {
 }
 
 
-void mac_fix_paths()
-{
+void 
+mac_fix_paths () {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   /* add appropriate TEXMACS_PATH to the current environment */
 #if 0
@@ -70,39 +70,43 @@ void mac_fix_paths()
 // This filter is installed in qt_gui.cpp
 // To use the API we need to compile in ObjC 2.0 since blocks are required
 
-NSEvent *mac_handler_body(NSEvent *event) 
-{
+NSEvent *
+mac_handler_body (NSEvent *event) {
   if (([event type] == NSKeyDown) || ([event type] == NSKeyUp)) {
-    unichar key = [[event charactersIgnoringModifiers] characterAtIndex:0];
-    if ((key == NSTabCharacter) || (key == NSBackTabCharacter)) {
-      NSUInteger nsmods = [event modifierFlags];
-      Qt::KeyboardModifiers modifs = 0;
-      if (key == NSBackTabCharacter) modifs |= Qt::ShiftModifier;
-      if (nsmods &  NSControlKeyMask) modifs |= Qt::MetaModifier;
-      if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;
-      if (nsmods &  NSCommandKeyMask) modifs |= Qt::ControlModifier;
-      
+    NSString *nss = [event charactersIgnoringModifiers];
+    if ([nss length] > 0) {
+      unichar key = [nss characterAtIndex:0];
+      if ((key == NSTabCharacter) || (key == NSBackTabCharacter) ) {
+        NSUInteger nsmods = [event modifierFlags];
+        Qt::KeyboardModifiers modifs = 0;
+        if (key == NSBackTabCharacter) modifs |= Qt::ShiftModifier;
+        if (nsmods &  NSControlKeyMask) modifs |= Qt::MetaModifier;
+        if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;
+        if (nsmods &  NSCommandKeyMask) modifs |= Qt::ControlModifier;
+        
 #if 0 // DEBUGGING CODE
-      QString str;
-      if (key == NSBackTabCharacter) str.append("Shift+");
-      if (nsmods &  NSControlKeyMask) str.append("Ctrl+");
-      if (nsmods &  NSAlternateKeyMask) str.append("Alt+");
-      if (nsmods &  NSCommandKeyMask) str.append("Meta+");
-      str.append("Tab");
-      cout << str.toAscii().constData() << LF;
+        QString str;
+        if (key == NSBackTabCharacter) str.append("Shift+");
+        if (nsmods &  NSControlKeyMask) str.append("Ctrl+");
+        if (nsmods &  NSAlternateKeyMask) str.append("Alt+");
+        if (nsmods &  NSCommandKeyMask) str.append("Meta+");
+        str.append("Tab");
+        cout << str.toAscii().constData() << LF;
 #endif      
-      
-      QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
-                                    QEvent::KeyPress : QEvent::KeyRelease, 
-                                    Qt::Key_Tab, modifs);
-      QApplication::postEvent(qApp->focusWidget(), qe);
-      return nil;
+        
+        QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
+                                      QEvent::KeyPress : QEvent::KeyRelease, 
+                                      Qt::Key_Tab, modifs);
+        QApplication::postEvent(qApp->focusWidget(), qe);
+        return nil;
+      }
     }
   }
   return event;
 }
-
-void mac_install_filter() {
+  
+void 
+mac_install_filter () {
 #if NS_BLOCKS_AVAILABLE
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   
@@ -119,7 +123,8 @@ void mac_install_filter() {
 #endif // HACK
 #endif // QTTEXMACS
 
-void cancel_tracking(NSMenu *menu) {
+void 
+cancel_tracking (NSMenu *menu) {
   [menu cancelTrackingWithoutAnimation];
   for (NSMenuItem *item in [menu itemArray]) {
     if ([item submenu]) {
@@ -129,7 +134,8 @@ void cancel_tracking(NSMenu *menu) {
 }
 
 #ifdef Q_WS_MAC
-void mac_cancel_menu_tracking() {
+void 
+mac_cancel_menu_tracking () {
 #ifdef QT_MAC_USE_COCOA
   cout << "pippo\n";
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
