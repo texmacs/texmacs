@@ -784,9 +784,11 @@ qt_gui_rep::check_event (int type) {
       else {
         time_t now= texmacs_time ();
         if (now - timeout_time < 0) return false;
-        fill_event_queue();
-        timeout_time= now + (100 / (N(waiting_events) + 1));
-        interrupted= (N(waiting_events) > 0);
+        //fill_event_queue();
+//        timeout_time= now + (100 / (N(waiting_events) + 1));
+        timeout_time= now + 1000;
+//        interrupted= (N(waiting_events) > 0);
+        interrupted= true;
         //if (interrupted) cout << "INTERRUPT " 
         //  << now << "------------------" << LF;
         return interrupted;
@@ -811,16 +813,21 @@ qt_gui_rep::update () {
     needs_update();
     return;
   }
-      
+
+ // cout << "<";
+  
   time_credit = 100;
   updatetimer->stop();
   updating = true;
   
-  int count_events = 0;
-  int max_proc_events = 2;
+  static int count_events = 0;
+  static int max_proc_events = 10;
+
+  time_t now = texmacs_time();
+  needing_update = false;
 
   
-  // preamble:
+  // 1.
   // check if a wait dialog is active and in the case remove it.
   // if we are here then the long operation is finished.
   
@@ -830,66 +837,66 @@ qt_gui_rep::update () {
     waitDialogs.removeLast();
   }
   
-  // now the serious business
-    
+  
+  // 2.
+  // manage delayed commands
+  
+  if (wait_for_delayed_commands && (lapse <= now)) process_delayed_commands();
+  
+  // 3.
+  // if there are pending events in the private queue process them up to some
+  // limit in processed events is reached. 
+  // if there are no events or the limit is reached then proceed to a redraw.
   do {
-    time_t now = texmacs_time();
-    needing_update = false;
-    
+  if ((N(waiting_events) > 0) && (count_events < max_proc_events)) {
+   // cout << "e";
+    //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
+    process_queued_events (1);
+    //cout << "AND END"  << LF;
     count_events++;
-
-    if (wait_for_delayed_commands && (lapse <= now)) process_delayed_commands();
-
-    if (N(waiting_events) > 0) {
-      //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
-      process_queued_events (1);
-      //cout << "AND END"  << LF;
-    };
     
     //cout << "TYPESET START..."; cout.flush();
-//    if ((N(waiting_events)==0) && (lapse <= now)) exec_pending_commands();
     if (the_interpose_handler) the_interpose_handler();
     //cout << "AND END" << LF;
-
-    fill_event_queue(); 
-
-    if ((count_events > max_proc_events) || (N(waiting_events) == 0)) {
-      //if (count_events > max_proc_events) cout << "PARTIAL REDRAW" << LF;
-      count_events = 0;
-
-      // repaint invalid regions  
-      interrupted = false;
-      timeout_time = texmacs_time() + time_credit/(N(waiting_events)+1);
-      
-      //cout << "REPAINT START..."; cout.flush();
-      
-      QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
-      while (i.hasNext()) {
-        QTMWidget *w = i.next();
-        w->repaint_invalid_regions();
-      }
-      
-      if (interrupted) needing_update = true;
-      //cout << "AND END" << LF;
-    }
-  
-  } while ((N(waiting_events)>0) || needing_update);
-  
     
-  updating = false;
+  } else {
+   // cout << "r";
+    count_events = 0;
+    
+    // repaint invalid regions  
+    interrupted = false;
+    timeout_time = texmacs_time() + time_credit/(N(waiting_events)+1);
+    
+    //cout << "REPAINT START..."; cout.flush();
+    
+    QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
+    while (i.hasNext()) {
+      QTMWidget *w = i.next();
+      w->repaint_invalid_regions();
+    }
+    //cout << "AND END" << LF;
+  }
+  }
+    while (N(waiting_events)>0);
+    
+  if (N(waiting_events) > 0) needing_update = true;
+  if (interrupted) needing_update = true;
+ // if (interrupted)     cout << "*";
 
-  
   if (nr_windows == 0) {
     qApp->quit();
   }
   
-  
   time_t delay = lapse - texmacs_time();
   if (delay > 1000/6) delay = 1000/6;
   if (delay < 0) delay = 0;
-  if (needing_update || interrupted) delay = 0;
+  if (needing_update) delay = 0;
+ // cout << delay << ">" <<  LF;
   updatetimer->start (delay);
   
+  updating = false;
+  
+
   // FIXME: we need to ensure that the interpose_handler is run at regular 
   //        intervals (1/6th of sec) so that informations on the footbar are 
   //        updated. (this should be better handled by promoting code in 
