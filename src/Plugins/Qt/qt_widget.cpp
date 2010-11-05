@@ -86,7 +86,7 @@ list <qt_tm_widget_rep*> waiting_widgets;
 
 void
 QTMGuiHelper::aboutToShowMainMenu() {
-  //  cout << "Show" << LF;
+  //cout << "Show :" << menu_count << LF;
   menu_count++;
 }
 
@@ -105,7 +105,6 @@ QTMGuiHelper::doPopWaitingWidgets() {
   if (!is_nil(waiting_widgets)) {
     if (DEBUG_QT)
       cout << "Installing postponed menu" << LF;
-    qApp->sendPostedEvents();
     waiting_widgets->item->install_main_menu();
     waiting_widgets = waiting_widgets->next;
   }
@@ -741,26 +740,25 @@ replaceButtons(QToolBar* dest, QWidget* src) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
+  widget tmp = main_menu_widget;
+  main_menu_widget = waiting_main_menu_widget;
   QMenu* m= to_qmenu (main_menu_widget);
   if (m) {
     {
       QMenuBar *dest = tm_mainwindow()->menuBar();
       QWidget *src = m;
-      dest->setUpdatesEnabled(false);
-      dest->clear();
-      QList<QAction*> list = src->actions();
-      while (!list.isEmpty()) {
-        QAction* a= list.takeFirst();
-        dest->addAction (a);
+      replaceActions(dest,src);
+      QList<QAction*> list = dest->actions();
+      for (int i= 0; i < list.count(); i++) {
+        QAction* a= list[i];
         if (a->menu()) {
           QObject::connect(a->menu(), SIGNAL(aboutToShow()),
                            the_gui->gui_helper, SLOT(aboutToShowMainMenu()));
           QObject::connect(a->menu(), SIGNAL(aboutToHide()),
                            the_gui->gui_helper, SLOT(aboutToHideMainMenu()));
         }
-        
       }
-      dest->setUpdatesEnabled(true);            
+      //      tm_mainwindow()->menuBar()->macUpdateMenuBar();
     }
     updateVisibility();
   }
@@ -805,8 +803,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         // postpone menu installation when the menu interaction is done
         if (DEBUG_QT)
           cout << "Main menu is busy: postponing menu installation" << LF;
-
-        waiting_widgets << this;
+        if (!contains(waiting_widgets,this))
+          waiting_widgets << this;
       }
     }
     break;
