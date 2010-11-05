@@ -19,22 +19,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-table-menu
-  (if (style-has? "std-dtd")
-      (when (and (in-text?) (style-has? "env-float-dtd"))
-	    ("Small table" (make 'small-table))
-	    ("Big table" (make 'big-table))
-	    ---))
+  (if (and (style-has? "std-dtd") (in-text?) (style-has? "env-float-dtd"))
+      ("Small table" (make 'small-table))
+      ("Big table" (make 'big-table))
+      ---)
   ("Plain tabular" (make 'tabular))
   ("Centered tabular" (make 'tabular*))
   ("Plain block" (make 'block))
   ("Centered block" (make 'block*))
-  (if (style-has? "std-dtd")
-      (when (in-math?)
-	    ---
-	    ("Matrix" (make 'matrix))
-	    ("Determinant" (make 'det))
-	    ("Choice" (make 'choice))
-	    ("Stack" (make 'stack)))))
+  (if (and (style-has? "std-dtd") (in-math?))
+      ---
+      ("Matrix" (make 'matrix))
+      ("Determinant" (make 'det))
+      ("Choice" (make 'choice))
+      ("Stack" (make 'stack))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Table menu

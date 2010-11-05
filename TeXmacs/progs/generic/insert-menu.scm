@@ -32,7 +32,7 @@
       ("Action" (make 'action)))
   (if (simple-menus?)
       ("Footnote" (make 'footnote)))
-  (if (style-has? "std-dtd")
+  (if (and (style-has? "std-dtd") (in-text?))
       ---
       (-> "Citation"
 	  (if (not (style-has? "cite-author-year-dtd"))
@@ -71,11 +71,10 @@
 	  ("Interjection" (make 'glossary-line)))))
 
 (menu-bind insert-image-menu
-  (if (style-has? "env-float-dtd")
-      (when (in-text?)
-	    ("Small figure" (make 'small-figure))
-	    ("Big figure" (make 'big-figure))
-	    ---))
+  (if (and (style-has? "env-float-dtd") (in-text?))
+      ("Small figure" (make 'small-figure))
+      ("Big figure" (make 'big-figure))
+      ---)
   ("Draw image" (make-graphics))
   (when (selection-active-small?)
     ("Draw over selection" (make-graphics-over-selection)))
