@@ -117,9 +117,9 @@
   grey|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-background|pastel
   blue>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<arg|x>>>>>
 
-  <assign|framed-fragment|<macro|x|<framed-table|<tformat|<table|<row|<\cell>
+  <assign|framed-fragment|<macro|x|<surround||<no-indent*>|<framed-table|<tformat|<table|<row|<\cell>
     <with|color|black|<arg|x>>
-  </cell>>>>>>>
+  </cell>>>>>>>>
 
   <assign|framed-fragment*|<\macro|x>
     <framed-table|<tformat|<twith|table-width|0.45par>|<table|<row|<\cell>
@@ -143,6 +143,16 @@
 
   <\active*>
     <\src-comment>
+      Fragments of verbatim code.
+    </src-comment>
+  </active*>
+
+  <assign|verbatim-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Fragments of scheme code.
     </src-comment>
   </active*>
@@ -162,16 +172,6 @@
 
   <assign|scm-fragment|<\macro|x>
     <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|x>>>>>
-  </macro>>
-
-  <\active*>
-    <\src-comment>
-      Fragments of verbatim code.
-    </src-comment>
-  </active*>
-
-  <assign|verbatim-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
   </macro>>
 
   <\active*>
