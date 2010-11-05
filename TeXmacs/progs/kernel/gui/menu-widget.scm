@@ -54,6 +54,8 @@
       (set! r (string-replace r "accent:abovedot" "."))
       (set! r (string-replace r "accent:breve" "U"))
       (set! r (string-replace r "accent:check" "C")))
+    ;;(when (!= r "")
+    ;;  (display* what " -> " r " -> " (kbd-system r menu-flag?) "\n"))
     (kbd-system r menu-flag?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

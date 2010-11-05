@@ -154,9 +154,9 @@ tm_config_rep::get_keycomb (
   string& which, int& status, command& cmd, string& shorth, string& help)
 {
   string orig= which;
-  //cout << which;
+  if (DEBUG_KEYBOARD) cout << "        ] " << which;
   variant_simplification (which);
-  //cout << " -> " << which;
+  if (DEBUG_KEYBOARD) cout << " -> " << which;
   string rew= apply_wildcards (which, post_kbd_wildcards);
   bool no_var= false;
   if (rew * var_suffix == orig) {
@@ -167,7 +167,7 @@ tm_config_rep::get_keycomb (
     no_var= true;
     rew= unvar_suffix (1, N(unvar_suffix));
   }
-  //cout << " -> " << rew << LF;
+  if (DEBUG_KEYBOARD) cout << " -> " << rew << LF;
   object obj= find_key_binding (rew);
   //cout << rew << " => " << obj << LF;
   //if (obj == object (false) || (orig != which && !is_string (car (obj)))) {
@@ -296,7 +296,9 @@ kbd_render (tree t) {
 
 static string
 kbd_system_prevails (string s) {
-  if (os_macos () && starts (s, "A-")) {
+  string laf= get_preference ("look and feel");
+  bool   mac= os_macos () && (laf == "default" || laf == "macos");
+  if (mac && starts (s, "A-")) {
     string ss= s (2, N(s));
     string r = "escape " * ss;
     if (starts (ss, "S-")) ss= ss (2, N(ss));
