@@ -22,11 +22,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (variant-set t v)
-  (tree-assign-node t v))
+  (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
+      (variant-set t (symbol-append v '*))
+      (tree-assign-node t v)))
+
+(define (tag-menu-name l)
+  (if (symbol-unnumbered? l)
+      (tag-menu-name (symbol-drop-right l 1))
+      (upcase-first (symbol->string l))))
 
 (define (variant-menu-item t v)
-  (list (upcase-first (symbol->string v))
-	(lambda () (variant-set t v))))
+  (list (tag-menu-name v) (lambda () (variant-set t v))))
 
 (tm-define (variant-menu-items t)
   (with variants (variants-of (tree-label t))
@@ -39,11 +45,11 @@
 (tm-define (focus-menu)
   (with t (focus-tree)
     (menu-dynamic
-      ,(cons* '-> (upcase-first (symbol->string (tree-label t)))
+      ,(cons* '-> (tag-menu-name (tree-label t))
 	      (variant-menu-items t)))))
 
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)
     (menu-dynamic
-      ,(cons* '=> (upcase-first (symbol->string (tree-label t)))
+      ,(cons* '=> (tag-menu-name (tree-label t))
 	      (variant-menu-items t)))))

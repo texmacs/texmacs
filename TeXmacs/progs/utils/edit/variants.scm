@@ -60,6 +60,18 @@
 ;; Toggle numbers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (symbol-numbered? s)
+  (in? s (numbered-tag-list)))
+
+(tm-define (symbol-unnumbered? s)
+  (and (symbol-ends? s '*)
+       (in? (symbol-drop-right s 1) (numbered-tag-list))))
+
+(tm-define (symbol-toggle-number s)
+  (if (symbol-ends? s '*)
+      (symbol-drop-right s 1)
+      (symbol-append s '*)))
+
 (tm-define (numbered-unnumbered l)
   (append l (map (lambda (x) (symbol-append x '*)) l)))
 
@@ -73,11 +85,6 @@
 
 (tm-define (numbered-context? t)
   (tree-in? t (numbered-tag-list*)))
-
-(tm-define (symbol-toggle-number s)
-  (if (symbol-ends? s '*)
-      (symbol-drop-right s 1)
-      (symbol-append s '*)))
 
 (tm-define (numbered?) #f)
 (tm-define (toggle-number) (noop))
