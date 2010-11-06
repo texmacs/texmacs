@@ -70,6 +70,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-popup-menu
+  (link focus-menu)
+  ---
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
   (if (in-graphics?) (-> "Graphics" (link graphics-menu)))
@@ -81,7 +83,6 @@
 	  (-> "Source" (link source-menu)))
       (if (with-linking-tool?)
 	  (-> "Link" (link link-menu)))
-      (-> "Focus" (link focus-menu))
       (-> "Format" (link format-menu)))
   (-> "Document" (link document-menu))
   (if (== (get-init-tree "sectional-short-style") (tree 'macro "false"))
