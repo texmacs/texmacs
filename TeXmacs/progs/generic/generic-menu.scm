@@ -72,8 +72,22 @@
     (menu-dynamic
       ,@(standard-focus-menu t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The main focus icons bar
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (standard-focus-icons t)
+  (append (opt #t
+	       (cons* '=>
+		      (list 'balloon (tag-menu-name (tree-label t))
+			    "Structured variant")
+		      (variant-menu-items t)))
+	  (opt (numbered-context? t)
+	       (list (list 'balloon (list 'icon "tm_three.xpm")
+			   "Toggle numbering")
+		     (lambda () (number-toggle t))))))
+
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)
     (menu-dynamic
-      ,(cons* '=> (tag-menu-name (tree-label t))
-	      (variant-menu-items t)))))
+      ,@(standard-focus-icons t))))
