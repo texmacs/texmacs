@@ -86,7 +86,7 @@
     (and p q (list-starts? q p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Special trees
+;; Cursor related trees trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (cursor-tree)
@@ -116,6 +116,25 @@
 	  ((tree-atomic? t) #f)
 	  ((== i 0) t)
 	  (else #f))))
+
+(define (find-focus t up?)
+  (cond ((not (tree->path t)) (texmacs-error "find-focus" "invalid focus"))
+	((== (tree->path t) '()) t)
+	((== t (buffer-tree)) t)
+	((tree-in? t '(space image)) t)
+	((tree-atomic? t) (find-focus (tree-up t) #f))
+	((tree-in? t '(document concat)) (find-focus (tree-up t) #f))
+	(up? (find-focus (tree-up t) #f))
+	(else t)))
+
+(define-public (focus-tree)
+  (if (selection-active-any?)
+      (find-focus (path->tree (selection-path)) #f)
+      (find-focus (cursor-tree) #t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other special trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (table-cell-tree row col)
   (path->tree (table-cell-path row col)))
