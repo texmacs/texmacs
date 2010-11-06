@@ -44,7 +44,7 @@ public:
   int  get_old_arity (tree_label l);
   bool correct_arity (tree_label l, int i);
   bool insert_point (tree_label l, int i, int n);
-  bool is_dynamic (tree t);
+  bool is_dynamic (tree t, bool hack= true);
 
   void set_border (tree_label tag, int mode);
   int  get_border (tree_label tag);

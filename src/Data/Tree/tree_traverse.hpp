@@ -13,6 +13,9 @@
 #define TREE_TRAVERSE_H
 #include "tree_cursor.hpp"
 
+bool correct_arity (tree t, int n);
+int insert_point (tree t, int i);
+bool is_dynamic (tree t);
 bool is_accessible_child (tree t, int i);
 array<tree> accessible_children (tree t);
 

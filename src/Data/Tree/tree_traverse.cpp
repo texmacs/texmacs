@@ -19,6 +19,21 @@
 ******************************************************************************/
 
 bool
+correct_arity (tree t, int n) {
+  return the_drd->correct_arity (L(t), n);
+}
+
+int
+insert_point (tree t, int i) {
+  return the_drd->insert_point (L(t), i, N(t));
+}
+
+bool
+is_dynamic (tree t) {
+  return the_drd->is_dynamic (t, false);
+}
+
+bool
 is_accessible_child (tree t, int i) {
   return the_drd->is_accessible_child (t, i);
 }

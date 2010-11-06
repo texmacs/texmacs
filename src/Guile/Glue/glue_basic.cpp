@@ -964,6 +964,49 @@ tmg_tree_simplify (SCM arg1) {
 }
 
 SCM
+tmg_tree_possible_arityP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-possible-arity?");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-possible-arity?");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= correct_arity (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_tree_insert_point (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-insert_point");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert_point");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  int out= insert_point (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_tree_is_dynamicP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-is-dynamic?");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_dynamic (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_tree_accessible_childP (SCM arg1, SCM arg2) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-accessible-child?");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-accessible-child?");
@@ -4543,6 +4586,9 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   scm_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   scm_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
+  scm_new_procedure ("tree-possible-arity?", (FN) tmg_tree_possible_arityP, 2, 0, 0);
+  scm_new_procedure ("tree-insert_point", (FN) tmg_tree_insert_point, 2, 0, 0);
+  scm_new_procedure ("tree-is-dynamic?", (FN) tmg_tree_is_dynamicP, 1, 0, 0);
   scm_new_procedure ("tree-accessible-child?", (FN) tmg_tree_accessible_childP, 2, 0, 0);
   scm_new_procedure ("tree-accessible-children", (FN) tmg_tree_accessible_children, 1, 0, 0);
   scm_new_procedure ("tree-load-inclusion", (FN) tmg_tree_load_inclusion, 1, 0, 0);

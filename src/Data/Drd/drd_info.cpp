@@ -196,8 +196,8 @@ drd_info_rep::insert_point (tree_label l, int i, int n) {
 }
 
 bool
-drd_info_rep::is_dynamic (tree t) {
-  if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
+drd_info_rep::is_dynamic (tree t, bool hack) {
+  if (hack && L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
   if (is_atomic (t)) return false;
   if (is_func (t, DOCUMENT) || is_func (t, PARA) || is_func (t, CONCAT) ||
       is_func (t, TABLE) || is_func (t, ROW)) return false;

@@ -123,7 +123,8 @@
 	((== t (buffer-tree)) t)
 	((tree-in? t '(space image)) t)
 	((tree-atomic? t) (find-focus (tree-up t) #f))
-	((tree-in? t '(document concat)) (find-focus (tree-up t) #f))
+	((tree-in? t '(document concat tformat table row cell))
+	 (find-focus (tree-up t) #f))
 	(up? (find-focus (tree-up t) #f))
 	(else t)))
 
