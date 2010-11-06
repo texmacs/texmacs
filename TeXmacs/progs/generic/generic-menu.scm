@@ -21,10 +21,13 @@
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (variant-set t v)
+(tm-define (variant-set t v)
+  (tree-assign-node t v))
+
+(define (variant-set-keep-numbering t v)
   (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
       (variant-set t (symbol-append v '*))
-      (tree-assign-node t v)))
+      (variant-set t v)))
 
 (define (tag-menu-name l)
   (if (symbol-unnumbered? l)
@@ -32,21 +35,42 @@
       (upcase-first (symbol->string l))))
 
 (define (variant-menu-item t v)
-  (list (tag-menu-name v) (lambda () (variant-set t v))))
+  (list (tag-menu-name v)
+	(lambda () (variant-set-keep-numbering t v))))
 
 (tm-define (variant-menu-items t)
   (with variants (variants-of (tree-label t))
     (map (lambda (v) (variant-menu-item t v)) variants)))
 
+(tm-define (check-number? . args)
+  (with t (car args)
+    (tree-in? t (numbered-tag-list))))
+
+(tm-define (number-toggle t)
+  (when (numbered-context? t)
+    (if (tree-in? t (numbered-tag-list))
+	(variant-set t (symbol-append (tree-label t) '*))
+	(variant-set t (symbol-drop-right (tree-label t) 1)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-macro (opt cond? . l)
+  `(if ,cond? (list ,@l) '()))
+
+(tm-define (standard-focus-menu t)
+  (append (opt #t
+	       (cons* '-> (tag-menu-name (tree-label t))
+		      (variant-menu-items t)))
+	  (opt (numbered-context? t)
+	       (list (list 'check "Number" "v" (lambda () (check-number? t)))
+		     (lambda () (number-toggle t))))))
+
 (tm-define (focus-menu)
   (with t (focus-tree)
     (menu-dynamic
-      ,(cons* '-> (tag-menu-name (tree-label t))
-	      (variant-menu-items t)))))
+      ,@(standard-focus-menu t))))
 
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)
