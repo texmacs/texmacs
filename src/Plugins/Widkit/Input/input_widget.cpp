@@ -33,6 +33,7 @@ class input_widget_rep: public attribute_widget_rep {
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
   bool    ok;          // input not canceled
+  bool    done;        // call back has been called
   int     def_cur;     // current choice between default possible values
   SI      dw, dh;      // border width and height
   int     pos;         // cursor position
@@ -67,7 +68,7 @@ public:
 input_widget_rep::input_widget_rep (command call_back2):
   attribute_widget_rep (south_west),
   s (""), draw_s (""), type ("default"), def (), call_back (call_back2),
-  ok (true), def_cur (0),
+  ok (true), done (false), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false)
 {
@@ -198,9 +199,9 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
 
   /* other actions */
-  if (key == "return") { ok= true; call_back (); }
+  if (key == "return") { ok= true; done= true; call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
-	   (key == "C-g")) { ok= false; call_back (); }
+	   (key == "C-g")) { ok= false; done= true; call_back (); }
   else if ((key == "left") || (key == "C-b")) {
     if (pos>0) tm_char_backwards (s, pos); }
   else if ((key == "right") || (key == "C-f")) {
@@ -295,8 +296,15 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
 void
 input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
-  got_focus= ev->flag;
-  this << emit_invalidate_all ();
+  if (got_focus && !ev->flag && !done) {
+    ok= false;
+    done= true;
+    call_back ();
+  }
+  else {
+    got_focus= ev->flag;
+    this << emit_invalidate_all ();
+  }
 }
 
 void
