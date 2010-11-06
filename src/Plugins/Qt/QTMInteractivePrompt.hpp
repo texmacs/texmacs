@@ -1,4 +1,3 @@
-
 /******************************************************************************
  * MODULE     : QTMInteractivePrompt.hpp
  * DESCRIPTION: interactive prompt a la emacs
@@ -36,8 +35,7 @@ public slots:
 	void appFocusChanged  ( QWidget * old, QWidget * now );
   
 protected:
-	void keyPressEvent(QKeyEvent*);
-	void focusOutEvent ( QFocusEvent * event );
+	void keyPressEvent ( QKeyEvent * event);
   
 	QHBoxLayout*      _hl;
 	QLabel*           _la;
@@ -51,3 +49,4 @@ protected:
 };
 
 #endif // QTMINTERACTIVEPROMPT_HPP
+

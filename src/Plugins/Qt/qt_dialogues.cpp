@@ -536,6 +536,7 @@ qt_input_widget_rep::perform_dialog() {
     // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
     // will retain the string aAAAAa    
     cbs[i]->setDuplicatesEnabled(true); 
+    cbs[i]->completer()->setCaseSensitivity(Qt::CaseSensitive);
     lab -> setBuddy (cbs[i]);
     hl -> addWidget (lab);
     hl -> addWidget (cbs[i]);
@@ -543,10 +544,11 @@ qt_input_widget_rep::perform_dialog() {
     
     if (ends (fields[i]->type, "file") || fields[i]->type == "directory") {
       // autocompletion
-      QCompleter *completer = new QCompleter(cbs[i]);
-      QDirModel *dirModel = new QDirModel(completer);
+      //QCompleter *completer = new QCompleter(cbs[i]);
+      QCompleter *completer = cbs[i]->completer();
+      QDirModel *dirModel = new QDirModel();
       completer->setModel(dirModel);
-      cbs[i]->setCompleter(completer);
+      //cbs[i]->setCompleter(completer);
     }
   }
 
@@ -652,6 +654,8 @@ qt_tm_widget_rep::do_interactive_prompt () {
   // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
   // will retain the string aAAAAa
   cb->setDuplicatesEnabled(true); 
+  cb->completer()->setCaseSensitivity(Qt::CaseSensitive);
+
   lab -> setBuddy (cb);
   hl -> addWidget (lab);
   hl -> addWidget (cb);
