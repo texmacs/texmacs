@@ -78,6 +78,8 @@ QTMInteractivePrompt::QTMInteractivePrompt(const QString& label, const QStringLi
 
 int QTMInteractivePrompt::exec() {
 	QStatusBar* _ns = new QStatusBar();
+  QWidget *old_parent = parentWidget();
+  
 	_ns->addWidget(this);
 	
 	QStatusBar* _os = _mw->statusBar();
@@ -91,6 +93,11 @@ int QTMInteractivePrompt::exec() {
 	
 	_ns->removeWidget(this);
 	_mw->setStatusBar(_os);
+  
+  // reset the parent which has been changed when the widget was added to the status bar
+  setParent(old_parent); 
+  // free the temporary status bar
+  delete _ns;
 	
 	return ret;
 	 
