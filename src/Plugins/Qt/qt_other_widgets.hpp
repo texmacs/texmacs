@@ -29,7 +29,8 @@ public:
   QLabel *leftLabel;
 
   QToolBar *mainToolBar;
-  QToolBar *contextToolBar;
+  QToolBar *modeToolBar;
+  QToolBar *focusToolBar;
   QToolBar *userToolBar;
         
   QTMInteractiveInputHelper helper;
@@ -37,11 +38,15 @@ public:
   qt_widget int_prompt;
   qt_widget int_input;
 
-  bool visibility[5];
+  bool visibility[6];
 
   command quit;
   
-  widget main_menu_widget, main_icons_widget, context_icons_widget, user_icons_widget;
+  widget main_menu_widget;
+  widget main_icons_widget;
+  widget mode_icons_widget;
+  widget focus_icons_widget;
+  widget user_icons_widget;
   widget waiting_main_menu_widget;
 
 public:

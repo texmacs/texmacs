@@ -124,8 +124,9 @@ tm_window_rep::menu_icons (int which, string menu) {
   widget w;
   if (get_menu_widget (which, menu, w)) {
     if      (which == 0) set_main_icons (wid, w);
-    else if (which == 1) set_context_icons (wid, w);
-    else if (which == 2) set_user_icons (wid, w);
+    else if (which == 1) set_mode_icons (wid, w);
+    else if (which == 2) set_focus_icons (wid, w);
+    else if (which == 3) set_user_icons (wid, w);
   }
 }
 
@@ -137,8 +138,9 @@ tm_window_rep::set_header_flag (bool flag) {
 void
 tm_window_rep::set_icon_bar_flag (int which, bool flag) {
   if      (which == 0) set_main_icons_visibility (wid, flag);
-  else if (which == 1) set_context_icons_visibility (wid, flag);
-  else if (which == 2) set_user_icons_visibility (wid, flag);
+  else if (which == 1) set_mode_icons_visibility (wid, flag);
+  else if (which == 2) set_focus_icons_visibility (wid, flag);
+  else if (which == 3) set_user_icons_visibility (wid, flag);
 }
 
 bool
@@ -149,8 +151,9 @@ tm_window_rep::get_header_flag () {
 bool
 tm_window_rep::get_icon_bar_flag (int which) {
   if      (which == 0) return get_main_icons_visibility (wid);
-  else if (which == 1) return get_context_icons_visibility (wid);
-  else if (which == 2) return get_user_icons_visibility (wid);
+  else if (which == 1) return get_mode_icons_visibility (wid);
+  else if (which == 2) return get_focus_icons_visibility (wid);
+  else if (which == 3) return get_user_icons_visibility (wid);
   else return false;
 }
 

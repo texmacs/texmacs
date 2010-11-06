@@ -88,8 +88,9 @@ edit_interface_rep::resume () {
   got_focus= true;
   SERVER (menu_main ("(horizontal (link texmacs-menu))"));
   SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-  SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-  SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+  SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
+  SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
+  SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
   cur_sb= 2;
   tp= make_cursor_accessible (tp, true);
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
@@ -340,8 +341,9 @@ edit_interface_rep::apply_changes () {
     {
       SERVER (menu_main ("(horizontal (link texmacs-menu))"));
       SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-      SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-      SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+      SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
+      SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
+      SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
       set_footer ();
       if (!get_renderer (this) -> interrupted ()) drd_update ();
       cache_memorize ();

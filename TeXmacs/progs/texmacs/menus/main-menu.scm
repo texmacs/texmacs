@@ -165,10 +165,10 @@
    (cursor-history-forward)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The context dependent icon bar
+;; The mode dependent icon bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-context-icons
+(menu-bind texmacs-mode-icons
   (if (in-source?) (link source-icons))
   (if (in-text?) (link text-icons))
   (if (in-session?) (link session-icons))

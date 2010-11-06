@@ -54,8 +54,10 @@ enum slot_id {
   SLOT_MAIN_MENU,
   SLOT_MAIN_ICONS_VISIBILITY,
   SLOT_MAIN_ICONS,
-  SLOT_CONTEXT_ICONS_VISIBILITY,
-  SLOT_CONTEXT_ICONS,
+  SLOT_MODE_ICONS_VISIBILITY,
+  SLOT_MODE_ICONS,
+  SLOT_FOCUS_ICONS_VISIBILITY,
+  SLOT_FOCUS_ICONS,
   SLOT_USER_ICONS_VISIBILITY,
   SLOT_USER_ICONS,
   SLOT_FOOTER_VISIBILITY,
@@ -497,21 +499,39 @@ set_main_icons (widget w, widget bar) {
 }
 
 inline void
-set_context_icons_visibility (widget w, bool visible) {
-  // set visibility of context icons bar
-  send<bool> (w, SLOT_CONTEXT_ICONS_VISIBILITY, visible);
+set_mode_icons_visibility (widget w, bool visible) {
+  // set visibility of mode dependent icons bar
+  send<bool> (w, SLOT_MODE_ICONS_VISIBILITY, visible);
 }
 
 inline bool
-get_context_icons_visibility (widget w) {
-  // get visibility of context icons bar
-  return query<bool> (w, SLOT_CONTEXT_ICONS_VISIBILITY);
+get_mode_icons_visibility (widget w) {
+  // get visibility of mode dependent icons bar
+  return query<bool> (w, SLOT_MODE_ICONS_VISIBILITY);
 }
 
 inline void
-set_context_icons (widget w, widget bar) {
-  // set context icons bar
-  write (w, SLOT_CONTEXT_ICONS, bar);
+set_mode_icons (widget w, widget bar) {
+  // set mode dependent icons bar
+  write (w, SLOT_MODE_ICONS, bar);
+}
+
+inline void
+set_focus_icons_visibility (widget w, bool visible) {
+  // set visibility of focus dependent icons bar
+  send<bool> (w, SLOT_FOCUS_ICONS_VISIBILITY, visible);
+}
+
+inline bool
+get_focus_icons_visibility (widget w) {
+  // get visibility of focus dependent icons bar
+  return query<bool> (w, SLOT_FOCUS_ICONS_VISIBILITY);
+}
+
+inline void
+set_focus_icons (widget w, widget bar) {
+  // set focus dependent icons bar
+  write (w, SLOT_FOCUS_ICONS, bar);
 }
 
 inline void

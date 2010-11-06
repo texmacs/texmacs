@@ -41,3 +41,9 @@
     (menu-dynamic
       ,(cons* '-> (upcase-first (symbol->string (tree-label t)))
 	      (variant-menu-items t)))))
+
+(tm-define (texmacs-focus-icons)
+  (with t (focus-tree)
+    (menu-dynamic
+      ,(cons* '=> (upcase-first (symbol->string (tree-label t)))
+	      (variant-menu-items t)))))

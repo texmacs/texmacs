@@ -78,7 +78,7 @@
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
-(lazy-menu (generic generic-menu) focus-menu)
+(lazy-menu (generic generic-menu) focus-menu texmacs-focus-icons)
 (lazy-menu (generic format-menu) format-menu
 	   font-size-menu color-menu horizontal-space-menu
 	   transform-menu specific-menu

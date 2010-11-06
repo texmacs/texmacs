@@ -540,8 +540,11 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_MAIN_ICONS_VISIBILITY:
     send_bool (THIS, "main icons", val);
     break;
-  case SLOT_CONTEXT_ICONS_VISIBILITY:
-    send_bool (THIS, "context icons", val);
+  case SLOT_MODE_ICONS_VISIBILITY:
+    send_bool (THIS, "mode icons", val);
+    break;
+  case SLOT_FOCUS_ICONS_VISIBILITY:
+    send_bool (THIS, "focus icons", val);
     break;
   case SLOT_USER_ICONS_VISIBILITY:
     send_bool (THIS, "user icons", val);
@@ -688,8 +691,10 @@ wk_widget_rep::query (slot s, int type_id) {
     return query_bool (THIS, "header", type_id);
   case SLOT_MAIN_ICONS_VISIBILITY:
     return query_bool (THIS, "main icons", type_id);
-  case SLOT_CONTEXT_ICONS_VISIBILITY:
-    return query_bool (THIS, "context icons", type_id);
+  case SLOT_MODE_ICONS_VISIBILITY:
+    return query_bool (THIS, "mode icons", type_id);
+  case SLOT_FOCUS_ICONS_VISIBILITY:
+    return query_bool (THIS, "focus icons", type_id);
   case SLOT_USER_ICONS_VISIBILITY:
     return query_bool (THIS, "user icons", type_id);
   case SLOT_FOOTER_VISIBILITY:
@@ -784,9 +789,13 @@ wk_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_MAIN_ICONS");
     THIS << set_widget ("main icons bar", concrete (w));
     break;
-  case SLOT_CONTEXT_ICONS:
-    check_type_void (index, "SLOT_CONTEXT_ICONS");
-    THIS << set_widget ("context icons bar", concrete (w));
+  case SLOT_MODE_ICONS:
+    check_type_void (index, "SLOT_MODE_ICONS");
+    THIS << set_widget ("mode icons bar", concrete (w));
+    break;
+  case SLOT_FOCUS_ICONS:
+    check_type_void (index, "SLOT_FOCUS_ICONS");
+    THIS << set_widget ("focus icons bar", concrete (w));
     break;
   case SLOT_USER_ICONS:
     check_type_void (index, "SLOT_USER_ICONS");

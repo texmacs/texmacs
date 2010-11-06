@@ -325,10 +325,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
   visibility[1] = (mask & 2)  == 2;  // main
-  visibility[2] = (mask & 4)  == 4;  // context
-  visibility[3] = (mask & 8)  == 8;  // user
-  visibility[4] = (mask & 16) == 16; // footer
-
+  visibility[2] = (mask & 4)  == 4;  // mode
+  visibility[3] = (mask & 8)  == 8;  // focus
+  visibility[4] = (mask & 16) == 16; // user
+  visibility[5] = (mask & 32) == 32; // footer
 
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
@@ -386,13 +386,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
 
   mainToolBar= mw->addToolBar ("main toolbar");
   mw->addToolBarBreak ();
-  contextToolBar= mw->addToolBar ("context toolbar");
+  modeToolBar= mw->addToolBar ("mode toolbar");
+  mw->addToolBarBreak ();
+  focusToolBar= mw->addToolBar ("focus toolbar");
   mw->addToolBarBreak ();
   userToolBar= mw->addToolBar ("user toolbar");
   mw->addToolBarBreak ();
 
   mainToolBar->setStyle (qtmstyle ());
-  contextToolBar->setStyle (qtmstyle ());
+  modeToolBar->setStyle (qtmstyle ());
+  focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
 
   updateVisibility();
@@ -415,7 +418,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   // other options)
   
   mainToolBar->setVisible (false);
-  contextToolBar->setVisible (false);
+  modeToolBar->setVisible (false);
+  focusToolBar->setVisible (false);
   userToolBar->setVisible (false);
   tm_mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_WS_MAC
@@ -448,9 +452,10 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 void qt_tm_widget_rep::updateVisibility()
 {
   mainToolBar->setVisible (visibility[1] && visibility[0]);
-  contextToolBar->setVisible (visibility[2] && visibility[0]);
-  userToolBar->setVisible (visibility[3] && visibility[0]);
-  tm_mainwindow()->statusBar()->setVisible (visibility[4]);
+  modeToolBar->setVisible (visibility[2] && visibility[0]);
+  focusToolBar->setVisible (visibility[3] && visibility[0]);
+  userToolBar->setVisible (visibility[4] && visibility[0]);
+  tm_mainwindow()->statusBar()->setVisible (visibility[5]);
 #ifdef Q_WS_MAC
   //app_menubar->setVisible(true);
 #else
@@ -528,7 +533,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       updateVisibility();
     }
     break;
-  case SLOT_CONTEXT_ICONS_VISIBILITY:
+  case SLOT_MODE_ICONS_VISIBILITY:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
@@ -536,7 +541,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       updateVisibility();
     }
     break;
-  case SLOT_USER_ICONS_VISIBILITY:
+  case SLOT_FOCUS_ICONS_VISIBILITY:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
@@ -544,11 +549,19 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       updateVisibility();
     }
     break;
-  case SLOT_FOOTER_VISIBILITY:
+  case SLOT_USER_ICONS_VISIBILITY:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       bool f= open_box<bool> (val);
       visibility[4] = f;
+      updateVisibility();
+    }
+    break;
+  case SLOT_FOOTER_VISIBILITY:
+    {
+      TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+      bool f= open_box<bool> (val);
+      visibility[5] = f;
       updateVisibility();
     }
     break;
@@ -665,9 +678,13 @@ qt_tm_widget_rep::query (slot s, int type_id) {
                         
   case SLOT_USER_ICONS_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
+    return close_box<bool> (visibility[4]);
+
+  case SLOT_FOCUS_ICONS_VISIBILITY:
+    TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[3]);
 
-  case SLOT_CONTEXT_ICONS_VISIBILITY:
+  case SLOT_MODE_ICONS_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[2]);
 
@@ -681,7 +698,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
   case SLOT_FOOTER_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
-    return close_box<bool> (visibility[4]);
+    return close_box<bool> (visibility[5]);
 
   case SLOT_INTERACTIVE_INPUT:
     TYPE_CHECK (type_id == type_helper<string>::id);
@@ -819,12 +836,22 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     }
     break;
 
-  case SLOT_CONTEXT_ICONS:
-    check_type_void (index, "SLOT_CONTEXT_ICONS");
+  case SLOT_MODE_ICONS:
+    check_type_void (index, "SLOT_MODE_ICONS");
     {   
-      context_icons_widget = w;
+      mode_icons_widget = w;
       QMenu* m= to_qmenu (w);
-      replaceButtons (contextToolBar, m);
+      replaceButtons (modeToolBar, m);
+      updateVisibility();
+    }
+    break;
+
+  case SLOT_FOCUS_ICONS:
+    check_type_void (index, "SLOT_FOCUS_ICONS");
+    {   
+      focus_icons_widget = w;
+      QMenu* m= to_qmenu (w);
+      replaceButtons (focusToolBar, m);
       updateVisibility();
     }
     break;

@@ -66,7 +66,8 @@
     (-> "View"
 	(toggle ("Header" "header"))
 	(toggle ("Main icon bar" "main icon bar"))
-	(toggle ("Context dependent icons" "context dependent icons"))
+	(toggle ("Mode dependent icons" "mode dependent icons"))
+	(toggle ("Focus dependent icons" "focus dependent icons"))
 	(toggle ("User provided icons" "user provided icons"))
 	(toggle ("Status bar" "status bar"))
 	---

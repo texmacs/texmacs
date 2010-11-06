@@ -378,9 +378,10 @@ tm_data_rep::new_window (bool map_flag, tree geom) {
   int mask= 0;
   if (get_preference ("header") == "on") mask += 1;
   if (get_preference ("main icon bar") == "on") mask += 2;
-  if (get_preference ("context dependent icons") == "on") mask += 4;
-  if (get_preference ("user provided icons") == "on") mask += 8;
-  if (get_preference ("status bar") == "on") mask += 16;
+  if (get_preference ("mode dependent icons") == "on") mask += 4;
+  if (get_preference ("focus dependent icons") == "on") mask += 8;
+  if (get_preference ("user provided icons") == "on") mask += 16;
+  if (get_preference ("status bar") == "on") mask += 32;
   command quit= tm_new<kill_window_command_rep> ();
   tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);
   if (map_flag) win->map ();

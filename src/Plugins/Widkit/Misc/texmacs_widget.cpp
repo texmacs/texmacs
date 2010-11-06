@@ -105,17 +105,19 @@ make_icon_bar (bool on) {
 
 static wk_widget
 make_header (int mask) {
-  array<wk_widget> H (5);
-  array<string> H_name (5);
+  array<wk_widget> H (6);
+  array<string> H_name (6);
   H[0]= make_menu_bar ();
   H[1]= make_icon_bar ((mask & 2) == 2);
   H[2]= make_icon_bar ((mask & 4) == 4);
   H[3]= make_icon_bar ((mask & 8) == 8);
-  H[4]= glue_wk_widget (true, false, 0, 2*PIXEL);
+  H[4]= make_icon_bar ((mask & 16) == 16);
+  H[5]= glue_wk_widget (true, false, 0, 2*PIXEL);
   H_name[0]= "menu";
   H_name[1]= "main";
-  H_name[2]= "context";
-  H_name[3]= "user";
+  H_name[2]= "mode";
+  H_name[3]= "focus";
+  H_name[4]= "user";
   return optional_widget (vertical_list (H, H_name), (mask & 1) == 1);
 }
 
@@ -150,7 +152,7 @@ make_footer (int mask) {
   S[2]= glue_wk_widget (false, false);
   S_name[0]= "default";
   S_name[1]= "interactive";
-  return switch_widget (S, S_name, (mask & 16) == 16? 0: 2);
+  return switch_widget (S, S_name, (mask & 32) == 32? 0: 2);
 }
 
 static wk_widget
@@ -298,8 +300,10 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
     set_subwidget (THIS ["header"] ["menu"] ["bar"], "menu", ev->w);
   else if (ev->which == "main icons bar")
     set_subwidget (THIS ["header"] ["main"] ["bar"], "icons", ev->w);
-  else if (ev->which == "context icons bar")
-    set_subwidget (THIS ["header"] ["context"] ["bar"], "icons", ev->w);
+  else if (ev->which == "mode icons bar")
+    set_subwidget (THIS ["header"] ["mode"] ["bar"], "icons", ev->w);
+  else if (ev->which == "focus icons bar")
+    set_subwidget (THIS ["header"] ["focus"] ["bar"], "icons", ev->w);
   else if (ev->which == "user icons bar")
     set_subwidget (THIS ["header"] ["user"] ["bar"], "icons", ev->w);
   else if (ev->which == "interactive prompt")
@@ -337,8 +341,10 @@ texmacs_widget_rep::handle_set_string (set_string_event ev) {
     set_subwidget_flag (THIS ["header"], ev->s == "on");
   else if (ev->which == "main icons")
     set_subwidget_flag (THIS ["header"] ["main"], ev->s == "on");
-  else if (ev->which == "context icons")
-    set_subwidget_flag (THIS ["header"] ["context"], ev->s == "on");
+  else if (ev->which == "mode icons")
+    set_subwidget_flag (THIS ["header"] ["mode"], ev->s == "on");
+  else if (ev->which == "focus icons")
+    set_subwidget_flag (THIS ["header"] ["focus"], ev->s == "on");
   else if (ev->which == "user icons")
     set_subwidget_flag (THIS ["header"] ["user"], ev->s == "on");
   else if (ev->which == "interactive mode")
@@ -357,8 +363,11 @@ texmacs_widget_rep::handle_get_string (get_string_event ev) {
   else if (ev->which == "main icons")
     ev->s= get_subwidget_flag (THIS ["header"] ["main"])?
              string ("on"): string ("off");
-  else if (ev->which == "context icons")
-    ev->s= get_subwidget_flag (THIS ["header"] ["context"])?
+  else if (ev->which == "mode icons")
+    ev->s= get_subwidget_flag (THIS ["header"] ["mode"])?
+             string ("on"): string ("off");
+  else if (ev->which == "focus icons")
+    ev->s= get_subwidget_flag (THIS ["header"] ["focus"])?
              string ("on"): string ("off");
   else if (ev->which == "user icons")
     ev->s= get_subwidget_flag (THIS ["header"] ["user"])?
