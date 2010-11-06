@@ -42,9 +42,8 @@
   (with variants (variants-of (tree-label t))
     (map (lambda (v) (variant-menu-item t v)) variants)))
 
-(tm-define (check-number? . args)
-  (with t (car args)
-    (tree-in? t (numbered-tag-list))))
+(tm-define (check-number? t)
+  (tree-in? t (numbered-tag-list)))
 
 (tm-define (number-toggle t)
   (when (numbered-context? t)
@@ -64,8 +63,13 @@
 	       (cons* '-> (tag-menu-name (tree-label t))
 		      (variant-menu-items t)))
 	  (opt (numbered-context? t)
-	       (list (list 'check "Number" "v" (lambda () (check-number? t)))
-		     (lambda () (number-toggle t))))))
+	       (list (list 'check "Numbered" "v"
+			   (lambda () (check-number? t)))
+		     (lambda () (number-toggle t))))
+	  (opt (toggle-context? t)
+	       (list (list 'check "Unfolded" "v"
+			   (lambda () (toggle-second-context? t)))
+		     (lambda () (toggle-toggle t))))))
 
 (tm-define (focus-menu)
   (with t (focus-tree)
@@ -85,7 +89,12 @@
 	  (opt (numbered-context? t)
 	       (list (list 'balloon (list 'icon "tm_three.xpm")
 			   "Toggle numbering")
-		     (lambda () (number-toggle t))))))
+		     (lambda () (number-toggle t))))
+	  (opt (toggle-context? t)
+	       (list (list 'balloon (list 'icon "tm_unfold.xpm")
+			   "Fold / Unfold")
+		     (lambda () (toggle-toggle t))))))
+
 
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)
