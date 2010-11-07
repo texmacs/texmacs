@@ -65,6 +65,14 @@
       (and-with c (tree-down t)
 	(tree-in? c '(table tformat)))))
 
+(tm-define (focus-can-insert)
+  (with t (focus-tree)
+    (< (tree-arity t) (tree-maximal-arity t))))
+
+(tm-define (focus-can-remove)
+  (with t (focus-tree)
+    (> (tree-arity t) (tree-minimal-arity t))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -90,11 +98,13 @@
 	       (list "Insert above"
 		     (lambda () (structured-insert-up))))
           (opt (structured-horizontal? t)
-	       (list "Insert argument before"
-		     (lambda () (structured-insert #f))))
+	       (list 'when focus-can-insert
+		     (list "Insert argument before"
+			   (lambda () (structured-insert #f)))))
           (opt (structured-horizontal? t)
-	       (list "Insert argument after"
-		     (lambda () (structured-insert #t))))
+	       (list 'when focus-can-insert
+		     (list "Insert argument after"
+			   (lambda () (structured-insert #t)))))
           (opt (structured-vertical? t)
 	       (list "Insert below"
 		     (lambda () (structured-insert-down))))
@@ -102,11 +112,13 @@
 	       (list "Remove above"
 		     (lambda () (structured-remove-up))))
           (opt (structured-horizontal? t)
-	       (list "Remove argument backwards"
-		     (lambda () (structured-remove #f))))
+	       (list 'when focus-can-remove
+		     (list "Remove argument backwards"
+			   (lambda () (structured-remove #f)))))
           (opt (structured-horizontal? t)
-	       (list "Remove argument forwards"
-		     (lambda () (structured-remove #t))))
+	       (list 'when focus-can-remove
+		     (list "Remove argument forwards"
+			   (lambda () (structured-remove #t)))))
           (opt (structured-vertical? t)
 	       (list "Remove below"
 		     (lambda () (structured-remove-down))))))
@@ -142,13 +154,15 @@
 			   "Structured insert above")
 		     (lambda () (structured-insert-up))))
           (opt (structured-horizontal? t)
-	       (list (list 'balloon (list 'icon "tm_insert_left.xpm")
-			   "Structured insert at the left")
-		     (lambda () (structured-insert #f))))
+	       (list 'when focus-can-insert
+		     (list (list 'balloon (list 'icon "tm_insert_left.xpm")
+				 "Structured insert at the left")
+			   (lambda () (structured-insert #f)))))
           (opt (structured-horizontal? t)
-	       (list (list 'balloon (list 'icon "tm_insert_right.xpm")
-			   "Structured insert at the right")
-		     (lambda () (structured-insert #t))))
+	       (list 'when focus-can-insert
+		     (list (list 'balloon (list 'icon "tm_insert_right.xpm")
+				 "Structured insert at the right")
+			   (lambda () (structured-insert #t)))))
           (opt (structured-vertical? t)
 	       (list (list 'balloon (list 'icon "tm_insert_down.xpm")
 			   "Structured insert below")
@@ -158,13 +172,15 @@
 			   "Structured remove upwards")
 		     (lambda () (structured-remove-up))))
           (opt (structured-horizontal? t)
-	       (list (list 'balloon (list 'icon "tm_delete_left.xpm")
-			   "Structured remove leftwards")
-		     (lambda () (structured-remove #f))))
+	       (list 'when focus-can-remove
+		     (list (list 'balloon (list 'icon "tm_delete_left.xpm")
+				 "Structured remove leftwards")
+			   (lambda () (structured-remove #f)))))
           (opt (structured-horizontal? t)
-	       (list (list 'balloon (list 'icon "tm_delete_right.xpm")
-			   "Structured remove rightwards")
-		     (lambda () (structured-remove #t))))
+	       (list 'when focus-can-remove
+		     (list (list 'balloon (list 'icon "tm_delete_right.xpm")
+				 "Structured remove rightwards")
+			   (lambda () (structured-remove #t)))))
           (opt (structured-vertical? t)
 	       (list (list 'balloon (list 'icon "tm_delete_down.xpm")
 			   "Structured remove downwards")

@@ -18,6 +18,16 @@
 * Accessability
 ******************************************************************************/
 
+int
+minimal_arity (tree t) {
+  return the_drd->get_minimal_arity (L(t));
+}
+
+int
+maximal_arity (tree t) {
+  return the_drd->get_maximal_arity (L(t));
+}
+
 bool
 correct_arity (tree t, int n) {
   return the_drd->correct_arity (L(t), n);

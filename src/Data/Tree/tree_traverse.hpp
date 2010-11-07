@@ -13,6 +13,8 @@
 #define TREE_TRAVERSE_H
 #include "tree_cursor.hpp"
 
+int minimal_arity (tree t);
+int maximal_arity (tree t);
 bool correct_arity (tree t, int n);
 int insert_point (tree t, int i);
 bool is_dynamic (tree t);

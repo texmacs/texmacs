@@ -964,6 +964,32 @@ tmg_tree_simplify (SCM arg1) {
 }
 
 SCM
+tmg_tree_minimal_arity (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-minimal-arity");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= minimal_arity (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_tree_maximal_arity (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-maximal-arity");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= maximal_arity (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_tree_possible_arityP (SCM arg1, SCM arg2) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-possible-arity?");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-possible-arity?");
@@ -4586,6 +4612,8 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   scm_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   scm_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
+  scm_new_procedure ("tree-minimal-arity", (FN) tmg_tree_minimal_arity, 1, 0, 0);
+  scm_new_procedure ("tree-maximal-arity", (FN) tmg_tree_maximal_arity, 1, 0, 0);
   scm_new_procedure ("tree-possible-arity?", (FN) tmg_tree_possible_arityP, 2, 0, 0);
   scm_new_procedure ("tree-insert_point", (FN) tmg_tree_insert_point, 2, 0, 0);
   scm_new_procedure ("tree-is-dynamic?", (FN) tmg_tree_is_dynamicP, 1, 0, 0);

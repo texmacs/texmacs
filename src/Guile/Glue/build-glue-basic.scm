@@ -99,6 +99,8 @@
   (tree-label-extension? is_extension (bool tree_label))
   (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
+  (tree-minimal-arity minimal_arity (int tree))
+  (tree-maximal-arity maximal_arity (int tree))
   (tree-possible-arity? correct_arity (bool tree int))
   (tree-insert_point insert_point (int tree int))
   (tree-is-dynamic? is_dynamic (bool tree))

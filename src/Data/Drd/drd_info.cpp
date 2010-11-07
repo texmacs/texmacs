@@ -157,6 +157,34 @@ drd_info_rep::get_old_arity (tree_label l) {
   else return ((int) ti->pi.arity_base) + ((int) ti->pi.arity_extra);
 }
 
+int
+drd_info_rep::get_minimal_arity (tree_label l) {
+  parent_info pi= info[l]->pi;
+  switch (pi.arity_mode) {
+  case ARITY_NORMAL:
+    return ((int) pi.arity_base) + ((int) pi.arity_extra);
+  case ARITY_OPTIONS:
+  case ARITY_REPEAT:
+  case ARITY_VAR_REPEAT:
+    return ((int) pi.arity_base);
+  }
+  return 0; // NOT REACHED
+}
+
+int
+drd_info_rep::get_maximal_arity (tree_label l) {
+  parent_info pi= info[l]->pi;
+  switch (pi.arity_mode) {
+  case ARITY_NORMAL:
+  case ARITY_OPTIONS:
+    return ((int) pi.arity_base) + ((int) pi.arity_extra);
+  case ARITY_REPEAT:
+  case ARITY_VAR_REPEAT:
+    return 0x7fffffff;
+  }
+  return 0; // NOT REACHED
+}
+
 bool
 drd_info_rep::correct_arity (tree_label l, int i) {
   parent_info pi= info[l]->pi;
