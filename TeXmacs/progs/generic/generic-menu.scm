@@ -104,18 +104,18 @@
 		     (lambda () (remove-structure-upwards))))
 
 	  (list '---)
-	  (list (list "First similar tag"
-		      (lambda () (traverse-first))))
-	  (list (list "Previous similar tag"
+	  (list (list "Previous similar"
 		      (lambda () (traverse-previous))))
-	  (list (list "Left exit tag"
-		      (lambda () (structured-exit-left))))
-	  (list (list "Right exit tag"
-		      (lambda () (structured-exit-right))))
-	  (list (list "Next similar tag"
+	  (list (list "Next similar"
 		      (lambda () (traverse-next))))
-	  (list (list "Last similar tag"
+	  (list (list "First similar"
+		      (lambda () (traverse-first))))
+	  (list (list "Last similar"
 		      (lambda () (traverse-last))))
+	  (list (list "Exit left"
+		      (lambda () (structured-exit-left))))
+	  (list (list "Exit right"
+		      (lambda () (structured-exit-right))))
 
 	  (opt (or (structured-horizontal? t) (structured-vertical? t))
 	       (list '---))
