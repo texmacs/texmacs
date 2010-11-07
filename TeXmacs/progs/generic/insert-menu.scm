@@ -125,3 +125,30 @@
 	  (-> "Animation" (link insert-animation-menu)))
       (if (and (style-has? "program-dtd") (detailed-menus?))
 	  (-> "Session" (link insert-session-menu)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The main Insert icons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind texmacs-insert-icons
+  (if (not (in-graphics?))
+      |
+      (if (in-text?)
+	  (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
+	      (link insert-math-menu)))
+      (=> (balloon (icon "tm_table.xpm") "Insert a table")
+	  (link insert-table-menu))
+      (=> (balloon (icon "tm_image.xpm") "Insert a picture")
+	  (link insert-image-menu))
+      (=> (balloon (icon "tm_link.xpm") "Insert a link")
+	  (link insert-link-menu))
+      (if (detailed-menus?)
+	  (if (style-has? "std-fold-dtd")
+	      (=> (balloon (icon "tm_switch.xpm") "Switching and folding")
+		  (link insert-fold-menu)))
+	  (=> (balloon (icon "tm_animate.xpm") "Animation")
+	      (link insert-animation-menu)))
+      (if (and (style-has? "program-dtd") (detailed-menus?) (in-text?))
+	  (=> (balloon (icon "tm_shell.xpm")
+		       "Start an interactive session")
+	      (link insert-session-menu)))))

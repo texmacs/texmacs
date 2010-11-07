@@ -52,10 +52,6 @@
 	(variant-set t (symbol-drop-right (tree-label t) 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Structured navigation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding and removing children
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -89,6 +85,7 @@
 	       (cons* '-> (tag-menu-name (tree-label t))
 		      (variant-menu-items t)))
 	  (opt (numbered-context? t)
+	       ;; FIXME: itemize, enumerate, eqnarray*
 	       (list (list 'check "Numbered" "v"
 			   (lambda () (check-number? (focus-tree))))
 		     (lambda () (number-toggle (focus-tree)))))
@@ -165,6 +162,7 @@
 			    "Structured variant")
 		      (variant-menu-items t)))
 	  (opt (numbered-context? t)
+	       ;; FIXME: itemize, enumerate, eqnarray*
 	       (list (list 'balloon (list 'icon "tm_numbered.xpm")
 			   "Toggle numbering")
 		     (lambda () (number-toggle (focus-tree)))))
