@@ -52,6 +52,10 @@
 	(variant-set t (symbol-drop-right (tree-label t) 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding and removing children
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -92,6 +96,27 @@
 	       (list (list 'check "Unfolded" "v"
 			   (lambda () (toggle-second-context? (focus-tree))))
 		     (lambda () (toggle-toggle (focus-tree)))))
+	  (opt #t
+	       (list "Describe"
+		     (lambda () (set-message "Not yet implemented" ""))))
+	  (opt #t
+	       (list "Delete"
+		     (lambda () (remove-structure-upwards))))
+
+	  (list '---)
+	  (list (list "First similar tag"
+		      (lambda () (traverse-first))))
+	  (list (list "Previous similar tag"
+		      (lambda () (traverse-previous))))
+	  (list (list "Left exit tag"
+		      (lambda () (structured-exit-left))))
+	  (list (list "Right exit tag"
+		      (lambda () (structured-exit-right))))
+	  (list (list "Next similar tag"
+		      (lambda () (traverse-next))))
+	  (list (list "Last similar tag"
+		      (lambda () (traverse-last))))
+
 	  (opt (or (structured-horizontal? t) (structured-vertical? t))
 	       (list '---))
           (opt (structured-vertical? t)
@@ -140,13 +165,42 @@
 			    "Structured variant")
 		      (variant-menu-items t)))
 	  (opt (numbered-context? t)
-	       (list (list 'balloon (list 'icon "tm_three.xpm")
+	       (list (list 'balloon (list 'icon "tm_numbered.xpm")
 			   "Toggle numbering")
 		     (lambda () (number-toggle (focus-tree)))))
 	  (opt (toggle-context? t)
 	       (list (list 'balloon (list 'icon "tm_unfold.xpm")
 			   "Fold / Unfold")
 		     (lambda () (toggle-toggle (focus-tree)))))
+	  (opt #t
+	       (list (list 'balloon (list 'icon "tm_focus_help.xpm")
+			   "Describe tag")
+		     (lambda () (set-message "Not yet implemented" ""))))
+	  (opt #t
+	       (list (list 'balloon (list 'icon "tm_focus_delete.xpm")
+			   "Remove tag")
+		     (lambda () (remove-structure-upwards))))
+
+	  (list '|)
+	  (list (list (list 'balloon (list 'icon "tm_similar_first.xpm")
+			    "Go to first similar tag")
+		      (lambda () (traverse-first))))
+	  (list (list (list 'balloon (list 'icon "tm_similar_previous.xpm")
+			    "Go to previous similar tag")
+		      (lambda () (traverse-previous))))
+	  (list (list (list 'balloon (list 'icon "tm_exit_left.xpm")
+			    "Exit tag on the left")
+		      (lambda () (structured-exit-left))))
+	  (list (list (list 'balloon (list 'icon "tm_exit_right.xpm")
+			    "Exit tag on the right")
+		      (lambda () (structured-exit-right))))
+	  (list (list (list 'balloon (list 'icon "tm_similar_next.xpm")
+			    "Go to next similar tag")
+		      (lambda () (traverse-next))))
+	  (list (list (list 'balloon (list 'icon "tm_similar_last.xpm")
+			    "Go to last similar tag")
+		      (lambda () (traverse-last))))
+
 	  (opt (or (structured-horizontal? t) (structured-vertical? t))
 	       (list '|))
           (opt (structured-vertical? t)
