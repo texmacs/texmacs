@@ -26,6 +26,7 @@ protected:
   bool   button_flag;
   bool   enabled;
   bool   centered;
+  bool   has_pull_down;
 
 public:
   bool   status;

@@ -84,6 +84,18 @@ layout_submenu_triangle (renderer ren, SI x, SI y) {
 }
 
 void
+layout_pulldown_triangle (renderer ren, SI x, SI y) {
+  ren->set_line_style (PIXEL);
+  ren->set_color (layout_normal (ren));
+  ren->triangle (x-4*PIXEL, y, x+4*PIXEL, y, x, y-4*PIXEL);
+  ren->set_color (layout_dark (ren));
+  ren->line (x+4*PIXEL, y, x, y-4*PIXEL);
+  ren->set_color (white);
+  ren->line (x-4*PIXEL, y, x+4*PIXEL, y);
+  ren->line (x-4*PIXEL, y, x, y-4*PIXEL);
+}
+
+void
 layout_up_arrow (renderer ren, SI x, SI y, SI w, SI h) {
   w -= PIXEL; h -= PIXEL; SI hw= ((w/PIXEL)>>1)*PIXEL;
   ren->set_line_style (PIXEL);

@@ -21,20 +21,23 @@
 button_widget_rep::button_widget_rep (wk_widget w2, bool rf2, bool bf2):
   attribute_widget_rep (1, south_west),
   extra_left (0), extra_right (0), rflag (rf2), button_flag (bf2),
-  enabled(true), centered(false), status (false), inside (false)
+  enabled(true), centered(false), has_pull_down (false),
+  status (false), inside (false)
 { a[0]= w2; }
     
 button_widget_rep::button_widget_rep (wk_widget lw, wk_widget rw):
   attribute_widget_rep (2, south_west),
   extra_left (0), extra_right (0), rflag (false), button_flag (false),
-  enabled(true), centered(false), status (false), inside (false)
+  enabled(true), centered(false), has_pull_down (false),
+  status (false), inside (false)
 { a[0]= lw; a[1]= rw; }
     
 button_widget_rep::button_widget_rep (
   wk_widget lw, wk_widget cw, wk_widget rw, bool e, bool c):
     attribute_widget_rep (3, south_west),
     extra_left (0), extra_right (0), rflag (false), button_flag (false),
-    enabled(e), centered(c), status (false), inside (false)
+    enabled(e), centered(c), has_pull_down (false),
+    status (false), inside (false)
 { a[0]= lw; a[1]= cw; a[2]= rw; }
 
 button_widget_rep::operator tree () {
@@ -107,12 +110,16 @@ void
 button_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   renderer ren= win->get_renderer ();
   layout_default (ren, 0, 0, w, h);
-  if (button_flag) layout_higher (ren, 0, 0, w, h);
+  if (button_flag || (inside && !status))
+    layout_higher (ren, 0, 0, w, h);
   if (status) {
     layout_dark (ren, 0, 0, w, h);
     layout_lower (ren, 0, 0, w, h);
   }
-  if (rflag) layout_submenu_triangle (ren, w-10*PIXEL, h>>1);
+  if (rflag)
+    layout_submenu_triangle (ren, w-10*PIXEL, h>>1);
+  if (has_pull_down && inside && !status)
+    layout_pulldown_triangle (ren, 6*PIXEL, 4*PIXEL);
 }
 
 void
@@ -172,15 +179,16 @@ command_button_rep::handle_mouse (mouse_event ev) {
   // cout << "Command button[" << status << "] "
   //      << s << ": " << ((event) ev) << "\n";
 
-  bool old= status;
+  bool old_inside= inside;
+  bool old_status= status;
   inside= (y>=0) && (y<h) && (x>=0) && (x<w);
   status= inside && enabled && (ev->pressed ("left") || ev->pressed ("right"));
 
-  if (status!=old) {
+  if (inside != old_inside || status != old_status)
     this << emit_invalidate_all ();
+  if (status != old_status)
     if ((type == "release-left") || (type == "release-right"))
       if (!is_nil (cmd)) cmd ();
-  }
 }
 
 /******************************************************************************

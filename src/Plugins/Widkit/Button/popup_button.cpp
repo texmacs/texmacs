@@ -60,7 +60,8 @@ popup_button_rep::popup_button_rep (
     prom (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
     where (wh), require_map (false), stick (false)
 {
-  if ((where!=east) && (where!=south) && (where!=south_east))
+  this->has_pull_down= (where == south || where == south_east);
+  if (where != east && where != south && where != south_east)
     WK_FAILED ("direction not implemented");
 }
 
@@ -70,6 +71,7 @@ popup_button_rep::popup_button_rep (
     prom (prom2), popup_w (), popup (NULL),
     where (where2), require_map (false), stick (false)
 {
+  this->has_pull_down= (where == south || where == south_east);
   if ((where!=east) && (where!=south) && (where!=south_east))
     WK_FAILED ("direction not implemented");
 }
@@ -172,13 +174,15 @@ popup_button_rep::handle_attach_window (attach_window_event ev) {
 void
 popup_button_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
-  SI     x= ev->x, y= ev->y;
+  SI x= ev->x, y= ev->y;
 
   consistent ("handle_mouse (start)");
 
+  bool old_inside= inside;
+
   if (type == "leave") {
+    inside= false;
     if (require_map) {
-      inside= false;
       status= false;
       require_map= false;
     }
@@ -236,6 +240,9 @@ popup_button_rep::handle_mouse (mouse_event ev) {
       }
     }
   }
+
+  if (inside != old_inside)
+    this << emit_invalidate_all ();
 
   consistent ("handle_mouse (*)");
 
