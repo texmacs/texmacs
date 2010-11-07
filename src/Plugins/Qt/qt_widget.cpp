@@ -23,6 +23,7 @@
 #include "promise.hpp"
 #include "analyze.hpp"
 #include "list.hpp"
+#include "converter.hpp"
 
 #include "qt_basic_widgets.hpp"
 #include <QScrollArea>
@@ -152,7 +153,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, "SLOT_NAME");
       string name = open_box<string> (val);
-      view->window() -> setWindowTitle (to_qstring_utf8 (name));
+      view->window() -> setWindowTitle (to_qstring_utf8 (utf8_to_cork(name)));
     }
     break;
 #if 1
@@ -334,6 +335,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
   mw->setStyle (qtmstyle ());
 
 #ifdef Q_WS_MAC
+  //mw->setUnifiedTitleAndToolBarOnMac(true);
   // on the Mac there is only the system menu bar which is globally allocated.
   // do not call QMainWindow::menuBar()
   if (!app_menubar) {

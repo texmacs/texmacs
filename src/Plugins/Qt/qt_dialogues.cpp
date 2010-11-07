@@ -17,6 +17,7 @@
 #include "qt_basic_widgets.hpp"
 #include "url.hpp"
 #include "analyze.hpp"
+#include "converter.hpp"
 #include <QtGui>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -297,7 +298,7 @@ qt_chooser_widget_rep::perform_dialog () {
           scm_quote (as_string (u)) *
           ") " * imgdialog->getParamsAsString () * ")";
       else
-        file = "(url-system " * scm_quote (as_string (u)) * ")";
+        file = "(url-system " * scm_quote (cork_to_utf8(as_string (u))) * ")";
     }
   } else {
     file = "#f";
@@ -619,7 +620,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
     ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
   }
 }
-#elif 1
+#elif 0
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
