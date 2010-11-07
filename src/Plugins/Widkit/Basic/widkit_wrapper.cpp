@@ -195,7 +195,7 @@ popup_widget (widget w) {
 
 widget
 canvas_widget (widget w) {
-  return abstract (canvas_widget (concrete (w), north_west));
+  return abstract (canvas_widget (concrete (w), north_west, true));
 }
 
 widget

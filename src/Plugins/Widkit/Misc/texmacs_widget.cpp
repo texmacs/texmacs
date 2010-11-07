@@ -160,7 +160,7 @@ make_texmacs_widget (int mask) {
   array<wk_widget> V (3);
   array<string> V_name (3);
   V[0]= make_header (mask);
-  V[1]= canvas_widget (glue_wk_widget ());
+  V[1]= canvas_widget (glue_wk_widget (), north_west, true);
   V[2]= make_footer (mask);
   V_name[0]= "header";
   V_name[1]= "canvas";
