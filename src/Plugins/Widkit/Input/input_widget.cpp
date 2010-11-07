@@ -33,6 +33,7 @@ class input_widget_rep: public attribute_widget_rep {
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
   string  width;       // width of input field
+  bool    persistent;  // don't complete after loss of focus
   bool    ok;          // input not canceled
   bool    done;        // call back has been called
   int     def_cur;     // current choice between default possible values
@@ -46,7 +47,7 @@ class input_widget_rep: public attribute_widget_rep {
   int     tab_pos;     // cursor position where tab was pressed
 
 public:
-  input_widget_rep (command call_back, string width);
+  input_widget_rep (command call_back, string width, bool persistent);
   operator tree ();
   void update_draw_s ();
 
@@ -66,10 +67,10 @@ public:
 
 #define SHRINK 3
 
-input_widget_rep::input_widget_rep (command call_back2, string width2):
+input_widget_rep::input_widget_rep (command cb2, string w2, bool p2):
   attribute_widget_rep (south_west),
   s (""), draw_s (""), type ("default"), def (),
-  call_back (call_back2), width (width2),
+  call_back (cb2), width (w2), persistent (p2),
   ok (true), done (false), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false)
@@ -314,7 +315,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
 void
 input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
-  if (got_focus && !ev->flag && !done) {
+  if (got_focus && !ev->flag && !done && !persistent) {
     ok= false;
     done= true;
     call_back ();
@@ -362,14 +363,15 @@ get_input_string (string& s) {
 }
 
 wk_widget
-input_text_wk_widget (command call_back, string w) {
-  return tm_new<input_widget_rep> (call_back, w);
+input_text_wk_widget (command call_back, string w, bool persistent) {
+  return tm_new<input_widget_rep> (call_back, w, persistent);
 }
 
 wk_widget
-input_text_wk_widget (command cb, string type, array<string> def, string w) {
+input_text_wk_widget (command cb, string type, array<string> def,
+		      string w, bool persistent) {
   int i, n= N(def);
-  wk_widget inp= input_text_wk_widget (cb, w);
+  wk_widget inp= input_text_wk_widget (cb, w, persistent);
   inp << set_string ("type", type);
   if (n>0) inp << set_string ("input", def[0]);
   for (i=0; i<n; i++) inp << set_string ("default", def[i]);
