@@ -125,9 +125,12 @@ widget pulldown_button (widget w, promise<widget> pw);
   // a button w with a lazy pulldown menu pw
 widget pullright_button (widget w, promise<widget> pw);
   // a button w with a lazy pullright menu pw
-widget menu_button (widget w, command cmd, string pre, string ks, bool ok);
+widget menu_button (widget w, command cmd,
+		    string pre= "", string ks= "",
+		    bool ok= true, bool pressed= false);
   // a command button with an optional prefix (o, * or v) and
   // keyboard shortcut; if ok does not hold, then the button is greyed
+  // if pressed holds, then the button is displayed as a pressed button
 widget balloon_widget (widget w, widget help);
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while
@@ -146,9 +149,12 @@ widget empty_widget ();
 widget glue_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);
   // an empty widget of minimal width w and height h and which is horizontally
   // resp. vertically extensible if hx resp. vx is true
-widget input_text_widget (command call_back, string type, array<string> def);
+widget input_text_widget (command call_back, string type,
+			  array<string> def, string width= "1w");
   // a textual input widget for input of a given type and a list of suggested
   // default inputs (the first one should be displayed, if there is one)
+  // an optional width may be specified for the input field
+  // the width is specified in TeXmacs length format with units em, px or w.
 widget wait_widget (SI width, SI height, string message);
   // a widget of a specified width and height, displaying a wait message
   // this widget is only needed when using the X11 plugin

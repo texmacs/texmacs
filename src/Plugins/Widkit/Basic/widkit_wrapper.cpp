@@ -83,7 +83,8 @@ vertical_list (array<widget> a) {
 
 widget
 horizontal_menu (array<widget> a) {
-  return abstract (horizontal_array (concrete (a), -1));
+  return abstract (horizontal_list (concrete (a)));
+  //return abstract (horizontal_array (concrete (a), -1));
 }
 
 widget
@@ -161,7 +162,9 @@ menu_group (string name) {
 }
 
 widget
-menu_button (widget w, command cmd, string pre, string ks, bool ok) {
+menu_button (widget w, command cmd, string pre, string ks,
+	     bool ok, bool pressed)
+{
   if (pre == "" && ks == "") return command_button (w, cmd, false);
   else {
     color  c = ok? black: dark_grey;
@@ -199,8 +202,9 @@ canvas_widget (widget w) {
 }
 
 widget
-input_text_widget (command call_back, string type, array<string> def) {
-  return abstract (input_text_wk_widget (call_back, type, def));
+input_text_widget (command call_back, string type,
+		   array<string> def, string width) {
+  return abstract (input_text_wk_widget (call_back, type, def, width));
 }
 
 widget

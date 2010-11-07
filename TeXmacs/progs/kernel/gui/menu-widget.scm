@@ -108,8 +108,8 @@
 
 (define (make-menu-input p)
   "Make @(input :%1) menu item."
-  (with (tag cmd type props) p
-    (widget-input (object->command cmd) type (props))))
+  (with (tag cmd type props width) p
+    (widget-input (object->command cmd) type (props) width)))
 ;;(widget-input (make-menu-command cmd) type (props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -117,9 +117,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-menu-entry-button e? bar? check label short command)
-  (if bar?
-      (widget-menu-button (make-menu-label label e?) command "" "" e?)
-      (widget-menu-button (make-menu-label label e?) command check short e?)))
+  (with l (make-menu-label label e?)
+    (if bar?
+	(widget-menu-button l command "" "" e? #f)
+	(widget-menu-button l command check short e? #f))))
 
 (define (make-menu-entry-shortcut label action opt-key)
   (cond (opt-key (kbd-system opt-key #t))
@@ -190,9 +191,11 @@
   (with col (color (if e? "black" "dark grey"))
     (if opt-cmd
 	(widget-menu-button (widget-box '() sym col #t #f)
-			    (make-menu-command (apply opt-cmd '())) "" "" e?)
+			    (make-menu-command (apply opt-cmd '()))
+			    "" "" e? #f)
 	(widget-menu-button (widget-box '() sym col #t #f)
-			    (make-menu-command (insert sym)) "" "" e?))))
+			    (make-menu-command (insert sym))
+			    "" "" e? #f))))
 
 (define (make-menu-symbol p e?)
   "Make @(symbol :string? :*) menu item."
@@ -281,7 +284,7 @@
 (define (make-menu-items p e? bar?)
   "Make menu items @p. The items are on a bar if @bar? and greyed if not @e?."
   (if (pair? p)
-      (cond ((match? p '(input :%1 :string? :%1))
+      (cond ((match? p '(input :%1 :string? :%1 :string?))
 	     (list (make-menu-input p)))
 	    ((translatable? (car p))
 	     (list (make-menu-entry p e? bar?)))
@@ -302,7 +305,8 @@
 (define-table make-menu-items-table
   (group (:string?) ,(lambda (p e? bar?) (list (make-menu-group (cadr p)))))
   (symbol (:string? :*) ,(lambda (p e? bar?) (list (make-menu-symbol p e?))))
-  (input (:%1 :string? :%1) ,(lambda (p e? bar?) (list (make-menu-input p))))
+  (input (:%1 :string? :%1 :string?)
+    ,(lambda (p e? bar?) (list (make-menu-input p))))
   (link (:%1) ,(lambda (p e? bar?) (make-menu-link p e? bar?)))
   (horizontal (:*) ,(lambda (p e? bar?) (list (make-menu-horizontal p e?))))
   (vertical (:*) ,(lambda (p e? bar?) (list (make-menu-vertical p e?))))

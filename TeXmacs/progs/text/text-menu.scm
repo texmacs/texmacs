@@ -262,7 +262,7 @@
 
 (menu-bind text-icons
   ;;("Goedenmiddag" (display* "Hi there\n"))
-  ;;(input (display "Hello\n") "string" '("Hello" "Bonjour"))
+  ;;(input (display "Hello\n") "string" '("Hello" "Bonjour") "0.5w")
   (if (and (style-has? "header-title-dtd")
 	   (not (style-has? "header-letter-dtd"))
 	   (not (style-has? "header-exam-dtd")))

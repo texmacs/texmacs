@@ -32,6 +32,7 @@ class input_widget_rep: public attribute_widget_rep {
   string  type;        // expected type of string
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
+  string  width;       // width of input field
   bool    ok;          // input not canceled
   bool    done;        // call back has been called
   int     def_cur;     // current choice between default possible values
@@ -45,7 +46,7 @@ class input_widget_rep: public attribute_widget_rep {
   int     tab_pos;     // cursor position where tab was pressed
 
 public:
-  input_widget_rep (command call_back);
+  input_widget_rep (command call_back, string width);
   operator tree ();
   void update_draw_s ();
 
@@ -65,9 +66,10 @@ public:
 
 #define SHRINK 3
 
-input_widget_rep::input_widget_rep (command call_back2):
+input_widget_rep::input_widget_rep (command call_back2, string width2):
   attribute_widget_rep (south_west),
-  s (""), draw_s (""), type ("default"), def (), call_back (call_back2),
+  s (""), draw_s (""), type ("default"), def (),
+  call_back (call_back2), width (width2),
   ok (true), done (false), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false)
@@ -96,12 +98,28 @@ input_widget_rep::update_draw_s () {
 
 void
 input_widget_rep::handle_get_size (get_size_event ev) {
-  SI dummy;
+  SI ex, ey;
+  if (win == NULL) gui_maximal_extents (ex, ey);
+  else win->get_size (ex, ey);
   font fn= get_default_font ();
   ev->h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
+  if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
+    double x= as_double (width (0, N(width) - 1));
+    if (ev->mode == -1) ev->w= 0;
+    else if (ev->mode == 0);
+    else if (ev->mode == 1) ev->w= (SI) (x * ex);
+    ev->w= max (ev->w, 3 * fn->wquad / SHRINK);
+  }
+  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
+    double x= as_double (width (0, N(width) - 2));
+    ev->w= (SI) (x * fn->wquad / SHRINK);
+  }
+  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
+    double x= as_double (width (0, N(width) - 2));
+    ev->w= (SI) (x * PIXEL);
+  }
+  else if (ev->mode == 1) ev->w= ex;
   abs_round (ev->w, ev->h);
-  if (ev->mode == 1) gui_maximal_extents (ev->w, dummy);
-  //ev->w= min (ev->w, 200 * PIXEL);
 }
 
 void
@@ -344,14 +362,14 @@ get_input_string (string& s) {
 }
 
 wk_widget
-input_text_wk_widget (command call_back) {
-  return tm_new<input_widget_rep> (call_back);
+input_text_wk_widget (command call_back, string w) {
+  return tm_new<input_widget_rep> (call_back, w);
 }
 
 wk_widget
-input_text_wk_widget (command cb, string type, array<string> def) {
+input_text_wk_widget (command cb, string type, array<string> def, string w) {
   int i, n= N(def);
-  wk_widget inp= input_text_wk_widget (cb);
+  wk_widget inp= input_text_wk_widget (cb, w);
   inp << set_string ("type", type);
   if (n>0) inp << set_string ("input", def[0]);
   for (i=0; i<n; i++) inp << set_string ("default", def[i]);

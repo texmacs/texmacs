@@ -4254,21 +4254,23 @@ tmg_widget_pullright_button (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_widget_menu_button (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
+tmg_widget_menu_button (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-menu-button");
   SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-menu-button");
   SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-menu-button");
   SCM_ASSERT_STRING (arg4, SCM_ARG4, "widget-menu-button");
   SCM_ASSERT_BOOL (arg5, SCM_ARG5, "widget-menu-button");
+  SCM_ASSERT_BOOL (arg6, SCM_ARG6, "widget-menu-button");
 
   widget in1= scm_to_widget (arg1);
   command in2= scm_to_command (arg2);
   string in3= scm_to_string (arg3);
   string in4= scm_to_string (arg4);
   bool in5= scm_to_bool (arg5);
+  bool in6= scm_to_bool (arg6);
 
   // SCM_DEFER_INTS;
-  widget out= menu_button (in1, in2, in3, in4, in5);
+  widget out= menu_button (in1, in2, in3, in4, in5, in6);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -4316,17 +4318,19 @@ tmg_widget_text (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_widget_input (SCM arg1, SCM arg2, SCM arg3) {
+tmg_widget_input (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
   SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "widget-input");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "widget-input");
   SCM_ASSERT_ARRAY_STRING (arg3, SCM_ARG3, "widget-input");
+  SCM_ASSERT_STRING (arg4, SCM_ARG4, "widget-input");
 
   command in1= scm_to_command (arg1);
   string in2= scm_to_string (arg2);
   array_string in3= scm_to_array_string (arg3);
+  string in4= scm_to_string (arg4);
 
   // SCM_DEFER_INTS;
-  widget out= input_text_widget (in1, in2, in3);
+  widget out= input_text_widget (in1, in2, in3, in4);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -4848,11 +4852,11 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-menu-group", (FN) tmg_widget_menu_group, 1, 0, 0);
   scm_new_procedure ("widget-pulldown-button", (FN) tmg_widget_pulldown_button, 2, 0, 0);
   scm_new_procedure ("widget-pullright-button", (FN) tmg_widget_pullright_button, 2, 0, 0);
-  scm_new_procedure ("widget-menu-button", (FN) tmg_widget_menu_button, 5, 0, 0);
+  scm_new_procedure ("widget-menu-button", (FN) tmg_widget_menu_button, 6, 0, 0);
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-empty", (FN) tmg_widget_empty, 0, 0, 0);
   scm_new_procedure ("widget-text", (FN) tmg_widget_text, 3, 0, 0);
-  scm_new_procedure ("widget-input", (FN) tmg_widget_input, 3, 0, 0);
+  scm_new_procedure ("widget-input", (FN) tmg_widget_input, 4, 0, 0);
   scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
