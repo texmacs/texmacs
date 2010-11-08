@@ -4321,16 +4321,16 @@ tmg_widget_text (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
 
 SCM
 tmg_widget_input (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "widget-input");
-  SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-input");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-input");
-  SCM_ASSERT_ARRAY_STRING (arg4, SCM_ARG4, "widget-input");
+  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "widget-input");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "widget-input");
+  SCM_ASSERT_ARRAY_STRING (arg3, SCM_ARG3, "widget-input");
+  SCM_ASSERT_INT (arg4, SCM_ARG4, "widget-input");
   SCM_ASSERT_STRING (arg5, SCM_ARG5, "widget-input");
 
-  int in1= scm_to_int (arg1);
-  command in2= scm_to_command (arg2);
-  string in3= scm_to_string (arg3);
-  array_string in4= scm_to_array_string (arg4);
+  command in1= scm_to_command (arg1);
+  string in2= scm_to_string (arg2);
+  array_string in3= scm_to_array_string (arg3);
+  int in4= scm_to_int (arg4);
   string in5= scm_to_string (arg5);
 
   // SCM_DEFER_INTS;

@@ -375,7 +375,7 @@
   (widget-empty empty_widget (widget))
   (widget-text text_widget (widget string int int bool))
   (widget-input input_text_widget
-		(widget int command string array_string string))
+		(widget command string array_string int string))
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
   (object->promise-widget as_promise_widget (promise_widget object))
