@@ -30,9 +30,11 @@
 class input_widget_rep: public attribute_widget_rep {
   string  s;           // the string being entered
   string  draw_s;      // the string being displayed
+  SI      text_h;      // text height
   string  type;        // expected type of string
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
+  int     style;       // style of widget
   string  width;       // width of input field
   bool    persistent;  // don't complete after loss of focus
   bool    ok;          // input not canceled
@@ -48,7 +50,7 @@ class input_widget_rep: public attribute_widget_rep {
   int     tab_pos;     // cursor position where tab was pressed
 
 public:
-  input_widget_rep (command call_back, string width, bool persistent);
+  input_widget_rep (int style, command call_back, string width, bool persist);
   operator tree ();
   void update_draw_s ();
   void commit ();
@@ -70,20 +72,23 @@ public:
 
 #define SHRINK 3
 
-input_widget_rep::input_widget_rep (command cb2, string w2, bool p2):
+input_widget_rep::input_widget_rep (int st2, command cb2, string w2, bool p2):
   attribute_widget_rep (south_west),
   s (""), draw_s (""), type ("default"), def (),
-  call_back (cb2), width (w2), persistent (p2),
+  call_back (cb2), style (st2), width (w2), persistent (p2),
   ok (true), done (false), def_cur (0),
-  dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
+  dw (4*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false)
 {
+  if ((style & WIDGET_STYLE_MINI) != 0) dh= 1.5 * PIXEL;
   if (use_macos_fonts ()) {
     dw += PIXEL;
     dh += 3*PIXEL;
   }
   dw *= SHRINK;
   dh *= SHRINK;
+  font fn= get_default_styled_font (style);
+  text_h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
 }
 
 input_widget_rep::operator tree () {
@@ -119,24 +124,24 @@ input_widget_rep::handle_get_size (get_size_event ev) {
   SI ex, ey;
   if (win == NULL) gui_maximal_extents (ex, ey);
   else win->get_size (ex, ey);
-  font fn= get_default_font ();
-  ev->h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
+  font fn= get_default_styled_font (style);
   if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
     double x= as_double (width (0, N(width) - 1));
     if (ev->mode == -1) ev->w= 0;
     else if (ev->mode == 0);
     else if (ev->mode == 1) ev->w= (SI) (x * ex);
-    ev->w= max (ev->w, 3 * fn->wquad / SHRINK);
+    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
   }
   else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
     double x= as_double (width (0, N(width) - 2));
-    ev->w= (SI) (x * fn->wquad / SHRINK);
+    ev->w= (SI) ((x * fn->wquad + 2*dw) / SHRINK);
   }
   else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
     double x= as_double (width (0, N(width) - 2));
-    ev->w= (SI) (x * PIXEL);
+    ev->w= (SI) (x * PIXEL + (2*dw / SHRINK));
   }
   else if (ev->mode == 1) ev->w= ex;
+  ev->h= text_h;
   abs_round (ev->w, ev->h);
 }
 
@@ -144,9 +149,10 @@ void
 input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   renderer ren= win->get_renderer ();
   update_draw_s (); 
+  SI ecart= max (0, (h - (2*dh / SHRINK) - text_h) >> 1);
 
   metric ex;
-  font fn= get_default_font ();
+  font fn= get_default_styled_font (style);
   fn->var_get_extents (draw_s, ex);
   SI left= ex->x1, bottom= fn->y1, right= ex->x2;
   fn->var_get_extents (draw_s (0, pos), ex);
@@ -162,27 +168,29 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   left    += scroll;
   current -= scroll;
 
+  layout_default (ren, 0, 0, w, h);
   if (true) {
-    layout_pastel (ren, 0, 0, w, h);
-    layout_lower (ren, 0, 0, w, h);
+    layout_pastel (ren, 0, ecart, w, h - ecart);
+    layout_lower (ren, 0, ecart, w, h - ecart);
   }
   else if (got_focus && hilit) {
     layout_dark (ren, 0, 0, w, h);
     layout_lower (ren, 0, 0, w, h);
   }
-  else layout_default (ren, 0, 0, w, h);
   ren->set_color (black);
+
   ren->set_shrinking_factor (SHRINK);
-  fn->var_draw (ren, draw_s, dw- left, dh- bottom);
+  ecart *= SHRINK;
+  fn->var_draw (ren, draw_s, dw - left, dh - bottom + ecart);
   if (got_focus) {
     SI pixel= SHRINK*PIXEL;
     ren->set_color (red);
-    ren->line (current+ dw, dh,
-	       current+ dw, height- pixel- dh);
-    ren->line (current+ dw- pixel, dh,
-	       current+ dw+ pixel, dh);
-    ren->line (current+ dw- pixel, height- pixel- dh,
-	       current+ dw+ pixel, height- pixel- dh);
+    ren->line (current + dw, dh + ecart,
+	       current + dw, height - pixel - dh - ecart);
+    ren->line (current + dw - pixel, dh + ecart,
+	       current + dw + pixel, dh + ecart);
+    ren->line (current + dw - pixel, height - pixel - dh - ecart,
+	       current + dw + pixel, height - pixel - dh - ecart);
   }
   ren->set_shrinking_factor (1);
 }
@@ -300,7 +308,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
   string type= ev->type;
   SI     x   = ev->x;
-  font   fn  = get_default_font ();
+  font   fn  = get_default_styled_font (style);
 
   if (type == "press-left") {
     if (N(s)>0) {
@@ -383,7 +391,7 @@ input_text_wk_widget (int style, command call_back,
 		      string w, bool persistent)
 {
   (void) style;
-  return tm_new<input_widget_rep> (call_back, w, persistent);
+  return tm_new<input_widget_rep> (style, call_back, w, persistent);
 }
 
 wk_widget

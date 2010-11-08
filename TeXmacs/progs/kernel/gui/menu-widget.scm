@@ -109,7 +109,7 @@
 (define (make-menu-input p)
   "Make @(input :%1) menu item."
   (with (tag cmd type props width) p
-    (widget-input 0 (object->command cmd) type (props) width)))
+    (widget-input widget-style-mini (object->command cmd) type (props) width)))
 ;;(widget-input (make-menu-command cmd) type (props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

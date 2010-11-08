@@ -68,8 +68,13 @@ string get_named_color (color c);
 
 void set_default_font (string name);
   // set the name of the default font
-font get_default_font (bool tt= false);
-  // get the default font or monospaced font (if tt is true)
+font get_default_font (bool tt= false, bool mini= false);
+  // get the default font, depending on desired characteristics:
+  // tt for a monospaced font and mini for a smaller font
+font get_default_styled_font (int style);
+  // get the default font for a given style
+  // (see widget.hpp for available styles)
+  // NOTE: implemented in widget.cpp
 void load_system_font (string family, int size, int dpi,
 		       font_metric& fnm, font_glyphs& fng);
   // load the metric and glyphs of a system font

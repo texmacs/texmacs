@@ -9,12 +9,13 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "gui.hpp"
 #include "message.hpp"
+#include "font.hpp"
 
 /******************************************************************************
- * slot names, useful for debugging
- ******************************************************************************/
-
+* slot names, useful for debugging
+******************************************************************************/
 
 const char * 
 slot_name (const slot s) { 
@@ -200,4 +201,11 @@ widget_rep::notify (slot s, blackbox new_val) {
 tm_ostream&
 widget_rep::print (tm_ostream& out) {
   return out << "widget";
+}
+
+font
+get_default_styled_font (int style) {
+  bool tt  = (style & WIDGET_STYLE_MONOSPACED) != 0;
+  bool mini= (style & WIDGET_STYLE_MINI) != 0;
+  return get_default_font (tt, mini);
 }
