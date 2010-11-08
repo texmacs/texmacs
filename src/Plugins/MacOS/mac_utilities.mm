@@ -123,9 +123,15 @@ mac_install_filter () {
 #endif // HACK
 #endif // QTTEXMACS
 
+//#ifdef Q_WS_MAC
+#if 0
+
+// this code is not used. It was an hack. Maybe sometimes in the future we
+// should drop it
+
 void 
 cancel_tracking (NSMenu *menu) {
-  [menu cancelTrackingWithoutAnimation];
+  [menu cancelTracking];
   for (NSMenuItem *item in [menu itemArray]) {
     if ([item submenu]) {
       cancel_tracking([item submenu]);
@@ -133,11 +139,10 @@ cancel_tracking (NSMenu *menu) {
   }
 }
 
-#ifdef Q_WS_MAC
+
 void 
 mac_cancel_menu_tracking () {
 #ifdef QT_MAC_USE_COCOA
-  cout << "pippo\n";
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSMenu *mainMenu = [  [NSApplication sharedApplication]
                       mainMenu];
