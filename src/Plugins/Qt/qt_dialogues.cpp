@@ -760,7 +760,6 @@ QTMWidgetAction::createWidget ( QWidget * parent ) {
   if (helper && 0) {
     helper -> add (le);
     QObject::connect(le, SIGNAL(returnPressed()), helper, SLOT(commit()));
-    QObject::connect(le, SIGNAL(destroyed(QObject*)), helper, SLOT(remove(QObject*)));
     cout << N(helper->wid->def);
     cout << helper->wid->def<< LF;
     cout << helper->wid->def[0]<< LF;
@@ -782,6 +781,11 @@ qt_input_text_widget_rep::as_qaction () {
   return a;
 }
 
+
+qt_input_text_widget_rep::~qt_input_text_widget_rep() { 
+  if (helper) delete helper; 
+}
+
 void
 QTMInputTextWidgetHelper::commit () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());
@@ -791,13 +795,16 @@ QTMInputTextWidgetHelper::commit () {
 }
 
 void
-QTMInputTextWidgetHelper::remove(QObject *obj) {
+QTMInputTextWidgetHelper::remove (QObject *obj) {
   views.removeAll (qobject_cast<QLineEdit*>(obj));
 }
 
 void
 QTMInputTextWidgetHelper::add(QLineEdit *obj) {
-  if (!views.contains (obj)) views << obj;
+  if (!views.contains (obj)) {
+    QObject::connect(obj, SIGNAL(destroyed(QObject*)), this, SLOT(remove(QObject*)));
+    views << obj;
+  }
 }
 
 

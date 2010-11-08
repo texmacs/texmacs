@@ -57,7 +57,7 @@ public:
     (command _cmd, string _type, array<string> _def):
       cmd (_cmd), type (_type), def (_def), text (""), helper(NULL) {}
 
-  ~qt_input_text_widget_rep() { if (helper) delete helper; }
+  ~qt_input_text_widget_rep();
 
   virtual QAction* as_qaction ();
 };
