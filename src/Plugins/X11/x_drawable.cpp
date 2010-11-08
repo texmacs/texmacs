@@ -387,7 +387,7 @@ x_drawable_rep::image (
   if (gui->gswindow == NULL) {
     SI max_w= gui->screen_width  * PIXEL;
     SI max_h= gui->screen_height * PIXEL;
-    //widget dummy= text_widget ("ghostscript window");
+    //widget dummy= text_widget (0, "ghostscript window");
     if (ghostscript_bugged ()) {
       max_w *= 2;
       max_h *= 2;

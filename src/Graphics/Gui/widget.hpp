@@ -150,8 +150,8 @@ widget balloon_widget (widget w, widget help);
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while
 
-widget text_widget (string s, color col, bool tsp= true);
-  // a text widget with a given color and transparency
+widget text_widget (string s, int style, color col, bool tsp= true);
+  // a text widget with a given style, color and transparency
 widget xpm_widget (url file_name);
   // a widget with an X pixmap icon
 

@@ -123,18 +123,20 @@ menu_separator (bool vert) {
 }
 
 widget
-text_widget (string s, bool tsp) {
-  return abstract (text_wk_widget (s, tsp));
+text_widget (string s, int style, bool tsp) {
+  (void) style;
+  return abstract (text_wk_widget (s, style, tsp));
 }
 
 widget
-menu_text_widget (string s, color col, bool tsp, bool tt) {
-  return abstract (menu_text_wk_widget (s, col, tsp, tt));
+menu_text_widget (string s, int style, color col, bool tsp, bool tt) {
+  (void) style;
+  return abstract (menu_text_wk_widget (s, style, col, tsp, tt));
 }
 
 widget
-text_widget (string s, color col, bool tsp) {
-  return menu_text_widget (s, col, tsp, false);
+text_widget (string s, int style, color col, bool tsp) {
+  return menu_text_widget (s, style, col, tsp, false);
 }
 
 widget
@@ -169,7 +171,7 @@ menu_button (widget w, command cmd, string pre, string ks,
   else {
     color  c = ok? black: dark_grey;
     widget lw= empty_widget ();
-    widget rw= menu_text_widget (ks, c, true, true);
+    widget rw= menu_text_widget (ks, 0, c, true, true);
     if (pre != "") {
       string s= "";
       if (pre == "v") s= "<checked>";

@@ -373,7 +373,7 @@
 		      (widget widget command string string bool bool))
   (widget-balloon balloon_widget (widget widget widget))
   (widget-empty empty_widget (widget))
-  (widget-text text_widget (widget string int bool))
+  (widget-text text_widget (widget string int int bool))
   (widget-input input_text_widget
 		(widget int command string array_string string))
   (widget-xpm xpm_widget (widget url))

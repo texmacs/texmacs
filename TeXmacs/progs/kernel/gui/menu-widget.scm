@@ -22,7 +22,7 @@
 
 (define (make-menu-error . args)
   (apply tm-display-error args)
-  (widget-text "Error" (color "black") #t))
+  (widget-text "Error" 0 (color "black") #t))
 
 (define (make-menu-bad-format p e?)
   (make-menu-error "menu has bad format in " (object->string p)))
@@ -82,7 +82,7 @@
   (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
     (cond ((translatable? p)		; "text"
-	   (widget-text (translate p) col #t))
+	   (widget-text (translate p) 0 col #t))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) e? tt?))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
@@ -179,7 +179,7 @@
 	       (txt (if (or (not sh) (== sh "")) text
 			(string-append text " (" sh ")")))
 	       (ftxt (translate txt))
-	       (twid (widget-text ftxt (color "black") #t)))
+	       (twid (widget-text ftxt 0 (color "black") #t)))
 	  (widget-balloon but twid))
 	but)))
 
@@ -238,7 +238,7 @@
       (if (tuple? label 'balloon 2)
 	  (let* ((text (caddr label))
 		 (ftxt (translate text))
-		 (twid (widget-text ftxt (color "black") #t)))
+		 (twid (widget-text ftxt 0 (color "black") #t)))
 	    (widget-balloon button twid))
 	  button))))
 

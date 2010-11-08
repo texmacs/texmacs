@@ -4301,17 +4301,19 @@ tmg_widget_empty () {
 }
 
 SCM
-tmg_widget_text (SCM arg1, SCM arg2, SCM arg3) {
+tmg_widget_text (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "widget-text");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "widget-text");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "widget-text");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "widget-text");
+  SCM_ASSERT_BOOL (arg4, SCM_ARG4, "widget-text");
 
   string in1= scm_to_string (arg1);
   int in2= scm_to_int (arg2);
-  bool in3= scm_to_bool (arg3);
+  int in3= scm_to_int (arg3);
+  bool in4= scm_to_bool (arg4);
 
   // SCM_DEFER_INTS;
-  widget out= text_widget (in1, in2, in3);
+  widget out= text_widget (in1, in2, in3, in4);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -4857,7 +4859,7 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-menu-button", (FN) tmg_widget_menu_button, 6, 0, 0);
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-empty", (FN) tmg_widget_empty, 0, 0, 0);
-  scm_new_procedure ("widget-text", (FN) tmg_widget_text, 3, 0, 0);
+  scm_new_procedure ("widget-text", (FN) tmg_widget_text, 4, 0, 0);
   scm_new_procedure ("widget-input", (FN) tmg_widget_input, 5, 0, 0);
   scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);

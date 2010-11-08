@@ -427,9 +427,10 @@ widget balloon_widget (widget w, widget help)
   return tm_new <aqua_balloon_widget_rep> (w,help);
 }
 
-widget text_widget (string s, color col, bool tsp) 
+widget text_widget (string s, int style, color col, bool tsp) 
 // a text widget with a given color, transparency and language
 {
+  (void) style;
   string t= tm_var_encode (s);
   return tm_new <aqua_text_widget_rep> (t,col,tsp);
 }

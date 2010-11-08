@@ -461,8 +461,9 @@ balloon_widget (widget w, widget help)  {
 }
 
 widget
-text_widget (string s, color col, bool tsp) {
+text_widget (string s, int style, color col, bool tsp) {
   // a text widget with a given color and transparency
+  (void) style;
   return tm_new<qt_text_widget_rep> (s, col, tsp);
 }
 

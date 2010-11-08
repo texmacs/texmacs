@@ -255,7 +255,7 @@ tm_window_rep::interactive (string name, string type, array<string> def,
   if (get_interactive_mode ()) { s= "cancel"; return; }
   text_ptr = &s;
   call_back= cmd;
-  widget tw = text_widget (translate (name), black, false);
+  widget tw = text_widget (translate (name), 0, black, false);
   widget inp= input_text_widget (0, tm_new<ia_command_rep> (this), type, def);
   set_interactive_prompt (wid, tw);
   set_interactive_input (wid, inp);
