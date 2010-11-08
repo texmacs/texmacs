@@ -214,6 +214,17 @@ as_path (object obj) {
   return scm_to_path (t);
 }
 
+array<object>
+as_array_object (object obj) {
+  ASSERT (is_list (obj), "list expected");
+  array<object> ret;
+  while (!is_null (obj)) {
+    ret << car (obj);
+    obj= cdr (obj);
+  }
+  return ret;
+}
+
 url
 as_url (object obj) {
   SCM t= obj->lookup();
@@ -276,11 +287,23 @@ scheme_cmd (object cmd) {
 * Conversions to functional objects
 ******************************************************************************/
 
+static inline array<SCM>
+array_lookup (array<object> a) {
+  const int n=N(a);
+  array<SCM> scm(n);
+  int i;
+  for (i=0; i<n; i++) scm[i]= a[i]->lookup();
+  return scm;
+}
+
 class object_command_rep: public command_rep {
   object obj;
 public:
   object_command_rep (object obj2): obj (obj2) {}
   void apply () { (void) call_scheme (obj->lookup ()); }
+  void apply (object args) {
+    (void) call_scheme (obj->lookup (),
+			array_lookup (as_array_object (args))); }
   tm_ostream& print (tm_ostream& out) { return out << obj; }
 };
 
@@ -326,15 +349,6 @@ object eval_file (string name) {
 bool exec_file (url u) {
   object ret= eval_file (materialize (u));
   return ret != object ("#<unspecified>"); }
-
-static inline array<SCM>
-array_lookup (array<object> a) {
-  const int n=N(a);
-  array<SCM> scm(n);
-  int i;
-  for (i=0; i<n; i++) scm[i]= a[i]->lookup();
-  return scm;
-}
 
 object call (const char* fun) {
   return object (call_scheme (eval_scheme(fun))); }

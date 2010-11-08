@@ -74,6 +74,28 @@
     (> (tree-arity t) (tree-minimal-arity t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special handles for images
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (string-input-handle t i w)
+  (if (tree-atomic? (tree-ref t i))
+      (list 'input
+	    (lambda (answer)
+	      (when answer
+		(tree-set (focus-tree) i answer)))
+	    "string"
+	    (lambda ()
+	      (list (tree->string (tree-ref t i))))
+	    w)
+      (list 'group "[n.a.]")))
+
+(define (image-handles t)
+  (list (list 'group "Width")
+	(string-input-handle t 1 "3em")
+	(list 'group "Height")
+	(string-input-handle t 2 "3em")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -155,6 +177,9 @@
 ;; The main focus icons bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (vertical-separator)
+  (list '|))
+
 (tm-define (standard-focus-icons t)
   (append (opt #t
 	       (cons* '=>
@@ -179,7 +204,7 @@
 			   "Remove tag")
 		     (lambda () (remove-structure-upwards))))
 
-	  (list '|)
+	  (vertical-separator)
 	  (list (list (list 'balloon (list 'icon "tm_similar_first.xpm")
 			    "Go to first similar tag")
 		      (lambda () (traverse-first))))
@@ -200,7 +225,7 @@
 		      (lambda () (traverse-last))))
 
 	  (opt (or (structured-horizontal? t) (structured-vertical? t))
-	       (list '|))
+	       (vertical-separator))
           (opt (structured-vertical? t)
 	       (list (list 'balloon (list 'icon "tm_insert_up.xpm")
 			   "Structured insert above")
@@ -236,7 +261,11 @@
           (opt (structured-vertical? t)
 	       (list (list 'balloon (list 'icon "tm_delete_down.xpm")
 			   "Structured remove downwards")
-		     (lambda () (structured-remove-down))))))
+		     (lambda () (structured-remove-down))))
+
+	  (opt (tree-is? t 'image)
+	       (cons (vertical-separator)
+		     (image-handles t)))))
 
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)

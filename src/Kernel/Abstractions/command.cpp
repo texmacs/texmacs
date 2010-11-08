@@ -10,6 +10,22 @@
 ******************************************************************************/
 
 #include "command.hpp"
+#include "Scheme/object.hpp"
+
+/******************************************************************************
+* default implementation of command application with arguments
+******************************************************************************/
+
+void
+command_rep::apply (object args) {
+  (void) args;
+  apply ();
+}
+
+void
+command::operator () (object args) {
+  rep->apply (args);
+}
 
 /******************************************************************************
 * standard commands without arguments
@@ -29,6 +45,10 @@ void std_command_rep::apply () { routine (); }
 command::command (void (*routine) (void)) :
   rep (tm_new<std_command_rep> (routine)) { INC_COUNT(rep); }
 
+
+/******************************************************************************
+* callbacks
+******************************************************************************/
 
 class generic_command_rep: public command_rep {
   void (*callback) (void*, void*); // callback

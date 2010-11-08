@@ -125,6 +125,7 @@ scheme_tree as_scheme_tree (object obj);
 list<string> as_list_string (object obj);
 list<tree> as_list_tree (object obj);
 path as_path (object obj);
+array<object> as_array_object (object obj);
 url as_url (object obj);
 command as_command (object obj);
 #ifdef WIDGET_H // FIXME: dirty hack

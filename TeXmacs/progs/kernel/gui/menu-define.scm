@@ -65,6 +65,10 @@
   "Helper routines for menu-widget and kbd-define"
   (list 'unquote `(lambda () ,x)))
 
+(define-public (make-input-promise x)
+  "Helper routines for menu-widget and kbd-define"
+  (list 'unquote `(lambda (answer) (when answer ,x))))
+
 (define-public (promise-source action)
   "Helper routines for menu-widget and kbd-define"
   (and (procedure? action)
@@ -138,7 +142,7 @@
   (group (:string?) ,(lambda (p) p))
   (input (:%1 :string? :%1 :string?)
     ,(lambda (p)
-       `(input ,(make-promise (cadr p))
+       `(input ,(make-input-promise (cadr p))
 	       ,(caddr p)
 	       ,(make-promise (cadddr p))
 	       ,(fifth p))))

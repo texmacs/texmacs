@@ -15,6 +15,7 @@
 #include "window.hpp"
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
+#include "Scheme/object.hpp"
 
 #ifdef OS_WIN32
 #define URL_CONCATER  '\\'
@@ -50,6 +51,8 @@ public:
   input_widget_rep (command call_back, string width, bool persistent);
   operator tree ();
   void update_draw_s ();
+  void commit ();
+  void cancel ();
 
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
@@ -95,6 +98,20 @@ input_widget_rep::update_draw_s () {
     for (int i=0; i<N(s); i++)
       draw_s[i]= '*';
   }
+}
+
+void
+input_widget_rep::commit () {
+  ok= true;
+  done= true;
+  call_back (list_object (object (s)));
+}
+
+void
+input_widget_rep::cancel () {
+  ok= false;
+  done= true;
+  call_back (list_object (object (false)));
 }
 
 void
@@ -218,9 +235,9 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
 
   /* other actions */
-  if (key == "return") { ok= true; done= true; call_back (); }
+  if (key == "return") commit ();
   else if ((key == "escape") || (key == "C-c") ||
-	   (key == "C-g")) { ok= false; done= true; call_back (); }
+	   (key == "C-g")) cancel ();
   else if ((key == "left") || (key == "C-b")) {
     if (pos>0) tm_char_backwards (s, pos); }
   else if ((key == "right") || (key == "C-f")) {
@@ -315,11 +332,8 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
 void
 input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
-  if (got_focus && !ev->flag && !done && !persistent) {
-    ok= false;
-    done= true;
-    call_back ();
-  }
+  if (got_focus && !ev->flag && !done && !persistent)
+    cancel ();
   else {
     got_focus= ev->flag;
     this << emit_invalidate_all ();

@@ -336,6 +336,14 @@
   (with value ((cadr p))
     (if (match? value ':menu-item) (menu-expand value) p)))
 
+(define (menu-expand-input p)
+  "Expand input menu item @p."
+  `(input ,(replace-procedures (cadr p))
+          ,(caddr p)
+	  ,(with r ((cadddr p))
+	     (if (pair? r) (car r)))
+	  ,(fifth p)))
+
 (define (menu-expand-list l)
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
@@ -361,7 +369,7 @@
   (| ,(lambda (p) `(| ,@(menu-expand-list (cdr p)))))
   (group ,replace-procedures)
   (symbol ,replace-procedures)
-  (input ,replace-procedures)
+  (input ,menu-expand-input)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
