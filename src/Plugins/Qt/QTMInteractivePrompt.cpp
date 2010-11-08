@@ -10,15 +10,15 @@
 
 #include "QTMInteractivePrompt.hpp"
 
-#include <QComboBox>;
-#include <QMainWindow>;
-#include <QHBoxLayout>;
-#include <QLabel>;
-#include <QEventLoop>;
-#include <QDialogButtonBox>;
+#include <QComboBox>
+#include <QMainWindow>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QEventLoop>
+#include <QDialogButtonBox>
 #include <QCompleter>
 #include <QDirModel>
-#include <QStatusbar>
+#include <QStatusBar>
 #include <QDialog>
 #include <QKeyEvent>
 #include <QApplication>
