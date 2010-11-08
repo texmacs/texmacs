@@ -919,8 +919,8 @@ set_default_font (string name) {
 }
 
 font
-get_default_font (bool tt) {
-        (void) tt;      
+get_default_font (bool tt, bool mini) {
+  (void) tt; (void) mini;
   // get the default font or monospaced font (if tt is true)
         
   // return a null font since this function is not called in the Qt port.
