@@ -15,7 +15,6 @@
 #include "qt_gui.hpp"
 #include "Scheme/object.hpp"
 #include <QObject>
-#include <QAction>
 #include <QTranslator>
 
 class QTMGuiHelper : public QObject {
@@ -40,23 +39,6 @@ public slots:
  
 signals:
   void refresh ();  
-};
-
-
-// this custom action frees its menu if it does not already have an owner.
-class QTMAction : public QAction {
-  
-  Q_OBJECT
-  
-public:
-  string str;
-  
-  QTMAction(QObject *parent = NULL);
-  ~QTMAction();
-  
-  public slots:
-  void doRefresh();
-  
 };
 
 

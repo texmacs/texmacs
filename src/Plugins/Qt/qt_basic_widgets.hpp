@@ -13,6 +13,8 @@
 #define QT_BASIC_WIDGETS_HPP
 #include "qt_widget.hpp"
 
+class QTMInputTextWidgetHelper;
+
 class qt_text_widget_rep: public qt_widget_rep {
 public:
   string str;
@@ -48,9 +50,16 @@ public:
   array<string> def;
   string text;
 
+  
+  QTMInputTextWidgetHelper *helper;
+  
   inline qt_input_text_widget_rep
     (command _cmd, string _type, array<string> _def):
-      cmd (_cmd), type (_type), def (_def), text ("") {}
+      cmd (_cmd), type (_type), def (_def), text (""), helper(NULL) {}
+
+  ~qt_input_text_widget_rep() { if (helper) delete helper; }
+
+  virtual QAction* as_qaction ();
 };
 
 #endif // QT_BASIC_WIDGETS_HPP

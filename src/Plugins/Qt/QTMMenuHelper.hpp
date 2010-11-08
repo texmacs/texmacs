@@ -17,8 +17,10 @@
 #include <QObject>
 #include <QAction>
 #include <QMenu>
+#include <QWidgetAction>
 
 #include "qt_gui.hpp"
+#include "qt_basic_widgets.hpp"
 
 class QTMCommand: public QObject {
   Q_OBJECT
@@ -58,5 +60,60 @@ public:
 public slots:
   void force();
 };
+
+// this custom action frees its menu if it does not already have an owner.
+class QTMAction : public QAction {
+  Q_OBJECT
+  
+public:
+  string str;
+  
+  QTMAction(QObject *parent = NULL);
+  ~QTMAction();
+  
+public slots:
+  void doRefresh();
+  
+};
+
+
+class QTMInputTextWidgetHelper : public QObject {
+  Q_OBJECT
+
+public:
+  qt_input_text_widget_rep* wid;
+  QList<QLineEdit*> views;
+
+  QTMInputTextWidgetHelper ( qt_input_text_widget_rep*  _wid ) 
+    : wid(_wid) { }
+  ~QTMInputTextWidgetHelper();
+  
+  void add(QLineEdit *);
+
+public slots:
+  void commit();
+  void remove(QObject *);
+  
+};
+
+class QTMWidgetAction : public QWidgetAction {
+  Q_OBJECT
+  
+public:
+  string str;
+  QTMInputTextWidgetHelper *helper;
+  
+  QTMWidgetAction(QObject *parent = NULL);
+  ~QTMWidgetAction();
+  
+  public slots:
+  void doRefresh();
+  
+protected:
+  QWidget * createWidget ( QWidget * parent );
+  
+};
+
+
 
 #endif // QTMMENUHELPER_HPP

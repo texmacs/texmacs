@@ -19,9 +19,9 @@
 #include "analyze.hpp"
 #include "converter.hpp"
 #include <QtGui>
-#include <QFileDialog>
-#include <QInputDialog>
 #include "QTMFileDialog.hpp"
+#include "QTMMenuHelper.hpp"
+#include "QTMGuiHelper.hpp"
 
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
@@ -330,7 +330,6 @@ public:
   // virtual void connect (slot s, widget w2, slot s2);
   // virtual void deconnect (slot s, widget w2, slot s2);
   virtual widget plain_window_widget (string s);
-
   void perform_dialog();
 };
 
@@ -729,3 +728,80 @@ qt_tm_widget_rep::do_interactive_prompt () {
 }
 
 #endif
+
+
+QTMWidgetAction::QTMWidgetAction(QObject *parent)
+: QWidgetAction (parent), helper(NULL) { 
+  QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
+}
+
+QTMWidgetAction::~QTMWidgetAction() {
+  QObject::disconnect (the_gui->gui_helper, 0, this, 0);
+//  if (menu() && !(menu()->parent())) delete menu(); 
+}
+
+
+void 
+QTMWidgetAction::doRefresh() {
+  if (N(str)) {
+    string t= tm_var_encode (str);
+    if (t == "Help") t= "Help ";
+    setText (to_qstring (t));
+  }
+}
+
+QWidget * 
+QTMWidgetAction::createWidget ( QWidget * parent ) {
+  QLineEdit *le = new QLineEdit (parent);
+//  le -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
+//  le -> setEditable (true);
+//  cb -> setDuplicatesEnabled (true); 
+//  cb -> completer () -> setCaseSensitivity (Qt::CaseSensitive);
+  if (helper && 0) {
+    helper -> add (le);
+    QObject::connect(le, SIGNAL(returnPressed()), helper, SLOT(commit()));
+    QObject::connect(le, SIGNAL(destroyed(QObject*)), helper, SLOT(remove(QObject*)));
+    cout << N(helper->wid->def);
+    cout << helper->wid->def<< LF;
+    cout << helper->wid->def[0]<< LF;
+    if (N(helper->wid->def) > 0) {
+      string s = helper->wid->def[0];
+      le -> setText (to_qstring (s));
+    }
+  }
+  return le;  
+}
+
+QAction *
+qt_input_text_widget_rep::as_qaction () {
+  if (!helper) {
+    helper = new QTMInputTextWidgetHelper(this);
+  }
+  QTMWidgetAction *a = new QTMWidgetAction ();
+  a->helper = helper;
+  return a;
+}
+
+void
+QTMInputTextWidgetHelper::commit () {
+  QLineEdit *le = qobject_cast <QLineEdit*> (sender());
+  wid->text = scm_quote (from_qstring (le -> text()));
+  cout << "Committing: " << wid->text << LF;
+//  wid->cmd ();
+}
+
+void
+QTMInputTextWidgetHelper::remove(QObject *obj) {
+  views.removeAll (qobject_cast<QLineEdit*>(obj));
+}
+
+void
+QTMInputTextWidgetHelper::add(QLineEdit *obj) {
+  if (!views.contains (obj)) views << obj;
+}
+
+
+QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
+  cout << "deleting" << LF;
+}
+
