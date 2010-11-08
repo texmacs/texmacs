@@ -622,7 +622,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
     ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
   }
 }
-#elif 0
+#elif 1
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
