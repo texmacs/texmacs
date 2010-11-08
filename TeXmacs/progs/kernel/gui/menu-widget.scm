@@ -232,6 +232,11 @@
   "Make @(vertical :menu-item-list) menu item."
   (widget-vmenu (make-menu-items (cadr p) style #f)))
 
+(define (make-menu-minibar p style)
+  "Make @(minibar :menu-item-list) menu items."
+  (with new-style (logior style widget-style-mini)
+    (widget-minibar-menu (make-menu-items (cdr p) new-style #t))))
+
 (define (make-menu-submenu p style)
   "Make @((:or -> =>) :menu-label :menu-item-list) menu item."
   (with (tag label . items) p
@@ -269,7 +274,7 @@
       (make-menu-items-list items new-style bar?))))
 
 (define (make-menu-mini p style bar?)
-  "Make @(mini :menu-item-list) menu items."
+  "Make @(mini :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
     (let* ((style-maxi (logand style (lognot widget-style-mini)))
 	   (style-mini (logior style-maxi widget-style-mini))
@@ -330,6 +335,8 @@
 	      ,(lambda (p style bar?) (list (make-menu-horizontal p style))))
   (vertical (:*)
 	    ,(lambda (p style bar?) (list (make-menu-vertical p style))))
+  (minibar (:*)
+	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (-> (:menu-label :*)
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (=> (:menu-label :*)
@@ -414,6 +421,7 @@
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
+  (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (-> ,replace-procedures)
   (=> ,replace-procedures)
   (tile ,replace-procedures)

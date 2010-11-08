@@ -98,6 +98,16 @@ tile_menu (array<widget> a, int cols) {
 }
 
 widget
+transparent_button (widget w) {
+  return abstract (transparent_button (concrete (w)));
+}
+
+widget
+minibar_menu (array<widget> a) {
+  return transparent_button (horizontal_menu (a));
+}
+
+widget
 switch_widget (array<widget> a, array<string> name, int init) {
   return abstract (switch_widget (concrete (a), name, init));
 }

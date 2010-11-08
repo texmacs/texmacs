@@ -224,6 +224,10 @@ widget horizontal_menu (array<widget> a)
 	return tm_new <aqua_menu_rep> (mi);	
 }
 
+widget minibar_menu (array<widget> a) {
+  return horizontal_menu (a);
+}
+
 widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 // a vertical menu made up of the widgets in a
 

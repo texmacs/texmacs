@@ -131,6 +131,8 @@ widget vertical_menu (array<widget> a);
   // a vertical menu made up of the widgets in a
 widget tile_menu (array<widget> a, int cols);
   // a menu rendered as a table of cols columns wide & made up of widgets in a
+widget minibar_menu (array<widget> a);
+  // a small minibar, which can for instance occur inside another iconbar
 widget menu_separator (bool vertical);
   // a horizontal or vertical menu separator
 widget menu_group (string name, int style);

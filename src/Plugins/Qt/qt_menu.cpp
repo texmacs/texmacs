@@ -195,6 +195,11 @@ horizontal_menu (array<widget> arr) {
 }
 
 widget
+minibar_menu (array<widget> a) {
+  return horizontal_menu (a);
+}
+
+widget
 vertical_menu (array<widget> a) {
   // a vertical menu made up of the widgets in a
   return horizontal_menu (a);

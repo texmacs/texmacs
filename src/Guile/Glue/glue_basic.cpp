@@ -4198,6 +4198,19 @@ tmg_widget_tmenu (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_widget_minibar_menu (SCM arg1) {
+  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-minibar-menu");
+
+  array_widget in1= scm_to_array_widget (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= minibar_menu (in1);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_widget_separator (SCM arg1) {
   SCM_ASSERT_BOOL (arg1, SCM_ARG1, "widget-separator");
 
@@ -4854,6 +4867,7 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-hmenu", (FN) tmg_widget_hmenu, 1, 0, 0);
   scm_new_procedure ("widget-vmenu", (FN) tmg_widget_vmenu, 1, 0, 0);
   scm_new_procedure ("widget-tmenu", (FN) tmg_widget_tmenu, 2, 0, 0);
+  scm_new_procedure ("widget-minibar-menu", (FN) tmg_widget_minibar_menu, 1, 0, 0);
   scm_new_procedure ("widget-separator", (FN) tmg_widget_separator, 1, 0, 0);
   scm_new_procedure ("widget-menu-group", (FN) tmg_widget_menu_group, 2, 0, 0);
   scm_new_procedure ("widget-pulldown-button", (FN) tmg_widget_pulldown_button, 2, 0, 0);

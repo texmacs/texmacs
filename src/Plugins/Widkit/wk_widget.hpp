@@ -100,6 +100,7 @@ wk_widget text_wk_widget (string s, int style= 0, bool tsp= false);
 wk_widget menu_text_wk_widget (string s, int style, color col,
 			       bool tsp=true, bool tt= false);
 wk_widget xpm_wk_widget (url file_name, bool transp= true);
+wk_widget transparent_button (wk_widget w);
 wk_widget command_button (wk_widget w, command cmd,
 			  int style= 0, bool button_flag= false);
 wk_widget command_button (wk_widget lw, wk_widget rw, command cmd,
