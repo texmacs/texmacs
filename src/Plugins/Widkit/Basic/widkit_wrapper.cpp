@@ -123,14 +123,7 @@ menu_separator (bool vert) {
 }
 
 widget
-text_widget (string s, int style, bool tsp) {
-  (void) style;
-  return abstract (text_wk_widget (s, style, tsp));
-}
-
-widget
 menu_text_widget (string s, int style, color col, bool tsp, bool tt) {
-  (void) style;
   return abstract (menu_text_wk_widget (s, style, col, tsp, tt));
 }
 
@@ -158,7 +151,7 @@ command_button (widget lw, widget cw, widget rw, command cmd, bool e, bool c) {
 widget
 menu_group (string name) {
   widget lw= empty_widget ();
-  widget cw= text_widget (name, dark_grey, false);
+  widget cw= text_widget (name, 0, dark_grey, false);
   widget rw= empty_widget ();
   return command_button (lw, cw, rw, noop, false, true);
 }
