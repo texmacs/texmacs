@@ -199,18 +199,21 @@ command_button_rep::handle_mouse (mouse_event ev) {
 ******************************************************************************/
 
 wk_widget
-command_button (wk_widget w, command cmd, bool button_flag) {
+command_button (wk_widget w, command cmd, int style, bool button_flag) {
+  (void) style;
   return tm_new<command_button_rep> (w, cmd, button_flag);
 }
 
 wk_widget
-command_button (wk_widget lw, wk_widget rw, command cmd) {
+command_button (wk_widget lw, wk_widget rw, command cmd, int style) {
+  (void) style;
   return tm_new<command_button_rep> (lw, rw, cmd);
 }
 
 wk_widget
-command_button (wk_widget lw, wk_widget cw, wk_widget rw,
-		command cmd, bool e, bool c)
+command_button (wk_widget lw, wk_widget cw, wk_widget rw, command cmd,
+		int style, bool e, bool c)
 {
+  (void) style;
   return tm_new<command_button_rep> (lw, cw, rw, cmd, e, c);
 }

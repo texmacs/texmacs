@@ -4259,14 +4259,14 @@ tmg_widget_menu_button (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM ar
   SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-menu-button");
   SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-menu-button");
   SCM_ASSERT_STRING (arg4, SCM_ARG4, "widget-menu-button");
-  SCM_ASSERT_BOOL (arg5, SCM_ARG5, "widget-menu-button");
+  SCM_ASSERT_INT (arg5, SCM_ARG5, "widget-menu-button");
   SCM_ASSERT_BOOL (arg6, SCM_ARG6, "widget-menu-button");
 
   widget in1= scm_to_widget (arg1);
   command in2= scm_to_command (arg2);
   string in3= scm_to_string (arg3);
   string in4= scm_to_string (arg4);
-  bool in5= scm_to_bool (arg5);
+  int in5= scm_to_int (arg5);
   bool in6= scm_to_bool (arg6);
 
   // SCM_DEFER_INTS;

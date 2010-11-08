@@ -121,10 +121,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-menu-entry-button style bar? check label short command)
-  (with l (make-menu-label label style)
+  (let* ((l (make-menu-label label style))
+	 (pressed? (and bar? (!= check "")))
+	 (new-style (logior style (if pressed? widget-style-pressed 0))))
     (if bar?
-	(widget-menu-button l command "" "" (active? style) #f)
-	(widget-menu-button l command check short (active? style) #f))))
+	(widget-menu-button l command "" "" new-style (active? style))
+	(widget-menu-button l command check short style (active? style)))))
 
 (define (make-menu-entry-shortcut label action opt-key)
   (cond (opt-key (kbd-system opt-key #t))
@@ -196,10 +198,10 @@
     (if opt-cmd
 	(widget-menu-button (widget-box '() sym col #t #f)
 			    (make-menu-command (apply opt-cmd '()))
-			    "" "" (active? style) #f)
+			    "" "" style (active? style))
 	(widget-menu-button (widget-box '() sym col #t #f)
 			    (make-menu-command (insert sym))
-			    "" "" (active? style) #f))))
+			    "" "" style (active? style)))))
 
 (define (make-menu-symbol p style)
   "Make @(symbol :string? :*) menu item."

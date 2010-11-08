@@ -394,10 +394,11 @@ TMMenuItem * aqua_balloon_widget_rep::as_menuitem()
 
 
 widget menu_button (widget w, command cmd, string pre, string ks,
-	       	    bool ok, bool pressed)
+	       	    int style, bool ok)
 // a command button with an optional prefix (o, * or v) and
 // keyboard shortcut; if ok does not hold, then the button is greyed
 {
+  (void) style;
   TMMenuItem *mi = nil;
   
   if (typeid(*(w.rep)) == typeid(simple_widget_rep)) {

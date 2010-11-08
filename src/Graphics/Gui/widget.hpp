@@ -142,10 +142,10 @@ widget pullright_button (widget w, promise<widget> pw);
   // a button w with a lazy pullright menu pw
 widget menu_button (widget w, command cmd,
 		    string pre= "", string ks= "",
-		    bool ok= true, bool pressed= false);
+		    int style= 0, bool ok= true);
   // a command button with an optional prefix (o, * or v) and
   // keyboard shortcut; if ok does not hold, then the button is greyed
-  // if pressed holds, then the button is displayed as a pressed button
+  // for pressed styles, the button is displayed as a pressed button
 widget balloon_widget (widget w, widget help);
   // given a button widget w, specify a help balloon which should be displayed
   // when the user leaves the mouse pointer on the button for a small while

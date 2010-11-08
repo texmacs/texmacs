@@ -417,7 +417,7 @@ file_chooser_widget_rep::input_widget (string what, string ref, int type) {
 wk_widget
 file_chooser_widget_rep::button_widget (string what, int type) {
   return command_button (text_wk_widget (translate (what)),
-			 file_chooser_command (this, type), true);
+			 file_chooser_command (this, type), 0, true);
 }
 
 file_chooser_widget_rep::file_chooser_widget_rep (

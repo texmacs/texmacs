@@ -191,8 +191,11 @@
 		      (variant-menu-items t)))
 	  (opt (numbered-context? t)
 	       ;; FIXME: itemize, enumerate, eqnarray*
-	       (list (list 'balloon (list 'icon "tm_numbered.xpm")
-			   "Toggle numbering")
+	       (list (list 'check
+			   (list 'balloon (list 'icon "tm_numbered.xpm")
+				 "Toggle numbering")
+			   "v" 
+			   (lambda () (check-number? (focus-tree))))
 		     (lambda () (number-toggle (focus-tree)))))
 	  (opt (toggle-context? t)
 	       (list (list 'balloon (list 'icon "tm_unfold.xpm")
