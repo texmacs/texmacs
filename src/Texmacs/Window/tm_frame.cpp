@@ -27,8 +27,8 @@ tm_frame_rep::~tm_frame_rep () {}
 
 widget
 make_menu_widget (object menu) {
-  widget w= as_widget (call ("make-menu-widget", menu, true));
-  //string s= "(make-menu-widget '" * menu * " #t)";
+  widget w= as_widget (call ("make-menu-widget", menu, 0));
+  //string s= "(make-menu-widget '" * menu * " 0)";
   //widget w= as_widget (eval (s));
   if (is_nil (w)) {
     array<widget> a (0);

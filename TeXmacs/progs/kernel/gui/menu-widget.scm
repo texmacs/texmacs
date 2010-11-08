@@ -24,7 +24,7 @@
   (apply tm-display-error args)
   (widget-text "Error" 0 (color "black") #t))
 
-(define (make-menu-bad-format p e?)
+(define (make-menu-bad-format p style)
   (make-menu-error "menu has bad format in " (object->string p)))
 
 (define (make-menu-empty) (widget-hmenu '()))
@@ -65,7 +65,10 @@
 (define (translatable? s)
   (or (string? s) (func? s 'concat) (func? s 'verbatim)))
 
-(define (make-menu-label p e? . opt)
+(define (active? style)
+  (== (logand style widget-style-inert) 0))
+
+(define (make-menu-label p style . opt)
   "Make widget for menu label @p."
   ;; Possibilities for p:
   ;;   <label> :: (balloon <label> <string>)
@@ -76,15 +79,15 @@
   ;;     Example default values are: family="roman", class="mr",
   ;;     series="medium", shape="normal", size=10, dpi=600.
   ;;   <label> :: <string>
-  ;;     Simple menu label, its display style is controlled by tt? and e?
+  ;;     Simple menu label, its display style is controlled by tt? and style
   ;;   <label> :: (icon <string>)
   ;;     Pixmap menu label, the <string> is the name of the pixmap.
   (let ((tt? (and (nnull? opt) (car opt)))
-	(col (color (if e? "black" "dark grey"))))
+	(col (color (if (active? style) "black" "dark grey"))))
     (cond ((translatable? p)		; "text"
 	   (widget-text (translate p) 0 col #t))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
-  	   (make-menu-label (cadr p) e? tt?))
+  	   (make-menu-label (cadr p) style tt?))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
@@ -117,11 +120,11 @@
 ;; Menu entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-entry-button e? bar? check label short command)
-  (with l (make-menu-label label e?)
+(define (make-menu-entry-button style bar? check label short command)
+  (with l (make-menu-label label style)
     (if bar?
-	(widget-menu-button l command "" "" e? #f)
-	(widget-menu-button l command check short e? #f))))
+	(widget-menu-button l command "" "" (active? style) #f)
+	(widget-menu-button l command check short (active? style) #f))))
 
 (define (make-menu-entry-shortcut label action opt-key)
   (cond (opt-key (kbd-system opt-key #t))
@@ -157,20 +160,20 @@
 	 (make-menu-entry-attrs (cadr label) action opt-key (cddr label)))
 	(else (values label action opt-key opt-check))))
 
-(define (make-menu-entry-sub p e? bar?)
+(define (make-menu-entry-sub p style bar?)
   (receive
       (label action opt-key opt-check)
       (make-menu-entry-attrs (car p) (cAr p) #f #f)
     (make-menu-entry-button
-     e? bar?
+     style bar?
      (make-menu-entry-check opt-check action)
      (make-menu-entry-dots label action)
      (make-menu-entry-shortcut label action opt-key)
-     (make-menu-command (if e? (apply action '()))))))
+     (make-menu-command (if (active? style) (apply action '()))))))
 
-(define (make-menu-entry p e? bar?)
+(define (make-menu-entry p style bar?)
   "Make @:menu-wide-item menu item."
-  (let ((but (make-menu-entry-sub p e? bar?))
+  (let ((but (make-menu-entry-sub p style bar?))
 	(label (car p)))
     (if (tuple? label 'balloon 2)
 	(let* ((text (caddr label))
@@ -188,17 +191,17 @@
 ;; Symbol fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-symbol-button e? sym opt-cmd)
-  (with col (color (if e? "black" "dark grey"))
+(define (make-menu-symbol-button style sym opt-cmd)
+  (with col (color (if (active? style) "black" "dark grey"))
     (if opt-cmd
 	(widget-menu-button (widget-box '() sym col #t #f)
 			    (make-menu-command (apply opt-cmd '()))
-			    "" "" e? #f)
+			    "" "" (active? style) #f)
 	(widget-menu-button (widget-box '() sym col #t #f)
 			    (make-menu-command (insert sym))
-			    "" "" e? #f))))
+			    "" "" (active? style) #f))))
 
-(define (make-menu-symbol p e?)
+(define (make-menu-symbol p style)
   "Make @(symbol :string? :*) menu item."
   ;; Possibilities for p:
   ;;   <menu-symbol> :: (symbol <symbol-string> [<cmd>])
@@ -209,33 +212,33 @@
 	  (let* ((source (and opt-cmd (promise-source opt-cmd)))
 		 (sh (kbd-find-shortcut (if source source symstring) #f)))
 	    (if (== sh "")
-		(make-menu-symbol-button e? symstring opt-cmd)
+		(make-menu-symbol-button style symstring opt-cmd)
 		(widget-balloon
-		 (make-menu-symbol-button e? symstring opt-cmd)
+		 (make-menu-symbol-button style symstring opt-cmd)
 		 (make-menu-label (string-append "Keyboard equivalent: " sh)
-				  e?))))))))
+				  style))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Composite menus and submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-horizontal p e?)
+(define (make-menu-horizontal p style)
   "Make @(horizontal :menu-item-list) menu item."
-  (widget-hmenu (make-menu-items (cadr p) e? #t)))
+  (widget-hmenu (make-menu-items (cadr p) style #t)))
 
-(define (make-menu-vertical p e?)
+(define (make-menu-vertical p style)
   "Make @(vertical :menu-item-list) menu item."
-  (widget-vmenu (make-menu-items (cadr p) e? #f)))
+  (widget-vmenu (make-menu-items (cadr p) style #f)))
 
-(define (make-menu-submenu p e?)
+(define (make-menu-submenu p style)
   "Make @((:or -> =>) :menu-label :menu-item-list) menu item."
   (with (tag label . items) p
     (let ((button
 	   ((cond ((== tag '=>) widget-pulldown-button)
 		  ((== tag '->) widget-pullright-button))
-	    (make-menu-label label e?)
+	    (make-menu-label label style)
 	    (object->promise-widget
-	     (lambda () (make-menu-widget (list 'vertical items) e?))))))
+	     (lambda () (make-menu-widget (list 'vertical items) style))))))
       (if (tuple? label 'balloon 2)
 	  (let* ((text (caddr label))
 		 (ftxt (translate text))
@@ -243,80 +246,92 @@
 	    (widget-balloon button twid))
 	  button))))
 
-(define (make-menu-tile p e?)
+(define (make-menu-tile p style)
   "Make @(tile :integer? :menu-item-list) menu item."
   (with (tag width . items) p
-    (widget-tmenu (make-menu-items items e? #f) width)))
+    (widget-tmenu (make-menu-items items style #f) width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-if p e? bar?)
+(define (make-menu-if p style bar?)
   "Make @(if :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
-    (if (pred?) (make-menu-items-list items e? bar?) '())))
+    (if (pred?) (make-menu-items-list items style bar?) '())))
 
-(define (make-menu-when p e? bar?)
+(define (make-menu-when p style bar?)
   "Make @(when :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
-    (make-menu-items-list items (and e? (pred?)) bar?)))
+    (with new-style (logior style (if (pred?) 0 widget-style-inert))
+      (make-menu-items-list items new-style bar?))))
 
-(define (make-menu-link p e? bar?)
+(define (make-menu-link p style bar?)
   "Make @(link :%1) menu items."
   (with linked ((eval (cadr p)))
-    (if linked (make-menu-items linked e? bar?)
+    (if linked (make-menu-items linked style bar?)
 	(make-menu-error "bad link: " (object->string (cadr p))))))
 
-(define (make-menu-promise p e? bar?)
+(define (make-menu-promise p style bar?)
   "Make @(promise :%1) menu items."
   (with value ((cadr p))
-    (if (match? value ':menu-item) (make-menu-items value e? bar?)
+    (if (match? value ':menu-item) (make-menu-items value style bar?)
 	(make-menu-error "promise did not yield a menu: " value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for making menu items
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-items-list l e? bar?)
+(define (make-menu-items-list l style bar?)
   "Make menu items for each element in @l and append results."
-  (append-map (lambda (p) (make-menu-items p e? bar?)) l))
+  (append-map (lambda (p) (make-menu-items p style bar?)) l))
 
-(define (make-menu-items p e? bar?)
-  "Make menu items @p. The items are on a bar if @bar? and greyed if not @e?."
+(define (make-menu-items p style bar?)
+  "Make menu items @p. The items are on a bar if @bar? and of a given @style."
   (if (pair? p)
       (cond ((match? p '(input :%1 :string? :%1 :string?))
 	     (list (make-menu-input p)))
 	    ((translatable? (car p))
-	     (list (make-menu-entry p e? bar?)))
+	     (list (make-menu-entry p style bar?)))
 	    ((symbol? (car p))
 	     (with result (ahash-ref make-menu-items-table (car p))
 	       (if (or (not result) (not (match? (cdr p) (car result))))
-		   (make-menu-items-list p e? bar?)
-		   ((cadr result) p e? bar?))))
+		   (make-menu-items-list p style bar?)
+		   ((cadr result) p style bar?))))
 	    ((match? (car p) ':menu-wide-label)
-	     (list (make-menu-entry p e? bar?)))
+	     (list (make-menu-entry p style bar?)))
 	    (else
-	     (make-menu-items-list p e? bar?)))
+	     (make-menu-items-list p style bar?)))
       (cond ((== p '---) (list (make-menu-hsep)))
 	    ((== p '|) (list (make-menu-vsep)))
 	    ((== p '()) p)
-	    (else (list (make-menu-bad-format p e?))))))
+	    (else (list (make-menu-bad-format p style))))))
 
 (define-table make-menu-items-table
-  (group (:string?) ,(lambda (p e? bar?) (list (make-menu-group (cadr p)))))
-  (symbol (:string? :*) ,(lambda (p e? bar?) (list (make-menu-symbol p e?))))
+  (group (:string?)
+	 ,(lambda (p style bar?) (list (make-menu-group (cadr p)))))
+  (symbol (:string? :*)
+	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
-    ,(lambda (p e? bar?) (list (make-menu-input p))))
-  (link (:%1) ,(lambda (p e? bar?) (make-menu-link p e? bar?)))
-  (horizontal (:*) ,(lambda (p e? bar?) (list (make-menu-horizontal p e?))))
-  (vertical (:*) ,(lambda (p e? bar?) (list (make-menu-vertical p e?))))
-  (-> (:menu-label :*) ,(lambda (p e? bar?) (list (make-menu-submenu p e?))))
-  (=> (:menu-label :*) ,(lambda (p e? bar?) (list (make-menu-submenu p e?))))
-  (tile (:integer? :*) ,(lambda (p e? bar?) (list (make-menu-tile p e?))))
-  (if (:%1 :*) ,(lambda (p e? bar?) (make-menu-if p e? bar?)))
-  (when (:%1 :*) ,(lambda (p e? bar?) (make-menu-when p e? bar?)))
-  (promise (:%1) ,(lambda (p e? bar?) (make-menu-promise p e? bar?))))
+         ,(lambda (p style bar?) (list (make-menu-input p))))
+  (link (:%1)
+	,(lambda (p style bar?) (make-menu-link p style bar?)))
+  (horizontal (:*)
+	      ,(lambda (p style bar?) (list (make-menu-horizontal p style))))
+  (vertical (:*)
+	    ,(lambda (p style bar?) (list (make-menu-vertical p style))))
+  (-> (:menu-label :*)
+      ,(lambda (p style bar?) (list (make-menu-submenu p style))))
+  (=> (:menu-label :*)
+      ,(lambda (p style bar?) (list (make-menu-submenu p style))))
+  (tile (:integer? :*)
+	,(lambda (p style bar?) (list (make-menu-tile p style))))
+  (if (:%1 :*)
+      ,(lambda (p style bar?) (make-menu-if p style bar?)))
+  (when (:%1 :*)
+        ,(lambda (p style bar?) (make-menu-when p style bar?)))
+  (promise (:%1)
+	   ,(lambda (p style bar?) (make-menu-promise p style bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu expansion
@@ -385,16 +400,16 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-menu-main p e?)
+(define (make-menu-main p style)
   "Transform the menu @p into a widget."
-  (with l (make-menu-items p e? #f)
+  (with l (make-menu-items p style #f)
     (cond ((null? l) (make-menu-empty))
 	  ((and (list? l) (null? (cdr l))) (car l))
-	  (else (make-menu-bad-format p e?)))))
+	  (else (make-menu-bad-format p style)))))
 
-(tm-define (make-menu-widget p e?)
+(tm-define (make-menu-widget p style)
   (:type (-> object widget))
   (:synopsis "Transform a menu into a widget.")
   (:argument p "a scheme object which represents the menu")
-  (:argument e? "greyed menu if @e? is @#f")
-  ((wrap-catch make-menu-main) p e?))
+  (:argument style "menu style")
+  ((wrap-catch make-menu-main) p style))
