@@ -94,6 +94,15 @@ QTMKeyCommand::apply()  {
   }
 }
 
+
+/*******************************************************************************
+* Default action is empty.
+*******************************************************************************/
+
+QAction *qt_widget_rep::as_qaction() { return new QTMAction (NULL); };
+
+/******************************************************************************/
+
 class qt_menu_rep: public qt_widget_rep {
 public:
   QAction  *item;

@@ -26,7 +26,7 @@ public:
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
 
-  virtual QAction *as_qaction() { return NULL; };
+  virtual QAction *as_qaction() ; // { return NULL; };
   // virtual TMMenuItem *as_menuitem() { return NULL; };
 };
 
