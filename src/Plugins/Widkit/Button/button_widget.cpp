@@ -18,24 +18,29 @@
 * Routines for abstract button_widgets
 ******************************************************************************/
 
-button_widget_rep::button_widget_rep (wk_widget w2, bool rf2, bool bf2):
-  attribute_widget_rep (1, south_west),
-  extra_left (0), extra_right (0), rflag (rf2), button_flag (bf2),
-  enabled(true), centered(false), has_pull_down (false),
-  status (false), inside (false)
+button_widget_rep::button_widget_rep
+  (wk_widget w2, bool rf2, int style2, bool bf2):
+    attribute_widget_rep (1, south_west),
+    extra_left (0), extra_right (0), rflag (rf2),
+    style (style2), button_flag (bf2),
+    enabled(true), centered(false), has_pull_down (false),
+    status (false), inside (false)
 { a[0]= w2; }
     
-button_widget_rep::button_widget_rep (wk_widget lw, wk_widget rw):
-  attribute_widget_rep (2, south_west),
-  extra_left (0), extra_right (0), rflag (false), button_flag (false),
-  enabled(true), centered(false), has_pull_down (false),
-  status (false), inside (false)
+button_widget_rep::button_widget_rep
+  (wk_widget lw, wk_widget rw, int style2):
+    attribute_widget_rep (2, south_west),
+    extra_left (0), extra_right (0), rflag (false),
+    style (style2), button_flag (false),
+    enabled(true), centered(false), has_pull_down (false),
+    status (false), inside (false)
 { a[0]= lw; a[1]= rw; }
     
-button_widget_rep::button_widget_rep (
-  wk_widget lw, wk_widget cw, wk_widget rw, bool e, bool c):
+button_widget_rep::button_widget_rep
+  (wk_widget lw, wk_widget cw, wk_widget rw, int style2, bool e, bool c):
     attribute_widget_rep (3, south_west),
-    extra_left (0), extra_right (0), rflag (false), button_flag (false),
+    extra_left (0), extra_right (0), rflag (false),
+    style (style2), button_flag (false),
     enabled(e), centered(c), has_pull_down (false),
     status (false), inside (false)
 { a[0]= lw; a[1]= cw; a[2]= rw; }
@@ -155,25 +160,27 @@ button_widget_rep::handle_set_coord2 (set_coord2_event ev) {
 class command_button_rep: public button_widget_rep {
   command cmd;
 public:
-  command_button_rep (wk_widget w, command cmd, bool button_flag= false);
-  command_button_rep (wk_widget lw, wk_widget rw, command cmd);
-  command_button_rep (wk_widget lw, wk_widget cw, wk_widget rw,
-		      command cmd, bool e, bool c);
+  command_button_rep (wk_widget w, command cmd,
+		      int style, bool button_flag);
+  command_button_rep (wk_widget lw, wk_widget rw, command cmd,
+		      int style);
+  command_button_rep (wk_widget lw, wk_widget cw, wk_widget rw, command cmd,
+		      int style, bool e, bool c);
   void handle_mouse (mouse_event ev);
 };
 
 command_button_rep::command_button_rep (
-  wk_widget w, command cmd2, bool bf):
-    button_widget_rep (w, false, bf), cmd (cmd2) {}
+ wk_widget w, command cmd2, int style, bool bf):
+    button_widget_rep (w, false, style, bf), cmd (cmd2) {}
 
 command_button_rep::command_button_rep (
-  wk_widget lw, wk_widget rw, command cmd2):
-    button_widget_rep (lw, rw), cmd (cmd2) {}
+  wk_widget lw, wk_widget rw, command cmd2, int style):
+    button_widget_rep (lw, rw, style), cmd (cmd2) {}
 
 command_button_rep::command_button_rep (
-  wk_widget lw, wk_widget cw, wk_widget rw,
-  command cmd2, bool e, bool c):
-    button_widget_rep (lw, cw, rw, e, c), cmd (cmd2) {}
+  wk_widget lw, wk_widget cw, wk_widget rw, command cmd2,
+  int style, bool e, bool c):
+    button_widget_rep (lw, cw, rw, style, e, c), cmd (cmd2) {}
 
 void
 command_button_rep::handle_mouse (mouse_event ev) {
@@ -200,20 +207,17 @@ command_button_rep::handle_mouse (mouse_event ev) {
 
 wk_widget
 command_button (wk_widget w, command cmd, int style, bool button_flag) {
-  (void) style;
-  return tm_new<command_button_rep> (w, cmd, button_flag);
+  return tm_new<command_button_rep> (w, cmd, style, button_flag);
 }
 
 wk_widget
 command_button (wk_widget lw, wk_widget rw, command cmd, int style) {
-  (void) style;
-  return tm_new<command_button_rep> (lw, rw, cmd);
+  return tm_new<command_button_rep> (lw, rw, cmd, style);
 }
 
 wk_widget
 command_button (wk_widget lw, wk_widget cw, wk_widget rw, command cmd,
 		int style, bool e, bool c)
 {
-  (void) style;
-  return tm_new<command_button_rep> (lw, cw, rw, cmd, e, c);
+  return tm_new<command_button_rep> (lw, cw, rw, cmd, style, e, c);
 }

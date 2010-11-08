@@ -56,7 +56,7 @@ gravity opposite (gravity grav);
 
 popup_button_rep::popup_button_rep (
   wk_widget w, wk_widget pw, gravity wh, bool fl):
-    button_widget_rep (w, wh==east, fl),
+    button_widget_rep (w, wh==east, 0, fl),
     prom (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
     where (wh), require_map (false), stick (false)
 {
