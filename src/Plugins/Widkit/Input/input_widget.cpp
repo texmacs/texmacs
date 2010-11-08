@@ -81,10 +81,6 @@ input_widget_rep::input_widget_rep (int st2, command cb2, string w2, bool p2):
   got_focus (false), hilit (false)
 {
   if ((style & WIDGET_STYLE_MINI) != 0) dh= 1.5 * PIXEL;
-  if (use_macos_fonts ()) {
-    dw += PIXEL;
-    dh += 3*PIXEL;
-  }
   dw *= SHRINK;
   dh *= SHRINK;
   font fn= get_default_styled_font (style);
@@ -170,8 +166,12 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
   layout_default (ren, 0, 0, w, h);
   if (true) {
-    layout_pastel (ren, 0, ecart, w, h - ecart);
-    layout_lower (ren, 0, ecart, w, h - ecart);
+    SI yy= ((ecart + PIXEL/2) / PIXEL) * PIXEL;
+    SI hh= ((h - 2*ecart + PIXEL/2) / PIXEL) * PIXEL;
+    if (yy + hh + 2*PIXEL <= h) hh += 2 * PIXEL;
+    else if (yy + hh + PIXEL <= h) hh += PIXEL;
+    layout_pastel (ren, 0, yy, w, hh);
+    layout_lower (ren, 0, yy, w, hh);
   }
   else if (got_focus && hilit) {
     layout_dark (ren, 0, 0, w, h);

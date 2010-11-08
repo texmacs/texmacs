@@ -44,12 +44,7 @@ text_widget_rep::text_widget_rep (
     original (s2), s (s2), col (c2),
     transparent (t2), tt (tt2),
     dw (dw2+2*PIXEL), dh (dh2+2*PIXEL)
-{
-  if (use_macos_fonts ()) {
-    dw += PIXEL;
-    dh += 3*PIXEL;
-  }
-}
+{}
 
 text_widget_rep::operator tree () {
   return tree (TUPLE, "text", s);

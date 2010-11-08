@@ -145,9 +145,9 @@ x_gui_rep::default_font_sub (bool tt, bool mini) {
   if (mini && fam == "ecrm") fam= "ecss";
   for (i=j; j<n; j++) if (s[j] == '@') break;
   int sz= (j<n? as_int (s (i, j)): 10);
-  if (mini) sz= (int) (0.8 * sz);
   if (j<n) j++;
   int dpi= (j<n? as_int (s (j, n)): 300);
+  if (mini) { sz= (int) (0.5 * sz); dpi= (int) (1.6 * dpi); }
   if (use_macos_fonts ()) {
     tree lucida_fn= tuple ("apple-lucida", "ss", "medium", "right");
     lucida_fn << as_string (sz) << as_string ((int) (0.95 * dpi));

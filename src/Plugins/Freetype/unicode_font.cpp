@@ -64,6 +64,12 @@ unicode_font_rep::unicode_font_rep (string name,
   get_extents ("f", ex);
   y1= ex->y1;
   y2= ex->y2;
+  get_extents ("p", ex);
+  y1= min (y1, ex->y1);
+  y2= max (y2, ex->y2);
+  get_extents ("d", ex);
+  y1= min (y1, ex->y1);
+  y2= max (y2, ex->y2);
   display_size = y2-y1;
   design_size  = size << 8;
 
