@@ -379,7 +379,15 @@
 	((symbol? (car p))
 	 (with result (ahash-ref menu-expand-table (car p))
 	   (if result ((car result) p) p)))
-	((match? (car p) ':menu-wide-label) (replace-procedures p))
+	((match? (car p) '(check :menu-wide-label :string? :%1))
+	 (with a (cdar p)
+	   (list (list 'check
+		       (menu-expand (car a))
+		       (cadr a)
+		       ((caddr a)))
+		 (replace-procedures (cadr p)))))
+	((match? (car p) ':menu-wide-label)
+	 (replace-procedures p))
 	(else (menu-expand-list p))))
 
 (define-table menu-expand-table

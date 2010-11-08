@@ -194,12 +194,15 @@
 	       (list (list 'check
 			   (list 'balloon (list 'icon "tm_numbered.xpm")
 				 "Toggle numbering")
-			   "v" 
+			   "v"
 			   (lambda () (check-number? (focus-tree))))
 		     (lambda () (number-toggle (focus-tree)))))
 	  (opt (toggle-context? t)
-	       (list (list 'balloon (list 'icon "tm_unfold.xpm")
-			   "Fold / Unfold")
+	       (list (list 'check
+			   (list 'balloon (list 'icon "tm_unfold.xpm")
+				 "Fold / Unfold")
+			   "v"
+			   (lambda () (toggle-second-context? (focus-tree))))
 		     (lambda () (toggle-toggle (focus-tree)))))
 	  (opt #t
 	       (list (list 'balloon (list 'icon "tm_focus_help.xpm")

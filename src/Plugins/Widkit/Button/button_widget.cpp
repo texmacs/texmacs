@@ -115,9 +115,16 @@ void
 button_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   renderer ren= win->get_renderer ();
   layout_default (ren, 0, 0, w, h);
-  if (button_flag || (inside && !status && enabled))
+  if ((style & WIDGET_STYLE_PRESSED) != 0) {
+    if (status) layout_higher (ren, 0, 0, w, h);
+    else {
+      layout_dark (ren, 0, 0, w, h);
+      layout_lower (ren, 0, 0, w, h);
+    }
+  }
+  else if (button_flag || (inside && !status && enabled))
     layout_higher (ren, 0, 0, w, h);
-  if (status) {
+  else if (status) {
     layout_dark (ren, 0, 0, w, h);
     layout_lower (ren, 0, 0, w, h);
   }
