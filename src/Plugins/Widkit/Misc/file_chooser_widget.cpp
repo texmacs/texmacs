@@ -492,7 +492,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
 #endif
 
   int cwn= 11;
-  if (type == "image") cwn= 17;
+  if (type == "image") cwn= 16;
   if (type == "directory") cwn= 7;
   array<wk_widget> cw (cwn);
   array<string> cn (cwn);
@@ -542,13 +542,14 @@ file_chooser_widget_rep::file_chooser_widget_rep (
     cn4[3] = "image";
     cw4[4] = glue_wk_widget (false, false, sep);
 
-    cw[ 8] = separator_wk_widget ();
-    cw[ 9] = glue_wk_widget (true, false, 0, sep);
-    cw[10] = horizontal_list (cw4, cn4);
-    cn[10] = "image";
-    cw[11] = glue_wk_widget (true, false, 0, sep);
-    cw[12] = separator_wk_widget ();
-    cw[13] = glue_wk_widget (true, false, 0, sep);
+    //cw[ 8] = glue_wk_widget (true, false, 0, sep);
+    //cw[ 9] = separator_wk_widget ();
+    cw[ 8] = glue_wk_widget (true, false, 0, sep);
+    cw[ 9] = horizontal_list (cw4, cn4);
+    cn[ 9] = "image";
+    cw[10] = glue_wk_widget (true, false, 0, sep);
+    cw[11] = separator_wk_widget ();
+    cw[12] = glue_wk_widget (true, false, 0, sep);
   }
 
   cw[cwn-3]= glue_wk_widget (true, false, 0, sep);

@@ -91,8 +91,7 @@ inputs_list_widget_rep::inputs_list_widget_rep (
     line_w[1]= text_wk_widget (prompts[i]);
     line_n[1]= "prompt";
     line_w[2]= glue_wk_widget (false, false, 5*PIXEL);
-    line_w[3]= input_text_wk_widget (inputs_list_command (this, i, n),
-				     "1w", true);
+    line_w[3]= input_text_wk_widget (inputs_list_command (this, i, n));
     line_n[3]= "input";
     line_w[4]= glue_wk_widget (false, false, 2*PIXEL);
     fields_w[i]= horizontal_list (line_w, line_n);
