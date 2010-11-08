@@ -102,6 +102,9 @@
 (define-macro (opt cond? . l)
   `(if ,cond? (list ,@l) '()))
 
+;; FIXME: when recovering focus-tree,
+;; double check that focus-tree still has the required form
+
 (tm-define (standard-focus-menu t)
   (append (opt #t
 	       (cons* '-> (tag-menu-name (tree-label t))
