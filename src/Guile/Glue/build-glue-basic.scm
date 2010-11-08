@@ -374,7 +374,8 @@
   (widget-balloon balloon_widget (widget widget widget))
   (widget-empty empty_widget (widget))
   (widget-text text_widget (widget string int bool))
-  (widget-input input_text_widget (widget command string array_string string))
+  (widget-input input_text_widget
+		(widget int command string array_string string))
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
   (object->promise-widget as_promise_widget (promise_widget object))

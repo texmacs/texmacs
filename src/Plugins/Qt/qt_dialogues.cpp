@@ -596,10 +596,11 @@ inputs_list_widget (command call_back, array<string> prompts) {
 }
 
 widget
-input_text_widget (command call_back, string type,
+input_text_widget (int style, command call_back, string type,
 		   array<string> def, string width) {
   // a textual input widget for input of a given type and a list of suggested
   // default inputs (the first one should be displayed, if there is one)
+  (void) style; (void) width;
   return tm_new<qt_input_text_widget_rep> (call_back, type, def);
 }
 

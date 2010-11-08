@@ -73,6 +73,21 @@ operator << (tm_ostream& out, widget w) {
 }
 
 /******************************************************************************
+* Widget style parameters
+******************************************************************************/
+
+#define WIDGET_STYLE_MINI        1
+  // use smaller text font inside widget
+#define WIDGET_STYLE_GREY        2
+  // use grey text font
+#define WIDGET_STYLE_LIGHT       4
+  // use lighter background
+#define WIDGET_STYLE_PRESSED     8
+  // indicate that a button is currently pressed
+#define WIDGET_STYLE_INERT      16
+  // only render but don't associate any action to widget
+
+/******************************************************************************
 * Window widgets
 ******************************************************************************/
 
@@ -149,7 +164,7 @@ widget empty_widget ();
 widget glue_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);
   // an empty widget of minimal width w and height h and which is horizontally
   // resp. vertically extensible if hx resp. vx is true
-widget input_text_widget (command call_back, string type,
+widget input_text_widget (int style, command call_back, string type,
 			  array<string> def, string width= "1w");
   // a textual input widget for input of a given type and a list of suggested
   // default inputs (the first one should be displayed, if there is one)
