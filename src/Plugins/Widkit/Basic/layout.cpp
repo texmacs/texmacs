@@ -96,6 +96,33 @@ layout_pulldown_triangle (renderer ren, SI x, SI y) {
 }
 
 void
+layout_pulldown_dash (renderer ren, SI x, SI y, SI w) {
+  /*
+  ren->set_line_style (PIXEL);
+  ren->set_color (layout_dark (ren));
+  ren->line (x+PIXEL, y, x+w-PIXEL, y);
+  ren->set_color (layout_normal (ren));
+  ren->line (x+PIXEL, y+PIXEL, x+w, y+PIXEL);
+  ren->set_color (white);
+  ren->line (x+PIXEL, y, x+PIXEL, y);
+  ren->line (x, y+PIXEL, x+2*PIXEL, y+PIXEL);
+  ren->line (x+PIXEL, y+2*PIXEL, x+w-PIXEL, y+2*PIXEL);
+  */
+
+  SI offset, inc= 3*PIXEL;
+  bool parity= false;
+  ren->set_line_style (PIXEL);
+
+  for (offset= 0; offset<w; offset += inc, parity= !parity) {
+    SI pos= x + offset;
+    ren->set_color (parity? layout_normal (ren): layout_dark (ren));
+    ren->line (pos, y, min (pos+inc, x+w), y);
+    ren->set_color (parity? layout_normal (ren): white);
+    ren->line (pos, y + PIXEL, min (pos+inc, x+w), y + PIXEL);
+  }
+}
+
+void
 layout_up_arrow (renderer ren, SI x, SI y, SI w, SI h) {
   w -= PIXEL; h -= PIXEL; SI hw= ((w/PIXEL)>>1)*PIXEL;
   ren->set_line_style (PIXEL);

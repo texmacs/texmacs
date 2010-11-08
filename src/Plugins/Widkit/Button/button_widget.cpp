@@ -119,7 +119,10 @@ button_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   if (rflag)
     layout_submenu_triangle (ren, w-10*PIXEL, h>>1);
   if (has_pull_down && inside && !status)
-    layout_pulldown_triangle (ren, 6*PIXEL, 4*PIXEL);
+    //layout_pulldown_triangle (ren, 6*PIXEL, 4*PIXEL);
+    layout_pulldown_dash (ren, 0, 0, w-2*PIXEL);
+  //if (has_pull_down && !inside && !status)
+  //  layout_pulldown_dash (ren, 2*PIXEL, 0, w-4*PIXEL);
 }
 
 void
