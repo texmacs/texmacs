@@ -133,8 +133,8 @@ widget tile_menu (array<widget> a, int cols);
   // a menu rendered as a table of cols columns wide & made up of widgets in a
 widget menu_separator (bool vertical);
   // a horizontal or vertical menu separator
-widget menu_group (string name);
-  // a menu group; the name should be greyed and centered
+widget menu_group (string name, int style);
+  // a menu group of a given style; the name should be greyed and centered
 
 widget pulldown_button (widget w, promise<widget> pw);
   // a button w with a lazy pulldown menu pw

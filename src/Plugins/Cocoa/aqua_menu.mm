@@ -325,9 +325,10 @@ widget tile_menu (array<widget> a, int cols)
 
 widget menu_separator (bool vertical) { return tm_new <aqua_menu_rep> ([NSMenuItem separatorItem]); }
 // a horizontal or vertical menu separator
-widget menu_group (string name) 
+widget menu_group (string name, int style)
 // a menu group; the name should be greyed and centered
 {
+	(void) style;
 	NSMenuItem* mi = [[alloc_menuitem() initWithTitle:to_nsstring_utf8(name) action:NULL keyEquivalent:@""] autorelease];
 
 	//	NSAttributedString *str = [mi attributedTitle];

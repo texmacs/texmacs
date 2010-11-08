@@ -151,9 +151,9 @@ command_button (widget lw, widget cw, widget rw, command cmd,
 }
 
 widget
-menu_group (string name) {
+menu_group (string name, int style) {
   widget lw= empty_widget ();
-  widget cw= text_widget (name, 0, dark_grey, false);
+  widget cw= text_widget (name, style, dark_grey, false);
   widget rw= empty_widget ();
   return command_button (lw, cw, rw, noop, 0, false, true);
 }

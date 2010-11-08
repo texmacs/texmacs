@@ -323,7 +323,8 @@ menu_separator (bool vertical) {
 }
 
 widget
-menu_group (string name) {
+menu_group (string name, int style) {
+  (void) style;
   // a menu group; the name should be greyed and centered
   QAction* a= new QTMAction (NULL);
   a->setText(to_qstring(tm_var_encode ((name))));

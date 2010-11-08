@@ -85,7 +85,7 @@
   (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if (active? style) "black" "dark grey"))))
     (cond ((translatable? p)		; "text"
-	   (widget-text (translate p) 0 col #t))
+	   (widget-text (translate p) style col #t))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) style tt?))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
@@ -105,9 +105,9 @@
   "Make @| menu item."
   (widget-separator #t))
 
-(define (make-menu-group s)
+(define (make-menu-group s style)
   "Make @(group :string?) menu item."
-  (widget-menu-group s))
+  (widget-menu-group s style))
 
 (define (make-menu-input p)
   "Make @(input :%1) menu item."
@@ -185,7 +185,7 @@
 	       (txt (if (or (not sh) (== sh "")) text
 			(string-append text " (" sh ")")))
 	       (ftxt (translate txt))
-	       (twid (widget-text ftxt 0 (color "black") #t)))
+	       (twid (widget-text ftxt style (color "black") #t)))
 	  (widget-balloon but twid))
 	but)))
 
@@ -244,7 +244,7 @@
       (if (tuple? label 'balloon 2)
 	  (let* ((text (caddr label))
 		 (ftxt (translate text))
-		 (twid (widget-text ftxt 0 (color "black") #t)))
+		 (twid (widget-text ftxt style (color "black") #t)))
 	    (widget-balloon button twid))
 	  button))))
 
@@ -266,6 +266,14 @@
   "Make @(when :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
     (with new-style (logior style (if (pred?) 0 widget-style-inert))
+      (make-menu-items-list items new-style bar?))))
+
+(define (make-menu-mini p style bar?)
+  "Make @(mini :menu-item-list) menu items."
+  (with (tag pred? . items) p
+    (let* ((style-maxi (logand style (lognot widget-style-mini)))
+	   (style-mini (logior style-maxi widget-style-mini))
+	   (new-style (if (pred?) style-mini style-maxi)))
       (make-menu-items-list items new-style bar?))))
 
 (define (make-menu-link p style bar?)
@@ -311,7 +319,7 @@
 
 (define-table make-menu-items-table
   (group (:string?)
-	 ,(lambda (p style bar?) (list (make-menu-group (cadr p)))))
+	 ,(lambda (p style bar?) (list (make-menu-group (cadr p) style))))
   (symbol (:string? :*)
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
@@ -332,6 +340,8 @@
       ,(lambda (p style bar?) (make-menu-if p style bar?)))
   (when (:%1 :*)
         ,(lambda (p style bar?) (make-menu-when p style bar?)))
+  (mini (:%1 :*)
+        ,(lambda (p style bar?) (make-menu-mini p style bar?)))
   (promise (:%1)
 	   ,(lambda (p style bar?) (make-menu-promise p style bar?))))
 
@@ -348,6 +358,11 @@
   "Expand conditional menu @p."
   (with (tag pred? . items) p
     (if (pred?) (menu-expand-list items) '())))
+
+(define (menu-expand-mini p)
+  "Expand mini menu @p."
+  (with (tag pred? . items) p
+    (cons* 'mini (pred?) (menu-expand-list items))))
 
 (define (menu-expand-promise p)
   "Expand promised menu @p."
@@ -404,6 +419,7 @@
   (tile ,replace-procedures)
   (if ,menu-expand-if)
   (when ,replace-procedures)
+  (mini ,menu-expand-mini)
   (promise ,menu-expand-promise))
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

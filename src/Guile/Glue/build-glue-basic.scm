@@ -366,7 +366,7 @@
   (widget-vmenu vertical_menu (widget array_widget))
   (widget-tmenu tile_menu (widget array_widget int))
   (widget-separator menu_separator (widget bool))
-  (widget-menu-group menu_group (widget string))
+  (widget-menu-group menu_group (widget string int))
   (widget-pulldown-button pulldown_button (widget widget promise_widget))
   (widget-pullright-button pullright_button (widget widget promise_widget))
   (widget-menu-button menu_button

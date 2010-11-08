@@ -90,10 +90,12 @@
       (list 'group "[n.a.]")))
 
 (define (image-handles t)
-  (list (list 'group "Width")
+  (list (list 'mini (lambda () #t) (list 'group "Width:"))
 	(string-input-handle t 1 "3em")
-	(list 'group "Height")
-	(string-input-handle t 2 "3em")))
+	(list 'mini (lambda () #t) (list 'group "Height:"))
+	(string-input-handle t 2 "3em")
+	(list 'mini (lambda () #t) (list 'group "File:"))
+	(string-input-handle t 0 "0.5w")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
@@ -185,10 +187,11 @@
 
 (tm-define (standard-focus-icons t)
   (append (opt #t
-	       (cons* '=>
-		      (list 'balloon (tag-menu-name (tree-label t))
-			    "Structured variant")
-		      (variant-menu-items t)))
+	       (list 'mini (lambda () #t)
+		     (cons* '=>
+			    (list 'balloon (tag-menu-name (tree-label t))
+				  "Structured variant")
+			    (variant-menu-items t))))
 	  (opt (numbered-context? t)
 	       ;; FIXME: itemize, enumerate, eqnarray*
 	       (list (list 'check

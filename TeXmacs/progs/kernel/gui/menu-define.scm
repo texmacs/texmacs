@@ -49,6 +49,7 @@
     (tile :integer? :menu-item-list)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
+    (mini :%1 :menu-item-list)
     (link :%1)
     (promise :%1)
     (:menu-item-list)))
@@ -175,6 +176,8 @@
     ,(lambda (p) `(if ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
   (when (:%1 :*)
     ,(lambda (p) `(when ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
+  (mini (:%1 :*)
+    ,(lambda (p) `(mini ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
   (promise (:%1)
     ,(lambda (p) `(promise ,(make-promise (cadr p))))))
 
