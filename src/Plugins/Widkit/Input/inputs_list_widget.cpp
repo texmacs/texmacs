@@ -87,7 +87,7 @@ inputs_list_widget_rep::inputs_list_widget_rep (
   array<wk_widget> inputs_w (n);
   for (i=0; i<n; i++) {
     prompts_w[i]= text_wk_widget (prompts[i]);
-    inputs_w [i]= input_text_wk_widget (0, inputs_list_command (this, i, n));
+    inputs_w [i]= input_text_wk_widget (inputs_list_command (this, i, n));
   }
 
   array<wk_widget> buttons_w (5);

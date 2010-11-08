@@ -407,7 +407,7 @@ file_chooser_widget_rep::input_widget (string what, string ref, int type) {
   array<string> nn (4);
   ww[0]= glue_wk_widget (false, false, offset);
   ww[1]= what_w;
-  ww[2]= input_text_wk_widget (0, file_chooser_command (this, type));
+  ww[2]= input_text_wk_widget (file_chooser_command (this, type));
   nn[2]= "input";
   ww[3]= glue_wk_widget (false, false, 3*PIXEL);
   if (type == CHANGE_DIR) ww[2] << set_string ("type", "directory");

@@ -50,7 +50,7 @@ class input_widget_rep: public attribute_widget_rep {
   int     tab_pos;     // cursor position where tab was pressed
 
 public:
-  input_widget_rep (int style, command call_back, string width, bool persist);
+  input_widget_rep (command call_back, int style, string width, bool persist);
   operator tree ();
   void update_draw_s ();
   void commit ();
@@ -72,7 +72,7 @@ public:
 
 #define SHRINK 3
 
-input_widget_rep::input_widget_rep (int st2, command cb2, string w2, bool p2):
+input_widget_rep::input_widget_rep (command cb2, int st2, string w2, bool p2):
   attribute_widget_rep (south_west),
   s (""), draw_s (""), type ("default"), def (),
   call_back (cb2), style (st2), width (w2), persistent (p2),
@@ -387,21 +387,20 @@ get_input_string (string& s) {
 }
 
 wk_widget
-input_text_wk_widget (int style, command call_back,
-		      string w, bool persistent)
+input_text_wk_widget (command call_back,
+		      int style, string w, bool persistent)
 {
   (void) style;
-  return tm_new<input_widget_rep> (style, call_back, w, persistent);
+  return tm_new<input_widget_rep> (call_back, style, w, persistent);
 }
 
 wk_widget
-input_text_wk_widget (int style, command cb,
-		      string type, array<string> def,
-		      string w, bool persistent)
+input_text_wk_widget (command cb, string type, array<string> def,
+		      int style, string w, bool persistent)
 {
   (void) style;
   int i, n= N(def);
-  wk_widget inp= input_text_wk_widget (style, cb, w, persistent);
+  wk_widget inp= input_text_wk_widget (cb, style, w, persistent);
   inp << set_string ("type", type);
   if (n>0) inp << set_string ("input", def[0]);
   for (i=0; i<n; i++) inp << set_string ("default", def[i]);

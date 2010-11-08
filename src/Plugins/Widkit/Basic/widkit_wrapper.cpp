@@ -206,7 +206,7 @@ canvas_widget (widget w) {
 widget
 input_text_widget (command call_back, string type, array<string> def,
 		   int style, string width) {
-  return abstract (input_text_wk_widget (style, call_back, type, def, width));
+  return abstract (input_text_wk_widget (call_back, type, def, style, width));
 }
 
 widget

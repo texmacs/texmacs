@@ -110,11 +110,10 @@ wk_widget pulldown_button (wk_widget w, promise<wk_widget> pw);
 wk_widget pullright_button (wk_widget w, promise<wk_widget> pw);
 wk_widget popup_widget (wk_widget w, gravity quit=center);
 wk_widget canvas_widget (wk_widget w, gravity grav=north_west, bool rf= false);
-wk_widget input_text_wk_widget (int style, command cb,
-				string w= "1w", bool pf= true);
-wk_widget input_text_wk_widget (int style, command cb,
-				string type, array<string> def,
-				string w= "1w", bool pf= false);
+wk_widget input_text_wk_widget (command cb,
+				int style= 0, string w= "1w", bool pf= true);
+wk_widget input_text_wk_widget (command cb, string type, array<string> def,
+				int style= 0, string w= "1w", bool pf= false);
 wk_widget inputs_list_wk_widget (command call_back, array<string> prompts);
 wk_widget file_chooser_wk_widget (command cmd, string type);
 wk_widget balloon_widget (wk_widget w, wk_widget help);
