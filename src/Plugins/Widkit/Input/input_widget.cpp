@@ -162,7 +162,11 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   left    += scroll;
   current -= scroll;
 
-  if (got_focus && hilit) {
+  if (true) {
+    layout_pastel (ren, 0, 0, w, h);
+    layout_lower (ren, 0, 0, w, h);
+  }
+  else if (got_focus && hilit) {
     layout_dark (ren, 0, 0, w, h);
     layout_lower (ren, 0, 0, w, h);
   }
@@ -334,10 +338,8 @@ void
 input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
   if (got_focus && !ev->flag && !done && !persistent)
     cancel ();
-  else {
-    got_focus= ev->flag;
-    this << emit_invalidate_all ();
-  }
+  got_focus= ev->flag;
+  this << emit_invalidate_all ();
 }
 
 void
@@ -377,15 +379,21 @@ get_input_string (string& s) {
 }
 
 wk_widget
-input_text_wk_widget (command call_back, string w, bool persistent) {
+input_text_wk_widget (int style, command call_back,
+		      string w, bool persistent)
+{
+  (void) style;
   return tm_new<input_widget_rep> (call_back, w, persistent);
 }
 
 wk_widget
-input_text_wk_widget (command cb, string type, array<string> def,
-		      string w, bool persistent) {
+input_text_wk_widget (int style, command cb,
+		      string type, array<string> def,
+		      string w, bool persistent)
+{
+  (void) style;
   int i, n= N(def);
-  wk_widget inp= input_text_wk_widget (cb, w, persistent);
+  wk_widget inp= input_text_wk_widget (style, cb, w, persistent);
   inp << set_string ("type", type);
   if (n>0) inp << set_string ("input", def[0]);
   for (i=0; i<n; i++) inp << set_string ("default", def[i]);

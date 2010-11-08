@@ -76,15 +76,13 @@ operator << (tm_ostream& out, widget w) {
 * Widget style parameters
 ******************************************************************************/
 
-#define WIDGET_STYLE_MINI        1
+#define WIDGET_STYLE_MINI                1
   // use smaller text font inside widget
-#define WIDGET_STYLE_GREY        2
+#define WIDGET_STYLE_GREY                2
   // use grey text font
-#define WIDGET_STYLE_LIGHT       4
-  // use lighter background
-#define WIDGET_STYLE_PRESSED     8
+#define WIDGET_STYLE_PRESSED             4
   // indicate that a button is currently pressed
-#define WIDGET_STYLE_INERT      16
+#define WIDGET_STYLE_INERT               8
   // only render but don't associate any action to widget
 
 /******************************************************************************

@@ -60,9 +60,8 @@
 
 (define-public widget-style-mini 1)
 (define-public widget-style-grey 2)
-(define-public widget-style-light 4)
-(define-public widget-style-pressed 8)
-(define-public widget-style-inert 16)
+(define-public widget-style-pressed 4)
+(define-public widget-style-inert 8)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preparation of menu entries

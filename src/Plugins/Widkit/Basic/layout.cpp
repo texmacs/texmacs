@@ -11,9 +11,17 @@
 
 #include "window.hpp"
 
+color layout_pastel (renderer ren) { return rgb_color (223, 223, 223); }
 color layout_light (renderer ren) { return light_grey; }
 color layout_normal (renderer ren) { return grey; }
 color layout_dark (renderer ren) { return dark_grey; }
+
+void
+layout_pastel (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  ren->set_background (layout_pastel (ren));
+  ren->set_color (layout_pastel (ren));
+  ren->fill (x1, y1, x2, y2);
+}
 
 void
 layout_default (renderer ren, SI x1, SI y1, SI x2, SI y2) {

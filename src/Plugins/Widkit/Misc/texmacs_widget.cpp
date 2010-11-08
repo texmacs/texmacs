@@ -137,13 +137,20 @@ make_footer (int mask) {
   F_name << string ("margin");
 #endif
 
-  array<wk_widget> I (2);
-  array<string> I_name (2);
+  array<wk_widget> I (3);
+  array<string> I_name (3);
   I[0]= text_wk_widget (translate ("Input:"));
   I[1]= glue_wk_widget (true, false);
+#ifdef OS_MACOS
+  I[2]= glue_wk_widget (false, false, 18*PIXEL);
+#else
+  I[2]= glue_wk_widget (false, false, 2*PIXEL);
+#endif
   I_name[0]= "left";
   I_name[1]= "middle";
-  wk_widget iac= horizontal_array (I, I_name, 1);
+  I_name[2]= "right";
+  wk_widget iac= horizontal_list (I, I_name);
+  //wk_widget iac= horizontal_array (I, I_name, 1);
 
   array<wk_widget> S (3);
   array<string> S_name (3);
@@ -157,14 +164,16 @@ make_footer (int mask) {
 
 static wk_widget
 make_texmacs_widget (int mask) {
-  array<wk_widget> V (3);
-  array<string> V_name (3);
+  array<wk_widget> V (5);
+  array<string> V_name (5);
   V[0]= make_header (mask);
   V[1]= canvas_widget (glue_wk_widget (), north_west, true);
-  V[2]= make_footer (mask);
+  V[2]= glue_wk_widget (false, false, 0, 2*PIXEL);
+  V[3]= make_footer (mask);
+  V[4]= glue_wk_widget (false, false, 0, 2*PIXEL);
   V_name[0]= "header";
   V_name[1]= "canvas";
-  V_name[2]= "footer";
+  V_name[3]= "footer";
   return vertical_list (V, V_name);
 }
 

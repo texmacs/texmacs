@@ -204,7 +204,7 @@ canvas_widget (widget w) {
 widget
 input_text_widget (int style, command call_back, string type,
 		   array<string> def, string width) {
-  return abstract (input_text_wk_widget (call_back, type, def, width));
+  return abstract (input_text_wk_widget (style, call_back, type, def, width));
 }
 
 widget
@@ -769,7 +769,7 @@ wk_widget_rep::read (slot s, blackbox index) {
     return win -> get_widget ();
   case SLOT_FORM_FIELD:
     check_type<int> (index, "SLOT_FORM_FIELD");
-    return abstract (THIS [0] ["inputs"] [open_box<int> (index)] ["input"]);
+    return abstract (THIS [0] ["inputs"] [2*open_box<int> (index)] ["input"]);
   case SLOT_FILE:
     check_type_void (index, "SLOT_FILE");
     return abstract (THIS [0] ["file"] ["input"]);

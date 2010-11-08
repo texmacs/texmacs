@@ -45,7 +45,7 @@
 
 class file_chooser_command_rep: public command_rep {
   wk_widget_rep* fch;
-  int                type;
+  int type;
 public:
   file_chooser_command_rep (wk_widget w, int t): fch(w.rep), type(t) {}
   void apply ();
@@ -362,7 +362,7 @@ public:
   file_chooser_widget_rep (command cmd, string type);
   operator tree ();
 
-  wk_widget input_widget (string what, int type);
+  wk_widget input_widget (string what, string ref, int type);
   wk_widget button_widget (string what, int type);
 
   void handle_get_size (get_size_event ev);
@@ -395,13 +395,22 @@ public:
 ******************************************************************************/
 
 wk_widget
-file_chooser_widget_rep::input_widget (string what, int type) {
-  array<wk_widget> ww (2);
-  array<string> nn (2);
-  ww[0]= text_wk_widget (translate (what));
-  ww[1]= input_text_wk_widget (file_chooser_command (this, type));
-  nn[1]= "input";
-  if (type == CHANGE_DIR) ww[1] << set_string ("type", "directory");
+file_chooser_widget_rep::input_widget (string what, string ref, int type) {
+  SI ww1= 1280*PIXEL, hh1= 64*PIXEL, ww2= 1280*PIXEL, hh2= 64*PIXEL;
+  wk_widget ref_w = text_wk_widget (translate (ref));
+  wk_widget what_w= text_wk_widget (translate (what));
+  ref_w  << get_size (ww1, hh1, 0);
+  what_w << get_size (ww2, hh2, 0);
+  SI offset= max (ww1 - ww2, 0);
+
+  array<wk_widget> ww (4);
+  array<string> nn (4);
+  ww[0]= glue_wk_widget (false, false, offset);
+  ww[1]= what_w;
+  ww[2]= input_text_wk_widget (0, file_chooser_command (this, type));
+  nn[2]= "input";
+  ww[3]= glue_wk_widget (false, false, 3*PIXEL);
+  if (type == CHANGE_DIR) ww[2] << set_string ("type", "directory");
   return horizontal_list (ww, nn);
 }
 
@@ -429,13 +438,11 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   array<wk_widget> cw2 (cw2n);
   array<string> cn2 (cw2n);
   cw2[0]= glue_wk_widget (false, true, sep);
-  cw2[1]=
-    canvas_widget (wk_widget (tm_new<file_list_widget_rep> (this, suffix, true)));
+  cw2[1]= canvas_widget (wk_widget (tm_new<file_list_widget_rep> (this, suffix, true)));
   cn2[1]= "directories";
   cw2[2]= glue_wk_widget (false, true, sep);
   if (type != "directory") {
-    cw2[3]=
-      canvas_widget (wk_widget (tm_new<file_list_widget_rep> (this,suffix,false)));
+    cw2[3]= canvas_widget (wk_widget (tm_new<file_list_widget_rep> (this, suffix, false)));
     cn2[3]= "files";
     cw2[4]= glue_wk_widget (false, true, sep-PIXEL);
   }
@@ -497,7 +504,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   array<wk_widget> cw (cwn);
   array<string> cn (cwn);
   cw[0]= glue_wk_widget (true, false, 0, sep);
-  cw[1]= input_widget ("Directory:", CHANGE_DIR);
+  cw[1]= input_widget ("Directory:", "Directory:", CHANGE_DIR);
   cn[1]= "directory";
   cw[2]= glue_wk_widget (true, false, 0, sep);
 
@@ -507,10 +514,10 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   }
 
   if (type != "directory") {
-    cw[3]= input_widget ("File:", CHANGE_FILE);
+    cw[3]= input_widget ("File:", "Directory:", CHANGE_FILE);
     cn[3]= "file";
     cw[4]= glue_wk_widget (true, false, 0, sep);
-    cw[5]= input_widget ("Suffixes:", CHANGE_SUFFIXES);
+    cw[5]= input_widget ("Suffixes:", "Directory:", CHANGE_SUFFIXES);
     cn[5]= "suffixes";
     cw[6]= glue_wk_widget (true, false, 0, sep);
     cw[7]= horizontal_list (cw2, cn2);
@@ -520,16 +527,16 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   if (type == "image") {
     array<wk_widget> imw (7);
     array<string> ims (7);
-    imw[ 0]= input_widget ("width:", IMAGE_HSIZE);
+    imw[ 0]= input_widget ("width:", "y-position:", IMAGE_HSIZE);
     ims[ 0]= "hsize";
     imw[ 1]= glue_wk_widget (true, false, 0, sep);
-    imw[ 2]= input_widget ("height:", IMAGE_VSIZE);
+    imw[ 2]= input_widget ("height:", "y-position:", IMAGE_VSIZE);
     ims[ 2]= "vsize";
     imw[ 3]= glue_wk_widget (true, false, 0, sep);
-    imw[ 4]= input_widget ("x-position:", IMAGE_XPOS);
+    imw[ 4]= input_widget ("x-position:", "y-position:", IMAGE_XPOS);
     ims[ 4]= "xpos";
     imw[ 5]= glue_wk_widget (true, false, 0, sep);
-    imw[ 6]= input_widget ("y-position:", IMAGE_YPOS);
+    imw[ 6]= input_widget ("y-position:", "y-position:", IMAGE_YPOS);
     ims[ 6]= "ypos";
 
     array<wk_widget> cw4 (5);

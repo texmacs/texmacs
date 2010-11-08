@@ -60,10 +60,10 @@ inputs_list_command_rep::apply () {
     il_wid << set_string ("return", "#t");
   else {
     string answer;
-    il_wid[0]["inputs"][i]["input"] << get_string ("input", answer);
+    il_wid[0]["inputs"][2 * i]["input"] << get_string ("input", answer);
     if (answer == "#f") il_wid << set_string ("return", "#f");
     else il_wid[0]->win->set_keyboard_focus
-	   (abstract (il_wid[0]["inputs"][i+1]["input"]));
+	   (abstract (il_wid[0]["inputs"][2 * i + 2]["input"]));
   }
 }
 
@@ -83,18 +83,11 @@ inputs_list_widget_rep::inputs_list_widget_rep (
   ref_count++;
 
   int i, n= N (prompts);
-  array<wk_widget> fields_w (n);
+  array<wk_widget> prompts_w (n);
+  array<wk_widget> inputs_w (n);
   for (i=0; i<n; i++) {
-    array<wk_widget> line_w (5);
-    array<string> line_n (5);
-    line_w[0]= glue_wk_widget (false, false, 2*PIXEL);
-    line_w[1]= text_wk_widget (prompts[i]);
-    line_n[1]= "prompt";
-    line_w[2]= glue_wk_widget (false, false, 5*PIXEL);
-    line_w[3]= input_text_wk_widget (inputs_list_command (this, i, n));
-    line_n[3]= "input";
-    line_w[4]= glue_wk_widget (false, false, 2*PIXEL);
-    fields_w[i]= horizontal_list (line_w, line_n);
+    prompts_w[i]= text_wk_widget (prompts[i]);
+    inputs_w [i]= input_text_wk_widget (0, inputs_list_command (this, i, n));
   }
 
   array<wk_widget> buttons_w (5);
@@ -113,7 +106,8 @@ inputs_list_widget_rep::inputs_list_widget_rep (
   array<wk_widget> main_w (5);
   array<string> main_n (5);
   main_w[0]= glue_wk_widget (false, false, 0, 5*PIXEL);
-  main_w[1]= vertical_list (fields_w);
+  main_w[1]= aligned_widget (prompts_w, inputs_w,
+			     5*PIXEL, 3*PIXEL, 2*PIXEL, 5*PIXEL);
   main_n[1]= "inputs";
   main_w[2]= glue_wk_widget (false, false, 0, 5*PIXEL);
   main_w[3]= horizontal_list (buttons_w);
@@ -152,7 +146,7 @@ inputs_list_widget_rep::handle_get_string (get_string_event ev) {
   if (s == "input") s= "input-0";
   if (starts (s, "input-")) {
     wk_widget ch=
-      wk_widget(this)[0]["inputs"][as_int (s (6, N(s)))]["input"];
+      wk_widget(this)[0]["inputs"][2 * as_int (s (6, N(s)))]["input"];
     ch << get_string ("input", ev->s);
     if (!ok) ev->s= "#f";
   }
