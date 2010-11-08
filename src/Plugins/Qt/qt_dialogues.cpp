@@ -221,9 +221,9 @@ qt_chooser_widget_rep::perform_dialog () {
   QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
   
   if (type  == "image")
-    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring_utf8 (win_title), to_qstring_utf8(directory * "/" * file));
+    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
   else
-    dialog= new QTMFileDialog (NULL, to_qstring_utf8 (win_title), to_qstring_utf8(directory * "/" * file));
+    dialog= new QTMFileDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
 
 #if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
   dialog->setOptions(QFileDialog::DontUseNativeDialog);
@@ -257,7 +257,7 @@ qt_chooser_widget_rep::perform_dialog () {
   dialog->setNameFilter ("TeXmacs file (*.tm *.ts *.tp)");
   dialog->setDefaultSuffix ("tm");
   } else if (type == "image") {
-  dialog->setNameFilter ("Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.fig *.xpm)");
+  dialog->setNameFilter ("Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.tiff *.fig *.xpm)");
   } else if (type == "bibtex") {
   dialog->setNameFilter ("BibTeX file (*.bib)");
   dialog->setDefaultSuffix ("bib");
@@ -291,14 +291,14 @@ qt_chooser_widget_rep::perform_dialog () {
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      file = from_qstring (fileNames[0]);
+      file = from_qstring_utf8 (fileNames[0]);
       url u = url_system (scm_unquote (file));
       if (type == "image")
         file = "(list (url-system " *
           scm_quote (as_string (u)) *
           ") " * imgdialog->getParamsAsString () * ")";
       else
-        file = "(url-system " * scm_quote (cork_to_utf8(as_string (u))) * ")";
+        file = "(url-system " * scm_quote (as_string (u)) * ")";
     }
   } else {
     file = "#f";
@@ -519,13 +519,13 @@ qt_input_widget_rep::perform_dialog() {
   for(int i=0; i<N(fields); i++) {
     QHBoxLayout *hl = new QHBoxLayout();
 
-    QLabel *lab = new QLabel (to_qstring_utf8 (tm_var_encode( (fields[i]->prompt))),&d);
+    QLabel *lab = new QLabel (to_qstring (tm_var_encode( (fields[i]->prompt))),&d);
     cbs[i] = new QComboBox(&d);
     cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
-    cbs[i] -> setEditText (to_qstring_utf8 (fields[i]->input));
+    cbs[i] -> setEditText (to_qstring(fields[i]->input));
     int minlen = 0;
     for(int j=0; j < N(fields[i]->proposals); j++) {
-      QString str = to_qstring_utf8 (fields[i]->proposals[j]);
+      QString str = to_qstring (fields[i]->proposals[j]);
       cbs[i] -> addItem (str);
       int c = str.count();
       if (c > minlen) minlen = c;
@@ -562,7 +562,7 @@ qt_input_widget_rep::perform_dialog() {
     vl -> addWidget (buttonBox);
   }
 //  d.setLayout (vl);
-  d.setWindowTitle(to_qstring_utf8(win_title));
+  d.setWindowTitle(to_qstring(win_title));
   QPoint pos = to_qpoint(position);
   //cout << "Size :" << size.x1 << "," << size.x2 << LF;
   //cout << "Position :" << pos.x() << "," << pos.y() << LF;
@@ -608,10 +608,10 @@ input_text_widget (int style, command call_back, string type,
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
-  QString label= to_qstring_utf8 (((qt_text_widget_rep*) int_prompt.rep)->str);
+  QString label= to_qstring (((qt_text_widget_rep*) int_prompt.rep)->str);
   qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
   for (int j=0; j < N(it->def); j++)
-    items << to_qstring_utf8(it->def[j]);
+    items << to_qstring(it->def[j]);
   bool ok;
   QString item =
     QInputDialog::getItem (NULL, "Interactive Prompt", label,
@@ -626,13 +626,13 @@ qt_tm_widget_rep::do_interactive_prompt () {
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
-  QString label= to_qstring_utf8 (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+  QString label= to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
   qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
   if ( N(it->def) == 0) {
    items << "";
   } else {
     for (int j=0; j < N(it->def); j++) {
-      items << to_qstring_utf8(it->def[j]);
+      items << to_qstring(it->def[j]);
     }
   }
   QDialog d (0, Qt::Sheet);
@@ -709,13 +709,13 @@ qt_tm_widget_rep::do_interactive_prompt () {
 
 void
 qt_tm_widget_rep::do_interactive_prompt () {
-	QString label = to_qstring_utf8 (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+	QString label = to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
 	QStringList items;
   qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
   if ( N(it->def) == 0)
 		items << "";
   else for (int j=0; j < N(it->def); j++)
-		items << to_qstring_utf8(it->def[j]);
+		items << to_qstring(it->def[j]);
 
 	QTMInteractivePrompt _prompt(label, items, to_qstring(it->type), tm_mainwindow());
 	

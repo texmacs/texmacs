@@ -71,7 +71,7 @@ QTMAction::doRefresh() {
   if (N(str)) {
     string t= tm_var_encode (str);
     if (t == "Help") t= "Help ";
-    setText(to_qstring_utf8 (t));
+    setText(to_qstring (t));
   }
 }
 
@@ -131,7 +131,7 @@ qt_menu_rep::make_popup_widget () {
 
 widget
 qt_menu_rep::popup_window_widget (string s) {
-  item->menu()->setWindowTitle (to_qstring_utf8 (s));
+  item->menu()->setWindowTitle (to_qstring (s));
   return this;
 }
 
@@ -317,7 +317,7 @@ widget
 menu_group (string name) {
   // a menu group; the name should be greyed and centered
   QAction* a= new QTMAction (NULL);
-  a->setText(to_qstring_utf8(tm_var_encode ((name))));
+  a->setText(to_qstring(tm_var_encode ((name))));
   a->setEnabled (false);
   return tm_new<qt_menu_rep> (a);
 }
@@ -347,7 +347,7 @@ qt_text_widget_rep::as_qaction () {
   QTMAction* a= new QTMAction (NULL);
   string t= tm_var_encode (str);
   if (t == "Help") t= "Help ";
-  a->setText(to_qstring_utf8 (t));
+  a->setText(to_qstring (t));
   a->str = str;
   return a;
 }
@@ -364,7 +364,7 @@ qt_image_widget_rep::as_qaction () {
 QAction*
 qt_balloon_widget_rep::as_qaction() {
   QAction* a= concrete(text)->as_qaction();
-  a->setToolTip (to_qstring_utf8 (((qt_text_widget_rep*) hint.rep) -> str));
+  a->setToolTip (to_qstring (((qt_text_widget_rep*) hint.rep) -> str));
   return a;
 }
 

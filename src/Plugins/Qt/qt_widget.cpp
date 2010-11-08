@@ -153,7 +153,7 @@ qt_view_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, "SLOT_NAME");
       string name = open_box<string> (val);
-      view->window() -> setWindowTitle (to_qstring_utf8 (utf8_to_cork(name)));
+      view->window() -> setWindowTitle (to_qstring (utf8_to_cork(name)));
     }
     break;
 #if 1
@@ -312,7 +312,7 @@ qt_view_widget_rep::write (slot s, blackbox index, widget w) {
 widget
 qt_view_widget_rep::plain_window_widget (string s) {
   // creates a decorated window with name s and contents w
-  view->setWindowTitle (to_qstring_utf8 (s));
+  view->setWindowTitle (to_qstring (s));
   //return this;
   widget wid= tm_new<qt_window_widget_rep> (view);
   //FIXME: is this the right thing to do?
@@ -572,7 +572,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg= open_box<string> (val);
-      leftLabel->setText (to_qstring_utf8 (tm_var_encode (msg)));
+      leftLabel->setText (to_qstring (tm_var_encode (msg)));
       leftLabel->update ();
     }
     break;
@@ -580,7 +580,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
       string msg= open_box<string> (val);
-      rightLabel->setText (to_qstring_utf8 (tm_var_encode (msg)));
+      rightLabel->setText (to_qstring (tm_var_encode (msg)));
       rightLabel->update ();
     }
     break;
@@ -626,7 +626,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      view->window()->setWindowFilePath(to_qstring_utf8(file));
+      view->window()->setWindowFilePath(to_qstring(file));
 #endif
     }
     break;
@@ -957,7 +957,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, "SLOT_NAME");
       string name = open_box<string> (val);
-      if (wid) wid->setWindowTitle (to_qstring_utf8 (name));
+      if (wid) wid->setWindowTitle (to_qstring (name));
     }
     break;
 

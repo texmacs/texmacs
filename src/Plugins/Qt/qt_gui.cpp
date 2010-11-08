@@ -241,7 +241,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     //lab->setWindowModality(Qt::ApplicationModal);
     lab->setFocusPolicy(Qt::NoFocus);
     lab->setMargin(15);
-    lab->setText (to_qstring_utf8 (tm_var_encode(message)));
+    lab->setText (to_qstring (tm_var_encode(message)));
     QSize sz = lab->sizeHint();
     QRect rect = QRect(QPoint(0,0),sz);
     //HACK: 
@@ -1034,5 +1034,5 @@ QTMTranslator::translate ( const char * context, const char * sourceText,
     cout << "Translating: " << sourceText << LF;
     cout << "Translation: " << qt_translate (sourceText) << LF;
   }
-  return QString (to_qstring_utf8 (qt_translate (sourceText)));
+  return QString (to_qstring (qt_translate (sourceText)));
 }

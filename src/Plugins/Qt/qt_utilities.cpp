@@ -75,23 +75,9 @@ from_qsize (const QSize & s) {
   return coord2 (c1, c2);
 }
 
+
 QString
 to_qstring (string s) {
-  char* p= as_charp (s);
-  QString nss (p);
-  tm_delete_array (p);
-  return nss;
-}
-
-string
-from_qstring (const QString &s) {
-  QByteArray arr= s.toUtf8 ();
-  const char* cstr= arr.constData ();
-  return utf8_to_cork (string ((char*) cstr));
-}
-
-QString
-to_qstring_utf8 (string s) {
   string out_lan= get_output_language ();
   if ((out_lan == "bulgarian") || 
       (out_lan == "russian") ||
@@ -105,6 +91,27 @@ to_qstring_utf8 (string s) {
   tm_delete_array (p);
   return nss;
 }
+
+QString
+utf8_to_qstring (string s) {
+  char* p= as_charp (s);
+  QString nss= QString::fromUtf8 (p, N(s));
+  tm_delete_array (p);
+  return nss;
+}
+
+string
+from_qstring_utf8 (const QString &s) {
+  QByteArray arr= s.toUtf8 ();
+  const char* cstr= arr.constData ();
+  return string ((char*) cstr);
+}
+
+string
+from_qstring (const QString &s) {
+  return utf8_to_cork (from_qstring_utf8(s));
+}
+
 
 string
 qt_translate (string s) {
@@ -123,7 +130,7 @@ qt_supports (url u) {
 
 void
 qt_image_size (url image, int& w, int& h) {
-  QImage im= QImage (to_qstring (concretize (image)));
+  QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
     cerr << "TeXmacs] cannot read image file '" << image << "'" 
 	 << " in qt_image_size" << LF;
@@ -137,20 +144,20 @@ qt_image_size (url image, int& w, int& h) {
 
 void
 qt_convert_image (url image, url dest, int w, int h) {
-  QImage im (to_qstring (concretize (image)));
+  QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
     cerr << "TeXmacs] cannot read image file '" << image << "'"
 	 << " in qt_convert_image" << LF;
   else {
     if (w > 0 && h > 0) im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    im.scaled (w, h).save (to_qstring (concretize (dest)));
+    im.scaled (w, h).save (utf8_to_qstring (concretize (dest)));
   }
 }
 
 void
 qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   static const char* d= "0123456789ABCDEF";
-  QImage im (to_qstring (concretize (image)));
+  QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
     cerr << "TeXmacs Cannot read image file '" << image << "'"
 	 << " in qt_image_to_eps" << LF;

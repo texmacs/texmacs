@@ -78,7 +78,7 @@ simple_input (string s, QLineEdit* ledit, QWidget* parent= 0) {
 //  string in_lan= get_input_language ();
 //  string out_lan= get_output_language ();
 //  QLabel* label= new QLabel (to_qstring (tm_var_encode (translate (s, in_lan, out_lan))), parent);
-  QLabel* label= new QLabel (to_qstring_utf8 (qt_translate (s)), parent);
+  QLabel* label= new QLabel (to_qstring (qt_translate (s)), parent);
   layout->addWidget (label);
   layout->addWidget (ledit);
   widget->setLayout (layout);
@@ -122,7 +122,7 @@ QTMImagePreview::setImage (const QString& file) {
       file.endsWith (".eps") ||
       file.endsWith (".pdf")) {
     url temp= url_temp (".png");
-    url image_url= url_system (scm_unquote (from_qstring (file)));
+    url image_url= url_system (scm_unquote (from_qstring_utf8 (file)));
     int w_pt, h_pt;
     double w, h;
     image_size (image_url, w_pt, h_pt);
@@ -137,7 +137,7 @@ QTMImagePreview::setImage (const QString& file) {
       h= 98;
     }
     image_to_png (image_url, temp, w, h);
-    img.load (to_qstring (as_string (temp)));
+    img.load (utf8_to_qstring (as_string (temp)));
     remove (temp);
   }
   else {
