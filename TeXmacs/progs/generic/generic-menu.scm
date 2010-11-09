@@ -74,6 +74,56 @@
     (> (tree-arity t) (tree-minimal-arity t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New markup element for generation of menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (gui-normalize l)
+  (cond ((null? l) l)
+	((func? (car l) 'list)
+	 (append (gui-normalize (cdar l)) (gui-normalize (cdr l))))
+	(else (cons (car l) (gui-normalize (cdr l))))))
+
+(tm-define-macro (gui$list . l)
+  (:synopsis "Make widgets")
+  `(gui-normalize (list ,@l)))
+
+(tm-define-macro (gui$dynamic w)
+  (:synopsis "Make dynamic widgets")
+  `(cons* 'list ,w))
+
+(tm-define-macro (gui$optional pred? . l)
+  (:synopsis "Make optional widgets")
+  `(cons* 'list (if ,pred? (gui$list ,@l) '())))
+
+(tm-define-macro (gui$when pred? . l)
+  (:synopsis "Make possibly inert (whence greyed) widgets")
+  `(cons* 'when (lambda () ,pred?) (gui$list ,@l)))
+
+(tm-define-macro (gui$button text cmd)
+  (:synopsis "Make button")
+  `(list ,text (lambda () ,cmd)))
+
+(tm-define-macro (gui$pullright text . l)
+  (:synopsis "Make pullright button")
+  `(cons* '-> ,text (gui$list ,@l)))
+
+(tm-define-macro (gui$check text check pred?)
+  (:synopsis "Make button")
+  `(list 'check ,text ,check (lambda () ,pred?)))
+
+(tm-define-macro (gui$mini pred? . l)
+  (:synopsis "Make minibar")
+  `(cons* 'mini (lambda () ,pred?) (gui$list ,@l)))
+
+(tm-define-macro (gui$hsep)
+  (:synopsis "Make horizontal separator")
+  `(string->symbol "|"))
+
+(tm-define-macro (gui$vsep)
+  (:synopsis "Make vertical separator")
+  `'---)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special handles for images
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -108,70 +158,58 @@
 ;; double check that focus-tree still has the required form
 
 (tm-define (standard-focus-menu t)
-  (append (opt #t
-	       (cons* '-> (tag-menu-name (tree-label t))
-		      (variant-menu-items t)))
-	  (opt (numbered-context? t)
-	       ;; FIXME: itemize, enumerate, eqnarray*
-	       (list (list 'check "Numbered" "v"
-			   (lambda () (check-number? (focus-tree))))
-		     (lambda () (number-toggle (focus-tree)))))
-	  (opt (toggle-context? t)
-	       (list (list 'check "Unfolded" "v"
-			   (lambda () (toggle-second-context? (focus-tree))))
-		     (lambda () (toggle-toggle (focus-tree)))))
-	  (opt #t
-	       (list "Describe"
-		     (lambda () (set-message "Not yet implemented" ""))))
-	  (opt #t
-	       (list "Delete"
-		     (lambda () (remove-structure-upwards))))
+  (gui$list
+    (gui$pullright (tag-menu-name (tree-label t))
+		   (gui$dynamic (variant-menu-items t)))
+    (gui$optional (numbered-context? t)
+		  ;; FIXME: itemize, enumerate, eqnarray*
+		  (gui$button
+		   (gui$check "Numbered" "v"
+			      (check-number? (focus-tree)))
+		   (number-toggle (focus-tree))))
+    (gui$optional (toggle-context? t)
+		  (gui$button
+		   (gui$check "Unfolded" "v"
+			      (toggle-second-context? (focus-tree)))
+		   (toggle-toggle (focus-tree))))
+    (gui$button "Describe" (set-message "Not yet implemented" ""))
+    (gui$button "Delete" (remove-structure-upwards))
 
-	  (list '---)
-	  (list (list "Previous similar"
-		      (lambda () (traverse-previous))))
-	  (list (list "Next similar"
-		      (lambda () (traverse-next))))
-	  (list (list "First similar"
-		      (lambda () (traverse-first))))
-	  (list (list "Last similar"
-		      (lambda () (traverse-last))))
-	  (list (list "Exit left"
-		      (lambda () (structured-exit-left))))
-	  (list (list "Exit right"
-		      (lambda () (structured-exit-right))))
+    (gui$vsep)
+    (gui$button "Previous similar" (traverse-previous))
+    (gui$button "Next similar" (traverse-next))
+    (gui$button "First similar" (traverse-first))
+    (gui$button "Last similar" (traverse-last))
+    (gui$button "Exit left" (structured-exit-left))
+    (gui$button "Exit right" (structured-exit-right))
 
-	  (opt (or (structured-horizontal? t) (structured-vertical? t))
-	       (list '---))
-          (opt (structured-vertical? t)
-	       (list "Insert above"
-		     (lambda () (structured-insert-up))))
-          (opt (structured-horizontal? t)
-	       (list 'when focus-can-insert
-		     (list "Insert argument before"
-			   (lambda () (structured-insert #f)))))
-          (opt (structured-horizontal? t)
-	       (list 'when focus-can-insert
-		     (list "Insert argument after"
-			   (lambda () (structured-insert #t)))))
-          (opt (structured-vertical? t)
-	       (list "Insert below"
-		     (lambda () (structured-insert-down))))
-          (opt (structured-vertical? t)
-	       (list "Remove above"
-		     (lambda () (structured-remove-up))))
-          (opt (structured-horizontal? t)
-	       (list 'when focus-can-remove
-		     (list "Remove argument backwards"
-			   (lambda () (structured-remove #f)))))
-          (opt (structured-horizontal? t)
-	       (list 'when focus-can-remove
-		     (list "Remove argument forwards"
-			   (lambda () (structured-remove #t)))))
-          (opt (structured-vertical? t)
-	       (list "Remove below"
-		     (lambda () (structured-remove-down))))))
-
+    (gui$optional (or (structured-horizontal? t) (structured-vertical? t))
+		  (gui$vsep))
+    (gui$optional (structured-vertical? t)
+		  (gui$button "Insert above" (structured-insert-up)))
+    (gui$optional (structured-horizontal? t)
+		  (gui$when (focus-can-insert)
+			    (gui$button "Insert argument before"
+					(structured-insert #f))))
+    (gui$optional (structured-horizontal? t)
+		  (gui$when (focus-can-insert)
+			    (gui$button "Insert argument after"
+					(structured-insert #t))))
+    (gui$optional (structured-vertical? t)
+		  (gui$button "Insert below" (structured-insert-down)))
+    (gui$optional (structured-vertical? t)
+		  (gui$button "Remove upwards" (structured-remove-up)))
+    (gui$optional (structured-horizontal? t)
+		  (gui$when (focus-can-remove)
+			    (gui$button "Remove argument before"
+					(structured-remove #f))))
+    (gui$optional (structured-horizontal? t)
+		  (gui$when (focus-can-remove)
+			    (gui$button "Remove argument after"
+					(structured-remove #t))))
+    (gui$optional (structured-vertical? t)
+		  (gui$button "Remove downwards"
+			      (structured-remove-down)))))
 
 (tm-define (focus-menu)
   (with t (focus-tree)
