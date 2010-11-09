@@ -93,10 +93,12 @@ inputs_list_widget_rep::inputs_list_widget_rep (
   array<wk_widget> buttons_w (5);
   buttons_w[0]= glue_wk_widget (true, false);
   buttons_w[1]= command_button (text_wk_widget (translate ("Cancel")),
-				inputs_list_command (this, -1, n), 0, true);
+				inputs_list_command (this, -1, n),
+				WIDGET_STYLE_BUTTON);
   buttons_w[2]= glue_wk_widget (false, false, 5*PIXEL);
   buttons_w[3]= command_button (text_wk_widget (translate ("Ok")),
-				inputs_list_command (this, n-1, n), 0, true);
+				inputs_list_command (this, n-1, n),
+				WIDGET_STYLE_BUTTON);
 #ifdef OS_MACOS
   buttons_w[4]= glue_wk_widget (false, false, 19*PIXEL);
 #else

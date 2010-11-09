@@ -40,7 +40,7 @@ private:
   void consistent (string s);
 public:
   popup_button_rep (wk_widget w, wk_widget pw,
-		    gravity where, bool button_flag);
+		    gravity where, int style);
   popup_button_rep (wk_widget w, promise<wk_widget> prom,
 		    gravity where);
   void handle_attach_window (attach_window_event ev);
@@ -55,8 +55,8 @@ gravity opposite (gravity grav);
 ******************************************************************************/
 
 popup_button_rep::popup_button_rep (
-  wk_widget w, wk_widget pw, gravity wh, bool fl):
-    button_widget_rep (w, wh==east, 0, fl),
+  wk_widget w, wk_widget pw, gravity wh, int style):
+    button_widget_rep (w, wh==east, style),
     prom (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
     where (wh), require_map (false), stick (false)
 {
@@ -299,13 +299,13 @@ opposite (gravity grav) {
 ******************************************************************************/
 
 wk_widget
-pulldown_button (wk_widget w, wk_widget pw, bool button_flag) {
-  return tm_new<popup_button_rep> (w, pw, south_east, button_flag);
+pulldown_button (wk_widget w, wk_widget pw, int style) {
+  return tm_new<popup_button_rep> (w, pw, south_east, style);
 }
 
 wk_widget
-pullright_button (wk_widget w, wk_widget pw, bool button_flag) {
-  return tm_new<popup_button_rep> (w, pw, east, button_flag);
+pullright_button (wk_widget w, wk_widget pw, int style) {
+  return tm_new<popup_button_rep> (w, pw, east, style);
 }
 
 wk_widget

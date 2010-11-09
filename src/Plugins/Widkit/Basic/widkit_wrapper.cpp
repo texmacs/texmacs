@@ -148,16 +148,14 @@ xpm_widget (url file_name) {
 }
 
 widget
-command_button (widget w, command cmd, int style, bool button_flag) {
-  return abstract (command_button (concrete (w), cmd, style, button_flag));
+command_button (widget w, command cmd, int style) {
+  return abstract (command_button (concrete (w), cmd, style));
 }
 
 widget
-command_button (widget lw, widget cw, widget rw, command cmd,
-		int style, bool e, bool c) {
+command_button (widget lw, widget cw, widget rw, command cmd, int style) {
   return abstract (command_button (concrete (lw), concrete (cw),
-				   concrete (rw), cmd,
-				   style, e, c));
+				   concrete (rw), cmd, style));
 }
 
 widget
@@ -165,14 +163,15 @@ menu_group (string name, int style) {
   widget lw= empty_widget ();
   widget cw= text_widget (name, style, dark_grey, false);
   widget rw= empty_widget ();
-  return command_button (lw, cw, rw, noop, 0, false, true);
+  return command_button (lw, cw, rw, noop,
+			 WIDGET_STYLE_INERT + WIDGET_STYLE_CENTERED);
 }
 
 widget
 menu_button (widget w, command cmd, string pre, string ks, int style) {
   bool ok= (style & WIDGET_STYLE_INERT) != 0;
   if (pre == "" && ks == "")
-    return command_button (w, cmd, style, false);
+    return command_button (w, cmd, style);
   else {
     color  c = ok? black: dark_grey;
     widget lw= empty_widget ();
@@ -184,7 +183,7 @@ menu_button (widget w, command cmd, string pre, string ks, int style) {
       if (pre == "*") s= "<bullet>";
       if (s != "") lw= box_widget (tree (TUPLE), s, c, true, false);
     }
-    return command_button (lw, w, rw, cmd, style, ok, false);
+    return command_button (lw, w, rw, cmd, style);
   }
 }
 

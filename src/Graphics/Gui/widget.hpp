@@ -86,6 +86,10 @@ operator << (tm_ostream& out, widget w) {
   // indicate that a button is currently pressed
 #define WIDGET_STYLE_INERT              16
   // only render but don't associate any action to widget
+#define WIDGET_STYLE_BUTTON             32
+  // indicate that a button should explicitly rendered as a button
+#define WIDGET_STYLE_CENTERED           64
+  // use centered text
 
 /******************************************************************************
 * Window widgets

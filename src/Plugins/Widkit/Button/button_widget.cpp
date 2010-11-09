@@ -19,30 +19,33 @@
 ******************************************************************************/
 
 button_widget_rep::button_widget_rep
-  (wk_widget w2, bool rf2, int style2, bool bf2):
+  (wk_widget w2, bool rf2, int style2):
     attribute_widget_rep (1, south_west),
-    extra_left (0), extra_right (0), rflag (rf2),
-    style (style2), button_flag (bf2),
-    enabled(true), centered(false), has_pull_down (false),
-    status (false), inside (false)
+    extra_left (0), extra_right (0), rflag (rf2), style (style2),
+    button_flag ((style2 & WIDGET_STYLE_BUTTON) != 0),
+    enabled ((style2 & WIDGET_STYLE_INERT) == 0),
+    centered ((style2 & WIDGET_STYLE_CENTERED) != 0),
+    has_pull_down (false), status (false), inside (false)
 { a[0]= w2; }
     
 button_widget_rep::button_widget_rep
   (wk_widget lw, wk_widget rw, int style2):
     attribute_widget_rep (2, south_west),
-    extra_left (0), extra_right (0), rflag (false),
-    style (style2), button_flag (false),
-    enabled(true), centered(false), has_pull_down (false),
-    status (false), inside (false)
+    extra_left (0), extra_right (0), rflag (false), style (style2),
+    button_flag ((style2 & WIDGET_STYLE_BUTTON) != 0),
+    enabled ((style2 & WIDGET_STYLE_INERT) == 0),
+    centered ((style2 & WIDGET_STYLE_CENTERED) != 0),
+    has_pull_down (false), status (false), inside (false)
 { a[0]= lw; a[1]= rw; }
     
 button_widget_rep::button_widget_rep
-  (wk_widget lw, wk_widget cw, wk_widget rw, int style2, bool e, bool c):
+  (wk_widget lw, wk_widget cw, wk_widget rw, int style2):
     attribute_widget_rep (3, south_west),
-    extra_left (0), extra_right (0), rflag (false),
-    style (style2), button_flag (false),
-    enabled(e), centered(c), has_pull_down (false),
-    status (false), inside (false)
+    extra_left (0), extra_right (0), rflag (false), style (style2),
+    button_flag ((style2 & WIDGET_STYLE_BUTTON) != 0),
+    enabled ((style2 & WIDGET_STYLE_INERT) == 0),
+    centered ((style2 & WIDGET_STYLE_CENTERED) != 0),
+    has_pull_down (false), status (false), inside (false)
 { a[0]= lw; a[1]= cw; a[2]= rw; }
 
 button_widget_rep::operator tree () {
@@ -122,12 +125,14 @@ button_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
       layout_lower (ren, 0, 0, w, h);
     }
   }
-  else if (button_flag || (inside && !status && enabled))
+  else if (inside && !status && enabled)
     layout_higher (ren, 0, 0, w, h);
   else if (status) {
     layout_dark (ren, 0, 0, w, h);
     layout_lower (ren, 0, 0, w, h);
   }
+  else if (button_flag)
+    layout_higher (ren, 0, 0, w, h);
   if (rflag)
     layout_submenu_triangle (ren, w-10*PIXEL, h>>1);
   if (has_pull_down && inside && !status)
@@ -167,27 +172,24 @@ button_widget_rep::handle_set_coord2 (set_coord2_event ev) {
 class command_button_rep: public button_widget_rep {
   command cmd;
 public:
-  command_button_rep (wk_widget w, command cmd,
-		      int style, bool button_flag);
-  command_button_rep (wk_widget lw, wk_widget rw, command cmd,
-		      int style);
-  command_button_rep (wk_widget lw, wk_widget cw, wk_widget rw, command cmd,
-		      int style, bool e, bool c);
+  command_button_rep (wk_widget w, command cmd, int style);
+  command_button_rep (wk_widget lw, wk_widget rw, command cmd, int style);
+  command_button_rep (wk_widget lw, wk_widget cw, wk_widget rw,
+		      command cmd, int style);
   void handle_mouse (mouse_event ev);
 };
 
 command_button_rep::command_button_rep (
- wk_widget w, command cmd2, int style, bool bf):
-    button_widget_rep (w, false, style, bf), cmd (cmd2) {}
+ wk_widget w, command cmd2, int style):
+    button_widget_rep (w, false, style), cmd (cmd2) {}
 
 command_button_rep::command_button_rep (
   wk_widget lw, wk_widget rw, command cmd2, int style):
     button_widget_rep (lw, rw, style), cmd (cmd2) {}
 
 command_button_rep::command_button_rep (
-  wk_widget lw, wk_widget cw, wk_widget rw, command cmd2,
-  int style, bool e, bool c):
-    button_widget_rep (lw, cw, rw, style, e, c), cmd (cmd2) {}
+  wk_widget lw, wk_widget cw, wk_widget rw, command cmd2, int style):
+    button_widget_rep (lw, cw, rw, style), cmd (cmd2) {}
 
 void
 command_button_rep::handle_mouse (mouse_event ev) {
@@ -213,8 +215,8 @@ command_button_rep::handle_mouse (mouse_event ev) {
 ******************************************************************************/
 
 wk_widget
-command_button (wk_widget w, command cmd, int style, bool button_flag) {
-  return tm_new<command_button_rep> (w, cmd, style, button_flag);
+command_button (wk_widget w, command cmd, int style) {
+  return tm_new<command_button_rep> (w, cmd, style);
 }
 
 wk_widget
@@ -223,8 +225,8 @@ command_button (wk_widget lw, wk_widget rw, command cmd, int style) {
 }
 
 wk_widget
-command_button (wk_widget lw, wk_widget cw, wk_widget rw, command cmd,
-		int style, bool e, bool c)
+command_button (wk_widget lw, wk_widget cw, wk_widget rw,
+		command cmd, int style)
 {
-  return tm_new<command_button_rep> (lw, cw, rw, cmd, style, e, c);
+  return tm_new<command_button_rep> (lw, cw, rw, cmd, style);
 }

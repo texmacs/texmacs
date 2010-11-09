@@ -33,12 +33,9 @@ public:
   bool   status;
   bool   inside;
 
-  button_widget_rep (wk_widget w, bool rflag=false,
-		     int style= 0, bool button_flag= false);
-  button_widget_rep (wk_widget lw, wk_widget rw,
-		     int style= 0);
-  button_widget_rep (wk_widget lw, wk_widget cw, wk_widget rw,
-		     int style= 0, bool e=true, bool c=false);
+  button_widget_rep (wk_widget w, bool rflag=false, int style= 0);
+  button_widget_rep (wk_widget lw, wk_widget rw, int style= 0);
+  button_widget_rep (wk_widget lw, wk_widget cw, wk_widget rw, int style= 0);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
