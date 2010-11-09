@@ -107,6 +107,14 @@
   (:synopsis "Make balloon")
   `(list 'balloon ,text ,balloon))
 
+(tm-define-macro (gui$group text)
+  (:synopsis "Make a menu group")
+  `(list 'group ,text))
+
+(tm-define-macro (gui$input cmd type proposals width)
+  (:synopsis "Make input field")
+  `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
+
 (tm-define-macro (gui$button text cmd)
   (:synopsis "Make button")
   `(list ,text (lambda () ,cmd)))
@@ -119,12 +127,16 @@
   (:synopsis "Make pulldown button")
   `(cons* '=> ,text (gui$list ,@l)))
 
+(tm-define-macro (gui$minibar . l)
+  (:synopsis "Make minibar")
+  `(cons* 'minibar (gui$list ,@l)))
+
 (tm-define-macro (gui$check text check pred?)
   (:synopsis "Make button")
   `(list 'check ,text ,check (lambda () ,pred?)))
 
 (tm-define-macro (gui$mini pred? . l)
-  (:synopsis "Make minibar")
+  (:synopsis "Make mini widgets")
   `(cons* 'mini (lambda () ,pred?) (gui$list ,@l)))
 
 (tm-define-macro (gui$hsep)
@@ -141,30 +153,21 @@
 
 (define (string-input-handle t i w)
   (if (tree-atomic? (tree-ref t i))
-      (list 'input
-	    (lambda (answer)
-	      (when answer
-		(tree-set (focus-tree) i answer)))
-	    "string"
-	    (lambda ()
-	      (list (tree->string (tree-ref t i))))
-	    w)
-      (list 'group "[n.a.]")))
+      (gui$input (when answer (tree-set (focus-tree) i answer)) "string"
+		 (list (tree->string (tree-ref t i))) w)
+      (gui$group "[n.a.]")))
 
 (define (image-handles t)
-  (list (list 'mini (lambda () #t) (list 'group "Width:"))
+  (list (gui$mini #t (gui$group "Width:"))
 	(string-input-handle t 1 "3em")
-	(list 'mini (lambda () #t) (list 'group "Height:"))
+	(gui$mini #t (gui$group "Height:"))
 	(string-input-handle t 2 "3em")
-	(list 'mini (lambda () #t) (list 'group "File:"))
+	(gui$mini #t (gui$group "File:"))
 	(string-input-handle t 0 "0.5w")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-macro (opt cond? . l)
-  `(if ,cond? (list ,@l) '()))
 
 ;; FIXME: when recovering focus-tree,
 ;; double check that focus-tree still has the required form
@@ -319,21 +322,17 @@
 		  (structured-remove-down)))))
 
 (tm-define (standard-focus-icons t)
-  (append (opt #t
-	       (cons 'minibar (focus-variant-icons t)))
-
-	  (opt #t
-	       (list 'group "")
-	       (cons 'minibar (focus-move-icons t)))
-
-          (opt (or (structured-horizontal? t) (structured-vertical? t))
-	       (list 'group "")
-	       (cons 'minibar (focus-insert-icons t)))
-
-	  (opt (tree-is? t 'image)
-	       (append (list (list 'group ""))
-		       (image-handles t)
-		       (list (list 'group ""))))))
+  (gui$list
+    (gui$minibar (gui$dynamic (focus-variant-icons t)))
+    (gui$group "")
+    (gui$minibar (gui$dynamic (focus-move-icons t)))
+    (gui$optional (or (structured-horizontal? t) (structured-vertical? t))
+      (gui$group "")
+      (gui$minibar (gui$dynamic (focus-insert-icons t))))
+    (gui$optional (tree-is? t 'image)
+      (gui$group "")
+      (gui$dynamic (image-handles t))
+      (gui$group ""))))
 
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)
