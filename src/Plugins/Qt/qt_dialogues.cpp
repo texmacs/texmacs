@@ -848,8 +848,8 @@ input_text_widget (command call_back, string type, array<string> def,
 }
 
 widget
-color_picker_widget (command call_back, array<tree> proposals) {
+color_picker_widget (command call_back, bool bg, array<tree> proposals) {
   // TODO: to be implemented
-  (void) call_back; (void) proposals;
+  (void) call_back; (void) bg; (void) proposals;
   return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
 }

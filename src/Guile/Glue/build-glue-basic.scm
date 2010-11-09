@@ -378,7 +378,7 @@
 		(widget command string array_string int string))
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
-  (widget-color-picker color_picker_widget (widget command array_tree))
+  (widget-color-picker color_picker_widget (widget command bool array_tree))
   (object->promise-widget as_promise_widget (promise_widget object))
 
   ;; routines for BibTeX

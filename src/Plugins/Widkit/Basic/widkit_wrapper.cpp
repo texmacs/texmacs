@@ -224,8 +224,8 @@ file_chooser_widget (command cmd, string type, bool save) {
 }
 
 widget
-color_picker_widget (command cmd, array<tree> proposals) {
-  return abstract (color_picker_wk_widget (cmd, proposals));
+color_picker_widget (command cmd, bool bg, array<tree> proposals) {
+  return abstract (color_picker_wk_widget (cmd, bg, proposals));
 }
 
 widget

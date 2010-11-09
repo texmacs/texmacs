@@ -102,9 +102,9 @@ tile_color_picker (array<tree> cols, command cmd, int columns) {
 }
 
 wk_widget
-direct_color_picker (command cmd, array<tree> proposals) {
+direct_color_picker (command cmd, bool bg, array<tree> proposals) {
   (void) proposals;
-  array<wk_widget> picker (5);
+  array<wk_widget> picker (bg? 5: 3);
 
   array<tree> cols1;
   cols1 << tree ("dark red") << tree ("dark magenta")
@@ -129,24 +129,26 @@ direct_color_picker (command cmd, array<tree> proposals) {
 	<< tree ("white");
   picker[2]= tile_color_picker (cols2, cmd, 8);
 
-  picker[3]= glue_wk_widget (true, false, 0, 5*PIXEL);
+  if (bg) {
+    picker[3]= glue_wk_widget (true, false, 0, 5*PIXEL);
 
-  bool dir_problem;
-  url pattern_dir= "$TEXMACS_PATH/misc/patterns";
-  array<string> all= read_directory (pattern_dir, dir_problem);
-  array<tree> cols3;
-  for (int i=0; i<N(all); i++)
-    if (ends (all[i], ".png")) {
-      url image= resolve (relative (pattern_dir, all[i]));
-      int imw_pt, imh_pt;
-      image_size (image, imw_pt, imh_pt);
-      double pt= ((double) 600*PIXEL) / 72.0;
-      SI imw= (SI) (((double) imw_pt) * pt);
-      SI imh= (SI) (((double) imh_pt) * pt);
-      cols3 << tree (PATTERN, as_string (pattern_dir * all[i]),
-		     as_string (imw), as_string (imh));
-    }
-  picker[4]= tile_color_picker (cols3, cmd, 8);
+    bool dir_problem;
+    url pattern_dir= "$TEXMACS_PATH/misc/patterns";
+    array<string> all= read_directory (pattern_dir, dir_problem);
+    array<tree> cols3;
+    for (int i=0; i<N(all); i++)
+      if (ends (all[i], ".png")) {
+	url image= resolve (relative (pattern_dir, all[i]));
+	int imw_pt, imh_pt;
+	image_size (image, imw_pt, imh_pt);
+	double pt= ((double) 600*PIXEL) / 72.0;
+	SI imw= (SI) (((double) imw_pt) * pt);
+	SI imh= (SI) (((double) imh_pt) * pt);
+	cols3 << tree (PATTERN, as_string (pattern_dir * all[i]),
+		       as_string (imw), as_string (imh));
+      }
+    picker[4]= tile_color_picker (cols3, cmd, 8);
+  }
 
   return vertical_list (picker);
 }
@@ -156,7 +158,6 @@ direct_color_picker (command cmd, array<tree> proposals) {
 ******************************************************************************/
 
 wk_widget
-color_picker_wk_widget (command cmd, array<tree> proposals) {
-  return direct_color_picker (cmd, proposals);
-  //return tm_new<color_picker_widget_rep> (cmd, proposals);
+color_picker_wk_widget (command cmd, bool bg, array<tree> proposals) {
+  return direct_color_picker (cmd, bg, proposals);
 }

@@ -167,7 +167,7 @@
   ("None" (cell-set-background ""))
   ("Foreground" (cell-set-background "foreground"))
   ---
-  (pick-color (cell-set-background (tree->stree answer)))
+  (pick-background (cell-set-background (tree->stree answer)))
   ---
   ("Other"  (interactive cell-set-background)))
 

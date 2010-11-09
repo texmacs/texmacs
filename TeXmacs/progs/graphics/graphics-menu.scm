@@ -280,7 +280,8 @@
   ("Default" (graphics-set-fill-color "default"))
   ("None" (graphics-set-fill-color "none"))
   ---
-  (pick-color (graphics-set-fill-color (tree->stree answer)))
+  (pick-background (graphics-set-fill-color (tree->stree answer)))
+  ;;(pick-background (graphics-set-fill-color (tree->stree answer)))
   ---
   ("Other" (interactive graphics-set-fill-color)))
 

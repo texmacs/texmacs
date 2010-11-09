@@ -117,8 +117,8 @@
 
 (define (make-menu-pick-color p)
   "Make @(pick-color :%1) menu item."
-  (with (tag cmd) p
-    (widget-color-picker (object->command cmd) '())))
+  (with (tag cmd bg?) p
+    (widget-color-picker (object->command cmd) bg? '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
@@ -333,7 +333,7 @@
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p))))
-  (pick-color (:%1)
+  (pick-color (:%1 :%1)
 	      ,(lambda (p style bar?) (list (make-menu-pick-color p))))
   (link (:%1)
 	,(lambda (p style bar?) (make-menu-link p style bar?)))
@@ -393,6 +393,7 @@
 (define (menu-expand-pick-color p)
   "Expand pick-color menu item @p."
   `(pick-color ,(replace-procedures (cadr p))
+	       ,(caddr p)
 	       ;; FIXME: add default proposals
 	       ))
 

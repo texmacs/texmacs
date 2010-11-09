@@ -90,6 +90,8 @@ operator << (tm_ostream& out, widget w) {
   // indicate that a button should explicitly rendered as a button
 #define WIDGET_STYLE_CENTERED           64
   // use centered text
+#define WIDGET_STYLE_CENTERED           64
+  // use centered text
 
 /******************************************************************************
 * Window widgets
@@ -118,10 +120,11 @@ widget file_chooser_widget (command cmd, string type, bool save);
 widget printer_widget (url ps_pdf_file);
   // widget for printing a file, offering a way for selecting a page range,
   // changing the paper type and orientation, previewing, etc.
-widget color_picker_widget (command cmd, array<tree> proposals);
-  // a widget for selecting a color, a pattern or a background image,
+widget color_picker_widget (command cmd, bool bg, array<tree> proposals);
+  // widgets for selecting a color, a pattern or a background image,
   // encoded by a tree. On input, we give a list of recently used proposals
   // on termination the command is called with the selected color as argument
+  // the bg flag specifies whether we are picking a background color or fill
 widget inputs_list_widget (command call_back, array<string> prompts);
   // a dialogue widget with Ok and Cancel buttons and a series of textual
   // input widgets with specified prompts

@@ -43,6 +43,7 @@
     (symbol :string? :*)
     (input :%1 :string? :%1 :string?)
     (pick-color :%1)
+    (pick-background :%1)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
     (minibar :menu-item-list)
@@ -160,7 +161,9 @@
 	       ,(make-promise (cadddr p))
 	       ,(fifth p))))
   (pick-color (:%1)
-    ,(lambda (p) `(pick-color ,(make-input-promise (cadr p)))))
+    ,(lambda (p) `(pick-color ,(make-input-promise (cadr p)) #f)))
+  (pick-background (:%1)
+    ,(lambda (p) `(pick-color ,(make-input-promise (cadr p)) #t)))
   (symbol (:string? :*)
     ,(lambda (p)
        (if (<= (length p) 2) p
