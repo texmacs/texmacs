@@ -1239,7 +1239,7 @@ edit_table_rep::table_go_to (int row, int col) {
 }
 
 void
-edit_table_rep::table_set_format (string var, string val) {
+edit_table_rep::table_set_format (string var, tree val) {
   if (val == "") table_del_format (var);
   else {
     path fp= search_format ();
@@ -1318,7 +1318,7 @@ edit_table_rep::get_cell_mode () {
 }
 
 void
-edit_table_rep::cell_set_format (string var, string val) {
+edit_table_rep::cell_set_format (string var, tree val) {
   if (selection_active_table ()) {
     int row1, col1, row2, col2;
     path fp= selection_get_subtable (row1, col1, row2, col2);

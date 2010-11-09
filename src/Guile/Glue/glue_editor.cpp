@@ -1170,10 +1170,10 @@ tmg_table_go_to (SCM arg1, SCM arg2) {
 SCM
 tmg_table_set_format (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "table-set-format");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "table-set-format");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "table-set-format");
 
   string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->table_set_format (in1, in2);
@@ -1277,10 +1277,10 @@ tmg_get_cell_mode () {
 SCM
 tmg_cell_set_format (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "cell-set-format");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "cell-set-format");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "cell-set-format");
 
   string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->cell_set_format (in1, in2);

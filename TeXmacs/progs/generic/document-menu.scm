@@ -352,7 +352,7 @@
       (-> "Background"
 	  ("Default" (init-default "bg-color"))
 	  ---
-	  (pick-color (init-env "bg-color" (tree->stree answer)))
+	  (pick-color (init-env-tree "bg-color" (tree->stree answer)))
 	  ---
 	  ("Other" (init-interactive-env "bg-color"))))
   (if (detailed-menus?)

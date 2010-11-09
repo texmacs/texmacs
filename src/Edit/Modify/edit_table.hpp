@@ -98,7 +98,7 @@ public:
   int    table_which_column ();
   path   table_search_cell (int row, int col);
   void   table_go_to (int row, int col);
-  void   table_set_format (string var, string val);
+  void   table_set_format (string var, tree val);
   string table_get_format (string var);
   void   table_del_format (string var);
   void   table_format_center ();
@@ -107,7 +107,7 @@ public:
   void   table_correct_block_content ();
   void   set_cell_mode (string mode);
   string get_cell_mode ();
-  void   cell_set_format (string var, string val);
+  void   cell_set_format (string var, tree val);
   string cell_get_format (string var);
   void   cell_del_format (string var);
 
