@@ -337,13 +337,13 @@ QTMMinibarAction::createWidget(QWidget* parent) {
   l->setSpacing(0);
   for (int i=0; i < actions.count(); i++) {
     QAction* sa= actions[i];
-    cout << sa->text().toUtf8().constData() << LF;
     if (qobject_cast<QWidgetAction*>(sa)) {
       QWidget *w = qobject_cast<QWidgetAction*>(sa)->requestWidget(wid);
       l->addWidget(w);
     } else {
       QToolButton *tb = new QToolButton(wid);
       tb->setDefaultAction(sa);
+      tb->setAutoRaise(true);
       l->addWidget(tb);
     }
   }
