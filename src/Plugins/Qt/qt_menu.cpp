@@ -39,19 +39,19 @@
 // the hierarchy of a QMenu has parents correctly set to the proper supermenu
 // this guarantees that deletion of the root menu correclty deletes all the tree below it.
 // the root menu itself (without parent QObject) is "owned" by the associate qt_menu_rep instance
-// and it is deallocated by it. This ensure correct memory management between TeXmacs and Qt
+// and it is deallocated by it. This ensures correct memory management between TeXmacs and Qt
 // since qt_menu_rep is sometimes cached at TeXmacs level.
-// this also mean that when we install some menu in the GUI (in the main menu or in the toolbar)
+// this also means that when we install some menu in the GUI (in the main menu or in the toolbar)
 // we should just add actions and not reroot the qt parent hierarchy since even if the menu will
 // be eventually removed from the GUI it has some chance to still be cached in the TeXmacs side
 // conventions are as follows:
 // - the method as_qaction passes the ownership of the action and the eventual submenu to the caller 
-//   responsibility. When creating menu hierachy (eg. via the scheme interface) you should use this method
+//   responsibility. When creating menu hierachies (eg. via the scheme interface) you should use this method
 //   to retrieve the relevant Qt objects.
-// - the method qt_menu_rep::get_menu preserve the onwership of the menu to the called qt_menu_rep
+// - the method qt_menu_rep::get_menu preserves the onwership of the menu to the called qt_menu_rep
 //   (to guarantee correct caching). when installing menus in the gui you should use this method.
-// Submenus belongs implicilty to the parent QTMAction since it controls if the menu has an explicit parent
-// and in negative case delete the submenu. All submenus in the menu hierarchy should have empty parent widget
+// Submenus belongs implicitly to the parent QTMAction since it controls if the menu has an explicit parent
+// and in negative case delete the submenu. All submenus in the menu hierarchy should have an empty parent widget
 // and be attached to some QTMAction. This guarantees correct memory management.
 
 
