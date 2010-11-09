@@ -284,6 +284,9 @@
 		9C74D965123BF892008959D1 /* packrat_grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95A123BF892008959D1 /* packrat_grammar.cpp */; };
 		9C74D966123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
 		9C74D967123BF892008959D1 /* win32_get_date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95E123BF892008959D1 /* win32_get_date.cpp */; };
+		9C75B68612895366008DE84F /* aligned_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B68512895366008DE84F /* aligned_widget.cpp */; };
+		9C75B720128973D5008DE84F /* minibar_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B71F128973D5008DE84F /* minibar_widget.cpp */; };
+		9C75B76C12897795008DE84F /* color_picker_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B76B12897795008DE84F /* color_picker_widget.cpp */; };
 		9C7E7AA21105EA7D004482BB /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */; };
 		9C7E7AAA1105EBB1004482BB /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */; };
 		9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */; };
@@ -1683,6 +1686,9 @@
 		9C74D95C123BF892008959D1 /* packrat_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_parser.cpp; sourceTree = "<group>"; };
 		9C74D95D123BF892008959D1 /* packrat_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat_parser.hpp; sourceTree = "<group>"; };
 		9C74D95E123BF892008959D1 /* win32_get_date.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = win32_get_date.cpp; sourceTree = "<group>"; };
+		9C75B68512895366008DE84F /* aligned_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aligned_widget.cpp; sourceTree = "<group>"; };
+		9C75B71F128973D5008DE84F /* minibar_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = minibar_widget.cpp; sourceTree = "<group>"; };
+		9C75B76B12897795008DE84F /* color_picker_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color_picker_widget.cpp; sourceTree = "<group>"; };
 		9C7AC3381105DE4A00A7D07F /* fig2ps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps; sourceTree = "<group>"; };
 		9C7AC3391105DE4A00A7D07F /* fig2ps.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps.in; sourceTree = "<group>"; };
 		9C7AC33A1105DE4A00A7D07F /* texmacs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs; sourceTree = "<group>"; };
@@ -2581,16 +2587,11 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
-				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
-				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
-				9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */,
-				9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */,
+				9C0B48A410A8CC100097A335 /* NOTES */,
+				9C0B48BE10A8CC100097A335 /* TODO */,
 				9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */,
 				9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */,
 				9C1D126510D102B300232476 /* qt_pipe_link.cpp */,
-				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
-				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
-				9C0B48A410A8CC100097A335 /* NOTES */,
 				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
 				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
 				9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */,
@@ -2618,7 +2619,12 @@
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
 				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
 				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
-				9C0B48BE10A8CC100097A335 /* TODO */,
+				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
+				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
+				9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */,
+				9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */,
+				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
+				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
 			);
 			path = Qt;
 			sourceTree = "<group>";
@@ -2682,6 +2688,8 @@
 		9C0B48D010A8CC100097A335 /* Composite */ = {
 			isa = PBXGroup;
 			children = (
+				9C75B71F128973D5008DE84F /* minibar_widget.cpp */,
+				9C75B68512895366008DE84F /* aligned_widget.cpp */,
 				9C0B48D110A8CC100097A335 /* array_widget.cpp */,
 				9C0B48D210A8CC100097A335 /* composite_widget.cpp */,
 				9C0B48D310A8CC100097A335 /* list_widget.cpp */,
@@ -2719,6 +2727,7 @@
 		9C0B48E610A8CC100097A335 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				9C75B76B12897795008DE84F /* color_picker_widget.cpp */,
 				9C0B48E710A8CC100097A335 /* balloon_widget.cpp */,
 				9C0B48E810A8CC100097A335 /* file_chooser_widget.cpp */,
 				9C0B48E910A8CC100097A335 /* texmacs_widget.cpp */,
@@ -4686,6 +4695,9 @@
 				9CEDAA371264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA725F126CC926006E8028 /* tree_modify.cpp in Sources */,
 				9C646EBF12842B7A000ABCDF /* mac_utilities.mm in Sources */,
+				9C75B68612895366008DE84F /* aligned_widget.cpp in Sources */,
+				9C75B720128973D5008DE84F /* minibar_widget.cpp in Sources */,
+				9C75B76C12897795008DE84F /* color_picker_widget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
