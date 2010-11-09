@@ -13,6 +13,7 @@
 ******************************************************************************/
 
 #include "Widkit/composite_widget.hpp"
+#include "Widkit/Event/attribute_event.hpp"
 
 void abs_round (SI& l);
 
@@ -127,6 +128,7 @@ public:
   void handle_get_size (get_size_event ev);
   void handle_position (position_event ev);
   void handle_find_child (find_child_event ev);
+  bool handle (event ev);
 };
 
 vertical_list_rep::vertical_list_rep (array<wk_widget> a, bool mf):
@@ -220,6 +222,26 @@ vertical_list_rep::handle_find_child (find_child_event ev) {
   for (i=0; i<N(a); i++)
     if ((ev->y >= a[i]->y1()-oy) && (ev->y < a[i]->y2()-oy)) return;
   i= -1;
+}
+
+bool
+vertical_list_rep::handle (event ev) {
+  if (basic_widget_rep::handle (ev)) return true;
+  switch (ev->type) {
+  case GET_COORD2_EVENT: {
+    get_coord2_event e (ev);
+    if (e->which == "extra width") {
+      e->c1= e->c2= 0;
+      return true;
+    }
+    else return false;
+  }
+  case SET_COORD2_EVENT: {
+    set_coord2_event e (ev);
+    return e->which == "extra width";
+  }
+  }
+  return false;
 }
 
 /******************************************************************************

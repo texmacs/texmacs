@@ -346,36 +346,13 @@
       (-> "Foreground"
 	  ("Default" (init-default "color"))
 	  ---
-	  ("Black" (init-env "color" "black"))
-	  ("White" (init-env "color" "white"))
-	  ("Grey" (init-env "color" "grey"))
-	  ("Red" (init-env "color" "red"))
-	  ("Blue" (init-env "color" "blue"))
-	  ("Yellow" (init-env "color" "yellow"))
-	  ("Green" (init-env "color" "green"))
-	  ("Orange" (init-env "color" "orange"))
-	  ("Magenta" (init-env "color" "magenta"))
-	  ("Brown" (init-env "color" "brown"))
-	  ("Pink" (init-env "color" "pink"))
+	  (pick-color (init-env "color" (tree->stree answer)))
 	  ---
 	  ("Other" (init-interactive-env "color")))
       (-> "Background"
 	  ("Default" (init-default "bg-color"))
 	  ---
-	  ("Black" (init-env "bg-color" "black"))
-	  ("White" (init-env "bg-color" "white"))
-	  ("Grey" (init-env "bg-color" "grey"))
-	  ("Red" (init-env "bg-color" "red"))
-	  ("Blue" (init-env "bg-color" "blue"))
-	  ("Yellow" (init-env "bg-color" "yellow"))
-	  ("Green" (init-env "bg-color" "green"))
-	  ("Orange" (init-env "bg-color" "orange"))
-	  ("Magenta" (init-env "bg-color" "magenta"))
-	  ("Brown" (init-env "bg-color" "brown"))
-	  ("Pink" (init-env "bg-color" "pink"))
-	  ("Light grey" (init-env "bg-color" "light grey"))
-	  ("Dark grey" (init-env "bg-color" "dark grey"))
-	  ("Broken white" (init-env "bg-color" "broken white"))
+	  (pick-color (init-env "bg-color" (tree->stree answer)))
 	  ---
 	  ("Other" (init-interactive-env "bg-color"))))
   (if (detailed-menus?)

@@ -41,17 +41,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind color-menu
-  ("Black" (make-with "color" "black"))
-  ("White" (make-with "color" "white"))
-  ("Grey" (make-with "color" "grey"))
-  ("Red" (make-with "color" "red"))
-  ("Blue" (make-with "color" "blue"))
-  ("Yellow" (make-with "color" "yellow"))
-  ("Green" (make-with "color" "green"))
-  ("Orange" (make-with "color" "orange"))
-  ("Magenta" (make-with "color" "magenta"))
-  ("Brown" (make-with "color" "brown"))
-  ("Pink" (make-with "color" "pink"))
+  (pick-color (make-with "color" (tree->stree answer)))
   ---
   ("Other" (make-interactive-with "color")))
 

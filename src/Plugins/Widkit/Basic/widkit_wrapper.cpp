@@ -224,6 +224,11 @@ file_chooser_widget (command cmd, string type, bool save) {
 }
 
 widget
+color_picker_widget (command cmd, array<tree> proposals) {
+  return abstract (color_picker_wk_widget (cmd, proposals));
+}
+
+widget
 balloon_widget (widget w, widget help) {
   return abstract (balloon_widget (concrete (w), concrete (help)));
 }

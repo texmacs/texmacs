@@ -206,36 +206,16 @@
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
-  ---
   ("None" (graphics-set-color "none"))
-  ("Black" (graphics-set-color "black"))
-  ("White" (graphics-set-color "white"))
-  ("Grey" (graphics-set-color "grey"))
-  ("Red" (graphics-set-color "red"))
-  ("Blue" (graphics-set-color "blue"))
-  ("Yellow" (graphics-set-color "yellow"))
-  ("Green" (graphics-set-color "green"))
-  ("Orange" (graphics-set-color "orange"))
-  ("Magenta" (graphics-set-color "magenta"))
-  ("Brown" (graphics-set-color "brown"))
-  ("Pink" (graphics-set-color "pink"))
+  ---
+  (pick-color (graphics-set-color (tree->stree answer)))
   ---
   ("Other" (interactive graphics-set-color)))
 
 (menu-bind grid-color-axes-menu
   ("Default" (graphics-set-grid-color 'axes "default"))
   ---
-  ("Black" (graphics-set-grid-color 'axes "black"))
-  ("White" (graphics-set-grid-color 'axes "white"))
-  ("Grey" (graphics-set-grid-color 'axes "grey"))
-  ("Red" (graphics-set-grid-color 'axes "red"))
-  ("Blue" (graphics-set-grid-color 'axes "blue"))
-  ("Yellow" (graphics-set-grid-color 'axes "yellow"))
-  ("Green" (graphics-set-grid-color 'axes "green"))
-  ("Orange" (graphics-set-grid-color 'axes "orange"))
-  ("Magenta" (graphics-set-grid-color 'axes "magenta"))
-  ("Brown" (graphics-set-grid-color 'axes "brown"))
-  ("Pink" (graphics-set-grid-color 'axes "pink"))
+  (pick-color (graphics-set-grid-color 'axes (tree->stree answer)))
   ---
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'axes x)) "Color")))
@@ -243,17 +223,7 @@
 (menu-bind grid-color-units-menu
   ("Default" (graphics-set-grid-color 'units "default"))
   ---
-  ("Black" (graphics-set-grid-color 'units "black"))
-  ("White" (graphics-set-grid-color 'units "white"))
-  ("Grey" (graphics-set-grid-color 'units "grey"))
-  ("Red" (graphics-set-grid-color 'units "red"))
-  ("Blue" (graphics-set-grid-color 'units "blue"))
-  ("Yellow" (graphics-set-grid-color 'units "yellow"))
-  ("Green" (graphics-set-grid-color 'units "green"))
-  ("Orange" (graphics-set-grid-color 'units "orange"))
-  ("Magenta" (graphics-set-grid-color 'units "magenta"))
-  ("Brown" (graphics-set-grid-color 'units "brown"))
-  ("Pink" (graphics-set-grid-color 'units "pink"))
+  (pick-color (graphics-set-grid-color 'units (tree->stree answer)))
   ---
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'units x)) "Color")))
@@ -261,17 +231,7 @@
 (menu-bind grid-color-subunits-menu
   ("Default" (graphics-set-grid-color 'subunits "default"))
   ---
-  ("Black" (graphics-set-grid-color 'subunits "black"))
-  ("White" (graphics-set-grid-color 'subunits "white"))
-  ("Grey" (graphics-set-grid-color 'subunits "grey"))
-  ("Red" (graphics-set-grid-color 'subunits "red"))
-  ("Blue" (graphics-set-grid-color 'subunits "blue"))
-  ("Yellow" (graphics-set-grid-color 'subunits "yellow"))
-  ("Green" (graphics-set-grid-color 'subunits "green"))
-  ("Orange" (graphics-set-grid-color 'subunits "orange"))
-  ("Magenta" (graphics-set-grid-color 'subunits "magenta"))
-  ("Brown" (graphics-set-grid-color 'subunits "brown"))
-  ("Pink" (graphics-set-grid-color 'subunits "pink"))
+  (pick-color (graphics-set-grid-color 'subunits (tree->stree answer)))
   ---
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
@@ -318,19 +278,9 @@
 
 (menu-bind graphics-fill-color-menu
   ("Default" (graphics-set-fill-color "default"))
-  ---
   ("None" (graphics-set-fill-color "none"))
-  ("Black" (graphics-set-fill-color "black"))
-  ("White" (graphics-set-fill-color "white"))
-  ("Grey" (graphics-set-fill-color "grey"))
-  ("Red" (graphics-set-fill-color "red"))
-  ("Blue" (graphics-set-fill-color "blue"))
-  ("Yellow" (graphics-set-fill-color "yellow"))
-  ("Green" (graphics-set-fill-color "green"))
-  ("Orange" (graphics-set-fill-color "orange"))
-  ("Magenta" (graphics-set-fill-color "magenta"))
-  ("Brown" (graphics-set-fill-color "brown"))
-  ("Pink" (graphics-set-fill-color "pink"))
+  ---
+  (pick-color (graphics-set-fill-color (tree->stree answer)))
   ---
   ("Other" (interactive graphics-set-fill-color)))
 

@@ -167,17 +167,7 @@
   ("None" (cell-set-background ""))
   ("Foreground" (cell-set-background "foreground"))
   ---
-  ("Black" (cell-set-background "black"))
-  ("White" (cell-set-background "white"))
-  ("Grey" (cell-set-background "grey"))
-  ("Red" (cell-set-background "red"))
-  ("Blue" (cell-set-background "blue"))
-  ("Yellow" (cell-set-background "yellow"))
-  ("Green" (cell-set-background "green"))
-  ("Orange" (cell-set-background "orange"))
-  ("Magenta" (cell-set-background "magenta"))
-  ("Brown" (cell-set-background "brown"))
-  ("Pink" (cell-set-background "pink"))
+  (pick-color (cell-set-background (tree->stree answer)))
   ---
   ("Other"  (interactive cell-set-background)))
 

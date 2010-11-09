@@ -117,6 +117,7 @@ wk_widget input_text_wk_widget (command cb, string type, array<string> def,
 				int style= 0, string w= "1w", bool pf= false);
 wk_widget inputs_list_wk_widget (command call_back, array<string> prompts);
 wk_widget file_chooser_wk_widget (command cmd, string type);
+wk_widget color_picker_wk_widget (command cmd, array<tree> proposals);
 wk_widget balloon_widget (wk_widget w, wk_widget help);
 wk_widget wait_wk_widget (SI w, SI h, string message);
 wk_widget texmacs_wk_widget (int mask, command quit);

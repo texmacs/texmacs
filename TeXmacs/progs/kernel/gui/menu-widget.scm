@@ -110,11 +110,15 @@
   (widget-menu-group s style))
 
 (define (make-menu-input p)
-  "Make @(input :%1) menu item."
+  "Make @(input :%1 :string? :%1 :string?) menu item."
   (with (tag cmd type props width) p
     (widget-input (object->command cmd) type (props)
 		  widget-style-mini width)))
-;;(widget-input (make-menu-command cmd) type (props))))
+
+(define (make-menu-pick-color p)
+  "Make @(pick-color :%1) menu item."
+  (with (tag cmd) p
+    (widget-color-picker (object->command cmd) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
@@ -329,6 +333,8 @@
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p))))
+  (pick-color (:%1)
+	      ,(lambda (p style bar?) (list (make-menu-pick-color p))))
   (link (:%1)
 	,(lambda (p style bar?) (make-menu-link p style bar?)))
   (horizontal (:*)
@@ -384,6 +390,12 @@
 	     (if (pair? r) (car r)))
 	  ,(fifth p)))
 
+(define (menu-expand-pick-color p)
+  "Expand pick-color menu item @p."
+  `(pick-color ,(replace-procedures (cadr p))
+	       ;; FIXME: add default proposals
+	       ))
+
 (define (menu-expand-list l)
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
@@ -418,6 +430,7 @@
   (group ,replace-procedures)
   (symbol ,replace-procedures)
   (input ,menu-expand-input)
+  (pick-color ,menu-expand-pick-color)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
