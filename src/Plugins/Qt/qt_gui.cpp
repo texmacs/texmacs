@@ -34,6 +34,7 @@
 //#include "TeXmacs/server.hpp" // for get_server
 
 #include "qt_simple_widget.hpp"
+#include "qt_window_widget.hpp"
 
 extern window (*get_current_window) (void);
 

@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : QTMGuiHelper.hpp
-* DESCRIPTION: QT Gui helper class
+* DESCRIPTION: QT Gui helper class. Infrastructure for delayed menu installation 
 * COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.

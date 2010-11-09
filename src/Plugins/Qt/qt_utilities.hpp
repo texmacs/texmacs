@@ -8,6 +8,8 @@
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
+#ifndef QT_UTILITIES_HPP
+#define QT_UTILITIES_HPP
 
 #include "message.hpp"
 
@@ -70,4 +72,17 @@ check_type (blackbox bb, string s) {
   check_type<pair<T1,T2> > (bb, s);
 }
 
+extern widget the_keyboard_focus;
 
+extern int nr_windows; 
+  // the run-loop should exit when the number of windows is zero
+
+/**
+ * some debugging infrastucture
+ */
+extern tm_ostream& operator << (tm_ostream& out, QRect rect);
+#define TYPE_CHECK(b) ASSERT (b, "type mismatch")
+#define NOT_IMPLEMENTED \
+{ if (DEBUG_QT) cout << "STILL NOT IMPLEMENTED\n"; }
+
+#endif  // QT_UTILITIES_HPP

@@ -18,6 +18,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QWidgetAction>
+#include <QLineEdit>
 
 #include "qt_gui.hpp"
 #include "qt_basic_widgets.hpp"

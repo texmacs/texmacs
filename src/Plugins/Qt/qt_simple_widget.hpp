@@ -14,6 +14,8 @@
 
 #include "widget.hpp"
 #include "qt_widget.hpp"
+#include "qt_simple_widget.hpp"
+#include "qt_view_widget.hpp"
 #include "QTMWidget.hpp"
 
 class simple_widget_rep: public qt_view_widget_rep {

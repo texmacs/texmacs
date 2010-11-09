@@ -31,6 +31,15 @@
 #include "Ghostscript/gs_utilities.hpp"
 #endif
 
+/**
+ * some debugging infrastucture
+ */
+tm_ostream&
+operator << (tm_ostream& out, QRect rect) {
+  return out << "(" << rect.x() << "," << rect.y() << ","
+  << rect.width() << "," << rect.height() << ")";
+}
+
 QRect
 to_qrect (const coord4 & p) {
   float c= 1.0/PIXEL;

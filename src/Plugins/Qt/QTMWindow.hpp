@@ -12,7 +12,7 @@
 #ifndef QTMWINDOW_HPP
 #define QTMWINDOW_HPP
 
-#include "qt_other_widgets.hpp"
+#include "qt_tm_widget.hpp"
 #include <QVariant>
 #include <QMainWindow>
 #include <QScrollArea>

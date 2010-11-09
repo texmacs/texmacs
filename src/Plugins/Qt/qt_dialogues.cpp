@@ -13,7 +13,7 @@
 #include "message.hpp"
 #include "qt_dialogues.hpp"
 #include "qt_utilities.hpp"
-#include "qt_other_widgets.hpp"
+#include "qt_tm_widget.hpp"
 #include "qt_basic_widgets.hpp"
 #include "url.hpp"
 #include "analyze.hpp"
