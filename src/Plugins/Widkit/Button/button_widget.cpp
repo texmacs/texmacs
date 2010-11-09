@@ -204,7 +204,8 @@ command_button_rep::handle_mouse (mouse_event ev) {
   status= inside && enabled && (ev->pressed ("left") || ev->pressed ("right"));
 
   if (inside != old_inside || status != old_status)
-    this << emit_invalidate_all ();
+    if (attached ())
+      this << emit_invalidate_all ();
   if (status != old_status)
     if ((type == "release-left") || (type == "release-right"))
       if (!is_nil (cmd)) cmd ();

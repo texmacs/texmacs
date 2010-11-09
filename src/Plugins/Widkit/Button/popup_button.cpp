@@ -241,7 +241,7 @@ popup_button_rep::handle_mouse (mouse_event ev) {
     }
   }
 
-  if (inside != old_inside)
+  if (inside != old_inside && attached ())
     this << emit_invalidate_all ();
 
   consistent ("handle_mouse (*)");

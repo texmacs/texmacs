@@ -347,7 +347,8 @@ input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
   if (got_focus && !ev->flag && !done && !persistent)
     cancel ();
   got_focus= ev->flag;
-  this << emit_invalidate_all ();
+  if (attached ())
+    this << emit_invalidate_all ();
 }
 
 void
