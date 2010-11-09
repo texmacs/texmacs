@@ -586,23 +586,6 @@ qt_input_widget_rep::perform_dialog() {
   cmd ();
 }
 
-widget
-inputs_list_widget (command call_back, array<string> prompts) {
-  // a dialogue widget with Ok and Cancel buttons and a series of textual
-  // input widgets with specified prompts
-  if (DEBUG_QT) cout << "inputs_list_widget\n";
-  return tm_new<qt_input_widget_rep> (call_back, prompts);
-}
-
-widget
-input_text_widget (command call_back, string type, array<string> def,
-		   int style, string width) {
-  // a textual input widget for input of a given type and a list of suggested
-  // default inputs (the first one should be displayed, if there is one)
-  (void) style; (void) width;
-  return tm_new<qt_input_text_widget_rep> (call_back, type, def);
-}
-
 #if 0
 void
 qt_tm_widget_rep::do_interactive_prompt () {
@@ -730,6 +713,13 @@ qt_tm_widget_rep::do_interactive_prompt () {
 #endif
 
 
+
+/*******************************************************************************
+* Input text widget implementation
+*******************************************************************************/
+
+
+
 QTMWidgetAction::QTMWidgetAction(QObject *parent)
 : QWidgetAction (parent), helper(NULL) { 
   QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
@@ -753,20 +743,11 @@ QTMWidgetAction::doRefresh() {
 QWidget * 
 QTMWidgetAction::createWidget ( QWidget * parent ) {
   QLineEdit *le = new QLineEdit (parent);
-//  le -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
-//  le -> setEditable (true);
-//  cb -> setDuplicatesEnabled (true); 
-//  cb -> completer () -> setCaseSensitivity (Qt::CaseSensitive);
-  if (helper && 0) {
+  if (helper) {
     helper -> add (le);
-    QObject::connect(le, SIGNAL(returnPressed()), helper, SLOT(commit()));
-    cout << N(helper->wid->def);
-    cout << helper->wid->def<< LF;
-    cout << helper->wid->def[0]<< LF;
-    if (N(helper->wid->def) > 0) {
-      string s = helper->wid->def[0];
-      le -> setText (to_qstring (s));
-    }
+    QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
+    QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
+    le -> setText (to_qstring (helper->wid()->text));
   }
   return le;  
 }
@@ -775,40 +756,93 @@ QAction *
 qt_input_text_widget_rep::as_qaction () {
   if (!helper) {
     helper = new QTMInputTextWidgetHelper(this);
+    // helper retains the current widget
+    // in toolbars the widget is not referenced directly in texmacs code
+    // so must be retained by Qt objects
   }
   QTMWidgetAction *a = new QTMWidgetAction ();
   a->helper = helper;
   return a;
 }
 
+qt_input_text_widget_rep::qt_input_text_widget_rep 
+  (command _cmd, string _type, array<string> _def)
+  : cmd (_cmd), type (_type), def (_def), text (""), helper(NULL) 
+{
+  if (N(def) > 0) {
+    text = def[0];
+  }
+}
+
 
 qt_input_text_widget_rep::~qt_input_text_widget_rep() { 
-  if (helper) delete helper; 
 }
 
 void
 QTMInputTextWidgetHelper::commit () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());
-  wid->text = scm_quote (from_qstring (le -> text()));
-  cout << "Committing: " << wid->text << LF;
-//  wid->cmd ();
+  if (le) {
+    le -> setFrame(false);
+    wid () -> text = from_qstring (le -> text());
+  //cout << "Committing: " << wid () -> text << LF;
+    wid () -> cmd (list_object (object (wid() -> text)));
+  }
+}
+
+void
+QTMInputTextWidgetHelper::leave () {
+  // this is executed after commit
+  // and when losing focus
+  QLineEdit *le = qobject_cast <QLineEdit*> (sender());  
+  if (le) {
+    // reset the text according to the texmacs widget
+    le -> setText (to_qstring (wid () -> text));
+  }
 }
 
 void
 QTMInputTextWidgetHelper::remove (QObject *obj) {
-  views.removeAll (qobject_cast<QLineEdit*>(obj));
+  views.removeAll (qobject_cast<QLineEdit*> (obj));
+  if (views.count () == 0) {
+    // no more view, free the helper 
+    deleteLater();
+  }
 }
 
 void
 QTMInputTextWidgetHelper::add(QLineEdit *obj) {
   if (!views.contains (obj)) {
-    QObject::connect(obj, SIGNAL(destroyed(QObject*)), this, SLOT(remove(QObject*)));
+    QObject::connect (obj, SIGNAL(destroyed (QObject*)), this, SLOT(remove (QObject*)));
     views << obj;
   }
 }
 
-
 QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
-  cout << "deleting" << LF;
+  //cout << "deleting" << LF;
+  // remove refernce to helper in the texmacs widget
+  wid()->helper = NULL;
+  // if needed the texmacs widget is automatically deleted
 }
 
+
+/*******************************************************************************
+* Interface to texmacs
+*******************************************************************************/
+
+
+widget
+inputs_list_widget (command call_back, array<string> prompts) {
+  // a dialogue widget with Ok and Cancel buttons and a series of textual
+  // input widgets with specified prompts
+  if (DEBUG_QT) cout << "inputs_list_widget\n";
+  return tm_new<qt_input_widget_rep> (call_back, prompts);
+}
+
+widget
+input_text_widget (command call_back, string type, array<string> def,
+                   int style, string width) {
+  // a textual input widget for input of a given type and a list of suggested
+  // default inputs (the first one should be displayed, if there is one)
+  (void) style; (void) width;
+  return tm_new<qt_input_text_widget_rep> (call_back, type, def);
+}

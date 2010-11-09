@@ -53,10 +53,7 @@ public:
   
   QTMInputTextWidgetHelper *helper;
   
-  inline qt_input_text_widget_rep
-    (command _cmd, string _type, array<string> _def):
-      cmd (_cmd), type (_type), def (_def), text (""), helper(NULL) {}
-
+  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def);
   ~qt_input_text_widget_rep();
 
   virtual QAction* as_qaction ();

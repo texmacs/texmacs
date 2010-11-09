@@ -80,19 +80,28 @@ public slots:
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 
+  widget p_wid; 
+  // we keep reference to the texmacs widget
+  // which is always a qt_input_text_widget_rep
+  
 public:
-  qt_input_text_widget_rep* wid;
+  
   QList<QLineEdit*> views;
 
   QTMInputTextWidgetHelper ( qt_input_text_widget_rep*  _wid ) 
-    : wid(_wid) { }
+    : QObject(NULL), p_wid(abstract(_wid)) { }
   ~QTMInputTextWidgetHelper();
+
+  qt_input_text_widget_rep* wid () 
+    { return (qt_input_text_widget_rep*) p_wid.rep; }
+  // useful cast
   
-  void add(QLineEdit *);
+  void add (QLineEdit *);
 
 public slots:
-  void commit();
-  void remove(QObject *);
+  void commit ();
+  void leave ();
+  void remove (QObject *);
   
 };
 
