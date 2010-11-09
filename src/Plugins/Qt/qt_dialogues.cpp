@@ -761,6 +761,7 @@ qt_input_text_widget_rep::as_qaction () {
     // so must be retained by Qt objects
   }
   QTMWidgetAction *a = new QTMWidgetAction ();
+  a->setText("QTMWidgetAction");
   a->helper = helper;
   return a;
 }

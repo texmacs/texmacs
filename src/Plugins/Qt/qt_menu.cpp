@@ -21,15 +21,7 @@
 #include "message.hpp"
 #include "promise.hpp"
 //#import "TMView.h"
-#include <QtGlobal>
-#include <QPointer>
-#include <QBitmap>
-#include <QGridLayout>
-#include <QToolButton>
-#include <QWidgetAction>
-#include <QEvent>
-#include <QStyleOptionMenuItem>
-#include <QKeySequence>
+#include <QtGui>
 
 
 #include "QTMGuiHelper.hpp"
@@ -195,11 +187,6 @@ horizontal_menu (array<widget> arr) {
 }
 
 widget
-minibar_menu (array<widget> a) {
-  return horizontal_menu (a);
-}
-
-widget
 vertical_menu (array<widget> a) {
   // a vertical menu made up of the widgets in a
   return horizontal_menu (a);
@@ -262,8 +249,8 @@ class QTMTileAction: public QWidgetAction {
   QVector <QAction*> actions;
   int cols;
 public:
-  QTMTileAction (QWidget* parent, array<widget>& arr, int _cols):
-    QWidgetAction (parent), cols (_cols)
+  QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
+   : QWidgetAction (parent), cols (_cols)
   {
     actions.reserve(N(arr));
     for(int i = 0; i < N(arr); i++) {
@@ -309,13 +296,64 @@ QTMTileAction::createWidget(QWidget* parent) {
 widget
 tile_menu (array<widget> a, int cols) {
   // a menu rendered as a table of cols columns wide & made up of widgets in a
-  (void) cols;
-#if 1
   QWidgetAction* act= new QTMTileAction (NULL, a, cols);
   return tm_new<qt_menu_rep> (act);
-#else
-  return horizontal_menu (a);
-#endif
+}
+
+
+class QTMMinibarAction : public QWidgetAction {
+  QVector <QAction*> actions;
+public:
+  QTMMinibarAction (QWidget* parent, array<widget>& arr)
+   : QWidgetAction (parent)
+  {
+    actions.reserve(N(arr));
+    for(int i = 0; i < N(arr); i++) {
+      if (is_nil(arr[i])) break;
+      QAction *act = concrete(arr[i])->as_qaction();
+      act->setParent(this);
+      actions.append(act);
+    };
+  }
+  QWidget* createWidget(QWidget* parent);
+  // virtual void activate (ActionEvent event) {
+  //   cout << "TRIG\n"; QWidgetAction::activate (event); }
+};
+
+// FIXME: QTMMinibarAction::createWidget is called twice:
+// the first time when the action is added to the menu,
+// the second when from the menu it is transferred to the toolbar.
+// This is weird since the first widget does not ever use
+// the widget so it results in a waste of time.
+
+QWidget*
+QTMMinibarAction::createWidget(QWidget* parent) {
+  if (DEBUG_QT) cout << "QTMMinibarAction::createWidget\n";
+  QWidget* wid= new QWidget (parent);
+  QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
+  wid->setLayout (l);
+  //  l->setSizeConstraint (QLayout::SetFixedSize);
+  l->setContentsMargins (0, 0, 0, 0);
+  l->setSpacing(0);
+  for (int i=0; i < actions.count(); i++) {
+    QAction* sa= actions[i];
+    cout << sa->text().toUtf8().constData() << LF;
+    if (qobject_cast<QWidgetAction*>(sa)) {
+      QWidget *w = qobject_cast<QWidgetAction*>(sa)->requestWidget(wid);
+      l->addWidget(w);
+    } else {
+      QToolButton *tb = new QToolButton(wid);
+      tb->setDefaultAction(sa);
+      l->addWidget(tb);
+    }
+  }
+  return wid;
+}
+
+widget
+minibar_menu (array<widget> arr) {
+  QWidgetAction* act= new QTMMinibarAction (NULL, arr);
+  return tm_new<qt_menu_rep> (act);
 }
 
 widget
