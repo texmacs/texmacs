@@ -164,12 +164,12 @@ menu_group (string name, int style) {
   widget cw= text_widget (name, style, dark_grey, false);
   widget rw= empty_widget ();
   return command_button (lw, cw, rw, noop,
-			 WIDGET_STYLE_INERT + WIDGET_STYLE_CENTERED);
+			 WIDGET_STYLE_INERT | WIDGET_STYLE_CENTERED);
 }
 
 widget
 menu_button (widget w, command cmd, string pre, string ks, int style) {
-  bool ok= (style & WIDGET_STYLE_INERT) != 0;
+  bool ok= (style & WIDGET_STYLE_INERT) == 0;
   if (pre == "" && ks == "")
     return command_button (w, cmd, style);
   else {
