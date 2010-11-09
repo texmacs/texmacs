@@ -426,7 +426,7 @@ widget
 menu_button (widget w, command cmd, string pre, string ks, int style) {
   // a command button with an optional prefix (o, * or v) and
   // keyboard shortcut; if ok does not hold, then the button is greyed
-  bool ok= (style & WIDGET_STYLE_INERT) != 0;
+  bool ok= (style & WIDGET_STYLE_INERT) == 0;
   QAction* a= NULL;
   a= concrete(w)->as_qaction();
 #ifdef Q_WS_MAC
