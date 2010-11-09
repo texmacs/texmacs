@@ -4269,23 +4269,21 @@ tmg_widget_pullright_button (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_widget_menu_button (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6) {
+tmg_widget_menu_button (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
   SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-menu-button");
   SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-menu-button");
   SCM_ASSERT_STRING (arg3, SCM_ARG3, "widget-menu-button");
   SCM_ASSERT_STRING (arg4, SCM_ARG4, "widget-menu-button");
   SCM_ASSERT_INT (arg5, SCM_ARG5, "widget-menu-button");
-  SCM_ASSERT_BOOL (arg6, SCM_ARG6, "widget-menu-button");
 
   widget in1= scm_to_widget (arg1);
   command in2= scm_to_command (arg2);
   string in3= scm_to_string (arg3);
   string in4= scm_to_string (arg4);
   int in5= scm_to_int (arg5);
-  bool in6= scm_to_bool (arg6);
 
   // SCM_DEFER_INTS;
-  widget out= menu_button (in1, in2, in3, in4, in5, in6);
+  widget out= menu_button (in1, in2, in3, in4, in5);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -4872,7 +4870,7 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-menu-group", (FN) tmg_widget_menu_group, 2, 0, 0);
   scm_new_procedure ("widget-pulldown-button", (FN) tmg_widget_pulldown_button, 2, 0, 0);
   scm_new_procedure ("widget-pullright-button", (FN) tmg_widget_pullright_button, 2, 0, 0);
-  scm_new_procedure ("widget-menu-button", (FN) tmg_widget_menu_button, 6, 0, 0);
+  scm_new_procedure ("widget-menu-button", (FN) tmg_widget_menu_button, 5, 0, 0);
   scm_new_procedure ("widget-balloon", (FN) tmg_widget_balloon, 2, 0, 0);
   scm_new_procedure ("widget-empty", (FN) tmg_widget_empty, 0, 0, 0);
   scm_new_procedure ("widget-text", (FN) tmg_widget_text, 4, 0, 0);

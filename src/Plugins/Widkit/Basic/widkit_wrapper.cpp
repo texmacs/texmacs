@@ -169,9 +169,8 @@ menu_group (string name, int style) {
 }
 
 widget
-menu_button (widget w, command cmd, string pre, string ks,
-	     int style, bool ok)
-{
+menu_button (widget w, command cmd, string pre, string ks, int style) {
+  bool ok= (style & WIDGET_STYLE_INERT) != 0;
   if (pre == "" && ks == "")
     return command_button (w, cmd, style, false);
   else {

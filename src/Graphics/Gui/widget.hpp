@@ -143,8 +143,7 @@ widget pulldown_button (widget w, promise<widget> pw);
 widget pullright_button (widget w, promise<widget> pw);
   // a button w with a lazy pullright menu pw
 widget menu_button (widget w, command cmd,
-		    string pre= "", string ks= "",
-		    int style= 0, bool ok= true);
+		    string pre= "", string ks= "", int style= 0);
   // a command button with an optional prefix (o, * or v) and
   // keyboard shortcut; if ok does not hold, then the button is greyed
   // for pressed styles, the button is displayed as a pressed button

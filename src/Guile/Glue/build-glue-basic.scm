@@ -370,8 +370,7 @@
   (widget-menu-group menu_group (widget string int))
   (widget-pulldown-button pulldown_button (widget widget promise_widget))
   (widget-pullright-button pullright_button (widget widget promise_widget))
-  (widget-menu-button menu_button
-		      (widget widget command string string int bool))
+  (widget-menu-button menu_button (widget widget command string string int))
   (widget-balloon balloon_widget (widget widget widget))
   (widget-empty empty_widget (widget))
   (widget-text text_widget (widget string int int bool))
