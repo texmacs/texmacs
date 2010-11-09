@@ -846,3 +846,10 @@ input_text_widget (command call_back, string type, array<string> def,
   (void) style; (void) width;
   return tm_new<qt_input_text_widget_rep> (call_back, type, def);
 }
+
+widget
+color_picker_widget (command call_back, array<tree> proposals) {
+  // TODO: to be implemented
+  (void) call_back; (void) proposals;
+  return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
+}

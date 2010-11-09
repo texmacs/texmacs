@@ -76,7 +76,7 @@ public slots:
   
 };
 
-
+struct QLineEdit;
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
 
