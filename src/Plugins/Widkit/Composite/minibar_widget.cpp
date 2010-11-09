@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : transparent_button.cpp
+* MODULE     : minibar_widget.cpp
 * DESCRIPTION: Simple transparent buttons
 * COPYRIGHT  : (C) 2010  Joris van der Hoeven
 *******************************************************************************
@@ -17,11 +17,9 @@
 * Balloon widgets
 ******************************************************************************/
 
-class transparent_button_rep: public attribute_widget_rep {
-  wk_widget balloon_wid;
-
+class minibar_widget_rep: public attribute_widget_rep {
 public:
-  transparent_button_rep (wk_widget w);
+  minibar_widget_rep (wk_widget w);
   operator tree ();
   void handle_get_size (get_size_event ev);
   void handle_position (position_event ev);
@@ -33,25 +31,25 @@ public:
 * Implementation of balloon widgets
 ******************************************************************************/
 
-transparent_button_rep::transparent_button_rep (wk_widget w):
+minibar_widget_rep::minibar_widget_rep (wk_widget w):
   attribute_widget_rep (1, south_west)
 {
   a[0]= w;
 }
 
-transparent_button_rep::operator tree () {
+minibar_widget_rep::operator tree () {
   return tree (TUPLE, "transparent button", (tree) a[0]);
 }
 
 void
-transparent_button_rep::handle_get_size (get_size_event ev) {
+minibar_widget_rep::handle_get_size (get_size_event ev) {
   attribute_widget_rep::handle_get_size (ev);
   ev->w += 2*PIXEL;
   ev->h += 2*PIXEL;
 }
 
 void
-transparent_button_rep::handle_position (position_event ev) {
+minibar_widget_rep::handle_position (position_event ev) {
   (event) ev;
   SI ww= w-2*PIXEL;
   SI hh= h-2*PIXEL;
@@ -59,14 +57,14 @@ transparent_button_rep::handle_position (position_event ev) {
 }
 
 void
-transparent_button_rep::handle_repaint (repaint_event ev) {
+minibar_widget_rep::handle_repaint (repaint_event ev) {
   (void) ev;
   renderer ren= win->get_renderer ();
   layout_higher (ren, 0, 0, w, h);
 }
 
 bool
-transparent_button_rep::handle (event ev) {
+minibar_widget_rep::handle (event ev) {
   switch (ev->type) {
   case MOUSE_EVENT:
   case GET_SIZE_EVENT:
@@ -89,6 +87,6 @@ transparent_button_rep::handle (event ev) {
 ******************************************************************************/
 
 wk_widget
-transparent_button (wk_widget w) {
-  return tm_new<transparent_button_rep> (w);
+minibar_widget (wk_widget w) {
+  return tm_new<minibar_widget_rep> (w);
 }

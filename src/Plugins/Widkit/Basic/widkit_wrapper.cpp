@@ -98,13 +98,13 @@ tile_menu (array<widget> a, int cols) {
 }
 
 widget
-transparent_button (widget w) {
-  return abstract (transparent_button (concrete (w)));
+minibar_widget (widget w) {
+  return abstract (minibar_widget (concrete (w)));
 }
 
 widget
 minibar_menu (array<widget> a) {
-  return transparent_button (horizontal_menu (a));
+  return minibar_widget (horizontal_menu (a));
 }
 
 widget
