@@ -159,6 +159,7 @@ named_color (string s) {
   if (s == "pink")           return pink;
   if (s == "broken white")   return rgb_color (255, 255, pastel);
   if (s == "light grey")     return light_grey;
+  if (s == "darker grey")    return rgb_color (64, 64, 64);
   if (s == "dark grey")      return dark_grey;
   if (s == "dark red")       return rgb_color (128, 0, 0);
   if (s == "dark blue")      return rgb_color (0, 0, 128);

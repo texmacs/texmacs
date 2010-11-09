@@ -124,9 +124,9 @@ direct_color_picker (command cmd, bool bg, array<tree> proposals) {
   picker[1]= glue_wk_widget (true, false, 0, 5*PIXEL);
 
   array<tree> cols2;
-  cols2 << tree ("black") << tree ("dark grey")
-	<< tree ("light grey") << tree ("pastel grey")
-	<< tree ("white");
+  cols2 << tree ("black") << tree ("darker grey")
+	<< tree ("dark grey") << tree ("light grey")
+	<< tree ("pastel grey")	<< tree ("white");
   picker[2]= tile_color_picker (cols2, cmd, 8);
 
   if (bg) {
