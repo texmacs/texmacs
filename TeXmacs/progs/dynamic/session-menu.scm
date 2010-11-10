@@ -37,11 +37,11 @@
 
 (menu-bind insert-session-menu
   (when (and (style-has? "std-dtd") (in-text?))
-	("Scheme" (make-session "scheme" "default"))
-	---
-	(link supported-sessions-menu)
-	---
-	("Other" (interactive make-session))))
+    ("Scheme" (make-session "scheme" "default"))
+    ---
+    (link supported-sessions-menu)
+    ---
+    ("Other" (interactive make-session))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Sessions menu
@@ -49,7 +49,7 @@
 
 (menu-bind session-input-menu
   (when (in-plugin-with-converters?)
-	("Mathematical input" (toggle-session-math-input)))
+    ("Mathematical input" (toggle-session-math-input)))
   ("Multiline input" (toggle-session-multiline-input)))
 
 (menu-bind session-output-menu

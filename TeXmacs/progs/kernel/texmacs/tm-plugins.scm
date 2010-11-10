@@ -70,7 +70,7 @@
     (if r (cons 'tuple r) '(tuple))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menu for the supported sessions
+;; Supported sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public supported-sessions-list '())
@@ -85,8 +85,8 @@
 ;; Supported scripting languages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define supported-scripts-list '())
-(define supported-scripts-table (make-ahash-table))
+(define-public supported-scripts-list '())
+(define-public supported-scripts-table (make-ahash-table))
 
 (define (supported-scripts-add name menu-name)
   (if (symbol? name) (set! name (symbol->string name)))
@@ -112,16 +112,6 @@
   (lazy-plugin-force)
   (with l (list-sort supported-scripts-list string<=?)
     (menu-dynamic ,@(map local-supported-scripts-menu-entry l))))
-
-(tm-define (scripts-preferences-menu-entry name)
-  (let* ((fun `(lambda () (set-preference "scripting language" ,name)))
-	 (menu-name (ahash-ref supported-scripts-table name)))
-    (list menu-name (eval fun))))
-
-(define-public (scripts-preferences-menu)
-  (lazy-plugin-force)
-  (with l (list-sort supported-scripts-list string<=?)
-    (menu-dynamic ,@(map scripts-preferences-menu-entry l))))
 
 (tm-define (supports-scripts? name)
   (if (symbol? name) (set! name (symbol->string name)))

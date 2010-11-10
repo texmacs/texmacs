@@ -123,6 +123,12 @@
   `(,(car x) ,(cadr x) ,(caddr x) (gui$menu ,@(cdddr x))))
 
 (tm-define (gui-menu-item x)
+  (:case for)
+  (require-format x '(for (:%1 :%1) :*))
+  (with fun `(lambda (,(caadr x)) (gui$menu ,@(cddr x)))
+    `(gui$dynamic (append-map ,fun ,(cadadr x)))))
+
+(tm-define (gui-menu-item x)
   (:case group)
   (require-format x '(group :%1))
   `(gui$group ,(cadr x)))
