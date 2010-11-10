@@ -50,8 +50,6 @@ public:
   virtual widget read (slot s, blackbox index);
   virtual void write (slot s, blackbox index, widget w);
   virtual void notify (slot s, blackbox new_val);
-  //  virtual void connect (slot s, widget w2, slot s2);
-  //  virtual void deconnect (slot s, widget w2, slot s2);
   virtual widget plain_window_widget (string s);
 
   void perform_dialog();
@@ -205,6 +203,80 @@ qt_chooser_widget_rep::plain_window_widget (string s)
   return this;
 }
 
+void
+qt_chooser_widget_rep::perform_dialog () {
+  QString _file;
+  QStringList _files;
+  QString _filter, _suffix, _caption, _directory;
+  _caption = to_qstring (win_title);
+  _directory = to_qstring (directory * "/" * file);
+  
+#if (QT_VERSION >= 0x040400)
+  if (type == "directory") {
+  } else if (type == "texmacs") {
+    _filter= "TeXmacs file (*.tm *.ts *.tp)";
+    _suffix= "tm";
+  } else if (type == "image") {
+    _filter= "Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.fig *.xpm)";
+  } else if (type == "bibtex") {
+    _filter= "BibTeX file (*.bib)";
+    _suffix= "bib";
+  } else if (type == "html") {
+    _filter= "Html file (*.htm *.html *.xhtml)";
+    _suffix= "html";
+  } else if (type == "latex") {
+    _filter= "LaTeX file (*.tex *.ltx *.sty *.cls)";
+    _suffix= "tex";
+  } else if (type == "stm") {
+    _filter= "Scheme file (*.stm *.scm)";
+    _suffix= "stm";
+  } else if (type == "verbatim") {
+    _filter= "Verbatim file (*.txt)";
+    _suffix= "txt";
+  } else if (type == "tmml") {
+    _filter= "XML file (*.tmml)";
+    _suffix= "tmml";  
+  } else if (type == "pdf") {
+    _filter= "Pdf file (*.pdf)";
+    _suffix= "pdf";
+  } else if (type == "postscript") {
+    _filter= "PostScript file (*.ps *.eps)";
+    _suffix= "ps";  
+  }
+#endif
+  
+  if (type == "directory")
+    _file = QFileDialog::getExistingDirectory (0, _caption, _directory);
+  else if (save)
+    _file = QFileDialog::getSaveFileName(0, _caption, _directory, _filter);
+  else
+    _file = QFileDialog::getOpenFileName (0, _caption, _directory, _filter);
+  
+  if (_file.isEmpty()) {
+    file= "#f";
+  } else {
+    url u = url_system (scm_unquote (from_qstring (_file)));
+    if (type == "image") {
+      /*
+      QPixmap _pic(_file);
+      string params;
+        // TEMPORARY HACK: wouldn't it be nicer to scale the image to, say, 
+        // 90% of the current column width?
+      params << "\"" << from_qstring(QString("%1px").arg(_pic.width())) << "\" ";
+      params << "\"" << from_qstring(QString("%1px").arg(_pic.height())) << "\" ";
+      params << "\"" << "" << "\" ";  // xps ??
+      params << "\"" << "" << "\"";   // yps ??
+      file = "(list (url-system " * scm_quote (as_string (u)) * ") " * params * ")";
+       */
+      file = "(list (url-system " * scm_quote (as_string (u)) * ") \"\" \"\" \"\" \"\")";
+    } else {
+      file = "(url-system " * scm_quote (cork_to_utf8(as_string (u))) * ")";
+    }
+  }
+  cout << "file= " << file << "\n";
+  cmd ();
+}
+
 widget
 file_chooser_widget (command cmd, string type, bool save)  {
   // file chooser widget for files of a given type; for files of type "image",
@@ -213,102 +285,6 @@ file_chooser_widget (command cmd, string type, bool save)  {
   return tm_new<qt_chooser_widget_rep> (cmd, type, save);
 }
 
-void
-qt_chooser_widget_rep::perform_dialog () {
-  // int result;
-  // FIXME: the chooser dialog is widely incomplete
-
-  QTMFileDialog *dialog;
-  QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
-  
-  if (type  == "image")
-    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
-  else
-    dialog= new QTMFileDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
-
-#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
-  dialog->setOptions(QFileDialog::DontUseNativeDialog);
-#endif
-  
-  QPoint pos = to_qpoint(position);
-  //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-  if (DEBUG_QT) {
-    cout << "Position :" << pos.x() << "," << pos.y() << LF;
-    cout << "Dir: " << directory * "/" * file << LF;
-  }
-  
-  dialog->updateGeometry();
-  QSize sz = dialog->sizeHint();
-  QRect r; r.setSize(sz);
-  r.moveCenter(pos);
-  dialog->setGeometry(r);
-    
-  dialog->setViewMode (QFileDialog::Detail);
-  if (type == "directory") {
-    dialog->setFileMode(QFileDialog::Directory);
-  } else if (type == "image") {
-    dialog->setFileMode(QFileDialog::ExistingFile);
-  } else {
-    dialog->setFileMode(QFileDialog::AnyFile);
-  }
-
-#if (QT_VERSION >= 0x040400)
-  if (type == "directory") {  
-  } else if (type == "texmacs") {
-  dialog->setNameFilter ("TeXmacs file (*.tm *.ts *.tp)");
-  dialog->setDefaultSuffix ("tm");
-  } else if (type == "image") {
-  dialog->setNameFilter ("Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.tiff *.fig *.xpm)");
-  } else if (type == "bibtex") {
-  dialog->setNameFilter ("BibTeX file (*.bib)");
-  dialog->setDefaultSuffix ("bib");
-  } else if (type == "html") {
-  dialog->setNameFilter ("Html file (*.htm *.html *.xhtml)");
-  dialog->setDefaultSuffix ("html");
-  } else if (type == "latex") {
-  dialog->setNameFilter ("LaTeX file (*.tex *.ltx *.sty *.cls)");
-  dialog->setDefaultSuffix ("tex");
-  } else if (type == "stm") {
-  dialog->setNameFilter ("Scheme file (*.stm *.scm)");
-  dialog->setDefaultSuffix ("stm");
-  } else if (type == "verbatim") {
-  dialog->setNameFilter ("Verbatim file (*.txt)");
-  dialog->setDefaultSuffix ("txt");
-  } else if (type == "tmml") {
-  dialog->setNameFilter ("XML file (*.tmml)");
-  dialog->setDefaultSuffix ("tmml");  
-  } else if (type == "pdf") {
-  dialog->setNameFilter ("Pdf file (*.pdf)");
-  dialog->setDefaultSuffix ("pdf");
-  } else if (type == "postscript") {
-  dialog->setNameFilter ("PostScript file (*.ps *.eps)");
-  dialog->setDefaultSuffix ("ps");  
-  }
-#endif
-  
-  dialog->setLabelText(QFileDialog::Accept, "Ok");
-
-  QStringList fileNames;
-  if (dialog->exec ()) {
-    fileNames = dialog->selectedFiles();
-    if (fileNames.count() > 0) {
-      file = from_qstring_utf8 (fileNames[0]);
-      url u = url_system (scm_unquote (file));
-      if (type == "image")
-        file = "(list (url-system " *
-          scm_quote (as_string (u)) *
-          ") " * imgdialog->getParamsAsString () * ")";
-      else
-        file = "(url-system " * scm_quote (as_string (u)) * ")";
-    }
-  } else {
-    file = "#f";
-  }
-
-  delete dialog;
-
-  cmd ();
-}
 
 
 class qt_field_widget;
@@ -586,132 +562,6 @@ qt_input_widget_rep::perform_dialog() {
   }
   cmd ();
 }
-
-#if 0
-void
-qt_tm_widget_rep::do_interactive_prompt () {
-  QStringList items;
-  QString label= to_qstring (((qt_text_widget_rep*) int_prompt.rep)->str);
-  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
-  for (int j=0; j < N(it->def); j++)
-    items << to_qstring(it->def[j]);
-  bool ok;
-  QString item =
-    QInputDialog::getItem (NULL, "Interactive Prompt", label,
-                           items, 0, true, &ok );
-  if (ok && !item.isEmpty()) {
-    ((qt_input_text_widget_rep*) int_input.rep) -> text=
-      scm_quote (from_qstring (item));
-    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
-  }
-}
-#elif 1
-void
-qt_tm_widget_rep::do_interactive_prompt () {
-  QStringList items;
-  QString label= to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
-  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
-  if ( N(it->def) == 0) {
-   items << "";
-  } else {
-    for (int j=0; j < N(it->def); j++) {
-      items << to_qstring(it->def[j]);
-    }
-  }
-  QDialog d (0, Qt::Sheet);
-  QVBoxLayout* vl = new QVBoxLayout(&d);
-  
-  QHBoxLayout *hl = new QHBoxLayout();
-    
-  QLabel *lab = new QLabel (label,&d);
-  QComboBox *cb = new QComboBox(&d);
-  cb -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
-  cb -> setEditText (items[0]);
-  int minlen = 0;
-  for(int j=0; j < items.count(); j++) {
-    cb -> addItem (items[j]);
-    int c = items[j].count();
-    if (c > minlen) minlen = c;
-  }
-  cb -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
-  cb -> setEditable (true);
-  // apparently the following flag prevents Qt from substituting an history item
-  // for an input when they differ only from the point of view of case (upper/lower)
-  // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
-  // will retain the string aAAAAa
-  cb->setDuplicatesEnabled(true); 
-  cb->completer()->setCaseSensitivity(Qt::CaseSensitive);
-
-  lab -> setBuddy (cb);
-  hl -> addWidget (lab);
-  hl -> addWidget (cb);
-  vl -> addLayout (hl);
-  
-  if (ends (it->type, "file") || it->type == "directory") {
-    // autocompletion
-    QCompleter *completer = new QCompleter(&d);
-    QDirModel *dirModel = new QDirModel(&d);
-    completer->setModel(dirModel);
-    cb->setCompleter(completer);
-  }
-  
-  {
-    QDialogButtonBox* buttonBox =
-    new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                          Qt::Horizontal, &d);
-    QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
-    QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
-    vl -> addWidget (buttonBox);
-  }
-  //  d.setLayout (vl);
-  
-  QRect wframe = view->window()->frameGeometry();
-  QPoint pos = QPoint(wframe.x()+wframe.width()/2,wframe.y()+wframe.height()/2);
-  
-  d.setWindowTitle("Interactive Prompt");
-  d.updateGeometry();
-  QSize sz = d.sizeHint();
-  QRect r; r.setSize(sz);
-  r.moveCenter(pos);
-  d.setGeometry(r);
-  
-  
-  int result = d.exec ();
-  if (result == QDialog::Accepted) {
-    QString item = cb->currentText();
-    ((qt_input_text_widget_rep*) int_input.rep) -> text=
-    scm_quote (from_qstring (item));
-    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
-  } else {
-//    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
-  }
-}
-#else
-
-#include "QTMInteractivePrompt.hpp"
-
-void
-qt_tm_widget_rep::do_interactive_prompt () {
-	QString label = to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
-	QStringList items;
-  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
-  if ( N(it->def) == 0)
-		items << "";
-  else for (int j=0; j < N(it->def); j++)
-		items << to_qstring(it->def[j]);
-
-	QTMInteractivePrompt _prompt(label, items, to_qstring(it->type), tm_mainwindow());
-	
-	if (_prompt.exec() == QDialog::Accepted) {
-		QString text = _prompt.currentText();
-    ((qt_input_text_widget_rep*) int_input.rep) -> text = scm_quote (from_qstring (text));
-    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
-  } else {
-		//    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
-  }
-}
-
-#endif
 
 
 
