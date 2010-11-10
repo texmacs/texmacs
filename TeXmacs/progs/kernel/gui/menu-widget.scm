@@ -274,7 +274,9 @@
 (define (make-menu-when p style bar?)
   "Make @(when :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
-    (with new-style (logior style (if (pred?) 0 widget-style-inert))
+    (let* ((old-active? (== (logand style widget-style-inert) 0))
+	   (new-active? (and old-active? (pred?)))
+	   (new-style (logior style (if new-active? 0 widget-style-inert))))
       (make-menu-items-list items new-style bar?))))
 
 (define (make-menu-mini p style bar?)
