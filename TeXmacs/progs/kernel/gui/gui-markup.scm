@@ -33,10 +33,6 @@
   (:synopsis "Make dynamic widgets")
   `(cons* 'list ,w))
 
-(tm-define-macro (gui$dynamic-map fun l)
-  (:synopsis "Make dynamic widgets")
-  `(cons* 'list (append-map ,fun ,l)))
-
 (tm-define-macro (gui$assuming pred? . l)
   (:synopsis "Conditionally make widgets")
   `(cons* 'list (if ,pred? (gui$list ,@l) '())))
@@ -114,7 +110,17 @@
 (tm-define (gui-menu-item x)
   (:case dynamic-map)
   (require-format x '(dynamic-map :%2))
-  `(gui$dynamic-map ,(cadr x) ,(caddr x)))
+  `(gui$dynamic (append-map ,(cadr x) ,(caddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case let let*)
+  (require-format x '(:%1 :%1 :*))
+  `(,(car x) ,(cadr x) (gui$menu ,@(cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case with receive)
+  (require-format x '(:%1 :%2 :*))
+  `(,(car x) ,(cadr x) ,(caddr x) (gui$menu ,@(cdddr x))))
 
 (tm-define (gui-menu-item x)
   (:case group)
@@ -185,6 +191,9 @@
 
 (tm-define-macro (gui$menu . l)
   `(gui$list ,@(map gui-menu-item l)))
+
+(tm-define-macro (define-menu head . body)
+  `(define ,head (gui$menu ,@body)))
 
 (tm-define-macro (tm-menu head . l)
   (let* ((body? (lambda (x) (or (npair? x) (not (keyword? (car x))))))

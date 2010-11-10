@@ -38,24 +38,21 @@
     (when (< (switch-index) (switch-index :last))
       ("Switch to last" (dynamic-last)))))
 
-(define (fold/unfold-menu-entry x which action)
+(define-menu (fold/unfold-menu-entry x which action)
   (with sym (string->symbol x)
-    (gui$menu
-      (when (ahash-ref which sym)
-	((eval (upcase-first x))
-	 (dynamic-operate-on-buffer (list action sym)))))))
+    (when (ahash-ref which sym)
+      ((eval (upcase-first x))
+       (dynamic-operate-on-buffer (list action sym))))))
 
-(tm-define (fold-environments-menu)
+(tm-menu (fold-environments-menu)
   (receive (l first second) (fold-get-environments-in-buffer)
-    (gui$menu
-      (assuming (nnull? l) ---)
-      (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :fold)) l))))
+    (assuming (nnull? l) ---)
+    (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :fold)) l)))
 
-(tm-define (unfold-environments-menu)
+(tm-menu (unfold-environments-menu)
   (receive (l first second) (fold-get-environments-in-buffer)
-    (gui$menu
-      (assuming (nnull? l) ---)
-      (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :unfold)) l))))
+    (assuming (nnull? l) ---)
+    (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :unfold)) l)))
 
 (menu-bind insert-fold-menu
   ("First" (dynamic-operate-on-buffer :first))

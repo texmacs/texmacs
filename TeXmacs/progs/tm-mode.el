@@ -50,7 +50,8 @@
   '(define define-public define-macro define-public-macro
     texmacs-module provide-public define-group
     tm-define tm-define-macro tm-property request-handler
-    tm-menu tm-build tm-build-macro tm-build-widget
+    tm-menu define-menu
+    tm-build tm-build-macro tm-build-widget
     menu-bind menu-extend define-table
     define-format define-language))
 
