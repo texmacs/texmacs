@@ -181,7 +181,7 @@ static void qtmDrawRoundedRect(QPainter *p, const QRectF &rect, qreal xRadius, q
     qreal rxx2 = w*xRadius/100;
     qreal ryy2 = h*yRadius/100;
     
-    
+    path.moveTo(x+rxx2,y);
     path.arcMoveTo(x, y, rxx2, ryy2, 90);
     path.arcTo(x, y, rxx2, ryy2, 90, 90);
     path.arcTo(x, y+h-ryy2, rxx2, ryy2, 2*90, 90);
