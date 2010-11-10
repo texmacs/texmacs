@@ -38,7 +38,7 @@
 (setq unary-keywords
   '(let let* lambda
     with-result and-let* setup-append-if
-    while for repeat when
+    while for repeat when assuming mini
     drd-group drd-table drd-dispatcher
     with-cc with-aux
     with-action with-module with-cursor with-server
@@ -50,7 +50,7 @@
   '(define define-public define-macro define-public-macro
     texmacs-module provide-public define-group
     tm-define tm-define-macro tm-property request-handler
-    tm-build tm-build-macro tm-build-widget
+    tm-menu tm-build tm-build-macro tm-build-widget
     menu-bind menu-extend define-table
     define-format define-language))
 
