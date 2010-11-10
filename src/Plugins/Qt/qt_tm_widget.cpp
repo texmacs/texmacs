@@ -25,6 +25,8 @@
 #include "QTMWindow.hpp"
 #include "QTMStyle.hpp"      // qtstyle()
 #include "QTMGuiHelper.hpp"  // needed to connect()
+#include "QTMInteractivePrompt.hpp"
+#include "QTMInteractiveInputHelper.hpp"
 
 int menu_count = 0;
 list<qt_tm_widget_rep*> waiting_widgets;
@@ -63,6 +65,9 @@ replaceButtons(QToolBar* dest, QWidget* src) {
   dest->setUpdatesEnabled(true);
 }
 
+void QTMInteractiveInputHelper::doit() {
+  wid->do_interactive_prompt();
+}
 
 /******************************************************************************
  * qt_tm_widget_rep
@@ -370,10 +375,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
   }
 }
 
-void
-QTMInteractiveInputHelper::doit () {
-  wid->do_interactive_prompt();
-}
 
 blackbox
 qt_tm_widget_rep::query (slot s, int type_id) {
@@ -592,4 +593,126 @@ qt_tm_widget_rep::plain_window_widget (string s) {
   return wid;
 }
 
+#if 0
+void
+qt_tm_widget_rep::do_interactive_prompt () {
+  QStringList items;
+  QString label= to_qstring (((qt_text_widget_rep*) int_prompt.rep)->str);
+  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
+  for (int j=0; j < N(it->def); j++)
+    items << to_qstring(it->def[j]);
+  bool ok;
+  QString item =
+  QInputDialog::getItem (NULL, "Interactive Prompt", label,
+                         items, 0, true, &ok );
+  if (ok && !item.isEmpty()) {
+    ((qt_input_text_widget_rep*) int_input.rep) -> text=
+    scm_quote (from_qstring (item));
+    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
+  }
+}
+#elif 1
+void
+qt_tm_widget_rep::do_interactive_prompt () {
+  QStringList items;
+  QString label= to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
+  if ( N(it->def) == 0) {
+    items << "";
+  } else {
+    for (int j=0; j < N(it->def); j++) {
+      items << to_qstring(it->def[j]);
+    }
+  }
+  QDialog d (0, Qt::Sheet);
+  QVBoxLayout* vl = new QVBoxLayout(&d);
+  
+  QHBoxLayout *hl = new QHBoxLayout();
+  
+  QLabel *lab = new QLabel (label,&d);
+  QComboBox *cb = new QComboBox(&d);
+  cb -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
+  cb -> setEditText (items[0]);
+  int minlen = 0;
+  for(int j=0; j < items.count(); j++) {
+    cb -> addItem (items[j]);
+    int c = items[j].count();
+    if (c > minlen) minlen = c;
+  }
+  cb -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
+  cb -> setEditable (true);
+    // apparently the following flag prevents Qt from substituting an history item
+    // for an input when they differ only from the point of view of case (upper/lower)
+    // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
+    // will retain the string aAAAAa
+  cb->setDuplicatesEnabled(true); 
+  cb->completer()->setCaseSensitivity(Qt::CaseSensitive);
+  
+  lab -> setBuddy (cb);
+  hl -> addWidget (lab);
+  hl -> addWidget (cb);
+  vl -> addLayout (hl);
+  
+  if (ends (it->type, "file") || it->type == "directory") {
+      // autocompletion
+    QCompleter *completer = new QCompleter(&d);
+    QDirModel *dirModel = new QDirModel(&d);
+    completer->setModel(dirModel);
+    cb->setCompleter(completer);
+  }
+  
+  {
+    QDialogButtonBox* buttonBox =
+    new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                          Qt::Horizontal, &d);
+    QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
+    QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
+    vl -> addWidget (buttonBox);
+  }
+    //  d.setLayout (vl);
+  
+  QRect wframe = view->window()->frameGeometry();
+  QPoint pos = QPoint(wframe.x()+wframe.width()/2,wframe.y()+wframe.height()/2);
+  
+  d.setWindowTitle("Interactive Prompt");
+  d.updateGeometry();
+  QSize sz = d.sizeHint();
+  QRect r; r.setSize(sz);
+  r.moveCenter(pos);
+  d.setGeometry(r);
+  
+  
+  int result = d.exec ();
+  if (result == QDialog::Accepted) {
+    QString item = cb->currentText();
+    ((qt_input_text_widget_rep*) int_input.rep) -> text=
+    scm_quote (from_qstring (item));
+    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
+  } else {
+      //    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
+  }
+}
+#else
 
+void
+qt_tm_widget_rep::do_interactive_prompt () {
+	QString label = to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+	QStringList items;
+  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
+  if ( N(it->def) == 0)
+		items << "";
+  else for (int j=0; j < N(it->def); j++)
+		items << to_qstring(it->def[j]);
+  
+	QTMInteractivePrompt _prompt(label, items, to_qstring(it->type), tm_mainwindow());
+	
+	if (_prompt.exec() == QDialog::Accepted) {
+		QString text = _prompt.currentText();
+    ((qt_input_text_widget_rep*) int_input.rep) -> text = scm_quote (from_qstring (text));
+    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
+  } else {
+      //    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
+  }
+}
+
+#endif

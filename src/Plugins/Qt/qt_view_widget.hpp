@@ -1,7 +1,7 @@
 
 /******************************************************************************
- * MODULE     : qt_widget.hpp
- * DESCRIPTION: QT widget class
+ * MODULE     : qt_view_widget.hpp
+ * DESCRIPTION: QT view widget class
  * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.

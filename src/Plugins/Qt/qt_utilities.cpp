@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : qt_utilities.mm
+* MODULE     : qt_utilities.cpp
 * DESCRIPTION: Utilities for QT
 * COPYRIGHT  : (C) 2007  Massimiliano Gubinelli
 *******************************************************************************
