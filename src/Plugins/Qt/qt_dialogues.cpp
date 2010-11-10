@@ -23,6 +23,7 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
 
+#include "converter.hpp"
 
 #define TYPE_CHECK(b) ASSERT (b, "type mismatch")
 #define NOT_IMPLEMENTED \

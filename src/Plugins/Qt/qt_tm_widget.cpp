@@ -52,8 +52,10 @@ replaceButtons(QToolBar* dest, QWidget* src) {
   QList<QObject*> list= dest->children();
   for (int i=0; i<list.count(); i++) {
     QToolButton* button= qobject_cast<QToolButton*> (list[i]);
-    if (button)
+    if (button) {
       button->setPopupMode (QToolButton::InstantPopup);
+      button->setStyle( qtmstyle() );
+    }
   }
   dest->setUpdatesEnabled(true);
 }
@@ -78,7 +80,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
   mw->menuBar()->setStyle (qtmstyle ());  
-  mw->setUnifiedTitleAndToolBarOnMac(true);
+ // mw->setUnifiedTitleAndToolBarOnMac(true);
   
   QStackedWidget* tw = new QStackedWidget ();
   mw->setCentralWidget(tw);

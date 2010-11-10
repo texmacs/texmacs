@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QStyleOptionMenuItem>
 #include "tm_ostream.hpp"
+#include <qdrawutil.h>
 
 /******************************************************************************
 * QTMProxyStyle (does not own *style)
@@ -145,11 +146,113 @@ QTMProxyStyle::unpolish (QApplication* app) {
 ******************************************************************************/
 
 void
-QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const {
+QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const {
   //  if (element == QStyle::PE_FrameStatusBarItem) return;
-  if (element == QStyle::PE_FrameStatusBar) return;
-  baseStyle()->drawPrimitive(element,option,painter,widget);
+  switch (element) {
+    case PE_FrameStatusBar : 
+      return;
+    case PE_PanelButtonTool:
+      if ((opt->state & (State_Sunken | State_On))) {
+      qDrawShadePanel(p, opt->rect,  QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
+                      (opt->state & (State_Sunken | State_On)), 2,
+                      &opt->palette.brush(QPalette::Mid));
+      } else {
+        qDrawShadePanel(p, opt->rect, opt->palette, //QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
+                        (opt->state & (State_Sunken | State_On)), 0,
+                        &opt->palette.brush(QPalette::Mid));
+      }
+      return;
+    default:
+      ;
+  }
+  baseStyle()->drawPrimitive(element,opt,p,widget);  
 }
+
+
+void 
+QTMStyle::drawComplexControl (ComplexControl cc, const QStyleOptionComplex* opt, QPainter* p, const QWidget* widget) const {
+  switch (cc) {
+    case CC_ToolButton:
+      if (const QStyleOptionToolButton *toolbutton
+          = qstyleoption_cast<const QStyleOptionToolButton *>(opt)) {
+        QRect button, menuarea;
+        button = proxy()->subControlRect(cc, toolbutton, SC_ToolButton, widget);
+        menuarea = proxy()->subControlRect(cc, toolbutton, SC_ToolButtonMenu, widget);
+        
+        State bflags = toolbutton->state & ~State_Sunken;
+        
+        if (bflags & State_AutoRaise) {
+          if (!(bflags & State_MouseOver) || !(bflags & State_Enabled)) {
+            bflags &= ~State_Raised;
+          }
+        }
+        State mflags = bflags;
+        if (toolbutton->state & State_Sunken) {
+          if (toolbutton->activeSubControls & SC_ToolButton)
+            bflags |= State_Sunken;
+          mflags |= State_Sunken;
+        }
+        
+        QStyleOption tool(0);
+        tool.palette = toolbutton->palette;
+        if (toolbutton->subControls & SC_ToolButton) {
+          if (bflags & (State_Sunken | State_On | State_Raised)) {
+            tool.rect = button;
+            tool.state = bflags;
+            proxy()->drawPrimitive(PE_PanelButtonTool, &tool, p, widget);
+          }
+        }
+        
+        if (toolbutton->state & State_HasFocus) {
+          QStyleOptionFocusRect fr;
+          fr.QStyleOption::operator=(*toolbutton);
+          fr.rect.adjust(3, 3, -3, -3);
+          if (toolbutton->features & QStyleOptionToolButton::MenuButtonPopup)
+            fr.rect.adjust(0, 0, -proxy()->pixelMetric(QStyle::PM_MenuButtonIndicator,
+                                                       toolbutton, widget), 0);
+          proxy()->drawPrimitive(PE_FrameFocusRect, &fr, p, widget);
+        }
+        QStyleOptionToolButton label = *toolbutton;
+        label.state = bflags;
+        int fw = proxy()->pixelMetric(PM_DefaultFrameWidth, opt, widget);
+        label.rect = button.adjusted(fw, fw, -fw, -fw);
+        proxy()->drawControl(CE_ToolButtonLabel, &label, p, widget);
+        
+        if (toolbutton->subControls & SC_ToolButtonMenu) {
+          tool.rect = menuarea;
+          tool.state = mflags;
+          if (mflags & (State_Sunken | State_On | State_Raised))
+            proxy()->drawPrimitive(PE_IndicatorButtonDropDown, &tool, p, widget);
+          proxy()->drawPrimitive(PE_IndicatorArrowDown, &tool, p, widget);
+        } else if ((toolbutton->features & QStyleOptionToolButton::HasMenu) 
+                   && (mflags & State_MouseOver))
+        {
+          int mbi = proxy()->pixelMetric(PM_MenuButtonIndicator, toolbutton, widget);
+          QRect ir = toolbutton->rect;
+          QStyleOptionToolButton newBtn = *toolbutton;
+          newBtn.rect = QRect(ir.right() + 5 - mbi, ir.y() + ir.height() - mbi + 4, mbi - 6, mbi - 6);
+          proxy()->drawPrimitive(PE_IndicatorArrowDown, &newBtn, p, widget);
+        }
+      }
+      break;
+    default:
+      baseStyle()->drawComplexControl (cc, opt, p, widget);
+  }
+}
+
+      
+      
+      
+QSize 
+QTMStyle::sizeFromContents (ContentsType type, const QStyleOption* option, const QSize& contentsSize, const QWidget* widget) const {
+  QSize sz(contentsSize);
+  if (type == QStyle::CT_ToolButton) {
+    sz = QSize(sz.width() + 4, sz.height() + 6);
+    return sz;
+  }
+  return baseStyle()->sizeFromContents(type, option, contentsSize, widget);
+}
+
 
 int
 QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const {
