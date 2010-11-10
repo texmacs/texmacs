@@ -23,10 +23,5 @@ void imlib2_display (Display* dpy, Pixmap pm, url image, int w, int h,
 		     double cx1, double cy1, double cx2, double cy2);
 #endif
 
-#ifdef USE_IMLIB2
-#include <Imlib2.h>
-#include <stdio.h>
-#include <string.h>
-#endif // USE_IMLIB2
 
 #endif // IMLIB2_H
