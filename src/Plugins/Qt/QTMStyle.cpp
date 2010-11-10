@@ -1,26 +1,27 @@
 
 /******************************************************************************
-* MODULE     : QTMStyle.hpp
-* DESCRIPTION: QT Texmacs custom style (for some elements)
-* COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
-*******************************************************************************
-* This software falls under the GNU general public license version 3 or later.
-* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
-* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
-******************************************************************************/
+ * MODULE     : QTMStyle.hpp
+ * DESCRIPTION: QT Texmacs custom style (for some elements)
+ * COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
+ *******************************************************************************
+ * This software falls under the GNU general public license version 3 or later.
+ * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+ * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+ ******************************************************************************/
 
 #include "QTMStyle.hpp"
 #include <QApplication>
 #include <QStyleOptionMenuItem>
 #include "tm_ostream.hpp"
 #include <qdrawutil.h>
+#include <QPainter>
 
 /******************************************************************************
-* QTMProxyStyle (does not own *style)
-******************************************************************************/
+ * QTMProxyStyle (does not own *style)
+ ******************************************************************************/
 
 QTMProxyStyle::QTMProxyStyle (QStyle* _base):
-  QStyle (), base (_base) {}
+QStyle (), base (_base) {}
 
 QTMProxyStyle::~QTMProxyStyle() {
   // delete style;
@@ -142,8 +143,58 @@ QTMProxyStyle::unpolish (QApplication* app) {
 }
 
 /******************************************************************************
-* QTMStyle
-******************************************************************************/
+ * QTMStyle
+ ******************************************************************************/
+
+static void qtmDrawShadeRoundPanel(QPainter *p, const QRect &r,
+                                   const QPalette &pal, bool sunken,
+                                   int lineWidth, const QBrush *fill)
+{
+#if (QT_VERSION < 0x040400)
+  // drawRoundedRect is not available, fallback to standard functions
+  qDrawShadePanel(p, r, pal, sunken, lineWidth, fill);
+#else
+  
+  if (r.width() == 0 || r.height() == 0)
+    return;
+  if (!(r.width() > 0 && r.height() > 0 && lineWidth >= 0)) {
+    qWarning("qtmDrawShadeRoundPanel: Invalid parameters");
+  }
+  
+  QColor shade = pal.dark().color();
+  QColor light = pal.light().color();
+  if (fill) {
+    if (fill->color() == shade)
+      shade = pal.shadow().color();
+    if (fill->color() == light)
+      light = pal.midlight().color();
+  }
+  
+  QPen oldPen = p->pen();                        // save pen
+  QBrush oldBrush = p->brush();                  // save brush  
+  QRect rect(r);
+  int border = 6;
+  
+  p->setPen(Qt::NoPen);
+  
+  if (sunken) {
+    p->setBrush(light);
+    p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
+    rect.adjust(0,0,-1,-1);
+    p->setBrush(shade);
+    p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
+    rect.adjust(1,1,0,0);
+  }
+  
+  p->setBrush(fill ? *fill : shade);
+  p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
+  
+  p->setPen(oldPen);                        // restore pen
+  p->setBrush(oldBrush);                        // restore brush
+#endif // (QT_VERSION < 0x040400)
+}
+
+
 
 void
 QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const {
@@ -153,11 +204,11 @@ QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *opt, QPai
       return;
     case PE_PanelButtonTool:
       if ((opt->state & (State_Sunken | State_On))) {
-      qDrawShadePanel(p, opt->rect,  QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
-                      (opt->state & (State_Sunken | State_On)), 2,
-                      &opt->palette.brush(QPalette::Mid));
+        qtmDrawShadeRoundPanel(p, opt->rect,  QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
+                        (opt->state & (State_Sunken | State_On)), 2,
+                        &opt->palette.brush(QPalette::Mid));
       } else {
-        qDrawShadePanel(p, opt->rect, opt->palette, //QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
+        qtmDrawShadeRoundPanel(p, opt->rect, opt->palette, //QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
                         (opt->state & (State_Sunken | State_On)), 0,
                         &opt->palette.brush(QPalette::Mid));
       }
@@ -240,13 +291,13 @@ QTMStyle::drawComplexControl (ComplexControl cc, const QStyleOptionComplex* opt,
   }
 }
 
-      
-      
-      
+
+
+
 QSize 
 QTMStyle::sizeFromContents (ContentsType type, const QStyleOption* option, const QSize& contentsSize, const QWidget* widget) const {
   QSize sz(contentsSize);
-  if (type == QStyle::CT_ToolButton) {
+  if (type == CT_ToolButton) {
     sz = QSize(sz.width() + 4, sz.height() + 6);
     return sz;
   }
@@ -257,27 +308,30 @@ QTMStyle::sizeFromContents (ContentsType type, const QStyleOption* option, const
 int
 QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const {
   switch (metric) {
-  case PM_ToolBarItemSpacing:
-    return 0;
-  default:
-    return baseStyle()->pixelMetric(metric,opt,widget);
+    case PM_ToolBarItemSpacing:
+      return 0;
+  //  case PM_ToolBarFrameWidth:
+  //    return 2;
+    default:
+      ;
   }
+  return baseStyle()->pixelMetric(metric,opt,widget);
 }
 
 #if 0
 void
 QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const {
   switch (element) {
-  case CE_MenuItem:
-    if (const QStyleOptionMenuItem *mi =
-       qstyleoption_cast<const QStyleOptionMenuItem *> (option)) {
-      QStyleOptionMenuItem mi2(*mi);
-      mi2.text= QString ("pippo");
-      baseStyle()->drawControl (element, &mi2, painter, widget);
-      break;
-    }
-  default:
-    baseStyle()->drawControl (element, option, painter, widget);
+    case CE_MenuItem:
+      if (const QStyleOptionMenuItem *mi =
+          qstyleoption_cast<const QStyleOptionMenuItem *> (option)) {
+        QStyleOptionMenuItem mi2(*mi);
+        mi2.text= QString ("pippo");
+        baseStyle()->drawControl (element, &mi2, painter, widget);
+        break;
+      }
+    default:
+      baseStyle()->drawControl (element, option, painter, widget);
   }
 }
 #endif
