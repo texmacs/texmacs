@@ -40,23 +40,22 @@
 
 (define (fold/unfold-menu-entry x which action)
   (with sym (string->symbol x)
-    (list 'when (lambda () (ahash-ref which sym))
-	  (list (upcase-first x)
-		(lambda () (dynamic-operate-on-buffer (list action sym)))))))
+    (gui$menu
+      (when (ahash-ref which sym)
+	((eval (upcase-first x))
+	 (dynamic-operate-on-buffer (list action sym)))))))
 
 (tm-define (fold-environments-menu)
   (receive (l first second) (fold-get-environments-in-buffer)
-    (if (null? l) (menu-dynamic ())
-	(menu-dynamic
-	  ---
-	  ,@(map (lambda (x) (fold/unfold-menu-entry x second :fold)) l)))))
+    (gui$menu
+      (assuming (nnull? l) ---)
+      (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :fold)) l))))
 
 (tm-define (unfold-environments-menu)
   (receive (l first second) (fold-get-environments-in-buffer)
-    (if (null? l) (menu-dynamic ())
-	(menu-dynamic
-	  ---
-	  ,@(map (lambda (x) (fold/unfold-menu-entry x first :unfold)) l)))))
+    (gui$menu
+      (assuming (nnull? l) ---)
+      (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :unfold)) l))))
 
 (menu-bind insert-fold-menu
   ("First" (dynamic-operate-on-buffer :first))

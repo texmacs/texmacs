@@ -33,6 +33,10 @@
   (:synopsis "Make dynamic widgets")
   `(cons* 'list ,w))
 
+(tm-define-macro (gui$dynamic-map fun l)
+  (:synopsis "Make dynamic widgets")
+  `(cons* 'list (append-map ,fun ,l)))
+
 (tm-define-macro (gui$assuming pred? . l)
   (:synopsis "Conditionally make widgets")
   `(cons* 'list (if ,pred? (gui$list ,@l) '())))
@@ -106,6 +110,11 @@
   (:case dynamic)
   (require-format x '(dynamic :%1))
   `(gui$dynamic ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case dynamic-map)
+  (require-format x '(dynamic-map :%2))
+  `(gui$dynamic-map ,(cadr x) ,(caddr x)))
 
 (tm-define (gui-menu-item x)
   (:case group)
