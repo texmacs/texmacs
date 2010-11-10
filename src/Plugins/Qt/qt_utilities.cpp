@@ -139,6 +139,7 @@ qt_supports (url u) {
 
 void
 qt_image_size (url image, int& w, int& h) {
+  cout <<  concretize (image) << LF;
   QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
     cerr << "TeXmacs] cannot read image file '" << image << "'" 

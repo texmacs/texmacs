@@ -18,11 +18,12 @@ class QTMInputTextWidgetHelper;
 class qt_text_widget_rep: public qt_widget_rep {
 public:
   string str;
+  int style;
   color col;
   bool tsp;
-
-  inline qt_text_widget_rep (string _s, color _col, bool _tsp):
-    str (_s), col (_col), tsp (_tsp) {}
+  
+  inline qt_text_widget_rep (string _s, int _style, color _col, bool _tsp):
+    str (_s), style(_style), col (_col), tsp (_tsp) {}
   virtual QAction* as_qaction ();
 };
 
@@ -49,11 +50,11 @@ public:
   string type;
   array<string> def;
   string text;
-
+  string width;
   
   QTMInputTextWidgetHelper *helper;
   
-  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def);
+  qt_input_text_widget_rep (command _cmd, string _type, array<string> _def, string _width);
   ~qt_input_text_widget_rep();
 
   virtual QAction* as_qaction ();

@@ -378,6 +378,11 @@ menu_group (string name, int style) {
   QAction* a= new QTMAction (NULL);
   a->setText(to_qstring(tm_var_encode ((name))));
   a->setEnabled (false);
+  if (style == WIDGET_STYLE_MINI) {
+    QFont f = a->font();
+    f.setPointSize(10);
+    a->setFont(f);
+  }  
   return tm_new<qt_menu_rep> (a);
 }
 
@@ -408,6 +413,11 @@ qt_text_widget_rep::as_qaction () {
   if (t == "Help") t= "Help ";
   a->setText(to_qstring (t));
   a->str = str;
+  if (style == WIDGET_STYLE_MINI) {
+    QFont f = a->font();
+    f.setPointSize(10);
+    a->setFont(f);
+  }
   return a;
 }
 
@@ -513,8 +523,7 @@ balloon_widget (widget w, widget help)  {
 widget
 text_widget (string s, int style, color col, bool tsp) {
   // a text widget with a given color and transparency
-  (void) style;
-  return tm_new<qt_text_widget_rep> (s, col, tsp);
+  return tm_new<qt_text_widget_rep> (s, style, col, tsp);
 }
 
 widget

@@ -21,8 +21,10 @@
 #include "converter.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
+#include "QTMStyle.hpp"
 
 #include <QtGui>
+#include "string.hpp"
 
 
 widget
@@ -317,7 +319,35 @@ qt_input_widget_rep::perform_dialog() {
 * Input text widget implementation
 *******************************************************************************/
 
+class QTMLineEdit : public QLineEdit {
+  
+public:
+  string ww; // width
+  
+  QTMLineEdit(QWidget *parent, string _ww) 
+  : QLineEdit(parent), ww(_ww) {};
+  
+  virtual QSize	sizeHint () const ;
+};
 
+QSize
+QTMLineEdit::sizeHint () const {
+  QSize sz(QLineEdit::sizeHint());
+  string s = ww; // to avoid const casting
+  if (ends (s, "w") && is_double (s (0, N(s) - 1))) {
+    double x= as_double (s (0, N(s) - 1));
+    sz.setWidth(parentWidget()->width() * x);
+//    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
+  } else if (ends (s, "em") && is_double (s (0, N(s) - 2))) {
+    double x= as_double (s (0, N(s) - 2));
+    QFontMetrics fm(fontMetrics());
+    sz.setWidth(x*fm.width("m")); //FIXME: put real font width
+  }  else if (ends (s, "px") && is_double (s (0, N(s) - 2))) {
+    double x= as_double (s (0, N(s) - 2));
+    sz.setWidth(x);
+  }  
+  return sz;
+}
 
 QTMWidgetAction::QTMWidgetAction(QObject *parent)
 : QWidgetAction (parent), helper(NULL) { 
@@ -341,12 +371,29 @@ QTMWidgetAction::doRefresh() {
 
 QWidget * 
 QTMWidgetAction::createWidget ( QWidget * parent ) {
-  QLineEdit *le = new QLineEdit (parent);
+  QLineEdit *le;
   if (helper) {
+    le = new QTMLineEdit (parent, helper->wid()->width);
     helper -> add (le);
     QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
     QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
     le -> setText (to_qstring (helper->wid()->text));
+    QFont f= le->font();
+    f.setPixelSize(10);
+    le->setFont(f);
+    le->setTextMargins(0,0,0,0);
+    le->setFrame(false);
+    le->setStyle(qtmstyle());
+    QPalette pal(le->palette());
+    pal.setColor(QPalette::Base, Qt::lightGray);
+    le->setPalette(pal);
+    if (ends(helper->wid()->width,"w")) {
+      le->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    } else {
+      le->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+  } else {
+    le = new QLineEdit(parent);
   }
   return le;  
 }
@@ -366,8 +413,8 @@ qt_input_text_widget_rep::as_qaction () {
 }
 
 qt_input_text_widget_rep::qt_input_text_widget_rep 
-  (command _cmd, string _type, array<string> _def)
-  : cmd (_cmd), type (_type), def (_def), text (""), helper(NULL) 
+  (command _cmd, string _type, array<string> _def, string _width)
+  : cmd (_cmd), type (_type), def (_def), text (""), width(_width), helper(NULL) 
 {
   if (N(def) > 0) {
     text = def[0];
@@ -377,6 +424,7 @@ qt_input_text_widget_rep::qt_input_text_widget_rep
 
 qt_input_text_widget_rep::~qt_input_text_widget_rep() { 
 }
+
 
 void
 QTMInputTextWidgetHelper::commit () {
@@ -444,7 +492,7 @@ input_text_widget (command call_back, string type, array<string> def,
   // a textual input widget for input of a given type and a list of suggested
   // default inputs (the first one should be displayed, if there is one)
   (void) style; (void) width;
-  return tm_new<qt_input_text_widget_rep> (call_back, type, def);
+  return tm_new<qt_input_text_widget_rep> (call_back, type, def, width);
 }
 
 widget
