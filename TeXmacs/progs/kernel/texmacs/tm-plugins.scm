@@ -34,7 +34,7 @@
 (define connection-defined (make-ahash-table))
 (define connection-default (make-ahash-table))
 (define connection-variant (make-ahash-table))
-(define connection-varlist (make-ahash-table))
+(define-public connection-varlist (make-ahash-table))
 (define connection-handler (make-ahash-table))
 
 (define (connection-setup name val . opt)
@@ -73,27 +73,13 @@
 ;; Menu for the supported sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define supported-sessions-list '())
-(define supported-sessions-table (make-ahash-table))
+(define-public supported-sessions-list '())
+(define-public supported-sessions-table (make-ahash-table))
 
 (define (supported-sessions-add name menu-name)
   (if (symbol? name) (set! name (symbol->string name)))
   (set! supported-sessions-list (cons name supported-sessions-list))
   (ahash-set! supported-sessions-table name menu-name))
-
-(define (supported-sessions-menu-entry name)
-  (define (menu-item variant)
-    (list variant (lambda () (make-session name variant))))
-  (let* ((menu-name (ahash-ref supported-sessions-table name))
-	 (l (ahash-ref connection-varlist name)))
-    (if (not l)
-	(list menu-name (lambda () (make-session name "default")))
-	`(-> ,menu-name ,@(map menu-item l)))))
-
-(define-public (supported-sessions-menu)
-  (lazy-plugin-force)
-  (with l (list-sort supported-sessions-list string<=?)
-    (menu-dynamic ,@(map supported-sessions-menu-entry l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supported scripting languages
