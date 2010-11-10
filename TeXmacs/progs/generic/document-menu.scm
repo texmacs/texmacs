@@ -180,6 +180,14 @@
      (init-language "ukrainian")
      (set-output-language "ukrainian"))))
 
+(tm-menu (supported-scripts-menu)
+  (let* ((dummy (lazy-plugin-force))
+         (l (list-sort supported-scripts-list string<=?)))
+    (for (name l)
+      ((eval (ahash-ref supported-scripts-table name))
+       (noop) ;; NOTE: inhibit segfault due to property searching?
+       (init-env "prog-scripts" name)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

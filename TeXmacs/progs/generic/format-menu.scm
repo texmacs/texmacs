@@ -74,6 +74,13 @@
   ("Printer" (make-specific "printer"))
   ("Image" (make-specific "image")))
 
+(tm-menu (local-supported-scripts-menu)
+  (let* ((dummy (lazy-plugin-force))
+         (l (list-sort supported-scripts-list string<=?)))
+    (for (name l)
+      ((eval (ahash-ref supported-scripts-table name))
+       (make-with "prog-scripts" name)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for paragraph formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

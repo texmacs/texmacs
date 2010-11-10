@@ -70,7 +70,7 @@
     (if r (cons 'tuple r) '(tuple))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Supported sessions
+;; Supported sessions and scripting languages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public supported-sessions-list '())
@@ -81,10 +81,6 @@
   (set! supported-sessions-list (cons name supported-sessions-list))
   (ahash-set! supported-sessions-table name menu-name))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Supported scripting languages
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (define-public supported-scripts-list '())
 (define-public supported-scripts-table (make-ahash-table))
 
@@ -92,26 +88,6 @@
   (if (symbol? name) (set! name (symbol->string name)))
   (set! supported-scripts-list (cons name supported-scripts-list))
   (ahash-set! supported-scripts-table name menu-name))
-
-(tm-define (supported-scripts-menu-entry name)
-  (let* ((fun `(lambda () (init-env "prog-scripts" ,name)))
-	 (menu-name (ahash-ref supported-scripts-table name)))
-    (list menu-name (eval fun))))
-
-(define-public (supported-scripts-menu)
-  (lazy-plugin-force)
-  (with l (list-sort supported-scripts-list string<=?)
-    (menu-dynamic ,@(map supported-scripts-menu-entry l))))
-
-(tm-define (local-supported-scripts-menu-entry name)
-  (let* ((fun `(lambda () (make-with "prog-scripts" ,name)))
-	 (menu-name (ahash-ref supported-scripts-table name)))
-    (list menu-name (eval fun))))
-
-(define-public (local-supported-scripts-menu)
-  (lazy-plugin-force)
-  (with l (list-sort supported-scripts-list string<=?)
-    (menu-dynamic ,@(map local-supported-scripts-menu-entry l))))
 
 (tm-define (supports-scripts? name)
   (if (symbol? name) (set! name (symbol->string name)))
