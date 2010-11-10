@@ -253,17 +253,15 @@
 ;; The dynamic document part menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-menu (document-parts-menu-entry id active?)
-  ((check (eval (upcase-first id)) "v" active?)
-   (if (== (buffer-get-part-mode) :one)
-       (buffer-show-part id)
-       (buffer-toggle-part id))))
-
 (tm-menu (document-parts-menu)
   (let* ((all (buffer-parts-list #t))
 	 (active (buffer-parts-list #f))
 	 (make (lambda (id) (document-parts-menu-entry id (in? id active)))))
-    (dynamic-map make all)))
+    (for (id all)
+      ((check (eval (upcase-first id)) "v" (in? id active))
+       (if (== (buffer-get-part-mode) :one)
+           (buffer-show-part id)
+           (buffer-toggle-part id))))))
 
 (menu-bind document-part-menu
   (if (buffer-has-preamble?)

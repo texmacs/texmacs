@@ -108,11 +108,6 @@
   `(gui$dynamic ,(cadr x)))
 
 (tm-define (gui-menu-item x)
-  (:case dynamic-map)
-  (require-format x '(dynamic-map :%2))
-  `(gui$dynamic (append-map ,(cadr x) ,(caddr x))))
-
-(tm-define (gui-menu-item x)
   (:case let let*)
   (require-format x '(:%1 :%1 :*))
   `(,(car x) ,(cadr x) (gui$menu ,@(cddr x))))

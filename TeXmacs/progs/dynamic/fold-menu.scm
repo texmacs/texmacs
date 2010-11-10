@@ -47,12 +47,12 @@
 (tm-menu (fold-environments-menu)
   (receive (l first second) (fold-get-environments-in-buffer)
     (assuming (nnull? l) ---)
-    (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :fold)) l)))
+    (for (x l) (dynamic (fold/unfold-menu-entry x second :fold)))))
 
 (tm-menu (unfold-environments-menu)
   (receive (l first second) (fold-get-environments-in-buffer)
     (assuming (nnull? l) ---)
-    (dynamic-map (lambda (x) (fold/unfold-menu-entry x second :unfold)) l)))
+    (for (x l) (dynamic (fold/unfold-menu-entry x second :unfold)))))
 
 (menu-bind insert-fold-menu
   ("First" (dynamic-operate-on-buffer :first))
