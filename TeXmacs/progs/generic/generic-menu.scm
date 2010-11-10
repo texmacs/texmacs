@@ -161,6 +161,11 @@
   (cadr x))
 
 (tm-define (gui-menu-item x)
+  (:case dynamic)
+  (require-format x '(dynamic :%1))
+  `(gui$dynamic ,(cadr x)))
+
+(tm-define (gui-menu-item x)
   (:case group)
   (require-format x '(group :string?))
   `(gui$group ,(cadr x)))
@@ -222,14 +227,14 @@
   (if (tree-atomic? (tree-ref t i))
       (gui$input (when answer (tree-set (focus-tree) i answer)) "string"
 		 (list (tree->string (tree-ref t i))) w)
-      (gui$group "[n.a.]")))
+      (gui$item (group "[n.a.]"))))
 
 (define (image-handles t)
-  (list (gui$mini #t (gui$group "Width:"))
+  (list (gui$mini #t (gui$item (group "Width:")))
 	(string-input-handle t 1 "3em")
-	(gui$mini #t (gui$group "Height:"))
+	(gui$mini #t (gui$item (group "Height:")))
 	(string-input-handle t 2 "3em")
-	(gui$mini #t (gui$group "File:"))
+	(gui$mini #t (gui$item (group "File:")))
 	(string-input-handle t 0 "0.5w")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -242,18 +247,16 @@
 (tm-define (standard-focus-menu t)
   (gui$list
     (gui$pullright (tag-menu-name (tree-label t))
-		   (gui$dynamic (variant-menu-items t)))
-    (gui$cond (numbered-context? t)
-	      ;; FIXME: itemize, enumerate, eqnarray*
-	      (gui$button
-	       (gui$item (check "Numbered" "v"
-				(check-number? (focus-tree))))
-	       (number-toggle (focus-tree))))
-    (gui$cond (toggle-context? t)
-	      (gui$button
-	       (gui$item (check "Unfolded" "v"
-				(toggle-second-context? (focus-tree))))
-	       (toggle-toggle (focus-tree))))
+		   (gui$item (dynamic (variant-menu-items t))))
+    (gui$item (cond (numbered-context? t)
+		    ;; FIXME: itemize, enumerate, eqnarray*
+		    ((check "Numbered" "v"
+			    (check-number? (focus-tree)))
+		     (number-toggle (focus-tree)))))
+    (gui$item (cond (toggle-context? t)
+		    ((check "Unfolded" "v"
+			    (toggle-second-context? (focus-tree)))
+		     (toggle-toggle (focus-tree)))))
     (gui$item ("Describe" (set-message "Not yet implemented" "")))
     (gui$item ("Delete" (remove-structure-upwards)))
 
@@ -308,7 +311,7 @@
               (gui$pulldown (gui$item
 			     (balloon (eval (tag-menu-name (tree-label t)))
 				      "Structured variant"))
-			    (gui$dynamic (variant-menu-items t))))
+			    (gui$item (dynamic (variant-menu-items t)))))
     (gui$item (cond (numbered-context? t)
 		    ;; FIXME: itemize, enumerate, eqnarray*
 		    ((check (balloon (icon "tm_numbered.xpm")
@@ -391,16 +394,16 @@
 
 (tm-define (standard-focus-icons t)
   (gui$list
-    (gui$minibar (gui$dynamic (focus-variant-icons t)))
-    (gui$group "")
-    (gui$minibar (gui$dynamic (focus-move-icons t)))
+    (gui$minibar (gui$item (dynamic (focus-variant-icons t))))
+    (gui$item (group ""))
+    (gui$minibar (gui$item (dynamic (focus-move-icons t))))
     (gui$cond (or (structured-horizontal? t) (structured-vertical? t))
-      (gui$group "")
-      (gui$minibar (gui$dynamic (focus-insert-icons t))))
-    (gui$cond (tree-is? t 'image)
-      (gui$group "")
-      (gui$dynamic (image-handles t))
-      (gui$group ""))))
+      (gui$item (group ""))
+      (gui$minibar (gui$item (dynamic (focus-insert-icons t)))))
+    (gui$item (cond (tree-is? t 'image)
+		    (group "")
+		    (dynamic (image-handles t))
+		    (group "")))))
 
 (tm-define (texmacs-focus-icons)
   (with t (focus-tree)
