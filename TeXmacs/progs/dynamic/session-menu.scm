@@ -18,22 +18,19 @@
 ;; Inserting sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (supported-sessions-menu-variant name variant)
-  ((eval variant) (make-session name variant)))
-
-(tm-menu (supported-sessions-menu-entry name)
-  (let* ((menu-name (ahash-ref supported-sessions-table name))
-	 (l (ahash-ref connection-varlist name))
-         (fun (lambda (v) (supported-sessions-menu-variant name v))))
-    (assuming (not l)
-      ((eval menu-name) (make-session name "default")))
-    (assuming l
-      (-> (eval menu-name) (dynamic-map fun l)))))
-
 (tm-menu (supported-sessions-menu)
   (let* ((dummy (lazy-plugin-force))
          (l (list-sort supported-sessions-list string<=?)))
-    (dynamic-map supported-sessions-menu-entry l)))
+    (for (name l)
+      (let* ((menu-name (ahash-ref supported-sessions-table name))
+             (l (ahash-ref connection-varlist name))
+             (fun (lambda (v) (supported-sessions-menu-variant name v))))
+        (assuming (not l)
+          ((eval menu-name) (make-session name "default")))
+        (assuming l
+          (-> (eval menu-name)
+              (for (variant l)
+                ((eval variant) (make-session name variant)))))))))
 
 (menu-bind insert-session-menu
   (when (and (style-has? "std-dtd") (in-text?))
