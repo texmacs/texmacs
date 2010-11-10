@@ -146,15 +146,57 @@ QTMProxyStyle::unpolish (QApplication* app) {
  * QTMStyle
  ******************************************************************************/
 
+
+static void qtmDrawRoundedRect(QPainter *p, const QRectF &rect, qreal xRadius, qreal yRadius,
+                               Qt::SizeMode mode)
+{
+  QRectF r = rect.normalized();
+  
+  if (r.isNull())
+    return;
+  
+  if (mode == Qt::AbsoluteSize) {
+    qreal w = r.width() / 2;
+    qreal h = r.height() / 2;
+    
+    xRadius = 100 * qMin(xRadius, w) / w;
+    yRadius = 100 * qMin(yRadius, h) / h;
+  } else {
+    if (xRadius > 100)                          // fix ranges
+      xRadius = 100;
+    
+    if (yRadius > 100)
+      yRadius = 100;
+  }
+  
+  QPainterPath path;
+  
+  if (xRadius <= 0 || yRadius <= 0) {             // add normal rectangle
+    path.addRect(r);
+  } else {
+    qreal x = r.x();
+    qreal y = r.y();
+    qreal w = r.width();
+    qreal h = r.height();
+    qreal rxx2 = w*xRadius/100;
+    qreal ryy2 = h*yRadius/100;
+    
+    
+    path.arcMoveTo(x, y, rxx2, ryy2, 90);
+    path.arcTo(x, y, rxx2, ryy2, 90, 90);
+    path.arcTo(x, y+h-ryy2, rxx2, ryy2, 2*90, 90);
+    path.arcTo(x+w-rxx2, y+h-ryy2, rxx2, ryy2, 3*90, 90);
+    path.arcTo(x+w-rxx2, y, rxx2, ryy2, 0, 90);
+    path.closeSubpath();
+  }
+  
+  p->drawPath(path);
+}
+
 static void qtmDrawShadeRoundPanel(QPainter *p, const QRect &r,
                                    const QPalette &pal, bool sunken,
                                    int lineWidth, const QBrush *fill)
 {
-#if (QT_VERSION < 0x040400)
-  // drawRoundedRect is not available, fallback to standard functions
-  qDrawShadePanel(p, r, pal, sunken, lineWidth, fill);
-#else
-  
   if (r.width() == 0 || r.height() == 0)
     return;
   if (!(r.width() > 0 && r.height() > 0 && lineWidth >= 0)) {
@@ -179,19 +221,21 @@ static void qtmDrawShadeRoundPanel(QPainter *p, const QRect &r,
   
   if (sunken) {
     p->setBrush(light);
-    p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
+    qtmDrawRoundedRect(p,rect,border,border, Qt::AbsoluteSize);
+    //    p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
     rect.adjust(0,0,-1,-1);
     p->setBrush(shade);
-    p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
+    qtmDrawRoundedRect(p,rect,border,border, Qt::AbsoluteSize);
+    //    p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
     rect.adjust(1,1,0,0);
   }
   
   p->setBrush(fill ? *fill : shade);
-  p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
+  qtmDrawRoundedRect(p,rect,border,border, Qt::AbsoluteSize);
+  //  p->drawRoundedRect(rect,border,border, Qt::AbsoluteSize);
   
   p->setPen(oldPen);                        // restore pen
   p->setBrush(oldBrush);                        // restore brush
-#endif // (QT_VERSION < 0x040400)
 }
 
 
