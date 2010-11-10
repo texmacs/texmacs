@@ -203,6 +203,7 @@ qt_chooser_widget_rep::plain_window_widget (string s)
   return this;
 }
 
+#if (defined(Q_WS_MAC) || defined(Q_WS_WINDOWS))
 void
 qt_chooser_widget_rep::perform_dialog () {
   QString _file;
@@ -258,24 +259,121 @@ qt_chooser_widget_rep::perform_dialog () {
     url u = url_system (scm_unquote (from_qstring (_file)));
     if (type == "image") {
       /*
-      QPixmap _pic(_file);
-      string params;
-        // TEMPORARY HACK: wouldn't it be nicer to scale the image to, say, 
-        // 90% of the current column width?
-      params << "\"" << from_qstring(QString("%1px").arg(_pic.width())) << "\" ";
-      params << "\"" << from_qstring(QString("%1px").arg(_pic.height())) << "\" ";
-      params << "\"" << "" << "\" ";  // xps ??
-      params << "\"" << "" << "\"";   // yps ??
-      file = "(list (url-system " * scm_quote (as_string (u)) * ") " * params * ")";
+       QPixmap _pic(_file);
+       string params;
+       // TEMPORARY HACK: wouldn't it be nicer to scale the image to, say, 
+       // 90% of the current column width?
+       params << "\"" << from_qstring(QString("%1px").arg(_pic.width())) << "\" ";
+       params << "\"" << from_qstring(QString("%1px").arg(_pic.height())) << "\" ";
+       params << "\"" << "" << "\" ";  // xps ??
+       params << "\"" << "" << "\"";   // yps ??
+       file = "(list (url-system " * scm_quote (as_string (u)) * ") " * params * ")";
        */
       file = "(list (url-system " * scm_quote (as_string (u)) * ") \"\" \"\" \"\" \"\")";
     } else {
       file = "(url-system " * scm_quote (cork_to_utf8(as_string (u))) * ")";
     }
   }
-  cout << "file= " << file << "\n";
   cmd ();
 }
+#else
+void
+qt_chooser_widget_rep::perform_dialog () {
+    // int result;
+    // FIXME: the chooser dialog is widely incomplete
+  
+  QTMFileDialog *dialog;
+  QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
+  
+  if (type  == "image")
+    dialog= imgdialog= new QTMImageDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
+  else
+    dialog= new QTMFileDialog (NULL, to_qstring (win_title), to_qstring(directory * "/" * file));
+  
+#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
+  dialog->setOptions(QFileDialog::DontUseNativeDialog);
+#endif
+  
+  QPoint pos = to_qpoint(position);
+    //cout << "Size :" << size.x1 << "," << size.x2 << LF;
+  if (DEBUG_QT) {
+    cout << "Position :" << pos.x() << "," << pos.y() << LF;
+    cout << "Dir: " << directory * "/" * file << LF;
+  }
+  
+  dialog->updateGeometry();
+  QSize sz = dialog->sizeHint();
+  QRect r; r.setSize(sz);
+  r.moveCenter(pos);
+  dialog->setGeometry(r);
+  
+  dialog->setViewMode (QFileDialog::Detail);
+  if (type == "directory") {
+    dialog->setFileMode(QFileDialog::Directory);
+  } else if (type == "image") {
+    dialog->setFileMode(QFileDialog::ExistingFile);
+  } else {
+    dialog->setFileMode(QFileDialog::AnyFile);
+  }
+  
+#if (QT_VERSION >= 0x040400)
+  if (type == "directory") {  
+  } else if (type == "texmacs") {
+    dialog->setNameFilter ("TeXmacs file (*.tm *.ts *.tp)");
+    dialog->setDefaultSuffix ("tm");
+  } else if (type == "image") {
+    dialog->setNameFilter ("Image file (*.gif *.jpg *.jpeg *.pdf *.png *.pnm *.ps *.eps *.ppm *.svg *.tif *.tiff *.fig *.xpm)");
+  } else if (type == "bibtex") {
+    dialog->setNameFilter ("BibTeX file (*.bib)");
+    dialog->setDefaultSuffix ("bib");
+  } else if (type == "html") {
+    dialog->setNameFilter ("Html file (*.htm *.html *.xhtml)");
+    dialog->setDefaultSuffix ("html");
+  } else if (type == "latex") {
+    dialog->setNameFilter ("LaTeX file (*.tex *.ltx *.sty *.cls)");
+    dialog->setDefaultSuffix ("tex");
+  } else if (type == "stm") {
+    dialog->setNameFilter ("Scheme file (*.stm *.scm)");
+    dialog->setDefaultSuffix ("stm");
+  } else if (type == "verbatim") {
+    dialog->setNameFilter ("Verbatim file (*.txt)");
+    dialog->setDefaultSuffix ("txt");
+  } else if (type == "tmml") {
+    dialog->setNameFilter ("XML file (*.tmml)");
+    dialog->setDefaultSuffix ("tmml");  
+  } else if (type == "pdf") {
+    dialog->setNameFilter ("Pdf file (*.pdf)");
+    dialog->setDefaultSuffix ("pdf");
+  } else if (type == "postscript") {
+    dialog->setNameFilter ("PostScript file (*.ps *.eps)");
+    dialog->setDefaultSuffix ("ps");  
+  }
+#endif
+  
+  dialog->setLabelText(QFileDialog::Accept, "Ok");
+  
+  QStringList fileNames;
+  if (dialog->exec ()) {
+    fileNames = dialog->selectedFiles();
+    if (fileNames.count() > 0) {
+      file = from_qstring_utf8 (fileNames[0]);
+      url u = url_system (scm_unquote (file));
+      if (type == "image")
+        file = "(list (url-system " *
+        scm_quote (as_string (u)) *
+        ") " * imgdialog->getParamsAsString () * ")";
+      else
+        file = "(url-system " * scm_quote (as_string (u)) * ")";
+    }
+  } else {
+    file = "#f";
+  }
+  
+  delete dialog;
+  
+  cmd ();
+}
+#endif
 
 widget
 file_chooser_widget (command cmd, string type, bool save)  {
@@ -284,7 +382,6 @@ file_chooser_widget (command cmd, string type, bool save)  {
   // for importation can be specified
   return tm_new<qt_chooser_widget_rep> (cmd, type, save);
 }
-
 
 
 class qt_field_widget;
@@ -479,7 +576,8 @@ qt_input_widget_rep::write (slot s, blackbox index, widget w) {
   }
 }
 
-widget qt_input_widget_rep::plain_window_widget (string s)
+widget
+qt_input_widget_rep::plain_window_widget (string s)
 {
   win_title = s;
   return this;
