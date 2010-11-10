@@ -28,6 +28,10 @@ public:
 
   QStyle *baseStyle() const;
   
+#if (QT_VERSION < 0x046000)
+  const QStyle * proxy () const { return this; }
+#endif  
+  
   void drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = 0) const;
   void drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
   void drawItemPixmap (QPainter* painter, const QRect& rect, int alignment, const QPixmap& pixmap) const;

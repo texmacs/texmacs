@@ -51,4 +51,4 @@ public:
 };
 
 
-#endif
+#endif // QT_VIEW_WIDGET_HPP

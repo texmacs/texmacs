@@ -38,3 +38,4 @@ QTMGuiHelper::doPopWaitingWidgets() {
     waiting_widgets = waiting_widgets->next;
   }
 }
+
