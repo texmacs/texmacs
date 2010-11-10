@@ -287,8 +287,6 @@
 		9C75B68612895366008DE84F /* aligned_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B68512895366008DE84F /* aligned_widget.cpp */; };
 		9C75B720128973D5008DE84F /* minibar_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B71F128973D5008DE84F /* minibar_widget.cpp */; };
 		9C75B76C12897795008DE84F /* color_picker_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B76B12897795008DE84F /* color_picker_widget.cpp */; };
-		9C7E7AA21105EA7D004482BB /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */; };
-		9C7E7AAA1105EBB1004482BB /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */; };
 		9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */; };
 		9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */; };
 		9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */; };
@@ -1699,8 +1697,6 @@
 		9C7AC33A1105DE4A00A7D07F /* texmacs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs; sourceTree = "<group>"; };
 		9C7AC33B1105DE4A00A7D07F /* texmacs.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs.in; sourceTree = "<group>"; };
 		9C7AC33C1105DE4A00A7D07F /* tm_gs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = tm_gs; sourceTree = "<group>"; };
-		9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
-		9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
 		9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMScrollView.hpp; sourceTree = "<group>"; };
 		9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMScrollView.cpp; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2642,8 +2638,6 @@
 				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
 				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
 				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
-				9C7E7AA01105EA7D004482BB /* QTMFileDialog.cpp */,
-				9C7E7AA11105EA7D004482BB /* QTMFileDialog.hpp */,
 				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
 				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
 			);
@@ -3541,7 +3535,6 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -3938,7 +3931,6 @@
 				9C722BED10D2F7C700C41915 /* qt_sys_utils.cpp in Sources */,
 				9C722C0F10D2F88900C41915 /* unix_sys_utils.cpp in Sources */,
 				9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
-				9C7E7AA21105EA7D004482BB /* QTMFileDialog.cpp in Sources */,
 				9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F711D79783005C12C4 /* bibtex_functions.cpp in Sources */,
 				9CFEB40011D79AF6005C12C4 /* parsebib.cpp in Sources */,
@@ -4020,7 +4012,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */,
-				9C7E7AAA1105EBB1004482BB /* QTMFileDialog.hpp in Sources */,
 				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
 				9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */,
