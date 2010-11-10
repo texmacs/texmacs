@@ -2,7 +2,7 @@
 /******************************************************************************
  * MODULE     : qt_tm_widget.hpp
  * DESCRIPTION: The main TeXmacs widget for the Qt GUI
- * COPYRIGHT  : (C) 2010 The TeXmacs Team
+ * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
  * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

@@ -1,11 +1,14 @@
-/*
- *  qt_tm_widget.cpp
- *  TeXmacs
- *
- *  Created by Miguel de Benito Delgado on 09/11/10.
- *  Copyright 2010 TeXmacs.org. All rights reserved.
- *
- */
+
+/******************************************************************************
+ * MODULE     : qt_tm_widget.cpp
+ * DESCRIPTION: The main TeXmacs widget for the Qt GUI
+ * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
+ *******************************************************************************
+ * This software falls under the GNU general public license version 3 or later.
+ * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+ * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+ ******************************************************************************/
+
 #include <QtGui>
 
 #include "analyze.hpp"
