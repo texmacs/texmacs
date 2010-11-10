@@ -142,10 +142,8 @@
   (assuming (structured-vertical? t)
     ("Remove downwards" (structured-remove-down))))
 
-(tm-define (focus-menu)
-  (with t (focus-tree)
-    (menu-dynamic
-      ,@(standard-focus-menu t))))
+(tm-menu (focus-menu)
+  (dynamic (standard-focus-menu (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main focus icons bar
@@ -225,7 +223,5 @@
     (dynamic (image-handles t))
     (group "")))
 
-(tm-define (texmacs-focus-icons)
-  (with t (focus-tree)
-    (menu-dynamic
-      ,@(standard-focus-icons t))))
+(tm-menu (texmacs-focus-icons)
+  (dynamic (standard-focus-icons (focus-tree))))
