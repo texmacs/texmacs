@@ -17,14 +17,16 @@
 ;; Dynamic menus for formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (clipboard-preference-item fm name routine)
-  `(,name (,routine ,fm)))
+(tm-menu (clipboard-preference-menu cvs fun)
+  (with l (cvs "texmacs-file" "-file" #f)
+    (for (fm l)
+      (with name (format-get-name fm)
+        ((eval name) (fun fm))))))
 
-(define-macro (clipboard-preference-menu-promise routine)
-  (define (item fm name) (clipboard-preference-item fm name routine))
-  (with fun (if (== routine 'clipboard-set-export)
-		converter-from-menu converter-to-menu)
-    `(menu-dynamic ,@(fun "texmacs-snippet" "-snippet" #t item))))
+(tm-define (clipboard-import-preference-menu)
+  (clipboard-preference-menu converters-to-special clipboard-set-import))
+(tm-define (clipboard-export-preference-menu)
+  (clipboard-preference-menu converters-from-special clipboard-set-export))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
@@ -35,10 +37,8 @@
       ("Execute system command" (interactive system))
       ("Evaluate scheme expression" (interactive footer-eval)))
   (-> "Selections"
-      (-> "Import"
-	  (promise (clipboard-preference-menu-promise clipboard-set-import)))
-      (-> "Export"
-	  (promise (clipboard-preference-menu-promise clipboard-set-export))))
+      (-> "Import" (link clipboard-import-preference-menu))
+      (-> "Export" (link clipboard-export-preference-menu)))
   (-> "Update"
       ("Image links" (image-gc))
       ("Inclusions" (inclusions-gc))
