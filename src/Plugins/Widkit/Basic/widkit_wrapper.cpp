@@ -128,6 +128,11 @@ glue_widget (bool hx, bool vx, SI w, SI h) {
 }
 
 widget
+glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
+  return abstract (glue_wk_widget (col, hx, vx, w, h));
+}
+
+widget
 menu_separator (bool vert) {
   return abstract (separator_wk_widget (2*PIXEL, 2*PIXEL, vert));
 }

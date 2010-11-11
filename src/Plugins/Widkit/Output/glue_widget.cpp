@@ -19,11 +19,13 @@
 ******************************************************************************/
 
 class glue_widget_rep: public basic_widget_rep {
+  tree col;           // color or empty string for default background
   bool hflag, vflag;  // may be extended horizontally resp. vertically
   SI   minw, minh;    // minimal width and height in pixels
 
 public:
   glue_widget_rep (bool hflag, bool vflag, SI minw, SI minh);
+  glue_widget_rep (tree col, bool hflag, bool vflag, SI minw, SI minh);
   operator tree ();
 
   void handle_get_size (get_size_event ev);
@@ -32,7 +34,11 @@ public:
 
 glue_widget_rep::glue_widget_rep (bool hflag2, bool vflag2, SI w2, SI h2):
   basic_widget_rep (),
-  hflag (hflag2), vflag (vflag2), minw (w2), minh (h2) {}
+  col (""), hflag (hflag2), vflag (vflag2), minw (w2), minh (h2) {}
+
+glue_widget_rep::glue_widget_rep (tree c2, bool hf2, bool vf2, SI w2, SI h2):
+  basic_widget_rep (),
+  col (c2), hflag (hf2), vflag (vf2), minw (w2), minh (h2) {}
 
 glue_widget_rep::operator tree () {
   return "glue";
@@ -58,7 +64,24 @@ glue_widget_rep::handle_get_size (get_size_event ev) {
 void
 glue_widget_rep::handle_repaint (repaint_event ev) {
   renderer ren= win->get_renderer ();
-  layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
+  if (col == "")
+    layout_default (ren, ev->x1, ev->y1, ev->x2, ev->y2);
+  else {
+    if (is_atomic (col)) {
+      color c= named_color (col->label);
+      ren->set_background (c);
+      ren->set_color (c);
+      ren->fill (ev->x1, ev->y1, ev->x2, ev->y2);
+    }
+    else {
+      ren->set_shrinking_factor (5);
+      tree old_bg= ren->get_background_pattern ();
+      ren->set_background_pattern (col);
+      ren->clear_pattern (5*ev->x1, 5*ev->y1, 5*ev->x2, 5*ev->y2);
+      ren->set_background_pattern (old_bg);
+      ren->set_shrinking_factor (1);
+    }
+  }
 }
 
 /******************************************************************************
@@ -68,4 +91,9 @@ glue_widget_rep::handle_repaint (repaint_event ev) {
 wk_widget
 glue_wk_widget (bool hflag, bool vflag, SI minw, SI minh) {
   return tm_new<glue_widget_rep> (hflag, vflag, minw, minh);
+}
+
+wk_widget
+glue_wk_widget (tree col, bool hflag, bool vflag, SI minw, SI minh) {
+  return tm_new<glue_widget_rep> (col, hflag, vflag, minw, minh);
 }

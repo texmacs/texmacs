@@ -166,6 +166,12 @@ widget text_widget (string s, int style, color col, bool tsp= true);
   // a text widget with a given style, color and transparency
 widget xpm_widget (url file_name);
   // a widget with an X pixmap icon
+widget input_text_widget (command call_back, string type, array<string> def,
+			  int style= 0, string width= "1w");
+  // a textual input widget for input of a given type and a list of suggested
+  // default inputs (the first one should be displayed, if there is one)
+  // an optional width may be specified for the input field
+  // the width is specified in TeXmacs length format with units em, px or w
 
 /******************************************************************************
 * Other widgets
@@ -176,12 +182,13 @@ widget empty_widget ();
 widget glue_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);
   // an empty widget of minimal width w and height h and which is horizontally
   // resp. vertically extensible if hx resp. vx is true
-widget input_text_widget (command call_back, string type, array<string> def,
-			  int style= 0, string width= "1w");
-  // a textual input widget for input of a given type and a list of suggested
-  // default inputs (the first one should be displayed, if there is one)
-  // an optional width may be specified for the input field
-  // the width is specified in TeXmacs length format with units em, px or w
+widget glue_widget (tree col, bool hx=true, bool vx=true, SI w=0, SI h=0);
+  // a colored variant of the above widget, with colors as in the color picker
+widget horizontal_list (array<widget> a);
+  // a horizontal list made up of the widgets in a
+widget vertical_list (array<widget> a);
+  // a vertical list made up of the widgets in a
+
 widget wait_widget (SI width, SI height, string message);
   // a widget of a specified width and height, displaying a wait message
   // this widget is only needed when using the X11 plugin

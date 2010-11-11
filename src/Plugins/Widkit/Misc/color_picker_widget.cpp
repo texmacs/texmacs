@@ -20,50 +20,9 @@
 * Color button widget
 ******************************************************************************/
 
-class color_widget_rep: public basic_widget_rep {
-  tree col;
-public:
-  color_widget_rep (tree col2): col (col2) {}
-  operator tree () { return tuple ("color", col); }
-  void handle_get_size (get_size_event ev);
-  void handle_repaint (repaint_event ev);
-};
-
-void
-color_widget_rep::handle_get_size (get_size_event ev) {
-  ev->w= 32*PIXEL; ev->h= 24*PIXEL;
-  /*
-  if (ev->mode == -1)
-    ev->w= ev->h= 8*PIXEL;
-  if (ev->mode == 0) {
-    ev->w= 48*PIXEL; ev->h= 24*PIXEL; }
-  if (ev->mode == 1)
-    gui_maximal_extents (ev->w, ev->h);
-  */
-}
-
-void
-color_widget_rep::handle_repaint (repaint_event ev) {
-  renderer ren= win->get_renderer ();
-  if (is_atomic (col)) {
-    color c= named_color (col->label);
-    ren->set_background (c);
-    ren->set_color (c);
-    ren->fill (ev->x1, ev->y1, ev->x2, ev->y2);
-  }
-  else {
-    ren->set_shrinking_factor (5);
-    tree old_bg= ren->get_background_pattern ();
-    ren->set_background_pattern (col);
-    ren->clear_pattern (5*ev->x1, 5*ev->y1, 5*ev->x2, 5*ev->y2);
-    ren->set_background_pattern (old_bg);
-    ren->set_shrinking_factor (1);
-  }
-}
-
 wk_widget
 color_widget (tree col) {
-  return tm_new<color_widget_rep> (col);
+  return glue_wk_widget (col, false, false, 32*PIXEL, 24*PIXEL);
 }
 
 class color_command_rep: public command_rep {

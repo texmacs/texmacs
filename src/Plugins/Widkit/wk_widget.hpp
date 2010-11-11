@@ -96,6 +96,7 @@ wk_widget horizontal_array (array<wk_widget> a, array<string> s,
 wk_widget switch_widget (array<wk_widget> a, array<string> name, int init= 0);
 wk_widget optional_widget (wk_widget w, bool on= true);
 wk_widget glue_wk_widget (bool hx=true, bool vx=true, SI w=0, SI h=0);
+wk_widget glue_wk_widget (tree c, bool hx=true, bool vx=true, SI w=0, SI h=0);
 wk_widget separator_wk_widget (SI pre=0, SI post=0, bool vert=false);
 wk_widget text_wk_widget (string s, int style= 0, bool tsp= false);
 wk_widget menu_text_wk_widget (string s, int style, color col,
