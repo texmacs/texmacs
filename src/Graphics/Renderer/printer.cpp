@@ -329,9 +329,9 @@ printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
       if ((i<gl->width) && (gl->get_x(i,j)>0)) cur++;
       count++;
       if (count==4) {
-	hex_code << hex_string[cur];
-	cur  = 0;
-	count= 0;
+        hex_code << hex_string[cur];
+        cur  = 0;
+        count= 0;
       }
     }
 
@@ -482,10 +482,10 @@ printer_rep::generate_tex_fonts () {
       array<string> cum;
       cum << "{}" * as_string (N(a));
       for (i=0; i<N(a); i++) {
-	string w= tex_width [fn_name * "-" * as_string (a[i])];
-	d= (i==0? a[0]: (a[i]-a[i-1]-1));
-	if (d>0) cum << as_string (d) * "[";
-	cum << w * " ";
+        string w= tex_width [fn_name * "-" * as_string (a[i])];
+        d= (i==0? a[0]: (a[i]-a[i-1]-1));
+        if (d>0) cum << as_string (d) * "[";
+        cum << w * " ";
       }
       d= 255-a[i-1];
       if (d>0) cum << as_string (d) * "[";
@@ -500,8 +500,8 @@ printer_rep::generate_tex_fonts () {
       for (i=N(cum)-1; i>=0; i--) fdef << cum[i];
       fdef= "/" * name * " " * fdef * " " * mag * " /" * ttf_name * " rf";
       for (i=0, l=0; i<N(fdef); i++, l++)
-	if ((l<70) || (fdef[i]!=' ')) prologue << fdef[i];
-	else { prologue << '\n'; l=-1; }
+        if ((l<70) || (fdef[i]!=' ')) prologue << fdef[i];
+        else { prologue << '\n'; l=-1; }
       prologue << "\n";
     }
     else {
@@ -509,24 +509,24 @@ printer_rep::generate_tex_fonts () {
 	       << " " << as_string (N(a))
 	       << " " << as_string (a[N(a)-1]+1) << " df\n";
       for (i=0; i<N(a); i++) {
-	int end;
-	string hex_code= tex_chars [fn_name * "-" * as_string (a[i])];
-	for (end=1; end < N(hex_code); end++)
-	  if (hex_code[end-1]=='>') break;
-	string after= hex_code (end, N(hex_code));
-	if ((i>0) && (a[i]==(a[i-1]+1))) after << "I";
-	else after << as_string (a[i]) << " D";
-	if (i==(N(a)-1)) after << " E";
-	hex_code= hex_code (0, end);
+        int end;
+        string hex_code= tex_chars [fn_name * "-" * as_string (a[i])];
+        for (end=1; end < N(hex_code); end++)
+          if (hex_code[end-1]=='>') break;
+        string after= hex_code (end, N(hex_code));
+        if ((i>0) && (a[i]==(a[i-1]+1))) after << "I";
+        else after << as_string (a[i]) << " D";
+        if (i==(N(a)-1)) after << " E";
+        hex_code= hex_code (0, end);
       
-	int j, l, n= N(hex_code);
-	for (j=0; j<n; j+=79) {
-	  if (n < (j+79)) prologue << hex_code (j, n);
-	  else prologue << hex_code (j, j+79) << "\n";
-	}
-	l= 79-(n%79);
-	if (l<N(after)) prologue << "\n";
-	prologue << after << "\n";
+        int j, l, n= N(hex_code);
+        for (j=0; j<n; j+=79) {
+          if (n < (j+79)) prologue << hex_code (j, n);
+          else prologue << hex_code (j, j+79) << "\n";
+        }
+        l= 79-(n%79);
+        if (l<N(after)) prologue << "\n";
+        prologue << after << "\n";
       }
     }
   }
