@@ -39,6 +39,8 @@
     ---
     |
     (group :string?)
+    (glue :boolean? :boolean? :integer? :integer?)
+    (color :%1 :boolean? :boolean? :integer? :integer?)
     (:menu-wide-label :%1)
     (symbol :string? :*)
     (input :%1 :string? :%1 :string?)
@@ -154,6 +156,8 @@
 
 (define-table menu-pre-table
   (group (:string?) ,(lambda (p) p))
+  (glue (:boolean? :boolean? :integer? :integer?) ,(lambda (p) p))
+  (color (:%1 :boolean? :boolean? :integer? :integer?) ,(lambda (p) p))
   (input (:%1 :string? :%1 :string?)
     ,(lambda (p)
        `(input ,(make-input-promise (cadr p))

@@ -84,12 +84,15 @@
       (gui$menu (group "[n.a.]"))))
 
 (tm-menu (image-handles t)
+  (glue #f #f 3 0)
+  (mini #t (group "File:"))
+  (dynamic (string-input-handle t 0 "0.5w"))
+  (glue #f #f 3 0)
   (mini #t (group "Width:"))
   (dynamic (string-input-handle t 1 "3em"))
+  (glue #f #f 3 0)
   (mini #t (group "Height:"))
-  (dynamic (string-input-handle t 2 "3em"))
-  (mini #t (group "File:"))
-  (dynamic (string-input-handle t 0 "0.5w")))
+  (dynamic (string-input-handle t 2 "3em")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
@@ -213,15 +216,14 @@
 
 (tm-menu (standard-focus-icons t)
   (minibar (dynamic (focus-variant-icons t)))
-  (group "")
+  (glue #f #f 5 0)
   (minibar (dynamic (focus-move-icons t)))
   (assuming (or (structured-horizontal? t) (structured-vertical? t))
-    (group "")
+    (glue #f #f 5 0)
     (minibar (dynamic (focus-insert-icons t))))
   (assuming (tree-is? t 'image)
-    (group "")
-    (dynamic (image-handles t))
-    (group "")))
+    (dynamic (image-handles t)))
+  (glue #f #f 5 0))
 
 (tm-menu (texmacs-focus-icons)
   (dynamic (standard-focus-icons (focus-tree))))

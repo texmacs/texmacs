@@ -105,6 +105,14 @@
   "Make @| menu item."
   (widget-separator #t))
 
+(define (make-menu-glue hext? vext? minw minh)
+  "Make @(glue :boolean? :boolean? :integer? :integer?) menu item."
+  (widget-glue hext? vext? (* minw 256) (* minh 256)))
+
+(define (make-menu-color col hext? vext? minw minh)
+  "Make @(glue :1% :boolean? :boolean? :integer? :integer?) menu item."
+  (widget-color col hext? vext? (* minw 256) (* minh 256)))
+
 (define (make-menu-group s style)
   "Make @(group :string?) menu item."
   (widget-menu-group s style))
@@ -330,6 +338,14 @@
 	    (else (list (make-menu-bad-format p style))))))
 
 (define-table make-menu-items-table
+  (glue (:boolean? :boolean? :integer? :integer?)
+        ,(lambda (p style bar?)
+           (list (make-menu-glue (second p) (third p)
+                                 (fourth p) (fifth p)))))
+  (color (:%1 :boolean? :boolean? :integer? :integer?)
+         ,(lambda (p style bar?)
+            (list (make-menu-color (second p) (third p)
+                                   (fourth p) (fifth p) (sixth p)))))
   (group (:string?)
 	 ,(lambda (p style bar?) (list (make-menu-group (cadr p) style))))
   (symbol (:string? :*)
@@ -432,6 +448,8 @@
   (--- ,(lambda (p) `(--- ,@(menu-expand-list (cdr p)))))
   (| ,(lambda (p) `(| ,@(menu-expand-list (cdr p)))))
   (group ,replace-procedures)
+  (glue ,replace-procedures)
+  (color ,replace-procedures)
   (symbol ,replace-procedures)
   (input ,menu-expand-input)
   (pick-color ,menu-expand-pick-color)

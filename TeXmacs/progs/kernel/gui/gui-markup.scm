@@ -65,6 +65,14 @@
   (:synopsis "Make a menu group")
   `(list 'group ,text))
 
+(tm-define-macro (gui$glue hext? vext? minw minh)
+  (:synopsis "Make extensible glue")
+  `(list 'glue ,hext? ,vext? ,minw ,minh))
+
+(tm-define-macro (gui$color col hext? vext? minw minh)
+  (:synopsis "Make extensible colored glue")
+  `(list 'color ,col ,hext? ,vext? ,minw ,minh))
+
 (tm-define-macro (gui$symbol sym . l)
   (:synopsis "Make a menu symbol")
   (if (null? l)
@@ -182,6 +190,16 @@
   (:case group)
   (require-format x '(group :%1))
   `(gui$group ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case glue)
+  (require-format x '(glue :%4))
+  `(gui$glue ,(second x) ,(third x) ,(fourth x) ,(fifth x)))
+
+(tm-define (gui-menu-item x)
+  (:case color)
+  (require-format x '(color :%5))
+  `(gui$color ,(second x) ,(third x) ,(fourth x) ,(fifth x) ,(sixth x)))
 
 (tm-define (gui-menu-item x)
   (:case input)

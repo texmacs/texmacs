@@ -4405,6 +4405,72 @@ tmg_widget_color_picker (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_widget_glue (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "widget-glue");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "widget-glue");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "widget-glue");
+  SCM_ASSERT_INT (arg4, SCM_ARG4, "widget-glue");
+
+  bool in1= scm_to_bool (arg1);
+  bool in2= scm_to_bool (arg2);
+  int in3= scm_to_int (arg3);
+  int in4= scm_to_int (arg4);
+
+  // SCM_DEFER_INTS;
+  widget out= glue_widget (in1, in2, in3, in4);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_color (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "widget-color");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "widget-color");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "widget-color");
+  SCM_ASSERT_INT (arg4, SCM_ARG4, "widget-color");
+  SCM_ASSERT_INT (arg5, SCM_ARG5, "widget-color");
+
+  content in1= scm_to_content (arg1);
+  bool in2= scm_to_bool (arg2);
+  bool in3= scm_to_bool (arg3);
+  int in4= scm_to_int (arg4);
+  int in5= scm_to_int (arg5);
+
+  // SCM_DEFER_INTS;
+  widget out= glue_widget (in1, in2, in3, in4, in5);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_hlist (SCM arg1) {
+  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-hlist");
+
+  array_widget in1= scm_to_array_widget (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= horizontal_list (in1);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
+tmg_widget_vlist (SCM arg1) {
+  SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-vlist");
+
+  array_widget in1= scm_to_array_widget (arg1);
+
+  // SCM_DEFER_INTS;
+  widget out= vertical_list (in1);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_widget_texmacs (SCM arg1, SCM arg2) {
   SCM_ASSERT_INT (arg1, SCM_ARG1, "widget-texmacs");
   SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-texmacs");
@@ -4977,6 +5043,10 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("widget-color-picker", (FN) tmg_widget_color_picker, 3, 0, 0);
+  scm_new_procedure ("widget-glue", (FN) tmg_widget_glue, 4, 0, 0);
+  scm_new_procedure ("widget-color", (FN) tmg_widget_color, 5, 0, 0);
+  scm_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
+  scm_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
   scm_new_procedure ("widget-texmacs", (FN) tmg_widget_texmacs, 2, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
