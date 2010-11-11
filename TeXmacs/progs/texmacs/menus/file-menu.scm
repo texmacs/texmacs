@@ -22,44 +22,30 @@
 ;; Dynamic menus for formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; FIXME: yet another bug in Guile: for some strange reason,
-;; import-menu-promise and export-menu-promise are not
-;; reevaluated at each run. This *is* the case for top level macros,
-;; but apparently not for local macros or macros in a module :^(((
+(tm-menu (import-menu flag?)
+  (with l (converters-to-special "texmacs-file" "-file" #f)
+    (for (fm l)
+      (let* ((name (format-get-name fm))
+             (load-text (string-append "Load " (string-downcase name) " file"))
+             (import-text `(concat "Import " ,name))
+             (text (if flag? import-text name))
+             (format (if (== fm "varbatim") "" fm)))
+        ((eval text) (choose-file (buffer-loader fm) load-text format))))))
 
-(define (import-item fm name)
-  (define (rw s) (if (== s "verbatim") "" s))
-  (let* ((import-text `(concat "Import " ,name))
-	 (load-text (string-append "Load " (string-downcase name) " file"))
-	 (routine `(buffer-loader ,fm)))
-    `(,import-text (choose-file ,routine ,load-text ,(rw fm)))))
+(tm-define (import-top-menu) (import-menu #t))
+(tm-define (import-import-menu) (import-menu #f))
 
-(define (import-item* fm name)
-  (define (rw s) (if (== s "verbatim") "" s))
-  (let* ((load-text (string-append "Load " (string-downcase name) " file"))
-	 (routine `(buffer-loader ,fm)))
-    `(,name (choose-file ,routine ,load-text ,(rw fm)))))
+(tm-menu (export-menu flag?)
+  (with l (converters-from-special "texmacs-file" "-file" #f)
+    (for (fm l)
+      (let* ((name (format-get-name fm))
+             (save-text (string-append "Save " (string-downcase name) " file"))
+             (export-text `(concat "Export as " ,name))
+             (text (if flag? export-text name)))
+        ((eval text) (choose-file (buffer-saver fm) save-text fm))))))
 
-(define-macro (import-menu-promise flag?)
-  `(menu-dynamic
-     ,@(converter-to-menu "texmacs-file" "-file" #f
-			  (if flag? import-item import-item*))))
-
-(define (export-item fm name)
-  (let* ((export-text `(concat "Export as " ,name))
-	 (load-text (string-append "Save " (string-downcase name) " file"))
-	 (routine `(buffer-saver ,fm)))
-    `(,export-text (choose-file ,routine ,load-text ,fm))))
-
-(define (export-item* fm name)
-  (let* ((load-text (string-append "Save " (string-downcase name) " file"))
-	 (routine `(buffer-saver ,fm)))
-    `(,name (choose-file ,routine ,load-text ,fm))))
-
-(define-macro (export-menu-promise flag?)
-  `(menu-dynamic
-     ,@(converter-from-menu "texmacs-file" "-file" #f
-			    (if flag? export-item export-item*))))
+(tm-define (export-top-menu) (export-menu #t))
+(tm-define (export-export-menu) (export-menu #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the File menu and for the icon bar
@@ -75,13 +61,13 @@
   ("Revert" (revert-buffer))
   ("Load in new window" (choose-file load-in-new-window "Load file" ""))
   ---
-  (promise (import-menu-promise #t)))
+  (link import-top-menu))
 
 (menu-bind save-menu
   ("Save" (save-buffer))
   ("Save as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ---
-  (promise (export-menu-promise #t))
+  (link export-top-menu)
   ---
   ((concat "Export as " "Pdf")
    (choose-file print-to-file "Save pdf file" "pdf"))
@@ -118,9 +104,9 @@
   (-> "Page setup" (link page-setup-menu))
   (-> "Print" (link print-menu))
   (-> "Import"
-      (promise (import-menu-promise #f)))
+      (link import-import-menu))
   (-> "Export"
-      (promise (export-menu-promise #f))
+      (link export-export-menu)
       ---
       ("Pdf" (choose-file print-to-file "Save pdf file" "pdf"))
       ("Postscript"

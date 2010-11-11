@@ -32,13 +32,9 @@
 (tm-define (clipboard-paste-import-menu)
   (clipboard-extern-menu converters-to-special clipboard-paste-import))
 
-(define (redo-item i)
-  (list `(concat "Branch " ,(number->string (+ i 1)))
-	(lambda () (redo i))))
-
-(tm-define (redo-menu)
-  (menu-dynamic
-    ,@(map redo-item (.. 0 (redo-possibilities)))))
+(tm-menu (redo-menu)
+  (for (i (.. 0 (redo-possibilities)))
+    ((eval `(concat "Branch " ,(number->string (+ i 1)))) (redo i))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Edit menu
