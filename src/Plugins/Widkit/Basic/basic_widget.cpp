@@ -12,6 +12,7 @@
 #include "Widkit/basic_widget.hpp"
 #include "gui.hpp"
 #include "window.hpp"
+#include "Widkit/Event/attribute_event.hpp"
 
 SI get_dx (gravity grav, SI w);
 SI get_dy (gravity grav, SI h);
@@ -370,6 +371,18 @@ basic_widget_rep::handle (event ev) {
     ev= ::emit_find_child (e->x- ox, e->y- oy, e->which);
     handle_find_child (ev);
     return true;
+  }
+  case GET_COORD2_EVENT: {
+    get_coord2_event e (ev);
+    if (e->which == "extra width") {
+      e->c1= e->c2= 0;
+      return true;
+    }
+    else return false;
+  }
+  case SET_COORD2_EVENT: {
+    set_coord2_event e (ev);
+    return e->which == "extra width";
   }
   }
   return false;

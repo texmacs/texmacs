@@ -198,6 +198,9 @@
   (xml-name->tm xml_name_to_tm (string string))
   (old-xml-cdata->tm old_xml_cdata_to_tm (string string))
   (xml-unspace xml_unspace (string string bool bool))
+  (integer->hexadecimal as_hexadecimal (string int))
+  (integer->padded-hexadecimal as_hexadecimal (string int int))
+  (hexadecimal->integer from_hexadecimal (int string))
 
   ;; routines for strings in the TeXmacs encoding
   (string->tmstring tm_encode (string string))

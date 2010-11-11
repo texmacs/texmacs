@@ -111,6 +111,14 @@
   (:synopsis "Vertical layout of widgets")
   `(cons* 'vertical (gui$list ,@l)))
 
+(tm-define-macro (gui$hlist . l)
+  (:synopsis "Horizontal layout of widgets")
+  `(cons* 'hlist (gui$list ,@l)))
+
+(tm-define-macro (gui$vlist . l)
+  (:synopsis "Vertical layout of widgets")
+  `(cons* 'vlist (gui$list ,@l)))
+
 (tm-define-macro (gui$tile columns . l)
   (:synopsis "Tile layout of widgets")
   `(cons* 'tile ,columns (gui$list ,@l)))
@@ -245,6 +253,16 @@
   (:case vertical)
   (require-format x '(vertical :*))
   `(gui$vertical ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case hlist)
+  (require-format x '(hlist :*))
+  `(gui$hlist ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case vlist)
+  (require-format x '(vlist :*))
+  `(gui$vlist ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case tile)

@@ -91,7 +91,10 @@
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
-  	   (widget-xpm (cadr p))))))
+  	   (widget-xpm (cadr p)))
+  	  ((tuple? p 'color 5)		; (color col hext? vext? minw minh)
+  	   (widget-color (second p) (third p) (fourth p)
+                         (* (fifth p) 256) (* (sixth p) 256))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elementary menu items
@@ -238,11 +241,19 @@
 
 (define (make-menu-horizontal p style)
   "Make @(horizontal :menu-item-list) menu item."
-  (widget-hmenu (make-menu-items (cadr p) style #t)))
+  (widget-hmenu (make-menu-items (cdr p) style #t)))
 
 (define (make-menu-vertical p style)
   "Make @(vertical :menu-item-list) menu item."
-  (widget-vmenu (make-menu-items (cadr p) style #f)))
+  (widget-vmenu (make-menu-items (cdr p) style #f)))
+
+(define (make-menu-hlist p style)
+  "Make @(hlist :menu-item-list) menu item."
+  (widget-hlist (make-menu-items (cdr p) style #t)))
+
+(define (make-menu-vertical p style)
+  "Make @(vertical :menu-item-list) menu item."
+  (widget-vlist (make-menu-items (cdr p) style #f)))
 
 (define (make-menu-minibar p style)
   "Make @(minibar :menu-item-list) menu items."
@@ -360,6 +371,10 @@
 	      ,(lambda (p style bar?) (list (make-menu-horizontal p style))))
   (vertical (:*)
 	    ,(lambda (p style bar?) (list (make-menu-vertical p style))))
+  (hlist (:*)
+         ,(lambda (p style bar?) (list (make-menu-hlist p style))))
+  (vlist (:*)
+         ,(lambda (p style bar?) (list (make-menu-vlist p style))))
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (-> (:menu-label :*)

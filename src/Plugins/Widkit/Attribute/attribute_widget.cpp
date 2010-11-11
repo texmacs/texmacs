@@ -108,8 +108,23 @@ attribute_widget_rep::handle_set_coord4 (set_coord4_event ev) {
 ******************************************************************************/
 
 bool
+is_extra_width_event (event ev) {
+  if (ev->type == GET_COORD2_EVENT) {
+    get_coord2_event e (ev);
+    return e->which == "extra width";
+  }
+  if (ev->type == SET_COORD2_EVENT) {
+    set_coord2_event e (ev);
+    return e->which == "extra width";
+  }
+  return false;
+}
+
+bool
 attribute_widget_rep::handle (event ev) {
-  if (basic_widget_rep::handle (ev)) return true;
+  if (!is_extra_width_event (ev))
+    if (basic_widget_rep::handle (ev))
+      return true;
   switch (ev->type) {
   case GET_INTEGER_EVENT:
     handle_get_integer (ev);

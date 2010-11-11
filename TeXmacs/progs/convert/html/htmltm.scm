@@ -49,10 +49,10 @@
 	     (== 7 (length cs))
 	     (list-every char-hexadecimal? (cdr cs)))
 	(with (hash r1 r2 g1 g2 b1 b2) cs
-	  (map hexadecimal->integer `((,r1 ,r2) (,g1 ,g2) (,b1 ,b2))))
+	  (map hexlist->integer `((,r1 ,r2) (,g1 ,g2) (,b1 ,b2))))
 	#f)))
 
-(define (hexadecimal->integer cs)
+(define (hexlist->integer cs)
   (let next ((i 0) (cs cs))
     (if (pair? cs)
 	(next (+ (* 16 i) (hexadecimal-digit->integer (car cs))) (cdr cs))

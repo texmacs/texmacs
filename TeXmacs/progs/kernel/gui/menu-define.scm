@@ -27,6 +27,7 @@
   (:menu-label (:or
     :string?
     (concat :*)
+    (color :%5)
     (verbatim :%1)
     (text :tuple? :string?)
     (icon :string?)
@@ -48,6 +49,8 @@
     (pick-background :%1)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
+    (hlist :menu-item-list)
+    (vlist :menu-item-list)
     (minibar :menu-item-list)
     (-> :menu-label :menu-item-list)
     (=> :menu-label :menu-item-list)
@@ -177,6 +180,10 @@
     ,(lambda (p) `(horizontal ,@(menu-pre-list (cdr p)))))
   (vertical (:*)
     ,(lambda (p) `(vertical ,@(menu-pre-list (cdr p)))))
+  (hlist (:*)
+    ,(lambda (p) `(hlist ,@(menu-pre-list (cdr p)))))
+  (vlist (:*)
+    ,(lambda (p) `(vlist ,@(menu-pre-list (cdr p)))))
   (minibar (:*)
     ,(lambda (p) `(minibar ,@(menu-pre-list (cdr p)))))
   (-> (:menu-label :*)

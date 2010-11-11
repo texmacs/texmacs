@@ -2199,6 +2199,47 @@ tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_integer_2hexadecimal (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "integer->hexadecimal");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= as_hexadecimal (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_integer_2padded_hexadecimal (SCM arg1, SCM arg2) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "integer->padded-hexadecimal");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "integer->padded-hexadecimal");
+
+  int in1= scm_to_int (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= as_hexadecimal (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_hexadecimal_2integer (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "hexadecimal->integer");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= from_hexadecimal (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_string_2tmstring (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->tmstring");
 
@@ -4885,6 +4926,9 @@ initialize_glue_basic () {
   scm_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
   scm_new_procedure ("old-xml-cdata->tm", (FN) tmg_old_xml_cdata_2tm, 1, 0, 0);
   scm_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
+  scm_new_procedure ("integer->hexadecimal", (FN) tmg_integer_2hexadecimal, 1, 0, 0);
+  scm_new_procedure ("integer->padded-hexadecimal", (FN) tmg_integer_2padded_hexadecimal, 2, 0, 0);
+  scm_new_procedure ("hexadecimal->integer", (FN) tmg_hexadecimal_2integer, 1, 0, 0);
   scm_new_procedure ("string->tmstring", (FN) tmg_string_2tmstring, 1, 0, 0);
   scm_new_procedure ("tmstring->string", (FN) tmg_tmstring_2string, 1, 0, 0);
   scm_new_procedure ("tmstring-length", (FN) tmg_tmstring_length, 1, 0, 0);

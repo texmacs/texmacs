@@ -37,12 +37,51 @@
   ("Other" (make-interactive-with "font-base-size")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra RGB color picker
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (rgb-color-name r g b)
+  (string-append "#"
+    (integer->padded-hexadecimal r 2)
+    (integer->padded-hexadecimal g 2)
+    (integer->padded-hexadecimal b 2)))
+
+(tm-menu (rgb-color-picker win)
+  (tile 18
+    (for (rr (.. 0 6))
+      (for (gg (.. 0 6))
+        (for (bb (.. 0 6))
+          (let* ((r (* 51 rr))
+                 (g (* 51 gg))
+                 (b (* 51 bb))
+                 (col (rgb-color-name r g b)))
+            ((color col #f #f 24 24)
+             (make-with "color" col)
+             (window-delete win)))))))
+  ---
+  (glue #f #f 0 3)
+  (hlist
+    (glue #t #f 0 0)
+    ("Cancel" (window-delete win))
+    (glue #f #f 3 0))
+  (glue #f #f 0 3))
+
+(tm-define (interactive-rgb-picker)
+  (:interactive #t)
+  (let* ((win (window-handle))
+         (scm (list 'vertical (rgb-color-picker win)))
+         (wid (make-menu-widget scm 0)))
+    (window-create win wid "RGB color palette" #t)
+    (window-show win)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for text properties and formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind color-menu
   (pick-color (make-with "color" (tree->stree answer)))
   ---
+  ("Palette" (interactive-rgb-picker))
   ("Other" (make-interactive-with "color")))
 
 (menu-bind horizontal-space-menu
