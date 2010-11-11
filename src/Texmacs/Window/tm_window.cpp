@@ -283,14 +283,13 @@ window_handle () {
 }
 
 void
-window_create (int win, widget wid, string name, bool plain, SI w, SI h) {
+window_create (int win, widget wid, string name, bool plain) {
   widget pww;
   if (plain)
     pww= plain_window_widget (wid, name);
   else
     pww= popup_window_widget (wid, name);
   window_table (win)= pww;
-  set_visibility (pww, true);
 }
 
 void
@@ -299,4 +298,18 @@ window_delete (int win) {
   widget pww= window_table [win];
   window_table->reset (win);
   destroy_window_widget (pww);
+}
+
+void
+window_show (int win) {
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  set_visibility (pww, true);
+}
+
+void
+window_hide (int win) {
+  ASSERT (window_table->contains (win), "window does not exist");
+  widget pww= window_table [win];
+  set_visibility (pww, false);
 }

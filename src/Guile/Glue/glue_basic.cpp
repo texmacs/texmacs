@@ -4405,6 +4405,21 @@ tmg_widget_color_picker (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_widget_texmacs (SCM arg1, SCM arg2) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "widget-texmacs");
+  SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-texmacs");
+
+  int in1= scm_to_int (arg1);
+  command in2= scm_to_command (arg2);
+
+  // SCM_DEFER_INTS;
+  widget out= texmacs_widget (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_object_2promise_widget (SCM arg1) {
   SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->promise-widget");
 
@@ -4427,23 +4442,19 @@ tmg_window_handle () {
 }
 
 SCM
-tmg_window_create (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6) {
+tmg_window_create (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
   SCM_ASSERT_INT (arg1, SCM_ARG1, "window-create");
   SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "window-create");
   SCM_ASSERT_STRING (arg3, SCM_ARG3, "window-create");
   SCM_ASSERT_BOOL (arg4, SCM_ARG4, "window-create");
-  SCM_ASSERT_INT (arg5, SCM_ARG5, "window-create");
-  SCM_ASSERT_INT (arg6, SCM_ARG6, "window-create");
 
   int in1= scm_to_int (arg1);
   widget in2= scm_to_widget (arg2);
   string in3= scm_to_string (arg3);
   bool in4= scm_to_bool (arg4);
-  int in5= scm_to_int (arg5);
-  int in6= scm_to_int (arg6);
 
   // SCM_DEFER_INTS;
-  window_create (in1, in2, in3, in4, in5, in6);
+  window_create (in1, in2, in3, in4);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -4457,6 +4468,32 @@ tmg_window_delete (SCM arg1) {
 
   // SCM_DEFER_INTS;
   window_delete (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_window_show (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-show");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  window_show (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_window_hide (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-hide");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  window_hide (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -4940,10 +4977,13 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-xpm", (FN) tmg_widget_xpm, 1, 0, 0);
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("widget-color-picker", (FN) tmg_widget_color_picker, 3, 0, 0);
+  scm_new_procedure ("widget-texmacs", (FN) tmg_widget_texmacs, 2, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
-  scm_new_procedure ("window-create", (FN) tmg_window_create, 6, 0, 0);
+  scm_new_procedure ("window-create", (FN) tmg_window_create, 4, 0, 0);
   scm_new_procedure ("window-delete", (FN) tmg_window_delete, 1, 0, 0);
+  scm_new_procedure ("window-show", (FN) tmg_window_show, 1, 0, 0);
+  scm_new_procedure ("window-hide", (FN) tmg_window_hide, 1, 0, 0);
   scm_new_procedure ("bib-add-period", (FN) tmg_bib_add_period, 1, 0, 0);
   scm_new_procedure ("bib-upcase-first", (FN) tmg_bib_upcase_first, 1, 0, 0);
   scm_new_procedure ("bib-locase", (FN) tmg_bib_locase, 1, 0, 0);

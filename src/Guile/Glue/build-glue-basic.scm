@@ -379,12 +379,15 @@
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
   (widget-color-picker color_picker_widget (widget command bool array_tree))
+  (widget-texmacs texmacs_widget (widget int command))
   (object->promise-widget as_promise_widget (promise_widget object))
 
   ;; windows
   (window-handle window_handle (int))
-  (window-create window_create (void int widget string bool int int))
+  (window-create window_create (void int widget string bool))
   (window-delete window_delete (void int))
+  (window-show window_show (void int))
+  (window-hide window_hide (void int))
 
   ;; routines for BibTeX
   (bib-add-period bib_add_period (scheme_tree scheme_tree))
