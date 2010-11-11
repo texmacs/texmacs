@@ -44,39 +44,29 @@
 ;; Dynamic submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (link-create-entry name)
-  (list name (lambda () (make-link name))))
-
-(tm-define (link-create-menu)
+(tm-menu (link-create-menu)
   (let* ((l1 (current-link-types))
 	 (l2 (list-remove-duplicates (cons* "hyperlink" "action" l1)))
 	 (l3 (list-sort l2 string<=?)))
-    (menu-dynamic
-      ,@(map link-create-entry l3)
-      ---
-      ("Other" (interactive make-link)))))
+    (for (name l3) ((eval name) (make-link name)))
+    ---
+    ("Other" (interactive make-link))))
 
-(define (link-delete-entry name)
-  (list name (lambda () (remove-link-of-types name))))
-
-(tm-define (link-delete-menu)
+(tm-menu (link-delete-menu)
   (let* ((l1 (locus-link-types #t))
 	 (l2 (list-sort l1 string<=?)))
-    (menu-dynamic
-      ("All" (remove-all-links))
-      ---
-      ,@(map link-delete-entry l2)
-      ---
-      ("Other" (interactive remove-link-of-types)))))
+    ("All" (remove-all-links))
+    ---
+    (for (name l2) ((eval name) (remove-link-of-types name)))
+    ---
+    ("Other" (interactive remove-link-of-types))))
 
-(define (navigation-type-entry name)
-  (list name (eval `(lambda () (navigation-toggle-type ,name)))))
-
-(tm-define (navigation-type-menu)
+(tm-menu (navigation-type-menu)
   (let* ((l1 (current-link-types))
 	 (l2 (list-sort l1 string<=?)))
-    (menu-dynamic
-      ,@(map navigation-type-entry l2))))
+    (for (name l2)
+      ((eval name)
+       (navigation-toggle-type name)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main link menu
