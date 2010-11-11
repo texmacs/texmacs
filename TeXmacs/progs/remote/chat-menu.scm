@@ -14,27 +14,19 @@
 (texmacs-module (remote chat-menu)
   (:use (remote chat-edit)))
 
-(define (chat-administrated-menu-entry name)
-  (list name (lambda () (chat-connect name))))
-
-(tm-define (chat-administrated-menu)
+(tm-menu (chat-administrated-menu)
   (with l (chat-list-administrated-rooms)
-    (if (not l) (menu-dynamic)
-	(with sorted-l (list-sort l string<=?)
-	  (menu-dynamic
-	    ---
-	    ,@(map chat-administrated-menu-entry sorted-l))))))
+    (assuming l
+      (with sorted-l (list-sort l string<=?)
+        ---
+        (for (name sorted-l) ((eval name) (chat-connect name))))))_)
 
-(define (chat-connect-menu-entry name)
-  (list name (lambda () (chat-connect name))))
-
-(tm-define (chat-connect-menu)
+(tm-menu (chat-connect-menu)
   (with l (chat-list-rooms)
-    (if (not l) (menu-dynamic)
-	(with sorted-l (list-sort l string<=?)
-	  (menu-dynamic
-	    ,@(map chat-connect-menu-entry sorted-l)
-	    ---)))))
+    (assuming l
+      (with sorted-l (list-sort l string<=?)
+        (for (name sorted-l) ((eval name) (chat-connect name)))
+        ---))))
 
 (menu-bind chat-menu
   (if (not (chat-session))

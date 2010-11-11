@@ -21,34 +21,30 @@
 (define (std-property-types)
   '(owner type date read write classify-type classify-value project))
 
-(define (remote-set-property-menu-entry type)
-  (list (upcase-first type)
-	(lambda () (interactive-remote-set-property type))))
-
-(tm-define (remote-set-property-menu)
+(tm-menu (remote-set-property-menu)
   (let* ((l1 (or (remote-get-property-types) '()))
 	 (l2 (list-difference l1 (std-property-types)))
 	 (l3 (list-sort (map symbol->string l2) string<=?)))
-    (menu-dynamic
-      ,@(map remote-set-property-menu-entry l3)
-      ---
-      ("Other" (interactive-remote-set-property-and-value)))))
+    (for (type l3)
+      ((eval (upcase-first type))
+       (interactive-remote-set-property type)))
+    ---
+    ("Other" (interactive-remote-set-property-and-value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu for setting the current project
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (remote-set-project-menu-entry val new-file old-file)
-  (list (list 'check val "v" (lambda () (== new-file old-file)))
-	(lambda () (remote-set-property "project" new-file))))
-
-(tm-define (remote-set-project-menu)
+(tm-menu (remote-set-project-menu)
   (let* ((l1 (or (remote-get-projects) '()))
 	 (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
 	 (prj (remote-get-property "project")))
-    (menu-dynamic
-      ,@(map (lambda (x) (remote-set-project-menu-entry (car x) (cdr x) prj))
-	     l2))))
+    (for (x l2)
+      (let* ((val (car x))
+             (new-file (cdr x))
+             (old-file prj))
+        ((check (eval val) "v" (== new-file old-file))
+         (remote-set-property "project" new-file))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main remote file menu
