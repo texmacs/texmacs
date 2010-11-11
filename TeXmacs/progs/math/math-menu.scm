@@ -19,7 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-math-menu
-  ("Formula" "$" (begin (noop) (make 'math)))
+  ("Formula" (make 'math))
   (if (style-has? "env-math-dtd")
       ("Equation" (make-equation*))
       ("Equations" (make-eqnarray*))))
@@ -139,7 +139,7 @@
       ---
       (tile 6 (link long-arrow-menu)))
   (-> "Negation"
-      ("General negation" "/" (key-press "/"))
+      ("General negation" (key-press "/"))
       ---
       (tile 9 (link negation-menu-1))
       ---
@@ -920,16 +920,16 @@
   (=> (balloon (icon "tm_bigright.xpm") "Insert a large right delimiter")
       (tile 8 (link right-delimiter-menu)))
   (=> (balloon (icon "tm_wide.xpm") "Insert an accent")
-      ((icon "tm_hat.xpm") "A-^" (make-wide "^"))
-      ((icon "tm_tilda.xpm") "A-~" (make-wide "~"))
-      ((icon "tm_bar.xpm") "A-B" (make-wide "<bar>"))
-      ((icon "tm_vect.xpm") "A-V" (make-wide "<vect>"))
-      ((icon "tm_check.xpm") "A-C" (make-wide "<check>"))
-      ((icon "tm_breve.xpm") "A-U" (make-wide "<breve>"))
-      ((icon "tm_dot.xpm") "A-." (make-wide "<dot>"))
-      ((icon "tm_ddot.xpm") "A-\"" (make-wide "<ddot>"))
-      ((icon "tm_acute.xpm") "A-'" (make-wide "<acute>"))
-      ((icon "tm_grave.xpm") "A-`" (make-wide "<grave>")))
+      ((icon "tm_hat.xpm") (make-wide "^"))
+      ((icon "tm_tilda.xpm") (make-wide "~"))
+      ((icon "tm_bar.xpm") (make-wide "<bar>"))
+      ((icon "tm_vect.xpm") (make-wide "<vect>"))
+      ((icon "tm_check.xpm") (make-wide "<check>"))
+      ((icon "tm_breve.xpm") (make-wide "<breve>"))
+      ((icon "tm_dot.xpm") (make-wide "<dot>"))
+      ((icon "tm_ddot.xpm") (make-wide "<ddot>"))
+      ((icon "tm_acute.xpm") (make-wide "<acute>"))
+      ((icon "tm_grave.xpm") (make-wide "<grave>")))
   |
   (=> (balloon (icon "tm_binop.xpm") "Insert a binary operation")
       (tile 8 (link binary-operation-menu)))

@@ -277,3 +277,7 @@
 (tm-define-macro (tm-menu head . l)
   (receive (opts body) (list-break l not-define-option?)
     `(tm-define ,head ,@opts (gui$menu ,@body))))
+
+(define-public-macro (menu-bindx name . body)
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define ,(name) ,@opts (gui$menu ,@body))))

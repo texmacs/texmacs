@@ -40,6 +40,9 @@
 ;; The Edit menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-property (search-start forward?) (:interactive #t))
+(tm-property (spell-start) (:interactive #t))
+
 (menu-bind edit-menu
   (when (> (undo-possibilities) 0)
     ("Undo" (undo 0)))
@@ -58,14 +61,13 @@
   (if (detailed-menus?)
       ("Clear" (clipboard-clear "primary")))
   ---
-  ("Search" ... (search-start #t))
+  ("Search" (search-start #t))
   ("Replace" (interactive replace-start-forward))
 
   (if (not (in-math?))
-      ("Spell" ... (spell-start)))
+      ("Spell" (spell-start)))
   (if (in-math?)
-      (=> "Correct"
-          (link math-correct-menu)))
+      (=> "Correct" (link math-correct-menu)))
   (if (detailed-menus?)
       ---
       (when (selection-active-any?)

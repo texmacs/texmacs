@@ -57,13 +57,13 @@
   ("Show timings" (toggle-session-output-timings)))
 
 (menu-bind session-field-menu
-  ("Insert field above" "A-up" (field-insert #f))
-  ("Insert field below" "A-down" (field-insert #t))
+  ("Insert field above" (field-insert #f))
+  ("Insert field below" (field-insert #t))
   ("Insert text field above" (field-insert-text #f))
   ("Insert text field below" (field-insert-text #t))
   ---
-  ("Remove previous field" "A-backspace" (field-remove #f))
-  ("Remove next field" "A-delete" (field-remove #t))
+  ("Remove previous field" (field-remove #f))
+  ("Remove next field" (field-remove #t))
   ("Remove banner" (field-remove-banner))
   ("Remove last field" (field-remove-extreme #t)))
 
@@ -72,11 +72,11 @@
   ("Fold all fields" (session-fold-all))
   ("Unfold all fields" (session-unfold-all))
   ---
-  ("Create subsession" "A-right" (field-insert-fold))
+  ("Create subsession" (field-insert-fold))
   ("Split session" (session-split)))
 
 (menu-bind session-evaluate-menu
-  ("Evaluate" "return" (session-evaluate))
+  ("Evaluate" (session-evaluate))
   ("Evaluate all" (session-evaluate-all))
   ("Evaluate above" (session-evaluate-above))
   ("Evaluate below" (session-evaluate-below)))
