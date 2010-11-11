@@ -224,6 +224,11 @@ widget horizontal_menu (array<widget> a)
 	return tm_new <aqua_menu_rep> (mi);	
 }
 
+widget
+horizontal_list (array<widget> a) {
+  return horizontal_menu (a);
+}  
+
 widget minibar_menu (array<widget> a) {
   return horizontal_menu (a);
 }
@@ -231,6 +236,10 @@ widget minibar_menu (array<widget> a) {
 widget vertical_menu (array<widget> a) { return horizontal_menu(a); }
 // a vertical menu made up of the widgets in a
 
+widget
+vertical_list (array<widget> a) {
+  return vertical_menu (a);
+}
 
 @interface TMTileView : NSMatrix
 {

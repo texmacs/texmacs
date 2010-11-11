@@ -187,10 +187,20 @@ horizontal_menu (array<widget> arr) {
 }
 
 widget
+horizontal_list (array<widget> a) {
+  return horizontal_menu (a);
+}  
+
+widget
 vertical_menu (array<widget> a) {
   // a vertical menu made up of the widgets in a
   return horizontal_menu (a);
 }
+
+widget
+vertical_list (array<widget> a) {
+  return vertical_menu (a);
+}  
 
 #if 1
 class QTMAuxMenu: public QMenu {
