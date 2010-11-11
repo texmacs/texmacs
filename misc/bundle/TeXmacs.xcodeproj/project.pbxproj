@@ -266,6 +266,7 @@
 		9C0B4BDE10A8D9370097A335 /* TeXmacs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C0B430010A8CB4E0097A335 /* TeXmacs */; };
 		9C1D126810D102B300232476 /* qt_pipe_link.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126510D102B300232476 /* qt_pipe_link.cpp */; };
 		9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126610D102B300232476 /* QTMPipeLink.cpp */; };
+		9C225A65128B5EB00039258C /* qt_chooser_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */; };
 		9C2C2ADC10BAA420009B855A /* TeXmacsQt.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */; };
 		9C6061EA112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
 		9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6061E8112442BC00054149 /* gs_utilities.cpp */; };
@@ -1672,6 +1673,8 @@
 		9C1D126510D102B300232476 /* qt_pipe_link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_pipe_link.cpp; sourceTree = "<group>"; };
 		9C1D126610D102B300232476 /* QTMPipeLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMPipeLink.cpp; sourceTree = "<group>"; };
 		9C1D126710D102B300232476 /* QTMPipeLink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMPipeLink.hpp; sourceTree = "<group>"; };
+		9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_chooser_widget.cpp; sourceTree = "<group>"; };
+		9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_chooser_widget.hpp; sourceTree = "<group>"; };
 		9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsQt.xcconfig; sourceTree = "<group>"; };
 		9C5DBAD810A8DDD7008B7623 /* makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.in; path = src/makefile.in; sourceTree = "<group>"; };
 		9C5DBADA10A8DE60008B7623 /* Base.xcconfig.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Base.xcconfig.in; sourceTree = "<group>"; };
@@ -2596,6 +2599,8 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
+				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
 				9CF5BC6A128A13CB00F691BF /* qt_simple_widget.cpp */,
 				9CF5BC6B128A13CB00F691BF /* qt_tm_widget.cpp */,
 				9CF5BC6C128A13CB00F691BF /* qt_tm_widget.hpp */,
@@ -3535,6 +3540,7 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -4004,6 +4010,7 @@
 				9CF5BC74128A13CB00F691BF /* qt_view_widget.cpp in Sources */,
 				9CF5BC75128A13CB00F691BF /* qt_window_widget.cpp in Sources */,
 				9CF5BC76128A13CB00F691BF /* QTMGuiHelper.cpp in Sources */,
+				9C225A65128B5EB00039258C /* qt_chooser_widget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
