@@ -85,13 +85,99 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   visibility[4] = (mask & 16) == 16; // user
   visibility[5] = (mask & 32) == 32; // footer
   
+  // general setup for main window
+  
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
-  mw->menuBar()->setStyle (qtmstyle ());  
- // mw->setUnifiedTitleAndToolBarOnMac(true);
+  mw->menuBar()->setStyle (qtmstyle ()); 
+
+  
+  // there is a bug in the early implementation of toolbars in Qt 4.6
+  // which has been fixed in 4.6.2 (at least)
+  // this is why we change dimension of icons
+	
+#if (defined(Q_WS_MAC)&&(QT_VERSION>=QT_VERSION_CHECK(4,6,0))&&(QT_VERSION<QT_VERSION_CHECK(4,6,2)))
+  mw->setIconSize (QSize (22, 30));  
+#else
+  mw->setIconSize (QSize (17, 17));
+#endif
+  mw->setFocusPolicy (Qt::NoFocus);
+  
+  
+  // central widget
   
   QStackedWidget* tw = new QStackedWidget ();
+  tw->setObjectName("stacked widget"); // to easily find this object
+
+  // status bar
+  
+  QStatusBar* bar= new QStatusBar(mw);
+  leftLabel= new QLabel ("Welcome to TeXmacs", mw);
+  rightLabel= new QLabel ("Booting", mw);
+  leftLabel->setFrameStyle (QFrame::NoFrame);
+  rightLabel->setFrameStyle (QFrame::NoFrame);
+  {
+    QFont f=  leftLabel->font();
+    f.setPixelSize(12);
+    leftLabel->setFont(f);
+    rightLabel->setFont(f);
+  }
+  bar->addWidget (leftLabel);
+  bar->addPermanentWidget (rightLabel);
+  bar->setStyle (qtmstyle ());
+  
+  // NOTE (mg): the following setMinimumWidth command disable automatic 
+  // enlarging of the status bar and consequently of the main window due to 
+  // long messages in the left label. I found this strange solution here
+  // http://www.archivum.info/qt-interest@trolltech.com/2007-05/01453/Re:-QStatusBar-size.html
+  // The solution if due to Martin Petricek. He adds:
+  //    The docs says: If minimumSize() is set, the minimum size hint will be ignored.
+  //    Probably the minimum size hint was size of the lengthy message and
+  //    internal layout was enlarging the satusbar and the main window
+  //    Maybe the notice about QLayout that is at minimumSizeHint should be
+  //    also at minimumSize, didn't notice it first time and spend lot of time
+  //    trying to figure this out :)
+  
+  bar->setMinimumWidth(2);
+  mw->setStatusBar (bar);
+  
+  
+  // toolbars
+  
+
+#ifdef Q_WS_MAC
+
+  QWidget *cw= new QWidget ();
+  QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, cw);
+  bl->setContentsMargins(2,2,2,2);
+  bl->setSpacing(0);
+  cw->setLayout(bl);
+  bl->addWidget(tw);
+  
+  mw->setCentralWidget(cw);
+  
+  mw->setUnifiedTitleAndToolBarOnMac(true);
+  mainToolBar= mw->addToolBar ("main toolbar");
+  modeToolBar = new QToolBar("mode toolbar");
+  bl->insertWidget(0, modeToolBar);
+  focusToolBar = new QToolBar("focus toolbar");
+  bl->insertWidget(1, focusToolBar);
+  userToolBar = new QToolBar("user toolbar");
+  bl->insertWidget(2, userToolBar);
+  
+#else
   mw->setCentralWidget(tw);
+  
+  mainToolBar= mw->addToolBar ("main toolbar");
+  mw->addToolBarBreak ();
+  modeToolBar= mw->addToolBar ("mode toolbar");
+  mw->addToolBarBreak ();
+  focusToolBar= mw->addToolBar ("focus toolbar");
+  mw->addToolBarBreak ();
+  userToolBar= mw->addToolBar ("user toolbar");
+  mw->addToolBarBreak ();
+  
+#endif
   
 #if 0
   QScrollArea* sa= new QTMScrollArea (this);
@@ -103,58 +189,16 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   mw->setCentralWidget (sa);
 #endif
   
-  QStatusBar* bar= new QStatusBar(mw);
-  leftLabel= new QLabel ("Welcome to TeXmacs", mw);
-  rightLabel= new QLabel ("Booting", mw);
-  leftLabel->setFrameStyle (QFrame::NoFrame);
-  rightLabel->setFrameStyle (QFrame::NoFrame);
-  bar->addWidget (leftLabel);
-  bar->addPermanentWidget (rightLabel);
-  bar->setStyle (qtmstyle ());
   
-    // NOTE (mg): the following setMinimumWidth command disable automatic 
-    // enlarging of the status bar and consequently of the main window due to 
-    // long messages in the left label. I found this strange solution here
-    // http://www.archivum.info/qt-interest@trolltech.com/2007-05/01453/Re:-QStatusBar-size.html
-    // The solution if due to Martin Petricek. He adds:
-    //    The docs says: If minimumSize() is set, the minimum size hint will be ignored.
-    //    Probably the minimum size hint was size of the lengthy message and
-    //    internal layout was enlarging the satusbar and the main window
-    //    Maybe the notice about QLayout that is at minimumSizeHint should be
-    //    also at minimumSize, didn't notice it first time and spend lot of time
-    //    trying to figure this out :)
-  
-  bar->setMinimumWidth(2);
-  
-  mw->setStatusBar (bar);
-  
-  mainToolBar= mw->addToolBar ("main toolbar");
-  mw->addToolBarBreak ();
-  modeToolBar= mw->addToolBar ("mode toolbar");
-  mw->addToolBarBreak ();
-  focusToolBar= mw->addToolBar ("focus toolbar");
-  mw->addToolBarBreak ();
-  userToolBar= mw->addToolBar ("user toolbar");
-  mw->addToolBarBreak ();
-  
-  mainToolBar->setStyle (qtmstyle ());
+//  mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
   
+  focusToolBar->setIconSize(QSize(14,14));
+  
   updateVisibility();
 	
-    // there is a bug in the early implementation of toolbars in Qt 4.6
-    // which has been fixed in 4.6.2 (at least)
-    // this is why we change dimension of icons
-	
-#if (defined(Q_WS_MAC)&&(QT_VERSION>=QT_VERSION_CHECK(4,6,0))&&(QT_VERSION<QT_VERSION_CHECK(4,6,2)))
-  mw->setIconSize (QSize (22, 30));  
-#else
-  mw->setIconSize (QSize (17, 17));
-#endif
-  mw->setFocusPolicy (Qt::NoFocus);
-  
   
     // handles visibility
     // at this point all the toolbars are empty so we avoid showing them

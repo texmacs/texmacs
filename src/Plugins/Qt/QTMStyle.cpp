@@ -422,6 +422,8 @@ QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidge
   switch (metric) {
     case PM_ToolBarItemSpacing:
       return 0;
+    case PM_ToolBarIconSize:
+      return 17;
   //  case PM_ToolBarFrameWidth:
   //    return 2;
     default:

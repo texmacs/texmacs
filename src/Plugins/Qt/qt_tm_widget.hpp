@@ -23,6 +23,7 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
+#include <QLayout>
 
 class QLabel; class QToolBar;
 
@@ -38,6 +39,8 @@ public:
   QToolBar *modeToolBar;
   QToolBar *focusToolBar;
   QToolBar *userToolBar;
+  
+  QWidget *centralWidget;
   
   QTMInteractiveInputHelper helper;
   
@@ -69,7 +72,7 @@ public:
   QMainWindow* tm_mainwindow () {
     return qobject_cast<QMainWindow*> (view); }
   QStackedWidget* tm_centralwidget () {
-    return qobject_cast<QStackedWidget*> (tm_mainwindow()->centralWidget()); }
+    return tm_mainwindow()->findChild<QStackedWidget*>("stacked widget"); }
   QTMScrollView* tm_scrollarea () {
     return qobject_cast<QTMScrollView*> (tm_centralwidget()->currentWidget()); }
   QTMWidget* tm_canvas () {
