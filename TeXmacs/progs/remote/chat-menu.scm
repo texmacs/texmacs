@@ -19,7 +19,7 @@
     (assuming l
       (with sorted-l (list-sort l string<=?)
         ---
-        (for (name sorted-l) ((eval name) (chat-connect name))))))_)
+        (for (name sorted-l) ((eval name) (chat-connect name)))))))
 
 (tm-menu (chat-connect-menu)
   (with l (chat-list-rooms)

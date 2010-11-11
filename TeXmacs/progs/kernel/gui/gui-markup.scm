@@ -37,9 +37,17 @@
   (:synopsis "Make dynamic widgets")
   `(cons* 'list ,w))
 
+(tm-define-macro (gui$link w)
+  (:synopsis "Make dynamic link to another widget")
+  `(list 'link ',w))
+
 (tm-define-macro (gui$assuming pred? . l)
   (:synopsis "Conditionally make widgets")
   `(cons* 'list (if ,pred? (gui$list ,@l) '())))
+
+(tm-define-macro (gui$if pred? . l)
+  (:synopsis "Conditionally make widgets, a posteriori")
+  `(cons* 'if (lambda () ,pred?) (gui$list ,@l)))
 
 (tm-define-macro (gui$when pred? . l)
   (:synopsis "Make possibly inert (whence greyed) widgets")
@@ -69,11 +77,11 @@
 
 (tm-define-macro (gui$pick-color cmd)
   (:synopsis "Make color picker")
-  `(list 'pick-color (lambda (answer) ,cmd)))
+  `(list 'pick-color (lambda (answer) ,cmd) #f))
 
 (tm-define-macro (gui$pick-background cmd)
   (:synopsis "Make background picker")
-  `(list 'pick-background (lambda (answer) ,cmd)))
+  `(list 'pick-color (lambda (answer) ,cmd) #t))
 
 (tm-define-macro (gui$button text . cmds)
   (:synopsis "Make button")
@@ -106,6 +114,10 @@
 (tm-define-macro (gui$check text check pred?)
   (:synopsis "Make button")
   `(list 'check ,text ,check (lambda () ,pred?)))
+
+(tm-define-macro (gui$concat . l)
+  (:synopsis "Make text concatenation")
+  `(quote (concat ,@l)))
 
 (tm-define-macro (gui$mini pred? . l)
   (:synopsis "Make mini widgets")
@@ -140,7 +152,7 @@
 (tm-define (gui-menu-item x)
   (:case link)
   (require-format x '(link :%1))
-  `(gui$dynamic (,(cadr x))))
+  `(gui$link ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   (:case let let*)
@@ -180,6 +192,11 @@
   (:case icon)
   (require-format x '(icon :%1))
   `(gui$icon ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case concat)
+  (require-format x '(concat :*))
+  `(gui$concat ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
   (:case check)
@@ -227,6 +244,11 @@
   `(gui$assuming ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
+  (:case if)
+  (require-format x '(if :%1 :*))
+  `(gui$if ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
   (:case when)
   (require-format x '(when :%1 :*))
   `(gui$when ,(cadr x) ,@(map gui-menu-item (cddr x))))
@@ -257,6 +279,7 @@
   `(gui$promise ,(cadr x)))
 
 (tm-define (gui-menu-item x)
+  ;;(display* "x= " x "\n")
   (cond ((== x '---) `(gui$vsep))
 	((== x (string->symbol "|")) `(gui$hsep))
 	((string? x) x)
@@ -278,6 +301,7 @@
   (receive (opts body) (list-break l not-define-option?)
     `(tm-define ,head ,@opts (gui$menu ,@body))))
 
-(define-public-macro (menu-bindx name . body)
+(tm-define-macro (menu-bindx name . l)
+  ;;(display* name " --> " l "\n")
   (receive (opts body) (list-break l not-define-option?)
-    `(tm-define ,(name) ,@opts (gui$menu ,@body))))
+    `(tm-define (,name) ,@opts (gui$menu ,@body))))

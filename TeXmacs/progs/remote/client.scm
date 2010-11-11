@@ -92,7 +92,8 @@
 	     ;; build data base for remembering previous connections
 	     ;; and increasing trust from the server side
 	     ;; may also avoid need to log in
-	     (remote-key (base64->string (server-request `(get-public-key))))
+             (remote-64 (server-request `(get-public-key)))
+	     (remote-key (base64->string remote-64))
 	     ;; check with trusted database
 	     ;; can also ask for some previously stored secret info
 	     (challenge (secret-generate))
