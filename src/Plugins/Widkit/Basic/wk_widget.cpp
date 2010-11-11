@@ -140,6 +140,12 @@ print_tree (tm_ostream& out, tree t, int tab) {
 }
 
 tm_ostream&
+wk_widget_rep::print (tm_ostream& out) {
+  print_tree (out, operator tree (), 0);
+  return out;  
+}
+
+tm_ostream&
 operator << (tm_ostream& out, wk_widget w) {
   print_tree (out, (tree) w, 0);
   return out;

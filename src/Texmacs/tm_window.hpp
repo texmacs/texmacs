@@ -84,4 +84,8 @@ typedef tm_buffer_rep* tm_buffer;
 typedef tm_view_rep*   tm_view;
 typedef tm_window_rep* tm_window;
 
+int window_handle ();
+void window_create (int win, widget wid, string name, bool plain, SI w, SI h);
+void window_delete (int win);
+
 #endif // defined TM_WINDOW_H

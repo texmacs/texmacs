@@ -12,6 +12,7 @@
 #include <tm_configure.hpp>
 #include "Glue/glue.hpp"
 #include "server.hpp"
+#include "tm_window.hpp"
 #include "boot.hpp"
 #include "connect.hpp"
 #include "convert.hpp"

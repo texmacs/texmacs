@@ -38,6 +38,7 @@ public:
   void write (slot s, blackbox index, widget w);
 
   virtual operator tree () = 0;
+  virtual tm_ostream& print (tm_ostream& out);
   virtual bool handle (event ev) = 0;
   virtual bool is_window_widget ();
 

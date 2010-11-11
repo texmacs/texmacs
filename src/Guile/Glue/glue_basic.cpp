@@ -4418,6 +4418,51 @@ tmg_object_2promise_widget (SCM arg1) {
 }
 
 SCM
+tmg_window_handle () {
+  // SCM_DEFER_INTS;
+  int out= window_handle ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_window_create (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-create");
+  SCM_ASSERT_WIDGET (arg2, SCM_ARG2, "window-create");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "window-create");
+  SCM_ASSERT_BOOL (arg4, SCM_ARG4, "window-create");
+  SCM_ASSERT_INT (arg5, SCM_ARG5, "window-create");
+  SCM_ASSERT_INT (arg6, SCM_ARG6, "window-create");
+
+  int in1= scm_to_int (arg1);
+  widget in2= scm_to_widget (arg2);
+  string in3= scm_to_string (arg3);
+  bool in4= scm_to_bool (arg4);
+  int in5= scm_to_int (arg5);
+  int in6= scm_to_int (arg6);
+
+  // SCM_DEFER_INTS;
+  window_create (in1, in2, in3, in4, in5, in6);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_window_delete (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "window-delete");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  window_delete (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_bib_add_period (SCM arg1) {
   SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "bib-add-period");
 
@@ -4896,6 +4941,9 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-box", (FN) tmg_widget_box, 5, 0, 0);
   scm_new_procedure ("widget-color-picker", (FN) tmg_widget_color_picker, 3, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
+  scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
+  scm_new_procedure ("window-create", (FN) tmg_window_create, 6, 0, 0);
+  scm_new_procedure ("window-delete", (FN) tmg_window_delete, 1, 0, 0);
   scm_new_procedure ("bib-add-period", (FN) tmg_bib_add_period, 1, 0, 0);
   scm_new_procedure ("bib-upcase-first", (FN) tmg_bib_upcase_first, 1, 0, 0);
   scm_new_procedure ("bib-locase", (FN) tmg_bib_locase, 1, 0, 0);

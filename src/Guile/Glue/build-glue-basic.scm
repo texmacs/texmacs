@@ -381,6 +381,11 @@
   (widget-color-picker color_picker_widget (widget command bool array_tree))
   (object->promise-widget as_promise_widget (promise_widget object))
 
+  ;; windows
+  (window-handle window_handle (int))
+  (window-create window_create (void int widget string bool int int))
+  (window-delete window_delete (void int))
+
   ;; routines for BibTeX
   (bib-add-period bib_add_period (scheme_tree scheme_tree))
   (bib-upcase-first bib_upcase_first (scheme_tree scheme_tree))
