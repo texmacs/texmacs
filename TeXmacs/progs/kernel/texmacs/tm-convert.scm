@@ -253,32 +253,19 @@
 (define (format<=? fm1 fm2)
   (string<=? (ahash-ref format-name fm1) (ahash-ref format-name fm2)))
 
-(define (converters-from-special fm suf tm?)
+(define-public (converters-from-special fm suf tm?)
   (let* ((l1 (converters-from fm))
 	 (l2 (list-filter l1 (lambda (s) (string-ends? s suf))))
 	 (l3 (map (lambda (s) (string-drop-right s (string-length suf))) l2))
 	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (!= s "texmacs"))))))
     (list-sort l4 format<=?)))
 
-(define (converters-to-special fm suf tm?)
+(define-public (converters-to-special fm suf tm?)
   (let* ((l1 (converters-to fm))
 	 (l2 (list-filter l1 (lambda (s) (string-ends? s suf))))
 	 (l3 (map (lambda (s) (string-drop-right s (string-length suf))) l2))
 	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (!= s "texmacs"))))))
     (list-sort l4 format<=?)))
-
-(define (converter-build-menu item-builder l)
-  (define (menu-item fm)
-    (item-builder fm (ahash-ref format-name fm)))
-  (map menu-item l))
-
-(define-public (converter-from-menu fm special tm? item-builder)
-  (with l (converters-from-special fm special tm?)
-    (converter-build-menu item-builder l)))
-
-(define-public (converter-to-menu fm special tm? item-builder)
-  (with l (converters-to-special fm special tm?)
-    (converter-build-menu item-builder l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other useful subroutines
@@ -421,6 +408,10 @@
 (define-public (format? fm)
   (lazy-format-force)
   (not (not (ahash-ref format-name fm))))
+
+(define-public (format-get-name fm)
+  (lazy-format-force)
+  (ahash-ref format-name fm))
 
 (define-public (format-recognizes? doc fm)
   (lazy-format-force)

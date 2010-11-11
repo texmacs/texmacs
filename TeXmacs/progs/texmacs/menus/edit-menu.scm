@@ -19,15 +19,18 @@
 ;; Dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (extern-clipboard-item fm name action)
-  (with routine (string->symbol (string-append "clipboard-" action))
-    `(,name (,routine ,fm "primary"))))
+(tm-menu (clipboard-extern-menu cvs fun)
+  (with l (cvs "texmacs-snippet" "-snippet" #t)
+    (for (fm l)
+      (with name (format-get-name fm)
+        ((eval name) (fun fm "primary"))))))
 
-(define-macro (extern-clipboard-menu-promise action)
-  (define (item fm name) (extern-clipboard-item fm name action))
-  (with routine (if (== action "paste-import")
-		    converter-to-menu converter-from-menu)
-    `(menu-dynamic ,@(routine "texmacs-snippet" "-snippet" #t item))))
+(tm-define (clipboard-copy-export-menu)
+  (clipboard-extern-menu converters-from-special clipboard-copy-export))
+(tm-define (clipboard-cut-export-menu)
+  (clipboard-extern-menu converters-from-special clipboard-cut-export))
+(tm-define (clipboard-paste-import-menu)
+  (clipboard-extern-menu converters-to-special clipboard-paste-import))
 
 (define (redo-item i)
   (list `(concat "Branch " ,(number->string (+ i 1)))
@@ -71,7 +74,7 @@
       ---
       (when (selection-active-any?)
 	(-> "Copy to"
-	    (promise (extern-clipboard-menu-promise "copy-export"))
+	    (link clipboard-copy-export-menu)
 	    ---
 	    ("Primary" (clipboard-copy "primary"))
 	    ("Secondary" (clipboard-copy "secondary"))
@@ -81,7 +84,7 @@
 	    ---
 	    ("Other" (interactive clipboard-copy)))
 	(-> "Cut to"
-	    (promise (extern-clipboard-menu-promise "cut-export"))
+	    (link clipboard-cut-export-menu)
 	    ---
 	    ("Primary" (clipboard-cut "primary"))
 	    ("Secondary" (clipboard-cut "secondary"))
@@ -91,7 +94,7 @@
 	    ---
 	    ("Other" (interactive clipboard-cut))))
       (-> "Paste from"
-	  (promise (extern-clipboard-menu-promise "paste-import"))
+          (link clipboard-paste-import-menu)
 	  ---
 	  ("Primary" (clipboard-paste "primary"))
 	  ("Secondary" (clipboard-paste "secondary"))
