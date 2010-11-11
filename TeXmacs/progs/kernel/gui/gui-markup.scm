@@ -124,6 +124,14 @@
     `(gui$dynamic (append-map ,fun ,(cadadr x)))))
 
 (tm-define (gui-menu-item x)
+  (:case cond)
+  (require-format x '(cond :*))
+  (with fun (lambda (x)
+              (with (pred? . body) x
+                (list pred? (cons* 'gui$menu body))))
+    `(cond ,@(map fun (cdr x)))))
+
+(tm-define (gui-menu-item x)
   (:case group)
   (require-format x '(group :%1))
   `(gui$group ,(cadr x)))
