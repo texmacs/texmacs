@@ -29,6 +29,10 @@
   (:synopsis "Make widgets")
   `(gui-normalize (list ,@l)))
 
+(tm-define-macro (gui$promise cmd)
+  (:synopsis "Promise widgets")
+  `(list 'promise (lambda () ,cmd)))
+
 (tm-define-macro (gui$dynamic w)
   (:synopsis "Make dynamic widgets")
   `(cons* 'list ,w))
@@ -53,9 +57,23 @@
   (:synopsis "Make a menu group")
   `(list 'group ,text))
 
+(tm-define-macro (gui$symbol sym . l)
+  (:synopsis "Make a menu symbol")
+  (if (null? l)
+      `(list 'symbol ,sym)
+      `(list 'symbol ,sym (lambda () ,(car l)))))
+
 (tm-define-macro (gui$input cmd type proposals width)
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
+
+(tm-define-macro (gui$pick-color cmd)
+  (:synopsis "Make color picker")
+  `(list 'pick-color (lambda (answer) ,cmd)))
+
+(tm-define-macro (gui$pick-background cmd)
+  (:synopsis "Make background picker")
+  `(list 'pick-background (lambda (answer) ,cmd)))
 
 (tm-define-macro (gui$button text . cmds)
   (:synopsis "Make button")
@@ -68,6 +86,18 @@
 (tm-define-macro (gui$pulldown text . l)
   (:synopsis "Make pulldown button")
   `(cons* '=> ,text (gui$list ,@l)))
+
+(tm-define-macro (gui$horizontal . l)
+  (:synopsis "Horizontal layout of widgets")
+  `(cons* 'horizontal (gui$list ,@l)))
+
+(tm-define-macro (gui$vertical . l)
+  (:synopsis "Vertical layout of widgets")
+  `(cons* 'vertical (gui$list ,@l)))
+
+(tm-define-macro (gui$tile columns . l)
+  (:synopsis "Tile layout of widgets")
+  `(cons* 'tile ,columns (gui$list ,@l)))
 
 (tm-define-macro (gui$minibar . l)
   (:synopsis "Make minibar")
@@ -172,6 +202,21 @@
   `(gui$pulldown ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
+  (:case horizontal)
+  (require-format x '(horizontal :*))
+  `(gui$horizontal ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case vertical)
+  (require-format x '(vertical :*))
+  `(gui$vertical ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case tile)
+  (require-format x '(tile :integer? :*))
+  `(gui$tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
   (:case minibar)
   (require-format x '(minibar :*))
   `(gui$minibar ,@(map gui-menu-item (cdr x))))
@@ -190,6 +235,26 @@
   (:case mini)
   (require-format x '(mini :%1 :*))
   `(gui$mini ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case pick-color)
+  (require-format x '(pick-color :%1))
+  `(gui$pick-color ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case pick-background)
+  (require-format x '(pick-background :%1))
+  `(gui$pick-background ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case symbol)
+  (require-format x '(symbol :string? :*))
+  `(gui$symbol ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case promise)
+  (require-format x '(promise :%1))
+  `(gui$promise ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   (cond ((== x '---) `(gui$vsep))
