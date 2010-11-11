@@ -220,7 +220,7 @@
 			  `(set-preference ,s ,(id-or-cadr (car l))))
 		    (compute-preferences-enum s (cdr l))))))
 
-(define (compute-preferences-menu-sub l)
+(tm-define (compute-preferences-menu-sub l)
   (cond ((or (nlist? l) (null? l)) l)
 	((== (car l) 'string)
 	 (let* ((x (cadr l))
@@ -239,8 +239,12 @@
 	   (list s (list 'toggle-preference v))))
 	(else (map-in-order compute-preferences-menu-sub l))))
 
-(tm-define (compute-preferences-menu l)
-  (eval `(menu-dynamic ,@(compute-preferences-menu-sub l))))
+(tm-menu (compute-preferences-menu l)
+  (with r (eval (cons* 'gui$menu (compute-preferences-menu-sub l)))
+    (dynamic r)))
 
-(menu-bind page-setup-menu ,@(compute-preferences-menu page-setup-tree))
-(menu-bind preferences-menu ,@(compute-preferences-menu preferences-tree))
+(tm-menu (page-setup-menu)
+  (dynamic (compute-preferences-menu page-setup-tree)))
+
+(tm-menu (preferences-menu)
+  (dynamic (compute-preferences-menu preferences-tree)))
