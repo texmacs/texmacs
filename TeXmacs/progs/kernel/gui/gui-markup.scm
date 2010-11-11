@@ -275,8 +275,5 @@
   `(define ,head (gui$menu ,@body)))
 
 (tm-define-macro (tm-menu head . l)
-  (let* ((body? (lambda (x) (or (npair? x) (not (keyword? (car x))))))
-	 (i (list-find-index l body?))
-	 (prop (if i (sublist l 0 i) l))
-	 (body (if i (sublist l i (length l)) '())))
-    `(tm-define ,head ,@prop (gui$menu ,@body))))
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define ,head ,@opts (gui$menu ,@body))))
