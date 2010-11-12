@@ -240,7 +240,7 @@
 	(else (map-in-order compute-preferences-menu-sub l))))
 
 (tm-menu (compute-preferences-menu l)
-  (with r (eval (cons* 'gui$menu (compute-preferences-menu-sub l)))
+  (with r (eval (cons* 'menu-dynamic (compute-preferences-menu-sub l)))
     (dynamic r)))
 
 (tm-menu (page-setup-menu)

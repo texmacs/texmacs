@@ -79,9 +79,11 @@
 
 (define (string-input-handle t i w)
   (if (tree-atomic? (tree-ref t i))
-      (gui$menu (input (when answer (tree-set (focus-tree) i answer)) "string"
-		       (list (tree->string (tree-ref t i))) w))
-      (gui$menu (group "[n.a.]"))))
+      (menu-dynamic
+	(input (when answer (tree-set (focus-tree) i answer)) "string"
+	       (list (tree->string (tree-ref t i))) w))
+      (menu-dynamic
+	(group "[n.a.]"))))
 
 (tm-menu (image-handles t)
   (glue #f #f 3 0)

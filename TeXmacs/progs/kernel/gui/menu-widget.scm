@@ -315,7 +315,7 @@
   "Make @(hlist :menu-item-list) menu item."
   (widget-hlist (make-menu-items (cdr p) style #t)))
 
-(define (make-menu-vertical p style)
+(define (make-menu-vlist p style)
   "Make @(vertical :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
@@ -535,6 +535,8 @@
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
+  (hlist ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
+  (vlist ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (-> ,replace-procedures)
   (=> ,replace-procedures)
