@@ -106,6 +106,8 @@
   (tree-is-dynamic? is_dynamic (bool tree))
   (tree-accessible-child? is_accessible_child (bool tree int))
   (tree-accessible-children accessible_children (array_tree tree))
+  (tree-all-accessible? all_accessible (bool content))
+  (tree-none-accessible? none_accessible (bool content))
   (tree-load-inclusion load_inclusion (tree url))
   (tree-as-string tree_as_string (string content))
   (tree-extents tree_extents (tree content))

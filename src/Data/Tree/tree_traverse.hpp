@@ -20,6 +20,8 @@ int insert_point (tree t, int i);
 bool is_dynamic (tree t);
 bool is_accessible_child (tree t, int i);
 array<tree> accessible_children (tree t);
+bool all_accessible (tree t);
+bool none_accessible (tree t);
 
 path next_valid (tree t, path p);
 path previous_valid (tree t, path p);

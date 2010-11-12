@@ -80,6 +80,7 @@ public:
   int  get_accessible (tree_label tag, int nr);
   void freeze_accessible (tree_label tag, int nr);
   bool all_accessible (tree_label tag);
+  bool none_accessible (tree_label tag);
   bool is_accessible_child (tree t, int child);
 
   void set_writability (tree_label tag, int nr, int writability);

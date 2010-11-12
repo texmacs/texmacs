@@ -121,7 +121,7 @@
   (cond ((not (tree->path t)) (texmacs-error "find-focus" "invalid focus"))
 	((== (tree->path t) '()) t)
 	((== t (buffer-tree)) t)
-	((tree-in? t '(space image)) t)
+	((tree-none-accessible? t) t)
 	((tree-atomic? t) (find-focus (tree-up t) #f))
 	((tree-in? t '(document concat tformat table row cell))
 	 (find-focus (tree-up t) #f))

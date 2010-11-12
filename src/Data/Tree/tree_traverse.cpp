@@ -58,6 +58,18 @@ accessible_children (tree t) {
   return a;
 }
 
+bool
+all_accessible (tree t) {
+  if (is_atomic (t)) return false;
+  return the_drd->all_accessible (L(t));
+}
+
+bool
+none_accessible (tree t) {
+  if (is_atomic (t)) return false;
+  return the_drd->none_accessible (L(t));
+}
+
 /******************************************************************************
 * Traversal of a tree
 ******************************************************************************/

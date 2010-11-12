@@ -1061,6 +1061,32 @@ tmg_tree_accessible_children (SCM arg1) {
 }
 
 SCM
+tmg_tree_all_accessibleP (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-all-accessible?");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= all_accessible (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_tree_none_accessibleP (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-none-accessible?");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= none_accessible (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_tree_load_inclusion (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "tree-load-inclusion");
 
@@ -4846,6 +4872,8 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-is-dynamic?", (FN) tmg_tree_is_dynamicP, 1, 0, 0);
   scm_new_procedure ("tree-accessible-child?", (FN) tmg_tree_accessible_childP, 2, 0, 0);
   scm_new_procedure ("tree-accessible-children", (FN) tmg_tree_accessible_children, 1, 0, 0);
+  scm_new_procedure ("tree-all-accessible?", (FN) tmg_tree_all_accessibleP, 1, 0, 0);
+  scm_new_procedure ("tree-none-accessible?", (FN) tmg_tree_none_accessibleP, 1, 0, 0);
   scm_new_procedure ("tree-load-inclusion", (FN) tmg_tree_load_inclusion, 1, 0, 0);
   scm_new_procedure ("tree-as-string", (FN) tmg_tree_as_string, 1, 0, 0);
   scm_new_procedure ("tree-extents", (FN) tmg_tree_extents, 1, 0, 0);

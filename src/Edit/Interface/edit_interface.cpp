@@ -18,6 +18,7 @@
 #include "data_cache.hpp"
 #include "drd_mode.hpp"
 #include "message.hpp"
+#include "tree_traverse.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Evaluate/evaluate_main.hpp"
 #endif
@@ -468,7 +469,7 @@ edit_interface_rep::apply_changes () {
     env_rects= rectangles ();
     path pp= path_up (tp);
     tree pt= subtree (et, pp);
-    if (is_func (pt, SPACE) || is_func (pt, IMAGE));
+    if (none_accessible (pt));
     else pp= path_up (pp);
     compute_env_rects (pp, env_rects, true);
     if (env_rects != old_rects) {

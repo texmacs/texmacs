@@ -427,6 +427,15 @@ drd_info_rep::all_accessible (tree_label l) {
 }
 
 bool
+drd_info_rep::none_accessible (tree_label l) {
+  int i, n= N(info[l]->ci);
+  for (i=0; i<n; i++)
+    if (info[l]->ci[i].accessible != ACCESSIBLE_NEVER)
+      return false;
+  return true;
+}
+
+bool
 drd_info_rep::is_accessible_child (tree t, int i) {
   //cout << "l= " << as_string (L(t)) << "\n";
   tag_info ti= info[L(t)];
