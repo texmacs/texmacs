@@ -17,6 +17,50 @@
   (:use (kernel gui menu-define) (kernel gui kbd-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu grammar
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-regexp-grammar
+  (:menu-label (:or
+    :string?
+    (concat :*)
+    (color :%5)
+    (verbatim :%1)
+    (text :tuple? :string?)
+    (icon :string?)
+    (balloon :menu-label :string?)))
+  (:menu-wide-label (:or
+    :menu-label
+    (check :menu-wide-label :string? :%1)
+    (shortcut :menu-wide-label :string?)))
+  (:menu-item (:or
+    ---
+    |
+    (group :string?)
+    (glue :boolean? :boolean? :integer? :integer?)
+    (color :%1 :boolean? :boolean? :integer? :integer?)
+    (:menu-wide-label :%1)
+    (symbol :string? :*)
+    (input :%1 :string? :%1 :string?)
+    (pick-color :%1)
+    (pick-background :%1)
+    (horizontal :menu-item-list)
+    (vertical :menu-item-list)
+    (hlist :menu-item-list)
+    (vlist :menu-item-list)
+    (minibar :menu-item-list)
+    (-> :menu-label :menu-item-list)
+    (=> :menu-label :menu-item-list)
+    (tile :integer? :menu-item-list)
+    (if :%1 :menu-item-list)
+    (when :%1 :menu-item-list)
+    (mini :%1 :menu-item-list)
+    (link :%1)
+    (promise :%1)
+    (:menu-item-list)))
+  (:menu-item-list (:repeat :menu-item)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -143,6 +187,15 @@
 	(widget-menu-button l command "" "" new-style)
 	(widget-menu-button l command check short style))))
 
+(define-public (promise-source action)
+  "Helper routines for menu-widget and kbd-define"
+  (and (procedure? action)
+       (with source (procedure-source action)
+	 (and (== (car source) 'lambda)
+	      (== (cadr source) '())
+	      (null? (cdddr source))
+	      (caddr source)))))
+
 (define (make-menu-entry-shortcut label action opt-key)
   (cond (opt-key (kbd-system opt-key #t))
 	((pair? label) "")
@@ -163,6 +216,17 @@
 		      (make-menu-entry-check-sub
 		       (and prop (apply (cadr prop) (cdr source)))
 		       (and prop (car prop)))))))))
+
+(define (menu-label-add-dots l)
+  (cond ((match? l ':string?) (string-append l "..."))
+	((match? l '(concat :*))
+	 `(,@(cDr l) ,(menu-label-add-dots (cAr l))))
+	((match? l '(verbatim :*))
+	 `(,@(cDr l) ,(menu-label-add-dots (cAr l))))
+	((match? l '(text :tuple? :string?))
+	 `(text ,(cadr l) ,(string-append (caddr l) "...")))
+	((match? l '(icon :string?)) l)
+	(else `(,(car l) ,(menu-label-add-dots (cadr l)) ,(caddr l)))))
 
 (define (make-menu-entry-dots label action)
   (with source (promise-source action)

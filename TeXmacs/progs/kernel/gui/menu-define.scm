@@ -15,55 +15,6 @@
   (:use (kernel regexp regexp-match)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menu grammar
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ATTENTION: in menu-pre-entry, we also perform some convenience
-;; rewritings in order to let menus match the grammar below.
-;; The convience rewritings allow the use of ..., (check :string? :%1),
-;; (shortcut :string?) and multiple actions in menu entries.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-regexp-grammar
-  (:menu-label (:or
-    :string?
-    (concat :*)
-    (color :%5)
-    (verbatim :%1)
-    (text :tuple? :string?)
-    (icon :string?)
-    (balloon :menu-label :string?)))
-  (:menu-wide-label (:or
-    :menu-label
-    (check :menu-wide-label :string? :%1)
-    (shortcut :menu-wide-label :string?)))
-  (:menu-item (:or
-    ---
-    |
-    (group :string?)
-    (glue :boolean? :boolean? :integer? :integer?)
-    (color :%1 :boolean? :boolean? :integer? :integer?)
-    (:menu-wide-label :%1)
-    (symbol :string? :*)
-    (input :%1 :string? :%1 :string?)
-    (pick-color :%1)
-    (pick-background :%1)
-    (horizontal :menu-item-list)
-    (vertical :menu-item-list)
-    (hlist :menu-item-list)
-    (vlist :menu-item-list)
-    (minibar :menu-item-list)
-    (-> :menu-label :menu-item-list)
-    (=> :menu-label :menu-item-list)
-    (tile :integer? :menu-item-list)
-    (if :%1 :menu-item-list)
-    (when :%1 :menu-item-list)
-    (mini :%1 :menu-item-list)
-    (link :%1)
-    (promise :%1)
-    (:menu-item-list)))
-  (:menu-item-list (:repeat :menu-item)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style constants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -74,153 +25,346 @@
 (define-public widget-style-inert 16)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Preparation of menu entries
+;; Markup elements for the generation of widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (menu-format-error where which)
-  (texmacs-error where "Bad menu format in: ~S" which))
+(tm-define (gui-normalize l)
+  (cond ((null? l) l)
+	((func? (car l) 'list)
+	 (append (gui-normalize (cdar l)) (gui-normalize (cdr l))))
+	(else (cons (car l) (gui-normalize (cdr l))))))
 
-(define-public (make-promise x)
-  "Helper routines for menu-widget and kbd-define"
-  (list 'unquote `(lambda () ,x)))
+(tm-define-macro (gui$list . l)
+  (:synopsis "Make widgets")
+  `(gui-normalize (list ,@l)))
 
-(define-public (make-input-promise x)
-  "Helper routines for menu-widget and kbd-define"
-  (list 'unquote `(lambda (answer) (when answer ,x))))
+(tm-define-macro (gui$promise cmd)
+  (:synopsis "Promise widgets")
+  `(list 'promise (lambda () ,cmd)))
 
-(define-public (promise-source action)
-  "Helper routines for menu-widget and kbd-define"
-  (and (procedure? action)
-       (with source (procedure-source action)
-	 (and (== (car source) 'lambda)
-	      (== (cadr source) '())
-	      (null? (cdddr source))
-	      (caddr source)))))
+(tm-define-macro (gui$dynamic w)
+  (:synopsis "Make dynamic widgets")
+  `(cons* 'list ,w))
 
-(define-public (menu-label-add-dots l)
-  (cond ((match? l ':string?) (string-append l "..."))
-	((match? l '(concat :*))
-	 `(,@(cDr l) ,(menu-label-add-dots (cAr l))))
-	((match? l '(verbatim :*))
-	 `(,@(cDr l) ,(menu-label-add-dots (cAr l))))
-	((match? l '(text :tuple? :string?))
-	 `(text ,(cadr l) ,(string-append (caddr l) "...")))
-	((match? l '(icon :string?)) l)
-	(else `(,(car l) ,(menu-label-add-dots (cadr l)) ,(caddr l)))))
+(tm-define-macro (gui$link w)
+  (:synopsis "Make dynamic link to another widget")
+  `(list 'link ',w))
 
-(define (menu-pre-wide-label l)
-  (cond ((string? l) l)
-	((== (car l) 'text) l)
-	((== (car l) 'icon) l)
-	((== (car l) 'balloon)
-	 (list 'balloon (menu-pre-wide-label (cadr l)) (caddr l)))
-	((== (car l) 'shortcut)
-	 (list 'shortcut (menu-pre-wide-label (cadr l)) (caddr l)))
-	((== (car l) 'check)
-	 (list 'check (menu-pre-wide-label (cadr l)) (caddr l)
-	       (make-promise (cadddr l))))
-	(else l)))
+(tm-define-macro (gui$assuming pred? . l)
+  (:synopsis "Conditionally make widgets")
+  `(cons* 'list (if ,pred? (gui$list ,@l) '())))
 
-(define (menu-pre-entry p)
-  (if (= (length p) 2)
-      (list (menu-pre-wide-label (car p)) (make-promise (cadr p)))
-      (cond ((null? (cdr p)) (menu-format-error "menu-pre-entry" p))
-	    ;; convenience rewritings
-	    ((match? (cdr p) '(... :%1 :*))
-	     (menu-pre-entry `(,(menu-label-add-dots (car p)) ,@(cddr p))))
-	    ((match? (cdr p) '(:string? :%1 :*))
-	     (menu-pre-entry `((shortcut ,(car p) ,(cadr p)) ,@(cddr p))))
-	    ((match? (cdr p) '((check :%2) :%1 :*))
-	     (menu-pre-entry `((check ,(car p) ,@(cdadr p)) ,@(cddr p))))
-	    (else (menu-pre-entry `(,(car p) (begin ,@(cdr p))))))))
+(tm-define-macro (gui$if pred? . l)
+  (:synopsis "Conditionally make widgets, a posteriori")
+  `(cons* 'if (lambda () ,pred?) (gui$list ,@l)))
+
+(tm-define-macro (gui$when pred? . l)
+  (:synopsis "Make possibly inert (whence greyed) widgets")
+  `(cons* 'when (lambda () ,pred?) (gui$list ,@l)))
+
+(tm-define-macro (gui$icon name)
+  (:synopsis "Make icon")
+  `(list 'icon ,name))
+
+(tm-define-macro (gui$balloon text balloon)
+  (:synopsis "Make balloon")
+  `(list 'balloon ,text ,balloon))
+
+(tm-define-macro (gui$group text)
+  (:synopsis "Make a menu group")
+  `(list 'group ,text))
+
+(tm-define-macro (gui$glue hext? vext? minw minh)
+  (:synopsis "Make extensible glue")
+  `(list 'glue ,hext? ,vext? ,minw ,minh))
+
+(tm-define-macro (gui$color col hext? vext? minw minh)
+  (:synopsis "Make extensible colored glue")
+  `(list 'color ,col ,hext? ,vext? ,minw ,minh))
+
+(tm-define-macro (gui$symbol sym . l)
+  (:synopsis "Make a menu symbol")
+  (if (null? l)
+      `(list 'symbol ,sym)
+      `(list 'symbol ,sym (lambda () ,(car l)))))
+
+(tm-define-macro (gui$input cmd type proposals width)
+  (:synopsis "Make input field")
+  `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
+
+(tm-define-macro (gui$pick-color cmd)
+  (:synopsis "Make color picker")
+  `(list 'pick-color (lambda (answer) ,cmd) #f))
+
+(tm-define-macro (gui$pick-background cmd)
+  (:synopsis "Make background picker")
+  `(list 'pick-color (lambda (answer) ,cmd) #t))
+
+(tm-define-macro (gui$button text . cmds)
+  (:synopsis "Make button")
+  `(list ,text (lambda () ,@cmds)))
+
+(tm-define-macro (gui$pullright text . l)
+  (:synopsis "Make pullright button")
+  `(cons* '-> ,text (gui$list ,@l)))
+
+(tm-define-macro (gui$pulldown text . l)
+  (:synopsis "Make pulldown button")
+  `(cons* '=> ,text (gui$list ,@l)))
+
+(tm-define-macro (gui$horizontal . l)
+  (:synopsis "Horizontal layout of widgets")
+  `(cons* 'horizontal (gui$list ,@l)))
+
+(tm-define-macro (gui$vertical . l)
+  (:synopsis "Vertical layout of widgets")
+  `(cons* 'vertical (gui$list ,@l)))
+
+(tm-define-macro (gui$hlist . l)
+  (:synopsis "Horizontal layout of widgets")
+  `(cons* 'hlist (gui$list ,@l)))
+
+(tm-define-macro (gui$vlist . l)
+  (:synopsis "Vertical layout of widgets")
+  `(cons* 'vlist (gui$list ,@l)))
+
+(tm-define-macro (gui$tile columns . l)
+  (:synopsis "Tile layout of widgets")
+  `(cons* 'tile ,columns (gui$list ,@l)))
+
+(tm-define-macro (gui$minibar . l)
+  (:synopsis "Make minibar")
+  `(cons* 'minibar (gui$list ,@l)))
+
+(tm-define-macro (gui$check text check pred?)
+  (:synopsis "Make button")
+  `(list 'check ,text ,check (lambda () ,pred?)))
+
+(tm-define-macro (gui$concat . l)
+  (:synopsis "Make text concatenation")
+  `(quote (concat ,@l)))
+
+(tm-define-macro (gui$concat . l)
+  (:synopsis "Make verbatim text")
+  `(quote (verbatim ,@l)))
+
+(tm-define-macro (gui$mini pred? . l)
+  (:synopsis "Make mini widgets")
+  `(cons* 'mini (lambda () ,pred?) (gui$list ,@l)))
+
+(tm-define-macro (gui$hsep)
+  (:synopsis "Make horizontal separator")
+  `(string->symbol "|"))
+
+(tm-define-macro (gui$vsep)
+  (:synopsis "Make vertical separator")
+  `'---)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Preparation of menus
+;; Definition of dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (menu-pre-list l)
-  (map menu-pre l))
+(define (require-format x pattern)
+  (if (not (match? x pattern))
+      (texmacs-error "gui-menu-item" "invalid menu item ~S" x)))
 
-(define-public (menu-pre p)
-  "Helper routine for menu-dynamic, menu-bind and menu-extend macros"
-  (if (pair? p)
-      (cond ((string? (car p)) (menu-pre-entry p))
-	    ((symbol? (car p))
-	     (with result (ahash-ref menu-pre-table (car p))
-	       (if (or (not result) (not (match? (cdr p) (car result))))
-		   (menu-pre-list p)
-		   ((cadr result) p))))
-	    ((match? (car p) ':menu-wide-label) (menu-pre-entry p))
-	    (else (menu-pre-list p)))
-      (cond ((== p '---) p)
-	    ((== p '|) p)
-	    ((== p '()) p)
-	    (else (menu-format-error "menu-pre" p)))))
+(tm-define (gui-menu-item x)
+  (:case eval)
+  (require-format x '(eval :%1))
+  (cadr x))
 
-(define-table menu-pre-table
-  (group (:string?) ,(lambda (p) p))
-  (glue (:boolean? :boolean? :integer? :integer?) ,(lambda (p) p))
-  (color (:%1 :boolean? :boolean? :integer? :integer?) ,(lambda (p) p))
-  (input (:%1 :string? :%1 :string?)
-    ,(lambda (p)
-       `(input ,(make-input-promise (cadr p))
-	       ,(caddr p)
-	       ,(make-promise (cadddr p))
-	       ,(fifth p))))
-  (pick-color (:%1)
-    ,(lambda (p) `(pick-color ,(make-input-promise (cadr p)) #f)))
-  (pick-background (:%1)
-    ,(lambda (p) `(pick-color ,(make-input-promise (cadr p)) #t)))
-  (symbol (:string? :*)
-    ,(lambda (p)
-       (if (<= (length p) 2) p
-	   `(symbol ,(cadr p) ,(make-promise (caddr p))))))
-  (link (:%1) ,(lambda (p) p))
-  (horizontal (:*)
-    ,(lambda (p) `(horizontal ,@(menu-pre-list (cdr p)))))
-  (vertical (:*)
-    ,(lambda (p) `(vertical ,@(menu-pre-list (cdr p)))))
-  (hlist (:*)
-    ,(lambda (p) `(hlist ,@(menu-pre-list (cdr p)))))
-  (vlist (:*)
-    ,(lambda (p) `(vlist ,@(menu-pre-list (cdr p)))))
-  (minibar (:*)
-    ,(lambda (p) `(minibar ,@(menu-pre-list (cdr p)))))
-  (-> (:menu-label :*)
-    ,(lambda (p) `(-> ,(cadr p) ,@(menu-pre-list (cddr p)))))
-  (=> (:menu-label :*)
-    ,(lambda (p) `(=> ,(cadr p) ,@(menu-pre-list (cddr p)))))
-  (tile (:integer? :*)
-    ,(lambda (p) `(tile ,(cadr p) ,@(menu-pre-list (cddr p)))))
-  (if (:%1 :*)
-    ,(lambda (p) `(if ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
-  (when (:%1 :*)
-    ,(lambda (p) `(when ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
-  (mini (:%1 :*)
-    ,(lambda (p) `(mini ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
-  (promise (:%1)
-    ,(lambda (p) `(promise ,(make-promise (cadr p))))))
+(tm-define (gui-menu-item x)
+  (:case dynamic)
+  (require-format x '(dynamic :%1))
+  `(gui$dynamic ,(cadr x)))
 
-(ahash-set! menu-pre-table 'unquote `((:%1) ,(lambda (p) p)))
-(ahash-set! menu-pre-table 'unquote-splicing `((:%1) ,(lambda (p) p)))
+(tm-define (gui-menu-item x)
+  (:case link)
+  (require-format x '(link :%1))
+  `(gui$link ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case let let*)
+  (require-format x '(:%1 :%1 :*))
+  `(,(car x) ,(cadr x) (menu-dynamic ,@(cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case with receive)
+  (require-format x '(:%1 :%2 :*))
+  `(,(car x) ,(cadr x) ,(caddr x) (menu-dynamic ,@(cdddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case for)
+  (require-format x '(for (:%1 :%1) :*))
+  (with fun `(lambda (,(caadr x)) (menu-dynamic ,@(cddr x)))
+    `(gui$dynamic (append-map ,fun ,(cadadr x)))))
+
+(tm-define (gui-menu-item x)
+  (:case cond)
+  (require-format x '(cond :*))
+  (with fun (lambda (x)
+              (with (pred? . body) x
+                (list pred? (cons* 'menu-dynamic body))))
+    `(cond ,@(map fun (cdr x)))))
+
+(tm-define (gui-menu-item x)
+  (:case group)
+  (require-format x '(group :%1))
+  `(gui$group ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case glue)
+  (require-format x '(glue :%4))
+  `(gui$glue ,(second x) ,(third x) ,(fourth x) ,(fifth x)))
+
+(tm-define (gui-menu-item x)
+  (:case color)
+  (require-format x '(color :%5))
+  `(gui$color ,(second x) ,(third x) ,(fourth x) ,(fifth x) ,(sixth x)))
+
+(tm-define (gui-menu-item x)
+  (:case input)
+  (require-format x '(input :%4))
+  `(gui$input ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case icon)
+  (require-format x '(icon :%1))
+  `(gui$icon ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case concat)
+  (require-format x '(concat :*))
+  `(gui$concat ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case verbatim)
+  (require-format x '(verbatim :*))
+  `(gui$concat ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case check)
+  (require-format x '(check :%3))
+  `(gui$check ,(gui-menu-item (cadr x)) ,(caddr x) ,(cadddr x)))
+
+(tm-define (gui-menu-item x)
+  (:case balloon)
+  (require-format x '(balloon :%2))
+  `(gui$balloon ,(gui-menu-item (cadr x)) ,(caddr x)))
+
+(tm-define (gui-menu-item x)
+  (:case ->)
+  (require-format x '(-> :%1 :*))
+  `(gui$pullright ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case =>)
+  (require-format x '(=> :%1 :*))
+  `(gui$pulldown ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case horizontal)
+  (require-format x '(horizontal :*))
+  `(gui$horizontal ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case vertical)
+  (require-format x '(vertical :*))
+  `(gui$vertical ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case hlist)
+  (require-format x '(hlist :*))
+  `(gui$hlist ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case vlist)
+  (require-format x '(vlist :*))
+  `(gui$vlist ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case tile)
+  (require-format x '(tile :integer? :*))
+  `(gui$tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case minibar)
+  (require-format x '(minibar :*))
+  `(gui$minibar ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case assuming)
+  (require-format x '(assuming :%1 :*))
+  `(gui$assuming ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case if)
+  (require-format x '(if :%1 :*))
+  `(gui$if ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case when)
+  (require-format x '(when :%1 :*))
+  `(gui$when ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case mini)
+  (require-format x '(mini :%1 :*))
+  `(gui$mini ,(cadr x) ,@(map gui-menu-item (cddr x))))
+
+(tm-define (gui-menu-item x)
+  (:case pick-color)
+  (require-format x '(pick-color :%1))
+  `(gui$pick-color ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case pick-background)
+  (require-format x '(pick-background :%1))
+  `(gui$pick-background ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  (:case symbol)
+  (require-format x '(symbol :string? :*))
+  `(gui$symbol ,@(cdr x)))
+
+(tm-define (gui-menu-item x)
+  (:case promise)
+  (require-format x '(promise :%1))
+  `(gui$promise ,(cadr x)))
+
+(tm-define (gui-menu-item x)
+  ;;(display* "x= " x "\n")
+  (cond ((== x '---) `(gui$vsep))
+	((== x (string->symbol "|")) `(gui$hsep))
+	((string? x) x)
+	((and (pair? x) (or (string? (car x)) (pair? (car x))))
+	 `(gui$button ,(gui-menu-item (car x)) ,@(cdr x)))
+        (else (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Definition of menus
+;; User interface for dynamic menu definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public-macro (menu-dynamic . body)
-  (list 'quasiquote (menu-pre body)))
+(tm-define-macro (menu-dynamic . l)
+  `(gui$list ,@(map gui-menu-item l)))
 
-(define-public-macro (menu-bind name . body)
-  (receive (opts real-body) (list-break body not-define-option?)
-    `(tm-define (,name) ,@opts ,(list 'quasiquote (menu-pre real-body)))))
+(tm-define-macro (define-menu head . body)
+  `(define ,head (menu-dynamic ,@body)))
 
-(define-public-macro (menu-extend name . body)
-  (receive (opts real-body) (list-break body not-define-option?)
+(tm-define-macro (tm-menu head . l)
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define ,head ,@opts (menu-dynamic ,@body))))
+
+(tm-define-macro (menu-bind name . l)
+  ;;(display* name " --> " l "\n")
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define (,name) ,@opts (menu-dynamic ,@body))))
+
+(define-public-macro (menu-extend name . l)
+  (receive (opts body) (list-break l not-define-option?)
     `(tm-redefine ,name ,@opts
        (with old-menu (tm-definition ,name ,@opts)
-	 (lambda () (append (old-menu)
-			    ,(list 'quasiquote (menu-pre body))))))))
+	 (lambda () (append (old-menu) (menu-dynamic ,@body)))))))
 
 (define-public-macro (lazy-menu module . menus)
   `(begin
