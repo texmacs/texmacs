@@ -247,6 +247,8 @@
     (assuming (not (tree-accessible-child? t i))
       (with name (tree-child-name t i)
 	(with s (string-append (upcase-first name) ":")
+	  (assuming (== name "")
+	    (glue #f #f 5 0))
 	  (assuming (!= name "")
 	    (glue #f #f 3 0)
 	    (mini #t (group (eval s))))))
