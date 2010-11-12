@@ -71,6 +71,35 @@ none_accessible (tree t) {
 }
 
 /******************************************************************************
+* Further properties
+******************************************************************************/
+
+string
+get_name (tree t) {
+  return the_drd->get_name (L(t));
+}
+
+string
+get_long_name (tree t) {
+  return the_drd->get_long_name (L(t));
+}
+
+string
+get_child_name (tree t, int i) {
+  return the_drd->get_child_name (t, i);
+}
+
+string
+get_child_long_name (tree t, int i) {
+  return the_drd->get_child_long_name (t, i);
+}
+
+int
+get_child_type (tree t, int i) {
+  return the_drd->get_type_child (t, i);
+}
+
+/******************************************************************************
 * Traversal of a tree
 ******************************************************************************/
 

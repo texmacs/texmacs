@@ -428,11 +428,14 @@ init_std_drd () {
 	identifier (0) ->                     // the key
 	integer (1));                         // binding from master?
   init (LABEL, "label",
-	fixed (1) -> identifier (0));
+	fixed (1) -> identifier (0) ->
+	name (0, "id") -> long_name (0, "identifier"));
   init (REFERENCE, "reference",
-	fixed (1) -> identifier (0));
+	fixed (1) -> identifier (0) ->
+	name (0, "id") -> long_name (0, "identifier"));
   init (PAGEREF, "pageref",
-	fixed (1) -> identifier (0) -> name ("page reference"));
+	fixed (1) -> identifier (0) -> name ("page reference") ->
+	name (0, "id") -> long_name (0, "identifier"));
   init (WRITE, "write",
 	fixed (1, 1, BIFORM) ->
 	string_type (0) ->                    // channel

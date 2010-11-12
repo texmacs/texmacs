@@ -144,7 +144,21 @@
     ("Remove downwards" (structured-remove-down))))
 
 (tm-menu (focus-extra-menu t))
-(tm-menu (focus-hidden-menu t))
+
+(tm-menu (focus-hidden-menu t)
+  (assuming (!= (length (tree-accessible-children t)) (tree-arity t))
+    ---
+    (for (i (.. 0 (tree-arity t)))
+      (assuming (not (tree-accessible-child? t i))
+	(with name (tree-child-long-name t i)
+	  (let* ((s `(concat "Set " ,name))
+		 (prompt (upcase-first name)))
+	    (assuming (!= name "")
+	      (when (tree-atomic? (tree-ref t i))
+		((eval s)
+		 (interactive (lambda (x) (tree-set (focus-tree) i x))
+		   (list prompt "string"
+			 (tree->string (tree-ref t i)))))))))))))
 
 (tm-menu (standard-focus-menu t)
   (dynamic (focus-variant-menu t))
@@ -227,7 +241,16 @@
      (structured-remove-down))))
 
 (tm-menu (focus-extra-icons t))
-(tm-menu (focus-hidden-icons t))
+
+(tm-menu (focus-hidden-icons t)
+  (for (i (.. 0 (tree-arity t)))
+    (assuming (not (tree-accessible-child? t i))
+      (with name (tree-child-name t i)
+	(with s (string-append (upcase-first name) ":")
+	  (assuming (!= name "")
+	    (glue #f #f 3 0)
+	    (mini #t (group (eval s))))))
+      (dynamic (string-input-handle t i "1w")))))
 
 (tm-menu (standard-focus-icons t)
   (minibar (dynamic (focus-variant-icons t)))

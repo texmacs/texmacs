@@ -328,8 +328,20 @@ drd_info_rep::set_name (tree_label l, string val) {
   set_attribute (l, "name", val);
 }
 
+void
+drd_info_rep::set_long_name (tree_label l, string val) {
+  set_attribute (l, "long-name", val);
+}
+
 string
 drd_info_rep::get_name (tree_label l) {
+  return as_string (get_attribute (l, "name"));
+}
+
+string
+drd_info_rep::get_long_name (tree_label l) {
+  string r= as_string (get_attribute (l, "long-name"));
+  if (r != "") return r;
   return as_string (get_attribute (l, "name"));
 }
 
@@ -498,6 +510,56 @@ drd_info_rep::get_writability_child (tree t, int i) {
   }
   if ((index<0) || (index>=N(ti->ci))) return WRITABILITY_DISABLE;
   return ti->ci[index].writability;
+}
+
+/******************************************************************************
+* Child names, based on set/get attribute for parent
+******************************************************************************/
+
+void
+drd_info_rep::set_child_name (tree_label l, int nr, string val) {
+  set_attribute (l, "name-" * as_string (nr), val);
+}
+
+void
+drd_info_rep::set_child_long_name (tree_label l, int nr, string val) {
+  set_attribute (l, "long-name-" * as_string (nr), val);
+}
+
+string
+drd_info_rep::get_child_name (tree_label l, int nr) {
+  return as_string (get_attribute (l, "name-" * as_string (nr)));
+}
+
+string
+drd_info_rep::get_child_long_name (tree_label l, int nr) {
+  return as_string (get_attribute (l, "long-name-" * as_string (nr)));
+}
+
+string
+drd_info_rep::get_child_name (tree t, int i) {
+  tag_info ti= info[L(t)];
+  int index= ti->get_index (i, N(t));
+  if (is_func (t, EXTERN) && N(t)>0 && is_atomic (t[0])) {
+    ti= info[make_tree_label ("extern:" * t[0]->label)];
+    index= ti->get_index (i-1, N(t));
+  }
+  if ((index<0) || (index>=N(ti->ci))) return "";
+  return get_child_name (L(t), index);
+}
+
+string
+drd_info_rep::get_child_long_name (tree t, int i) {
+  tag_info ti= info[L(t)];
+  int index= ti->get_index (i, N(t));
+  if (is_func (t, EXTERN) && N(t)>0 && is_atomic (t[0])) {
+    ti= info[make_tree_label ("extern:" * t[0]->label)];
+    index= ti->get_index (i-1, N(t));
+  }
+  if ((index<0) || (index>=N(ti->ci))) return "";
+  string r= get_child_long_name (L(t), index);
+  if (r != "") return r;
+  return get_child_name (L(t), index);
 }
 
 /******************************************************************************

@@ -67,7 +67,9 @@ public:
   void set_attribute (tree_label tag, string which, tree val);
   tree get_attribute (tree_label tag, string which);
   void set_name (tree_label tag, string val);
+  void set_long_name (tree_label tag, string val);
   string get_name (tree_label tag);
+  string get_long_name (tree_label tag);
   string get_class (tree t);
 
   /* Properties of the children of the tag */
@@ -98,6 +100,13 @@ public:
   tree get_env_child (tree t, int child, tree env);
   tree get_env_child (tree t, int child, string var, tree val);
   tree get_env_descendant (tree t, path p, tree env);
+
+  void set_child_name (tree_label tag, int nr, string val);
+  void set_child_long_name (tree_label tag, int nr, string val);
+  string get_child_name (tree_label tag, int nr);
+  string get_child_long_name (tree_label tag, int nr);
+  string get_child_name (tree t, int child);
+  string get_child_long_name (tree t, int child);
 
   /* Heuristic initialization */
   tree arg_access (tree t, tree arg, tree env, int& type);

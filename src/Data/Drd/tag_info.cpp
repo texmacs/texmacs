@@ -314,12 +314,6 @@ tag_info_rep::locals (int i, string var, string val) {
   return tag_info (pi, ci, extra);
 }
 
-tag_info
-tag_info_rep::name (string s) {
-  set_attribute ("name", s);
-  return tag_info (pi, ci, extra);
-}
-
 void
 tag_info_rep::set_attribute (string which, tree val) {
   if (extra == "") extra= tree (ATTR);
@@ -334,6 +328,34 @@ tag_info_rep::get_attribute (string which) {
     if (extra[i] == which)
       return extra[i+1];
   return "";
+}
+
+tag_info
+tag_info_rep::name (string s) {
+  set_attribute ("name", s);
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::long_name (string s) {
+  set_attribute ("long-name", s);
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::name (int i, string s) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
+  set_attribute ("name-" * as_string (i), s);
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::long_name (int i, string s) {
+  if (i < 0 || i >= N(ci)) cout << i << " out of " << N(ci) << "\n";
+  ASSERT (i >= 0 && i<N(ci), "index out of range");
+  set_attribute ("long-name-" * as_string (i), s);
+  return tag_info (pi, ci, extra);
 }
 
 int

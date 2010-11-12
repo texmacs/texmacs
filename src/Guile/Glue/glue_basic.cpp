@@ -1087,6 +1087,77 @@ tmg_tree_none_accessibleP (SCM arg1) {
 }
 
 SCM
+tmg_tree_name (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-name");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= get_name (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tree_long_name (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-long-name");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= get_long_name (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tree_child_name (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-name");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-name");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= get_child_name (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tree_child_long_name (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-long-name");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-long-name");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= get_child_long_name (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tree_child_type (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-type");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-type");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  int out= get_child_type (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_tree_load_inclusion (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "tree-load-inclusion");
 
@@ -4874,6 +4945,11 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-accessible-children", (FN) tmg_tree_accessible_children, 1, 0, 0);
   scm_new_procedure ("tree-all-accessible?", (FN) tmg_tree_all_accessibleP, 1, 0, 0);
   scm_new_procedure ("tree-none-accessible?", (FN) tmg_tree_none_accessibleP, 1, 0, 0);
+  scm_new_procedure ("tree-name", (FN) tmg_tree_name, 1, 0, 0);
+  scm_new_procedure ("tree-long-name", (FN) tmg_tree_long_name, 1, 0, 0);
+  scm_new_procedure ("tree-child-name", (FN) tmg_tree_child_name, 2, 0, 0);
+  scm_new_procedure ("tree-child-long-name", (FN) tmg_tree_child_long_name, 2, 0, 0);
+  scm_new_procedure ("tree-child-type", (FN) tmg_tree_child_type, 2, 0, 0);
   scm_new_procedure ("tree-load-inclusion", (FN) tmg_tree_load_inclusion, 1, 0, 0);
   scm_new_procedure ("tree-as-string", (FN) tmg_tree_as_string, 1, 0, 0);
   scm_new_procedure ("tree-extents", (FN) tmg_tree_extents, 1, 0, 0);
