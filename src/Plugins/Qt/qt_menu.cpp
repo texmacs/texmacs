@@ -91,7 +91,12 @@ QTMKeyCommand::apply()  {
 * Default action is empty.
 *******************************************************************************/
 
-QAction *qt_widget_rep::as_qaction() { return new QTMAction (NULL); };
+QAction *qt_widget_rep::as_qaction() {
+  QAction *a = new QTMAction (NULL); 
+  //  a->setSeparator(true);
+  a->setEnabled(false);
+  return a;
+};
 
 /******************************************************************************/
 
@@ -350,6 +355,8 @@ QTMMinibarAction::createWidget(QWidget* parent) {
     if (QWidgetAction * wa = qobject_cast<QWidgetAction*>(sa)) {
       QWidget *w = wa->requestWidget(wid);
       l->addWidget(w);
+    } else if ((sa->text().isNull())&&(sa->icon().isNull())) {
+      l->addSpacing(8);
     } else {
       QToolButton *tb = new QToolButton(wid);
       tb->setDefaultAction(sa);
@@ -378,6 +385,7 @@ menu_separator (bool vertical) {
   (void) vertical;
   QAction* a= new QTMAction (NULL);
   a->setSeparator (true);
+  a->setText("x");
   return tm_new<qt_menu_rep> (a);
 }
 
