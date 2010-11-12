@@ -164,11 +164,11 @@
   "Make @(group :string?) menu item."
   (widget-menu-group s style))
 
-(define (make-menu-input p)
+(define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
   (with (tag cmd type props width) p
     (widget-input (object->command cmd) type (props)
-		  widget-style-mini width)))
+		  (logior style widget-style-mini) width)))
 
 (define (make-menu-pick-color p)
   "Make @(pick-color :%1) menu item."
@@ -395,7 +395,7 @@
   ;;(display* "Make items " p ", " style "\n")
   (if (pair? p)
       (cond ((match? p '(input :%1 :string? :%1 :string?))
-	     (list (make-menu-input p)))
+	     (list (make-menu-input p style)))
 	    ((translatable? (car p))
 	     (list (make-menu-entry p style bar?)))
 	    ((symbol? (car p))
@@ -426,7 +426,7 @@
   (symbol (:string? :*)
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
-         ,(lambda (p style bar?) (list (make-menu-input p))))
+         ,(lambda (p style bar?) (list (make-menu-input p style))))
   (pick-color (:%1 :%1)
 	      ,(lambda (p style bar?) (list (make-menu-pick-color p))))
   (link (:%1)

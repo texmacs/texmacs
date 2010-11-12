@@ -77,13 +77,12 @@
 ;; Special handles for images
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (string-input-handle t i w)
-  (if (tree-atomic? (tree-ref t i))
-      (menu-dynamic
-	(input (when answer (tree-set (focus-tree) i answer)) "string"
-	       (list (tree->string (tree-ref t i))) w))
-      (menu-dynamic
-	(group "[n.a.]"))))
+(tm-menu (string-input-handle t i w)
+  (let* ((active? (tree-atomic? (tree-ref t i)))
+	 (s (if active? (tree->string (tree-ref t i)) "n.a.")))
+    (when active?
+      (input (when answer (tree-set (focus-tree) i answer)) "string"
+	     (list s) w))))
 
 (tm-menu (image-handles t)
   (glue #f #f 3 0)

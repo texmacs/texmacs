@@ -35,6 +35,7 @@ class input_widget_rep: public attribute_widget_rep {
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
   int     style;       // style of widget
+  bool    greyed;      // greyed input
   string  width;       // width of input field
   bool    persistent;  // don't complete after loss of focus
   bool    ok;          // input not canceled
@@ -75,7 +76,9 @@ public:
 input_widget_rep::input_widget_rep (command cb2, int st2, string w2, bool p2):
   attribute_widget_rep (south_west),
   s (""), draw_s (""), type ("default"), def (),
-  call_back (cb2), style (st2), width (w2), persistent (p2),
+  call_back (cb2), style (st2),
+  greyed ((style & WIDGET_STYLE_INERT) != 0),
+  width (w2), persistent (p2),
   ok (true), done (false), def_cur (0),
   dw (4*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false)
@@ -170,15 +173,17 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     SI hh= ((h - 2*ecart + PIXEL/2) / PIXEL) * PIXEL;
     if (yy + hh + 2*PIXEL <= h) hh += 2 * PIXEL;
     else if (yy + hh + PIXEL <= h) hh += PIXEL;
-    layout_pastel (ren, 0, yy, w, hh);
+    if (greyed) layout_default (ren, 0, yy, w, hh);
+    else layout_pastel (ren, 0, yy, w, hh);
     layout_lower (ren, 0, yy, w, hh);
   }
   else if (got_focus && hilit) {
     layout_dark (ren, 0, 0, w, h);
     layout_lower (ren, 0, 0, w, h);
   }
-  ren->set_color (black);
 
+  ren->set_color (black);
+  if (greyed) ren->set_color (dark_grey);
   ren->set_shrinking_factor (SHRINK);
   ecart *= SHRINK;
   fn->var_draw (ren, draw_s, dw - left, dh - bottom + ecart);
@@ -197,6 +202,7 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
 
 void
 input_widget_rep::handle_keypress (keypress_event ev) {
+  if (greyed) return;
   string key= ev->key;
   while ((N(key) >= 5) && (key(0,3) == "Mod") && (key[4] == '-') &&
 	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
@@ -304,6 +310,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
 
 void
 input_widget_rep::handle_mouse (mouse_event ev) {
+  if (greyed) return;
   update_draw_s ();
 
   string type= ev->type;
