@@ -470,6 +470,13 @@
   (with (tag pred? . items) p
     (if (pred?) (menu-expand-list items) '())))
 
+(define (menu-expand-when p)
+  "Expand potentially greyed menu @p."
+  (with (tag pred? . items) p
+    (if (pred?)
+	(cons* 'when #t (menu-expand-list items))
+	(cons* 'when #f (replace-procedures items)))))
+
 (define (menu-expand-mini p)
   "Expand mini menu @p."
   (with (tag pred? . items) p
@@ -485,7 +492,7 @@
   `(input ,(replace-procedures (cadr p))
           ,(caddr p)
 	  ,(with r ((cadddr p))
-	     (if (pair? r) (car r)))
+	     (if (pair? r) (car r) (replace-procedures (cadddr p))))
 	  ,(fifth p)))
 
 (define (menu-expand-pick-color p)
@@ -535,14 +542,14 @@
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
-  (hlist ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
-  (vlist ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
+  (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
+  (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (-> ,replace-procedures)
   (=> ,replace-procedures)
   (tile ,replace-procedures)
   (if ,menu-expand-if)
-  (when ,replace-procedures)
+  (when ,menu-expand-when)
   (mini ,menu-expand-mini)
   (promise ,menu-expand-promise))
  
