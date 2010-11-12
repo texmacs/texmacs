@@ -381,7 +381,6 @@ QTMWidgetAction::createWidget ( QWidget * parent ) {
     QFont f= le->font();
     f.setPixelSize(10);
     le->setFont(f);
-    le->setTextMargins(0,0,0,0);
     le->setFrame(false);
     le->setStyle(qtmstyle());
     QPalette pal(le->palette());
