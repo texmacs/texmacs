@@ -144,7 +144,6 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   // toolbars
   
-
 #ifdef Q_WS_MAC
 
   QWidget *cw= new QWidget ();
@@ -157,14 +156,23 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   mw->setCentralWidget(cw);
   
   mw->setUnifiedTitleAndToolBarOnMac(true);
-  mainToolBar= mw->addToolBar ("main toolbar");
-  modeToolBar = new QToolBar("mode toolbar");
-  bl->insertWidget(0, modeToolBar);
-  focusToolBar = new QToolBar("focus toolbar");
-  bl->insertWidget(1, focusToolBar);
-  userToolBar = new QToolBar("user toolbar");
-  bl->insertWidget(2, userToolBar);
   
+  mainToolBar= mw->addToolBar ("main toolbar");
+  mw->addToolBarBreak ();
+  
+  // HACK: we add a dumb action to the unified toolbar to circumvent a resize
+  // bug in Qt. The empty toolbar causes a small toolbar size which is not
+  // updated when the toolbar is populated by real actions.
+  
+  mainToolBar->addAction(QIcon(QPixmap(17,17)), "hack"); // hack
+  
+  modeToolBar = new QToolBar("mode toolbar", tw);
+  bl->insertWidget(0, modeToolBar);
+  focusToolBar = new QToolBar("focus toolbar", tw);
+  bl->insertWidget(1, focusToolBar);
+  userToolBar = new QToolBar("user toolbar", tw);
+  bl->insertWidget(2, userToolBar);
+
 #else
   mw->setCentralWidget(tw);
   
@@ -190,7 +198,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
 #endif
   
   
-//  mainToolBar->setStyle (qtmstyle ());
+  mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
@@ -213,6 +221,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
 #ifndef Q_WS_MAC
   tm_mainwindow()->menuBar()->setVisible (false);
 #endif  
+  
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
