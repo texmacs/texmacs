@@ -1088,9 +1088,9 @@ tmg_tree_none_accessibleP (SCM arg1) {
 
 SCM
 tmg_tree_name (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-name");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-name");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
   string out= get_name (in1);
@@ -1101,9 +1101,9 @@ tmg_tree_name (SCM arg1) {
 
 SCM
 tmg_tree_long_name (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-long-name");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-long-name");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
   string out= get_long_name (in1);
@@ -1114,10 +1114,10 @@ tmg_tree_long_name (SCM arg1) {
 
 SCM
 tmg_tree_child_name (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-name");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-child-name");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-name");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
@@ -1129,10 +1129,10 @@ tmg_tree_child_name (SCM arg1, SCM arg2) {
 
 SCM
 tmg_tree_child_long_name (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-long-name");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-child-long-name");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-long-name");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
@@ -1144,17 +1144,17 @@ tmg_tree_child_long_name (SCM arg1, SCM arg2) {
 
 SCM
 tmg_tree_child_type (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child-type");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-child-type");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child-type");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
-  int out= get_child_type (in1, in2);
+  string out= get_child_type (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return int_to_scm (out);
+  return string_to_scm (out);
 }
 
 SCM

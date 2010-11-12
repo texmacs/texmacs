@@ -74,27 +74,52 @@
     (> (tree-arity t) (tree-minimal-arity t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Special handles for images
+;; Subroutines for hidden fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (string-input-handle t i w)
-  (let* ((active? (tree-atomic? (tree-ref t i)))
-	 (s (if active? (tree->string (tree-ref t i)) "n.a.")))
-    (when active?
-      (input (when answer (tree-set (focus-tree) i answer)) "string"
-	     (list s) w))))
+(define (tree-child-name* t i)
+  (with s (tree-child-name t i)
+    (cond ((!= s "") s)
+          ((> (tree-arity t) (+ (length (tree-accessible-children t)) 2)) "")
+          (else (tree-child-type t i)))))
 
-(tm-menu (focus-hidden-icons t)
-  (:match (image :*))
-  (glue #f #f 3 0)
-  (mini #t (group "File:"))
-  (dynamic (string-input-handle t 0 "0.5w"))
-  (glue #f #f 3 0)
-  (mini #t (group "Width:"))
-  (dynamic (string-input-handle t 1 "3em"))
-  (glue #f #f 3 0)
-  (mini #t (group "Height:"))
-  (dynamic (string-input-handle t 2 "3em")))
+(define (type->format type)
+  (cond ((== type "url") "smart-file")
+        (else "string")))
+
+(define (type->width type)
+  (cond ((== type "length") "3em")
+        ((== type "duration") "3em")
+        (else "1w")))
+
+(tm-menu (string-input-icon t i)
+  (let* ((name (tree-child-name* t i))
+         (s (string-append (upcase-first name) ":"))
+         (active? (tree-atomic? (tree-ref t i)))
+	 (in (if active? (tree->string (tree-ref t i)) "n.a."))
+         (type (tree-child-type t i))
+         (fm (type->format type))
+         (w (type->width type)))
+    (assuming (== name "")
+      (glue #f #f 5 0))
+    (assuming (!= name "")
+      (glue #f #f 3 0)
+      (mini #t (group (eval s))))
+    (when active?
+      (input (when answer (tree-set (focus-tree) i answer)) fm
+	     (list in) w))))
+
+(tm-menu (string-input-menu t i)
+  (let* ((name (tree-child-long-name* t i))
+         (s `(concat "Set " ,name))
+         (prompt (upcase-first name))
+         (type (tree-child-type t i))
+         (fm (type->format type)))
+    (assuming (!= name "")
+      (when (tree-atomic? (tree-ref t i))
+        ((eval s)
+         (interactive (lambda (x) (tree-set (focus-tree) i x))
+           (list prompt fm (tree->string (tree-ref t i)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
@@ -150,15 +175,7 @@
     ---
     (for (i (.. 0 (tree-arity t)))
       (assuming (not (tree-accessible-child? t i))
-	(with name (tree-child-long-name t i)
-	  (let* ((s `(concat "Set " ,name))
-		 (prompt (upcase-first name)))
-	    (assuming (!= name "")
-	      (when (tree-atomic? (tree-ref t i))
-		((eval s)
-		 (interactive (lambda (x) (tree-set (focus-tree) i x))
-		   (list prompt "string"
-			 (tree->string (tree-ref t i)))))))))))))
+        (dynamic (string-input-menu t i))))))
 
 (tm-menu (standard-focus-menu t)
   (dynamic (focus-variant-menu t))
@@ -245,14 +262,7 @@
 (tm-menu (focus-hidden-icons t)
   (for (i (.. 0 (tree-arity t)))
     (assuming (not (tree-accessible-child? t i))
-      (with name (tree-child-name t i)
-	(with s (string-append (upcase-first name) ":")
-	  (assuming (== name "")
-	    (glue #f #f 5 0))
-	  (assuming (!= name "")
-	    (glue #f #f 3 0)
-	    (mini #t (group (eval s))))))
-      (dynamic (string-input-handle t i "1w")))))
+      (dynamic (string-input-icon t i)))))
 
 (tm-menu (standard-focus-icons t)
   (minibar (dynamic (focus-variant-icons t)))

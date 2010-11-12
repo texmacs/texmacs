@@ -522,7 +522,13 @@ init_std_drd () {
   init (FILL, "fill",
 	repeat (1, 1));                       // Not yet implemented
   init (IMAGE, "image",
-	fixed (1, 4, BIFORM) -> url_type (0) -> length (1));
+	fixed (1, 4, DETAILED) ->
+	url_type (0) -> name (0, "name") ->
+	length (1) -> name (1, "width") ->
+	length (2) -> name (2, "height") ->
+        length (3) -> name (3, "x") -> long_name (3, "x-offset") ->
+        length (4) -> name (4, "y") -> long_name (4, "x-offset"));
+
   init (BOX_INFO, "box-info",
 	fixed (1, 1, BIFORM) ->
 	regular (0) ->                        // content leading to box

@@ -573,29 +573,6 @@ edit_env_rep::exec_compound (tree t) {
   else return exec (f);
 }
 
-static int
-decode_type (string s) {
-  if (s == "regular") return TYPE_REGULAR;
-  else if (s == "adhoc") return TYPE_ADHOC;
-  else if (s == "variable") return TYPE_VARIABLE;
-  else if (s == "argument") return TYPE_ARGUMENT;
-  else if (s == "boolean") return TYPE_BOOLEAN;
-  else if (s == "integer") return TYPE_INTEGER;
-  else if (s == "string") return TYPE_STRING;
-  else if (s == "length") return TYPE_LENGTH;
-  else if (s == "numeric") return TYPE_NUMERIC;
-  else if (s == "code") return TYPE_CODE;
-  else if (s == "identifier") return TYPE_IDENTIFIER;
-  else if (s == "url") return TYPE_URL;
-  else if (s == "graphical") return TYPE_GRAPHICAL;
-  else if (s == "point") return TYPE_POINT;
-  else if (s == "animation") return TYPE_ANIMATION;
-  else if (s == "duration") return TYPE_DURATION;
-  else if (s == "unknown") return TYPE_UNKNOWN;
-  else if (s == "error") return TYPE_ERROR;
-  else return -1;
-}
-
 tree
 edit_env_rep::exec_drd_props (tree t) {
   int i, n= N(t);
@@ -683,12 +660,12 @@ edit_env_rep::exec_drd_props (tree t) {
 	    }
 	  }
 	}
-      else if (prop == "returns" && decode_type (as_string (val)) >= 0) {
-	drd->set_type (l, decode_type (as_string (val)));
+      else if (prop == "returns" && drd_encode_type (as_string (val)) >= 0) {
+	drd->set_type (l, drd_encode_type (as_string (val)));
 	drd->freeze_type (l);
       }
-      else if (decode_type (prop) >= 0) {
-	int tp= decode_type (prop);
+      else if (drd_encode_type (prop) >= 0) {
+	int tp= drd_encode_type (prop);
 	if (is_int (val)) {
 	  int i= as_int (val);
 	  drd->set_type (l, i, tp);

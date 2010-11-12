@@ -40,6 +40,58 @@ drd_decode (int i) {
 }
 
 /******************************************************************************
+* Names for drd types
+******************************************************************************/
+
+string
+drd_decode_type (int i) {
+  switch (i) {
+  case TYPE_REGULAR: return "regular";
+  case TYPE_ADHOC: return "adhoc";
+  case TYPE_VARIABLE: return "variable";
+  case TYPE_ARGUMENT: return "argument";
+  case TYPE_BOOLEAN: return "boolean";
+  case TYPE_INTEGER: return "integer";
+  case TYPE_STRING: return "string";
+  case TYPE_LENGTH: return "length";
+  case TYPE_NUMERIC: return "numeric";
+  case TYPE_CODE: return "code";
+  case TYPE_IDENTIFIER: return "identifier";
+  case TYPE_URL: return "url";
+  case TYPE_GRAPHICAL: return "graphical";
+  case TYPE_POINT: return "point";
+  case TYPE_ANIMATION: return "animation";
+  case TYPE_DURATION: return "duration";
+  case TYPE_UNKNOWN: return "unknown";
+  case TYPE_ERROR: return "error";
+  default: return "unknown";
+  }
+}
+
+int
+drd_encode_type (string s) {
+  if (s == "regular") return TYPE_REGULAR;
+  else if (s == "adhoc") return TYPE_ADHOC;
+  else if (s == "variable") return TYPE_VARIABLE;
+  else if (s == "argument") return TYPE_ARGUMENT;
+  else if (s == "boolean") return TYPE_BOOLEAN;
+  else if (s == "integer") return TYPE_INTEGER;
+  else if (s == "string") return TYPE_STRING;
+  else if (s == "length") return TYPE_LENGTH;
+  else if (s == "numeric") return TYPE_NUMERIC;
+  else if (s == "code") return TYPE_CODE;
+  else if (s == "identifier") return TYPE_IDENTIFIER;
+  else if (s == "url") return TYPE_URL;
+  else if (s == "graphical") return TYPE_GRAPHICAL;
+  else if (s == "point") return TYPE_POINT;
+  else if (s == "animation") return TYPE_ANIMATION;
+  else if (s == "duration") return TYPE_DURATION;
+  else if (s == "unknown") return TYPE_UNKNOWN;
+  else if (s == "error") return TYPE_ERROR;
+  else return -1;
+}
+
+/******************************************************************************
 * Properties of the tag
 ******************************************************************************/
 

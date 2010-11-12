@@ -94,9 +94,9 @@ get_child_long_name (tree t, int i) {
   return the_drd->get_child_long_name (t, i);
 }
 
-int
+string
 get_child_type (tree t, int i) {
-  return the_drd->get_type_child (t, i);
+  return drd_decode_type (the_drd->get_type_child (t, i));
 }
 
 /******************************************************************************

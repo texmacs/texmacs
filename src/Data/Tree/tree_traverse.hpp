@@ -27,7 +27,7 @@ string get_name (tree t);
 string get_long_name (tree t);
 string get_child_name (tree t, int i);
 string get_child_long_name (tree t, int i);
-int get_child_type (tree t, int i);
+string get_child_type (tree t, int i);
 
 path next_valid (tree t, path p);
 path previous_valid (tree t, path p);
