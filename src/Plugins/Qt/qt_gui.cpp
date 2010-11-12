@@ -779,6 +779,11 @@ qt_gui_rep::check_event (int type) {
   
 // cout << "."; cout.flush();
 //  return false;
+  
+  // do not interrupt while not in update
+  // (for example while painting the icons in the menus)
+  if (!updating) return false;
+  
   switch (type) {
     case INTERRUPT_EVENT:
       if (interrupted) return true;
