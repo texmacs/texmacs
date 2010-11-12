@@ -144,6 +144,19 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   // toolbars
   
+  mainToolBar  = new QToolBar ("main toolbar", tw);
+  modeToolBar  = new QToolBar ("mode toolbar", tw);
+  focusToolBar = new QToolBar ("focus toolbar", tw);
+  userToolBar   = new QToolBar ("user toolbar", tw);
+ 
+  mainToolBar->setStyle (qtmstyle ());
+  modeToolBar->setStyle (qtmstyle ());
+  focusToolBar->setStyle (qtmstyle ());
+  userToolBar->setStyle (qtmstyle ());
+  
+  focusToolBar->setIconSize(QSize(14,14));
+  
+  
 #ifdef Q_WS_MAC
 
   QWidget *cw= new QWidget ();
@@ -157,8 +170,8 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mw->setUnifiedTitleAndToolBarOnMac(true);
   
-  mainToolBar= mw->addToolBar ("main toolbar");
-  mw->addToolBarBreak ();
+  mw->addToolBar (mainToolBar);
+//  mw->addToolBarBreak ();
   
   // HACK: we add a dumb action to the unified toolbar to circumvent a resize
   // bug in Qt. The empty toolbar causes a small toolbar size which is not
@@ -166,25 +179,21 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mainToolBar->addAction(QIcon(QPixmap(17,17)), "hack"); // hack
   
-  modeToolBar = new QToolBar("mode toolbar", tw);
   bl->insertWidget(0, modeToolBar);
-  focusToolBar = new QToolBar("focus toolbar", tw);
   bl->insertWidget(1, focusToolBar);
-  userToolBar = new QToolBar("user toolbar", tw);
   bl->insertWidget(2, userToolBar);
 
 #else
   mw->setCentralWidget(tw);
   
-  mainToolBar= mw->addToolBar ("main toolbar");
+  mw->addToolBar (mainToolBar);
   mw->addToolBarBreak ();
-  modeToolBar= mw->addToolBar ("mode toolbar");
+  mw->addToolBar (modeToolBar);
   mw->addToolBarBreak ();
-  focusToolBar= mw->addToolBar ("focus toolbar");
+  mw->addToolBar (focusToolBar);
   mw->addToolBarBreak ();
-  userToolBar= mw->addToolBar ("user toolbar");
+  mw->addToolBar (userToolBar);
   mw->addToolBarBreak ();
-  
 #endif
   
 #if 0
@@ -198,14 +207,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
 #endif
   
   
-  mainToolBar->setStyle (qtmstyle ());
-  modeToolBar->setStyle (qtmstyle ());
-  focusToolBar->setStyle (qtmstyle ());
-  userToolBar->setStyle (qtmstyle ());
-  
-  focusToolBar->setIconSize(QSize(14,14));
-  
-  updateVisibility();
+ // updateVisibility();
 	
   
     // handles visibility
@@ -254,6 +256,42 @@ void qt_tm_widget_rep::updateVisibility()
   userToolBar->setVisible (visibility[4] && visibility[0]);
   tm_mainwindow()->statusBar()->setVisible (visibility[5]);
   tm_mainwindow()->menuBar()->setVisible (visibility[0]);
+  
+#ifdef Q_WS_MAC
+  {
+    // ensure that the topmost visible toolbar is always unified on Mac
+    // (actually only for main and mode toolbars, unifying focus is not
+    // appropriate)
+    
+    QBoxLayout *bl = qobject_cast<QBoxLayout*>(tm_mainwindow()->centralWidget()->layout());
+    QMainWindow *mw = tm_mainwindow();
+    
+    if (mainToolBar->isVisible()) {
+      if (mw->toolBarArea(modeToolBar) == Qt::TopToolBarArea) {
+        bool tmp = modeToolBar->isVisible();
+        mw->removeToolBar(modeToolBar);
+        modeToolBar->setVisible(tmp);
+      }
+      if (mw->toolBarArea(mainToolBar) == Qt::NoToolBarArea) {
+        mw->addToolBar(mainToolBar);
+        mainToolBar->setVisible(true); // to update the unified toolbar state
+      }
+      bl->insertWidget(0, modeToolBar);
+      bl->insertWidget(1, focusToolBar);
+      bl->insertWidget(2, userToolBar);
+    } else { 
+      if (modeToolBar->isVisible()) {
+        if (mw->toolBarArea(modeToolBar) == Qt::NoToolBarArea) {
+          bl->removeWidget(modeToolBar);
+          mw->addToolBar(modeToolBar);
+          modeToolBar->setVisible(true); // to update the unified toolbar state
+        }
+      }
+      bl->insertWidget(0, focusToolBar);
+      bl->insertWidget(1, userToolBar);
+    }
+  }
+#endif
 }
 
 
