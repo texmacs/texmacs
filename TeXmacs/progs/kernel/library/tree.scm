@@ -86,7 +86,7 @@
     (and p q (list-starts? q p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Cursor related trees trees
+;; Cursor related trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (cursor-tree)
@@ -132,6 +132,21 @@
   (if (selection-active-any?)
       (find-focus (path->tree (selection-path)) #f)
       (find-focus (cursor-tree) #t)))
+
+(define-public (cursor-on-border? t)
+  (let* ((p (cursor-path))
+         (i (cAr p)))
+    (and (== (cDr p) (tree->path t))
+         (or (== i 0)
+             (if (tree-atomic? t)
+                 (== i (string-length (tree->string t)))
+                 (== i 1))))))
+
+(define-public (cursor-inside? t)
+  (let* ((p (cDr (cursor-path)))
+         (q (tree->path t)))
+    (and (> (length p) (length q))
+         (== (sublist p 0 (length q)) q))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other special trees

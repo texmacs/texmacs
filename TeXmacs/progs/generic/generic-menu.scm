@@ -173,7 +173,7 @@
   ("Next similar" (traverse-next))
   ("First similar" (traverse-first))
   ("Last similar" (traverse-last))
-  (assuming (not (tree-none-accessible? t))
+  (assuming (cursor-inside? t)
     ("Exit left" (structured-exit-left))
     ("Exit right" (structured-exit-right))))
 
@@ -209,8 +209,9 @@
   ---
   (dynamic (focus-move-menu t))
   (assuming (or (structured-horizontal? t) (structured-vertical? t))
-    ---
-    (dynamic (focus-insert-menu t)))
+    (assuming (cursor-inside? t)
+      ---
+      (dynamic (focus-insert-menu t))))
   (dynamic (focus-extra-menu t))
   (dynamic (focus-hidden-menu t)))
 
@@ -244,7 +245,7 @@
    (traverse-first))
   ((balloon (icon "tm_similar_previous.xpm") "Go to previous similar tag")
    (traverse-previous))
-  (assuming (not (tree-none-accessible? t))
+  (assuming (cursor-inside? t)
     ((balloon (icon "tm_exit_left.xpm") "Exit tag on the left")
      (structured-exit-left))
     ((balloon (icon "tm_exit_right.xpm") "Exit tag on the right")
@@ -296,8 +297,9 @@
   (glue #f #f 5 0)
   (minibar (dynamic (focus-move-icons t)))
   (assuming (or (structured-horizontal? t) (structured-vertical? t))
-    (glue #f #f 5 0)
-    (minibar (dynamic (focus-insert-icons t))))
+    (assuming (cursor-inside? t)
+      (glue #f #f 5 0)
+      (minibar (dynamic (focus-insert-icons t)))))
   (dynamic (focus-extra-icons t))
   (dynamic (focus-hidden-icons t))
   (glue #f #f 5 0))
