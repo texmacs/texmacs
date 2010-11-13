@@ -140,7 +140,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   bar->setMinimumWidth(2);
   mw->setStatusBar (bar);
-  
+ 
   
   // toolbars
   
@@ -157,7 +157,10 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   focusToolBar->setIconSize(QSize(14,14));
   
   
+//#if 0
 #ifdef Q_WS_MAC
+
+  mw->setUnifiedTitleAndToolBarOnMac(true);
 
   QWidget *cw= new QWidget ();
   QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, cw);
@@ -168,9 +171,8 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mw->setCentralWidget(cw);
   
-  mw->setUnifiedTitleAndToolBarOnMac(true);
  
-  mw->addToolBar("dumb toolbar");
+//  mw->addToolBar("dumb toolbar")->setVisible(false);
   
   // HACK: we add a dumb action to the unified toolbar to circumvent a resize
   // bug in Qt. The empty toolbar causes a small toolbar size which is not
@@ -178,10 +180,12 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mainToolBar->addAction(QIcon(QPixmap(17,17)), "hack"); // hack
   
-  //  mw->addToolBar(mainToolBar);
+ //   mw->addToolBar(mainToolBar);
+ // mainToolBar->setVisible(false);
   //WARNING: the above line must be commented. The main toolbar is set in place
   //in updateVisibility since at that point the window size is correct.
   //otherwise we would induce artifacts in the toolbar which cause misbehaviors.
+  //this seems a bug in Qt/Cocoa.
   
   bl->insertWidget(0, modeToolBar);
   bl->insertWidget(1, focusToolBar);
@@ -261,6 +265,7 @@ void qt_tm_widget_rep::updateVisibility()
   tm_mainwindow()->statusBar()->setVisible (visibility[5]);
   tm_mainwindow()->menuBar()->setVisible (visibility[0]);
   
+//#if 0
 #ifdef Q_WS_MAC
   {
     // ensure that the topmost visible toolbar is always unified on Mac
@@ -269,8 +274,7 @@ void qt_tm_widget_rep::updateVisibility()
     
     QBoxLayout *bl = qobject_cast<QBoxLayout*>(tm_mainwindow()->centralWidget()->layout());
     QMainWindow *mw = tm_mainwindow();
-    
-    
+
     if (mw->toolBarArea(mainToolBar) == Qt::NoToolBarArea) {
       mw->addToolBar(mainToolBar);
     }
@@ -288,6 +292,11 @@ void qt_tm_widget_rep::updateVisibility()
           bl->removeWidget(modeToolBar);
           mw->addToolBar(modeToolBar);
           modeToolBar->setVisible(true); // to update the unified toolbar state
+          mw->removeToolBar(mainToolBar); 
+          // order is important, unified toolbar is quite buggy in 4.7.0
+          // we remove the main toolbar only after inserting the mode toolbar
+          // we want to remove it because even invisible it occupies a small 
+          // blank space
         }
       }
     }
