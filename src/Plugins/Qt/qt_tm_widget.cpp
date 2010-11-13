@@ -170,15 +170,13 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mw->setUnifiedTitleAndToolBarOnMac(true);
   
-  mw->addToolBar (mainToolBar);
-//  mw->addToolBarBreak ();
-  
   // HACK: we add a dumb action to the unified toolbar to circumvent a resize
   // bug in Qt. The empty toolbar causes a small toolbar size which is not
   // updated when the toolbar is populated by real actions.
   
   mainToolBar->addAction(QIcon(QPixmap(17,17)), "hack"); // hack
   
+  mw->addToolBar(mainToolBar);
   bl->insertWidget(0, modeToolBar);
   bl->insertWidget(1, focusToolBar);
   bl->insertWidget(2, userToolBar);
@@ -270,15 +268,9 @@ void qt_tm_widget_rep::updateVisibility()
       if (mw->toolBarArea(modeToolBar) == Qt::TopToolBarArea) {
         bool tmp = modeToolBar->isVisible();
         mw->removeToolBar(modeToolBar);
+        bl->insertWidget(0, modeToolBar);
         modeToolBar->setVisible(tmp);
       }
-      if (mw->toolBarArea(mainToolBar) == Qt::NoToolBarArea) {
-        mw->addToolBar(mainToolBar);
-        mainToolBar->setVisible(true); // to update the unified toolbar state
-      }
-      bl->insertWidget(0, modeToolBar);
-      bl->insertWidget(1, focusToolBar);
-      bl->insertWidget(2, userToolBar);
     } else { 
       if (modeToolBar->isVisible()) {
         if (mw->toolBarArea(modeToolBar) == Qt::NoToolBarArea) {
@@ -287,8 +279,6 @@ void qt_tm_widget_rep::updateVisibility()
           modeToolBar->setVisible(true); // to update the unified toolbar state
         }
       }
-      bl->insertWidget(0, focusToolBar);
-      bl->insertWidget(1, userToolBar);
     }
   }
 #endif
