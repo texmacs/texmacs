@@ -130,6 +130,8 @@
 (tm-define (structured-remove forwards?) (remove-argument forwards?))
 (tm-define (structured-insert-up) (noop))
 (tm-define (structured-insert-down) (noop))
+(tm-define (structured-remove-up) (noop))
+(tm-define (structured-remove-down) (noop))
 
 (tm-define (structured-insert-start)
   (structured-first)

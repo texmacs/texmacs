@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (table table-menu)
-  (:use (table table-edit)))
+  (:use (table table-edit)
+        (generic generic-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting tables
@@ -202,29 +203,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind table-menu
-  (-> "Insert"
-      ("Row above" (table-insert-row #f))
-      ("Row below" (table-insert-row #t))
-      ("Column to the left" (table-insert-column #f))
-      ("Column to the right" (table-insert-column #t))
-      ("Blank row" (interactive table-insert-blank-row))
-      ("Blank column" (interactive table-insert-blank-column)))
-  (-> "Remove"
-      ("This row" (table-remove-row #f))
-      ("This column" (table-remove-column #f)))
-  ---
+  (assuming #f
+    (-> "Insert"
+        ("Row above" (table-insert-row #f))
+        ("Row below" (table-insert-row #t))
+        ("Column to the left" (table-insert-column #f))
+        ("Column to the right" (table-insert-column #t))
+        ("Blank row" (interactive table-insert-blank-row))
+        ("Blank column" (interactive table-insert-blank-column)))
+    (-> "Remove"
+        ("This row" (table-remove-row #f))
+        ("This column" (table-remove-column #f)))
+    ---)
   (-> "Width" (link table-width-menu))
   (-> "Height" (link table-height-menu))
   (-> "Border" (link table-border-menu))
   (-> "Padding" (link table-padding-menu))
   (-> "Horizontal alignment" (link table-halign-menu))
   (-> "Vertical alignment" (link table-valign-menu))
-  ---
+  ;;---
   (-> "Special properties" (link table-special-menu)))
 
 (menu-bind cell-menu
   (-> "Operation mode" (link cell-mode-menu))
-  ---
+  ;;---
   (-> "Width" (link cell-width-menu))
   (-> "Height" (link cell-height-menu))
   (-> "Border" (link cell-border-menu))
@@ -232,7 +234,7 @@
   (-> "Horizontal alignment" (link cell-halign-menu))
   (-> "Vertical alignment" (link cell-valign-menu))
   (-> "Background color" (link cell-color-menu))
-  ---
+  ;;---
   (-> "Special properties" (link cell-special-menu)))
 
 (menu-bind vertical-table-cell-menu
@@ -248,6 +250,23 @@
   (if (== (get-cell-mode) "row") (-> "Row" (link cell-menu)))
   (if (== (get-cell-mode) "column") (-> "Column" (link cell-menu)))
   (if (== (get-cell-mode) "table") (-> "Cells" (link cell-menu))))
+
+(tm-menu (standard-focus-menu t)
+  (:require (table-markup-context? t))
+  (dynamic (focus-variant-menu t))
+  (-> "Move" (dynamic (focus-move-menu t)))
+  (-> "Resize" (dynamic (focus-insert-menu t)))
+  ---
+  (group "Table")
+  (link table-menu)
+  ---
+  (if (== (get-cell-mode) "cell") (group "Cell"))
+  (if (== (get-cell-mode) "row") (group "Row"))
+  (if (== (get-cell-mode) "column") (group "Column"))
+  (if (== (get-cell-mode) "table") (group "Cells"))
+  (link cell-menu)
+  (dynamic (focus-extra-menu t))
+  (dynamic (focus-hidden-menu t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for manipulation of tables
@@ -410,11 +429,13 @@
 	    "Use row below as border")
    (table-row-decoration #t)))
 
-(menu-bind table-icons
+(tm-menu (focus-extra-icons t)
+  (:require (table-markup-context? t))
   |
-  (=> (balloon (icon "tm_table_insert.xpm")
-	       "Insert or delete rows or columns")
-      (link table-insert-icons))
+  (assuming #f
+    (=> (balloon (icon "tm_table_insert.xpm")
+	         "Insert or delete rows or columns")
+        (link table-insert-icons)))
   (=> (balloon (icon "tm_table_size.xpm") "Specify the size of the table")
       (group "Width")
       (link table-width-menu)

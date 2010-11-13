@@ -120,8 +120,7 @@
 
 ;(display "Booting table mode\n")
 (lazy-keyboard (table table-kbd) in-table?)
-(lazy-menu (table table-menu) table-menu table-icons insert-table-menu
-	   horizontal-table-cell-menu vertical-table-cell-menu)
+(lazy-menu (table table-menu) insert-table-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting graphics mode\n")

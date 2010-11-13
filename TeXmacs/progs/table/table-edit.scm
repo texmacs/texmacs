@@ -26,6 +26,11 @@
 (define-group table-tag
   tabular tabular* block block*)
 
+(tm-define (table-markup-context? t)
+  (or (tree-in? t '(table tformat))
+      (and (== (tree-arity t) 1)
+           (tree-in? (tree-ref t 0) '(table tformat)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting rows and columns
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -54,6 +59,14 @@
 (tm-define (structured-remove forwards?)
   (:inside table)
   (table-remove-column forwards?))
+
+(tm-define (structured-remove-up)
+  (:inside table)
+  (table-remove-row #f))
+
+(tm-define (structured-remove-down)
+  (:inside table)
+  (table-remove-row #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Posititioning
