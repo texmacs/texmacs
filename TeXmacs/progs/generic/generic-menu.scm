@@ -77,24 +77,43 @@
 ;; Subroutines for hidden fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (hidden-child? t i)
+  (and (not (tree-accessible-child? t i))
+       (!= (type->format (tree-child-type t i)) "n.a.")))
+
+(define (hidden-children t)
+  (with fun (lambda (i) (if (hidden-child? t i) (list (tree-ref t i)) (list)))
+    (append-map fun (.. 0 (tree-arity t)))))
+
 (define (tree-child-name* t i)
   (with s (tree-child-name t i)
     (cond ((!= s "") s)
-          ((> (tree-arity t) (+ (length (tree-accessible-children t)) 1)) "")
+          ((> (length (hidden-children t)) 1) "")
           (else (tree-child-type t i)))))
 
 (define (tree-child-long-name* t i)
   (with s (tree-child-long-name t i)
     (cond ((!= s "") s)
-          ((> (tree-arity t) (+ (length (tree-accessible-children t)) 1)) "")
+          ((> (length (hidden-children t)) 1) "")
           (else (tree-child-type t i)))))
 
 (define (type->format type)
-  (cond ((== type "url") "smart-file")
+  (cond ((== type "adhoc") "n.a.")
+        ((== type "raw") "n.a.")
+        ((== type "url") "smart-file")
+        ((== type "graphical") "n.a.")
+        ((== type "point") "n.a.")
+        ((== type "obsolete") "n.a.")
+        ((== type "unknown") "n.a.")
+        ((== type "error") "n.a.")
         (else "string")))
 
 (define (type->width type)
-  (cond ((== type "length") "3em")
+  (cond ((== type "boolean") "3em")
+        ((== type "integer") "3em")
+        ((== type "length") "3em")
+        ((== type "numeric") "3em")
+        ((== type "identifier") "8em")
         ((== type "duration") "3em")
         (else "1w")))
 
@@ -177,10 +196,10 @@
 (tm-menu (focus-extra-menu t))
 
 (tm-menu (focus-hidden-menu t)
-  (assuming (!= (length (tree-accessible-children t)) (tree-arity t))
+  (assuming (nnull? (hidden-children t))
     ---
     (for (i (.. 0 (tree-arity t)))
-      (assuming (not (tree-accessible-child? t i))
+      (assuming (hidden-child? t i)
         (dynamic (string-input-menu t i))))))
 
 (tm-menu (standard-focus-menu t)
@@ -267,7 +286,7 @@
 
 (tm-menu (focus-hidden-icons t)
   (for (i (.. 0 (tree-arity t)))
-    (assuming (not (tree-accessible-child? t i))
+    (assuming (hidden-child? t i)
       (dynamic (string-input-icon t i)))))
 
 (tm-menu (standard-focus-icons t)

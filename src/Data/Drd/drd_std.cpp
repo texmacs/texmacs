@@ -523,7 +523,7 @@ init_std_drd () {
 	repeat (1, 1));                       // Not yet implemented
   init (IMAGE, "image",
 	fixed (1, 4, DETAILED) ->
-	url_type (0) -> name (0, "name") ->
+	url_type (0) -> name (0, "url") ->
 	length (1) -> name (1, "width") ->
 	length (2) -> name (2, "height") ->
         length (3) -> name (3, "x") -> long_name (3, "x-offset") ->
