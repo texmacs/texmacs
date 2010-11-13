@@ -89,12 +89,14 @@
   (with s (tree-child-name t i)
     (cond ((!= s "") s)
           ((> (length (hidden-children t)) 1) "")
+          ((== (tree-child-type t i) "regular") "")
           (else (tree-child-type t i)))))
 
 (define (tree-child-long-name* t i)
   (with s (tree-child-long-name t i)
     (cond ((!= s "") s)
           ((> (length (hidden-children t)) 1) "")
+          ((== (tree-child-type t i) "regular") "")
           (else (tree-child-type t i)))))
 
 (define (type->format type)

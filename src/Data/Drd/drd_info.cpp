@@ -693,6 +693,8 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
       return "";
     tree_label inner= make_tree_label (as_string (t[0]));
     tree_label outer= make_tree_label (as_string (t[1]));
+    if (get_nr_indices (inner) > 0)
+      type= get_type_child (tree (inner, arg), 0);
     if ((get_nr_indices (inner) > 0) &&
 	(get_accessible (inner, 0) == ACCESSIBLE_ALWAYS) &&
 	all_accessible (outer))
@@ -727,6 +729,12 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
       if (aenv != "") {
 	if (ctype != TYPE_INVALID) type= ctype;
 	if (is_accessible_child (t, i)) return aenv;
+      }
+      else if (type == TYPE_UNKNOWN &&
+               ctype != TYPE_INVALID &&
+               ctype != TYPE_UNKNOWN) {
+        type= ctype;
+        //cout << "  found type " << t << ", " << arg << ", " << type << "\n";
       }
     }
     return "";
@@ -770,7 +778,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   //cout << "With-like: " << var << LF;
   for (i=0; i<n; i++) {
     if (is_atomic (macro[i]))
-      set_child_name (l, i, macro[i]->label);
+      if (l >= START_EXTENSIONS || get_child_name (l, i) == "")
+        set_child_name (l, i, macro[i]->label);
     int  type= TYPE_UNKNOWN;
     tree arg (ARG, macro[i]);
     tree env= arg_access (macro[n], arg, tree (ATTR), type);
@@ -820,6 +829,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
     int type= TYPE_UNKNOWN;
     tree arg (ARG, xmacro[0], as_string (i));
     tree env= arg_access (xmacro[1], arg, tree (ATTR), type);
+    //cout << var << ", " << xmacro << ", " << i << " -> " << type << "\n";
     set_type (l, i, type);
     if (env != "") {
       set_accessible (l, i, ACCESSIBLE_ALWAYS);
