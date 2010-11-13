@@ -527,7 +527,7 @@ init_std_drd () {
 	length (1) -> name (1, "width") ->
 	length (2) -> name (2, "height") ->
         length (3) -> name (3, "x") -> long_name (3, "x-offset") ->
-        length (4) -> name (4, "y") -> long_name (4, "x-offset"));
+        length (4) -> name (4, "y") -> long_name (4, "y-offset"));
 
   init (BOX_INFO, "box-info",
 	fixed (1, 1, BIFORM) ->
