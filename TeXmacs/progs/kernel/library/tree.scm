@@ -123,7 +123,7 @@
 	((== t (buffer-tree)) t)
 	((tree-none-accessible? t) t)
 	((tree-atomic? t) (find-focus (tree-up t) #f))
-	((tree-in? t '(document concat tformat table row cell))
+	((tree-in? t '(document concat tformat table row cell shown hidden))
 	 (find-focus (tree-up t) #f))
 	(up? (find-focus (tree-up t) #f))
 	(else t)))

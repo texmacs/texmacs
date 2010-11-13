@@ -536,7 +536,7 @@
   (== mode (graphics-mode)))
 
 (tm-define (graphics-set-mode val)
-  (:check-mark "*" graphics-mode-has-value?)
+  (:check-mark "v" graphics-mode-has-value?)
   (graphics-group-start)
   (with old-mode (graphics-mode)
      (graphics-enter-mode old-mode val)

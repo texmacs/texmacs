@@ -305,4 +305,7 @@
   (glue #f #f 5 0))
 
 (tm-menu (texmacs-focus-icons)
-  (dynamic (standard-focus-icons (focus-tree))))
+  (assuming (in-graphics?)
+    (dynamic (graphics-focus-icons)))
+  (assuming (not (in-graphics?))
+    (dynamic (standard-focus-icons (focus-tree)))))
