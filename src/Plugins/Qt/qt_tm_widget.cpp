@@ -169,6 +169,8 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   mw->setCentralWidget(cw);
   
   mw->setUnifiedTitleAndToolBarOnMac(true);
+ 
+  mw->addToolBar("dumb toolbar");
   
   // HACK: we add a dumb action to the unified toolbar to circumvent a resize
   // bug in Qt. The empty toolbar causes a small toolbar size which is not
@@ -176,7 +178,11 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mainToolBar->addAction(QIcon(QPixmap(17,17)), "hack"); // hack
   
-  mw->addToolBar(mainToolBar);
+  //  mw->addToolBar(mainToolBar);
+  //WARNING: the above line must be commented. The main toolbar is set in place
+  //in updateVisibility since at that point the window size is correct.
+  //otherwise we would induce artifacts in the toolbar which cause misbehaviors.
+  
   bl->insertWidget(0, modeToolBar);
   bl->insertWidget(1, focusToolBar);
   bl->insertWidget(2, userToolBar);
@@ -263,6 +269,11 @@ void qt_tm_widget_rep::updateVisibility()
     
     QBoxLayout *bl = qobject_cast<QBoxLayout*>(tm_mainwindow()->centralWidget()->layout());
     QMainWindow *mw = tm_mainwindow();
+    
+    
+    if (mw->toolBarArea(mainToolBar) == Qt::NoToolBarArea) {
+      mw->addToolBar(mainToolBar);
+    }
     
     if (mainToolBar->isVisible()) {
       if (mw->toolBarArea(modeToolBar) == Qt::TopToolBarArea) {
