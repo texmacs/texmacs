@@ -197,12 +197,11 @@
   ("Circle" (graphics-set-mode "carc"))
   ("Text box" (graphics-set-mode "text-at"))
   ---
-  ("Move" (graphics-set-mode '(group-edit move)))
-  ("Zoom/unzoom" (graphics-set-mode '(group-edit zoom)))
-  ("Rotate" (graphics-set-mode '(group-edit rotate)))
-  ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup)))
-  ---
-  ("Properties" (graphics-set-mode '(group-edit props))))
+  ("Set properties" (graphics-set-mode '(group-edit props)))
+  ("Move objects" (graphics-set-mode '(group-edit move)))
+  ("Resize objects" (graphics-set-mode '(group-edit zoom)))
+  ("Rotate objects" (graphics-set-mode '(group-edit rotate)))
+  ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup))))
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
@@ -249,16 +248,17 @@
   ("0.5 ln" (graphics-set-line-width "0.5ln"))
   ("1 ln" (graphics-set-line-width "1ln"))
   ("2 ln" (graphics-set-line-width "2ln"))
+  ("5 ln" (graphics-set-line-width "5ln"))
   ---
   ("Other" (interactive graphics-set-line-width)))
 
 (menu-bind graphics-dash-menu
   (-> "Style"
-      ("None" (graphics-set-dash-style "default"))
+      ("Default" (graphics-set-dash-style "default"))
       ---
       ("- - - - - - - - -"    (graphics-set-dash-style "10"))
-      ("----  ----  ----  --" (graphics-set-dash-style "11100"))
-      ("---- - ---- - ---- -" (graphics-set-dash-style "1111010"))
+      ("---  ---  ---  ---" (graphics-set-dash-style "11100"))
+      ("--- - --- - --- -" (graphics-set-dash-style "1111010"))
       ---
       ("Other" (interactive graphics-set-dash-style)))
   (-> "Unit"
@@ -271,10 +271,11 @@
       ("Other" (interactive graphics-set-dash-style-unit))))
 
 (menu-bind graphics-line-arrows-menu
-  ("None" (graphics-set-line-arrows 0))
+  ("Default" (graphics-set-line-arrows "default"))
   ---
-  (" ------------------>" (graphics-set-line-arrows 1))
-  ("<---------------->" (graphics-set-line-arrows 2)))
+  ("---" (graphics-set-line-arrows 0))
+  ("--->" (graphics-set-line-arrows 1))
+  ("<--->" (graphics-set-line-arrows 2)))
 
 (menu-bind graphics-fill-color-menu
   ("Default" (graphics-set-fill-color "default"))
@@ -285,32 +286,29 @@
   ---
   ("Other" (interactive graphics-set-fill-color)))
 
-(menu-bind graphics-text-align-menu
-  ("Default" (begin (graphics-set-textat-halign "default")
-		    (graphics-set-textat-valign "default")))
+(menu-bind graphics-text-halign-menu
+  ("Default" (graphics-set-textat-halign "default"))
   ---
-  (-> "Horizontal"
-      ("Default" (graphics-set-textat-halign "default"))
-      ---
-      ("Left" (graphics-set-textat-halign "left"))
-      ("Center" (graphics-set-textat-halign "center"))
-      ("Right" (graphics-set-textat-halign "right")))
-  (-> "Vertical"
-      ("Default" (graphics-set-textat-valign "default"))
-      ---
-      ("Bottom" (graphics-set-textat-valign "bottom"))
-      ("Base" (graphics-set-textat-valign "base"))
-      ("Center" (graphics-set-textat-valign "center"))
-      ("Top" (graphics-set-textat-valign "top"))))
+  ("Left" (graphics-set-textat-halign "left"))
+  ("Center" (graphics-set-textat-halign "center"))
+  ("Right" (graphics-set-textat-halign "right")))
+
+(menu-bind graphics-text-valign-menu
+  ("Default" (graphics-set-textat-valign "default"))
+  ---
+  ("Bottom" (graphics-set-textat-valign "bottom"))
+  ("Base" (graphics-set-textat-valign "base"))
+  ("Center" (graphics-set-textat-valign "center"))
+  ("Top" (graphics-set-textat-valign "top")))
 
 (menu-bind graphics-enable-change-properties-menu
   ("Color"  (graphics-toggle-color-enabled))
+  ("Fill color" (graphics-toggle-fill-color-enabled))
   ("Point style" (graphics-toggle-point-style-enabled))
   ("Line width" (graphics-toggle-line-width-enabled))
   ("Dash style" (graphics-toggle-dash-style-enabled))
   ("Dash unit" (graphics-toggle-dash-style-unit-enabled))
   ("Line arrows" (graphics-toggle-line-arrows-enabled))
-  ("Fill color" (graphics-toggle-fill-color-enabled))
   ("Text box horizontal alignment" (graphics-toggle-textat-halign-enabled))
   ("Text box vertical alignment" (graphics-toggle-textat-valign-enabled)))
 
@@ -318,22 +316,35 @@
 ;; Menus for graphics mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind graphics-menu
+(menu-bind graphics-insert-menu
   (-> "Geometry" (link graphics-geometry-menu))
   (-> "Grids" (link graphics-grids-menu))
-  (-> "Mode" (link graphics-mode-menu))
-  (-> "Color" (link graphics-color-menu))
-  (-> "Point style" (link graphics-point-style-menu))
-  (-> "Fill color" (link graphics-fill-color-menu))
-  (-> "Line properties"
-      (-> "Width" (link graphics-line-width-menu))
-      (-> "Dashes" (link graphics-dash-menu))
-      (-> "Arrows" (link graphics-line-arrows-menu)))
- ;(-> "Fill"
- ;    (-> "Fill mode" ...)
- ;    (-> "Fill color" ...))
-  (-> "Text box alignment" (link graphics-text-align-menu))
-  (-> "Enable change" (link graphics-enable-change-properties-menu)))
+  ---
+  (link graphics-mode-menu)
+  ;;(-> "Enable change" (link graphics-enable-change-properties-menu))
+  )
+
+(menu-bind graphics-focus-menu
+  (-> (eval (upcase-first (gr-mode->string (graphics-mode))))
+      (link graphics-mode-menu))
+  (assuming (func? (graphics-mode) 'edit)
+    ---
+    (assuming (graphics-mode-attribute? (graphics-mode) "color")
+      (-> "Color" (link graphics-color-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
+      (-> "Fill color" (link graphics-fill-color-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
+      (-> "Point style" (link graphics-point-style-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
+      (-> "Line width" (link graphics-line-width-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
+      (-> "Line dashes" (link graphics-dash-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "line-arrows")
+      (-> "Line arrows" (link graphics-line-arrows-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
+      (-> "Horizontal alignment" (link graphics-text-halign-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "text-at-valign")
+      (-> "Vertical alignment" (link graphics-text-valign-menu)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for graphics mode
@@ -395,43 +406,75 @@
    (graphics-set-mode '(group-edit group-ungroup))))
 
 (tm-menu (graphics-property-icons)
-  (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
-    (=> (balloon (icon "tm_point_style.xpm") "Point style")
-        (link graphics-point-style-menu)))
-  (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
-    (=> (balloon (icon "tm_line_width.xpm") "Line width")
-        (link graphics-line-width-menu)))
-  (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
-    (=> (balloon (icon "tm_line_style.xpm") "Dashes")
-        (link graphics-dash-menu)))
-  (assuming (graphics-mode-attribute? (graphics-mode) "line-arrows")
-    (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
-        (link graphics-line-arrows-menu)))
   (assuming (graphics-mode-attribute? (graphics-mode) "color")
-    (=> (balloon (icon "tm_gr_color.xpm") "Line color")
-        (link graphics-color-menu)))
+    /
+    (mini #t
+      (group "Color:")
+      (with col (graphics-get-property "gr-color")
+        (assuming (== col "default")
+          (=> (color "black" #f #f 25 17)
+              (link graphics-color-menu)))
+        (assuming (== col "none")
+          (=> "none"
+              (link graphics-color-menu)))
+        (assuming (and (!= col "default") (!= col "none"))
+          (=> (color (eval col) #f #f 25 17)
+              (link graphics-color-menu))))))
   (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
-    (=> (balloon (icon "tm_fill.xpm") "Fill color")
-        (link graphics-fill-color-menu)))
+    /
+    (mini #t
+      (group "Fill color:")
+      (with col (graphics-get-property "gr-fill-color")
+        (assuming (== col "default")
+          (=> (glue #f #f 24 15)
+              (link graphics-fill-color-menu)))
+        (assuming (== col "none")
+          (=> "none"
+              (link graphics-fill-color-menu)))
+        (assuming (and (!= col "default") (!= col "none"))
+          (=> (color (eval col) #f #f 25 17)
+              (link graphics-fill-color-menu))))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
+    /
+    (mini #t
+      (group "Point style:")
+      (=> (eval (graphics-get-property "gr-point-style"))
+          (link graphics-point-style-menu))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
+    /
+    (mini #t
+      (group "Line width:")
+      (input (when answer (graphics-set-line-width answer)) "string"
+	     (list (graphics-get-property "gr-line-width")
+                   "default" "0.5ln" "1ln" "2ln" "5ln") "3em")))
+  (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
+    /
+    (mini #t
+      (group "Dashed:")
+      (let* ((dash (graphics-get-property "gr-dash-style"))
+             (s (decode-dash dash)))
+        (=> (eval s)
+            (link graphics-dash-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "line-arrows")
+    /
+    (mini #t
+      (group "Arrows:")
+      (let* ((arrows (graphics-get-property "gr-line-arrows"))
+             (s (decode-arrows arrows)))
+        (=> (eval s)
+            (link graphics-line-arrows-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
-    (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
-        (link graphics-text-align-menu))))
-
-(tm-menu (graphics-set-mode-minimenu)
-  ("Point" (graphics-set-mode "point"))
-  ("Line" (graphics-set-mode "line"))
-  ("Closed line" (graphics-set-mode "cline"))
-  ("Spline" (graphics-set-mode "spline"))
-  ("Closed spline" (graphics-set-mode "cspline"))
-  ("Arc" (graphics-set-mode "arc"))
-  ("Closed arc" (graphics-set-mode "carc"))
-  ("Text" (graphics-set-mode "text-at"))
-  ---
-  ("Set properties" (graphics-set-mode '(group-edit props)))
-  ("Move objects" (graphics-set-mode '(group-edit move)))
-  ("Resize objects" (graphics-set-mode '(group-edit zoom)))
-  ("Rotate objects" (graphics-set-mode '(group-edit rotate)))
-  ("Group / ungroup" (graphics-set-mode '(group-edit group-ungroup))))
+    /
+    (mini #t
+      (group "Horizontal alignment:")
+      (=> (eval (graphics-get-property "gr-text-at-halign"))
+          (link graphics-text-halign-menu))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
+    /
+    (mini #t
+      (group "Vertical alignment:")
+      (=> (eval (graphics-get-property "gr-text-at-valign"))
+          (link graphics-text-valign-menu)))))
 
 (define (gr-mode->string s)
   (cond ((== s '(edit point)) "point")
@@ -451,9 +494,9 @@
 
 (tm-menu (graphics-icons)
   (link graphics-global-icons)
-  |
+  /
   (link graphics-insert-icons)
-  |
+  /
   (link graphics-group-property-icons)
   (link graphics-group-icons))
 
@@ -461,7 +504,5 @@
   (mini #t
     (=> (balloon (eval (upcase-first (gr-mode->string (graphics-mode))))
                  "Current graphical mode")
-        (dynamic (graphics-set-mode-minimenu))))
-  (assuming (func? (graphics-mode) 'edit)
-    |
-    (link graphics-property-icons)))
+        (link graphics-mode-menu)))
+  (link graphics-property-icons))

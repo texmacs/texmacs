@@ -35,7 +35,9 @@
 (menu-bind texmacs-menu
   (=> "File" (link file-menu))
   (=> "Edit" (link edit-menu))
-  (if (in-graphics?) (=> "Graphics" (link graphics-menu)))
+  (if (in-graphics?)
+      (=> "Insert" (link graphics-insert-menu))
+      (=> "Focus" (link graphics-focus-menu)))
   (if (not (in-graphics?))
       (=> "Insert" (link insert-menu))
       (if (in-session?) (=> "Session" (link session-menu)))
@@ -73,7 +75,9 @@
   ---
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
-  (if (in-graphics?) (-> "Graphics" (link graphics-menu)))
+  (if (in-graphics?)
+      (-> "Insert" (link graphics-insert-menu))
+      (-> "Focus" (link graphics-focus-menu)))
   (if (not (in-graphics?))
       (-> "Insert" (link insert-menu))
       (if (in-session?) (-> "Session" (link session-menu)))

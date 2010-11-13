@@ -599,6 +599,13 @@
        "default"
        (convert-dash-style val))))
 
+(tm-define (decode-dash x)
+  (cond ((== x "default") "default")
+        ((== x '(tuple "1" "0")) "- - -")
+        ((== x '(tuple "1" "1" "1" "0" "0")) "--  --  --")
+        ((== x '(tuple "1" "1" "1" "1" "0" "1" "0")) "-- - -- - --")
+        (else "other")))
+
 (define (dash-style-unit-has-value? val)
   (== val (graphics-get-property "gr-dash-style-unit")))
 
@@ -636,8 +643,6 @@
 
 (define (line-arrows-has-value? arrows)
   (with gr-arrows (graphics-get-property "gr-line-arrows")
-     (if (== gr-arrows "default")
-	 (set! gr-arrows "none")) ; FIXME: Not sure it's so nice...
      (if (pair? gr-arrows)
        ; FIXME: Shitty workaround around the <quote|none> bug...
 	 (set-car! (cddadr gr-arrows) "none"))
@@ -648,12 +653,21 @@
 (tm-define (graphics-set-line-arrows arrows)
   (:argument val "Arrows")
   (:check-mark "*" line-arrows-has-value?)
-  (cond ((integer? arrows)
-	 (graphics-change-property
-	   "gr-line-arrows"
-	   (vector-ref default-line-arrows arrows)))
+  (cond ((string? arrows)
+	 (graphics-change-property "gr-line-arrows" arrows))
+        ((integer? arrows)
+         (graphics-change-property
+          "gr-line-arrows"
+          (vector-ref default-line-arrows arrows)))
 	((pair? arrows)
 	 (graphics-change-property "gr-line-arrows" arrows))))
+
+(tm-define (decode-arrows val)
+  (cond ((== val "default") "default")
+        ((== val (vector-ref default-line-arrows 0)) "---")
+        ((== val (vector-ref default-line-arrows 1)) "--->")
+        ((== val (vector-ref default-line-arrows 2)) "<--->")
+        (else "other")))
 
 (define (text-at-halign-has-value? val)
   (== val (graphics-get-property "gr-text-at-halign")))

@@ -335,6 +335,7 @@
 (tm-define (gui-menu-item x)
   ;;(display* "x= " x "\n")
   (cond ((== x '---) `(gui$vsep))
+	((== x '/) `(gui$hsep))
 	((== x (string->symbol "|")) `(gui$hsep))
 	((string? x) x)
 	((and (pair? x) (or (string? (car x)) (pair? (car x))))

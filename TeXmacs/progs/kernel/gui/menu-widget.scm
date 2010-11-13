@@ -24,6 +24,7 @@
   (:menu-label (:or
     :string?
     (concat :*)
+    (glue :%4)
     (color :%5)
     (verbatim :%1)
     (text :tuple? :string?)
@@ -136,6 +137,9 @@
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
   	   (widget-xpm (cadr p)))
+  	  ((tuple? p 'glue 4)		; (glue hext? vext? minw minh)
+  	   (widget-glue (second p) (third p)
+                        (* (fourth p) 256) (* (fifth p) 256)))
   	  ((tuple? p 'color 5)		; (color col hext? vext? minw minh)
   	   (widget-color (second p) (third p) (fourth p)
                          (* (fifth p) 256) (* (sixth p) 256))))))
