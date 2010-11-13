@@ -80,7 +80,13 @@
 (define (tree-child-name* t i)
   (with s (tree-child-name t i)
     (cond ((!= s "") s)
-          ((> (tree-arity t) (+ (length (tree-accessible-children t)) 2)) "")
+          ((> (tree-arity t) (+ (length (tree-accessible-children t)) 1)) "")
+          (else (tree-child-type t i)))))
+
+(define (tree-child-long-name* t i)
+  (with s (tree-child-long-name t i)
+    (cond ((!= s "") s)
+          ((> (tree-arity t) (+ (length (tree-accessible-children t)) 1)) "")
           (else (tree-child-type t i)))))
 
 (define (type->format type)
