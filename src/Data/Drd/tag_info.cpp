@@ -369,6 +369,11 @@ tag_info_rep::locals (int i, string var, string val) {
 void
 tag_info_rep::set_attribute (string which, tree val) {
   if (extra == "") extra= tree (ATTR);
+  for (int i=0; i+1<N(extra); i+=2)
+    if (extra[i] == tree (which)) {
+      extra[i+1]= val;
+      return;
+    }
   extra << tree (which) << val;
 }
 

@@ -769,6 +769,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   //if (heuristic_with_like (macro, ""))
   //cout << "With-like: " << var << LF;
   for (i=0; i<n; i++) {
+    if (is_atomic (macro[i]))
+      set_child_name (l, i, macro[i]->label);
     int  type= TYPE_UNKNOWN;
     tree arg (ARG, macro[i]);
     tree env= arg_access (macro[n], arg, tree (ATTR), type);
@@ -787,8 +789,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
       set_env (l, i, env);
     }
   }
-  // if (old_ti != info[l])
-  //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";
+  //if (old_ti != info[l])
+  //cout << var << ": " << old_ti << " -> " << info[l] << "\n";
   return (old_ti != info[l]);
 }
 
