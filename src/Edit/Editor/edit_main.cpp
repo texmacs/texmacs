@@ -170,6 +170,8 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 #ifdef USE_GS
   if (pdf) name= url_temp (".ps");
 #endif
+#else
+  (void) pdf;  // avoid annoying warning
 #endif
   
   string medium = env->get_string (PAGE_MEDIUM);
@@ -253,10 +255,70 @@ edit_main_rep::print_to_file (url name, string first, string last) {
   print (name, false, as_int (first), as_int (last));
 }
 
+#ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
+#include "qt_printer_widget.hpp"
+#endif
+
+/**
+ * In Qt this is the main entry point to the printing subsystem.
+ * the other routines (print_to_file, ...) are overriden since all fine tuning 
+ * is made here via the Qt print dialog
+ */
 void
 edit_main_rep::print_buffer (string first, string last) {
-#if 0
-//#ifdef QTTEXMACS // disabled for the moment
+  url target= url_temp (".ps");
+  
+#if (defined(_MBD_EXPERIMENTAL_PRINTER_WIDGET) && defined(QTTEXMACS))
+  widget wid = printer_widget(target);
+  
+    // Try to force the dialog to show our preferences. Platform dependent?
+  
+  // TODO: add missing preferences and reduce redundancy with print();
+  PrinterSettings settings;
+  settings.firstPage = as_int(first);
+  settings.lastPage  = as_int(last);
+  settings.dpi       = as_int(printing_dpi);
+  settings.landscape = env->page_landscape;
+  settings.paperSize = env->get_string(PAGE_TYPE);
+  
+  wid->send(SLOT_PRINTER_SETTINGS, close_box<PrinterSettings>(settings));
+  
+    // Show the dialog, read results
+  
+  send_keyboard_focus(wid);
+  settings = open_box<PrinterSettings> (wid->query(SLOT_PRINTER_SETTINGS,
+                                            type_helper<PrinterSettings>::id));
+  if (! settings.accepted) return;
+  
+  env->write(PAGE_TYPE, settings.paperSize);
+  env->page_landscape = settings.landscape;
+  
+  //FIXME?
+  // This is set to 72 dpi by the MacOS dialog and there's no way to change that.
+  //printing_dpi = from_qstring(QString("%1").arg(settings.dpi));
+  
+  // translate from the Qt convention.
+  if(settings.firstPage ==  0)    settings.firstPage = 1;
+  if (settings.lastPage == 0)     settings.lastPage  = 100000;   // ugly!
+
+  if (settings.printToFile) {
+    target = settings.fileName;
+    print (target, false, settings.firstPage, settings.lastPage);
+    return;  // No temporary file to remove nor to send to the printer.
+  }
+  print (target, false, settings.firstPage, settings.lastPage);
+#else
+  print (target, false, as_int (first), as_int (last));
+#endif
+
+    // Send the document to the printer
+  system (printing_cmd, target);
+  ::remove (target);
+}
+
+#ifdef THISISTHEPREVIOUSCODE_IJUSTLEFTITHEREINCASE
+void
+edit_main_rep::print_buffer (string first, string last) {
   // in Qt this is the main entry point to the printing subsystem.
   // the other routines (print_to_file, ...) are overriden since all fine tuning 
   // is made here via the Qt print dialog
@@ -273,13 +335,8 @@ edit_main_rep::print_buffer (string first, string last) {
         ::remove (name);
       }
   }
-#else
-  url temp= url_temp (".ps");
-  print (temp, false, as_int (first), as_int (last));
-  system (printing_cmd, temp);
-  ::remove (temp);
-#endif
 }
+#endif
 
 void
 edit_main_rep::export_ps (url name, string first, string last) {

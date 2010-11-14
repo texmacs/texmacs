@@ -16,6 +16,7 @@
 #include "qt_tm_widget.hpp"
 #include "qt_basic_widgets.hpp"
 #include "qt_chooser_widget.hpp"
+#include "qt_printer_widget.hpp"
 #include "url.hpp"
 #include "analyze.hpp"
 #include "converter.hpp"
@@ -473,7 +474,7 @@ QTMInputTextWidgetHelper::~QTMInputTextWidgetHelper() {
 
 
 /*******************************************************************************
-* Interface to texmacs
+* Interface to texmacs. See src/Graphics/Gui/widget.hpp.
 *******************************************************************************/
 
 
@@ -496,7 +497,22 @@ input_text_widget (command call_back, string type, array<string> def,
 
 widget
 color_picker_widget (command call_back, bool bg, array<tree> proposals) {
-  // TODO: to be implemented
+  // widgets for selecting a color, a pattern or a background image,
+  // encoded by a tree. On input, we give a list of recently used proposals
+  // on termination the command is called with the selected color as argument
+  // the bg flag specifies whether we are picking a background color or fill
+  NOT_IMPLEMENTED;
   (void) call_back; (void) bg; (void) proposals;
   return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
 }
+
+#ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
+widget 
+printer_widget(url ps_pdf_file) {
+  // widget to print the document, offering a way for selecting a page range,
+  // changing the paper type and orientation, previewing, etc.
+  (void) ps_pdf_file;
+  return tm_new<qt_printer_widget_rep>();
+}
+
+#endif // _MBD_EXPERIMENTAL_PRINTER_WIDGET
