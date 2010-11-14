@@ -69,6 +69,25 @@ void QTMInteractiveInputHelper::doit() {
   wid->do_interactive_prompt();
 }
 
+
+#if 0
+class QTMToolbarWidgetAction : public QWidgetAction {
+  
+public:
+  QTMToolbarWidgetAction(QObject *parent = NULL);
+  //~QTMToolbarWidgetAction();
+  
+protected:
+  QWidget * createWidget ( QWidget * parent );
+  
+};
+
+QWidget * 
+QTMToolbarWidgetAction::createWidget ( QWidget * parent ) {
+  
+}
+#endif
+
 /******************************************************************************
  * qt_tm_widget_rep
  ******************************************************************************/
@@ -106,7 +125,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   // central widget
   
-  QStackedWidget* tw = new QStackedWidget ();
+  QStackedWidget* tw = new QStackedWidget (mw);
   tw->setObjectName("stacked widget"); // to easily find this object
 
   // status bar
@@ -144,10 +163,10 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   // toolbars
   
-  mainToolBar  = new QToolBar ("main toolbar", tw);
-  modeToolBar  = new QToolBar ("mode toolbar", tw);
-  focusToolBar = new QToolBar ("focus toolbar", tw);
-  userToolBar   = new QToolBar ("user toolbar", tw);
+  mainToolBar  = new QToolBar ("main toolbar", mw);
+  modeToolBar  = new QToolBar ("mode toolbar", mw);
+  focusToolBar = new QToolBar ("focus toolbar", mw);
+  userToolBar   = new QToolBar ("user toolbar", mw);
  
   mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
@@ -171,21 +190,20 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mw->setCentralWidget(cw);
   
- 
-//  mw->addToolBar("dumb toolbar")->setVisible(false);
   
-  // HACK: we add a dumb action to the unified toolbar to circumvent a resize
-  // bug in Qt. The empty toolbar causes a small toolbar size which is not
-  // updated when the toolbar is populated by real actions.
+  //WARNING: dumbToolBar is the toolbar installed on the top area of the
+  //main widget which is  then unified in the title bar. 
+  //to overcome some limitations of the unified toolbar implementation we
+  //install the real toolbars as widgets in this toolbar.
   
-  mainToolBar->addAction(QIcon(QPixmap(17,17)), "hack"); // hack
+  dumbToolBar = mw->addToolBar("dumb toolbar");
+  dumbToolBar->setMinimumHeight(30);
+
+  //these are the actions related to the various toolbars to be installed in
+  //the dumb toolbar.
   
- //   mw->addToolBar(mainToolBar);
- // mainToolBar->setVisible(false);
-  //WARNING: the above line must be commented. The main toolbar is set in place
-  //in updateVisibility since at that point the window size is correct.
-  //otherwise we would induce artifacts in the toolbar which cause misbehaviors.
-  //this seems a bug in Qt/Cocoa.
+  mainToolBarAction = dumbToolBar->addWidget(mainToolBar);
+  modeToolBarAction = NULL;
   
   bl->insertWidget(0, modeToolBar);
   bl->insertWidget(1, focusToolBar);
@@ -201,27 +219,13 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   mw->addToolBar (focusToolBar);
   mw->addToolBarBreak ();
   mw->addToolBar (userToolBar);
-  mw->addToolBarBreak ();
+ // mw->addToolBarBreak ();
 #endif
   
-#if 0
-  QScrollArea* sa= new QTMScrollArea (this);
-  sa->setParent (mw);
-  sa->setBackgroundRole (QPalette::Dark);
-  sa->setAlignment (Qt::AlignCenter);
-  sa->setFocusPolicy (Qt::NoFocus);
-  
-  mw->setCentralWidget (sa);
-#endif
-  
-  
- // updateVisibility();
-	
-  
-    // handles visibility
-    // at this point all the toolbars are empty so we avoid showing them
-    // same for the menu bar if we are not on the Mac (where we do not have
-    // other options)
+  // handles visibility
+  // at this point all the toolbars are empty so we avoid showing them
+  // same for the menu bar if we are not on the Mac (where we do not have
+  // other options)
   
   mainToolBar->setVisible (false);
   modeToolBar->setVisible (false);
@@ -254,6 +258,7 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
     canvas->setParent(NULL);
     QTMWidget::all_widgets.remove(canvas);
   }
+  
 }
 
 void qt_tm_widget_rep::updateVisibility()
@@ -273,31 +278,37 @@ void qt_tm_widget_rep::updateVisibility()
     // appropriate)
     
     QBoxLayout *bl = qobject_cast<QBoxLayout*>(tm_mainwindow()->centralWidget()->layout());
-    QMainWindow *mw = tm_mainwindow();
-
-    if (mw->toolBarArea(mainToolBar) == Qt::NoToolBarArea) {
-      mw->addToolBar(mainToolBar);
-    }
     
-    if (mainToolBar->isVisible()) {
-      if (mw->toolBarArea(modeToolBar) == Qt::TopToolBarArea) {
-        bool tmp = modeToolBar->isVisible();
-        mw->removeToolBar(modeToolBar);
-        bl->insertWidget(0, modeToolBar);
-        modeToolBar->setVisible(tmp);
-      }
+    if (modeToolBarAction)
+     modeToolBarAction->setVisible(modeToolBar->isVisible());
+    mainToolBarAction->setVisible(mainToolBar->isVisible());
+
+    //WARNING: jugglying around bugs in Qt unified toolbar implementation
+    //do not try to change the order of the following operations....
+    
+    if (mainToolBar->isVisible()) {       
+      bool tmp = modeToolBar->isVisible();
+      dumbToolBar->removeAction(modeToolBarAction);
+      dumbToolBar->addAction(mainToolBarAction);
+      bl->insertWidget(0, modeToolBar);
+      mainToolBarAction->setVisible(true);
+      modeToolBar->setVisible(tmp);
+      if (modeToolBarAction)
+        modeToolBarAction->setVisible(tmp);
+      dumbToolBar->setVisible(true);
     } else { 
+      dumbToolBar->removeAction(mainToolBarAction);
       if (modeToolBar->isVisible()) {
-        if (mw->toolBarArea(modeToolBar) == Qt::NoToolBarArea) {
-          bl->removeWidget(modeToolBar);
-          mw->addToolBar(modeToolBar);
-          modeToolBar->setVisible(true); // to update the unified toolbar state
-          mw->removeToolBar(mainToolBar); 
-          // order is important, unified toolbar is quite buggy in 4.7.0
-          // we remove the main toolbar only after inserting the mode toolbar
-          // we want to remove it because even invisible it occupies a small 
-          // blank space
+        bl->removeWidget(modeToolBar);
+        if (modeToolBarAction == NULL) {
+          modeToolBarAction = dumbToolBar->addWidget(modeToolBar);
+        } else {
+          dumbToolBar->addAction(modeToolBarAction);
         }
+        dumbToolBar->setVisible(true);
+      } else {
+        dumbToolBar->setVisible(false);
+        dumbToolBar->removeAction(modeToolBarAction);
       }
     }
   }
