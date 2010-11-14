@@ -156,10 +156,11 @@ void
 qt_convert_image (url image, url dest, int w, int h) {
   QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
-    cerr << "TeXmacs] cannot read image file '" << image << "'"
-	 << " in qt_convert_image" << LF;
+    cerr << "TeXmacs] cannot read image file '" << image << "'" 
+         << " in qt_convert_image" << LF;
   else {
-    if (w > 0 && h > 0) im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if (w > 0 && h > 0) 
+      im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     im.scaled (w, h).save (utf8_to_qstring (concretize (dest)));
   }
 }
@@ -253,6 +254,8 @@ qt_get_date (string lan, string fm) {
   return from_qstring(date);
 }
 
+#ifndef _MBD_EXPERIMENTAL_PRINTER_WIDGET  // this is in qt_printer_widget
+
 #define PAPER(fmt)  case QPrinter::fmt : return "fmt"
 static string 
 qt_papersize_to_string( QPrinter::PaperSize sz ) {
@@ -286,8 +289,10 @@ qt_papersize_to_string( QPrinter::PaperSize sz ) {
 }
 #undef PAPER
 
+
 bool 
-qt_print (bool& to_file, bool& landscape, string& pname, url& filename, string& first, string& last, string& paper_type) {
+qt_print (bool& to_file, bool& landscape, string& pname, url& filename, 
+          string& first, string& last, string& paper_type) {
   static QPrinter *qprinter = NULL;
   if (!qprinter) {
     qprinter = new QPrinter;
@@ -310,3 +315,4 @@ qt_print (bool& to_file, bool& landscape, string& pname, url& filename, string& 
   return false;
 }
 
+#endif //_MBD_EXPERIMENTAL_PRINTER_WIDGET
