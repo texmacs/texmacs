@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4901F0E5128B4F7200CC54C6 /* qt_printer_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */; };
 		4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */; };
+		49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FA128B331A0006E948 /* QTMFileDialog.cpp */; };
+		49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D662FB128B331A0006E948 /* QTMFileDialog.hpp */; };
+		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		9C060A9C10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
@@ -296,7 +300,6 @@
 		9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */; };
 		9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */; };
 		9CC614B510A99B100055F808 /* MOCs.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CC6148B10A998BC0055F808 /* MOCs.o */; };
-		9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B410A8CC100097A335 /* QTMGuiHelper.hpp */; };
 		9CCC73FC10D303D900E88D90 /* TeXmacs-document.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C0B4B5810A8CCA00097A335 /* TeXmacs-document.icns */; };
 		9CCC73FD10D303D900E88D90 /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C0B4B5910A8CCA00097A335 /* TeXmacs.icns */; };
 		9CCC73FF10D303D900E88D90 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476110A8CC0F0097A335 /* generic.cpp */; };
@@ -1097,8 +1100,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_printer_widget.hpp; sourceTree = "<group>"; };
+		4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_printer_widget.cpp; sourceTree = "<group>"; };
 		4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMInteractivePrompt.hpp; sourceTree = "<group>"; };
 		4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMInteractivePrompt.cpp; sourceTree = "<group>"; };
+		49D662FA128B331A0006E948 /* QTMFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMFileDialog.cpp; sourceTree = "<group>"; };
+		49D662FB128B331A0006E948 /* QTMFileDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMFileDialog.hpp; sourceTree = "<group>"; };
+		49DEEC8C1289A465002ACC66 /* qt_window_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_window_widget.cpp; sourceTree = "<group>"; };
+		49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_simple_widget.cpp; sourceTree = "<group>"; };
+		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
@@ -1381,7 +1391,7 @@
 		9C0B48A910A8CC100097A335 /* qt_gui.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_gui.hpp; sourceTree = "<group>"; };
 		9C0B48AA10A8CC100097A335 /* qt_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_menu.cpp; sourceTree = "<group>"; };
 		9C0B48AB10A8CC100097A335 /* qt_menu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_menu.hpp; sourceTree = "<group>"; };
-		9C0B48AC10A8CC100097A335 /* qt_other_widgets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_other_widgets.hpp; sourceTree = "<group>"; };
+		9C0B48AC10A8CC100097A335 /* qt_window_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_window_widget.hpp; sourceTree = "<group>"; };
 		9C0B48AD10A8CC100097A335 /* qt_renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_renderer.cpp; sourceTree = "<group>"; };
 		9C0B48AE10A8CC100097A335 /* qt_renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_renderer.hpp; sourceTree = "<group>"; };
 		9C0B48AF10A8CC100097A335 /* qt_simple_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_simple_widget.hpp; sourceTree = "<group>"; };
@@ -1389,7 +1399,6 @@
 		9C0B48B110A8CC100097A335 /* qt_utilities.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_utilities.hpp; sourceTree = "<group>"; };
 		9C0B48B210A8CC100097A335 /* qt_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_widget.cpp; sourceTree = "<group>"; };
 		9C0B48B310A8CC100097A335 /* qt_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_widget.hpp; sourceTree = "<group>"; };
-		9C0B48B410A8CC100097A335 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMInteractiveInputHelper.hpp; sourceTree = "<group>"; };
 		9C0B48B610A8CC100097A335 /* QTMMenuHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMMenuHelper.cpp; sourceTree = "<group>"; };
 		9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMMenuHelper.hpp; sourceTree = "<group>"; };
@@ -2599,6 +2608,8 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */,
+				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
 				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
 				9CF5BC6A128A13CB00F691BF /* qt_simple_widget.cpp */,
@@ -2608,28 +2619,28 @@
 				9CF5BC6E128A13CB00F691BF /* qt_view_widget.hpp */,
 				9CF5BC6F128A13CB00F691BF /* qt_window_widget.cpp */,
 				9CF5BC70128A13CB00F691BF /* qt_window_widget.hpp */,
-				9CF5BC71128A13CB00F691BF /* QTMGuiHelper.cpp */,
-				9C0B48A410A8CC100097A335 /* NOTES */,
-				9C0B48BE10A8CC100097A335 /* TODO */,
 				9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */,
 				9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */,
 				9C1D126510D102B300232476 /* qt_pipe_link.cpp */,
 				9C0B48A510A8CC100097A335 /* qt_basic_widgets.hpp */,
-				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
 				9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */,
+				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
 				9C0B48A810A8CC100097A335 /* qt_gui.cpp */,
 				9C0B48A910A8CC100097A335 /* qt_gui.hpp */,
 				9C0B48AA10A8CC100097A335 /* qt_menu.cpp */,
 				9C0B48AB10A8CC100097A335 /* qt_menu.hpp */,
-				9C0B48AC10A8CC100097A335 /* qt_other_widgets.hpp */,
+				9C0B48AC10A8CC100097A335 /* qt_window_widget.hpp */,
+				49DEEC8C1289A465002ACC66 /* qt_window_widget.cpp */,
 				9C0B48AD10A8CC100097A335 /* qt_renderer.cpp */,
 				9C0B48AE10A8CC100097A335 /* qt_renderer.hpp */,
 				9C0B48AF10A8CC100097A335 /* qt_simple_widget.hpp */,
+				49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */,
 				9C0B48B010A8CC100097A335 /* qt_utilities.cpp */,
 				9C0B48B110A8CC100097A335 /* qt_utilities.hpp */,
 				9C0B48B210A8CC100097A335 /* qt_widget.cpp */,
 				9C0B48B310A8CC100097A335 /* qt_widget.hpp */,
-				9C0B48B410A8CC100097A335 /* QTMGuiHelper.hpp */,
+				49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */,
+				9CF5BC71128A13CB00F691BF /* QTMGuiHelper.cpp */,
 				9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */,
 				9C0B48B610A8CC100097A335 /* QTMMenuHelper.cpp */,
 				9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */,
@@ -2641,10 +2652,14 @@
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
 				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
 				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
-				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
-				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
+				49D662FA128B331A0006E948 /* QTMFileDialog.cpp */,
+				49D662FB128B331A0006E948 /* QTMFileDialog.hpp */,
 				9C1D126610D102B300232476 /* QTMPipeLink.cpp */,
 				9C1D126710D102B300232476 /* QTMPipeLink.hpp */,
+				4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */,
+				4931F77E127ED51C007C92CC /* QTMInteractivePrompt.hpp */,
+				9C0B48A410A8CC100097A335 /* NOTES */,
+				9C0B48BE10A8CC100097A335 /* TODO */,
 			);
 			path = Qt;
 			sourceTree = "<group>";
@@ -3538,6 +3553,9 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = TeXmacs.org;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
 			developmentRegion = English;
@@ -4010,6 +4028,8 @@
 				9CF5BC74128A13CB00F691BF /* qt_view_widget.cpp in Sources */,
 				9CF5BC75128A13CB00F691BF /* qt_window_widget.cpp in Sources */,
 				9CF5BC76128A13CB00F691BF /* QTMGuiHelper.cpp in Sources */,
+				49D662FC128B331A0006E948 /* QTMFileDialog.cpp in Sources */,
+				4901F0E5128B4F7200CC54C6 /* qt_printer_widget.cpp in Sources */,
 				9C225A65128B5EB00039258C /* qt_chooser_widget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4018,10 +4038,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49D662FD128B333F0006E948 /* QTMFileDialog.hpp in Sources */,
+				49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */,
 				4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */,
 				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
-				9CC614B710A99B2F0055F808 /* QTMGuiHelper.hpp in Sources */,
 				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
 				9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */,
 				9CC6149210A999460055F808 /* QTMStyle.hpp in Sources */,
@@ -4856,6 +4877,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_NAME = TeXmacsQt;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -4880,6 +4902,8 @@
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				TM_LDQT = "-Wl,-F/Library/Frameworks -L/Library/Frameworks -framework QtGui  -framework QtCore";
