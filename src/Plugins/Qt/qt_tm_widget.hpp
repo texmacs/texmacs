@@ -28,7 +28,10 @@
 class QLabel; class QToolBar;
 
 /**
- *
+ * Main TeXmacs' widget. This is the interface between TeXmacs
+ * and our QT implementation of this widget. The auxiliary function 
+ * texmacs_widget() returns an instance of this class to be used within 
+ * the rest of TeXmacs.
  */
 class qt_tm_widget_rep: public qt_view_widget_rep {
 public: 
