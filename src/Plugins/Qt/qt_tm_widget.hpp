@@ -39,6 +39,10 @@ public:
   QToolBar *modeToolBar;
   QToolBar *focusToolBar;
   QToolBar *userToolBar;
+  QToolBar *dumbToolBar;
+  
+  QAction *modeToolBarAction;
+  QAction *mainToolBarAction;
   
   QWidget *centralWidget;
   
