@@ -123,6 +123,7 @@
   (if (in-text?) (link text-menu))
   (if (in-math?) (link math-menu))
   (if (not (or (in-text?) (in-math?)))
+      ("Text" (make 'text))
       (-> "Mathematics" (link insert-math-menu))
       (-> "Table" (link insert-table-menu))
       (-> "Image" (link insert-image-menu))
@@ -131,7 +132,7 @@
 	  (if (style-has? "std-fold-dtd")
 	      (-> "Fold" (link insert-fold-menu)))
 	  (-> "Animation" (link insert-animation-menu)))
-      (if (and (style-has? "program-dtd") (detailed-menus?))
+      (if (and (style-has? "program-dtd") (detailed-menus?) (in-text?))
 	  (-> "Session" (link insert-session-menu)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

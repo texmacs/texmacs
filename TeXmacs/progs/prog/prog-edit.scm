@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : program-edit.scm
+;; MODULE      : prog-edit.scm
 ;; DESCRIPTION : editing verbatim programs
 ;; COPYRIGHT   : (C) 2008  Joris van der Hoeven
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog program-edit)
+(texmacs-module (prog prog-edit)
   (:use (utils library tree)
 	(utils library cursor)))
 

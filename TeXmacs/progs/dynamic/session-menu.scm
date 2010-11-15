@@ -100,6 +100,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind session-icons
+  (glue #f #f 8 0)
   (=> (balloon (icon "tm_plugin_input.xpm") "Input options")
       (link session-input-menu))
   (=> (balloon (icon "tm_plugin_output.xpm") "Output options")
@@ -108,17 +109,14 @@
       (link session-field-menu))
   (=> (balloon (icon "tm_session_session.xpm") "Session commands")
       (link session-session-menu))
-  /
+  (glue #f #f 10 0)
   (=> (balloon (icon "tm_go.xpm") "Evaluate fields")
       (link session-evaluate-menu))
   (if (!= (get-env "prog-language") "scheme")
       ((balloon (icon "tm_stop.xpm") "Interrupt execution")
        (plugin-interrupt))
       ((balloon (icon "tm_clsession.xpm") "Close session")
-       (plugin-stop)))
-  /
-  (if (in-prog?) (link prog-format-icons))
-  (link texmacs-insert-icons))
+       (plugin-stop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Help icons
@@ -127,6 +125,3 @@
 (menu-bind session-help-icons
   ;; Each plugin appends its own entry
   )
-
-(menu-bind help-icons
-  (link session-help-icons))

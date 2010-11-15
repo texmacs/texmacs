@@ -43,7 +43,7 @@ edit_interface_rep::set_left_footer () {
   */
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
-  if (mode == "prog") s << " program";
+  if (mode == "prog") s << "program";
   else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
     s << " " << lan;
   else s << " " << mode;

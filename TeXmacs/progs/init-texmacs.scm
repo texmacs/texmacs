@@ -110,6 +110,8 @@
 
 ;(display "Booting programming modes\n")
 (lazy-keyboard (prog scheme-edit) in-prog-scheme?)
+(lazy-menu (prog format-prog-menu) prog-format-menu prog-format-icons)
+(lazy-menu (prog prog-menu) prog-menu prog-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting source mode\n")
@@ -140,10 +142,9 @@
 ;(display "Booting dynamic features\n")
 (lazy-keyboard (dynamic fold-kbd) always?)
 (lazy-keyboard (dynamic scripts-kbd) always?)
-(lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic fold-menu) insert-fold-menu)
 (lazy-menu (dynamic session-menu) insert-session-menu
-	   session-menu session-icons session-help-icons help-icons)
+	   session-menu session-icons session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-define (dynamic fold-edit)

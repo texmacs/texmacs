@@ -27,6 +27,7 @@
 (tm-define (remove-package-menu) (get-remove-package-menu))
 (menu-bind bookmarks-menu)
 (menu-bind test-menu)
+(menu-bind help-icons (if (in-session?) (link session-help-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs main menu
@@ -40,7 +41,6 @@
       (=> "Focus" (link graphics-focus-menu)))
   (if (not (in-graphics?))
       (=> "Insert" (link insert-menu))
-      (if (in-session?) (=> "Session" (link session-menu)))
       (if (or (in-source?) (with-source-tool?))
 	  (=> "Source" (link source-menu)))
       (if (with-linking-tool?)
@@ -80,7 +80,6 @@
       (-> "Focus" (link graphics-focus-menu)))
   (if (not (in-graphics?))
       (-> "Insert" (link insert-menu))
-      (if (in-session?) (-> "Session" (link session-menu)))
       (if (or (in-source?) (with-source-tool?))
 	  (-> "Source" (link source-menu)))
       (if (with-linking-tool?)
@@ -153,7 +152,7 @@
 (menu-bind texmacs-mode-icons
   (if (in-source?) (link source-icons))
   (if (in-text?) (link text-icons))
-  (if (in-session?) (link session-icons))
   (if (in-math?) (link math-icons))
+  (if (in-prog?) (link prog-icons))
   (if (in-graphics?) (link graphics-icons))
   (link help-icons))
