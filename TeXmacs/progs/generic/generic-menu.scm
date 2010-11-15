@@ -66,11 +66,15 @@
       (and-with c (tree-down t)
 	(tree-in? c '(table tformat)))))
 
-(tm-define (focus-can-insert)
+(tm-define (focus-can-insert-remove? t)
+  (and (or (structured-horizontal? t) (structured-vertical? t))
+       (cursor-inside? t)))
+
+(tm-define (focus-can-insert?)
   (with t (focus-tree)
     (< (tree-arity t) (tree-maximal-arity t))))
 
-(tm-define (focus-can-remove)
+(tm-define (focus-can-remove?)
   (with t (focus-tree)
     (> (tree-arity t) (tree-minimal-arity t))))
 
@@ -159,7 +163,7 @@
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
     (assuming (<= (length l) 1)
-      (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+      (inert ((eval (focus-tag-name (tree-label t))) (noop) (noop))))
     (assuming (> (length l) 1)
       (-> (eval (focus-tag-name (tree-label t)))
           (dynamic (focus-variant-menu t)))))
@@ -184,10 +188,10 @@
 
 (tm-menu (focus-insert-menu t)
   (assuming (and (structured-horizontal? t) (not (structured-vertical? t)))
-    (when (focus-can-insert)
+    (when (focus-can-insert?)
       ("Insert argument before" (structured-insert #f))
       ("Insert argument after" (structured-insert #t)))
-    (when (focus-can-remove)
+    (when (focus-can-remove?)
       ("Remove argument before" (structured-remove #f))
       ("Remove argument after" (structured-remove #t))))
   (assuming (structured-vertical? t)
@@ -213,10 +217,10 @@
   (dynamic (focus-tag-menu t))
   ---
   (dynamic (focus-move-menu t))
-  (assuming (or (structured-horizontal? t) (structured-vertical? t))
-    (assuming (cursor-inside? t)
-      ---
-      (dynamic (focus-insert-menu t))))
+  (assuming (focus-can-insert-remove? t)
+    ---
+    (dynamic (focus-insert-menu t))
+    )
   (dynamic (focus-extra-menu t))
   (dynamic (focus-hidden-menu t)))
 
@@ -241,7 +245,6 @@
     (with l (focus-variants-of t)
       (assuming (<= (length l) 1)
         (inert ((eval (focus-tag-name (tree-label t))) (noop))))
-      ;;((eval (focus-tag-name (tree-label t))) (noop)))
       (assuming (> (length l) 1)
         ;;(=> (extend
         ;;(balloon (eval (focus-tag-name (tree-label t)))
@@ -273,12 +276,12 @@
 
 (tm-menu (focus-insert-icons t)
   (assuming (and (structured-horizontal? t) (not (structured-vertical? t)))
-    (when (focus-can-insert)
+    (when (focus-can-insert?)
       ((balloon (icon "tm_insert_left.xpm") "Structured insert at the left")
        (structured-insert #f))
       ((balloon (icon "tm_insert_right.xpm") "Structured insert at the right")
        (structured-insert #t)))
-    (when (focus-can-remove)
+    (when (focus-can-remove?)
       ((balloon (icon "tm_delete_left.xpm") "Structured remove leftwards")
        (structured-remove #f))
       ((balloon (icon "tm_delete_right.xpm") "Structured remove rightwards")
@@ -310,12 +313,11 @@
 
 (tm-menu (standard-focus-icons t)
   (minibar (dynamic (focus-move-icons t)))
+  (assuming (focus-can-insert-remove? t)
+    (glue #f #f 5 0)
+    (minibar (dynamic (focus-insert-icons t))))
   (glue #f #f 5 0)
   (minibar (dynamic (focus-tag-icons t)))
-  (assuming (or (structured-horizontal? t) (structured-vertical? t))
-    (assuming (cursor-inside? t)
-      (glue #f #f 5 0)
-      (minibar (dynamic (focus-insert-icons t)))))
   (dynamic (focus-extra-icons t))
   (dynamic (focus-hidden-icons t))
   (glue #f #f 5 0))
