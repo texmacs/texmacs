@@ -46,146 +46,149 @@
 	  ---
 	  ("Other" (interactive graphics-set-origin)))))
 
+(menu-bind graphics-visual-grid-menu
+  (-> "Type"
+      ("No grid"     (graphics-set-visual-grid 'empty))
+      ---
+      ("Cartesian"   (graphics-set-visual-grid 'cartesian))
+      ("Polar"       (graphics-set-visual-grid 'polar))
+      ("Logarithmic" (graphics-set-visual-grid 'logarithmic)))
+  (when (!= (graphics-get-grid-type #t) 'empty)
+    (-> "Center"
+	("Default"      (graphics-set-grid-center "0" "0" #t))
+	---
+	("Other"        (graphics-interactive-set-grid-center #t)))
+    (-> "Unit length"
+	("Default"      (graphics-set-grid-step "1" #t))
+	---
+	("0.1"          (graphics-set-grid-step "0.1" #t))
+	("0.2"          (graphics-set-grid-step "0.2" #t))
+	("0.5"          (graphics-set-grid-step "0.5" #t))
+	("1"            (graphics-set-grid-step "1" #t))
+	("2"            (graphics-set-grid-step "2" #t))
+	("5"            (graphics-set-grid-step "5" #t))
+	("10"           (graphics-set-grid-step "10" #t))
+	---
+	("Other"        (graphics-interactive-set-grid-step #t))))
+  (when (== (graphics-get-grid-type #t) 'polar)
+    (-> "Number of polar steps"
+	("Default"      (graphics-set-grid-astep "24" #t))
+	---
+	("4"            (graphics-set-grid-astep "4" #t))
+	("6"            (graphics-set-grid-astep "6" #t))
+	("8"            (graphics-set-grid-astep "8" #t))
+	("12"           (graphics-set-grid-astep "12" #t))
+	("16"           (graphics-set-grid-astep "16" #t))
+	("24"           (graphics-set-grid-astep "24" #t))
+	("30"           (graphics-set-grid-astep "30" #t))
+	("36"           (graphics-set-grid-astep "36" #t))
+	---
+	("Other"        (graphics-interactive-set-grid-astep #t))))
+  (when (== (graphics-get-grid-type #t) 'logarithmic)
+    (-> "Logarithmic base"
+	("Default"      (graphics-set-grid-base "10" #t))
+	---
+	("6"            (graphics-set-grid-base "6" #t))
+	("8"            (graphics-set-grid-base "8" #t))
+	("10"           (graphics-set-grid-base "10" #t))
+	("16"           (graphics-set-grid-base "16" #t))
+	---
+	("Other"        (graphics-interactive-set-grid-base #t))))
+  ---
+  (group "Aspect")
+  (when (!= (graphics-get-grid-type #t) 'empty)
+    (-> "Color of the axes" (link grid-color-axes-menu))
+    (-> "Color of the units" (link grid-color-units-menu))
+    ("Show subunits" (grid-toggle-show-subunits))
+    (when (grid-show-subunits?)
+      (-> "Color of the subunits" (link grid-color-subunits-menu))
+      (when (or (== (graphics-get-grid-type #t) 'cartesian)
+		(== (graphics-get-grid-type #t) 'polar))
+	(-> "Number of subunit steps"
+	    ("Default" (graphics-set-grid-aspect 'detailed #f #t))
+	    ---
+	    ("2" (graphics-set-grid-aspect 'detailed 2 #t))
+	    ("3" (graphics-set-grid-aspect 'detailed 3 #t))
+	    ("4" (graphics-set-grid-aspect 'detailed 4 #t))
+	    ("5" (graphics-set-grid-aspect 'detailed 5 #t))
+	    ("6" (graphics-set-grid-aspect 'detailed 6 #t))
+	    ("8" (graphics-set-grid-aspect 'detailed 8 #t))
+	    ("10" (graphics-set-grid-aspect 'detailed 10 #t))
+	    ---
+	    ("Other" (graphics-interactive-set-grid-nsubds #t)))))))
+
+(menu-bind graphics-edit-grid-menu
+  ("As visual grid"  (grid-toggle-as-visual-grid))
+  ---
+  (-> "Type"
+      ("No grid"     (graphics-set-edit-grid 'empty))
+      ---
+      ("Cartesian"   (graphics-set-edit-grid 'cartesian))
+      ("Polar"       (graphics-set-edit-grid 'polar))
+      ("Logarithmic" (graphics-set-edit-grid 'logarithmic)))
+  (when (!= (graphics-get-grid-type #f) 'empty)
+    (-> "Center"
+	("Default"      (graphics-set-grid-center "0" "0" #f))
+	---
+	("Other"        (graphics-interactive-set-grid-center #f)))
+    (-> "Unit length"
+	("Default"      (graphics-set-grid-step "0.1" #f))
+	---
+	("0.05"         (graphics-set-grid-step "0.05" #f))
+	("0.1"          (graphics-set-grid-step "0.1" #f))
+	("0.2"          (graphics-set-grid-step "0.2" #f))
+	("0.5"          (graphics-set-grid-step "0.5" #f))
+	("1"            (graphics-set-grid-step "1" #f))
+	("2"            (graphics-set-grid-step "2" #f))
+	("5"            (graphics-set-grid-step "5" #f))
+	("10"           (graphics-set-grid-step "10" #f))
+	---
+	("Other"        (graphics-interactive-set-grid-step #f))))
+  (when (== (graphics-get-grid-type #f) 'polar)
+    (-> "Number of polar steps"
+	("Default"      (graphics-set-grid-astep "24" #f))
+	---
+	("4"            (graphics-set-grid-astep "4" #f))
+	("6"            (graphics-set-grid-astep "6" #f))
+	("8"            (graphics-set-grid-astep "8" #f))
+	("12"           (graphics-set-grid-astep "12" #f))
+	("16"           (graphics-set-grid-astep "16" #f))
+	("24"           (graphics-set-grid-astep "24" #f))
+	("30"           (graphics-set-grid-astep "30" #f))
+	("36"           (graphics-set-grid-astep "36" #f))
+	("60"           (graphics-set-grid-astep "60" #f))
+	---
+	("Other"        (graphics-interactive-set-grid-astep #f))))
+  (when (== (graphics-get-grid-type #f) 'logarithmic)
+    (-> "Logarithmic base"
+	("Default"      (graphics-set-grid-base "10" #f))
+	---
+	("6"            (graphics-set-grid-base "6" #f))
+	("8"            (graphics-set-grid-base "8" #f))
+	("10"           (graphics-set-grid-base "10" #f))
+	("16"           (graphics-set-grid-base "16" #f))
+	---
+	("Other"        (graphics-interactive-set-grid-base #f))))
+  (when (or (== (graphics-get-grid-type #f) 'cartesian)
+	    (== (graphics-get-grid-type #f) 'polar)
+	    )
+    (-> "Number of subunit steps"
+	("Default" (graphics-set-grid-aspect 'detailed #f #f))
+	---
+	("2" (graphics-set-grid-aspect 'detailed 2 #f))
+	("3" (graphics-set-grid-aspect 'detailed 3 #f))
+	("4" (graphics-set-grid-aspect 'detailed 4 #f))
+	("5" (graphics-set-grid-aspect 'detailed 5 #f))
+	("6" (graphics-set-grid-aspect 'detailed 6 #f))
+	("8" (graphics-set-grid-aspect 'detailed 8 #f))
+	("10" (graphics-set-grid-aspect 'detailed 10 #f))
+	---
+	("Other" (graphics-interactive-set-grid-nsubds #f)))))
+
 (menu-bind graphics-grids-menu
   ("Default" (graphics-reset-grids))
   ---
-  (-> "Visual grid"
-      (-> "Type"
-	  ("No grid"     (graphics-set-visual-grid 'empty))
-	  ---
-	  ("Cartesian"   (graphics-set-visual-grid 'cartesian))
-	  ("Polar"       (graphics-set-visual-grid 'polar))
-	  ("Logarithmic" (graphics-set-visual-grid 'logarithmic)))
-      (when (!= (graphics-get-grid-type #t) 'empty)
-        (-> "Center"
-	    ("Default"      (graphics-set-grid-center "0" "0" #t))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-center #t)))
-	(-> "Unit length"
-	    ("Default"      (graphics-set-grid-step "1" #t))
-	    ---
-	    ("0.1"          (graphics-set-grid-step "0.1" #t))
-	    ("0.2"          (graphics-set-grid-step "0.2" #t))
-	    ("0.5"          (graphics-set-grid-step "0.5" #t))
-	    ("1"            (graphics-set-grid-step "1" #t))
-	    ("2"            (graphics-set-grid-step "2" #t))
-	    ("5"            (graphics-set-grid-step "5" #t))
-	    ("10"           (graphics-set-grid-step "10" #t))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-step #t))))
-      (when (== (graphics-get-grid-type #t) 'polar)
-	(-> "Number of polar steps"
-	    ("Default"      (graphics-set-grid-astep "24" #t))
-	    ---
-	    ("4"            (graphics-set-grid-astep "4" #t))
-	    ("6"            (graphics-set-grid-astep "6" #t))
-	    ("8"            (graphics-set-grid-astep "8" #t))
-	    ("12"           (graphics-set-grid-astep "12" #t))
-	    ("16"           (graphics-set-grid-astep "16" #t))
-	    ("24"           (graphics-set-grid-astep "24" #t))
-	    ("30"           (graphics-set-grid-astep "30" #t))
-	    ("36"           (graphics-set-grid-astep "36" #t))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-astep #t))))
-      (when (== (graphics-get-grid-type #t) 'logarithmic)
-	(-> "Logarithmic base"
-	    ("Default"      (graphics-set-grid-base "10" #t))
-	    ---
-	    ("6"            (graphics-set-grid-base "6" #t))
-	    ("8"            (graphics-set-grid-base "8" #t))
-	    ("10"           (graphics-set-grid-base "10" #t))
-	    ("16"           (graphics-set-grid-base "16" #t))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-base #t))))
-      ---
-      (group "Aspect")
-      (when (!= (graphics-get-grid-type #t) 'empty)
-	(-> "Color of the axes" (link grid-color-axes-menu))
-	(-> "Color of the units" (link grid-color-units-menu))
-	("Show subunits" (grid-toggle-show-subunits))
-	(when (grid-show-subunits?)
-	  (-> "Color of the subunits" (link grid-color-subunits-menu))
-	  (when (or (== (graphics-get-grid-type #t) 'cartesian)
-		    (== (graphics-get-grid-type #t) 'polar))
-	    (-> "Number of subunit steps"
-		("Default" (graphics-set-grid-aspect 'detailed #f #t))
-		---
-		("2" (graphics-set-grid-aspect 'detailed 2 #t))
-		("3" (graphics-set-grid-aspect 'detailed 3 #t))
-		("4" (graphics-set-grid-aspect 'detailed 4 #t))
-		("5" (graphics-set-grid-aspect 'detailed 5 #t))
-		("6" (graphics-set-grid-aspect 'detailed 6 #t))
-		("8" (graphics-set-grid-aspect 'detailed 8 #t))
-		("10" (graphics-set-grid-aspect 'detailed 10 #t))
-		---
-		("Other" (graphics-interactive-set-grid-nsubds #t)))))))
-  (-> "Edit grid"
-      ("As visual grid"  (grid-toggle-as-visual-grid))
-      ---
-      (-> "Type"
-	  ("No grid"     (graphics-set-edit-grid 'empty))
-	  ---
-	  ("Cartesian"   (graphics-set-edit-grid 'cartesian))
-	  ("Polar"       (graphics-set-edit-grid 'polar))
-	  ("Logarithmic" (graphics-set-edit-grid 'logarithmic)))
-      (when (!= (graphics-get-grid-type #f) 'empty)
-	(-> "Center"
-	    ("Default"      (graphics-set-grid-center "0" "0" #f))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-center #f)))
-	(-> "Unit length"
-	    ("Default"      (graphics-set-grid-step "0.1" #f))
-	    ---
-	    ("0.05"         (graphics-set-grid-step "0.05" #f))
-	    ("0.1"          (graphics-set-grid-step "0.1" #f))
-	    ("0.2"          (graphics-set-grid-step "0.2" #f))
-	    ("0.5"          (graphics-set-grid-step "0.5" #f))
-	    ("1"            (graphics-set-grid-step "1" #f))
-	    ("2"            (graphics-set-grid-step "2" #f))
-	    ("5"            (graphics-set-grid-step "5" #f))
-	    ("10"           (graphics-set-grid-step "10" #f))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-step #f))))
-      (when (== (graphics-get-grid-type #f) 'polar)
-	(-> "Number of polar steps"
-	    ("Default"      (graphics-set-grid-astep "24" #f))
-	    ---
-	    ("4"            (graphics-set-grid-astep "4" #f))
-	    ("6"            (graphics-set-grid-astep "6" #f))
-	    ("8"            (graphics-set-grid-astep "8" #f))
-	    ("12"           (graphics-set-grid-astep "12" #f))
-	    ("16"           (graphics-set-grid-astep "16" #f))
-	    ("24"           (graphics-set-grid-astep "24" #f))
-	    ("30"           (graphics-set-grid-astep "30" #f))
-	    ("36"           (graphics-set-grid-astep "36" #f))
-	    ("60"           (graphics-set-grid-astep "60" #f))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-astep #f))))
-      (when (== (graphics-get-grid-type #f) 'logarithmic)
-	(-> "Logarithmic base"
-	    ("Default"      (graphics-set-grid-base "10" #f))
-	    ---
-	    ("6"            (graphics-set-grid-base "6" #f))
-	    ("8"            (graphics-set-grid-base "8" #f))
-	    ("10"           (graphics-set-grid-base "10" #f))
-	    ("16"           (graphics-set-grid-base "16" #f))
-	    ---
-	    ("Other"        (graphics-interactive-set-grid-base #f))))
-      (when (or (== (graphics-get-grid-type #f) 'cartesian)
-		(== (graphics-get-grid-type #f) 'polar)
-	)
-	(-> "Number of subunit steps"
-	    ("Default" (graphics-set-grid-aspect 'detailed #f #f))
-	    ---
-	    ("2" (graphics-set-grid-aspect 'detailed 2 #f))
-	    ("3" (graphics-set-grid-aspect 'detailed 3 #f))
-	    ("4" (graphics-set-grid-aspect 'detailed 4 #f))
-	    ("5" (graphics-set-grid-aspect 'detailed 5 #f))
-	    ("6" (graphics-set-grid-aspect 'detailed 6 #f))
-	    ("8" (graphics-set-grid-aspect 'detailed 8 #f))
-	    ("10" (graphics-set-grid-aspect 'detailed 10 #f))
-	    ---
-	    ("Other" (graphics-interactive-set-grid-nsubds #f))))))
+  (link graphics-visual-grid-menu))
 
 (menu-bind graphics-mode-menu
   ("Point" (graphics-set-mode "point"))
@@ -204,10 +207,13 @@
   ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup))))
 
 (menu-bind graphics-color-menu
-  ("Default" (graphics-set-color "default"))
+  ;;("Default" (graphics-set-color "default"))
   ("None" (graphics-set-color "none"))
   ---
-  (pick-color (graphics-set-color (tree->stree answer)))
+  (pick-color
+   (let* ((a (tree->stree answer))
+	  (s (if (or (== a "black") (== a "#000000")) "default" a)))
+     (graphics-set-color a)))
   ---
   ("Other" (interactive graphics-set-color)))
 
@@ -236,50 +242,56 @@
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
 
 (menu-bind graphics-point-style-menu
-  ("Default" (graphics-set-point-style "default"))
-  ---
-  ("Disk" (graphics-set-point-style "disk"))
+  ;;("Default" (graphics-set-point-style "default"))
+  ;;---
+  ;;("Disk" (graphics-set-point-style "disk"))
+  ("Disk" (graphics-set-point-style "default"))
   ("Round" (graphics-set-point-style "round"))
   ("Square" (graphics-set-point-style "square")))
 
 (menu-bind graphics-line-width-menu
-  ("Default" (graphics-set-line-width "default"))
-  ---
+  ;;("Default" (graphics-set-line-width "default"))
+  ;;---
   ("0.5 ln" (graphics-set-line-width "0.5ln"))
-  ("1 ln" (graphics-set-line-width "1ln"))
+  ;;("1 ln" (graphics-set-line-width "1ln"))
+  ("1 ln" (graphics-set-line-width "default"))
   ("2 ln" (graphics-set-line-width "2ln"))
   ("5 ln" (graphics-set-line-width "5ln"))
   ---
   ("Other" (interactive graphics-set-line-width)))
 
 (menu-bind graphics-dash-menu
-  (-> "Style"
-      ("Default" (graphics-set-dash-style "default"))
-      ---
-      ("- - - - - - - - -"    (graphics-set-dash-style "10"))
-      ("---  ---  ---  ---" (graphics-set-dash-style "11100"))
-      ("--- - --- - --- -" (graphics-set-dash-style "1111010"))
-      ---
-      ("Other" (interactive graphics-set-dash-style)))
-  (-> "Unit"
-      ("Default" (graphics-set-dash-style-unit "default"))
-      ---
-      ("2 ln" (graphics-set-dash-style-unit "2ln"))
-      ("5 ln" (graphics-set-dash-style-unit "5ln"))
-      ("10 ln" (graphics-set-dash-style-unit "10ln"))
-      ---
-      ("Other" (interactive graphics-set-dash-style-unit))))
+  (group "Style")
+  ;;("Default" (graphics-set-dash-style "default"))
+  ;;--
+  ("---"    (graphics-set-dash-style "default"))
+  (". . . . ."    (graphics-set-dash-style "10"))
+  ("- - - - -" (graphics-set-dash-style "11100"))
+  ("- . - . -" (graphics-set-dash-style "1111010"))
+  ;;---
+  ;;("Other" (interactive graphics-set-dash-style_))
+  ---
+  (group "Unit")
+  ;;("Default" (graphics-set-dash-style-unit "default"))
+  ;;---
+  ("2 ln" (graphics-set-dash-style-unit "2ln"))
+  ("5 ln" (graphics-set-dash-style-unit "5ln"))
+  ("10 ln" (graphics-set-dash-style-unit "10ln"))
+  ---
+  ("Other" (interactive graphics-set-dash-style-unit)))
 
 (menu-bind graphics-line-arrows-menu
-  ("Default" (graphics-set-line-arrows "default"))
-  ---
-  ("---" (graphics-set-line-arrows 0))
+  ;;("Default" (graphics-set-line-arrows "default"))
+  ;;---
+  ;;("---" (graphics-set-line-arrows 0))
+  ("---" (graphics-set-line-arrows "default"))
   ("--->" (graphics-set-line-arrows 1))
   ("<--->" (graphics-set-line-arrows 2)))
 
 (menu-bind graphics-fill-color-menu
-  ("Default" (graphics-set-fill-color "default"))
-  ("None" (graphics-set-fill-color "none"))
+  ;;("Default" (graphics-set-fill-color "default"))
+  ;;("None" (graphics-set-fill-color "none"))
+  ("None" (graphics-set-fill-color "default"))
   ---
   (pick-color (graphics-set-fill-color (tree->stree answer)))
   ;;(pick-background (graphics-set-fill-color (tree->stree answer)))
@@ -287,17 +299,19 @@
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-halign-menu
-  ("Default" (graphics-set-textat-halign "default"))
-  ---
-  ("Left" (graphics-set-textat-halign "left"))
+  ;;("Default" (graphics-set-textat-halign "default"))
+  ;;---
+  ;;("Left" (graphics-set-textat-halign "left"))
+  ("Left" (graphics-set-textat-halign "default"))
   ("Center" (graphics-set-textat-halign "center"))
   ("Right" (graphics-set-textat-halign "right")))
 
 (menu-bind graphics-text-valign-menu
-  ("Default" (graphics-set-textat-valign "default"))
-  ---
+  ;;("Default" (graphics-set-textat-valign "default"))
+  ;;---
   ("Bottom" (graphics-set-textat-valign "bottom"))
-  ("Base" (graphics-set-textat-valign "base"))
+  ;;("Base" (graphics-set-textat-valign "base"))
+  ("Base" (graphics-set-textat-valign "default"))
   ("Center" (graphics-set-textat-valign "center"))
   ("Top" (graphics-set-textat-valign "top")))
 
@@ -438,19 +452,22 @@
     /
     (mini #t
       (group "Point style:")
-      (=> (eval (graphics-get-property "gr-point-style"))
-          (link graphics-point-style-menu))))
+      (let* ((ps (graphics-get-property "gr-point-style"))
+             (s (if (== ps "default") "disk" ps)))
+	(=> (eval s)
+	    (link graphics-point-style-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
     /
     (mini #t
       (group "Line width:")
-      (input (when answer (graphics-set-line-width answer)) "string"
-	     (list (graphics-get-property "gr-line-width")
-                   "default" "0.5ln" "1ln" "2ln" "5ln") "3em")))
+      (let* ((lw (graphics-get-property "gr-line-width"))
+             (s (if (== lw "default") "1ln" lw)))
+	(=> (eval s)
+	    (link graphics-line-width-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
     /
     (mini #t
-      (group "Dashed:")
+      (group "Dash:")
       (let* ((dash (graphics-get-property "gr-dash-style"))
              (s (decode-dash dash)))
         (=> (eval s)
@@ -467,14 +484,18 @@
     /
     (mini #t
       (group "Horizontal alignment:")
-      (=> (eval (graphics-get-property "gr-text-at-halign"))
-          (link graphics-text-halign-menu))))
+      (let* ((al (graphics-get-property "gr-text-at-halign"))
+             (s (if (== al "default") "left" al)))
+	(=> (eval s)
+	    (link graphics-text-halign-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
     /
     (mini #t
       (group "Vertical alignment:")
-      (=> (eval (graphics-get-property "gr-text-at-valign"))
-          (link graphics-text-valign-menu)))))
+      (let* ((al (graphics-get-property "gr-text-at-valign"))
+             (s (if (== al "default") "base" al)))
+	(=> (eval s)
+	    (link graphics-text-valign-menu))))))
 
 (define (gr-mode->string s)
   (cond ((== s '(edit point)) "point")

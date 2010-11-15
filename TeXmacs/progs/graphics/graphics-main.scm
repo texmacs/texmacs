@@ -600,10 +600,10 @@
        (convert-dash-style val))))
 
 (tm-define (decode-dash x)
-  (cond ((== x "default") "default")
-        ((== x '(tuple "1" "0")) "- - -")
-        ((== x '(tuple "1" "1" "1" "0" "0")) "--  --  --")
-        ((== x '(tuple "1" "1" "1" "1" "0" "1" "0")) "-- - -- - --")
+  (cond ((== x "default") "---")
+        ((== x '(tuple "1" "0")) ". . . . .")
+        ((== x '(tuple "1" "1" "1" "0" "0")) "- - - - -")
+        ((== x '(tuple "1" "1" "1" "1" "0" "1" "0")) "- . - . -")
         (else "other")))
 
 (define (dash-style-unit-has-value? val)
@@ -663,7 +663,7 @@
 	 (graphics-change-property "gr-line-arrows" arrows))))
 
 (tm-define (decode-arrows val)
-  (cond ((== val "default") "default")
+  (cond ((== val "default") "---")
         ((== val (vector-ref default-line-arrows 0)) "---")
         ((== val (vector-ref default-line-arrows 1)) "--->")
         ((== val (vector-ref default-line-arrows 2)) "<--->")
