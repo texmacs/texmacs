@@ -159,7 +159,7 @@
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
     (assuming (<= (length l) 1)
-      ((eval (focus-tag-name (tree-label t))) (noop)))
+      (inert ((eval (focus-tag-name (tree-label t))) (noop))))
     (assuming (> (length l) 1)
       (-> (eval (focus-tag-name (tree-label t)))
           (dynamic (focus-variant-menu t)))))
@@ -240,7 +240,8 @@
   (mini #t
     (with l (focus-variants-of t)
       (assuming (<= (length l) 1)
-        ((eval (focus-tag-name (tree-label t))) (noop)))
+        (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+      ;;((eval (focus-tag-name (tree-label t))) (noop)))
       (assuming (> (length l) 1)
         ;;(=> (extend
         ;;(balloon (eval (focus-tag-name (tree-label t)))

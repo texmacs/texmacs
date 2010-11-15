@@ -140,6 +140,10 @@
   (:synopsis "Extend the size of a widget")
   `(cons* 'extend ,w (gui$list ,@l)))
 
+(tm-define-macro (gui$style st . l)
+  (:synopsis "Change the style of a widget")
+  `(cons* 'style ,st (gui$list ,@l)))
+
 (tm-define-macro (gui$check text check pred?)
   (:synopsis "Make button")
   `(list 'check ,text ,check (lambda () ,pred?)))
@@ -285,6 +289,11 @@
   (:case vlist)
   (require-format x '(vlist :*))
   `(gui$vlist ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
+  (:case inert)
+  (require-format x '(inert :*))
+  `(gui$style ,widget-style-inert ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case tile)

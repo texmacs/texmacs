@@ -29,6 +29,7 @@
     (text :tuple? :string?)
     (icon :string?)
     (extend :menu-label :*)
+    (style :integer? :menu-label)
     (balloon :menu-label :string?)))
   (:menu-wide-label (:or
     :menu-label
@@ -51,6 +52,7 @@
     (vlist :menu-item-list)
     (minibar :menu-item-list)
     (extend :menu-item :menu-item-list)
+    (style :integer? :menu-item-list)
     (-> :menu-label :menu-item-list)
     (=> :menu-label :menu-item-list)
     (tile :integer? :menu-item-list)
@@ -114,6 +116,9 @@
 (define (active? style)
   (== (logand style widget-style-inert) 0))
 
+(define (greyed? style)
+  (!= (logand style widget-style-grey) 0))
+
 (define (make-menu-label p style . opt)
   "Make widget for menu label @p."
   ;; Possibilities for p:
@@ -129,7 +134,7 @@
   ;;   <label> :: (icon <string>)
   ;;     Pixmap menu label, the <string> is the name of the pixmap.
   (let ((tt? (and (nnull? opt) (car opt)))
-	(col (color (if (active? style) "black" "dark grey"))))
+	(col (color (if (greyed? style) "dark grey" "black"))))
     (cond ((translatable? p)		; "text"
 	   (widget-text (translate p) style col #t))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
@@ -137,6 +142,11 @@
   	  ((tuple? p 'extend)		; (extend <label> . ws)
            (with l (make-menu-items (cddr p) style tt?)
              (widget-extend (make-menu-label (cadr p) style tt?) l)))
+  	  ((tuple? p 'style 2)		; (style st <label>)
+           (let* ((x (cadr p))
+                  (new-style (if (> x 0) (logior style x)
+                                 (logand style (lognot (- x))))))
+             (make-menu-label (caddr p) new-style tt?)))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
@@ -278,7 +288,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-menu-symbol-button style sym opt-cmd)
-  (with col (color (if (active? style) "black" "dark grey"))
+  (with col (color (if (greyed? style) "dark grey" "black"))
     (if opt-cmd
 	(widget-menu-button (widget-box '() sym col #t #f)
 			    (make-menu-command (apply opt-cmd '()))
@@ -329,6 +339,13 @@
   (with l (make-menu-items (cdr p) style bar?)
     (widget-extend (car l) (cdr l))))
 
+(define (make-menu-style p style bar?)
+  "Make @(extend :integer? :menu-item-list) menu item."
+  (let* ((x (cadr p))
+         (new-style (if (> x 0) (logior style x)
+                        (logand style (lognot (- x))))))
+    (make-menu-items-list (cddr p) new-style bar?)))
+
 (define (make-menu-minibar p style)
   "Make @(minibar :menu-item-list) menu items."
   (with new-style (logior style widget-style-mini)
@@ -369,7 +386,9 @@
   (with (tag pred? . items) p
     (let* ((old-active? (== (logand style widget-style-inert) 0))
 	   (new-active? (and old-active? (pred?)))
-	   (new-style (logior style (if new-active? 0 widget-style-inert))))
+	   (new-style (logior style
+                              (if new-active? 0
+                                  (+ widget-style-inert widget-style-grey)))))
       (make-menu-items-list items new-style bar?))))
 
 (define (make-menu-mini p style bar?)
@@ -454,6 +473,8 @@
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (extend (:%1 :*)
 	  ,(lambda (p style bar?) (list (make-menu-extend p style bar?))))
+  (style (:%1 :*)
+         ,(lambda (p style bar?) (make-menu-style p style bar?)))
   (-> (:%1 :*)
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (=> (:%1 :*)
@@ -528,6 +549,7 @@
 (tm-define (menu-expand p)
   (:type (-> object object))
   (:synopsis "Expand links and conditional menus in menu @p.")
+  ;;(display* "Expand " p "\n")
   (cond ((npair? p) (replace-procedures p))
 	((string? (car p)) p)
 	((symbol? (car p))
@@ -560,6 +582,7 @@
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (extend ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))
+  (style ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))
   (-> ,replace-procedures)
   (=> ,replace-procedures)
   (tile ,replace-procedures)
