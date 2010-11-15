@@ -99,12 +99,14 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   object xmenu= call ("menu-expand", eval ("'" * menu));
   //cout << "xmenu= " << xmenu << "\n";
   if (menu_cache->contains (xmenu)) {
+    //if (menu_current[which] == xmenu) cout << "Same " << menu << "\n";
     if (menu_current[which] == xmenu) return false;
     menu_current (which)= xmenu;
     //cout << "Cached " << menu << "\n";
     w= menu_cache [xmenu];
     return true;
   }
+  menu_current (which)= xmenu;
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);
   w= make_menu_widget (umenu);
