@@ -151,6 +151,7 @@
 	     toggle-context? toggle-second-context? toggle-toggle)
 (lazy-define (dynamic session-edit) scheme-eval)
 (lazy-define (dynamic form-edit) form-ref form-set! form-toggle)
+(lazy-initialize (dynamic session-menu) (in-session?))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")

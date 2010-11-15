@@ -116,6 +116,7 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
 
 void
 tm_window_rep::menu_main (string menu) {
+  eval ("(lazy-initialize-force)");
   widget w;
   if (get_menu_widget (-1, menu, w))
     ::set_main_menu (wid, w);
@@ -123,6 +124,7 @@ tm_window_rep::menu_main (string menu) {
 
 void
 tm_window_rep::menu_icons (int which, string menu) {
+  eval ("(lazy-initialize-force)");
   widget w;
   if (get_menu_widget (which, menu, w)) {
     if      (which == 0) set_main_icons (wid, w);

@@ -183,3 +183,39 @@
   (in-cyrillic-koi8% (cyrillic-input-method? "koi8") in-cyrillic%)
   (in-cyrillic-translit% (cyrillic-input-method? "translit") in-cyrillic%)
   (in-cyrillic-yawerty% (cyrillic-input-method? "yawerty") in-cyrillic%))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy initializations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public lazy-initialize-id 0)
+(define-public lazy-initialize-pending '())
+
+(define-public (lazy-initialize-impl id pred? module)
+  (set! lazy-initialize-pending
+	(cons (list id pred? module) lazy-initialize-pending)))
+
+(define-public (lazy-initialize-do l id)
+  (cond ((null? l) l)
+	((or (== (caar l) id) (and (== id #t) ((cadar l))))
+	 ((caddar l))
+	 (lazy-initialize-do (cdr l) id))
+	(else (cons (car l) (lazy-initialize-do (cdr l) id)))))
+
+(define-public-macro (lazy-initialize module pred?)
+  `(with id lazy-initialize-id
+     (set! lazy-initialize-id (+ id 1))
+     (lazy-initialize-impl id
+       (lambda ()
+	 ,pred?)
+       (lambda ()
+	 (import-from ,module)))
+     (delayed
+       (:idle 5000)
+       (set! lazy-initialize-pending
+	     (lazy-initialize-do lazy-initialize-pending id))
+       (import-from ,module))))
+
+(define-public (lazy-initialize-force)
+  (set! lazy-initialize-pending
+	(lazy-initialize-do lazy-initialize-pending #t)))

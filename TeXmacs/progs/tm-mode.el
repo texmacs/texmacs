@@ -79,8 +79,8 @@
   '(for if inherit
     define-secure-symbols map-in-order link promise plugin-configure
     plugin-input-converters use-modules export import-from inherit-modules
-    lazy-menu lazy-keyboard lazy-define lazy-format
-    lazy-language lazy-input-converter
+    lazy-menu lazy-keyboard lazy-define lazy-initialize
+    lazy-format lazy-language lazy-input-converter
     form-cancel form-done form-next form-previous radio suggestions toggle))
 
 (setq highlight-definitions

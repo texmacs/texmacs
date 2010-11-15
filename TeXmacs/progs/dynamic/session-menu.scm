@@ -86,6 +86,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind session-menu
+  ---
   (-> "Input options" (link session-input-menu))
   (-> "Output options" (link session-output-menu))
   (-> "Field" (link session-field-menu))
@@ -94,6 +95,10 @@
   (-> "Evaluate" (link session-evaluate-menu))
   ("Interrupt execution" (plugin-interrupt))
   ("Close session" (plugin-stop)))
+
+(tm-menu (focus-extra-menu t)
+  (:require (field-context? t))
+  (link session-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sessions icons
@@ -117,6 +122,10 @@
        (plugin-interrupt))
       ((balloon (icon "tm_clsession.xpm") "Close session")
        (plugin-stop))))
+
+(tm-menu (focus-extra-icons t)
+  (:require (field-context? t))
+  (link session-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Help icons
