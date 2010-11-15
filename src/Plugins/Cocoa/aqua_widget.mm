@@ -1040,6 +1040,12 @@ glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
 }
 
 widget
+extend (widget w, array<widget> a) {
+  (void) a;
+  return w;
+}
+
+widget
 wait_widget (SI width, SI height, string message) { 
   // a widget of a specified width and height, displaying a wait message
   // this widget is only needed when using the X11 plugin

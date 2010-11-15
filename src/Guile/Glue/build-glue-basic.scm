@@ -372,6 +372,7 @@
   (connection-stop connection_stop (void string string))
 
   ;; widgets
+  (widget-extend extend (widget widget array_widget))
   (widget-hmenu horizontal_menu (widget array_widget))
   (widget-vmenu vertical_menu (widget array_widget))
   (widget-tmenu tile_menu (widget array_widget int))

@@ -81,6 +81,7 @@ bool wk_has_pointer_grab (wk_widget w);
 * Exported special widgets and window widget destruction
 ******************************************************************************/
 
+wk_widget extend (wk_widget w, array<wk_widget> a);
 wk_widget horizontal_list (array<wk_widget> a);
 wk_widget horizontal_list (array<wk_widget> a, array<string> name);
 wk_widget vertical_list (array<wk_widget> a);

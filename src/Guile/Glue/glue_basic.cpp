@@ -4295,6 +4295,21 @@ tmg_connection_stop (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_widget_extend (SCM arg1, SCM arg2) {
+  SCM_ASSERT_WIDGET (arg1, SCM_ARG1, "widget-extend");
+  SCM_ASSERT_ARRAY_WIDGET (arg2, SCM_ARG2, "widget-extend");
+
+  widget in1= scm_to_widget (arg1);
+  array_widget in2= scm_to_array_widget (arg2);
+
+  // SCM_DEFER_INTS;
+  widget out= extend (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return widget_to_scm (out);
+}
+
+SCM
 tmg_widget_hmenu (SCM arg1) {
   SCM_ASSERT_ARRAY_WIDGET (arg1, SCM_ARG1, "widget-hmenu");
 
@@ -5175,6 +5190,7 @@ initialize_glue_basic () {
   scm_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
   scm_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 2, 0, 0);
   scm_new_procedure ("connection-stop", (FN) tmg_connection_stop, 2, 0, 0);
+  scm_new_procedure ("widget-extend", (FN) tmg_widget_extend, 2, 0, 0);
   scm_new_procedure ("widget-hmenu", (FN) tmg_widget_hmenu, 1, 0, 0);
   scm_new_procedure ("widget-vmenu", (FN) tmg_widget_vmenu, 1, 0, 0);
   scm_new_procedure ("widget-tmenu", (FN) tmg_widget_tmenu, 2, 0, 0);

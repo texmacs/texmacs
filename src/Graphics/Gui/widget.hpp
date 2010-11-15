@@ -188,6 +188,9 @@ widget horizontal_list (array<widget> a);
   // a horizontal list made up of the widgets in a
 widget vertical_list (array<widget> a);
   // a vertical list made up of the widgets in a
+widget extend (widget w, array<widget> a);
+  // extend the size of w to the maximum of the sizes of
+  // the widgets in the list a
 
 widget wait_widget (SI width, SI height, string message);
   // a widget of a specified width and height, displaying a wait message
