@@ -61,7 +61,7 @@
   ---
   (glue #f #f 0 3)
   (hlist
-    (glue #t #f 0 0)
+    (glue #t #f 0 17)
     ("Cancel" (window-delete win))
     (glue #f #f 3 0))
   (glue #f #f 0 3))
