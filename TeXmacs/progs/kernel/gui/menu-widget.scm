@@ -28,6 +28,7 @@
     (verbatim :%1)
     (text :tuple? :string?)
     (icon :string?)
+    (extend :menu-label :*)
     (balloon :menu-label :string?)))
   (:menu-wide-label (:or
     :menu-label
@@ -133,6 +134,9 @@
 	   (widget-text (translate p) style col #t))
   	  ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
   	   (make-menu-label (cadr p) style tt?))
+  	  ((tuple? p 'extend)		; (extend <label> . ws)
+           (with l (make-menu-items (cddr p) style tt?)
+             (widget-extend (make-menu-label (cadr p) style tt?) l)))
   	  ((tuple? p 'text 2)		; (text <font desc> "text")
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
@@ -320,9 +324,9 @@
   "Make @(vertical :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
-(define (make-menu-extend p style)
+(define (make-menu-extend p style bar?)
   "Make @(extend :menu-item :menu-item-list) menu item."
-  (with l (make (make-menu-items (cdr p) style #f))
+  (with l (make-menu-items (cdr p) style bar?)
     (widget-extend (car l) (cdr l))))
 
 (define (make-menu-minibar p style)
@@ -449,7 +453,7 @@
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (extend (:%1 :*)
-	  ,(lambda (p style bar?) (list (make-menu-extend p style))))
+	  ,(lambda (p style bar?) (list (make-menu-extend p style bar?))))
   (-> (:%1 :*)
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (=> (:%1 :*)

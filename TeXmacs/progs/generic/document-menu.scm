@@ -599,6 +599,6 @@
    (=> (balloon (eval (upcase-first (get-init "page-type")))
 		"Paper size")
        (link document-page-size-menu))
-   (=> (balloon (eval (string-append (get-init "font-base-size") " pt"))
+   (=> (balloon (eval (string-append (get-init "font-base-size") "pt"))
 		"Font size")
        (link document-font-base-size-menu))))

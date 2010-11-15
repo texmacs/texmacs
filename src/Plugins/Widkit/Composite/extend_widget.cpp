@@ -17,7 +17,7 @@
 * Balloon widgets
 ******************************************************************************/
 
-class extend_widget_rep: public basic_widget_rep {
+class extend_widget_rep: public attribute_widget_rep {
   array<wk_widget> ws;
 public:
   extend_widget_rep (wk_widget w, array<wk_widget> ws);
@@ -32,7 +32,7 @@ public:
 ******************************************************************************/
 
 extend_widget_rep::extend_widget_rep (wk_widget w, array<wk_widget> ws2):
-  basic_widget_rep (1, south_west), ws (ws2)
+  attribute_widget_rep (1, south_west), ws (ws2)
 {
   a[0]= w;
 }
@@ -48,10 +48,11 @@ extend_widget_rep::operator tree () {
 
 void
 extend_widget_rep::handle_get_size (get_size_event ev) {
-  SI w=0, h=0;
+  SI w= ev->w, h= ev->h;
+  a[0] << get_size (w, h, ev->mode);
   for (int i=0; i<N(ws); i++) {
     SI ww= ev->w, hh= ev->h;
-    a[i] << get_size (ww, hh, ev->mode);
+    ws[i] << get_size (ww, hh, ev->mode);
     w= max (w, ww);
     h= max (h, hh);
   }
@@ -62,7 +63,11 @@ extend_widget_rep::handle_get_size (get_size_event ev) {
 void
 extend_widget_rep::handle_position (position_event ev) {
   (event) ev;
-  a[0] << emit_position (0, 0, w, h, south_west);
+  SI ww= w, hh= h;
+  a[0] << get_size (ww, hh, 0);
+  SI x= (w - ww) >> 1;
+  abs_round (x);
+  a[0] << emit_position (x, 0, ww, hh, south_west);
 }
 
 bool
@@ -77,7 +82,7 @@ extend_widget_rep::handle (event ev) {
   case INVALIDATE_EVENT:
   case REPAINT_EVENT:
   case FIND_CHILD_EVENT:
-    return basic_widget_rep::handle (ev);
+    return attribute_widget_rep::handle (ev);
   default:
     a[0] << ev;
     return true;

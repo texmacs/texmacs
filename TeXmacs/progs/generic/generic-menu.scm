@@ -25,23 +25,23 @@
 (tm-define (variant-set t v)
   (tree-assign-node t v))
 
-(define (variant-set-keep-numbering t v)
+(tm-define (variant-set-keep-numbering t v)
   (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
       (variant-set t (symbol-append v '*))
       (variant-set t v)))
 
-(define (tag-menu-name l)
+(tm-define (focus-variants-of t)
+  (variants-of (tree-label t)))
+
+(tm-define (focus-tag-name l)
   (if (symbol-unnumbered? l)
-      (tag-menu-name (symbol-drop-right l 1))
+      (focus-tag-name (symbol-drop-right l 1))
       (upcase-first (symbol->string l))))
 
-(define (variant-menu-item v)
-  (list (tag-menu-name v)
-	(lambda () (variant-set-keep-numbering (focus-tree) v))))
-
-(tm-define (variant-menu-items t)
-  (with variants (variants-of (tree-label t))
-    (map variant-menu-item variants)))
+(tm-menu (focus-variant-menu t)
+  (for (v (focus-variants-of t))
+    ((eval (focus-tag-name v))
+     (variant-set-keep-numbering (focus-tree) v))))
 
 (tm-define (check-number? t)
   (tree-in? t (numbered-tag-list)))
@@ -156,9 +156,13 @@
 ;; FIXME: when recovering focus-tree,
 ;; double check that focus-tree still has the required form
 
-(tm-menu (focus-variant-menu t)
-  (-> (eval (tag-menu-name (tree-label t)))
-      (dynamic (variant-menu-items t)))
+(tm-menu (focus-tag-menu t)
+  (with l (focus-variants-of t)
+    (assuming (<= (length l) 1)
+      ((eval (focus-tag-name (tree-label t))) (noop)))
+    (assuming (> (length l) 1)
+      (-> (eval (focus-tag-name (tree-label t)))
+          (dynamic (focus-variant-menu t)))))
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check "Numbered" "v" (check-number? (focus-tree)))
@@ -206,7 +210,7 @@
         (dynamic (string-input-menu t i))))))
 
 (tm-menu (standard-focus-menu t)
-  (dynamic (focus-variant-menu t))
+  (dynamic (focus-tag-menu t))
   ---
   (dynamic (focus-move-menu t))
   (assuming (or (structured-horizontal? t) (structured-vertical? t))
@@ -223,10 +227,7 @@
 ;; The main focus icons bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-variant-icons t)
-  (mini #t
-    (=> (balloon (eval (tag-menu-name (tree-label t))) "Structured variant")
-	(dynamic (variant-menu-items t))))
+(tm-menu (focus-tag-icons t)
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
@@ -236,6 +237,19 @@
     ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
 	    (toggle-second-context? (focus-tree)))
      (toggle-toggle (focus-tree))))
+  (mini #t
+    (with l (focus-variants-of t)
+      (assuming (<= (length l) 1)
+        ((eval (focus-tag-name (tree-label t))) (noop)))
+      (assuming (> (length l) 1)
+        ;;(=> (extend
+        ;;(balloon (eval (focus-tag-name (tree-label t)))
+        ;;"Structured variant")
+        ;;(dynamic (focus-variant-menu t)))
+        ;;(dynamic (focus-variant-menu t)))))
+        (=> (balloon (eval (focus-tag-name (tree-label t)))
+                     "Structured variant")
+            (dynamic (focus-variant-menu t))))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (set-message "Not yet implemented" ""))
   ((balloon (icon "tm_focus_delete.xpm") "Remove tag")
@@ -294,9 +308,9 @@
       (dynamic (string-input-icon t i)))))
 
 (tm-menu (standard-focus-icons t)
-  (minibar (dynamic (focus-variant-icons t)))
-  (glue #f #f 5 0)
   (minibar (dynamic (focus-move-icons t)))
+  (glue #f #f 5 0)
+  (minibar (dynamic (focus-tag-icons t)))
   (assuming (or (structured-horizontal? t) (structured-vertical? t))
     (assuming (cursor-inside? t)
       (glue #f #f 5 0)
