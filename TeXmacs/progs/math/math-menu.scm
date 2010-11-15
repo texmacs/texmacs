@@ -34,7 +34,6 @@
   ("N-th root" (make-var-sqrt))
   ("Negation" (make-neg))
   ("Tree" (make-tree))
-  ("Text" (make 'text))
   ---
   (-> "Size tag" (link size-tag-menu))
   (-> "Script"
@@ -86,6 +85,7 @@
       ("Wide bar" (make-wide-under "<wide-bar>")))
   (-> "Symbol" (link symbol-menu))
   ---
+  ("Text" (make 'text))
   (-> "Table" (link insert-table-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Link" (link insert-link-menu))
@@ -910,7 +910,7 @@
    (make-script #f #t))
   ((balloon (icon "tm_sup.xpm") "Make a superscript")
    (make-script #t #t))
-  |
+  /
   (=> (balloon (icon "tm_bigop.xpm") "Insert a big operator")
       (tile 8 (link big-operator-menu)))
   (=> (balloon (icon "tm_bigleft.xpm") "Insert a large left delimiter")
@@ -930,7 +930,7 @@
       ((icon "tm_ddot.xpm") (make-wide "<ddot>"))
       ((icon "tm_acute.xpm") (make-wide "<acute>"))
       ((icon "tm_grave.xpm") (make-wide "<grave>")))
-  |
+  /
   (=> (balloon (icon "tm_binop.xpm") "Insert a binary operation")
       (tile 8 (link binary-operation-menu)))
   (=> (balloon (icon "tm_binrel.xpm") "Insert a binary relation")
@@ -950,4 +950,35 @@
   (=> (balloon (icon "tm_miscsymb.xpm") "Insert a miscellaneous symbol")
       (tile 8 (link miscellaneous-symbol-menu))
       ---
-      (tile 6 (link dots-menu))))
+      (tile 6 (link dots-menu)))
+  /
+  (=> (balloon (icon "tm_greek.xpm") "Insert a greek character")
+      (tile 8 (link lower-greek-menu))
+      ---
+      (tile 8 (link upper-greek-menu)))
+  (=> (balloon (icon "tm_mathbold.xpm")
+	       "Insert a bold character")
+      (tile 15 (link bold-num-menu))
+      ---
+      (tile 13 (link bold-alpha-menu))
+      ---
+      (tile 15 (link bold-greek-menu))
+      ---
+      ("use a bold font" (make-with "math-font-series" "bold")))
+  (=> (balloon (icon "tm_cal.xpm")
+	       "Insert a calligraphic character")
+      (tile 13 (link cal-menu))
+      ---
+      ("use a calligraphic font" (make-with "math-font" "cal")))
+  (=> (balloon (icon "tm_frak.xpm")
+	       "Insert a fraktur character")
+      (tile 13 (link frak-menu))
+      ---
+      ("use the fraktur font" (make-with "math-font" "Euler")))
+  (=> (balloon (icon "tm_bbb.xpm")
+	       "Insert a blackboard bold character")
+      (tile 13 (link bbb-menu))
+      ---
+      ("use the blackboard bold font" (make-with "math-font" "Bbb*")))
+  (link math-format-icons)
+  (link texmacs-insert-icons))

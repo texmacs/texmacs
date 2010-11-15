@@ -440,7 +440,7 @@
       (group "Fill color:")
       (with col (graphics-get-property "gr-fill-color")
         (assuming (== col "default")
-          (=> (glue #f #f 24 15)
+          (=> "none"
               (link graphics-fill-color-menu)))
         (assuming (== col "none")
           (=> "none"

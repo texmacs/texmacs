@@ -24,7 +24,6 @@
   (:menu-label (:or
     :string?
     (concat :*)
-    (glue :%4)
     (color :%5)
     (verbatim :%1)
     (text :tuple? :string?)
@@ -137,9 +136,6 @@
 	   (widget-box (cadr p) (caddr p) col #t #t))
   	  ((tuple? p 'icon 1)		; (icon "name.xpm")
   	   (widget-xpm (cadr p)))
-  	  ((tuple? p 'glue 4)		; (glue hext? vext? minw minh)
-  	   (widget-glue (second p) (third p)
-                        (* (fourth p) 256) (* (fifth p) 256)))
   	  ((tuple? p 'color 5)		; (color col hext? vext? minw minh)
   	   (widget-color (second p) (third p) (fourth p)
                          (* (fifth p) 256) (* (sixth p) 256))))))
@@ -383,6 +379,7 @@
 (define (make-menu-promise p style bar?)
   "Make @(promise :%1) menu items."
   (with value ((cadr p))
+    ;;(make-menu-items value style bar?)
     (if (match? value ':menu-item) (make-menu-items value style bar?)
 	(make-menu-error "promise did not yield a menu: " value))))
 
@@ -445,9 +442,9 @@
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
-  (-> (:menu-label :*)
+  (-> (:%1 :*)
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
-  (=> (:menu-label :*)
+  (=> (:%1 :*)
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (tile (:integer? :*)
 	,(lambda (p style bar?) (list (make-menu-tile p style))))
@@ -489,6 +486,7 @@
 (define (menu-expand-promise p)
   "Expand promised menu @p."
   (with value ((cadr p))
+    ;;(menu-expand value)
     (if (match? value ':menu-item) (menu-expand value) p)))
 
 (define (menu-expand-input p)

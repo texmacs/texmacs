@@ -424,6 +424,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind text-format-icons
+  /
   (if (and (style-has? "std-markup-dtd") (not (in-source?)))
       ;;((balloon
       ;;(text (roman rm bold right 12 600) "S")

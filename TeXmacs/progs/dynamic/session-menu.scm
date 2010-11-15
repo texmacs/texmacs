@@ -108,7 +108,7 @@
       (link session-field-menu))
   (=> (balloon (icon "tm_session_session.xpm") "Session commands")
       (link session-session-menu))
-  |
+  /
   (=> (balloon (icon "tm_go.xpm") "Evaluate fields")
       (link session-evaluate-menu))
   (if (!= (get-env "prog-language") "scheme")
@@ -116,8 +116,9 @@
        (plugin-interrupt))
       ((balloon (icon "tm_clsession.xpm") "Close session")
        (plugin-stop)))
-  (if (in-math?)
-      |))
+  /
+  (if (in-prog?) (link prog-format-icons))
+  (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Help icons

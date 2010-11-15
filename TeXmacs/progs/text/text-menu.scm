@@ -313,7 +313,7 @@
 		   "Insert automatically generated content")
 	  (link automatic-menu)))
   (if (style-has? "std-list-dtd")
-      |
+      /
       (=> (balloon (icon "tm_itemize.xpm") "Itemize")
 	  (link itemize-menu))
       (=> (balloon (icon "tm_enumerate.xpm") "Enumerate")
@@ -322,4 +322,6 @@
 	  (link description-menu))
       (if (inside-list-tag?)
 	  ((balloon (icon "tm_item.xpm") "Insert a new item")
-	   (make-item)))))
+	   (make-item))))
+  (link text-format-icons)
+  (link texmacs-insert-icons))
