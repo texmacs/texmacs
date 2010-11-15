@@ -49,6 +49,7 @@
     (hlist :menu-item-list)
     (vlist :menu-item-list)
     (minibar :menu-item-list)
+    (extend :menu-item :menu-item-list)
     (-> :menu-label :menu-item-list)
     (=> :menu-label :menu-item-list)
     (tile :integer? :menu-item-list)
@@ -319,6 +320,11 @@
   "Make @(vertical :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
+(define (make-menu-extend p style)
+  "Make @(extend :menu-item :menu-item-list) menu item."
+  (with l (make (make-menu-items (cdr p) style #f))
+    (widget-extend (car l) (cdr l))))
+
 (define (make-menu-minibar p style)
   "Make @(minibar :menu-item-list) menu items."
   (with new-style (logior style widget-style-mini)
@@ -442,6 +448,8 @@
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
   (minibar (:*)
 	    ,(lambda (p style bar?) (list (make-menu-minibar p style))))
+  (extend (:%1 :*)
+	  ,(lambda (p style bar?) (list (make-menu-extend p style))))
   (-> (:%1 :*)
       ,(lambda (p style bar?) (list (make-menu-submenu p style))))
   (=> (:%1 :*)
@@ -547,6 +555,7 @@
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
+  (extend ,(lambda (p) `(extend ,@(menu-expand-list (cdr p)))))
   (-> ,replace-procedures)
   (=> ,replace-procedures)
   (tile ,replace-procedures)
