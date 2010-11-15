@@ -33,13 +33,14 @@ edit_interface_rep::append_left_footer (tree& l, string env_var) {
 
 void
 edit_interface_rep::set_left_footer () {
-  int i;
   tree s= concat ();
   double base_sz= get_env_int (FONT_BASE_SIZE);
   double sz= get_env_double (FONT_SIZE);
+  /*
   tree the_style= get_style ();
-  for (i=0; i<arity (the_style); i++)
+  for (int i=0; i<arity (the_style); i++)
     s << " " << as_string (the_style[i]);
+  */
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
   if (mode == "prog") s << " program";

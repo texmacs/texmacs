@@ -188,6 +188,90 @@
        (noop) ;; NOTE: inhibit segfault due to property searching?
        (init-env "prog-scripts" name)))))
 
+(tm-menu (document-page-size-menu)
+  ("Default"
+   (init-default "page-type" "page-width" "page-height")
+   (notify-page-change))
+  ---
+  (group "Common formats")
+  ("A3" (init-page-type "a3"))
+  ("A4" (init-page-type "a4"))
+  ("A5" (init-page-type "a5"))
+  ("B4" (init-page-type "b4"))
+  ("B5" (init-page-type "b5"))
+  ("Letter" (init-page-type "letter"))
+  ("Legal" (init-page-type "legal"))
+  ("Executive" (init-page-type "executive"))
+  ---
+  (group "Standard formats")
+  (-> "A series"
+      ("A0" (init-page-type "a0"))
+      ("A1" (init-page-type "a1"))
+      ("A2" (init-page-type "a2"))
+      ("A3" (init-page-type "a3"))
+      ("A4" (init-page-type "a4"))
+      ("A5" (init-page-type "a5"))
+      ("A6" (init-page-type "a6"))
+      ("A7" (init-page-type "a7"))
+      ("A8" (init-page-type "a8"))
+      ("A9" (init-page-type "a9")))
+  (-> "B series"
+      ("B0" (init-page-type "b0"))
+      ("B1" (init-page-type "b1"))
+      ("B2" (init-page-type "b2"))
+      ("B3" (init-page-type "b3"))
+      ("B4" (init-page-type "b4"))
+      ("B5" (init-page-type "b5"))
+      ("B6" (init-page-type "b6"))
+      ("B7" (init-page-type "b7"))
+      ("B8" (init-page-type "b8"))
+      ("B9" (init-page-type "b9")))
+  (-> "Arch series"
+      ("ArchA" (init-page-type "archA"))
+      ("ArchB" (init-page-type "archB"))
+      ("ArchC" (init-page-type "archC"))
+      ("ArchD" (init-page-type "archD"))
+      ("ArchE" (init-page-type "archE")))
+  (-> "American"
+      ("10x14" (init-page-type "10x14"))
+      ("11x17" (init-page-type "11x17"))
+      ("C5" (init-page-type "C5"))
+      ("Comm10" (init-page-type "Comm10"))
+      ("DL" (init-page-type "DL"))
+      ("Executive" (init-page-type "executive"))
+      ("Half letter" (init-page-type "halfletter"))
+      ("Half executive" (init-page-type "halfexecutive"))
+      ("Ledger" (init-page-type "ledger"))
+      ("Legal" (init-page-type "legal"))
+      ("Letter" (init-page-type "letter"))
+      ("Monarch" (init-page-type "Monarch")))
+  (-> "Miscellaneous"
+      ("C sheet" (init-page-type "csheet"))
+      ("D sheet" (init-page-type "dsheet"))
+      ("E sheet" (init-page-type "esheet"))
+      ("Flsa" (init-page-type "flsa"))
+      ("Flse" (init-page-type "flse"))
+      ("Folio" (init-page-type "folio"))
+      ("Lecture note" (init-page-type "lecture note"))
+      ("Note" (init-page-type "note"))
+      ("Quarto" (init-page-type "quarto"))
+      ("Statement" (init-page-type "statement"))
+      ("Tabloid" (init-page-type "tabloid")))
+  ---
+  ("Other" (interactive init-page-size)))
+
+(tm-menu (document-font-base-size-menu)
+  ("Default" (init-default "font-base-size"))
+  ---
+  ("8" (init-env "font-base-size" "8"))
+  ("9" (init-env "font-base-size" "9"))
+  ("10" (init-env "font-base-size" "10"))
+  ("11" (init-env "font-base-size" "11"))
+  ("12" (init-env "font-base-size" "12"))
+  ("14" (init-env "font-base-size" "14"))
+  ---
+  ("Other" (init-interactive-env "font-base-size")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -316,16 +400,7 @@
 	  ("Times" (init-env "prog-font" "times")))
       ---
       (-> "Size"
-	  ("Default" (init-default "font-base-size"))
-	  ---
-	  ("8" (init-env "font-base-size" "8"))
-	  ("9" (init-env "font-base-size" "9"))
-	  ("10" (init-env "font-base-size" "10"))
-	  ("11" (init-env "font-base-size" "11"))
-	  ("12" (init-env "font-base-size" "12"))
-	  ("14" (init-env "font-base-size" "14"))
-	  ---
-	  ("Other" (init-interactive-env "font-base-size")))
+	  (link document-font-base-size-menu))
       (-> "Dpi"
 	  ("Default" (init-default "dpi"))
 	  ---
@@ -438,77 +513,7 @@
 	  ("Papyrus" (init-page-medium "papyrus"))
 	  ("Automatic" (init-page-medium "automatic")))
       (-> "Size"
-	  ("Default"
-	   (check "*" (test-default? "page-type" "page-width" "page-height"))
-	   (init-default "page-type" "page-width" "page-height")
-	   (notify-page-change))
-	  ---
-	  (group "Common formats")
-	  ("A3" (init-page-type "a3"))
-	  ("A4" (init-page-type "a4"))
-	  ("A5" (init-page-type "a5"))
-	  ("B4" (init-page-type "b4"))
-	  ("B5" (init-page-type "b5"))
-	  ("Letter" (init-page-type "letter"))
-	  ("Legal" (init-page-type "legal"))
-	  ("Executive" (init-page-type "executive"))
-	  ---
-	  (group "Standard formats")
-	  (-> "A series"
-	      ("A0" (init-page-type "a0"))
-	      ("A1" (init-page-type "a1"))
-	      ("A2" (init-page-type "a2"))
-	      ("A3" (init-page-type "a3"))
-	      ("A4" (init-page-type "a4"))
-	      ("A5" (init-page-type "a5"))
-	      ("A6" (init-page-type "a6"))
-	      ("A7" (init-page-type "a7"))
-	      ("A8" (init-page-type "a8"))
-	      ("A9" (init-page-type "a9")))
-	  (-> "B series"
-	      ("B0" (init-page-type "b0"))
-	      ("B1" (init-page-type "b1"))
-	      ("B2" (init-page-type "b2"))
-	      ("B3" (init-page-type "b3"))
-	      ("B4" (init-page-type "b4"))
-	      ("B5" (init-page-type "b5"))
-	      ("B6" (init-page-type "b6"))
-	      ("B7" (init-page-type "b7"))
-	      ("B8" (init-page-type "b8"))
-	      ("B9" (init-page-type "b9")))
-	  (-> "Arch series"
-	      ("ArchA" (init-page-type "archA"))
-	      ("ArchB" (init-page-type "archB"))
-	      ("ArchC" (init-page-type "archC"))
-	      ("ArchD" (init-page-type "archD"))
-	      ("ArchE" (init-page-type "archE")))
-	  (-> "American"
-	      ("10x14" (init-page-type "10x14"))
-	      ("11x17" (init-page-type "11x17"))
-	      ("C5" (init-page-type "C5"))
-	      ("Comm10" (init-page-type "Comm10"))
-	      ("DL" (init-page-type "DL"))
-	      ("Executive" (init-page-type "executive"))
-	      ("Half letter" (init-page-type "halfletter"))
-	      ("Half executive" (init-page-type "halfexecutive"))
-	      ("Ledger" (init-page-type "ledger"))
-	      ("Legal" (init-page-type "legal"))
-	      ("Letter" (init-page-type "letter"))
-	      ("Monarch" (init-page-type "Monarch")))
-	  (-> "Miscellaneous"
-	      ("C sheet" (init-page-type "csheet"))
-	      ("D sheet" (init-page-type "dsheet"))
-	      ("E sheet" (init-page-type "esheet"))
-	      ("Flsa" (init-page-type "flsa"))
-	      ("Flse" (init-page-type "flse"))
-	      ("Folio" (init-page-type "folio"))
-	      ("Lecture note" (init-page-type "lecture note"))
-	      ("Note" (init-page-type "note"))
-	      ("Quarto" (init-page-type "quarto"))
-	      ("Statement" (init-page-type "statement"))
-	      ("Tabloid" (init-page-type "tabloid")))
-	  ---
-	  ("Other" (interactive init-page-size)))
+	  (link document-page-size-menu))
       (-> "Orientation"
 	  ("Default" (check "*" (test-default? "page-orientation"))
 	   (init-default "page-orientation")
@@ -571,3 +576,29 @@
       (if (project-attached?)
 	  ---
 	  ("Clear local information" (clear-local-info)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document focus icons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (standard-focus-icons t)
+  (:require (== (tree->path t) (buffer-path)))
+  (minibar
+   (let* ((st* (tree->stree (get-style-tree)))
+	  (st (if (== st* '(tuple)) '(generic) (cdr st*))))
+     (=> (balloon (eval (upcase-first (car st))) "Document style")
+	 (link style-menu))
+     (for (pack (cdr st))
+       (=> (eval pack)
+	   ("Remove package" (init-remove-package pack)))))
+   (=> (balloon (icon "tm_add.xpm") "Add style package")
+       (link add-package-menu)))
+
+  (glue #f #f 5 0)
+  (minibar
+   (=> (balloon (eval (upcase-first (get-init "page-type")))
+		"Paper size")
+       (link document-page-size-menu))
+   (=> (balloon (eval (string-append (get-init "font-base-size") " pt"))
+		"Font size")
+       (link document-font-base-size-menu))))

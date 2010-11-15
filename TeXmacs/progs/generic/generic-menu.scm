@@ -15,7 +15,8 @@
   (:use (utils edit variants)
 	(generic generic-edit)
 	(generic format-edit)
-	(generic format-geometry-edit)))
+	(generic format-geometry-edit)
+	(generic document-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
