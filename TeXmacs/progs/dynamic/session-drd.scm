@@ -16,5 +16,5 @@
 
 ;; fold <-> unfold toggles
 
-(define-fold folded-io unfolded-io)
-(define-fold folded-io-math unfolded-io-math)
+(define-foldable folded-io unfolded-io)
+(define-foldable folded-io-math unfolded-io-math)

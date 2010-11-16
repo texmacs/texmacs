@@ -23,12 +23,15 @@
 (define-group similar-tag (folded-tag) (unfolded-tag))
 
 (tm-define toggle-table (make-ahash-table))
+(tm-define-macro (define-foldable folded unfolded)
+  `(begin
+     (ahash-set! toggle-table ',folded ',unfolded)
+     (ahash-set! toggle-table ',unfolded ',folded)))
 (tm-define-macro (define-fold folded unfolded)
   `(begin
      (define-group folded-tag ,folded)
      (define-group unfolded-tag ,unfolded)
-     (ahash-set! toggle-table ',folded ',unfolded)
-     (ahash-set! toggle-table ',unfolded ',folded)))
+     (define-foldable ,folded ,unfolded)))
 
 (define-fold folded unfolded)
 (define-fold folded-plain unfolded-plain)
