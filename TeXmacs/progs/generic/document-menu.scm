@@ -578,8 +578,27 @@
 	  ("Clear local information" (clear-local-info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Document focus icons
+;; Document focus menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (standard-focus-menu t)
+  (:require (== (tree->path t) (buffer-path)))
+  (group "Style")
+  (let* ((st* (tree->stree (get-style-tree)))
+         (st (if (== st* '(tuple)) '(generic) (cdr st*))))
+    (-> (eval (upcase-first (car st)))
+        (link style-menu))
+    (for (pack (cdr st))
+      (-> (eval (upcase-first pack))
+          ("Remove package" (init-remove-package pack)))))
+  (-> "Add style package"
+      (link add-package-menu))
+  ---
+  (group "Document")
+  (-> (eval (upcase-first (get-init "page-type")))
+      (link document-page-size-menu))
+  (-> (eval (string-append (get-init "font-base-size") " pt"))
+      (link document-font-base-size-menu)))
 
 (tm-menu (standard-focus-icons t)
   (:require (== (tree->path t) (buffer-path)))
