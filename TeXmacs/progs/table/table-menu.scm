@@ -431,7 +431,7 @@
 
 (tm-menu (focus-extra-icons t)
   (:require (table-markup-context? t))
-  (glue #f #f 8 0)
+  (glue #f #f 10 0)
   (assuming #f
     (=> (balloon (icon "tm_table_insert.xpm")
 	         "Insert or delete rows or columns")

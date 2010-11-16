@@ -17,9 +17,8 @@
 ;; View preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (get-system-preference var)
-  (:require (== var "main icon bar"))
-  (not (like-macos?)))
+(define (main-icon-bar-default)
+  (if (and (qt-gui?) (like-macos?)) "off" "on"))
 
 (define (notify-header var val)
   (show-header (== val "on")))
@@ -43,7 +42,7 @@
 
 (define-preferences
   ("header" "on" notify-header)
-  ("main icon bar" "default" notify-icon-bar)
+  ("main icon bar" (main-icon-bar-default) notify-icon-bar)
   ("mode dependent icons" "on" notify-icon-bar)
   ("focus dependent icons" "on" notify-icon-bar)
   ("user provided icons" "off" notify-icon-bar)

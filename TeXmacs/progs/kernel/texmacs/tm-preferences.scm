@@ -42,22 +42,19 @@
 ;; Setting and getting preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (get-system-preference x) #f)
-
 (define (test-preference? which what)
-  (cond ((== what "default") (== what (get-preference "which")))
-        ((and (== (get-preference which) "default")
-              (get-system-preference which))
-         (== what (get-system-preference which)))
-        (else (== what (get-preference which)))))
+  (== what (get-preference "which")))
 
 (tm-define (set-preference which what)
   (:synopsis "Set preference @which to @what")
   (:check-mark "*" test-preference?)
-  (ahash-set! preferences-table which what)
-  ;;(display* "set-preference " which " := " what "\n")
-  ((get-call-back which) which (get-preference which))
-  (save-preferences))
+  (if (== what "default")
+      (reset-preference which)
+      (begin
+        (ahash-set! preferences-table which what)
+        ;;(display* "set-preference " which " := " what "\n")
+        ((get-call-back which) which (get-preference which))
+        (save-preferences))))
 
 (tm-define (reset-preference which)
   (:synopsis "Revert preference @which to default setting")
@@ -78,8 +75,6 @@
   (:synopsis "Toggle the preference @which")
   (:check-mark "v" preference-on?)
   (with what (get-preference which)
-    (if (and (== what "default") (get-system-preference which))
-        (set! what (get-system-preference which)))
     (set-preference which (cond ((== what "on") "off")
 				((== what "off") "on")
 				(else what)))))
@@ -113,10 +108,7 @@
 (define-public (notify-preference var)
   "Notify a change in preference @var"
   ;;(display* "notify-preference " var ", " (get-preference var) "\n")
-  (with val (get-preference var)
-    (if (and (== val "default") (get-system-preference var))
-        (set! val (get-system-preference var)))
-    ((get-call-back var) var val)))
+  ((get-call-back var) var (get-preference var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialize preferences and consulting preferences
