@@ -311,9 +311,9 @@
   (:synopsis "Select the tree @(tree-ref t . l)")
   (with t (apply tree-ref (cons t l))
     (if t
-	(begin
-	  (selection-set-start-path (tree->path t :start))
-	  (selection-set-end-path (tree->path t :end))))))
+	(with p (tree->path t)
+	  (selection-set-start-path (rcons p 0))
+	  (selection-set-end-path (rcons p (tree-right-index t)))))))
 
 (tm-define (tree-correct-old t . l)
   (:synopsis "Deprecated old tree correction routine")

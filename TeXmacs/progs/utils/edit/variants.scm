@@ -161,8 +161,7 @@
           (when (nnull? ac)
             (tree-go-to (car ac) :start)))))
     (when selected?
-      (selection-set-start-path (tree->path t 0))
-      (selection-set-end-path (tree->path t 1)))))
+      (tree-select t))))
 
 (tm-define (focus-circulate-list t l forward?)
   (let* ((old (tree-label t))
