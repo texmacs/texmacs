@@ -982,3 +982,56 @@
       ("use the blackboard bold font" (make-with "math-font" "Bbb*")))
   (link math-format-icons)
   (link texmacs-insert-icons))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Math focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-tag-name l)
+  (:require (== l 'math))
+  "Formula")
+
+(tm-define (focus-tag-name l)
+  (:require (in? l '(equation equation*)))
+  "Equation")
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(math equation equation*)))
+  '(formula equation))
+
+(tm-menu (focus-variant-menu t)
+  (:require (tree-in? t '(math equation equation*)))
+  ("Formula" (variant-formula t))
+  ("Equation" (variant-equation t)))
+
+(tm-define (focus-can-insert-remove? t)
+  (:require (script-context? t))
+  #t)
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(lsub lsup)))
+  '(lsub lsup))
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(rsub rsup)))
+  '(rsub rsup))
+
+(tm-menu (focus-insert-menu t)
+  (:require (script-context? t))
+  (assuming (tree-in? t '(lsub rsub))
+    (when (script-only-script? t)
+      ("Insert superscript" (structured-insert-up))))
+  (assuming (tree-in? t '(lsup rsup))
+    (when (script-only-script? t)
+      ("Insert subscript" (structured-insert-down)))))
+
+(tm-menu (focus-insert-icons t)
+  (:require (script-context? t))
+  (assuming (tree-in? t '(lsub rsub))
+    (when (script-only-script? t)
+      ((balloon (icon "tm_insert_up.xpm") "Insert superscript")
+       (structured-insert-up))))
+  (assuming (tree-in? t '(lsup rsup))
+    (when (script-only-script? t)
+      ((balloon (icon "tm_insert_down.xpm") "Insert subscript")
+       (structured-insert-down)))))

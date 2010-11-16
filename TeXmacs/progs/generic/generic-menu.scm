@@ -22,35 +22,18 @@
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (variant-set t v)
-  (tree-assign-node t v))
-
-(tm-define (variant-set-keep-numbering t v)
-  (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
-      (variant-set t (symbol-append v '*))
-      (variant-set t v)))
-
 (tm-define (focus-variants-of t)
   (variants-of (tree-label t)))
 
 (tm-define (focus-tag-name l)
   (if (symbol-unnumbered? l)
       (focus-tag-name (symbol-drop-right l 1))
-      (upcase-first (symbol->string l))))
+      (upcase-first (tree-name (tree l)))))
 
 (tm-menu (focus-variant-menu t)
   (for (v (focus-variants-of t))
     ((eval (focus-tag-name v))
      (variant-set-keep-numbering (focus-tree) v))))
-
-(tm-define (check-number? t)
-  (tree-in? t (numbered-tag-list)))
-
-(tm-define (number-toggle t)
-  (when (numbered-context? t)
-    (if (tree-in? t (numbered-tag-list))
-	(variant-set t (symbol-append (tree-label t) '*))
-	(variant-set t (symbol-drop-right (tree-label t) 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding and removing children

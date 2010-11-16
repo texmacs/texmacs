@@ -123,6 +123,27 @@
   (go-to-previous-tag (similar-to 'section)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Variants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (variant-set t v)
+  (tree-assign-node t v))
+
+(tm-define (variant-set-keep-numbering t v)
+  (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
+      (variant-set t (symbol-append v '*))
+      (variant-set t v)))
+
+(tm-define (check-number? t)
+  (tree-in? t (numbered-tag-list)))
+
+(tm-define (number-toggle t)
+  (when (numbered-context? t)
+    (if (tree-in? t (numbered-tag-list))
+	(variant-set t (symbol-append (tree-label t) '*))
+	(variant-set t (symbol-drop-right (tree-label t) 1)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

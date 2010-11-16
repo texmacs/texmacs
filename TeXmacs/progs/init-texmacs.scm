@@ -106,6 +106,7 @@
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
 (lazy-menu (math math-menu) math-menu math-icons
 	   insert-math-menu math-correct-menu)
+(lazy-initialize (math math-menu) (in-math?))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting programming modes\n")
