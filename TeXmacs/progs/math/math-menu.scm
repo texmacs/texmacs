@@ -904,8 +904,6 @@
    (make-fraction))
   ((balloon (icon "tm_sqrt.xpm") "Insert a square root")
    (make-sqrt))
-  ((balloon (icon "tm_root.xpm") "Insert an n-th root")
-   (make-var-sqrt))
   ((balloon (icon "tm_sub.xpm") "Make a subscript")
    (make-script #f #t))
   ((balloon (icon "tm_sup.xpm") "Make a superscript")
@@ -1020,6 +1018,18 @@
   (:require (tree-in? t '(rsub rsup)))
   '(rsub rsup))
 
+(tm-menu (focus-variant-menu t)
+  (:require (tree-in? t '(lsub lsup)))
+  (when (script-only-script? t)
+    ("Left subscript" (variant-set (focus-tree) 'lsub))
+    ("Left superscript" (variant-set (focus-tree) 'lsup))))
+
+(tm-menu (focus-variant-menu t)
+  (:require (tree-in? t '(rsub rsup)))
+  (when (script-only-script? t)
+    ("Subscript" (variant-set (focus-tree) 'rsub))
+    ("Superscript" (variant-set (focus-tree) 'rsup))))
+
 (tm-menu (focus-insert-menu t)
   (:require (script-context? t))
   (assuming (tree-in? t '(lsub rsub))
@@ -1039,6 +1049,26 @@
     (when (script-only-script? t)
       ((balloon (icon "tm_insert_down.xpm") "Insert subscript")
        (structured-insert-down)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Root focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-insert-remove? t)
+  (:require (tree-is? t 'sqrt))
+  #f)
+
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-is? t 'sqrt))
+  ((check "Multiple root" "v"
+          (== (tree-arity (focus-tree)) 2))
+   (sqrt-toggle (focus-tree))))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-is? t 'sqrt))
+  ((check (balloon (icon "tm_root_index.xpm") "Multiple root") "v"
+          (== (tree-arity (focus-tree)) 2))
+   (sqrt-toggle (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Around focus menus
