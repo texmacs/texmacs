@@ -52,8 +52,9 @@ replaceActions (QWidget* dest, QWidget* src) {
 
 void
 replaceButtons(QToolBar* dest, QWidget* src) {
-  replaceActions (dest, src);
   dest->setUpdatesEnabled(false);
+  dest->hide(); //TRICK: this is a trick to avoid flicker of the dest widget
+  replaceActions (dest, src);
   QList<QObject*> list= dest->children();
   for (int i=0; i<list.count(); i++) {
     QToolButton* button= qobject_cast<QToolButton*> (list[i]);
@@ -62,6 +63,7 @@ replaceButtons(QToolBar* dest, QWidget* src) {
       button->setStyle( qtmstyle() );
     }
   }
+  dest->show(); //TRICK: see above
   dest->setUpdatesEnabled(true);
 }
 
@@ -235,7 +237,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
 #ifndef Q_WS_MAC
   tm_mainwindow()->menuBar()->setVisible (false);
 #endif  
-  
+ 
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -263,6 +265,11 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 
 void qt_tm_widget_rep::updateVisibility()
 {
+#ifdef Q_WS_MAC
+  bool old_mainVisibility = mainToolBar->isVisible();
+  bool old_modeVisibility = modeToolBar->isVisible();
+#endif
+  
   mainToolBar->setVisible (visibility[1] && visibility[0]);
   modeToolBar->setVisible (visibility[2] && visibility[0]);
   focusToolBar->setVisible (visibility[3] && visibility[0]);
@@ -272,6 +279,13 @@ void qt_tm_widget_rep::updateVisibility()
   
 //#if 0
 #ifdef Q_WS_MAC
+#define XOR(exp1,exp2) (((!exp1)&&(exp2)) || (exp1) && (!exp2))
+  bool new_mainVisibility = mainToolBar->isVisible();
+  bool new_modeVisibility = modeToolBar->isVisible();
+
+  // do modifications only if needed to reduce flicker
+  if ( XOR(old_mainVisibility,  new_mainVisibility) ||
+      XOR(old_modeVisibility,  new_modeVisibility) )
   {
     // ensure that the topmost visible toolbar is always unified on Mac
     // (actually only for main and mode toolbars, unifying focus is not
@@ -280,9 +294,9 @@ void qt_tm_widget_rep::updateVisibility()
     QBoxLayout *bl = qobject_cast<QBoxLayout*>(tm_mainwindow()->centralWidget()->layout());
     
     if (modeToolBarAction)
-     modeToolBarAction->setVisible(modeToolBar->isVisible());
+      modeToolBarAction->setVisible(modeToolBar->isVisible());
     mainToolBarAction->setVisible(mainToolBar->isVisible());
-
+    
     //WARNING: jugglying around bugs in Qt unified toolbar implementation
     //do not try to change the order of the following operations....
     
@@ -312,7 +326,8 @@ void qt_tm_widget_rep::updateVisibility()
       }
     }
   }
-#endif
+#undef XOR
+#endif // Q_WS_MAC
 }
 
 
@@ -590,9 +605,7 @@ qt_tm_widget_rep::install_main_menu () {
                            the_gui->gui_helper, SLOT(aboutToHideMainMenu()));
         }
       }
-        //      tm_mainwindow()->menuBar()->macUpdateMenuBar();
     }
-    updateVisibility();
   }
 }
 
