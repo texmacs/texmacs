@@ -43,7 +43,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (test-preference? which what)
-  (== what (get-preference "which")))
+  (== (get-preference which)
+      (if (!= what "default") what
+          (ahash-ref preferences-default which))))
 
 (tm-define (set-preference which what)
   (:synopsis "Set preference @which to @what")
