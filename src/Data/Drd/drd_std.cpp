@@ -170,14 +170,20 @@ init_std_drd () {
   init (BELOW, "below", fixed (2) -> accessible (0));
   init (ABOVE, "above", fixed (2) -> accessible (0));
   init (LSUB, "lsub",
-	fixed (1) -> accessible (0) -> name ("left subscript"));
+	fixed (1) -> name ("left subscript") ->
+        accessible (0) -> locals (0, "math-display", "false"));
   init (LSUP, "lsup",
-	fixed (1) -> accessible (0) -> name ("left superscript"));
+	fixed (1) -> name ("left superscript") ->
+        accessible (0) -> locals (0, "math-display", "false"));
   init (RSUB, "rsub",
-	fixed (1) -> accessible (0) -> name ("subscript"));
+	fixed (1) -> name ("subscript") ->
+        accessible (0) -> locals (0, "math-display", "false"));
   init (RSUP, "rsup",
-	fixed (1) -> accessible (0) -> name ("superscript"));
-  init (FRAC, "frac", fixed (2) -> accessible (0) -> name ("fraction"));
+	fixed (1) -> name ("superscript") ->
+        accessible (0) -> locals (0, "math-display", "false"));
+  init (FRAC, "frac",
+        fixed (2) -> name ("fraction") ->
+        accessible (0) -> locals (0, "math-display", "false"));
   init (SQRT, "sqrt", options (1, 1) -> accessible (0) -> name ("root"));
   init (WIDE, "wide", fixed (1, 1, BIFORM) -> accessible (0));
   init (VAR_WIDE, "wide*",

@@ -245,6 +245,50 @@
             ((tree-is? t 'rsup) (make 'rsub))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured editing of wide accents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define wide-list-1
+  '("~" "^" "<bar>" "<vect>" "<check>" "<breve>"))
+
+(define wide-list-2
+  '("<acute>" "<grave>" "<dot>" "<ddot>" "<abovering>"))
+
+(define wide-list-3
+  '("<wide-overbrace>" "<wide-underbrace*>"
+    "<wide-sqoverbrace>" "<wide-squnderbrace*>"
+    "<wide-varrightarrow>" "<wide-varleftarrow>" "<wide-bar>"))
+
+(tm-define (variant-circulate forward?)
+  (:inside wide wide*)
+  (with-innermost t '(wide wide*)
+    (when (tree-atomic? (tree-ref t 1))
+      (with s (tree->string (tree-ref t 1))
+        (and-with i (list-find-index wide-list-1 (lambda (x) (== x s)))
+          (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-1))
+            (tree-set t 1 (list-ref wide-list-1 j))))
+        (and-with i (list-find-index wide-list-2 (lambda (x) (== x s)))
+          (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-2))
+            (tree-set t 1 (list-ref wide-list-2 j))))
+        (and-with i (list-find-index wide-list-3 (lambda (x) (== x s)))
+          (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-3))
+            (tree-set t 1 (list-ref wide-list-3 j))))))))
+
+(tm-define (toggle-variant)
+  (:inside wide)
+  (with-innermost t 'wide
+    (tree-assign-node t 'wide*)))
+
+(tm-define (toggle-variant)
+  (:inside wide*)
+  (with-innermost t 'wide*
+    (tree-assign-node t 'wide)))
+
+(tm-define (wide-toggle t)
+  (cond ((tree-is? t 'wide) (variant-set t 'wide*))
+        ((tree-is? t 'wide*) (variant-set t 'wide))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying the size and shape of brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

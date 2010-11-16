@@ -50,6 +50,7 @@
       ("Vector" (make-wide "<vect>"))
       ("Check" (make-wide "<check>"))
       ("Breve" (make-wide "<breve>"))
+      ---
       ("Acute" (make-wide "<acute>"))
       ("Grave" (make-wide "<grave>"))
       ("Dot" (make-wide "<dot>"))
@@ -70,6 +71,7 @@
       ("Vector" (make-wide-under "<vect>"))
       ("Check" (make-wide-under "<check>"))
       ("Breve" (make-wide-under "<breve>"))
+      ---
       ("Acute" (make-wide-under "<acute>"))
       ("Grave" (make-wide-under "<grave>"))
       ("Dot" (make-wide-under "<dot>"))
@@ -918,16 +920,17 @@
   (=> (balloon (icon "tm_bigright.xpm") "Insert a large right delimiter")
       (tile 8 (link right-delimiter-menu)))
   (=> (balloon (icon "tm_wide.xpm") "Insert an accent")
-      ((icon "tm_hat.xpm") (make-wide "^"))
-      ((icon "tm_tilda.xpm") (make-wide "~"))
-      ((icon "tm_bar.xpm") (make-wide "<bar>"))
-      ((icon "tm_vect.xpm") (make-wide "<vect>"))
-      ((icon "tm_check.xpm") (make-wide "<check>"))
-      ((icon "tm_breve.xpm") (make-wide "<breve>"))
-      ((icon "tm_dot.xpm") (make-wide "<dot>"))
-      ((icon "tm_ddot.xpm") (make-wide "<ddot>"))
-      ((icon "tm_acute.xpm") (make-wide "<acute>"))
-      ((icon "tm_grave.xpm") (make-wide "<grave>")))
+      (tile 6
+            ((icon "tm_hat.xpm") (make-wide "^"))
+            ((icon "tm_tilda.xpm") (make-wide "~"))
+            ((icon "tm_bar.xpm") (make-wide "<bar>"))
+            ((icon "tm_vect.xpm") (make-wide "<vect>"))
+            ((icon "tm_check.xpm") (make-wide "<check>"))
+            ((icon "tm_breve.xpm") (make-wide "<breve>"))
+            ((icon "tm_dot.xpm") (make-wide "<dot>"))
+            ((icon "tm_ddot.xpm") (make-wide "<ddot>"))
+            ((icon "tm_acute.xpm") (make-wide "<acute>"))
+            ((icon "tm_grave.xpm") (make-wide "<grave>"))))
   /
   (=> (balloon (icon "tm_binop.xpm") "Insert a binary operation")
       (tile 8 (link binary-operation-menu)))
@@ -1069,6 +1072,30 @@
   ((check (balloon (icon "tm_root_index.xpm") "Multiple root") "v"
           (== (tree-arity (focus-tree)) 2))
    (sqrt-toggle (focus-tree))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wide accent focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-tag-name l)
+  (:require (in? l '(wide wide*)))
+  "Wide")
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(wide wide*)))
+  '(wide))
+
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-in? t '(wide wide*)))
+  ((check "Accent below" "v"
+          (tree-is? (focus-tree) 'wide*))
+   (wide-toggle (focus-tree))))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-in? t '(wide wide*)))
+  ((check (balloon (icon "tm_wide_under.xpm") "Accent below") "v"
+          (tree-is? (focus-tree) 'wide*))
+   (wide-toggle (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Around focus menus

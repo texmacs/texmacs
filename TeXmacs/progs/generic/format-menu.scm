@@ -46,18 +46,23 @@
     (integer->padded-hexadecimal g 2)
     (integer->padded-hexadecimal b 2)))
 
+(tm-menu (rgb-palette win r1 r2 g1 g2 b1 b2 n)
+  (for (rr (.. r1 r2))
+    (for (gg (.. g1 g2))
+      (for (bb (.. b1 b2))
+        (let* ((r (/ (* 255 rr) (- n 1)))
+               (g (/ (* 255 gg) (- n 1)))
+               (b (/ (* 255 bb) (- n 1)))
+               (col (rgb-color-name r g b)))
+          ((color col #f #f 24 24)
+           (make-with "color" col)
+           (window-delete win)))))))
+
 (tm-menu (rgb-color-picker win)
   (tile 18
-    (for (rr (.. 0 6))
-      (for (gg (.. 0 6))
-        (for (bb (.. 0 6))
-          (let* ((r (* 51 rr))
-                 (g (* 51 gg))
-                 (b (* 51 bb))
-                 (col (rgb-color-name r g b)))
-            ((color col #f #f 24 24)
-             (make-with "color" col)
-             (window-delete win)))))))
+    (dynamic (rgb-palette win 0 6 0 3 0 6 6)))
+  (tile 18
+    (dynamic (rgb-palette win 0 6 3 6 0 6 6)))
   ---
   (glue #f #f 0 3)
   (hlist
