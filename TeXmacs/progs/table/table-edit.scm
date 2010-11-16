@@ -26,11 +26,6 @@
 (define-group table-tag
   tabular tabular* block block*)
 
-(tm-define (table-markup-context? t)
-  (or (tree-in? t '(table tformat))
-      (and (== (tree-arity t) 1)
-           (tree-in? (tree-ref t 0) '(table tformat)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting rows and columns
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -549,7 +544,7 @@
   (let* ((row (table-which-row))
 	 (st  (table-cell-tree row -1)))
     (tree-go-to st :end)
-    (insert '(eq-number))))
+    (insert-go-to '(eq-number) '(0))))
 
 (tm-define (table-nonumber-equation)
   (let ((r (table-search-number-equation)))

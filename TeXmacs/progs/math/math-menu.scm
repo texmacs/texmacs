@@ -1120,3 +1120,25 @@
   ((check (balloon (icon "tm_large_around.xpm") "Large brackets") "v"
           (tree-is? (focus-tree) 'around*))
    (around-toggle (focus-tree))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Eqnarray focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-tag-name l)
+  (:require (in? l '(eqnarray eqnarray*)))
+  "Equations")
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(eqnarray eqnarray*)))
+  '(eqnarray*))
+
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-in? t '(eqnarray eqnarray*)))
+  ((check "Numbered" "v" (numbered?)) (toggle-number)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-in? t '(eqnarray eqnarray*)))
+  ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
+          (numbered?))
+   (toggle-number)))

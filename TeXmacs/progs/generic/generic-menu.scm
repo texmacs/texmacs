@@ -39,15 +39,20 @@
 ;; Adding and removing children
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (table-markup-context? t)
+  (or (tree-in? t '(table tformat))
+      (and (== (tree-arity t) 1)
+           (or (tree-in? (tree-ref t 0) '(table tformat))
+               (and (tm-func? (tree-ref t 0) 'document 1)
+                    (tree-in? (tree-ref t 0 0) '(table tformat)))))))
+
 (tm-define (structured-horizontal? t)
   (or (tree-is-dynamic? t)
-      (and-with c (tree-down t)
-	(tree-in? c '(table tformat)))))
+      (table-markup-context? t)))
 
 (tm-define (structured-vertical? t)
   (or (tree-in? t '(tree))
-      (and-with c (tree-down t)
-	(tree-in? c '(table tformat)))))
+      (table-markup-context? t)))
 
 (tm-define (focus-can-insert-remove? t)
   (and (or (structured-horizontal? t) (structured-vertical? t))
