@@ -400,21 +400,23 @@ edit_interface_rep::apply_changes () {
   
   // cout << "Handling selection\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION)) {
-    if (made_selection) invalidate (selection_rects);
+    if (made_selection) {
+      invalidate (selection_rects);
+      if (!selection_active_any ()) {
+        made_selection= false;
+        set_selection (tp, tp);
+        selection_rects= rectangles ();
+      }
+    }
   }
   
   // cout << "Handling environment\n";
   if (env_change & THE_ENVIRONMENT)
     typeset_invalidate_all ();
-  
+
   // cout << "Handling tree\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT)) {
     typeset_invalidate_env ();
-    if (input_mode == INPUT_NORMAL) {
-      made_selection= false;
-      set_selection (tp, tp);
-    }
-    selection_rects= rectangles ();
     SI x1, y1, x2, y2;
     typeset (x1, y1, x2, y2);
     invalidate (x1- 2*pixel, y1- 2*pixel, x2+ 2*pixel, y2+ 2*pixel);
