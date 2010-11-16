@@ -12,6 +12,7 @@
 #include "renderer.hpp"
 #include "gui.hpp"
 #include "rectangles.hpp"
+#include "image_files.hpp"
 
 /******************************************************************************
 * Constructors
@@ -244,20 +245,30 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
     SI cx1, cy1, cx2, cy2;
     get_clipping (cx1, cy1, cx2, cy2);
     extra_clipping (x1, y1, x2, y2);
+
     url u= as_string (pattern[0]);
+    int imw_pt, imh_pt;
+    image_size (u, imw_pt, imh_pt);
+    double pt= ((double) 600*PIXEL) / 72.0;
+    SI imw= (SI) (((double) imw_pt) * pt);
+    SI imh= (SI) (((double) imh_pt) * pt);
+
     SI w= x2 - x1, h= y2 - y1;
-    if (is_int (pattern[1])) w= as_int (pattern[1]);
+    if (pattern[1] == "") w= imw;
+    else if (is_int (pattern[1])) w= as_int (pattern[1]);
     else if (is_percentage (pattern[1]))
       w= (SI) (as_percentage (pattern[1]) * ((double) w));
     else if (is_percentage (pattern[1], "@"))
       w= (SI) (as_percentage (pattern[1]) * ((double) h));
-    if (is_int (pattern[2])) h= as_int (pattern[2]);
+    if (pattern[1] == "") h= imh;
+    else if (is_int (pattern[2])) h= as_int (pattern[2]);
     else if (is_percentage (pattern[2]))
       h= (SI) (as_percentage (pattern[2]) * ((double) h));
     else if (is_percentage (pattern[2], "@"))
       h= (SI) (as_percentage (pattern[2]) * ((double) w));
     w= ((w + pixel - 1) / pixel) * pixel;
     h= ((h + pixel - 1) / pixel) * pixel;
+
     SI sx= 0; //is_percentage (pattern[1])? 0: ox;
     SI sy= 0; //is_percentage (pattern[2])? 0: oy;
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)

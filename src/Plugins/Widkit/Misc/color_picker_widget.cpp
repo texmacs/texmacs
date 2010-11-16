@@ -13,7 +13,6 @@
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
 #include "file.hpp"
-#include "image_files.hpp"
 #include "Scheme/object.hpp"
 
 /******************************************************************************
@@ -98,13 +97,7 @@ direct_color_picker (command cmd, bool bg, array<tree> proposals) {
     for (int i=0; i<N(all); i++)
       if (ends (all[i], ".png")) {
 	url image= resolve (relative (pattern_dir, all[i]));
-	int imw_pt, imh_pt;
-	image_size (image, imw_pt, imh_pt);
-	double pt= ((double) 600*PIXEL) / 72.0;
-	SI imw= (SI) (((double) imw_pt) * pt);
-	SI imh= (SI) (((double) imh_pt) * pt);
-	cols3 << tree (PATTERN, as_string (pattern_dir * all[i]),
-		       as_string (imw), as_string (imh));
+	cols3 << tree (PATTERN, as_string (pattern_dir * all[i]), "", "");
       }
     picker[4]= tile_color_picker (cols3, cmd, 8);
   }
