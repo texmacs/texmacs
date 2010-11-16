@@ -18,7 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (main-icon-bar-default)
-  (if (and (qt-gui?) (like-macos?)) "off" "on"))
+  (if (like-macos?) "off" "on"))
 
 (define (notify-header var val)
   (show-header (== val "on")))
