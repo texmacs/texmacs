@@ -150,14 +150,18 @@
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (list-context? t)
+(tm-define (list-context? t)
   (tree-in? t (list-tag-list)))
 
-(define (itemize-context? t)
+(tm-define (itemize-context? t)
   (tree-in? t (itemize-tag-list)))
 
-(define (enumerate-context? t)
+(tm-define (enumerate-context? t)
   (tree-in? t (enumerate-tag-list)))
+
+(tm-define (itemize-enumerate-context? t)
+  (or (tree-in? t (itemize-tag-list))
+      (tree-in? t (enumerate-tag-list))))
 
 (tm-define (make-tmlist l)
   (make l)
