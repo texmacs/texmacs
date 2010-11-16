@@ -42,8 +42,14 @@
 ;; Setting and getting preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (get-system-preference x) #f)
+
 (define (test-preference? which what)
-  (== what (get-preference which)))
+  (cond ((== what "default") (== what (get-preference "which")))
+        ((and (== (get-preference which) "default")
+              (get-system-preference which))
+         (== what (get-system-preference which)))
+        (else (== what (get-preference which)))))
 
 (tm-define (set-preference which what)
   (:synopsis "Set preference @which to @what")
@@ -71,7 +77,9 @@
 (tm-define (toggle-preference which)
   (:synopsis "Toggle the preference @which")
   (:check-mark "v" preference-on?)
-  (let ((what (get-preference which)))
+  (with what (get-preference which)
+    (if (and (== what "default") (get-system-preference which))
+        (set! what (get-system-preference which)))
     (set-preference which (cond ((== what "on") "off")
 				((== what "off") "on")
 				(else what)))))
@@ -105,7 +113,10 @@
 (define-public (notify-preference var)
   "Notify a change in preference @var"
   ;;(display* "notify-preference " var ", " (get-preference var) "\n")
-  ((get-call-back var) var (get-preference var)))
+  (with val (get-preference var)
+    (if (and (== val "default") (get-system-preference var))
+        (set! val (get-system-preference var)))
+    ((get-call-back var) var val)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialize preferences and consulting preferences
