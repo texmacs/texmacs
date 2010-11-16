@@ -256,7 +256,7 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 }
 
 #ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
-#include "qt_printer_widget.hpp"
+#include "qt_printer_widget.hpp" // Needed for PrinterSettings, could be elsewhere
 #endif
 
 /**
@@ -293,16 +293,16 @@ edit_main_rep::print_buffer (string first, string last) {
   env->write(PAGE_TYPE, settings.paperSize);
   env->page_landscape = settings.landscape;
   
-  //FIXME?
-  // This is set to 72 dpi by the MacOS dialog and there's no way to change that.
+    // FIXME?
+    // This is set to 72 dpi by the MacOS dialog and I see no way to change it.
   //printing_dpi = from_qstring(QString("%1").arg(settings.dpi));
   
   // translate from the Qt convention.
-  if(settings.firstPage ==  0)    settings.firstPage = 1;
+  if (settings.firstPage ==  0)   settings.firstPage = 1;
   if (settings.lastPage == 0)     settings.lastPage  = 100000;   // ugly!
 
   if (settings.printToFile) {
-    target = settings.fileName;
+    target = url_general(settings.fileName, URL_SYSTEM);
     print (target, false, settings.firstPage, settings.lastPage);
     return;  // No temporary file to remove nor to send to the printer.
   }
