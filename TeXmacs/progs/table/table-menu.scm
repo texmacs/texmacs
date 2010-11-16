@@ -431,7 +431,7 @@
 
 (tm-menu (focus-extra-icons t)
   (:require (table-markup-context? t))
-  |
+  (glue #f #f 8 0)
   (assuming #f
     (=> (balloon (icon "tm_table_insert.xpm")
 	         "Insert or delete rows or columns")
@@ -454,7 +454,7 @@
       (tile 4 (link table-vpos-icons)))
   (=> (balloon (icon "tm_table_special.xpm") "Set special table properties")
       (link table-special-menu))
-  |
+  (glue #f #f 10 0)
   (if (== (get-cell-mode) "cell")
       (=> (balloon (icon "tm_cell_cell.xpm")
 		   "Change cell operation mode")

@@ -74,13 +74,13 @@
 ;; The Session menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (focus-tag-name l)
-  (:require (in? l field-tags))
-  "Input")
+(tm-define (focus-session-language)
+  (with lan (get-env "prog-language")
+    (or (ahash-ref supported-sessions-table lan) "Scheme")))
 
 (tm-menu (focus-tag-menu t)
   (:require (field-context? t))
-  (inert ((eval (focus-tag-name (tree-label t))) (noop) (noop)))
+  (inert ((eval (focus-session-language)) (noop) (noop)))
   (when (toggle-context? t)
     ((check "Unfolded" "v" (toggle-second-context? (focus-tree)))
      (toggle-toggle (focus-tree))))
@@ -109,6 +109,9 @@
   ("Remove banner" (field-remove-banner))
   ("Remove last field" (field-remove-extreme #t)))
 
+(tm-menu (focus-hidden-menu t)
+  (:require (field-context? t)))
+
 (tm-menu (focus-extra-menu t)
   (:require (field-context? t))
   ---
@@ -130,7 +133,7 @@
     ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
 	    (toggle-second-context? (focus-tree)))
      (toggle-toggle (focus-tree))))
-  (mini #t (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+  (mini #t (inert ((eval (focus-session-language)) (noop))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (set-message "Not yet implemented" "")))
 
@@ -155,6 +158,9 @@
    (field-remove #f))
   ((balloon (icon "tm_delete_down.xpm") "Remove field below")
    (field-remove #t)))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (field-context? t)))
 
 (tm-menu (focus-extra-icons t)
   (:require (field-context? t))
