@@ -26,35 +26,10 @@
 (define-group fragment-tag
   framed-fragment shell-fragment scm-fragment cpp-fragment mmx-fragment)
 
-;; override variant function for verbatim and scm
-;; FIXME: find a nicer solution
+(define-group tmdoc-prog-tag
+  verbatim scm mmx cpp)
 
-(tm-define (variant-circulate forward?)
+(tm-define (focus-circulate t forward?)
   (:mode in-tmdoc?)
-  (:inside verbatim)
-  (with-innermost t 'verbatim
-    (tree-assign-node! t 'scm)))
-
-(tm-define (variant-circulate forward?)
-  (:mode in-tmdoc?)
-  (:inside scm)
-  (with-innermost t 'scm
-    (tree-assign-node! t 'verbatim)))
-
-(tm-define (variant-circulate forward?)
-  (:mode in-mmxdoc?)
-  (:inside verbatim)
-  (with-innermost t 'verbatim
-    (tree-assign-node! t 'mmx)))
-
-(tm-define (variant-circulate forward?)
-  (:mode in-mmxdoc?)
-  (:inside mmx)
-  (with-innermost t 'mmx
-    (tree-assign-node! t 'cpp)))
-
-(tm-define (variant-circulate forward?)
-  (:mode in-mmxdoc?)
-  (:inside cpp)
-  (with-innermost t 'cpp
-    (tree-assign-node! t 'verbatim)))
+  (:require (tree-in? t (tmdoc-prog-tag-list)))
+  (focus-circulate-list t (tmdoc-prog-tag-list) forward?))

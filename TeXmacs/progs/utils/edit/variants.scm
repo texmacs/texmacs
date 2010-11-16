@@ -142,21 +142,39 @@
 (tm-define (variant-context? t)
   (tree-in? t (numbered-unnumbered-complete (variant-tag-list))))
 
-(tm-define (variant-circulate forward?)
+(tm-define (focus-circulate t forward?)
   (noop))
+
+(tm-define (variant-circulate forward?)
+  (focus-circulate (focus-tree) forward?))
 
 (tm-define (list-search-rotate which search)
   (receive (l r) (list-break which (lambda (x) (== x search)))
     (append r l)))
 
-(tm-define (variant-circulate forward?)
-  (:context variant-context?)
-  (with-innermost t variant-context?
-    (let* ((old (tree-label t))
-	   (val (variants-of old))
-	   (rot (list-search-rotate val old))
-	   (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
-      (variant-replace old new))))
+(tm-define (variant-set t by)
+  (with selected? (selection-active-any?)
+    (with i (tree-index (tree-down t))
+      (tree-assign-node! t by)
+      (when (not (tree-accessible-child? t i))
+        (with ac (tree-accessible-children t)
+          (when (nnull? ac)
+            (tree-go-to (car ac) :start)))))
+    (when selected?
+      (delayed
+        (:pause 1)
+        (selection-set-start-path (tree->path t 0))
+        (selection-set-end-path (tree->path t 1))))))
+
+(tm-define (focus-circulate-list t l forward?)
+  (let* ((old (tree-label t))
+         (rot (list-search-rotate l old))
+         (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
+    (variant-set t new)))
+
+(tm-define (focus-circulate t forward?)
+  (:require (variant-context? t))
+  (focus-circulate-list t (variants-of (tree-label t)) forward?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding-unfolding variants of tags with hidden arguments
