@@ -86,20 +86,21 @@
 (tm-define (numbered-context? t)
   (tree-in? t (numbered-tag-list*)))
 
-(tm-define (numbered?) #f)
-(tm-define (toggle-number) (noop))
+(tm-define (focus-numbered? t) #f)
+(tm-define (focus-toggle-number t) (noop))
 
-(tm-define (numbered?)
-  (:context numbered-context?)
-  (with-innermost t numbered-context?
-    (not (symbol-ends? (tree-label t) '*))))
+(tm-define (focus-numbered? t)
+  (:require (numbered-context? t))
+  (not (symbol-ends? (tree-label t) '*)))
+
+(tm-define (focus-toggle-number t)
+  (:require (numbered-context? t))
+  (let* ((old (tree-label t))
+         (new (symbol-toggle-number old)))
+    (variant-set t new)))
 
 (tm-define (toggle-number)
-  (:context numbered-context?)
-  (with-innermost t numbered-context?
-    (let* ((old (tree-label t))
-	   (new (symbol-toggle-number old)))
-      (variant-replace old new))))
+  (focus-toggle-number (focus-tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Toggling other binary variants
@@ -110,15 +111,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actions on structured variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (variant-replace which by)
-  (with-innermost t which
-    (with i (tree-index (tree-down t))
-      (tree-assign-node! t by)
-      (when (not (tree-accessible-child? t i))
-	(with ac (tree-accessible-children t)
-	  (when (nnull? ac)
-	    (tree-go-to (car ac) :start)))))))
 
 (define (variants-of-sub lab type nv?)
   (with numbered? (in? lab (numbered-tag-list*))

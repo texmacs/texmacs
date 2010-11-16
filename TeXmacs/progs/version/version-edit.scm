@@ -85,7 +85,8 @@
 	 (for-each (lambda (u) (tree-replace u version-context? tag))
 		   (selection-trees)))
 	((inside-version?)
-	 (variant-replace version-context? tag))))
+         (with t (tree-innermost version-context?)
+           (variant-set t tag)))))
 
 (tm-define (version-show-all tag)
   (tree-replace (buffer-tree) version-context? tag))

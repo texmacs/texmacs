@@ -333,12 +333,8 @@
 
 (tm-define (focus-circulate t forward?)
   (:require (switch-context? t))
-  (let* ((old (tree-label t))
-         (val (big-switch-tag-list))
-         (rot (list-search-rotate val old))
-         (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot)))
-         (i (switch-index)))
-    (variant-replace old new)
+  (with i (switch-index)
+    (focus-circulate-list t (big-switch-tag-list) forward?)
     (switch-select i)))
 
 (tm-define (tree-show-hidden t)

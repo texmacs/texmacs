@@ -332,10 +332,11 @@
 
 (tm-menu (focus-toggle-menu t)
   (:require (itemize-enumerate-context? t))
-  ((check "Numbered" "v" (enumerate-context? t)) (toggle-number)))
+  ((check "Numbered" "v" (enumerate-context? t))
+   (focus-toggle-number t)))
 
 (tm-menu (focus-toggle-icons t)
   (:require (itemize-enumerate-context? t))
   ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
           (enumerate-context? t))
-   (toggle-number)))
+   (focus-toggle-number t)))

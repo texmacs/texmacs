@@ -182,15 +182,13 @@
   (:inside item*)
   (go-end-of 'item*))
 
-(tm-define (toggle-number)
-  (:context itemize-context?)
-  (with-innermost t itemize-context?
-    (variant-replace (tree-label t) 'enumerate)))
+(tm-define (focus-toggle-number t)
+  (:require (itemize-context? t))
+  (variant-set t 'enumerate))
 
-(tm-define (toggle-number)
-  (:context enumerate-context?)
-  (with-innermost t enumerate-context?
-    (variant-replace (tree-label t) 'itemize)))
+(tm-define (focus-toggle-number t)
+  (:require (enumerate-context? t))
+  (variant-set t 'itemize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting formulas
