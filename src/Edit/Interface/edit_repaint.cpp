@@ -97,10 +97,10 @@ edit_interface_rep::draw_surround (renderer ren, rectangle r) {
   ren->set_background (light_grey);
   string medium= get_init_string (PAGE_MEDIUM);
   if ((medium == "papyrus") || (medium == "paper"))
-    ren->clear_pattern (max (eb->x2, r->x1), r->y1,
-			r->x2, min (eb->y2+ 2*pixel, r->y2));
+    ren->clear (max (eb->x2, r->x1), r->y1,
+                r->x2, min (eb->y2+ 2*pixel, r->y2));
   else if (medium == "paper")
-    ren->clear_pattern (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
+    ren->clear (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
 }
 
 void
