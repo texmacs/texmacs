@@ -1,0 +1,21 @@
+/* XPM */
+static char * tm_add_xpm[] = {
+"13 13 5 1",
+" 	c None",
+"=	c #00000000FFFF",
+".	c #0000FFFFFFFF",
+"O	c #444444444444",
+"o	c #000000000000",
+"  oO     Oo  ",
+" oO  OOO  Oo ",
+"oO   ooo   Oo",
+"oO   OOO   Oo",
+"             ",
+"oO         Oo",
+"   ooooooo   ",
+"oO         Oo",
+"             ",
+"oO   OOO   Oo",
+"oO   ooo   Oo",
+" oO  OOO  Oo ",
+"  oO     Oo  "};

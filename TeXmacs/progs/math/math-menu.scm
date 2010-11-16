@@ -1004,6 +1004,10 @@
   ("Formula" (variant-formula t))
   ("Equation" (variant-equation t)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Script focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (focus-can-insert-remove? t)
   (:require (script-context? t))
   #t)
@@ -1035,3 +1039,27 @@
     (when (script-only-script? t)
       ((balloon (icon "tm_insert_down.xpm") "Insert subscript")
        (structured-insert-down)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Around focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-tag-name l)
+  (:require (in? l '(around around*)))
+  "Around")
+
+(tm-define (focus-variants-of t)
+  (:require (tree-in? t '(around around*)))
+  '(around))
+
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-in? t '(around around*)))
+  ((check "Large brackets" "v"
+          (tree-is? (focus-tree) 'around*))
+   (around-toggle (focus-tree))))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-in? t '(around around*)))
+  ((check (balloon (icon "tm_large_around.xpm") "Large brackets") "v"
+          (tree-is? (focus-tree) 'around*))
+   (around-toggle (focus-tree))))

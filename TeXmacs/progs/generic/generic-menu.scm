@@ -143,6 +143,15 @@
 ;; FIXME: when recovering focus-tree,
 ;; double check that focus-tree still has the required form
 
+(tm-menu (focus-toggle-menu t)
+  (assuming (numbered-context? t)
+    ;; FIXME: itemize, enumerate, eqnarray*
+    ((check "Numbered" "v" (check-number? (focus-tree)))
+     (number-toggle (focus-tree))))
+  (assuming (toggle-context? t)
+    ((check "Unfolded" "v" (toggle-second-context? (focus-tree)))
+     (toggle-toggle (focus-tree)))))
+
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
     (assuming (<= (length l) 1)
@@ -150,13 +159,7 @@
     (assuming (> (length l) 1)
       (-> (eval (focus-tag-name (tree-label t)))
           (dynamic (focus-variant-menu t)))))
-  (assuming (numbered-context? t)
-    ;; FIXME: itemize, enumerate, eqnarray*
-    ((check "Numbered" "v" (check-number? (focus-tree)))
-     (number-toggle (focus-tree))))
-  (assuming (toggle-context? t)
-    ((check "Unfolded" "v" (toggle-second-context? (focus-tree)))
-     (toggle-toggle (focus-tree))))
+  (dynamic (focus-toggle-menu t))
   ("Describe" (set-message "Not yet implemented" ""))
   ("Delete" (remove-structure-upwards)))
 
@@ -214,7 +217,7 @@
 ;; The main focus icons bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-tag-icons t)
+(tm-menu (focus-toggle-icons t)
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
@@ -223,7 +226,10 @@
   (assuming (toggle-context? t)
     ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
 	    (toggle-second-context? (focus-tree)))
-     (toggle-toggle (focus-tree))))
+     (toggle-toggle (focus-tree)))))
+
+(tm-menu (focus-tag-icons t)
+  (dynamic (focus-toggle-icons t))
   (mini #t
     (with l (focus-variants-of t)
       (assuming (<= (length l) 1)

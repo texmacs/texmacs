@@ -268,6 +268,10 @@
   (with-innermost t 'around*
     (tree-assign-node t 'around)))
 
+(tm-define (around-toggle t)
+  (cond ((tree-is? t 'around) (variant-set t 'around*))
+        ((tree-is? t 'around*) (variant-set t 'around))))
+
 (define brackets
   '(("(" ")")
     ("[" "]")
