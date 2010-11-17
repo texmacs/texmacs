@@ -86,8 +86,12 @@
 (tm-define (numbered-context? t)
   (tree-in? t (numbered-tag-list*)))
 
-(tm-define (focus-numbered? t) #f)
-(tm-define (focus-toggle-number t) (noop))
+(tm-define (focus-numbered? t)
+  #f)
+
+(tm-define (focus-toggle-number t)
+  (focus-next t
+    (focus-toggle-number (tree-up t))))
 
 (tm-define (focus-numbered? t)
   (:require (numbered-context? t))
@@ -135,7 +139,8 @@
   (tree-in? t (numbered-unnumbered-complete (variant-tag-list))))
 
 (tm-define (focus-circulate t forward?)
-  (noop))
+  (focus-next t
+    (focus-circulate (tree-up t) forward?)))
 
 (tm-define (variant-circulate forward?)
   (focus-circulate (focus-tree) forward?))

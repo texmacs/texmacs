@@ -133,6 +133,12 @@
       (find-focus (path->tree (selection-path)) #f)
       (find-focus (cursor-tree) #t)))
 
+(define-public-macro (focus-next t . cmds)
+  `(and (tree->path ,t)
+	(nnull? (tree->path ,t))
+	(not (tree-is-buffer? ,t))
+	(begin ,@cmds)))
+
 (define-public (cursor-on-border? t)
   (let* ((p (cursor-path))
          (i (cAr p)))
