@@ -123,7 +123,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (section-context? t)
-  (tree-in? t (numbered-unnumbered (section-tag-list))))
+  (tree-in? t (numbered-unnumbered-append (section-tag-list))))
 
 (tm-define (make-section l)
   (if (or (selection-active-any?) (not (make-return-after)))

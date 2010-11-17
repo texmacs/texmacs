@@ -71,7 +71,10 @@
       (symbol-drop-right s 1)
       (symbol-append s '*)))
 
-(tm-define (numbered-unnumbered l)
+(tm-define (numbered-tag-list*)
+  (map (lambda (x) (symbol-append x '*)) (numbered-tag-list)))
+
+(tm-define (numbered-unnumbered-append l)
   (append l (map (lambda (x) (symbol-append x '*)) l)))
 
 (tm-define (numbered-unnumbered-complete l)
@@ -79,11 +82,9 @@
 	 (bl (list-intersection l nl)))
     (append l (map (lambda (x) (symbol-append x '*)) bl))))
 
-(define (numbered-tag-list*)
-  (numbered-unnumbered (numbered-tag-list)))
-
 (tm-define (numbered-context? t)
-  (tree-in? t (numbered-tag-list*)))
+  (or (tree-in? t (numbered-tag-list))
+      (tree-in? t (numbered-tag-list*))))
 
 (tm-define (numbered-numbered? t)
   #f)
@@ -138,12 +139,13 @@
       (variant-set t v)))
 
 (define (variants-of-sub lab type nv?)
-  (with numbered? (in? lab (numbered-tag-list*))
+  (with numbered? (or (in? lab (numbered-tag-list))
+		      (in? lab (numbered-tag-list*)))
     (cond ((and numbered? (symbol-ends? lab '*))
 	   (with l (variants-of-sub (symbol-drop-right lab 1) type nv?)
 	     (if nv? l (map (lambda (x) (symbol-append x '*)) l))))
 	  ((and numbered? nv?)
-	   (numbered-unnumbered (variants-of-sub lab type #f)))
+	   (numbered-unnumbered-append (variants-of-sub lab type #f)))
 	  (else (with vg (group-find lab type)
 		  (if (not vg) (list lab)
 		      (group-resolve vg)))))))

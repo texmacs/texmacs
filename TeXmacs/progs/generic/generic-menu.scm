@@ -151,8 +151,8 @@
 (tm-menu (focus-toggle-menu t)
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
-    ((check "Numbered" "v" (check-number? (focus-tree)))
-     (number-toggle (focus-tree))))
+    ((check "Numbered" "v" (numbered-numbered? (focus-tree)))
+     (numbered-toggle (focus-tree))))
   (assuming (toggle-context? t)
     ((check "Unfolded" "v" (toggle-second-context? (focus-tree)))
      (toggle-toggle (focus-tree)))))
@@ -226,8 +226,8 @@
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
-	    (check-number? (focus-tree)))
-     (number-toggle (focus-tree))))
+	    (numbered-numbered? (focus-tree)))
+     (numbered-toggle (focus-tree))))
   (assuming (toggle-context? t)
     ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
 	    (toggle-second-context? (focus-tree)))
