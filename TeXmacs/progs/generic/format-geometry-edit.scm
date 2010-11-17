@@ -152,23 +152,14 @@
       (space-make-ternary t)
       (length-increase (tree-ref t 2) inc))))
 
-(tm-define (geometry-top)
-  (:context space-context?)
-  (with-innermost p space-context?
-    (with t (tree-ref p :down)
+(tm-define (geometry-incremental t down?)
+  (:require (new-space-context? t))
+  (with inc (if down? -1 1)
+    (conserve-focus t
       (space-make-ternary t)
       (when (space-consistent? t)
-	(length-increase (tree-ref t 1) 1)
-	(length-increase (tree-ref t 2) 1)))))
-
-(tm-define (geometry-bottom)
-  (:context space-context?)
-  (with-innermost p space-context?
-    (with t (tree-ref p :down)
-      (space-make-ternary t)
-      (when (space-consistent? t)
-	(length-increase (tree-ref t 1) -1)
-	(length-increase (tree-ref t 2) -1)))))
+	(length-increase (tree-ref t 1) inc)
+	(length-increase (tree-ref t 2) inc)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rubber horizontal spaces
@@ -349,19 +340,13 @@
       (length-increase (tree-ref t 1) 1)
       (length-increase (tree-ref t 3) 1))))
 
-(tm-define (geometry-bottom)
-  (:context resize-context?)
-  (with-innermost t resize-context?
-    (when (resize-consistent-vertical? t)
-      (length-increase (tree-ref t 2) -1)
-      (length-increase (tree-ref t 4) -1))))
-
-(tm-define (geometry-top)
-  (:context resize-context?)
-  (with-innermost t resize-context?
-    (when (resize-consistent-vertical? t)
-      (length-increase (tree-ref t 2) 1)
-      (length-increase (tree-ref t 4) 1))))
+(tm-define (geometry-incremental t down?)
+  (:require (resize-context? t))
+  (with inc (if down? -1 1)
+    (conserve-focus t
+      (when (resize-consistent-vertical? t)
+        (length-increase (tree-ref t 2) inc)
+        (length-increase (tree-ref t 4) inc)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Images
@@ -394,19 +379,12 @@
       (replace-empty t 2 "1h")
       (length-increase (tree-ref t 2) inc))))
 
-(tm-define (geometry-bottom)
-  (:context image-context?)
-  (with-innermost p image-context?
-    (with t (tree-ref p :down)
+(tm-define (geometry-incremental t down?)
+  (:require (new-image-context? t))
+  (with inc (if down? -1 1)
+    (conserve-focus t
       (replace-empty t 4 "0h")
-      (length-increase (tree-ref t 4) -1))))
-
-(tm-define (geometry-top)
-  (:context image-context?)
-  (with-innermost p image-context?
-    (with t (tree-ref p :down)
-      (replace-empty t 4 "0h")
-      (length-increase (tree-ref t 4) 1))))
+      (length-increase (tree-ref t 4) inc))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Animations
