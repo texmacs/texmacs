@@ -273,10 +273,21 @@ path previous_node (tree t, path p) {
 * Tag based traversal of a tree
 ******************************************************************************/
 
+static int
+tag_border (tree t, path p) {
+  if (none_accessible (subtree (t, path_up (p)))) {
+    if (last_item (p) == 0) return -1;
+    if (last_item (p) == 1) return 1;
+  }
+  return 0;
+}
+
 static bool
 distinct_tag_or_argument (tree t, path p, path q, hashset<int> labs) {
   path c= common (p, q);
   path r= path_up (q);
+  if (labs->contains ((int) L (subtree (t, r))) && tag_border (t, q) != 0)
+    return true;
   while (!is_nil (r) && (r != c)) {
     r= path_up (r);
     if (labs->contains ((int) L (subtree (t, r)))) return true;
@@ -302,6 +313,7 @@ move_tag (tree t, path p, hashset<int> labs, bool forward, bool preserve) {
     path r= move_node (t, q, forward);
     if (r == q) return p;
     if (distinct_tag_or_argument (t, p, r, labs) &&
+	tag_border (t, r) == (tag_border (t, p) == 0? 0: 1) &&
 	(!preserve || tag_index (t, r, labs) == tag_index (t, p, labs)))
       return r;
     q= r;

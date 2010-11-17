@@ -104,11 +104,11 @@
   (tree-label (apply traverse-tree l)))
 
 (tm-define (traverse-previous)
-  (with-innermost t similar-complex-context?
+  (with t (focus-tree)
     (go-to-previous-tag (similar-to (tree-label t)))))
 
 (tm-define (traverse-next)
-  (with-innermost t similar-complex-context?
+  (with t (focus-tree)
     (go-to-next-tag (similar-to (tree-label t)))))
 
 (tm-define (traverse-first)
