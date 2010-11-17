@@ -241,7 +241,7 @@ static void qtmDrawRoundedRect(QPainter *p, const QRectF &rect, qreal xRadius, q
     qreal rxx2 = w*xRadius/100;
     qreal ryy2 = h*yRadius/100;
     
-#if Q_WS_X11
+#ifdef Q_WS_X11
     // There is a bug (probably in arcTo) for small sizes.
     // We use a rough linear approx.
     rxx2 /= 4;
