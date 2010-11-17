@@ -99,7 +99,7 @@
   ("structured:cmd tab" (variant-circulate (focus-tree) #t))
   ("structured:cmd S-tab" (variant-circulate (focus-tree) #f))
   ("structured:cmd *" (toggle-variant))
-  ("structured:cmd #" (toggle-number))
+  ("structured:cmd #" (numbered-toggle (focus-tree)))
   ("structured:cmd %" (hidden-variant))
 
   ("structured:move delete" (structured-exit-right))
@@ -362,7 +362,7 @@
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))
-  ("A-*" (toggle-number))
+  ("A-*" (numbered-toggle (focus-tree)))
   ("A-tab" (make-htab "5mm"))
   ("A-space" (make-space "0.2spc"))
   ("A-S-space" (make-space "-0.2spc"))

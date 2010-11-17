@@ -53,12 +53,11 @@
 	  (else (with f (map car (list-filter l (lambda (x) (pair? x))))
 		  (list-any (lambda (x) (group-find which x)) f))))))
 
-(define-group variant-tag)
-(define-group numbered-tag)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Numbers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Toggle numbers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-group numbered-tag)
 
 (tm-define (symbol-numbered? s)
   (in? s (numbered-tag-list)))
@@ -86,25 +85,29 @@
 (tm-define (numbered-context? t)
   (tree-in? t (numbered-tag-list*)))
 
-(tm-define (focus-numbered? t)
+(tm-define (numbered-numbered? t)
   #f)
 
-(tm-define (focus-toggle-number t)
-  (focus-next t
-    (focus-toggle-number (tree-up t))))
+(tm-define (numbered-unnumbered? t)
+  #f)
 
-(tm-define (focus-numbered? t)
+(tm-define (numbered-toggle t)
+  (focus-next t
+    (numbered-toggle (tree-up t))))
+
+(tm-define (numbered-numbered? t)
   (:require (numbered-context? t))
   (not (symbol-ends? (tree-label t) '*)))
 
-(tm-define (focus-toggle-number t)
+(tm-define (numbered-unnumbered? t)
+  (:require (numbered-context? t))
+  (symbol-ends? (tree-label t) '*))
+
+(tm-define (numbered-toggle t)
   (:require (numbered-context? t))
   (let* ((old (tree-label t))
          (new (symbol-toggle-number old)))
     (variant-set t new)))
-
-(tm-define (toggle-number)
-  (focus-toggle-number (focus-tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Toggling other binary variants
@@ -113,8 +116,10 @@
 (tm-define (toggle-variant) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Actions on structured variants
+;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-group variant-tag)
 
 (tm-define (variant-set t by)
   (with selected? (selection-active-any?)
@@ -126,6 +131,11 @@
             (tree-go-to (car ac) :start)))))
     (when selected?
       (tree-select t))))
+
+(tm-define (variant-set-keep-numbering t v)
+  (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
+      (variant-set t (symbol-append v '*))
+      (variant-set t v)))
 
 (define (variants-of-sub lab type nv?)
   (with numbered? (in? lab (numbered-tag-list*))

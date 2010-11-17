@@ -536,7 +536,7 @@
 	 (st  (table-cell-tree row -1)))
     (tree-search-subtree st (stree->tree '(eq-number)))))
 
-(tm-define (focus-numbered? t)
+(tm-define (numbered-numbered? t)
   (:require (tree-in? t '(eqnarray eqnarray*)))
   (and (== t (tree-innermost '(eqnarray eqnarray*)))
        (if (table-search-number-equation) #t #f)))
@@ -563,7 +563,7 @@
 	 (tree-inside? t2 t1)
 	 (table-inside-sub? t1 (tree-up t2)))))
 
-(tm-define (focus-toggle-number t)
+(tm-define (numbered-toggle t)
   (:require (tree-in? t '(eqnarray eqnarray*)))
   (when (== t (tree-innermost '(eqnarray eqnarray*)))
     (if (table-search-number-equation)

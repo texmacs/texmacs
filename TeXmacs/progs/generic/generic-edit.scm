@@ -126,14 +126,6 @@
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;(tm-define (variant-set t v)
-;;  (tree-assign-node t v))
-
-(tm-define (variant-set-keep-numbering t v)
-  (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))
-      (variant-set t (symbol-append v '*))
-      (variant-set t v)))
-
 (tm-define (check-number? t)
   (tree-in? t (numbered-tag-list)))
 

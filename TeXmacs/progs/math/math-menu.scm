@@ -1135,11 +1135,11 @@
 
 (tm-menu (focus-toggle-menu t)
   (:require (tree-in? t '(eqnarray eqnarray*)))
-  ((check "Numbered" "v" (focus-numbered? t))
-   (focus-toggle-number (focus-tree))))
+  ((check "Numbered" "v" (numbered-numbered? t))
+   (numbered-toggle (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(eqnarray eqnarray*)))
   ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
-          (focus-numbered? t))
-   (focus-toggle-number (focus-tree))))
+          (numbered-numbered? t))
+   (numbered-toggle (focus-tree))))

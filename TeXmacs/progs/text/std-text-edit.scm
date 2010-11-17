@@ -182,11 +182,11 @@
   (:inside item*)
   (go-end-of 'item*))
 
-(tm-define (focus-toggle-number t)
+(tm-define (numbered-toggle t)
   (:require (itemize-context? t))
   (variant-set t 'enumerate))
 
-(tm-define (focus-toggle-number t)
+(tm-define (numbered-toggle t)
   (:require (enumerate-context? t))
   (variant-set t 'itemize))
 
