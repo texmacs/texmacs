@@ -247,6 +247,7 @@ tree
 edit_interface_rep::compute_compound_footer (tree t, path p) {
   if (!(rp < p)) return "";
   tree up= compute_compound_footer (t, path_up (p));
+  if (N(focus_get (false))+1 < N(p)) return up;
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
   switch (L (st)) {
@@ -355,12 +356,13 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
 
 void
 edit_interface_rep::set_right_footer () {
-  tree r;
+  tree cf= compute_compound_footer (et, path_up (tp));
   tree st= subtree (et, path_up (tp));
-  if (is_atomic (st)) r= compute_text_footer (st);
-  else r= compute_operation_footer (st);
-  r= concat (compute_compound_footer (et, path_up (tp)), r);
-  set_right_footer (r);
+  tree lf;
+  if (is_atomic (st)) lf= compute_text_footer (st);
+  else lf= compute_operation_footer (st);
+  if (N(focus_get (false))+1 >= N(tp)) cf= concat (cf, lf);
+  set_right_footer (cf);
 }
 
 /******************************************************************************

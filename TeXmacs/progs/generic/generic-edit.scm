@@ -103,13 +103,22 @@
 (define (traverse-label . l)
   (tree-label (apply traverse-tree l)))
 
+(define (focus-similar-upwards t l)
+  (cond ((in? (tree-label t) l) (tree-focus t))
+        ((and (not (tree-is-buffer? t)) (tree-up t))
+         (focus-similar-upwards (tree-up t) l))))
+
 (tm-define (traverse-previous)
   (with t (focus-tree)
-    (go-to-previous-tag (similar-to (tree-label t)))))
+    (with l (similar-to (tree-label t))
+      (go-to-previous-tag l)
+      (focus-similar-upwards (focus-tree) l))))
 
 (tm-define (traverse-next)
   (with t (focus-tree)
-    (go-to-next-tag (similar-to (tree-label t)))))
+    (with l (similar-to (tree-label t))
+      (go-to-next-tag l)
+      (focus-similar-upwards (focus-tree) l))))
 
 (tm-define (traverse-first)
   (go-to-repeat traverse-previous)

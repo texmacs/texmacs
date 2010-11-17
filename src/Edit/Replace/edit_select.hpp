@@ -87,6 +87,8 @@ public:
   void cut (path start, path end);
   path manual_focus_get ();
   void manual_focus_set (path p);
+  path focus_search (path p, bool skip_flag);
+  path focus_get (bool skip_flag);
 };
 
 #endif // defined EDIT_SELECT_H

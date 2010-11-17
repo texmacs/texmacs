@@ -295,6 +295,14 @@ distinct_tag_or_argument (tree t, path p, path q, hashset<int> labs) {
   return false;
 }
 
+static bool
+acceptable_border (tree t, path p, path q, hashset<int> labs) {
+  if (tag_border (t, q) < 0) return false;
+  if (tag_border (t, q) == 0) return true;
+  if (!labs->contains ((int) L (subtree (t, path_up (q))))) return true;
+  return tag_border (t, p) != 0;
+}
+
 static int
 tag_index (tree t, path p, hashset<int> labs) {
   p= path_up (p);
@@ -313,7 +321,7 @@ move_tag (tree t, path p, hashset<int> labs, bool forward, bool preserve) {
     path r= move_node (t, q, forward);
     if (r == q) return p;
     if (distinct_tag_or_argument (t, p, r, labs) &&
-	tag_border (t, r) == (tag_border (t, p) == 0? 0: 1) &&
+        acceptable_border (t, p, r, labs) &&
 	(!preserve || tag_index (t, r, labs) == tag_index (t, p, labs)))
       return r;
     q= r;

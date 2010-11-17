@@ -159,6 +159,7 @@ edit_cursor_rep::notify_cursor_moved (int status) {
   mv_status= status;
   cu= eb->find_check_cursor (tp);
   notify_change (THE_CURSOR);
+  manual_focus_set (path ());
 }
 
 void
@@ -374,6 +375,7 @@ edit_cursor_rep::go_to (path p) {
       mv= copy (cu);
     }
     notify_change (THE_CURSOR);
+    manual_focus_set (path ());
   }
 }
 

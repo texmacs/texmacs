@@ -95,6 +95,7 @@ edit_interface_rep::resume () {
   cur_sb= 2;
   tp= make_cursor_accessible (tp, true);
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
+  manual_focus_set (path ());
 }
 
 /******************************************************************************
@@ -293,7 +294,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       if (is_func (st, CELL)) { q1= p1; q2= p2; }
       else selection_correct (et, p1, p2, q1, q2);
       selection sel= eb->find_check_selection (q1, q2);
-      rs << outline (sel->rs, pixel);
+      if (N(focus_get ()) >= N(p))
+        rs << outline (sel->rs, pixel);
     }
     set_access_mode (old_mode);
     if (recurse) compute_env_rects (path_up (p), rs, recurse);

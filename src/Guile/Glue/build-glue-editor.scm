@@ -210,6 +210,7 @@
   (clipboard-get-export selection_get_export (string))
   (set-manual-focus-path manual_focus_set (void path))
   (get-manual-focus-path manual_focus_get (path))
+  (get-focus-path focus_get (path))
 
   ;; undo and redo
   (clear-undo-history clear_undo_history (void))

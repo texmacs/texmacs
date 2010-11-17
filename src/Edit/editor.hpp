@@ -448,6 +448,7 @@ public:
   virtual void cut (path start, path end) = 0;
   virtual path manual_focus_get () = 0;
   virtual void manual_focus_set (path p) = 0;
+  virtual path focus_get (bool skip_flag= true) = 0;
 
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;

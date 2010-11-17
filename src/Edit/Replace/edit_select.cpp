@@ -13,6 +13,7 @@
 #include "Interface/edit_interface.hpp"
 #include "convert.hpp"
 #include "packrat.hpp"
+#include "tree_traverse.hpp"
 
 /******************************************************************************
 * Internationalization
@@ -110,7 +111,7 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
 void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
-  focus_p= path ();
+  manual_focus_set (path ());
   if (p1 != p2)
     (void) semantic_select (common (p1, p2), p1, p2, 0);
   if (path_less (p1, p2)) {
@@ -907,4 +908,33 @@ edit_select_rep::manual_focus_get () {
 void
 edit_select_rep::manual_focus_set (path p) {
   focus_p= p;
+  //cout << "Set focus " << p << "\n";
+}
+
+path
+edit_select_rep::focus_search (path p, bool skip_flag) {
+  if (!(rp < p)) return rp;
+  tree st= subtree (et, p);
+  if (!skip_flag || none_accessible (st)) return p;
+  if (is_atomic (st) ||
+      is_func (st, DOCUMENT) ||
+      is_func (st, CONCAT) ||
+      is_func (st, TFORMAT) ||
+      is_func (st, TABLE) ||
+      is_func (st, ROW) ||
+      is_func (st, CELL) ||
+      is_compound (st, "shown") ||
+      is_func (st, HIDDEN))
+    return focus_search (path_up (p), skip_flag);
+  return p;
+}
+
+path
+edit_select_rep::focus_get (bool skip_flag) {
+  if (!is_nil (focus_p))
+    return focus_p;
+  if (selection_active_any ())
+    return focus_search (selection_get_path (), skip_flag);
+  else
+    return focus_search (path_up (tp), skip_flag);
 }
