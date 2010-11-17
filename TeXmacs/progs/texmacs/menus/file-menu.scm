@@ -69,9 +69,9 @@
   ---
   (link export-top-menu)
   ---
-  ((concat "Export as " "Pdf")
+  ((eval '(concat "Export as " "Pdf"))
    (choose-file print-to-file "Save pdf file" "pdf"))
-  ((concat "Export as " "PostScript")
+  ((eval '(concat "Export as " "PostScript"))
    (choose-file print-to-file "Save postscript file" "postscript")))
 
 (menu-bind print-menu

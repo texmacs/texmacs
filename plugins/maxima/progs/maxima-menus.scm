@@ -72,7 +72,8 @@
       ("Simplify" (maxima-apply "fullratsimp"))
       ("Factor" (maxima-apply "factor"))
       ("Expand" (maxima-apply "expand"))
-      ((concat "Expand " "w.r.t.") (maxima-apply "expandwrt" 2)))
+      ((eval '(concat "Expand " "w.r.t."))
+       (maxima-apply "expandwrt" 2)))
   (-> "Solving equations"
       ("Solve" (maxima-apply "solve"))
       ("Solve in" (maxima-apply "solve" 2)))
@@ -96,7 +97,7 @@
       ("Arc tangent" (maxima-apply "atan"))
       ---
       ("Reduce trigonometric functions" (maxima-apply "trigreduce"))
-      ((concat "Reduce trigonometric functions " "w.r.t.")
+      ((eval '(concat "Reduce trigonometric functions " "w.r.t."))
        (maxima-apply "trigreduce" 2))
       ("Expand trigonometric functions" (maxima-apply "trigexpand")))
   (-> "Special functions"
