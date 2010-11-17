@@ -325,18 +325,3 @@
 	   (make-item))))
   (link text-format-icons)
   (link texmacs-insert-icons))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Text mode focus icons
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-menu (focus-toggle-menu t)
-  (:require (itemize-enumerate-context? t))
-  ((check "Numbered" "v" (enumerate-context? t))
-   (numbered-toggle t)))
-
-(tm-menu (focus-toggle-icons t)
-  (:require (itemize-enumerate-context? t))
-  ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
-          (enumerate-context? t))
-   (numbered-toggle t)))

@@ -82,30 +82,33 @@
 	 (bl (list-intersection l nl)))
     (append l (map (lambda (x) (symbol-append x '*)) bl))))
 
-(tm-define (numbered-context? t)
+(tm-define (numbered-standard-context? t)
   (or (tree-in? t (numbered-tag-list))
       (tree-in? t (numbered-tag-list*))))
+
+(tm-define (numbered-context? t)
+  #f)
 
 (tm-define (numbered-numbered? t)
   #f)
 
 (tm-define (numbered-unnumbered? t)
-  #f)
+  (and (numbered-context? t) (not (numbered-numbered? t))))
 
 (tm-define (numbered-toggle t)
   (focus-next t
     (numbered-toggle (tree-up t))))
 
+(tm-define (numbered-context? t)
+  (:require (numbered-standard-context? t))
+  #t)
+
 (tm-define (numbered-numbered? t)
-  (:require (numbered-context? t))
+  (:require (numbered-standard-context? t))
   (not (symbol-ends? (tree-label t) '*)))
 
-(tm-define (numbered-unnumbered? t)
-  (:require (numbered-context? t))
-  (symbol-ends? (tree-label t) '*))
-
 (tm-define (numbered-toggle t)
-  (:require (numbered-context? t))
+  (:require (numbered-standard-context? t))
   (let* ((old (tree-label t))
          (new (symbol-toggle-number old)))
     (variant-set t new)))

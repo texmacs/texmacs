@@ -182,6 +182,14 @@
   (:inside item*)
   (go-end-of 'item*))
 
+(tm-define (numbered-context? t)
+  (:require (or (itemize-context? t) (enumerate-context? t)))
+  #t)
+
+(tm-define (numbered-numbered? t)
+  (:require (enumerate-context? t))
+  #t)
+
 (tm-define (numbered-toggle t)
   (:require (itemize-context? t))
   (variant-set t 'enumerate))
