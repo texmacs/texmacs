@@ -531,13 +531,9 @@
   (:context field-input-context?)
   (field-go-down))
 
-(tm-define (traverse-previous)
-  (:context field-input-context?)
-  (field-go-up))
-
-(tm-define (traverse-next)
-  (:context field-input-context?)
-  (field-go-down))
+(tm-define (traverse-incremental t forward?)
+  (:require (field-input-context? t))
+  (if forward? (field-go-down) (field-go-up)))
 
 (tm-define (structured-left)
   (:context field-input-simple-context?)

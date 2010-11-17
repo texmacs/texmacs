@@ -103,30 +103,43 @@
 (define (traverse-label . l)
   (tree-label (apply traverse-tree l)))
 
-(define (focus-similar-upwards t l)
-  (cond ((in? (tree-label t) l) (tree-focus t))
+(define (find-similar-upwards t l)
+  (cond ((in? (tree-label t) l) t)
         ((and (not (tree-is-buffer? t)) (tree-up t))
-         (focus-similar-upwards (tree-up t) l))))
+         (find-similar-upwards (tree-up t) l))
+        (else #f)))
+
+(define-macro (with-focus-selection-in l . body)
+  `(with selected? (selection-active-any?)
+     (selection-cancel)
+     ,@body
+     (and-with t (find-similar-upwards (focus-tree) ,l)
+       (if selected? (tree-select t))
+       (tree-focus t))))
+
+(tm-define (traverse-incremental t forward?)
+  (let* ((l (similar-to (tree-label t)))
+         (fun (if forward? go-to-next-tag go-to-previous-tag)))
+    (with-focus-selection-in l (fun l))))
+
+(tm-define (traverse-extremal t forward?)
+  (let* ((l (similar-to (tree-label t)))
+         (fun (if forward? go-to-next-tag go-to-previous-tag))
+         (inc (lambda () (fun l)))
+         (end (if forward? structured-end structured-start)))
+    (with-focus-selection-in l (go-to-repeat inc) (end))))
 
 (tm-define (traverse-previous)
-  (with t (focus-tree)
-    (with l (similar-to (tree-label t))
-      (go-to-previous-tag l)
-      (focus-similar-upwards (focus-tree) l))))
+  (traverse-incremental (focus-tree) #f))
 
 (tm-define (traverse-next)
-  (with t (focus-tree)
-    (with l (similar-to (tree-label t))
-      (go-to-next-tag l)
-      (focus-similar-upwards (focus-tree) l))))
+  (traverse-incremental (focus-tree) #t))
 
 (tm-define (traverse-first)
-  (go-to-repeat traverse-previous)
-  (structured-start))
+  (traverse-extremal (focus-tree) #f))
 
 (tm-define (traverse-last)
-  (go-to-repeat traverse-next)
-  (structured-end))
+  (traverse-extremal (focus-tree) #t))
 
 (tm-define (traverse-previous-section-title)
   (go-to-previous-tag (similar-to 'section)))
