@@ -110,3 +110,25 @@ observer
 edit_observer (editor_rep* ed) {
   return tm_new<edit_observer_rep> (ed);
 }
+
+observer
+search_type (observer o, int type) {
+  if (o->get_type () == type) return o;
+  if (o->get_type () == OBSERVER_LIST) {
+    observer r= search_type (o->get_child (0), type);
+    if (!is_nil (r)) return r;
+    r= search_type (o->get_child (1), type);
+    if (!is_nil (r)) return r;
+  }
+  return observer ();
+}
+
+observer
+search_observer (tree& ref, int type) {
+  return search_type (ref->obs, type);
+}
+
+bool
+admits_edit_observer (tree t) {
+  return !is_nil (search_observer (t, OBSERVER_EDIT));
+}

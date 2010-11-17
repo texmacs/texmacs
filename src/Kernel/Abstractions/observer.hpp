@@ -151,6 +151,9 @@ void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
 
+observer search_observer (tree& ref, int type);
+bool admits_edit_observer (tree t);
+
 void attach_highlight (tree& ref, int lan);
 void attach_highlight (tree& ref, int lan, int col, int start, int end);
 bool has_highlight (tree& ref, int lan);
