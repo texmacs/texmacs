@@ -359,6 +359,12 @@ QTMMinibarAction::createWidget(QWidget* parent) {
       l->addSpacing(8);
     } else {
       QToolButton *tb = new QToolButton(wid);
+
+      //HACK: texmacs does not use the checked state of the action
+      // if the action is checkable then it means that it should be
+      // checked
+      sa->setChecked(sa->isCheckable());
+
       tb->setDefaultAction(sa);
       tb->setAutoRaise(true);
       tb->setPopupMode (QToolButton::InstantPopup);
@@ -522,8 +528,11 @@ menu_button (widget w, command cmd, string pre, string ks, int style) {
   }
   // FIXME: implement complete prefix handling
   a->setEnabled (ok? true: false);
-  a->setCheckable (pre != ""? true: false);
-  a->setChecked (pre != ""? true: false);
+  
+  bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
+  
+  a->setCheckable (check? true: false);
+  a->setChecked (check? true: false);
   if (pre == "v") {}
   else if (pre == "*") {}
     // [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
