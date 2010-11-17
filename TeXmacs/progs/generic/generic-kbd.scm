@@ -362,7 +362,8 @@
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))
-  ("A-*" (numbered-toggle (focus-tree)))
+  ("A-#" (numbered-toggle (focus-tree)))
+  ("A-*" (alternate-toggle (focus-tree)))
   ("A-tab" (make-htab "5mm"))
   ("A-space" (make-space "0.2spc"))
   ("A-S-space" (make-space "-0.2spc"))

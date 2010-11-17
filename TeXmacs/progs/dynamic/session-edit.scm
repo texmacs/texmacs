@@ -562,22 +562,22 @@
 (tm-define (fold)
   (:context field-unfolded-context?)
   (with-innermost t field-unfolded-context?
-    (toggle-toggle t)
+    (alternate-toggle t)
     (tree-go-to t 1 :end)))
 
 (tm-define (unfold)
   (:context field-folded-context?)
   (with-innermost t field-folded-context?
-    (toggle-toggle t)
+    (alternate-toggle t)
     (tree-go-to t 1 :end)))
 
 (tm-define (field-fold t)
   (when (field-unfolded-context? t)
-    (toggle-toggle t)))
+    (alternate-toggle t)))
 
 (tm-define (field-unfold t)
   (when (field-folded-context? t)
-    (toggle-toggle t)))
+    (alternate-toggle t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Field management

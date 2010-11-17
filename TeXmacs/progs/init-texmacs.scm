@@ -147,8 +147,6 @@
 (lazy-menu (dynamic session-menu) insert-session-menu session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
-(lazy-define (dynamic fold-edit)
-	     toggle-context? toggle-second-context? toggle-toggle)
 (lazy-define (dynamic session-edit) scheme-eval)
 (lazy-define (dynamic form-edit) form-ref form-set! form-toggle)
 (lazy-initialize (dynamic session-menu) (in-session?))

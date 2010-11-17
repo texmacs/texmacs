@@ -81,9 +81,9 @@
 (tm-menu (focus-tag-menu t)
   (:require (field-context? t))
   (inert ((eval (focus-session-language)) (noop) (noop)))
-  (when (toggle-context? t)
-    ((check "Unfolded" "v" (toggle-second-context? (focus-tree)))
-     (toggle-toggle (focus-tree))))
+  (when (alternate-context? t)
+    ((check "Unfolded" "v" (alternate-second? (focus-tree)))
+     (alternate-toggle (focus-tree))))
   ("Describe" (set-message "Not yet implemented" "")))
 
 (tm-menu (focus-move-menu t)
@@ -129,10 +129,10 @@
 
 (tm-menu (focus-tag-icons t)
   (:require (field-context? t))
-  (when (toggle-context? t)
+  (when (alternate-context? t)
     ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
-	    (toggle-second-context? (focus-tree)))
-     (toggle-toggle (focus-tree))))
+	    (alternate-second? (focus-tree)))
+     (alternate-toggle (focus-tree))))
   (mini #t (inert ((eval (focus-session-language)) (noop))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (set-message "Not yet implemented" "")))

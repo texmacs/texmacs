@@ -156,12 +156,6 @@
   (focus-next t
     (alternate-toggle (tree-up t))))
 
-;;(tm-define (alternate-toggle t)
-;;  (:require (alternate-standard-context? t))
-;;  (with i (if (alternate-standard-first? t) 1 0)
-;;    (variant-set t (ahash-ref alternate-table (tree-label t)))
-;;    (tree-go-to t i :start)))
-
 (tm-define (alternate-toggle t)
   (:require (alternate-standard-context? t))
   (variant-set t (ahash-ref alternate-table (tree-label t))))
@@ -181,6 +175,34 @@
 (tm-define (alternate-unfold t)
   (:require (alternate-standard-first? t))
   (alternate-toggle t))
+
+(tm-define (fold)
+  (:type (-> void))
+  (:synopsis "Fold at the current focus position")
+  (alternate-fold (focus-tree)))
+
+(tm-define (unfold)
+  (:type (-> void))
+  (:synopsis "Unold at the current focus position")
+  (alternate-unfold (focus-tree)))
+
+(tm-define (mouse-fold)
+  (:type (-> void))
+  (:synopsis "Fold using the mouse")
+  (:secure #t)
+  (with-action t
+    (tree-go-to t :start)
+    (when (tree-up t)
+      (alternate-fold (tree-up t)))))
+
+(tm-define (mouse-unfold)
+  (:type (-> void))
+  (:synopsis "Unfold using the mouse")
+  (:secure #t)
+  (with-action t
+    (tree-go-to t :start)
+    (when (tree-up t)
+      (alternate-unfold (tree-up t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants

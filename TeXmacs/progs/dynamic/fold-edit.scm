@@ -62,14 +62,6 @@
   (dynamic-last))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Operations on toggle trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (toggle-toggle t)
-  (:synopsis "Toggle a fold/unfold")
-  (tree-assign-node! t (ahash-ref toggle-table (tree-label t))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -87,43 +79,11 @@
   (:synopsis "Insert a 'fold' environment")
   (insert-go-to `(,tag (document "") (document "")) (list 0 0)))
 
-(tm-define (fold)
-  (:type (-> void))
-  (:synopsis "Fold at the current cursor position")
-  (noop))
-
-(tm-define (fold)
-  (:context toggle-second-context?)
-  (with-innermost t toggle-second-context?
-    (toggle-toggle t)
-    (tree-go-to t 0 :start)))
-
-(tm-define (unfold)
-  (:type (-> void))
-  (:synopsis "Unfold at the current cursor position")
-  (noop))
-
-(tm-define (unfold)
-  (:context toggle-first-context?)
-  (with-innermost t toggle-first-context?
-    (toggle-toggle t)
-    (tree-go-to t 1 :start)))
-
-(tm-define (mouse-fold)
-  (:type (-> void))
-  (:synopsis "Fold using the mouse")
-  (:secure #t)
-  (with-action t
-    (tree-go-to t :start)
-    (fold)))
-
-(tm-define (mouse-unfold)
-  (:type (-> void))
-  (:synopsis "Unfold using the mouse")
-  (:secure #t)
-  (with-action t
-    (tree-go-to t :start)
-    (unfold)))
+(tm-define (alternate-toggle t)
+  (:require (toggle-context? t))
+  (with i (if (toggle-first-context? t) 1 0)
+    (variant-set t (ahash-ref alternate-table (tree-label t)))
+    (tree-go-to t i :start)))
 
 (tm-define (hidden-variant)
   (:context toggle-first-context?)
@@ -151,7 +111,7 @@
 
 (tm-define (tree-show-hidden t)
   (:require (toggle-context? t))
-  (toggle-toggle t))
+  (alternate-toggle t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on switch trees
@@ -417,19 +377,19 @@
 	 (cond ((== mode :var-last)
 		(tree-insert-node! t 0 '(traversed)))
 	       ((in? mode '(:unfold :expand :var-expand :last))
-		(toggle-toggle t))
+		(alternate-toggle t))
 	       ((and (pair? mode) (== (car mode) :unfold)
 		     (fold-matching-env? t (cadr mode)))
-		(toggle-toggle t))))
+		(alternate-toggle t))))
 	((toggle-second-context? t)
 	 (cond ((== mode :var-last)
-		(toggle-toggle t)
+		(alternate-toggle t)
 		(tree-insert-node! t 0 '(traversed)))
 	       ((in? mode '(:fold :compress :var-compress :first))
-		(toggle-toggle t))
+		(alternate-toggle t))
 	       ((and (pair? mode) (== (car mode) :fold)
 		     (fold-matching-env? t (cadr mode)))
-		(toggle-toggle t))))
+		(alternate-toggle t))))
 	((and (== mode :expand) (switch-context? t))
 	 (switch-set-range t 0 :last #t))
 	((and (== mode :compress) (switch-context? t))
@@ -514,7 +474,7 @@
 
 (define (dynamic-traverse-folded t mode)
   (cond ((in? mode '(:next :var-next))
-	 (toggle-toggle t)
+	 (alternate-toggle t)
 	 (dynamic-operate (tree-ref t 1) :first)
 	 (tree-go-to t 1 :end)
 	 #t)
@@ -522,12 +482,12 @@
 
 (define (dynamic-traverse-unfolded t mode)
   (cond ((== mode :var-next)
-	 (toggle-toggle t)
+	 (alternate-toggle t)
 	 (tree-insert-node! t 0 '(traversed))
 	 #t)
 	((in? mode '(:previous :var-previous))
 	 (with last-mode (if (== mode :previous) :last :var-last)
-	   (toggle-toggle t)
+	   (alternate-toggle t)
 	   (dynamic-operate (tree-ref t 0) last-mode)
 	   (tree-go-to t 0 :end)
 	   #t))

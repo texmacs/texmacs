@@ -153,9 +153,9 @@
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check "Numbered" "v" (numbered-numbered? (focus-tree)))
      (numbered-toggle (focus-tree))))
-  (assuming (toggle-context? t)
-    ((check "Unfolded" "v" (toggle-second-context? (focus-tree)))
-     (toggle-toggle (focus-tree)))))
+  (assuming (alternate-context? t)
+    ((check "Unfolded" "v" (alternate-second? (focus-tree)))
+     (alternate-toggle (focus-tree)))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
@@ -204,6 +204,9 @@
       (assuming (hidden-child? t i)
         (dynamic (string-input-menu t i))))))
 
+(tm-menu (focus-hidden-menu t)
+  (:require (alternate-context? t)))
+
 (tm-menu (standard-focus-menu t)
   (dynamic (focus-tag-menu t))
   ---
@@ -228,10 +231,10 @@
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
 	    (numbered-numbered? (focus-tree)))
      (numbered-toggle (focus-tree))))
-  (assuming (toggle-context? t)
+  (assuming (alternate-context? t)
     ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
-	    (toggle-second-context? (focus-tree)))
-     (toggle-toggle (focus-tree)))))
+	    (alternate-second? (focus-tree)))
+     (alternate-toggle (focus-tree)))))
 
 (tm-menu (focus-tag-icons t)
   (dynamic (focus-toggle-icons t))
@@ -304,6 +307,9 @@
   (for (i (.. 0 (tree-arity t)))
     (assuming (hidden-child? t i)
       (dynamic (string-input-icon t i)))))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (alternate-context? t)))
 
 (tm-menu (standard-focus-icons t)
   (minibar (dynamic (focus-move-icons t)))

@@ -22,16 +22,11 @@
 (define-group variant-tag (folded-tag) (unfolded-tag))
 (define-group similar-tag (folded-tag) (unfolded-tag))
 
-(tm-define toggle-table (make-ahash-table))
-(tm-define-macro (define-foldable folded unfolded)
-  `(begin
-     (ahash-set! toggle-table ',folded ',unfolded)
-     (ahash-set! toggle-table ',unfolded ',folded)))
 (tm-define-macro (define-fold folded unfolded)
   `(begin
      (define-group folded-tag ,folded)
      (define-group unfolded-tag ,unfolded)
-     (define-foldable ,folded ,unfolded)))
+     (define-alternate ,folded ,unfolded)))
 
 (define-fold folded unfolded)
 (define-fold folded-plain unfolded-plain)
@@ -52,8 +47,7 @@
   `(begin
      (define-group summarized-tag ,short)
      (define-group detailed-tag ,long)
-     (ahash-set! toggle-table ',short ',long)
-     (ahash-set! toggle-table ',long ',short)))
+     (define-alternate ,short ,long)))
 
 (define-summarize summarized detailed)
 (define-summarize summarized-plain detailed-plain)
@@ -63,8 +57,7 @@
 (define-summarize summarized-raw detailed-raw)
 (define-summarize summarized-tiny detailed-tiny)
 
-(ahash-set! toggle-table 'summarized-algorithm 'detailed-algorithm)
-(ahash-set! toggle-table 'detailed-algorithm 'summarized-algorithm)
+(define-alternate summarized-algorithm detailed-algorithm)
 
 ;; switches
 
