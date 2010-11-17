@@ -235,6 +235,18 @@
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (geometry-speed t down?)
+  (focus-next t
+    (geometry-speed (tree-up t) down?)))
+
+(tm-define (geometry-variant t forward?)
+  (focus-next t
+    (geometry-variant (tree-up t) forward?)))
+
+(tm-define (geometry-default t)
+  (focus-next t
+    (geometry-default (tree-up t))))
+
 (tm-define (geometry-horizontal t forward?)
   (focus-next t
     (geometry-horizontal (tree-up t) forward?)))
@@ -243,18 +255,13 @@
   (focus-next t
     (geometry-vertical (tree-up t) down?)))
 
+(tm-define (geometry-extremal t forward?)
+  (focus-next t
+    (geometry-extremal (tree-up t) forward?)))
+
 (tm-define (geometry-incremental t down?)
   (focus-next t
     (geometry-incremental (tree-up t) down?)))
-
-(tm-define (geometry-speed t down?)
-  (focus-next t
-    (geometry-speed (tree-up t) down?)))
-
-(tm-define (geometry-default) (noop))
-(tm-define (geometry-start) (noop))
-(tm-define (geometry-end) (noop))
-(tm-define (geometry-variant forward?) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing

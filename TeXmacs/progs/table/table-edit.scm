@@ -67,8 +67,8 @@
 ;; Posititioning
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (geometry-default)
-  (:inside table)
+(tm-define (geometry-default t)
+  (:require (table-markup-context? t))
   (cell-del-format ""))
 
 (tm-define (geometry-horizontal t forward?)

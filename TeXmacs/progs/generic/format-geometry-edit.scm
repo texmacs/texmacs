@@ -119,10 +119,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (space-context? t)
-  (and-with u (tree-down t)
-    (tm-func? u 'space)))
-
-(tm-define (new-space-context? t)
   (tree-is? t 'space))
 
 (define (space-make-ternary t)
@@ -134,26 +130,26 @@
        (lengths-consistent? (tree-ref t 1) (tree-ref t 2))))
 
 (tm-define (geometry-speed t inc?)
-  (:require (new-space-context? t))
+  (:require (space-context? t))
   (with inc (if inc? 1 -1)
     (conserve-focus t
       (length-increase-step (tree-ref t 0) inc))))
 
 (tm-define (geometry-horizontal t forward?)
-  (:require (new-space-context? t))
+  (:require (space-context? t))
   (with inc (if forward? 1 -1)
     (conserve-focus t
       (length-increase (tree-ref t 0) inc))))
 
 (tm-define (geometry-vertical t down?)
-  (:require (new-space-context? t))
+  (:require (space-context? t))
   (with inc (if down? -1 1)
     (conserve-focus t
       (space-make-ternary t)
       (length-increase (tree-ref t 2) inc))))
 
 (tm-define (geometry-incremental t down?)
-  (:require (new-space-context? t))
+  (:require (space-context? t))
   (with inc (if down? -1 1)
     (conserve-focus t
       (space-make-ternary t)
@@ -166,10 +162,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (hspace-context? t)
-  (and-with u (tree-down t)
-    (tm-func? u 'hspace)))
-
-(tm-define (new-hspace-context? t)
   (tree-is? t 'hspace))
 
 (define (rubber-space-consistent? t)
@@ -186,13 +178,13 @@
       (length-increase (tree-ref t 2) by))))
 
 (tm-define (geometry-speed t inc?)
-  (:require (new-hspace-context? t))
+  (:require (hspace-context? t))
   (with inc (if inc? 1 -1)
     (conserve-focus t
       (length-increase-step (tree-ref t 0) inc))))
 
 (tm-define (geometry-horizontal t forward?)
-  (:require (new-hspace-context? t))
+  (:require (hspace-context? t))
   (with inc (if forward? 1 -1)
     (conserve-focus t
       (rubber-space-increase t inc))))
@@ -243,8 +235,8 @@
       (when (not (lengths-consistent? (tree-ref t 1) (tree-ref t 2)))
         (length-increase-step (tree-ref t 2) inc)))))
 
-(tm-define (geometry-variant forward?)
-  (:context move-context?)
+(tm-define (geometry-variant t forward?)
+  (:require (move-context? t))
   (circulate-unit (if forward? 1 -1)))
 
 (tm-define (geometry-horizontal t forward?)
@@ -308,8 +300,8 @@
       (when (not (lengths-consistent? (tree-ref t 3) (tree-ref t 4)))
         (length-increase-step (tree-ref t 3) inc)))))
 
-(tm-define (geometry-variant forward?)
-  (:context resize-context?)
+(tm-define (geometry-variant t forward?)
+  (:context (resize-context? t))
   (circulate-unit (if forward? 1 -1)))
 
 (tm-define (geometry-horizontal t forward?)
@@ -326,19 +318,13 @@
       (replace-empty-vertical t)
       (length-increase (tree-ref t 4) inc))))
 
-(tm-define (geometry-start)
-  (:context resize-context?)
-  (with-innermost t resize-context?
-    (when (resize-consistent-horizontal? t)
-      (length-increase (tree-ref t 1) -1)
-      (length-increase (tree-ref t 3) -1))))
-
-(tm-define (geometry-end)
-  (:context resize-context?)
-  (with-innermost t resize-context?
-    (when (resize-consistent-horizontal? t)
-      (length-increase (tree-ref t 1) 1)
-      (length-increase (tree-ref t 3) 1))))
+(tm-define (geometry-extremal t forward?)
+  (:require (resize-context? t))
+  (with inc (if forward? 1 -1)
+    (conserve-focus t
+      (when (resize-consistent-horizontal? t)
+        (length-increase (tree-ref t 1) inc)
+        (length-increase (tree-ref t 3) inc)))))
 
 (tm-define (geometry-incremental t down?)
   (:require (resize-context? t))
@@ -353,34 +339,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (image-context? t)
-  (and-with u (tree-down t)
-    (tm-func? u 'image 5)))
-
-(tm-define (new-image-context? t)
   (tm-func? t 'image 5))
 
 (tm-define (geometry-speed t inc?)
-  (:require (new-image-context? t))
+  (:require (image-context? t))
   (with inc (if inc? 1 -1)
     (conserve-focus t
       (length-increase-step (tree-ref t 0) inc))))
 
 (tm-define (geometry-horizontal t forward?)
-  (:require (new-image-context? t))
+  (:require (image-context? t))
   (with inc (if forward? 1 -1)
     (conserve-focus t
       (replace-empty t 1 "1w")
       (length-increase (tree-ref t 1) inc))))
 
 (tm-define (geometry-vertical t down?)
-  (:require (new-image-context? t))
+  (:require (image-context? t))
   (with inc (if down? 1 -1)
     (conserve-focus t
       (replace-empty t 2 "1h")
       (length-increase (tree-ref t 2) inc))))
 
 (tm-define (geometry-incremental t down?)
-  (:require (new-image-context? t))
+  (:require (image-context? t))
   (with inc (if down? -1 1)
     (conserve-focus t
       (replace-empty t 4 "0h")
