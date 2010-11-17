@@ -582,7 +582,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (standard-focus-menu t)
-  (:require (== (tree->path t) (buffer-path)))
+  (:require (tree-is-buffer? t))
   (group "Style")
   (let* ((st* (tree->stree (get-style-tree)))
          (st (if (== st* '(tuple)) '(generic) (cdr st*))))
@@ -601,7 +601,7 @@
       (link document-font-base-size-menu)))
 
 (tm-menu (standard-focus-icons t)
-  (:require (== (tree->path t) (buffer-path)))
+  (:require (tree-is-buffer? t))
   (minibar
    (let* ((st* (tree->stree (get-style-tree)))
 	  (st (if (== st* '(tuple)) '(generic) (cdr st*))))
