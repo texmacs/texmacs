@@ -71,21 +71,13 @@
   (:inside table)
   (cell-del-format ""))
 
-(tm-define (geometry-left)
-  (:inside table)
-  (cell-halign-left))
+(tm-define (geometry-horizontal t forward?)
+  (:require (table-markup-context? t))
+  (if forward? (cell-halign-right) (cell-halign-left)))
 
-(tm-define (geometry-right)
-  (:inside table)
-  (cell-halign-right))
-
-(tm-define (geometry-up)
-  (:inside table)
-  (cell-valign-up))
-
-(tm-define (geometry-down)
-  (:inside table)
-  (cell-valign-down))
+(tm-define (geometry-vertical t down?)
+  (:require (table-markup-context? t))
+  (if down? (cell-valign-down) (cell-valign-up)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured traversal

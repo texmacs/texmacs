@@ -109,7 +109,7 @@
          (find-similar-upwards (tree-up t) l))
         (else #f)))
 
-(define-macro (with-focus-selection-in l . body)
+(define-macro (with-focus-in l . body)
   `(with selected? (selection-active-any?)
      (selection-cancel)
      ,@body
@@ -120,14 +120,14 @@
 (tm-define (traverse-incremental t forward?)
   (let* ((l (similar-to (tree-label t)))
          (fun (if forward? go-to-next-tag go-to-previous-tag)))
-    (with-focus-selection-in l (fun l))))
+    (with-focus-in l (fun l))))
 
 (tm-define (traverse-extremal t forward?)
   (let* ((l (similar-to (tree-label t)))
          (fun (if forward? go-to-next-tag go-to-previous-tag))
          (inc (lambda () (fun l)))
          (end (if forward? structured-end structured-start)))
-    (with-focus-selection-in l (go-to-repeat inc) (end))))
+    (with-focus-in l (go-to-repeat inc) (end))))
 
 (tm-define (traverse-previous)
   (traverse-incremental (focus-tree) #f))
@@ -147,6 +147,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (table-markup-context? t)
+  (or (tree-in? t '(table tformat))
+      (and (== (tree-arity t) 1)
+           (or (tree-in? (tree-ref t 0) '(table tformat))
+               (and (tm-func? (tree-ref t 0) 'document 1)
+                    (tree-in? (tree-ref t 0 0) '(table tformat)))))))
+
+(tm-define (structured-horizontal? t)
+  (or (tree-is-dynamic? t)
+      (table-markup-context? t)))
+
+(tm-define (structured-vertical? t)
+  (or (tree-in? t '(tree))
+      (table-markup-context? t)))
 
 (tm-define (structured-insert forwards?) (insert-argument forwards?))
 (tm-define (structured-remove forwards?) (remove-argument forwards?))
@@ -220,11 +235,15 @@
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (geometry-horizontal t forward?)
+  (focus-next t
+    (geometry-horizontal (tree-up t) forward?)))
+
+(tm-define (geometry-vertical t down?)
+  (focus-next t
+    (geometry-vertical (tree-up t) down?)))
+
 (tm-define (geometry-default) (noop))
-(tm-define (geometry-left) (noop))
-(tm-define (geometry-right) (noop))
-(tm-define (geometry-up) (noop))
-(tm-define (geometry-down) (noop))
 (tm-define (geometry-start) (noop))
 (tm-define (geometry-end) (noop))
 (tm-define (geometry-top) (noop))

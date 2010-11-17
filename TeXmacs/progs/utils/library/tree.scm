@@ -320,6 +320,12 @@
     (and-with p (tree->path t)
       (set-manual-focus-path p))))
 
+(tm-define-macro (conserve-focus t . body)
+  `(with selected? (selection-active-any?)
+     ,@body
+     (if selected? (tree-select ,t))
+     (tree-focus ,t)))
+
 (tm-define (tree-correct-old t . l)
   (:synopsis "Deprecated old tree correction routine")
   (with p (apply tree->path (cons t l))

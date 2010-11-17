@@ -38,7 +38,8 @@
 (setq unary-keywords
   '(let let* lambda
     with-result and-let* setup-append-if
-    while for repeat when assuming mini focus-next
+    while for repeat when assuming mini
+    focus-next conserve-focus
     drd-group drd-table drd-dispatcher
     with-cc with-aux
     with-action with-module with-cursor with-server
