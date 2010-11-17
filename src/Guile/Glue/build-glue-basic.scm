@@ -117,6 +117,7 @@
   (tree-as-string tree_as_string (string content))
   (tree-extents tree_extents (tree content))
   (tree-empty? is_empty (bool content))
+  (tree-is-buffer? admits_edit_observer (bool tree))
 
   (tree-assign tree_assign (tree tree content))
   (tree-var-insert tree_insert (tree tree int content))

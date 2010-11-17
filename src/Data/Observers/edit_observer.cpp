@@ -113,6 +113,7 @@ edit_observer (editor_rep* ed) {
 
 observer
 search_type (observer o, int type) {
+  if (is_nil (o)) return o;
   if (o->get_type () == type) return o;
   if (o->get_type () == OBSERVER_LIST) {
     observer r= search_type (o->get_child (0), type);
