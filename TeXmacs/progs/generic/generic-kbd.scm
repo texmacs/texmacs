@@ -98,7 +98,7 @@
   ("structured:cmd space" (kbd-select-enlarge))
   ("structured:cmd tab" (variant-circulate (focus-tree) #t))
   ("structured:cmd S-tab" (variant-circulate (focus-tree) #f))
-  ("structured:cmd *" (toggle-variant))
+  ("structured:cmd *" (alternate-toggle (focus-tree)))
   ("structured:cmd #" (numbered-toggle (focus-tree)))
   ("structured:cmd %" (hidden-variant))
 

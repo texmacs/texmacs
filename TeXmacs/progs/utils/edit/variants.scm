@@ -89,8 +89,16 @@
 (tm-define (numbered-context? t)
   #f)
 
+(tm-define (numbered-context? t)
+  (:require (numbered-standard-context? t))
+  #t)
+
 (tm-define (numbered-numbered? t)
   #f)
+
+(tm-define (numbered-numbered? t)
+  (:require (numbered-standard-context? t))
+  (not (symbol-ends? (tree-label t) '*)))
 
 (tm-define (numbered-unnumbered? t)
   (and (numbered-context? t) (not (numbered-numbered? t))))
@@ -99,14 +107,6 @@
   (focus-next t
     (numbered-toggle (tree-up t))))
 
-(tm-define (numbered-context? t)
-  (:require (numbered-standard-context? t))
-  #t)
-
-(tm-define (numbered-numbered? t)
-  (:require (numbered-standard-context? t))
-  (not (symbol-ends? (tree-label t) '*)))
-
 (tm-define (numbered-toggle t)
   (:require (numbered-standard-context? t))
   (let* ((old (tree-label t))
@@ -114,10 +114,73 @@
     (variant-set t new)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Toggling other binary variants
+;; Alternate between two possibilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (toggle-variant) (noop))
+(define-group alternate-tag (alternate-first-tag) (alternate-second-tag))
+(define-group alternate-first-tag)
+(define-group alternate-second-tag)
+
+(tm-define (alternate-standard-context? t)
+  (tree-in? t (alternate-tag-list)))
+(tm-define (alternate-standard-first? t)
+  (tree-in? t (alternate-first-tag-list)))
+(tm-define (alternate-standard-second? t)
+  (tree-in? t (alternate-second-tag-list)))
+
+(tm-define (alternate-context? t) #f)
+(tm-define (alternate-context? t)
+  (:require (alternate-standard-context? t))
+  #t)
+
+(tm-define (alternate-first? t) #f)
+(tm-define (alternate-first? t)
+  (:require (alternate-standard-first? t))
+  #t)
+
+(tm-define (alternate-second? t) #f)
+(tm-define (alternate-second? t)
+  (:require (alternate-standard-second? t))
+  #t)
+
+(tm-define alternate-table (make-ahash-table))
+
+(tm-define-macro (define-alternate first second)
+  `(begin
+     (define-group alternate-first-tag ,first)
+     (define-group alternate-second-tag ,second)
+     (ahash-set! alternate-table ',first ',second)
+     (ahash-set! alternate-table ',second ',first)))
+
+(tm-define (alternate-toggle t)
+  (focus-next t
+    (alternate-toggle (tree-up t))))
+
+;;(tm-define (alternate-toggle t)
+;;  (:require (alternate-standard-context? t))
+;;  (with i (if (alternate-standard-first? t) 1 0)
+;;    (variant-set t (ahash-ref alternate-table (tree-label t)))
+;;    (tree-go-to t i :start)))
+
+(tm-define (alternate-toggle t)
+  (:require (alternate-standard-context? t))
+  (variant-set t (ahash-ref alternate-table (tree-label t))))
+
+(tm-define (alternate-fold t)
+  (focus-next t
+    (alternate-fold (tree-up t))))
+
+(tm-define (alternate-fold t)
+  (:require (alternate-standard-second? t))
+  (alternate-toggle t))
+
+(tm-define (alternate-unfold t)
+  (focus-next t
+    (alternate-unfold (tree-up t))))
+
+(tm-define (alternate-unfold t)
+  (:require (alternate-standard-first? t))
+  (alternate-toggle t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
@@ -161,8 +224,15 @@
   (:synopsis "Retrieve list of tags similar to @lab")
   (variants-of-sub lab 'similar-tag #t))
 
-(tm-define (variant-context? t)
+(tm-define (variant-standard-context? t)
   (tree-in? t (numbered-unnumbered-complete (variant-tag-list))))
+
+(tm-define (variant-context? t)
+  #f)
+
+(tm-define (variant-context? t)
+  (:require (variant-standard-context? t))
+  #t)
 
 (tm-define (variant-circulate t forward?)
   (focus-next t
@@ -179,7 +249,7 @@
     (variant-set t new)))
 
 (tm-define (variant-circulate t forward?)
-  (:require (variant-context? t))
+  (:require (variant-standard-context? t))
   (variant-circulate-in t (variants-of (tree-label t)) forward?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

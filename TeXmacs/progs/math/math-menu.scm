@@ -1088,14 +1088,14 @@
 (tm-menu (focus-toggle-menu t)
   (:require (tree-in? t '(wide wide*)))
   ((check "Accent below" "v"
-          (tree-is? (focus-tree) 'wide*))
-   (wide-toggle (focus-tree))))
+	  (alternate-second? (focus-tree)))
+   (alternate-toggle (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(wide wide*)))
   ((check (balloon (icon "tm_wide_under.xpm") "Accent below") "v"
-          (tree-is? (focus-tree) 'wide*))
-   (wide-toggle (focus-tree))))
+	  (alternate-second? (focus-tree)))
+   (alternate-toggle (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Around focus menus
@@ -1112,14 +1112,14 @@
 (tm-menu (focus-toggle-menu t)
   (:require (tree-in? t '(around around*)))
   ((check "Large brackets" "v"
-          (tree-is? (focus-tree) 'around*))
-   (around-toggle (focus-tree))))
+	  (alternate-second? (focus-tree)))
+   (alternate-toggle (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(around around*)))
   ((check (balloon (icon "tm_large_around.xpm") "Large brackets") "v"
-          (tree-is? (focus-tree) 'around*))
-   (around-toggle (focus-tree))))
+	  (alternate-second? (focus-tree)))
+   (alternate-toggle (focus-tree))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Eqnarray focus menus

@@ -14,7 +14,8 @@
 (texmacs-module (math math-edit)
   (:use (utils library tree)
 	(utils library cursor)
-	(utils edit auto-close)))
+	(utils edit auto-close)
+	(math math-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some drd properties, which should go into table-drd.scm later on
@@ -269,20 +270,6 @@
         (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-3))
           (tree-set t 1 (list-ref wide-list-3 j)))))))
 
-(tm-define (toggle-variant)
-  (:inside wide)
-  (with-innermost t 'wide
-    (tree-assign-node t 'wide*)))
-
-(tm-define (toggle-variant)
-  (:inside wide*)
-  (with-innermost t 'wide*
-    (tree-assign-node t 'wide)))
-
-(tm-define (wide-toggle t)
-  (cond ((tree-is? t 'wide) (variant-set t 'wide*))
-        ((tree-is? t 'wide*) (variant-set t 'wide))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying the size and shape of brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -308,20 +295,6 @@
 	  ((and (string-starts? s "<") (string-ends? s ">"))
 	   `(,type ,(substring s 1 (- (string-length s) 1))))
 	  (else `(,type ".")))))
-
-(tm-define (toggle-variant)
-  (:inside around)
-  (with-innermost t 'around
-    (tree-assign-node t 'around*)))
-
-(tm-define (toggle-variant)
-  (:inside around*)
-  (with-innermost t 'around*
-    (tree-assign-node t 'around)))
-
-(tm-define (around-toggle t)
-  (cond ((tree-is? t 'around) (variant-set t 'around*))
-        ((tree-is? t 'around*) (variant-set t 'around))))
 
 (define brackets
   '(("(" ")")
