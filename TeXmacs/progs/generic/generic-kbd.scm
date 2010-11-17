@@ -144,8 +144,8 @@
   ("structured:geometry pagedown" (geometry-bottom))
   ("structured:geometry tab" (geometry-variant #t))
   ("structured:geometry S-tab" (geometry-variant #f))
-  ("structured:geometry [" (geometry-slower))
-  ("structured:geometry ]" (geometry-faster))
+  ("structured:geometry [" (geometry-speed (focus-tree) #f))
+  ("structured:geometry ]" (geometry-speed (focus-tree) #t))
 
   ("altcmd \\" (make-hybrid))
   ("altcmd a" (make-tree))
@@ -357,8 +357,8 @@
   ("emacs:meta ]" (redo 0))
   ("emacs:meta C-tab" (geometry-variant #t))
   ("emacs:meta C-S-tab" (geometry-variant #f))
-  ("emacs:meta C-[" (geometry-slower))
-  ("emacs:meta C-]" (geometry-faster))
+  ("emacs:meta C-[" (geometry-speed (focus-tree) #f))
+  ("emacs:meta C-]" (geometry-speed (focus-tree) #t))
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))

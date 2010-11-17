@@ -243,13 +243,15 @@
   (focus-next t
     (geometry-vertical (tree-up t) down?)))
 
+(tm-define (geometry-speed t down?)
+  (focus-next t
+    (geometry-speed (tree-up t) down?)))
+
 (tm-define (geometry-default) (noop))
 (tm-define (geometry-start) (noop))
 (tm-define (geometry-end) (noop))
 (tm-define (geometry-top) (noop))
 (tm-define (geometry-bottom) (noop))
-(tm-define (geometry-slower) (noop))
-(tm-define (geometry-faster) (noop))
 (tm-define (geometry-variant forward?) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
