@@ -241,6 +241,21 @@ static void qtmDrawRoundedRect(QPainter *p, const QRectF &rect, qreal xRadius, q
     qreal rxx2 = w*xRadius/100;
     qreal ryy2 = h*yRadius/100;
     
+#if Q_WS_X11
+    // There is a bug (probably in arcTo) for small sizes.
+    // We use a rough linear approx.
+    rxx2 /= 4;
+    ryy2 /= 4;
+    path.moveTo(x+rxx2,y);
+    path.lineTo(x+w-rxx2, y);
+    path.lineTo(x+w, y+ryy2);
+    path.lineTo(x+w, y+h-ryy2);    
+    path.lineTo(x+w-rxx2, y+h);    
+    path.lineTo(x+rxx2, y+h);    
+    path.lineTo(x, y+h-ryy2);    
+    path.lineTo(x, y+ryy2);    
+    path.closeSubpath();
+#else
     path.moveTo(x+rxx2,y);
     path.arcMoveTo(x, y, rxx2, ryy2, 90);
     path.arcTo(x, y, rxx2, ryy2, 90, 90);
@@ -248,6 +263,7 @@ static void qtmDrawRoundedRect(QPainter *p, const QRectF &rect, qreal xRadius, q
     path.arcTo(x+w-rxx2, y+h-ryy2, rxx2, ryy2, 3*90, 90);
     path.arcTo(x+w-rxx2, y, rxx2, ryy2, 0, 90);
     path.closeSubpath();
+#endif
   }
   
   p->drawPath(path);
@@ -275,7 +291,7 @@ static void qtmDrawShadeRoundPanel(QPainter *p, const QRect &r,
   QPen oldPen = p->pen();                        // save pen
   QBrush oldBrush = p->brush();                  // save brush  
   QRect rect(r);
-  int border = 6;
+  int border = 8;
   
   p->setPen(Qt::NoPen);
   
