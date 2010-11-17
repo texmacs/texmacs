@@ -29,7 +29,7 @@
 (define-group tmdoc-prog-tag
   verbatim scm mmx cpp)
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:mode in-tmdoc?)
   (:require (tree-in? t (tmdoc-prog-tag-list)))
-  (focus-circulate-list t (tmdoc-prog-tag-list) forward?))
+  (variant-circulate-in t (tmdoc-prog-tag-list) forward?))

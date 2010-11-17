@@ -116,6 +116,17 @@
 ;; Actions on structured variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (variant-set t by)
+  (with selected? (selection-active-any?)
+    (with i (tree-index (tree-down t))
+      (tree-assign-node! t by)
+      (when (not (tree-accessible-child? t i))
+        (with ac (tree-accessible-children t)
+          (when (nnull? ac)
+            (tree-go-to (car ac) :start)))))
+    (when selected?
+      (tree-select t))))
+
 (define (variants-of-sub lab type nv?)
   (with numbered? (in? lab (numbered-tag-list*))
     (cond ((and numbered? (symbol-ends? lab '*))
@@ -138,37 +149,23 @@
 (tm-define (variant-context? t)
   (tree-in? t (numbered-unnumbered-complete (variant-tag-list))))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (focus-next t
-    (focus-circulate (tree-up t) forward?)))
-
-(tm-define (variant-circulate forward?)
-  (focus-circulate (focus-tree) forward?))
+    (variant-circulate (tree-up t) forward?)))
 
 (tm-define (list-search-rotate which search)
   (receive (l r) (list-break which (lambda (x) (== x search)))
     (append r l)))
 
-(tm-define (variant-set t by)
-  (with selected? (selection-active-any?)
-    (with i (tree-index (tree-down t))
-      (tree-assign-node! t by)
-      (when (not (tree-accessible-child? t i))
-        (with ac (tree-accessible-children t)
-          (when (nnull? ac)
-            (tree-go-to (car ac) :start)))))
-    (when selected?
-      (tree-select t))))
-
-(tm-define (focus-circulate-list t l forward?)
+(tm-define (variant-circulate-in t l forward?)
   (let* ((old (tree-label t))
          (rot (list-search-rotate l old))
          (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
     (variant-set t new)))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (variant-context? t))
-  (focus-circulate-list t (variants-of (tree-label t)) forward?))
+  (variant-circulate-in t (variants-of (tree-label t)) forward?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding-unfolding variants of tags with hidden arguments

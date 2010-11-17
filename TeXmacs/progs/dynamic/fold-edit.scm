@@ -331,10 +331,10 @@
   (:context switch-context?)
   (switch-to :rotate-forward))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (switch-context? t))
   (with i (switch-index)
-    (focus-circulate-list t (big-switch-tag-list) forward?)
+    (variant-circulate-in t (big-switch-tag-list) forward?)
     (switch-select i)))
 
 (tm-define (tree-show-hidden t)

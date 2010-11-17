@@ -309,18 +309,16 @@
 
 (tm-define (tree-select t . l)
   (:synopsis "Select the tree @(tree-ref t . l)")
-  (with t (apply tree-ref (cons t l))
-    (when t
-      (with p (tree->path t)
-	(selection-set-start-path (rcons p 0))
-	(selection-set-end-path (rcons p (tree-right-index t)))))))
+  (and-with t (apply tree-ref (cons t l))
+    (and-with p (tree->path t)
+      (selection-set-start-path (rcons p 0))
+      (selection-set-end-path (rcons p (tree-right-index t))))))
 
 (tm-define (tree-focus t . l)
   (:synopsis "Focus on the tree @(tree-ref t . l)")
-  (with t (apply tree-ref (cons t l))
-    (when t
-      (and-with p (tree->path t)
-	(set-manual-focus-path p)))))
+  (and-with t (apply tree-ref (cons t l))
+    (and-with p (tree->path t)
+      (set-manual-focus-path p))))
 
 (tm-define (tree-correct-old t . l)
   (:synopsis "Deprecated old tree correction routine")

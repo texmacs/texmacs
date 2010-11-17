@@ -167,16 +167,16 @@
 (define (with-math-context? t)
   (match? t '(with "mode" "math" :%1)))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (with-math-context? t))
   (tree-set! t `(math ,(tree-ref t 2)))
   (math->equation* t))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (tree-is? t 'math))
   (math->equation* t))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (tree-in? t '(equation equation*)))
   (equation*->math t))
 
@@ -216,7 +216,7 @@
                 (and (tree-ref t :next)
                      (script-context? (tree-ref t :next)))))))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (script-context? t))
   (when (script-only-script? t)
     (cond ((tree-is? t 'lsub) (variant-set t 'lsup))
@@ -255,7 +255,7 @@
     "<wide-sqoverbrace>" "<wide-squnderbrace*>"
     "<wide-varrightarrow>" "<wide-varleftarrow>" "<wide-bar>"))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (tree-in? t '(wide wide*)))
   (when (tree-atomic? (tree-ref t 1))
     (with s (tree->string (tree-ref t 1))
@@ -334,7 +334,7 @@
     ("<lceil>" "<rceil>")
     ("<llbracket>" "<rrbracket>")))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (tree-in? t '(around around*)))
   (when (and (== (tree-arity t) 3)
              (tree-atomic? (tree-ref t 0))
@@ -359,7 +359,7 @@
     "<triangleup>" "<triangledown>"
     "<box>" "<parallel>" "<interleave>"))
 
-(tm-define (focus-circulate t forward?)
+(tm-define (variant-circulate t forward?)
   (:require (tree-is? t 'big-around))
   (when (and (== (tree-arity t) 2)
              (tree-atomic? (tree-ref t 0)))
