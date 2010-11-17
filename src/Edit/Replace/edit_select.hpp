@@ -25,6 +25,7 @@ protected:
   path   mid_p;
   string selection_import;
   string selection_export;
+  path   focus_p;
 
 protected:
   void get_selection (path& start, path& end);
@@ -84,6 +85,8 @@ public:
   void selection_move ();
   void cut (path p);
   void cut (path start, path end);
+  path manual_focus_get ();
+  void manual_focus_set (path p);
 };
 
 #endif // defined EDIT_SELECT_H

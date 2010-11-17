@@ -56,7 +56,8 @@ selection_decode (string lan, string s) {
 
 edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
-  selection_import ("texmacs"), selection_export ("texmacs") {}
+  selection_import ("texmacs"), selection_export ("texmacs"),
+  focus_p () {}
 edit_select_rep::~edit_select_rep () {}
 
 /******************************************************************************
@@ -109,6 +110,7 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
 void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
+  focus_p= path ();
   if (p1 != p2)
     (void) semantic_select (common (p1, p2), p1, p2, 0);
   if (path_less (p1, p2)) {
@@ -895,4 +897,14 @@ edit_select_rep::selection_move () {
   go_to (position_get (pos));
   insert_tree (t);
   position_delete (pos);
+}
+
+path
+edit_select_rep::manual_focus_get () {
+  return focus_p;
+}
+
+void
+edit_select_rep::manual_focus_set (path p) {
+  focus_p= p;
 }

@@ -1992,6 +1992,28 @@ tmg_clipboard_get_export () {
 }
 
 SCM
+tmg_set_manual_focus_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "set-manual-focus-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->manual_focus_set (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_manual_focus_path () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->manual_focus_get ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_clear_undo_history () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->clear_undo_history ();
@@ -2841,6 +2863,8 @@ initialize_glue_editor () {
   scm_new_procedure ("clipboard-set-export", (FN) tmg_clipboard_set_export, 1, 0, 0);
   scm_new_procedure ("clipboard-get-import", (FN) tmg_clipboard_get_import, 0, 0, 0);
   scm_new_procedure ("clipboard-get-export", (FN) tmg_clipboard_get_export, 0, 0, 0);
+  scm_new_procedure ("set-manual-focus-path", (FN) tmg_set_manual_focus_path, 1, 0, 0);
+  scm_new_procedure ("get-manual-focus-path", (FN) tmg_get_manual_focus_path, 0, 0, 0);
   scm_new_procedure ("clear-undo-history", (FN) tmg_clear_undo_history, 0, 0, 0);
   scm_new_procedure ("commit-changes", (FN) tmg_commit_changes, 0, 0, 0);
   scm_new_procedure ("start-slave", (FN) tmg_start_slave, 1, 0, 0);

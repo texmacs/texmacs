@@ -129,9 +129,11 @@
 	(else t)))
 
 (define-public (focus-tree)
-  (if (selection-active-any?)
-      (find-focus (path->tree (selection-path)) #f)
-      (find-focus (cursor-tree) #t)))
+  (cond ((nnull? (get-manual-focus-path))
+	 (path->tree (get-manual-focus-path)))
+	((selection-active-any?)
+	 (find-focus (path->tree (selection-path)) #f))
+	(else (find-focus (cursor-tree) #t))))
 
 (define-public-macro (focus-next t . cmds)
   `(and (tree->path ,t)
