@@ -90,8 +90,6 @@ operator << (tm_ostream& out, widget w) {
   // indicate that a button should explicitly rendered as a button
 #define WIDGET_STYLE_CENTERED           64
   // use centered text
-#define WIDGET_STYLE_CENTERED           64
-  // use centered text
 
 /******************************************************************************
 * Window widgets

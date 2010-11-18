@@ -23,6 +23,8 @@
 (define-public widget-style-grey 4)
 (define-public widget-style-pressed 8)
 (define-public widget-style-inert 16)
+(define-public widget-style-button 32)
+(define-public widget-style-centered 64)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Markup elements for the generation of widgets
@@ -288,6 +290,11 @@
   `(gui$style ,widget-style-inert ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
+  (:case explicit-buttons)
+  (require-format x '(explicit-buttons :*))
+  `(gui$style ,widget-style-button ,@(map gui-menu-item (cdr x))))
+
+(tm-define (gui-menu-item x)
   (:case tile)
   (require-format x '(tile :integer? :*))
   `(gui$tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
@@ -393,13 +400,15 @@
 (tm-menu (standard-color-menu cmd)
   (tile 8
     (for (col (standard-color-list))
-      ((color col #f #f 32 24)
-       (cmd col))))
+      (explicit-buttons
+        ((color col #f #f 32 24)
+         (cmd col)))))
   (glue #f #f 0 5)
   (tile 8
     (for (col (standard-grey-list))
-      ((color col #f #f 32 24)
-       (cmd col)))))
+      (explicit-buttons
+        ((color col #f #f 32 24)
+         (cmd col))))))
 
 (tm-define (gui-menu-item x)
   (:case pick-color)
@@ -417,8 +426,9 @@
 (tm-menu (standard-pattern-menu cmd)
   (tile 8
     (for (col (standard-pattern-list))
-      ((color col #f #f 32 24)
-       (cmd col)))))
+      (explicit-buttons
+        ((color col #f #f 32 24)
+         (cmd col))))))
 
 (tm-define (gui-menu-item x)
   (:case pick-background)
@@ -445,8 +455,9 @@
                (g (/ (* 255 gg) (- n 1)))
                (b (/ (* 255 bb) (- n 1)))
                (col (rgb-color-name r g b)))
-          ((color col #f #f 24 24)
-           (cmd col)))))))
+          (explicit-buttons
+            ((color col #f #f 24 24)
+             (cmd col))))))))
 
 (tm-menu (rgb-color-picker cmd)
   (tile 18
@@ -457,6 +468,7 @@
   (glue #f #f 0 3)
   (hlist
     (glue #t #f 0 17)
-    ("Cancel" (cmd #f))
+    (explicit-buttons
+      ("Cancel" (cmd #f)))
     (glue #f #f 3 0))
   (glue #f #f 0 3))

@@ -170,7 +170,7 @@
   ---
   (pick-background (cell-set-background answer))
   ---
-  ("Other"  (interactive cell-set-background)))
+  ("Other" (interactive cell-set-background)))
 
 (menu-bind cell-special-menu
   ("Set span" (interactive cell-set-span))
