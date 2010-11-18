@@ -711,3 +711,8 @@ void aqua_tm_widget_rep::do_interactive_prompt()
         contextInfo: nil];
   [ih performSelector:@selector(delayedRun) withObject:nil afterDelay:0.0];
 }
+
+widget 
+printer_widget (command cmd, url u) {
+  return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
+}

@@ -117,9 +117,10 @@ widget file_chooser_widget (command cmd, string type, bool save);
   // file chooser widget for files of a given 'type';
   // for files of type "image", the widget includes a previsualizer for images
   // 'save' indicates whether we intend to save the file
-widget printer_widget (url ps_pdf_file);
+widget printer_widget (command cmd, url ps_pdf_file);
   // widget for printing a file, offering a way for selecting a page range,
-  // changing the paper type and orientation, previewing, etc.
+  // changing the paper type and orientation, previewing, etc.;
+  // the command cmd is called on exit
 widget color_picker_widget (command cmd, bool bg, array<tree> proposals);
   // widgets for selecting a color, a pattern or a background image,
   // encoded by a tree. On input, we give a list of recently used proposals

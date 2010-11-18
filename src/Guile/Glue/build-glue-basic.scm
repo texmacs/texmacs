@@ -373,8 +373,7 @@
   (connection-stop connection_stop (void string string))
 
   ;; widgets
-  (widget-file-chooser file_chooser_widget (widget command string bool))
-  (widget-printer printer_widget (widget url))
+  (widget-printer printer_widget (widget command url))
   (widget-color-picker color_picker_widget (widget command bool array_tree))
   (widget-extend extend (widget widget array_widget))
   (widget-hmenu horizontal_menu (widget array_widget))
@@ -397,7 +396,6 @@
   (widget-color glue_widget (widget content bool bool int int))
   (widget-hlist horizontal_list (widget array_widget))
   (widget-vlist vertical_list (widget array_widget))
-  (widget-texmacs texmacs_widget (widget int command))
   (object->promise-widget as_promise_widget (promise_widget object))
 
   ;; windows

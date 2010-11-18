@@ -234,8 +234,8 @@ file_chooser_widget (command cmd, string type, bool save) {
 }
 
 widget
-printer_widget (url u) {
-  return glue_widget (false, false, 100 * PIXEL, 100 * PIXEL);
+printer_widget (command cmd, url u) {
+  return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
 }
 
 widget

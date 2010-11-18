@@ -508,9 +508,10 @@ color_picker_widget (command call_back, bool bg, array<tree> proposals) {
 
 #ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
 widget 
-printer_widget(url ps_pdf_file) {
+printer_widget (command cmd, url ps_pdf_file) {
   // widget to print the document, offering a way for selecting a page range,
   // changing the paper type and orientation, previewing, etc.
+  (void) cmd;
   (void) ps_pdf_file;
   return tm_new<qt_printer_widget_rep>();
 }

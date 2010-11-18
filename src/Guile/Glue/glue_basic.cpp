@@ -4308,30 +4308,15 @@ tmg_connection_stop (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_widget_file_chooser (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "widget-file-chooser");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "widget-file-chooser");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "widget-file-chooser");
+tmg_widget_printer (SCM arg1, SCM arg2) {
+  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "widget-printer");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "widget-printer");
 
   command in1= scm_to_command (arg1);
-  string in2= scm_to_string (arg2);
-  bool in3= scm_to_bool (arg3);
+  url in2= scm_to_url (arg2);
 
   // SCM_DEFER_INTS;
-  widget out= file_chooser_widget (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_printer (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "widget-printer");
-
-  url in1= scm_to_url (arg1);
-
-  // SCM_DEFER_INTS;
-  widget out= printer_widget (in1);
+  widget out= printer_widget (in1, in2);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -4661,21 +4646,6 @@ tmg_widget_vlist (SCM arg1) {
 
   // SCM_DEFER_INTS;
   widget out= vertical_list (in1);
-  // SCM_ALLOW_INTS;
-
-  return widget_to_scm (out);
-}
-
-SCM
-tmg_widget_texmacs (SCM arg1, SCM arg2) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "widget-texmacs");
-  SCM_ASSERT_COMMAND (arg2, SCM_ARG2, "widget-texmacs");
-
-  int in1= scm_to_int (arg1);
-  command in2= scm_to_command (arg2);
-
-  // SCM_DEFER_INTS;
-  widget out= texmacs_widget (in1, in2);
   // SCM_ALLOW_INTS;
 
   return widget_to_scm (out);
@@ -5234,8 +5204,7 @@ initialize_glue_basic () {
   scm_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
   scm_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 2, 0, 0);
   scm_new_procedure ("connection-stop", (FN) tmg_connection_stop, 2, 0, 0);
-  scm_new_procedure ("widget-file-chooser", (FN) tmg_widget_file_chooser, 3, 0, 0);
-  scm_new_procedure ("widget-printer", (FN) tmg_widget_printer, 1, 0, 0);
+  scm_new_procedure ("widget-printer", (FN) tmg_widget_printer, 2, 0, 0);
   scm_new_procedure ("widget-color-picker", (FN) tmg_widget_color_picker, 3, 0, 0);
   scm_new_procedure ("widget-extend", (FN) tmg_widget_extend, 2, 0, 0);
   scm_new_procedure ("widget-hmenu", (FN) tmg_widget_hmenu, 1, 0, 0);
@@ -5257,7 +5226,6 @@ initialize_glue_basic () {
   scm_new_procedure ("widget-color", (FN) tmg_widget_color, 5, 0, 0);
   scm_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
   scm_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
-  scm_new_procedure ("widget-texmacs", (FN) tmg_widget_texmacs, 2, 0, 0);
   scm_new_procedure ("object->promise-widget", (FN) tmg_object_2promise_widget, 1, 0, 0);
   scm_new_procedure ("window-handle", (FN) tmg_window_handle, 0, 0, 0);
   scm_new_procedure ("window-create", (FN) tmg_window_create, 4, 0, 0);
