@@ -99,10 +99,10 @@
 
 (tm-menu (focus-insert-menu t)
   (:require (field-context? t))
-  ("Insert field above" (field-insert #f))
-  ("Insert field below" (field-insert #t))
-  ("Insert text field above" (field-insert-text #f))
-  ("Insert text field below" (field-insert-text #t))
+  ("Insert field above" (field-insert (focus-tree) #f))
+  ("Insert field below" (field-insert (focus-tree) #t))
+  ("Insert text field above" (field-insert-text (focus-tree) #f))
+  ("Insert text field below" (field-insert-text (focus-tree) #t))
   ---
   ("Remove previous field" (field-remove (focus-tree) #f))
   ("Remove next field" (field-remove (focus-tree) #t))

@@ -43,25 +43,17 @@
   (:require (table-markup-context? t))
   (table-insert-column forwards?))
 
-(tm-define (structured-insert-up)
-  (:inside table)
-  (table-insert-row #f))
-
-(tm-define (structured-insert-down)
-  (:inside table)
-  (table-insert-row #t))
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (table-markup-context? t))
+  (table-insert-row downwards?))
 
 (tm-define (structured-remove-horizontal t forwards?)
   (:require (table-markup-context? t))
   (table-remove-column forwards?))
 
-(tm-define (structured-remove-up)
-  (:inside table)
-  (table-remove-row #f))
-
-(tm-define (structured-remove-down)
-  (:inside table)
-  (table-remove-row #t))
+(tm-define (structured-remove-vertical t downwards?)
+  (:require (table-markup-context? t))
+  (table-remove-row downwards?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Posititioning

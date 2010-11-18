@@ -579,16 +579,16 @@
 ;; Field management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (field-insert forwards?)
-  (with-innermost t field-input-context?
+(tm-define (field-insert t* forwards?)
+  (and-with t (tree-search-upwards t* field-input-context?)
     (let* ((lan (get-env "prog-language"))
 	   (ses (get-env "prog-session"))
 	   (p (plugin-prompt lan ses))
 	   (t (field-create t p forwards?)))
       (tree-go-to t 1 :end))))
 
-(tm-define (field-insert-text forward?)
-  (with-innermost t field-input-context?
+(tm-define (field-insert-text t* forward?)
+  (and-with t (tree-search-upwards t* field-input-context?)
     (let* ((d (tree-ref t :up))
 	   (i (+ (tree-index t) (if forward? 1 0)))
 	   (b `(textput (document ""))))
@@ -625,15 +625,15 @@
   (:require (field-input-context? t))
   (if forwards? (field-insert-fold t)))
 
-(tm-define (structured-insert-up)
-  (:context field-input-context?)
-  (field-insert #f))
-
-(tm-define (structured-insert-down)
-  (:context field-input-context?)
-  (field-insert #t))
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (field-input-context? t))
+  (field-insert t downwards?))
 
 (tm-define (structured-remove-horizontal t forwards?)
+  (:require (field-input-context? t))
+  (field-remove t forwards?))
+
+(tm-define (structured-remove-vertical t forwards?)
   (:require (field-input-context? t))
   (field-remove t forwards?))
 

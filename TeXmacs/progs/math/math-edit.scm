@@ -225,21 +225,19 @@
           ((tree-is? t 'rsub) (variant-set t 'rsup))
           ((tree-is? t 'rsup) (variant-set t 'rsub)))))
 
-(tm-define (structured-insert-up)
-  (:inside lsub rsub)
-  (with-innermost t '(lsub rsub)
-    (when (script-only-script? t)
-      (tree-go-to t :end)
-      (cond ((tree-is? t 'lsub) (make 'lsup))
-            ((tree-is? t 'rsub) (make 'rsup))))))
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (tree-in? t '(lsub rsub)))
+  (when (and (not downwards?) (script-only-script? t))
+    (tree-go-to t :end)
+    (cond ((tree-is? t 'lsub) (make 'lsup))
+          ((tree-is? t 'rsub) (make 'rsup)))))
 
-(tm-define (structured-insert-down)
-  (:inside lsup rsup)
-  (with-innermost t '(lsup rsup)
-    (when (script-only-script? t)
-      (tree-go-to t :end)
-      (cond ((tree-is? t 'lsup) (make 'lsub))
-            ((tree-is? t 'rsup) (make 'rsub))))))
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (tree-in? t '(lsup rsup)))
+  (when (and downwards? (script-only-script? t))
+    (tree-go-to t :end)
+    (cond ((tree-is? t 'lsup) (make 'lsub))
+          ((tree-is? t 'rsup) (make 'rsub)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing of wide accents

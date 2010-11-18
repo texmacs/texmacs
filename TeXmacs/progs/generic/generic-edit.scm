@@ -169,24 +169,29 @@
 (tm-define (structured-remove-horizontal t forwards?)
   (when (tree->path t :down)
     (remove-argument-at (tree->path t :down) forwards?)))
-;;(remove-argument forwards?)))
+
+(tm-define (structured-insert-vertical t downwards?)
+  (noop))
+
+(tm-define (structured-remove-vertical t downwards?)
+  (noop))
 
 (tm-define (structured-insert-left)
   (structured-insert-horizontal (focus-tree) #f))
-
 (tm-define (structured-insert-right)
   (structured-insert-horizontal (focus-tree) #t))
-
 (tm-define (structured-remove-left)
   (structured-remove-horizontal (focus-tree) #f))
-
 (tm-define (structured-remove-right)
   (structured-remove-horizontal (focus-tree) #t))
-
-(tm-define (structured-insert-up) (noop))
-(tm-define (structured-insert-down) (noop))
-(tm-define (structured-remove-up) (noop))
-(tm-define (structured-remove-down) (noop))
+(tm-define (structured-insert-up)
+  (structured-insert-vertical (focus-tree) #f))
+(tm-define (structured-insert-down)
+  (structured-insert-vertical (focus-tree) #t))
+(tm-define (structured-remove-up)
+  (structured-remove-vertical (focus-tree) #f))
+(tm-define (structured-remove-down)
+  (structured-remove-vertical (focus-tree) #t))
 
 (tm-define (structured-insert-start)
   (structured-first)
@@ -312,24 +317,21 @@
               ((== pos 1) (tree-go-to t 0 :end))
               (else (tree-remove! t (- pos 1) 1))))))
 
-(tm-define (structured-insert-up)
-  (:inside tree)
-  (with-innermost t 'tree
-    (if (!= (tree-down-index t) 0) (set! t (tree-down t)))
-    (tree-set! t `(tree "" ,t))
-    (tree-go-to t 0 0)))
-
-(tm-define (structured-insert-down)
-  (:inside tree)
-  (with-innermost t 'tree
-    (if (== (tree-down-index t) 0)
-	(with pos (tree-arity t)
-	  (tree-insert! t pos '(""))
-	  (tree-go-to t pos 0))
-	(begin
-	  (set! t (tree-down t))
-	  (tree-set! t `(tree ,t ""))
-	  (tree-go-to t 1 0)))))
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (tree-is? t 'tree))
+  (if downwards?
+      (if (== (tree-down-index t) 0)
+          (with pos (tree-arity t)
+            (tree-insert! t pos '(""))
+            (tree-go-to t pos 0))
+          (begin
+            (set! t (tree-down t))
+            (tree-set! t `(tree ,t ""))
+            (tree-go-to t 1 0)))
+      (begin
+        (if (!= (tree-down-index t) 0) (set! t (tree-down t)))
+        (tree-set! t `(tree "" ,t))
+        (tree-go-to t 0 0))))
 
 (define (branch-active)
   (with-innermost t 'tree

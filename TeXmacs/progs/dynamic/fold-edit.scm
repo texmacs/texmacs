@@ -326,13 +326,9 @@
   (:require (switch-context? t))
   (tree/switch-insert-at t (if forwards? :var-next :current)))
 
-(tm-define (structured-insert-up)
-  (:context switch-context?)
-  (switch-insert-at :current))
-
-(tm-define (structured-insert-down)
-  (:context switch-context?)
-  (switch-insert-at :var-next))
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (switch-context? t))
+  (structured-insert-horizontal t downwards?))
 
 (tm-define (structured-remove-horizontal t forwards?)
   (:require (switch-context? t))
@@ -341,6 +337,10 @@
     (cond ((< i 0) (tree-go-to t :start))
           ((and forwards? (= i (- (tree-arity t) 1))) (tree-go-to t :end))
           (else (tree/switch-remove-at t i)))))
+
+(tm-define (structured-remove-vertical t downwards?)
+  (:require (switch-context? t))
+  (structured-remove-horizontal t downwards?))
 
 (tm-define (hidden-variant)
   (:context switch-context?)
