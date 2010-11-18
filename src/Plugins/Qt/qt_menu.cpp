@@ -391,7 +391,6 @@ menu_separator (bool vertical) {
   (void) vertical;
   QAction* a= new QTMAction (NULL);
   a->setSeparator (true);
-  a->setText("x");
   return tm_new<qt_menu_rep> (a);
 }
 
