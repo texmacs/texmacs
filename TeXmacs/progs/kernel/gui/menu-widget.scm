@@ -615,10 +615,10 @@
     (window-create win wid name #t)
     (window-show win)))
 
-(tm-define (interactive-print u)
+(tm-define (interactive-print done u)
   (:interactive #t)
   (with p (lambda (com) (widget-printer com u))
-    (interactive-window p (lambda x (noop)) "Print document")))
+    (interactive-window p done "Print document")))
 
 (tm-define (interactive-rgb-picker cmd l)
   (:interactive #t)
