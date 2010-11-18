@@ -45,6 +45,6 @@
   (:mode in-source?)
   (insert-argument #t))
 
-(tm-define (structured-insert forwards?)
-  (:inside hybrid)
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (tree-is? t 'hybrid))
   (activate-hybrid #t))

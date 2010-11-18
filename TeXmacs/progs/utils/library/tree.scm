@@ -216,6 +216,12 @@
 ;; Upward searching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (tree-search-upwards t pred?)
+  (:synopsis "Find ancestor of @t which matches @pred?")
+  (cond ((pred? t) t)
+        ((or (tree-is-buffer? t) (tree-up t)) #f)
+        (else (tree-search-upwards (tree-up t) pred?))))
+
 (define (tree-innermost-sub p pred?)
   (with t (path->tree p)
     (cond ((pred? t) t)
@@ -231,6 +237,7 @@
 	 (pred? (cond ((procedure? x) x)
 		      ((list? x) (lambda (t) (in? (tree-label t) x)))
 		      (else (lambda (t) (== (tree-label t) x))))))
+    ;;(tree-search-upwards (path->tree p) pred?)))
     (tree-innermost-sub p pred?)))
 
 (tm-define (inside-which l)

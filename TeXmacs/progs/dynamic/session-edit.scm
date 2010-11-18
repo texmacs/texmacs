@@ -595,13 +595,13 @@
       (tree-insert d i (list b))
       (tree-go-to d i 0 :start))))
 
-(tm-define (field-remove-banner)
-  (with-innermost t session-document-context?
+(tm-define (field-remove-banner t*)
+  (and-with t (tree-search-upwards t* session-document-context?)
     (when (tm-func? (tree-ref t 0) 'output)
       (tree-remove! t 0 1))))
 
-(tm-define (field-remove-extreme last?)
-  (with-innermost t field-input-context?
+(tm-define (field-remove-extreme t* last?)
+  (and-with t (tree-search-upwards t* field-input-context?)
     (with u (field-extreme t last?)
       (with v (field-next t (not last?))
 	(if (and (== u t) v)
@@ -609,21 +609,21 @@
 	(if (or (!= u t) v)
 	    (tree-remove (tree-ref u :up) (tree-index u) 1))))))
 
-(tm-define (field-remove forwards?)
-  (with-innermost t field-input-context?
+(tm-define (field-remove t* forwards?)
+  (and-with t (tree-search-upwards t* field-input-context?)
     (if forwards?
-	(with u (field-next t #t)
-	  (if u (begin
-		  (tree-remove (tree-ref t :up) (tree-index t) 1)
-		  (tree-go-to u 1 :start))
-	      (field-remove-extreme #t)))
-	(with u (field-next t #f)
-	  (if u (tree-remove (tree-ref u :up) (tree-index u) 1)
-	      (field-remove-banner))))))
+        (with u (field-next t #t)
+          (if u (begin
+                  (tree-remove (tree-ref t :up) (tree-index t) 1)
+                  (tree-go-to u 1 :start))
+              (field-remove-extreme t #t)))
+        (with u (field-next t #f)
+          (if u (tree-remove (tree-ref u :up) (tree-index u) 1)
+              (field-remove-banner t))))))
 
-(tm-define (structured-insert forwards?)
-  (:context field-input-context?)
-  (if forwards? (field-insert-fold)))
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (field-input-context? t))
+  (if forwards? (field-insert-fold t)))
 
 (tm-define (structured-insert-up)
   (:context field-input-context?)
@@ -633,9 +633,9 @@
   (:context field-input-context?)
   (field-insert #t))
 
-(tm-define (structured-remove forwards?)
-  (:context field-input-context?)
-  (field-remove forwards?))
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (field-input-context? t))
+  (field-remove t forwards?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Session management
@@ -650,8 +650,8 @@
 (tm-define (session-unfold-all)
   (session-forall field-unfold))
 
-(tm-define (field-insert-fold)
-  (with-innermost t field-input-context?
+(tm-define (field-insert-fold t*)
+  (and-with t (tree-search-upwards t* field-input-context?)
     (tree-set! t `(unfolded (document "") (document ,t)))
     (tree-go-to t 0 :end)))
 

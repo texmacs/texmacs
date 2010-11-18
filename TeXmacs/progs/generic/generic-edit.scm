@@ -162,8 +162,27 @@
   (or (tree-in? t '(tree))
       (table-markup-context? t)))
 
-(tm-define (structured-insert forwards?) (insert-argument forwards?))
-(tm-define (structured-remove forwards?) (remove-argument forwards?))
+(tm-define (structured-insert-horizontal t forwards?)
+  (when (tree->path t :down)
+    (insert-argument-at (tree->path t :down) forwards?)))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (when (tree->path t :down)
+    (remove-argument-at (tree->path t :down) forwards?)))
+;;(remove-argument forwards?)))
+
+(tm-define (structured-insert-left)
+  (structured-insert-horizontal (focus-tree) #f))
+
+(tm-define (structured-insert-right)
+  (structured-insert-horizontal (focus-tree) #t))
+
+(tm-define (structured-remove-left)
+  (structured-remove-horizontal (focus-tree) #f))
+
+(tm-define (structured-remove-right)
+  (structured-remove-horizontal (focus-tree) #t))
+
 (tm-define (structured-insert-up) (noop))
 (tm-define (structured-insert-down) (noop))
 (tm-define (structured-remove-up) (noop))
@@ -171,11 +190,11 @@
 
 (tm-define (structured-insert-start)
   (structured-first)
-  (structured-insert #f))
+  (structured-insert-left))
 
 (tm-define (structured-insert-end)
-  (structured-first)
-  (structured-insert #t))
+  (structured-last)
+  (structured-insert-right))
 
 (tm-define (structured-insert-top)
   (structured-top)
@@ -271,29 +290,27 @@
        (tree-is? t 'tree)
        (simple-context? (tree-down t))))
 
-(tm-define (structured-insert forwards?)
-  (:inside tree)
-  (with-innermost t 'tree
-    (if (== (tree-down-index t) 0) (set! t (tree-up t)))
-    (if (== (tm-car t) 'tree)
-	(with pos (tree-down-index t)
-	  (if forwards? (set! pos (1+ pos)))
-	  (tree-insert! t pos '(""))
-	  (tree-go-to t pos 0)))))
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (tree-is? t 'tree))
+  (if (== (tree-down-index t) 0) (set! t (tree-up t)))
+  (if (== (tm-car t) 'tree)
+      (with pos (tree-down-index t)
+        (if forwards? (set! pos (1+ pos)))
+        (tree-insert! t pos '(""))
+        (tree-go-to t pos 0))))
 
-(tm-define (structured-remove forwards?)
-  (:inside tree)
-  (with-innermost t 'tree
-    (if (== (tree-down-index t) 0) (set! t (tree-up t)))
-    (if (== (tm-car t) 'tree)
-	(with pos (tree-down-index t)
-	  (cond (forwards?
-		 (tree-remove! t pos 1)
-		 (if (== pos (tree-arity t))
-		     (tree-go-to t :end)
-		     (tree-go-to t pos :start)))
-		((== pos 1) (tree-go-to t 0 :end))
-		(else (tree-remove! t (- pos 1) 1)))))))
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (tree-is? t 'tree))
+  (if (== (tree-down-index t) 0) (set! t (tree-up t)))
+  (if (== (tm-car t) 'tree)
+      (with pos (tree-down-index t)
+        (cond (forwards?
+               (tree-remove! t pos 1)
+               (if (== pos (tree-arity t))
+                   (tree-go-to t :end)
+                   (tree-go-to t pos :start)))
+              ((== pos 1) (tree-go-to t 0 :end))
+              (else (tree-remove! t (- pos 1) 1))))))
 
 (tm-define (structured-insert-up)
   (:inside tree)

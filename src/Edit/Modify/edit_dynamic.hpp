@@ -28,6 +28,7 @@ public:
   void go_to_argument (path p, bool start_flag);
   void insert_argument (path p, bool forward);
   void insert_argument (bool forward);
+  void remove_empty_argument (path p, bool forward);
   void remove_argument (path p, bool forward);
   void remove_argument (bool forward);
 

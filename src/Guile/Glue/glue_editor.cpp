@@ -350,6 +350,36 @@ tmg_remove_argument (SCM arg1) {
 }
 
 SCM
+tmg_insert_argument_at (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "insert-argument-at");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "insert-argument-at");
+
+  path in1= scm_to_path (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->insert_argument (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_remove_argument_at (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "remove-argument-at");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "remove-argument-at");
+
+  path in1= scm_to_path (arg1);
+  bool in2= scm_to_bool (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->remove_argument (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_with (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-with");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-with");
@@ -2732,6 +2762,8 @@ initialize_glue_editor () {
   scm_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
   scm_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
   scm_new_procedure ("remove-argument", (FN) tmg_remove_argument, 1, 0, 0);
+  scm_new_procedure ("insert-argument-at", (FN) tmg_insert_argument_at, 2, 0, 0);
+  scm_new_procedure ("remove-argument-at", (FN) tmg_remove_argument_at, 2, 0, 0);
   scm_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
   scm_new_procedure ("make-mod-active", (FN) tmg_make_mod_active, 1, 0, 0);
   scm_new_procedure ("make-style-with", (FN) tmg_make_style_with, 2, 0, 0);

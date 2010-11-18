@@ -297,7 +297,7 @@ edit_math_rep::make_tree () {
     insert_tree (tree (TREE, selection_get_cut (), ""), path (1, 0));
   else {
     insert_tree (tree (TREE, "", ""), path (0, 0));
-    set_message (concat (kbd_shortcut ("(structured-insert #t)"),
+    set_message (concat (kbd_shortcut ("(structured-insert-right)"),
 			 ": insert a new branch"),
 		 "tree");
   }

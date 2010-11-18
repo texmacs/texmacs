@@ -200,7 +200,7 @@ edit_dynamic_rep::insert_argument (bool forward) {
 }
 
 void
-edit_dynamic_rep::remove_argument (path p, bool forward) {
+edit_dynamic_rep::remove_empty_argument (path p, bool forward) {
   tree t= subtree (et, path_up (p));
   int i= last_item (p), j, d, n= N(t);
   bool src_flag= in_source () && (!drd->contains (as_string (L(t))));
@@ -263,12 +263,7 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 }
 
 void
-edit_dynamic_rep::remove_argument (bool forward) {
-  path p= find_dynamic (tp);
-  if (is_nil (p)) return;
-  if (p == tp) p= find_dynamic (path_up (tp));
-  if (is_nil (p)) return;
-
+edit_dynamic_rep::remove_argument (path p, bool forward) {
   tree t= subtree (et, path_up (p));
   int i= last_item (p), n= N(t), d= 1;
   if ((!in_source ()) || drd->contains (as_string (L(t)))) {
@@ -285,6 +280,15 @@ edit_dynamic_rep::remove_argument (bool forward) {
   path q= path_up (p) * (i-d);
   remove (q, d);
   go_to_argument (q, forward);
+}
+
+void
+edit_dynamic_rep::remove_argument (bool forward) {
+  path p= find_dynamic (tp);
+  if (is_nil (p)) return;
+  if (p == tp) p= find_dynamic (path_up (tp));
+  if (is_nil (p)) return;
+  remove_argument (p, forward);
 }
 
 /******************************************************************************
@@ -329,7 +333,7 @@ edit_dynamic_rep::back_in_general (tree t, path p, bool forward) {
       go_to_end (p);
       return;
     }
-  remove_argument (p, forward);
+  remove_empty_argument (p, forward);
 }
 
 /******************************************************************************

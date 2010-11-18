@@ -212,8 +212,8 @@
 
 (tm-define (variant-set t by)
   (with-focus-after t
-    (with i (tree-index (tree-down t))
-      (tree-assign-node! t by)
+    (tree-assign-node! t by)
+    (and-with i (tree-index (tree-down t))
       (when (not (tree-accessible-child? t i))
         (with ac (tree-accessible-children t)
           (when (nnull? ac)

@@ -373,6 +373,7 @@ public:
   virtual void go_to_argument (path p, bool start_flag) = 0;
   virtual void insert_argument (path p, bool forward) = 0;
   virtual void insert_argument (bool forward) = 0;
+  virtual void remove_empty_argument (path p, bool forward) = 0;
   virtual void remove_argument (path p, bool forward) = 0;
   virtual void remove_argument (bool forward) = 0;
   virtual void make_with (string var, string val) = 0;

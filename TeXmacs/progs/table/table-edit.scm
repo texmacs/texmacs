@@ -39,8 +39,8 @@
 	   (table-insert-row #t)
 	   (table-go-to (table-which-row) 1)))))
 
-(tm-define (structured-insert forwards?)
-  (:inside table)
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (table-markup-context? t))
   (table-insert-column forwards?))
 
 (tm-define (structured-insert-up)
@@ -51,8 +51,8 @@
   (:inside table)
   (table-insert-row #t))
 
-(tm-define (structured-remove forwards?)
-  (:inside table)
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (table-markup-context? t))
   (table-remove-column forwards?))
 
 (tm-define (structured-remove-up)

@@ -61,7 +61,7 @@
   ("Fold all fields" (session-fold-all))
   ("Unfold all fields" (session-unfold-all))
   ---
-  ("Create subsession" (field-insert-fold))
+  ("Create subsession" (field-insert-fold (focus-tree)))
   ("Split session" (session-split)))
 
 (menu-bind session-evaluate-menu
@@ -104,10 +104,10 @@
   ("Insert text field above" (field-insert-text #f))
   ("Insert text field below" (field-insert-text #t))
   ---
-  ("Remove previous field" (field-remove #f))
-  ("Remove next field" (field-remove #t))
-  ("Remove banner" (field-remove-banner))
-  ("Remove last field" (field-remove-extreme #t)))
+  ("Remove previous field" (field-remove (focus-tree) #f))
+  ("Remove next field" (field-remove (focus-tree) #t))
+  ("Remove banner" (field-remove-banner (focus-tree)))
+  ("Remove last field" (field-remove-extreme (focus-tree) #t)))
 
 (tm-menu (focus-hidden-menu t)
   (:require (field-context? t)))
@@ -155,9 +155,9 @@
   ((balloon (icon "tm_insert_down.xpm") "Insert field below")
    (structured-insert-down))
   ((balloon (icon "tm_delete_up.xpm") "Remove field above")
-   (field-remove #f))
+   (field-remove (focus-tree) #f))
   ((balloon (icon "tm_delete_down.xpm") "Remove field below")
-   (field-remove #t)))
+   (field-remove (focus-tree) #t)))
 
 (tm-menu (focus-hidden-icons t)
   (:require (field-context? t)))
