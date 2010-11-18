@@ -144,7 +144,7 @@
   (go-to-previous-tag (similar-to 'section)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Structured editing
+;; Structured predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (table-markup-context? t)
@@ -162,6 +162,10 @@
   (or (tree-in? t '(tree))
       (table-markup-context? t)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured insert and remove
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (structured-insert-horizontal t forwards?)
   (when (tree->path t :down)
     (insert-argument-at (tree->path t :down) forwards?)))
@@ -175,6 +179,14 @@
 
 (tm-define (structured-remove-vertical t downwards?)
   (noop))
+
+(tm-define (structured-insert-extremal t forwards?)
+  (structured-extremal t forwards?)
+  (structured-insert-horizontal t forwards?))
+
+(tm-define (structured-insert-incremental t downwards?)
+  (structured-incremental t downwards?)
+  (structured-insert-vertical t downwards?))
 
 (tm-define (structured-insert-left)
   (structured-insert-horizontal (focus-tree) #f))
@@ -192,22 +204,18 @@
   (structured-remove-vertical (focus-tree) #f))
 (tm-define (structured-remove-down)
   (structured-remove-vertical (focus-tree) #t))
-
 (tm-define (structured-insert-start)
-  (structured-first)
-  (structured-insert-left))
-
+  (structured-insert-extremal (focus-tree) #f))
 (tm-define (structured-insert-end)
-  (structured-last)
-  (structured-insert-right))
-
+  (structured-insert-extremal (focus-tree) #t))
 (tm-define (structured-insert-top)
-  (structured-top)
-  (structured-insert-up))
-
+  (structured-insert-incremental (focus-tree) #f))
 (tm-define (structured-insert-bottom)
-  (structured-bottom)
-  (structured-insert-down))
+  (structured-insert-incremental (focus-tree) #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured movements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-left)
   (with-innermost t complex-context?
@@ -253,6 +261,12 @@
 (tm-define (structured-bottom)
   (go-to-repeat structured-down)
   (structured-end))
+
+(tm-define (structured-extremal t forwards?)
+  (if forwards? (structured-last) (structured-first)))
+
+(tm-define (structured-incremental t downwards?)
+  (if downwards? (structured-bottom) (structured-top)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
