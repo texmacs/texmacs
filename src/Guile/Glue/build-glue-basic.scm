@@ -373,6 +373,9 @@
   (connection-stop connection_stop (void string string))
 
   ;; widgets
+  (widget-file-chooser file_chooser_widget (widget command string bool))
+  (widget-printer printer_widget (widget url))
+  (widget-color-picker color_picker_widget (widget command bool array_tree))
   (widget-extend extend (widget widget array_widget))
   (widget-hmenu horizontal_menu (widget array_widget))
   (widget-vmenu vertical_menu (widget array_widget))
@@ -390,7 +393,6 @@
 		(widget command string array_string int string))
   (widget-xpm xpm_widget (widget url))
   (widget-box box_widget (widget scheme_tree string int bool bool))
-  (widget-color-picker color_picker_widget (widget command bool array_tree))
   (widget-glue glue_widget (widget bool bool int int))
   (widget-color glue_widget (widget content bool bool int int))
   (widget-hlist horizontal_list (widget array_widget))

@@ -234,6 +234,11 @@ file_chooser_widget (command cmd, string type, bool save) {
 }
 
 widget
+printer_widget (url u) {
+  return glue_widget (false, false, 100 * PIXEL, 100 * PIXEL);
+}
+
+widget
 color_picker_widget (command cmd, bool bg, array<tree> proposals) {
   return abstract (color_picker_wk_widget (cmd, bg, proposals));
 }

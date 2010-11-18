@@ -78,7 +78,7 @@
     (integer->padded-hexadecimal g 2)
     (integer->padded-hexadecimal b 2)))
 
-(tm-menu (rgb-palette cmd win r1 r2 g1 g2 b1 b2 n)
+(tm-menu (rgb-palette cmd r1 r2 g1 g2 b1 b2 n)
   (for (rr (.. r1 r2))
     (for (gg (.. g1 g2))
       (for (bb (.. b1 b2))
@@ -87,35 +87,35 @@
                (b (/ (* 255 bb) (- n 1)))
                (col (rgb-color-name r g b)))
           ((color col #f #f 24 24)
-           (cmd col)
-           (window-delete win)))))))
+           (cmd col)))))))
 
-(tm-menu (rgb-color-picker cmd win)
+(tm-menu (rgb-color-picker cmd)
   (tile 18
-    (dynamic (rgb-palette cmd win 0 6 0 3 0 6 6)))
+    (dynamic (rgb-palette cmd 0 6 0 3 0 6 6)))
   (tile 18
-    (dynamic (rgb-palette cmd win 0 6 3 6 0 6 6)))
+    (dynamic (rgb-palette cmd 0 6 3 6 0 6 6)))
   ---
   (glue #f #f 0 3)
   (hlist
     (glue #t #f 0 17)
-    ("Cancel" (window-delete win))
+    ("Cancel" (cmd #f))
     (glue #f #f 3 0))
   (glue #f #f 0 3))
 
 (tm-define (interactive-rgb-picker cmd)
   (:interactive #t)
-  (let* ((win (window-handle))
-         (scm (list 'vertical (rgb-color-picker cmd win)))
-         (wid (make-menu-widget scm 0)))
-    (window-create win wid "RGB color palette" #t)
-    (window-show win)))
+  (dialogue-window rgb-color-picker cmd "Color picker"))
 
 (tm-define (gui-menu-item x)
   (:case interactive-pick-color)
   `(menu-dynamic
      ("Palette"
-      (interactive-rgb-picker (lambda (answer) ,@(cdr x))))))
+      (interactive-rgb-picker (lambda (answer) (when answer ,@(cdr x)))))))
+
+;;(tm-define (interactive-pattern-picker cmd)
+;;  (:interactive #t)
+;;  (with p (lambda (com) (widget-file-chooser com "Pick pattern" #f))
+;;    (interactive-window p cmd "Pattern picker")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for text properties and formatting
@@ -125,6 +125,8 @@
   (standard-pick-color (make-with "color" (tm->stree answer)))
   ---
   (interactive-pick-color (make-with "color" (tm->stree answer)))
+  ;;("Pattern" (interactive-pattern-picker
+  ;;(lambda x (display* "Hello " x "\n"))))
   ("Other" (make-interactive-with "color")))
 
 (menu-bind horizontal-space-menu

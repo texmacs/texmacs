@@ -350,6 +350,7 @@ basic_widget_rep::handle (event ev) {
     handle_update (ev);
     return true;
   case INVALIDATE_EVENT: {
+    if (!attached ()) return true;
     test_window_attached (ev, this);
     invalidate_event e (ev);
     if (!e->all_flag)
