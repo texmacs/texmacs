@@ -102,20 +102,10 @@
     (glue #f #f 3 0))
   (glue #f #f 0 3))
 
-(tm-define (interactive-rgb-picker cmd)
+(tm-define (interactive-rgb-picker cmd l)
   (:interactive #t)
-  (dialogue-window rgb-color-picker cmd "Color picker"))
-
-(tm-define (gui-menu-item x)
-  (:case interactive-pick-color)
-  `(menu-dynamic
-     ("Palette"
-      (interactive-rgb-picker (lambda (answer) (when answer ,@(cdr x)))))))
-
-;;(tm-define (interactive-pattern-picker cmd)
-;;  (:interactive #t)
-;;  (with p (lambda (com) (widget-file-chooser com "Pick pattern" #f))
-;;    (interactive-window p cmd "Pattern picker")))
+  (with cmd* (lambda (col) (when col (cmd col)))
+    (dialogue-window rgb-color-picker cmd* "Color picker")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for text properties and formatting
@@ -124,9 +114,10 @@
 (menu-bind color-menu
   (standard-pick-color (make-with "color" (tm->stree answer)))
   ---
-  (interactive-pick-color (make-with "color" (tm->stree answer)))
-  ;;("Pattern" (interactive-pattern-picker
-  ;;(lambda x (display* "Hello " x "\n"))))
+  ;;("Standard"
+  ;; (interactive-color (lambda (col) (make-with "color" col)) '()))
+  ("Palette"
+   (interactive-rgb-picker (lambda (col) (make-with "color" col)) '()))
   ("Other" (make-interactive-with "color")))
 
 (menu-bind horizontal-space-menu

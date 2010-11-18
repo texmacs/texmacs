@@ -590,7 +590,7 @@
   (when ,menu-expand-when)
   (mini ,menu-expand-mini)
   (promise ,menu-expand-promise))
- 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -619,11 +619,32 @@
     (window-create win wid name #t)
     (window-show win)))
 
-;;(tm-define (interactive-window wid-promise cmd name)
-;;  (:interactive #t)
-;;  (let* ((win (window-handle))
-;;	 (lbd (lambda x (apply cmd x) (window-delete win)))
-;;	 (com (object->command lbd))
-;;	 (wid (wid-promise com)))
-;;    (window-create win wid name #t)
-;;    (window-show win)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other top-level windows
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (interactive-window wid-promise cmd name)
+  (:interactive #t)
+  (let* ((win (window-handle))
+	 (lbd (lambda x (apply cmd x) (window-delete win)))
+	 (com (object->command lbd))
+	 (wid (wid-promise com)))
+    (window-create win wid name #t)
+    (window-show win)))
+
+(tm-define (interactive-print u)
+  (:interactive #t)
+  (with p (lambda (com) (widget-printer com u))
+    (interactive-window p (lambda x (noop)) "Print document")))
+
+(tm-define (interactive-color cmd proposals)
+  (:interactive #t)
+  (with p (lambda (com) (widget-color-picker com #f proposals))
+    (with cmd* (lambda (t) (when t (cmd (tm->stree t))))
+      (interactive-window p cmd* "Choose color"))))
+
+(tm-define (interactive-background cmd proposals)
+  (:interactive #t)
+  (with p (lambda (com) (widget-color-picker com #t proposals))
+    (with cmd* (lambda (t) (when t (cmd (tm->stree t))))
+      (interactive-window p cmd* "Choose background"))))
