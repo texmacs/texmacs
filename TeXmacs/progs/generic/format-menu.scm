@@ -37,6 +37,38 @@
   ("Other" (make-interactive-with "font-base-size")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic color menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (standard-color-list)
+  '("dark red" "dark magenta" "dark blue" "dark cyan"
+    "dark green" "dark yellow" "dark orange" "dark brown"
+    "red" "magenta" "blue" "cyan"
+    "green" "yellow" "orange" "brown"
+    "pastel red" "pastel magenta" "pastel blue" "pastel cyan"
+    "pastel green" "pastel yellow" "pastel orange" "pastel brown"))
+
+(define (standard-grey-list)
+  '("black" "darker grey" "dark grey" "light grey"
+    "pastel grey" "white"))
+
+(tm-menu (standard-color-menu cmd)
+  (tile 8
+    (for (col (standard-color-list))
+      ((color col #f #f 32 24)
+       (cmd col))))
+  (glue #f #f 0 5)
+  (tile 8
+    (for (col (standard-grey-list))
+      ((color col #f #f 32 24)
+       (cmd col)))))
+
+(tm-define (gui-menu-item x)
+  (:case standard-pick-color)
+  `(menu-dynamic
+     (dynamic (standard-color-menu (lambda (answer) ,@(cdr x))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra RGB color picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -46,7 +78,7 @@
     (integer->padded-hexadecimal g 2)
     (integer->padded-hexadecimal b 2)))
 
-(tm-menu (rgb-palette win r1 r2 g1 g2 b1 b2 n)
+(tm-menu (rgb-palette cmd win r1 r2 g1 g2 b1 b2 n)
   (for (rr (.. r1 r2))
     (for (gg (.. g1 g2))
       (for (bb (.. b1 b2))
@@ -55,14 +87,14 @@
                (b (/ (* 255 bb) (- n 1)))
                (col (rgb-color-name r g b)))
           ((color col #f #f 24 24)
-           (make-with "color" col)
+           (cmd col)
            (window-delete win)))))))
 
-(tm-menu (rgb-color-picker win)
+(tm-menu (rgb-color-picker cmd win)
   (tile 18
-    (dynamic (rgb-palette win 0 6 0 3 0 6 6)))
+    (dynamic (rgb-palette cmd win 0 6 0 3 0 6 6)))
   (tile 18
-    (dynamic (rgb-palette win 0 6 3 6 0 6 6)))
+    (dynamic (rgb-palette cmd win 0 6 3 6 0 6 6)))
   ---
   (glue #f #f 0 3)
   (hlist
@@ -71,22 +103,28 @@
     (glue #f #f 3 0))
   (glue #f #f 0 3))
 
-(tm-define (interactive-rgb-picker)
+(tm-define (interactive-rgb-picker cmd)
   (:interactive #t)
   (let* ((win (window-handle))
-         (scm (list 'vertical (rgb-color-picker win)))
+         (scm (list 'vertical (rgb-color-picker cmd win)))
          (wid (make-menu-widget scm 0)))
     (window-create win wid "RGB color palette" #t)
     (window-show win)))
+
+(tm-define (gui-menu-item x)
+  (:case interactive-pick-color)
+  `(menu-dynamic
+     ("Palette"
+      (interactive-rgb-picker (lambda (answer) ,@(cdr x))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for text properties and formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind color-menu
-  (pick-color (make-with "color" (tree->stree answer)))
+  (standard-pick-color (make-with "color" (tm->stree answer)))
   ---
-  ("Palette" (interactive-rgb-picker))
+  (interactive-pick-color (make-with "color" (tm->stree answer)))
   ("Other" (make-interactive-with "color")))
 
 (menu-bind horizontal-space-menu

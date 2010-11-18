@@ -26,7 +26,7 @@
     drd-rule drd-rules assume texmacs-modes
     delayed dialogue on-entry on-exit widget-delayed
     association-tile bar concat dense-bar dense-tile document
-    header-bar sequence short-bar short-tile tile
+    header-bar sequence short-bar short-tile
     wrap-selection-any wrap-selection-small))
 
 (setq nullary-misc
@@ -38,7 +38,7 @@
 (setq unary-keywords
   '(let let* lambda
     with-result and-let* setup-append-if
-    while for repeat when assuming mini
+    while for repeat when assuming mini tile
     focus-next with-focus-after
     drd-group drd-table drd-dispatcher
     with-cc with-aux
