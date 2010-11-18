@@ -371,7 +371,6 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
       call ("graphics-end-right-drag", sx, sy);
     invalidate_graphical_object ();
     notify_change (THE_CURSOR);
-    manual_focus_set (path ());
     return true;
   }
   return false;

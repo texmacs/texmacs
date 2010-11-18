@@ -211,15 +211,13 @@
 (define-group variant-tag)
 
 (tm-define (variant-set t by)
-  (with selected? (selection-active-any?)
+  (with-focus-after t
     (with i (tree-index (tree-down t))
       (tree-assign-node! t by)
       (when (not (tree-accessible-child? t i))
         (with ac (tree-accessible-children t)
           (when (nnull? ac)
-            (tree-go-to (car ac) :start)))))
-    (when selected?
-      (tree-select t))))
+            (tree-go-to (car ac) :start)))))))
 
 (tm-define (variant-set-keep-numbering t v)
   (if (and (symbol-numbered? v) (symbol-unnumbered? (tree-label t)))

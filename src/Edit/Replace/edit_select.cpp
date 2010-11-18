@@ -58,7 +58,7 @@ selection_decode (string lan, string s) {
 edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
   selection_import ("texmacs"), selection_export ("texmacs"),
-  focus_p () {}
+  focus_p (), focus_hold (false) {}
 edit_select_rep::~edit_select_rep () {}
 
 /******************************************************************************
@@ -111,7 +111,6 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
 void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
-  manual_focus_set (path ());
   if (p1 != p2)
     (void) semantic_select (common (p1, p2), p1, p2, 0);
   if (path_less (p1, p2)) {
@@ -906,13 +905,20 @@ edit_select_rep::manual_focus_get () {
 }
 
 void
-edit_select_rep::manual_focus_set (path p) {
+edit_select_rep::manual_focus_set (path p, bool force) {
+  //cout << "Set focus " << p << ", " << force << ", " << focus_hold << "\n";
+  if (is_nil (p) && focus_hold && !force) return;
   focus_p= p;
-  //cout << "Set focus " << p << "\n";
+  focus_hold= !is_nil (p);
+}
+
+void
+edit_select_rep::manual_focus_release () {
+  focus_hold= false;
 }
 
 path
-edit_select_rep::focus_search (path p, bool skip_flag) {
+edit_select_rep::focus_search (path p, bool skip_flag, bool up_flag) {
   if (!(rp < p)) return rp;
   tree st= subtree (et, p);
   if (!skip_flag || none_accessible (st)) return p;
@@ -924,17 +930,18 @@ edit_select_rep::focus_search (path p, bool skip_flag) {
       is_func (st, ROW) ||
       is_func (st, CELL) ||
       is_compound (st, "shown") ||
-      is_func (st, HIDDEN))
-    return focus_search (path_up (p), skip_flag);
+      is_func (st, HIDDEN) ||
+      up_flag)
+    return focus_search (path_up (p), skip_flag, false);
   return p;
 }
 
 path
 edit_select_rep::focus_get (bool skip_flag) {
   if (!is_nil (focus_p))
-    return focus_p;
+    return focus_search (focus_p, skip_flag, false);
   if (selection_active_any ())
-    return focus_search (selection_get_path (), skip_flag);
+    return focus_search (selection_get_path (), skip_flag, false);
   else
-    return focus_search (path_up (tp), skip_flag);
+    return focus_search (path_up (tp), skip_flag, true);
 }

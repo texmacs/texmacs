@@ -110,11 +110,10 @@
         (else #f)))
 
 (define-macro (with-focus-in l . body)
-  `(with selected? (selection-active-any?)
-     (selection-cancel)
+  `(begin
      ,@body
+     (selection-cancel)
      (and-with t (find-similar-upwards (focus-tree) ,l)
-       (if selected? (tree-select t))
        (tree-focus t))))
 
 (tm-define (traverse-incremental t forward?)

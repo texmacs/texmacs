@@ -95,7 +95,6 @@ edit_interface_rep::resume () {
   cur_sb= 2;
   tp= make_cursor_accessible (tp, true);
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
-  manual_focus_set (path ());
 }
 
 /******************************************************************************
@@ -310,6 +309,8 @@ void
 edit_interface_rep::notify_change (int change) {
   env_change= env_change | change;
   needs_update ();
+  if ((change & (THE_TREE | THE_SELECTION | THE_CURSOR)) != 0)
+    manual_focus_set (path (), (change & THE_TREE) != 0);
 }
 
 bool
@@ -446,7 +447,7 @@ edit_interface_rep::apply_changes () {
   // cout << "Cursor\n";
   temp_invalid_cursor= false;
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+
-                    THE_CURSOR+THE_FOCUS)) {
+                    THE_CURSOR+THE_SELECTION+THE_FOCUS)) {
     SI /*P1= pixel,*/ P2= 2*pixel, P3= 3*pixel;
     int THE_CURSOR_BAK= env_change & THE_CURSOR;
     go_to_here ();
@@ -559,6 +560,7 @@ edit_interface_rep::apply_changes () {
   env_change  = 0;
   last_change = texmacs_time ();
   last_update = last_change-1;
+  manual_focus_release ();
 }
 
 /******************************************************************************

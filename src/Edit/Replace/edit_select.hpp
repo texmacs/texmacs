@@ -26,6 +26,7 @@ protected:
   string selection_import;
   string selection_export;
   path   focus_p;
+  bool   focus_hold;
 
 protected:
   void get_selection (path& start, path& end);
@@ -86,8 +87,9 @@ public:
   void cut (path p);
   void cut (path start, path end);
   path manual_focus_get ();
-  void manual_focus_set (path p);
-  path focus_search (path p, bool skip_flag);
+  void manual_focus_set (path p, bool force);
+  void manual_focus_release ();
+  path focus_search (path p, bool skip_flag, bool up_flag);
   path focus_get (bool skip_flag);
 };
 

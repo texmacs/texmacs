@@ -297,9 +297,9 @@ distinct_tag_or_argument (tree t, path p, path q, hashset<int> labs) {
 
 static bool
 acceptable_border (tree t, path p, path q, hashset<int> labs) {
-  if (tag_border (t, q) < 0) return false;
   if (tag_border (t, q) == 0) return true;
   if (!labs->contains ((int) L (subtree (t, path_up (q))))) return true;
+  if (tag_border (t, q) < 0) return false;
   return tag_border (t, p) != 0;
 }
 
