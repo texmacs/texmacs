@@ -269,7 +269,8 @@ edit_main_rep::print_buffer (string first, string last) {
   url target= url_temp (".ps");
   
 #if (defined(_MBD_EXPERIMENTAL_PRINTER_WIDGET) && defined(QTTEXMACS))
-  widget wid = printer_widget(target);
+  command dummy;
+  widget wid = printer_widget(dummy, target);
   
     // Try to force the dialog to show our preferences. Platform dependent?
   
