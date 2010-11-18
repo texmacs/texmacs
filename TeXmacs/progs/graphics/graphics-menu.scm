@@ -211,7 +211,7 @@
   ("None" (graphics-set-color "none"))
   ---
   (pick-color
-   (let* ((a (tree->stree answer))
+   (let* ((a answer)
 	  (s (if (or (== a "black") (== a "#000000")) "default" a)))
      (graphics-set-color a)))
   ---
@@ -220,7 +220,7 @@
 (menu-bind grid-color-axes-menu
   ("Default" (graphics-set-grid-color 'axes "default"))
   ---
-  (pick-color (graphics-set-grid-color 'axes (tree->stree answer)))
+  (pick-color (graphics-set-grid-color 'axes answer))
   ---
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'axes x)) "Color")))
@@ -228,7 +228,7 @@
 (menu-bind grid-color-units-menu
   ("Default" (graphics-set-grid-color 'units "default"))
   ---
-  (pick-color (graphics-set-grid-color 'units (tree->stree answer)))
+  (pick-color (graphics-set-grid-color 'units answer))
   ---
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'units x)) "Color")))
@@ -236,7 +236,7 @@
 (menu-bind grid-color-subunits-menu
   ("Default" (graphics-set-grid-color 'subunits "default"))
   ---
-  (pick-color (graphics-set-grid-color 'subunits (tree->stree answer)))
+  (pick-color (graphics-set-grid-color 'subunits answer))
   ---
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
@@ -293,8 +293,8 @@
   ;;("None" (graphics-set-fill-color "none"))
   ("None" (graphics-set-fill-color "default"))
   ---
-  (pick-color (graphics-set-fill-color (tree->stree answer)))
-  ;;(pick-background (graphics-set-fill-color (tree->stree answer)))
+  (pick-color (graphics-set-fill-color answer))
+  ;;(pick-background (graphics-set-fill-color answer))
   ---
   ("Other" (interactive graphics-set-fill-color)))
 

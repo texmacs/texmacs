@@ -92,14 +92,6 @@
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
 
-(tm-define-macro (gui$pick-color cmd)
-  (:synopsis "Make color picker")
-  `(list 'pick-color (lambda (answer) ,cmd) #f))
-
-(tm-define-macro (gui$pick-background cmd)
-  (:synopsis "Make background picker")
-  `(list 'pick-color (lambda (answer) ,cmd) #t))
-
 (tm-define-macro (gui$button text . cmds)
   (:synopsis "Make button")
   `(list ,text (lambda () ,@cmds)))
@@ -331,16 +323,6 @@
   `(gui$mini ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
-  (:case pick-color)
-  (require-format x '(pick-color :%1))
-  `(gui$pick-color ,(cadr x)))
-
-(tm-define (gui-menu-item x)
-  (:case pick-background)
-  (require-format x '(pick-background :%1))
-  `(gui$pick-background ,(cadr x)))
-
-(tm-define (gui-menu-item x)
   (:case symbol)
   (require-format x '(symbol :string? :*))
   `(gui$symbol ,@(cdr x)))
@@ -391,3 +373,90 @@
      (delayed
        (:idle 500)
        (import-from ,module))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic color pickers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (standard-color-list)
+  '("dark red" "dark magenta" "dark blue" "dark cyan"
+    "dark green" "dark yellow" "dark orange" "dark brown"
+    "red" "magenta" "blue" "cyan"
+    "green" "yellow" "orange" "brown"
+    "pastel red" "pastel magenta" "pastel blue" "pastel cyan"
+    "pastel green" "pastel yellow" "pastel orange" "pastel brown"))
+
+(define (standard-grey-list)
+  '("black" "darker grey" "dark grey" "light grey"
+    "pastel grey" "white"))
+
+(tm-menu (standard-color-menu cmd)
+  (tile 8
+    (for (col (standard-color-list))
+      ((color col #f #f 32 24)
+       (cmd col))))
+  (glue #f #f 0 5)
+  (tile 8
+    (for (col (standard-grey-list))
+      ((color col #f #f 32 24)
+       (cmd col)))))
+
+(tm-define (gui-menu-item x)
+  (:case pick-color)
+  `(menu-dynamic
+     (dynamic (standard-color-menu (lambda (answer) ,@(cdr x))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic pattern picker
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (standard-pattern-list)
+  (with d (url-read-directory "$TEXMACS_PATH/misc/patterns" "*.png")
+    (map (lambda (x) `(pattern ,(url->string x) "" "")) d)))
+
+(tm-menu (standard-pattern-menu cmd)
+  (tile 8
+    (for (col (standard-pattern-list))
+      ((color col #f #f 32 24)
+       (cmd col)))))
+
+(tm-define (gui-menu-item x)
+  (:case pick-background)
+  `(menu-dynamic
+     (dynamic (standard-color-menu (lambda (answer) ,@(cdr x))))
+     (glue #f #f 0 5)
+     (dynamic (standard-pattern-menu (lambda (answer) ,@(cdr x))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra RGB color picker
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (rgb-color-name r g b)
+  (string-append "#"
+    (integer->padded-hexadecimal r 2)
+    (integer->padded-hexadecimal g 2)
+    (integer->padded-hexadecimal b 2)))
+
+(tm-menu (rgb-palette cmd r1 r2 g1 g2 b1 b2 n)
+  (for (rr (.. r1 r2))
+    (for (gg (.. g1 g2))
+      (for (bb (.. b1 b2))
+        (let* ((r (/ (* 255 rr) (- n 1)))
+               (g (/ (* 255 gg) (- n 1)))
+               (b (/ (* 255 bb) (- n 1)))
+               (col (rgb-color-name r g b)))
+          ((color col #f #f 24 24)
+           (cmd col)))))))
+
+(tm-menu (rgb-color-picker cmd)
+  (tile 18
+    (dynamic (rgb-palette cmd 0 6 0 3 0 6 6)))
+  (tile 18
+    (dynamic (rgb-palette cmd 0 6 3 6 0 6 6)))
+  ---
+  (glue #f #f 0 3)
+  (hlist
+    (glue #t #f 0 17)
+    ("Cancel" (cmd #f))
+    (glue #f #f 3 0))
+  (glue #f #f 0 3))

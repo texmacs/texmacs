@@ -272,6 +272,10 @@
 	((null? (cdr l)) (car l))
 	(else (url-or (car l) (list->url (cdr l))))))
 
+(define-public (url-read-directory u wc)
+  (with d (url-expand (url-complete (url-append u (url-wildcard wc)) "r"))
+    (url->list d)))
+
 (define-public (buffer->tree u)
   (with t (get-buffer-tree u)
     (and (tree-active? t) t)))

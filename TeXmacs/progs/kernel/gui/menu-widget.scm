@@ -44,8 +44,6 @@
     (:menu-wide-label :%1)
     (symbol :string? :*)
     (input :%1 :string? :%1 :string?)
-    (pick-color :%1)
-    (pick-background :%1)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
     (hlist :menu-item-list)
@@ -184,11 +182,6 @@
   (with (tag cmd type props width) p
     (widget-input (object->command cmd) type (props)
 		  (logior style widget-style-mini) width)))
-
-(define (make-menu-pick-color p)
-  "Make @(pick-color :%1) menu item."
-  (with (tag cmd bg?) p
-    (widget-color-picker (object->command cmd) bg? '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu entries
@@ -457,8 +450,6 @@
 	  ,(lambda (p style bar?) (list (make-menu-symbol p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
-  (pick-color (:%1 :%1)
-	      ,(lambda (p style bar?) (list (make-menu-pick-color p))))
   (link (:%1)
 	,(lambda (p style bar?) (make-menu-link p style bar?)))
   (horizontal (:*)
@@ -530,13 +521,6 @@
 	     (if (pair? r) (car r) (replace-procedures (cadddr p))))
 	  ,(fifth p)))
 
-(define (menu-expand-pick-color p)
-  "Expand pick-color menu item @p."
-  `(pick-color ,(replace-procedures (cadr p))
-	       ,(caddr p)
-	       ;; FIXME: add default proposals
-	       ))
-
 (define (menu-expand-list l)
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
@@ -574,7 +558,6 @@
   (color ,replace-procedures)
   (symbol ,replace-procedures)
   (input ,menu-expand-input)
-  (pick-color ,menu-expand-pick-color)
   (link ,menu-expand-link p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
@@ -636,6 +619,11 @@
   (:interactive #t)
   (with p (lambda (com) (widget-printer com u))
     (interactive-window p (lambda x (noop)) "Print document")))
+
+(tm-define (interactive-rgb-picker cmd l)
+  (:interactive #t)
+  (with cmd* (lambda (col) (when col (cmd col)))
+    (dialogue-window rgb-color-picker cmd* "Choose color")))
 
 (tm-define (interactive-color cmd proposals)
   (:interactive #t)

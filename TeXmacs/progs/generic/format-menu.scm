@@ -37,82 +37,11 @@
   ("Other" (make-interactive-with "font-base-size")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic color menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (standard-color-list)
-  '("dark red" "dark magenta" "dark blue" "dark cyan"
-    "dark green" "dark yellow" "dark orange" "dark brown"
-    "red" "magenta" "blue" "cyan"
-    "green" "yellow" "orange" "brown"
-    "pastel red" "pastel magenta" "pastel blue" "pastel cyan"
-    "pastel green" "pastel yellow" "pastel orange" "pastel brown"))
-
-(define (standard-grey-list)
-  '("black" "darker grey" "dark grey" "light grey"
-    "pastel grey" "white"))
-
-(tm-menu (standard-color-menu cmd)
-  (tile 8
-    (for (col (standard-color-list))
-      ((color col #f #f 32 24)
-       (cmd col))))
-  (glue #f #f 0 5)
-  (tile 8
-    (for (col (standard-grey-list))
-      ((color col #f #f 32 24)
-       (cmd col)))))
-
-(tm-define (gui-menu-item x)
-  (:case standard-pick-color)
-  `(menu-dynamic
-     (dynamic (standard-color-menu (lambda (answer) ,@(cdr x))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra RGB color picker
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (rgb-color-name r g b)
-  (string-append "#"
-    (integer->padded-hexadecimal r 2)
-    (integer->padded-hexadecimal g 2)
-    (integer->padded-hexadecimal b 2)))
-
-(tm-menu (rgb-palette cmd r1 r2 g1 g2 b1 b2 n)
-  (for (rr (.. r1 r2))
-    (for (gg (.. g1 g2))
-      (for (bb (.. b1 b2))
-        (let* ((r (/ (* 255 rr) (- n 1)))
-               (g (/ (* 255 gg) (- n 1)))
-               (b (/ (* 255 bb) (- n 1)))
-               (col (rgb-color-name r g b)))
-          ((color col #f #f 24 24)
-           (cmd col)))))))
-
-(tm-menu (rgb-color-picker cmd)
-  (tile 18
-    (dynamic (rgb-palette cmd 0 6 0 3 0 6 6)))
-  (tile 18
-    (dynamic (rgb-palette cmd 0 6 3 6 0 6 6)))
-  ---
-  (glue #f #f 0 3)
-  (hlist
-    (glue #t #f 0 17)
-    ("Cancel" (cmd #f))
-    (glue #f #f 3 0))
-  (glue #f #f 0 3))
-
-(tm-define (interactive-rgb-picker cmd l)
-  (:interactive #t)
-  (with cmd* (lambda (col) (when col (cmd col)))
-    (dialogue-window rgb-color-picker cmd* "Color picker")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for text properties and formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind color-menu
-  (standard-pick-color (make-with "color" (tm->stree answer)))
+  (pick-color (make-with "color" answer))
   ---
   ;;("Standard"
   ;; (interactive-color (lambda (col) (make-with "color" col)) '()))
