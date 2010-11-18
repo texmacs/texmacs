@@ -43,8 +43,6 @@
 (menu-bind color-menu
   (pick-color (make-with "color" answer))
   ---
-  ;;("Standard"
-  ;; (interactive-color (lambda (col) (make-with "color" col)) '()))
   ("Palette"
    (interactive-rgb-picker (lambda (col) (make-with "color" col)) '()))
   ("Other" (make-interactive-with "color")))
