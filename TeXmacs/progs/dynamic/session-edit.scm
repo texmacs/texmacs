@@ -531,25 +531,18 @@
   (:context field-input-context?)
   (field-go-down))
 
-(tm-define (traverse-incremental t forward?)
+(tm-define (traverse-incremental t forwards?)
   (:require (field-input-context? t))
-  (if forward? (field-go-down) (field-go-up)))
+  (if forwards? (field-go-down) (field-go-up)))
 
-(tm-define (structured-left)
-  (:context field-input-simple-context?)
+(tm-define (structured-horizontal t forwards?)
+  (:require (field-input-simple-context? t))
   (noop))
 
-(tm-define (structured-right)
-  (:context field-input-simple-context?)
-  (noop))
-
-(tm-define (structured-up)
-  (:context field-input-simple-context?)
-  (go-to-remain-inside field-go-up 'session))
-
-(tm-define (structured-down)
-  (:context field-input-simple-context?)
-  (go-to-remain-inside field-go-down 'session))
+(tm-define (structured-vertical t downwards?)
+  (:require (field-input-simple-context? t))
+  (with move (if downwards? field-go-down field-go-up)
+    (go-to-remain-inside move 'session)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fold and unfold

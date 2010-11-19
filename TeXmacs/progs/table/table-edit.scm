@@ -61,15 +61,18 @@
 
 (tm-define (geometry-default t)
   (:require (table-markup-context? t))
-  (cell-del-format ""))
+  (with-focus-after t
+    (cell-del-format "")))
 
 (tm-define (geometry-horizontal t forward?)
   (:require (table-markup-context? t))
-  (if forward? (cell-halign-right) (cell-halign-left)))
+  (with-focus-after t
+    (if forward? (cell-halign-right) (cell-halign-left))))
 
 (tm-define (geometry-vertical t down?)
   (:require (table-markup-context? t))
-  (if down? (cell-valign-down) (cell-valign-up)))
+  (with-focus-after t
+    (if down? (cell-valign-down) (cell-valign-up))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured traversal
@@ -122,30 +125,27 @@
 ;; Structured movements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (cell-search-downwards t)
+  (if (tree-is? t 'cell) t
+      (and (tree-down t)
+           (cell-search-downwards (tree-down t)))))
+
+(tm-define (structured-horizontal t forwards?)
+  (:require (table-markup-context? t))
+  (with-focus-after t
+    (and-with c (cell-search-downwards t)
+      (cell-move-relative c 0 (if forwards? 1 -1)))))
+
+(tm-define (structured-vertical t downwards?)
+  (:require (table-markup-context? t))
+  (with-focus-after t
+    (and-with c (cell-search-downwards t)
+      (cell-move-relative c (if downwards? 1 -1) 0))))
+
 (define (cell-simple-context? t)
   (and (nleaf? t)
        (simple-context? (tree-down t))
        (cell-context? t)))
-
-(tm-define (structured-left)
-  (:context cell-simple-context?)
-  (with-innermost c cell-simple-context?
-    (cell-move-relative c 0 -1)))
-
-(tm-define (structured-right)
-  (:context cell-simple-context?)
-  (with-innermost c cell-simple-context?
-    (cell-move-relative c 0 1)))
-
-(tm-define (structured-up)
-  (:context cell-simple-context?)
-  (with-innermost c cell-simple-context?
-    (cell-move-relative c -1 0)))
-
-(tm-define (structured-down)
-  (:context cell-simple-context?)
-  (with-innermost c cell-simple-context?
-    (cell-move-relative c 1 0)))
 
 (tm-define (structured-exit-left)
   (:context cell-simple-context?)

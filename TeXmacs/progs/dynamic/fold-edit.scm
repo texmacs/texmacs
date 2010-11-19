@@ -17,33 +17,41 @@
 	(dynamic dynamic-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Abstract stuff for fold tags and switches
+;; Dynamic movements for fold tags and switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (dynamic-context? t)
   (or (toggle-tag? (tree-label t))
       (switch-tag? (tree-label t))))
 
-(tm-define (dynamic-first) (noop))
-(tm-define (dynamic-previous) (noop))
-(tm-define (dynamic-next) (noop))
-(tm-define (dynamic-last) (noop))
+(tm-define (dynamic-extremal t forwards?)
+  (focus-next t
+    (dynamic-extremal (tree-up t) forwards?)))
 
-(tm-define (structured-left)
-  (:context dynamic-context?)
-  (dynamic-previous))
+(tm-define (dynamic-incremental t forwards?)
+  (focus-next t
+    (dynamic-incremental (tree-up t) forwards?)))
 
-(tm-define (structured-right)
-  (:context dynamic-context?)
-  (dynamic-next))
+(tm-define (dynamic-first)
+  (dynamic-extremal (focus-tree) #f))
+(tm-define (dynamic-last)
+  (dynamic-extremal (focus-tree) #t))
+(tm-define (dynamic-previous)
+  (dynamic-incremental (focus-tree) #f))
+(tm-define (dynamic-next)
+  (dynamic-incremental (focus-tree) #t))
 
-(tm-define (structured-up)
-  (:context dynamic-context?)
-  (dynamic-previous))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Abstract stuff for fold tags and switches
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (structured-down)
-  (:context dynamic-context?)
-  (dynamic-next))
+(tm-define (structured-horizontal t forwards?)
+  (:require (dynamic-context? t))
+  (dynamic-incremental t forwards?))
+
+(tm-define (structured-vertical t downwards?)
+  (:require (dynamic-context? t))
+  (dynamic-incremental t downwards?))
 
 (tm-define (structured-first)
   (:context dynamic-context?)
@@ -93,21 +101,15 @@
   (:context toggle-second-context?)
   (fold))
 
-(tm-define (dynamic-first)
-  (:context toggle-context?)
-  (fold))
+(tm-define (dynamic-extremal t forwards?)
+  (:require (toggle-context? t))
+  (with action (if forwards? alternate-unfold alternate-fold)
+    (action t)))
 
-(tm-define (dynamic-previous)
-  (:context toggle-context?)
-  (fold))
-
-(tm-define (dynamic-next)
-  (:context toggle-context?)
-  (unfold))
-
-(tm-define (dynamic-last)
-  (:context toggle-context?)
-  (unfold))
+(tm-define (dynamic-incremental t forwards?)
+  (:require (toggle-context? t))
+  (with action (if forwards? alternate-unfold alternate-fold)
+    (action t)))
 
 (tm-define (tree-show-hidden t)
   (:require (toggle-context? t))
@@ -306,21 +308,17 @@
       (insert-go-to `(,tag (shown (document ""))) '(0 0 0 0))
       (insert-go-to `(,tag (shown "")) '(0 0 0))))
 
-(tm-define (dynamic-first)
-  (:context switch-context?)
-  (switch-to :first :start))
+(tm-define (dynamic-extremal t forwards?)
+  (:require (switch-contect? t))
+  (if forwards?
+      (tree/switch-to t :last :end)
+      (tree/switch-to t :first :start)))
 
-(tm-define (dynamic-previous)
-  (:context switch-context?)
-  (switch-to :previous :end))
-
-(tm-define (dynamic-next)
-  (:context switch-context?)
-  (switch-to :next :start))
-
-(tm-define (dynamic-last)
-  (:context switch-context?)
-  (switch-to :last :end))
+(tm-define (dynamic-incremental t forwards?)
+  (:require (switch-contect? t))
+  (if forwards?
+      (tree/switch-to t :next :start)
+      (tree/switch-to t :previous :end)))
 
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (switch-context? t))

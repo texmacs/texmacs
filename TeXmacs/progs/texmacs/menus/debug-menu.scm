@@ -52,6 +52,7 @@
       ("Path" (show-path))
       ("Cursors" (show-cursor))
       ("Selection" (show-selection))
+      ("Focus" (display* "focus: " (get-focus-path) "\n"))
       ("Environment" (show-env))
       ("History" (show-history))
       ("Memory usage" (show-meminfo)))

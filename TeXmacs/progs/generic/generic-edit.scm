@@ -81,6 +81,25 @@
 (tm-define (document-context? t)
   (tree-is? t 'document))
 
+(tm-define (table-markup-context? t)
+  (or (tree-in? t '(table tformat))
+      (and (== (tree-arity t) 1)
+           (or (tree-in? (tree-ref t 0) '(table tformat))
+               (and (tm-func? (tree-ref t 0) 'document 1)
+                    (tree-in? (tree-ref t 0 0) '(table tformat)))))))
+
+(tm-define (structured-horizontal? t)
+  (or (tree-is-dynamic? t)
+      (table-markup-context? t)))
+
+(tm-define (structured-vertical? t)
+  (or (tree-in? t '(tree))
+      (table-markup-context? t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tree traversal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (traverse-right) (go-to-next-word))
 (tm-define (traverse-left) (go-to-previous-word))
 (tm-define (traverse-up) (noop))
@@ -144,41 +163,34 @@
   (go-to-previous-tag (similar-to 'section)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Structured predicates
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (table-markup-context? t)
-  (or (tree-in? t '(table tformat))
-      (and (== (tree-arity t) 1)
-           (or (tree-in? (tree-ref t 0) '(table tformat))
-               (and (tm-func? (tree-ref t 0) 'document 1)
-                    (tree-in? (tree-ref t 0 0) '(table tformat)))))))
-
-(tm-define (structured-horizontal? t)
-  (or (tree-is-dynamic? t)
-      (table-markup-context? t)))
-
-(tm-define (structured-vertical? t)
-  (or (tree-in? t '(tree))
-      (table-markup-context? t)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured insert and remove
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-insert-horizontal t forwards?)
+  (focus-next t
+    (structured-insert-horizontal (tree-up t) forwards?)))
+
+(tm-define (structured-insert-vertical t downwards?)
+  (focus-next t
+    (structured-insert-vertical (tree-up t) downwards?)))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (focus-next t
+    (structured-remove-horizontal (tree-up t) forwards?)))
+
+(tm-define (structured-remove-vertical t downwards?)
+  (focus-next t
+    (structured-remove-vertical (tree-up t) downwards?)))
+
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (structured-horizontal? t))
   (when (tree->path t :down)
     (insert-argument-at (tree->path t :down) forwards?)))
 
 (tm-define (structured-remove-horizontal t forwards?)
+  (:require (structured-horizontal? t))
   (when (tree->path t :down)
     (remove-argument-at (tree->path t :down) forwards?)))
-
-(tm-define (structured-insert-vertical t downwards?)
-  (noop))
-
-(tm-define (structured-remove-vertical t downwards?)
-  (noop))
 
 (tm-define (structured-insert-extremal t forwards?)
   (structured-extremal t forwards?)
@@ -217,18 +229,28 @@
 ;; Structured movements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (structured-horizontal t forwards?)
+  (focus-next t
+    (structured-horizontal (tree-up t) forwards?)))
+
+(tm-define (structured-vertical t downwards?)
+  (focus-next t
+    (structured-vertical (tree-up t) downwards?)))
+
+(tm-define (structured-horizontal t forwards?)
+  (:require (structured-horizontal? t))
+  (with move (if forwards? path-next-argument path-previous-argument)
+    (with p (move (root-tree) (tree->path (tree-down t)))
+      (if (nnull? p) (go-to p)))))
+
 (tm-define (structured-left)
-  (with-innermost t complex-context?
-    (with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
-      (if (nnull? p) (go-to p)))))
-
+  (structured-horizontal (focus-tree) #f))
 (tm-define (structured-right)
-  (with-innermost t complex-context?
-    (with p (path-next-argument (root-tree) (tree->path (tree-down t)))
-      (if (nnull? p) (go-to p)))))
-
-(tm-define (structured-up) (noop))
-(tm-define (structured-down) (noop))
+  (structured-horizontal (focus-tree) #t))
+(tm-define (structured-up)
+  (structured-vertical (focus-tree) #f))
+(tm-define (structured-down)
+  (structured-vertical (focus-tree) #t))
 
 (tm-define (structured-start)
   (with-innermost t complex-context?
@@ -301,38 +323,33 @@
     (geometry-incremental (tree-up t) down?)))
 
 (tm-define (geometry-slower)
-  (conserve-focus (geometry-speed (focus-tree) #f)))
+  (geometry-speed (focus-tree) #f))
 (tm-define (geometry-faster)
-  (conserve-focus (geometry-speed (focus-tree) #t)))
+  (geometry-speed (focus-tree) #t))
 (tm-define (geometry-circulate forward?)
-  (conserve-focus (geometry-variant (focus-tree) forward?)))
+  (geometry-variant (focus-tree) forward?))
 (tm-define (geometry-reset)
-  (conserve-focus (geometry-default (focus-tree))))
+  (geometry-default (focus-tree)))
 (tm-define (geometry-left)
-  (conserve-focus (geometry-horizontal (focus-tree) #f)))
+  (geometry-horizontal (focus-tree) #f))
 (tm-define (geometry-right)
-  (conserve-focus (geometry-horizontal (focus-tree) #t)))
+  (geometry-horizontal (focus-tree) #t))
 (tm-define (geometry-up)
-  (conserve-focus (geometry-vertical (focus-tree) #f)))
+  (geometry-vertical (focus-tree) #f))
 (tm-define (geometry-down)
-  (conserve-focus (geometry-vertical (focus-tree) #t)))
+  (geometry-vertical (focus-tree) #t))
 (tm-define (geometry-start)
-  (conserve-focus (geometry-extremal (focus-tree) #f)))
+  (geometry-extremal (focus-tree) #f))
 (tm-define (geometry-end)
-  (conserve-focus (geometry-extremal (focus-tree) #t)))
+  (geometry-extremal (focus-tree) #t))
 (tm-define (geometry-top)
-  (conserve-focus (geometry-incremental (focus-tree) #f)))
+  (geometry-incremental (focus-tree) #f))
 (tm-define (geometry-bottom)
-  (conserve-focus (geometry-incremental (focus-tree) #t)))
+  (geometry-incremental (focus-tree) #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tree-simple-context? t)
-  (and (nleaf? t)
-       (tree-is? t 'tree)
-       (simple-context? (tree-down t))))
 
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (tree-is? t 'tree))
@@ -372,12 +389,11 @@
         (tree-set! t `(tree "" ,t))
         (tree-go-to t 0 0))))
 
-(define (branch-active)
-  (with-innermost t 'tree
-    (with i (tree-down-index t)
-      (if (and (= i 0) (tree-is? t :up 'tree))
-	  (tree-up t)
-	  t))))
+(define (branch-active t)
+  (with i (tree-down-index t)
+    (if (and (= i 0) (tree-is? t :up 'tree))
+        (tree-up t)
+        t)))
 
 (define (branch-go-to . l)
   (apply tree-go-to l)
@@ -386,30 +402,23 @@
 	(if (nin? last '(:start :end)) (set! last :start))
 	(tree-go-to (cursor-tree) 0 last))))
 
-(tm-define (structured-left)
-  (:context tree-simple-context?)
-  (let* ((t (branch-active))
+(tm-define (structured-horizontal t* forwards?)
+  (:require (tree-is? t* 'tree))
+  (let* ((t (branch-active t*))
 	 (i (tree-down-index t)))
-    (if (> i 1) (branch-go-to t (- i 1) :end))))
+    (cond ((and (not forwards?) (> i 1))
+           (branch-go-to t (- i 1) :end))
+          ((and forwards? (!= i 0) (< i (- (tree-arity t) 1)))
+           (branch-go-to t (+ i 1) :start)))))
 
-(tm-define (structured-right)
-  (:context tree-simple-context?)
-  (let* ((t (branch-active))
+(tm-define (structured-vertical t* downwards?)
+  (:require (tree-is? t* 'tree))
+  (let* ((t (branch-active t*))
 	 (i (tree-down-index t)))
-    (if (and (!= i 0) (< i (- (tree-arity t) 1)))
-	(branch-go-to t (+ i 1) :start))))
-
-(tm-define (structured-up)
-  (:context tree-simple-context?)
-  (let* ((t (branch-active))
-	 (i (tree-down-index t)))
-    (if (!= i 0) (tree-go-to t 0 :end))))
-
-(tm-define (structured-down)
-  (:context tree-simple-context?)
-  (with-innermost t 'tree
-    (if (== (tree-down-index t) 0)
-	(branch-go-to t (quotient (tree-arity t) 2) :start))))
+    (cond ((and (not downwards?) (!= i 0))
+           (tree-go-to t 0 :end))
+          ((and downwards? (== (tree-down-index t*) 0))
+           (branch-go-to t* (quotient (tree-arity t*) 2) :start)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra editing functions
