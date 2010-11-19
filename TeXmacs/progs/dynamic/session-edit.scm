@@ -520,17 +520,15 @@
 ;; Fold and unfold
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (fold)
-  (:context field-unfolded-context?)
-  (with-innermost t field-unfolded-context?
-    (alternate-toggle t)
-    (tree-go-to t 1 :end)))
+(tm-define (alternate-fold t)
+  (:require (field-unfolded-context? t))
+  (alternate-toggle t)
+  (tree-go-to t 1 :end))
 
-(tm-define (unfold)
-  (:context field-folded-context?)
-  (with-innermost t field-folded-context?
-    (alternate-toggle t)
-    (tree-go-to t 1 :end)))
+(tm-define (alternate-unfold t)
+  (:require (field-folded-context? t))
+  (alternate-toggle t)
+  (tree-go-to t 1 :end))
 
 (tm-define (field-fold t)
   (when (field-unfolded-context? t)
@@ -621,7 +619,6 @@
     (tree-go-to t 0 :end)))
 
 (tm-define (session-split)
-  (:context session-document-context?)
   (with-innermost t session-document-context?
     (let* ((u (tree-ref t :up)) ;; session
 	   (v (tree-ref u :up)) ;; document
