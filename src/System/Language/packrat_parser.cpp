@@ -626,8 +626,10 @@ bool
 packrat_select (string lan, string s, tree in, path in_pos,
 		path& p1, path& p2, int mode)
 {
+  if (path_less (p2, p1))
+    return packrat_select (lan, s, in, in_pos, p2, p1, mode);
   //cout << "Enlarge " << p1 << " -- " << p2 << " in " << in
-  //     << " (" << lan << ", " << s << ")" << LF;
+  //<< " (" << lan << ", " << s << ")" << LF;
   packrat_parser par= make_packrat_parser (lan, in);
   C sym = encode_symbol (compound ("symbol", s));
   if (par->parse (sym, 0) != N(par->current_input))

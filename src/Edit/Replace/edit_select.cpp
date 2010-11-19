@@ -111,6 +111,7 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
 void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
+  if (!(rp <= p1 && rp <= p2)) return;
   if (p1 != p2)
     (void) semantic_select (common (p1, p2), p1, p2, 0);
   if (path_less (p1, p2)) {
@@ -176,8 +177,7 @@ edit_select_rep::select_from_keyboard (bool flag) {
 
 void
 edit_select_rep::select_from_shift_keyboard () {
-  if (!shift_selecting || end_p == start_p || (tp != start_p && tp != end_p))
-    mid_p= copy (tp);
+  if (!shift_selecting || end_p == start_p) mid_p= copy (tp);
   selecting= true;
   shift_selecting= true;
 }
