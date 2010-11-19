@@ -71,6 +71,7 @@ public:
   void selection_set (tree t);
   void selection_set_start (path p= path());
   void selection_set_end (path p= path());
+  void selection_set_paths (path start, path end);
   void selection_copy (string key= "primary");
   void selection_paste (string key= "primary");
   void selection_clear (string key= "primary");

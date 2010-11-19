@@ -1869,26 +1869,15 @@ tmg_selection_path () {
 }
 
 SCM
-tmg_selection_set_start_path (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-start-path");
+tmg_selection_set (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "selection-set");
 
   path in1= scm_to_path (arg1);
+  path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->selection_set_start (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_selection_set_end_path (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-end-path");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->selection_set_end (in1);
+  get_server()->get_editor()->selection_set_paths (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2891,8 +2880,7 @@ initialize_glue_editor () {
   scm_new_procedure ("selection-get-start", (FN) tmg_selection_get_start, 0, 0, 0);
   scm_new_procedure ("selection-get-end", (FN) tmg_selection_get_end, 0, 0, 0);
   scm_new_procedure ("selection-path", (FN) tmg_selection_path, 0, 0, 0);
-  scm_new_procedure ("selection-set-start-path", (FN) tmg_selection_set_start_path, 1, 0, 0);
-  scm_new_procedure ("selection-set-end-path", (FN) tmg_selection_set_end_path, 1, 0, 0);
+  scm_new_procedure ("selection-set", (FN) tmg_selection_set, 2, 0, 0);
   scm_new_procedure ("clipboard-copy", (FN) tmg_clipboard_copy, 1, 0, 0);
   scm_new_procedure ("clipboard-cut", (FN) tmg_clipboard_cut, 1, 0, 0);
   scm_new_procedure ("clipboard-cut-at", (FN) tmg_clipboard_cut_at, 1, 0, 0);

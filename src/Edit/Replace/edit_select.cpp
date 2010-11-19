@@ -637,6 +637,13 @@ edit_select_rep::selection_set_end (path p) {
 }
 
 void
+edit_select_rep::selection_set_paths (path start, path end) {
+  if (is_nil (start) || is_nil (end)) selection_set_paths (tp, tp);
+  else if (path_less_eq (end, start)) select (start, start);
+  else if (rp < start && rp < end) select (start, end);
+}
+
+void
 edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
   string mode= get_env_string (MODE);

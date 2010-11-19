@@ -317,8 +317,7 @@
   (:synopsis "Select the tree @(tree-ref t . l)")
   (and-with t (apply tree-ref (cons t l))
     (and-with p (tree->path t)
-      (selection-set-start-path (rcons p 0))
-      (selection-set-end-path (rcons p (tree-right-index t))))))
+      (selection-set (rcons p 0) (rcons p (tree-right-index t))))))
 
 (tm-define (tree-focus t . l)
   (:synopsis "Focus on the tree @(tree-ref t . l)")

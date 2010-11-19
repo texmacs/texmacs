@@ -83,7 +83,9 @@
   (script-feed lan session in where opts))
 
 (tm-define (kbd-enter t forwards?)
-  (:require (and (tree-is? t 'script-eval) (not forwards?)))
+  (:require (and (tree-is? t 'script-eval)
+                 (xor (not forwards?)
+                      (tree-is? t 1 'document))))
   (script-modified-eval noop))
 
 (tm-define (make-script-input)
@@ -106,6 +108,13 @@
   (:require (tree-is? t 'script-output))
   (tree-assign-node! t 'script-input)
   (tree-go-to t 2 :end))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (or (tree-is? t 'script-output)
+                (and (tree-is? t 'script-input)
+                     (xor (not forwards?)
+                          (tree-is? t 2 'document)))))
+  (alternate-toggle t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operate on current selection or formula
@@ -268,12 +277,6 @@
     (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
     (tree-go-to t 1 :end)))
 
-(tm-define (kbd-enter t forwards?)
-  (:require (and (plot-context? t) (not forwards?)))
-  (if (= (tree-down-index t) (- (tree-arity t) 1))
-      (activate-plot t)
-      (tree-go-to t (1+ (tree-down-index t)) :end)))
-
 (tm-define (alternate-toggle t)
   (:require (plot-context? t))
   (activate-plot t))
@@ -283,12 +286,24 @@
   (tree-remove-node! t 0)
   (tree-go-to t 0 :end))
 
+(tm-define (kbd-enter t forwards?)
+  (:require (plot-context? t))
+  (if (= (tree-down-index t) (- (tree-arity t) 1))
+      (activate-plot t)
+      (tree-go-to t (1+ (tree-down-index t)) :end)))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-is? t 'plot-output))
+  (alternate-toggle t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-enter t forwards?)
-  (:require (and (tree-is? t 'converter-eval) (not forwards?)))
+  (:require (and (tree-is? t 'converter-eval)
+                 (xor (not forwards?)
+                      (tree-is? t 1 'document))))
   (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
          (in (texmacs->verbatim (tree-ref t 1))))
     (tree-select t)
@@ -307,3 +322,10 @@
   (:require (tree-is? t 'converter-output))
   (tree-assign-node! t 'converter-input)
   (tree-go-to t 1 :end))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (or (tree-is? t 'converter-output)
+                (and (tree-is? t 'converter-input)
+                     (xor (not forwards?)
+                          (tree-is? t 1 'document)))))
+  (alternate-toggle t))
