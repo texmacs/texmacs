@@ -143,9 +143,10 @@
 (tm-define (traverse-extremal t forward?)
   (let* ((l (similar-to (tree-label t)))
          (fun (if forward? go-to-next-tag go-to-previous-tag))
-         (inc (lambda () (fun l)))
-         (end (if forward? structured-end structured-start)))
-    (with-focus-in l (go-to-repeat inc) (end))))
+         (inc (lambda () (fun l))))
+    (with-focus-in l
+      (go-to-repeat inc)
+      (structured-inner-extremal t forward?))))
 
 (tm-define (traverse-previous)
   (traverse-incremental (focus-tree) #f))
@@ -237,11 +238,29 @@
   (focus-next t
     (structured-vertical (tree-up t) downwards?)))
 
+(tm-define (structured-inner-extremal t forwards?)
+  (focus-next t
+    (structured-inner-extremal (tree-up t) forwards?)))
+
 (tm-define (structured-horizontal t forwards?)
   (:require (structured-horizontal? t))
-  (with move (if forwards? path-next-argument path-previous-argument)
-    (with p (move (root-tree) (tree->path (tree-down t)))
-      (if (nnull? p) (go-to p)))))
+  (with-focus-after t
+    (with move (if forwards? path-next-argument path-previous-argument)
+      (with p (move (root-tree) (tree->path (tree-down t)))
+        (if (nnull? p) (go-to p))))))
+
+(tm-define (structured-inner-extremal t forwards?)
+  (:require (structured-horizontal? t))
+  (with-focus-after t
+    (tree-go-to t :down (if forwards? :end :start))))
+
+(tm-define (structured-extremal t forwards?)
+  (go-to-repeat (lambda () (structured-horizontal t forwards?)))
+  (structured-inner-extremal t forwards?))
+
+(tm-define (structured-incremental t downwards?)
+  (go-to-repeat (lambda () (structured-vertical t downwards?)))
+  (structured-inner-extremal t downwards?))
 
 (tm-define (structured-left)
   (structured-horizontal (focus-tree) #f))
@@ -251,14 +270,14 @@
   (structured-vertical (focus-tree) #f))
 (tm-define (structured-down)
   (structured-vertical (focus-tree) #t))
-
 (tm-define (structured-start)
-  (with-innermost t complex-context?
-    (tree-go-to t :down :start)))
-
+  (structured-extremal (focus-tree) #f))
 (tm-define (structured-end)
-  (with-innermost t complex-context?
-    (tree-go-to t :down :end)))
+  (structured-extremal (focus-tree) #t))
+(tm-define (structured-top)
+  (structured-incremental (focus-tree) #f))
+(tm-define (structured-bottom)
+  (structured-incremental (focus-tree) #t))
 
 (tm-define (structured-exit-left)
   (with-innermost t complex-context?
@@ -267,28 +286,6 @@
 (tm-define (structured-exit-right)
   (with-innermost t complex-context?
     (tree-go-to t :end)))
-
-(tm-define (structured-first)
-  (go-to-repeat structured-left)
-  (structured-start))
-
-(tm-define (structured-last)
-  (go-to-repeat structured-right)
-  (structured-end))
-
-(tm-define (structured-top)
-  (go-to-repeat structured-up)
-  (structured-start))
-
-(tm-define (structured-bottom)
-  (go-to-repeat structured-down)
-  (structured-end))
-
-(tm-define (structured-extremal t forwards?)
-  (if forwards? (structured-last) (structured-first)))
-
-(tm-define (structured-incremental t downwards?)
-  (if downwards? (structured-bottom) (structured-top)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
@@ -419,6 +416,19 @@
            (tree-go-to t 0 :end))
           ((and downwards? (== (tree-down-index t*) 0))
            (branch-go-to t* (quotient (tree-arity t*) 2) :start)))))
+
+(tm-define (structured-extremal t* forwards?)
+  (:require (tree-is? t* 'tree))
+  (let* ((t (branch-active t*))
+	 (i (tree-down-index t)))
+    (cond ((not forwards?)
+           (branch-go-to t 1 :start))
+          (forwards?
+           (branch-go-to t :last :end)))))
+  
+(tm-define (structured-incremental t downwards?)
+  (:require (tree-is? t 'tree))
+  (go-to-repeat (if downwards? structured-down structured-up)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra editing functions

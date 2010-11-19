@@ -142,6 +142,12 @@
     (and-with c (cell-search-downwards t)
       (cell-move-relative c (if downwards? 1 -1) 0))))
 
+(tm-define (structured-inner-extremal t forwards?)
+  (:require (table-markup-context? t))
+  (with-focus-after t
+    (and-with c (cell-search-downwards t)
+      (tree-go-to c (if forwards? :end :start)))))
+
 (define (cell-simple-context? t)
   (and (nleaf? t)
        (simple-context? (tree-down t))

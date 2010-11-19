@@ -53,21 +53,13 @@
   (:require (dynamic-context? t))
   (dynamic-incremental t downwards?))
 
-(tm-define (structured-first)
-  (:context dynamic-context?)
-  (dynamic-first))
+(tm-define (structured-extremal t forwards?)
+  (:require (dynamic-context? t))
+  (dynamic-extremal t forwards?))
 
-(tm-define (structured-last)
-  (:context dynamic-context?)
-  (dynamic-last))
-
-(tm-define (structured-top)
-  (:context dynamic-context?)
-  (dynamic-first))
-
-(tm-define (structured-bottom)
-  (:context dynamic-context?)
-  (dynamic-last))
+(tm-define (structured-incremental t downwards?)
+  (:require (dynamic-context? t))
+  (dynamic-extremal t downwards?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding
