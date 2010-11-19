@@ -506,14 +506,16 @@ color_picker_widget (command call_back, bool bg, array<tree> proposals) {
   return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
 }
 
-#ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
 widget 
 printer_widget (command cmd, url ps_pdf_file) {
   // widget to print the document, offering a way for selecting a page range,
   // changing the paper type and orientation, previewing, etc.
   (void) cmd;
   (void) ps_pdf_file;
+#ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
   return tm_new<qt_printer_widget_rep>();
+#else
+  return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
+#endif // _MBD_EXPERIMENTAL_PRINTER_WIDGET
 }
 
-#endif // _MBD_EXPERIMENTAL_PRINTER_WIDGET
