@@ -67,16 +67,17 @@
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (simple-tags)
+  '(concat document tformat table row cell shown hidden))
+
 (tm-define (complex-context? t)
-  (and (nleaf? t) (nin? (tree-label t) '(concat document))))
+  (and (nleaf? t)
+       (nin? (tree-label t) (simple-tags))))
 
 (tm-define (simple-context? t)
   (or (leaf? t)
-      (and (tree-in? t '(concat document))
+      (and (tree-in? t (simple-tags))
 	   (simple-context? (tree-down t)))))
-
-(tm-define (similar-complex-context? t)
-  (complex-context? t))
 
 (tm-define (document-context? t)
   (tree-is? t 'document))
@@ -100,27 +101,17 @@
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (traverse-right) (go-to-next-word))
-(tm-define (traverse-left) (go-to-previous-word))
-(tm-define (traverse-up) (noop))
-(tm-define (traverse-down) (noop))
+(tm-define (traverse-horizontal t forwards?)
+  (if forwards? (go-to-next-word) (go-to-previous-word)))
 
-(tm-define (traverse-up)
-  (:context document-context?)
-  (go-to-previous-tag 'document))
+(tm-define (traverse-vertical t downwards?)
+  (focus-next t
+    (traverse-vertical (tree-up t) downwards?)))
 
-(tm-define (traverse-down)
-  (:context document-context?)
-  (go-to-next-tag 'document))
-
-(define (traverse-tree . l)
-  (cond ((null? l) (traverse-tree (tree-up (cursor-tree))))
-	((tree-in? (car l) '(concat document))
-	 (traverse-tree (tree-up (car l))))
-	(else (car l))))
-
-(define (traverse-label . l)
-  (tree-label (apply traverse-tree l)))
+(tm-define (traverse-vertical t downwards?)
+  (:require (document-context? t))
+  (with move (if downwards? go-to-next-tag go-to-previous-tag)
+    (move 'document)))
 
 (define (find-similar-upwards t l)
   (cond ((in? (tree-label t) l) t)
@@ -150,16 +141,20 @@
 
 (tm-define (traverse-previous)
   (traverse-incremental (focus-tree) #f))
-
 (tm-define (traverse-next)
   (traverse-incremental (focus-tree) #t))
-
 (tm-define (traverse-first)
   (traverse-extremal (focus-tree) #f))
-
 (tm-define (traverse-last)
   (traverse-extremal (focus-tree) #t))
-
+(tm-define (traverse-left)
+  (traverse-horizontal (focus-tree) #f))
+(tm-define (traverse-right)
+  (traverse-horizontal (focus-tree) #t))
+(tm-define (traverse-up)
+  (traverse-vertical (focus-tree) #f))
+(tm-define (traverse-down)
+  (traverse-vertical (focus-tree) #t))
 (tm-define (traverse-previous-section-title)
   (go-to-previous-tag (similar-to 'section)))
 

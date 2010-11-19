@@ -78,22 +78,18 @@
 ;; Structured traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (similar-complex-context? t)
-  (:case cell row table tformat)
-  #f)
+(define (cell-search-downwards t)
+  (if (tree-is? t 'cell) t
+      (and (tree-down t)
+           (cell-search-downwards (tree-down t)))))
 
-(define (cell-context? t)
-  (and (tree-is? t 'cell)
-       (tree-is? t :up 'row)
-       (tree-is? t :up :up 'table)))
-
-(define (cell-not-at-top-context? t)
-  (and (cell-context? t)
-       (> (tree-index (tree-up t)) 0)))
-
-(define (cell-not-at-bottom-context? t)
-  (and (cell-context? t)
-       (< (tree-index (tree-up t)) (- (tree-arity (tree-up t 2)) 1))))
+(define (table-non-extremal-context? t downwards?)
+  (and (table-markup-context? t)
+       (and-with c (cell-search-downwards t)
+         (and-with i (tree-index (tree-up c))
+           (if downwards?
+               (< i (- (tree-arity (tree-up c 2)) 1))
+               (> i 0))))))
 
 (define (cell-move-absolute c row col)
   (let* ((r (tree-up c))
@@ -111,24 +107,14 @@
 	 (col (+ (tree-index c) dcol)))
     (cell-move-absolute c row col)))
 
-(tm-define (traverse-up)
-  (:context cell-not-at-top-context?)
-  (with-innermost c cell-not-at-top-context?
-    (cell-move-relative c -1 0)))
-
-(tm-define (traverse-down)
-  (:context cell-not-at-bottom-context?)
-  (with-innermost c cell-not-at-bottom-context?
-    (cell-move-relative c 1 0)))
+(tm-define (traverse-vertical t downwards?)
+  (:require (table-non-extremal-context? t downwards?))
+  (and-with c (cell-search-downwards t)
+    (cell-move-relative c (if downwards? 1 -1) 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured movements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (cell-search-downwards t)
-  (if (tree-is? t 'cell) t
-      (and (tree-down t)
-           (cell-search-downwards (tree-down t)))))
 
 (tm-define (structured-horizontal t forwards?)
   (:require (table-markup-context? t))

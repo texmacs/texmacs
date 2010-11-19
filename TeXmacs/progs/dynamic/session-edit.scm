@@ -505,42 +505,30 @@
 ;; Structured keyboard movements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (field-input-simple-context? t)
-  (and (nleaf? t)
-       (simple-context? (tree-down t))
-       (field-input-context? t)))
-
 (tm-define (document-context? t)
   (:case document)
   (:require (field-input-context? (tree-ref t :up)))
   #f)
 
-(tm-define (traverse-left)
-  (:context field-input-context?)
-  (go-to-remain-inside go-to-previous-word field-context? 1))
+(tm-define (traverse-horizontal t forwards?)
+  (:require (field-input-context? t))
+  (with move (if forwards? go-to-next-word go-to-previous-word)
+    (go-to-remain-inside move field-context? 1)))
 
-(tm-define (traverse-right)
-  (:context field-input-context?)
-  (go-to-remain-inside go-to-next-word field-context? 1))
-
-(tm-define (traverse-up)
-  (:context field-input-context?)
-  (field-go-up))
-
-(tm-define (traverse-down)
-  (:context field-input-context?)
-  (field-go-down))
+(tm-define (traverse-vertical t downwards?)
+  (:require (field-input-context? t))
+  (if downwards? (field-go-down) (field-go-up)))
 
 (tm-define (traverse-incremental t forwards?)
   (:require (field-input-context? t))
   (if forwards? (field-go-down) (field-go-up)))
 
 (tm-define (structured-horizontal t forwards?)
-  (:require (field-input-simple-context? t))
+  (:require (field-input-context? t))
   (noop))
 
 (tm-define (structured-vertical t downwards?)
-  (:require (field-input-simple-context? t))
+  (:require (field-input-context? t))
   (with move (if downwards? field-go-down field-go-up)
     (go-to-remain-inside move 'session)))
 
