@@ -714,5 +714,6 @@ void aqua_tm_widget_rep::do_interactive_prompt()
 
 widget 
 printer_widget (command cmd, url u) {
+  (void) u;
   return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
 }
