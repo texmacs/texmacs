@@ -51,8 +51,8 @@
   (go-end-of 'equation*)
   (insert-return))
 
-(tm-define (make-label)
-  (:inside eqnarray*)
+(tm-define (label-insert t)
+  (:require (tree-is? t 'eqnarray*))
   (go-end-line)
   (make 'label))
 

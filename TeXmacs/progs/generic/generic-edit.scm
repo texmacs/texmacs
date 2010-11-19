@@ -508,8 +508,16 @@
 ;; Inserting various kinds of content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-label)
+(tm-define (label-insert t)
+  (focus-next t
+    (label-insert (tree-up t))))
+
+(tm-define (label-insert t)
+  (:require (tree-is-buffer? t))
   (make 'label))
+
+(tm-define (make-label)
+  (label-insert (focus-tree)))
 
 (tm-define (make-specific s)
   (if (or (== s "texmacs") (in-source?))

@@ -139,11 +139,10 @@
   (tree-go-to t :end)
   (insert-return))
 
-(tm-define (make-label)
-  (:context section-context?)
-  (with-innermost t section-context?
-    (tree-go-to t :end)
-    (make 'label)))
+(tm-define (label-insert t)
+  (:require (section-context? t))
+  (tree-go-to t :end)
+  (make 'label))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
