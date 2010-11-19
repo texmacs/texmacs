@@ -332,6 +332,10 @@
      (tree-focus (tree-pointer->tree tp))
      (tree-pointer-detach tp)))
 
+(tm-define-macro (conserve-focus . body)
+  `(with-focus-after (focus-tree)
+     ,@body))
+
 (tm-define (tree-correct-old t . l)
   (:synopsis "Deprecated old tree correction routine")
   (with p (apply tree->path (cons t l))

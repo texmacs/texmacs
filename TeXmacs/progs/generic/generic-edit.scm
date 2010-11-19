@@ -300,6 +300,31 @@
   (focus-next t
     (geometry-incremental (tree-up t) down?)))
 
+(tm-define (geometry-slower)
+  (conserve-focus (geometry-speed (focus-tree) #f)))
+(tm-define (geometry-faster)
+  (conserve-focus (geometry-speed (focus-tree) #t)))
+(tm-define (geometry-circulate forward?)
+  (conserve-focus (geometry-variant (focus-tree) forward?)))
+(tm-define (geometry-reset)
+  (conserve-focus (geometry-default (focus-tree))))
+(tm-define (geometry-left)
+  (conserve-focus (geometry-horizontal (focus-tree) #f)))
+(tm-define (geometry-right)
+  (conserve-focus (geometry-horizontal (focus-tree) #t)))
+(tm-define (geometry-up)
+  (conserve-focus (geometry-vertical (focus-tree) #f)))
+(tm-define (geometry-down)
+  (conserve-focus (geometry-vertical (focus-tree) #t)))
+(tm-define (geometry-start)
+  (conserve-focus (geometry-extremal (focus-tree) #f)))
+(tm-define (geometry-end)
+  (conserve-focus (geometry-extremal (focus-tree) #t)))
+(tm-define (geometry-top)
+  (conserve-focus (geometry-incremental (focus-tree) #f)))
+(tm-define (geometry-bottom)
+  (conserve-focus (geometry-incremental (focus-tree) #t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -65,13 +65,11 @@
 
 (tm-define (geometry-horizontal t forward?)
   (:require (table-markup-context? t))
-  (with-focus-after t
-    (if forward? (cell-halign-right) (cell-halign-left))))
+  (if forward? (cell-halign-right) (cell-halign-left)))
 
 (tm-define (geometry-vertical t down?)
   (:require (table-markup-context? t))
-  (with-focus-after t
-    (if down? (cell-valign-down) (cell-valign-up))))
+  (if down? (cell-valign-down) (cell-valign-up)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured traversal
