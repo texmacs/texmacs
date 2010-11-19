@@ -387,16 +387,17 @@
       (if current-obj
 	  (begin
 	    (if (not just-started-dragging)
-	    (begin
-	       (edit_tab-key 'edit
-			     (if (graphics-states-void?)
-				 #f
-				 choosing))))
+                (begin
+                  (edit_tab-key 'edit
+                                (if (graphics-states-void?)
+                                    #f
+                                    choosing)
+                                1)))
 	    (if (or (not just-started-dragging) (not choosing))
-	    (begin
-	       (if (not (graphics-states-void?))
-		   (graphics-pop-state))
-	       (graphics-store-state #f)))
+                (begin
+                  (if (not (graphics-states-void?))
+                      (graphics-pop-state))
+                  (graphics-store-state #f)))
 	    (set! choosing #t))
 	  (edit-insert x y))))
 
@@ -439,7 +440,7 @@
   (:require (eq? mode 'edit))
   (display* "Right button(edit) currently unused\n"))
 
-(tm-define (edit_tab-key mode next)
+(tm-define (edit_tab-key mode next inc)
   (:require (eq? mode 'edit))
   (:state graphics-state)
  ;(display* "\nGraphics] Edit(Tab)[" next "," current-path "]=" current-obj "\n")
@@ -448,7 +449,7 @@
 	(if current-obj
 	    (graphics-decorations-update))
 	(if next
-	    (select-next))
+	    (select-next inc))
       )
       (invalidate-graphical-object)))
 
@@ -851,14 +852,14 @@
 ; FIXME : test due to timing problems in detecting the drag
       (graphics-last-point x y)))
 
-(tm-define (graphics-choose-point)
+(tm-define (graphics-choose-point inc)
   (:state graphics-state)
   ;(display* "Graphics] Choose\n")
   (if (not (graphics-states-void?))
       (graphics-pop-state))
   (set! choosing #t)
   (graphics-store-state #f)
-  (edit_tab-key (car (graphics-mode)) #t))
+  (edit_tab-key (car (graphics-mode)) #t inc))
 
 (tm-define (graphics-enter-mode old-mode new-mode)
   (:state graphics-state)

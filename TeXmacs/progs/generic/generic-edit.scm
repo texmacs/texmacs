@@ -78,6 +78,22 @@
 ;; Basic editing via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (kbd-variant t forwards?)
+  (focus-next t
+    (kbd-variant (tree-up t) forwards?)))
+
+(tm-define (kbd-variant t forwards?)
+  (:require (tree-is-buffer? t))
+  (if (and (not (complete-try?)) forwards?)
+      (with sh (kbd-system-rewrite (kbd-find-inv-binding '(make-htab "5mm")))
+	(set-message `(concat "Use " ,sh " in order to insert a tab")
+		     "tab"))))
+
+(tm-define (kbd-variant t forwards?)
+  ;;(:mode in-source?)
+  (:require (tree-in? t '(label reference pageref)))
+  (if (complete-try?) (noop)))
+
 (tm-define (insert-return) (insert-raw-return))
 (tm-define (kbd-return) (insert-return))
 (tm-define (kbd-shift-return) (insert-return))
@@ -89,23 +105,9 @@
   (clipboard-clear "nowhere"))
 
 (tm-define (kbd-tab)
-  (if (not (complete-try?))
-      (with sh (kbd-system-rewrite (kbd-find-inv-binding '(make-htab "5mm")))
-	(set-message `(concat "Use " ,sh " in order to insert a tab")
-		     "tab"))))
-
+  (kbd-variant (focus-tree) #t))
 (tm-define (kbd-shift-tab)
-  (complete-try?))
-
-(tm-define (kbd-tab)
-  (:mode in-source?)
-  (:inside label reference pageref)
-  (if (complete-try?) (noop)))
-
-(tm-define (kbd-shift-tab)
-  (:mode in-source?)
-  (:inside label reference pageref)
-  (if (complete-try?) (noop)))
+  (kbd-variant (focus-tree) #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree traversal

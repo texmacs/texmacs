@@ -309,12 +309,14 @@
 	(set! subsel-no 0))
     (if (pair? sel) (car (list-tail sel subsel-no)) #f)))
 
-(tm-define (select-next)
+(tm-define (select-next inc)
   (if (and current-selection subsel-no)
       (begin
-	(set! subsel-no (+ subsel-no 1))
+	(set! subsel-no (+ subsel-no inc))
 	(if (>= subsel-no (length current-selection))
-	    (set! subsel-no 0)))))
+	    (set! subsel-no 0))
+        (if (< subsel-no 0)
+            (set! subsel-no (- (length current-selection) 1))))))
 
 ;; Graphics X cursor
 ;;NOTE: This subsection is OK

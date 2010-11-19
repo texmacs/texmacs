@@ -33,17 +33,17 @@
   (:inside inactive)
   (activate))
 
-(tm-define (kbd-tab)
-  (:inside hybrid)
+(tm-define (kbd-variant t forwards?)
+  (:require (tree-is? t 'hybrid))
   (activate-hybrid #t))
 
-(tm-define (kbd-tab)
-  (:inside inactive tuple attr)
-  (insert-argument #t))
+(tm-define (kbd-variant t forwards?)
+  (:require (tree-in? t '(inactive tuple attr)))
+  (insert-argument forwards?))
 
-(tm-define (kbd-tab)
-  (:mode in-source?)
-  (insert-argument #t))
+(tm-define (kbd-variant t forwards?)
+  (:require (in-source?))
+  (insert-argument forwards?))
 
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (tree-is? t 'hybrid))

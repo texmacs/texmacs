@@ -33,9 +33,9 @@
 (tm-define Mod4Mask    16384)
 (tm-define Mod5Mask    32768)
 
-(tm-define (kbd-tab)
-  (:mode in-graphics?)
-  (graphics-choose-point))
+(tm-define (kbd-variant t forwards?)
+  (:require (in-active-graphics?))
+  (graphics-choose-point (if forwards? 1 -1)))
 
 (tm-define (kbd-horizontal t forwards?)
   (:require (tree-is? t 'text-at))

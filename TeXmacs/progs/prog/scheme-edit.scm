@@ -149,8 +149,8 @@
       (program-set-indent i)
       (program-go-to (program-row-number) i))))
 
-(tm-define (kbd-tab)
-  (:mode in-prog-scheme?)
+(tm-define (kbd-variant t forwards?)
+  (:require (in-prog-scheme?))
   (scheme-indent))
 
 (tm-define (insert-return)

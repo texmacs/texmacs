@@ -483,16 +483,14 @@
 	  ((and (tree-cursor-at? t 1 :end) forward?) (noop))
 	  (else (remove-text forward?)))))
 
-(tm-define (kbd-tab)
-  (:context field-input-context?)
-  (:require (session-supports-completions?))
-  (with-innermost t field-input-context?
-    (let* ((lan (get-env "prog-language"))
-	   (ses (get-env "prog-session"))
-	   (cmd (session-complete-command t))
-	   (ret (lambda (x) (when x (custom-complete (tm->tree x))))))
-      (when (!= cmd "")
-	(plugin-command lan ses cmd ret '())))))
+(tm-define (kbd-variant t forwards?)
+  (:require (and (field-context? t) (session-supports-completions?)))
+  (let* ((lan (get-env "prog-language"))
+         (ses (get-env "prog-session"))
+         (cmd (session-complete-command t))
+         (ret (lambda (x) (when x (custom-complete (tm->tree x))))))
+    (when (!= cmd "")
+      (plugin-command lan ses cmd ret '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured keyboard movements
