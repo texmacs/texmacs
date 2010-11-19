@@ -93,22 +93,20 @@
     (insert-go-to `(script-input ,lan ,session "" "")
 		  '(2 0))))
 
-(tm-define (hidden-variant)
-  (:inside script-input)
-  (with-innermost t 'script-input
-    (let* ((lan (tree->string (tree-ref t 0)))
-	   (session (tree->string (tree-ref t 1)))
-	   (in (tree->stree (tree-ref t 2)))
-	   (out (tree-ref t 3)))
-      (script-eval-at out lan session in :math-input :simplify-output)
-      (tree-assign-node! t 'script-output)
-      (tree-go-to t 3 :end))))
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'script-input))
+  (let* ((lan (tree->string (tree-ref t 0)))
+         (session (tree->string (tree-ref t 1)))
+         (in (tree->stree (tree-ref t 2)))
+         (out (tree-ref t 3)))
+    (script-eval-at out lan session in :math-input :simplify-output)
+    (tree-assign-node! t 'script-output)
+    (tree-go-to t 3 :end)))
 
-(tm-define (hidden-variant)
-  (:inside script-output)
-  (with-innermost t 'script-output
-    (tree-assign-node! t 'script-input)
-    (tree-go-to t 2 :end)))
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'script-output))
+  (tree-assign-node! t 'script-input)
+  (tree-go-to t 2 :end))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operate on current selection or formula
@@ -234,6 +232,9 @@
 ;; Plots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (plot-context? t)
+  (tree-in? t '(plot-curve plot-curve* plot-surface plot-surface*)))
+
 (tm-define (script-plot-command lan t)
   (cond ((== (car t) 'plot-curve)
 	 `(concat "set samples 1000 ~ "
@@ -260,31 +261,29 @@
 		  ", " ,(tm-ref t 1)
 		  ", " ,(tm-ref t 2)))))
 
-(define (activate-plot)
-  (with-innermost t '(plot-curve plot-curve* plot-surface plot-surface*)
-    (let* ((lan "gnuplot")
-	   (session "default")
-	   (in (script-plot-command lan (tree->stree t))))
-      (tree-set! t `(plot-output ,t ""))
-      (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
-      (tree-go-to t 1 :end))))
+(define (activate-plot t)
+  (let* ((lan "gnuplot")
+         (session "default")
+         (in (script-plot-command lan (tree->stree t))))
+    (tree-set! t `(plot-output ,t ""))
+    (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
+    (tree-go-to t 1 :end)))
 
 (tm-define (kbd-return)
-  (:inside plot-curve plot-curve* plot-surface plot-surface*)
-  (with-innermost t '(plot-curve plot-curve* plot-surface plot-surface*)
+  (:context plot-context?)
+  (with-innermost t plot-context?
     (if (= (tree-down-index t) (- (tree-arity t) 1))
-	(activate-plot)
+	(activate-plot t)
 	(tree-go-to t (1+ (tree-down-index t)) :end))))
 
-(tm-define (hidden-variant)
-  (:inside plot-curve plot-curve* plot-surface plot-surface*)
-  (activate-plot))
+(tm-define (alternate-toggle t)
+  (:require (plot-context? t))
+  (activate-plot t))
 
-(tm-define (hidden-variant)
-  (:inside plot-output)
-  (with-innermost t 'plot-output
-    (tree-remove-node! t 0)
-    (tree-go-to t 0 :end)))
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'plot-output))
+  (tree-remove-node! t 0)
+  (tree-go-to t 0 :end))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Converters
@@ -299,17 +298,15 @@
       (clipboard-cut "primary")
       (insert (convert in format "texmacs-tree")))))
 
-(tm-define (hidden-variant)
-  (:inside converter-input)
-  (with-innermost t 'converter-input
-    (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
-	   (in (texmacs->verbatim (tree-ref t 1))))
-      (tree-set! t 2 (convert in format "texmacs-tree"))
-      (tree-assign-node! t 'converter-output)
-      (tree-go-to t 2 :end))))
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'converter-input))
+  (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
+         (in (texmacs->verbatim (tree-ref t 1))))
+    (tree-set! t 2 (convert in format "texmacs-tree"))
+    (tree-assign-node! t 'converter-output)
+    (tree-go-to t 2 :end)))
 
-(tm-define (hidden-variant)
-  (:inside converter-output)
-  (with-innermost t 'converter-output
-    (tree-assign-node! t 'converter-input)
-    (tree-go-to t 1 :end)))
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'converter-output))
+  (tree-assign-node! t 'converter-input)
+  (tree-go-to t 1 :end))

@@ -27,6 +27,9 @@
 ;; Plots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (texgraph-plot-context? t)
+  (tree-in? t '(texgraph-plot-curve texgraph-plot-curve*
+                plot-surface plot-surface*)))
 
 (tm-define (texgraph-script-plot-command lan t)
   (cond ((== (car t) 'texgraph-plot-curve) 
@@ -80,29 +83,26 @@
 		  ", " ,(tm-ref t 1)
 		  ", " ,(tm-ref t 2)))))
 
-(define (texgraph-activate-plot)
-  (with-innermost t '(texgraph-plot-curve texgraph-plot-curve* plot-surface plot-surface*)
-    (let* ((lan "texgraph")
-	   (session "default")
-	   (in (texgraph-script-plot-command lan (tree->stree t))))
-      (tree-set! t `(plot-output ,t ""))
-      (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
-      (tree-go-to t 1 :end))))
+(define (texgraph-activate-plot t)
+  (let* ((lan "texgraph")
+         (session "default")
+         (in (texgraph-script-plot-command lan (tree->stree t))))
+    (tree-set! t `(plot-output ,t ""))
+    (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
+    (tree-go-to t 1 :end)))
 
 (tm-define (kbd-return)
-  (:inside texgraph-plot-curve texgraph-plot-curve* plot-surface plot-surface*)
+  (:context texgraph-plot-context?)
   (with-innermost t '(texgraph-plot-curve texgraph-plot-curve* plot-surface plot-surface*)
     (if (= (tree-down-index t) (- (tree-arity t) 1))
-	(texgraph-activate-plot)
+	(texgraph-activate-plot t)
 	(tree-go-to t (1+ (tree-down-index t)) :end))))
 
-(tm-define (hidden-variant)
-  (:inside texgraph-plot-curve texgraph-plot-curve* plot-surface plot-surface*)
-  (texgraph-activate-plot))
+(tm-define (alternate-toggle t)
+  (:require (texgraph-plot-context? t))
+  (texgraph-activate-plot t))
 
-(tm-define (hidden-variant)
-  (:inside plot-output)
-  (with-innermost t 'plot-output
-    (tree-remove-node! t 0)
-    (tree-go-to t 0 :end)))
-
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'texgraph-plot-output))
+  (tree-remove-node! t 0)
+  (tree-go-to t 0 :end))

@@ -100,7 +100,6 @@
   ("structured:cmd S-tab" (variant-circulate (focus-tree) #f))
   ("structured:cmd *" (alternate-toggle (focus-tree)))
   ("structured:cmd #" (numbered-toggle (focus-tree)))
-  ("structured:cmd %" (hidden-variant))
 
   ("structured:move delete" (structured-exit-right))
   ("structured:move backspace" (structured-exit-left))

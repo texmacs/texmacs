@@ -85,14 +85,6 @@
     (variant-set t (ahash-ref alternate-table (tree-label t)))
     (tree-go-to t i :start)))
 
-(tm-define (hidden-variant)
-  (:context toggle-first-context?)
-  (unfold))
-
-(tm-define (hidden-variant)
-  (:context toggle-second-context?)
-  (fold))
-
 (tm-define (dynamic-extremal t forwards?)
   (:require (toggle-context? t))
   (with action (if forwards? alternate-unfold alternate-fold)
@@ -332,9 +324,9 @@
   (:require (switch-context? t))
   (structured-remove-horizontal t downwards?))
 
-(tm-define (hidden-variant)
-  (:context switch-context?)
-  (switch-to :rotate-forward))
+(tm-define (alternate-toggle t)
+  (:require (switch-context? t))
+  (tree/switch-to t :rotate-forward))
 
 (tm-define (variant-circulate t forward?)
   (:require (switch-context? t))

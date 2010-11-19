@@ -276,9 +276,6 @@
 ;; Folding-unfolding variants of tags with hidden arguments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (hidden-variant)
-  (noop))
-
 (tm-define (tree-show-hidden t)
   (noop))
 
@@ -288,6 +285,6 @@
 
 (tm-define (cursor-show-hidden)
   (with t (buffer-tree)
-    (while (!= t (cursor-tree))
+    (while (and t (!= t (cursor-tree)))
       (tree-show-hidden t)
       (set! t (tree-ref t :down)))))
