@@ -206,7 +206,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (kbd-add-condition conds opt)
-  (cond ((== (car opt) :mode) (conditions-insert conds 0 (cadr opt)))
+  (cond ((== (car opt) :mode)
+         (conditions-insert conds 0 (cadr opt)))
 	((== (car opt) :context)
 	 (if (predicate-option? (cadr opt))
 	     (conditions-insert conds 1 (cadr opt))

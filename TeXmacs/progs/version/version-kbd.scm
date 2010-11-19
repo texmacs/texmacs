@@ -31,8 +31,7 @@
   ("version 2" (version-select-new)))
 
 (kbd-map
-  (:mode with-versioning-tool?)
-  (:context version-context?)
+  (:mode in-versioning?)
   ("C-up" (version-previous-difference))
   ("C-down" (version-next-difference))
   ("C-|" (version-show 'version-both))

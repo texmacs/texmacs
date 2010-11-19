@@ -24,6 +24,9 @@
 (tm-define (inside-version?)
   (not (not (tree-innermost version-context?))))
 
+(texmacs-modes
+  (in-versioning% (inside-version?) with-versioning-tool%))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutine for computing all subtrees in a selection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

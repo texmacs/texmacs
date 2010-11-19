@@ -43,7 +43,11 @@
 	  (list 'begin defn arch1 arch2 drd-cmd)))))
 
 (define-public-macro (texmacs-modes . l)
-  `(begin ,@(map texmacs-mode l)))
+  `(begin
+     (set! temp-module ,(current-module))
+     (set-current-module texmacs-user)
+     ,@(map texmacs-mode l)
+     (set-current-module temp-module)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking modes

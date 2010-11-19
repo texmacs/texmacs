@@ -301,7 +301,7 @@
         (length-increase-step (tree-ref t 3) inc)))))
 
 (tm-define (geometry-variant t forward?)
-  (:context (resize-context? t))
+  (:require (resize-context? t))
   (circulate-unit (if forward? 1 -1)))
 
 (tm-define (geometry-horizontal t forward?)
