@@ -17,22 +17,66 @@
 	(utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic editing via the keyboard
+;; Basic cursor movements via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kbd-left) (go-left))
-(tm-define (kbd-right) (go-right))
-(tm-define (kbd-up) (go-up))
-(tm-define (kbd-down) (go-down))
-(tm-define (kbd-page-up) (go-page-up))
-(tm-define (kbd-page-down) (go-page-down))
-(tm-define (kbd-start-line) (go-start-line))
-(tm-define (kbd-end-line) (go-end-line))
+(tm-define (kbd-horizontal t forwards?)
+  (focus-next t
+    (kbd-horizontal (tree-up t) forwards?)))
+
+(tm-define (kbd-vertical t downwards?)
+  (focus-next t
+    (kbd-vertical (tree-up t) downwards?)))
+
+(tm-define (kbd-extremal t forwards?)
+  (focus-next t
+    (kbd-extremal (tree-up t) forwards?)))
+
+(tm-define (kbd-incremental t downwards?)
+  (focus-next t
+    (kbd-incremental (tree-up t) downwards?)))
+
+(tm-define (kbd-horizontal t forwards?)
+  (:require (tree-is-buffer? t))
+  (if forwards? (go-right) (go-left)))
+
+(tm-define (kbd-vertical t downwards?)
+  (:require (tree-is-buffer? t))
+  (if downwards? (go-down) (go-up)))
+
+(tm-define (kbd-extremal t forwards?)
+  (:require (tree-is-buffer? t))
+  (if forwards? (go-end-line) (go-start-line)))
+
+(tm-define (kbd-incremental t downwards?)
+  (:require (tree-is-buffer? t))
+  (if downwards? (go-page-down) (go-page-up)))
+
+(tm-define (kbd-left)
+  (kbd-horizontal (focus-tree) #f))
+(tm-define (kbd-right)
+  (kbd-horizontal (focus-tree) #t))
+(tm-define (kbd-up)
+  (kbd-vertical (focus-tree) #f))
+(tm-define (kbd-down)
+  (kbd-vertical (focus-tree) #t))
+(tm-define (kbd-start-line)
+  (kbd-extremal (focus-tree) #f))
+(tm-define (kbd-end-line)
+  (kbd-extremal (focus-tree) #t))
+(tm-define (kbd-page-up)
+  (kbd-incremental (focus-tree) #f))
+(tm-define (kbd-page-down)
+  (kbd-incremental (focus-tree) #t))
 
 (tm-define (kbd-select r)
   (select-from-shift-keyboard)
   (r)
   (select-from-cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic editing via the keyboard
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (insert-return) (insert-raw-return))
 (tm-define (kbd-return) (insert-return))

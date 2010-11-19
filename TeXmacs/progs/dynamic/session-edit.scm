@@ -430,13 +430,15 @@
 ;; Keyboard editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kbd-left)
-  (:context field-context?)
-  (go-to-remain-inside go-left field-context? 1))
+(tm-define (kbd-horizontal t forwards?)
+  (:require (field-context? t))
+  (with move (if forwards? go-right go-left)
+    (go-to-remain-inside move field-context? 1)))
 
-(tm-define (kbd-right)
-  (:context field-context?)
-  (go-to-remain-inside go-right field-context? 1))
+(tm-define (kbd-extremal t forwards?)
+  (:require (field-context? t))
+  (with move (if forwards? go-end-line go-start-line)
+    (go-to-remain-inside move field-context? 1)))
 
 (define (field-go-to-previous)
   (with-innermost t field-context?
@@ -465,23 +467,14 @@
     (when (== (cursor-path) p)
       (field-go-to-next))))
 
-(tm-define (kbd-up)
-  (:context field-context?)
-  (field-go-up))
+(tm-define (kbd-vertical t downwards?)
+  (:require (field-context? t))
+  (if downwards? (field-go-down) (field-go-up)))
 
-(tm-define (kbd-down)
-  (:context field-context?)
-  (field-go-down))
-
-(tm-define (kbd-page-up)
-  (:context field-input-context?)
+(tm-define (kbd-incremental t downwards?)
+  (:require (field-context? t))
   (for (n 0 5)
-    (field-go-to-previous)))
-
-(tm-define (kbd-page-down)
-  (:context field-input-context?)
-  (for (n 0 5)
-    (field-go-to-next)))
+    (if downwards? (field-go-to-next) (field-go-to-previous))))
 
 (tm-define (kbd-remove forward?)
   (:context field-input-context?)
@@ -506,8 +499,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (document-context? t)
-  (:case document)
-  (:require (field-input-context? (tree-ref t :up)))
+  (:require (and (tree-is? t 'document)
+                 (field-input-context? (tree-ref t :up))))
   #f)
 
 (tm-define (traverse-horizontal t forwards?)
