@@ -78,9 +78,22 @@
 ;; Basic editing via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (kbd-remove t forwards?)
+  (focus-next t
+    (kbd-remove (tree-up t) forwards?)))
+
 (tm-define (kbd-variant t forwards?)
   (focus-next t
     (kbd-variant (tree-up t) forwards?)))
+
+(tm-define (kbd-remove t forwards?)
+  (:require (tree-is-buffer? t))
+  (remove-text forwards?))
+
+(tm-define (kbd-remove t forwards?)
+  (:require (and (tree-is-buffer? t) (with-any-selection?)))
+  (clipboard-cut "nowhere")
+  (clipboard-clear "nowhere"))
 
 (tm-define (kbd-variant t forwards?)
   (:require (tree-is-buffer? t))
@@ -90,20 +103,17 @@
 		     "tab"))))
 
 (tm-define (kbd-variant t forwards?)
-  ;;(:mode in-source?)
-  (:require (tree-in? t '(label reference pageref)))
+  (:require (and (tree-in? t '(label reference pageref)) (cursor-inside? t)))
   (if (complete-try?) (noop)))
 
 (tm-define (insert-return) (insert-raw-return))
 (tm-define (kbd-return) (insert-return))
 (tm-define (kbd-shift-return) (insert-return))
 
-(tm-define (kbd-remove forward?) (remove-text forward?))
-(tm-define (kbd-remove forward?)
-  (:mode with-any-selection?)
-  (clipboard-cut "nowhere")
-  (clipboard-clear "nowhere"))
-
+(tm-define (kbd-backspace)
+  (kbd-remove (focus-tree) #f))
+(tm-define (kbd-delete)
+  (kbd-remove (focus-tree) #t))
 (tm-define (kbd-tab)
   (kbd-variant (focus-tree) #t))
 (tm-define (kbd-shift-tab)
@@ -172,18 +182,18 @@
      (and-with t (find-similar-upwards (focus-tree) ,l)
        (tree-focus t))))
 
-(tm-define (traverse-incremental t forward?)
+(tm-define (traverse-incremental t forwards?)
   (let* ((l (similar-to (tree-label t)))
-         (fun (if forward? go-to-next-tag go-to-previous-tag)))
+         (fun (if forwards? go-to-next-tag go-to-previous-tag)))
     (with-focus-in l (fun l))))
 
-(tm-define (traverse-extremal t forward?)
+(tm-define (traverse-extremal t forwards?)
   (let* ((l (similar-to (tree-label t)))
-         (fun (if forward? go-to-next-tag go-to-previous-tag))
+         (fun (if forwards? go-to-next-tag go-to-previous-tag))
          (inc (lambda () (fun l))))
     (with-focus-in l
       (go-to-repeat inc)
-      (structured-inner-extremal t forward?))))
+      (structured-inner-extremal t forwards?))))
 
 (tm-define (traverse-previous)
   (traverse-incremental (focus-tree) #f))
@@ -336,25 +346,25 @@
   (focus-next t
     (geometry-speed (tree-up t) down?)))
 
-(tm-define (geometry-variant t forward?)
+(tm-define (geometry-variant t forwards?)
   (focus-next t
-    (geometry-variant (tree-up t) forward?)))
+    (geometry-variant (tree-up t) forwards?)))
 
 (tm-define (geometry-default t)
   (focus-next t
     (geometry-default (tree-up t))))
 
-(tm-define (geometry-horizontal t forward?)
+(tm-define (geometry-horizontal t forwards?)
   (focus-next t
-    (geometry-horizontal (tree-up t) forward?)))
+    (geometry-horizontal (tree-up t) forwards?)))
 
 (tm-define (geometry-vertical t down?)
   (focus-next t
     (geometry-vertical (tree-up t) down?)))
 
-(tm-define (geometry-extremal t forward?)
+(tm-define (geometry-extremal t forwards?)
   (focus-next t
-    (geometry-extremal (tree-up t) forward?)))
+    (geometry-extremal (tree-up t) forwards?)))
 
 (tm-define (geometry-incremental t down?)
   (focus-next t
@@ -364,8 +374,8 @@
   (geometry-speed (focus-tree) #f))
 (tm-define (geometry-faster)
   (geometry-speed (focus-tree) #t))
-(tm-define (geometry-circulate forward?)
-  (geometry-variant (focus-tree) forward?))
+(tm-define (geometry-circulate forwards?)
+  (geometry-variant (focus-tree) forwards?))
 (tm-define (geometry-reset)
   (geometry-default (focus-tree)))
 (tm-define (geometry-left)

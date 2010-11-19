@@ -254,7 +254,7 @@
 	 (kbd-remove-body (kbd-add-condition conds (car l)) (cdr l)))
 	(else (map (lambda (x) (kbd-remove-one conds x)) l))))
 
-(tm-define-macro (kbd-remove . l)
+(tm-define-macro (kbd-unmap . l)
   (:synopsis "Remove entries in @l from keyboard mapping")
   `(begin ,@(kbd-remove-body '() l)))
 

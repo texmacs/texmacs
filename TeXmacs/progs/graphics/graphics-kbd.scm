@@ -98,8 +98,8 @@
   ("M-up"    (if (current-is-textat?)
 		 (text-at-change-valign current-path #t)
 		 (graphics-change-geo-valign #t)))
-  ("backspace" (graphics-kbd-remove #f))
-  ("delete" (graphics-kbd-remove #t))
+  ("backspace" (graphics-kbd-backspace))
+  ("delete" (graphics-kbd-delete))
   ("C-g" (graphics-toggle-grid #f))
   ("C-G" (graphics-toggle-grid #t)))
 

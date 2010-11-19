@@ -476,12 +476,11 @@
   (for (n 0 5)
     (if downwards? (field-go-to-next) (field-go-to-previous))))
 
-(tm-define (kbd-remove forward?)
-  (:context field-input-context?)
-  (with-innermost t field-input-context?
-    (cond ((and (tree-cursor-at? t 1 :start) (not forward?)) (noop))
-	  ((and (tree-cursor-at? t 1 :end) forward?) (noop))
-	  (else (remove-text forward?)))))
+(tm-define (kbd-remove t forwards?)
+  (:require (field-input-context? t))
+  (cond ((and (tree-cursor-at? t 1 :start) (not forwards?)) (noop))
+        ((and (tree-cursor-at? t 1 :end) forwards?) (noop))
+        (else (remove-text forwards?))))
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (field-context? t) (session-supports-completions?)))
