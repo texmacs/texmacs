@@ -128,8 +128,8 @@
       (ahash-remove! chat-connected (cons room user))
       (ahash-remove! chat-last-modification (cons room user)))))
 
-(tm-define (kbd-return)
-  (:inside chat-input)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'chat-input))
   (and-let* ((room (chat-room))
 	     (user (chat-user))
 	     (input (chat-input))
@@ -140,8 +140,8 @@
       (tree-set! input 1 '(document ""))
       (remote-request `(chat-emit ,room ,user ,emit)))))
 
-(tm-define (kbd-return)
-  (:inside chat-output)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'chat-output))
   (and-let* ((room (chat-room))
 	     (user (chat-user*))
 	     (field (chat-field))

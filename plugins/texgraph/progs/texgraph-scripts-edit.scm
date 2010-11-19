@@ -91,12 +91,11 @@
     (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
     (tree-go-to t 1 :end)))
 
-(tm-define (kbd-return)
-  (:context texgraph-plot-context?)
-  (with-innermost t '(texgraph-plot-curve texgraph-plot-curve* plot-surface plot-surface*)
-    (if (= (tree-down-index t) (- (tree-arity t) 1))
-	(texgraph-activate-plot t)
-	(tree-go-to t (1+ (tree-down-index t)) :end))))
+(tm-define (kbd-enter t forwards?)
+  (:require (and (texgraph-plot-context? t) (not forwards?)))
+  (if (= (tree-down-index t) (- (tree-arity t) 1))
+      (texgraph-activate-plot t)
+      (tree-go-to t (1+ (tree-down-index t)) :end)))
 
 (tm-define (alternate-toggle t)
   (:require (texgraph-plot-context? t))

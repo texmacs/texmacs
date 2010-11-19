@@ -30,14 +30,14 @@
 ;; Inserting rows and columns
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kbd-return)
-  (:inside table)
+(tm-define (kbd-enter t shift?)
+  (:require (table-markup-context? t))
   (let ((x (inside-which '(table document))))
     (cond ((== x 'document)
 	   (insert-return))
 	  (else
-	   (table-insert-row #t)
-	   (table-go-to (table-which-row) 1)))))
+           (table-insert-row #t)
+           (table-go-to (table-which-row) 1)))))
 
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (table-markup-context? t))

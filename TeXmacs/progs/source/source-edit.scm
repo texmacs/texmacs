@@ -17,20 +17,20 @@
   (make 'latex)
   (set-message "Type a latex command followed by return" "latex"))
 
-(tm-define (kbd-return)
-  (:inside hybrid)
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-is? t 'hybrid))
   (activate-hybrid #f))
 
-(tm-define (kbd-return)
-  (:inside latex)
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-is? t 'latex))
   (activate-latex))
 
-(tm-define (kbd-return)
-  (:inside symbol)
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-is? t 'symbol))
   (activate-symbol))
 
-(tm-define (kbd-return)
-  (:inside inactive)
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-is? t 'inactive))
   (activate))
 
 (tm-define (kbd-variant t forwards?)

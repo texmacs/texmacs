@@ -78,6 +78,12 @@
 ;; Basic editing via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (insert-return) (insert-raw-return))
+
+(tm-define (kbd-enter t shift?)
+  (focus-next t
+    (kbd-enter (tree-up t) shift?)))
+
 (tm-define (kbd-remove t forwards?)
   (focus-next t
     (kbd-remove (tree-up t) forwards?)))
@@ -85,6 +91,10 @@
 (tm-define (kbd-variant t forwards?)
   (focus-next t
     (kbd-variant (tree-up t) forwards?)))
+
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is-buffer? t))
+  (insert-return))
 
 (tm-define (kbd-remove t forwards?)
   (:require (tree-is-buffer? t))
@@ -106,10 +116,10 @@
   (:require (and (tree-in? t '(label reference pageref)) (cursor-inside? t)))
   (if (complete-try?) (noop)))
 
-(tm-define (insert-return) (insert-raw-return))
-(tm-define (kbd-return) (insert-return))
-(tm-define (kbd-shift-return) (insert-return))
-
+(tm-define (kbd-return)
+  (kbd-enter (focus-tree) #f))
+(tm-define (kbd-shift-return)
+  (kbd-enter (focus-tree) #t))
 (tm-define (kbd-backspace)
   (kbd-remove (focus-tree) #f))
 (tm-define (kbd-delete)

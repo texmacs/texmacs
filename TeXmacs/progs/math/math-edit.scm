@@ -41,13 +41,13 @@
 ;; Special customizations inside equation environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kbd-return)
-  (:inside equation)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'equation))
   (go-end-of 'equation)
   (insert-return))
 
-(tm-define (kbd-return)
-  (:inside equation*)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'equation*))
   (go-end-of 'equation*)
   (insert-return))
 

@@ -52,21 +52,21 @@
 	     (tree-insert! t pos `((,l "")))
 	     (tree-go-to t pos 0 0))))))
 
-(tm-define (kbd-return)
-  (:inside title)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'title))
   (go-end-line)
   (insert-return))
 
-(tm-define (kbd-return)
-  (:inside doc-title)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'doc-title))
   (make-doc-data-element 'doc-author-data))
 
-(tm-define (kbd-return)
-  (:inside author-name)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'author-name))
   (make-author-data-element 'author-address))
 
-(tm-define (kbd-return)
-  (:inside doc-inactive)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'doc-inactive))
   (doc-data-activate-here))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -134,11 +134,10 @@
       (make l)
       (make-return-before)))
 
-(tm-define (kbd-return)
-  (:context section-context?)
-  (with-innermost t section-context?
-    (tree-go-to t :end)
-    (insert-return)))
+(tm-define (kbd-enter t shift?)
+  (:require (section-context? t))
+  (tree-go-to t :end)
+  (insert-return))
 
 (tm-define (make-label)
   (:context section-context?)
@@ -174,12 +173,12 @@
 	      ((in? lab (enumerate-tag-list)) (make 'item))
 	      ((in? lab (description-tag-list)) (make 'item*))))))
 
-(tm-define (kbd-return)
-  (:context list-context?)
+(tm-define (kbd-enter t shift?)
+  (:require (list-context? t))
   (make-item))
 
-(tm-define (kbd-return)
-  (:inside item*)
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'item*))
   (go-end-of 'item*))
 
 (tm-define (numbered-context? t)

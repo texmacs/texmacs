@@ -388,17 +388,11 @@
 	(session-feed lan ses in out u opts)
 	(tree-go-to u 1 :end)))))
 
-(tm-define (kbd-return)
-  (:context field-input-context?)
-  (if (session-multiline-input?)
+(tm-define (kbd-enter t shift?)
+  (:require (field-input-context? t))
+  (if (xor (session-multiline-input?) shift?)
       (insert-return)
       (session-evaluate)))
-
-(tm-define (kbd-shift-return)
-  (:context field-input-context?)
-  (if (session-multiline-input?)
-      (session-evaluate)
-      (insert-return)))
 
 (tm-define (session-evaluate)
   (with-innermost t field-input-context?

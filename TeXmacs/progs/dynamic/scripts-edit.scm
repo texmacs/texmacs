@@ -82,10 +82,9 @@
 (tm-define (script-eval-at where lan session in . opts)
   (script-feed lan session in where opts))
 
-(tm-define (kbd-return)
-  (:inside script-eval)
-  (with-innermost t 'script-eval
-    (script-modified-eval noop)))
+(tm-define (kbd-enter t forwards?)
+  (:require (and (tree-is? t 'script-eval) (not forwards?)))
+  (script-modified-eval noop))
 
 (tm-define (make-script-input)
   (let* ((lan (get-env "prog-scripts"))
@@ -269,12 +268,11 @@
     (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
     (tree-go-to t 1 :end)))
 
-(tm-define (kbd-return)
-  (:context plot-context?)
-  (with-innermost t plot-context?
-    (if (= (tree-down-index t) (- (tree-arity t) 1))
-	(activate-plot t)
-	(tree-go-to t (1+ (tree-down-index t)) :end))))
+(tm-define (kbd-enter t forwards?)
+  (:require (and (plot-context? t) (not forwards?)))
+  (if (= (tree-down-index t) (- (tree-arity t) 1))
+      (activate-plot t)
+      (tree-go-to t (1+ (tree-down-index t)) :end)))
 
 (tm-define (alternate-toggle t)
   (:require (plot-context? t))
@@ -289,14 +287,13 @@
 ;; Converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kbd-return)
-  (:inside converter-eval)
-  (with-innermost t 'converter-eval
-    (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
-	   (in (texmacs->verbatim (tree-ref t 1))))
-      (tree-select t)
-      (clipboard-cut "primary")
-      (insert (convert in format "texmacs-tree")))))
+(tm-define (kbd-enter t forwards?)
+  (:require (and (tree-is? t 'converter-eval) (not forwards?)))
+  (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
+         (in (texmacs->verbatim (tree-ref t 1))))
+    (tree-select t)
+    (clipboard-cut "primary")
+    (insert (convert in format "texmacs-tree"))))
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'converter-input))
