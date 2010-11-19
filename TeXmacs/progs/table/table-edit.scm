@@ -148,25 +148,6 @@
     (and-with c (cell-search-downwards t)
       (tree-go-to c (if forwards? :end :start)))))
 
-(define (cell-simple-context? t)
-  (and (nleaf? t)
-       (simple-context? (tree-down t))
-       (cell-context? t)))
-
-(tm-define (structured-exit-left)
-  (:context cell-simple-context?)
-  (with-innermost c cell-simple-context?
-    (with t (tree-ref c :up :up)
-      (while (tree-in? t :up '(tformat document)) (set! t (tree-up t)))
-      (tree-go-to t :up :start))))
-
-(tm-define (structured-exit-right)
-  (:context cell-simple-context?)
-  (with-innermost c cell-simple-context?
-    (with t (tree-ref c :up :up)
-      (while (tree-in? t :up '(tformat document)) (set! t (tree-up t)))
-      (tree-go-to t :up :end))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands for tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

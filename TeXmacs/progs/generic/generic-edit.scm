@@ -234,6 +234,13 @@
   (focus-next t
     (structured-horizontal (tree-up t) forwards?)))
 
+(tm-define (structured-horizontal t forwards?)
+  (:require (structured-horizontal? t))
+  (with-focus-after t
+    (with move (if forwards? path-next-argument path-previous-argument)
+      (with p (move (root-tree) (tree->path (tree-down t)))
+        (if (nnull? p) (go-to p))))))
+
 (tm-define (structured-vertical t downwards?)
   (focus-next t
     (structured-vertical (tree-up t) downwards?)))
@@ -241,13 +248,6 @@
 (tm-define (structured-inner-extremal t forwards?)
   (focus-next t
     (structured-inner-extremal (tree-up t) forwards?)))
-
-(tm-define (structured-horizontal t forwards?)
-  (:require (structured-horizontal? t))
-  (with-focus-after t
-    (with move (if forwards? path-next-argument path-previous-argument)
-      (with p (move (root-tree) (tree->path (tree-down t)))
-        (if (nnull? p) (go-to p))))))
 
 (tm-define (structured-inner-extremal t forwards?)
   (:require (structured-horizontal? t))
@@ -261,6 +261,10 @@
 (tm-define (structured-incremental t downwards?)
   (go-to-repeat (lambda () (structured-vertical t downwards?)))
   (structured-inner-extremal t downwards?))
+
+(tm-define (structured-exit t forwards?)
+  (:require (complex-context? t))
+  (tree-go-to t (if forwards? :end :start)))
 
 (tm-define (structured-left)
   (structured-horizontal (focus-tree) #f))
@@ -278,14 +282,10 @@
   (structured-incremental (focus-tree) #f))
 (tm-define (structured-bottom)
   (structured-incremental (focus-tree) #t))
-
 (tm-define (structured-exit-left)
-  (with-innermost t complex-context?
-    (tree-go-to t :start)))
-
+  (structured-exit (focus-tree) #f))
 (tm-define (structured-exit-right)
-  (with-innermost t complex-context?
-    (tree-go-to t :end)))
+  (structured-exit (focus-tree) #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
