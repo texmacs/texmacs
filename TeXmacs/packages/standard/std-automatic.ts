@@ -32,7 +32,7 @@
 
   <assign|current-part|>
 
-  <assign|set-part|<macro|id|body|<with|current-part|<merge|<value|current-part>|.|<arg|id>>|auto-nr|0|<arg|body>>>>
+  <assign|set-part|<macro|Id|body|<with|current-part|<merge|<value|current-part>|.|<arg|Id>>|auto-nr|0|<arg|body>>>>
 
   <assign|the-auto|<macro|<merge|auto|<value|current-part>|-|<value|auto-nr>>>>
 
@@ -44,32 +44,33 @@
     </src-comment>
   </active*>
 
-  <assign|render-cite|<macro|x|[<arg|x>]>>
+  <assign|render-cite|<macro|body|[<arg|body>]>>
 
-  <assign|render-cite-detail|<macro|x|y|<render-cite|<arg|x>, <arg|y>>>>
+  <assign|render-cite-detail|<macro|body|detail|<render-cite|<arg|body>,
+  <arg|detail>>>>
 
   <assign|cite-bib|bib>
 
   <assign|cite-sep|<macro|, >>
 
-  <assign|cite-arg|<macro|x|<write|<value|cite-bib>|<arg|x>><reference|<merge|<value|cite-bib>|-|<arg|x>>>>>
+  <assign|cite-arg|<macro|key|<write|<value|cite-bib>|<arg|key>><reference|<merge|<value|cite-bib>|-|<arg|key>>>>>
 
-  <assign|cite-arg-extra|<macro|x|<cite-sep><cite-arg|<arg|x>>>>
+  <assign|cite-arg-extra|<macro|key|<cite-sep><cite-arg|<arg|key>>>>
 
-  <assign|cite|<xmacro|x|<render-cite|<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>>>>
+  <assign|cite|<xmacro|keys|<render-cite|<cite-arg|<arg|keys|0>><map-args|cite-arg-extra|concat|keys|1>>>>
 
-  <assign|cite-detail|<macro|x|y|<render-cite-detail|<cite-arg|<arg|x>>|<arg|y>>>>
+  <assign|cite-detail|<macro|key|detail|<render-cite-detail|<cite-arg|<arg|key>>|<arg|detail>>>>
 
-  <assign|cite-raw|<xmacro|x|<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>>>
+  <assign|cite-raw|<xmacro|keys|<cite-arg|<arg|keys|0>><map-args|cite-arg-extra|concat|keys|1>>>
 
-  <assign|nocite-arg|<macro|x|<write|<value|cite-bib>|<arg|x>>>>
+  <assign|nocite-arg|<macro|key|<write|<value|cite-bib>|<arg|key>>>>
 
-  <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
-  green|x><map-args|nocite-arg|concat|x>>>>
+  <assign|nocite|<xmacro|keys|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
+  green|keys><map-args|nocite-arg|concat|keys>>>>
 
   \;
 
-  <assign|transform-bibitem|<macro|x|<strong|[<arg|x>] \ >>>
+  <assign|transform-bibitem|<macro|body|<strong|[<arg|body>] \ >>>
 
   <assign|render-bibitem|<macro|text|<compact-item|<transform-bibitem|<arg|text>>>>>
 
@@ -144,17 +145,17 @@
 
   <assign|index-write|<macro|entry|<style-with|src-compact|none|<auto-label><write|idx|<tuple|<arg|entry>|<pageref|<the-auto>>>>>>>
 
-  <assign|index|<macro|x|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><index-write|<tuple|<arg|x>>>>>>
+  <assign|index|<macro|key|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><index-write|<tuple|<arg|key>>>>>>
 
-  <assign|subindex|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><index-write|<tuple|<arg|x>|<arg|y>>>>>>
+  <assign|subindex|<macro|key|secondary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><index-write|<tuple|<arg|key>|<arg|secondary>>>>>>
 
-  <assign|subsubindex|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>>>>>>
+  <assign|subsubindex|<macro|key|secondary|tertiary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><index-write|<tuple|<arg|key>|<arg|secondary>|<arg|tertiary>>>>>>
 
-  <assign|subsubsubindex|<macro|x|y|z|a|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>|<arg|a>>>>>>
+  <assign|subsubsubindex|<macro|key|secondary|tertiary|quaternary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><index-write|<tuple|<arg|key>|<arg|secondary>|<arg|tertiary>|<arg|quaternary>>>>>>
 
   <assign|index-complex|<macro|key|how|range|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><auto-label><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<the-auto>>>>>>>
@@ -210,7 +211,7 @@
   <assign|glossary-1|<macro|left|right|<arg|left><glossary-dots><no-break><arg|right>>>
 
   <assign|glossary-2|<macro|entry|explain|right|<margin-first-other|0fn|10fn|<style-with|src-compact|none|<resize|<arg|entry>
-  |||r]10fn|><arg|explain><glossary-dots><no-break><arg|right>>>>>
+  |||<maximum|1r|10fn>|><arg|explain><glossary-dots><no-break><arg|right>>>>>
 
   \;
 </body>

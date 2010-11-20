@@ -44,7 +44,7 @@
 
   <assign|hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
 
-  <assign|pre-edit|<macro|x|<with|ornament-color|#ffffc0|ornament-sunny-color|#fff0e0|ornament-shadow-color|#ffc080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<smash|<ornament|<with|color|#4040c0|<arg|x>>>>>>>
+  <assign|pre-edit|<macro|body|<with|ornament-color|#ffffc0|ornament-sunny-color|#fff0e0|ornament-shadow-color|#ffc080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<smash|<ornament|<with|color|#4040c0|<arg|body>>>>>>>
 
   <drd-props|pre-edit|arity|1|border|no>
 
@@ -55,43 +55,43 @@
     </src-comment>
   </active*>
 
-  <assign|really-tiny|<macro|x|<with|font-size|0.5|<arg|x>>>>
+  <assign|really-tiny|<macro|body|<with|font-size|0.5|<arg|body>>>>
 
-  <assign|very-tiny|<macro|x|<with|font-size|0.545|<arg|x>>>>
+  <assign|very-tiny|<macro|body|<with|font-size|0.545|<arg|body>>>>
 
-  <assign|tiny|<macro|x|<with|font-size|0.595|<arg|x>>>>
+  <assign|tiny|<macro|body|<with|font-size|0.595|<arg|body>>>>
 
-  <assign|really-small|<macro|x|<with|font-size|0.648|<arg|x>>>>
+  <assign|really-small|<macro|body|<with|font-size|0.648|<arg|body>>>>
 
-  <assign|very-small|<macro|x|<with|font-size|0.707|<arg|x>>>>
+  <assign|very-small|<macro|body|<with|font-size|0.707|<arg|body>>>>
 
-  <assign|smaller|<macro|x|<with|font-size|0.771|<arg|x>>>>
+  <assign|smaller|<macro|body|<with|font-size|0.771|<arg|body>>>>
 
-  <assign|small|<macro|x|<with|font-size|0.841|<arg|x>>>>
+  <assign|small|<macro|body|<with|font-size|0.841|<arg|body>>>>
 
-  <assign|flat-size|<macro|x|<with|font-size|0.917|<arg|x>>>>
+  <assign|flat-size|<macro|body|<with|font-size|0.917|<arg|body>>>>
 
-  <assign|normal-size|<macro|x|<with|font-size|1|<arg|x>>>>
+  <assign|normal-size|<macro|body|<with|font-size|1|<arg|body>>>>
 
-  <assign|sharp-size|<macro|x|<with|font-size|1.091|<arg|x>>>>
+  <assign|sharp-size|<macro|body|<with|font-size|1.091|<arg|body>>>>
 
-  <assign|large|<macro|x|<with|font-size|1.189|<arg|x>>>>
+  <assign|large|<macro|body|<with|font-size|1.189|<arg|body>>>>
 
-  <assign|larger|<macro|x|<with|font-size|1.297|<arg|x>>>>
+  <assign|larger|<macro|body|<with|font-size|1.297|<arg|body>>>>
 
-  <assign|very-large|<macro|x|<with|font-size|1.414|<arg|x>>>>
+  <assign|very-large|<macro|body|<with|font-size|1.414|<arg|body>>>>
 
-  <assign|really-large|<macro|x|<with|font-size|1.542|<arg|x>>>>
+  <assign|really-large|<macro|body|<with|font-size|1.542|<arg|body>>>>
 
-  <assign|huge|<macro|x|<with|font-size|1.682|<arg|x>>>>
+  <assign|huge|<macro|body|<with|font-size|1.682|<arg|body>>>>
 
-  <assign|very-huge|<macro|x|<with|font-size|1.834|<arg|x>>>>
+  <assign|very-huge|<macro|body|<with|font-size|1.834|<arg|body>>>>
 
-  <assign|really-huge|<macro|x|<with|font-size|2|<arg|x>>>>
+  <assign|really-huge|<macro|body|<with|font-size|2|<arg|body>>>>
 
-  <assign|font-zoom|<macro|factor|x|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|x>>>>
+  <assign|font-zoom|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
-  <assign|font-unzoom|<macro|factor|x|<with|font-size|<over|<value|font-size>|<arg|factor>>|<arg|x>>>>
+  <assign|font-unzoom|<macro|factor|body|<with|font-size|<over|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -99,37 +99,37 @@
     </src-comment>
   </active*>
 
-  <assign|strong|<macro|x|<with|font-series|bold|math-font-series|bold|<arg|x>>>>
+  <assign|strong|<macro|body|<with|font-series|bold|math-font-series|bold|<arg|body>>>>
 
-  <assign|em|<macro|x|<with|font-shape|<if|<equal|<value|font-shape>|italic>|right|italic>|<arg|x>>>>
+  <assign|em|<macro|body|<with|font-shape|<if|<equal|<value|font-shape>|italic>|right|italic>|<arg|body>>>>
 
-  <assign|tt|<macro|x|<with|font-family|tt|<arg|x>>>>
+  <assign|tt|<macro|body|<with|font-family|tt|<arg|body>>>>
 
-  <assign|name|<macro|x|<with|font-shape|small-caps|<arg|x>>>>
+  <assign|name|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
-  <assign|samp|<macro|x|<with|font-family|ss|<arg|x>>>>
+  <assign|samp|<macro|body|<with|font-family|ss|<arg|body>>>>
 
-  <assign|abbr|<macro|x|<rigid|<arg|x>>>>
+  <assign|abbr|<macro|body|<rigid|<arg|body>>>>
 
-  <assign|math|<macro|x|<with|mode|math|<arg|x>>>>
+  <assign|math|<macro|body|<with|mode|math|<arg|body>>>>
 
-  <assign|text|<macro|x|<with|mode|text|<arg|x>>>>
+  <assign|text|<macro|body|<with|mode|text|<arg|body>>>>
 
-  <assign|op|<macro|x|<with|math-condensed|true|<arg|x>>>>
+  <assign|op|<macro|body|<with|math-condensed|true|<arg|body>>>>
 
-  <assign|cite*|<macro|x|<with|font-shape|italic|<arg|x>>>>
+  <assign|cite*|<macro|body|<with|font-shape|italic|<arg|body>>>>
 
-  <assign|dfn|<macro|x|<with|font-shape|italic|<arg|x>>>>
+  <assign|dfn|<macro|body|<with|font-shape|italic|<arg|body>>>>
 
-  <assign|code*|<macro|x|<with|font-family|tt|<arg|x>>>>
+  <assign|code*|<macro|body|<with|font-family|tt|<arg|body>>>>
 
-  <assign|kbd|<macro|x|<with|font-family|tt|<arg|x>>>>
+  <assign|kbd|<macro|body|<with|font-family|tt|<arg|body>>>>
 
-  <assign|var|<macro|x|<with|font-family|tt|font-shape|italic|<arg|x>>>>
+  <assign|var|<macro|body|<with|font-family|tt|font-shape|italic|<arg|body>>>>
 
-  <assign|acronym|<macro|x|<with|font-shape|small-caps|<arg|x>>>>
+  <assign|acronym|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
-  <assign|person|<macro|x|<with|font-shape|small-caps|<arg|x>>>>
+  <assign|person|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -137,51 +137,51 @@
     </src-comment>
   </active*>
 
-  <assign|british|<macro|x|<with|language|british|<arg|x>>>>
+  <assign|british|<macro|body|<with|language|british|<arg|body>>>>
 
-  <assign|bulgarian|<macro|x|<with|language|bulgarian|<arg|x>>>>
+  <assign|bulgarian|<macro|body|<with|language|bulgarian|<arg|body>>>>
 
-  <assign|chinese|<macro|x|<with|language|chinese|<arg|x>>>>
+  <assign|chinese|<macro|body|<with|language|chinese|<arg|body>>>>
 
-  <assign|czech|<macro|x|<with|language|czech|<arg|x>>>>
+  <assign|czech|<macro|body|<with|language|czech|<arg|body>>>>
 
-  <assign|danish|<macro|x|<with|language|danish|<arg|x>>>>
+  <assign|danish|<macro|body|<with|language|danish|<arg|body>>>>
 
-  <assign|dutch|<macro|x|<with|language|dutch|<arg|x>>>>
+  <assign|dutch|<macro|body|<with|language|dutch|<arg|body>>>>
 
-  <assign|english|<macro|x|<with|language|english|<arg|x>>>>
+  <assign|english|<macro|body|<with|language|english|<arg|body>>>>
 
-  <assign|finnish|<macro|x|<with|language|finnish|<arg|x>>>>
+  <assign|finnish|<macro|body|<with|language|finnish|<arg|body>>>>
 
-  <assign|french|<macro|x|<with|language|french|<arg|x>>>>
+  <assign|french|<macro|body|<with|language|french|<arg|body>>>>
 
-  <assign|german|<macro|x|<with|language|german|<arg|x>>>>
+  <assign|german|<macro|body|<with|language|german|<arg|body>>>>
 
-  <assign|hungarian|<macro|x|<with|language|hungarian|<arg|x>>>>
+  <assign|hungarian|<macro|body|<with|language|hungarian|<arg|body>>>>
 
-  <assign|italian|<macro|x|<with|language|italian|<arg|x>>>>
+  <assign|italian|<macro|body|<with|language|italian|<arg|body>>>>
 
-  <assign|japanese|<macro|x|<with|language|japanese|<arg|x>>>>
+  <assign|japanese|<macro|body|<with|language|japanese|<arg|body>>>>
 
-  <assign|korean|<macro|x|<with|language|korean|<arg|x>>>>
+  <assign|korean|<macro|body|<with|language|korean|<arg|body>>>>
 
-  <assign|polish|<macro|x|<with|language|polish|<arg|x>>>>
+  <assign|polish|<macro|body|<with|language|polish|<arg|body>>>>
 
-  <assign|portuguese|<macro|x|<with|language|portuguese|<arg|x>>>>
+  <assign|portuguese|<macro|body|<with|language|portuguese|<arg|body>>>>
 
-  <assign|romanian|<macro|x|<with|language|romanian|<arg|x>>>>
+  <assign|romanian|<macro|body|<with|language|romanian|<arg|body>>>>
 
-  <assign|russian|<macro|x|<with|language|russian|<arg|x>>>>
+  <assign|russian|<macro|body|<with|language|russian|<arg|body>>>>
 
-  <assign|slovene|<macro|x|<with|language|slovene|<arg|x>>>>
+  <assign|slovene|<macro|body|<with|language|slovene|<arg|body>>>>
 
-  <assign|spanish|<macro|x|<with|language|spanish|<arg|x>>>>
+  <assign|spanish|<macro|body|<with|language|spanish|<arg|body>>>>
 
-  <assign|swedish|<macro|x|<with|language|swedish|<arg|x>>>>
+  <assign|swedish|<macro|body|<with|language|swedish|<arg|body>>>>
 
-  <assign|taiwanese|<macro|x|<with|language|taiwanese|<arg|x>>>>
+  <assign|taiwanese|<macro|body|<with|language|taiwanese|<arg|body>>>>
 
-  <assign|ukrainian|<macro|x|<with|language|ukrainian|<arg|x>>>>
+  <assign|ukrainian|<macro|body|<with|language|ukrainian|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -230,11 +230,11 @@
     </src-comment>
   </active*>
 
-  <assign|tabular*|<macro|x|<tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>>>>
+  <assign|tabular*|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|body>>>>
 
-  <assign|block|<macro|x|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<arg|x>>>>
+  <assign|block|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<arg|body>>>>
 
-  <assign|block*|<macro|x|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>>>>
+  <assign|block*|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-halign|c>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -242,43 +242,43 @@
     </src-comment>
   </active*>
 
-  <assign|hresize|<macro|x|left|right|<resize|<arg|x>|<arg|left>||<arg|right>|>>>
+  <assign|hresize|<macro|body|left|right|<resize|<arg|body>|<arg|left>||<arg|right>|>>>
 
-  <assign|hextend|<macro|x|right|<resize|<arg|x>|||<maximum|1r|<arg|right>>|>>>
+  <assign|hextend|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
 
-  <assign|vresize|<macro|x|bottom|top|<resize|<arg|x>||<arg|bottom>||<arg|top>>>>
+  <assign|vresize|<macro|body|bottom|top|<resize|<arg|body>||<arg|bottom>||<arg|top>>>>
 
-  <assign|bcorrect|<macro|x|<resize|<arg|x>||<minimum|1b|1fnbot>||>>>
+  <assign|bcorrect|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||>>>
 
-  <assign|tcorrect|<macro|x|<resize|<arg|x>||||<maximum|1t|1fntop>>>>
+  <assign|tcorrect|<macro|body|<resize|<arg|body>||||<maximum|1t|1fntop>>>>
 
-  <assign|vcorrect|<macro|x|<resize|<arg|x>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
+  <assign|vcorrect|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
 
-  <assign|smash|<macro|x|<vresize|<arg|x>|0ex|1ex>>>
+  <assign|smash|<macro|body|<vresize|<arg|body>|0ex|1ex>>>
 
-  <assign|smash-top|<macro|x|<vresize|<arg|x>||1ex>>>
+  <assign|smash-top|<macro|body|<vresize|<arg|body>||1ex>>>
 
-  <assign|smash-bottom|<macro|x|<vresize|<arg|x>|0ex|>>>
+  <assign|smash-bottom|<macro|body|<vresize|<arg|body>|0ex|>>>
 
-  <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
+  <assign|phantom|<macro|body|<if*|false|<arg|body>>>>
 
-  <assign|hphantom|<macro|x|<vresize|<phantom|<arg|x>>|0ex|1ex>>>
+  <assign|hphantom|<macro|body|<vresize|<phantom|<arg|body>>|0ex|1ex>>>
 
-  <assign|vphantom|<macro|x|<hresize|<phantom|<arg|x>>|0em|0em>>>
+  <assign|vphantom|<macro|body|<hresize|<phantom|<arg|body>>|0em|0em>>>
 
   \;
 
-  <assign|overline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
+  <assign|overline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
 
   <drd-props|overline|with-like|yes|arity|1|accessible|all>
 
-  <assign|underline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
+  <assign|underline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide*|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
 
   <drd-props|underline|with-like|yes|arity|1|accessible|all>
 
   \;
 
-  <assign|href|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
+  <assign|href|<macro|body|<hlink|<with|font-family|tt|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
 
