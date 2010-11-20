@@ -265,6 +265,7 @@ symbol_priority (tree t) {
     if (s == "otimes") return PRIORITY_TIMES;
     if (s == "odot") return PRIORITY_TIMES;
     if (s == "triangleup") return PRIORITY_TIMES;
+    return PRIORITY_RADICAL;
   }
   else return PRIORITY_RADICAL;
 }
