@@ -69,6 +69,20 @@
   description description-compact description-aligned
   description-dash description-long)
 
+;; Document titles
+
+(define-group doc-title-tag
+  (doc-title-active-tag) (doc-title-inactive-tag))
+
+(define-group doc-title-active-tag
+  doc-title doc-subtitle doc-author-data doc-date)
+
+(define-group doc-title-inactive-tag
+  doc-running-title doc-running-author doc-keywords doc-AMS-class)
+
+(define-group doc-author-tag
+  author-name author-address author-email author-homepage author-note)
+
 ;; Theorems
 
 (define-group named-environment-tag

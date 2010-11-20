@@ -325,3 +325,88 @@
 	   (make-item))))
   (link text-format-icons)
   (link texmacs-insert-icons))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus icons for entering title information
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-move? t)
+  (:require (doc-title-context? t))
+  #f)
+
+(tm-menu (focus-title-menu)
+  ("Subtitle" (make-doc-data-element 'doc-subtitle))
+  ("Author" (make-doc-data-element 'doc-author-data))
+  ("Date" (make-doc-data-element 'doc-date))
+  ("Today"
+   (begin (make-doc-data-element 'doc-date) (make-arity 'date 0)))
+  ("Note" (make-doc-data-element 'doc-note))
+  ("TeXmacs notice" (begin (make-doc-data-element 'doc-note)
+                           (make 'with-TeXmacs-text))))
+
+(tm-menu (focus-title-hidden-menu)
+  ("Running title" (make-doc-data-element 'doc-running-title))
+  ("Running author" (make-doc-data-element 'doc-running-author))
+  ("Keywords" (make-doc-data-element 'doc-keywords))
+  ("A.M.S. subject classification"
+   (make-doc-data-element 'doc-AMS-class)))
+
+(tm-menu (focus-title-icons)
+  (mini #t
+    (inert ("Title" (noop))))
+  (=> (balloon (icon "tm_add.xpm") "Add title information")
+      (link focus-title-menu)
+      (-> "Hidden" (link focus-title-hidden-menu))))
+
+(tm-menu (focus-ancestor-menu t)
+  (:require (doc-title-context? t))
+  (group "Title")
+  (link focus-title-menu)
+  ---
+  (group "Hidden")
+  (link focus-title-hidden-menu)
+  ---)
+
+(tm-menu (focus-ancestor-icons t)
+  (:require (doc-title-context? t))
+  (minibar (dynamic (focus-title-icons)))
+  (glue #f #f 5 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus icons for entering titles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-move? t)
+  (:require (doc-author-context? t))
+  #f)
+
+(tm-menu (focus-author-menu)
+  ("Address" (make-author-data-element 'author-address))
+  ("Email" (make-author-data-element 'author-email))
+  ("Homepage" (make-author-data-element 'author-homepage))
+  ("Note" (make-author-data-element 'author-note)))
+
+(tm-menu (focus-author-icons)
+  (mini #t
+    (inert ("Author" (noop))))
+  (=> (balloon (icon "tm_add.xpm") "Add author information")
+      (link focus-author-menu)))
+
+(tm-menu (focus-ancestor-menu t)
+  (:require (doc-author-context? t))
+  (group "Title")
+  (link focus-title-menu)
+  ---
+  (group "Hidden")
+  (link focus-title-hidden-menu)
+  ---
+  (group "Author")
+  (link focus-author-menu)
+  ---)
+
+(tm-menu (focus-ancestor-icons t)
+  (:require (doc-author-context? t))
+  (minibar (dynamic (focus-title-icons)))
+  (glue #f #f 5 0)
+  (minibar (dynamic (focus-author-icons)))
+  (glue #f #f 5 0))

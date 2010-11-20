@@ -39,6 +39,9 @@
 ;; Adding and removing children
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (focus-can-move? t)
+  #t)
+
 (tm-define (focus-can-insert-remove? t)
   (and (or (structured-horizontal? t) (structured-vertical? t))
        (cursor-inside? t)))
@@ -133,6 +136,8 @@
 ;; FIXME: when recovering focus-tree,
 ;; double check that focus-tree still has the required form
 
+(tm-menu (focus-ancestor-menu t))
+
 (tm-menu (focus-toggle-menu t)
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
@@ -193,13 +198,14 @@
   (:require (alternate-context? t)))
 
 (tm-menu (standard-focus-menu t)
+  (dynamic (focus-ancestor-menu t))
   (dynamic (focus-tag-menu t))
-  ---
-  (dynamic (focus-move-menu t))
+  (assuming (focus-can-move? t)
+    ---
+    (dynamic (focus-move-menu t)))
   (assuming (focus-can-insert-remove? t)
     ---
-    (dynamic (focus-insert-menu t))
-    )
+    (dynamic (focus-insert-menu t)))
   (dynamic (focus-extra-menu t))
   (dynamic (focus-hidden-menu t)))
 
@@ -209,6 +215,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main focus icons bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-ancestor-icons t))
 
 (tm-menu (focus-toggle-icons t)
   (assuming (numbered-context? t)
@@ -297,11 +305,13 @@
   (:require (alternate-context? t)))
 
 (tm-menu (standard-focus-icons t)
-  (minibar (dynamic (focus-move-icons t)))
+  (dynamic (focus-ancestor-icons t))
+  (assuming (focus-can-move? t)
+    (minibar (dynamic (focus-move-icons t)))
+    (glue #f #f 5 0))
   (assuming (focus-can-insert-remove? t)
-    (glue #f #f 5 0)
-    (minibar (dynamic (focus-insert-icons t))))
-  (glue #f #f 5 0)
+    (minibar (dynamic (focus-insert-icons t)))
+    (glue #f #f 5 0))
   (minibar (dynamic (focus-tag-icons t)))
   (dynamic (focus-extra-icons t))
   (dynamic (focus-hidden-icons t))

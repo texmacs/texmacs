@@ -20,6 +20,13 @@
 ;; Inserting document and author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (doc-title-context? t)
+  (or (tree-in? t (doc-title-tag-list))
+      (and (tree-is? t 'date) (tree-is? t :up 'doc-date))))
+
+(tm-define (doc-author-context? t)
+  (tree-in? t (doc-author-tag-list)))
+
 (define doc-data-inactive-tags
   '(doc-running-title doc-running-author doc-keywords doc-AMS-class))
 
