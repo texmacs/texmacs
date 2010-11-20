@@ -244,123 +244,128 @@ initialize_default_env () {
   /* hiding and showing content */
   env ("shown")= identity_m;
   env ("ignore")=
-    tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
+    tree (MACRO, "body", tree (HIDDEN, tree (ARG, "body")));
 
   /* linking macros */
-  tree src_id (ID, tree (HARD_ID, tree (ARG, "x")));
-  tree var_src_id (ID, tree (ARG, "x"));
-  tree dest_url (URL, tree (ARG, "y"));
-  tree dest_script (SCRIPT, tree (ARG, "y"), tree (ARG, "z"));
-  tree dest_ref (URL, tree (MERGE, "#", tree (ARG, "x")));
+  tree src_id (ID, tree (HARD_ID, tree (ARG, "body")));
+  tree ref_id (ID, tree (HARD_ID, tree (ARG, "Id")));
+  tree dest_url (URL, tree (ARG, "destination"));
+  tree dest_script (SCRIPT, tree (ARG, "destination"), tree (ARG, "where"));
+  tree dest_ref (URL, tree (MERGE, "#", tree (ARG, "Id")));
   tree ln1 (LINK, "hyperlink", copy (src_id), copy (dest_url));
   tree ln2 (LINK, "action", copy (src_id), copy (dest_script));
-  tree ln3 (LINK, "hyperlink", copy (src_id), copy (dest_ref));
-  tree labflag (FLAG, tree (ARG, "x"), "blue", "x");
-  tree labtxt (SET_BINDING, tree (ARG, "x"), tree (VALUE, THE_LABEL));
-  tree merged (MERGE, tree (VALUE, THE_TAGS), tuple (tree (ARG, "x")));
-  tree tagflag (FLAG, tree (ARG, "x"), "blue", "x");
-  tree reftxt (GET_BINDING, tree (ARG, "x"));
-  tree preftxt (GET_BINDING, tree (ARG, "x"), "1");
-  env ("hlink")= tree (MACRO, "x", "y",
-		       tree (LOCUS, copy (src_id), ln1, tree (ARG, "x")));
-  env ("action")= tree (MACRO, "x", "y", "z",
-			tree (LOCUS, copy (src_id), ln2, tree (ARG, "x")));
-  env ("label")= tree (MACRO, "x", tree (CONCAT, labflag, labtxt));
-  env ("tag")= tree (MACRO, "x", "y",
+  tree ln3 (LINK, "hyperlink", copy (ref_id), copy (dest_ref));
+  tree labflag (FLAG, tree (ARG, "Id"), "blue", "Id");
+  tree labtxt (SET_BINDING, tree (ARG, "Id"), tree (VALUE, THE_LABEL));
+  tree merged (MERGE, tree (VALUE, THE_TAGS), tuple (tree (ARG, "Id")));
+  tree tagflag (FLAG, tree (ARG, "Id"), "blue", "Id");
+  tree reftxt (GET_BINDING, tree (ARG, "Id"));
+  tree preftxt (GET_BINDING, tree (ARG, "Id"), "1");
+  env ("hlink")= tree (MACRO, "body", "destination",
+		       tree (LOCUS, copy (src_id), ln1,
+                             tree (ARG, "body")));
+  env ("action")= tree (MACRO, "body", "destination", "where",
+			tree (LOCUS, copy (src_id), ln2,
+                              tree (ARG, "body")));
+  env ("label")= tree (MACRO, "Id", tree (CONCAT, labflag, labtxt));
+  env ("tag")= tree (MACRO, "Id", "body",
 		     tree (WITH, "the-tags", merged,
-			   tree (SURROUND, tagflag, "", tree (ARG, "y"))));
-  env ("reference")= tree (MACRO, "x",
-			   tree (LOCUS, copy (src_id), ln3, reftxt));
-  env ("pageref")= tree (MACRO, "x",
-			 tree (LOCUS, copy (src_id), copy (ln3), preftxt));
+			   tree (SURROUND, tagflag, "",
+                                 tree (ARG, "body"))));
+  env ("reference")= tree (MACRO, "Id",
+			   tree (LOCUS, copy (ref_id), ln3, reftxt));
+  env ("pageref")= tree (MACRO, "Id",
+			 tree (LOCUS, copy (ref_id), copy (ln3), preftxt));
 
   /* further standard macros */
   env ("error")=
-    tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "error"));
+    tree (MACRO, "message",
+          tree (REWRITE_INACTIVE, tree (ARG, "message"), "error"));
   env ("style-only")=
-    tree (MACRO, "x", tree (ARG, "x"));
+    tree (MACRO, "body", tree (ARG, "body"));
   env ("style-only*")=
-    tree (MACRO, "x", tree (ARG, "x"));
+    tree (MACRO, "body", tree (ARG, "body"));
   env ("active")=
-    tree (MACRO, "x", tree (ARG, "x"));
+    tree (MACRO, "body", tree (ARG, "body"));
   env ("active*")=
-    tree (MACRO, "x", tree (ARG, "x"));
+    tree (MACRO, "body", tree (ARG, "body"));
   env ("inactive")=
-    tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "once"));
+    tree (MACRO, "body",
+          tree (REWRITE_INACTIVE, tree (ARG, "body"), "once"));
   env ("inactive*")=
-    tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "recurse"));
+    tree (MACRO, "body",
+          tree (REWRITE_INACTIVE, tree (ARG, "body"), "recurse"));
   env ("right-flush")=
     tree (MACRO, tree (HTAB, "0fn", "first"));
   env ("indent*")=
-    tree (MACRO, "x",
+    tree (MACRO, "body",
 	  tree (WITH, PAR_LEFT, tree (PLUS, tree (VALUE, PAR_LEFT), "1.5fn"),
-		tree (ARG, "x")));
+		tree (ARG, "body")));
   env ("indent")=
-    tree (MACRO, "x",
+    tree (MACRO, "body",
 	  tree (SURROUND, "", compound ("right-flush"),
-		compound ("indent*", tree (ARG, "x"))));
+		compound ("indent*", tree (ARG, "body"))));
   env ("math")=
-    tree (MACRO, "x", tree (WITH, MODE, "math", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "math", tree (ARG, "body")));
   env ("text")=
-    tree (MACRO, "x", tree (WITH, MODE, "text", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "text", tree (ARG, "body")));
   env ("pre-edit")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#4040c0", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, COLOR, "#4040c0", tree (ARG, "body")));
   env ("mutator")=
-    tree (MACRO, "x", "y", tree (ARG, "x"));
+    tree (MACRO, "body", "y", tree (ARG, "body"));
 
   /* syntactic highlighting */
   env ("src-regular")=
-    tree (MACRO, "x", tree (WITH, COLOR, "black", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, COLOR, "black", tree (ARG, "body")));
   env ("src-macro")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "blue",
-			    FONT_FAMILY, "ss", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "blue",
+                               FONT_FAMILY, "ss", tree (ARG, "body")));
   env ("src-var")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "dark green",
-			    FONT_SHAPE, "italic", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "dark green",
+                               FONT_SHAPE, "italic", tree (ARG, "body")));
   env ("src-arg")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "brown",
-			    FONT_SHAPE, "italic", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "brown",
+                               FONT_SHAPE, "italic", tree (ARG, "body")));
   env ("src-tt")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "#228",
-			    FONT_FAMILY, "tt", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "#228",
+                               FONT_FAMILY, "tt", tree (ARG, "body")));
   env ("src-numeric")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "#848",
-			    tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "#848",
+                               tree (ARG, "body")));
   env ("src-textual")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "black",
-			    tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "black",
+                               tree (ARG, "body")));
   env ("src-length")=
-    tree (MACRO, "x", tree (WITH, MODE, "src", COLOR, "#288",
-			    tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "#288",
+                               tree (ARG, "body")));
   env ("src-unknown")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#C68", tree (ARG, "x")));
+    tree (MACRO, "body", tree (WITH, COLOR, "#C68", tree (ARG, "body")));
   env ("src-error")=
-    tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
-
+    tree (MACRO, "body", tree (WITH, COLOR, "red", tree (ARG, "body")));
 
   /* for correct importation of style files and packages */
   env ("src-title")= identity_m;
   env ("src-style-file")=
-    tree (MACRO, "x", "y",
+    tree (MACRO, "style", "version",
 	  tree (ASSIGN,
-		tree (MERGE, tree (ARG, "x"), "-style"),
-		tree (ARG, "y")));
+		tree (MERGE, tree (ARG, "style"), "-style"),
+		tree (ARG, "version")));
   env ("src-package")=
-    tree (MACRO, "x", "y",
+    tree (MACRO, "package", "version",
 	  tree (CONCAT,
 		tree (ASSIGN,
-		      tree (MERGE, tree (ARG, "x"), "-package"),
-		      tree (ARG, "y")),
+		      tree (MERGE, tree (ARG, "package"), "-package"),
+		      tree (ARG, "version")),
 		tree (ASSIGN,
-		      tree (MERGE, tree (ARG, "x"), "-dtd"),
-		      tree (ARG, "y"))));
+		      tree (MERGE, tree (ARG, "package"), "-dtd"),
+		      tree (ARG, "version"))));
   env ("src-package-dtd")=
-    tree (MACRO, "x", "y", "a", "b",
+    tree (MACRO, "package", "version", "drd", "drd-version",
 	  tree (CONCAT,
 		tree (ASSIGN,
-		      tree (MERGE, tree (ARG, "x"), "-package"),
-		      tree (ARG, "y")),
+		      tree (MERGE, tree (ARG, "package"), "-package"),
+		      tree (ARG, "version")),
 		tree (ASSIGN,
-		      tree (MERGE, tree (ARG, "a"), "-dtd"),
-		      tree (ARG, "b"))));
+		      tree (MERGE, tree (ARG, "drd"), "-dtd"),
+		      tree (ARG, "drd-version"))));
 }

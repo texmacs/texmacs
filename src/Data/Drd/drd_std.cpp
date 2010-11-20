@@ -116,13 +116,29 @@ init_std_drd () {
   init (HTAB, "htab",
 	options (1, 1, BIFORM) -> length (0) -> name ("tab"));
   init (MOVE, "move",
-	fixed (1, 2, BIFORM) -> accessible (0) -> length (1));
+        fixed (3, 0, DETAILED) ->
+        accessible (0) ->
+        length (1) -> name (1, "x-offset") ->
+        length (2) -> name (2, "y-offset"));
   init (SHIFT, "shift",
-	fixed (1, 2, BIFORM) -> accessible (0) -> length (1));
+        fixed (3, 0, DETAILED) ->
+        accessible (0) ->
+        length (1) -> name (1, "x-offset") ->
+        length (2) -> name (2, "y-offset"));
   init (RESIZE, "resize",
-	fixed (1, 4, BIFORM) -> accessible (0) -> length (1));
+        fixed (5, 0, DETAILED) ->
+        accessible (0) ->
+        length (1) -> name (1, "left") ->
+        length (2) -> name (2, "bottom") ->
+        length (3) -> name (3, "right") ->
+        length (4) -> name (4, "top"));
   init (CLIPPED, "clipped",
-	fixed (1, 4, BIFORM) -> accessible (0) -> length (1));
+        fixed (5, 0, DETAILED) ->
+        accessible (0) ->
+        length (1) -> name (1, "left") ->
+        length (2) -> name (2, "bottom") ->
+        length (3) -> name (3, "right") ->
+        length (4) -> name (4, "top"));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DATOMS, "datoms",
@@ -158,9 +174,17 @@ init_std_drd () {
 	fixed (0) -> name ("new double page before"));
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
-  init (AROUND, "around", fixed (3, 0, DETAILED) -> accessible (1));
-  init (VAR_AROUND, "around*", fixed (3, 0, DETAILED) -> accessible (1));
-  init (BIG_AROUND, "big-around", fixed (2, 0, DETAILED) -> accessible (1));
+  init (AROUND, "around", fixed (3, 0, DETAILED) ->
+        name (0, "left bracket") ->
+        accessible (1) ->
+        name (2, "right bracket"));
+  init (VAR_AROUND, "around*", fixed (3, 0, DETAILED) ->
+        name (0, "left bracket") ->
+        accessible (1) ->
+        name (2, "right bracket"));
+  init (BIG_AROUND, "big-around", fixed (2, 0, DETAILED) ->
+        name (0, "big operator") ->
+        accessible (1));
   init (LEFT, "left", options (1, 2));
   init (MID, "mid", options (1, 2));
   init (RIGHT, "right", options (1, 2));
@@ -185,9 +209,12 @@ init_std_drd () {
         fixed (2) -> name ("fraction") ->
         accessible (0) -> locals (0, "math-display", "false"));
   init (SQRT, "sqrt", options (1, 1) -> accessible (0) -> name ("root"));
-  init (WIDE, "wide", fixed (1, 1, BIFORM) -> accessible (0));
-  init (VAR_WIDE, "wide*",
-	fixed (1, 1, BIFORM) -> accessible (0) -> name ("wide under"));
+  init (WIDE, "wide", fixed (1, 1, BIFORM) ->
+        accessible (0) ->
+        name (1, "accent"));
+  init (VAR_WIDE, "wide*", fixed (1, 1, BIFORM) ->
+        accessible (0) -> name ("wide under") ->
+        name (1, "accent"));
   init (NEG, "neg", fixed (1) -> accessible (0) -> name ("negation"));
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
 
@@ -237,11 +264,11 @@ init_std_drd () {
   init (GET_ARITY, "get-arity", fixed (1) -> returns_integer ());
   init (MAP_ARGS, "map-args",
 	options (3, 2, DETAILED) ->
-	variable (0) ->                       // macro to be applied
-	variable (1) ->                       // tag for the returned value
-	argument (2) ->                       // apply map to this argument
-	integer (3) ->                        // optional start index
-	integer (4) ->                        // optional end index
+	variable (0) -> name (0, "macro") ->
+	variable (1) -> name (1, "return tag") ->
+	argument (2) -> name (2, "argument") ->
+	integer (3) -> name (3, "start index") ->
+	integer (4) -> name (4, "end index") ->
 	name ("map arguments"));
   init (EVAL_ARGS, "eval-args",
 	fixed (1) -> argument (0) -> name ("evaluate arguments"));
@@ -256,10 +283,12 @@ init_std_drd () {
   init (COPY, "copy", fixed (1) -> regular (0));
   init (IF, "if",
 	options (2, 1, DETAILED) ->
-	boolean (0) -> regular (1) -> regular (2));
+	boolean (0) -> name (0, "condition") ->
+        regular (1) -> regular (2));
   init (VAR_IF, "if*",
 	fixed (1, 1, BIFORM) ->
-	boolean (0) -> regular (1));
+	boolean (0) -> name (0, "condition") ->
+        regular (1));
   init (CASE, "case",
 	repeat (2, 1));
   init (WHILE, "while",
@@ -377,23 +406,29 @@ init_std_drd () {
   init (REWRITE_INACTIVE, "rewrite-inactive", fixed (2));
   init (INLINE_TAG, "inline-tag",
 	repeat (1, 1, BIFORM) ->
-	accessible (0) -> variable (0) -> accessible (1));
+	accessible (0) -> variable (0) -> name (0, "macro") ->
+        accessible (1));
   init (OPEN_TAG, "open-tag",
 	repeat (1, 1, BIFORM) ->
-	accessible (0) -> variable (0) -> accessible (1));
+	accessible (0) -> variable (0) -> name (0, "macro") ->
+        accessible (1));
   init (MIDDLE_TAG, "middle-tag",
 	repeat (1, 1, BIFORM) ->
-	variable (0) -> accessible (1));
+	variable (0) -> name (0, "macro") ->
+        accessible (1));
   init (CLOSE_TAG, "close-tag",
 	repeat (1, 1, BIFORM) ->
-	variable (0) -> accessible (1));
+	variable (0) -> name (0, "macro") ->
+        accessible (1));
   init (SYMBOL, "symbol",
-	fixed (1) -> code (0) -> locals (0, "mode", "src"));
+        fixed (1) ->
+        code (0) -> name (0, "name") -> locals (0, "mode", "src"));
   init (LATEX, "latex",
-	fixed (1) -> code (0) -> locals (0, "mode", "src"));
+	fixed (1) ->
+        code (0) -> name (0, "command") -> locals (0, "mode", "src"));
   init (HYBRID, "hybrid",
 	options (1, 1, BIFORM) ->
-	variable (0) -> locals (0, "mode", "src") ->
+	variable (0) -> name (0, "command") -> locals (0, "mode", "src") ->
 	accessible (1));
 
   init (LOCUS, "locus",
@@ -407,45 +442,45 @@ init_std_drd () {
 	regular (0));
   init (LINK, "link",
 	repeat (1, 1, BIFORM) -> returns_adhoc () ->
-	accessible (0) -> string_type (0) ->  // link type
-	accessible (1));                      // participants
+	accessible (0) -> string_type (0) -> name (0, "link type") ->
+	accessible (1) -> name (1, "participants"));
   init (URL, "url",
 	options (1, 1, BIFORM) -> returns_adhoc () ->
-	accessible (0) -> url_type (0) ->     // the URL
+	accessible (0) -> url_type (0) ->
 	accessible (1) -> regular (1));       // FIXME: location?
   init (SCRIPT, "script",
 	options (1, 1, BIFORM) -> returns_adhoc () ->
-	accessible (0) -> code (0) ->         // the script
-	accessible (1) -> regular (1));       // location for evaluation
+	accessible (0) -> code (0) -> name (0, "script") ->
+	accessible (1) -> regular (1) -> name (0, "where"));
   init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) ->
-	accessible (0) ->                     // link text
-	url_type (1) ->                       // link destination
+	accessible (0) -> name (0, "text") ->
+	url_type (1) -> name (1, "destination") ->
 	name ("hyperlink"));
   init (ACTION, "action",
 	options (2, 1, DETAILED) ->
-	accessible (0) ->                     // action text
-	code (1) ->                           // action script
-	regular (2));                         // location for evaluation
+	accessible (0) -> name (0, "text") ->
+	code (1) -> name (1, "script") ->
+	regular (2) -> name (2, "where"));
   init (SET_BINDING, "set-binding",
 	options (1, 2));                      // see env_exec.cpp
   init (GET_BINDING, "get-binding",
 	options (1, 1, BIFORM) ->
-	identifier (0) ->                     // the key
-	integer (1));                         // binding from master?
+	identifier (0) -> name (0, "key") ->
+	integer (1) -> name (0, "kind"));
   init (LABEL, "label",
-	fixed (1) -> identifier (0) ->
-	name (0, "id") -> long_name (0, "identifier"));
+	fixed (1) ->
+        identifier (0) -> name (0, "id") -> long_name (0, "identifier"));
   init (REFERENCE, "reference",
-	fixed (1) -> identifier (0) ->
-	name (0, "id") -> long_name (0, "identifier"));
+	fixed (1) ->
+        identifier (0) -> name (0, "id") -> long_name (0, "identifier"));
   init (PAGEREF, "pageref",
-	fixed (1) -> identifier (0) -> name ("page reference") ->
-	name (0, "id") -> long_name (0, "identifier"));
+	fixed (1) -> name ("page reference") ->
+        identifier (0) -> name (0, "id") -> long_name (0, "identifier"));
   init (WRITE, "write",
 	fixed (1, 1, BIFORM) ->
-	string_type (0) ->                    // channel
-	regular (1));                         // content written to channel
+	string_type (0) -> name (0, "channel") ->
+	regular (1) -> name (1, "content"));
 
   init (TUPLE, "tuple",
 	repeat (0, 1) -> accessible (0));
@@ -467,13 +502,13 @@ init_std_drd () {
 	fixed (3));                           // not yet implemented
   init (SPECIFIC, "specific",
 	fixed (1, 1, BIFORM) ->
-	string_type (0) ->                    // specific medium
-	regular (1));                         // content
+	string_type (0) -> name (0, "medium") ->
+	regular (1) -> name (1, "content"));
   init (FLAG, "flag",
 	options (2, 1, DETAILED) ->
-	regular (0) ->                        // text in flag
-	string_type (1) ->                    // color
-	argument (2));                        // source of flag
+	regular (0) -> name (0, "flag text") ->
+	string_type (1) -> name (1, "color") ->
+	argument (2) -> name (2, "source"));
 
   init (ANIM_COMPOSE, "anim-compose",
 	repeat (1, 1) -> returns_animation () ->
