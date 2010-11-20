@@ -682,7 +682,7 @@ observer_rep::get_tree (tree& t) {
 
 bool
 observer_rep::set_highlight (int lan, int col, int start, int end) {
-  (void) col; (void) start; (void) end;
+  (void) col; (void) start; (void) end; (void) lan;
   return false;
 }
 

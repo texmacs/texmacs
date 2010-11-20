@@ -186,7 +186,7 @@ skip_modifier (char **p, char *endptr)
   len = (long) (endptr - (*p));
 
   for (i = 0; modifiers[i] != NULL; i++) {
-    if ((len >= strlen(modifiers[i]) &&
+    if ((len >= (long)strlen(modifiers[i]) &&
 	 !memcmp(*p, modifiers[i], len))) {
       slen = strlen(modifiers[i]);
       *p  += slen;
@@ -294,7 +294,7 @@ agl_guess_name (const char *glyphname)
 
   len = strlen(glyphname);
   for (i = 1; var_list[i].key != NULL; i++) {
-    if (len > strlen(var_list[i].key) &&
+    if (len > (int)strlen(var_list[i].key) &&
 	!strcmp(glyphname+len-strlen(var_list[i].key), var_list[i].key)
 	) {
       return i;
@@ -526,7 +526,7 @@ agl_name_is_unicode (const char *glyphname)
     return 0;
 
   suffix = strchr(glyphname, '.');
-  len    = (int) (suffix ? suffix - glyphname : strlen(glyphname));
+  len    = (int) (suffix ? suffix - glyphname : (int)strlen(glyphname));
   /*
    * uni02ac is invalid glyph name and mapped to th empty string.
    */

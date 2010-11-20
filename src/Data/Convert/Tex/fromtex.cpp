@@ -1395,7 +1395,7 @@ env_hacks (tree t) {
     else ea << end[i];
   beg= tree (CONCAT, ba);
   end= tree (CONCAT, ea);
-  for (i=N(beg); i>0 && is_func (beg[i-1], RESET, 1); i--);
+  for (i=N(beg); i>0 && is_func (beg[i-1], RESET, 1); i--) ;
   bool ok= (i<<1) >= N(beg);
   for (int k=0; k<N(beg)-i; k++) {
     ok= ok && is_func (beg[i-k-1], SET, 2) && beg[i-k-1][0] == beg[i+k][0];
