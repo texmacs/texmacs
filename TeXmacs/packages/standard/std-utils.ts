@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7>
+<TeXmacs|1.0.7.7>
 
 <style|<tuple|source|std>>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -38,9 +37,9 @@
 
   <assign|wide-centered|<macro|body|<surround|<no-indent><htab|0fn|last>|<htab|0fn|first>|<arg|body>>>>
 
-  <assign|padded-normal|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent>|<htab|0fn|first><vspace|<arg|b>>|<arg|body>>>>
+  <assign|padded-normal|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent>|<htab|0fn|first><vspace|<arg|after>>|<arg|body>>>>
 
-  <assign|padded-centered|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent><htab|0fn|last>|<htab|0fn|first><vspace|<arg|b>>|<arg|body>>>>
+  <assign|padded-centered|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent><htab|0fn|last>|<htab|0fn|first><vspace|<arg|after>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -53,9 +52,11 @@
 
   <assign|wide-std-bothlined|<macro|body|<wide-bothlined|1ln|1ln|1sep|1sep|<arg|body>>>>
 
-  <assign|padded-bothlined|<macro|a|b|top-border|bot-border|top-sep|bot-sep|body|<surround|<vspace*|<arg|a>>|<vspace|<arg|b>>|<wide-bothlined|<arg|top-border>|<arg|bot-border>|<arg|top-sep>|<arg|bot-sep>|<arg|body>>>>>
+  <assign|padded-bothlined|<macro|before|after|top-border|bot-border|top-sep|bot-sep|body|<surround|<vspace*|<arg|before>>|<vspace|<arg|after>>|<wide-bothlined|<arg|top-border>|<arg|bot-border>|<arg|top-sep>|<arg|bot-sep>|<arg|body>>>>>
 
-  <assign|padded-std-bothlined|<macro|a|b|body|<padded-bothlined|<arg|a>|<arg|b>|1ln|1ln|1sep|1sep|<arg|body>>>>
+  <assign|padded-std-bothlined|<\macro|before|after|body>
+    <padded-bothlined|<arg|before>|<arg|after>|1ln|1ln|1sep|1sep|<arg|body>>
+  </macro>>
 
   <assign|wide-underlined|<macro|bborder|bsep|body|<wide-bothlined|0pt|<arg|bborder>|0pt|<arg|bsep>|<arg|body>>>>
 
@@ -84,20 +85,20 @@
     </src-comment>
   </active*>
 
-  <assign|indent-left|<\macro|l|body>
-    <\with|par-left|<plus|<value|par-left>|<arg|l>>>
+  <assign|indent-left|<\macro|indentation|body>
+    <\with|par-left|<plus|<value|par-left>|<arg|indentation>>>
       <arg|body>
     </with>
   </macro>>
 
-  <assign|indent-right|<\macro|r|body>
-    <\with|par-right|<plus|<value|par-right>|<arg|r>>>
+  <assign|indent-right|<\macro|indentation|body>
+    <\with|par-right|<plus|<value|par-right>|<arg|indentation>>>
       <arg|body>
     </with>
   </macro>>
 
-  <assign|indent-both|<\macro|l|r|body>
-    <\with|par-left|<plus|<value|par-left>|<arg|l>>|par-right|<plus|<value|par-right>|<arg|r>>>
+  <assign|indent-both|<\macro|left-indentation|right-indentation|body>
+    <\with|par-left|<plus|<value|par-left>|<arg|left-indentation>>|par-right|<plus|<value|par-right>|<arg|right-indentation>>>
       <arg|body>
     </with>
   </macro>>
@@ -110,27 +111,27 @@
     </src-comment>
   </active*>
 
-  <assign|set-this-page-header|<macro|s|<style-with|src-compact|none|<flag|<localize|this
-  page header>|brown|s><assign|page-this-header|<arg|s>>>>>
+  <assign|set-this-page-header|<macro|header|<style-with|src-compact|none|<flag|<localize|this
+  page header>|brown|header><assign|page-this-header|<arg|header>>>>>
 
-  <assign|set-header|<macro|s|<style-with|src-compact|none|<flag|<localize|header>|brown|s><assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>>
+  <assign|set-header|<macro|header|<style-with|src-compact|none|<flag|<localize|header>|brown|header><assign|page-odd-header|<arg|header>><assign|page-even-header|<arg|header>>>>>
 
-  <assign|set-odd-page-header|<macro|s|<style-with|src-compact|none|<flag|<localize|odd
-  page header>|brown|s><assign|page-odd-header|<arg|s>>>>>
+  <assign|set-odd-page-header|<macro|header|<style-with|src-compact|none|<flag|<localize|odd
+  page header>|brown|header><assign|page-odd-header|<arg|header>>>>>
 
-  <assign|set-even-page-header|<macro|s|<style-with|src-compact|none|<flag|<localize|even
-  page header>|brown|s><assign|page-odd-header|<arg|s>>>>>
+  <assign|set-even-page-header|<macro|header|<style-with|src-compact|none|<flag|<localize|even
+  page header>|brown|header><assign|page-odd-header|<arg|header>>>>>
 
-  <assign|set-this-page-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|this
-  page footer>|brown|s><assign|page-this-footer|<arg|s>>>>>
+  <assign|set-this-page-footer|<macro|footer|<style-with|src-compact|none|<flag|<localize|this
+  page footer>|brown|footer><assign|page-this-footer|<arg|footer>>>>>
 
-  <assign|set-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|footer>|brown|s><assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>>
+  <assign|set-footer|<macro|footer|<style-with|src-compact|none|<flag|<localize|footer>|brown|footer><assign|page-odd-footer|<arg|footer>><assign|page-even-footer|<arg|footer>>>>>
 
-  <assign|set-odd-page-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|odd
-  page footer>|brown|s><assign|page-odd-footer|<arg|s>>>>>
+  <assign|set-odd-page-footer|<macro|footer|<style-with|src-compact|none|<flag|<localize|odd
+  page footer>|brown|footer><assign|page-odd-footer|<arg|footer>>>>>
 
-  <assign|set-even-page-footer|<macro|s|<style-with|src-compact|none|<flag|<localize|even
-  page footer>|brown|s><assign|page-odd-footer|<arg|s>>>>>
+  <assign|set-even-page-footer|<macro|footer|<style-with|src-compact|none|<flag|<localize|even
+  page footer>|brown|footer><assign|page-odd-footer|<arg|footer>>>>>
 
   <assign|set-page-number|<macro|nr|<style-with|src-compact|none|<flag|<localize|renumber
   this page>|brown|nr><assign|page-nr|<arg|nr>>>>>
@@ -148,15 +149,15 @@
     </src-comment>
   </active*>
 
-  <assign|localize|<macro|x|<translate|<arg|x>|english|<value|language>>>>
+  <assign|localize|<macro|text|<translate|<arg|text>|english|<value|language>>>>
 
-  <assign|map|<macro|f|args|<extern|ext-map|<arg|f>|<arg|args>>>>
+  <assign|map|<macro|fun|args|<extern|ext-map|<arg|fun>|<arg|args>>>>
 
   <assign|concat-tuple|<macro|args|sep|fin|<extern|ext-concat-tuple|<arg|args>|<arg|sep>|<arg|fin>>>>
 
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
-  <assign|hidden-title|<macro|t|>>
+  <assign|hidden-title|<macro|title|>>
 
   <assign|wiki-link|<macro|body|name|<style-with|src-compact|none|<action|<arg|body>|<merge|(remote-project-load-by-name
   "|<arg|name>|")>>>>>

@@ -256,23 +256,23 @@
 
   \;
 
-  <assign|bi-index|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><subindex|<arg|x>|<arg|y>><subindex|<arg|y>|<arg|x>>>>>
+  <assign|bi-index|<macro|key|secondary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><subindex|<arg|key>|<arg|secondary>><subindex|<arg|secondary>|<arg|key>>>>>
 
-  <assign|bi-index*|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><index|<arg|x> <arg|y>><subindex|<arg|y>|<arg|x>>>>>
+  <assign|bi-index*|<macro|key|secondary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><index|<arg|key> <arg|secondary>><subindex|<arg|secondary>|<arg|key>>>>>
 
-  <assign|sub-bi-index|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><subsubindex|<arg|x>|<arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
+  <assign|sub-bi-index|<macro|key|secondary|tertiary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><subsubindex|<arg|key>|<arg|secondary>|<arg|tertiary>><subsubindex|<arg|secondary>|<arg|key>|<arg|tertiary>>>>>
 
-  <assign|sub-bi-index*|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><subindex|<arg|x> <arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
+  <assign|sub-bi-index*|<macro|key|secondary|tertiary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><subindex|<arg|key> <arg|secondary>|<arg|tertiary>><subsubindex|<arg|secondary>|<arg|key>|<arg|tertiary>>>>>
 
-  <assign|subsub-bi-index|<macro|x|y|z|a|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|x><subsubsubindex|<arg|x>|<arg|y>|<arg|z>|<arg|a>><subsubsubindex|<arg|y>|<arg|x>|<arg|z>|<arg|a>>>>>
+  <assign|subsub-bi-index|<macro|key|secondary|tertiary|quaternary|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|key><subsubsubindex|<arg|key>|<arg|secondary>|<arg|tertiary>|<arg|quaternary>><subsubsubindex|<arg|secondary>|<arg|key>|<arg|tertiary>|<arg|quaternary>>>>>
 
-  <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
-  red>|<table|<row|<cell|<arg|x>>>>>>>>
+  <assign|recall|<macro|key|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
+  red>|<table|<row|<cell|<arg|key>>>>>>>>
 
   <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Rightarrow\>>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
 
@@ -282,12 +282,12 @@
     <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>|<arg|y>>
   </macro>>
 
-  <assign|solution|<\macro|x>
-    <render-exercise|<localize|Solution>|<arg|x>>
+  <assign|solution|<\macro|body>
+    <render-exercise|<localize|Solution>|<arg|body>>
   </macro>>
 
-  <assign|annote|<macro|i|<with|font-family|ss|<active*|<with|color|brown|[>><with|color|dark
-  blue|<arg|i>><active*|<with|color|brown|]>>>>>
+  <assign|annote|<macro|body|<with|font-family|ss|<active*|<with|color|brown|[>><with|color|dark
+  blue|<arg|body>><active*|<with|color|brown|]>>>>>
 
   <assign|correct|<macro|old|new|<active*|<with|color|brown|[>><with|color|dark
   blue|<arg|old>><active*|<with|color|brown|<with|mode|math|\<rightarrow\>>>><with|color|dark
@@ -295,7 +295,7 @@
 
   \;
 
-  <assign|joris-title|<macro|x|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-block|no>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|par-mode|center|<very-large|<strong|<name|<arg|x>>>><hidden-title|<arg|x>>>>>|<row|<cell|<small|<strong|[
+  <assign|joris-title|<macro|title|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-block|no>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|par-mode|center|<very-large|<strong|<name|<arg|title>>>><hidden-title|<arg|title>>>>>|<row|<cell|<small|<strong|[
   <hlink|Homepage|../main/joris.tm> \| <hlink|Publications|../main/publs.tm>
   \| <hlink|<TeXmacs>|http://www.texmacs.org> \|
   <hlink|Mathemagix|http://www.mathemagix.org> ]>>>>>>>>>

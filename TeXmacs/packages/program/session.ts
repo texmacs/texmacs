@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.0.7.7>
 
 <style|source>
 
@@ -26,8 +26,8 @@
     </src-comment>
   </active*>
 
-  <assign|session|<\macro|lan|ses|body>
-    <\with|prog-language|<arg|lan>|prog-session|<arg|ses>>
+  <assign|session|<\macro|language|session|body>
+    <\with|prog-language|<arg|language>|prog-session|<arg|session>>
       <render-session|<arg|body>>
     </with>
   </macro>>
@@ -52,7 +52,7 @@
     <input|<arg|prompt>|<math|<arg|in>>>
   </macro>>
 
-  <assign|id-function|<macro|x|<arg|x>>>
+  <assign|id-function|<macro|body|<arg|body>>>
 
   <assign|generic-input|<\macro|prompt|body>
     <tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|2|2|cell-lsep|0fn>|<cwith|1|1|2|2|cell-rsep|0fn>|<cwith|1|1|2|2|cell-hyphen|t>|<twith|table-hyphen|y>|<table|<row|<cell|<id-function|<arg|prompt>>>|<\cell>
@@ -89,8 +89,8 @@
     </wide-normal>
   </macro>>
 
-  <assign|timing|<macro|s|<compound|small|<htab|5mm><with|color|dark
-  grey|<arg|s>>>>>
+  <assign|timing|<macro|time|<compound|small|<htab|5mm><with|color|dark
+  grey|<arg|time>>>>>
 
   <\active*>
     <\src-comment>
@@ -144,7 +144,7 @@
     </src-comment>
   </active*>
 
-  <assign|html-text|<macro|x|<with|mode|text|par-mode|justify|font-family|ss|par-indent|0em|par-par-sep|0.33em|<arg|x>>>>
+  <assign|html-text|<macro|body|<with|mode|text|par-mode|justify|font-family|ss|par-indent|0em|par-par-sep|0.33em|<arg|body>>>>
 
   \;
 </body>

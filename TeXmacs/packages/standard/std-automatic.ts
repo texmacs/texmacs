@@ -59,7 +59,7 @@
 
   <assign|cite|<xmacro|keys|<render-cite|<cite-arg|<arg|keys|0>><map-args|cite-arg-extra|concat|keys|1>>>>
 
-  <assign|cite-detail|<macro|key|detail|<render-cite-detail|<cite-arg|<arg|key>>|<arg|detail>>>>
+  <assign|cite-detail|<macro|key|details|<render-cite-detail|<cite-arg|<arg|key>>|<arg|details>>>>
 
   <assign|cite-raw|<xmacro|keys|<cite-arg|<arg|keys|0>><map-args|cite-arg-extra|concat|keys|1>>>
 

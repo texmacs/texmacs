@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.4>
+<TeXmacs|1.0.7.7>
 
 <style|<tuple|source|std-pattern>>
 
@@ -168,7 +168,7 @@
   <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
   ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
 
-  <assign|msc-ref|<macro|x|<style-with|src-compact|none|<hlink|<arg|x>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|x>|&submit=Search>>>>>>
+  <assign|msc-ref|<macro|msc-id|<style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=default&sk=|<arg|msc-id>|&submit=Search>>>>>>
 
   <assign|doc-AMS-class|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >>>>
@@ -288,22 +288,22 @@
 
   <assign|author-from-authors|<xmacro|x|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|x>>|0>|<arg|x|0><map-args|author-from-authors*|concat|x|1>>>>>
 
-  <assign|author-render-name|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<arg|x>>>>>>
+  <assign|author-render-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<arg|author>>>>>>
 
-  <assign|author-name|<macro|x|<author-render-name|<style-with|src-compact|none|<author-by|<arg|x>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
+  <assign|author-name|<macro|author|<author-render-name|<style-with|src-compact|none|<author-by|<arg|author>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
 
-  <assign|author-address|<\macro|x>
-    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|x>>>
+  <assign|author-address|<\macro|address>
+    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|address>>>
   </macro>>
 
-  <assign|author-email|<macro|x|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
-  ><with|font-family|tt|<arg|x>>>>>>
+  <assign|author-email|<macro|email|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
+  ><with|font-family|tt|<arg|email>>>>>>
 
-  <assign|author-homepage|<macro|x|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
-  ><with|font-family|tt|<arg|x>>>>>>
+  <assign|author-homepage|<macro|homepage|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
+  ><with|font-family|tt|<arg|homepage>>>>>>
 
-  <assign|author-note|<\macro|x>
-    <arg|x>
+  <assign|author-note|<\macro|note>
+    <arg|note>
   </macro>>
 
   <\active*>

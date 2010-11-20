@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.5>
+<TeXmacs|1.0.7.7>
 
 <style|source>
 
@@ -55,57 +55,57 @@
 
   \;
 
-  <assign|cite-author|<macro|x|<cite-add|<arg|x>><natbib-author|<cite-data|<arg|x>>>>>
+  <assign|cite-author|<macro|key|<cite-add|<arg|key>><natbib-author|<cite-data|<arg|key>>>>>
 
-  <assign|cite-year|<macro|x|<cite-add|<arg|x>><natbib-year|<cite-data|<arg|x>>>>>
+  <assign|cite-year|<macro|key|<cite-add|<arg|key>><natbib-year|<cite-data|<arg|key>>>>>
 
-  <assign|cite-author*|<macro|x|<cite-add|<arg|x>><natbib-author*|<cite-data|<arg|x>>>>>
+  <assign|cite-author*|<macro|key|<cite-add|<arg|key>><natbib-author*|<cite-data|<arg|key>>>>>
 
-  <assign|cite-author-year|<macro|x|<cite-author|<arg|x>>,
-  <cite-year|<arg|x>>>>
+  <assign|cite-author-year|<macro|key|<cite-author|<arg|key>>,
+  <cite-year|<arg|key>>>>
 
-  <assign|cite-author*-year|<macro|x|<cite-author*|<arg|x>>,
-  <cite-year|<arg|x>>>>
+  <assign|cite-author*-year|<macro|key|<cite-author*|<arg|key>>,
+  <cite-year|<arg|key>>>>
 
-  <assign|cite-author-year*|<macro|x|<cite-author|<arg|x>>
-  <render-cite|<cite-year|<arg|x>>>>>
+  <assign|cite-author-year*|<macro|key|<cite-author|<arg|key>>
+  <render-cite|<cite-year|<arg|key>>>>>
 
-  <assign|cite-author*-year*|<macro|x|<cite-author*|<arg|x>>
-  <render-cite|<cite-year|<arg|x>>>>>
-
-  \;
-
-  <assign|cite-author-link|<macro|x|<cite-link|<arg|x>|<cite-author|<arg|x>>>>>
-
-  <assign|cite-year-link|<macro|x|<cite-link|<arg|x>|<cite-year|<arg|x>>>>>
-
-  <assign|cite-author*-link|<macro|x|<cite-link|<arg|x>|<cite-author*|<arg|x>>>>>
+  <assign|cite-author*-year*|<macro|key|<cite-author*|<arg|key>>
+  <render-cite|<cite-year|<arg|key>>>>>
 
   \;
 
-  <assign|cite-raw-1|<macro|x|<cite-link|<arg|x>|<cite-author-year|<arg|x>>>>>
+  <assign|cite-author-link|<macro|key|<cite-link|<arg|key>|<cite-author|<arg|key>>>>>
 
-  <assign|cite-raw+|<macro|x|<cite-sep><cite-raw-1|<arg|x>>>>
+  <assign|cite-year-link|<macro|key|<cite-link|<arg|key>|<cite-year|<arg|key>>>>>
+
+  <assign|cite-author*-link|<macro|key|<cite-link|<arg|key>|<cite-author*|<arg|key>>>>>
+
+  \;
+
+  <assign|cite-raw-1|<macro|key|<cite-link|<arg|key>|<cite-author-year|<arg|key>>>>>
+
+  <assign|cite-raw+|<macro|key|<cite-sep><cite-raw-1|<arg|key>>>>
 
   <assign|cite-raw|<xmacro|x|<cite-raw-1|<arg|x|0>><map-args|cite-raw+|concat|x|1>>>
 
-  <assign|cite-raw*-1|<macro|x|<cite-link|<arg|x>|<cite-author*-year|<arg|x>>>>>
+  <assign|cite-raw*-1|<macro|key|<cite-link|<arg|key>|<cite-author*-year|<arg|key>>>>>
 
-  <assign|cite-raw*+|<macro|x|<cite-sep><cite-raw*-1|<arg|x>>>>
+  <assign|cite-raw*+|<macro|key|<cite-sep><cite-raw*-1|<arg|key>>>>
 
   <assign|cite-raw*|<xmacro|x|<cite-raw*-1|<arg|x|0>><map-args|cite-raw*+|concat|x|1>>>
 
   \;
 
-  <assign|cite-textual-1|<macro|x|<cite-link|<arg|x>|<cite-author-year*|<arg|x>>>>>
+  <assign|cite-textual-1|<macro|key|<cite-link|<arg|key>|<cite-author-year*|<arg|key>>>>>
 
-  <assign|cite-textual+|<macro|x|<cite-sep><cite-textual-1|<arg|x>>>>
+  <assign|cite-textual+|<macro|key|<cite-sep><cite-textual-1|<arg|key>>>>
 
   <assign|cite-textual|<xmacro|x|<cite-textual-1|<arg|x|0>><map-args|cite-textual+|concat|x|1>>>
 
-  <assign|cite-textual*-1|<macro|x|<cite-link|<arg|x>|<cite-author*-year*|<arg|x>>>>>
+  <assign|cite-textual*-1|<macro|key|<cite-link|<arg|key>|<cite-author*-year*|<arg|key>>>>>
 
-  <assign|cite-textual*+|<macro|x|<cite-sep><cite-textual*-1|<arg|x>>>>
+  <assign|cite-textual*+|<macro|key|<cite-sep><cite-textual*-1|<arg|key>>>>
 
   <assign|cite-textual*|<xmacro|x|<cite-textual*-1|<arg|x|0>><map-args|cite-textual*+|concat|x|1>>>
 
@@ -119,11 +119,11 @@
 
   <assign|cite-parenthesized*|<value|cite*>>
 
-  <assign|cite-detail|<macro|x|y|<render-cite-detail|<cite-raw-1|<arg|x>>|<arg|y>>>>
+  <assign|cite-detail|<macro|key|details|<render-cite-detail|<cite-raw-1|<arg|key>>|<arg|details>>>>
 
   \;
 
-  <assign|render-natbibitem|<macro|x|>>
+  <assign|render-natbibitem|<macro|key|>>
 
   <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-natbibitem|<natbib-author*|<arg|text>>,
   <natbib-year|<arg|text>>><set-binding|<arg|text>>>>>

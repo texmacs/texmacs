@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.4>
+<TeXmacs|1.0.7.7>
 
 <style|<tuple|source|std>>
 
@@ -34,7 +34,7 @@
 
   <assign|default-padded-normal|<value|padded-normal>>
 
-  <assign|folded-padded-normal|<macro|a|b|body|<\surround|<vspace*|<arg|a>>|<htab|0fn|first><vspace|<arg|b>>>
+  <assign|folded-padded-normal|<macro|before|after|body|<\surround|<vspace*|<arg|before>>|<htab|0fn|first><vspace|<arg|after>>>
     <\with|padded-normal|<value|default-padded-normal>>
       <arg|body>
     </with>
@@ -48,9 +48,9 @@
     </surround>
   </macro>>
 
-  <assign|render-folded-explain|<\macro|tit|body>
+  <assign|render-folded-explain|<\macro|title|body>
     <\surround|<no-indent><vspace*|0.5fn>|<vspace|0.5fn><right-flush>>
-      <with|font-series|bold|<arg|tit>><vspace|0.5fn>
+      <with|font-series|bold|<arg|title>><vspace|0.5fn>
 
       <arg|body>
     </surround>
@@ -90,7 +90,7 @@
   </macro>>
 
   <assign|folded-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
@@ -98,7 +98,7 @@
   </macro>>
 
   <assign|unfolded-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
       <arg|x>
 
       <arg|y>
@@ -106,7 +106,7 @@
   </macro>>
 
   <assign|folded-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
@@ -114,7 +114,7 @@
   </macro>>
 
   <assign|unfolded-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
       <arg|x>
 
       <arg|y>
@@ -186,25 +186,25 @@
   </macro>>
 
   <assign|summarized-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
       <arg|x>
     </render-folded-std>
   </macro>>
 
   <assign|detailed-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
       <arg|y>
     </render-folded-std>
   </macro>>
 
   <assign|summarized-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|(mouse-unfold)|<arg|x>>>
       <arg|x>
     </render-folded-env>
   </macro>>
 
   <assign|detailed-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||<maximum|1r|1.5fn>|>|(mouse-fold)|<arg|x>>>
       <arg|y>
     </render-folded-env>
   </macro>>
@@ -361,23 +361,23 @@
     </src-comment>
   </active*>
 
-  <assign|render-old|<macro|x|<with|color|dark red|<arg|x>>>>
+  <assign|render-old|<macro|old|<with|color|dark red|<arg|old>>>>
 
-  <assign|render-new|<macro|x|<with|color|dark green|<arg|x>>>>
+  <assign|render-new|<macro|new|<with|color|dark green|<arg|new>>>>
 
-  <assign|version-old|<macro|x|y|<render-old|<arg|x>>>>
+  <assign|version-old|<macro|old|new|<render-old|<arg|old>>>>
 
-  <assign|version-new|<macro|x|y|<render-new|<arg|y>>>>
+  <assign|version-new|<macro|old|new|<render-new|<arg|new>>>>
 
-  <assign|version-both-small|<macro|x|y|<render-old|<arg|x>><render-new|<arg|y>>>>
+  <assign|version-both-small|<macro|old|new|<render-old|<arg|old>><render-new|<arg|new>>>>
 
-  <assign|version-both-big|<\macro|x|y>
-    <render-old|<arg|x>>
+  <assign|version-both-big|<\macro|old|new>
+    <render-old|<arg|old>>
 
-    <surround||<right-flush>|<render-new|<arg|y>>>
+    <surround||<right-flush>|<render-new|<arg|new>>>
   </macro>>
 
-  <assign|version-both|<macro|x|y|<compound|<if|<equal|<get-label|<arg|x>>|document>|version-both-big|version-both-small>|<arg|x>|<arg|y>>>>
+  <assign|version-both|<macro|old|new|<compound|<if|<equal|<get-label|<arg|old>>|document>|version-both-big|version-both-small>|<arg|old>|<arg|new>>>>
 
   <assign|version-suppressed|<macro|<math|<op|\<times\>>>>>
 </body>
