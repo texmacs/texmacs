@@ -28,7 +28,7 @@
   (tree-in? t (doc-author-tag-list)))
 
 (define doc-data-inactive-tags
-  '(doc-running-title doc-running-author doc-keywords doc-AMS-class))
+  (doc-title-inactive-tag-list))
 
 (tm-define (make-doc-data)
   (insert-go-to '(doc-data (doc-title "")) '(0 0 0)))
