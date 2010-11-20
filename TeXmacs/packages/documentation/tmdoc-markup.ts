@@ -26,9 +26,9 @@
     </src-comment>
   </active*>
 
-  <assign|menu-item|<macro|x|<with|font-family|ss|<localize|<arg|x>>>>>
+  <assign|menu-item|<macro|body|<with|font-family|ss|<localize|<arg|body>>>>>
 
-  <assign|menu-extra|<macro|x|<active*|<with|mode|math|\<rightarrow\>>><menu-item|<arg|x>>>>
+  <assign|menu-extra|<macro|body|<active*|<with|mode|math|\<rightarrow\>>><menu-item|<arg|body>>>>
 
   <assign|menu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|0>><map-args|menu-extra|concat|x|1><index-write|<map-args|menu-item|tuple|x>>>>>
 
@@ -39,16 +39,16 @@
     </src-comment>
   </active*>
 
-  <assign|indexed|<macro|x|<arg|x><index|<arg|x>>>>
+  <assign|indexed|<macro|body|<arg|body><index|<arg|body>>>>
 
-  <assign|markup|<macro|x|<src-macro|<arg|x>>>>
+  <assign|markup|<macro|body|<src-macro|<arg|body>>>>
 
-  <assign|tmstyle|<macro|x|<indexed|<with|font-family|tt|color|brown|<arg|x>>>>>
+  <assign|tmstyle|<macro|body|<indexed|<with|font-family|tt|color|brown|<arg|body>>>>>
 
-  <assign|tmpackage|<macro|x|<indexed|<with|font-family|tt|color|brown|<arg|x>>>>>
+  <assign|tmpackage|<macro|body|<indexed|<with|font-family|tt|color|brown|<arg|body>>>>>
 
-  <assign|tmdtd|<macro|x|<indexed|<with|font-family|tt|color|dark
-  magenta|<arg|x>>>>>
+  <assign|tmdtd|<macro|body|<indexed|<with|font-family|tt|color|dark
+  magenta|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -78,10 +78,10 @@
 
   <drd-props|explain-macro|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <assign|explain-synopsis|<macro|x|<htab|5mm><with|color|dark
-  grey|(<arg|x>)><vspace|0.25fn>>>
+  <assign|explain-synopsis|<macro|synopsis|<htab|5mm><with|color|dark
+  grey|(synopsis)><vspace|0.25fn>>>
 
-  <assign|src-value|<macro|x|<with|font-shape|right|color|black|<arg|x>>>>
+  <assign|src-value|<macro|body|<with|font-shape|right|color|black|<arg|body>>>>
 
   <assign|var-val|<macro|var|val|<src-var|<arg|var>><active*|<with|mode|math|\<assign\>>><with|font-family|tt|<arg|val>>>>
 
@@ -93,19 +93,19 @@
     </src-comment>
   </active*>
 
-  <assign|simple-link|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
+  <assign|simple-link|<macro|destination|<hlink|<with|font-family|tt|<arg|destination>>|<arg|destination>>>>
 
-  <assign|hyper-link*|<macro|x|y|<hlink|<arg|x>|<arg|y>>>>
+  <assign|hyper-link*|<macro|body|destination|<hlink|<arg|body>|<arg|destination>>>>
 
-  <assign|concept-link|<macro|x|<with|color|magenta|<arg|x>>>>
+  <assign|concept-link|<macro|body|<with|color|magenta|<arg|body>>>>
 
-  <assign|only-index|<macro|x|<index|<arg|x>>>>
+  <assign|only-index|<macro|body|<index|<arg|body>>>>
 
-  <assign|def-index|<macro|x|<em|<arg|x>><index|<arg|x>>>>
+  <assign|def-index|<macro|body|<em|<arg|body>><index|<arg|body>>>>
 
-  <assign|re-index|<macro|x|<arg|x><index|<arg|x>>>>
+  <assign|re-index|<macro|body|<arg|body><index|<arg|body>>>>
 
-  <assign|example-plugin-link|<macro|x|<style-with|src-compact|none|<hlink|<with|font-family|tt|<arg|x>>|<merge|$TEXMACS_PATH/examples/plugins/|<arg|x>>>>>>
+  <assign|example-plugin-link|<macro|plugin|<style-with|src-compact|none|<hlink|<with|font-family|tt|<arg|plugin>>|<merge|$TEXMACS_PATH/examples/plugins/|<arg|plugin>>>>>>
 
   <\active*>
     <\src-comment>
@@ -113,23 +113,23 @@
     </src-comment>
   </active*>
 
-  <assign|framed-table|<macro|x|<with|color|dark
+  <assign|framed-table|<macro|body|<with|color|dark
   grey|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-background|pastel
-  blue>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<arg|x>>>>>
+  blue>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<arg|body>>>>>
 
-  <assign|framed-fragment|<macro|x|<surround||<no-indent*>|<framed-table|<tformat|<table|<row|<\cell>
-    <with|color|black|<arg|x>>
+  <assign|framed-fragment|<macro|body|<surround||<no-indent*>|<framed-table|<tformat|<table|<row|<\cell>
+    <with|color|black|<arg|body>>
   </cell>>>>>>>>
 
-  <assign|framed-fragment*|<\macro|x>
+  <assign|framed-fragment*|<\macro|body>
     <framed-table|<tformat|<twith|table-width|0.45par>|<table|<row|<\cell>
-      <with|color|black|<arg|x>>
+      <with|color|black|<arg|body>>
     </cell>>>>>
   </macro>>
 
-  <assign|todo|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
+  <assign|todo|<macro|body|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|To
-  do: <arg|x>>>>>>>>
+  do: <arg|body>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -137,8 +137,8 @@
     </src-comment>
   </active*>
 
-  <assign|tm-fragment|<\macro|x>
-    <quotation|<framed-fragment|<arg|x>>>
+  <assign|tm-fragment|<\macro|body>
+    <quotation|<framed-fragment|<arg|body>>>
   </macro>>
 
   <\active*>
@@ -147,8 +147,8 @@
     </src-comment>
   </active*>
 
-  <assign|verbatim-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
+  <assign|verbatim-fragment|<\macro|body>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|body>>>>>
   </macro>>
 
   <\active*>
@@ -159,19 +159,19 @@
 
   <assign|scheme|<macro|<name|Scheme>>>
 
-  <assign|scm|<macro|x|<with|mode|prog|prog-language|scheme|<arg|x>>>>
+  <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|<arg|body>>>>
 
-  <assign|scm-verb|<macro|x|<with|prog-language|verbatim|<arg|x>>>>
+  <assign|scm-verb|<macro|body|<with|prog-language|verbatim|<arg|body>>>>
 
-  <assign|scm-arg|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>>>>
+  <assign|scm-arg|<macro|body|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|body>>>>>>
 
-  <assign|scm-args|<macro|x|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|x>>>><rsup|*>>>
+  <assign|scm-args|<macro|body|<with|prog-font-shape|italic|<scm|<scm-verb|<arg|body>>>><rsup|*>>>
 
-  <assign|scm-opt-arg|<macro|x|<with|color|dark
-  grey|[<style-with|<scm-arg|<arg|x>>>]>>>
+  <assign|scm-opt-arg|<macro|body|<with|color|dark
+  grey|[<style-with|<scm-arg|<arg|body>>>]>>>
 
-  <assign|scm-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|x>>>>>
+  <assign|scm-fragment|<\macro|body>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|body>>>>>
   </macro>>
 
   <\active*>
@@ -180,10 +180,10 @@
     </src-comment>
   </active*>
 
-  <assign|shell|<macro|x|<with|mode|prog|prog-language|shell|<arg|x>>>>
+  <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|<arg|body>>>>
 
-  <assign|shell-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<shell|<arg|x>>>>>
+  <assign|shell-fragment|<\macro|body>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<shell|<arg|body>>>>>
   </macro>>
 
   <\active*>
@@ -194,10 +194,10 @@
 
   <assign|c++|<macro|<name|C++>>>
 
-  <assign|cpp|<macro|x|<with|mode|prog|prog-language|cpp|<arg|x>>>>
+  <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|<arg|body>>>>
 
-  <assign|cpp-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<cpp|<arg|x>>>>>
+  <assign|cpp-fragment|<\macro|body>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<cpp|<arg|body>>>>>
   </macro>>
 
   <\active*>
@@ -210,14 +210,14 @@
 
   <assign|mathemagix|<macro|<with|font-shape|small-caps|Mathemagix>>>
 
-  <assign|mmx|<macro|x|<with|mode|prog|prog-language|mathemagix|<arg|x>>>>
+  <assign|mmx|<macro|body|<with|mode|prog|prog-language|mathemagix|<arg|body>>>>
 
-  <assign|mmx-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|x>>>>>
+  <assign|mmx-fragment|<\macro|body>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|body>>>>>
   </macro>>
 
-  <assign|mmx-fragment*|<\macro|x>
-    <framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|x>>>>
+  <assign|mmx-fragment*|<\macro|body>
+    <framed-fragment|<with|par-par-sep|0fn|<mmx|<arg|body>>>>
   </macro>>
 
   <\active*>
@@ -226,8 +226,8 @@
     </src-comment>
   </active*>
 
-  <assign|descriptive-table|<macro|x|<tformat|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|-1|cell-background|pastel
-  blue>|<twith|table-min-rows|2>|<twith|table-lborder|1ln>|<twith|table-rborder|1ln>|<twith|table-bborder|1ln>|<twith|table-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<twith|table-min-cols|2>|<arg|x>>>>
+  <assign|descriptive-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|-1|cell-background|pastel
+  blue>|<twith|table-min-rows|2>|<twith|table-lborder|1ln>|<twith|table-rborder|1ln>|<twith|table-bborder|1ln>|<twith|table-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<twith|table-min-cols|2>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
