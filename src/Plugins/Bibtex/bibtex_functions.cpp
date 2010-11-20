@@ -563,7 +563,7 @@ get_first_von_last (string s) {
     return res;
   }
   if (a != "" && b != "" && c != "") return get_vl_j_f (a, b, c);
-  return "";  // Avoid compiler warning. FIXME: right default return value?
+  return "";
 }
 
 string
@@ -657,7 +657,7 @@ bib_tree_length (tree t) {
     int s= 0;
     for (int i= 0; i<N(t); i++) s += bib_tree_length (t[i]);
   }
-  return 0;   // Avoid compiler warning. FIXME: right default return value?
+  return 0;
 }
 
 int
