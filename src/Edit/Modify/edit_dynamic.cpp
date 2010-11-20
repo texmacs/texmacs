@@ -96,6 +96,11 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 
   tree t (l, n);
   path p (0, 0);
+  int  acc=0;
+  for (; acc<n; acc++)
+    if (drd->is_accessible_child (t, acc))
+      break;
+  if (acc<n) p->item= acc;
   if (n == 0) insert_tree (t, 1);
   else if (is_with_like (t) && as_bool (call ("with-like-check-insert", t)));
   else {
@@ -113,7 +118,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 	t[0]= tree (DOCUMENT, "");
 	p   = path (0, 0, 0);
       }
-    if ((!drd->all_accessible (l)) && (!in_source ())) {
+    if ((!drd->all_accessible (l)) && get_init_string (MODE) != "src") {
       t= tree (INACTIVE, t);
       p= path (0, p);
     }
