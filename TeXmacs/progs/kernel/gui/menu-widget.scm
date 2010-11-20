@@ -84,6 +84,14 @@
 		    ,cmd
 		    (menu-after-action))))
 
+(define (menu-protect cmd)
+  (lambda x
+    (exec-delayed
+      (lambda ()
+        (menu-before-action)
+        (apply cmd x)
+        (menu-after-action)))))
+
 (define (kbd-system shortcut menu-flag?)
   (cond ((nstring? shortcut) "")
 	((and (qt-gui?) menu-flag?) shortcut)
@@ -180,7 +188,7 @@
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
   (with (tag cmd type props width) p
-    (widget-input (object->command cmd) type (props)
+    (widget-input (object->command (menu-protect cmd)) type (props)
 		  (logior style widget-style-mini) width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -610,7 +618,7 @@
   (:interactive #t)
   (let* ((win (window-handle))
 	 (lbd (lambda x (apply cmd x) (window-delete win)))
-	 (com (object->command lbd))
+	 (com (object->command (menu-protect lbd)))
 	 (wid (wid-promise com)))
     (window-create win wid name #t)
     (window-show win)))
