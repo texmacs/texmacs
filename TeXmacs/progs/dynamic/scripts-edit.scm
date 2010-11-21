@@ -15,7 +15,8 @@
   (:use (utils library tree)
 	(utils library cursor)
 	(utils plugins plugin-cmd)
-	(convert tools tmconcat)))
+	(convert tools tmconcat)
+	(dynamic scripts-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some switches
@@ -88,6 +89,9 @@
                       (tree-is? t 1 'document))))
   (script-modified-eval noop))
 
+(tm-define (script-context? t)
+  (tree-in? t '(script-input script-output)))
+
 (tm-define (make-script-input)
   (let* ((lan (get-env "prog-scripts"))
 	 (session (get-env "prog-session")))
@@ -112,6 +116,7 @@
 (tm-define (kbd-enter t forwards?)
   (:require (or (tree-is? t 'script-output)
                 (and (tree-is? t 'script-input)
+                     (not (tree-is? t :up 'inactive))
                      (xor (not forwards?)
                           (tree-is? t 2 'document)))))
   (alternate-toggle t))
@@ -240,7 +245,7 @@
 ;; Plots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (plot-context? t)
+(tm-define (plot-context? t)
   (tree-in? t '(plot-curve plot-curve* plot-surface plot-surface*)))
 
 (tm-define (script-plot-command lan t)
@@ -300,6 +305,9 @@
 ;; Converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (converter-context? t)
+  (tree-in? t '(converter-input converter-output)))
+
 (tm-define (kbd-enter t forwards?)
   (:require (and (tree-is? t 'converter-eval)
                  (xor (not forwards?)
@@ -326,6 +334,7 @@
 (tm-define (kbd-enter t forwards?)
   (:require (or (tree-is? t 'converter-output)
                 (and (tree-is? t 'converter-input)
+                     (not (tree-is? t :up 'inactive))
                      (xor (not forwards?)
                           (tree-is? t 1 'document)))))
   (alternate-toggle t))

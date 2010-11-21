@@ -113,3 +113,11 @@
       ("Preserve tags" (dynamic-operate-on-buffer :expand))
       ("Change tags" (dynamic-operate-on-buffer :var-expand))
       ("Make slides" (dynamic-make-slides))))
+
+(tm-define (alternate-second-name t)
+  (:require (fold-context? t))
+  "Unfold")
+
+(tm-define (alternate-second-icon t)
+  (:require (fold-context? t))
+  "tm_alternate_both.xpm")

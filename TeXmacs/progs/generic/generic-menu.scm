@@ -144,7 +144,8 @@
     ((check "Numbered" "v" (numbered-numbered? (focus-tree)))
      (numbered-toggle (focus-tree))))
   (assuming (alternate-context? t)
-    ((check "Unfolded" "v" (alternate-second? (focus-tree)))
+    ((check (eval (alternate-second-name t)) "v"
+            (alternate-second? (focus-tree)))
      (alternate-toggle (focus-tree)))))
 
 (tm-menu (focus-tag-menu t)
@@ -220,13 +221,16 @@
 
 (tm-menu (focus-toggle-icons t)
   (assuming (numbered-context? t)
-    ;; FIXME: itemize, enumerate, eqnarray*
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
-	    (numbered-numbered? (focus-tree)))
+            (numbered-numbered? (focus-tree)))
      (numbered-toggle (focus-tree))))
-  (assuming (alternate-context? t)
-    ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
-	    (alternate-second? (focus-tree)))
+  (assuming (alternate-first? t)
+    ((check (balloon (icon "tm_alternate_first.xpm")
+                     (eval (alternate-second-name t))) "v" #f)
+     (alternate-toggle (focus-tree))))
+  (assuming (alternate-second? t)
+    ((check (balloon (icon (eval (alternate-second-icon t)))
+                     (eval (alternate-second-name t))) "v" #t)
      (alternate-toggle (focus-tree)))))
 
 (tm-menu (focus-tag-icons t)
@@ -236,11 +240,6 @@
       (assuming (<= (length l) 1)
         (inert ((eval (focus-tag-name (tree-label t))) (noop))))
       (assuming (> (length l) 1)
-        ;;(=> (extend
-        ;;(balloon (eval (focus-tag-name (tree-label t)))
-        ;;"Structured variant")
-        ;;(dynamic (focus-variant-menu t)))
-        ;;(dynamic (focus-variant-menu t)))))
         (=> (balloon (eval (focus-tag-name (tree-label t)))
                      "Structured variant")
             (dynamic (focus-variant-menu t))))))

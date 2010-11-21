@@ -74,6 +74,9 @@
 (tm-define (toggle-second-context? t)
   (toggle-second-tag? (tree-label t)))
 
+(tm-define (fold-context? t)
+  (or (folded-tag? (tree-label t)) (unfolded-tag? (tree-label t))))
+
 (tm-define (make-toggle tag)
   (:type (-> void))
   (:synopsis "Insert a 'fold' environment")

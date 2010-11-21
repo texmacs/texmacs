@@ -152,6 +152,12 @@
      (ahash-set! alternate-table ',first ',second)
      (ahash-set! alternate-table ',second ',first)))
 
+(tm-define (alternate-second-name t)
+  "Expand")
+
+(tm-define (alternate-second-icon t)
+  "tm_alternate_second.xpm")
+
 (tm-define (alternate-toggle t)
   (focus-next t
     (alternate-toggle (tree-up t))))

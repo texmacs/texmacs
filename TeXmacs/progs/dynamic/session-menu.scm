@@ -127,12 +127,17 @@
 ;; Sessions icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (alternate-second-name t)
+  (:require (field-context? t))
+  "Unfold")
+
+(tm-define (alternate-second-icon t)
+  (:require (field-context? t))
+  "tm_alternate_both.xpm")
+
 (tm-menu (focus-tag-icons t)
   (:require (field-context? t))
-  (when (alternate-context? t)
-    ((check (balloon (icon "tm_unfold.xpm") "Fold / Unfold") "v"
-	    (alternate-second? (focus-tree)))
-     (alternate-toggle (focus-tree))))
+  (dynamic (focus-toggle-icons t))
   (mini #t (inert ((eval (focus-session-language)) (noop))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (set-message "Not yet implemented" "")))

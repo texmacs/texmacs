@@ -31,3 +31,15 @@
   ("Surface" (make 'plot-surface))
   ("Parametric curve" (make 'plot-curve*))
   ("Parametric surface" (make 'plot-surface*)))
+
+(tm-define (alternate-second-name t)
+  (:require (script-context? t))
+  "Evaluate")
+
+(tm-define (alternate-second-name t)
+  (:require (plot-context? t))
+  "Plot")
+
+(tm-define (alternate-second-name t)
+  (:require (converter-context? t))
+  "Convert")
