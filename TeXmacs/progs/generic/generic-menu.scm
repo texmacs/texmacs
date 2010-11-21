@@ -16,7 +16,8 @@
 	(generic generic-edit)
 	(generic format-edit)
 	(generic format-geometry-edit)
-	(generic document-menu)))
+	(generic document-menu)
+        (source source-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
@@ -139,6 +140,9 @@
 (tm-menu (focus-ancestor-menu t))
 
 (tm-menu (focus-toggle-menu t)
+  (assuming (!= (tree-children t) (tree-accessible-children t))
+    ((check "Show hidden" "v" (tree-is? t :up 'inactive))
+     (inactive-toggle t)))
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check "Numbered" "v" (numbered-numbered? (focus-tree)))
@@ -224,6 +228,10 @@
 (tm-menu (focus-ancestor-icons t))
 
 (tm-menu (focus-toggle-icons t)
+  (assuming (!= (tree-children t) (tree-accessible-children t))
+    ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
+            (tree-is? t :up 'inactive))
+     (inactive-toggle t)))
   (assuming (numbered-context? t)
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
             (numbered-numbered? (focus-tree)))

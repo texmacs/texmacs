@@ -147,12 +147,16 @@ edit_dynamic_rep::activate () {
   if (is_func (st, COMPOUND) && is_atomic (st[0])) {
     tree u (make_tree_label (st[0]->label));
     u << A (st (1, N(st)));
-    st= u;
+    assign (p, u);
+    go_to (end (et, p));
+    correct (path_up (p));
   }
-
-  assign (p, st);
-  go_to (end (et, p));
-  correct (path_up (p));
+  else {
+    bool acc= (p < path_up (tp) && drd->is_accessible_child (st, tp[N(p)]));
+    remove_node (p * 0);
+    if (!acc) go_to (end (et, p));
+    correct (path_up (p));
+  }
 }
 
 /******************************************************************************

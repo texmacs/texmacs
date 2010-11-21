@@ -48,3 +48,20 @@
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (tree-is? t 'hybrid))
   (activate-hybrid #t))
+
+(tm-define (inactive-toggle t)
+  (if (or (tree-is? t 'inactive) (tree-is? t :up 'inactive))
+      (activate)
+      (tree-set t `(inactive ,t))))
+
+(tm-define (inactive-toggle t)
+  (:require (and (tree-is? t 'hybrid) (tree-is? t :up 'inactive)))
+  (activate-hybrid #f))
+
+(tm-define (inactive-toggle t)
+  (:require (and (tree-is? t 'latex) (tree-is? t :up 'inactive)))
+  (activate-latex))
+
+(tm-define (inactive-toggle t)
+  (:require (and (tree-is? t 'symbol) (tree-is? t :up 'inactive)))
+  (activate-symbol))
