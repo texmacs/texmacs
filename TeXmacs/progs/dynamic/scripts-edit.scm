@@ -89,7 +89,7 @@
                       (tree-is? t 1 'document))))
   (script-modified-eval noop))
 
-(tm-define (script-context? t)
+(tm-define (evaluate-context? t)
   (tree-in? t '(script-input script-output)))
 
 (tm-define (make-script-input)

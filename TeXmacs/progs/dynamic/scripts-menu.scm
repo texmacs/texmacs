@@ -33,7 +33,7 @@
   ("Parametric surface" (make 'plot-surface*)))
 
 (tm-define (alternate-second-name t)
-  (:require (script-context? t))
+  (:require (evaluate-context? t))
   "Evaluate")
 
 (tm-define (alternate-second-name t)

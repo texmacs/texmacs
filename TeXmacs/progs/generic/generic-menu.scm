@@ -188,8 +188,12 @@
 
 (tm-menu (focus-extra-menu t))
 
+(tm-define (hidden-string-children t)
+  (append-map (lambda (c) (if (tree-atomic? c) (list c) (list)))
+              (hidden-children t)))
+
 (tm-menu (focus-hidden-menu t)
-  (assuming (nnull? (hidden-children t))
+  (assuming (nnull? (hidden-string-children t))
     ---
     (for (i (.. 0 (tree-arity t)))
       (assuming (hidden-child? t i)

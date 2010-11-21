@@ -16,5 +16,5 @@
 
 ;; input <-> output toggles
 
-(define-alternate script-input script-output)
-(define-alternate converter-input converter-output)
+(define-toggle script-input script-output)
+(define-toggle converter-input converter-output)

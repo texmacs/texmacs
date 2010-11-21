@@ -22,6 +22,12 @@
 (define-group variant-tag (folded-tag) (unfolded-tag))
 (define-group similar-tag (folded-tag) (unfolded-tag))
 
+(tm-define-macro (define-toggle folded unfolded)
+  `(begin
+     (define-group toggle-first-tag ,folded)
+     (define-group toggle-second-tag ,unfolded)
+     (define-alternate ,folded ,unfolded)))
+
 (tm-define-macro (define-fold folded unfolded)
   `(begin
      (define-group folded-tag ,folded)
