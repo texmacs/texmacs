@@ -1223,6 +1223,19 @@ tmg_tree_is_bufferP (SCM arg1) {
 }
 
 SCM
+tmg_tree_search_sections (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-search-sections");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  array_tree out= search_sections (in1);
+  // SCM_ALLOW_INTS;
+
+  return array_tree_to_scm (out);
+}
+
+SCM
 tmg_tree_assign (SCM arg1, SCM arg2) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-assign");
   SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tree-assign");
@@ -1826,6 +1839,21 @@ tmg_path_previous_argument (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   path out= previous_argument (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_previous_section (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-previous-section");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-previous-section");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= previous_section (in1, in2);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -4983,6 +5011,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tree-extents", (FN) tmg_tree_extents, 1, 0, 0);
   scm_new_procedure ("tree-empty?", (FN) tmg_tree_emptyP, 1, 0, 0);
   scm_new_procedure ("tree-is-buffer?", (FN) tmg_tree_is_bufferP, 1, 0, 0);
+  scm_new_procedure ("tree-search-sections", (FN) tmg_tree_search_sections, 1, 0, 0);
   scm_new_procedure ("tree-assign", (FN) tmg_tree_assign, 2, 0, 0);
   scm_new_procedure ("tree-var-insert", (FN) tmg_tree_var_insert, 3, 0, 0);
   scm_new_procedure ("tree-remove", (FN) tmg_tree_remove, 3, 0, 0);
@@ -5024,6 +5053,7 @@ initialize_glue_basic () {
   scm_new_procedure ("path-previous-tag-same-argument", (FN) tmg_path_previous_tag_same_argument, 3, 0, 0);
   scm_new_procedure ("path-next-argument", (FN) tmg_path_next_argument, 2, 0, 0);
   scm_new_procedure ("path-previous-argument", (FN) tmg_path_previous_argument, 2, 0, 0);
+  scm_new_procedure ("path-previous-section", (FN) tmg_path_previous_section, 2, 0, 0);
   scm_new_procedure ("tree->ids", (FN) tmg_tree_2ids, 1, 0, 0);
   scm_new_procedure ("id->trees", (FN) tmg_id_2trees, 1, 0, 0);
   scm_new_procedure ("vertex->links", (FN) tmg_vertex_2links, 1, 0, 0);

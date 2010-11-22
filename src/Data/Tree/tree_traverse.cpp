@@ -13,6 +13,7 @@
 #include "drd_std.hpp"
 #include "analyze.hpp"
 #include "hashset.hpp"
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * Accessability
@@ -402,4 +403,77 @@ more_inside (tree t, path p, path q, tree_label which) {
   return
     search_upwards (t, path_up (q), which) <=
     search_upwards (t, path_up (p), which);
+}
+
+/******************************************************************************
+* Find sections in document
+******************************************************************************/
+
+hashset<tree_label> section_traverse_tags;
+hashset<tree_label> section_tags;
+
+void
+init_sections () {
+  if (N(section_traverse_tags) == 0) {
+    section_traverse_tags= hashset<tree_label> ();
+    section_traverse_tags->insert (DOCUMENT);
+    section_traverse_tags->insert (CONCAT);
+    section_traverse_tags->insert (as_tree_label ("ignore"));
+    section_traverse_tags->insert (as_tree_label ("show-part"));
+    section_traverse_tags->insert (as_tree_label ("hide-part"));
+  }
+  if (N(section_tags) == 0) {
+    eval ("(use-modules (text std-text-drd))");
+    object l= eval ("(append (section-tag-list) (section*-tag-list))");
+    while (!is_null (l)) {
+      section_tags->insert (as_tree_label (as_symbol (car (l))));
+      l= cdr (l);
+    }
+  }
+}
+
+path
+previous_section_impl (tree t, path p) {
+  if (is_atomic (t)) return path ();
+  else if (N(t) == 1 && section_tags->contains (L(t)))
+    return p * 0;
+  else if (section_traverse_tags->contains (L(t))) {
+    int i= is_nil (p)? N(t)-1: p->item;
+    for (; i>=0; i--) {
+      if (!is_nil (p) && i == p->item) {
+	path r= previous_section_impl (t[i], p->next);
+	if (!is_nil (r)) return path (i, r);
+      }
+      else {
+	path r= previous_section_impl (t[i], path ());
+	if (!is_nil (r)) return path (i, r);
+      }
+    }
+  }
+  return path ();
+}
+
+path
+previous_section (tree t, path p) {
+  init_sections ();
+  path r= previous_section_impl (t, p);
+  if (is_nil (r)) return p;
+  return path_up (r);
+}
+
+void
+search_sections (array<tree>& a, tree t) {
+  if (is_atomic (t)) return;
+  else if (N(t) == 1 && section_tags->contains (L(t))) a << t;
+  else if (section_traverse_tags->contains (L(t)))
+    for (int i=0; i<N(t); i++)
+      search_sections (a, t[i]);
+}
+
+array<tree>
+search_sections (tree t) {
+  init_sections ();
+  array<tree> a;
+  search_sections (a, t);
+  return a;
 }

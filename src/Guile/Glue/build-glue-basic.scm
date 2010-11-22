@@ -118,6 +118,7 @@
   (tree-extents tree_extents (tree content))
   (tree-empty? is_empty (bool content))
   (tree-is-buffer? admits_edit_observer (bool tree))
+  (tree-search-sections search_sections (array_tree tree))
 
   (tree-assign tree_assign (tree tree content))
   (tree-var-insert tree_insert (tree tree int content))
@@ -167,6 +168,7 @@
 				   (path content path scheme_tree))
   (path-next-argument next_argument (path content path))
   (path-previous-argument previous_argument (path content path))
+  (path-previous-section previous_section (path content path))
 
   ;; links
   (tree->ids get_ids (list_string tree))

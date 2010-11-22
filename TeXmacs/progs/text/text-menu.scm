@@ -395,3 +395,35 @@
   (glue #f #f 5 0)
   (minibar (dynamic (focus-author-icons)))
   (glue #f #f 5 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus icons for entering authors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-section-menu)
+  (for (s (tree-search-sections (buffer-tree)))
+    ((eval (tm/section-get-title-string s))
+     (when (and (tree->path s) (section-context? s))
+       (tree-go-to s 0 :end)))))
+
+(tm-menu (focus-document-extra-menu t)
+  (:require (previous-section))
+  (-> "Sections" (link focus-section-menu)))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (previous-section))
+  (mini #t
+    (=> (eval (tm/section-get-title-string (previous-section)))
+	(link focus-section-menu))))
+
+(tm-menu (focus-extra-menu t)
+  (:require (section-context? t))
+  ---
+  (-> "Go to section"
+      (link focus-section-menu)))
+
+(tm-menu (focus-extra-icons t)
+  (:require (section-context? t))
+  (mini #t
+    (=> (eval (tm/section-get-title-string t))
+	(link focus-section-menu))))

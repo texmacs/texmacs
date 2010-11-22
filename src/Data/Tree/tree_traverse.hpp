@@ -45,4 +45,7 @@ path previous_argument (tree t, path p);
 bool inside_same (tree t, path p, path q, tree_label which);
 bool more_inside (tree t, path p, path q, tree_label which);
 
+array<tree> search_sections (tree t);
+path previous_section (tree t, path p);
+
 #endif // defined TREE_TRAVERSE_H

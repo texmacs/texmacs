@@ -25,7 +25,7 @@
     (and-with t (tree-ref bt :down)
       (and (tree-is? bt 'document)
 	   (== (tree-index t) 0)
-	   (not (tree-is? t 'doc-data))))))
+	   (not (tree-in? t '(doc-data tmdoc-title)))))))
 
 (tm-define (document-propose-abstract?)
   (with bt (buffer-tree)
@@ -170,8 +170,15 @@
 ;; Sectional commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (section-context? t)
+(tm-define (section-context? t)
   (tree-in? t (numbered-unnumbered-append (section-tag-list))))
+
+(tm-define (previous-section)
+  (with bt (buffer-tree)
+    (and (cursor-inside? bt)
+	 (with bp (list-drop (cursor-path) (length (tree->path bt)))
+	   (with sp (path-previous-section bt bp)
+	     (and (!= sp bp) (path->tree (append (tree->path bt) sp))))))))
 
 (tm-define (make-section l)
   (if (or (selection-active-any?) (not (make-return-after)))
