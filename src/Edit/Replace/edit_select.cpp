@@ -623,7 +623,10 @@ edit_select_rep::selection_raw_get (string key) {
 
 void
 edit_select_rep::selection_set_start (path p) {
-  if (!selection_active_any ()) select (start_p, start_p);
+  if (!selection_active_any ()) {
+    if (rp < start_p) select (start_p, start_p);
+    else select (tp, tp);
+  }
   if (is_nil (p)) selection_set_start (tp);
   else if (path_less_eq (end_p, p)) select (p, p);
   else if (rp < p) select (p, end_p);
