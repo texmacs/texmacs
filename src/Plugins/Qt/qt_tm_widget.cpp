@@ -618,7 +618,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_CANVAS:
     {
       check_type_void (index, "SLOT_CANVAS");
-      QTMWidget* new_canvas= qobject_cast<QTMWidget*>(((qt_view_widget_rep*) w.rep)->view);
+      QTMWidget* new_canvas= qobject_cast<QTMWidget*>(concrete(w)->as_qwidget());
       QTMWidget* old_canvas= tm_canvas();
       QStackedWidget* tw= tm_centralwidget();
       if (new_canvas && (new_canvas != old_canvas) ) {

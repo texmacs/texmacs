@@ -247,7 +247,7 @@ void
 QTMToolButton::paintEvent(QPaintEvent* event) {
   (void) event;
   QPainter p (this);
-#if 1
+#if 0
   QStyleOptionMenuItem option;
   QAction *action = defaultAction ();
   QTMAuxMenu m;
@@ -288,19 +288,22 @@ public:
 
 QWidget*
 QTMTileAction::createWidget(QWidget* parent) {
-  if (DEBUG_QT) cout << "QTMTileAction::createWidget\n";
+  if (DEBUG_QT) 
+    cout << "QTMTileAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
   wid->setLayout (l);
   l->setSizeConstraint (QLayout::SetFixedSize);
-  l->setHorizontalSpacing (0);
-  l->setVerticalSpacing (0);
-  l->setContentsMargins (0, 0, 0, 0);
+  l->setHorizontalSpacing (2);
+  l->setVerticalSpacing (2);
+  l->setContentsMargins (4, 0, 4, 0);
   int row= 0, col= 0;
   for (int i=0; i < actions.count(); i++) {
     QAction* sa= actions[i];
     QToolButton* tb= new QTMToolButton (wid);
     tb->setDefaultAction (sa);
+    QObject::connect(tb, SIGNAL(released()), this, SLOT(trigger()));
+  //  tb->setStyle (qtmstyle ());
     l->addWidget (tb, row, col);
     col++;
     if (col >= cols) { col = 0; row++; }

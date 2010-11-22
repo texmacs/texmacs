@@ -48,6 +48,8 @@ public:
   virtual widget plain_window_widget (string s);
   void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
   basic_renderer get_current_renderer() {  return current_renderer; }
+  virtual QWidget* as_qwidget () { return view ; };
+
 };
 
 

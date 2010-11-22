@@ -34,6 +34,7 @@ public:
   virtual widget popup_window_widget (string s);
 
   virtual QAction* as_qaction ();
+  virtual QWidget* as_qwidget () { return NULL ; };
 };
 
 

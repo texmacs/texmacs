@@ -229,3 +229,4 @@ qt_view_widget_rep::plain_window_widget (string _title) {
   return wid;
 }
 
+
