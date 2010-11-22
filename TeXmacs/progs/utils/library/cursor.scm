@@ -190,10 +190,23 @@
 ;; Changing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (menu-flatten x)
+  (cond ((string? x) x)
+        ((pair? x) (apply string-append (map menu-flatten (cdr x))))
+        (else "")))
+
+(define (list-buffers)
+  (with bm (list-filter (get-buffer-menu) pair?)
+    (with fun (lambda (p) (cons (menu-flatten (car p)) (cdr p)))
+      (map fun bm))))
+
+(define (menu-name p)
+  (menu-flatten (car p)))
+
 (tm-define (go-to-buffer name)
   (:argument  name "Switch to buffer")
-  (:proposals name (map car (list-filter (get-buffer-menu) pair?)))
-  (let* ((m  (list-filter (get-buffer-menu) pair?))
+  (:proposals name (map car (list-buffers)))
+  (let* ((m  (list-buffers))
 	 (l1 (assoc name m))
 	 (l2 (assoc (string-append name " *") m)))
     (cond (l1 ((cadr l1)))
