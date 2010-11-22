@@ -100,11 +100,25 @@
 ;; Activation and disactivation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (doc-data-go-to-active t i)
+  (cond ((< i 0) (tree-go-to t :end))
+	((tree-in? t i (doc-title-inactive-tag-list))
+	 (doc-data-go-to-active t (- i 1)))
+	((not (cursor-inside? (tree-ref t i)))
+	 (tree-go-to t i :end))))
+
 (tm-define (doc-data-activate-here)
-  (with-innermost t 'doc-inactive
-    (tree-remove-node! t 0)
-    (with-innermost t 'doc-data
-      (tree-go-to t :start))))
+  (with-innermost dd 'doc-data
+    (with-innermost t 'doc-inactive
+      (tree-remove-node! t 0)
+      (doc-data-go-to-active dd (tree-down-index dd)))))
+
+(tm-define (doc-data-has-hidden?)
+  (with-innermost t 'doc-data
+    (with l (cdr (tree->list t))
+      (with fun (lambda (t) (or (tree-in? t (doc-title-inactive-tag-list))
+				(tree-is? t 'doc-inactive)))
+	(list-or (map fun l))))))
 
 (tm-define (doc-data-disactivated?)
   (with-innermost t 'doc-data
@@ -112,13 +126,15 @@
       (list-or (map (lambda (t) (== (tm-car t) 'doc-inactive)) l)))))
 
 (define (doc-data-activate-one t)
-  (if (== (tm-car t) 'doc-inactive)
-      (tree-remove-node! t 0)))
+  (when (tree-is? t 'doc-inactive)
+    (tree-remove-node! t 0)))
 
 (tm-define (doc-data-activate-all)
   (with-innermost t 'doc-data
-    (with l (cdr (tree->list t))
-      (for-each doc-data-activate-one l))))
+    (with i (tree-down-index t)
+      (with l (cdr (tree->list t))
+	(for-each doc-data-activate-one l))
+      (doc-data-go-to-active t i))))
 
 (define (doc-data-disactivate-one t)
   (if (in? (tm-car t) doc-data-inactive-tags)
@@ -128,6 +144,11 @@
   (with-innermost t 'doc-data
     (with l (cdr (tree->list t))
       (for-each doc-data-disactivate-one l))))
+
+(tm-define (doc-data-activate-toggle)
+  (if (doc-data-disactivated?)
+      (doc-data-activate-all)
+      (doc-data-disactivate-all)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Making letter headings or titles
