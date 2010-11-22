@@ -58,6 +58,11 @@
 	 (len (if (list? p) (length p) -1)))
     (and (>= len nr) (path->tree (list-head p (- len nr))))))
 
+(define-public (tree-outer t)
+  "Get parent of @t except for buffer trees"
+  (and (not (tree-is-buffer? t))
+       (tree-up t)))
+
 (define-public (tree-down t . opt)
   "Get the child where the cursor is."
   (let* ((p   (tree->path t))
@@ -119,12 +124,6 @@
 
 (define-public (focus-tree)
   (path->tree (get-focus-path)))
-
-(define-public-macro (focus-next t . cmds)
-  `(and (tree->path ,t)
-	(nnull? (tree->path ,t))
-	(not (tree-is-buffer? ,t))
-	(begin ,@cmds)))
 
 (define-public (cursor-on-border? t)
   (let* ((p (cursor-path))

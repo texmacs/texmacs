@@ -104,8 +104,8 @@
   (and (numbered-context? t) (not (numbered-numbered? t))))
 
 (tm-define (numbered-toggle t)
-  (focus-next t
-    (numbered-toggle (tree-up t))))
+  (and-with p (tree-outer t)
+    (numbered-toggle p)))
 
 (tm-define (numbered-toggle t)
   (:require (numbered-standard-context? t))
@@ -159,24 +159,24 @@
   "tm_alternate_second.xpm")
 
 (tm-define (alternate-toggle t)
-  (focus-next t
-    (alternate-toggle (tree-up t))))
+  (and-with p (tree-outer t)
+    (alternate-toggle p)))
 
 (tm-define (alternate-toggle t)
   (:require (alternate-standard-context? t))
   (variant-set t (ahash-ref alternate-table (tree-label t))))
 
 (tm-define (alternate-fold t)
-  (focus-next t
-    (alternate-fold (tree-up t))))
+  (and-with p (tree-outer t)
+    (alternate-fold p)))
 
 (tm-define (alternate-fold t)
   (:require (alternate-standard-second? t))
   (alternate-toggle t))
 
 (tm-define (alternate-unfold t)
-  (focus-next t
-    (alternate-unfold (tree-up t))))
+  (and-with p (tree-outer t)
+    (alternate-unfold p)))
 
 (tm-define (alternate-unfold t)
   (:require (alternate-standard-first? t))
@@ -261,8 +261,8 @@
   #t)
 
 (tm-define (variant-circulate t forward?)
-  (focus-next t
-    (variant-circulate (tree-up t) forward?)))
+  (and-with p (tree-outer t)
+    (variant-circulate p forward?)))
 
 (tm-define (list-search-rotate which search)
   (receive (l r) (list-break which (lambda (x) (== x search)))

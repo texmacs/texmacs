@@ -21,20 +21,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-horizontal t forwards?)
-  (focus-next t
-    (kbd-horizontal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (kbd-horizontal p forwards?)))
 
 (tm-define (kbd-vertical t downwards?)
-  (focus-next t
-    (kbd-vertical (tree-up t) downwards?)))
+  (and-with p (tree-outer t)
+    (kbd-vertical p downwards?)))
 
 (tm-define (kbd-extremal t forwards?)
-  (focus-next t
-    (kbd-extremal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (kbd-extremal p forwards?)))
 
 (tm-define (kbd-incremental t downwards?)
-  (focus-next t
-    (kbd-incremental (tree-up t) downwards?)))
+  (and-with p (tree-outer t)
+    (kbd-incremental p downwards?)))
 
 (tm-define (kbd-horizontal t forwards?)
   (:require (tree-is-buffer? t))
@@ -81,16 +81,16 @@
 (tm-define (insert-return) (insert-raw-return))
 
 (tm-define (kbd-enter t shift?)
-  (focus-next t
-    (kbd-enter (tree-up t) shift?)))
+  (and-with p (tree-outer t)
+    (kbd-enter p shift?)))
 
 (tm-define (kbd-remove t forwards?)
-  (focus-next t
-    (kbd-remove (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (kbd-remove p forwards?)))
 
 (tm-define (kbd-variant t forwards?)
-  (focus-next t
-    (kbd-variant (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (kbd-variant p forwards?)))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is-buffer? t))
@@ -171,8 +171,8 @@
   (if forwards? (go-to-next-word) (go-to-previous-word)))
 
 (tm-define (traverse-vertical t downwards?)
-  (focus-next t
-    (traverse-vertical (tree-up t) downwards?)))
+  (and-with p (tree-outer t)
+    (traverse-vertical p downwards?)))
 
 (tm-define (traverse-vertical t downwards?)
   (:require (document-context? t))
@@ -229,20 +229,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-insert-horizontal t forwards?)
-  (focus-next t
-    (structured-insert-horizontal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (structured-insert-horizontal p forwards?)))
 
 (tm-define (structured-insert-vertical t downwards?)
-  (focus-next t
-    (structured-insert-vertical (tree-up t) downwards?)))
+  (and-with p (tree-outer t)
+    (structured-insert-vertical p downwards?)))
 
 (tm-define (structured-remove-horizontal t forwards?)
-  (focus-next t
-    (structured-remove-horizontal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (structured-remove-horizontal p forwards?)))
 
 (tm-define (structured-remove-vertical t downwards?)
-  (focus-next t
-    (structured-remove-vertical (tree-up t) downwards?)))
+  (and-with p (tree-outer t)
+    (structured-remove-vertical p downwards?)))
 
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (structured-horizontal? t))
@@ -292,8 +292,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-horizontal t forwards?)
-  (focus-next t
-    (structured-horizontal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (structured-horizontal p forwards?)))
 
 (tm-define (structured-horizontal t forwards?)
   (:require (structured-horizontal? t))
@@ -303,12 +303,12 @@
         (if (nnull? p) (go-to p))))))
 
 (tm-define (structured-vertical t downwards?)
-  (focus-next t
-    (structured-vertical (tree-up t) downwards?)))
+  (and-with p (tree-outer t)
+    (structured-vertical p downwards?)))
 
 (tm-define (structured-inner-extremal t forwards?)
-  (focus-next t
-    (structured-inner-extremal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (structured-inner-extremal p forwards?)))
 
 (tm-define (structured-inner-extremal t forwards?)
   (:require (structured-horizontal? t))
@@ -353,32 +353,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (geometry-speed t down?)
-  (focus-next t
-    (geometry-speed (tree-up t) down?)))
+  (and-with p (tree-outer t)
+    (geometry-speed p down?)))
 
 (tm-define (geometry-variant t forwards?)
-  (focus-next t
-    (geometry-variant (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (geometry-variant p forwards?)))
 
 (tm-define (geometry-default t)
-  (focus-next t
-    (geometry-default (tree-up t))))
+  (and-with p (tree-outer t)
+    (geometry-default p)))
 
 (tm-define (geometry-horizontal t forwards?)
-  (focus-next t
-    (geometry-horizontal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (geometry-horizontal p forwards?)))
 
 (tm-define (geometry-vertical t down?)
-  (focus-next t
-    (geometry-vertical (tree-up t) down?)))
+  (and-with p (tree-outer t)
+    (geometry-vertical p down?)))
 
 (tm-define (geometry-extremal t forwards?)
-  (focus-next t
-    (geometry-extremal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (geometry-extremal p forwards?)))
 
 (tm-define (geometry-incremental t down?)
-  (focus-next t
-    (geometry-incremental (tree-up t) down?)))
+  (and-with p (tree-outer t)
+    (geometry-incremental p down?)))
 
 (tm-define (geometry-slower)
   (geometry-speed (focus-tree) #f))
@@ -509,8 +509,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (label-insert t)
-  (focus-next t
-    (label-insert (tree-up t))))
+  (and-with p (tree-outer t)
+    (label-insert p)))
 
 (tm-define (label-insert t)
   (:require (tree-is-buffer? t))

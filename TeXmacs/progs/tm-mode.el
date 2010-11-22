@@ -39,7 +39,7 @@
   '(let let* lambda
     with-result and-let* setup-append-if
     while for repeat when assuming mini tile
-    focus-next with-focus-after
+    with-focus-after
     drd-group drd-table drd-dispatcher
     with-cc with-aux
     with-action with-module with-cursor with-server

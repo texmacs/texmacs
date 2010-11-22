@@ -25,12 +25,12 @@
       (switch-tag? (tree-label t))))
 
 (tm-define (dynamic-extremal t forwards?)
-  (focus-next t
-    (dynamic-extremal (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (dynamic-extremal p forwards?)))
 
 (tm-define (dynamic-incremental t forwards?)
-  (focus-next t
-    (dynamic-incremental (tree-up t) forwards?)))
+  (and-with p (tree-outer t)
+    (dynamic-incremental p forwards?)))
 
 (tm-define (dynamic-first)
   (dynamic-extremal (focus-tree) #f))
