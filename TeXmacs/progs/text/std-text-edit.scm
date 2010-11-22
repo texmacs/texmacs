@@ -17,6 +17,26 @@
 	(text std-text-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting a title and an abstract
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (document-propose-title?)
+  (with bt (buffer-tree)
+    (and-with t (tree-ref bt :down)
+      (and (tree-is? bt 'document)
+	   (== (tree-index t) 0)
+	   (not (tree-is? t 'doc-data))))))
+
+(tm-define (document-propose-abstract?)
+  (with bt (buffer-tree)
+    (and-with t (tree-ref bt :down)
+      (and (tree-is? bt 'document)
+	   (<= (tree-index t) 1)
+	   (tree-is? bt 0 'doc-data)
+	   (or (== (tree-arity bt) 1)
+	       (not (tree-is? bt 1 'abstract)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting document and author data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -598,7 +598,10 @@
   (-> (eval (upcase-first (get-init "page-type")))
       (link document-page-size-menu))
   (-> (eval (string-append (get-init "font-base-size") " pt"))
-      (link document-font-base-size-menu)))
+      (link document-font-base-size-menu))
+  (dynamic (focus-document-extra-menu t)))
+
+(tm-menu (focus-document-extra-icons t))
 
 (tm-menu (standard-focus-icons t)
   (:require (tree-is-buffer? t))
@@ -620,4 +623,6 @@
        (link document-page-size-menu))
    (=> (balloon (eval (string-append (get-init "font-base-size") "pt"))
 		"Font size")
-       (link document-font-base-size-menu))))
+       (link document-font-base-size-menu)))
+  (glue #f #f 5 0)
+  (dynamic (focus-document-extra-icons t)))

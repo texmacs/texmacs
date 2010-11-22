@@ -376,6 +376,24 @@
 ;; Focus icons for entering titles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (focus-document-extra-menu t)
+  (:require (document-propose-title?))
+  ("Title" (make-doc-data)))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (document-propose-title?))
+  (minibar
+    ((balloon "Title" "Insert title") (make-doc-data))))
+
+(tm-menu (focus-document-extra-menu t)
+  (:require (document-propose-abstract?))
+  ("Abstract" (make 'abstract)))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (document-propose-abstract?))
+  (minibar
+    ((balloon "Abstract" "Insert abstract") (make 'abstract))))
+
 (tm-define (focus-can-move? t)
   (:require (doc-author-context? t))
   #f)
