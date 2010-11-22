@@ -36,33 +36,42 @@
 	 (append (gui-normalize (cdar l)) (gui-normalize (cdr l))))
 	(else (cons (car l) (gui-normalize (cdr l))))))
 
-(tm-define-macro (gui$list . l)
+(tm-define-macro ($list . l)
   (:synopsis "Make widgets")
   `(gui-normalize (list ,@l)))
 
-(tm-define-macro (gui$promise cmd)
-  (:synopsis "Promise widgets")
-  `(list 'promise (lambda () ,cmd)))
-
-(tm-define-macro (gui$dynamic w)
+(tm-define-macro ($dynamic w)
   (:synopsis "Make dynamic widgets")
   `(cons* 'list ,w))
 
-(tm-define-macro (gui$link w)
+(tm-define-macro ($promise cmd)
+  (:synopsis "Promise widgets")
+  `(list 'promise (lambda () ,cmd)))
+
+(tm-define-macro ($if pred? . l)
+  (:synopsis "When primitive for content generation")
+  (cond ((== (length l) 1)
+         `(cons* 'list (if ,pred? ($list ,(car l)) '())))
+        ((== (length l) 2)
+         `(cons* 'list (if ,pred? ($list ,(car l)) ($list ,(cadr l)))))
+        (else
+          (texmacs-error "$if" "invalid number of arguments"))))
+
+(tm-define-macro ($when pred? . l)
+  (:synopsis "When primitive for content generation")
+  `(cons* 'list (if ,pred? ($list ,@l) '())))
+
+(tm-define-macro ($delayed-when pred? . l)
+  (:synopsis "Delayed when primitive for content generation")
+  `(cons* 'if (lambda () ,pred?) ($list ,@l)))
+
+(tm-define-macro ($assuming pred? . l)
+  (:synopsis "Make possibly inert (whence greyed) widgets")
+  `(cons* 'when (lambda () ,pred?) ($list ,@l)))
+
+(tm-define-macro ($menu-link w)
   (:synopsis "Make dynamic link to another widget")
   `(list 'link ',w))
-
-(tm-define-macro (gui$assuming pred? . l)
-  (:synopsis "Conditionally make widgets")
-  `(cons* 'list (if ,pred? (gui$list ,@l) '())))
-
-(tm-define-macro (gui$if pred? . l)
-  (:synopsis "Conditionally make widgets, a posteriori")
-  `(cons* 'if (lambda () ,pred?) (gui$list ,@l)))
-
-(tm-define-macro (gui$when pred? . l)
-  (:synopsis "Make possibly inert (whence greyed) widgets")
-  `(cons* 'when (lambda () ,pred?) (gui$list ,@l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets
@@ -78,94 +87,94 @@
 
 (tm-define-macro ($hlist . l)
   (:synopsis "Horizontal layout of widgets")
-  `(cons* 'hlist (gui$list ,@l)))
+  `(cons* 'hlist ($list ,@l)))
 
 (tm-define-macro ($vlist . l)
   (:synopsis "Vertical layout of widgets")
-  `(cons* 'vlist (gui$list ,@l)))
+  `(cons* 'vlist ($list ,@l)))
 
 (tm-define-macro ($horizontal . l)
   (:synopsis "Horizontal layout of widgets")
-  `(cons* 'horizontal (gui$list ,@l)))
+  `(cons* 'horizontal ($list ,@l)))
 
 (tm-define-macro ($vertical . l)
   (:synopsis "Vertical layout of widgets")
-  `(cons* 'vertical (gui$list ,@l)))
+  `(cons* 'vertical ($list ,@l)))
 
-(tm-define-macro (gui$tile columns . l)
+(tm-define-macro ($tile columns . l)
   (:synopsis "Tile layout of widgets")
-  `(cons* 'tile ,columns (gui$list ,@l)))
+  `(cons* 'tile ,columns ($list ,@l)))
 
-(tm-define-macro (gui$hsep)
-  (:synopsis "Make horizontal separator")
-  `(string->symbol "|"))
+(tm-define $/
+  (:synopsis "Horizontal separator")
+  (string->symbol "|"))
 
-(tm-define-macro (gui$vsep)
-  (:synopsis "Make vertical separator")
-  `'---)
+(tm-define $---
+  (:synopsis "Vertical separator")
+  '---)
 
-(tm-define-macro (gui$mini pred? . l)
+(tm-define-macro ($mini pred? . l)
   (:synopsis "Make mini widgets")
-  `(cons* 'mini (lambda () ,pred?) (gui$list ,@l)))
+  `(cons* 'mini (lambda () ,pred?) ($list ,@l)))
 
 (tm-define-macro (gui$minibar . l)
   (:synopsis "Make minibar")
-  `(cons* 'minibar (gui$list ,@l)))
+  `(cons* 'minibar ($list ,@l)))
 
-(tm-define-macro (gui$style st . l)
+(tm-define-macro ($widget-style st . l)
   (:synopsis "Change the style of a widget")
-  `(cons* 'style ,st (gui$list ,@l)))
+  `(cons* 'style ,st ($list ,@l)))
 
-(tm-define-macro (gui$extend w . l)
+(tm-define-macro ($widget-extend w . l)
   (:synopsis "Extend the size of a widget")
-  `(cons* 'extend ,w (gui$list ,@l)))
+  `(cons* 'extend ,w ($list ,@l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu and widget elements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define-macro (gui$pullright text . l)
+(tm-define-macro ($-> text . l)
   (:synopsis "Make pullright button")
-  `(cons* '-> ,text (gui$list ,@l)))
+  `(cons* '-> ,text ($list ,@l)))
 
-(tm-define-macro (gui$pulldown text . l)
+(tm-define-macro ($=> text . l)
   (:synopsis "Make pulldown button")
-  `(cons* '=> ,text (gui$list ,@l)))
+  `(cons* '=> ,text ($list ,@l)))
 
-(tm-define-macro (gui$button text . cmds)
+(tm-define-macro ($> text . cmds)
   (:synopsis "Make button")
   `(list ,text (lambda () ,@cmds)))
 
-(tm-define-macro (gui$check text check pred?)
+(tm-define-macro ($check text check pred?)
   (:synopsis "Make button")
   `(list 'check ,text ,check (lambda () ,pred?)))
 
-(tm-define-macro (gui$balloon text balloon)
+(tm-define-macro ($balloon text balloon)
   (:synopsis "Make balloon")
   `(list 'balloon ,text ,balloon))
 
-(tm-define-macro (gui$concat . l)
+(tm-define-macro ($concat-text . l)
   (:synopsis "Make text concatenation")
   `(quote (concat ,@l)))
 
-(tm-define-macro (gui$verbatim . l)
+(tm-define-macro ($verbatim-text . l)
   (:synopsis "Make verbatim text")
   `(quote (verbatim ,@l)))
 
-(tm-define-macro (gui$icon name)
+(tm-define-macro ($icon name)
   (:synopsis "Make icon")
   `(list 'icon ,name))
 
-(tm-define-macro (gui$symbol sym . l)
+(tm-define-macro ($symbol sym . l)
   (:synopsis "Make a menu symbol")
   (if (null? l)
       `(list 'symbol ,sym)
       `(list 'symbol ,sym (lambda () ,(car l)))))
 
-(tm-define-macro (gui$group text)
+(tm-define-macro ($menu-group text)
   (:synopsis "Make a menu group")
   `(list 'group ,text))
 
-(tm-define-macro (gui$input cmd type proposals width)
+(tm-define-macro ($input cmd type proposals width)
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))

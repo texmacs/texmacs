@@ -30,12 +30,12 @@
 (tm-define (gui-menu-item x)
   (:case dynamic)
   (require-format x '(dynamic :%1))
-  `(gui$dynamic ,(cadr x)))
+  `($dynamic ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   (:case link)
   (require-format x '(link :%1))
-  `(gui$link ,(cadr x)))
+  `($menu-link ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   (:case let let*)
@@ -51,7 +51,7 @@
   (:case for)
   (require-format x '(for (:%1 :%1) :*))
   (with fun `(lambda (,(caadr x)) (menu-dynamic ,@(cddr x)))
-    `(gui$dynamic (append-map ,fun ,(cadadr x)))))
+    `($dynamic (append-map ,fun ,(cadadr x)))))
 
 (tm-define (gui-menu-item x)
   (:case cond)
@@ -64,7 +64,7 @@
 (tm-define (gui-menu-item x)
   (:case group)
   (require-format x '(group :%1))
-  `(gui$group ,(cadr x)))
+  `($menu-group ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   (:case glue)
@@ -79,42 +79,42 @@
 (tm-define (gui-menu-item x)
   (:case input)
   (require-format x '(input :%4))
-  `(gui$input ,@(cdr x)))
+  `($input ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
   (:case icon)
   (require-format x '(icon :%1))
-  `(gui$icon ,(cadr x)))
+  `($icon ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   (:case concat)
   (require-format x '(concat :*))
-  `(gui$concat ,@(cdr x)))
+  `($concat-text ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
   (:case verbatim)
   (require-format x '(verbatim :*))
-  `(gui$concat ,@(cdr x)))
+  `($concat-text ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
   (:case check)
   (require-format x '(check :%3))
-  `(gui$check ,(gui-menu-item (cadr x)) ,(caddr x) ,(cadddr x)))
+  `($check ,(gui-menu-item (cadr x)) ,(caddr x) ,(cadddr x)))
 
 (tm-define (gui-menu-item x)
   (:case balloon)
   (require-format x '(balloon :%2))
-  `(gui$balloon ,(gui-menu-item (cadr x)) ,(caddr x)))
+  `($balloon ,(gui-menu-item (cadr x)) ,(caddr x)))
 
 (tm-define (gui-menu-item x)
   (:case ->)
   (require-format x '(-> :%1 :*))
-  `(gui$pullright ,@(map gui-menu-item (cdr x))))
+  `($-> ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case =>)
   (require-format x '(=> :%1 :*))
-  `(gui$pulldown ,@(map gui-menu-item (cdr x))))
+  `($=> ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case horizontal)
@@ -139,17 +139,17 @@
 (tm-define (gui-menu-item x)
   (:case inert)
   (require-format x '(inert :*))
-  `(gui$style ,widget-style-inert ,@(map gui-menu-item (cdr x))))
+  `($widget-style ,widget-style-inert ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case explicit-buttons)
   (require-format x '(explicit-buttons :*))
-  `(gui$style ,widget-style-button ,@(map gui-menu-item (cdr x))))
+  `($widget-style ,widget-style-button ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case tile)
   (require-format x '(tile :integer? :*))
-  `(gui$tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
+  `($tile ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
   (:case minibar)
@@ -159,46 +159,46 @@
 (tm-define (gui-menu-item x)
   (:case extend)
   (require-format x '(extend :%1 :*))
-  `(gui$extend ,@(map gui-menu-item (cdr x))))
+  `($widget-extend ,@(map gui-menu-item (cdr x))))
 
 (tm-define (gui-menu-item x)
   (:case assuming)
   (require-format x '(assuming :%1 :*))
-  `(gui$assuming ,(cadr x) ,@(map gui-menu-item (cddr x))))
+  `($when ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
   (:case if)
   (require-format x '(if :%1 :*))
-  `(gui$if ,(cadr x) ,@(map gui-menu-item (cddr x))))
+  `($delayed-when ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
   (:case when)
   (require-format x '(when :%1 :*))
-  `(gui$when ,(cadr x) ,@(map gui-menu-item (cddr x))))
+  `($assuming ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
   (:case mini)
   (require-format x '(mini :%1 :*))
-  `(gui$mini ,(cadr x) ,@(map gui-menu-item (cddr x))))
+  `($mini ,(cadr x) ,@(map gui-menu-item (cddr x))))
 
 (tm-define (gui-menu-item x)
   (:case symbol)
   (require-format x '(symbol :string? :*))
-  `(gui$symbol ,@(cdr x)))
+  `($symbol ,@(cdr x)))
 
 (tm-define (gui-menu-item x)
   (:case promise)
   (require-format x '(promise :%1))
-  `(gui$promise ,(cadr x)))
+  `($promise ,(cadr x)))
 
 (tm-define (gui-menu-item x)
   ;;(display* "x= " x "\n")
-  (cond ((== x '---) `(gui$vsep))
-	((== x '/) `(gui$hsep))
-	((== x (string->symbol "|")) `(gui$hsep))
+  (cond ((== x '---) '$---)
+	((== x '/) '$/)
+	((== x (string->symbol "|")) '$/)
 	((string? x) x)
 	((and (pair? x) (or (string? (car x)) (pair? (car x))))
-	 `(gui$button ,(gui-menu-item (car x)) ,@(cdr x)))
+	 `($> ,(gui-menu-item (car x)) ,@(cdr x)))
         (else (texmacs-error "gui-menu-item" "invalid menu item ~S" x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,7 +206,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define-macro (menu-dynamic . l)
-  `(gui$list ,@(map gui-menu-item l)))
+  `($list ,@(map gui-menu-item l)))
 
 (tm-define-macro (define-menu head . body)
   `(define ,head (menu-dynamic ,@body)))
