@@ -40,13 +40,9 @@
   (:synopsis "Make widgets")
   `(gui-normalize (list ,@l)))
 
-(tm-define-macro ($dynamic w)
-  (:synopsis "Make dynamic widgets")
-  `(cons* 'list ,w))
-
-(tm-define-macro ($promise cmd)
-  (:synopsis "Promise widgets")
-  `(list 'promise (lambda () ,cmd)))
+(tm-define-macro ($begin . l)
+  (:synopsis "Begin primitive for content generation")
+  `(cons* 'list ($list ,@l)))
 
 (tm-define-macro ($if pred? . l)
   (:synopsis "When primitive for content generation")
@@ -61,6 +57,54 @@
   (:synopsis "When primitive for content generation")
   `(cons* 'list (if ,pred? ($list ,@l) '())))
 
+(tm-define (cond$sub l)
+  (cond ((null? l)
+         (list `(else '())))
+        ((npair? (car l))
+         (texmacs-error "cond$sub" "syntax error ~S" l))
+        ((== (caar l) 'else)
+         (list `(else ($list ,@(cdar l)))))
+        (else (cons `(,(caar l) ($list ,@(cdar l)))
+                    (cond$sub (cdr l))))))
+
+(tm-define-macro ($cond . l)
+  (:synopsis "Cond primitive for content generation")
+  `(cons* 'list (cond ,@(cond$sub l))))
+
+(tm-define-macro ($let decls . l)
+  (:synopsis "Let* primitive for content generation")
+  `(let ,decls
+     (cons* 'list ($list ,@l))))
+
+(tm-define-macro ($let* decls . l)
+  (:synopsis "Let* primitive for content generation")
+  `(let* ,decls
+     (cons* 'list ($list ,@l))))
+
+(tm-define-macro ($with var val . l)
+  (:synopsis "With primitive for content generation")
+  `(with ,var ,val
+     (cons* 'list ($list ,@l))))
+
+(tm-define-macro ($for var-val . l)
+  (:synopsis "For primitive for content generation")
+  (when (nlist-2? var-val)
+    (texmacs-error "$for" "syntax error in ~S" var-val))
+  (with fun `(lambda (,(car var-val)) ($list ,@l))
+    `(cons* 'list (append-map ,fun ,(cadr var-val)))))
+
+(tm-define-macro ($dynamic w)
+  (:synopsis "Make dynamic widgets")
+  `(cons* 'list ,w))
+
+(tm-define-macro ($promise cmd)
+  (:synopsis "Promise widgets")
+  `(list 'promise (lambda () ,cmd)))
+
+(tm-define-macro ($menu-link w)
+  (:synopsis "Make dynamic link to another widget")
+  `(list 'link ',w))
+
 (tm-define-macro ($delayed-when pred? . l)
   (:synopsis "Delayed when primitive for content generation")
   `(cons* 'if (lambda () ,pred?) ($list ,@l)))
@@ -68,10 +112,6 @@
 (tm-define-macro ($assuming pred? . l)
   (:synopsis "Make possibly inert (whence greyed) widgets")
   `(cons* 'when (lambda () ,pred?) ($list ,@l)))
-
-(tm-define-macro ($menu-link w)
-  (:synopsis "Make dynamic link to another widget")
-  `(list 'link ',w))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets

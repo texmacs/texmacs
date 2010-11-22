@@ -27,7 +27,8 @@
     delayed dialogue on-entry on-exit widget-delayed
     association-tile bar concat dense-bar dense-tile document
     header-bar sequence short-bar short-tile
-    wrap-selection-any wrap-selection-small))
+    wrap-selection-any wrap-selection-small
+    $begin $cond))
 
 (setq nullary-misc
   '(:use :inherit))
@@ -45,7 +46,8 @@
     with-action with-module with-cursor with-server
     dialogue-user widget-with
     aspect block-input button form
-    input internal short-input))
+    input internal short-input
+    $when $let $let* $for))
 
 (setq unary-definitions
   '(define define-public define-macro define-public-macro
@@ -65,7 +67,8 @@
 (setq binary-keywords
   '(with with-global and-with with-innermost receive
     with-environment with-environment* converter
-    hidden-input pagelet radio-button toggle-button))
+    hidden-input pagelet radio-button toggle-button
+    $with))
 
 (setq binary-indent
   binary-keywords)
@@ -82,7 +85,8 @@
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-initialize
     lazy-format lazy-language lazy-input-converter
-    form-cancel form-done form-next form-previous radio suggestions toggle))
+    form-cancel form-done form-next form-previous radio suggestions toggle
+    $if))
 
 (setq highlight-definitions
   unary-definitions)
