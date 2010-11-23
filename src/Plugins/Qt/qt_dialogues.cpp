@@ -382,10 +382,11 @@ QTMWidgetAction::createWidget ( QWidget * parent ) {
     QFont f= le->font();
     f.setPixelSize(10);
     le->setFont(f);
-    le->setFrame(false);
+    //le->setFrame(false);
     le->setStyle(qtmstyle());
     QPalette pal(le->palette());
-    pal.setColor(QPalette::Base, Qt::lightGray);
+    //pal.setColor(QPalette::Base, Qt::lightGray);
+    pal.setColor(QPalette::Base, QColor(252, 252, 248));
     le->setPalette(pal);
     if (ends(helper->wid()->width,"w")) {
       le->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
