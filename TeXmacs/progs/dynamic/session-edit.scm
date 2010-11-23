@@ -503,9 +503,14 @@
   (:require (field-input-context? t))
   (if downwards? (field-go-down) (field-go-up)))
 
-(tm-define (traverse-incremental t forwards?)
+(tm-define (traverse-extremal t forwards?)
   (:require (field-input-context? t))
-  (if forwards? (field-go-down) (field-go-up)))
+  (with move (if forwards? field-go-down field-go-up)
+    (go-to-repeat move)))
+
+(tm-define (traverse-incremental t downwards?)
+  (:require (field-input-context? t))
+  (if downwards? (field-go-down) (field-go-up)))
 
 (tm-define (structured-horizontal t forwards?)
   (:require (field-input-context? t))
@@ -520,15 +525,15 @@
 ;; Fold and unfold
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (alternate-fold t)
+(tm-define (alternate-toggle t)
   (:require (field-unfolded-context? t))
-  (alternate-toggle t)
-  (tree-go-to t 1 :end))
+  (with i (tree-down-index t)
+    (variant-set t (ahash-ref alternate-table (tree-label t)))
+    (if (== i 2) (tree-go-to t 1 :end))))
 
-(tm-define (alternate-unfold t)
+(tm-define (alternate-toggle t)
   (:require (field-folded-context? t))
-  (alternate-toggle t)
-  (tree-go-to t 1 :end))
+  (variant-set t (ahash-ref alternate-table (tree-label t))))
 
 (tm-define (field-fold t)
   (when (field-unfolded-context? t)
