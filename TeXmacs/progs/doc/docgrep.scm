@@ -41,40 +41,27 @@
 ;; occur on top of the list.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-hlink l highest-score)
-  `(concat
-     (item*
-       (concat ,(object->string (quotient (* (cdr l) 100) highest-score)) "%"))
-     (hlink ,(cAr (string-tokenize-by-char (car l) #\/)) ,(car l))))
-
-(define (make-translate . args)
-  (with s (apply string-append args)
-    `(translate ,s "english" (value "language"))))
+(define (build-search-results keyword the-result)
+  ($tmdoc
+    ($tmdoc-title
+      ($localize "Search results for ``" keyword "''"))
+    ($when (null? the-result)
+      ($localize "No matches found for ``" keyword "''."))
+    ($when (nnull? the-result)
+      ($with highest-score (cdar the-result)
+        $lf
+        ($description-aligned
+          ($for (x the-result)
+            ($describe-item
+              ($inline (quotient (* (cdr x) 100) highest-score) "%")
+              ($link (car x)
+                (cAr (string-tokenize-by-char (car x) #\/))))))))))
 
 (define (build-link-page keyword file-list)
-  (let* ((lan (get-output-language))
-	 (keyword-list (string-tokenize-by-char keyword #\space))
-	 (the-result (get-score-list keyword-list file-list))
-	 ;;(the-result (get-final-sorted-results keyword file-list))
-	 (text (make-translate "No matches found for ``" keyword "''."))
-	 (body (list text)))
-    (if (nnull? the-result)
-	(let ((highest-score (cdar the-result)))
-	  (set! body (map (lambda (x) (make-hlink x highest-score))
-			  the-result))
-	  (set! body `((description-aligned (document ,@body))))))
+  (let* ((keyword-list (string-tokenize-by-char keyword #\space))
+	 (the-result (get-score-list keyword-list file-list)))
     (set-help-buffer "Results of search"
-		     `(document
-		       (style "tmdoc")
-		       (body (document
-			      (tmdoc-title
-			       (concat
-				,(make-translate
-				  "Results of the search for ``"
-				  keyword
-				  "''")))
-			      ,@body))
-		       (initial (collection (associate "language" ,lan)))))))
+		     (build-search-results keyword the-result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find documentation in given path and matching a given pattern

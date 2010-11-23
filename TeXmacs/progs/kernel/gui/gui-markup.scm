@@ -218,3 +218,94 @@
 (tm-define-macro ($input cmd type proposals width)
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic text markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define $lf '$lf)
+
+(tm-define (markup-build-atom x)
+  (cond ((number? x) (number->string x))
+        ((== x #t) "true")
+        ((== x #f) "false")
+        (else x)))
+
+(tm-define (markup-build-concat l)
+  (with r (map markup-build-atom l)
+    (cond ((null? r) "")
+          ((list-1? r) (car r))
+          (else (cons 'concat r)))))
+
+(tm-define (markup-build-document l block?)
+  (with s (list-scatter l (lambda (x) (== x '$lf)) #f)
+    (with r (map markup-build-concat s)
+      (cond ((and (null? r) block?) '(document ""))
+            ((null? r) "")
+            ((and (list-1? r) (not block?)) (car r))
+            (else (cons 'document r))))))
+
+(tm-define-macro ($textual . l)
+  `(markup-build-document ($list ,@l) #f))
+
+(tm-define-macro ($inline . l)
+  `(markup-build-document ($list ,@l) #f))
+
+(tm-define-macro ($block . l)
+  `(markup-build-document ($list ,@l) #t))
+
+(tm-define-macro ($localize . l)
+  `(tree-translate ($inline ,@l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (replace-unquotes x)
+  (cond ((npair? x) x)
+        ((== (car x) '$unquote) (cons 'unquote (cdr x)))
+        (else (cons (replace-unquotes (car x)) (replace-unquotes (cdr x))))))
+
+(tm-define ($quote x)
+  (list 'quasiquote (replace-unquotes x)))
+
+(tm-define-macro ($tmdoc . l)
+  (with lan (get-output-language)
+    ($quote
+      `(document
+         (style "tmdoc")
+         (body ($unquote ($block ,@l)))
+         (initial (collection (associate "language" ,lan)))))))
+
+(tm-define-macro ($tmdoc-title . l)
+  ($quote `(tmdoc-title ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($itemize . l)
+  ($quote `(itemize ($unquote ($block ,@l)))))
+
+(tm-define-macro ($enumerate . l)
+  ($quote `(enumerate ($unquote ($block ,@l)))))
+
+(tm-define-macro ($description . l)
+  ($quote `(description ($unquote ($block ,@l)))))
+
+(tm-define-macro ($description-aligned . l)
+  ($quote `(description-aligned ($unquote ($block ,@l)))))
+
+(tm-define-macro ($item)
+  ($quote `(item)))
+
+(tm-define-macro ($item* . l)
+  ($quote `(item* ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($list-item . l)
+  `($begin ($item) ,@l $lf))
+
+(tm-define-macro ($describe-item key . l)
+  `($begin ($item* ,key) ,@l $lf))
+
+(tm-define-macro ($strong . l)
+  ($quote `(strong ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($link dest . l)
+  ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))
