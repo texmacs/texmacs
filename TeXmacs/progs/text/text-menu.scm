@@ -426,6 +426,7 @@
 
 (tm-menu (focus-extra-icons t)
   (:require (section-context? t))
+  (glue #f #f 5 0)
   (mini #t
     (=> (eval (tm/section-get-title-string t))
 	(link focus-section-menu))))

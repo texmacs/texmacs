@@ -140,9 +140,6 @@
 (tm-menu (focus-ancestor-menu t))
 
 (tm-menu (focus-toggle-menu t)
-  (assuming (!= (tree-children t) (tree-accessible-children t))
-    ((check "Show hidden" "v" (tree-is? t :up 'inactive))
-     (inactive-toggle t)))
   (assuming (numbered-context? t)
     ;; FIXME: itemize, enumerate, eqnarray*
     ((check "Numbered" "v" (numbered-numbered? (focus-tree)))
@@ -150,7 +147,10 @@
   (assuming (alternate-context? t)
     ((check (eval (alternate-second-name t)) "v"
             (alternate-second? (focus-tree)))
-     (alternate-toggle (focus-tree)))))
+     (alternate-toggle (focus-tree))))
+  (assuming (!= (tree-children t) (tree-accessible-children t))
+    ((check "Show hidden" "v" (tree-is? t :up 'inactive))
+     (inactive-toggle t))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
@@ -228,10 +228,6 @@
 (tm-menu (focus-ancestor-icons t))
 
 (tm-menu (focus-toggle-icons t)
-  (assuming (!= (tree-children t) (tree-accessible-children t))
-    ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
-            (tree-is? t :up 'inactive))
-     (inactive-toggle t)))
   (assuming (numbered-context? t)
     ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
             (numbered-numbered? (focus-tree)))
@@ -243,7 +239,11 @@
   (assuming (alternate-second? t)
     ((check (balloon (icon (eval (alternate-second-icon t)))
                      (eval (alternate-second-name t))) "v" #t)
-     (alternate-toggle (focus-tree)))))
+     (alternate-toggle (focus-tree))))
+  (assuming (!= (tree-children t) (tree-accessible-children t))
+    ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
+            (tree-is? t :up 'inactive))
+     (inactive-toggle t))))
 
 (tm-menu (focus-tag-icons t)
   (dynamic (focus-toggle-icons t))
