@@ -66,6 +66,7 @@
       ("Plain" (make-toggle 'folded-plain))
       ("Standard" (make-toggle 'folded-std))
       ("Environment" (make-toggle 'folded-env))
+      ("Documentation" (make-toggle 'folded-documentation))
       ("Grouped" (make-toggle 'folded-grouped))
       ---
       (link fold-menu))
@@ -75,6 +76,7 @@
       ("Plain" (make-toggle 'summarized-plain))
       ("Standard" (make-toggle 'summarized-std))
       ("Environment" (make-toggle 'summarized-env))
+      ("Documentation" (make-toggle 'summarized-documentation))
       ("Grouped" (make-toggle 'summarized-grouped))
       ---
       (link fold-menu))

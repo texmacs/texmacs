@@ -56,6 +56,18 @@
     </surround>
   </macro>>
 
+  <assign|render-folded-documentation|<\macro|button|body>
+    <\surround||<right-flush><vspace|0.5fn>>
+      <arg|body> <arg|button>
+    </surround>
+  </macro>>
+
+  <assign|render-unfolded-documentation|<\macro|button|body>
+    <\surround||<right-flush><arg|button><vspace|0.5fn>>
+      <arg|body>
+    </surround>
+  </macro>>
+
   <assign|render-folded-grouped|<\macro|button|body>
     <\with|old-color|<value|color>|color|blue>
       <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|1|cell-lsep|0ln>|<cwith|1|1|1|1|cell-rsep|0ln>|<cwith|1|1|1|1|cell-bsep|0ln>|<cwith|1|1|1|1|cell-tsep|0ln>|<cwith|1|1|1|1|cell-width|20ln>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|2|2|cell-hyphen|t>|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|1|-1|cell-background|pastel
@@ -133,6 +145,20 @@
     </render-folded-explain>
   </macro>>
 
+  <assign|folded-documentation|<\macro|x|y>
+    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|(mouse-unfold)|<arg|x>>>
+      <strong|<large|<arg|x>>><hidden|<arg|y>>
+    </render-folded-documentation>
+  </macro>>
+
+  <assign|unfolded-documentation|<\macro|x|y>
+    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>>
+      <strong|<large|<arg|x>>>
+
+      <arg|y>
+    </render-unfolded-documentation>
+  </macro>>
+
   <assign|folded-grouped|<\macro|x|y>
     <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
       <arg|x>
@@ -162,6 +188,8 @@
   <drd-props|folded-env|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-explain|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-documentation|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-grouped|arity|2|accessible|0|hidden|1>
 
@@ -219,6 +247,18 @@
     <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
       <arg|y>
     </render-folded-grouped>
+  </macro>>
+
+  <assign|summarized-documentation|<\macro|x|y>
+    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|(mouse-unfold)|<arg|x>>>
+      <strong|<large|<arg|x>>>
+    </render-folded-documentation>
+  </macro>>
+
+  <assign|detailed-documentation|<\macro|x|y>
+    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>>
+      <arg|y>
+    </render-unfolded-documentation>
   </macro>>
 
   <assign|summarized-raw|<macro|x|y|<arg|x>>>

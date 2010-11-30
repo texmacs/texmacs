@@ -140,7 +140,7 @@
   (dynamic (focus-toggle-icons t))
   (mini #t (inert ((eval (focus-session-language)) (noop))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
-   (set-message "Not yet implemented" "")))
+   (focus-help)))
 
 (tm-menu (focus-move-icons t)
   (:require (field-context? t))

@@ -931,7 +931,9 @@ path
 edit_select_rep::focus_search (path p, bool skip_flag, bool up_flag) {
   if (!(rp < p)) return rp;
   tree st= subtree (et, p);
-  if (!skip_flag || none_accessible (st)) return p;
+  if (!skip_flag) return p;
+  if (none_accessible (st) && p == path_up (tp) && last_item (tp) != 0)
+    return p;
   if (is_atomic (st) ||
       is_func (st, DOCUMENT) ||
       is_func (st, CONCAT) ||

@@ -980,7 +980,7 @@
 ("reset" "skasuj")
 ("resize object" "przeskaluj obiekt")
 ("resized" "przeskalowany")
-("results of the search for" "wyniki wyszukiwania dla")
+("search results for" "wyniki wyszukiwania dla")
 ("return" "powrót")
 ("revert" "przywró¢")
 ("revert buffer" "przywró¢ bufor")

@@ -42,10 +42,17 @@ public:
   QToolBar *modeToolBar;
   QToolBar *focusToolBar;
   QToolBar *userToolBar;
+  
+
+#ifdef Q_WS_MAC
   QToolBar *dumbToolBar;
   
   QAction *modeToolBarAction;
   QAction *mainToolBarAction;
+  
+  QWidget *rulerWidget;
+#endif
+  
   
   QWidget *centralWidget;
   

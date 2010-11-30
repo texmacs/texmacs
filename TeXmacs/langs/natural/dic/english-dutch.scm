@@ -1151,7 +1151,7 @@
 ("reset" "herzet")
 ("resize object" "verander grootte object")
 ("resized" "uitgerekt")
-("results of the search for" "resultaten voor het zoeken naar")
+("search results for" "resultaten voor het zoeken naar")
 ("return" "return")
 ("revert" "herlaad")
 ("revert buffer" "herlaad")

@@ -47,7 +47,7 @@
 ("remove fields" "")
 ("remove input field" "")
 ("remove input field above" "")
-("results of the search for" "")
+("search results for" "")
 ("right arrow" "")
 ("search words in my documents" "")
 ("search words in the documentation" "")

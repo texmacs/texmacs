@@ -227,6 +227,7 @@
 
 (tm-define (markup-build-atom x)
   (cond ((number? x) (number->string x))
+        ((symbol? x) (symbol->string x))
         ((== x #t) "true")
         ((== x #f) "false")
         (else x)))
@@ -237,13 +238,23 @@
           ((list-1? r) (car r))
           (else (cons 'concat r)))))
 
-(tm-define (markup-build-document l block?)
+(tm-define (markup-build-paragraphs l block?)
   (with s (list-scatter l (lambda (x) (== x '$lf)) #f)
     (with r (map markup-build-concat s)
       (cond ((and (null? r) block?) '(document ""))
             ((null? r) "")
             ((and (list-1? r) (not block?)) (car r))
             (else (cons 'document r))))))
+
+(tm-define (markup-expand-document x)
+  (if (tm-is? x 'document)
+      (append-map (lambda (x) (list x $lf)) (tm-cdr x))
+      (list x)))
+
+(tm-define (markup-build-document l block?)
+  (with x (append-map markup-expand-document l)
+    (with y (if (and (nnull? x) (== (cAr x) $lf)) (cDr x) x)
+      (markup-build-paragraphs y block?))))
 
 (tm-define-macro ($textual . l)
   `(markup-build-document ($list ,@l) #f))
@@ -254,13 +265,6 @@
 (tm-define-macro ($block . l)
   `(markup-build-document ($list ,@l) #t))
 
-(tm-define-macro ($localize . l)
-  `(tree-translate ($inline ,@l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (define (replace-unquotes x)
   (cond ((npair? x) x)
         ((== (car x) '$unquote) (cons 'unquote (cdr x)))
@@ -269,28 +273,27 @@
 (tm-define ($quote x)
   (list 'quasiquote (replace-unquotes x)))
 
-(tm-define-macro ($tmdoc . l)
-  (with lan (get-output-language)
-    ($quote
-      `(document
-         (style "tmdoc")
-         (body ($unquote ($block ,@l)))
-         (initial (collection (associate "language" ,lan)))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define-macro ($tmdoc-title . l)
-  ($quote `(tmdoc-title ($unquote ($inline ,@l)))))
+(tm-define-macro ($para . l)
+  ($quote `(document ($unquote ($block ,@l)))))
 
 (tm-define-macro ($itemize . l)
-  ($quote `(itemize ($unquote ($block ,@l)))))
+  ($quote `(document (itemize ($unquote ($block ,@l))))))
 
 (tm-define-macro ($enumerate . l)
-  ($quote `(enumerate ($unquote ($block ,@l)))))
+  ($quote `(document (enumerate ($unquote ($block ,@l))))))
 
 (tm-define-macro ($description . l)
-  ($quote `(description ($unquote ($block ,@l)))))
+  ($quote `(document (description ($unquote ($block ,@l))))))
 
 (tm-define-macro ($description-aligned . l)
-  ($quote `(description-aligned ($unquote ($block ,@l)))))
+  ($quote `(document (description-aligned ($unquote ($block ,@l))))))
+
+(tm-define-macro ($description-long . l)
+  ($quote `(document (description-long ($unquote ($block ,@l))))))
 
 (tm-define-macro ($item)
   ($quote `(item)))
@@ -309,3 +312,66 @@
 
 (tm-define-macro ($link dest . l)
   ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific markup for TeXmacs documentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro ($tmdoc . l)
+  (with lan (get-output-language)
+    ($quote
+      `(document
+         (style "tmdoc")
+         (body ($unquote ($localize ($block ,@l))))
+         (initial (collection (associate "language" ,lan)))))))
+
+(tm-define-macro ($localize . l)
+  `(tree-translate ($inline ,@l)))
+
+(tm-define-macro ($tmdoc-title . l)
+  ($quote `(document (tmdoc-title ($unquote ($inline ,@l))))))
+
+(tm-define-macro ($folded-documentation key . l)
+  ($quote `(document (folded-documentation ($unquote ($inline ,key))
+                                           ($unquote ($block ,@l))))))
+
+(tm-define-macro ($unfolded-documentation key . l)
+  ($quote `(document (unfolded-documentation ($unquote ($inline ,key))
+                                             ($unquote ($block ,@l))))))
+
+(tm-define-macro ($explain key . l)
+  ($quote `(document (explain ($unquote ($inline ,key))
+			      ($unquote ($block ,@l))))))
+
+(tm-define-macro ($tm-fragment . l)
+  ($quote `(document (tm-fragment ($unquote ($block ,@l))))))
+
+(tm-define-macro ($markup . l)
+  ($quote `(markup ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($tmstyle . l)
+  ($quote `(tmstyle ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($shortcut cmd)
+  ($quote `(shortcut ($unquote (object->string ',cmd)))))
+
+(tm-define-macro ($tmdoc-link dest . l)
+  `(with s (string-append "$TEXMACS_DOC_PATH/" ,dest ".en.tm")
+     ($link s ,@l)))
+
+(tm-define-macro ($menu . l)
+  `(list 'menu ,@l))
+
+(tm-define-macro ($tmdoc-icon dest)
+  ($quote `(icon ($unquote ($textual ,dest)))))
+
+(tm-define-macro ($src-arg s)
+  ($quote `(src-arg ($unquote ($textual ,s)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface for dynamic content generation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (tm-generate head . l)
+  (receive (opts body) (list-break l not-define-option?)
+    `(tm-define ,head ,@opts ($begin ,@body))))

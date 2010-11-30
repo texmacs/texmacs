@@ -1345,7 +1345,7 @@
 ("remove fields" "fjern felter")
 ("remove input field" "fjern indtastningsfelt")
 ("remove input field above" "fjern indtastningsfelt over")
-("results of the search for" "resultaterne af søgningen efter")
+("search results for" "resultaterne af søgningen efter")
 ("search words in my documents" "søg efter ord i mine dokumenter")
 ("search words in the documentation" "søg efter ord i brugerhåndbøgerne")
 ("search words in the source code" "søg efter ord i kildekoden")

@@ -1046,7 +1046,7 @@
 ("reset" "reiniciar")
 ("resize object" "cambiar tamaño del objeto")
 ("resized" "tamaño cambiado")
-("results of the search for" "resultados de la búsqueda de")
+("search results for" "resultados de la búsqueda de")
 ("return" "return")
 ("revert" "volver al original")
 ("revert buffer" "recuperar el búfer")

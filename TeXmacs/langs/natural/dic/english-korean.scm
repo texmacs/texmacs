@@ -1073,7 +1073,7 @@
 ("reset" "")
 ("resize object" "")
 ("resized" "크기조절")
-("results of the search for" "")
+("search results for" "")
 ("return" "")
 ("revert" "뒤로")
 ("revert buffer" "이전 버퍼로")

@@ -1061,7 +1061,7 @@
 ("reset" "переустановить")
 ("resize object" "изменить размер объекта")
 ("resized" "изменјн размер")
-("results of the search for" "результаты поиска")
+("search results for" "результаты поиска")
 ("return" "вернуться")
 ("revert" "обратить")
 ("revert buffer" "восстановить буфер")

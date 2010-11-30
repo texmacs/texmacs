@@ -30,11 +30,15 @@
     wrap-selection-any wrap-selection-small
     $begin $cond))
 
-(setq nullary-misc
-  '(:use :inherit))
+(setq nullary-no-highlight
+  '(:use :inherit
+    $tmdoc $tmdoc-title
+    $para $itemize $enumerate
+    $description $description-aligned $description-long
+    $tm-fragment))
 
 (setq nullary-indent
-  (append nullary-keywords nullary-misc))
+  (append nullary-keywords nullary-no-highlight))
 
 (setq unary-keywords
   '(let let* lambda
@@ -53,13 +57,15 @@
   '(define define-public define-macro define-public-macro
     texmacs-module provide-public define-group
     tm-define tm-define-macro tm-property request-handler
-    tm-menu define-menu
+    tm-menu define-menu tm-generate
     tm-build tm-build-macro tm-build-widget
     menu-bind menu-extend define-table
     define-format define-language))
 
 (setq unary-no-highlight
-  '(format interactive))
+  '(format interactive
+    $describe-item $link $tmdoc-link
+    $folded-documentation $unfolded-documentation $explain))
 
 (setq unary-indent
   (append unary-keywords unary-definitions unary-no-highlight))

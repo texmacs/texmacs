@@ -162,9 +162,12 @@
   (and-with p (tree-outer t)
     (alternate-toggle p)))
 
+(tm-define (symbol-toggle-alternate l)
+  (ahash-ref alternate-table l))
+
 (tm-define (alternate-toggle t)
   (:require (alternate-standard-context? t))
-  (variant-set t (ahash-ref alternate-table (tree-label t))))
+  (variant-set t (symbol-toggle-alternate (tree-label t))))
 
 (tm-define (alternate-fold t)
   (and-with p (tree-outer t)

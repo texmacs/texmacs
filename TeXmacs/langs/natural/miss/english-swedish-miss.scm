@@ -492,7 +492,7 @@
 ("replace by" "")
 ("replaced" "")
 ("replaced one occurrence" "")
-("results of the search for" "")
+("search results for" "")
 ("revert" "")
 ("right arrow" "")
 ("right padding" "")

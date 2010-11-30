@@ -39,6 +39,7 @@
 (define-fold folded-std unfolded-std)
 (define-fold folded-explain unfolded-explain)
 (define-fold folded-env unfolded-env)
+(define-fold folded-documentation unfolded-documentation)
 (define-fold folded-grouped unfolded-grouped)
 
 ;; summarized <-> detailed toggles
@@ -59,6 +60,7 @@
 (define-summarize summarized-plain detailed-plain)
 (define-summarize summarized-std detailed-std)
 (define-summarize summarized-env detailed-env)
+(define-summarize summarized-documentation detailed-documentation)
 (define-summarize summarized-grouped detailed-grouped)
 (define-summarize summarized-raw detailed-raw)
 (define-summarize summarized-tiny detailed-tiny)

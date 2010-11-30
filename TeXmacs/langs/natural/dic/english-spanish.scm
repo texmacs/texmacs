@@ -1381,7 +1381,7 @@
 ("remove fields" "quitar campos")
 ("remove input field" "quitar campo de entrada")
 ("remove input field above" "quitar campo de entrada arriba")
-("results of the search for" "resultados de la búsqueda de")
+("search results for" "resultados de la búsqueda de")
 ("right arrow" "flecha derecha")
 ("search words in my documents" "buscar palabras en mis documentos")
 ("search words in the documentation" "buscar palabras en la documentación")

@@ -127,6 +127,8 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   if ((x1<x2) && (y2<y1)) {
     QRect r(x1,y2,x2-x1,y1-y2);
     painter->setClipRect(r);
+  } else {
+    painter->setClipRect(QRect());
   }
 }
 
@@ -480,6 +482,8 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   }
 
   // draw the character
+  //cout << (char)c << ": " << cx1/256 << ","  << cy1/256 << ","  
+  //<< cx2/256 << ","  << cy2/256 << LF; 
   draw_clipped (mi->img, mi->w, mi->h, x- mi->xo*sfactor, y+ mi->yo*sfactor);
 }
 
@@ -567,23 +571,25 @@ qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   y2= min (y2, cy2- oy);
   shadow->ox= ox;
   shadow->oy= oy;
+  shadow->master= this;
   shadow->cx1= x1+ ox;
   shadow->cy1= y1+ oy;
   shadow->cx2= x2+ ox;
   shadow->cy2= y2+ oy;
-  shadow->master= this;
-#if 0
+  
   decode (x1, y1);
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
-    //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);   
-    shadow->painter->drawPixmap (rect, px, rect);
+    //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);  
+    shadow->painter->setClipRect(rect);
+//    shadow->painter->drawPixmap (rect, px, rect);
     //    cout << "qt_shadow_renderer_rep::get_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
     //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  } else {
+    shadow->painter->setClipRect(QRect());
   }
-#endif
 }
 
 void 
@@ -644,8 +650,6 @@ the_qt_renderer () {
  * proxy qt renderer
  ******************************************************************************/
 
-
-
 void 
 qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   SI mw, mh, sw, sh;
@@ -667,7 +671,6 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   static_cast<qt_shadow_renderer_rep*>(ren)->begin(
           &(static_cast<qt_shadow_renderer_rep*>(ren)->px));
 }
-
 
 void 
 qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
@@ -691,6 +694,9 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
+
+    shadow->painter->setClipRect(rect);
+
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
     QPixmap *_pixmap = static_cast<QPixmap*>(painter->device()); 
     if (_pixmap) {
@@ -699,7 +705,10 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     //    cout << "qt_shadow_renderer_rep::get_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
     //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  } else {
+    shadow->painter->setClipRect(QRect());
   }
+
 }
 
 
@@ -744,11 +753,15 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
+    shadow->painter->setClipRect(rect);
+
 //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);   
     shadow->painter->drawPixmap (rect, px, rect);
 //    cout << "qt_shadow_renderer_rep::get_shadow " 
 //         << rectangle(x1,y2,x2,y1) << LF;
 //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  } else {
+    shadow->painter->setClipRect(QRect());
   }
 }
 

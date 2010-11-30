@@ -92,6 +92,7 @@
 (lazy-menu (generic document-part) document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-icons
 	   insert-link-menu insert-image-menu insert-animation-menu)
+(lazy-define (generic generic-doc) focus-help)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting text mode\n")

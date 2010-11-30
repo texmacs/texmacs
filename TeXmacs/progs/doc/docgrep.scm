@@ -44,16 +44,15 @@
 (define (build-search-results keyword the-result)
   ($tmdoc
     ($tmdoc-title
-      ($localize "Search results for ``" keyword "''"))
+      "Search results for ``" keyword "''")
     ($when (null? the-result)
-      ($localize "No matches found for ``" keyword "''."))
+      "No matches found for ``" keyword "''.")
     ($when (nnull? the-result)
       ($with highest-score (cdar the-result)
-        $lf
         ($description-aligned
           ($for (x the-result)
             ($describe-item
-              ($inline (quotient (* (cdr x) 100) highest-score) "%")
+                ($inline (quotient (* (cdr x) 100) highest-score) "%")
               ($link (car x)
                 (cAr (string-tokenize-by-char (car x) #\/))))))))))
 

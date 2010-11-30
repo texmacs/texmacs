@@ -585,7 +585,7 @@
   (:require (tree-is-buffer? t))
   (group "Style")
   (let* ((st* (tree->stree (get-style-tree)))
-         (st (if (== st* '(tuple)) '(generic) (cdr st*))))
+         (st (if (== st* '(tuple)) '(no-style) (cdr st*))))
     (-> (eval (upcase-first (car st)))
         (link style-menu))
     (for (pack (cdr st))
@@ -599,7 +599,9 @@
       (link document-page-size-menu))
   (-> (eval (string-append (get-init "font-base-size") " pt"))
       (link document-font-base-size-menu))
-  (dynamic (focus-document-extra-menu t)))
+  (dynamic (focus-document-extra-menu t))
+  ---
+  ("Help" (focus-help)))
 
 (tm-menu (focus-document-extra-icons t))
 
@@ -607,7 +609,7 @@
   (:require (tree-is-buffer? t))
   (minibar
    (let* ((st* (tree->stree (get-style-tree)))
-	  (st (if (== st* '(tuple)) '(generic) (cdr st*))))
+	  (st (if (== st* '(tuple)) '(no-style) (cdr st*))))
      (=> (balloon (eval (upcase-first (car st))) "Document style")
 	 (link style-menu))
      (for (pack (cdr st))
@@ -625,4 +627,8 @@
 		"Font size")
        (link document-font-base-size-menu)))
   (glue #f #f 5 0)
+  (minibar
+   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
+    (focus-help)))
+  (glue #f #f 5 0)   
   (dynamic (focus-document-extra-icons t)))

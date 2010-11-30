@@ -184,6 +184,7 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   mw->setUnifiedTitleAndToolBarOnMac(true);
 
   QWidget *cw= new QWidget ();
+  
   QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, cw);
   bl->setContentsMargins(2,2,2,2);
   bl->setSpacing(0);
@@ -206,10 +207,22 @@ qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
   
   mainToolBarAction = dumbToolBar->addWidget(mainToolBar);
   modeToolBarAction = NULL;
+
+  
+  //a ruler
+  rulerWidget = new QWidget(cw);
+  rulerWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+  rulerWidget->setMinimumHeight(1);
+  rulerWidget->setBackgroundRole(QPalette::Dark);
+  rulerWidget->setVisible(false);
+  rulerWidget->setAutoFillBackground(true);
+//  rulerWidget = new QLabel("pippo", cw);
+  
   
   bl->insertWidget(0, modeToolBar);
-  bl->insertWidget(1, focusToolBar);
-  bl->insertWidget(2, userToolBar);
+  bl->insertWidget(1, rulerWidget);
+  bl->insertWidget(2, focusToolBar);
+  bl->insertWidget(3, userToolBar);
 
 #else
   mw->setCentralWidget(tw);
@@ -304,8 +317,10 @@ void qt_tm_widget_rep::updateVisibility()
       bool tmp = modeToolBar->isVisible();
       dumbToolBar->removeAction(modeToolBarAction);
       dumbToolBar->addAction(mainToolBarAction);
+      bl->insertWidget(0, rulerWidget);
       bl->insertWidget(0, modeToolBar);
       mainToolBarAction->setVisible(true);
+      rulerWidget->setVisible(true);
       modeToolBar->setVisible(tmp);
       if (modeToolBarAction)
         modeToolBarAction->setVisible(tmp);
@@ -313,6 +328,8 @@ void qt_tm_widget_rep::updateVisibility()
     } else { 
       dumbToolBar->removeAction(mainToolBarAction);
       if (modeToolBar->isVisible()) {
+        bl->removeWidget(rulerWidget);
+        rulerWidget->setVisible(false);
         bl->removeWidget(modeToolBar);
         if (modeToolBarAction == NULL) {
           modeToolBarAction = dumbToolBar->addWidget(modeToolBar);

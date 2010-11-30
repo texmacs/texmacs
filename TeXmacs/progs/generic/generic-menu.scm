@@ -20,6 +20,33 @@
         (source source-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus predicates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-has-variants? t)
+  (> (length (focus-variants-of t)) 1))
+
+(tm-define (focus-has-toggles? t)
+  (or (numbered-context? t)
+      (alternate-context? t)))
+
+(tm-define (focus-can-move? t)
+  #t)
+
+(tm-define (focus-can-insert-remove? t)
+  (and (or (structured-horizontal? t) (structured-vertical? t))
+       (cursor-inside? t)))
+
+(tm-define (focus-can-insert? t)
+  (< (tree-arity t) (tree-maximal-arity t)))
+
+(tm-define (focus-can-remove? t)
+  (> (tree-arity t) (tree-minimal-arity t)))
+
+(tm-define (focus-has-geometry? t)
+  #f)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -29,7 +56,8 @@
 (tm-define (focus-tag-name l)
   (if (symbol-unnumbered? l)
       (focus-tag-name (symbol-drop-right l 1))
-      (upcase-first (tree-name (tree l)))))
+      (with r (upcase-first (tree-name (tree l)))
+        (string-replace r "-" " "))))
 
 (tm-menu (focus-variant-menu t)
   (for (v (focus-variants-of t))
@@ -37,30 +65,18 @@
      (variant-set-keep-numbering (focus-tree) v))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Adding and removing children
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (focus-can-move? t)
-  #t)
-
-(tm-define (focus-can-insert-remove? t)
-  (and (or (structured-horizontal? t) (structured-vertical? t))
-       (cursor-inside? t)))
-
-(tm-define (focus-can-insert?)
-  (with t (focus-tree)
-    (< (tree-arity t) (tree-maximal-arity t))))
-
-(tm-define (focus-can-remove?)
-  (with t (focus-tree)
-    (> (tree-arity t) (tree-minimal-arity t))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for hidden fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (string-variable-name? t i)
+  (and (== (tree-child-type t i) "variable")
+       (tree-in? t '(with attr style-with style-with*))
+       (tree-atomic? (tree-ref t i))
+       (!= (tree->stree (tree-ref t i)) "")))
+
 (define (hidden-child? t i)
   (and (not (tree-accessible-child? t i))
+       (not (string-variable-name? t i))
        (!= (type->format (tree-child-type t i)) "n.a.")))
 
 (define (hidden-children t)
@@ -70,6 +86,9 @@
 (define (tree-child-name* t i)
   (with s (tree-child-name t i)
     (cond ((!= s "") s)
+          ((and (> i 0) (string-variable-name? t (- i 1)))
+           (with r (tree->string (tree-ref t (- i 1)))
+             (string-replace r "-" " ")))
           ((> (length (hidden-children t)) 1) "")
           ((== (tree-child-type t i) "regular") "")
           (else (tree-child-type t i)))))
@@ -77,6 +96,9 @@
 (define (tree-child-long-name* t i)
   (with s (tree-child-long-name t i)
     (cond ((!= s "") s)
+          ((and (> i 0) (string-variable-name? t (- i 1)))
+           (with r (tree->string (tree-ref t (- i 1)))
+             (string-replace r "-" " ")))
           ((> (length (hidden-children t)) 1) "")
           ((== (tree-child-type t i) "regular") "")
           (else (tree-child-type t i)))))
@@ -130,6 +152,13 @@
          (interactive (lambda (x) (tree-set (focus-tree) i x))
            (list prompt fm (tree->string (tree-ref t i)))))))))
 
+(tm-menu (string-input-icon t i)
+  (:require (string-variable-name? t i))
+  (with c (tree-ref t i)
+    (with s (if (tree-atomic? c) (tree->string c) "n.a.")
+      (glue #f #f 3 0)
+      (mini #t (group (eval (string-append s ":")))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -160,7 +189,7 @@
       (-> (eval (focus-tag-name (tree-label t)))
           (dynamic (focus-variant-menu t)))))
   (dynamic (focus-toggle-menu t))
-  ("Describe" (set-message "Not yet implemented" ""))
+  ("Describe" (focus-help))
   ("Delete" (remove-structure-upwards)))
 
 (tm-menu (focus-move-menu t)
@@ -174,10 +203,10 @@
 
 (tm-menu (focus-insert-menu t)
   (assuming (and (structured-horizontal? t) (not (structured-vertical? t)))
-    (when (focus-can-insert?)
+    (when (focus-can-insert? t)
       ("Insert argument before" (structured-insert-left))
       ("Insert argument after" (structured-insert-right)))
-    (when (focus-can-remove?)
+    (when (focus-can-remove? t)
       ("Remove argument before" (structured-remove-left))
       ("Remove argument after" (structured-remove-right))))
   (assuming (structured-vertical? t)
@@ -256,7 +285,7 @@
                      "Structured variant")
             (dynamic (focus-variant-menu t))))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
-   (set-message "Not yet implemented" ""))
+   (focus-help))
   ((balloon (icon "tm_focus_delete.xpm") "Remove tag")
    (remove-structure-upwards)))
 
@@ -277,12 +306,12 @@
 
 (tm-menu (focus-insert-icons t)
   (assuming (and (structured-horizontal? t) (not (structured-vertical? t)))
-    (when (focus-can-insert?)
+    (when (focus-can-insert? t)
       ((balloon (icon "tm_insert_left.xpm") "Structured insert at the left")
        (structured-insert-left))
       ((balloon (icon "tm_insert_right.xpm") "Structured insert at the right")
        (structured-insert-right)))
-    (when (focus-can-remove?)
+    (when (focus-can-remove? t)
       ((balloon (icon "tm_delete_left.xpm") "Structured remove leftwards")
        (structured-remove-left))
       ((balloon (icon "tm_delete_right.xpm") "Structured remove rightwards")

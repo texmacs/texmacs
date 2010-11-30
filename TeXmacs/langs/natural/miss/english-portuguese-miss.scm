@@ -59,7 +59,7 @@
 ("remove input field" "")
 ("remove input field above" "")
 ("remove this switch" "")
-("results of the search for" "")
+("search results for" "")
 ("right arrow" "")
 ("running author" "")
 ("running title" "")

@@ -111,8 +111,10 @@ init_upgrade_doc (string install_version) {
     s << string_load (from_dir * "changes-13.en.ptm");
   if (version_inf_eq (install_version, "1.0.6.2"))
     s << string_load (from_dir * "changes-14.en.ptm");
-  if (version_inf_eq (install_version, "1.0.7.6")) {
+  if (version_inf_eq (install_version, "1.0.7.6"))
     s << string_load (from_dir * "changes-15.en.ptm");
+  if (version_inf_eq (install_version, "1.0.7.7")) {
+    s << string_load (from_dir * "changes-16.en.ptm");
     s << string_load (from_dir * "changes-post.en.ptm");
     save_string (to, s, false);
   }

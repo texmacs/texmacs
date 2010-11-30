@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -79,7 +79,7 @@
   <drd-props|explain-macro|arity|<tuple|repeat|1|1>|accessible|all>
 
   <assign|explain-synopsis|<macro|synopsis|<htab|5mm><with|color|dark
-  grey|(synopsis)><vspace|0.25fn>>>
+  grey|(<arg|synopsis>)><vspace|0.25fn>>>
 
   <assign|src-value|<macro|body|<with|font-shape|right|color|black|<arg|body>>>>
 
@@ -235,13 +235,21 @@
     </src-comment>
   </active*>
 
-  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>|0.5w|0.5h||>>>
+  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>||2ex||-0.333ex>>>
 
   <assign|screenshot|<macro|name|<image|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|0.5w|0.5h||>>>
 
   \;
 
   <assign|cursor|<with|color|red|\|>>
+
+  <assign|math-cursor|<with|color|magenta|\|>>
+
+  <assign|small-focus|<macro|body|<with|color|cyan|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
+
+  <assign|big-focus|<macro|body|<with|color|cyan|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <with|color|black|<arg|body>>
+  </cell>>>>>>>>
 
   \;
 
@@ -257,5 +265,6 @@
     <associate|language|english>
     <associate|par-par-sep|0fn>
     <associate|preamble|true>
+    <associate|sfactor|3>
   </collection>
 </initial>

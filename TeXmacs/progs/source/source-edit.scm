@@ -13,13 +13,27 @@
 
 (texmacs-module (source source-edit))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing command tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (make-latex)
   (make 'latex)
   (set-message "Type a latex command followed by return" "latex"))
 
+(tm-define (activate-compound)
+  (with-innermost t 'compound
+    (when (not (tree-is? t :up 'inactive))
+      (tree-set! t `(inactive ,t)))
+    (activate)))
+
 (tm-define (kbd-enter t forwards?)
   (:require (tree-is? t 'hybrid))
   (activate-hybrid #f))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (tree-is? t 'compound))
+  (activate-compound))
 
 (tm-define (kbd-enter t forwards?)
   (:require (tree-is? t 'latex))
@@ -57,6 +71,10 @@
 (tm-define (inactive-toggle t)
   (:require (and (tree-is? t 'hybrid) (tree-is? t :up 'inactive)))
   (activate-hybrid #f))
+
+(tm-define (inactive-toggle t)
+  (:require (and (tree-is? t 'compound) (tree-is? t :up 'inactive)))
+  (activate-compound))
 
 (tm-define (inactive-toggle t)
   (:require (and (tree-is? t 'latex) (tree-is? t :up 'inactive)))

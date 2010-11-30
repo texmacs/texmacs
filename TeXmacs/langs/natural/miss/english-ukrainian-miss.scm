@@ -61,7 +61,7 @@
 ("remove input field above" "")
 ("remove number" "")
 ("renumber this page" "")
-("results of the search for" "")
+("search results for" "")
 ("right arrow" "")
 ("search words in my documents" "")
 ("search words in the documentation" "")

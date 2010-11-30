@@ -84,7 +84,7 @@ contains_table_format (tree t, tree var) {
 
 void
 edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
-  //cout << "Make compound " << as_string (l) << "\n";
+  //cout << "Make compound " << as_string (l) << ", " << n << "\n";
   eval ("(use-modules (generic generic-edit))");
   if (n == -1) {
     for (n=0; true; n++) {
@@ -186,6 +186,10 @@ void
 edit_dynamic_rep::insert_argument (path p, bool forward) {
   tree t= subtree (et, path_up (p));
   int i= last_item (p), n= N(t), d= 1;
+  if (is_func (t, WITH) ||
+      is_func (t, STYLE_WITH) ||
+      is_func (t, VAR_STYLE_WITH))
+    if (i == n-1) i--;
   if ((!in_source ()) || drd->contains (as_string (L(t)))) {
     if (forward) do i++; while ((i<=n) && (!drd->insert_point (L(t), i, n)));
     else while ((i>=0) && (!drd->insert_point (L(t), i, n))) i--;

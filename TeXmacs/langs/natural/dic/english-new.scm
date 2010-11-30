@@ -1145,7 +1145,7 @@
 ("reset" "")
 ("resize object" "")
 ("resized" "")
-("results of the search for" "")
+("search results for" "")
 ("return" "")
 ("revert" "")
 ("revert buffer" "")

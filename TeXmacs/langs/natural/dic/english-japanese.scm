@@ -1066,7 +1066,7 @@
 ("reset" "")
 ("resize object" "")
 ("resized" "")
-("results of the search for" "")
+("search results for" "")
 ("return" "")
 ("revert" "反対向")
 ("revert buffer" "")

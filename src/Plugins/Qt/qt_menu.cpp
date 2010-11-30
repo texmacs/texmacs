@@ -292,6 +292,8 @@ QTMTileAction::createWidget(QWidget* parent) {
     cout << "QTMTileAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
+  wid->setAutoFillBackground(true);
+  wid->setBackgroundRole(QPalette::Base);
   wid->setLayout (l);
   l->setSizeConstraint (QLayout::SetFixedSize);
   l->setHorizontalSpacing (2);
