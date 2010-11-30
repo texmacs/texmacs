@@ -19,7 +19,7 @@
 
 bool 
 mac_alternate_startup () {
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
   NSUInteger nsmods = [NSEvent modifierFlags];
   return (nsmods &  NSAlternateKeyMask);
 #else

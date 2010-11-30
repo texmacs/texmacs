@@ -4798,7 +4798,6 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = MOCs;
-				TM_LDQT = "-Wl,-F/Library/Frameworks -L/Library/Frameworks -framework QtGui -framework QtCore";
 			};
 			name = Debug;
 		};

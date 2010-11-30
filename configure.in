@@ -538,7 +538,7 @@ CONFIG_WORD_LENGTH_INC="3"
 CONFIG_WORD_MASK="0xfffffffc"
 CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 # tweak for XCode project
-CONFIG_NATIVE_ARCH_TAG="NATIVE_ARCH"
+CONFIG_ARCHS='$(NATIVE_ARCH)'
 
 X11_CFLAGS="$X_CFLAGS"
 X11_LDFLAGS="$X_LIBS -lXext -lX11"
@@ -585,9 +585,9 @@ case "${host}" in
   *apple*darwin*)
     echo "$ac_t""final adjustments for a MacOS host" 1>&6
     CONFIG_OS="MACOS"
-    CONFIG_CXXFLAGS="-mmacosx-version-min=10.4 -I${prefix}/include"
+    CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
-    CONFIG_BFLAGS="-mmacosx-version-min=10.4 -framework Cocoa"
+    CONFIG_BFLAGS="-framework Cocoa"
     CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
@@ -682,7 +682,7 @@ esac
 case "${host}" in
   *apple*darwin10*)
     echo "$ac_t""Xcode 3.2 project tweak (only MacOSX 10.6)" 1>&6
-    CONFIG_NATIVE_ARCH_TAG="NATIVE_ARCH_ACTUAL"
+    CONFIG_ARCHS='$(NATIVE_ARCH_ACTUAL)'
   ;;
 esac
 
@@ -761,6 +761,33 @@ case "$enable_macosx_extensions" in
 	;;
 esac
 AC_SUBST(CONFIG_MACOS)
+
+#--------------------------------------------------------------------
+# MacOS X distribution version (guarantees backward compatibility)
+#--------------------------------------------------------------------
+
+
+AC_ARG_ENABLE(macosx-distr,
+changequote(<<, >>)dnl
+<<  --enable-macosx-distr[=ARCH]      build for MacOSX >= 10.4 and arch [ARCH]>>,
+changequote([, ])dnl
+[], [enable_macosx_distr="no"])
+
+if test "$enable_macosx_distr" != "no" ; then    
+  MACOSX_DEPLOYMENT_TARGET="MACOSX_DEPLOYMENT_TARGET=10.4"
+  CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
+  CONFIG_BFLAGS="$CONFIG_BFLAGS -mmacosx-version-min=10.4 -DMACOSX_DEPLOYMENT_TARGET=10.4"
+  if test "$enable_macosx_distr" != "yes" -a "$enable_macosx_distr" != "" ; then
+    CONFIG_ARCHS="$enable_macosx_distr" 
+  	AC_MSG_RESULT([enabling Mac OSX distribution for architecture $enable_macosx_distr])
+  else
+	  AC_MSG_RESULT([enabling Mac OSX distribution])
+  fi
+else
+	AC_MSG_RESULT([disabling Mac OSX distribution])
+fi
+
+AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 
 #--------------------------------------------------------------------
 # Experimental PDF renderer
@@ -1056,7 +1083,7 @@ AC_SUBST(CONFIG_LIB_PATH)
 AC_SUBST(CONFIG_STRIP)
 AC_SUBST(CONFIG_CHMOD)
 AC_SUBST(CONFIG_LDRT)
-AC_SUBST(CONFIG_NATIVE_ARCH_TAG)
+AC_SUBST(CONFIG_ARCHS)
 
 #--------------------------------------------------------------------
 # Default paths for installation
