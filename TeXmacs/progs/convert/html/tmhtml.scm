@@ -167,8 +167,9 @@
 		       `(concat ,(tmhtml-force-string title)
 				" (FSF GNU project)"))
 		      (else (tmhtml-force-string title))))
-    (if (or (in? "tmdoc" styles) (in? "tmweb" styles) (in? "mmxdoc" styles))
-	(with ss (if (in? "mmxdoc" styles)
+    (if (or (in? "tmdoc" styles) (in? "tmweb" styles)
+            (in? "mmxdoc" styles) (in? "magix-web" styles))
+	(with ss (if (or (in? "mmxdoc" styles) (in? "magix-web" styles))
 		     "http://www.texmacs.org/css/mmxdoc.css"
 		     "http://www.texmacs.org/css/tmdoc.css")
 	  (set! css `(h:link (@ (rel "stylesheet")
