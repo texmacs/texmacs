@@ -120,6 +120,7 @@
   (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
+  (in-screens% (inside? 'screens))
   (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-scheme% (== (get-env "prog-language") "scheme"))

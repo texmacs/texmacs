@@ -24,3 +24,8 @@
   ("S-F10" (dynamic-previous))
   ("S-F11" (dynamic-next))
   ("S-F12" (dynamic-last)))
+
+(kbd-map
+  (:mode in-screens?)
+  ("pageup" (dynamic-traverse-buffer :previous))
+  ("pagedown" (dynamic-traverse-buffer :next)))
