@@ -20,8 +20,8 @@
 
 (tm-define (focus-doc t)
   (:require (tree-is-buffer? t))
-  (let* ((st (tree->stree (get-style-tree)))
-         (style (if (== st '(tuple)) "none" (cadr st))))
+  (let* ((st (get-style-list))
+         (style (if (null? st) "none" (car st))))
     ($tmdoc
       ($tmdoc-title "Top level contextual help")
       ($para

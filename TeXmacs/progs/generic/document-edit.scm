@@ -31,6 +31,12 @@
 (tm-property (project-attach master)
   (:argument master "Master file"))
 
+(tm-define (get-style-list)
+  (with t (tree->stree (get-style-tree))
+    (cond ((string? t) (list t))
+          ((and (pair? t) (== (car t) 'tuple)) (cdr t))
+          (else (texmacs-error "get-style-list ""invalid style ~S" t)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preamble mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
