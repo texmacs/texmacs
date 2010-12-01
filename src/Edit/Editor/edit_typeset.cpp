@@ -190,6 +190,12 @@ edit_typeset_rep::typeset_exec_until (path p) {
 	cout << "TeXmacs] Warning: resynchronizing for path " << p << "\n";
       // apply_changes ();
     }
+  if (p == tp && inside_graphics (true) && p != closest_inside (et, p)) {
+    //cout << "TeXmacs] Warning: corrected cursor\n";
+    tp= closest_inside (et, tp);
+    p = tp;
+  }
+
   if (N(cur[p])!=0) return;
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
