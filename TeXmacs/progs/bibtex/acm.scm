@@ -99,10 +99,11 @@
   (:mode bib-acm?)
   (let* ((t (bib-field x "type"))
 	 (n (bib-field x "number"))
-	 (type (if (bib-null? t) ,(bib-translate "Technical Report") t))
+	 (type (if (bib-null? t) (bib-translate "Technical Report") t))
 	 (number (if (bib-null? n) "" n))
 	 (sep (if (< (bib-text-length n) 3) `(nbsp) " ")))
-    `(concat ,type ,sep ,number)))
+    (if (bib-null? n) type
+        `(concat ,type ,sep ,number))))
 
 (tm-define (bib-format-edition x)
   (:mode bib-acm?)
