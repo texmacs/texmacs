@@ -39,6 +39,7 @@ edit_graphics_rep::inside_graphics (bool b) {
   while (!is_nil (p)) {
     if (is_func (st, GRAPHICS)) flag= true;
     if (b && is_func (st, TEXT_AT)) flag= false;
+    if (is_atomic (st) || p->item < 0 || p->item >= N(st)) break;
     st= st[p->item];
     p = p->next;
   }
