@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|<tuple|source|std>>
 
@@ -279,6 +279,8 @@
   \;
 
   <assign|href|<macro|body|<hlink|<with|font-family|tt|<arg|body>>|<arg|body>>>>
+
+  <assign|slink|<macro|body|<hlink|<with|font-family|tt|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
 
