@@ -41,7 +41,7 @@ extern window (*get_current_window) (void);
 qt_gui_rep* the_gui= NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 
-time_t time_credit;  // interval to interrupt long redrawings
+time_t time_credit = 100;  // interval to interrupt long redrawings
 time_t timeout_time; // new redraw interruption
 time_t lapse = 0; // optimization for delayed commands
 
@@ -65,7 +65,7 @@ qt_gui_rep::qt_gui_rep(int &argc, char **argv):
   // argv= argv2;
 
   interrupted   = false;
-  time_credit = 25;
+  time_credit = 100;
   timeout_time= texmacs_time () + time_credit;
 
   //waitDialog = NULL;
@@ -790,11 +790,8 @@ qt_gui_rep::check_event (int type) {
       else {
         time_t now= texmacs_time ();
         if (now - timeout_time < 0) return false;
-        //fill_event_queue();
-//        timeout_time= now + (100 / (N(waiting_events) + 1));
-        timeout_time= now + 1000;
-//        interrupted= (N(waiting_events) > 0);
-        interrupted= true;
+        timeout_time= now + time_credit;
+        interrupted= (N(waiting_events) > 0);
         //if (interrupted) cout << "INTERRUPT " 
         //  << now << "------------------" << LF;
         return interrupted;
@@ -822,7 +819,6 @@ qt_gui_rep::update () {
 
   // cout << "<" << texmacs_time() << " " << N(delayed_queue) << " ";
   
-  time_credit = 100;
   updatetimer->stop();
   updating = true;
   
@@ -831,6 +827,8 @@ qt_gui_rep::update () {
 
   time_t now = texmacs_time();
   needing_update = false;
+
+  time_credit = 100 / (N(waiting_events)+1);
 
   
   // 1.
@@ -877,7 +875,7 @@ qt_gui_rep::update () {
       
       // repaint invalid regions  
       interrupted = false;
-      timeout_time = texmacs_time() + time_credit/(N(waiting_events)+1);
+      timeout_time = texmacs_time() + time_credit;
       
       //cout << "REPAINT START..."; cout.flush();
       
