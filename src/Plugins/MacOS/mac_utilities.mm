@@ -10,13 +10,17 @@
 
 #include "url.hpp"
 #include "mac_utilities.h"
-#include "Cocoa/mac_cocoa.h"
 
+#define extend CARBON_extends // avoid name collision
+#include "Cocoa/mac_cocoa.h"
+#include <Carbon/Carbon.h>
 #include "HIDRemote.h"
+#undef extend
 
 #ifdef QTTEXMACS
 #include <QtGui>
-#include <Carbon/Carbon.h>
+#include "Qt/QTMWidget.hpp"
+#include "Qt/qt_gui.hpp"
 #endif
 
 bool 
@@ -205,7 +209,9 @@ from_nsstring (NSString *s) {
          isPressed:(BOOL)isPressed
 fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
   mac_remote_button (from_nsstring([self buttonNameForButtonCode:buttonCode]), isPressed);
+  [pool release];
 }
 
 - (void) cleanupRemote
@@ -224,67 +230,66 @@ fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 	switch (buttonCode)
 	{
 		case kHIDRemoteButtonCodeUp:
-			return (@"Up");
+			return (@"ir-up");
       break;
       
 		case kHIDRemoteButtonCodeDown:
-			return (@"Down");
+			return (@"ir-down");
       break;
       
 		case kHIDRemoteButtonCodeLeft:
-			return (@"Left");
+			return (@"ir-left");
       break;
       
 		case kHIDRemoteButtonCodeRight:
-			return (@"Right");
+			return (@"ir-right");
       break;
       
 		case kHIDRemoteButtonCodeCenter:
-			return (@"Center");
+			return (@"ir-center");
       break;
       
 		case kHIDRemoteButtonCodePlay:
-			return (@"Play/Pause");
+			return (@"ir-play");
       break;
       
 		case kHIDRemoteButtonCodeMenu:
-			return (@"Menu");
+			return (@"ir-menu");
       break;
       
 		case kHIDRemoteButtonCodeUpHold:
-			return (@"Up (hold)");
+			return (@"ir-up-hold");
       break;
       
 		case kHIDRemoteButtonCodeDownHold:
-			return (@"Down (hold)");
+			return (@"ir-down-hold");
       break;
       
 		case kHIDRemoteButtonCodeLeftHold:
-			return (@"Left (hold)");
+			return (@"ir-left-hold");
       break;
       
 		case kHIDRemoteButtonCodeRightHold:
-			return (@"Right (hold)");
+			return (@"ir-right-hold");
       break;
       
 		case kHIDRemoteButtonCodeCenterHold:
-			return (@"Center (hold)");
+			return (@"ir-center-hold");
       break;
       
 		case kHIDRemoteButtonCodePlayHold:
-			return (@"Play/Pause (hold)");
+			return (@"ir-play-hold");
       break;
       
 		case kHIDRemoteButtonCodeMenuHold:
-			return (@"Menu (hold)");
+			return (@"ir-menu-hold");
       break;
       
     default:
-      return (@"Unknown");
-      break;
+      ;
 	}
 	
-	return ([NSString stringWithFormat:@"Button %x", (int)buttonCode]);
+  return ([NSString stringWithFormat:@"ir-button-%x", (int)buttonCode]);
 }
 
 - (void) startStopRemote:(bool) _start
@@ -372,17 +377,21 @@ TMRemoteDelegate* remote_delegate = nil;
 
 void 
 mac_begin_remote () {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
   if (!remote_delegate) {
     remote_delegate = [[TMRemoteDelegate alloc] init];
   }
   [remote_delegate setupRemote];
   [remote_delegate startStopRemote:true];
+  [pool release];
 }
 
 void 
 mac_end_remote () {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
   [remote_delegate startStopRemote:false];
   [remote_delegate cleanupRemote];
+  [pool release];
 }
 
 void 
@@ -390,5 +399,16 @@ mac_remote_button (string button, bool pressed) {
   (void) button; (void) pressed; 
 //TODO: do something with the button.
 //  cout << button << " " << (pressed ? "Down" : "Up") << LF;
+#if QTTEXMACS
+  if (pressed) {
+    QTMWidget *tm_focus = qobject_cast<QTMWidget*>(qApp->focusWidget());
+    if (tm_focus) {
+      simple_widget_rep *wid =  tm_focus->tm_widget();
+      if (wid) {
+        the_gui -> process_keypress (wid, button, texmacs_time());
+      }
+    }
+  }
+#endif
 }
 
