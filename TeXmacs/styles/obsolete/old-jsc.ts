@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.5>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -92,7 +92,7 @@
     </src-comment>
   </active*>
 
-  <assign|theorem-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
+  <assign|enunciation-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
 
   \;
 </body>

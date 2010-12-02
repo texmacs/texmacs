@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.12>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -13,11 +13,10 @@
     <src-copyright|2007|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -59,21 +58,27 @@
 
   <\active*>
     <\src-comment>
-      Theorems and strong text in dark blue.
+      Theorems, lists and strong text in dark blue.
     </src-comment>
   </active*>
 
   <assign|strong-color|dark blue>
 
-  <assign|uncolored-theorem-name|<value|theorem-name>>
+  <assign|uncolored-enunciation-name|<value|enunciation-name>>
 
-  <assign|uncolored-exercise-name|<value|exercise-name>>
+  <assign|uncolored-render-list|<value|render-list>>
 
   <assign|uncolored-strong|<value|strong>>
 
-  <assign|theorem-name|<macro|x|<with|color|<value|strong-color>|<uncolored-theorem-name|<arg|x>>>>>
+  <assign|enunciation-name|<macro|x|<with|color|<value|strong-color>|<uncolored-enunciation-name|<arg|x>>>>>
 
-  <assign|exercise-name|<macro|x|<with|color|<value|strong-color>|<uncolored-exercise-name|<arg|x>>>>>
+  <assign|render-list|<\macro|body>
+    <\uncolored-render-list>
+      <\with|uncolored-current-item|<value|current-item>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>>
+        <arg|body>
+      </with>
+    </uncolored-render-list>
+  </macro>>
 
   <assign|strong|<macro|x|<with|color|<value|strong-color>|<uncolored-strong|<arg|x>>>>>
 

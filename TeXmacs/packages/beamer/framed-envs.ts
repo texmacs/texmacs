@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -57,9 +57,9 @@
   <assign|render-enunciation|<\macro|which|body>
     <\padded-normal|1fn|1fn>
       <\wide-std-framed-colored|dark blue|pastel yellow>
-        <\unframed-render-remark|<arg|which>>
+        <\unframed-render-enunciation|<arg|which>>
           <arg|body>
-        </unframed-render-remark>
+        </unframed-render-enunciation>
       </wide-std-framed-colored>
     </padded-normal>
   </macro>>

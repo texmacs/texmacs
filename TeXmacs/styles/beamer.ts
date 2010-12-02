@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|generic|presentation|ridged-paper>
+  <use-package|generic|compact-list|presentation|ridged-paper>
 
   \;
 </body>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|<tuple|source|std>>
 
@@ -26,9 +26,13 @@
     </src-comment>
   </active*>
 
-  <assign|aligned-item|<macro|name|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<arg|name>|<minus|1r|2.5fn>||<plus|1r|0.5fn>|>>>>
+  <assign|item-hsep|3fn>
 
-  <assign|compact-item|<macro|name|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<arg|name>|||<maximum|1r|1.5fn>|>>>>
+  <assign|item-vsep|0.5fn>
+
+  <assign|aligned-item|<macro|name|<style-with|src-compact|none|<vspace*|<value|item-vsep>><with|par-first|-3fn|<yes-indent>><resize|<arg|name>|<minus|1r|2.5fn>||<plus|1r|0.5fn>|>>>>
+
+  <assign|compact-item|<macro|name|<style-with|src-compact|none|<vspace*|<value|item-vsep>><with|par-first|-1.5fn|<yes-indent>><resize|<arg|name>|||<maximum|1r|1.5fn>|>>>>
 
   <\active*>
     <\src-comment>
@@ -91,8 +95,8 @@
   </active*>
 
   <assign|render-list|<\macro|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <\indent-left|3fn>
+    <\padded-normal|<value|item-vsep>|<value|item-vsep>>
+      <\indent-left|<value|item-hsep>>
         <surround|<no-page-break*>|<no-indent*>|<arg|body>>
       </indent-left>
     </padded-normal>

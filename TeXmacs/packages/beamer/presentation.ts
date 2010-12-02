@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -44,15 +44,7 @@
 
   <assign|name|<macro|body|<with|font-family|rm|font-shape|small-caps|<arg|body>>>>
 
-  <\active*>
-    <\src-comment>
-      Customized list environments
-    </src-comment>
-  </active*>
-
-  <assign|aligned-item|<macro|name|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-2.5fn|<yes-indent>><resize|<arg|name>|<minus|1r|2.5fn>||<plus|1r|0.0fn>|>>>>
-
-  <assign|render-bibitem|<macro|text|<aligned-item|<transform-bibitem|<arg|text>>>>>
+  <assign|item-vsep|0fn>
 
   <\active*>
     <\src-comment>
