@@ -42,21 +42,15 @@
 (menu-bind table-width-menu
   ("Automatic" (table-set-automatic-width))
   ("Paragraph" (table-set-exact-width "1par"))
-  ("Exact" (check "o" (table-test-exact-width?))
-   (interactive table-set-exact-width))
-  ("Minimal" (check "o" (table-test-minimal-width?))
-   (interactive table-set-minimal-width))
-  ("Maximal" (check "o" (table-test-maximal-width?))
-   (interactive table-set-maximal-width)))
+  ("Exact" (table-ia-exact-width))
+  ("Minimal" (table-ia-minimal-width))
+  ("Maximal" (table-ia-maximal-width)))
 
 (menu-bind table-height-menu
   ("Automatic" (table-set-automatic-height))
-  ("Exact" (check "o" (table-test-exact-height?))
-   (interactive table-set-exact-height))
-  ("Minimal" (check "o" (table-test-minimal-height?))
-   (interactive table-set-minimal-height))
-  ("Maximal" (check "o" (table-test-maximal-height?))
-   (interactive table-set-maximal-height)))
+  ("Exact" (table-ia-exact-height))
+  ("Minimal" (table-ia-minimal-height))
+  ("Maximal" (table-ia-maximal-height)))
 
 (menu-bind table-halign-menu
   ("Left" (table-set-halign "l"))
@@ -134,21 +128,15 @@
 
 (menu-bind cell-width-menu
   ("Automatic" (cell-set-automatic-width))
-  ("Exact" (check "o" (cell-test-exact-width?))
-   (interactive cell-set-exact-width))
-  ("Minimal" (check "o" (cell-test-minimal-width?))
-   (interactive cell-set-minimal-width))
-  ("Maximal" (check "o" (cell-test-maximal-width?))
-   (interactive cell-set-maximal-width)))
+  ("Exact" (cell-ia-exact-width))
+  ("Minimal" (cell-ia-minimal-width))
+  ("Maximal" (cell-ia-maximal-width)))
 
 (menu-bind cell-height-menu
   ("Automatic" (cell-set-automatic-height))
-  ("Exact" (check "o" (cell-test-exact-height?))
-   (interactive cell-set-exact-height))
-  ("Minimal" (check "o" (cell-test-minimal-height?))
-   (interactive cell-set-minimal-height))
-  ("Maximal" (check "o" (cell-test-maximal-height?))
-   (interactive cell-set-maximal-height)))
+  ("Exact" (cell-ia-exact-height))
+  ("Minimal" (cell-ia-minimal-height))
+  ("Maximal" (cell-ia-maximal-height)))
 
 (menu-bind cell-border-menu
   ("All" (interactive cell-set-border))
