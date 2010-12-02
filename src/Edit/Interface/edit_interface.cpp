@@ -369,7 +369,11 @@ edit_interface_rep::apply_changes () {
     ::get_size (get_window (this), wx, wy);
     if (get_init_string (SCROLL_BARS) == "false") sb= 0;
     if (get_server () -> in_full_screen_mode ()) sb= 0;
+#ifdef QTTEXMACS
+    if (sb) wx -= 24 * PIXEL;
+#else
     if (sb) wx -= 20 * PIXEL;
+#endif
     if (wx != cur_wx || wy != cur_wy) {
       cur_wx= wx; cur_wy= wy;
       init_env (PAGE_SCREEN_WIDTH, as_string (wx*sfactor) * "tmpt");
