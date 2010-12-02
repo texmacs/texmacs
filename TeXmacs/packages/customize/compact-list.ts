@@ -21,19 +21,19 @@
     </src-license>
   </src-title>>
 
-  <assign|item-hsep|1.5fn>
+  <assign|item-hsep|<macro|1.5fn>>
 
-  <assign|item-vsep|0.25fn>
+  <assign|item-vsep|<macro|0.25fn>>
 
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|<value|item-vsep>><with|par-first|-1.5fn|<yes-indent>><resize|<arg|x>|<minus|1r|1.25fn>||<plus|1r|0.25fn>|>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|<minus|1r|<minus|<item-hsep>|0.25fn>>||<plus|1r|0.25fn>|>>>>
 
-  <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|<value|item-vsep>><with|par-first|-1.5fn|<yes-indent>><resize|<arg|x>|||<maximum|1r|0fn>|>>>>
+  <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|||<maximum|1r|0fn>|>>>>
 
   <assign|render-bibitem|<macro|text|<aligned-item|<transform-bibitem|<arg|text>>>>>
 
   <assign|render-list|<\macro|body>
-    <\padded-normal|<value|item-vsep>|<value|item-vsep>>
-      <\indent-left|<value|item-hsep>>
+    <\padded-normal|<item-vsep>|<item-vsep>>
+      <\indent-left|<item-hsep>>
         <surround|<no-page-break*>|<no-indent*>|<arg|body>>
       </indent-left>
     </padded-normal>

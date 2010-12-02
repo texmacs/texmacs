@@ -44,7 +44,7 @@
 
   <assign|name|<macro|body|<with|font-family|rm|font-shape|small-caps|<arg|body>>>>
 
-  <assign|item-vsep|0fn>
+  <assign|item-vsep|<macro|0fn>>
 
   <\active*>
     <\src-comment>

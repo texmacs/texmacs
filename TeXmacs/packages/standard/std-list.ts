@@ -26,13 +26,13 @@
     </src-comment>
   </active*>
 
-  <assign|item-hsep|3fn>
+  <assign|item-hsep|<macro|3fn>>
 
-  <assign|item-vsep|0.5fn>
+  <assign|item-vsep|<macro|0.5fn>>
 
-  <assign|aligned-item|<macro|name|<style-with|src-compact|none|<vspace*|<value|item-vsep>><with|par-first|-3fn|<yes-indent>><resize|<arg|name>|<minus|1r|2.5fn>||<plus|1r|0.5fn>|>>>>
+  <assign|aligned-item|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|name>|<minus|1r|<minus|<item-hsep>|0.5fn>>||<plus|1r|0.5fn>|>>>>
 
-  <assign|compact-item|<macro|name|<style-with|src-compact|none|<vspace*|<value|item-vsep>><with|par-first|-1.5fn|<yes-indent>><resize|<arg|name>|||<maximum|1r|1.5fn>|>>>>
+  <assign|compact-item|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<over|<item-hsep>|2>>|<yes-indent>><resize|<arg|name>|||<maximum|1r|<over|<item-hsep>|2>>|>>>>
 
   <\active*>
     <\src-comment>
@@ -95,8 +95,8 @@
   </active*>
 
   <assign|render-list|<\macro|body>
-    <\padded-normal|<value|item-vsep>|<value|item-vsep>>
-      <\indent-left|<value|item-hsep>>
+    <\padded-normal|<item-vsep>|<item-vsep>>
+      <\indent-left|<item-hsep>>
         <surround|<no-page-break*>|<no-indent*>|<arg|body>>
       </indent-left>
     </padded-normal>
