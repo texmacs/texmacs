@@ -370,7 +370,7 @@ edit_interface_rep::apply_changes () {
     if (get_init_string (SCROLL_BARS) == "false") sb= 0;
     if (get_server () -> in_full_screen_mode ()) sb= 0;
 #ifdef QTTEXMACS
-    if (sb) wx -= 24 * PIXEL;
+    if (sb) wx -= 32 * PIXEL;
 #else
     if (sb) wx -= 20 * PIXEL;
 #endif
