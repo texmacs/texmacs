@@ -16,19 +16,21 @@
 	(dynamic fold-edit)))
 
 (kbd-map
-  ("F9" (dynamic-operate-on-buffer :first))
-  ("F10" (dynamic-traverse-buffer :previous))
-  ("F11" (dynamic-traverse-buffer :next))
-  ("F12" (dynamic-operate-on-buffer :last))
+  ("ir-menu" (toggle-full-screen-mode))
   ("ir-up" (dynamic-operate-on-buffer :first))
   ("ir-left" (dynamic-traverse-buffer :previous))
   ("ir-center" (dynamic-traverse-buffer :next))
   ("ir-right" (dynamic-traverse-buffer :next))
   ("ir-down" (dynamic-operate-on-buffer :last))
+  ("F9" (dynamic-operate-on-buffer :first))
+  ("F10" (dynamic-traverse-buffer :previous))
+  ("F11" (dynamic-traverse-buffer :next))
+  ("F12" (dynamic-operate-on-buffer :last))
   ("S-F9" (dynamic-first))
   ("S-F10" (dynamic-previous))
   ("S-F11" (dynamic-next))
-  ("S-F12" (dynamic-last)))
+  ("S-F12" (dynamic-last))
+  ("C-F9" (toggle-full-screen-mode)))
 
 (kbd-map
   (:mode in-screens?)
