@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -16,11 +16,10 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>
@@ -313,9 +312,9 @@
   <assign|simple-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||15pt|>>>>
 
   <assign|aligned-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>
-  |r-15pt||r+0pt|>>>>
+  |<minus|1r|15pt>||<plus|1r|0pt>|>>>>
 
-  <assign|compact-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||r]15pt|>>>>
+  <assign|compact-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||<maximum|1r|15pt>|>>>>
 
   \;
 
@@ -335,17 +334,17 @@
 
   \;
 
-  <new-list|itemize-1|<value|simple-item>|<macro|x|<active*|<with|mode|math|<group|\<bullet\>>>>>>
+  <new-list|itemize-1|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|\<bullet\>>>>>>
 
-  <new-list|itemize-2|<value|simple-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-2|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
   <new-list|itemize-3|<value|simple-item>|<macro|x|.>>
 
-  <new-list|itemize-minus|<value|simple-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <new-list|itemize-minus|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
   <new-list|itemize-dot|<value|simple-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-arrow|<value|simple-item>|<macro|x|<active*|<with|mode|math|<group|\<rightarrow\>>>>>>
+  <new-list|itemize-arrow|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|\<rightarrow\>>>>>>
 
   \;
 
@@ -361,15 +360,15 @@
 
   <assign|long-compact-space-item|<macro|x|<item-long|<compact-space-item|<arg|x>>>>>
 
-  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -470,7 +469,7 @@
 
   <assign|transform-bibitem|<macro|x|<arg|x> >>
 
-  <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><resize|<transform-bibitem|<arg|text>>|||<merge|r]|<value|bibitem-width>>|>>>>
+  <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><resize|<transform-bibitem|<arg|text>>|||<maximum|1r|<value|bibitem-width>>|>>>>
 
   <assign|bib-list|<\macro|largest|body>
     <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|render-list|<value|render-bib-list>>
@@ -532,7 +531,7 @@
 
   <assign|glossary-2|<\macro|entry|explain|right>
     <glossary-sv|<margin-first-other|0fn|10fn|<style-with|src-compact|none|<resize|<arg|entry>
-    |||r]10fn|><arg|explain>>>|<arg|right>>
+    |||<maximum|1r|10fn>|><arg|explain>>>|<arg|right>>
   </macro>>
 
   \;
