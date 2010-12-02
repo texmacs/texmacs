@@ -28,6 +28,11 @@
 #include "QTMWindow.hpp"
 #include "qt_renderer.hpp" // for the_qt_renderer
 
+#ifdef MACOSX_EXTENSIONS
+#include "MacOS/mac_utilities.h"
+#endif
+
+
 #include "tm_link.hpp" // for number_of_servers
 
 #include "Scheme/object.hpp"
@@ -435,6 +440,10 @@ gui_open (int& argc, char** argv) {
   // start the gui
  // new QApplication (argc,argv); now in texmacs.cpp
   the_gui = tm_new<qt_gui_rep> (argc, argv);
+  
+#ifdef MACOSX_EXTENSIONS
+  mac_begin_remote();
+#endif
 }
 
 void
@@ -449,6 +458,10 @@ gui_close () {
   ASSERT (the_gui != NULL, "gui not yet open");
   tm_delete (the_gui);
   the_gui=NULL;
+
+#ifdef MACOSX_EXTENSIONS
+  mac_end_remote();
+#endif
 }
 
 void

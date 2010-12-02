@@ -11,7 +11,12 @@
 #ifndef MAC_UTILITIES_H
 #define MAC_UTILITIES_H
 
+#include "string.hpp"
 
 bool mac_alternate_startup();
+
+void mac_begin_remote();
+void mac_end_remote();
+void mac_remote_button (string button, bool pressed); 
 
 #endif // MAC_UTILITIES_H

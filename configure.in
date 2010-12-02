@@ -751,6 +751,7 @@ case "$enable_macosx_extensions" in
 	AC_MSG_RESULT([enabling Mac OSX extensions])
         AC_DEFINE(MACOSX_EXTENSIONS, 1, [Enabling Mac OSX extensions])
         CONFIG_MACOS="MacOS"
+        CONFIG_BFLAGS="$CONFIG_BFLAGS -framework IOKit"
         ;;
     no)
 	AC_MSG_RESULT([disabling Mac OSX extensions])

@@ -8,9 +8,11 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
+#include "url.hpp"
 #include "mac_utilities.h"
 #include "Cocoa/mac_cocoa.h"
-#include "url.hpp"
+
+#include "HIDRemote.h"
 
 #ifdef QTTEXMACS
 #include <QtGui>
@@ -161,3 +163,232 @@ mac_cancel_menu_tracking () {
 #endif
 }
 #endif
+
+/*********************/
+/* remote controller */
+/*********************/
+
+@interface TMRemoteDelegate : NSObject <HIDRemoteDelegate> 
+{
+  // -- HID Remote --
+	HIDRemote			*hidRemote;
+}
+- (void) setupRemote ;
+- (void) cleanupRemote ;
+- (void) startStopRemote:(bool) _start;
+- (NSString *) buttonNameForButtonCode:(HIDRemoteButtonCode)buttonCode;
+@end
+
+@implementation TMRemoteDelegate
+- (void) setupRemote
+{
+	if (!hidRemote)
+	{
+		if ((hidRemote = [[HIDRemote alloc] init]) != nil)
+		{
+			[hidRemote setDelegate:self];
+		}
+	}
+}
+
+extern string utf8_to_cork (string input);
+
+static string 
+from_nsstring (NSString *s) {
+  const char *cstr = [s cStringUsingEncoding:NSUTF8StringEncoding];
+  return utf8_to_cork(string((char*)cstr));
+}
+
+
+- (void) hidRemote:(HIDRemote *)theHidRemote
+   eventWithButton:(HIDRemoteButtonCode)buttonCode
+         isPressed:(BOOL)isPressed
+fromHardwareWithAttributes:(NSMutableDictionary *)attributes
+{
+  mac_remote_button (from_nsstring([self buttonNameForButtonCode:buttonCode]), isPressed);
+}
+
+- (void) cleanupRemote
+{
+	if ([hidRemote isStarted])
+	{
+		[hidRemote stopRemoteControl];
+	}
+	[hidRemote setDelegate:nil];
+	[hidRemote release];
+	hidRemote = nil;
+}
+
+- (NSString *)buttonNameForButtonCode:(HIDRemoteButtonCode)buttonCode
+{
+	switch (buttonCode)
+	{
+		case kHIDRemoteButtonCodeUp:
+			return (@"Up");
+      break;
+      
+		case kHIDRemoteButtonCodeDown:
+			return (@"Down");
+      break;
+      
+		case kHIDRemoteButtonCodeLeft:
+			return (@"Left");
+      break;
+      
+		case kHIDRemoteButtonCodeRight:
+			return (@"Right");
+      break;
+      
+		case kHIDRemoteButtonCodeCenter:
+			return (@"Center");
+      break;
+      
+		case kHIDRemoteButtonCodePlay:
+			return (@"Play/Pause");
+      break;
+      
+		case kHIDRemoteButtonCodeMenu:
+			return (@"Menu");
+      break;
+      
+		case kHIDRemoteButtonCodeUpHold:
+			return (@"Up (hold)");
+      break;
+      
+		case kHIDRemoteButtonCodeDownHold:
+			return (@"Down (hold)");
+      break;
+      
+		case kHIDRemoteButtonCodeLeftHold:
+			return (@"Left (hold)");
+      break;
+      
+		case kHIDRemoteButtonCodeRightHold:
+			return (@"Right (hold)");
+      break;
+      
+		case kHIDRemoteButtonCodeCenterHold:
+			return (@"Center (hold)");
+      break;
+      
+		case kHIDRemoteButtonCodePlayHold:
+			return (@"Play/Pause (hold)");
+      break;
+      
+		case kHIDRemoteButtonCodeMenuHold:
+			return (@"Menu (hold)");
+      break;
+      
+    default:
+      return (@"Unknown");
+      break;
+	}
+	
+	return ([NSString stringWithFormat:@"Button %x", (int)buttonCode]);
+}
+
+- (void) startStopRemote:(bool) _start
+{
+	// Has the HID Remote already been started?
+	if ([hidRemote isStarted] && (!_start))
+	{
+		// HID Remote already started. Stop it.
+		[hidRemote stopRemoteControl];
+	}
+	else if (_start)
+	{
+		// HID Remote has not been started yet. Start it.
+		HIDRemoteMode remoteMode = kHIDRemoteModeNone;
+		NSString *remoteModeName = nil;
+		
+		// Fancy GUI stuff
+    int mode = 2;
+		switch (mode)
+		{
+			case 0:
+				remoteMode = kHIDRemoteModeShared;
+				remoteModeName = @"shared";
+        break;
+        
+			case 1:
+				remoteMode = kHIDRemoteModeExclusive;
+				remoteModeName = @"exclusive";
+        break;
+        
+			case 2:
+				remoteMode = kHIDRemoteModeExclusiveAuto;
+				remoteModeName = @"exclusive (auto)";
+        break;
+		}
+    
+		// Check whether the installation of Candelair is required to reliably operate in this mode
+		if ([HIDRemote isCandelairInstallationRequiredForRemoteMode:remoteMode])
+		{
+			// Reliable usage of the remote in this mode under this operating system version
+			// requires the Candelair driver to be installed. Tell the user about it.
+			NSAlert *alert;
+			
+			if ((alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Candelair driver installation necessary", @"")
+			                             defaultButton:NSLocalizedString(@"Download", @"")
+                                 alternateButton:NSLocalizedString(@"More information", @"")
+                                     otherButton:NSLocalizedString(@"Cancel", @"")
+                       informativeTextWithFormat:NSLocalizedString(@"An additional driver needs to be installed before %@ can reliably access the remote under the OS version installed on your computer.", @""), [[NSBundle mainBundle] objectForInfoDictionaryKey:(id)kCFBundleNameKey]]) != nil)
+			{
+				switch ([alert runModal])
+				{
+					case NSAlertDefaultReturn:
+						[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.candelair.com/download/"]];
+            break;
+            
+					case NSAlertAlternateReturn:
+						[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.candelair.com/"]];
+            break;
+				}
+			}
+		}	
+		else
+		{
+			// Candelair is either already installed or not required under this OS release => proceed!
+			if ([hidRemote startRemoteControl:remoteMode])
+			{
+				// Start was successful, perform UI changes and log it.
+//				[self appendToLog:[NSString stringWithFormat:@"-- Starting HID Remote in %@ mode successful --", remoteModeName]];
+//				[startStopButton setTitle:@"Stop"];
+//				[modeButton setEnabled:NO];
+			}
+			else
+			{
+				// Start failed. Log about it
+//				[self appendToLog:[NSString stringWithFormat:@"Starting HID Remote in %@ mode failed", remoteModeName]];
+			}
+		}
+	}
+}
+
+@end
+
+
+TMRemoteDelegate* remote_delegate = nil;
+
+void 
+mac_begin_remote () {
+  if (!remote_delegate) {
+    remote_delegate = [[TMRemoteDelegate alloc] init];
+  }
+  [remote_delegate setupRemote];
+  [remote_delegate startStopRemote:true];
+}
+
+void 
+mac_end_remote () {
+  [remote_delegate startStopRemote:false];
+  [remote_delegate cleanupRemote];
+}
+
+void 
+mac_remote_button (string button, bool pressed) {
+  (void) button; (void) pressed; 
+//TODO: do something with the button.
+//  cout << button << " " << (pressed ? "Down" : "Up") << LF;
+}
+
