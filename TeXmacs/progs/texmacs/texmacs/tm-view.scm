@@ -40,6 +40,9 @@
   (set-default-shrinking-factor (string->number val))
   (set-shrinking-factor (string->number val)))
 
+(define (notify-remote-control var val)
+  (ahash-set! remote-control-remap val var))
+
 (define-preferences
   ("header" "on" notify-header)
   ("main icon bar" (main-icon-bar-default) notify-icon-bar)
@@ -47,7 +50,15 @@
   ("focus dependent icons" "on" notify-icon-bar)
   ("user provided icons" "off" notify-icon-bar)
   ("status bar" "on" notify-status-bar)
-  ("shrinking factor" "5" notify-shrinking-factor))
+  ("shrinking factor" "5" notify-shrinking-factor)
+  ("ir-up" "F9" notify-remote-control)
+  ("ir-down" "F12" notify-remote-control)
+  ("ir-left" "pageup" notify-remote-control)
+  ("ir-right" "pagedown" notify-remote-control)
+  ("ir-center" "F5" notify-remote-control)
+  ("ir-play" "F5" notify-remote-control)
+  ("ir-pause" "escape" notify-remote-control)
+  ("ir-menu" "." notify-remote-control))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Changing the view properties
@@ -77,6 +88,11 @@
   (:synopsis "Toggle full screen edit mode.")
   (:check-mark "v" full-screen-edit?)
   (full-screen-mode (not (full-screen-edit?)) (not (full-screen-edit?))))
+
+(tm-define (toggle-remote-control-mode)
+  (:synopsis "Toggle remote keyboard control mode.")
+  (:check-mark "v" remote-control-mode?)
+  (set! remote-control-flag? (not remote-control-flag?)))
 
 (define (test-shrinking-factor? n)
   (= (get-shrinking-factor) n))

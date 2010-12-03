@@ -36,6 +36,8 @@
   ---
   ("Full screen mode"  (toggle-full-screen-edit-mode))
   ("Presentation mode" (toggle-full-screen-mode))
+  ("Remote control" (toggle-remote-control-mode))
+  ---
   (-> "Shrinking factor"
       ("1" (set-shrinking-factor 1))
       ("2" (set-shrinking-factor 2))

@@ -162,6 +162,9 @@
 ;; Keyboard related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public remote-control-flag? #f)
+(define-public remote-control-remap (make-ahash-table))
+
 (define (cyrillic-input-method? what)
   (== (get-preference "cyrillic input method") what))
 
@@ -183,6 +186,7 @@
   (replace-mode% (== (get-input-mode) 2))
   (spell-mode% (== (get-input-mode) 3))
   (complete-mode% (== (get-input-mode) 4))
+  (remote-control-mode% (== remote-control-flag? #t))
   (in-cyrillic-cp1251% (cyrillic-input-method? "cp1251") in-cyrillic%)
   (in-cyrillic-jcuken% (cyrillic-input-method? "jcuken") in-cyrillic%)
   (in-cyrillic-koi8% (cyrillic-input-method? "koi8") in-cyrillic%)

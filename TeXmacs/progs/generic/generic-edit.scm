@@ -670,3 +670,12 @@
     (cond (cmd (cmd))
 	  ((key-press-complete key) (noop))
 	  (else (key-press key)))))
+
+(tm-define (keyboard-press key time)
+  (:mode remote-control-mode?)
+  ;;(display* "Press " key "\n")
+  (if (ahash-ref remote-control-remap key)
+      (begin
+	;;(display* "Remap " (ahash-ref remote-control-remap key) "\n")
+	(key-press (ahash-ref remote-control-remap key)))
+      (key-press key)))
