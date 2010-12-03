@@ -116,6 +116,7 @@ public:
   virtual void send (slot s, blackbox val);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
+  virtual widget plain_window_widget (string s);
   virtual QAction* as_qaction ();
 };
 
@@ -141,6 +142,12 @@ qt_menu_rep::popup_window_widget (string s) {
   return this;
 }
 
+widget
+qt_menu_rep::plain_window_widget (string s) {
+  item->menu()->setWindowTitle (to_qstring (s));
+  return this;
+}
+
 void
 qt_menu_rep::send (slot s, blackbox val) {
   if (DEBUG_QT)
@@ -153,6 +160,8 @@ qt_menu_rep::send (slot s, blackbox val) {
     {   
       check_type<bool> (val, "SLOT_VISIBILITY");
       bool flag = open_box<bool> (val);
+      if (flag)
+        item->menu()->show();
       (void) flag;
     }   
     break;
