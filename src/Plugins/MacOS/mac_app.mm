@@ -10,6 +10,7 @@
 
 #include "mac_app.h"
 #include "Cocoa/mac_cocoa.h"
+#include "mac_utilities.h"
 #include "url.hpp"
 #include "converter.hpp"
 #include "../Guile/scheme.hpp"
@@ -45,10 +46,14 @@ void init_mac_application ()
   delegate = [[TMAppDelegate alloc] init];
   [NSApp setDelegate: delegate];
   [NSApp finishLaunching];
+  
+  mac_begin_remote ();
 }
 
 void finalize_mac_application ()
-{
+{  
+  mac_end_remote ();
+
   [pool release];
   [NSApp setDelegate:nil];
   [delegate release];

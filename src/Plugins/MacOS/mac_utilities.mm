@@ -307,9 +307,13 @@ fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 		// HID Remote has not been started yet. Start it.
 		HIDRemoteMode remoteMode = kHIDRemoteModeNone;
 		NSString *remoteModeName = nil;
-		
-		// Fancy GUI stuff
+
+#ifdef X11TEXMACS
+    int mode = 1;
+#else
     int mode = 2;
+#endif
+
 		switch (mode)
 		{
 			case 0:
