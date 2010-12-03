@@ -10,6 +10,7 @@
 
 #include "url.hpp"
 #include "mac_utilities.h"
+#include "timer.hpp"
 
 #define extend CARBON_extends // avoid name collision
 #include "Cocoa/mac_cocoa.h"

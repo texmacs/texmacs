@@ -185,6 +185,7 @@ public:
   void   set_mouse_pointer (widget w, string name);
   void   set_mouse_pointer (widget w, string curs_name, string mask_name);
   void   show_wait_indicator (widget w, string message, string arg);
+  void   external_event (string s, time_t t);
   bool   check_event (int type);
 
   /************************** Event processing *******************************/

@@ -551,6 +551,16 @@ x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
   send_invalidate_all (old_wid);
 }
 
+void
+x_gui_rep::external_event (string type, time_t t) {
+  cout << "Got " << type << " at " << t << "\n";
+  //QTMWidget *tm_focus = qobject_cast<QTMWidget*>(qApp->focusWidget());
+  //if (tm_focus) {
+  //  simple_widget_rep *wid = tm_focus->tm_widget();
+  //  if (wid) the_gui -> process_keypress (wid, type, t);
+  //}
+}
+
 bool
 x_gui_rep::check_event (int type) {
   bool status;
@@ -603,6 +613,11 @@ show_help_balloon (widget wid, SI x, SI y) {
 void
 show_wait_indicator (widget w, string message, string arg) {
   the_gui->show_wait_indicator (w, message, arg);
+}
+
+void
+external_event (string type, time_t t) {
+  the_gui->external_event (type, t);
 }
 
 void
