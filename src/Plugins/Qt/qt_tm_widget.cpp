@@ -96,8 +96,9 @@ QTMToolbarWidgetAction::createWidget ( QWidget * parent ) {
  ******************************************************************************/
 
 
-qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
-qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit), full_screen(false)
+qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
+ : qt_view_widget_rep (new QTMWindow (this)), helper (this), 
+   full_screen(false), quit(_quit) 
 {
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
@@ -752,9 +753,15 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   QWidget *win = tm_mainwindow()->window();  
   if (win) {
     if (flag ) {
+#ifdef Q_WS_MAC
+      tm_mainwindow()->centralWidget()->layout()->setContentsMargins(0,0,0,0);
+#endif
       win->showFullScreen();
     } else {
       win->showNormal();
+#ifdef Q_WS_MAC
+      tm_mainwindow()->centralWidget()->layout()->setContentsMargins(2,2,2,2);
+#endif
     }
   }
   
