@@ -229,7 +229,7 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (list-context? t))
-  (make-item))
+  (if shift? (make-return-after) (make-item)))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'item*))
