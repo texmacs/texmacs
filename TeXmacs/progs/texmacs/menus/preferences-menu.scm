@@ -110,6 +110,15 @@
 	  ("Taiwanese" "taiwanese")
 	  ("Ukrainian" "ukrainian"))
     (-> "Keyboard"
+	(-> "Remote control"
+	    (enum ("Left" "ir-left") "pageup" *)
+	    (enum ("Right" "ir-right") "pagedown" *)
+	    (enum ("Up" "ir-up") "home" *)
+	    (enum ("Down" "ir-down") "end" *)
+	    (enum ("Center" "ir-center") "return" "S-return" *)
+	    (enum ("Play" "ir-play") "F5" *)
+	    (enum ("Pause" "ir-pause") "escape" *)
+	    (enum ("Menu" "ir-menu") "." *))
 	(enum ("Cyrillic input method" "cyrillic input method")
 	      ("Translit" "translit")
 	      ("Jcuken" "jcuken")

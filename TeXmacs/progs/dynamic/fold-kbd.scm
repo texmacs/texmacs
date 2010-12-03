@@ -16,12 +16,14 @@
 	(dynamic fold-edit)))
 
 (kbd-map
-  ("ir-menu" (toggle-full-screen-mode))
   ("ir-up" (screens-switch-to :previous))
   ("ir-down" (screens-switch-to :next))
   ("ir-left" (dynamic-traverse-buffer :previous))
-  ("ir-center" (dynamic-traverse-buffer :next))
   ("ir-right" (dynamic-traverse-buffer :next))
+  ("ir-center" (dynamic-traverse-buffer :next))
+  ("ir-play" (dynamic-traverse-buffer :next))
+  ("ir-pause" (dynamic-traverse-buffer :next))
+  ("ir-menu" (toggle-full-screen-mode))
   ("F9" (dynamic-operate-on-buffer :first))
   ("F10" (dynamic-traverse-buffer :previous))
   ("F11" (dynamic-traverse-buffer :next))
