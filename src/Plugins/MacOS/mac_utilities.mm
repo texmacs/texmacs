@@ -11,7 +11,6 @@
 #include "url.hpp"
 #include "mac_utilities.h"
 #include "timer.hpp"
-
 #include "gui.hpp"
 
 #define extend CARBON_extends // avoid name collision
