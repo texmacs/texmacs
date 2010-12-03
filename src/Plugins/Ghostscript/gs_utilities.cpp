@@ -42,7 +42,7 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
     cmd << sys_concretize (image);
     string buf= eval_system (cmd);
     int pos= 0;
-    int ok= read (buf, pos, "%%BoundingBox: ");
+    ok= read (buf, pos, "%%BoundingBox: ");
   }
   if (ok) {
     int x1, y1, x2, y2;
