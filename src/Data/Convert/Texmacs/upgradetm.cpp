@@ -2991,6 +2991,28 @@ upgrade_image (tree t) {
 }
 
 /******************************************************************************
+* Upgrade root switches
+******************************************************************************/
+
+tree
+upgrade_root_switch (tree t, bool top= true) {
+  if (is_func (t, DOCUMENT) &&
+      (top || N(t) == 1 ||
+       (N(t) == 2 && is_compound (t[0], "hide-preamble")))) {
+    int i, n= N(t);
+    tree r (DOCUMENT, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_root_switch (t[i], false);
+    return r;
+  }
+  else if (is_compound (t, "body", 1))
+    return compound ("body", upgrade_root_switch (t[0], false));
+  else if (is_compound (t, "switch"))
+    return compound ("screens", A(t));
+  else return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3126,6 +3148,8 @@ upgrade (tree t, string version) {
     t= upgrade_resize_clipped (t);
   if (version_inf_eq (version, "1.0.7.7"))
     t= upgrade_image (t);
+  if (version_inf_eq (version, "1.0.7.7"))
+    t= upgrade_root_switch (t);
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;
