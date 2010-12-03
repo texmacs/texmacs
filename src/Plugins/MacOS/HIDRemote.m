@@ -177,13 +177,15 @@ static HIDRemote *sHIDRemote = nil;
 
 				switch (remoteMode)
 				{
-					case kHIDRemoteModeExclusive:
-					case kHIDRemoteModeExclusiveAuto:
-						if (![self isCandelairInstalled])
-						{
-							return (YES);
-						}
-					break;
+				case kHIDRemoteModeExclusive:
+				case kHIDRemoteModeExclusiveAuto:
+				  if (![self isCandelairInstalled])
+				    {
+				      return (YES);
+				    }
+				  break;
+				default:
+				  break;
 				}
 			break;
 		}

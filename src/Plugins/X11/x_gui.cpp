@@ -553,12 +553,12 @@ x_gui_rep::show_wait_indicator (widget w, string message, string arg) {
 
 void
 x_gui_rep::external_event (string type, time_t t) {
-  cout << "Got " << type << " at " << t << "\n";
-  //QTMWidget *tm_focus = qobject_cast<QTMWidget*>(qApp->focusWidget());
-  //if (tm_focus) {
-  //  simple_widget_rep *wid = tm_focus->tm_widget();
-  //  if (wid) the_gui -> process_keypress (wid, type, t);
-  //}
+  (void) t;
+  if (!is_nil (windows_l)) {
+    Window win= windows_l->item;
+    x_window x_win= (x_window) Window_to_window[win];
+    x_win->key_event (type);
+  }
 }
 
 bool
