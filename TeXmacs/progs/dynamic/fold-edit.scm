@@ -528,3 +528,11 @@
 
 (tm-define (dynamic-traverse-buffer mode)
   (dynamic-traverse (buffer-tree) mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific navigation for 'screens' switch
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (screens-switch-to which)
+  (and-with t (tree-innermost 'screens)
+    (switch-to t which :start)))
