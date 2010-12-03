@@ -53,7 +53,8 @@ replaceActions (QWidget* dest, QWidget* src) {
 void
 replaceButtons(QToolBar* dest, QWidget* src) {
   dest->setUpdatesEnabled(false);
-  dest->hide(); //TRICK: this is a trick to avoid flicker of the dest widget
+  bool visible = dest->isVisible();
+  if (visible) dest->hide(); //TRICK: this is a trick to avoid flicker of the dest widget
   replaceActions (dest, src);
   QList<QObject*> list= dest->children();
   for (int i=0; i<list.count(); i++) {
@@ -63,7 +64,7 @@ replaceButtons(QToolBar* dest, QWidget* src) {
       button->setStyle( qtmstyle() );
     }
   }
-  dest->show(); //TRICK: see above
+  if (visible) dest->show(); //TRICK: see above
   dest->setUpdatesEnabled(true);
 }
 
@@ -96,7 +97,7 @@ QTMToolbarWidgetAction::createWidget ( QWidget * parent ) {
 
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit):
-qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit)
+qt_view_widget_rep (new QTMWindow (this)), helper (this), quit(_quit), full_screen(false)
 {
   // decode mask
   visibility[0] = (mask & 1)  == 1;  // header
@@ -278,23 +279,41 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 
 void qt_tm_widget_rep::updateVisibility()
 {
-#ifdef Q_WS_MAC
+#define XOR(exp1,exp2) (((!exp1)&&(exp2)) || (exp1) && (!exp2))
+
   bool old_mainVisibility = mainToolBar->isVisible();
   bool old_modeVisibility = modeToolBar->isVisible();
+  bool old_focusVisibility = focusToolBar->isVisible();
+  bool old_userVisibility = userToolBar->isVisible();
+  bool old_statusVisibility = tm_mainwindow()->statusBar()->isVisible();
+
+  bool new_mainVisibility = visibility[1] && visibility[0];
+  bool new_modeVisibility = visibility[2] && visibility[0];
+  bool new_focusVisibility = visibility[3] && visibility[0];
+  bool new_userVisibility = visibility[4] && visibility[0];
+  bool new_statusVisibility = visibility[5];
+  
+  if ( XOR(old_mainVisibility,  new_mainVisibility) )
+    mainToolBar->setVisible (new_mainVisibility);
+  if ( XOR(old_modeVisibility,  new_modeVisibility) )
+    modeToolBar->setVisible (new_modeVisibility);
+  if ( XOR(old_focusVisibility,  new_focusVisibility) )
+    focusToolBar->setVisible (new_focusVisibility);
+  if ( XOR(old_userVisibility,  new_userVisibility) )
+    userToolBar->setVisible (new_userVisibility);
+  if ( XOR(old_statusVisibility,  new_statusVisibility) )
+    tm_mainwindow()->statusBar()->setVisible (new_statusVisibility);
+
+#ifndef Q_WS_MAC
+  bool old_menuVisibility = tm_mainwindow()->menuBar()->isVisible();
+  bool new_menuVisibility = visibility[0];
+
+  if ( XOR(old_menuVisibility,  new_menuVisibility) )
+    tm_mainwindow()->menuBar()->setVisible (new_menuVisibility);
 #endif
-  
-  mainToolBar->setVisible (visibility[1] && visibility[0]);
-  modeToolBar->setVisible (visibility[2] && visibility[0]);
-  focusToolBar->setVisible (visibility[3] && visibility[0]);
-  userToolBar->setVisible (visibility[4] && visibility[0]);
-  tm_mainwindow()->statusBar()->setVisible (visibility[5]);
-  tm_mainwindow()->menuBar()->setVisible (visibility[0]);
-  
+
 //#if 0
 #ifdef Q_WS_MAC
-#define XOR(exp1,exp2) (((!exp1)&&(exp2)) || (exp1) && (!exp2))
-  bool new_mainVisibility = mainToolBar->isVisible();
-  bool new_modeVisibility = modeToolBar->isVisible();
 
   // do modifications only if needed to reduce flicker
   if ( XOR(old_mainVisibility,  new_mainVisibility) ||
@@ -343,8 +362,8 @@ void qt_tm_widget_rep::updateVisibility()
       }
     }
   }
-#undef XOR
 #endif // Q_WS_MAC
+#undef XOR
 }
 
 
@@ -724,6 +743,23 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     default:
       qt_view_widget_rep::write (s, index, w);
   }
+}
+
+
+void
+qt_tm_widget_rep::set_full_screen(bool flag) {
+  full_screen = flag;
+  QWidget *win = tm_mainwindow()->window();  
+  if (win) {
+    if (flag ) {
+      win->showFullScreen();
+    } else {
+      win->showNormal();
+    }
+  }
+  
+  tm_scrollarea()->setHorizontalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+  tm_scrollarea()->setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 widget

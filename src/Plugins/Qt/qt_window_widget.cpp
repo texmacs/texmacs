@@ -11,12 +11,12 @@
 
 #include "qt_window_widget.hpp"
 #include "qt_utilities.hpp"
+#include "QTMWindow.hpp"
 
 #include "message.hpp"
 
 #include <QWidget>
 #include <QVariant>
-
 
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid):
 widget_rep(), wid(_wid)
@@ -90,12 +90,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     case SLOT_FULL_SCREEN:
     {
       check_type<bool> (val, "SLOT_FULL_SCREEN");
-      NOT_IMPLEMENTED ;
-      bool flag = open_box<bool> (val);
-      if (flag) {
-        if (wid) wid->showFullScreen();
-      } else {
-        if (wid) wid->showNormal();
+      QTMWindow *win = qobject_cast<QTMWindow*>(wid);
+      if (win && win->tm_widget()) {
+        win->tm_widget()->set_full_screen(open_box<bool> (val));
       }
         //win->set_full_screen (open_box<bool> (val));
     }

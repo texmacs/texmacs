@@ -62,6 +62,7 @@ public:
   qt_widget int_input;
   
   bool visibility[6];
+  bool full_screen;
   
   command quit;
   
@@ -95,6 +96,7 @@ public:
   void updateVisibility();
   void do_interactive_prompt ();
   void install_main_menu ();
+  void set_full_screen (bool flag);
 };
 
 
