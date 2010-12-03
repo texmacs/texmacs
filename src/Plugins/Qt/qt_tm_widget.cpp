@@ -28,6 +28,13 @@
 #include "QTMInteractivePrompt.hpp"
 #include "QTMInteractiveInputHelper.hpp"
 
+
+#ifdef Q_WS_MAC
+//#define UNIFIED_TOOLBAR
+// enable the unified toolbar style on the mac. To work properly this requires
+// a modification of the widget hierarchy of the main window.
+#endif
+
 int menu_count = 0;
 list<qt_tm_widget_rep*> waiting_widgets;
 
@@ -113,7 +120,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
   mw->menuBar()->setStyle (qtmstyle ()); 
-
   
   // there is a bug in the early implementation of toolbars in Qt 4.6
   // which has been fixed in 4.6.2 (at least)
@@ -131,7 +137,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   QStackedWidget* tw = new QStackedWidget (mw);
   tw->setObjectName("stacked widget"); // to easily find this object
-
+  
   // status bar
   
   QStatusBar* bar= new QStatusBar(mw);
@@ -181,7 +187,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   
 //#if 0
-#ifdef Q_WS_MAC
+#ifdef UNIFIED_TOOLBAR
 
   mw->setUnifiedTitleAndToolBarOnMac(true);
 
@@ -314,7 +320,7 @@ void qt_tm_widget_rep::updateVisibility()
 #endif
 
 //#if 0
-#ifdef Q_WS_MAC
+#ifdef UNIFIED_TOOLBAR
 
   // do modifications only if needed to reduce flicker
   if ( XOR(old_mainVisibility,  new_mainVisibility) ||
@@ -363,7 +369,7 @@ void qt_tm_widget_rep::updateVisibility()
       }
     }
   }
-#endif // Q_WS_MAC
+#endif // UNIFIED_TOOLBAR
 #undef XOR
 }
 
@@ -753,13 +759,18 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   QWidget *win = tm_mainwindow()->window();  
   if (win) {
     if (flag ) {
-#ifdef Q_WS_MAC
+      // remove the borders from some widgets
+      tm_scrollarea()->setFrameShape(QFrame::NoFrame);
+#ifdef UNIFIED_TOOLBAR
       tm_mainwindow()->centralWidget()->layout()->setContentsMargins(0,0,0,0);
 #endif
+//      tm_mainwindow()->window()->setContentsMargins(0,0,0,0);
       win->showFullScreen();
     } else {
       win->showNormal();
-#ifdef Q_WS_MAC
+      // reset the borders of some widgets
+      tm_scrollarea()->setFrameShape(QFrame::Box);
+#ifdef UNIFIED_TOOLBAR
       tm_mainwindow()->centralWidget()->layout()->setContentsMargins(2,2,2,2);
 #endif
     }
