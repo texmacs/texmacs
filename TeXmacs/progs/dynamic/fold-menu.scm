@@ -98,9 +98,9 @@
   (-> "Traversal"
       ("Fold back" (make 'fold-back))
       ("Keep unfolded" (make 'keep-unfolded))
-      (when #f
-	("Animate folding" (noop))
-	("Animate unfolding" (noop))))
+      (if #f
+	  ("Animate folding" (noop))
+	  ("Animate unfolding" (noop))))
   ---
   (-> "Fold"
       ("All" (dynamic-operate-on-buffer :fold))

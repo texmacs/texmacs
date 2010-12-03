@@ -227,13 +227,13 @@
       (insert-go-to `(,tag (shown "")) '(0 0 0))))
 
 (tm-define (dynamic-extremal t forwards?)
-  (:require (switch-contect? t))
+  (:require (switch-context? t))
   (if forwards?
       (switch-to t :last :end)
       (switch-to t :first :start)))
 
 (tm-define (dynamic-incremental t forwards?)
-  (:require (switch-contect? t))
+  (:require (switch-context? t))
   (if forwards?
       (switch-to t :next :start)
       (switch-to t :previous :end)))
