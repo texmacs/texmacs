@@ -396,19 +396,5 @@ mac_end_remote () {
 
 void 
 mac_remote_button (string button, bool pressed) {
-  (void) button; (void) pressed; 
-//TODO: do something with the button.
-//  cout << button << " " << (pressed ? "Down" : "Up") << LF;
-#if QTTEXMACS
-  if (pressed) {
-    QTMWidget *tm_focus = qobject_cast<QTMWidget*>(qApp->focusWidget());
-    if (tm_focus) {
-      simple_widget_rep *wid =  tm_focus->tm_widget();
-      if (wid) {
-        the_gui -> process_keypress (wid, button, texmacs_time());
-      }
-    }
-  }
-#endif
+  if (pressed) external_event (button, texmacs_time ());
 }
-

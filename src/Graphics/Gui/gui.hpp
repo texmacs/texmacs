@@ -123,5 +123,7 @@ void show_wait_indicator (widget base, string message, string argument);
   // The indicator might for instance be displayed at the center of
   // the base widget which triggered the lengthy operation;
   // the indicator should be removed if the message is empty
+void external_event (string type, time_t t);
+  // External events, such as pushing a button of a remote infrared commander
 
 #endif // defined GUI_H
