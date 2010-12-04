@@ -870,37 +870,36 @@ qt_gui_rep::update () {
     // if there are not waiting events call at least once
     // the interpose handler
     if (the_interpose_handler) the_interpose_handler();
+  } else while ((N(waiting_events) > 0) && (count_events < max_proc_events)) {
+    // cout << "e";
+    //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
+    process_queued_events (1);
+    //cout << "AND END"  << LF;
+    count_events++;
+    
+    //cout << "TYPESET START..."; cout.flush();
+    if (the_interpose_handler) the_interpose_handler();
+    //cout << "AND END" << LF;
   }
-  do {
-    if ((N(waiting_events) > 0) && (count_events < max_proc_events)) {
-        // cout << "e";
-        //cout << "PROCESS QUEUED EVENTS START..."; cout.flush();
-        process_queued_events (1);
-        //cout << "AND END"  << LF;
-        count_events++;
-        
-        //cout << "TYPESET START..."; cout.flush();
-        if (the_interpose_handler) the_interpose_handler();
-        //cout << "AND END" << LF;
-      } else {
-      // redrawing
-      // cout << "r";
-      count_events = 0;
-      
-      // repaint invalid regions  
-      interrupted = false;
-      timeout_time = texmacs_time() + time_credit;
-      
-      //cout << "REPAINT START..."; cout.flush();
-      
-      QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
-      while (i.hasNext()) {
-        QTMWidget *w = i.next();
-        w->repaint_invalid_regions();
-      }
-      //cout << "AND END" << LF;
+  
+  {
+    // redrawing
+    // cout << "r";
+    count_events = 0;
+    
+    // repaint invalid regions  
+    interrupted = false;
+    timeout_time = texmacs_time() + time_credit;
+    
+    //cout << "REPAINT START..."; cout.flush();
+    
+    QSetIterator<QTMWidget*> i(QTMWidget::all_widgets);
+    while (i.hasNext()) {
+      QTMWidget *w = i.next();
+      w->repaint_invalid_regions();
     }
-  } while (N(waiting_events)>0);
+    //cout << "AND END" << LF;
+  }
   
   
   if (N(waiting_events) > 0) needing_update = true;
