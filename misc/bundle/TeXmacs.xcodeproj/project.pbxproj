@@ -1029,6 +1029,7 @@
 		9CEE0A8711EDDB3100403342 /* type1c.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09D911EDDB3100403342 /* type1c.c */; };
 		9CEE0A8811EDDB3100403342 /* unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DB11EDDB3100403342 /* unicode.c */; };
 		9CEE0A8911EDDB3100403342 /* pdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */; };
+		9CF1389612A9B65F009F02C9 /* qt_ui_element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CF1389512A9B65F009F02C9 /* qt_ui_element.cpp */; };
 		9CF5BC72128A13CB00F691BF /* qt_simple_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CF5BC6A128A13CB00F691BF /* qt_simple_widget.cpp */; };
 		9CF5BC73128A13CB00F691BF /* qt_tm_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CF5BC6B128A13CB00F691BF /* qt_tm_widget.cpp */; };
 		9CF5BC74128A13CB00F691BF /* qt_view_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CF5BC6D128A13CB00F691BF /* qt_view_widget.cpp */; };
@@ -1850,6 +1851,8 @@
 		9CEE09DC11EDDB3100403342 /* unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode.h; sourceTree = "<group>"; };
 		9CEE09DD11EDDB3100403342 /* pdf_renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pdf_renderer.cpp; sourceTree = "<group>"; };
 		9CEE09DE11EDDB3100403342 /* pdf_renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pdf_renderer.hpp; sourceTree = "<group>"; };
+		9CF1389412A9B65F009F02C9 /* qt_ui_element.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_ui_element.hpp; sourceTree = "<group>"; };
+		9CF1389512A9B65F009F02C9 /* qt_ui_element.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_ui_element.cpp; sourceTree = "<group>"; };
 		9CF5BC6A128A13CB00F691BF /* qt_simple_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_simple_widget.cpp; sourceTree = "<group>"; };
 		9CF5BC6B128A13CB00F691BF /* qt_tm_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_tm_widget.cpp; sourceTree = "<group>"; };
 		9CF5BC6C128A13CB00F691BF /* qt_tm_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_tm_widget.hpp; sourceTree = "<group>"; };
@@ -2616,6 +2619,8 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				9CF1389412A9B65F009F02C9 /* qt_ui_element.hpp */,
+				9CF1389512A9B65F009F02C9 /* qt_ui_element.cpp */,
 				4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */,
 				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
@@ -3567,6 +3572,7 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -4040,6 +4046,7 @@
 				4901F0E5128B4F7200CC54C6 /* qt_printer_widget.cpp in Sources */,
 				9C225A65128B5EB00039258C /* qt_chooser_widget.cpp in Sources */,
 				9CCC738F12A7D6DA006EDBDA /* HIDRemote.m in Sources */,
+				9CF1389612A9B65F009F02C9 /* qt_ui_element.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
