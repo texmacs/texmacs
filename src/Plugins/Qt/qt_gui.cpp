@@ -51,6 +51,7 @@ time_t timeout_time; // new redraw interruption
 time_t lapse = 0; // optimization for delayed commands
 
 // marshalling flags between update, needs_update and check_event.
+bool disable_check_event = false;
 bool updating = false;
 bool needing_update = false;
 bool wait_for_delayed_commands = true;
@@ -795,7 +796,7 @@ qt_gui_rep::check_event (int type) {
   
   // do not interrupt while not in update
   // (for example while painting the icons in the menus)
-  if (!updating) return false;
+  if (!updating || disable_check_event) return false;
   
   switch (type) {
     case INTERRUPT_EVENT:

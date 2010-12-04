@@ -376,7 +376,14 @@ impress (simple_widget_rep* wid) {
       ren->encode (r->x1, r->y1);
       ren->encode (r->x2, r->y2);
       ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-      wid->handle_repaint (r->x1, r->y2, r->x2, r->y1);
+      {
+        // we do not want to be interrupted here...
+        extern bool disable_check_event;
+        bool cache = disable_check_event;
+        disable_check_event= true;
+        wid->handle_repaint (r->x1, r->y2, r->x2, r->y1);
+        disable_check_event= cache;
+      }
       ren->end();
       wid->set_current_renderer(NULL);
     }
