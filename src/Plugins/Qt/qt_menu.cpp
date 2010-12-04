@@ -109,7 +109,7 @@ public:
     delete item; // the submenu is usually also deleted since item is a QTMAction
   }
 
-  QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
+  virtual QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
   // get_menu doest not give ownership of the menu to the caller
   // this allow menu caching at the TeXmacs level
   // get_qmenu is called only by code which attach root menus in the GUI elements
@@ -358,14 +358,6 @@ QTMMinibarAction::createWidget(QWidget* parent) {
   return wid;
 }
 
-QMenu*
-to_qmenu(widget w) {
-  //FIXME: the static cast is not sure in general, how we can test for
-  //       the right widget type?
-  QMenu *m = static_cast<qt_menu_rep*>(w.rep)->get_qmenu();
-  return m;
-}
-
 QPixmap
 impress (simple_widget_rep* wid) {
   if (wid) {
@@ -428,12 +420,12 @@ QTMLazyMenu::force () {
   if (DEBUG_QT)  
     cout << "Force lazy menu" << LF;
   widget w= pm ();
-  QMenu *menu2 = to_qmenu(w);
+  QMenu *menu2 = concrete(w)->get_qmenu();
   rerootActions (this, menu2);
 }
 
 /******************************************************************************
-* Widgets for the construction of menus
+* Widgets for the construction of menus and dialogs
 ******************************************************************************/
 #if 1
 widget

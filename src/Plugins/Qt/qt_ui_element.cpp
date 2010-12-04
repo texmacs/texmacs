@@ -117,10 +117,7 @@ public:
     delete item; // the submenu is usually also deleted since item is a QTMAction
   }
   
-  QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
-  // get_menu doest not give ownership of the menu to the caller
-  // this allow menu caching at the TeXmacs level
-  // get_qmenu is called only by code which attach root menus in the GUI elements
+  virtual QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
   
   virtual void send (slot s, blackbox val);
   virtual widget make_popup_widget ();
@@ -139,10 +136,78 @@ qt_ui_element_rep::popup_window_widget (string s)  {
   return concrete(make_popup_widget())->popup_window_widget(s);
 }
 
+
+
+
+class qt_plain_widget_rep: public qt_view_widget_rep {
+  
+public:
+  qt_plain_widget_rep (QWidget *v) : qt_view_widget_rep(v) {};
+  ~qt_plain_widget_rep () {};
+  
+  virtual void send (slot s, blackbox val);
+//  virtual blackbox query (slot s, int type_id);
+//  virtual widget read (slot s, blackbox index);
+//  virtual void write (slot s, blackbox index, widget w);
+//  virtual void notify (slot s, blackbox new_val);
+  
+ // virtual widget plain_window_widget (string s);
+ // void set_current_renderer(basic_renderer _r) { current_renderer = _r;  }
+ // basic_renderer get_current_renderer() {  return current_renderer; }
+ // virtual QWidget* as_qwidget () { return view ; };
+  
+};
+
+
+void
+qt_plain_widget_rep::send (slot s, blackbox val) {
+  if (DEBUG_QT)
+    cout << "qt_plain_widget_rep::send " << slot_name(s) << LF;
+  switch (s) {
+    case SLOT_POSITION:
+      ASSERT (type_box (val) == type_helper<coord2>::id, "type mismatch");
+      NOT_IMPLEMENTED;
+      break;
+    case SLOT_VISIBILITY:
+    {   
+      check_type<bool> (val, "SLOT_VISIBILITY");
+      bool flag = open_box<bool> (val);
+      if (flag)
+        view->show();
+      (void) flag;
+    }   
+      break;
+    default:
+      FAILED ("cannot handle slot type");
+  }
+}
+
+
 widget 
 qt_ui_element_rep::plain_window_widget (string s)  {
-  return concrete(make_popup_widget())->plain_window_widget(s);
+  QLayoutItem *li = as_qlayoutitem();
+  QWidget *w;
+  if (li->widget()) 
+    w = li->widget();
+  else if (li->layout()) {
+    w = new QWidget();
+    w->setLayout(li->layout());
+  } else {
+    w = new QWidget();
+  }
+  w->setWindowTitle (to_qstring (s));
+  return tm_new<qt_plain_widget_rep>(w);
+//  concrete(make_popup_widget())->plain_window_widget(s);
 }
+
+QMenu *
+qt_ui_element_rep::get_qmenu() {
+  if (!cachedAction) {
+    cachedAction = as_qaction();
+  }
+  return (cachedAction ? cachedAction->menu() : NULL);
+}
+
 
 QAction* 
 qt_ui_element_rep::as_qaction () {
@@ -295,6 +360,7 @@ qt_ui_element_rep::as_qaction () {
       return a;
     }
       break;
+      
     case balloon_widget:
     {
       typedef pair<widget, widget> T;
@@ -362,9 +428,252 @@ qt_ui_element_rep::as_qaction () {
 }
 
 
+class QTMUIButton: public QToolButton {
+public:
+  QTMUIButton (QWidget* parent = 0): QToolButton(parent) {}
+  void paintEvent(QPaintEvent *event);
+};
+
+
+void
+QTMUIButton::paintEvent(QPaintEvent* event) {
+  (void) event;
+  QPainter p (this);
+  defaultAction()->icon().paint (&p, rect ());
+}
+
+QLayoutItem *
+qt_ui_element_rep::as_qlayoutitem () {
+  switch (type) {
+    case horizontal_menu:
+    case vertical_menu:
+    case horizontal_list:
+    case vertical_list:
+    {
+      typedef array<widget> T;
+      array<widget> arr = open_box<T> (load);
+      
+      // a horizontal/vertical menu made up of the widgets in a
+      QLayout *l;
+      if ((type == horizontal_list) || (type==horizontal_menu))
+        l =  new QHBoxLayout();
+      else
+        l =  new QVBoxLayout();
+
+      for (int i = 0; i < N(arr); i++) {
+        if (is_nil (arr[i])) break;
+        QLayoutItem* li= concrete (arr[i]) -> as_qlayoutitem ();
+        if (li) l->addItem(li); // ownership transferred
+      }
+      return l;
+    }
+      break;
+      
+    case tile_menu: 
+    {
+      typedef pair<array<widget>, int> T;
+      T x = open_box<T>(load);
+      array<widget> a = x.x1;
+      int cols = x.x2;
+      
+      // a menu rendered as a table of cols columns wide & made up of widgets in a
+      
+      QGridLayout* l= new QGridLayout ();
+      l->setSizeConstraint (QLayout::SetFixedSize);
+      l->setHorizontalSpacing (2);
+      l->setVerticalSpacing (2);
+      l->setContentsMargins (4, 0, 4, 0);
+      int row= 0, col= 0;
+      for (int i=0; i < N(a); i++) {
+        QLayoutItem *li = concrete(a[i])->as_qlayoutitem();
+        l->addItem(li, row, col);
+        col++;
+        if (col >= cols) { col = 0; row++; }
+      }
+      return l;
+    }
+      break;
+      
+    case minibar_menu: 
+    {
+      typedef array<widget> T;
+      array<widget> arr = open_box<T> (load);
+      QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight);
+      l->setContentsMargins (0, 0, 0, 0);
+      l->setSpacing(0);
+      for (int i=0; i < N(arr); i++) {
+        QLayoutItem *li = concrete(arr[i])->as_qlayoutitem();
+        l->addItem(li);
+      }
+      return l;
+    }
+      break;
+      
+    case menu_separator: 
+    {
+      typedef bool T;
+      bool vertical = open_box<T> (load);
+      // a horizontal or vertical menu separator
+      (void) vertical;
+      //FIXME: implement h/v
+      return new QSpacerItem(1,1);
+    }
+      break;
+      
+    case menu_group: 
+    {
+      typedef pair<string, int> T;
+      T x = open_box<T>(load);
+      string name = x.x1;
+      int style = x.x2;
+      
+      (void) style;
+      // a menu group; the name should be greyed and centered
+      return NULL;
+    }
+      break;
+      
+    case pulldown_button:
+    case pullright_button:
+    {
+      typedef pair<widget, promise<widget> > T;
+      T x = open_box<T>(load);
+      widget w = x.x1;
+      promise<widget> pw = x.x2;
+      
+      // a button w with a lazy pulldown menu pw
+
+      QAction* a= concrete (w) -> as_qaction ();
+      QTMLazyMenu* lm= new QTMLazyMenu (pw);
+      QMenu *old_menu = a->menu();
+      a->setMenu (lm);
+      if (old_menu) {
+        cout << "this should not happen\n";
+        delete old_menu;
+      }
+
+      QToolButton *b = new QTMUIButton();
+      b->setDefaultAction(a);
+      return new QWidgetItem(b);
+    }
+      break;
+      
+    case menu_button:
+    {
+      typedef quintuple<widget, command, string, string, int> T;
+      T x = open_box<T>(load);
+      widget w = x.x1;
+      command cmd = x.x2;
+      string pre = x.x3;
+      string ks = x.x4;
+      int style = x.x5;
+      
+      // a command button with an optional prefix (o, * or v) and
+      // keyboard shortcut; if ok does not hold, then the button is greyed
+      bool ok= (style & WIDGET_STYLE_INERT) == 0;
+      QAction* a= NULL;
+      a= concrete(w)->as_qaction();
+      {
+        QTMCommand* c= new QTMCommand (cmd.rep);
+        c->setParent (a);
+        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
+                          Qt::QueuedConnection);    
+      }
+      // FIXME: implement complete prefix handling
+      a->setEnabled (ok? true: false);
+      
+      bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
+      
+      a->setCheckable (check? true: false);
+      a->setChecked (check? true: false);
+      if (pre == "v") {}
+      else if (pre == "*") {}
+      else if (pre == "o") {}
+      cout << style << LF;
+      QToolButton *b = (style & WIDGET_STYLE_BUTTON) ? new QToolButton() : new QTMUIButton();
+      b->setDefaultAction(a);
+      return new QWidgetItem(b);
+    }
+      break;
+      
+    case balloon_widget:
+    {
+      typedef pair<widget, widget> T;
+      T x = open_box<T>(load);
+      widget text = x.x1;
+      widget help = x.x2;
+      
+      // given a button widget w, specify a help balloon which should be displayed
+      // when the user leaves the mouse pointer on the button for a small while
+      QLayoutItem* li= concrete(text)->as_qlayoutitem();
+      if (li->widget())
+      {
+        typedef quartet<string, int, color, bool> T1;
+        T1 x = open_box<T1>(static_cast<qt_ui_element_rep*>(help.rep)->load);
+        string str = x.x1;
+        li->widget()->setToolTip (to_qstring (str));
+      }
+      return li;
+    }
+      break;
+      
+    case text_widget:
+    {
+      typedef quartet<string, int, color, bool> T;
+      T x = open_box<T>(load);
+      string str = x.x1;
+      int style = x.x2;
+      color col = x.x3;
+      bool tsp = x.x4;
+      
+      // a text widget with a given color and transparency
+      QLabel *w = new QLabel();
+      QTMAction* a= new QTMAction (NULL);
+      string t= tm_var_encode (str);
+      if (t == "Help") t= "Help ";
+      w->setText(to_qstring (t));
+      //a->str = str;
+      if (style == WIDGET_STYLE_MINI) {
+        QFont f = w->font();
+        f.setPointSize(10);
+        w->setFont(f);
+      }
+      return new QWidgetItem(w);
+    }
+      break;
+      
+    case xpm_widget:
+    {
+      url image = open_box<url>(load);
+      
+      // return widget ();
+      // a widget with an X pixmap icon
+      QLabel* l= new QLabel (NULL);
+      QPixmap* img= the_qt_renderer () -> xpm_image (image);
+      QIcon icon (*img);
+      l->setPixmap (*img);
+      return new QWidgetItem(l);
+    }
+      break;
+      
+    default:
+      ;
+  }
+  
+  return NULL;
+}
+
+
+
+
+/******************************************************************************
+ * Widgets for the construction of menus and dialogs
+ ******************************************************************************/
+
+// TeXmacs interface
 
 #if 0
-widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::qt_ui_element_rep::create (qt_ui_element_rep::horizontal_menu, arr); }
+widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_menu, arr); }
 widget vertical_menu (array<widget> arr)  { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
 widget horizontal_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
 widget vertical_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_list, arr); }

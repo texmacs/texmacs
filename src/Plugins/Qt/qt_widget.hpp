@@ -16,6 +16,8 @@
 
 class QWidget;
 class QAction;
+class QMenu;
+class QLayoutItem;
 
 /**
  * The basic implementation of an "abstract widget representation class" within
@@ -33,8 +35,16 @@ public:
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
 
+  // Qt semantics of abstract texmacs widgets
+  
   virtual QAction* as_qaction ();
-  virtual QWidget* as_qwidget () { return NULL ; };
+  virtual QWidget* as_qwidget () { return NULL ; }
+  virtual QMenu *get_qmenu() { return NULL; }
+  // get_menu doest not give ownership of the menu to the caller
+  // this allow menu caching at the TeXmacs level
+  // get_qmenu is called only by code which attach root menus in the GUI elements
+  virtual QLayoutItem *as_qlayoutitem () { return NULL; }
+  
 };
 
 

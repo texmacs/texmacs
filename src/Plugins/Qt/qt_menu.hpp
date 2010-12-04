@@ -16,6 +16,4 @@
 #include <QMenu>
 #include <QAction>
 
-QMenu* to_qmenu (widget w);
-
 #endif // defined QT_MENU_HPP

@@ -17,6 +17,8 @@
 #include "promise.hpp"
 #include "url.hpp"
 
+#include <QAction>
+
 /*******************************************************************************
  * ui element widget  
  *******************************************************************************/
@@ -34,13 +36,20 @@ public:
   types type;
   blackbox load;
   
-  qt_ui_element_rep (types _type, blackbox _load) 
-  : type(_type), load(_load)  {};
+  QAction *cachedAction;
   
+  qt_ui_element_rep (types _type, blackbox _load) 
+  : type(_type), load(_load), cachedAction(NULL)  {};
+
+  ~qt_ui_element_rep() {
+    delete cachedAction;
+  }
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
   virtual widget plain_window_widget (string s);
   virtual QAction* as_qaction ();
+  virtual QMenu *get_qmenu();
+  virtual QLayoutItem *as_qlayoutitem ();
 
   template<class X1> static widget create (types _type, X1 x1) {
     return tm_new <qt_ui_element_rep> (_type, close_box<X1>(x1));
@@ -49,42 +58,27 @@ public:
   template <class X1, class X2> 
   static widget create (types _type, X1 x1, X2 x2) {
     typedef pair<X1,X2> T;
-    return tm_new <qt_ui_element_rep> (_type, close_box<T>(T(x1,x2)));
+    return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2)));
   }
   
   template <class X1, class X2, class X3> 
- static widget create (types _type, X1 x1, X2 x2, X3 x3) {
+  static widget create (types _type, X1 x1, X2 x2, X3 x3) {
     typedef triple<X1,X2,X3> T;
-    return tm_new <qt_ui_element_rep> (_type, close_box<T>(T(x1,x2,x3)));
+    return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3)));
   }
   
   template <class X1, class X2, class X3, class X4> 
   static widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4) {
     typedef quartet<X1,X2,X3,X4> T;
-    return tm_new <qt_ui_element_rep> (_type, close_box<T>(T(x1,x2,x3,x4)));
+    return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4)));
   }
   
   template <class X1, class X2, class X3, class X4, class X5> 
-    static widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4, X5 x5) {
+  static widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4, X5 x5) {
     typedef quintuple<X1,X2,X3,X4,X5> T;
-    return tm_new <qt_ui_element_rep> (_type, close_box<T>(T(x1,x2,x3,x4,x5)));
+    return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4,x5)));
   }
   
-  
-  static widget make_horizontal_menu (array<widget> arr) { return create (horizontal_menu, arr); }
-  static widget make_vertical_menu (array<widget> arr)  { return create (vertical_menu, arr); }
-  static widget make_horizontal_list (array<widget> arr) { return create (horizontal_list, arr); }
-  static widget make_vertical_list (array<widget> arr) { return create (vertical_list, arr); }
-  static widget make_tile_menu (array<widget> a, int cols) { return create (tile_menu, a, cols); }
-  static widget make_minibar_menu (array<widget> arr) { return create (minibar_menu, arr); }
-  static widget make_menu_separator (bool vertical) { return create (menu_separator, vertical); }
-  static widget make_menu_group (string name, int style) { return create (menu_group , name, style); }
-  static widget make_pulldown_button (widget w, promise<widget> pw) { return create (pulldown_button, w, pw); }
-  static widget make_pullright_button (widget w, promise<widget> pw) { return create (pullright_button, w, pw); }
-  static widget make_menu_button (widget w, command cmd, string pre, string ks, int style) { return create (menu_button, w, cmd, pre, ks, style); }
-  static widget make_balloon_widget (widget w, widget help) { return create (balloon_widget, w, help); }
-  static widget make_text_widget (string s, int style, color col, bool tsp) { return create (text_widget, s, style, col, tsp); }
-  static widget make_xpm_widget (url file_name) { return create (xpm_widget, file_name); }
 };
 
 

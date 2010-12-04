@@ -632,7 +632,7 @@ void
 qt_tm_widget_rep::install_main_menu () {
   widget tmp = main_menu_widget;
   main_menu_widget = waiting_main_menu_widget;
-  QMenu* m= to_qmenu (main_menu_widget);
+  QMenu* m= concrete (main_menu_widget)->get_qmenu();
   if (m) {
     {
       QMenuBar *dest = tm_mainwindow()->menuBar();
@@ -701,7 +701,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
         //cout << "widget :" << (void*)w.rep << LF;
       main_icons_widget = w;
-      QMenu* m= to_qmenu (w);
+      QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (mainToolBar, m);
       updateVisibility();
     }
@@ -711,7 +711,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, "SLOT_MODE_ICONS");
     {   
       mode_icons_widget = w;
-      QMenu* m= to_qmenu (w);
+      QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (modeToolBar, m);
       updateVisibility();
     }
@@ -721,7 +721,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, "SLOT_FOCUS_ICONS");
     {   
       focus_icons_widget = w;
-      QMenu* m= to_qmenu (w);
+      QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (focusToolBar, m);
       updateVisibility();
     }
@@ -731,7 +731,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, "SLOT_USER_ICONS");
     {   
       user_icons_widget = w;
-      QMenu* m= to_qmenu (w);
+      QMenu* m= concrete (w)->get_qmenu();
       replaceButtons (userToolBar, m);
       updateVisibility();
     }
