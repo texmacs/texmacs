@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : qt_menu.h
+* MODULE     : qt_menu.cpp
 * DESCRIPTION: QT menu proxies
 * COPYRIGHT  : (C) 2007  Massimiliano Gubinelli
 *******************************************************************************
@@ -98,6 +98,7 @@ QAction *qt_widget_rep::as_qaction() {
   return a;
 };
 
+
 /******************************************************************************/
 
 class qt_menu_rep: public qt_widget_rep {
@@ -180,41 +181,12 @@ qt_menu_rep::send (slot s, blackbox val) {
   }
 }
 
+
+
 /******************************************************************************
-* Widgets for the construction of menus
-******************************************************************************/
+ * Auxiliary classes
+ ******************************************************************************/
 
-widget
-horizontal_menu (array<widget> arr) {
-  // a horizontal menu made up of the widgets in a
-  QAction* act= new QTMAction (NULL);
-  act->setText("Menu");
-  QMenu* m= new QMenu ();
-  for (int i = 0; i < N(arr); i++) {
-    if (is_nil (arr[i])) break;
-    QAction* a= concrete (arr[i]) -> as_qaction ();
-    m->addAction (a);
-    a->setParent (m);
-  }
-  act->setMenu (m);
-  return tm_new<qt_menu_rep> (act);     
-}
-
-widget
-horizontal_list (array<widget> a) {
-  return horizontal_menu (a);
-}  
-
-widget
-vertical_menu (array<widget> a) {
-  // a vertical menu made up of the widgets in a
-  return horizontal_menu (a);
-}
-
-widget
-vertical_list (array<widget> a) {
-  return vertical_menu (a);
-}  
 
 #if 1
 class QTMAuxMenu: public QMenu {
@@ -274,7 +246,7 @@ class QTMTileAction: public QWidgetAction {
   int cols;
 public:
   QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
-   : QWidgetAction (parent), cols (_cols)
+  : QWidgetAction (parent), cols (_cols)
   {
     actions.reserve(N(arr));
     for(int i = 0; i < N(arr); i++) {
@@ -314,7 +286,7 @@ QTMTileAction::createWidget(QWidget* parent) {
     QToolButton* tb= new QTMToolButton (wid);
     tb->setDefaultAction (sa);
     QObject::connect(tb, SIGNAL(released()), this, SLOT(trigger()));
-  //  tb->setStyle (qtmstyle ());
+    //  tb->setStyle (qtmstyle ());
     l->addWidget (tb, row, col);
     col++;
     if (col >= cols) { col = 0; row++; }
@@ -322,19 +294,12 @@ QTMTileAction::createWidget(QWidget* parent) {
   return wid;
 }
 
-widget
-tile_menu (array<widget> a, int cols) {
-  // a menu rendered as a table of cols columns wide & made up of widgets in a
-  QWidgetAction* act= new QTMTileAction (NULL, a, cols);
-  return tm_new<qt_menu_rep> (act);
-}
-
 
 class QTMMinibarAction : public QWidgetAction {
   QVector <QAction*> actions;
 public:
   QTMMinibarAction (QWidget* parent, array<widget>& arr)
-   : QWidgetAction (parent)
+  : QWidgetAction (parent)
   {
     actions.reserve(N(arr));
     for(int i = 0; i < N(arr); i++) {
@@ -373,12 +338,12 @@ QTMMinibarAction::createWidget(QWidget* parent) {
       l->addSpacing(8);
     } else {
       QToolButton *tb = new QToolButton(wid);
-
+      
       //HACK: texmacs does not use the checked state of the action
       // if the action is checkable then it means that it should be
       // checked
       sa->setChecked(sa->isCheckable());
-
+      
       tb->setDefaultAction(sa);
       tb->setAutoRaise(true);
       tb->setPopupMode (QToolButton::InstantPopup);
@@ -392,6 +357,124 @@ QTMMinibarAction::createWidget(QWidget* parent) {
   }
   return wid;
 }
+
+QMenu*
+to_qmenu(widget w) {
+  //FIXME: the static cast is not sure in general, how we can test for
+  //       the right widget type?
+  QMenu *m = static_cast<qt_menu_rep*>(w.rep)->get_qmenu();
+  return m;
+}
+
+QPixmap
+impress (simple_widget_rep* wid) {
+  if (wid) {
+    int width, height;
+    wid->handle_get_size_hint (width, height);
+    QSize s = QSize (width/PIXEL, height/PIXEL);
+    QPixmap pxm(s);
+    //cout << "impress (" << s.width() << "," << s.height() << ")\n";
+    pxm.fill (Qt::transparent);
+    {
+      qt_renderer_rep *ren = the_qt_renderer();
+      ren->begin (static_cast<QPaintDevice*>(&pxm));
+      wid->set_current_renderer(the_qt_renderer());
+      rectangle r = rectangle (0, 0, s.width(), s.height());
+      ren->set_origin(0,0);
+      ren->encode (r->x1, r->y1);
+      ren->encode (r->x2, r->y2);
+      ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
+      wid->handle_repaint (r->x1, r->y2, r->x2, r->y1);
+      ren->end();
+      wid->set_current_renderer(NULL);
+    }
+    return pxm;
+  }
+  else {
+    // return arbitrary image...
+    QPixmap pxm (10, 10);
+    return pxm;
+  }
+}
+
+QAction*
+simple_widget_rep::as_qaction () {
+  QAction* a= new QTMAction (NULL);
+  QPixmap pxm (impress (this));
+  QIcon icon (pxm);
+  a->setIcon (icon);
+  return a;
+}
+
+void
+rerootActions (QWidget* dest, QWidget* src) {
+  QList<QAction *> list = dest->actions();
+  while (!list.isEmpty()) {
+    QAction* a= list.takeFirst();
+    dest->removeAction (a);
+    //    delete a;
+    a->deleteLater();
+  }
+  list = src->actions();
+  while (!list.isEmpty()) {
+    QAction* a= list.takeFirst();
+    dest->addAction (a);
+    a->setParent (dest);
+  }
+}
+
+void
+QTMLazyMenu::force () {
+  if (DEBUG_QT)  
+    cout << "Force lazy menu" << LF;
+  widget w= pm ();
+  QMenu *menu2 = to_qmenu(w);
+  rerootActions (this, menu2);
+}
+
+/******************************************************************************
+* Widgets for the construction of menus
+******************************************************************************/
+#if 1
+widget
+horizontal_menu (array<widget> arr) {
+  // a horizontal menu made up of the widgets in a
+  QAction* act= new QTMAction (NULL);
+  act->setText("Menu");
+  QMenu* m= new QMenu ();
+  for (int i = 0; i < N(arr); i++) {
+    if (is_nil (arr[i])) break;
+    QAction* a= concrete (arr[i]) -> as_qaction ();
+    m->addAction (a);
+    a->setParent (m);
+  }
+  act->setMenu (m);
+  return tm_new<qt_menu_rep> (act);     
+}
+
+widget
+horizontal_list (array<widget> a) {
+  return horizontal_menu (a);
+}  
+
+widget
+vertical_menu (array<widget> a) {
+  // a vertical menu made up of the widgets in a
+  return horizontal_menu (a);
+}
+
+widget
+vertical_list (array<widget> a) {
+  return vertical_menu (a);
+}  
+
+widget
+tile_menu (array<widget> a, int cols) {
+  // a menu rendered as a table of cols columns wide & made up of widgets in a
+  QWidgetAction* act= new QTMTileAction (NULL, a, cols);
+  return tm_new<qt_menu_rep> (act);
+}
+
 
 widget
 minibar_menu (array<widget> arr) {
@@ -474,7 +557,7 @@ qt_balloon_widget_rep::as_qaction() {
   return a;
 }
 
-string
+static string
 conv_sub (string ks) {
   string r(ks);
 #ifdef Q_WS_MAC
@@ -501,7 +584,7 @@ conv_sub (string ks) {
   return r;
 }
 
-string
+static string
 conv (string s) {
   int i=0, k;
   string r;
@@ -572,77 +655,4 @@ xpm_widget (url file_name) {
   // a widget with an X pixmap icon
   return tm_new<qt_image_widget_rep> (file_name);
 }
-
-QMenu*
-to_qmenu(widget w) {
-  //FIXME: the static cast is not sure in general, how we can test for
-  //       the right widget type?
-  QMenu *m = static_cast<qt_menu_rep*>(w.rep)->get_qmenu();
-  return m;
-}
-
-QPixmap
-impress (simple_widget_rep* wid) {
-  if (wid) {
-    int width, height;
-    wid->handle_get_size_hint (width, height);
-    QSize s = QSize (width/PIXEL, height/PIXEL);
-    QPixmap pxm(s);
-    //cout << "impress (" << s.width() << "," << s.height() << ")\n";
-    pxm.fill (Qt::transparent);
-    {
-      qt_renderer_rep *ren = the_qt_renderer();
-      ren->begin (static_cast<QPaintDevice*>(&pxm));
-      wid->set_current_renderer(the_qt_renderer());
-      rectangle r = rectangle (0, 0, s.width(), s.height());
-      ren->set_origin(0,0);
-      ren->encode (r->x1, r->y1);
-      ren->encode (r->x2, r->y2);
-      ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-      wid->handle_repaint (r->x1, r->y2, r->x2, r->y1);
-      ren->end();
-      wid->set_current_renderer(NULL);
-    }
-    return pxm;
-  }
-  else {
-    // return arbitrary image...
-    QPixmap pxm (10, 10);
-    return pxm;
-  }
-}
-
-QAction*
-simple_widget_rep::as_qaction () {
-  QAction* a= new QTMAction (NULL);
-  QPixmap pxm (impress (this));
-  QIcon icon (pxm);
-  a->setIcon (icon);
-  return a;
-}
-
-void
-rerootActions (QWidget* dest, QWidget* src) {
-  QList<QAction *> list = dest->actions();
-  while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->removeAction (a);
-//    delete a;
-    a->deleteLater();
-  }
-  list = src->actions();
-  while (!list.isEmpty()) {
-    QAction* a= list.takeFirst();
-    dest->addAction (a);
-    a->setParent (dest);
-  }
-}
-
-void
-QTMLazyMenu::force () {
-  if (DEBUG_QT)  
-    cout << "Force lazy menu" << LF;
-  widget w= pm ();
-  QMenu *menu2 = to_qmenu(w);
-  rerootActions (this, menu2);
-}
+#endif
