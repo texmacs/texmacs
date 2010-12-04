@@ -30,7 +30,7 @@
 
 
 #ifdef Q_WS_MAC
-//#define UNIFIED_TOOLBAR
+#define UNIFIED_TOOLBAR
 // enable the unified toolbar style on the mac. To work properly this requires
 // a modification of the widget hierarchy of the main window.
 #endif
