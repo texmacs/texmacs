@@ -228,18 +228,31 @@ void
 QTMToolButton::paintEvent(QPaintEvent* event) {
   (void) event;
   QPainter p (this);
-#if 0
+  defaultAction()->icon().paint (&p, rect ());
+}
+
+
+class QTMMenuWidget: public QWidget {
+public:
+  QTMMenuWidget (QWidget* parent = 0): QWidget(parent) {}
+  void paintEvent(QPaintEvent *event);
+};
+
+
+void
+QTMMenuWidget::paintEvent(QPaintEvent* event) {
+  (void) event;
+  QPainter p (this);
   QStyleOptionMenuItem option;
-  QAction *action = defaultAction ();
+  QAction action(NULL);
   QTMAuxMenu m;
-  m.myInitStyleOption (&option, action);
+  m.myInitStyleOption (&option, &action);
   option.rect = rect ();
   QRect r = rect ();
-  style()->drawControl (QStyle::CE_MenuItem, &option, &p, this);
-#else
-  defaultAction()->icon().paint (&p, rect ());
-#endif
+  style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
+  QWidget::paintEvent(event);
 }
+
 
 class QTMTileAction: public QWidgetAction {
   QVector <QAction*> actions;
@@ -259,7 +272,9 @@ public:
   QWidget* createWidget(QWidget* parent);
   // virtual void activate (ActionEvent event) {
   //   cout << "TRIG\n"; QWidgetAction::activate (event); }
+  void paintEvent(QPaintEvent *event);
 };
+
 
 // FIXME: QTMTileAction::createWidget is called twice:
 // the first time when the action is added to the menu,
@@ -271,10 +286,10 @@ QWidget*
 QTMTileAction::createWidget(QWidget* parent) {
   if (DEBUG_QT) 
     cout << "QTMTileAction::createWidget\n";
-  QWidget* wid= new QWidget (parent);
+  QWidget* wid= new QTMMenuWidget (parent);
   QGridLayout* l= new QGridLayout (wid);
-  wid->setAutoFillBackground(true);
-  wid->setBackgroundRole(QPalette::Base);
+ // wid->setAutoFillBackground(true);
+ // wid->setBackgroundRole(QPalette::Base);
   wid->setLayout (l);
   l->setSizeConstraint (QLayout::SetFixedSize);
   l->setHorizontalSpacing (2);
@@ -293,7 +308,6 @@ QTMTileAction::createWidget(QWidget* parent) {
   }
   return wid;
 }
-
 
 class QTMMinibarAction : public QWidgetAction {
   QVector <QAction*> actions;
