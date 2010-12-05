@@ -188,15 +188,10 @@ qt_menu_rep::send (slot s, blackbox val) {
  ******************************************************************************/
 
 
-#if 1
-class QTMAuxMenu: public QMenu {
-public:
-  QTMAuxMenu (): QMenu() {}
-  void myInitStyleOption (QStyleOptionMenuItem *option, const QAction *action) const {
-    initStyleOption(option,action);
-  }
-};
-#endif
+// we need to subclass QToolButton for two reasons
+// 1) custom appearence
+// 2) if used in QWidgetAction the menu do not disappear upon triggering the
+//    button. See QTBUG-10427.
 
 class QTMToolButton: public QToolButton {
 public:
@@ -232,27 +227,40 @@ QTMToolButton::paintEvent(QPaintEvent* event) {
 }
 
 
-class QTMMenuWidget: public QWidget {
+// we use this class to properly initialize style options
+// for our QWidgets which have to blend into QMenus
+// see #QTBUG-1993.
+// see #QTBUG-7707.
+
+class QTMAuxMenu: public QMenu {
 public:
-  QTMMenuWidget (QWidget* parent = 0): QWidget(parent) {}
-  void paintEvent(QPaintEvent *event);
+  QTMAuxMenu (): QMenu() {}
+  
+  void myInitStyleOption (QStyleOptionMenuItem *option) const {
+    QAction action (NULL);
+    initStyleOption(option,&action);
+  }
 };
 
+class QTMMenuWidget: public QWidget {
+  QStyleOptionMenuItem option;
+public:
+  QTMMenuWidget (QWidget* parent = 0): QWidget(parent) {
+    QTMAuxMenu m;
+    m.myInitStyleOption (&option);
+  }
+  void paintEvent(QPaintEvent *event);
+};
 
 void
 QTMMenuWidget::paintEvent(QPaintEvent* event) {
   (void) event;
   QPainter p (this);
-  QStyleOptionMenuItem option;
-  QAction action(NULL);
-  QTMAuxMenu m;
-  m.myInitStyleOption (&option, &action);
   option.rect = rect ();
-  QRect r = rect ();
+  //QRect r = rect ();
   style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
   QWidget::paintEvent(event);
 }
-
 
 class QTMTileAction: public QWidgetAction {
   QVector <QAction*> actions;
@@ -448,7 +456,7 @@ QTMLazyMenu::force () {
 /******************************************************************************
 * Widgets for the construction of menus and dialogs
 ******************************************************************************/
-#if 1
+#if 0
 widget
 horizontal_menu (array<widget> arr) {
   // a horizontal menu made up of the widgets in a
