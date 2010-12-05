@@ -278,7 +278,7 @@ QTMWidget::repaint_invalid_regions () {
   }
   
   // update backing store size
-  {
+  if (0) {
     QSize _oldSize = backingPixmap.size();
     QSize _newSize = QAbstractScrollArea::viewport()->size();
     if (_newSize != _oldSize) {
@@ -286,12 +286,17 @@ QTMWidget::repaint_invalid_regions () {
       QPixmap newBackingPixmap (_newSize);
       QPainter p (&newBackingPixmap);
       p.drawPixmap(0,0,backingPixmap);
+      p.fillRect(0, 0, _newSize.width(), _newSize.height(), Qt::red);
+      if (_newSize.width() >= _oldSize.width()) {
+       // invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
+        p.fillRect(QRect(_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::green);
+      }
+      if (_newSize.height() >= _oldSize.height()) {
+        //invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
+        p.fillRect(QRect(0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::green);
+      }
       p.end();
       backingPixmap = newBackingPixmap;
-      if (_newSize.width() > _oldSize.width())
-        invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
-      if (_newSize.height() > _oldSize.height())
-        invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
      // invalidate_all();
 //      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
     }
@@ -361,6 +366,32 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
   QTMScrollView::resizeEvent (event);
   // the_gui::update needs to be run as soon as possible to refresh the status
   // of the widget.
+  
+  // update backing store size
+  {
+    QSize _oldSize = backingPixmap.size();
+    QSize _newSize = QAbstractScrollArea::viewport()->size();
+    if (_newSize != _oldSize) {
+      // cout << "RESIZING BITMAP"<< LF;
+      QPixmap newBackingPixmap (_newSize);
+      QPainter p (&newBackingPixmap);
+      p.drawPixmap(0,0,backingPixmap);
+      //p.fillRect(0, 0, _newSize.width(), _newSize.height(), Qt::red);
+      if (_newSize.width() >= _oldSize.width()) {
+         invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
+        p.fillRect(QRect(_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
+      }
+      if (_newSize.height() >= _oldSize.height()) {
+        invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
+        p.fillRect(QRect(0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
+      }
+      p.end();
+      backingPixmap = newBackingPixmap;
+      // invalidate_all();
+      //      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
+    }
+  }
+  
   the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
 //  needs_update(); 
 }
@@ -389,7 +420,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
       QRect qr = rects.at(i);
       p.drawPixmap(qr,backingPixmap,qr);
     }
-  }
+  } 
   
 }
 
