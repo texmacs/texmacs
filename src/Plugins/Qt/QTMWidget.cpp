@@ -284,12 +284,16 @@ QTMWidget::repaint_invalid_regions () {
     if (_newSize != _oldSize) {
       // cout << "RESIZING BITMAP"<< LF;
       QPixmap newBackingPixmap (_newSize);
-      //QPainter p (&newBackingPixmap);
-      //p.drawPixmap(0,0,backingPixmap);
-      //p.end();
+      QPainter p (&newBackingPixmap);
+      p.drawPixmap(0,0,backingPixmap);
+      p.end();
       backingPixmap = newBackingPixmap;
-      invalidate_all();
-      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
+      if (_newSize.width() > _oldSize.width())
+        invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
+      if (_newSize.height() > _oldSize.height())
+        invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
+     // invalidate_all();
+//      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
     }
   }
   
@@ -357,7 +361,8 @@ QTMWidget::resizeEvent( QResizeEvent* event ) {
   QTMScrollView::resizeEvent (event);
   // the_gui::update needs to be run as soon as possible to refresh the status
   // of the widget.
-  needs_update(); 
+  the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
+//  needs_update(); 
 }
 
 void
