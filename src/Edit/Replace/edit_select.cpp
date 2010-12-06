@@ -67,17 +67,21 @@ edit_select_rep::~edit_select_rep () {}
 
 path
 edit_select_rep::semantic_root (path p) {
-  while (!is_nil (p) && is_script (subtree (et, p)))
+  while (p != rp) {
+    tree st= subtree (et, path_up (p));
+    if (is_func (st, CELL)) break;
+    if (is_compound (st) && N(st) == 1)
+      if (drd_env_read (drd->get_env (L(st), 0), "mode") == "math")
+        break;
     p= path_up (p);
-  while (!is_nil (p) && is_format (subtree (et, path_up (p))))
-    p= path_up (p);
+  }
   return p;
 }
 
 bool
 edit_select_rep::semantic_active (path p) {
-  p= semantic_root (p);
   if (as_string (eval ("(get-preference \"semantic editing\")")) == "on") {
+    p= semantic_root (p);
     //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
     tree mode= get_env_value (MODE, end (et, p));
     tree plan= get_env_value (PROG_LANGUAGE, end (et, p));

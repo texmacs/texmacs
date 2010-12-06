@@ -34,16 +34,31 @@ packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
   current_production (packrat_uninit) {}
 
 packrat_parser
-make_packrat_parser (string lan, tree in, path in_pos= path ()) {
+make_packrat_parser (string lan, tree in) {
+  static string         last_lan   = "";
+  static tree           last_in    = "";
+  static packrat_parser last_par;
+  if (lan != last_lan || in != last_in) {
+    packrat_grammar gr= find_packrat_grammar (lan);
+    last_lan   = lan;
+    last_in    = copy (in);
+    last_par   = packrat_parser (gr, in);
+  }
+  return last_par;
+}
+
+packrat_parser
+make_packrat_parser (string lan, tree in, path in_pos) {
   static string         last_lan   = "";
   static tree           last_in    = "";
   static path           last_in_pos= path ();
   static packrat_parser last_par;
   if (lan != last_lan || in != last_in || in_pos != last_in_pos) {
     packrat_grammar gr= find_packrat_grammar (lan);
-    last_lan= lan;
-    last_in = copy (in);
-    last_par= packrat_parser (gr, in, in_pos);
+    last_lan   = lan;
+    last_in    = copy (in);
+    last_in_pos= copy (last_in_pos);
+    last_par   = packrat_parser (gr, in, in_pos);
   }
   return last_par;
 }
