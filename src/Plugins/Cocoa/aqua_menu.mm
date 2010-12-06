@@ -345,13 +345,13 @@ widget menu_group (string name, int style)
 	NSMenuItem* mi = [[alloc_menuitem() initWithTitle:to_nsstring_utf8(name) action:NULL keyEquivalent:@""] autorelease];
 
 	//	NSAttributedString *str = [mi attributedTitle];
-	NSMutableParagraphStyle *style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+	NSMutableParagraphStyle *pstyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
 //	NSMutableParagraphStyle *style = [(NSParagraphStyle*)[str attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:NULL] mutableCopy];
-	[style setAlignment: NSCenterTextAlignment];
+	[pstyle setAlignment: NSCenterTextAlignment];
 	[mi setAttributedTitle:[[[NSAttributedString alloc] 
                                initWithString: [mi title]
                                    attributes: [NSDictionary 
-                                      dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil]]
+                                      dictionaryWithObjectsAndKeys:pstyle, NSParagraphStyleAttributeName, nil]]
                                 autorelease]];
 	return tm_new <aqua_menu_rep> (mi);
 }

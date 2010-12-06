@@ -518,6 +518,18 @@ show_wait_indicator (widget base, string message, string argument) {
   the_gui->show_wait_indicator(base,message,argument); 
 }
 
+void
+external_event (string type, time_t t) {
+  // External events, such as pushing a button of a remote infrared commander
+#if 0
+  QTMWidget *tm_focus = qobject_cast<QTMWidget*>(qApp->focusWidget());
+  if (tm_focus) {
+    simple_widget_rep *wid = tm_focus->tm_widget();
+    if (wid) the_gui -> process_keypress (wid, type, t);
+  }
+#endif
+}
+
 font x_font (string family, int size, int dpi)
 {
   (void) family; (void) size; (void) dpi;

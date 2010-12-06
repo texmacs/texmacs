@@ -13,6 +13,7 @@
 
 #include "aqua_dialogues.h"
 
+#include "gui.hpp" 
 #include "widget.hpp" 
 #include "message.hpp"
 #include "aqua_utilities.h"
@@ -40,7 +41,7 @@ protected:
   string file;
 	
 public:
-  aqua_chooser_widget_rep (command, string, string);
+  aqua_chooser_widget_rep (command, string, bool);
   ~aqua_chooser_widget_rep ();
 	
   virtual void send (slot s, blackbox val);
@@ -204,7 +205,7 @@ widget file_chooser_widget (command cmd, string type, bool save)
 // the widget includes a previsualizer and a default magnification
 // for importation can be specified
 {
-  return tm_new <aqua_chooser_widget_rep> (cmd,type,save);
+  return tm_new <aqua_chooser_widget_rep> (cmd, type, save);
 }
 
 
@@ -716,4 +717,16 @@ widget
 printer_widget (command cmd, url u) {
   (void) u;
   return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
+}
+
+
+widget
+color_picker_widget (command call_back, bool bg, array<tree> proposals) {
+  // widgets for selecting a color, a pattern or a background image,
+  // encoded by a tree. On input, we give a list of recently used proposals
+  // on termination the command is called with the selected color as argument
+  // the bg flag specifies whether we are picking a background color or fill
+  NOT_IMPLEMENTED;
+  (void) call_back; (void) bg; (void) proposals;
+  return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
 }

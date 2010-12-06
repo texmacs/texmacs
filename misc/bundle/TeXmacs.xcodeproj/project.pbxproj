@@ -428,23 +428,6 @@
 		9CCC747710D303D900E88D90 /* tex_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489510A8CC100097A335 /* tex_init.cpp */; };
 		9CCC747810D303D900E88D90 /* tex_rubber_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489610A8CC100097A335 /* tex_rubber_font.cpp */; };
 		9CCC747910D303D900E88D90 /* openssl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B489B10A8CC100097A335 /* openssl.cpp */; };
-		9CCC748410D303D900E88D90 /* assoc_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490610A8CC100097A335 /* assoc_environment.cpp */; };
-		9CCC748510D303D900E88D90 /* basic_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490810A8CC100097A335 /* basic_environment.cpp */; };
-		9CCC748610D303D900E88D90 /* list_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490B10A8CC100097A335 /* list_environment.cpp */; };
-		9CCC748710D303D900E88D90 /* std_environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B490D10A8CC100097A335 /* std_environment.cpp */; };
-		9CCC748810D303D900E88D90 /* evaluate_boolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491010A8CC100097A335 /* evaluate_boolean.cpp */; };
-		9CCC748910D303D900E88D90 /* evaluate_control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491110A8CC100097A335 /* evaluate_control.cpp */; };
-		9CCC748A10D303D900E88D90 /* evaluate_inactive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491210A8CC100097A335 /* evaluate_inactive.cpp */; };
-		9CCC748B10D303D900E88D90 /* evaluate_length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491310A8CC100097A335 /* evaluate_length.cpp */; };
-		9CCC748C10D303D900E88D90 /* evaluate_macro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491410A8CC100097A335 /* evaluate_macro.cpp */; };
-		9CCC748D10D303D900E88D90 /* evaluate_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491510A8CC100097A335 /* evaluate_main.cpp */; };
-		9CCC748E10D303D900E88D90 /* evaluate_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491710A8CC100097A335 /* evaluate_misc.cpp */; };
-		9CCC748F10D303D900E88D90 /* evaluate_numeric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491810A8CC100097A335 /* evaluate_numeric.cpp */; };
-		9CCC749010D303D900E88D90 /* evaluate_quote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491910A8CC100097A335 /* evaluate_quote.cpp */; };
-		9CCC749110D303D900E88D90 /* evaluate_rewrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491A10A8CC100097A335 /* evaluate_rewrite.cpp */; };
-		9CCC749210D303D900E88D90 /* evaluate_textual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491B10A8CC100097A335 /* evaluate_textual.cpp */; };
-		9CCC749310D303D900E88D90 /* clean_copy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491D10A8CC100097A335 /* clean_copy.cpp */; };
-		9CCC749410D303D900E88D90 /* memorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B491F10A8CC100097A335 /* memorizer.cpp */; };
 		9CCC749510D303D900E88D90 /* init_texmacs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492410A8CC110097A335 /* init_texmacs.cpp */; };
 		9CCC749610D303D900E88D90 /* init_upgrade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492510A8CC110097A335 /* init_upgrade.cpp */; };
 		9CCC749710D303D900E88D90 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B492710A8CC110097A335 /* timer.cpp */; };
@@ -4193,23 +4176,6 @@
 				9CCC747710D303D900E88D90 /* tex_init.cpp in Sources */,
 				9CCC747810D303D900E88D90 /* tex_rubber_font.cpp in Sources */,
 				9CCC747910D303D900E88D90 /* openssl.cpp in Sources */,
-				9CCC748410D303D900E88D90 /* assoc_environment.cpp in Sources */,
-				9CCC748510D303D900E88D90 /* basic_environment.cpp in Sources */,
-				9CCC748610D303D900E88D90 /* list_environment.cpp in Sources */,
-				9CCC748710D303D900E88D90 /* std_environment.cpp in Sources */,
-				9CCC748810D303D900E88D90 /* evaluate_boolean.cpp in Sources */,
-				9CCC748910D303D900E88D90 /* evaluate_control.cpp in Sources */,
-				9CCC748A10D303D900E88D90 /* evaluate_inactive.cpp in Sources */,
-				9CCC748B10D303D900E88D90 /* evaluate_length.cpp in Sources */,
-				9CCC748C10D303D900E88D90 /* evaluate_macro.cpp in Sources */,
-				9CCC748D10D303D900E88D90 /* evaluate_main.cpp in Sources */,
-				9CCC748E10D303D900E88D90 /* evaluate_misc.cpp in Sources */,
-				9CCC748F10D303D900E88D90 /* evaluate_numeric.cpp in Sources */,
-				9CCC749010D303D900E88D90 /* evaluate_quote.cpp in Sources */,
-				9CCC749110D303D900E88D90 /* evaluate_rewrite.cpp in Sources */,
-				9CCC749210D303D900E88D90 /* evaluate_textual.cpp in Sources */,
-				9CCC749310D303D900E88D90 /* clean_copy.cpp in Sources */,
-				9CCC749410D303D900E88D90 /* memorizer.cpp in Sources */,
 				9CCC749510D303D900E88D90 /* init_texmacs.cpp in Sources */,
 				9CCC749610D303D900E88D90 /* init_upgrade.cpp in Sources */,
 				9CCC749710D303D900E88D90 /* timer.cpp in Sources */,

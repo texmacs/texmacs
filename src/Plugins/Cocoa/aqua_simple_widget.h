@@ -41,7 +41,6 @@ public:
 
 
   virtual TMMenuItem *as_menuitem();
-
 };
 
 #endif // defined AQUA_SIMPLE_WIDGET_H

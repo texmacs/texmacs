@@ -16,6 +16,7 @@
 #define ID COCOA_ID
 #define outline COCOA_outline
 #undef EVENT_H 
+#define extend CARBON_extends 
 
 
 #include <Cocoa/Cocoa.h>
@@ -24,6 +25,6 @@
 #define EVENT_H
 #undef ID
 #undef outline
-
+#undef extend
 
 #endif
