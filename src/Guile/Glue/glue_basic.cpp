@@ -2503,36 +2503,6 @@ tmg_string_previous (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_define_grammar_rule (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "define-grammar-rule");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "define-grammar-rule");
-
-  tree in1= scm_to_tree (arg1);
-  tree in2= scm_to_tree (arg2);
-
-  // SCM_DEFER_INTS;
-  define_grammar_rule (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_grammar_parse (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "grammar-parse");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "grammar-parse");
-
-  tree in1= scm_to_tree (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  int out= grammar_parse (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_packrat_define (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "packrat-define");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "packrat-define");
@@ -5101,8 +5071,6 @@ initialize_glue_basic () {
   scm_new_procedure ("list->tmstring", (FN) tmg_list_2tmstring, 1, 0, 0);
   scm_new_procedure ("string-next", (FN) tmg_string_next, 2, 0, 0);
   scm_new_procedure ("string-previous", (FN) tmg_string_previous, 2, 0, 0);
-  scm_new_procedure ("define-grammar-rule", (FN) tmg_define_grammar_rule, 2, 0, 0);
-  scm_new_procedure ("grammar-parse", (FN) tmg_grammar_parse, 2, 0, 0);
   scm_new_procedure ("packrat-define", (FN) tmg_packrat_define, 3, 0, 0);
   scm_new_procedure ("packrat-property", (FN) tmg_packrat_property, 4, 0, 0);
   scm_new_procedure ("packrat-inherit", (FN) tmg_packrat_inherit, 2, 0, 0);

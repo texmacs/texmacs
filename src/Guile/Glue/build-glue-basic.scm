@@ -224,8 +224,6 @@
   (string-previous tm_char_previous (int string int))
 
   ;; Packrat grammar and parsing tools
-  (define-grammar-rule define_grammar_rule (void tree tree))
-  (grammar-parse grammar_parse (int tree string))
   (packrat-define packrat_define (void string string tree))
   (packrat-property packrat_property (void string string string string))
   (packrat-inherit packrat_inherit (void string string))
