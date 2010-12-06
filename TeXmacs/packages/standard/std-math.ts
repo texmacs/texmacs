@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|<tuple|source|std>>
 
@@ -48,11 +48,9 @@
 
   <assign|shrink-inline|<macro|x|<style-with|src-compact|none|<if|<equal|<value|math-display>|false>|<with|math-level|<plus|<value|math-level>|1>|<arg|x>>|<with|math-display|false|<arg|x>>>>>>
 
-  <drd-props|shrink-inline|arity|1|accessible|all>
+  <assign|binom|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<left|(><resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||<plus|1b|2.5sep>||<minus|1t|2.5sep>|><right|)>>>>>>
 
-  <assign|binom|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<left|(><resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||b+2.5sep||t-2.5sep|><right|)>>>>>>
-
-  <assign|ontop|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||b+2.5sep||t-2.5sep|>>>>>>
+  <assign|ontop|<macro|x|y|<style-only*|<with|mode|math|<shrink-inline|<resize|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|1|1|cell-rsep|0spc>|<table|<row|<cell|<inactive*|<arg|x>>>>|<row|<cell|<inactive*|<arg|y>>>>>>>||<plus|1b|2.5sep>||<minus|1t|2.5sep>|>>>>>>
 
   <assign|choose|<value|binom>>
 
@@ -60,7 +58,11 @@
 
   <assign|tfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
 
-  <assign|frac*|<macro|x|y|<move|<lsup|<arg|x>><resize|/|l+0.15em|b+0.5em|r-0.15em|t-0.5em><rsub|<arg|y>>||0.05em>>>
+  <assign|frac*|<macro|x|y|<move|<lsup|<arg|x>><resize|/|<plus|1l|0.15em>|<plus|1b|0.5em>|<minus|1r|0.15em>|<minus|1t|0.5em>><rsub|<arg|y>>||0.05em>>>
+
+  <drd-props|shrink-inline|arity|1|accessible|all|meaning|<macro|x|<arg|x>>>
+
+  <drd-props|frac*|arity|2|meaning|<macro|x|y|<arg|x>/<arg|y>>>
 
   <\active*>
     <\src-comment>

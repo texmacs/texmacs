@@ -52,9 +52,33 @@ make_packrat_parser (string lan, tree in, path in_pos= path ()) {
 * Setting up the input
 ******************************************************************************/
 
+static tree
+replace (tree t, hashmap<tree,tree> h) {
+  if (h->contains (t)) return h[t];
+  else if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= replace (t[i], h);
+    return r;
+  }
+}
+
+static path
+as_path (tree t) {
+  ASSERT (is_tuple (t), "invalid path");
+  path p;
+  int i, n= N(t);
+  for (i=n-1; i>=0; i--)
+    p= path (as_int (t[i]), p);
+  return p;
+}
+
 void
 packrat_parser_rep::add_input (tree t, path p) {
-  current_start (p)= N(current_string);
+  if (is_nil (p) || p->item != -1)
+    current_start (p)= N(current_string);
   if (is_atomic (t)) {
     int pos=0;
     string s= t->label;
@@ -80,6 +104,28 @@ packrat_parser_rep::add_input (tree t, path p) {
       if (is_func (t, DOCUMENT)) current_string << "\n";
     }
   }
+  else if (is_func (t, WITH)) {
+    if (t[0] == "mode" && t[1] != "math");
+    else add_input (t[N(t)-1], p * (N(t)-1));
+  }
+  else if (is_func (the_drd->get_meaning (L(t)), MACRO)) {
+    tree fun= the_drd->get_meaning (L(t));
+    int i, n= N(fun)-1;
+    hashmap<tree,tree> tab (UNINIT);
+    for (i=0; i<n; i++) {
+      tree var= tree (ARG, fun[i]);
+      tree val= "";
+      if (i<N(t)) val= tree (QUASI, t[i], (tree) (p * i));
+      tab (var)= val;
+    }
+    tree body= replace (fun[n], tab);
+    add_input (body, path (-1));
+  }
+  else if (is_func (t, QUASI, 2)) {
+    tree tt= t[0];
+    path pp= as_path (t[1]);
+    add_input (tt, pp);
+  }
   else {
     string cl= the_drd->get_class (t);
     //if (cl != "") cout << "Class " << t << " -> " << cl << "\n";
@@ -92,7 +138,8 @@ packrat_parser_rep::add_input (tree t, path p) {
     current_string << "</>";
     if (cl != "") current_string << "</>";
   }
-  current_end (p)= N(current_string);
+  if (is_nil (p) || p->item != -1)
+    current_end (p)= N(current_string);
 }
 
 void

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.8>
 
 <style|source>
 
@@ -221,14 +221,6 @@
 
     <assign|cgbt|<macro|x|<with|math-font-family|mt|{<space|-0.6spc>{<space|-0.6spc>{><arg|x><with|math-font-family|mt|}<space|-0.6spc>}<space|-0.6spc>}>>>
 
-    <drd-props|gb|arity|1|class|Postfix>
-
-    <drd-props|cgb|arity|1|class|Postfix>
-
-    <drd-props|gbt|arity|1|class|Postfix>
-
-    <drd-props|cgbt|arity|1|class|Postfix>
-
     \;
 
     <assign|head|<macro|x|<arg|x><rsup|\<sharp\>>>>
@@ -249,7 +241,7 @@
 
     <assign|reff|<macro|f|<resize|<wide*|<resize|r||0ex|0.3em|1ex>|\<wide-bar\>>||0.5ex|0.4em|1ex><rsub|<arg|f>>>>
 
-    <assign|Bth|<macro|f|\<\|\|\><arg|f>\<\|\|\>>>
+    <assign|Bth|<macro|f|<around|\<\|\|\>|<arg|f>|\<\|\|\>>>>
 
     <assign|Beff|<macro|f|\<lceil\><space|-0.75spc>\<lceil\><arg|f>\<rceil\><space|-0.75spc>\<rceil\>>>
   </with>>

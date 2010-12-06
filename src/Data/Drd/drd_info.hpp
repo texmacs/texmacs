@@ -69,8 +69,10 @@ public:
   tree get_attribute (tree_label tag, string which);
   void set_name (tree_label tag, string val);
   void set_long_name (tree_label tag, string val);
+  void set_meaning (tree_label tag, tree val);
   string get_name (tree_label tag);
   string get_long_name (tree_label tag);
+  tree   get_meaning (tree_label tag);
   string get_class (tree t);
 
   /* Properties of the children of the tag */

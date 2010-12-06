@@ -333,6 +333,11 @@ drd_info_rep::set_long_name (tree_label l, string val) {
   set_attribute (l, "long-name", val);
 }
 
+void
+drd_info_rep::set_meaning (tree_label l, tree val) {
+  set_attribute (l, "meaning", val);
+}
+
 string
 drd_info_rep::get_name (tree_label l) {
   return as_string (get_attribute (l, "name"));
@@ -343,6 +348,14 @@ drd_info_rep::get_long_name (tree_label l) {
   string r= as_string (get_attribute (l, "long-name"));
   if (r != "") return r;
   return as_string (get_attribute (l, "name"));
+}
+
+tree
+drd_info_rep::get_meaning (tree_label l) {
+  tree r= get_attribute (l, "meaning");
+  if (r != "") return r;
+  if (env->contains (as_string (l))) return env[as_string (l)];
+  return UNINIT;
 }
 
 string
