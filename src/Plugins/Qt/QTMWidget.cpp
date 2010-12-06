@@ -695,9 +695,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 #endif
   }
   
-  if (!preedit_string.isEmpty()) {
-    if (DEBUG_QT)
-      cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+  if (DEBUG_QT)
+    cout << "IM preediting :" << preedit_string.toUtf8().data() << LF;
+  
+  string r = "pre-edit:";
+  if (!preedit_string.isEmpty())
+  {
 
     // find cursor position in the preedit string
     QList<QInputMethodEvent::Attribute> attrs = event->attributes();
@@ -706,12 +709,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
       if (attrs[i].type == QInputMethodEvent::Cursor) 
         pos = attrs[i].start;
     
-    string r = "pre-edit:" * as_string(pos) * ":" 
-                           * from_qstring(preedit_string);
-    simple_widget_rep *wid =  tm_widget();
-    if (wid)
-      the_gui -> process_keypress (wid, r, texmacs_time());
+    r = r * as_string(pos) * ":" 
+          * from_qstring(preedit_string);
   }
+  simple_widget_rep *wid =  tm_widget();
+  if (wid)
+    the_gui -> process_keypress (wid, r, texmacs_time());
   event->accept();
 }  
 
