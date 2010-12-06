@@ -23,13 +23,11 @@
     (:<with "mode" :/ :args :>))
 
   (define Pre
-    (:operator)
     (:<lsub Script :>)
     (:<lsup Script :>)
     (:<lprime (* Prime-symbol) :>))
 
   (define Post
-    (:operator)
     (:<rsub Script :>)
     (:<rsup Script :>)
     (:<rprime (* Prime-symbol) :>))
