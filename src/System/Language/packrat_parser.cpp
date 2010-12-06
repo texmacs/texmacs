@@ -128,7 +128,8 @@ packrat_parser_rep::add_input (tree t, path p) {
            is_func (t, MOVE) || is_func (t, SHIFT) ||
            is_func (t, RESIZE) || is_func (t, CLIPPED))
     add_input (t[0], p * 0);
-  else if (is_func (the_drd->get_meaning (L(t)), MACRO)) {
+  else if (is_func (the_drd->get_meaning (L(t)), MACRO) &&
+           L(t) >= START_EXTENSIONS) {
     tree fun= the_drd->get_meaning (L(t));
     int i, n= N(fun)-1;
     hashmap<tree,tree> tab (UNINIT);

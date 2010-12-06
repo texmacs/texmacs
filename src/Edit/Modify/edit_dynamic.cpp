@@ -118,10 +118,11 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 	t[0]= tree (DOCUMENT, "");
 	p   = path (0, 0, 0);
       }
-    if ((!drd->all_accessible (l)) && get_init_string (MODE) != "src") {
-      t= tree (INACTIVE, t);
-      p= path (0, p);
-    }
+    if (!drd->all_accessible (l))
+      if (get_init_string (MODE) != "src" && !inside ("show-preamble")) {
+        t= tree (INACTIVE, t);
+        p= path (0, p);
+      }
     insert_tree (t, p);
     if (table_macro) make_table (1, 1);
     if (sel != "") insert_tree (sel, end (sel));
