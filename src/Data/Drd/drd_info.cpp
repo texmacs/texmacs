@@ -21,9 +21,9 @@
 ******************************************************************************/
 
 drd_info_rep::drd_info_rep (string name2):
-  name (name2), info (tag_info ()) {}
+  name (name2), info (tag_info ()), env (UNINIT) {}
 drd_info_rep::drd_info_rep (string name2, drd_info base):
-  name (name2), info (tag_info (), base->info) {}
+  name (name2), info (tag_info (), base->info), env (UNINIT) {}
 drd_info::drd_info (string name):
   rep (tm_new<drd_info_rep> (name)) {}
 drd_info::drd_info (string name, drd_info base):
@@ -842,8 +842,9 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
 }
 
 void
-drd_info_rep::heuristic_init (hashmap<string,tree> env) {
+drd_info_rep::heuristic_init (hashmap<string,tree> env2) {
   // time_t tt= texmacs_time ();
+  env= env2;
   bool flag= true;
   int round= 0;
   while (flag) {

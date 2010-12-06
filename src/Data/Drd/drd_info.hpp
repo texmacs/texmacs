@@ -20,6 +20,7 @@ class drd_info_rep: concrete_struct {
 public:
   string name;
   rel_hashmap<tree_label,tag_info> info;
+  hashmap<string,tree> env;
 
 public:
   drd_info_rep (string name);
