@@ -119,10 +119,15 @@ packrat_parser_rep::add_input (tree t, path p) {
       if (is_func (t, DOCUMENT)) current_string << "\n";
     }
   }
-  else if (is_func (t, WITH)) {
-    if (t[0] == "mode" && t[1] != "math");
+  else if (is_func (t, WITH) || is_func (t, TWITH) || is_func (t, CWITH) ||
+           is_func (t, TFORMAT) || is_func (t, CELL, 1)) {
+    if (is_func (t, WITH) && t[0] == "mode" && t[1] != "math");
     else add_input (t[N(t)-1], p * (N(t)-1));
   }
+  else if (is_func (t, CELL) ||
+           is_func (t, MOVE) || is_func (t, SHIFT) ||
+           is_func (t, RESIZE) || is_func (t, CLIPPED))
+    add_input (t[0], p * 0);
   else if (is_func (the_drd->get_meaning (L(t)), MACRO)) {
     tree fun= the_drd->get_meaning (L(t));
     int i, n= N(fun)-1;
@@ -162,7 +167,8 @@ packrat_parser_rep::set_input (tree t) {
   current_string= "";
   current_tree  = t;
   add_input (t, path ());
-  //cout << "Input " << current_string << "\n";
+  if (DEBUG_FLATTEN)
+    cout << "Input " << current_string << "\n";
   current_input= encode_tokens (current_string);
 }
 

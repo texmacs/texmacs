@@ -367,6 +367,17 @@
     (Postfixed :<around* :any :/ (* Post) Expressions (* Pre) :/ :any :>)
     Radical)
 
+  (define Slot
+    Expression
+    "")
+
+  (define Cell
+    Main
+    "")
+
+  (define Row
+    (:<row Cell (* (:/ Cell)) :>))
+
   (define Radical
     (Open Close)
     (Open Expressions Close)
@@ -382,10 +393,11 @@
     Suspension-symbol
     Miscellaneous-symbol
     Unary-operator-glyph-symbol
-    (:<frac Expression :/ Expression :>)
+    (:<frac Expression :/ Slot :>)
     (:<sqrt Expression :>)
-    (:<sqrt Expression :/ Expression :>)
+    (:<sqrt Expression :/ Slot :>)
     (:<wide Expression :/ :args :>)
+    (:<table Row (* (:/ Row)) :>)
     ((except :< Reserved-symbol) :args :>)
     :cursor)
 

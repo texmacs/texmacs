@@ -575,7 +575,7 @@
     Power-symbol)
 
   (define Reserved-symbol
-    :<frac :<sqrt :<wide
+    :<frac :<sqrt :<wide :<table :<row
     :<around :<around* :<big-around :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime
     :<Prefix :<Postfix)
