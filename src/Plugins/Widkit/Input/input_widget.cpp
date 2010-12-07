@@ -338,7 +338,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
   if (type == "press-middle") {
     tree t; string sel;
-    (void) get_selection ("primary", t, sel);
+    (void) get_selection ("primary", t, sel, "verbatim");
     if (is_tuple (t, "extern", 1)) {
       string ins= as_string (t[1]);
       s= s (0, pos) * ins * s(pos, N(s));
