@@ -121,8 +121,12 @@ void
 edit_select_rep::select (path p1, path p2) {
   if (start_p == p1 && end_p == p2) return;
   if (!(rp <= p1 && rp <= p2)) return;
-  if (p1 != p2)
-    (void) semantic_select (common (p1, p2), p1, p2, 0);
+  if (p1 != p2) {
+    path cp= common (p1, p2);
+    tree st= subtree (et, cp);
+    if (!is_func (st, TABLE) && !is_func (st, ROW))
+      (void) semantic_select (cp, p1, p2, 0);
+  }
   if (path_less (p1, p2)) {
     start_p= copy (p1);
     end_p  = copy (p2);
