@@ -77,19 +77,19 @@
     Model-symbol)
 
   (define Imply-infix
-    (:operator)
+    (:operator associative)
     (Imply-infix Post)
     (Pre Imply-infix)
     Imply-symbol)
 
   (define Or-infix
-    (:operator)
+    (:operator associative)
     (Or-infix Post)
     (Pre Or-infix)
     Or-symbol)
 
   (define And-infix
-    (:operator)
+    (:operator associative)
     (And-infix Post)
     (Pre And-infix)
     And-symbol)
@@ -100,7 +100,7 @@
     Not-symbol)
 
   (define Relation-infix
-    (:operator)
+    (:operator associative)
     (Relation-infix Post)
     (Pre Relation-infix)
     Relation-symbol)
@@ -111,7 +111,7 @@
     Relation-symbol)
 
   (define Arrow-infix
-    (:operator)
+    (:operator associative)
     (Arrow-infix Post)
     (Pre Arrow-infix)
     Arrow-symbol)
@@ -122,7 +122,7 @@
     Arrow-symbol)
 
   (define Union-infix
-    (:operator)
+    (:operator associative)
     (Union-infix Post)
     (Pre Union-infix)
     Union-symbol)
@@ -134,13 +134,13 @@
     Exclude-symbol)
 
   (define Intersection-infix
-    (:operator)
+    (:operator associative)
     (Intersection-infix Post)
     (Pre Intersection-infix)
     Intersection-symbol)
 
   (define Plus-infix
-    (:operator)
+    (:operator associative)
     (Plus-infix Post)
     (Pre Plus-infix)
     Plus-symbol)
@@ -152,7 +152,7 @@
     Plus-symbol)
 
   (define Minus-infix
-    (:operator)
+    (:operator anti-associative)
     (Minus-infix Post)
     (Pre Minus-infix)
     Minus-symbol)
@@ -164,7 +164,7 @@
     Minus-symbol)
 
   (define Times-infix
-    (:operator)
+    (:operator associative)
     (Times-infix Post)
     (Pre Times-infix)
     Times-symbol)
@@ -229,7 +229,7 @@
     (:<left :args :>))
 
   (define Separator
-    (:operator)
+    (:operator associative)
     Ponctuation-symbol
     Middle-symbol
     (:<mid :args :>))
@@ -251,7 +251,7 @@
     Relaxed-expressions)
 
   (define Relaxed-expressions
-    (Relaxed-expression Separator Relaxed-expressions)
+    (Relaxed-expressions Separator Relaxed-expression)
     Relaxed-expression)
 
   (define Relaxed-expression
@@ -271,7 +271,7 @@
     (:<Postfix :args :>))
 
   (define Expressions
-    (Expression Separator Expressions)
+    (Expressions Separator Expression)
     Expression)
 
   (define Expression

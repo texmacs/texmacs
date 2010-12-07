@@ -17,7 +17,7 @@
   (:synopsis "operators for a minimal test language")
 
   (define Spc
-    (:operator)
+    (:operator associative)
     (* (or " " "\t" "\n")))
 
   (define Space
@@ -119,8 +119,11 @@
   (:synopsis "grammar for a minimal test language")
 
   (define Main
-    (Spc Instruction Main)
-    Spc)
+    (Spc Instructions Spc))
+
+  (define Instructions
+    (Instructions Spc Instruction)
+    Instruction)
 
   (define Instruction
     ("{" Main "}")

@@ -72,9 +72,12 @@ edit_select_rep::semantic_root (path p) {
     if (path_up (p) != rp && is_func (st, DOCUMENT, 1))
       st= subtree (et, path_up (p, 2));
     if (is_func (st, CELL)) break;
-    if (is_compound (st) && N(st) == 1)
-      if (drd_env_read (drd->get_env (L(st), 0), "mode") == "math")
-        break;
+    if (is_compound (st) && N(st) == 1) {
+      tree env= drd->get_env (L(st), 0);
+      if (drd_env_read (env, "mode") == "math") break;
+      if (drd_env_read (env, "mode") == "prog")
+        if (drd_env_read (env, "prog-language") == "minimal") break;
+    }
     p= path_up (p);
   }
   return p;

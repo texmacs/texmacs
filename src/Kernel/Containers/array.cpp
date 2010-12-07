@@ -116,6 +116,15 @@ operator << (array<T>& a, array<T> b) {
 }
 
 template<class T> array<T>
+append (T a, array<T> b) {
+  register int i, l= N(b);
+  array<T> c (l+1);
+  c[0]= a;
+  for (i=0; i<l; i++) c[i+1]= b[i];
+  return c;
+}
+
+template<class T> array<T>
 append (array<T> a, array<T> b) {
   register int i, k= N(a), l= N(b);
   array<T> c (k+l);

@@ -48,6 +48,12 @@ public:
   path decode_tree_position (C pos);
   C    encode_tree_position (path p);
   C    parse (C sym, C pos);
+
+  void inspect (C sym, C pos, array<C>& syms, array<C>& poss);
+  bool is_left_recursive (C sym);
+  bool is_associative (C sym);
+  bool is_anti_associative (C sym);
+  bool is_list_like (C sym);
   bool is_selectable (C sym);
   void context (C sym, C pos, C left, C right, int mode,
 		array<C>& kind, array<C>& begin, array<C>& end);
