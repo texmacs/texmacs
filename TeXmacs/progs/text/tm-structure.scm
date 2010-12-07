@@ -44,7 +44,8 @@
                                "TeX" (macro "TeX")
                                ,(tm->tree x)))
     (if (qt-gui?)
-        (texmacs->verbatim t (cons "texmacs->verbatim:encoding" "utf-8"))
+        (texmacs->verbatim t
+          (list (cons "texmacs->verbatim:encoding" "cork")))
         (texmacs->verbatim t))))
 
 (tm-define (tm/section-get-title-string t)
