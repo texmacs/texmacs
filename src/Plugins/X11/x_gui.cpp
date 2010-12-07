@@ -287,12 +287,14 @@ x_gui_rep::clear_selection (string key) {
 }
 
 bool
-set_selection (string key, tree t, string s) {
+set_selection (string key, tree t, string s, string format) {
+  (void) format;
   return the_gui->set_selection (key, t, s);
 }
 
 bool
-get_selection (string key, tree& t, string& s) {
+get_selection (string key, tree& t, string& s, string format) {
+  (void) format;
   return the_gui->get_selection (key, t, s);
 }
 

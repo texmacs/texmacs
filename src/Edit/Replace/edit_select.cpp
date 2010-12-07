@@ -617,13 +617,13 @@ edit_select_rep::selection_get_path () {
 
 void
 edit_select_rep::selection_raw_set (string key, tree t) {
-  (void) ::set_selection (key, t, "");
+  (void) ::set_selection (key, t, "", "texmacs");
 }
 
 tree
 edit_select_rep::selection_raw_get (string key) {
   tree t; string s;
-  (void) ::get_selection (key, t, s);
+  (void) ::get_selection (key, t, s, "texmacs");
   return t;
 }
 
@@ -671,7 +671,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
     s= tree_to_generic (t, selection_export * "-snippet");
     s= selection_encode (lan, s);
   }
-  if (::set_selection (key, sel, s) && !persistant)
+  if (::set_selection (key, sel, s, selection_export) && !persistant)
     selection_cancel ();
 }
 
@@ -701,7 +701,7 @@ edit_select_rep::selection_copy (string key) {
 void
 edit_select_rep::selection_paste (string key) {
   tree t; string s;
-  (void) ::get_selection (key, t, s);
+  (void) ::get_selection (key, t, s, selection_import);
   if (inside_active_graphics ()) {
     if (is_tuple (t, "texmacs", 3))
       call ("graphics-paste", t[1]);

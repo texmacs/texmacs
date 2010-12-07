@@ -968,16 +968,18 @@ load_system_font (string family, int size, int dpi,
 ******************************************************************************/
 
 bool
-set_selection (string key, tree t, string s) {
+set_selection (string key, tree t, string s, string format) {
   // Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
   // Returns true on success
+  (void) format;
   return the_gui->set_selection (key, t, s);
 }
 
 bool
-get_selection (string key, tree& t, string& s) {
+get_selection (string key, tree& t, string& s, string format) {
   // Retrieve the selection 't' with string equivalent 's' from clipboard 'cb'
   // Returns true on success; sets t to (extern s) for external selections
+  (void) format;
   return the_gui->get_selection (key, t, s);
 }
 

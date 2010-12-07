@@ -26,6 +26,8 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     else s= tm_decode (t->label);
     buf << s;
   }
+  else if (is_func (t, SPACE) || is_func (t, HSPACE) || is_func (t, HTAB))
+    buf << " ";
   else if (is_func (t, SURROUND, 3)) {
     tree_to_verbatim (buf, t[0], wrap, enc);
     tree_to_verbatim (buf, t[2], wrap, enc);
