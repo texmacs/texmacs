@@ -79,7 +79,6 @@
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
 	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "iso-8859-1")))
-    (display* "Encoding= " enc "\n")
     (cpp-texmacs->verbatim x wrap? enc)))
 
 (tm-define (verbatim->texmacs x . opts)
