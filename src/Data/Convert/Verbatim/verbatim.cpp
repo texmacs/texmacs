@@ -13,10 +13,31 @@
 #include "converter.hpp"
 #include "vars.hpp"
 #include "drd_std.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Verbatim input
 ******************************************************************************/
+
+static void tree_to_verbatim (string& buf, tree t, bool wrap, string enc);
+
+static bool
+is_simple (tree t) {
+  if (!is_atomic (t)) return false;
+  string s= t->label;
+  return tm_string_length (s) == 1 || is_iso_alpha (s) || is_numeric (s);
+}
+
+static void
+tree_to_verbatim_arg (string& buf, tree t, bool wrap, string enc) {
+  if (is_simple (t))
+    tree_to_verbatim (buf, t, wrap, enc);
+  else {
+    buf << "(";
+    tree_to_verbatim (buf, t, wrap, enc);
+    buf << ")";
+  }
+}
 
 static void
 tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
@@ -27,26 +48,80 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     else s= t->label;
     buf << s;
   }
-  else if (is_func (t, SPACE) || is_func (t, HSPACE) || is_func (t, HTAB))
-    buf << " ";
-  else if (is_func (t, SURROUND, 3)) {
-    tree_to_verbatim (buf, t[0], wrap, enc);
-    tree_to_verbatim (buf, t[2], wrap, enc);
-    tree_to_verbatim (buf, t[1], wrap, enc);
-  }
-  else if (is_compound (t, "TeXmacs", 0))
-    tree_to_verbatim (buf, "TeXmacs", wrap, enc);
-  else {
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (std_drd->is_accessible_child (t, i)) {
-	if (is_document (t) && (i>0)) {
-	  buf << "\n";
-	  if (wrap) buf << "\n";
-	}
-	tree_to_verbatim (buf, t[i], wrap, enc);
+  else switch (L(t)) {
+    case SURROUND:
+      tree_to_verbatim (buf, t[0], wrap, enc);
+      tree_to_verbatim (buf, t[2], wrap, enc);
+      tree_to_verbatim (buf, t[1], wrap, enc);
+      break;
+    case HSPACE:
+    case SPACE:
+    case HTAB:
+      buf << " ";
+      break;
+    case AROUND:
+    case VAR_AROUND:
+      tree_to_verbatim (buf, t[0], wrap, enc);
+      tree_to_verbatim (buf, t[1], wrap, enc);
+      tree_to_verbatim (buf, t[2], wrap, enc);
+      break;
+    case BIG_AROUND:
+      tree_to_verbatim (buf, t[0], wrap, enc);
+      tree_to_verbatim (buf, t[1], wrap, enc);
+      break;
+    case LEFT:
+    case MID:
+    case RIGHT:
+    case BIG:
+    case LPRIME:
+    case RPRIME:
+      tree_to_verbatim (buf, t[0], wrap, enc);
+      break;
+    case RSUB:
+      buf << "_";
+      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      break;
+    case RSUP:
+      buf << "^";
+      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      break;
+    case FRAC:
+      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      buf << "/";
+      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      break;
+    case SQRT:
+      if (N(t) == 1) {
+        buf << "sqrt(";
+        tree_to_verbatim (buf, t[0], wrap, enc);
+        buf << ")";
       }
-  }
+      else {
+        tree_to_verbatim_arg (buf, t[0], wrap, enc);
+        tree_to_verbatim_arg (buf, tree (RSUP, tree (FRAC, "1", t[1])),
+                              wrap, enc);
+      }
+      break;
+    case WIDE:
+      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      tree_to_verbatim (buf, t[1], wrap, enc);
+      break;
+    default:
+      if (is_compound (t, "TeXmacs", 0))
+        tree_to_verbatim (buf, "TeXmacs", wrap, enc);
+      else {
+        int i, n= N(t);
+        for (i=0; i<n; i++)
+          if (std_drd->is_accessible_child (t, i)) {
+            if (is_document (t) && (i>0)) {
+              buf << "\n";
+              if (wrap) buf << "\n";
+            }
+            tree_to_verbatim (buf, t[i], wrap, enc);
+          }
+      }
+      break;
+    }
 }
 
 string

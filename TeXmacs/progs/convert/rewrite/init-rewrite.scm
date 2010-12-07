@@ -99,20 +99,20 @@
 
 (converter verbatim-document texmacs-tree
   (:function-with-options verbatim->texmacs)
-  (:option "verbatim->texmacs:wrap" "off")
+  (:option "verbatim->texmacs:wrap" "on")
   (:option "verbatim->texmacs:encoding" "utf-8"))
 
 (converter verbatim-snippet texmacs-tree
   (:function-with-options verbatim-snippet->texmacs)
-  (:option "verbatim->texmacs:wrap" "off")
+  (:option "verbatim->texmacs:wrap" "on")
   (:option "verbatim->texmacs:encoding" "utf-8"))
 
 (converter texmacs-tree verbatim-document
   (:function-with-options texmacs->verbatim)
-  (:option "texmacs->verbatim:wrap" "off")
+  (:option "texmacs->verbatim:wrap" "on")
   (:option "texmacs->verbatim:encoding" "utf-8"))
 
 (converter texmacs-tree verbatim-snippet
   (:function-with-options texmacs->verbatim)
-  (:option "texmacs->verbatim:wrap" "off")
+  (:option "texmacs->verbatim:wrap" "on")
   (:option "texmacs->verbatim:encoding" "utf-8"))
