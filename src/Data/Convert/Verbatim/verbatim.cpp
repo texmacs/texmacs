@@ -23,7 +23,8 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
   if (is_atomic (t)) {
     string s;
     if (enc == "utf-8") s= cork_to_utf8 (t->label);
-    else s= tm_decode (t->label);
+    else if (enc == "iso-8859-1") s= tm_decode (t->label);
+    else s= t->label;
     buf << s;
   }
   else if (is_func (t, SPACE) || is_func (t, HSPACE) || is_func (t, HTAB))
