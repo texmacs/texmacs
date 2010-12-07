@@ -34,7 +34,7 @@ public:
   hashmap<D,tree>           current_production;
 
 protected:
-  void add_input (tree t, path p);
+  void serialize (tree t, path p);
   void set_input (tree t);
   void set_cursor (path t_pos);
   path decode_path (tree t, path p, int pos);
