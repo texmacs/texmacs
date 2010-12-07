@@ -33,6 +33,12 @@ tree_to_verbatim_arg (string& buf, tree t, bool wrap, string enc) {
   }
 }
 
+static int
+get_width (string s) {
+  if (occurs ("\n", s)) return 0;
+  else return N(s);
+}
+
 static void
 tree_to_verbatim_table (string& buf, tree t, bool wrap, string enc) {
   if (N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
@@ -53,11 +59,11 @@ tree_to_verbatim_table (string& buf, tree t, bool wrap, string enc) {
   for (j=0; j<nc; j++) w[j]= 0;
   for (i=0; i<nr; i++) {
     for (j=0; j<N(tab[i]); j++)
-      w[j]= max (w[j], N(tab[i][j]->label));
+      w[j]= max (w[j], get_width(tab[i][j]->label));
   }
   for (i=0; i<nr; i++) {
     for (j=0; j<N(tab[i]); j++) {
-      int spc= w[j] - N(tab[i][j]->label) + 1;
+      int spc= w[j] - get_width(tab[i][j]->label) + 1;
       buf << tab[i][j]->label;
       for (int k=0; k<spc; k++) buf << " ";
     }
@@ -143,8 +149,8 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
         for (i=0; i<n; i++)
           if (std_drd->is_accessible_child (t, i)) {
             if (is_document (t) && (i>0)) {
+              if (wrap && N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
               buf << "\n";
-              if (wrap) buf << "\n";
             }
             tree_to_verbatim (buf, t[i], wrap, enc);
           }
