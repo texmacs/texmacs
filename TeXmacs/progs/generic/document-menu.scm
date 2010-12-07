@@ -98,7 +98,7 @@
        (set-output-language "chinese"))))
   ("Czech"
    (begin
-     (init-language <"czech")
+     (init-language "czech")
      (set-output-language "czech")))
   ("Danish"
    (begin
