@@ -21,16 +21,10 @@
 
 static void tree_to_verbatim (string& buf, tree t, bool wrap, string enc);
 
-static bool
-is_simple (tree t) {
-  if (!is_atomic (t)) return false;
-  string s= t->label;
-  return tm_string_length (s) == 1 || is_iso_alpha (s) || is_numeric (s);
-}
-
 static void
 tree_to_verbatim_arg (string& buf, tree t, bool wrap, string enc) {
-  if (is_simple (t))
+  string s= tree_to_verbatim (t, wrap, enc);
+  if (tm_string_length (s) == 1 || is_iso_alpha (s) || is_numeric (s))
     tree_to_verbatim (buf, t, wrap, enc);
   else {
     buf << "(";
