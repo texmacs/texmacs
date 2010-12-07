@@ -16,7 +16,7 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Verbatim input
+* TeXmacs to verbatim
 ******************************************************************************/
 
 static void tree_to_verbatim (string& buf, tree t, bool wrap, string enc);
@@ -24,12 +24,44 @@ static void tree_to_verbatim (string& buf, tree t, bool wrap, string enc);
 static void
 tree_to_verbatim_arg (string& buf, tree t, bool wrap, string enc) {
   string s= tree_to_verbatim (t, wrap, enc);
-  if (tm_string_length (s) == 1 || is_iso_alpha (s) || is_numeric (s))
+  if (tm_string_length (s) <= 1 || is_iso_alpha (s) || is_numeric (s))
     tree_to_verbatim (buf, t, wrap, enc);
   else {
     buf << "(";
     tree_to_verbatim (buf, t, wrap, enc);
     buf << ")";
+  }
+}
+
+static void
+tree_to_verbatim_table (string& buf, tree t, bool wrap, string enc) {
+  if (N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
+  int i, nr= N(t), j, nc= 0;
+  tree tab (TUPLE, nr);
+  for (i=0; i<nr; i++) {
+    tree row= t[i];
+    if (is_func (row, CWITH)) row= row[N(row)-1];
+    if (!is_func (row, ROW)) tab[i]= tree (TUPLE);
+    else {
+      nc= max (nc, N(row));
+      tab[i]= tree (TUPLE, N(row));
+      for (j=0; j<N(row); j++)
+        tab[i][j]= tree_to_verbatim (row[j], wrap, enc);
+    }
+  }
+  array<int> w (nc);
+  for (j=0; j<nc; j++) w[j]= 0;
+  for (i=0; i<nr; i++) {
+    for (j=0; j<N(tab[i]); j++)
+      w[j]= max (w[j], N(tab[i][j]->label));
+  }
+  for (i=0; i<nr; i++) {
+    for (j=0; j<N(tab[i]); j++) {
+      int spc= w[j] - N(tab[i][j]->label) + 1;
+      buf << tab[i][j]->label;
+      for (int k=0; k<spc; k++) buf << " ";
+    }
+    buf << "\n";
   }
 }
 
@@ -51,7 +83,7 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     case HSPACE:
     case SPACE:
     case HTAB:
-      buf << " ";
+      if (N(buf)>0 && buf[N(buf)-1] != '\n') buf << " ";
       break;
     case AROUND:
     case VAR_AROUND:
@@ -99,6 +131,9 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     case WIDE:
       tree_to_verbatim_arg (buf, t[0], wrap, enc);
       tree_to_verbatim (buf, t[1], wrap, enc);
+      break;
+    case TABLE:
+      tree_to_verbatim_table (buf, t, wrap, enc);
       break;
     default:
       if (is_compound (t, "TeXmacs", 0))
@@ -156,7 +191,7 @@ tree_to_verbatim (tree t, bool wrap, string enc) {
 }
 
 /******************************************************************************
-* Verbatim output
+* Verbatim to TeXmacs
 ******************************************************************************/
 
 static string
