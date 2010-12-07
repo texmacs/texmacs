@@ -534,7 +534,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       string file = open_box<string> (val);
       if (DEBUG_QT) cout << "File: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      view->window()->setWindowFilePath(to_qstring(file));
+      view->window()->setWindowFilePath(to_qstring(tm_var_encode(file)));
 #endif
     }
       break;
@@ -826,7 +826,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
-  QString label= to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+ // QString label= to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
   qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
   if ( N(it->def) == 0) {
     items << "";
@@ -840,7 +840,8 @@ qt_tm_widget_rep::do_interactive_prompt () {
   
   QHBoxLayout *hl = new QHBoxLayout();
   
-  QLabel *lab = new QLabel (label,&d);
+ // QLabel *lab = new QLabel (label,&d);
+  QLayoutItem *lab = int_prompt->as_qlayoutitem ();
   QComboBox *cb = new QComboBox(&d);
   cb -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
   cb -> setEditText (items[0]);
@@ -859,8 +860,8 @@ qt_tm_widget_rep::do_interactive_prompt () {
   cb->setDuplicatesEnabled(true); 
   cb->completer()->setCaseSensitivity(Qt::CaseSensitive);
   
-  lab -> setBuddy (cb);
-  hl -> addWidget (lab);
+  if (QLabel *_lab = qobject_cast<QLabel*>(lab ->widget())) _lab -> setBuddy (cb);
+  hl -> addItem (lab);
   hl -> addWidget (cb);
   vl -> addLayout (hl);
   

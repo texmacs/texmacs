@@ -628,11 +628,14 @@ qt_ui_element_rep::as_qlayoutitem () {
       
       // a text widget with a given color and transparency
       QLabel *w = new QLabel();
+#if 0
+      //FIXME: implement refresh when changing language
       QTMAction* a= new QTMAction (NULL);
+      //a->str = str;
+#endif
       string t= tm_var_encode (str);
       if (t == "Help") t= "Help ";
       w->setText(to_qstring (t));
-      //a->str = str;
       if (style == WIDGET_STYLE_MINI) {
         QFont f = w->font();
         f.setPointSize(10);
@@ -672,7 +675,6 @@ qt_ui_element_rep::as_qlayoutitem () {
 
 // TeXmacs interface
 
-#if 1
 widget horizontal_menu (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_menu, arr); }
 widget vertical_menu (array<widget> arr)  { return qt_ui_element_rep::create (qt_ui_element_rep::vertical_menu, arr); }
 widget horizontal_list (array<widget> arr) { return qt_ui_element_rep::create (qt_ui_element_rep::horizontal_list, arr); }
@@ -687,4 +689,4 @@ widget menu_button (widget w, command cmd, string pre, string ks, int style) { r
 widget balloon_widget (widget w, widget help) { return qt_ui_element_rep::create (qt_ui_element_rep::balloon_widget, w, help); }
 widget text_widget (string s, int style, color col, bool tsp) { return qt_ui_element_rep::create (qt_ui_element_rep::text_widget, s, style, col, tsp); }
 widget xpm_widget (url file_name) { return qt_ui_element_rep::create (qt_ui_element_rep::xpm_widget, file_name); }
-#endif
+
