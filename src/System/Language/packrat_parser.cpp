@@ -417,15 +417,22 @@ packrat_parser_rep::context
     if (properties->contains (key)) return;
   }
 
-  int n= N(kind);
-  if (n >= 1 && begin[n-1] == pos && end[n-1] == next) {
-    if (is_selectable (sym) || !is_selectable (kind[n-1]))
-      kind[n-1]= sym;
-  }
-  else {
-    kind  << sym;
-    begin << pos;
-    end   << next;
+  if (true) {
+    static C prop= encode_symbol (compound ("property", "selectable"));
+    D key = (((D) prop) << 32) + ((D) (sym ^ prop));
+    if (properties->contains (key) && properties[key] == "inside");
+    else {
+      int n= N(kind);
+      if (n >= 1 && begin[n-1] == pos && end[n-1] == next) {
+        if (is_selectable (sym) || !is_selectable (kind[n-1]))
+          kind[n-1]= sym;
+      }
+      else {
+        kind  << sym;
+        begin << pos;
+        end   << next;
+      }
+    }
   }
 
   if (mode >= 0) {

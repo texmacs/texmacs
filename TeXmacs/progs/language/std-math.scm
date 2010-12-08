@@ -23,11 +23,13 @@
     (:<with "mode" :/ :args :>))
 
   (define Pre
+    (:selectable inside)
     (:<lsub Script :>)
     (:<lsup Script :>)
     (:<lprime (* Prime-symbol) :>))
 
   (define Post
+    (:selectable inside)
     (:<rsub Script :>)
     (:<rsup Script :>)
     (:<rprime (* Prime-symbol) :>))
