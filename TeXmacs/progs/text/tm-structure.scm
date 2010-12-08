@@ -39,10 +39,7 @@
 	    (tm/section-get-title-string-sub (cdr l))))))
 
 (tm-define (texmacs->string x)
-  (with t (texmacs-exec `(with "TeXmacs" (macro "TeXmacs")
-                               "LaTeX" (macro "LaTeX")
-                               "TeX" (macro "TeX")
-                               ,(tm->tree x)))
+  (with t (verbatim-expand x)
     (if (qt-gui?)
         (texmacs->verbatim t
           (list (cons "texmacs->verbatim:encoding" "cork")))

@@ -246,6 +246,8 @@ public:
   virtual language get_env_language () = 0;
   virtual tree     exec_texmacs (tree t, path p) = 0;
   virtual tree     exec_texmacs (tree t) = 0;
+  virtual tree     exec_verbatim (tree t, path p) = 0;
+  virtual tree     exec_verbatim (tree t) = 0;
   virtual tree     exec_html (tree t, path p) = 0;
   virtual tree     exec_html (tree t) = 0;
   virtual tree     exec_latex (tree t, path p) = 0;

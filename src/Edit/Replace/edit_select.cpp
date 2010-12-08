@@ -670,12 +670,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
      nicely copying graphics into text, text into graphics, etc. */
   string s;
   if (key == "primary" || key == "mouse") {
-    if (selection_export == "verbatim") {
-      t= tree (WITH, "TeXmacs", tree (MACRO, "TeXmacs"), t);
-      t= tree (WITH, "LaTeX", tree (MACRO, "LaTeX"), t);
-      t= tree (WITH, "TeX", tree (MACRO, "TeX"), t);
-      t= exec_texmacs (t, tp);
-    }
+    if (selection_export == "verbatim") t= exec_verbatim (t, tp);
     if (selection_export == "html") t= exec_html (t, tp);
     if (selection_export == "latex") t= exec_latex (t, tp);
     if ((selection_export == "latex") && (mode == "math"))

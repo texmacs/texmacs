@@ -276,7 +276,7 @@ tree
 tm_data_rep::make_document (tm_view vw, string fm) {
   tree body= subtree (the_et, vw->buf->rp);
   if (fm == "verbatim")
-    body= vw->ed->exec_texmacs (body);
+    body= vw->ed->exec_verbatim (body);
   if (fm == "html")
     body= vw->ed->exec_html (body);
   if (fm == "latex")

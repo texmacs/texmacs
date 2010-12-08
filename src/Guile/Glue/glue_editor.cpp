@@ -2614,6 +2614,58 @@ tmg_texmacs_exec (SCM arg1) {
 }
 
 SCM
+tmg_texmacs_expand (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-expand");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->exec_texmacs (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_verbatim_expand (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "verbatim-expand");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->exec_verbatim (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_latex_expand (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "latex-expand");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->exec_latex (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_html_expand (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "html-expand");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->exec_html (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_idle_time () {
   // SCM_DEFER_INTS;
   int out= get_server()->get_editor()->idle_time ();
@@ -2945,6 +2997,10 @@ initialize_glue_editor () {
   scm_new_procedure ("export-pages-postscript", (FN) tmg_export_pages_postscript, 3, 0, 0);
   scm_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);
   scm_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
+  scm_new_procedure ("texmacs-expand", (FN) tmg_texmacs_expand, 1, 0, 0);
+  scm_new_procedure ("verbatim-expand", (FN) tmg_verbatim_expand, 1, 0, 0);
+  scm_new_procedure ("latex-expand", (FN) tmg_latex_expand, 1, 0, 0);
+  scm_new_procedure ("html-expand", (FN) tmg_html_expand, 1, 0, 0);
   scm_new_procedure ("idle-time", (FN) tmg_idle_time, 0, 0, 0);
   scm_new_procedure ("change-time", (FN) tmg_change_time, 0, 0, 0);
   scm_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);

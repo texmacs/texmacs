@@ -381,6 +381,21 @@ edit_typeset_rep::exec_texmacs (tree t) {
 }
 
 tree
+edit_typeset_rep::exec_verbatim (tree t, path p) {
+  typeset_exec_until (p);
+  hashmap<string,tree> H= copy (cur[p]);
+  H ("TeXmacs")= tree (MACRO, "TeXmacs");
+  H ("LaTeX")= tree (MACRO, "LaTeX");
+  H ("TeX")= tree (MACRO, "TeX");
+  return exec (t, H);
+}
+
+tree
+edit_typeset_rep::exec_verbatim (tree t) {
+  return exec_verbatim (t, rp * 0);
+}
+
+tree
 edit_typeset_rep::exec_html (tree t, path p) {
   if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
