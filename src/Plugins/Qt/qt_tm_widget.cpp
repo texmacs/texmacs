@@ -89,28 +89,9 @@ void QTMInteractiveInputHelper::commit(int result) {
       ((qt_input_text_widget_rep*) wid->int_input.rep) -> cmd ();      
     }
   }
- // wid->do_interactive_prompt();
+  sender()->deleteLater();
 }
 
-
-
-#if 0
-class QTMToolbarWidgetAction : public QWidgetAction {
-  
-public:
-  QTMToolbarWidgetAction(QObject *parent = NULL);
-  //~QTMToolbarWidgetAction();
-  
-protected:
-  QWidget * createWidget ( QWidget * parent );
-  
-};
-
-QWidget * 
-QTMToolbarWidgetAction::createWidget ( QWidget * parent ) {
-  
-}
-#endif
 
 /******************************************************************************
  * qt_tm_widget_rep
