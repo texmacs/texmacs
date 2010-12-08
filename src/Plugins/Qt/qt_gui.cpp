@@ -177,7 +177,7 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   QByteArray ba (selection);
   QMimeData *md= new QMimeData;
   md->setData ("application/x-texmacs-clipboard", ba);
-  md->setText (selection);
+  md->setText ( QString::fromUtf8 (selection));
   cb->setMimeData (md, mode); 
   // according to the docs, ownership of mimedata is transferred to clipboard
   // so no memory leak here
