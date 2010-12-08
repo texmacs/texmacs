@@ -19,16 +19,17 @@
 * TeXmacs to verbatim
 ******************************************************************************/
 
-static void tree_to_verbatim (string& buf, tree t, bool wrap, string enc);
+static void print_verbatim (string& buf, tree t, bool wrap);
+static string as_verbatim (tree t, bool wrap);
 
 static void
-tree_to_verbatim_arg (string& buf, tree t, bool wrap, string enc) {
-  string s= tree_to_verbatim (t, wrap, enc);
+print_verbatim_arg (string& buf, tree t, bool wrap) {
+  string s= as_verbatim (t, wrap);
   if (tm_string_length (s) <= 1 || is_iso_alpha (s) || is_numeric (s))
-    tree_to_verbatim (buf, t, wrap, enc);
+    print_verbatim (buf, t, wrap);
   else {
     buf << "(";
-    tree_to_verbatim (buf, t, wrap, enc);
+    print_verbatim (buf, t, wrap);
     buf << ")";
   }
 }
@@ -36,11 +37,11 @@ tree_to_verbatim_arg (string& buf, tree t, bool wrap, string enc) {
 static int
 get_width (string s) {
   if (occurs ("\n", s)) return 0;
-  else return N(s);
+  else return tm_string_length (s);
 }
 
 static void
-tree_to_verbatim_table (string& buf, tree t, bool wrap, string enc) {
+print_verbatim_table (string& buf, tree t, bool wrap) {
   if (N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
   int i, nr= N(t), j, nc= 0;
   tree tab (TUPLE, nr);
@@ -52,7 +53,7 @@ tree_to_verbatim_table (string& buf, tree t, bool wrap, string enc) {
       nc= max (nc, N(row));
       tab[i]= tree (TUPLE, N(row));
       for (j=0; j<N(row); j++)
-        tab[i][j]= tree_to_verbatim (row[j], wrap, enc);
+        tab[i][j]= as_verbatim (row[j], wrap);
     }
   }
   array<int> w (nc);
@@ -65,26 +66,21 @@ tree_to_verbatim_table (string& buf, tree t, bool wrap, string enc) {
     for (j=0; j<N(tab[i]); j++) {
       int spc= w[j] - get_width(tab[i][j]->label) + 1;
       buf << tab[i][j]->label;
-      for (int k=0; k<spc; k++) buf << " ";
+      if (j != N(tab[i]) - 1)
+	for (int k=0; k<spc; k++) buf << " ";
     }
     buf << "\n";
   }
 }
 
 static void
-tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
-  if (is_atomic (t)) {
-    string s;
-    if (enc == "utf-8") s= cork_to_utf8 (t->label);
-    else if (enc == "iso-8859-1") s= tm_decode (t->label);
-    else s= t->label;
-    buf << s;
-  }
+print_verbatim (string& buf, tree t, bool wrap) {
+  if (is_atomic (t)) buf << t->label;
   else switch (L(t)) {
     case SURROUND:
-      tree_to_verbatim (buf, t[0], wrap, enc);
-      tree_to_verbatim (buf, t[2], wrap, enc);
-      tree_to_verbatim (buf, t[1], wrap, enc);
+      print_verbatim (buf, t[0], wrap);
+      print_verbatim (buf, t[2], wrap);
+      print_verbatim (buf, t[1], wrap);
       break;
     case HSPACE:
     case SPACE:
@@ -93,13 +89,13 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
       break;
     case AROUND:
     case VAR_AROUND:
-      tree_to_verbatim (buf, t[0], wrap, enc);
-      tree_to_verbatim (buf, t[1], wrap, enc);
-      tree_to_verbatim (buf, t[2], wrap, enc);
+      print_verbatim (buf, t[0], wrap);
+      print_verbatim (buf, t[1], wrap);
+      print_verbatim (buf, t[2], wrap);
       break;
     case BIG_AROUND:
-      tree_to_verbatim (buf, t[0], wrap, enc);
-      tree_to_verbatim (buf, t[1], wrap, enc);
+      print_verbatim (buf, t[0], wrap);
+      print_verbatim (buf, t[1], wrap);
       break;
     case LEFT:
     case MID:
@@ -107,43 +103,42 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     case BIG:
     case LPRIME:
     case RPRIME:
-      tree_to_verbatim (buf, t[0], wrap, enc);
+      print_verbatim (buf, t[0], wrap);
       break;
     case RSUB:
       buf << "_";
-      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      print_verbatim_arg (buf, t[0], wrap);
       break;
     case RSUP:
       buf << "^";
-      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      print_verbatim_arg (buf, t[0], wrap);
       break;
     case FRAC:
-      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      print_verbatim_arg (buf, t[0], wrap);
       buf << "/";
-      tree_to_verbatim_arg (buf, t[1], wrap, enc);
+      print_verbatim_arg (buf, t[1], wrap);
       break;
     case SQRT:
       if (N(t) == 1) {
         buf << "sqrt(";
-        tree_to_verbatim (buf, t[0], wrap, enc);
+        print_verbatim (buf, t[0], wrap);
         buf << ")";
       }
       else {
-        tree_to_verbatim_arg (buf, t[0], wrap, enc);
-        tree_to_verbatim_arg (buf, tree (RSUP, tree (FRAC, "1", t[1])),
-                              wrap, enc);
+        print_verbatim_arg (buf, t[0], wrap);
+        print_verbatim_arg (buf, tree (RSUP, tree (FRAC, "1", t[1])), wrap);
       }
       break;
     case WIDE:
-      tree_to_verbatim_arg (buf, t[0], wrap, enc);
-      tree_to_verbatim (buf, t[1], wrap, enc);
+      print_verbatim_arg (buf, t[0], wrap);
+      print_verbatim (buf, t[1], wrap);
       break;
     case TABLE:
-      tree_to_verbatim_table (buf, t, wrap, enc);
+      print_verbatim_table (buf, t, wrap);
       break;
     default:
       if (is_compound (t, "TeXmacs", 0))
-        tree_to_verbatim (buf, "TeXmacs", wrap, enc);
+        print_verbatim (buf, "TeXmacs", wrap);
       else {
         int i, n= N(t);
         for (i=0; i<n; i++)
@@ -152,11 +147,46 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
               if (wrap && N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
               buf << "\n";
             }
-            tree_to_verbatim (buf, t[i], wrap, enc);
+            print_verbatim (buf, t[i], wrap);
           }
       }
       break;
     }
+}
+
+static string
+as_verbatim (tree t, bool wrap) {
+  if (!is_snippet (t)) t= extract (t, "body");
+  string buf;
+  print_verbatim (buf, t, wrap);
+  if (wrap) {
+    int i= 0, n= N(buf);
+    while (i<n) {
+      int pos= i;
+      while (i<n && buf[i]!='\n') i++;
+      array<string> a= tm_tokenize (buf (pos, i));
+      int start= 0;
+      //cout << "a= " << a << "\n";
+      //cout << "l= " << N(a) << "\n";
+      while (N(a)-start > 78) {
+	//cout << "  start= " << start << "\n";
+	int mid= start+78;
+	while (mid>start && a[mid] != " ") mid--;
+	if (mid <= start) break;
+	if (mid<N(a)) {
+	  //cout << "  mid= " << mid << "\n";
+	  pos += N(tm_recompose (range (a, start, mid)));
+	  ASSERT (buf[pos] == ' ', "error in space synchronization");
+	  buf[pos]= '\n';
+	  start= mid+1;
+	  pos++;
+	}
+	else break;
+      }
+      if (i<n) i++;
+    }
+  }
+  return buf;
 }
 
 string
@@ -170,25 +200,22 @@ unix_to_dos (string s) {
 }
 
 string
-tree_to_verbatim (tree t, bool wrap, string enc) {
-  if (!is_snippet (t)) t= extract (t, "body");
-  string buf;
-  tree_to_verbatim (buf, t, wrap, enc);
-  if (wrap) {
-    int i= 0, n= N(buf);
-    while (i<n) {
-      int start= i;
-      while (i<n && buf[i]!='\n') i++;
-      while (i-start > 78) {
-	int mid= start+78;
-	while (mid>start && buf[mid] != ' ') mid--;
-	if (mid<=start) while (mid<i && buf[mid] != ' ') mid++;
-	if (mid<i) { buf[mid]= '\n'; start= mid+1; }
-	else break;
-      }
-      if (i<n) i++;
-    }
+var_cork_to_utf8 (string s) {
+  string r;
+  for (int i=0; i<N(s); ) {
+    int start= i;
+    while (i<N(s) && s[i] != '\n') i++;
+    r << cork_to_utf8 (s (start, i));
+    if (i<N(s)) { r << '\n'; i++; }
   }
+  return r;
+}
+
+string
+tree_to_verbatim (tree t, bool wrap, string enc) {
+  string buf= as_verbatim (t, wrap);
+  if (enc == "utf-8") buf= var_cork_to_utf8 (buf);
+  else if (enc == "iso-8859-1") buf= tm_decode (buf);
 #ifdef OS_WIN32
   return unix_to_dos (buf);
 #else
