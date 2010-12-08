@@ -78,19 +78,19 @@
 (tm-define (texmacs->verbatim x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
-	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "iso-8859-1")))
+	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "cork")))
     (cpp-texmacs->verbatim x wrap? enc)))
 
 (tm-define (verbatim->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "iso-8859-1")))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "cork")))
     (cpp-verbatim->texmacs x wrap? enc)))
 
 (tm-define (verbatim-snippet->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "iso-8859-1")))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "cork")))
     (cpp-verbatim-snippet->texmacs x wrap? enc)))
 
 (define-format verbatim

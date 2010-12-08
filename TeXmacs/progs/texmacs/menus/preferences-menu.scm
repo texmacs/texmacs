@@ -164,12 +164,14 @@
 	    (toggle ("Wrap lines"
 		     "texmacs->verbatim:wrap"))
 	    (enum ("Encoding" "texmacs->verbatim:encoding")
+		  ("Cork" "cork")
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8")))
 	(-> "Verbatim -> TeXmacs"
 	    (toggle ("Wrap lines"
 		     "verbatim->texmacs:wrap"))
 	    (enum ("Encoding" "verbatim->texmacs:encoding")
+		  ("Cork" "cork")
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8"))))
     (-> "Scripts"

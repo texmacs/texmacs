@@ -39,11 +39,7 @@
 	    (tm/section-get-title-string-sub (cdr l))))))
 
 (tm-define (texmacs->string x)
-  (with t (verbatim-expand x)
-    (if (qt-gui?)
-        (texmacs->verbatim t
-          (list (cons "texmacs->verbatim:encoding" "cork")))
-        (texmacs->verbatim t))))
+  (texmacs->verbatim (verbatim-expand x)))
 
 (tm-define (tm/section-get-title-string t)
   (cond ((tm-atomic? t) "no title")

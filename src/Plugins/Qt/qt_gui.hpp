@@ -59,8 +59,8 @@ public:
   void event_loop ();
 
   /* interclient communication */
-  virtual bool get_selection (string key, tree& t, string& s);
-  virtual bool set_selection (string key, tree t, string s);
+  virtual bool get_selection (string key, tree& t, string& s, string format);
+  virtual bool set_selection (string key, tree t, string s, string format);
   virtual void clear_selection (string key);
 
   /* miscellaneous */

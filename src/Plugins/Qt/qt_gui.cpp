@@ -131,7 +131,8 @@ qt_gui_rep::~qt_gui_rep()  {
 ******************************************************************************/
 
 bool
-qt_gui_rep::get_selection (string key, tree& t, string& s) {
+qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
+  (void) format;
   QClipboard *cb= QApplication::clipboard ();
   QClipboard::Mode mode= QClipboard::Clipboard;
   bool owns= false;
@@ -152,7 +153,11 @@ qt_gui_rep::get_selection (string key, tree& t, string& s) {
   }
   else {
     QString originalText= cb->text (mode);
-    QByteArray buf= originalText.toAscii ();
+    QByteArray buf;
+    if (format == "verbatim" &&
+	get_preference ("verbatim->texmacs:encoding") == "utf-8")
+      buf= originalText.toUtf8 ();
+    else buf= originalText.toAscii ();
     if (!(buf.isEmpty())) s << string (buf.constData(), buf.size());
     t= tuple ("extern", s);
     return true;
@@ -160,7 +165,7 @@ qt_gui_rep::get_selection (string key, tree& t, string& s) {
 }
 
 bool
-qt_gui_rep::set_selection (string key, tree t, string s) {
+qt_gui_rep::set_selection (string key, tree t, string s, string format) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
         
@@ -177,7 +182,10 @@ qt_gui_rep::set_selection (string key, tree t, string s) {
   QByteArray ba (selection);
   QMimeData *md= new QMimeData;
   md->setData ("application/x-texmacs-clipboard", ba);
-  md->setText ( QString::fromUtf8 (selection));
+  if (format == "verbatim" &&
+      get_preference ("texmacs->verbatim:encoding") == "utf-8")
+    md->setText (QString::fromUtf8 (selection));
+  else md->setText (selection);
   cb->setMimeData (md, mode); 
   // according to the docs, ownership of mimedata is transferred to clipboard
   // so no memory leak here
@@ -971,16 +979,14 @@ bool
 set_selection (string key, tree t, string s, string format) {
   // Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
   // Returns true on success
-  (void) format;
-  return the_gui->set_selection (key, t, s);
+  return the_gui->set_selection (key, t, s, format);
 }
 
 bool
 get_selection (string key, tree& t, string& s, string format) {
   // Retrieve the selection 't' with string equivalent 's' from clipboard 'cb'
   // Returns true on success; sets t to (extern s) for external selections
-  (void) format;
-  return the_gui->get_selection (key, t, s);
+  return the_gui->get_selection (key, t, s, format);
 }
 
 void

@@ -120,7 +120,7 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     case FRAC:
       tree_to_verbatim_arg (buf, t[0], wrap, enc);
       buf << "/";
-      tree_to_verbatim_arg (buf, t[0], wrap, enc);
+      tree_to_verbatim_arg (buf, t[1], wrap, enc);
       break;
     case SQRT:
       if (N(t) == 1) {
@@ -220,7 +220,8 @@ un_special (string s) {
 static string
 encode (string s, string enc) {
   if (enc == "utf-8") return utf8_to_cork (s);
-  else return tm_encode (s);
+  else if (enc == "iso-8859-1") return tm_encode (s);
+  else return s;
 }
 
 tree
