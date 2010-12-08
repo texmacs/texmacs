@@ -581,6 +581,8 @@
 ;; Document focus menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (focus-document-extra-menu t))
+
 (tm-menu (standard-focus-menu t)
   (:require (tree-is-buffer? t))
   (group "Style")
