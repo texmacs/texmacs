@@ -86,7 +86,7 @@ x_gui_rep::look_up_key (XKeyEvent* ev) {
     if (contains_unicode_char (r)) return r;
   }
   else XLookupString (ev, NULL, 0, &key, NULL);
-  string s= ((ev->state&3)? upper_key [key]: lower_key [key]);
+  string s= ((ev->state&1)? upper_key [key]: lower_key [key]);
   if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s));
 
   /* other keyboard modifiers */
