@@ -79,6 +79,20 @@ void QTMInteractiveInputHelper::doit() {
   wid->do_interactive_prompt();
 }
 
+void QTMInteractiveInputHelper::commit(int result) {
+  QComboBox *cb = sender()->findChild<QComboBox*>("combobox");
+  if (cb && wid) {
+    if (result == QDialog::Accepted) {
+      QString item = cb->currentText();
+      ((qt_input_text_widget_rep*) wid->int_input.rep) -> text=
+      scm_quote (from_qstring (item));
+      ((qt_input_text_widget_rep*) wid->int_input.rep) -> cmd ();      
+    }
+  }
+ // wid->do_interactive_prompt();
+}
+
+
 
 #if 0
 class QTMToolbarWidgetAction : public QWidgetAction {
@@ -835,14 +849,15 @@ qt_tm_widget_rep::do_interactive_prompt () {
       items << to_qstring(it->def[j]);
     }
   }
-  QDialog d (0, Qt::Sheet);
-  QVBoxLayout* vl = new QVBoxLayout(&d);
-  
-  QHBoxLayout *hl = new QHBoxLayout();
+  QDialog *d = new QDialog (tm_scrollarea()->window());
+
+  QVBoxLayout* vl = new QVBoxLayout(d);
+  QHBoxLayout *hl = new QHBoxLayout(d);
   
  // QLabel *lab = new QLabel (label,&d);
   QLayoutItem *lab = int_prompt->as_qlayoutitem ();
-  QComboBox *cb = new QComboBox(&d);
+  QComboBox *cb = new QComboBox(d);
+  cb-> setObjectName("combobox"); // to find it
   cb -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
   cb -> setEditText (items[0]);
   int minlen = 0;
@@ -867,8 +882,8 @@ qt_tm_widget_rep::do_interactive_prompt () {
   
   if (ends (it->type, "file") || it->type == "directory") {
       // autocompletion
-    QCompleter *completer = new QCompleter(&d);
-    QDirModel *dirModel = new QDirModel(&d);
+    QCompleter *completer = new QCompleter(d);
+    QDirModel *dirModel = new QDirModel(d);
     completer->setModel(dirModel);
     cb->setCompleter(completer);
   }
@@ -876,9 +891,9 @@ qt_tm_widget_rep::do_interactive_prompt () {
   {
     QDialogButtonBox* buttonBox =
     new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                          Qt::Horizontal, &d);
-    QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
-    QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
+                          Qt::Horizontal, d);
+    QObject::connect (buttonBox, SIGNAL (accepted()), d, SLOT (accept()));
+    QObject::connect (buttonBox, SIGNAL (rejected()), d, SLOT (reject()));
     vl -> addWidget (buttonBox);
   }
     //  d.setLayout (vl);
@@ -886,23 +901,14 @@ qt_tm_widget_rep::do_interactive_prompt () {
   QRect wframe = view->window()->frameGeometry();
   QPoint pos = QPoint(wframe.x()+wframe.width()/2,wframe.y()+wframe.height()/2);
   
-  d.setWindowTitle("Interactive Prompt");
-  d.updateGeometry();
-  QSize sz = d.sizeHint();
+  d->setWindowTitle("Interactive Prompt");
+  d->updateGeometry();
+  QSize sz = d->sizeHint();
   QRect r; r.setSize(sz);
   r.moveCenter(pos);
-  d.setGeometry(r);
-  
-  
-  int result = d.exec ();
-  if (result == QDialog::Accepted) {
-    QString item = cb->currentText();
-    ((qt_input_text_widget_rep*) int_input.rep) -> text=
-    scm_quote (from_qstring (item));
-    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
-  } else {
-      //    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
-  }
+  d->setGeometry(r);
+  QObject::connect (d, SIGNAL (finished (int)), &helper, SLOT(commit (int)));
+  d->open();
 }
 #else
 

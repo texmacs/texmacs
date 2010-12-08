@@ -26,6 +26,7 @@ public:
 
 public slots:
   void doit();
+  void commit(int result);
 };
 
 #endif // QTMINTERACTIVEINPUTHELPER_HPP
