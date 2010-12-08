@@ -701,16 +701,36 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   string r = "pre-edit:";
   if (!preedit_string.isEmpty())
   {
-
+    
     // find cursor position in the preedit string
-    QList<QInputMethodEvent::Attribute> attrs = event->attributes();
-    int pos = preedit_string.count();
+    QList<QInputMethodEvent::Attribute>  const & attrs = event->attributes();
+    //    int pos = preedit_string.count();
+    int pos = 0;
+    bool visible_cur = false;
     for(int i=0; i< attrs.count(); i++) 
-      if (attrs[i].type == QInputMethodEvent::Cursor) 
+      if (attrs[i].type == QInputMethodEvent::Cursor) {
         pos = attrs[i].start;
+        visible_cur = (attrs[i].length != 0);
+      }
+    
+    // find selection in the preedit string
+    int sel_start = 0;
+    int sel_length = 0;
+    if (pos <  preedit_string.count()) {
+      for(int i=0; i< attrs.count(); i++) 
+        if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
+            (attrs[i].start <= pos) && (pos < attrs[i].start + attrs[i].length)) {
+          sel_start = attrs[i].start;
+          sel_length =  attrs[i].length;
+          if (!visible_cur) pos += attrs[i].length;
+        }
+    } else {
+      sel_start = pos;
+      sel_length = 0;
+    }
     
     r = r * as_string(pos) * ":" 
-          * from_qstring(preedit_string);
+    * from_qstring(preedit_string);
   }
   simple_widget_rep *wid =  tm_widget();
   if (wid)
@@ -722,9 +742,9 @@ QVariant
 QTMWidget::inputMethodQuery ( Qt::InputMethodQuery query ) const {
   switch (query) {
     case Qt::ImMicroFocus :
-      return QVariant(QRect(cursor_pos ,QSize(5,5)));
+      return QVariant (QRect (cursor_pos, QSize (5,5)));
     default:
-      return QVariant();
+      return QWidget::inputMethodQuery (query);
   }
 }
 
