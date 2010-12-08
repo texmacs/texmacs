@@ -24,7 +24,6 @@
 #endif
 
 extern void (*env_next_prog)(void);
-extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 
 /*static*/ string
 MODE_LANGUAGE (string mode) {
@@ -291,7 +290,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
 	p2= end   (et, p * 0);
       }
       if (is_func (st, CELL)) { q1= p1; q2= p2; }
-      else selection_correct (et, p1, p2, q1, q2);
+      else selection_correct (p1, p2, q1, q2);
       selection sel= eb->find_check_selection (q1, q2);
       if (N(focus_get ()) >= N(p))
         rs << outline (sel->rs, pixel);
@@ -500,7 +499,7 @@ edit_interface_rep::apply_changes () {
         p2= end (et, sr);
       }
       path q1, q2;
-      selection_correct (et, p1, p2, q1, q2);
+      selection_correct (p1, p2, q1, q2);
       selection sel= eb->find_check_selection (q1, q2);
       sem_rects << outline (sel->rs, pixel);
     }

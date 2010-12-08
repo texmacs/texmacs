@@ -13,7 +13,7 @@
 #include "Interface/edit_interface.hpp"
 #include "convert.hpp"
 #include "packrat.hpp"
-#include "tree_traverse.hpp"
+#include "tree_select.hpp"
 
 /******************************************************************************
 * Internationalization
@@ -432,104 +432,10 @@ table_search_cell (tree t, int row, int col) {
 ******************************************************************************/
 
 void
-selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
-  if (i1 == i2) {
-    o1= i1;
-    o2= i2;
-  }
-  else if (is_atom (i1) || is_atom (i2)) {
-    if (is_atomic (t)) {
-      o1= i1;
-      o2= i2;
-    }
-    else {
-      o1= start (t);
-      o2= end (t);
-    }
-  }
-  else if (i1->item == i2->item) {
-    selection_correct (t[i1->item], i1->next, i2->next, o1, o2);
-    o1= path (i1->item, o1);
-    o2= path (i2->item, o2);
-  }
-  else {
-    tree_label l= L(t);
-    if ((l==DOCUMENT) || (l==PARA) || (l==CONCAT)) {
-      if (is_compound (t[i1->item])) {
-	path mid;
-	selection_correct (t[i1->item], i1->next, end (t[i1->item]), o1, mid);
-	o1= path (i1->item, o1);
-      }
-      else o1= i1;
-      if (is_compound (t[i2->item])) {
-	path mid;
-	selection_correct (t[i2->item], start(t[i2->item]), i2->next, mid, o2);
-	o2= path (i2->item, o2);
-      }
-      else o2= i2;
-    }
-    else {
-      o1= start (t);
-      o2= end (t);
-    }
-  }
-}
-
-static void
-selection_bcorrect (drd_info drd, tree t, path i1, path i2, path& o1, path& o2)
-{
-  o1= i1; o2= i2;
-  if (is_compound (t) && !is_atom (i1) && !is_atom (i2) &&
-      i1->item == i2->item) {
-    path O1, O2;
-    selection_bcorrect (drd, t[i1->item], i1->next, i2->next, O1, O2);
-    if (drd->var_without_border (L(t[i1->item])) && (O1->item != O2->item)) {
-      o1= path (0);
-      o2= path (1);
-    }
-    else {
-      o1= path (i1->item, O1);
-      o2= path (i1->item, O2);
-    }
-  }
-}
-
-tree
-compute_selection (tree t, path start, path end) {
-  int  i1= start->item;
-  int  i2= end->item;
-  path p1= start->next;
-  path p2= end->next;
-
-  if (is_nil (p1) || is_nil (p2)) {
-    if (start == path (right_index (t))) return "";
-    if (end == path (0)) return "";
-    if (start == end) return "";
-    if (is_nil (p1) && is_nil (p2)) {
-      if (is_compound (t)) return copy (t);
-      if (i1>=i2) return "";
-      return t->label (i1, i2);
-    }
-    if (is_compound (t) && (!is_format (t))) return copy (t);
-    if (is_nil (p1)) {
-      i1= 0;
-      p1= (start->item==0? 0: right_index (t[i1]));
-    }
-    if (is_nil (p2)) {
-      i2= N(t)-1;
-      p2= (end->item==0? 0: right_index (t[i2]));
-    }
-  }
-
-  if (i1==i2) return compute_selection (t[i1], p1, p2);
-  if (is_compound (t) && (!is_format (t))) return copy (t);
-
-  int i;
-  tree r (t, i2-i1+1);
-  r[0]     = compute_selection (t[i1], p1, path (right_index (t[i1])));
-  r[N(r)-1]= compute_selection (t[i2], path (0), p2);
-  for (i=1; i<N(r)-1; i++) r[i]= copy (t[i+i1]);
-  return r;
+edit_select_rep::selection_correct (path i1, path i2, path& o1, path& o2) {
+  ASSERT (rp <= i1 && rp <= i2, "paths not inside document");
+  ::selection_correct (subtree (et, rp), i1 / rp, i2 / rp, o1, o2);
+  o1= rp * o1; o2= rp * o2;
 }
 
 path
@@ -568,10 +474,12 @@ edit_select_rep::selection_get (selection& sel) {
     sel= selection (rectangles (r), fp * 0, fp * 1);
   }
   else {
-    path aux_start, aux_end, p_start, p_end;
-    selection_bcorrect (drd, et, start_p, end_p, aux_start, aux_end);
-    selection_correct (et, aux_start, aux_end, p_start, p_end);
+    path p_start, p_end;
+    //cout << "Find " << start_p << " -- " << end_p << "\n";
+    selection_correct (start_p, end_p, p_start, p_end);
+    //cout << "Find " << p_start << " -- " << p_end << "\n";
     sel= eb->find_check_selection (p_start, p_end);
+    //cout << "sel= " << sel << "\n";
   }
 }
 
@@ -605,7 +513,7 @@ edit_select_rep::selection_get () {
     // cout << "Selecting...\n";
     selection_get (start, end);
     // cout << "Between paths: " << start << " and " << end << "\n";
-    tree t= ::compute_selection (et, start, end);
+    tree t= selection_compute (et, start, end);
     // cout << "Selection : " << t << "\n";
     return simplify_correct (t);
   }
@@ -898,7 +806,7 @@ edit_select_rep::selection_cut (string key) {
       go_to (p2);
       if (p2 == p1) return;
       if (key != "none") {
-        tree sel= compute_selection (et, p1, p2);
+        tree sel= selection_compute (et, p1, p2);
         selection_set (key, simplify_correct (sel));
       }
     }
@@ -921,6 +829,10 @@ edit_select_rep::selection_move () {
   insert_tree (t);
   position_delete (pos);
 }
+
+/******************************************************************************
+* Focus related routines
+******************************************************************************/
 
 path
 edit_select_rep::manual_focus_get () {

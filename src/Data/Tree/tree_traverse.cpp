@@ -185,6 +185,23 @@ path next_valid (tree t, path p) {
 path previous_valid (tree t, path p) {
   return move_valid (t, p, false); }
 
+static path
+move_accessible (tree t, path p, bool forward) {
+  ASSERT (is_inside (t, p), "invalid cursor");
+  path q= p;
+  while (true) {
+    path r= move_any (t, q, forward);
+    if (r == q) return p;
+    if (is_accessible_cursor (t, r)) return r;
+    q= r;
+  }
+}
+
+path next_accessible (tree t, path p) {
+  return move_accessible (t, p, true); }
+path previous_accessible (tree t, path p) {
+  return move_accessible (t, p, false); }
+
 /******************************************************************************
 * Word based traversal of a tree
 ******************************************************************************/

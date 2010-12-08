@@ -31,6 +31,8 @@ string get_child_type (tree t, int i);
 
 path next_valid (tree t, path p);
 path previous_valid (tree t, path p);
+path next_accessible (tree t, path p);
+path previous_accessible (tree t, path p);
 path next_word (tree t, path p);
 path previous_word (tree t, path p);
 path next_node (tree t, path p);
