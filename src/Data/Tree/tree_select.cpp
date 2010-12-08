@@ -11,6 +11,7 @@
 
 #include "tree_select.hpp"
 #include "drd_std.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Structural correction of the selection
@@ -37,7 +38,61 @@ selection_adjust_border (tree t, path i1, path i2, path& o1, path& o2)
 }
 
 static void
+adjust_right_script (tree t, path& o1) {
+  while (is_concat (t) && o1->item > 0 && o1->next == path (0)) {
+    tree st= t[o1->item];
+    if (is_func (st, RSUB) || is_func (st, RSUP) || is_func (st, RPRIME)) {
+      tree pt= t[o1->item-1];
+      if (!is_atomic (pt))
+        o1= path (o1->item-1, start (pt));
+      else {
+        string s= pt->label;
+        int pos= N(s);
+        while (pos > 0) {
+          int prev= pos;
+          tm_char_backwards (s, prev);
+          if (pos == N(s));
+          else if (is_numeric (s (prev, N(s))));
+          else if (is_iso_alpha (s (prev, N(s))));
+          else break;
+          pos= prev;
+        }
+        o1= path (o1->item-1, pos);
+      }
+    }
+    else break;
+  }
+}
+
+static void
+adjust_left_script (tree t, path& o2) {
+  while (is_concat (t) && o2->item + 1 < N(t) && o2->next == path (1)) {
+    tree st= t[o2->item];
+    if (is_func (st, LSUB) || is_func (st, LSUP) || is_func (st, LPRIME)) {
+      tree nt= t[o2->item+1];
+      if (!is_atomic (nt)) o2= path (o2->item+1, end (nt));
+      else {
+        string s= nt->label;
+        int pos= 0;
+        while (pos < N(s)) {
+          int next= pos;
+          tm_char_forwards (s, next);
+          if (pos == 0);
+          else if (is_numeric (s (0, next)));
+          else if (is_iso_alpha (s (0, next)));
+          else break;
+          pos= next;
+        }
+        o2= path (o2->item+1, pos);
+      }
+    }
+    else break;
+  }
+}
+
+static void
 selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
+  //cout << "Adjust " << i1 << " -- " << i2 << " in " << t << "\n";
   if (i1 == i2) {
     o1= i1;
     o2= i2;
@@ -56,6 +111,8 @@ selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
     selection_adjust (t[i1->item], i1->next, i2->next, o1, o2);
     o1= path (i1->item, o1);
     o2= path (i2->item, o2);
+    adjust_right_script (t, o1);
+    adjust_left_script (t, o2);
   }
   else {
     tree_label l= L(t);
@@ -78,6 +135,7 @@ selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
       o2= end (t);
     }
   }
+  //cout << "Adjusted " << o1 << " -- " << o2 << " in " << t << "\n";
 }
 
 static void
