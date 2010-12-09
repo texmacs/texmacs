@@ -271,6 +271,9 @@
 		9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126610D102B300232476 /* QTMPipeLink.cpp */; };
 		9C225A65128B5EB00039258C /* qt_chooser_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */; };
 		9C2C2ADC10BAA420009B855A /* TeXmacsQt.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */; };
+		9C3D2E5912B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
+		9C3D2E5A12B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
+		9C3D2E5B12B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
 		9C3DA71F12932990009617C4 /* extend_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3DA71E12932990009617C4 /* extend_widget.cpp */; };
 		9C4B87A612AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
 		9C4B87A712AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
@@ -1670,6 +1673,8 @@
 		9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_chooser_widget.cpp; sourceTree = "<group>"; };
 		9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_chooser_widget.hpp; sourceTree = "<group>"; };
 		9C2C2ADB10BAA420009B855A /* TeXmacsQt.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TeXmacsQt.xcconfig; sourceTree = "<group>"; };
+		9C3D2E5712B0D662009E33AD /* tree_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_select.cpp; sourceTree = "<group>"; };
+		9C3D2E5812B0D662009E33AD /* tree_select.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_select.hpp; sourceTree = "<group>"; };
 		9C3DA71E12932990009617C4 /* extend_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = extend_widget.cpp; sourceTree = "<group>"; };
 		9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_serializer.cpp; sourceTree = "<group>"; };
 		9C5DBAD810A8DDD7008B7623 /* makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.in; path = src/makefile.in; sourceTree = "<group>"; };
@@ -2106,6 +2111,8 @@
 		9C0B47A310A8CC100097A335 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				9C3D2E5712B0D662009E33AD /* tree_select.cpp */,
+				9C3D2E5812B0D662009E33AD /* tree_select.hpp */,
 				9CDA725C126CC926006E8028 /* tree_modify.cpp */,
 				9CDA725D126CC926006E8028 /* tree_modify.hpp */,
 				9CEDAA2E1264FF6C009630CC /* tree_analyze.cpp */,
@@ -4027,6 +4034,7 @@
 				9CCC738F12A7D6DA006EDBDA /* HIDRemote.m in Sources */,
 				9CF1389612A9B65F009F02C9 /* qt_ui_element.cpp in Sources */,
 				9C4B87A612AE5BD100F8571A /* packrat_serializer.cpp in Sources */,
+				9C3D2E5912B0D662009E33AD /* tree_select.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4366,6 +4374,7 @@
 				9C646EC012842B7A000ABCDF /* mac_utilities.mm in Sources */,
 				9CCC739012A7D6DA006EDBDA /* HIDRemote.m in Sources */,
 				9C4B87A712AE5BD100F8571A /* packrat_serializer.cpp in Sources */,
+				9C3D2E5A12B0D662009E33AD /* tree_select.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4725,6 +4734,7 @@
 				9C3DA71F12932990009617C4 /* extend_widget.cpp in Sources */,
 				9C990A5A12A92473001542C5 /* HIDRemote.m in Sources */,
 				9C4B87A812AE5BD100F8571A /* packrat_serializer.cpp in Sources */,
+				9C3D2E5B12B0D662009E33AD /* tree_select.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
