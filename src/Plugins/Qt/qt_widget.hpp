@@ -31,8 +31,19 @@ class qt_widget_rep : public widget_rep {
 public:
   qt_widget_rep() : widget_rep () { };
 
+  /**
+   * (At least) window_create() expects this method in widgets which 
+   * implement windows.
+   */
   virtual widget plain_window_widget (string s);
+  /**
+   *
+   */
   virtual widget make_popup_widget ();
+  
+  /**
+   *
+   */
   virtual widget popup_window_widget (string s);
 
   // Qt semantics of abstract texmacs widgets
