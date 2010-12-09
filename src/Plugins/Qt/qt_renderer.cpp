@@ -531,6 +531,54 @@ qt_renderer_rep::xpm (url file_name, SI x, SI y) {
   char_clip=old_clip;
 }
 
+/******************************************************************************
+ * main qt renderer
+ ******************************************************************************/
+
+
+qt_renderer_rep*
+the_qt_renderer () {
+  static QPainter *the_painter = NULL;
+  static qt_renderer_rep* the_renderer= NULL;
+  if (!the_renderer) {
+    the_painter = new QPainter();
+    the_renderer= tm_new<qt_renderer_rep> (the_painter);
+  }
+  return the_renderer;
+}
+
+
+/******************************************************************************
+ * Shadow management methods 
+ ******************************************************************************/
+
+/* Shadows are auxiliary renderers which allows double buffering and caching of
+ * graphics. TeXmacs has explicit double buffering from the X11 port. Maybe
+ * it would be better to design a better API abstracting from the low level 
+ * details but for the moment the following code and the qt_proxy_renderer_rep
+ * and qt_shadow_renderer_rep classes are designed to solve two problems:
+ * 
+ * 1) Qt has already double buffering.
+ * 2) in Qt we are not easily allowed to read onscreen pixels (we can only ask a
+ *    widget to redraw himself on a pixmap or read the screen pixels -- this has
+ *    the drawback that if our widget is under another one we won't read the 
+ *    right pixels)
+ * 
+ * qt_proxy_renderer_rep solve the double buffering problem: when texmacs ask
+ * a qt_renderer_rep for a shadow it is given a proxy of the original renderer
+ * texmacs uses this shadow for double buffering and the proxy will simply
+ * forward the drawing operations to the original surface and neglect all the
+ * syncronization operations
+ *
+ * to solve the second problem we do not draw directly on screen in QTMWidget.
+ * Instead we maintain an internal pixmap which represent the state of the pixels
+ * according to texmacs. when we are asked to initialize a qt_shadow_renderer_rep
+ * we simply read the pixels form this backing store. At the Qt level then
+ * (in QTMWidget) we make sure that the state of the backing store is in sync
+ * with the screen via paintEvent/repaint mechanism.
+ *
+ */
+
 
 void
 qt_renderer_rep::new_shadow (renderer& ren) {
@@ -629,22 +677,6 @@ qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
   master->put_shadow (this, x1, y1, x2, y2);
 }
 
-
-/******************************************************************************
- * main qt renderer
- ******************************************************************************/
-
-
-qt_renderer_rep*
-the_qt_renderer () {
-  static QPainter *the_painter = NULL;
-  static qt_renderer_rep* the_renderer= NULL;
-  if (!the_renderer) {
-    the_painter = new QPainter();
-    the_renderer= tm_new<qt_renderer_rep> (the_painter);
-  }
-  return the_renderer;
-}
 
 /******************************************************************************
  * proxy qt renderer
