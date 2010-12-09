@@ -17,6 +17,7 @@
 #include "qt_basic_widgets.hpp"
 #include "qt_chooser_widget.hpp"
 #include "qt_printer_widget.hpp"
+#include "qt_color_picker_widget.hpp"
 #include "url.hpp"
 #include "analyze.hpp"
 #include "converter.hpp"
@@ -502,21 +503,24 @@ color_picker_widget (command call_back, bool bg, array<tree> proposals) {
   // encoded by a tree. On input, we give a list of recently used proposals
   // on termination the command is called with the selected color as argument
   // the bg flag specifies whether we are picking a background color or fill
+  
+#ifdef _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
+  return tm_new<qt_color_picker_widget_rep>(call_back, bg, proposals);  
+#else   // _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
   NOT_IMPLEMENTED;
   (void) call_back; (void) bg; (void) proposals;
   return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
+#endif
 }
 
 widget 
 printer_widget (command cmd, url ps_pdf_file) {
   // widget to print the document, offering a way for selecting a page range,
   // changing the paper type and orientation, previewing, etc.
-  (void) cmd;
-  (void) ps_pdf_file;
 #ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
-  return tm_new<qt_printer_widget_rep>();
+  return tm_new<qt_printer_widget_rep>(cmd, ps_pdf_file);
 #else
+  (void) cmd; (void) ps_pdf_file;
   return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
 #endif // _MBD_EXPERIMENTAL_PRINTER_WIDGET
 }
-
