@@ -36,14 +36,14 @@ typedef struct PrinterSettings {
   int        copyCount;
 public:
   PrinterSettings() 
-   : accepted(false), printToFile(true), landscape(false), collateCopies(true),
-     useColorIf(true), printerName(""), fileName(""), paperSize("A4"), dpi(600),
-     firstPage(0), lastPage(0), copyCount(1) {}
+  : accepted(false), printToFile(true), landscape(false), collateCopies(true),
+  useColorIf(true), printerName(""), fileName(""), paperSize("A4"), dpi(600),
+  firstPage(0), lastPage(0), copyCount(1) {}
   friend bool operator== (const PrinterSettings&, const PrinterSettings&);
   friend tm_ostream& operator<< (tm_ostream&, const PrinterSettings&);
-  friend PrinterSettings& operator<< (PrinterSettings&, const QPrinter&);
-  friend QPrinter& operator>>(const PrinterSettings&, QPrinter&);
-
+  void getFromQPrinter(const QPrinter&);
+  void setToQPrinter(QPrinter&) const;
+  
 } PrinterSettings;
 
 
@@ -58,21 +58,24 @@ public:
  */ 
 class qt_printer_widget_rep: public qt_widget_rep { 
 public:
-  qt_printer_widget_rep ();
+  qt_printer_widget_rep (command, url);
   ~qt_printer_widget_rep () { };
   
-  virtual void      send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);  // shouldn't this be const?
-  
+  virtual void          send (slot s, blackbox val);
+  virtual blackbox     query (slot s, int type_id);  // shouldn't this be const?
+  widget plain_window_widget (string s) { return this; }
+
   void showDialog ();
   static string qtPaperSizeToString(const QPrinter::PaperSize);
   static QPrinter::PaperSize stringToQtPaperSize(const string);
 private:      
   // Making qtPrinter static should preserve settings between calls.
-  static QPrinter* qtPrinter;
-  PrinterSettings  settings;
-
+  static QPrinter*    qtPrinter;
+  PrinterSettings      settings;
+  url       internalFileToPrint;
+  command commandAfterExecution;
 };
 
 #endif  // QT_PRINTER_WIDGET_HPP
 #endif  // _MBD_EXPERIMENTAL_PRINTER_WIDGET
+  
