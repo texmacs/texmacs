@@ -895,7 +895,8 @@ qt_tm_widget_rep::do_interactive_prompt () {
 
 void
 qt_tm_widget_rep::do_interactive_prompt () {
-	QString label = to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+	//QString label = to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
+  QLayoutItem *label = int_prompt->as_qlayoutitem ();
 	QStringList items;
   qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
   if ( N(it->def) == 0)

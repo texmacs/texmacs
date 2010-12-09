@@ -16,16 +16,17 @@
 class QComboBox;
 class QMainWindow;
 class QHBoxLayout;
-class QLabel;
 class QEventLoop;
 class QDialogButtonBox;
+class QLabel;
+class QLayoutItem;
 
 class QTMInteractivePrompt : public QWidget
 {
 	Q_OBJECT
 	
 public:
-	QTMInteractivePrompt(const QString&, const QStringList&, const QString&, QMainWindow*, QWidget* p=0);
+	QTMInteractivePrompt(QLayoutItem *, const QStringList&, const QString&, QMainWindow*, QWidget* p=0);
 	const QString currentText();
 	int exec ();
 	
@@ -38,8 +39,8 @@ protected:
 	void keyPressEvent ( QKeyEvent * event);
   
 	QHBoxLayout*      _hl;
-	QLabel*           _la;
 	QComboBox*        _cb;
+  QLabel*           _la;
 	QDialogButtonBox* _bb;
 	
 	QEventLoop*       _ev;

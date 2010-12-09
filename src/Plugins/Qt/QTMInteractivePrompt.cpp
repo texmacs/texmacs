@@ -24,13 +24,13 @@
 #include <QApplication>
 
 
-QTMInteractivePrompt::QTMInteractivePrompt(const QString& label, const QStringList& items, const QString& type, 
+QTMInteractivePrompt::QTMInteractivePrompt(QLayoutItem *label, const QStringList& items, const QString& type, 
 																					 QMainWindow* mw, QWidget* parent)
   : QWidget(parent),_ty(type), _mw(mw)
 {
   _ev = new QEventLoop(this);
   _hl = new QHBoxLayout(this);
-  _la = new QLabel(label, this);
+  _la = new QLabel(this);
   _cb = new QComboBox(this);
   _bb = new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
 	
@@ -49,9 +49,10 @@ QTMInteractivePrompt::QTMInteractivePrompt(const QString& label, const QStringLi
   _cb->setDuplicatesEnabled(true); 
   _cb->completer()->setCaseSensitivity(Qt::CaseSensitive);
 
-	_la->setBuddy(_cb);
-  
-	_hl->addWidget(_la);
+	if ((_la = qobject_cast<QLabel*>(label->widget())))
+    _la->setBuddy (_cb);
+
+  _hl->addItem (label);
   _hl->addWidget(_cb);
   _hl->addWidget(_bb);
 	_hl->setContentsMargins(3,0,0,0);
