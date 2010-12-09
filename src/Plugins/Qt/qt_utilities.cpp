@@ -121,6 +121,16 @@ from_qstring (const QString &s) {
   return utf8_to_cork (from_qstring_utf8(s));
 }
 
+QColor
+to_qcolor (const string& col) {
+  return QColor(to_qstring(col));  //FIXME: how are colors stored internally?
+}
+
+string
+from_qcolor (const QColor& col) {
+  return from_qstring(col.name());  //FIXME: how are colors stored internally?
+}
+
 
 string
 qt_translate (string s) {
@@ -130,6 +140,7 @@ qt_translate (string s) {
   return tm_var_encode (translate (s, in_lan, out_lan));
 }
 
+//FIXME!?!?
 bool
 qt_supports (url u) {
   string s= suffix (u);

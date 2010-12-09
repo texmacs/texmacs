@@ -17,10 +17,13 @@
 #include <QSize>
 #include <QPoint>
 #include <QString>
+#include <QColor>
 
 typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
+QColor to_qcolor (const string& );
+string from_qcolor (const QColor& );
 QRect to_qrect (const coord4 & p);
 QPoint to_qpoint (const coord2 & p);
 QSize to_qsize (const coord2 & p);
