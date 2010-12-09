@@ -304,6 +304,7 @@ qt_ui_element_rep::as_qaction () {
       QTMLazyMenu* lm= new QTMLazyMenu (pw);
       QMenu *old_menu = a->menu();
       a->setMenu (lm);
+      a->setEnabled(true);
       if (old_menu) {
         cout << "this should not happen\n";
         delete old_menu;
@@ -547,6 +548,7 @@ qt_ui_element_rep::as_qlayoutitem () {
       QTMLazyMenu* lm= new QTMLazyMenu (pw);
       QMenu *old_menu = a->menu();
       a->setMenu (lm);
+      a->setEnabled(true);
       if (old_menu) {
         cout << "this should not happen\n";
         delete old_menu;
