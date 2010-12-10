@@ -61,7 +61,7 @@ QTMInteractivePrompt::QTMInteractivePrompt(QLayoutItem *label, const QStringList
 
   {
    // _hl->addItem (label);
-   // this do not work. we need an hack.
+   // this does not work, we need a hack.
     if (label->widget()) {
       _hl->addWidget(label->widget());
     } else if (label->layout()) {
