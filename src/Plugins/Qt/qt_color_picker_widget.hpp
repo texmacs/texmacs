@@ -36,12 +36,11 @@ public:
   widget   plain_window_widget (string s);
 
   void showDialog();
-  void hideDialog();
   
 protected:
   string            _windowTitle;
-  bool              _pickPattern;
   command _commandAfterExecution;
+  bool              _pickPattern;
 };
 
 

@@ -32,14 +32,10 @@ qt_color_picker_widget_rep::qt_color_picker_widget_rep
   (command call_back, bool pickPattern, array<tree> proposals)
 : _commandAfterExecution(call_back), _pickPattern(pickPattern)
 {
-  // TODO: Implement a live dialog together with QColorDialog::NoButtons
-  //_dialog = new QColorDialog();
   (void) proposals;
 }
 
-qt_color_picker_widget_rep::~qt_color_picker_widget_rep() {
-  //delete _dialog;
-}
+qt_color_picker_widget_rep::~qt_color_picker_widget_rep() { }
 
 void
 qt_color_picker_widget_rep::send (slot s, blackbox val) {
@@ -50,8 +46,6 @@ qt_color_picker_widget_rep::send (slot s, blackbox val) {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
       if (open_box<bool>(val) == true)
         showDialog();
-      else
-        hideDialog();
       break;
     default:
       qt_widget_rep::send (s, val);
@@ -94,11 +88,6 @@ qt_color_picker_widget_rep::showDialog() {
       _commandAfterExecution (list_object(object(tree(from_qcolor(_sel)))));
     }
   }
-}
-
-void 
-qt_color_picker_widget_rep::hideDialog() {
-    // TODO: implement live dialog (and hide it here)
 }
 
 #endif    // _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
