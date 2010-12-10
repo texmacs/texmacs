@@ -882,7 +882,11 @@ qt_tm_widget_rep::do_interactive_prompt () {
   r.moveCenter(pos);
   d->setGeometry(r);
   QObject::connect (d, SIGNAL (finished (int)), &helper, SLOT(commit (int)));
+#if (QT_VERSION >= 0x040500)
   d->open();
+#else
+  d->exec();
+#endif
 }
 #else
 
