@@ -178,8 +178,18 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
   
-  focusToolBar->setIconSize(QSize(14,14));
-  
+  {
+    // set proper sizes for icons
+    QPixmap *pxm = the_qt_renderer()->xpm_image("tm_new.xpm");
+    QSize sz = (pxm ? pxm->size() : QSize(32,32));
+    mainToolBar->setIconSize (sz);
+    pxm =  the_qt_renderer()->xpm_image("tm_section.xpm");
+    sz = (pxm ? pxm->size() : QSize(17,17));
+    modeToolBar->setIconSize(sz);
+    pxm =  the_qt_renderer()->xpm_image("tm_plus.xpm");
+    sz = (pxm ? pxm->size() : QSize(17,17));
+    focusToolBar->setIconSize(sz);
+  }  
   
 //#if 0
 #ifdef UNIFIED_TOOLBAR
