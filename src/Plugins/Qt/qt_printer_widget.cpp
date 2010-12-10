@@ -51,7 +51,9 @@ PrinterSettings::getFromQPrinter(const QPrinter& from) {
   dpi           = from.resolution ();
   firstPage     = from.fromPage ();
   lastPage      = from.toPage ();
+#if (QT_VERSION >= 0x040700)
   copyCount     = from.copyCount ();
+#endif
   collateCopies = from.collateCopies();
   useColorIf    = (from.colorMode () == QPrinter::Color);
   printProgram  = from.printProgram();
@@ -68,7 +70,9 @@ PrinterSettings::setToQPrinter(QPrinter& to) const {
   to.setOrientation(landscape ? QPrinter::Landscape : QPrinter::Portrait);
   to.setOutputFileName(fileName);
   to.setPaperSize(qt_printer_widget_rep::qStringToQtPaperSize(paperSize));
+#if (QT_VERSION >= 0x040700)
   to.setCopyCount(copyCount);
+#endif  
   to.setCollateCopies(collateCopies);
   to.setColorMode(useColorIf ? QPrinter::Color : QPrinter::GrayScale);
 }
@@ -123,7 +127,7 @@ qt_printer_widget_rep::showDialog () {
 
   QString _cmd;
   
-#ifdef QS_WIN
+#ifdef QS_WS_WINDOWS
   
   // Do ugly Windows stuff
   _cmd = "copy /help";
