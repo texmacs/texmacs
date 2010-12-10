@@ -18,11 +18,12 @@
 #include <QLocale>
 #include <QDateTime>
 #include <QTextCodec>
+#include <QHash>
 
 #include <QPrinter>
 #include <QPrintDialog>
 
-
+#include "rgb_colors.hpp"
 #include "dictionary.hpp"
 #include "converter.hpp"
 #include "language.hpp"
@@ -121,15 +122,50 @@ from_qstring (const QString &s) {
   return utf8_to_cork (from_qstring_utf8(s));
 }
 
-QColor
-to_qcolor (const string& col) {
-  return QColor(to_qstring(col));  //FIXME: how are colors stored internally?
+// <MBD> 
+
+// Although slow to build, this should provide better lookup times than
+// linearly traversing the array of colors.
+static QHash<QString, QColor> _NamedColors;
+
+/**
+ * This needn't be called more than once. Takes RGBColors, defined in
+ * rgb_colors.hpp and initializes our QHash
+ */
+void initNamedColors(void) {
+  for(int i = 0; i < RGBColorsSize; ++i)
+    _NamedColors.insert(QString(RGBColors[i].name), 
+                        QColor(RGBColors[i].r, RGBColors[i].g, RGBColors[i].b));
 }
 
+/**
+ * Takes either an hexadecimal RGB color, as in #e3a1ff, or a named color
+ * as those defined in src/Graphics/Renderer/rgb_colors.hpp and returns a QColor
+ */
+QColor
+to_qcolor (const string& col) {
+  QString _col = to_qstring(col);
+  if(_col.startsWith("#"))
+    return QColor(_col);
+  if(_NamedColors.isEmpty())
+    initNamedColors();
+  if(_NamedColors.contains(_col))
+    return _NamedColors[_col];
+  if(DEBUG_QT)
+    cout << "to_qcolor(" << col << "): name is not defined in RGBColors.\n";
+  return QColor(100,100,100);  // FIXME? 
+}
+
+/**
+ * Returns a color encoded as a string with hexadecimal RGB values, 
+ * as in #e3a1ff
+ */
 string
 from_qcolor (const QColor& col) {
-  return from_qstring(col.name());  //FIXME: how are colors stored internally?
+  return from_qstring(col.name());
 }
+
+// </MBD> 
 
 
 string
