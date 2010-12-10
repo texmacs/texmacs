@@ -119,7 +119,7 @@ qt_printer_widget_rep::showDialog () {
   settings.getFromQPrinter(*qtPrinter);
   
   if (! settings.accepted)
-    return;
+    return;  // TODO: display "cancelled message"
 
   QString _cmd;
   
@@ -136,6 +136,8 @@ qt_printer_widget_rep::showDialog () {
   if(! settings.printerName.isEmpty())
     _cmd += "-P " + settings.printerName;
   
+  //_cmd += internalFileToPrint;
+
 #endif
 
   // At this point we need gsutils...
