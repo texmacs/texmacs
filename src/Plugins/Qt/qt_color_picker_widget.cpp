@@ -65,7 +65,11 @@ qt_color_picker_widget_rep::showDialog() {
   if (_pickPattern) {
     // do stuff
   } else {
+#if 0 (QT_VERSION >= 0x040500)
     QColor _sel = QColorDialog::getColor(Qt::white, 0, to_qstring(_windowTitle));
+#else
+    QColor _sel = QColorDialog::getColor(Qt::white);
+#endif
     if(_sel.isValid()) {
       _commandAfterExecution (list_object (object (tree (from_qcolor (_sel)))));
     }
