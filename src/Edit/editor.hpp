@@ -273,6 +273,7 @@ public:
   virtual void notify_assign_node (path p, tree_label op) = 0;
   virtual void notify_insert_node (path p, tree t) = 0;
   virtual void notify_remove_node (path p) = 0;
+  virtual void notify_set_cursor (path p, tree data) = 0;
   virtual void post_notify (path p) = 0;
   virtual void clear_undo_history () = 0;
   virtual double this_author () = 0;

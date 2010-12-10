@@ -87,6 +87,13 @@ edit_modify_rep::notify_remove_node (path p) {
 }
 
 void
+edit_modify_rep::notify_set_cursor (path p, tree data) {
+  if (!(rp <= p)) return;
+  // TODO: really set cursor(s)
+  cur_pos= position_new (tp);
+}
+
+void
 edit_modify_rep::post_notify (path p) {
   // cout << "Post notify\n";
   if (!(rp <= p)) return;
@@ -172,6 +179,13 @@ edit_remove_node (editor_rep* ed, path pp) {
 }
 
 void
+edit_set_cursor (editor_rep* ed, path pp, tree data) {
+  path p= copy (pp);
+  ASSERT (ed->the_buffer_path() <= p, "invalid modification");
+  ed->notify_set_cursor (p, data);
+}
+
+void
 edit_announce (editor_rep* ed, modification mod) {
   switch (mod->k) {
   case MOD_ASSIGN:
@@ -197,6 +211,9 @@ edit_announce (editor_rep* ed, modification mod) {
     break;
   case MOD_REMOVE_NODE:
     edit_remove_node (ed, mod->p);
+    break;
+  case MOD_SET_CURSOR:
+    edit_set_cursor (ed, mod->p, mod->t);
     break;
   default: FAILED ("invalid modification type");
   }

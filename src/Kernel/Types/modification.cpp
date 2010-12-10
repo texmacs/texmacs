@@ -52,6 +52,9 @@ operator << (tm_ostream& out, modification mod) {
   case MOD_REMOVE_NODE:
     return out << "remove_node (" << root (mod)
 	       << ", " << index (mod) << ")";
+  case MOD_SET_CURSOR:
+    return out << "set_cursor (" << root (mod)
+	       << ", " << index (mod) << ", " << mod->t << ")";
   default: FAILED ("invalid modification type");
     return out;
   }
@@ -72,6 +75,7 @@ root (modification mod) {
   case MOD_ASSIGN_NODE: return mod->p;
   case MOD_INSERT_NODE: return path_up (mod->p);
   case MOD_REMOVE_NODE: return path_up (mod->p);
+  case MOD_SET_CURSOR: return path_up (mod->p);
   default: FAILED ("invalid modification type");
   }
 }
@@ -84,6 +88,7 @@ index (modification mod) {
   case MOD_SPLIT: return last_item (path_up (mod->p));
   case MOD_JOIN: return last_item (mod->p);
   case MOD_REMOVE_NODE: return last_item (mod->p);
+  case MOD_SET_CURSOR: return last_item (mod->p);
   default: FAILED ("invalid modification type");
   }
 }
@@ -165,6 +170,13 @@ can_remove_node (tree t, path p, int pos) {
 }
 
 bool
+can_set_cursor (tree t, path p, int pos, tree data) {
+  (void) data;
+  if (!has_subtree (t, p)) return false;
+  return pos >= 0 && pos <= right_index (subtree (t, p));
+}
+
+bool
 is_applicable (tree t, modification mod) {
   switch (mod->k) {
   case MOD_ASSIGN:
@@ -183,6 +195,8 @@ is_applicable (tree t, modification mod) {
     return can_insert_node (t, root (mod), argument (mod), mod->t);
   case MOD_REMOVE_NODE:
     return can_remove_node (t, root (mod), index (mod));
+  case MOD_SET_CURSOR:
+    return can_set_cursor (t, root (mod), index (mod), mod->t);
   default:
     return false;
   }
@@ -369,6 +383,12 @@ clean_remove_node (tree t, path p) {
 }
 
 tree
+clean_set_cursor (tree t, path p, tree data) {
+  (void) p; (void) data;
+  return t;
+}
+
+tree
 clean_apply (tree t, modification mod) {
   switch (mod->k) {
   case MOD_ASSIGN:
@@ -387,6 +407,8 @@ clean_apply (tree t, modification mod) {
     return clean_insert_node (t, mod->p, mod->t);
   case MOD_REMOVE_NODE:
     return clean_remove_node (t, mod->p);
+  case MOD_SET_CURSOR:
+    return clean_set_cursor (t, mod->p, mod->t);
   default:
     FAILED ("invalid modification type");
     return "";

@@ -26,6 +26,7 @@
 #define MOD_ASSIGN_NODE  6
 #define MOD_INSERT_NODE  7
 #define MOD_REMOVE_NODE  8
+#define MOD_SET_CURSOR   9
 
 /******************************************************************************
 * The modification class
@@ -82,6 +83,8 @@ inline modification mod_insert_node (path p, int pos, tree t) {
   return modification (MOD_INSERT_NODE, p * pos, t); }
 inline modification mod_remove_node (path p, int pos) {
   return modification (MOD_REMOVE_NODE, p * pos); }
+inline modification mod_set_cursor (path p, int pos, tree data) {
+  return modification (MOD_SET_CURSOR, p * pos, data); }
 inline modification operator * (int i, modification mod) {
   return modification (mod->k, path (i, mod->p), mod->t); }
 inline modification operator * (path p, modification mod) {

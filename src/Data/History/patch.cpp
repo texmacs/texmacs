@@ -376,6 +376,8 @@ possible_inverse (modification m1, modification m2) {
   case MOD_REMOVE_NODE:
     return m2->k == MOD_INSERT_NODE && 
            argument (m2) == index (m1);
+  case MOD_SET_CURSOR:
+    return m1 == m2;
   default:
     FAILED ("invalid situation");
     return false;
@@ -597,6 +599,8 @@ cursor_hint (modification m, tree t) {
     return end (t, rp);
   case MOD_REMOVE_NODE:
     return end (t, rp * index (m));
+  case MOD_SET_CURSOR:
+    return path ();
   default:
     FAILED ("unexpected situation");
     return path ();

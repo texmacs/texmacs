@@ -68,6 +68,8 @@ invert (modification m, tree t) {
       int  i= index (m);
       return mod_insert_node (rp, i, u (0, i) * u (i+1, N(u)));
     }
+  case MOD_SET_CURSOR:
+    return m;
   default:
     FAILED ("unexpected situation");
   }
@@ -118,6 +120,8 @@ swap1 (modification& m1, modification& m2, int i, int d) {
 	return true;
       }
     case MOD_REMOVE_NODE:
+      return false;
+    case MOD_SET_CURSOR:
       return false;
     }
   m1= r1;
@@ -222,6 +226,15 @@ swap (modification& m1, modification& m2) {
 	m2= aux;
 	return true;
       }
+    case MOD_SET_CURSOR:
+      {
+        if (!is_nil (rp2) ||
+            m2->k == MOD_JOIN ||
+            m2->k == MOD_SPLIT ||
+            m2->k == MOD_ASSIGN_NODE)
+          return swap_basic (m1, m2);
+        return false;
+      }
     }
   else if (is_nil (rp2))
     switch (m2->k) {
@@ -268,6 +281,15 @@ swap (modification& m1, modification& m2) {
 	m2= modification (m1->k, m1->p->next, m1->t);
 	m1= aux;
 	return true;
+      }
+    case MOD_SET_CURSOR:
+      {
+        if (!is_nil (rp1) ||
+            m1->k == MOD_JOIN ||
+            m1->k == MOD_SPLIT ||
+            m1->k == MOD_ASSIGN_NODE)
+          return swap_basic (m1, m2);
+        return false;
       }
     }
   else if (rp1->item == rp2->item) {

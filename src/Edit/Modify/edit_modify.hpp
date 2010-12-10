@@ -35,6 +35,7 @@ public:
   void notify_assign_node (path p, tree_label op);
   void notify_insert_node (path p, tree t);
   void notify_remove_node (path p);
+  void notify_set_cursor  (path p, tree data);
   void post_notify        (path p);
 
   void clear_undo_history ();

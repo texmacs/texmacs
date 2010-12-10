@@ -78,7 +78,8 @@ operator << (tm_ostream& out, observer o) {
 * 1) The "inserting modifications" (insert, split and insert_node) invoke
 *    the observers call-back routines after the actual modification and
 *    "assigning and deleting modifications" (assign, remove, join,
-*    assign_node and remove_node)  before the actual modification.
+*    assign_node and remove_node) before the actual modification.
+*    set_cursor does not make any modifications in the tree
 * 2) The split and join modifications pass the joined tree
 *    at position pos as an additional argument to the call-back routines.
 * 3) They also admit variant call back routines for the split/join nodes.
@@ -312,6 +313,20 @@ raw_remove_node (tree& ref, int pos) {
 }
 
 void
+raw_set_cursor (tree& ref, int pos, tree data) {
+  // cout << "Set cursor " << ref << " : " << pos << ", " << data << "\n";
+  modification mod= mod_set_cursor (path (), pos, data);
+  if (!is_nil (ref->obs)) {
+    ref->obs->announce (ref, mod);
+    ref->obs->notify_set_cursor (ref, pos, data);
+    simplify (ref->obs);
+  }
+  if (!is_nil (ref->obs)) ref->obs->done (ref, mod);
+  // stretched_print (ref, true, 1);
+  // consistency_check ();
+}
+
+void
 raw_apply (tree& t, modification mod) {
   ASSERT (is_applicable (t, mod), "invalid modification");
   switch (mod->k) {
@@ -338,6 +353,9 @@ raw_apply (tree& t, modification mod) {
     break;
   case MOD_REMOVE_NODE:
     raw_remove_node (subtree (t, root (mod)), index (mod));
+    break;
+  case MOD_SET_CURSOR:
+    raw_set_cursor (subtree (t, root (mod)), index (mod), mod->t);
     break;
   }
   packrat_invalid_colors= true;
@@ -441,6 +459,11 @@ remove_node (tree& ref, int pos) {
 }
 
 void
+set_cursor (tree& ref, int pos, tree data) {
+  apply (ref, mod_set_cursor (path (), pos, data));
+}
+
+void
 touch (tree& ref) {
   //cout << "Touch " << ref << "\n";
   if (!is_nil (ref->obs))
@@ -495,6 +518,11 @@ remove_node (path p) {
 }
 
 void
+set_cursor (path p, tree data) {
+  set_cursor (subtree (the_et, path_up (p)), last_item (p), data);
+}
+
+void
 touch (path p) {
   touch (subtree (the_et, p));
 }
@@ -530,6 +558,9 @@ observer_rep::announce (tree& ref, modification mod) {
     break;
   case MOD_REMOVE_NODE:
     announce_remove_node (ref, mod->p);
+    break;
+  case MOD_SET_CURSOR:
+    announce_set_cursor (ref, mod->p, mod->t);
     break;
   }
 }
@@ -585,6 +616,11 @@ observer_rep::announce_remove_node (tree& ref, path p) {
 }
 
 void
+observer_rep::announce_set_cursor (tree& ref, path p, tree data) {
+  (void) ref; (void) p; (void) data;
+}
+
+void
 observer_rep::notify_assign (tree& ref, tree t) {
   (void) ref; (void) t;
 }
@@ -632,6 +668,11 @@ observer_rep::notify_insert_node (tree& ref, int pos) {
 void
 observer_rep::notify_remove_node (tree& ref, int pos) {
   (void) ref; (void) pos;
+}
+
+void
+observer_rep::notify_set_cursor (tree& ref, int pos, tree data) {
+  (void) ref; (void) pos; (void) data;
 }
 
 void
