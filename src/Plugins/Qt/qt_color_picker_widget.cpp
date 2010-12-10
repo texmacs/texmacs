@@ -60,22 +60,6 @@ qt_color_picker_widget_rep::plain_window_widget (string title)
   return this;
 }
 
-// TEMP HACK
-#define SLOT_CURRENT_COLOR -42
-
-blackbox
-qt_color_picker_widget_rep::query (slot s, int type_id) {
-  if (DEBUG_QT)
-    cout << "qt_color_picker_widget_rep::query " << slot_name(s) << LF;
-  if (s != SLOT_CURRENT_COLOR)
-    return qt_widget_rep::query (s, type_id);
-  else {
-    // TODO: return currently selected color in a live dialog.
-    TYPE_CHECK (type_id == type_helper<QColor>::id);
-    return close_box<QColor>(Qt::white);
-  }
-}
-
 void
 qt_color_picker_widget_rep::showDialog() {
   if (_pickPattern) {

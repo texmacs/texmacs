@@ -31,7 +31,6 @@ public:
   ~qt_color_picker_widget_rep ();
   
   virtual void            send (slot s, blackbox val);
-  virtual blackbox       query (slot s, int type_id);  // shouldn't this be const?
   widget   plain_window_widget (string s);
 
   void showDialog();
