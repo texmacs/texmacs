@@ -46,6 +46,7 @@ public:
   void notify_assign_node (tree& ref, tree_label op);
   void notify_insert_node (tree& ref, int pos);
   void notify_remove_node (tree& ref, int pos);
+  void notify_set_cursor  (tree& ref, int pos, tree data);
   void notify_detach      (tree& ref, tree closest, bool right);
 
   bool get_ip (path& ip);
@@ -143,6 +144,12 @@ void
 list_observer_rep::notify_remove_node (tree& ref, int pos) {
   if (!is_nil (o1)) o1->notify_remove_node (ref, pos);
   if (!is_nil (o2)) o2->notify_remove_node (ref, pos);
+}
+
+void
+list_observer_rep::notify_set_cursor (tree& ref, int pos, tree data) {
+  if (!is_nil (o1)) o1->notify_set_cursor (ref, pos, data);
+  if (!is_nil (o2)) o2->notify_set_cursor (ref, pos, data);
 }
 
 void
