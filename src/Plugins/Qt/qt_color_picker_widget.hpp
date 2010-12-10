@@ -9,7 +9,6 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#ifdef _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
 #ifndef QT_COLOR_PICKER_WIDGET_HPP
 #define QT_COLOR_PICKER_WIDGET_HPP
 
@@ -45,4 +44,3 @@ protected:
 
 
 #endif    // QT_COLOR_PICKER_WIDGET_HPP
-#endif    // _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET

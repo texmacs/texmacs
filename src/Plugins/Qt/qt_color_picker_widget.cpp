@@ -9,13 +9,11 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#ifdef _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
-
 #include "qt_color_picker_widget.hpp"
 #include "qt_utilities.hpp"
 
 #include "message.hpp"
-#include "object.hpp"
+#include "Scheme/object.hpp"
 
 #include <QColorDialog>
 
@@ -85,9 +83,8 @@ qt_color_picker_widget_rep::showDialog() {
   } else {
     QColor _sel = QColorDialog::getColor(Qt::white, 0, to_qstring(_windowTitle));
     if(_sel.isValid()) {
-      _commandAfterExecution (list_object(object(tree(from_qcolor(_sel)))));
+      _commandAfterExecution (list_object (object (tree (from_qcolor (_sel)))));
     }
   }
 }
 
-#endif    // _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET

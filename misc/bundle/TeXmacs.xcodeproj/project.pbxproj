@@ -16,6 +16,7 @@
 		9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */; };
 		9C066E6612849FD900DE2F84 /* QTMInteractivePrompt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4931F77F127ED5B3007C92CC /* QTMInteractivePrompt.cpp */; };
+		9C088F7612B1BAD000A18E04 /* qt_color_picker_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */; };
 		9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126710D102B300232476 /* QTMPipeLink.hpp */; };
 		9C0B49F010A8CC110097A335 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476110A8CC0F0097A335 /* generic.cpp */; };
 		9C0B49F110A8CC110097A335 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B476210A8CC0F0097A335 /* input.cpp */; };
@@ -1102,6 +1103,8 @@
 		8D1107320486CEB800E47090 /* TeXmacsQt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsQt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
+		9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_color_picker_widget.cpp; sourceTree = "<group>"; };
+		9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_color_picker_widget.hpp; sourceTree = "<group>"; };
 		9C0B430010A8CB4E0097A335 /* TeXmacs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TeXmacs; sourceTree = "<group>"; };
 		9C0B475F10A8CC0F0097A335 /* convert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convert.hpp; sourceTree = "<group>"; };
 		9C0B476110A8CC0F0097A335 /* generic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = generic.cpp; sourceTree = "<group>"; };
@@ -2608,6 +2611,8 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
+				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
+				9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */,
 				9CF1389412A9B65F009F02C9 /* qt_ui_element.hpp */,
 				9CF1389512A9B65F009F02C9 /* qt_ui_element.cpp */,
 				4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */,
@@ -3560,6 +3565,7 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -4035,6 +4041,7 @@
 				9CF1389612A9B65F009F02C9 /* qt_ui_element.cpp in Sources */,
 				9C4B87A612AE5BD100F8571A /* packrat_serializer.cpp in Sources */,
 				9C3D2E5912B0D662009E33AD /* tree_select.cpp in Sources */,
+				9C088F7612B1BAD000A18E04 /* qt_color_picker_widget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

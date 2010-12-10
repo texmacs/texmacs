@@ -504,13 +504,7 @@ color_picker_widget (command call_back, bool bg, array<tree> proposals) {
   // on termination the command is called with the selected color as argument
   // the bg flag specifies whether we are picking a background color or fill
   
-#ifdef _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
   return tm_new<qt_color_picker_widget_rep>(call_back, bg, proposals);  
-#else   // _MBD_EXPERIMENTAL_COLOR_PICKER_WIDGET
-  NOT_IMPLEMENTED;
-  (void) call_back; (void) bg; (void) proposals;
-  return glue_widget (false, false, 100*PIXEL, 100*PIXEL);
-#endif
 }
 
 widget 
