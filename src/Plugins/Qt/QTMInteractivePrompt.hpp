@@ -40,12 +40,10 @@ protected:
   
 	QHBoxLayout*      _hl;
 	QComboBox*        _cb;
-  QLabel*           _la;
-	QDialogButtonBox* _bb;
 	
 	QEventLoop*       _ev;
 	QString           _ty;
-	QMainWindow*      _mw;   // Hack, would be nicer to have access to a singleton through some static member somewehere...
+	QMainWindow*      _mw;   // the main window the prompt belongs (not a singleton)
 	
 };
 

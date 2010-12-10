@@ -809,25 +809,8 @@ qt_tm_widget_rep::plain_window_widget (string s) {
   return wid;
 }
 
+//#if !defined(_MBD_USE_NEW_INTERACTIVE_PROMPT)
 #if 0
-void
-qt_tm_widget_rep::do_interactive_prompt () {
-  QStringList items;
-  QString label= to_qstring (((qt_text_widget_rep*) int_prompt.rep)->str);
-  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
-  for (int j=0; j < N(it->def); j++)
-    items << to_qstring(it->def[j]);
-  bool ok;
-  QString item =
-  QInputDialog::getItem (NULL, "Interactive Prompt", label,
-                         items, 0, true, &ok );
-  if (ok && !item.isEmpty()) {
-    ((qt_input_text_widget_rep*) int_input.rep) -> text=
-    scm_quote (from_qstring (item));
-    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
-  }
-}
-#elif !defined(_MBD_USE_NEW_INTERACTIVE_PROMPT)
 void
 qt_tm_widget_rep::do_interactive_prompt () {
   QStringList items;
@@ -842,8 +825,8 @@ qt_tm_widget_rep::do_interactive_prompt () {
   }
   QDialog *d = new QDialog (tm_scrollarea()->window());
 
-  QVBoxLayout* vl = new QVBoxLayout(d);
-  QHBoxLayout *hl = new QHBoxLayout(d);
+  QVBoxLayout* vl = new QVBoxLayout();
+  QHBoxLayout *hl = new QHBoxLayout();
   
  // QLabel *lab = new QLabel (label,&d);
   QLayoutItem *lab = int_prompt->as_qlayoutitem ();
@@ -887,7 +870,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
     QObject::connect (buttonBox, SIGNAL (rejected()), d, SLOT (reject()));
     vl -> addWidget (buttonBox);
   }
-    //  d.setLayout (vl);
+  d->setLayout (vl);
   
   QRect wframe = view->window()->frameGeometry();
   QPoint pos = QPoint(wframe.x()+wframe.width()/2,wframe.y()+wframe.height()/2);

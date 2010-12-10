@@ -29,10 +29,8 @@ QTMInteractivePrompt::QTMInteractivePrompt(QLayoutItem *label, const QStringList
   : QWidget(parent),_ty(type), _mw(mw)
 {
   _ev = new QEventLoop(this);
-  _hl = new QHBoxLayout(this);
-  _la = new QLabel(this);
-  _cb = new QComboBox(this);
-  _bb = new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
+  _hl = new QHBoxLayout();
+  _cb = new QComboBox();
 	
   _cb->addItems(items);
   _cb->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
@@ -49,19 +47,6 @@ QTMInteractivePrompt::QTMInteractivePrompt(QLayoutItem *label, const QStringList
   _cb->setDuplicatesEnabled(true); 
   _cb->completer()->setCaseSensitivity(Qt::CaseSensitive);
 
-	if ((_la = qobject_cast<QLabel*>(label->widget())))
-    _la->setBuddy (_cb);
-
-  _hl->addItem (label);
-  _hl->addWidget(_cb);
-  _hl->addWidget(_bb);
-	_hl->setContentsMargins(3,0,0,0);
-  setLayout(_hl);
-	
-  QFont f = font();
-  f.setPointSize(11);
-  setFont(f);
-  
 	if (_ty.endsWith("file", Qt::CaseInsensitive) || _ty.endsWith("directory", Qt::CaseInsensitive)) {
 		// autocompletion
     QCompleter* completer = new QCompleter(this);
@@ -70,10 +55,27 @@ QTMInteractivePrompt::QTMInteractivePrompt(QLayoutItem *label, const QStringList
     _cb->setCompleter(completer);
   }
 	
-	QObject::connect(_bb, SIGNAL (accepted()), this, SLOT (accept()));
-	QObject::connect(_bb, SIGNAL (rejected()), this, SLOT (reject()));
   
-  setTabOrder(_cb, _bb);
+	if (QLabel *_la = qobject_cast<QLabel*>(label->widget()))
+    _la->setBuddy (_cb);
+
+  {
+   // _hl->addItem (label);
+   // this do not work. we need an hack.
+    if (label->widget()) {
+      _hl->addWidget(label->widget());
+    } else if (label->layout()) {
+      _hl->addLayout(label->layout());
+    }
+  }
+  _hl->addWidget(_cb);
+	_hl->setContentsMargins(3,0,0,0);
+  setLayout(_hl);
+	
+  QFont f = font();
+  f.setPointSize(11);
+  setFont(f);
+  
 }
 
 
@@ -86,8 +88,10 @@ int QTMInteractivePrompt::exec() {
 	QStatusBar* _os = _mw->statusBar();
 	_os->setParent(0);
 	_mw->setStatusBar(_ns);
-  setFocus();  // This lets the user access all the widgets just by pressing tab. _cb->setFocus() does something weird.
-
+  qApp->processEvents();
+  _cb->show();
+  _cb->setFocus(Qt::OtherFocusReason);  // This lets the user access all the widgets just by pressing tab. _cb->setFocus() does something weird.
+  
   QObject::connect(qApp, SIGNAL(focusChanged( QWidget * , QWidget *  ) ), this, SLOT(appFocusChanged( QWidget * , QWidget * ) ));
 	int ret = _ev->exec();
   QObject::disconnect(qApp, SIGNAL(focusChanged( QWidget * , QWidget *  ) ), this, SLOT(appFocusChanged( QWidget * , QWidget * ) ));
