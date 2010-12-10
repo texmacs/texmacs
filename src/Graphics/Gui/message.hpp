@@ -73,9 +73,6 @@ enum slot_id {
   SLOT_INPUT_PROPOSAL,
   SLOT_FILE,
   SLOT_DIRECTORY
-#ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
-  , SLOT_PRINTER_SETTINGS
-#endif
 };
 
 class slot {
