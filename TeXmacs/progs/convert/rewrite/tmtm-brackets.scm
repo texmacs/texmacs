@@ -34,16 +34,9 @@
 	(else (string-append "<" s ">"))))
 
 (tm-define (downgrade-brackets t)
-  (with cc (lambda (x) (if (func? x 'concat) (cdr x) (list x)))
-    (cond ((func? t 'around 3)
-	   `(concat ,(cadr t) ,@(cc (caddr t)) ,(cadddr t)))
-	  ((func? t 'around* 3)
-	   `(concat ,(large-bracket 'left (cadr t))
-		    ,@(cc (caddr t))
-		    ,(large-bracket 'right (cadddr t))))
-	  ((func? t 'big-around 2)
-	   `(concat ,(large-bracket 'big (cadr t)) ,@(cc (caddr t))))
-	  (else t))))
+  (if (tree? t)
+      (tree-downgrade-brackets t)
+      (tree->stree (tree-downgrade-brackets t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket matching

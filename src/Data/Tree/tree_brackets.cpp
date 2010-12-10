@@ -383,7 +383,7 @@ upgrade_above_below (tree t) {
 }
 
 /******************************************************************************
-* Master routines
+* Master routine for upgrading brackets
 ******************************************************************************/
 
 static array<tree>
@@ -463,4 +463,45 @@ upgrade_brackets (tree t, string mode) {
   with_drd drd (get_document_drd (t));
   t= upgrade_above_below (t);
   return upgrade_brackets_bis (t, mode);
+}
+
+/******************************************************************************
+* Downgrading brackets
+******************************************************************************/
+
+static tree
+downgrade_bracket (tree t, bool large) {
+  if (!is_atomic (t)) return t;
+  string s= t->label;
+  if (large) {
+    if (t == "<nobracket>") return tree (".");
+    if (starts (s, "<") && ends (s, ">")) return s (1, N(s)-1);
+  }
+  else if (s == "<nobracket>") return "";
+  return t;
+}
+
+tree
+downgrade_brackets (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= downgrade_brackets (t[i]);
+  if (is_func (r, AROUND, 3)) {
+    tree lb= downgrade_bracket (r[0], false);
+    tree rb= downgrade_bracket (r[2], false);
+    r= concat (lb, r[1], rb);
+  }
+  if (is_func (r, VAR_AROUND, 3)) {
+    tree lb= downgrade_bracket (r[0], true);
+    tree rb= downgrade_bracket (r[2], true);
+    r= concat (lb, r[1], rb);
+  }
+  if (is_func (r, BIG_AROUND, 3)) {
+    tree op= downgrade_bracket (r[0], true);
+    r= concat (op, r[1]);
+  }
+  if (is_concat (r)) r= concat_recompose (concat_decompose (r));
+  return r;
 }

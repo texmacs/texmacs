@@ -342,6 +342,37 @@
           (tree-assign (tree-ref t 0) ns))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Not necessarily matching brackets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (find-non-bracket t)
+  (cond ((not (tree-up t)) t)
+        ((tm-in? t '(around around* big-around temp-slot))
+         (find-non-bracket (tree-up t)))
+        ((tm-in? (tree-up t) '(concat around around* big-around temp-slot))
+         (find-non-bracket (tree-up t)))
+        (else t)))
+
+(define (find-and-remove-temp-slot x)
+  ;;(display* "x= " x "\n")
+  (cond ((tree-atomic? x) #f)
+        ((tree-is? x 'temp-slot)
+         (tree-go-to x 0 0)
+         (remove-structure-upwards))
+        ((tree? x)
+         (list-or (map find-and-remove-temp-slot (tree-children x))))
+        (else #f)))
+
+(tm-define (brackets-refresh)
+  (when (and #f (!= (get-preference "matching brackets") "on"))
+    (insert-go-to '(temp-slot "") '(0 0))
+    (let* ((t (find-non-bracket (cursor-tree)))
+           (u (tree-downgrade-brackets t))
+           (v (tree-upgrade-brackets u "math")))
+      (tree-set! t v)
+      (find-and-remove-temp-slot t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Matching brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -385,7 +416,8 @@
 
 (tm-define (math-bracket-open lb rb large?)
   (when (!= (get-preference "matching brackets") "on")
-    (make-bracket-open lb rb large?))
+    (make-bracket-open lb rb large?)
+    (brackets-refresh))
   (when (== (get-preference "matching brackets") "on")
     (if large? (set! lb (make-small lb)))
     (if large? (set! rb (make-small rb)))
@@ -409,13 +441,15 @@
 
 (tm-define (math-separator sep large?)
   (when (!= (get-preference "matching brackets") "on")
-    (make-separator sep large?))
+    (make-separator sep large?)
+    (brackets-refresh))
   (when (== (get-preference "matching brackets") "on")
     (make-separator sep large?)))
 
 (tm-define (math-bracket-close rb lb large?)
   (when (!= (get-preference "matching brackets") "on")
-    (make-bracket-close rb lb large?))
+    (make-bracket-close rb lb large?)
+    (brackets-refresh))
   (when (== (get-preference "matching brackets") "on")
     (if large? (set! rb (make-small rb)))
     (if large? (set! lb (make-small lb)))
@@ -436,7 +470,8 @@
 
 (tm-define (math-big-operator op)
   (when (!= (get-preference "matching brackets") "on")
-    (make-big-operator op))
+    (make-big-operator op)
+    (brackets-refresh))
   (when (== (get-preference "matching brackets") "on")
     (insert-go-to `(big-around ,(make-small op) "") '(1 0))))
 

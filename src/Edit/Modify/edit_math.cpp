@@ -179,49 +179,64 @@ is_deleted (tree t) {
 
 void
 edit_math_rep::back_around (tree t, path p, bool forward) {
+  bool match= (get_preference ("matching brackets") == "on");
   if (is_func (t, BIG_AROUND)) {
+    if (match || forward)
+      go_to_border (p * 1, forward);
+    else {
+      remove_node (t, 1);
+      correct (path_up (p));
+    }
+  }
+  else {
+    int i= (forward? 0: 2);
+    if (is_deleted (t[i]));
+    else if (is_atomic (t[i]))
+      assign (t[i], "<nobracket>");
+    else if (is_func (t[i], LEFT))
+      assign (t[i], tree (LEFT, "."));
+    else if (is_func (t[i], RIGHT))
+      assign (t[i], tree (RIGHT, "."));
     go_to_border (p * 1, forward);
-    return;
+    if (is_deleted (t[0]) && is_deleted (t[2])) {
+      remove_node (t, 1);
+      correct (path_up (p));
+    }
   }
-  int i= (forward? 0: 2);
-  if (is_deleted (t[i]));
-  else if (is_atomic (t[i]))
-    assign (t[i], "<nobracket>");
-  else if (is_func (t[i], LEFT))
-    assign (t[i], tree (LEFT, "."));
-  else if (is_func (t[i], RIGHT))
-    assign (t[i], tree (RIGHT, "."));
-  go_to_border (p * 1, forward);
-  if (is_deleted (t[0]) && is_deleted (t[2])) {
-    remove_node (t, 1);
-    correct (path_up (p));
-  }
+  call ("brackets-refresh");
 }
 
 void
 edit_math_rep::back_in_around (tree t, path p, bool forward) {
-  if (is_empty (t[1])) {
+  bool match= (get_preference ("matching brackets") == "on");
+  if (is_empty (t[1]) && match) {
     assign (t, "");
     correct (path_up (p, 2));
-    return;
   }
-  if (is_func (t, BIG_AROUND)) {
+  else if (is_func (t, BIG_AROUND)) {
+    if (match || forward)
+      go_to_border (path_up (p), !forward);
+    else {
+      remove_node (t, 1);
+      correct (path_up (p, 2));
+    }
+  }
+  else {
+    int i= (forward? 2: 0);
+    if (is_deleted (t[i]));
+    else if (is_atomic (t[i]))
+      assign (t[i], "<nobracket>");
+    else if (is_func (t[i], LEFT))
+      assign (t[i], tree (LEFT, "."));
+    else if (is_func (t[i], RIGHT))
+      assign (t[i], tree (RIGHT, "."));
     go_to_border (path_up (p), !forward);
-    return;
+    if (is_deleted (t[0]) && is_deleted (t[2])) {
+      remove_node (t, 1);
+      correct (path_up (p, 2));
+    }
   }
-  int i= (forward? 2: 0);
-  if (is_deleted (t[i]));
-  else if (is_atomic (t[i]))
-    assign (t[i], "<nobracket>");
-  else if (is_func (t[i], LEFT))
-    assign (t[i], tree (LEFT, "."));
-  else if (is_func (t[i], RIGHT))
-    assign (t[i], tree (RIGHT, "."));
-  go_to_border (path_up (p), !forward);
-  if (is_deleted (t[0]) && is_deleted (t[2])) {
-    remove_node (t, 1);
-    correct (path_up (p, 2));
-  }
+  call ("brackets-refresh");  
 }
 
 void

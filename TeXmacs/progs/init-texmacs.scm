@@ -109,6 +109,7 @@
 (lazy-menu (math math-menu) math-menu math-icons
 	   insert-math-menu math-correct-menu)
 (lazy-initialize (math math-menu) (in-math?))
+(lazy-define (math math-edit) brackets-refresh)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting programming modes\n")

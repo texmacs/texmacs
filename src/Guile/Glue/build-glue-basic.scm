@@ -146,6 +146,8 @@
   (invisible-correct-missing missing_invisible_correct (tree content int))
   (automatic-correct automatic_correct (tree content string))
   (manual-correct manual_correct (tree content))
+  (tree-upgrade-brackets upgrade_brackets (tree content string))
+  (tree-downgrade-brackets downgrade_brackets (tree content))
 
   ;; paths
   (path-inf? path_inf (bool path path))

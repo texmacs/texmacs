@@ -19,6 +19,7 @@ tree superfluous_with_correct (tree t);
 tree superfluous_invisible_correct (tree t);
 tree missing_invisible_correct (tree t, int force= -1);
 tree upgrade_brackets (tree t, string mode= "text");
+tree downgrade_brackets (tree t);
 
 tree latex_correct (tree t);
 tree automatic_correct (tree t, string version);
