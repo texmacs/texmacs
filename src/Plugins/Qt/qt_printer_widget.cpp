@@ -57,7 +57,9 @@ PrinterSettings::getFromQPrinter(const QPrinter& from) {
   collateCopies = from.collateCopies();
   useColorIf    = (from.colorMode () == QPrinter::Color);
   printProgram  = from.printProgram();
+#ifndef QS_WS_WINDOWS
   printerSelectionOption = from.printerSelectionOption();
+#endif
 }
 
 /**

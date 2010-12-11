@@ -80,4 +80,5 @@ private:
 };
 
 #endif  // QT_PRINTER_WIDGET_HPP
+
   
