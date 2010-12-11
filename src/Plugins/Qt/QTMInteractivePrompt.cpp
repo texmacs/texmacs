@@ -10,22 +10,10 @@
 
 #include "QTMInteractivePrompt.hpp"
 
-#include <QLineEdit>
-#include <QMainWindow>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QEventLoop>
-#include <QDialogButtonBox>
-#include <QCompleter>
-#include <QDirModel>
-#include <QStatusBar>
-#include <QDialog>
-#include <QKeyEvent>
-#include <QApplication>
-#include <QWidgetAction>
-#include <QObject>
-
 #include "QTMStyle.hpp"
+#include <QLabel>
+#include <QLineEdit>
 
 QTMInteractivePrompt::QTMInteractivePrompt(qt_widget _int_prompt, qt_widget _int_input, 
 																					 QMainWindow* mw, QWidget* parent)
@@ -34,7 +22,7 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget _int_prompt, qt_widget _int
   QLayoutItem *li = int_prompt->as_qlayoutitem ();
   QLayoutItem *li2 = int_input->as_qlayoutitem ();
   _le = qobject_cast<QLineEdit*>(li2->widget());
-  _hl = new QHBoxLayout();
+  QHBoxLayout *_hl = new QHBoxLayout();
 
 	setStyle (qtmstyle());
   
@@ -48,38 +36,18 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget _int_prompt, qt_widget _int
   QFont f = font();
   f.setPointSize(11);
   setFont(f);
+
+  
 }
 
 
 void QTMInteractivePrompt::start() {
   if (_le) {
-  _le->show();
-  _le->setFocus(Qt::OtherFocusReason);  
+    _le->show();
+    _le->setFocus(Qt::OtherFocusReason);  
   }
-  QObject::connect(qApp, SIGNAL(focusChanged( QWidget * , QWidget *  ) ), this, SLOT(appFocusChanged( QWidget * , QWidget * ) ));
 }
 
 void QTMInteractivePrompt::end() {
-  QObject::disconnect(qApp, SIGNAL(focusChanged( QWidget * , QWidget *  ) ), this, SLOT(appFocusChanged( QWidget * , QWidget * ) ));
-}
-
-void 
-QTMInteractivePrompt::appFocusChanged ( QWidget * old, QWidget * now ) {
-  // We check wether the focus has gone to one of our children widgets, or it has simply "jumped" inside the QComboBox:
-  // Clicking its dropdown arrow fires a QFocusEvent, but doesn't change the widget, so we must take care of that
-  // TODO: Don't lose focus if the user pressed too many times the tab key (I tend to do that...)
-  if (now && !isAncestorOf(now) && now->parent() != old) {
-    reject();
-  }
-}
-
-void 
-QTMInteractivePrompt::accept() {	
- // _ev->exit(QDialog::Accepted); 
-}
-
-void 
-QTMInteractivePrompt::reject() {	
- // _ev->exit(QDialog::Rejected); 
 }
 

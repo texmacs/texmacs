@@ -32,18 +32,12 @@ public:
 	void start ();
 	void end ();
 	
-public slots:
-	void accept ();
-	void reject ();
-	void appFocusChanged  ( QWidget * old, QWidget * now );
-  
 protected:
   
   qt_widget int_prompt;
   qt_widget int_input;
   
   
-	QHBoxLayout*      _hl;
 	QLineEdit*        _le;
 	
 	QMainWindow*      _mw;   // the main window the prompt belongs (not a singleton)

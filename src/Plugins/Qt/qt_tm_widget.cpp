@@ -521,22 +521,20 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_INTERACTIVE_MODE:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
-#if 0
-      if (open_box<bool> (val) == true) {
-        QTimer::singleShot (0, &helper, SLOT (doit ()));
-          // do_interactive_prompt ();
-      }
-#endif
+
       if (open_box<bool> (val) == true) {
         prompt = new QTMInteractivePrompt(int_prompt, int_input, tm_mainwindow());
         tm_mainwindow()->statusBar()->removeWidget(leftLabel);
+        tm_mainwindow()->statusBar()->removeWidget(rightLabel);
         tm_mainwindow()->statusBar()->addWidget(prompt);
         prompt->start();
       } else {
         if (prompt) prompt->end();
         tm_mainwindow()->statusBar()->removeWidget(prompt);
         tm_mainwindow()->statusBar()->addWidget(leftLabel);
+        tm_mainwindow()->statusBar()->addPermanentWidget(rightLabel);
         leftLabel->show();
+        rightLabel->show();
         delete prompt;
         prompt = NULL;
       }
