@@ -14,16 +14,21 @@
 #include "qt_widget.hpp"
 #include "qt_utilities.hpp"
 
+/*!
+ * A file/directory chooser dialog, using native dialogs where available.
+ * See @link widget.cpp @endlink for an explanation of send(), query(), 
+ * read(), etc.
+ */
 class qt_chooser_widget_rep: public qt_widget_rep {
 protected:      
-  command cmd;
+  command cmd;      //! Scheme closure to execute after the dialog closes
   string type;
   bool   save;
   string win_title;
-  string directory;
-  coord2 position;
+  string directory; //! Set this property sending SLOT_DIRECTORY to this widget
+  coord2 position; 
   coord2 size;
-  string file;
+  string file;      //! Set this property sending SLOT_FILE to this widget
   
 public:
   qt_chooser_widget_rep (command, string, bool);

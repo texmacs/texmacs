@@ -19,6 +19,12 @@
 
 #include <QtGui>
 
+/*!
+ * @param _cmd  Scheme closure to execute after the dialog is closed.
+ * @param _type What kind of dialog to show. Can be one of "image", "directory",
+ *              or any of the supported file formats: "texmacs", "tmml",
+                "postscript", etc. See @link perform_dialog()
+ */
 qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _save)
  : qt_widget_rep (), cmd (_cmd), type (_type), save (_save), 
    position (coord2 (0, 0)), size (coord2 (100, 100)), file ("")
@@ -29,6 +35,7 @@ qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _
 }
 
 qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
+
 
 void
 qt_chooser_widget_rep::send (slot s, blackbox val) {
@@ -166,6 +173,12 @@ qt_chooser_widget_rep::plain_window_widget (string s)
 }
 
 #if (defined(Q_WS_MAC) || defined(Q_WS_WINDOWS))
+
+/*!
+ * Actually displays the dialog with all the options set.
+ * @todo The file filters for the dialog should not be hardcoded!
+ * @todo Retrieve image sizes when opening images.
+ */ 
 void
 qt_chooser_widget_rep::perform_dialog () {
   QString _file;
@@ -239,10 +252,13 @@ qt_chooser_widget_rep::perform_dialog () {
   cmd ();
 }
 #else
+/**
+ * A file chooser dialog with image preview for platforms other than Mac/Win
+ * FIXME: this is incomplete.
+ */
 void
 qt_chooser_widget_rep::perform_dialog () {
     // int result;
-    // FIXME: the chooser dialog is widely incomplete
   
   QTMFileDialog *dialog;
   QTMImageDialog *imgdialog= 0; // to avoid a dynamic_cast
