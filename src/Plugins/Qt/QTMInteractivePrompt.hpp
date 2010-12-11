@@ -12,23 +12,25 @@
 #define QTMINTERACTIVEPROMPT_HPP
 
 #include <QWidget>
+#include "qt_widget.hpp"
 
-class QComboBox;
+class QLineEdit;
 class QMainWindow;
 class QHBoxLayout;
 class QEventLoop;
 class QDialogButtonBox;
 class QLabel;
 class QLayoutItem;
+class QStatusBar;
 
 class QTMInteractivePrompt : public QWidget
 {
 	Q_OBJECT
 	
 public:
-	QTMInteractivePrompt(QLayoutItem *, const QStringList&, const QString&, QMainWindow*, QWidget* p=0);
-	const QString currentText();
-	int exec ();
+	QTMInteractivePrompt(qt_widget, qt_widget, QMainWindow*, QWidget* p=0);
+	void start ();
+	void end ();
 	
 public slots:
 	void accept ();
@@ -36,15 +38,16 @@ public slots:
 	void appFocusChanged  ( QWidget * old, QWidget * now );
   
 protected:
-	void keyPressEvent ( QKeyEvent * event);
+  
+  qt_widget int_prompt;
+  qt_widget int_input;
+  
   
 	QHBoxLayout*      _hl;
-	QComboBox*        _cb;
+	QLineEdit*        _le;
 	
-	QEventLoop*       _ev;
-	QString           _ty;
 	QMainWindow*      _mw;   // the main window the prompt belongs (not a singleton)
-	
+
 };
 
 #endif // QTMINTERACTIVEPROMPT_HPP

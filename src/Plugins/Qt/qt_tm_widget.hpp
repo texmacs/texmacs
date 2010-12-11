@@ -26,6 +26,7 @@
 #include <QLayout>
 
 class QLabel; class QToolBar;
+class QTMInteractivePrompt;
 
 /**
  * Main TeXmacs' widget. This is the interface between TeXmacs
@@ -57,6 +58,8 @@ public:
   QWidget *centralWidget;
   
   QTMInteractiveInputHelper helper;
+  
+  QTMInteractivePrompt *prompt;
   
   qt_widget int_prompt;
   qt_widget int_input;

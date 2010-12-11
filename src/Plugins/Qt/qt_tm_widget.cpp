@@ -80,12 +80,16 @@ void QTMInteractiveInputHelper::doit() {
 }
 
 void QTMInteractiveInputHelper::commit(int result) {
-  QComboBox *cb = sender()->findChild<QComboBox*>("combobox");
-  if (cb && wid) {
+  if (wid) {
     if (result == QDialog::Accepted) {
-      QString item = cb->currentText();
+      QString item = "#f";
+      QComboBox *cb = sender()->findChild<QComboBox*>("input");
+      if (cb) {
+        item = cb->currentText();
+      }      
       ((qt_input_text_widget_rep*) wid->int_input.rep) -> text=
-      scm_quote (from_qstring (item));
+//      scm_quote (from_qstring (item));
+      from_qstring (item);
       ((qt_input_text_widget_rep*) wid->int_input.rep) -> cmd ();      
     }
   }
@@ -517,9 +521,24 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_INTERACTIVE_MODE:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
+#if 0
       if (open_box<bool> (val) == true) {
         QTimer::singleShot (0, &helper, SLOT (doit ()));
           // do_interactive_prompt ();
+      }
+#endif
+      if (open_box<bool> (val) == true) {
+        prompt = new QTMInteractivePrompt(int_prompt, int_input, tm_mainwindow());
+        tm_mainwindow()->statusBar()->removeWidget(leftLabel);
+        tm_mainwindow()->statusBar()->addWidget(prompt);
+        prompt->start();
+      } else {
+        if (prompt) prompt->end();
+        tm_mainwindow()->statusBar()->removeWidget(prompt);
+        tm_mainwindow()->statusBar()->addWidget(leftLabel);
+        leftLabel->show();
+        delete prompt;
+        prompt = NULL;
       }
     }
       break;
@@ -613,9 +632,14 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       
     case SLOT_INTERACTIVE_INPUT:
       TYPE_CHECK (type_id == type_helper<string>::id);
-      return close_box<string>
-      (((qt_input_text_widget_rep*) int_input.rep) -> text);
-        // return close_box<string> ("FIXME");
+    {
+      qt_input_text_widget_rep* w =((qt_input_text_widget_rep*) int_input.rep);
+      if (w->ok) {
+        return close_box<string>(scm_quote(w->text));
+      } else {
+        return close_box<string>("#f");
+      }
+    }
       
     case SLOT_INTERACTIVE_MODE:
       TYPE_CHECK (type_id == type_helper<bool>::id);
@@ -831,7 +855,7 @@ qt_tm_widget_rep::do_interactive_prompt () {
  // QLabel *lab = new QLabel (label,&d);
   QLayoutItem *lab = int_prompt->as_qlayoutitem ();
   QComboBox *cb = new QComboBox(d);
-  cb-> setObjectName("combobox"); // to find it
+  cb-> setObjectName("input"); // to find it
   cb -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
   cb -> setEditText (items[0]);
   int minlen = 0;
@@ -892,24 +916,9 @@ qt_tm_widget_rep::do_interactive_prompt () {
 
 void
 qt_tm_widget_rep::do_interactive_prompt () {
-	//QString label = to_qstring (tm_var_encode (((qt_text_widget_rep*) int_prompt.rep)->str));
-  QLayoutItem *label = int_prompt->as_qlayoutitem ();
-	QStringList items;
-  qt_input_text_widget_rep* it = (qt_input_text_widget_rep*) (int_input.rep);
-  if ( N(it->def) == 0)
-		items << "";
-  else for (int j=0; j < N(it->def); j++)
-		items << to_qstring(it->def[j]);
-  
-	QTMInteractivePrompt _prompt(label, items, to_qstring(it->type), tm_mainwindow());
-	
-	if (_prompt.exec() == QDialog::Accepted) {
-		QString text = _prompt.currentText();
-    ((qt_input_text_widget_rep*) int_input.rep) -> text = scm_quote (from_qstring (text));
-    ((qt_input_text_widget_rep*) int_input.rep) -> cmd ();
-  } else {
-      //    ((qt_input_text_widget_rep*) int_input.rep) -> text="#f";
-  }
+	QTMInteractivePrompt _prompt(int_prompt, int_input, tm_mainwindow());
+ // QObject::connect (&_prompt, SIGNAL (finished (int)), &helper, SLOT(commit (int)));
+	//_prompt.exec();
 }
 
 #endif

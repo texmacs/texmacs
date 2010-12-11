@@ -330,13 +330,43 @@ public:
   : QLineEdit(parent), ww(_ww) {};
   
   virtual QSize	sizeHint () const ;
+protected:
+  void keyPressEvent(QKeyEvent *event);
 };
+
+void 
+QTMLineEdit::keyPressEvent(QKeyEvent *event)
+{
+  if(event->key() == Qt::Key_Up){
+    int row = completer()->currentRow();
+    completer()->setCurrentRow(row-1);
+    setText(completer()->currentCompletion());
+    event->accept();
+    // move back in history
+  }
+  else if(event->key() == Qt::Key_Down){
+    int row = completer()->currentRow();
+    completer()->setCurrentRow(row+1);
+    setText(completer()->currentCompletion());
+    event->accept();
+    // move forward in history
+  }
+  else if(event->key() == Qt::Key_Escape){
+    emit editingFinished();
+    event->accept();
+    // exit editing
+  }
+  else{
+    // default handler for event
+    QLineEdit::keyPressEvent(event);
+  }
+}
 
 QSize
 QTMLineEdit::sizeHint () const {
   QSize sz(QLineEdit::sizeHint());
   string s = ww; // to avoid const casting
-  if (ends (s, "w") && is_double (s (0, N(s) - 1))) {
+  if (ends (s, "w") && is_double (s (0, N(s) - 1)) && parentWidget()) {
     double x= as_double (s (0, N(s) - 1));
     sz.setWidth(parentWidget()->width() * x);
 //    ev->w= max (ev->w, (4 * fn->wquad + 2*dw) / SHRINK);
@@ -373,27 +403,10 @@ QTMWidgetAction::doRefresh() {
 
 QWidget * 
 QTMWidgetAction::createWidget ( QWidget * parent ) {
-  QLineEdit *le;
+  QWidget *le;
   if (helper) {
-    le = new QTMLineEdit (parent, helper->wid()->width);
-    helper -> add (le);
-    QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
-    QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
-    le -> setText (to_qstring (helper->wid()->text));
-    QFont f= le->font();
-    f.setPixelSize(10);
-    le->setFont(f);
-    //le->setFrame(false);
-    le->setStyle(qtmstyle());
-    QPalette pal(le->palette());
-    //pal.setColor(QPalette::Base, Qt::lightGray);
-    pal.setColor(QPalette::Base, QColor(252, 252, 248));
-    le->setPalette(pal);
-    if (ends(helper->wid()->width,"w")) {
-      le->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    } else {
-      le->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    }
+    le = helper->wid()->as_qwidget();
+    le->setParent(parent);
   } else {
     le = new QLineEdit(parent);
   }
@@ -414,9 +427,72 @@ qt_input_text_widget_rep::as_qaction () {
   return a;
 }
 
+QWidget *
+qt_input_text_widget_rep::as_qwidget () {
+  if (!helper) {
+    helper = new QTMInputTextWidgetHelper(this);
+    // helper retains the current widget
+    // in toolbars the widget is not referenced directly in texmacs code
+    // so must be retained by Qt objects
+  }
+  QLineEdit *le;
+  if (helper) {
+    le = new QTMLineEdit (NULL, helper->wid()->width);
+    helper -> add (le);
+    QObject::connect(le, SIGNAL(returnPressed ()), helper, SLOT(commit ()));
+    QObject::connect(le, SIGNAL(editingFinished ()), helper, SLOT(leave ()));
+    le -> setText (to_qstring (helper->wid()->text));
+    QFont f= le->font();
+    f.setPixelSize(10);
+    le->setFont(f);
+    //le->setFrame(false);
+    le->setStyle(qtmstyle());
+    QPalette pal(le->palette());
+    //pal.setColor(QPalette::Base, Qt::lightGray);
+    pal.setColor(QPalette::Base, QColor(252, 252, 248));
+    le->setPalette(pal);
+    if (ends(helper->wid()->width,"w")) {
+      le->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    } else {
+      le->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+    
+    
+    if (ends (type, "file") || type == "directory") {
+      // autocompletion
+      QCompleter *completer = new QCompleter(le);
+      QDirModel *dirModel = new QDirModel(le);
+      completer->setModel(dirModel);
+      le->setCompleter(completer);
+    } else if (N(def) > 0) {
+      QStringList items;
+      for (int j=0; j < N(def); j++) {
+        items << to_qstring(def[j]);
+      }
+      QCompleter *completer = new QCompleter(items, le);
+      completer->setCaseSensitivity(Qt::CaseSensitive);
+      completer->setCompletionMode(QCompleter::InlineCompletion);
+      le->setCompleter(completer);
+    }
+    
+    le->selectAll();
+    
+  } else {
+    le = new QLineEdit(NULL);
+  }
+  return le;
+}
+
+
+QLayoutItem *
+qt_input_text_widget_rep::as_qlayoutitem () {
+  return new QWidgetItem(as_qwidget());
+}
+
+
 qt_input_text_widget_rep::qt_input_text_widget_rep 
   (command _cmd, string _type, array<string> _def, string _width)
-  : cmd (_cmd), type (_type), def (_def), text (""), width(_width), helper(NULL) 
+  : cmd (_cmd), type (_type), def (_def), text (""), width(_width), helper(NULL), ok(false) 
 {
   if (N(def) > 0) {
     text = def[0];
@@ -427,15 +503,28 @@ qt_input_text_widget_rep::qt_input_text_widget_rep
 qt_input_text_widget_rep::~qt_input_text_widget_rep() { 
 }
 
+void
+QTMInputTextWidgetHelper::doit () {
+  if (done) return;
+  done = true;
+#if 0
+  if (wid()->ok) 
+   cout << "Committing: " << wid () -> text << LF;
+  else 
+    cout << "Leaving with text: " << wid () -> text << LF;
+#endif
+  wid () -> cmd (wid()->ok ? list_object (object (wid() -> text)) : 
+                      list_object (object (false)));
+}
 
 void
 QTMInputTextWidgetHelper::commit () {
   QLineEdit *le = qobject_cast <QLineEdit*> (sender());
   if (le) {
-    le -> setFrame(false);
+//    le -> setFrame(false);
+    wid()->ok = true;
+    done = false;
     wid () -> text = from_qstring (le -> text());
-  //cout << "Committing: " << wid () -> text << LF;
-    wid () -> cmd (list_object (object (wid() -> text)));
   }
 }
 
@@ -447,6 +536,9 @@ QTMInputTextWidgetHelper::leave () {
   if (le) {
     // reset the text according to the texmacs widget
     le -> setText (to_qstring (wid () -> text));
+    //ok = false;
+    QTimer::singleShot (0, this, SLOT (doit ()));
+  
   }
 }
 
@@ -511,10 +603,5 @@ widget
 printer_widget (command cmd, url ps_pdf_file) {
   // widget to print the document, offering a way for selecting a page range,
   // changing the paper type and orientation, previewing, etc.
-#ifdef _MBD_EXPERIMENTAL_PRINTER_WIDGET
   return tm_new<qt_printer_widget_rep>(cmd, ps_pdf_file);
-#else
-  (void) cmd; (void) ps_pdf_file;
-  return menu_button (text_widget ("Cancel", 0, black), cmd, "", "", 0);
-#endif // _MBD_EXPERIMENTAL_PRINTER_WIDGET
 }
