@@ -337,19 +337,24 @@ protected:
 void 
 QTMLineEdit::keyPressEvent(QKeyEvent *event)
 {
+  QCompleter c = completer();
   // reset completion
-  completer()->setCompletionPrefix (QString ());
+  if (c) c->setCompletionPrefix (QString ());
 
   if (event->key() == Qt::Key_Up){
-    int row = completer()->currentRow();
-    completer()->setCurrentRow(row-1);
-    setText(completer()->currentCompletion());
+    if (c) {
+      int row = c->currentRow();
+      c->setCurrentRow(row-1);
+      setText(c->currentCompletion());
+    }
     event->accept();
     // move back in history
   } else if (event->key() == Qt::Key_Down){
-    int row = completer()->currentRow();
-    completer()->setCurrentRow(row+1);
-    setText(completer()->currentCompletion());
+    if (c) {
+      int row = c->currentRow();
+      c->setCurrentRow(row+1);
+      setText(c->currentCompletion());
+    }
     event->accept();
     // move forward in history
   } else if (event->key() == Qt::Key_Escape){
