@@ -337,7 +337,7 @@ protected:
 void 
 QTMLineEdit::keyPressEvent(QKeyEvent *event)
 {
-  QCompleter c = completer();
+  QCompleter *c = completer();
   // reset completion
   if (c) c->setCompletionPrefix (QString ());
 
