@@ -28,7 +28,7 @@
 
 (define-preferences
   ("automatic quotes" "default" notify-quoting-style)
-  ("automatically close brackets" "off" notify-auto-close-brackets))
+  ("automatic brackets" "mathematics" notify-auto-close-brackets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Quotes

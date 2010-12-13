@@ -563,13 +563,7 @@ latex_correct (tree t) {
 
 tree
 automatic_correct (tree t, string version) {
-  if (version_inf_eq (version, "1.0.7.7")) {
-    if (enabled_preference ("with correct"))
-      t= with_correct (t);
-    if (enabled_preference ("with correct"))
-      t= superfluous_with_correct (t);
-    if (enabled_preference ("matching brackets"))
-      t= upgrade_brackets (t);
+  if (version_inf_eq (version, "1.0.7.8")) {
     if (enabled_preference ("remove superfluous invisible"))
       t= superfluous_invisible_correct (t);
     if (enabled_preference ("homoglyph correct"))
@@ -582,12 +576,9 @@ automatic_correct (tree t, string version) {
 
 tree
 manual_correct (tree t) {
-  if (enabled_preference ("manual with correct"))
-    t= with_correct (t);
-  if (enabled_preference ("manual with correct"))
-    t= superfluous_with_correct (t);
-  if (enabled_preference ("manual matching brackets"))
-    t= upgrade_brackets (t);
+  t= with_correct (t);
+  t= superfluous_with_correct (t);
+  t= upgrade_brackets (t);
   if (enabled_preference ("manual remove superfluous invisible"))
     t= superfluous_invisible_correct (t);
   if (enabled_preference ("manual homoglyph correct"))

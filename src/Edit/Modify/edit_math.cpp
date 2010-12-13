@@ -179,7 +179,7 @@ is_deleted (tree t) {
 
 void
 edit_math_rep::back_around (tree t, path p, bool forward) {
-  bool match= (get_preference ("matching brackets") == "on");
+  bool match= (get_preference ("automatic brackets") != "off");
   if (is_func (t, BIG_AROUND)) {
     if (match || forward)
       go_to_border (p * 1, forward);
@@ -208,7 +208,7 @@ edit_math_rep::back_around (tree t, path p, bool forward) {
 
 void
 edit_math_rep::back_in_around (tree t, path p, bool forward) {
-  bool match= (get_preference ("matching brackets") == "on");
+  bool match= (get_preference ("automatic brackets") != "off");
   if (is_empty (t[1]) && match) {
     assign (t, "");
     correct (path_up (p, 2));

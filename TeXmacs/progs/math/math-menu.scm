@@ -106,10 +106,6 @@
     ("Correct manually" (math-correct-manually)))
   ---
   (group "Options")
-  ("Force matching brackets"
-   (toggle-preference "manual matching brackets"))
-  ("Correct presentation markup"
-   (toggle-preference "manual with correct"))
   ("Remove superfluous invisible operators"
    (toggle-preference "manual remove superfluous invisible"))
   ("Insert missing invisible operators"

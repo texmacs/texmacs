@@ -364,7 +364,7 @@
         (else #f)))
 
 (tm-define (brackets-refresh)
-  (when (and #f (!= (get-preference "matching brackets") "on"))
+  (when (== (get-preference "automatic brackets") "off")
     (insert-go-to '(temp-slot "") '(0 0))
     (let* ((t (find-non-bracket (cursor-tree)))
            (u (tree-downgrade-brackets t))
@@ -415,10 +415,10 @@
     ret))
 
 (tm-define (math-bracket-open lb rb large?)
-  (when (!= (get-preference "matching brackets") "on")
+  (when (== (get-preference "automatic brackets") "off")
     (make-bracket-open lb rb large?)
     (brackets-refresh))
-  (when (== (get-preference "matching brackets") "on")
+  (when (!= (get-preference "automatic brackets") "off")
     (if large? (set! lb (make-small lb)))
     (if large? (set! rb (make-small rb)))
     (let* ((t (find-adjacent-around #t))
@@ -440,17 +440,17 @@
 	     (insert-go-to `(around* ,lb "" ,rb) '(1 0)))))))
 
 (tm-define (math-separator sep large?)
-  (when (!= (get-preference "matching brackets") "on")
+  (when (== (get-preference "automatic brackets") "off")
     (make-separator sep large?)
     (brackets-refresh))
-  (when (== (get-preference "matching brackets") "on")
+  (when (!= (get-preference "automatic brackets") "off")
     (make-separator sep large?)))
 
 (tm-define (math-bracket-close rb lb large?)
-  (when (!= (get-preference "matching brackets") "on")
+  (when (== (get-preference "automatic brackets") "off")
     (make-bracket-close rb lb large?)
     (brackets-refresh))
-  (when (== (get-preference "matching brackets") "on")
+  (when (!= (get-preference "automatic brackets") "off")
     (if large? (set! rb (make-small rb)))
     (if large? (set! lb (make-small lb)))
     (let* ((t (find-adjacent-around #t))
@@ -469,10 +469,10 @@
 			   (force-string rb)))))))
 
 (tm-define (math-big-operator op)
-  (when (!= (get-preference "matching brackets") "on")
+  (when (== (get-preference "automatic brackets") "off")
     (make-big-operator op)
     (brackets-refresh))
-  (when (== (get-preference "matching brackets") "on")
+  (when (!= (get-preference "automatic brackets") "off")
     (insert-go-to `(big-around ,(make-small op) "") '(1 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

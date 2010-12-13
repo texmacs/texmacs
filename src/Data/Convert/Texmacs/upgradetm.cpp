@@ -3043,8 +3043,9 @@ upgrade_tex (tree t) {
   t= upgrade_bibliography (t);
   t= upgrade_math (t);
   t= upgrade_resize_clipped (t);
-  if (call ("get-preference", "matching brackets") == object ("on"))
-    t= upgrade_brackets (t);
+  t= with_correct (t);
+  t= superfluous_with_correct (t);
+  t= upgrade_brackets (t);
   t= upgrade_image (t);
   upgrade_tex_flag= false;
   return t;
@@ -3150,6 +3151,11 @@ upgrade (tree t, string version) {
     t= upgrade_image (t);
   if (version_inf_eq (version, "1.0.7.7"))
     t= upgrade_root_switch (t);
+  if (version_inf_eq (version, "1.0.7.8") && is_non_style_document (t)) {
+    t= with_correct (t);
+    t= superfluous_with_correct (t);
+    t= upgrade_brackets (t);
+  }
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

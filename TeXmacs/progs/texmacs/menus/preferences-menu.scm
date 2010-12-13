@@ -135,8 +135,10 @@
 	      ("German" "german")
 	      ("Spanish" "spanish")
 	      ("Swiss" "swiss"))
-	(toggle ("Automatically close brackets"
-		 "automatically close brackets")))
+	(enum ("Automatic brackets" "automatic brackets")
+	      ("Disabled" "off")
+	      ("Inside mathematics" "mathematics")
+	      ("Enabled" "on")))
     (-> "Printer" . ,page-setup-tree)
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
@@ -188,8 +190,6 @@
 	(toggle ("Fast environments" "fast environments"))
 	(toggle ("Semantic editing" "semantic editing"))
 	---
-	(toggle ("Force matching brackets" "matching brackets"))
-	(toggle ("Correct presentation markup" "with correct"))
 	(toggle ("Remove superfluous invisible operators"
 		 "remove superfluous invisible"))
 	(toggle ("Insert missing invisible operators"
