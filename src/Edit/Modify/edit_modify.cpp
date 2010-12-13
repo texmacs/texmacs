@@ -89,8 +89,21 @@ edit_modify_rep::notify_remove_node (path p) {
 void
 edit_modify_rep::notify_set_cursor (path p, tree data) {
   if (!(rp <= p)) return;
-  // TODO: really set cursor(s)
-  cur_pos= position_new (tp);
+  if (data[0] == as_string (author)) {
+    if (is_compound (data, "cursor", 1)) {
+      tp= p;
+      go_to_correct (tp);
+      selection_cancel ();
+    }
+    if (is_compound (data, "start", 1)) {
+      //cout << "Set start selection: " << p << "\n";
+      select (p, p);
+    }
+    if (is_compound (data, "end", 1)) {
+      //cout << "Set end selection: " << p << "\n";
+      selection_set_end (p);
+    }
+  }
 }
 
 void
@@ -223,7 +236,8 @@ void
 edit_done (editor_rep* ed, modification mod) {
   path p= copy (mod->p);
   ASSERT (ed->the_buffer_path() <= p, "invalid modification");
-  ed->post_notify (p);
+  if (mod->k != MOD_SET_CURSOR)
+    ed->post_notify (p);
 #ifdef EXPERIMENTAL
   copy_announce (subtree (ed->et, ed->rp), ed->cct, mod / ed->rp);
 #endif
@@ -248,6 +262,21 @@ edit_modify_rep::clear_undo_history () {
 double
 edit_modify_rep::this_author () {
   return author;
+}
+
+void
+edit_modify_rep::archive_state () {
+  tree d1= compound ("cursor", as_string (author));
+  tree d2= compound ("start", as_string (author));
+  tree d3= compound ("end", as_string (author));
+  path sp1= selection_get_start ();
+  path sp2= selection_get_end ();
+  if (path_less (sp1, sp2)) {
+    //cout << "Selection: " << sp1 << "--" << sp2 << "\n";
+    arch->add (mod_set_cursor (path_up (sp2), last_item (sp2), d3));
+    arch->add (mod_set_cursor (path_up (sp1), last_item (sp1), d2));
+  }
+  arch->add (mod_set_cursor (path_up (tp), last_item (tp), d1));
 }
 
 void
@@ -298,6 +327,7 @@ edit_modify_rep::undo_possibilities () {
 void
 edit_modify_rep::undo (bool redoable) {
   interrupt_shortcut ();
+  arch->forget_cursor ();
   if (inside_graphics () && !as_bool (eval ("graphics-undo-enabled"))) {
     eval ("(graphics-reset-context 'undo)"); return; }
   if (arch->undo_possibilities () == 0) {
@@ -333,6 +363,7 @@ edit_modify_rep::redo_possibilities () {
 void
 edit_modify_rep::redo (int i) {
   interrupt_shortcut ();
+  arch->forget_cursor ();
   if (arch->redo_possibilities () == 0) {
     set_message ("No more redo information available", "redo"); return; }
   path p= arch->redo (i);

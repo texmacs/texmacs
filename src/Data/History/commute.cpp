@@ -42,14 +42,14 @@ invert (modification m, tree t) {
   path rp= root (m);
   switch (m->k) {
   case MOD_ASSIGN:
-    return mod_assign (rp, subtree (t, rp));
+    return mod_assign (rp, copy (subtree (t, rp)));
   case MOD_INSERT:
     return mod_remove (rp, index (m), insert_length (m->t));
   case MOD_REMOVE:
     {
       int i= index (m);
       int n= argument (m);
-      return mod_insert (rp, i, insert_range (subtree (t, rp), i, n));
+      return mod_insert (rp, i, copy (insert_range (subtree (t, rp), i, n)));
     }
   case MOD_SPLIT:
     return mod_join (rp, index (m));
@@ -66,7 +66,7 @@ invert (modification m, tree t) {
     {
       tree u= subtree (t, rp);
       int  i= index (m);
-      return mod_insert_node (rp, i, u (0, i) * u (i+1, N(u)));
+      return mod_insert_node (rp, i, copy (u (0, i) * u (i+1, N(u))));
     }
   case MOD_SET_CURSOR:
     return m;

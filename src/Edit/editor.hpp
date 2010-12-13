@@ -277,6 +277,7 @@ public:
   virtual void post_notify (path p) = 0;
   virtual void clear_undo_history () = 0;
   virtual double this_author () = 0;
+  virtual void archive_state () = 0;
   virtual void start_editing () = 0;
   virtual void end_editing () = 0;
   virtual void start_slave (double a) = 0;

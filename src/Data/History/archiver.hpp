@@ -47,10 +47,11 @@ public:
   void start_slave (double a);
   bool active ();
   bool has_history ();
-  void cancel ();    // cancel current series of modifications
-  void confirm ();   // move current modifications to history
-  bool retract ();   // reopen last history item for further modifications
-  bool forget ();    // undo and forget about last history item
+  void cancel ();        // cancel current series of modifications
+  void confirm ();       // move current modifications to history
+  bool retract ();       // reopen last history item for further modifications
+  bool forget ();        // undo and forget about last history item
+  void forget_cursor (); // forget cursor modifications in last history item
   void simplify ();
 
   int  undo_possibilities ();

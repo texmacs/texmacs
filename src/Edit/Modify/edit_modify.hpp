@@ -39,6 +39,7 @@ public:
   void post_notify        (path p);
 
   void clear_undo_history ();
+  void archive_state ();
   void start_editing ();
   void end_editing ();
   void start_slave (double a);

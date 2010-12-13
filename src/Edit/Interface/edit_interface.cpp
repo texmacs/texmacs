@@ -596,6 +596,7 @@ edit_interface_rep::full_screen_mode (bool flag) {
 
 void
 edit_interface_rep::before_menu_action () {
+  archive_state ();
   start_editing ();
   set_input_normal ();
 }

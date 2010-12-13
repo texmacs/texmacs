@@ -484,6 +484,7 @@ commute (patch p1, patch p2) {
 
 bool
 join (patch& p1, patch p2, tree t) {
+  //cout << "Join " << p1 << LF << "with " << p2 << LF;
   if (get_type (p1) == PATCH_AUTHOR &&
       get_type (p2) == PATCH_AUTHOR &&
       get_author (p1) == get_author (p2))
@@ -506,6 +507,30 @@ join (patch& p1, patch p2, tree t) {
       bool v= join (i2, i1, clean_apply (p2, clean_apply (p1, t)));
       if (r && v) p1= patch (m1, i2);
       return r && v;
+    }
+  if (get_type (p1) == PATCH_COMPOUND &&
+      nr_children (p1) > 0 &&
+      nr_children (remove_set_cursor (p1)) == 1 &&
+      nr_children (p1[0]) == 1)
+    {
+      patch q= p1[0];
+      bool rf= join (q, p2, t);
+      if (rf) p1= q;
+      return rf;
+    }
+  if (get_type (p2) == PATCH_COMPOUND &&
+      nr_children (p2) > 0 &&
+      nr_children (remove_set_cursor (p2)) == 1 &&
+      nr_children (p2[0]) == 1)
+    {
+      patch q= p2[0];
+      bool rf= join (p1, q, t);
+      if (rf) {
+        array<patch> a= children (p1);
+        array<patch> b= children (p2);
+        p1= patch (append (a, range (b, 1, N(b))));
+      }
+      return rf;
     }
   return false;
 }
@@ -628,4 +653,35 @@ cursor_hint (patch p, tree t) {
     FAILED ("unsupported patch type");
   }
   return path ();
+}
+
+patch
+remove_set_cursor (patch p) {
+  switch (get_type (p)) {
+  case PATCH_MODIFICATION:
+    if (get_modification (p)->k != MOD_SET_CURSOR) return copy (p);
+    return patch (array<patch> ());
+  case PATCH_COMPOUND:
+    {
+      array<patch> r;
+      for (int i=0; i<N(p); i++) {
+        patch q= remove_set_cursor (p[i]);
+        r << children (q);
+      }
+      if (N(r) == 1) return r[0];
+      return patch (r);
+    }
+  case PATCH_BRANCH:
+  case PATCH_BIRTH:
+    return copy (p);
+  case PATCH_AUTHOR:
+    {
+      patch q= remove_set_cursor (p[0]);
+      if (nr_children (q) == 0) return q;
+      else return patch (get_author (p), q);
+    }
+  default:
+    FAILED ("unsupported patch type");
+  }
+  return p;
 }

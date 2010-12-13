@@ -259,6 +259,7 @@ archiver_rep::normalize () {
 
 void
 archiver_rep::add (modification m) {
+  m= copy (m);
   if (the_owner != 0 && the_owner != get_author ()) {
     //cout << "Change " << the_owner << " -> " << get_author () << "\n";
     confirm ();
@@ -306,15 +307,19 @@ void
 archiver_rep::confirm () {
   if (active ()) {
     current= patch (the_owner, compactify (current));
-    //cout << "Confirm " << current << "\n";
-    archive= patch (current, archive);
-    current= make_compound (0);
-    the_owner= 0;
-    depth++;
-    if (depth <= last_save) last_save= -1;
-    if (depth <= last_autosave) last_autosave= -1;
-    normalize ();
-    //show_all ();
+    if (nr_children (remove_set_cursor (current)) == 0)
+      current= make_compound (0);
+    if (active ()) {
+      //cout << "Confirm " << current << "\n";
+      archive= patch (current, archive);
+      current= make_compound (0);
+      the_owner= 0;
+      depth++;
+      if (depth <= last_save) last_save= -1;
+      if (depth <= last_autosave) last_autosave= -1;
+      normalize ();
+      //show_all ();
+    }
   }
 }
 
@@ -348,6 +353,11 @@ archiver_rep::forget () {
   bool r= retract ();
   if (r) cancel ();
   return r;
+}
+
+void
+archiver_rep::forget_cursor () {
+  current= remove_set_cursor (current);
 }
 
 /******************************************************************************
@@ -402,10 +412,8 @@ archiver_rep::undo_one (int i) {
   if (undo_possibilities () != 0) {
     ASSERT (i == 0, "index out of range");
     patch p= car (get_undo (archive));
-    //cout << "p= " << p << "\n";
     ASSERT (is_applicable (p, the_et), "history corrupted");
     patch q= invert (p, the_et);
-    //cout << "q= " << q << "\n";
     apply (p);
     patch re1= patch (q, get_redo (archive));
     patch nx = cdr (get_undo (archive));

@@ -101,6 +101,7 @@ edit_interface_rep::try_shortcut (string comb) {
     sh_s= comb;
     sh_mark= new_marker ();
     mark_start (sh_mark);
+    archive_state ();
     string rew_s= sv->kbd_post_rewrite (sh_s);
     tree rew= sv->kbd_system_rewrite (rew_s);
     if (N(help)>0) set_message (help, rew);
@@ -146,6 +147,7 @@ edit_interface_rep::key_press (string gkey) {
     pre_edit_s= s;
     pre_edit_mark= new_marker ();
     mark_start (pre_edit_mark);
+    archive_state ();
     insert_tree (compound ("pre-edit", s), path (0, pos));
     return;
   }
@@ -161,11 +163,14 @@ edit_interface_rep::key_press (string gkey) {
   if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
     if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255))
-      if (!inside_active_graphics ())
+      if (!inside_active_graphics ()) {
+        archive_state ();
 	insert_tree (rew);
+      }
     interrupt_shortcut ();
   }
   else if (contains_unicode_char (rew)) {
+    archive_state ();
     insert_tree (key);
     interrupt_shortcut ();    
   }

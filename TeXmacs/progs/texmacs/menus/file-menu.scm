@@ -77,6 +77,9 @@
 (menu-bind print-menu
   ("Preview with ghostview" (preview-with-ghostview))
   ---
+  ;;("Print all"
+  ;; (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
+  ;; (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
   ("Print all" (print-buffer))
   ("Print page selection" (interactive print-pages))
   ("Print all to file"
