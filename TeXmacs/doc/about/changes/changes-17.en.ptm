@@ -4,7 +4,7 @@
   all big operators should admit well-specified scopes. To this effect, the
   way parenthesized expressions are edited has changed, although the old
   non-matching editing style can be restored using
-  <expand|menu|Edit|Preferences|Keyboard|Automatic brackets|Disabled>.
+  <expand|menu|Edit|Preferences|Keyboard|Automatic brackets|Disable>.
 
   Documents for previous versions of <expand|TeXmacs> will be upgraded automatically
   in order to make all brackets match and determine the scopes of big
