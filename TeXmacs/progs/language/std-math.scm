@@ -17,11 +17,6 @@
 (define-language std-math-operators
   (:synopsis "standard mathematical operators")
 
-  (define Skip
-    (:operator)
-    (Skip-symbol :args :>)
-    (:<with "mode" :/ :args :>))
-
   (define Pre
     (:selectable inside)
     (:<lsub Script :>)
@@ -249,7 +244,6 @@
     (Main Separator)
     (Main ".")
     (Main "\n")
-    (Main Skip)
     Relaxed-expressions)
 
   (define Relaxed-expressions
@@ -351,14 +345,12 @@
   (define Prefixed
     (Prefix-prefix Prefixed)
     (Pre Prefixed)
-    (Skip Prefixed)
     (Postfixed Space-infix Prefixed)
     Postfixed)
 
   (define Postfixed
     (Postfixed Postfix-postfix)
     (Postfixed Post)
-    (Postfixed Skip)
     (Postfixed Open Close)
     (Postfixed Open Expressions Close)
     (Postfixed :<around :any :/ (* Post) (* Pre) :/ :any :>)

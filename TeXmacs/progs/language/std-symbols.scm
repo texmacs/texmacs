@@ -578,10 +578,4 @@
     :<frac :<sqrt :<wide :<table :<row
     :<around :<around* :<big-around :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime
-    :<Prefix :<Postfix)
-
-  (define Skip-symbol
-    :<space :<hspace :<vspace :<vspace* :<htab
-    :<with-limits :<line-break :<new-line :<next-line :<no-break
-    :<no-indent :<yes-indent :<no-indent* :<yes-indent*
-    :<label :<eq-number :<text :<assign :<hidden))
+    :<Prefix :<Postfix))
