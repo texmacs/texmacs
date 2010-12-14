@@ -388,8 +388,8 @@ qt_ui_element_rep::as_qaction () {
       T x = open_box<T>(load);
       string str = x.x1;
       int style = x.x2;
-      color col = x.x3;
-      bool tsp = x.x4;
+      //color col = x.x3;
+      //bool tsp = x.x4;
       
       // a text widget with a given color and transparency
 
@@ -625,8 +625,8 @@ qt_ui_element_rep::as_qlayoutitem () {
       T x = open_box<T>(load);
       string str = x.x1;
       int style = x.x2;
-      color col = x.x3;
-      bool tsp = x.x4;
+      //color col = x.x3;
+      //bool tsp = x.x4;
       
       // a text widget with a given color and transparency
       QLabel *w = new QLabel();
