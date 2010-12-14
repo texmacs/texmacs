@@ -15,36 +15,40 @@
 #include <QLabel>
 #include <QLineEdit>
 
-QTMInteractivePrompt::QTMInteractivePrompt(qt_widget _int_prompt, qt_widget _int_input, 
-																					 QMainWindow* mw, QWidget* parent)
-  : QWidget(parent),int_prompt(_int_prompt), int_input(_int_input), _mw(mw)
+QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt, 
+                                           qt_widget int_input, 
+																					 QWidget* parent)
+  : QWidget(parent)
 {
   QLayoutItem *li = int_prompt->as_qlayoutitem ();
   QLayoutItem *li2 = int_input->as_qlayoutitem ();
-  _le = qobject_cast<QLineEdit*>(li2->widget());
-  QHBoxLayout *_hl = new QHBoxLayout();
+  QHBoxLayout *_hl = new QHBoxLayout ();
 
-	setStyle (qtmstyle());
+	setStyle (qtmstyle ());
   
-	if (QLabel *_la = qobject_cast<QLabel*>(li->widget()))
-    _la->setBuddy (li2->widget());
-  _hl->addItem(li);
-  _hl->addItem(li2);
-	_hl->setContentsMargins(3,0,0,0);
-  setLayout(_hl);
+	if (QLabel *_la = qobject_cast<QLabel*> (li->widget ()))
+    _la->setBuddy (li2->widget ());
+	if (QWidget *w = qobject_cast<QWidget*> (li2->widget ())) 
+    w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  _hl->addItem (li);
+  _hl->addSpacing (6);
+  _hl->addItem (li2);
+	_hl->setContentsMargins (3,0,0,0);
+  setLayout (_hl);
 	
-  QFont f = font();
-  f.setPointSize(11);
-  setFont(f);
+  QFont f = font ();
+  f.setPointSize (11);
+  setFont (f);
 
   
 }
 
 
 void QTMInteractivePrompt::start() {
+  QWidget *_le = findChild<QLineEdit*>();
   if (_le) {
-    _le->show();
-    _le->setFocus(Qt::OtherFocusReason);  
+    _le->show ();
+    _le->setFocus (Qt::OtherFocusReason);  
   }
 }
 

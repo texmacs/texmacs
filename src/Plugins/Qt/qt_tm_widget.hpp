@@ -97,7 +97,6 @@ public:
     return qobject_cast<QTMWidget*> (tm_scrollarea()); }
   
   void updateVisibility();
-  void do_interactive_prompt ();
   void install_main_menu ();
   void set_full_screen (bool flag);
 };

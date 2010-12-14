@@ -75,10 +75,6 @@ replaceButtons(QToolBar* dest, QWidget* src) {
   dest->setUpdatesEnabled(true);
 }
 
-void QTMInteractiveInputHelper::doit() {
-  wid->do_interactive_prompt();
-}
-
 void QTMInteractiveInputHelper::commit(int result) {
   if (wid) {
     if (result == QDialog::Accepted) {
@@ -523,7 +519,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
 
       if (open_box<bool> (val) == true) {
-        prompt = new QTMInteractivePrompt(int_prompt, int_input, tm_mainwindow());
+        prompt = new QTMInteractivePrompt (int_prompt, int_input);
         tm_mainwindow()->statusBar()->removeWidget(leftLabel);
         tm_mainwindow()->statusBar()->removeWidget(rightLabel);
         tm_mainwindow()->statusBar()->addWidget(prompt);
@@ -912,12 +908,5 @@ qt_tm_widget_rep::do_interactive_prompt () {
 #endif
 }
 #else
-
-void
-qt_tm_widget_rep::do_interactive_prompt () {
-	QTMInteractivePrompt _prompt(int_prompt, int_input, tm_mainwindow());
- // QObject::connect (&_prompt, SIGNAL (finished (int)), &helper, SLOT(commit (int)));
-	//_prompt.exec();
-}
 
 #endif

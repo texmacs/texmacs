@@ -25,7 +25,6 @@ public:
     QObject(), wid(_wid) {}
 
 public slots:
-  void doit();
   void commit(int result);
 };
 
