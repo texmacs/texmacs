@@ -155,9 +155,9 @@ QTMWidget::QTMWidget (simple_widget_rep *_wid)
   : QTMScrollView (), backingPixmap(), imwidget(NULL) {
   setObjectName("A QTMWidget");
   setProperty ("texmacs_widget", QVariant::fromValue ((void*) _wid));
-  QAbstractScrollArea::viewport()->setMouseTracking (true);
+  surface()->setMouseTracking (true);
   setFocusPolicy (Qt::StrongFocus);
-  backing_pos = origin;
+  backing_pos = origin();
   setAttribute(Qt::WA_InputMethodEnabled);
 }
 
@@ -175,7 +175,8 @@ QTMWidget::invalidate_rect (int x1, int y1, int x2, int y2) {
 
 void 
 QTMWidget::invalidate_all () {
-  QSize sz = QAbstractScrollArea::viewport()->size();
+  QSize sz = surface()->size();
+ // QPoint pt = QAbstractScrollArea::viewport()->pos();
    //cout << "invalidate all " << LF;
   invalid_regions = rectangles();
   invalidate_rect (0, 0, sz.width(), sz.height());
@@ -228,11 +229,11 @@ QTMWidget::repaint_invalid_regions () {
   // qrgn is to keep track of the area on the sceen which needs to be updated 
 
   // update backing store origin wrt. TeXmacs document
-  if ( backing_pos != origin ) {
+  if ( backing_pos != origin() ) {
 
-    int dx =  origin.x() - backing_pos.x();
-    int dy =  origin.y() - backing_pos.y();
-    backing_pos = origin;
+    int dx =  origin().x() - backing_pos.x();
+    int dy =  origin().y() - backing_pos.y();
+    backing_pos = origin();
     
     QPixmap newBackingPixmap (backingPixmap.size());
     QPainter p (&newBackingPixmap);
@@ -277,28 +278,27 @@ QTMWidget::repaint_invalid_regions () {
     qrgn += QRect(QPoint(0,0),sz);
   }
   
+  
   // update backing store size
-  if (0) {
+  {
     QSize _oldSize = backingPixmap.size();
-    QSize _newSize = QAbstractScrollArea::viewport()->size();
+    QSize _newSize = surface()->size();
     if (_newSize != _oldSize) {
       // cout << "RESIZING BITMAP"<< LF;
       QPixmap newBackingPixmap (_newSize);
       QPainter p (&newBackingPixmap);
       p.drawPixmap(0,0,backingPixmap);
-      p.fillRect(0, 0, _newSize.width(), _newSize.height(), Qt::red);
+      //p.fillRect(0, 0, _newSize.width(), _newSize.height(), Qt::red);
       if (_newSize.width() >= _oldSize.width()) {
-       // invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
-        p.fillRect(QRect(_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::green);
+        invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
+        p.fillRect(QRect(_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
       }
       if (_newSize.height() >= _oldSize.height()) {
-        //invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
-        p.fillRect(QRect(0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::green);
+        invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
+        p.fillRect(QRect(0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
       }
       p.end();
       backingPixmap = newBackingPixmap;
-     // invalidate_all();
-//      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
     }
   }
   
@@ -347,54 +347,41 @@ QTMWidget::repaint_invalid_regions () {
   }
 
   // propagate immediatly the changes to the screen  
-  QAbstractScrollArea::viewport()->repaint(qrgn);
+  surface()->repaint(qrgn);
   
 }
 
 void 
 QTMWidget::scrollContentsBy ( int dx, int dy ) {
   QTMScrollView::scrollContentsBy (dx,dy);
-  // the_gui::update needs to be run as soon as possible to refresh the status
-  // of the widget.
-  needs_update(); 
+
+  force_update();
+  // we force an update of the internal state to be in sync with the moving
+  // scrollbars
 }
 
 void 
 QTMWidget::resizeEvent( QResizeEvent* event ) {
+  (void) event;
+  
   // cout << "QTMWidget::resizeEvent (" << event->size().width()
   //      << "," << event->size().height() << ")" << LF;
-  QTMScrollView::resizeEvent (event);
-  // the_gui::update needs to be run as soon as possible to refresh the status
-  // of the widget.
-  
-  // update backing store size
-  {
-    QSize _oldSize = backingPixmap.size();
-    QSize _newSize = QAbstractScrollArea::viewport()->size();
-    if (_newSize != _oldSize) {
-      // cout << "RESIZING BITMAP"<< LF;
-      QPixmap newBackingPixmap (_newSize);
-      QPainter p (&newBackingPixmap);
-      p.drawPixmap(0,0,backingPixmap);
-      //p.fillRect(0, 0, _newSize.width(), _newSize.height(), Qt::red);
-      if (_newSize.width() >= _oldSize.width()) {
-         invalidate_rect(_oldSize.width(), 0, _newSize.width(), _newSize.height());
-        p.fillRect(QRect(_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
-      }
-      if (_newSize.height() >= _oldSize.height()) {
-        invalidate_rect(0,_oldSize.height(), _newSize.width(), _newSize.height());
-        p.fillRect(QRect(0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
-      }
-      p.end();
-      backingPixmap = newBackingPixmap;
-      // invalidate_all();
-      //      the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
-    }
-  }
   
   the_gui -> process_resize(tm_widget(), 0, 0); // FIXME
-//  needs_update(); 
+
+  // force_update();
+
+  //FIXME: I would like to have a force_update here but this cause a failed
+  //assertion in TeXmacs since the at the boot not every internal structure is
+  //initialized at this point. It seems not too difficult to fix but I
+  //postpone this to discuss with Joris. 
+  //
+  //Not having a force_update results in some lack of sync of the surface
+  //while the user is actively resizing with the mouse.
 }
+
+
+
 
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
@@ -414,7 +401,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   }
     
   {    
-    QPainter p (QAbstractScrollArea::viewport());
+    QPainter p (surface());
     QVector<QRect> rects = event->region().rects();
     for (int i=0; i< rects.count(); i++) {
       QRect qr = rects.at(i);
@@ -757,7 +744,7 @@ void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
   simple_widget_rep *wid= tm_widget ();
   if (!wid) return;
-  QPoint point = event->pos() + origin;
+  QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
@@ -773,7 +760,7 @@ void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   simple_widget_rep *wid = tm_widget();
   if (!wid) return;
-  QPoint point = event->pos() + origin;;
+  QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, true);
   string s= "release-" * mouse_decode (mstate);
@@ -789,7 +776,7 @@ void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   simple_widget_rep *wid = tm_widget();
   if (!wid) return;
-  QPoint point = event->pos() + origin;
+  QPoint point = event->pos() + origin();
   scale (point);
   unsigned int mstate= mouse_state (event, false);
   string s= "move";
@@ -808,7 +795,7 @@ QTMWidget::event (QEvent* event) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
     keyPressEvent (ke);
     return true;
-  }
+  } 
   return QTMScrollView::event (event);
 }
 

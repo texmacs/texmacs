@@ -577,7 +577,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_SCROLL_POSITION:
     {
       TYPE_CHECK (type_id == type_helper<coord2>::id);
-      QPoint pt= tm_canvas()->origin;
+      QPoint pt= tm_canvas()->origin();
       if (DEBUG_QT)
         cout << "Position (" << pt.x() << "," << pt.y() << ")\n";
       return close_box<coord2> (from_qpoint (pt));
@@ -586,16 +586,17 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_EXTENTS:
     {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QRect rect= tm_canvas()->extents;
+      QRect rect= tm_canvas()->extents();
       coord4 c= from_qrect (rect);
-      if (DEBUG_QT) cout << "Canvas geometry " << rect << LF;
+      //if (DEBUG_QT) 
+        cout << "Canvas geometry " << rect << LF;
       return close_box<coord4> (c);
     }
       
     case SLOT_VISIBLE_PART:
     {
       TYPE_CHECK (type_id == type_helper<coord4>::id);
-      QSize sz = tm_canvas()->QAbstractScrollArea::viewport()->size();
+      QSize sz = tm_canvas()->surface()->size();
         //sz.setWidth(sz.width()-2);
       QPoint pos = tm_canvas()->backing_pos;
       coord4 c = from_qrect(QRect(pos,sz));

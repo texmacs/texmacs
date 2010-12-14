@@ -1007,6 +1007,16 @@ beep () {
 }
 
 void
+force_update() {
+  if (updating) {
+    needing_update = true;
+  }
+  else {
+    the_gui->update();
+  }
+}
+
+void
 needs_update () {
   // 0 ms - call immediately when all other events have 
   // been processed

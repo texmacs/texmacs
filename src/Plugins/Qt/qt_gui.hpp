@@ -95,4 +95,7 @@ public:
   
 };
 
+void force_update(); 
+// force an immediate update of the internal texmacs state
+
 #endif // defined QT_GUI_HPP

@@ -25,24 +25,28 @@ class QPaintEvent;
 
 class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
+
+  QRect p_extents;
+  QPoint p_origin;
+  QWidget *p_surface;
   
 public:
   
-  QRect extents;
-  QPoint origin;
- 
   QTMScrollView (QWidget *_parent = NULL);
   virtual ~QTMScrollView();
   
   void setOrigin ( QPoint newOrigin ) ;
   void setExtents ( QRect newExtents ) ;
+  QRect extents() { return p_extents; }
+  QWidget* surface() ;
+  QPoint origin() { return p_origin; }
   
   // Scrolls contents so that given point is visible.
-  void ensureVisible(int cx, int cy, int mx = 50, int my = 50);
+  void ensureVisible (int cx, int cy, int mx = 50, int my = 50);
   
   // Viewport/contents position converters.
-  QPoint viewportToContents ( QPoint const& pos) const { return pos + origin; };
-  QPoint contentsToViewport ( QPoint const& pos) const { return pos - origin; };
+  QPoint viewportToContents ( QPoint const& pos) const { return pos + p_origin; };
+  QPoint contentsToViewport ( QPoint const& pos) const { return pos - p_origin; };
   
 protected:
   
@@ -52,12 +56,11 @@ protected:
   // Scroll area updater.
   void scrollContentsBy(int dx, int dy);
   
-  // Specialized event handlers.
-  void resizeEvent(QResizeEvent *pResizeEvent);
-  void wheelEvent(QWheelEvent *pWheelEvent);
-  
-  // Rectangular contents update.
-  void updateContents(const QRect& rect);
+  virtual bool viewportEvent(QEvent *e);
+  virtual bool surfaceEvent(QEvent *e);
+  virtual bool event(QEvent *e);
+
+  friend class QTMSurface;
 };
 
 #endif // QTMSCROLLVIEW_HPP
