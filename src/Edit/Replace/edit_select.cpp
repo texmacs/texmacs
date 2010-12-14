@@ -14,6 +14,7 @@
 #include "convert.hpp"
 #include "packrat.hpp"
 #include "tree_select.hpp"
+#include "drd_mode.hpp"
 
 /******************************************************************************
 * Internationalization
@@ -119,6 +120,7 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
 
 void
 edit_select_rep::select (path p1, path p2) {
+  //cout << "Select " << p1 << " -- " << p2 << "\n";
   if (start_p == p1 && end_p == p2) return;
   if (!(rp <= p1 && rp <= p2)) return;
   if (p1 != p2) {
@@ -434,7 +436,11 @@ table_search_cell (tree t, int row, int col) {
 void
 edit_select_rep::selection_correct (path i1, path i2, path& o1, path& o2) {
   ASSERT (rp <= i1 && rp <= i2, "paths not inside document");
+  int old_mode= get_access_mode ();
+  if (get_init_string (MODE) == "src")
+    set_access_mode (DRD_ACCESS_SOURCE);
   ::selection_correct (subtree (et, rp), i1 / rp, i2 / rp, o1, o2);
+  set_access_mode (old_mode);
   o1= rp * o1; o2= rp * o2;
 }
 
