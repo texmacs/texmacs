@@ -88,6 +88,8 @@ superfluous_with_correct (tree t, tree env) {
     //cout << "Superfluous correcting " << t << ", " << env << LF;
     if (is_compound (t, "body", 1))
       return compound ("body", superfluous_with_correct (t[0], env));
+    if (is_func (t, WITH) && ((N(t) & 1) == 0))
+      t= t * tree (WITH, "");
     tree r (t, N(t));
     for (int i=0; i<N(t); i++)
       r[i]= superfluous_with_correct
