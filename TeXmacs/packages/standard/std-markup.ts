@@ -115,8 +115,6 @@
 
   <assign|text|<macro|body|<with|mode|text|<arg|body>>>>
 
-  <assign|op|<macro|body|<with|math-condensed|true|<arg|body>>>>
-
   <assign|cite*|<macro|body|<with|font-shape|italic|<arg|body>>>>
 
   <assign|dfn|<macro|body|<with|font-shape|italic|<arg|body>>>>
@@ -130,6 +128,10 @@
   <assign|acronym|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
   <assign|person|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
+
+  <assign|op|<macro|body|<with|math-condensed|true|<arg|body>>>>
+
+  <drd-props|op|arity|1|meaning|<macro|body|x>>
 
   <\active*>
     <\src-comment>

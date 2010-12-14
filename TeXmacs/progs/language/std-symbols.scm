@@ -242,7 +242,7 @@
     (:spacing default default)
     "<cdot>" "<times>" "<otimes>" "<circ>" "<boxdot>" "<boxtimes>"
     "<dottimes>" "<dototimes>" "<ltimes>" "<rtimes>" "<atimes>" "<btimes>"
-    "<join>" "<ast>" "<star>" "<oast>")
+    "<join>" "<ast>" "<star>" "<oast>" "<asterisk>")
 
   (define Times-invisible-symbol
     (:type infix)

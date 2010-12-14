@@ -389,6 +389,7 @@ drd_info_rep::set_type (tree_label l, int nr, int tp) {
 
 int
 drd_info_rep::get_type (tree_label l, int nr) {
+  if (nr >= N(info[l]->ci)) return TYPE_ADHOC;
   return info[l]->ci[nr].type;
 }
 
@@ -396,6 +397,7 @@ void
 drd_info_rep::freeze_type (tree_label l, int nr) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   ci.freeze_type= true;
 }
@@ -431,6 +433,7 @@ drd_info_rep::set_accessible (tree_label l, int nr, int is_accessible) {
 
 int
 drd_info_rep::get_accessible (tree_label l, int nr) {
+  if (nr >= N(info[l]->ci)) return ACCESSIBLE_NEVER;
   return info[l]->ci[nr].accessible;
 }
 
@@ -438,6 +441,7 @@ void
 drd_info_rep::freeze_accessible (tree_label l, int nr) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   ci.freeze_accessible= true;
 }
@@ -502,6 +506,7 @@ drd_info_rep::set_writability (tree_label l, int nr, int writability) {
 
 int
 drd_info_rep::get_writability (tree_label l, int nr) {
+  if (nr >= N(info[l]->ci)) return WRITABILITY_NORMAL;
   return info[l]->ci[nr].writability;
 }
 
@@ -509,6 +514,7 @@ void
 drd_info_rep::freeze_writability (tree_label l, int nr) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   ci.freeze_writability= true;
 }
@@ -626,6 +632,7 @@ drd_info_rep::set_env (tree_label l, int nr, tree env) {
 
 tree
 drd_info_rep::get_env (tree_label l, int nr) {
+  if (nr >= N(info[l]->ci)) return tree (WITH);
   return drd_decode (info[l]->ci[nr].env);
 }
 
@@ -633,6 +640,7 @@ void
 drd_info_rep::freeze_env (tree_label l, int nr) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   ci.freeze_env= true;
 }
@@ -670,6 +678,7 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
     return drd_env_merge (env, cenv);
   }
 }
+
 
 tree
 drd_info_rep::get_env_child (tree t, int i, string var, tree val) {

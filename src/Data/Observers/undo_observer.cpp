@@ -42,6 +42,7 @@ void
 undo_observer_rep::announce (tree& ref, modification mod) {
   if (mod->k == MOD_ASSIGN && mod->p == path () && mod->t == ref) return;
   if (!ip_attached (obtain_ip (ref))) return;
+  //if (admits_edit_observer (ref) && is_nil (root (mod)))
   //cout << "Archive " << mod << "\n";
   archive_announce (arch, reverse (obtain_ip (ref)) * mod);
 }

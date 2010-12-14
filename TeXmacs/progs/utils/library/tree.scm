@@ -108,13 +108,15 @@
 	   (if (== (tm-car ref) (tm-car t)) ref
 	       (tree-assign-node! ref (tm-car t))))
 	  ((and (tm-compound? ref)
-		(= (+ l r) (tm-arity t)) (> (tm-arity ref) (tm-arity t)))
+		(= (+ l r) (tm-arity t)) (> (tm-arity ref) (tm-arity t))
+                (not (tree-is-buffer? ref)))
 	   (tree-remove! ref l (- (- (tm-arity ref) r) l))
 	   (if (== (tm-car ref) (tm-car t)) ref
 	       (tree-assign-node! ref (tm-car t))))
 	  (else
 	   (with pos (tree-focus ref (tm-cdr t))
-	     (if (not pos) (tree-assign! ref t)
+	     (if (or (not pos) (tree-is-buffer? ref))
+                 (tree-assign! ref t)
 		 (let* ((tl (tm->list t))
 			(head (list-head tl (+ pos 1)))
 			(mid  (list-ref tl (+ pos 1)))
