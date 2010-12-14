@@ -291,7 +291,7 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 
 void qt_tm_widget_rep::updateVisibility()
 {
-#define XOR(exp1,exp2) (((!exp1)&&(exp2)) || (exp1) && (!exp2))
+#define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
   bool old_mainVisibility = mainToolBar->isVisible();
   bool old_modeVisibility = modeToolBar->isVisible();
