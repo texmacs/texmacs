@@ -27,4 +27,5 @@
 	((tree-in? t '(document table row cell))
 	 `(,(tree-label t) ,@(map math-check-table (tree-children t))))
 	((== t (tree "")) t)
-	(else (math-check t))))
+        ((packrat-correct? "std-math" "Cell" t) t)
+        (else `(math-error ,t))))

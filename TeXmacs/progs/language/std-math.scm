@@ -364,7 +364,15 @@
     "")
 
   (define Cell
+    (Main Or-infix)
+    (Main And-infix)
+    (Main Union-infix)
+    (Main Exclude-infix)
+    (Main Intersection-infix)
+    (Main Plus-infix)
+    (Main Minus-infix)
     Main
+    Separator
     "")
 
   (define Row
