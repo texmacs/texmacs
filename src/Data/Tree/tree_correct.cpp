@@ -92,7 +92,9 @@ superfluous_with_correct (tree t, tree env) {
     for (int i=0; i<N(t); i++)
       r[i]= superfluous_with_correct
 	      (t[i], the_drd->get_env_child (t, i, env));
-    if (is_compound (r, "math", 1) && drd_env_read (env, MODE) == "math")
+    if (is_compound (r, "math", 1) && r[0] == "") return "";
+    else if (is_compound (r, "text", 1) && r[0] == "") return "";
+    else if (is_compound (r, "math", 1) && drd_env_read (env, MODE) == "math")
       return r[0];
     else if (is_compound (r, "text", 1) && drd_env_read (env, MODE) == "text")
       return r[0];
