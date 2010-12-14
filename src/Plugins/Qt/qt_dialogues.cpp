@@ -326,13 +326,18 @@ class QTMLineEdit : public QLineEdit {
 public:
   string ww; // width
   
-  QTMLineEdit(QWidget *parent, string _ww) 
-  : QLineEdit(parent), ww(_ww) {};
+  QTMLineEdit (QWidget *parent, string _ww) 
+  : QLineEdit (parent), ww (_ww) {
+    setStyle (qtmstyle());
+    QPalette pal (palette());
+    pal.setColor (QPalette::Base, QColor(250, 250, 220));
+    setPalette (pal);
+  };
   
   virtual QSize	sizeHint () const ;
 protected:
-  void keyPressEvent(QKeyEvent *event);
-  void focusInEvent(QFocusEvent *evenement);
+  void keyPressEvent (QKeyEvent *event);
+  void focusInEvent (QFocusEvent *evenement);
 
 };
 
@@ -390,16 +395,16 @@ QTMLineEdit::sizeHint () const {
 }
 
 void 
-QTMLineEdit::focusInEvent(QFocusEvent *evenement)
+QTMLineEdit::focusInEvent (QFocusEvent *event)
 {
-  setCursorPosition(text().size());
-  selectAll();
-  QLineEdit::focusInEvent(evenement);
+  setCursorPosition (text().size());
+//  selectAll ();
+  QLineEdit::focusInEvent (event);
 }
 
 
-QTMWidgetAction::QTMWidgetAction(QObject *parent)
-: QWidgetAction (parent), helper(NULL) { 
+QTMWidgetAction::QTMWidgetAction (QObject *parent)
+: QWidgetAction (parent), helper (NULL) { 
   QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
 }
 
@@ -463,11 +468,6 @@ qt_input_text_widget_rep::as_qwidget () {
     f.setPixelSize(10);
     le->setFont(f);
     //le->setFrame(false);
-    le->setStyle(qtmstyle());
-    QPalette pal(le->palette());
-    //pal.setColor(QPalette::Base, Qt::lightGray);
-    pal.setColor(QPalette::Base, QColor(252, 252, 248));
-    le->setPalette(pal);
     if (ends(helper->wid()->width,"w")) {
       le->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     } else {
