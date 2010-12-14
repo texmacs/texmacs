@@ -332,6 +332,8 @@ public:
   virtual QSize	sizeHint () const ;
 protected:
   void keyPressEvent(QKeyEvent *event);
+  void focusInEvent(QFocusEvent *evenement);
+
 };
 
 void 
@@ -386,6 +388,15 @@ QTMLineEdit::sizeHint () const {
   }  
   return sz;
 }
+
+void 
+QTMLineEdit::focusInEvent(QFocusEvent *evenement)
+{
+  setCursorPosition(text().size());
+  selectAll();
+  QLineEdit::focusInEvent(evenement);
+}
+
 
 QTMWidgetAction::QTMWidgetAction(QObject *parent)
 : QWidgetAction (parent), helper(NULL) { 
@@ -481,7 +492,7 @@ qt_input_text_widget_rep::as_qwidget () {
       le->setCompleter(completer);
     }
     
-    le->selectAll();
+    //le->selectAll();
     
   } else {
     le = new QLineEdit(NULL);
