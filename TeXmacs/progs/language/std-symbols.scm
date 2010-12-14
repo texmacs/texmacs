@@ -302,12 +302,12 @@
     (:type prefix)
     (:penalty invalid)
     (:spacing none none)
-    "<card>")
+    "#" "<card>")
 
   (define Other-postfix-symbol
     (:type postfix)
     (:penalty panic)
-    "!")
+    "!" "%")
 
   (define Prime-symbol
     (:type symbol)
@@ -379,28 +379,28 @@
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<epsilon>"
     "<varepsilon>" "<zeta>" "<eta>" "<theta>" "<vartheta>"
     "<iota>" "<kappa>" "<varkappa>" "<lambda>" "<mu>" "<nu>"
-    "<xi>" "<omikron>" "<pi>" "<varpi>" "<rho>" "<varrho>"
+    "<xi>" "<omicron>" "<pi>" "<varpi>" "<rho>" "<varrho>"
     "<sigma>" "<varsigma>" "<tau>" "<upsilon>"
     "<phi>" "<varphi>" "<psi>" "<chi>" "<omega>"
     "<backepsilon>" "<mho>"
 
     "<Alpha>" "<Beta>" "<Gamma>" "<Delta>" "<Epsilon>" "<Zeta>"
     "<Eta>" "<Theta>" "<Iota>" "<Kappa>" "<Lambda>" "<Mu>" "<Nu>"
-    "<Xi>" "<Omikron>" "<Pi>" "<Rho>" "<Sigma>" "<Tau>"
+    "<Xi>" "<Omicron>" "<Pi>" "<Rho>" "<Sigma>" "<Tau>"
     "<Upsilon>" "<Phi>" "<Psi>" "<Chi>" "<Omega>"
     "<Backepsilon>" "<Mho>"
 
     "<b-alpha>" "<b-beta>" "<b-gamma>" "<b-delta>" "<b-epsilon>"
     "<b-varepsilon>" "<b-zeta>" "<b-eta>" "<b-theta>" "<b-vartheta>"
     "<b-iota>" "<b-kappa>" "<b-varkappa>" "<b-lambda>" "<b-mu>" "<b-nu>"
-    "<b-xi>" "<b-omikron>" "<b-pi>" "<b-varpi>" "<b-rho>" "<b-varrho>"
+    "<b-xi>" "<b-omicron>" "<b-pi>" "<b-varpi>" "<b-rho>" "<b-varrho>"
     "<b-sigma>" "<b-varsigma>" "<b-tau>" "<b-upsilon>"
     "<b-phi>" "<b-varphi>" "<b-psi>" "<b-chi>" "<b-omega>"
     "<b-backepsilon>" "<b-mho>"
 
     "<b-Alpha>" "<b-Beta>" "<b-Gamma>" "<b-Delta>" "<b-Epsilon>"
     "<b-Zeta>" "<b-Eta>" "<b-Theta>" "<b-Iota>" "<b-Kappa>"
-    "<b-Lambda>" "<b-Mu>" "<b-Nu>" "<b-Xi>" "<b-Omikron>"
+    "<b-Lambda>" "<b-Mu>" "<b-Nu>" "<b-Xi>" "<b-Omicron>"
     "<b-Pi>" "<b-Rho>" "<b-Sigma>" "<b-Tau>" "<b-Upsilon>"
     "<b-Phi>" "<b-Psi>" "<b-Chi>" "<b-Omega>"
     "<b-Backepsilon>" "<b-Mho>"
