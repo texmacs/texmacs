@@ -22,6 +22,7 @@
 (define (guile-b-c?) (or (guile-b?) (guile-c?)))
 (if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
 (define has-look-and-feel? (lambda (x) (== x "emacs")))
+(define (experimental-qt-gui?) #f)
 
 ;; Should be defined 
 (define dialogue-break #f)

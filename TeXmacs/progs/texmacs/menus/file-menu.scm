@@ -77,9 +77,6 @@
 (menu-bind print-menu
   ("Preview with ghostview" (preview-with-ghostview))
   ---
-  ;;("Print all"
-  ;; (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
-  ;; (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
   ("Print all" (print-buffer))
   ("Print page selection" (interactive print-pages))
   ("Print all to file"
@@ -104,8 +101,11 @@
   ("Save as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ("Revert" (revert-buffer))
   ---
+  (if (experimental-qt-gui?)
+      ("Print" (interactive-print-buffer)))
+  (if (not (experimental-qt-gui?))
+      (-> "Print" (link print-menu)))
   (-> "Page setup" (link page-setup-menu))
-  (-> "Print" (link print-menu))
   (-> "Import"
       (link import-import-menu))
   (-> "Export"
