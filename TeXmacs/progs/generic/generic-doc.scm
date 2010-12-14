@@ -249,7 +249,7 @@
                      ($menu "Focus" "Remove right") ", "
                      ($tmdoc-icon "tm_delete_right.xpm"))
           "Remove the current argument and move to the next one."))
-      ($when (structured-horizontal? t)
+      ($when (structured-vertical? t)
         ($describe-item
             ($inline ($menu "Focus" "Remove above") ", "
                      ($tmdoc-icon "tm_delete_up.xpm"))
@@ -329,6 +329,7 @@
 
 (lazy-initialize (table table-doc) (table-markup-context? (focus-tree)))
 (lazy-initialize (generic document-doc) (tree-is-buffer? (focus-tree)))
+(lazy-initialize (dynamic session-doc) (in-session?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public interface
