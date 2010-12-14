@@ -37,7 +37,7 @@
 
 (tm-define page-setup-tree
   '((enum ("Preview command" "preview command")
-	  "default" "ggv" "ghostview" "gv" "kghostview"
+	  "default" "ggv" "ghostview" "gv" "kghostview" "open"
 	  *)
     (enum ("Printing command" "printing command")
 	  "lpr" "lp" "pdq"

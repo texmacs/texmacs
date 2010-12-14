@@ -75,7 +75,7 @@
    (choose-file print-to-file "Save postscript file" "postscript")))
 
 (menu-bind print-menu
-  ("Preview with ghostview" (preview-with-ghostview))
+  ("Preview" (preview-buffer))
   ---
   ("Print all" (print-buffer))
   ("Print page selection" (interactive print-pages))

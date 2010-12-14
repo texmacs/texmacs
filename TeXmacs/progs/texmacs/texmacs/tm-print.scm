@@ -98,13 +98,15 @@
   (:argument first "First page")
   (:argument last "Last page"))
 
-(tm-define (preview-with-ghostview)
+(tm-define (preview-buffer)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps")
   (cond ((!= preview-command "default")
 	 (shell (string-append preview-command
 			       " $TEXMACS_HOME_PATH/system/tmp/preview.ps &")))
         ((os-win32?)
 	 (shell "__previewps__ $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
+        ((os-macos?)
+         (shell "open $TEXMACS_HOME_PATH/system/tmp/preview.ps"))
         ((url-exists-in-path? "ggv")
 	 (shell "ggv $TEXMACS_HOME_PATH/system/tmp/preview.ps &"))
 	((url-exists-in-path? "ghostview")
