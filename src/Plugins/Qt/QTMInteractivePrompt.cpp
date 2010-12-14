@@ -25,6 +25,7 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
   QHBoxLayout *_hl = new QHBoxLayout ();
 
 	setStyle (qtmstyle ());
+  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   
 	if (QLabel *_la = qobject_cast<QLabel*> (li->widget ()))
     _la->setBuddy (li2->widget ());

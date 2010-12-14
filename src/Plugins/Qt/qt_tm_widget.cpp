@@ -146,7 +146,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     leftLabel->setFont(f);
     rightLabel->setFont(f);
   }
-  bar->addWidget (leftLabel);
+  bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
   bar->setStyle (qtmstyle ());
   
@@ -522,7 +522,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
         prompt = new QTMInteractivePrompt (int_prompt, int_input);
         tm_mainwindow()->statusBar()->removeWidget(leftLabel);
         tm_mainwindow()->statusBar()->removeWidget(rightLabel);
-        tm_mainwindow()->statusBar()->addWidget(prompt);
+        tm_mainwindow()->statusBar()->addWidget(prompt, 1);
         prompt->start();
       } else {
         if (prompt) prompt->end();
