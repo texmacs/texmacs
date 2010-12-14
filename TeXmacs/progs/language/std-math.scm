@@ -62,16 +62,16 @@
     (Assign-prefix Post)
     Assign-symbol)
 
-  (define Model-infix
+  (define Models-infix
     (:operator)
-    (Model-infix Post)
-    (Pre Model-infix)
-    Model-symbol)
+    (Models-infix Post)
+    (Pre Models-infix)
+    Models-symbol)
 
-  (define Model-prefix
+  (define Models-prefix
     (:operator)
-    (Model-prefix Post)
-    Model-symbol)
+    (Models-prefix Post)
+    Models-symbol)
 
   (define Imply-infix
     (:operator associative)
@@ -281,8 +281,8 @@
     Modeling)
 
   (define Modeling
-    (Sum Model-infix Quantified)
-    (Model-prefix Quantified)
+    (Sum Models-infix Quantified)
+    (Models-prefix Quantified)
     Quantified)
 
   (define Quantified
