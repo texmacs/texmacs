@@ -94,8 +94,8 @@ edit_interface_rep::try_shortcut (string comb) {
     }
     else {
       if (sh_mark != 0 && !mark_cancel (sh_mark)) {
-	sh_mark= 0;
-	return false;
+        sh_mark= 0;
+        return false;
       }
     }
     sh_s= comb;

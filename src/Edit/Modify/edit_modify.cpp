@@ -90,18 +90,28 @@ void
 edit_modify_rep::notify_set_cursor (path p, tree data) {
   if (!(rp <= p)) return;
   if (data[0] == as_string (author)) {
-    if (is_compound (data, "cursor", 1)) {
-      tp= p;
-      go_to_correct (tp);
-      selection_cancel ();
+    if (is_compound (data, "cursor", 1) ||
+        is_compound (data, "cursor-clear", 1)) {
+      if (tp != p) {
+        tp= p;
+        go_to_correct (tp);
+      }
+      if (is_compound (data, "cursor-clear", 1)) {
+        //cout << "Clear selection\n";
+        select (tp, tp);
+      }
     }
-    if (is_compound (data, "start", 1)) {
-      //cout << "Set start selection: " << p << "\n";
-      select (p, p);
+    else if (is_compound (data, "start", 1)) {
+      if (selection_get_start () != p) {
+        //cout << "Set start selection: " << p << "\n";
+        select (p, p);
+      }
     }
-    if (is_compound (data, "end", 1)) {
-      //cout << "Set end selection: " << p << "\n";
-      selection_set_end (p);
+    else if (is_compound (data, "end", 1)) {
+      if (selection_get_end () != p) {
+        //cout << "Set end selection: " << p << "\n";
+        selection_set_end (p);
+      }
     }
   }
 }
@@ -266,17 +276,15 @@ edit_modify_rep::this_author () {
 
 void
 edit_modify_rep::archive_state () {
-  tree d1= compound ("cursor", as_string (author));
-  tree d2= compound ("start", as_string (author));
-  tree d3= compound ("end", as_string (author));
   path sp1= selection_get_start ();
   path sp2= selection_get_end ();
   if (path_less (sp1, sp2)) {
     //cout << "Selection: " << sp1 << "--" << sp2 << "\n";
-    arch->add (mod_set_cursor (path_up (sp2), last_item (sp2), d3));
-    arch->add (mod_set_cursor (path_up (sp1), last_item (sp1), d2));
+    set_cursor (sp2, compound ("end", as_string (author)));
+    set_cursor (sp1, compound ("start", as_string (author)));
+    set_cursor (tp, compound ("cursor", as_string (author)));
   }
-  arch->add (mod_set_cursor (path_up (tp), last_item (tp), d1));
+  else set_cursor (tp, compound ("cursor-clear", as_string (author)));
 }
 
 void

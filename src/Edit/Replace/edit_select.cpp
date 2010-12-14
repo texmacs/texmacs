@@ -491,9 +491,18 @@ edit_select_rep::selection_get (selection& sel) {
 
 void
 edit_select_rep::selection_get (path& start, path& end) {
+  if (selection_active_table ()) {
+    int row1, col1, row2, col2;
+    path fp= selection_get_subtable (row1, col1, row2, col2);
+    start= fp * 0;
+    end= fp * 1;
+  }
+  else selection_correct (start_p, end_p, start, end);
+  /*
   selection sel; selection_get (sel);
   start= sel->start;
   end  = sel->end;
+  */
 }
 
 path
