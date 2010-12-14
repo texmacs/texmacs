@@ -330,7 +330,7 @@ public:
   : QLineEdit (parent), ww (_ww) {
     setStyle (qtmstyle());
     QPalette pal (palette());
-    pal.setColor (QPalette::Base, QColor(250, 250, 220));
+    pal.setColor (QPalette::Base, QColor (252, 252, 248));
     setPalette (pal);
   };
   
