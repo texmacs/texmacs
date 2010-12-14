@@ -961,22 +961,22 @@
       ---
       (tile 15 (link bold-greek-menu))
       ---
-      ("use a bold font" (make-with "math-font-series" "bold")))
+      ("Use a bold font" (make-with "math-font-series" "bold")))
   (=> (balloon (icon "tm_cal.xpm")
 	       "Insert a calligraphic character")
       (tile 13 (link cal-menu))
       ---
-      ("use a calligraphic font" (make-with "math-font" "cal")))
+      ("Use a calligraphic font" (make-with "math-font" "cal")))
   (=> (balloon (icon "tm_frak.xpm")
 	       "Insert a fraktur character")
       (tile 13 (link frak-menu))
       ---
-      ("use the fraktur font" (make-with "math-font" "Euler")))
+      ("Use the fraktur font" (make-with "math-font" "Euler")))
   (=> (balloon (icon "tm_bbb.xpm")
 	       "Insert a blackboard bold character")
       (tile 13 (link bbb-menu))
       ---
-      ("use the blackboard bold font" (make-with "math-font" "Bbb*")))
+      ("Use the blackboard bold font" (make-with "math-font" "Bbb*")))
   (link math-format-icons)
   (link texmacs-insert-icons))
 
