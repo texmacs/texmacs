@@ -187,46 +187,6 @@ qt_menu_rep::send (slot s, blackbox val) {
  * Auxiliary classes
  ******************************************************************************/
 
-
-// we need to subclass QToolButton for two reasons
-// 1) custom appearence
-// 2) if used in QWidgetAction the menu do not disappear upon triggering the
-//    button. See QTBUG-10427.
-
-class QTMToolButton: public QToolButton {
-public:
-  QTMToolButton (QWidget* parent = 0): QToolButton(parent) {}
-  void mouseReleaseEvent(QMouseEvent *event);
-  void mousePressEvent(QMouseEvent *event);
-  void paintEvent(QPaintEvent *event);
-};
-
-void
-QTMToolButton::mousePressEvent (QMouseEvent* event) {
-  // this one triggers the action and toggles the button
-  QToolButton::mousePressEvent (event);
-  // this one forwards the event to the parent
-  // (which eventually is the menu)
-  QWidget::mousePressEvent (event);
-}
-
-void
-QTMToolButton::mouseReleaseEvent (QMouseEvent* event) {
-  // this one triggers the action and untoggles the button
-  QToolButton::mouseReleaseEvent (event);
-  // this one forwards the event to the parent
-  // (which eventually is the menu which then close itself)
-  QWidget::mouseReleaseEvent (event);
-}
-
-void
-QTMToolButton::paintEvent(QPaintEvent* event) {
-  (void) event;
-  QPainter p (this);
-  defaultAction()->icon().paint (&p, rect ());
-}
-
-
 // we use this class to properly initialize style options
 // for our QWidgets which have to blend into QMenus
 // see #QTBUG-1993.
@@ -241,6 +201,66 @@ public:
     initStyleOption(option,&action);
   }
 };
+
+
+// we need to subclass QToolButton for two reasons
+// 1) custom appearence
+// 2) if used in QWidgetAction the menu do not disappear upon triggering the
+//    button. See QTBUG-10427.
+
+// QTMMenuButton is a custom button appropriate for menus
+
+class QTMMenuButton: public QToolButton {
+  QStyleOptionMenuItem option;
+public:
+  QTMMenuButton (QWidget* parent = 0): QToolButton(parent) {
+    QTMAuxMenu m;
+    m.myInitStyleOption (&option);
+    setAttribute (Qt::WA_Hover);
+  }  
+  void mouseReleaseEvent (QMouseEvent *event);
+  void mousePressEvent (QMouseEvent *event);
+  void paintEvent (QPaintEvent *event);
+};
+
+void
+QTMMenuButton::mousePressEvent (QMouseEvent* event) {
+  // this one triggers the action and toggles the button
+  QToolButton::mousePressEvent (event);
+  // this one forwards the event to the parent
+  // (which eventually is the menu)
+  QWidget::mousePressEvent (event);
+}
+
+void
+QTMMenuButton::mouseReleaseEvent (QMouseEvent* event) {
+  // this one triggers the action and untoggles the button
+  QToolButton::mouseReleaseEvent (event);
+  // this one forwards the event to the parent
+  // (which eventually is the menu which then close itself)
+  QWidget::mouseReleaseEvent (event);
+}
+
+void
+QTMMenuButton::paintEvent (QPaintEvent* event) {
+  (void) event;
+  QPainter p (this);
+  
+  // initialize the options
+  QStyleOptionToolButton buttonOpt;
+  initStyleOption (&buttonOpt);
+  QRect r = rect ();
+  option.rect = r;
+  option.state = QStyle::State_Enabled |
+    ( buttonOpt.state & QStyle::State_MouseOver ? 
+      QStyle::State_Selected : QStyle::State_None ); 
+  // draw the control background as a menu item
+  style () -> drawControl (QStyle::CE_MenuItem, &option, &p, this); 
+  // draw the icon with a bit of inset.
+  r.adjust (2,2,-2,-2);
+  defaultAction ()-> icon ().paint (&p, r);
+}
+
 
 class QTMMenuWidget: public QWidget {
   QStyleOptionMenuItem option;
@@ -306,7 +326,7 @@ QTMTileAction::createWidget(QWidget* parent) {
   int row= 0, col= 0;
   for (int i=0; i < actions.count(); i++) {
     QAction* sa= actions[i];
-    QToolButton* tb= new QTMToolButton (wid);
+    QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
     QObject::connect(tb, SIGNAL(released()), this, SLOT(trigger()));
     //  tb->setStyle (qtmstyle ());
