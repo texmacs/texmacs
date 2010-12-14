@@ -56,20 +56,21 @@ protected:
 
 QTMScrollView::QTMScrollView ( QWidget *_parent )
 : QAbstractScrollArea (_parent), p_extents(QRect(0,0,0,0))  {
-	QWidget *_viewport = QAbstractScrollArea::viewport();
-	_viewport->setAttribute(Qt::WA_OpaquePaintEvent);
-  _viewport->setAttribute(Qt::WA_MacNoClickThrough);
-	//_viewport->setAttribute(Qt::WA_StaticContents);
-  //  _viewport->setAttribute(Qt::WA_PaintOnScreen); 
-  // the above option disable double-buffering on X11
-  _viewport->setBackgroundRole(QPalette::Shadow);
+
+  QWidget *_viewport = QAbstractScrollArea::viewport();
+  _viewport->setBackgroundRole(QPalette::Mid);
+  _viewport->setAutoFillBackground(true);
+
   p_surface = new QTMSurface (_viewport);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
+  p_surface->setAttribute(Qt::WA_StaticContents); 
+  p_surface->setAttribute(Qt::WA_MacNoClickThrough);
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
   p_surface->setGeometry(_viewport->geometry());
   p_surface->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+
   QHBoxLayout *layout = new QHBoxLayout();
   layout->addWidget(p_surface, 0, Qt::AlignHCenter);
   layout->setContentsMargins(0,0,0,0);
