@@ -2925,6 +2925,10 @@ upgrade_resize_arg (tree t) {
     cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
     return t;
   }
+  if (s == "l") return "1l";
+  if (s == "r") return "1r";
+  if (s == "t") return "1t";
+  if (s == "b") return "1b";
   if (N(s) < 2) return t;
   if (s[0] != 'l' && s[0] != 'b' && s[0] != 'r' && s[0] != 't') return t;
   string s1= "1" * s (0, 1);
