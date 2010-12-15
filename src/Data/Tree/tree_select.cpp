@@ -129,6 +129,10 @@ selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
 	o2= path (i2->item, o2);
       }
       else o2= i2;
+      if (l == CONCAT) {
+        adjust_right_script (t, o1);
+        adjust_left_script (t, o2);
+      }
     }
     else {
       o1= start (t);
