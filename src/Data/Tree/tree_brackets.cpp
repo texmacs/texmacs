@@ -496,11 +496,11 @@ downgrade_brackets (tree t) {
   if (is_func (r, VAR_AROUND, 3)) {
     tree lb= downgrade_bracket (r[0], true);
     tree rb= downgrade_bracket (r[2], true);
-    r= concat (lb, r[1], rb);
+    r= concat (tree (LEFT, lb), r[1], tree (RIGHT, rb));
   }
   if (is_func (r, BIG_AROUND, 2)) {
     tree op= downgrade_bracket (r[0], true);
-    r= concat (op, r[1]);
+    r= concat (tree (BIG, op), r[1]);
   }
   if (is_concat (r)) r= concat_recompose (concat_decompose (r));
   return r;
