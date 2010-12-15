@@ -60,7 +60,7 @@
   ("detailed menus" "detailed" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
-  ("fast environments" "off" notify-fast-environments)
+  ("fast environments" "on" notify-fast-environments)
   ("semantic editing" "off" (lambda args (noop)))
   ("remove superfluous invisible" "off" (lambda args (noop)))
   ("insert missing invisible" "off" (lambda args (noop)))
