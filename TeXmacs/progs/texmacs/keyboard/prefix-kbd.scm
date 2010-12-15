@@ -266,7 +266,7 @@
 
   ("math:over" "math o" #t)
   ("math:under" "math u" #t)
-  ("math:large" "math" #t)
+  ("math:small" "math" #t)
   ("math:left" "math l" #t)
   ("math:middle" "math m" #t)
   ("math:right" "math r" #t))
