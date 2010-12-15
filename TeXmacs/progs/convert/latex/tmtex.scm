@@ -26,8 +26,8 @@
 ;; Global variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public tmtex-style "generic")
-(define-public tmtex-packages '())
+(tm-define tmtex-style "generic")
+(tm-define tmtex-packages '())
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
 (define tmtex-auto-produce 0)

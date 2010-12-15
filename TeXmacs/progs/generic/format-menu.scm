@@ -44,7 +44,7 @@
   (pick-color (make-with "color" answer))
   ---
   ("Palette"
-   (if (qt-gui?) 
+   (if (and #f (qt-gui?))
     (interactive-color (lambda (col) (make-with "color" col)) '())
     (interactive-rgb-picker (lambda (col) (make-with "color" col)) '())))
   ("Other" (make-interactive-with "color")))
