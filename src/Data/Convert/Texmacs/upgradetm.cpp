@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include "Scheme/object.hpp"
 #include "tree_correct.hpp"
+#include "merge_sort.hpp"
 
 static bool upgrade_tex_flag= false;
 double get_magnification (string s);
@@ -3017,6 +3018,29 @@ upgrade_root_switch (tree t, bool top= true) {
 }
 
 /******************************************************************************
+* Upgrade hyphenation
+******************************************************************************/
+
+tree
+upgrade_hyphenation (tree t) {
+  tree style= copy (extract (t, "style"));
+  tree init = extract (t, "initial");
+  if (is_atomic (style)) style= tuple (style);
+  if (style == tree (TUPLE)) style= tuple ("generic");
+  if (!is_tuple (style) || N(style) != 1 || !is_atomic (style[0])) return t;
+  string ms= style[0]->label;
+  if (ms == "article" || ms == "beamer" || ms == "book" || ms == "exam" ||
+      ms == "generic" || ms == "letter" || ms == "seminar")
+    {
+      hashmap<string,tree> h (UNINIT, init);
+      if (!h->contains (PAR_HYPHEN)) h (PAR_HYPHEN)= "normal";
+      tree new_init= make_collection (h);
+      return change_doc_attr (t, "initial", new_init);
+    }
+  else return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3155,6 +3179,8 @@ upgrade (tree t, string version) {
     t= upgrade_image (t);
   if (version_inf_eq (version, "1.0.7.7"))
     t= upgrade_root_switch (t);
+  if (version_inf_eq (version, "1.0.7.8"))
+    t= upgrade_hyphenation (t);
   if (version_inf_eq (version, "1.0.7.8") && is_non_style_document (t)) {
     t= with_correct (t);
     t= superfluous_with_correct (t);

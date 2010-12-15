@@ -11,6 +11,7 @@
 #ifndef MERGE_SORT_H
 #define MERGE_SORT_H
 #include "array.hpp"
+#include "hashmap.hpp"
 
 template<class T> struct less_eq_operator {
   static inline bool leq(T& a, T& b) { return a<=b; }
@@ -47,5 +48,20 @@ merge_sort_leq (array<T>& a) {
 template<class T> inline void
 merge_sort (array<T>& a) {
   merge_sort_leq <T, less_eq_operator<T> > (a); }
+
+struct less_eq_associate {
+  static inline bool leq (tree& a, tree& b) {
+    return as_string(a[0]) <= as_string(b[0]); }
+};
+
+template <class T, class U> static tree
+make_collection (hashmap<T,U> h) {
+  tree t(h);
+  array<tree> a=A(h);
+  merge_sort_leq <tree, less_eq_associate> (a);
+  int i, n=N(a);
+  for (i=0; i<n; i++) t[i] = a[i];
+  return t;
+}
 
 #endif // MERGE_SORT_H

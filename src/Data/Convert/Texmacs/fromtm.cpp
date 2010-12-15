@@ -498,9 +498,13 @@ tree
 change_doc_attr (tree doc, string attr, tree val) {
   int i, n= arity (doc);
   tree r (doc, n);
+  bool done= false;
   for (i=0; i<n; i++)
-    if (is_compound (doc[i], attr, 1))
+    if (is_compound (doc[i], attr, 1)) {
       r[i]= tree (L(doc[i]), val);
+      done= true;
+    }
     else r[i]= doc[i];
+  if (!done) r << compound (attr, val);
   return r;
 }
