@@ -147,7 +147,11 @@ print_verbatim (string& buf, tree t, bool wrap) {
               if (wrap && N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
               buf << "\n";
             }
-            print_verbatim (buf, t[i], wrap);
+            tree w= std_drd->get_env_child (t, i, tree (ATTR));
+            if (drd_env_read (w, MODE, "text") == "prog" ||
+                drd_env_read (w, FONT_FAMILY, "rm") == "tt")
+              print_verbatim (buf, t[i], false);
+            else print_verbatim (buf, t[i], wrap);
           }
       }
       break;
@@ -156,7 +160,12 @@ print_verbatim (string& buf, tree t, bool wrap) {
 
 static string
 as_verbatim (tree t, bool wrap) {
-  if (!is_snippet (t)) t= extract (t, "body");
+  if (!is_snippet (t)) {
+    tree init= extract (t, "initial");
+    hashmap<string,tree> h (UNINIT, init);
+    if (h[MODE] == "prog" || h[FONT_FAMILY] == "tt") wrap= false;
+    t= extract (t, "body");
+  }
   string buf;
   print_verbatim (buf, t, wrap);
   if (wrap) {

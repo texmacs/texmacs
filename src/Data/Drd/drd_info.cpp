@@ -632,7 +632,7 @@ drd_info_rep::set_env (tree_label l, int nr, tree env) {
 
 tree
 drd_info_rep::get_env (tree_label l, int nr) {
-  if (nr >= N(info[l]->ci)) return tree (WITH);
+  if (nr >= N(info[l]->ci)) return tree (ATTR);
   return drd_decode (info[l]->ci[nr].env);
 }
 

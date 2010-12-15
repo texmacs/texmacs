@@ -81,6 +81,15 @@
 	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "cork")))
     (cpp-texmacs->verbatim x wrap? enc)))
 
+(tm-define (texmacs->verbatim-snippet x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
+	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "cork")))
+    ;; FIXME: dirty hack for "copy to verbatim" of code snippets
+    (if (or (== (get-env "mode") "prog") (== (get-env "font-family") "tt"))
+        (set! wrap? #f))
+    (cpp-texmacs->verbatim x wrap? enc)))
+
 (tm-define (verbatim->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
@@ -113,6 +122,6 @@
   (:option "texmacs->verbatim:encoding" "utf-8"))
 
 (converter texmacs-tree verbatim-snippet
-  (:function-with-options texmacs->verbatim)
+  (:function-with-options texmacs->verbatim-snippet)
   (:option "texmacs->verbatim:wrap" "on")
   (:option "texmacs->verbatim:encoding" "utf-8"))
