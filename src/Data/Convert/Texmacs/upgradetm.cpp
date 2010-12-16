@@ -2882,9 +2882,9 @@ upgrade_math (tree t) {
   int i;
   if (is_atomic (t)) return t;
   else if (is_func (t, WITH, 3) && t[0] == MODE && t[1] == "math")
-    return compound ("math", t[2]);
+    return compound ("math", upgrade_math (t[2]));
   else if (is_func (t, WITH, 3) && t[0] == MODE && t[1] == "text")
-    return compound ("text", t[2]);
+    return compound ("text", upgrade_math (t[2]));
   else {
     int n= N(t);
     tree r (t, n);
