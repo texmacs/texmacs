@@ -318,22 +318,10 @@ conv (string s) {
 }
 
 
-class qt_menu_rep: public qt_widget_rep {
-public:
-  QAction  *item;
-  qt_menu_rep (QAction* _item) : item (_item ? _item : new QTMAction (NULL)) {  }
-  ~qt_menu_rep () { 
-    delete item; // the submenu is usually also deleted since item is a QTMAction
-  }
-  
-  virtual QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
-  
-  virtual void send (slot s, blackbox val);
-  virtual widget make_popup_widget ();
-  virtual widget popup_window_widget (string s);
-  virtual widget plain_window_widget (string s);
-  virtual QAction* as_qaction ();
-};
+qt_ui_element_rep::~qt_ui_element_rep()
+{
+  if (cachedAction) delete cachedAction;
+}
 
 widget 
 qt_ui_element_rep::make_popup_widget () {

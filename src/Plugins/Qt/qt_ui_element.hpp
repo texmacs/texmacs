@@ -41,9 +41,8 @@ public:
   qt_ui_element_rep (types _type, blackbox _load) 
   : type(_type), load(_load), cachedAction(NULL)  {};
 
-  ~qt_ui_element_rep() {
-    delete cachedAction;
-  }
+  ~qt_ui_element_rep(); 
+
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
   virtual widget plain_window_widget (string s);

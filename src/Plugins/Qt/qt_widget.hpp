@@ -75,17 +75,19 @@ public:
  * Automagically create definitions for the stuff declared inside qt_widget with
  * the macro ABSTRACT_NULL(). See src/Kernel/Abstractions/basic.hpp
  */
+
 ABSTRACT_NULL_CODE(qt_widget);
 
 /**
- * Returns the qt_widget_rep object of a qt_widget
+ * casting form qt_widget to widget
  */
+
 inline widget abstract (qt_widget w) { return widget (w.rep); }
 
 /**
- * Constructs and returns a qt_widget object wrapper around the representation
- * (..._rep) class for a generic widget. Which is supposed to be qt_widget?
+ * casting from widget to qt_widget
  */
+
 inline qt_widget concrete (widget w) { return qt_widget ((qt_widget_rep*) w.rep); }
 
 #endif // defined QT_WIDGET_HPP

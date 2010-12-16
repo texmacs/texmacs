@@ -16,7 +16,6 @@
 #include "qt_tm_widget.hpp"
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
-#include "qt_menu.hpp"    // to_qmenu()
 #include "qt_gui.hpp"
 
 #include "qt_basic_widgets.hpp"

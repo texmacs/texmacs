@@ -101,25 +101,10 @@ QAction *qt_widget_rep::as_qaction() {
 
 /******************************************************************************/
 
-class qt_menu_rep: public qt_widget_rep {
-public:
-  QAction  *item;
-  qt_menu_rep (QAction* _item) : item (_item ? _item : new QTMAction (NULL)) {  }
-  ~qt_menu_rep () { 
-    delete item; // the submenu is usually also deleted since item is a QTMAction
-  }
 
-  virtual QMenu *get_qmenu() { return (item ? item->menu() : NULL); }
-  // get_menu doest not give ownership of the menu to the caller
-  // this allow menu caching at the TeXmacs level
-  // get_qmenu is called only by code which attach root menus in the GUI elements
-  
-  virtual void send (slot s, blackbox val);
-  virtual widget make_popup_widget ();
-  virtual widget popup_window_widget (string s);
-  virtual widget plain_window_widget (string s);
-  virtual QAction* as_qaction ();
-};
+qt_menu_rep::qt_menu_rep (QAction* _item) 
+ : item (_item ? _item : new QTMAction (NULL)) {  }
+
 
 QAction*
 qt_menu_rep::as_qaction() {
