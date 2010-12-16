@@ -136,7 +136,6 @@ QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
 }
 
 QTMWidgetAction::~QTMWidgetAction() {
-  QObject::disconnect (the_gui->gui_helper, 0, this, 0);
 }
 
 

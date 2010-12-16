@@ -53,7 +53,6 @@ QTMAction::QTMAction(QObject *parent) : QAction(parent) {
 }
 
 QTMAction::~QTMAction() { 
-  QObject::disconnect(the_gui->gui_helper, 0, this, 0);
   if (menu() && !(menu()->parent())) delete menu(); 
 }
 
