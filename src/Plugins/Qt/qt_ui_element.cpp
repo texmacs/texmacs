@@ -745,65 +745,12 @@ qt_ui_element_rep::as_qlayoutitem () {
       
     case pulldown_button:
     case pullright_button:
-    {
-      typedef pair<widget, promise<widget> > T;
-      T x = open_box<T>(load);
-      widget w = x.x1;
-      promise<widget> pw = x.x2;
-      
-      // a button w with a lazy pulldown menu pw
-
-      QAction* a= concrete (w) -> as_qaction ();
-      QTMLazyMenu* lm= new QTMLazyMenu (pw);
-      QMenu *old_menu = a->menu();
-      a->setMenu (lm);
-      a->setEnabled(true);
-      if (old_menu) {
-        cout << "this should not happen\n";
-        delete old_menu;
-      }
-      cout << a->text().toAscii().constData() << LF;
-      QToolButton *b = new QTMUIButton();
-      b->setDefaultAction(a);
-      return new QWidgetItem(b);
-    }
-      break;
-      
     case menu_button:
+    case text_widget:
+    case xpm_widget:
     {
-      typedef quintuple<widget, command, string, string, int> T;
-      T x = open_box<T>(load);
-      widget w = x.x1;
-      command cmd = x.x2;
-      string pre = x.x3;
-      string ks = x.x4;
-      int style = x.x5;
-      
-      // a command button with an optional prefix (o, * or v) and
-      // keyboard shortcut; if ok does not hold, then the button is greyed
-      bool ok= (style & WIDGET_STYLE_INERT) == 0;
-      QAction* a= NULL;
-      a= concrete(w)->as_qaction();
-      {
-        QTMCommand* c= new QTMCommand (cmd.rep);
-        c->setParent (a);
-        QObject::connect (a, SIGNAL (triggered ()), c, SLOT (apply ()),
-                          Qt::QueuedConnection);    
-      }
-      // FIXME: implement complete prefix handling
-      a->setEnabled (ok? true: false);
-      
-      bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
-      
-      a->setCheckable (check? true: false);
-      a->setChecked (check? true: false);
-      if (pre == "v") {}
-      else if (pre == "*") {}
-      else if (pre == "o") {}
-      cout << style << LF;
-      QToolButton *b = (style & WIDGET_STYLE_BUTTON) ? new QToolButton() : new QTMUIButton();
-      b->setDefaultAction(a);
-      return new QWidgetItem(b);
+      QWidget *w = this->as_qwidget();
+      return new QWidgetItem(w);
     }
       break;
       
@@ -825,6 +772,103 @@ qt_ui_element_rep::as_qlayoutitem () {
         li->widget()->setToolTip (to_qstring (str));
       }
       return li;
+    }
+      break;
+      
+      
+    default:
+      ;
+  }
+  
+  return NULL;
+}
+
+QWidget *
+qt_ui_element_rep::as_qwidget () {
+  switch (type) {
+    case horizontal_menu:
+    case vertical_menu:
+    case horizontal_list:
+    case vertical_list:
+    case tile_menu: 
+    case minibar_menu: 
+    {
+      QLayoutItem *li = this->as_qlayoutitem();
+      QWidget *w = new QWidget();
+      if (QLayout *l = li->layout()) {
+        w->setLayout(l);
+      } else {
+        cout << "qt_ui_element_rep::as_qwidget : invalid situation" << LF;
+      }
+      delete li;
+      return w;
+    }
+      break;
+      
+    case menu_separator: 
+    case menu_group: 
+    {
+      return NULL;
+    }
+      break;
+      
+    case pulldown_button:
+    case pullright_button:
+    {
+      typedef pair<widget, promise<widget> > T;
+      T x = open_box<T>(load);
+      widget w = x.x1;
+      promise<widget> pw = x.x2;
+      
+      // a button w with a lazy pulldown menu pw
+      
+      QAction* a= concrete (this) -> as_qaction ();
+      QToolButton *b = new QTMUIButton();
+      a->setParent(b);
+      b->setDefaultAction(a);
+      return b;
+    }
+      break;
+      
+    case menu_button:
+    {
+      typedef quintuple<widget, command, string, string, int> T;
+      T x = open_box<T>(load);
+      widget w = x.x1;
+      command cmd = x.x2;
+      string pre = x.x3;
+      string ks = x.x4;
+      int style = x.x5;
+      
+      
+      // a command button with an optional prefix (o, * or v) and
+      // keyboard shortcut; if ok does not hold, then the button is greyed
+      QAction* a= concrete(this)->as_qaction();
+      QToolButton *b = (style & WIDGET_STYLE_BUTTON) ? new QToolButton() : new QTMUIButton();
+      b->setDefaultAction(a);
+      a->setParent(b);
+      return b;
+    }
+      break;
+      
+    case balloon_widget:
+    {
+      typedef pair<widget, widget> T;
+      T x = open_box<T>(load);
+      widget text = x.x1;
+      widget help = x.x2;
+      
+      // given a button widget w, specify a help balloon which should be displayed
+      // when the user leaves the mouse pointer on the button for a small while
+      QWidget* w= concrete(text)->as_qwidget();
+      if (w)
+      {
+        typedef quartet<string, int, color, bool> T1;
+        T1 x = open_box<T1>(static_cast<qt_ui_element_rep*>(help.rep)->load);
+        string str = x.x1;
+        w->setToolTip (to_qstring (str));
+      }
+      return w;
     }
       break;
       
@@ -852,7 +896,7 @@ qt_ui_element_rep::as_qlayoutitem () {
         f.setPointSize(10);
         w->setFont(f);
       }
-      return new QWidgetItem(w);
+      return w;
     }
       break;
       
@@ -866,7 +910,7 @@ qt_ui_element_rep::as_qlayoutitem () {
       QPixmap* img= the_qt_renderer () -> xpm_image (image);
       QIcon icon (*img);
       l->setPixmap (*img);
-      return new QWidgetItem(l);
+      return l;
     }
       break;
       

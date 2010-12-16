@@ -50,6 +50,7 @@ public:
   virtual QAction* as_qaction ();
   virtual QMenu *get_qmenu();
   virtual QLayoutItem *as_qlayoutitem ();
+  virtual QWidget *as_qwidget ();
 
   template<class X1> static widget create (types _type, X1 x1) {
     return tm_new <qt_ui_element_rep> (_type, close_box<X1>(x1));
