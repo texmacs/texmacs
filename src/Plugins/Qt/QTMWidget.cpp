@@ -168,7 +168,14 @@ QTMWidget::~QTMWidget () {
 
 void 
 QTMWidget::invalidate_rect (int x1, int y1, int x2, int y2) {
+#ifdef Q_WS_MAC
+  //HACK: for unknown reasons we need to enlarge the invalid rect to prevent
+  //artifacts while moving the cursor (for example at the end of a formula like
+  // $a+f$. These artifacts seems present only on 64 bit Macs. 
+  rectangle r = rectangle (x1-2, y1-2, x2+6, y2+2);
+#else
   rectangle r = rectangle (x1, y1, x2, y2);
+#endif
   // cout << "invalidating " << r << LF;
   invalid_regions = invalid_regions | rectangles (r);
 }
