@@ -118,10 +118,10 @@
 
 (converter texmacs-tree verbatim-document
   (:function-with-options texmacs->verbatim)
-  (:option "texmacs->verbatim:wrap" "on")
+  (:option "texmacs->verbatim:wrap" "off")
   (:option "texmacs->verbatim:encoding" "utf-8"))
 
 (converter texmacs-tree verbatim-snippet
   (:function-with-options texmacs->verbatim-snippet)
-  (:option "texmacs->verbatim:wrap" "on")
+  (:option "texmacs->verbatim:wrap" "off")
   (:option "texmacs->verbatim:encoding" "utf-8"))
