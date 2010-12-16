@@ -112,16 +112,15 @@ public slots:
 
 class QTMWidgetAction : public QWidgetAction {
   Q_OBJECT
+
+  widget wid;
   
 public:
-  string str;
-  QTMInputTextWidgetHelper *helper;
-  
-  QTMWidgetAction(QObject *parent = NULL);
+  QTMWidgetAction(widget _wid, QObject *parent = NULL);
   ~QTMWidgetAction();
   
-  public slots:
-  void doRefresh();
+public slots:
+  virtual void doRefresh();
   
 protected:
   QWidget * createWidget ( QWidget * parent );

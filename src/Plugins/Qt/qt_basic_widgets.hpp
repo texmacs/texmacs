@@ -30,8 +30,8 @@ public:
   qt_input_text_widget_rep (command _cmd, string _type, array<string> _def, string _width);
   ~qt_input_text_widget_rep();
 
-  virtual QAction* as_qaction ();
-  virtual QLayoutItem *as_qlayoutitem ();
+  QAction* as_qaction ();
+  QLayoutItem *as_qlayoutitem ();
   QWidget *as_qwidget ();
 };
 

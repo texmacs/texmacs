@@ -402,50 +402,9 @@ QTMLineEdit::focusInEvent (QFocusEvent *event)
   QLineEdit::focusInEvent (event);
 }
 
-
-QTMWidgetAction::QTMWidgetAction (QObject *parent)
-: QWidgetAction (parent), helper (NULL) { 
-  QObject::connect (the_gui->gui_helper, SIGNAL(refresh()), this, SLOT(doRefresh()));
-}
-
-QTMWidgetAction::~QTMWidgetAction() {
-  QObject::disconnect (the_gui->gui_helper, 0, this, 0);
-//  if (menu() && !(menu()->parent())) delete menu(); 
-}
-
-
-void 
-QTMWidgetAction::doRefresh() {
-  if (N(str)) {
-    string t= tm_var_encode (str);
-    if (t == "Help") t= "Help ";
-    setText (to_qstring (t));
-  }
-}
-
-QWidget * 
-QTMWidgetAction::createWidget ( QWidget * parent ) {
-  QWidget *le;
-  if (helper) {
-    le = helper->wid()->as_qwidget();
-    le->setParent(parent);
-  } else {
-    le = new QLineEdit(parent);
-  }
-  return le;  
-}
-
 QAction *
 qt_input_text_widget_rep::as_qaction () {
-  if (!helper) {
-    helper = new QTMInputTextWidgetHelper(this);
-    // helper retains the current widget
-    // in toolbars the widget is not referenced directly in texmacs code
-    // so must be retained by Qt objects
-  }
-  QTMWidgetAction *a = new QTMWidgetAction ();
-  a->setText("QTMWidgetAction");
-  a->helper = helper;
+  QTMWidgetAction *a = new QTMWidgetAction (this);
   return a;
 }
 
@@ -503,7 +462,7 @@ qt_input_text_widget_rep::as_qwidget () {
 
 QLayoutItem *
 qt_input_text_widget_rep::as_qlayoutitem () {
-  return new QWidgetItem(as_qwidget());
+  return new QWidgetItem (as_qwidget ());
 }
 
 
