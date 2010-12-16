@@ -11,6 +11,7 @@
 
 #include "Boxes/construct.hpp"
 #include "Format/line_item.hpp"
+#define PEN DI
 
 /******************************************************************************
 * Information about the best line breaks
@@ -19,9 +20,9 @@
 struct lb_info_rep: concrete_struct {
   path prev;
   int  pen;
-  int  pen_spc;
+  PEN  pen_spc;
 
-  lb_info_rep (): prev (), pen (HYPH_INVALID), pen_spc(1000000000) {}
+  lb_info_rep (): prev (), pen (HYPH_INVALID), pen_spc ((PEN) 1000000000000) {}
 };
 
 struct lb_info {
@@ -30,7 +31,7 @@ struct lb_info {
   operator tree () {
     return tuple ((tree) rep->prev,
 		  as_string (rep->pen),
-		  as_string (rep->pen_spc)); }
+		  as_string ((double) rep->pen_spc)); }
 };
 CONCRETE_CODE(lb_info);
 
@@ -65,7 +66,7 @@ struct line_breaker_rep {
   path next_ragged_break (path pos);
   array<path> compute_ragged_breaks ();
 
-  void test_better (path new_pos, path old_pos, int penalty, int pen_spc);
+  void test_better (path new_pos, path old_pos, int penalty, PEN pen_spc);
   bool propose_break (path new_pos, path old_pos, int penalty, space spc);
   void break_string (line_item item, path pos, int i, space spc);
   void process (path pos);
@@ -106,8 +107,6 @@ get_position (font fn, string s, SI x) {
   STACK_DELETE_ARRAY (xpos);
   return i;
 }
-
-inline int square (int i) { return i*i; }
 
 /*static*/ void
 hyphenate (line_item item, int pos, line_item& item1, line_item& item2) {
@@ -254,20 +253,23 @@ line_breaker_rep::compute_ragged_breaks () {
 
 void
 line_breaker_rep::test_better (path new_pos, path old_pos,
-			       int pen, int pen_spc)
+			       int pen, PEN pen_spc)
 {
-  //cout << "Test " << new_pos << ", " << old_pos << ", "
-  //<< pen << ", " << pen_spc << "\n";
   if (!best->contains (new_pos)) best (new_pos)= lb_info ();
   lb_info cur= best [new_pos];
+  //cout << "Test " << new_pos << " vs " << old_pos
+  //     << ", " << pen << " vs " << cur->pen
+  //     << ", " << pen_spc << " vs " << cur->pen_spc << "\n";
   if ((pen < cur->pen) ||
       ((pen == cur->pen) && (pen_spc < cur->pen_spc))) {
     cur->prev   = old_pos;
     cur->pen    = pen;
-    cur->pen_spc= min (pen_spc, 1000000000);
+    cur->pen_spc= min (pen_spc, (PEN) 1000000000000);
     //cout << "  Better\n";
   }
 }
+
+inline PEN square (PEN i) { return i*i; }
 
 bool
 line_breaker_rep::propose_break (path new_pos, path old_pos,
@@ -279,22 +281,23 @@ line_breaker_rep::propose_break (path new_pos, path old_pos,
       ((spc->max >= line_width) || (new_pos->item==end))) {
     SI d= max (line_width- spc->def, spc->def- line_width);
     if (new_pos->item==end) d=0;
-    test_better (new_pos, old_pos, min (HYPH_INVALID, cur->pen+ pen),
-		 cur->pen_spc+ (cur->pen==HYPH_INVALID? 0: square (d/PIXEL)));
+    test_better (new_pos, old_pos, min (HYPH_INVALID, cur->pen + pen),
+		 cur->pen_spc + (cur->pen == HYPH_INVALID?
+                                 ((PEN) 0): square ((PEN) (d / PIXEL))));
   }
   
   if (pass==2) {
     if (spc->max < line_width)
       test_better (new_pos, old_pos, HYPH_INVALID,
-		   (cur->pen==HYPH_INVALID? cur->pen_spc: 0)+
-		   square ((line_width- spc->max)/PIXEL)+
+		   (cur->pen == HYPH_INVALID? cur->pen_spc: ((PEN) 0)) +
+		   square ((PEN) ((line_width - spc->max)/PIXEL)) +
 		   (new_pos->item==old_pos->item?
-		    square (line_width/PIXEL): 0));
+		    square ((PEN) (line_width / PIXEL)): ((PEN) 0)));
     if (spc->min > line_width)
       test_better (new_pos, old_pos, HYPH_INVALID,
-		   (cur->pen==HYPH_INVALID? cur->pen_spc: 0)+
-		   square ((spc->min- line_width)/PIXEL)+
-		   square (4*line_width/PIXEL));
+		   (cur->pen == HYPH_INVALID? cur->pen_spc: ((PEN) 0)) +
+		   square ((PEN) ((spc->min - line_width) / PIXEL)) +
+		   square ((PEN) (4*line_width / PIXEL)));
   }
   
   return spc->min > line_width;
@@ -417,7 +420,7 @@ line_breaker_rep::compute_breaks () {
     for (i=start; i<end; i++)
       process (path (i));
 
-  test_better (path (end), path (start), HYPH_INVALID, 999999999);
+  test_better (path (end), path (start), HYPH_INVALID, (PEN) 999999999999);
 
   array<path> ap (0);
   get_breaks (ap, path (end));

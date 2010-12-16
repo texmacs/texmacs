@@ -92,6 +92,8 @@ bool debug_get (string s);
 
 inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
 inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
+inline DI min (DI i, DI j) { if (i<j) return i; else return j; }
+inline DI max (DI i, DI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
