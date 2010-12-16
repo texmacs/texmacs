@@ -390,7 +390,7 @@ QTMMinibarAction::createWidget(QWidget* parent) {
       tb->setAutoRaise(true);
       tb->setPopupMode (QToolButton::InstantPopup);
       tb->setStyle(qtmstyle());
-      tb->setIconSize(QSize(12,12));
+    //  tb->setIconSize(QSize(12,12));
       QFont f = tb->font();
       f.setPixelSize(10);
       tb->setFont(f);
