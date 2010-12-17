@@ -10,9 +10,9 @@ function bundle_install_lib {
   echo Bundling [$2] in [${BUNDLE_FRAMEWORKS}/$3] for [$1]
   if [ ! -f ${BUNDLE_FRAMEWORKS}/$3 ]; then
     cp ${2} ${BUNDLE_FRAMEWORKS}/$3
-    install_name_tool -id @executable_path/../Frameworks/${3} ${BUNDLE_FRAMEWORKS}/$3
-    bundle_all_libs ${BUNDLE_FRAMEWORKS}/$3
+  bundle_all_libs ${BUNDLE_FRAMEWORKS}/$3
   fi
+  install_name_tool -id @executable_path/../Frameworks/${3} ${BUNDLE_FRAMEWORKS}/$3
   install_name_tool -change ${2} @executable_path/../Frameworks/${3} ${1}
 }
 
@@ -24,22 +24,31 @@ function bundle_all_libs {
 }
 
 
-function bundle_framework {
+function fix_lib {
+  echo Fixing [$2] in [${BUNDLE_FRAMEWORKS}/$3] for [$1]
+  fix_libs ${BUNDLE_FRAMEWORKS}/$3
+  install_name_tool -id @executable_path/../Frameworks/${3} ${BUNDLE_FRAMEWORKS}/$3
+  install_name_tool -change ${2} @executable_path/../Frameworks/${3} ${1}
+}
+
+function fix_libs {
+  echo Fixing all for ${1}
+  for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib' ) ; do 
+	 fix_lib ${1} ${lib} $(basename ${lib})  
+  done
+}
+
+function fix_framework {
  if [ ! ${4##*/} == ${1##*/} ]; then
-  echo Bundling Framework [${2}] to [${3}/Versions/${4}] for [${1}]
-  if [ ! -e ${BUNDLE_FRAMEWORKS}/${3} ]; then
-    cp -R ${2} ${BUNDLE_FRAMEWORKS}
-    bundle_qt_frameworks ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
-  fi
-  install_name_tool -id @executable_path/../Frameworks/${3}/Versions/${4} ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
-  install_name_tool -change ${5} @executable_path/../Frameworks/${3}/Versions/${4} ${1} 
+  REF=@executable_path/../Frameworks/${3}/Versions/${4} 
+  echo Fixing Framework [${2}] to [${REF}] for [${1}]
+  fix_frameworks ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
+  install_name_tool -id ${REF} ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
+  install_name_tool -change ${5} ${REF} ${1} 
  fi
 }
 
-function bundle_qt_frameworks {
-  if [ ! -e ${BUNDLE_FRAMEWORKS} ]; then
-    mkdir ${BUNDLE_FRAMEWORKS}
-  fi
+function fix_frameworks {
   for f in $( otool -L ${1}  | grep -o '\(.*Qt.*\.framework/Versions/[^: ]*\) ' ) ; do 
     fname=${f%%/Versions/*}
     if [ ! -e ${fname} ]; then
@@ -48,11 +57,32 @@ function bundle_qt_frameworks {
       fi
     fi 
     if [ -e ${fname} ]; then
-  	  bundle_framework  ${1} ${fname} ${fname##*/} ${f#*Versions/} ${f}
+  	  fix_framework  ${1} ${fname} ${fname##*/} ${f#*Versions/} ${f}
     fi
   done
 }
 
-mkdir ${BUNDLE_FRAMEWORKS}
-bundle_all_libs ${EXECUTABLE}
-PATH=${MISC_DIR}:$PATH macdeployqt ${APP_BUNDLE} -verbose=2
+function fix_plugin {
+  REF= @executable_path/../${2}
+  echo Fixing Plugin [${1}] to [${REF}]
+  lipo -thin i386 ${1} -output ${1}.i386
+  mv ${1}.i386 ${1}
+  fix_frameworks ${1}
+  install_name_tool -id ${REF} ${1}
+}
+
+
+
+
+if [ ! -e ${BUNDLE_FRAMEWORKS} ]; then
+  mkdir ${BUNDLE_FRAMEWORKS}
+fi
+#bundle_all_libs ${EXECUTABLE}
+#PATH=${MISC_DIR}:$PATH macdeployqt ${APP_BUNDLE} -verbose=2
+#fix_libs ${EXECUTABLE}
+#fix_frameworks ${EXECUTABLE}
+
+for f in   ${APP_BUNDLE}/Contents/PlugIns/*/*.dylib  ; do
+  fix_plugin $f ${f##*Contents/}
+done
+  

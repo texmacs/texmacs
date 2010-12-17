@@ -8,9 +8,9 @@ function bundle_install_lib {
   echo Bundling [$2] in [${BUNDLE_RESOURCES}/lib/$3] for [$1]
   if [ ! -f ${BUNDLE_RESOURCES}/lib/${3} ]; then
     cp ${2} ${BUNDLE_RESOURCES}/lib
-    install_name_tool -id @executable_path/../Resources/lib/${3} ${BUNDLE_RESOURCES}/lib/${3}
-    bundle_all_libs ${BUNDLE_RESOURCES}/lib/${3}
   fi
+  install_name_tool -id @executable_path/../Resources/lib/${3} ${BUNDLE_RESOURCES}/lib/${3}
+  bundle_all_libs ${BUNDLE_RESOURCES}/lib/${3}
   install_name_tool -change ${2} @executable_path/../Resources/lib/${3} ${1}
 }
 
@@ -27,6 +27,8 @@ function bundle_framework {
   echo Bundling Framework [${2}] to [${3}/Versions/${4}] for [${1}]
   if [ ! -e ${BUNDLE_FRAMEWORKS}/${3} ]; then
     cp -R ${2} ${BUNDLE_FRAMEWORKS}
+    lipo -thin i386 ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4} -output ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}.i386
+    mv ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}.i386 ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
     bundle_qt_frameworks ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
   fi
   install_name_tool -id @executable_path/../Frameworks/${3}/Versions/${4} ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
