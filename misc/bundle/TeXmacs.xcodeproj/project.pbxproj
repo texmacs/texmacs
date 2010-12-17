@@ -1706,6 +1706,7 @@
 		9C7AC33C1105DE4A00A7D07F /* tm_gs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = tm_gs; sourceTree = "<group>"; };
 		9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMScrollView.hpp; sourceTree = "<group>"; };
 		9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMScrollView.cpp; sourceTree = "<group>"; };
+		9CB6332312BB81F300A35D6B /* deploy.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = deploy.sh; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CCC738D12A7D6DA006EDBDA /* HIDRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDRemote.h; sourceTree = "<group>"; };
 		9CCC738E12A7D6DA006EDBDA /* HIDRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HIDRemote.m; sourceTree = "<group>"; };
@@ -3288,6 +3289,7 @@
 		9C0B4B5310A8CCA00097A335 /* bundle */ = {
 			isa = PBXGroup;
 			children = (
+				9CB6332312BB81F300A35D6B /* deploy.sh */,
 				9C5DBADA10A8DE60008B7623 /* Base.xcconfig.in */,
 				9C0B4B5410A8CCA00097A335 /* bundle-libs.sh */,
 				9C0B4B5510A8CCA00097A335 /* Info.plist */,
@@ -3565,7 +3567,6 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TeXmacs" */;
 			compatibilityVersion = "Xcode 3.0";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

@@ -211,6 +211,7 @@ BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
 BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
 BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
 BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+BUNDLE_EXTRA_FONTS = TeXmacs-extra-fonts-1.0-noarch.tar.gz
 
 BUNDLE_MAIN: TEXMACS
 	$(MKDIR) ../distr
@@ -249,6 +250,12 @@ BUNDLE_MAIN: TEXMACS
 	tar -zxf $(BUNDLE_FONTS); \
 	$(RM) $(BUNDLE_FONTS) ; \
 	fi
+	if [ -f ../distr/$(BUNDLE_EXTRA_FONTS) ] ; then \
+	$(CP) ../distr/$(BUNDLE_EXTRA_FONTS) $(BUNDLE_TEXMACS) ; \
+	cd $(BUNDLE_TEXMACS) ; \
+	tar -zxf $(BUNDLE_EXTRA_FONTS); \
+	$(RM) $(BUNDLE_EXTRA_FONTS) ; \
+	fi
 #	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
 #	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
 #	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
@@ -282,13 +289,14 @@ BUNDLE_LIBS:
 
 #BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
 BUNDLE: BUNDLE_MAIN
-	$(BUNDLE_SRC)/bundle-libs.sh $(BUNDLE_CONTENTS)/MacOS/TeXmacs
+#	$(BUNDLE_SRC)/bundle-libs.sh $(BUNDLE_CONTENTS)/MacOS/TeXmacs
+	$(BUNDLE_SRC)/deploy.sh $(BUNDLE_APP) $(BUNDLE_SRC)
     
     
 DISKIMAGE: BUNDLE
 	$(RM) $(BUNDLE_DMG)
 	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
-	$(RM) -r $(BUNDLE_APP)
+#	$(RM) -r $(BUNDLE_APP)
 
 .PHONY: BUNDLE
 
