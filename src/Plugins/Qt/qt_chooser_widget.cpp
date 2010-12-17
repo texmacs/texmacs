@@ -172,7 +172,7 @@ qt_chooser_widget_rep::plain_window_widget (string s)
   return this;
 }
 
-#if (defined(Q_WS_MAC) || defined(Q_WS_WINDOWS))
+#if (defined(Q_WS_MAC) || defined(Q_WS_WIN))
 
 /*!
  * Actually displays the dialog with all the options set.

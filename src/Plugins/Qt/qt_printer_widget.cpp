@@ -57,7 +57,7 @@ PrinterSettings::getFromQPrinter(const QPrinter& from) {
   collateCopies = from.collateCopies();
   useColorIf    = (from.colorMode () == QPrinter::Color);
   printProgram  = from.printProgram();
-#ifndef QS_WS_WINDOWS
+#ifndef Q_WS_WIN
   printerSelectionOption = from.printerSelectionOption();
 #endif
 }
@@ -129,7 +129,7 @@ qt_printer_widget_rep::showDialog () {
 
   QString _cmd;
   
-#ifdef QS_WS_WINDOWS
+#ifdef Q_WS_WIN
   
   // Do ugly Windows stuff
   _cmd = "copy /help";
