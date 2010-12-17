@@ -22,7 +22,7 @@ struct lb_info_rep: concrete_struct {
   int  pen;
   PEN  pen_spc;
 
-  lb_info_rep (): prev (), pen (HYPH_INVALID), pen_spc ((PEN) 1000000000000) {}
+  lb_info_rep (): prev (), pen (HYPH_INVALID), pen_spc ((PEN) 1000000000) {}
 };
 
 struct lb_info {
@@ -264,7 +264,7 @@ line_breaker_rep::test_better (path new_pos, path old_pos,
       ((pen == cur->pen) && (pen_spc < cur->pen_spc))) {
     cur->prev   = old_pos;
     cur->pen    = pen;
-    cur->pen_spc= min (pen_spc, (PEN) 1000000000000);
+    cur->pen_spc= min (pen_spc, (PEN) 1000000000);
     //cout << "  Better\n";
   }
 }
@@ -420,7 +420,7 @@ line_breaker_rep::compute_breaks () {
     for (i=start; i<end; i++)
       process (path (i));
 
-  test_better (path (end), path (start), HYPH_INVALID, (PEN) 999999999999);
+  test_better (path (end), path (start), HYPH_INVALID, (PEN) 999999999);
 
   array<path> ap (0);
   get_breaks (ap, path (end));
