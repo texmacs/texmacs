@@ -16,7 +16,7 @@ function bundle_install_lib {
 
 function bundle_all_libs {
   echo Bundling all for ${1}
-  for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib' ) ; do 
+  for lib in $( otool -L ${1}  | grep -o '/\(opt\|sw\|Users\|usr/local\)/.*/lib[^/]*dylib' ) ; do 
 	bundle_install_lib ${1} ${lib} $(basename ${lib})  
   done
 }
@@ -26,9 +26,16 @@ function bundle_framework {
  if [ ! ${4##*/} == ${1##*/} ]; then
   echo Bundling Framework [${2}] to [${3}/Versions/${4}] for [${1}]
   if [ ! -e ${BUNDLE_FRAMEWORKS}/${3} ]; then
-    cp -R ${2} ${BUNDLE_FRAMEWORKS}
-    lipo -thin i386 ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4} -output ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}.i386
-    mv ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}.i386 ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
+    mkdir ${BUNDLE_FRAMEWORKS}/${3}
+    mkdir ${BUNDLE_FRAMEWORKS}/${3}/Versions
+    mkdir ${BUNDLE_FRAMEWORKS}/${3}/Versions/4
+    ln -s 4 ${BUNDLE_FRAMEWORKS}/${3}/Versions/Current
+    ln -s 4 ${BUNDLE_FRAMEWORKS}/${3}/Versions/4.0
+    lipo -thin i386 ${2}/Versions/${4} -output ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
+    if [ -e  ${2}/Versions/4/Resources ]; then
+      cp -R ${2}/Versions/4/Resources ${BUNDLE_FRAMEWORKS}/${3}/Versions/4
+      ln -s Versions/4/Resources ${BUNDLE_FRAMEWORKS}/${3}/Resources
+    fi
     bundle_qt_frameworks ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
   fi
   install_name_tool -id @executable_path/../Frameworks/${3}/Versions/${4} ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
