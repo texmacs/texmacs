@@ -128,7 +128,7 @@ from_qstring (const QString &s) {
 // linearly traversing the array of colors.
 static QHash<QString, QColor> _NamedColors;
 
-/**
+/*!
  * This needn't be called more than once. Takes RGBColors, defined in
  * rgb_colors.hpp and initializes our QHash
  */
@@ -138,7 +138,7 @@ void initNamedColors(void) {
                         QColor(RGBColors[i].r, RGBColors[i].g, RGBColors[i].b));
 }
 
-/**
+/*!
  * Takes either an hexadecimal RGB color, as in #e3a1ff, or a named color
  * as those defined in src/Graphics/Renderer/rgb_colors.hpp and returns a QColor
  */
@@ -156,7 +156,7 @@ to_qcolor (const string& col) {
   return QColor(100,100,100);  // FIXME? 
 }
 
-/**
+/*!
  * Returns a color encoded as a string with hexadecimal RGB values, 
  * as in #e3a1ff
  */

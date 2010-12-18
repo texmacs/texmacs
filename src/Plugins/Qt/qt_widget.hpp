@@ -19,29 +19,32 @@ class QAction;
 class QMenu;
 class QLayoutItem;
 
-/**
+/*!
  * The basic implementation of an "abstract widget representation class" within
  * the QT toolkit, this does the real display/update/event work for the widget.
  * Any other GUI implementations using other toolkits (like Cocoa) must 
  * implement an analogous child of widget_rep.
- * See src/Graphics/Gui/widget.hpp and the relevant sections of the developer's
- * guide.
+ * See @link src/Graphics/Gui/widget.hpp and the relevant sections of the
+ * developer's guide.
  */
 class qt_widget_rep : public widget_rep {
 public:
   qt_widget_rep() : widget_rep () { };
 
-  /**
-   * (At least) window_create() expects this method in widgets which 
-   * implement windows.
+  /*!
+   * (At least) @link window_create() @endlink expects this method in widgets
+   * which implement windows. 
+   * @param s (Often?) a title for the window.
+   * @return A pointer to this widget.
    */
   virtual widget plain_window_widget (string s);
-  /**
+  
+  /*!
    *
    */
   virtual widget make_popup_widget ();
   
-  /**
+  /*!
    *
    */
   virtual widget popup_window_widget (string s);
@@ -49,11 +52,22 @@ public:
   // Qt semantics of abstract texmacs widgets
   
   virtual QAction* as_qaction ();
+  
+  /*!
+   *
+   */
   virtual QWidget* as_qwidget () { return NULL ; }
+  
+  /*!
+   * This method must not give ownership of the menu to the caller, thus
+   * allowing menu caching at the TeXmacs level.
+   * Called only by code which attaches root menus in the GUI elements.
+   */
   virtual QMenu *get_qmenu() { return NULL; }
-  // get_menu doest not give ownership of the menu to the caller
-  // this allow menu caching at the TeXmacs level
-  // get_qmenu is called only by code which attach root menus in the GUI elements
+  
+  /*!
+   *
+   */
   virtual QLayoutItem *as_qlayoutitem () { return NULL; }
   
 };

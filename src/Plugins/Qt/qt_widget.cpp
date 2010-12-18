@@ -166,25 +166,33 @@ destroy_window_widget (widget w) {
 }
 
 /******************************************************************************
-* Top-level widgets, typically given as an argument to plain_window_widget
+* Top-level widgets (??)
 * See also message.hpp for specific messages for these widgets
 ******************************************************************************/
 
+/*!
+ * A factory for the main TeXmacs window.
+ * @param mask Indicates whether the menu, icon bars, status bar, etc.
+ *             are visible or not.
+ * @param quit Command called on exit.
+ */
 widget
 texmacs_widget (int mask, command quit) {
-  // the main TeXmacs widget and a command which is called on exit
-  // the mask variable indicates whether the menu, icon bars, status bar, etc.
-  // are visible or not
   (void) mask; (void) quit; // FIXME: handle correctly mask and quit
   widget w= tm_new<qt_tm_widget_rep> (mask, quit);
   return w;
 }
 
+/*!
+ * A factory for a popup widget container whose contents are to be unmapped as 
+ * soon as the mouse exits the widget. This is used in @link edit_mouse.cpp @endlink 
+ * to implement a contextual menu in the canvas
+ *  @param w The widget to be placed in the popup. It will be deleted after the
+ *            mouse leaves the popup.
+ *  @return 
+ */
 widget
 popup_widget (widget w) {
-  // a widget container which results w to be unmapped as soon as
-  // the pointer quits the widget
-  // used in edit_mouse.cpp to implement a contextual menu in the canvas
   return concrete(w)->make_popup_widget();
 }
 
