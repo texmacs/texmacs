@@ -100,6 +100,8 @@ tt_font_find_sub (string name) {
   u= tt_locate (name * ".ttc");
   if (!is_none (u)) return u;
   u= tt_locate (name * ".otf");
+  if (!is_none (u)) return u;
+  u= tt_locate (name * ".dfont");
   return u;
 }
 
