@@ -101,8 +101,9 @@
   ("Save as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ("Revert" (revert-buffer))
   ---
-  (if (experimental-qt-gui?)
-      ("Print" (interactive-print-buffer)))
+   (if (experimental-qt-gui?)
+       ("Preview" (preview-buffer))
+       ("Print" (interactive-print-buffer)))
   (if (not (experimental-qt-gui?))
       (-> "Print" (link print-menu)))
   (-> "Page setup" (link page-setup-menu))
