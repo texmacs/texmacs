@@ -63,6 +63,7 @@ public:
   QPixmap render ();
   
   virtual QAction *as_qaction();
+  virtual QWidget *as_qwidget();
 };
 
 
@@ -124,6 +125,17 @@ qt_glue_widget_rep::as_qaction() {
   a->setEnabled(false);
   return a;
 }
+
+QWidget *
+qt_glue_widget_rep::as_qwidget() {
+  QLabel *w= new QLabel();
+  w->setText(to_qstring(as_string(col)));
+  QIcon icon;
+  w->setPixmap (render ());  
+//  w->setEnabled(false);
+  return w;
+}
+
 
 /******************************************************************************
 * Global functions we export for the creation of widgets by TeXmacs
