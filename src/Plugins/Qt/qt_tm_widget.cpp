@@ -684,21 +684,26 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_CANVAS:
     {
       check_type_void (index, "SLOT_CANVAS");
-      QTMWidget* new_canvas= qobject_cast<QTMWidget*>(concrete(w)->as_qwidget());
-      QTMWidget* old_canvas= tm_canvas();
       QStackedWidget* tw= tm_centralwidget();
-      if (new_canvas && (new_canvas != old_canvas) ) {
-        tw->addWidget(new_canvas);
-        tw->removeWidget(old_canvas);
-        QTMWidget::all_widgets.insert(new_canvas);
-        if (old_canvas) {
-          old_canvas->setParent(NULL);
-          QTMWidget::all_widgets.remove(old_canvas);
+      QWidget *new_widget= concrete(w)->as_qwidget();
+      QWidget *old_widget= tw->currentWidget();
+      if (new_widget && (new_widget != old_widget) ) {
+        tw->addWidget(new_widget);
+        tw->removeWidget(old_widget);
+        if (old_widget) {
+          old_widget->setParent(NULL);
         }
+      }
+      QTMWidget* new_canvas= qobject_cast<QTMWidget*>(new_widget);
+      QTMWidget* old_canvas= qobject_cast<QTMWidget*>(old_widget);
+      if (old_canvas) {
+          QTMWidget::all_widgets.remove(old_canvas);
+      }
+      if (new_canvas) {
+        QTMWidget::all_widgets.insert(new_canvas);
         new_canvas->setFocusPolicy (Qt::StrongFocus);
         new_canvas->setFocus ();
-        
-      }
+      }        
     }
       break;
       
