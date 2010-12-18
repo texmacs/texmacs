@@ -82,6 +82,7 @@ public:
   void process_mouse (simple_widget_rep *wid, string kind, SI x, SI y, int mods, time_t t);
   void process_resize (simple_widget_rep *wid, SI x, SI y);
   void process_command (command _cmd);
+  void process_command (command _cmd, object _args);
   void process_socket_notification (socket_notifier sn);
   void process_delayed_commands (); 
 

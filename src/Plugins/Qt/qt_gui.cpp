@@ -574,6 +574,7 @@ enum qp_type_id {
   QP_RESIZE,
   QP_SOCKET_NOTIFICATION,
   QP_COMMAND,
+  QP_COMMAND_ARGS,
   QP_DELAYED_COMMANDS
 };
 
@@ -605,6 +606,7 @@ static array<queued_event> waiting_events;
 
 void
 process_event (queued_event ev) {
+  //cout << "<" << (qp_type_id) ev.x1 << LF;
   switch ((qp_type_id) ev.x1) {
     case QP_NULL :
       break;
@@ -656,6 +658,14 @@ process_event (queued_event ev) {
       cmd->apply();
     }
       break;
+    case QP_COMMAND_ARGS :
+    {
+      typedef pair<command, object> T;
+      T x = open_box <T> (ev.x2) ;
+      // cout << "QP_COMMAND_ARGS" << LF;
+      x.x1->apply(x.x2);
+    }
+      break;
     case QP_DELAYED_COMMANDS :
     {
       // cout << "QP_DELAYED_COMMANDS" << LF;
@@ -666,6 +676,7 @@ process_event (queued_event ev) {
     default:   
       FAILED("Unexpected queued event");
   }
+  //cout << ">" << (qp_type_id) ev.x1 << LF;
 }
 
 
@@ -691,6 +702,7 @@ qt_gui_rep::process_queued_events (int max) {
       process_event(a[i]);
       switch (a[i].x1) {
         case QP_COMMAND:
+        case QP_COMMAND_ARGS:
         case QP_SOCKET_NOTIFICATION:
         case QP_RESIZE:
         case QP_DELAYED_COMMANDS:
@@ -778,6 +790,13 @@ void
 qt_gui_rep::process_command (command _cmd) {
   add_event ( 
              queued_event (QP_COMMAND, close_box< command > (_cmd)));
+}
+
+void 
+qt_gui_rep::process_command (command _cmd, object _args) {
+  typedef pair<command, object > T;
+  add_event ( 
+             queued_event (QP_COMMAND_ARGS, close_box< T > (T(_cmd,_args))));
 }
 
 void 
