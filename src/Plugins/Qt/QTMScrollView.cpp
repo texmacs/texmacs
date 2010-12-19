@@ -238,9 +238,9 @@ QTMScrollView::surfaceEvent(QEvent *e)
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
+#endif
     case QEvent::MouseMove:
     case QEvent::ContextMenu:
-#endif
     case QEvent::Wheel:
     case QEvent::Drop:
     case QEvent::DragEnter:
