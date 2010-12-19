@@ -92,7 +92,14 @@ public:
   
   /*! Implemented by one of CupsQTMPrinterSettings, WinQTMPrinterSettings */
   virtual QString toSystemCommand() const = 0;
-  virtual QStringList availablePrinters() = 0;
+  
+  /*! 
+   *  Implemented by one of CupsQTMPrinterSettings, WinQTMPrinterSettings 
+   *  Must return a list of pairs of strings. The first item in each pair being
+   *  the printer's display name (i.e. the one to be shown to the user), the
+   *  second the queue name.
+   */
+  virtual QList<QPair<QString,QString> > availablePrinters() = 0;
   
   static QString qtPaperSizeToQString(const QPrinter::PaperSize);
   static QPrinter::PaperSize qStringToQtPaperSize(const QString&);
@@ -129,7 +136,7 @@ class CupsQTMPrinterSettings : public QTMPrinterSettings {
 public:
   CupsQTMPrinterSettings();
   QString toSystemCommand() const;
-  QStringList availablePrinters();
+  QList<QPair<QString,QString> > availablePrinters();
 protected:
   bool fromSystemConfig(const QString& printer);
   void systemCommandFinished(int exitCode, QProcess::ExitStatus exitStatus);
@@ -159,7 +166,7 @@ class WinQTMPrinterSettings : public QTMPrinterSettings {
 public:
   WinQTMPrinterSettings();
   QString toSystemCommand() const;
-  QStringList availablePrinters();
+  QList<QPair<QString,QString> > availablePrinters();
 protected:
   bool fromSystemConfig(const QString& printer);
   void systemCommandFinished(int exitCode, QProcess::ExitStatus exitStatus);

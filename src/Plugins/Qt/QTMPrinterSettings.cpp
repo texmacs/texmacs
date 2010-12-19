@@ -295,11 +295,12 @@ CupsQTMPrinterSettings::toSystemCommand() const {
 /*!
  * This is a temporary workaround the problem with the names returned for the
  * printers by QPrinterInfo::availablePrinters().
+ * @see QTMPrinterSettings::availablePrinters()
  * @todo Use asynchronous querying.
  */
-QStringList
+QList<QPair<QString,QString> >
 CupsQTMPrinterSettings::availablePrinters() {
-  QStringList _ret;
+  QList<QPair<QString,QString> > _ret;
   QProcess stat(this);
   stat.start("lpstat -a");
   if(! stat.waitForFinished(2000)) // 2 sec.
@@ -311,7 +312,7 @@ CupsQTMPrinterSettings::availablePrinters() {
     if(rx.indexIn(_line) == -1)      // No matches?
       continue;
     
-    _ret << rx.cap(1);
+    _ret << QPair<QString,QString>(rx.cap(1),rx.cap(1));
   }
   return _ret;
 }
@@ -425,7 +426,7 @@ WinQTMPrinterSettings::toSystemCommand() const {
 }
 
 /*!
- * Parses winprinfo output.
+ * Parses winprinfo output. This is really UGLY.
  */
 void
 WinQTMPrinterSettings::systemCommandFinished(int exitCode, 
@@ -439,7 +440,6 @@ WinQTMPrinterSettings::systemCommandFinished(int exitCode,
     return;
   }
   
-  // This is UGLY...
   int resolutionsCounter = 0;
   bool readingSizes = false;
   QList<QByteArray> _lines = configProgram->readAllStandardOutput().split('\n');
@@ -498,13 +498,14 @@ WinQTMPrinterSettings::systemCommandFinished(int exitCode,
 }
 
 /*!
+ * @see QTMPrinterSettings::availablePrinters()
  * @todo Check whether the list returned by QPrinterInfo is ok.
  */
-QStringList
+QList<QPair<QString,QString> >
 WinQTMPrinterSettings::availablePrinters() const {
-  QStringList _ret;
+  QList<QPair<QString,QString> > _ret;
   foreach(QPrinterInfo printer, QPrinterInfo::availablePrinters())
-    _ret << printer.printerName();
+    _ret << QPair<QString,QString>(printer.printerName(), printer.printerName());
   return _ret;
 }
 

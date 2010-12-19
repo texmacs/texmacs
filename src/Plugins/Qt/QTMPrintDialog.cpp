@@ -9,7 +9,6 @@
  ******************************************************************************/
 
 #include "QTMPrintDialog.hpp"
-#include <QPrinterInfo>
 
 /*!
  * Constructs a QTMPrintDialog and sets up the connections that allow for 
@@ -79,9 +78,9 @@ void
 QTMPrintDialog::setupUi(QDialog *dia) {
 
   Ui::QTMPrintDialog::setupUi(dia);
-  
-  foreach (QString printerName, _settings->availablePrinters())
-    printerCombo->addItem(printerName);
+  typedef QPair<QString, QString> printerPair;
+  foreach (printerPair printer, _settings->availablePrinters())
+    printerCombo->addItem(printer.first, printer.second);
   
   if(printerCombo->count() == 0)
     printerCombo->addItem("No printers available"); // TODO hide everything else
@@ -96,12 +95,16 @@ QTMPrintDialog::setupUi(QDialog *dia) {
   orderPagesCombo->addItem("Left-Right, Top-Bottom", QTMPrinterSettings::LR_TB);
   orderPagesCombo->addItem("Right-Left, Top-Bottom", QTMPrinterSettings::RL_TB);
   orderPagesCombo->addItem("Top-Bottom, Left-Right", QTMPrinterSettings::TB_LR);
-  orderPagesCombo->addItem("Top-Bottom, Right-Left", QTMPrinterSettings::TB_RL);
+  orderPagesCombo->addItem("Top-Bottom, Right-Left", QTMPrinterSettings::TB_RL);  
+  orderPagesCombo->addItem("Left-Right, Bottom-Top", QTMPrinterSettings::LR_BT);
+  orderPagesCombo->addItem("Right-Left, Bottom-Top", QTMPrinterSettings::RL_BT);
+  orderPagesCombo->addItem("Bottom-Top, Left-Right", QTMPrinterSettings::BT_LR);
+  orderPagesCombo->addItem("Bottom-Top, Right-Left", QTMPrinterSettings::BT_RL);
   
   // Force reading the printer settings for the first printer in the list. 
   _settings->startReadingSystemConfig(printerCombo->currentText());
-  
 }
+
 
 /*!
  * Stores the values from the dialog into the QTMPrinterSettings object after the
@@ -145,7 +148,7 @@ void QTMPrintDialog::reject()
 }
 
 
-/////////////////// Some cosmetic stuff follows
+/////////////////// Some cosmetic stuff follows ///////////////////
 
 
 /*!
