@@ -109,7 +109,7 @@
   (=> (balloon (icon "tm_open.xpm") "Load a file") (link load-menu))
   (=> (balloon (icon "tm_save.xpm") "Save this buffer") (link save-menu))
   (if (experimental-qt-gui?)
-      ((balloon (icon "tm_print.xpm") "Print") (interactive-print-buffer?)))
+      ((balloon (icon "tm_print.xpm") "Print") (interactive-print-buffer)))
   (if (not (experimental-qt-gui?))
       (=> (balloon (icon "tm_print.xpm") "Print") (link print-menu)))
   (if (detailed-menus?)
