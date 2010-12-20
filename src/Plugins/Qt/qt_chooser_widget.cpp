@@ -232,6 +232,9 @@ qt_chooser_widget_rep::perform_dialog () {
     file= "#f";
   } else {
     url u = url_system (scm_unquote (from_qstring (_file)));
+    QByteArray arr= to_qstring (as_string (u)).toLocal8Bit ();
+    const char* cstr= arr.constData ();
+    string localname = string ((char*) cstr);
     if (type == "image") {
       /*
        QPixmap _pic(_file);
@@ -244,9 +247,9 @@ qt_chooser_widget_rep::perform_dialog () {
        params << "\"" << "" << "\"";   // yps ??
        file = "(list (url-system " * scm_quote (as_string (u)) * ") " * params * ")";
        */
-      file = "(list (url-system " * scm_quote (as_string (u)) * ") \"\" \"\" \"\" \"\")";
+      file = "(list (url-system " * scm_quote (localname) * ") \"\" \"\" \"\" \"\")";
     } else {
-      file = "(url-system " * scm_quote (cork_to_utf8(as_string (u))) * ")";
+      file = "(url-system " * scm_quote (localname) * ")";
     }
   }
   cmd ();
@@ -336,12 +339,15 @@ qt_chooser_widget_rep::perform_dialog () {
     if (fileNames.count() > 0) {
       file = from_qstring_utf8 (fileNames[0]);
       url u = url_system (scm_unquote (file));
+      QByteArray arr= to_qstring (as_string (u)).toLocal8Bit ();
+      const char* cstr= arr.constData ();
+      string localname = string ((char*) cstr);
       if (type == "image")
         file = "(list (url-system " *
         scm_quote (as_string (u)) *
         ") " * imgdialog->getParamsAsString () * ")";
       else
-        file = "(url-system " * scm_quote (as_string (u)) * ")";
+        file = "(url-system " * scm_quote (localname) * ")";
     }
   } else {
     file = "#f";
