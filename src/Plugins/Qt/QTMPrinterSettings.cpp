@@ -14,6 +14,7 @@
 #include "qt_utilities.hpp"
 
 #include <QPrinter>
+#include <QPrinterInfo>
 #include <QProcess>
 #include <QRegExp>
 
@@ -502,7 +503,7 @@ WinQTMPrinterSettings::systemCommandFinished(int exitCode,
  * @todo Check whether the list returned by QPrinterInfo is ok.
  */
 QList<QPair<QString,QString> >
-WinQTMPrinterSettings::availablePrinters() const {
+WinQTMPrinterSettings::availablePrinters() {
   QList<QPair<QString,QString> > _ret;
   foreach(QPrinterInfo printer, QPrinterInfo::availablePrinters())
     _ret << QPair<QString,QString>(printer.printerName(), printer.printerName());
