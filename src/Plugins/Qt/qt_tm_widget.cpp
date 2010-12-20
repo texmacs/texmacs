@@ -688,11 +688,12 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QWidget *new_widget= concrete(w)->as_qwidget();
       QWidget *old_widget= tw->currentWidget();
       if (new_widget && (new_widget != old_widget) ) {
-        tw->addWidget(new_widget);
-        tw->removeWidget(old_widget);
         if (old_widget) {
+          old_widget->setVisible(false);
+          tw->removeWidget(old_widget);
           old_widget->setParent(NULL);
         }
+        tw->addWidget(new_widget);
       }
       QTMWidget* new_canvas= qobject_cast<QTMWidget*>(new_widget);
       QTMWidget* old_canvas= qobject_cast<QTMWidget*>(old_widget);
