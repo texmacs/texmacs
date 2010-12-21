@@ -112,6 +112,7 @@ public:
   string get_child_long_name (tree t, int child);
 
   /* Heuristic initialization */
+  void set_environment (hashmap<string,tree> env);
   tree arg_access (tree t, tree arg, tree env, int& type);
   bool heuristic_with_like (tree t, tree arg);
   bool heuristic_init_macro (string var, tree macro);

@@ -122,6 +122,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   if (ok) {
     env->patch_env (H);
     ok= drd->set_locals (t);
+    drd->set_environment (H);
   }
   if (!ok) {
     if (!is_tuple (style)) FAILED ("tuple expected as style");

@@ -173,6 +173,7 @@ compute_env_and_drd (tree style) {
     if (ok) {
       env->patch_env (H);
       ok= drd->set_locals (t);
+      drd->set_environment (H);
     }
     if (!ok) {
       env->exec (tree (USE_PACKAGE, A (style)));
@@ -231,8 +232,11 @@ get_document_preamble (tree t) {
 drd_info
 get_document_drd (tree doc) {
   tree style= extract (doc, "style");
-  if (extract (doc, "TeXmacs") == "")
+  if (extract (doc, "TeXmacs") == "") {
+    if (the_drd->get_meaning (make_tree_label ("theorem")) != tree (UNINIT))
+      return the_drd;
     style= tree (TUPLE, "generic");
+  }
   //cout << "style= " << style << "\n";
   drd_info drd= get_style_drd (style);
   tree p= get_document_preamble (doc);

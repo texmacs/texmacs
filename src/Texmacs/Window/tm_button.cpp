@@ -139,6 +139,7 @@ get_init_environment (tree doc, drd_info& drd) {
   if (ok) {
     env->patch_env (H);
     ok= drd->set_locals (t);
+    drd->set_environment (H);
   }
   if (!ok) {
     ASSERT (is_tuple (style), "tuple expected as style");

@@ -700,6 +700,11 @@ drd_info_rep::get_env_descendant (tree t, path p, tree env) {
 * Heuristic initialization of DRD
 ******************************************************************************/
 
+void
+drd_info_rep::set_environment (hashmap<string,tree> env2) {
+  env= env2;
+}
+
 tree
 drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
   // returns "" if unaccessible and the env if accessible
@@ -808,7 +813,7 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
     //if (var == "section" || var == "section-title")
     //cout << var << " -> " << env << ", " << macro << "\n";
     //if (var == "math")
-    //cout << var << ", " << i << " -> " << env << ", " << macro << "\n";
+    //cout << var << ", " << i << " -> " << type << ", " << env << ", " << macro << "\n";
     set_type (l, i, type);
     if (env != "") {
       //if (var == "eqnarray*")
@@ -866,7 +871,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env2) {
   // time_t tt= texmacs_time ();
-  env= env2;
+  set_environment (env2);
   bool flag= true;
   int round= 0;
   while (flag) {

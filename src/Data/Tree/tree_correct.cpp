@@ -343,7 +343,7 @@ protected:
   bool contains_plus_like (tree t);
   void count_invisible (array<tree> a);
   void count_invisible (tree t, string mode);
-  int  get_status (tree t, bool left);
+  int  get_status (tree t, bool left, bool script_flag);
   array<tree> correct (array<tree> a);
 
 public:
@@ -425,7 +425,7 @@ invisible_corrector::count_invisible (tree t, string mode) {
 }
 
 int
-invisible_corrector::get_status (tree t, bool left) {
+invisible_corrector::get_status (tree t, bool left, bool script_flag) {
   if (is_atomic (t)) {
     static language lan= math_language ("std-math");
     string s= t->label;
@@ -450,6 +450,8 @@ invisible_corrector::get_status (tree t, bool left) {
 	  return PROBABLE_SPACE;
 	else if (N(s)>1 && is_iso_alpha (s))
 	  return PROBABLE_SPACE;
+        else if (script_flag)
+          return PROBABLE_TIMES;
 	else return BOTH_WAYS;
       }
       else {
@@ -457,6 +459,8 @@ invisible_corrector::get_status (tree t, bool left) {
 	  return PROBABLE_TIMES;
 	else if (times_after[s] > 0 && space_after[s] == 0)
 	  return PROBABLE_TIMES;
+        else if (script_flag && (N(s) == 1 || !is_iso_alpha (s)))
+          return PROBABLE_TIMES;
 	else return BOTH_WAYS;
       }
     }
@@ -480,9 +484,27 @@ invisible_corrector::get_status (tree t, bool left) {
     else if (!left && is_func (t, BIG_AROUND))
       return PROBABLE_TIMES;
     else if (is_func (t, WIDE, 2))
-      return get_status (t[0], left);
+      return get_status (t[0], left, script_flag);
+    else if (is_func (t, WITH))
+      return get_status (t[N(t)-1], left, script_flag);
+    else if (N(t) == 0 && L(t) >= START_EXTENSIONS) {
+      tree def= the_drd->get_meaning (L(t));
+      if (is_func (def, MACRO, 1))
+        return get_status (def[0], left, script_flag);
+      else return SURE_NOTHING;
+    }
     else return SURE_NOTHING;
   }
+}
+
+static bool
+admits_script (array<int> tp, int i) {
+  i++;
+  while (i<N(tp))
+    if (tp[i] == SYMBOL_SCRIPT) return true;
+    else if (tp[i] == SYMBOL_SKIP) i++;
+    else return false;
+  return false;
 }
 
 array<tree>
@@ -501,8 +523,8 @@ invisible_corrector::correct (array<tree> a) {
 	continue;
       
       string ins= "";
-      int sti= get_status (a[i], true);
-      int stj= get_status (a[j], false);
+      int sti= get_status (a[i], true, admits_script (tp, i));
+      int stj= get_status (a[j], false, admits_script (tp, j));
       //cout << "Pair (" << a[i] << ", " << a[j] << ")"
       //<< " -> (" << sti << ", " << stj << ")" << LF;
       if (sti == SURE_NOTHING || stj == SURE_NOTHING)
@@ -546,6 +568,7 @@ invisible_corrector::correct (array<tree> a) {
 
 tree
 invisible_corrector::correct (tree t, string mode) {
+  //cout << "Correct " << t << ", " << mode << "\n";
   tree r= t;
   if (is_compound (t)) {
     int i, n= N(t);
@@ -595,6 +618,8 @@ misc_math_correct (tree t) {
     return tree (RSUB, compound ("math", misc_math_correct (t[0][0])));
   else if (is_compound (t, "math", 1) && is_func (t[0], RSUP, 1))
     return tree (RSUP, compound ("math", misc_math_correct (t[0][0])));
+  else if (is_func (t, RSUP, 1) && is_func (t[0], RPRIME, 1))
+    return misc_math_correct (t[0]);
   else {
     int i, n= N(t);
     tree r (t, n);

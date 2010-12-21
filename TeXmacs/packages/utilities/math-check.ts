@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.9>
 
 <style|source>
 
@@ -32,9 +32,9 @@
 
   <assign|math-error|<macro|x|<with|ornament-color|#ffc0c0|ornament-sunny-color|#ffe0e0|ornament-shadow-color|#ff8080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<ornament|<arg|x>>>>>
 
-  <drd-props|extern:math-check|with-like|true|arity|1|accessible|all>
+  <drd-props|extern:math-check|with-like|true|arity|1|accessible|all|regular|all>
 
-  <drd-props|extern:math-check-table|arity|1|accessible|all>
+  <drd-props|extern:math-check-table|arity|1|accessible|all|regular|all>
 
   <\active*>
     <\src-comment>

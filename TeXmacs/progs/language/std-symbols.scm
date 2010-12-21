@@ -89,8 +89,8 @@
     "<equiv>" "<nequiv>" "<sim>" "<simeq>" "<asymp>" "<approx>" "<cong>"
     "<subsetsim>" "<supsetsim>" "<doteq>" "<propto>" "<varpropto>"
     "<perp>" "<bowtie>" "<Join>" "<smile>" "<frown>" "<signchange>"
-    "<mid>" "<parallel>" "<shortmid>" "<shortparallel>" "<nmid>"
-    "<nparallel>" "<nshortmid>" "<nshortparallel>" "<divides>" "<ndivides>"
+    "<parallel>" "<shortparallel>" "<nparallel>" "<nshortparallel>"
+    "<divides>" "<ndivides>"
 
     "<approxeq>" "<backsim>" "<backsimeq>" "<Bumpeq>" "<bumpeq>" "<circeq>"
     "<curlyeqprec>" "<curlyeqsucc>" "<Doteq>" "<doteqdot>" "<eqcirc>"
@@ -341,7 +341,8 @@
   
   (define Middle-symbol
     (:type middle-bracket)
-    "|" "<||>" "<nobracket>" "<mid-|>" "<mid-||>" "<mid-.>")
+    "|" "<||>" "<nobracket>" "<mid-|>" "<mid-||>" "<mid-.>"
+    "<mid>" "<shortmid>" "<nmid>" "<nshortmid>")
 
   (define Close-symbol
     (:type closing-bracket)
@@ -550,6 +551,7 @@
     "inf" "lim" "liminf" "limsup" "max" "min" "sup")
 
   (define Prefix-symbol
+    Not-symbol
     Minus-prefix-symbol
     Plus-prefix-symbol
     Other-prefix-symbol)
