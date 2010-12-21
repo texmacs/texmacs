@@ -337,7 +337,7 @@ qt_chooser_widget_rep::perform_dialog () {
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      file = from_qstring_utf8 (fileNames[0]);
+      file = from_qstring (fileNames[0]);
       url u = url_system (scm_unquote (file));
       QByteArray arr= to_qstring (as_string (u)).toLocal8Bit ();
       const char* cstr= arr.constData ();
