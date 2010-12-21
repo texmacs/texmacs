@@ -3181,6 +3181,8 @@ upgrade (tree t, string version) {
     t= upgrade_root_switch (t);
   if (version_inf_eq (version, "1.0.7.8"))
     t= upgrade_hyphenation (t);
+  //if (is_non_style_document (t))
+  //  print_math_status (t);
   if (version_inf_eq (version, "1.0.7.8") && is_non_style_document (t)) {
     t= with_correct (t);
     t= superfluous_with_correct (t);

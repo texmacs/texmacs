@@ -12,6 +12,7 @@
 #include "tree_correct.hpp"
 #include "tree_analyze.hpp"
 #include "Scheme/object.hpp"
+#include "packrat.hpp"
 
 /******************************************************************************
 * DRD based correction
@@ -144,6 +145,45 @@ homoglyph_correct (array<tree> a) {
 	       ((tp[j2] == SYMBOL_BASIC) ||
 		(tp[j2] == SYMBOL_PREFIX)))
 	r << tree ("<setminus>");
+      else r << a[i];
+    }
+    else if (is_func (a[i], NEG, 1) && is_atomic (a[i][0])) {
+      string s= a[i][0]->label;
+      if (s == "=") r << tree ("<neq>");
+      else if (s == "<less>") r << tree ("<nless>");
+      else if (s == "<gtr>") r << tree ("<ngtr>");
+      else if (s == "<leq>") r << tree ("<nleq>");
+      else if (s == "<geq>") r << tree ("<ngeq>");
+      else if (s == "<leqslant>") r << tree ("<nleqslant>");
+      else if (s == "<geqslant>") r << tree ("<ngeqslant>");
+      else if (s == "<prec>") r << tree ("<nprec>");
+      else if (s == "<succ>") r << tree ("<nsucc>");
+      else if (s == "<preceq>") r << tree ("<npreceq>");
+      else if (s == "<succeq>") r << tree ("<nsucceq>");
+      else if (s == "<preccurlyeq>") r << tree ("<npreccurlyeq>");
+      else if (s == "<succcurlyeq>") r << tree ("<nsucccurlyeq>");
+      else if (s == "<rightarrow>") r << tree ("<nrightarrow>");
+      else if (s == "<Rightarrow>") r << tree ("<nRightarrow>");
+      else if (s == "<leftarrow>") r << tree ("<nleftarrow>");
+      else if (s == "<Leftarrow>") r << tree ("<nLeftarrow>");
+      else if (s == "<leftrightarrow>") r << tree ("<nleftrightarrow>");
+      else if (s == "<Leftrightarrow>") r << tree ("<nLeftrightarrow>");
+      else if (s == "<equiv>") r << tree ("<nequiv>");
+      else if (s == "<sim>") r << tree ("<nsim>");
+      else if (s == "<simeq>") r << tree ("<nsimeq>");
+      else if (s == "<approx>") r << tree ("<napprox>");
+      else if (s == "<cong>") r << tree ("<ncong>");
+      else if (s == "<asymp>") r << tree ("<nasymp>");
+      else if (s == "<in>") r << tree ("<nin>");
+      else if (s == "<ni>") r << tree ("<nni>");
+      else if (s == "<subset>") r << tree ("<nsubset>");
+      else if (s == "<supset>") r << tree ("<nsupset>");
+      else if (s == "<subseteq>") r << tree ("<nsubseteq>");
+      else if (s == "<supseteq>") r << tree ("<nsupseteq>");
+      else if (s == "<sqsubset>") r << tree ("<nsqsubset>");
+      else if (s == "<sqsupset>") r << tree ("<nsqsupset>");
+      else if (s == "<sqsubseteq>") r << tree ("<nsqsubseteq>");
+      else if (s == "<sqsupseteq>") r << tree ("<nsqsupseteq>");
       else r << a[i];
     }
     else r << a[i];
@@ -545,6 +585,105 @@ missing_invisible_correct (tree t, int force) {
 }
 
 /******************************************************************************
+* Miscellaneous corrections
+******************************************************************************/
+
+tree
+misc_math_correct (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "math", 1) && is_func (t[0], RSUB, 1))
+    return tree (RSUB, compound ("math", misc_math_correct (t[0][0])));
+  else if (is_compound (t, "math", 1) && is_func (t[0], RSUP, 1))
+    return tree (RSUP, compound ("math", misc_math_correct (t[0][0])));
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= misc_math_correct (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
+* Print mathematical status
+******************************************************************************/
+
+static int
+count_math_formula_errors (tree t) {
+  if (packrat_correct ("std-math", "Main", t)) return 0;
+  else {
+    //cout << "  ERROR> " << t << "\n";
+    return 1;
+  }
+}
+
+static int
+count_math_table_errors (tree t) {
+  if (is_atomic (t)) return 0;
+  else if (is_func (t, CELL, 1)) {
+    if (packrat_correct ("std-math", "Cell", t[0])) return 0;
+    else {
+      //cout << "  ERROR> " << t << "\n";
+      return 1;
+    }
+  }
+  else {
+    int sum= 0;
+    for (int i=0; i<N(t); i++)
+      sum += count_math_table_errors (t[i]);
+    return sum;
+  }
+}
+
+int
+count_math_errors (tree t) {
+  if (is_atomic (t)) return 0;
+  else {
+    int sum= 0;
+    for (int i=0; i<N(t); i++) {
+      tree cmode= the_drd->get_env_child (t, i, MODE, "text");
+      if (cmode != "math") sum += count_math_errors (t[i]);
+      else {
+        tree u= t[i];
+        while (is_func (u, DOCUMENT, 1) ||
+               is_func (u, TFORMAT) ||
+               is_func (u, WITH))
+          u= u[N(u)-1];
+        if (is_func (u, TABLE)) count_math_table_errors (u);
+        else sum += count_math_formula_errors (u);
+      }
+    }
+    return sum;
+  }
+}
+
+void
+print_math_status (tree t) {
+  with_drd drd (get_document_drd (t));
+  if (is_func (t, DOCUMENT))
+    for (int i=0; i<N(t); i++)
+      if (is_compound (t[i], "body", 1)) {
+        t= t[i][0];
+        break;
+      }
+  cout << "Initial                     : " << count_math_errors (t) << "\n";
+  t= with_correct (t);
+  cout << "With corrected              : " << count_math_errors (t) << "\n";
+  t= superfluous_with_correct (t);
+  cout << "Superfluous with corrected  : " << count_math_errors (t) << "\n";
+  t= upgrade_brackets (t);
+  cout << "Upgraded brackets           : " << count_math_errors (t) << "\n";
+  t= misc_math_correct (t);
+  cout << "Miscellaneous corrected     : " << count_math_errors (t) << "\n";
+  t= superfluous_invisible_correct (t);
+  cout << "Invisible corrected         : " << count_math_errors (t) << "\n";
+  t= homoglyph_correct (t);
+  cout << "Homoglyphs corrected        : " << count_math_errors (t) << "\n";
+  t= missing_invisible_correct (t);
+  cout << "Missing invisible corrected : " << count_math_errors (t) << "\n";
+}
+
+/******************************************************************************
 * Master routines
 ******************************************************************************/
 
@@ -556,6 +695,7 @@ enabled_preference (string s) {
 tree
 latex_correct (tree t) {
   // NOTE: matching brackets corrected in upgrade_tex
+  t= misc_math_correct (t);
   if (enabled_preference ("remove superfluous invisible"))
     t= superfluous_invisible_correct (t);
   if (enabled_preference ("homoglyph correct"))
@@ -567,7 +707,8 @@ latex_correct (tree t) {
 
 tree
 automatic_correct (tree t, string version) {
-  if (version_inf_eq (version, "1.0.7.8")) {
+  if (version_inf_eq (version, "1.0.7.9")) {
+    t= misc_math_correct (t);
     if (enabled_preference ("remove superfluous invisible"))
       t= superfluous_invisible_correct (t);
     if (enabled_preference ("homoglyph correct"))
@@ -583,6 +724,7 @@ manual_correct (tree t) {
   t= with_correct (t);
   t= superfluous_with_correct (t);
   t= upgrade_brackets (t);
+  t= misc_math_correct (t);
   if (enabled_preference ("manual remove superfluous invisible"))
     t= superfluous_invisible_correct (t);
   if (enabled_preference ("manual homoglyph correct"))
