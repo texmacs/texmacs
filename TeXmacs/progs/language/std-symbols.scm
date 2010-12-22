@@ -139,7 +139,7 @@
     "<equallim>" "<longequallim>")
 
   (define Relation-symbol
-    Relation-nolim-symbol Relaton-symbol)
+    Relation-nolim-symbol Relation-lim-symbol)
 
   (define Arrow-nolim-symbol
     (:type infix)
@@ -228,7 +228,7 @@
     (:type infix)
     (:penalty 30)
     (:spacing default default)
-    "-" "<pm>" "<mp>" "<ominus>" "<boxminus>")
+    "-" "<pm>" "<mp>" "<ominus>" "<boxminus>" "<longminus>")
 
   (define Minus-prefix-symbol
     (:type prefix)
@@ -312,7 +312,7 @@
   (define Prime-symbol
     (:type symbol)
     (:penalty panic)
-    "'" "`" "<dag>" "<ddag>")
+    "'" "`" "<dag>" "<ddag>" "<ast>")
 
   (define Ponctuation-visible-symbol
     (:type separator)
@@ -373,8 +373,8 @@
     "<mathe>" "<mathi>" "<mathpi>"
     "<matheuler>" "<mathcatalan>" "<mathGamma>"
     "<aleph>" "<beth>" "<gimel>" "<daleth>"
-    "<hbar>" "<hslash>" "<imath>" "<jmath>" "<ell>"
-    "<wp>" "<digamma>"
+    "<hbar>" "<hslash>" "<imath>" "<jmath>"
+    "<ell>" "<b-ell>" "<wp>" "<digamma>"
 
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<epsilon>"
     "<varepsilon>" "<zeta>" "<eta>" "<theta>" "<vartheta>"

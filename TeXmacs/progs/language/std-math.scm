@@ -368,10 +368,15 @@
     (:<around :any :/ (* Post) Expressions (* Pre) :/ :any :>)
     (:<around* :any :/ (* Post) Expressions (* Pre) :/ :any :>))
 
+  (define Restrict
+    ((or "|" (:<mid "|" :>))
+     (+ (or (:<rsub Script :>) (:<rsup Script :>)))))
+
   (define Postfixed
     (Postfixed Postfix-postfix)
     (Postfixed Post)
     (Postfixed Fenced)
+    (Postfixed Restrict)
     Radical)
 
   (define Slot

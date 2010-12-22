@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.9>
 
 <style|<tuple|source|std>>
 
@@ -263,6 +263,8 @@
   <assign|smash-bottom|<macro|body|<vresize|<arg|body>|0ex|>>>
 
   <assign|phantom|<macro|body|<if*|false|<arg|body>>>>
+
+  <drd-props|phantom|arity|1|accessible|none|meaning|<macro|body|>>
 
   <assign|hphantom|<macro|body|<vresize|<phantom|<arg|body>>|0ex|1ex>>>
 

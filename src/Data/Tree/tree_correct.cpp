@@ -186,6 +186,10 @@ homoglyph_correct (array<tree> a) {
       else if (s == "<sqsupseteq>") r << tree ("<nsqsupseteq>");
       else r << a[i];
     }
+    else if (a[i] == ":" && i+1 < N(a) && a[i+1] == "=") {
+      r << tree ("<assign>");
+      i++;
+    }
     else r << a[i];
   return r;
 }
@@ -437,7 +441,7 @@ invisible_corrector::get_status (tree t, bool left, bool script_flag) {
     string g= lan->get_group (t->label);
     if (is_numeric (s))
       return (left? SURE_TIMES: PROBABLE_TIMES);
-    else if (starts (g, "Unary-operator"))
+    else if (starts (g, "Unary-operator-textual"))
       return (left? SURE_SPACE: BOTH_WAYS);
     else if (starts (g, "Binary-operator"))
       return SURE_SPACE;

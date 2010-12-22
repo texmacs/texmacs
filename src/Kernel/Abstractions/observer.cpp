@@ -386,7 +386,11 @@ busy_tree (tree& ref) {
 
 void
 apply (tree& ref, modification mod) {
-  ASSERT (is_applicable (ref, mod), "invalid modification");
+  if (!is_applicable (ref, mod)) {
+    cout << "mod= " << mod << "\n";
+    cout << "ref= " << ref << "\n";
+    ASSERT (is_applicable (ref, mod), "invalid modification");
+  }
   path ip= obtain_ip (ref);
   path rp= reverse (ip);
   path p = rp * root (mod);
@@ -519,7 +523,10 @@ remove_node (path p) {
 
 void
 set_cursor (path p, tree data) {
-  set_cursor (subtree (the_et, path_up (p)), last_item (p), data);
+  if (is_inside (the_et, p))
+    set_cursor (subtree (the_et, path_up (p)), last_item (p), data);
+  else
+    cout << "TeXmacs] warning: invalid cursor position " << p << "\n";
 }
 
 void
