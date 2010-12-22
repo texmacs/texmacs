@@ -21,7 +21,7 @@ tree missing_invisible_correct (tree t, int force= -1);
 tree upgrade_brackets (tree t, string mode= "text");
 tree downgrade_brackets (tree t);
 
-int  count_math_errors (tree t);
+int  count_math_errors (tree t, int mode= 0);
 void print_math_status (tree t);
 tree latex_correct (tree t);
 tree automatic_correct (tree t, string version);

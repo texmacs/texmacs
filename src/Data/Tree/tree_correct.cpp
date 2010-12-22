@@ -402,8 +402,13 @@ invisible_corrector::count_invisible (array<tree> a) {
 	  times_after (s)= times_after[s] + 1;
 	if (a[j2] == " ")
 	  space_after (s)= space_after[s] + 1;
-	if (is_around (a[j2]) && a[j2][0] == "(" && !contains_infix (a[j2][1]))
-	  space_after (s)= space_after[s] + 1;
+        // NOTE: this heuristic might not be a good idea,
+        // because it inhibits the correction of QR -> Q*R,
+        // if Q is a polynomial which is applied somewhere Q(1).
+        // We might introduce a table 'apply_after'.
+	//if (is_around (a[j2]) && a[j2][0] == "(" &&
+        //!contains_infix (a[j2][1]))
+        //space_after (s)= space_after[s] + 1;
       }
     }
 }
@@ -481,7 +486,12 @@ invisible_corrector::get_status (tree t, bool left, bool script_flag) {
     else if (is_func (t, FRAC) ||
 	     is_func (t, SQRT))
       return (left? SURE_TIMES: BOTH_WAYS);
-    else if (!left && is_func (t, BIG_AROUND))
+    else if (!left && is_func (t, BIG_AROUND, 2) &&
+             (t[0] == "<sum>" || t[0] == "<amalg>" ||
+              t[0] == "<oplus>" || t[0] == "<uplus>" ||
+              t[0] == "<int>" || t[0] == "<oint>" ||
+              t[0] == "<intlim>" || t[0] == "<ointlim>" ||
+              t[0] == "<prod>" || t[0] == "<odot>" || t[0] == "<otimes>"))
       return PROBABLE_TIMES;
     else if (is_func (t, WIDE, 2))
       return get_status (t[0], left, script_flag);
@@ -588,8 +598,9 @@ invisible_corrector::correct (tree t, string mode) {
     array<tree> a= concat_tokenize (r);
     a= correct (a);
     tree ret= concat_recompose (a);
-    //if (ret != r) cout << "<< " << r << " >>" << LF
-    //<< ">> " << ret << " <<" << LF;
+    //if (ret != r)
+    //  cout << "<< " << r << " >>" << LF
+    //       << ">> " << ret << " <<" << LF;
     return ret;
   }
   else return r;
@@ -602,8 +613,10 @@ missing_invisible_correct (tree t, int force) {
   // force = 1 , correct whenever reasonable (used for LaTeX import)
   with_drd drd (get_document_drd (t));
   invisible_corrector corrector (t, force);
-  //cout << "Times " << corrector.times_after << "\n";
-  //cout << "Space " << corrector.space_after << "\n";
+  //cout << "Times before " << corrector.times_before << "\n";
+  //cout << "Space before " << corrector.space_before << "\n";
+  //cout << "Times after  " << corrector.times_after  << "\n";
+  //cout << "Space after  " << corrector.space_after  << "\n";
   return corrector.correct (t, "text");
 }
 
@@ -618,6 +631,14 @@ misc_math_correct (tree t) {
     return tree (RSUB, compound ("math", misc_math_correct (t[0][0])));
   else if (is_compound (t, "math", 1) && is_func (t[0], RSUP, 1))
     return tree (RSUP, compound ("math", misc_math_correct (t[0][0])));
+  else if (is_func (t, RSUB, 1) && is_func (t[0], RSUB, 1))
+    return misc_math_correct (t[0]);
+  else if (is_func (t, RSUB, 1) && is_func (t[0], RSUP, 1))
+    return misc_math_correct (tree (RSUB, t[0][0]));
+  else if (is_func (t, RSUP, 1) && is_func (t[0], RSUB, 1))
+    return misc_math_correct (tree (RSUP, t[0][0]));
+  else if (is_func (t, RSUP, 1) && is_func (t[0], RSUP, 1))
+    return misc_math_correct (t[0]);
   else if (is_func (t, RSUP, 1) && is_func (t[0], RPRIME, 1))
     return misc_math_correct (t[0]);
   else {
@@ -634,7 +655,8 @@ misc_math_correct (tree t) {
 ******************************************************************************/
 
 static int
-count_math_formula_errors (tree t) {
+count_math_formula_errors (tree t, int mode) {
+  if (mode == 1) return 1;
   if (packrat_correct ("std-math", "Main", t)) return 0;
   else {
     //cout << "  ERROR> " << t << "\n";
@@ -643,9 +665,10 @@ count_math_formula_errors (tree t) {
 }
 
 static int
-count_math_table_errors (tree t) {
+count_math_table_errors (tree t, int mode) {
   if (is_atomic (t)) return 0;
   else if (is_func (t, CELL, 1)) {
+    if (mode == 1) return 1;
     if (packrat_correct ("std-math", "Cell", t[0])) return 0;
     else {
       //cout << "  ERROR> " << t << "\n";
@@ -655,27 +678,27 @@ count_math_table_errors (tree t) {
   else {
     int sum= 0;
     for (int i=0; i<N(t); i++)
-      sum += count_math_table_errors (t[i]);
+      sum += count_math_table_errors (t[i], mode);
     return sum;
   }
 }
 
 int
-count_math_errors (tree t) {
+count_math_errors (tree t, int mode) {
   if (is_atomic (t)) return 0;
   else {
     int sum= 0;
     for (int i=0; i<N(t); i++) {
       tree cmode= the_drd->get_env_child (t, i, MODE, "text");
-      if (cmode != "math") sum += count_math_errors (t[i]);
+      if (cmode != "math") sum += count_math_errors (t[i], mode);
       else {
         tree u= t[i];
         while (is_func (u, DOCUMENT, 1) ||
                is_func (u, TFORMAT) ||
                is_func (u, WITH))
           u= u[N(u)-1];
-        if (is_func (u, TABLE)) count_math_table_errors (u);
-        else sum += count_math_formula_errors (u);
+        if (is_func (u, TABLE)) count_math_table_errors (u, mode);
+        else sum += count_math_formula_errors (u, mode);
       }
     }
     return sum;
@@ -691,6 +714,7 @@ print_math_status (tree t) {
         t= t[i][0];
         break;
       }
+  cout << "Formula count               : " << count_math_errors (t, 1) << "\n";
   cout << "Initial                     : " << count_math_errors (t) << "\n";
   t= with_correct (t);
   cout << "With corrected              : " << count_math_errors (t) << "\n";

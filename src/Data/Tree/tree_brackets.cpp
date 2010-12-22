@@ -19,34 +19,44 @@ static array<tree> upgrade_brackets (array<tree> a, int level);
 * Extra routines for symbol types
 ******************************************************************************/
 
+static bool
+is_dubious_open_middle (array<int> tp, int j) {
+  j--;
+  while (j >= 0 && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
+    j--;
+  return
+    j < 0 ||
+    tp[j] == SYMBOL_PREFIX ||
+    tp[j] == SYMBOL_INFIX ||
+    tp[j] == SYMBOL_SEPARATOR;
+}
+
+static bool
+is_dubious_close_middle (array<int> tp, int j) {
+  j++;
+  while (j < N(tp) && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
+    j++;
+  return
+    j >= N(tp) ||
+    tp[j] == SYMBOL_POSTFIX ||
+    tp[j] == SYMBOL_INFIX ||
+    tp[j] == SYMBOL_SEPARATOR;
+}
+
 static array<int>
 downgrade_dubious (array<int> tp_in) {
   array<int> tp= copy (tp_in);
   // NOTE: we also might forbid combinations such as OPEN MIDDLE
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_PROBABLE_OPEN && tp[i] <= SYMBOL_PROBABLE_CLOSE) {
-      int j= i-1;
-      while (j >= 0 && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
-	j--;
-      if (j < 0 ||
-	  tp[j] == SYMBOL_PREFIX ||
-	  tp[j] == SYMBOL_INFIX ||
-	  tp[j] == SYMBOL_SEPARATOR)
-	{
-	  if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
-	  if (tp[i] == SYMBOL_PROBABLE_CLOSE) tp[i]= SYMBOL_DUBIOUS_CLOSE;
-	}
-      j= i+1;
-      while (j < N(tp) && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
-	j++;
-      if (j >= N(tp) ||
-	  tp[j] == SYMBOL_POSTFIX ||
-	  tp[j] == SYMBOL_INFIX ||
-	  tp[j] == SYMBOL_SEPARATOR)
-	{
-	  if (tp[i] == SYMBOL_PROBABLE_OPEN) tp[i]= SYMBOL_DUBIOUS_OPEN;
-	  if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
-	}
+      if (is_dubious_open_middle (tp, i)) {
+        if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
+        if (tp[i] == SYMBOL_PROBABLE_CLOSE) tp[i]= SYMBOL_DUBIOUS_CLOSE;
+      }
+      if (is_dubious_close_middle (tp, i)) {
+        if (tp[i] == SYMBOL_PROBABLE_OPEN) tp[i]= SYMBOL_DUBIOUS_OPEN;
+        if (tp[i] == SYMBOL_PROBABLE_MIDDLE) tp[i]= SYMBOL_DUBIOUS_MIDDLE;
+      }
     }
   return tp;
 }
@@ -155,13 +165,16 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
 	       (last_open != -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
 	{
 	  if (last_open != -1 &&
-	      a[i] == a[last_open] &&
-	      (insist ||
-	       (a[last_open] == SYMBOL_PROBABLE_OPEN) ||
-	       (a[i] == SYMBOL_PROBABLE_CLOSE)))
+              a[i] == a[last_open] &&
+              ((tp[last_open] == SYMBOL_PROBABLE_OPEN) ||
+               (tp[i] == SYMBOL_PROBABLE_CLOSE) ||
+               (insist &&
+                !is_dubious_open_middle (tp, last_open) &&
+                !is_dubious_close_middle (tp, i))))
 	    {
 	      tp[last_open]= SYMBOL_OPEN;
 	      tp[i]= SYMBOL_CLOSE;
+              last_open= -1;
 	    }
 	  else if (tp[i] == SYMBOL_PROBABLE_MIDDLE) last_open= i;
 	  else last_open= -1;
@@ -391,26 +404,35 @@ upgrade_brackets (array<tree> a, int level) {
   array<int> tp= symbol_types (a);
   //cout << "Upgrade " << a << ", " << tp << "\n";
   if (admits_brackets (tp)) {
+    //cout << "  Downgrade dubious\n";
     array<tree> r= simplify_matching (a, downgrade_dubious (tp), level);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Detect french\n";
     r= simplify_matching (a, detect_french_interval (a, tp), level);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Detect absolute 1\n";
     r= simplify_matching (a, detect_absolute (a, tp, false), level);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Detect absolute 2\n";
     r= simplify_matching (a, detect_absolute (a, tp, true), level);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Detect probable\n";
     r= simplify_matching (a, detect_probable (a, tp), level);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Detect dummy substitution\n";
     if (replace_dummies (a) != a) {
       array<tree> a2= replace_dummies (a);
       array<int> tp2= symbol_types (a2);
       r= simplify_matching (a2, detect_probable (a2, tp2), level);
       if (r != a2) return upgrade_brackets (r, level);
     }
+    //cout << "  Confirm all\n";
     r= simplify_matching (a, confirm_all (tp), level);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Missing left\n";
     r= add_missing_left (a, tp);
     if (r != a) return upgrade_brackets (r, level);
+    //cout << "  Missing right\n";
     r= add_missing_right (a, tp);
     if (r != a) return upgrade_brackets (r, level);
   }

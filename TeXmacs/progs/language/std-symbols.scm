@@ -90,7 +90,7 @@
     "<subsetsim>" "<supsetsim>" "<doteq>" "<propto>" "<varpropto>"
     "<perp>" "<bowtie>" "<Join>" "<smile>" "<frown>" "<signchange>"
     "<parallel>" "<shortparallel>" "<nparallel>" "<nshortparallel>"
-    "<divides>" "<ndivides>"
+    "<shortmid>" "<nshortmid>" "<nmid>" "<divides>" "<ndivides>"
 
     "<approxeq>" "<backsim>" "<backsimeq>" "<Bumpeq>" "<bumpeq>" "<circeq>"
     "<curlyeqprec>" "<curlyeqsucc>" "<Doteq>" "<doteqdot>" "<eqcirc>"
@@ -318,7 +318,7 @@
     (:type separator)
     (:penalty 0)
     (:spacing none default)
-    "," ";" ":" "<point>")
+    "," ";" ":" "<point>" "<mid>")
 
   (define Ponctuation-invisible-symbol
     (:type separator)
@@ -341,8 +341,7 @@
   
   (define Middle-symbol
     (:type middle-bracket)
-    "|" "<||>" "<nobracket>" "<mid-|>" "<mid-||>" "<mid-.>"
-    "<mid>" "<shortmid>" "<nmid>" "<nshortmid>")
+    "|" "<||>" "<nobracket>" "<mid-|>" "<mid-||>" "<mid-.>")
 
   (define Close-symbol
     (:type closing-bracket)
