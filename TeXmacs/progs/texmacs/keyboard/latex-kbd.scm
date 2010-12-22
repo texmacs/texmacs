@@ -391,4 +391,4 @@
 
 (kbd-symbols
   "ddots" "mho" "Backepsilon" "homsim"
-  "mathcatalan" "mathd" "mathe" "matheuler" "mathi" "mathpi")
+  "mathcatalan" "mathd" "mathe" "matheuler" "mathlambda" "mathi" "mathpi")

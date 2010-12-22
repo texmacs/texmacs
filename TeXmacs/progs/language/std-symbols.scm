@@ -37,7 +37,7 @@
 
   (define Quantifier-symbol
     (:type prefix)
-    "<forall>" "<exists>" "<nexists>")
+    "<forall>" "<exists>" "<nexists>" "<mathlambda>")
 
   (define Imply-nolim-symbol
     (:type infix)

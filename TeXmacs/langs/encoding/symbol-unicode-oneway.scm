@@ -22,6 +22,7 @@
 ("<mathj>"	   "#6A")   ; variant of imaginary unit
 ("<mathpi>"	   "#03C0") ;
 ("<matheuler>"	   "#03B3") ; Euler constant
+("<mathlambda>"	   "#03BB") ; lambda calculus "quantifier"
 ("<mathcatalan>"   "#69")   ; Catalan constant
 
 ;; Alternate symbol names. They use the same glyph and are converted to the

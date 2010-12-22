@@ -296,6 +296,7 @@
 
   (define Quantified
     (Quantifier-prefix Ponctuation-symbol Quantified)
+    (Quantifier-prefix "." Quantified)
     (Quantifier-fenced Quantified)
     (Quantifier-fenced Space-infix Quantified)
     Implication)

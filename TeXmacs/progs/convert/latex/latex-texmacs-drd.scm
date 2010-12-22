@@ -70,6 +70,7 @@
   (mathd "\\mathrm{d}")
   (mathe "\\mathrm{e}")
   (matheuler "\\gamma")
+  (mathlambda "\\lambda")
   (mathi "\\mathrm{i}")
   (mathpi "\\pi")
   (Alpha "\\mathrm{A}")
