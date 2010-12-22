@@ -601,7 +601,7 @@ drd_env_write (tree env, string var, tree val) {
 tree
 drd_env_merge (tree env, tree t) {
   int i, n= N(t);
-  for (i=0; i<n; i+=2)
+  for (i=0; (i+1)<n; i+=2)
     if (is_atomic (t[i]))
       env= drd_env_write (env, t[i]->label, t[i+1]);
   return env;
