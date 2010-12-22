@@ -3074,6 +3074,7 @@ upgrade_tex (tree t) {
   t= with_correct (t);
   t= superfluous_with_correct (t);
   t= upgrade_brackets (t);
+  t= move_brackets (t);
   t= upgrade_image (t);
   upgrade_tex_flag= false;
   return t;
@@ -3189,6 +3190,8 @@ upgrade (tree t, string version) {
     t= superfluous_with_correct (t);
     t= upgrade_brackets (t);
   }
+  if (version_inf_eq (version, "1.0.7.9"))
+    t= move_brackets (t);
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

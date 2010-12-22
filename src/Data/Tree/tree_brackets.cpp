@@ -532,3 +532,100 @@ downgrade_brackets (tree t) {
   if (is_concat (r)) r= concat_recompose (concat_decompose (r));
   return r;
 }
+
+/******************************************************************************
+* Moving wrongly brackets across 'math' tag boundary
+******************************************************************************/
+
+static bool
+is_simple_opening (string s) {
+  return s == "(" || s == "[" || s == "{" || s == "|";
+}
+
+static bool
+is_simple_closing (string s) {
+  return s == ")" || s == "]" || s == "}" || s == "|";
+}
+
+static bool
+is_simple_matching (string l, string r) {
+  return
+    (l == "(" && r == ")") ||
+    (l == "[" && r == "]") ||
+    (l == "{" && r == "}") ||
+    (l == "|" && r == "|");
+}
+
+static tree
+move_brackets_sub (tree t) {
+  if (is_compound (t)) {
+    int i, n= N(t);
+    tree r= tree (t, n);
+    for (i=0; i<n; i++)
+      r[i]= move_brackets_sub (t[i]);
+    t= r;
+  }
+  if (is_concat (t))
+    for (int i=0; i<N(t); i++)
+      if (is_compound (t[i], "math")) {
+        array<tree> a= concat_tokenize (t[i][0]);
+        for (int j=0; j<N(a); j++)
+          if (is_atomic (a[j]) && is_simple_opening (a[j]->label))
+            for (int k= i+1; k<N(t); k++)
+              if (is_atomic (t[k])) {
+                string s= t[k]->label;
+                for (int l=0; l<N(s); tm_char_forwards (s, l))
+                  if (is_simple_matching (a[j]->label, s (l, l+1))) {
+                    if (k == i+1 && l == 0) {
+                      array<tree> c= concat_decompose (t);
+                      a << tree (s (0, 1));
+                      c[i]= compound ("math", concat_recompose (a));
+                      c[i+1]= s (1, N(s));
+                      return move_brackets_sub (concat_recompose (c));
+                    }
+                    if (j == 0) {
+                      tree x= a[0];
+                      array<tree> c= concat_decompose (t);
+                      a= range (a, 1, N(a));
+                      c[i]= compound ("math", concat_recompose (a));
+                      c= append (range (c, 0, i),
+                                 append (x, range (c, i, N(c))));
+                      return move_brackets_sub (concat_recompose (c));
+                    }
+                  }
+              }
+        for (int j=N(a)-1; j>=0; j--)
+          if (is_atomic (a[j]) && is_simple_closing (a[j]->label))
+            for (int k= i-1; k>=0; k--)
+              if (is_atomic (t[k])) {
+                string s= t[k]->label;
+                for (int l=N(s); l>0; tm_char_backwards (s, l))
+                  if (is_simple_matching (s (l-1, l), a[j]->label)) {
+                    if (k == i-1 && l == N(s)) {
+                      array<tree> c= concat_decompose (t);
+                      a= append (tree (s (l-1, l)), a);
+                      c[i]= compound ("math", concat_recompose (a));
+                      c[i-1]= s (0, l-1);
+                      return move_brackets_sub (concat_recompose (c));
+                    }
+                    if (j == N(a)-1) {
+                      tree x= a[j];
+                      array<tree> c= concat_decompose (t);
+                      a= range (a, 0, j);
+                      c[i]= compound ("math", concat_recompose (a));
+                      c= append (range (c, 0, i+1),
+                                 append (x, range (c, i+1, N(c))));
+                      return move_brackets_sub (concat_recompose (c));
+                    }
+                  }
+              }
+      }
+  return t;
+}
+
+tree
+move_brackets (tree t) {
+  tree r= move_brackets_sub (t);
+  if (r == t) return r;
+  else return upgrade_brackets (r);
+}

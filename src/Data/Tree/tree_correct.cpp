@@ -730,6 +730,7 @@ static int count_final_errors= 0;
 static int corrected_with= 0;
 static int corrected_superfluous_with= 0;
 static int corrected_brackets= 0;
+static int corrected_move_brackets= 0;
 static int corrected_misc= 0;
 static int corrected_superfluous_invisible= 0;
 static int corrected_homoglyph= 0;
@@ -762,6 +763,8 @@ math_status_cumul (tree t) {
   math_status_cumul_sub (t, corrected_superfluous_with, errors);
   t= upgrade_brackets (t);
   math_status_cumul_sub (t, corrected_brackets, errors);
+  t= move_brackets (t);
+  math_status_cumul_sub (t, corrected_move_brackets, errors);
   t= misc_math_correct (t);
   math_status_cumul_sub (t, corrected_misc, errors);
   t= superfluous_invisible_correct (t);
@@ -785,6 +788,7 @@ math_status_reset () {
   corrected_with= 0;
   corrected_superfluous_with= 0;
   corrected_brackets= 0;
+  corrected_move_brackets= 0;
   corrected_misc= 0;
   corrected_superfluous_invisible= 0;
   corrected_homoglyph= 0;
@@ -797,14 +801,20 @@ math_status_print () {
   cout << "Initial errors : " << count_initial_errors << "\n";
   cout << "Final errors   : " << count_final_errors << "\n";
   cout << "\n";
-  cout << "With corrected                  : " << corrected_with << "\n";
+  cout << "With corrected                  : "
+       << corrected_with << "\n";
   cout << "Superfluous with corrected      : "
        << corrected_superfluous_with << "\n";
-  cout << "Upgraded brackets               : " << corrected_brackets << "\n";
-  cout << "Miscellaneous corrected         : " << corrected_misc << "\n";
+  cout << "Upgraded brackets               : "
+       << corrected_brackets << "\n";
+  cout << "Moved brackets                  : "
+       << corrected_move_brackets << "\n";
+  cout << "Miscellaneous corrected         : "
+       << corrected_misc << "\n";
   cout << "Superfluous invisible corrected : "
        << corrected_superfluous_invisible << "\n";
-  cout << "Homoglyphs corrected            : " << corrected_homoglyph << "\n";
+  cout << "Homoglyphs corrected            : "
+       << corrected_homoglyph << "\n";
   cout << "Missing invisible corrected     : "
        << corrected_missing_invisible << "\n";
   cout << "Zealous invisible corrected     : "
