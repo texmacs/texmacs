@@ -22,7 +22,10 @@ tree upgrade_brackets (tree t, string mode= "text");
 tree downgrade_brackets (tree t);
 
 int  count_math_errors (tree t, int mode= 0);
-void print_math_status (tree t);
+void math_status_cumul (tree t);
+void math_status_print ();
+void math_status_reset ();
+
 tree latex_correct (tree t);
 tree automatic_correct (tree t, string version);
 tree manual_correct (tree t);

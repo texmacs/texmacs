@@ -148,6 +148,8 @@
   (manual-correct manual_correct (tree content))
   (tree-upgrade-brackets upgrade_brackets (tree content string))
   (tree-downgrade-brackets downgrade_brackets (tree content))
+  (math-status-print math_status_print (void))
+  (math-status-reset math_status_reset (void))
 
   ;; paths
   (path-inf? path_inf (bool path path))

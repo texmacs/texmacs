@@ -111,7 +111,11 @@
   ("Insert missing invisible operators"
    (toggle-preference "manual insert missing invisible"))
   ("Homoglyph substitutions"
-   (toggle-preference "manual homoglyph correct")))
+   (toggle-preference "manual homoglyph correct"))
+  (if (debug-get "correct")
+      ---
+      ("Error status report" (math-status-print))
+      ("Reset error counters" (math-status-reset))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical Symbol menu

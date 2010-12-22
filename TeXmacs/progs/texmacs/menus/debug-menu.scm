@@ -79,4 +79,5 @@
   ("qt" (debug-toggle "qt"))
   ("keyboard" (debug-toggle "keyboard"))
   ("packrat" (debug-toggle "packrat"))
-  ("flatten" (debug-toggle "flatten")))
+  ("flatten" (debug-toggle "flatten"))
+  ("correct" (debug-toggle "correct")))

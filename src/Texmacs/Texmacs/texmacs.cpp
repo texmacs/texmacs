@@ -168,6 +168,7 @@ TeXmacs_main (int argc, char** argv) {
       else if (s == "-debug-keyboard") debug (DEBUG_FLAG_KEYBOARD, true);
       else if (s == "-debug-packrat") debug (DEBUG_FLAG_PACKRAT, true);
       else if (s == "-debug-flatten") debug (DEBUG_FLAG_FLATTEN, true);
+      else if (s == "-debug-correct") debug (DEBUG_FLAG_CORRECT, true);
       else if (s == "-debug-all") {
 	debug (DEBUG_FLAG_EVENTS, true);
 	debug (DEBUG_FLAG_STD, true);

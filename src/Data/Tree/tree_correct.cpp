@@ -651,7 +651,7 @@ misc_math_correct (tree t) {
 }
 
 /******************************************************************************
-* Print mathematical status
+* Count errors
 ******************************************************************************/
 
 static int
@@ -668,6 +668,7 @@ static int
 count_math_table_errors (tree t, int mode) {
   if (is_atomic (t)) return 0;
   else if (is_func (t, CELL, 1)) {
+    if (t[0] == "" || t[0] == tree (DOCUMENT, "")) return 0;
     if (mode == 1) return 1;
     if (packrat_correct ("std-math", "Cell", t[0])) return 0;
     else {
@@ -705,8 +706,31 @@ count_math_errors (tree t, int mode) {
   }
 }
 
+/******************************************************************************
+* Print mathematical status
+******************************************************************************/
+
+static int count_formula= 0;
+static int count_initial_errors= 0;
+static int count_final_errors= 0;
+
+static int corrected_with= 0;
+static int corrected_superfluous_with= 0;
+static int corrected_brackets= 0;
+static int corrected_misc= 0;
+static int corrected_superfluous_invisible= 0;
+static int corrected_homoglyph= 0;
+static int corrected_missing_invisible= 0;
+
 void
-print_math_status (tree t) {
+math_status_cumul_sub (tree t, int& cumul, int& errors) {
+  int new_errors= count_math_errors (t);
+  cumul += (errors - new_errors);
+  errors= new_errors;
+}
+
+void
+math_status_cumul (tree t) {
   with_drd drd (get_document_drd (t));
   if (is_func (t, DOCUMENT))
     for (int i=0; i<N(t); i++)
@@ -714,22 +738,58 @@ print_math_status (tree t) {
         t= t[i][0];
         break;
       }
-  cout << "Formula count               : " << count_math_errors (t, 1) << "\n";
-  cout << "Initial                     : " << count_math_errors (t) << "\n";
+
+  int errors= count_math_errors (t);
+  count_formula += count_math_errors (t, 1);
+  count_initial_errors += errors;
   t= with_correct (t);
-  cout << "With corrected              : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_with, errors);
   t= superfluous_with_correct (t);
-  cout << "Superfluous with corrected  : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_superfluous_with, errors);
   t= upgrade_brackets (t);
-  cout << "Upgraded brackets           : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_brackets, errors);
   t= misc_math_correct (t);
-  cout << "Miscellaneous corrected     : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_misc, errors);
   t= superfluous_invisible_correct (t);
-  cout << "Invisible corrected         : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_superfluous_invisible, errors);
   t= homoglyph_correct (t);
-  cout << "Homoglyphs corrected        : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_homoglyph, errors);
   t= missing_invisible_correct (t);
-  cout << "Missing invisible corrected : " << count_math_errors (t) << "\n";
+  math_status_cumul_sub (t, corrected_missing_invisible, errors);
+  count_final_errors += errors;
+}
+
+void
+math_status_reset () {
+  count_formula= 0;
+  count_initial_errors= 0;
+  count_final_errors= 0;
+  corrected_with= 0;
+  corrected_superfluous_with= 0;
+  corrected_brackets= 0;
+  corrected_misc= 0;
+  corrected_superfluous_invisible= 0;
+  corrected_homoglyph= 0;
+  corrected_missing_invisible= 0;
+}
+
+void
+math_status_print () {
+  cout << "Formulas       : " << count_formula << "\n";
+  cout << "Initial errors : " << count_initial_errors << "\n";
+  cout << "Final errors   : " << count_final_errors << "\n";
+  cout << "\n";
+  cout << "With corrected                  : " << corrected_with << "\n";
+  cout << "Superfluous with corrected      : "
+       << corrected_superfluous_with << "\n";
+  cout << "Upgraded brackets               : " << corrected_brackets << "\n";
+  cout << "Miscellaneous corrected         : " << corrected_misc << "\n";
+  cout << "Superfluous invisible corrected : "
+       << corrected_superfluous_invisible << "\n";
+  cout << "Homoglyphs corrected            : " << corrected_homoglyph << "\n";
+  cout << "Missing invisible corrected     : "
+       << corrected_missing_invisible << "\n";
+  cout << "\n";
 }
 
 /******************************************************************************

@@ -1595,6 +1595,24 @@ tmg_tree_downgrade_brackets (SCM arg1) {
 }
 
 SCM
+tmg_math_status_print () {
+  // SCM_DEFER_INTS;
+  math_status_print ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_math_status_reset () {
+  // SCM_DEFER_INTS;
+  math_status_reset ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_path_infP (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf?");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf?");
@@ -5035,6 +5053,8 @@ initialize_glue_basic () {
   scm_new_procedure ("manual-correct", (FN) tmg_manual_correct, 1, 0, 0);
   scm_new_procedure ("tree-upgrade-brackets", (FN) tmg_tree_upgrade_brackets, 2, 0, 0);
   scm_new_procedure ("tree-downgrade-brackets", (FN) tmg_tree_downgrade_brackets, 1, 0, 0);
+  scm_new_procedure ("math-status-print", (FN) tmg_math_status_print, 0, 0, 0);
+  scm_new_procedure ("math-status-reset", (FN) tmg_math_status_reset, 0, 0, 0);
   scm_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   scm_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   scm_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
