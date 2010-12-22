@@ -194,6 +194,8 @@
 		 "remove superfluous invisible"))
 	(toggle ("Insert missing invisible operators"
 		 "insert missing invisible"))
+	(toggle ("Zealous correction of invisible operators"
+		 "zealous invisible correct"))
 	(toggle ("Homoglyph substitutions"
 		 "homoglyph correct")))
     ---

@@ -110,6 +110,8 @@
    (toggle-preference "manual remove superfluous invisible"))
   ("Insert missing invisible operators"
    (toggle-preference "manual insert missing invisible"))
+  ("Zealous corrections for invisible operators"
+   (toggle-preference "manual zealous invisible correct"))
   ("Homoglyph substitutions"
    (toggle-preference "manual homoglyph correct"))
   (if (debug-get "correct")

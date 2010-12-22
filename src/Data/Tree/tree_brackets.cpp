@@ -139,7 +139,7 @@ detect_french_interval (array<tree> a, array<int> tp_in) {
 	last_comma= -1;
       }
       else if (tp[i] == SYMBOL_CLOSE || tp[i] == SYMBOL_PROBABLE_CLOSE) {
-	if (last_open != -1 && last_comma != -1) {
+	if (last_open != -1 && last_comma != -1 && last_comma != i-1) {
 	  tp[last_open]= SYMBOL_OPEN;
 	  tp[i]= SYMBOL_CLOSE;
 	}
@@ -154,6 +154,9 @@ detect_french_interval (array<tree> a, array<int> tp_in) {
 static array<int>
 detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
   array<int> tp= upgrade_probable (tp_in);
+  //cout << "    a = " << a << "\n";
+  //cout << "    in= " << tp_in << "\n";
+  //cout << "    tp= " << tp << "\n";
   int last_open= -1;
   for (int i=0; i<N(tp); i++)
     if (tp[i] == SYMBOL_SEPARATOR) last_open= -1;
@@ -168,6 +171,8 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
               a[i] == a[last_open] &&
               ((tp[last_open] == SYMBOL_PROBABLE_OPEN) ||
                (tp[i] == SYMBOL_PROBABLE_CLOSE) ||
+               //(i == last_open + 2 &&
+               //a[i-1] == "<cdot>") ||
                (insist &&
                 !is_dubious_open_middle (tp, last_open) &&
                 !is_dubious_close_middle (tp, i))))

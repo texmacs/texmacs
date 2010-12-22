@@ -251,10 +251,12 @@ superfluous_invisible_correct (array<tree> a) {
       else if (a[j1] == " " || a[j1] == "*");
       else if (tp[j1] == SYMBOL_PREFIX ||
 	       tp[j1] == SYMBOL_INFIX ||
-	       tp[j1] == SYMBOL_SEPARATOR);
+	       tp[j1] == SYMBOL_SEPARATOR ||
+               tp[j1] == SYMBOL_PROBABLE_MIDDLE);
       else if (tp[j2] == SYMBOL_POSTFIX ||
 	       tp[j2] == SYMBOL_INFIX ||
-	       tp[j2] == SYMBOL_SEPARATOR);
+	       tp[j2] == SYMBOL_SEPARATOR ||
+               tp[j2] == SYMBOL_PROBABLE_MIDDLE);
       else r << a[i];
     }
     else if (is_func (a[i], SQRT, 2) && a[i][1] == "")
@@ -624,6 +626,13 @@ missing_invisible_correct (tree t, int force) {
   return corrector.correct (t, "text");
 }
 
+tree
+missing_invisible_correct_twice (tree t, int force= -1) {
+  tree u= missing_invisible_correct (t, force);
+  if (u == t) return t;
+  return missing_invisible_correct (u, force);
+}
+
 /******************************************************************************
 * Miscellaneous corrections
 ******************************************************************************/
@@ -725,6 +734,7 @@ static int corrected_misc= 0;
 static int corrected_superfluous_invisible= 0;
 static int corrected_homoglyph= 0;
 static int corrected_missing_invisible= 0;
+static int corrected_zealous_invisible= 0;
 
 void
 math_status_cumul_sub (tree t, int& cumul, int& errors) {
@@ -758,9 +768,13 @@ math_status_cumul (tree t) {
   math_status_cumul_sub (t, corrected_superfluous_invisible, errors);
   t= homoglyph_correct (t);
   math_status_cumul_sub (t, corrected_homoglyph, errors);
+  t= superfluous_invisible_correct (t);
+  math_status_cumul_sub (t, corrected_superfluous_invisible, errors);
   t= missing_invisible_correct (t);
   math_status_cumul_sub (t, corrected_missing_invisible, errors);
   count_final_errors += errors;
+  t= missing_invisible_correct (t, 1);
+  math_status_cumul_sub (t, corrected_zealous_invisible, errors);
 }
 
 void
@@ -793,6 +807,8 @@ math_status_print () {
   cout << "Homoglyphs corrected            : " << corrected_homoglyph << "\n";
   cout << "Missing invisible corrected     : "
        << corrected_missing_invisible << "\n";
+  cout << "Zealous invisible corrected     : "
+       << corrected_zealous_invisible << "\n";
   cout << "\n";
 }
 
@@ -809,12 +825,16 @@ tree
 latex_correct (tree t) {
   // NOTE: matching brackets corrected in upgrade_tex
   t= misc_math_correct (t);
-  if (enabled_preference ("remove superfluous invisible"))
-    t= superfluous_invisible_correct (t);
-  if (enabled_preference ("homoglyph correct"))
-    t= homoglyph_correct (t);
-  if (enabled_preference ("insert missing invisible"))
-    t= missing_invisible_correct (t, 1);
+  //if (enabled_preference ("remove superfluous invisible"))
+  t= superfluous_invisible_correct (t);
+  //if (enabled_preference ("homoglyph correct"))
+  t= homoglyph_correct (t);
+  //if (enabled_preference ("remove superfluous invisible"))
+  t= superfluous_invisible_correct (t);
+  //if (enabled_preference ("insert missing invisible"))
+  t= missing_invisible_correct_twice (t);
+  //if (enabled_preference ("insert missing invisible"))
+  t= missing_invisible_correct (t, 1);
   return t;
 }
 
@@ -826,8 +846,12 @@ automatic_correct (tree t, string version) {
       t= superfluous_invisible_correct (t);
     if (enabled_preference ("homoglyph correct"))
       t= homoglyph_correct (t);
+    if (enabled_preference ("remove superfluous invisible"))
+      t= superfluous_invisible_correct (t);
     if (enabled_preference ("insert missing invisible"))
-      t= missing_invisible_correct (t);
+      t= missing_invisible_correct_twice (t);
+    if (enabled_preference ("zealous invisible correct"))
+      t= missing_invisible_correct (t, 1);
   }
   return t;
 }
@@ -842,7 +866,11 @@ manual_correct (tree t) {
     t= superfluous_invisible_correct (t);
   if (enabled_preference ("manual homoglyph correct"))
     t= homoglyph_correct (t);
+  if (enabled_preference ("manual remove superfluous invisible"))
+    t= superfluous_invisible_correct (t);
   if (enabled_preference ("manual insert missing invisible"))
-    t= missing_invisible_correct (t);
+    t= missing_invisible_correct_twice (t);
+  if (enabled_preference ("manual zealous invisible correct"))
+    t= missing_invisible_correct (t, 1);
   return t;
 }
