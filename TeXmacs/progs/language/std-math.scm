@@ -201,6 +201,7 @@
     (:operator)
     (Prefix-prefix Post)
     Other-prefix-symbol
+    Unary-operator-glyph-symbol
     (:<Prefix :args :>))
 
   (define Postfix-postfix

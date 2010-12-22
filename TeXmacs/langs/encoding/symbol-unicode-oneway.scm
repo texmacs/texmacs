@@ -15,15 +15,17 @@
 ;; Mathematical constants are displayed upright in TeXmacs
 ;; Admit variants <mathD*>, <mathd*>, etc.
 
+("<mathcatalan>"   "#43")   ; Catalan constant
 ("<mathD>"	   "#44")   ; Derivation operator
 ("<mathd>"	   "#64")   ; differential (for d x inside integrals)
 ("<mathe>"	   "#65")   ; exp(1)
 ("<mathi>"	   "#69")   ; imaginary unit
 ("<mathj>"	   "#6A")   ; variant of imaginary unit
-("<mathpi>"	   "#03C0") ;
+("<mathGamma>"	   "#0393") ; Gamma function
+("<mathLaplace>"   "#0394") ; Laplace operator
+("<mathpi>"	   "#03C0") ; pi constant
 ("<matheuler>"	   "#03B3") ; Euler constant
 ("<mathlambda>"	   "#03BB") ; lambda calculus "quantifier"
-("<mathcatalan>"   "#69")   ; Catalan constant
 
 ;; Alternate symbol names. They use the same glyph and are converted to the
 ;; same unicode character as another symbol.

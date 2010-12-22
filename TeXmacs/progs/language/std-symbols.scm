@@ -370,8 +370,8 @@
   (define Letter-symbol
     (:type symbol)
 
-    "<mathd>" "<mathe>" "<mathi>" "<mathpi>"
-    "<mathD>" "<matheuler>" "<mathcatalan>"
+    "<mathe>" "<mathi>" "<mathpi>"
+    "<matheuler>" "<mathcatalan>" "<mathGamma>"
     "<aleph>" "<beth>" "<gimel>" "<daleth>"
     "<hbar>" "<hslash>" "<imath>" "<jmath>" "<ell>"
     "<wp>" "<digamma>"
@@ -522,7 +522,8 @@
     (:type unary)
     (:penalty panic)
     (:spacing none none)
-    "<partial>" "<nabla>" "<Re>" "<Im>" "<complement>")
+    "<mathd>" "<mathD>" "<mathLaplace>" "<partial>" "<nabla>"
+    "<Re>" "<Im>" "<complement>")
 
   (define Unary-operator-textual-symbol
     (:type unary)
