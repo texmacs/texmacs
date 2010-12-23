@@ -673,7 +673,7 @@ count_math_formula_errors (tree t, int mode) {
   if (mode == 1) return 1;
   if (packrat_correct ("std-math", "Main", t)) return 0;
   else {
-    //cout << "  ERROR> " << t << "\n";
+    if (mode == 2) cout << "  ERROR> " << t << "\n";
     return 1;
   }
 }
@@ -686,7 +686,7 @@ count_math_table_errors (tree t, int mode) {
     if (mode == 1) return 1;
     if (packrat_correct ("std-math", "Cell", t[0])) return 0;
     else {
-      //cout << "  ERROR> " << t << "\n";
+      if (mode == 2) cout << "  ERROR> " << t << "\n";
       return 1;
     }
   }
@@ -712,7 +712,7 @@ count_math_errors (tree t, int mode) {
                is_func (u, TFORMAT) ||
                is_func (u, WITH))
           u= u[N(u)-1];
-        if (is_func (u, TABLE)) count_math_table_errors (u, mode);
+        if (is_func (u, TABLE)) sum += count_math_table_errors (u, mode);
         else sum += count_math_formula_errors (u, mode);
       }
     }
@@ -777,6 +777,8 @@ math_status_cumul (tree t) {
   t= missing_invisible_correct (t);
   math_status_cumul_sub (t, corrected_missing_invisible, errors);
   count_final_errors += errors;
+  //cout << "Errors= " << errors << "\n";
+  //(void) count_math_errors (t, 2);
   t= missing_invisible_correct (t, 1);
   math_status_cumul_sub (t, corrected_zealous_invisible, errors);
 }
