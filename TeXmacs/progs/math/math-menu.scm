@@ -113,11 +113,7 @@
   ("Zealous corrections for invisible operators"
    (toggle-preference "manual zealous invisible correct"))
   ("Homoglyph substitutions"
-   (toggle-preference "manual homoglyph correct"))
-  (if (debug-get "correct")
-      ---
-      ("Error status report" (math-status-print))
-      ("Reset error counters" (math-status-reset))))
+   (toggle-preference "manual homoglyph correct")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical Symbol menu

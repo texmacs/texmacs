@@ -65,6 +65,10 @@
       (group "Permanent")
       ("Show memory usage" (set! footer-hook show-memory-information))
       ("Garbage collection" (delayed (:idle 1000) (gc))))
+  (when (debug-get "correct")
+    (-> "Mathematics"
+        ("Error status report" (math-status-print))
+        ("Reset error counters" (math-status-reset))))
   (-> "Miscellaneous"
       ("Provoke error" (oops))
       ("Test routine" (edit-test)))
