@@ -73,7 +73,7 @@ public:
   string get_name (tree_label tag);
   string get_long_name (tree_label tag);
   tree   get_meaning (tree_label tag);
-  string get_class (tree t);
+  tree   get_meaning (tree t, path p= path (-1));
 
   /* Properties of the children of the tag */
   void set_type (tree_label tag, int nr, int tp);

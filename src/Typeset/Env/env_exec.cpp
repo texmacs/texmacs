@@ -596,10 +596,6 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (is_atomic (val))
 	  drd->set_attribute (l, prop, val->label);
       }
-      else if (prop == "class") {
-	if (is_atomic (val))
-	  drd->set_attribute (l, prop, val->label);
-      }
       else if (prop == "meaning")
         drd->set_meaning (l, val);
       else if (prop == "border") {

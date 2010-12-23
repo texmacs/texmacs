@@ -34,6 +34,8 @@ public:
   hashmap<D,tree>           current_production;
 
 protected:
+  void serialize_atomic (tree t, path p);
+  void serialize_compound (tree t, path p);
   void serialize (tree t, path p);
   void set_input (tree t);
   void set_cursor (path t_pos);

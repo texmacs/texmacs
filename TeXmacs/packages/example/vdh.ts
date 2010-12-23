@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.9>
 
 <style|source>
 
@@ -53,11 +53,11 @@
 
     <assign|I|<with|math-display|false|<op|<big|int>>>>
 
-    <drd-props|value:I|class|Prefix>
+    <drd-props|I|meaning|\<int\>>
 
-    <drd-props|symbol:\<uparrow\>|class|Postfix>
+    <drd-props|\<uparrow\>|meaning|\<postup\>>
 
-    <drd-props|symbol:\<downarrow\>|class|Postfix>
+    <drd-props|\<downarrow\>|meaning|\<postdown\>>
 
     \;
 

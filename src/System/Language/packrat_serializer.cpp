@@ -17,19 +17,6 @@
 * Useful subroutines
 ******************************************************************************/
 
-static tree
-replace (tree t, hashmap<tree,tree> h) {
-  if (h->contains (t)) return h[t];
-  else if (is_atomic (t)) return t;
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= replace (t[i], h);
-    return r;
-  }
-}
-
 static path
 as_path (tree t) {
   ASSERT (is_tuple (t), "invalid path");
@@ -45,6 +32,26 @@ as_path (tree t) {
 ******************************************************************************/
 
 void
+packrat_parser_rep::serialize_compound (tree t, path p) {
+  tree r= the_drd->get_meaning (t, p);
+  if (r != UNINIT)
+    serialize (r, path (-1));
+  else if (is_func (t, QUASI, 2)) {
+    tree tt= t[0];
+    path pp= as_path (t[1]);
+    serialize (tt, pp);
+  }
+  else {
+    current_string << "<\\" << as_string (L(t)) << ">";
+    for (int i=0; i<N(t); i++) {
+      if (i != 0) current_string << "<|>";
+      serialize (t[i], p * i);
+    }
+    current_string << "</>";
+  }
+}
+
+void
 packrat_parser_rep::serialize (tree t, path p) {
   if (is_nil (p) || p->item != -1)
     current_start (p)= N(current_string);
@@ -58,10 +65,10 @@ packrat_parser_rep::serialize (tree t, path p) {
 	current_string << s[start];
       else {
 	string ss= s (start, pos);
-	string cl= the_drd->get_class (ss);
-	//if (cl != "") cout << "Class " << ss << " -> " << cl << "\n";
-	if (cl == "") current_string << ss;
-	else current_string << "<\\" << cl << ">" << ss << "</>";
+        tree r= the_drd->get_meaning (ss);
+        //if (r != UNINIT) cout << "Rewrite " << ss << " -> " << r << "\n";
+        if (r == UNINIT) current_string << ss;
+        else serialize (r, path (-1));
       }
     }
   }
@@ -136,7 +143,14 @@ packrat_parser_rep::serialize (tree t, path p) {
     case WITH:
       if (t[0] == "mode" && t[1] != "math");
       else serialize (t[N(t)-1], p * (N(t)-1));
-      break;  
+      break;
+    case VALUE: {
+      tree r= the_drd->get_meaning (t);
+      //if (r != UNINIT) cout << "Rewrite " << t << " -> " << r << "\n";
+      if (r != UNINIT) serialize (r, path (-1));
+      else serialize_compound (t, p);
+      break;
+    }
 
     case STYLE_WITH:
     case VAR_STYLE_WITH:
@@ -168,37 +182,8 @@ packrat_parser_rep::serialize (tree t, path p) {
       break;
 
     default:
-      if (is_func (the_drd->get_meaning (L(t)), MACRO) &&
-          L(t) >= START_EXTENSIONS) {
-        tree fun= the_drd->get_meaning (L(t));
-        int i, n= N(fun)-1;
-        hashmap<tree,tree> tab (UNINIT);
-        for (i=0; i<n; i++) {
-          tree var= tree (ARG, fun[i]);
-          tree val= "";
-          if (i<N(t)) val= tree (QUASI, t[i], (tree) (p * i));
-          tab (var)= val;
-        }
-        tree body= replace (fun[n], tab);
-        serialize (body, path (-1));
-      }
-      else if (is_func (t, QUASI, 2)) {
-        tree tt= t[0];
-        path pp= as_path (t[1]);
-        serialize (tt, pp);
-      }
-      else {
-        string cl= the_drd->get_class (t);
-        //if (cl != "") cout << "Class " << t << " -> " << cl << "\n";
-        if (cl != "") current_string << "<\\" << cl << ">";
-        current_string << "<\\" << as_string (L(t)) << ">";
-        for (int i=0; i<N(t); i++) {
-          if (i != 0) current_string << "<|>";
-          serialize (t[i], p * i);
-        }
-        current_string << "</>";
-        if (cl != "") current_string << "</>";
-      }
+      serialize_compound (t, p);
+      break;
     }
   if (is_nil (p) || p->item != -1)
     current_end (p)= N(current_string);

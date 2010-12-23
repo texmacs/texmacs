@@ -128,12 +128,13 @@ with_recompose (tree w, array<tree> a) {
 int
 symbol_type (tree t) {
   static language lan= math_language ("std-math");
-  if (the_drd->get_class (t) != "") {
-    string cl= the_drd->get_class (t);
-    //cout << "Class " << t << " -> " << cl << "\n";
-    if (cl == "Prefix") return SYMBOL_PREFIX;
-    else if (cl == "Postfix") return SYMBOL_POSTFIX;
-    else return SYMBOL_BASIC;
+  tree r= the_drd->get_meaning (t);
+  if (r != UNINIT) {
+    if (is_compound (t, "text")) return SYMBOL_SKIP;
+    else if (is_compound (t, "eq-number")) return SYMBOL_SKIP;
+    else if (is_compound (t, "bl")) return SYMBOL_OPEN;
+    else if (is_compound (t, "br")) return SYMBOL_CLOSE;
+    else return symbol_type (r);
   }
   else if (is_atomic (t)) {
     int pos= 0;
@@ -163,27 +164,41 @@ symbol_type (tree t) {
       return SYMBOL_BASIC;
     }
   }
-  else if (is_func (t, LEFT)) return SYMBOL_OPEN;
-  else if (is_func (t, MID)) return SYMBOL_MIDDLE;
-  else if (is_func (t, RIGHT)) return SYMBOL_CLOSE;
-  else if (is_func (t, BIG, 1) && t[0] == ".") return SYMBOL_CLOSE_BIG;
-  else if (is_func (t, BIG)) return SYMBOL_OPEN_BIG;
-  else if (is_func (t, LSUB)) return SYMBOL_SCRIPT;
-  else if (is_func (t, LSUP)) return SYMBOL_SCRIPT;
-  else if (is_func (t, LPRIME)) return SYMBOL_SCRIPT;
-  else if (is_func (t, RSUB)) return SYMBOL_SCRIPT;
-  else if (is_func (t, RSUP)) return SYMBOL_SCRIPT;
-  else if (is_func (t, RPRIME)) return SYMBOL_SCRIPT;
-  else if (is_func (t, SPACE)) return SYMBOL_SKIP;
-  else if (is_func (t, HSPACE)) return SYMBOL_SKIP;
-  else if (is_func (t, VSPACE)) return SYMBOL_SKIP;
-  else if (is_func (t, VAR_VSPACE)) return SYMBOL_SKIP;
-  else if (is_func (t, LABEL)) return SYMBOL_SKIP;
-  else if (is_compound (t, "text")) return SYMBOL_SKIP;
-  else if (is_compound (t, "eq-number")) return SYMBOL_SKIP;
-  else if (is_compound (t, "bl")) return SYMBOL_OPEN;
-  else if (is_compound (t, "br")) return SYMBOL_CLOSE;
-  else return SYMBOL_BASIC;
+  else switch (L(t)) {
+    case HSPACE:
+    case VAR_VSPACE:
+    case VSPACE:
+    case SPACE:
+    case HTAB:
+      return SYMBOL_SKIP;
+
+    case LEFT:
+      return SYMBOL_OPEN;
+    case MID:
+      return SYMBOL_MIDDLE;
+    case RIGHT:
+      return SYMBOL_CLOSE;
+    case BIG:
+      if (is_func (t, BIG, 1) && t[0] == ".") return SYMBOL_CLOSE_BIG;
+      else return SYMBOL_OPEN_BIG;
+    case LPRIME:
+    case RPRIME:
+    case LSUB:
+    case LSUP:
+    case RSUB:
+    case RSUP:
+      return SYMBOL_SCRIPT;
+
+    case WITH:
+    case STYLE_WITH:
+    case VAR_STYLE_WITH:
+      return symbol_type (t[N(t)-1]);
+    case LABEL:
+      return SYMBOL_SKIP;
+
+    default:
+      return SYMBOL_BASIC;
+  }
 }
 
 array<int>

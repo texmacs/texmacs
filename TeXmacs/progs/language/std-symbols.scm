@@ -307,7 +307,7 @@
   (define Other-postfix-symbol
     (:type postfix)
     (:penalty panic)
-    "!" "%")
+    "!" "%" "<postup>" "<postdown>")
 
   (define Prime-symbol
     (:type symbol)
@@ -523,7 +523,8 @@
     (:penalty panic)
     (:spacing none none)
     "<mathd>" "<mathD>" "<mathLaplace>" "<partial>" "<nabla>"
-    "<Re>" "<Im>" "<complement>")
+    "<Re>" "<Im>" "<complement>"
+    "<sum>" "<prod>" "<int>" "<oint>")
 
   (define Unary-operator-textual-symbol
     (:type unary)
