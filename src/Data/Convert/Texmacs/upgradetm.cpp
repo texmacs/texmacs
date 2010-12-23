@@ -2885,6 +2885,10 @@ upgrade_math (tree t) {
     return compound ("math", upgrade_math (t[2]));
   else if (is_func (t, WITH, 3) && t[0] == MODE && t[1] == "text")
     return compound ("text", upgrade_math (t[2]));
+  else if (is_func (t, WITH) && N(t) >= 5 && t[0] == MODE && t[1] == "math")
+    return compound ("math", upgrade_math (t (2, N(t))));
+  else if (is_func (t, WITH) && N(t) >= 5 && t[0] == MODE && t[1] == "text")
+    return compound ("text", upgrade_math (t (2, N(t))));
   else {
     int n= N(t);
     tree r (t, n);

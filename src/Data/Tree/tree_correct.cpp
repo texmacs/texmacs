@@ -131,7 +131,8 @@ homoglyph_correct (array<tree> a) {
   array<tree> r;
   //cout << a << ", " << tp << "\n";
   for (int i=0; i<N(a); i++)
-    if (a[i] == "\\" || a[i] == "<backslash>") {
+    if (a[i] == "<minus>") r << tree ("-");
+    else if (a[i] == "\\" || a[i] == "<backslash>") {
       int j1, j2;
       for (j1= i-1; j1>=0; j1--)
 	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;

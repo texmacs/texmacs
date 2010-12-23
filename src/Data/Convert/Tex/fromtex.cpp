@@ -1537,10 +1537,6 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt9= " << t9 << "\n\n";
   tree t10= drd_correct (std_drd, t9);
   // cout << "\n\nt10= " << t10 << "\n\n";
-  tree t11= simplify_correct (t10);
-  //cout << "\n\nt11= " << t11 << "\n\n";
-  tree t12= latex_correct (t11);
-  //cout << "\n\nt12= " << t12 << "\n\n";
 
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
@@ -1558,6 +1554,14 @@ latex_to_tree (tree t1) {
     initial << tree (ASSOCIATE, LANGUAGE, lan);
     mods << tree (LANGUAGE) << tree (lan);
   }
+
+  tree t11= t10;
+  if (is_document) t11= simplify_correct (t10);
+  else if (N (mods) > 0) { t11= mods; t11 << t10; }
+  // cout << "\n\nt11= " << t11 << "\n\n";
+  tree t12= latex_correct (t11);
+  // cout << "\n\nt12= " << t12 << "\n\n";
+
   if (is_document) {
     tree the_body   = compound ("body", t12);
     tree the_style  = compound ("style", style);
@@ -1567,10 +1571,7 @@ latex_to_tree (tree t1) {
     if (N (initial) == 0) return tree (DOCUMENT, the_style, the_body);
     else return tree (DOCUMENT, the_style, the_body, the_initial);
   }
-  else {
-    if (N (mods) > 0) { mods << t10; return mods; }
-    return t10;
-  }
+  else return t12;
 }
 
 tree

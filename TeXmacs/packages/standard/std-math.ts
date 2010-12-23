@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.9>
 
 <style|<tuple|source|std>>
 
@@ -56,7 +56,9 @@
 
   <assign|cfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
 
-  <assign|tfrac|<macro|x|y|<style-only*|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>>
+  <assign|tfrac|<macro|x|y|<with|mode|math|<with|math-display|false|<frac|<arg|x>|<arg|y>>>>>>
+
+  <assign|dfrac|<macro|x|y|<with|mode|math|<with|math-display|true|<frac|<arg|x>|<arg|y>>>>>>
 
   <assign|frac*|<macro|x|y|<move|<lsup|<arg|x>><resize|/|<plus|1l|0.15em>|<plus|1b|0.5em>|<minus|1r|0.15em>|<minus|1t|0.5em>><rsub|<arg|y>>||0.05em>>>
 

@@ -228,7 +228,7 @@
     (:type infix)
     (:penalty 30)
     (:spacing default default)
-    "-" "<pm>" "<mp>" "<ominus>" "<boxminus>" "<longminus>")
+    "-" "<pm>" "<mp>" "<minus>" "<ominus>" "<boxminus>" "<longminus>")
 
   (define Minus-prefix-symbol
     (:type prefix)
