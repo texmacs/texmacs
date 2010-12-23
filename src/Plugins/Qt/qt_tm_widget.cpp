@@ -685,14 +685,13 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       check_type_void (index, "SLOT_CANVAS");
       QStackedWidget* tw= tm_centralwidget();
-      QWidget *new_widget= concrete(w)->as_qwidget();
+      QWidget *new_widget= concrete(w)->get_canvas();
       QWidget *old_widget= tw->currentWidget();
-      if (new_widget && (new_widget != old_widget) ) {
-        if (old_widget) {
-          old_widget->setVisible(false);
-          tw->removeWidget(old_widget);
-          old_widget->setParent(NULL);
-        }
+      if (old_widget) {
+        tw->removeWidget(old_widget);
+        old_widget->setParent(NULL);
+      }
+      if (new_widget) {
         tw->addWidget(new_widget);
       }
       QTMWidget* new_canvas= qobject_cast<QTMWidget*>(new_widget);

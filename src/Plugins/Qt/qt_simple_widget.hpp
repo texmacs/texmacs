@@ -43,6 +43,7 @@ public:
 
   virtual QAction* as_qaction();
   // virtual TMMenuItem* as_menuitem();
+  virtual QWidget* get_canvas() { return tm_canvas(); }
 
   QTMWidget* tm_canvas () { return qobject_cast <QTMWidget*>(view); }
 };

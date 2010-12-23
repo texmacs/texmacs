@@ -25,6 +25,7 @@
 
 #include "QTMGuiHelper.hpp"
 #include "qt_gui.hpp"
+#include "qt_window_widget.hpp"
 #include "qt_menu.hpp"
 
 
@@ -370,11 +371,12 @@ qt_plain_widget_rep::send (slot s, blackbox val) {
       bool flag = open_box<bool> (val);
       if (flag)
         view->show();
-      (void) flag;
+      else 
+        view->hide();
     }   
       break;
     default:
-      FAILED ("cannot handle slot type");
+      qt_view_widget_rep::send (s,val);
   }
 }
 

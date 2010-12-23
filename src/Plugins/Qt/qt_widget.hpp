@@ -64,6 +64,12 @@ public:
    * Called only by code which attaches root menus in the GUI elements.
    */
   virtual QMenu *get_qmenu() { return NULL; }
+
+  
+  /*!
+   * Get a texmacs canvas (if available). 
+   */
+  virtual QWidget* get_canvas () { return NULL ; }
   
   /*!
    *
