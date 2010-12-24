@@ -194,8 +194,13 @@
     Power-symbol)
 
   (define Space-infix
-    (:operator)
+    (:operator associative)
     Spacing-symbol)
+
+  (define Ponctuation-infix
+    (:operator associative)
+    Ponctuation-symbol
+    ".")
 
   (define Prefix-prefix
     (:operator)
@@ -287,19 +292,24 @@
     (Models-prefix Quantified)
     Quantified)
 
-  (define Quantifier-prefix
+  (define Quantifier-prefix-symbol
     (:operator)
-    (+ (Quantifier-symbol Relation)))
+    Quantifier-symbol)
+
+  (define Quantifier-prefix
+    (Quantifier-prefix-symbol Relation))
+
+  (define Quantifier-prefixes
+    (+ Quantifier-prefix))
 
   (define Quantifier-fenced
     (:focus disallow)
-    (Open Quantifier-prefix Close)
-    (:<around :any :/ Quantifier-prefix :/ :any :>)
-    (:<around* :any :/ Quantifier-prefix :/ :any :>))
+    (Open Quantifier-prefixes Close)
+    (:<around :any :/ Quantifier-prefixes :/ :any :>)
+    (:<around* :any :/ Quantifier-prefixes :/ :any :>))
 
   (define Quantified
-    (Quantifier-prefix Ponctuation-symbol Quantified)
-    (Quantifier-prefix "." Quantified)
+    (Quantifier-prefixes Ponctuation-infix Quantified)
     (Quantifier-fenced Quantified)
     (Quantifier-fenced Space-infix Quantified)
     Implication)
