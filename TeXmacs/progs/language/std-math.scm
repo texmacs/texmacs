@@ -288,9 +288,11 @@
     Quantified)
 
   (define Quantifier-prefix
+    (:operator)
     (+ (Quantifier-symbol Relation)))
 
   (define Quantifier-fenced
+    (:focus disallow)
     (Open Quantifier-prefix Close)
     (:<around :any :/ Quantifier-prefix :/ :any :>)
     (:<around* :any :/ Quantifier-prefix :/ :any :>))
@@ -360,7 +362,8 @@
     (Postfixed Space-infix Prefixed)
     Postfixed)
 
-  (define Fenced
+  (define Fenced-postfix
+    (:focus disallow)
     (Open Close)
     (Open Expressions Close)
     (:<around :any :/ (* Post) (* Pre) :/ :any :>)
@@ -368,14 +371,18 @@
     (:<around :any :/ (* Post) Expressions (* Pre) :/ :any :>)
     (:<around* :any :/ (* Post) Expressions (* Pre) :/ :any :>))
 
+  (define Fenced
+    Fenced-postfix)
+
   (define Restrict
+    (:focus disallow)
     ((or "|" (:<mid "|" :>))
      (+ (or (:<rsub Script :>) (:<rsup Script :>)))))
 
   (define Postfixed
     (Postfixed Postfix-postfix)
     (Postfixed Post)
-    (Postfixed Fenced)
+    (Postfixed Fenced-postfix)
     (Postfixed Restrict)
     Radical)
 

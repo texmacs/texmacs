@@ -418,9 +418,15 @@ packrat_parser_rep::context
   }
 
   if (true) {
-    static C prop= encode_symbol (compound ("property", "selectable"));
-    D key = (((D) prop) << 32) + ((D) (sym ^ prop));
-    if (properties->contains (key) && properties[key] == "inside");
+    static C sel_prop= encode_symbol (compound ("property", "selectable"));
+    static C foc_prop= encode_symbol (compound ("property", "focus"));
+    D sel_key = (((D) sel_prop) << 32) + ((D) (sym ^ sel_prop));
+    D foc_key = (((D) foc_prop) << 32) + ((D) (sym ^ foc_prop));
+    if (properties->contains (sel_key) &&
+        properties[sel_key] == "inside");
+    else if (properties->contains (foc_key) &&
+             properties[foc_key] == "disallow" &&
+             mode == 2);
     else {
       int n= N(kind);
       if (n >= 1 && begin[n-1] == pos && end[n-1] == next) {

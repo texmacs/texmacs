@@ -385,22 +385,26 @@ drd_info_rep::get_meaning (tree t, path p) {
   }
   else if (L(t) < START_EXTENSIONS)
     return UNINIT;
-  else if (is_func (the_drd->get_meaning (L(t)), MACRO)) {
+  else {
     tree fun= the_drd->get_meaning (L(t));
-    int i, n= N(fun)-1;
-    hashmap<tree,tree> tab (UNINIT);
-    for (i=0; i<n; i++) {
-      tree var= tree (ARG, fun[i]);
-      tree val= "";
-      if (i < N(t)) {
-        if (p == path (-1)) val= t[i];
-        else val= tree (QUASI, t[i], (tree) (p * i));
+    if (fun == UNINIT) return UNINIT;
+    else if (N(t) == 0 && !is_func (fun, MACRO)) return fun;
+    else if (!is_func (fun, MACRO)) return UNINIT;
+    else {
+      int i, n= N(fun)-1;
+      hashmap<tree,tree> tab (UNINIT);
+      for (i=0; i<n; i++) {
+        tree var= tree (ARG, fun[i]);
+        tree val= "";
+        if (i < N(t)) {
+          if (p == path (-1)) val= t[i];
+          else val= tree (QUASI, t[i], (tree) (p * i));
+        }
+        tab (var)= val;
       }
-      tab (var)= val;
+      return replace (fun[n], tab);
     }
-    return replace (fun[n], tab);
   }
-  else return UNINIT;
 }
 
 /******************************************************************************
