@@ -187,12 +187,15 @@ concater_rep::typeset_document (tree t, path ip) {
 
 void
 concater_rep::typeset_surround (tree t, path ip) {
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0));
-  array<line_item> b= ::typeset_concat (env, t[1], descend (ip, 1));
-  typeset (t[2], descend (ip, 2));
-  a << b;
-  marker (descend (ip, 1));
+  if (N(t) == 3) {
+    marker (descend (ip, 0));
+    typeset (t[0], descend (ip, 0));
+    array<line_item> b= ::typeset_concat (env, t[1], descend (ip, 1));
+    typeset (t[2], descend (ip, 2));
+    a << b;
+    marker (descend (ip, 1));
+  }
+  else typeset_error (t, ip);
 }
 
 void
@@ -204,8 +207,11 @@ concater_rep::typeset_concat (tree t, path ip) {
 
 void
 concater_rep::typeset_rigid (tree t, path ip) {
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  print (STD_ITEM, move_box (ip, b, 0, 0, true));
+  if (N(t) == 1) {
+    box b= typeset_as_concat (env, t[0], descend (ip, 0));
+    print (STD_ITEM, move_box (ip, b, 0, 0, true));
+  }
+  else typeset_error (t, ip);
 }
 
 /******************************************************************************
@@ -214,24 +220,30 @@ concater_rep::typeset_rigid (tree t, path ip) {
 
 void
 concater_rep::typeset_hspace (tree t, path ip) {
-  if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
-  if (N(t)==1) print (env->as_hspace (t[0]));
-  else print (space (env->as_length (t[0]),
-		     env->as_length (t[1]),
-		     env->as_length (t[2])));
-  control (t, ip);
+  if (N(t) == 1 || N(t) == 3) {
+    if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
+    if (N(t)==1) print (env->as_hspace (t[0]));
+    else print (space (env->as_length (t[0]),
+                       env->as_length (t[1]),
+                       env->as_length (t[2])));
+    control (t, ip);
+  }
+  else typeset_error (t, ip);  
 }
 
 void
 concater_rep::typeset_space (tree t, path ip) {
-  SI w = env->as_length (t[0]);
-  SI y1= 0;
-  SI y2= env->fn->yx;
-  if (N(t)==3) {
-    y1= env->as_length (t[1]);
-    y2= env->as_length (t[2]);
+  if (N(t) == 1 || N(t) == 3) {
+    SI w = env->as_length (t[0]);
+    SI y1= 0;
+    SI y2= env->fn->yx;
+    if (N(t)==3) {
+      y1= env->as_length (t[1]);
+      y2= env->as_length (t[2]);
+    }
+    print (STD_ITEM, empty_box (ip, 0, y1, w, y2));
   }
-  print (STD_ITEM, empty_box (ip, 0, y1, w, y2));
+  else typeset_error (t, ip);  
 }
 
 /******************************************************************************
@@ -240,46 +252,58 @@ concater_rep::typeset_space (tree t, path ip) {
 
 void
 concater_rep::typeset_move (tree t, path ip) {
-  box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
-  tree old= env->local_begin_extents (b);
-  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
-  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
-  env->local_end_extents (old);
-  print (STD_ITEM, move_box (ip, b, x, y, true));
+  if (N(t) == 3) {
+    box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
+    tree old= env->local_begin_extents (b);
+    SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
+    SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
+    env->local_end_extents (old);
+    print (STD_ITEM, move_box (ip, b, x, y, true));
+  }
+  else typeset_error (t, ip);  
 }
 
 void
 concater_rep::typeset_shift (tree t, path ip) {
-  box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
-  tree old= env->local_begin_extents (b);
-  SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
-  SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
-  env->local_end_extents (old);
-  print (STD_ITEM, shift_box (ip, b, x, y, true));
+  if (N(t) == 3) {
+    box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
+    tree old= env->local_begin_extents (b);
+    SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
+    SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
+    env->local_end_extents (old);
+    print (STD_ITEM, shift_box (ip, b, x, y, true));
+  }
+  else typeset_error (t, ip);  
 }
 
 void
 concater_rep::typeset_resize (tree t, path ip) {
-  box  b = typeset_as_concat (env, t[0], descend (ip, 0));
-  tree old= env->local_begin_extents (b);
-  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1]), "w"));
-  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2]), "h"));
-  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
-  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
-  env->local_end_extents (old);
-  print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, true));
+  if (N(t) == 5) {
+    box  b = typeset_as_concat (env, t[0], descend (ip, 0));
+    tree old= env->local_begin_extents (b);
+    SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1]), "w"));
+    SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2]), "h"));
+    SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
+    SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
+    env->local_end_extents (old);
+    print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, true));
+  }
+  else typeset_error (t, ip);  
 }
 
 void
 concater_rep::typeset_clipped (tree t, path ip) {
-  box  b = typeset_as_concat (env, t[0], descend (ip, 0));
-  tree old= env->local_begin_extents (b);
-  SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1]), "w"));
-  SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2]), "h"));
-  SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
-  SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
-  env->local_end_extents (old);
-  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
+  if (N(t) == 5) {
+    box  b = typeset_as_concat (env, t[0], descend (ip, 0));
+    tree old= env->local_begin_extents (b);
+    SI   x1 = (t[1] == ""? b->x1: env->as_length (env->exec (t[1]), "w"));
+    SI   y1 = (t[2] == ""? b->y1: env->as_length (env->exec (t[2]), "h"));
+    SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
+    SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
+    env->local_end_extents (old);
+    print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
+  }
+  else typeset_error (t, ip);  
 }
 
 /******************************************************************************
@@ -288,15 +312,18 @@ concater_rep::typeset_clipped (tree t, path ip) {
 
 void
 concater_rep::typeset_float (tree t, path ip) {
-  tree t1= env->exec (t[0]);
-  tree t2= env->exec (t[1]);
-  tree ch= tuple (t1, t2);
-  lazy lz= make_lazy_vstream (env, t[2], descend (ip, 2), ch);
-  marker (descend (ip, 0));
-  if (is_accessible (ip) && !env->read_only)
-    flag_ok (as_string (t1), decorate_middle (ip), brown);
-  print (FLOAT_ITEM, control_box (decorate_middle (ip), lz, env->fn));
-  marker (descend (ip, 1));
+  if (N(t) == 3) {
+    tree t1= env->exec (t[0]);
+    tree t2= env->exec (t[1]);
+    tree ch= tuple (t1, t2);
+    lazy lz= make_lazy_vstream (env, t[2], descend (ip, 2), ch);
+    marker (descend (ip, 0));
+    if (is_accessible (ip) && !env->read_only)
+      flag_ok (as_string (t1), decorate_middle (ip), brown);
+    print (FLOAT_ITEM, control_box (decorate_middle (ip), lz, env->fn));
+    marker (descend (ip, 1));
+  }
+  else typeset_error (t, ip);  
 }
 
 /******************************************************************************
@@ -305,10 +332,13 @@ concater_rep::typeset_float (tree t, path ip) {
 
 void
 concater_rep::typeset_repeat (tree t, path ip) {
-  box b1  = typeset_as_concat (env, t[0], descend (ip, 0));
-  box b2  = typeset_as_concat (env, t[1], descend (ip, 1));
-  SI  xoff= env->get_length (XOFF_DECORATIONS);
-  print (STD_ITEM, repeat_box (ip, b1, b2, xoff));
+  if (N(t) == 2) {
+    box b1  = typeset_as_concat (env, t[0], descend (ip, 0));
+    box b2  = typeset_as_concat (env, t[1], descend (ip, 1));
+    SI  xoff= env->get_length (XOFF_DECORATIONS);
+    print (STD_ITEM, repeat_box (ip, b1, b2, xoff));
+  }
+  else typeset_error (t, ip);  
 }
 
 /******************************************************************************
