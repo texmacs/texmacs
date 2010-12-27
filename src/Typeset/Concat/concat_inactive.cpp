@@ -166,6 +166,7 @@ concater_rep::typeset_src_args (tree t, path ip) {
 
 void
 concater_rep::typeset_src_tag (tree t, path ip) {
+  if (N(t) == 0) { typeset_error (t, ip); return; }
   int n= N(t);
   marker (descend (ip, 0));
   if ((L(t) == INLINE_TAG) || (env->src_close == CLOSE_REPEAT)) {

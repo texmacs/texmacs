@@ -252,6 +252,7 @@ void
 concater_rep::typeset_canvas (tree t, path ip) {
   // IDEA: set left, right, bottom, top environment variables
   //       and allow doing computations with them
+  if (N(t) != 7) { typeset_error (t, ip); return; }
   canvas_properties props= get_canvas_properties (env, t);
   box b= typeset_as_concat (env, t[6], descend (ip, 6));
   SI x1, y1, x2, y2, scx, scy;
@@ -270,6 +271,7 @@ concater_rep::typeset_canvas (tree t, path ip) {
 
 void
 concater_rep::typeset_ornament (tree t, path ip) {
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   SI    w     = env->get_length (ORNAMENT_BORDER);
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);

@@ -42,15 +42,13 @@ concater_rep::typeset_if (tree t, path ip) {
 
 void
 concater_rep::typeset_var_if (tree t, path ip) {
-  if (N(t) == 2) {
-    tree flag= env->exec (t[0]);
-    box  b   = typeset_as_concat (env, attach_right (t[1], ip));
-    marker (descend (ip, 0));
-    if (flag == "true") print (STD_ITEM, b);
-    else print (STD_ITEM, empty_box (b->ip, b->x1, b->y1, b->x2, b->y2));
-    marker (descend (ip, 1));
-  }
-  else typeset_error (t, ip);
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  tree flag= env->exec (t[0]);
+  box  b   = typeset_as_concat (env, attach_right (t[1], ip));
+  marker (descend (ip, 0));
+  if (flag == "true") print (STD_ITEM, b);
+  else print (STD_ITEM, empty_box (b->ip, b->x1, b->y1, b->x2, b->y2));
+  marker (descend (ip, 1));
 }
 
 void
@@ -136,25 +134,23 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
 
 void
 concater_rep::typeset_locus (tree t, path ip) {
-  if (N(t) > 0) {
-    int last= N(t)-1;
-    list<string> ids;
-    string col;
-    if (build_locus (env, t, ids, col)) {
-      marker (descend (ip, 0));
-      tree old= env->local_begin (COLOR, col);
-      typeset (t[last], descend (ip, last));
-      env->local_end (COLOR, old);
-      marker (descend (ip, 1));
-    }
-    else {
-      tree old= env->local_begin (COLOR, col);
-      box b= typeset_as_concat (env, t[last], descend (ip, last));
-      env->local_end (COLOR, old);
-      print (STD_ITEM, locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
-    }
+  if (N(t) == 0) { typeset_error (t, ip); return; }
+  int last= N(t)-1;
+  list<string> ids;
+  string col;
+  if (build_locus (env, t, ids, col)) {
+    marker (descend (ip, 0));
+    tree old= env->local_begin (COLOR, col);
+    typeset (t[last], descend (ip, last));
+    env->local_end (COLOR, old);
+    marker (descend (ip, 1));
   }
-  else typeset_error (t, ip);
+  else {
+    tree old= env->local_begin (COLOR, col);
+    box b= typeset_as_concat (env, t[last], descend (ip, last));
+    env->local_end (COLOR, old);
+    print (STD_ITEM, locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
+  }
 }
 
 void
@@ -178,17 +174,15 @@ concater_rep::typeset_set_binding (tree t, path ip) {
 
 void
 concater_rep::typeset_write (tree t, path ip) {
-  if (N(t) == 2) {
-    string s= env->exec_string (t[0]);
-    tree   r= copy (env->exec (t[1]));
-    if (env->complete) {
-      if (!env->local_aux->contains (s))
-	env->local_aux (s)= tree (DOCUMENT);
-      env->local_aux (s) << r;
-    } 
-    control ("write", ip);
-  }
-  else typeset_error (t, ip);
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  string s= env->exec_string (t[0]);
+  tree   r= copy (env->exec (t[1]));
+  if (env->complete) {
+    if (!env->local_aux->contains (s))
+      env->local_aux (s)= tree (DOCUMENT);
+    env->local_aux (s) << r;
+  } 
+  control ("write", ip);
 }
 
 /******************************************************************************
@@ -197,44 +191,40 @@ concater_rep::typeset_write (tree t, path ip) {
 
 void
 concater_rep::typeset_specific (tree t, path ip) {
-  if (N(t) == 2) {
-    string which= env->exec_string (t[0]);
-    if (which == "texmacs" || which == "image") {
-      marker (descend (ip, 0));
-      typeset (t[1], descend (ip, 1));
-      marker (descend (ip, 1));
-      //typeset_dynamic (t[1], descend (ip, 1));
-    }
-    else if ((which == "screen") || (which == "printer")) {
-      bool pr= (which != "screen");
-      box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
-      box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
-      marker (descend (ip, 0));
-      print (STD_ITEM, b);
-      marker (descend (ip, 1));
-    }
-    else control ("specific", ip);
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  string which= env->exec_string (t[0]);
+  if (which == "texmacs" || which == "image") {
+    marker (descend (ip, 0));
+    typeset (t[1], descend (ip, 1));
+    marker (descend (ip, 1));
+    //typeset_dynamic (t[1], descend (ip, 1));
   }
-  else typeset_error (t, ip);
+  else if ((which == "screen") || (which == "printer")) {
+    bool pr= (which != "screen");
+    box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
+    box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
+    marker (descend (ip, 0));
+    print (STD_ITEM, b);
+      marker (descend (ip, 1));
+  }
+  else control ("specific", ip);
 }
 
 void
 concater_rep::typeset_flag (tree t, path ip) {
-  if (N(t) == 2 || N(t) == 3) {
-    string name= env->exec_string (t[0]);
-    string col = env->exec_string (t[1]);
-    path sip= ip;
-    if ((N(t) >= 3) && (!is_nil (env->macro_src))) {
-      string var= env->exec_string (t[2]);
-      sip= env->macro_src->item [var];
-    }
-    if (((N(t) == 2) || is_accessible (sip)) && (!env->read_only)) {
-      marker (descend (ip, 0));
-      flag_ok (name, ip, named_color (col));
-      marker (descend (ip, 1));  
-    }
+  if (N(t) != 2 && N(t) != 3) { typeset_error (t, ip); return; }
+  string name= env->exec_string (t[0]);
+  string col = env->exec_string (t[1]);
+  path sip= ip;
+  if ((N(t) >= 3) && (!is_nil (env->macro_src))) {
+    string var= env->exec_string (t[2]);
+    sip= env->macro_src->item [var];
   }
-  else typeset_error (t, ip);
+  if (((N(t) == 2) || is_accessible (sip)) && (!env->read_only)) {
+    marker (descend (ip, 0));
+    flag_ok (name, ip, named_color (col));
+    marker (descend (ip, 1));  
+  }
 }
 
 /******************************************************************************

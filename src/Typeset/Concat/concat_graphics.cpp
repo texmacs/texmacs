@@ -66,9 +66,7 @@ concater_rep::typeset_gr_group (tree t, path ip) {
 
 void
 concater_rep::typeset_gr_linear_transform (tree t, path ip) {
-  if (!is_tuple (t[1]))
-    typeset_dynamic (tree (ERROR, "bad linear transform"), ip);
-
+  if (N(t) != 2 || !is_tuple (t[1])) { typeset_error (t, ip); }
   frame f= affine_2D (as_matrix<double> (t[1]));
   box   b= typeset_as_concat (env, t[0], descend (ip, 0));
         /* The call should be performed with 'typeset_as_atomic()',
@@ -79,6 +77,7 @@ concater_rep::typeset_gr_linear_transform (tree t, path ip) {
 
 void
 concater_rep::typeset_text_at (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
   point  p     = env->fr (env->as_point (env->exec (t[1])));
   string halign= env->textat_halign;
@@ -100,18 +99,15 @@ concater_rep::typeset_text_at (tree t, path ip) {
 
 void
 concater_rep::typeset_point (tree t, path ip) {
+  if (N(t) < 2) { typeset_error (t, ip); return; }
   int i, n= N(t);
   tree u (TUPLE, N(t));
   for (i=0; i<n; i++)
     u[i]= env->exec (t[i]);
-  if (N(u) < 2)
-    typeset_dynamic (tree (ERROR, "bad point", t), ip);
-  else {
-    point p= env->fr (env->as_point (u));
-    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col,
-				env->fill_mode, env->fill_color,
-				env->point_style));
-  }
+  point p= env->fr (env->as_point (u));
+  print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col,
+                              env->fill_mode, env->fill_color,
+                              env->point_style));
 }
 
 void
@@ -127,19 +123,16 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
     a << copy (a[0]);
     cip << cip[0];
   }
-  if (N(a) == 0 || N(a[0]) == 0)
-    typeset_dynamic (tree (ERROR, "bad line"), ip);
-  else {
-    if (N(a) == 1) {
-      a << copy (a[0]);
-      cip << cip[0];
-    }
-    curve c= env->fr (poly_segment (a, cip));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-				env->dash_style, env->dash_style_unit,
-				env->fill_mode, env->fill_color,
-				env->line_arrows));
+  if (N(a) == 0 || N(a[0]) == 0) { typeset_error (t, ip); return; }
+  if (N(a) == 1) {
+    a << copy (a[0]);
+    cip << cip[0];
   }
+  curve c= env->fr (poly_segment (a, cip));
+  print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
+                              env->dash_style, env->dash_style_unit,
+                              env->fill_mode, env->fill_color,
+                              env->line_arrows));
 }
 
 void
@@ -151,12 +144,10 @@ concater_rep::typeset_arc (tree t, path ip, bool close) {
   array<path> cip(n);
   for (i=0; i<n; i++)
     cip[i]= descend (ip, i);
-  if (N(a) == 0 || N(a[0]) == 0)
-    typeset_dynamic (tree (ERROR, "bad arc"), ip);
-  else
+  if (N(a) == 0 || N(a[0]) == 0) { typeset_error (t, ip); return; }
   if (n != 3 || linearly_dependent (a[0], a[1], a[2]) ||
-     (N (intersection (midperp (a[0], a[1], a[2]),
-		       midperp (a[1], a[2], a[0]))) == 0))
+      (N (intersection (midperp (a[0], a[1], a[2]),
+                        midperp (a[1], a[2], a[0]))) == 0))
     typeset_line (t, ip, close);
   else {
     curve c= env->fr (arc (a, cip, close));
@@ -176,20 +167,16 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
   array<path> cip(n);
   for (i=0; i<n; i++)
     cip[i]= descend (ip, i);
-  if (N(a) == 0 || N(a[0]) == 0)
-    typeset_dynamic (tree (ERROR, "bad spline"), ip);
-  else {
-    if (N(a) == 1) {
-      a << copy (a[0]);
-      cip << cip[0];
-    }
-    curve c= env->fr (
-      N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-				env->dash_style, env->dash_style_unit,
-				env->fill_mode, env->fill_color,
-				env->line_arrows));
+  if (N(a) == 0 || N(a[0]) == 0) { typeset_error (t, ip); return; }
+  if (N(a) == 1) {
+    a << copy (a[0]);
+    cip << cip[0];
   }
+  curve c= env->fr (N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
+  print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
+                              env->dash_style, env->dash_style_unit,
+                              env->fill_mode, env->fill_color,
+                              env->line_arrows));
 }
 
 void

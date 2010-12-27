@@ -25,12 +25,14 @@ concater_rep::typeset_anim_compose (tree t, path ip) {
 
 void
 concater_rep::typeset_anim_repeat (tree t, path ip) {
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   print (STD_ITEM, anim_repeat_box (ip, b));
 }
 
 void
 concater_rep::typeset_anim_constant (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   int l= env->as_length (env->exec (t[1]));
   print (STD_ITEM, anim_constant_box (ip, b, l));
@@ -46,6 +48,7 @@ effect_point (edit_env env, box b, tree xt, tree yt, SI& x, SI& y) {
 
 void
 concater_rep::typeset_anim_translate (tree t, path ip) {
+  if (N(t) != 4) { typeset_error (t, ip); return; }
   box b  = typeset_as_concat (env, t[0], descend (ip, 0));
   int  len= env->as_length (t[1]);
   tree t1 = env->exec (t[2]);
@@ -58,6 +61,7 @@ concater_rep::typeset_anim_translate (tree t, path ip) {
 
 void
 concater_rep::typeset_anim_progressive (tree t, path ip) {
+  if (N(t) != 4) { typeset_error (t, ip); return; }
   box b  = typeset_as_concat (env, t[0], descend (ip, 0));
   int  len= env->as_length (t[1]);
   tree t1 = env->exec (t[2]);
@@ -81,6 +85,7 @@ concater_rep::typeset_anim_progressive (tree t, path ip) {
 
 void
 concater_rep::typeset_sound (tree t, path ip) {
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   tree sound_t= env->exec (t[0]);
   url sound= url_none ();
   if (is_atomic (sound_t)) {
@@ -102,6 +107,7 @@ concater_rep::typeset_sound (tree t, path ip) {
 
 void
 concater_rep::typeset_video (tree t, path ip) {
+  if (N(t) != 5) { typeset_error (t, ip); return; }
   tree video_t= env->exec (t[0]);
   url video= url_none ();
   if (is_atomic (video_t)) {

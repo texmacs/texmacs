@@ -17,22 +17,22 @@
 
 void
 concater_rep::typeset_assign (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
   tree r= env->exec (t[0]);
-  if ((N(t)==2) && is_atomic (r)) {
-    string var= r->label;
-    env->assign (var, copy (t[1]));
-    if (env->var_type [var] == Env_Paragraph)
-      control (tuple ("env_par", var, env->read (var)), ip);
-    else if (env->var_type [var] == Env_Page)
-      control (tuple ("env_page", var, env->read (var)), ip);
-    else control (t, ip);
-  }
+  if (!is_atomic (r)) return;
+  string var= r->label;
+  env->assign (var, copy (t[1]));
+  if (env->var_type [var] == Env_Paragraph)
+    control (tuple ("env_par", var, env->read (var)), ip);
+  else if (env->var_type [var] == Env_Page)
+    control (tuple ("env_page", var, env->read (var)), ip);
+  else control (t, ip);
 }
 
 void
 concater_rep::typeset_with (tree t, path ip) {
   int i, n= N(t), k= (n-1)>>1; // is k=0 allowed ?
-  if ((n&1) != 1) return;
+  if ((n&1) != 1) { typeset_error (t, ip); return; }
 
   STACK_NEW_ARRAY(vars,string,k);
   STACK_NEW_ARRAY(oldv,tree,k);
@@ -68,6 +68,7 @@ void
 concater_rep::typeset_compound (tree t, path ip) {
   int d; tree f;
   if (L(t) == COMPOUND) {
+    if (N(t) == 0) { typeset_error (t, ip); return; }
     d= 1;
     f= t[0];
     if (is_compound (f)) f= env->exec (f);
@@ -146,6 +147,7 @@ concater_rep::typeset_auto (tree t, path ip, tree f) {
 
 void
 concater_rep::typeset_include (tree t, path ip) {
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   url file_name= as_string (t[0]);
   url incl_file= relative (env->base_file_name, file_name);
   tree incl= load_inclusion (incl_file);
@@ -166,6 +168,7 @@ concater_rep::typeset_drd_props (tree t, path ip) {
 
 void
 concater_rep::typeset_eval (tree t, path ip) {
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   tree r= env->exec (t[0]);
   typeset_dynamic (r, ip);
 }
@@ -173,6 +176,7 @@ concater_rep::typeset_eval (tree t, path ip) {
 void
 concater_rep::typeset_value (tree t, path ip) {
   // cout << "Value " << t << ", " << ip << "\n";
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   tree r= env->exec (t[0]);
   if (is_compound (r)) {
     typeset_error (t, ip);
@@ -189,6 +193,7 @@ concater_rep::typeset_value (tree t, path ip) {
 void
 concater_rep::typeset_argument (tree t, path ip) {
   // cout << "Argument " << t << ", " << ip << "\n";
+  if (N(t) == 0) { typeset_error (t, ip); return; }
   tree r= t[0];
   if (is_compound (r) ||
       is_nil (env->macro_arg) ||
@@ -233,6 +238,7 @@ concater_rep::typeset_argument (tree t, path ip) {
 
 void
 concater_rep::typeset_eval_args (tree t, path ip) { 
+  if (N(t) != 1) { typeset_error (t, ip); return; }
   marker (descend (ip, 0));
   typeset_inactive (attach_right (env->exec (t), ip));
   marker (descend (ip, 1));
@@ -241,6 +247,7 @@ concater_rep::typeset_eval_args (tree t, path ip) {
 void
 concater_rep::typeset_mark (tree t, path ip) {
   // cout << "Mark: " << t << ", " << ip << "\n\n";
+  if (N(t) != 2) { typeset_error (t, ip); return; }
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
       (!is_nil (env->macro_arg)) &&
@@ -277,6 +284,7 @@ concater_rep::typeset_mark (tree t, path ip) {
 void
 concater_rep::typeset_expand_as (tree t, path ip) {
   // cout << "Mark: " << t << ", " << ip << "\n\n";
+  if (N(t) != 2) { typeset_error (t, ip); return; }
   marker (descend (ip, 0));
   typeset (t[1], descend (ip, 1));
   marker (descend (ip, 1));
@@ -349,42 +357,39 @@ concater_rep::typeset_dynamic (tree t, path ip) {
 
 void
 concater_rep::typeset_range (tree t, path ip) {
-  if (N(t) != 3)
+  if (N(t) != 3) { typeset_error (t, ip); return; }
+  tree t1= env->exec (t[0]);
+  tree t2= env->exec (t[1]);
+  tree t3= env->exec (t[2]);
+  if (!(is_int (t2) && is_int (t3)))
     typeset_dynamic (tree (ERROR, "bad range"), ip);
-  else {
-    tree t1= env->exec (t[0]);
-    tree t2= env->exec (t[1]);
-    tree t3= env->exec (t[2]);
-    if (!(is_int (t2) && is_int (t3)))
-      typeset_dynamic (tree (ERROR, "bad range"), ip);
-    else if (is_compound (t1)) {
-      if (is_tuple (t1)) {
-	int i1= max (0, as_int (t2));
-	int i2= min (N (t1), as_int (t3));
-	i2 = max (i1, i2);
-	typeset_dynamic (t1 (i1, i2), ip);
-      }
-      else typeset_dynamic (tree (ERROR, "bad range"), ip);
-    }
-    else {
+  else if (is_compound (t1)) {
+    if (is_tuple (t1)) {
       int i1= max (0, as_int (t2));
-      int i2= min (N(t1->label), as_int (t3));
+      int i2= min (N (t1), as_int (t3));
       i2 = max (i1, i2);
-      path ip1= obtain_ip (t1);
-      if (is_decoration (ip1))
-	typeset_dynamic (t1->label (i1, i2), ip);
-      else {
-	marker (descend (ip, 0));
-	if (env->mode == 1)
-	  typeset_text_string (t1->label, ip1, i1, i2);
-	else if (env->mode == 2)
-	  typeset_math_string (t1->label, ip1, i1, i2);
-	else if (env->mode == 3)
-	  typeset_prog_string (t1       , ip1, i1, i2);
-	else
-	  typeset_text_string (t1->label, ip1, i1, i2);
-	marker (descend (ip, 1));
-      }
+      typeset_dynamic (t1 (i1, i2), ip);
+    }
+    else typeset_dynamic (tree (ERROR, "bad range"), ip);
+  }
+  else {
+    int i1= max (0, as_int (t2));
+    int i2= min (N(t1->label), as_int (t3));
+    i2 = max (i1, i2);
+    path ip1= obtain_ip (t1);
+    if (is_decoration (ip1))
+      typeset_dynamic (t1->label (i1, i2), ip);
+    else {
+      marker (descend (ip, 0));
+      if (env->mode == 1)
+        typeset_text_string (t1->label, ip1, i1, i2);
+      else if (env->mode == 2)
+        typeset_math_string (t1->label, ip1, i1, i2);
+      else if (env->mode == 3)
+        typeset_prog_string (t1       , ip1, i1, i2);
+      else
+        typeset_text_string (t1->label, ip1, i1, i2);
+      marker (descend (ip, 1));
     }
   }
 }

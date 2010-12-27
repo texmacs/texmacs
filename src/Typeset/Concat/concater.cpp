@@ -195,14 +195,17 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case HIDDEN:
     //(void) env->exec (t);
-    (void) typeset_as_concat (env, t[0], descend (ip, 0));
+    if (N(t) != 1) typeset_error (t, ip);
+    else (void) typeset_as_concat (env, t[0], descend (ip, 0));
     break;
   case FREEZE:
+    if (N(t) != 1) typeset_error (t, ip);
+    else typeset (attach_middle (t[0], ip));
     //typeset (freeze (t[0]), decorate_middle (ip));
-    typeset (attach_middle (t[0], ip));
     break;
   case UNFREEZE:
-    typeset (t[0], descend (ip, 0));
+    if (N(t) != 1) typeset_error (t, ip);
+    else typeset (t[0], descend (ip, 0));
     break;
   case HSPACE:
     t= env->exec (t);
@@ -223,6 +226,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_space (attach_here (t, ip));
     break;
   case HTAB:
+    if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); break; }
     if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
     print (space (env->as_length (t[0])));
     control (t, ip);
