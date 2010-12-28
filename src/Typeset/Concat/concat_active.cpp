@@ -46,8 +46,8 @@ concater_rep::typeset_var_if (tree t, path ip) {
   tree flag= env->exec (t[0]);
   box  b   = typeset_as_concat (env, attach_right (t[1], ip));
   marker (descend (ip, 0));
-  if (flag == "true") print (STD_ITEM, b);
-  else print (STD_ITEM, empty_box (b->ip, b->x1, b->y1, b->x2, b->y2));
+  if (flag == "true") print (b);
+  else print (empty_box (b->ip, b->x1, b->y1, b->x2, b->y2));
   marker (descend (ip, 1));
 }
 
@@ -149,7 +149,7 @@ concater_rep::typeset_locus (tree t, path ip) {
     tree old= env->local_begin (COLOR, col);
     box b= typeset_as_concat (env, t[last], descend (ip, last));
     env->local_end (COLOR, old);
-    print (STD_ITEM, locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
+    print (locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
   }
 }
 
@@ -166,7 +166,7 @@ concater_rep::typeset_set_binding (tree t, path ip) {
 	sip= obtain_ip (body);
       }
       box b= tag_box (sip, empty_box (sip, 0, 0, 0, env->fn->yx), keys);
-      a << line_item (CONTROL_ITEM, b, HYPH_INVALID, "label");
+      a << line_item (CONTROL_ITEM, OP_SKIP, b, HYPH_INVALID, "label");
     }
   }
   else typeset_dynamic (keys, ip);
@@ -204,8 +204,8 @@ concater_rep::typeset_specific (tree t, path ip) {
     box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
     box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
     marker (descend (ip, 0));
-    print (STD_ITEM, b);
-      marker (descend (ip, 1));
+    print (b);
+    marker (descend (ip, 1));
   }
   else control ("specific", ip);
 }
@@ -288,7 +288,7 @@ concater_rep::typeset_image (tree t, path ip) {
   
   // print the box
   box imb= image_box (ip, image, imw, imh);
-  print (STD_ITEM, move_box (ip, imb, imx, imy, true));
+  print (move_box (ip, imb, imx, imy, true));
 }
 
 #undef error_image

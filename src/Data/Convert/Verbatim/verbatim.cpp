@@ -133,6 +133,9 @@ print_verbatim (string& buf, tree t, bool wrap) {
       print_verbatim_arg (buf, t[0], wrap);
       print_verbatim (buf, t[1], wrap);
       break;
+    case MEANING:
+      print_verbatim_arg (buf, t[0], wrap);
+      break;
     case TABLE:
       print_verbatim_table (buf, t, wrap);
       break;

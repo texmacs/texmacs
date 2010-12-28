@@ -16,6 +16,7 @@
 #include "convert.hpp"
 #include "merge_sort.hpp"
 #include "drd_std.hpp"
+#include "language.hpp"
 
 tree texmacs_settings = tuple ();
 int  install_status   = 0;
@@ -375,6 +376,7 @@ setup_texmacs () {
 
 void
 init_texmacs () {
+  init_succession_status_table ();
   init_std_drd ();
   init_main_paths ();
   init_user_dirs ();

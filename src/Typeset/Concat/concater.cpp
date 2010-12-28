@@ -21,14 +21,19 @@
 SI italic_correction (box left, box right);
 
 void
-concater_rep::print (int type, box b) {
-  a << line_item (type, b, HYPH_INVALID);
+concater_rep::print (box b) {
+  a << line_item (STD_ITEM, env->mode_op, b, HYPH_INVALID);
+}
+
+void
+concater_rep::print (int type, int op_type, box b) {
+  a << line_item (type, op_type, b, HYPH_INVALID);
 }
 
 void
 concater_rep::control (tree t, path ip) {
   box b= empty_box (ip, 0, 0, 0, env->fn->yx);
-  a << line_item (CONTROL_ITEM, b, HYPH_INVALID, t);
+  a << line_item (CONTROL_ITEM, OP_SKIP, b, HYPH_INVALID, t);
 }
 
 void
@@ -38,7 +43,7 @@ concater_rep::marker (path ip) {
   int sz= script (env->fn_size, env->index_level);
   font gfn (tex_font (fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (ip->next, ip->item, "", gfn, blue);
-  a << line_item (MARKER_ITEM, b, HYPH_INVALID);
+  a << line_item (MARKER_ITEM, OP_SKIP, b, HYPH_INVALID);
 }
 
 void
@@ -69,7 +74,8 @@ concater_rep::ghost (string s, path ip, color col) {
   box b= text_box (decorate (ip), 0, s, gfn, col);
   array<box> bs (1);
   bs[0]= b;
-  a << line_item (STD_ITEM, composite_box (decorate (ip), bs), HYPH_INVALID);
+  a << line_item (STD_ITEM, OP_SKIP,
+                  composite_box (decorate (ip), bs), HYPH_INVALID);
 }
 
 void
@@ -86,7 +92,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
   if (info_flag == "short") {
     box infob= info_box (dip, h, env->fn->wline, col, light);
     box specb= specific_box (ip, infob, false, env->fn);
-    print (STD_ITEM, specb);
+    print (specb);
   }
   if (info_flag == "detailed" || info_flag == "paper") {
     int sz= script (env->fn_size, env->index_level+2);
@@ -95,11 +101,11 @@ concater_rep::flag_ok (string s, path ip, color col) {
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
     if (info_flag == "detailed") {
       box specb= specific_box (ip, flagb, false, env->fn);
-      print (STD_ITEM, specb);
+      print (specb);
     }
     else {
       box b= resize_box (ip, flagb, 0, 0, 0, env->fn->yx);
-      print (STD_ITEM, b);
+      print (b);
     }
   }
 }
@@ -227,7 +233,7 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case HTAB:
     if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); break; }
-    if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
+    if (N(a)==0) print (empty_box (ip, 0, 0, 0, env->fn->yx));
     print (space (env->as_length (t[0])));
     control (t, ip);
     break;
@@ -326,13 +332,13 @@ concater_rep::typeset (tree t, path ip) {
     typeset_around (t, ip, env->get_string (MATH_NESTING_MODE) != "off");
     break;
   case LEFT:
-    typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");
+    typeset_large (t, ip, LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
     break;
   case MID:
-    typeset_large (t, ip, MIDDLE_BRACKET_ITEM, "<mid-");
+    typeset_large (t, ip, MIDDLE_BRACKET_ITEM, OP_MIDDLE_BRACKET, "<mid-");
     break;
   case RIGHT:
-    typeset_large (t, ip, RIGHT_BRACKET_ITEM, "<right-");
+    typeset_large (t, ip, RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");
     break;
   case BIG:
     typeset_bigop (t, ip);
@@ -374,6 +380,9 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case TREE:
     typeset_tree (t, ip);
+    break;
+  case MEANING:
+    typeset_meaning (t, ip);
     break;
 
   case TFORMAT:
@@ -710,7 +719,7 @@ concater_rep::typeset (tree t, path ip) {
     break;
 
   default:
-    if (L(t) < START_EXTENSIONS) print (STD_ITEM, test_box (ip));
+    if (L(t) < START_EXTENSIONS) print (test_box (ip));
     else typeset_compound (t, ip);
     break;
   }

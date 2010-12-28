@@ -191,7 +191,7 @@ bridge_ornamented_rep::insert_ornament (box b) {
   */
   lazy_paragraph par (env, ip);
   par->a= copy (ttt->a);
-  par->a << line_item (STD_ITEM, b, HYPH_INVALID);
+  par->a << line_item (STD_ITEM, env->mode_op, b, HYPH_INVALID);
   par->a << ttt->b;
   par->format_paragraph ();
   ttt->insert_stack (par->sss->l, par->sss->sb);

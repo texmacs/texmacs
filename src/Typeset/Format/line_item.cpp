@@ -16,26 +16,28 @@
 // Routines for the line item class
 /*****************************************************************************/
 
-line_item_rep::line_item_rep (int type2, box b2, int pen2):
-  type (type2), b (b2), spc (0), penalty (pen2), limits (false)
+line_item_rep::line_item_rep (int ty2, int ot2, box b2, int pen2):
+  type (ty2), op_type (ot2), b (b2),
+  spc (0), penalty (pen2), limits (false)
     { TM_DEBUG(line_item_count++); }
-line_item_rep::line_item_rep (int type2, box b2, int pen2, language lan2):
-  type (type2), b (b2), spc (0), penalty (pen2), limits (false),
-  lan (lan2) { TM_DEBUG(line_item_count++); }
-line_item_rep::line_item_rep (int type2, box b2,
-  int pen2, tree t2):
-  type (type2), b (b2), spc (0), penalty (pen2), limits (false),
-  t (t2) { TM_DEBUG(line_item_count++); }
+line_item_rep::line_item_rep (int ty2, int ot2, box b2, int pen2, language l2):
+  type (ty2), op_type (ot2), b (b2),
+  spc (0), penalty (pen2), limits (false),
+  lan (l2) { TM_DEBUG(line_item_count++); }
+line_item_rep::line_item_rep (int ty2, int ot2, box b2, int pen2, tree t2):
+  type (ty2), op_type (ot2), b (b2),
+  spc (0), penalty (pen2), limits (false), t (t2)
+    { TM_DEBUG(line_item_count++); }
 line_item_rep::~line_item_rep () {
   TM_DEBUG(line_item_count--); }
-line_item::line_item (int type, box b, int penalty):
-  rep (tm_new<line_item_rep> (type, b, penalty)) {}
-line_item::line_item (int type, box b, int penalty, language lan):
-  rep (tm_new<line_item_rep> (type, b, penalty, lan)) {}
-line_item::line_item (int type, box b, int penalty, tree t):
-  rep (tm_new<line_item_rep> (type, b, penalty, t)) {}
-bool line_item::operator == (line_item item2) { return rep==item2.rep; }
-bool line_item::operator != (line_item item2) { return rep!=item2.rep; }
+line_item::line_item (int type, int ot_type, box b, int penalty):
+  rep (tm_new<line_item_rep> (type, ot_type, b, penalty)) {}
+line_item::line_item (int type, int ot_type, box b, int penalty, language lan):
+  rep (tm_new<line_item_rep> (type, ot_type, b, penalty, lan)) {}
+line_item::line_item (int type, int ot_type, box b, int penalty, tree t):
+  rep (tm_new<line_item_rep> (type, ot_type, b, penalty, t)) {}
+bool line_item::operator == (line_item item2) { return rep == item2.rep; }
+bool line_item::operator != (line_item item2) { return rep != item2.rep; }
 
 tm_ostream&
 operator << (tm_ostream& out, line_item item) {

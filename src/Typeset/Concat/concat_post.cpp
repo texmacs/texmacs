@@ -56,9 +56,9 @@ concater_rep::pre_glue () {
 	int   pen   = item2->penalty;
 	space spc   = max (item1->spc, item2->spc);
 
-	a[i]= line_item (type, b, pen);
+	a[i]= line_item (type, OP_SKIP, b, pen);
 	a[i]->spc = spc;
-	a[i+1]= line_item (OBSOLETE_ITEM, item2->b, pen);
+	a[i+1]= line_item (OBSOLETE_ITEM, OP_SKIP, item2->b, pen);
       }
   }
 }
@@ -67,8 +67,9 @@ void
 concater_rep::glue (box b, int ref, int arg) {
   space spc = max (a[ref]->spc, a[arg]->spc);
 
-  a[arg]  = line_item (OBSOLETE_ITEM, a[arg]->b, a[arg]->penalty);
-  a[ref]  = line_item (arg<ref? GLUE_LEFT_ITEM: GLUE_RIGHT_ITEM, b,
+  a[arg]  = line_item (OBSOLETE_ITEM, OP_SKIP, a[arg]->b, a[arg]->penalty);
+  a[ref]  = line_item (arg<ref? GLUE_LEFT_ITEM: GLUE_RIGHT_ITEM,
+                       a[ref]->op_type, b,
 		       min (a[ref]->penalty, a[arg]->penalty));
   a[ref]->spc = spc;
 }
@@ -79,9 +80,9 @@ concater_rep::glue (box b, int ref, int arg1, int arg2) {
   int   pen = min (a[ref]->penalty, min (a[arg1]->penalty, a[arg2]->penalty));
 
   space ref_spc= a[ref]->spc;
-  a[arg1]= line_item (OBSOLETE_ITEM, a[arg1]->b, a[arg1]->penalty);
-  a[arg2]= line_item (OBSOLETE_ITEM, a[arg2]->b, a[arg2]->penalty);
-  a[ref]= line_item (GLUE_BOTH_ITEM, b, pen);
+  a[arg1]= line_item (OBSOLETE_ITEM, OP_SKIP, a[arg1]->b, a[arg1]->penalty);
+  a[arg2]= line_item (OBSOLETE_ITEM, OP_SKIP, a[arg2]->b, a[arg2]->penalty);
+  a[ref]= line_item (GLUE_BOTH_ITEM, a[ref]->op_type, b, pen);
   a[ref]->spc = spc;
 }
 

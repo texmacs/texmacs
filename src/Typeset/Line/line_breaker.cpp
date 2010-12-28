@@ -122,10 +122,11 @@ hyphenate (line_item item, int pos, line_item& item1, line_item& item2) {
   string s1, s2;
   array<int> hp= item->lan->get_hyphens (s);
   item->lan->hyphenate (s, pos, s1, s2);
-  item1= line_item (STRING_ITEM,
+  item1= line_item (STRING_ITEM, OP_SKIP,
 		    shorter_box (ip, text_box (ip, x1, s1, fn, col), pos+ 1),
 		    hp[pos], item->lan);
-  item2= line_item (STRING_ITEM, text_box (ip, x2, s2, fn, col),
+  item2= line_item (STRING_ITEM, item->op_type,
+                    text_box (ip, x2, s2, fn, col),
 		    item->penalty, item->lan);
   item2->spc= item->spc;
   // cout << s << " ---> " << s1 << " " << s2 << "\n";

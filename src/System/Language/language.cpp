@@ -59,6 +59,84 @@ operator != (text_property_rep tpr1, text_property_rep tpr2) {
 }
 
 /******************************************************************************
+* Initialized the allowed successions of mathematical operators
+******************************************************************************/
+
+int succession_status_table [OP_TOTAL * OP_TOTAL];
+
+/*
+int
+succession_status (int op1, int op2) {
+  cout << "Check " << op1 << ":" << op2 << " -> " <<
+    succession_status_table [op1 * OP_TOTAL + op2] << "\n";
+  return succession_status_table [op1 * OP_TOTAL + op2];
+}
+*/
+
+static inline void set_status (int op1, int op2, int st) {
+  succession_status_table [op1 * OP_TOTAL + op2]= st; }
+
+static inline void init_could_end (int op) {
+  set_status (op, OP_UNARY, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_N_ARY, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_PREFIX, REMOVE_CURRENT_SPACE);
+}
+
+static inline void init_expect_after (int op) {
+  set_status (op, OP_TEXT, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_BINARY, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_POSTFIX, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_INFIX, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_APPLY, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_SEPARATOR, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_MIDDLE_BRACKET, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_CLOSING_BRACKET, REMOVE_SPACE_BEFORE);
+}
+
+static inline void init_expect_space (int op) {
+  set_status (op, OP_TEXT, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_SYMBOL, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_UNARY, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_BINARY, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_N_ARY, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_PREFIX, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_POSTFIX, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_INFIX, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_SEPARATOR, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_MIDDLE_BRACKET, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_CLOSING_BRACKET, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_BIG, REMOVE_SPACE_BEFORE);
+}
+
+void
+init_succession_status_table () {
+  for (int i=0; i < (OP_TOTAL * OP_TOTAL); i++)
+    succession_status_table[i]= SUCCESSION_OK;
+
+  for (int i=0; i<OP_TOTAL; i++) {
+    set_status (OP_UNKNOWN, i, REMOVE_ALL_SPACE);
+    set_status (i, OP_UNKNOWN, REMOVE_ALL_SPACE);
+  }
+
+  init_expect_after (OP_TEXT);
+  init_could_end    (OP_SYMBOL);
+  init_expect_space (OP_UNARY);
+  init_expect_space (OP_BINARY);
+  init_expect_space (OP_N_ARY);
+  init_expect_after (OP_PREFIX);
+  init_could_end    (OP_POSTFIX);
+  init_expect_after (OP_INFIX);
+  init_expect_after (OP_APPLY);
+  init_expect_after (OP_SEPARATOR);
+  init_expect_after (OP_OPENING_BRACKET);
+  init_expect_after (OP_MIDDLE_BRACKET);
+  init_could_end    (OP_CLOSING_BRACKET);
+  init_expect_after (OP_BIG);
+  set_status (OP_APPLY, OP_BINARY, SUCCESSION_OK);
+  set_status (OP_OPENING_BRACKET, OP_CLOSING_BRACKET, SUCCESSION_OK);
+}
+
+/******************************************************************************
 * Default group of a string
 ******************************************************************************/
 

@@ -141,6 +141,8 @@ symbol_type (tree t) {
     text_property prop= lan->advance (t, pos);
     switch (prop->op_type) {
     case OP_UNKNOWN:
+    case OP_TEXT:
+    case OP_SKIP:
     case OP_SYMBOL:
     case OP_UNARY:
     case OP_BINARY:

@@ -37,7 +37,7 @@ concater_rep::typeset_graphics (tree t, path ip) {
   gr= as_grid (env->read (GR_EDIT_GRID));
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
   box b= graphics_box (ip, bs, env->fr, gr, env->clip_lim1, env->clip_lim2);
-  print (STD_ITEM, b);
+  print (b);
 }
 
 void
@@ -51,7 +51,7 @@ concater_rep::typeset_superpose (tree t, path ip) {
       // would put an accessible concat_box around bs[i] otherwise
       bs[i]= frozen_box (decorate_middle (descend (ip, i)), bs[i]);
   }
-  print (STD_ITEM, superpose_box (ip, bs));
+  print (superpose_box (ip, bs));
 }
 
 void
@@ -61,7 +61,7 @@ concater_rep::typeset_gr_group (tree t, path ip) {
   for (i=0; i<n; i++)
     bs[i]= typeset_as_atomic (env, t[i], descend (ip, i));
 
-  print (STD_ITEM, graphics_group_box (ip, bs));
+  print (graphics_group_box (ip, bs));
 }
 
 void
@@ -72,7 +72,7 @@ concater_rep::typeset_gr_linear_transform (tree t, path ip) {
         /* The call should be performed with 'typeset_as_atomic()',
 	   but we should re-test transform() under these circumstances.
          */
-  print (STD_ITEM, b->transform (env->fr * (f * invert (env->fr))));
+  print (b->transform (env->fr * (f * invert (env->fr))));
 }
 
 void
@@ -93,7 +93,7 @@ concater_rep::typeset_text_at (tree t, path ip) {
     if (valign == "bottom") y -= b->y1;
     else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
     else if (valign == "top") y -= b->y2;
-    print (STD_ITEM, textat_box (ip, b, x, y));
+    print (textat_box (ip, b, x, y));
   }
 }
 
@@ -105,9 +105,9 @@ concater_rep::typeset_point (tree t, path ip) {
   for (i=0; i<n; i++)
     u[i]= env->exec (t[i]);
   point p= env->fr (env->as_point (u));
-  print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col,
-                              env->fill_mode, env->fill_color,
-                              env->point_style));
+  print (point_box (ip, p, 20*PIXEL, env->col,
+                    env->fill_mode, env->fill_color,
+                    env->point_style));
 }
 
 void
@@ -129,10 +129,10 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
     cip << cip[0];
   }
   curve c= env->fr (poly_segment (a, cip));
-  print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-                              env->dash_style, env->dash_style_unit,
-                              env->fill_mode, env->fill_color,
-                              env->line_arrows));
+  print (curve_box (ip, c, env->lw, env->col,
+                    env->dash_style, env->dash_style_unit,
+                    env->fill_mode, env->fill_color,
+                    env->line_arrows));
 }
 
 void
@@ -151,10 +151,10 @@ concater_rep::typeset_arc (tree t, path ip, bool close) {
     typeset_line (t, ip, close);
   else {
     curve c= env->fr (arc (a, cip, close));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-				env->dash_style, env->dash_style_unit,
-				env->fill_mode, env->fill_color,
-				env->line_arrows));
+    print (curve_box (ip, c, env->lw, env->col,
+                      env->dash_style, env->dash_style_unit,
+                      env->fill_mode, env->fill_color,
+                      env->line_arrows));
   }
 }
 
@@ -173,16 +173,16 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
     cip << cip[0];
   }
   curve c= env->fr (N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
-  print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-                              env->dash_style, env->dash_style_unit,
-                              env->fill_mode, env->fill_color,
-                              env->line_arrows));
+  print (curve_box (ip, c, env->lw, env->col,
+                    env->dash_style, env->dash_style_unit,
+                    env->fill_mode, env->fill_color,
+                    env->line_arrows));
 }
 
 void
 concater_rep::typeset_var_spline (tree t, path ip) {
   (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
+  print (test_box (ip));
 }
 
 void
@@ -193,5 +193,5 @@ concater_rep::typeset_cspline (tree t, path ip) {
 void
 concater_rep::typeset_fill (tree t, path ip) {
   (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
+  print (test_box (ip));
 }

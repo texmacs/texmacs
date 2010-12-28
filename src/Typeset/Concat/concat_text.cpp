@@ -22,7 +22,13 @@ lazy make_lazy_vstream (edit_env env, tree t, path ip, tree channel);
 void
 concater_rep::typeset_substring (string s, path ip, int pos) {
   box b= text_box (ip, pos, s, env->fn, env->col);
-  a << line_item (STRING_ITEM, b, HYPH_INVALID, env->lan);
+  a << line_item (STRING_ITEM, OP_TEXT, b, HYPH_INVALID, env->lan);
+}
+
+void
+concater_rep::typeset_math_substring (string s, path ip, int pos, int otype) {
+  box b= text_box (ip, pos, s, env->fn, env->col);
+  a << line_item (STRING_ITEM, otype, b, HYPH_INVALID, env->lan);
 }
 
 void
@@ -31,7 +37,7 @@ concater_rep::typeset_colored_substring
 {
   color c= (col == ""? env->col: named_color (col));
   box b= text_box (ip, pos, s, env->fn, c);
-  a << line_item (STRING_ITEM, b, HYPH_INVALID, env->lan);
+  a << line_item (STRING_ITEM, OP_TEXT, b, HYPH_INVALID, env->lan);
 }
 
 #define PRINT_SPACE(spc_type) \
@@ -119,24 +125,36 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
   do {
     start= pos;
     text_property tp= env->lan->advance (t, pos);
+    int k= N(a);
+    while (k > 0 && a[k-1]->op_type == OP_SKIP) k--;
+    int prev_op_type= (k == 0? OP_TEXT: a[k-1]->op_type);
+    int succ_status= succession_status (prev_op_type, tp->op_type);
+    if ((succ_status & 1) != 0 && k > 0) a[k-1]->spc= space (0);
+    bool spc_ok= (succ_status <= 1);
     if (pos > end) pos= end;
     if ((pos>start) && (s[start]==' ')) { // spaces
       if (start==0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
-      PRINT_SPACE (tp->spc_before);
-      PRINT_SPACE (tp->spc_after);
-      if ((pos==end) || (s[pos]==' '))
-	typeset_substring ("", ip, pos);
+      if (spc_ok) {
+        PRINT_SPACE (tp->spc_before);
+        PRINT_SPACE (tp->spc_after);
+      }
+      //if ((pos==end) || (s[pos]==' '))
+      typeset_math_substring ("", ip, pos, OP_APPLY);
     }
     else { // strings
       penalty_max (tp->pen_before);
-      if (condensed) PRINT_CONDENSED_SPACE (tp->spc_before)
-      else PRINT_SPACE (tp->spc_before)
-      typeset_substring (s (start, pos), ip, start);
+      if (spc_ok) {
+        if (condensed) PRINT_CONDENSED_SPACE (tp->spc_before)
+        else PRINT_SPACE (tp->spc_before)
+      }
+      typeset_math_substring (s (start, pos), ip, start, tp->op_type);
       penalty_min (tp->pen_after);
       if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
-      if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
-      else PRINT_SPACE (tp->spc_after)
+      if (spc_ok) {
+        if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
+        else PRINT_SPACE (tp->spc_after)
+      }
     }
   } while (pos<end);
 }
@@ -177,12 +195,12 @@ concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
 
 void
 concater_rep::typeset_paragraph (tree t, path ip) {
-  print (STD_ITEM, ::typeset_as_paragraph (env, t[0], descend (ip, 0)));
+  print (::typeset_as_paragraph (env, t[0], descend (ip, 0)));
 }
 
 void
 concater_rep::typeset_document (tree t, path ip) {
-  print (STD_ITEM, ::typeset_as_stack (env, t, ip));
+  print (::typeset_as_stack (env, t, ip));
 }
 
 void
@@ -207,7 +225,40 @@ void
 concater_rep::typeset_rigid (tree t, path ip) {
   if (N(t) != 1) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  print (STD_ITEM, move_box (ip, b, 0, 0, true));
+  print (move_box (ip, b, 0, 0, true));
+}
+
+void
+concater_rep::typeset_meaning (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  if (is_atomic (t[1]) && tm_string_length (t[1]->label) == 1) {
+    space  spc= env->fn->spc;
+    space  extra= env->fn->extra;
+    bool   condensed= env->math_condensed;
+    int    pos= 0;
+    string s= t[1]->label;
+    text_property tp= env->lan->advance (s, pos);
+    int k= N(a);
+    while (k > 0 && a[k-1]->op_type == OP_SKIP) k--;
+    int prev_op_type= (k == 0? OP_TEXT: a[k-1]->op_type);
+    int succ_status= succession_status (prev_op_type, tp->op_type);
+    if ((succ_status & 1) != 0 && k > 0) a[k-1]->spc= space (0);
+    bool spc_ok= (succ_status <= 1);
+    penalty_max (tp->pen_before);
+    if (spc_ok) {
+      if (condensed) PRINT_CONDENSED_SPACE (tp->spc_before)
+      else PRINT_SPACE (tp->spc_before)
+    }
+    print (STD_ITEM, tp->op_type, b);
+    penalty_min (tp->pen_after);
+    if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
+    if (spc_ok) {
+      if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
+      else PRINT_SPACE (tp->spc_after)
+    }
+  }
+  else print (b);
 }
 
 /******************************************************************************
@@ -217,7 +268,7 @@ concater_rep::typeset_rigid (tree t, path ip) {
 void
 concater_rep::typeset_hspace (tree t, path ip) {
   if (N(t) != 1 && N(t) != 3) { typeset_error (t, ip); return; }
-  if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
+  if (N(a)==0) print (empty_box (ip, 0, 0, 0, env->fn->yx));
   if (N(t)==1) print (env->as_hspace (t[0]));
   else print (space (env->as_length (t[0]),
                      env->as_length (t[1]),
@@ -235,7 +286,7 @@ concater_rep::typeset_space (tree t, path ip) {
     y1= env->as_length (t[1]);
     y2= env->as_length (t[2]);
   }
-  print (STD_ITEM, empty_box (ip, 0, y1, w, y2));
+  print (empty_box (ip, 0, y1, w, y2));
 }
 
 /******************************************************************************
@@ -250,7 +301,7 @@ concater_rep::typeset_move (tree t, path ip) {
   SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
   SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
   env->local_end_extents (old);
-  print (STD_ITEM, move_box (ip, b, x, y, true));
+  print (move_box (ip, b, x, y, true));
 }
 
 void
@@ -261,7 +312,7 @@ concater_rep::typeset_shift (tree t, path ip) {
   SI   x  = (t[1] == ""? 0: env->as_length (env->exec (t[1]), "w"));
   SI   y  = (t[2] == ""? 0: env->as_length (env->exec (t[2]), "h"));
   env->local_end_extents (old);
-  print (STD_ITEM, shift_box (ip, b, x, y, true));
+  print (shift_box (ip, b, x, y, true));
 }
 
 void
@@ -274,7 +325,7 @@ concater_rep::typeset_resize (tree t, path ip) {
   SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
   SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
   env->local_end_extents (old);
-  print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, true));
+  print (resize_box (ip, b, x1, y1, x2, y2, true, true));
 }
 
 void
@@ -287,7 +338,7 @@ concater_rep::typeset_clipped (tree t, path ip) {
   SI   x2 = (t[3] == ""? b->x2: env->as_length (env->exec (t[3]), "w"));
   SI   y2 = (t[4] == ""? b->y2: env->as_length (env->exec (t[4]), "h"));
   env->local_end_extents (old);
-  print (STD_ITEM, clip_box (ip, b, x1, y1, x2, y2));
+  print (clip_box (ip, b, x1, y1, x2, y2));
 }
 
 /******************************************************************************
@@ -304,7 +355,7 @@ concater_rep::typeset_float (tree t, path ip) {
   marker (descend (ip, 0));
   if (is_accessible (ip) && !env->read_only)
     flag_ok (as_string (t1), decorate_middle (ip), brown);
-  print (FLOAT_ITEM, control_box (decorate_middle (ip), lz, env->fn));
+  print (FLOAT_ITEM, OP_SKIP, control_box (decorate_middle (ip), lz, env->fn));
   marker (descend (ip, 1));
 }
 
@@ -318,7 +369,7 @@ concater_rep::typeset_repeat (tree t, path ip) {
   box b1  = typeset_as_concat (env, t[0], descend (ip, 0));
   box b2  = typeset_as_concat (env, t[1], descend (ip, 1));
   SI  xoff= env->get_length (XOFF_DECORATIONS);
-  print (STD_ITEM, repeat_box (ip, b1, b2, xoff));
+  print (repeat_box (ip, b1, b2, xoff));
 }
 
 /******************************************************************************
@@ -348,7 +399,7 @@ concater_rep::typeset_decorated_box (tree t, path ip) {
   (void) t; (void) ip;
   int n= N (env->decorated_boxes);
   if ((n > 0) && (!is_nil (env->decorated_boxes [n-1]))) {
-    print (STD_ITEM, env->decorated_boxes [n-1]);
+    print (env->decorated_boxes [n-1]);
     env->decorated_boxes [n-1]= box ();
   }
 }

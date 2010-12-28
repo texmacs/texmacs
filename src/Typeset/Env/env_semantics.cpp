@@ -288,6 +288,8 @@ edit_env_rep::update_mode () {
   else if (s == "math") mode=2;
   else if (s == "prog") mode=3;
   else mode=0;
+  if (mode == 2) mode_op= OP_SYMBOL;
+  else mode_op= OP_TEXT;
 }
 
 void

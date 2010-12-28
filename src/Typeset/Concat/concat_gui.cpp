@@ -262,7 +262,7 @@ concater_rep::typeset_canvas (tree t, path ip) {
   path dip= (type == "plain"? ip: decorate (ip));
   box cb= clip_box (dip, b, x1, y1, x2, y2, props->xt, props->yt, scx, scy);
   if (type != "plain") cb= put_scroll_bars (props, cb, ip, b, scx, scy);
-  print (STD_ITEM, cb);
+  print (cb);
 }
 
 /******************************************************************************
@@ -279,5 +279,5 @@ concater_rep::typeset_ornament (tree t, path ip) {
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
   box   b     = typeset_as_concat (env, t[0], descend (ip, 0));
-  print (STD_ITEM, highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow));
+  print (highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow));
 }

@@ -41,25 +41,26 @@ extern int line_item_count;
 class line_item;
 class line_item_rep: public concrete_struct {
 public:
-  int        type;    // type of the line item
-  box        b;       // the box
-  space      spc;     // separation space
-  int        penalty; // penalty for a linebreak after this line_item
-  bool       limits;  // line items has limits
-  language   lan;     // language for hyphenating strings
-  tree       t;       // for control items
+  int        type;      // type of the line item
+  int        op_type;   // operator type for mathematical symbols
+  box        b;         // the box
+  space      spc;       // separation space
+  int        penalty;   // penalty for a linebreak after this line_item
+  bool       limits;    // line items has limits
+  language   lan;       // language for hyphenating strings
+  tree       t;         // for control items
 
-  line_item_rep (int type, box b, int penalty);
-  line_item_rep (int type, box b, int penalty, language lan);
-  line_item_rep (int type, box b, int penalty, tree t);
+  line_item_rep (int type, int ot_type, box b, int penalty);
+  line_item_rep (int type, int ot_type, box b, int penalty, language lan);
+  line_item_rep (int type, int ot_type, box b, int penalty, tree t);
   ~line_item_rep ();
 };
 
 class line_item {
   CONCRETE_NULL(line_item);
-  line_item (int type, box b, int penalty);
-  line_item (int type, box b, int penalty, language lan);
-  line_item (int type, box b, int penalty, tree t);
+  line_item (int type, int ot_type, box b, int penalty);
+  line_item (int type, int ot_type, box b, int penalty, language lan);
+  line_item (int type, int ot_type, box b, int penalty, tree t);
   bool operator == (line_item item2);
   bool operator != (line_item item2);
 };

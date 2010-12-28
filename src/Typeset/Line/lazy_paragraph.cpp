@@ -470,12 +470,12 @@ convert (edit_env env, array<box> bs, path ip) {
     if (i==0) {
       box b= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
       tree ct= tuple ("env_par", PAR_FIRST, "0cm");
-      a << line_item (CONTROL_ITEM, b, 0, ct);
+      a << line_item (CONTROL_ITEM, OP_SKIP, b, 0, ct);
     }
-    a << line_item (STD_ITEM, bs[i], 0);
+    a << line_item (STD_ITEM, env->mode_op, bs[i], 0);
     if (i<(n-1)) {
       box b= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
-      a << line_item (CONTROL_ITEM, b, 0, NEXT_LINE);
+      a << line_item (CONTROL_ITEM, OP_SKIP, b, 0, NEXT_LINE);
     }
   }
   return a;

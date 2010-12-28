@@ -541,7 +541,7 @@
   (define Binary-operator-symbol
     (:type binary)
     (:penalty panic)
-    (:spacing default default)
+    (:spacing none default)
     "div" "mod")
 
   (define N-ary-operator-symbol

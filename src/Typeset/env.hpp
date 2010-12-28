@@ -137,6 +137,7 @@ public:
   double       magn;
   double       flexibility;
   int          mode;
+  int          mode_op;
   language     lan;
   int          hl_lan;
   font         fn;
