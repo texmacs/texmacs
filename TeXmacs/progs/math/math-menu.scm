@@ -911,12 +911,12 @@
   /
   (=> (balloon (icon "tm_bigop.xpm") "Insert a big operator")
       (tile 8 (link big-operator-menu)))
-  (=> (balloon (icon "tm_bigleft.xpm") "Insert a large left delimiter")
-      (tile 8 (link left-delimiter-menu)))
-  (=> (balloon (icon "tm_bigsep.xpm") "Insert a large separator")
-      (tile 8 (link middle-delimiter-menu)))
-  (=> (balloon (icon "tm_bigright.xpm") "Insert a large right delimiter")
-      (tile 8 (link right-delimiter-menu)))
+  (=> (balloon (icon "tm_bigaround.xpm") "Insert large delimiters")
+      (tile 8 (link left-delimiter-menu))
+      ---
+      (-> "Opening" (tile 8 (link left-delimiter-menu)))
+      (-> "Middle" (tile 8 (link middle-delimiter-menu)))
+      (-> "Closing" (tile 8 (link right-delimiter-menu))))
   (=> (balloon (icon "tm_wide.xpm") "Insert an accent")
       (tile 6
             ((icon "tm_hat.xpm") (make-wide "^"))
