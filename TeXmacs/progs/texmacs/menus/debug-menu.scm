@@ -70,6 +70,7 @@
         ("Error status report" (math-status-print))
         ("Reset error counters" (math-status-reset))))
   (-> "Miscellaneous"
+      ("Use fast environments" (toggle-preference "fast environments"))
       ("Provoke error" (oops))
       ("Test routine" (edit-test)))
   ---
