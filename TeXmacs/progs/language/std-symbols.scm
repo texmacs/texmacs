@@ -307,7 +307,7 @@
   (define Other-postfix-symbol
     (:type postfix)
     (:penalty panic)
-    "!" "%" "<postup>" "<postdown>")
+    "!" "%" "<permil>" "<postup>" "<postdown>")
 
   (define Prime-symbol
     (:type symbol)

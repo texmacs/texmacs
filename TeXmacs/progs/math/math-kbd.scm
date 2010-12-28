@@ -193,6 +193,7 @@
 
   ("symbol &" "&")
   ("symbol %" "%")
+  ("symbol % var" "<permil>")
   ("symbol \\" "\\")
   ("symbol \\ var" "<setminus>")
   ("symbol \\ var var" "<smallsetminus>")
@@ -723,7 +724,9 @@
   ("% var" "<cup>")
   ("% var +" "<uplus>")
   ("% var var" "<sqcup>")
-  ("% var var var" "%")
+  ("% var var var" "<amalg>")
+  ("% var var var var" "%")
+  ("% var var var var var" "<permil>")
 
   ("| /" "<nmid>")
   ("| var" "|")
@@ -930,6 +933,7 @@
 
   ("math:greek &" "&")
   ("math:greek %" "%")
+  ("math:greek % var" "<permil>")
   ("math:greek \\" "\\")
   ("math:greek \\ var" "<setminus>")
   ("math:greek \\ var var" "<smallsetminus>")
