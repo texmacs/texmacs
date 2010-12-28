@@ -182,6 +182,18 @@ edit_typeset_rep::typeset_invalidate_env () {
   cur= hashmap<path,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
 }
 
+static void
+restricted_exec (edit_env env, tree t, int end) {
+  if (is_func (t, ASSIGN, 2) && end == 2)
+    env->exec (t);
+  else if (is_document (t) || is_concat (t))
+    for (int i=0; i < min (end, 10); i++)
+      restricted_exec (env, t[i], arity (t[i]));
+  else if (is_compound (t, "hide-preamble", 1) ||
+           is_compound (t, "show-preamble", 1))
+    env->exec (t[0]);
+}
+
 void
 edit_typeset_rep::typeset_exec_until (path p) {
   //time_t t1= texmacs_time ();
@@ -203,13 +215,10 @@ edit_typeset_rep::typeset_exec_until (path p) {
   typeset_prepare ();
   if (enable_fastenv) {
     tree t= subtree (et, rp);
-    if (is_func (t, DOCUMENT) && N(t) > 0)
-      if (is_compound (t[0], "hide-preamble", 1) ||
-	  is_compound (t[0], "show-preamble", 1))
-	env->exec (t[0][0]);
     path q= path_up (p / rp);
     while (!is_nil (q)) {
       int i= q->item;
+      restricted_exec (env, t, i);
       tree w= drd->get_env_child (t, i, tree (ATTR));
       if (w == "") break;
       //cout << "t= " << t << "\n";
