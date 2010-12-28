@@ -18,7 +18,6 @@
 
 (kbd-map
   (:mode in-std-text?)
-  ("$" (if (inside? 'hybrid) (insert "$") (make 'math)))
   ("text $" (make-equation*))
   ("text &" (make-eqnarray*))
 

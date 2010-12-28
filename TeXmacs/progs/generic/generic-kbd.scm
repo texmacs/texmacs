@@ -42,6 +42,9 @@
   ("{" (make-bracket-open "{" "}"))
   ("}" (make-bracket-close "}" "{"))
   ("\\" (if (or (inside? 'hybrid) (in-prog?)) (insert "\\") (make-hybrid)))
+  ("\\ var" "\\")
+  ("$" (if (inside? 'hybrid) (insert "$") (make 'math)))
+  ("$ var" "$")
 
   ("-" "-")
   ("- var" (make 'nbhyph))
