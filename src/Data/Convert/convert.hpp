@@ -14,10 +14,13 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 typedef tree scheme_tree;
+class url;
 
 /*** Miscellaneous ***/
 bool   is_snippet (tree doc);
 string get_texmacs_path ();
+void   set_file_focus (url u);
+url    get_file_focus ();
 
 /*** Generic ***/
 string suffix_to_format (string suffix);

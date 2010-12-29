@@ -25,6 +25,7 @@ tm_data_rep::load_tree (url u, string fm) {
   string s, suf= suffix (u);
   string action= "load " * fm * " file";
   u= resolve (u);
+  set_file_focus (u);
   if (is_none (u) || load_string (u, s, false)) {
     tree vname= verbatim (as_string (u));
     set_message (concat ("Error: file ", vname, " not found"), action);

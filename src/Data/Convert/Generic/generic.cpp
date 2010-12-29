@@ -13,6 +13,8 @@
 #include "file.hpp"
 #include "scheme.hpp"
 
+static url current_file_focus= url_none ();
+
 bool
 is_snippet (tree doc) {
   if (!is_document (doc)) return true;
@@ -29,6 +31,16 @@ get_texmacs_path () {
   while ((N(tmpath)>0) && (tmpath [N(tmpath) - 1] == '/'))
     tmpath= tmpath (0, N(tmpath)-1);
   return tmpath;
+}
+
+url
+get_file_focus () {
+  return current_file_focus;
+}
+
+void
+set_file_focus (url u) {
+  current_file_focus= u;
 }
 
 string

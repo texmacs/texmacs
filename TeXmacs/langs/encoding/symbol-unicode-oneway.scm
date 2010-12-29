@@ -35,7 +35,7 @@
 ("<Im>"		"#2111") ; see <frak-I>
 ("<Re>"		"#211C") ; see <frak-R>
 ("<agemO>"	"#2127") ; see <Mho>
-("<to>"		"#2192") ; see <rigtharrow>
+("<to>"		"#2192") ; see <rightarrow>
 ("<notin>"	"#2209") ; see <nin>
 ("<notni>"	"#220C") ; see <nni>
 ("<asterisk>"	"#2217") ; see <ast>

@@ -764,10 +764,26 @@ latex_parser::parse (string s, bool change) {
 	  test (s, i, "\\paragraph") ||
 	  test (s, i, "\\subparagraph") ||
 	  test (s, i, "\\newcommand") ||
-	  test (s, i, "\\def"))
+	  test (s, i, "\\def") ||
+	  test (s, i, "\\input{"))
 	{
 	  a << s (start, i);
 	  start= i;
+          if (test (s, i, "\\input{")) {
+            while (i<N(s) && s[i] != '}') i++;
+            string name= s (start + 7, i);
+            if (!ends (name, ".tex")) name= name * ".tex";
+            url incl= relative (get_file_focus (), name);
+            string body;
+            if (!exists (incl) || load_string (incl, body, false)) i++;
+            else {
+              //cout << "Include " << name << " -> " << incl << "\n";
+              s= s (0, start) * "\n" * body * "\n" * s (i+1, N(s));
+              n= N(s);
+              i= start + 1;
+            }
+            start= i;
+          }
 	}
       if (i == n) break;
     }
