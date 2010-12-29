@@ -64,6 +64,8 @@
 
   <assign|eq-number|<value|req-number>>
 
+  <assign|no-number|<macro|>>
+
   <assign|eqref|<macro|id|(<reference|<arg|id>>)>>
 
   <\active*>

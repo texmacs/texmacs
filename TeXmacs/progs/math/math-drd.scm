@@ -16,3 +16,6 @@
 
 (define-alternate wide wide*)
 (define-alternate around around*)
+
+(define-group fraction-tag frac tfrac dfrac frac*)
+(define-group variant-tag (fraction-tag))

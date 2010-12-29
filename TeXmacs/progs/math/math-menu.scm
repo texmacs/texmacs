@@ -898,8 +898,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-icons
-  ((balloon (icon "tm_fraction.xpm") "Insert a fraction")
-   (make-fraction))
+  (=> (balloon (icon "tm_fraction.xpm") "Insert a fraction")
+      ("Standard fraction" (make-fraction))
+      ("Small inline fraction" (make 'tfrac))
+      ("Large displayed fraction" (make 'dfrac))
+      ("Slash fraction" (make 'frac*)))
   ((balloon (icon "tm_sqrt.xpm") "Insert a square root")
    (make-sqrt))
   ((balloon (icon "tm_sub.xpm") "Make a subscript")
