@@ -18,4 +18,5 @@
 (define-alternate around around*)
 
 (define-group fraction-tag frac tfrac dfrac frac*)
-(define-group variant-tag (fraction-tag))
+(define-group vertical-script-tag below above)
+(define-group variant-tag (fraction-tag) (vertical-script-tag))
