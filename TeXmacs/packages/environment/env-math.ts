@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.9>
 
 <style|source>
 
@@ -63,6 +63,8 @@
   <assign|req-number|<macro|<htab|5mm><next-number>>>
 
   <assign|eq-number|<value|req-number>>
+
+  <assign|eqref|<macro|id|(<reference|<arg|id>>)>>
 
   <\active*>
     <\src-comment>

@@ -2951,7 +2951,7 @@ upgrade_resize_clipped (tree t) {
   else if (N(t) >= 5 && (is_func (t, RESIZE) || is_func (t, CLIPPED))) {
     if (is_func (t, CLIPPED))
       t= tree (CLIPPED, t[4], t[0], t[1], t[2], t[3]);
-    int i, n= N(t);
+    int i, n= 5;
     tree r (t, n);
     r[0]= upgrade_resize_clipped (t[0]);
     for (i=1; i<n; i++)
