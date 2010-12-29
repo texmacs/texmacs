@@ -30,7 +30,6 @@
 ;; Alternate symbol names. They use the same glyph and are converted to the
 ;; same unicode character as another symbol.
 
-("<cdummy>"	"#22C5") ; see <cdot>
 ("<dag>"	"#2020") ; see <dagger>
 ("<ddag>"	"#2021") ; see <ddagger>
 ("<Im>"		"#2111") ; see <frak-I>
@@ -51,6 +50,8 @@
 ("<wasyunlhd>"	"#22B4") ; see <trianglelefteq>
 ("<unrhd>"	"#22B5") ; see <trianglerighteq>
 ("<wasyunrhd>"	"#22B5") ; see <trianglerighteq>
+("<cdummy>"	"#22C5") ; see <cdot>
+("<exterior>"	"#2227") ; see <wedge>
 ("<box>"	"#25A1") ; see <square>
 ("<Box>"	"#25A1") ; see <square>
 ("<wasy-38>"	"#2641") ; see <earth>

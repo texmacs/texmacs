@@ -3045,6 +3045,44 @@ upgrade_hyphenation (tree t) {
 }
 
 /******************************************************************************
+* Renaming of symbols
+******************************************************************************/
+
+tree
+rename_symbols (tree t, hashmap<string,string> h) {
+  if (is_atomic (t)) {
+    bool same= true;
+    int pos;
+    string s= t->label;
+    for (pos=0; pos<N(s); ) {
+      int j=pos;
+      tm_char_forwards (s, pos);
+      if (j+2 < pos && h->contains (s (j, pos))) {
+        same= false;
+        break;
+      }
+    }
+    if (same) return t;
+    string r;
+    for (pos=0; pos<N(s); ) {
+      int j=pos;
+      tm_char_forwards (s, pos);
+      if (h->contains (s (j, pos))) r << h [s (j, pos)];
+      else r << s (j, pos);
+    }
+    return r;
+  }
+  else if (is_func (t, RAW_DATA)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= rename_symbols (t[i], h);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 

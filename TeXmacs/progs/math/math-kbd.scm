@@ -855,6 +855,7 @@
   ("* var" "<times>")
   ("* var var" "<ast>")
   ("* var var var" "<cdot>")
+  ("* &" "<exterior>")
   ("| * var" "<ltimes>")
   ("| * var |" "<join>")
   ("| var *" "<ltimes>")

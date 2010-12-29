@@ -88,6 +88,7 @@
   (Zeta "\\mathrm{Z}")
 
   ;; other extra symbols
+  (exterior "\\wedge")
   (Exists "\\exists")
   (bigintwl "\\int")
   (bigointwl "\\oint")
