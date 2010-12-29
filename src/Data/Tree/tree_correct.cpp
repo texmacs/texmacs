@@ -655,11 +655,46 @@ misc_math_correct (tree t) {
     return misc_math_correct (t[0]);
   else if (is_func (t, RSUP, 1) && is_func (t[0], RPRIME, 1))
     return misc_math_correct (t[0]);
+  else if (is_script (t) && is_compound (t[0], "text", 1) &&
+           is_atomic (t[0][0]) && is_alpha (t[0][0]->label))
+    {
+      if (N(t[0][0]->label) != 1) return tree (L(t), t[0][0]);
+      else return tree (L(t), tree (WITH, "math-font-family", "trm",
+                                    misc_math_correct (t[0])));
+    }
+  else if (is_compound (t, "math", 1)) {
+    tree arg = misc_math_correct (t[0]);
+    tree last= arg;
+    if (is_concat (last) && N(last) > 0) last= last[N(last)-1];
+    if (is_atomic (last) && N(last->label) > 0 &&
+        is_punctuation (last->label [N(last->label)-1]))
+      {
+        string s= last->label;
+        int i= N(s);
+        while (i>0 && is_punctuation (s[i-1])) i--;
+        if (i == N(s)) return compound ("math", arg);
+        string tail= s (i, N(s));
+        s= s (0, i);
+        if (last == arg) {
+          if (N(s) == 0) return tail;
+          else return concat (compound ("math", s), tail);
+        }
+        else {
+          tree cc= arg (0, N(arg) - 1);
+          if (N(s) != 0) cc << tree (s);
+          if (N(cc) == 1) cc= cc[0];
+          return concat (compound ("math", cc), tail);
+        }        
+      }
+    else return compound ("math", arg);
+  }
   else {
     int i, n= N(t);
     tree r (t, n);
     for (i=0; i<n; i++)
       r[i]= misc_math_correct (t[i]);
+    if (is_concat (r))
+      r= concat_recompose (concat_decompose (r));
     return r;
   }
 }
