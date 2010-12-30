@@ -147,7 +147,8 @@
   /
   (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
       (link color-menu))
-  (=> (balloon (icon "tm_math_style.xpm") "Mathematical formulas style")
+  (=> (balloon (icon "tm_math_style.xpm")
+               "Change the style of mathematical formulas")
       (group "Style")
       ("Small inline" (make-with "math-display" "false"))
       ("Large displayed" (make-with "math-display" "true"))

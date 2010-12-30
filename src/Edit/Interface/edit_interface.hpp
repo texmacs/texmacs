@@ -57,6 +57,7 @@ protected:
   bool          table_selection;
   rectangles    selection_rects;
   rectangles    env_rects;
+  rectangles    foc_rects;
   rectangles    sem_rects;
   bool          sem_correct;
   cursor        oc;

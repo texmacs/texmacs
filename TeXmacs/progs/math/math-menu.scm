@@ -113,6 +113,13 @@
   ("Homoglyph substitutions"
    (toggle-preference "manual homoglyph correct")))
 
+(menu-bind context-preferences-menu
+  ("Show full context" (toggle-preference "show full context"))
+  ("Show current focus" (toggle-preference "show current focus"))
+  (when (!= (get-preference "semantic editing") "off")
+    ("Only show semantic focus"
+      (toggle-preference "show only semantic focus"))))
+
 (menu-bind semantic-math-preferences-menu
   ("Semantic editing" (toggle-preference "semantic editing"))
   (when (== (get-preference "semantic editing") "on")
@@ -1014,10 +1021,13 @@
       ("Use the blackboard bold font" (make-with "math-font" "Bbb*")))
   (link math-format-icons)
   (=> (balloon (icon "tm_math_preferences.xpm")
-               "Preferences for editing mathematics")
+               "Preferences for editing mathematical formulas")
       (group "Keyboard")
       ("Enforce brackets to match" (toggle-matching-brackets))
       ("Use extensible brackets" (toggle-preference "use large brackets"))
+      ---
+      (group "Context aids")
+      (link context-preferences-menu)
       ---
       (group "Semantics")
       (link semantic-math-preferences-menu))

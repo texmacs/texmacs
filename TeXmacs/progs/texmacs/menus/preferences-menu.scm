@@ -180,6 +180,8 @@
         (-> "Keyboard"
             (item ("Enforce brackets to match" (toggle-matching-brackets)))
             (toggle ("Use extensible brackets" "use large brackets")))
+        (-> "Context aids"
+            (link context-preferences-menu))
         (-> "Semantics"
             (link semantic-math-preferences-menu))
         (-> "Automatic correction"

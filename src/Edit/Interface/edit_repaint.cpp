@@ -37,6 +37,12 @@ edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
     rectangles rs= env_rects;
     while (!is_nil (rs)) {
+      ren->set_color (rgb_color (224, 236, 236));
+      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
+      rs= rs->next;
+    }
+    rs= foc_rects;
+    while (!is_nil (rs)) {
       ren->set_color (rgb_color (0, 255, 255));
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
@@ -44,7 +50,7 @@ edit_interface_rep::draw_env (renderer ren) {
     rs= sem_rects;
     while (!is_nil (rs)) {
       if (sem_correct) ren->set_color (rgb_color (112, 208, 112));
-      else ren->set_color (rgb_color (208, 112, 112));
+      else ren->set_color (rgb_color (208, 144, 80));
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }
