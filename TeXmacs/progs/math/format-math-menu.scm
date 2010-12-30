@@ -145,8 +145,8 @@
 
 (menu-bind math-format-icons
   /
-  (=> (balloon (icon "tm_display_style.xpm") "Select display or formula style")
-      ("Formula style" (make-with "math-display" "false"))
-      ("Display style" (make-with "math-display" "true")))
   (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
-      (link color-menu)))
+      (link color-menu))
+  (=> (balloon (icon "tm_math_style.xpm") "Mathematical formulas style")
+      ("Formula style" (make-with "math-display" "false"))
+      ("Display style" (make-with "math-display" "true"))))

@@ -985,6 +985,10 @@
       ---
       ("Use the blackboard bold font" (make-with "math-font" "Bbb*")))
   (link math-format-icons)
+  (=> (balloon (icon "tm_math_preferences.xpm")
+               "Preferences for editing mathematics")
+      (group "Semantics")
+      ("Semantic editing" (toggle-preference "semantic editing")))
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
