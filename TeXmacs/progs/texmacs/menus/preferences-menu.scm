@@ -177,7 +177,10 @@
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8"))))
     (-> "Mathematics"
-	(toggle ("Semantic editing" "semantic editing"))
+        (-> "Keyboard"
+            (toggle ("Use large brackets" "use large brackets")))
+        (-> "Semantics"
+            (toggle ("Semantic editing" "semantic editing")))
         (-> "Automatic correction"
             (toggle ("Remove superfluous invisible operators"
                      "remove superfluous invisible"))

@@ -28,7 +28,8 @@
 
 (define-preferences
   ("automatic quotes" "default" notify-quoting-style)
-  ("automatic brackets" "mathematics" notify-auto-close-brackets))
+  ("automatic brackets" "mathematics" notify-auto-close-brackets)
+  ("use large brackets" "on" (lambda args (noop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Quotes

@@ -435,10 +435,12 @@ upgrade_brackets (array<tree> a, int level) {
     r= simplify_matching (a, confirm_all (tp), level);
     if (r != a) return upgrade_brackets (r, level);
     //cout << "  Missing left\n";
-    r= add_missing_left (a, tp);
+    if (get_preference ("automatic brackets") != "off")
+      r= add_missing_left (a, tp);
     if (r != a) return upgrade_brackets (r, level);
     //cout << "  Missing right\n";
-    r= add_missing_right (a, tp);
+    if (get_preference ("automatic brackets") != "off")
+      r= add_missing_right (a, tp);
     if (r != a) return upgrade_brackets (r, level);
   }
   if (admits_bigops (tp)) {

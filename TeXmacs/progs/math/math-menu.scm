@@ -156,6 +156,29 @@
 ;; Large delimiters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind large-delimiter-menu
+  (symbol "<left-(-2>" (math-bracket-open "(" ")" 'default))
+  (symbol "<left-)-2>" (math-bracket-open ")" "(" 'default))
+  (symbol "<left-[-2>" (math-bracket-open "[" "]" 'default))
+  (symbol "<left-]-2>" (math-bracket-open "]" "[" 'default))
+  (symbol "<left-{-2>" (math-bracket-open "{" "}" 'default))
+  (symbol "<left-}-2>" (math-bracket-open "}" "{" 'default))
+  (symbol "<left-langle-2>" (math-bracket-open "langle" "rangle" 'default))
+  (symbol "<left-rangle-2>" (math-bracket-open "rangle" "langle" 'default))
+  (symbol "<left-lfloor-2>" (math-bracket-open "lfloor" "rfloor" 'default))
+  (symbol "<left-rfloor-2>" (math-bracket-open "rfloor" "lfloor" 'default))
+  (symbol "<left-lceil-2>" (math-bracket-open "lceil" "rceil" 'default))
+  (symbol "<left-rceil-2>" (math-bracket-open "rceil" "lceil" 'default))
+  (symbol "<left-llbracket-2>"
+          (math-bracket-open "llbracket" "rrbracket" 'default))
+  (symbol "<left-rrbracket-2>"
+          (math-bracket-open "rrbracket" "llbracket" 'default))
+  (symbol "<left-|-4>" (math-bracket-open "|" "|" 'default))
+  (symbol "<left-||-4>" (math-bracket-open "||" "||" 'default))
+  (symbol "<left-/-2>" (math-bracket-open "/" "\\" 'default))
+  (symbol "<left-\\-2>" (math-bracket-open "\\" "/" 'default))
+  (symbol "<left-.-2>" (math-bracket-open "." "." 'default)))
+
 (menu-bind left-delimiter-menu
   (symbol "<left-(-2>" (math-bracket-open "(" ")" #t))
   (symbol "<left-)-2>" (math-bracket-open ")" "(" #t))
@@ -917,7 +940,7 @@
   (=> (balloon (icon "tm_bigop.xpm") "Insert a big operator")
       (tile 8 (link big-operator-menu)))
   (=> (balloon (icon "tm_bigaround.xpm") "Insert large delimiters")
-      (tile 8 (link left-delimiter-menu))
+      (tile 8 (link large-delimiter-menu))
       ---
       (-> "Opening" (tile 8 (link left-delimiter-menu)))
       (-> "Middle" (tile 8 (link middle-delimiter-menu)))
@@ -988,7 +1011,8 @@
   (=> (balloon (icon "tm_math_preferences.xpm")
                "Preferences for editing mathematics")
       (group "Semantics")
-      ("Semantic editing" (toggle-preference "semantic editing")))
+      ("Semantic editing" (toggle-preference "semantic editing"))
+      ("Matching brackets" (toggle-matching-brackets)))
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

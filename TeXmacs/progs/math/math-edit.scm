@@ -372,6 +372,16 @@
       (tree-set! t v)
       (find-and-remove-temp-slot t))))
 
+(tm-define (test-matching-brackets?)
+  (!= (get-preference "automatic brackets") "off"))
+
+(tm-define (toggle-matching-brackets)
+  (:check-mark "v" test-matching-brackets?)
+  (set-preference "automatic brackets"
+                  (if (== (get-preference "automatic brackets") "off")
+                      "mathematics"
+                      "off")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Matching brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -415,6 +425,8 @@
     ret))
 
 (tm-define (math-bracket-open lb rb large?)
+  (when (== large? 'default)
+    (set! large? (!= (get-preference "use large brackets") "off")))
   (when (== (get-preference "automatic brackets") "off")
     (make-bracket-open lb rb large?)
     (brackets-refresh))
@@ -440,6 +452,8 @@
 	     (insert-go-to `(around* ,lb "" ,rb) '(1 0)))))))
 
 (tm-define (math-separator sep large?)
+  (when (== large? 'default)
+    (set! large? (!= (get-preference "use large brackets") "off")))
   (when (== (get-preference "automatic brackets") "off")
     (make-separator sep large?)
     (brackets-refresh))
@@ -447,6 +461,8 @@
     (make-separator sep large?)))
 
 (tm-define (math-bracket-close rb lb large?)
+  (when (== large? 'default)
+    (set! large? (!= (get-preference "use large brackets") "off")))
   (when (== (get-preference "automatic brackets") "off")
     (make-bracket-close rb lb large?)
     (brackets-refresh))
