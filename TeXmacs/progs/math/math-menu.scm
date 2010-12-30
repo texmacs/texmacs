@@ -115,7 +115,9 @@
 
 (menu-bind context-preferences-menu
   ("Show full context" (toggle-preference "show full context"))
-  ("Show current focus" (toggle-preference "show current focus"))
+  (when (inside? 'table)
+    ("Show table cells" (toggle-preference "show table cells")))
+  ("Show current focus" (toggle-preference "show focus"))
   (when (!= (get-preference "semantic editing") "off")
     ("Only show semantic focus"
       (toggle-preference "show only semantic focus"))))
