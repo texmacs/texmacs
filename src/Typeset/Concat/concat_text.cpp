@@ -232,6 +232,7 @@ void
 concater_rep::typeset_meaning (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  b= move_box (ip, b, 0, 0, true);
   if (is_atomic (t[1]) && tm_string_length (t[1]->label) == 1) {
     space  spc= env->fn->spc;
     space  extra= env->fn->extra;
