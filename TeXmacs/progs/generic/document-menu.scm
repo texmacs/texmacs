@@ -431,12 +431,16 @@
 	  ---
 	  (pick-color (init-env "color" answer))
 	  ---
+          ("Palette" (interactive-color
+                      (lambda (col) (init-env "color" col)) '()))
 	  ("Other" (init-interactive-env "color")))
       (-> "Background"
 	  ("Default" (init-default "bg-color"))
 	  ---
 	  (pick-background (init-env-tree "bg-color" answer))
 	  ---
+          ("Palette" (interactive-background
+                      (lambda (col) (init-env "bg-color" col)) '()))
 	  ("Other" (init-interactive-env "bg-color"))))
   (if (detailed-menus?)
       (-> "Language"

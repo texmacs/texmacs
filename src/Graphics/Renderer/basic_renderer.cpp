@@ -55,13 +55,14 @@ hash (basic_character xc) {
 
 bool reverse_colors= false;
 
-#if 0
-color black, white, red, green, blue;
-color yellow, magenta, orange, brown, pink;
-color light_grey, grey, dark_grey;
+#ifdef QTTEXMACS
+#define LARGE_COLORMAP
+#else
+#define MEDIUM_COLORMAP
 #endif
 
-#if 0
+#ifndef LARGE_COLORMAP
+#ifdef SMALL_COLORMAP
 int CSCALES= 4;
 int CFACTOR= 5;
 int GREYS  = 16;
@@ -71,7 +72,23 @@ int CFACTOR= 9;
 int GREYS  = 256;
 #endif
 int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
+#endif
 
+#ifdef LARGE_COLORMAP
+
+color
+rgb_color (int r, int g, int b) {
+  return (r << 16) + (g << 8) + b;
+}
+
+void
+get_rgb_color (color col, int& r, int& g, int& b) {
+  r= col >> 16;
+  g= (col >> 8) & 255;
+  b= col & 255;
+}
+
+#else
 
 color
 rgb_color (int r, int g, int b) {
@@ -103,6 +120,8 @@ get_rgb_color (color col, int& r, int& g, int& b) {
   }
 }
 
+#endif
+
 color	black   = rgb_color (0, 0, 0);
 color	white   = rgb_color (255, 255, 255);
 color	red     = rgb_color (255, 0, 0);
@@ -118,8 +137,6 @@ color	light_grey = rgb_color (208, 208, 208);
 color	grey       = rgb_color (184, 184, 184);
 color	dark_grey  = rgb_color (112, 112, 112);
 
-
-
 color
 named_color (string s) {
   if ((N(s) == 4) && (s[0]=='#')) {
@@ -134,14 +151,22 @@ named_color (string s) {
     int b= from_hexadecimal (s (5, 7));
     return rgb_color (r, g, b);
   }
-  unsigned int depth = 65535;
+#ifdef REDUCED_COLORMAP
+  unsigned int depth= 8;
+#else
+#ifdef MEDIUM_COLORMAP
+  unsigned int depth= 16;
+#else
+  unsigned int depth= 24;
+#endif
+#endif
   int pastel= (depth>=16? 223: 191);
   
-  if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5,N(s))))) {
+  if ((N(s) > 4) && (s (1,4) == "gray") && (is_numeric (s (5, N(s))))) {
     int level, i=5;
     if (read_int(s,i,level)) {
       level = (level*255) /100;
-      return rgb_color(level,level,level);
+      return rgb_color (level, level, level);
     }
   }
 	

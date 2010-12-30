@@ -43,10 +43,7 @@
 (menu-bind color-menu
   (pick-color (make-with "color" answer))
   ---
-  ("Palette"
-   (if (and #f (qt-gui?))
-    (interactive-color (lambda (col) (make-with "color" col)) '())
-    (interactive-rgb-picker (lambda (col) (make-with "color" col)) '())))
+  ("Palette" (interactive-color (lambda (col) (make-with "color" col)) '()))
   ("Other" (make-interactive-with "color")))
 
 (menu-bind horizontal-space-menu

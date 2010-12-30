@@ -215,6 +215,7 @@
 	  (s (if (or (== a "black") (== a "#000000")) "default" a)))
      (graphics-set-color a)))
   ---
+  ("Palette" (interactive-color (lambda (c) (graphics-set-color c)) '()))
   ("Other" (interactive graphics-set-color)))
 
 (menu-bind grid-color-axes-menu
@@ -222,6 +223,8 @@
   ---
   (pick-color (graphics-set-grid-color 'axes answer))
   ---
+  ("Palette" (interactive-color
+              (lambda (c) (graphics-set-grid-color 'axes c)) '()))
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'axes x)) "Color")))
 
@@ -230,6 +233,8 @@
   ---
   (pick-color (graphics-set-grid-color 'units answer))
   ---
+  ("Palette" (interactive-color
+              (lambda (c) (graphics-set-color 'units c)) '()))
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'units x)) "Color")))
 
@@ -238,6 +243,8 @@
   ---
   (pick-color (graphics-set-grid-color 'subunits answer))
   ---
+  ("Palette" (interactive-color
+              (lambda (c) (graphics-set-grid-color 'subunits c)) '()))
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
 
@@ -296,6 +303,7 @@
   (pick-color (graphics-set-fill-color answer))
   ;;(pick-background (graphics-set-fill-color answer))
   ---
+  ("Palette" (interactive-color (lambda (c) (graphics-set-fill-color c)) '()))
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-halign-menu
