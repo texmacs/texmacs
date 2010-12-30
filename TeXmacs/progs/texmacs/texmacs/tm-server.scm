@@ -62,6 +62,7 @@
   ("language" (get-locale-language) notify-language)
   ("fast environments" "on" notify-fast-environments)
   ("semantic editing" "off" (lambda args (noop)))
+  ("semantic selections" "on" (lambda args (noop)))
   ("remove superfluous invisible" "off" (lambda args (noop)))
   ("insert missing invisible" "off" (lambda args (noop)))
   ("zealous invisible correct" "off" (lambda args (noop)))

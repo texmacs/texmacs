@@ -99,6 +99,7 @@ edit_select_rep::semantic_active (path p) {
 bool
 edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   if (!semantic_active (p)) return false;
+  if (mode < 2 && get_preference ("semantic selections") != "on") return false;
   p= semantic_root (p);
   tree mt= get_env_value (MODE, end (et, p));
   tree lt= get_env_value (MODE_LANGUAGE (mt->label), end (et, p));

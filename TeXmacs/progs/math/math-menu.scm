@@ -97,7 +97,7 @@
       (-> "Animation" (link insert-animation-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menu for syntax and other corrections
+;; Semantic math menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-correct-menu
@@ -112,6 +112,11 @@
    (toggle-preference "manual insert missing invisible"))
   ("Homoglyph substitutions"
    (toggle-preference "manual homoglyph correct")))
+
+(menu-bind semantic-math-preferences-menu
+  ("Semantic editing" (toggle-preference "semantic editing"))
+  (when (== (get-preference "semantic editing") "on")
+    ("Semantic selections" (toggle-preference "semantic selections"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical Symbol menu
@@ -1010,9 +1015,12 @@
   (link math-format-icons)
   (=> (balloon (icon "tm_math_preferences.xpm")
                "Preferences for editing mathematics")
+      (group "Keyboard")
+      ("Enforce brackets to match" (toggle-matching-brackets))
+      ("Use extensible brackets" (toggle-preference "use large brackets"))
+      ---
       (group "Semantics")
-      ("Semantic editing" (toggle-preference "semantic editing"))
-      ("Matching brackets" (toggle-matching-brackets)))
+      (link semantic-math-preferences-menu))
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -117,6 +117,16 @@
 	(insert `(right ,r))
 	(insert r))))
 
+(tm-define (test-matching-brackets?)
+  (!= (get-preference "automatic brackets") "off"))
+
+(tm-define (toggle-matching-brackets)
+  (:check-mark "v" test-matching-brackets?)
+  (set-preference "automatic brackets"
+                  (if (== (get-preference "automatic brackets") "off")
+                      "mathematics"
+                      "off")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Big operators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

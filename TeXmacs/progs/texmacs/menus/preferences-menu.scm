@@ -178,9 +178,10 @@
 		  ("Utf-8" "utf-8"))))
     (-> "Mathematics"
         (-> "Keyboard"
-            (toggle ("Use large brackets" "use large brackets")))
+            (item ("Enforce brackets to match" (toggle-matching-brackets)))
+            (toggle ("Use extensible brackets" "use large brackets")))
         (-> "Semantics"
-            (toggle ("Semantic editing" "semantic editing")))
+            (link semantic-math-preferences-menu))
         (-> "Automatic correction"
             (toggle ("Remove superfluous invisible operators"
                      "remove superfluous invisible"))
@@ -257,6 +258,7 @@
 		(s (id-or-car x))
 		(v (id-or-cadr x)))
 	   (list s (list 'toggle-preference v))))
+	((== (car l) 'item) (cadr l))
 	(else (map-in-order compute-preferences-menu-sub l))))
 
 (tm-menu (compute-preferences-menu l)

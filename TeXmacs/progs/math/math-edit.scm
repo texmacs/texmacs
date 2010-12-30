@@ -372,16 +372,6 @@
       (tree-set! t v)
       (find-and-remove-temp-slot t))))
 
-(tm-define (test-matching-brackets?)
-  (!= (get-preference "automatic brackets") "off"))
-
-(tm-define (toggle-matching-brackets)
-  (:check-mark "v" test-matching-brackets?)
-  (set-preference "automatic brackets"
-                  (if (== (get-preference "automatic brackets") "off")
-                      "mathematics"
-                      "off")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Matching brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
