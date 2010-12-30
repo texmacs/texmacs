@@ -148,5 +148,15 @@
   (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
       (link color-menu))
   (=> (balloon (icon "tm_math_style.xpm") "Mathematical formulas style")
-      ("Formula style" (make-with "math-display" "false"))
-      ("Display style" (make-with "math-display" "true"))))
+      (group "Style")
+      ("Small inline" (make-with "math-display" "false"))
+      ("Large displayed" (make-with "math-display" "true"))
+      ---
+      (group "Spacing")
+      ("Normal" (make-with "math-condensed" "false"))
+      ("Condensed" (make-with "math-condensed" "true"))
+      ---
+      (group "Size")
+      ("Normal" (make-with "math-level" "0"))
+      ("Script size" (make-with "math-level" "1"))
+      ("Script script size" (make-with "math-level" "2"))))
