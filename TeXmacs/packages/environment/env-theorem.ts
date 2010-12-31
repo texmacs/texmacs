@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.5>
+<TeXmacs|1.0.7.9>
 
 <style|source>
 
@@ -104,16 +104,18 @@
 
   <new-exercise|problem|Problem>
 
+  <new-theorem|question|Question>
+
   <\active*>
     <\src-comment>
       Further markup related to theorems.
     </src-comment>
   </active*>
 
-  <assign|proof-text|<macro|<localize|Proof>>>
-
   <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
   >>>>
+
+  <assign|proof-text|<macro|<localize|Proof>>>
 
   <assign|render-proof|<\macro|which|body>
     <\render-remark|<arg|which>>
@@ -125,6 +127,40 @@
 
   <assign|proof|<\macro|body>
     <render-proof|<proof-text>|<arg|body>>
+  </macro>>
+
+  <assign|proof-of|<\macro|what|body>
+    <render-proof|<proof-text> <arg|what>|<arg|body>>
+  </macro>>
+
+  <assign|solution-text|<macro|<localize|Solution>>>
+
+  <assign|render-solution|<\macro|which|body>
+    <\render-exercise|<arg|which>>
+      <\with|par-left|0em>
+        <arg|body>
+      </with>
+    </render-exercise>
+  </macro>>
+
+  <assign|solution|<\macro|body>
+    <render-solution|<solution-text>|<arg|body>>
+  </macro>>
+
+  <assign|solution-of|<\macro|what|body>
+    <render-solution|<solution-text> <arg|what>|<arg|body>>
+  </macro>>
+
+  <assign|answer-text|<macro|<localize|Answer>>>
+
+  <assign|render-answer|<value|render-remark>>
+
+  <assign|answer|<\macro|body>
+    <render-answer|<answer-text>|<arg|body>>
+  </macro>>
+
+  <assign|answer-to|<\macro|what|body>
+    <answer-answer|<answer-text> <arg|what>|<arg|body>>
   </macro>>
 
   \;

@@ -61,7 +61,7 @@
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("fast environments" "on" notify-fast-environments)
-  ("show full context" "off" (lambda args (noop)))
+  ("show full context" "on" (lambda args (noop)))
   ("show table cells" "off" (lambda args (noop)))
   ("show focus" "on" (lambda args (noop)))
   ("show only semantic focus" "on" (lambda args (noop)))

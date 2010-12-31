@@ -83,10 +83,10 @@
 (define-group doc-author-tag
   author-name author-address author-email author-homepage author-note)
 
-;; Theorems
+;; Enunciations
 
 (define-group named-environment-tag
-  (theorem-tag) (definition-tag) (remark-tag) (exercise-tag))
+  (theorem-tag) (definition-tag) (remark-tag) (exercise-tag) (solution-tag))
 
 (define-group theorem-tag
   theorem proposition lemma corollary conjecture)
@@ -98,7 +98,10 @@
   remark note example convention warning)
 
 (define-group exercise-tag
-  exercise problem)
+  exercise problem question)
+
+(define-group solution-tag
+  solution answer)
 
 ;; Textual markup tags
 

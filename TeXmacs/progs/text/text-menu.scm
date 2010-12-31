@@ -68,36 +68,40 @@
   ("Subparagraph" (make-section 'subparagraph)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Theorem like environments
+;; Enunciations, quotations and programs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind environment-menu
-  (if (style-has? "header-exam-dtd")
-      ("Exercise" (make 'exercise))
-      ("Problem" (make 'problem)))
-  (if (not (style-has? "header-exam-dtd"))
-      (if (style-has? "env-theorem-dtd")
-	  ("Theorem" (make 'theorem))
-	  ("Proposition" (make 'proposition))
-	  ("Lemma" (make 'lemma))
-	  ("Corollary" (make 'corollary))
-	  ("Proof" (make 'proof))
-	  ("Axiom" (make 'axiom))
-	  ("Definition" (make 'definition))
-	  ("Notation" (make 'notation))
-	  ---
-	  ("Remark" (make 'remark))
-	  ("Note" (make 'note))
-	  ("Example" (make 'example))
-	  ("Warning" (make 'warning))
-	  ("Exercise" (make 'exercise))
-	  ("Problem" (make 'problem))
-	  ---)
-      ("Verbatim" (make 'verbatim))
-      ("Code" (make 'code))
-      ("Quote" (make 'quote-env))
-      ("Quotation" (make 'quotation))
-      ("Verse" (make 'verse))))
+(menu-bind enunciation-menu
+  (if (style-has? "env-theorem-dtd")
+      ("Theorem" (make 'theorem))
+      ("Proposition" (make 'proposition))
+      ("Lemma" (make 'lemma))
+      ("Corollary" (make 'corollary))
+      ("Proof" (make 'proof))
+      ---
+      ("Axiom" (make 'axiom))
+      ("Definition" (make 'definition))
+      ("Notation" (make 'notation))
+      ---
+      ("Remark" (make 'remark))
+      ("Note" (make 'note))
+      ("Example" (make 'example))
+      ("Warning" (make 'warning))
+      ---)
+  ("Exercise" (make 'exercise))
+  ("Problem" (make 'problem))
+  ("Solution" (make 'solution))
+  ("Question" (make 'question))
+  ("Answer" (make 'answer)))
+
+(menu-bind prominent-menu
+  ("Quote" (make 'quote-env))
+  ("Quotation" (make 'quotation))
+  ("Verse" (make 'verse)))
+
+(menu-bind code-menu
+  ("Verbatim" (make 'verbatim))
+  ("Code" (make 'code)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags
@@ -166,6 +170,28 @@
   ("Dashes" (make-tmlist 'description-dash))
   ("Long" (make-tmlist 'description-long)))
 
+(menu-bind list-menu
+  ("Itemize" (make-tmlist 'itemize))
+  ---
+  ("Bullets" (make-tmlist 'itemize-dot))
+  ("Dashes" (make-tmlist 'itemize-minus))
+  ("Arrows" (make-tmlist 'itemize-arrow))
+  ---
+  ("Enumerate" (make-tmlist 'enumerate))
+  ---
+  ("1, 2, 3, ..." (make-tmlist 'enumerate-numeric))
+  ("i, ii, iii, ..." (make-tmlist 'enumerate-roman))
+  ("I, II, III, ..." (make-tmlist 'enumerate-Roman))
+  ("a, b, c, ..." (make-tmlist 'enumerate-alpha))
+  ("A, B, C, ..." (make-tmlist 'enumerate-Alpha))
+  ---
+  ("Description" (make-tmlist 'description))
+  ---
+  ("Compact" (make-tmlist 'description-compact))
+  ("Aligned" (make-tmlist 'description-aligned))
+  ("Dashes" (make-tmlist 'description-dash))
+  ("Long" (make-tmlist 'description-long)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatically generated content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,16 +224,20 @@
   (if (and (style-has? "section-base-dtd")
 	   (not (style-has? "header-exam-dtd")))
       (-> "Section" (link section-menu)))
+  (if (or (style-has? "env-theorem-dtd")
+          (style-has? "header-exam-dtd"))
+      (-> "Enunciation" (link enunciation-menu)))
   (if (style-has? "std-markup-dtd")
-      (-> "Environment" (link environment-menu)))
+      (-> "Prominent" (link prominent-menu)))
+  (if (style-has? "std-markup-dtd")
+      (-> "Program" (link code-menu)))
   (if (style-has? "section-base-dtd")
       (-> "Automatic" (link automatic-menu)))
   (if (style-has? "std-list-dtd")
       ---
       (-> "Itemize" (link itemize-menu))
       (-> "Enumerate" (link enumerate-menu))
-      (-> "Description" (link description-menu))
-      (when (inside-list-tag?) ("New item" (make-item))))
+      (-> "Description" (link description-menu)))
   ---
   (if (style-has? "std-markup-dtd")
       (-> "Content tag" (link content-tag-menu))
@@ -245,9 +275,25 @@
 	   (not (style-has? "header-exam-dtd")))
       (=> (balloon (icon "tm_section.xpm") "Start a new section")
 	  (link section-menu)))
+  (if (or (style-has? "env-theorem-dtd")
+          (style-has? "header-exam-dtd"))
+      (=> (balloon (icon "tm_theorem.xpm") "Insert an enunciation")
+	  (link enunciation-menu)))
   (if (style-has? "std-markup-dtd")
-      (=> (balloon (icon "tm_theorem.xpm") "Insert an environment")
-	  (link environment-menu)))
+      (=> (balloon (icon "tm_prominent.xpm") "Insert a prominent piece of text")
+	  (link prominent-menu)))
+  (if (style-has? "std-markup-dtd")
+      (=> (balloon (icon "tm_program.xpm") "Insert a computer program")
+	  (link code-menu)))
+  (if (style-has? "std-list-dtd")
+      (=> (balloon (icon "tm_list.xpm") "Insert a list")
+	  (link list-menu)))
+  (if (style-has? "section-base-dtd")
+      (=> (balloon (icon "tm_index.xpm")
+		   "Insert automatically generated content")
+	  (link automatic-menu)))
+  (if (style-has? "std-markup-dtd")
+      /)
   (=> (balloon (icon "tm_parstyle.xpm") "Set paragraph mode")
       ((balloon (icon "tm_left.xpm") "Align text to the left")
        (make-line-with "par-mode" "left"))
@@ -272,22 +318,6 @@
 ;;((balloon (icon "tm_margin.xpm") "Insert a marginal note") ())
 ;;((balloon (icon "tm_floating.xpm") "Insert a floating object") ())
 ;;((balloon (icon "tm_multicol.xpm") "Start multicolumn context") ())
-  (if (style-has? "section-base-dtd")
-      (=> (balloon (icon "tm_index.xpm")
-		   "Insert automatically generated content")
-	  (link automatic-menu)))
-  (if (style-has? "std-list-dtd")
-      /
-      (=> (balloon (icon "tm_itemize.xpm") "Itemize")
-	  (link itemize-menu))
-      (=> (balloon (icon "tm_enumerate.xpm") "Enumerate")
-	  (link enumerate-menu))
-      (=> (balloon (icon "tm_description.xpm") "Description")
-	  (link description-menu))
-      ;;(if (inside-list-tag?)
-      ;;((balloon (icon "tm_item.xpm") "Insert a new item")
-      ;;(make-item)))
-      )
   (link text-format-icons)
   (link texmacs-insert-icons))
 

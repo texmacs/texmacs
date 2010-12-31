@@ -1,5 +1,5 @@
 /* XPM */
-static char * tm_theorem_xpm[] = {
+static char * tm_prominent_xpm[] = {
 "17 17 7 1",
 " 	c None",
 "=	c #000000000000",
@@ -11,17 +11,17 @@ static char * tm_theorem_xpm[] = {
 "                 ",
 " =============== ",
 " ............... ",
-" ============    ",
-" ............    ",
+" =======         ",
 "                 ",
-"                 ",
-" ==== OOOOOOOOOO ",
-"      PPPPPPPPPP ",
-" OOOOOOOOOOOOOOO ",
-" PPPPPPPPPPPPPPP ",
-"                 ",
+"   OOOOOOOOOOO   ",
+"   OPPPPPPPPPO   ",
+"   OP=======PO   ",
+"   OP.......PO   ",
+"   OP====PPPPO   ",
+"   OPPPPPPPPPO   ",
+"   OOOOOOOOOOO   ",
 "                 ",
 " =============== ",
 " ............... ",
-" =============== ",
+" ===             ",
 "                 "};
