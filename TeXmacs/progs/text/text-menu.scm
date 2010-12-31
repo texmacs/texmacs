@@ -103,14 +103,14 @@
   ("Underlined" (make 'underlined))
   ("Lines around" (make 'bothlined))
   ("Framed" (make 'framed))
-  (if (style-has? "ornaments-drd")
+  (if (style-has? "ornaments-dtd")
       ---
-      ("Granite" (make 'granite))
       ("Manila paper" (make 'manila-paper))
-      ("Metal" (make 'metal))
-      ("Pine" (make 'pine))
       ("Rough paper" (make 'rough-paper))
-      ("Ridged paper" (make 'ridged-paper))))
+      ("Ridged paper" (make 'ridged-paper))
+      ("Pine" (make 'pine))
+      ("Granite" (make 'granite))
+      ("Metal" (make 'metal))))
 
 (menu-bind code-menu
   ("Verbatim" (make 'verbatim))

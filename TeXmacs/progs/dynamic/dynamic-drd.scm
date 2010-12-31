@@ -90,7 +90,7 @@
 ;; ornaments
 
 (define-group ornament-tag
-  granite manila-paper metal pine rough-paper ridged-paper)
+  manila-paper rough-paper ridged-paper pine granite metal)
 
 (define-group variant-tag (ornament-tag))
 (define-group similar-tag (ornament-tag))
