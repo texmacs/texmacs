@@ -99,9 +99,18 @@
   ("Quotation" (make 'quotation))
   ("Verse" (make 'verse))
   ---
-  ("Underlined" (make 'wide-std-underlined))
-  ("Lines around" (make 'wide-std-bothlined))
-  ("Framed" (make 'wide-std-framed)))
+  ("Padded" (make 'padded))
+  ("Underlined" (make 'underlined))
+  ("Lines around" (make 'bothlined))
+  ("Framed" (make 'framed))
+  (if (style-has? "ornaments-drd")
+      ---
+      ("Granite" (make 'granite))
+      ("Manila paper" (make 'manila-paper))
+      ("Metal" (make 'metal))
+      ("Pine" (make 'pine))
+      ("Rough paper" (make 'rough-paper))
+      ("Ridged paper" (make 'ridged-paper))))
 
 (menu-bind code-menu
   ("Verbatim" (make 'verbatim))

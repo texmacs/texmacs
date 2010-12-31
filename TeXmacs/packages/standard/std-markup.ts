@@ -191,6 +191,50 @@
     </src-comment>
   </active*>
 
+  <assign|padded|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <arg|body>
+    </padded-normal>
+  </macro>>
+
+  <assign|underlined|<\macro|body>
+    <padded|<wide-std-underlined|<arg|body>>>
+  </macro>>
+
+  <assign|bothlined|<\macro|body>
+    <padded|<wide-std-bothlined|<arg|body>>>
+  </macro>>
+
+  <assign|framed|<\macro|body>
+    <padded|<wide-std-framed|<arg|body>>>
+  </macro>>
+
+  <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
+
+  <assign|quote-env|<\macro|body>
+    <\padded>
+      <\indent-both|3fn|3fn>
+        <with|par-first|0fn|par-par-sep|0.25fn|<arg|body>>
+      </indent-both>
+    </padded>
+  </macro>>
+
+  <assign|quotation|<\macro|body>
+    <\padded>
+      <\indent-both|3fn|3fn>
+        <surround|<yes-indent>||<arg|body>>
+      </indent-both>
+    </padded>
+  </macro>>
+
+  <assign|verse|<\macro|body>
+    <\padded>
+      <\indent-both|4.5fn|3fn>
+        <with|par-first|-1.5fn|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
+      </indent-both>
+    </padded>
+  </macro>>
+
   <assign|verbatim|<macro|body|<with|font-family|tt|language|verbatim|<arg|body>>>>
 
   <assign|code|<\macro|body>
@@ -198,32 +242,6 @@
       <surround||<htab|5mm>|<with|font-family|tt|language|verbatim|par-first|0fn|<arg|body>>>
     </padded-normal>
   </macro>>
-
-  <assign|quote-env|<\macro|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <\indent-both|3fn|3fn>
-        <with|par-first|0fn|par-par-sep|0.25fn|<arg|body>>
-      </indent-both>
-    </padded-normal>
-  </macro>>
-
-  <assign|quotation|<\macro|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <\indent-both|3fn|3fn>
-        <surround|<yes-indent>||<arg|body>>
-      </indent-both>
-    </padded-normal>
-  </macro>>
-
-  <assign|verse|<\macro|body>
-    <\padded-normal|0.5fn|0.5fn>
-      <\indent-both|4.5fn|3fn>
-        <with|par-first|-1.5fn|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
-      </indent-both>
-    </padded-normal>
-  </macro>>
-
-  <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
 
   <\active*>
     <\src-comment>
