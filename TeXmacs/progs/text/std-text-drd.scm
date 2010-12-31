@@ -17,15 +17,17 @@
 ;; General groups
 
 (define-group variant-tag
-  (section-tag) (list-tag) (named-environment-tag) (figure-tag)
+  (section-tag) (list-tag) (figure-tag)
+  (enunciation-tag) (prominent-tag) (frame-tag)
   (textual-tag))
 
 (define-group similar-tag
-  (section-tag) (list-tag) (named-environment-tag) (figure-tag)
+  (section-tag) (list-tag) (figure-tag)
+  (enunciation-tag) (prominent-tag) (frame-tag)
   (textual-tag) (equation-tag))
 
 (define-group numbered-tag
-  (section-tag) (named-environment-tag) (figure-tag) (equation-tag))
+  (section-tag) (enunciation-tag) (figure-tag) (equation-tag))
 
 ;; Sections
 
@@ -85,7 +87,7 @@
 
 ;; Enunciations
 
-(define-group named-environment-tag
+(define-group enunciation-tag
   (theorem-tag) (definition-tag) (remark-tag) (exercise-tag) (solution-tag))
 
 (define-group theorem-tag
@@ -102,6 +104,14 @@
 
 (define-group solution-tag
   solution answer)
+
+;; Other textual environments
+
+(define-group prominent-tag
+  quote-env quotation verse)
+
+(define-group frame-tag
+  wide-std-underlined wide-std-bothlined wide-std-framed)
 
 ;; Textual markup tags
 
