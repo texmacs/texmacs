@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.5>
+<TeXmacs|1.0.7.9>
 
 <style|source>
 
@@ -40,6 +40,10 @@
 
   <group-individual-counters|exercise-env>
 
+  <add-to-counter-group|algorithm-env|std-env>
+
+  <group-individual-counters|algorithm-env>
+
   <new-counter-group|figure-env>
 
   <add-to-counter-group|figure-env|std-env>
@@ -70,6 +74,8 @@
   <assign|new-remark|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-remark>>>
 
   <assign|new-exercise|<macro|env|name|<new-env|<arg|env>|<arg|name>|exercise-env|render-exercise>>>
+
+  <assign|new-algorithm|<macro|env|name|<new-env|<arg|env>|<arg|name>|algorithm-env|render-algorithm>>>
 
   <\active*>
     <\src-comment>

@@ -103,7 +103,7 @@
 
   <assign|em|<macro|body|<with|font-shape|<if|<equal|<value|font-shape>|italic>|right|italic>|<arg|body>>>>
 
-  <assign|tt|<macro|body|<with|font-family|tt|<arg|body>>>>
+  <assign|tt|<macro|body|<with|font-family|tt|math-font-family|ttt|<arg|body>>>>
 
   <assign|name|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 

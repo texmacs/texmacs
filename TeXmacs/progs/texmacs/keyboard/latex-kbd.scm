@@ -312,7 +312,7 @@
   ("scshape" "Use small-caps font shape"
    (make-with "font-shape" "small-caps"))
   ("rm" "Use roman font family" (make-with "font-family" "rm"))
-  ("tt" "Use typewriter font family" (make-with "font-family" "tt"))
+  ("tt" "Use typewriter font family" (make 'tt))
   ("sf" "Use sans serif font family" (make-with "font-family" "ss"))
   ("md" "Use medium font series" (make-with "font-series" "medium"))
   ("bf" "Use bold font series" (make-with "font-series" "bold"))

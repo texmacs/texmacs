@@ -3083,6 +3083,37 @@ rename_symbols (tree t, hashmap<string,string> h) {
 }
 
 /******************************************************************************
+* Rewrite bodies of algorithms
+******************************************************************************/
+
+tree
+upgrade_algorithm (tree t, bool flag= true) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "algo", 1))
+    return compound ("tt", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "algorithm", 2))
+    return compound ("named-algorithm-old",
+                     upgrade_algorithm (t[0]), upgrade_algorithm (t[1]));
+  else if (flag && is_compound (t, "body", 1))
+    return compound ("algorithm-body", upgrade_algorithm (t[0]));
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    flag= true;
+    if (is_document (t))
+      for (i=0; i<n; i++)
+        if (is_compound (t[i], "TeXmacs", 1) ||
+            is_compound (t[i], "style") ||
+            is_compound (t[i], "initial") ||
+            is_compound (t[i], "references"))
+          flag= false;
+    for (i=0; i<n; i++)
+      r[i]= upgrade_algorithm (t[i], flag);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3234,6 +3265,8 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.7.9"))
     t= move_brackets (t);
+  if (version_inf_eq (version, "1.0.7.9") && is_non_style_document (t))
+    t= upgrade_algorithm (t, false);
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

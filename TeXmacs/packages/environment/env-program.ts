@@ -1,10 +1,10 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.9>
 
 <style|source>
 
 <\body>
   <active*|<\src-title>
-    <src-package|program|1.0>
+    <src-package|env-program|1.0>
 
     <\src-purpose>
       Some environments for typesetting algorithms. This package is very
@@ -22,14 +22,31 @@
     </src-license>
   </src-title>>
 
-  <assign|algo|<macro|name|<with|font-family|tt|math-font-family|ttt|<arg|name>>>>
+  <\active*>
+    <\src-comment>
+      Algorithmic environments
+    </src-comment>
+  </active*>
 
-  <assign|algorithm|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>>
-  <algo|<arg|name>>||<with|item*|<macro|what|<with|font-series|bold|math-font-series|bold|<arg|what>
-  >>|<arg|body>>>>>>>
+  <assign|algorithm-name|<macro|name|<enunciation-name|<arg|name>>>>
 
-  <assign|body|<macro|body|<surround|<vspace*|0.5fn>||<with|item*|<macro|name|<vspace*|0.5fn><with|font-series|bold|math-font-series|bold|<arg|name>
-  >>|<arg|body>>>>>
+  <assign|algorithm-sep|<macro|<enunciation-sep>>>
+
+  <assign|render-algorithm|<\macro|which|body>
+    <\render-enunciation|<algorithm-name|<arg|which><algorithm-sep>>>
+      <\with|par-indent|0fn|par-par-sep|0fn>
+        <arg|body>
+      </with>
+    </render-enunciation>
+  </macro>>
+
+  <new-algorithm|algorithm|Algorithm>
+
+  <\active*>
+    <\src-comment>
+      Special layout markup for algorithms
+    </src-comment>
+  </active*>
 
   <assign|indent*|<\macro|body>
     <\with|par-left|<plus|<value|par-left>|1.5fn>>
@@ -46,6 +63,19 @@
   </macro>>
 
   <assign|pile|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Deprecated markup for algorithms
+    </src-comment>
+  </active*>
+
+  <assign|named-algorithm-old|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>>
+  <tt|<arg|name>>||<with|item*|<macro|what|<with|font-series|bold|math-font-series|bold|<arg|what>
+  >>|<arg|body>>>>>>>
+
+  <assign|algorithm-body|<macro|body|<surround|<vspace*|0.5fn>||<with|item*|<macro|name|<vspace*|0.5fn><with|font-series|bold|math-font-series|bold|<arg|name>
+  >>|<arg|body>>>>>
 
   <assign|minimal|<macro|body|<with|mode|prog|prog-language|minimal|<arg|body>>>>
 
