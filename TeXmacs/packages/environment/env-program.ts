@@ -7,12 +7,10 @@
     <src-package|env-program|1.0>
 
     <\src-purpose>
-      Some environments for typesetting algorithms. This package is very
-      simplistic and should be replaced by something more elaborate in the
-      future.
+      Some environments for typesetting algorithms.
     </src-purpose>
 
-    <src-copyright|1998--2004|Joris van der Hoeven>
+    <src-copyright|1998--2011|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -32,12 +30,32 @@
 
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
-  <assign|render-algorithm|<\macro|which|body>
-    <\render-enunciation|<algorithm-name|<arg|which><algorithm-sep>>>
+  <assign|render-sole-algorithm|<\macro|body>
+    <\padded>
       <\with|par-indent|0fn|par-par-sep|0fn>
         <arg|body>
       </with>
-    </render-enunciation>
+    </padded>
+  </macro>>
+
+  <assign|render-algorithm|<\macro|name|body>
+    <\render-sole-algorithm>
+      <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
+
+      <arg|body>
+    </render-sole-algorithm>
+  </macro>>
+
+  <assign|render-specified-algorithm|<\macro|name|intro|body>
+    <\render-sole-algorithm>
+      <\surround||<vspace|0.5fn>>
+        <algorithm-name|<arg|name>>
+
+        <arg|intro>
+      </surround>
+
+      <arg|body>
+    </render-sole-algorithm>
   </macro>>
 
   <new-algorithm|algorithm|Algorithm>
