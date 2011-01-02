@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.9>
 
-<style|source>
+<style|<tuple|source|std>>
 
 <\body>
   <active*|<\src-title>
@@ -31,31 +31,41 @@
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
   <assign|render-sole-algorithm|<\macro|body>
-    <\padded>
-      <\with|par-indent|0fn|par-par-sep|0fn>
-        <arg|body>
-      </with>
-    </padded>
+    <\padded-normal|1fn|1fn>
+      <\indent>
+        <\with|par-first|0fn|par-par-sep|0fn>
+          <arg|body>
+        </with>
+      </indent>
+    </padded-normal>
   </macro>>
 
   <assign|render-algorithm|<\macro|name|body>
-    <\render-sole-algorithm>
-      <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
+    <\padded-normal|1fn|1fn>
+      <\with|par-first|0fn|par-par-sep|0fn>
+        <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
 
-      <arg|body>
-    </render-sole-algorithm>
+        <\indent>
+          <arg|body>
+        </indent>
+      </with>
+    </padded-normal>
   </macro>>
 
   <assign|render-specified-algorithm|<\macro|name|intro|body>
-    <\render-sole-algorithm>
-      <\surround||<vspace|0.5fn>>
-        <algorithm-name|<arg|name>>
+    <\padded-normal|1fn|1fn>
+      <\with|par-first|0fn|par-par-sep|0fn>
+        <\surround||<vspace|0.5fn>>
+          <algorithm-name|<arg|name>>
 
-        <arg|intro>
-      </surround>
+          <arg|intro>
+        </surround>
 
-      <arg|body>
-    </render-sole-algorithm>
+        <\indent>
+          <arg|body>
+        </indent>
+      </with>
+    </padded-normal>
   </macro>>
 
   <new-algorithm|algorithm|Algorithm>
@@ -80,7 +90,7 @@
     </surround>
   </macro>>
 
-  <assign|pile|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
+  <assign|pile|<macro|body|<tformat|<twith|table-valignx|C>|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
