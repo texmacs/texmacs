@@ -1,4 +1,4 @@
-  <expand|tmdoc-title|Improved spacing inside formulas (1.0.7.10)>
+  <expand|section|Improved spacing inside formulas (1.0.7.10)>
 
   In the new version, the spacing around mathematical operators has been made
   dependent on the semantic context. For instance, when used as an infix
