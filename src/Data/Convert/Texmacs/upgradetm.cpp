@@ -3096,6 +3096,8 @@ upgrade_algorithm (tree t, bool flag= true) {
                      upgrade_algorithm (t[0]), upgrade_algorithm (t[1]));
   else if (flag && is_compound (t, "body", 1))
     return compound ("algorithm-body", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "pile", 1))
+    return compound ("tabbed", upgrade_algorithm (t[0]));
   else {
     int i, n= N(t);
     tree r (t, n);

@@ -30,7 +30,7 @@
 
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
-  <assign|render-sole-algorithm|<\macro|body>
+  <assign|pseudo-code|<\macro|body>
     <\padded-normal|1fn|1fn>
       <\indent>
         <\with|par-first|0fn|par-par-sep|0fn>
@@ -90,7 +90,7 @@
     </surround>
   </macro>>
 
-  <assign|pile|<macro|body|<tformat|<twith|table-valignx|C>|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
+  <assign|tabbed|<macro|body|<tformat|<twith|table-valign|T>|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-2|1|-1|cell-bsep|<plus|<value|par-sep>|<value|par-line-sep>>>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -113,5 +113,6 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
+    <associate|sfactor|5>
   </collection>
 </initial>

@@ -40,7 +40,7 @@
     </src-comment>
   </active*>
 
-  <assign|render-sole-algorithm|<\macro|body>
+  <assign|pseudo-code|<\macro|body>
     <\padded-centered|1fn|1fn>
       <\with|par-first|0fn|par-par-sep|0fn|par-mode|>
         <\narrow-bothlined>
