@@ -268,11 +268,11 @@ correct_adjacent (rectangles& rs1, rectangles& rs2) {
   SI bot1= rs1->item->y1;
   SI top2= rs2->item->y2;
   if (rs1->item->y1 <= rs2->item->y1) {
-    cout << "Discard " << rs1->item->y1 << ", " << rs2->item->y1 << "\n";
+    //cout << "Discard " << rs1->item->y1 << ", " << rs2->item->y1 << "\n";
     return;
   }
   if (rs1->item->y2 <= rs2->item->y2) {
-    cout << "Discard " << rs1->item->y2 << ", " << rs2->item->y2 << "\n";
+    //cout << "Discard " << rs1->item->y2 << ", " << rs2->item->y2 << "\n";
     return;
   }
   SI mid= (bot1 + top2) >> 1;
