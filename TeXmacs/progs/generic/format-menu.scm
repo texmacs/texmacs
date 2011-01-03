@@ -150,7 +150,8 @@
   ---
   ("Floating object" (make-insertion "float"))
   ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
-  ("Floating table" (begin (make-insertion "float") (make 'big-table))))
+  ("Floating table" (begin (make-insertion "float") (make 'big-table)))
+  ("Floating algorithm" (begin (make-insertion "float") (make 'algorithm))))
 
 (menu-bind position-float-menu
   ("Top" (toggle-insertion-positioning "t"))

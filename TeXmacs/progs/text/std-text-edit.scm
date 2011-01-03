@@ -285,3 +285,82 @@
   (:argument file-name "Bibliography file")
   (if (not (make-return-after))
       (insert (list 'bibliography "bib" style file-name '(document "")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing algorithms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (algorithm-context? t)
+  (tree-in? t (algorithm-tag-list)))
+
+(tm-define (algorithm-root s)
+  (cond ((symbol-ends? s '*)
+	 (algorithm-root (symbol-drop-right s 1)))
+	((symbol-starts? s 'specified-)
+	 (algorithm-root (symbol-drop s 10)))
+	((symbol-starts? s 'named-)
+	 (algorithm-root (symbol-drop s 6)))
+	(else s)))
+
+(tm-define (algorithm-numbered? t)
+  (let* ((l (tree-label t))
+	 (r (algorithm-root l)))
+    (in? l (list r (symbol-append 'specified- r)))))
+
+(tm-define (algorithm-named? t)
+  (with l (tree-label t)
+    (symbol-starts? l 'named-)))
+
+(tm-define (algorithm-specified? t)
+  (with l (tree-label t)
+    (or (symbol-starts? l 'named-specified-)
+	(symbol-starts? l 'specified-))))
+
+(tm-define (algorithm-toggle-number t)
+  (let* ((l (tree-label t))
+	 (r (algorithm-root l)))
+    (if (algorithm-numbered? t)
+	(if (algorithm-specified? t)
+	    (variant-set t (symbol-append 'specified- r '*))
+	    (variant-set t (symbol-append r '*)))
+	(if (algorithm-specified? t)
+	    (variant-set t (symbol-append 'specified- r))
+	    (variant-set t r)))))
+
+(tm-define (algorithm-toggle-name t)
+  (let* ((l (tree-label t))
+	 (r (algorithm-root l)))
+    (if (algorithm-named? t)
+	(begin
+	  (if (algorithm-specified? t)
+	      (tree-assign-node! t (symbol-append 'specified- r))
+	      (tree-assign-node! t r))
+	  (tree-remove! t 0 1))
+	(begin
+	  (if (algorithm-specified? t)
+	      (tree-assign-node! t (symbol-append 'named-specified- r))
+	      (tree-assign-node! t (symbol-append 'named- r)))
+	  (tree-insert! t 0 '(""))
+	  (tree-go-to t 0 :start)))))
+
+(tm-define (algorithm-toggle-specification t)
+  (let* ((l (tree-label t))
+	 (r (algorithm-root l)))
+    (if (algorithm-specified? t)
+	(begin
+	  (cond ((algorithm-named? t)
+		 (tree-assign-node! t (symbol-append 'named- r)))
+		((algorithm-numbered? t)
+		 (tree-assign-node! t r))
+		(else
+		 (tree-assign-node! t (symbol-append r '*))))
+	  (tree-remove! t (- (tree-arity t) 2) 1))
+	(begin
+	  (cond ((algorithm-named? t)
+		 (tree-assign-node! t (symbol-append 'named-specified- r)))
+		((algorithm-numbered? t)
+		 (tree-assign-node! t (symbol-append 'specified- r)))
+		(else
+		 (tree-assign-node! t (symbol-append 'specified- r '*))))
+	  (tree-insert! t (- (tree-arity t) 1) '((document "")))
+	  (tree-go-to t (- (tree-arity t) 2) :start)))))

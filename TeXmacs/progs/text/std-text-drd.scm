@@ -19,12 +19,12 @@
 (define-group variant-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (frame-tag)
-  (textual-tag))
+  (textual-tag) (code-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (frame-tag)
-  (textual-tag) (equation-tag))
+  (textual-tag) (code-tag) (equation-tag))
 
 (define-group numbered-tag
   (section-tag) (enunciation-tag) (figure-tag) (equation-tag))
@@ -116,7 +116,7 @@
 ;; Textual markup tags
 
 (define-group textual-tag
-  (strong-tag) (name-tag) (verbatim-tag))
+  (strong-tag) (name-tag) (monospaced-tag))
 
 (define-group strong-tag
   strong em dfn underline)
@@ -124,8 +124,8 @@
 (define-group name-tag
   name person cite*)
 
-(define-group verbatim-tag
-  verbatim kbd code* var)
+(define-group monospaced-tag
+  kbd code* var)
 
 ;; Figures and tables
 
@@ -142,3 +142,28 @@
 
 (define-group equation-tag
   equation eqnarray)
+
+;; General groups
+
+(define-group variant-tag
+  (fragment-tag))
+
+(define-group similar-tag
+  (fragment-tag))
+
+;; Algorithms
+
+(define-group algorithm-tag
+  algorithm algorithm* named-algorithm
+  specified-algorithm specified-algorithm* named-specified-algorithm)
+
+;; Code fragments
+
+(define-group code-tag
+  (inline-code-tag) (block-code-tag))
+
+(define-group inline-code-tag
+  verbatim scm mmx cpp shell)
+
+(define-group block-code-tag
+  verbatim-code scm-code mmx-code cpp-code shell-code)

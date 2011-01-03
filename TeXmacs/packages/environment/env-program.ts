@@ -94,6 +94,62 @@
 
   <\active*>
     <\src-comment>
+      Standard languages
+    </src-comment>
+  </active*>
+
+  <assign|scheme|<macro|<name|Scheme>>>
+
+  <assign|c++|<macro|<name|C++>>>
+
+  <assign|mathemagix|<macro|<name|Mathemagix>>>
+
+  <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|<arg|body>>>>
+
+  <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|<arg|body>>>>
+
+  <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|<arg|body>>>>
+
+  <assign|mmx|<macro|body|<with|mode|prog|prog-language|mathemagix|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Blocks of code for standard languages
+    </src-comment>
+  </active*>
+
+  <assign|verbatim-code|<\macro|body>
+    <\pseudo-code>
+      <verbatim|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|scm-code|<\macro|body>
+    <\pseudo-code>
+      <scm|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|shell-code|<\macro|body>
+    <\pseudo-code>
+      <shell|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|cpp-code|<\macro|body>
+    <\pseudo-code>
+      <cpp|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|mmx-code|<\macro|body>
+    <\pseudo-code>
+      <mmx|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Deprecated markup for algorithms
     </src-comment>
   </active*>

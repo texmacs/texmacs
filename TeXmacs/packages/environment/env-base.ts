@@ -81,8 +81,7 @@
     </src-comment>
   </active*>
 
-  <assign|new-algorithm|<macro|env|name|render|<quasi|<style-with|src-compact|none|<add-to-counter-group|<unquote|<arg|env>>|algorithm-env><assign|<unquote|<merge|<arg|env>|-text>>|<macro|<localize|<unquote|<arg|name>>>>><assign|<unquote|<merge|<arg|env>|-numbered>>|<macro|text|num|<arg|text>
-  <with|font-shape|right|<arg|num>>>><assign|<unquote|<merge|<arg|env>|-unnumbered>>|<macro|text|<arg|text>>><assign|<unquote|<arg|env>>|<\macro|body>
+  <assign|new-algorithm|<macro|env|name|render|<quasi|<style-with|src-compact|none|<add-to-counter-group|<unquote|<arg|env>>|algorithm-env><assign|<unquote|<merge|<arg|env>|-text>>|<macro|<localize|<unquote|<arg|name>>>>><assign|<unquote|<arg|env>>|<\macro|body>
     <\surround|<compound|<unquote|<merge|next-|<arg|env>>>>|>
       <\render-algorithm|<compound|<unquote|<merge|<arg|env>|-text>>>
       <with|font-shape|right|<compound|<unquote|<merge|the-|<arg|env>>>>>>

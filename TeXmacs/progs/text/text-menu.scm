@@ -113,8 +113,24 @@
       ("Metal" (make 'metal))))
 
 (menu-bind code-menu
-  ("Verbatim" (make 'verbatim))
-  ("Code" (make 'code)))
+  ("Algorithm" (make 'algorithm))
+  ("Pseudo code" (make 'pseudo-code))
+  ---
+  ("Indent" (make 'indent))
+  ("Tabbed" (make 'tabbed))
+  ---
+  (-> "Inline code"
+      ("C++" (make 'cpp))
+      ("Mathemagix" (make 'mmx))
+      ("Scheme" (make 'scm))
+      ("Shell" (make 'shell))
+      ("Verbatim" (make 'verbatim)))
+  (-> "Block of code"
+      ("C++" (make 'cpp-code))
+      ("Mathemagix" (make 'mmx-code))
+      ("Scheme" (make 'scm-code))
+      ("Shell" (make 'shell-code))
+      ("Verbatim" (make 'verbatim-code))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags
@@ -309,7 +325,7 @@
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Focus icons for entering title information
+;; Focus menus for entering title information
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-document-extra-menu t)
@@ -377,7 +393,7 @@
   (glue #f #f 5 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Focus icons for entering authors
+;; Focus menus for entering authors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (focus-can-move? t)
@@ -416,7 +432,7 @@
   (glue #f #f 5 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Focus icons for entering authors
+;; Focus menus for sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-section-menu)
@@ -447,3 +463,36 @@
   (mini #t
     (=> (eval (tm/section-get-title-string t))
 	(link focus-section-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menus for algorithms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-tag-name l)
+  (:require (in? l (algorithm-tag-list)))
+  (with r (algorithm-root l)
+    (with s (upcase-first (tree-name (tree r)))
+      (string-replace s "-" " "))))
+
+(tm-menu (focus-toggle-menu t)
+  (:require (algorithm-context? t))
+  (when (not (algorithm-named? (focus-tree)))
+    ((check "Numbered" "v" (algorithm-numbered? (focus-tree)))
+     (algorithm-toggle-number (focus-tree))))
+  ((check "Named" "v" (algorithm-named? (focus-tree)))
+   (algorithm-toggle-name t))
+  ((check "Specified" "v" (algorithm-specified? (focus-tree)))
+   (algorithm-toggle-specification t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (algorithm-context? t))
+  (when (not (algorithm-named? (focus-tree)))
+    ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
+	    (algorithm-numbered? (focus-tree)))
+     (algorithm-toggle-number (focus-tree))))
+  ((check (balloon (icon "tm_small_textual.xpm") "Toggle name") "v"
+	  (algorithm-named? (focus-tree)))
+   (algorithm-toggle-name t))
+  ((check (balloon (icon "tm_specified.xpm") "Toggle specification") "v"
+	  (algorithm-specified? (focus-tree)))
+   (algorithm-toggle-specification t)))

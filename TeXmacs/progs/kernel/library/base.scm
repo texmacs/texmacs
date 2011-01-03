@@ -202,6 +202,9 @@
 (define-public (symbol-ends? s1 s2)
   (string-ends? (symbol->string s1) (symbol->string s2)))
 
+(define-public (symbol-drop s n)
+  (string->symbol (string-drop (symbol->string s) n)))
+
 (define-public (symbol-drop-right s n)
   (string->symbol (string-drop-right (symbol->string s) n)))
 
