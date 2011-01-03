@@ -26,9 +26,6 @@
 (define-group fragment-tag
   framed-fragment shell-fragment scm-fragment cpp-fragment mmx-fragment)
 
-(define-group tmdoc-prog-tag
-  verbatim scm mmx cpp)
-
 (tm-define (variant-circulate t forward?)
   (:mode in-tmdoc?)
   (:require (tree-in? t (tmdoc-prog-tag-list)))

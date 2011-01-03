@@ -3098,6 +3098,14 @@ upgrade_algorithm (tree t, bool flag= true) {
     return compound ("algorithm-body", upgrade_algorithm (t[0]));
   else if (is_compound (t, "pile", 1))
     return compound ("tabbed", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "scheme-fragment", 1))
+    return compound ("scm-code", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "mmx-fragment", 1))
+    return compound ("mmx-code", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "cpp-fragment", 1))
+    return compound ("cpp-code", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "shell-fragment", 1))
+    return compound ("shell-code", upgrade_algorithm (t[0]));
   else {
     int i, n= N(t);
     tree r (t, n);
