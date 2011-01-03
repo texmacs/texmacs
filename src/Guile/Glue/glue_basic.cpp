@@ -2111,6 +2111,19 @@ tmg_string_replace (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_string_alphaP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-alpha?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_alpha (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_string_locase_alphaP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-locase-alpha?");
 
@@ -5089,6 +5102,7 @@ initialize_glue_basic () {
   scm_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   scm_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
   scm_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
+  scm_new_procedure ("string-alpha?", (FN) tmg_string_alphaP, 1, 0, 0);
   scm_new_procedure ("string-locase-alpha?", (FN) tmg_string_locase_alphaP, 1, 0, 0);
   scm_new_procedure ("upcase-first", (FN) tmg_upcase_first, 1, 0, 0);
   scm_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);

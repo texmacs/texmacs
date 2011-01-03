@@ -691,10 +691,14 @@
 	(list which r))))
 
 (define (tmtex-rsub l)
-  (tmtex-script '!sub (car l)))
+  (if (tmtex-math-mode?)
+      (tmtex-script '!sub (car l))
+      (list 'tmrsub (tmtex (car l)))))
 
 (define (tmtex-rsup l)
-  (tmtex-script '!sup (car l)))
+  (if (tmtex-math-mode?)
+      (tmtex-script '!sup (car l))
+      (list 'tmrsup (tmtex (car l)))))
 
 (define (tmtex-frac l)
   (tmtex-function 'frac l))

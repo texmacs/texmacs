@@ -144,6 +144,9 @@
        (or (in? x1 '("," ";" ":"))
 	   (func? x1 'tmop) (func? x2 'tmop)
 	   (func? x1 '!symbol) (func? x2 '!symbol)
+           (and (list-1? x1) (symbol? (car x1))
+                (string-alpha? (symbol->string (car x1)))
+                (string? x2) (> (string-length x2) 0))
 	   (and (nlist? x1) (nlist? x2)))))
 
 (define (texout-concat l)

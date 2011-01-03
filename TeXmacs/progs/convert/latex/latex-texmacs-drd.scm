@@ -166,6 +166,8 @@
   (pari "{\\sc Pari}"))
 
 (drd-table latex-texmacs-1%
+  (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
+  (tmrsup (ensuremath (!append "^{" (textrm 1) "}")))
   (tmtextrm (!group (rmfamily) (!group 1)))
   (tmtextsf (!group (sffamily) (!group 1)))
   (tmtexttt (!group (ttfamily) (!group 1)))
