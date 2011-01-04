@@ -43,6 +43,7 @@
   ("}" (make-bracket-close "}" "{"))
   ("\\" (if (or (inside? 'hybrid) (in-prog?)) (insert "\\") (make-hybrid)))
   ("\\ var" "\\")
+  ("\\ var var" "<setminus>")
   ("$" (if (inside? 'hybrid) (insert "$") (make 'math)))
   ("$ var" "$")
 

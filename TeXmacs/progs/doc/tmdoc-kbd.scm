@@ -12,8 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (doc tmdoc-kbd)
-  (:use (text std-text-kbd)
-	(doc tmdoc-drd)))
+  (:use (text std-text-kbd)))
 
 (kbd-map
   (:mode in-tmdoc?)
