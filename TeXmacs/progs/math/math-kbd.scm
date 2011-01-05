@@ -22,6 +22,7 @@
   (:mode in-math?)
   ;; must come first in order not to screw the menus up
   ("accent:deadhat" (make-script #t #t))
+  ("accent:deadhat var" "^")
   ("math:left accent:deadhat" (make-script #t #f))
   ("math accent:tilde" (make-wide "~"))          ; yields M-M-~
   ("math accent:deadhat" (make-wide "^"))        ; yields M-M-^
@@ -55,7 +56,9 @@
   ("math:greek +" (make-rprime "<kreuz>"))
   ("\"" (make-rprime "'") (make-rprime "'"))
   ("_" (make-script #f #t))
+  ("_ var" "_")
   ("^" (make-script #t #t))
+  ("^ var" "^")
   ("math:left _" (make-script #f #f))
   ("math:left ^" (make-script #t #f))
   ("math f" (make-fraction))

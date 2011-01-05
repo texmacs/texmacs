@@ -31,6 +31,11 @@
   ;;("- -" "")
   ;;("' '" "")
   ;;("` `" "")
+  ("_" "_")
+  ("_ var" (make-script #f #t))
+  ("^" "^")
+  ("^ var" (make-script #t #t))
+  ("accent:deadhat var" (make-script #t #t))
 
   ("text:symbol s" "ÿ")
   ("text:symbol S" "ß")
