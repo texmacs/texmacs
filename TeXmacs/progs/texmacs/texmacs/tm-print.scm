@@ -29,9 +29,10 @@
     "10x14" "11x17" "C5" "Comm10" "DL" "executive" "halfletter"
     "halfexecutive" "ledger" "legal" "letter" "Monarch"
     "csheet" "dsheet" "flsa" "flse" "folio"
-    "lecture note" "note" "quarto" "statement" "tabloid"))
+    "lecture note" "note" "quarto" "statement" "tabloid"
+    "user"))
 
-(tm-define (get-default-paper-size-bis)
+(define (get-default-paper-size-bis)
   (with psize (getenv "PAPERSIZE")
     (if (and psize (!= psize "")) psize
         (with papersizefile (or (getenv "PAPERCONF") "/etc/papersize")
@@ -41,9 +42,11 @@
                    (close-input-port pps-port)
                    size)))))))
 
+(tm-define (correct-paper-size s)
+  (if (and (string? s) (in? s supported-sizes)) s "a4"))
+
 (tm-define (get-default-paper-size)
-  (with size (get-default-paper-size-bis)
-    (if (and size (in? size supported-sizes)) size "a4")))
+  (correct-paper-size (get-default-paper-size-bis)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences
