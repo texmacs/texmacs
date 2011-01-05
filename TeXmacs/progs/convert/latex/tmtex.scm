@@ -1266,6 +1266,30 @@
 (define (tmtex-math-it s l)
   (list 'mathit (tmtex-textual (car l))))
 
+(define (tmtex-mathord s l)
+  (list 'mathord (tmtex (car l))))
+
+(define (tmtex-mathbin s l)
+  (list 'mathbin (tmtex (car l))))
+
+(define (tmtex-mathrel s l)
+  (list 'mathrel (tmtex (car l))))
+
+(define (tmtex-mathopen s l)
+  (list 'mathopen (tmtex (car l))))
+
+(define (tmtex-mathclose s l)
+  (list 'mathclose (tmtex (car l))))
+
+(define (tmtex-mathpunct s l)
+  (list 'mathpunct (tmtex (car l))))
+
+(define (tmtex-mathop s l)
+  (list 'mathop (tmtex (car l))))
+
+(define (tmtex-syntax s l)
+  (tmtex (car l)))
+
 (define (tmtex-dummy s l)
   "")
 
@@ -1578,6 +1602,7 @@
   ((:or unquote* copy
 	if if* case while for-each
 	extern include use-package) tmtex-noop)
+  (syntax (,tmtex-syntax 1))
 
   ((:or or xor and not plus minus times over div mod
 	merge length range number date translate change-case find-file
@@ -1668,6 +1693,27 @@
   (math-bf (,tmtex-math-bf 1))
   (math-sl (,tmtex-math-sl 1))
   (math-it (,tmtex-math-it 1))
+  (math-separator (,tmtex-mathpunct 1))
+  (math-quantifier (,tmtex-mathord 1))
+  (math-imply (,tmtex-mathbin 1))
+  (math-or (,tmtex-mathbin 1))
+  (math-and (,tmtex-mathbin 1))
+  (math-not (,tmtex-mathord 1))
+  (math-relation (,tmtex-mathrel 1))
+  (math-union (,tmtex-mathbin 1))
+  (math-intersection (,tmtex-mathbin 1))
+  (math-exclude (,tmtex-mathbin 1))
+  (math-plus (,tmtex-mathbin 1))
+  (math-minus (,tmtex-mathbin 1))
+  (math-times (,tmtex-mathbin 1))
+  (math-over (,tmtex-mathbin 1))
+  (math-big (,tmtex-mathop 1))
+  (math-prefix (,tmtex-mathord 1))
+  (math-postfix (,tmtex-mathord 1))
+  (math-open (,tmtex-mathopen 1))
+  (math-close (,tmtex-mathclose 1))
+  (math-ordinary (,tmtex-mathord 1))
+  (math-ignore (,tmtex-mathord 1))
   ((:or equation equation*) (,tmtex-equation-wrapper 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))

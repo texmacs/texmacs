@@ -3150,8 +3150,13 @@ upgrade_math_ops (tree t) {
       if (t[1] == "ss") return compound ("math-ss", t[2]);
       if (t[1] == "tt") return compound ("math-tt", t[2]);
     }
-  //string s= as_string (L(t));
-  //if (n == 1 && starts (s, "math-")) {}  
+  if (n == 1 && starts (as_string (L(t)), "math-")) {
+    if (is_compound (t, "math-ord")) return compound ("math-ordinary", t[0]);
+    if (is_compound (t, "math-punct")) return compound ("math-separator", t[0]);
+    if (is_compound (t, "math-bin")) return compound ("math-plus", t[0]);
+    if (is_compound (t, "math-rel")) return compound ("math-relation", t[0]);
+    if (is_compound (t, "math-op")) return compound ("math-big", t[0]);
+  }
   return r;
 }
 

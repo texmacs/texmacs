@@ -87,6 +87,8 @@
       ("Wide bar" (make-wide-under "<wide-bar>")))
   (-> "Symbol" (link symbol-menu))
   (-> "Textual operator" (link textual-operator-menu))
+  (if (== (get-preference "semantic editing") "on")
+      (-> "Semantics" (link semantic-annotation-menu)))
   ---
   ("Text" (make 'text))
   (-> "Table" (link insert-table-menu))
@@ -127,6 +129,31 @@
   ("Semantic editing" (toggle-preference "semantic editing"))
   (when (== (get-preference "semantic editing") "on")
     ("Semantic selections" (toggle-preference "semantic selections"))))
+
+(menu-bind semantic-annotation-menu
+  ("Ordinary symbol" (make 'math-ordinary))
+  ("Ignore" (make 'math-ignore))
+  ---
+  ("Separator" (make 'math-separator))
+  ("Quantifier" (make 'math-quantifier))
+  ("Logical implication" (make 'math-imply))
+  ("Logical or" (make 'math-or))
+  ("Logical and" (make 'math-and))
+  ("Logical not" (make 'math-not))
+  ("Relation" (make 'math-relation))
+  ("Set union" (make 'math-union))
+  ("Set intersection" (make 'math-intersection))
+  ("Set difference" (make 'math-exclude))
+  ("Addition" (make 'math-plus))
+  ("Subtraction" (make 'math-minus))
+  ("Multiplication" (make 'math-times))
+  ("Division" (make 'math-over))
+  ("Prefix" (make 'math-prefix))
+  ("Postfix" (make 'math-postfix))
+  ("Open" (make 'math-open))
+  ("Close" (make 'math-close))
+  ---
+  ("Other" (make 'syntax)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical symbol menus
@@ -1036,6 +1063,10 @@
       ---
       (group "Semantics")
       (link semantic-math-preferences-menu))
+  (if (== (get-preference "semantic editing") "on")
+      (=> (balloon (icon "tm_math_syntax.xpm")
+                   "Specify semantics of a symbol or formula")
+          (link semantic-annotation-menu)))
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

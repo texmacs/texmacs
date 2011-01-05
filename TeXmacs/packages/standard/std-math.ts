@@ -56,19 +56,47 @@
     </src-comment>
   </active*>
 
-  <assign|math-ord|<macro|x|<with|math-condensed|true|<arg|x>>>>
+  <assign|math-separator|<macro|x|<syntax|<arg|x>|,>>>
 
-  <assign|math-open|<value|op>>
+  <assign|math-quantifier|<macro|x|<syntax|<arg|x>|\<forall\>>>>
 
-  <assign|math-close|<value|op>>
+  <assign|math-imply|<macro|x|<syntax|<arg|x>|\<Rightarrow\>>>>
 
-  <assign|math-punct|<value|op>>
+  <assign|math-or|<macro|x|<syntax|<arg|x>|\<cap\>>>>
 
-  <assign|math-bin|<macro|x|<space|0.5spc><with|math-condensed|true|<arg|x>><space|0.5spc>>>
+  <assign|math-and|<macro|x|<syntax|<arg|x>|\<cup\>>>>
 
-  <assign|math-rel|<value|math-bin>>
+  <assign|math-not|<macro|x|<syntax|<arg|x>|\<neg\>>>>
 
-  <assign|math-op|<macro|x|<with|math-condensed|true|<arg|x>><space|1spc>>>
+  <assign|math-relation|<macro|x|<syntax|<arg|x>|\<less\>>>>
+
+  <assign|math-union|<macro|x|<syntax|<arg|x>|\<cup\>>>>
+
+  <assign|math-intersection|<macro|x|<syntax|<arg|x>|\<cap\>>>>
+
+  <assign|math-exclude|<macro|x|<syntax|<arg|x>|\<setminus\>>>>
+
+  <assign|math-plus|<macro|x|<syntax|<arg|x>|+>>>
+
+  <assign|math-minus|<macro|x|<syntax|<arg|x>|->>>
+
+  <assign|math-times|<macro|x|<syntax|<arg|x>|*>>>
+
+  <assign|math-over|<macro|x|<syntax|<arg|x>|/>>>
+
+  <assign|math-big|<macro|x|<syntax|<arg|x>|<big|sum>>>>
+
+  <assign|math-prefix|<macro|x|<syntax|<arg|x>|#>>>
+
+  <assign|math-postfix|<macro|x|<syntax|<arg|x>|!>>>
+
+  <assign|math-open|<macro|x|<syntax|<arg|x>|(>>>
+
+  <assign|math-close|<macro|x|<syntax|<arg|x>|)>>>
+
+  <assign|math-ordinary|<macro|x|<syntax|<arg|x>|x>>>
+
+  <assign|math-ignore|<macro|x|<syntax|<arg|x>|>>>
 
   <\active*>
     <\src-comment>
