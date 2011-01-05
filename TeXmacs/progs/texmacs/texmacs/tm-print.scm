@@ -22,16 +22,28 @@
 ;; or else default to "a4"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define supported-sizes
+  '("a0" "a1" "a2" "a3" "a4" "a5" "a6" "a7" "a8" "a9"
+    "b0" "b1" "b2" "b3" "b4" "b5" "b6" "b7" "b8" "b9"
+    "archA" "archB" "archC" "archD" "archE"
+    "10x14" "11x17" "C5" "Comm10" "DL" "executive" "halfletter"
+    "halfexecutive" "ledger" "legal" "letter" "Monarch"
+    "csheet" "dsheet" "flsa" "flse" "folio"
+    "lecture note" "note" "quarto" "statement" "tabloid"))
+
+(tm-define (get-default-paper-size-bis)
+  (with psize (getenv "PAPERSIZE")
+    (if (and psize (!= psize "")) psize
+        (with papersizefile (or (getenv "PAPERCONF") "/etc/papersize")
+          (and (access? papersizefile R_OK)
+               (with pps-port (open-input-file papersizefile)
+                 (with size (read-line pps-port)
+                   (close-input-port pps-port)
+                   size)))))))
+
 (tm-define (get-default-paper-size)
-  (or (getenv "PAPERSIZE")
-      (let ((papersizefile (or (getenv "PAPERCONF") '"/etc/papersize")))
-	(if (access? papersizefile R_OK)
-	    (let ((pps-port (open-input-file papersizefile)))
-	      (let ((size (read-line pps-port)))
-		(begin
-		  (close-input-port pps-port)
-		  size)))
-	    "a4"))))
+  (with size (get-default-paper-size-bis)
+    (if (and size (in? size supported-sizes)) size "a4")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences

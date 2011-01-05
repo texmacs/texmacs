@@ -269,7 +269,8 @@
   ("math:small" "math" #t)
   ("math:left" "math l" #t)
   ("math:middle" "math m" #t)
-  ("math:right" "math r" #t))
+  ("math:right" "math r" #t)
+  ("math:syntax" "math x" #t))
 
 (kbd-wildcards
   ("tilde tilde" "tilde")
@@ -348,7 +349,8 @@
   ("math:right" "" "Insert a large right delimiter")
   ("math:symbol" "" "Insert a mathematical symbol")
   ("math:symbol:circled" "" "Insert a big circled operator")
-  ("math:symbol:limits" "" "Insert a mathematical symbol with limits"))
+  ("math:symbol:limits" "" "Insert a mathematical symbol with limits")
+  ("math:syntax" "" "Specify an alternative semantics"))
 
 (kbd-map
   (:mode in-prog?)
