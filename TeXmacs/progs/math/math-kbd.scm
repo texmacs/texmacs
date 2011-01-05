@@ -145,6 +145,8 @@
   (", var" "<comma>")
   (", var var" "<nocomma>")
   (", space" "<nocomma>")
+  (", space var" (insert '(separating-space "0.2em")))
+  (", space var var" (insert '(separating-space "1em")))
   (", ," ",<ldots>,")
   ("; ;" ";<ldots>;")
   ("." ".")

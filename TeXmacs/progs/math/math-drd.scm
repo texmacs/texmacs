@@ -14,10 +14,18 @@
 (texmacs-module (math math-drd)
   (:use (utils edit variants)))
 
-(define-group variant-tag (fraction-tag) (vertical-script-tag))
+(define-group variant-tag
+  (fraction-tag) (vertical-script-tag)
+  (textual-operator-tag))
 
-(define-group fraction-tag frac tfrac dfrac frac*)
-(define-group vertical-script-tag below above)
+(define-group fraction-tag
+  frac tfrac dfrac frac*)
+
+(define-group vertical-script-tag
+  below above)
+
+(define-group textual-operator-tag
+  math-up math-ss math-tt math-bf math-it math-sl)
 
 (define-alternate wide wide*)
 (define-alternate around around*)

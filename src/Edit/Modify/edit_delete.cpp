@@ -206,7 +206,8 @@ edit_text_rep::remove_text (bool forward) {
       else back_general (p, forward);
       return;
     default:
-      back_general (p, forward);
+      if (is_compound (t, "separating-space", 1)) back_monolithic (p);
+      else back_general (p, forward);
       break;
     }
 

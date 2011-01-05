@@ -121,6 +121,9 @@
 (tm-define (space-context? t)
   (tree-is? t 'space))
 
+(tm-define (var-space-context? t)
+  (or (tree-is? t 'space) (tree-func? t 'separating-space 1)))
+
 (define (space-make-ternary t)
   (cond ((== (tm-arity t) 1) (tree-insert t 1 '("0ex" "1ex")))
 	((== (tm-arity t) 2) (tree-insert t 1 '("1ex")))))
@@ -130,13 +133,13 @@
        (lengths-consistent? (tree-ref t 1) (tree-ref t 2))))
 
 (tm-define (geometry-speed t inc?)
-  (:require (space-context? t))
+  (:require (var-space-context? t))
   (with inc (if inc? 1 -1)
     (with-focus-after t
       (length-increase-step (tree-ref t 0) inc))))
 
 (tm-define (geometry-horizontal t forward?)
-  (:require (space-context? t))
+  (:require (var-space-context? t))
   (with inc (if forward? 1 -1)
     (with-focus-after t
       (length-increase (tree-ref t 0) inc))))

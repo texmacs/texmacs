@@ -124,6 +124,10 @@
 
   <drd-props|frac*|arity|2|syntax|<macro|x|y|<arg|x>/<arg|y>>>
 
+  <assign|separating-space|<macro|len|<space|<arg|len>>>>
+
+  <drd-props|separating-space|syntax|<macro|len|,>>
+
   <\active*>
     <\src-comment>
       Mathematical tabular structures.
