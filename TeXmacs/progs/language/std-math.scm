@@ -265,7 +265,7 @@
     (Over-prefix Power)
     (Power-prefix Prefixed)
     Quantifier-prefix
-    Quantifier-symbol
+    Quantifier-prefix-symbol
     Prime-symbol
     Infix
     Prefix
@@ -279,6 +279,8 @@
 
   (define Expression
     Assignment
+    Quantifier-prefix-symbol
+    Prime-symbol
     Infix
     Prefix
     Postfix)
