@@ -41,6 +41,11 @@
   ("math:under accent:check" (make-wide-under "<check>"))
   ;; end
 
+  ("altcmd F5" (make 'math-it))
+  ("altcmd F6" (make 'math-bf))
+  ("altcmd F7" (make 'math-tt))
+  ("altcmd F8" (make 'math-ss))
+
   ("$" (math-make-math))
   ("math $" (make-with "mode" "text"))
   ("`" (make-lprime "`"))
