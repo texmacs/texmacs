@@ -78,13 +78,13 @@
 (tm-define (texmacs->verbatim x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
-	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "cork")))
+	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "utf-8")))
     (cpp-texmacs->verbatim x wrap? enc)))
 
 (tm-define (texmacs->verbatim-snippet x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
-	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "cork")))
+	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "utf-8")))
     ;; FIXME: dirty hack for "copy to verbatim" of code snippets
     (if (or (== (get-env "mode") "prog") (== (get-env "font-family") "tt"))
         (set! wrap? #f))
@@ -93,13 +93,13 @@
 (tm-define (verbatim->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "cork")))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
     (cpp-verbatim->texmacs x wrap? enc)))
 
 (tm-define (verbatim-snippet->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
-	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "cork")))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "utf-8")))
     (cpp-verbatim-snippet->texmacs x wrap? enc)))
 
 (define-format verbatim
