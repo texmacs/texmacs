@@ -229,7 +229,7 @@ concater_rep::typeset_rigid (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_meaning (tree t, path ip) {
+concater_rep::typeset_syntax (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   b= move_box (ip, b, 0, 0, true);

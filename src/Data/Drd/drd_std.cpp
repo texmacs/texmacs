@@ -217,9 +217,9 @@ init_std_drd () {
         name (1, "accent"));
   init (NEG, "neg", fixed (1) -> accessible (0) -> name ("negation"));
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
-  init (MEANING, "meaning", fixed (1, 1, BIFORM) ->        
+  init (SYNTAX, "syntax", fixed (1, 1, BIFORM) ->        
         accessible (0) -> name (0, "body") ->
-        regular (1) -> name (1, "meaning"));
+        regular (1) -> name (1, "syntax"));
 
   init (TFORMAT, "tformat",
 	var_repeat (1, 1, BIFORM) -> inner_border () ->

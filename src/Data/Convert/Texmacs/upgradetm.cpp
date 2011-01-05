@@ -264,7 +264,7 @@ get_codes (string version) {
   if (version_inf ("0.3.4.0", version)) return H;
 
   new_feature (H, "tag");
-  new_feature (H, "meaning");
+  new_feature (H, "syntax");
 
   if (version_inf_eq ("0.3.3.15", version)) return H;
 
@@ -3124,6 +3124,38 @@ upgrade_algorithm (tree t, bool flag= true) {
 }
 
 /******************************************************************************
+* Upgrade mathematical operators
+******************************************************************************/
+
+tree
+upgrade_math_ops (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_math_ops (t[i]);
+  if (is_func (t, WITH, 3) &&
+      is_atomic (t[2]) &&
+      is_alpha (t[2]->label) &&
+      t[0] == "math-font-family")
+    {
+      if (t[1] == "trm") return compound ("math-up", t[2]);
+      if (t[1] == "tss") return compound ("math-ss", t[2]);
+      if (t[1] == "ttt") return compound ("math-tt", t[2]);
+      if (t[1] == "rm") return compound ("math-up", t[2]);
+      if (t[1] == "up") return compound ("math-up", t[2]);
+      if (t[1] == "bf") return compound ("math-bf", t[2]);
+      if (t[1] == "sl") return compound ("math-sl", t[2]);
+      if (t[1] == "it") return compound ("math-it", t[2]);
+      if (t[1] == "ss") return compound ("math-ss", t[2]);
+      if (t[1] == "tt") return compound ("math-tt", t[2]);
+    }
+  //string s= as_string (L(t));
+  //if (n == 1 && starts (s, "math-")) {}  
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3159,6 +3191,7 @@ upgrade_tex (tree t) {
   t= upgrade_brackets (t);
   t= move_brackets (t);
   t= upgrade_image (t);
+  t= upgrade_math_ops (t);
   upgrade_tex_flag= false;
   return t;
 }
@@ -3273,10 +3306,12 @@ upgrade (tree t, string version) {
     t= superfluous_with_correct (t);
     t= upgrade_brackets (t);
   }
-  if (version_inf_eq (version, "1.0.7.9"))
+  if (version_inf_eq (version, "1.0.7.9")) {
     t= move_brackets (t);
-  if (version_inf_eq (version, "1.0.7.9") && is_non_style_document (t))
-    t= upgrade_algorithm (t, false);
+    if (is_non_style_document (t))
+      t= upgrade_algorithm (t, false);
+    t= upgrade_math_ops (t);
+  }
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

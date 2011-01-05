@@ -86,6 +86,7 @@
       ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
       ("Wide bar" (make-wide-under "<wide-bar>")))
   (-> "Symbol" (link symbol-menu))
+  (-> "Textual operator" (link textual-operator-menu))
   ---
   ("Text" (make 'text))
   (-> "Table" (link insert-table-menu))
@@ -128,7 +129,7 @@
     ("Semantic selections" (toggle-preference "semantic selections"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The mathematical Symbol menu
+;; The mathematical symbol menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind symbol-menu
@@ -165,6 +166,14 @@
       (tile 8 (link miscellaneous-symbol-menu))
       ---
       (tile 6 (link dots-menu))))
+
+(menu-bind textual-operator-menu
+  ("Normal" (make 'math-up))
+  ("Sans serif" (make 'math-ss))
+  ("Typewriter" (make 'math-tt))
+  ("Bold" (make 'math-bf))
+  ("Italic" (make 'math-it))
+  ("Slanted" (make 'math-sl)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Large delimiters
@@ -1003,24 +1012,18 @@
       ---
       (tile 13 (link bold-alpha-menu))
       ---
-      (tile 15 (link bold-greek-menu))
-      ---
-      ("Use a bold font" (make-with "math-font-series" "bold")))
+      (tile 15 (link bold-greek-menu)))
   (=> (balloon (icon "tm_cal.xpm")
 	       "Insert a calligraphic character")
-      (tile 13 (link cal-menu))
-      ---
-      ("Use a calligraphic font" (make-with "math-font" "cal")))
+      (tile 13 (link cal-menu)))
   (=> (balloon (icon "tm_frak.xpm")
 	       "Insert a fraktur character")
-      (tile 13 (link frak-menu))
-      ---
-      ("Use the fraktur font" (make-with "math-font" "Euler")))
+      (tile 13 (link frak-menu)))
   (=> (balloon (icon "tm_bbb.xpm")
 	       "Insert a blackboard bold character")
-      (tile 13 (link bbb-menu))
-      ---
-      ("Use the blackboard bold font" (make-with "math-font" "Bbb*")))
+      (tile 13 (link bbb-menu)))
+  (=> (balloon (icon "tm_op.xpm") "Insert a textual operator")
+      (link textual-operator-menu))
   (link math-format-icons)
   (=> (balloon (icon "tm_math_preferences.xpm")
                "Preferences for editing mathematical formulas")

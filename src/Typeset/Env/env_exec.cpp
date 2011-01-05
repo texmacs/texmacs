@@ -596,8 +596,8 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (is_atomic (val))
 	  drd->set_attribute (l, prop, val->label);
       }
-      else if (prop == "meaning")
-        drd->set_meaning (l, val);
+      else if (prop == "syntax")
+        drd->set_syntax (l, val);
       else if (prop == "border") {
 	if (val == "yes") drd->set_border (l, BORDER_YES);
 	if (val == "inner") drd->set_border (l, BORDER_INNER);

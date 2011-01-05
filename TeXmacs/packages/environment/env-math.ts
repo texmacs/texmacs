@@ -56,7 +56,7 @@
 
   <assign|next-number|<macro|<style-with|src-compact|none|<next-equation><with|mode|text|font-shape|right|(<the-equation>)>>>>
 
-  <drd-props|next-number|meaning|<macro|>>
+  <drd-props|next-number|syntax|<macro|>>
 
   <assign|leq-number|<macro|<next-number><htab|5mm>>>
 

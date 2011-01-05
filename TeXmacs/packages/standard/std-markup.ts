@@ -129,9 +129,9 @@
 
   <assign|person|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
-  <assign|op|<macro|body|<with|math-condensed|true|<meaning|<arg|body>|x>>>>
+  <assign|op|<macro|body|<with|math-condensed|true|<syntax|<arg|body>|x>>>>
 
-  <drd-props|op|arity|1|meaning|<macro|body|x>>
+  <drd-props|op|arity|1|syntax|<macro|body|x>>
 
   <\active*>
     <\src-comment>
@@ -282,7 +282,7 @@
 
   <assign|phantom|<macro|body|<if*|false|<arg|body>>>>
 
-  <drd-props|phantom|arity|1|accessible|none|meaning|<macro|body|>>
+  <drd-props|phantom|arity|1|accessible|none|syntax|<macro|body|>>
 
   <assign|hphantom|<macro|body|<vresize|<phantom|<arg|body>>|0ex|1ex>>>
 

@@ -234,7 +234,7 @@ drd_info
 get_document_drd (tree doc) {
   tree style= extract (doc, "style");
   if (extract (doc, "TeXmacs") == "") {
-    if (the_drd->get_meaning (make_tree_label ("theorem")) != tree (UNINIT))
+    if (the_drd->get_syntax (make_tree_label ("theorem")) != tree (UNINIT))
       return the_drd;
     style= tree (TUPLE, "generic");
   }

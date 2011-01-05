@@ -243,9 +243,6 @@ init_env_vars () {
   (void) set_env_path ("TEXMACS_SECURE_PATH",
 		       get_env_path ("TEXMACS_SECURE_PATH") |
 		       "$TEXMACS_PATH:$TEXMACS_HOME_PATH");
-  (void) get_env_path ("TEXMACS_SYNTAX_PATH",
-		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
-		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
   (void) get_env_path ("TEXMACS_PATTERN_PATH",
 		       "$TEXMACS_HOME_PATH/misc/patterns" |
 		       url ("$TEXMACS_PATH/misc/patterns") |

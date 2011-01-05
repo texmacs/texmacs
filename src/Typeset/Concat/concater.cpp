@@ -381,8 +381,8 @@ concater_rep::typeset (tree t, path ip) {
   case TREE:
     typeset_tree (t, ip);
     break;
-  case MEANING:
-    typeset_meaning (t, ip);
+  case SYNTAX:
+    typeset_syntax (t, ip);
     break;
 
   case TFORMAT:

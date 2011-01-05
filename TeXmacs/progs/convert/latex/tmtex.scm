@@ -1242,6 +1242,30 @@
 (define (tmtex-math s l)
   (tmtex `(with "mode" "math" ,(car l))))
 
+(define (tmtex-textual x)
+  (tmtex-env-set "mode" "text")
+  (with r (tmtex x)
+    (tmtex-env-reset "mode")
+    r))
+
+(define (tmtex-math-up s l)
+  (list 'mathup (tmtex-textual (car l))))
+
+(define (tmtex-math-ss s l)
+  (list 'mathsf (tmtex-textual (car l))))
+
+(define (tmtex-math-tt s l)
+  (list 'mathtt (tmtex-textual (car l))))
+
+(define (tmtex-math-bf s l)
+  (list 'mathbf (tmtex-textual (car l))))
+
+(define (tmtex-math-sl s l)
+  (list 'mathsl (tmtex-textual (car l))))
+
+(define (tmtex-math-it s l)
+  (list 'mathit (tmtex-textual (car l))))
+
 (define (tmtex-dummy s l)
   "")
 
@@ -1638,9 +1662,16 @@
   (really-huge (,tmtex-Huge 1))
 
   (math (,tmtex-math 1))
+  (math-up (,tmtex-math-up 1))
+  (math-ss (,tmtex-math-ss 1))
+  (math-tt (,tmtex-math-tt 1))
+  (math-bf (,tmtex-math-bf 1))
+  (math-sl (,tmtex-math-sl 1))
+  (math-it (,tmtex-math-it 1))
   ((:or equation equation*) (,tmtex-equation-wrapper 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
+
   (the-index (,tmtex-dummy -1))
   (glossary (,tmtex-glossary 1))
   (glossary-explain (,tmtex-glossary 2))

@@ -41,7 +41,7 @@ enum tree_label {
   LPRIME, RPRIME, BELOW, ABOVE,
   LSUB, LSUP, RSUB, RSUP,
   FRAC, SQRT, WIDE, VAR_WIDE, NEG, TREE,
-  MEANING,
+  SYNTAX,
 
   // tabular material
   TFORMAT, TWITH, CWITH, TMARKER,

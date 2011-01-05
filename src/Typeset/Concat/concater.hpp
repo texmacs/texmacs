@@ -81,7 +81,7 @@ class concater_rep {
   void typeset_neg (tree t, path ip);
   void typeset_tree (tree t, path ip);
   void typeset_table (tree t, path ip);
-  void typeset_meaning (tree t, path ip);
+  void typeset_syntax (tree t, path ip);
 
   // disactivated markup
   void typeset_blue (tree t, path ip);

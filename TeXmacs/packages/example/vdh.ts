@@ -53,11 +53,11 @@
 
     <assign|I|<with|math-display|false|<op|<big|int>>>>
 
-    <drd-props|I|meaning|\<int\>>
+    <drd-props|I|syntax|\<int\>>
 
-    <drd-props|\<uparrow\>|meaning|\<postup\>>
+    <drd-props|\<uparrow\>|syntax|\<postup\>>
 
-    <drd-props|\<downarrow\>|meaning|\<postdown\>>
+    <drd-props|\<downarrow\>|syntax|\<postdown\>>
 
     \;
 

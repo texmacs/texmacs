@@ -75,9 +75,11 @@ edit_select_rep::semantic_root (path p) {
     if (is_func (st, CELL)) break;
     if (is_compound (st) && N(st) == 1) {
       tree env= drd->get_env (L(st), 0);
-      if (drd_env_read (env, "mode") == "math") break;
-      if (drd_env_read (env, "mode") == "prog")
-        if (drd_env_read (env, "prog-language") == "minimal") break;
+      tree mt= drd_env_read (env, MODE);
+      tree pt= drd_env_read (env, "prog-language");
+      if (mt == "math") break;
+      if (mt == "prog" && pt == "minimal") break;
+      if (mt == "text") return rp;
     }
     p= path_up (p);
   }

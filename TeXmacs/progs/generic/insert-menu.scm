@@ -132,7 +132,7 @@
 	  (if (style-has? "std-fold-dtd")
 	      (-> "Fold" (link insert-fold-menu)))
 	  (-> "Animation" (link insert-animation-menu)))
-      (if (and (style-has? "program-dtd") (detailed-menus?) (in-text?))
+      (if (and (style-has? "session-dtd") (detailed-menus?) (in-text?))
 	  (-> "Session" (link insert-session-menu)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -159,7 +159,7 @@
 	      (link insert-fold-menu)))
       (=> (balloon (icon "tm_animate.xpm") "Animation")
 	  (link insert-animation-menu)))
-  (if (and (style-has? "program-dtd") (detailed-menus?) (in-text?))
+  (if (and (style-has? "session-dtd") (detailed-menus?) (in-text?))
       (=> (balloon (icon "tm_shell.xpm")
 		   "Start an interactive session")
 	  (link insert-session-menu))))

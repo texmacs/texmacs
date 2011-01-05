@@ -281,7 +281,7 @@
       (if (style-has? "std-fold-dtd")
 	  (-> "Fold" (link insert-fold-menu)))
       (-> "Animation" (link insert-animation-menu)))
-  (if (and (style-has? "program-dtd") (detailed-menus?))
+  (if (and (style-has? "session-dtd") (detailed-menus?))
       (-> "Session" (link insert-session-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

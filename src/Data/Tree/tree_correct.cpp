@@ -505,7 +505,7 @@ invisible_corrector::get_status (tree t, bool left, bool script_flag) {
     else if (is_func (t, WITH))
       return get_status (t[N(t)-1], left, script_flag);
     else if (N(t) == 0 && L(t) >= START_EXTENSIONS) {
-      tree def= the_drd->get_meaning (L(t));
+      tree def= the_drd->get_syntax (L(t));
       if (is_func (def, MACRO, 1))
         return get_status (def[0], left, script_flag);
       else return SURE_NOTHING;

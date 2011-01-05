@@ -30,6 +30,8 @@
 
 (menu-bind math-font-menu
   (-> "Name"
+      (if (url-exists-in-tex? "rpsyr.tfm")
+	  ("Adobe" (make-with "math-font" "adobe")))
       (if (font-exists-in-tt? "Apple Symbols")
 	  ("Apple symbols" (make-with "math-font" "math-apple")))
       (if (font-exists-in-tt? "Asana-Math")
@@ -46,8 +48,6 @@
       (if (font-exists-in-tt? "STIXGeneral")
 	  ("Stix" (make-with "math-font" "math-stix")))
       ---
-      (if (url-exists-in-tex? "rpsyr.tfm")
-	  ("Adobe" (make-with "math-font" "adobe")))
       (if (url-exists-in-tex? "cdr10.mf")
 	  ("Duerer" (make-with "math-font" "Duerer")))
       (if (url-exists-in-tex? "eufm10.mf")
@@ -73,15 +73,16 @@
 	  ("Roman" (make-with "math-font-family" "mr"))
 	  ("Typewriter" (make-with "math-font-family" "mt"))
 	  ("Sans serif" (make-with "math-font-family" "ms"))
-	  ---
-	  (-> "Text font"
-	      ("Roman" (make-with "math-font-family" "trm"))
-	      ("Typewriter" (make-with "math-font-family" "ttt"))
-	      ("Sans serif" (make-with "math-font-family" "tss"))
-	      ("Bold" (make-with "math-font-family" "bf"))
-	      ("Right" (make-with "math-font-family" "up"))
-	      ("Slanted" (make-with "math-font-family" "sl"))
-	      ("Italic" (make-with "math-font-family" "it"))))
+	  ;;---
+	  ;;(-> "Text font"
+	  ;;    ("Roman" (make-with "math-font-family" "trm"))
+	  ;;    ("Typewriter" (make-with "math-font-family" "ttt"))
+	  ;;    ("Sans serif" (make-with "math-font-family" "tss"))
+	  ;;    ("Bold" (make-with "math-font-family" "bf"))
+	  ;;    ("Right" (make-with "math-font-family" "up"))
+	  ;;    ("Slanted" (make-with "math-font-family" "sl"))
+	  ;;    ("Italic" (make-with "math-font-family" "it")))
+          )
       (if (real-math-family? (get-env "math-font-family"))
 	  (-> "Series"
 	      ("Light" (make-with "math-font-series" "light"))
