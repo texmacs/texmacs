@@ -341,7 +341,10 @@ get_wide (string s, font fn, SI width) {
 
 box
 delimiter_box (path ip, string s, font fn, color col, SI bot, SI top) {
-  string r= get_delimiter (s, fn, top-bot);
+  SI h= top - bot;
+  SI d= 3*fn->yx - h;
+  if (d > 0) h -= (d / 2);
+  string r= get_delimiter (s, fn, h);
   metric ex;
   fn->get_extents (r, ex);
   SI x= -ex->x1;
