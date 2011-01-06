@@ -345,7 +345,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
           rs << outline (sel->rs, pixel);
     }
     set_access_mode (old_mode);
-    if (recurse) compute_env_rects (path_up (p), rs, recurse);
+    if (recurse || N(rs) == 0)
+      compute_env_rects (path_up (p), rs, recurse);
   }
 }
 

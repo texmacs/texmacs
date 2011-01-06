@@ -206,10 +206,8 @@
       (structured-inner-extremal t forwards?))))
 
 (tm-define (traverse-previous)
-  ;;(display* "focus= " (focus-tree) "\n")
   (traverse-incremental (focus-tree) #f))
 (tm-define (traverse-next)
-  ;;(display* "focus= " (focus-tree) "\n")
   (traverse-incremental (focus-tree) #t))
 (tm-define (traverse-first)
   (traverse-extremal (focus-tree) #f))

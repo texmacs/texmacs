@@ -126,6 +126,11 @@ edit_select_rep::select (path p1, path p2) {
   //cout << "Select " << p1 << " -- " << p2 << "\n";
   if (start_p == p1 && end_p == p2) return;
   if (!(rp <= p1 && rp <= p2)) return;
+  if (start_p == end_p && p1 == p2) {
+    start_p= copy (p1);
+    end_p  = copy (p2);
+    return;
+  }
   if (p1 != p2) {
     path cp= common (p1, p2);
     tree st= subtree (et, cp);
