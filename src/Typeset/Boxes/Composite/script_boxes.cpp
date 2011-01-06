@@ -206,6 +206,7 @@ dummy_script_box_rep::finalize () {
 
 path
 dummy_script_box_rep::find_box_path (path p, bool& found) {
+  cout << "Find " << p << " in " << operator tree () << "\n";
   int nr= subnr ();
   if (((nr >= 1) && test_script_border (p, bs[0])) ||
       ((nr == 2) && test_script_border (p, bs[1])))
@@ -384,10 +385,10 @@ void
 side_box_rep::finalize () {
   int i;
   composite_box_rep::finalize ();
-  for (i=1; i<=nr_left; i++)
+  for (i=1; i<=nr_left+nr_right; i++) {
     finalize_left (lip, bs[i]);
-  for (i=1; i<=nr_right; i++)
-    finalize_right (rip, bs[nr_left+ i]);
+    finalize_right (rip, bs[i]);
+  }
 }
 
 int

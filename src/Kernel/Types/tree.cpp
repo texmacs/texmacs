@@ -346,6 +346,12 @@ is_prime (tree t) {
 }
 
 bool
+is_right_script_prime (tree t) {
+  return is_func (t, RSUB, 1) || is_func (t, RSUP, 1) ||
+         is_func (t, RPRIME, 1);
+}
+
+bool
 is_mod_active (tree t) {
   return (N(t) == 1) && (L(t) >= STYLE_ONLY) && (L(t) <= VAR_INACTIVE);
 }

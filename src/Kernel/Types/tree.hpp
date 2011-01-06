@@ -259,6 +259,7 @@ bool is_around (tree t);
 bool is_script (tree t);
 bool is_script (tree t, bool& right);
 bool is_prime (tree t);
+bool is_right_script_prime (tree t);
 bool is_mod_active (tree t);
 bool is_mod_active_once (tree t);
 bool is_empty (tree t);

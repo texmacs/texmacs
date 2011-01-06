@@ -241,6 +241,11 @@ valid_cursor (tree t, path p, bool start_flag) {
   if (is_compound (t, "input", 2) && (N(p) == 2) &&
       is_compound (t[1], "math", 1) && (p->item == 1))
     return false;
+  if (is_func (t, BIG_AROUND) && p->item == 1) {
+    if (p == path (1, 0) && is_right_script_prime (t[1])) return false;
+    if (p == path (1, 0, 0) && is_concat (t[1]) &&
+        N(t[1]) > 0 && is_right_script_prime (t[1][0])) return false;
+  }
   return valid_cursor (t[p->item], p->next, false);
 }
 
