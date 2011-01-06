@@ -23,9 +23,9 @@ Hunt down memory leaks
 SCHEME INTERFACE
 ===============================================================================
 
-Internal plug-in for Guile
-
-Integrate menus in new GUI system
+General
+  * Internal plug-in for Guile
+  * Integrate menus in new GUI system
 
 Naming conventions
   * Rename "drd-" -> "logic-" for routines from kernel/drd.
@@ -42,8 +42,8 @@ TYPESETTER
 ===============================================================================
 
 General
-  * Equivalent of TEX \topsep
-    In TEXMACS, the \topsep always equals 0.75em. It should be possible
+  * Equivalent of TeX \topsep
+    In TeXmacs, the \topsep always equals 0.75em. It should be possible
     to modify this. For symmetry, we might also introduce a ``bottom sep''.
   * Resizing macro expansions
     When attempting to resize a macro application to become smaller than
@@ -71,24 +71,14 @@ Text
   * Cursor movement is extremely slow for oriental languages.
 
 Mathematics
-  * Horizontal grouping instead of \bigop ... \big.
-    Introduce grouping primitives in which expressions with big operands
-    (and maybe large delimiters) can be encapsulated. The advantage is that
-    this eases parsing and an indicative bounding box is shown.
-  * Scripts to large delimiters produced by macros
-    Such scripts are not put at the right positions
   * Macro for fractions in continued fractions.
   * Less vertical spacing in text style between numerator/denominator and bar.
   * Left-numbering of equation arrays
     Should be possible now using the extern primitive.
-  * Consider fractions and scripts as operators
-    Consider fractions as operators => spaces before and after.
-    Similarly for scripts => small space before left scripts and
-    after right scripts.
-  * Better spacing
-    Determine spacing between two mathematical boxes as a function of
-    the rough semantics of the boxes. Application: no need for operators
-    like the unary minus.
+  * Above, below, wide and wide* as operator decorations.
+  * forall and exists as big operators.
+  * Large brackets and wide delimiters for STIX fonts.
+  * Mode for showing invisible symbols.
 
 Style-sheet language
   * Introduce a style options mechanism
@@ -97,6 +87,13 @@ Style-sheet language
     Selected options postpended to name for style-file caching
   * Grey menu entries for parameters which cannot be changed in style
     For instance, a style might provide a limited number of font base sizes.
+  * Replace drd-props primitive by a primitive inside the macro,
+    e.g.: <macro|a|b|<drd-props|<drd-prop|a|accessible>|...|body>>.
+    'no-assign' tag for associating drd-properties without actual assignment.
+  * Implement forms by letting field tags link to the main form tag.
+  * provide-package variant of use-package, which does not (re)load.
+    Or let use-package never reload.
+  * Declaration of key-bindings and more complex scheme code in style packages.
 
 Boxes
   * Origin of boxes
@@ -121,11 +118,9 @@ Structured text
   * Icon menu for font size.
   * Buggy title environment: remove author, transform selection
     into title, etc.
-  * Strong inside strong, "with color red" inside "with color red", etc.
-  * "with color black" at the left/right extreme of "with color red".
-  * Remove "document" when applying "strong" to a single paragraph.
-  * More generally: automatically turn block content into inline content
-    when appropriate.
+  * Automatically turn block content into inline content when appropriate.
+  * Maybe use shift-mouse-click for outward selection (besides pointing
+    inside a hyperlink).
 
 Editing source trees
   * User-defined macros can be turned into a compound using the backspace key,
@@ -138,7 +133,7 @@ Editing source trees
   * Edit as option
     A facility "Edit as" to convert a selection into any other format and
     put the result in an "edit-as" tag for manual editing. When pressing
-    return, reconvert back into TEXMACS.
+    return, reconvert back into TeXmacs.
   * More customizable presentation of source tags
     Make the presentation of source code more customizable by user macros.
     Done for syntactic highlighting, but should also be done for special
@@ -155,6 +150,11 @@ Editing source trees
 Styling
   * Assistant for creating your own styles.
 
+Miscellaneous
+  * When 'author' tags for the history management get large,
+    then the as_double/as_string conversions may fail.
+  * Relaunch TeXmacs after change of look and feel.
+
 ===============================================================================
 TOOLS AND FREQUENTLY USED SUBROUTINES
 ===============================================================================
@@ -167,9 +167,9 @@ General caching mechanism
   * Optimize performance as a function of cost of recomputation and
     storage requirement
 
-LATEX import
+LaTeX import
   * Avoid name-clashes with built-in commands
-    Importation of LATEX macros whose names coincide with built-in
+    Importation of LaTeX macros whose names coincide with built-in
     commands may lead to incorrect documents (e.g. the point macro
     in publs/1998/zeta.tex). We should probably post-correct imported
     documents.
@@ -178,16 +178,21 @@ LATEX import
     which should not be parsed in the generic way. The string_arg function
     is a temporary remedy.
 
+Postscript export
+  * Watermarks for Pdf generation with hyperlinks and tables of contents.
+
+Plug-ins
+  * Declare version of TeXmacs for which plug-in was designed,
+    so as to upgrade/downgrade exchanged TeXmacs markup automatically.
+
 ===============================================================================
 GRAPHICS EDITOR
 ===============================================================================
 
 Interface
-  * Better looking icons.
   * Explanatory messages on the status bar
   * Better "mouse button layout": do as much as possible with left mouse
     button only and reserve right button for contextual menu.
-  * Compatability with pen-based devices.
   * Fine-grained resizing using keyboard (also allow modification of grain?).
   * Resizing using mouse.
   * Automatic detection of simple types of curves when dragging
@@ -228,6 +233,44 @@ Reorganization of Scheme code
       6) Copy and paste.
       7) Computation of decorations.
   * Documentation of all APIs.
+
+===============================================================================
+SEMANTIC EDITING TOOLS BASED ON PACKRAT PARSING
+===============================================================================
+
+Packrat engine
+  * Grammar rules with productions.
+  * content MathML output.
+
+Mathematics
+  * Automatic correction of formulas -> editing mode based on "slots".
+  * Explicit prefix-postfix, prefix-infix and symbol-prefix operator types
+    for operators such as !, - resp mathd.
+  * Better scheme for entering big operators and large delimiters
+    as symbols and not binary/ternary constructs.
+  * Above, below, wide and wide* as operator decorations.
+  * Upgrade wide spaces (e.g. >= 1em) as separating spaces.
+
+Universal grammar
+  * . and -> as data access operators.
+  * symbols for min, max -> appropriate precedence.
+  * Notations a, b \in X and i= 0, ..., n.
+  * Several precedences for separators in [ a, b | c, d | e, f ].
+  * Use appropriate precedences for big operators. For instance,
+    \sum and \int should go into the rules for the Sum non-terminal symbol,
+    so that <big-around|<sum>|a_i+b_i> becomes incorrect.
+
+Programming languages
+  * Add facility to automatically close partial environments,
+    e.g. with missing } or missing statement after 'if x then'.
+    Applications: highlighting imcomplete input, automatic indentation.
+
+Editing
+  * Generalize use of mathematical focus instead of usual focus.
+    For instance, the focus bar, tooltips on math symbols,
+    using semantic_root instead of innermost, etc.
+  * Easy way to switch between semantic and non-semantic selections.
+  * Shortcut for circulating among homoglyphs.
 
 ===============================================================================
 UPCOMING STYLE REWRITING TOOL
@@ -298,7 +341,7 @@ TUTORIAL OR SERIES OF INTRODUCTORY ARTICLES (E.G. FOR LINUX MAGAZINE)
 ===============================================================================
 
 General introduction/quick overview
-  * Different purposes of TEXMACS
+  * Different purposes of TeXmacs
   * Writing a simple text
   * Style-sheets and writing a simple macro
   * Running a computer algebra system
@@ -306,7 +349,7 @@ General introduction/quick overview
 
 Writing simple structured texts
   * Why are structured documents useful?
-  * How to enter structure into TEXMACS, redundancy of the interface
+  * How to enter structure into TeXmacs, redundancy of the interface
   * Understanding the visual indications, cursor movement
   * Editing the structure (removing structure, improper nesting, variants,
     numbering)

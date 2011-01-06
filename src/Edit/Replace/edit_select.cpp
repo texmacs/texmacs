@@ -893,6 +893,7 @@ edit_select_rep::focus_search (path p, bool skip_flag, bool up_flag) {
 
 path
 edit_select_rep::focus_get (bool skip_flag) {
+  //cout << "Search focus " << focus_p << "\n";
   if (!is_nil (focus_p))
     return focus_search (focus_p, skip_flag, false);
   if (selection_active_any ())
