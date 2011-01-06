@@ -106,6 +106,7 @@ edit_interface_rep::try_shortcut (string comb) {
     tree rew= sv->kbd_system_rewrite (rew_s);
     if (N(help)>0) set_message (help, rew);
     tree rhs= (shorth == rew_s? tree (""): sv->kbd_system_rewrite (shorth));
+    //cout << "Shortcut: " << sh_s << " -> " << rew << "\n";
     if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
 	(search_forwards ("-", comb) >= 0 && comb != "-"))
       call ("set-temporary-message",

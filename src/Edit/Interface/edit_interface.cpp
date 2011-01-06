@@ -74,6 +74,10 @@ edit_interface_rep::operator tree () {
 
 void
 edit_interface_rep::suspend () {
+  if (got_focus) {
+    interrupt_shortcut ();
+    set_message ("", "", false);
+  }
   got_focus= false;
   notify_change (THE_FOCUS);
   if (is_attached (this)) {
