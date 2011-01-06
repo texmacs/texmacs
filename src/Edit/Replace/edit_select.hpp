@@ -68,6 +68,7 @@ public:
   path selection_get_start ();
   path selection_get_end ();
   path selection_get_path ();
+  tree selection_get_env_value (string var);
   void selection_set (string key, tree t, bool persistant= false);
   void selection_set (tree t);
   void selection_set_start (path p= path());

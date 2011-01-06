@@ -544,6 +544,14 @@ edit_select_rep::selection_get_path () {
   return common (start, end);
 }
 
+tree
+edit_select_rep::selection_get_env_value (string var) {
+  if (!selection_active_any ()) return get_env_value (var);
+  path p= common (start_p, end_p);
+  path q= start (et, p);
+  return get_env_value (var, q);
+}
+
 /******************************************************************************
 * Copy and paste
 ******************************************************************************/
@@ -588,8 +596,8 @@ edit_select_rep::selection_set_paths (path start, path end) {
 void
 edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
-  string mode= get_env_string (MODE);
-  string lan = get_env_string (MODE_LANGUAGE (mode));
+  string mode= as_string (selection_get_env_value (MODE));
+  string lan = as_string (selection_get_env_value (MODE_LANGUAGE (mode)));
   tree sel= tuple ("texmacs", t, mode, lan);
   /* TODO: add mode="graphics" somewhere in the context of the <graphics>
      tag. To be done when implementing the different embeddings for
