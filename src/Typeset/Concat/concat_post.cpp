@@ -214,6 +214,11 @@ concater_rep::handle_matching (int start, int end) {
 	SI drift= ((Y1 + Y2) >> 1) - fn->yfrac;
 	if (drift < 0) Y2 += min (-drift, tol) << 1;
 	else Y1 -= min (drift, tol) << 1;
+
+        // further adjustments when the enclosed expression is not very heigh
+        SI h= y2 - y1 - fn->sep;
+        SI d= 5 * fn->yx - h;
+        if (d > 0) { Y1 += d/12; Y2 -= d/12; }
 	
 	a[i]->b= delimiter_box (a[i]->b->ip, a[i]->b->get_leaf_string (),
 				fn, a[i]->b->get_leaf_color (), Y1, Y2);
