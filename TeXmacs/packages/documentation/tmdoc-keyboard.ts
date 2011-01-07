@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.9>
 
 <style|<tuple|source|std>>
 
@@ -25,6 +25,8 @@
   \;
 
   <assign|render-key|<macro|key|<active*|<move|<small|<with|font-family|tt|<with|ornament-color|#e0e0e0|ornament-sunny-color|#f0f0f0|ornament-shadow-color|#c0c0c0|ornament-hpadding|2ln|ornament-vpadding|2ln|ornament-border|2ln|<ornament|<vcorrect|<arg|key>>>>>>||0.075ex>>>>
+
+  <assign|render-keys|<macro|keys|<extern|tmdoc-render-keys|<arg|keys>>>>
 
   <assign|key|<macro|shortcut|<extern|tmdoc-key|<arg|shortcut>>>>
 
