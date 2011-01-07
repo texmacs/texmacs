@@ -87,15 +87,17 @@ edit_select_rep::semantic_root (path p) {
 }
 
 bool
-edit_select_rep::semantic_active (path p) {
+edit_select_rep::semantic_active (path q) {
   if (as_string (eval ("(get-preference \"semantic editing\")")) == "on") {
-    p= semantic_root (p);
+    path p= semantic_root (q);
     //cout << subtree (et, p) << ", " << p << " -> " << end (et, p) << "\n";
-    tree mode= get_env_value (MODE, end (et, p));
-    tree plan= get_env_value (PROG_LANGUAGE, end (et, p));
-    return mode == "math" || (mode == "prog" && plan == "minimal");
+    tree mt= get_env_value (MODE, end (et, p));
+    tree lt= get_env_value (MODE_LANGUAGE (mt->label), end (et, p));
+    string lan= (is_atomic (lt)? lt->label: string ("std-math"));
+    if (mt == "math" || (mt == "prog" && lan == "minimal"))
+      return packrat_available_path (lan, subtree (et, p), q / p);
   }
-  else return false;
+  return false;
 }
 
 bool

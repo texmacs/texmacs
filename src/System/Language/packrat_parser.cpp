@@ -727,6 +727,12 @@ packrat_correct (string lan, string sym, tree in) {
   return pos == N(par->current_input);
 }
 
+bool
+packrat_available_path (string lan, tree in, path in_p) {
+  packrat_parser par= make_packrat_parser (lan, in);
+  return par->current_start->contains (in_p);
+}
+
 object
 packrat_context (string lan, string s, tree in, path in_pos) {
   //cout << "Context " << in << " at " << in_pos

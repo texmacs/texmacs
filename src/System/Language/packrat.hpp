@@ -21,6 +21,7 @@ int    packrat_abbreviation (string lan, string s);
 
 path   packrat_parse (string lan, string s, tree in);
 bool   packrat_correct (string lan, string s, tree in);
+bool   packrat_available_path (string lan, tree in, path in_p);
 object packrat_context (string lan, string s, tree in, path in_pos);
 bool   packrat_select (string lan, string s, tree in, path in_pos,
 		       path& p1, path& p2, int mode);
