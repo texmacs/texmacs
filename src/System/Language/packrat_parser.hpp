@@ -26,6 +26,8 @@ public:
   string                    current_string;
   hashmap<path,int>         current_start;
   hashmap<path,int>         current_end;
+  hashmap<path,int>         current_path_pos;
+  hashmap<int,path>         current_pos_path;
   C                         current_cursor;
   int                       current_hl_lan;
 

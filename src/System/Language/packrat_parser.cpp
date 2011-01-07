@@ -28,6 +28,8 @@ packrat_parser_rep::packrat_parser_rep (packrat_grammar gr):
   current_string (""),
   current_start (-1),
   current_end (-1),
+  current_path_pos (-1),
+  current_pos_path (-1),
   current_cursor (-1),
   current_input (),
   current_cache (PACKRAT_UNDEFINED),
@@ -104,10 +106,11 @@ int
 packrat_parser_rep::encode_path (tree t, path p, path pos) {
   //cout << "Search " << pos << " in " << t << ", " << p << "\n";
   //cout << "Range " << current_start[p] << " -- " << current_end[p] << "\n";
-  if (is_nil (pos)) return -1;
-  else if (!current_start->contains (p)) return -1;
+  if (is_nil (pos) || !current_start->contains (p)) return -1;
   else if (is_atomic (t)) {
-    if (pos->item < 0 || pos->item > N(t->label)) return -1;
+    if (current_path_pos->contains (p * pos))
+      return current_path_pos[p * pos];
+    else if (pos->item < 0 || pos->item > N(t->label)) return -1;
     return current_start[p] + pos->item;
   }
   else {
@@ -142,7 +145,11 @@ path
 packrat_parser_rep::decode_path (tree t, path p, int pos) {
   //cout << "Search " << pos << " in " << t << ", " << p << "\n";
   //cout << "Range " << current_start[p] << " -- " << current_end[p] << "\n";
-  if (is_atomic (t)) return p * (pos - current_start[p]);
+  if (is_atomic (t)) {
+    if (current_pos_path->contains (pos))
+      return current_pos_path[pos];
+    else return p * (pos - current_start[p]);
+  }
   else {
     for (int i=0; i<N(t); i++)
       if (pos >= current_start[p*i] && pos <= current_end[p*i])
