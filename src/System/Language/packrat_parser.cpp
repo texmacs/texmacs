@@ -105,6 +105,7 @@ packrat_parser_rep::encode_path (tree t, path p, path pos) {
   //cout << "Search " << pos << " in " << t << ", " << p << "\n";
   //cout << "Range " << current_start[p] << " -- " << current_end[p] << "\n";
   if (is_nil (pos)) return -1;
+  else if (!current_start->contains (p)) return -1;
   else if (is_atomic (t)) {
     if (pos->item < 0 || pos->item > N(t->label)) return -1;
     return current_start[p] + pos->item;

@@ -433,6 +433,7 @@ public:
   virtual path selection_get_start () = 0;
   virtual path selection_get_end () = 0;
   virtual path selection_get_path () = 0;
+  virtual path selection_get_cursor_path () = 0;
   virtual tree selection_get_env_value (string var) = 0;
   virtual void selection_set (string key, tree t, bool persistant= false) = 0;
   virtual void selection_set (tree t) = 0;

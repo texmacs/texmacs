@@ -523,7 +523,8 @@ edit_interface_rep::apply_changes () {
     // set hot spot in the gui
     send_cursor (this, (cu->ox-sfactor+1)/sfactor, (cu->oy-sfactor+1)/sfactor);
 
-    bool semantic_flag= semantic_active (path_up (tp));
+    path sp= selection_get_cursor_path ();
+    bool semantic_flag= semantic_active (path_up (sp));
     bool full_context= (get_preference ("show full context") == "on");
     bool table_cells= (get_preference ("show table cells") == "on");
     bool show_focus= (get_preference ("show focus") == "on");
@@ -556,10 +557,12 @@ edit_interface_rep::apply_changes () {
     sem_rects= rectangles ();
     sem_correct= true;
     if (semantic_flag && show_focus) {
+      path sp= selection_get_cursor_path ();
       path p1= tp, p2= tp;
-      sem_correct= semantic_select (path_up (tp), p1, p2, 2);
+      if (selection_active_any ()) selection_get (p1, p2);
+      sem_correct= semantic_select (path_up (sp), p1, p2, 2);
       if (!sem_correct) {
-        path sr= semantic_root (path_up (tp));
+        path sr= semantic_root (path_up (sp));
         p1= start (et, sr);
         p2= end (et, sr);
       }

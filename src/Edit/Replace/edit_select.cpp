@@ -549,12 +549,16 @@ edit_select_rep::selection_get_path () {
   return common (start, end);
 }
 
+path
+edit_select_rep::selection_get_cursor_path () {
+  if (!selection_active_any ()) return tp;
+  return start (et, selection_get_path ());
+}
+
 tree
 edit_select_rep::selection_get_env_value (string var) {
   if (!selection_active_any ()) return get_env_value (var);
-  path p= common (start_p, end_p);
-  path q= start (et, p);
-  return get_env_value (var, q);
+  return get_env_value (var, selection_get_cursor_path ());
 }
 
 /******************************************************************************
