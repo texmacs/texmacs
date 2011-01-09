@@ -587,6 +587,9 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (is_tuple (val, "repeat", 2))
 	  drd->set_arity (l, as_int (val [1]), as_int (val [2]),
 			  ARITY_REPEAT, CHILD_BIFORM);
+	else if (is_tuple (val, "options", 2))
+	  drd->set_arity (l, as_int (val [1]), as_int (val [2]),
+			  ARITY_OPTIONS, CHILD_BIFORM);
 	else
 	  drd->set_arity (l, as_int (val), 0,
 			  ARITY_NORMAL, CHILD_DETAILED);
