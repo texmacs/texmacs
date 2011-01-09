@@ -118,8 +118,9 @@
   (:mode bib-plain?)
   (with p (bib-field x "pages")
     (cond
-      ((equal? 1 (length p)) "")
-      ((equal? 2 (length p))
+      ((bib-null? p) "")
+      ((== (length p) 1) "")
+      ((== (length p) 2)
        `(concat ,(bib-translate "page ") ,(list-ref p 1)))
       (else
 	`(concat ,(bib-translate "pages ")
@@ -366,7 +367,7 @@
 	 ,(bib-new-block
 	   (bib-new-sentence
 	    `(,(if (bib-empty? x "type")
-		   ,(bib-translate "Master's thesis")
+		   (bib-translate "Master's thesis")
 		   (bib-format-field-Locase x "type"))
 	      ,(bib-format-field x "school")
 	      ,(bib-format-field x "address")

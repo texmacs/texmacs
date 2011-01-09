@@ -15,9 +15,19 @@
 #include "tree_traverse.hpp"
 #include "Bibtex/bibtex_functions.hpp"
 
+static string bib_current_tag= "";
+
 bool
 bib_ok (string s, int pos) {
   return 0 <= pos && pos < N(s);
+}
+
+void
+bib_error () {
+  if (bib_current_tag == "")
+    cerr << "TeXmacs] BibTeX parse error encountered\n";
+  else
+    cerr << "TeXmacs] BibTeX parse error in " << bib_current_tag << "\n";
 }
 
 void
@@ -25,10 +35,25 @@ bib_char (string s, int& pos, char c) {
   if (!bib_ok (s, pos)) return;
   if (s[pos] == c) pos++;
   else {
-    cerr << "TeXmacs] Error: invalid BibTeX file.\n";
-    if (c) cerr << "TeXmacs] Invalid char: \'" << s[pos]
+    bib_error ();
+    if (c) cerr << "       ] Invalid char: \'" << s[pos]
 		<< "\', expected \'" << c << "\'\n";
     pos= -1;
+  }
+}
+
+bool
+bib_open (string s, int& pos, char& cend) {
+  switch (s[pos]) {
+  case '{': cend= '}'; return false;
+  case '(': cend= ')'; return false;
+  default:
+    bib_error ();
+    cerr << "       ] Expected '{' or '(' instead of '" << s[pos] << "'\n";
+    while (pos < N(s) && s[pos] != '{' && s[pos] != '(') pos++;
+    if (pos < N(s)) return bib_open (s, pos, cend);
+    pos= -1;
+    return true;
   }
 }
 
@@ -182,11 +207,7 @@ bib_string (string s, int& pos, tree& t) {
   tree fields= tree (DOCUMENT);
   string cs= ", \t\n\r";
   char cend;
-  switch (s[pos]) {
-    case '{': cend= '}'; break;
-    case '(': cend= ')'; break;
-    default: pos= -1; return;
-  }
+  if (bib_open (s, pos, cend)) return;
   pos++;
   cs << cend;
   bib_blank (s, pos);
@@ -203,11 +224,7 @@ bib_preamble (string s, int& pos, tree& t) {
   if (!bib_ok (s, pos)) return;
   string cs= ",";
   char cend;
-  switch (s[pos]) {
-    case '{': cend= '}'; break;
-    case '(': cend= ')'; break;
-    default: pos= -1; return;
-  }
+  if (bib_open (s, pos, cend)) return;
   pos++;
   cs << cend;
   bib_blank (s, pos);
@@ -238,16 +255,13 @@ bib_entry (string s, int& pos, tree type, tree& t) {
   tree fields= tree (DOCUMENT);
   string cs= ",\t\n\r";
   char cend;
-  switch (s[pos]) {
-    case '{': cend= '}'; break;
-    case '(': cend= ')'; break;
-    default: pos= -1; return;
-  }
+  if (bib_open (s, pos, cend)) return;
   pos++;
   cs << cend;
   bib_blank (s, pos);
   string tag;
   bib_until (s, pos, cs, tag);
+  bib_current_tag= copy (tag);
   bib_blank (s, pos);
   string ce;
   ce << cend;
@@ -355,6 +369,7 @@ tree
 parse_bib (string s) {
   int pos= 0;
   tree r (DOCUMENT);
+  bib_current_tag= "";
   bib_list (s, pos, r);
   if (N(s) == 0 || N(r) == 0) return tree ();
   if (pos < 0) {

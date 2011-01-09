@@ -41,8 +41,16 @@ edit_process_rep::generate_bibliography (
   if (buf->prj != NULL) bib_t= buf->prj->aux[bib];
   tree t;
   if (N(style)>=3 && style (0, 3) == "tm-") {
+    if (!ends (fname, ".bib")) fname= fname * ".bib";
+    url bibf (fname);
+    if (!exists (bibf))
+      bibf= relative (buf->name, bibf);
+    if (!exists (bibf)) {
+      set_message ("Could not find bibliography file", "compile bibliography");
+      return;
+    }
     string sbib;
-    load_string (url (fname), sbib, false);
+    load_string (bibf, sbib, false);
     tree te= bib_entries (parse_bib (sbib), bib_t);
     object ot= tree_to_stree (te);
     eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
