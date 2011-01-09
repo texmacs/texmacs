@@ -225,6 +225,7 @@ var_cork_to_utf8 (string s) {
 
 string
 tree_to_verbatim (tree t, bool wrap, string enc) {
+  if (enc == "default") enc= "utf-8";
   string buf= as_verbatim (t, wrap);
   if (enc == "utf-8") buf= var_cork_to_utf8 (buf);
   else if (enc == "iso-8859-1") buf= tm_decode (buf);
@@ -302,6 +303,7 @@ mac_to_unix (string s) {
 
 tree
 verbatim_to_tree (string s, bool wrap, string enc) {
+  if (enc == "default") enc= "utf-8";
   s= mac_to_unix (dos_to_unix (s));
   if (wrap) {
     string r;
@@ -325,6 +327,7 @@ verbatim_to_tree (string s, bool wrap, string enc) {
 
 tree
 verbatim_document_to_tree (string s, bool wrap, string enc) {
+  if (enc == "default") enc= "utf-8";
   tree t    = verbatim_to_tree (s, wrap, enc);
   tree init = tree (COLLECTION,
 		    tree (ASSOCIATE, LANGUAGE, "verbatim"),
