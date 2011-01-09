@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (bibtex-remove-keepcase x)
-  ;; (display* "REMOVE KEEPCASE: " x "\n")
+  ;;(display* "REMOVE KEEPCASE: " x "\n")
   (cond
     ((list? x)
      (if (not (null? x))

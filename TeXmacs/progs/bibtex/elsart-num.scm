@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (bibtex elsart-num)
-  (:use (bibtex bib-utils)))
+  (:use (bibtex bib-utils) (bibtex plain)))
 
 (bib-define-style "elsart-num" "plain")
 
@@ -22,7 +22,7 @@
 		""
 		`(concat ,(bib-abbreviate (list-ref x 1) "." `(nbsp)))))
 	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (list-ref x 3)))
+	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,f ,vv ,ll ,jj)))
 
@@ -63,11 +63,11 @@
   (:mode bib-elsart-num?)
   (let* ((p (bib-field x "pages")))
     (cond
-     ((equal? 1 (length p)) "")
-     ((equal? 2 (length p)) `(concat ,(bib-translate "pp. ")
-				     ,(list-ref p 1)))
-     (else `(concat ,(bib-translate "pp. ")
-		    ,(list-ref p 1) "--" ,(list-ref p 2))))))
+      ((bib-null? p) "")
+      ((== (length p) 1) "")
+      ((== (length p) 2) `(concat ,(bib-translate "pp. ") ,(list-ref p 1)))
+      (else `(concat ,(bib-translate "pp. ")
+                     ,(list-ref p 1) "--" ,(list-ref p 2))))))
 
 (tm-define (bib-format-vol-num-pages x)
   (:mode bib-elsart-num?)
@@ -212,7 +212,7 @@
 	      `(,(bib-format-author x)
 		,(bib-format-field-Locase x "title")
 		,(if (bib-empty? x "type")
-		     ,(bib-translate "Master's thesis")
+		     (bib-translate "Master's thesis")
 		     (bib-format-field x "type"))
 		,(bib-format-field x "school")
 		,(bib-format-field x "address")

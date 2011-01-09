@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (bibtex acm)
-  (:use (bibtex bib-utils)))
+  (:use (bibtex bib-utils) (bibtex plain)))
 
 (bib-define-style "acm" "plain")
 
@@ -22,7 +22,7 @@
 		""
 		`(concat ", " ,(bib-abbreviate (list-ref x 1) "." `(nbsp)))))
 	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (list-ref x 3)))
+	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(with "font-shape" "small-caps" (concat ,vv ,ll ,jj ,f))))
 
@@ -78,10 +78,11 @@
   (:mode bib-acm?)
   (let* ((p (bib-field x "pages")))
     (cond
-     ((equal? 1 (length p)) "")
-     ((equal? 2 (length p)) `(concat ,(bib-translate "p. ") ,(list-ref p 1)))
-     (else `(concat ,(bib-translate "p. ")
-		    ,(list-ref p 1) "--" ,(list-ref p 2))))))
+      ((bib-null? p) "")
+      ((== (length p) 1) "")
+      ((== (length p) 2) `(concat ,(bib-translate "p. ") ,(list-ref p 1)))
+      (else `(concat ,(bib-translate "p. ")
+                     ,(list-ref p 1) "--" ,(list-ref p 2))))))
 
 (tm-define (bib-format-chapter-pages x)
   (:mode bib-acm?)

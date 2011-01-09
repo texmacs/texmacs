@@ -20,6 +20,12 @@
 (tm-define bib-style "plain")
 (tm-define bib-default-style "plain")
 
+(tm-define (bib-preprocessing t)
+  (noop))
+
+(tm-define (bib-sort-key x)
+  "")
+
 (tm-define (bib-mode? s)
   (or (equal? bib-style s) (equal? bib-default-style s)))
 
@@ -41,6 +47,7 @@
 
 (define (bib-sorted-entries t)
   (bib-without-sort-key (stable-sort (bib-with-sort-key t) bib-compare)))
+
 
 (tm-define (bibstyle style t)
   (set! bib-style style)

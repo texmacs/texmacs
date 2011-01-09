@@ -601,6 +601,7 @@ bib_purify_tree (tree t, string& res) {
   else if (L(t) == CONCAT || L(t) == DOCUMENT) {
     for (int i= 0; i<N(t); i++) bib_purify_tree (t[i], res);
   }
+  cout << UNINDENT;
 }
 
 string

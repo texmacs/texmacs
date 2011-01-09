@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (bibtex ieeetr)
-  (:use (bibtex bib-utils)))
+  (:use (bibtex bib-utils) (bibtex plain)))
 
 (bib-define-style "ieeetr" "plain")
 
@@ -21,7 +21,7 @@
   (let* ((f (if (bib-null? (list-ref x 1)) ""
 		`(concat ,(bib-abbreviate (list-ref x 1) "." `(nbsp)) (nbsp))))
 	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (list-ref x 3)))
+	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,f ,vv ,ll ,jj)))
 
@@ -86,8 +86,9 @@
   (:mode bib-ieeetr?)
   (with p (bib-field x "pages")
     (cond
-      ((equal? 1 (length p)) "")
-      ((equal? 2 (length p)) `(concat "p. " ,(list-ref p 1)))
+      ((bib-null? p) "")
+      ((== (length p) 1) "")
+      ((== (length p) 2) `(concat "p. " ,(list-ref p 1)))
       (else `(concat "p. " ,(list-ref p 1) "--" ,(list-ref p 2))))))
 
 (tm-define (bib-format-article n x)

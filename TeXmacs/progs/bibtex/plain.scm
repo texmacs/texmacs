@@ -35,7 +35,7 @@
   (:mode bib-plain?)
   (let* ((ff (if (bib-null? (list-ref x 1)) "" `(concat ,(list-ref x 1) (nbsp))))
 	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (list-ref x 3)))
+	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,ff ,vv ,ll ,jj)))
 
