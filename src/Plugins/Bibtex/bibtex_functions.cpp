@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "bibtex_functions.hpp"
+#include "vars.hpp"
 
 /******************************************************************************
 * Helper functions
@@ -231,7 +232,10 @@ bib_first_char (tree t) {
     if (beg < N(s)) return &(s[beg]);
     else return 0;
   }
-  else if (is_compound (t, "verbatim")) return 0;
+  else if (is_compound (t, "verbatim"))
+    return 0;
+  else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt")
+    return 0;
   else {
     int pos= 0;
     if (L(t) == WITH) pos= N(t)-1;

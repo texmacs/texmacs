@@ -241,6 +241,10 @@ SEMANTIC EDITING TOOLS BASED ON PACKRAT PARSING
 Packrat engine
   * Grammar rules with productions.
   * content MathML output.
+  * When making semantic selections, don't select ignored markup at
+    the border of selections (or only if explicitly selected).
+    For instance, inside maxima sessions, the "(%ox) " output prefix
+    is current included when selecting a complete output semantically.
 
 Mathematics
   * Automatic correction of formulas -> editing mode based on "slots".

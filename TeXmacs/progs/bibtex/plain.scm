@@ -55,9 +55,10 @@
 	    (bib-format-name (list-ref a 1))
 	    (let* ((b (bib-format-name (list-ref a 1)))
 		   (m (bib-format-names-rec 2 (- n 1) a))
-		   (e (if (equal? (list-ref (list-ref a (- n 1)) 4) "others")
+		   (e (if (or (== (list-ref (list-ref a (- n 1)) 3) "others")
+                              (== (list-ref (list-ref a (- n 1)) 4) "others"))
 			  `(concat " et" (nbsp) "al")
-			  `(concat ,(bib-translate " et ")
+			  `(concat ,(bib-translate " and ")
 				   ,(bib-format-name (list-ref a (- n 1)))))))
 	      `(concat ,b ,m ,e))))))
 
