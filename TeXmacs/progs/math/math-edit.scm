@@ -269,30 +269,8 @@
           (tree-set t 1 (list-ref wide-list-3 j)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying the size and shape of brackets
+;; Modifying the shape of brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (make-small br)
-  (cond ((tree? br) (make-small (tree->stree br)))
-	((string? br) br)
-	((not (or (tm-func? br 'left) (tm-func? br 'right))) "<nobracket>")
-	(else
-	  (with s (tm-ref br 0)
-	    (cond ((nstring? s) "<nobracket>")
-		  ((== s ".") "<nobracket>")
-		  ((== (string-length s) 1) s)
-		  (else (string-append "<" s ">")))))))
-
-(define (make-large s pos)
-  (with type (if (== pos 0) 'left 'right)
-    (cond ((tree? s) (make-large (tree->stree s) pos))
-	  ((or (tm-func? s 'left) (tm-func? s 'right)) s)
-	  ((nstring? s) `(,type "."))
-	  ((== s "<nobracket>") `(,type "."))
-	  ((== (string-length s) 1) `(,type ,s))
-	  ((and (string-starts? s "<") (string-ends? s ">"))
-	   `(,type ,(substring s 1 (- (string-length s) 1))))
-	  (else `(,type ".")))))
 
 (define brackets
   '(("(" ")")
@@ -421,8 +399,6 @@
     (make-bracket-open lb rb large?)
     (brackets-refresh))
   (when (!= (get-preference "automatic brackets") "off")
-    (if large? (set! lb (make-small lb)))
-    (if large? (set! rb (make-small rb)))
     (let* ((t (find-adjacent-around #t))
 	   (u (find-adjacent-around #f)))
       (cond ((and t (deleted? t 0))
@@ -457,8 +433,6 @@
     (make-bracket-close rb lb large?)
     (brackets-refresh))
   (when (!= (get-preference "automatic brackets") "off")
-    (if large? (set! rb (make-small rb)))
-    (if large? (set! lb (make-small lb)))
     (let* ((t (find-adjacent-around #t))
 	   (u (find-adjacent-around #f)))
       (cond ((and t (deleted? t 0))
