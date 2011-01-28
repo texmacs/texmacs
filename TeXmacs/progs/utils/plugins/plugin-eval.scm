@@ -20,6 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (plugin-output-std-simplify name t)
+  ;;(display* "Simplify " t "\n")
   (cond ((or (func? t 'document 0) (func? 'concat 0)) "")
 	((or (func? t 'document 1) (func? t 'concat 1))
 	 (plugin-output-simplify name (cadr t)))
@@ -36,10 +37,11 @@
 	(else t)))
 
 (tm-define (plugin-output-simplify name t)
+  ;;(display* "Simplify " t "\n")
   (plugin-output-std-simplify name t))
 
 (tm-define (plugin-preprocess name ses t opts)
-  ;;(display* "Preprocess " t "\n")
+  ;;(display* "Preprocess " t ", " opts "\n")
   (if (null? opts) t
       (begin
 	(if (and (== (car opts) :math-input)
@@ -48,11 +50,11 @@
 	(plugin-preprocess name ses t (cdr opts)))))
 
 (tm-define (plugin-postprocess name ses r opts)
-  ;;(display* "Postprocess " r "\n")
+  ;;(display* "Postprocess " r ", " opts "\n")
   (if (null? opts) r
       (begin
 	(if (== (car opts) :simplify-output)
-	    (set! r (plugin-output-simplify name r)))
+            (set! r (plugin-output-simplify name r)))
 	(plugin-postprocess name ses r (cdr opts)))))
 
 (tm-define (plugin-eval name ses t . opts)
@@ -224,7 +226,7 @@
 (define (silent-do lan ses)
   (with l (pending-ref lan ses)
     (with (in out err return opts) (silent-decode (car l))
-      ;;(display* "Silent do " lan ", " ses ", " in "\n")
+     ;;(display* "Silent do " lan ", " ses ", " in "\n")
       (if (tree-empty? in)
 	  (plugin-next lan ses)
 	  (plugin-write lan ses in)))))
@@ -233,6 +235,7 @@
   ;;(display* "Silent next " lan ", " ses "\n")
   (with l (pending-ref lan ses)
     (with (in out err return opts) (silent-decode (car l))
+      ;;(display* "Silent return " (tm->stree out) ", " (tm->stree err) "\n")
       (return (cons (tm->stree out) (tm->stree err))))))
 
 (define (var-tree-children t)

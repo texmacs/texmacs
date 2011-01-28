@@ -23,8 +23,8 @@
 (tm-define (plugin-output-simplify name t)
   (:require (== name "pari"))
   (cond ((match? t '(with "color" "magenta"
-		      (concat :%1 (with "mode" "math" "color" "blue" :%1))))
-	 `(math ,(plugin-output-simplify name (tm-ref t 2 1 4))))
+                      (concat :%1 (math (with "color" "blue" :%1)))))
+	 `(math ,(plugin-output-simplify name (tm-ref t 2 1 0 2))))
 	(else (plugin-output-std-simplify name t))))
 
 (define pari-apply script-apply)

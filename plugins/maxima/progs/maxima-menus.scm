@@ -22,13 +22,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (maxima-prompt? t)
-  (match? t '(with "mode" "text" "font-family" "tt" "color" "red" :*)))
+  (or (match? t '(text (with "font-family" "tt" "color" "red" :*)))
+      (match? t '(with "font-family" "tt" "color" "red" :*))
+      (match? t '(with "mode" "text" "font-family" "tt" "color" "red" :*))))
 
 (define (maxima-output-simplify t)
   ;;(display* "Simplify " t "\n")
   (cond ((and (func? t 'concat) (> (length t) 2) (maxima-prompt? (cadr t)))
 	 (plugin-output-std-simplify "maxima" (cons 'concat (cddr t))))
+	((match? t '(with "math-display" "true" :%1))
+	 (maxima-output-simplify (cAr t)))
 	((match? t '(with "mode" "math" "math-display" "true" :%1))
+	 `(math ,(maxima-output-simplify (cAr t))))
+	((func? t 'text 1)
+	 `(text ,(maxima-output-simplify (cAr t))))
+	((func? t 'math 1)
 	 `(math ,(maxima-output-simplify (cAr t))))
 	((func? t 'with 1)
 	 (maxima-output-simplify (cAr t)))
@@ -43,6 +51,8 @@
 	((func? t 'concat)
 	 (list-or (map maxima-contains-prompt? (cdr t))))
 	((and (func? t 'with) (nnull? (cdr t)))
+	 (maxima-contains-prompt? (cAr t)))
+	((or (func? t 'text 1) (func? t 'math 1))
 	 (maxima-contains-prompt? (cAr t)))
 	(else #f)))
 

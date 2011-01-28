@@ -21,8 +21,8 @@
 
 (tm-define (plugin-output-simplify name t)
   (:require (== name "mupad"))
-  (cond ((match? t '(concat (with "mode" "math" "math-display" "true" :%1) :*))
-	 `(math ,(plugin-output-simplify name (tm-ref t 0 4))))
+  (cond ((match? t '(concat (math (with "math-display" "true" :%1)) :*))
+	 `(math ,(plugin-output-simplify name (tm-ref t 0 0 2))))
 	(else (plugin-output-std-simplify name t))))
 
 (define mupad-apply script-apply)
