@@ -206,7 +206,7 @@ dummy_script_box_rep::finalize () {
 
 path
 dummy_script_box_rep::find_box_path (path p, bool& found) {
-  cout << "Find " << p << " in " << operator tree () << "\n";
+  //cout << "Find " << p << " in " << operator tree () << "\n";
   int nr= subnr ();
   if (((nr >= 1) && test_script_border (p, bs[0])) ||
       ((nr == 2) && test_script_border (p, bs[1])))
