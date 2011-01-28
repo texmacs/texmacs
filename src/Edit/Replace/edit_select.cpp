@@ -105,6 +105,8 @@ edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   if (!semantic_active (p)) return false;
   if (mode < 2 && get_preference ("semantic selections") != "on") return false;
   p= semantic_root (p);
+  while (p != rp && !(p <= q1 && p <= q2))
+    p= semantic_root (path_up (p));
   tree mt= get_env_value (MODE, end (et, p));
   tree lt= get_env_value (MODE_LANGUAGE (mt->label), end (et, p));
   string lan= (is_atomic (lt)? lt->label: string ("std-math"));
@@ -294,6 +296,7 @@ edit_select_rep::select_enlarge () {
   path pp= sp, p1= start_p, p2= end_p;
   if (start_p == pp * 0 && end_p == pp * right_index (subtree (et, pp)))
     if (!is_nil (pp)) pp= path_up (pp);
+  if (is_func (subtree (et, pp), TFORMAT)) pp= path_up (pp);
   if (semantic_select (pp, p1, p2, 1))
     select (p1, p2);
   else {
