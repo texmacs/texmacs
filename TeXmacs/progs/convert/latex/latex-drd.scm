@@ -35,6 +35,8 @@
   maketitle tableofcontents TeX LaTeX
   begingroup endgroup
 
+  ;; AMS commands
+  qed
   ;; temporarily
   hline
   ;; rewritten
@@ -54,7 +56,8 @@
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
-  ^ over atop ~ = u v H t c d b k r thispagestyle ensuremath
+  ^ over atop ~ = u v H t c d b k r textsuperscript textsubscript
+  thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
   title author thanks
@@ -119,7 +122,8 @@
 
 (drd-group latex-environment-0%
   begin-document begin-abstract begin-verbatim
-  begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix begin-cases
+  begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix begin-smallmatrix
+  begin-cases
   begin-center begin-picture)
 
 (drd-group latex-environment-0*%
@@ -180,7 +184,7 @@
   inf ker lg lim liminf limsup ln log max min Pr sec sin sinh sup tan tanh)
 
 (drd-group latex-list%
-  begin-itemize begin-enumerate begin-description)
+  begin-itemize begin-enumerate begin-description begin-inparaenum)
 
 (drd-group latex-math-environment-0%
   begin-formula begin-equation*
@@ -194,7 +198,7 @@
 (drd-rules
   ((latex-arity% 'x 0) (latex-control% 'x))
   ((latex-arity% 'x 0) (latex-operator% 'x))
-  ((latex-environment-0% 'x) (latex-list% 'x))
+  ((latex-environment-0*% 'x) (latex-list% 'x))
   ((latex-math-environment% 'x) (latex-math-environment-0% 'x))
   ((latex-environment-0% 'x) (latex-math-environment-0% 'x)))
 
@@ -327,6 +331,8 @@
   (llleq "amsmath")
   (ggeq "amsmath")
   (gggeq "amsmath")
+  (qed "amsmath")
+
   (btimes "graphicx")
   (Backepsilon "graphicx")
   (Mho "graphicx")
@@ -362,7 +368,9 @@
   (citetext "natbib")
   (citeauthor "natbib")
   (citeauthor* "natbib")
-  (citeyear "natbib"))
+  (citeyear "natbib")
+
+  (inparaenum "paralist"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated routines for consulting the database

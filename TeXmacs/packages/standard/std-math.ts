@@ -134,6 +134,8 @@
     </src-comment>
   </active*>
 
+  <assign|matrix*|<macro|x|<shrink-inline|<style-with|src-compact|none|<tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>>>>>>
+
   <assign|matrix|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|(><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>><right|)>>>>>
 
   <assign|det|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|\|><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>><right|\|>>>>>

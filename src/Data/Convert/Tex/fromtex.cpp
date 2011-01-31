@@ -50,6 +50,7 @@ filter_preamble (tree t) {
   int i, n=N(t);
   bool in_preamble= true;
   tree r (CONCAT);
+  tree doc (CONCAT);
   tree preamble (CONCAT);
   tree title_info (CONCAT);
 
@@ -61,14 +62,13 @@ filter_preamble (tree t) {
 	if (N(preamble) > 0)
 	  r << tuple ("\\begin-hide-preamble") << A(preamble)
 	    << tuple ("\\end-hide-preamble");
-	r << A(title_info);
 	in_preamble= false;
       }
       else if (is_tuple (u, "\\documentclass") ||
 	       is_tuple (u, "\\documentclass*") ||
 	       is_tuple (u, "\\documentstyle") ||
 	       is_tuple (u, "\\documentstyle*"))
-	r << u;
+	doc << u;
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
@@ -77,23 +77,25 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\newenvironment") ||
 	       is_tuple (u, "\\newenvironment*"))
 	preamble << u << "\n" << "\n";
-      else if (is_tuple (u, "\\title") ||
-	       is_tuple (u, "\\author") ||
-	       is_tuple (u, "\\address"))
-	title_info << u;
-      else if (is_tuple (u, "\\email")) {
-	tree v= copy (u);
-	v[0]= "\\title-email";
-	title_info << v;
-      }
-      else if (is_tuple (u, "\\thanks")) {
-	tree v= copy (u);
-	v[0]= "\\title-thanks";
-	title_info << v;
-      }
     }
-    else r << u;
+    else if (is_tuple (u, "\\title") ||
+	     is_tuple (u, "\\author") ||
+	     is_tuple (u, "\\address"))
+      title_info << u;
+    else if (is_tuple (u, "\\email")) {
+      tree v= copy (u);
+      v[0]= "\\title-email";
+      title_info << v;
+    }
+    else if (is_tuple (u, "\\thanks")) {
+      tree v= copy (u);
+      v[0]= "\\title-thanks";
+      title_info << v;
+    }
+    else doc << u;
   }
+  r << A(title_info);
+  r << A(doc);
   if (in_preamble) return t;
   return r;
 }
@@ -181,6 +183,7 @@ latex_symbol_to_tree (string s) {
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
       if (s == "\\bgroup") return "";
       if (s == "\\egroup") return "";
+      if (s == "\\qed") return compound ("math", "<Box>");
     }
 
     if (latex_type (s) == "texmacs") {
@@ -616,6 +619,8 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\textsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
   if (is_tuple (t, "\\tmrsub", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\tmrsup", 1)) return tree (RSUP, l2e (t[1]));
+  if (is_tuple (t, "\\textsubscript", 1)) return tree (RSUB, l2e (t[1]));
+  if (is_tuple (t, "\\textsuperscript", 1)) return tree (RSUP, l2e (t[1]));
   if (is_tuple (t, "\\tmtextrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\tmtexttt", 1)) return m2e (t, FONT_FAMILY, "tt");
   if (is_tuple (t, "\\tmtextsf", 1)) return m2e (t, FONT_FAMILY, "ss");
@@ -1010,6 +1015,11 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
       if (i<N(t)) continue;
       break;
     }
+    else if (v == tree (BEGIN, "smallmatrix")) {
+      parse_pmatrix (E, t, i, "", "", "matrix*");
+      if (i<N(t)) continue;
+      break;
+    }
     else if (v == tree (END, "array")) break;
     else if (v == tree (END, "tabular")) break;
     else if (v == tree (END, "cases")) break;
@@ -1018,6 +1028,7 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
     else if (v == tree (END, "pmatrix")) break;
     else if (v == tree (END, "bmatrix")) break;
     else if (v == tree (END, "vmatrix")) break;
+    else if (v == tree (END, "smallmatrix")) break;
     else if (v == tree (APPLY, "hline")) {
       int    row  = N(V)+ (N(L)==0? 0: 1);
       string row_s= row==0? as_string (row+1): as_string (row);
@@ -1077,6 +1088,8 @@ finalize_pmatrix (tree t) {
 	  parse_pmatrix (r, u, i, "[", "]", "tabular*");
 	else if (u[i][0] == "vmatrix")
 	  parse_pmatrix (r, u, i, "", "", "det");
+	else if (u[i][0] == "smallmatrix")
+	  parse_pmatrix (r, u, i, "", "", "matrix*");
 	else r << u[i];
       }
       else r << u[i];
@@ -1084,6 +1097,8 @@ finalize_pmatrix (tree t) {
   }
   else if (is_func (u, APPLY, 2) && (u[0] == "matrix"))
     return tree (APPLY, "tabular*", u[1]);
+  else if (is_func (u, APPLY, 2) && (u[0] == "smallmatrix"))
+    return tree (APPLY, "matrix*", u[1]);
   else if (is_func (u, APPLY, 2) && (u[0] == "substack")) {
     tree cc (CONCAT);
     cc << tree (BEGIN, "stack");
@@ -1119,6 +1134,7 @@ space_eater (tree t) {
 static bool
 admissible_env (tree t) {
   string s= t[0]->label;
+  if (ends (s, "*")) s= s (0, N(s)-1);
   if (latex_type ("\\begin-" * s) == "list") return true;
   if (latex_type ("\\begin-" * s) == "environment") return true;
   if (latex_type ("\\begin-" * s) == "math-environment") return true;
@@ -1135,6 +1151,18 @@ translate_list (string s) {
   if (s == "enumerateromancap") return "enumerate-romancap";
   if (s == "enumeratealpha") return "enumerate-alpha";
   if (s == "enumeratealphacap") return "enumerate-alphacap";
+  if (s == "inparaenum") return "enumerate";
+  if (s == "itemize*") return "itemize";
+  if (s == "itemizeminus*") return "itemize-minus";
+  if (s == "itemizedot*") return "itemize-dot";
+  if (s == "itemizearrow*") return "itemize-arrow";
+  if (s == "enumerate*") return "enumerate";
+  if (s == "enumeratenumeric*") return "enumerate-numeric";
+  if (s == "enumerateroman*") return "enumerate-roman";
+  if (s == "enumerateromancap*") return "enumerate-romancap";
+  if (s == "enumeratealpha*") return "enumerate-alpha";
+  if (s == "enumeratealphacap*") return "enumerate-alphacap";
+  if (s == "inparaenum*") return "enumerate";
   return s;
 }
 
@@ -1199,7 +1227,8 @@ finalize_layout (tree t) {
       }
       */
 
-      if (is_func (v, BEGIN, 1) && admissible_env (v)) {
+      if ((is_func (v, BEGIN, 1) || is_func (v, BEGIN, 2)) &&
+	  admissible_env (v)) {
 	if (v == tree (BEGIN, "verbatim")) {
 	  r << v; i++;
 	  if ((i<n) && (t[i] == tree (FORMAT, "new line"))) {
