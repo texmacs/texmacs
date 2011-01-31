@@ -81,6 +81,16 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\author") ||
 	       is_tuple (u, "\\address"))
 	title_info << u;
+      else if (is_tuple (u, "\\email")) {
+	tree v= copy (u);
+	v[0]= "\\title-email";
+	title_info << v;
+      }
+      else if (is_tuple (u, "\\thanks")) {
+	tree v= copy (u);
+	v[0]= "\\title-thanks";
+	title_info << v;
+      }
     }
     else r << u;
   }

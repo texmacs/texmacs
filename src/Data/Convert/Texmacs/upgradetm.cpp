@@ -1376,6 +1376,8 @@ upgrade_title (tree t, tree& params) {
     if (t[0] == "title") { params[0]= t[1]; return ""; }
     if (t[0] == "author") { params[1]= t[1]; return ""; }
     if (t[0] == "address") { params[2]= t[1]; return ""; }
+    if (t[0] == "title-email") { params[3]= t[1]; return ""; }
+    if (t[0] == "title-thanks") { params[4]= t[1]; return ""; }
     return t;
   }
   else if ((t == tree (APPLY, "maketitle")) ||
@@ -1385,6 +1387,10 @@ upgrade_title (tree t, tree& params) {
       doc << tree (EXPAND, "title", copy (params[0]));
       doc << tree (EXPAND, "author", copy (params[1]));
       doc << tree (EXPAND, "address", copy (params[2]));
+      if (params[3] != "")
+	doc << tree (EXPAND, "title-email", copy (params[3]));
+      if (params[4] != "")
+	doc << tree (EXPAND, "title-thanks", copy (params[4]));
       doc << tree (EXPAND, "title-date", tree (_DATE, ""));
       return tree (EXPAND, "make-title", doc);
     }
@@ -1399,7 +1405,7 @@ upgrade_title (tree t, tree& params) {
 
 static tree
 upgrade_title (tree t) {
-  tree params (TUPLE, "", "", "");
+  tree params (TUPLE, "", "", "", "", "");
   return simplify_correct (upgrade_title (t, params));
 }
 
@@ -2360,6 +2366,7 @@ upgrade_title2 (tree t) {
     tree address = search_title_tag (t, "address");
     tree email   = search_title_tag (t, "title-email");
     tree date    = search_title_tag (t, "title-date");
+    tree thanks  = search_title_tag (t, "title-thanks", true);
     tree rtitle  = search_title_tag (t, "header-title");
     tree rauthor = search_title_tag (t, "header-author");
     tree notice  = search_title_tag (t, "made-by-TeXmacs", true);
@@ -2372,6 +2379,7 @@ upgrade_title2 (tree t) {
     title_add (data, "doc-date", date);
     title_add (data, "doc-running-title", rtitle);
     title_add (data, "doc-running-author", rauthor);
+    title_add (data, "doc-note", thanks, true);
     if (N (doc_keywords) != 0) data << doc_keywords;
     if (N (doc_ams_class) != 0) data << doc_ams_class;
     if (N (notice) != 0)
