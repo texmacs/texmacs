@@ -1602,7 +1602,7 @@
   ((:or unquote* copy
 	if if* case while for-each
 	extern include use-package) tmtex-noop)
-  (syntax (,tmtex-syntax 1))
+  (syntax tmtex-syntax)
 
   ((:or or xor and not plus minus times over div mod
 	merge length range number date translate change-case find-file
