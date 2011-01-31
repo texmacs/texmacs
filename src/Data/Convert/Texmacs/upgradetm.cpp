@@ -1231,7 +1231,7 @@ upgrade_table (tree t) {
 ******************************************************************************/
 
 static tree
-upgrade_split (tree t) {
+upgrade_split (tree t, bool eq= false) {
   int i, n= N(t);
   if (is_atomic (t)) return t;
   else if (is_func (t, SURROUND, 3) && is_func (t[0], SPLIT)) {
@@ -1272,9 +1272,8 @@ upgrade_split (tree t) {
 	r << u;
       }
     nr_cols= max (sep, nr_cols);
-    if ((split == "") && (nr_cols == 1)) return r;
-
-    if ((nr_cols > 1) || ((split != "") && (nr_rows > 1))) {
+    if (split == "" && nr_cols == 1 && !eq) return r;
+    else {
       int col=0, row=0;
       tree T (TABLE, nr_rows);
       for (row=0; row<nr_rows; row++) {
@@ -1341,6 +1340,20 @@ upgrade_split (tree t) {
   }
   else {
     tree r (t, n);
+    if (n == 1 || is_func (t, EXPAND, 2)) {
+      string s= as_string (L(t));
+      if (is_func (t, EXPAND, 2) && is_atomic (t[0])) s= t[0]->label;
+      if (ends (s, "*")) s= s (0, N(s)-1);
+      if (s == "eqnarray" || s == "align" || s == "multline" ||
+          s == "gather" || s == "eqsplit") {
+        tree arg= t[n-1];
+        if (is_func (arg, DOCUMENT, 1)) arg= arg[0];
+        if (!is_concat (arg)) arg= tree (CONCAT, arg);
+        r= copy (t);
+        r[n-1]= upgrade_split (arg, true);
+        return r;
+      }
+    }
     for (i=0; i<n; i++)
       r[i]= upgrade_split (t[i]);
     return r;
@@ -3179,7 +3192,7 @@ upgrade_tex (tree t) {
   t= upgrade_new_environments (t);
   t= upgrade_items (t);
   t= upgrade_table (t);
-  t= upgrade_split (t);
+  t= upgrade_split (t, false);
   t= upgrade_title (t);
   t= simplify_correct (upgrade_mod_symbols (t));
   t= upgrade_menus_in_help (t);
@@ -3232,7 +3245,7 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "0.3.4.7"))
     t= upgrade_table (t);
   if (version_inf_eq (version, "0.3.4.8"))
-    t= upgrade_split (t);
+    t= upgrade_split (t, false);
   if (version_inf_eq (version, "0.3.5.6"))
     t= upgrade_project (t);
   if (version_inf_eq (version, "0.3.5.10"))
