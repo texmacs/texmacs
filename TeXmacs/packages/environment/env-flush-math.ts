@@ -84,6 +84,12 @@
     <old-gather*|<tformat|<cwith|1|-1|1|-1|cell-halign|l>|<arg|body>>>
   </macro>>
 
+  <assign|old-multline*|<value|multline*>>
+
+  <assign|multline*|<\macro|body>
+    <old-multline*|<tformat|<cwith|1|-1|1|-1|cell-halign|l>|<arg|body>>>
+  </macro>>
+
   \;
 </body>
 

@@ -187,6 +187,7 @@
   begin-math begin-displaymath begin-equation
   begin-eqnarray begin-eqnarray*
   begin-align begin-align*
+  begin-multline begin-multline*
   begin-gather begin-gather*
   begin-eqsplit begin-eqsplit*)
 

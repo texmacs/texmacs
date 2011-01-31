@@ -96,6 +96,12 @@
     </equations-base>
   </macro>>
 
+  <assign|multline*|<\macro|body>
+    <\equations-base>
+      <tformat|<twith|table-hyphen|y>|<twith|table-width|1par>|<twith|table-min-cols|1>|<twith|table-max-cols|1>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<cwith|1|-1|1|-1|cell-hpart|1>|<cwith|1|-1|1|-1|cell-hyphen|b>|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-block|no>|<extern|math-check-table|<quote-arg|body>>>
+    </equations-base>
+  </macro>>
+
   <assign|eqsplit*|<\macro|body>
     <\equations-base>
       <tformat|<twith|table-hyphen|y>|<twith|table-width|1par>|<twith|table-min-cols|1>|<twith|table-max-cols|1>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<cwith|1|-1|1|-1|cell-hpart|1>|<cwith|1|-1|1|-1|cell-hyphen|b>|<cwith|-1|-1|1|1|cell-halign|r>|<cwith|2|-2|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-halign|l>|<cwith|1|-1|1|-1|cell-block|no>|<extern|math-check-table|<quote-arg|body>>>
@@ -109,6 +115,8 @@
   <assign|align|<value|align*>>
 
   <assign|gather|<value|gather*>>
+
+  <assign|multline|<value|multline*>>
 
   <assign|eqsplit|<value|eqsplit*>>
 
