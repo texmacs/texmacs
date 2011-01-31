@@ -1153,15 +1153,7 @@ translate_list (string s) {
   if (s == "enumeratealphacap") return "enumerate-alphacap";
   if (s == "inparaenum") return "enumerate";
   if (s == "itemize*") return "itemize";
-  if (s == "itemizeminus*") return "itemize-minus";
-  if (s == "itemizedot*") return "itemize-dot";
-  if (s == "itemizearrow*") return "itemize-arrow";
   if (s == "enumerate*") return "enumerate";
-  if (s == "enumeratenumeric*") return "enumerate-numeric";
-  if (s == "enumerateroman*") return "enumerate-roman";
-  if (s == "enumerateromancap*") return "enumerate-romancap";
-  if (s == "enumeratealpha*") return "enumerate-alpha";
-  if (s == "enumeratealphacap*") return "enumerate-alphacap";
   if (s == "inparaenum*") return "enumerate";
   return s;
 }
