@@ -52,7 +52,7 @@
   bar hat tilde widehat widetilde vec grave acute check breve abovering
   dot ddot dddot ddddot
   label ref pageref index hspace hspace* vspace vspace*
-  mbox hbox text not
+  mbox hbox text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
   ^ over atop ~ = u v H t c d b k r thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
@@ -119,7 +119,7 @@
 
 (drd-group latex-environment-0%
   begin-document begin-abstract begin-verbatim
-  begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix
+  begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix begin-cases
   begin-center begin-picture)
 
 (drd-group latex-environment-0*%

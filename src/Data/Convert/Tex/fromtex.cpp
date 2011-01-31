@@ -942,7 +942,7 @@ parse_matrix_params (tree t) {
 }
 
 static void
-parse_pmatrix (tree& r, tree t, int& i, string lb, string rb) {
+parse_pmatrix (tree& r, tree t, int& i, string lb, string rb, string fm) {
   tree tformat= parse_matrix_params (t[i]);
   if (lb != "") r << tree (LEFT, lb);
 
@@ -965,33 +965,45 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb) {
       E= tree (CONCAT);
       continue;
     }
-    else if (is_func (v, BEGIN) && ((v[0] == "array") ||(v[0] == "tabular"))) {
-      parse_pmatrix (E, t, i, "", "");
+    else if (is_func (v, BEGIN) && (v[0] == "array" || v[0] == "tabular")) {
+      parse_pmatrix (E, t, i, "", "", "tabular*");
+      if (i<N(t)) continue;
+      break;
+    }
+    else if (v == tree (BEGIN, "stack")) {
+      parse_pmatrix (E, t, i, "", "", "stack");
+      if (i<N(t)) continue;
+      break;
+    }
+    else if (v == tree (BEGIN, "cases")) {
+      parse_pmatrix (E, t, i, "", "", "choice");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (BEGIN, "matrix")) {
-      parse_pmatrix (E, t, i, "", "");
+      parse_pmatrix (E, t, i, "", "", "tabular*");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (BEGIN, "pmatrix")) {
-      parse_pmatrix (E, t, i, "(", ")");
+      parse_pmatrix (E, t, i, "", "", "matrix");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (BEGIN, "bmatrix")) {
-      parse_pmatrix (E, t, i, "{", "}");
+      parse_pmatrix (E, t, i, "[", "]", "tabular*");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (BEGIN, "vmatrix")) {
-      parse_pmatrix (E, t, i, "|", "|");
+      parse_pmatrix (E, t, i, "", "", "det");
       if (i<N(t)) continue;
       break;
     }
     else if (v == tree (END, "array")) break;
     else if (v == tree (END, "tabular")) break;
+    else if (v == tree (END, "cases")) break;
+    else if (v == tree (END, "stack")) break;
     else if (v == tree (END, "matrix")) break;
     else if (v == tree (END, "pmatrix")) break;
     else if (v == tree (END, "bmatrix")) break;
@@ -1017,17 +1029,15 @@ parse_pmatrix (tree& r, tree t, int& i, string lb, string rb) {
   rows= N(V);
 
   int x, y;
-  tree M (OLD_MATRIX);
-  for (y=0; y<rows; y++)
+  tree M (TABLE);
+  for (y=0; y<rows; y++) {
+    tree R (ROW);
     for (x=0; x<cols; x++)
-      if (x<N(V[y])) M << V[y][x];
-      else M << "";
-  M << as_string (cols) << as_string (rows);
-  if (tformat != tree (TFORMAT)) {
-    tformat << M;
-    M= tformat;
+      if (x<N(V[y])) R << tree (CELL, V[y][x]);
+      else R << tree (CELL, "");
+    M << R;
   }
-  r << M;
+  r << compound (fm, tree (TFORMAT, M));
   if (rb != "") r << tree (RIGHT, rb);
 }
 
@@ -1041,12 +1051,22 @@ finalize_pmatrix (tree t) {
     tree r (CONCAT);
     for (i=0; i<n; i++)
       if (is_func (u[i], BEGIN)) {
-	if (u[i][0] == "array") parse_pmatrix (r, u, i, "", "");
-	else if (u[i][0] == "tabular") parse_pmatrix (r, u, i, "", "");
-	else if (u[i][0] == "matrix") parse_pmatrix (r, u, i, "", "");
-	else if (u[i][0] == "pmatrix") parse_pmatrix (r, u, i, "(", ")");
-	else if (u[i][0] == "bmatrix") parse_pmatrix (r, u, i, "[", "]");
-	else if (u[i][0] == "vmatrix") parse_pmatrix (r, u, i, "|", "|");
+	if (u[i][0] == "array")
+	  parse_pmatrix (r, u, i, "", "", "tabular*");
+	else if (u[i][0] == "tabular")
+	  parse_pmatrix (r, u, i, "", "", "tabular*");
+	else if (u[i][0] == "cases")
+	  parse_pmatrix (r, u, i, "", "", "choice");
+	else if (u[i][0] == "stack")
+	  parse_pmatrix (r, u, i, "", "", "stack");
+	else if (u[i][0] == "matrix")
+	  parse_pmatrix (r, u, i, "", "", "tabular*");
+	else if (u[i][0] == "pmatrix")
+	  parse_pmatrix (r, u, i, "", "", "matrix");
+	else if (u[i][0] == "bmatrix")
+	  parse_pmatrix (r, u, i, "[", "]", "tabular*");
+	else if (u[i][0] == "vmatrix")
+	  parse_pmatrix (r, u, i, "", "", "det");
 	else r << u[i];
       }
       else r << u[i];
@@ -1054,6 +1074,14 @@ finalize_pmatrix (tree t) {
   }
   else if (is_func (u, APPLY, 2) && (u[0] == "matrix"))
     return tree (APPLY, "tabular*", u[1]);
+  else if (is_func (u, APPLY, 2) && (u[0] == "substack")) {
+    tree cc (CONCAT);
+    cc << tree (BEGIN, "stack");
+    if (is_func (u[1], CONCAT)) cc << A(u[1]);
+    else cc << u[1];
+    cc << tree (END, "stack");
+    return finalize_pmatrix (cc);
+  }
   else return u;
 }
 
