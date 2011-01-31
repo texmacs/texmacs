@@ -121,7 +121,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-group latex-environment-0%
-  begin-document begin-abstract begin-verbatim
+  begin-document begin-abstract begin-verbatim begin-proof
   begin-matrix begin-pmatrix begin-bmatrix begin-vmatrix begin-smallmatrix
   begin-cases
   begin-center begin-picture)

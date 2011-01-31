@@ -555,10 +555,10 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   }
   if (is_tuple (t, "\\newtheorem", 2)) {
     string var= "\\begin-" * string_arg (t[1]);
-    command_type  (var)= "user";
+    command_type  (var)= "environment";
     command_arity (var)= 0;
     var= "\\end-" * string_arg (t[1]);
-    command_type  (var)= "user";
+    command_type  (var)= "environment";
     command_arity (var)= 0;
   }
   if (is_tuple (t, "\\newenvironment", 3)) {
