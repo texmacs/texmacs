@@ -56,7 +56,29 @@ filter_preamble (tree t) {
 
   for (i=0; i<n; i++) {
     tree u= t[i];
-    if (in_preamble) {
+    if (is_tuple (u, "\\title") ||
+	     is_tuple (u, "\\author") ||
+	     is_tuple (u, "\\address"))
+      title_info << u;
+    else if (is_tuple (u, "\\thanks")) {
+      tree v= copy (u);
+      v[0]= "\\title-thanks";
+      title_info << v;
+    }
+    else if (is_tuple (u, "\\email")) {
+      tree v= copy (u);
+      v[0]= "\\title-email";
+      title_info << v;
+    }
+    else if (is_tuple (u, "\\urladdr"))
+      title_info << u;
+    else if (is_tuple (u, "\\keywords"))
+      title_info << u;
+    else if (is_tuple (u, "\\classification"))
+      title_info << u;
+    else if (is_tuple (u, "\\subjclass"))
+      title_info << u;
+    else if (in_preamble) {
       if (u == tuple ("\\begin-document")) {
 	r << u;
 	if (N(preamble) > 0)
@@ -77,20 +99,6 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\newenvironment") ||
 	       is_tuple (u, "\\newenvironment*"))
 	preamble << u << "\n" << "\n";
-    }
-    else if (is_tuple (u, "\\title") ||
-	     is_tuple (u, "\\author") ||
-	     is_tuple (u, "\\address"))
-      title_info << u;
-    else if (is_tuple (u, "\\email")) {
-      tree v= copy (u);
-      v[0]= "\\title-email";
-      title_info << v;
-    }
-    else if (is_tuple (u, "\\thanks")) {
-      tree v= copy (u);
-      v[0]= "\\title-thanks";
-      title_info << v;
     }
     else doc << u;
   }

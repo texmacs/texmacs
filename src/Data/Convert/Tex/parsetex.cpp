@@ -331,7 +331,7 @@ latex_parser::parse_backslash (string s, int& i) {
     i+=16;
     return parse_verbatim (s, i, "\\end{verbatim}");
   }
-  if (((i+5)<n) && (s(i,i+4)=="\\url")) {
+  if (((i+5)<n) && (s(i,i+4)=="\\url") && !is_alpha (s[i+5])) {
     i+=4;
     while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
     string ss;
