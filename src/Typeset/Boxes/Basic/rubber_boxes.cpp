@@ -42,9 +42,10 @@ struct empty_box_rep: public box_rep {
 
 struct marker_box_rep: public box_rep {
   int pos;
-  marker_box_rep (path ip2, int x1b, int y1b, int x2b, int y2b):
+  box ref;
+  marker_box_rep (path ip2, int x1b, int y1b, int x2b, int y2b, box ref2):
     box_rep (is_accessible (ip2)? ip2->next: ip2),
-    pos (is_accessible (ip2)? ip2->item: 0) {
+    pos (is_accessible (ip2)? ip2->item: 0), ref (ref2) {
       x3= x4= y3= y4= 0; x1= x1b; y1= y1b; x2= x2b; y2= y2b; }
   operator tree () { return "marker"; }
   void display (renderer ren) { (void) ren; }
@@ -67,6 +68,11 @@ struct marker_box_rep: public box_rep {
   selection find_selection (path lbp, path rbp) {
     return selection (rectangles (),
 		      find_tree_path (lbp), find_tree_path (rbp)); }
+  SI sub_lo_base (int level) { return min (y1, ref->sub_lo_base (level)); }
+  SI sub_hi_lim (int level) { return ref->sub_hi_lim (level); }
+  SI sup_lo_lim (int level) { return ref->sup_lo_lim (level); }
+  SI sup_lo_base (int level) { return ref->sup_lo_base (level); }
+  SI sup_hi_lim (int level) { return max (y2, ref->sup_hi_lim (level)); }
 };
 
 /*****************************************************************************/
@@ -214,8 +220,8 @@ empty_box (path ip, int x1, int y1, int x2, int y2) {
 }
 
 box
-marker_box (path ip, int x1, int y1, int x2, int y2) {
-  return tm_new<marker_box_rep> (ip, x1, y1, x2, y2);
+marker_box (path ip, int x1, int y1, int x2, int y2, box ref) {
+  return tm_new<marker_box_rep> (ip, x1, y1, x2, y2, ref);
 }
 
 box

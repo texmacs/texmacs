@@ -420,6 +420,8 @@
 (tm-define (math-separator sep large?)
   (when (== large? 'default)
     (set! large? (!= (get-preference "use large brackets") "off")))
+  (when (and (string? sep) (string-starts? sep "<") (string-ends? sep ">"))
+    (set! sep (substring sep 1 (- (string-length sep) 1))))
   (when (== (get-preference "automatic brackets") "off")
     (make-separator sep large?)
     (brackets-refresh))

@@ -211,7 +211,8 @@ concater_rep::handle_matching (int start, int end) {
 	SI Y1   = y1 + (fn->sep >> 1);
 	SI Y2   = y2 - (fn->sep >> 1);
 	SI tol  = fn->sep << 1;
-	SI drift= ((Y1 + Y2) >> 1) - fn->yfrac;
+	SI mid  = (a[i]->b->y1 + a[i]->b->y2) >> 1;
+	SI drift= ((Y1 + Y2) >> 1) - mid; // fn->yfrac;
 	if (drift < 0) Y2 += min (-drift, tol) << 1;
 	else Y1 -= min (drift, tol) << 1;
 
@@ -219,7 +220,7 @@ concater_rep::handle_matching (int start, int end) {
         SI h= y2 - y1 - fn->sep;
         SI d= 5 * fn->yx - h;
         if (d > 0) { Y1 += d/12; Y2 -= d/12; }
-	
+
 	a[i]->b= delimiter_box (a[i]->b->ip, a[i]->b->get_leaf_string (),
 				fn, a[i]->b->get_leaf_color (), Y1, Y2);
 	a[i]->type= STD_ITEM;
@@ -229,7 +230,7 @@ concater_rep::handle_matching (int start, int end) {
 	if (a[j]->type == MARKER_ITEM) {
 	  SI Y1= a[i]->b->y1;
 	  SI Y2= a[i]->b->y2;
-	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2);
+	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
 	  a[j]->type= STD_ITEM;
 	}
 	else if (a[j]->type != CONTROL_ITEM) break;
@@ -239,7 +240,7 @@ concater_rep::handle_matching (int start, int end) {
 	if (a[j]->type == MARKER_ITEM) {
 	  SI Y1= a[i]->b->y1;
 	  SI Y2= a[i]->b->y2;
-	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2);
+	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
 	  a[j]->type= STD_ITEM;
 	}
 	else if (a[j]->type != CONTROL_ITEM) break;

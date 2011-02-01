@@ -224,10 +224,12 @@ shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
   // if ((gl->status==0) && (yfactor>1)) dy= get_ver_shift (gl, yfactor, ty);
 
   glyph ret= shrink (gl, xfactor, yfactor, dx, dy, tx, ty, xo, yo);
+#ifndef QTTEXMACS
   if (ret->status != 0) {
     if (ret->status&1) ret->adjust_top ();
     if (ret->status&2) ret->adjust_bot ();
     ret->yoff= yo= 0;
   }
+#endif
   return ret;
 }

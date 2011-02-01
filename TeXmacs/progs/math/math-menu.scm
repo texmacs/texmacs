@@ -224,7 +224,7 @@
   (symbol "<left-rrbracket-2>"
           (math-bracket-open "<rrbracket>" "<llbracket>" 'default))
   (symbol "<left-|-4>" (math-bracket-open "|" "|" 'default))
-  (symbol "<left-||-4>" (math-bracket-open "||" "||" 'default))
+  (symbol "<left-||-4>" (math-bracket-open "<||>" "<||>" 'default))
   (symbol "<left-/-2>" (math-bracket-open "/" "\\" 'default))
   (symbol "<left-\\-2>" (math-bracket-open "\\" "/" 'default))
   (symbol "<left-.-2>" (math-bracket-open "." "." 'default)))
@@ -247,7 +247,7 @@
   (symbol "<left-rrbracket-2>"
           (math-bracket-open "<rrbracket>" "<llbracket>" #t))
   (symbol "<left-|-4>" (math-bracket-open "|" "|" #t))
-  (symbol "<left-||-4>" (math-bracket-open "||" "||" #t))
+  (symbol "<left-||-4>" (math-bracket-open "<||>" "<||>" #t))
   (symbol "<left-/-2>" (math-bracket-open "/" "\\" #t))
   (symbol "<left-\\-2>" (math-bracket-open "\\" "/" #t))
   (symbol "<left-.-2>" (math-bracket-open "." "." #t)))
@@ -268,7 +268,7 @@
   (symbol "<mid-llbracket-2>" (math-separator "<llbracket>" #t))
   (symbol "<mid-rrbracket-2>" (math-separator "<rrbracket>" #t))
   (symbol "<mid-|-4>" (math-separator "|" #t))
-  (symbol "<mid-||-4>" (math-separator "||" #t))
+  (symbol "<mid-||-4>" (math-separator "<||>" #t))
   (symbol "<mid-/-2>" (math-separator "/" #t))
   (symbol "<mid-\\-2>" (math-separator "\\" #t)))
 
@@ -290,7 +290,7 @@
   (symbol "<right-rrbracket-2>"
 	  (math-bracket-close "<rrbracket>" "<llbracket>" #t))
   (symbol "<right-|-4>" (math-bracket-close "|" "|" #t))
-  (symbol "<right-||-4>" (math-bracket-close "||" "||" #t))
+  (symbol "<right-||-4>" (math-bracket-close "<||>" "<||>" #t))
   (symbol "<right-/-2>" (math-bracket-close "/" "\\" #t))
   (symbol "<right-\\-2>" (math-bracket-close "\\" "/" #t))
   (symbol "<right-.-2>" (math-bracket-close "." "." #t)))
