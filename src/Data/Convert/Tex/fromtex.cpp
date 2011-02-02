@@ -191,6 +191,16 @@ latex_symbol_to_tree (string s) {
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
       if (s == "\\bgroup") return "";
       if (s == "\\egroup") return "";
+      if (s == "\\colon") return ":";
+      if (s == "\\dotsc") return "<ldots>";
+      if (s == "\\dotsb") return "<cdots>";
+      if (s == "\\dotsm") return "<cdots>";
+      if (s == "\\dotsi") return "<cdots>";
+      if (s == "\\dotso") return "<ldots>";
+      if (s == "\\lvert") return "|";
+      if (s == "\\rvert") return "|";
+      if (s == "\\lVert") return "<||>";
+      if (s == "\\rVert") return "<||>";
       if (s == "\\qed") return compound ("math", "<Box>");
     }
 
@@ -655,6 +665,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathfrak", 1)) return m2e (t, MATH_FONT, "Euler");
   if (is_tuple (t, "\\mathbb", 1)) return m2e (t, MATH_FONT, "Bbb");
   if (is_tuple (t, "\\mathbbm", 1)) return m2e (t, MATH_FONT, "Bbb*");
+  if (is_tuple (t, "\\mathscr", 1)) return m2e (t, MATH_FONT, "cal*");
 
   if (is_tuple (t, "\\prime", 1)) return tree (RPRIME, string_arg (t[1]));
   if (is_tuple (t, "\\frac", 2)) return tree (FRAC, l2e (t[1]), l2e (t[2]));

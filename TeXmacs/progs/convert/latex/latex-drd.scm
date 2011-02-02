@@ -27,7 +27,7 @@
   ,(string->symbol " ") ,(string->symbol ";") 
   ,(string->symbol ",") ,(string->symbol ":") 
   - / [ ] ! * | i j ss SS oe OE ae AE
-  AA DH L NG O S TH aa dh dj l ng o th pounds
+  AA DH L NG O S TH aa dh dj l ng o th pounds colon
   quad qquad par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
@@ -36,7 +36,8 @@
   begingroup endgroup
 
   ;; AMS commands
-  qed
+  qed dotsc dotsb dotsm dotsi dotso
+  lvert rvert lVert rVert
   ;; temporarily
   hline
   ;; rewritten
@@ -164,7 +165,7 @@
 (drd-group latex-modifier-1%
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
-  mathcal mathfrak mathbb mathbbm operatorname boldsymbol)
+  mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol)
 
 (drd-rules
   ((latex-modifier% 'x) (latex-modifier-0% 'x))
@@ -264,7 +265,7 @@
   arrowvert Arrowvert bracevert
 
   ;; Binary operations (latexsym or amssymb required)
-  lhd rhd unlhd unrhd
+  lhd rhd unlhd unrhd leadsto
 
   ;; Miscellaneous symbols (amssymb or graphicx required)
   Diamond mho)
@@ -319,6 +320,8 @@
   (mathbb "amssymb")
   (theorembodyfont "theorem")
 
+  (leadsto "leadsto")
+  (nleadsto "leadsto")
   (Diamond "amssymb")
   (text "amsmath")
   (dddot "amsmath")

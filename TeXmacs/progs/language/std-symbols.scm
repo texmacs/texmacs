@@ -153,7 +153,7 @@
     "<longmapsto>" "<longmapsfrom>"
     "<longhookleftarrow>" "<longhookrightarrow>" "<leftharpoonup>"
     "<leftharpoondown>" "<rightleftharpoons>" "<rightharpoonup>"
-    "<rightharpoondown>" "<leadsto>"
+    "<rightharpoondown>" "<leadsto>" "<nleadsto>"
     "<nearrow>" "<searrow>" "<swarrow>" "<nwarrow>"
     "<longtwoheadleftarrow>" "<longtwoheadrightarrow>"
     "<leftprec>" "<leftpreceq>" "<succright>" "<succeqright>"

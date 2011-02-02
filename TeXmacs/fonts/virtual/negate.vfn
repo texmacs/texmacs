@@ -26,4 +26,5 @@
   (nggg (add ggg /))
   (nggeq (add ggeq /))
   (ngggeq (add gggeq /))
-)
+  (leadsto wasyleadsto)
+  (nleadsto (join (0 0 leadsto) (0 0 Arrownot))))

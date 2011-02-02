@@ -765,13 +765,16 @@ latex_parser::parse (string s, bool change) {
 	  test (s, i, "\\subparagraph") ||
 	  test (s, i, "\\newcommand") ||
 	  test (s, i, "\\def") ||
-	  test (s, i, "\\input{"))
+	  test (s, i, "\\input{") ||
+	  test (s, i, "\\include{"))
 	{
 	  a << s (start, i);
 	  start= i;
-          if (test (s, i, "\\input{")) {
+          if (test (s, i, "\\input{") || test (s, i, "\\include{")) {
+	    while (i<N(s) && s[i] != '{') i++;
+	    int start_name= i+1;
             while (i<N(s) && s[i] != '}') i++;
-            string name= s (start + 7, i);
+            string name= s (start_name, i);
             if (!ends (name, ".tex")) name= name * ".tex";
             url incl= relative (get_file_focus (), name);
             string body;

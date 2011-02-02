@@ -185,6 +185,7 @@ homoglyph_correct (array<tree> a) {
       else if (s == "<sqsupset>") r << tree ("<nsqsupset>");
       else if (s == "<sqsubseteq>") r << tree ("<nsqsubseteq>");
       else if (s == "<sqsupseteq>") r << tree ("<nsqsupseteq>");
+      else if (s == "<leadsto>") r << tree ("<nleadsto>");
       else r << a[i];
     }
     else if (a[i] == ":" && i+1 < N(a) && a[i+1] == "=") {
