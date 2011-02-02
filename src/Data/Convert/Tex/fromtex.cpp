@@ -41,6 +41,14 @@ check_tree (tree t) {
 }
 */
 
+static bool
+is_var_compound (tree t, string s, int n) {
+  return
+    is_compound (t, s, n) ||
+    (is_func (t, APPLY, n+1) && t[0] == s) ||
+    (is_func (t, EXPAND, n+1) && t[0] == s);
+}
+
 /******************************************************************************
 * Preprocess preamble
 ******************************************************************************/
@@ -693,7 +701,7 @@ latex_command_to_tree (tree t) {
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {
     tree r= t2e (t[1]);
-    if (is_compound (r, "fill", 0)) return tree (HTAB, "1fn");
+    if (is_var_compound (r, "fill", 0)) return tree (HTAB, "1fn");
     return tree (SPACE, r);
   }
   if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1))
@@ -1317,6 +1325,49 @@ finalize_layout (tree t) {
 }
 
 static tree
+finalize_sections (tree t) {
+  tree r (DOCUMENT);
+  for (int i=0; i<N(t); i++) {
+    tree u= t[i];
+    if (is_concat (u) && N(u) >= 2 &&
+	(is_var_compound (u[0], "part", 1) ||
+	 is_var_compound (u[0], "part*", 1) ||
+	 is_var_compound (u[0], "chapter", 1) ||
+	 is_var_compound (u[0], "chapter*", 1) ||
+	 is_var_compound (u[0], "section", 1) ||
+	 is_var_compound (u[0], "section*", 1) ||
+	 is_var_compound (u[0], "subsection", 1) ||
+	 is_var_compound (u[0], "subsection*", 1) ||
+	 is_var_compound (u[0], "subsubsection", 1) ||
+	 is_var_compound (u[0], "subsubsection*", 1)))
+      {
+	if (N(u) > 2 && u[1] == " ")
+	  u= u (0, 1) * u (2, N(u));
+	if (!is_func (u[1], LABEL) || (N(u) >= 3 && !is_func (u[2], LABEL))) {
+	  if (!is_func (u[1], LABEL)) {
+	    r << u[0];
+	    if (N(u) == 2) u= u[1];
+	    else u= u (1, N(u));
+	  }
+	  else {
+	    r << u (0, 2);
+	    if (N(u) == 3) u= u[2];
+	    else u= u (2, N(u));
+	  }
+	  if (is_atomic (u) && starts (u->label, " "))
+	    u= u->label (1, N(u->label));
+	  if (is_concat (u) && is_atomic (u[0]) && starts (u[0]->label, " "))
+	    u= tree (CONCAT, u[0]->label (1, N(u[0]->label))) * u (1, N(u));
+	  r << u;
+	}
+	else r << u;
+      }
+    else r << u;
+  }
+  return r;
+}
+
+static tree
 finalize_document (tree t) {
   if (is_atomic (t)) t= tree (CONCAT, t);
   t= finalize_returns (t);
@@ -1334,7 +1385,7 @@ finalize_document (tree t) {
     else r << t(start,i);
     if (i==(N(t)-1)) r << "";
   }
-  return r;
+  return finalize_sections (r);
 }
 
 bool
@@ -1522,8 +1573,8 @@ handle_improper_matches (tree t) {
 tree
 float_body (tree t) {
   if (is_atomic (t)) return t;
-  else if (is_compound (t, "caption", 1)) return "";
-  else if (is_compound (t, "center", 1)) return float_body (t[0]);
+  else if (is_var_compound (t, "caption", 1)) return "";
+  else if (is_var_compound (t, "center", 1)) return float_body (t[N(t)-1]);
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -1537,7 +1588,7 @@ float_body (tree t) {
 tree
 find_caption (tree t) {
   if (is_atomic (t)) return "";
-  else if (is_compound (t, "caption", 1)) return t[0];
+  else if (is_var_compound (t, "caption", 1)) return t[N(t)-1];
   else {
     int i, n= N(t);
     for (i=0; i<n; i++) {
@@ -1551,12 +1602,12 @@ find_caption (tree t) {
 tree
 finalize_floats (tree t) {
   if (is_atomic (t)) return t;
-  else if (is_compound (t, "bigfigure", 1)) {
+  else if (is_var_compound (t, "bigfigure", 1)) {
     tree body= float_body (t[N(t)-1]);
     tree capt= find_caption (t[N(t)-1]);
     return tree (make_tree_label ("big-figure"), body, capt);
   }
-  else if (is_compound (t, "bigtable", 1)) {
+  else if (is_var_compound (t, "bigtable", 1)) {
     tree body= float_body (t[N(t)-1]);
     tree capt= find_caption (t[N(t)-1]);
     return tree (make_tree_label ("big-table"), body, capt);
