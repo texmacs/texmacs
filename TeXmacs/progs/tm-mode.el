@@ -28,6 +28,7 @@
     association-tile bar concat dense-bar dense-tile document
     header-bar sequence short-bar short-tile
     wrap-selection-any wrap-selection-small
+    try-modification
     $begin $cond))
 
 (setq nullary-no-highlight

@@ -353,3 +353,19 @@
 (tm-define (tree-correct-upwards t . l)
   (:synopsis "Correct the tree @(tree-ref t . l) and its ancestors")
   (cpp-tree-correct-upwards (apply tree-ref (cons t l))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Try a modification with possibility for cancelation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (try-modification . body)
+  `(let* ((mark-nr (mark-new))
+	  (mark-cursor (cursor-path)))
+     (mark-start mark-nr)
+     (with mark-ok (begin ,@body)
+       (if mark-ok
+	   (mark-end mark-nr)
+	   (begin
+	     (mark-cancel mark-nr)
+	     (go-to-path mark-cursor)))
+       mark-ok)))

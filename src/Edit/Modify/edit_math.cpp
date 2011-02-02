@@ -203,7 +203,7 @@ edit_math_rep::back_around (tree t, path p, bool forward) {
       correct (path_up (p));
     }
   }
-  call ("brackets-refresh");
+  if (!match) call ("brackets-refresh");
 }
 
 void
@@ -236,7 +236,7 @@ edit_math_rep::back_in_around (tree t, path p, bool forward) {
       correct (path_up (p, 2));
     }
   }
-  call ("brackets-refresh");  
+  if (!match) call ("brackets-refresh");  
 }
 
 void

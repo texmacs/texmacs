@@ -19,7 +19,7 @@ tree superfluous_with_correct (tree t);
 tree superfluous_invisible_correct (tree t);
 tree missing_invisible_correct (tree t, int force= -1);
 tree upgrade_brackets (tree t, string mode= "text");
-tree downgrade_brackets (tree t);
+tree downgrade_brackets (tree t, bool delete_missing= false);
 tree move_brackets (tree t);
 
 int  count_math_errors (tree t, int mode= 0);

@@ -35,8 +35,8 @@
 
 (tm-define (downgrade-brackets t)
   (if (tree? t)
-      (tree-downgrade-brackets t)
-      (tree->stree (tree-downgrade-brackets t))))
+      (tree-downgrade-brackets t #f)
+      (tree->stree (tree-downgrade-brackets t #f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket matching

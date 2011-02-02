@@ -70,6 +70,7 @@
   (debug-get debug_get (bool string))
   (cout-buffer cout_buffer (void))
   (cout-unbuffer cout_unbuffer (string))
+  (mark-new new_marker (double))
 
   ;; routines for images
   (image->psdoc image_to_psdoc (string url))
@@ -147,7 +148,7 @@
   (automatic-correct automatic_correct (tree content string))
   (manual-correct manual_correct (tree content))
   (tree-upgrade-brackets upgrade_brackets (tree content string))
-  (tree-downgrade-brackets downgrade_brackets (tree content))
+  (tree-downgrade-brackets downgrade_brackets (tree content bool))
   (math-status-print math_status_print (void))
   (math-status-reset math_status_reset (void))
 

@@ -511,21 +511,23 @@ downgrade_bracket (tree t, bool large) {
 }
 
 tree
-downgrade_brackets (tree t) {
+downgrade_brackets (tree t, bool delete_missing) {
   if (is_atomic (t)) return t;
   int i, n= N(t);
   tree r (t, n);
   for (i=0; i<n; i++)
-    r[i]= downgrade_brackets (t[i]);
+    r[i]= downgrade_brackets (t[i], delete_missing);
   if (is_func (r, AROUND, 3)) {
     tree lb= downgrade_bracket (r[0], false);
     tree rb= downgrade_bracket (r[2], false);
     r= concat (lb, r[1], rb);
   }
   if (is_func (r, VAR_AROUND, 3)) {
-    tree lb= downgrade_bracket (r[0], true);
-    tree rb= downgrade_bracket (r[2], true);
-    r= concat (tree (LEFT, lb), r[1], tree (RIGHT, rb));
+    tree lb= tree (LEFT, downgrade_bracket (r[0], true));
+    tree rb= tree (RIGHT, downgrade_bracket (r[2], true));
+    if (delete_missing && lb == tree (LEFT, ".")) lb= "";
+    if (delete_missing && rb == tree (RIGHT, ".")) rb= "";
+    r= concat (lb, r[1], rb);
   }
   if (is_func (r, BIG_AROUND, 2)) {
     tree op= downgrade_bracket (r[0], true);

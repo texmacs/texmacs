@@ -619,6 +619,15 @@ tmg_cout_unbuffer () {
 }
 
 SCM
+tmg_mark_new () {
+  // SCM_DEFER_INTS;
+  double out= new_marker ();
+  // SCM_ALLOW_INTS;
+
+  return double_to_scm (out);
+}
+
+SCM
 tmg_image_2psdoc (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "image->psdoc");
 
@@ -1582,13 +1591,15 @@ tmg_tree_upgrade_brackets (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tree_downgrade_brackets (SCM arg1) {
+tmg_tree_downgrade_brackets (SCM arg1, SCM arg2) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-downgrade-brackets");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "tree-downgrade-brackets");
 
   content in1= scm_to_content (arg1);
+  bool in2= scm_to_bool (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= downgrade_brackets (in1);
+  tree out= downgrade_brackets (in1, in2);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -4996,6 +5007,7 @@ initialize_glue_basic () {
   scm_new_procedure ("debug-get", (FN) tmg_debug_get, 1, 0, 0);
   scm_new_procedure ("cout-buffer", (FN) tmg_cout_buffer, 0, 0, 0);
   scm_new_procedure ("cout-unbuffer", (FN) tmg_cout_unbuffer, 0, 0, 0);
+  scm_new_procedure ("mark-new", (FN) tmg_mark_new, 0, 0, 0);
   scm_new_procedure ("image->psdoc", (FN) tmg_image_2psdoc, 1, 0, 0);
   scm_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   scm_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
@@ -5065,7 +5077,7 @@ initialize_glue_basic () {
   scm_new_procedure ("automatic-correct", (FN) tmg_automatic_correct, 2, 0, 0);
   scm_new_procedure ("manual-correct", (FN) tmg_manual_correct, 1, 0, 0);
   scm_new_procedure ("tree-upgrade-brackets", (FN) tmg_tree_upgrade_brackets, 2, 0, 0);
-  scm_new_procedure ("tree-downgrade-brackets", (FN) tmg_tree_downgrade_brackets, 1, 0, 0);
+  scm_new_procedure ("tree-downgrade-brackets", (FN) tmg_tree_downgrade_brackets, 2, 0, 0);
   scm_new_procedure ("math-status-print", (FN) tmg_math_status_print, 0, 0, 0);
   scm_new_procedure ("math-status-reset", (FN) tmg_math_status_reset, 0, 0, 0);
   scm_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);

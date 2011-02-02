@@ -2073,6 +2073,45 @@ tmg_start_slave (SCM arg1) {
 }
 
 SCM
+tmg_mark_start (SCM arg1) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "mark-start");
+
+  double in1= scm_to_double (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->mark_start (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_mark_end (SCM arg1) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "mark-end");
+
+  double in1= scm_to_double (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->mark_end (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_mark_cancel (SCM arg1) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "mark-cancel");
+
+  double in1= scm_to_double (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->mark_cancel (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_remove_undo_mark () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->remove_undo_mark ();
@@ -2950,6 +2989,9 @@ initialize_glue_editor () {
   scm_new_procedure ("clear-undo-history", (FN) tmg_clear_undo_history, 0, 0, 0);
   scm_new_procedure ("commit-changes", (FN) tmg_commit_changes, 0, 0, 0);
   scm_new_procedure ("start-slave", (FN) tmg_start_slave, 1, 0, 0);
+  scm_new_procedure ("mark-start", (FN) tmg_mark_start, 1, 0, 0);
+  scm_new_procedure ("mark-end", (FN) tmg_mark_end, 1, 0, 0);
+  scm_new_procedure ("mark-cancel", (FN) tmg_mark_cancel, 1, 0, 0);
   scm_new_procedure ("remove-undo-mark", (FN) tmg_remove_undo_mark, 0, 0, 0);
   scm_new_procedure ("add-undo-mark", (FN) tmg_add_undo_mark, 0, 0, 0);
   scm_new_procedure ("unredoable-undo", (FN) tmg_unredoable_undo, 0, 0, 0);
