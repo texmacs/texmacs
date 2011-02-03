@@ -31,8 +31,8 @@
   quad qquad par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
-  newblock bgroup egroup protect cr date hfill appendix nolimits dots
-  maketitle tableofcontents TeX LaTeX
+  newblock bgroup egroup protect cr date hfill appendix limits nolimits
+  dots maketitle tableofcontents TeX LaTeX
   begingroup endgroup
 
   ;; AMS commands
@@ -102,7 +102,7 @@
   documentclass documentstyle sqrt bibitem cite)
 
 (drd-group latex-command-2*%
-  def newcommand renewcommand newtheorem frac)
+  def newcommand renewcommand newtheorem newtheorem* frac parbox)
 
 (drd-group latex-command-3*%
   newenvironment renewenvironment)

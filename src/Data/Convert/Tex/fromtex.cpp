@@ -102,7 +102,8 @@ filter_preamble (tree t) {
       else if (is_tuple (u, "\\def") ||
 	       is_tuple (u, "\\def*"))
 	preamble << u << "\n" << "\n";
-      else if (is_tuple (u, "\\newtheorem"))
+      else if (is_tuple (u, "\\newtheorem") ||
+	       is_tuple (u, "\\newtheorem*"))
 	preamble << u << "\n" << "\n";
       else if (is_tuple (u, "\\newenvironment") ||
 	       is_tuple (u, "\\newenvironment*"))
@@ -187,6 +188,7 @@ latex_symbol_to_tree (string s) {
       if (s == "\\hfill")  return tree (HTAB, "1fn");
       if (s == "\\hline")  return tree (APPLY, "hline");
       if (s == "\\appendix") { textm_appendices= true; return ""; }
+      if (s == "\\limits") return ""; // tree (FORMAT, "with limits");
       if (s == "\\nolimits") return ""; // temporarily
       if (s == "\\vert") return "|";
       if (s == "\\Vert") return "<||>";
@@ -403,8 +405,7 @@ latex_concat_to_tree (tree t, bool& new_flag) {
 	      string s= t[i-1][0]->label;
 	      if ((s[0] == '\\') && (latex_type (s) == "command") &&
 		  (s!="\\end-math") && (s!="\\end-displaymath"))
-		if ((arity(t[i-1])==1) || (s=="\\label"))
-		  continue;
+		if ((arity(t[i-1])==1) || (s=="\\label")) continue;
 	      if (starts (s, "\\begin-") &&
 		  (command_type["!verbatim"] != "true"))
 		continue;
@@ -590,7 +591,7 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, var, f);
   }
 
-  if (is_tuple (t, "\\newtheorem", 2)) {
+  if (is_tuple (t, "\\newtheorem", 2) || is_tuple (t, "\\newtheorem*", 2)) {
     string var= l2e(t[1])->label;
     string val= l2e(t[2])->label;
     return compound ("new-theorem", var, val);
@@ -753,6 +754,10 @@ latex_command_to_tree (tree t) {
     return tree (ABOVE, l2e (t[2]), l2e (t[1]));
   if (is_tuple (t, "\\underset", 2))
     return tree (BELOW, l2e (t[2]), l2e (t[1]));
+  if (is_tuple (t, "\\parbox", 2))
+    return compound ("mini-paragraph", v2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\parbox*", 3))
+    return compound ("mini-paragraph", v2e (t[2]), l2e (t[3]));
 
   int dtype= 0;
   if (is_large_delimiter (t, dtype)) {
@@ -1658,7 +1663,7 @@ latex_to_tree (tree t1) {
   tree t5= is_document? finalize_preamble (t4, style): t4;
   // cout << "\n\nt5= " << t5 << "\n\n";
   tree t6= handle_improper_matches (t5);
-  //cout << "\n\nt6= " << t6 << "\n\n";
+  // cout << "\n\nt6= " << t6 << "\n\n";
   if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
   // cout << "\n\nt7= " << t7 << "\n\n";

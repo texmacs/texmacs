@@ -288,6 +288,12 @@
 
   <assign|vphantom|<macro|body|<hresize|<phantom|<arg|body>>|0em|0em>>>
 
+  <assign|mini-paragraph|<macro|width|body|<tabular|<tformat|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<twith|table-width|<arg|width>>|<twith|table-hmode|exact>|<twith|table-valign|T>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
+
+  <drd-props|mini-paragraph|arity|2|length|0|accessible|1>
+
   \;
 
   <assign|overline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
