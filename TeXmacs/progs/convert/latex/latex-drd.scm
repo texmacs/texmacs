@@ -66,7 +66,7 @@
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear
-  includegraphics epsfig url penalty
+  epsfig url penalty centerline fbox
   enlargethispage)
 
 (drd-group latex-command-1% ;; . needs a special treatment
@@ -99,7 +99,8 @@
   item ,(string->symbol "\\"))
 
 (drd-group latex-command-1*%
-  documentclass documentstyle sqrt bibitem cite)
+  documentclass documentstyle sqrt bibitem cite
+  includegraphics includegraphics*)
 
 (drd-group latex-command-2*%
   def newcommand renewcommand newtheorem newtheorem* frac parbox)

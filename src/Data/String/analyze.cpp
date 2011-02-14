@@ -1183,6 +1183,46 @@ match_wildcard (string s, string w) {
   return match_wildcard (s, 0, w, 0);
 }
 
+array<string>
+tokenize (string s, string sep) {
+  int start=0;
+  array<string> a;
+  for (int i=0; i<N(s); )
+    if (test (s, i, sep)) {
+      a << s (start, i);
+      i += N(sep);
+      start= i;
+    }
+    else i++;
+  return a;
+}
+
+string
+recompose (array<string> a, string sep) {
+  string r;
+  for (int i=0; i<N(a); i++) {
+    if (i != 0) r << sep;
+    r << a[i];
+  }
+  return r;
+}
+
+string
+trim_spaces (string s) {
+  int start, end;
+  for (start=0; start<N(s) && is_space (s[start]); start++);
+  for (end=N(s); end>start && is_space (s[end]); end--);
+  return s (start, end);
+}
+
+array<string>
+trim_spaces (array<string> a) {
+  array<string> b (N(a));
+  for (int i=0; i<N(a); i++)
+    b[i]= trim_spaces (a[i]);
+  return b;
+}
+
 /******************************************************************************
 * Computations with completions
 ******************************************************************************/

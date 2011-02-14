@@ -827,12 +827,28 @@ latex_command_to_tree (tree t) {
       << tree (END, "array") << tree (RIGHT, ".");
     return r;
   }
-  if (is_tuple (t, "\\includegraphics", 1)) {
+  if (is_tuple (t, "\\includegraphics", 1) ||
+      is_tuple (t, "\\includegraphics*", 1)) {
     tree name= v2e (t[1]);
     if (name == "") return "";
     else {
       tree g (IMAGE, 7);
       g[0]= name;
+      return g;
+    }
+  }
+  if (is_tuple (t, "\\includegraphics*", 2) ||
+      is_tuple (t, "\\includegraphics**", 2)) {
+    tree name= v2e (t[2]);
+    tree data= v2e (t[1]);
+    if (data == "" || name == "") return "";
+    else {
+      tree g (IMAGE, 7);
+      g[0]= name;
+      tree width = latex_eps_get (data, "width");
+      tree height= latex_eps_get (data, "height");
+      g[1]= width;
+      g[2]= height;
       return g;
     }
   }
@@ -848,8 +864,11 @@ latex_command_to_tree (tree t) {
       g[1]= width;
       g[2]= height;
       return g;
+
     }
   }
+  if (is_tuple (t, "\\fbox", 1)) return compound ("frame", l2e (t[1]));
+  if (is_tuple (t, "\\centerline", 1)) return compound ("center", l2e (t[1]));
   if (is_tuple (t, "\\noalign", 1))
     return ""; // FIXME: for larger space in maple matrices
   if (is_tuple (t, "\\etalchar", 1)) return t2e (t[1]);

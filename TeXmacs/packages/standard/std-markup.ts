@@ -296,6 +296,8 @@
 
   \;
 
+  <assign|frame|<macro|body|<block|<tformat|<table|<row|<cell|<arg|body>>>>>>>>
+
   <assign|overline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
 
   <drd-props|overline|with-like|yes|arity|1|accessible|all>

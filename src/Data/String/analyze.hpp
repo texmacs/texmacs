@@ -122,6 +122,10 @@ int    count_occurrences (string what, string in);
 bool   occurs (string what, string in);
 string replace (string s, string what, string by);
 bool   match_wildcard (string s, string w);
+array<string> tokenize (string s, string sep);
+string recompose (array<string> a, string sep);
+string trim_spaces (string s);
+array<string> trim_spaces (array<string> a);
 
 array<string> as_completions (hashset<string> h);
 array<string> close_completions (array<string> a);
