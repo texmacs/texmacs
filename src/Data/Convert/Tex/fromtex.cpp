@@ -1270,8 +1270,8 @@ finalize_layout (tree t) {
       }
       */
 
-      if ((is_func (v, BEGIN, 1) || is_func (v, BEGIN, 2)) &&
-	  admissible_env (v)) {
+      if ((is_func (v, BEGIN, 1) || is_func (v, BEGIN, 2))
+          && admissible_env (v) && v[0] != "thebibliography") {
 	if (v == tree (BEGIN, "verbatim")) {
 	  r << v; i++;
 	  if ((i<n) && (t[i] == tree (FORMAT, "new line"))) {
