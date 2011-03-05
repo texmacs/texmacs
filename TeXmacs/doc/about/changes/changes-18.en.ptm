@@ -2,11 +2,11 @@
 
   In the new version, the spacing around mathematical operators has been made
   dependent on the semantic context. For instance, when used as an infix
-  operator in a subtraction <expand|math|x-y>, there is are small spaces around the
+  operator in a subtraction <expand|math|x-y>, there are small spaces around the
   minus sign <expand|math|->; this is no longer the case in <expand|math|-x>, where we
-  using it as a<expand|nbsp>prefix. Similarly, the spacing inside lists of operators
-  <expand|math|+,-,\<times\>> is now correct. However, the modification may modify
-  some of the spacing for formulas in existing documents. For critical
+  use the minus as a<expand|nbsp>prefix. Similarly, the spacing inside lists of operators
+  <expand|math|+,-,\<times\>> is now correct. However, the modification may alter
+  the spacing inside some formulas in existing documents. For critical
   documents, you may thus want to review the line breaking.
 
   Some of the keyboard shortcuts inside formulas have also been modified. For
