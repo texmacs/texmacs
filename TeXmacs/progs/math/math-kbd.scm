@@ -701,6 +701,7 @@
   ("@ -" "<ominus>")
   ("@ - var" "<mapmulti>")
   ("@ x" "<otimes>")
+  ("@ ." "<odot>")
   ("@ :" "<oover>")
   ("@ *" "<oast>")
   ("@ x" "<otimes>")
