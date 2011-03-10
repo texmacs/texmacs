@@ -131,8 +131,8 @@ protected:
  * @link http://www.cups.org/documentation.php/options.html @endlink
  */
 class CupsQTMPrinterSettings : public QTMPrinterSettings {
-  Q_OBJECT
-  
+  // Q_OBJECT
+  // MOC does not support conditional compilation    
 public:
   CupsQTMPrinterSettings();
   QString toSystemCommand() const;
@@ -162,7 +162,8 @@ protected:
  
  */
 class WinQTMPrinterSettings : public QTMPrinterSettings {
-  Q_OBJECT
+  // Q_OBJECT
+  // MOC does not support conditional compilation  
 public:
   WinQTMPrinterSettings();
   QString toSystemCommand() const;
