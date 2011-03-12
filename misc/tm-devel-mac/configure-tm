@@ -27,9 +27,9 @@ export PREFIX=$PWD/../../usr/$ARCH
 export PATH=$PREFIX/bin:$PATH
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
 export GUILE_CFLAGS=`pkg-config --cflags guile-1.8`
-export GUILE_LDLAGS=`pkg-config --libs guile-1.8`
+export GUILE_LDFLAGS=`pkg-config --libs guile-1.8`
 export FREETYPE_CFLAGS=`pkg-config --cflags freetype2`
-export FREETYPE_LDLAGS=`pkg-config --libs freetype2`
+export FREETYPE_LDFLAGS=`pkg-config --libs freetype2`
 
 ./configure \
   --host=$HOST \
