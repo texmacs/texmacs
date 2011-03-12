@@ -1,0 +1,42 @@
+# this script will invoke configure with the right set of parameters on macosx
+
+case $ARCH in
+ i386) 
+ ;;
+ x86_64) 
+ ;;
+ ppc) 
+ ;;
+ *)
+  export ARCH=`arch` 
+esac
+
+case $ARCH in
+ i386) 
+  export HOST=i686-apple-darwin10.4.0
+ ;;
+ x86_64) 
+  export HOST=x86_64-apple-darwin10.4.0
+ ;;
+ ppc) 
+  export HOST=powerpc-apple-darwin10.4.0
+ ;;
+esac
+  
+export PREFIX=$PWD/../../usr/$ARCH
+export PATH=$PREFIX/bin:$PATH
+export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+export GUILE_CFLAGS=`pkg-config --cflags guile-1.8`
+export GUILE_LDLAGS=`pkg-config --libs guile-1.8`
+export FREETYPE_CFLAGS=`pkg-config --cflags freetype2`
+export FREETYPE_LDLAGS=`pkg-config --libs freetype2`
+
+./configure \
+  --host=$HOST \
+  --enable-macosx-extensions\
+  --enable-qt\
+  CPPFLAGS="-arch $ARCH -mmacosx-version-min=10.4 "\
+  CFLAGS="-arch $ARCH -mmacosx-version-min=10.4 "\
+  CXXFLAGS="-arch $ARCH -mmacosx-version-min=10.4 "\
+  LDFLAGS="-arch $ARCH -mmacosx-version-min=10.4 " 
+
