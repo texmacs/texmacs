@@ -1,17 +1,18 @@
 # This file is part of tm-devel-mac.
 
-diff -u  src/gui/kernel/qapplication_mac.mm.orig src/gui/kernel/qapplication_mac.mm
---- src/gui/kernel/qapplication_mac.mm.orig	2011-03-13 00:52:08.000000000 +0100
-+++ src/gui/kernel/qapplication_mac.mm	2011-03-13 00:47:04.000000000 +0100
-@@ -1252,6 +1252,7 @@
+diff -u qt-everywhere-opensource-src-4.7.1/src/gui/kernel/qapplication_mac.mm.orig qt-everywhere-opensource-src-4.7.1/src/gui/kernel/qapplication_mac.mm
+--- qt-everywhere-opensource-src-4.7.1/src/gui/kernel/qapplication_mac.mm.orig	2011-03-13 21:32:20.000000000 +0100
++++ qt-everywhere-opensource-src-4.7.1/src/gui/kernel/qapplication_mac.mm	2011-03-13 21:32:51.000000000 +0100
+@@ -1252,7 +1252,7 @@
      if (oldDelegate != newDelegate && !QApplication::testAttribute(Qt::AA_MacPluginApplication)) {
          [newDelegate setReflectionDelegate:oldDelegate];
          [cocoaApp setDelegate:newDelegate];
+-
 +#if 0
          QT_MANGLE_NAMESPACE(QCocoaMenuLoader) *qtMenuLoader = [[QT_MANGLE_NAMESPACE(QCocoaMenuLoader) alloc] init];
          if ([NSBundle loadNibNamed:@"qt_menu" owner:qtMenuLoader] == false) {
              qFatal("Qt internal error: qt_menu.nib could not be loaded. The .nib file"
-@@ -1262,6 +1263,7 @@
+@@ -1263,6 +1263,7 @@
          [cocoaApp setMenu:[qtMenuLoader menu]];
          [newDelegate setMenuLoader:qtMenuLoader];
          [qtMenuLoader release];
