@@ -54,9 +54,8 @@ define $(PKG)_BUILD
         -nomake docs \
         -nomake examples \
         -nomake tools \
-        -qt-sql-sqlite \
+        -no-sql-sqlite \
         -system-zlib \
-        -system-sqlite \
         -openssl \
         -arch "ppc x86_64 x86" \
         -v
