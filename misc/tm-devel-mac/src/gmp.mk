@@ -26,15 +26,26 @@ define $(PKG)_UPDATE
     head -1
 endef
 
+
 define $(PKG)_BUILD
+   $(foreach BUILD_ARCH,$(BUILD_ARCHS),
+     $(call $(3)_BUILD_ARCH,$(1),$(2),$(BUILD_ARCH)))
+endef
+
+
+define $(PKG)_BUILD_ARCH
     [ -d '$(1)/../$(3)' ] || mkdir -p '$(1)/../$(3)'
     cd '$(1)/../$(3)' && '$(1)'/configure\
         --host=$(TARGET_$(3)) \
         NM='/usr/bin/nm -p' \
-        CPPFLAGS="-arch $(3) -mmacosx-version-min=10.4 "\
-        CFLAGS="-arch $(3) -mmacosx-version-min=10.4 "\
-        CXXFLAGS="-arch $(3) -mmacosx-version-min=10.4 "\
-        LDFLAGS="-arch $(3) -mmacosx-version-min=10.4 " \
+        CC="gcc-4.2 -arch $(3) -mmacosx-version-min=10.4 "\
+        CXX="g++-4.2 -arch $(3) -mmacosx-version-min=10.4 "\
+        CPP="cpp-4.2"\
+        CXXCPP="cpp-4.2" \
+        CPPFLAGS=" -I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
+        CFLAGS=" -I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
+        CXXFLAGS="-I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
+        LDFLAGS="-L$(PREFIX)/$(3)/lib -L$(PREFIX)/lib" \
         --prefix='$(PREFIX)/$(3)' \
         --disable-shared \
         --without-readline \

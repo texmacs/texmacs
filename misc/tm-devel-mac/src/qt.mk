@@ -28,12 +28,12 @@ define $(PKG)_BUILD
         -fast \
         -force-pkg-config \
         -release \
-        -exceptions \
+        -no-exceptions \
         -static \
         -prefix '$(PREFIX)'  \
         -prefix-install \
         -no-script \
-        -opengl desktop \
+        -no-opengl \
         -no-webkit \
         -no-glib \
         -no-gstreamer \
@@ -46,7 +46,7 @@ define $(PKG)_BUILD
         -no-declarative \
         -no-xmlpatterns \
         -no-stl \
-        -accessibility \
+        -no-accessibility \
         -no-reduce-exports \
         -no-rpath \
         -make libs \

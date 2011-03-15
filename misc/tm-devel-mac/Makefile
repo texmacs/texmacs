@@ -24,7 +24,7 @@ SED        := $(shell gsed --help >/dev/null 2>&1 && echo g)sed
 VERSION    := $(shell $(SED) -n 's,^.*<span id="latest-version">\([^<]*\)</span>.*$$,\1,p' '$(TOP_DIR)/doc/index.html')
 
 
-BUILD_ARCHS    := i386 x86_64 ppc
+BUILD_ARCHS    := ppc i386 x86_64
 TARGET_i386    := i686-apple-darwin10.4.0
 TARGET_x86_64  := x86_64-apple-darwin10.4.0
 TARGET_ppc     := powerpc-apple-darwin10.4.0
@@ -158,8 +158,7 @@ build-only-$(1):
 	    cd '$(2)/$($(1)_SUBDIR)'
 	    $(foreach PKG_PATCH,$(sort $(wildcard $(TOP_DIR)/src/$(1)-*.patch)),
 	        (cd '$(2)/$($(1)_SUBDIR)' && $(PATCH) -p1 -u) < $(PKG_PATCH))
-	    $(foreach BUILD_ARCH,$(BUILD_ARCHS),
-	      $$(call $(1)_BUILD,$(2)/$($(1)_SUBDIR),$(TOP_DIR)/src/$(1)-test,$(BUILD_ARCH)))
+	    $$(call $(1)_BUILD,$(2)/$($(1)_SUBDIR),$(TOP_DIR)/src/$(1)-test,$(1))
 	    rm -rfv  '$(2)'
 	    ,)
 	[ -d '$(PREFIX)/installed' ] || mkdir -p '$(PREFIX)/installed'
