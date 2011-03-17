@@ -35,8 +35,6 @@ export FREETYPE_LDFLAGS=`pkg-config --libs freetype2`
   --host=$HOST \
   --enable-macosx-extensions\
   --enable-qt\
-  CPPFLAGS="-arch $ARCH -mmacosx-version-min=10.4 "\
-  CFLAGS="-arch $ARCH -mmacosx-version-min=10.4 "\
-  CXXFLAGS="-arch $ARCH -mmacosx-version-min=10.4 "\
-  LDFLAGS="-arch $ARCH -mmacosx-version-min=10.4 " 
-
+  CC="gcc-4.2 -arch $ARCH -mmacosx-version-min=10.4 "\
+  CXX="g++-4.2 -arch $ARCH -mmacosx-version-min=10.4 "\
+  CPP="gcc-4.2 -E "
