@@ -31,7 +31,7 @@ function bundle_framework {
     mkdir ${BUNDLE_FRAMEWORKS}/${3}/Versions/4
     ln -s 4 ${BUNDLE_FRAMEWORKS}/${3}/Versions/Current
     ln -s 4 ${BUNDLE_FRAMEWORKS}/${3}/Versions/4.0
-    lipo -thin i386 ${2}/Versions/${4} -output ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
+#    lipo -thin i386 ${2}/Versions/${4} -output ${BUNDLE_FRAMEWORKS}/${3}/Versions/${4}
     if [ -e  ${2}/Versions/4/Resources ]; then
       cp -R ${2}/Versions/4/Resources ${BUNDLE_FRAMEWORKS}/${3}/Versions/4
       ln -s Versions/4/Resources ${BUNDLE_FRAMEWORKS}/${3}/Resources
