@@ -11,7 +11,7 @@ $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://www.gnu.org/software/$(PKG)/
 $(PKG)_URL      := http://ftp.gnu.org/gnu/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := gmp
+$(PKG)_DEPS     := gmp gettext
 #gcc libtool gmp libiconv gettext libunistring gc libffi readline
 
 # these options prevents some misbehaviour in configure due to cross-compilation to ppc from i386
