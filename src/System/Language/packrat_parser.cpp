@@ -646,6 +646,7 @@ packrat_parser_rep::highlight (C sym, C pos) {
 	C next= parse (inst[1], pos);
 	if (next == PACKRAT_FAILED) break;
 	highlight (inst[1], pos);
+	if (next == pos) break;
 	pos= next;
       }
       break;
