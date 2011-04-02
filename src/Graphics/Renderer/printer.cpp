@@ -601,7 +601,10 @@ void
 printer_rep::set_line_style (SI w, int type, bool round) {
   (void) type;
   (void) round;
-  if (lw == w) return;
+  // if (lw == w) return;
+  // FIXME: apparently, the line width can be overidden by some of
+  // the graphical constructs (example file: newimpl.tm, in which
+  // the second dag was not printed using the right width)
   lw= w;
   select_line_width (w);
 }
