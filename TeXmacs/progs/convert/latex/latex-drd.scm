@@ -48,7 +48,7 @@
 (drd-group latex-command-1%
   usepackage part part* chapter chapter*
   section section* subsection subsection* subsubsection subsubsection*
-  paragraph paragraph* subparagraph subparagraph*
+  paragraph paragraph* subparagraph subparagraph* nextbib
   footnote overline underline <sub> <sup> not left right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr

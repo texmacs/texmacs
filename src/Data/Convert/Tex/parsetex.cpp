@@ -234,7 +234,8 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       if ((i<n) && (!is_space (s[i]))) break;
       while ((i<n) && is_space (s[i]))
 	if (s[i++]=='\n') ln++;
-      if (ln >= 2) t << "\n"; else t << tree (TUPLE, "\\ ");
+      if (ln >= 2) t << "\n";
+      else if (i<n) t << tree (TUPLE, "\\ ");
       break;
     }
     case '$': {
@@ -754,7 +755,7 @@ latex_parser::parse (string s, bool change) {
   array<string> a;
   int i, start=0, n= N(s);
   for (i=0; i<n; i++)
-    if (s[i]=='\n') {
+    if (s[i]=='\n' || (s[i] == '\\' && test (s, i, "\\nextbib"))) {
       while ((i<n) && is_space (s[i])) i++;
       if (test (s, i, "%%%%%%%%%% Start TeXmacs macros\n")) {
 	a << s (start, i);
@@ -772,6 +773,7 @@ latex_parser::parse (string s, bool change) {
 	  test (s, i, "\\subsubsection") ||
 	  test (s, i, "\\paragraph") ||
 	  test (s, i, "\\subparagraph") ||
+	  test (s, i, "\\nextbib") ||
 	  test (s, i, "\\newcommand") ||
 	  test (s, i, "\\def") ||
 	  test (s, i, "\\input{") ||
@@ -796,10 +798,14 @@ latex_parser::parse (string s, bool change) {
             }
             start= i;
           }
+          while (i < n && test (s, i, "\\nextbib{}")) {
+            i += 10;
+            a << s (start, i);
+            start= i;
+          }
 	}
       if (i == n) break;
     }
-  a << s (start, i);
 
   // We now parse each of the pieces
   tree t (CONCAT);

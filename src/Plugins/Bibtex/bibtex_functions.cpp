@@ -414,7 +414,7 @@ bib_assoc (tree entry, string key) {
       if (bib_is_field (doc[i]) && doc[i][0]->label == key)
 	return doc[i][1];
   }
-  return tree ();
+  return "";
 }
 
 /******************************************************************************
@@ -490,9 +490,9 @@ get_fvl (string sfvl) {
       f= w << " " << f;
     }
   }
-  res << "\\section{}" << bib_to_latex (f);
-  res << "\\section{}" << bib_to_latex (v);
-  res << "\\section{}" << bib_to_latex (l);
+  res << "\\nextbib{}" << bib_to_latex (f);
+  res << "\\nextbib{}" << bib_to_latex (v);
+  res << "\\nextbib{}" << bib_to_latex (l);
   return res;
 }
 
@@ -516,9 +516,9 @@ get_vl_f (string svl, string sf) {
     w << words;
     f= w << " " << f;
   }
-  res << "\\section{}" << bib_to_latex (f);
-  res << "\\section{}" << bib_to_latex (v);
-  res << "\\section{}" << bib_to_latex (l);
+  res << "\\nextbib{}" << bib_to_latex (f);
+  res << "\\nextbib{}" << bib_to_latex (v);
+  res << "\\nextbib{}" << bib_to_latex (l);
   return res;
 }
 
@@ -533,7 +533,7 @@ get_vl_j_f (string svl, string sj, string sf) {
     w << words;
     j= w << " " << j;
   }
-  res << "\\section{}" << bib_to_latex (j);
+  res << "\\nextbib{}" << bib_to_latex (j);
   return res;
 }
 
@@ -560,12 +560,12 @@ get_first_von_last (string s) {
   c= get_until_char (s, pos, "");
   if (a != "" && b == "" && c == "") {
     string res= get_fvl (a);
-    res << "\\section{}";
+    res << "\\nextbib{}";
     return res;
   }
   if (a != "" && b != "" && c == "") {
     string res= get_vl_f (a, b);
-    res << "\\section{}";
+    res << "\\nextbib{}";
     return res;
   }
   if (a != "" && b != "" && c != "") return get_vl_j_f (a, b, c);
@@ -577,7 +577,7 @@ bib_names (string s, int& nbfields) {
   string res;
   int pos= 0;
   nbfields++;
-  res << "\\section{}{\\bibnames}";
+  res << "\\nextbib{}{\\bibnames}";
   while (pos < N(s)) {
     string name;
     int deb= pos;
@@ -585,7 +585,7 @@ bib_names (string s, int& nbfields) {
     int pos2= pos;
     if (pos < N(s)) pos -= 5;
     if (pos <= N(s) && deb < pos) name= s (deb, pos);
-    res << "\\section{}{\\bibname}";
+    res << "\\nextbib{}{\\bibname}";
     res << get_first_von_last (name);
     nbfields += 5;
     pos= pos2;
@@ -808,11 +808,11 @@ bib_get_fields (tree t, string& latex) {
           }
 	  else if (is_atomic (f[1]) && f[0]->label != "pages") {
             if (!bib_is_blank_string (f[1]->label)) {
-	      latex << "\\section{}" << bib_to_latex (f[1]->label);
+	      latex << "\\nextbib{}" << bib_to_latex (f[1]->label);
               nbfields++;;
             }
             else {
-              latex << "\\section{}";
+              latex << "\\nextbib{}";
               nbfields++;
             }
           }
@@ -829,8 +829,10 @@ static void
 bib_set_fields (tree& t, array<tree> latex, int& ind) {
   for (int i= 0; i<N(t); i++) {
     if (bib_is_entry (t[i])) {
+      //cout << "Changing " << t[i] << "\n";
       for (int j= 0; j<N(t[i][2]); j++) {
         tree f= t[i][2][j];
+        //cout << "  Field " << f << "\n";
         if (bib_is_field (f)) {
           if ((f[0]->label == "author" || f[0]->label == "editor") &&
 	      is_atomic (f[1])) {
@@ -863,7 +865,7 @@ static array<tree>
 bib_latex_array (tree latex) {
   int i= 0;
   array<tree> res;
-  while (i < N(latex) && latex[i] == compound ("section", tree ())) {
+  while (i < N(latex) && latex[i] == compound ("nextbib", "")) {
     i++;
     if (i < N(latex)) {
       if (latex[i] == compound ("bibnames")
@@ -873,7 +875,7 @@ bib_latex_array (tree latex) {
       }
       else {
         tree elt (CONCAT);
-        while (i < N(latex) && latex[i] != compound ("section", tree ())) {
+        while (i < N(latex) && latex[i] != compound ("nextbib", "")) {
           elt << latex[i];
           i++;
         }
@@ -890,6 +892,7 @@ bib_parse_fields (tree& t) {
   int i= 0;
   int nb= bib_get_fields (t, fields);
   array<tree> latex= bib_latex_array (latex_to_tree (parse_latex (fields)));
+  if (N(latex) == nb - 1) latex << tree ("");
   if (nb == N(latex)) bib_set_fields (t, latex, i);
 }
 
@@ -907,7 +910,7 @@ bib_field (scheme_tree st, string field) {
         return tree_to_scheme_tree (doc[i][1]);
     }
   }
-  return tree ();
+  return "";
 }
 
 /******************************************************************************
@@ -916,7 +919,7 @@ bib_field (scheme_tree st, string field) {
 
 bool
 bib_empty (scheme_tree st, string f) {
-  return (bib_field (st, f) == tree ());
+  return (bib_field (st, f) == "");
 }
 
 /******************************************************************************
@@ -1037,7 +1040,7 @@ bib_select_entries (tree t, tree bib_t) {
       r->insert (b);
       entries << h[b];
       tree cr= bib_assoc (h[b], string ("crossref"));
-      if (cr != tree ()) bt << as_string (cr);
+      if (cr != "") bt << as_string (cr);
     }
   }
   return entries;
