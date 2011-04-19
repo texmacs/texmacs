@@ -60,6 +60,7 @@ url url_standard (string dir, string name);
 inline url url_none () { return as_url (tuple ("none")); }
 inline url url_here () { return as_url (tree (".")); }
 inline url url_parent () { return as_url (tree ("..")); }
+inline url url_ancestor () { return as_url (tree ("...")); }
 inline url url_pwd () { return url_system ("$PWD"); }
 
 url url_root (string protocol);       // root url
@@ -81,6 +82,7 @@ inline url url_parent (url u) { return u * url_parent (); }
 inline bool is_none (url u) { return is_tuple (u->t, "none", 0); }
 inline bool is_here (url u) { return u->t == "."; }
 inline bool is_parent (url u) { return u->t == ".."; }
+inline bool is_ancestor (url u) { return u->t == "..."; }
 inline bool is_atomic (url u) { return is_atomic (u->t); }
 inline bool is_concat (url u) { return is_tuple (u->t, "concat", 2); }
 inline bool is_or (url u) { return is_tuple (u->t, "or", 2); }

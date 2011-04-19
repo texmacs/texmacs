@@ -318,6 +318,10 @@ operator * (url u1, url u2) {
     if (is_semi_root (u1))
       return u1 * u2[2];
   }
+  if (is_concat (u2) && (u2[1] == url_ancestor ())) {
+    if (is_root (u1) || is_semi_root (u1)) return u1 * u2[2];
+    return (u1 * u2[2]) | ((u1 * url_parent ()) * u2);
+  }
   if (is_concat (u1)) return u1[1] * (u1[2] * u2);
   return as_url (tuple ("concat", u1->t, u2->t));
 }

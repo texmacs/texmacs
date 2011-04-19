@@ -30,6 +30,19 @@ edit_process_rep::~edit_process_rep () {}
 * Automatically generate a bibliography
 ******************************************************************************/
 
+url
+find_bib_file (url base, string fname) {
+  if (!ends (fname, ".bib")) fname= fname * ".bib";
+  url bibf (fname);
+  if (exists (bibf))
+    return bibf;
+  if (exists (relative (base, bibf)))
+    return relative (base, bibf);
+  if (exists (relative (base, url_ancestor () * bibf)))
+    return resolve (relative (base, url_ancestor () * bibf));
+  return url_none ();
+}
+
 void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
@@ -40,17 +53,15 @@ edit_process_rep::generate_bibliography (
   tree bib_t= buf->aux[bib];
   if (buf->prj != NULL) bib_t= buf->prj->aux[bib];
   tree t;
+  url bib_file= find_bib_file (buf->name, fname);
+  if (is_none (bib_file)) {
+    set_message ("Could not find bibliography file", "compile bibliography");
+    return;
+  }
+  //cout << fname << " -> " << concretize (bib_file) << "\n";
   if (N(style)>=3 && style (0, 3) == "tm-") {
-    if (!ends (fname, ".bib")) fname= fname * ".bib";
-    url bibf (fname);
-    if (!exists (bibf))
-      bibf= relative (buf->name, bibf);
-    if (!exists (bibf)) {
-      set_message ("Could not find bibliography file", "compile bibliography");
-      return;
-    }
     string sbib;
-    load_string (bibf, sbib, false);
+    load_string (bib_file, sbib, false);
     tree te= bib_entries (parse_bib (sbib), bib_t);
     object ot= tree_to_stree (te);
     eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
@@ -58,7 +69,7 @@ edit_process_rep::generate_bibliography (
   }
   else {
     string dir= concretize (head (buf->name));
-    t= bibtex_run (bib, style, dir, fname, bib_t);
+    t= bibtex_run (bib, style, bib_file, bib_t);
   }
   if (is_atomic (t)) {
     if (starts (t->label, "Error:"))

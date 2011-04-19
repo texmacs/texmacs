@@ -806,6 +806,7 @@ latex_parser::parse (string s, bool change) {
 	}
       if (i == n) break;
     }
+  a << s (start, i);
 
   // We now parse each of the pieces
   tree t (CONCAT);

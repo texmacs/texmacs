@@ -51,20 +51,21 @@ search_bib (tree t) {
 }
 
 tree
-bibtex_run (string bib, string style, string dir, string fname, tree bib_t) {
+bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   int i;
   string bib_s= "\\bibstyle{" * style * "}\n";
   for (i=0; i<arity(bib_t); i++)
     bib_s << "\\citation{" << as_string (bib_t[i]) << "}\n";
 
-  string bib_name= fname;
+  string dir= concretize (head (bib_file));
+  string bib_name= as_string (tail (bib_file));
   if ((N(bib_name) >= 4) && (bib_name (N(bib_name)-4, N(bib_name)) == ".bib"))
     bib_name= bib_name (0, N(bib_name)- 4);
   bib_s << "\\bibdata{" << bib_name << "}\n";
   save_string ("$TEXMACS_HOME_PATH/system/bib/temp.aux", bib_s);
 
 #ifdef OS_WIN32
-  char *directory = as_charp(dir);
+  char *directory = as_charp (dir);
   RunBibtex(directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
   tm_delete_array (directory);
 #else

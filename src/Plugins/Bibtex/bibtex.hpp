@@ -11,10 +11,9 @@
 
 #ifndef BIBTEX_H
 #define BIBTEX_H
-#include "tree.hpp"
+#include "url.hpp"
 
 void set_bibtex_command (string cmd);
-tree bibtex_run (string bib, string style, string dir, string fname,
-		 tree bib_t);
+tree bibtex_run (string bib, string style, url bib_file, tree bib_t);
 
 #endif // BIBTEX_H

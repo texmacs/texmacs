@@ -516,7 +516,8 @@
 (define (author-sort-key x ae)
   (if (bib-empty? x ae)
       (list-ref x 2)
-      (author-sort-format (cdr (bib-field x ae)))))
+      ;;(author-sort-format (cdr (bib-field x ae)))))
+      (string-upcase (author-sort-format (cdr (bib-field x ae))))))
 
 (tm-define (bib-sort-key x)
   (:mode bib-plain?)
