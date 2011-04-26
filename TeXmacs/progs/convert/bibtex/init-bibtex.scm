@@ -19,8 +19,7 @@
 
 (define-format bibtex
   (:name "BibTeX")
-  ;;(:suffix "bib")
-  (:suffix))
+  (:suffix "bib"))
 
 (lazy-define (convert bibtex bibtextm) parse-bibtex-snippet)
 (lazy-define (convert bibtex bibtextm) parse-bibtex-document)
