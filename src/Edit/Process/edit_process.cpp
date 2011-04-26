@@ -59,7 +59,14 @@ edit_process_rep::generate_bibliography (
     return;
   }
   //cout << fname << " -> " << concretize (bib_file) << "\n";
-  if (N(style)>=3 && style (0, 3) == "tm-") {
+  if (!bibtex_present () && !starts (style, "tm-")) {
+    if (style == "alpha") style= "tm-alpha";
+    else if (style == "acm") style= "tm-acm";
+    else if (style == "ieeetr") style= "tm-ieeetr";
+    else if (style == "siam") style= "tm-siam";
+    else style= "tm-plain";
+  }
+  if (starts (style, "tm-")) {
     string sbib;
     load_string (bib_file, sbib, false);
     tree te= bib_entries (parse_bib (sbib), bib_t);
@@ -71,10 +78,8 @@ edit_process_rep::generate_bibliography (
     string dir= concretize (head (buf->name));
     t= bibtex_run (bib, style, bib_file, bib_t);
   }
-  if (is_atomic (t)) {
-    if (starts (t->label, "Error:"))
-      set_message (t->label, "compile bibliography");
-  }
+  if (is_atomic (t) && starts (t->label, "Error:"))
+    set_message (t->label, "compile bibliography");
   else if (N(t) > 0) insert_tree (t);
 }
 

@@ -25,6 +25,11 @@ set_bibtex_command (string cmd) {
   bibtex_command= cmd;
 }
 
+bool
+bibtex_present () {
+  return exists_in_path (bibtex_command);
+}
+
 tree
 remove_start_space (tree t) {
   if (is_atomic (t)) {

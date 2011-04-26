@@ -14,6 +14,7 @@
 #include "url.hpp"
 
 void set_bibtex_command (string cmd);
+bool bibtex_present ();
 tree bibtex_run (string bib, string style, url bib_file, tree bib_t);
 
 #endif // BIBTEX_H
