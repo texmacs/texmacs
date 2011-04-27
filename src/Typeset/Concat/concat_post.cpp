@@ -221,9 +221,24 @@ concater_rep::handle_matching (int start, int end) {
         SI d= 5 * fn->yx - h;
         if (d > 0) { Y1 += d/12; Y2 -= d/12; }
 
-	a[i]->b= delimiter_box (a[i]->b->ip, a[i]->b->get_leaf_string (),
-				fn, a[i]->b->get_leaf_color (), Y1, Y2);
-	a[i]->type= STD_ITEM;
+        // replace item by large or small delimiter
+        string ls= a[i]->b->get_leaf_string ();
+        color lc= a[i]->b->get_leaf_color ();
+        font lf= a[i]->b->get_leaf_font ();
+        if (Y1 < fn->y1 || Y2 > fn->y2)
+          a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lc, Y1, Y2);
+        else {
+          string s= "<nobracket>";
+          int j;
+          for (j=0; j<N(ls); j++)
+            if (ls[j] == '-') break;
+          if (j<N(ls) && ls[N(ls)-1] == '>') s= ls (j+1, N(ls)-1);
+          if (N(s) != 1 && s[0] != '<') s= "<" * s * ">";
+          else if (s == ".") s= "<nobracket>";
+          a[i]->b= text_box (a[i]->b->ip, 0, s, lf, lc);
+          tp= STD_ITEM;
+        }
+        a[i]->type= STD_ITEM;
       }
     if (tp == LEFT_BRACKET_ITEM)
       for (int j= i-1; j>=0; j--) {
