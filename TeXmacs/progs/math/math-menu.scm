@@ -227,7 +227,8 @@
   (symbol "<left-||-4>" (math-bracket-open "<||>" "<||>" 'default))
   (symbol "<left-/-2>" (math-bracket-open "/" "\\" 'default))
   (symbol "<left-\\-2>" (math-bracket-open "\\" "/" 'default))
-  (symbol "<left-.-2>" (math-bracket-open "." "." 'default)))
+  (symbol "<left-.-2>"
+          (math-bracket-open "<nobracket>" "<nobracket>" 'default)))
 
 (menu-bind left-delimiter-menu
   (symbol "<left-(-2>" (math-bracket-open "(" ")" #t))
@@ -250,7 +251,7 @@
   (symbol "<left-||-4>" (math-bracket-open "<||>" "<||>" #t))
   (symbol "<left-/-2>" (math-bracket-open "/" "\\" #t))
   (symbol "<left-\\-2>" (math-bracket-open "\\" "/" #t))
-  (symbol "<left-.-2>" (math-bracket-open "." "." #t)))
+  (symbol "<left-.-2>" (math-bracket-open "<nobracket>" "<nobracket>" #t)))
 
 (menu-bind middle-delimiter-menu
   (symbol "<mid-(-2>" (math-separator "(" #t))
@@ -321,8 +322,7 @@
   (symbol "<big-box-2>" (math-big-operator "box"))
   (symbol "<big-pluscup-2>" (math-big-operator "pluscup"))
   (symbol "<big-parallel-2>" (math-big-operator "parallel"))
-  (symbol "<big-interleave-2>" (math-big-operator "interleave"))
-  (symbol "<big-.-2>" (math-big-operator ".")))
+  (symbol "<big-interleave-2>" (math-big-operator "interleave")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Binary operations

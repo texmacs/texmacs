@@ -518,6 +518,8 @@ downgrade_brackets (tree t, bool delete_missing) {
   for (i=0; i<n; i++)
     r[i]= downgrade_brackets (t[i], delete_missing);
   if (is_func (r, AROUND, 3)) {
+    if (delete_missing && r[0] == "<nobracket>" && r[2] == "<nobracket>")
+      return concat (r[0], r[1], r[2]);
     tree lb= downgrade_bracket (r[0], false);
     tree rb= downgrade_bracket (r[2], false);
     r= concat (lb, r[1], rb);
@@ -525,8 +527,11 @@ downgrade_brackets (tree t, bool delete_missing) {
   if (is_func (r, VAR_AROUND, 3)) {
     tree lb= tree (LEFT, downgrade_bracket (r[0], true));
     tree rb= tree (RIGHT, downgrade_bracket (r[2], true));
-    if (delete_missing && lb == tree (LEFT, ".")) lb= "";
-    if (delete_missing && rb == tree (RIGHT, ".")) rb= "";
+    if (delete_missing) {
+      if (lb == tree (LEFT, ".") && rb == tree (RIGHT, "."));
+      else if (lb == tree (LEFT, ".")) lb= "";
+      else if (rb == tree (RIGHT, ".")) rb= "";
+    }
     r= concat (lb, r[1], rb);
   }
   if (is_func (r, BIG_AROUND, 2)) {

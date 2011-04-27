@@ -223,7 +223,6 @@
   ("math:symbol:circled ." (math-big-operator "odot"))
   ("math:symbol:circled +" (math-big-operator "oplus"))
   ("math:symbol:circled x" (math-big-operator "otimes"))
-  ("math:symbol ." (math-big-operator "."))
 
   ("symbol &" "&")
   ("symbol %" "%")
@@ -299,7 +298,7 @@
   ("math:left | accent:grave" (math-bracket-open "<lceil>" "<rceil>" #t))
   ("math:left | accent:grave var" (math-bracket-open "<lceil>" "<rfloor>" #t))
   ("math:left accent:grave |" (math-bracket-open "<rceil>" "<lceil>" #t))
-  ("math:left ." (math-bracket-open "." "." #t))
+  ("math:left ." (math-bracket-open "<nobracket>" "<nobracket>" #t))
 
   ("math:middle (" (math-separator "(" #t))
   ("math:middle )" (math-separator ")" #t))
@@ -319,7 +318,7 @@
   ("math:left ` |" (math-separator "<rceil>" #t))
   ("math:left | accent:grave" (math-separator "<lceil>" #t))
   ("math:left accent:grave |" (math-separator "<rceil>" #t))
-  ("math:middle ." (math-separator "." #t))
+  ("math:middle ." (math-separator "<nobracket>" #t))
 
   ("math:right (" (math-bracket-close "(" ")" #t))
   ("math:right )" (math-bracket-close ")" "(" #t))
@@ -339,11 +338,11 @@
   ("math:right ` |" (math-bracket-close "<rceil>" "<lceil>" #t))
   ("math:right | accent:grave" (math-bracket-close "<lceil>" "<rceil>" #t))
   ("math:right accent:grave |" (math-bracket-close "<rceil>" "<lceil>" #t))
-  ("math:right ." (math-bracket-close "." "." #t))
+  ("math:right ." (math-bracket-close "<nobracket>" "<nobracket>" #t))
 
   ("(" (math-bracket-open "(" ")" 'default))
-  ("( var" (math-bracket-open "." "." 'default))
-  ("( space" (math-bracket-open "." "." 'default))
+  ("( var" (math-bracket-open "<nobracket>" "<nobracket>" 'default))
+  ("( space" (math-bracket-open "<nobracket>" "<nobracket>" 'default))
   (")" (math-bracket-close ")" "(" 'default))
   ("[" (math-bracket-open "[" "]" 'default))
   ("[ var" (math-bracket-open "[" "[" 'default))
