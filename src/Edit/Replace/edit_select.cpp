@@ -622,7 +622,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
     if (selection_export == "html") t= exec_html (t, tp);
     if (selection_export == "latex") t= exec_latex (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
-      t= tree (WITH, "mode", "math", t);
+      t= compound ("math", t);
     s= tree_to_generic (t, selection_export * "-snippet");
     s= selection_encode (lan, s);
   }
@@ -689,8 +689,14 @@ edit_select_rep::selection_paste (string key) {
     }
     else {
       if ((t[2] != mode) && (t[2] != "src") && (mode != "src") &&
-	  ((t[2] == "math") || (mode == "math")))
-	insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
+	  ((t[2] == "math") || (mode == "math"))) {
+        if (t[2] == "math")
+          insert_tree (compound ("math", ""), path (0, 0));
+        else if (t[2] == "text")
+          insert_tree (compound ("text", ""), path (0, 0));
+        else
+          insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
+      }
       if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;
 	path fp= search_format (row, col);
