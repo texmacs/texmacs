@@ -113,6 +113,12 @@
 ;; Main page layout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (test-default-page-medium?) (test-default? "page-medium"))
+(tm-define (init-default-page-medium)
+  (:check-mark "*" test-default-page-medium?)
+  (init-default "page-medium")
+  (notify-page-change))
+
 (define (test-page-medium? s) (string=? (get-env "page-medium") s))
 (tm-define (init-page-medium s)
   (:check-mark "*" test-page-medium?)

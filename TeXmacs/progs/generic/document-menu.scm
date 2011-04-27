@@ -509,9 +509,7 @@
 	  ("3" (init-env "par-columns" "3"))))
   (-> "Page"
       (-> "Type"
-	  ("Default" (check "*" (test-default? "page-medium"))
-	   (init-default "page-medium")
-	   (notify-page-change))
+	  ("Default" (init-default-page-medium))
 	  ---
 	  ("Paper" (init-page-medium "paper"))
 	  ("Papyrus" (init-page-medium "papyrus"))
