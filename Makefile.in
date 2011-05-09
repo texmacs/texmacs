@@ -18,6 +18,8 @@ datadir = @datadir@
 mandir = @mandir@
 tmdir = @tmdir@
 tmtgz = @tmtgz@
+tmdeb = @tmdeb@
+tmdebb = @tmdebb@
 tmbin = @tmbin@
 tmdata = @tmdata@
 so = @CONFIG_SO@
@@ -356,7 +358,50 @@ WIN_BUNDLE_LIBS:
 
 WIN_BUNDLE: WIN_BUNDLE_MAIN WIN_BUNDLE_LIBS 
 
+###############################################################################
+# Make a bundle for Debian
+###############################################################################
 
+DEBIAN_BUNDLE_SRC = misc/debian
+DEBIAN_BUNDLE_DIR = ../distr/TeXmacs-Debian
+DEBIAN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+
+DEBIAN_BUNDLE:
+	$(MKDIR) ../distr
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)
+	$(MKDIR) $(DEBIAN_BUNDLE_DIR)
+	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)
+	#$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
+	$(CP) -a * $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/.
+
+	# Moving doc
+	$(CP) -ar ../doc/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
+
+	# Moving fonts
+	if [ -f ../$(DEBIAN_BUNDLE_FONTS) ] ; then \
+	  cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
+	  tar -zxf ../../../../$(DEBIAN_BUNDLE_FONTS); \
+	fi
+
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
+
+	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); make distclean
+	cd $(DEBIAN_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb)
+	cd $(DEBIAN_BUNDLE_DIR); tar -czf $(tmdebb).orig.tar.gz $(tmdeb)
+
+	# Moving Debian files
+	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb);
+	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian ;
+	$(CP) $(DEBIAN_BUNDLE_SRC)/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
+	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); debuild -us -uc
 
 ###############################################################################
 # Cleaning and backups
