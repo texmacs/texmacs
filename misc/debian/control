@@ -1,0 +1,15 @@
+Source: texmacs
+Section: editors
+Priority: optional
+Maintainer: Daouda Niang DIATTA <dndiatta@lix.polytechnique.fr>
+Build-Depends: debhelper (>= 7.0.50~), cdbs (>= 0.4), dpatch, guile-1.8-dev [!ia64], libxt-dev, libx11-dev, x11proto-core-dev, libltdl-dev | libltdl7-dev, libfreetype6-dev, autotools-dev, r-base-core (>= 2.0), libimlib2-dev, netpbm, libjpeg-progs, libtiff-tools, ispell, librsvg2-bin, xfig, imagemagick
+Standards-Version: 3.8.4
+Homepage: http://www.texmacs.org
+
+Package: texmacs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},texlive-base, texlive-extra-utils, texlive-font-utils, texlive-math-extra, x11-apps, x11-session-utils, x11-utils, ghostscript-x, groff, mlocate | slocate | locate | findutils (<< 4.2.31-2)
+Description: WYSIWYG mathematical text editor using TeX fonts
+ GNU TeXmacs is a free scientific text editor, which was both inspired
+ by TeX and GNU Emacs.
+

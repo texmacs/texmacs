@@ -1,0 +1,30 @@
+This work was packaged for Debian by:
+
+    Daouda Niang Diatta <dndiatta@lix.polytechnique.fr> on Fri, 08 Apr 2011 15:21:31 +0200
+
+It was downloaded from:
+
+    <http://www.texmacs.org/>
+
+Upstream Author(s):
+
+    <Joris van der Hoeven>
+  
+Copyright:
+
+    <Copyright (C) 1999 Joris van der Hoeven>
+
+License:
+
+    < GPL version 3>
+
+The Debian packaging is:
+
+    Copyright (C) 2011 dndiatta <dndiatta@lix.polytechnique.fr>
+
+
+and is licensed under the GPL version 3,
+see "/usr/share/common-licenses/GPL-3".
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.

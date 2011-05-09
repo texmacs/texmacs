@@ -1,0 +1,4 @@
+python:Depends=python, python-support (>= 0.90.0)
+perl:Depends=perl
+shlibs:Depends=guile-1.8-libs, libc6 (>= 2.3), libfreetype6 (>= 2.2.1), libgcc1 (>= 1:4.1.1), libgmp3c2, libltdl7 (>= 2.2.6b), libstdc++6 (>= 4.4.0), libx11-6, libxext6, zlib1g (>= 1:1.1.4)
+misc:Depends=
