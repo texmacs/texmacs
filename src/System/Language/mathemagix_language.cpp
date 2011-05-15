@@ -140,6 +140,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("infix")= c;
   t ("inherit")= c;
   t ("inline")= d;
+  t ("inplace")= c;
   t ("interactive")= c;
   t ("intern")= c;
   t ("join")= c;
