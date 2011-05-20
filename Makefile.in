@@ -403,6 +403,55 @@ DEBIAN_BUNDLE:
 	$(CP) $(DEBIAN_BUNDLE_SRC)/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
 	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); debuild -us -uc
 
+
+
+
+
+###############################################################################
+# Make a bundle for Fedora
+###############################################################################
+
+FEDORA_BUNDLE_SRC = misc/fedora
+FEDORA_BUNDLE_DIR = ../distr/TeXmacs-Fedora
+FEDORA_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+
+FEDORA_BUNDLE:
+	$(MKDIR) ../distr
+	$(RM) -r $(FEDORA_BUNDLE_DIR)
+	$(MKDIR) $(FEDORA_BUNDLE_DIR)
+	$(MKDIR) $(FEDORA_BUNDLE_DIR)/$(tmdeb)
+	$(CP) -a * $(FEDORA_BUNDLE_DIR)/$(tmdeb)/.
+
+	# Moving doc
+	$(CP) -ar ../doc/* $(FEDORA_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
+
+	# Moving fonts
+	if [ -f ../$(FEDORA_BUNDLE_FONTS) ] ; then \
+	  cd $(FEDORA_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
+	  tar -zxf ../../../../$(FEDORA_BUNDLE_FONTS); \
+	fi
+
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
+
+	cd $(FEDORA_BUNDLE_DIR)/$(tmdeb); make distclean
+	cd $(FEDORA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+
+	# Moving Fedora files
+	rpmdev-setuptree;
+	cp $(FEDORA_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(FEDORA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(FEDORA_BUNDLE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(FEDORA_BUNDLE_DIR);
+
 ###############################################################################
 # Cleaning and backups
 ###############################################################################
