@@ -452,6 +452,56 @@ FEDORA_BUNDLE:
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(FEDORA_BUNDLE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(FEDORA_BUNDLE_DIR);
 
+
+###############################################################################
+# Make a bundle for CentOs
+###############################################################################
+
+CENTOS_BUNDLE_SRC = misc/centos
+CENTOS_BUNDLE_DIR = ../distr/TeXmacs-Centos
+CENTOS_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+
+CENTOS_BUNDLE:
+	$(MKDIR) ../distr
+	$(RM) -r $(CENTOS_BUNDLE_DIR)
+	$(MKDIR) $(CENTOS_BUNDLE_DIR)
+	$(MKDIR) $(CENTOS_BUNDLE_DIR)/$(tmdeb)
+	$(CP) -a * $(CENTOS_BUNDLE_DIR)/$(tmdeb)/.
+
+	# Moving doc
+	$(CP) -ar ../doc/* $(CENTOS_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
+
+	# Moving fonts
+	if [ -f ../$(CENTOS_BUNDLE_FONTS) ] ; then \
+	  cd $(CENTOS_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
+	  tar -zxf ../../../../$(CENTOS_BUNDLE_FONTS); \
+	fi
+
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
+	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
+
+	cd $(CENTOS_BUNDLE_DIR)/$(tmdeb); make distclean
+	cd $(CENTOS_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+
+	# Moving Centos files
+	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	if [ !-f ~/.rpmmacros ]; then \
+	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
+
+	cp $(CENTOS_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(CENTOS_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(CENTOS_BUNDLE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_BUNDLE_DIR);
+
 ###############################################################################
 # Cleaning and backups
 ###############################################################################
