@@ -10,7 +10,7 @@ Source0:        texmacs-1.0.7.10.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-c++,libtiff-devel, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel,guile-devel, xfig, aspell, ImageMagick
-Requires: texlive    
+Requires: tetex    
 
 %description
 
