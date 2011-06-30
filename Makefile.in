@@ -503,6 +503,57 @@ CENTOS_BUNDLE:
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_BUNDLE_DIR);
 
 ###############################################################################
+# Make a bundle for CentOs
+###############################################################################
+
+
+MANDRIVA_BUNDLE_SRC = misc/mandriva
+MANDRIVA_BUNDLE_DIR = ../distr/TeXmacs-Mandriva
+MANDRIVA_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
+
+MANDRIVA_BUNDLE:
+	$(MKDIR) ../distr
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)
+	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)
+	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)
+	$(CP) -a * $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/.
+
+	# Moving doc
+	$(CP) -ar ../doc/* $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
+
+	# Moving fonts
+	if [ -f ../$(MANDRIVA_BUNDLE_FONTS) ] ; then \
+	  cd $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
+	  tar -zxf ../../../../$(MANDRIVA_BUNDLE_FONTS); \
+	fi
+
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
+	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
+
+	cd $(MANDRIVA_BUNDLE_DIR)/$(tmdeb); make distclean
+	cd $(MANDRIVA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+
+	# Moving Mandriva files
+	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	if [ !-f ~/.rpmmacros ]; then \
+	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
+
+	cp $(MANDRIVA_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(MANDRIVA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_BUNDLE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_BUNDLE_DIR);
+
+
+###############################################################################
 # Cleaning and backups
 ###############################################################################
 
