@@ -21,6 +21,7 @@
 #define PATTERN WIN_PATTERN
 #define STRING WIN_STRING
 #define GROUP WIN_GROUP
+#define mouse_event win_mouse_event
 #ifdef IN
 #define MY_IN IN
 #undef IN
@@ -38,6 +39,7 @@
 #undef ERROR
 #undef PATTERN
 #undef GROUP
+#undef mouse_event
 #undef IN
 #undef OUT
 #undef MENU_EVENT
