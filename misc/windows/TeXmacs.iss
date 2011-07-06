@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=TeXmacs
-AppVerName=TeXmacs version 1.0.7.2
+AppVerName=TeXmacs version 1.0.7.10
 DefaultDirName={pf}\TeXmacs
 DefaultGroupName=TeXmacs
 UninstallDisplayIcon={app}\TeXmacs.ico
