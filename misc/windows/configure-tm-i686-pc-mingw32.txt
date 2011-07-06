@@ -1,3 +1,12 @@
+# this script correctly configure TeXmacs with the
+# mingw-cross-env cross-compling environment
+# see http://mingw-cross-env.nongnu.org/
+
+# you have to modify BASEDIR to suit your needs.
+
+# mingw-cross-env packages needed: 
+# qt freetype guile
+
 BASEDIR=$HOME/w/mingw-cross-env-2.18
 export PATH=$BASEDIR/usr/bin:$PATH
 export GUILE_CFLAGS=`i686-pc-mingw32-pkg-config --cflags guile-1.8`
