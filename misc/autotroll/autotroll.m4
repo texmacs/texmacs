@@ -148,8 +148,13 @@ dnl Memo: AC_ARG_WITH(package, help-string, [if-given], [if-not-given])
   fi
 
   # Find rcc (Qt Resource Compiler).
-  AC_PATH_PROGS([RCC], [rcc], [false], [$QT_PATH:$PATH:$tmp_qt_paths])
-  if test x"$UIC" = xfalse; then
+  if test -z "$RCC"; then
+    AC_PATH_PROGS([RCC], [rcc], [false], [$QT_PATH:$PATH:$tmp_qt_paths])
+  else
+    AC_MSG_CHECKING([for the rcc to use with Qt])
+    AC_MSG_RESULT([$RCC])
+  fi
+  if test x"$RCC" = xfalse; then
     AC_MSG_WARN([Cannot find rcc (Qt Resource Compiler) in your PATH. Try using --with-qt.])
   fi
 
