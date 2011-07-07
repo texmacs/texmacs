@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <locale.h> // for setlocale
 
 #include "boot.hpp"
 #include "file.hpp"
