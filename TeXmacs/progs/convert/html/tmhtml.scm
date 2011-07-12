@@ -893,7 +893,7 @@
 (define (border-attr what x)
   (length-attr what x " solid"))
 
-(define (tmhtml-make-cell-attr x)
+(define (tmhtml-make-cell-attr x all)
   (cond ((== (car x) "cell-width") (length-attr "width" (cadr x)))
 	((== (car x) "cell-height") (length-attr "height" (cadr x)))
 	((== x '("cell-halign" "l")) "text-align: left")
@@ -913,12 +913,22 @@
 	((== (car x) "cell-rsep") (length-attr "padding-right" (cadr x)))
 	((== (car x) "cell-tsep") (length-attr "padding-top" (cadr x)))
 	((== (car x) "cell-bsep") (length-attr "padding-bottom" (cadr x)))
+	((== (car x) "cell-bsep") (length-attr "padding-bottom" (cadr x)))
+	((== x '("cell-block" "no")) "white-space: nowrap")
+	((== x '("cell-block" "yes")) #f)
+	((== x '("cell-block" "auto"))
+         (if (or (in? '("cell-hyphen" "t") all)
+                 (in? '("cell-hyphen" "c") all)
+                 (in? '("cell-hyphen" "b") all))
+             #f
+             "white-space: nowrap"))
 	(else #f)))
 
 (define (tmhtml-make-cell c cellf)
   (ahash-with tmhtml-env :left-margin 0
-    `(h:td ,@(html-css-attrs (map* tmhtml-make-cell-attr cellf))
-	   ,@(tmhtml (cadr c)))))
+    (with make (lambda (attr) (tmhtml-make-cell-attr attr cellf))
+      `(h:td ,@(html-css-attrs (map* make cellf))
+             ,@(tmhtml (cadr c))))))
 
 (define (tmhtml-make-cells-bis l cellf)
   (if (null? l) l
