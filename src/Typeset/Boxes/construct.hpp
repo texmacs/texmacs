@@ -93,6 +93,7 @@ box page_box (path ip, tree page, SI w, SI h,
 box action_box (path ip, box b, tree filter, command cmd, bool child_flag);
 box action_box (path ip, box b, tree f, command c, bool ch, path vip);
 box locus_box (path ip, box b, list<string> ids, SI pixel);
+box locus_box (path ip, box b, list<string> ids, SI pixel, string ref, string anchor);
 box macro_box (path ip, box b, font big_fn= font ());
 box tag_box (path ip, box b, tree keys);
 

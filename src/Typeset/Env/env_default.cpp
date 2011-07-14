@@ -252,9 +252,11 @@ initialize_default_env () {
   tree dest_url (URL, tree (ARG, "destination"));
   tree dest_script (SCRIPT, tree (ARG, "destination"), tree (ARG, "where"));
   tree dest_ref (URL, tree (MERGE, "#", tree (ARG, "Id")));
+  tree anchor (ID, tree (MERGE, "#", tree (ARG, "Id")));
   tree ln1 (LINK, "hyperlink", copy (src_id), copy (dest_url));
   tree ln2 (LINK, "action", copy (src_id), copy (dest_script));
   tree ln3 (LINK, "hyperlink", copy (ref_id), copy (dest_ref));
+  tree ln4 (LINK, "anchor", anchor);
   tree labflag (FLAG, tree (ARG, "Id"), "blue", "Id");
   tree labtxt (SET_BINDING, tree (ARG, "Id"), tree (VALUE, THE_LABEL));
   tree merged (MERGE, tree (VALUE, THE_TAGS), tuple (tree (ARG, "Id")));
@@ -267,7 +269,8 @@ initialize_default_env () {
   env ("action")= tree (MACRO, "body", "destination", "where",
 			tree (LOCUS, copy (src_id), ln2,
                               tree (ARG, "body")));
-  env ("label")= tree (MACRO, "Id", tree (CONCAT, labflag, labtxt));
+  env ("label")= tree (MACRO, "Id", 
+		       tree (LOCUS, copy (ref_id), ln4, tree (CONCAT, labflag, labtxt)));
   env ("tag")= tree (MACRO, "Id", "body",
 		     tree (WITH, "the-tags", merged,
 			   tree (SURROUND, tagflag, "",

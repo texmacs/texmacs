@@ -104,6 +104,10 @@ public:
   virtual void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
+
+  /* href and stuff */
+  virtual void anchor(string label, SI x, SI y);
+  virtual void href(string label, SI x1, SI y1, SI x2, SI y2);
 };
 
 void abs_round (SI& l);

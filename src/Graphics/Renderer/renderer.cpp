@@ -64,6 +64,20 @@ renderer_rep::interrupted (bool check) {
   return false;
 }
 
+void
+renderer_rep::anchor(string label, SI x, SI y) {
+  (void) label; (void) x; (void) y;
+  return;
+}
+
+void
+renderer_rep::href(string label, SI x1, SI y1, SI x2, SI y2) {
+  (void) label;
+  (void) x1; (void) y1; (void) x2; (void) y2;
+  return;
+}
+
+
 /******************************************************************************
 * Origin and shrinking factor
 ******************************************************************************/

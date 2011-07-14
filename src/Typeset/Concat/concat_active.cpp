@@ -81,13 +81,16 @@ concater_rep::typeset_case (tree t, path ip) {
 ******************************************************************************/
 
 bool
-build_locus (edit_env env, tree t, list<string>& ids, string& col) {
+build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, string &anchor) {
   //cout << "Typeset " << t << "\n";
   int last= N(t)-1;
   tree body= env->expand (t[last], true);
   //cout << "Typeset " << body << "\n";
   bool accessible= is_accessible (obtain_ip (body));
   bool visited= false;
+  ref="";
+  anchor="";
+
   if (!is_nil (env->link_env)) {
     int i, j;
     for (i=0; i<last; i++) {
@@ -110,10 +113,14 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
 	       << (env->secure? tree ("true"): tree ("false"));
 	env->link_env->insert_link (arg);
 	for (j=2; j<N(arg); j++) {
-	  if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0]))
+	  if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0])) {
 	    visited= visited || has_been_visited ("id:" * arg[j][0]->label);
-	  if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0]))
+	    anchor = arg[j][0]->label;
+	  }
+	  if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0])) {
 	    visited= visited || has_been_visited ("url:" * arg[j][0]->label);
+	    ref = arg[j][0]->label;
+	  }
 	}
       }
     }
@@ -132,13 +139,23 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   return accessible;
 }
 
+bool
+build_locus (edit_env env, tree t, list<string>& ids, string& col) {
+  string ref;
+  string anchor;
+  return build_locus(env, t, ids, col, ref, anchor);
+}
+
 void
 concater_rep::typeset_locus (tree t, path ip) {
+  string ref;
+  string anchor;
+
   if (N(t) == 0) { typeset_error (t, ip); return; }
   int last= N(t)-1;
   list<string> ids;
   string col;
-  if (build_locus (env, t, ids, col)) {
+  if (build_locus (env, t, ids, col, ref, anchor)) {
     marker (descend (ip, 0));
     tree old= env->local_begin (COLOR, col);
     typeset (t[last], descend (ip, last));
@@ -149,7 +166,7 @@ concater_rep::typeset_locus (tree t, path ip) {
     tree old= env->local_begin (COLOR, col);
     box b= typeset_as_concat (env, t[last], descend (ip, last));
     env->local_end (COLOR, old);
-    print (locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
+    print (locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL, ref, anchor));
   }
 }
 

@@ -69,6 +69,10 @@ public:
   void select_tex_font (string name);
   void generate_tex_fonts ();
 
+  /************************ subroutines hyperlinks ***************************/
+  void anchor(string label, SI x, SI y);
+  void href(string label, SI x1, SI y1, SI x2, SI y2);
+
   /********************** routines from renderer.hpp *************************/
 
   void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
