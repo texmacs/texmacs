@@ -441,60 +441,59 @@ edit_replace_rep::search_keypress (string s) {
   }
   else {
     if ((s == "left") || (s == "right") ||
-	(s == "up") || (s == "down") ||
-	(s == "pageup") || (s == "pagedown") ||
-	(s == "begin") || (s == "end"))
-      {
-	search_stop ();
-	return false;
-      }
+        (s == "up") || (s == "down") ||
+        (s == "pageup") || (s == "pagedown") ||
+        (s == "begin") || (s == "end")) {
+      search_stop ();
+      return false;      
+    }
     else if ((s == "C-c") || (s == "C-g"))
       search_stop ();
     else if ((s == "next") || (s == "previous")) {
       if (search_what == "") {
-	tree t= selection_raw_get ("search");
-	if (is_tuple (t, "texmacs", 3) &&
-	    (t[1] != "") &&
-	    (t[2] == search_mode) &&
-	    (t[3] == search_lan))
-	  search_next (t[1], s != "previous", true);
+        tree t= selection_raw_get ("search");
+        if (is_tuple (t, "texmacs", 3) &&
+            (t[1] != "") &&
+            (t[2] == search_mode) &&
+            (t[3] == search_lan))
+          search_next (t[1], s != "previous", true);
       }
       else search_next (search_what, s != "previous", true);
     }
     else if ((s == "delete") || (s == "backspace")) {
       if (is_nil (where_stack))
-	search_stop ();
+        search_stop ();
       else if (is_atom (where_stack)) {
-	go_to (where_stack->item);
-	search_stop ();
+        go_to (where_stack->item);
+        search_stop ();
       }
       else {
-	search_at  = where_stack->item;
-	where_stack= where_stack->next;
-	search_what= what_stack[0];
-	what_stack = what_stack[1];
-	search_next (forward);
+        search_at  = where_stack->item;
+        where_stack= where_stack->next;
+        search_what= what_stack[0];
+        what_stack = what_stack[1];
+        search_next (forward);
       }
     }
     else if ((s == "C-left") || (s == "C-right")) {
       // FIXME: integrate better with general searching mechanism
       path p= path_up (search_at);
       while ((p != rp) && (!is_extension (subtree (et, path_up (p)))))
-	p= path_up (p);
+        p= path_up (p);
       if (p == rp) return true;
       path r= path_up (p);
       string w= as_string (L (subtree (et, r)));
-      path q= (s == "C-right")?
-	search_next_compound (r, w):
-	search_previous_compound (r, w);
+      path q= (s == "C-right") ?
+        search_next_compound (r, w) :
+        search_previous_compound (r, w);
       if (q == r) {
-	set_message ("No more matches", "search similar structure");
-	beep ();
+        set_message ("No more matches", "search similar structure");
+        beep ();
       }
       else {
-	q= q * min (N (subtree (et, q)) - 1, last_item (p));
-	search_at= end (et, q);
-	go_to (copy (search_at));
+        q= q * min (N (subtree (et, q)) - 1, last_item (p));
+        search_at= end (et, q);
+        go_to (copy (search_at));
       }
     }
   }
@@ -518,15 +517,15 @@ edit_replace_rep::replace_start (tree what, tree by, bool flag) {
   if (search_what == "") {
     tree t= selection_raw_get ("search");
     if (is_tuple (t, "texmacs", 3) &&
-	(t[1] != "") &&
-	(t[2] == search_mode) &&
-	(t[3] == search_lan))
+        (t[1] != "") &&
+        (t[2] == search_mode) &&
+        (t[3] == search_lan))
       search_what= t[1];
     t= selection_raw_get ("replace");
     if (is_tuple (t, "texmacs", 3) &&
-	(t[1] != "") &&
-	(t[2] == search_mode) &&
-	(t[3] == search_lan))
+        (t[1] != "") &&
+        (t[2] == search_mode) &&
+        (t[3] == search_lan))
       replace_by= t[1];
   }
   replace_next ();
