@@ -53,7 +53,7 @@
 (tm-define (save-buffer . l)
   (if (and (pair? l) (url? (car l))) (set! current-save-target (car l)))
   (cond ((= (length l) 0) (save-buffer (get-name-buffer)))
-	((url-scratch? (car l)) (interactive save-buffer))
+	((url-scratch? (car l)) (choose-file save-buffer "Save TeXmacs file" "texmacs"))
 	((= (length l) 1) (texmacs-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
