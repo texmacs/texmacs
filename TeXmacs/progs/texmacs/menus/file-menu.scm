@@ -29,7 +29,7 @@
              (load-text (string-append "Load " (string-downcase name) " file"))
              (import-text `(concat "Import " ,name))
              (text (if flag? import-text name))
-             (format (if (== fm "varbatim") "" fm)))
+             (format (if (== fm "verbatim") "" fm)))
         ((eval text) (choose-file (buffer-loader fm) load-text format))))))
 
 (tm-define (import-top-menu) (import-menu #t))
