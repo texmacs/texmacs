@@ -336,11 +336,11 @@ tm_data_rep::save_buffer (url u, string fm) {
     else {
       set_message (concat ("saved ", vname), action);
       if (fm == "texmacs") {
-	if (no_name () && exists (get_name_buffer ()))
-	  remove (get_name_buffer ());
-	set_name_buffer (u);
-	pretend_save_buffer ();
-	if (suffix (u) == "ts") style_clear_cache ();
+        if (no_name () && exists (get_name_buffer ()))
+          remove (get_name_buffer ());
+        set_name_buffer (u);
+        pretend_save_buffer ();
+        if (suffix (u) == "ts") style_clear_cache ();
       }
     }
   }
