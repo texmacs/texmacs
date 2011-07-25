@@ -7716,7 +7716,7 @@ if test "$DEBIAN_RELEASE" = "1"; then
 else
   tmdeb=texmacs-${DEBIAN_VERSION}-R${DEBIAN_RELEASE}
 fi
-tmdebb=texmacs_${STABLE_RELEASE}:${DEBIAN_VERSION}
+tmdebb=texmacs_${DEBIAN_VERSION}-R${DEBIAN_RELEASE}
 
 
 
