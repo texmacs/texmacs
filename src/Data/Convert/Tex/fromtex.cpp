@@ -1645,6 +1645,31 @@ finalize_floats (tree t) {
   }
 }
 
+static bool
+is_hyper_link (string s) {
+  return starts (s, "http://") || starts (s, "ftp://");
+}
+
+tree
+finalize_misc (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "verbatim", 1) &&
+           is_atomic (t[0]) && is_hyper_link (t[0]->label)) {
+    return compound ("href", t[0]);
+  }
+  else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt" &&
+           is_atomic (t[2]) && is_hyper_link (t[2]->label)) {
+    return compound ("href", t[2]);
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= finalize_misc (t[i]);
+    return r;
+  }
+}
+
 /******************************************************************************
 * Final changes programmed in Guile
 ******************************************************************************/
@@ -1688,10 +1713,12 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt7= " << t7 << "\n\n";
   tree t8= finalize_floats (t7);
   // cout << "\n\nt8= " << t8 << "\n\n";
-  tree t9= finalize_textm (t8);
+  tree t9= finalize_misc (t8);
   // cout << "\n\nt9= " << t9 << "\n\n";
-  tree t10= drd_correct (std_drd, t9);
+  tree t10= finalize_textm (t9);
   // cout << "\n\nt10= " << t10 << "\n\n";
+  tree t11= drd_correct (std_drd, t10);
+  // cout << "\n\nt11= " << t11 << "\n\n";
 
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
@@ -1710,15 +1737,15 @@ latex_to_tree (tree t1) {
     mods << tree (LANGUAGE) << tree (lan);
   }
 
-  tree t11= t10;
-  if (is_document) t11= simplify_correct (t10);
-  else if (N (mods) > 0) { t11= mods; t11 << t10; }
-  // cout << "\n\nt11= " << t11 << "\n\n";
-  tree t12= latex_correct (t11);
+  tree t12= t11;
+  if (is_document) t12= simplify_correct (t11);
+  else if (N (mods) > 0) { t12= mods; t12 << t11; }
   // cout << "\n\nt12= " << t12 << "\n\n";
+  tree t13= latex_correct (t12);
+  // cout << "\n\nt13= " << t13 << "\n\n";
 
   if (is_document) {
-    tree the_body   = compound ("body", t12);
+    tree the_body   = compound ("body", t13);
     tree the_style  = compound ("style", style);
     tree the_initial= compound ("initial", initial);
     if (textm_natbib)
@@ -1726,7 +1753,7 @@ latex_to_tree (tree t1) {
     if (N (initial) == 0) return tree (DOCUMENT, the_style, the_body);
     else return tree (DOCUMENT, the_style, the_body, the_initial);
   }
-  else return t12;
+  else return t13;
 }
 
 tree
