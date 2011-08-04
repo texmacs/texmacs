@@ -70,6 +70,7 @@ extern string PROG_FONT_SHAPE;
 extern string PROG_SESSION;
 
 extern string PAR_MODE;
+extern string PAR_FLEXIBILITY;
 extern string PAR_HYPHEN;
 extern string PAR_WIDTH;
 extern string PAR_LEFT;

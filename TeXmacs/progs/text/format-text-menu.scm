@@ -355,10 +355,12 @@
 
 (menu-bind paragraph-menu
   (-> "Alignment"
-      ("Justified" (make-line-with "par-mode" "justify"))
       ("Left ragged" (make-line-with "par-mode" "left"))
       ("Centered" (make-line-with "par-mode" "center"))
-      ("Right ragged" (make-line-with "par-mode" "right")))
+      ("Right ragged" (make-line-with "par-mode" "right"))
+      ---
+      ("Justified" (make-line-with "par-mode" "justify"))
+      ("Flexibility" (make-interactive-line-with "par-flexibility")))
   (-> "Margins"
       ("Left margin" (make-interactive-line-with "par-left"))
       ("Right margin" (make-interactive-line-with "par-right"))

@@ -40,6 +40,7 @@ protected:
   int           cur_start;   // index of the start of the line unit
 
   string        mode;        // justified, left, center or right
+  double        flexibility; // threshold for switching to ragged mode
   string        hyphen;      // hyphenation quality
   SI            width;       // the width of the parbox
   SI            first;       // indentation of first line (added to left)

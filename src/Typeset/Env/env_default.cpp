@@ -85,6 +85,7 @@ initialize_default_env () {
   env (PROG_SESSION)     = "default";   // computer algebra session name
 
   env (PAR_MODE)         = "justify";   // outline method
+  env (PAR_FLEXIBILITY)  = "1000.0";    // threshold for switching to ragged
   env (PAR_HYPHEN)       = "professional"; // quality of hyphenation
   env (PAR_WIDTH)        = "auto";      // width of paragraph
   env (PAR_LEFT)         = "0cm";       // left indentation

@@ -76,6 +76,7 @@ string PROG_SESSION ("prog-session");
 ******************************************************************************/
 
 string PAR_MODE ("par-mode");
+string PAR_FLEXIBILITY ("par-flexibility");
 string PAR_HYPHEN ("par-hyphen");
 string PAR_WIDTH ("par-width");
 string PAR_LEFT ("par-left");

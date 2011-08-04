@@ -24,6 +24,7 @@
 
   ("par-width" "Paragraph width")
   ("par-mode" "Paragraph mode")
+  ("par-flexibility" "Paragraph extensibility")
   ("par-hyphen" "Paragraph hyphenation algorithm")
   ("par-width" "Paragraph width")
   ("par-left" "Left margin")

@@ -87,7 +87,7 @@
   <assign|bibitem-hsep|<macro|<value|bibitem-width>>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0>
+    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0|par-flexibility|2.0>
       <\description>
         <arg|body>
       </description>
