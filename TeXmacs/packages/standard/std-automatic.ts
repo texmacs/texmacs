@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.10>
 
 <style|<tuple|source|std>>
 
@@ -72,11 +72,11 @@
 
   <assign|transform-bibitem|<macro|body|<strong|[<arg|body>] \ >>>
 
-  <assign|render-bibitem|<macro|text|<compact-item|<transform-bibitem|<arg|text>>>>>
+  <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|text>|||<maximum|1r|<item-hsep>>|>>>>
 
   <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|<value|cite-bib>|-|<arg|text>>>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<arg|text>><set-binding|<arg|text>>>>>
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<transform-bibitem|<arg|text>>><set-binding|<arg|text>>>>>
 
   <assign|protect|>
 
@@ -84,8 +84,10 @@
 
   <assign|citeauthoryear|<macro|author|year|<arg|author> <arg|year>>>
 
+  <assign|bibitem-hsep|<macro|<value|bibitem-width>>>
+
   <assign|bib-list|<\macro|largest|body>
-    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>>
+    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0>
       <\description>
         <arg|body>
       </description>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -28,8 +28,6 @@
   <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|<minus|1r|<minus|<item-hsep>|0.25fn>>||<plus|1r|0.25fn>|>>>>
 
   <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|||<maximum|1r|0fn>|>>>>
-
-  <assign|render-bibitem|<macro|text|<aligned-item|<transform-bibitem|<arg|text>>>>>
 
   <assign|render-list|<\macro|body>
     <\padded-normal|<item-vsep>|<item-vsep>>

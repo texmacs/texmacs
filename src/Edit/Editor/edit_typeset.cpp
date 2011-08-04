@@ -115,6 +115,7 @@ use_modules (tree t) {
 
 void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
+  //cout << "Typesetting style using cache " << style << LF;
   bool ok;
   hashmap<string,tree> H;
   tree t;
@@ -125,6 +126,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     drd->set_environment (H);
   }
   if (!ok) {
+    //cout << "Typeset without cache " << style << LF;
     if (!is_tuple (style)) FAILED ("tuple expected as style");
     tree t (USE_PACKAGE, A (style));
     env->exec (t);

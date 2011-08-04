@@ -115,15 +115,17 @@ do_cache_stat (string name) {
 bool
 do_cache_stat_fail (string name) {
   return
-    starts (name, texmacs_path_string) ||
-    starts (name, texmacs_doc_path_string);
+    !ends (name, ".ts") &&
+    (starts (name, texmacs_path_string) ||
+     starts (name, texmacs_doc_path_string));
 }
 
 bool
 do_cache_file (string name) {
   return
-    starts (name, texmacs_path_string) ||
-    starts (name, texmacs_font_path_string);
+    !ends (name, ".ts") &&
+    (starts (name, texmacs_path_string) ||
+     starts (name, texmacs_font_path_string));
 }
 
 bool

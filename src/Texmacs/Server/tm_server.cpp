@@ -264,7 +264,7 @@ void
 tm_server_rep::style_get_cache (
   tree style, hashmap<string,tree>& H, tree& t, bool& f)
 {
-  // cout << "get cache " << style << LF;
+  //cout << "get cache " << style << LF;
   if ((style == "") || (style == tree (TUPLE))) { f= false; return; }
   f= style_cache->contains (style);
   if (f) {
@@ -275,7 +275,7 @@ tm_server_rep::style_get_cache (
     string s;
     url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
     if (exists (name) && (!load_string (name, s, false))) {
-      // cout << "loaded " << name << LF;
+      //cout << "loaded " << name << LF;
       tree p= scheme_to_tree (s);
       H= hashmap<string,tree> (UNINIT, p[0]);
       t= p[1];

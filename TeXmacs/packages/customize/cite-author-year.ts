@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -123,10 +123,12 @@
 
   \;
 
-  <assign|render-natbibitem|<macro|key|>>
+  <assign|transform-natbibitem|<macro|text|<transform-bibitem|<value|bibitem-nr>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-natbibitem|<natbib-author*|<arg|text>>,
-  <natbib-year|<arg|text>>><set-binding|<arg|text>>>>>
+  <assign|render-natbibitem|<macro|text|<render-bibitem|<arg|text>>>>
+
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><render-natbibitem|<transform-natbibitem|<natbib-author*|<arg|text>>,
+  <natbib-year|<arg|text>>>><set-binding|<arg|text>>>>>
 
   \;
 </body>
