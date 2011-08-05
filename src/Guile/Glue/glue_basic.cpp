@@ -1591,15 +1591,43 @@ tmg_tree_upgrade_brackets (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tree_downgrade_brackets (SCM arg1, SCM arg2) {
+tmg_tree_upgrade_big (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-upgrade-big");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= upgrade_big (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_downgrade_brackets (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-downgrade-brackets");
   SCM_ASSERT_BOOL (arg2, SCM_ARG2, "tree-downgrade-brackets");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "tree-downgrade-brackets");
 
   content in1= scm_to_content (arg1);
   bool in2= scm_to_bool (arg2);
+  bool in3= scm_to_bool (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= downgrade_brackets (in1, in2);
+  tree out= downgrade_brackets (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_downgrade_big (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tree-downgrade-big");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= downgrade_big (in1);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -5077,7 +5105,9 @@ initialize_glue_basic () {
   scm_new_procedure ("automatic-correct", (FN) tmg_automatic_correct, 2, 0, 0);
   scm_new_procedure ("manual-correct", (FN) tmg_manual_correct, 1, 0, 0);
   scm_new_procedure ("tree-upgrade-brackets", (FN) tmg_tree_upgrade_brackets, 2, 0, 0);
-  scm_new_procedure ("tree-downgrade-brackets", (FN) tmg_tree_downgrade_brackets, 2, 0, 0);
+  scm_new_procedure ("tree-upgrade-big", (FN) tmg_tree_upgrade_big, 1, 0, 0);
+  scm_new_procedure ("tree-downgrade-brackets", (FN) tmg_tree_downgrade_brackets, 3, 0, 0);
+  scm_new_procedure ("tree-downgrade-big", (FN) tmg_tree_downgrade_big, 1, 0, 0);
   scm_new_procedure ("math-status-print", (FN) tmg_math_status_print, 0, 0, 0);
   scm_new_procedure ("math-status-reset", (FN) tmg_math_status_reset, 0, 0, 0);
   scm_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);

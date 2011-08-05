@@ -419,7 +419,7 @@ packrat_parser_rep::context
   C next= parse (sym, pos);
   if (next < 0 || pos > w1 || next < w2) return;
 
-  if (mode == 2) {
+  if (mode == 2 && (pos == w1 || next == w2)) {
     static C prop= encode_symbol (compound ("property", "operator"));
     D key = (((D) prop) << 32) + ((D) (sym ^ prop));
     if (properties->contains (key)) return;

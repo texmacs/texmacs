@@ -33,14 +33,17 @@
   (tm-with-output-to-string plugin-input-caller))
 
 (define (plugin-input-caller)
-  (plugin-input current-plugin-input-stree))
+  (plugin-input (tree-upgrade-big current-plugin-input-stree)))
 
 (tm-define (plugin-input t)
-  (if (string? t)
-      (plugin-input-tmtokens (string->tmtokens t 0 (string-length t)))
-      (let* ((f (car t)) (args (cdr t)) (im (plugin-input-ref f)))
-	(cond ((!= im #f) (im args))
-	      (else (noop))))))
+  (cond ((string? t)
+         (plugin-input-tmtokens (string->tmtokens t 0 (string-length t))))
+        ((tree? t)
+         (plugin-input (tree->stree t)))
+        (else
+          (let* ((f (car t)) (args (cdr t)) (im (plugin-input-ref f)))
+            (cond ((!= im #f) (im args))
+                  (else (noop)))))))
 
 (define (plugin-input-arg t)
   (if (and (string? t)
@@ -148,10 +151,10 @@
   (plugin-input-arg (car args)))
 
 (define (plugin-input-around args)
-  (plugin-input (downgrade-brackets (cons 'around args))))
+  (plugin-input (tree-downgrade-brackets (cons 'around args) #f #t)))
 
 (define (plugin-input-around* args)
-  (plugin-input (downgrade-brackets (cons 'around* args))))
+  (plugin-input (tree-downgrade-brackets (cons 'around* args) #f #t)))
 
 (define (plugin-input-big-around args)
   (let* ((b `(big-around ,@args))

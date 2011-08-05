@@ -3365,6 +3365,8 @@ upgrade (tree t, string version) {
       t= upgrade_algorithm (t, false);
     t= upgrade_math_ops (t);
   }
+  if (version_inf_eq (version, "1.0.7.10"))
+    t= downgrade_big (t);
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

@@ -214,17 +214,7 @@
     (Pre Postfix-postfix)
     Other-postfix-symbol
     (:<Postfix :args :>))
-
-  (define Big-open
-    (:operator)
-    (Big-open Post)
-    (:<big ((not ".") :args) :>))
-
-  (define Big-close
-    (:operator)
-    (Pre Big-close)
-    (:<big "." :>))
-  
+ 
   (define Open
     (:operator)
     (Open Post)
@@ -241,7 +231,42 @@
     (:operator associative)
     Ponctuation-symbol
     Middle-symbol
-    (:<mid :args :>)))
+    (:<mid :args :>))
+ 
+  (define Big-separator
+    (:operator)
+    (Big-separator Post)
+    (:<big Big-separator-symbol :>))
+ 
+  (define Big-or
+    (:operator)
+    (Big-or Post)
+    (:<big Big-or-symbol :>))
+ 
+  (define Big-and
+    (:operator)
+    (Big-and Post)
+    (:<big Big-and-symbol :>))
+ 
+  (define Big-union
+    (:operator)
+    (Big-union Post)
+    (:<big Big-union-symbol :>))
+ 
+  (define Big-intersection
+    (:operator)
+    (Big-intersection Post)
+    (:<big Big-intersection-symbol :>))
+ 
+  (define Big-sum
+    (:operator)
+    (Big-sum Post)
+    (:<big Big-sum-symbol :>))
+ 
+  (define Big-product
+    (:operator)
+    (Big-product Post)
+    (:<big Big-product-symbol :>)))
 
 (define-language std-math-grammar
   (:synopsis "default syntax for mathematical formulas")
@@ -369,6 +394,13 @@
     Prefixed)
 
   (define Prefixed
+    (Big-separator Expression)
+    (Big-or Conjunction)
+    (Big-and Negation)
+    (Big-union Intersection)
+    (Big-intersection Sum)
+    (Big-sum Sum-prefix)
+    (Big-product Power)
     (Prefix-prefix Prefixed)
     (Pre Prefixed)
     (Postfixed Space-infix Prefixed)
@@ -419,7 +451,6 @@
 
   (define Radical
     Fenced
-    (Big-open Expressions Big-close)
     (:<big-around :any :/ (* Post) Expressions :>)
     Identifier
     Number

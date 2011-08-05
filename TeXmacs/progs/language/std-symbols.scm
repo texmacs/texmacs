@@ -277,6 +277,27 @@
     (:penalty 50)
     "_")
 
+  (define Big-separator-symbol
+    "parallel" "interleave")
+
+  (define Big-or-symbol
+    "vee" "curlyvee")
+
+  (define Big-and-symbol
+    "wedge" "curlywedge")
+
+  (define Big-union-symbol
+    "cup" "sqcup" "amalg" "uplus" "box")
+
+  (define Big-intersection-symbol
+    "cap" "sqcap")
+
+  (define Big-sum-symbol
+    "int" "oint" "intlim" "ointlim" "sum" "oplus" "triangledown")
+
+  (define Big-product-symbol
+    "prod" "otimes" "odot" "triangleup")
+
   (define Big-nolim-symbol
     (:type prefix)
     (:penalty panic)
