@@ -39,8 +39,9 @@ RESOURCE(language);
 #define SPC_DSPACE    2
 #define SPC_PERIOD    3
 #define SPC_TINY      4
-#define SPC_OPERATOR  5
-#define SPC_BIGOP     6
+#define SPC_HALF      5
+#define SPC_OPERATOR  6
+#define SPC_BIGOP     7
 
 #define HYPH_STD      10000
 #define HYPH_PANIC    1000000

@@ -91,6 +91,7 @@ math_language_rep::set_right_penalty (string cl, string s) {
 void
 math_language_rep::set_left_spacing (string cl, string s) {
   if      (s == "none")    tpr_class(cl).spc_before= SPC_NONE;
+  else if (s == "half")    tpr_class(cl).spc_before= SPC_HALF;
   else if (s == "default") tpr_class(cl).spc_before= SPC_OPERATOR;
   else if (s == "big")     tpr_class(cl).spc_before= SPC_BIGOP;
   else {
@@ -102,6 +103,7 @@ math_language_rep::set_left_spacing (string cl, string s) {
 void
 math_language_rep::set_right_spacing (string cl, string s) {
   if      (s == "none")    tpr_class(cl).spc_after= SPC_NONE;
+  else if (s == "half")    tpr_class(cl).spc_after= SPC_HALF;
   else if (s == "default") tpr_class(cl).spc_after= SPC_OPERATOR;
   else if (s == "big")     tpr_class(cl).spc_after= SPC_BIGOP;
   else {

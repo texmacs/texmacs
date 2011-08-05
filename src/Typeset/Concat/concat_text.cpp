@@ -56,6 +56,9 @@ concater_rep::typeset_colored_substring
   case SPC_TINY: \
     print (space (spc->min>>2, spc->def>>2, spc->max>>2)); \
     break; \
+  case SPC_HALF: \
+    print (space (spc->min>>1, spc->def>>2, spc->max>>1)); \
+    break; \
   case SPC_OPERATOR: \
     print (space (spc->min>>1, spc->def>>1, spc->max)); \
     break; \
@@ -76,6 +79,9 @@ concater_rep::typeset_colored_substring
     break; \
   case SPC_TINY: \
     print (space (spc->min>>4, spc->def>>4, spc->max>>4)); \
+    break; \
+  case SPC_HALF: \
+    print (space (spc->min>>3, spc->def>>4, spc->max>>3)); \
     break; \
   case SPC_OPERATOR: \
     print (space (spc->min>>3, spc->def>>3, spc->max>>2)); \
@@ -132,9 +138,10 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
     if ((succ_status & 1) != 0 && k > 0) a[k-1]->spc= space (0);
     bool spc_ok= (succ_status <= 1);
     if (pos > end) pos= end;
-    if ((pos>start) && (s[start]==' ')) { // spaces
+    if ((pos > start) && (s[start]==' ')) { // spaces
       if (start==0) typeset_substring ("", ip, 0);
-      penalty_min (tp->pen_after);
+      penalty_max (HYPH_INVALID);
+      //penalty_min (tp->pen_after);
       if (spc_ok) {
         PRINT_SPACE (tp->spc_before);
         PRINT_SPACE (tp->spc_after);
@@ -147,6 +154,14 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
       if (spc_ok) {
         if (condensed) PRINT_CONDENSED_SPACE (tp->spc_before)
         else PRINT_SPACE (tp->spc_before)
+      }
+      if (pos > start && s[start] == '*' && env->info_level >= INFO_SHORT) {
+        color c = rgb_color (160, 160, 255);
+        box   tb= text_box (decorate (ip), 0, "<cdot>", env->fn, c);
+        box   sb= specific_box (decorate (ip), tb, false, env->fn);
+        box   mb= move_box (decorate (ip), sb, -tb->w()>>1, 0);
+        box   rb= resize_box (decorate (ip), mb, 0, tb->y1, 0, tb->y2);
+        a << line_item (STD_ITEM, OP_SKIP, rb, HYPH_INVALID);
       }
       typeset_math_substring (s (start, pos), ip, start, tp->op_type);
       penalty_min (tp->pen_after);

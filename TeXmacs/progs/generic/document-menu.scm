@@ -34,6 +34,7 @@
       ("Default" (init-default "info-flag"))
       ---
       ("None" (init-env "info-flag" "none"))
+      ("Minimal" (init-env "info-flag" "minimal"))
       ("Short" (init-env "info-flag" "short"))
       ("Detailed" (init-env "info-flag" "detailed"))
       ("Also on paper" (init-env "info-flag" "paper")))

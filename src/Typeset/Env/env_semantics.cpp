@@ -29,6 +29,7 @@ initialize_default_var_type () {
   var_type (PREAMBLE)          = Env_Preamble;
   var_type (SAVE_AUX)          = Env_Fixed;
   var_type (MODE)              = Env_Mode;
+  var_type (INFO_FLAG)         = Env_Info_Level;
 
   var_type (FONT)              = Env_Font;
   var_type (FONT_FAMILY)       = Env_Font;
@@ -293,6 +294,17 @@ edit_env_rep::update_mode () {
 }
 
 void
+edit_env_rep::update_info_level () {
+  string s= get_string (INFO_FLAG);
+  if (s == "none") info_level= INFO_NONE;
+  else if (s == "minimal") info_level= INFO_MINIMAL;
+  else if (s == "short") info_level= INFO_SHORT;
+  else if (s == "detailed") info_level= INFO_DETAILED;
+  else if (s == "paper") info_level= INFO_PAPER;
+  else info_level= INFO_MINIMAL;
+}
+
+void
 edit_env_rep::update_language () {
   switch (mode) {
   case 0:
@@ -456,6 +468,7 @@ edit_env_rep::update () {
 
   update_color ();
   update_mode ();
+  update_info_level ();
   update_language ();
   update_font ();
 

@@ -247,7 +247,7 @@
   (define Times-invisible-symbol
     (:type infix)
     (:penalty invalid)
-    (:spacing none default)
+    (:spacing half half)
     "*")
 
   (define Times-symbol
@@ -541,7 +541,7 @@
 
   (define Unary-operator-glyph-symbol
     (:type unary)
-    (:penalty panic)
+    (:penalty invalid)
     (:spacing none none)
     "<mathd>" "<mathD>" "<mathLaplace>" "<partial>" "<nabla>"
     "<Re>" "<Im>" "<complement>"
@@ -549,7 +549,7 @@
 
   (define Unary-operator-textual-symbol
     (:type unary)
-    (:penalty panic)
+    (:penalty invalid)
     (:spacing none default)
     "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
     "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
@@ -561,13 +561,13 @@
 
   (define Binary-operator-symbol
     (:type binary)
-    (:penalty panic)
+    (:penalty invalid)
     (:spacing none default)
     "div" "mod")
 
   (define N-ary-operator-symbol
     (:type n-ary)
-    (:penalty panic)
+    (:penalty invalid)
     (:spacing none default)
     (:limits display)
     "inf" "lim" "liminf" "limsup" "max" "min" "sup")

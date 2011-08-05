@@ -88,18 +88,18 @@ concater_rep::flag_ok (string s, path ip, color col) {
   g= 255- (255 - g)/6;
   b= 255- (255 - b)/6;
   color light= rgb_color (r, g, b);
-  string info_flag= env->get_string (INFO_FLAG);
-  if (info_flag == "short") {
+  int info= env->info_level;
+  if (info == INFO_MINIMAL || info == INFO_SHORT) {
     box infob= info_box (dip, h, env->fn->wline, col, light);
     box specb= specific_box (ip, infob, false, env->fn);
     print (specb);
   }
-  if (info_flag == "detailed" || info_flag == "paper") {
+  else if (info == INFO_DETAILED || info == INFO_PAPER) {
     int sz= script (env->fn_size, env->index_level+2);
     font gfn (tex_font ("ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
-    if (info_flag == "detailed") {
+    if (info == INFO_DETAILED) {
       box specb= specific_box (ip, flagb, false, env->fn);
       print (specb);
     }
