@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -71,7 +71,7 @@
 
   <assign|output|<macro|body|<with|mode|prog|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-output>>|<merge|<value|prog-language>|-output>|generic-output>>|<arg|body>>>>>>
 
-  <assign|generic-output*|<macro|body|<with|par-mode|left|par-hyphen|normal|math-display|true|<arg|body>>>>
+  <assign|generic-output*|<macro|body|<with|par-mode|justify|par-flexibility|2.0|par-hyphen|normal|math-display|true|<arg|body>>>>
 
   <assign|generic-output|<\macro|body>
     <\padded-normal|0.5fn|0.5fn>
