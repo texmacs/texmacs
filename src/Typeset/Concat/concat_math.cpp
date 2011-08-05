@@ -59,7 +59,6 @@ concater_rep::typeset_bigop (tree t, path ip) {
     bool flag= (!env->math_condensed) && (l != ".");
     box b= big_operator_box (ip, s, env->fn, env->col,
 			     env->display_style? 2: 1);
-    if (flag) print (space (spc->min>>1, spc->def>>1, spc->max));
     print (STD_ITEM, OP_BIG, b);
     penalty_min (HYPH_PANIC);
     if ((l != "int") && (l != "oint")) with_limits (LIMITS_DISPLAY);

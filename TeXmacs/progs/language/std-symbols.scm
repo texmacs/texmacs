@@ -298,6 +298,12 @@
   (define Big-product-symbol
     "prod" "otimes" "odot" "triangleup")
 
+  (define Big-operator-symbol
+    Big-separator-symbol
+    Big-or-symbol Big-and-symbol
+    Big-union-symbol Big-intersection-symbol
+    Big-sum-symbol Big-product-symbol)
+
   (define Big-nolim-symbol
     (:type prefix)
     (:penalty panic)
@@ -574,6 +580,7 @@
 
   (define Prefix-symbol
     Not-symbol
+    (:<big Big-operator-symbol :>)
     Minus-prefix-symbol
     Plus-prefix-symbol
     Other-prefix-symbol)

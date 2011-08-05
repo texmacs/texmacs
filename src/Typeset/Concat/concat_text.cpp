@@ -63,7 +63,6 @@ concater_rep::typeset_colored_substring
     print (space (spc->min>>1, spc->def>>1, spc->max)); \
     break; \
   case SPC_BIGOP: \
-    print (spc); \
     break; \
   }
 
@@ -102,8 +101,8 @@ concater_rep::typeset_text_string (tree t, path ip, int pos, int end) {
     start= pos;
     text_property tp= env->lan->advance (t, pos);
     if (pos > end) pos= end;
-    if ((pos>start) && (s[start]==' ')) { // spaces
-      if (start==0) typeset_substring ("", ip, 0);
+    if ((pos > start) && (s[start] == ' ')) { // spaces
+      if (start == 0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);
@@ -135,11 +134,14 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
     while (k > 0 && a[k-1]->op_type == OP_SKIP) k--;
     int prev_op_type= (k == 0? OP_TEXT: a[k-1]->op_type);
     int succ_status= succession_status (prev_op_type, tp->op_type);
+    //cout << "Succession [" << s (start, pos) << "] "
+    //     << "(" << prev_op_type << ", " << tp->op_type << ")"
+    //     << " -> " << succ_status << "\n";
     if ((succ_status & 1) != 0 && k > 0) a[k-1]->spc= space (0);
     bool spc_ok= (succ_status <= 1);
     if (pos > end) pos= end;
     if ((pos > start) && (s[start]==' ')) { // spaces
-      if (start==0) typeset_substring ("", ip, 0);
+      if (start == 0) typeset_substring ("", ip, 0);
       penalty_max (HYPH_INVALID);
       //penalty_min (tp->pen_after);
       if (spc_ok) {
@@ -186,7 +188,7 @@ concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
     text_property tp= env->lan->advance (t, pos);
     if (pos > end) pos= end;
     if ((pos>start) && (s[start]==' ')) { // spaces
-      if (start==0) typeset_substring ("", ip, 0);
+      if (start == 0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);

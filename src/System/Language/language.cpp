@@ -82,6 +82,7 @@ static inline void init_could_end (int op) {
   set_status (op, OP_UNARY, REMOVE_CURRENT_SPACE);
   set_status (op, OP_N_ARY, REMOVE_CURRENT_SPACE);
   set_status (op, OP_PREFIX, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_BIG, REMOVE_CURRENT_SPACE);
 }
 
 static inline void init_expect_after (int op) {
