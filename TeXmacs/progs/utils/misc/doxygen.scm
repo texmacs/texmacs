@@ -160,11 +160,12 @@
 					name "::")))
 	      ((tagged? 'filename x)
 	       (set! filename (second x)))
-	      ((tagged? 'templarg x)
+	      ((and (tagged? 'templarg x) (= (length x) 2))
 	       (set! templarg (html->ascii (second x)))
 	       (if (string-null? templargs)
 		   (set! templargs templarg)
 		   (set! templargs (string-append templargs ", " templarg))))
+	      ((tagged? 'templarg x))
 	      ((tagged? 'member x) (parse-member x))
 	      (else
 	       (display "TeXmacs] doxygen warning, unknown tag type within a 'struct 'compound:\n")
