@@ -69,8 +69,9 @@
       ("Environment" (make-toggle 'folded-env))
       ("Documentation" (make-toggle 'folded-documentation))
       ("Grouped" (make-toggle 'folded-grouped))
-      ---
-      (link fold-menu))
+      ;;---
+      ;;(link fold-menu)
+      )
   (-> "Summarized"
       ("Default" (make-toggle 'summarized))
       ---
@@ -79,23 +80,27 @@
       ("Environment" (make-toggle 'summarized-env))
       ("Documentation" (make-toggle 'summarized-documentation))
       ("Grouped" (make-toggle 'summarized-grouped))
-      ---
-      (link fold-menu))
+      ;;---
+      ;;(link fold-menu)
+      )
   (-> "Switch"
       ("Standard" (make-switch 'switch))
       ("Screens" (make-switch 'screens))
       ("Tiny" (make-switch 'tiny-switch))
-      ---
-      (link switch-menu))
+      ;;---
+      ;;(link switch-menu)
+      )
   (-> "Unroll"
       ("Standard" (make-switch 'unroll))
-      ---
-      (link switch-menu))
+      ;;---
+      ;;(link switch-menu)
+      )
   (-> "Expanded"
       ("Standard" (make-switch 'expanded))
       ("Slides" (make-switch 'slides))
-      ---
-      (link switch-menu))
+      ;;---
+      ;;(link switch-menu)
+      )
   (-> "Traversal"
       ("Fold back" (make 'fold-back))
       ("Keep unfolded" (make 'keep-unfolded))
