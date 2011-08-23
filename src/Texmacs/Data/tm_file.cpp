@@ -22,6 +22,7 @@
 
 static void
 notify_recent_buffer (string name) {
+  if (ends (name, "~") || ends (name, "#")) name= name (0, N(name) - 1);
   object a= call ("assoc-set!", null_object (), object ("0"), object (name));
   call ("learn-interactive", object ("recent-buffer"), a);
 }

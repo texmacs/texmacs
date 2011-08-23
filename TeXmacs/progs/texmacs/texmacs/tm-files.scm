@@ -83,7 +83,7 @@
 (define (load-buffer-sub file fm where)
   (let* ((suffix (most-recent-suffix file))
          (question (if (== suffix "#")
-                       "Rescue from crash?"
+                       "Rescue file from crash?"
                        "Load more recent autosave file?")))
     (dialogue
       (if (and (!= fm "help")
