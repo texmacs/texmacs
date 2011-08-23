@@ -185,10 +185,10 @@
            (l (- (tree-arity t) 2)))
       (switch-set-range t (max 0 (- i 1)) (min l (+ i 1)) #t)
       (tree-remove! t i 1)
-      (tree-go-to t (min i l) :start)
       (if (tree-in? t (alternative-tag-list))
           (switch-select t (min i l))
-          (switch-select t (max 0 (- v 1)))))))
+          (switch-select t (max 0 (- v 1))))
+      (tree-go-to t (min i l) :start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific types of switches
