@@ -71,7 +71,8 @@
         ("Reset error counters" (math-status-reset))))
   (-> "Miscellaneous"
       ("Use fast environments" (toggle-preference "fast environments"))
-      ("Provoke error" (oops))
+      ("Provoke scheme error" (oops))
+      ("Provoke C++ error" (cpp-error))
       ("Test routine" (edit-test)))
   ---
   ("auto" (debug-toggle "auto"))

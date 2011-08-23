@@ -62,6 +62,7 @@ case "$GXX" in
     AC_MSG_WARN(cannot find GNU C++ compiler)
   ;;
 esac
+AC_CPLUSPLUS_STACK
 
 #--------------------------------------------------------------------
 # Checks for Guile

@@ -31,6 +31,7 @@
   (tm-output tm_output (void string))
   (tm-errput tm_errput (void string))
   (win32-display win32_display (void string))
+  (cpp-error cpp_error (void))
   (scheme-dialect scheme_dialect (string))
   (get-texmacs-path get_texmacs_path (string))
   (plugin-list plugin_list (scheme_tree))

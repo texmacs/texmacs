@@ -160,6 +160,15 @@ tmg_win32_display (SCM arg1) {
 }
 
 SCM
+tmg_cpp_error () {
+  // SCM_DEFER_INTS;
+  cpp_error ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_scheme_dialect () {
   // SCM_DEFER_INTS;
   string out= scheme_dialect ();
@@ -4996,6 +5005,7 @@ initialize_glue_basic () {
   scm_new_procedure ("tm-output", (FN) tmg_tm_output, 1, 0, 0);
   scm_new_procedure ("tm-errput", (FN) tmg_tm_errput, 1, 0, 0);
   scm_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
+  scm_new_procedure ("cpp-error", (FN) tmg_cpp_error, 0, 0, 0);
   scm_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   scm_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
   scm_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);

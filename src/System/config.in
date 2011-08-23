@@ -138,6 +138,9 @@
 /* Use imlib2 library */
 #undef USE_IMLIB2
 
+/* Use C++ stack backtraces */
+#undef USE_STACK_TRACE
+
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
 

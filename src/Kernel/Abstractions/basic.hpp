@@ -79,13 +79,15 @@ bool debug_get (string s);
 #define DEBUG_FLATTEN (debug (DEBUG_FLAG_FLATTEN))
 #define DEBUG_CORRECT (debug (DEBUG_FLAG_CORRECT))
 
+void tm_failure (const char* msg);
 #ifdef DEBUG_ASSERT
 #include <assert.h>
-#define ASSERT(cond,msg) assert (cond); // msg
+#define ASSERT(cond,msg) { if (!(cond)) { tm_failure (msg); assert (cond); } }
+#define FAILED(msg) { tm_failure (msg); assert (false); }
 #else
-#define ASSERT(cond,msg)
+#define ASSERT(cond,msg) { if (!(cond)) { tm_failure (msg); } }
+#define FAILED(msg) { tm_failure (msg); }
 #endif
-#define FAILED(msg) ASSERT(false,msg)
 
 /******************************************************************************
 * miscellaneous routines

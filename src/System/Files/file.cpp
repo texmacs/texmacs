@@ -349,14 +349,19 @@ url_temp (string suffix) {
 }
 
 url
-url_scratch (string prefix, string postfix, int i) {
-  url dir ("$TEXMACS_HOME_PATH/texts/scratch");
+url_numbered (url dir, string prefix, string postfix, int i) {
   if (!exists (dir)) mkdir (dir);
   for (; true; i++) {
     url name= dir * (prefix * as_string (i) * postfix);
     if (!exists (name)) return name;
   }
   return dir * (prefix * "x" * postfix);
+}
+
+url
+url_scratch (string prefix, string postfix, int i) {
+  url dir ("$TEXMACS_HOME_PATH/texts/scratch");
+  return url_numbered (dir, prefix, postfix, i);
 }
 
 bool
