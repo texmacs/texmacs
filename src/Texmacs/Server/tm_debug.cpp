@@ -139,8 +139,52 @@ get_stacktrace (unsigned int max_frames= 127) {
 ******************************************************************************/
 
 string
+path_as_string (path p) {
+  if (is_nil (p)) return "[]";
+  string r= "[ ";
+  r << as_string (p->item);
+  p= p->next;
+  while (!is_nil (p)) {
+    r << ", " << as_string (p->item);
+    p= p->next;
+  }
+  r << " ]";
+  return r;
+}
+
+string
+get_editor_status_report () {
+  string r;
+  r << "Editor status:\n";
+  server sv= get_server();
+  editor ed= sv->get_editor();
+  path start_p, end_p;
+  ed->get_selection (start_p, end_p);
+  selection sel;
+  ed->selection_get (sel);
+  r << "  Current path       : "
+    << path_as_string (ed->the_path ()) << "\n"
+    << "  Shifted path       : "
+    << path_as_string (ed->the_shifted_path ()) << "\n"
+    << "  Physical selection : "
+    << path_as_string (start_p) << " -- "
+    << path_as_string (end_p) << "\n"
+    << "  Logical selection  : "
+    << path_as_string (sel->start) << " -- "
+    << path_as_string (sel->end) << "\n";
+  return r;
+}
+
+/******************************************************************************
+* Crash management
+******************************************************************************/
+
+string
 get_crash_report () {
-  return get_stacktrace ();
+  string r;
+  r << get_editor_status_report ()
+    << "\n" << get_stacktrace ();
+  return r;
 }
 
 void

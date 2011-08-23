@@ -520,8 +520,9 @@ public:
   friend class tm_data_rep;
   friend class tm_server_rep;
   friend class server_command_rep;
-  friend void  edit_announce (editor_rep* ed, modification mod);
-  friend void  edit_done (editor_rep* ed, modification mod);
+  friend void   edit_announce (editor_rep* ed, modification mod);
+  friend void   edit_done (editor_rep* ed, modification mod);
+  friend string get_editor_status_report ();
 };
 
 class editor {
