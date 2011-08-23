@@ -69,17 +69,30 @@
 ;; Loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (more-recent file suffix1 suffix2)
+  (and (url-exists? (url-glue file suffix1))
+       (url-exists? (url-glue file suffix2))
+       (url-newer? (url-glue file suffix1) (url-glue file suffix2))))
+
+(define (most-recent-suffix file)
+  (if (more-recent file "~" "")
+      (if (not (more-recent file "#" "")) "~"
+          (if (more-recent file "#" "~") "#" "~"))
+      (if (more-recent file "#" "") "#" "")))
+
 (define (load-buffer-sub file fm where)
-  (dialogue
-    (if (and (!= fm "help")
-	     (not (url-rooted-web? file))
-	     (url-exists? file)
-	     (url-exists? (url-glue file "~"))
-	     (url-newer? (url-glue file "~") file)
-	     (dialogue-confirm? "Load more recent autosave file?" #t))
-	(texmacs-load-buffer (url-glue file "~") fm where #t)
-	(texmacs-load-buffer file fm where #f))
-    (activate-highlighting)))
+  (let* ((suffix (most-recent-suffix file))
+         (question (if (== suffix "#")
+                       "Rescue from crash?"
+                       "Load more recent autosave file?")))
+    (dialogue
+      (if (and (!= fm "help")
+               (not (url-rooted-web? file))
+               (!= suffix "")
+               (dialogue-confirm? question #t))
+          (texmacs-load-buffer (url-glue file suffix) fm where #t)
+          (texmacs-load-buffer file fm where #f))
+      (activate-highlighting))))
 
 (tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))

@@ -138,7 +138,7 @@ get_from_server (url u) {
   if (!is_none (res)) return res;
 
   string name= as_string (u);
-  if (ends (name, "~")) return url_none ();
+  if (ends (name, "~") || ends (name, "#")) return url_none ();
   string r= as_string (call ("tmfs-load", object (name)));
   if (r == "") return url_none ();
   url tmp= url_temp ();

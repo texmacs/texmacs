@@ -17,6 +17,8 @@
 #include "tm_server.hpp"
 #include "file.hpp"
 
+bool rescue_mode= false;
+
 /******************************************************************************
 * Run-time routine for obtaining a stack trace. This function was written
 * by Timo Bingmann and further improved (and published under the WTFPL v2.0)
@@ -156,8 +158,8 @@ string
 get_editor_status_report () {
   string r;
   r << "Editor status:\n";
-  server sv= get_server();
-  editor ed= sv->get_editor();
+  server sv= get_server ();
+  editor ed= sv -> get_editor ();
   path start_p, end_p;
   ed->get_selection (start_p, end_p);
   selection sel;
@@ -189,6 +191,7 @@ get_crash_report () {
 
 void
 tm_failure (const char* msg) {
+  rescue_mode= true;
   cerr << "TeXmacs] Fatal error, " << msg << "\n";
   string report= get_crash_report ();
   url dir ("$TEXMACS_HOME_PATH/system/crash");
@@ -199,4 +202,5 @@ tm_failure (const char* msg) {
     cerr << "TeXmacs] Crash report could not be saved in " << err << "\n"
          << "TeXmacs] Dumping report below\n\n"
          << report;
+  get_server () -> auto_save ();
 }

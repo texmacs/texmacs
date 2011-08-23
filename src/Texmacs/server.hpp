@@ -185,6 +185,7 @@ class server {
 };
 ABSTRACT_CODE(server);
 
+extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();
 void gui_set_output_language (string lan);
