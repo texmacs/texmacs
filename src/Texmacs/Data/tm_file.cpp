@@ -20,6 +20,12 @@
 * Loading files
 ******************************************************************************/
 
+static void
+notify_recent_buffer (string name) {
+  object a= call ("assoc-set!", null_object (), object ("0"), object (name));
+  call ("learn-interactive", object ("recent-buffer"), a);
+}
+
 tree
 tm_data_rep::load_tree (url u, string fm) {
   string s, suf= suffix (u);
@@ -98,6 +104,8 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
       buf->read_only= true;
     }
   }
+  if ((fm == "generic") || (fm == "texmacs"))
+    notify_recent_buffer (as_string (u));
 }
 
 tm_buffer
@@ -341,6 +349,9 @@ tm_data_rep::save_buffer (url u, string fm) {
         set_name_buffer (u);
         pretend_save_buffer ();
         if (suffix (u) == "ts") style_clear_cache ();
+        if ((fm == "generic") || (fm == "texmacs"))
+          if (!no_name ())
+            notify_recent_buffer (as_string (u));
       }
     }
   }

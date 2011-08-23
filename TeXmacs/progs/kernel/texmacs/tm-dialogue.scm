@@ -267,6 +267,12 @@
   (set! fun (procedure-symbol-name fun))
   (or (ahash-ref interactive-arg-table fun) '()))
 
+(define-public (forget-interactive fun)
+  "Forget interactive values for @fun"
+  (set! fun (procedure-symbol-name fun))
+  (when (symbol? fun)
+    (ahash-remove! interactive-arg-table fun)))
+
 (define (learned-interactive-arg fun nr)
   (let* ((l (learned-interactive fun))
 	 (arg (number->string nr))
