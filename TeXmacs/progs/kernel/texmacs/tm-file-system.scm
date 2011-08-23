@@ -52,6 +52,7 @@
   "Check whether we have the permission of a given @type for the url @u."
   (with (class name) (tmfs-decompose-name u)
     (cond ((string-ends? (url->string u) "~") #f)
+	  ((string-ends? (url->string u) "#") #f)
 	  ((ahash-ref tmfs-handler-table (cons class 'permission?)) =>
 	   (lambda (handler) (handler name type)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))

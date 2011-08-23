@@ -520,7 +520,7 @@ suffix (url u) {
     if (s[i]=='.') break;
   if ((i>0) && (i<n-1)) {
     string r= s (i+1, n);
-    while ((N(r)>0) && (r[N(r)-1]=='~')) r= r(0, N(r)-1);
+    while ((N(r)>0) && (r[N(r)-1]=='~' || r[N(r)-1]=='#')) r= r(0, N(r)-1);
     return r;
   }
   return "";
