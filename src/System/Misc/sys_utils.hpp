@@ -20,5 +20,6 @@ string eval_system (string s);
 string var_eval_system (string s);
 string get_env (string var);
 void   set_env (string var, string with);
+string get_stacktrace (unsigned int max_frames= 127);
 
 #endif // defined SYS_UTILS_H
