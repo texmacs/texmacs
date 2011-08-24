@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <locale.h> // for setlocale
+#include <signal.h>
 
 #include "boot.hpp"
 #include "file.hpp"
@@ -65,6 +66,15 @@ test_routines () {
   test_math ();
 }
 #endif
+
+/******************************************************************************
+* Clean exit on segmentation faults
+******************************************************************************/
+
+void 
+clean_exit_on_segfault (int sig_num) {
+  FAILED ("segmentation fault");
+}
 
 /******************************************************************************
 * Texmacs paths
@@ -413,6 +423,7 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  signal (SIGSEGV, clean_exit_on_segfault);
   immediate_options (argc, argv);
   set_env ("LC_NUMERIC", "POSIX");
 #ifdef MACOSX_EXTENSIONS

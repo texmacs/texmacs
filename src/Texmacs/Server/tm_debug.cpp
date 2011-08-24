@@ -138,8 +138,29 @@ get_stacktrace (unsigned int max_frames= 127) {
 }
 
 /******************************************************************************
-* Crash management
+* Status reports
 ******************************************************************************/
+
+string
+get_system_information () {
+  string r;
+  r << "System information:\n";
+  r << "  TeXmacs version  : "
+    << TEXMACS_VERSION << "\n";
+  r << "  Built by         : "
+    << BUILD_USER << "\n";
+  r << "  Building date    : "
+    << BUILD_DATE << "\n";
+  r << "  Operating system : "
+    << HOST_OS << "\n";
+  r << "  Vendor           : "
+    << HOST_VENDOR << "\n";
+  r << "  Processor        : "
+    << HOST_CPU << "\n";
+  r << "  Crash date       : "
+    << var_eval_system ("date") << "\n";
+  return r;
+}
 
 string
 path_as_string (path p) {
@@ -183,18 +204,24 @@ get_editor_status_report () {
 ******************************************************************************/
 
 string
-get_crash_report () {
+get_crash_report (const char* msg) {
   string r;
-  r << get_editor_status_report ()
+  r << "Error message:\n  " << msg << "\n"
+    << "\n" << get_system_information ()
+    << "\n" << get_editor_status_report ()
     << "\n" << get_stacktrace ();
   return r;
 }
 
 void
 tm_failure (const char* msg) {
+  if (rescue_mode) {
+    fprintf (stderr, "TeXmacs] Fatal unrecoverable error, %s\n", msg);
+    exit (1);
+  }
   rescue_mode= true;
   cerr << "TeXmacs] Fatal error, " << msg << "\n";
-  string report= get_crash_report ();
+  string report= get_crash_report (msg);
   url dir ("$TEXMACS_HOME_PATH/system/crash");
   url err= url_numbered (dir, "crash_report_", "");
   if (!save_string (err, report))
@@ -207,4 +234,5 @@ tm_failure (const char* msg) {
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
   clear_pending_commands ();
+  exit (1);
 }

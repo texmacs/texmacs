@@ -24,6 +24,12 @@
 #define WORD_MASK @CONFIG_WORD_MASK@
 #define MAX_FAST @CONFIG_MAX_FAST@
 
+#define HOST_OS "@CONFIG_HOST_OS@"
+#define HOST_VENDOR "@CONFIG_HOST_VENDOR@"
+#define HOST_CPU "@CONFIG_HOST_CPU@"
+#define BUILD_USER "@CONFIG_USER@"
+#define BUILD_DATE "@CONFIG_DATE@"
+
 #define TEXMACS_TGZ "@tmtgz@"
 #define TEXMACS_RPM "@tmrpm@"
 #define TEXMACS_STGZ "@tmstgz@"
