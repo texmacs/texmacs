@@ -551,6 +551,8 @@ path
 edit_select_rep::selection_get_path () {
   path start, end;
   selection_get (start, end);
+  if (end == start && end_p != start_p)
+    return path_up (start);
   return common (start, end);
 }
 
@@ -906,6 +908,7 @@ edit_select_rep::manual_focus_release () {
 
 path
 edit_select_rep::focus_search (path p, bool skip_flag, bool up_flag) {
+  //cout << "Search focus " << p << ", " << skip_flag << ", " << up_flag << "\n";
   if (!(rp < p)) return rp;
   tree st= subtree (et, p);
   if (!skip_flag) return p;
@@ -927,7 +930,7 @@ edit_select_rep::focus_search (path p, bool skip_flag, bool up_flag) {
 
 path
 edit_select_rep::focus_get (bool skip_flag) {
-  //cout << "Search focus " << focus_p << "\n";
+  //cout << "Search focus " << focus_p << ", " << skip_flag << "\n";
   if (!is_nil (focus_p))
     return focus_search (focus_p, skip_flag, false);
   if (selection_active_any ())

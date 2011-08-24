@@ -118,5 +118,5 @@ tm_failure (const char* msg) {
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
   clear_pending_commands ();
-  exit (1);
+  //exit (1);
 }
