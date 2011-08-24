@@ -586,8 +586,7 @@
 
 (tm-menu (focus-document-extra-menu t))
 
-(tm-menu (standard-focus-menu t)
-  (:require (tree-is-buffer? t))
+(tm-menu (focus-document-menu t)
   (group "Style")
   (let* ((st* (get-style-list))
          (st (if (null? st*) (list "no style") st*)))
@@ -603,15 +602,18 @@
   (-> (eval (upcase-first (get-init "page-type")))
       (link document-page-size-menu))
   (-> (eval (string-append (get-init "font-base-size") " pt"))
-      (link document-font-base-size-menu))
+      (link document-font-base-size-menu)))
+
+(tm-menu (standard-focus-menu t)
+  (:require (tree-is-buffer? t))
+  (dynamic (focus-document-menu t))
   (dynamic (focus-document-extra-menu t))
   ---
   ("Help" (focus-help)))
 
 (tm-menu (focus-document-extra-icons t))
 
-(tm-menu (standard-focus-icons t)
-  (:require (tree-is-buffer? t))
+(tm-menu (focus-document-icons t)
   (minibar
    (let* ((st* (get-style-list))
           (st (if (null? st*) (list "no style") st*)))
@@ -630,7 +632,11 @@
        (link document-page-size-menu))
    (=> (balloon (eval (string-append (get-init "font-base-size") "pt"))
 		"Font size")
-       (link document-font-base-size-menu)))
+       (link document-font-base-size-menu))))
+
+(tm-menu (standard-focus-icons t)
+  (:require (tree-is-buffer? t))
+  (dynamic (focus-document-icons t))  
   (glue #f #f 5 0)
   (minibar
    ((balloon (icon "tm_focus_help.xpm") "Describe tag")

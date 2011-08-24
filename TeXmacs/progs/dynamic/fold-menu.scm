@@ -14,6 +14,10 @@
 (texmacs-module (dynamic fold-menu)
   (:use (dynamic fold-edit)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menus for direct folding and switching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (menu-bind fold-menu
   (when (with t (tree-innermost dynamic-context?)
 	  (and t (toggle-second-context? t)))
@@ -38,6 +42,10 @@
         ("Switch to next" (dynamic-next)))
       (when (< (switch-index (focus-tree)) (switch-index (focus-tree) :last))
         ("Switch to last" (dynamic-last))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting foldable and switchable tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-menu (fold/unfold-menu-entry x which action)
   (with sym (string->symbol x)
@@ -129,3 +137,47 @@
 (tm-define (alternate-second-icon t)
   (:require (fold-context? t))
   "tm_alternate_both.xpm")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus related menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (search-slide-name t)
+  (cond ((tree-in? t '(shown hidden document))
+         (search-slide-name (tree-ref t 0)))
+        ((tree-is? t 'tit)
+         (texmacs->string (tm-ref t 0)))
+        (else "")))
+
+(tm-define (get-slide-name t i)
+  (with s (search-slide-name t)
+    (string-append "Slide " (number->string (+ i 1))
+                   (if (== s "") "" (string-append ": " s)))))
+
+(tm-menu (focus-slides-menu t)
+  (for (i (.. 0 (tree-arity t)))
+    ((eval (get-slide-name (tree-ref t i) i))
+     (switch-to t i))))
+
+(tm-menu (standard-focus-menu t)
+  (:require (tree-is? t 'screens))
+  (dynamic (focus-document-menu t))
+  ---
+  (dynamic (focus-tag-menu t))
+  ---
+  (dynamic (focus-insert-menu t))
+  ---
+  (dynamic (focus-slides-menu t)))
+
+(tm-menu (standard-focus-icons t)
+  (:require (tree-is? t 'screens))
+  (dynamic (focus-document-icons t))  
+  (glue #f #f 5 0)
+  (minibar (dynamic (focus-insert-icons t)))
+  (glue #f #f 5 0)
+  (minibar (dynamic (focus-tag-icons t)))
+  (glue #f #f 5 0)
+  (with i (tree-index (tree-down t))
+    (mini #t
+      (=> (eval (get-slide-name (tree-ref t i) i))
+          (dynamic (focus-slides-menu t))))))
