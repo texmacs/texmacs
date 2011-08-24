@@ -25,7 +25,8 @@
     (and-with t (tree-ref bt :down)
       (and (tree-is? bt 'document)
 	   (== (tree-index t) 0)
-	   (not (tree-in? t '(doc-data tmdoc-title)))))))
+	   (not (tree-in? t '(doc-data tmdoc-title)))
+           (not (style-has? "beamer-style"))))))
 
 (tm-define (document-propose-abstract?)
   (with bt (buffer-tree)

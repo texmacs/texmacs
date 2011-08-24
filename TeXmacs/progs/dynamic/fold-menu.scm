@@ -142,6 +142,21 @@
 ;; Focus related menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (document-propose-screens?)
+  (and (style-has? "beamer-style")
+       (== (buffer-tree) (tm->tree '(document "")))))
+
+(tm-menu (focus-document-extra-menu t)
+  (:require (document-propose-screens?))
+  ---
+  ("Screens" (make-switch 'screens)))
+
+(tm-menu (focus-document-extra-icons t)
+  (:require (document-propose-screens?))
+  (minibar
+    ((balloon "Screens" "Make a multi-slide presentation")
+     (make-switch 'screens))))
+
 (tm-define (search-slide-name t)
   (cond ((tree-in? t '(shown hidden document))
          (search-slide-name (tree-ref t 0)))
