@@ -1108,6 +1108,7 @@
 ("really huge" "echt enorm")
 ("really quit" "wilt u echt ophouden")
 ("really tiny" "werkelijk miniem")
+("recent" "recent")
 ("recover autosave file" "herstel veiligheidsbestand")
 ("red" "rood")
 ("redo" "opnieuw")

@@ -1102,6 +1102,7 @@
 ("really huge" "")
 ("really quit" "")
 ("really tiny" "")
+("recent" "")
 ("recover autosave file" "")
 ("red" "")
 ("redo" "")

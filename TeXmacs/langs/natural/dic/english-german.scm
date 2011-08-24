@@ -1021,6 +1021,7 @@
 ("really huge" "riesengroÿ")
 ("really quit" "wollen Sie wirklich beenden")
 ("really tiny" "wirklich winzig")
+("recent" "rezent")
 ("red" "rot")
 ("redo" "wieder")
 ("redo undone changes" "stornierte Änderungen wiederherstellen")
