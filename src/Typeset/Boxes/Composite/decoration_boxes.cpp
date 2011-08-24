@@ -13,6 +13,8 @@
 #include "Boxes/construct.hpp"
 #include "Scheme/object.hpp"
 
+bool in_presentation_mode ();
+
 /******************************************************************************
 * Specific boxes
 ******************************************************************************/
@@ -30,10 +32,11 @@ struct specific_box_rep: public box_rep {
   operator tree () {
     return tuple ("specific", (tree) b, as_string (printer_flag)); }
   void display (renderer ren) {
-    if (ren->is_printer () == printer_flag) {
-      rectangles rs;
-      b->redraw (ren, path (), rs);
-    }
+    if (ren->is_printer () == printer_flag)
+      if (printer_flag || !in_presentation_mode ()) {
+	rectangles rs;
+	b->redraw (ren, path (), rs);
+      }
   }
 };
 

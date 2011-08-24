@@ -59,6 +59,11 @@ get_server () {
   return *the_server;
 }
 
+bool
+in_presentation_mode () {
+  return get_server () -> in_full_screen_mode ();
+}
+
 tree
 get_subtree (path p) {
   return get_server()->get_editor()->the_subtree (p);

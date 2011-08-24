@@ -660,6 +660,7 @@ edit_interface_rep::animate () {
 void
 edit_interface_rep::full_screen_mode (bool flag) {
   full_screen= flag;
+  send_invalidate_all (this);
 }
 
 void
