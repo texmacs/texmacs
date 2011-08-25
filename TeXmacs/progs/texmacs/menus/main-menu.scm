@@ -45,6 +45,8 @@
 	  (=> "Source" (link source-menu)))
       (if (with-linking-tool?)
 	  (=> "Link" (link link-menu)))
+      (if (in-presentation?)
+	  (=> "Dynamic" (link dynamic-menu)))
       (link texmacs-extra-menu)
       (=> "Focus" (link focus-menu))
       (=> "Format" (link format-menu)))
@@ -84,6 +86,8 @@
 	  (-> "Source" (link source-menu)))
       (if (with-linking-tool?)
 	  (-> "Link" (link link-menu)))
+      (if (in-presentation?)
+	  (-> "Dynamic" (link dynamic-menu)))
       (-> "Format" (link format-menu)))
   (-> "Document" (link document-menu))
   (if (== (get-init-tree "sectional-short-style") (tree 'macro "false"))
@@ -146,7 +150,10 @@
   ((balloon (icon "tm_reload.xpm") "Reload")
    (revert-buffer))
   ((balloon (icon "tm_forward.xpm") "Browse forward")
-   (cursor-history-forward)))
+   (cursor-history-forward))
+  (if (in-presentation?)
+    |
+    (link dynamic-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

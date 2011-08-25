@@ -47,28 +47,7 @@
 ;; Inserting foldable and switchable tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-menu (fold/unfold-menu-entry x which action)
-  (with sym (string->symbol x)
-    (when (ahash-ref which sym)
-      ((eval (upcase-first x))
-       (dynamic-operate-on-buffer (list action sym))))))
-
-(tm-menu (fold-environments-menu)
-  (receive (l first second) (fold-get-environments-in-buffer)
-    (assuming (nnull? l) ---)
-    (for (x l) (dynamic (fold/unfold-menu-entry x second :fold)))))
-
-(tm-menu (unfold-environments-menu)
-  (receive (l first second) (fold-get-environments-in-buffer)
-    (assuming (nnull? l) ---)
-    (for (x l) (dynamic (fold/unfold-menu-entry x second :unfold)))))
-
 (menu-bind insert-fold-menu
-  ("First" (dynamic-operate-on-buffer :first))
-  ("Previous" (dynamic-traverse-buffer :previous))
-  ("Next" (dynamic-traverse-buffer :next))
-  ("Last" (dynamic-operate-on-buffer :last))
-  ---
   (-> "Folded"
       ("Default" (make-toggle 'folded))
       ---
@@ -115,7 +94,37 @@
       ("Keep unfolded" (make 'keep-unfolded))
       (if #f
 	  ("Animate folding" (noop))
-	  ("Animate unfolding" (noop))))
+	  ("Animate unfolding" (noop)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Operate on buffers with dynamic markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-menu (fold/unfold-menu-entry x which action)
+  (with sym (string->symbol x)
+    (when (ahash-ref which sym)
+      ((eval (upcase-first x))
+       (dynamic-operate-on-buffer (list action sym))))))
+
+(tm-menu (fold-environments-menu)
+  (receive (l first second) (fold-get-environments-in-buffer)
+    (assuming (nnull? l) ---)
+    (for (x l) (dynamic (fold/unfold-menu-entry x second :fold)))))
+
+(tm-menu (unfold-environments-menu)
+  (receive (l first second) (fold-get-environments-in-buffer)
+    (assuming (nnull? l) ---)
+    (for (x l) (dynamic (fold/unfold-menu-entry x second :unfold)))))
+
+(menu-bind dynamic-menu
+  ("First" (dynamic-operate-on-buffer :first))
+  (if (in-screens?)
+      ("Previous screen" (screens-switch-to :previous)))
+  ("Previous" (dynamic-traverse-buffer :previous))
+  ("Next" (dynamic-traverse-buffer :next))
+  (if (in-screens?)
+      ("Next screen" (screens-switch-to :next)))
+  ("Last" (dynamic-operate-on-buffer :last))
   ---
   (-> "Fold"
       ("All" (dynamic-operate-on-buffer :fold))
@@ -138,6 +147,22 @@
 (tm-define (alternate-second-icon t)
   (:require (fold-context? t))
   "tm_alternate_both.xpm")
+
+(menu-bind dynamic-icons
+  ((balloon (icon "tm_larrow_bar.xpm") "First")
+   (dynamic-operate-on-buffer :first))
+  (if (in-screens?)
+      ((balloon (icon "tm_larrow_double.xpm") "Previous screen")
+       (screens-switch-to :previous)))
+  ((balloon (icon "tm_larrow.xpm") "Previous")
+   (dynamic-traverse-buffer :previous))
+  ((balloon (icon "tm_rarrow.xpm") "Next")
+   (dynamic-traverse-buffer :next))
+  (if (in-screens?)
+      ((balloon (icon "tm_rarrow_double.xpm") "Next screen")
+       (screens-switch-to :next)))
+  ((balloon (icon "tm_rarrow_bar.xpm") "Last")
+   (dynamic-operate-on-buffer :last)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Propose insertion of 'screens' tag in beamer style
