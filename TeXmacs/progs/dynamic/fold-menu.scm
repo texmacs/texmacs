@@ -73,8 +73,8 @@
   (-> "Switch"
       ("Standard" (make-switch 'switch))
       (when (not (screens-buffer?))
-        ("Screens" (make-screens))
-        ("Tiny" (make-switch 'tiny-switch)))
+        ("Screens" (make-screens)))
+      ("Tiny" (make-switch 'tiny-switch))
       ;;---
       ;;(link switch-menu)
       )
