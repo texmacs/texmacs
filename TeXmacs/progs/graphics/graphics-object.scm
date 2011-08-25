@@ -73,6 +73,7 @@
 ;; Graphical object
 (tm-define default-color-go-points "#4040ff")
 (tm-define default-color-selected-points "#ff6060")
+(tm-define graphical-opacity "default")
 (tm-define graphical-color "default")
 (tm-define graphical-pstyle "default")
 (tm-define graphical-lwidth "default")
@@ -85,6 +86,7 @@
 (tm-define graphical-textat-valign "default")
 
 (tm-define (graphical-fetch-props o)
+  (set! graphical-opacity (find-prop o "opacity" "default"))
   (set! graphical-color (find-prop o "color" "default"))
   (set! graphical-pstyle (find-prop o "point-style" "default"))
   (set! graphical-lwidth (find-prop o "line-width" "default"))
@@ -150,6 +152,8 @@
          )
 	((== mode 'active)
 	 (cond
+	    ((== prop "opacity")
+	     graphical-opacity)
 	    ((== prop "color")
 	     graphical-color)
 	    ((== prop "point-style")
@@ -182,7 +186,8 @@
      (dv prop res)))
 
 (tm-define (create-graphical-props mode ps0)
-  (let ((color #f)
+  (let ((op #f)
+	(color #f)
 	(ps #f)
 	(lw #f)
 	(mag #f)
@@ -195,6 +200,7 @@
      )
      (cond
 	((== mode 'active)
+	 (set! op graphical-opacity)
 	 (set! color graphical-color)
 	 (set! ps graphical-pstyle)
 	 (set! lw graphical-lwidth)
@@ -206,6 +212,7 @@
 	 (set! ha graphical-textat-halign)
 	 (set! va graphical-textat-valign))
 	((list? mode)
+	 (set! op (graphics-path-property mode "opacity"))
 	 (set! color (graphics-path-property mode "color"))
 	 (set! ps (graphics-path-property mode "point-style"))
 	 (set! lw (graphics-path-property mode "line-width"))
@@ -217,6 +224,7 @@
 	 (set! ha (graphics-path-property mode "text-at-halign"))
 	 (set! va (graphics-path-property mode "text-at-valign")))
 	((== mode 'new)
+	 (set! op (graphics-get-property "gr-opacity"))
 	 (set! color (graphics-get-property "gr-color"))
 	 (set! ps (graphics-get-property "gr-point-style"))
 	 (set! lw (graphics-get-property "gr-line-width"))
@@ -227,6 +235,7 @@
 	 (set! ha (graphics-get-property "gr-text-at-halign"))
 	 (set! va (graphics-get-property "gr-text-at-valign")))
 	((== mode 'default)
+	 (set! op (get-default-val "gr-opacity"))
 	 (set! color (get-default-val "gr-color"))
 	 (set! ps (get-default-val "gr-point-style"))
 	 (set! lw (get-default-val "gr-line-width"))
@@ -239,6 +248,7 @@
      )
      (list 'with "point-style"
 		  (if ps0 ps0 (if ps (dv "point-style" ps) "square"))
+		 "opacity" (dv "opacity" op)
 		 "color" (dv "color" color)
 		 "line-width" (dv "line-width" lw)
 		 (if mag "magnification" "magnification-none")

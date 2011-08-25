@@ -24,7 +24,7 @@
 
 struct font;
 class widget;
-typedef int color;
+typedef unsigned int color;
 
 /******************************************************************************
 * Main routines
@@ -53,11 +53,12 @@ extern color black, white, red, green, blue;
 extern color yellow, magenta, orange, brown, pink;
 extern color light_grey, grey, dark_grey;
 
-color  rgb_color (int r, int g, int b);
-  // get a color by its RGB components ranging from 0 to 255 included
-void   get_rgb_color (color col, int& r, int& g, int& b);
+color  rgb_color (int r, int g, int b, int a= 255);
+  // get a color by its RGB and alpha components
+  // ranging from 0 to 255 included
+void   get_rgb_color (color col, int& r, int& g, int& b, int& a);
   // get the RGB components of a color
-color  named_color (string s);
+color  named_color (string s, int a= 255);
   // get a color by its name
 string get_named_color (color c);
   // get a standard name for the color if it exists

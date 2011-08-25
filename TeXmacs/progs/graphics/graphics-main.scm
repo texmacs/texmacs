@@ -553,6 +553,14 @@
   (and (pair? mode) (eq? (car mode) 'group-edit)))
 
 ;; Graphics current edit properties
+(define (opacity-has-value? opacity)
+  (== opacity (graphics-get-property "gr-opacity")))
+
+(tm-define (graphics-set-opacity val)
+  (:argument val "Opacity")
+  (:check-mark "*" opacity-has-value?)
+  (graphics-change-property "gr-opacity" val))
+
 (define (color-has-value? color)
   (== color (graphics-get-property "gr-color")))
 

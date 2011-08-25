@@ -37,7 +37,7 @@ edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
     rectangles rs= env_rects;
     while (!is_nil (rs)) {
-      ren->set_color (rgb_color (232, 240, 240));
+      ren->set_color (rgb_color (0, 85, 85, 24));
       ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }

@@ -88,8 +88,8 @@ public:
   
   /***** routines from renderer.hpp ******************************************/
 
-  color rgb (int r, int g, int b);
-  void  get_rgb (color col, int& r, int& g, int& b);
+  color rgb (int r, int g, int b, int a= 255);
+  void  get_rgb (color col, int& r, int& g, int& b, int& a);
   color get_color ();
   // color get_color (string s);
   color get_background ();

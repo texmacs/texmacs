@@ -60,6 +60,7 @@ public:
   void print (string s);
   void print (SI x, SI y);
   void move_to (SI x, SI y);
+  string define_alpha (int a);
   void select_color (color c);
   void select_line_width (SI w);
 

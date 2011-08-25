@@ -15,7 +15,7 @@
 #include "url.hpp"
 
 typedef int SI;
-typedef int color;
+typedef unsigned int color;
 
 #define PIXEL          256
 #define PLUS_INFINITY  ((SI) 0x3fffffff)

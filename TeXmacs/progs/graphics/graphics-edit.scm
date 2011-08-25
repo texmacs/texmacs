@@ -173,7 +173,9 @@
      (graphical-fetch-props (car (sketch-get)))
      (set! obj (graphics-enrich-bis
       obj
-      graphical-color graphical-pstyle
+      graphical-opacity
+      graphical-color
+      graphical-pstyle
       graphical-lwidth
       (local-magnification graphical-magnification)
       graphical-lstyle
@@ -461,8 +463,16 @@
 (define (enabled-var? var)
   (not (graphics-frozen-property? var)))
 
+(tm-define (graphics-opacity-enabled?)
+  (enabled-var? "gr-opacity"))
+
 (tm-define (graphics-color-enabled?)
   (enabled-var? "gr-color"))
+
+(tm-define (graphics-toggle-opacity-enabled)
+  (:check-mark "v" graphics-opacity-enabled?)
+  (graphics-frozen-property! "gr-opacity"
+			     (graphics-opacity-enabled?)))
 
 (tm-define (graphics-toggle-color-enabled)
   (:check-mark "v" graphics-color-enabled?)
@@ -535,7 +545,8 @@
 
 ;; Functions for managing properties
 (tm-define (graphics-assign-props p obj)
-  (let* ((color (graphics-path-property p "color"))
+  (let* ((op (graphics-path-property p "opacity"))
+	 (color (graphics-path-property p "color"))
 	 (ps (graphics-path-property p "point-style"))
 	 (lw (graphics-path-property p "line-width"))
 	 (mag (graphics-path-property-1 p "magnification"))
@@ -549,6 +560,8 @@
      (graphics-remove p 'memoize-layer)
      (with res
 	   (graphics-group-enrich-insert-bis (stree-radical obj)
+	      (if (graphics-opacity-enabled?)
+		  (graphics-get-property "gr-opacity") op)
 	      (if (graphics-color-enabled?)
 		  (graphics-get-property "gr-color") color)
 	      (if (graphics-point-style-enabled?)
@@ -571,7 +584,8 @@
 	res)))
 
 (tm-define (graphics-copy-props p)
-  (let* ((color (graphics-path-property p "color"))
+  (let* ((op (graphics-path-property p "opacity"))
+	 (color (graphics-path-property p "color"))
 	 (ps (graphics-path-property p "point-style"))
 	 (lw (graphics-path-property p "line-width"))
 	 (st (graphics-path-property p "dash-style"))
@@ -581,6 +595,9 @@
 	 (ha (graphics-path-property p "text-at-halign"))
 	 (va (graphics-path-property p "text-at-valign"))
      )
+     (if (!= op "default")
+	 (graphics-change-property "gr-opacity" op)
+	 (graphics-remove-property "gr-opacity"))
      (if (!= color "default")
 	 (graphics-change-property "gr-color" color)
 	 (graphics-remove-property "gr-color"))

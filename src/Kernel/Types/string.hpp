@@ -62,6 +62,7 @@ double as_double (string s);
 char*  as_charp  (string s);
 string as_string_bool (bool f);
 string as_string (int i);
+string as_string (unsigned int i);
 string as_string (double x);
 string as_string (const char* s);
 bool   is_bool   (string s);

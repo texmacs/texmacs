@@ -306,7 +306,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
     else if (!reverse_colors && XAllocColor (gui->dpy, gui->cols, &closest))
       pmcs(name)= closest.pixel;
     else {
-      int myc= rgb_color (exact.red/256, exact.green/256, exact.blue/256);
+      color myc= rgb_color (exact.red/256, exact.green/256, exact.blue/256);
       pmcs(name)= CONVERT (myc);
     }
     tm_delete_array (_def);

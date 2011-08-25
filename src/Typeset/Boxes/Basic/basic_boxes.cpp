@@ -230,12 +230,12 @@ test_box (path ip) {
 }
 
 box
-line_box (path ip, SI x1, SI y1, SI x2, SI y2, SI w, SI c) {
+line_box (path ip, SI x1, SI y1, SI x2, SI y2, SI w, color c) {
   return tm_new<line_box_rep> (ip, x1, y1, x2, y2, w, c);
 }
 
 box
-arc_box (path ip, SI x1, SI y1, SI x2, SI y2, int a1, int a2, SI w, SI c) {
+arc_box (path ip, SI x1, SI y1, SI x2, SI y2, int a1, int a2, SI w, color c) {
   return tm_new<arc_box_rep> (ip, x1, y1, x2, y2, a1, a2, w, c);
 }
 

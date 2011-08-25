@@ -129,9 +129,9 @@ cairo_renderer_rep::next_page () {
 
 void
 tm_cairo_set_source_color(cairo_t *context, color c) {
-  int r,g,b;
-  get_rgb_color(c, r, g, b);
-  tm_cairo_set_source_rgba(context, r/255.0, g/255.0, b/255.0, 1.0);
+  int r, g, b, a;
+  get_rgb_color(c, r, g, b, a);
+  tm_cairo_set_source_rgba(context, r/255.0, g/255.0, b/255.0, a/255.0);
 }
 
 void
@@ -449,8 +449,8 @@ cairo_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   basic_character xc (c, fng, sfactor, 0, 0);
   cairo_image mi = character_image [xc];
   if (is_nil(mi)) {
-    int r, g, b;
-    get_rgb (cur_fg, r, g, b);
+    int r, g, b, a;
+    get_rgb (cur_fg, r, g, b, a);
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);

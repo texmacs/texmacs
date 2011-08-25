@@ -19,7 +19,7 @@
 
 class window_rep;
 typedef window_rep* window;
-typedef int color;
+typedef unsigned int color;
 class url;
 class widget;
 class slot;

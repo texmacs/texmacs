@@ -60,10 +60,10 @@ static hashmap<string,cg_image> images;
 
 void 
 cg_set_color (CGContextRef cxt, color col) {
-  int r, g, b;
-  get_rgb_color(col,r,g,b);
-  CGContextSetRGBFillColor(cxt, r/255.0, g/255.0, b/255.0, 1.0);
-  CGContextSetRGBStrokeColor(cxt, r/255.0, g/255.0, b/255.0, 1.0);
+  int r, g, b, a;
+  get_rgb_color (col, r, g, b, a);
+  CGContextSetRGBFillColor(cxt, r/255.0, g/255.0, b/255.0, a/255.0);
+  CGContextSetRGBStrokeColor(cxt, r/255.0, g/255.0, b/255.0, a/255.0);
 }
 
 cg_renderer_rep::cg_renderer_rep (int w2, int h2):

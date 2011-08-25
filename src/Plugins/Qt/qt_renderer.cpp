@@ -96,11 +96,10 @@ qt_renderer_rep::begin (void* handle) {
 void qt_renderer_rep::end () { painter->end (); }
 
 QColor
-qt_color(color c)
-{
-  int r, g, b;
-  get_rgb_color (c,r,g,b);
-  return QColor(r, g, b);
+qt_color(color c) {
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  return QColor (r, g, b, a);
 }
 
 void 
@@ -430,8 +429,8 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   basic_character xc (c, fng, sfactor, cur_fg, 0);
   qt_image mi = character_image [xc];
   if (is_nil(mi)) {
-    int r, g, b;
-    get_rgb (cur_fg, r, g, b);
+    int r, g, b, a;
+    get_rgb (cur_fg, r, g, b, a);
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
     glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
@@ -450,7 +449,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
       for (j=0; j<h; j++)
         for (i=0; i<w; i++) {
           int col = gl->get_x (i, j);
-          brush.setColor (QColor (r, g, b, (255*col)/nr_cols));
+          brush.setColor (QColor (r, g, b, (a*col)/nr_cols));
           pp.fillRect (i, j, 1, 1, brush);
         }
       pp.end();
@@ -469,7 +468,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
       for (j=0; j<h; j++)
         for (i=0; i<w; i++) {
           int col = gl->get_x (i, j);
-          im->setPixel (i, j, qRgba (r, g, b, (255*col)/nr_cols));
+          im->setPixel (i, j, qRgba (r, g, b, (a*col)/nr_cols));
         }
     }
 #endif

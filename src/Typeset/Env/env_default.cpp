@@ -54,6 +54,7 @@ initialize_default_env () {
   env (FONT_BASE_SIZE)   = "10";        // the font base size
   env (MAGNIFICATION)    = "1";         // magnification (slides for instance)
   env (COLOR)            = "black";     // the color
+  env (OPACITY)          = "1";         // the opacity
   env (BG_COLOR)         = "white";     // the background color
   env (LOCUS_COLOR)      = "global";    // the color of loci
   env (VISITED_COLOR)    = "global";    // the color of visited loci
@@ -208,6 +209,7 @@ initialize_default_env () {
   env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
   env (GR_MODE)          = "line";      // graphical mode
+  env (GR_OPACITY)       = "default";   // opacity of new objects
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_POINT_STYLE)   = "default";   // point style of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects

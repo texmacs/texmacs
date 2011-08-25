@@ -77,13 +77,14 @@ int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 #ifdef LARGE_COLORMAP
 
 color
-rgb_color (int r, int g, int b) {
-  return (r << 16) + (g << 8) + b;
+rgb_color (int r, int g, int b, int a) {
+  return (a << 24) + (r << 16) + (g << 8) + b;
 }
 
 void
-get_rgb_color (color col, int& r, int& g, int& b) {
-  r= col >> 16;
+get_rgb_color (color col, int& r, int& g, int& b, int& a) {
+  a= (col >> 24) & 255;
+  r= (col >> 16) & 255;
   g= (col >> 8) & 255;
   b= col & 255;
 }
@@ -91,19 +92,22 @@ get_rgb_color (color col, int& r, int& g, int& b) {
 #else
 
 color
-rgb_color (int r, int g, int b) {
-  if ((r==g) && (g==b)) return (r*GREYS+ 128)/255;
+rgb_color (int r, int g, int b, int a) {
+  if ((r==g) && (g==b))
+    return (a << 24) + (r*GREYS+ 128)/255;
   else {
     r= (r*CSCALES+ 128)/255;
     g= (g*CSCALES+ 128)/255;
     b= (b*CSCALES+ 128)/255;
-    return r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
+    return (a << 24) + r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
   }
 }
 
 void
-get_rgb_color (color col, int& r, int& g, int& b) {
-  if (col <= GREYS) {
+get_rgb_color (color col, int& r, int& g, int& b, int& a) {
+  a= (col >> 24) & 255;
+  col= col & 0xffffff;
+  if (col <= ((color) GREYS)) {
     r= (col*255)/GREYS;
     g= (col*255)/GREYS;
     b= (col*255)/GREYS;
@@ -137,8 +141,8 @@ color	light_grey = rgb_color (208, 208, 208);
 color	grey       = rgb_color (184, 184, 184);
 color	dark_grey  = rgb_color (112, 112, 112);
 
-color
-named_color (string s) {
+static color
+named_color_bis (string s) {
   if ((N(s) == 4) && (s[0]=='#')) {
     int r= 17 * from_hexadecimal (s (1, 2));
     int g= 17 * from_hexadecimal (s (2, 3));
@@ -206,10 +210,16 @@ named_color (string s) {
   return black;
 }
 
+color
+named_color (string s, int a) {
+  color c= named_color_bis (s);
+  return (a << 24) + (c & 0xffffff);
+}
+
 string
 get_named_color (color c) {
-  SI r, g, b;
-  get_rgb_color (c, r, g, b);
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
   return "#" *
     as_hexadecimal (r, 2) *
     as_hexadecimal (g, 2) *
@@ -295,13 +305,13 @@ void basic_renderer_rep::end () {  }
 ******************************************************************************/
 
 color
-basic_renderer_rep::rgb (int r, int g, int b) {
-  return rgb_color (r, g, b);
+basic_renderer_rep::rgb (int r, int g, int b, int a) {
+  return rgb_color (r, g, b, a);
 }
 
 void
-basic_renderer_rep::get_rgb (color col, int& r, int& g, int& b) {
-  get_rgb_color (col, r, g, b);
+basic_renderer_rep::get_rgb (color col, int& r, int& g, int& b, int& a) {
+  get_rgb_color (col, r, g, b, a);
 }
 
 color

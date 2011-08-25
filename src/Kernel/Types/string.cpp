@@ -253,6 +253,14 @@ as_string (int i) {
 }
 
 string
+as_string (unsigned int i) {
+  char buf[64];
+  sprintf (buf, "%i", i);
+  // sprintf (buf, "%i\0", i);
+  return string (buf);
+}
+
+string
 as_string (double x) {
   char buf[64];
   sprintf (buf, "%g", x);

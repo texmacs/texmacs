@@ -336,12 +336,12 @@
 (tm-define (graphics-mode-attribute? mode attr)
   (if (func? mode 'edit 1) (set! mode (cadr mode)))
   (cond ((in? mode '(point))
-         (in? attr '("color" "point-style")))
+         (in? attr '("opacity" "color" "point-style")))
         ((in? mode gr-tags-curves)
-         (in? attr '("color" "line-width" "dash-style"
+         (in? attr '("opacity" "color" "line-width" "dash-style"
                      "dash-style-unit" "line-arrows" "fill-color")))
         ((in? mode '(text-at))
-         (in? attr '("text-at-halign" "text-at-valign")))
+         (in? attr '("opacity" "color" "text-at-halign" "text-at-valign")))
         (else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -443,15 +443,16 @@
 ;;NOTE: This section is OK.
 (tm-define (graphics-valid-attribute? attr tag)
   (cond ((== tag 'point)
-	 (in? attr '("color" "fill-color" "point-style")))
+	 (in? attr '("opacity" "color" "fill-color" "point-style")))
 	((not (in? tag gr-tags-noncurves))
-	 (in? attr '("color" "fill-color" "line-width"
+	 (in? attr '("opacity" "color" "fill-color" "line-width"
 		     "magnification" "dash-style" "dash-style-unit"
 		     "line-arrows")))
 	((== tag 'text-at)
-	 (in? attr '("magnification" "text-at-halign" "text-at-valign")))
+	 (in? attr '("opacity" "color"
+                     "text-at-halign" "text-at-valign" "magnification")))
 	((== tag 'gr-group)
-	 (in? attr '("color" "fill-color"
+	 (in? attr '("opacity" "color" "fill-color"
 		     "point-style" "line-width"
 		     "magnification" "dash-style" "dash-style-unit"
 		     "line-arrows"
@@ -477,16 +478,18 @@
 	t
 	`(with ,@f ,t))))
 
-(tm-define (graphics-enrich-bis t color ps lw mag st stu lp fc ha va)
+(tm-define (graphics-enrich-bis t op color ps lw mag st stu lp fc ha va)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t
-	    `(("color" ,color)
+	    `(("opacity" ,op)
+	      ("color" ,color)
 	      ("fill-color" ,fc)
 	      ("point-style" ,ps))))
 	  ((not (in? mode gr-tags-noncurves))
 	   (graphics-enrich-sub t
-	    `(("color" ,color)
+	    `(("opacity" ,op)
+	      ("color" ,color)
 	      ("line-width" ,lw)
 	      ;;("magnification" ,mag)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
@@ -495,11 +498,14 @@
 	  ((== mode 'text-at)
 	   (graphics-enrich-sub t
 	    `(;;("magnification" ,mag)
+	      ("opacity" ,op)
+	      ("color" ,color)
 	      ("text-at-halign" ,ha)
 	      ("text-at-valign" ,va))))
 	  ((== mode 'gr-group)
 	   (graphics-enrich-sub t
-	    `(("color" ,color)
+	    `(("opacity" ,op)
+	      ("color" ,color)
 	      ("point-style" ,ps)
 	      ("line-width" ,lw)
 	      ;;("magnification" ,mag)
@@ -512,7 +518,8 @@
 	   (graphics-enrich-sub t '())))))
 
 (tm-define (graphics-enrich t)
-  (let* ((color (graphics-get-property "gr-color"))
+  (let* ((op (graphics-get-property "gr-opacity"))
+	 (color (graphics-get-property "gr-color"))
 	 (ps (graphics-get-property "gr-point-style"))
 	 (lw (graphics-get-property "gr-line-width"))
 	 (mag "1.0")
@@ -522,7 +529,7 @@
 	 (fc (graphics-get-property "gr-fill-color"))
 	 (ha (graphics-get-property "gr-text-at-halign"))
 	 (va (graphics-get-property "gr-text-at-valign")))
-    (graphics-enrich-bis t color ps lw mag st stu lp fc ha va)))
+    (graphics-enrich-bis t op color ps lw mag st stu lp fc ha va)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -564,9 +571,9 @@
   (graphics-group-insert (graphics-enrich t)))
 
 (tm-define (graphics-group-enrich-insert-bis
-	    t color ps lw mag st stu lp fc ha va go-into)
+	    t op color ps lw mag st stu lp fc ha va go-into)
   (graphics-group-insert-bis
-    (graphics-enrich-bis t color ps lw mag st stu lp fc ha va) go-into))
+    (graphics-enrich-bis t op color ps lw mag st stu lp fc ha va) go-into))
 
 (tm-define (graphics-group-start)
   (graphics-finish)

@@ -247,17 +247,26 @@ printer_rep::move_to (SI x, SI y) {
   print ("a");
 }
 
+string
+printer_rep::define_alpha (int a) {
+  string aa= as_string (((double) a) / 255.0);
+  string s= "[ /ca " * aa * " /CA " * aa * " /SetTransparency pdfmark";
+  if (!defs->contains (s)) define ("A" * as_string (a), s);
+  return defs[s];
+}
+
 void
 printer_rep::select_color (color c) {
-  int r, g, b;
-  get_rgb_color (c, r, g, b);
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
   r= 10000+ ((r*1000)/255);
   g= 10000+ ((g*1000)/255);
   b= 10000+ ((b*1000)/255);
   string rr= as_string (r); rr= rr(1,2) * "." * rr(2,5);
   string gg= as_string (g); gg= gg(1,2) * "." * gg(2,5);
   string bb= as_string (b); bb= bb(1,2) * "." * bb(2,5);
-  string s = rr * " " * gg * " " * bb * " setrgbcolor";
+  string da= define_alpha (a);
+  string s = rr * " " * gg * " " * bb * " setrgbcolor " * da;
   if (!defs->contains (s)) {
     define ("C" * as_string (ncols), s);
     ncols++;

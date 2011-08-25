@@ -81,9 +81,9 @@ static hashmap<string,aqua_image> images;
 
 void 
 aqua_set_color (color col) {
-  int r, g, b;
-  get_rgb_color(col,r,g,b);
-  [[NSColor colorWithDeviceRed: r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0] set];
+  int r, g, b, a;
+  get_rgb_color (col, r, g, b, a);
+  [[NSColor colorWithDeviceRed: r/255.0 green:g/255.0 blue:b/255.0 alpha:a/255.0] set];
 }
 
 aqua_renderer_rep::aqua_renderer_rep (int w2, int h2) :

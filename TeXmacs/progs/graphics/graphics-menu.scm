@@ -206,6 +206,21 @@
   ("Rotate objects" (graphics-set-mode '(group-edit rotate)))
   ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup))))
 
+(menu-bind graphics-opacity-menu
+  ("Default" (graphics-set-opacity "default"))
+  ---
+  ("10%" (graphics-set-opacity "10%"))
+  ("20%" (graphics-set-opacity "20%"))
+  ("30%" (graphics-set-opacity "30%"))
+  ("40%" (graphics-set-opacity "40%"))
+  ("50%" (graphics-set-opacity "50%"))
+  ("60%" (graphics-set-opacity "60%"))
+  ("70%" (graphics-set-opacity "70%"))
+  ("80%" (graphics-set-opacity "80%"))
+  ("90%" (graphics-set-opacity "90%"))
+  ---
+  ("Other" (interactive graphics-set-opacity)))
+
 (menu-bind graphics-color-menu
   ;;("Default" (graphics-set-color "default"))
   ("None" (graphics-set-color "none"))
@@ -324,6 +339,7 @@
   ("Top" (graphics-set-textat-valign "top")))
 
 (menu-bind graphics-enable-change-properties-menu
+  ;;("Opacity"  (graphics-toggle-opacity-enabled))
   ("Color"  (graphics-toggle-color-enabled))
   ("Fill color" (graphics-toggle-fill-color-enabled))
   ("Point style" (graphics-toggle-point-style-enabled))
@@ -351,6 +367,8 @@
       (link graphics-mode-menu))
   (assuming (func? (graphics-mode) 'edit)
     ---
+    ;;(assuming (graphics-mode-attribute? (graphics-mode) "opacity")
+    ;;(-> "Opacity" (link graphics-opacity-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "color")
       (-> "Color" (link graphics-color-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
@@ -428,6 +446,14 @@
    (graphics-set-mode '(group-edit group-ungroup))))
 
 (tm-menu (graphics-property-icons)
+  ;;(assuming (graphics-mode-attribute? (graphics-mode) "opacity")
+  ;;  /
+  ;;  (mini #t
+  ;;    (group "Opacity:")
+  ;;    (let* ((o (graphics-get-property "gr-opacity"))
+  ;;           (s (if (== o "default") "100%" o)))
+  ;;	(=> (eval s)
+  ;;	    (link graphics-opacity-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "color")
     /
     (mini #t

@@ -56,9 +56,14 @@ x_gui_rep::prepare_color (int sf, color fg, color bg) {
   x_character col_entry (0, font_glyphs (), sf, fg, bg);
   color* cols= (color*) color_scale [col_entry];
   if (cols == NULL) {
-    int fR, fG, fB, bR, bG, bB, j;
-    get_rgb_color (fg, fR, fG, fB);
-    get_rgb_color (bg, bR, bG, bB);
+    int fR, fG, fB, fA, bR, bG, bB, bA, j;
+    get_rgb_color (fg, fR, fG, fB, fA);
+    get_rgb_color (bg, bR, bG, bB, bA);
+    if (fA != 255) {
+      fR= (bR * (255 - fA) + fR * fA) / 255;
+      fG= (bG * (255 - fA) + fG * fA) / 255;
+      fB= (bB * (255 - fA) + fB * fA) / 255;
+    }
     cols= tm_new_array<color> (nr_cols+1);
     for (j=0; j<=nr_cols; j++)
       cols [nr_cols-j]= rgb_color ((bR*j + fR*(nr_cols-j)) / nr_cols,
