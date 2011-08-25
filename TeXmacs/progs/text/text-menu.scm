@@ -330,7 +330,6 @@
 
 (tm-menu (focus-document-extra-menu t)
   (:require (document-propose-title?))
-  ---
   ("Title" (make-doc-data)))
 
 (tm-menu (focus-document-extra-icons t)
@@ -340,7 +339,6 @@
 
 (tm-menu (focus-document-extra-menu t)
   (:require (document-propose-abstract?))
-  ---
   ("Abstract" (make 'abstract)))
 
 (tm-menu (focus-document-extra-icons t)

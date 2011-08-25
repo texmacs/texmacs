@@ -135,10 +135,12 @@
                  (== i 1))))))
 
 (define-public (cursor-inside? t)
-  (let* ((p (cDr (cursor-path)))
+  (let* ((c (cursor-path))
+         (p (cDr c))
          (q (tree->path t)))
     (and (> (length p) (length q))
-         (== (sublist p 0 (length q)) q))))
+         (== (sublist p 0 (length q)) q)
+         (sublist c (length q) (length c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other special trees

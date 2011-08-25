@@ -586,7 +586,7 @@
 
 (tm-menu (focus-document-extra-menu t))
 
-(tm-menu (focus-document-menu t)
+(tm-menu (focus-style-menu t)
   (group "Style")
   (let* ((st* (get-style-list))
          (st (if (null? st*) (list "no style") st*)))
@@ -596,8 +596,9 @@
       (-> (eval (upcase-first pack))
           ("Remove package" (init-remove-package pack)))))
   (-> "Add style package"
-      (link add-package-menu))
-  ---
+      (link add-package-menu)))
+
+(tm-menu (focus-document-menu t)
   (group "Document")
   (-> (eval (upcase-first (get-init "page-type")))
       (link document-page-size-menu))
@@ -606,6 +607,8 @@
 
 (tm-menu (standard-focus-menu t)
   (:require (tree-is-buffer? t))
+  (dynamic (focus-style-menu t))
+  ---
   (dynamic (focus-document-menu t))
   (dynamic (focus-document-extra-menu t))
   ---
@@ -613,7 +616,7 @@
 
 (tm-menu (focus-document-extra-icons t))
 
-(tm-menu (focus-document-icons t)
+(tm-menu (focus-style-icons t)
   (minibar
    (let* ((st* (get-style-list))
           (st (if (null? st*) (list "no style") st*)))
@@ -623,9 +626,9 @@
        (=> (eval pack)
 	   ("Remove package" (init-remove-package pack)))))
    (=> (balloon (icon "tm_add.xpm") "Add style package")
-       (link add-package-menu)))
+       (link add-package-menu))))
 
-  (glue #f #f 5 0)
+(tm-menu (focus-document-icons t)
   (minibar
    (=> (balloon (eval (upcase-first (get-init "page-type")))
 		"Paper size")
@@ -636,6 +639,8 @@
 
 (tm-menu (standard-focus-icons t)
   (:require (tree-is-buffer? t))
+  (dynamic (focus-style-icons t))  
+  (glue #f #f 5 0)
   (dynamic (focus-document-icons t))  
   (glue #f #f 5 0)
   (minibar

@@ -93,8 +93,9 @@
       )
   (-> "Switch"
       ("Standard" (make-switch 'switch))
-      ("Screens" (make-switch 'screens))
-      ("Tiny" (make-switch 'tiny-switch))
+      (when (not (screens-buffer?))
+        ("Screens" (make-screens))
+        ("Tiny" (make-switch 'tiny-switch)))
       ;;---
       ;;(link switch-menu)
       )
@@ -139,23 +140,56 @@
   "tm_alternate_both.xpm")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Focus related menus
+;; Propose insertion of 'screens' tag in beamer style
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (screens-buffer?)
+  (with t (buffer-tree)
+    (and (tree-is? t 'document)
+         (tree-is? t :last 'screens))))
+
+(tm-define (make-screens)
+  (let* ((t (buffer-tree))
+         (l (tree-children t))
+         (p (cursor-inside? t)))
+    (if (and (tree-is? t 'document)
+             (tree-in? t 0 '(hide-preamble show-preamble)))
+        (begin
+          (tree-assign! t `(document ,(tree-ref t 0)
+                                     (screens (shown (document ,@(cdr l))))))
+          (if (!= (car p) 0)
+              (apply tree-go-to `(,t 1 0 0 ,(- (car p) 1) ,@(cdr p)))))
+        (begin
+          (tree-assign! t `(document (screens (shown (document ,@l)))))
+          (apply tree-go-to `(,t 0 0 0 ,@p))))))
 
 (tm-define (document-propose-screens?)
   (and (style-has? "beamer-style")
-       (== (buffer-tree) (tm->tree '(document "")))))
+       (not (screens-buffer?))))
 
 (tm-menu (focus-document-extra-menu t)
   (:require (document-propose-screens?))
-  ---
   ("Screens" (make-switch 'screens)))
 
 (tm-menu (focus-document-extra-icons t)
   (:require (document-propose-screens?))
   (minibar
     ((balloon "Screens" "Make a multi-slide presentation")
-     (make-switch 'screens))))
+     (make-screens))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Slide titles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (slide-propose-title? t)
+  (and-with u (tree-ref t :down :down)
+    (and (tree-is? u 'document)
+         (not (tree-is? u 0 'tit)))))
+
+(tm-define (slide-insert-title t)
+  (with u (tree-ref t :down :down)
+    (tree-insert u 0 '((tit "")))
+    (tree-go-to u 0 0 0)))
 
 (tm-define (search-slide-name t)
   (cond ((tree-in? t '(shown hidden document))
@@ -174,19 +208,30 @@
     ((eval (get-slide-name (tree-ref t i) i))
      (switch-to t i))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menus shen focus is on 'screens' tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-move? t)
+  (:require (tree-is? t 'screens))
+  #f)
+
 (tm-menu (standard-focus-menu t)
   (:require (tree-is? t 'screens))
-  (dynamic (focus-document-menu t))
+  (dynamic (focus-style-menu t))
   ---
   (dynamic (focus-tag-menu t))
   ---
   (dynamic (focus-insert-menu t))
   ---
-  (dynamic (focus-slides-menu t)))
+  (dynamic (focus-slides-menu t))
+  (assuming (slide-propose-title? t)
+    ---
+    ("Title" (slide-insert-title t))))
 
 (tm-menu (standard-focus-icons t)
   (:require (tree-is? t 'screens))
-  (dynamic (focus-document-icons t))  
+  (dynamic (focus-style-icons t))  
   (glue #f #f 5 0)
   (minibar (dynamic (focus-insert-icons t)))
   (glue #f #f 5 0)
@@ -195,4 +240,8 @@
   (with i (tree-index (tree-down t))
     (mini #t
       (=> (eval (get-slide-name (tree-ref t i) i))
-          (dynamic (focus-slides-menu t))))))
+          (dynamic (focus-slides-menu t)))))
+  (assuming (slide-propose-title? t)
+    (glue #f #f 5 0)
+    (minibar
+     ((balloon "Title" "Insert title") (slide-insert-title t)))))
