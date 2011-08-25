@@ -291,8 +291,6 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
   // Given an image of original size (W, H),
   // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
   // at position (x, y) in a rectangle of size (w, h)
-  (void) alpha; // FIXME
-
   if(cx2<=cx1 || cy2<=cy1) return;
 
   w= w/pixel; h= h/pixel;
@@ -397,7 +395,10 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     (ci->nr)++;
   }
 
+  qreal old_opacity= painter->opacity ();
+  painter->setOpacity (qreal (alpha) / qreal (255));
   painter->drawImage (x, y-h, *pm);
+  painter->setOpacity (old_opacity);
 };
 
 
