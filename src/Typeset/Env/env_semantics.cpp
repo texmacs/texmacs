@@ -267,7 +267,7 @@ edit_env_rep::update_font () {
   }
 }
 
-static int
+int
 decode_alpha (string s) {
   if (N(s) == 0) return 255;
   else if (s[N(s)-1] == '%')
@@ -277,7 +277,7 @@ decode_alpha (string s) {
 
 void
 edit_env_rep::update_color () {
-  int    a = decode_alpha (get_string (OPACITY));
+  alpha= decode_alpha (get_string (OPACITY));
   string c = get_string (COLOR);
   string fc= get_string (FILL_COLOR);
   if (c == "none") {
@@ -288,8 +288,8 @@ edit_env_rep::update_color () {
     if (fc == "none") fill_mode= FILL_MODE_NONE;
     else fill_mode= FILL_MODE_BOTH;
   }
-  col= named_color (c, a);
-  fill_color= named_color (fc, a);
+  col= named_color (c, alpha);
+  fill_color= named_color (fc, alpha);
 }
 
 void

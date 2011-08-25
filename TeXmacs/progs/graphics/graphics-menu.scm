@@ -339,9 +339,10 @@
   ("Top" (graphics-set-textat-valign "top")))
 
 (menu-bind graphics-enable-change-properties-menu
-  ;;("Opacity"  (graphics-toggle-opacity-enabled))
   ("Color"  (graphics-toggle-color-enabled))
   ("Fill color" (graphics-toggle-fill-color-enabled))
+  (assuming (== (get-preference "experimental alpha") "on")
+    ("Opacity"  (graphics-toggle-opacity-enabled)))
   ("Point style" (graphics-toggle-point-style-enabled))
   ("Line width" (graphics-toggle-line-width-enabled))
   ("Dash style" (graphics-toggle-dash-style-enabled))
@@ -367,12 +368,13 @@
       (link graphics-mode-menu))
   (assuming (func? (graphics-mode) 'edit)
     ---
-    ;;(assuming (graphics-mode-attribute? (graphics-mode) "opacity")
-    ;;(-> "Opacity" (link graphics-opacity-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "color")
       (-> "Color" (link graphics-color-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
       (-> "Fill color" (link graphics-fill-color-menu)))
+    (assuming (== (get-preference "experimental alpha") "on")
+      (assuming (graphics-mode-attribute? (graphics-mode) "opacity")
+        (-> "Opacity" (link graphics-opacity-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
       (-> "Point style" (link graphics-point-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
@@ -446,14 +448,6 @@
    (graphics-set-mode '(group-edit group-ungroup))))
 
 (tm-menu (graphics-property-icons)
-  ;;(assuming (graphics-mode-attribute? (graphics-mode) "opacity")
-  ;;  /
-  ;;  (mini #t
-  ;;    (group "Opacity:")
-  ;;    (let* ((o (graphics-get-property "gr-opacity"))
-  ;;           (s (if (== o "default") "100%" o)))
-  ;;	(=> (eval s)
-  ;;	    (link graphics-opacity-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "color")
     /
     (mini #t
@@ -482,6 +476,15 @@
         (assuming (and (!= col "default") (!= col "none"))
           (=> (color (eval col) #f #f 25 17)
               (link graphics-fill-color-menu))))))
+  (assuming (== (get-preference "experimental alpha") "on")
+    (assuming (graphics-mode-attribute? (graphics-mode) "opacity")
+      /
+      (mini #t
+        (group "Opacity:")
+        (let* ((o (graphics-get-property "gr-opacity"))
+               (s (if (== o "default") "100%" o)))
+          (=> (eval s)
+              (link graphics-opacity-menu))))))
   (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
     /
     (mini #t

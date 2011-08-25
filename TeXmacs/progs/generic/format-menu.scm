@@ -40,6 +40,20 @@
 ;; Menus for text properties and formatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind opacity-menu
+  ("10%" (make-with "opacity" "10%"))
+  ("20%" (make-with "opacity" "20%"))
+  ("30%" (make-with "opacity" "30%"))
+  ("40%" (make-with "opacity" "40%"))
+  ("50%" (make-with "opacity" "50%"))
+  ("60%" (make-with "opacity" "60%"))
+  ("70%" (make-with "opacity" "70%"))
+  ("80%" (make-with "opacity" "80%"))
+  ("90%" (make-with "opacity" "90%"))
+  ("100%" (make-with "opacity" "100%"))
+  ---
+  ("Other" (make-interactive-with "opacity")))
+
 (menu-bind color-menu
   (pick-color (make-with "color" answer))
   ---

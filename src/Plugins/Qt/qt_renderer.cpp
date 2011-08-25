@@ -285,11 +285,13 @@ struct qt_cache_image_rep: cache_image_element_rep {
 
 void
 qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
-                        double cx1, double cy1, double cx2, double cy2)
+                        double cx1, double cy1, double cx2, double cy2,
+                        int alpha)
 {
   // Given an image of original size (W, H),
   // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
   // at position (x, y) in a rectangle of size (w, h)
+  (void) alpha; // FIXME
 
   if(cx2<=cx1 || cy2<=cy1) return;
 

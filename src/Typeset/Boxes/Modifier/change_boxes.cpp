@@ -258,9 +258,12 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
 struct cell_box_rep: public change_box_rep {
   SI    bl, br, bb, bt;
   color fg;
-  tree  bg, old_bg;
+  tree  bg;
+  int   alpha;
+  tree  old_bg;
+  int   old_a;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-		SI bl, SI br, SI bb, SI bt, color fg, tree bg);
+		SI bl, SI br, SI bb, SI bt, color fg, tree bg, int alpha);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -269,10 +272,10 @@ struct cell_box_rep: public change_box_rep {
 
 cell_box_rep::cell_box_rep (
   path ip, box b, SI X0, SI Y0, SI X1, SI Y1, SI X2, SI Y2,
-  SI Bl, SI Br, SI Bb, SI Bt, color Fg, tree Bg):
+  SI Bl, SI Br, SI Bb, SI Bt, color Fg, tree Bg, int Alpha):
   change_box_rep (ip, false),
   bl (Bl<<1), br (Br<<1), bb (Bb<<1), bt (Bt<<1),
-  fg (Fg), bg (Bg)
+  fg (Fg), bg (Bg), alpha (Alpha)
 {
   insert (b, X0, Y0);
   position ();
@@ -291,15 +294,15 @@ cell_box_rep::cell_box_rep (
 void
 cell_box_rep::pre_display (renderer& ren) {
   if (bg == "") return;
-  old_bg= ren->get_background_pattern ();
-  ren->set_background_pattern (bg);
+  old_bg= ren->get_background_pattern (old_a);
+  ren->set_background_pattern (bg, alpha);
   ren->clear_pattern (x1, y1, x2, y2);
 }
 
 void
 cell_box_rep::post_display (renderer &ren) {
   if (bg == "") return;
-  ren->set_background_pattern (old_bg);
+  ren->set_background_pattern (old_bg, old_a);
 }
 
 void
@@ -366,10 +369,13 @@ public:
 
 struct highlight_box_rep: public change_box_rep {
   SI w, xpad, ypad;
-  tree bg, old_bg;
+  tree bg;
+  int alpha;
   color sun, shad;
+  tree old_bg;
+  int old_a;
   highlight_box_rep (path ip, box b, SI w, SI xpad, SI ypad,
-		     tree bg, color sun, color shad);
+		     tree bg, int alpha, color sun, color shad);
   operator tree () { return tree (TUPLE, "highlight", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
@@ -377,9 +383,10 @@ struct highlight_box_rep: public change_box_rep {
 };
 
 highlight_box_rep::highlight_box_rep (
-  path ip, box b, SI w2, SI xp2, SI yp2, tree bg2, color sun2, color shad2):
-  change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
-  bg (bg2), sun (sun2), shad (shad2)
+  path ip, box b, SI w2, SI xp2, SI yp2,
+  tree bg2, int alpha2, color sun2, color shad2):
+    change_box_rep (ip, true), w (w2), xpad (xp2), ypad (yp2),
+    bg (bg2), alpha (alpha2), sun (sun2), shad (shad2)
 {
   insert (b, w + xpad, 0);
   position ();
@@ -396,8 +403,8 @@ highlight_box_rep::highlight_box_rep (
 
 void
 highlight_box_rep::pre_display (renderer& ren) {
-  old_bg= ren->get_background_pattern ();
-  ren->set_background_pattern (bg);
+  old_bg= ren->get_background_pattern (old_a);
+  ren->set_background_pattern (bg, alpha);
   SI W= w;
   if (!ren->is_printer ()) {
     SI pixel= ren->pixel;
@@ -408,7 +415,7 @@ highlight_box_rep::pre_display (renderer& ren) {
 
 void
 highlight_box_rep::post_display (renderer &ren) {
-  ren->set_background_pattern (old_bg);
+  ren->set_background_pattern (old_bg, old_a);
 }
 
 void
@@ -621,10 +628,10 @@ repeat_box (path ip, box ref, box repeat, SI xoff) {
 
 box
 cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-	  SI bl, SI br, SI bb, SI bt, color fg, tree bg)
+	  SI bl, SI br, SI bb, SI bt, color fg, tree bg, int a)
 {
   box cb= tm_new<cell_box_rep> (ip, b, x0, y0, x1, y1, x2, y2,
-			    bl, br, bb, bt, fg, bg);
+                                bl, br, bb, bt, fg, bg, a);
   return cb;
 }
 
@@ -635,8 +642,8 @@ remember_box (path ip, box b) {
 
 box
 highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
-	       tree bg, color sun, color shad) {
-  return tm_new<highlight_box_rep> (ip, b, w, xpad, ypad, bg, sun, shad);
+	       tree bg, int a, color sun, color shad) {
+  return tm_new<highlight_box_rep> (ip, b, w, xpad, ypad, bg, a, sun, shad);
 }
 
 box

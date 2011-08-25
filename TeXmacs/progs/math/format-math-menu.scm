@@ -132,6 +132,8 @@
       ---
       (group "Text")
       (-> "Color" (link color-menu))
+      (if (== (get-preference "experimental alpha") "on")
+          (-> "Opacity" (link opacity-menu)))
       (-> "Scripts" (link local-supported-scripts-menu))
       (-> "Space" (link horizontal-space-menu))
       (-> "Transform" (link transform-menu))

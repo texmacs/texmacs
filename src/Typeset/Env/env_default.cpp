@@ -54,7 +54,7 @@ initialize_default_env () {
   env (FONT_BASE_SIZE)   = "10";        // the font base size
   env (MAGNIFICATION)    = "1";         // magnification (slides for instance)
   env (COLOR)            = "black";     // the color
-  env (OPACITY)          = "1";         // the opacity
+  env (OPACITY)          = "100%";      // the opacity
   env (BG_COLOR)         = "white";     // the background color
   env (LOCUS_COLOR)      = "global";    // the color of loci
   env (VISITED_COLOR)    = "global";    // the color of visited loci

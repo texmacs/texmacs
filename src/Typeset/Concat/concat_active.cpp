@@ -304,7 +304,7 @@ concater_rep::typeset_image (tree t, path ip) {
   env->local_end ("h-length", old_h);
   
   // print the box
-  box imb= image_box (ip, image, imw, imh);
+  box imb= image_box (ip, image, imw, imh, env->alpha);
   print (move_box (ip, imb, imx, imy, true));
 }
 

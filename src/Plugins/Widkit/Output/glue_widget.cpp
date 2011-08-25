@@ -75,10 +75,11 @@ glue_widget_rep::handle_repaint (repaint_event ev) {
     }
     else {
       ren->set_shrinking_factor (5);
-      tree old_bg= ren->get_background_pattern ();
+      int old_a;
+      tree old_bg= ren->get_background_pattern (old_a);
       ren->set_background_pattern (col);
       ren->clear_pattern (5*ev->x1, 5*ev->y1, 5*ev->x2, 5*ev->y2);
-      ren->set_background_pattern (old_bg);
+      ren->set_background_pattern (old_bg, old_a);
       ren->set_shrinking_factor (1);
     }
   }

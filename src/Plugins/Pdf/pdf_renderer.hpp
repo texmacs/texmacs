@@ -70,7 +70,8 @@ public:
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
   void  image (url u, SI w, SI h, SI x, SI y,
-	       double cx1, double cy1, double cx2, double cy2);
+	       double cx1, double cy1, double cx2, double cy2,
+               int alpha);
 
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);

@@ -511,10 +511,11 @@ make_transmatrix (pdf_tmatrix *M,
 void
 pdf_renderer_rep::image (
   url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2)
+  double cx1, double cy1, double cx2, double cy2,
+  int alpha)
 {
   //cerr << "image " << u << LF;
-  
+  (void) alpha; // FIXME
   
   int bx1, by1, bx2, by2;
   ps_bounding_box (u, bx1, by1, bx2, by2);

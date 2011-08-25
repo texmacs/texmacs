@@ -70,10 +70,12 @@
         ("Error status report" (math-status-print))
         ("Reset error counters" (math-status-reset))))
   (-> "Miscellaneous"
-      ("Use fast environments" (toggle-preference "fast environments"))
       ("Provoke scheme error" (oops))
       ("Provoke C++ error" (cpp-error))
       ("Test routine" (edit-test)))
+  (-> "Experimental"
+      ("Fast environments" (toggle-preference "fast environments"))
+      ("Alpha transparency" (toggle-preference "experimental alpha")))
   ---
   ("auto" (debug-toggle "auto"))
   ("verbose" (debug-toggle "verbose"))

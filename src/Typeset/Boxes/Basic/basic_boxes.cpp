@@ -181,13 +181,14 @@ arc_box_rep::display (renderer ren) {
 
 struct image_box_rep: public box_rep {
   url u;
-  image_box_rep (path ip, url u2, SI w, SI h);
+  int alpha;
+  image_box_rep (path ip, url u2, SI w, SI h, int alpha);
   operator tree () { return "image"; }
   void display (renderer ren);
 };
 
-image_box_rep::image_box_rep (path ip, url u2, SI w, SI h):
-  box_rep (ip), u (u2)
+image_box_rep::image_box_rep (path ip, url u2, SI w, SI h, int a):
+  box_rep (ip), u (u2), alpha (a)
 {
   x1= x3= 0; y1= y3= 0;
   x2= x4= w; y2= y4= h;
@@ -195,7 +196,7 @@ image_box_rep::image_box_rep (path ip, url u2, SI w, SI h):
 
 void
 image_box_rep::display (renderer ren) {
-  ren->image (u, x2, y2, 0, 0, 0.0, 0.0, 1.0, 1.0);
+  ren->image (u, x2, y2, 0, 0, 0.0, 0.0, 1.0, 1.0, alpha);
 }
 
 /******************************************************************************
@@ -250,8 +251,8 @@ polygon_box (path ip, array<SI> x, array<SI> y, color c) {
 }
 
 box
-image_box (path ip, url u, SI w, SI h) {
-  return tm_new<image_box_rep> (ip, u, w, h);
+image_box (path ip, url u, SI w, SI h, int alpha) {
+  return tm_new<image_box_rep> (ip, u, w, h, alpha);
 }
 
 box

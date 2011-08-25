@@ -375,11 +375,13 @@ static hashmap<tree,int> cache_image_nr (0);
 void
 x_drawable_rep::image (
   url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2)
+  double cx1, double cy1, double cx2, double cy2,
+  int alpha)
 {
   // Given an image of original size (W, H),
   // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
   // at position (x, y) in a rectangle of size (w, h)
+  (void) alpha; // FIXME
 
   w= w/pixel; h= h/pixel;
   decode (x, y);

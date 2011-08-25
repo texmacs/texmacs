@@ -94,10 +94,11 @@ qt_glue_widget_rep::render () {
         ren->fill (r->x1, r->y2, r->x2, r->y1);
       } else {
         ren->set_shrinking_factor (5);
-        tree old_bg= ren->get_background_pattern ();
+        int  old_a;
+        tree old_bg= ren->get_background_pattern (old_a);
         ren->set_background_pattern (col);
         ren->clear_pattern (5*r->x1, 5*r->y2, 5*r->x2, 5*r->y1);
-        ren->set_background_pattern (old_bg);
+        ren->set_background_pattern (old_bg, old_a);
         ren->set_shrinking_factor (1);
       }
     }

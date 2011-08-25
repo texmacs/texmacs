@@ -267,6 +267,7 @@ bridge_ornament_rep::my_typeset (int desired_status) {
   SI    xpad  = env->get_length (ORNAMENT_HPADDING);
   SI    ypad  = env->get_length (ORNAMENT_VPADDING);
   tree  bg    = env->read       (ORNAMENT_COLOR);
+  int   a     = env->alpha;
   color sunny = env->get_color  (ORNAMENT_SUNNY_COLOR);
   color shadow= env->get_color  (ORNAMENT_SHADOW_COLOR);
   SI    l     = env->get_length (PAR_LEFT ) + w + xpad;
@@ -274,7 +275,7 @@ bridge_ornament_rep::my_typeset (int desired_status) {
   with        = tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
                 tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
   box   b     = typeset_ornament (desired_status);
-  box   hb    = highlight_box (ip, b, w, xpad, ypad, bg, sunny, shadow);
+  box   hb    = highlight_box (ip, b, w, xpad, ypad, bg, a, sunny, shadow);
   box   mb    = move_box (decorate (ip), hb, -l, 0);
   insert_ornament (remember_box (decorate (ip), mb));
 }

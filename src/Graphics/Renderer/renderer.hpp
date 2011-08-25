@@ -40,6 +40,7 @@ public:
   int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
   renderer master;          // master renderer in case of shadow renderers
   tree pattern;             // current background pattern
+  int pattern_alpha;        // current background pattern transparency
   rectangles clip_stack;    // stack with clipping regions
 
 public:
@@ -71,12 +72,12 @@ public:
   /* color */
   virtual color get_color () = 0;
   virtual color get_background () = 0;
-  virtual tree  get_background_pattern ();
+  virtual tree  get_background_pattern (int& alpha);
 
   /* main graphical routines */
   virtual void set_color (color c) = 0;
   virtual void set_background (color c) = 0;
-  virtual void set_background_pattern (tree t);
+  virtual void set_background_pattern (tree t, int alpha= 255);
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
   virtual void set_line_style (SI w, int type=0, bool round=true) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
@@ -90,7 +91,8 @@ public:
   virtual void triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
   virtual void xpm (url file_name, SI x, SI y) = 0;
   virtual void image (url u, SI w, SI h, SI x, SI y,
-		      double cx1, double cy1, double cx2, double cy2) = 0;
+		      double cx1, double cy1, double cx2, double cy2,
+                      int alpha= 255) = 0;
   virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
   virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   void extra_clipping (SI x1, SI y1, SI x2, SI y2);

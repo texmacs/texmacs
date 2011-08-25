@@ -24,6 +24,7 @@ public:
   SI       vpadding;
   SI       border;
   tree     bg;
+  int      alpha;
   color    sunny;
   color    shadow;
   SI       bar_width;

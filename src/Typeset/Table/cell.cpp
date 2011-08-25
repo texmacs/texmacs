@@ -361,5 +361,6 @@ cell_rep::finish () {
   color fc= env->col;
 
   b= cell_box (ip, b, xoff, yoff, 0, 0, x2-x1, y2-y1,
-	       lborder, rborder, bborder, tborder, fc, bg);
+	       lborder, rborder, bborder, tborder,
+               fc, bg, env->alpha);
 }

@@ -44,6 +44,7 @@ printer_rep::printer_rep (
     ps_file_name (ps_file_name2), dpi (dpi2),
     nr_pages (nr_pages2), page_type (page_type2),
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
+    use_alpha (get_preference ("experimental alpha") == "on"),
     linelen (0), fg (-1), bg (-1), ncols (0),
     lw (-1), nwidths (0), cfn (""), nfonts (0),
     xpos (0), ypos (0), tex_flag (false),
@@ -265,8 +266,8 @@ printer_rep::select_color (color c) {
   string rr= as_string (r); rr= rr(1,2) * "." * rr(2,5);
   string gg= as_string (g); gg= gg(1,2) * "." * gg(2,5);
   string bb= as_string (b); bb= bb(1,2) * "." * bb(2,5);
-  string da= define_alpha (a);
-  string s = rr * " " * gg * " " * bb * " setrgbcolor " * da;
+  string s = rr * " " * gg * " " * bb * " setrgbcolor";
+  if (use_alpha) s= s * " " * define_alpha (a);
   if (!defs->contains (s)) {
     define ("C" * as_string (ncols), s);
     ncols++;
@@ -720,8 +721,9 @@ incorporate_postscript (string s) {
 void
 printer_rep::image (
   url u, SI w, SI h, SI x, SI y,
-  double cx1, double cy1, double cx2, double cy2)
+  double cx1, double cy1, double cx2, double cy2, int alpha)
 {
+  (void) alpha; // FIXME
   int bx1, by1, bx2, by2;
   ps_bounding_box (u, bx1, by1, bx2, by2);
   int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);

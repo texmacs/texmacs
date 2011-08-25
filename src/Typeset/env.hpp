@@ -153,6 +153,7 @@ public:
   bool         display_style;
   bool         math_condensed;
   int          vert_pos;
+  int          alpha;
   color        col;
   SI           lw;
   string       point_style;
@@ -443,7 +444,7 @@ public:
     return as_vspace (t); }
   inline color get_color (string var) {
     tree t= env [var];
-    return named_color (as_string (t)); }
+    return named_color (as_string (t), alpha); }
 
   friend class edit_env;
   friend tm_ostream& operator << (tm_ostream& out, edit_env env);
@@ -472,5 +473,6 @@ bool is_percentage (tree t);
 double as_percentage (tree t);
 bool is_magnification (string s);
 double get_magnification (string s);
+int decode_alpha (string s);
 
 #endif // defined ENV_H

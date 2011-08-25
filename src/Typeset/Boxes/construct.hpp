@@ -28,7 +28,7 @@ box arc_box (path ip, SI x1, SI y1, SI x2, SI y2,
 	     int a1, int a2, SI w, color c);
 box polygon_box (path ip, array<SI> x, array<SI> y, color c);
 box polygon_box (path ip, array<SI> x, array<SI> y, SI w, color cf, color cl);
-box image_box (path ip, url u, SI w, SI h);
+box image_box (path ip, url u, SI w, SI h, int alpha);
 
 box text_box (path ip, int pos, string s, font fn, color col);
 box delimiter_box (path ip, string s, font fn, color col, SI y1, SI y2);
@@ -55,10 +55,10 @@ box composite_box (path ip, array<box> bs, array<SI> x, array<SI> y,
 box superpose_box (path ip, array<box> bs, bool bfl= true);
 box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y);
 box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
-	      SI bl, SI br, SI bb, SI bt, color fg, tree bg);
+	      SI bl, SI br, SI bb, SI bt, color fg, tree bg, int alpha);
 box remember_box (path ip, box b);
 box highlight_box (path ip, box b, SI w, SI xpad, SI ypad,
-		   tree bg, color sunny, color shadow);
+		   tree bg, int alpha, color sunny, color shadow);
 
 box frac_box (path ip, box b1, box b2, font fn, font sfn, color c);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, color c);
@@ -103,6 +103,6 @@ box anim_constant_box (path ip, box b, int l);
 box anim_translate_box (path ip, box b, int len, SI sx, SI sy, SI ex, SI ey);
 box anim_progressive_box (path ip, box b, int len, rectangle r1, rectangle r2);
 box sound_box (path ip, url u, SI h);
-box video_box (path ip, url u, SI w, SI h, int msecs, bool repeat_flag);
+box video_box (path ip, url u, SI w, SI h, int a, int msecs, bool repeated);
 
 #endif // defined CONSTRUCT_H
