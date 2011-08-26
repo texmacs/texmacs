@@ -128,6 +128,7 @@ get_stacktrace (unsigned int max_frames) {
 
 string
 get_stacktrace (unsigned int max_frames) {
+  (void) max_frames;
   return "Backtrace of C++ stack not supported\n";
 }
 
