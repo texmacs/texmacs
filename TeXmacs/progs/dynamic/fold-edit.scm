@@ -14,7 +14,8 @@
 (texmacs-module (dynamic fold-edit)
   (:use (utils library tree)
 	(utils library cursor)
-	(dynamic dynamic-drd)))
+	(dynamic dynamic-drd)
+	(generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic movements for fold tags and switches
