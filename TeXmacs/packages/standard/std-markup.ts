@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.10>
 
 <style|<tuple|source|std>>
 
@@ -262,6 +262,16 @@
     </src-comment>
   </active*>
 
+  <assign|with-opacity|<macro|fact|body|<with|opacity|<times|<arg|fact>|<value|opacity>>|<arg|body>>>>
+
+  <assign|pastel|<macro|body|<with-opacity|0.1|<arg|body>>>>
+
+  <assign|greyed|<macro|body|<with-opacity|0.33333|<arg|body>>>>
+
+  <assign|light|<macro|body|<with-opacity|0.5|<arg|body>>>>
+
+  \;
+
   <assign|hresize|<macro|body|left|right|<resize|<arg|body>|<arg|left>||<arg|right>|>>>
 
   <assign|hextend|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
@@ -306,7 +316,11 @@
 
   <drd-props|underline|with-like|yes|arity|1|accessible|all>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Miscellaneous.
+    </src-comment>
+  </active*>
 
   <assign|href|<macro|body|<hlink|<with|font-family|tt|<arg|body>>|<arg|body>>>>
 

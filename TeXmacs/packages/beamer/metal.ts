@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -65,10 +65,6 @@
   <assign|strong-color|#202048>
 
   <assign|math-color|#602020>
-
-  <assign|greyed-math-color|#b8a0ac>
-
-  <assign|greyed|<macro|x|<with|color|#a8a8ae|math-color|<value|greyed-math-color>|<arg|x>>>>
 
   <\active*>
     <\src-comment>

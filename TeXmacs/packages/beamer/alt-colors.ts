@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -28,8 +28,6 @@
 
   <assign|math-color|dark red>
 
-  <assign|greyed-math-color|#d0b0b0>
-
   <assign|uncolored-math|<value|math>>
 
   <assign|uncolored-equation*|<value|equation*>>
@@ -53,8 +51,6 @@
       </uncolored-equations-base>
     </with>
   </macro>>
-
-  <assign|greyed|<macro|x|<with|color|grey|math-color|<value|greyed-math-color>|<arg|x>>>>
 
   <\active*>
     <\src-comment>

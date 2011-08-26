@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -55,8 +55,8 @@
   </active*>
 
   <assign|tit|<macro|body|<with|ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#e0e0e0>|<ornament|<with|font-series|bold|color|dark
-  brown|<postscript|$TEXMACS_PATH/misc/images/right-head.png|/4.5|/4.5||||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|dark
-  brown|<arg|body>>>>|0fn|0.333fn><htab|5mm><postscript|$TEXMACS_PATH/misc/images/left-head.png|/4.5|/4.5||||>>>>>
+  brown|<image|$TEXMACS_PATH/misc/images/right-head.png|0.222222w|0.222222h||>><htab|5mm><move|<with|font-series|bold|math-font-series|bold|<large|<with|color|dark
+  brown|<arg|body>>>>|0fn|0.333fn><htab|5mm><image|$TEXMACS_PATH/misc/images/left-head.png|0.222222w|0.222222h||>>>>>
 
   <\active*>
     <\src-comment>
@@ -65,10 +65,6 @@
   </active*>
 
   <assign|strong-color|#504000>
-
-  <assign|greyed-math-color|#c08080>
-
-  <assign|greyed|<macro|x|<with|color|#c08080|math-color|<value|greyed-math-color>|<arg|x>>>>
 
   <\active*>
     <\src-comment>
