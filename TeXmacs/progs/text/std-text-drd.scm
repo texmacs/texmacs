@@ -116,7 +116,7 @@
 ;; Textual markup tags
 
 (define-group textual-tag
-  (strong-tag) (name-tag) (monospaced-tag) (opacity-tag))
+  (strong-tag) (name-tag) (monospaced-tag) (size-tag) (opacity-tag))
 
 (define-group strong-tag
   strong em dfn underline)
@@ -126,6 +126,10 @@
 
 (define-group monospaced-tag
   kbd code* var)
+
+(define-group size-tag
+  really-tiny tiny very-small small
+  normal-size large very-large huge really-huge)
 
 (define-group opacity-tag
   pastel greyed light)
