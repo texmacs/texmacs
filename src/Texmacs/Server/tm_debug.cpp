@@ -10,10 +10,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <execinfo.h>
-#include <cxxabi.h>
 #include "tm_server.hpp"
 #include "file.hpp"
 #include "tm_link.hpp"
