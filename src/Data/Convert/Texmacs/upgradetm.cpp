@@ -3146,6 +3146,8 @@ upgrade_algorithm (tree t, bool flag= true) {
     return compound ("algorithm-body", upgrade_algorithm (t[0]));
   else if (is_compound (t, "pile", 1))
     return compound ("tabbed", upgrade_algorithm (t[0]));
+  else if (is_compound (t, "scm-fragment", 1))
+    return compound ("scm-code", upgrade_algorithm (t[0]));
   else if (is_compound (t, "scheme-fragment", 1))
     return compound ("scm-code", upgrade_algorithm (t[0]));
   else if (is_compound (t, "mmx-fragment", 1))
