@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.10>
 
 <style|source>
 
@@ -201,7 +201,13 @@
 
   <assign|math-cursor|<with|color|magenta|\|>>
 
+  <assign|small-envbox|<macro|body|<with|color|#e8f0f0|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
+
   <assign|small-focus|<macro|body|<with|color|cyan|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
+
+  <assign|big-envbox|<macro|body|<with|color|#e8f0f0|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <with|color|black|<arg|body>>
+  </cell>>>>>>>>
 
   <assign|big-focus|<macro|body|<with|color|cyan|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
     <with|color|black|<arg|body>>
