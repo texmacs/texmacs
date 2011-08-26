@@ -158,7 +158,13 @@
       ("Underline" (make 'underline))
       ("Overline" (make 'overline)))
   ("Subscript" (make-script #f #t))
-  ("Superscript" (make-script #t #t)))
+  ("Superscript" (make-script #t #t))
+  (if (and (style-has? "std-markup-dtd")
+           (== (get-preference "experimental alpha") "on"))
+      ---
+      ("Pastel" (make 'pastel))
+      ("Greyed" (make 'greyed))
+      ("Light" (make 'light))))
 
 (menu-bind size-tag-menu
   ("Really tiny" (make 'really-tiny))
