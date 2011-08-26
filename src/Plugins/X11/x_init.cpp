@@ -225,6 +225,18 @@ get_named_color (color c) {
     as_hexadecimal (b, 2);
 }
 
+color
+blend (color fg, color bg) {
+  if (((fg >> 24) & 255) == 255) return fg;
+  int fR, fG, fB, fA, bR, bG, bB, bA;
+  get_rgb_color (fg, fR, fG, fB, fA);
+  get_rgb_color (bg, bR, bG, bB, bA);
+  fR= (bR * (255 - fA) + fR * fA) / 255;
+  fG= (bG * (255 - fA) + fG * fA) / 255;
+  fB= (bB * (255 - fA) + fB * fA) / 255;
+  return rgb_color (fR, fG, fB);
+}
+
 void
 x_initialize_colors () {
   if (the_gui->depth >= 16) {

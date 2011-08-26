@@ -129,14 +129,14 @@ x_drawable_rep::get_background () {
 
 void
 x_drawable_rep::set_color (color c) {
-  XSetForeground (dpy, gc, CONVERT (c));
   cur_fg= c;
+  XSetForeground (dpy, gc, CONVERT (blend (cur_fg, cur_bg)));
 }
 
 void
 x_drawable_rep::set_background (color c) {
-  XSetBackground (dpy, gc, CONVERT (c));
   cur_bg= c;
+  XSetBackground (dpy, gc, CONVERT (cur_bg));
 }
 
 void
@@ -182,7 +182,7 @@ x_drawable_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   if ((x1>=x2) || (y1<=y2)) return;
   XSetForeground (dpy, gc, CONVERT (cur_bg));
   XFillRectangle (dpy, win, gc, x1, y2, x2-x1, y1-y2);
-  XSetForeground (dpy, gc, CONVERT (cur_fg));
+  XSetForeground (dpy, gc, CONVERT (blend (cur_fg, cur_bg)));
 }
 
 void

@@ -242,7 +242,7 @@ x_gui_rep::get_ps_char (Font fn, int c, metric& ex, glyph& gl) {
   for (j=0; j<h; j++)
     for (i=0; i<w; i++) {
       int c = im->f.get_pixel (im, i, j);
-      int on= (c == black? 1: 0);
+      int on= (((color) c) == black? 1: 0);
       gl->set_x (i, j, on);
     }
   gl->lwidth= xcs.width;
