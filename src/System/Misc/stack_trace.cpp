@@ -10,15 +10,16 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "sys_utils.hpp"
+
+#ifdef USE_STACK_TRACE
 #include <stdio.h>
 #include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
-#include "sys_utils.hpp"
 
 string
 get_stacktrace (unsigned int max_frames) {
-#ifdef USE_STACK_TRACE
   string r;
   r << "Backtrace of C++ stack:\n";
   
@@ -121,7 +122,13 @@ get_stacktrace (unsigned int max_frames) {
   free (funcname);
   free (symbollist);
   return r;
-#else
-  return "Backtrace of C++ stack not supported\n";
-#endif
 }
+
+#else
+
+string
+get_stacktrace (unsigned int max_frames) {
+  return "Backtrace of C++ stack not supported\n";
+}
+
+#endif
