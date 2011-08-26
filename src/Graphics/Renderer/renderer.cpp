@@ -301,3 +301,30 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
 }
 
 #undef RND
+
+/******************************************************************************
+* Drawing selections using alpha transparency
+******************************************************************************/
+
+void
+renderer_rep::draw_rectangles (rectangles rs) {
+  rectangles it= rs;
+  while (!is_nil (it)) {
+    fill (it->item->x1, it->item->y1, it->item->x2, it->item->y2);
+    it= it->next;
+  }
+}
+
+void
+renderer_rep::draw_selection (rectangles rs) {
+  color fg= get_color ();
+  int r, g, b, a;
+  get_rgb_color (fg, r, g, b, a);
+  color pfg= rgb_color (r, g, b, (a + 1) / 16);
+  rectangles inn= ::thicken (rs, -pixel, -pixel);
+  rectangles out= ::simplify (::correct (rs - inn));
+  set_color (pfg);
+  draw_rectangles (::simplify (inn));
+  set_color (fg);
+  draw_rectangles (out);
+}

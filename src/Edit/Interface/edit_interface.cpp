@@ -586,12 +586,11 @@ edit_interface_rep::apply_changes () {
     if (made_selection) {
       table_selection= selection_active_table ();
       selection sel; selection_get (sel);
-      /*
-       selection_rects=
-       simplify (::correct (thicken (sel->rs, pixel, pixel) - sel->rs));
-       */
-      selection_rects= simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
-                                            thicken (sel->rs, 0, 2*pixel)));
+      rectangles rs= thicken (sel->rs, pixel, 3*pixel);
+#ifndef QTTEXMACS
+      rs= simplify (::correct (rs - thicken (rs, -pixel, -pixel)));
+#endif
+      selection_rects= rs;
       invalidate (selection_rects);
     }
   }

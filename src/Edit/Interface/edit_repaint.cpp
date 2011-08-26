@@ -35,24 +35,18 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
 void
 edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
-    rectangles rs= env_rects;
-    while (!is_nil (rs)) {
+    if (!is_nil (env_rects)) {
       ren->set_color (rgb_color (0, 85, 85, 24));
-      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
-      rs= rs->next;
+      ren->draw_rectangles (env_rects);
     }
-    rs= foc_rects;
-    while (!is_nil (rs)) {
+    if (!is_nil (foc_rects)) {
       ren->set_color (rgb_color (0, 255, 255));
-      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
-      rs= rs->next;
+      ren->draw_rectangles (foc_rects);
     }
-    rs= sem_rects;
-    while (!is_nil (rs)) {
+    if (!is_nil (sem_rects)) {
       if (sem_correct) ren->set_color (rgb_color (112, 208, 112));
       else ren->set_color (rgb_color (208, 144, 80));
-      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
-      rs= rs->next;
+      ren->draw_rectangles (sem_rects);
     }
   }
 }
@@ -125,20 +119,16 @@ edit_interface_rep::draw_context (renderer ren, rectangle r) {
 void
 edit_interface_rep::draw_selection (renderer ren) {
   if (!is_nil (locus_rects)) {
-    rectangles rs= locus_rects;
-    while (!is_nil (rs)) {
-      ren->set_color (rgb_color (32, 160, 96));
-      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
-      rs= rs->next;
-    }
+    ren->set_color (rgb_color (32, 160, 96));
+    ren->draw_rectangles (locus_rects);
   }
-  if (made_selection) {
-    rectangles rs= selection_rects;
-    while (!is_nil (rs)) {
-      ren->set_color (table_selection? rgb_color (192, 0, 255): red);
-      ren->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
-      rs= rs->next;
-    }
+  if (made_selection && !is_nil (selection_rects)) {
+    ren->set_color (table_selection? rgb_color (192, 0, 255): red);
+#ifdef QTTEXMACS
+    ren->draw_selection (selection_rects);
+#else
+    ren->draw_rectangles (selection_rects);
+#endif
   }
 }
 

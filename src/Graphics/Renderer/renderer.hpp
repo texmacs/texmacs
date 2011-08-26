@@ -110,6 +110,10 @@ public:
   /* href and stuff */
   virtual void anchor(string label, SI x, SI y);
   virtual void href(string label, SI x1, SI y1, SI x2, SI y2);
+
+  /* miscellaneous */
+  virtual void draw_rectangles (rectangles rs);
+  virtual void draw_selection (rectangles rs);
 };
 
 void abs_round (SI& l);
