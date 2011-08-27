@@ -7,15 +7,12 @@ Compiling GNU TeXmacs
 
    Before you compile GNU TeXmacs on your system, you have to make
    sure that the other programs on which GNU TeXmacs depends,
-   namely TeX and Guile Scheme (from the Gnome project)
-   have been installed correctly. You can do this by checking
-   whether the latex and guile binaries exists in your path
+   such as Guile Scheme, FreeType 2, libiconv, etc.
+   Configuration will fail if one if these dependencies are missing.
 
-	which latex
-	which guile
-
-   If one of these commands yields an error message,
-   then look at the webpage doc/html/web/Dependencies.html.
+   There are also a certain number of optional dependencies,
+   which may depend on your operating system, such as aspell,
+   ImageMagick, or netpbm.
 
 2. Compile, install and run.
 
@@ -151,24 +148,6 @@ Appendix C: Possible problems
       Solution: type 'make deps' in order to generate the dependence
       files and/or 'rm src/Objects/*' in order to be sure that the
       object files are rebuilt.
-
-    * You have problems with the font system from TeX when running.
-      Solution: get a version of TeX with 'kpsepath',
-      'MakeTeXPK' and 'MakeTeXTFM'.
-
-    * TeXmacs runs fine, but certain fonts are not displayed correctly.
-      Solution: This problem may have several causes:
-      o You use a recent version (>= 7.3) of RedHat Linux or
-        one of its clones. On such systems, the installation of
-        TeTeX is bugged and you need to change some permissions
-        in order to allow font generation by Metafont.
-        As root, type
-	  chmod -R a+rw /var/lib/texmf/*
-      o You do not use a standard TeX/LaTeX distribution, such as TeTeX
-	(standard distributions come with scripts for generating fonts,
-	such as 'mktextfm' or 'MakeTeXTFM'). You may either install
-        a more standard TeX/LaTeX distribution, or download some
-        pregenerated fonts from texmacs.org.
 
     * If you encounter other problems, or if our fixes don't work, then please
       contact us at contact@texmacs.org.

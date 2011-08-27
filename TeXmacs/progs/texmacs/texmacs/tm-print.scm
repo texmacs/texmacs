@@ -66,28 +66,11 @@
 (define (notify-printer-dpi var val)
   (set-printer-dpi val))
 
-(define notify-font-type-flag #f)
-(define (notify-font-type var val)
-  (when notify-font-type-flag
-    (with font-cache "$TEXMACS_HOME_PATH/system/cache/font_cache.scm"
-      (system-remove (string->url font-cache)))
-    (set-message "Restart in order to let new font type take effect"
-		 "font type"))
-  (set! notify-font-type-flag #t)
-  (with type
-      (cond ((== val "Metafont only") 0)
-	    ((== val "Metafont + Type 1") 1)
-	    ((== val "Type 1 + Metafont") 2)
-	    ((== val "Type 1 only") 3)
-	    (else 2))
-    (set-font-type type)))
-
 (define-preferences
   ("preview command" "default" notify-preview-command)
   ("printing command" "lpr" notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
-  ("printer dpi" "600" notify-printer-dpi)
-  ("font type" "Type 1 + Metafont" notify-font-type))
+  ("printer dpi" "600" notify-printer-dpi))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands

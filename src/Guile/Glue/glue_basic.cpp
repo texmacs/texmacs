@@ -209,28 +209,6 @@ tmg_set_fast_environments (SCM arg1) {
 }
 
 SCM
-tmg_get_font_type () {
-  // SCM_DEFER_INTS;
-  int out= get_font_type ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_set_font_type (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "set-font-type");
-
-  int in1= scm_to_int (arg1);
-
-  // SCM_DEFER_INTS;
-  set_font_type (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_font_exists_in_ttP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "font-exists-in-tt?");
 
@@ -5010,8 +4988,6 @@ initialize_glue_basic () {
   scm_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
   scm_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
   scm_new_procedure ("set-fast-environments", (FN) tmg_set_fast_environments, 1, 0, 0);
-  scm_new_procedure ("get-font-type", (FN) tmg_get_font_type, 0, 0, 0);
-  scm_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
   scm_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
   scm_new_procedure ("eval-system", (FN) tmg_eval_system, 1, 0, 0);
   scm_new_procedure ("var-eval-system", (FN) tmg_var_eval_system, 1, 0, 0);

@@ -27,83 +27,23 @@ init_helper_binaries () {
     cerr << "TeXmacs] kpsepath works with your TeX distribution\n";
     set_setting ("KPSEPATH", "true");
   }
-  else {
-    cerr << "TeXmacs] kpsepath does not work with your TeX distribution\n";
-    set_setting ("KPSEPATH", "false");
-  }
+  else set_setting ("KPSEPATH", "false");
 
   if (exists_in_path ("kpsewhich")) {
     cerr << "TeXmacs] kpsewhich works with your TeX distribution\n";
     set_setting ("KPSEWHICH", "true");
   }
-  else {
-    cerr << "TeXmacs] kpsewhich does not work with your TeX distribution\n";
-    set_setting ("KPSEWHICH", "false");
-  }
+  else set_setting ("KPSEWHICH", "false");
 
-  if (exists_in_path ("mktextfm")) {
-    cerr << "TeXmacs] mktextfm works with your TeX distribution\n";
-    set_setting ("MAKETFM", "mktextfm");
-  }
-  else if (exists_in_path ("MakeTeXTFM")) {
-    cerr << "TeXmacs] MakeTeXTFM works with your TeX distribution\n";
-    set_setting ("MAKETFM", "MakeTeXTFM");
-  }
-  else if (exists_in_path ("maketfm")){
-    cerr << "TeXmacs] maketfm works with your TeX distribution\n";
-    set_setting ("MAKETFM", "maketfm");
-  }
-  else {
-    cerr << "TeXmacs] MakeTeXTFM does not work with your TeX distribution\n";
-    set_setting ("MAKETFM", "false");
-  }
-
-  if (exists_in_path ("mktexpk")) {
-    cerr << "TeXmacs] mktexpk works with your TeX distribution\n";
-    set_setting ("MAKEPK", "mktexpk");
-  }
-  else if (exists_in_path ("MakeTeXPK")) {
-    cerr << "TeXmacs] MakeTeXPK works with your TeX distribution\n";
-    set_setting ("MAKEPK", "MakeTeXPK");
-  }
-  else if (exists_in_path ("makepk")){
-    cerr << "TeXmacs] makepk works with your TeX distribution\n";
-    set_setting ("MAKEPK", "makepk");
-  }
-  else {
-    cerr << "TeXmacs] MakeTeXPK does not work with your TeX distribution\n";
-    set_setting ("MAKEPK", "false");
-  }
-
-  if (exists_in_path ("texhash")) {
-    cerr << "TeXmacs] texhash works with your TeX distribution\n";
-    set_setting ("TEXHASH", "true");
-  }
-  else {
-    cerr << "TeXmacs] texhash does not work with your TeX distribution\n";
-    set_setting ("TEXHASH", "false");
-  }
+  set_setting ("MAKETFM", "false");
+  set_setting ("MAKEPK", "false");
+  set_setting ("DPI", "600");
+  set_setting ("TEXHASH", "false");
 }
 
 /******************************************************************************
 * Heuristic determination of path with TeX files
 ******************************************************************************/
-
-static void
-locate (string name, url& p) {
-  if (use_locate) {
-    int start=0, i;
-    string s= eval_system ("locate " * name);
-    for (i=0; i<N(s); i++)
-      if (s[i]=='\n') {
-	int j;
-	for (j=i-1; j>start; j--)
-	  if ((s[j] == '/') || (s[j] == '\\')) break;
-	p= url_system (s (start, j)) | p;
-	start= i+1;
-      }
-  }
-}
 
 static void
 search_sub_dirs_sub (url base, url u, url& tfm, url& pk, url& pfb, int status) {
@@ -141,43 +81,13 @@ search_sub_dirs (url root) {
 
 static void
 init_heuristic_tex_paths () {
-  // cout << "kpsepath = " << get_setting ("KPSEPATH") << "\n";
-  // cout << "kpsewhich= " << get_setting ("KPSEWHICH") << "\n";
-#ifndef OS_WIN32
-  // Not necessary if we can use kpsepath
-  if (get_setting ("KPSEPATH") == "true") {
-    set_setting ("TFM", "");
-    set_setting ("PK" , "");
-    set_setting ("PFB", "");
-    return;
-  }
-#endif
-
-  // Try locate
   url tfm= url_none (), pk= url_none (), pfb= url_none ();
-  if (use_locate && (eval_system ("locate cmr10.tfm") != "")) {
-    locate (".tfm", tfm);
-    locate (".300pk", pk);
-    locate (".360pk", pk);
-    locate (".400pk", pk);
-    locate (".600pk", pk);
-    locate (".1200pk", pk);
-    locate (".pfb", pfb);
-    if (is_none (tfm)) cerr << "TeXmacs] I could not locate any tfm files\n";
-    else cerr << "TeXmacs] located tfm files in " << tfm << "\n";
-    if (is_none (pk)) cerr << "TeXmacs] I could not locate any pk files\n";
-    else cerr << "TeXmacs] located pk files in " << pk << "\n";
-  }
-  else cerr << "TeXmacs] locate does not work; I will try something else\n";
 
   // Try some 'standard' directories
 #ifdef OS_WIN32
   tfm= search_sub_dirs ("$TEX_HOME/fonts/tfm");
   pk = search_sub_dirs ("$TEX_HOME/fonts/pk");
   pfb= search_sub_dirs ("$TEX_HOME/fonts/type1");
-  if (is_none (tfm)) tfm= search_sub_dirs ("$TEXMACS_PATH/fonts/tfm");
-  if (is_none (pk )) pk = search_sub_dirs ("$TEXMACS_PATH/fonts/pk");
-  if (is_none (pfb)) pfb= search_sub_dirs ("$TEXMACS_PATH/fonts/type1");
 #else
   search_sub_dirs ("/usr/lib/tetex/fonts", tfm, pk, pfb);
   search_sub_dirs ("/usr/lib/texmf/fonts", tfm, pk, pfb);
@@ -188,24 +98,6 @@ init_heuristic_tex_paths () {
   search_sub_dirs ("/usr/share/texmf/fonts", tfm, pk, pfb);
 #endif
 
-  // Does TeX work?
-  if ((is_none (tfm) && (get_env ("TEX_TFM_PATH") == "")) ||
-      (is_none (pk ) && (get_env ("TEX_PK_PATH" ) == ""))) {
-    cerr << HRULE;
-    cerr << "I could not find a TeX system on your system\n";
-    cerr << "If you did install one, please set the system variables\n\n";
-    cerr << "\tTEX_TFM_PATH\n";
-    cerr << "\tTEX_PK_PATH\n\n";
-    cerr << "with the paths where the tfm resp. pk file\n";
-    cerr << "can be found on your system and restart TeXmacs\n";
-    cerr << HRULE;
-    cerr << "WARNING: fonts may not be displayed correctly\n";
-    cerr << "Either install a TeX system or make sure that\n";
-    cerr << "you installed the TeXmacs-extra-fonts package\n";
-    cerr << HRULE;
-  }
-
-  // Done
 #ifdef OS_WIN32
   set_setting ("TFM", as_string (tfm));
   set_setting ("PK" , as_string (pk ));
@@ -218,69 +110,6 @@ init_heuristic_tex_paths () {
 }
 
 /******************************************************************************
-* Determine default TeX settings
-******************************************************************************/
-
-static bool
-try_dpi (int dpi, int test) {
-  cerr << "TeXmacs] Trying to create ecrm10." << test
-       << "pk from " << dpi << " dpi\n";
-  make_tex_pk ("ecrm10", test, dpi);
-  reset_pk_path ();
-  if (!is_none (resolve_tex ("ecrm10." * as_string (test) * "pk"))) {
-    set_setting ("DPI", as_string (dpi));
-    set_setting ("EC", "true");
-    cerr << "TeXmacs] Metafont works with " << dpi << " dpi ec-fonts\n";
-    return true;
-  }
-
-  cerr << "TeXmacs] Trying to create cmr10." << test
-       << "pk from " << dpi << " dpi\n";
-  make_tex_pk ("cmr10", test, dpi);
-  reset_pk_path ();
-  if (!is_none (resolve_tex ("cmr10." * as_string (test) * "pk"))) {
-    set_setting ("DPI", as_string (dpi));
-    cerr << "TeXmacs] Metafont works with " << dpi << " dpi cm-fonts\n";
-    return true;
-  }
-
-  return false;
-}
-
-static void
-init_default_tex_settings () {
-  set_setting ("DPI", "300");
-  set_setting ("EC", "false");
-  if (get_setting ("MAKEPK") != "false") {
-    if (try_dpi (300, 123));
-    else if (try_dpi (600, 234));
-    else if (try_dpi (1200, 345));
-    else cerr << "TeXmacs] Your mktexpk/MakeTeXPK does not seem to work\n";
-  }
-}
-
-/******************************************************************************
-* Getting information about installation
-******************************************************************************/
-
-static int font_type= 2;
-// 0: Metafont, 1: Metafont + Type 1, 2: Type 1 + Metafont, 3: Type 1
-
-void
-set_font_type (int type) {
-  //cout << "set_font_type " << type << "\n";
-  if (get_setting ("MAKETFM") == "false") type= 3;
-  if (!ft_present ()) type= 0;
-  font_type= type;
-}
-
-int
-get_font_type () {
-  //cout << "get_font_type -> " << font_type << "\n";
-  return font_type;
-}
-
-/******************************************************************************
 * Setting up and initializing TeX fonts
 ******************************************************************************/
 
@@ -289,7 +118,6 @@ setup_tex () {
   remove ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
   init_helper_binaries ();
   init_heuristic_tex_paths ();
-  init_default_tex_settings ();
 }
 
 void

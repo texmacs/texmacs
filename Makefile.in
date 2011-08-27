@@ -212,8 +212,6 @@ BUNDLE_DMG = ../distr/TeXmacs.dmg
 BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
 BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
 BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
-BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
-BUNDLE_EXTRA_FONTS = TeXmacs-extra-fonts-1.0-noarch.tar.gz
 
 BUNDLE_MAIN: TEXMACS
 	$(MKDIR) ../distr
@@ -246,18 +244,6 @@ BUNDLE_MAIN: TEXMACS
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
 	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugging 2>/dev/null || :
-	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
-	$(CP) ../distr/$(BUNDLE_FONTS) $(BUNDLE_TEXMACS) ; \
-	cd $(BUNDLE_TEXMACS) ; \
-	tar -zxf $(BUNDLE_FONTS); \
-	$(RM) $(BUNDLE_FONTS) ; \
-	fi
-	if [ -f ../distr/$(BUNDLE_EXTRA_FONTS) ] ; then \
-	$(CP) ../distr/$(BUNDLE_EXTRA_FONTS) $(BUNDLE_TEXMACS) ; \
-	cd $(BUNDLE_TEXMACS) ; \
-	tar -zxf $(BUNDLE_EXTRA_FONTS); \
-	$(RM) $(BUNDLE_EXTRA_FONTS) ; \
-	fi
 #	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
 #	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
 #	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
@@ -293,8 +279,7 @@ BUNDLE_LIBS:
 BUNDLE: BUNDLE_MAIN
 	$(BUNDLE_SRC)/bundle-libs.sh $(BUNDLE_CONTENTS)/MacOS/TeXmacs
 #	$(BUNDLE_SRC)/deploy.sh $(BUNDLE_APP) $(BUNDLE_SRC)
-    
-    
+
 DISKIMAGE: BUNDLE
 	$(RM) $(BUNDLE_DMG)
 	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
@@ -309,7 +294,6 @@ DISKIMAGE: BUNDLE
 WIN_BUNDLE_SRC = misc/windows
 WIN_BUNDLE_DIR = ../distr/TeXmacs-Windows
 WIN_BUNDLE_BIN_DIR = $(WIN_BUNDLE_DIR)/bin
-WIN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 ## WARNING: the following path list needs to be adapted manually 
 DLLPATH = $(PATH)
@@ -333,12 +317,6 @@ WIN_BUNDLE_MAIN: TEXMACS
 	export GUILE_LOAD_PATH; \
 	for I in $$GUILE_LOAD_PATH ; do $(CP) $$I $(WIN_BUNDLE_DIR)/progs/ ; done
 	find $(WIN_BUNDLE_DIR)/progs/ice-9 -type f -exec $(CHMOD) 644 {} \;
-	if [ -f ../distr/$(BUNDLE_FONTS) ] ; then \
-	  $(CP) ../distr/$(BUNDLE_FONTS) $(WIN_BUNDLE_DIR) ; \
-	  cd $(WIN_BUNDLE_DIR) ; \
-	  tar -zxf $(BUNDLE_FONTS); \
-	  $(RM) $(BUNDLE_FONTS) ; \
-	fi
 #	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
 #	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
 #	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
@@ -364,7 +342,6 @@ WIN_BUNDLE: WIN_BUNDLE_MAIN WIN_BUNDLE_LIBS
 
 DEBIAN_BUNDLE_SRC = misc/debian
 DEBIAN_BUNDLE_DIR = ../distr/TeXmacs-Debian
-DEBIAN_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 DEBIAN_BUNDLE:
 	$(MKDIR) ../distr
@@ -373,16 +350,8 @@ DEBIAN_BUNDLE:
 	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)
 	#$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
 	$(CP) -a * $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/.
-
 	# Moving doc
 	$(CP) -ar ../doc/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
-
-	# Moving fonts
-	if [ -f ../$(DEBIAN_BUNDLE_FONTS) ] ; then \
-	  cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
-	  tar -zxf ../../../../$(DEBIAN_BUNDLE_FONTS); \
-	fi
-
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/.svn
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/.svn
@@ -392,20 +361,14 @@ DEBIAN_BUNDLE:
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-
 	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); make distclean
 	cd $(DEBIAN_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb)
 	cd $(DEBIAN_BUNDLE_DIR); tar -czf $(tmdebb).orig.tar.gz $(tmdeb)
-
 	# Moving Debian files
 	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb);
 	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian ;
 	$(CP) $(DEBIAN_BUNDLE_SRC)/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
 	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); debuild -us -uc
-
-
-
-
 
 ###############################################################################
 # Make a bundle for Fedora
@@ -413,7 +376,6 @@ DEBIAN_BUNDLE:
 
 FEDORA_BUNDLE_SRC = misc/fedora
 FEDORA_BUNDLE_DIR = ../distr/TeXmacs-Fedora
-FEDORA_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 FEDORA_BUNDLE:
 	$(MKDIR) ../distr
@@ -421,16 +383,8 @@ FEDORA_BUNDLE:
 	$(MKDIR) $(FEDORA_BUNDLE_DIR)
 	$(MKDIR) $(FEDORA_BUNDLE_DIR)/$(tmdeb)
 	$(CP) -a * $(FEDORA_BUNDLE_DIR)/$(tmdeb)/.
-
 	# Moving doc
 	$(CP) -ar ../doc/* $(FEDORA_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
-
-	# Moving fonts
-	if [ -f ../$(FEDORA_BUNDLE_FONTS) ] ; then \
-	  cd $(FEDORA_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
-	  tar -zxf ../../../../$(FEDORA_BUNDLE_FONTS); \
-	fi
-
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/.svn
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/.svn
@@ -440,10 +394,8 @@ FEDORA_BUNDLE:
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-
 	cd $(FEDORA_BUNDLE_DIR)/$(tmdeb); make distclean
 	cd $(FEDORA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
-
 	# Moving Fedora files
 	rpmdev-setuptree;
 	cp $(FEDORA_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
@@ -459,7 +411,6 @@ FEDORA_BUNDLE:
 
 CENTOS_BUNDLE_SRC = misc/centos
 CENTOS_BUNDLE_DIR = ../distr/TeXmacs-Centos
-CENTOS_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 CENTOS_BUNDLE:
 	$(MKDIR) ../distr
@@ -467,16 +418,8 @@ CENTOS_BUNDLE:
 	$(MKDIR) $(CENTOS_BUNDLE_DIR)
 	$(MKDIR) $(CENTOS_BUNDLE_DIR)/$(tmdeb)
 	$(CP) -a * $(CENTOS_BUNDLE_DIR)/$(tmdeb)/.
-
 	# Moving doc
 	$(CP) -ar ../doc/* $(CENTOS_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
-
-	# Moving fonts
-	if [ -f ../$(CENTOS_BUNDLE_FONTS) ] ; then \
-	  cd $(CENTOS_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
-	  tar -zxf ../../../../$(CENTOS_BUNDLE_FONTS); \
-	fi
-
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/.svn
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/.svn
@@ -486,16 +429,13 @@ CENTOS_BUNDLE:
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-
 	cd $(CENTOS_BUNDLE_DIR)/$(tmdeb); make distclean
 	cd $(CENTOS_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
-
 	# Moving Centos files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-
 	cp $(CENTOS_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(CENTOS_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
@@ -503,13 +443,11 @@ CENTOS_BUNDLE:
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_BUNDLE_DIR);
 
 ###############################################################################
-# Make a bundle for CentOs
+# Make a bundle for Mandriva
 ###############################################################################
-
 
 MANDRIVA_BUNDLE_SRC = misc/mandriva
 MANDRIVA_BUNDLE_DIR = ../distr/TeXmacs-Mandriva
-MANDRIVA_BUNDLE_FONTS = TeXmacs-windows-fonts-1.0-noarch.tar.gz
 
 MANDRIVA_BUNDLE:
 	$(MKDIR) ../distr
@@ -517,16 +455,8 @@ MANDRIVA_BUNDLE:
 	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)
 	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)
 	$(CP) -a * $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/.
-
 	# Moving doc
 	$(CP) -ar ../doc/* $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
-
-	# Moving fonts
-	if [ -f ../$(MANDRIVA_BUNDLE_FONTS) ] ; then \
-	  cd $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/TeXmacs ; \
-	  tar -zxf ../../../../$(MANDRIVA_BUNDLE_FONTS); \
-	fi
-
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/.svn
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/.svn
@@ -536,16 +466,13 @@ MANDRIVA_BUNDLE:
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-
 	cd $(MANDRIVA_BUNDLE_DIR)/$(tmdeb); make distclean
 	cd $(MANDRIVA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
-
 	# Moving Mandriva files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-
 	cp $(MANDRIVA_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(MANDRIVA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec

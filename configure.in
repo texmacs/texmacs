@@ -223,20 +223,17 @@ changequote([, ])dnl
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-if test "$with_freetype" = "no" ; then
-    AC_MSG_RESULT([disabling freetype support])
-else
-    if test -z "$FREETYPE_CFLAGS"; then
-      FREETYPE_CFLAGS=`freetype-config --cflags`
-    fi
-    CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
-    if test -z "$FREETYPE_LDFLAGS"; then
-      FREETYPE_LDFLAGS=`freetype-config --libs`
-    fi
-    LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
-    AC_CHECK_HEADER(ft2build.h,
-    AC_MSG_CHECKING(for freetype)
-    AC_TRY_LINK(
+if test -z "$FREETYPE_CFLAGS"; then
+  FREETYPE_CFLAGS=`freetype-config --cflags`
+fi
+CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
+if test -z "$FREETYPE_LDFLAGS"; then
+  FREETYPE_LDFLAGS=`freetype-config --libs`
+fi
+LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
+AC_CHECK_HEADER(ft2build.h,
+AC_MSG_CHECKING(for freetype)
+AC_TRY_LINK(
 [
 #include <ft2build.h>
 #include FT_FREETYPE_H 
@@ -252,8 +249,9 @@ else
       AC_DEFINE(LINKED_FREETYPE, 1, [Link freetype library with TeXmacs])
     fi
 ],[
-    AC_MSG_RESULT(no)]))
-fi
+    AC_MSG_RESULT(no)
+    AC_MSG_ERROR([cannot find freetype library])
+]))
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"

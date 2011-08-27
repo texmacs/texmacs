@@ -25,7 +25,6 @@ class printer_rep: public renderer_rep {
   double   paper_w;
   double   paper_h;
   bool     use_alpha;
-  bool     type_1;
   string   prologue;
   string   body;
   int      cur_page;

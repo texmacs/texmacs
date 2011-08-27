@@ -51,8 +51,6 @@ printer_rep::printer_rep (
     defs ("?"), tex_chars ("?"), tex_width ("?"),
     tex_fonts ("?"), tex_font_chars (array<int>(0))    
 {
-  type_1    = get_font_type () > 0;
-
   string tex_pro, special_pro, color_pro, texps_pro;
   load_string ("$TEXMACS_PATH/misc/convert/tex.pro", tex_pro, true);
   load_string ("$TEXMACS_PATH/misc/convert/special.pro", special_pro, true);

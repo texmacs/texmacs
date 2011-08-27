@@ -84,7 +84,7 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
     return true;
   if (size > 333)
     return load_tex_tfm (family, (size+50)/100, dsize, tfm, make);
-  if (get_font_type () == 3) {
+  if (true) {
     if ((size > 14) && try_tfm (family, 17, size, tfm, make)) return true;
     if ((size > 12) && try_tfm (family, 12, size, tfm, make)) return true;
     if ((size > 10) && try_tfm (family, 10, size, tfm, make)) return true;
@@ -101,7 +101,7 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
     if ((size < 9) && try_tfm (family, 700, size, tfm, make)) return true;
     if (try_tfm (family, 1000, size, tfm, make)) return true;
   }
-  if (get_font_type () == 2) {
+  if (false) { // NOTE: first search for type 1, then use Metafont
     SI delta= (size<10? 1: -1);
     if (try_tfm (family, size + delta, size, tfm, make)) return true;
     if (try_tfm (family, size - delta, size, tfm, make)) return true;
@@ -129,7 +129,7 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
     if (try_tfm (family, as_int (cache_get ("font_cache.scm", var)->label),
 		 size, tfm, false))
       return true;
-  if (get_font_type () >= 2 && get_setting ("MAKETFM") != "false")
+  if (get_setting ("MAKETFM") != "false")
     if (load_tex_tfm (family, size ,dsize, tfm, false))
       return true;
   return load_tex_tfm (family, size ,dsize, tfm, true);
@@ -189,17 +189,15 @@ try_pk (string family, int size, int dpi, int dsize,
 {
   // cout << "Try pk " << family << size << " at " << dpi << " dpi\n";
 #ifdef USE_FREETYPE
-  if (get_font_type () > 0) {
-    // Substitute by True Type font ?
-    int tt_size= size<333? size: (size+50)/100;
-    int tt_dpi = size<333? dpi : (size * dpi) / (100 * tt_size);
-    string tt_name= tt_find_name (family, tt_size);
-    if (tt_name != "") {
-      if (font_glyphs::instances -> contains (tt_name))
-	pk= font_glyphs (tt_name);
-      else pk= tt_font_glyphs (tt_name, tt_size, tt_dpi);
-      return true;
-    }
+  // Substitute by True Type font ?
+  int tt_size= size<333? size: (size+50)/100;
+  int tt_dpi = size<333? dpi : (size * dpi) / (100 * tt_size);
+  string tt_name= tt_find_name (family, tt_size);
+  if (tt_name != "") {
+    if (font_glyphs::instances -> contains (tt_name))
+      pk= font_glyphs (tt_name);
+    else pk= tt_font_glyphs (tt_name, tt_size, tt_dpi);
+    return true;
   }
 #endif // USE_FREETYPE
 

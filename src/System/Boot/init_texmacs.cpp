@@ -275,8 +275,8 @@ init_misc () {
 #else
   use_which = (var_eval_system ("which texmacs 2> /dev/null") != "");
 #endif
-  string loc= var_eval_system ("locate bin/locate 2> /dev/null");
-  use_locate= (search_forwards ("bin/locate", loc) > 0);
+  //string loc= var_eval_system ("locate bin/locate 2> /dev/null");
+  //use_locate= (search_forwards ("bin/locate", loc) > 0);
 
   // Set extra environment variables for Cygwin
 #ifdef OS_CYGWIN
@@ -337,12 +337,6 @@ void
 setup_texmacs () {
   url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
   cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
-  cerr << HRULE;
-  cerr << "Since this seems to be the first time you have run this\n";
-  cerr << "version of TeXmacs, I will first analyze your system\n";
-  cerr << "in order to set up some TeX paths in the correct way.\n";
-  cerr << "This may take some seconds; the result can be found in\n\n";
-  cerr << "\t" << settings_file << "\n\n";
   cerr << HRULE;
 
   set_setting ("VERSION", TEXMACS_VERSION);

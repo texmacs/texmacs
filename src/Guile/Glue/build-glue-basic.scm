@@ -36,8 +36,6 @@
   (get-texmacs-path get_texmacs_path (string))
   (plugin-list plugin_list (scheme_tree))
   (set-fast-environments set_fast_environments (void bool))
-  (get-font-type get_font_type (int))
-  (set-font-type set_font_type (void int))
   (font-exists-in-tt? tt_font_exists (bool string))
   (eval-system eval_system (string string))
   (var-eval-system var_eval_system (string string))

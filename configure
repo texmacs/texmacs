@@ -5679,23 +5679,19 @@ fi
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-if test "$with_freetype" = "no" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling freetype support" >&5
-$as_echo "disabling freetype support" >&6; }
-else
-    if test -z "$FREETYPE_CFLAGS"; then
-      FREETYPE_CFLAGS=`freetype-config --cflags`
-    fi
-    CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
-    if test -z "$FREETYPE_LDFLAGS"; then
-      FREETYPE_LDFLAGS=`freetype-config --libs`
-    fi
-    LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
-    ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
+if test -z "$FREETYPE_CFLAGS"; then
+  FREETYPE_CFLAGS=`freetype-config --cflags`
+fi
+CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
+if test -z "$FREETYPE_LDFLAGS"; then
+  FREETYPE_LDFLAGS=`freetype-config --libs`
+fi
+LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
+ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
 if test "x$ac_cv_header_ft2build_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for freetype" >&5
 $as_echo_n "checking for freetype... " >&6; }
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <ft2build.h>
@@ -5731,13 +5727,14 @@ else
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
+    as_fn_error $? "cannot find freetype library" "$LINENO" 5
+
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
 
 
-fi
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"

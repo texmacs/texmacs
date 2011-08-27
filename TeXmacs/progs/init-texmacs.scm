@@ -219,8 +219,7 @@
 ;(display "Booting fonts\n")
 (use-modules (fonts fonts-ec) (fonts fonts-adobe) (fonts fonts-x)
 	     (fonts fonts-math) (fonts fonts-foreign) (fonts fonts-misc)
-	     (fonts fonts-composite))
-(if (> (get-font-type) 0) (use-modules (fonts fonts-truetype)))
+	     (fonts fonts-composite) (fonts fonts-truetype))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")
