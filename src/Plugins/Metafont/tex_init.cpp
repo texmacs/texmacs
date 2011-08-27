@@ -35,10 +35,41 @@ init_helper_binaries () {
   }
   else set_setting ("KPSEWHICH", "false");
 
-  set_setting ("MAKETFM", "false");
-  set_setting ("MAKEPK", "false");
+  if (exists_in_path ("mktextfm")) { 	 
+   cerr << "TeXmacs] mktextfm works with your TeX distribution\n"; 	 
+   set_setting ("MAKETFM", "mktextfm"); 	 
+  } 	 
+  else if (exists_in_path ("MakeTeXTFM")) { 	 
+    cerr << "TeXmacs] MakeTeXTFM works with your TeX distribution\n"; 	 
+    set_setting ("MAKETFM", "MakeTeXTFM"); 	 
+  } 	 
+  else if (exists_in_path ("maketfm")){ 	 
+    cerr << "TeXmacs] maketfm works with your TeX distribution\n"; 	 
+    set_setting ("MAKETFM", "maketfm"); 	 
+  } 	 
+  else set_setting ("MAKETFM", "false");
+  
+  if (exists_in_path ("mktexpk")) { 	 
+    cerr << "TeXmacs] mktexpk works with your TeX distribution\n"; 	 
+    set_setting ("MAKEPK", "mktexpk"); 	 
+  } 	 
+  else if (exists_in_path ("MakeTeXPK")) { 	 
+    cerr << "TeXmacs] MakeTeXPK works with your TeX distribution\n"; 	 
+    set_setting ("MAKEPK", "MakeTeXPK"); 	 
+  } 	 
+  else if (exists_in_path ("makepk")){ 	 
+    cerr << "TeXmacs] makepk works with your TeX distribution\n"; 	 
+    set_setting ("MAKEPK", "makepk"); 	 
+  } 	 
+  else set_setting ("MAKEPK", "false");
+
+  if (exists_in_path ("texhash")) { 	 
+    cerr << "TeXmacs] texhash works with your TeX distribution\n"; 	 
+    set_setting ("TEXHASH", "true"); 	 
+  } 	 
+  else set_setting ("TEXHASH", "false");
+  
   set_setting ("DPI", "600");
-  set_setting ("TEXHASH", "false");
 }
 
 /******************************************************************************

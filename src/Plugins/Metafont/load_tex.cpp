@@ -84,7 +84,7 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
     return true;
   if (size > 333)
     return load_tex_tfm (family, (size+50)/100, dsize, tfm, make);
-  if (true) {
+  if (false) { // NOTE: only use Type 1 fonts
     if ((size > 14) && try_tfm (family, 17, size, tfm, make)) return true;
     if ((size > 12) && try_tfm (family, 12, size, tfm, make)) return true;
     if ((size > 10) && try_tfm (family, 10, size, tfm, make)) return true;
@@ -101,7 +101,7 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
     if ((size < 9) && try_tfm (family, 700, size, tfm, make)) return true;
     if (try_tfm (family, 1000, size, tfm, make)) return true;
   }
-  if (false) { // NOTE: first search for type 1, then use Metafont
+  if (true) { // NOTE: first search for type 1, then use Metafont
     SI delta= (size<10? 1: -1);
     if (try_tfm (family, size + delta, size, tfm, make)) return true;
     if (try_tfm (family, size - delta, size, tfm, make)) return true;
