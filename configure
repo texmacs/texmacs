@@ -1416,14 +1416,14 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
-  --enable-macosx-extensions   use Mac specific services (spellchecker, image handling, ...)
-  --enable-macosx-distr=ARCH      build for MacOSX >= 10.4 and arch ARCH
+  --disable-macosx-extensions  don't use Mac specific services (spellchecker, image handling, ...)
+  --enable-macosx-distr=ARCH   build for MacOSX >= 10.4 and arch ARCH
   --enable-pdf-renderer   use experimental PDF renderer for pdf export
-  --enable-qt             replace X11 by Qt interface
-  --enable-qtpipes             replace UNIX pipes by Qt pipes
+  --disable-qt            replace Qt by X11 interface
+  --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-debug=ARG      install a debugging enable executable -ggdb
-  --enable-assert           exit on failed assertions in code
+  --enable-assert         exit on failed assertions in code
   --enable-warnings       print warning messages during compilation
   --enable-optimize=ARG   compile with optimizations guessed
 
@@ -1435,8 +1435,8 @@ Optional Packages:
   --with-freetype=ARG     with freetype support ARG=linked
   --with-cairo=ARG        with cairo support ARG=no
   --with-imlib2=ARG       with imlib2 support ARG=no
-  --with-axel=ARG       with axel support ARG=no
-  --with-gs=ARG       with ghostscript support ARG=yes
+  --with-axel=ARG         with axel support ARG=no
+  --with-gs=ARG           with ghostscript support ARG=yes
   --with-qt               Path to Qt [Look in PATH and /usr/local/Trolltech]
 
 Some influential environment variables:
@@ -6648,11 +6648,13 @@ esac
 # MacOS X extensions (spellchecker, image loading)
 #--------------------------------------------------------------------
 
+if test x"$CONFIG_OS" = xMACOS; then
+
 # Check whether --enable-macosx-extensions was given.
 if test "${enable_macosx_extensions+set}" = set; then :
   enableval=$enable_macosx_extensions;
 else
-  enable_macosx_extensions="no"
+  enable_macosx_extensions="yes"
 fi
 
 case "$enable_macosx_extensions" in
@@ -6676,10 +6678,11 @@ $as_echo "disabling Mac OSX extensions" >&6; }
 esac
 
 
+fi
+
 #--------------------------------------------------------------------
 # MacOS X distribution version (guarantees backward compatibility)
 #--------------------------------------------------------------------
-
 
 # Check whether --enable-macosx-distr was given.
 if test "${enable_macosx_distr+set}" = set; then :
@@ -6751,7 +6754,7 @@ CONFIG_GUI="X11"
 if test "${enable_qt+set}" = set; then :
   enableval=$enable_qt;
 else
-  enable_qt="no"
+  enable_qt="yes"
 fi
 
 
@@ -7381,8 +7384,8 @@ $as_echo "$QT_LIBS" >&6; }
 	if test x"$at_cv_qt_build" = xko; then
 	   as_fn_error $? "cannot find Qt!" "$LINENO" 5
 	else
-	   { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental Qt port" >&5
-$as_echo "enabling experimental Qt port" >&6; }
+	   { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Qt port" >&5
+$as_echo "enabling Qt port" >&6; }
            CONFIG_GUI="QT"
            if test x"$CONFIG_OS" = xMACOS; then
               # on Mac we rely on some ObjC code contained in
@@ -7392,8 +7395,8 @@ $as_echo "enabling experimental Qt port" >&6; }
         fi
         ;;
     no)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental Qt port" >&5
-$as_echo "disabling experimental Qt port" >&6; }
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling X11 port" >&5
+$as_echo "enabling X11 port" >&6; }
 	;;
     *)
 	as_fn_error $? "bad option --enable-qt=$enable_qt" "$LINENO" 5
