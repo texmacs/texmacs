@@ -9,8 +9,7 @@ URL:            http://www.texmacs.org
 Source0:        texmacs-1.0.7.10.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gcc-c++,libtiff-devel, libltdl-devel, libtool, netpbm, freetype-devel, libxt-devel,guile-devel, xfig, aspell, ImageMagick
-Requires: tetex    
+BuildRequires:  gcc-c++, libtiff-devel, libltdl-devel, libtool, netpbm, freetype-devel, libxt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
 
 %description
 
@@ -34,24 +33,19 @@ TeXmacs runs on all major Unix platforms and Windows. Documents can be
 saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 
-
 %prep
 %setup -q
-
 
 %build
 %configure
 make %{?_smp_mflags}
 
-
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-
 %clean
 rm -rf $RPM_BUILD_ROOT
-
 
 %files
 %defattr(-,root,root)
@@ -61,7 +55,5 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_mandir}/*/*
 %{_libexecdir}/TeXmacs
 %{_datadir}/TeXmacs
-
-
 
 %changelog

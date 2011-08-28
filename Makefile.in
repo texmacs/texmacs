@@ -231,10 +231,6 @@ BUNDLE_MAIN: TEXMACS
 	$(MKDIR) $(BUNDLE_RESOURCES)/share
 	$(CP) TeXmacs $(BUNDLE_RESOURCES)/share
 	$(RM) $(BUNDLE_TEXMACS)/bin/texmacs.bin
-	$(RM) -r $(BUNDLE_TEXMACS)/doc
-	if [ -d ../doc ] ; then \
-	  $(CP) ../doc $(BUNDLE_TEXMACS) ;\
-	fi
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
@@ -309,8 +305,6 @@ WIN_BUNDLE_MAIN: TEXMACS
 	$(CP) TeXmacs/* $(WIN_BUNDLE_DIR)/.
 	$(MV) $(WIN_BUNDLE_DIR)/bin/texmacs.bin $(WIN_BUNDLE_DIR)/bin/texmacs.exe
 	$(RM) -r $(WIN_BUNDLE_DIR)/bin/texmacs
-	$(RM) -r $(WIN_BUNDLE_DIR)/doc
-	$(CP) ../doc $(WIN_BUNDLE_DIR)
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
@@ -350,8 +344,6 @@ DEBIAN_BUNDLE:
 	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)
 	#$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
 	$(CP) -a * $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/.
-	# Moving doc
-	$(CP) -ar ../doc/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/.svn
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/.svn
@@ -383,8 +375,6 @@ FEDORA_BUNDLE:
 	$(MKDIR) $(FEDORA_BUNDLE_DIR)
 	$(MKDIR) $(FEDORA_BUNDLE_DIR)/$(tmdeb)
 	$(CP) -a * $(FEDORA_BUNDLE_DIR)/$(tmdeb)/.
-	# Moving doc
-	$(CP) -ar ../doc/* $(FEDORA_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/.svn
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/.svn
@@ -418,8 +408,6 @@ CENTOS_BUNDLE:
 	$(MKDIR) $(CENTOS_BUNDLE_DIR)
 	$(MKDIR) $(CENTOS_BUNDLE_DIR)/$(tmdeb)
 	$(CP) -a * $(CENTOS_BUNDLE_DIR)/$(tmdeb)/.
-	# Moving doc
-	$(CP) -ar ../doc/* $(CENTOS_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/.svn
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/.svn
@@ -455,8 +443,6 @@ MANDRIVA_BUNDLE:
 	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)
 	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)
 	$(CP) -a * $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/.
-	# Moving doc
-	$(CP) -ar ../doc/* $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/TeXmacs/doc/.
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/.svn
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/.svn
 	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/.svn
@@ -483,23 +469,6 @@ MANDRIVA_BUNDLE:
 ###############################################################################
 # Cleaning and backups
 ###############################################################################
-
-CLEAN_DOC:
-	$(RM) -r $(tmdir)/doc/examples
-	$(RM) -r $(tmdir)/doc/images
-	$(RM) -r $(tmdir)/doc/tutorial
-	$(RM) -r $(tmdir)/doc/web
-	$(RM) -r $(tmdir)/doc/plugins
-	$(RM) -r $(tmdir)/doc/CVS
-	$(RM) -r $(tmdir)/doc/*/CVS
-	$(RM) -r $(tmdir)/doc/*/*/CVS
-	$(RM) -r $(tmdir)/doc/*/*/*/CVS
-	$(RM) -r $(tmdir)/doc/*/*/*/*/CVS
-	$(RM) -r $(tmdir)/doc/.svn
-	$(RM) -r $(tmdir)/doc/*/.svn
-	$(RM) -r $(tmdir)/doc/*/*/.svn
-	$(RM) -r $(tmdir)/doc/*/*/*/.svn
-	$(RM) -r $(tmdir)/doc/*/*/*/*/.svn
 
 RDISTR:
 	$(RM) $(tmdir)/TEX_PATHS
