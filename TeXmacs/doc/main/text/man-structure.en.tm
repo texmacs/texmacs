@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
@@ -48,17 +48,18 @@
   <\quote-env>
     The following theorem is due to <name|Euler>:
 
-    <\big-focus>
+    <\big-envbox>
       <\theorem>
         <small-focus|<math|\<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1<value|math-cursor>>>.
       </theorem>
-    </big-focus>
+    </big-envbox>
   </quote-env>
 
-  At the position of the cursor, the cyan boxes indicate the active tags: in
-  this case, the cursor is both inside a theorem and a formula. The innermost
-  active tag (the formula <math|\<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1>
-  in our example) is called the <em|current focus>.
+  At the position of the cursor, the grey and cyan boxes indicate the active
+  tags: in this case, the cursor is both inside a theorem and a formula. The
+  innermost active tag (the formula <math|\<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1>
+  in our example) is surrounded by a cyan box and called the <em|current
+  focus>.
 
   The contents of the <menu|Focus> menu and <em|focus toolbar> (the lowest
   toolbar) are highly context dependent and determined as a function of the
@@ -69,7 +70,7 @@
   <\quote-env>
     The following theorem is due to <name|Euler>:
 
-    <\big-focus>
+    <\big-envbox>
       <\theorem>
         \;
 
@@ -79,7 +80,7 @@
           </equation*>
         </big-focus>
       </theorem>
-    </big-focus>
+    </big-envbox>
   </quote-env>
 
   Similarly, the arrow buttons on the left hand side of the focus toolbar
@@ -111,5 +112,6 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|preamble|false>
   </collection>
 </initial>
