@@ -79,27 +79,6 @@
 	     (load-help-article "main/styles/styles"))
 	    ("Compatibility with other formats"
 	     (load-help-article "main/convert/man-convert"))))
-  (if (detailed-menus?)
-      (if (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
-	  (-> "Tutorial"
-	      ("Browse" (load-help-buffer "tutorial/tut-tutorial"))
-	      ---
-	      ("First contact"
-	       (load-help-article "tutorial/start/tut-start"))
-	      ("Typing a simple text"
-	       (load-help-article "tutorial/start/tut-simple-text")))))
-; (when (url-exists-in-help? "devel/style/style.en.tm")
-;	(-> "Styles"
-;	    ("Browse" (load-help-buffer "devel/style/style"))
-;	    ---
-;	    ("Introduction"
-;	     (load-help-article "devel/style/style-intro"))
-;	    ("The standard TeXmacs styles"
-;	     (load-help-article "devel/style/standard/standard"))
-;	    ("Writing your own style files"
-;	     (load-help-article "devel/style/design/design"))
-;	    ("Customizing the TeXmacs styles"
-;	     (load-help-article "devel/style/customize/customize"))))
   (when (url-exists-in-help? "about/about.en.tm")
 	(-> "About"
 	    ("Browse" (load-help-buffer "about/about"))
