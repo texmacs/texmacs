@@ -9,7 +9,8 @@ Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
 Group: Applications/Editors
-Buildrequires: qt4-devel, guile-devel
+Requires: tetex
+Buildrequires: guile-devel
 BuildRoot: %{_tmppath}/TeXmacs-1.0.7.11-root
 
 %description
@@ -88,9 +89,6 @@ cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/images/text-texmacs.svg $RPM_BUILD_RO
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-
-* Sun Aug 18 2011   Joris van der Hoeven <vdhoeven@texmacs.org>
-- 1.0.7.11 Remove dependency on TeTeX and add dependency on Qt
 
 * Sat Apr 18 2009   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.7.2 Updated mimetype support
