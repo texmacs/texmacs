@@ -1,9 +1,0 @@
-  <expand|section|Improved titles (1.0.4.1)>
-
-  From now on, titles of documents are more structured. This makes it
-  easier to render the same title information in the appropriate ways
-  for different styles. Old-style titles are automatically upgraded,
-  but the result is only expected to be correct for documents with
-  a single author. For documents with multiple authors, you may have
-  to re-enter the title using our new interface.
-

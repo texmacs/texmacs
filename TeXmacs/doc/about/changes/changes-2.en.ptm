@@ -1,9 +1,0 @@
-  <expand|section|Tabular material (0.3.5)>
-
-  The way tabular material is treated has completely changed. It has become
-  much easier to edit tables, matrices, equation arrays, etc. Also, many new
-  features have been implemented, such as background color, border, padding,
-  hyphenation, subtables, etc. However, the upgrading of old tabular material
-  might sometimes be erroneous, in which case we invite you to submit a bug
-  report.
-

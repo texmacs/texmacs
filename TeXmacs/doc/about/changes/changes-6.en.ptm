@@ -1,8 +1,0 @@
-  <expand|section|Formatting tags (1.0.2 -- 1.0.2.1)>
-
-  All formattings constructs without arguments (like line breaks,
-  indentation directives, etc.) have been replaced by tags of arity zero.
-  This makes most new documents badly unreadable for older versions
-  of <TeXmacs> and subtle errors might occasionnaly occur when saving
-  or loading, or during other editing operations.
-

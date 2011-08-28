@@ -1,6 +1,0 @@
-  <expand|section|Renaming of tags and environment variables (1.0.2.8 -- 1.0.2.9)>
-
-  Most environment variables and some tags have been renamed,
-  so that these names no longer contain whitespace and only dashes
-  (and no underscores) as separators.
-

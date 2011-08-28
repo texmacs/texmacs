@@ -1,8 +1,0 @@
-  <expand|section|Improved scheme interface (1.0.5.1 -- 1.0.5.6)>
-
-  The <expand|name|Scheme> interface has been further improved and stabilized. For
-  those users who customized the behaviour of <expand|TeXmacs> using a personal
-  initialization file, it may be necessary to make a few corrections. Some
-  information about the new <expand|name|Scheme> interface can be found in
-  <expand|menu|Scheme|Extensions>. Further documentation will be written later.
-
