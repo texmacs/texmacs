@@ -9,7 +9,8 @@
   extern systems. For computer algebra systems or other scientific
   computation systems, this is typically done in shell-like sessions, in
   which it is possible to evaluate commands and display the results in a
-  nice, graphical way.
+  nice, graphical way. Some systems can also be used more in the background
+  as scripting languages.
 
   See <menu|Help|Plugins> for a list of extern systems to which <TeXmacs> has
   been interfaced and more documentation on these specific interfaces.
@@ -20,6 +21,8 @@
     <branch|Editing sessions|man-session-edit.en.tm>
 
     <branch|Selecting the input method|man-session-input.en.tm>
+
+    <branch|Scripting languages|man-scripting-language.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
