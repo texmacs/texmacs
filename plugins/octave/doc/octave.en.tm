@@ -9,6 +9,8 @@
     <branch|Short description|octave-abstract.en.tm>
 
     <branch|Example session|octave-demo.en.tm>
+
+    <branch|Further information|octave-details.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>
