@@ -60,7 +60,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (script-feed lan ses in out opts)
-  (with ok? #t ;;(supports-scripts? lan)
+  ;;(with ok? (supports-scripts? lan)
+  (with ok? (or (supports-scripts? lan) (supports-sessions? lan))
     (when (not ok?)
       (with m `(concat "Error: " (verbatim ,lan)
                        " is not a scripting language")
