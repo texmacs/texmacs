@@ -1,9 +1,9 @@
-<TeXmacs|1.0.6.14>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Feynmf plug-in>
+  <tmdoc-title|Short description of <name|Feynmf>>
 
   This plug-in can be used in order to draw Feynman diagrams.
 

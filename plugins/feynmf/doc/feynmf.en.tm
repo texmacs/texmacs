@@ -3,12 +3,12 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Feynmf plug-in>
+  <tmdoc-title|The <name|Feynmf> plug-in>
 
   <\traverse>
     <branch|Short description|feynmf-abstract.en.tm>
 
-    <branch|Examples|feynmf-demo.en.tm>
+    <branch|Example sessions|feynmf-demo.en.tm>
 
     <branch|Possible improvements|feynmf-todo.en.tm>
   </traverse>

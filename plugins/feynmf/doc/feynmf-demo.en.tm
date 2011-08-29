@@ -3,21 +3,21 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Example sessions for the Feynmf plug-in>
+  <tmdoc-title|Example <name|Feynmf> sessions>
 
   You may insert a <name|Feynmf> session using <menu|Insert|Session|Feynmf>.
   When you finished typing your input, press <shortcut|(kbd-return)> in order
   to compute the output. Multiline input is entered using
   <shortcut|(kbd-shift-return)>. More features are described in the chapter
-  about <hlink|<TeXmacs> as an interface|$TEXMACS_DOC_PATH/main/interface/man-itf.en.tm>.
+  ``<hlink|<TeXmacs> as an interface|$TEXMACS_DOC_PATH/main/interface/man-itf.en.tm>''.
 
-  If something goes wrong, the latex compilation will stay [busy] in the
+  If something goes wrong, the <LaTeX> compilation will stay [busy] in the
   menubar below. Just press the ``stop'' button to interrupt exectution. In
   case it doesn't help, press the ``scissors'' button to kill the feynmf
   session [dead], just start a new one, and continue.
 
-  Below are some simple examples of sessions. Read the feynmf manual for more
-  information.
+  Below are some simple examples of sessions. Read the <name|Feynmf> manual
+  for more information.
 
   <subsection*|Simple diagrams>
 
