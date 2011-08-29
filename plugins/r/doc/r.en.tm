@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|r-abstract.en.tm>
+
+    <branch|Example session|r-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

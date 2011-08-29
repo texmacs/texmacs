@@ -1,20 +1,13 @@
-<TeXmacs|1.0.1.20>
+<TeXmacs|1.0.7.11>
 
 <style|<tuple|tmdoc|maxima>>
 
 <\body>
-  <\expand|tmdoc-title>
-    Using Octave sessions inside <TeXmacs>
-  </expand>
+  <\tmdoc-title>
+    Example <name|Octave> session
+  </tmdoc-title>
 
-  GNU <name|Octave> is a free clone of <name|Matlab>, which can be downloaded
-  from
-
-  <\verbatim>
-    \ \ \ \ http://octave.sf.net
-  </verbatim>
-
-  An <name|Octave> session is started using <apply|menu|Insert|Session|Octave>.
+  An <name|Octave> session is started using <menu|Insert|Session|Octave>.
   Below, it is shown how to do linear algebra operations with <name|Octave>,
   such as matrix multiplication, inversion and diagonalization. Notice that
   you need to use the <verbatim|tmdisp> command (at the moment) in order to
@@ -39,11 +32,9 @@
       \;
     </output>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       A=[1 0 0 0;2 2 0 0;-1 0 2 0;0 -1 2 2]
-    </input>
-
-    <\output>
+    <|unfolded-io>
       A =
 
       \;
@@ -59,33 +50,27 @@
       \;
 
       \;
-    </output>
+    </unfolded-io>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       tmdisp(A^2)
-    </input>
-
-    <\output>
-      <with|mode|math|formula style|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|1>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|0>>>|<row|<cell|<with|mode|math|6>>|<cell|<with|mode|math|4>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|0>>>|<row|<cell|<with|mode|math|-3>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|4>>|<cell|<with|mode|math|0>>>|<row|<cell|<with|mode|math|-4>>|<cell|<with|mode|math|-4>>|<cell|<with|mode|math|8>>|<cell|<with|mode|math|4>>>>>>>
+    <|unfolded-io>
+      <math|<with|math-display|true|<matrix|<tformat|<table|<row|<cell|1>|<cell|0>|<cell|0>|<cell|0>>|<row|<cell|6>|<cell|4>|<cell|0>|<cell|0>>|<row|<cell|-3>|<cell|0>|<cell|4>|<cell|0>>|<row|<cell|-4>|<cell|-4>|<cell|8>|<cell|4>>>>>>>
 
       \;
-    </output>
+    </unfolded-io>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       tmdisp(A.^2)
-    </input>
-
-    <\output>
-      <with|mode|math|formula style|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|1>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|0>>>|<row|<cell|<with|mode|math|4>>|<cell|<with|mode|math|4>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|0>>>|<row|<cell|<with|mode|math|1>>|<cell|<with|mode|math|0>>|<cell|<with|mode|math|4>>|<cell|<with|mode|math|0>>>|<row|<cell|<with|mode|math|0>>|<cell|<with|mode|math|1>>|<cell|<with|mode|math|4>>|<cell|<with|mode|math|4>>>>>>>
+    <|unfolded-io>
+      <math|<with|math-display|true|<matrix|<tformat|<table|<row|<cell|1>|<cell|0>|<cell|0>|<cell|0>>|<row|<cell|4>|<cell|4>|<cell|0>|<cell|0>>|<row|<cell|1>|<cell|0>|<cell|4>|<cell|0>>|<row|<cell|0>|<cell|1>|<cell|4>|<cell|4>>>>>>>
 
       \;
-    </output>
+    </unfolded-io>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       [u,v]=eig(A)
-    </input>
-
-    <\output>
+    <|unfolded-io>
       u =
 
       \;
@@ -115,13 +100,11 @@
       \;
 
       \;
-    </output>
+    </unfolded-io>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       Q=[1 0 0 0;-2 2 1 0;1 1 0 0;-4 0 0 -1]
-    </input>
-
-    <\output>
+    <|unfolded-io>
       Q =
 
       \;
@@ -137,13 +120,11 @@
       \;
 
       \;
-    </output>
+    </unfolded-io>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       P=inv(Q)
-    </input>
-
-    <\output>
+    <|unfolded-io>
       P =
 
       \;
@@ -159,13 +140,11 @@
       \;
 
       \;
-    </output>
+    </unfolded-io>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       P*A*Q
-    </input>
-
-    <\output>
+    <|unfolded-io>
       ans =
 
       \;
@@ -181,7 +160,7 @@
       \;
 
       \;
-    </output>
+    </unfolded-io>
 
     <\input|octave\<gtr\> >
       \;
@@ -201,323 +180,17 @@
       y=x+sin(x);
     </input>
 
-    <\input|octave\<gtr\> >
+    <\unfolded-io|octave\<gtr\> >
       plot(x,y,";Function y=x+sin(x);");
-    </input>
-
-    <\output>
+    <|unfolded-io>
       \;
 
       \;
 
-      <postscript|<tuple|<raw_data|%!PS-Adobe-2.0 EPSF-2.0\n%%Title:
-      /tmp/tmplot.eps\n%%Creator: gnuplot 3.7 patchlevel 2\n%%CreationDate:
-      Wed Jul 23 17:35:03 2003\n%%DocumentFonts: (atend)\n%%BoundingBox: 50
-      50 230 176\n%%Orientation: Portrait\n%%EndComments\n/gnudict 256 dict
-      def\ngnudict begin\n/Color true def\n/Solid false def\n/gnulinewidth
-      5.000 def\n/userlinewidth gnulinewidth def\n/vshift -46 def\n/dl {10
-      mul} def\n/hpt_ 31.5 def\n/vpt_ 31.5 def\n/hpt hpt_ def\n/vpt vpt_
-      def\n/M {moveto} bind def\n/L {lineto} bind def\n/R {rmoveto} bind
-      def\n/V {rlineto} bind def\n/vpt2 vpt 2 mul def\n/hpt2 hpt 2 mul
-      def\n/Lshow { currentpoint stroke M\n \ 0 vshift R show } def\n/Rshow {
-      currentpoint stroke M\n \ dup stringwidth pop neg vshift R show }
-      def\n/Cshow { currentpoint stroke M\n \ dup stringwidth pop -2 div
-      vshift R show } def\n/UP { dup vpt_ mul /vpt exch def hpt_ mul /hpt
-      exch def\n \ /hpt2 hpt 2 mul def /vpt2 vpt 2 mul def } def\n/DL { Color
-      {setrgbcolor Solid {pop []} if 0 setdash }\n {pop pop pop Solid {pop
-      []} if 0 setdash} ifelse } def\n/BL { stroke userlinewidth 2 mul
-      setlinewidth } def\n/AL { stroke userlinewidth 2 div setlinewidth }
-      def\n/UL { dup gnulinewidth mul /userlinewidth exch def\n \ \ \ \ \ dup
-      1 lt {pop 1} if 10 mul /udl exch def } def\n/PL { stroke userlinewidth
-      setlinewidth } def\n/LTb { BL [] 0 0 0 DL } def\n/LTa { AL [1 udl mul 2
-      udl mul] 0 setdash 0 0 0 setrgbcolor } def\n/LT0 { PL [] 1 0 0 DL }
-      def\n/LT1 { PL [4 dl 2 dl] 0 1 0 DL } def\n/LT2 { PL [2 dl 3 dl] 0 0 1
-      DL } def\n/LT3 { PL [1 dl 1.5 dl] 1 0 1 DL } def\n/LT4 { PL [5 dl 2 dl
-      1 dl 2 dl] 0 1 1 DL } def\n/LT5 { PL [4 dl 3 dl 1 dl 3 dl] 1 1 0 DL }
-      def\n/LT6 { PL [2 dl 2 dl 2 dl 4 dl] 0 0 0 DL } def\n/LT7 { PL [2 dl 2
-      dl 2 dl 2 dl 2 dl 4 dl] 1 0.3 0 DL } def\n/LT8 { PL [2 dl 2 dl 2 dl 2
-      dl 2 dl 2 dl 2 dl 4 dl] 0.5 0.5 0.5 DL } def\n/Pnt { stroke [] 0
-      setdash\n \ \ gsave 1 setlinecap M 0 0 V stroke grestore } def\n/Dia {
-      stroke [] 0 setdash 2 copy vpt add M\n \ hpt neg vpt neg V hpt vpt neg
-      V\n \ hpt vpt V hpt neg vpt V closepath stroke\n \ Pnt } def\n/Pls {
-      stroke [] 0 setdash vpt sub M 0 vpt2 V\n \ currentpoint stroke M\n
-      \ hpt neg vpt neg R hpt2 0 V stroke\n \ } def\n/Box { stroke [] 0
-      setdash 2 copy exch hpt sub exch vpt add M\n \ 0 vpt2 neg V hpt2 0 V 0
-      vpt2 V\n \ hpt2 neg 0 V closepath stroke\n \ Pnt } def\n/Crs { stroke
-      [] 0 setdash exch hpt sub exch vpt add M\n \ hpt2 vpt2 neg V
-      currentpoint stroke M\n \ hpt2 neg 0 R hpt2 vpt2 V stroke } def\n/TriU
-      { stroke [] 0 setdash 2 copy vpt 1.12 mul add M\n \ hpt neg vpt -1.62
-      mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt 1.62 mul V closepath stroke\n
-      \ Pnt \ } def\n/Star { 2 copy Pls Crs } def\n/BoxF { stroke [] 0
-      setdash exch hpt sub exch vpt add M\n \ 0 vpt2 neg V \ hpt2 0 V \ 0
-      vpt2 V\n \ hpt2 neg 0 V \ closepath fill } def\n/TriUF { stroke [] 0
-      setdash vpt 1.12 mul add M\n \ hpt neg vpt -1.62 mul V\n \ hpt 2 mul 0
-      V\n \ hpt neg vpt 1.62 mul V closepath fill } def\n/TriD { stroke [] 0
-      setdash 2 copy vpt 1.12 mul sub M\n \ hpt neg vpt 1.62 mul V\n \ hpt 2
-      mul 0 V\n \ hpt neg vpt -1.62 mul V closepath stroke\n \ Pnt \ }
-      def\n/TriDF { stroke [] 0 setdash vpt 1.12 mul sub M\n \ hpt neg vpt
-      1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V closepath
-      fill} def\n/DiaF { stroke [] 0 setdash vpt add M\n \ hpt neg vpt neg V
-      hpt vpt neg V\n \ hpt vpt V hpt neg vpt V closepath fill } def\n/Pent {
-      stroke [] 0 setdash 2 copy gsave\n \ translate 0 hpt M 4 {72 rotate 0
-      hpt L} repeat\n \ closepath stroke grestore Pnt } def\n/PentF { stroke
-      [] 0 setdash gsave\n \ translate 0 hpt M 4 {72 rotate 0 hpt L} repeat\n
-      \ closepath fill grestore } def\n/Circle { stroke [] 0 setdash 2 copy\n
-      \ hpt 0 360 arc stroke Pnt } def\n/CircleF { stroke [] 0 setdash hpt 0
-      360 arc fill } def\n/C0 { BL [] 0 setdash 2 copy moveto vpt 90 450
-      \ arc } bind def\n/C1 { BL [] 0 setdash 2 copy \ \ \ \ \ \ \ moveto\n
-      \ \ \ \ \ \ 2 copy \ vpt 0 90 arc closepath fill\n
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C2 {
-      BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 90 180 arc
-      closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath }
-      bind def\n/C3 { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy
-      \ vpt 0 180 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360
-      arc closepath } bind def\n/C4 { BL [] 0 setdash 2 copy moveto\n
-      \ \ \ \ \ \ 2 copy \ vpt 180 270 arc closepath fill\n
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C5 {
-      BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 0 90 arc\n
-      \ \ \ \ \ \ 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 180 270 arc
-      closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc } bind
-      def\n/C6 { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ 2 copy \ vpt 90
-      270 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc
-      closepath } bind def\n/C7 { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ 2
-      copy \ vpt 0 270 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0
-      360 arc closepath } bind def\n/C8 { BL [] 0 setdash 2 copy moveto\n
-      \ \ \ \ \ 2 copy vpt 270 360 arc closepath fill\n
-      \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C9 { BL
-      [] 0 setdash 2 copy moveto\n \ \ \ \ \ 2 copy \ vpt 270 450 arc
-      closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath }
-      bind def\n/C10 { BL [] 0 setdash 2 copy 2 copy moveto vpt 270 360 arc
-      closepath fill\n \ \ \ \ \ \ 2 copy moveto\n \ \ \ \ \ \ 2 copy vpt 90
-      180 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc
-      closepath } bind def\n/C11 { BL [] 0 setdash 2 copy moveto\n
-      \ \ \ \ \ \ 2 copy \ vpt 0 180 arc closepath fill\n \ \ \ \ \ \ 2 copy
-      moveto\n \ \ \ \ \ \ 2 copy \ vpt 270 360 arc closepath fill\n
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C12 {
-      BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 180 360 arc
-      closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath }
-      bind def\n/C13 { BL [] 0 setdash \ 2 copy moveto\n \ \ \ \ \ \ 2 copy
-      \ vpt 0 90 arc closepath fill\n \ \ \ \ \ \ 2 copy moveto\n
-      \ \ \ \ \ \ 2 copy \ vpt 180 360 arc closepath fill\n
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C14 {
-      BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 90 360 arc
-      closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc } bind
-      def\n/C15 { BL [] 0 setdash 2 copy vpt 0 360 arc closepath fill\n
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/Rec
-      \ \ { newpath 4 2 roll moveto 1 index 0 rlineto 0 exch rlineto\n
-      \ \ \ \ \ \ neg 0 rlineto closepath } bind def\n/Square { dup Rec }
-      bind def\n/Bsquare { vpt sub exch vpt sub exch vpt2 Square } bind
-      def\n/S0 { BL [] 0 setdash 2 copy moveto 0 vpt rlineto BL Bsquare }
-      bind def\n/S1 { BL [] 0 setdash 2 copy vpt Square fill Bsquare } bind
-      def\n/S2 { BL [] 0 setdash 2 copy exch vpt sub exch vpt Square fill
-      Bsquare } bind def\n/S3 { BL [] 0 setdash 2 copy exch vpt sub exch vpt2
-      vpt Rec fill Bsquare } bind def\n/S4 { BL [] 0 setdash 2 copy exch vpt
-      sub exch vpt sub vpt Square fill Bsquare } bind def\n/S5 { BL [] 0
-      setdash 2 copy 2 copy vpt Square fill\n \ \ \ \ \ \ exch vpt sub exch
-      vpt sub vpt Square fill Bsquare } bind def\n/S6 { BL [] 0 setdash 2
-      copy exch vpt sub exch vpt sub vpt vpt2 Rec fill Bsquare } bind
-      def\n/S7 { BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt vpt2
-      Rec fill\n \ \ \ \ \ \ 2 copy vpt Square fill\n \ \ \ \ \ \ Bsquare }
-      bind def\n/S8 { BL [] 0 setdash 2 copy vpt sub vpt Square fill Bsquare
-      } bind def\n/S9 { BL [] 0 setdash 2 copy vpt sub vpt vpt2 Rec fill
-      Bsquare } bind def\n/S10 { BL [] 0 setdash 2 copy vpt sub vpt Square
-      fill 2 copy exch vpt sub exch vpt Square fill\n \ \ \ \ \ \ Bsquare }
-      bind def\n/S11 { BL [] 0 setdash 2 copy vpt sub vpt Square fill 2 copy
-      exch vpt sub exch vpt2 vpt Rec fill\n \ \ \ \ \ \ Bsquare } bind
-      def\n/S12 { BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt
-      Rec fill Bsquare } bind def\n/S13 { BL [] 0 setdash 2 copy exch vpt sub
-      exch vpt sub vpt2 vpt Rec fill\n \ \ \ \ \ \ 2 copy vpt Square fill
-      Bsquare } bind def\n/S14 { BL [] 0 setdash 2 copy exch vpt sub exch vpt
-      sub vpt2 vpt Rec fill\n \ \ \ \ \ \ 2 copy exch vpt sub exch vpt Square
-      fill Bsquare } bind def\n/S15 { BL [] 0 setdash 2 copy Bsquare fill
-      Bsquare } bind def\n/D0 { gsave translate 45 rotate 0 0 S0 stroke
-      grestore } bind def\n/D1 { gsave translate 45 rotate 0 0 S1 stroke
-      grestore } bind def\n/D2 { gsave translate 45 rotate 0 0 S2 stroke
-      grestore } bind def\n/D3 { gsave translate 45 rotate 0 0 S3 stroke
-      grestore } bind def\n/D4 { gsave translate 45 rotate 0 0 S4 stroke
-      grestore } bind def\n/D5 { gsave translate 45 rotate 0 0 S5 stroke
-      grestore } bind def\n/D6 { gsave translate 45 rotate 0 0 S6 stroke
-      grestore } bind def\n/D7 { gsave translate 45 rotate 0 0 S7 stroke
-      grestore } bind def\n/D8 { gsave translate 45 rotate 0 0 S8 stroke
-      grestore } bind def\n/D9 { gsave translate 45 rotate 0 0 S9 stroke
-      grestore } bind def\n/D10 { gsave translate 45 rotate 0 0 S10 stroke
-      grestore } bind def\n/D11 { gsave translate 45 rotate 0 0 S11 stroke
-      grestore } bind def\n/D12 { gsave translate 45 rotate 0 0 S12 stroke
-      grestore } bind def\n/D13 { gsave translate 45 rotate 0 0 S13 stroke
-      grestore } bind def\n/D14 { gsave translate 45 rotate 0 0 S14 stroke
-      grestore } bind def\n/D15 { gsave translate 45 rotate 0 0 S15 stroke
-      grestore } bind def\n/DiaE { stroke [] 0 setdash vpt add M\n \ hpt neg
-      vpt neg V hpt vpt neg V\n \ hpt vpt V hpt neg vpt V closepath stroke }
-      def\n/BoxE { stroke [] 0 setdash exch hpt sub exch vpt add M\n \ 0 vpt2
-      neg V hpt2 0 V 0 vpt2 V\n \ hpt2 neg 0 V closepath stroke } def\n/TriUE
-      { stroke [] 0 setdash vpt 1.12 mul add M\n \ hpt neg vpt -1.62 mul V\n
-      \ hpt 2 mul 0 V\n \ hpt neg vpt 1.62 mul V closepath stroke }
-      def\n/TriDE { stroke [] 0 setdash vpt 1.12 mul sub M\n \ hpt neg vpt
-      1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V closepath
-      stroke } def\n/PentE { stroke [] 0 setdash gsave\n \ translate 0 hpt M
-      4 {72 rotate 0 hpt L} repeat\n \ closepath stroke grestore }
-      def\n/CircE { stroke [] 0 setdash \n \ hpt 0 360 arc stroke }
-      def\n/Opaque { gsave closepath 1 setgray fill grestore 0 setgray
-      closepath } def\n/DiaW { stroke [] 0 setdash vpt add M\n \ hpt neg vpt
-      neg V hpt vpt neg V\n \ hpt vpt V hpt neg vpt V Opaque stroke }
-      def\n/BoxW { stroke [] 0 setdash exch hpt sub exch vpt add M\n \ 0 vpt2
-      neg V hpt2 0 V 0 vpt2 V\n \ hpt2 neg 0 V Opaque stroke } def\n/TriUW {
-      stroke [] 0 setdash vpt 1.12 mul add M\n \ hpt neg vpt -1.62 mul V\n
-      \ hpt 2 mul 0 V\n \ hpt neg vpt 1.62 mul V Opaque stroke } def\n/TriDW
-      { stroke [] 0 setdash vpt 1.12 mul sub M\n \ hpt neg vpt 1.62 mul V\n
-      \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V Opaque stroke } def\n/PentW
-      { stroke [] 0 setdash gsave\n \ translate 0 hpt M 4 {72 rotate 0 hpt L}
-      repeat\n \ Opaque stroke grestore } def\n/CircW { stroke [] 0 setdash
-      \n \ hpt 0 360 arc Opaque stroke } def\n/BoxFill { gsave Rec 1 setgray
-      fill grestore } def\n/Symbol-Oblique /Symbol findfont [1 0 .167 1 0 0]
-      makefont\ndup length dict begin {1 index /FID eq {pop pop} {def}
-      ifelse} forall\ncurrentdict end definefont\n/MFshow {{dup dup 0 get
-      findfont exch 1 get scalefont setfont\n \ \ \ \ [ currentpoint ] exch
-      dup 2 get 0 exch rmoveto dup dup 5 get exch 4 get\n \ \ \ \ {show}
-      {stringwidth pop 0 rmoveto}ifelse dup 3 get\n \ \ \ \ {2 get neg 0 exch
-      rmoveto pop} {pop aload pop moveto}ifelse} forall} bind def\n/MFwidth
-      {0 exch {dup 3 get{dup dup 0 get findfont exch 1 get scalefont
-      setfont\n \ \ \ \ \ 5 get stringwidth pop add}\n \ \ \ {pop} ifelse}
-      forall} bind def\n/MLshow { currentpoint stroke M\n \ 0 exch R MFshow }
-      bind def\n/MRshow { currentpoint stroke M\n \ exch dup MFwidth neg 3 -1
-      roll R MFshow } def\n/MCshow { currentpoint stroke M\n \ exch dup
-      MFwidth -2 div 3 -1 roll R MFshow } def\nend\n%%EndProlog\ngnudict
-      begin\ngsave\n50 50 translate\n0.050 0.050 scale\n0
-      setgray\nnewpath\n(Helvetica) findfont 140 scalefont setfont\n1.000
-      UL\nLTb\n490 280 M\n63 0 V\n2809 0 R\n-63 0 V\n stroke\n406 280 M\n[
-      [(Helvetica) 140.0 0.0 true true (-10)]\n] -46.7 MRshow\n490 487 M\n63
-      0 V\n2809 0 R\n-63 0 V\n stroke\n406 487 M\n[ [(Helvetica) 140.0 0.0
-      true true (-8)]\n] -46.7 MRshow\n490 694 M\n63 0 V\n2809 0 R\n-63 0 V\n
-      stroke\n406 694 M\n[ [(Helvetica) 140.0 0.0 true true (-6)]\n] -46.7
-      MRshow\n490 902 M\n63 0 V\n2809 0 R\n-63 0 V\n stroke\n406 902 M\n[
-      [(Helvetica) 140.0 0.0 true true (-4)]\n] -46.7 MRshow\n490 1109 M\n63
-      0 V\n2809 0 R\n-63 0 V\n stroke\n406 1109 M\n[ [(Helvetica) 140.0 0.0
-      true true (-2)]\n] -46.7 MRshow\n490 1316 M\n63 0 V\n2809 0 R\n-63 0
-      V\n stroke\n406 1316 M\n[ [(Helvetica) 140.0 0.0 true true ( 0)]\n]
-      -46.7 MRshow\n490 1523 M\n63 0 V\n2809 0 R\n-63 0 V\n stroke\n406 1523
-      M\n[ [(Helvetica) 140.0 0.0 true true ( 2)]\n] -46.7 MRshow\n490 1730
-      M\n63 0 V\n2809 0 R\n-63 0 V\n stroke\n406 1730 M\n[ [(Helvetica) 140.0
-      0.0 true true ( 4)]\n] -46.7 MRshow\n490 1938 M\n63 0 V\n2809 0 R\n-63
-      0 V\n stroke\n406 1938 M\n[ [(Helvetica) 140.0 0.0 true true ( 6)]\n]
-      -46.7 MRshow\n490 2145 M\n63 0 V\n2809 0 R\n-63 0 V\n stroke\n406 2145
-      M\n[ [(Helvetica) 140.0 0.0 true true ( 8)]\n] -46.7 MRshow\n490 2352
-      M\n63 0 V\n2809 0 R\n-63 0 V\n stroke\n406 2352 M\n[ [(Helvetica) 140.0
-      0.0 true true ( 10)]\n] -46.7 MRshow\n490 280 M\n0 63 V\n0 2009 R\n0
-      -63 V\n stroke\n490 140 M\n[ [(Helvetica) 140.0 0.0 true true (-10)]\n]
-      -46.7 MCshow\n1208 280 M\n0 63 V\n0 2009 R\n0 -63 V\n stroke\n1208 140
-      M\n[ [(Helvetica) 140.0 0.0 true true (-5)]\n] -46.7 MCshow\n1926 280
-      M\n0 63 V\n0 2009 R\n0 -63 V\n stroke\n1926 140 M\n[ [(Helvetica) 140.0
-      0.0 true true ( 0)]\n] -46.7 MCshow\n2644 280 M\n0 63 V\n0 2009 R\n0
-      -63 V\n stroke\n2644 140 M\n[ [(Helvetica) 140.0 0.0 true true ( 5)]\n]
-      -46.7 MCshow\n3362 280 M\n0 63 V\n0 2009 R\n0 -63 V\n stroke\n3362 140
-      M\n[ [(Helvetica) 140.0 0.0 true true ( 10)]\n] -46.7 MCshow\n1.000
-      UL\nLTb\n490 280 M\n2872 0 V\n0 2072 V\n-2872 0 V\n490 280 L\n1.000
-      UL\nLT0\n2711 2219 M\n[ [(Helvetica) 140.0 0.0 true true (Function
-      y=x+sin\\(x\\))]\n] -46.7 MRshow\n2795 2219 M\n399 0 V\n490 336 M\n3 1
-      V\n3 0 V\n3 0 V\n2 1 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0
-      V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 1 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n3 0
-      V\n2 0 V\n3 1 V\n3 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n2 1 V\n3 0
-      V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n2 1 V\n3 0 V\n3 1 V\n3 1
-      V\n3 0 V\n3 1 V\n3 1 V\n3 1 V\n2 1 V\n3 0 V\n3 1 V\n3 1 V\n3 1 V\n3 1
-      V\n3 1 V\n3 1 V\n2 2 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 2 V\n3 1 V\n3 2
-      V\n2 1 V\n3 1 V\n3 2 V\n3 2 V\n3 1 V\n3 2 V\n3 1 V\n3 2 V\n2 2 V\n3 2
-      V\n3 2 V\n3 1 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n2 2 V\n3 3 V\n3 2 V\n3 2
-      V\n3 2 V\n3 2 V\n3 3 V\n3 2 V\n2 3 V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n3 2
-      V\n3 3 V\n3 3 V\n2 2 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3
-      V\n2 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 4 V\n3 3 V\n2 3 V\n3 4
-      V\n3 3 V\n3 3 V\n3 4 V\n3 3 V\n3 4 V\n3 3 V\n2 4 V\n3 4 V\n3 3 V\n3 4
-      V\n3 4 V\n3 3 V\n3 4 V\n3 4 V\n2 4 V\n3 3 V\n3 4 V\n3 4 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4
-      V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 5 V\n3 4
-      V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 5 V\n2 4 V\n3 4 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n3 5 V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4
-      V\n2 4 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n3 4 V\n3 4 V\n3 3 V\n2 4 V\n3 4
-      V\n3 3 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n3 3 V\n2 4 V\n3 3 V\n3 3 V\n3 4
-      V\n3 3 V\n3 3 V\n3 4 V\n3 3 V\n2 3 V\n3 3 V\n3 3 V\n3 3 V\n3 4 V\n3 3
-      V\n3 3 V\n3 2 V\n2 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 2 V\n3 3 V\n3 3
-      V\n2 2 V\n3 3 V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n3 2 V\n3 2 V\n2 3 V\n3 2
-      V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n2 2 V\n3 2 V\n3 2 V\n3 2
-      V\n3 1 V\n3 2 V\n3 2 V\n3 2 V\n2 1 V\n3 2 V\n3 1 V\n3 2 V\n3 1 V\n3 2
-      V\n3 1 V\n3 1 V\n2 2 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 2
-      V\n2 1 V\n3 0 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 0 V\n2 1 V\n3 1
-      V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n2 1 V\n3 0 V\n3 1 V\n3 0
-      V\n3 1 V\n3 0 V\n3 0 V\n3 1 V\n2 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n2 1 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0
-      V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n2 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 1 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n3 0 V\n3 1
-      V\n2 0 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n2 1 V\n3 0
-      V\n3 1 V\n3 0 V\n3 1 V\n3 1 V\n3 0 V\n3 1 V\n2 1 V\n3 1 V\n3 1 V\n3 1
-      V\n3 0 V\n3 1 V\n3 1 V\n3 1 V\n2 1 V\n3 2 V\ncurrentpoint stroke M\n3 1
-      V\n3 1 V\n3 1 V\n3 1 V\n3 2 V\n3 1 V\n2 1 V\n3 2 V\n3 1 V\n3 2 V\n3 1
-      V\n3 2 V\n3 1 V\n3 2 V\n2 2 V\n3 1 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2
-      V\n3 2 V\n2 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 3 V\n2 2
-      V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n3 3 V\n2 2 V\n3 3 V\n3 3
-      V\n3 3 V\n3 2 V\n3 3 V\n3 3 V\n3 3 V\n2 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3
-      V\n3 3 V\n3 4 V\n3 3 V\n2 3 V\n3 3 V\n3 4 V\n3 3 V\n3 4 V\n3 3 V\n3 3
-      V\n3 4 V\n2 3 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n3 3 V\n3 4 V\n3 4 V\n2 4
-      V\n3 3 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n2 4 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 5
-      V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 5 V\n3 4
-      V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 5 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 4
-      V\n3 4 V\n3 4 V\n3 4 V\n3 5 V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 3 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n3 3 V\n2 4 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n3 3 V\n3 4
-      V\n3 4 V\n2 3 V\n3 4 V\n3 3 V\n3 3 V\n3 4 V\n3 3 V\n3 4 V\n3 3 V\n2 3
-      V\n3 3 V\n3 4 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n2 3 V\n3 3 V\n3 3
-      V\n3 3 V\n3 2 V\n3 3 V\n3 3 V\n3 3 V\n2 2 V\n3 3 V\n3 3 V\n3 2 V\n3 3
-      V\n3 2 V\n3 3 V\n3 2 V\n2 2 V\n3 3 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2
-      V\n3 2 V\n2 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 1 V\n2 2
-      V\n3 2 V\n3 1 V\n3 2 V\n3 1 V\n3 2 V\n3 1 V\n3 2 V\n2 1 V\n3 1 V\n3 2
-      V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 2 V\n2 1 V\n3 1 V\n3 1 V\n3 1 V\n3 0
-      V\n3 1 V\n3 1 V\n3 1 V\n2 1 V\n3 1 V\n3 0 V\n3 1 V\n3 1 V\n3 0 V\n3 1
-      V\n3 0 V\n2 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n2 0
-      V\n3 1 V\n3 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 1
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 1 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n2 0 V\n3 1 V\n3 0 V\n3 0 V\n3 1
-      V\n3 0 V\n3 1 V\n3 0 V\n2 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n3 1
-      V\n3 1 V\n2 1 V\n3 0 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 0 V\n2 1
-      V\n3 2 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n2 2 V\n3 1 V\n3 1
-      V\n3 2 V\n3 1 V\n3 2 V\n3 1 V\n3 2 V\n2 1 V\n3 2 V\n3 2 V\n3 2 V\n3 1
-      V\n3 2 V\n3 2 V\n3 2 V\n2 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 2
-      V\n3 2 V\n2 3 V\n3 2 V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n2 2
-      V\n3 3 V\n3 3 V\n3 2 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n2 3 V\n3 2 V\n3 3
-      V\n3 3 V\n3 4 V\n3 3 V\n3 3 V\n3 3 V\n2 3 V\n3 3 V\n3 4 V\n3 3 V\n3 3
-      V\n3 4 V\n3 3 V\n3 3 V\n2 4 V\n3 3 V\n3 4 V\n3 3 V\n3 4 V\n3 4 V\n3 3
-      V\n3 4 V\n2 4 V\n3 3 V\n3 4 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n3 4 V\n2 4
-      V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 4
-      V\ncurrentpoint stroke M\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 4
-      V\n3 4 V\n3 5 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 5 V\n3 4
-      V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n2 5 V\n3 4 V\n3 4 V\n3 4 V\n3 4
-      V\n3 4 V\n3 4 V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4
-      V\n3 4 V\n2 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 4 V\n3 3 V\n2 4
-      V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n3 4 V\n3 3 V\n3 4 V\n2 4 V\n3 3 V\n3 4
-      V\n3 3 V\n3 4 V\n3 3 V\n3 3 V\n3 4 V\n2 3 V\n3 3 V\n3 4 V\n3 3 V\n3 3
-      V\n3 3 V\n3 3 V\n3 3 V\n2 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3 V\n3 3
-      V\n3 3 V\n2 2 V\n3 3 V\n3 3 V\n3 2 V\n3 3 V\n3 2 V\n3 3 V\n3 2 V\n2 3
-      V\n3 2 V\n3 3 V\n3 2 V\n3 2 V\n3 2 V\n3 2 V\n3 3 V\n2 2 V\n3 2 V\n3 2
-      V\n3 2 V\n3 2 V\n3 1 V\n3 2 V\n3 2 V\n2 2 V\n3 2 V\n3 1 V\n3 2 V\n3 1
-      V\n3 2 V\n3 2 V\n3 1 V\n2 1 V\n3 2 V\n3 1 V\n3 2 V\n3 1 V\n3 1 V\n3 1
-      V\n3 1 V\n2 2 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 1 V\n3 0 V\n2 1
-      V\n3 1 V\n3 1 V\n3 1 V\n3 0 V\n3 1 V\n3 1 V\n3 0 V\n2 1 V\n3 0 V\n3 1
-      V\n3 0 V\n3 1 V\n3 0 V\n3 1 V\n3 0 V\n2 1 V\n3 0 V\n3 0 V\n3 1 V\n3 0
-      V\n3 0 V\n3 0 V\n3 1 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0
-      V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n3 0 V\n2 1 V\n3 0 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n3 0 V\n3 0 V\n2 0 V\n3 0 V\n3 0 V\n3 1 V\n3 0 V\n3 0 V\n3 0
-      V\n3 0 V\n2 1 V\n3 0 V\n3 0 V\n3 1 V\nstroke\ngrestore\nend\nshowpage\n>|ps>||||||>
+      <image|<tuple|<#252150532D41646F62652D322E3020455053462D322E300A25255469746C653A202F746D702F746D706C6F742E6570730A252543726561746F723A20676E75706C6F7420332E372070617463686C6576656C20320A25254372656174696F6E446174653A20576564204A756C2032332031373A33353A303320323030330A2525446F63756D656E74466F6E74733A20286174656E64290A2525426F756E64696E67426F783A20353020353020323330203137360A25254F7269656E746174696F6E3A20506F7274726169740A2525456E64436F6D6D656E74730A2F676E7564696374203235362064696374206465660A676E756469637420626567696E0A2F436F6C6F722074727565206465660A2F536F6C69642066616C7365206465660A2F676E756C696E65776964746820352E303030206465660A2F757365726C696E65776964746820676E756C696E657769647468206465660A2F767368696674202D3436206465660A2F646C207B3130206D756C7D206465660A2F6870745F2033312E35206465660A2F7670745F2033312E35206465660A2F687074206870745F206465660A2F767074207670745F206465660A2F4D207B6D6F7665746F7D2062696E64206465660A2F4C207B6C696E65746F7D2062696E64206465660A2F52207B726D6F7665746F7D2062696E64206465660A2F56207B726C696E65746F7D2062696E64206465660A2F76707432207670742032206D756C206465660A2F68707432206870742032206D756C206465660A2F4C73686F77207B2063757272656E74706F696E74207374726F6B65204D0A2020302076736869667420522073686F77207D206465660A2F5273686F77207B2063757272656E74706F696E74207374726F6B65204D0A202064757020737472696E67776964746820706F70206E65672076736869667420522073686F77207D206465660A2F4373686F77207B2063757272656E74706F696E74207374726F6B65204D0A202064757020737472696E67776964746820706F70202D32206469762076736869667420522073686F77207D206465660A2F5550207B20647570207670745F206D756C202F767074206578636820646566206870745F206D756C202F6870742065786368206465660A20202F68707432206870742032206D756C20646566202F76707432207670742032206D756C20646566207D206465660A2F444C207B20436F6C6F72207B736574726762636F6C6F7220536F6C6964207B706F70205B5D7D20696620302073657464617368207D0A207B706F7020706F7020706F7020536F6C6964207B706F70205B5D7D206966203020736574646173687D206966656C7365207D206465660A2F424C207B207374726F6B6520757365726C696E6577696474682032206D756C207365746C696E657769647468207D206465660A2F414C207B207374726F6B6520757365726C696E657769647468203220646976207365746C696E657769647468207D206465660A2F554C207B2064757020676E756C696E657769647468206D756C202F757365726C696E6577696474682065786368206465660A2020202020206475702031206C74207B706F7020317D206966203130206D756C202F75646C206578636820646566207D206465660A2F504C207B207374726F6B6520757365726C696E657769647468207365746C696E657769647468207D206465660A2F4C5462207B20424C205B5D20302030203020444C207D206465660A2F4C5461207B20414C205B312075646C206D756C20322075646C206D756C5D2030207365746461736820302030203020736574726762636F6C6F72207D206465660A2F4C5430207B20504C205B5D20312030203020444C207D206465660A2F4C5431207B20504C205B3420646C203220646C5D20302031203020444C207D206465660A2F4C5432207B20504C205B3220646C203320646C5D20302030203120444C207D206465660A2F4C5433207B20504C205B3120646C20312E3520646C5D20312030203120444C207D206465660A2F4C5434207B20504C205B3520646C203220646C203120646C203220646C5D20302031203120444C207D206465660A2F4C5435207B20504C205B3420646C203320646C203120646C203320646C5D20312031203020444C207D206465660A2F4C5436207B20504C205B3220646C203220646C203220646C203420646C5D20302030203020444C207D206465660A2F4C5437207B20504C205B3220646C203220646C203220646C203220646C203220646C203420646C5D203120302E33203020444C207D206465660A2F4C5438207B20504C205B3220646C203220646C203220646C203220646C203220646C203220646C203220646C203420646C5D20302E3520302E3520302E3520444C207D206465660A2F506E74207B207374726F6B65205B5D203020736574646173680A20202067736176652031207365746C696E65636170204D203020302056207374726F6B652067726573746F7265207D206465660A2F446961207B207374726F6B65205B5D20302073657464617368203220636F70792076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E656720767074205620636C6F736570617468207374726F6B650A2020506E74207D206465660A2F506C73207B207374726F6B65205B5D203020736574646173682076707420737562204D2030207670743220560A202063757272656E74706F696E74207374726F6B65204D0A2020687074206E656720767074206E65672052206870743220302056207374726F6B650A20207D206465660A2F426F78207B207374726F6B65205B5D20302073657464617368203220636F70792065786368206870742073756220657863682076707420616464204D0A2020302076707432206E656720562068707432203020562030207670743220560A202068707432206E65672030205620636C6F736570617468207374726F6B650A2020506E74207D206465660A2F437273207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020687074322076707432206E656720562063757272656E74706F696E74207374726F6B65204D0A202068707432206E656720302052206870743220767074322056207374726F6B65207D206465660A2F54726955207B207374726F6B65205B5D20302073657464617368203220636F70792076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C205620636C6F736570617468207374726F6B650A2020506E7420207D206465660A2F53746172207B203220636F707920506C7320437273207D206465660A2F426F7846207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020302076707432206E6567205620206870743220302056202030207670743220560A202068707432206E6567203020562020636C6F7365706174682066696C6C207D206465660A2F5472695546207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C205620636C6F7365706174682066696C6C207D206465660A2F54726944207B207374726F6B65205B5D20302073657464617368203220636F70792076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C205620636C6F736570617468207374726F6B650A2020506E7420207D206465660A2F5472694446207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C205620636C6F7365706174682066696C6C7D206465660A2F44696146207B207374726F6B65205B5D203020736574646173682076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E656720767074205620636C6F7365706174682066696C6C207D206465660A2F50656E74207B207374726F6B65205B5D20302073657464617368203220636F70792067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A2020636C6F736570617468207374726F6B652067726573746F726520506E74207D206465660A2F50656E7446207B207374726F6B65205B5D203020736574646173682067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A2020636C6F7365706174682066696C6C2067726573746F7265207D206465660A2F436972636C65207B207374726F6B65205B5D20302073657464617368203220636F70790A202068707420302033363020617263207374726F6B6520506E74207D206465660A2F436972636C6546207B207374726F6B65205B5D2030207365746461736820687074203020333630206172632066696C6C207D206465660A2F4330207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F20767074203930203435302020617263207D2062696E64206465660A2F4331207B20424C205B5D20302073657464617368203220636F707920202020202020206D6F7665746F0A202020202020203220636F7079202076707420302039302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4332207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F70792020767074203930203138302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4333207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F707920207670742030203138302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4334207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203237302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4335207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F707920207670742030203930206172630A202020202020203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203237302061726320636C6F7365706174682066696C6C0A20202020202020202020202020202076707420302033363020617263207D2062696E64206465660A2F4336207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F70792020767074203930203237302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4337207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F707920207670742030203237302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4338207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F70792076707420323730203336302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4339207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F7079202076707420323730203435302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433130207B20424C205B5D20302073657464617368203220636F7079203220636F7079206D6F7665746F2076707420323730203336302061726320636C6F7365706174682066696C6C0A202020202020203220636F7079206D6F7665746F0A202020202020203220636F707920767074203930203138302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433131207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F707920207670742030203138302061726320636C6F7365706174682066696C6C0A202020202020203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420323730203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433132207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433133207B20424C205B5D2030207365746461736820203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420302039302061726320636C6F7365706174682066696C6C0A202020202020203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433134207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F70792020767074203930203336302061726320636C6F7365706174682066696C6C0A20202020202020202020202020202076707420302033363020617263207D2062696E64206465660A2F433135207B20424C205B5D20302073657464617368203220636F7079207670742030203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F5265632020207B206E6577706174682034203220726F6C6C206D6F7665746F203120696E646578203020726C696E65746F2030206578636820726C696E65746F0A202020202020206E6567203020726C696E65746F20636C6F736570617468207D2062696E64206465660A2F537175617265207B2064757020526563207D2062696E64206465660A2F42737175617265207B2076707420737562206578636820767074207375622065786368207670743220537175617265207D2062696E64206465660A2F5330207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F20302076707420726C696E65746F20424C2042737175617265207D2062696E64206465660A2F5331207B20424C205B5D20302073657464617368203220636F707920767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5332207B20424C205B5D20302073657464617368203220636F707920657863682076707420737562206578636820767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5333207B20424C205B5D20302073657464617368203220636F7079206578636820767074207375622065786368207670743220767074205265632066696C6C2042737175617265207D2062696E64206465660A2F5334207B20424C205B5D20302073657464617368203220636F7079206578636820767074207375622065786368207670742073756220767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5335207B20424C205B5D20302073657464617368203220636F7079203220636F707920767074205371756172652066696C6C0A202020202020206578636820767074207375622065786368207670742073756220767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5336207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670742076707432205265632066696C6C2042737175617265207D2062696E64206465660A2F5337207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670742076707432205265632066696C6C0A202020202020203220636F707920767074205371756172652066696C6C0A2020202020202042737175617265207D2062696E64206465660A2F5338207B20424C205B5D20302073657464617368203220636F7079207670742073756220767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5339207B20424C205B5D20302073657464617368203220636F70792076707420737562207670742076707432205265632066696C6C2042737175617265207D2062696E64206465660A2F533130207B20424C205B5D20302073657464617368203220636F7079207670742073756220767074205371756172652066696C6C203220636F707920657863682076707420737562206578636820767074205371756172652066696C6C0A2020202020202042737175617265207D2062696E64206465660A2F533131207B20424C205B5D20302073657464617368203220636F7079207670742073756220767074205371756172652066696C6C203220636F7079206578636820767074207375622065786368207670743220767074205265632066696C6C0A2020202020202042737175617265207D2062696E64206465660A2F533132207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670743220767074205265632066696C6C2042737175617265207D2062696E64206465660A2F533133207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670743220767074205265632066696C6C0A202020202020203220636F707920767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F533134207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670743220767074205265632066696C6C0A202020202020203220636F707920657863682076707420737562206578636820767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F533135207B20424C205B5D20302073657464617368203220636F707920427371756172652066696C6C2042737175617265207D2062696E64206465660A2F4430207B206773617665207472616E736C61746520343520726F7461746520302030205330207374726F6B652067726573746F7265207D2062696E64206465660A2F4431207B206773617665207472616E736C61746520343520726F7461746520302030205331207374726F6B652067726573746F7265207D2062696E64206465660A2F4432207B206773617665207472616E736C61746520343520726F7461746520302030205332207374726F6B652067726573746F7265207D2062696E64206465660A2F4433207B206773617665207472616E736C61746520343520726F7461746520302030205333207374726F6B652067726573746F7265207D2062696E64206465660A2F4434207B206773617665207472616E736C61746520343520726F7461746520302030205334207374726F6B652067726573746F7265207D2062696E64206465660A2F4435207B206773617665207472616E736C61746520343520726F7461746520302030205335207374726F6B652067726573746F7265207D2062696E64206465660A2F4436207B206773617665207472616E736C61746520343520726F7461746520302030205336207374726F6B652067726573746F7265207D2062696E64206465660A2F4437207B206773617665207472616E736C61746520343520726F7461746520302030205337207374726F6B652067726573746F7265207D2062696E64206465660A2F4438207B206773617665207472616E736C61746520343520726F7461746520302030205338207374726F6B652067726573746F7265207D2062696E64206465660A2F4439207B206773617665207472616E736C61746520343520726F7461746520302030205339207374726F6B652067726573746F7265207D2062696E64206465660A2F443130207B206773617665207472616E736C61746520343520726F746174652030203020533130207374726F6B652067726573746F7265207D2062696E64206465660A2F443131207B206773617665207472616E736C61746520343520726F746174652030203020533131207374726F6B652067726573746F7265207D2062696E64206465660A2F443132207B206773617665207472616E736C61746520343520726F746174652030203020533132207374726F6B652067726573746F7265207D2062696E64206465660A2F443133207B206773617665207472616E736C61746520343520726F746174652030203020533133207374726F6B652067726573746F7265207D2062696E64206465660A2F443134207B206773617665207472616E736C61746520343520726F746174652030203020533134207374726F6B652067726573746F7265207D2062696E64206465660A2F443135207B206773617665207472616E736C61746520343520726F746174652030203020533135207374726F6B652067726573746F7265207D2062696E64206465660A2F44696145207B207374726F6B65205B5D203020736574646173682076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E656720767074205620636C6F736570617468207374726F6B65207D206465660A2F426F7845207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020302076707432206E656720562068707432203020562030207670743220560A202068707432206E65672030205620636C6F736570617468207374726F6B65207D206465660A2F5472695545207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C205620636C6F736570617468207374726F6B65207D206465660A2F5472694445207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C205620636C6F736570617468207374726F6B65207D206465660A2F50656E7445207B207374726F6B65205B5D203020736574646173682067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A2020636C6F736570617468207374726F6B652067726573746F7265207D206465660A2F4369726345207B207374726F6B65205B5D20302073657464617368200A202068707420302033363020617263207374726F6B65207D206465660A2F4F7061717565207B20677361766520636C6F736570617468203120736574677261792066696C6C2067726573746F72652030207365746772617920636C6F736570617468207D206465660A2F44696157207B207374726F6B65205B5D203020736574646173682076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E6567207670742056204F7061717565207374726F6B65207D206465660A2F426F7857207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020302076707432206E656720562068707432203020562030207670743220560A202068707432206E656720302056204F7061717565207374726F6B65207D206465660A2F5472695557207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C2056204F7061717565207374726F6B65207D206465660A2F5472694457207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C2056204F7061717565207374726F6B65207D206465660A2F50656E7457207B207374726F6B65205B5D203020736574646173682067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A20204F7061717565207374726F6B652067726573746F7265207D206465660A2F4369726357207B207374726F6B65205B5D20302073657464617368200A202068707420302033363020617263204F7061717565207374726F6B65207D206465660A2F426F7846696C6C207B20677361766520526563203120736574677261792066696C6C2067726573746F7265207D206465660A2F53796D626F6C2D4F626C69717565202F53796D626F6C2066696E64666F6E74205B312030202E3136372031203020305D206D616B65666F6E740A647570206C656E677468206469637420626567696E207B3120696E646578202F464944206571207B706F7020706F707D207B6465667D206966656C73657D20666F72616C6C0A63757272656E746469637420656E6420646566696E65666F6E740A2F4D4673686F77207B7B647570206475702030206765742066696E64666F6E742065786368203120676574207363616C65666F6E7420736574666F6E740A20202020205B2063757272656E74706F696E74205D2065786368206475702032206765742030206578636820726D6F7665746F206475702064757020352067657420657863682034206765740A20202020207B73686F777D207B737472696E67776964746820706F70203020726D6F7665746F7D6966656C7365206475702033206765740A20202020207B3220676574206E65672030206578636820726D6F7665746F20706F707D207B706F7020616C6F616420706F70206D6F7665746F7D6966656C73657D20666F72616C6C7D2062696E64206465660A2F4D467769647468207B302065786368207B6475702033206765747B647570206475702030206765742066696E64666F6E742065786368203120676574207363616C65666F6E7420736574666F6E740A202020202020352067657420737472696E67776964746820706F70206164647D0A202020207B706F707D206966656C73657D20666F72616C6C7D2062696E64206465660A2F4D4C73686F77207B2063757272656E74706F696E74207374726F6B65204D0A20203020657863682052204D4673686F77207D2062696E64206465660A2F4D5273686F77207B2063757272656E74706F696E74207374726F6B65204D0A20206578636820647570204D467769647468206E65672033202D3120726F6C6C2052204D4673686F77207D206465660A2F4D4373686F77207B2063757272656E74706F696E74207374726F6B65204D0A20206578636820647570204D467769647468202D32206469762033202D3120726F6C6C2052204D4673686F77207D206465660A656E640A2525456E6450726F6C6F670A676E756469637420626567696E0A67736176650A3530203530207472616E736C6174650A302E30353020302E303530207363616C650A3020736574677261790A6E6577706174680A2848656C766574696361292066696E64666F6E7420313430207363616C65666F6E7420736574666F6E740A312E30303020554C0A4C54620A34393020323830204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A34303620323830204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D3130295D0A5D202D34362E37204D5273686F770A34393020343837204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A34303620343837204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D38295D0A5D202D34362E37204D5273686F770A34393020363934204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A34303620363934204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D36295D0A5D202D34362E37204D5273686F770A34393020393032204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A34303620393032204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D34295D0A5D202D34362E37204D5273686F770A3439302031313039204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362031313039204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D32295D0A5D202D34362E37204D5273686F770A3439302031333136204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362031333136204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282030295D0A5D202D34362E37204D5273686F770A3439302031353233204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362031353233204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282032295D0A5D202D34362E37204D5273686F770A3439302031373330204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362031373330204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282034295D0A5D202D34362E37204D5273686F770A3439302031393338204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362031393338204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282036295D0A5D202D34362E37204D5273686F770A3439302032313435204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362032313435204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282038295D0A5D202D34362E37204D5273686F770A3439302032333532204D0A3633203020560A32383039203020520A2D3633203020560A207374726F6B650A3430362032333532204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203130295D0A5D202D34362E37204D5273686F770A34393020323830204D0A3020363320560A30203230303920520A30202D363320560A207374726F6B650A34393020313430204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D3130295D0A5D202D34362E37204D4373686F770A3132303820323830204D0A3020363320560A30203230303920520A30202D363320560A207374726F6B650A3132303820313430204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D35295D0A5D202D34362E37204D4373686F770A3139323620323830204D0A3020363320560A30203230303920520A30202D363320560A207374726F6B650A3139323620313430204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282030295D0A5D202D34362E37204D4373686F770A3236343420323830204D0A3020363320560A30203230303920520A30202D363320560A207374726F6B650A3236343420313430204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282035295D0A5D202D34362E37204D4373686F770A3333363220323830204D0A3020363320560A30203230303920520A30202D363320560A207374726F6B650A3333363220313430204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203130295D0A5D202D34362E37204D4373686F770A312E30303020554C0A4C54620A34393020323830204D0A32383732203020560A30203230373220560A2D32383732203020560A34393020323830204C0A312E30303020554C0A4C54300A323731312032323139204D0A5B205B2848656C76657469636129203134302E3020302E3020747275652074727565202846756E6374696F6E20793D782B73696E5C28785C29295D0A5D202D34362E37204D5273686F770A323739352032323139204D0A333939203020560A34393020333336204D0A33203120560A33203020560A33203020560A32203120560A33203020560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203120560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A32203020560A33203120560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A32203120560A33203020560A33203120560A33203020560A33203120560A33203020560A33203120560A33203020560A32203120560A33203020560A33203120560A33203120560A33203020560A33203120560A33203120560A33203120560A32203120560A33203020560A33203120560A33203120560A33203120560A33203120560A33203120560A33203120560A32203220560A33203120560A33203120560A33203120560A33203120560A33203220560A33203120560A33203220560A32203120560A33203120560A33203220560A33203220560A33203120560A33203220560A33203120560A33203220560A32203220560A33203220560A33203220560A33203120560A33203220560A33203220560A33203220560A33203220560A32203220560A33203320560A33203220560A33203220560A33203220560A33203220560A33203320560A33203220560A32203320560A33203220560A33203320560A33203220560A33203320560A33203220560A33203320560A33203320560A32203220560A33203320560A33203320560A33203320560A33203320560A33203320560A33203320560A33203320560A32203320560A33203320560A33203320560A33203320560A33203320560A33203320560A33203420560A33203320560A32203320560A33203420560A33203320560A33203320560A33203420560A33203320560A33203420560A33203320560A32203420560A33203420560A33203320560A33203420560A33203420560A33203320560A33203420560A33203420560A32203420560A33203320560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203520560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203520560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203520560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203320560A33203420560A33203420560A33203420560A33203320560A32203420560A33203420560A33203320560A33203420560A33203420560A33203320560A33203420560A33203320560A32203420560A33203320560A33203320560A33203420560A33203320560A33203320560A33203420560A33203320560A32203320560A33203320560A33203320560A33203320560A33203420560A33203320560A33203320560A33203220560A32203320560A33203320560A33203320560A33203320560A33203320560A33203220560A33203320560A33203320560A32203220560A33203320560A33203220560A33203320560A33203220560A33203320560A33203220560A33203220560A32203320560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A32203220560A33203220560A33203220560A33203220560A33203120560A33203220560A33203220560A33203220560A32203120560A33203220560A33203120560A33203220560A33203120560A33203220560A33203120560A33203120560A32203220560A33203120560A33203120560A33203120560A33203120560A33203120560A33203120560A33203220560A32203120560A33203020560A33203120560A33203120560A33203120560A33203120560A33203120560A33203020560A32203120560A33203120560A33203120560A33203020560A33203120560A33203020560A33203120560A33203020560A32203120560A33203020560A33203120560A33203020560A33203120560A33203020560A33203020560A33203120560A32203020560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A33203020560A32203120560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203120560A33203020560A32203020560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A33203120560A32203020560A33203020560A33203120560A33203020560A33203120560A33203020560A33203120560A33203020560A32203120560A33203020560A33203120560A33203020560A33203120560A33203120560A33203020560A33203120560A32203120560A33203120560A33203120560A33203120560A33203020560A33203120560A33203120560A33203120560A32203120560A33203220560A63757272656E74706F696E74207374726F6B65204D0A33203120560A33203120560A33203120560A33203120560A33203220560A33203120560A32203120560A33203220560A33203120560A33203220560A33203120560A33203220560A33203120560A33203220560A32203220560A33203120560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A32203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203320560A32203220560A33203220560A33203320560A33203220560A33203320560A33203220560A33203320560A33203320560A32203220560A33203320560A33203320560A33203320560A33203220560A33203320560A33203320560A33203320560A32203320560A33203320560A33203320560A33203320560A33203320560A33203320560A33203420560A33203320560A32203320560A33203320560A33203420560A33203320560A33203420560A33203320560A33203320560A33203420560A32203320560A33203420560A33203420560A33203320560A33203420560A33203320560A33203420560A33203420560A32203420560A33203320560A33203420560A33203420560A33203420560A33203420560A33203320560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203520560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203520560A33203420560A33203420560A32203420560A33203420560A33203420560A33203520560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203520560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203320560A33203420560A33203420560A33203420560A33203420560A33203320560A32203420560A33203420560A33203420560A33203320560A33203420560A33203320560A33203420560A33203420560A32203320560A33203420560A33203320560A33203320560A33203420560A33203320560A33203420560A33203320560A32203320560A33203320560A33203420560A33203320560A33203320560A33203320560A33203320560A33203320560A32203320560A33203320560A33203320560A33203320560A33203220560A33203320560A33203320560A33203320560A32203220560A33203320560A33203320560A33203220560A33203320560A33203220560A33203320560A33203220560A32203220560A33203320560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A32203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203120560A32203220560A33203220560A33203120560A33203220560A33203120560A33203220560A33203120560A33203220560A32203120560A33203120560A33203220560A33203120560A33203120560A33203120560A33203120560A33203220560A32203120560A33203120560A33203120560A33203120560A33203020560A33203120560A33203120560A33203120560A32203120560A33203120560A33203020560A33203120560A33203120560A33203020560A33203120560A33203020560A32203120560A33203020560A33203120560A33203020560A33203120560A33203020560A33203120560A33203020560A32203020560A33203120560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A32203020560A33203020560A33203120560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203120560A33203020560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A32203020560A33203120560A33203020560A33203020560A33203120560A33203020560A33203120560A33203020560A32203120560A33203020560A33203120560A33203020560A33203120560A33203020560A33203120560A33203120560A32203120560A33203020560A33203120560A33203120560A33203120560A33203120560A33203120560A33203020560A32203120560A33203220560A33203120560A33203120560A33203120560A33203120560A33203120560A33203120560A32203220560A33203120560A33203120560A33203220560A33203120560A33203220560A33203120560A33203220560A32203120560A33203220560A33203220560A33203220560A33203120560A33203220560A33203220560A33203220560A32203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A33203220560A32203320560A33203220560A33203220560A33203320560A33203220560A33203320560A33203220560A33203320560A32203220560A33203320560A33203320560A33203220560A33203320560A33203320560A33203320560A33203320560A32203320560A33203220560A33203320560A33203320560A33203420560A33203320560A33203320560A33203320560A32203320560A33203320560A33203420560A33203320560A33203320560A33203420560A33203320560A33203320560A32203420560A33203320560A33203420560A33203320560A33203420560A33203420560A33203320560A33203420560A32203420560A33203320560A33203420560A33203420560A33203420560A33203320560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A63757272656E74706F696E74207374726F6B65204D0A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203520560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203520560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203520560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A32203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203420560A33203320560A32203420560A33203420560A33203420560A33203320560A33203420560A33203420560A33203320560A33203420560A32203420560A33203320560A33203420560A33203320560A33203420560A33203320560A33203320560A33203420560A32203320560A33203320560A33203420560A33203320560A33203320560A33203320560A33203320560A33203320560A32203320560A33203320560A33203320560A33203320560A33203320560A33203320560A33203320560A33203320560A32203220560A33203320560A33203320560A33203220560A33203320560A33203220560A33203320560A33203220560A32203320560A33203220560A33203320560A33203220560A33203220560A33203220560A33203220560A33203320560A32203220560A33203220560A33203220560A33203220560A33203220560A33203120560A33203220560A33203220560A32203220560A33203220560A33203120560A33203220560A33203120560A33203220560A33203220560A33203120560A32203120560A33203220560A33203120560A33203220560A33203120560A33203120560A33203120560A33203120560A32203220560A33203120560A33203120560A33203120560A33203120560A33203120560A33203120560A33203020560A32203120560A33203120560A33203120560A33203120560A33203020560A33203120560A33203120560A33203020560A32203120560A33203020560A33203120560A33203020560A33203120560A33203020560A33203120560A33203020560A32203120560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A33203120560A32203020560A33203020560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203120560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A33203020560A32203020560A33203020560A33203020560A33203120560A33203020560A33203020560A33203020560A33203020560A32203120560A33203020560A33203020560A33203120560A7374726F6B650A67726573746F72650A656E640A73686F77706167650A>|ps>||||>
 
       \;
-    </output>
+    </unfolded-io>
 
     <\input|octave\<gtr\> >
       x0=[2;5;10];
@@ -565,378 +238,23 @@
 
   In order to embed the 3D graph, we first save it as butterfly.eps in /tmp
   directory. Then we can embed this EPS file into the worksheet using
-  <apply|menu|Insert|Image>.
+  <menu|Insert|Image>.
 
-  <expand|big-figure|<postscript|<tuple|<raw_data|%!PS-Adobe-2.0
-  EPSF-2.0\n%%Title: /tmp/butterfly.eps\n%%Creator: gnuplot 3.7 patchlevel
-  3\n%%CreationDate: Wed Jul \ 9 21:26:06 2003\n%%DocumentFonts:
-  (atend)\n%%BoundingBox: 50 50 230 176\n%%Orientation:
-  Portrait\n%%EndComments\n/gnudict 256 dict def\ngnudict begin\n/Color true
-  def\n/Solid false def\n/gnulinewidth 5.000 def\n/userlinewidth gnulinewidth
-  def\n/vshift -46 def\n/dl {10 mul} def\n/hpt_ 31.5 def\n/vpt_ 31.5
-  def\n/hpt hpt_ def\n/vpt vpt_ def\n/M {moveto} bind def\n/L {lineto} bind
-  def\n/R {rmoveto} bind def\n/V {rlineto} bind def\n/vpt2 vpt 2 mul
-  def\n/hpt2 hpt 2 mul def\n/Lshow { currentpoint stroke M\n \ 0 vshift R
-  show } def\n/Rshow { currentpoint stroke M\n \ dup stringwidth pop neg
-  vshift R show } def\n/Cshow { currentpoint stroke M\n \ dup stringwidth pop
-  -2 div vshift R show } def\n/UP { dup vpt_ mul /vpt exch def hpt_ mul /hpt
-  exch def\n \ /hpt2 hpt 2 mul def /vpt2 vpt 2 mul def } def\n/DL { Color
-  {setrgbcolor Solid {pop []} if 0 setdash }\n {pop pop pop Solid {pop []} if
-  0 setdash} ifelse } def\n/BL { stroke userlinewidth 2 mul setlinewidth }
-  def\n/AL { stroke userlinewidth 2 div setlinewidth } def\n/UL { dup
-  gnulinewidth mul /userlinewidth exch def\n \ \ \ \ \ dup 1 lt {pop 1} if 10
-  mul /udl exch def } def\n/PL { stroke userlinewidth setlinewidth }
-  def\n/LTb { BL [] 0 0 0 DL } def\n/LTa { AL [1 udl mul 2 udl mul] 0 setdash
-  0 0 0 setrgbcolor } def\n/LT0 { PL [] 1 0 0 DL } def\n/LT1 { PL [4 dl 2 dl]
-  0 1 0 DL } def\n/LT2 { PL [2 dl 3 dl] 0 0 1 DL } def\n/LT3 { PL [1 dl 1.5
-  dl] 1 0 1 DL } def\n/LT4 { PL [5 dl 2 dl 1 dl 2 dl] 0 1 1 DL } def\n/LT5 {
-  PL [4 dl 3 dl 1 dl 3 dl] 1 1 0 DL } def\n/LT6 { PL [2 dl 2 dl 2 dl 4 dl] 0
-  0 0 DL } def\n/LT7 { PL [2 dl 2 dl 2 dl 2 dl 2 dl 4 dl] 1 0.3 0 DL }
-  def\n/LT8 { PL [2 dl 2 dl 2 dl 2 dl 2 dl 2 dl 2 dl 4 dl] 0.5 0.5 0.5 DL }
-  def\n/Pnt { stroke [] 0 setdash\n \ \ gsave 1 setlinecap M 0 0 V stroke
-  grestore } def\n/Dia { stroke [] 0 setdash 2 copy vpt add M\n \ hpt neg vpt
-  neg V hpt vpt neg V\n \ hpt vpt V hpt neg vpt V closepath stroke\n \ Pnt }
-  def\n/Pls { stroke [] 0 setdash vpt sub M 0 vpt2 V\n \ currentpoint stroke
-  M\n \ hpt neg vpt neg R hpt2 0 V stroke\n \ } def\n/Box { stroke [] 0
-  setdash 2 copy exch hpt sub exch vpt add M\n \ 0 vpt2 neg V hpt2 0 V 0 vpt2
-  V\n \ hpt2 neg 0 V closepath stroke\n \ Pnt } def\n/Crs { stroke [] 0
-  setdash exch hpt sub exch vpt add M\n \ hpt2 vpt2 neg V currentpoint stroke
-  M\n \ hpt2 neg 0 R hpt2 vpt2 V stroke } def\n/TriU { stroke [] 0 setdash 2
-  copy vpt 1.12 mul add M\n \ hpt neg vpt -1.62 mul V\n \ hpt 2 mul 0 V\n
-  \ hpt neg vpt 1.62 mul V closepath stroke\n \ Pnt \ } def\n/Star { 2 copy
-  Pls Crs } def\n/BoxF { stroke [] 0 setdash exch hpt sub exch vpt add M\n
-  \ 0 vpt2 neg V \ hpt2 0 V \ 0 vpt2 V\n \ hpt2 neg 0 V \ closepath fill }
-  def\n/TriUF { stroke [] 0 setdash vpt 1.12 mul add M\n \ hpt neg vpt -1.62
-  mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt 1.62 mul V closepath fill }
-  def\n/TriD { stroke [] 0 setdash 2 copy vpt 1.12 mul sub M\n \ hpt neg vpt
-  1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V closepath stroke\n
-  \ Pnt \ } def\n/TriDF { stroke [] 0 setdash vpt 1.12 mul sub M\n \ hpt neg
-  vpt 1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V closepath
-  fill} def\n/DiaF { stroke [] 0 setdash vpt add M\n \ hpt neg vpt neg V hpt
-  vpt neg V\n \ hpt vpt V hpt neg vpt V closepath fill } def\n/Pent { stroke
-  [] 0 setdash 2 copy gsave\n \ translate 0 hpt M 4 {72 rotate 0 hpt L}
-  repeat\n \ closepath stroke grestore Pnt } def\n/PentF { stroke [] 0
-  setdash gsave\n \ translate 0 hpt M 4 {72 rotate 0 hpt L} repeat\n
-  \ closepath fill grestore } def\n/Circle { stroke [] 0 setdash 2 copy\n
-  \ hpt 0 360 arc stroke Pnt } def\n/CircleF { stroke [] 0 setdash hpt 0 360
-  arc fill } def\n/C0 { BL [] 0 setdash 2 copy moveto vpt 90 450 \ arc } bind
-  def\n/C1 { BL [] 0 setdash 2 copy \ \ \ \ \ \ \ moveto\n \ \ \ \ \ \ 2 copy
-  \ vpt 0 90 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc
-  closepath } bind def\n/C2 { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2
-  copy \ vpt 90 180 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0
-  360 arc closepath } bind def\n/C3 { BL [] 0 setdash 2 copy moveto\n
-  \ \ \ \ \ \ 2 copy \ vpt 0 180 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C4 { BL []
-  0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 180 270 arc closepath
-  fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C5
-  { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 0 90 arc\n
-  \ \ \ \ \ \ 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 180 270 arc closepath
-  fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc } bind def\n/C6 { BL [] 0
-  setdash 2 copy moveto\n \ \ \ \ \ 2 copy \ vpt 90 270 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C7 { BL [] 0
-  setdash 2 copy moveto\n \ \ \ \ \ 2 copy \ vpt 0 270 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C8 { BL [] 0
-  setdash 2 copy moveto\n \ \ \ \ \ 2 copy vpt 270 360 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C9 { BL [] 0
-  setdash 2 copy moveto\n \ \ \ \ \ 2 copy \ vpt 270 450 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C10 { BL []
-  0 setdash 2 copy 2 copy moveto vpt 270 360 arc closepath fill\n
-  \ \ \ \ \ \ 2 copy moveto\n \ \ \ \ \ \ 2 copy vpt 90 180 arc closepath
-  fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C11
-  { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 0 180 arc
-  closepath fill\n \ \ \ \ \ \ 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 270
-  360 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc
-  closepath } bind def\n/C12 { BL [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2
-  copy \ vpt 180 360 arc closepath fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0
-  360 arc closepath } bind def\n/C13 { BL [] 0 setdash \ 2 copy moveto\n
-  \ \ \ \ \ \ 2 copy \ vpt 0 90 arc closepath fill\n \ \ \ \ \ \ 2 copy
-  moveto\n \ \ \ \ \ \ 2 copy \ vpt 180 360 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/C14 { BL
-  [] 0 setdash 2 copy moveto\n \ \ \ \ \ \ 2 copy \ vpt 90 360 arc closepath
-  fill\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc } bind def\n/C15 { BL [] 0
-  setdash 2 copy vpt 0 360 arc closepath fill\n
-  \ \ \ \ \ \ \ \ \ \ \ \ \ \ vpt 0 360 arc closepath } bind def\n/Rec \ \ {
-  newpath 4 2 roll moveto 1 index 0 rlineto 0 exch rlineto\n \ \ \ \ \ \ neg
-  0 rlineto closepath } bind def\n/Square { dup Rec } bind def\n/Bsquare {
-  vpt sub exch vpt sub exch vpt2 Square } bind def\n/S0 { BL [] 0 setdash 2
-  copy moveto 0 vpt rlineto BL Bsquare } bind def\n/S1 { BL [] 0 setdash 2
-  copy vpt Square fill Bsquare } bind def\n/S2 { BL [] 0 setdash 2 copy exch
-  vpt sub exch vpt Square fill Bsquare } bind def\n/S3 { BL [] 0 setdash 2
-  copy exch vpt sub exch vpt2 vpt Rec fill Bsquare } bind def\n/S4 { BL [] 0
-  setdash 2 copy exch vpt sub exch vpt sub vpt Square fill Bsquare } bind
-  def\n/S5 { BL [] 0 setdash 2 copy 2 copy vpt Square fill\n \ \ \ \ \ \ exch
-  vpt sub exch vpt sub vpt Square fill Bsquare } bind def\n/S6 { BL [] 0
-  setdash 2 copy exch vpt sub exch vpt sub vpt vpt2 Rec fill Bsquare } bind
-  def\n/S7 { BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt vpt2 Rec
-  fill\n \ \ \ \ \ \ 2 copy vpt Square fill\n \ \ \ \ \ \ Bsquare } bind
-  def\n/S8 { BL [] 0 setdash 2 copy vpt sub vpt Square fill Bsquare } bind
-  def\n/S9 { BL [] 0 setdash 2 copy vpt sub vpt vpt2 Rec fill Bsquare } bind
-  def\n/S10 { BL [] 0 setdash 2 copy vpt sub vpt Square fill 2 copy exch vpt
-  sub exch vpt Square fill\n \ \ \ \ \ \ Bsquare } bind def\n/S11 { BL [] 0
-  setdash 2 copy vpt sub vpt Square fill 2 copy exch vpt sub exch vpt2 vpt
-  Rec fill\n \ \ \ \ \ \ Bsquare } bind def\n/S12 { BL [] 0 setdash 2 copy
-  exch vpt sub exch vpt sub vpt2 vpt Rec fill Bsquare } bind def\n/S13 { BL
-  [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill\n
-  \ \ \ \ \ \ 2 copy vpt Square fill Bsquare } bind def\n/S14 { BL [] 0
-  setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill\n \ \ \ \ \ \ 2
-  copy exch vpt sub exch vpt Square fill Bsquare } bind def\n/S15 { BL [] 0
-  setdash 2 copy Bsquare fill Bsquare } bind def\n/D0 { gsave translate 45
-  rotate 0 0 S0 stroke grestore } bind def\n/D1 { gsave translate 45 rotate 0
-  0 S1 stroke grestore } bind def\n/D2 { gsave translate 45 rotate 0 0 S2
-  stroke grestore } bind def\n/D3 { gsave translate 45 rotate 0 0 S3 stroke
-  grestore } bind def\n/D4 { gsave translate 45 rotate 0 0 S4 stroke grestore
-  } bind def\n/D5 { gsave translate 45 rotate 0 0 S5 stroke grestore } bind
-  def\n/D6 { gsave translate 45 rotate 0 0 S6 stroke grestore } bind def\n/D7
-  { gsave translate 45 rotate 0 0 S7 stroke grestore } bind def\n/D8 { gsave
-  translate 45 rotate 0 0 S8 stroke grestore } bind def\n/D9 { gsave
-  translate 45 rotate 0 0 S9 stroke grestore } bind def\n/D10 { gsave
-  translate 45 rotate 0 0 S10 stroke grestore } bind def\n/D11 { gsave
-  translate 45 rotate 0 0 S11 stroke grestore } bind def\n/D12 { gsave
-  translate 45 rotate 0 0 S12 stroke grestore } bind def\n/D13 { gsave
-  translate 45 rotate 0 0 S13 stroke grestore } bind def\n/D14 { gsave
-  translate 45 rotate 0 0 S14 stroke grestore } bind def\n/D15 { gsave
-  translate 45 rotate 0 0 S15 stroke grestore } bind def\n/DiaE { stroke [] 0
-  setdash vpt add M\n \ hpt neg vpt neg V hpt vpt neg V\n \ hpt vpt V hpt neg
-  vpt V closepath stroke } def\n/BoxE { stroke [] 0 setdash exch hpt sub exch
-  vpt add M\n \ 0 vpt2 neg V hpt2 0 V 0 vpt2 V\n \ hpt2 neg 0 V closepath
-  stroke } def\n/TriUE { stroke [] 0 setdash vpt 1.12 mul add M\n \ hpt neg
-  vpt -1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt 1.62 mul V closepath
-  stroke } def\n/TriDE { stroke [] 0 setdash vpt 1.12 mul sub M\n \ hpt neg
-  vpt 1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V closepath
-  stroke } def\n/PentE { stroke [] 0 setdash gsave\n \ translate 0 hpt M 4
-  {72 rotate 0 hpt L} repeat\n \ closepath stroke grestore } def\n/CircE {
-  stroke [] 0 setdash \n \ hpt 0 360 arc stroke } def\n/Opaque { gsave
-  closepath 1 setgray fill grestore 0 setgray closepath } def\n/DiaW { stroke
-  [] 0 setdash vpt add M\n \ hpt neg vpt neg V hpt vpt neg V\n \ hpt vpt V
-  hpt neg vpt V Opaque stroke } def\n/BoxW { stroke [] 0 setdash exch hpt sub
-  exch vpt add M\n \ 0 vpt2 neg V hpt2 0 V 0 vpt2 V\n \ hpt2 neg 0 V Opaque
-  stroke } def\n/TriUW { stroke [] 0 setdash vpt 1.12 mul add M\n \ hpt neg
-  vpt -1.62 mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt 1.62 mul V Opaque stroke
-  } def\n/TriDW { stroke [] 0 setdash vpt 1.12 mul sub M\n \ hpt neg vpt 1.62
-  mul V\n \ hpt 2 mul 0 V\n \ hpt neg vpt -1.62 mul V Opaque stroke }
-  def\n/PentW { stroke [] 0 setdash gsave\n \ translate 0 hpt M 4 {72 rotate
-  0 hpt L} repeat\n \ Opaque stroke grestore } def\n/CircW { stroke [] 0
-  setdash \n \ hpt 0 360 arc Opaque stroke } def\n/BoxFill { gsave Rec 1
-  setgray fill grestore } def\n/Symbol-Oblique /Symbol findfont [1 0 .167 1 0
-  0] makefont\ndup length dict begin {1 index /FID eq {pop pop} {def} ifelse}
-  forall\ncurrentdict end definefont pop\n/MFshow {{dup dup 0 get findfont
-  exch 1 get scalefont setfont\n \ \ \ \ [ currentpoint ] exch dup 2 get 0
-  exch rmoveto dup dup 5 get exch 4 get\n \ \ \ \ {show} {stringwidth pop 0
-  rmoveto}ifelse dup 3 get\n \ \ \ \ {2 get neg 0 exch rmoveto pop} {pop
-  aload pop moveto}ifelse} forall} bind def\n/MFwidth {0 exch {dup 3 get{dup
-  dup 0 get findfont exch 1 get scalefont setfont\n \ \ \ \ \ 5 get
-  stringwidth pop add}\n \ \ \ {pop} ifelse} forall} bind def\n/MLshow {
-  currentpoint stroke M\n \ 0 exch R MFshow } bind def\n/MRshow {
-  currentpoint stroke M\n \ exch dup MFwidth neg 3 -1 roll R MFshow }
-  def\n/MCshow { currentpoint stroke M\n \ exch dup MFwidth -2 div 3 -1 roll
-  R MFshow } def\nend\n%%EndProlog\ngnudict begin\ngsave\n50 50
-  translate\n0.050 0.050 scale\n0 setgray\nnewpath\n(Helvetica) findfont 140
-  scalefont setfont\n1.000 UL\nLTb\n1.000 UL\nLT0\n2802 2036 M\n[
-  [(Helvetica) 140.0 0.0 true true (Butterfly Effect)]\n] -46.7 MRshow\n2886
-  2036 M\n399 0 V\n1989 1344 M\n24 3 V\n27 5 V\n29 8 V\n31 10 V\n34 13 V\n36
-  16 V\n39 20 V\n40 22 V\n41 27 V\n40 29 V\n39 33 V\n34 34 V\n27 35 V\n19 35
-  V\n6 30 V\n-6 26 V\n-19 18 V\n-33 9 V\n-44 1 V\n-52 -8 V\n-58 -14 V\n-59
-  -19 V\n-59 -21 V\n-55 -22 V\n-51 -22 V\n-46 -21 V\n-41 -18 V\n-35 -17
-  V\n-30 -15 V\n-26 -13 V\n-23 -12 V\n-19 -11 V\n-16 -10 V\n-13 -10 V\n-12 -9
-  V\n-11 -8 V\n-9 -9 V\n-8 -8 V\n-8 -9 V\n-7 -8 V\n-7 -8 V\n-7 -7 V\n-8 -8
-  V\n-7 -8 V\n-8 -7 V\n-9 -7 V\n-9 -7 V\n-10 -7 V\n-11 -6 V\n-12 -6 V\n-13 -6
-  V\n-14 -5 V\n-16 -4 V\n-17 -4 V\n-18 -3 V\n-20 -3 V\n-21 0 V\n-23 0 V\n-23
-  2 V\n-25 4 V\n-25 5 V\n-26 9 V\n-25 11 V\n-24 13 V\n-22 17 V\n-19 20 V\n-15
-  22 V\n-10 25 V\n-5 26 V\n2 27 V\n8 26 V\n15 25 V\n21 22 V\n26 19 V\n30 14
-  V\n32 10 V\n34 6 V\n34 1 V\n33 -3 V\n31 -6 V\n29 -9 V\n27 -11 V\n23 -12
-  V\n21 -13 V\n18 -13 V\n16 -14 V\n14 -14 V\n11 -13 V\n9 -13 V\n7 -13 V\n6
-  -13 V\n4 -12 V\n4 -11 V\n2 -12 V\n0 -10 V\n0 -11 V\n0 -10 V\n-2 -9 V\n-3
-  -10 V\n-3 -8 V\n-4 -9 V\n-5 -8 V\n-6 -8 V\n-7 -8 V\n-7 -8 V\n-9 -7 V\n-9 -7
-  V\n-11 -6 V\n-12 -6 V\n-13 -6 V\n-15 -5 V\n-17 -5 V\n-18 -4 V\n-19 -4
-  V\n-22 -2 V\n-23 -2 V\n-26 0 V\n-27 2 V\n-28 3 V\n-30 6 V\n-31 9 V\n-30 12
-  V\n-30 16 V\n-28 19 V\n-24 24 V\n-20 27 V\n-14 30 V\n-6 33 V\n2 34 V\n10 33
-  V\n19 32 V\n27 28 V\n34 23 V\n38 17 V\n41 11 V\n42 5 V\n42 0 V\n40 -5 V\n37
-  -9 V\n34 -12 V\n31 -13 V\n27 -15 V\n23 -16 V\n21 -16 V\n17 -15 V\n15 -16
-  V\n12 -14 V\n11 -15 V\n8 -14 V\n7 -13 V\n6 -12 V\n5 -12 V\n4 -12 V\n2 -10
-  V\n3 -11 V\n2 -10 V\n1 -9 V\n1 -9 V\n0 -9 V\n1 -8 V\n0 -8 V\n-1 -8 V\n0 -7
-  V\n-1 -7 V\n-1 -7 V\n-1 -7 V\n-1 -6 V\n-1 -7 V\n-2 -6 V\n-2 -6 V\n-2 -6
-  V\n-2 -5 V\n-3 -6 V\n-3 -5 V\n-4 -5 V\n-4 -6 V\n-4 -5 V\n-5 -5 V\n-6 -5
-  V\n-7 -4 V\n-7 -5 V\n-8 -5 V\n-10 -5 V\n-10 -5 V\n-12 -4 V\n-14 -5 V\n-15
-  -4 V\n-17 -4 V\n-20 -4 V\n-21 -4 V\n-25 -3 V\n-27 -2 V\n-31 -1 V\n-33 1
-  V\n-37 2 V\n-40 5 V\n-42 9 V\n-45 13 V\n-45 18 V\n-44 24 V\n-42 31 V\n-36
-  38 V\n-27 45 V\n-16 51 V\n-2 55 V\n15 56 V\n29 53 V\n45 47 V\n55 37 V\n64
-  26 V\n66 14 V\n67 4 V\n63 -6 V\n59 -12 V\n53 -17 V\n46 -20 V\n41 -21 V\n35
-  -22 V\n29 -21 V\n26 -19 V\n21 -19 V\n18 -17 V\n16 -17 V\n14 -14 V\n11 -14
-  V\n11 -12 V\n10 -11 V\n9 -11 V\n8 -9 V\n9 -8 V\n8 -7 V\n9 -7 V\n9 -6 V\n10
-  -4 V\n10 -4 V\n11 -3 V\n12 -2 V\n12 -2 V\n14 0 V\n15 1 V\n16 2 V\n16 3
-  V\n18 5 V\n19 5 V\n19 7 V\n20 9 V\n21 10 V\n20 11 V\n20 12 V\n19 14 V\n18
-  14 V\n15 15 V\n13 14 V\n9 14 V\n5 14 V\n1 11 V\n-5 10 V\n-8 7 V\n-14 5
-  V\n-17 2 V\n-21 -1 V\n-23 -4 V\n-25 -5 V\n-26 -8 V\n-26 -8 V\n-26 -10
-  V\n-24 -9 V\n-23 -11 V\n-20 -10 V\n-19 -10 V\n-17 -9 V\n-15 -10 V\n-12 -9
-  V\n-11 -8 V\n-8 -9 V\n-7 -8 V\n-6 -7 V\n-4 -8 V\n-2 -7 V\n-1 -6 V\n0 -6
-  V\n1 -6 V\n2 -6 V\n3 -5 V\n5 -5 V\n5 -4 V\n7 -4 V\n7 -4 V\n9 -2 V\n10 -2
-  V\n11 -2 V\n12 0 V\n14 0 V\n15 2 V\n16 2 V\n17 4 V\n19 5 V\n20 6 V\n21 7
-  V\n22 10 V\n22 10 V\n23 13 V\n23 13 V\n22 16 V\n21 16 V\n18 17 V\n16 17
-  V\n12 17 V\n7 15 V\n2 14 V\n-4 12 V\n-9 9 V\n-15 6 V\n-19 3 V\n-24 -1
-  V\n-26 -4 V\n-29 -6 V\n-30 -9 V\n-30 -10 V\n-29 -11 V\n-28 -11 V\n-25 -12
-  V\n-24 -11 V\n-21 -11 V\n-19 -11 V\n-16 -10 V\n-14 -10 V\n-12 -9 V\n-10 -9
-  V\n-8 -8 V\n-6 -8 V\n-5 -8 V\n-3 -8 V\n-2 -7 V\n-1 -7 V\n0 -7 V\n1 -6 V\n3
-  -6 V\n3 -6 V\n4 -5 V\n5 -5 V\n6 -4 V\n7 -4 V\n8 -4 V\n10 -3 V\n10 -2 V\n12
-  -1 V\n13 -1 V\n14 1 V\n15 1 V\n18 2 V\n18 4 V\n20 5 V\n22 7 V\n23 8 V\n25
-  10 V\n25 12 V\n27 13 V\n26 16 V\n26 17 V\n25 19 V\n23 20 V\n20 20 V\n16 20
-  V\n10 20 V\n4 18 V\n-3 15 V\n-9 11 V\n-17 8 V\n-23 3 V\n-28 -1 V\n-32 -4
-  V\n-34 -8 V\n-35 -11 V\n-36 -12 V\n-34 -13 V\n-32 -13 V\n-30 -14 V\n-27 -13
-  V\n-24 -12 V\n-21 -12 V\n-19 -11 V\n-16 -11 V\n-13 -10 V\n-11 -9 V\n-9 -9
-  V\n-8 -9 V\n-6 -8 V\n-4 -9 V\n-4 -8 V\n-2 -7 V\n-1 -8 V\n0 -7 V\n0 -7 V\n1
-  -7 V\n2 -6 V\n3 -6 V\ncurrentpoint stroke M\n3 -6 V\n5 -6 V\n4 -5 V\n6 -5
-  V\n6 -4 V\n8 -4 V\n8 -3 V\n9 -3 V\n11 -2 V\n11 -2 V\n13 -1 V\n14 1 V\n16 1
-  V\n18 2 V\n19 3 V\n22 5 V\n23 7 V\n25 8 V\n28 10 V\n29 13 V\n30 14 V\n32 18
-  V\n33 19 V\n32 22 V\n31 24 V\n29 26 V\n24 27 V\n18 26 V\n11 25 V\n3 22
-  V\n-7 18 V\n-16 13 V\n-26 7 V\n-33 0 V\n-39 -4 V\n-43 -10 V\n-46 -13 V\n-45
-  -15 V\n-44 -17 V\n-41 -17 V\n-37 -16 V\n-34 -16 V\n-30 -15 V\n-26 -14
-  V\n-23 -12 V\n-19 -12 V\n-17 -11 V\n-14 -10 V\n-11 -10 V\n-10 -9 V\n-9 -9
-  V\n-6 -9 V\n-6 -9 V\n-5 -8 V\n-4 -9 V\n-4 -8 V\n-3 -8 V\n-2 -8 V\n-3 -7
-  V\n-2 -8 V\n-2 -7 V\n-2 -8 V\n-2 -7 V\n-2 -7 V\n-3 -7 V\n-2 -7 V\n-3 -6
-  V\n-3 -7 V\n-3 -6 V\n-3 -6 V\n-4 -6 V\n-4 -6 V\n-5 -6 V\n-6 -6 V\n-6 -6
-  V\n-7 -5 V\n-7 -6 V\n-9 -5 V\n-9 -5 V\n-11 -6 V\n-13 -5 V\n-13 -5 V\n-16 -4
-  V\n-17 -5 V\n-20 -4 V\n-21 -3 V\n-25 -3 V\n-27 -2 V\n-29 -1 V\n-33 1 V\n-35
-  3 V\n-38 5 V\n-40 9 V\n-42 13 V\n-41 18 V\n-41 24 V\n-37 30 V\n-32 36
-  V\n-23 42 V\n-13 47 V\n1 51 V\n14 50 V\n28 47 V\n41 42 V\n51 33 V\n57 23
-  V\n61 14 V\n60 3 V\n59 -4 V\n54 -11 V\n49 -15 V\n44 -19 V\n38 -19 V\n33 -20
-  V\n28 -20 V\n24 -19 V\n20 -18 V\n18 -18 V\n15 -16 V\n13 -14 V\n11 -14 V\n10
-  -13 V\n8 -12 V\n9 -11 V\n7 -10 V\n8 -9 V\n7 -8 V\n8 -7 V\n8 -7 V\n8 -6 V\n9
-  -5 V\n9 -5 V\n11 -3 V\n11 -3 V\n12 -2 V\n13 -1 V\n15 0 V\n16 1 V\n17 2
-  V\n18 4 V\n20 4 V\n20 7 V\n23 8 V\n23 9 V\n24 12 V\n24 12 V\n24 15 V\n24 16
-  V\n22 17 V\n20 18 V\n17 19 V\n12 18 V\n8 17 V\n2 15 V\n-4 13 V\n-10 9
-  V\n-16 6 V\n-21 3 V\n-26 -2 V\n-29 -4 V\n-31 -7 V\n-32 -10 V\n-32 -10
-  V\n-31 -12 V\n-29 -12 V\n-27 -13 V\n-24 -12 V\n-22 -11 V\n-20 -11 V\n-17
-  -11 V\n-14 -10 V\n-12 -9 V\n-10 -9 V\n-9 -9 V\n-6 -8 V\n-5 -9 V\n-4 -7
-  V\n-2 -8 V\n-2 -7 V\n0 -7 V\n1 -7 V\n2 -6 V\n2 -6 V\n4 -6 V\n4 -5 V\n6 -5
-  V\n6 -5 V\n7 -4 V\n8 -3 V\n9 -3 V\n10 -3 V\n12 -1 V\n13 -1 V\n14 0 V\n16 1
-  V\n17 2 V\n19 4 V\n20 5 V\n22 6 V\n24 8 V\n26 10 V\n27 12 V\n27 14 V\n29 16
-  V\n29 18 V\n27 19 V\n26 22 V\n24 22 V\n19 23 V\n13 22 V\n7 20 V\n0 18 V\n-8
-  14 V\n-15 10 V\n-24 5 V\n-29 0 V\n-34 -5 V\n-37 -8 V\n-39 -11 V\n-39 -13
-  V\n-37 -14 V\n-36 -14 V\n-33 -15 V\n-30 -14 V\n-26 -13 V\n-23 -13 V\n-21
-  -12 V\n-17 -11 V\n-15 -10 V\n-12 -10 V\n-11 -10 V\n-8 -9 V\n-7 -8 V\n-6 -9
-  V\n-4 -8 V\n-3 -8 V\n-2 -8 V\n-2 -8 V\n-1 -7 V\n0 -8 V\n0 -7 V\n1 -7 V\n2
-  -6 V\n2 -6 V\n2 -7 V\n3 -5 V\n3 -6 V\n4 -5 V\n5 -5 V\n5 -5 V\n6 -4 V\n7 -4
-  V\n7 -3 V\n8 -3 V\n10 -2 V\n10 -2 V\n12 -1 V\n13 0 V\n15 1 V\n16 1 V\n18 3
-  V\n21 4 V\n22 5 V\n25 7 V\n27 9 V\n30 12 V\n32 13 V\n34 17 V\n36 19 V\n37
-  22 V\n37 25 V\n37 28 V\n33 30 V\n29 31 V\n23 32 V\n14 30 V\n4 26 V\n-8 22
-  V\n-20 15 V\n-31 8 V\n-40 0 V\n-47 -7 V\n-52 -13 V\n-54 -17 V\n-52 -19
-  V\n-50 -20 V\n-47 -19 V\n-42 -19 V\n-37 -18 V\n-33 -15 V\n-28 -15 V\n-24
-  -13 V\n-21 -11 V\n-18 -11 V\n-15 -11 V\n-13 -9 V\n-11 -10 V\n-9 -9 V\n-8 -8
-  V\n-7 -9 V\n-7 -9 V\n-6 -8 V\n-5 -8 V\n-6 -8 V\n-6 -8 V\n-5 -8 V\n-6 -8
-  V\n-6 -7 V\n-7 -8 V\n-7 -7 V\n-8 -7 V\n-9 -7 V\n-9 -7 V\n-11 -6 V\n-11 -7
-  V\n-13 -6 V\n-15 -5 V\n-15 -5 V\n-17 -5 V\n-19 -3 V\n-21 -3 V\n-22 -2
-  V\n-24 -1 V\n-26 0 V\n-28 3 V\n-29 5 V\n-30 7 V\n-31 10 V\n-30 14 V\n-29 17
-  V\n-26 21 V\n-22 25 V\n-18 28 V\n-10 31 V\n-3 34 V\n5 33 V\n15 33 V\n22 30
-  V\n30 26 V\n35 20 V\n40 15 V\n41 8 V\n42 3 V\n41 -3 V\n39 -6 V\n35 -11
-  V\n33 -12 V\n29 -14 V\n25 -15 V\n22 -16 V\n19 -16 V\n17 -15 V\n13 -15 V\n12
-  -15 V\n9 -14 V\n8 -13 V\n7 -13 V\n5 -13 V\n4 -11 V\n3 -11 V\n3 -11 V\n2 -10
-  V\n1 -10 V\n1 -9 V\n1 -9 V\n0 -9 V\n0 -8 V\n0 -8 V\n-1 -7 V\n0 -8 V\n-1 -7
-  V\n-1 -7 V\n-2 -6 V\n-2 -7 V\n-1 -6 V\n-3 -6 V\n-2 -6 V\n-3 -6 V\n-3 -5
-  V\n-4 -6 V\n-4 -5 V\n-4 -6 V\n-5 -5 V\n-6 -5 V\n-7 -5 V\n-7 -5 V\n-9 -5
-  V\n-9 -5 V\n-11 -5 V\n-12 -5 V\n-14 -5 V\n-15 -4 V\n-17 -4 V\n-20 -4 V\n-22
-  -4 V\n-24 -3 V\n-28 -2 V\n-30 -1 V\n-33 1 V\n-37 3 V\ncurrentpoint stroke
-  M\n-39 5 V\n-42 9 V\n1.000 UL\nLTb\n3024 948 M\n2128 464 L\n575 743 M\n2128
-  464 L\n575 743 M\n896 484 V\n3024 948 M\n1471 1227 L\n575 743 M\n0 968 V\n0
-  -968 R\n55 29 V\n stroke\n501 676 M\n[ [(Helvetica) 140.0 0.0 true true
-  (-20)]\n] -46.7 MCshow\n1471 1227 M\n-56 -30 V\n963 673 M\n55 29 V\n
-  stroke\n889 606 M\n[ [(Helvetica) 140.0 0.0 true true (-10)]\n] -46.7
-  MCshow\n1860 1157 M\n-56 -30 V\n1351 603 M\n55 29 V\n stroke\n1277 536 M\n[
-  [(Helvetica) 140.0 0.0 true true ( 0)]\n] -46.7 MCshow\n2248 1087 M\n-56
-  -30 V\n1739 533 M\n55 29 V\n stroke\n1665 466 M\n[ [(Helvetica) 140.0 0.0
-  true true ( 10)]\n] -46.7 MCshow\n2636 1018 M\n-56 -30 V\n2128 464 M\n55 29
-  V\n stroke\n2054 397 M\n[ [(Helvetica) 140.0 0.0 true true ( 20)]\n] -46.7
-  MCshow\n3024 948 M\n-56 -30 V\n2128 464 M\n-63 11 V\n stroke\n2210 439 M\n[
-  [(Helvetica) 140.0 0.0 true true (-20)]\n] -46.7 MLshow\n575 743 M\n62 -12
-  V\n2352 585 M\n-63 11 V\n stroke\n2434 560 M\n[ [(Helvetica) 140.0 0.0 true
-  true (-10)]\n] -46.7 MLshow\n799 864 M\n62 -12 V\n2576 706 M\n-63 11 V\n
-  stroke\n2658 681 M\n[ [(Helvetica) 140.0 0.0 true true ( 0)]\n] -46.7
-  MLshow\n1023 985 M\n62 -12 V\n2800 827 M\n-63 11 V\n stroke\n2882 802 M\n[
-  [(Helvetica) 140.0 0.0 true true ( 10)]\n] -46.7 MLshow\n1247 1106 M\n62
-  -12 V\n3024 948 M\n-63 11 V\n stroke\n3106 923 M\n[ [(Helvetica) 140.0 0.0
-  true true ( 20)]\n] -46.7 MLshow\n1471 1227 M\n62 -12 V\n575 1066 M\n63 0
-  V\n stroke\n449 1066 M\n[ [(Helvetica) 140.0 0.0 true true ( 0)]\n] -46.7
-  MRshow\n575 1195 M\n63 0 V\n stroke\n449 1195 M\n[ [(Helvetica) 140.0 0.0
-  true true ( 10)]\n] -46.7 MRshow\n575 1324 M\n63 0 V\n stroke\n449 1324
-  M\n[ [(Helvetica) 140.0 0.0 true true ( 20)]\n] -46.7 MRshow\n575 1453
-  M\n63 0 V\n stroke\n449 1453 M\n[ [(Helvetica) 140.0 0.0 true true (
-  30)]\n] -46.7 MRshow\n575 1582 M\n63 0 V\n stroke\n449 1582 M\n[
-  [(Helvetica) 140.0 0.0 true true ( 40)]\n] -46.7 MRshow\n575 1711 M\n63 0
-  V\n stroke\n449 1711 M\n[ [(Helvetica) 140.0 0.0 true true ( 50)]\n] -46.7
-  MRshow\nstroke\ngrestore\nend\nshowpage\n>|eps>||||||>|Embedded 3D graph
-  from Octave.>
+  <big-figure|<image|<tuple|<#252150532D41646F62652D322E3020455053462D322E300A25255469746C653A202F746D702F627574746572666C792E6570730A252543726561746F723A20676E75706C6F7420332E372070617463686C6576656C20330A25254372656174696F6E446174653A20576564204A756C2020392032313A32363A303620323030330A2525446F63756D656E74466F6E74733A20286174656E64290A2525426F756E64696E67426F783A20353020353020323330203137360A25254F7269656E746174696F6E3A20506F7274726169740A2525456E64436F6D6D656E74730A2F676E7564696374203235362064696374206465660A676E756469637420626567696E0A2F436F6C6F722074727565206465660A2F536F6C69642066616C7365206465660A2F676E756C696E65776964746820352E303030206465660A2F757365726C696E65776964746820676E756C696E657769647468206465660A2F767368696674202D3436206465660A2F646C207B3130206D756C7D206465660A2F6870745F2033312E35206465660A2F7670745F2033312E35206465660A2F687074206870745F206465660A2F767074207670745F206465660A2F4D207B6D6F7665746F7D2062696E64206465660A2F4C207B6C696E65746F7D2062696E64206465660A2F52207B726D6F7665746F7D2062696E64206465660A2F56207B726C696E65746F7D2062696E64206465660A2F76707432207670742032206D756C206465660A2F68707432206870742032206D756C206465660A2F4C73686F77207B2063757272656E74706F696E74207374726F6B65204D0A2020302076736869667420522073686F77207D206465660A2F5273686F77207B2063757272656E74706F696E74207374726F6B65204D0A202064757020737472696E67776964746820706F70206E65672076736869667420522073686F77207D206465660A2F4373686F77207B2063757272656E74706F696E74207374726F6B65204D0A202064757020737472696E67776964746820706F70202D32206469762076736869667420522073686F77207D206465660A2F5550207B20647570207670745F206D756C202F767074206578636820646566206870745F206D756C202F6870742065786368206465660A20202F68707432206870742032206D756C20646566202F76707432207670742032206D756C20646566207D206465660A2F444C207B20436F6C6F72207B736574726762636F6C6F7220536F6C6964207B706F70205B5D7D20696620302073657464617368207D0A207B706F7020706F7020706F7020536F6C6964207B706F70205B5D7D206966203020736574646173687D206966656C7365207D206465660A2F424C207B207374726F6B6520757365726C696E6577696474682032206D756C207365746C696E657769647468207D206465660A2F414C207B207374726F6B6520757365726C696E657769647468203220646976207365746C696E657769647468207D206465660A2F554C207B2064757020676E756C696E657769647468206D756C202F757365726C696E6577696474682065786368206465660A2020202020206475702031206C74207B706F7020317D206966203130206D756C202F75646C206578636820646566207D206465660A2F504C207B207374726F6B6520757365726C696E657769647468207365746C696E657769647468207D206465660A2F4C5462207B20424C205B5D20302030203020444C207D206465660A2F4C5461207B20414C205B312075646C206D756C20322075646C206D756C5D2030207365746461736820302030203020736574726762636F6C6F72207D206465660A2F4C5430207B20504C205B5D20312030203020444C207D206465660A2F4C5431207B20504C205B3420646C203220646C5D20302031203020444C207D206465660A2F4C5432207B20504C205B3220646C203320646C5D20302030203120444C207D206465660A2F4C5433207B20504C205B3120646C20312E3520646C5D20312030203120444C207D206465660A2F4C5434207B20504C205B3520646C203220646C203120646C203220646C5D20302031203120444C207D206465660A2F4C5435207B20504C205B3420646C203320646C203120646C203320646C5D20312031203020444C207D206465660A2F4C5436207B20504C205B3220646C203220646C203220646C203420646C5D20302030203020444C207D206465660A2F4C5437207B20504C205B3220646C203220646C203220646C203220646C203220646C203420646C5D203120302E33203020444C207D206465660A2F4C5438207B20504C205B3220646C203220646C203220646C203220646C203220646C203220646C203220646C203420646C5D20302E3520302E3520302E3520444C207D206465660A2F506E74207B207374726F6B65205B5D203020736574646173680A20202067736176652031207365746C696E65636170204D203020302056207374726F6B652067726573746F7265207D206465660A2F446961207B207374726F6B65205B5D20302073657464617368203220636F70792076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E656720767074205620636C6F736570617468207374726F6B650A2020506E74207D206465660A2F506C73207B207374726F6B65205B5D203020736574646173682076707420737562204D2030207670743220560A202063757272656E74706F696E74207374726F6B65204D0A2020687074206E656720767074206E65672052206870743220302056207374726F6B650A20207D206465660A2F426F78207B207374726F6B65205B5D20302073657464617368203220636F70792065786368206870742073756220657863682076707420616464204D0A2020302076707432206E656720562068707432203020562030207670743220560A202068707432206E65672030205620636C6F736570617468207374726F6B650A2020506E74207D206465660A2F437273207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020687074322076707432206E656720562063757272656E74706F696E74207374726F6B65204D0A202068707432206E656720302052206870743220767074322056207374726F6B65207D206465660A2F54726955207B207374726F6B65205B5D20302073657464617368203220636F70792076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C205620636C6F736570617468207374726F6B650A2020506E7420207D206465660A2F53746172207B203220636F707920506C7320437273207D206465660A2F426F7846207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020302076707432206E6567205620206870743220302056202030207670743220560A202068707432206E6567203020562020636C6F7365706174682066696C6C207D206465660A2F5472695546207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C205620636C6F7365706174682066696C6C207D206465660A2F54726944207B207374726F6B65205B5D20302073657464617368203220636F70792076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C205620636C6F736570617468207374726F6B650A2020506E7420207D206465660A2F5472694446207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C205620636C6F7365706174682066696C6C7D206465660A2F44696146207B207374726F6B65205B5D203020736574646173682076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E656720767074205620636C6F7365706174682066696C6C207D206465660A2F50656E74207B207374726F6B65205B5D20302073657464617368203220636F70792067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A2020636C6F736570617468207374726F6B652067726573746F726520506E74207D206465660A2F50656E7446207B207374726F6B65205B5D203020736574646173682067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A2020636C6F7365706174682066696C6C2067726573746F7265207D206465660A2F436972636C65207B207374726F6B65205B5D20302073657464617368203220636F70790A202068707420302033363020617263207374726F6B6520506E74207D206465660A2F436972636C6546207B207374726F6B65205B5D2030207365746461736820687074203020333630206172632066696C6C207D206465660A2F4330207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F20767074203930203435302020617263207D2062696E64206465660A2F4331207B20424C205B5D20302073657464617368203220636F707920202020202020206D6F7665746F0A202020202020203220636F7079202076707420302039302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4332207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F70792020767074203930203138302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4333207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F707920207670742030203138302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4334207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203237302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4335207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F707920207670742030203930206172630A202020202020203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203237302061726320636C6F7365706174682066696C6C0A20202020202020202020202020202076707420302033363020617263207D2062696E64206465660A2F4336207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F70792020767074203930203237302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4337207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F707920207670742030203237302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4338207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F70792076707420323730203336302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F4339207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A2020202020203220636F7079202076707420323730203435302061726320636C6F7365706174682066696C6C0A20202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433130207B20424C205B5D20302073657464617368203220636F7079203220636F7079206D6F7665746F2076707420323730203336302061726320636C6F7365706174682066696C6C0A202020202020203220636F7079206D6F7665746F0A202020202020203220636F707920767074203930203138302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433131207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F707920207670742030203138302061726320636C6F7365706174682066696C6C0A202020202020203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420323730203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433132207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433133207B20424C205B5D2030207365746461736820203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420302039302061726320636C6F7365706174682066696C6C0A202020202020203220636F7079206D6F7665746F0A202020202020203220636F7079202076707420313830203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F433134207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F0A202020202020203220636F70792020767074203930203336302061726320636C6F7365706174682066696C6C0A20202020202020202020202020202076707420302033363020617263207D2062696E64206465660A2F433135207B20424C205B5D20302073657464617368203220636F7079207670742030203336302061726320636C6F7365706174682066696C6C0A2020202020202020202020202020207670742030203336302061726320636C6F736570617468207D2062696E64206465660A2F5265632020207B206E6577706174682034203220726F6C6C206D6F7665746F203120696E646578203020726C696E65746F2030206578636820726C696E65746F0A202020202020206E6567203020726C696E65746F20636C6F736570617468207D2062696E64206465660A2F537175617265207B2064757020526563207D2062696E64206465660A2F42737175617265207B2076707420737562206578636820767074207375622065786368207670743220537175617265207D2062696E64206465660A2F5330207B20424C205B5D20302073657464617368203220636F7079206D6F7665746F20302076707420726C696E65746F20424C2042737175617265207D2062696E64206465660A2F5331207B20424C205B5D20302073657464617368203220636F707920767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5332207B20424C205B5D20302073657464617368203220636F707920657863682076707420737562206578636820767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5333207B20424C205B5D20302073657464617368203220636F7079206578636820767074207375622065786368207670743220767074205265632066696C6C2042737175617265207D2062696E64206465660A2F5334207B20424C205B5D20302073657464617368203220636F7079206578636820767074207375622065786368207670742073756220767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5335207B20424C205B5D20302073657464617368203220636F7079203220636F707920767074205371756172652066696C6C0A202020202020206578636820767074207375622065786368207670742073756220767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5336207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670742076707432205265632066696C6C2042737175617265207D2062696E64206465660A2F5337207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670742076707432205265632066696C6C0A202020202020203220636F707920767074205371756172652066696C6C0A2020202020202042737175617265207D2062696E64206465660A2F5338207B20424C205B5D20302073657464617368203220636F7079207670742073756220767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F5339207B20424C205B5D20302073657464617368203220636F70792076707420737562207670742076707432205265632066696C6C2042737175617265207D2062696E64206465660A2F533130207B20424C205B5D20302073657464617368203220636F7079207670742073756220767074205371756172652066696C6C203220636F707920657863682076707420737562206578636820767074205371756172652066696C6C0A2020202020202042737175617265207D2062696E64206465660A2F533131207B20424C205B5D20302073657464617368203220636F7079207670742073756220767074205371756172652066696C6C203220636F7079206578636820767074207375622065786368207670743220767074205265632066696C6C0A2020202020202042737175617265207D2062696E64206465660A2F533132207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670743220767074205265632066696C6C2042737175617265207D2062696E64206465660A2F533133207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670743220767074205265632066696C6C0A202020202020203220636F707920767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F533134207B20424C205B5D20302073657464617368203220636F70792065786368207670742073756220657863682076707420737562207670743220767074205265632066696C6C0A202020202020203220636F707920657863682076707420737562206578636820767074205371756172652066696C6C2042737175617265207D2062696E64206465660A2F533135207B20424C205B5D20302073657464617368203220636F707920427371756172652066696C6C2042737175617265207D2062696E64206465660A2F4430207B206773617665207472616E736C61746520343520726F7461746520302030205330207374726F6B652067726573746F7265207D2062696E64206465660A2F4431207B206773617665207472616E736C61746520343520726F7461746520302030205331207374726F6B652067726573746F7265207D2062696E64206465660A2F4432207B206773617665207472616E736C61746520343520726F7461746520302030205332207374726F6B652067726573746F7265207D2062696E64206465660A2F4433207B206773617665207472616E736C61746520343520726F7461746520302030205333207374726F6B652067726573746F7265207D2062696E64206465660A2F4434207B206773617665207472616E736C61746520343520726F7461746520302030205334207374726F6B652067726573746F7265207D2062696E64206465660A2F4435207B206773617665207472616E736C61746520343520726F7461746520302030205335207374726F6B652067726573746F7265207D2062696E64206465660A2F4436207B206773617665207472616E736C61746520343520726F7461746520302030205336207374726F6B652067726573746F7265207D2062696E64206465660A2F4437207B206773617665207472616E736C61746520343520726F7461746520302030205337207374726F6B652067726573746F7265207D2062696E64206465660A2F4438207B206773617665207472616E736C61746520343520726F7461746520302030205338207374726F6B652067726573746F7265207D2062696E64206465660A2F4439207B206773617665207472616E736C61746520343520726F7461746520302030205339207374726F6B652067726573746F7265207D2062696E64206465660A2F443130207B206773617665207472616E736C61746520343520726F746174652030203020533130207374726F6B652067726573746F7265207D2062696E64206465660A2F443131207B206773617665207472616E736C61746520343520726F746174652030203020533131207374726F6B652067726573746F7265207D2062696E64206465660A2F443132207B206773617665207472616E736C61746520343520726F746174652030203020533132207374726F6B652067726573746F7265207D2062696E64206465660A2F443133207B206773617665207472616E736C61746520343520726F746174652030203020533133207374726F6B652067726573746F7265207D2062696E64206465660A2F443134207B206773617665207472616E736C61746520343520726F746174652030203020533134207374726F6B652067726573746F7265207D2062696E64206465660A2F443135207B206773617665207472616E736C61746520343520726F746174652030203020533135207374726F6B652067726573746F7265207D2062696E64206465660A2F44696145207B207374726F6B65205B5D203020736574646173682076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E656720767074205620636C6F736570617468207374726F6B65207D206465660A2F426F7845207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020302076707432206E656720562068707432203020562030207670743220560A202068707432206E65672030205620636C6F736570617468207374726F6B65207D206465660A2F5472695545207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C205620636C6F736570617468207374726F6B65207D206465660A2F5472694445207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C205620636C6F736570617468207374726F6B65207D206465660A2F50656E7445207B207374726F6B65205B5D203020736574646173682067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A2020636C6F736570617468207374726F6B652067726573746F7265207D206465660A2F4369726345207B207374726F6B65205B5D20302073657464617368200A202068707420302033363020617263207374726F6B65207D206465660A2F4F7061717565207B20677361766520636C6F736570617468203120736574677261792066696C6C2067726573746F72652030207365746772617920636C6F736570617468207D206465660A2F44696157207B207374726F6B65205B5D203020736574646173682076707420616464204D0A2020687074206E656720767074206E656720562068707420767074206E656720560A202068707420767074205620687074206E6567207670742056204F7061717565207374726F6B65207D206465660A2F426F7857207B207374726F6B65205B5D203020736574646173682065786368206870742073756220657863682076707420616464204D0A2020302076707432206E656720562068707432203020562030207670743220560A202068707432206E656720302056204F7061717565207374726F6B65207D206465660A2F5472695557207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20616464204D0A2020687074206E656720767074202D312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E65672076707420312E3632206D756C2056204F7061717565207374726F6B65207D206465660A2F5472694457207B207374726F6B65205B5D203020736574646173682076707420312E3132206D756C20737562204D0A2020687074206E65672076707420312E3632206D756C20560A20206870742032206D756C203020560A2020687074206E656720767074202D312E3632206D756C2056204F7061717565207374726F6B65207D206465660A2F50656E7457207B207374726F6B65205B5D203020736574646173682067736176650A20207472616E736C617465203020687074204D2034207B373220726F74617465203020687074204C7D207265706561740A20204F7061717565207374726F6B652067726573746F7265207D206465660A2F4369726357207B207374726F6B65205B5D20302073657464617368200A202068707420302033363020617263204F7061717565207374726F6B65207D206465660A2F426F7846696C6C207B20677361766520526563203120736574677261792066696C6C2067726573746F7265207D206465660A2F53796D626F6C2D4F626C69717565202F53796D626F6C2066696E64666F6E74205B312030202E3136372031203020305D206D616B65666F6E740A647570206C656E677468206469637420626567696E207B3120696E646578202F464944206571207B706F7020706F707D207B6465667D206966656C73657D20666F72616C6C0A63757272656E746469637420656E6420646566696E65666F6E7420706F700A2F4D4673686F77207B7B647570206475702030206765742066696E64666F6E742065786368203120676574207363616C65666F6E7420736574666F6E740A20202020205B2063757272656E74706F696E74205D2065786368206475702032206765742030206578636820726D6F7665746F206475702064757020352067657420657863682034206765740A20202020207B73686F777D207B737472696E67776964746820706F70203020726D6F7665746F7D6966656C7365206475702033206765740A20202020207B3220676574206E65672030206578636820726D6F7665746F20706F707D207B706F7020616C6F616420706F70206D6F7665746F7D6966656C73657D20666F72616C6C7D2062696E64206465660A2F4D467769647468207B302065786368207B6475702033206765747B647570206475702030206765742066696E64666F6E742065786368203120676574207363616C65666F6E7420736574666F6E740A202020202020352067657420737472696E67776964746820706F70206164647D0A202020207B706F707D206966656C73657D20666F72616C6C7D2062696E64206465660A2F4D4C73686F77207B2063757272656E74706F696E74207374726F6B65204D0A20203020657863682052204D4673686F77207D2062696E64206465660A2F4D5273686F77207B2063757272656E74706F696E74207374726F6B65204D0A20206578636820647570204D467769647468206E65672033202D3120726F6C6C2052204D4673686F77207D206465660A2F4D4373686F77207B2063757272656E74706F696E74207374726F6B65204D0A20206578636820647570204D467769647468202D32206469762033202D3120726F6C6C2052204D4673686F77207D206465660A656E640A2525456E6450726F6C6F670A676E756469637420626567696E0A67736176650A3530203530207472616E736C6174650A302E30353020302E303530207363616C650A3020736574677261790A6E6577706174680A2848656C766574696361292066696E64666F6E7420313430207363616C65666F6E7420736574666F6E740A312E30303020554C0A4C54620A312E30303020554C0A4C54300A323830322032303336204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028427574746572666C7920456666656374295D0A5D202D34362E37204D5273686F770A323838362032303336204D0A333939203020560A313938392031333434204D0A3234203320560A3237203520560A3239203820560A333120313020560A333420313320560A333620313620560A333920323020560A343020323220560A343120323720560A343020323920560A333920333320560A333420333420560A323720333520560A313920333520560A3620333020560A2D3620323620560A2D313920313820560A2D3333203920560A2D3434203120560A2D3532202D3820560A2D3538202D313420560A2D3539202D313920560A2D3539202D323120560A2D3535202D323220560A2D3531202D323220560A2D3436202D323120560A2D3431202D313820560A2D3335202D313720560A2D3330202D313520560A2D3236202D313320560A2D3233202D313220560A2D3139202D313120560A2D3136202D313020560A2D3133202D313020560A2D3132202D3920560A2D3131202D3820560A2D39202D3920560A2D38202D3820560A2D38202D3920560A2D37202D3820560A2D37202D3820560A2D37202D3720560A2D38202D3820560A2D37202D3820560A2D38202D3720560A2D39202D3720560A2D39202D3720560A2D3130202D3720560A2D3131202D3620560A2D3132202D3620560A2D3133202D3620560A2D3134202D3520560A2D3136202D3420560A2D3137202D3420560A2D3138202D3320560A2D3230202D3320560A2D3231203020560A2D3233203020560A2D3233203220560A2D3235203420560A2D3235203520560A2D3236203920560A2D323520313120560A2D323420313320560A2D323220313720560A2D313920323020560A2D313520323220560A2D313020323520560A2D3520323620560A3220323720560A3820323620560A313520323520560A323120323220560A323620313920560A333020313420560A333220313020560A3334203620560A3334203120560A3333202D3320560A3331202D3620560A3239202D3920560A3237202D313120560A3233202D313220560A3231202D313320560A3138202D313320560A3136202D313420560A3134202D313420560A3131202D313320560A39202D313320560A37202D313320560A36202D313320560A34202D313220560A34202D313120560A32202D313220560A30202D313020560A30202D313120560A30202D313020560A2D32202D3920560A2D33202D313020560A2D33202D3820560A2D34202D3920560A2D35202D3820560A2D36202D3820560A2D37202D3820560A2D37202D3820560A2D39202D3720560A2D39202D3720560A2D3131202D3620560A2D3132202D3620560A2D3133202D3620560A2D3135202D3520560A2D3137202D3520560A2D3138202D3420560A2D3139202D3420560A2D3232202D3220560A2D3233202D3220560A2D3236203020560A2D3237203220560A2D3238203320560A2D3330203620560A2D3331203920560A2D333020313220560A2D333020313620560A2D323820313920560A2D323420323420560A2D323020323720560A2D313420333020560A2D3620333320560A3220333420560A313020333320560A313920333220560A323720323820560A333420323320560A333820313720560A343120313120560A3432203520560A3432203020560A3430202D3520560A3337202D3920560A3334202D313220560A3331202D313320560A3237202D313520560A3233202D313620560A3231202D313620560A3137202D313520560A3135202D313620560A3132202D313420560A3131202D313520560A38202D313420560A37202D313320560A36202D313220560A35202D313220560A34202D313220560A32202D313020560A33202D313120560A32202D313020560A31202D3920560A31202D3920560A30202D3920560A31202D3820560A30202D3820560A2D31202D3820560A30202D3720560A2D31202D3720560A2D31202D3720560A2D31202D3720560A2D31202D3620560A2D31202D3720560A2D32202D3620560A2D32202D3620560A2D32202D3620560A2D32202D3520560A2D33202D3620560A2D33202D3520560A2D34202D3520560A2D34202D3620560A2D34202D3520560A2D35202D3520560A2D36202D3520560A2D37202D3420560A2D37202D3520560A2D38202D3520560A2D3130202D3520560A2D3130202D3520560A2D3132202D3420560A2D3134202D3520560A2D3135202D3420560A2D3137202D3420560A2D3230202D3420560A2D3231202D3420560A2D3235202D3320560A2D3237202D3220560A2D3331202D3120560A2D3333203120560A2D3337203220560A2D3430203520560A2D3432203920560A2D343520313320560A2D343520313820560A2D343420323420560A2D343220333120560A2D333620333820560A2D323720343520560A2D313620353120560A2D3220353520560A313520353620560A323920353320560A343520343720560A353520333720560A363420323620560A363620313420560A3637203420560A3633202D3620560A3539202D313220560A3533202D313720560A3436202D323020560A3431202D323120560A3335202D323220560A3239202D323120560A3236202D313920560A3231202D313920560A3138202D313720560A3136202D313720560A3134202D313420560A3131202D313420560A3131202D313220560A3130202D313120560A39202D313120560A38202D3920560A39202D3820560A38202D3720560A39202D3720560A39202D3620560A3130202D3420560A3130202D3420560A3131202D3320560A3132202D3220560A3132202D3220560A3134203020560A3135203120560A3136203220560A3136203320560A3138203520560A3139203520560A3139203720560A3230203920560A323120313020560A323020313120560A323020313220560A313920313420560A313820313420560A313520313520560A313320313420560A3920313420560A3520313420560A3120313120560A2D3520313020560A2D38203720560A2D3134203520560A2D3137203220560A2D3231202D3120560A2D3233202D3420560A2D3235202D3520560A2D3236202D3820560A2D3236202D3820560A2D3236202D313020560A2D3234202D3920560A2D3233202D313120560A2D3230202D313020560A2D3139202D313020560A2D3137202D3920560A2D3135202D313020560A2D3132202D3920560A2D3131202D3820560A2D38202D3920560A2D37202D3820560A2D36202D3720560A2D34202D3820560A2D32202D3720560A2D31202D3620560A30202D3620560A31202D3620560A32202D3620560A33202D3520560A35202D3520560A35202D3420560A37202D3420560A37202D3420560A39202D3220560A3130202D3220560A3131202D3220560A3132203020560A3134203020560A3135203220560A3136203220560A3137203420560A3139203520560A3230203620560A3231203720560A323220313020560A323220313020560A323320313320560A323320313320560A323220313620560A323120313620560A313820313720560A313620313720560A313220313720560A3720313520560A3220313420560A2D3420313220560A2D39203920560A2D3135203620560A2D3139203320560A2D3234202D3120560A2D3236202D3420560A2D3239202D3620560A2D3330202D3920560A2D3330202D313020560A2D3239202D313120560A2D3238202D313120560A2D3235202D313220560A2D3234202D313120560A2D3231202D313120560A2D3139202D313120560A2D3136202D313020560A2D3134202D313020560A2D3132202D3920560A2D3130202D3920560A2D38202D3820560A2D36202D3820560A2D35202D3820560A2D33202D3820560A2D32202D3720560A2D31202D3720560A30202D3720560A31202D3620560A33202D3620560A33202D3620560A34202D3520560A35202D3520560A36202D3420560A37202D3420560A38202D3420560A3130202D3320560A3130202D3220560A3132202D3120560A3133202D3120560A3134203120560A3135203120560A3138203220560A3138203420560A3230203520560A3232203720560A3233203820560A323520313020560A323520313220560A323720313320560A323620313620560A323620313720560A323520313920560A323320323020560A323020323020560A313620323020560A313020323020560A3420313820560A2D3320313520560A2D3920313120560A2D3137203820560A2D3233203320560A2D3238202D3120560A2D3332202D3420560A2D3334202D3820560A2D3335202D313120560A2D3336202D313220560A2D3334202D313320560A2D3332202D313320560A2D3330202D313420560A2D3237202D313320560A2D3234202D313220560A2D3231202D313220560A2D3139202D313120560A2D3136202D313120560A2D3133202D313020560A2D3131202D3920560A2D39202D3920560A2D38202D3920560A2D36202D3820560A2D34202D3920560A2D34202D3820560A2D32202D3720560A2D31202D3820560A30202D3720560A30202D3720560A31202D3720560A32202D3620560A33202D3620560A63757272656E74706F696E74207374726F6B65204D0A33202D3620560A35202D3620560A34202D3520560A36202D3520560A36202D3420560A38202D3420560A38202D3320560A39202D3320560A3131202D3220560A3131202D3220560A3133202D3120560A3134203120560A3136203120560A3138203220560A3139203320560A3232203520560A3233203720560A3235203820560A323820313020560A323920313320560A333020313420560A333220313820560A333320313920560A333220323220560A333120323420560A323920323620560A323420323720560A313820323620560A313120323520560A3320323220560A2D3720313820560A2D313620313320560A2D3236203720560A2D3333203020560A2D3339202D3420560A2D3433202D313020560A2D3436202D313320560A2D3435202D313520560A2D3434202D313720560A2D3431202D313720560A2D3337202D313620560A2D3334202D313620560A2D3330202D313520560A2D3236202D313420560A2D3233202D313220560A2D3139202D313220560A2D3137202D313120560A2D3134202D313020560A2D3131202D313020560A2D3130202D3920560A2D39202D3920560A2D36202D3920560A2D36202D3920560A2D35202D3820560A2D34202D3920560A2D34202D3820560A2D33202D3820560A2D32202D3820560A2D33202D3720560A2D32202D3820560A2D32202D3720560A2D32202D3820560A2D32202D3720560A2D32202D3720560A2D33202D3720560A2D32202D3720560A2D33202D3620560A2D33202D3720560A2D33202D3620560A2D33202D3620560A2D34202D3620560A2D34202D3620560A2D35202D3620560A2D36202D3620560A2D36202D3620560A2D37202D3520560A2D37202D3620560A2D39202D3520560A2D39202D3520560A2D3131202D3620560A2D3133202D3520560A2D3133202D3520560A2D3136202D3420560A2D3137202D3520560A2D3230202D3420560A2D3231202D3320560A2D3235202D3320560A2D3237202D3220560A2D3239202D3120560A2D3333203120560A2D3335203320560A2D3338203520560A2D3430203920560A2D343220313320560A2D343120313820560A2D343120323420560A2D333720333020560A2D333220333620560A2D323320343220560A2D313320343720560A3120353120560A313420353020560A323820343720560A343120343220560A353120333320560A353720323320560A363120313420560A3630203320560A3539202D3420560A3534202D313120560A3439202D313520560A3434202D313920560A3338202D313920560A3333202D323020560A3238202D323020560A3234202D313920560A3230202D313820560A3138202D313820560A3135202D313620560A3133202D313420560A3131202D313420560A3130202D313320560A38202D313220560A39202D313120560A37202D313020560A38202D3920560A37202D3820560A38202D3720560A38202D3720560A38202D3620560A39202D3520560A39202D3520560A3131202D3320560A3131202D3320560A3132202D3220560A3133202D3120560A3135203020560A3136203120560A3137203220560A3138203420560A3230203420560A3230203720560A3233203820560A3233203920560A323420313220560A323420313220560A323420313520560A323420313620560A323220313720560A323020313820560A313720313920560A313220313820560A3820313720560A3220313520560A2D3420313320560A2D3130203920560A2D3136203620560A2D3231203320560A2D3236202D3220560A2D3239202D3420560A2D3331202D3720560A2D3332202D313020560A2D3332202D313020560A2D3331202D313220560A2D3239202D313220560A2D3237202D313320560A2D3234202D313220560A2D3232202D313120560A2D3230202D313120560A2D3137202D313120560A2D3134202D313020560A2D3132202D3920560A2D3130202D3920560A2D39202D3920560A2D36202D3820560A2D35202D3920560A2D34202D3720560A2D32202D3820560A2D32202D3720560A30202D3720560A31202D3720560A32202D3620560A32202D3620560A34202D3620560A34202D3520560A36202D3520560A36202D3520560A37202D3420560A38202D3320560A39202D3320560A3130202D3320560A3132202D3120560A3133202D3120560A3134203020560A3136203120560A3137203220560A3139203420560A3230203520560A3232203620560A3234203820560A323620313020560A323720313220560A323720313420560A323920313620560A323920313820560A323720313920560A323620323220560A323420323220560A313920323320560A313320323220560A3720323020560A3020313820560A2D3820313420560A2D313520313020560A2D3234203520560A2D3239203020560A2D3334202D3520560A2D3337202D3820560A2D3339202D313120560A2D3339202D313320560A2D3337202D313420560A2D3336202D313420560A2D3333202D313520560A2D3330202D313420560A2D3236202D313320560A2D3233202D313320560A2D3231202D313220560A2D3137202D313120560A2D3135202D313020560A2D3132202D313020560A2D3131202D313020560A2D38202D3920560A2D37202D3820560A2D36202D3920560A2D34202D3820560A2D33202D3820560A2D32202D3820560A2D32202D3820560A2D31202D3720560A30202D3820560A30202D3720560A31202D3720560A32202D3620560A32202D3620560A32202D3720560A33202D3520560A33202D3620560A34202D3520560A35202D3520560A35202D3520560A36202D3420560A37202D3420560A37202D3320560A38202D3320560A3130202D3220560A3130202D3220560A3132202D3120560A3133203020560A3135203120560A3136203120560A3138203320560A3231203420560A3232203520560A3235203720560A3237203920560A333020313220560A333220313320560A333420313720560A333620313920560A333720323220560A333720323520560A333720323820560A333320333020560A323920333120560A323320333220560A313420333020560A3420323620560A2D3820323220560A2D323020313520560A2D3331203820560A2D3430203020560A2D3437202D3720560A2D3532202D313320560A2D3534202D313720560A2D3532202D313920560A2D3530202D323020560A2D3437202D313920560A2D3432202D313920560A2D3337202D313820560A2D3333202D313520560A2D3238202D313520560A2D3234202D313320560A2D3231202D313120560A2D3138202D313120560A2D3135202D313120560A2D3133202D3920560A2D3131202D313020560A2D39202D3920560A2D38202D3820560A2D37202D3920560A2D37202D3920560A2D36202D3820560A2D35202D3820560A2D36202D3820560A2D36202D3820560A2D35202D3820560A2D36202D3820560A2D36202D3720560A2D37202D3820560A2D37202D3720560A2D38202D3720560A2D39202D3720560A2D39202D3720560A2D3131202D3620560A2D3131202D3720560A2D3133202D3620560A2D3135202D3520560A2D3135202D3520560A2D3137202D3520560A2D3139202D3320560A2D3231202D3320560A2D3232202D3220560A2D3234202D3120560A2D3236203020560A2D3238203320560A2D3239203520560A2D3330203720560A2D333120313020560A2D333020313420560A2D323920313720560A2D323620323120560A2D323220323520560A2D313820323820560A2D313020333120560A2D3320333420560A3520333320560A313520333320560A323220333020560A333020323620560A333520323020560A343020313520560A3431203820560A3432203320560A3431202D3320560A3339202D3620560A3335202D313120560A3333202D313220560A3239202D313420560A3235202D313520560A3232202D313620560A3139202D313620560A3137202D313520560A3133202D313520560A3132202D313520560A39202D313420560A38202D313320560A37202D313320560A35202D313320560A34202D313120560A33202D313120560A33202D313120560A32202D313020560A31202D313020560A31202D3920560A31202D3920560A30202D3920560A30202D3820560A30202D3820560A2D31202D3720560A30202D3820560A2D31202D3720560A2D31202D3720560A2D32202D3620560A2D32202D3720560A2D31202D3620560A2D33202D3620560A2D32202D3620560A2D33202D3620560A2D33202D3520560A2D34202D3620560A2D34202D3520560A2D34202D3620560A2D35202D3520560A2D36202D3520560A2D37202D3520560A2D37202D3520560A2D39202D3520560A2D39202D3520560A2D3131202D3520560A2D3132202D3520560A2D3134202D3520560A2D3135202D3420560A2D3137202D3420560A2D3230202D3420560A2D3232202D3420560A2D3234202D3320560A2D3238202D3220560A2D3330202D3120560A2D3333203120560A2D3337203320560A63757272656E74706F696E74207374726F6B65204D0A2D3339203520560A2D3432203920560A312E30303020554C0A4C54620A3330323420393438204D0A3231323820343634204C0A35373520373433204D0A3231323820343634204C0A35373520373433204D0A3839362034383420560A3330323420393438204D0A313437312031323237204C0A35373520373433204D0A302039363820560A30202D39363820520A353520323920560A207374726F6B650A35303120363736204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D3230295D0A5D202D34362E37204D4373686F770A313437312031323237204D0A2D3536202D333020560A39363320363733204D0A353520323920560A207374726F6B650A38383920363036204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D3130295D0A5D202D34362E37204D4373686F770A313836302031313537204D0A2D3536202D333020560A3133353120363033204D0A353520323920560A207374726F6B650A3132373720353336204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282030295D0A5D202D34362E37204D4373686F770A323234382031303837204D0A2D3536202D333020560A3137333920353333204D0A353520323920560A207374726F6B650A3136363520343636204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203130295D0A5D202D34362E37204D4373686F770A323633362031303138204D0A2D3536202D333020560A3231323820343634204D0A353520323920560A207374726F6B650A3230353420333937204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203230295D0A5D202D34362E37204D4373686F770A3330323420393438204D0A2D3536202D333020560A3231323820343634204D0A2D363320313120560A207374726F6B650A3232313020343339204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D3230295D0A5D202D34362E37204D4C73686F770A35373520373433204D0A3632202D313220560A3233353220353835204D0A2D363320313120560A207374726F6B650A3234333420353630204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282D3130295D0A5D202D34362E37204D4C73686F770A37393920383634204D0A3632202D313220560A3235373620373036204D0A2D363320313120560A207374726F6B650A3236353820363831204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282030295D0A5D202D34362E37204D4C73686F770A3130323320393835204D0A3632202D313220560A3238303020383237204D0A2D363320313120560A207374726F6B650A3238383220383032204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203130295D0A5D202D34362E37204D4C73686F770A313234372031313036204D0A3632202D313220560A3330323420393438204D0A2D363320313120560A207374726F6B650A3331303620393233204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203230295D0A5D202D34362E37204D4C73686F770A313437312031323237204D0A3632202D313220560A3537352031303636204D0A3633203020560A207374726F6B650A3434392031303636204D0A5B205B2848656C76657469636129203134302E3020302E302074727565207472756520282030295D0A5D202D34362E37204D5273686F770A3537352031313935204D0A3633203020560A207374726F6B650A3434392031313935204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203130295D0A5D202D34362E37204D5273686F770A3537352031333234204D0A3633203020560A207374726F6B650A3434392031333234204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203230295D0A5D202D34362E37204D5273686F770A3537352031343533204D0A3633203020560A207374726F6B650A3434392031343533204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203330295D0A5D202D34362E37204D5273686F770A3537352031353832204D0A3633203020560A207374726F6B650A3434392031353832204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203430295D0A5D202D34362E37204D5273686F770A3537352031373131204D0A3633203020560A207374726F6B650A3434392031373131204D0A5B205B2848656C76657469636129203134302E3020302E30207472756520747275652028203530295D0A5D202D34362E37204D5273686F770A7374726F6B650A67726573746F72650A656E640A73686F77706167650A>|eps>||||>|Embedded
+  3D graph from Octave.>
 
-  <apply|tmdoc-copyright|2003|Chu-Ching Huang|Joris van der Hoeven>
+  <tmdoc-copyright|2003|Chu-Ching Huang|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-10|<tuple|8.2|?>>
-    <associate|toc-11|<tuple|8.3|?>>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-12|<tuple|8.4|?>>
-    <associate|gly-2|<tuple|2|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|gly-3|<tuple|3|?>>
-    <associate|toc-13|<tuple|8.5|?>>
-    <associate|idx-3|<tuple|2|?>>
-    <associate|gly-4|<tuple|4|?>>
-    <associate|toc-14|<tuple|8.6|?>>
-    <associate|idx-4|<tuple|7|?>>
-    <associate|gly-5|<tuple|5|?>>
-    <associate|toc-15|<tuple|8.7|?>>
-    <associate|idx-5|<tuple|8|?>>
-    <associate|toc-16|<tuple|8.8|?>>
-    <associate|gly-6|<tuple|6|?>>
-    <associate|gly-7|<tuple|7|?>>
-    <associate|gly-8|<tuple|8|?>>
-    <associate|gly-9|<tuple|9|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|toc-3|<tuple|3|?>>
-    <associate|toc-4|<tuple|4|?>>
-    <associate|toc-5|<tuple|5|?>>
-    <associate|toc-6|<tuple|6|?>>
-    <associate|toc-7|<tuple|7|?>>
-    <associate|toc-8|<tuple|8|?>>
-    <associate|toc-9|<tuple|8.1|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|figure>
-      <tuple|normal||<pageref|gly-1>>
-    </associate>
-    <\associate|idx>
-      <tuple|<tuple|<with|font family|<quote|ss>|Text>|<with|font
-      family|<quote|ss>|Session>|<with|font
-      family|<quote|ss>|Octave>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font family|<quote|ss>|Octave>>|<pageref|idx-2>>
-    </associate>
-  </collection>
-</auxiliary>

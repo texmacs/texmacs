@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|maxima-abstract.en.tm>
+
+    <branch|Example session|maxima-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

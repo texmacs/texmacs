@@ -5,6 +5,10 @@
 <\body>
   <tmdoc-title|The <name|Dra<TeX>> plug-in>
 
+  <\traverse>
+    <branch|Example sessions|dratex-demo.en.tm>
+  </traverse>
+
   <tmdoc-copyright|2011|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this

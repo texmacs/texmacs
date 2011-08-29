@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|yacas-abstract.en.tm>
+
+    <branch|Example session|yacas-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

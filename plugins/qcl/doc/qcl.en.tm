@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|qcl-abstract.en.tm>
+
+    <branch|Example session|qcl-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

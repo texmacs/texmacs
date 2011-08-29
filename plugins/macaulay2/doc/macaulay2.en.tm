@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|macaulay2-abstract.en.tm>
+
+    <branch|Example session|macaulay2-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

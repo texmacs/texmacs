@@ -5,6 +5,10 @@
 <\body>
   <tmdoc-title|The <name|Gnuplot> plug-in>
 
+  <\traverse>
+    <branch|Example session|gnuplot-demo.en.tm>
+  </traverse>
+
   <tmdoc-copyright|2011|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this

@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|asymptote-abstract.en.tm>
+
+    <branch|Example sessions|asymptote-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

@@ -7,6 +7,8 @@
 
   <\traverse>
     <branch|Short description|octave-abstract.en.tm>
+
+    <branch|Example session|octave-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>

@@ -1,17 +1,17 @@
-<TeXmacs|1.0.5.12>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <doc-data|<doc-title|Mycas>>
+  <tmdoc-title|The <name|Mycas> plug-in>
 
   The <name|Mycas> plug-in is a very simple example of how you might write
   your own plug-in. In order to try it, compile the program
   <verbatim|mycas.cpp> in the <verbatim|src> subdirectory using
 
-  <\shell-fragment>
+  <\shell-code>
     g++ mycas.cpp -o mycas
-  </shell-fragment>
+  </shell-code>
 
   and move the binary to some place in your path. When starting <TeXmacs>,
   you will see a <menu|Mycas> entry in the <menu|Insert|Session> menu. Below,
@@ -27,25 +27,25 @@
   your system has finished, all output needs to be encapsulated in blocks,
   using three special control characters:
 
-  <\cpp-fragment>
+  <\cpp-code>
     #define DATA_BEGIN \ \ ((char) 2)
 
     #define DATA_END \ \ \ \ ((char) 5)
 
     #define DATA_ESCAPE \ ((char) 27)
-  </cpp-fragment>
+  </cpp-code>
 
   <\verbatim>
     \ \ \ \ 
   </verbatim>
 
   The <verbatim|DATA_ESCAPE> character followed by any other character
-  <with|mode|math|c> may be used to produce <with|mode|math|c>, even if
-  <with|mode|math|c> is one of the three control characters. An illustration
-  of how to use <verbatim|DATA_BEGIN> and <verbatim|DATA_END> is given by the
-  startup banner:
+  <math|c> may be used to produce <math|c>, even if <math|c> is one of the
+  three control characters. An illustration of how to use
+  <verbatim|DATA_BEGIN> and <verbatim|DATA_END> is given by the startup
+  banner:
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       int
 
@@ -70,7 +70,7 @@
 
       \ \ fflush (stdout);
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   The first line of <verbatim|main> says that the startup banner will be
   printed in the ``verbatim'' format. The <verbatim|next_input> function,
@@ -82,7 +82,7 @@
 
   The main loop starts by asking for input from the standard input:
 
-  <\cpp-fragment>
+  <\cpp-code>
     \ \ while (1) {
 
     \ \ \ \ char buffer[100];
@@ -90,7 +90,7 @@
     \ \ \ \ cin \<gtr\>\<gtr\> buffer;
 
     \ \ \ \ if (strcmp (buffer, "quit") == 0) break;
-  </cpp-fragment>
+  </cpp-code>
 
   <\verbatim>
     \ \ \ \ \ \ 
@@ -99,20 +99,20 @@
   The output which is send back should again be enclosed in a
   <verbatim|DATA_BEGIN>-<verbatim|DATA_END> block.
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       \ \ \ \ cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "verbatim:";
 
       \ \ \ \ cout \<less\>\<less\> "You typed " \<less\>\<less\> buffer
       \<less\>\<less\> "\\n";
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   Inside such a block you may recursively send other blocks, which may be
   specified in different formats. For instance, the following code will send
   a <LaTeX> formula:
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       \ \ \ \ cout \<less\>\<less\> "And now a LaTeX formula: ";
 
@@ -121,12 +121,12 @@
 
       \ \ \ \ cout \<less\>\<less\> "\\n";
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   For certain purposes, it may be useful to directly send output in <TeXmacs>
   format using a <scheme> representation:
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       \ \ \ \ cout \<less\>\<less\> "And finally a fraction ";
 
@@ -137,14 +137,14 @@
 
       \ \ \ \ cout \<less\>\<less\> ".\\n";
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   \;
 
   In order to finish, we should again output the matching <verbatim|DATA_END>
   and flush the standard output:
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       \ \ \ \ next_input ();
 
@@ -158,7 +158,7 @@
 
       }
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   \;
 
@@ -172,7 +172,7 @@
   A special ``channel'' is used in order to send the input prompt. Channels
   are specified as special <verbatim|DATA_BEGIN>-<verbatim|DATA_END> blocks:
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       static int counter= 0;
 
@@ -192,7 +192,7 @@
 
       }
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   \;
 
@@ -216,7 +216,7 @@
   that you have a picture <verbatim|picture.ps> in your home directory. Then
   inserting the lines:
 
-  <\cpp-fragment>
+  <\cpp-code>
     <\verbatim>
       \ \ \ \ cout \<less\>\<less\> "A little picture:\\n";
 
@@ -230,10 +230,19 @@
 
       \ \ \ \ cout \<less\>\<less\> "\\n";
     </verbatim>
-  </cpp-fragment>
+  </cpp-code>
 
   at the appropriate place in the main loop will display your image in the
   middle of the output.
+
+  <tmdoc-copyright|2011|Joris van der Hoeven>
+
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
