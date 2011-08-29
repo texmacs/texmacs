@@ -1,9 +1,9 @@
-<TeXmacs|1.0.6.4>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Cadabra system>
+  <tmdoc-title|The <name|Cadabra> system>
 
   <hlink|Cadabra|http://www.aei.mpg.de/~peekas/cadabra/> is a computer
   algebra system for the manipulation of what could loosely be called

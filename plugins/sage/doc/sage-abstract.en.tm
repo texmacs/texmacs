@@ -1,10 +1,10 @@
-<TeXmacs|1.0.6.11>
+<TeXmacs|1.0.7.11>
 
 <style|<tuple|tmdoc|maxima>>
 
 <\body>
   <\tmdoc-title>
-    Sage
+    The <name|Sage> system
   </tmdoc-title>
 
   <hlink|<name|Sage>|http://www.sagemath.org/> is an open source system for

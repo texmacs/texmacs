@@ -3,13 +3,13 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The <name|Giac> system>
+  <tmdoc-title|The <name|Macaulay 2> plug-in>
 
-  <hlink|<name|Giac>|http://www-fourier.ujf-grenoble.fr/~parisse/english.html>
-  Is A Computer algebra system. The system has been designed by <name|Bernard
-  Parisse> and is under active development.
+  <\traverse>
+    <branch|Short description|macaulay2-abstract.en.tm>
+  </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|2011|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -21,6 +21,7 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
+    <associate|par-hyphen|normal>
+    <associate|preamble|false>
   </collection>
 </initial>

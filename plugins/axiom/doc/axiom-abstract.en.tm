@@ -1,9 +1,9 @@
-<TeXmacs|1.0.2.6>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Axiom system>
+  <tmdoc-title|The <name|Axiom> system>
 
   <hlink|Axiom|http://www.nongnu.org/axiom/> is a general purpose Computer
   Algebra system. It is useful for research and development of mathematical
@@ -35,7 +35,7 @@
 
   Axiom project : <hlink|http://savannah.nongnu.org/projects/axiom|http://savannah.nongnu.org/projects/axiom>
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -47,40 +47,6 @@
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|giac|<tuple|1|?>>
-    <associate|yacas|<tuple|5|?>>
-    <associate|gtybalt|<tuple|1|?>>
-    <associate|qcl|<tuple|6|?>>
-    <associate|pari|<tuple|4|?>>
-    <associate|r|<tuple|6|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|maxima|<tuple|3|?>>
-    <associate|macaulay2|<tuple|2|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|toc-3|<tuple|3|?>>
-    <associate|toc-4|<tuple|4|?>>
-    <associate|toc-5|<tuple|5|?>>
-    <associate|octave|<tuple|5|?>>
-    <associate|toc-6|<tuple|6|?>>
-    <associate|toc-7|<tuple|7|?>>
-    <associate|toc-8|<tuple|8|?>>
-    <associate|toc-9|<tuple|9|?>>
-  </collection>
-</references>

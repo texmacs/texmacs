@@ -1,9 +1,9 @@
-<TeXmacs|1.0.7>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The <TeX>graph system>
+  <tmdoc-title|The <name|<TeX>graph> system>
 
   <hlink|<TeX>graph|http://texgraph.tuxfamily.org> is a software for the
   creation of mathematical graphics, such as lines, circles, curves,

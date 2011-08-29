@@ -1,9 +1,9 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Asymptote system>
+  <tmdoc-title|The <name|Asymptote> system>
 
   <hlink|Asymptote|http://asymptote.sourceforge.net/> is a powerful
   descriptive vector graphics language that provides a natural

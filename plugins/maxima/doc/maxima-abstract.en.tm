@@ -1,9 +1,9 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Maxima system>
+  <tmdoc-title|The <name|Maxima> system>
 
   <hlink|<name|Maxima>|http://maxima.sourceforge.net/> is not only one of the
   oldest and best computer algebra systems around, it is also one of the only

@@ -1,9 +1,9 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The Eukleides system>
+  <tmdoc-title|The <name|Eukleides> system>
 
   <hlink|Eukleides|http://www.eukleides.org/> is a Euclidean geometry drawing
   language. It has been designed in order to be close to the traditional
