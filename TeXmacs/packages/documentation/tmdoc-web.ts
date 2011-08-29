@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.5>
+<TeXmacs|1.0.7.11>
 
 <style|<tuple|source|std>>
 
@@ -79,7 +79,7 @@
 
   <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Helping|contribute>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
 
-  <assign|tmweb-plugin-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Education|education>|<tmweb-link|Tools|tools>>>>>
+  <assign|tmweb-plugin-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Tools|tools>>>>>
 
   <assign|tmweb-about-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Authors|authors>|<tmweb-link|Donators|donators>|<tmweb-link|Philosophy|philosophy>|<tmweb-link|Changes|changes>|<tmweb-link|Plans|plans>|<tmweb-link|Roadmap|roadmap>|<tmweb-link|Artwork|artwork>|<tmweb-link|License|license>>>>>
 
@@ -101,7 +101,7 @@
     </src-comment>
   </active*>
 
-  <assign|tmweb-image|<macro|name|<postscript|<merge|http://www.texmacs.org/Samples/|<arg|name>>|*2/3|||||>>>
+  <assign|tmweb-image|<macro|name|<image|<merge|http://www.texmacs.org/Samples/|<arg|name>>|0.666667w|||>>>
 
   <assign|tmweb-email|<macro|name|domain|<active*|<with|font-family|tt|color|dark
   magenta|\<less\>>><with|font-family|tt|color|dark

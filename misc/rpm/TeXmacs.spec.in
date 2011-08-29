@@ -4,7 +4,7 @@ Version: @DEVEL_VERSION@
 Release: @DEVEL_RELEASE@
 Url: http://www.texmacs.org
 Source: ftp://ftp.texmacs.org/pub/TeXmacs/@tmtgz@-src.tar.gz
-License: GNU GPL 2.0
+License: GNU GPL 3.0
 Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software

@@ -4,7 +4,7 @@ Release:        1%{?dist}
 Summary:        A structured wysiwyg scientific text editor
 
 Group:          Applications/Editors
-License:        GNU GPL 2.0
+License:        GNU GPL 3.0
 URL:            http://www.texmacs.org
 Source0:        texmacs-1.0.7.10.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)

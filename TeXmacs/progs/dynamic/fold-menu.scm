@@ -47,6 +47,12 @@
 ;; Inserting foldable and switchable tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (supported-executable-menu)
+  (for (name (sorted-supported-sessions))
+    (with menu-name (ahash-ref supported-sessions-table name)
+      ((eval menu-name)
+       (insert-go-to `(script-input ,name "default" "" "") '(2 0))))))
+
 (menu-bind insert-fold-menu
   (-> "Folded"
       ("Default" (make-toggle 'folded))
@@ -89,6 +95,9 @@
       ;;---
       ;;(link switch-menu)
       )
+  (if (!= (sorted-supported-sessions) '())
+      (-> "Executable"
+          (link supported-executable-menu)))
   (-> "Traversal"
       ("Fold back" (make 'fold-back))
       ("Keep unfolded" (make 'keep-unfolded))
