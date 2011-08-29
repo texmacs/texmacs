@@ -8,9 +8,9 @@
   <hlink|<name|Macaulay 2>|http://www.math.uiuc.edu/Macaulay2> is a new
   software system devoted to supporting research in algebraic geometry and
   commutative algebra. The software is available now in source code for
-  porting, and in compiled form for Linux, SunOS, Solaris, Windows, and a few
-  other unix machines. An interface with <TeXmacs> is currently being
-  implemented.
+  porting, and in compiled form for <name|Linux>, <name|SunOS>,
+  <name|Solaris>, <name|Windows>, and a few other <name|Unix> machines. An
+  interface with <TeXmacs> is currently being implemented.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
@@ -18,8 +18,6 @@
     <branch|Sitzungen editieren|man-session-edit.de.tm>
 
     <branch|Eine Eingabemethode auswählen|man-session-input.de.tm>
-
-    <branch|Unterstützte Anwendungen|cas/man-supported.de.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
