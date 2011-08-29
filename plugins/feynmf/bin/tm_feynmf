@@ -67,7 +67,7 @@ while [ 1 ]; do
 	echo -n $DATA_BEGIN
 	echo -n channel:prompt
 	echo -n $DATA_END
-	echo -n "feynmf]"
+	echo -n "feynmf] "
 	echo -n $DATA_END
 
 	# Read a line from stdin
