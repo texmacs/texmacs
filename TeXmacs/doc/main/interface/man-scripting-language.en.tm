@@ -17,8 +17,9 @@
   <script-input|maxima|default|diff(x^x,x)|>. Using <shortcut|(kbd-return)>,
   you may now switch back and forth between the unevaluated input and the
   evaluated output <script-output|maxima|default|diff(x^x,x)|<math|x<rsup|x>*<around*|(|log
-  <around*|(|x|)>+1|)>>>. This kind of executable switches are very useful
-  for plugins such as <name|Dra<TeX>>, <name|Eukleides>, <name|Feynmf>,
+  <around*|(|x|)>+1|)>>>. Using <shortcut|(kbd-shift-return)>, you enable
+  multi-line input. This kind of executable switches are very useful for
+  plugins such as <name|Dra<TeX>>, <name|Eukleides>, <name|Feynmf>,
   <abbr|etc.>, which are mainly used for the efficient computation and
   insertion of special graphics inside <TeXmacs> documents.
 
