@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
@@ -47,6 +47,14 @@
   computer algebra sessions are also foldable. Similarly, the tags in
   <menu|Insert|Fold|Summarize> are switches with two branches, again with
   different kinds of rendering.
+
+  When using <TeXmacs> in combination with an external plug-in, such as a
+  computer algebra system, you will notice that all input-output fields in
+  <hlink|sessions|../interface/man-session-basic.en.tm> are foldable. In
+  addition, you can create so called ``<hlink|executable
+  switches|../interface/man-scripting-language.en.tm>'' using the items in
+  the <menu|Insert|Fold|Executable> submenu. This allows you to switch back
+  and forth between a given input to the system and the corresponding output.
 
   All markup for the traversal of presentations may be nested in a natural
   way. In the <menu|Insert|Fold|Traversal> menu, you may specify whether
