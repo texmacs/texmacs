@@ -9,7 +9,7 @@ Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
 Group: Applications/Editors
-Buildrequires: qt4-devel, guile-devel
+Buildrequires: guile-devel
 BuildRoot: %{_tmppath}/TeXmacs-1.0.7.12-root
 
 %description

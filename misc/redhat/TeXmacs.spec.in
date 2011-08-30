@@ -9,7 +9,7 @@ Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
 Group: Applications/Editors
-Buildrequires: qt4-devel, guile-devel
+Buildrequires: guile-devel
 BuildRoot: %{_tmppath}/@tmtgz@-root
 
 %description
