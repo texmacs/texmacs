@@ -468,6 +468,23 @@ MANDRIVA_BUNDLE:
 # Cleaning and backups
 ###############################################################################
 
+CLEAN_DOC:
+	$(RM) -r $(tmdir)/doc/examples
+	$(RM) -r $(tmdir)/doc/images
+	$(RM) -r $(tmdir)/doc/tutorial
+	$(RM) -r $(tmdir)/doc/web
+	$(RM) -r $(tmdir)/doc/plugins
+	$(RM) -r $(tmdir)/doc/CVS
+	$(RM) -r $(tmdir)/doc/*/CVS
+	$(RM) -r $(tmdir)/doc/*/*/CVS
+	$(RM) -r $(tmdir)/doc/*/*/*/CVS
+	$(RM) -r $(tmdir)/doc/*/*/*/*/CVS
+	$(RM) -r $(tmdir)/doc/.svn
+	$(RM) -r $(tmdir)/doc/*/.svn
+	$(RM) -r $(tmdir)/doc/*/*/.svn
+	$(RM) -r $(tmdir)/doc/*/*/*/.svn
+	$(RM) -r $(tmdir)/doc/*/*/*/*/.svn
+
 RDISTR:
 	$(RM) $(tmdir)/TEX_PATHS
 	$(RM) *~
@@ -520,7 +537,7 @@ DISTCLEAN: CLEAN
 	$(RM) config.status
 	$(RM) Makefile
 
-.PHONY: RDISTR DISTR RCLEAN SCLEAN DISTCLEAN
+.PHONY: CLEAN_DOC RDISTR DISTR RCLEAN SCLEAN DISTCLEAN
 
 ###############################################################################
 # Miscellaneous targets
