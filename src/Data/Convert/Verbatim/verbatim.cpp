@@ -145,7 +145,7 @@ print_verbatim (string& buf, tree t, bool wrap) {
       else {
         int i, n= N(t);
         for (i=0; i<n; i++)
-          if (std_drd->is_accessible_child (t, i)) {
+          if (the_drd->is_accessible_child (t, i)) {
             if (is_document (t) && (i>0)) {
               if (wrap && N(buf)>0 && buf[N(buf)-1] != '\n') buf << "\n";
               buf << "\n";

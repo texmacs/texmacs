@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <dirent.h>
 #ifdef OS_WIN32
 #include <sys/misc.h>
@@ -71,17 +72,25 @@ load_string (url u, string& s, bool fatal) {
 #else
     FILE* fin= fopen (_name, "r");
 #endif
-    if (fin == NULL) err= true;
+    if (fin == NULL) {
+      err= true;
+      cerr << "TeXmacs] warning, load error for " << name << ", "
+           << sys_errlist[errno] << "\n";
+    }
     int size= 0;
     if (!err) {
       if (fseek (fin, 0L, SEEK_END) < 0) err= true;
       else {
-	size = ftell (fin);
+	size= ftell (fin);
 	if (size<0) err= true;
+      }
+      if (err) {
+        cerr << "TeXmacs] warning, seek failed for " << as_string (u) << "\n";
+        fclose (fin);
       }
     }
     if (!err) {
-      rewind(fin);
+      rewind (fin);
       s->resize (size);
       int read= fread (&(s[0]), 1, size, fin);
       if (read < size) s->resize (read);
@@ -128,7 +137,11 @@ save_string (url u, string s, bool fatal) {
 #else
     FILE* fout= fopen (_name, "w");
 #endif
-    if (fout == NULL) err= true;
+    if (fout == NULL) {
+      err= true;
+      cerr << "TeXmacs] warning, save error for " << name << ", "
+           << sys_errlist[errno] << "\n";
+    }
     if (!err) {
       int i, n= N(s);
       for (i=0; i<n; i++)

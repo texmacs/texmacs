@@ -103,10 +103,6 @@
   (:require (toggle-context? t))
   (alternate-toggle t))
 
-(tm-define (sorted-supported-sessions)
-  (lazy-plugin-force)
-  (list-sort supported-sessions-list string<=?))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on switch trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

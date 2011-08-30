@@ -18,6 +18,18 @@
 ;; The Help menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (plugin-documented? name)
+  (and (url-exists-in-help? (string-append name ".en.tm"))
+       (url-exists-in-help? (string-append name "-abstract.en.tm"))))
+
+(tm-menu (help-plugins-menu)
+  (for (name (list-filter (map symbol->string (plugin-list))
+                          plugin-documented?))
+    (with menu-name (or (ahash-ref supported-sessions-table name)
+                        (upcase-first name))
+      ((eval menu-name)
+       (load-help-article (string-append name))))))
+
 (menu-bind help-menu
   (when (url-exists-in-help? "about/welcome/welcome.en.tm")
 	("Welcome" (load-help-buffer "about/welcome/welcome"))
@@ -79,6 +91,8 @@
 	     (load-help-article "main/styles/styles"))
 	    ("Compatibility with other formats"
 	     (load-help-article "main/convert/man-convert"))))
+  (-> "Plugins"
+      (link help-plugins-menu))
   (when (url-exists-in-help? "about/about.en.tm")
 	(-> "About"
 	    ("Browse" (load-help-buffer "about/about"))
