@@ -12,8 +12,8 @@
   nice, graphical way. Some systems can also be used more in the background
   as scripting languages.
 
-  See <menu|Help|Plugins> for a list of extern systems to which <TeXmacs> has
-  been interfaced and more documentation on these specific interfaces.
+  See <menu|Help|Plug-ins> for a list of existing plug-ins and more
+  documentation on these systems.
 
   <\traverse>
     <branch|Creating sessions|man-session-basic.en.tm>

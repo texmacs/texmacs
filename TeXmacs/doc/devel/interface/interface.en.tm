@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.11>
 
 <style|tmdoc>
 
@@ -26,6 +26,8 @@
     <branch|Dynamic libraries|interface-dynlibs.en.tm>
 
     <branch|Miscellaneous features|interface-misc.en.tm>
+
+    <branch|Writing documentation|interface-documentation.en.tm>
 
     <branch|Plans for the future|interface-plans.en.tm>
   </traverse>
