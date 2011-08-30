@@ -7836,7 +7836,7 @@ tmdebb=texmacs_${DEBIAN_VERSION}
 # Done
 #--------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile:Makefile.in src/makefile:src/makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in misc/bundle/Base.xcconfig:misc/bundle/Base.xcconfig.in"
+ac_config_files="$ac_config_files Makefile:Makefile.in src/makefile:src/makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/redhat/TeXmacs.spec:misc/redhat/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in misc/bundle/Base.xcconfig:misc/bundle/Base.xcconfig.in"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8546,7 +8546,7 @@ do
     "misc/admin/admin.makefile") CONFIG_FILES="$CONFIG_FILES misc/admin/admin.makefile:misc/admin/admin.makefile.in" ;;
     "misc/doxygen/Doxyfile") CONFIG_FILES="$CONFIG_FILES misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in" ;;
     "misc/man/texmacs.1") CONFIG_FILES="$CONFIG_FILES misc/man/texmacs.1:misc/man/texmacs.1.in" ;;
-    "misc/rpm/TeXmacs.spec") CONFIG_FILES="$CONFIG_FILES misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in" ;;
+    "misc/redhat/TeXmacs.spec") CONFIG_FILES="$CONFIG_FILES misc/redhat/TeXmacs.spec:misc/redhat/TeXmacs.spec.in" ;;
     "misc/scripts/fig2ps") CONFIG_FILES="$CONFIG_FILES misc/scripts/fig2ps:misc/scripts/fig2ps.in" ;;
     "misc/scripts/texmacs") CONFIG_FILES="$CONFIG_FILES misc/scripts/texmacs:misc/scripts/texmacs.in" ;;
     "TeXmacs/examples/plugins/dynlink/Makefile") CONFIG_FILES="$CONFIG_FILES TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in" ;;
