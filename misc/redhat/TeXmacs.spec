@@ -37,10 +37,8 @@ Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 %prep
 %setup -q -n TeXmacs-1.0.7.12-src
 
-%configure
-./configure --disable-qt
-
 %build
+./configure --disable-qt
 make STATIC_TEXMACS
 
 %install
