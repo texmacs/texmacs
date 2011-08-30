@@ -119,10 +119,15 @@
 (tm-define (kbd-enter t forwards?)
   (:require (or (tree-is? t 'script-output)
                 (and (tree-is? t 'script-input)
-                     (not (tree-is? t :up 'inactive))
-                     (xor (not forwards?)
-                          (tree-is? t 2 'document)))))
-  (alternate-toggle t))
+                     (not (tree-is? t :up 'inactive)))))
+  (cond ((tree-is? t 'script-output)
+         (alternate-toggle t))
+        ((xor (not forwards?) (tree-is? t 2 'document))
+         (alternate-toggle t))
+        (else
+         (if (not (tree-is? t 2 'document))
+             (tree-set t 2 `(document ,(tree-ref t 2))))
+         (insert-return))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operate on current selection or formula
@@ -337,7 +342,12 @@
 (tm-define (kbd-enter t forwards?)
   (:require (or (tree-is? t 'converter-output)
                 (and (tree-is? t 'converter-input)
-                     (not (tree-is? t :up 'inactive))
-                     (xor (not forwards?)
-                          (tree-is? t 1 'document)))))
-  (alternate-toggle t))
+                     (not (tree-is? t :up 'inactive)))))
+  (cond ((tree-is? t 'converter-output)
+         (alternate-toggle t))
+        ((xor (not forwards?) (tree-is? t 1 'document))
+         (alternate-toggle t))
+        (else
+         (if (not (tree-is? t 1 'document))
+             (tree-set t 1 `(document ,(tree-ref t 1))))
+         (insert-return))))

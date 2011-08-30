@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.11>
 
 <style|source>
 
@@ -94,6 +94,8 @@
 
   <assign|script-eval|<macro|in|<render-eval-script|<value|prog-scripts>|<script-aux-3|<value|prog-scripts>|<arg|in>>>>>
 
+  <drd-props|script-input|arity|3|accessible|2|unaccessible|1|unaccessible|3>
+
   <\active*>
     <\src-comment>
       Plots.
@@ -102,15 +104,15 @@
 
   <assign|plot|<macro|name|body|<render-big-script|<arg|name>|<arg|body>>>>
 
-  <assign|plot-group|<macro|text|<style-with|src-compact|none|<resize|<small|<with|font-shape|italic|font-series|bold|<arg|text>>>||<minus|1b|0.3fn>||<plus|1t|0.3fn>|>>>>
+  <assign|plot-group|<macro|text|<style-with|src-compact|none|<resize|<small|<with|font-shape|italic|font-series|bold|<arg|text>>>||<minus|1b|0.3fn>||<plus|1t|0.3fn>>>>>
 
   <assign|plot-input-field|<macro|size|body|<with|color|grey|<tabular|<tformat|<cwith|1|1|1|1|cell-background|white>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-width|<arg|size>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
 
   <assign|plot-function|<macro|x|body|<style-with|src-compact|none|<resize|<math|<arg|x>>:
-  |||1.5fn||><plot-input-field|0.666par|<math|<arg|body>>>>>>
+  |||1.5fn|><plot-input-field|0.666par|<math|<arg|body>>>>>>
 
   <assign|plot-range|<macro|x|start|end|<style-with|src-compact|none|<resize|<math|<arg|x>>:
-  |||1.5fn||><plot-input-field|0.25par|<math|<arg|start>>> --
+  |||1.5fn|><plot-input-field|0.25par|<math|<arg|start>>> --
   <plot-input-field|0.25par|<math|<arg|end>>>>>>
 
   <assign|plot-curve|<macro|fun-f|start-x|end-x|<\plot|<localize|Plot curve>>
@@ -180,7 +182,7 @@
 
   <assign|converter-eval|<macro|format|in|<style-with|src-compact|none|<render-small-script|<arg|format>|<with|mode|prog|prog-language|verbatim|<arg|in>>>>>>
 
-  \;
+  <drd-props|converter-input|arity|3|accessible|1|unaccessible|2>
 </body>
 
 <\initial>
