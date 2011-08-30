@@ -37,8 +37,10 @@ Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 %prep
 %setup -q -n @tmtgz@-src
 
-%build
 %configure
+./configure --disable-qt
+
+%build
 make STATIC_TEXMACS
 
 %install

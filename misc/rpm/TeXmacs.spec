@@ -4,7 +4,7 @@ Version: 1.0.7.11
 Release: 1
 Url: http://www.texmacs.org
 Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-1.0.7.11-src.tar.gz
-License: GNU GPL 2.0
+License: GNU GPL 3.0
 Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
@@ -37,8 +37,10 @@ Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 %prep
 %setup -q -n TeXmacs-1.0.7.11-src
 
-%build
 %configure
+./configure --disable-qt
+
+%build
 make STATIC_TEXMACS
 
 %install
