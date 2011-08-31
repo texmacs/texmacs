@@ -330,7 +330,7 @@
 
   <assign|html-javascript|<macro|script|<small|<colored-frame|pastel
   yellow|<with|font-family|ss|Javascript:
-  ><with|font-family|tt|<arg|source-file>>>>>>
+  ><with|font-family|tt|<arg|script>>>>>>
 
   <assign|html-javascript-src|<macro|source-file|<small|<colored-frame|pastel
   yellow|<with|font-family|ss|Javascript source:

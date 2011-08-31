@@ -38,6 +38,8 @@
 
   <assign|html-css|http://www.texmacs.org/css/tmdoc.css>
 
+  <assign|html-head-javascript-src|http://www.texmacs.org/javascript/texmacs_functions.js>
+
   \;
 </body>
 
