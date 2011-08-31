@@ -198,7 +198,7 @@ qt_chooser_widget_rep::perform_dialog () {
     _filter= "BibTeX file (*.bib)";
     _suffix= "bib";
   } else if (type == "html") {
-    _filter= "Html file (*.htm *.html *.xhtml)";
+    _filter= "Html file (*.html *.xhtml *.htm)";
     _suffix= "html";
   } else if (type == "latex") {
     _filter= "LaTeX file (*.tex *.ltx *.sty *.cls)";

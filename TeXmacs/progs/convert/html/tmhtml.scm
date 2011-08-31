@@ -183,7 +183,6 @@
 		(else (tmhtml-force-string title))))
     (set! css
 	  (cond ((with-extract doc "html-css")
-		 (display* "Extract " (with-extract doc "html-css") "\n")
 		 `(h:link (@ (rel "stylesheet")
 			     (href ,(with-extract doc "html-css"))
 			     (type "text/css"))))
@@ -887,6 +886,7 @@
 
 (define (tmhtml-specific l)
   (cond ((== (car l) "html") (list (tmstring->string (force-string (cadr l)))))
+	((== (car l) "html*") (tmhtml (cadr l)))
 	((== (car l) "image") (tmhtml-png (cadr l)))
 	(else '())))
 
