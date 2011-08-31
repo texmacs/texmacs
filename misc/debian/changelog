@@ -1,5 +1,4 @@
-texmacs (1:1.0.7.10-1) unstable; urgency=low
+texmacs (1.0.7.12-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
-
- -- dndiatta <dndiatta@debian.localdomain>  Fri, 08 Apr 2011 15:21:31 +0200
+  * Texmacs Debian Package
+ -- dndiatta <dndiatta@lix.polytechnique.fr>  Fri, 08 Apr 2011 15:21:31 +0200

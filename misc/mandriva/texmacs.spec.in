@@ -1,18 +1,19 @@
-Name:           texmacs
-Version:        1.0.7.12
-Release:        1%{?dist}
-Summary:        A structured wysiwyg scientific text editor
+Name: @PACKAGE@
+Version: @DEVEL_VERSION@
+Release: @DEVEL_RELEASE@
+Summary: A structured wysiwyg scientific text editor
 
-Group:          Applications/Editors
-License:        GNU GPL 3.0
-URL:            http://www.texmacs.org
-Source0:        texmacs-1.0.7.12.tar.gz
+Group: Applications/Editors
+License: GNU GPL 3.0
+URL: http://www.texmacs.org
+Source0: texmacs-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
-BuildRequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
+Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
+
 
 %description
 
@@ -29,6 +30,7 @@ a small technical picture editor and a tool for making presentations from
 a laptop. Moreover, TeXmacs can be used as an interface for many external
 systems for computer algebra, numerical analysis, statistics, etc.
 New presentation styles can be written by the user and new features can be
+
 added to the editor using the Scheme extension language. A native spreadsheet
 and tools for collaborative authoring are planned for later.
 
@@ -64,5 +66,5 @@ rm -rf $RPM_BUILD_ROOT
 * Sun Aug 18 2011   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.7.11 Remove dependency on TeTeX and add dependency on Qt
 
-* Wed Apr 20 2011   Daouda NIang Diatta <dndiatta@lix.polytechnique.fr>
-- 1.0.7.10 Initial TeXmacs Package
+* Wed Apr 20 2011   Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
+- 1.0.7.10 Initial TeXmacs Package 

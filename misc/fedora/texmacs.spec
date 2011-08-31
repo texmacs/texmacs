@@ -1,14 +1,17 @@
 Name:           texmacs
-Version:        1.0.7.10
+Version:        1.0.7.12
 Release:        1%{?dist}
 Summary:        A structured wysiwyg scientific text editor
 
 Group:          Applications/Editors
 License:        GNU GPL 3.0
 URL:            http://www.texmacs.org
-Source0:        texmacs-1.0.7.10.tar.gz
+Source0:        texmacs-1.0.7.12.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
+Distribution: GNU/Linux
+Vendor: Jo the ripper software
 BuildRequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
 
 %description
@@ -60,3 +63,6 @@ rm -rf $RPM_BUILD_ROOT
 
 * Sun Aug 18 2011   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.7.11 Remove dependency on TeTeX and add dependency on Qt
+
+* Wed Apr 20 2011   Daouda NIang Diatta <dndiatta@lix.polytechnique.fr>
+- 1.0.7.10 Initial TeXmacs Package
