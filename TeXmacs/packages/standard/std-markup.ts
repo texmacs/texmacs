@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.12>
 
 <style|<tuple|source|std>>
 
@@ -308,6 +308,8 @@
 
   <assign|frame|<macro|body|<block|<tformat|<table|<row|<cell|<arg|body>>>>>>>>
 
+  <assign|colored-frame|<macro|col|body|<block|<tformat|<cwith|1|1|1|1|cell-background|<arg|col>>|<table|<row|<cell|<arg|body>>>>>>>>
+
   <assign|overline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
 
   <drd-props|overline|with-like|yes|arity|1|accessible|all>
@@ -315,6 +317,24 @@
   <assign|underline|<macro|body|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|body|<with|color|<unquote|<value|color>>|<wide*|<arg|body>|\<wide-bar\>>>>|<arg|body>>>>>>>
 
   <drd-props|underline|with-like|yes|arity|1|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Tags for HTML generation.
+    </src-comment>
+  </active*>
+
+  <assign|html-div|<macro|name|body|<arg|body>>>
+
+  <assign|html-style|<macro|style|body|<arg|body>>>
+
+  <assign|html-javascript|<macro|script|<small|<colored-frame|pastel
+  yellow|<with|font-family|ss|Javascript:
+  ><with|font-family|tt|<arg|source-file>>>>>>
+
+  <assign|html-javascript-src|<macro|source-file|<small|<colored-frame|pastel
+  yellow|<with|font-family|ss|Javascript source:
+  ><href|<arg|source-file>>>>>>
 
   <\active*>
     <\src-comment>
@@ -327,8 +347,6 @@
   <assign|slink|<macro|body|<hlink|<with|font-family|tt|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
-
-  \;
 </body>
 
 <\initial>

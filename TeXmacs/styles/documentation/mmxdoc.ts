@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.3>
+<TeXmacs|1.0.7.12>
 
 <style|source>
 
@@ -25,6 +25,14 @@
   </active*>
 
   <use-package|tmdoc|tmdoc-web|varsession>
+
+  <\active*>
+    <\src-comment>
+      Html customization
+    </src-comment>
+  </active*>
+
+  <assign|html-css|http://www.texmacs.org/css/mmxdoc.css>
 
   <\active*>
     <\src-comment>

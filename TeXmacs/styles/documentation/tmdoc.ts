@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.12>
 
 <style|source>
 
@@ -35,6 +35,8 @@
   <assign|par-first|0fn>
 
   <assign|save-aux|false>
+
+  <assign|html-css|http://www.texmacs.org/css/tmdoc.css>
 
   \;
 </body>

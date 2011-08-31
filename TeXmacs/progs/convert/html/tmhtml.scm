@@ -151,6 +151,16 @@
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
+(define (with-extract w var)
+  (cond ((and (pair? w) (== (car w) 'with)
+	      (pair? (cdr w)) (== (cadr w) var)
+	      (pair? (cddr w)))
+	 (tmhtml-force-string (caddr w)))
+	((and (pair? w) (== (car w) 'with)
+	      (pair? (cdr w)) (pair? (cddr w)))
+	 (with-extract `(with ,@(cdddr w)) var))
+	(else #f)))
+
 (define (tmhtml-file l)
   ;; This handler is special:
   ;; Since !file is a special node used only at the top of trees
@@ -161,27 +171,41 @@
 	 (tmpath (cadddr l))
 	 (title (tmhtml-find-title doc))
 	 (css `(h:style (@ (type "text/css")) ,(tmhtml-css-header)))
+	 (xhead '())
 	 (body (tmhtml doc)))
-    (set! title (cond ((not title) "No title")
-		      ((or (in? "tmdoc" styles) (in? "tmweb" styles))
-		       `(concat ,(tmhtml-force-string title)
-				" (FSF GNU project)"))
-		      (else (tmhtml-force-string title))))
+    (set! title
+	  (cond ((with-extract doc "html-title")
+		 (with-extract doc "html-title"))
+		((not title) "No title")
+		((or (in? "tmdoc" styles) (in? "tmweb" styles))
+		 `(concat ,(tmhtml-force-string title)
+			  " (FSF GNU project)"))
+		(else (tmhtml-force-string title))))
+    (set! css
+	  (cond ((with-extract doc "html-css")
+		 (display* "Extract " (with-extract doc "html-css") "\n")
+		 `(h:link (@ (rel "stylesheet")
+			     (href ,(with-extract doc "html-css"))
+			     (type "text/css"))))
+		(else css)))
+    (if (with-extract doc "html-head-javascript-src")
+	(let* ((src (with-extract doc "html-head-javascript-src"))
+	       (script `(h:script (@ (language "javascript") (src ,src)))))
+	  (set! xhead (append xhead (list script)))))
+    (if (with-extract doc "html-head-javascript")
+	(let* ((code (with-extract doc "html-head-javascript"))
+	       (script `(h:script (@ (language "javascript")) ,code)))
+	  (set! xhead (append xhead (list script)))))
     (if (or (in? "tmdoc" styles) (in? "tmweb" styles)
             (in? "mmxdoc" styles) (in? "magix-web" styles))
-	(with ss (if (or (in? "mmxdoc" styles) (in? "magix-web" styles))
-		     "http://www.texmacs.org/css/mmxdoc.css"
-		     "http://www.texmacs.org/css/tmdoc.css")
-	  (set! css `(h:link (@ (rel "stylesheet")
-				(href ,ss)
-				(type "text/css"))))
-	  (set! body (tmhtml-tmdoc-post body))))
+	(set! body (tmhtml-tmdoc-post body)))
     `(h:html
       (h:head
        (h:title ,@(tmhtml title))
        (h:meta (@ (name "generator")
 		  (content ,(string-append "TeXmacs " (texmacs-version)))))
-       ,css)
+       ,css
+       ,@xhead)
       (h:body ,@body))))
 
 (define (tmhtml-finalize-document top)
@@ -1171,6 +1195,26 @@
 			     "(" ,@(tmhtml (cadr l)) ")")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tags for customized html generation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-html-div l)
+  (list `(h:div (@ (class ,(tmhtml-force-string (car l))))
+		,@(tmhtml (cadr l)))))
+
+(define (tmhtml-html-style l)
+  (list `(h:div (@ (style ,(tmhtml-force-string (car l))))
+		,@(tmhtml (cadr l)))))
+
+(define (tmhtml-html-javascript l)
+  (list `(h:script (@ (language "javascript"))
+		   ,(tmhtml-force-string (car l)))))
+
+(define (tmhtml-html-javascript-src l)
+  (list `(h:script (@ (language "javascript")
+		      (src ,(tmhtml-force-string (car l)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1442,6 +1486,11 @@
   (equation* ,tmhtml-equation*)
   (equation-lab ,tmhtml-equation-lab)
   (equations-base ,tmhtml-equation*)
+  ;; tags for customized html generation
+  (html-div ,tmhtml-html-div)
+  (html-style ,tmhtml-html-style)
+  (html-javascript ,tmhtml-html-javascript)
+  (html-javascript-src ,tmhtml-html-javascript-src)
   ;; tmdoc tags
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)

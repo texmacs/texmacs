@@ -415,7 +415,20 @@ edit_typeset_rep::exec_html (tree t, path p) {
   tree patch= as_tree (eval ("(stree->tree (tmhtml-env-patch))"));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
-  return exec (t, H);
+  tree w (WITH);
+  if (H->contains ("html-title"))
+    w << string ("html-title") << H["html-title"];
+  if (H->contains ("html-css"))
+    w << string ("html-css") << H["html-css"];
+  if (H->contains ("html-head-javascript"))
+    w << string ("html-head-javascript") << H["html-head-javascript"];
+  if (H->contains ("html-head-javascript-src"))
+    w << string ("html-head-javascript-src") << H["html-head-javascript-src"];
+  if (N(w) == 0) return exec (t, H);
+  else {
+    w << t;
+    return exec (w, H);
+  }
   //tree r= exec (t, H);
   //cout << "In: " << t << "\n";
   //cout << "Out: " << r << "\n";

@@ -1,9 +1,11 @@
-<TeXmacs|1.0.5.11>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Converters for Html and MathML>
+
+  <paragraph|<name|Html generation>>
 
   <TeXmacs> supports reasonably good converters to <name|Html> and
   <name|MathML>. A document can be exported to <name|Html> using
@@ -20,7 +22,7 @@
   as images using <menu|Edit|Preferences|Converters|TeXmacs-\<gtr\>Html|Export
   formulas as images>. If your destination file is called
   <verbatim|name.html>, then the images are stored in the same directory in
-  files <verbatim|name-1.png>, <group|<verbatim|name-2.png>> and so on. Even
+  files <verbatim|name-1.png>, <rigid|<verbatim|name-2.png>> and so on. Even
   when formulas are not exported as images, notice that all graphics drawn
   using <TeXmacs> are exported in this way. In particular, the exportation of
   a <TeXmacs> file with pictures may give rise to the creation of additional
@@ -33,6 +35,46 @@
   <TeXmacs> files in this directory to <name|Html> files in a new directory.
   The conversion procedure recursively traverses all subdirectories and all
   non-<TeXmacs> files are simply copied.
+
+  <paragraph|Customized <name|Html> generation>
+
+  The following <TeXmacs> environment variables can be used to customize the
+  <name|Html> generation:
+
+  <\description>
+    <item*|<src-var|html-title>>The title of your exported document.
+
+    <item*|<src-var|html-css>>A cascaded style sheet for your exported
+    document.
+
+    <item*|<src-var|html-head-javascript-src>>An external <name|Javascript>
+    file to be executed before the body.
+
+    <item*|<src-var|html-head-javascript>>A <name|Javascript> script to be
+    executed before the body.
+  </description>
+
+  You may also use the following macros:
+
+  <\indent>
+    <\explain|<explain-macro|html-div|class|body>>
+      Associate a CSS class to the content <src-arg|body>.
+    </explain>
+
+    <\explain|<explain-macro|html-style|style|body>>
+      Associate a CSS style to the content <src-arg|body>.
+    </explain>
+
+    <\explain|<explain-macro|html-javascript-src|src>>
+      Execute a <name|Javascript> script from the file <src-arg|src>.
+    </explain>
+
+    <\explain|<explain-macro|html-javascript|code>>
+      Execute the <name|Javascript> script <compound|src-arg|code>.
+    </explain>
+  </indent>
+
+  <paragraph|Html importation>
 
   <TeXmacs> also contains a rudimentary input converter for <name|Html> in
   <menu|File|Import|Html>. Most of HTML 2.0 and parts of HTML 3.0 are
