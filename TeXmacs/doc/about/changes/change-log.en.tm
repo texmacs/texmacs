@@ -1,14 +1,33 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.11>
+  <section|Changes from version 1.0.7 to 1.0.7.12>
 
   <\itemize>
-    <item>Support for alpha transparency, Qt version & screen only (1.0.7.11).
+    <item>Make the Qt port default (1.0.7.12).
+
+    <item>Remove the dependency on <TeX>/<LaTeX> (1.0.7.12).
+
+    <item>Distribute the standard fonts with <TeXmacs> (1.0.7.12).
+
+    <item>Move the <TeXmacs> documentation inside the source code (1.0.7.12).
+
+    <item>Support for documentation inside plug-ins (1.0.7.12).
+
+    <item>Support for executable switches (1.0.7.12).
+
+    <item>Markup for CSS and <name|Javascript> customization of generated
+    webpages (1.0.7.12).
+
+    <item>Reorganize standard package generation and update website
+    (1.0.7.12).
+
+    <item>Support for alpha transparency, Qt version & screen only
+    (1.0.7.11).
 
     <item>Slightly improved interface for presentation mode (1.0.7.11).
 
