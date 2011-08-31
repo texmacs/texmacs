@@ -21,6 +21,9 @@
 (define (get-default-interactive-questions)
   (if (or (like-gnome?) (like-macos?) (like-windows?)) "popups" "footer"))
 
+(define (get-default-show-table-cells)
+  (if (qt-gui?) "on" "off"))
+
 (define (notify-look-and-feel var val)
   (set-message "Restart in order to let the new look and feel take effect"
 	       "configure look and feel"))
@@ -62,7 +65,7 @@
   ("language" (get-locale-language) notify-language)
   ("fast environments" "on" notify-fast-environments)
   ("show full context" "on" (lambda args (noop)))
-  ("show table cells" "off" (lambda args (noop)))
+  ("show table cells" (get-default-show-table-cells) (lambda args (noop)))
   ("show focus" "on" (lambda args (noop)))
   ("show only semantic focus" "on" (lambda args (noop)))
   ("semantic editing" "off" (lambda args (noop)))
