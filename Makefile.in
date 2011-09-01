@@ -428,6 +428,45 @@ CENTOS_BUNDLE:
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(CENTOS_BUNDLE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_BUNDLE_DIR);
 
+
+###############################################################################
+# Make a bundle for RedHat
+###############################################################################
+
+REDHAT_BUNDLE_SRC = packages/redhat
+REDHAT_BUNDLE_DIR = ../distr/TeXmacs-Redhat
+
+REDHAT_BUNDLE:
+	$(MKDIR) ../distr
+	$(RM) -r $(REDHAT_BUNDLE_DIR)
+	$(MKDIR) $(REDHAT_BUNDLE_DIR)
+	$(MKDIR) $(REDHAT_BUNDLE_DIR)/$(tmdeb)
+	$(CP) -a * $(REDHAT_BUNDLE_DIR)/$(tmdeb)/.
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
+	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
+	cd $(REDHAT_BUNDLE_DIR)/$(tmdeb); make distclean
+	cd $(REDHAT_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	# Moving Redhat files
+	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	if [ !-f ~/.rpmmacros ]; then \
+	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
+	cp $(REDHAT_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(REDHAT_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(REDHAT_BUNDLE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(REDHAT_BUNDLE_DIR);
+
+
+
+
 ###############################################################################
 # Make a bundle for Mandriva
 ###############################################################################
