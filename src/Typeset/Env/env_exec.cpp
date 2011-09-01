@@ -1506,15 +1506,19 @@ edit_env_rep::exec_greatereq (tree t) {
 
 tree
 edit_env_rep::exec_hard_id (tree t) {
-  if (N(t) == 0) {
-    pointer ptr= (pointer) this;
+  pointer ptr= (pointer) this;
+  if (N(t) == 0)
     return "%" * as_hexadecimal (ptr);
-  }
   else {
     t= expand (t[0], true);
-    pointer ptr1= (pointer) this;
-    pointer ptr2= (pointer) t.operator -> ();
-    return "%" * as_hexadecimal (ptr1) * "-" * as_hexadecimal (ptr2);
+    if (is_accessible (obtain_ip (t))) {
+      pointer tptr= (pointer) t.operator -> ();
+      return "%" * as_hexadecimal (ptr) * "-" * as_hexadecimal (tptr);
+    }
+    else {
+      int h= hash (t);
+      return "%" * as_hexadecimal (ptr) * "-" * as_hexadecimal (h);
+    }
   }
 }
 
