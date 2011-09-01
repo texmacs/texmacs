@@ -204,7 +204,7 @@ UNINSTALL:
 # Make a bundle for Mac OS X
 ###############################################################################
 
-BUNDLE_SRC = misc/bundle
+BUNDLE_SRC = packages/macos
 BUNDLE_APP = ../distr/TeXmacs.app
 BUNDLE_DMG = ../distr/TeXmacs.dmg
 BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
@@ -285,7 +285,7 @@ DISKIMAGE: BUNDLE
 # Make a bundle for Windows
 ###############################################################################
 
-WIN_BUNDLE_SRC = misc/windows
+WIN_BUNDLE_SRC = packages/windows
 WIN_BUNDLE_DIR = ../distr/TeXmacs-Windows
 WIN_BUNDLE_BIN_DIR = $(WIN_BUNDLE_DIR)/bin
 
@@ -332,7 +332,7 @@ WIN_BUNDLE: WIN_BUNDLE_MAIN WIN_BUNDLE_LIBS
 # Make a bundle for Debian
 ###############################################################################
 
-DEBIAN_BUNDLE_SRC = misc/debian
+DEBIAN_BUNDLE_SRC = packages/debian
 DEBIAN_BUNDLE_DIR = ../distr/TeXmacs-Debian
 
 DEBIAN_BUNDLE:
@@ -364,7 +364,7 @@ DEBIAN_BUNDLE:
 # Make a bundle for Fedora
 ###############################################################################
 
-FEDORA_BUNDLE_SRC = misc/fedora
+FEDORA_BUNDLE_SRC = packages/fedora
 FEDORA_BUNDLE_DIR = ../distr/TeXmacs-Fedora
 
 FEDORA_BUNDLE:
@@ -397,7 +397,7 @@ FEDORA_BUNDLE:
 # Make a bundle for CentOs
 ###############################################################################
 
-CENTOS_BUNDLE_SRC = misc/centos
+CENTOS_BUNDLE_SRC = packages/centos
 CENTOS_BUNDLE_DIR = ../distr/TeXmacs-Centos
 
 CENTOS_BUNDLE:
@@ -432,7 +432,7 @@ CENTOS_BUNDLE:
 # Make a bundle for Mandriva
 ###############################################################################
 
-MANDRIVA_BUNDLE_SRC = misc/mandriva
+MANDRIVA_BUNDLE_SRC = packages/mandriva
 MANDRIVA_BUNDLE_DIR = ../distr/TeXmacs-Mandriva
 
 MANDRIVA_BUNDLE:
