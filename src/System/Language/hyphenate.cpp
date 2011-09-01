@@ -86,7 +86,7 @@ load_hyphen_tables (string file_name,
     if (hyphenation_flag && i != 0 && N(buffer) != 0) {
       string word= replace (buffer, "-", "");
       hyphenations (word)= buffer;
-      cout << word << " --> " << buffer << "\n";
+      //cout << word << " --> " << buffer << "\n";
     }
     if (buffer == "\\patterns{") pattern_flag=true;
     if (buffer == "\\hyphenation{") hyphenation_flag=true;
