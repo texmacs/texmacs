@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
@@ -11,9 +11,7 @@
   enough examples and illustrative screen shots whenever adequate. Although
   the documentation is not necessarily meant to be complete, we do aim at
   providing relatively stable documentation. In particular, you should have
-  checked your text against spelling errors. The more experimental
-  documentation should be put in the <verbatim|incoming> directory or on the
-  <hyper-link|<TeXmacs> Wiki|http://alqua.com/tmresources>.
+  checked your text against spelling errors.
 
   It is also important that you give your documentation as much structure as
   possible, using special markup from the <tmstyle|tmdoc> style file. This
@@ -21,9 +19,9 @@
   from your documentation, to make it suitable for different ways of viewing,
   or to make it possible to efficiently search a certain type of information
   in the documentation. In particular, you should always provide
-  <hyper-link|copyright and license|copyright.en.tm><inactive|> information,
-  as well as indications on how to <hyper-link|traverse|traversal.en.tm> your
-  documentation, if it contains <hyper-link|many files|file-names.en.tm>.
+  <hlink|copyright and license|copyright.en.tm><inactive|> information, as
+  well as indications on how to <hlink|traverse|traversal.en.tm> your
+  documentation, if it contains <hlink|many files|file-names.en.tm>.
 
   <\warning>
     Don't forget to select <menu|Document|Language|Your language> for each

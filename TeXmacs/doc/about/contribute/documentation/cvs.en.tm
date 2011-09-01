@@ -1,15 +1,15 @@
-<TeXmacs|1.0.2.11>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Using <name|cvs>>
+  <tmdoc-title|Using <name|SVN>>
 
   The present <TeXmacs> documentation is currently maintained on
-  <verbatim|texmacs.org> using <name|cvs> (Concurrent Version System). In
-  order to contribute, you should first create an account as explained on
+  <verbatim|texmacs.org> using <name|SVN>. In order to contribute, you should
+  first create an account as explained on
 
-  <verbatim| \ \ \ <hlink|http://www.texmacs.org/tmweb/download/cvs.en.html|http://www.texmacs.org/tmweb/download/cvs.en.html>>
+  <verbatim| \ \ \ <hlink|http://www.texmacs.org/tmweb/download/svn.en.html|http://www.texmacs.org/tmweb/download/cvs.en.html>>
 
   In fact, the <name|cvs> system is not ideal for our documentation purpose,
   because it is not very dynamic. In the future, we plan to create a
@@ -29,18 +29,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
