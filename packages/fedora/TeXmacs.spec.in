@@ -7,13 +7,12 @@ Group: Applications/Editors
 License: GNU GPL 3.0
 URL: http://www.texmacs.org
 Source0: texmacs-%{version}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
 Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
-
 
 %description
 
