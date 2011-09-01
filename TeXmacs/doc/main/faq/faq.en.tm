@@ -1,9 +1,9 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.12>
 
 <style|tmweb>
 
 <\body>
-  <tmdoc-title|The GNU <TeXmacs> manual>
+  <tmdoc-title|Frequently asked questions>
 
   <section*|Overview>
 
@@ -31,14 +31,8 @@
     <item>System Appearance and Behavior
 
     <\itemize-minus>
-      <item><hlink|<TeXmacs> hangs when opening a document for a while and my
-      disk is being filled with files|#sys-1>?
-
       <item><hlink|How can I see the <LaTeX> or <TeX> code corresponding to
       what I see on the screen|#sys-2>?
-
-      <item><hlink|Why don't you use a common graphical user interface like
-      GTK for your scrollbars, menus, and so on|#sys-3>?
 
       <item><hlink|Trying to start <TeXmacs> remotely over a ssh connection,
       I get an error, while <abbr|e.g.> xclock works without a
@@ -47,17 +41,19 @@
       <item><hlink|<TeXmacs> is unusually slow while editing|#sys-5>?
     </itemize-minus>
 
-    <item>Windows/Cygwin specific
+    <item>Windows and Cygwin specific
 
     <\itemize-minus>
-      <item><hlink|What to do with Cygwin specific questions|#cygwin-1>?
-
-      <item><hlink|How to associate .tm files with <TeXmacs>|#cygwin-2>?
-
-      <item><hlink|How to get spell checking working|#cygwin-3>?
-
       <item><hlink|My Windows username contains spaces. Will this cause
       problems|#cygwin-4>?
+
+      <item><hlink|What to do with Cygwin specific questions|#cygwin-1>?
+
+      <item><hlink|How to associate .tm files with <TeXmacs> inside
+      Cygwin|#cygwin-2>?
+
+      <item><hlink|How to get spell checking working inside
+      Cygwin|#cygwin-3>?
     </itemize-minus>
 
     <item>Usage
@@ -129,11 +125,11 @@
   </answer>
 
   <\question>
-    <label|general-2>For what typical purposes do people use \ <TeXmacs>?
+    <label|general-2>For what typical purposes do people use <TeXmacs>?
   </question>
 
   <\answer>
-    \ <TeXmacs> can be used for
+    <TeXmacs> can be used for
 
     <\itemize>
       <item>Books and Articles. They can be written fully within <TeXmacs>.
@@ -147,7 +143,7 @@
       software.
 
       <item>Webpages. For example the <TeXmacs> webpage is maintained as
-      <TeXmacs> documents, which are exported to <name|HTML>.\ 
+      <TeXmacs> documents, which are exported to <name|Html>.
     </itemize>
   </answer>
 
@@ -156,15 +152,11 @@
   </question>
 
   <\answer>
-    <TeXmacs> can be easily installed on all major systems. There are
-    <name|rpm> and Debian packages as well as binaries available for
-    <name|Linux>. For Mac <name|OS X> there is a <name|Fink> package. For
-    <name|MS Windows>, a <name|Cygwin> package is available.\ 
-
-    Work is in progress to rewrite the graphical user interface of <TeXmacs>,
-    so that it becomes more portable. Your
-    <hlink|help|http://www.texmacs.org/Web/Contribute.html> might actually be
-    very useful here.
+    <TeXmacs> can be easily installed on all major systems, such as
+    GNU/<name|Linux>, <name|MacOS> and <name|Windows>. There are <name|rpm>
+    and Debian packages as well as binaries available for <name|Linux>. For
+    Mac <name|OS X> there is a <name|Fink> package. For <name|MS Windows>, a
+    <name|Cygwin> package is available.\ 
   </answer>
 
   <\question>
@@ -173,7 +165,7 @@
 
   <answer|A reasonably fast machine is recommended. Having said this, I
   (Andreas) am typing this on a Pentium III 450Mhz under Cygwin, and
-  <TeXmacs> is still useable here, although not overly reactive. >
+  <TeXmacs> is still useable here, although not overly reactive.>
 
   <\question>
     <label|general-5>I have already learned <TeX>/<LaTeX> and <name|Emacs>,
@@ -205,17 +197,6 @@
   <section*|System Appearance and Behavior>
 
   <\question>
-    <label|sys-1><TeXmacs> hangs when opening a document for a while and my
-    disk is being filled with files?
-  </question>
-
-  <answer|This behaviour is normal. <TeXmacs> calls <name|Metafont> in order
-  to generate fonts which are not yet present. The first time you launch
-  <TeXmacs>, many fonts may therefore have to be generated. In order to avoid
-  this, you may download some <hlink|pregenerated
-  fonts|http://www.texmacs.org/Download/Fonts.html>.>
-
-  <\question>
     <label|sys-2>How can I see the <LaTeX> or <TeX> code corresponding to
     what I see on the screen?
   </question>
@@ -227,32 +208,6 @@
   at something like the <TeX> source, since <TeXmacs> is guaranteed to be
   fully WYSIWYG. Conversion to <LaTeX> may only be useful, when transmitting
   an accepted paper to the publisher of a journal.>
-
-  <\question>
-    <label|sys-3>Why don't you use a common graphical user interface like GTK
-    for your scrollbars, menus, and so on?
-  </question>
-
-  <\answer>
-    When I (Joris) started to develop <TeXmacs> about four years ago, the
-    common graphical user interfaces were not as good as nowadays. Moreover,
-    I wanted the GUI to support some special features, like <TeX> fonts in
-    the menus. Nevertheless, now that graphical user interfaces did become
-    much better, I plan to switch to guile-gtk as soon as possible. Using
-    Guile-gtk in combination with <TeXmacs> has three main advantages:
-
-    <\enumerate>
-      <item>One has full access to the GTK widget set, which includes menus,
-      scrollable windows, file choosers, iconbars, etc.
-
-      <item>Guile-gtk provides you with a very flexible and customizable way
-      to use these widgets.
-
-      <item>The incorporation of Guile-gtk in <TeXmacs> should be natural,
-      since <TeXmacs> already supports the <name|Guile>/<name|Scheme>
-      extension language.
-    </enumerate>
-  </answer>
 
   <\question>
     <label|sys-4>Trying to start <TeXmacs> remotely over a ssh connection, I
@@ -277,11 +232,11 @@
 
   <\answer>
     Graphics card drivers with poor 2D performance can slow <TeXmacs> down
-    termendously.\ 
+    tremendously.\ 
 
     If you are running TeXmacs under X on a system with an ATI graphics card
     and are using ATI's proprietary drivers (the driver called
-    <verbatim|fglrx)>, you can achieve a significant speedup by\ 
+    <verbatim|fglrx)>, you can achieve a significant speedup by
 
     <\itemize>
       <item><em|either> running an X server such as Xgl that performs 2D
@@ -296,7 +251,16 @@
     down even more, instead of speeding it up.
   </answer>
 
-  <section*|Windows/Cygwin specific>
+  <section*|Windows and Cygwin specific>
+
+  <\question>
+    <label|cygwin-4>My Windows username contains spaces. Will this cause
+    problems?
+  </question>
+
+  <answer|It is strongly recommended to have a Windows username without
+  spaces. Please make a new account, as simply changing the username could be
+  insufficient.>
 
   <\question>
     <label|cygwin-1>What to do with Cygwin specific questions?
@@ -309,7 +273,7 @@
   </answer>
 
   <\question>
-    <label|cygwin-2>How to associate .tm files with <TeXmacs>?
+    <label|cygwin-2>How to associate .tm files with <TeXmacs> inside Cygwin?
   </question>
 
   <\answer>
@@ -332,7 +296,7 @@
   </answer>
 
   <\question>
-    <label|cygwin-3>How to get spell checking working?
+    <label|cygwin-3>How to get spell checking working inside Cygwin?
   </question>
 
   <\answer>
@@ -343,15 +307,6 @@
       ispell
     </verbatim>
   </answer>
-
-  <\question>
-    <label|cygwin-4>My Windows username contains spaces. Will this cause
-    problems?
-  </question>
-
-  <answer|It is strongly recommended to have a Windows username without
-  spaces. Please make a new account, as simply changing the username could be
-  insufficient.>
 
   <section*|Usage>
 
@@ -396,7 +351,7 @@
     <label|usage-4>How can I insert the number of pages?
   </question>
 
-  <answer| Put a label on the last page of your document and use the
+  <answer|Put a label on the last page of your document and use the
   <verbatim|pageref> primitive in order to produce the corresponding number.>
 
   <\question>
@@ -404,10 +359,8 @@
   </question>
 
   <\answer>
-    Put your cursor right behind the image and press <key|backspace>. You
-    will see the name of the image, followed by four other fields. The two
-    fields after the name of the image are respectively its width and its
-    height. You may for instance set the width to <verbatim|5cm> and the
+    Put your cursor right behind the image and edit the fields in the lowest
+    icon bar. You may for instance set the width to <verbatim|5cm> and the
     height to <verbatim|27mm>. When leaving the width open, it will
     automatically be determined as a function of the height (and vice versa).
     When leaving both fields open, the image will be reproduced at its
@@ -428,7 +381,7 @@
   <answer|This is because <TeXmacs> thinks, that the sentence ends after the
   dot in the abbreviation. To resolve this <em|a posteriori>, mark the
   abbreviation and press <shortcut|(make 'abbr)>. To care for this while
-  writing: <shortcut|(make 'abbr)> <key|etc.> <key|[right]>.>
+  writing: <shortcut|(make 'abbr)><key*|e t c . right>.>
 
   <\question>
     <label|typo-2>How to add unbreakable space?
@@ -445,7 +398,7 @@
   </question>
 
   <\answer>
-    I recommand to convert the preamble to <TeXmacs> and to put the result in
+    I recommend to convert the preamble to <TeXmacs> and to put the result in
     a <TeXmacs> style file. However, the result will probably be
     disappointing, because conversion between <TeX>/<LaTeX> and <TeXmacs> is
     not yet perfect and style files are particularly problematic. What you
@@ -454,11 +407,11 @@
     When you convert your book to <LaTeX>, you next use the editors style.
     Some layout will probably need to be redone at that stage, but this
     should actually be the work of the editor... Please look in the <TeXmacs>
-    help for more information about convertions between <TeXmacs> and
+    help for more information about conversions between <TeXmacs> and
     <LaTeX>.
   </answer>
 
-  <tmdoc-copyright|1998--2002|Andreas Seidl|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2011|Andreas Seidl|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
