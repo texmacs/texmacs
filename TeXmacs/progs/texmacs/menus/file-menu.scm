@@ -38,7 +38,7 @@
       ((balloon (eval short-name) (eval name)) (load-buffer name)))))
 
 (tm-define (recent-file-menu)
-  (file-list-menu (recent-file-list 20)))
+  (file-list-menu (recent-file-list 25)))
 
 (tm-define (recent-unloaded-file-menu)
   (file-list-menu (recent-unloaded-file-list 10)))
@@ -86,7 +86,10 @@
   ("Revert" (revert-buffer))
   ("Load in new window" (choose-file load-in-new-window "Load file" ""))
   ---
-  (link import-top-menu))
+  (link import-top-menu)
+  (if (nnull? (recent-file-list 1))
+      ---
+      (link recent-file-menu)))
 
 (menu-bind save-menu
   ("Save" (save-buffer))
