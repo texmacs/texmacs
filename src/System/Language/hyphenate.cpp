@@ -54,15 +54,18 @@ hyphen_normalize (string s) {
   return r;
 }
 
-hashmap<string,string>
-load_hyphen_table (string file_name) {
+void
+load_hyphen_tables (string file_name,
+                    hashmap<string,string>& patterns,
+                    hashmap<string,string>& hyphenations) {
   string s;
   file_name= string ("hyphen.") * file_name;
   load_string (url ("$TEXMACS_PATH/langs/natural/hyphen", file_name), s, true);
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << file_name << "\n";
 
   hashmap<string,string> H ("?");
-  bool flag=false;
+  bool pattern_flag=false;
+  bool hyphenation_flag=false;
   int i=0, n= N(s);
   while (i<n) {
     string buffer;
@@ -71,15 +74,23 @@ load_hyphen_table (string file_name) {
       else while ((i<n) && (s[i]!='\n')) i++;
     }
     if (i<n) i++;
-    if (buffer == "}") flag=false;
-    string norm= hyphen_normalize (buffer);
-    //cout << norm << "\n";
-    if (flag && (i!=0)) H (unpattern (norm))= norm;
-    if (buffer == "\\patterns{") flag=true;
+    if (buffer == "}") {
+      pattern_flag=false;
+      hyphenation_flag=false;
+    }
+    if (pattern_flag && i != 0) {
+      string norm= hyphen_normalize (buffer);
+      patterns (unpattern (norm))= norm;
+      //cout << unpattern (norm) << " ==> " << norm << "\n";
+    }
+    if (hyphenation_flag && i != 0 && N(buffer) != 0) {
+      string word= replace (buffer, "-", "");
+      hyphenations (word)= buffer;
+      cout << word << " --> " << buffer << "\n";
+    }
+    if (buffer == "\\patterns{") pattern_flag=true;
+    if (buffer == "\\hyphenation{") hyphenation_flag=true;
   }
-
-  // cout << file_name << " done!\n";
-  return H;
 }
 
 static string
@@ -95,37 +106,59 @@ lower_case (string s) {
 }
 
 array<int>
-get_hyphens (string s, hashmap<string,string> H) {
+get_hyphens (string s,
+             hashmap<string,string> patterns,
+             hashmap<string,string> hyphenations) {
   ASSERT (N(s) != 0, "hyphenation of empty string");
-  s= "." * lower_case (s) * ".";
-  // cout << s << "\n";
-  int i, j, k, m, len;
-  array<int> T (N(s)+1);
-  for (i=0; i<N(s)+1; i++) T[i]=0;
-  for (len=1; len < MAX_SEARCH; len++)
-    for (i=0; i<N(s)-len; i++) {
-      string r= H [s (i, i+len)];
-      if (!(r == "?")) {
-	// cout << "  " << s (i, i+len) << " => " << r << "\n";
-	for (j=0, k=0; j<=len; j++, k++) {
-	  if ((k<N(r)) && (r[k]>='0') && (r[k]<='9')) {
-	    m=((int) r[k])-((int) '0');
-	    k++;
-	  }
-	  else m=0;
-	  if (m>T[i+j]) T[i+j]=m;
-	}
-      }
-    }
 
-  array<int> penalty (N(s)-3);
-  for (i=2; i<N(s)-1; i++)
-    penalty [i-2]= (((T[i]&1)==1)? HYPH_STD: HYPH_INVALID);
-  if (N(penalty)>0) penalty[0] = penalty[N(penalty)-1] = HYPH_INVALID;
-  if (N(penalty)>1) penalty[1] = penalty[N(penalty)-2] = HYPH_INVALID;
-  if (N(penalty)>2) penalty[N(penalty)-3] = HYPH_INVALID;
-  // cout << "  -> " << penalty << "\n";
-  return penalty;
+  if (hyphenations->contains (s)) {
+    string h= hyphenations [s];
+    array<int> penalty (N(s)-1);
+    int i=0, j=0;
+    while (h[j] == '-') j++;
+    i++; j++;
+    while (i < N(s)) {
+      penalty[i-1]= HYPH_INVALID;
+      while (j < N(h) && h[j] == '-') {
+        penalty[i-1]= HYPH_STD;
+        j++;
+      }
+      i++; j++;
+    }
+    //cout << s << " --> " << penalty << "\n";
+    return penalty;
+  }
+  else {
+    s= "." * lower_case (s) * ".";
+    // cout << s << "\n";
+    int i, j, k, m, len;
+    array<int> T (N(s)+1);
+    for (i=0; i<N(s)+1; i++) T[i]=0;
+    for (len=1; len < MAX_SEARCH; len++)
+      for (i=0; i<N(s)-len; i++) {
+        string r= patterns [s (i, i+len)];
+        if (!(r == "?")) {
+          // cout << "  " << s (i, i+len) << " => " << r << "\n";
+          for (j=0, k=0; j<=len; j++, k++) {
+            if ((k<N(r)) && (r[k]>='0') && (r[k]<='9')) {
+              m=((int) r[k])-((int) '0');
+              k++;
+            }
+            else m=0;
+            if (m>T[i+j]) T[i+j]=m;
+          }
+        }
+      }
+
+    array<int> penalty (N(s)-3);
+    for (i=2; i<N(s)-1; i++)
+      penalty [i-2]= (((T[i]&1)==1)? HYPH_STD: HYPH_INVALID);
+    if (N(penalty)>0) penalty[0] = penalty[N(penalty)-1] = HYPH_INVALID;
+    if (N(penalty)>1) penalty[1] = penalty[N(penalty)-2] = HYPH_INVALID;
+    if (N(penalty)>2) penalty[N(penalty)-3] = HYPH_INVALID;
+    // cout << s << " --> " << penalty << "\n";
+    return penalty;
+  }
 }
 
 void

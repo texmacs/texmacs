@@ -27,7 +27,8 @@
 ******************************************************************************/
 
 struct text_language_rep: language_rep {
-  hashmap<string,string> H;
+  hashmap<string,string> patterns;
+  hashmap<string,string> hyphenations;
 
   text_language_rep (string lan_name, string hyph_name);
   text_property advance (tree t, int& pos);
@@ -36,7 +37,8 @@ struct text_language_rep: language_rep {
 };
 
 text_language_rep::text_language_rep (string lan_name, string hyph_name):
-  language_rep (lan_name), H (load_hyphen_table (hyph_name)) {}
+  language_rep (lan_name), patterns ("?"), hyphenations ("?") {
+    load_hyphen_tables (hyph_name, patterns, hyphenations); }
 
 text_property
 text_language_rep::advance (tree t, int& pos) {
@@ -92,7 +94,7 @@ text_language_rep::advance (tree t, int& pos) {
 
 array<int>
 text_language_rep::get_hyphens (string s) {
-  return ::get_hyphens (s, H);
+  return ::get_hyphens (s, patterns, hyphenations);
 }
 
 void

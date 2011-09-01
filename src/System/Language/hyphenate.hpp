@@ -13,8 +13,12 @@
 #define HYPHENATE_H
 #include "language.hpp"
 
-hashmap<string,string> load_hyphen_table (string language_name);
-array<int> get_hyphens (string s, hashmap<string,string> H);
+void load_hyphen_tables (string language_name,
+                         hashmap<string,string>& patterns,
+                         hashmap<string,string>& hyphenations);
+array<int> get_hyphens (string s,
+                        hashmap<string,string> patterns,
+                        hashmap<string,string> hyphenations);
 void std_hyphenate (string s, int after, string& left, string& right, int pen);
 
 #endif // defined HYPHENATE_H
