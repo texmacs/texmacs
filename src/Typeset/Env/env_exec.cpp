@@ -1505,7 +1505,7 @@ edit_env_rep::exec_greatereq (tree t) {
 }
 
 tree
-edit_env_rep::exec_hard_id (tree t) {
+edit_env_rep::exec_hard_id1 (tree t) {
   pointer ptr= (pointer) this;
   if (N(t) == 0)
     return "%" * as_hexadecimal (ptr);
@@ -1517,7 +1517,7 @@ edit_env_rep::exec_hard_id (tree t) {
     }
     else {
       int h= hash (t);
-      return "%" * as_hexadecimal (ptr) * "-" * as_hexadecimal (h);
+      return "%" * as_hexadecimal (ptr) * "+" * as_hexadecimal (h);
     }
   }
 }
