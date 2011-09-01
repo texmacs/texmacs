@@ -89,6 +89,19 @@ edit_env_rep::tmlen_over (tree t1, tree t2) {
   return as_string (as_double (t1) / as_double (t2));
 }
 
+double
+edit_env_rep::tmlen_div (tree t1, tree t2) {
+  t1= t1[N(t1)==1? 0: 1];
+  t2= t2[N(t2)==1? 0: 1];
+  return floor ((as_double (t1) / as_double (t2)) + 0.0001);
+}
+
+tree
+edit_env_rep::tmlen_mod (tree t1, tree t2) {
+  double div= tmlen_div (t1, t2);
+  return tmlen_plus (t1, tmlen_times (-div, t2));
+}
+
 /******************************************************************************
 * Length arithmetic for strings
 ******************************************************************************/

@@ -1119,6 +1119,13 @@ edit_env_rep::exec_divide (tree t) {
     if (den == 0) return tree (ERROR, "division by zero");
     return as_string (as_int (t1->label) / den);
   }
+  if (is_double (t1->label) && (is_double (t2->label))) {
+    double den= as_double (t2->label);
+    if (den == 0) return tree (ERROR, "division by zero");
+    return as_string (floor (as_double (t1->label) / den));
+  }
+  if (is_anylen (t1->label) && (is_anylen (t2->label)))
+    return as_string (tmlen_div (as_tmlen (t1), as_tmlen (t2)));
   return tree (ERROR, "bad divide");
 }
 
@@ -1134,6 +1141,15 @@ edit_env_rep::exec_modulo (tree t) {
     if (den == 0) return tree (ERROR, "modulo zero");
     return as_string (as_int (t1->label) % den);
   }
+  if (is_double (t1->label) && (is_double (t2->label))) {
+    double num= as_double (t1->label);
+    double den= as_double (t2->label);
+    if (den == 0) return tree (ERROR, "modulo zero");
+    double div= floor (num / den);
+    return as_string (num - div * den);
+  }
+  if (is_anylen (t1->label) && (is_anylen (t2->label)))
+    return tmlen_mod (as_tmlen (t1), as_tmlen (t2));
   return tree (ERROR, "bad modulo");
 }
 

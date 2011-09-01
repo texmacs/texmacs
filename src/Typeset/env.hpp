@@ -406,6 +406,8 @@ public:
   tree      tmlen_max (tree t1, tree t2);
   tree      tmlen_times (double sc, tree t);
   tree      tmlen_over (tree t1, tree t2);
+  double    tmlen_div (tree t1, tree t2);
+  tree      tmlen_mod (tree t1, tree t2);
 
   void      get_length_unit (string l, SI& un, string& un_str);
   string    add_lengths (string l1, string l2);
