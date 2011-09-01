@@ -835,37 +835,34 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-printer_rep::anchor(string label, SI x, SI y) {
+printer_rep::anchor (string label, SI x, SI y) {
   string s = "(";
-  s = s << prepare_text(label) << ") cvn";
-
-  if (linelen>0) cr();
-  print("[ /Dest");
-  print(s);
-  print("/View [/XYZ");
-  print(x, y);
-  print("null] /DEST pdfmark");
-  cr();
+  s = s << prepare_text (label) << ") cvn";
+  if (linelen>0) cr ();
+  print ("[ /Dest");
+  print (s);
+  print ("/View [/XYZ");
+  print (x, y);
+  print ("null] /DEST pdfmark");
+  cr ();
 }
 
 void
-printer_rep::href(string label, SI x1, SI y1, SI x2, SI y2) {
+printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
   string s = "(";
-  s = s << prepare_text(label) << ") cvn";
-
-  if (linelen>0) cr();
-
-  print("[");
-  print("/Dest");
-  print(s);
-  print("/Rect [");
-  print(x1, y1);
-  print(x2, y2);
-  print("]");
-  print("/Border [16 16 1 [3 10]] /Color [1 0 0]");
-  print("/Subtype /Link");
-  print("/ANN pdfmark");
-  cr();
+  s = s << prepare_text (label) << ") cvn";
+  if (linelen>0) cr ();
+  print ("[");
+  print ("/Dest");
+  print (s);
+  print ("/Rect [");
+  print (x1, y1);
+  print (x2, y2);
+  print ("]");
+  print ("/Border [16 16 1 [3 10]] /Color [1 0 0]");
+  print ("/Subtype /Link");
+  print ("/ANN pdfmark");
+  cr ();
 }
 
 /******************************************************************************
