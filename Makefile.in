@@ -386,9 +386,9 @@ FEDORA_BUNDLE:
 	cd $(FEDORA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
 	# Moving Fedora files
 	rpmdev-setuptree;
-	cp $(FEDORA_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cp $(FEDORA_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(FEDORA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(FEDORA_BUNDLE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(FEDORA_BUNDLE_DIR);
 
@@ -422,9 +422,9 @@ CENTOS_BUNDLE:
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-	cp $(CENTOS_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cp $(CENTOS_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(CENTOS_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(CENTOS_BUNDLE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_BUNDLE_DIR);
 
@@ -458,9 +458,9 @@ REDHAT_BUNDLE:
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-	cp $(REDHAT_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cp $(REDHAT_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(REDHAT_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(REDHAT_BUNDLE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(REDHAT_BUNDLE_DIR);
 
@@ -496,9 +496,9 @@ MANDRIVA_BUNDLE:
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-	cp $(MANDRIVA_BUNDLE_SRC)/texmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cp $(MANDRIVA_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(MANDRIVA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/texmacs.spec
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_BUNDLE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_BUNDLE_DIR);
 
