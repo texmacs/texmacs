@@ -205,8 +205,8 @@ UNINSTALL:
 ###############################################################################
 
 BUNDLE_SRC = packages/macos
-BUNDLE_APP = ../distr/TeXmacs.app
-BUNDLE_DMG = ../distr/TeXmacs.dmg
+BUNDLE_APP = ../distr/$(tmdeb).app
+BUNDLE_DMG = ../distr/$(tmdeb).dmg
 BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
 BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
 BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
@@ -270,16 +270,16 @@ BUNDLE_LIBS:
 	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
 
 #BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
-BUNDLE: BUNDLE_MAIN
+MACOS_BUNDLE: BUNDLE_MAIN
 	$(BUNDLE_SRC)/bundle-libs.sh $(BUNDLE_CONTENTS)/MacOS/TeXmacs
 #	$(BUNDLE_SRC)/deploy.sh $(BUNDLE_APP) $(BUNDLE_SRC)
 
-DISKIMAGE: BUNDLE
+DISKIMAGE: MACOS_BUNDLE
 	$(RM) $(BUNDLE_DMG)
 	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
 #	$(RM) -r $(BUNDLE_APP)
 
-.PHONY: BUNDLE
+.PHONY: MACOS_BUNDLE
 
 ###############################################################################
 # Make a bundle for Windows
