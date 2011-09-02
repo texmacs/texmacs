@@ -98,9 +98,13 @@ typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 #define scm_is_int SCM_INUMP
 #define scm_is_double SCM_REALP
 #define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
+#define scm_str2scm scm_mem2string
+#define scm_scm2str gh_scm2newstr
 #else
 #define scm_is_int scm_is_integer
 #define scm_is_double scm_is_real
+#define scm_str2scm scm_from_locale_stringn
+#define scm_scm2str scm_to_locale_stringn
 #endif
 #ifndef scm_is_symbol
 #define scm_is_symbol(x) SCM_NFALSEP(scm_symbol_p(x))
@@ -117,8 +121,6 @@ typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 #define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
 #define scm_double2scm scm_make_real
 #define scm_scm2double(x) scm_num2dbl(x,"scm2double")
-#define scm_str2scm scm_mem2string
-#define scm_scm2str gh_scm2newstr
 #define scm_symbol2scm scm_str2symbol
 #define scm_scm2symbol gh_symbol2newstr
 

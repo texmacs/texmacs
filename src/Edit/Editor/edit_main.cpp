@@ -302,9 +302,12 @@ edit_main_rep::print_snippet (url name, tree t) {
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
     if (ps) make_eps (name, b, dpi);
     else {
-      url temp= url_temp ("eps");
+      url temp= url_temp (".eps");
       make_eps (temp, b, dpi);
+      ::remove (name);
       system ("convert", temp, name);
+      if (!exists (name))
+        cout << "TeXmacs] warning, failed to create image " << name << "\n";
       ::remove (temp);
     }
   }

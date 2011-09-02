@@ -1039,10 +1039,10 @@
 	((and (func? x 'label 1) (string? (cadr x))) `((id ,(cadr x))))
 	(else (append-map tmhtml-collect-labels (cdr x)))))
 
-(define (tmhtml-png-names)
+(define (tmhtml-image-names ext)
   (set! tmhtml-image-serial (+ tmhtml-image-serial 1))
   (let* ((postfix (string-append
-		   "-" (number->string tmhtml-image-serial) ".png"))
+		   "-" (number->string tmhtml-image-serial) "." ext))
 	 (name-url (url-glue tmhtml-image-root-url postfix))
 	 (name-string (string-append tmhtml-image-root-string postfix)))
     (values name-url name-string)))
@@ -1055,7 +1055,7 @@
 	 (l2 (if (null? l1) l1 (list (car l1)))))
     (with cached (ahash-ref tmhtml-image-cache x)
       (if (not cached)
-	  (receive (name-url name-string) (tmhtml-png-names)
+	  (receive (name-url name-string) (tmhtml-image-names "png")
 	    ;;(display* x " -> " name-url ", " name-string "\n")
 	    (let* ((extents (print-snippet name-url x))
 		   ;;(pixels (inexact->exact (/ (second extents) 2100)))
@@ -1074,9 +1074,11 @@
 (define (tmhtml-image-name name)
   ;; FIXME: we should replace ~, environment variables, etc.
   (with u (url-relative current-save-target (string->url name))
-    (if (and (or (string-ends? name ".ps") (string-ends? name ".eps"))
+    (if (and (or (string-ends? name ".ps")
+                 (string-ends? name ".eps")
+                 (string-ends? name ".pdf"))
 	     (url-exists? u))
-	(receive (name-url name-string) (tmhtml-png-names)
+	(receive (name-url name-string) (tmhtml-image-names "png")
 	  (system-2 "convert" u name-url)
 	  name-string)
 	name)))
@@ -1084,14 +1086,23 @@
 (define (tmhtml-image l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
-  (if (nstring? (first l))
-      (tmhtml-png (cons 'image l))
-      (let* ((s (tmhtml-image-name (cork->html (first l))))
-	     (w (tmlength->htmllength (second l) #f))
-	     (h (tmlength->htmllength (third l) #f)))
-	`((h:img (@ (src ,s)
-		    ,@(if w `((width ,w)) '())
-		    ,@(if h `((height ,h)) '())))))))
+  (cond ((and (func? (car l) 'tuple 2)
+              (func? (cadar l) 'raw-data 1)
+              (string? (cadr (cadar l)))
+              (string? (caddar l))
+              (not (in? (caddar l) '("ps" "eps" "pdf"))))
+	  (receive (name-url name-string) (tmhtml-image-names (caddar l))
+            (string-save (cadr (cadar l)) name-url)
+            (tmhtml-image (cons name-string (cdr l)))))
+        ((nstring? (first l))
+         (tmhtml-png (cons 'image l)))
+        (else
+          (let* ((s (tmhtml-image-name (cork->html (first l))))
+                 (w (tmlength->htmllength (second l) #f))
+                 (h (tmlength->htmllength (third l) #f)))
+            `((h:img (@ (src ,s)
+                        ,@(if w `((width ,w)) '())
+                        ,@(if h `((height ,h)) '()))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Standard markup
