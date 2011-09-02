@@ -598,10 +598,6 @@ tm_stable
 tm_underscore_devel
 tm_redhat_devel
 tm_devel
-tmsrpm
-tmstgz
-tmrpm
-tmtgz
 tmdata
 tmbin
 tmsrc
@@ -7784,24 +7780,6 @@ tmdir=${PACKAGE}
 tmsrc=${curdir}/${tmdir}
 tmbin=${libexecdir}/${tmdir}
 tmdata=${datadir}/${tmdir}
-
-
-
-
-
-
-if test "$DEVEL_RELEASE" = "1"; then
-  tmtgz=${PACKAGE}-${DEVEL_VERSION}
-else
-  tmtgz=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
-fi
-tmrpm=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
-if test "$STABLE_RELEASE" = "1"; then
-  tmstgz=${PACKAGE}-${STABLE_VERSION}
-else
-  tmstgz=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
-fi
-tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
 
 
 

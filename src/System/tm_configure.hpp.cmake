@@ -24,9 +24,9 @@
 #define WORD_MASK @CONFIG_WORD_MASK@
 #define MAX_FAST @CONFIG_MAX_FAST@
 
-#define TEXMACS_TGZ "@tmtgz@"
-#define TEXMACS_RPM "@tmrpm@"
-#define TEXMACS_STGZ "@tmstgz@"
-#define TEXMACS_SRPM "@tmsrpm@"
+#define TM_DEVEL "@tm_devel@"
+#define TM_REDHAT_DEVEL "@tm_redhat_devel@"
+#define TM_STABLE "@tm_stable@"
+#define TM_REDHAT_STABLE "@tm_redhat_stable@"
 
 #endif // defined TM_CONFIGURE_H
