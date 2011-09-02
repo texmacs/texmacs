@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
@@ -7,10 +7,10 @@
 
   It is difficult to give a precise roadmap for the <TeXmacs> development,
   because our plans are permanently adjusted as a function of unexpected
-  needs, help by new contributors and humour. Nevertheless, we tend to spend
-  a significant time on a few major objectives, while amusing ourselves with
-  the implementation of a few new features. Roughly speaking, our roadmap can
-  therefore be divided into three major parts:
+  needs, help by new contributors and personal moods. Nevertheless, we tend
+  to spend a significant time on a few major objectives, while amusing
+  ourselves with the implementation of a few new features. Roughly speaking,
+  our roadmap can therefore be divided into three major parts:
 
   <\enumerate>
     <item>A limited number of major objectives for the upcoming stable

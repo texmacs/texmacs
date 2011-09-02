@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
@@ -10,23 +10,15 @@
   development on new features. A few points currently have our priority:
 
   <\itemize>
-    <item>Further development of the graphical drawing mode. First, the
-    upcoming support of <hlink|<name|Cairo>|http://cairographics.org/>,
-    <hlink|<name|OpenGL>|http://en.wikipedia.org/wiki/OpenGL>, <abbr|etc.>
-    should improve the rendering quality. Secondly, we intend to allow the
-    user to create new macros, either by explicit constructions or
-    constrained-based constructions. Finally, we would like to incorporate
-    several features which are typically found in editors of vector graphics,
-    such as <hlink|<name|Inkscape>|http://www.inkscape.org/>.
+    <item>Further development of the graphical drawing mode. Our main next
+    goal is to allows users to create new macros, either by explicit
+    constructions or constrained-based constructions. Finally, we would like
+    to incorporate several features which are typically found in editors of
+    vector graphics, such as <hlink|<name|Inkscape>|http://www.inkscape.org/>.
 
     <item>Extended features for computer algebra sessions, such as automatic
     folding of large expressions, lazy output (with subexpressions which can
     be further evaluated by clicking on them), cas-aided writing, etc.
-
-    <item>Providing more semantics to mathematical formulas by providing a
-    simple way to construct parsers and pretty printers and to use them for
-    establishing a bijection between presentation and content markup for
-    certain well-defined languages.
 
     <item>Continue the development of remote <TeXmacs> servers for providing
     web-based services in combination with <TeXmacs>. These services comprise

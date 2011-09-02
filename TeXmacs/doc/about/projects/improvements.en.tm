@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
@@ -11,12 +11,6 @@
 
   If I have the courage, I might one day write a garbage collector for
   <TeXmacs>.
-
-  <section|Graphical interface>
-
-  We wish to move towards <with|font-shape|small-caps|Guile-Gtk> or another
-  portable graphical user interface. Now that we have found someone for
-  making a Windows port, this not an urgent issue anymore though.
 
   <section|Encodings and fonts>
 
@@ -43,9 +37,6 @@
   several other main optimizations should still be made:
 
   <\itemize>
-    <item>Indexing file names which are in the distribution. This may
-    accelerate booting the program.
-
     <item>Encode the system environment variables; this will globally
     accelerate the program. Also, intermediate data during the typesetting
     process might be encoded in a more binary way.
@@ -55,8 +46,8 @@
 
   <section|Scheme>
 
-  The <name|Guile>/<value|scheme> interface should become more robust and
-  well documented. Several things still need to be done for this:
+  The <name|Guile>/<scheme> interface should become more robust and well
+  documented. Several things still need to be done for this:
 
   <\itemize>
     <item>Implement a system for ``contextual overloading''.
@@ -66,8 +57,8 @@
     <item>Systematic use of closures throughout the code.
 
     <item>A clean interface for manipulating <TeXmacs> content (a unified
-    interface for both internal <TeXmacs> trees and the associated
-    <value|scheme> representation).
+    interface for both internal <TeXmacs> trees and the associated <scheme>
+    representation).
 
     <item>Documentation.
   </itemize>

@@ -1,11 +1,16 @@
-<TeXmacs|1.0.7.1>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Plans for the future>
 
-  <with|color|red|[Should be completed]>
+  There are many things that we would like to integrate in <TeXmacs>. On
+  <hlink|<name|Savannah>|http://savannah.gnu.org/projects/texmacs/>, we
+  maintain a<nbsp>wish list with <hlink|suggestions|http://www.texmacs.org/tmweb/contact/wishes.en.html>
+  by users and other detailed wanted features. Here follows an incomplete
+  list of more general directions for future development, as on september 2,
+  2011.
 
   <section|Typesetting>
 
@@ -16,8 +21,6 @@
 
     <item>Better support for agglomerated documents (from physically
     different documents).
-
-    <item>Incorporation of better linking primitives (XLink, Proclus).
 
     <item>More types of dynamic objects, like animations, help balloons,
     <abbr|etc.>
@@ -32,8 +35,8 @@
   mention a few of these:
 
   <\itemize>
-    <item>Searching/replacing texts, formulas, certain environments etc. and
-    regular expressions.
+    <item>Better search and replace tool for structured texts, formulas,
+    certain environments etc. and regular expressions.
 
     <item>Mathematical facilities: simplification of a selected region,
     substitutions of formulas in other formulas, etc.
@@ -45,7 +48,33 @@
     <item>Grammar checkers and automatic translation programs. Does someone
     know where to find detailed free dictionaries and stuff like that?
 
-    <item>Incorporation of free speech recognition program.
+    <item>Incorporation of a free speech recognition program.
+  </itemize>
+
+  <section|Converters to other formats>
+
+  There is a constant need for good converters from and to other data
+  formats:
+
+  <\itemize>
+    <item>Of course, <TeX>/<LaTeX> cannot really be considered as a format
+    (it is really a language with an ill defined grammar). Nevertheless it is
+    important to have good heuristic converters in both directions. We still
+    would appreciate help in this direction, in particular in order to
+    support standard documents styles of various journals.
+
+    <item><TeXmacs> is also compatible with <name|Html>, but some things such
+    as forms have not been implemented yet. The importation of tables could
+    also be further improved and it would be nice if the importer could
+    support cascaded style sheets.
+
+    <item>It would be nice to have converters for the document formats used
+    by <name|Open Office>, <name|Word>, and the internal formats used by
+    important publishers such as <name|Elsevier>.
+
+    <item>We would appreciate help for writing a converter from <TeXmacs> to
+    the <name|Texinfo> format, which is the standard documentation format for
+    the GNU project.
   </itemize>
 
   <section|A universal spreadsheet>
@@ -60,12 +89,14 @@
 
   <section|Technical pictures>
 
-  I also would like to include a facility for drawing technical pictures. In
-  this implementation you should be able to benefit from the fact that you
-  can define macros for making geometrical constructions. It would for
-  instance be possible to write a style file for drawing electronic circuits
-  or chemical components with a nice icon bar for selecting circuits or
-  components, just as you select lines and circles in usual pictures.
+  We have started to include a facility for drawing technical pictures, but
+  the responsable developer (Henri <name|Lesourd>) is currently no longer
+  part of the <TeXmacs> team. It would be nice to rewrite parts of the tool
+  and extend it further so as to allow for the definition of graphical
+  macros. This would allow users to define new geometrical constructions. It
+  would for instance be possible to write a style file for drawing electronic
+  circuits or chemical components with a nice icon bar for selecting circuits
+  or components, just as you select lines and circles in usual pictures.
 
   <section|Tools for usage on the web and in networks>
 
@@ -86,7 +117,7 @@
   The following improvements should still be made in order to link <TeXmacs>
   to computer algebra systems:
 
-  <\enumerate>
+  <\itemize>
     <item>Improving the layout of computer algebra sessions.
 
     <item>Add extra features to increase the interoperability between
@@ -94,21 +125,15 @@
     over the layout of big output.
 
     <item>More semantics for the objects being communicated. This may either
-    be high level information (like Openmath or HTML 4.0 mathematical markup)
+    be high level information (like HTML 4.0 mathematical markup or Openmath)
     or low level information (including information about the representation
     of data), depending on the required speed.
 
-    <item>Further possibilities for evolution concern highlighting, debugging
-    facilities and so on.
-  </enumerate>
+    <item>Further possibilities for evolution concern syntax highlighting,
+    debugging facilities and so on.
+  </itemize>
 
-  <section|Interaction with other GNU projects>
-
-  We would appreciate help for writing a converter from <TeXmacs> to the
-  <name|Texinfo> format, which is the standard documentation format for the
-  GNU project.
-
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2011|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

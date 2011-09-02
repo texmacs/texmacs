@@ -1,19 +1,17 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Major objectives for the upcoming stable versions>
 
-  Our main focus for the next stable version 1.1 (to be released during 2007)
+  Our main focus for the next stable version 1.1 (to be released during 2012)
   is on the improvement of the user interface and documentation. This
   comprises the following developments:
 
   <\itemize>
-    <item>Increased standardization of the user interface: use M$-style
-    keyboard shortcuts as the default (and provide <name|Emacs> compatability
-    as an option), further simplification of the menus and increased use of
-    popup windows.
+    <item>Completion and stabilization of the <name|Qt> port and the
+    resulting ports for <name|Windows> and <name|MacOS>.
 
     <item>Development of a markup-based graphical user interface for popup
     windows. This new interface might only be ready after the next stable
@@ -45,13 +43,6 @@
   <\itemize>
     <item>Improve the quality of the <TeXmacs> makefiles so as to make them
     completely compatible with <verbatim|automake> and <verbatim|autoconf>.
-
-    <item>Improve the <name|Cygwin> port and other ports of <TeXmacs> and
-    monitor the availability of <TeXmacs> in major distributions.
-
-    <item>Reshape the low-level window interface so as to make the interface
-    to Xlib easily portable to other systems, such as Gtk, Qt, MacOsX,
-    Windows, etc. Also provide plugins for <name|Cairo>, <name|OpenGL>, etc.
 
     <item>Replace the current widget system by a markup-based system, with
     the possibility to use widgets (from Gtk, Qt, Aqua, etc.) from standard

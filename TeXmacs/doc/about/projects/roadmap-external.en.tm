@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
@@ -28,17 +28,13 @@
     using <TeXmacs>. Any people interested in developing addional interactive
     features inside <TeXmacs> are invited to contact us.
 
-    <item><TeXmacs> is used in combination with <name|Maxima> in a
-    high-school education project at the <name|Lycée Villegénis> at
-    <name|Massy Palaiseau> (nearby <name|Paris>). In view of this project, we
-    intend to further simplify the user-interface and to make it easier to
-    install up-to-date <TeXmacs> versions under <name|Windows>.
-
     <item><hlink|Felix Breuer|http://www.felixbreuer.net/index.html> and
     formerly <name|David Mentré> have considered developing a <hlink|literate
     programming plug-in|http://david.mentre.free.fr/serendipity/index.php?/archives/8-Literate-programming-as-source-code-comments.html>
-    for <TeXmacs>. Any concrete implementation of their proposals would
-    happily find its way into the main distribution.
+    for <TeXmacs>. Another such initiative is
+    <hlink|<name|Fangle>|http://www.nongnu.org/fangle/>, which has recently
+    been started by <name|Sam Liddicott>. Any concrete implementation of
+    their proposals would happily find its way into the main distribution.
   </itemize>
 
   If you want to start a project based on <TeXmacs>, then please let us know.
