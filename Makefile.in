@@ -204,82 +204,85 @@ UNINSTALL:
 # Make a bundle for Mac OS X
 ###############################################################################
 
-MACOS_BUNDLE_SRC = packages/macos
-MACOS_BUNDLE_APP = ../distr/$(tmdeb).app
-MACOS_BUNDLE_DMG = ../distr/$(tmdeb).dmg
-MACOS_BUNDLE_CONTENTS = $(MACOS_BUNDLE_APP)/Contents
-MACOS_BUNDLE_RESOURCES = $(MACOS_BUNDLE_CONTENTS)/Resources
-MACOS_BUNDLE_TEXMACS = $(MACOS_BUNDLE_RESOURCES)/share/TeXmacs
+MACOS_PACKAGE_SRC = packages/macos
+MACOS_PACKAGE_APP = ../distr/$(tmdeb).app
+MACOS_PACKAGE_DMG = ../distr/$(tmdeb).dmg
+MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
+MACOS_PACKAGE_RESOURCES = $(MACOS_PACKAGE_CONTENTS)/Resources
+MACOS_PACKAGE_TEXMACS = $(MACOS_PACKAGE_RESOURCES)/share/TeXmacs
 
-MACOS_BUNDLE_MAIN: TEXMACS
+MACOS_PACKAGE_MAIN: TEXMACS
 	$(MKDIR) ../distr
-	$(RM) -r $(MACOS_BUNDLE_APP)
-	$(MKDIR) $(MACOS_BUNDLE_APP)
-	$(MKDIR) $(MACOS_BUNDLE_CONTENTS)
-	$(CP) $(MACOS_BUNDLE_SRC)/Info.plist $(MACOS_BUNDLE_CONTENTS)
-	$(CP) $(MACOS_BUNDLE_SRC)/PkgInfo $(MACOS_BUNDLE_CONTENTS)
-	$(MKDIR) $(MACOS_BUNDLE_CONTENTS)/MacOS
-	$(CP) TeXmacs/bin/texmacs.bin $(MACOS_BUNDLE_CONTENTS)/MacOS/TeXmacs
-	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)
-	$(CP) $(MACOS_BUNDLE_SRC)/TeXmacs.icns $(MACOS_BUNDLE_RESOURCES)
-	$(CP) $(MACOS_BUNDLE_SRC)/TeXmacs-document.icns $(MACOS_BUNDLE_RESOURCES)
-	$(CP) src/Plugins/Cocoa/English.lproj $(MACOS_BUNDLE_RESOURCES)
-	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)/bin
-	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)/lib
-	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)/share
-	$(CP) TeXmacs $(MACOS_BUNDLE_RESOURCES)/share
-	$(RM) $(MACOS_BUNDLE_TEXMACS)/bin/texmacs.bin
+	$(RM) -r $(MACOS_PACKAGE_APP)
+	$(MKDIR) $(MACOS_PACKAGE_APP)
+	$(MKDIR) $(MACOS_PACKAGE_CONTENTS)
+	$(CP) $(MACOS_PACKAGE_SRC)/Info.plist $(MACOS_PACKAGE_CONTENTS)
+	$(CP) $(MACOS_PACKAGE_SRC)/PkgInfo $(MACOS_PACKAGE_CONTENTS)
+	$(MKDIR) $(MACOS_PACKAGE_CONTENTS)/MacOS
+	$(CP) TeXmacs/bin/texmacs.bin $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
+	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)
+	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs.icns $(MACOS_PACKAGE_RESOURCES)
+	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs-document.icns $(MACOS_PACKAGE_RESOURCES)
+	$(CP) src/Plugins/Cocoa/English.lproj $(MACOS_PACKAGE_RESOURCES)
+	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)/bin
+	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)/lib
+	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)/share
+	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
+	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
 	export GUILE_LOAD_PATH; \
-	$(CP) $$GUILE_LOAD_PATH $(MACOS_BUNDLE_TEXMACS)/progs/
-	$(CHMOD) 644 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9/*
-	$(CHMOD) 755 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9
-	$(CHMOD) 755 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
-	$(CHMOD) 755 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9/debugging 2>/dev/null || :
-#	$(CP) /opt/local/bin/gs $(MACOS_BUNDLE_RESOURCES)/bin
-#	$(CP) /opt/local/bin/ps2pdf $(MACOS_BUNDLE_RESOURCES)/bin
-#	cp -R -f /opt/local/share/ghostscript $(MACOS_BUNDLE_RESOURCES)/share
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/.svn
-	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/*/.svn
+	$(CP) $$GUILE_LOAD_PATH $(MACOS_PACKAGE_TEXMACS)/progs/
+	$(CHMOD) 644 $(MACOS_PACKAGE_TEXMACS)/progs/ice-9/*
+	$(CHMOD) 755 $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
+	$(CHMOD) 755 $(MACOS_PACKAGE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
+	$(CHMOD) 755 $(MACOS_PACKAGE_TEXMACS)/progs/ice-9/debugging 2>/dev/null || :
+#	$(CP) /opt/local/bin/gs $(MACOS_PACKAGE_RESOURCES)/bin
+#	$(CP) /opt/local/bin/ps2pdf $(MACOS_PACKAGE_RESOURCES)/bin
+#	cp -R -f /opt/local/share/ghostscript $(MACOS_PACKAGE_RESOURCES)/share
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/*/CVS
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/.svn
+	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/*/.svn
 
 define bundle_install_lib
-	$(CP) $(1) $(MACOS_BUNDLE_RESOURCES)/lib
-	install_name_tool -change $(1) @executable_path/../Resources/lib/$(2) $(MACOS_BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/lib/$(2) $(MACOS_BUNDLE_RESOURCES)/lib/$(2)
+	$(CP) $(1) $(MACOS_PACKAGE_RESOURCES)/lib
+	install_name_tool -change $(1) @executable_path/../Resources/lib/$(2) $(MACOS_PACKAGE_CONTENTS)/MacOS/texmacs.bin
+	install_name_tool -id @executable_path/../Resources/lib/$(2) $(MACOS_PACKAGE_RESOURCES)/lib/$(2)
 endef
 
-bundle_libraries = $(shell otool -L $(MACOS_BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
+bundle_libraries = $(shell otool -L $(MACOS_PACKAGE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
 
-MACOS_BUNDLE_LIBS:
+MACOS_PACKAGE_LIBS:
 	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
 
-#MACOS_BUNDLE: MACOS_BUNDLE_MAIN MACOS_BUNDLE_LIBS
-MACOS_MACOS_BUNDLE: MACOS_BUNDLE_MAIN
-	$(MACOS_BUNDLE_SRC)/bundle-libs.sh $(MACOS_BUNDLE_CONTENTS)/MacOS/TeXmacs
-#	$(MACOS_BUNDLE_SRC)/deploy.sh $(MACOS_BUNDLE_APP) $(MACOS_BUNDLE_SRC)
+#MACOS_PACKAGE: MACOS_PACKAGE_MAIN MACOS_PACKAGE_LIBS
+MACOS_PACKAGE_BUNDLE: MACOS_PACKAGE_MAIN
+	$(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
+#	$(MACOS_PACKAGE_SRC)/deploy.sh $(MACOS_PACKAGE_APP) $(MACOS_PACKAGE_SRC)
 
-MACOS_PACKAGE: MACOS_BUNDLE
-	$(RM) $(MACOS_BUNDLE_DMG)
-	hdiutil create -srcfolder $(MACOS_BUNDLE_APP) $(MACOS_BUNDLE_DMG)
-#	$(RM) -r $(MACOS_BUNDLE_APP)
+MACOS_PACKAGE: MACOS_PACKAGE_BUNDLE
+	$(RM) $(MACOS_PACKAGE_DMG)
+	hdiutil create -srcfolder $(MACOS_PACKAGE_APP) $(MACOS_PACKAGE_DMG)
+	cd $(MACOS_PACKAGE_DMG); $(LN) -s /Applications Applications
+	$(RM) -r $(MACOS_PACKAGE_APP)
 
-.PHONY: MACOS_BUNDLE
+BUNDLE: MACOS_PACKAGE_BUNDLE
+
+.PHONY: BUNDLE MACOS_PACKAGE
 
 ###############################################################################
 # Make a bundle for Windows
