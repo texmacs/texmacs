@@ -204,80 +204,80 @@ UNINSTALL:
 # Make a bundle for Mac OS X
 ###############################################################################
 
-BUNDLE_SRC = packages/macos
-BUNDLE_APP = ../distr/$(tmdeb).app
-BUNDLE_DMG = ../distr/$(tmdeb).dmg
-BUNDLE_CONTENTS = $(BUNDLE_APP)/Contents
-BUNDLE_RESOURCES = $(BUNDLE_CONTENTS)/Resources
-BUNDLE_TEXMACS = $(BUNDLE_RESOURCES)/share/TeXmacs
+MACOS_BUNDLE_SRC = packages/macos
+MACOS_BUNDLE_APP = ../distr/$(tmdeb).app
+MACOS_BUNDLE_DMG = ../distr/$(tmdeb).dmg
+MACOS_BUNDLE_CONTENTS = $(MACOS_BUNDLE_APP)/Contents
+MACOS_BUNDLE_RESOURCES = $(MACOS_BUNDLE_CONTENTS)/Resources
+MACOS_BUNDLE_TEXMACS = $(MACOS_BUNDLE_RESOURCES)/share/TeXmacs
 
-BUNDLE_MAIN: TEXMACS
+MACOS_BUNDLE_MAIN: TEXMACS
 	$(MKDIR) ../distr
-	$(RM) -r $(BUNDLE_APP)
-	$(MKDIR) $(BUNDLE_APP)
-	$(MKDIR) $(BUNDLE_CONTENTS)
-	$(CP) $(BUNDLE_SRC)/Info.plist $(BUNDLE_CONTENTS)
-	$(CP) $(BUNDLE_SRC)/PkgInfo $(BUNDLE_CONTENTS)
-	$(MKDIR) $(BUNDLE_CONTENTS)/MacOS
-	$(CP) TeXmacs/bin/texmacs.bin $(BUNDLE_CONTENTS)/MacOS/TeXmacs
-	$(MKDIR) $(BUNDLE_RESOURCES)
-	$(CP) $(BUNDLE_SRC)/TeXmacs.icns $(BUNDLE_RESOURCES)
-	$(CP) $(BUNDLE_SRC)/TeXmacs-document.icns $(BUNDLE_RESOURCES)
-	$(CP) src/Plugins/Cocoa/English.lproj $(BUNDLE_RESOURCES)
-	$(MKDIR) $(BUNDLE_RESOURCES)/bin
-	$(MKDIR) $(BUNDLE_RESOURCES)/lib
-	$(MKDIR) $(BUNDLE_RESOURCES)/share
-	$(CP) TeXmacs $(BUNDLE_RESOURCES)/share
-	$(RM) $(BUNDLE_TEXMACS)/bin/texmacs.bin
+	$(RM) -r $(MACOS_BUNDLE_APP)
+	$(MKDIR) $(MACOS_BUNDLE_APP)
+	$(MKDIR) $(MACOS_BUNDLE_CONTENTS)
+	$(CP) $(MACOS_BUNDLE_SRC)/Info.plist $(MACOS_BUNDLE_CONTENTS)
+	$(CP) $(MACOS_BUNDLE_SRC)/PkgInfo $(MACOS_BUNDLE_CONTENTS)
+	$(MKDIR) $(MACOS_BUNDLE_CONTENTS)/MacOS
+	$(CP) TeXmacs/bin/texmacs.bin $(MACOS_BUNDLE_CONTENTS)/MacOS/TeXmacs
+	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)
+	$(CP) $(MACOS_BUNDLE_SRC)/TeXmacs.icns $(MACOS_BUNDLE_RESOURCES)
+	$(CP) $(MACOS_BUNDLE_SRC)/TeXmacs-document.icns $(MACOS_BUNDLE_RESOURCES)
+	$(CP) src/Plugins/Cocoa/English.lproj $(MACOS_BUNDLE_RESOURCES)
+	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)/bin
+	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)/lib
+	$(MKDIR) $(MACOS_BUNDLE_RESOURCES)/share
+	$(CP) TeXmacs $(MACOS_BUNDLE_RESOURCES)/share
+	$(RM) $(MACOS_BUNDLE_TEXMACS)/bin/texmacs.bin
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
 	export GUILE_LOAD_PATH; \
-	$(CP) $$GUILE_LOAD_PATH $(BUNDLE_TEXMACS)/progs/
-	$(CHMOD) 644 $(BUNDLE_TEXMACS)/progs/ice-9/*
-	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9
-	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
-	$(CHMOD) 755 $(BUNDLE_TEXMACS)/progs/ice-9/debugging 2>/dev/null || :
-#	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
-#	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
-#	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
-	$(RM) -r $(BUNDLE_TEXMACS)/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
-	$(RM) -r $(BUNDLE_TEXMACS)/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/.svn
-	$(RM) -r $(BUNDLE_TEXMACS)/*/*/*/*/*/*/*/.svn
+	$(CP) $$GUILE_LOAD_PATH $(MACOS_BUNDLE_TEXMACS)/progs/
+	$(CHMOD) 644 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9/*
+	$(CHMOD) 755 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9
+	$(CHMOD) 755 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9/debugger 2>/dev/null || :
+	$(CHMOD) 755 $(MACOS_BUNDLE_TEXMACS)/progs/ice-9/debugging 2>/dev/null || :
+#	$(CP) /opt/local/bin/gs $(MACOS_BUNDLE_RESOURCES)/bin
+#	$(CP) /opt/local/bin/ps2pdf $(MACOS_BUNDLE_RESOURCES)/bin
+#	cp -R -f /opt/local/share/ghostscript $(MACOS_BUNDLE_RESOURCES)/share
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/*/CVS
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/.svn
+	$(RM) -r $(MACOS_BUNDLE_TEXMACS)/*/*/*/*/*/*/*/.svn
 
 define bundle_install_lib
-	$(CP) $(1) $(BUNDLE_RESOURCES)/lib
-	install_name_tool -change $(1) @executable_path/../Resources/lib/$(2) $(BUNDLE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/lib/$(2) $(BUNDLE_RESOURCES)/lib/$(2)
+	$(CP) $(1) $(MACOS_BUNDLE_RESOURCES)/lib
+	install_name_tool -change $(1) @executable_path/../Resources/lib/$(2) $(MACOS_BUNDLE_CONTENTS)/MacOS/texmacs.bin
+	install_name_tool -id @executable_path/../Resources/lib/$(2) $(MACOS_BUNDLE_RESOURCES)/lib/$(2)
 endef
 
-bundle_libraries = $(shell otool -L $(BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
+bundle_libraries = $(shell otool -L $(MACOS_BUNDLE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
 
-BUNDLE_LIBS:
+MACOS_BUNDLE_LIBS:
 	$(foreach lib, $(bundle_libraries), $(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
 
-#BUNDLE: BUNDLE_MAIN BUNDLE_LIBS
-MACOS_BUNDLE: BUNDLE_MAIN
-	$(BUNDLE_SRC)/bundle-libs.sh $(BUNDLE_CONTENTS)/MacOS/TeXmacs
-#	$(BUNDLE_SRC)/deploy.sh $(BUNDLE_APP) $(BUNDLE_SRC)
+#MACOS_BUNDLE: MACOS_BUNDLE_MAIN MACOS_BUNDLE_LIBS
+MACOS_MACOS_BUNDLE: MACOS_BUNDLE_MAIN
+	$(MACOS_BUNDLE_SRC)/bundle-libs.sh $(MACOS_BUNDLE_CONTENTS)/MacOS/TeXmacs
+#	$(MACOS_BUNDLE_SRC)/deploy.sh $(MACOS_BUNDLE_APP) $(MACOS_BUNDLE_SRC)
 
-DISKIMAGE: MACOS_BUNDLE
-	$(RM) $(BUNDLE_DMG)
-	hdiutil create -srcfolder $(BUNDLE_APP) $(BUNDLE_DMG)
-#	$(RM) -r $(BUNDLE_APP)
+MACOS_PACKAGE: MACOS_BUNDLE
+	$(RM) $(MACOS_BUNDLE_DMG)
+	hdiutil create -srcfolder $(MACOS_BUNDLE_APP) $(MACOS_BUNDLE_DMG)
+#	$(RM) -r $(MACOS_BUNDLE_APP)
 
 .PHONY: MACOS_BUNDLE
 
@@ -285,9 +285,9 @@ DISKIMAGE: MACOS_BUNDLE
 # Make a bundle for Windows
 ###############################################################################
 
-WIN_BUNDLE_SRC = packages/windows
-WIN_BUNDLE_DIR = ../distr/TeXmacs-Windows
-WIN_BUNDLE_BIN_DIR = $(WIN_BUNDLE_DIR)/bin
+WINDOWS_PACKAGE_SRC = packages/windows
+WINDOWS_PACKAGE_DIR = ../distr/TeXmacs-Windows
+WINDOWS_PACKAGE_BIN_DIR = $(WINDOWS_PACKAGE_DIR)/bin
 
 ## WARNING: the following path list needs to be adapted manually 
 DLLPATH = $(PATH)
@@ -296,173 +296,175 @@ DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
 DLL_LIST = QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll $(GS_EXE) $(GS_DLL) wget.exe
 DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
-WIN_BUNDLE_MAIN: TEXMACS
+WINDOWS_PACKAGE_MAIN: TEXMACS
 	$(MKDIR) ../distr
-	$(RM) -r $(WIN_BUNDLE_DIR)
-	$(MKDIR) $(WIN_BUNDLE_DIR)
-	$(CP) TeXmacs/* $(WIN_BUNDLE_DIR)/.
-	$(MV) $(WIN_BUNDLE_DIR)/bin/texmacs.bin $(WIN_BUNDLE_DIR)/bin/texmacs.exe
-	$(RM) -r $(WIN_BUNDLE_DIR)/bin/texmacs
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)
+	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
+	$(CP) TeXmacs/* $(WINDOWS_PACKAGE_DIR)/.
+	$(MV) $(WINDOWS_PACKAGE_DIR)/bin/texmacs.bin $(WINDOWS_PACKAGE_DIR)/bin/texmacs.exe
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/bin/texmacs
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
 	export GUILE_LOAD_PATH; \
-	for I in $$GUILE_LOAD_PATH ; do $(CP) $$I $(WIN_BUNDLE_DIR)/progs/ ; done
-	find $(WIN_BUNDLE_DIR)/progs/ice-9 -type f -exec $(CHMOD) 644 {} \;
-#	$(CP) /opt/local/bin/gs $(BUNDLE_RESOURCES)/bin
-#	$(CP) /opt/local/bin/ps2pdf $(BUNDLE_RESOURCES)/bin
-#	cp -R -f /opt/local/share/ghostscript $(BUNDLE_RESOURCES)/share
-	$(RM) -r $(WIN_BUNDLE_DIR)/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(WIN_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
+	for I in $$GUILE_LOAD_PATH ; do $(CP) $$I $(WINDOWS_PACKAGE_DIR)/progs/ ; done
+	find $(WINDOWS_PACKAGE_DIR)/progs/ice-9 -type f -exec $(CHMOD) 644 {} \;
+#	$(CP) /opt/local/bin/gs $(PACKAGE_RESOURCES)/bin
+#	$(CP) /opt/local/bin/ps2pdf $(PACKAGE_RESOURCES)/bin
+#	cp -R -f /opt/local/share/ghostscript $(PACKAGE_RESOURCES)/share
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/*/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/*/*/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(WINDOWS_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn
 
 
-WIN_BUNDLE_LIBS:
-	for DLL in $(DLLS) ; do $(CP) $$DLL $(WIN_BUNDLE_BIN_DIR) ; done
+WINDOWS_PACKAGE_LIBS:
+	for DLL in $(DLLS) ; do $(CP) $$DLL $(WINDOWS_PACKAGE_BIN_DIR) ; done
 
+WINDOWS_INSTALLER:
+	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
 
-WIN_BUNDLE: WIN_BUNDLE_MAIN WIN_BUNDLE_LIBS 
+WINDOWS_PACKAGE: WINDOWS_PACKAGE_MAIN WINDOWS_PACKAGE_LIBS WINDOWS_INSTALLER
 
 ###############################################################################
 # Make a bundle for Debian
 ###############################################################################
 
-DEBIAN_BUNDLE_SRC = packages/debian
-DEBIAN_BUNDLE_DIR = ../distr/TeXmacs-Debian
+DEBIAN_PACKAGE_SRC = packages/debian
+DEBIAN_PACKAGE_DIR = ../distr/TeXmacs-Debian
 
-DEBIAN_BUNDLE:
+DEBIAN_PACKAGE:
 	$(MKDIR) ../distr
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)
-	$(MKDIR) $(DEBIAN_BUNDLE_DIR)
-	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)
-	#$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
-	$(CP) -a * $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/.
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
-	$(RM) -r $(DEBIAN_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); make distclean
-	cd $(DEBIAN_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb)
-	cd $(DEBIAN_BUNDLE_DIR); tar -czf $(tmdebb).orig.tar.gz $(tmdeb)
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tmdeb)
+	#$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/debian
+	$(CP) -a * $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/.
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
+	cd $(DEBIAN_PACKAGE_DIR)/$(tmdeb); make distclean
+	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb)
+	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tmdebb).orig.tar.gz $(tmdeb)
 	# Moving Debian files
-	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb);
-	$(MKDIR) $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian ;
-	$(CP) $(DEBIAN_BUNDLE_SRC)/* $(DEBIAN_BUNDLE_DIR)/$(tmdeb)/debian
-	cd $(DEBIAN_BUNDLE_DIR)/$(tmdeb); debuild -us -uc
+	cd $(DEBIAN_PACKAGE_DIR)/$(tmdeb);
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/debian ;
+	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/debian
+	cd $(DEBIAN_PACKAGE_DIR)/$(tmdeb); debuild -us -uc
 
 ###############################################################################
 # Make a bundle for Fedora
 ###############################################################################
 
-FEDORA_BUNDLE_SRC = packages/fedora
-FEDORA_BUNDLE_DIR = ../distr/TeXmacs-Fedora
+FEDORA_PACKAGE_SRC = packages/fedora
+FEDORA_PACKAGE_DIR = ../distr/TeXmacs-Fedora
 
-FEDORA_BUNDLE:
+FEDORA_PACKAGE:
 	$(MKDIR) ../distr
-	$(RM) -r $(FEDORA_BUNDLE_DIR)
-	$(MKDIR) $(FEDORA_BUNDLE_DIR)
-	$(MKDIR) $(FEDORA_BUNDLE_DIR)/$(tmdeb)
-	$(CP) -a * $(FEDORA_BUNDLE_DIR)/$(tmdeb)/.
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn
-	$(RM) -r $(FEDORA_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(FEDORA_BUNDLE_DIR)/$(tmdeb); make distclean
-	cd $(FEDORA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	$(RM) -r $(FEDORA_PACKAGE_DIR)
+	$(MKDIR) $(FEDORA_PACKAGE_DIR)
+	$(MKDIR) $(FEDORA_PACKAGE_DIR)/$(tmdeb)
+	$(CP) -a * $(FEDORA_PACKAGE_DIR)/$(tmdeb)/.
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
+	cd $(FEDORA_PACKAGE_DIR)/$(tmdeb); make distclean
+	cd $(FEDORA_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
 	# Moving Fedora files
 	rpmdev-setuptree;
-	cp $(FEDORA_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(FEDORA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cp $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(FEDORA_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(FEDORA_BUNDLE_DIR); 
-	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(FEDORA_BUNDLE_DIR);
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(FEDORA_PACKAGE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(FEDORA_PACKAGE_DIR);
 
 
 ###############################################################################
 # Make a bundle for CentOs
 ###############################################################################
 
-CENTOS_BUNDLE_SRC = packages/centos
-CENTOS_BUNDLE_DIR = ../distr/TeXmacs-Centos
+CENTOS_PACKAGE_SRC = packages/centos
+CENTOS_PACKAGE_DIR = ../distr/TeXmacs-Centos
 
-CENTOS_BUNDLE:
+CENTOS_PACKAGE:
 	$(MKDIR) ../distr
-	$(RM) -r $(CENTOS_BUNDLE_DIR)
-	$(MKDIR) $(CENTOS_BUNDLE_DIR)
-	$(MKDIR) $(CENTOS_BUNDLE_DIR)/$(tmdeb)
-	$(CP) -a * $(CENTOS_BUNDLE_DIR)/$(tmdeb)/.
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
-	$(RM) -r $(CENTOS_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(CENTOS_BUNDLE_DIR)/$(tmdeb); make distclean
-	cd $(CENTOS_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	$(RM) -r $(CENTOS_PACKAGE_DIR)
+	$(MKDIR) $(CENTOS_PACKAGE_DIR)
+	$(MKDIR) $(CENTOS_PACKAGE_DIR)/$(tmdeb)
+	$(CP) -a * $(CENTOS_PACKAGE_DIR)/$(tmdeb)/.
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn	
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
+	cd $(CENTOS_PACKAGE_DIR)/$(tmdeb); make distclean
+	cd $(CENTOS_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
 	# Moving Centos files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-	cp $(CENTOS_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(CENTOS_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cp $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(CENTOS_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(CENTOS_BUNDLE_DIR); 
-	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_BUNDLE_DIR);
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(CENTOS_PACKAGE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_PACKAGE_DIR);
 
 
 ###############################################################################
 # Make a bundle for RedHat
 ###############################################################################
 
-REDHAT_BUNDLE_SRC = packages/redhat
-REDHAT_BUNDLE_DIR = ../distr/TeXmacs-Redhat
+REDHAT_PACKAGE_SRC = packages/redhat
+REDHAT_PACKAGE_DIR = ../distr/TeXmacs-Redhat
 
-REDHAT_BUNDLE:
+REDHAT_PACKAGE:
 	$(MKDIR) ../distr
-	$(RM) -r $(REDHAT_BUNDLE_DIR)
-	$(MKDIR) $(REDHAT_BUNDLE_DIR)
-	$(MKDIR) $(REDHAT_BUNDLE_DIR)/$(tmdeb)
-	$(CP) -a * $(REDHAT_BUNDLE_DIR)/$(tmdeb)/.
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
-	$(RM) -r $(REDHAT_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(REDHAT_BUNDLE_DIR)/$(tmdeb); make distclean
-	cd $(REDHAT_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	$(RM) -r $(REDHAT_PACKAGE_DIR)
+	$(MKDIR) $(REDHAT_PACKAGE_DIR)
+	$(MKDIR) $(REDHAT_PACKAGE_DIR)/$(tmdeb)
+	$(CP) -a * $(REDHAT_PACKAGE_DIR)/$(tmdeb)/.
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn	
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
+	cd $(REDHAT_PACKAGE_DIR)/$(tmdeb); make distclean
+	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
 	# Moving Redhat files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-	cp $(REDHAT_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(REDHAT_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cp $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(REDHAT_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(REDHAT_BUNDLE_DIR); 
-	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(REDHAT_BUNDLE_DIR);
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(REDHAT_PACKAGE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR);
 
 
 
@@ -471,36 +473,36 @@ REDHAT_BUNDLE:
 # Make a bundle for Mandriva
 ###############################################################################
 
-MANDRIVA_BUNDLE_SRC = packages/mandriva
-MANDRIVA_BUNDLE_DIR = ../distr/TeXmacs-Mandriva
+MANDRIVA_PACKAGE_SRC = packages/mandriva
+MANDRIVA_PACKAGE_DIR = ../distr/TeXmacs-Mandriva
 
-MANDRIVA_BUNDLE:
+MANDRIVA_PACKAGE:
 	$(MKDIR) ../distr
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)
-	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)
-	$(MKDIR) $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)
-	$(CP) -a * $(MANDRIVA_BUNDLE_DIR)/$(tmdeb)/.
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/*/.svn	
-	$(RM) -r $(MANDRIVA_BUNDLE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(MANDRIVA_BUNDLE_DIR)/$(tmdeb); make distclean
-	cd $(MANDRIVA_BUNDLE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)
+	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)
+	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)/$(tmdeb)
+	$(CP) -a * $(MANDRIVA_PACKAGE_DIR)/$(tmdeb)/.
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/*/.svn
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn	
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
+	cd $(MANDRIVA_PACKAGE_DIR)/$(tmdeb); make distclean
+	cd $(MANDRIVA_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
 	# Moving Mandriva files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
-	cp $(MANDRIVA_BUNDLE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(MANDRIVA_BUNDLE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cp $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(MANDRIVA_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_BUNDLE_DIR); 
-	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_BUNDLE_DIR);
+	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_PACKAGE_DIR); 
+	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_PACKAGE_DIR);
 
 
 ###############################################################################
