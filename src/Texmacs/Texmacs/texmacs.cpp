@@ -355,6 +355,7 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   texmacs_started= true;
+  signal (SIGSEGV, clean_exit_on_segfault);
   gui_start_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Stopping server...\n";
@@ -423,7 +424,6 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
-  signal (SIGSEGV, clean_exit_on_segfault);
   immediate_options (argc, argv);
   set_env ("LC_NUMERIC", "POSIX");
 #ifdef MACOSX_EXTENSIONS
