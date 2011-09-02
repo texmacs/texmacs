@@ -1196,11 +1196,11 @@ if test "$DEVEL_RELEASE" = "1"; then
 else
   tm_devel=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
 fi
-tm_redhat_devel=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
+tm_devel_release=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
 tm_underscore_devel=${PACKAGE}_${DEVEL_VERSION}
 
 AC_SUBST(tm_devel)
-AC_SUBST(tm_redhat_devel)
+AC_SUBST(tm_devel_release)
 AC_SUBST(tm_underscore_devel)
 
 if test "$STABLE_RELEASE" = "1"; then
@@ -1208,11 +1208,11 @@ if test "$STABLE_RELEASE" = "1"; then
 else
   tm_stable=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
 fi
-tm_redhat_stable=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
+tm_stable_release=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
 tm_underscore_stable=${PACKAGE}_${STABLE_VERSION}
 
 AC_SUBST(tm_stable)
-AC_SUBST(tm_redhat_stable)
+AC_SUBST(tm_stable_release)
 AC_SUBST(tm_underscore_stable)
 
 #--------------------------------------------------------------------

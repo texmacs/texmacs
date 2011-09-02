@@ -79,13 +79,13 @@ scheme_dialect () {
 string
 texmacs_version (string which) {
   if (which == "tgz") return TM_DEVEL;
-  if (which == "rpm") return TM_REDHAT_DEVEL;
+  if (which == "rpm") return TM_DEVEL_RELEASE;
   if (which == "stgz") return TM_STABLE;
-  if (which == "srpm") return TM_REDHAT_STABLE;
+  if (which == "srpm") return TM_STABLE_RELEASE;
   if (which == "devel") return TM_DEVEL;
   if (which == "stable") return TM_STABLE;
-  if (which == "redhat-devel") return TM_REDHAT_DEVEL;
-  if (which == "redhat-stable") return TM_REDHAT_STABLE;
+  if (which == "devel-release") return TM_DEVEL_RELEASE;
+  if (which == "stable-release") return TM_STABLE_RELEASE;
   return TEXMACS_VERSION;
 }
 
