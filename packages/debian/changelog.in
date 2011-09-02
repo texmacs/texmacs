@@ -1,4 +1,4 @@
-TeXmacs (1.0.7.12-1) unstable; urgency=low
+@PACKAGE@ (@DEVEL_VERSION@-@DEVEL_RELEASE@) unstable; urgency=low
 
   * TeXmacs Debian Package
  -- dndiatta <dndiatta@lix.polytechnique.fr>  Fri, 08 Apr 2011 15:21:31 +0200
