@@ -592,8 +592,12 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-tmdebb
-tmdeb
+tm_underscore_stable
+tm_redhat_stable
+tm_stable
+tm_underscore_devel
+tm_redhat_devel
+tm_devel
 tmsrpm
 tmstgz
 tmrpm
@@ -2726,8 +2730,6 @@ DEVEL_VERSION="1.0.7.12"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.7"
 STABLE_RELEASE="1"
-DEBIAN_VERSION="1.0.7.12"
-DEBIAN_RELEASE="1"
 
 
 
@@ -7800,16 +7802,31 @@ else
   tmstgz=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
 fi
 tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
-if test "$DEBIAN_RELEASE" = "1"; then
-  tmdeb=${PACKAGE}-${DEBIAN_VERSION}
+
+
+
+
+
+
+if test "$DEVEL_RELEASE" = "1"; then
+  tm_devel=${PACKAGE}-${DEVEL_VERSION}
 else
-  tmdeb=${PACKAGE}-${DEBIAN_VERSION}-R${DEBIAN_RELEASE}
+  tm_devel=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
 fi
-tmdebb=${PACKAGE}_${DEBIAN_VERSION}
+tm_redhat_devel=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
+tm_underscore_devel=${PACKAGE}_${DEVEL_VERSION}
 
 
 
 
+
+if test "$STABLE_RELEASE" = "1"; then
+  tm_stable=${PACKAGE}-${STABLE_VERSION}
+else
+  tm_stable=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
+fi
+tm_redhat_stable=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
+tm_underscore_stable=${PACKAGE}_${STABLE_VERSION}
 
 
 

@@ -18,8 +18,8 @@ datadir = @datadir@
 mandir = @mandir@
 tmdir = @tmdir@
 tmtgz = @tmtgz@
-tmdeb = @tmdeb@
-tmdebb = @tmdebb@
+tm_devel = @tm_devel@
+tm_underscore_devel = @tm_underscore_devel@
 tmbin = @tmbin@
 tmdata = @tmdata@
 so = @CONFIG_SO@
@@ -205,8 +205,8 @@ UNINSTALL:
 ###############################################################################
 
 MACOS_PACKAGE_SRC = packages/macos
-MACOS_PACKAGE_APP = ../distr/$(tmdeb).app
-MACOS_PACKAGE_DMG = ../distr/$(tmdeb).dmg
+MACOS_PACKAGE_APP = ../distr/$(tm_devel).app
+MACOS_PACKAGE_DMG = ../distr/$(tm_devel).dmg
 MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
 MACOS_PACKAGE_RESOURCES = $(MACOS_PACKAGE_CONTENTS)/Resources
 MACOS_PACKAGE_TEXMACS = $(MACOS_PACKAGE_RESOURCES)/share/TeXmacs
@@ -344,9 +344,9 @@ DEBIAN_PACKAGE:
 	$(MKDIR) ../distr
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)
 	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tmdeb)
-	#$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/debian
-	$(CP) -a * $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/.
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
+	#$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian
+	$(CP) -a * $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/.
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)/.svn
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/.svn
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/.svn
@@ -356,14 +356,14 @@ DEBIAN_PACKAGE:
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn
 	$(RM) -r $(DEBIAN_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(DEBIAN_PACKAGE_DIR)/$(tmdeb); make distclean
-	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb)
-	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tmdebb).orig.tar.gz $(tmdeb)
+	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); make distclean
+	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel)
+	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tm_underscore_devel).orig.tar.gz $(tm_devel)
 	# Moving Debian files
-	cd $(DEBIAN_PACKAGE_DIR)/$(tmdeb);
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/debian ;
-	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(DEBIAN_PACKAGE_DIR)/$(tmdeb)/debian
-	cd $(DEBIAN_PACKAGE_DIR)/$(tmdeb); debuild -us -uc
+	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel);
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian ;
+	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian
+	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); debuild -us -uc
 
 ###############################################################################
 # Make a bundle for Fedora
@@ -376,8 +376,8 @@ FEDORA_PACKAGE:
 	$(MKDIR) ../distr
 	$(RM) -r $(FEDORA_PACKAGE_DIR)
 	$(MKDIR) $(FEDORA_PACKAGE_DIR)
-	$(MKDIR) $(FEDORA_PACKAGE_DIR)/$(tmdeb)
-	$(CP) -a * $(FEDORA_PACKAGE_DIR)/$(tmdeb)/.
+	$(MKDIR) $(FEDORA_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(FEDORA_PACKAGE_DIR)/$(tm_devel)/.
 	$(RM) -r $(FEDORA_PACKAGE_DIR)/.svn
 	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/.svn
 	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/.svn
@@ -387,12 +387,12 @@ FEDORA_PACKAGE:
 	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn
 	$(RM) -r $(FEDORA_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(FEDORA_PACKAGE_DIR)/$(tmdeb); make distclean
-	cd $(FEDORA_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	cd $(FEDORA_PACKAGE_DIR)/$(tm_devel); make distclean
+	cd $(FEDORA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
 	# Moving Fedora files
 	rpmdev-setuptree;
 	cp $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(FEDORA_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(FEDORA_PACKAGE_DIR); $(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(FEDORA_PACKAGE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(FEDORA_PACKAGE_DIR);
@@ -409,8 +409,8 @@ CENTOS_PACKAGE:
 	$(MKDIR) ../distr
 	$(RM) -r $(CENTOS_PACKAGE_DIR)
 	$(MKDIR) $(CENTOS_PACKAGE_DIR)
-	$(MKDIR) $(CENTOS_PACKAGE_DIR)/$(tmdeb)
-	$(CP) -a * $(CENTOS_PACKAGE_DIR)/$(tmdeb)/.
+	$(MKDIR) $(CENTOS_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(CENTOS_PACKAGE_DIR)/$(tm_devel)/.
 	$(RM) -r $(CENTOS_PACKAGE_DIR)/.svn
 	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/.svn
 	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/.svn
@@ -420,15 +420,15 @@ CENTOS_PACKAGE:
 	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn	
 	$(RM) -r $(CENTOS_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(CENTOS_PACKAGE_DIR)/$(tmdeb); make distclean
-	cd $(CENTOS_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	cd $(CENTOS_PACKAGE_DIR)/$(tm_devel); make distclean
+	cd $(CENTOS_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
 	# Moving Centos files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	cp $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(CENTOS_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(CENTOS_PACKAGE_DIR); $(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(CENTOS_PACKAGE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(CENTOS_PACKAGE_DIR);
@@ -445,8 +445,8 @@ REDHAT_PACKAGE:
 	$(MKDIR) ../distr
 	$(RM) -r $(REDHAT_PACKAGE_DIR)
 	$(MKDIR) $(REDHAT_PACKAGE_DIR)
-	$(MKDIR) $(REDHAT_PACKAGE_DIR)/$(tmdeb)
-	$(CP) -a * $(REDHAT_PACKAGE_DIR)/$(tmdeb)/.
+	$(MKDIR) $(REDHAT_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(REDHAT_PACKAGE_DIR)/$(tm_devel)/.
 	$(RM) -r $(REDHAT_PACKAGE_DIR)/.svn
 	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/.svn
 	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/.svn
@@ -456,15 +456,15 @@ REDHAT_PACKAGE:
 	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn	
 	$(RM) -r $(REDHAT_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(REDHAT_PACKAGE_DIR)/$(tmdeb); make distclean
-	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	cd $(REDHAT_PACKAGE_DIR)/$(tm_devel); make distclean
+	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
 	# Moving Redhat files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	cp $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(REDHAT_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(REDHAT_PACKAGE_DIR); $(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(REDHAT_PACKAGE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR);
@@ -483,8 +483,8 @@ MANDRIVA_PACKAGE:
 	$(MKDIR) ../distr
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)
 	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)
-	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)/$(tmdeb)
-	$(CP) -a * $(MANDRIVA_PACKAGE_DIR)/$(tmdeb)/.
+	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)/.
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/.svn
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/.svn
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/.svn
@@ -494,15 +494,15 @@ MANDRIVA_PACKAGE:
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/*/*/.svn	
 	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/*/*/*/*/*/*/*/*/.svn
-	cd $(MANDRIVA_PACKAGE_DIR)/$(tmdeb); make distclean
-	cd $(MANDRIVA_PACKAGE_DIR); tar -czf $(tmdeb).tar.gz $(tmdeb) 
+	cd $(MANDRIVA_PACKAGE_DIR)/$(tm_devel); make distclean
+	cd $(MANDRIVA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
 	# Moving Mandriva files
 	mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if [ !-f ~/.rpmmacros ]; then \
 	 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	cp $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(MANDRIVA_PACKAGE_DIR); $(CP) $(tmdeb).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(MANDRIVA_PACKAGE_DIR); $(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(CP) -ar $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_PACKAGE_DIR); 
 	$(CP) -ar $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_PACKAGE_DIR);

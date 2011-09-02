@@ -30,6 +30,10 @@
 #define BUILD_USER "@CONFIG_USER@"
 #define BUILD_DATE "@CONFIG_DATE@"
 
+#define TM_DEVEL "@tm_devel@"
+#define TM_STABLE "@tm_stable@"
+#define TM_REDHAT_DEVEL "@tm_redhat_devel@"
+#define TM_REDHAT_STABLE "@tm_redhat_stable@"
 #define TEXMACS_TGZ "@tmtgz@"
 #define TEXMACS_RPM "@tmrpm@"
 #define TEXMACS_STGZ "@tmstgz@"
