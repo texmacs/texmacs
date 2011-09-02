@@ -28,6 +28,5 @@
 #define TEXMACS_RPM "@tmrpm@"
 #define TEXMACS_STGZ "@tmstgz@"
 #define TEXMACS_SRPM "@tmsrpm@"
-#define TEXMACS_WIN "@tmwin@"
 
 #endif // defined TM_CONFIGURE_H

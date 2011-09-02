@@ -82,7 +82,6 @@ texmacs_version (string which) {
   if (which == "rpm") return TEXMACS_RPM;
   if (which == "stgz") return TEXMACS_STGZ;
   if (which == "srpm") return TEXMACS_SRPM;
-  if (which == "win") return TEXMACS_WIN;
   return TEXMACS_VERSION;
 }
 
