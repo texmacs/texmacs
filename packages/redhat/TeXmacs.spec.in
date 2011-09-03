@@ -35,7 +35,7 @@ saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 
 %prep
-%setup -q -n @tm_devel@-src
+%setup -q -n @tm_devel@
 
 %build
 ./configure --disable-qt --prefix=/usr
