@@ -242,7 +242,7 @@ SRC_PACKAGE: COPY_SOURCES
 	$(MV) $(BUILD_DIR) ../distr/build/$(tm_devel)-src
 	cd ../distr/build; tar -czf $(tm_devel)-src.tar.gz $(tm_devel)-src
 	$(MKDIR) $(SRC_PACKAGE_DIR)
-	$(MV) $(tm_devel)-src.tar.gz $(SRC_PACKAGE_DIR)/.
+	$(MV) ../distr/build/$(tm_devel)-src.tar.gz $(SRC_PACKAGE_DIR)/.
 	$(RM) -r ../distr/build
 
 .PHONY: SRC_PACKAGE
@@ -282,7 +282,7 @@ GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 ###############################################################################
 
 CENTOS_PACKAGE_SRC = packages/centos
-CENTOS_PACKAGE_DIR = ../distr/TeXmacs-Centos
+CENTOS_PACKAGE_DIR = ../distr/centos
 
 CENTOS_PACKAGE:
 	$(MKDIR) ../distr
@@ -311,7 +311,7 @@ CENTOS_PACKAGE:
 ###############################################################################
 
 DEBIAN_PACKAGE_SRC = packages/debian
-DEBIAN_PACKAGE_DIR = ../distr/TeXmacs-Debian
+DEBIAN_PACKAGE_DIR = ../distr/debian
 
 DEBIAN_PACKAGE:
 	$(MKDIR) ../distr
@@ -336,7 +336,7 @@ DEBIAN_PACKAGE:
 ###############################################################################
 
 FEDORA_PACKAGE_SRC = packages/fedora
-FEDORA_PACKAGE_DIR = ../distr/TeXmacs-Fedora
+FEDORA_PACKAGE_DIR = ../distr/fedora
 
 FEDORA_PACKAGE:
 	$(MKDIR) ../distr
@@ -362,7 +362,7 @@ FEDORA_PACKAGE:
 ###############################################################################
 
 MANDRIVA_PACKAGE_SRC = packages/mandriva
-MANDRIVA_PACKAGE_DIR = ../distr/TeXmacs-Mandriva
+MANDRIVA_PACKAGE_DIR = ../distr/mandriva
 
 MANDRIVA_PACKAGE:
 	$(MKDIR) ../distr
