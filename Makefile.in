@@ -418,7 +418,7 @@ REDHAT_PACKAGE:
 	cd $(REDHAT_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
 	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
+	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
 	cp $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	cd $(REDHAT_PACKAGE_DIR); \
 	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.

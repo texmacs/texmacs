@@ -3,7 +3,7 @@ Name: @PACKAGE@
 Version: @DEVEL_VERSION@
 Release: @DEVEL_RELEASE@
 Url: http://www.texmacs.org
-Source: ftp://ftp.texmacs.org/pub/TeXmacs/@tm_devel@-src.tar.gz
+Source0: @tm_devel@.tar.gz
 License: GNU GPL 3.0
 Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
