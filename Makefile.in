@@ -213,8 +213,8 @@ BUILD_TGZ = ../distr/build/$(tm_devel).tar.gz
 
 COPY_SOURCES:
 	$(MKDIR) ../distr
+	$(RM) -r ../distr/build
 	$(MKDIR) ../distr/build
-	$(RM) -r $(BUILD_DIR)
 	$(MKDIR) $(BUILD_DIR)
 	$(CP) -p * $(BUILD_DIR)/.
 	cd $(BUILD_DIR); make ACCESS_FLAGS
@@ -236,7 +236,7 @@ COPY_GUILE:
 # Make a source package
 ###############################################################################
 
-SRC_PACKAGE_DIR = ../distr/Source
+SRC_PACKAGE_DIR = ../distr/source
 
 SRC_PACKAGE: COPY_SOURCES
 	$(MV) $(BUILD_DIR) ../distr/build/$(tm_devel)-src
@@ -251,7 +251,7 @@ SRC_PACKAGE: COPY_SOURCES
 # Make generic static binary packages
 ###############################################################################
 
-GENERIC_PACKAGE_DIR = ../distr/Generic
+GENERIC_PACKAGE_DIR = ../distr/generic
 STATIC_QT = $(tm_devel)-$(tm_suffix)
 STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
