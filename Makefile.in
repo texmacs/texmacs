@@ -284,25 +284,18 @@ GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 CENTOS_PACKAGE_SRC = packages/centos
 CENTOS_PACKAGE_DIR = ../distr/centos
 
-CENTOS_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(CENTOS_PACKAGE_DIR)
-	$(MKDIR) $(CENTOS_PACKAGE_DIR)
-	$(MKDIR) $(CENTOS_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(CENTOS_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(CENTOS_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(CENTOS_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+CENTOS_PACKAGE: COPY_SOURCES_TGZ
+	$(RM) -r $(HOME)/rpmbuild
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
-	cp $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(CENTOS_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	$(CP) $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(CENTOS_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(CENTOS_PACKAGE_DIR)
 	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(CENTOS_PACKAGE_DIR)
 	$(RM) $(HOME)/.rpmmacros
 	$(RM) -r $(HOME)/rpmbuild
-	$(RM) -r $(CENTOS_PACKAGE_DIR)/$(tm_devel)
+	$(RM) -r ../distr/build
 
 .PHONY: CENTOS_PACKAGE
 
@@ -338,22 +331,16 @@ DEBIAN_PACKAGE:
 FEDORA_PACKAGE_SRC = packages/fedora
 FEDORA_PACKAGE_DIR = ../distr/fedora
 
-FEDORA_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(FEDORA_PACKAGE_DIR)
-	$(MKDIR) $(FEDORA_PACKAGE_DIR)
-	$(MKDIR) $(FEDORA_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(FEDORA_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(FEDORA_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(FEDORA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+FEDORA_PACKAGE: COPY_SOURCES_TGZ
+	$(RM) -r $(HOME)/rpmbuild
 	rpmdev-setuptree;
-	cp $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(FEDORA_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	$(CP) $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(FEDORA_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(FEDORA_PACKAGE_DIR)
 	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(FEDORA_PACKAGE_DIR)
-	$(RM) -r $(FEDORA_PACKAGE_DIR)/$(tm_devel)
+	$(RM) -r $(HOME)/rpmbuild
+	$(RM) -r ../distr/build
 
 .PHONY: FEDORA_PACKAGE
 
@@ -364,25 +351,18 @@ FEDORA_PACKAGE:
 MANDRIVA_PACKAGE_SRC = packages/mandriva
 MANDRIVA_PACKAGE_DIR = ../distr/mandriva
 
-MANDRIVA_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(MANDRIVA_PACKAGE_DIR)
-	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)
-	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(MANDRIVA_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(MANDRIVA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+MANDRIVA_PACKAGE: COPY_SOURCES_TGZ
+	$(RM) -r $(HOME)/rpmbuild
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
-	cp $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(MANDRIVA_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	$(CP) $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(MANDRIVA_PACKAGE_DIR)
 	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_PACKAGE_DIR)
 	$(RM) $(HOME)/.rpmmacros
 	$(RM) -r $(HOME)/rpmbuild
-	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
+	$(RM) -r ../distr/build
 
 .PHONY: MANDRIVA_PACKAGE
 
@@ -394,14 +374,15 @@ REDHAT_PACKAGE_SRC = packages/redhat
 REDHAT_PACKAGE_DIR = ../distr/redhat
 
 REDHAT_PACKAGE: COPY_SOURCES_TGZ
+	$(RM) -r $(HOME)/rpmbuild
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
 	$(CP) $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(MKDIR) $(REDHAT_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(REDHAT_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/*/* $(REDHAT_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(REDHAT_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR)
 	$(RM) $(HOME)/.rpmmacros
 	$(RM) -r $(HOME)/rpmbuild
 	$(RM) -r ../distr/build
