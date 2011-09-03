@@ -231,47 +231,45 @@ COPY_GUILE:
 # Make a source package
 ###############################################################################
 
-BUILD_DIR = ../distr/$(tm_devel)-src
+SRC_PACKAGE_DIR = ../distr/Source
 
 SRC_PACKAGE: COPY_SOURCES
 	cd ../distr; tar -czf $(tm_devel)-src.tar.gz $(tm_devel)-src
+	$(MKDIR) $(SRC_PACKAGE_DIR)
+	$(MV) $(tm_devel)-src.tar.gz $(SRC_PACKAGE_DIR)/.
 	$(RM) -r $(BUILD_DIR)
 
 .PHONY: SRC_PACKAGE
 
 ###############################################################################
-# Make a static binary package
+# Make generic static binary packages
 ###############################################################################
 
+GENERIC_PACKAGE_DIR = ../distr/Generic
 STATIC_QT = $(tm_devel)-$(tm_suffix)
+STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
-STATIC_BINARY_PACKAGE: COPY_SOURCES COPY_GUILE
+GENERIC_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure
 	cd $(BUILD_DIR); make STATIC_TEXMACS
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_QT)
 	cd $(BUILD_DIR); tar -czf $(STATIC_QT).tar.gz $(STATIC_QT)
-	$(MV) $(BUILD_DIR)/$(STATIC_QT).tar.gz ../distr
+	$(MKDIR) $(GENERIC_PACKAGE_DIR)
+	$(MV) $(BUILD_DIR)/$(STATIC_QT).tar.gz $(GENERIC_PACKAGE_DIR)
 	$(RM) -r $(BUILD_DIR)
 
-.PHONY: STATIC_BINARY_PACKAGE
-
-###############################################################################
-# Make a static binary package for the X11 version
-###############################################################################
-
-STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
-
-STATIC_BINARY_X11_PACKAGE: COPY_SOURCES COPY_GUILE
+GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure --disable-qt
 	cd $(BUILD_DIR); make STATIC_TEXMACS
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_X11)
 	cd $(BUILD_DIR); tar -czf $(STATIC_X11).tar.gz $(STATIC_X11)
-	$(MV) $(BUILD_DIR)/$(STATIC_X11).tar.gz ../distr
+	$(MKDIR) $(GENERIC_PACKAGE_DIR)
+	$(MV) $(BUILD_DIR)/$(STATIC_X11).tar.gz $(GENERIC_PACKAGE_DIR)
 	$(RM) -r $(BUILD_DIR)
 
-.PHONY: STATIC_BINARY_X11_PACKAGE
+.PHONY: GENERIC_PACKAGE GENERIC_X11_PACKAGE
 
 ###############################################################################
 # Make a CentOs package
