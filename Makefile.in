@@ -208,15 +208,20 @@ UNINSTALL:
 # Subtargets for the production of packages
 ###############################################################################
 
-BUILD_DIR = ../distr/$(tm_devel)-src
+BUILD_DIR = ../distr/build/$(tm_devel)
+BUILD_TGZ = ../distr/build/$(tm_devel).tar.gz
 
 COPY_SOURCES:
 	$(MKDIR) ../distr
+	$(MKDIR) ../distr/build
 	$(RM) -r $(BUILD_DIR)
 	$(MKDIR) $(BUILD_DIR)
 	$(CP) -p * $(BUILD_DIR)/.
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	cd $(BUILD_DIR); make DISTR_CLEAN
+
+COPY_SOURCES_TGZ: COPY_SOURCES
+	cd ../distr/build; tar -czf $(tm_devel).tar.gz $(tm_devel) 
 
 COPY_GUILE:
 	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
@@ -234,10 +239,11 @@ COPY_GUILE:
 SRC_PACKAGE_DIR = ../distr/Source
 
 SRC_PACKAGE: COPY_SOURCES
-	cd ../distr; tar -czf $(tm_devel)-src.tar.gz $(tm_devel)-src
+	$(MV) $(BUILD_DIR) ../distr/build/$(tm_devel)-src
+	cd ../distr/build; tar -czf $(tm_devel)-src.tar.gz $(tm_devel)-src
 	$(MKDIR) $(SRC_PACKAGE_DIR)
 	$(MV) $(tm_devel)-src.tar.gz $(SRC_PACKAGE_DIR)/.
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r ../distr/build
 
 .PHONY: SRC_PACKAGE
 
@@ -257,7 +263,7 @@ GENERIC_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); tar -czf $(STATIC_QT).tar.gz $(STATIC_QT)
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
 	$(MV) $(BUILD_DIR)/$(STATIC_QT).tar.gz $(GENERIC_PACKAGE_DIR)
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r ../distr/build
 
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure --disable-qt
@@ -267,7 +273,7 @@ GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); tar -czf $(STATIC_X11).tar.gz $(STATIC_X11)
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
 	$(MV) $(BUILD_DIR)/$(STATIC_X11).tar.gz $(GENERIC_PACKAGE_DIR)
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r ../distr/build
 
 .PHONY: GENERIC_PACKAGE GENERIC_X11_PACKAGE
 
@@ -385,27 +391,20 @@ MANDRIVA_PACKAGE:
 ###############################################################################
 
 REDHAT_PACKAGE_SRC = packages/redhat
-REDHAT_PACKAGE_DIR = ../distr/TeXmacs-Redhat
+REDHAT_PACKAGE_DIR = ../distr/redhat
 
-REDHAT_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(REDHAT_PACKAGE_DIR)
-	$(MKDIR) $(REDHAT_PACKAGE_DIR)
-	$(MKDIR) $(REDHAT_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(REDHAT_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(REDHAT_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+REDHAT_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
-	cp $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(REDHAT_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	$(CP) $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(MKDIR) $(REDHAT_PACKAGE_DIR)
 	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(REDHAT_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/SRPMS/*/* $(REDHAT_PACKAGE_DIR)
 	$(RM) $(HOME)/.rpmmacros
 	$(RM) -r $(HOME)/rpmbuild
-	$(RM) -r $(REDHAT_PACKAGE_DIR)/$(tm_devel)
+	$(RM) -r ../distr/build
 
 .PHONY: REDHAT_PACKAGE
 
