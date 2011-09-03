@@ -6,7 +6,7 @@ Summary: A structured wysiwyg scientific text editor
 Group: Applications/Editors
 License: GNU GPL 3.0
 URL: http://www.texmacs.org
-Source0: texmacs-%{version}.tar.gz
+Source0: TeXmacs-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
