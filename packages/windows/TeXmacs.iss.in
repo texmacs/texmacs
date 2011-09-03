@@ -9,7 +9,7 @@ DefaultDirName={pf}\TeXmacs
 DefaultGroupName=TeXmacs
 UninstallDisplayIcon={app}\TeXmacs.ico
 OutputDir=..\..\..\distr
-OutputBaseFilename=@PACKAGE@-@DEVEL_VERSION@-installer
+OutputBaseFilename=@tm_devel@-installer
 ; SourceDir=../..
 ChangesAssociations=yes
 
