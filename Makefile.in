@@ -205,6 +205,213 @@ UNINSTALL:
 .PHONY: INSTALL UNINSTALL
 
 ###############################################################################
+# Subtargets for the production of packages
+###############################################################################
+
+BUILD_DIR = ../distr/$(tm_devel)-src
+
+COPY_SOURCES:
+	$(MKDIR) ../distr
+	$(RM) -r $(BUILD_DIR)
+	$(MKDIR) $(BUILD_DIR)
+	$(CP) -p * $(BUILD_DIR)/.
+	cd $(BUILD_DIR); make ACCESS_FLAGS
+	cd $(BUILD_DIR); make DISTR_CLEAN
+
+###############################################################################
+# Make a source package
+###############################################################################
+
+BUILD_DIR = ../distr/$(tm_devel)-src
+
+SRC_PACKAGE: COPY_SOURCES
+	cd ../distr; tar -czf $(tm_devel)-src.tar.gz $(tm_devel)-src
+	$(RM) -r $(BUILD_DIR)
+
+.PHONY: SRC_PACKAGE
+
+###############################################################################
+# Make a static binary package
+###############################################################################
+
+STATIC_QT = $(tm_devel)-$(tm_suffix)
+
+COPY_GUILE:
+	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
+	export GUILE_DATA_PATH; \
+	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
+	export GUILE_LOAD_PATH; \
+	for I in $$GUILE_LOAD_PATH ; \
+	do $(CP) $$I $(BUILD_DIR)/TeXmacs/progs/ ; done
+	$(CHMOD) -R go=rX $(BUILD_DIR)/TeXmacs/progs/ice-9
+
+STATIC_BINARY_PACKAGE: COPY_SOURCES COPY_GUILE
+	cd $(BUILD_DIR); ./configure
+	cd $(BUILD_DIR); make STATIC_TEXMACS
+	cd $(BUILD_DIR); make ACCESS_FLAGS
+	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_QT)
+	cd $(BUILD_DIR); tar -czf $(STATIC_QT).tar.gz $(STATIC_QT)
+	$(MV) $(BUILD_DIR)/$(STATIC_QT).tar.gz ../distr
+	$(RM) -r $(BUILD_DIR)
+
+.PHONY: STATIC_BINARY_PACKAGE
+
+###############################################################################
+# Make a static binary package for the X11 version
+###############################################################################
+
+STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
+
+STATIC_BINARY_X11_PACKAGE: COPY_SOURCES COPY_GUILE
+	cd $(BUILD_DIR); ./configure --disable-qt
+	cd $(BUILD_DIR); make STATIC_TEXMACS
+	cd $(BUILD_DIR); make ACCESS_FLAGS
+	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_X11)
+	cd $(BUILD_DIR); tar -czf $(STATIC_X11).tar.gz $(STATIC_X11)
+	$(MV) $(BUILD_DIR)/$(STATIC_X11).tar.gz ../distr
+	$(RM) -r $(BUILD_DIR)
+
+.PHONY: STATIC_BINARY_X11_PACKAGE
+
+###############################################################################
+# Make a CentOs package
+###############################################################################
+
+CENTOS_PACKAGE_SRC = packages/centos
+CENTOS_PACKAGE_DIR = ../distr/TeXmacs-Centos
+
+CENTOS_PACKAGE:
+	$(MKDIR) ../distr
+	$(RM) -r $(CENTOS_PACKAGE_DIR)
+	$(MKDIR) $(CENTOS_PACKAGE_DIR)
+	$(MKDIR) $(CENTOS_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(CENTOS_PACKAGE_DIR)/$(tm_devel)/.
+	cd $(CENTOS_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
+	cd $(CENTOS_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
+	cp $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(CENTOS_PACKAGE_DIR); \
+	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(CENTOS_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(CENTOS_PACKAGE_DIR)
+	$(RM) $(HOME)/.rpmmacros
+	$(RM) -r $(HOME)/rpmbuild
+	$(RM) -r $(CENTOS_PACKAGE_DIR)/$(tm_devel)
+
+.PHONY: CENTOS_PACKAGE
+
+###############################################################################
+# Make a Debian package
+###############################################################################
+
+DEBIAN_PACKAGE_SRC = packages/debian
+DEBIAN_PACKAGE_DIR = ../distr/TeXmacs-Debian
+
+DEBIAN_PACKAGE:
+	$(MKDIR) ../distr
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/.
+	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
+	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel)
+	cd $(DEBIAN_PACKAGE_DIR); \
+	tar -czf $(tm_underscore_devel).orig.tar.gz $(tm_devel)
+	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel);
+	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian ;
+	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian
+	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); debuild -us -uc
+	$(RM) -r $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
+
+.PHONY: DEBIAN_PACKAGE
+
+###############################################################################
+# Make a Fedora package
+###############################################################################
+
+FEDORA_PACKAGE_SRC = packages/fedora
+FEDORA_PACKAGE_DIR = ../distr/TeXmacs-Fedora
+
+FEDORA_PACKAGE:
+	$(MKDIR) ../distr
+	$(RM) -r $(FEDORA_PACKAGE_DIR)
+	$(MKDIR) $(FEDORA_PACKAGE_DIR)
+	$(MKDIR) $(FEDORA_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(FEDORA_PACKAGE_DIR)/$(tm_devel)/.
+	cd $(FEDORA_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
+	cd $(FEDORA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+	rpmdev-setuptree;
+	cp $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(FEDORA_PACKAGE_DIR); \
+	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(FEDORA_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(FEDORA_PACKAGE_DIR)
+	$(RM) -r $(FEDORA_PACKAGE_DIR)/$(tm_devel)
+
+.PHONY: FEDORA_PACKAGE
+
+###############################################################################
+# Make a Mandriva package
+###############################################################################
+
+MANDRIVA_PACKAGE_SRC = packages/mandriva
+MANDRIVA_PACKAGE_DIR = ../distr/TeXmacs-Mandriva
+
+MANDRIVA_PACKAGE:
+	$(MKDIR) ../distr
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)
+	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)
+	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)/.
+	cd $(MANDRIVA_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
+	cd $(MANDRIVA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
+	cp $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(MANDRIVA_PACKAGE_DIR); \
+	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_PACKAGE_DIR)
+	$(RM) $(HOME)/.rpmmacros
+	$(RM) -r $(HOME)/rpmbuild
+	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
+
+.PHONY: MANDRIVA_PACKAGE
+
+###############################################################################
+# Make a RedHat package
+###############################################################################
+
+REDHAT_PACKAGE_SRC = packages/redhat
+REDHAT_PACKAGE_DIR = ../distr/TeXmacs-Redhat
+
+REDHAT_PACKAGE:
+	$(MKDIR) ../distr
+	$(RM) -r $(REDHAT_PACKAGE_DIR)
+	$(MKDIR) $(REDHAT_PACKAGE_DIR)
+	$(MKDIR) $(REDHAT_PACKAGE_DIR)/$(tm_devel)
+	$(CP) -a * $(REDHAT_PACKAGE_DIR)/$(tm_devel)/.
+	cd $(REDHAT_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
+	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
+	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
+	cp $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	cd $(REDHAT_PACKAGE_DIR); \
+	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(REDHAT_PACKAGE_DIR)
+	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR)
+	$(RM) $(HOME)/.rpmmacros
+	$(RM) -r $(HOME)/rpmbuild
+	$(RM) -r $(REDHAT_PACKAGE_DIR)/$(tm_devel)
+
+.PHONY: REDHAT_PACKAGE
+
+###############################################################################
 # Make Mac OS X bundles and diskimages
 ###############################################################################
 
@@ -324,207 +531,6 @@ WINDOWS_INSTALLER:
 WINDOWS_PACKAGE: WINDOWS_PACKAGE_MAIN WINDOWS_PACKAGE_LIBS WINDOWS_INSTALLER
 
 .PHONY: WINDOWS_PACKAGE
-
-###############################################################################
-# Make a Debian package
-###############################################################################
-
-DEBIAN_PACKAGE_SRC = packages/debian
-DEBIAN_PACKAGE_DIR = ../distr/TeXmacs-Debian
-
-DEBIAN_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(DEBIAN_PACKAGE_DIR)
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel)
-	cd $(DEBIAN_PACKAGE_DIR); \
-	tar -czf $(tm_underscore_devel).orig.tar.gz $(tm_devel)
-	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel);
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian ;
-	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian
-	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); debuild -us -uc
-	$(RM) -r $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
-
-.PHONY: DEBIAN_PACKAGE
-
-###############################################################################
-# Make a Fedora package
-###############################################################################
-
-FEDORA_PACKAGE_SRC = packages/fedora
-FEDORA_PACKAGE_DIR = ../distr/TeXmacs-Fedora
-
-FEDORA_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(FEDORA_PACKAGE_DIR)
-	$(MKDIR) $(FEDORA_PACKAGE_DIR)
-	$(MKDIR) $(FEDORA_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(FEDORA_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(FEDORA_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(FEDORA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
-	rpmdev-setuptree;
-	cp $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(FEDORA_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(FEDORA_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(FEDORA_PACKAGE_DIR)
-	$(RM) -r $(FEDORA_PACKAGE_DIR)/$(tm_devel)
-
-.PHONY: FEDORA_PACKAGE
-
-###############################################################################
-# Make a CentOs package
-###############################################################################
-
-CENTOS_PACKAGE_SRC = packages/centos
-CENTOS_PACKAGE_DIR = ../distr/TeXmacs-Centos
-
-CENTOS_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(CENTOS_PACKAGE_DIR)
-	$(MKDIR) $(CENTOS_PACKAGE_DIR)
-	$(MKDIR) $(CENTOS_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(CENTOS_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(CENTOS_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(CENTOS_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
-	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
-	cp $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(CENTOS_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(CENTOS_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(CENTOS_PACKAGE_DIR)
-	$(RM) $(HOME)/.rpmmacros
-	$(RM) -r $(HOME)/rpmbuild
-	$(RM) -r $(CENTOS_PACKAGE_DIR)/$(tm_devel)
-
-.PHONY: CENTOS_PACKAGE
-
-###############################################################################
-# Make a Mandriva package
-###############################################################################
-
-MANDRIVA_PACKAGE_SRC = packages/mandriva
-MANDRIVA_PACKAGE_DIR = ../distr/TeXmacs-Mandriva
-
-MANDRIVA_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(MANDRIVA_PACKAGE_DIR)
-	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)
-	$(MKDIR) $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(MANDRIVA_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(MANDRIVA_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
-	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $HOME)/rpmbuild' > $(HOME)/.rpmmacros
-	cp $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(MANDRIVA_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(MANDRIVA_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_PACKAGE_DIR)
-	$(RM) $(HOME)/.rpmmacros
-	$(RM) -r $(HOME)/rpmbuild
-	$(RM) -r $(MANDRIVA_PACKAGE_DIR)/$(tm_devel)
-
-.PHONY: MANDRIVA_PACKAGE
-
-###############################################################################
-# Make a RedHat package
-###############################################################################
-
-REDHAT_PACKAGE_SRC = packages/redhat
-REDHAT_PACKAGE_DIR = ../distr/TeXmacs-Redhat
-
-REDHAT_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(REDHAT_PACKAGE_DIR)
-	$(MKDIR) $(REDHAT_PACKAGE_DIR)
-	$(MKDIR) $(REDHAT_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(REDHAT_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(REDHAT_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(REDHAT_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel) 
-	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
-	cp $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
-	cd $(REDHAT_PACKAGE_DIR); \
-	$(CP) $(tm_devel).tar.gz $(HOME)/rpmbuild/SOURCES/.
-	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/* $(REDHAT_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR)
-	$(RM) $(HOME)/.rpmmacros
-	$(RM) -r $(HOME)/rpmbuild
-	$(RM) -r $(REDHAT_PACKAGE_DIR)/$(tm_devel)
-
-.PHONY: REDHAT_PACKAGE
-
-###############################################################################
-# Make a source package
-###############################################################################
-
-SRC_PACKAGE_DIR = ../distr/$(tm_devel)-src
-
-COPY_SOURCES:
-	$(MKDIR) ../distr
-	$(RM) -r $(SRC_PACKAGE_DIR)
-	$(MKDIR) $(SRC_PACKAGE_DIR)
-	$(CP) -p * $(SRC_PACKAGE_DIR)/.
-	cd $(SRC_PACKAGE_DIR); make ACCESS_FLAGS
-	cd $(SRC_PACKAGE_DIR); make DISTR_CLEAN
-
-SRC_PACKAGE: COPY_SOURCES
-	cd ../distr; tar -czf $(tm_devel)-src.tar.gz $(tm_devel)-src
-	$(RM) -r $(SRC_PACKAGE_DIR)
-
-.PHONY: SRC_PACKAGE
-
-###############################################################################
-# Make a static binary package
-###############################################################################
-
-STATIC_QT = $(tm_devel)-$(tm_suffix)
-
-COPY_GUILE:
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	for I in $$GUILE_LOAD_PATH ; \
-	do $(CP) $$I $(SRC_PACKAGE_DIR)/TeXmacs/progs/ ; done
-	$(CHMOD) -R go=rX $(SRC_PACKAGE_DIR)/TeXmacs/progs/ice-9
-
-STATIC_BINARY_PACKAGE: COPY_SOURCES COPY_GUILE
-	cd $(SRC_PACKAGE_DIR); ./configure
-	cd $(SRC_PACKAGE_DIR); make STATIC_TEXMACS
-	cd $(SRC_PACKAGE_DIR); make ACCESS_FLAGS
-	$(MV) $(SRC_PACKAGE_DIR)/TeXmacs $(SRC_PACKAGE_DIR)/$(STATIC_QT)
-	cd $(SRC_PACKAGE_DIR); tar -czf $(STATIC_QT).tar.gz $(STATIC_QT)
-	$(MV) $(SRC_PACKAGE_DIR)/$(STATIC_QT).tar.gz ../distr
-	$(RM) -r $(SRC_PACKAGE_DIR)
-
-.PHONY: STATIC_BINARY_PACKAGE
-
-###############################################################################
-# Make a static binary package for the X11 version
-###############################################################################
-
-STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
-
-STATIC_BINARY_X11_PACKAGE: COPY_SOURCES COPY_GUILE
-	cd $(SRC_PACKAGE_DIR); ./configure --disable-qt
-	cd $(SRC_PACKAGE_DIR); make STATIC_TEXMACS
-	cd $(SRC_PACKAGE_DIR); make ACCESS_FLAGS
-	$(MV) $(SRC_PACKAGE_DIR)/TeXmacs $(SRC_PACKAGE_DIR)/$(STATIC_X11)
-	cd $(SRC_PACKAGE_DIR); tar -czf $(STATIC_X11).tar.gz $(STATIC_X11)
-	$(MV) $(SRC_PACKAGE_DIR)/$(STATIC_X11).tar.gz ../distr
-	$(RM) -r $(SRC_PACKAGE_DIR)
-
-.PHONY: STATIC_BINARY_X11_PACKAGE
 
 ###############################################################################
 # Cleaning and backups
