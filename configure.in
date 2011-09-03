@@ -515,7 +515,7 @@ LIBS="$SAVE_LIBS"
 #--------------------------------------------------------------------
 
 CONFIG_OS="GNU_LINUX"
-CONFIG_OS_SUFFIX="gnu-linux"
+CONFIG_OS_SUFFIX="${host}"
 CONFIG_OS_COMPAT="Unix"
 CONFIG_MACOS=""
 CONFIG_CXXFLAGS=""
@@ -560,6 +560,7 @@ fi
 case "${host}" in
   i*86-*-linux* | x86_64-*-linux*)
     AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/Linux host)
+    CONFIG_OS_SUFFIX="gnu-linux"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
   i*86-*-freebsd* | x86_64-*-freebsd*)
@@ -610,7 +611,6 @@ case "${host}" in
   *sun*)
     AC_MSG_RESULT(final adjustments for a SUN/solaris host)
     CONFIG_OS="SUN"
-    CONFIG_OS_SUFFIX="sun"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
