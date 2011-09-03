@@ -218,6 +218,15 @@ COPY_SOURCES:
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	cd $(BUILD_DIR); make DISTR_CLEAN
 
+COPY_GUILE:
+	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
+	export GUILE_DATA_PATH; \
+	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
+	export GUILE_LOAD_PATH; \
+	for I in $$GUILE_LOAD_PATH ; \
+	do $(CP) $$I $(BUILD_DIR)/TeXmacs/progs/ ; done
+	$(CHMOD) -R go=rX $(BUILD_DIR)/TeXmacs/progs/ice-9
+
 ###############################################################################
 # Make a source package
 ###############################################################################
@@ -235,15 +244,6 @@ SRC_PACKAGE: COPY_SOURCES
 ###############################################################################
 
 STATIC_QT = $(tm_devel)-$(tm_suffix)
-
-COPY_GUILE:
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	for I in $$GUILE_LOAD_PATH ; \
-	do $(CP) $$I $(BUILD_DIR)/TeXmacs/progs/ ; done
-	$(CHMOD) -R go=rX $(BUILD_DIR)/TeXmacs/progs/ice-9
 
 STATIC_BINARY_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure
