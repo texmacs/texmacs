@@ -306,21 +306,13 @@ CENTOS_PACKAGE: COPY_SOURCES_TGZ
 DEBIAN_PACKAGE_SRC = packages/debian
 DEBIAN_PACKAGE_DIR = ../distr/debian
 
-DEBIAN_PACKAGE:
-	$(MKDIR) ../distr
-	$(RM) -r $(DEBIAN_PACKAGE_DIR)
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
-	$(CP) -a * $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/.
-	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); make DISTR_CLEAN
-	cd $(DEBIAN_PACKAGE_DIR); tar -czf $(tm_devel).tar.gz $(tm_devel)
-	cd $(DEBIAN_PACKAGE_DIR); \
-	tar -czf $(tm_underscore_devel).orig.tar.gz $(tm_devel)
-	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel);
-	$(MKDIR) $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian ;
-	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(DEBIAN_PACKAGE_DIR)/$(tm_devel)/debian
-	cd $(DEBIAN_PACKAGE_DIR)/$(tm_devel); debuild -us -uc
-	$(RM) -r $(DEBIAN_PACKAGE_DIR)/$(tm_devel)
+DEBIAN_PACKAGE: COPY_SOURCES_TGZ
+	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_underscore_devel).orig.tar.gz
+	$(MKDIR) $(BUILD_DIR)/debian ;
+	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
+	cd $(BUILD_DIR); debuild -us -uc
+	$(CP) -p ../distr/build/*.deb $(DEBIAN_PACKAGE_DIR)
+	$(RM) -r ../distr/build
 
 .PHONY: DEBIAN_PACKAGE
 
