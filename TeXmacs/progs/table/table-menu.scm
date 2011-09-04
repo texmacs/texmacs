@@ -40,11 +40,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind table-size-menu
-  ("Number of rows" (interactive table-set-rows))
+  ("Set number of rows" (interactive table-set-rows))
   ("Minimal number of rows" (table-interactive-set "table-min-rows"))
   ("Minimal number of columns" (table-interactive-set "table-min-cols"))
   ---
-  ("Number of columns" (interactive table-set-columns))
+  ("Set number of columns" (interactive table-set-columns))
   ("Maximal number of rows" (table-interactive-set "table-max-rows"))
   ("Maximal number of columns" (table-interactive-set "table-max-cols")))
 
