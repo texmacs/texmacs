@@ -430,10 +430,11 @@
 
 (tm-menu (focus-tag-extra-icons t)
   (:require (table-markup-context? t))
-  ((check (balloon (icon "tm_table_parwidth.xpm")
-                   "Extend table to full paragraph width")
-          "v" (table-test-parwidth?))
-   (table-toggle-parwidth))
+  (if (tree-is? t :up 'document)
+      ((check (balloon (icon "tm_table_parwidth.xpm")
+                       "Extend table to full paragraph width")
+              "v" (table-test-parwidth?))
+       (table-toggle-parwidth)))
   (=> (balloon (icon "tm_set_properties.xpm") "Table properties")
       (mini #f (link table-menu))))
 
