@@ -171,9 +171,12 @@
 
 (menu-bind cell-special-menu
   (when (== (get-cell-mode) "cell")
-    ("Set span" (interactive cell-set-span))
     ("Insert subtable" (make-subtable)))
   ---
+  (when (== (get-cell-mode) "cell")
+    (-> "Cell span"
+        ("Horizontal" (interactive cell-set-column-span))
+        ("Vertical" (interactive cell-set-row-span))))
   (-> "Text height correction"
       ("Off" (cell-set-vcorrect "n"))
       ---
@@ -234,7 +237,7 @@
   (-> "Vertical alignment" (link cell-valign-menu))
   (-> "Background color" (link cell-color-menu))
   ;;---
-  (-> "Special properties" (link cell-special-menu)))
+  (-> "Special" (link cell-special-menu)))
 
 (menu-bind vertical-table-cell-menu
   (=> "Table" (link table-menu))
@@ -474,5 +477,9 @@
   (=> (balloon (icon "tm_cell_background.xpm")
 	       "Set background color of cell")
       (link cell-color-menu))
-  (=> (balloon (icon "tm_cell_special.xpm") "Set special cell properties")
+  ((check (balloon (icon "tm_cell_wrap.xpm") "Line wrapping inside cell")
+          "v" (cell-test-wrap?))
+   (cell-toggle-wrap))
+  (=> (balloon (icon "tm_cell_special.xpm")
+               "Special cell properties and actions")
       (link  cell-special-menu)))

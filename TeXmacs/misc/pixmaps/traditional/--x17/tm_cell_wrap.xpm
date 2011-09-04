@@ -1,0 +1,23 @@
+/* XPM */
+static char * tm_cell_wrap_xpm[] = {
+"14 14 6 1",
+" 	c None",
+"=	c #00000000FFFF",
+".	c #0000FFFFFFFF",
+"o	c #000000000000",
+"O	c #999999999999",
+"r      c #FFFF00000000",
+" O          O ",
+"OOOOOOOOOOOOOO",
+" O          O ",
+" O ooooooorrO ",
+" O oOOOOOrr O ",
+" O oooooorr O ",
+" O          O ",
+" O rroooooo O ",
+" O rrOOOOOo O ",
+" Orrooooooo O ",
+" O          O ",
+" O          O ",
+"OOOOOOOOOOOOOO",
+" O          O "};

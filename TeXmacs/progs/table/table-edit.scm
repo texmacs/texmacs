@@ -206,7 +206,7 @@
   (interactive table-set-maximal-width))
 
 (tm-define (table-test-parwidth?)
-  (and (== (table-get-width) "1par") (== (table-get-hmode) "exact")))
+  (== (table-get-width) "1par"))
 (tm-define (table-toggle-parwidth)
   (:check-mark "o" table-test-parwidth?)
   (if (table-test-parwidth?)
@@ -486,6 +486,14 @@
   (:argument cs "Column span")
   (cell-set-format-list '("cell-row-span" "cell-col-span") (list rs cs)))
 
+(tm-define (cell-set-row-span rs)
+  (:argument rs "Row span")
+  (cell-set-format "cell-row-span" rs))
+
+(tm-define (cell-set-column-span cs)
+  (:argument cs "Column span")
+  (cell-set-format "cell-col-span" cs))
+
 (define (cell-get-halign) (cell-get-format "cell-halign"))
 (define (cell-test-halign? s) (== (cell-get-halign) s))
 (tm-define (cell-set-halign s)
@@ -518,9 +526,17 @@
 (define (cell-get-hyphen) (cell-get-format "cell-hyphen"))
 (define (cell-test-hyphen? s) (== (cell-get-hyphen) s))
 (tm-define (cell-set-hyphen s)
-  (:synopsis "Set hyphenation mode for cell.")
+  (:synopsis "Set cell wrapping mode.")
   (:check-mark "o" cell-test-hyphen?)
   (cell-set-format "cell-hyphen" s))
+
+(tm-define (cell-test-wrap?) (!= (cell-get-hyphen) "n"))
+(tm-define (cell-toggle-wrap)
+  (:synopsis "Toggle cell wrapping mode.")
+  (:check-mark "o" cell-test-wrap?)
+  (if (cell-test-wrap?)
+      (cell-set-format "cell-hyphen" "n")
+      (cell-set-format "cell-hyphen" "t")))
 
 (define (cell-get-block) (cell-get-format "cell-block"))
 (define (cell-test-block? s) (== (cell-get-block) s))
