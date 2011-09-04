@@ -351,6 +351,7 @@ public:
   virtual void   table_remove_column (bool forward, bool flag= false) = 0;
   virtual int    table_nr_rows () = 0;
   virtual int    table_nr_columns () = 0;
+  virtual void   table_set_extents (int rows, int cols) = 0;
   virtual int    table_which_row () = 0;
   virtual int    table_which_column () = 0;
   virtual path   table_search_cell (int row, int col) = 0;

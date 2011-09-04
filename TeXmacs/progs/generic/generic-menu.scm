@@ -274,6 +274,8 @@
             (tree-is? t :up 'inactive))
      (inactive-toggle t))))
 
+(tm-menu (focus-tag-extra-icons t))
+
 (tm-menu (focus-tag-icons t)
   (dynamic (focus-toggle-icons t))
   (mini #t
@@ -284,6 +286,7 @@
         (=> (balloon (eval (focus-tag-name (tree-label t)))
                      "Structured variant")
             (dynamic (focus-variant-menu t))))))
+  (dynamic (focus-tag-extra-icons t))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help))
   ((balloon (icon "tm_focus_delete.xpm") "Remove tag")

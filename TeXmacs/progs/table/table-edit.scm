@@ -146,6 +146,16 @@
 (define (table-set-format-list vars vals)
   (map table-set-format vars vals))
 
+(tm-define (table-set-rows nr)
+  (:synopsis "Set the number of rows of the table to @nr.")
+  (:argument nr "Number of rows")
+  (table-set-extents (string->number nr) (table-nr-columns)))
+
+(tm-define (table-set-columns nr)
+  (:synopsis "Set the number of columns of the table to @nr.")
+  (:argument nr "Number of columns")
+  (table-set-extents (table-nr-rows) (string->number nr)))
+
 (define (table-get-width) (table-get-format "table-width"))
 (define (table-get-hmode) (table-get-format "table-hmode"))
 
@@ -194,6 +204,16 @@
   (:interactive #t)
   (:check-mark "o" table-test-maximal-width?)
   (interactive table-set-maximal-width))
+
+(tm-define (table-test-parwidth?)
+  (and (== (table-get-width) "1par") (== (table-get-hmode) "exact")))
+(tm-define (table-toggle-parwidth)
+  (:check-mark "o" table-test-parwidth?)
+  (if (table-test-parwidth?)
+      (table-set-format-list '("table-width" "table-hmode")
+                             '("" ""))
+      (table-set-format-list '("table-width" "table-hmode")
+                             '("1par" "exact"))))
 
 (define (table-get-height) (table-get-format "table-height"))
 (define (table-get-vmode) (table-get-format "table-vmode"))
@@ -262,12 +282,28 @@
   (:check-mark "*" table-test-halign?)
   (table-set-format "table-halign" s))
 
+(define (table-test-specific-halign? . l) (== (table-get-halign) "O"))
+(tm-define (table-specific-halign col)
+  (:synopsis "Align horizontally at the baseline of a specific column.")
+  (:check-mark "*" table-test-specific-halign?)
+  (:argument col "Align at column")
+  (table-set-format "table-col-origin" col)
+  (table-set-format "table-halign" "O"))
+
 (define (table-get-valign) (table-get-format "table-valign"))
 (define (table-test-valign? s) (== (table-get-valign) s))
 (tm-define (table-set-valign s)
   (:synopsis "Set vertical table alignment.")
   (:check-mark "*" table-test-valign?)
   (table-set-format "table-valign" s))
+
+(define (table-test-specific-valign? . l) (== (table-get-valign) "O"))
+(tm-define (table-specific-valign row)
+  (:synopsis "Align vertically at the baseline of a specific row.")
+  (:check-mark "*" table-test-specific-valign?)
+  (:argument row "Align at row")
+  (table-set-format "table-row-origin" row)
+  (table-set-format "table-valign" "O"))
 
 (define (table-hyphen?) (== "y" (table-get-format "table-hyphen")))
 (define (table-set-hyphen s) (table-set-format "table-hyphen" s))

@@ -58,6 +58,7 @@ protected:
 
   // Main routines for manipulating the entire table
   void table_get_extents (path fp, int& nr_rows, int& nr_cols);
+  void table_set_extents (path fp, int nr_rows, int nr_cols);
   void table_get_limits (path fp, int& i1, int& j1, int& i2, int& j2);
   void table_insert (path fp, int row, int col, int nr_rows, int nr_cols);
   void table_remove (path fp, int row, int col, int nr_rows, int nr_cols);
@@ -94,6 +95,7 @@ public:
   void   table_remove_column (bool forward, bool flag= false);
   int    table_nr_rows ();
   int    table_nr_columns ();
+  void   table_set_extents (int rows, int cols);
   int    table_which_row ();
   int    table_which_column ();
   path   table_search_cell (int row, int col);

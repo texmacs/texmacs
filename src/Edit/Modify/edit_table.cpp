@@ -418,6 +418,20 @@ edit_table_rep::table_get_extents (path fp, int& nr_rows, int& nr_cols) {
 }
 
 void
+edit_table_rep::table_set_extents (path fp, int nr_rows, int nr_cols) {
+  int old_rows, old_cols;
+  table_get_extents (fp, old_rows, old_cols);
+  if (nr_rows > old_rows || nr_cols > old_cols)
+    table_insert (fp, old_rows, old_cols,
+                  max (0, nr_rows - old_rows),
+                  max (0, nr_cols - old_cols));
+  if (nr_rows < old_rows || nr_cols < old_cols)
+    table_remove (fp, nr_rows, nr_cols,
+                  max (0, old_rows - nr_rows),
+                  max (0, old_cols - nr_cols));
+}
+
+void
 edit_table_rep::table_get_limits (
   path fp, int& i1, int& j1, int& i2, int& j2) 
 {
@@ -1196,6 +1210,17 @@ edit_table_rep::table_nr_columns () {
   if (is_nil (fp)) return -1;
   table_get_extents (fp, nr_rows, nr_cols);
   return nr_cols;
+}
+
+void
+edit_table_rep::table_set_extents (int rows, int cols) {
+  path fp= search_format ();
+  if (is_nil (fp)) return;
+  int min_rows, min_cols, max_rows, max_cols;
+  table_get_limits (fp, min_rows, min_cols, max_rows, max_cols);
+  rows= min (max_rows, max (min_rows, rows));
+  cols= min (max_cols, max (min_cols, cols));
+  table_set_extents (fp, rows, cols);
 }
 
 int

@@ -179,20 +179,12 @@ table_rep::format_table (tree fm) {
   if (var->contains (TABLE_HYPHEN))
     hyphen= as_string (env->exec (var[TABLE_HYPHEN]));
   else hyphen= "n";
-  if (var->contains (TABLE_ROW_ORIGIN)) {
+  if (var->contains (TABLE_ROW_ORIGIN))
     row_origin= as_int (env->exec (var[TABLE_ROW_ORIGIN]));
-    if (row_origin < 0) row_origin += nr_rows;
-    else row_origin--;
-    row_origin= max (min (row_origin, nr_rows - 1), 0);
-  }
-  else row_origin= 0;
-  if (var->contains (TABLE_COL_ORIGIN)) {
+  else row_origin= 1;
+  if (var->contains (TABLE_COL_ORIGIN))
     col_origin= as_int (env->exec (var[TABLE_COL_ORIGIN]));
-    if (col_origin < 0) col_origin += nr_cols;
-    else col_origin--;
-    col_origin= max (min (col_origin, nr_cols - 1), 0);
-  }
-  else col_origin= 0;
+  else col_origin= 1;
 }
 
 void
@@ -538,7 +530,13 @@ table_rep::position_columns () {
     xoff= -(sum (mw, nr_cols>>1) + sum (mw, (nr_cols-1)>>1)+
 	    lw[nr_cols>>1] + lw[(nr_cols-1)>>1]) >> 1;
   else if (halign == "R") xoff= -sum (mw, nr_cols - 1) - lw[nr_cols - 1];
-  else if (halign == "O") xoff= -sum (mw, col_origin) - lw[col_origin];
+  else if (halign == "O") {
+    int orig= col_origin;
+    if (orig < 0) orig += nr_cols;
+    else orig--;
+    orig= max (min (orig, nr_cols - 1), 0);
+    xoff= -sum (mw, orig) - lw[orig];
+  }
   else xoff= -sum (mw, j0) - lw[j0];
 
   x1= xoff- lborder- lsep;
@@ -657,7 +655,13 @@ table_rep::position_rows () {
     yoff= (sum (mh, nr_rows>>1) + sum (mh, (nr_rows-1)>>1) +
 	   th[nr_rows>>1] + th[(nr_rows-1)>>1]) >> 1;
   else if (valign == "B") yoff= sum (mh, nr_rows - 1) + th[nr_rows - 1];
-  else if (valign == "O") yoff= sum (mh, row_origin) + th[row_origin];
+  else if (valign == "O") {
+    int orig= row_origin;
+    if (orig < 0) orig += nr_rows;
+    else orig--;
+    orig= max (min (orig, nr_rows - 1), 0);
+    yoff= sum (mh, orig) + th[orig];
+  }
   else yoff= sum (mh, i0) + th[i0];
 
   y2= yoff+ tborder+ tsep;
