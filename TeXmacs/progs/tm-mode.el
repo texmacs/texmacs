@@ -27,6 +27,7 @@
     delayed dialogue on-entry on-exit widget-delayed
     association-tile bar concat dense-bar dense-tile document
     header-bar sequence short-bar short-tile
+    minibar
     wrap-selection-any wrap-selection-small
     try-modification
     $begin $cond))
