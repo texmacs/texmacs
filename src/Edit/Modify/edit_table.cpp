@@ -1345,9 +1345,13 @@ edit_table_rep::get_cell_mode () {
 void
 edit_table_rep::cell_set_format (string var, tree val) {
   if (selection_active_table ()) {
-    int row1, col1, row2, col2;
+    int row1, col1, row2, col2, rows, cols;
     path fp= selection_get_subtable (row1, col1, row2, col2);
-    table_set_format (fp, row1+1, col1+1, row2+1, col2+1, var, val);
+    row1++; col1++; row2++; col2++;
+    table_get_extents (fp, rows, cols);
+    if (rows > row1 && row1 <= 2 && row2 == rows) row2= -1;
+    if (cols > col1 && col1 <= 2 && col2 == cols) col2= -1;
+    table_set_format (fp, row1, col1, row2, col2, var, val);
   }
   else {
     int row, col;
