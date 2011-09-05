@@ -447,40 +447,49 @@
   (minibar
     (if (== (get-cell-mode) "cell")
         (=> (balloon "Cell" "Change cell operation mode")
-            (link cell-mode-icons)))
+            (mini #f
+              (link cell-mode-icons))))
     (if (== (get-cell-mode) "row")
         (=> (balloon "Row" "Change cell operation mode")
-            (link cell-mode-icons)))
+            (mini #f
+              (link cell-mode-icons))))
     (if (== (get-cell-mode) "column")
         (=> (balloon "Column" "Change cell operation mode")
-            (link cell-mode-icons)))
+            (mini #f
+              (link cell-mode-icons))))
     (if (== (get-cell-mode) "table")
         (=> (balloon "All cells" "Change cell operation mode")
-            (link cell-mode-icons)))
+            (mini #f
+              (link cell-mode-icons))))
     (=> (balloon (icon "tm_cell_size.xpm") "Modify cell size")
-        (group "Width")
-        (link cell-width-menu)
-        ---
-        (group "Height")
-        (link cell-height-menu))
+        (mini #f
+          (group "Width")
+          (link cell-width-menu)
+          ---
+          (group "Height")
+          (link cell-height-menu)))
     (=> (balloon (icon "tm_cell_border.xpm") "Change border of cell")
-        (group "Border")
-        (link cell-border-menu)
-        ---
-        (group "Padding")
-        (link cell-padding-menu))
+        (mini #f
+          (group "Border")
+          (link cell-border-menu)
+          ---
+          (group "Padding")
+          (link cell-padding-menu)))
     (=> (balloon (icon "tm_cell_pos.xpm") "Modify cell alignment")
-        (group "Horizontal alignment")
-        (link cell-halign-menu)
-        ---
-        (group "Vertical alignment")
-        (link cell-valign-menu))
+        (mini #f
+          (group "Horizontal alignment")
+          (link cell-halign-menu)
+          ---
+          (group "Vertical alignment")
+          (link cell-valign-menu)))
     (=> (balloon (icon "tm_cell_background.xpm")
                  "Set background color of cell")
-        (link cell-color-menu))
+        (mini #f
+          (link cell-color-menu)))
     ((check (balloon (icon "tm_cell_wrap.xpm") "Line wrapping inside cell")
             "v" (cell-test-wrap?))
      (cell-toggle-wrap))
     (=> (balloon (icon "tm_cell_special.xpm")
                  "Special cell properties and actions")
-        (link  cell-special-menu))))
+        (mini #f
+          (link  cell-special-menu)))))

@@ -120,13 +120,14 @@ init_heuristic_tex_paths () {
   pk = search_sub_dirs ("$TEX_HOME/fonts/pk");
   pfb= search_sub_dirs ("$TEX_HOME/fonts/type1");
 #else
+  search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts", tfm, pk, pfb);
   search_sub_dirs ("/usr/lib/tetex/fonts", tfm, pk, pfb);
   search_sub_dirs ("/usr/lib/texmf/fonts", tfm, pk, pfb);
-  search_sub_dirs ("/var/texfonts", tfm, pk, pfb);
-  search_sub_dirs ("/var/tmp/texfonts", tfm, pk, pfb);
-  search_sub_dirs ("/usr/TeX/lib/texmf/fonts", tfm, pk, pfb);
   search_sub_dirs ("/usr/local/lib/texmf/fonts", tfm, pk, pfb);
   search_sub_dirs ("/usr/share/texmf/fonts", tfm, pk, pfb);
+  search_sub_dirs ("/usr/TeX/lib/texmf/fonts", tfm, pk, pfb);
+  search_sub_dirs ("/var/texfonts", tfm, pk, pfb);
+  search_sub_dirs ("/var/tmp/texfonts", tfm, pk, pfb);
 #endif
 
 #ifdef OS_WIN32
