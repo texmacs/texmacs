@@ -365,14 +365,15 @@ edit_select_rep::selection_active_normal () {
 }
 
 bool
-edit_select_rep::selection_active_table () {
+edit_select_rep::selection_active_table (bool strict) {
   if (!selection_active_any ()) return false;
   path p= common (start_p, end_p);
   if ((p == start_p) || (p == end_p)) p= path_up (p);
   tree t= subtree (et, p);
   return
     is_func (t, TFORMAT) || is_func (t, TABLE) ||
-    is_func (t, ROW) || is_func (t, CELL);
+    is_func (t, ROW) || is_func (t, CELL) ||
+    (!strict && N(t) == 1 && is_func (t[0], TFORMAT));
 }
 
 bool
@@ -461,14 +462,33 @@ path
 edit_select_rep::selection_get_subtable (
   int& row1, int& col1, int& row2, int& col2)
 {
-  path fp= ::table_search_format (et, common (start_p, end_p));
-  tree st= subtree (et, fp);
-  table_search_coordinates (st, tail (start_p, N(fp)), row1, col1);
-  table_search_coordinates (st, tail (end_p, N(fp)), row2, col2);
-  if (row1>row2) { int tmp= row1; row1= row2; row2= tmp; }
-  if (col1>col2) { int tmp= col1; col1= col2; col2= tmp; }
-  table_bound (fp, row1, col1, row2, col2);
-  return fp;
+  if (selection_active_table ()) {
+    path fp= ::table_search_format (et, common (start_p, end_p));
+    if (is_nil (fp)) return fp;
+    tree st= subtree (et, fp);
+    table_search_coordinates (st, tail (start_p, N(fp)), row1, col1);
+    table_search_coordinates (st, tail (end_p, N(fp)), row2, col2);
+    if (row1>row2) { int tmp= row1; row1= row2; row2= tmp; }
+    if (col1>col2) { int tmp= col1; col1= col2; col2= tmp; }
+    table_bound (fp, row1, col1, row2, col2);
+    return fp;
+  }
+  else if (selection_active_table (false)) {
+    path fp= ::table_search_format (et, common (start_p, end_p) * 0);
+    if (is_nil (fp)) return fp;
+    path p= fp;
+    tree st;
+    while (true) {
+      st= subtree (et, p);
+      if (is_func (st, TABLE) && N(st) > 0 && is_func (st[0], ROW)) break;
+      if (!is_func (st, TFORMAT)) return path ();
+      p= p * (N(st) - 1);
+    }
+    row1= 0; col1= 0;
+    row2= N(st)-1; col2= N(st[0])-1;
+    return fp;
+  }
+  else return path ();
 }
 
 void

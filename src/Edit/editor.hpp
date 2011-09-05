@@ -421,7 +421,7 @@ public:
 
   virtual bool selection_active_any () = 0;
   virtual bool selection_active_normal () = 0;
-  virtual bool selection_active_table () = 0;
+  virtual bool selection_active_table (bool strict= true) = 0;
   virtual bool selection_active_small () = 0;
   virtual bool selection_active_enlarging () = 0;
 

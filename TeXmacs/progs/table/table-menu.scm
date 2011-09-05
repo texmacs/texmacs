@@ -431,9 +431,14 @@
 	    "Use row below as border")
    (table-row-decoration #t)))
 
+(define (document-like? t)
+  (or (tree-is? t 'document)
+      (and (tree-is? t 'with)
+           (document-like? (tree-up t)))))
+
 (tm-menu (focus-tag-extra-icons t)
   (:require (table-markup-context? t))
-  (if (tree-is? t :up 'document)
+  (if (document-like? (tree-up t))
       ((check (balloon (icon "tm_table_parwidth.xpm")
                        "Extend table to full paragraph width")
               "v" (table-test-parwidth?))

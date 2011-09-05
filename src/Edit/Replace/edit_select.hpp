@@ -55,7 +55,7 @@ public:
 
   bool selection_active_any ();
   bool selection_active_normal ();
-  bool selection_active_table ();
+  bool selection_active_table (bool strict= true);
   bool selection_active_small ();
   bool selection_active_enlarging ();
 
