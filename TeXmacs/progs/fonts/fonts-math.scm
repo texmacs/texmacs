@@ -102,28 +102,40 @@
      (var-math $ecrm $cmr $cmmi cmbrsy cmbram cmbrbm stmary wasy line
 	       cmbrsy eufm bbm grmn cmbx cmmib cmbsy cmex $s $d))
 
+    ((roman mr medium right $s $d) (math-var ecrm cmr cmmi $s $d))
+    ((roman mr bold right $s $d) (bold-math-var ecbx cmbx cmmib $s $d))
+    ((roman ms medium right $s $d) (math-var ecss cmss cmmi $s $d))
+    ((roman ms bold right $s $d) (bold-math-var ecsx cmssbx cmmib $s $d))
+    ((roman mt medium right $s $d) (math-var ectt cmtt cmmi $s $d))
     ((roman mr medium $a $s $d) (math-std ecrm cmr cmmi $s $d))
     ((roman mr bold $a $s $d) (bold-math-std ecbx cmbx cmmib $s $d))
     ((roman ms light $a $s $d) (math-bright cmbr cmbr cmbrmi $s $d))
     ((roman ms medium $a $s $d) (math-std ecss cmss cmssi $s $d))
     ((roman ms bold $a $s $d) (math-std ecsx cmssbx cmmib $s $d))
     ((roman mt medium $a $s $d) (math-std ectt cmtt cmitt $s $d))
+
     ((roman trm medium $a $s $d) (math-var ecrm cmr cmmi $s $d))
-    ((roman trm bold $a $s $d) (math-var ecbx cmbx cmmib $s $d))
+    ((roman trm bold $a $s $d) (bold-math-var ecbx cmbx cmmib $s $d))
     ((roman tss medium $a $s $d) (math-var ecss cmss cmmi $s $d))
-    ((roman tss bold $a $s $d) (math-var ecsx cmssbx cmmib $s $d))
+    ((roman tss bold $a $s $d) (bold-math-var ecsx cmssbx cmmib $s $d))
     ((roman ttt $a $b $s $d) (math-var ectt cmtt cmmi $s $d))
     ((roman bf $a $b $s $d) (bold-math-var ecbx cmbx cmmib $s $d))
     ((roman up $a $b $s $d) (math-var ecui cmu cmmi $s $d))
     ((roman it $a $b $s $d) (math-var ecti cmti cmmi $s $d))
     ((roman sl $a $b $s $d) (math-var ecsl cmsl cmmi $s $d))
 
-    ((concrete mr medium $a $s $d) (math-conc eorm ccr xccmi $s $d))
-    ((concrete mr bold $a $s $d) (bold-math-std ecbx cmbx cmmib $s $d))
-    ((concrete ms light $a $s $d) (math-bright cmbr cmbr cmbrmi $s $d))
-    ((concrete ms medium $a $s $d) (math-std ecss cmss cmssi $s $d))
-    ((concrete ms bold $a $s $d) (math-std ecsx cmssbx cmmib $s $d))
-    ((concrete mt medium $a $s $d) (math-std ectt cmtt cmitt $s $d))
+    ((concrete mr medium right $s $d) (math-conc eorm ccr xccmi $s $d))
+    ((concrete mr bold right $s $d) (bold-math-std ecbx cmbx cmmib $s $d))
+    ((concrete ms light right $s $d) (math-bright cmbr cmbr cmbrmi $s $d))
+    ((concrete ms medium right $s $d) (math-std ecss cmss cmssi $s $d))
+    ((concrete ms bold right $s $d) (math-std ecsx cmssbx cmmib $s $d))
+    ((concrete mt medium right $s $d) (math-std ectt cmtt cmitt $s $d))
+    ((concrete mr medium $a $s $d) (math-conc-var eorm ccr xcmmi $s $d))
+    ((concrete mr bold $a $s $d) (math-conc-var ecbx cmbx cmmib $s $d))
+    ((concrete ms medium $a $s $d) (math-var ecss cmss cmmi $s $d))
+    ((concrete ms bold $a $s $d) (math-var ecsx cmssbx cmmib $s $d))
+    ((concrete mt medium $a $s $d) (math-var ectt cmtt cmmi $s $d))
+
     ((concrete trm medium $a $s $d) (math-conc-var eorm ccr xcmmi $s $d))
     ((concrete trm bold $a $s $d) (math-conc-var ecbx cmbx cmmib $s $d))
     ((concrete tss medium $a $s $d) (math-var ecss cmss cmmi $s $d))
@@ -304,6 +316,14 @@
      (unicode $bit $s $d)
      (roman $t $a $b $s $d)))
 
+   ((math-stix $t bold right $s $d)
+    (unicode-math STIXGeneralBol STIXGeneralBol
+		  STIXGeneralBol STIXGeneralBol
+		  $t bold $b $s $d))
+   ((math-stix $t $a right $s $d)
+    (unicode-math STIXGeneral STIXGeneral
+		  STIXGeneralBol STIXGeneralBol
+		  $t $a $b $s $d))
    ((math-stix $t bold $b $s $d)
     (unicode-math STIXGeneralBol STIXGeneralBolIta
 		  STIXGeneralBol STIXGeneralBolIta
@@ -326,6 +346,14 @@
 		  #{Apple Symbols}# #{Apple Symbols}#
 		  $t $a $b $s $d))
 
+   ((math-dejavu ms bold right $s $d)
+    (unicode-math DejaVuSans-Bold DejaVuSans-Bold
+		  DejaVuSans-Bold DejaVuSans-Bold
+		  ms bold $b $s $d))
+   ((math-dejavu ms $a right $s $d)
+    (unicode-math DejaVuSans DejaVuSans
+		  DejaVuSans-Bold DejaVuSans-Bold
+		  ms $a $b $s $d))
    ((math-dejavu ms bold $b $s $d)
     (unicode-math DejaVuSans-Bold DejaVuSans-BoldOblique
 		  DejaVuSans-Bold DejaVuSans-BoldOblique
@@ -334,6 +362,15 @@
     (unicode-math DejaVuSans DejaVuSans-Oblique
 		  DejaVuSans-Bold DejaVuSans-BoldOblique
 		  ms $a $b $s $d))
+
+   ((math-dejavu mt bold right $s $d)
+    (unicode-math DejaVuSansMono-Bold DejaVuSansMono-Bold
+		  DejaVuSansMono-Bold DejaVuSansMono-Bold
+		  mt bold $b $s $d))
+   ((math-dejavu mt $a right $s $d)
+    (unicode-math DejaVuSansMono DejaVuSansMono
+		  DejaVuSansMono-Bold DejaVuSansMono-Bold
+		  mt $a $b $s $d))
    ((math-dejavu mt bold $b $s $d)
     (unicode-math DejaVuSansMono-Bold DejaVuSansMono-BoldOblique
 		  DejaVuSansMono-Bold DejaVuSansMono-BoldOblique
@@ -342,6 +379,15 @@
     (unicode-math DejaVuSansMono DejaVuSansMono-Oblique
 		  DejaVuSansMono-Bold DejaVuSansMono-BoldOblique
 		  mt $a $b $s $d))
+
+   ((math-dejavu $t bold right $s $d)
+    (unicode-math DejaVuSerif-Bold DejaVuSerif-Bold
+		  DejaVuSerif-Bold DejaVuSerif-Bold
+		  $t bold $b $s $d))
+   ((math-dejavu $t $a right $s $d)
+    (unicode-math DejaVuSerif DejaVuSerif
+		  DejaVuSerif-Bold DejaVuSerif-Bold
+		  $t $a $b $s $d))
    ((math-dejavu $t bold $b $s $d)
     (unicode-math DejaVuSerif-Bold DejaVuSerif-BoldItalic
 		  DejaVuSerif-Bold DejaVuSerif-BoldItalic

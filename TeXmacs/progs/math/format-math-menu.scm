@@ -87,7 +87,10 @@
 	  (-> "Series"
 	      ("Light" (make-with "math-font-series" "light"))
 	      ("Medium" (make-with "math-font-series" "medium"))
-	      ("Bold" (make-with "math-font-series" "bold")))))
+	      ("Bold" (make-with "math-font-series" "bold"))))
+      (-> "Shape"
+	  ("Normal" (make-with "math-font-shape" "normal"))
+	  ("Upight" (make-with "math-font-shape" "right"))))
   (if (not (real-math-font? (get-env "math-font")))
       (-> "Variant"
 	  ("Roman" (make-with "math-font-family" "mr"))
