@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.12>
 
 <style|source>
 
@@ -205,21 +205,13 @@
 
   <assign|small-focus|<macro|body|<with|color|cyan|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
 
-  <assign|small-focus|<macro|body|<with|color|cyan|<resize|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>|<minus|1l|1ln>|<minus|1b|1l>|<plus|1r|1ln>|<plus|1t|1ln>>>>>
-
-  <assign|big-envbox|<macro|body|<with|color|#e8f0f0|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+  <assign|big-envbox|<macro|body|<with|color|#e8f0f0|<rigid|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
     <with|color|black|<arg|body>>
-  </cell>>>>>>>>
+  </cell>>>>>>>>>
 
-  <assign|big-focus|<macro|body|<with|color|cyan|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+  <assign|big-focus|<macro|body|<with|color|cyan|<rigid|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
     <with|color|black|<arg|body>>
-  </cell>>>>>>>>
-
-  <assign|big-focus|<macro|body|<with|color|cyan|<resize|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0em>|<cwith|1|1|1|1|cell-rsep|0em>|<cwith|1|1|1|1|cell-bsep|0em>|<cwith|1|1|1|1|cell-tsep|0em>|<twith|table-width|<minus|1par|2ln>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <with|color|black|<arg|body>>
-  </cell>>>>>|<minus|1l|1ln>|<minus|1b|1l>|<plus|1r|1ln>|<plus|1t|1ln>>>>>
-
-  \;
+  </cell>>>>>>>>>
 
   <new-theorem|question|Question>
 

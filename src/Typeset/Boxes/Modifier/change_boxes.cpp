@@ -267,7 +267,6 @@ struct cell_box_rep: public change_box_rep {
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
-  void display (renderer ren);
 };
 
 cell_box_rep::cell_box_rep (
@@ -293,37 +292,41 @@ cell_box_rep::cell_box_rep (
 
 void
 cell_box_rep::pre_display (renderer& ren) {
-  if (bg == "") return;
-  old_bg= ren->get_background_pattern (old_a);
-  ren->set_background_pattern (bg, alpha);
-  ren->clear_pattern (x1, y1, x2, y2);
-}
-
-void
-cell_box_rep::post_display (renderer &ren) {
-  if (bg == "") return;
-  ren->set_background_pattern (old_bg, old_a);
-}
-
-void
-cell_box_rep::display (renderer ren) {
-  if ((bl>0) || (br>0) || (bb>0) || (bt>0)) {
-    SI l= bl, r= br, b= bb, t= bt;
-    if (ren->sfactor > 1) { // correction for screen display only
-      SI  pixel= ren->pixel;
-      l= ((l + (pixel - 1)) / pixel) * pixel;
-      r= ((r + (pixel - 1)) / pixel) * pixel;
-      b= ((b + (pixel - 1)) / pixel) * pixel;
-      t= ((t + (pixel - 1)) / pixel) * pixel;
-    }
-    SI X1= x1-(l>>1), X2= x2+(r>>1);
-    SI Y1= y1-(b>>1), Y2= y2+(t>>1);
-    ren->set_color (fg);
-    ren->fill (X1  , Y1  , X1+l, Y2  );
-    ren->fill (X2-r, Y1  , X2  , Y2  );
-    ren->fill (X1  , Y1  , X2  , Y1+b);
-    ren->fill (X1  , Y2-t, X2  , Y2  );
+  SI l= bl, r= br, b= bb, t= bt;
+  SI lx1, rx1, by1, ty1;
+  SI lx2, rx2, by2, ty2;
+  if (ren->sfactor > 1) { // correction for screen display only
+    SI  pixel= ren->pixel;
+    l= ((l + (pixel - 1)) / pixel) * pixel;
+    r= ((r + (pixel - 1)) / pixel) * pixel;
+    b= ((b + (pixel - 1)) / pixel) * pixel;
+    t= ((t + (pixel - 1)) / pixel) * pixel;
   }
+
+  lx1= x1 - (l>>1); lx2= lx1 + l;
+  by1= y1 - (b>>1); by2= by1 + b;
+  rx2= x2 + (r>>1); rx1= rx2 - r;
+  ty2= y2 + (t>>1); ty1= ty2 - t;
+
+  if (bg != "") {
+    old_bg= ren->get_background_pattern (old_a);
+    ren->set_background_pattern (bg, alpha);
+    ren->clear_pattern (lx2, by2, rx1, ty1);
+  }
+
+  if ((l>0) || (r>0) || (b>0) || (t>0)) {
+    ren->set_color (fg);
+    ren->fill (lx1, by1, lx2, ty2);
+    ren->fill (rx1, by1, rx2, ty2);
+    ren->fill (lx1, by1, rx2, by2);
+    ren->fill (lx1, ty1, rx2, ty2);
+  }
+}
+
+void
+cell_box_rep::post_display (renderer& ren) {
+  if (bg != "")
+    ren->set_background_pattern (old_bg, old_a);
 }
 
 /******************************************************************************

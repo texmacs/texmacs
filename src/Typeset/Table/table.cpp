@@ -296,41 +296,48 @@ table_rep::handle_span () {
 
 void
 table_rep::merge_borders () {
-  int i1, j1;
+  int hh= nr_cols + 1, vv= nr_rows + 1, nn= hh * vv;
+  array<SI> horb (nn), verb (nn);
+  for (int i=0; i<nn; i++) horb[i]= verb[i]= 0;
 
-  for (i1=0; i1<nr_rows; i1++)
-    for (j1=0; j1<(nr_cols-1); j1++) {
-      cell C1= T[i1][j1], C2;
-      if (!is_nil (C1)) {
-	int i2, j2= j1 + C1->col_span;
-	if (j2 >= nr_cols) continue;
-	for (i2=i1; i2>=0; i2--) {
-	  C2= T[i2][j2];
-	  if (!is_nil (C2)) break;
-	}
-	if (!is_nil (C2)) {
-	  SI width= max (C1->rborder, C2->lborder);
-	  C1->rborder= C2->lborder= width;
-	  // ATTENTION: introduce new border variables when cells become lazy
-	}
+  for (int i=0; i<nr_rows; i++)
+    for (int j=0; j<nr_cols; j++) {
+      cell C= T[i][j];
+      if (!is_nil (C)) {
+        for (int di=0; di < C->row_span; di++) {
+          int ii= i+di, jj= j, kk= ii*hh + jj;
+          horb[kk]= max (horb[kk], C->lborder);
+          jj= j + C->col_span; kk= ii*hh + jj;
+          horb[kk]= max (horb[kk], C->rborder);
+        }
+        for (int dj=0; dj < C->col_span; dj++) {
+          int ii= i, jj= j+dj, kk= ii*hh + jj;
+          verb[kk]= max (verb[kk], C->tborder);
+          ii= i + C->row_span; kk= ii*hh + jj;
+          verb[kk]= max (verb[kk], C->bborder);
+        }
       }
     }
 
-  for (i1=0; i1<(nr_rows-1); i1++)
-    for (j1=0; j1<nr_cols; j1++) {
-      cell C1= T[i1][j1], C2;
-      if (!is_nil (C1)) {
-	int i2= i1 + C1->row_span, j2;
-	if (i2 >= nr_rows) continue;
-	for (j2=j1; j2>=0; j2--) {
-	  C2= T[i2][j2];
-	  if (!is_nil (C2)) break;
-	}
-	if (!is_nil (C2)) {
-	  SI width= max (C1->bborder, C2->tborder);
-	  C1->bborder= C2->tborder= width;
-	  // ATTENTION: introduce new border variables when cells become lazy
-	}
+  for (int i=0; i<nr_rows; i++)
+    for (int j=0; j<nr_cols; j++) {
+      cell C= T[i][j];
+      if (!is_nil (C)) {
+        SI lb= 0, rb= 0, bb= 0, tb= 0;
+        for (int di=0; di < C->row_span; di++) {
+          int ii= i+di, jj= j, kk= ii*hh + jj;
+          lb= max (horb[kk], lb);
+          jj= j + C->col_span; kk= ii*hh + jj;
+          rb= max (horb[kk], rb);
+        }
+        for (int dj=0; dj < C->col_span; dj++) {
+          int ii= i, jj= j+dj, kk= ii*hh + jj;
+          tb= max (verb[kk], tb);
+          ii= i + C->row_span; kk= ii*hh + jj;
+          bb= max (verb[kk], bb);
+        }
+        C->lborder= lb; C->rborder= rb;
+        C->bborder= bb; C->tborder= tb;
       }
     }
 }
