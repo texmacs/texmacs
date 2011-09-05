@@ -81,6 +81,28 @@ get_editor_status_report () {
   return r;
 }
 
+void
+tree_report (string& s, tree t, path p, int indent) {
+  for (int i=0; i<indent; i++) s << " ";
+  if (is_atomic (t)) {
+    s << raw_quote (t->label);
+    s << " -- " << path_as_string (p) << "\n";
+  }
+  else {
+    s << as_string (L(t));
+    s << " -- " << path_as_string (p) << "\n";
+    for (int i=0; i<N(t); i++)
+      tree_report (s, t[i], p * i, indent+2);
+  }
+}
+
+string
+  tree_report (tree t, path p) {
+  string s;
+  tree_report (s, t, p, 0);
+  return s;
+}
+
 /******************************************************************************
 * Crash management
 ******************************************************************************/
@@ -107,20 +129,25 @@ tm_failure (const char* msg) {
   string report= get_crash_report (msg);
   url dir ("$TEXMACS_HOME_PATH/system/crash");
   url err= url_numbered (dir, "crash_report_", "");
-  bool ok= !save_string (err, report);
+  if (!save_string (err, report))
+    cerr << "TeXmacs] Crash report saved in " << err << "\n";
+  else
+    cerr << "TeXmacs] Crash report could not be saved in "
+         << err << "\n"
+         << "TeXmacs] Dumping report below\n\n"
+         << report << "\n";
 
   server sv= get_server ();
   editor ed= sv -> get_editor ();
-  cerr << "\nCurrent buffer\n"
-       << "--------------\n\n";
-  stretched_print (subtree (the_et, ed->rp), true);
-
-  if (ok)
-    cerr << "TeXmacs] Crash report saved in " << err << "\n";
+  string buf= tree_report (subtree (the_et, ed->rp), ed->rp);
+  url buf_err= glue (err, "_tree");
+  if (!save_string (buf_err, buf))
+    cerr << "TeXmacs] Current buffer report saved in " << buf_err << "\n";
   else
-    cerr << "TeXmacs] Crash report could not be saved in " << err << "\n"
+    cerr << "TeXmacs] Current buffer report could not be saved in "
+         << buf_err << "\n"
          << "TeXmacs] Dumping report below\n\n"
-         << report;
+         << buf << "\n";
 
   get_server () -> auto_save ();
   close_all_pipes ();
