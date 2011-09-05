@@ -66,7 +66,9 @@ get_editor_status_report () {
   ed->get_selection (start_p, end_p);
   selection sel;
   ed->selection_get (sel);
-  r << "  Current path       : "
+  r << "  Root path          : "
+    << path_as_string (ed->rp) << "\n"
+    << "  Current path       : "
     << path_as_string (ed->the_path ()) << "\n"
     << "  Shifted path       : "
     << path_as_string (ed->the_shifted_path ()) << "\n"
@@ -96,20 +98,30 @@ get_crash_report (const char* msg) {
 void
 tm_failure (const char* msg) {
   if (rescue_mode) {
-    fprintf (stderr, "TeXmacs] Fatal unrecoverable error, %s\n", msg);
+    fprintf (stderr, "\nTeXmacs] Fatal unrecoverable error, %s\n", msg);
     exit (1);
   }
   rescue_mode= true;
-  cerr << "TeXmacs] Fatal error, " << msg << "\n";
+  cerr << "\nTeXmacs] Fatal error, " << msg << "\n";
+
   string report= get_crash_report (msg);
   url dir ("$TEXMACS_HOME_PATH/system/crash");
   url err= url_numbered (dir, "crash_report_", "");
-  if (!save_string (err, report))
+  bool ok= !save_string (err, report);
+
+  server sv= get_server ();
+  editor ed= sv -> get_editor ();
+  cerr << "\nCurrent buffer\n"
+       << "--------------\n\n";
+  stretched_print (subtree (the_et, ed->rp), true);
+
+  if (ok)
     cerr << "TeXmacs] Crash report saved in " << err << "\n";
   else
     cerr << "TeXmacs] Crash report could not be saved in " << err << "\n"
          << "TeXmacs] Dumping report below\n\n"
          << report;
+
   get_server () -> auto_save ();
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");

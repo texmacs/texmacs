@@ -216,6 +216,10 @@ edit_typeset_rep::typeset_exec_until (path p) {
     typeset_invalidate_env ();
   typeset_prepare ();
   if (enable_fastenv) {
+    if (!(rp <= p)) {
+      cerr << "TeXmacs] erroneous path " << p << "\n";
+      FAILED ("invalid typesetting path");
+    }
     tree t= subtree (et, rp);
     path q= path_up (p / rp);
     while (!is_nil (q)) {

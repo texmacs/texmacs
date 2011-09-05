@@ -524,6 +524,7 @@ public:
   friend void   edit_announce (editor_rep* ed, modification mod);
   friend void   edit_done (editor_rep* ed, modification mod);
   friend string get_editor_status_report ();
+  friend void   tm_failure (const char* msg);
 };
 
 class editor {
