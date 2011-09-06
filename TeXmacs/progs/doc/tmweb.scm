@@ -31,7 +31,12 @@
     (if (url? html-file) (set! current-save-target html-file))
     (texmacs-save-buffer html-file "html")))
 
-(define (tmweb-convert-file-dir file tm-dir html-dir)
+(define (needs-update? src dest update?)
+  (or (not update?)
+      (not (url-exists? dest))
+      (url-newer? src dest)))
+
+(define (tmweb-convert-file-dir file tm-dir html-dir update?)
   (let* ((m? (== (get-preference "texmacs->html:mathml") "on"))
 	 (u1 (url-delta (url-append tm-dir "dummy") file))
 	 (u2 (url-glue (url-unglue u1 2) (if m? "xhtml" "html")))
@@ -41,11 +46,12 @@
     (when (and (!= dir-name "CVS") (!= dir-name ".svn")
 	       (!= dir-name "prop-base") (!= dir-name "text-base"))
       (tmweb-make-dir dir (url-expand html-dir))
-      (system-wait "Converting" (url->string u1))
-      (display* "TeXmacs] Converting " (url->string u1) "\n")
-      (tmweb-convert-file file u3))))
+      (when (needs-update? file u3 update?)
+        (system-wait "Converting" (url->string u1))
+        (display* "TeXmacs] Converting " (url->string u1) "\n")
+        (tmweb-convert-file file u3)))))
 
-(define (tmweb-copy-file-dir file tm-dir html-dir)
+(define (tmweb-copy-file-dir file tm-dir html-dir update?)
   (let* ((u1 (url-delta (url-append tm-dir "dummy") file))
 	 (u2 (url-append html-dir u1))
 	 (name (url->string (url-tail u2)))
@@ -56,21 +62,28 @@
 	       (not (string-ends? name "~"))
                (not (string-ends? name "#")))
       (tmweb-make-dir dir (url-expand html-dir))
-      (system-wait "Copying" (url->string u1))
-      (display* "TeXmacs] Copying " (url->string u1) "\n")
-      (system-copy file u2))))
+      (when (needs-update? file u2 update?)
+        (system-wait "Copying" (url->string u1))
+        (display* "TeXmacs] Copying " (url->string u1) "\n")
+        (system-copy file u2)))))
 
-(tm-define (tmweb-convert-dir tm-dir html-dir)
+(define (tmweb-convert-directory tm-dir html-dir update?)
   (let* ((u1 (url-append tm-dir (url-any)))
 	 (u2 (url-expand (url-complete u1 "dr")))
 	 (u3 (url-append u2 (url-wildcard "*.tm")))
 	 (u4 (url-expand (url-complete u3 "fr")))
 	 (u5 (url-expand (url-complete u1 "fr"))))
     (when (!= html-dir tm-dir)
-      (for-each (lambda (x) (tmweb-copy-file-dir x tm-dir html-dir))
+      (for-each (lambda (x) (tmweb-copy-file-dir x tm-dir html-dir update?))
 		(list-difference (url->list u5) (url->list u4))))
-    (for-each (lambda (x) (tmweb-convert-file-dir x tm-dir html-dir))
+    (for-each (lambda (x) (tmweb-convert-file-dir x tm-dir html-dir update?))
 	      (url->list u4))))
+
+(tm-define (tmweb-convert-dir tm-dir html-dir)
+  (tmweb-convert-directory tm-dir html-dir #f))
+
+(tm-define (tmweb-update-dir tm-dir html-dir)
+  (tmweb-convert-directory tm-dir html-dir #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
@@ -82,3 +95,10 @@
     (let* ((src (dialogue-url "Source directory" "directory"))
 	   (dest (dialogue-url "Destination directory" "directory")))
       (tmweb-convert-dir src dest))))
+
+(tm-define (tmweb-interactive-update)
+  (:interactive #t)
+  (dialogue
+    (let* ((src (dialogue-url "Source directory" "directory"))
+	   (dest (dialogue-url "Destination directory" "directory")))
+      (tmweb-update-dir src dest))))

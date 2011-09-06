@@ -44,7 +44,8 @@
       ("Inclusions" (inclusions-gc))
       ("Styles" (style-clear-cache)))
   (-> "Web"
-      ("Create web site" (tmweb-interactive-build)))
+      ("Create web site" (tmweb-interactive-build))
+      ("Update web site" (tmweb-interactive-update)))
   (-> "Project"
       (link project-manage-menu))
   (-> "Miscellaneous"
