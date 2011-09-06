@@ -18,20 +18,31 @@
 ;; Building a web site
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmweb-make-dir dir html-dir)
+  (when (and (!= dir html-dir) (!= dir (string->url ".")))
+    (tmweb-make-dir (url-expand (url-append dir (url-parent))) html-dir))
+  (when (not (url-exists? dir))
+    (display* "TeXmacs] Creating directory " (url->string dir) "\n")
+    (system-mkdir dir)))
+
 (define (tmweb-convert-file tm-file html-file)
   (with-aux tm-file
     (if (url? html-file) (set! current-save-target html-file))
-    (system-mkdir (url-append html-file (url-parent)))
     (texmacs-save-buffer html-file "html")))
 
 (define (tmweb-convert-file-dir file tm-dir html-dir)
   (let* ((m? (== (get-preference "texmacs->html:mathml") "on"))
 	 (u1 (url-delta (url-append tm-dir "dummy") file))
 	 (u2 (url-glue (url-unglue u1 2) (if m? "xhtml" "html")))
-	 (u3 (url-append html-dir u2)))
-    (system-wait "Converting" (url->string u1))
-    (display* "TeXmacs] Converting " (url->string u1) "\n")
-    (tmweb-convert-file file u3)))
+	 (u3 (url-append html-dir u2))
+	 (dir (url-expand (url-append u3 (url-parent))))
+	 (dir-name (url->string (url-tail dir))))
+    (when (and (!= dir-name "CVS") (!= dir-name ".svn")
+	       (!= dir-name "prop-base") (!= dir-name "text-base"))
+      (tmweb-make-dir dir (url-expand html-dir))
+      (system-wait "Converting" (url->string u1))
+      (display* "TeXmacs] Converting " (url->string u1) "\n")
+      (tmweb-convert-file file u3))))
 
 (define (tmweb-copy-file-dir file tm-dir html-dir)
   (let* ((u1 (url-delta (url-append tm-dir "dummy") file))
@@ -43,9 +54,9 @@
 	       (!= dir-name "prop-base") (!= dir-name "text-base")
 	       (not (string-ends? name "~"))
                (not (string-ends? name "#")))
+      (tmweb-make-dir dir (url-expand html-dir))
       (system-wait "Copying" (url->string u1))
       (display* "TeXmacs] Copying " (url->string u1) "\n")
-      (system-mkdir dir)
       (system-copy file u2))))
 
 (tm-define (tmweb-convert-dir tm-dir html-dir)
@@ -55,7 +66,6 @@
 	 (u4 (url-expand (url-complete u3 "fr")))
 	 (u5 (url-expand (url-complete u1 "fr"))))
     (when (!= html-dir tm-dir)
-      (system-mkdir html-dir)
       (for-each (lambda (x) (tmweb-copy-file-dir x tm-dir html-dir))
 		(list-difference (url->list u5) (url->list u4))))
     (for-each (lambda (x) (tmweb-convert-file-dir x tm-dir html-dir))
