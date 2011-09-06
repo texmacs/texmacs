@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|To do list for the current implementation>
+  <tmdoc-title|To do list for the improving the current implementation>
 
   <section|General architecture>
 

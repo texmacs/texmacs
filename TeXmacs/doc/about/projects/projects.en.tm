@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.9>
+<TeXmacs|1.0.7.12>
 
 <style|tmdoc>
 
@@ -6,7 +6,7 @@
   <tmdoc-title|Projects for the future>
 
   <\traverse>
-    <branch|Improving the current implementation|improvements.en.tm>
+    <branch|To do list for improving the current implementation|todo.en.tm>
 
     <branch|Plans for the future|future.en.tm>
 
