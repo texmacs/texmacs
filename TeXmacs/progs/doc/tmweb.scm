@@ -23,7 +23,8 @@
     (tmweb-make-dir (url-expand (url-append dir (url-parent))) html-dir))
   (when (not (url-exists? dir))
     (display* "TeXmacs] Creating directory " (url->string dir) "\n")
-    (system-mkdir dir)))
+    (system-mkdir dir)
+    (system-1 "chmod a+x" dir)))
 
 (define (tmweb-convert-file tm-file html-file)
   (with-aux tm-file
