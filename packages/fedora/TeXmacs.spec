@@ -1,6 +1,6 @@
 Name: TeXmacs
 Version: 1.0.7.12
-Release: 1
+Release: 1%{?dist}
 Summary: A structured wysiwyg scientific text editor
 
 Group: Applications/Editors
@@ -36,6 +36,10 @@ and tools for collaborative authoring are planned for later.
 TeXmacs runs on all major Unix platforms and Windows. Documents can be
 saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
+
+%vendor                MaGiX software association
+%packager              Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
+%dist                  .fc14-magix
 
 %prep
 %setup -q
