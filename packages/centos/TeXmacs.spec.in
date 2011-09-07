@@ -1,6 +1,6 @@
 Name: @PACKAGE@
 Version: @DEVEL_VERSION@
-Release: @DEVEL_RELEASE@
+Release: @DEVEL_RELEASE@%{?dist}
 Summary: A structured wysiwyg scientific text editor
 
 Group: Applications/Editors
