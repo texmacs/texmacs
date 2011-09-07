@@ -276,6 +276,7 @@ GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	$(RM) -r ../distr/build
 
 .PHONY: GENERIC_PACKAGE GENERIC_X11_PACKAGE
+
 ###############################################################################
 # Make a CentOs package
 ###############################################################################
