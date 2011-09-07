@@ -286,7 +286,7 @@ CENTOS_PACKAGE_DIR = ../distr/centos
 
 CENTOS_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	if [ !-f ~/.rpmmacros ]; then \
+	if test ! -f ~/.rpmmacros; then \
 	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	$(CP) $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
@@ -342,7 +342,7 @@ MANDRIVA_PACKAGE_DIR = ../distr/mandriva
 
 MANDRIVA_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	if [ !-f ~/.rpmmacros ]; then \
+	if test ! -f ~/.rpmmacros; then \
 	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	$(CP) $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
@@ -363,7 +363,7 @@ REDHAT_PACKAGE_DIR = ../distr/redhat
 
 REDHAT_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	if [ !-f ~/.rpmmacros ]; then \
+	if test ! -f ~/.rpmmacros; then \
 	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	$(CP) $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
@@ -406,7 +406,7 @@ MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
 MACOS_PACKAGE_RESOURCES = $(MACOS_PACKAGE_CONTENTS)/Resources
 MACOS_PACKAGE_TEXMACS = $(MACOS_PACKAGE_RESOURCES)/share/TeXmacs
 
-MACOS_PACKAGE_MAIN: TEXMACS
+MACOS_BUNDLE: TEXMACS
 	$(MKDIR) ../distr
 	$(RM) -r $(MACOS_PACKAGE_APP)
 	$(MKDIR) $(MACOS_PACKAGE_APP)
@@ -439,36 +439,19 @@ MACOS_PACKAGE_MAIN: TEXMACS
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/*/.svn
-
-define bundle_install_lib
-	$(CP) $(1) $(MACOS_PACKAGE_RESOURCES)/lib
-	install_name_tool -change $(1) \
-	@executable_path/../Resources/lib/$(2) \
-	$(MACOS_PACKAGE_CONTENTS)/MacOS/texmacs.bin
-	install_name_tool -id @executable_path/../Resources/lib/$(2) \
-	$(MACOS_PACKAGE_RESOURCES)/lib/$(2)
-endef
-
-bundle_libraries = $(shell otool -L $(MACOS_PACKAGE_CONTENTS)/MacOS/texmacs.bin | grep -o '/\(opt\|sw\|Users\)/.*/lib[^/]*dylib')
-
-MACOS_PACKAGE_LIBS:
-	$(foreach lib, $(bundle_libraries), \
-	$(call bundle_install_lib,$(lib),$(notdir $(lib))) ;)
-
-MACOS_PACKAGE_BUNDLE: MACOS_PACKAGE_MAIN
 	$(MACOS_PACKAGE_SRC)/bundle-libs.sh \
 	$(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 
-MACOS_PACKAGE: MACOS_PACKAGE_BUNDLE
+MACOS_PACKAGE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_DMG)
 	hdiutil create -srcfolder $(MACOS_PACKAGE_APP) $(MACOS_PACKAGE_DMG)
 	$(MKDIR) $(MACOS_PACKAGE_DIR)
 	$(MV) $(MACOS_PACKAGE_DMG) $(MACOS_PACKAGE_DIR)
 	$(RM) -r $(MACOS_PACKAGE_APP)
 
-BUNDLE: MACOS_PACKAGE_BUNDLE
+BUNDLE: MACOS_BUNDLE
 
-.PHONY: BUNDLE MACOS_PACKAGE
+.PHONY: BUNDLE MACOS_BUNDLE MACOS_PACKAGE
 
 ###############################################################################
 # Make a Windows installer
@@ -486,7 +469,7 @@ DLLS_IN_PATH = $(wildcard $(addsuffix /$(1),$(subst :, ,$(DLLPATH))))
 DLL_LIST = QtCore4.dll QtGui4.dll QtSvg4.dll mingwm10.dll libgmp*.dll libguile*.dll libfreetype*.dll libltdl*.dll libiconv*.dll $(GS_EXE) $(GS_DLL) wget.exe
 DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
-WINDOWS_PACKAGE_MAIN: TEXMACS
+WINDOWS_BUNDLE: TEXMACS
 	$(MKDIR) ../distr
 	$(RM) -r $(WINDOWS_BUILD_DIR)
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
@@ -509,19 +492,15 @@ WINDOWS_PACKAGE_MAIN: TEXMACS
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/.svn
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/.svn
 	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/*/.svn
-
-WINDOWS_PACKAGE_LIBS:
 	for DLL in $(DLLS) ; do $(CP) $$DLL $(WINDOWS_BUILD_BIN_DIR) ; done
 
-WINDOWS_INSTALLER:
+WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
-
-WINDOWS_PACKAGE: WINDOWS_PACKAGE_MAIN WINDOWS_PACKAGE_LIBS WINDOWS_INSTALLER
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
 	$(MV) ../distr/$(tm_devel)-installer* $(WINDOWS_PACKAGE_DIR)
 	$(RM) -r $(WINDOWS_BUILD_DIR)
 
-.PHONY: WINDOWS_PACKAGE
+.PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
 ###############################################################################
 # Cleaning and backups
