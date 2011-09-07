@@ -276,6 +276,26 @@ GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	$(RM) -r ../distr/build
 
 .PHONY: GENERIC_PACKAGE GENERIC_X11_PACKAGE
+###############################################################################
+# Make a CentOs package
+###############################################################################
+
+CENTOS_PACKAGE_SRC = packages/centos
+CENTOS_PACKAGE_DIR = ../distr/centos
+
+CENTOS_PACKAGE: COPY_SOURCES_TGZ
+	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	if [ !-f ~/.rpmmacros ]; then \
+	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
+	$(CP) $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(CENTOS_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(CENTOS_PACKAGE_DIR)
+	$(RM) -r ../distr/build
+
+.PHONY: CENTOS_PACKAGE
 
 ###############################################################################
 # Make a Debian package
@@ -293,6 +313,45 @@ DEBIAN_PACKAGE: COPY_SOURCES_TGZ
 	$(RM) -r ../distr/build
 
 .PHONY: DEBIAN_PACKAGE
+
+###############################################################################
+# Make a Fedora package
+###############################################################################
+
+FEDORA_PACKAGE_SRC = packages/fedora
+FEDORA_PACKAGE_DIR = ../distr/fedora
+
+FEDORA_PACKAGE: COPY_SOURCES_TGZ
+	rpmdev-setuptree;
+	$(CP) $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(FEDORA_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(FEDORA_PACKAGE_DIR)
+	$(RM) -r ../distr/build
+
+.PHONY: FEDORA_PACKAGE
+
+###############################################################################
+# Make a Mandriva package
+###############################################################################
+
+MANDRIVA_PACKAGE_SRC = packages/mandriva
+MANDRIVA_PACKAGE_DIR = ../distr/mandriva
+
+MANDRIVA_PACKAGE: COPY_SOURCES_TGZ
+	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	if [ !-f ~/.rpmmacros ]; then \
+	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
+	$(CP) $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
+	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
+	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(MANDRIVA_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(MANDRIVA_PACKAGE_DIR)
+	$(RM) -r ../distr/build
+
+.PHONY: MANDRIVA_PACKAGE
 
 ###############################################################################
 # Make a RedHat package
@@ -315,6 +374,23 @@ REDHAT_PACKAGE: COPY_SOURCES_TGZ
 	$(RM) -r ../distr/build
 
 .PHONY: REDHAT_PACKAGE
+
+###############################################################################
+# Make a Ubuntu package
+###############################################################################
+
+UBUNTU_PACKAGE_SRC = packages/debian
+UBUNTU_PACKAGE_DIR = ../distr/ubuntu
+
+UBUNTU_PACKAGE: COPY_SOURCES_TGZ
+	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_underscore_devel).orig.tar.gz
+	$(MKDIR) $(BUILD_DIR)/ubuntu ;
+	$(CP) $(UBUNTU_PACKAGE_SRC)/* $(BUILD_DIR)/ubuntu
+	cd $(BUILD_DIR); debuild -us -uc
+	$(CP) -p ../distr/build/*.deb $(UBUNTU_PACKAGE_DIR)
+	$(RM) -r ../distr/build
+
+.PHONY: UBUNTU_PACKAGE
 
 ###############################################################################
 # Make Mac OS X bundles and diskimages
