@@ -37,15 +37,6 @@ TeXmacs runs on all major Unix platforms and Windows. Documents can be
 saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 
-
-%vendor                MaGiX software association
-%packager              Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
-%dist                  .fc14-magix
-%fedora                14               
-%_signature            gpg
-%_gpg_name             Daouda Niang Diatta
-%_gpg_path             %(echo $HOME)/.gnupg
-
 %prep
 %setup -q
 
