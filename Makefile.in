@@ -286,6 +286,9 @@ CENTOS_PACKAGE_DIR = ../distr/centos
 
 CENTOS_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	if [ !-f ~/.rpmmacros ]; then \
+	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
 	$(CP) $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
@@ -320,14 +323,12 @@ FEDORA_PACKAGE_SRC = packages/fedora
 FEDORA_PACKAGE_DIR = ../distr/fedora
 
 FEDORA_PACKAGE: COPY_SOURCES_TGZ
-	$(RM) -r $(HOME)/rpmbuild
 	rpmdev-setuptree;
 	$(CP) $(FEDORA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(FEDORA_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(FEDORA_PACKAGE_DIR)
-	$(RM) -r $(HOME)/rpmbuild
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(FEDORA_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(FEDORA_PACKAGE_DIR)
 	$(RM) -r ../distr/build
 
 .PHONY: FEDORA_PACKAGE
@@ -340,16 +341,15 @@ MANDRIVA_PACKAGE_SRC = packages/mandriva
 MANDRIVA_PACKAGE_DIR = ../distr/mandriva
 
 MANDRIVA_PACKAGE: COPY_SOURCES_TGZ
-	$(RM) -r $(HOME)/rpmbuild
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
+	if [ !-f ~/.rpmmacros ]; then \
+	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
 	$(CP) $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(MANDRIVA_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(MANDRIVA_PACKAGE_DIR)
-	$(RM) $(HOME)/.rpmmacros
-	$(RM) -r $(HOME)/rpmbuild
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(MANDRIVA_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(MANDRIVA_PACKAGE_DIR)
 	$(RM) -r ../distr/build
 
 .PHONY: MANDRIVA_PACKAGE
@@ -362,17 +362,16 @@ REDHAT_PACKAGE_SRC = packages/redhat
 REDHAT_PACKAGE_DIR = ../distr/redhat
 
 REDHAT_PACKAGE: COPY_SOURCES_TGZ
-	$(RM) -r $(HOME)/rpmbuild
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
+	if [ !-f ~/.rpmmacros ]; then \
+	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+	fi
 	$(CP) $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
 	$(MKDIR) $(REDHAT_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(REDHAT_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(REDHAT_PACKAGE_DIR)
-	$(RM) $(HOME)/.rpmmacros
-	$(RM) -r $(HOME)/rpmbuild
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(REDHAT_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(REDHAT_PACKAGE_DIR)
 	$(RM) -r ../distr/build
 
 .PHONY: REDHAT_PACKAGE
