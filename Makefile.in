@@ -601,6 +601,8 @@ STRIP:
 	$(STRIP) $(tmdir)/plugins/*/bin/* 2>/dev/null || >/dev/null
 
 ACCESS_FLAGS:
+	$(MKDIR) -p $(tmdir)/bin
+	$(MKDIR) -p $(tmdir)/lib
 	$(CHMOD) -R go+rX *
 	$(CHMOD) -R go+x $(tmdir)/bin
 	$(CHMOD) -R go+x $(tmdir)/lib
