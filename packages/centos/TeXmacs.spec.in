@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 Distribution: GNU/Linux
 Vendor: Jo the ripper software
-Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4-devel, guile-devel, xfig, aspell, ImageMagick
+Buildrequires:  gcc-c++, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4-devel, guile-devel, xfig, aspell, ImageMagick
 
 %description
 
