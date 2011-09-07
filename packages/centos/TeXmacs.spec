@@ -41,8 +41,7 @@ Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 %setup -q
 
 %build
-%configure
-./configure --disable-qt
+%configure --disable-qt
 make %{?_smp_mflags}
 
 %install
