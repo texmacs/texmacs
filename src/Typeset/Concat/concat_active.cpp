@@ -174,7 +174,7 @@ void
 concater_rep::typeset_set_binding (tree t, path ip) {
   tree keys= env->exec (t);
   if (L(keys) == HIDDEN) {
-    keys= keys[1];
+    keys= keys[0];
     flag ("set binding", ip, blue);
     if (N(keys) > 0) {
       path sip= ip;
