@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 Distribution: GNU/Linux
 Vendor: MaGiX software association
-Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
+Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4-devel, guile-devel, xfig, aspell, ImageMagick
 
 %description
 
@@ -36,10 +36,6 @@ and tools for collaborative authoring are planned for later.
 TeXmacs runs on all major Unix platforms and Windows. Documents can be
 saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
-
-%vendor                MaGiX software association
-%packager              Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
-%dist                  .fc14-magix
 
 %prep
 %setup -q
