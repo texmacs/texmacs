@@ -37,7 +37,7 @@ TeXmacs runs on all major Unix platforms and Windows. Documents can be
 saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
 
-%__arch_install_post    /usr/lib/rpm/check-buildroot
+
 %vendor                MaGiX software association
 %packager              Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 %dist                  .fc14-magix
