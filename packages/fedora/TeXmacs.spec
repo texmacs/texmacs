@@ -11,7 +11,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 Distribution: GNU/Linux
-Vendor: Jo the ripper software
+Vendor: MaGiX software association
 Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4, guile-devel, xfig, aspell, ImageMagick
 
 %description
@@ -36,6 +36,15 @@ and tools for collaborative authoring are planned for later.
 TeXmacs runs on all major Unix platforms and Windows. Documents can be
 saved in TeXmacs, Xml or Scheme format and printed as Postscript or
 Pdf files. Converters exist for TeX/LaTeX and Html/Mathml.
+
+%__arch_install_post    /usr/lib/rpm/check-buildroot
+%vendor                MaGiX software association
+%packager              Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
+%dist                  .fc14-magix
+%fedora                14               
+%_signature            gpg
+%_gpg_name             Daouda Niang Diatta
+%_gpg_path             %(echo $HOME)/.gnupg
 
 %prep
 %setup -q
