@@ -285,16 +285,12 @@ CENTOS_PACKAGE_SRC = packages/centos
 CENTOS_PACKAGE_DIR = ../distr/centos
 
 CENTOS_PACKAGE: COPY_SOURCES_TGZ
-	$(RM) -r $(HOME)/rpmbuild
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-	echo '%_topdir %(echo $$HOME)/rpmbuild' > $(HOME)/.rpmmacros
 	$(CP) $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
 	cd $(HOME); rpmbuild -ba rpmbuild/SPECS/TeXmacs.spec
-	$(CP) -p $(HOME)/rpmbuild/RPMS/*/* $(CENTOS_PACKAGE_DIR)
-	$(CP) -p $(HOME)/rpmbuild/SRPMS/* $(CENTOS_PACKAGE_DIR)
-	$(RM) $(HOME)/.rpmmacros
-	$(RM) -r $(HOME)/rpmbuild
+	$(MV) $(HOME)/rpmbuild/RPMS/*/TeXmacs* $(CENTOS_PACKAGE_DIR)
+	$(MV) $(HOME)/rpmbuild/SRPMS/TeXmacs* $(CENTOS_PACKAGE_DIR)
 	$(RM) -r ../distr/build
 
 .PHONY: CENTOS_PACKAGE
