@@ -252,8 +252,8 @@ SRC_PACKAGE: COPY_SOURCES
 ###############################################################################
 
 GENERIC_PACKAGE_DIR = ../distr/generic
-STATIC_QT = $(tm_devel)-$(tm_suffix)
-STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
+STATIC_QT = $(tm_devel).$(tm_suffix)
+STATIC_X11 = $(tm_devel)-x11.$(tm_suffix)
 
 GENERIC_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure

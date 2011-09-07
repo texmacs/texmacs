@@ -6428,7 +6428,7 @@ case "${host}" in
   i*86-*-linux* | x86_64-*-linux*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Intel or AMD GNU/Linux host" >&5
 $as_echo "final adjustments for an Intel or AMD GNU/Linux host" >&6; }
-    CONFIG_OS_SUFFIX="gnu-linux"
+    CONFIG_OS_SUFFIX="gnu-linux.i386"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
   i*86-*-freebsd* | x86_64-*-freebsd*)
