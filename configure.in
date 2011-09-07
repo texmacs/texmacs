@@ -560,7 +560,7 @@ fi
 case "${host}" in
   i*86-*-linux* | x86_64-*-linux*)
     AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/Linux host)
-    CONFIG_OS_SUFFIX="gnu-linux.i386"
+    CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
   i*86-*-freebsd* | x86_64-*-freebsd*)
