@@ -5,9 +5,11 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.12>
+  <section|Changes from version 1.0.7 to 1.0.7.13>
 
   <\itemize>
+    <item>Added plug-in for the <name|Axiom> fork <name|Fricas> (1.0.7.13).
+
     <item>Make the Qt port default (1.0.7.12).
 
     <item>Remove the dependency on <TeX>/<LaTeX> (1.0.7.12).
