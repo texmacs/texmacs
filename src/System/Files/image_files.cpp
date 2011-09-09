@@ -248,7 +248,7 @@ image_size (url image, int& w, int& h) {
 #endif
 #ifdef USE_GS
   if (gs_supports (image)) {
-    cout << "gs " << image << "\n";
+    //cout << "gs " << image << "\n";
     gs_image_size (image, w, h);
     return;
   }

@@ -57,7 +57,6 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
     if (ok) {
       w_pt= x2-x1;
       h_pt= y2-y1;
-      cout << "Size= " << w_pt << ", " << h_pt << "\n";
       return;
     }
   }
@@ -66,41 +65,71 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
   w_pt= 35; h_pt= 35;
 }
 
+void ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
+
+static bool
+use_converts (url image) {
+  // NOTE: determine whether we should use image magick.
+  // Indeed, EPSCrop unfortunately does not correctly handle
+  // non trivial offsets of bounding boxes
+  static bool has_image_magick= exists_in_path ("convert");
+  int bx1, by1, bx2, by2;
+  ps_bounding_box (image, bx1, by1, bx2, by2);
+  return has_image_magick && (bx1 != 0 || by1 != 0);
+}
+
 void
 gs_to_png (url image, url png, int w, int h) {
+  if (use_converts (image)) {
+    string cmd= "convert ";
+    cmd << "-geometry " << as_string (w) << "x" << as_string (h) << "! ";  
+    cmd << sys_concretize (image) << " ";
+    cmd << sys_concretize (png);
+    system (cmd);
+  }
+  else {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= "\"";
-  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
+    string cmd= "\"";
+    cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
-  string cmd= "gs ";
+    string cmd= "gs ";
 #endif
-  cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-  cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dEPSCrop ";
-  cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
-  int bbw, bbh;
-  int rw, rh;
-  gs_image_size (image, bbw, bbh);
-  rw= (w*72-1)/bbw+1;
-  rh= (h*72-1)/bbh+1;
-  cmd << "-r" << as_string (rw) << "x" << as_string (rh) << " ";  
-  cmd << "-sOutputFile=" << sys_concretize (png) << " ";
-  cmd << sys_concretize (image);
-  system (cmd);
+    cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
+    cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dEPSCrop ";
+    cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
+    int bbw, bbh;
+    int rw, rh;
+    gs_image_size (image, bbw, bbh);
+    rw= (w*72-1)/bbw+1;
+    rh= (h*72-1)/bbh+1;
+    cmd << "-r" << as_string (rw) << "x" << as_string (rh) << " ";  
+    cmd << "-sOutputFile=" << sys_concretize (png) << " ";
+    cmd << sys_concretize (image);
+    system (cmd);
+  }
 }
 
 void
 gs_to_eps (url image, url eps) {
+  if (use_converts (image)) {
+    string cmd= "convert ";
+    cmd << sys_concretize (image) << " ";
+    cmd << sys_concretize (eps);
+    system (cmd);
+  }
+  else {
 #if defined (__MINGW__) || defined (__MINGW32__)
-  string cmd= "\"";
-  cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
+    string cmd= "\"";
+    cmd << get_env ("TEXMACS_PATH") << string ("\\bin\\gswin32c\" ");
 #else
-  string cmd= "gs ";
+    string cmd= "gs ";
 #endif
-  cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-  cmd << "-sDEVICE=epswrite -dEPSCrop ";
-  cmd << "-sOutputFile=" << sys_concretize (eps) << " ";
-  cmd << sys_concretize (image);
-  system (cmd);
+    cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
+    cmd << "-sDEVICE=epswrite -dEPSCrop ";
+    cmd << "-sOutputFile=" << sys_concretize (eps) << " ";
+    cmd << sys_concretize (image);
+    system (cmd);
+  }
 }
 
 void
@@ -138,4 +167,3 @@ tm_gs (url image) {
 }
 
 #endif
-
