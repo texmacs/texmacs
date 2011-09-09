@@ -856,10 +856,10 @@ printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
   print ("/Dest");
   print (s);
   print ("/Rect [");
-  print (x1, y1);
-  print (x2, y2);
+  print (x1 - 5*PIXEL, y1 - 10*PIXEL);
+  print (x2 + 5*PIXEL, y2 + 10*PIXEL);
   print ("]");
-  print ("/Border [16 16 1 [3 10]] /Color [1 0 0]");
+  print ("/Border [16 16 1 [3 10]] /Color [0.5 0.5 1.0]");
   print ("/Subtype /Link");
   print ("/ANN pdfmark");
   cr ();
