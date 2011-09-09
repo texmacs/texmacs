@@ -228,20 +228,20 @@ void
 image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-    cout << "qt " << image << "\n";
+    //cout << "qt " << image << "\n";
     qt_image_size (image, w, h); // default to 72 dpi
     return;
   }
 #endif
 #ifdef MACOSX_EXTENSIONS 
   if (mac_image_size (image, w, h) ) {
-    cout << "mac " << image << "\n";
+    //cout << "mac " << image << "\n";
     return;
   }
 #endif
 #ifdef USE_IMLIB2
   if (imlib2_supports (image)) {
-    cout << "imlib2 " << image << "\n";
+    //cout << "imlib2 " << image << "\n";
     imlib2_image_size (image, w, h);
     return;
   }
@@ -253,7 +253,7 @@ image_size (url image, int& w, int& h) {
     return;
   }
 #endif
-  cout << "default " << image << "\n";
+  //cout << "default " << image << "\n";
   int x1, y1, x2, y2;
   ps_bounding_box (image, x1, y1, x2, y2);
   w= x2 - x1;

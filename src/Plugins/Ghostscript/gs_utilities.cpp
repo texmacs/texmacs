@@ -57,6 +57,7 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
     if (ok) {
       w_pt= x2-x1;
       h_pt= y2-y1;
+      cout << "Size= " << w_pt << ", " << h_pt << "\n";
       return;
     }
   }
