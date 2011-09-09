@@ -849,17 +849,21 @@ printer_rep::anchor (string label, SI x, SI y) {
 
 void
 printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
-  string s = "(";
-  s = s << prepare_text (label) << ") cvn";
   if (linelen>0) cr ();
   print ("[");
-  print ("/Dest");
-  print (s);
+  if (starts (label, "#")) {
+    print ("/Dest");
+    print ("(" * prepare_text (label) * ") cvn");
+  }
+  else {
+    print ("/Action");
+    print ("<< /Subtype /URI /URI (" * prepare_text (label) * ") >>");
+  }
   print ("/Rect [");
   print (x1 - 5*PIXEL, y1 - 10*PIXEL);
   print (x2 + 5*PIXEL, y2 + 10*PIXEL);
   print ("]");
-  print ("/Border [16 16 1 [3 10]] /Color [0.5 0.5 1.0]");
+  print ("/Border [16 16 1 [3 10]] /Color [0.75 0.5 1.0]");
   print ("/Subtype /Link");
   print ("/ANN pdfmark");
   cr ();
