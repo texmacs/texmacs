@@ -228,32 +228,32 @@ void
 image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-    //cout << "qt " << image << "\n";
+    cout << "qt " << image << "\n";
     qt_image_size (image, w, h); // default to 72 dpi
     return;
   }
 #endif
 #ifdef MACOSX_EXTENSIONS 
-  if ( mac_image_size (image, w, h) ) {
-    //cout << "mac " << image << "\n";
+  if (mac_image_size (image, w, h) ) {
+    cout << "mac " << image << "\n";
     return;
   }
 #endif
 #ifdef USE_IMLIB2
   if (imlib2_supports (image)) {
-    //cout << "imlib2 " << image << "\n";
+    cout << "imlib2 " << image << "\n";
     imlib2_image_size (image, w, h);
     return;
   }
 #endif
 #ifdef USE_GS
   if (gs_supports (image)) {
-    //cout << "gs " << image << "\n";
+    cout << "gs " << image << "\n";
     gs_image_size (image, w, h);
     return;
   }
 #endif
-  //cout << "default " << image << "\n";
+  cout << "default " << image << "\n";
   int x1, y1, x2, y2;
   ps_bounding_box (image, x1, y1, x2, y2);
   w= x2 - x1;
@@ -315,8 +315,11 @@ image_to_png (url image, url png, int w, int h) {
   }*/
 #ifdef MACOSX_EXTENSIONS
   //cout << "mac convert " << image << ", " << png << "\n";
-  mac_image_to_png (image, png, w, h);
-#else
+  if (mac_supports (image)) {
+    mac_image_to_png (image, png, w, h);
+    return;
+  }
+#endif
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
     //cout << "qt convert " << image << ", " << png << "\n";
@@ -335,6 +338,5 @@ image_to_png (url image, url png, int w, int h) {
   string cmd= "convert";
   if (w > 0 && h > 0) cmd << " -resize " * as_string(w) * "x" * as_string(h) * "!";
   system (cmd, image, png);
-#endif
 }
 

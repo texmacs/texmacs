@@ -44,11 +44,12 @@ void mac_image_to_png (url img_file, url png_file, int w, int h) {
   [pool release];
 } 
 
-
 bool mac_image_size (url img_file, int& w, int& h) 
 {
-  bool res = false;
-  
+  string suf= suffix (img_file);
+  if (suf == "ps" || suf == "eps" || suf == "pdf") return false;
+
+  bool res = false; 
   // we need to be sure that the Cocoa application infrastructure is initialized 
   // (apparently Qt does not do this properly)
   NSApplication *NSApp=[NSApplication sharedApplication]; (void) NSApp;
@@ -67,6 +68,10 @@ bool mac_image_size (url img_file, int& w, int& h)
   return res;
 }
 
+bool mac_supports (url img_file) {
+  int w, h;
+  return mac_image_size (img_file, w, h);
+}
 
 void mac_ps_to_pdf (url ps_file, url pdf_file) 
 {
