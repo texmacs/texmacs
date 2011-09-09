@@ -26,7 +26,7 @@ export MuPAD_ROOT_PATH
 
 SYSINFO=`$MuPAD_ROOT_PATH/share/bin/sysinfo`
 export SYSINFO
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MuPAD_ROOT_PATH}/${SYSINFO}/lib:/usr/local/X11R6/motif-2.0/lib:/usr/local/X11R6/lib:$MuPAD_ROOT_PATH/$SYSINFO/bin
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH+${LD_LIBRARY_PATH}:}${MuPAD_ROOT_PATH}/${SYSINFO}/lib:/usr/local/X11R6/motif-2.0/lib:/usr/local/X11R6/lib:$MuPAD_ROOT_PATH/$SYSINFO/bin
 export LD_LIBRARY_PATH
 
 XKEYSYMDB=$MuPAD_ROOT_PATH/share/unix/XKeysymDB
