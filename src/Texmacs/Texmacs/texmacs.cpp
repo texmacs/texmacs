@@ -93,8 +93,12 @@ TeXmacs_init_paths (int& argc, char** argv) {
 #endif
 
 #if (defined(QTTEXMACS) && defined(Q_WS_MAC)) 
-  // inibith external plugin loading
-  QCoreApplication::setLibraryPaths(QStringList());
+  // the following line inibith external plugin loading
+  // QCoreApplication::setLibraryPaths(QStringList());
+  // ideally we would like to control the external plugins
+  // and add the most useful (gif, jpeg, svg converters)
+  // to the bundle package. I still do not have a reliable solution
+  // so just allow everything that is reachable.
   {
     // ensure that private versions of the Qt frameworks have priority on
     // other instances.
