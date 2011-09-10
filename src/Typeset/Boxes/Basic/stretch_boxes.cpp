@@ -17,7 +17,9 @@
 
 static void
 get_wide_parameters (SI x1, SI x2, SI penw, SI& width, SI& height) {
-  width = max (x2-x1, 10*penw)- (8*penw);
+  if (x2 - x1 >= 20 * penw) width= x2 - x1 - 8 * penw;
+  else if (x2 - x1 <= 2 * penw) width= 2 * penw;
+  else width= 2 * penw + ((10 * (x2 - x1 - 2 * penw)) / 18);
   int ratio = width / penw;
   int srrat = (int) sqrt ((double) ratio);
   height= srrat * penw;

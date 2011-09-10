@@ -237,13 +237,13 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
     wide= true;
   }
   else {
-    wide= (b->w() >= (env->fn->wfn));
+    wide= (b->w() >= (env->fn->wfn)) || is_func (t, VAR_WIDE);
     if (ends (s, "dot>") || (s == "<acute>") ||
         (s == "<grave>") || (s == "<abovering>"))
       wide= false;
   }
   if (wide) {
-    SI w  = env->fn->wline;
+    SI w = env->fn->wline;
     box wideb;
     if ((s == "^") || (s == "<hat>"))
       wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, w, env->col);

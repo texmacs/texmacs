@@ -685,6 +685,10 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\<sub>", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\not", 1)) return tree (NEG, l2e (t[1]));
   if (is_tuple (t, "\\bar", 1)) return tree (WIDE, l2e (t[1]), "<bar>");
+  if (is_tuple (t, "\\overline", 1))
+    return tree (WIDE, l2e (t[1]), "<bar>");
+  if (is_tuple (t, "\\underline", 1))
+    return tree (VAR_WIDE, l2e (t[1]), "<bar>");
   if (is_tuple (t, "\\hat", 1)) return tree (WIDE, l2e (t[1]), "^");
   if (is_tuple (t, "\\tilde", 1)) return tree (WIDE, l2e (t[1]), "~");
   if (is_tuple (t, "\\widehat", 1)) return tree (WIDE, l2e (t[1]), "^");
