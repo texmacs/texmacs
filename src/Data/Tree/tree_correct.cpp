@@ -884,6 +884,7 @@ latex_correct (tree t) {
   t= missing_invisible_correct_twice (t);
   //if (enabled_preference ("insert missing invisible"))
   t= missing_invisible_correct (t, 1);
+  t= downgrade_big (t);
   return t;
 }
 
@@ -902,6 +903,7 @@ automatic_correct (tree t, string version) {
     if (enabled_preference ("zealous invisible correct"))
       t= missing_invisible_correct (t, 1);
   }
+  t= downgrade_big (t);
   return t;
 }
 
@@ -921,5 +923,6 @@ manual_correct (tree t) {
     t= missing_invisible_correct_twice (t);
   if (enabled_preference ("manual zealous invisible correct"))
     t= missing_invisible_correct (t, 1);
+  t= downgrade_big (t);
   return t;
 }

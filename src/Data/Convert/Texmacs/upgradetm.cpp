@@ -3247,7 +3247,6 @@ upgrade_tex (tree t) {
   t= move_brackets (t);
   t= upgrade_image (t);
   t= upgrade_math_ops (t);
-  t= downgrade_big (t);
   upgrade_tex_flag= false;
   return t;
 }
