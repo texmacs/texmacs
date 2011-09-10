@@ -729,7 +729,8 @@ concater_rep::typeset (tree t, path ip) {
 * User interface
 ******************************************************************************/
 
-concater_rep::concater_rep (edit_env env2): env (env2) {}
+concater_rep::concater_rep (edit_env env2, bool rigid2):
+  env (env2), rigid (rigid2) {}
 
 array<line_item>
 typeset_concat (edit_env env, tree t, path ip) {
@@ -752,7 +753,7 @@ typeset_marker (edit_env env, path ip) {
 
 box
 typeset_as_concat (edit_env env, tree t, path ip) {
-  concater ccc= tm_new<concater_rep> (env);
+  concater ccc= tm_new<concater_rep> (env, true);
   ccc->typeset (t, ip);
   ccc->finish ();
   array<line_item> a= ccc->a;

@@ -25,6 +25,7 @@
 class concater_rep {
   edit_env              env;        // the environment
   array<line_item>      a;          // the line items
+  bool                  rigid;      // when surely not wrappable
 
   // useful subroutines
   void print (box b);
@@ -162,7 +163,7 @@ class concater_rep {
   void kill_spaces ();
 
 public:
-  concater_rep (edit_env env);
+  concater_rep (edit_env env, bool rigid= false);
   void typeset (tree t, path ip);
   void finish ();
 

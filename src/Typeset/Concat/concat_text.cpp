@@ -397,19 +397,38 @@ concater_rep::typeset_repeat (tree t, path ip) {
 void
 concater_rep::typeset_formatting (tree t, path ip, string v) {
   if (N(t) == 0) { typeset_error (t, ip); return; }
-  int n= N(t);
-  tree new_format= env->read (v) * t (0, n-1);
-  tree old_format= env->local_begin (v, new_format);
-  if (v != CELL_FORMAT) {
+  if (rigid && v == ATOM_DECORATIONS) {
+    int k, n=N(t);
+    box b= typeset_as_concat (env, t[n-1], descend (ip, n-1));
+    tree e (DBOX);
+    for (k=n-2; k>=0; k--)
+      if (is_func (t[k], MACRO, 2))
+        e= tree (COMPOUND, t[k], e);
+    if (e != tree (DBOX)) {
+      env->decorated_boxes << b;
+      box bb= typeset_as_concat (env, attach_middle (e, ip));
+      env->decorated_boxes->resize (N (env->decorated_boxes) - 1);
+      b= bb;
+    }
     marker (descend (ip, 0));
-    control (t (0, N(t)-1), decorate (ip));
-  }
-  typeset (t[n-1], descend (ip, n-1));
-  if (v != CELL_FORMAT) {
-    control (tree (L(t)), decorate (ip));
+    print (b);
     marker (descend (ip, 1));
   }
-  env->local_end (v, old_format);
+  else {
+    int n= N(t);
+    tree new_format= env->read (v) * t (0, n-1);
+    tree old_format= env->local_begin (v, new_format);
+    if (v != CELL_FORMAT) {
+      marker (descend (ip, 0));
+      control (t (0, N(t)-1), decorate (ip));
+    }
+    typeset (t[n-1], descend (ip, n-1));
+    if (v != CELL_FORMAT) {
+      control (tree (L(t)), decorate (ip));
+      marker (descend (ip, 1));
+    }
+    env->local_end (v, old_format);
+  }
 }
 
 void
