@@ -707,7 +707,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\acute", 1)) return tree (WIDE, l2e (t[1]), "<acute>");
   if (is_tuple (t, "\\vec", 1)) return tree (WIDE, l2e (t[1]), "<vect>");
   if (is_tuple (t, "\\breve", 1)) return tree (WIDE, l2e (t[1]), "<breve>");
-  if (is_tuple (t, "\\abovering", 1))
+  if (is_tuple (t, "\\abovering", 1) || is_tuple (t, "\\mathring", 1))
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {
     tree r= t2e (t[1]);
@@ -877,6 +877,7 @@ latex_command_to_tree (tree t) {
     }
   }
   if (is_tuple (t, "\\fbox", 1)) return compound ("frame", l2e (t[1]));
+  if (is_tuple (t, "\\framebox", 1)) return compound ("frame", l2e (t[1]));
   if (is_tuple (t, "\\centerline", 1)) return compound ("center", l2e (t[1]));
   if (is_tuple (t, "\\noalign", 1))
     return ""; // FIXME: for larger space in maple matrices

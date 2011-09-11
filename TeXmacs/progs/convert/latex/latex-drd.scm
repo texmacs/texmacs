@@ -53,7 +53,8 @@
   footnote overline underline <sub> <sup> not left right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
-  bar hat tilde widehat widetilde vec grave acute check breve abovering
+  bar hat tilde widehat widetilde vec
+  grave acute check breve abovering mathring
   dot ddot dddot ddddot
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox text not substack
@@ -67,7 +68,7 @@
   newcounter stepcounter refstepcounter value
   citet citep citet* citep* citealt citealp citealt* citealp*
   citetext citeauthor citeauthor* citeyear
-  epsfig url penalty centerline fbox
+  epsfig url penalty centerline fbox framebox
   enlargethispage)
 
 (drd-group latex-command-1% ;; . needs a special treatment
