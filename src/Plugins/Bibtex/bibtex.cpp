@@ -56,6 +56,44 @@ search_bib (tree t) {
 }
 
 tree
+bibtex_load_bbl (string bib, url bbl_file) {
+  string result;
+  if (load_string (bbl_file, result, false))
+    return "Error: bibtex failed to create bibliography";
+
+  int count=1;
+  tree t= generic_to_tree (result, "latex-snippet");
+  t= search_bib (t);
+  if (t == "") return "";
+  tree largest= t[0];
+  t= t[1];
+
+  tree u (DOCUMENT);
+  for (int i=0; i<arity(t); i++) {
+    if (is_concat (t[i]) &&
+	(is_compound (t[i][0], "bibitem") ||
+	 is_compound (t[i][0], "bibitem*")))
+      {
+	tree item= t[i][0];
+	if (is_compound (item, "bibitem"))
+	  item= compound ("bibitem*", as_string (count++), item[0]);
+	t[i][0]= item;
+	tree v (CONCAT, compound ("bibitem*", item[0]));
+	if (is_atomic (item[1]))
+	  v << tree (LABEL, bib * "-" * item[1]->label);
+	if (N(t[i])>1) {
+	  v << remove_start_space (t[i][1]);
+	  v << A (t[i] (2, N(t[i])));
+	}
+	u << v;
+      }
+  }
+
+  if (N(u) == 0) u= tree (DOCUMENT, "");
+  return compound ("bib-list", largest, u);
+}
+
+tree
 bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   int i;
   string bib_s= "\\bibstyle{" * style * "}\n";
@@ -82,6 +120,8 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   system (cmdln);
 #endif
 
+  return bibtex_load_bbl (bib, "$TEXMACS_HOME_PATH/system/bib/temp.bbl");
+  /*
   string result;
   if (load_string ("$TEXMACS_HOME_PATH/system/bib/temp.bbl", result, false))
     return "Error: bibtex failed to create bibliography";
@@ -114,4 +154,5 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   }
   if (N(u) == 0) u= tree (DOCUMENT, "");
   return compound ("bib-list", largest, u);
+  */
 }

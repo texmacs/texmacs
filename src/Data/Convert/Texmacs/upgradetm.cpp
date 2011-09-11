@@ -3301,7 +3301,6 @@ clean_header (tree t) {
   tree preamble (DOCUMENT);
   tree title    (DOCUMENT);
   tree abstract (DOCUMENT);
-  cout << t (0, 5) << "\n";
   t= search_header_tag (t, "hide-preamble", preamble);
   t= search_header_tag (t, "doc-data", title);
   t= search_header_tag (t, "abstract", abstract);
