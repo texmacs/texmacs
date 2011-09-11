@@ -214,6 +214,9 @@ latex_symbol_to_tree (string s) {
       if (s == "\\lVert") return "<||>";
       if (s == "\\rVert") return "<||>";
       if (s == "\\qed") return compound ("math", "<Box>");
+      if (s == "\\implies") return "<Longrightarrow>";
+      if (s == "\\iff") return "<Longleftrightarrow>";
+      if (s == "\\gets") return "<leftarrow>";
     }
 
     if (latex_type (s) == "texmacs") {

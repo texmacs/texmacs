@@ -42,6 +42,7 @@
   hline
   ;; rewritten
   notin vert Vert addots
+  implies iff gets
   ;; wikipedia
   infin rang)
 
