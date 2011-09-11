@@ -781,7 +781,7 @@ latex_command_to_tree (tree t) {
     return latex_cite_to_tree (cite_type, s);
   }
   if (is_tuple (t, "\\cite*", 2)) {
-    tree   ot= t2e(t[1])->label;
+    tree   ot= l2e (t[1]);
     string s = v2e (t[2]);
     tree   ct= latex_cite_to_tree ("cite", s);
     if (N(ct) == 2) return compound ("cite-detail", ct[1], ot);
