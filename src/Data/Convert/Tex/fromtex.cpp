@@ -86,6 +86,8 @@ filter_preamble (tree t) {
       title_info << u;
     else if (is_tuple (u, "\\subjclass"))
       title_info << u;
+    else if (is_tuple (u, "\\subjclass*"))
+      title_info << u;
     else if (in_preamble) {
       if (u == tuple ("\\begin-document")) {
 	r << u;

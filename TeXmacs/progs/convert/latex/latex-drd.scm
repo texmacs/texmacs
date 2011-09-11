@@ -100,7 +100,8 @@
 
 (drd-group latex-command-1*%
   documentclass documentstyle sqrt bibitem cite
-  includegraphics includegraphics*)
+  includegraphics includegraphics*
+  subjclass)
 
 (drd-group latex-command-2*%
   def newcommand renewcommand newtheorem newtheorem* frac parbox)

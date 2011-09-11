@@ -1385,7 +1385,8 @@ upgrade_project (tree t) {
 static tree
 upgrade_title (tree t, tree& params) {
   if (is_atomic (t)) return t;
-  else if (is_func (t, APPLY, 2)) {
+  else if (is_func (t, APPLY, 2) ||
+           is_func (t, EXPAND, 2)) {
     if (t[0] == "title") { params[0]= t[1]; return ""; }
     if (t[0] == "author") { params[1]= t[1]; return ""; }
     if (t[0] == "address") { params[2]= t[1]; return ""; }
@@ -1395,7 +1396,10 @@ upgrade_title (tree t, tree& params) {
     if (t[0] == "keywords") { params[6]= t[1]; return ""; }
     if (t[0] == "subjclass") { params[7]= t[1]; return ""; }
     if (t[0] == "classification") { params[8]= t[1]; return ""; }
-    return t;
+  }
+  else if (is_func (t, APPLY, 3) ||
+           is_func (t, EXPAND, 3)) {
+    if (t[0] == "subjclass*") { params[7]= t[2]; return ""; }
   }
   else if ((t == tree (APPLY, "maketitle")) ||
 	   (t == tree (EXPAND, "maketitle")))
@@ -1417,13 +1421,12 @@ upgrade_title (tree t, tree& params) {
       doc << tree (EXPAND, "title-date", tree (_DATE, ""));
       return tree (EXPAND, "make-title", doc);
     }
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= upgrade_title (t[i], params);
-    return r;
-  }
+
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_title (t[i], params);
+  return r;
 }
 
 static tree
@@ -3230,8 +3233,8 @@ eat_spaces (tree t, bool after) {
     is_compound (t, "doc-data") ||
     is_compound (t, "abstract") ||
     is_compound (t, "bibliography") ||
-    is_compound (t, "bibentry") ||
-    is_compound (t, "bibentry*");
+    is_compound (t, "bibitem") ||
+    is_compound (t, "bibitem*");
 }
 
 static tree
