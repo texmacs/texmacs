@@ -3211,6 +3211,79 @@ upgrade_math_ops (tree t) {
 }
 
 /******************************************************************************
+* Cleaning the document header
+******************************************************************************/
+
+static bool
+only_spaces (string s) {
+  for (int i=0; i<N(s); i++)
+    if (s[i] != ' ') return false;
+  return true;
+}
+
+static tree
+search_header_tag (tree t, string which, tree& h) {
+  if (is_compound (t, which)) {
+    h << t;
+    return "";
+  }
+  if (is_func (t, DOCUMENT)) {
+    tree r (DOCUMENT);
+    for (int i=0; i<N(t); i++) {
+      if (is_compound (t[i], which)) h << t[i];
+      else if (is_func (t[i], SURROUND, 3)) {
+        tree x= search_header_tag (t[i], which, h);
+        if (x != "") r << x;
+      }
+      else r << t[i];
+    }
+    return r;
+  }
+  if (is_func (t, SURROUND, 3)) {
+    tree r (SURROUND, 3);
+    r[0]= search_header_tag (t[0], which, h);
+    r[2]= search_header_tag (t[2], which, h);
+    r[1]= search_header_tag (t[1], which, h);
+    if (r[0] == "" && r[1] == "") r= r[2];
+    else if (r[0] == "" && r[2] == "") r= r[1];
+    else if (r[1] == "" && r[2] == "") r= r[0];
+    return r;
+  }
+  if (is_func (t, CONCAT)) {
+    int found= -1;
+    for (int i=0; i<N(t); i++)
+      if (is_compound (t[i], which)) {
+        if (found != -1) return t;
+        else found= i;
+      }
+      else if (!is_atomic (t[i]) || !only_spaces (t[i]->label))
+        return t;
+    if (found == -1) return t;
+    else return search_header_tag (t[found], which, h);
+  }
+  return t;
+}
+
+tree
+clean_header (tree t) {
+  if (!is_func (t, DOCUMENT)) return t;
+  tree r        (DOCUMENT);
+  tree preamble (DOCUMENT);
+  tree title    (DOCUMENT);
+  tree abstract (DOCUMENT);
+  t= search_header_tag (t, "hide-preamble", preamble);
+  t= search_header_tag (t, "doc-data", title);
+  t= search_header_tag (t, "abstract", abstract);
+  while (N(t) > 0 && is_atomic (t[0]) && only_spaces (t[0]->label))
+    t= t (1, N(t));
+  r << A (preamble);
+  r << A (title);
+  r << A (abstract);
+  r << A (t);
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3247,6 +3320,7 @@ upgrade_tex (tree t) {
   t= move_brackets (t);
   t= upgrade_image (t);
   t= upgrade_math_ops (t);
+  t= clean_header (t);
   upgrade_tex_flag= false;
   return t;
 }

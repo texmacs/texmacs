@@ -1701,9 +1701,9 @@ latex_to_tree (tree t1) {
   textm_unicode   = false;
   textm_natbib    = false;
   command_type ("!em") = "false";
-  // cout << "\n\nt1= " << t1 << "\n\n";
+  //cout << "\n\nt1= " << t1 << "\n\n";
   tree t2= is_document? filter_preamble (t1): t1;
-  // cout << "\n\nt2= " << t2 << "\n\n";
+  //cout << "\n\nt2= " << t2 << "\n\n";
   tree t3= parsed_latex_to_tree (t2);
   // cout << "\n\nt3= " << t3 << "\n\n";
   tree t4= finalize_document (t3);
@@ -1711,10 +1711,10 @@ latex_to_tree (tree t1) {
   tree t5= is_document? finalize_preamble (t4, style): t4;
   // cout << "\n\nt5= " << t5 << "\n\n";
   tree t6= handle_improper_matches (t5);
-  // cout << "\n\nt6= " << t6 << "\n\n";
+  //cout << "\n\nt6= " << t6 << "\n\n";
   if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
-  // cout << "\n\nt7= " << t7 << "\n\n";
+  //cout << "\n\nt7= " << t7 << "\n\n";
   tree t8= finalize_floats (t7);
   // cout << "\n\nt8= " << t8 << "\n\n";
   tree t9= finalize_misc (t8);
