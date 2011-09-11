@@ -1206,10 +1206,20 @@ translate_list (string s) {
   if (s == "enumerateromancap") return "enumerate-romancap";
   if (s == "enumeratealpha") return "enumerate-alpha";
   if (s == "enumeratealphacap") return "enumerate-alphacap";
+  if (s == "asparaitem") return "itemize";
+  if (s == "inparaitem") return "itemize";
+  if (s == "compactitem") return "itemize";
+  if (s == "asparaenum") return "enumerate";
   if (s == "inparaenum") return "enumerate";
+  if (s == "compactenum") return "enumerate";
   if (s == "itemize*") return "itemize";
   if (s == "enumerate*") return "enumerate";
+  if (s == "asparaitem*") return "itemize";
+  if (s == "inparaitem*") return "itemize";
+  if (s == "compactitem*") return "itemize";
+  if (s == "asparaenum*") return "enumerate";
   if (s == "inparaenum*") return "enumerate";
+  if (s == "compactenum*") return "enumerate";
   return s;
 }
 

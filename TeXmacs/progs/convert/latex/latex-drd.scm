@@ -186,7 +186,9 @@
   inf ker lg lim liminf limsup ln log max min Pr sec sin sinh sup tan tanh)
 
 (drd-group latex-list%
-  begin-itemize begin-enumerate begin-description begin-inparaenum)
+  begin-itemize begin-enumerate begin-description
+  begin-asparaitem begin-inparaitem begin-compactitem
+  begin-asparaenum begin-inparaenum begin-compactenum)
 
 (drd-group latex-math-environment-0%
   begin-formula begin-equation*
