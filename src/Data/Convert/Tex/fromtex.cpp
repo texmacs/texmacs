@@ -1677,6 +1677,12 @@ finalize_misc (tree t) {
            is_atomic (t[2]) && is_hyper_link (t[2]->label)) {
     return compound ("href", t[2]);
   }
+  else if (is_compound (t, "flushleft", 1) ||
+           is_compound (t, "leftaligned", 1))
+    return compound ("left-aligned", t[0]);
+  else if (is_compound (t, "flushright", 1) ||
+           is_compound (t, "rightaligned", 1))
+    return compound ("right-aligned", t[0]);
   else {
     int i, n= N(t);
     tree r (t, n);

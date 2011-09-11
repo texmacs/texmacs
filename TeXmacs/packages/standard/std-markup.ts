@@ -211,6 +211,10 @@
 
   <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
 
+  <assign|left-aligned|<macro|body|<with|par-mode|left|<arg|body>>>>
+
+  <assign|right-aligned|<macro|body|<with|par-mode|right|<arg|body>>>>
+
   <assign|quote-env|<\macro|body>
     <\padded>
       <\indent-both|3fn|3fn>

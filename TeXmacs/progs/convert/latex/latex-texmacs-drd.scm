@@ -245,6 +245,14 @@
    (!append (noindent) (textbf (!append 1 "\\ "))
 	    ---
 	    (hspace* (fill)) (!math (Box)) (medskip)))
+  ("left-aligned"
+   (!append (!begin "flushleft")
+	    ---
+            (!end "flushleft")))
+  ("right-aligned"
+   (!append (!begin "flushright")
+	    ---
+            (!end "flushright")))
   ("tmparmod"
    ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
 			       "\\setlength{\\leftmargin}{" 1 "}"
