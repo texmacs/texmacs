@@ -3211,7 +3211,7 @@ upgrade_math_ops (tree t) {
 }
 
 /******************************************************************************
-* Cleaning the document header
+* Cleaning spurious spaces in the document
 ******************************************************************************/
 
 static bool
@@ -3220,6 +3220,48 @@ only_spaces (string s) {
     if (s[i] != ' ') return false;
   return true;
 }
+
+static bool
+eat_spaces (tree t, bool after) {
+  (void) after;
+  if (is_atomic (t)) return false;
+  return
+    is_compound (t, "hide-preamble") ||
+    is_compound (t, "doc-data") ||
+    is_compound (t, "abstract") ||
+    is_compound (t, "bibliography") ||
+    is_compound (t, "bibentry") ||
+    is_compound (t, "bibentry*");
+}
+
+static tree
+clean_spaces (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= clean_spaces (t[i]);
+  if (!is_func (r, CONCAT)) return r;
+  t= r;
+  r= tree (CONCAT);
+  for (i=0; i<n; i++)
+    if (!is_atomic (t[i])) r << t[i];
+    else {
+      string s= t[i]->label;
+      if (i>0 && eat_spaces (t[i-1], true))
+        while (starts (s, " ")) s= s (1, N(s));
+      if (i<N(t)-1 && eat_spaces (t[i+1], false))
+        while (ends (s, " ")) s= s (0, N(s)-1);
+      if (s != "") r << tree (s);
+    }
+  if (N(r) == 0) return "";
+  if (N(r) == 1) return r[0];
+  return r;
+}
+
+/******************************************************************************
+* Cleaning the document header
+******************************************************************************/
 
 static tree
 search_header_tag (tree t, string which, tree& h) {
@@ -3249,18 +3291,6 @@ search_header_tag (tree t, string which, tree& h) {
     else if (r[1] == "" && r[2] == "") r= r[0];
     return r;
   }
-  if (is_func (t, CONCAT)) {
-    int found= -1;
-    for (int i=0; i<N(t); i++)
-      if (is_compound (t[i], which)) {
-        if (found != -1) return t;
-        else found= i;
-      }
-      else if (!is_atomic (t[i]) || !only_spaces (t[i]->label))
-        return t;
-    if (found == -1) return t;
-    else return search_header_tag (t[found], which, h);
-  }
   return t;
 }
 
@@ -3271,6 +3301,7 @@ clean_header (tree t) {
   tree preamble (DOCUMENT);
   tree title    (DOCUMENT);
   tree abstract (DOCUMENT);
+  cout << t (0, 5) << "\n";
   t= search_header_tag (t, "hide-preamble", preamble);
   t= search_header_tag (t, "doc-data", title);
   t= search_header_tag (t, "abstract", abstract);
@@ -3320,6 +3351,7 @@ upgrade_tex (tree t) {
   t= move_brackets (t);
   t= upgrade_image (t);
   t= upgrade_math_ops (t);
+  t= clean_spaces (t);
   t= clean_header (t);
   upgrade_tex_flag= false;
   return t;
