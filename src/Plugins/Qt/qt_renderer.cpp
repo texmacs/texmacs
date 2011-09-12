@@ -314,7 +314,8 @@ qt_renderer_rep::image (url u, SI w, SI h, SI x, SI y,
     if (qt_supports (u)) {
       pm= new QImage (utf8_to_qstring (concretize (u)));
       needs_crop= true;
-    } else if (suffix (u) == "ps" ||
+    }
+    else if (suffix (u) == "ps" ||
              suffix (u) == "eps" ||
              suffix (u) == "pdf") {
       url temp= url_temp (".png");
@@ -501,7 +502,12 @@ qt_renderer_rep::xpm_image (url file_name) {
   qt_pixmap mi= images [as_string (file_name)];
   if (is_nil (mi)) {
     string sss;
-    load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
+    if (suffix (file_name) == "xpm") {
+      url png_equiv= glue (unglue (file_name, 3), "png");
+      load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
+    }
+    if (sss == "")
+      load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
     if (sss == "")
       load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
     uchar *buf= (uchar*) as_charp (sss);
