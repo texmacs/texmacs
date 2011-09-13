@@ -1511,13 +1511,15 @@ edit_env_rep::exec_hard_id (tree t) {
     return "%" * as_hexadecimal (ptr);
   else {
     t= expand (t[0], true);
-    if (is_accessible (obtain_ip (t))) {
-      pointer tptr= (pointer) t.operator -> ();
-      return "%" * as_hexadecimal (ptr) * "-" * as_hexadecimal (tptr);
-    }
+    pointer tptr= (pointer) t.operator -> ();
+    if (is_accessible (obtain_ip (t)))
+      return "%" * as_hexadecimal (ptr) *
+             "-" * as_hexadecimal (tptr);
     else {
       int h= hash (t);
-      return "%" * as_hexadecimal (ptr) * "+" * as_hexadecimal (h);
+      return "%" * as_hexadecimal (ptr) *
+             "-" * as_hexadecimal (tptr) *
+             "-" * as_hexadecimal (h);
     }
   }
 }
