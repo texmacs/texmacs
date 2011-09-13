@@ -201,7 +201,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     sz = (pxm ? pxm->size() : QSize(17,17));
     tweek_iconbar_size (sz);
     modeToolBar->setIconSize(sz);
-    modeToolBar->setBackgroundRole (QPalette::MidLight);
     pxm =  the_qt_renderer()->xpm_image("tm_plus.xpm");
     sz = (pxm ? pxm->size() : QSize(17,17));
     tweek_iconbar_size (sz);
