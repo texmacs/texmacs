@@ -56,7 +56,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/fig2ps
 %{_bindir}/texmacs
 %{_includedir}/TeXmacs.h
-%doc %{_mandir}/*/*
+%doc 
+%{_mandir}/*/*
 %{_libexecdir}/TeXmacs
 %{_datadir}/TeXmacs
 

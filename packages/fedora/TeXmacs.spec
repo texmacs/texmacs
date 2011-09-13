@@ -11,6 +11,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Packager: Daouda Niang Diatta <dndiatta@lix.polytechnique.fr>
 Distribution: GNU/Linux
+Icon: TeXmacs.xpm
 Vendor: MaGiX software association
 Buildrequires:  gcc-c++,libtiff-tools, libtool-ltdl-devel, netpbm, freetype-devel, libXt-devel, qt4-devel, guile-devel, xfig, aspell, ImageMagick
 
@@ -56,7 +57,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/fig2ps
 %{_bindir}/texmacs
 %{_includedir}/TeXmacs.h
-%doc %{_mandir}/*/*
+%doc 
+%{_mandir}/*/*
 %{_libexecdir}/TeXmacs
 %{_datadir}/TeXmacs
 
