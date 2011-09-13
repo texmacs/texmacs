@@ -93,9 +93,23 @@ void QTMInteractiveInputHelper::commit(int result) {
 
 
 /******************************************************************************
- * qt_tm_widget_rep
- ******************************************************************************/
+* qt_tm_widget_rep
+******************************************************************************/
 
+static void
+tweek_iconbar_size (QSize& sz) {
+  if (sz.height () >= 24) {
+    sz.setWidth (sz.width () + 2);
+    sz.setHeight (sz.height () + 6);
+  }
+  else if (sz.height () >= 20) {
+    sz.setWidth (sz.width () + 2);
+    sz.setHeight (sz.height () + 4);
+  }
+  else if (sz.height () >= 16) {
+    sz.setHeight (sz.height () + 2);
+  }
+}
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
  : qt_view_widget_rep (new QTMWindow (this)), helper (this), 
@@ -181,12 +195,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     // set proper sizes for icons
     QPixmap *pxm = the_qt_renderer()->xpm_image("tm_new.xpm");
     QSize sz = (pxm ? pxm->size() : QSize(32,32));
+    tweek_iconbar_size (sz);
     mainToolBar->setIconSize (sz);
     pxm =  the_qt_renderer()->xpm_image("tm_section.xpm");
     sz = (pxm ? pxm->size() : QSize(17,17));
+    tweek_iconbar_size (sz);
     modeToolBar->setIconSize(sz);
+    modeToolBar->setBackgroundRole (QPalette::MidLight);
     pxm =  the_qt_renderer()->xpm_image("tm_plus.xpm");
     sz = (pxm ? pxm->size() : QSize(17,17));
+    tweek_iconbar_size (sz);
     focusToolBar->setIconSize(sz);
   }  
   
