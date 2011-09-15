@@ -385,7 +385,7 @@ UBUNTU_PACKAGE_DIR = ../distr/ubuntu
 
 UBUNTU_PACKAGE: COPY_SOURCES_TGZ
 	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_underscore_devel).orig.tar.gz
-	$(MKDIR) $(BUILD_DIR)/ubuntu ;
+	$(MKDIR) $(BUILD_DIR)/debian ;
 	$(CP) $(UBUNTU_PACKAGE_SRC)/* $(BUILD_DIR)/debian
 	cd $(BUILD_DIR); debuild -us -uc
 	$(CP) -p ../distr/build/*.deb $(UBUNTU_PACKAGE_DIR)
