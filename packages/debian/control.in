@@ -1,4 +1,4 @@
-Source: @PACKAGE@
+Source: texmacs
 Version: @DEVEL_VERSION@
 Section: editors
 Priority: optional

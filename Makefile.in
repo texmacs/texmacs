@@ -22,6 +22,7 @@ tmdata = @tmdata@
 tm_devel = @tm_devel@
 tm_devel_release = @tm_devel_release@
 tm_underscore_devel = @tm_underscore_devel@
+tm_debian_name_devel = @tm_debian_name_devel@
 tm_stable = @tm_stable@
 tm_stable_release = @tm_stable_release@
 tm_underscore_stable = @tm_underscore_stable@
@@ -306,7 +307,7 @@ DEBIAN_PACKAGE_SRC = packages/debian
 DEBIAN_PACKAGE_DIR = ../distr/debian
 
 DEBIAN_PACKAGE: COPY_SOURCES_TGZ
-	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_underscore_devel).orig.tar.gz
+	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_debian_name_devel).orig.tar.gz
 	$(MKDIR) $(BUILD_DIR)/debian ;
 	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
 	cd $(BUILD_DIR); debuild -us -uc
@@ -384,7 +385,7 @@ UBUNTU_PACKAGE_SRC = packages/debian
 UBUNTU_PACKAGE_DIR = ../distr/ubuntu
 
 UBUNTU_PACKAGE: COPY_SOURCES_TGZ
-	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_underscore_devel).orig.tar.gz
+	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_debian_name_devel).orig.tar.gz
 	$(MKDIR) $(BUILD_DIR)/debian ;
 	$(CP) $(UBUNTU_PACKAGE_SRC)/* $(BUILD_DIR)/debian
 	cd $(BUILD_DIR); debuild -us -uc
