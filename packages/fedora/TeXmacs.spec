@@ -1,5 +1,5 @@
 Name: TeXmacs
-Version: 1.0.7.12
+Version: 1.0.7.13
 Release: 1%{?dist}
 Summary: A structured wysiwyg scientific text editor
 
