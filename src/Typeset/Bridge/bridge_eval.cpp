@@ -52,16 +52,23 @@ bridge_eval (typesetter ttt, tree st, path ip) {
 
 void
 bridge_eval_rep::notify_assign (path p, tree u) {
-  // cout << "Assign " << p << ", " << u << " in " << st << "\n";
+  //cout << "Assign " << p << ", " << u << " in " << st << "\n";
   status= CORRUPTED;
   st= substitute (st, p, u);
 }
 
 bool
 bridge_eval_rep::notify_macro (int tp, string v, int l, path p, tree u) {
+  //cout << "Macro argument " << v << " [action=" << tp
+  //<< ", level=" << l << "] " << p << ", " << u << " in " << st << "\n";
+  //cout << "  Body= " << bt << "\n";
   (void) tp; (void) p; (void) u;
   bool flag= env->depends (st, v, l);
-  if (flag) status= CORRUPTED;
+  //cout << "  Flag= " << flag << "\n";
+  if (flag) {
+    status= CORRUPTED;
+    body->notify_macro (tp, v, l, p, u);
+  }
   return flag;
 }
 

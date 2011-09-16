@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.0.7.12>
 
 <style|<tuple|source|std-pattern>>
 
@@ -59,7 +59,7 @@
 
   <drd-props|doc-date|border|no>
 
-  <drd-props|doc-note|border|no>
+  <drd-props|doc-note|arity|1|border|no|accessible|all>
 
   <drd-props|doc-inactive|arity|1|border|no|accessible|all>
 
@@ -79,7 +79,9 @@
 
   <drd-props|author-homepage|border|no>
 
-  <drd-props|author-note|border|no>
+  <drd-props|author-note|arity|1|border|no|accessible|all>
+
+  <drd-props|abstract|arity|1|accessible|all>
 
   <\active*>
     <\src-comment>
