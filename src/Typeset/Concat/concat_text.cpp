@@ -36,6 +36,11 @@ concater_rep::typeset_colored_substring
   (string s, path ip, int pos, string col)
 {
   color c= (col == ""? env->col: named_color (col));
+  if (env->alpha != 255) {
+    int r, g, b, a;
+    get_rgb_color (c, r, g, b, a);
+    c= rgb_color (r, g, b, env->alpha);
+  }
   box b= text_box (ip, pos, s, env->fn, c);
   a << line_item (STRING_ITEM, OP_TEXT, b, HYPH_INVALID, env->lan);
 }

@@ -73,6 +73,7 @@ mathemagix_color_setup_constants (hashmap<string, string> & t) {
   t ("cpp_libs")= c;
   t ("cpp_preamble")= c;
   t ("cpp_macro")= c;
+  t ("cpp_include")= c;
   t ("true")= c;
   t ("false")= c;
   t ("mmout")= c;
