@@ -8,6 +8,12 @@
   <section|Changes from version 1.0.7 to 1.0.7.13>
 
   <\itemize>
+    <item>Experiment with new set of icons (1.0.7.13).
+
+    <item>Fix Qt image support (1.0.7.13).
+
+    <item>Various bug fixes (1.0.7.13).
+
     <item>Added plug-in for the <name|Axiom> fork <name|Fricas> (1.0.7.13).
 
     <item>Make the Qt port default (1.0.7.12).
