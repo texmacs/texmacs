@@ -228,36 +228,36 @@ void
 image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-    //cout << "qt " << image << "\n";
     qt_image_size (image, w, h); // default to 72 dpi
+    //cout << "qt " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
 #ifdef MACOSX_EXTENSIONS 
   if (mac_image_size (image, w, h) ) {
-    //cout << "mac " << image << "\n";
+    //cout << "mac " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
 #ifdef USE_IMLIB2
   if (imlib2_supports (image)) {
-    //cout << "imlib2 " << image << "\n";
     imlib2_image_size (image, w, h);
+    //cout << "imlib2 " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
 #ifdef USE_GS
   if (gs_supports (image)) {
-    //cout << "gs " << image << "\n";
     gs_image_size (image, w, h);
+    //cout << "gs " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
-  //cout << "default " << image << "\n";
   int x1, y1, x2, y2;
   ps_bounding_box (image, x1, y1, x2, y2);
   w= x2 - x1;
   h= y2 - y1;
+  //cout << "default " << image << ", " << w << ", " << h << "\n";
 }
 
 /******************************************************************************
