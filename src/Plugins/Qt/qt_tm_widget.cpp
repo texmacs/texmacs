@@ -103,8 +103,7 @@ tweek_iconbar_size (QSize& sz) {
     sz.setHeight (sz.height () + 6);
   }
   else if (sz.height () >= 20) {
-    sz.setWidth (sz.width () + 2);
-    sz.setHeight (sz.height () + 4);
+    sz.setHeight (sz.height () + 2);
   }
   else if (sz.height () >= 16) {
     sz.setHeight (sz.height () + 2);
@@ -193,16 +192,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   {
     // set proper sizes for icons
-    QPixmap *pxm = the_qt_renderer()->xpm_image("tm_new.xpm");
-    QSize sz = (pxm ? pxm->size() : QSize(32,32));
+    QPixmap *pxm = the_qt_renderer()->xpm_image ("tm_new.xpm");
+    QSize sz = (pxm ? pxm->size() : QSize(24,24));
     tweek_iconbar_size (sz);
     mainToolBar->setIconSize (sz);
-    pxm =  the_qt_renderer()->xpm_image("tm_section.xpm");
-    sz = (pxm ? pxm->size() : QSize(17,17));
+    pxm = the_qt_renderer()->xpm_image ("tm_section.xpm");
+    sz = (pxm ? pxm->size() : QSize(20,20));
     tweek_iconbar_size (sz);
     modeToolBar->setIconSize(sz);
-    pxm =  the_qt_renderer()->xpm_image("tm_plus.xpm");
-    sz = (pxm ? pxm->size() : QSize(17,17));
+    pxm = the_qt_renderer()->xpm_image ("tm_plus.xpm");
+    sz = (pxm ? pxm->size() : QSize(16,16));
     tweek_iconbar_size (sz);
     focusToolBar->setIconSize(sz);
   }  

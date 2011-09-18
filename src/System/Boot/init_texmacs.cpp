@@ -249,8 +249,9 @@ init_env_vars () {
 		       plugin_path ("misc/patterns"));
   (void) get_env_path ("TEXMACS_PIXMAP_PATH",
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
-		       url ("$TEXMACS_PATH/misc/pixmaps/modern/24x24") |
-		       //url ("$TEXMACS_PATH/misc/pixmaps/alternate/24x24") |
+		       url ("$TEXMACS_PATH/misc/pixmaps/modern/24x24/main") |
+		       //url ("$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode") |
+		       //url ("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus") |
 		       url ("$TEXMACS_PATH/misc/pixmaps/traditional/--x17") |
 		       plugin_path ("misc/pixmaps"));
   (void) get_env_path ("TEXMACS_DIC_PATH",
