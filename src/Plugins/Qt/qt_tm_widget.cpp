@@ -200,7 +200,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     sz = (pxm ? pxm->size() : QSize(20,20));
     tweek_iconbar_size (sz);
     modeToolBar->setIconSize(sz);
-    pxm = the_qt_renderer()->xpm_image ("tm_plus.xpm");
+    pxm = the_qt_renderer()->xpm_image ("tm_add.xpm");
     sz = (pxm ? pxm->size() : QSize(16,16));
     tweek_iconbar_size (sz);
     focusToolBar->setIconSize(sz);
