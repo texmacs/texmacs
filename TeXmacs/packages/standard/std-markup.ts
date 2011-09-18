@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.0.7.13>
 
 <style|<tuple|source|std>>
 
@@ -237,6 +237,22 @@
         <with|par-first|-1.5fn|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
       </indent-both>
     </padded>
+  </macro>>
+
+  <assign|jump-in|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|par-left|<plus|<value|par-left>|1.5fn>|par-first|-1.5fn>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
+
+  <assign|compact|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|par-par-sep|0fn>
+        <arg|body>
+      </with>
+    </surround>
   </macro>>
 
   <assign|verbatim|<macro|body|<with|font-family|tt|language|verbatim|<arg|body>>>>
