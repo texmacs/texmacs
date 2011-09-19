@@ -239,111 +239,120 @@ qt_input_widget_rep::plain_window_widget (string s)
 
 void
 qt_input_widget_rep::perform_dialog() {
- if ((N(fields)==1) && (fields[0]->type == "question")) // then use Qt messagebox for smoother, more standard UI
- {   QWidget * mainwindow = QApplication::activeWindow (); // main texmacs window. There are probably better ways...
-// Presently not checking if the windows has the focus; In case it has not, it should be brought into focus before calling the dialog
-     QMessageBox * msgBox=new QMessageBox(mainwindow);//sets parent widget, so that appears at proper location	
-     msgBox->setText(to_qstring(fields[0]->prompt));
-     msgBox->setStandardButtons(QMessageBox::Cancel);
-     int choices = N(fields[0]->proposals);
-     QVector<QPushButton*> buttonlist (choices); //allowing for any number of choices
-     for(int i=0; i<choices; i++) {
-     		string blabel="&"*(fields[0]->proposals[i]);//capitalize the first character?
-     		buttonlist[i] = msgBox->addButton(to_qstring(blabel), QMessageBox::ActionRole);
-                }
-     msgBox->setDefaultButton(buttonlist[0]); //default is first choice
-     msgBox->setWindowTitle (to_qstring("Question"));
-     msgBox->setIcon ( QMessageBox::Question );
-
-     msgBox->exec();
-     bool buttonclicked=false;
-     for(int i=0; i<choices; i++) {
-		if (msgBox->clickedButton() == buttonlist[i]) {
-        		fields[0] -> input = scm_quote (fields[0]->proposals[i]);
-                        buttonclicked=true;
-			break;
-        	}
-     }
-     if (!buttonclicked) {fields[0] -> input = "#f";} //cancelled
- }
- else {  //usual dialogue layout
-  QDialog d (0, Qt::Sheet);
-  QVBoxLayout* vl = new QVBoxLayout(&d);
-
-  QVector<QComboBox*> cbs (N (fields));
-
-  for(int i=0; i<N(fields); i++) {
-    QHBoxLayout *hl = new QHBoxLayout();
-
-    QLabel *lab = new QLabel (to_qstring (tm_var_encode( (fields[i]->prompt))),&d);
-    cbs[i] = new QComboBox(&d);
-    cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
-    cbs[i] -> setEditText (to_qstring(fields[i]->input));
-    int minlen = 0;
-    for(int j=0; j < N(fields[i]->proposals); j++) {
-      QString str = to_qstring (fields[i]->proposals[j]);
-      cbs[i] -> addItem (str);
-      int c = str.count();
-      if (c > minlen) minlen = c;
+  if ((N(fields)==1) && (fields[0]->type == "question")) {
+   // then use Qt messagebox for smoother, more standard UI
+    QWidget * mainwindow = QApplication::activeWindow ();
+    // main texmacs window. There are probably better ways...
+    // Presently not checking if the windows has the focus;
+    // In case it has not, it should be brought into focus
+    // before calling the dialog
+    QMessageBox * msgBox=new QMessageBox(mainwindow);
+    //sets parent widget, so that appears at proper location	
+    msgBox->setText(to_qstring(fields[0]->prompt));
+    msgBox->setStandardButtons(QMessageBox::Cancel);
+    int choices = N(fields[0]->proposals);
+    QVector<QPushButton*> buttonlist (choices);
+    //allowing for any number of choices
+    for(int i=0; i<choices; i++) {
+      string blabel= "&" * (fields[0]->proposals[i]);
+      //capitalize the first character?
+      buttonlist[i] = msgBox->addButton (to_qstring(blabel), QMessageBox::ActionRole);
     }
-    cbs[i] -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
-    cbs[i] -> setEditable (true);
-    // apparently the following flag prevents Qt from substituting an history item
-    // for an input when they differ only from the point of view of case (upper/lower)
-    // eg. if the history contains aAAAAa and you type AAAAAA then the combo box
-    // will retain the string aAAAAa    
-    cbs[i]->setDuplicatesEnabled(true); 
-    cbs[i]->completer()->setCaseSensitivity(Qt::CaseSensitive);
-    lab -> setBuddy (cbs[i]);
-    hl -> addWidget (lab);
-    hl -> addWidget (cbs[i]);
-    vl -> addLayout (hl);
+    msgBox->setDefaultButton (buttonlist[0]); //default is first choice
+    msgBox->setWindowTitle (to_qstring("Question"));
+    msgBox->setIcon (QMessageBox::Question);
+
+    msgBox->exec();
+    bool buttonclicked=false;
+    for(int i=0; i<choices; i++) {
+      if (msgBox->clickedButton() == buttonlist[i]) {
+        fields[0] -> input = scm_quote (fields[0]->proposals[i]);
+        buttonclicked=true;
+        break;
+      }
+    }
+    if (!buttonclicked) {fields[0] -> input = "#f";} //cancelled
+  }
+
+  else {  //usual dialogue layout
+    QDialog d (0, Qt::Sheet);
+    QVBoxLayout* vl = new QVBoxLayout(&d);
+
+    QVector<QComboBox*> cbs (N (fields));
+
+    for(int i=0; i<N(fields); i++) {
+      QHBoxLayout *hl = new QHBoxLayout();
+
+      QLabel *lab = new QLabel (to_qstring (tm_var_encode( (fields[i]->prompt))),&d);
+      cbs[i] = new QComboBox(&d);
+      cbs[i] -> setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLength);
+      cbs[i] -> setEditText (to_qstring(fields[i]->input));
+      int minlen = 0;
+      for(int j=0; j < N(fields[i]->proposals); j++) {
+        QString str = to_qstring (fields[i]->proposals[j]);
+        cbs[i] -> addItem (str);
+        int c = str.count();
+        if (c > minlen) minlen = c;
+      }
+      cbs[i] -> setMinimumContentsLength (minlen>50 ? 50 : (minlen < 2 ? 10 : minlen));
+      cbs[i] -> setEditable (true);
+      // apparently the following flag prevents Qt from substituting
+      // an history item for an input when they differ only from
+      // the point of view of case (upper/lower)
+      // eg. if the history contains aAAAAa and you type AAAAAA then
+      // the combo box will retain the string aAAAAa    
+      cbs[i]->setDuplicatesEnabled(true); 
+      cbs[i]->completer()->setCaseSensitivity(Qt::CaseSensitive);
+      lab -> setBuddy (cbs[i]);
+      hl -> addWidget (lab);
+      hl -> addWidget (cbs[i]);
+      vl -> addLayout (hl);
+      
+      if (ends (fields[i]->type, "file") || fields[i]->type == "directory") {
+        // autocompletion
+        //QCompleter *completer = new QCompleter(cbs[i]);
+        QCompleter *completer = cbs[i]->completer();
+        QDirModel *dirModel = new QDirModel();
+        completer->setModel(dirModel);
+        //cbs[i]->setCompleter(completer);
+      }
+    }
     
-    if (ends (fields[i]->type, "file") || fields[i]->type == "directory") {
-      // autocompletion
-      //QCompleter *completer = new QCompleter(cbs[i]);
-      QCompleter *completer = cbs[i]->completer();
-      QDirModel *dirModel = new QDirModel();
-      completer->setModel(dirModel);
-      //cbs[i]->setCompleter(completer);
+    {
+      QDialogButtonBox* buttonBox =
+        new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                              Qt::Horizontal, &d);
+      QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
+      QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
+      vl -> addWidget (buttonBox);
+    }
+    //  d.setLayout (vl);
+    d.setWindowTitle(to_qstring(win_title));
+    QPoint pos = to_qpoint(position);
+    //cout << "Size :" << size.x1 << "," << size.x2 << LF;
+    //cout << "Position :" << pos.x() << "," << pos.y() << LF;
+    
+    d.updateGeometry();
+    QSize sz = d.sizeHint();
+    QRect r; r.setSize(sz);
+    r.moveCenter(pos);
+    d.setGeometry(r);
+    
+    int result = d.exec ();
+    if (result == QDialog::Accepted) {
+      for(int i=0; i<N(fields); i++) {
+        QString item = cbs[i]->currentText();
+        fields[i] -> input = scm_quote (from_qstring (item));
+      }
+    } else {
+      for(int i=0; i<N(fields); i++) {
+        fields[i] -> input = "#f";
+      }
     }
   }
 
-  {
-    QDialogButtonBox* buttonBox =
-      new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                            Qt::Horizontal, &d);
-    QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
-    QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
-    vl -> addWidget (buttonBox);
-  }
-//  d.setLayout (vl);
-  d.setWindowTitle(to_qstring(win_title));
-  QPoint pos = to_qpoint(position);
-  //cout << "Size :" << size.x1 << "," << size.x2 << LF;
-  //cout << "Position :" << pos.x() << "," << pos.y() << LF;
-
-  d.updateGeometry();
-  QSize sz = d.sizeHint();
-  QRect r; r.setSize(sz);
-  r.moveCenter(pos);
-  d.setGeometry(r);
-  
-  int result = d.exec ();
-  if (result == QDialog::Accepted) {
-    for(int i=0; i<N(fields); i++) {
-      QString item = cbs[i]->currentText();
-      fields[i] -> input = scm_quote (from_qstring (item));
-    }
-  } else {
-    for(int i=0; i<N(fields); i++) {
-      fields[i] -> input = "#f";
-    }
-  }
- }//\else usual dialogue layout
   cmd ();
 }
-
 
 
 /*******************************************************************************
