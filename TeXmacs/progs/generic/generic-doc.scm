@@ -181,20 +181,6 @@
                    ($menu "Focus" "Last similar") ", "
                    ($tmdoc-icon "tm_similar_last.xpm"))
         "Jump to the last " (focus-doc-similar t) "."))
-    ($when (cursor-inside? t)
-      ($para
-        "In addition, it is possible to quickly exit the tag as follows:")
-      ($description-long
-        ($describe-item
-            ($inline ($shortcut (structured-exit-left)) ", "
-                     ($menu "Focus" "Exit left") ", "
-                     ($tmdoc-icon "tm_exit_left.xpm"))
-          "Jump out of the " ($markup lab) " tag on the left.")
-        ($describe-item
-            ($inline ($shortcut (structured-exit-right)) ", "
-                     ($menu "Focus" "Exit right") ", "
-                     ($tmdoc-icon "tm_exit_right.xpm"))
-          "Jump out of the " ($markup lab) " tag on the right.")))
     ($para
       "For more information and further useful shortcuts, "
       "we refer to the section on "
