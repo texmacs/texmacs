@@ -628,7 +628,7 @@
        (link add-package-menu))
    (assuming (tree-is-buffer? t)
      ((balloon (icon "tm_focus_help.xpm") "Describe tag")
-      (document-help)))))
+      (focus-help)))))
 
 (tm-menu (focus-document-icons t)
   (minibar
