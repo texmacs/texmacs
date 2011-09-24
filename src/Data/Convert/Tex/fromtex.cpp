@@ -1675,18 +1675,20 @@ finalize_misc (tree t) {
   if (is_atomic (t)) return t;
   else if (is_compound (t, "verbatim", 1) &&
            is_atomic (t[0]) && is_hyper_link (t[0]->label)) {
-    return compound ("href", t[0]);
+    return compound ("href", finalize_misc (t[0]));
   }
   else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt" &&
            is_atomic (t[2]) && is_hyper_link (t[2]->label)) {
-    return compound ("href", t[2]);
+    return compound ("href", finalize_misc (t[2]));
   }
   else if (is_compound (t, "flushleft", 1) ||
            is_compound (t, "leftaligned", 1))
-    return compound ("left-aligned", t[0]);
+    return compound ("left-aligned", finalize_misc (t[0]));
   else if (is_compound (t, "flushright", 1) ||
            is_compound (t, "rightaligned", 1))
-    return compound ("right-aligned", t[0]);
+    return compound ("right-aligned", finalize_misc (t[0]));
+  else if (is_compound (t, "acknowledgments", 1))
+    return compound ("acknowledgments*", finalize_misc (t[0]));
   else {
     int i, n= N(t);
     tree r (t, n);
