@@ -291,6 +291,7 @@
     Relaxed-expression-list)
 
   (define Relaxed-expression-list
+    Informal-relation
     (Relaxed-expression-list Comma Relaxed-expression)
     Relaxed-expression)
 
@@ -316,6 +317,7 @@
     Expression-list)
 
   (define Expression-list
+    Informal-relation
     (Expression-list Comma Expression)
     Expression)
 
@@ -326,6 +328,13 @@
     Infix
     Prefix
     Postfix)
+
+  (define Informal-relation
+    (Arrow-list Relation-infix Arrow))
+
+  (define Arrow-list
+    (Arrow-list Comma Arrow)
+    (Arrow Comma Arrow))
   
   (define Assignment
     (Modeling Assign-infix Assignment)
