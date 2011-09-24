@@ -227,6 +227,15 @@
     Close-symbol
     (:<right :args :>))
 
+  (define Middle
+    (:operator associative)
+    Middle-symbol
+    (:<mid :args :>))
+
+  (define Comma
+    (:operator associative)
+    Ponctuation-symbol)
+
   (define Separator
     (:operator associative)
     Ponctuation-symbol
@@ -278,7 +287,11 @@
     Relaxed-expressions)
 
   (define Relaxed-expressions
-    (Relaxed-expressions Separator Relaxed-expression)
+    (Relaxed-expressions Middle Relaxed-expression-list)
+    Relaxed-expression-list)
+
+  (define Relaxed-expression-list
+    (Relaxed-expression-list Comma Relaxed-expression)
     Relaxed-expression)
 
   (define Relaxed-expression
@@ -299,7 +312,11 @@
     (:<Postfix :args :>))
 
   (define Expressions
-    (Expressions Separator Expression)
+    (Expressions Middle Expression-list)
+    Expression-list)
+
+  (define Expression-list
+    (Expression-list Comma Expression)
     Expression)
 
   (define Expression
