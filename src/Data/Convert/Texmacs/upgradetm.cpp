@@ -952,7 +952,8 @@ expand_needs_surrounding (string s) {
     (s == "corollary") || (s == "proof") || (s == "axiom") ||
     (s == "definition") || (s == "notation") || (s == "conjecture") ||
     (s == "remark") || (s == "note") || (s == "example") ||
-    (s == "exercise") || (s == "warning") || (s == "convention") ||
+    (s == "exercise") || (s == "warning") ||
+    (s == "convention") || (s == "acknowledgments") ||
     (s == "code") || (s == "quote") ||
     (s == "quotation") || (s == "verse") || (s == "center") ||
     (s == "indent") || (s == "body") || (s == "description") ||
@@ -2125,6 +2126,7 @@ static charp style_rename []= {
   "thenote", "the-note",
   "thewarning", "the-warning",
   "theconvention", "the-convention",
+  "theacknowledgments", "the-acknowledgments",
   "theexercise", "the-exercise",
   "theproblem", "the-problem",
   "thefigure", "the-figure",
@@ -2144,6 +2146,7 @@ static charp style_rename []= {
   "notenr", "note-nr",
   "warningnr", "warning-nr",
   "conventionnr", "convention-nr",
+  "acknowledgmentsnr", "acknowledgments-nr",
   "exercisenr", "exercise-nr",
   "problemnr", "problem-nr",
   "figurenr", "figure-nr",

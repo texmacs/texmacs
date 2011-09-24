@@ -32,9 +32,10 @@
 
 (drd-group tmpre-theorem-env%
   theorem proposition lemma corollary axiom definition notation conjecture
-  remark note example exercise warning convention
+  remark note example exercise warning convention acknowledgments
   theorem* proposition* lemma* corollary* axiom* definition* notation*
-  conjecture* remark* note* example* exercise* warning* convention*)
+  conjecture* remark* note* example* exercise* warning*
+  convention* acknowledgments*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preprocessing

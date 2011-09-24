@@ -82,11 +82,13 @@
       ("Axiom" (make 'axiom))
       ("Definition" (make 'definition))
       ("Notation" (make 'notation))
+      ("Convention" (make 'convention))
       ---
       ("Remark" (make 'remark))
       ("Note" (make 'note))
       ("Example" (make 'example))
       ("Warning" (make 'warning))
+      ("Acknowledgments" (make 'acknowledgments*))
       ---)
   ("Exercise" (make 'exercise))
   ("Problem" (make 'problem))

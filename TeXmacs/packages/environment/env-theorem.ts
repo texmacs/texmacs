@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.13>
 
 <style|source>
 
@@ -97,6 +97,8 @@
   <new-remark|warning|Warning>
 
   <new-remark|convention|Convention>
+
+  <new-remark|acknowledgments|Acknowledgments>
 
   \;
 

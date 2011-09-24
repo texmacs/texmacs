@@ -420,6 +420,7 @@
 (latex-texmacs-remark "example" "Example")
 (latex-texmacs-remark "convention" "Convention")
 (latex-texmacs-remark "warning" "Warning")
+(latex-texmacs-remark "acknowledgments" "Acknowledgments")
 (latex-texmacs-exercise "exercise" "Exercise")
 (latex-texmacs-exercise "problem" "Problem")
 
@@ -455,6 +456,7 @@
 (ams-texmacs-remark "note" "Note")
 (ams-texmacs-remark "example" "Example")
 (ams-texmacs-remark "convention" "Convention")
+(ams-texmacs-remark "acknowledgments" "Acknowledgments")
 (ams-texmacs-remark "warning" "Warning")
 (ams-texmacs-remark "exercise" "Exercise")
 (ams-texmacs-remark "problem" "Problem")

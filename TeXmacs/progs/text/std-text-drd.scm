@@ -97,7 +97,7 @@
   definition axiom notation)
 
 (define-group remark-tag
-  remark note example convention warning)
+  remark note example convention warning acknowledgments)
 
 (define-group exercise-tag
   exercise problem question)
