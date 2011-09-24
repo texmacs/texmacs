@@ -100,8 +100,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	   (i+4>n || s(i,i+4) != "\\end")))) {
     switch (s[i]) {
     case '~':
-      if (command_type ["!mode"] == "math") t << tuple ("\\sim");
-      else t << tuple ("\\nbsp");
+      t << tuple ("\\nbsp");
       i++;
       break;
     case ' ':
