@@ -1689,6 +1689,11 @@ finalize_misc (tree t) {
     return compound ("right-aligned", finalize_misc (t[0]));
   else if (is_compound (t, "acknowledgments", 1))
     return compound ("acknowledgments*", finalize_misc (t[0]));
+  else if (is_compound (t, "text", 1) &&
+           is_func (t[0], WITH, 3) &&
+           t[0][0] == "font-family" &&
+           t[0][1] == "rm")
+    return compound ("math-up", finalize_misc (t[0][2]));
   else {
     int i, n= N(t);
     tree r (t, n);
