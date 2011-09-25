@@ -248,7 +248,7 @@ qt_input_widget_rep::perform_dialog() {
     // before calling the dialog
     QMessageBox * msgBox=new QMessageBox(mainwindow);
     //sets parent widget, so that appears at proper location	
-    msgBox->setText(to_qstring(fields[0]->prompt));
+    msgBox->setText(to_qstring (qt_translate (fields[0]->prompt)));
     msgBox->setStandardButtons(QMessageBox::Cancel);
     int choices = N(fields[0]->proposals);
     QVector<QPushButton*> buttonlist (choices);
@@ -256,10 +256,10 @@ qt_input_widget_rep::perform_dialog() {
     for(int i=0; i<choices; i++) {
       string blabel= "&" * (fields[0]->proposals[i]);
       //capitalize the first character?
-      buttonlist[i] = msgBox->addButton (to_qstring(blabel), QMessageBox::ActionRole);
+      buttonlist[i] = msgBox->addButton (to_qstring (qt_translate (blabel)), QMessageBox::ActionRole);
     }
     msgBox->setDefaultButton (buttonlist[0]); //default is first choice
-    msgBox->setWindowTitle (to_qstring("Question"));
+    msgBox->setWindowTitle (to_qstring (qt_translate ("Question")));
     msgBox->setIcon (QMessageBox::Question);
 
     msgBox->exec();
