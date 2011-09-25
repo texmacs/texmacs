@@ -1384,41 +1384,41 @@ upgrade_project (tree t) {
 ******************************************************************************/
 
 static tree
-upgrade_title (tree t, tree& params) {
+upgrade_title (tree t, tree& tit, tree& auth, tree& meta) {
   if (is_atomic (t)) return t;
   else if (is_func (t, APPLY, 2) ||
            is_func (t, EXPAND, 2)) {
-    if (t[0] == "title") { params[0]= t[1]; return ""; }
-    if (t[0] == "author") { params[1]= t[1]; return ""; }
-    if (t[0] == "address") { params[2]= t[1]; return ""; }
-    if (t[0] == "urladdr") { params[3]= t[1]; return ""; }
-    if (t[0] == "title-email") { params[4]= t[1]; return ""; }
-    if (t[0] == "title-thanks") { params[5]= t[1]; return ""; }
-    if (t[0] == "keywords") { params[6]= t[1]; return ""; }
-    if (t[0] == "subjclass") { params[7]= t[1]; return ""; }
-    if (t[0] == "classification") { params[8]= t[1]; return ""; }
+    if (t[0] == "title") {
+      tit << tree (EXPAND, "title", t[1]); return ""; }
+    if (t[0] == "author") {
+      auth << tree (EXPAND, "author", t[1]); return ""; }
+    if (t[0] == "address") {
+      auth << tree (EXPAND, "address", t[1]); return ""; }
+    if (t[0] == "urladdr") {
+      auth << tree (EXPAND, "title-web", t[1]); return ""; }
+    if (t[0] == "title-email") {
+      auth << tree (EXPAND, "title-email", t[1]); return ""; }
+    if (t[0] == "title-thanks") {
+      meta << tree (EXPAND, "title-thanks", t[1]); return ""; }
+    if (t[0] == "keywords") {
+      meta << tree (EXPAND, "title-keywords", t[1]); return ""; }
+    if (t[0] == "subjclass") {
+      meta << tree (EXPAND, "title-ams-class", t[1]); return ""; }
+    if (t[0] == "classification") {
+      meta << tree (EXPAND, "title-ams-class", t[1]); return ""; }
   }
   else if (is_func (t, APPLY, 3) ||
            is_func (t, EXPAND, 3)) {
-    if (t[0] == "subjclass*") { params[7]= t[2]; return ""; }
+    if (t[0] == "subjclass*") {
+      meta << tree (EXPAND, "title-ams-class", t[2]); return ""; }
   }
   else if ((t == tree (APPLY, "maketitle")) ||
 	   (t == tree (EXPAND, "maketitle")))
     {
       tree doc (DOCUMENT);
-      doc << tree (EXPAND, "title", copy (params[0]));
-      doc << tree (EXPAND, "author", copy (params[1]));
-      doc << tree (EXPAND, "address", copy (params[2]));
-      if (params[3] != "")
-	doc << tree (EXPAND, "title-web", copy (params[3]));
-      if (params[4] != "")
-	doc << tree (EXPAND, "title-email", copy (params[4]));
-      if (params[5] != "")
-	doc << tree (EXPAND, "title-thanks", copy (params[5]));
-      if (params[6] != "")
-	doc << tree (EXPAND, "title-keywords", copy (params[6]));
-      if (params[7] != "")
-	doc << tree (EXPAND, "title-ams-class", copy (params[7]));
+      doc << A (tit);
+      doc << A (auth);
+      doc << A (meta);
       doc << tree (EXPAND, "title-date", tree (_DATE, ""));
       return tree (EXPAND, "make-title", doc);
     }
@@ -1426,16 +1426,14 @@ upgrade_title (tree t, tree& params) {
   int i, n= N(t);
   tree r (t, n);
   for (i=0; i<n; i++)
-    r[i]= upgrade_title (t[i], params);
+    r[i]= upgrade_title (t[i], tit, auth, meta);
   return r;
 }
 
 static tree
 upgrade_title (tree t) {
-  tree params (TUPLE);
-  params << tree ("") << tree ("") << tree ("") << tree ("")
-         << tree ("") << tree ("") << tree ("") << tree ("");
-  return simplify_correct (upgrade_title (t, params));
+  tree tit (DOCUMENT), auth (DOCUMENT), meta (DOCUMENT);
+  return simplify_correct (upgrade_title (t, tit, auth, meta));
 }
 
 /******************************************************************************
@@ -2396,41 +2394,54 @@ title_add (tree& data, string tag, tree args, bool flag= false) {
   }
 }
 
+static void
+add_info (tree& data, tree t, string ntag, string otag,
+          bool flag1= false, bool flag2= false) {
+  tree u= search_title_tag (t, otag, flag1);
+  if (N(t) != 0) title_add (data, ntag, u, flag2);
+}
+
 static tree
 upgrade_title2 (tree t) {
   if (is_atomic (t)) return t;
   else if (is_compound (t, "make-title", 1)) {
-    tree data       = compound ("doc-data");
+    //cout << "t= " << t << "\n";
+    tree u= t[0];
+    if (!is_document (u) && !is_concat (u)) u= tree (DOCUMENT, u);
+    tree title_data = compound ("doc-data");
     tree author_data= compound ("doc-author-data");
+    tree meta_data  = compound ("doc-data");
 
-    tree title   = search_title_tag (t, "title");
-    tree author  = search_title_tag (t, "author");
-    tree address = search_title_tag (t, "address");
-    tree web     = search_title_tag (t, "title-web");
-    tree email   = search_title_tag (t, "title-email");
-    tree date    = search_title_tag (t, "title-date");
-    tree thanks  = search_title_tag (t, "title-thanks", true);
-    tree rtitle  = search_title_tag (t, "header-title");
-    tree rauthor = search_title_tag (t, "header-author");
-    tree notice  = search_title_tag (t, "made-by-TeXmacs", true);
+    for (int i=0; i<N(u); i++) {
+      tree v= u[i];
+      add_info (title_data, v, "doc-title", "title");
+      add_info (meta_data, v, "doc-date", "title-date");
+      add_info (meta_data, v, "doc-running-title", "header-title");
+      add_info (meta_data, v, "doc-running-author", "header-author");
+      add_info (meta_data, v, "doc-note", "title-thanks", true, true);
+      if (N (search_title_tag (v, "author")) != 0) {
+        if (N (author_data) != 0 &&
+            is_compound (author_data[0], "author-name"))
+          title_data << author_data;
+        author_data= compound ("doc-author-data");
+      }
+      add_info (author_data, v, "author-name", "author");
+      add_info (author_data, v, "author-address", "address", false, true);
+      add_info (author_data, v, "author-email", "title-email");
+      add_info (author_data, v, "author-homepage", "title-web");
+    }
+    if (N (author_data) != 0) title_data << author_data;
+    if (N (meta_data) != 0) title_data << A (meta_data);
+
+    tree notice= search_title_tag (t, "made-by-TeXmacs", true);
+    if (N (notice) != 0)
+      title_data << compound ("doc-note", compound ("with-TeXmacs-text"));    
     search_abstract_tag (t[0], doc_keywords, "title-keywords");
     search_abstract_tag (t[0], doc_ams_class, "title-ams-class");
-
-    title_add (data, "doc-title", title);
-    title_add (author_data, "author-name", author);
-    title_add (author_data, "author-address", address, true);
-    title_add (author_data, "author-email", email);
-    title_add (author_data, "author-homepage", web);
-    if (N (author_data) != 0) data << author_data;
-    title_add (data, "doc-date", date);
-    title_add (data, "doc-running-title", rtitle);
-    title_add (data, "doc-running-author", rauthor);
-    title_add (data, "doc-note", thanks, true);
-    if (N (notice) != 0)
-      data << compound ("doc-note", compound ("with-TeXmacs-text"));
-    if (N (doc_keywords) != 0) data << doc_keywords;
-    if (N (doc_ams_class) != 0) data << doc_ams_class;
-    return data;
+    if (N (doc_keywords) != 0) title_data << doc_keywords;
+    if (N (doc_ams_class) != 0) title_data << doc_ams_class;
+    //cout << "r= " << title_data << "\n";
+    return title_data;
   }
   else {
     int i, n= N(t);

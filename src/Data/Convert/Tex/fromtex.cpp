@@ -65,9 +65,14 @@ filter_preamble (tree t) {
   for (i=0; i<n; i++) {
     tree u= t[i];
     if (is_tuple (u, "\\title") ||
-	     is_tuple (u, "\\author") ||
-	     is_tuple (u, "\\address"))
+        is_tuple (u, "\\author") ||
+        is_tuple (u, "\\address"))
       title_info << u;
+    else if (is_tuple (u, "\\affiliation")) {
+      tree v= copy (u);
+      v[0]= "\\address";
+      title_info << v;
+    }
     else if (is_tuple (u, "\\thanks")) {
       tree v= copy (u);
       v[0]= "\\title-thanks";
