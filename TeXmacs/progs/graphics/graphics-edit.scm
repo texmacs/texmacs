@@ -235,7 +235,6 @@
   (graphics-group-start)
   (set! current-edge-sel? #t)
   (set! leftclick-waiting #f)
-  (set! previous-leftclick `(point ,current-x ,current-y))
   (if (and edge
 	   (not (and (in? (car current-obj) '(arc carc))
 			  (> (length current-obj) 3))))
@@ -276,11 +275,11 @@
 	    `(point ,current-x ,current-y)
 	     moveclick-tolerance))
       (begin
-         (object_set-point
-	    current-point-no
-	    (cadr previous-leftclick)
-	    (caddr previous-leftclick))
-         (object_commit))
+        (object_set-point
+         current-point-no
+         (cadr previous-leftclick)
+         (caddr previous-leftclick))
+        (object_commit))
       (begin
         (if (and (not leftclick-waiting)
                  previous-leftclick
@@ -289,17 +288,17 @@
                  `(point ,current-x ,current-y)
 		  moveclick-tolerance))
 	    (begin
-	       (undo 0)
-	       (set! choosing #f)
-	       (set! leftclick-waiting #f)
-	       (set! just-started-dragging #f))
+              (undo 0)
+              (set! choosing #f)
+              (set! leftclick-waiting #f)
+              (set! just-started-dragging #f))
 	    (begin
 	      (set-message "Left click: finish" "")
 	      (set! leftclick-waiting #t)))))
  ;(display* "prev-leftc=" previous-leftclick "\n")
  ;(display* "x=" current-x "\n")
  ;(display* "y=" current-y "\n\n")
-  (set! previous-leftclick `(point ,current-x ,current-y)))
+  )
 
 (define (back)
  ;(display* "obj[" p "]=" obj "\n")
@@ -410,7 +409,8 @@
                       (graphics-pop-state))
                   (graphics-store-state #f)))
 	    (set! choosing #t))
-	  (edit-insert x y))))
+	  (edit-insert x y)))
+  (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'edit))
