@@ -189,6 +189,12 @@
   (declare-visited declare_visited (void string))
   (has-been-visited? has_been_visited (bool string))
 
+  (graphics-set set_graphical_value (void content content))
+  (graphics-has? has_graphical_value (bool content))
+  (graphics-ref get_graphical_value (tree content))
+  (graphics-needs-update? graphics_needs_update (bool))
+  (graphics-notify-update graphics_notify_update (void content))
+
   ;; routines for strings
   (string-number? is_double (bool string))
   (string-search-forwards search_forwards (int string int string))

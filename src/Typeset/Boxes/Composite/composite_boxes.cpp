@@ -343,7 +343,7 @@ composite_box_rep::graphical_select (SI x, SI y, SI dist) {
   gr_selections res;
   if (graphical_distance (x, y) <= dist) {
     int i, n= subnr();
-    for (i=0; i<n; i++)
+    for (i=n-1; i>=0; i--)
       res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
   }
   return res;
@@ -354,7 +354,7 @@ composite_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   if (contains_rectangle (x1, y1, x2, y2)) {
     int i, n= subnr();
-    for (i=0; i<n; i++)
+    for (i=n-1; i>=0; i--)
       res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
 				      x2- sx(i), y2- sy(i));
   }

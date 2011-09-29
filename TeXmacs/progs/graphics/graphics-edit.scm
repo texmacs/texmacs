@@ -175,29 +175,31 @@
 (define (object_commit)
   (define obj (stree-radical (car (sketch-get1))))
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
-  (begin
-     (graphical-fetch-props (car (sketch-get)))
-     (set! obj (graphics-enrich-bis
-      obj
-      graphical-id
-      graphical-opacity
-      graphical-color
-      graphical-pstyle
-      graphical-lwidth
-      (local-magnification graphical-magnification)
-      graphical-lstyle
-      graphical-lstyle-unit
-      graphical-larrows
-      graphical-fcolor
-      graphical-textat-halign
-      graphical-textat-valign))
-     (set! current-edge-sel? #f)
-     (sketch-set! `(,obj))
-     (sketch-commit)
-     (set! leftclick-waiting #f)
-     (set! current-obj (stree-radical obj))
-     (set! current-point-no #f)
-     (graphics-forget-states))))
+      (begin
+        (graphical-fetch-props (car (sketch-get)))
+        (set! obj (graphics-enrich-bis
+                   obj
+                   graphical-id
+                   graphical-opacity
+                   graphical-color
+                   graphical-pstyle
+                   graphical-lwidth
+                   (local-magnification graphical-magnification)
+                   graphical-lstyle
+                   graphical-lstyle-unit
+                   graphical-larrows
+                   graphical-fcolor
+                   graphical-textat-halign
+                   graphical-textat-valign))
+        (set! current-edge-sel? #f)
+        (sketch-set! `(,obj))
+        (sketch-commit)
+        (set! leftclick-waiting #f)
+        (set! current-obj (stree-radical obj))
+        (set! current-point-no #f)
+        (graphics-forget-states)))
+  (delayed
+    (graphics-update-constraints)))
 
 ;; Edition operations
 ;;
@@ -800,6 +802,26 @@
      )
      (sketch-reset)
      (graphics-group-start))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Updating the constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tree-update-constraints t)
+  (cond ((not (tree? t)) (noop))
+        ((tree-atomic? t) (noop))
+        ((and (match? t '(with "gid" :%1 (point :%2)))
+              (graphics-has? (tree-ref t 1)))
+         (let* ((old (tree-ref t :last))
+                (new (graphics-ref (tree-ref t 1))))
+           (when (!= new old)
+             (tree-set t :last new))))
+        (else (for-each tree-update-constraints (tree-children t)))))
+
+(tm-define (graphics-update-constraints)
+  (when (graphics-needs-update?)
+    (with-innermost t 'graphics
+      (tree-update-constraints t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks

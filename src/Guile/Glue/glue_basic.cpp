@@ -2073,6 +2073,69 @@ tmg_has_been_visitedP (SCM arg1) {
 }
 
 SCM
+tmg_graphics_set (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "graphics-set");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "graphics-set");
+
+  content in1= scm_to_content (arg1);
+  content in2= scm_to_content (arg2);
+
+  // SCM_DEFER_INTS;
+  set_graphical_value (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_graphics_hasP (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "graphics-has?");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= has_graphical_value (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_graphics_ref (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "graphics-ref");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_graphical_value (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_graphics_needs_updateP () {
+  // SCM_DEFER_INTS;
+  bool out= graphics_needs_update ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_graphics_notify_update (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "graphics-notify-update");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  graphics_notify_update (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_string_numberP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
 
@@ -5126,6 +5189,11 @@ initialize_glue_basic () {
   scm_new_procedure ("set-locus-rendering", (FN) tmg_set_locus_rendering, 2, 0, 0);
   scm_new_procedure ("declare-visited", (FN) tmg_declare_visited, 1, 0, 0);
   scm_new_procedure ("has-been-visited?", (FN) tmg_has_been_visitedP, 1, 0, 0);
+  scm_new_procedure ("graphics-set", (FN) tmg_graphics_set, 2, 0, 0);
+  scm_new_procedure ("graphics-has?", (FN) tmg_graphics_hasP, 1, 0, 0);
+  scm_new_procedure ("graphics-ref", (FN) tmg_graphics_ref, 1, 0, 0);
+  scm_new_procedure ("graphics-needs-update?", (FN) tmg_graphics_needs_updateP, 0, 0, 0);
+  scm_new_procedure ("graphics-notify-update", (FN) tmg_graphics_notify_update, 1, 0, 0);
   scm_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   scm_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   scm_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

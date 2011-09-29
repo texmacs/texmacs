@@ -501,7 +501,7 @@ gr_selections
 concat_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   int i, n= subnr();
-  for (i=0; i<n; i++)
+  for (i=n-1; i>=0; i--)
     res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
                                     x2- sx(i), y2- sy(i));
   return res;

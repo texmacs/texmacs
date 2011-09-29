@@ -12,6 +12,7 @@
 #include "concater.hpp"
 #include "Boxes/graphics.hpp"
 #include "drd_std.hpp"
+#include "hashset.hpp"
 
 /******************************************************************************
 * Typesetting graphics
@@ -197,6 +198,7 @@ concater_rep::typeset_fill (tree t, path ip) {
 ******************************************************************************/
 
 hashmap<string,tree> graphical_values (UNINIT);
+hashset<string> graphical_modified;
 
 void
 set_graphical_value (tree var, tree val) {
@@ -208,16 +210,33 @@ set_graphical_value (tree var, tree val) {
 bool
 has_graphical_value (tree var) {
   //cout << "Has " << var << "?\n";
-  if (is_func (var, QUOTE, 1)) return has_graphical_value (var[0]);
   return is_atomic (var) && graphical_values->contains (var->label);
 }
 
 tree
 get_graphical_value (tree var) {
-  if (is_func (var, QUOTE, 1)) return get_graphical_value (var[0]);
   ASSERT (has_graphical_value (var), "invalid graphical id");
   //cout << "Get " << var << " = " << graphical_values [var->label] << "\n";
   return graphical_values [var->label];
+}
+
+bool
+graphics_needs_update () {
+  return N(graphical_modified) > 0;
+}
+
+void
+graphics_require_update (tree var) {
+  if (is_atomic (var))
+    graphical_modified->insert (var->label);
+  //cout << "Set " << var << ", " << N(graphical_modified) << "\n";
+}
+
+void
+graphics_notify_update (tree var) {
+  if (is_atomic (var))
+    graphical_modified->remove (var->label);
+  //cout << "Reset " << var << ", " << N(graphical_modified) << "\n";
 }
 
 static void

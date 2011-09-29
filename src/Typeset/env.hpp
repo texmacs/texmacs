@@ -480,5 +480,8 @@ int decode_alpha (string s);
 void set_graphical_value (tree var, tree val);
 bool has_graphical_value (tree var);
 tree get_graphical_value (tree var);
+bool graphics_needs_update ();
+void graphics_require_update (tree var);
+void graphics_notify_update (tree var);
 
 #endif // defined ENV_H

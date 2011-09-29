@@ -244,8 +244,22 @@ edit_env_rep::as_point (tree t) {
     return fr[p];
   }
   if (is_func (t, WITH)) {
-    if (N(t) == 3 && t[0] == GID && has_graphical_value (t[1]))
-      return as_point (get_graphical_value (t[1]));
+    for (int i=0; i<N(t)-1; i+=2) {
+      tree var= t[i+1];
+      if (is_func (var, QUOTE, 1)) var= var[0];
+      if (t[i] == GID && has_graphical_value (var)) {
+        tree old_t= t[N(t)-1];
+        tree new_t= get_graphical_value (var);
+        if (new_t != old_t) {
+          point old_p= as_point (old_t);
+          point new_p= as_point (new_t);
+          if (new_p != old_p) {
+            graphics_require_update (var);
+            return new_p;
+          }
+        }
+      }
+    }
     return as_point (t[N(t)-1]);
   }
   return point ();
