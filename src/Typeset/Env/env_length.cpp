@@ -243,6 +243,8 @@ edit_env_rep::as_point (tree t) {
       p[i]= as_length (t[i]);
     return fr[p];
   }
+  if (is_func (t, WITH))
+    return as_point (t[N(t)-1]);
   return point ();
 }
 

@@ -112,16 +112,22 @@
   (:require (eq? tag 'text-at))
   (object-set! `(text-at "" (point ,x ,y)) 'new))
 
+(define (set-point-sub obj no x y)
+  ;;(display* "set-point-sub " obj ", " no ", " x ", " y "\n")
+  (cond ((== (car obj) 'with)
+         (set-point-sub (cAr obj) no x y))
+        ((== (car obj) 'point)
+	 (set-car! (cdr obj) x)
+	 (set-car! (cddr obj) y))
+        ((and (not (not no)) (list? obj) (> (length obj) (+ no 1)))
+         (set-point-sub (list-ref obj (+ no 1)) #f x y))
+        (else #f)))
+
 ;; Basic operations (set & add point)
 (define (object_set-point no xcur ycur)
   (define obj (stree-radical (car (sketch-get1))))
- ;(display* "obj[" no ";" xcur "," ycur "]=" obj "\n")
-  (if (== (car obj) 'point)
-      (begin
-	 (set-car! (cdr obj) xcur)
-	 (set-car! (cddr obj) ycur))
-      (with l (list-tail (cdr obj) no)
-	 (set-car! l `(point ,xcur ,ycur))))
+  ;;(display* "obj[" no ";" xcur "," ycur "]=" obj "\n")
+  (set-point-sub obj no xcur ycur)
   (object-set! (car (sketch-get))))
 
 (define (object_add-point no xcur ycur x y dirn)
@@ -173,6 +179,7 @@
      (graphical-fetch-props (car (sketch-get)))
      (set! obj (graphics-enrich-bis
       obj
+      graphical-id
       graphical-opacity
       graphical-color
       graphical-pstyle

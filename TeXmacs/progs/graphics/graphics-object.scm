@@ -73,6 +73,7 @@
 ;; Graphical object
 (tm-define default-color-go-points "#4040ff")
 (tm-define default-color-selected-points "#ff6060")
+(tm-define graphical-id "default")
 (tm-define graphical-opacity "default")
 (tm-define graphical-color "default")
 (tm-define graphical-pstyle "default")
@@ -86,6 +87,7 @@
 (tm-define graphical-textat-valign "default")
 
 (tm-define (graphical-fetch-props o)
+  (set! graphical-id (find-prop o "gid" "default"))
   (set! graphical-opacity (find-prop o "opacity" "default"))
   (set! graphical-color (find-prop o "color" "default"))
   (set! graphical-pstyle (find-prop o "point-style" "default"))

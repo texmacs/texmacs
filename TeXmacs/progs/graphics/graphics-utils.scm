@@ -442,17 +442,18 @@
 
 ;;NOTE: This section is OK.
 (tm-define (graphics-valid-attribute? attr tag)
-  (cond ((== tag 'point)
-	 (in? attr '("opacity" "color" "fill-color" "point-style")))
+  (cond ((in? attr '("gid" "opacity" "color"))
+         #t)
+        ((== tag 'point)
+	 (in? attr '("fill-color" "point-style")))
 	((not (in? tag gr-tags-noncurves))
-	 (in? attr '("opacity" "color" "fill-color" "line-width"
+	 (in? attr '("fill-color" "line-width"
 		     "magnification" "dash-style" "dash-style-unit"
 		     "line-arrows")))
 	((== tag 'text-at)
-	 (in? attr '("opacity" "color"
-                     "text-at-halign" "text-at-valign" "magnification")))
+	 (in? attr '("text-at-halign" "text-at-valign" "magnification")))
 	((== tag 'gr-group)
-	 (in? attr '("opacity" "color" "fill-color"
+	 (in? attr '("fill-color"
 		     "point-style" "line-width"
 		     "magnification" "dash-style" "dash-style-unit"
 		     "line-arrows"
@@ -478,17 +479,19 @@
 	t
 	`(with ,@f ,t))))
 
-(tm-define (graphics-enrich-bis t op color ps lw mag st stu lp fc ha va)
+(tm-define (graphics-enrich-bis t id op color ps lw mag st stu lp fc ha va)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t
-	    `(("opacity" ,op)
+	    `(("gid" ,id)
+	      ("opacity" ,op)
 	      ("color" ,color)
 	      ("fill-color" ,fc)
 	      ("point-style" ,ps))))
 	  ((not (in? mode gr-tags-noncurves))
 	   (graphics-enrich-sub t
-	    `(("opacity" ,op)
+	    `(("gid" ,id)
+	      ("opacity" ,op)
 	      ("color" ,color)
 	      ("line-width" ,lw)
 	      ;;("magnification" ,mag)
@@ -498,13 +501,15 @@
 	  ((== mode 'text-at)
 	   (graphics-enrich-sub t
 	    `(;;("magnification" ,mag)
+	      ("gid" ,id)
 	      ("opacity" ,op)
 	      ("color" ,color)
 	      ("text-at-halign" ,ha)
 	      ("text-at-valign" ,va))))
 	  ((== mode 'gr-group)
 	   (graphics-enrich-sub t
-	    `(("opacity" ,op)
+	    `(("gid" ,id)
+	      ("opacity" ,op)
 	      ("color" ,color)
 	      ("point-style" ,ps)
 	      ("line-width" ,lw)
@@ -529,7 +534,7 @@
 	 (fc (graphics-get-property "gr-fill-color"))
 	 (ha (graphics-get-property "gr-text-at-halign"))
 	 (va (graphics-get-property "gr-text-at-valign")))
-    (graphics-enrich-bis t op color ps lw mag st stu lp fc ha va)))
+    (graphics-enrich-bis t "default" op color ps lw mag st stu lp fc ha va)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -573,7 +578,8 @@
 (tm-define (graphics-group-enrich-insert-bis
 	    t op color ps lw mag st stu lp fc ha va go-into)
   (graphics-group-insert-bis
-    (graphics-enrich-bis t op color ps lw mag st stu lp fc ha va) go-into))
+   (graphics-enrich-bis t "default" op color ps lw mag st stu lp fc ha va)
+   go-into))
 
 (tm-define (graphics-group-start)
   (graphics-finish)
