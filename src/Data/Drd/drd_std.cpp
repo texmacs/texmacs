@@ -33,6 +33,8 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define url_type(i) type (i, TYPE_URL)
 #define identifier(i) type (i, TYPE_IDENTIFIER)
 #define graphical(i) type (i, TYPE_GRAPHICAL)
+#define constraint(i) type (i, TYPE_CONSTRAINT)
+#define graphical_id(i) type (i, TYPE_GRAPHICAL_ID)
 #define point_type(i) type (i, TYPE_POINT)
 #define animation(i) type (i, TYPE_ANIMATION)
 #define duration(i) type (i, TYPE_DURATION)
@@ -47,6 +49,7 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define returns_identifier() type (TYPE_IDENTIFIER)
 #define returns_animation() type (TYPE_ANIMATION)
 #define returns_graphical() type (TYPE_GRAPHICAL)
+#define returns_constraint() type (TYPE_CONSTRAINT)
 
 static tag_info
 fixed (int arity, int extra=0, int child_mode= CHILD_UNIFORM) {
@@ -581,6 +584,18 @@ init_std_drd () {
 	fixed (1) -> point_type (0));
   init (FRAME_INVERSE, "frame-inverse",
 	fixed (1) -> point_type (0));
+
+  init (IS_EQUAL, "is-equal",
+        fixed (2) -> returns_constraint () -> graphical_id (0));
+  init (IS_INTERSECTION, "is-intersection",
+        fixed (3) -> returns_constraint () -> graphical_id (0));
+  init (ON_CURVE, "on-curve",
+        options (2, 1, BIFORM) -> returns_constraint () ->
+        graphical_id (0) -> numeric (1));
+  init (ON_TEXT_BORDER, "on-text-border",
+        fixed (2) -> returns_constraint () -> graphical_id (0));
+  init (ON_GRID, "on-grid",
+        fixed (2) -> returns_constraint () -> graphical_id (0));
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
   init (ORNAMENT, "ornament", fixed (1) -> accessible (0));

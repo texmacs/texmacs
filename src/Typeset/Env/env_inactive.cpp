@@ -146,6 +146,10 @@ highlight (tree t, tree orig, int kind) {
     return compound ("src-regular", t);
   case TYPE_POINT:
     return compound ("src-regular", t);
+  case TYPE_CONSTRAINT:
+    return compound ("src-regular", t);
+  case TYPE_GRAPHICAL_ID:
+    return compound ("src-var", t);
   case TYPE_ANIMATION:
     return compound ("src-regular", t);
   case TYPE_DURATION:

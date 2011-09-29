@@ -30,11 +30,13 @@
 #define TYPE_URL             13
 #define TYPE_GRAPHICAL       14
 #define TYPE_POINT           15
-#define TYPE_ANIMATION       16
-#define TYPE_DURATION        17
-#define TYPE_OBSOLETE        18
-#define TYPE_UNKNOWN         19
-#define TYPE_ERROR           20
+#define TYPE_CONSTRAINT      16
+#define TYPE_GRAPHICAL_ID    17
+#define TYPE_ANIMATION       18
+#define TYPE_DURATION        19
+#define TYPE_OBSOLETE        20
+#define TYPE_UNKNOWN         21
+#define TYPE_ERROR           22
 
 int    drd_encode (tree t);
 tree   drd_decode (int i);
