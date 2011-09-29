@@ -244,7 +244,7 @@ edit_env_rep::as_point (tree t) {
     return fr[p];
   }
   if (is_func (t, WITH)) {
-    if (N(t) == 3 && t[0] == "gid" && has_graphical_value (t[1]))
+    if (N(t) == 3 && t[0] == GID && has_graphical_value (t[1]))
       return as_point (get_graphical_value (t[1]));
     return as_point (t[N(t)-1]);
   }

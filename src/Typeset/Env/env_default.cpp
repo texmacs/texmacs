@@ -194,8 +194,8 @@ initialize_default_env () {
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
+  env (GID)              = "default";   // graphical identifier
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
-
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (DASH_STYLE)       = "none";      // dash style
   env (DASH_STYLE_UNIT)  = "5ln";       // dash style unit

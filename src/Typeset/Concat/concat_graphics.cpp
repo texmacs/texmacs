@@ -225,7 +225,7 @@ set_graphical_values (tree t) {
   if (is_atomic (t));
   else if (is_func (t, WITH)) {
     for (int i=0; i<N(t)-1; i+=2)
-      if (t[i] == "gid" && is_atomic (t[i+1]))
+      if (t[i] == GID && is_atomic (t[i+1]))
         set_graphical_value (t[i+1]->label, t[N(t)-1]);
     set_graphical_values (t[N(t)-1]);
   }

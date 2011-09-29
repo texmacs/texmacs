@@ -181,6 +181,7 @@ extern string CELL_BLOCK;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
+extern string GID;
 extern string POINT_STYLE;
 extern string LINE_WIDTH;
 extern string DASH_STYLE;

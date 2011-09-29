@@ -203,8 +203,8 @@ string CELL_COL_NR ("cell-col-nr");
 * Environment variables for graphics
 ******************************************************************************/
 
+string GID ("gid");
 string POINT_STYLE ("point-style");
-
 string LINE_WIDTH ("line-width");
 string DASH_STYLE ("dash-style");
 string DASH_STYLE_UNIT ("dash-style-unit");
