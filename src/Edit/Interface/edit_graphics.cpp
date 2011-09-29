@@ -15,6 +15,7 @@
 #include "Graphics/curve.hpp"
 #include "Boxes/graphics.hpp"
 #include "Bridge/impl_typesetter.hpp"
+#include "drd_std.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -35,8 +36,20 @@ path
 edit_graphics_rep::graphics_path () {
   // FIXME: why is this hack necessary?
   path p= tp;
-  while (is_func (subtree (et, path_up (p)), WITH))
-    p= path_up (p) * path (N (subtree (et, path_up (p))) - 1, 0);
+  while (true) {
+    path pp= path_up (p);
+    path ppp= path_up (pp);
+    tree st= subtree (et, pp);
+    if (is_func (st, WITH))
+      p= pp * path (N (st) - 1, 0);
+    else if (the_drd->get_type (st) != TYPE_GRAPHICAL &&
+             last_item (pp) + 1 < N (subtree (et, ppp)))
+      p= ppp * path (last_item (pp) + 1, 0);
+    else break;
+  }
+  //if (p != tp)
+  //  cout << "Old: " << subtree (et, path_up (tp)) << "\n"
+  //       << "New: " << subtree (et, path_up (p)) << "\n";
   return p;
 }
 
