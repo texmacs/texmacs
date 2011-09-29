@@ -31,6 +31,15 @@ edit_graphics_rep::~edit_graphics_rep () {}
 * Main edit_graphics routines
 ******************************************************************************/
 
+path
+edit_graphics_rep::graphics_path () {
+  // FIXME: why is this hack necessary?
+  path p= tp;
+  while (is_func (subtree (et, path_up (p)), WITH))
+    p= path_up (p) * path (N (subtree (et, path_up (p))) - 1, 0);
+  return p;
+}
+
 bool
 edit_graphics_rep::inside_graphics (bool b) {
   path p   = path_up (tp);
@@ -92,25 +101,28 @@ edit_graphics_rep::get_y () {
 
 frame
 edit_graphics_rep::find_frame (bool last) {
+  path gp= graphics_path ();
   bool bp_found;
-  path bp= eb->find_box_path (tp, bp_found);
+  path bp= eb->find_box_path (gp, bp_found);
   if (bp_found) return eb->find_frame (path_up (bp), last);
   else return frame ();
 }
 
 grid
 edit_graphics_rep::find_grid () {
+  path gp= graphics_path ();
   bool bp_found;
-  path bp= eb->find_box_path (tp, bp_found);
+  path bp= eb->find_box_path (gp, bp_found);
   if (bp_found) return eb->find_grid (path_up (bp));
   else return grid ();
 }
 
 void
 edit_graphics_rep::find_limits (point& lim1, point& lim2) {
+  path gp= graphics_path ();
   lim1= point (); lim2= point ();
   bool bp_found;
-  path bp= eb->find_box_path (tp, bp_found);
+  path bp= eb->find_box_path (gp, bp_found);
   if (bp_found) eb->find_limits (path_up (bp), lim1, lim2);
 }
 
@@ -333,6 +345,10 @@ edit_graphics_rep::draw_graphical_object (renderer ren) {
 
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
+  //cout << type << ", " << x << ", " << y << ", " << m << ", " << t << "\n";
+  //cout << "et= " << et << "\n";
+  //cout << "tp= " << tp << "\n";
+  //cout << "gp= " << graphics_path () << "\n";
   (void) t;
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
