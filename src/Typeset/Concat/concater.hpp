@@ -132,6 +132,7 @@ class concater_rep {
   void typeset_sound (tree t, path ip);
 
   // graphical markup
+  void typeset_graphical (array<box>& bs, tree t, path ip);
   void typeset_graphics (tree t, path ip);
   void typeset_superpose (tree t, path ip);
   void typeset_gr_group (tree t, path ip);

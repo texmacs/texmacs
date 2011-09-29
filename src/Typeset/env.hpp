@@ -477,4 +477,8 @@ bool is_magnification (string s);
 double get_magnification (string s);
 int decode_alpha (string s);
 
+void set_graphical_value (tree var, tree val);
+bool has_graphical_value (tree var);
+tree get_graphical_value (tree var);
+
 #endif // defined ENV_H

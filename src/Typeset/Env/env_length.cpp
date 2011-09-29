@@ -243,8 +243,11 @@ edit_env_rep::as_point (tree t) {
       p[i]= as_length (t[i]);
     return fr[p];
   }
-  if (is_func (t, WITH))
+  if (is_func (t, WITH)) {
+    if (N(t) == 3 && t[0] == "gid" && has_graphical_value (t[1]))
+      return as_point (get_graphical_value (t[1]));
     return as_point (t[N(t)-1]);
+  }
   return point ();
 }
 

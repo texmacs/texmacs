@@ -11,6 +11,7 @@
 
 #include "concater.hpp"
 #include "Boxes/graphics.hpp"
+#include "drd_std.hpp"
 
 /******************************************************************************
 * Typesetting graphics
@@ -23,21 +24,26 @@
 /* TODO: Check that the active elements (f.e. the <action> markup) also
    adhere to the same convention.
  */
+
 void
 concater_rep::typeset_graphics (tree t, path ip) {
-  int i, n= N(t);
   grid gr= as_grid (env->read (GR_GRID));
-  array<box> bs (n+1);
+  array<box> bs;
   gr->set_aspect (env->read (GR_GRID_ASPECT));
-  bs[0]= grid_box (ip, gr, env->fr, env->as_length ("2ln"),
-		   env->clip_lim1, env->clip_lim2);
-  for (i=0; i<n; i++)
-    bs[i+1]= typeset_as_atomic (env, t[i], descend (ip, i));
-  // if (n == 0) bs << empty_box (decorate_right (ip));
+  bs << grid_box (ip, gr, env->fr, env->as_length ("2ln"),
+                  env->clip_lim1, env->clip_lim2);
+  typeset_graphical (bs, t, ip);
   gr= as_grid (env->read (GR_EDIT_GRID));
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
   box b= graphics_box (ip, bs, env->fr, gr, env->clip_lim1, env->clip_lim2);
   print (b);
+}
+
+void
+concater_rep::typeset_gr_group (tree t, path ip) {
+  array<box> bs;
+  typeset_graphical (bs, t, ip);
+  print (graphics_group_box (ip, bs));
 }
 
 void
@@ -52,16 +58,6 @@ concater_rep::typeset_superpose (tree t, path ip) {
       bs[i]= frozen_box (decorate_middle (descend (ip, i)), bs[i]);
   }
   print (superpose_box (ip, bs));
-}
-
-void
-concater_rep::typeset_gr_group (tree t, path ip) {
-  int i, n= N(t);
-  array<box> bs (n);
-  for (i=0; i<n; i++)
-    bs[i]= typeset_as_atomic (env, t[i], descend (ip, i));
-
-  print (graphics_group_box (ip, bs));
 }
 
 void
@@ -194,4 +190,80 @@ void
 concater_rep::typeset_fill (tree t, path ip) {
   (void) t; (void) ip;
   print (test_box (ip));
+}
+
+/******************************************************************************
+* Constrainted graphics
+******************************************************************************/
+
+hashmap<string,tree> graphical_values (UNINIT);
+
+void
+set_graphical_value (tree var, tree val) {
+  //cout << "Set " << var << " := " << val << "\n";
+  if (is_atomic (var))
+    graphical_values (var->label)= val;
+}
+
+bool
+has_graphical_value (tree var) {
+  //cout << "Has " << var << "?\n";
+  if (is_func (var, QUOTE, 1)) return has_graphical_value (var[0]);
+  return is_atomic (var) && graphical_values->contains (var->label);
+}
+
+tree
+get_graphical_value (tree var) {
+  if (is_func (var, QUOTE, 1)) return get_graphical_value (var[0]);
+  ASSERT (has_graphical_value (var), "invalid graphical id");
+  //cout << "Get " << var << " = " << graphical_values [var->label] << "\n";
+  return graphical_values [var->label];
+}
+
+static void
+set_graphical_values (tree t) {
+  if (is_atomic (t));
+  else if (is_func (t, WITH)) {
+    for (int i=0; i<N(t)-1; i+=2)
+      if (t[i] == "gid" && is_atomic (t[i+1]))
+        set_graphical_value (t[i+1]->label, t[N(t)-1]);
+    set_graphical_values (t[N(t)-1]);
+  }
+  else {
+    for (int i=0; i<N(t); i++)
+      set_graphical_values (t[i]);
+  }
+}
+
+void
+concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
+  int i, n= N(t);
+  set_graphical_values (t);
+
+  for (i=0; i<n; i++)
+    if (the_drd->get_type (t[i]) == TYPE_CONSTRAINT) {
+      tree u= t[i];
+      switch (L(u)) {
+      case IS_EQUAL:
+        if (has_graphical_value (u[1]))
+          set_graphical_value (u[0], get_graphical_value (u[1]));
+        break;
+      case IS_INTERSECTION:
+        break;
+      case ON_CURVE:
+        break;
+      case ON_TEXT_BORDER:
+        break;
+      case ON_GRID:
+        break;
+      default:
+        break;
+      }
+    }
+  
+  for (i=0; i<n; i++)
+    if (the_drd->get_type (t[i]) == TYPE_CONSTRAINT)
+      bs << empty_box (decorate (descend (ip, 1)));
+    else
+      bs << typeset_as_atomic (env, t[i], descend (ip, i));
 }
