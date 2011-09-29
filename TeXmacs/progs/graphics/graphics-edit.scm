@@ -814,12 +814,12 @@
   the-keyboard-modifiers)
 
 (tm-define (graphics-insert-point x y)
-  ;(display* "Graphics] Insert " x ", " y "\n")
+  ;;(display* "Graphics] Insert " x ", " y "\n")
   (if (not (when-inside-text-at 'left-button x y))
       (edit_left-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-move-point x y)
- ;(display* "Graphics] Move " x ", " y "\n")
+  ;;(display* "Graphics] Move " x ", " y "\n")
   (if (not (when-inside-text-at 'move x y))
       (edit_move (car (graphics-mode)) x y)))
 
@@ -838,7 +838,7 @@
 ;; FIXME : put these 2 variables inside the state.
 
 (tm-define (graphics-start-drag x y)
-  ;(display* "Graphics] Start-drag " x ", " y "\n")
+  ;;(display* "Graphics] Start-drag " x ", " y "\n")
   (if (when-inside-text-at 'start-drag x y)
       (set! disable-drag #t)
       (begin
@@ -846,11 +846,11 @@
         (graphics-insert-point x y))))
 
 (tm-define (graphics-dragging x y)
-  ;(display* "Graphics] dragging " x ", " y "\n")
+  ;;(display* "Graphics] dragging " x ", " y "\n")
   (graphics-move-point x y))
 
 (tm-define (graphics-end-drag x y)
-  ;(display* "Graphics] End-drag " x ", " y "\n")
+  ;;(display* "Graphics] End-drag " x ", " y "\n")
   (if (not (when-inside-text-at 'end-drag x y))
   (begin
     (set! just-started-dragging #f)

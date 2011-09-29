@@ -335,13 +335,15 @@
 
 (tm-define (graphics-mode-attribute? mode attr)
   (if (func? mode 'edit 1) (set! mode (cadr mode)))
-  (cond ((in? mode '(point))
-         (in? attr '("opacity" "color" "point-style")))
+  (cond ((in? attr '("gid" "opacity" "color"))
+         #t)
+        ((in? mode '(point))
+         (in? attr '("point-style")))
         ((in? mode gr-tags-curves)
-         (in? attr '("opacity" "color" "line-width" "dash-style"
+         (in? attr '("line-width" "dash-style"
                      "dash-style-unit" "line-arrows" "fill-color")))
         ((in? mode '(text-at))
-         (in? attr '("opacity" "color" "text-at-halign" "text-at-valign")))
+         (in? attr '("text-at-halign" "text-at-valign")))
         (else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
