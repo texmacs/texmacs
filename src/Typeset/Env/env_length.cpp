@@ -255,7 +255,7 @@ edit_env_rep::as_point (tree t) {
           point new_p= as_point (new_t);
           if (new_p != old_p) {
             graphics_require_update (var);
-            return new_p;
+            return old_p;//return new_p;
           }
         }
       }

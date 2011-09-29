@@ -279,10 +279,8 @@ concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
         break;
       }
     }
-  
+
   for (i=0; i<n; i++)
-    if (the_drd->get_type (t[i]) == TYPE_CONSTRAINT)
-      bs << empty_box (decorate (descend (ip, 1)));
-    else
+    if (the_drd->get_type (t[i]) != TYPE_CONSTRAINT)
       bs << typeset_as_atomic (env, t[i], descend (ip, i));
 }

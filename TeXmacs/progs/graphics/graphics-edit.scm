@@ -814,8 +814,8 @@
               (graphics-has? (tree-ref t 1)))
          (let* ((old (tree-ref t :last))
                 (new (graphics-ref (tree-ref t 1))))
-           (when (!= new old)
-             (tree-set t :last new))))
+           (when (!= new old) (tree-set t :last new))
+           (graphics-notify-update (tree-ref t 1))))         
         (else (for-each tree-update-constraints (tree-children t)))))
 
 (tm-define (graphics-update-constraints)
