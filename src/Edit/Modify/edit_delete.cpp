@@ -219,6 +219,9 @@ edit_text_rep::remove_text (bool forward) {
     case BIG_AROUND:
       back_in_around (u, p, forward);
       return;
+    case LONG_ARROW:
+      back_in_long_arrow (u, p, forward);
+      return;
     case WIDE:
     case VAR_WIDE:
       back_in_wide (u, p, forward);

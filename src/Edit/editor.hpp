@@ -96,6 +96,7 @@ protected:
   virtual void back_around (tree t, path p, bool forward) = 0;
   virtual void back_prime (tree t, path p, bool forward) = 0;
   virtual void back_in_around (tree t, path p, bool forward) = 0;
+  virtual void back_in_long_arrow (tree t, path p, bool forward) = 0;
   virtual void back_in_wide (tree t, path p, bool forward) = 0;
   virtual void back_in_tree (tree t, path p, bool forward) = 0;
   virtual void pre_remove_around (path p) = 0;

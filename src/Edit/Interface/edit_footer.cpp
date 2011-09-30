@@ -188,6 +188,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("big ", as_symbol (st[0])); break;
     case LPRIME:
       r= concat ("left prime ", as_string (st[0])); break;
+    case LONG_ARROW:
+      r= concat ("long arrow ", as_string (st[0])); break;
     case RPRIME:
       r= concat ("prime ", as_string (st[0])); break;
     case SQRT:
@@ -276,6 +278,10 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     if (N(st) >= 1 && is_atomic (st[0]))
       return concat (up, st[0]->label * " ");
     else return concat (up, "float ");
+  case LONG_ARROW:
+    if (l == 1) return concat (up, "above ");
+    else if (l == 2) return concat (up, "below ");
+    else return up;
   case BELOW:
     if (l==0) return concat (up, "body ");
     else return concat (up, "script below ");

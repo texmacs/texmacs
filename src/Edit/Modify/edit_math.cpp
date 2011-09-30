@@ -240,6 +240,26 @@ edit_math_rep::back_in_around (tree t, path p, bool forward) {
 }
 
 void
+edit_math_rep::back_in_long_arrow (tree t, path p, bool forward) {
+  int i= last_item (p);
+  if (i == 2) {
+    if (is_empty (t[2])) remove (path_up (p) * 2, 1);
+    if (forward) go_to_border (path_up (p), !forward);
+    else go_to_border (path_up (p) * 1, forward);
+  }
+  else if (i == 1) {
+    if (N(t) == 2 && is_empty (t[1])) {
+      assign (path_up (p), "");
+      correct (path_up (p, 2));
+    }
+    else if (forward && N(t) >= 3)
+      go_to_border (path_up (p) * 2, forward);
+    else go_to_border (path_up (p), !forward);
+  }
+  else go_to_border (path_up (p), !forward);
+}
+
+void
 edit_math_rep::back_prime (tree t, path p, bool forward) {
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= t[0]->label;

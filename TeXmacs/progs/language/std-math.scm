@@ -100,23 +100,18 @@
     (:operator associative)
     (Relation-infix Post)
     (Pre Relation-infix)
-    Relation-symbol)
+    Relation-symbol
+    Arrow-symbol
+    (:<long-arrow :any :/ Expression :>)
+    (:<long-arrow :any :/ Expression :/ Expression :>))
 
   (define Relation-prefix
     (:operator)
     (Relation-prefix Post)
-    Relation-symbol)
-
-  (define Arrow-infix
-    (:operator associative)
-    (Arrow-infix Post)
-    (Pre Arrow-infix)
-    Arrow-symbol)
-
-  (define Arrow-prefix
-    (:operator)
-    (Arrow-prefix Post)
-    Arrow-symbol)
+    Relation-symbol
+    Arrow-symbol
+    (:<long-arrow :any :/ Expression :>)
+    (:<long-arrow :any :/ Expression :/ Expression :>))
 
   (define Union-infix
     (:operator associative)
@@ -298,8 +293,7 @@
   (define Relaxed-expression
     Assignment
     (Assign-prefix Modeling)
-    (Relation-prefix Arrow)
-    (Arrow-prefix Union)
+    (Relation-prefix Union)
     (Times-prefix Power)
     (Over-prefix Power)
     (Power-prefix Prefixed)
@@ -330,11 +324,11 @@
     Postfix)
 
   (define Informal-relation
-    (Arrow-list Relation-infix Arrow))
+    (Union-list Relation-infix Union))
 
-  (define Arrow-list
-    (Arrow-list Comma Arrow)
-    (Arrow Comma Arrow))
+  (define Union-list
+    (Union-list Comma Union)
+    (Union Comma Union))
   
   (define Assignment
     (Modeling Assign-infix Assignment)
@@ -384,11 +378,7 @@
     Relation)
 
   (define Relation
-    (Relation Relation-infix Arrow)
-    Arrow)
-
-  (define Arrow
-    (Arrow Arrow-infix Union)
+    (Relation Relation-infix Union)
     Union)
 
   (define Union

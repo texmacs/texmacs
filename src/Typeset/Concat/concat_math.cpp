@@ -122,6 +122,41 @@ concater_rep::typeset_rprime (tree t, path ip) {
 ******************************************************************************/
 
 void
+concater_rep::typeset_long_arrow (tree t, path ip) {
+  if (N(t) != 2 && N(t) != 3) { typeset_error (t, ip); return; }
+  tree old_ds= env->local_begin (MATH_DISPLAY, "false");
+  tree old_mc= env->local_begin (MATH_CONDENSED, "true");
+  tree old_il= env->local_begin_script ();
+  box sup_b, sub_b;
+  if (N(t) >= 2) {
+    tree old_vp= env->local_begin (MATH_VPOS, "-1");
+    sup_b= typeset_as_concat (env, t[1], descend (ip, 1));
+    env->local_end (MATH_VPOS, old_vp);
+  }
+  if (N(t) >= 3) {
+    tree old_vp= env->local_begin (MATH_VPOS, "1");
+    sub_b= typeset_as_concat (env, t[2], descend (ip, 2));
+    env->local_end (MATH_VPOS, old_vp);
+  }
+  env->local_end_script (old_il);
+  env->local_end (MATH_CONDENSED, old_mc);
+  env->local_end (MATH_DISPLAY, old_ds);
+
+  string s= as_string (t[0]);
+  SI w= sup_b->w();
+  if (N(t) == 3) w= max (w, sub_b->w());
+  w += env->fn->wquad;
+  box arrow= wide_box (decorate (descend (ip, 0)), s, env->fn, env->col, w);
+
+  space spc= env->fn->spc;
+  if (env->math_condensed) spc= space (spc->min>>3, spc->def>>3, spc->max>>2);
+  else spc= space (spc->min>>1, spc->def>>1, spc->max);
+  print (spc);
+  print (limit_box (ip, arrow, sub_b, sup_b, env->fn, false));
+  print (spc);
+}
+
+void
 concater_rep::typeset_below (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box b1= typeset_as_concat (env, t[0], descend (ip, 0));

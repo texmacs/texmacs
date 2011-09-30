@@ -71,6 +71,7 @@ class concater_rep {
   //void typeset_middle (tree t, path ip);
   //void typeset_right (tree t, path ip);
   void typeset_bigop (tree t, path ip);
+  void typeset_long_arrow (tree t, path ip);
   void typeset_lprime (tree t, path ip);
   void typeset_rprime (tree t, path ip);
   void typeset_below (tree t, path ip);

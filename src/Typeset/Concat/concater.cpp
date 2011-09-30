@@ -343,6 +343,9 @@ concater_rep::typeset (tree t, path ip) {
   case BIG:
     typeset_bigop (t, ip);
     break;
+  case LONG_ARROW:
+    typeset_long_arrow (t, ip);
+    break;
   case LPRIME:
     typeset_lprime (t, ip);
     break;

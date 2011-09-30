@@ -694,6 +694,17 @@
   ("< = = !" "<Longleftarrowlim>")
   ("< = = > !" "<Longleftrightarrowlim>")
 
+  ("- - ^" (make-long-arrow "<minus>"))
+  ("- - > ^" (make-long-arrow "<rightarrow>"))
+  ("< - - ^" (make-long-arrow "<leftarrow>"))
+  ("< - - > ^" (make-long-arrow "<leftrightarrow>"))
+  ("| - - > ^" (make-long-arrow "<mapsto>"))
+  ("| var - - > ^" (make-long-arrow "<mapsto>"))
+  ("= = ^" (make-long-arrow "<equal>"))
+  ("= = > ^" (make-long-arrow "<Rightarrow>"))
+  ("< = = ^" (make-long-arrow "<Leftarrow>"))
+  ("< = = > ^" (make-long-arrow "<Leftrightarrow>"))
+
   ("@" "<circ>")
   ("@ /" "<varnothing>")
   ("@ +" "<oplus>")

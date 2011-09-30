@@ -34,6 +34,7 @@ public:
   void back_around (tree t, path p, bool forward);
   void back_prime (tree t, path p, bool forward);
   void back_in_around (tree t, path p, bool forward);
+  void back_in_long_arrow (tree t, path p, bool forward);
   void back_in_wide (tree t, path p, bool forward);
   void back_in_tree (tree t, path p, bool forward);
   void pre_remove_around (path p);

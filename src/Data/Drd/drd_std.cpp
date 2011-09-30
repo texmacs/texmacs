@@ -192,6 +192,10 @@ init_std_drd () {
   init (MID, "mid", options (1, 2));
   init (RIGHT, "right", options (1, 2));
   init (BIG, "big", fixed (1));
+  init (LONG_ARROW, "long-arrow",
+        options (2, 1, DETAILED) -> name ("long arrow") ->
+        accessible (1) -> name (1, "superscript") ->
+        accessible (2) -> name (2, "subscript"));
   init (LPRIME, "lprime", fixed (1) -> name ("left prime"));
   init (RPRIME, "rprime", fixed (1) -> name ("right prime"));
   init (BELOW, "below", fixed (2) -> accessible (0));
