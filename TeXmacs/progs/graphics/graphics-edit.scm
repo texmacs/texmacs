@@ -821,7 +821,9 @@
 (tm-define (graphics-update-constraints)
   (when (graphics-needs-update?)
     (with-innermost t 'graphics
-      (tree-update-constraints t))))
+      (remove-undo-mark)
+      (tree-update-constraints t)
+      (add-undo-mark))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
