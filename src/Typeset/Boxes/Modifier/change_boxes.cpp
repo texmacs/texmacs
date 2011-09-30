@@ -567,16 +567,33 @@ tag_box_rep::find_tag (string search) {
 ******************************************************************************/
 
 struct textat_box_rep: public move_box_rep {
-  textat_box_rep (path ip, box b, SI x, SI y):
-    move_box_rep (ip, b, x, y, false, false) {}
+  textat_box_rep (path ip, box b, SI x, SI y, SI pad);
   gr_selections graphical_select (SI x, SI y, SI dist);
-  operator tree () { return tree (TUPLE, "textat", (tree) bs[0]); }
+  operator tree () { return tree (TUPLE, "text-at", (tree) bs[0]); }
 };
+
+textat_box_rep::textat_box_rep (path ip, box b, SI x, SI y, SI pad):
+  move_box_rep (ip, b, x, y, false, false)
+{
+  x1 -= pad;
+  y1 -= pad;
+  x2 += pad;
+  y2 += pad;
+}
 
 gr_selections
 textat_box_rep::graphical_select (SI x, SI y, SI dist) {
   gr_selections res;
-  if (graphical_distance (x, y) <= dist) {
+  if (norm (point (x, y) - point (sx(0), sy(0))) <= dist) {
+    gr_selection gs;
+    gs->dist= norm (point (x, y) - point (sx(0), sy(0)));
+    gs->p= point (sx(0), sy(0));
+    gs->cp << reverse (path (0, path (1, ip)));
+    gs->pts << gs->p;
+    gs->c= curve ();
+    res << gs;
+  }
+  else if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
     gs->dist= graphical_distance (x, y);
     gs->p= point (x, y);
@@ -675,6 +692,6 @@ tag_box (path ip, box b, tree keys) {
 }
 
 box
-textat_box (path ip, box b, SI x, SI y) {
-  return tm_new<textat_box_rep> (ip, b, x, y);
+textat_box (path ip, box b, SI x, SI y, SI pad) {
+  return tm_new<textat_box_rep> (ip, b, x, y, pad);
 }

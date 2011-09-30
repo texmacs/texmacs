@@ -295,6 +295,13 @@
 	 )
 	 b0)
   )
+  (define (create-text-at-handle o)
+    (cond ((func? o 'with)
+           (create-text-at-handle (cAr o)))
+          ((func? o 'text-at)
+           `((with "point-style" "disk" 
+               ,(cAr o))))
+          (else '())))
   (let* ((o1 (with res (if (in? (car o) '(text-at gr-group))
 			  `(with "text-at-halign" ,ha0
 				 "text-at-valign" ,va0 ,o)
@@ -320,15 +327,17 @@
 	(set-car! p1 'point)
 	(set-car! p2 'point)
 	(set-car! p3 'point)
-	(with res `((cline ,p00 ,p10 ,p2 ,p3)
-		   )
-		   (if halign (set! res (append res
-				 (create-haligns (cadr p00) (caddr p00)
-						 (cadr p10) (caddr p2)))))
-		   (if valign (set! res (append res
-				 (create-valigns (cadr p0) (caddr p0)
-						 (cadr p1) (caddr p2)))))
-		   res)))
+	(with res `((cline ,p00 ,p10 ,p2 ,p3))
+          ;;(if halign
+          ;;    (set! res (append res
+          ;;                      (create-haligns (cadr p00) (caddr p00)
+          ;;                                      (cadr p10) (caddr p2)))))
+          ;;(if valign
+          ;;    (set! res (append res
+          ;;                      (create-valigns (cadr p0) (caddr p0)
+          ;;                                      (cadr p1) (caddr p2)))))
+          (set! res (append res (create-text-at-handle o)))
+          res)))
 
 (define (in-interval? x i1 i2 supop infop)
   (and (supop x i1) (infop x i2)))

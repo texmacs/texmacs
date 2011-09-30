@@ -51,6 +51,7 @@ public:
   void   invalidate_graphical_object ();
   void   draw_graphical_object (renderer ren);
   bool   mouse_graphics (string s, SI x, SI y, int mods, time_t t);
+  void   back_in_text_at (tree t, path p, bool forward);
 };
 
 #endif // defined EDIT_GRAPHICS_H

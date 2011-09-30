@@ -618,5 +618,5 @@ curve_box (path ip, curve c, SI width, color col,
   array<box> arrows)
 {
   return tm_new<curve_box_rep> (ip, c, width, col,
-			    style, style_unit, fill, fill_col, arrows);
+                                style, style_unit, fill, fill_col, arrows);
 }

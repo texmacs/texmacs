@@ -106,6 +106,7 @@ protected:
   virtual void back_general (path p, bool forward) = 0;
   virtual void back_in_with (tree t, path p, bool forward) = 0;
   virtual void back_in_general (tree t, path p, bool forward) = 0;
+  virtual void back_in_text_at (tree t, path p, bool forward) = 0;
 
   /* other protected subroutines */
   virtual tree kbd (string s) = 0;

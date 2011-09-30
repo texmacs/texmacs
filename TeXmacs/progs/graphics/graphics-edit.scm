@@ -170,6 +170,7 @@
 (define (object_checkout)
   (sketch-set! `(,(path->tree current-path)))
   (sketch-checkout)
+  ;;(display* "Checked out " (sketch-get) "\n")
   (sketch-set! (map tree->stree (sketch-get))))
 
 (define (object_commit)
@@ -193,6 +194,7 @@
                    graphical-textat-valign))
         (set! current-edge-sel? #f)
         (sketch-set! `(,obj))
+        ;;(display* "Commited " (sketch-get) "\n")
         (sketch-commit)
         (set! leftclick-waiting #f)
         (set! current-obj (stree-radical obj))
@@ -200,6 +202,9 @@
         (graphics-forget-states)))
   (delayed
     (graphics-update-constraints)))
+
+(define (current-in? l)
+  (and (pair? current-obj) (in? (car current-obj) l)))
 
 ;; Edition operations
 ;;
@@ -236,8 +241,8 @@
   (set! current-edge-sel? #t)
   (set! leftclick-waiting #f)
   (if (and edge
-	   (not (and (in? (car current-obj) '(arc carc))
-			  (> (length current-obj) 3))))
+	   (not (and (current-in? '(arc carc))
+                     (> (length current-obj) 3))))
       (begin
 	 (object_add-point current-point-no #f #f current-x current-y #t)
 	 (graphics-decorations-update)))
@@ -307,8 +312,8 @@
 
 (define (remove-point)
  ;(display* "obj[" p "]=" obj "\n")
-  (if (or (in? (car current-obj) gr-tags-oneshot) (null? (cdddr current-obj))
-	  (not (in? (car current-obj) gr-tags-all))
+  (if (or (current-in? gr-tags-oneshot) (null? (cdddr current-obj))
+	  (not (current-in? gr-tags-all))
 	  (!= (logand (get-keyboard-modifiers) ShiftMask) 0))
       (begin
         (object_remove)
@@ -320,51 +325,47 @@
 
 ;; Left button
 (tm-define (left-button)
-  (:require (in? (car current-obj) gr-tags-point-curves))
+  (:require (current-in? gr-tags-point-curves))
   (if sticky-point
       (last-point)
       (start-move)))
 
 (tm-define (left-button)
-  (:require (eq? (car current-obj) 'text-at))
+  (:require (current-in? '(text-at)))
+  ;;(display* "Text at left button\n")
   (if sticky-point
       (object_commit)
-      (if (on-graphical-embedding-box? current-x current-y current-obj "1mm")
+      (if (== (graphics-mode) '(edit text-at))
+	  (begin
+            (set-texmacs-pointer 'text-arrow)
+            (go-to (car (select-first (s2f current-x) (s2f current-y)))))
 	  (begin
 	     (set-texmacs-pointer 'graphics-cross)
 	     (set! current-point-no 1)
-	     (start-move))
-	  (begin
-	     (set-texmacs-pointer 'text-arrow)
-	     (go-to (car (select-first (s2f current-x) (s2f current-y))))))))
+	     (start-move)))))
 
 (tm-define (left-button)
-  (:require (not (in? (car current-obj) gr-tags-all)))
+  (:require (not (current-in? gr-tags-all)))
   (if sticky-point
       (last-point)
       (start-move)))
 
 ;; Move
 (tm-define (move)
-  (:require (in? (car current-obj) gr-tags-point-curves))
+  (:require (current-in? gr-tags-point-curves))
   (if sticky-point
       (move-point)
       (move-over)))
 
 (tm-define (move)
-  (:require (eq? (car current-obj) 'text-at))
-  (if (and (not sticky-point)
-	   (on-graphical-embedding-box? current-x current-y current-obj "1mm"))
-      (set-texmacs-pointer 'graphics-cross-arrows)
-      (set-texmacs-pointer 'graphics-cross)
-  )
+  (:require (current-in? '(text-at)))
   (set! current-point-no 1)
   (if sticky-point
       (move-point)
       (move-over)))
 
 (tm-define (move)
-  (:require (eq? (car current-obj) 'gr-group))
+  (:require (current-in? '(gr-group)))
   (if sticky-point
       (display* "Sticky move(gr-group) !yet implemented\n")
       (begin
@@ -372,7 +373,7 @@
 	(graphics-decorations-update))))
 
 (tm-define (move)
-  (:require (not (in? (car current-obj) gr-tags-all)))
+  (:require (not (current-in? gr-tags-all)))
   (if sticky-point
       (move-point)
       (move-over)))
@@ -388,8 +389,8 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
- ;(display "obj[left-button]=")(write current-obj)(display "\n")
-  (if sticky-point
+  ;;(display "obj[left-button]=")(write current-obj)(display "\n")
+  (if (or sticky-point (current-in? '(text-at)))
       (begin
 	(if just-started-dragging
 	    (set! disable-drag #t))
@@ -427,7 +428,7 @@
 	 (graphics-forget-states)
 	 (if (and first
 		  (not just-started-dragging)
-		  (not (eq? (car current-obj) 'text-at)))
+		  (not (current-in? '(xtext-at))))
 	     (edit-insert current-x current-y)
 	     (left-button)))
    ;; Moving
@@ -690,30 +691,6 @@
      (graphics-group-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Events when the cursor is inside a text-at
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (when-inside-text-at func x y)
-  (:state graphics-state)
-  (let* ((res #t)
-	 (uncaptured (lambda ()
-		       (if (!= func 'move)
-			   (begin
-			     (graphics-group-start)
-			     (graphics-move-point x y))))))
-    ;;(display* "Inside text-at=" func "; x=" x "; y=" y "\n")
-    (if (and (not sticky-point)
-	     (tm-upwards-path (cDr (cursor-path)) '(text-at) '(graphics)))
-	(if (and (pair? current-obj) (eq? (car current-obj) 'text-at))
-	    (cond
-	      ((== func 'left-button)
-	       (left-button)))
-	    (uncaptured))
-	(set! res #f))
-    ;;(display* "res=" res "\n")
-    res))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dealing with superpositions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -846,23 +823,29 @@
 
 (tm-define (graphics-insert-point x y)
   ;;(display* "Graphics] Insert " x ", " y "\n")
-  (if (not (when-inside-text-at 'left-button x y))
+  (if (inside? 'text-at)
+      (with-innermost t 'text-at
+        (let* ((ps (select-first (s2f x) (s2f y)))
+               (p (and ps (car ps))))
+          (if (and p (list-starts? p (tree->path t)))
+              (go-to p)
+              (tree-go-to t :start))))
       (edit_left-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-move-point x y)
   ;;(display* "Graphics] Move " x ", " y "\n")
-  (if (not (when-inside-text-at 'move x y))
-      (edit_move (car (graphics-mode)) x y)))
+  (when (not (inside? 'text-at))
+    (edit_move (car (graphics-mode)) x y)))
 
 (tm-define (graphics-remove-point x y)
-  ;(display* "Graphics] Remove " x ", " y "\n")
-  (if (not (when-inside-text-at 'middle-button x y))
-      (edit_middle-button (car (graphics-mode)) x y)))
+  ;;(display* "Graphics] Remove " x ", " y "\n")
+  (when (not (inside? 'text-at))
+    (edit_middle-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-last-point x y)
-  ;(display* "Graphics] Last " x ", " y "\n")
-  (if (not (when-inside-text-at 'right-button x y))
-      (edit_right-button (car (graphics-mode)) x y)))
+  ;;(display* "Graphics] Last " x ", " y "\n")
+  (when (not (inside? 'text-at))
+    (edit_right-button (car (graphics-mode)) x y)))
 
 (define just-started-dragging #f)
 (define disable-drag #f)
@@ -870,42 +853,51 @@
 
 (tm-define (graphics-start-drag x y)
   ;;(display* "Graphics] Start-drag " x ", " y "\n")
-  (if (when-inside-text-at 'start-drag x y)
-      (set! disable-drag #t)
-      (begin
-        (set! just-started-dragging #t)
-        (graphics-insert-point x y))))
+  ;;(display* "  just-started " just-started-dragging "\n")
+  ;;(display* "  disable-drag " disable-drag "\n")
+  ;;(display* "  sticky-point " sticky-point "\n")
+  ;;(display* "  choosing " choosing "\n")
+  ;;(display* "  leftclick-waiting " leftclick-waiting "\n")
+  ;;(display* "  current-graphical-object " current-graphical-object "\n")
+  ;;(display* "  graphics-action " graphics-action "\n")
+  ;;(display* "  current-point-no " current-point-no "\n")
+  (when (not (inside? 'text-at))
+    (set! disable-drag #t)
+    (set! just-started-dragging #t)
+    (graphics-insert-point x y)))
 
 (tm-define (graphics-dragging x y)
   ;;(display* "Graphics] dragging " x ", " y "\n")
-  (graphics-move-point x y))
+  (when (not (inside? 'text-at))
+    (graphics-move-point x y)))
 
 (tm-define (graphics-end-drag x y)
   ;;(display* "Graphics] End-drag " x ", " y "\n")
-  (if (not (when-inside-text-at 'end-drag x y))
-  (begin
+  (when (not (inside? 'text-at))
     (set! just-started-dragging #f)
-    (if disable-drag
-        (set! disable-drag #f)
-        (begin
-	  (graphics-insert-point x y)
-	  (if (eq? (car (graphics-mode)) 'edit)
-	      (graphics-insert-point x y)))))))
+    (set! disable-drag #f)
+    (graphics-insert-point x y)
+    (if (== (car (graphics-mode)) 'edit)
+        (if (not (current-in? '(text-at)))
+            (graphics-insert-point x y)))))
 
 (tm-define (graphics-start-right-drag x y)
   ;(display* "Graphics] Start-right-drag " x ", " y "\n")
-  (graphics-last-point x y))
+  (when (not (inside? 'text-at))
+    (graphics-last-point x y)))
 
 (tm-define (graphics-right-dragging x y)
   ;(display* "Graphics] right-dragging " x ", " y "\n")
-  (graphics-move-point x y))
+  (when (not (inside? 'text-at))
+    (graphics-move-point x y)))
 
 (tm-define (graphics-end-right-drag x y)
   (:state graphics-state)
   ;(display* "Graphics] End-right-drag " x ", " y "\n")
-  (if (not sticky-point)
-; FIXME : test due to timing problems in detecting the drag
-      (graphics-last-point x y)))
+  (when (not (inside? 'text-at))
+    (if (not sticky-point)
+        ;; FIXME : test due to timing problems in detecting the drag
+        (graphics-last-point x y))))
 
 (tm-define (graphics-choose-point inc)
   (:state graphics-state)
@@ -915,7 +907,7 @@
   (set! choosing #t)
   (graphics-store-state #f)
   (edit_tab-key (car (graphics-mode)) #t inc))
-
+  
 (tm-define (graphics-enter-mode old-mode new-mode)
   (:state graphics-state)
   (if (and (graphics-group-mode? old-mode)

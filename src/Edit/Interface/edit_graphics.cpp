@@ -17,6 +17,8 @@
 #include "Bridge/impl_typesetter.hpp"
 #include "drd_std.hpp"
 
+extern tree the_et;
+
 /******************************************************************************
 * Constructors and destructors
 ******************************************************************************/
@@ -34,23 +36,9 @@ edit_graphics_rep::~edit_graphics_rep () {}
 
 path
 edit_graphics_rep::graphics_path () {
-  // FIXME: why is this hack necessary?
-  path p= tp;
-  while (true) {
-    path pp= path_up (p);
-    path ppp= path_up (pp);
-    tree st= subtree (et, pp);
-    if (is_func (st, WITH))
-      p= pp * path (N (st) - 1, 0);
-    else if (the_drd->get_type (st) != TYPE_GRAPHICAL &&
-             last_item (pp) + 1 < N (subtree (et, ppp)))
-      p= ppp * path (last_item (pp) + 1, 0);
-    else break;
-  }
-  //if (p != tp)
-  //  cout << "Old: " << subtree (et, path_up (tp)) << "\n"
-  //       << "New: " << subtree (et, path_up (p)) << "\n";
-  return p;
+  path gp= search_upwards (GRAPHICS);
+  if (is_nil (gp)) return tp;
+  return gp * 0;
 }
 
 bool
@@ -356,6 +344,23 @@ edit_graphics_rep::draw_graphical_object (renderer ren) {
   ren->set_clipping (ox1, oy1, ox2, oy2);
 }
 
+void
+edit_graphics_rep::back_in_text_at (tree t, path p, bool forward) {
+  int i= last_item (p);
+  if ((i == 0) && is_empty (t[0])) {
+    p= path_up (p);
+    if (is_func (subtree (et, path_up (p)), WITH)) p= path_up (p);
+    tree st= subtree (et, path_up (p));
+    if (is_func (st, GRAPHICS)) {
+      if (N(st) == 1) assign (p, "");
+      else {
+        remove (p, 1);
+        go_to_border (path_up (p) * 0, true);
+      }
+    }
+  }
+}
+
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   //cout << type << ", " << x << ", " << y << ", " << m << ", " << t << "\n";
@@ -403,5 +408,6 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
     notify_change (THE_CURSOR);
     return true;
   }
+  //cout << "No frame " << tp << ", " << subtree (et, path_up (tp)) << "\n";
   return false;
 }

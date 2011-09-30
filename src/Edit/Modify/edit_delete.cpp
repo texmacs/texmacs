@@ -242,6 +242,9 @@ edit_text_rep::remove_text (bool forward) {
     case LOCUS:
       back_in_with (u, p, forward);
       return;
+    case TEXT_AT:
+      back_in_text_at (u, p, forward);
+      return;
     default:
       back_in_general (u, p, forward);
       break;
