@@ -103,7 +103,7 @@
     Relation-symbol
     Arrow-symbol
     (:<long-arrow :any :/ Expression :>)
-    (:<long-arrow :any :/ Expression :/ Expression :>))
+    (:<long-arrow :any :/ Slot :/ Expression :>))
 
   (define Relation-prefix
     (:operator)
@@ -111,7 +111,7 @@
     Relation-symbol
     Arrow-symbol
     (:<long-arrow :any :/ Expression :>)
-    (:<long-arrow :any :/ Expression :/ Expression :>))
+    (:<long-arrow :any :/ Slot :/ Expression :>))
 
   (define Union-infix
     (:operator associative)

@@ -177,7 +177,9 @@
       ---
       (tile 8 (link vertical-arrow-menu))
       ---
-      (tile 6 (link long-arrow-menu)))
+      (tile 6 (link long-arrow-menu))
+      ---
+      (link extensible-arrow-menu))
   (-> "Negation"
       ("General negation" (key-press "/"))
       ---
@@ -535,6 +537,10 @@
   (symbol "<longhookleftarrow>")
   (symbol "<longhookrightarrow>")
   (symbol "<longmapsto>"))
+
+(menu-bind extensible-arrow-menu
+  ("Extensible left arrow" (make-long-arrow "<leftarrow>"))
+  ("Extensible right arrow" (make-long-arrow "<rightarrow>")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Negations
@@ -1021,7 +1027,9 @@
       ---
       (tile 8 (link vertical-arrow-menu))
       ---
-      (tile 6 (link long-arrow-menu)))
+      (tile 6 (link long-arrow-menu))
+      ---
+      (link extensible-arrow-menu))
   (=> (balloon (icon "tm_unequal.xpm") "Insert a negation")
       (tile 9 (link negation-menu-1))
       ---
