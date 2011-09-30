@@ -254,7 +254,7 @@ qt_input_widget_rep::perform_dialog() {
     QVector<QPushButton*> buttonlist (choices);
     //allowing for any number of choices
     for(int i=0; i<choices; i++) {
-      string blabel= "&" * (fields[0]->proposals[i]);
+      string blabel= "&" * upcase_first (fields[0]->proposals[i]);
       //capitalize the first character?
       buttonlist[i] = msgBox->addButton (to_qstring (qt_translate (blabel)), QMessageBox::ActionRole);
     }
