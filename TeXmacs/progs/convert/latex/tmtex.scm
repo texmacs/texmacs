@@ -647,6 +647,22 @@
 (define (tmtex-big l)
   (list (string->symbol (tmtex-big-decode (car l)))))
 
+(define (tmtex-decode-long-arrow s)
+  (cond ((nstring? s) 'xrightarrow)
+        ((and (string-starts? s "<rubber-") (string-ends? s ">"))
+         (tmtex-decode-long-arrow (substring s 8 (- (string-length s) 1))))
+        ((in? s '("minus" "leftarrow" "rightarrow" "leftrightarrow"
+                  "equal" "Leftarrow" "Rightarrow" "Leftrightarrow"
+                  "mapsto" "mapsfrom"))
+         (string->symbol (string-append "x" s)))
+        (else 'xrightarrow)))
+
+(define (tmtex-long-arrow l)
+  (with cmd (tmtex-decode-long-arrow (car l))
+    (if (== (length l) 2)
+        (list cmd (tmtex (cadr l)))
+        (list cmd (list '!option (tmtex (caddr l))) (tmtex (cadr l))))))
+
 (define (tmtex-prime-list l)
   (if (null? l) l
       (cond ((== (car l) #\<)
@@ -1566,6 +1582,7 @@
   (mid tmtex-mid)
   (right tmtex-right)
   (big tmtex-big)
+  (long-arrow tmtex-long-arrow)
   (lprime tmtex-lprime)
   (rprime tmtex-rprime)
   (below tmtex-below)

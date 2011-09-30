@@ -103,7 +103,10 @@
 (drd-group latex-command-1*%
   documentclass documentstyle sqrt bibitem cite
   includegraphics includegraphics*
-  subjclass)
+  subjclass
+  xleftarrow xrightarrow xleftrightarrow xminus
+  xLeftarrow xRightarrow xLeftrightarrow xequal
+  xmapsto xmapsfrom)
 
 (drd-group latex-command-2*%
   def newcommand renewcommand newtheorem newtheorem* frac parbox)
@@ -342,6 +345,17 @@
   (ggeq "amsmath")
   (gggeq "amsmath")
   (qed "amsmath")
+
+  (xminus "amsmath")
+  (xleftarrow "amsmath")
+  (xrightarrow "amsmath")
+  (xleftrightarrow "amsmath")
+  (xmapsto "amsmath")
+  (xmapsfrom "amsmath")
+  (xequal "amsmath")
+  (xLeftarrow "amsmath")
+  (xRightarrow "amsmath")
+  (xLeftrightarrow "amsmath")
 
   (btimes "graphicx")
   (Backepsilon "graphicx")

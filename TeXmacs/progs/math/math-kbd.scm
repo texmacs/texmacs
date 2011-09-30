@@ -700,6 +700,7 @@
   ("< - - > ^" (make-long-arrow "<leftrightarrow>"))
   ("| - - > ^" (make-long-arrow "<mapsto>"))
   ("| var - - > ^" (make-long-arrow "<mapsto>"))
+  ("< - - | ^" (make-long-arrow "<mapsfrom>"))
   ("= = ^" (make-long-arrow "<equal>"))
   ("= = > ^" (make-long-arrow "<Rightarrow>"))
   ("< = = ^" (make-long-arrow "<Leftarrow>"))

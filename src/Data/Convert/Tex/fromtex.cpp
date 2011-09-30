@@ -894,6 +894,49 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\href", 2))
     return tree (APPLY, "hlink", l2e (t[2]), t2e (t[1]));
 
+  if (is_tuple (t, "\\xminus", 1))
+    return tree (LONG_ARROW, "<rubber-minus>", l2e (t[1]));
+  if (is_tuple (t, "\\xleftarrow", 1))
+    return tree (LONG_ARROW, "<rubber-leftarrow>", l2e (t[1]));
+  if (is_tuple (t, "\\xrightarrow", 1))
+    return tree (LONG_ARROW, "<rubber-rightarrow>", l2e (t[1]));
+  if (is_tuple (t, "\\xleftrightarrow", 1))
+    return tree (LONG_ARROW, "<rubber-leftrightarrow>", l2e (t[1]));
+  if (is_tuple (t, "\\xmapsto", 1))
+    return tree (LONG_ARROW, "<rubber-mapsto>", l2e (t[1]));
+  if (is_tuple (t, "\\xmapsfrom", 1))
+    return tree (LONG_ARROW, "<rubber-mapsfrom>", l2e (t[1]));
+  if (is_tuple (t, "\\xequal", 1))
+    return tree (LONG_ARROW, "<rubber-equal>", l2e (t[1]));
+  if (is_tuple (t, "\\xLeftarrow", 1))
+    return tree (LONG_ARROW, "<rubber-Leftarrow>", l2e (t[1]));
+  if (is_tuple (t, "\\xRightarrow", 1))
+    return tree (LONG_ARROW, "<rubber-Rightarrow>", l2e (t[1]));
+  if (is_tuple (t, "\\xLeftrightarrow", 1))
+    return tree (LONG_ARROW, "<rubber-Leftrightarrow>", l2e (t[1]));
+  if (is_tuple (t, "\\xminus*", 2))
+    return tree (LONG_ARROW, "<rubber-minus>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xleftarrow*", 2))
+    return tree (LONG_ARROW, "<rubber-leftarrow>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xrightarrow*", 2))
+    return tree (LONG_ARROW, "<rubber-rightarrow>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xleftrightarrow*", 2))
+    return tree (LONG_ARROW, "<rubber-leftrightarrow>",
+                 l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xmapsto*", 2))
+    return tree (LONG_ARROW, "<rubber-mapsto>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xmapsfrom*", 2))
+    return tree (LONG_ARROW, "<rubber-mapsfrom>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xequal*", 2))
+    return tree (LONG_ARROW, "<rubber-equal>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xLeftarrow*", 2))
+    return tree (LONG_ARROW, "<rubber-Leftarrow>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xRightarrow*", 2))
+    return tree (LONG_ARROW, "<rubber-Rightarrow>", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\xLeftrightarrow*", 2))
+    return tree (LONG_ARROW, "<rubber-Leftrightarrow>",
+                 l2e (t[1]), l2e (t[2]));
+
   // Start TeXmacs specific markup
   if (is_tuple (t, "\\tmmathbf", 1))
     return tree (CONCAT,

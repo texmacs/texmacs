@@ -109,10 +109,13 @@
 
   (rubber-varleftarrow-# (hor-extend shortleftarrow 0.9 # 0.1))
   (rubber-varrightarrow-# (hor-extend shortrightarrow 0.1 # 0.1))
+  (rubber-minus-# (hor-extend - 0.5 # 0.1))
   (rubber-leftarrow-# (hor-extend leftarrow 0.5 # 0.1))
   (rubber-rightarrow-# (hor-extend rightarrow 0.5 # 0.1))
   (rubber-leftrightarrow-# (hor-extend leftrightarrow 0.5 # 0.1))
   (rubber-mapsto-# (hor-extend mapsto 0.5 # 0.1))
+  (rubber-mapsfrom-# (hor-extend mapsfrom 0.5 # 0.1))
+  (rubber-equal-# (hor-extend = 0.5 # 0.1))
   (rubber-Leftarrow-# (hor-extend Leftarrow 0.5 # 0.1))
   (rubber-Rightarrow-# (hor-extend Rightarrow 0.5 # 0.1))
   (rubber-Leftrightarrow-# (hor-extend Leftrightarrow 0.5 # 0.1))

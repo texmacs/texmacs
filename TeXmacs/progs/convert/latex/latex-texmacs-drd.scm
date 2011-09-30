@@ -381,6 +381,38 @@
     "    \\end{center}\n"
     "  \\end{minipage}}\n")))
 
+;;(define-macro (latex-texmacs-long prim x l m r)
+;;  `(drd-table latex-texmacs-preamble%
+;;     (,(string->symbol (substring prim 1 (string-length prim)))
+;;      (!append
+;;       "\\def" ,prim "fill@{\\arrowfill@" ,l ,m ,r "}\n"
+;;       "\\providecommand{" ,prim "}[2][]{"
+;;       "\\ext@arrow 0099" ,prim "fill@{#1}{#2}}\n"))))
+
+(define-macro (latex-texmacs-long prim x l m r)
+  `(drd-table latex-texmacs-preamble%
+     (,(string->symbol (substring prim 1 (string-length prim)))
+      (!append
+       "\\providecommand{" ,prim "}[2][]{"
+       "\\mathop{" ,x "}\\limits_{#1}^{#2}}\n"))))
+
+(latex-texmacs-long "\\xminus" "-"
+                    "\\DOTSB\\relbar" "\\relbar" "\\DOTSB\\relbar")
+(latex-texmacs-long "\\xleftrightarrow" "\\longleftrightarrow"
+                    "\\leftarrow" "\\relbar" "\\rightarrow")
+(latex-texmacs-long "\\xmapsto" "\\longmapsto"
+                    "\\vdash" "\\relbar" "\\rightarrow")
+(latex-texmacs-long "\\xmapsfrom" "\\leftarrow\\!\\!\\dashv"
+                    "\\leftarrow" "\\relbar" "\\dashv")
+(latex-texmacs-long "\\xequal" "="
+                    "\\DOTSB\\Relbar" "\\Relbar" "\\DOTSB\\Relbar")
+(latex-texmacs-long "\\xLeftarrow" "\\Longleftarrow"
+                    "\\Leftarrow" "\\Relbar" "\\Relbar")
+(latex-texmacs-long "\\xRightarrow" "\\Longrightarrow"
+                    "\\Relbar" "\\Relbar" "\\Rightarrow")
+(latex-texmacs-long "\\xLeftrightarrow" "\\Longleftrightarrow"
+                    "\\Leftarrow" "\\Relbar" "\\Rightarrow")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plain style theorems
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
