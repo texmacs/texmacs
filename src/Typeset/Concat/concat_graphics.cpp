@@ -88,6 +88,7 @@ concater_rep::typeset_text_at (tree t, path ip) {
     else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
     else if (halign == "right") x -= b->x2;
     if (valign == "bottom") y -= b->y1;
+    else if (valign == "axis") y -= (env->fn->yx >> 1);
     else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
     else if (valign == "top") y -= b->y2;
     print (textat_box (ip, b, x, y, env->fn->spc->def));

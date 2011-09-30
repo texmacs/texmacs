@@ -335,6 +335,7 @@
   ("Bottom" (graphics-set-textat-valign "bottom"))
   ;;("Base" (graphics-set-textat-valign "base"))
   ("Base" (graphics-set-textat-valign "default"))
+  ("Axis" (graphics-set-textat-valign "axis"))
   ("Center" (graphics-set-textat-valign "center"))
   ("Top" (graphics-set-textat-valign "top")))
 
