@@ -353,7 +353,7 @@
   (edit_left-button mode x y))
 
 (tm-define (edit_tab-key mode inc)
-  (noop))
+  (display* "Uncaptured graphical tab-key " mode ", " inc "\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global dispatching
