@@ -390,6 +390,17 @@
       (left-button))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
+(tm-define (edit_end-drag mode x y)
+  (edit_left-button mode x y))
+
+(tm-define (edit_end-drag mode x y)
+  (:require (eq? mode 'edit))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross)
+  (if (or sticky-point (current-in? '(text-at)) current-obj)
+      (last-point))
+  (set! previous-leftclick `(point ,current-x ,current-y)))
+
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
@@ -829,10 +840,7 @@
 (tm-define (graphics-end-drag x y)
   ;;(display* "Graphics] End-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
-    (graphics-release-left x y)
-    (if (== (car (graphics-mode)) 'edit)
-        (if (not (current-in? '(text-at)))
-            (graphics-release-left x y)))))
+    (edit_end-drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-start-right-drag x y)
   ;(display* "Graphics] Start-right-drag " x ", " y "\n")
