@@ -24,6 +24,7 @@
 
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
+  //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
   last_x= x; last_y= y;
   if (type != "move" || (is_attached (this) && !check_event (MOTION_EVENT)))
     update_active_loci ();
