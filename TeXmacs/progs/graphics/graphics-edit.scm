@@ -385,19 +385,22 @@
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
   (if choosing
-   ;; Start moving point/object or inserting a new point
-      (with first #f
-	 (set! choosing #f)
-	 (if (and first
-		  (not just-started-dragging)
-		  (not (current-in? '(xtext-at))))
-	     (edit-insert current-x current-y)
-	     (left-button)))
-   ;; Moving
-      (begin
+      (begin ;; Start moving point/object or inserting a new point
+        (set! choosing #f)
+        (left-button))
+      (begin ;; Moving
        (if current-obj
 	   (move)
 	   (graphics-decorations-reset)))))
+
+(tm-define (edit_drag mode x y)
+  (:require (eq? mode 'edit))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross #t)
+  (set! choosing #f)
+  (if sticky-point
+      (last-point)
+      (start-move)))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'edit))
