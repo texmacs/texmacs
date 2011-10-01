@@ -18,6 +18,45 @@
         (graphics graphics-single)
         (graphics graphics-group)))
 
+
+;; TODO:
+;;
+;;   1. Chercher scrupuleusement a factoriser et simplifier le code.
+;;
+;;   -> Enlever *tous* les parametres dans les fonctions de l'editeur
+;;      graphique, et utiliser uniquement les variables d'etat ;
+;;
+;;   -> Use systematically (first), (second), etc., instead
+;;      of (car), (cadr), etc.
+;;
+;;   2. travailler exclusivement avec des trees, et sauf dans les
+;;      rares cas ou peut-etre c'est necessaire, supprimer toute
+;;      utilisation des paths ;
+;;
+;;   -> Remove all the (stree-at), (tree->stree), etc.
+;;
+;;   -> Replace the remaining (tree->stree) by (tm->stree) or (t2o)
+;;
+;;   -> Except in simple cases, remove all the (tree->stree) which
+;;      slow the code, and operate everywhere and all the time on trees.
+;;
+;;   -> Remove the synchro-unsafe (get-env) & (get-env-tree) everywhere.
+;;
+;;   3. Doc, reorganisation code
+;;
+;;   ->  rajouter systematiquement des "synopsis" pour les tm-define.
+;;
+;;   -> des macros comme foreach-number, etc., devraient
+;;      etre dans kernel/boot/abbrevs ou kernel/library (et chercher
+;;      des noms plus elegants).
+;;
+;;   -> dans la doc, preciser **exactement** les conditions d'evaluation
+;;      des differentes fonctions (par exemple (stree->tree #f) == #f,
+;;      mais (stree->tree 1) == <tree 1>.
+;;
+;;   -> On en discutera davantage apres un premier passage en revue.
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit properties (implemented as a group mode, see below)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
