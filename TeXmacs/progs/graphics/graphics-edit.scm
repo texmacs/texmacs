@@ -284,7 +284,6 @@
 		  moveclick-tolerance))
 	    (begin
               (undo 0)
-              (set! choosing #f)
               (set! leftclick-waiting #f)
               (set! just-started-dragging #f))
 	    (begin
@@ -373,25 +372,18 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (if (or sticky-point (current-in? '(text-at)))
+  (if (or sticky-point (current-in? '(text-at)) current-obj)
       (left-button)
-      (if current-obj
-          (set! choosing #t)
-	  (edit-insert x y)))
+      (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
-  (if choosing
-      (begin ;; Start moving point/object or inserting a new point
-        (set! choosing #f)
-        (left-button))
-      (begin ;; Moving
-       (if current-obj
-	   (move)
-	   (graphics-decorations-reset)))))
+  (if current-obj
+      (move)
+      (graphics-decorations-reset)))
 
 (tm-define (edit_drag mode x y)
   (edit_move mode x y))
@@ -400,14 +392,9 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
-  (if choosing
-      (begin ;; Start moving point/object or inserting a new point
-        (set! choosing #f)
-        (left-button))
-      (begin ;; Moving
-        (if current-obj
-            (move)
-            (graphics-decorations-reset)))))
+  (if current-obj
+      (move)
+      (graphics-decorations-reset)))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'edit))
@@ -429,7 +416,6 @@
   (:state graphics-state)
   (if (and current-x current-y)
       (begin
-        (set! choosing #t)
         (select-next inc)
         (graphics-update-tab))
       (invalidate-graphical-object)))
