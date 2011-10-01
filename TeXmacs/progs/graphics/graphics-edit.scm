@@ -266,8 +266,8 @@
 (define (last-point)
   (object_set-point
    current-point-no
-   (cadr previous-leftclick)
-   (caddr previous-leftclick))
+   current-x
+   current-y)
   (object_commit))
 
 (define (next-point)
