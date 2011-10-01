@@ -45,7 +45,8 @@
 		 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
 		 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
 		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
-		 (kernel texmacs tm-language)  (kernel texmacs tm-file-system))
+		 (kernel texmacs tm-language) (kernel texmacs tm-file-system)
+                 (kernel texmacs tm-states))
 (inherit-modules (kernel gui gui-markup)
                  (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define) (kernel gui kbd-handlers)
@@ -131,6 +132,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting graphics mode\n")
+(lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
 (lazy-define (graphics graphics-edit)
 	     graphics-reset-context graphics-undo-enabled

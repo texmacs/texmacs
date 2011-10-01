@@ -13,7 +13,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-utils)
-  (:use (utils library cursor) (utils library tree)))
+  (:use (utils library cursor)
+        (utils library tree)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some global definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define ShiftMask     256)
+(tm-define LockMask      512)
+(tm-define ControlMask  1024)
+(tm-define Mod1Mask     2048)
+(tm-define Mod2Mask     4096)
+(tm-define Mod3Mask     8192)
+(tm-define Mod4Mask    16384)
+(tm-define Mod5Mask    32768)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic scheme processing
@@ -65,7 +79,7 @@
 
 ;; Error
 (tm-define (graphics-error . msg)
-  (foreach (e msg)
+  (for (e msg)
      (display e))
   (newline) ;(quit-TeXmacs)
 )
@@ -108,9 +122,8 @@
      `(remove-eq0? ,x ,l)))
 
 ;; Iterators
-(define-public foreach for)
 
-(define-public-macro (foreach-number what . body)
+(tm-define-macro (foreach-number what . body)
   (let ((n (length what)))
     (cond ((== n 3)
          ;;(foreach-number (i i0 iN) body[i])
@@ -133,7 +146,7 @@
 		     ,(- 0 (car (cddddr what))) ,(caddr what)) ,@body)))
           (else '(noop)))))
 
-(define-public-macro (foreach-cons i . b)
+(tm-define-macro (foreach-cons i . b)
 ;;(foreach-cons (e l) i   body[elt]) -> for each cons e of the list l
 ;;(foreach-cons (e l1 l2) body[elt]) -> for each cons e in [l1...l2]
   (if (null? (cddr i))

@@ -13,11 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-group)
-  (:use (utils library cursor) (utils library tree)
-	(kernel texmacs tm-states)
-        (graphics graphics-utils) (graphics graphics-main)
-        (graphics graphics-object) (graphics graphics-env)
-        (graphics graphics-kbd) (graphics graphics-edit)))
+  (:use (graphics graphics-env)
+        (graphics graphics-single)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Group edit mode
@@ -50,11 +47,10 @@
      (with n 0
 	(set! group-bary-x 0)
 	(set! group-bary-y 0)
-	(foreach (p so-points)
-	   (set! group-bary-x (+ group-bary-x (s2f (cadr p))))
-	   (set! group-bary-y (+ group-bary-y (s2f (caddr p))))
-	   (set! n (+ n 1))
-	)
+	(for (p so-points)
+          (set! group-bary-x (+ group-bary-x (s2f (cadr p))))
+          (set! group-bary-y (+ group-bary-y (s2f (caddr p))))
+          (set! n (+ n 1)))
 	(set! group-bary-x (/ group-bary-x n))
 	(set! group-bary-y (/ group-bary-y n))))
   ))
@@ -160,8 +156,7 @@
     (sketch-checkout)
     (sketch-reset)
     (foreach-number (i 0 < (tree-arity obj))
-       (sketch-toggle (tree-ref obj i))
-    )
+       (sketch-toggle (tree-ref obj i)))
     (sketch-commit)
     (graphics-group-start)
     (set! graphics-undo-enabled #t)
@@ -209,12 +204,11 @@
 		 (set! current-obj obj)
 		 (graphics-decorations-update)))
 	      (with l '()
-		 (foreach (o (sketch-get))
+		 (for (o (sketch-get))
 		    (with p (graphics-assign-props
 			       (tree->path o)
 			       (tree->stree o))
-		       (set! l (cons (path->tree p) l)))
-		 )
+		       (set! l (cons (path->tree p) l))))
 		 (sketch-set! (reverse l))
 		 (graphics-decorations-update))
 	  )
@@ -258,9 +252,8 @@
 	 )
 	 (set! sel (graphics-select-area x1 y1 x2 y2))
 	 (sketch-reset)
-	 (foreach (p sel)
-            (sketch-toggle (path->tree p))
-	 )
+	 (for (p sel)
+            (sketch-toggle (path->tree p)))
 	 (graphics-decorations-update)
 	 (set! multiselecting #f)
 	 (set! selecting-x0 #f)
@@ -351,7 +344,7 @@
 
 (tm-define (edit_tab-key mode inc)
   (:require (eq? mode 'group-edit))
- ;(display* "Graphics] Group-edit(Tab)\n")
+  ;;(display* "Graphics] Group-edit(Tab)\n")
   (edit_tab-key 'edit inc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -399,7 +392,6 @@
      (sketch-reset)
      (sketch-checkout)
      (foreach-number (i 0 < (tree-arity sel))
-	(sketch-toggle (tree-ref sel i))
-     )
+       (sketch-toggle (tree-ref sel i)))
      (sketch-commit)
      (graphics-group-start))))

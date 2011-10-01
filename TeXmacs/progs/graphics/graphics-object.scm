@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-object)
-  (:use (utils library cursor) (utils library tree)
-	(graphics graphics-utils)))
+  (:use (graphics graphics-utils)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for calculating with the graphical object
@@ -461,7 +460,7 @@
   )
   (define res '())
   (define curscol #f)
-  (foreach (o l)
+  (for (o l)
      (if (tree? o)
 	 (with path (reverse (tree-ip o))
 	       (if (equal? path ptr)
@@ -469,7 +468,7 @@
   (if (and (== pts 'points) ptr)
   (begin
      (set! l (cons (path->tree ptr) l))))
-  (foreach (o l)
+  (for (o l)
      (if (not (and (tree? o) (< (cAr (tree-ip o)) 0)))
      (let* ((props #f)
 	    (t #f)
@@ -724,7 +723,7 @@
       (graphics-error "(sketch-commit)"))
   (with sketch0 (list-copy (sketch-get))
      (sketch-reset)
-     (foreach (o sketch0)
+     (for (o sketch0)
 	(with layer layer-of-last-removed-object
 	   (sketch-toggle (path->tree (graphics-group-insert-bis o group-mode?)))
 	   (if (not (list? layer))

@@ -13,9 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-env)
-  (:use (utils library cursor) (utils library tree)
-	(kernel texmacs tm-states)
-	(graphics graphics-utils)))
+  (:use (graphics graphics-utils)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; State variables & history for the current graphics context
@@ -292,7 +290,7 @@
   (with res (tree->stree (graphical-select-area x1 y1 x2 y2))
    ;(display* "res=" res "\n")
     (set! res (filter-graphical-select res #f #f))
-    (foreach (e res)
+    (for (e res)
        (set! l (cons (graphics-path (car e)) l))
     )
     (reverse (list-remove-duplicates l))))

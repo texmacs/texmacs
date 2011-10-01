@@ -14,8 +14,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-main)
-  (:use (utils library cursor) (utils library tree)
-        (graphics graphics-utils)))
+  (:use (graphics graphics-utils)))
 
 ;; TODO: Have a look at if there is still some part of the previous
 ;;   mess due to unsafe synchro (fetching grids, egrid-as-vgrid?, etc.)
