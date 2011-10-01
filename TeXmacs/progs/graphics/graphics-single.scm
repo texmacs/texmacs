@@ -160,7 +160,7 @@
   (delayed
     (graphics-update-constraints)))
 
-(define (current-in? l)
+(tm-define (current-in? l)
   (and (pair? current-obj) (in? (car current-obj) l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -289,34 +289,6 @@
         (object_remove-point current-point-no)
         (graphics-decorations-update))))
 
-;; Move
-(tm-define (move)
-  (:require (current-in? gr-tags-point-curves))
-  (if sticky-point
-      (move-point)
-      (move-over)))
-
-(tm-define (move)
-  (:require (current-in? '(text-at)))
-  (set! current-point-no 1)
-  (if sticky-point
-      (move-point)
-      (move-over)))
-
-(tm-define (move)
-  (:require (current-in? '(gr-group)))
-  (if sticky-point
-      (display* "Sticky move(gr-group) !yet implemented\n")
-      (begin
-	(set! current-point-no #f)
-	(graphics-decorations-update))))
-
-(tm-define (move)
-  (:require (not (current-in? gr-tags-all)))
-  (if sticky-point
-      (move-point)
-      (move-over)))
-
 ;; Middle button
 (tm-define (middle-button)
   (if sticky-point
@@ -364,7 +336,12 @@
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
   (if current-obj
-      (move)
+      (begin
+        (if (current-in? '(text-at))
+            (set! current-point-no 1))
+        (if sticky-point
+            (move-point)
+            (move-over)))
       (graphics-decorations-reset)))
 
 (tm-define (edit_left-button mode x y)
@@ -407,14 +384,6 @@
   (if (or sticky-point (current-in? '(text-at)) current-obj)
       (last-point))
   (set! previous-leftclick `(point ,current-x ,current-y)))
-
-(tm-define (edit_drag mode x y)
-  (:require (== mode 'edit))
-  (:state graphics-state)
-  (set-texmacs-pointer 'graphics-cross #t)
-  (if current-obj
-      (move)
-      (graphics-decorations-reset)))
 
 (tm-define (edit_tab-key mode inc)
   (:require (== mode 'edit))

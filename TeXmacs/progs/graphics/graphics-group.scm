@@ -323,6 +323,15 @@
 			     (point ,selecting-x0 ,y)))))))
 	  (graphics-decorations-update))))
 
+(tm-define (edit_move mode x y)
+  (:require (and (== mode 'edit) (current-in? '(gr-group))))
+  (:state graphics-state)
+  (if sticky-point
+      (display* "Uncaptured graphical move " mode ", " x ", " y "\n")
+      (begin
+        (set! current-point-no #f)
+	(graphics-decorations-update))))
+
 (tm-define (edit_left-button mode x y)
   (:require (eq? mode 'group-edit))
   (:state graphics-state)
