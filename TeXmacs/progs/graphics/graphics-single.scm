@@ -273,10 +273,6 @@
           (set-message "Left click: finish" "")
           (set! leftclick-waiting #t))))
 
-(define (back)
-  (graphics-back-state #f)
-  (graphics-move current-x current-y))
-
 (define (remove-point)
   (if (or (current-in? gr-tags-oneshot) (null? (cdddr current-obj))
 	  (not (current-in? gr-tags-all))
@@ -292,7 +288,9 @@
 ;; Middle button
 (tm-define (middle-button)
   (if sticky-point
-      (back)
+      (begin
+        (graphics-back-state #f)
+        (graphics-move current-x current-y))
       (remove-point)))
 
 (tm-define (graphics-update-decorations)
