@@ -263,31 +263,31 @@
         (object_set-point current-point-no current-x current-y)))
   (graphics-decorations-update))
 
+(define (last-point)
+  (object_set-point
+   current-point-no
+   (cadr previous-leftclick)
+   (caddr previous-leftclick))
+  (object_commit))
+
 (define (next-point)
-  (if (and leftclick-waiting
-	   (points-dist<
-            previous-leftclick
-	    `(point ,current-x ,current-y)
-            moveclick-tolerance))
-      (begin
-        (object_set-point
-         current-point-no
-         (cadr previous-leftclick)
-         (caddr previous-leftclick))
-        (object_commit))
-      (begin
-        (if (and (not leftclick-waiting)
-                 previous-leftclick
-                 (points-dist<
-		  previous-leftclick
-                  `(point ,current-x ,current-y)
-		  moveclick-tolerance))
-	    (begin
-              (undo 0)
-              (set! leftclick-waiting #f))
-	    (begin
-	      (set-message "Left click: finish" "")
-	      (set! leftclick-waiting #t))))))
+  (cond ((and leftclick-waiting
+              (points-dist<
+               previous-leftclick
+               `(point ,current-x ,current-y)
+               moveclick-tolerance))
+         (last-point))
+        ((and (not leftclick-waiting)
+              previous-leftclick
+              (points-dist<
+               previous-leftclick
+               `(point ,current-x ,current-y)
+               moveclick-tolerance))
+         (undo 0)
+         (set! leftclick-waiting #f))
+        (else
+          (set-message "Left click: finish" "")
+          (set! leftclick-waiting #t))))
 
 (define (back)
   (graphics-back-state #f)
