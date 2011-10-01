@@ -306,31 +306,34 @@
         (graphics-decorations-update))))
 
 ;; Left button
-(tm-define (left-button)
-  (:require (current-in? gr-tags-point-curves))
-  (if sticky-point
-      (last-point)
-      (start-move)))
+(tm-define (click-non-sticky)
+  (start-move))
 
-(tm-define (left-button)
+(tm-define (click-non-sticky)
   (:require (current-in? '(text-at)))
-  ;;(display* "Text at left button\n")
-  (if sticky-point
-      (object_commit)
-      (if (== (graphics-mode) '(edit text-at))
-	  (begin
-            (set-texmacs-pointer 'text-arrow)
-            (go-to (car (select-first (s2f current-x) (s2f current-y)))))
-	  (begin
-	     (set-texmacs-pointer 'graphics-cross)
-	     (set! current-point-no 1)
-	     (start-move)))))
+  (if (== (graphics-mode) '(edit text-at))
+      (begin
+        (set-texmacs-pointer 'text-arrow)
+        (go-to (car (select-first (s2f current-x) (s2f current-y)))))
+      (begin
+        (set-texmacs-pointer 'graphics-cross)
+        (set! current-point-no 1)
+        (start-move))))
+
+(tm-define (click-sticky)
+  (last-point))
+
+(tm-define (click-sticky)
+  (:require (current-in? '(text-at)))
+  (object_commit))
 
 (tm-define (left-button)
-  (:require (not (current-in? gr-tags-all)))
+  (:require (or (current-in? gr-tags-point-curves)
+                (current-in? '(text-at))
+                (not (current-in? gr-tags-all))))
   (if sticky-point
-      (last-point)
-      (start-move)))
+      (click-sticky)
+      (click-non-sticky)))
 
 ;; Move
 (tm-define (move)
