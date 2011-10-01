@@ -56,7 +56,7 @@
   (sketch-get))
   
 (tm-define (object_create tag x y)
-  (:require (eq? tag 'point))
+  (:require (== tag 'point))
   (object-set! `(point ,x ,y) 'new))
 
 (tm-define (object_create tag x y)
@@ -68,7 +68,7 @@
     (graphics-store-state #f)))
 
 (tm-define (object_create tag x y)
-  (:require (eq? tag 'text-at))
+  (:require (== tag 'text-at))
   (object-set! `(text-at "" (point ,x ,y)) 'new))
 
 (define (set-point-sub obj no x y)
@@ -289,36 +289,6 @@
         (object_remove-point current-point-no)
         (graphics-decorations-update))))
 
-;; Left button
-(tm-define (click-non-sticky)
-  (start-move))
-
-(tm-define (click-non-sticky)
-  (:require (current-in? '(text-at)))
-  (if (== (graphics-mode) '(edit text-at))
-      (begin
-        (set-texmacs-pointer 'text-arrow)
-        (go-to (car (select-first (s2f current-x) (s2f current-y)))))
-      (begin
-        (set-texmacs-pointer 'graphics-cross)
-        (set! current-point-no 1)
-        (start-move))))
-
-(tm-define (click-sticky)
-  (next-point))
-
-(tm-define (click-sticky)
-  (:require (current-in? '(text-at)))
-  (object_commit))
-
-(tm-define (left-button)
-  (:require (or (current-in? gr-tags-point-curves)
-                (current-in? '(text-at))
-                (not (current-in? gr-tags-all))))
-  (if sticky-point
-      (click-sticky)
-      (click-non-sticky)))
-
 ;; Move
 (tm-define (move)
   (:require (current-in? gr-tags-point-curves))
@@ -390,7 +360,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (edit_move mode x y)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
   (if current-obj
@@ -398,31 +368,40 @@
       (graphics-decorations-reset)))
 
 (tm-define (edit_left-button mode x y)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (if sticky-point
-      (click-sticky)
-      (edit-insert x y))
+  (cond (sticky-point
+         (if (current-in? '(text-at))
+             (object_commit)
+             (next-point)))
+        ((and (current-in? '(text-at))
+              (== (graphics-mode) '(edit text-at)))
+         (set-texmacs-pointer 'text-arrow)
+         (go-to (car (select-first (s2f current-x) (s2f current-y)))))
+        (else
+         (edit-insert x y)))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_middle-button mode x y)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
   (when current-obj
     (middle-button)))
 
 (tm-define (edit_start-drag mode x y)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
   (if (or sticky-point (current-in? '(text-at)) current-obj)
-      (left-button))
+      (if sticky-point
+          (next-point)
+          (start-move)))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_end-drag mode x y)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
   (if (or sticky-point (current-in? '(text-at)) current-obj)
@@ -430,7 +409,7 @@
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_drag mode x y)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
   (if current-obj
@@ -438,7 +417,7 @@
       (graphics-decorations-reset)))
 
 (tm-define (edit_tab-key mode inc)
-  (:require (eq? mode 'edit))
+  (:require (== mode 'edit))
   (:state graphics-state)
   (if (and current-x current-y)
       (begin
