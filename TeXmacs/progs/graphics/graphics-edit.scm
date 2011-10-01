@@ -228,8 +228,6 @@
          (if (not p2) (go-to (rcons current-path 0))))))
 
 (define (edit-insert x y)
-  (if just-started-dragging
-      (set! disable-drag #t))
   (object_create (cadr (graphics-mode)) x y))
 
 (define (start-move)
@@ -392,8 +390,6 @@
   ;;(display "obj[left-button]=")(write current-obj)(display "\n")
   (if (or sticky-point (current-in? '(text-at)))
       (begin
-	(if just-started-dragging
-	    (set! disable-drag #t))
 	(left-button))
       (if current-obj
 	  (begin
@@ -848,13 +844,11 @@
     (edit_right-button (car (graphics-mode)) x y)))
 
 (define just-started-dragging #f)
-(define disable-drag #f)
 ;; FIXME : put these 2 variables inside the state.
 
 (tm-define (graphics-start-drag x y)
   ;;(display* "Graphics] Start-drag " x ", " y "\n")
   ;;(display* "  just-started " just-started-dragging "\n")
-  ;;(display* "  disable-drag " disable-drag "\n")
   ;;(display* "  sticky-point " sticky-point "\n")
   ;;(display* "  choosing " choosing "\n")
   ;;(display* "  leftclick-waiting " leftclick-waiting "\n")
@@ -862,7 +856,6 @@
   ;;(display* "  graphics-action " graphics-action "\n")
   ;;(display* "  current-point-no " current-point-no "\n")
   (when (not (inside? 'text-at))
-    (set! disable-drag #t)
     (set! just-started-dragging #t)
     (graphics-release-left x y)))
 
@@ -875,7 +868,6 @@
   ;;(display* "Graphics] End-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
     (set! just-started-dragging #f)
-    (set! disable-drag #f)
     (graphics-release-left x y)
     (if (== (car (graphics-mode)) 'edit)
         (if (not (current-in? '(text-at)))
