@@ -374,8 +374,8 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (if (or sticky-point (current-in? '(text-at)) current-obj)
-      (left-button)
+  (if sticky-point
+      (click-sticky)
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
