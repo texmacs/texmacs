@@ -75,7 +75,6 @@
 
 ;; Basic operations (setting the object)
 (define (object-set! o . opt)
- ;(display* "o=" o "\n")
   (set! layer-of-last-removed-object #f)
   (set! current-obj o)    ;; FIXME: Hmmm, I still have a doubt for this one.
                           ;;   Should completely clarify its role & centralize
@@ -126,13 +125,11 @@
 ;; Basic operations (set & add point)
 (define (object_set-point no xcur ycur)
   (define obj (stree-radical (car (sketch-get1))))
-  ;;(display* "obj[" no ";" xcur "," ycur "]=" obj "\n")
   (set-point-sub obj no xcur ycur)
   (object-set! (car (sketch-get))))
 
 (define (object_add-point no xcur ycur x y dirn)
   (define obj (stree-radical (car (sketch-get1))))
- ;(display* "obj=" obj "\n")
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
   	(graphics-store-state #f)
@@ -220,8 +217,8 @@
 (define previous-leftclick #f)
 
 (define (move-over)
- ;(display* "obj[move<" sticky-point ">]=")(write current-obj)(display "\n")
-  (set-message "Left click: add or edit object; Middle click: remove object" "")
+  (set-message "Left click: add or edit object; Middle click: remove object"
+               "")
   (graphics-decorations-update)
   (if current-path
       (with p2 (tm-upwards-path current-path '(text-at) '(graphics))
@@ -247,36 +244,31 @@
   (graphics-store-state #f))
 
 (define (move-point)
- ;(display* "obj[move<" sticky-point ">]=")(write current-obj)(display "\n")
   (if (and leftclick-waiting
 	   (not (points-dist<
-		  previous-leftclick
+                 previous-leftclick
 		 `(point ,current-x ,current-y)
-		  moveclick-tolerance)))
+                 moveclick-tolerance)))
       (begin
-	 ;(display* "prev-leftc(2)=" previous-leftclick "\n")
-	 ;(display* "x(2)=" current-x "\n")
-	 ;(display* "y(2)=" current-y "\n\n")
-	 (set! leftclick-waiting #f)
-	 (object_add-point
-	   current-point-no
-	   (cadr previous-leftclick) (caddr previous-leftclick)
-	   current-x current-y
-	   (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
+        (set! leftclick-waiting #f)
+        (object_add-point
+         current-point-no
+         (cadr previous-leftclick) (caddr previous-leftclick)
+         current-x current-y
+         (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
       (begin
-	 (if leftclick-waiting
-	     (set-message "Left click: finish" "")
-	     (set-message "Left click: add point; Middle click: undo" ""))
-	 (object_set-point current-point-no current-x current-y))
-  )
+        (if leftclick-waiting
+            (set-message "Left click: finish" "")
+            (set-message "Left click: add point; Middle click: undo" ""))
+        (object_set-point current-point-no current-x current-y)))
   (graphics-decorations-update))
 
 (define (last-point)
   (if (and leftclick-waiting
 	   (points-dist<
-	     previous-leftclick
+            previous-leftclick
 	    `(point ,current-x ,current-y)
-	     moveclick-tolerance))
+            moveclick-tolerance))
       (begin
         (object_set-point
          current-point-no
@@ -288,7 +280,7 @@
                  previous-leftclick
                  (points-dist<
 		  previous-leftclick
-                 `(point ,current-x ,current-y)
+                  `(point ,current-x ,current-y)
 		  moveclick-tolerance))
 	    (begin
               (undo 0)
@@ -297,19 +289,13 @@
               (set! just-started-dragging #f))
 	    (begin
 	      (set-message "Left click: finish" "")
-	      (set! leftclick-waiting #t)))))
- ;(display* "prev-leftc=" previous-leftclick "\n")
- ;(display* "x=" current-x "\n")
- ;(display* "y=" current-y "\n\n")
-  )
+	      (set! leftclick-waiting #t))))))
 
 (define (back)
- ;(display* "obj[" p "]=" obj "\n")
   (graphics-back-state #f)
   (graphics-move current-x current-y))
 
 (define (remove-point)
- ;(display* "obj[" p "]=" obj "\n")
   (if (or (current-in? gr-tags-oneshot) (null? (cdddr current-obj))
 	  (not (current-in? gr-tags-all))
 	  (!= (logand (get-keyboard-modifiers) ShiftMask) 0))
@@ -387,33 +373,21 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  ;;(display "obj[left-button]=")(write current-obj)(display "\n")
   (if (or sticky-point (current-in? '(text-at)))
       (left-button)
       (if current-obj
-	  (begin
-	    (if (or (not just-started-dragging) (not choosing))
-                (begin
-                  (if (not (graphics-states-void?))
-                      (graphics-pop-state))
-                  (graphics-store-state #f)))
-	    (set! choosing #t))
+          (set! choosing #t)
 	  (edit-insert x y)))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
- ;(display "obj[move]=")(write current-obj)(display "\n")
   (set-texmacs-pointer 'graphics-cross #t)
   (if choosing
    ;; Start moving point/object or inserting a new point
       (with first #f
-	 (graphics-state-set (graphics-pop-state))
-      ;; Restores the state when choosing has been set
-	 (set! first (not choosing))
 	 (set! choosing #f)
-	 (graphics-forget-states)
 	 (if (and first
 		  (not just-started-dragging)
 		  (not (current-in? '(xtext-at))))
@@ -429,25 +403,25 @@
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
- ;(display* "Graphics] Edit(Middle-button)[" current-path "]=" current-obj "\n")
-  (if current-obj
-      (begin
-	 (if choosing
-	     (graphics-state-set (graphics-pop-state)))
-	 (middle-button))))
+  (when current-obj
+    (middle-button)))
 
 (tm-define (edit_right-button mode x y)
   (:require (eq? mode 'edit))
   (display* "Right button(edit) currently unused\n"))
 
+(tm-define (graphics-update-tab)
+  (:state graphics-state)
+  (if current-obj (graphics-decorations-update)))
+
 (tm-define (edit_tab-key mode inc)
   (:require (eq? mode 'edit))
   (:state graphics-state)
- ;(display* "\nGraphics] Edit(Tab)[" next "," current-path "]=" current-obj "\n")
   (if (and current-x current-y)
       (begin
-	(if current-obj (graphics-decorations-update))
-        (select-next inc))
+        (set! choosing #t)
+        (select-next inc)
+        (graphics-update-tab))
       (invalidate-graphical-object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -712,15 +686,11 @@
      res))
 
 (tm-define (graphics-zmove dirn)
- ;(display* "dirn(graphics-zmove)=" dirn "\n")
- ;(display* "current-path" current-path "\n")
   (if current-path
   (let* ((p (graphics-object-root-path current-path))
 	 (t (if p (path->tree p) #f))
 	 (t0 (if t (path->tree (cDr p)) #f))
          (i0 (graphics-graphical-index t0)))
-    ;(display* "t0=" (get-tag? t0) "\n")
-    ;(display* "t=" t "\n")
      (cond ((eq? dirn 'background)
 	    (if (> (cAr p) i0)
 	    (let* ((p-1 (rcons (cDr p) i0))
@@ -883,12 +853,8 @@
 (tm-define (graphics-choose-point inc)
   (:state graphics-state)
   ;(display* "Graphics] Choose\n")
-  (if (not (graphics-states-void?))
-      (graphics-pop-state))
-  (set! choosing #t)
-  (graphics-store-state #f)
   (edit_tab-key (car (graphics-mode)) inc))
-  
+
 (tm-define (graphics-enter-mode old-mode new-mode)
   (:state graphics-state)
   (if (and (graphics-group-mode? old-mode)
