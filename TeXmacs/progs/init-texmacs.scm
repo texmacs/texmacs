@@ -134,8 +134,8 @@
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
 (lazy-define (graphics graphics-edit)
 	     graphics-reset-context graphics-undo-enabled
-	     graphics-insert-point graphics-remove-point
-	     graphics-last-point graphics-start-drag
+	     graphics-release-left graphics-release-middle
+	     graphics-release-right graphics-start-drag
 	     graphics-dragging graphics-end-drag)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 

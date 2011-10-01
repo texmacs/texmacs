@@ -385,13 +385,13 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
     invalidate_graphical_object ();
     call ("set-keyboard-modifiers", object (m));
     if (type == "move")
-      call ("graphics-move-point", sx, sy);
+      call ("graphics-move", sx, sy);
     else if (type == "release-left")
-      call ("graphics-insert-point", sx, sy);
+      call ("graphics-release-left", sx, sy);
     else if (type == "release-middle")
-      call ("graphics-remove-point", sx, sy);
+      call ("graphics-release-middle", sx, sy);
     else if (type == "release-right")
-      call ("graphics-last-point", sx, sy);
+      call ("graphics-release-right", sx, sy);
     else if (type == "start-drag")
       call ("graphics-start-drag", sx, sy);
     else if (type == "dragging")

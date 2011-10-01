@@ -308,7 +308,7 @@
 (define (back)
  ;(display* "obj[" p "]=" obj "\n")
   (graphics-back-state #f)
-  (graphics-move-point current-x current-y))
+  (graphics-move current-x current-y))
 
 (define (remove-point)
  ;(display* "obj[" p "]=" obj "\n")
@@ -821,7 +821,12 @@
 (tm-define (get-keyboard-modifiers)
   the-keyboard-modifiers)
 
-(tm-define (graphics-insert-point x y)
+(tm-define (graphics-move x y)
+  ;;(display* "Graphics] Move " x ", " y "\n")
+  (when (not (inside? 'text-at))
+    (edit_move (car (graphics-mode)) x y)))
+
+(tm-define (graphics-release-left x y)
   ;;(display* "Graphics] Insert " x ", " y "\n")
   (if (inside? 'text-at)
       (with-innermost t 'text-at
@@ -832,17 +837,12 @@
               (tree-go-to t :start))))
       (edit_left-button (car (graphics-mode)) x y)))
 
-(tm-define (graphics-move-point x y)
-  ;;(display* "Graphics] Move " x ", " y "\n")
-  (when (not (inside? 'text-at))
-    (edit_move (car (graphics-mode)) x y)))
-
-(tm-define (graphics-remove-point x y)
+(tm-define (graphics-release-middle x y)
   ;;(display* "Graphics] Remove " x ", " y "\n")
   (when (not (inside? 'text-at))
     (edit_middle-button (car (graphics-mode)) x y)))
 
-(tm-define (graphics-last-point x y)
+(tm-define (graphics-release-right x y)
   ;;(display* "Graphics] Last " x ", " y "\n")
   (when (not (inside? 'text-at))
     (edit_right-button (car (graphics-mode)) x y)))
@@ -864,32 +864,32 @@
   (when (not (inside? 'text-at))
     (set! disable-drag #t)
     (set! just-started-dragging #t)
-    (graphics-insert-point x y)))
+    (graphics-release-left x y)))
 
 (tm-define (graphics-dragging x y)
   ;;(display* "Graphics] dragging " x ", " y "\n")
   (when (not (inside? 'text-at))
-    (graphics-move-point x y)))
+    (graphics-move x y)))
 
 (tm-define (graphics-end-drag x y)
   ;;(display* "Graphics] End-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
     (set! just-started-dragging #f)
     (set! disable-drag #f)
-    (graphics-insert-point x y)
+    (graphics-release-left x y)
     (if (== (car (graphics-mode)) 'edit)
         (if (not (current-in? '(text-at)))
-            (graphics-insert-point x y)))))
+            (graphics-release-left x y)))))
 
 (tm-define (graphics-start-right-drag x y)
   ;(display* "Graphics] Start-right-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
-    (graphics-last-point x y)))
+    (graphics-release-right x y)))
 
 (tm-define (graphics-right-dragging x y)
   ;(display* "Graphics] right-dragging " x ", " y "\n")
   (when (not (inside? 'text-at))
-    (graphics-move-point x y)))
+    (graphics-move x y)))
 
 (tm-define (graphics-end-right-drag x y)
   (:state graphics-state)
@@ -897,7 +897,7 @@
   (when (not (inside? 'text-at))
     (if (not sticky-point)
         ;; FIXME : test due to timing problems in detecting the drag
-        (graphics-last-point x y))))
+        (graphics-release-right x y))))
 
 (tm-define (graphics-choose-point inc)
   (:state graphics-state)
