@@ -387,13 +387,19 @@
 (tm-define (get-keyboard-modifiers)
   the-keyboard-modifiers)
 
+;;(display* "  sticky-point " sticky-point "\n")
+;;(display* "  leftclick-waiting " leftclick-waiting "\n")
+;;(display* "  current-graphical-object " current-graphical-object "\n")
+;;(display* "  graphics-action " graphics-action "\n")
+;;(display* "  current-point-no " current-point-no "\n")
+
 (tm-define (graphics-move x y)
   ;;(display* "Graphics] Move " x ", " y "\n")
   (when (not (inside? 'text-at))
     (edit_move (car (graphics-mode)) x y)))
 
 (tm-define (graphics-release-left x y)
-  ;;(display* "Graphics] Insert " x ", " y "\n")
+  ;;(display* "Graphics] Release-left " x ", " y "\n")
   (if (inside? 'text-at)
       (with-innermost t 'text-at
         (let* ((ps (select-first (s2f x) (s2f y)))
@@ -404,27 +410,22 @@
       (edit_left-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-release-middle x y)
-  ;;(display* "Graphics] Remove " x ", " y "\n")
+  ;;(display* "Graphics] Release-middle " x ", " y "\n")
   (when (not (inside? 'text-at))
     (edit_middle-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-release-right x y)
-  ;;(display* "Graphics] Last " x ", " y "\n")
+  ;;(display* "Graphics] Release-right " x ", " y "\n")
   (when (not (inside? 'text-at))
     (edit_right-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-start-drag x y)
   ;;(display* "Graphics] Start-drag " x ", " y "\n")
-  ;;(display* "  sticky-point " sticky-point "\n")
-  ;;(display* "  leftclick-waiting " leftclick-waiting "\n")
-  ;;(display* "  current-graphical-object " current-graphical-object "\n")
-  ;;(display* "  graphics-action " graphics-action "\n")
-  ;;(display* "  current-point-no " current-point-no "\n")
   (when (not (inside? 'text-at))
     (edit_start-drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-dragging x y)
-  ;;(display* "Graphics] dragging " x ", " y "\n")
+  ;;(display* "Graphics] Dragging " x ", " y "\n")
   (when (not (inside? 'text-at))
     (edit_drag (car (graphics-mode)) x y)))
 
@@ -434,18 +435,18 @@
     (edit_end-drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-start-right-drag x y)
-  ;(display* "Graphics] Start-right-drag " x ", " y "\n")
+  ;;(display* "Graphics] Start-right-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
     (graphics-release-right x y)))
 
 (tm-define (graphics-right-dragging x y)
-  ;(display* "Graphics] right-dragging " x ", " y "\n")
+  ;;(display* "Graphics] Right-dragging " x ", " y "\n")
   (when (not (inside? 'text-at))
     (graphics-move x y)))
 
 (tm-define (graphics-end-right-drag x y)
   (:state graphics-state)
-  ;(display* "Graphics] End-right-drag " x ", " y "\n")
+  ;;(display* "Graphics] End-right-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
     (if (not sticky-point)
         ;; FIXME : test due to timing problems in detecting the drag
@@ -459,17 +460,14 @@
 (tm-define (graphics-enter-mode old-mode new-mode)
   (:state graphics-state)
   (if (and (graphics-group-mode? old-mode)
-	   (not (graphics-group-mode? new-mode))
-      )
-      (graphics-reset-state)
-  )
+	   (not (graphics-group-mode? new-mode)))
+      (graphics-reset-state))
   (if (and (not (graphics-group-mode? old-mode))
-	   (graphics-group-mode? new-mode)
-      )
+	   (graphics-group-mode? new-mode))
       (begin
-	 (if sticky-point (undo 0))
-	 (sketch-reset)
-	 (graphics-decorations-reset))))
+        (if sticky-point (undo 0))
+        (sketch-reset)
+        (graphics-decorations-reset))))
 
 (tm-define (graphics-finish)
   ;;(display* "Graphics] Finish\n")
