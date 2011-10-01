@@ -263,7 +263,7 @@
         (object_set-point current-point-no current-x current-y)))
   (graphics-decorations-update))
 
-(define (last-point)
+(define (next-point)
   (if (and leftclick-waiting
 	   (points-dist<
             previous-leftclick
@@ -321,7 +321,7 @@
         (start-move))))
 
 (tm-define (click-sticky)
-  (last-point))
+  (next-point))
 
 (tm-define (click-sticky)
   (:require (current-in? '(text-at)))
