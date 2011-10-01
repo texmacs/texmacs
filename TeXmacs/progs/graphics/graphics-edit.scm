@@ -284,8 +284,7 @@
 		  moveclick-tolerance))
 	    (begin
               (undo 0)
-              (set! leftclick-waiting #f)
-              (set! just-started-dragging #f))
+              (set! leftclick-waiting #f))
 	    (begin
 	      (set-message "Left click: finish" "")
 	      (set! leftclick-waiting #t))))))
@@ -798,20 +797,14 @@
   (when (not (inside? 'text-at))
     (edit_right-button (car (graphics-mode)) x y)))
 
-(define just-started-dragging #f)
-;; FIXME : put these 2 variables inside the state.
-
 (tm-define (graphics-start-drag x y)
   ;;(display* "Graphics] Start-drag " x ", " y "\n")
-  ;;(display* "  just-started " just-started-dragging "\n")
   ;;(display* "  sticky-point " sticky-point "\n")
-  ;;(display* "  choosing " choosing "\n")
   ;;(display* "  leftclick-waiting " leftclick-waiting "\n")
   ;;(display* "  current-graphical-object " current-graphical-object "\n")
   ;;(display* "  graphics-action " graphics-action "\n")
   ;;(display* "  current-point-no " current-point-no "\n")
   (when (not (inside? 'text-at))
-    (set! just-started-dragging #t)
     (graphics-release-left x y)))
 
 (tm-define (graphics-dragging x y)
@@ -822,7 +815,6 @@
 (tm-define (graphics-end-drag x y)
   ;;(display* "Graphics] End-drag " x ", " y "\n")
   (when (not (inside? 'text-at))
-    (set! just-started-dragging #f)
     (graphics-release-left x y)
     (if (== (car (graphics-mode)) 'edit)
         (if (not (current-in? '(text-at)))
