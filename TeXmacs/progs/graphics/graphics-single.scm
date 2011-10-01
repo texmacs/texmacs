@@ -371,18 +371,23 @@
   (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (if (or sticky-point (current-in? '(text-at)) current-obj)
+  (set! dragging-create? (or sticky-point (not current-obj)))
+  (if (or sticky-point current-obj)
       (if sticky-point
           (next-point)
-          (start-move)))
+          (start-move))
+      (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_end-drag mode x y)
   (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
-  (if (or sticky-point (current-in? '(text-at)) current-obj)
-      (last-point))
+  (if (or sticky-point current-obj)
+      (if dragging-create?
+          (edit_move mode x y)
+          (last-point)))
+  (set! dragging-create? #f)
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_tab-key mode inc)
