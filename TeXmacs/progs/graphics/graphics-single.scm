@@ -185,7 +185,6 @@
       (tree-update-constraints t)
       (add-undo-mark))))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit operations
 ;;
@@ -354,7 +353,50 @@
       (back)
       (remove-point)))
 
-;; Dispatch
+(tm-define (graphics-update-decorations)
+  (:state graphics-state)
+  (if current-obj (graphics-decorations-update)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Default global dispatching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (edit_move mode x y)
+  (display* "Uncaptured graphical move " mode ", " x ", " y "\n"))
+
+(tm-define (edit_left-button mode x y)
+  (display* "Uncaptured graphical left-button " mode ", " x ", " y "\n"))
+
+(tm-define (edit_middle-button mode x y)
+  (display* "Uncaptured graphical middle-button " mode ", " x ", " y "\n"))
+
+(tm-define (edit_right-button mode x y)
+  (display* "Uncaptured graphical right-button " mode ", " x ", " y "\n"))
+
+(tm-define (edit_start-drag mode x y)
+  (edit_left-button mode x y))
+
+(tm-define (edit_drag mode x y)
+  (edit_move mode x y))
+
+(tm-define (edit_end-drag mode x y)
+  (edit_left-button mode x y))
+
+(tm-define (edit_tab-key mode inc)
+  (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global dispatching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (edit_move mode x y)
+  (:require (eq? mode 'edit))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross #t)
+  (if current-obj
+      (move)
+      (graphics-decorations-reset)))
+
 (tm-define (edit_left-button mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
@@ -364,8 +406,12 @@
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
-(tm-define (edit_start-drag mode x y)
-  (edit_left-button mode x y))
+(tm-define (edit_middle-button mode x y)
+  (:require (eq? mode 'edit))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross)
+  (when current-obj
+    (middle-button)))
 
 (tm-define (edit_start-drag mode x y)
   (:require (eq? mode 'edit))
@@ -376,9 +422,6 @@
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_end-drag mode x y)
-  (edit_left-button mode x y))
-
-(tm-define (edit_end-drag mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
@@ -386,17 +429,6 @@
       (last-point))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
-(tm-define (edit_move mode x y)
-  (:require (eq? mode 'edit))
-  (:state graphics-state)
-  (set-texmacs-pointer 'graphics-cross #t)
-  (if current-obj
-      (move)
-      (graphics-decorations-reset)))
-
-(tm-define (edit_drag mode x y)
-  (edit_move mode x y))
-
 (tm-define (edit_drag mode x y)
   (:require (eq? mode 'edit))
   (:state graphics-state)
@@ -404,24 +436,6 @@
   (if current-obj
       (move)
       (graphics-decorations-reset)))
-
-(tm-define (edit_middle-button mode x y)
-  (:require (eq? mode 'edit))
-  (:state graphics-state)
-  (set-texmacs-pointer 'graphics-cross)
-  (when current-obj
-    (middle-button)))
-
-(tm-define (edit_right-button mode x y)
-  (:require (eq? mode 'edit))
-  (display* "Right button(edit) currently unused\n"))
-
-(tm-define (graphics-update-tab)
-  (:state graphics-state)
-  (if current-obj (graphics-decorations-update)))
-
-(tm-define (edit_tab-key mode inc)
-  (noop))
 
 (tm-define (edit_tab-key mode inc)
   (:require (eq? mode 'edit))
@@ -429,5 +443,5 @@
   (if (and current-x current-y)
       (begin
         (select-next inc)
-        (graphics-update-tab))
+        (graphics-update-decorations))
       (invalidate-graphical-object)))
