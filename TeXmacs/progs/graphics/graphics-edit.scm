@@ -393,13 +393,6 @@
 	(left-button))
       (if current-obj
 	  (begin
-	    (if (not just-started-dragging)
-                (begin
-                  (edit_tab-key 'edit
-                                (if (graphics-states-void?)
-                                    #f
-                                    choosing)
-                                1)))
 	    (if (or (not just-started-dragging) (not choosing))
                 (begin
                   (if (not (graphics-states-void?))
@@ -448,17 +441,14 @@
   (:require (eq? mode 'edit))
   (display* "Right button(edit) currently unused\n"))
 
-(tm-define (edit_tab-key mode next inc)
+(tm-define (edit_tab-key mode inc)
   (:require (eq? mode 'edit))
   (:state graphics-state)
  ;(display* "\nGraphics] Edit(Tab)[" next "," current-path "]=" current-obj "\n")
   (if (and current-x current-y)
       (begin
-	(if current-obj
-	    (graphics-decorations-update))
-	(if next
-	    (select-next inc))
-      )
+	(if current-obj (graphics-decorations-update))
+        (select-next inc))
       (invalidate-graphical-object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -898,7 +888,7 @@
       (graphics-pop-state))
   (set! choosing #t)
   (graphics-store-state #f)
-  (edit_tab-key (car (graphics-mode)) #t inc))
+  (edit_tab-key (car (graphics-mode)) inc))
   
 (tm-define (graphics-enter-mode old-mode new-mode)
   (:state graphics-state)
