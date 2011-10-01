@@ -389,8 +389,7 @@
   (set-texmacs-pointer 'graphics-cross)
   ;;(display "obj[left-button]=")(write current-obj)(display "\n")
   (if (or sticky-point (current-in? '(text-at)))
-      (begin
-	(left-button))
+      (left-button)
       (if current-obj
 	  (begin
 	    (if (or (not just-started-dragging) (not choosing))

@@ -349,10 +349,10 @@
 	  (remove-selected-objects))
       (unselect-all current-path current-obj)))
 
-(tm-define (edit_tab-key mode next inc)
+(tm-define (edit_tab-key mode inc)
   (:require (eq? mode 'group-edit))
  ;(display* "Graphics] Group-edit(Tab)\n")
-  (edit_tab-key 'edit next inc))
+  (edit_tab-key 'edit inc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cut & paste actions
