@@ -394,17 +394,20 @@
 	   (graphics-decorations-reset)))))
 
 (tm-define (edit_drag mode x y)
+  (edit_move mode x y))
+
+(tm-define (edit_drag mode x y)
+  (:require (eq? mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross #t)
-  (when (== mode 'edit)
-    (if choosing
-        (begin ;; Start moving point/object or inserting a new point
-          (set! choosing #f)
-          (left-button))
-        (begin ;; Moving
-          (if current-obj
-              (move)
-              (graphics-decorations-reset))))))
+  (if choosing
+      (begin ;; Start moving point/object or inserting a new point
+        (set! choosing #f)
+        (left-button))
+      (begin ;; Moving
+        (if current-obj
+            (move)
+            (graphics-decorations-reset)))))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'edit))
@@ -828,7 +831,7 @@
 (tm-define (graphics-dragging x y)
   ;;(display* "Graphics] dragging " x ", " y "\n")
   (when (not (inside? 'text-at))
-    (graphics-move x y)))
+    (edit_drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-end-drag x y)
   ;;(display* "Graphics] End-drag " x ", " y "\n")
