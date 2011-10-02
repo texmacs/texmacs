@@ -371,9 +371,12 @@
   (set-texmacs-pointer 'graphics-cross)
   (set! dragging-create? (or sticky-point (not current-obj)))
   (if (or sticky-point current-obj)
-      (if sticky-point
-          (next-point)
-          (start-move))
+      (begin
+        (if (current-in? '(text-at))
+            (set! current-point-no 1))
+        (if sticky-point
+            (next-point)
+            (start-move)))
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
