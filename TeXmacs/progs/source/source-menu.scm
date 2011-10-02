@@ -167,4 +167,5 @@
    (make-style-with "src-compact" "none"))
   ((balloon (icon "tm_compact.xpm") "Compactify")
    (make-style-with "src-compact" "all"))
+  /
   (link text-format-icons))
