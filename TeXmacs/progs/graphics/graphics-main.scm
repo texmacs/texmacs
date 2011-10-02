@@ -801,8 +801,19 @@
          (u (caddr fr))
          (newu (length-mult e u))
          (newud (length-decode newu))
-         (newfr `(tuple "scale" ,newu ,(cAr fr)))
-     )            
+
+         (x1 (cadr (cadddr fr)))
+         (y1 (caddr (cadddr fr)))
+         (x2 (length-add x1 "-0.5gw"))
+         (y2 (length-add y1 "-0.5gh"))
+         (x3 (length-mult e x2))
+         (y3 (length-mult e y2))
+         (x4 (length-add x3 "0.5gw"))
+         (y4 (length-add y3 "0.5gh"))
+         (x5 (if (and (string? x4) (string-ends? x4 "gw")) x4 x1))
+         (y5 (if (and (string? y4) (string-ends? y4 "gh")) y4 y1))
+
+         (newfr `(tuple "scale" ,newu (tuple ,x4 ,y4))))            
      (if (and (> newud 100) (< newud 10000000))
      (with magn (multiply-magnification
                    (graphics-get-property "magnification") e)
