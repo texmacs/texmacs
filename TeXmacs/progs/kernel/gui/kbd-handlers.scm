@@ -22,4 +22,4 @@
 
 (tm-define (mouse-event key x y mods time)
   ;;(display* "mouse-event " key ", " x ", " y ", " mods ", " time "\n")
-  (mouse-any key x y mods time))
+  (mouse-any key x y mods (+ time 0.0)))

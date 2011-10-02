@@ -412,7 +412,7 @@ delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
   string cmd=
     "(delayed (mouse-event " * scm_quote (kind) * " " *
     as_string (x) * " " * as_string (y) * " " *
-    as_string (m) * " " * as_string (((double) t) + 0.5) * "))";
+    as_string (m) * " " * as_string (((double) t)) * "))";
   eval (cmd);
 }
 

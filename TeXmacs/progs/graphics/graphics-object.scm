@@ -285,8 +285,6 @@
                            `(with "text-at-halign" ,ha0
                                   "text-at-valign" ,va0 ,o)
 			   o)
-               (if (!= mag "default")
-                   (set! res `(with "magnification" ,mag ,res)))
                res))
 	 (info0 (cdr (box-info o1 "lbLB")))
 	 (info1 (cdr (box-info o1 "rtRT")))
