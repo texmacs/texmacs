@@ -264,36 +264,16 @@
 ;; Graphical contours
 ;;NOTE: This subsection is OK.
 (define (create-graphical-embedding-box o ha0 va0 halign valign mag len)
-  (define (create-haligns l b r t)
-     (with x (cond ((== halign "left") l)
-		   ((== halign "center") (f2s (/ (+ (s2f l) (s2f r)) 2)))
-		   ((== halign "right") r)
-		   (else l))
-       `((line (point ,x ,b) (point ,x ,(f2s (- (s2f b) len))))
-	 (line (point ,x ,t) (point ,x ,(f2s (+ (s2f t) len))))))
-  )
-  (define (create-valigns l b r t)
-     (with y (cond ((== valign "bottom") b)
-		   ((== valign "center") (f2s (/ (+ (s2f b) (s2f t)) 2)))
-		   ((== valign "top") t)
-		   (else b))
-       `((line (point ,l ,y) (point ,(f2s (- (s2f l) len)) ,y))
-	 (line (point ,r ,y) (point ,(f2s (+ (s2f r) len)) ,y))))
-  )
   (define (get-textat-vbase b0)
-     (if (and (eq? (car o) 'text-at)
-	      (equal? va0 "base"))
+     (if (and (== (car o) 'text-at) (== va0 "base"))
 	 (begin
-	    (set! o `(with "text-at-halign" ,ha0
-			   "text-at-valign" "bottom" ,o))
-	    (let* ((info0 (cdr (box-info o "lbLB")))
-		   (b (f2s (min (s2f (cadr info0)) (s2f (cadddr info0)))))
-		  )
-		  (set! o (list-ref o 5))
-		  b)
-	 )
-	 b0)
-  )
+           (set! o `(with "text-at-halign" ,ha0
+                      "text-at-valign" "bottom" ,o))
+           (let* ((info0 (cdr (box-info o "lbLB")))
+                  (b (f2s (min (s2f (cadr info0)) (s2f (cadddr info0))))))
+             (set! o (list-ref o 5))
+             b))
+	 b0))
   (define (create-text-at-handle o)
     (cond ((func? o 'with)
            (create-text-at-handle (cAr o)))
@@ -302,12 +282,12 @@
                ,(cAr o))))
           (else '())))
   (let* ((o1 (with res (if (in? (car o) '(text-at gr-group))
-			  `(with "text-at-halign" ,ha0
-				 "text-at-valign" ,va0 ,o)
+                           `(with "text-at-halign" ,ha0
+                                  "text-at-valign" ,va0 ,o)
 			   o)
-		(if (!= mag "default")
-		    (set! res `(with "magnification" ,mag ,res)))
-		res))
+               (if (!= mag "default")
+                   (set! res `(with "magnification" ,mag ,res)))
+               res))
 	 (info0 (cdr (box-info o1 "lbLB")))
 	 (info1 (cdr (box-info o1 "rtRT")))
 	 (l (f2s (min (s2f (car  info0)) (s2f (caddr  info0)))))
@@ -320,23 +300,14 @@
 	 (p0 (frame-inverse `(tuple ,l ,b)))
 	 (p1 (frame-inverse `(tuple ,r ,b)))
 	 (p2 (frame-inverse `(tuple ,r ,t)))
-	 (p3 (frame-inverse `(tuple ,l ,t)))
-	)
-	(set-car! p0 'point)
-	(set-car! p1 'point)
-	(set-car! p2 'point)
-	(set-car! p3 'point)
-	(with res `((cline ,p00 ,p10 ,p2 ,p3))
-          ;;(if halign
-          ;;    (set! res (append res
-          ;;                      (create-haligns (cadr p00) (caddr p00)
-          ;;                                      (cadr p10) (caddr p2)))))
-          ;;(if valign
-          ;;    (set! res (append res
-          ;;                      (create-valigns (cadr p0) (caddr p0)
-          ;;                                      (cadr p1) (caddr p2)))))
-          (set! res (append res (create-text-at-handle o)))
-          res)))
+	 (p3 (frame-inverse `(tuple ,l ,t))))
+    (set-car! p0 'point)
+    (set-car! p1 'point)
+    (set-car! p2 'point)
+    (set-car! p3 'point)
+    (with res `((cline ,p00 ,p10 ,p2 ,p3))
+      (set! res (append res (create-text-at-handle o)))
+      res)))
 
 (define (in-interval? x i1 i2 supop infop)
   (and (supop x i1) (infop x i2)))
@@ -345,7 +316,7 @@
   (set! eps (length-decode eps))
   (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	 (va (get-graphical-prop 'basic "text-at-valign"))
-	 (o1 (if (and (pair? o) (eq? (car o) 'text-at))
+	 (o1 (if (and (pair? o) (== (car o) 'text-at))
 		`(with "text-at-halign" ,ha
 		       "text-at-valign" ,va ,o)
 		 o))
@@ -355,82 +326,73 @@
 	 (b (min (s2f (cadr info0)) (s2f (cadddr info0))))
 	 (r (max (s2f (car  info1)) (s2f (caddr  info1))))
 	 (t (max (s2f (cadr info1)) (s2f (cadddr info1))))
-	 (p (frame-direct `(tuple ,x ,y)))
-	)
-	(set! x (s2f (cadr p)))
-	(set! y (s2f (caddr p)))
-	(or (and (in-interval? x (- l eps) l >= <)
-		 (in-interval? y (- b eps) (+ t eps) >= <=))
-	    (and (in-interval? x r (+ r eps) > <=)
-		 (in-interval? y (- b eps) (+ t eps) >= <=))
-	    (and (in-interval? x (- l eps) (+ r eps) >= <=)
-		 (in-interval? y (- b eps) b >= <))
-	    (and (in-interval? x (- l eps) (+ r eps) >= <=)
-		 (in-interval? y t (+ t eps) > <=)))))
+	 (p (frame-direct `(tuple ,x ,y))))
+    (set! x (s2f (cadr p)))
+    (set! y (s2f (caddr p)))
+    (or (and (in-interval? x (- l eps) l >= <)
+             (in-interval? y (- b eps) (+ t eps) >= <=))
+        (and (in-interval? x r (+ r eps) > <=)
+             (in-interval? y (- b eps) (+ t eps) >= <=))
+        (and (in-interval? x (- l eps) (+ r eps) >= <=)
+             (in-interval? y (- b eps) b >= <))
+        (and (in-interval? x (- l eps) (+ r eps) >= <=)
+             (in-interval? y t (+ t eps) > <=)))))
 
 (define draw-nonsticky-curp #t)
 (define (create-graphical-contour o edge no) ;; Point mode
   (define (curp lp)
-     (if draw-nonsticky-curp lp '())
-  )
+     (if draw-nonsticky-curp lp '()))
   (cond ((== (car o) 'point)
-         (cons o '())
-        )
+         (cons o '()))
         ((== (car o) 'text-at)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
-	        (mag (get-graphical-prop 'basic "magnification"))
-	    )
-	    (create-graphical-embedding-box o ha va ha va mag 0.1))
-        )
+	        (mag (get-graphical-prop 'basic "magnification")))
+           (create-graphical-embedding-box o ha va ha va mag 0.1)))
         ((== (car o) 'gr-group)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
-	        (mag (get-graphical-prop 'basic "magnification"))
-	    )
-	    (create-graphical-embedding-box
-	       o ha va "center" "center" mag 0.1))
-        )
+	        (mag (get-graphical-prop 'basic "magnification")))
+           (create-graphical-embedding-box
+            o ha va "center" "center" mag 0.1)))
         (else (if (integer? no)
 		  (let* ((l (list-tail (cdr o) no))
 		         (ll (length l)))
-		        (append
-		  	  (with h (list-head (cdr o) no)
-			    (if (and edge
-				  (in? (car o)
-				      '(cline cspline carc))
-				  (== (+ no 1) (length (cdr o))))
-			      (cons `(with "point-style"
-					   ,(if sticky-point
-					        "square" "disk")
-			        ,(car h)) (cdr h))
-			      h))
-			  (cons
-			    (list 'with "point-style" "disk"
-			      (cons 'concat
-			        (if (< ll 2)
-				    (if sticky-point
-				       '()
-				        (if edge
-					    (list-head l 1)
-					    (curp (list-head l 1))))
-				     (if edge
-				        (with l2 (list-head l 2)
-				        (if sticky-point
-					   `(,(cons* 'with
+                    (append
+                     (with h (list-head (cdr o) no)
+                       (if (and edge
+                                (in? (car o)
+                                     '(cline cspline carc))
+                                (== (+ no 1) (length (cdr o))))
+                           (cons `(with "point-style"
+                                      ,(if sticky-point
+                                           "square" "disk")
+                                    ,(car h)) (cdr h))
+                           h))
+                     (cons
+                      (list 'with "point-style" "disk"
+                            (cons 'concat
+                                  (if (< ll 2)
+                                      (if sticky-point
+                                          '()
+                                          (if edge
+                                              (list-head l 1)
+                                              (curp (list-head l 1))))
+                                      (if edge
+                                          (with l2 (list-head l 2)
+                                            (if sticky-point
+                                                `(,(cons* 'with
 					         "point-style"
 					         "square"
 					        `((concat .
-						    ,(cdr l2)))))
-					    l2))
-				        (cons
-					  `(with "point-style"
-					         "square"
-					        ,(list-ref l 1))
-					   (curp (list-head l 1))
-					   ))))
-			    ) '())
-			  (if (> ll 2) (list-tail l 2) '())))
+                                                          ,(cdr l2)))))
+                                                l2))
+                                          (cons
+                                           `(with "point-style"
+                                                "square"
+                                              ,(list-ref l 1))
+					   (curp (list-head l 1))))))) '())
+                     (if (> ll 2) (list-tail l 2) '())))
 		  (cdr o)))))
 
 ;; Graphical contours (group mode)
@@ -438,10 +400,10 @@
 (define (add-selections-colors op color fill-color)
   (if (not color) (set! color "none"))
   (if (not fill-color) (set! fill-color "none"))
- `((with "color" ,color
-	 "point-style" "square"
-	 "fill-color" ,fill-color
-	 (concat . ,op))))
+  `((with "color" ,color
+      "point-style" "square"
+      "fill-color" ,fill-color
+      (concat . ,op))))
 
 (define (create-graphical-contours l ptr pts) ;; Group mode
 ;; This routine draws the contours of each one
@@ -454,99 +416,92 @@
   (define on-aobj #f)
   (define aobj-selected #f)
   (define (asc col fcol op)
-     (if (and on-aobj (not aobj-selected))
-	 (set! fcol #f))
-     (add-selections-colors op col fcol)
-  )
+    (if (and on-aobj (not aobj-selected))
+        (set! fcol #f))
+    (add-selections-colors op col fcol))
   (define res '())
   (define curscol #f)
   (for (o l)
-     (if (tree? o)
-	 (with path (reverse (tree-ip o))
-	       (if (equal? path ptr)
-		   (set! aobj-selected #t)))))
+    (if (tree? o)
+        (with path (reverse (tree-ip o))
+          (if (== path ptr)
+              (set! aobj-selected #t)))))
   (if (and (== pts 'points) ptr)
-  (begin
-     (set! l (cons (path->tree ptr) l))))
+      (begin
+        (set! l (cons (path->tree ptr) l))))
   (for (o l)
-     (if (not (and (tree? o) (< (cAr (tree-ip o)) 0)))
-     (let* ((props #f)
-	    (t #f)
-	    (path0 #f)
-	)
-	(set! curscol #f)
-	(set! on-aobj #f)
-	(if (tree? o)
-	    (with path (reverse (tree-ip o))
-	       (set! props (create-graphical-props (if (== pts 'points)
-						       'default path)
-						   (if (== pts 'object)
-						       #f "square")))
-	       (if (equal? path ptr)
-	       (begin
-		  (set! on-aobj #t)
-		  (set! curscol default-color-go-points)))
-	       (set! path0 path)
-	       (set! o (tree->stree o))) ;; FIXME: Remove this (tree->stree)
-	)
-	(if (and (== (car o) 'gr-group) (!= pts 'object))
-	    (set! props (create-graphical-props 'default #f)))
-	(cond ((== (car o) 'point)
-	       (if (not curscol)
-		   (set! curscol default-color-selected-points))
-	       (set! t (if (== pts 'object)
-			  `(,o)
-			   (asc curscol #f `(,o))))
-	      )
-	      ((== (car o) 'text-at)
-	       (if (not curscol)
-		   (set! curscol default-color-selected-points))
-	       (set! t (let* ((ha (get-graphical-prop path0 "text-at-halign"))
-			      (va (get-graphical-prop path0 "text-at-valign"))
-			      (mag (get-graphical-prop path0 "magnification"))
+    (if (not (and (tree? o) (< (cAr (tree-ip o)) 0)))
+        (let* ((props #f)
+               (t #f)
+               (path0 #f))
+          (set! curscol #f)
+          (set! on-aobj #f)
+          (if (tree? o)
+              (with path (reverse (tree-ip o))
+                (set! props (create-graphical-props (if (== pts 'points)
+                                                        'default path)
+                                                    (if (== pts 'object)
+                                                        #f "square")))
+                (if (== path ptr)
+                    (begin
+                      (set! on-aobj #t)
+                      (set! curscol default-color-go-points)))
+                (set! path0 path)
+                (set! o (tree->stree o))) ;; FIXME: Remove this (tree->stree)
+              )
+          (if (and (== (car o) 'gr-group) (!= pts 'object))
+              (set! props (create-graphical-props 'default #f)))
+          (cond ((== (car o) 'point)
+                 (if (not curscol)
+                     (set! curscol default-color-selected-points))
+                 (set! t (if (== pts 'object)
+                             `(,o)
+                             (asc curscol #f `(,o)))))
+                ((== (car o) 'text-at)
+                 (if (not curscol)
+                     (set! curscol default-color-selected-points))
+                 (set! t
+                       (let* ((ha (get-graphical-prop path0 "text-at-halign"))
+                              (va (get-graphical-prop path0 "text-at-valign"))
+                              (mag (get-graphical-prop path0 "magnification"))
 			      (gc (asc curscol #f
-				    (create-graphical-embedding-box
-				      o ha va ha va mag 0.1)))
-			  )
-			  (if (== pts 'object-and-points)
-			      (cons o gc)
-			      (if (== pts 'object)
+                                       (create-graphical-embedding-box
+                                        o ha va ha va mag 0.1))))
+                         (if (== pts 'object-and-points)
+                             (cons o gc)
+                             (if (== pts 'object)
 				 `(,o)
-				  gc))))
-	      )
-	      ((== (car o) 'gr-group)
-	       (if (not curscol)
-		   (set! curscol default-color-selected-points))
-	       (set! t (with gc (asc curscol #f
-				  (let* ((ha (get-graphical-prop
-						path0 "text-at-halign"))
-					 (va (get-graphical-prop
-						path0 "text-at-valign"))
-					 (mag (get-graphical-prop
-						path0 "magnification"))
-				     )
-				     (create-graphical-embedding-box
-					o ha va "center" "center" mag 0.1)))
-			  (if (== pts 'object-and-points)
-			      (cons o gc)
-			      (if (== pts 'object)
-				 `(,o)
-				  gc))))
-	      )
-	      (else
-		 (set! t (if (== pts 'object-and-points)
-			     (cons o (asc curscol default-color-selected-points
-					  (cdr o)))
-			     (if (== pts 'object)
-				`(,o)
-				 (asc curscol default-color-selected-points
-				      (cdr o))))))
-	)
-	(set! res (append res
-			  (if props
-			     `(,(append props `(,(cons* 'concat t))))
-			      t)))))
-  )
+                                 gc)))))
+                ((== (car o) 'gr-group)
+                 (if (not curscol)
+                     (set! curscol default-color-selected-points))
+                 (set! t (with gc (asc curscol #f
+                                       (let* ((ha (get-graphical-prop
+                                                   path0 "text-at-halign"))
+                                              (va (get-graphical-prop
+                                                   path0 "text-at-valign"))
+                                              (mag (get-graphical-prop
+                                                    path0 "magnification")))
+                                         (create-graphical-embedding-box
+                                          o ha va "center" "center" mag 0.1)))
+                           (if (== pts 'object-and-points)
+                               (cons o gc)
+                               (if (== pts 'object)
+                                   `(,o)
+                                   gc)))))
+                (else
+                  (set! t (if (== pts 'object-and-points)
+                              (cons o
+                                    (asc curscol default-color-selected-points
+                                         (cdr o)))
+                              (if (== pts 'object)
+                                  `(,o)
+                                  (asc curscol default-color-selected-points
+                                       (cdr o)))))))
+          (set! res (append res
+                            (if props
+                                `(,(append props `(,(cons* 'concat t))))
+                                t))))))
   res)
 
 ;; Create graphical object
@@ -573,8 +528,8 @@
 			(create-graphical-props 'default #f)))
          )
 	 (graphical-object!
-	    (if (or (eq? no 'group)
-		    (and (not (eq? no 'no-group))
+	    (if (or (== no 'group)
+		    (and (!= no 'no-group)
 			 (graphics-group-mode? (graphics-mode)))
 		)
 	       `(concat .
@@ -623,11 +578,11 @@
 		 (set! current-obj (car (sketch-get))))
 	     (if (tree? current-obj)
 		 (set! current-obj (tree->stree current-obj)))
-	     (if (and (eq? mode 'active)
+	     (if (and (== mode 'active)
 		      (pair? current-obj))
 		 (begin
 		    (graphical-fetch-props 
-		       (if (eq? (car current-obj) 'with)
+		       (if (== (car current-obj) 'with)
 			   current-obj `(with ,current-obj)))
 		    (set! current-obj (stree-radical current-obj))))
 	     (create-graphical-object
