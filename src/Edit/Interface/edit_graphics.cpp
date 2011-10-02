@@ -372,7 +372,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   frame f= find_frame ();
   if (!is_nil (f)) {
     if (!over_graphics (x, y)) return false;
-    if (type == "move" || type == "dragging")
+    if (type == "move" || type == "dragging-left")
       if (check_event (MOTION_EVENT))
 	return true;
     point p = f [point (x, y)];
@@ -386,24 +386,24 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
     call ("set-keyboard-modifiers", object (m));
     if (type == "move")
       call ("graphics-move", sx, sy);
-    else if (type == "release-left")
+    else if (type == "release-left" || type == "double-left")
       call ("graphics-release-left", sx, sy);
     else if (type == "release-middle")
       call ("graphics-release-middle", sx, sy);
-    else if (type == "release-right")
+    else if (type == "release-right" || type == "double-right")
       call ("graphics-release-right", sx, sy);
-    else if (type == "start-drag")
-      call ("graphics-start-drag", sx, sy);
-    else if (type == "dragging")
-      call ("graphics-dragging", sx, sy);
-    else if (type == "end-drag")
-      call ("graphics-end-drag", sx, sy);
-    else if (type == "start-right-drag")
-      call ("graphics-start-right-drag", sx, sy);
-    else if (type == "right-dragging")
-      call ("graphics-right-dragging", sx, sy);
-    else if (type == "end-right-drag")
-      call ("graphics-end-right-drag", sx, sy);
+    else if (type == "start-drag-left")
+      call ("graphics-start-drag-left", sx, sy);
+    else if (type == "dragging-left")
+      call ("graphics-dragging-left", sx, sy);
+    else if (type == "end-drag-left")
+      call ("graphics-end-drag-left", sx, sy);
+    else if (type == "start-drag-right")
+      call ("graphics-start-drag-right", sx, sy);
+    else if (type == "dragging-right")
+      call ("graphics-dragging-right", sx, sy);
+    else if (type == "end-drag-right")
+      call ("graphics-end-drag-right", sx, sy);
     invalidate_graphical_object ();
     notify_change (THE_CURSOR);
     return true;

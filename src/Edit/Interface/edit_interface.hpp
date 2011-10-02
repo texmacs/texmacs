@@ -47,10 +47,7 @@ protected:
   int           input_mode;    // INPUT_NORMAL, INPUT_SEARCH, INPUT_REPLACE
 
 protected:
-  time_t        last_click;    // last click on left mouse button
   SI            last_x, last_y;
-  bool          start_drag, start_right_drag;
-  bool          dragging, right_dragging;
   SI            start_x, start_y;
   SI            end_x, end_y;
   bool          made_selection;
@@ -149,7 +146,7 @@ public:
   void mouse_click (SI x, SI y);
   bool mouse_extra_click (SI x, SI y);
   void mouse_drag (SI x, SI y);
-  void mouse_select (SI x, SI y, int mods);
+  void mouse_select (SI x, SI y, int mods, bool drag);
   void mouse_paste (SI x, SI y);
   void mouse_adjust (SI x, SI y);
   void mouse_scroll (SI x, SI y, bool up);

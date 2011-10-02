@@ -228,11 +228,18 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
   //if (t2 - t1 >= 10) cout << "handle_keypress took " << t2-t1 << "ms\n";
 }
 
+void drag_left_reset ();
+void drag_right_reset ();
+
 void
 edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
   if (DEBUG_KEYBOARD) {
     if (has_focus) cout << "Keyboard] Got focus at " << t << "\n";
     else cout << "Keyboard] Lost focus at " << t << "\n";
+  }
+  if (got_focus != has_focus) {
+    drag_left_reset ();
+    drag_right_reset ();
   }
   got_focus= has_focus; (void) t;
   notify_change (THE_FOCUS);

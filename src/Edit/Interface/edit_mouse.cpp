@@ -19,97 +19,6 @@
 #include "window.hpp"
 
 /******************************************************************************
-* dispatching
-******************************************************************************/
-
-void
-edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
-  //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
-  last_x= x; last_y= y;
-  if (type != "move" || (is_attached (this) && !check_event (MOTION_EVENT)))
-    update_active_loci ();
-
-  if (type == "leave")
-    set_pointer ("XC_top_left_arrow");
-  if ((type != "move") && (type != "enter") && (type != "leave"))
-    set_input_normal ();
-  if (!is_nil (popup_win) && (type != "leave")) {
-    set_visibility (popup_win, false);
-    destroy_window_widget (popup_win);
-    popup_win= widget ();
-  }
-
-  if (inside_graphics (false)) {
-    string type2= type;
-    if (type == "enter") {
-      dragging= start_drag= false;
-      right_dragging= start_right_drag= false;
-    }
-    if (type == "press-left")
-      start_drag= true;
-    if (type == "press-right")
-      start_right_drag= true;
-
-    if (start_drag && type == "move") {
-      type2= "start-drag";
-      start_drag= false;
-      dragging= true;
-    }
-    else if (dragging && (type == "move"))
-      type2= "dragging";
-    if (dragging && (type == "release-left"))
-      type2= "end-drag";
-
-    if (start_right_drag && type == "move") {
-      type2= "start-right-drag";
-      start_right_drag= false;
-      right_dragging= true;
-    }
-    else if (right_dragging && (type == "move"))
-      type2= "right-dragging";
-    if (right_dragging && (type == "release-right"))
-      type2= "end-right-drag";
-
-    if (type == "release-left")
-      dragging= start_drag= false;
-    if (type == "release-right")
-      right_dragging= start_right_drag= false;
-    if (mouse_graphics (type2, x, y, mods, t)) return;
-    if (!over_graphics (x, y))
-      eval ("(graphics-reset-context 'text-cursor)");
-  }
-
-  if (type == "press-left") mouse_click (x, y);
-  if (dragging && (type == "move")) {
-    if (is_attached (this) && check_event (DRAG_EVENT)) return;
-    mouse_drag (x, y);
-  }
-  if (type == "release-left" || type == "release-right") {
-    dragging= right_dragging= false;
-    send_mouse_grab (this, false);
-    if ((t >= last_click) && ((t - last_click) <= 500)) {
-      last_click= t;
-      if (mouse_extra_click (x, y))
-	last_click= t- 2000;
-    }
-    else {
-      last_click= t;
-      mouse_select (x, y, mods);
-    }
-  }
-  if (type == "press-middle") mouse_paste (x, y);
-  if (type == "press-right") mouse_adjust (x, y);
-  if (type == "press-up") mouse_scroll (x, y, true);
-  if (type == "press-down") mouse_scroll (x, y, false);
-
-  if ((type == "press-left") ||
-      (type == "release-left") ||
-      (type == "press-middle") ||
-      (type == "press-right"))
-    notify_change (THE_DECORATIONS);
-}
-
-/******************************************************************************
 * Routines for the mouse
 ******************************************************************************/
 
@@ -118,8 +27,6 @@ edit_interface_rep::mouse_click (SI x, SI y) {
   if (eb->action ("click", x, y, 0) != "") return;
   start_x   = x;
   start_y   = y;
-  start_drag= dragging= true;
-  start_right_drag= right_dragging= false;
   send_mouse_grab (this, true);
 }
 
@@ -153,14 +60,12 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
     p1= p2;
     p2= temp;
   }
-  if ((p1 == p2) && start_drag) return;
   set_selection (p1, p2);
-  start_drag= start_right_drag= false;
   notify_change (THE_SELECTION);
 }
 
 void
-edit_interface_rep::mouse_select (SI x, SI y, int mods) {
+edit_interface_rep::mouse_select (SI x, SI y, int mods, bool drag) {
   if (eb->action ("select" , x, y, 0) != "") return;
   if (!is_nil (active_ids) && (mods & 256) == 0) {
     call ("link-follow-ids", object (active_ids));
@@ -171,10 +76,8 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods) {
   bool b= inside_graphics ();
   if (b) g= get_graphics ();
   go_to (x, y);
-  if ((!b0 && inside_graphics (false)) || (b0 && !inside_graphics (false))) {
-    dragging= start_drag= false;
-    right_dragging= start_right_drag= false;
-  }
+  if ((!b0 && inside_graphics (false)) || (b0 && !inside_graphics (false)))
+    drag= false;
   if (!b && inside_graphics ())
     eval ("(graphics-reset-context 'begin)");
   tree g2= get_graphics ();
@@ -182,7 +85,7 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods) {
     invalidate_graphical_object ();
     eval ("(graphics-reset-context 'exit)");
   }
-  if (start_drag) {
+  if (!drag) {
     path sp= find_innermost_scroll (eb, tp);
     path p0= tree_path (sp, x, y, 0);
     set_selection (p0, p0);
@@ -332,8 +235,186 @@ edit_interface_rep::update_active_loci () {
 }
 
 /******************************************************************************
+* drag and double click detection for left button
+******************************************************************************/
+
+static void*  left_handle  = NULL;
+static bool   left_started = false;
+static bool   left_dragging= false;
+static SI     left_x= 0;
+static SI     left_y= 0;
+static time_t left_last= 0;
+
+void
+drag_left_reset () {
+  left_started = false;
+  left_dragging= false;
+  left_x       = 0;
+  left_y       = 0;
+}
+
+static string
+detect_left_drag (void* handle, string type, SI x, SI y, time_t t, SI d) {
+  if (left_handle != handle) drag_left_reset ();
+  left_handle= handle;
+  if (type == "press-left") {
+    left_dragging= true;
+    left_started = true;
+    left_x       = x;
+    left_y       = y;
+  }
+  else if (type == "move") {
+    if (left_started) {
+      if (norm (point (x - left_x, y - left_y)) < d) return "wait-left";
+      left_started= false;
+      return "start-drag-left";
+    }
+    if (left_dragging) return "dragging-left";
+  }
+  else if (type == "release-left") {
+    if (left_started) drag_left_reset ();
+    if (left_dragging) {
+      drag_left_reset ();
+      return "end-drag-left";
+    }
+    if ((t >= left_last) && ((t - left_last) <= 500)) {
+      left_last= t;
+      return "double-left";
+    }
+    left_last= t;
+  }
+  return type;
+}
+
+/******************************************************************************
+* drag and double click detection for right button
+******************************************************************************/
+
+static void*  right_handle  = NULL;
+static bool   right_started = false;
+static bool   right_dragging= false;
+static SI     right_x= 0;
+static SI     right_y= 0;
+static time_t right_last= 0;
+
+void
+drag_right_reset () {
+  right_started = false;
+  right_dragging= false;
+  right_x       = 0;
+  right_y       = 0;
+  right_last    = 0;
+}
+
+static string
+detect_right_drag (void* handle, string type, SI x, SI y, time_t t, SI d) {
+  if (right_handle != handle) drag_right_reset ();
+  right_handle= handle;
+  if (type == "press-right") {
+    right_dragging= true;
+    right_started = true;
+    right_x       = x;
+    right_y       = y;
+  }
+  else if (type == "move") {
+    if (right_started) {
+      if (norm (point (x - right_x, y - right_y)) < d) return "wait-right";
+      right_started= false;
+      return "start-drag-right";
+    }
+    if (right_dragging) return "dragging-right";
+  }
+  else if (type == "release-right") {
+    if (right_started) drag_right_reset ();
+    if (right_dragging) {
+      drag_right_reset ();
+      return "end-drag-right";
+    }
+    if ((t >= right_last) && ((t - right_last) <= 500)) {
+      right_last= t;
+      return "double-right";
+    }
+    right_last= t;
+  }
+  return type;
+}
+
+/******************************************************************************
+* dispatching
+******************************************************************************/
+
+void
+edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
+  //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
+  last_x= x; last_y= y;
+  bool move_like=
+    (type == "move" || type == "dragging-left" || type == "dragging-right");
+  if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
+    update_active_loci ();
+
+  if (type == "leave")
+    set_pointer ("XC_top_left_arrow");
+  if ((!move_like) && (type != "enter") && (type != "leave"))
+    set_input_normal ();
+  if (!is_nil (popup_win) && (type != "leave")) {
+    set_visibility (popup_win, false);
+    destroy_window_widget (popup_win);
+    popup_win= widget ();
+  }
+
+  if (inside_graphics (false)) {
+    if (mouse_graphics (type, x, y, mods, t)) return;
+    if (!over_graphics (x, y))
+      eval ("(graphics-reset-context 'text-cursor)");
+  }
+
+  if (type == "press-left" || type == "start-drag-left") mouse_click (x, y);
+  if (type == "dragging-left") {
+    if (is_attached (this) && check_event (DRAG_EVENT)) return;
+    mouse_drag (x, y);
+  }
+  if (type == "release-left" || type == "end-drag-left") {
+    send_mouse_grab (this, false);
+    mouse_select (x, y, mods, type == "end-drag-left");
+  }
+  if (type == "double-left") {
+    send_mouse_grab (this, false);
+    if (mouse_extra_click (x, y))
+      drag_left_reset ();
+  }
+  if (type == "press-middle") mouse_paste (x, y);
+  if (type == "press-right") mouse_adjust (x, y);
+  if (type == "press-up") mouse_scroll (x, y, true);
+  if (type == "press-down") mouse_scroll (x, y, false);
+
+  if ((type == "press-left") ||
+      (type == "release-left") ||
+      (type == "end-drag-left") ||
+      (type == "press-middle") ||
+      (type == "press-right"))
+    notify_change (THE_DECORATIONS);
+}
+
+/******************************************************************************
 * Event handlers
 ******************************************************************************/
+
+static void
+call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
+  array<object> args;
+  args << object (kind) << object (x) << object (y)
+       << object (m) << object ((double) t);
+  call ("mouse-event", args);
+}
+
+static void
+delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
+  string cmd=
+    "(delayed (mouse-event " * scm_quote (kind) * " " *
+    as_string (x) * " " * as_string (y) * " " *
+    as_string (m) * " " * as_string (((double) t) + 0.5) * "))";
+  eval (cmd);
+}
 
 void
 edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
@@ -343,9 +424,21 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
   y *= sfactor;
   //cout << kind << " (" << x << ", " << y << "; " << m << ")"
   //<< " at " << t << "\n";
-  array<object> args;
-  args << object (kind) << object (x) << object (y)
-       << object (m) << object ((double) t);
-  call ("mouse-event", args);
+
+  string rew= kind;
+  rew= detect_left_drag ((void*) this, rew, x, y, t, 5 * PIXEL * sfactor);
+  if (rew == "start-drag-left") {
+    call_mouse_event (rew, left_x, left_y, m, t);
+    delayed_call_mouse_event ("dragging-left", x, y, m, t);
+  }
+  else {
+    rew= detect_right_drag ((void*) this, rew, x, y, t, 5 * PIXEL * sfactor);
+    if (rew == "start-drag-right") {
+      call_mouse_event (rew, right_x, right_y, m, t);
+      delayed_call_mouse_event ("dragging-right", x, y, m, t);
+    }
+    else call_mouse_event (rew, x, y, m, t);
+  }
+
   end_editing ();
 }

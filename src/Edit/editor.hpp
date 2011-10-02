@@ -159,7 +159,7 @@ public:
   virtual void mouse_click (SI x, SI y) = 0;
   virtual bool mouse_extra_click (SI x, SI y) = 0;
   virtual void mouse_drag (SI x, SI y) = 0;
-  virtual void mouse_select (SI x, SI y, int mods) = 0;
+  virtual void mouse_select (SI x, SI y, int mods, bool drag) = 0;
   virtual void mouse_paste (SI x, SI y) = 0;
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;

@@ -137,8 +137,8 @@
 (lazy-define (graphics graphics-edit)
 	     graphics-reset-context graphics-undo-enabled
 	     graphics-release-left graphics-release-middle
-	     graphics-release-right graphics-start-drag
-	     graphics-dragging graphics-end-drag)
+	     graphics-release-right graphics-start-drag-left
+	     graphics-dragging-left graphics-end-drag-left)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting formal languages\n")
