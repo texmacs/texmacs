@@ -115,7 +115,7 @@
 	'(concat))))
 
 (tm-define (graphical-object! obj)
- ;(display "graphical object!=")(write obj)(display "\n")
+  ;;(display* "obj= " obj "\n")
   (set-graphical-object (stree->tree obj)))
 
 ;; Graphical props
@@ -526,6 +526,8 @@
 	     (props (if (and pts (!= pts 'points))
 			(create-graphical-props mode #f)
 			(create-graphical-props 'default #f)))
+             (mag (graphics-get-property "magnification"))
+             (mag-o `(with "magnification" ,mag ,o))
          )
 	 (graphical-object!
 	    (if (or (== no 'group)
@@ -545,9 +547,9 @@
 		(append
 		   props
 		  `((concat . ,(cond ((== pts 'points) op)
-				     ((== pts 'object) `(,o))
+				     ((== pts 'object) `(,mag-o))
 				     ((== pts 'object-and-points)
-				      (cons o op)))))))))
+				      (cons mag-o op)))))))))
       (graphical-object! '(concat))))
 
 (tm-define (graphics-decorations-update . parms)
