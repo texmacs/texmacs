@@ -71,7 +71,7 @@ edit_graphics_rep::over_graphics (SI x, SI y) {
     // cout << type << " at " << p << " [" << lim1 << ", " << lim2 << "]\n";
     if (N(lim1) == 2)
       if ((p[0]<lim1[0]) || (p[0]>lim2[0]) || (p[1]<lim1[1]) || (p[1]>lim2[1]))
-	return false;
+        return as_bool (call ("graphics-busy?"));
     return true;
   }
   return false;
@@ -371,7 +371,8 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!is_nil (f)) {
-    if (!over_graphics (x, y)) return false;
+    if (!over_graphics (x, y))
+      return false;
     if (type == "move" || type == "dragging-left")
       if (check_event (MOTION_EVENT))
 	return true;

@@ -376,6 +376,38 @@
      (graphics-group-start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Major extern interface routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-enter-mode old-mode new-mode)
+  (:state graphics-state)
+  (if (and (graphics-group-mode? old-mode)
+	   (not (graphics-group-mode? new-mode)))
+      (graphics-reset-state))
+  (if (and (not (graphics-group-mode? old-mode))
+	   (graphics-group-mode? new-mode))
+      (begin
+        (if sticky-point (undo 0))
+        (sketch-reset)
+        (graphics-decorations-reset))))
+
+(tm-define (graphics-finish)
+  ;;(display* "Graphics] Finish\n")
+  (with mode (graphics-mode)
+    (cond ((== (car mode) 'edit)
+	  (with submode (cadr mode)
+	     (cond ((== submode 'point) (noop))
+		   ((in? submode gr-tags-curves) (noop))
+		   ((== submode 'text-at) (noop))
+		   (else (display* "Uncaptured finish (edit)\n")))))
+	 ((== (car mode) 'group-edit) (noop))
+	 (else (display* "Uncaptured finish\n")))))
+
+(tm-define (graphics-busy?)
+  (:state graphics-state)
+  sticky-point)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -456,27 +488,3 @@
   (:state graphics-state)
   ;(display* "Graphics] Choose\n")
   (edit_tab-key (car (graphics-mode)) inc))
-
-(tm-define (graphics-enter-mode old-mode new-mode)
-  (:state graphics-state)
-  (if (and (graphics-group-mode? old-mode)
-	   (not (graphics-group-mode? new-mode)))
-      (graphics-reset-state))
-  (if (and (not (graphics-group-mode? old-mode))
-	   (graphics-group-mode? new-mode))
-      (begin
-        (if sticky-point (undo 0))
-        (sketch-reset)
-        (graphics-decorations-reset))))
-
-(tm-define (graphics-finish)
-  ;;(display* "Graphics] Finish\n")
-  (with mode (graphics-mode)
-    (cond ((== (car mode) 'edit)
-	  (with submode (cadr mode)
-	     (cond ((== submode 'point) (noop))
-		   ((in? submode gr-tags-curves) (noop))
-		   ((== submode 'text-at) (noop))
-		   (else (display* "Uncaptured finish (edit)\n")))))
-	 ((== (car mode) 'group-edit) (noop))
-	 (else (display* "Uncaptured finish\n")))))

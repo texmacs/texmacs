@@ -135,6 +135,7 @@
 (lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
 (lazy-define (graphics graphics-edit)
+             graphics-busy?
 	     graphics-reset-context graphics-undo-enabled
 	     graphics-release-left graphics-release-middle
 	     graphics-release-right graphics-start-drag-left
