@@ -537,16 +537,8 @@
 (tm-define (graphics-set-mode val)
   (:check-mark "v" graphics-mode-has-value?)
   (graphics-group-start)
-  (with old-mode (graphics-mode)
-     (graphics-enter-mode old-mode val)
-     (graphics-set-property "gr-mode"
-	(cond ((string? val)
-	       (list 'tuple "edit" val))
-	      ((symbol? val)
-	       (list 'tuple "edit" (sy2s val)))
-	      ((pair? val)
-               (set! val (map symbol->string val))
-	       (cons 'tuple val))))))
+  (graphics-enter-mode (graphics-mode) val)
+  (graphics-set-property "gr-mode" `(tuple ,@(map symbol->string val))))
 
 (tm-define (graphics-group-mode? mode)
   (and (pair? mode) (eq? (car mode) 'group-edit)))

@@ -81,5 +81,17 @@
   (:require (graphical-group-tag? tag))
   (graphics-all-attributes))
 
-(tm-define (graphics-valid-attribute? attr tag)
+(tm-define (graphics-attribute? tag attr)
   (in? attr (graphics-attributes tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Attributes for editing modes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-mode-attributes mode)
+  (cond ((func? mode 'edit 1) (graphics-attributes (cadr mode)))
+        ((== mode '(group-edit props)) (graphics-all-attributes))
+        (else '())))
+
+(tm-define (graphics-mode-attribute? mode attr)
+  (in? attr (graphics-mode-attributes mode)))

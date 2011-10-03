@@ -334,10 +334,6 @@
       (graphics ""))
    '(6 1)))
 
-(tm-define (graphics-mode-attribute? mode attr)
-  (if (func? mode 'edit 1) (set! mode (cadr mode)))
-  (in? attr (graphics-attributes mode)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for accessing the properties of the graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -425,7 +421,7 @@
 		(and (== (car head) "magnification")
 		     (or (== (cadr head) "1.0")
 			 (== (cadr head) '(times "1.0" (value "magnification")))))
-		(not (graphics-valid-attribute? (car head) t)))
+		(not (graphics-attribute? t (car head))))
 	    tail
 	    (cons* (car head) (cadr head) tail)))))
 
