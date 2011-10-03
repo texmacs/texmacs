@@ -498,18 +498,16 @@
              (s (if (== ps "default") "disk" ps)))
 	(=> (eval s)
 	    (link graphics-point-style-menu)))))
-  (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
+  (assuming
+      (or (graphics-mode-attribute? (graphics-mode) "line-width")
+          (graphics-mode-attribute? (graphics-mode) "dash-style"))
     /
     (mini #t
-      (group "Line width:")
+      (group "Line style:")
       (let* ((lw (graphics-get-property "gr-line-width"))
              (s (if (== lw "default") "1ln" lw)))
 	(=> (eval s)
-	    (link graphics-line-width-menu)))))
-  (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
-    /
-    (mini #t
-      (group "Dash:")
+	    (link graphics-line-width-menu)))
       (let* ((dash (graphics-get-property "gr-dash-style"))
              (s (decode-dash dash)))
         (=> (eval s)
