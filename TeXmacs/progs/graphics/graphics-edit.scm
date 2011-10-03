@@ -61,90 +61,6 @@
 ;; Edit properties (implemented as a group mode, see below)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Functions with check marks for all the properties ("Enable change" menu)
-(define (enabled-var? var)
-  (not (graphics-frozen-property? var)))
-
-(tm-define (graphics-opacity-enabled?)
-  (enabled-var? "gr-opacity"))
-
-(tm-define (graphics-color-enabled?)
-  (enabled-var? "gr-color"))
-
-(tm-define (graphics-toggle-opacity-enabled)
-  (:check-mark "v" graphics-opacity-enabled?)
-  (graphics-frozen-property! "gr-opacity"
-			     (graphics-opacity-enabled?)))
-
-(tm-define (graphics-toggle-color-enabled)
-  (:check-mark "v" graphics-color-enabled?)
-  (graphics-frozen-property! "gr-color"
-			     (graphics-color-enabled?)))
-
-(tm-define (graphics-point-style-enabled?)
-  (enabled-var? "gr-point-style"))
-
-(tm-define (graphics-toggle-point-style-enabled)
-  (:check-mark "v" graphics-point-style-enabled?)
-  (graphics-frozen-property! "gr-point-style"
-			     (graphics-point-style-enabled?)))
-
-(tm-define (graphics-line-width-enabled?)
-  (enabled-var? "gr-line-width"))
-
-(tm-define (graphics-toggle-line-width-enabled)
-  (:check-mark "v" graphics-line-width-enabled?)
-  (graphics-frozen-property! "gr-line-width"
-			     (graphics-line-width-enabled?)))
-
-(tm-define (graphics-dash-style-enabled?)
-  (enabled-var? "gr-dash-style"))
-
-(tm-define (graphics-toggle-dash-style-enabled)
-  (:check-mark "v" graphics-dash-style-enabled?)
-  (graphics-frozen-property! "gr-dash-style"
-			     (graphics-dash-style-enabled?)))
-
-(tm-define (graphics-dash-style-unit-enabled?)
-  (enabled-var? "gr-dash-style-unit"))
-
-(tm-define (graphics-toggle-dash-style-unit-enabled)
-  (:check-mark "v" graphics-dash-style-unit-enabled?)
-  (graphics-frozen-property! "gr-dash-style-unit"
-			     (graphics-dash-style-unit-enabled?)))
-
-(tm-define (graphics-line-arrows-enabled?)
-  (enabled-var? "gr-line-arrows"))
-
-(tm-define (graphics-toggle-line-arrows-enabled)
-  (:check-mark "v" graphics-line-arrows-enabled?)
-  (graphics-frozen-property! "gr-line-arrows"
-			     (graphics-line-arrows-enabled?)))
-
-(tm-define (graphics-fill-color-enabled?)
-  (enabled-var? "gr-fill-color"))
-
-(tm-define (graphics-toggle-fill-color-enabled)
-  (:check-mark "v" graphics-fill-color-enabled?)
-  (graphics-frozen-property! "gr-fill-color"
-			     (graphics-fill-color-enabled?)))
-
-(tm-define (graphics-textat-halign-enabled?)
-  (enabled-var? "gr-text-at-halign"))
-
-(tm-define (graphics-toggle-textat-halign-enabled)
-  (:check-mark "v" graphics-textat-halign-enabled?)
-  (graphics-frozen-property! "gr-text-at-halign"
-			     (graphics-textat-halign-enabled?)))
-
-(tm-define (graphics-textat-valign-enabled?)
-  (enabled-var? "gr-text-at-valign"))
-
-(tm-define (graphics-toggle-textat-valign-enabled)
-  (:check-mark "v" graphics-textat-valign-enabled?)
-  (graphics-frozen-property! "gr-text-at-valign"
-			     (graphics-textat-valign-enabled?)))
-
 ;; Functions for managing properties
 (tm-define (graphics-assign-props p obj)
   (let* ((op (graphics-path-property p "opacity"))
@@ -162,27 +78,18 @@
      (graphics-remove p 'memoize-layer)
      (with res
 	   (graphics-group-enrich-insert-bis (stree-radical obj)
-	      (if (graphics-opacity-enabled?)
-		  (graphics-get-property "gr-opacity") op)
-	      (if (graphics-color-enabled?)
-		  (graphics-get-property "gr-color") color)
-	      (if (graphics-point-style-enabled?)
-		  (graphics-get-property "gr-point-style") ps)
-	      (if (graphics-line-width-enabled?)
-		  (graphics-get-property "gr-line-width") lw)
+              (graphics-get-property "gr-opacity")
+              (graphics-get-property "gr-color")
+	      (graphics-get-property "gr-point-style")
+	      (graphics-get-property "gr-line-width")
 	      mag
-	      (if (graphics-dash-style-enabled?)
-		  (graphics-get-property "gr-dash-style") st)
-	      (if (graphics-dash-style-unit-enabled?)
-		  (graphics-get-property "gr-dash-style-unit") stu)
-	      (if (graphics-line-arrows-enabled?)
-		  (graphics-get-property "gr-line-arrows") lp)
-	      (if (graphics-fill-color-enabled?)
-		  (graphics-get-property "gr-fill-color") fc)
-	      (if (graphics-textat-halign-enabled?)
-		  (graphics-get-property "gr-text-at-halign") ha)
-	      (if (graphics-textat-valign-enabled?)
-		  (graphics-get-property "gr-text-at-valign") va) #f)
+	      (graphics-get-property "gr-dash-style")
+	      (graphics-get-property "gr-dash-style-unit")
+	      (graphics-get-property "gr-line-arrows")
+              (graphics-get-property "gr-fill-color")
+	      (graphics-get-property "gr-text-at-halign")
+	      (graphics-get-property "gr-text-at-valign")
+              #f)
 	res)))
 
 (tm-define (graphics-copy-props p)

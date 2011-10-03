@@ -341,19 +341,6 @@
   ("Center" (graphics-set-textat-valign "center"))
   ("Top" (graphics-set-textat-valign "top")))
 
-(menu-bind graphics-enable-change-properties-menu
-  ("Color"  (graphics-toggle-color-enabled))
-  ("Fill color" (graphics-toggle-fill-color-enabled))
-  (assuming (== (get-preference "experimental alpha") "on")
-    ("Opacity"  (graphics-toggle-opacity-enabled)))
-  ("Point style" (graphics-toggle-point-style-enabled))
-  ("Line width" (graphics-toggle-line-width-enabled))
-  ("Dash style" (graphics-toggle-dash-style-enabled))
-  ("Dash unit" (graphics-toggle-dash-style-unit-enabled))
-  ("Line arrows" (graphics-toggle-line-arrows-enabled))
-  ("Text box horizontal alignment" (graphics-toggle-textat-halign-enabled))
-  ("Text box vertical alignment" (graphics-toggle-textat-valign-enabled)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -362,9 +349,7 @@
   (-> "Geometry" (link graphics-geometry-menu))
   (-> "Grids" (link graphics-grids-menu))
   ---
-  (link graphics-mode-menu)
-  ;;(-> "Enable change" (link graphics-enable-change-properties-menu))
-  )
+  (link graphics-mode-menu))
 
 (menu-bind graphics-focus-menu
   (-> (eval (upcase-first (gr-mode->string (graphics-mode))))
@@ -375,8 +360,8 @@
       (-> "Color" (link graphics-color-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
       (-> "Fill color" (link graphics-fill-color-menu)))
-    (assuming (== (get-preference "experimental alpha") "on")
-      (assuming (graphics-mode-attribute? (graphics-mode) "opacity")
+    (assuming (graphics-mode-attribute? (graphics-mode) "opacity")
+      (assuming (== (get-preference "experimental alpha") "on")
         (-> "Opacity" (link graphics-opacity-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
       (-> "Point style" (link graphics-point-style-menu)))
@@ -430,8 +415,6 @@
    (graphics-set-mode "text-at")))
 
 (tm-menu (graphics-group-property-icons)
-  ;;(=> (balloon (icon "tm_toggle_change_props.xpm") "Enable change property")
-  ;;    (link graphics-enable-change-properties-menu))
   ((check (balloon (icon "tm_edit_props.xpm") "Change objects properties")
           "v" (== (graphics-mode) '(group-edit props)))
    (graphics-set-mode '(group-edit props))))

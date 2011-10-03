@@ -351,31 +351,13 @@
 	     (tree-ref val 0)
 	     val))))
          
-(tm-define (graphics-frozen-property? var)
-  (with val (graphics-get-raw-property var)
-     (and (tree? val) (== (tree-label val) 'freeze))))
-         
-(tm-define (graphics-frozen-property! var b)
-  (if b
-      (if (not (graphics-frozen-property? var))
-          (graphics-set-property var
-            `(quote (freeze ,(tree->stree (get-env-tree var))))))
-      (if (graphics-frozen-property? var)
-          (graphics-set-property
-	     var (tree-ref (graphics-get-raw-property var) 0)))))
-         
 (tm-define (graphics-get-property var)
   (with val (graphics-get-raw-property var)
-     (tree->stree
-        (if (graphics-frozen-property? var)
-            (tree-ref val 0) 
-            val))))
+     (tree->stree val)))
                
 (tm-define (graphics-change-property var val)
   (set! val (t2o val))
-  (if (graphics-frozen-property? var)
-      (graphics-set-property var `(quote (freeze ,val)))
-      (graphics-set-property var val)))
+  (graphics-set-property var val))
 
 (tm-define (graphics-set-property var val)
   (with p (graphics-graphics-path)
