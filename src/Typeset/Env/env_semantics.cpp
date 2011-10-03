@@ -486,10 +486,40 @@ edit_env_rep::decode_arrow (tree t, string l, string h) {
                    tree (_POINT, "0" * lun, "0" * hun),
                    tree (_POINT, as_string (-lx) * lun,
                                  as_string (-hx) * hun));
+    if (s == "<less><less>")
+      return tree (GR_GROUP,
+                   tree (LINE,
+                         tree (_POINT, l, h),
+                         tree (_POINT, "0" * lun, "0" * hun),
+                         tree (_POINT, l, as_string (-hx) * hun)),
+                   tree (LINE,
+                         tree (_POINT, as_string (0 * lx) * lun, h),
+                         tree (_POINT, as_string (-lx) * lun, "0" * hun),
+                         tree (_POINT, as_string (0 * lx) * lun,
+                               as_string (-hx) * hun)));
+    if (s == "<gtr><gtr>")
+      return tree (GR_GROUP,
+                   tree (LINE,
+                         tree (_POINT, as_string (-lx) * lun, h),
+                         tree (_POINT, "0" * lun, "0" * hun),
+                         tree (_POINT, as_string (-lx) * lun,
+                               as_string (-hx) * hun)),
+                   tree (LINE,
+                         tree (_POINT, as_string (0 * lx) * lun, h),
+                         tree (_POINT, as_string (lx) * lun, "0" * hun),
+                         tree (_POINT, as_string (0 * lx) * lun,
+                               as_string (-hx) * hun)));                   
     if (s == "|")
       return tree (LINE,
                    tree (_POINT, "0" * lun, h),
                    tree (_POINT, "0" * lun, as_string (-hx) * hun));
+    if (s == "o")
+      return tree (WITH, FILL_COLOR, tree (VALUE, COLOR),
+                   LINE_WIDTH, "0ln",
+                   tree (CARC,
+                         tree (_POINT, "0" * lun, h),
+                         tree (_POINT, l, "0" * hun),
+                         tree (_POINT, "0" * lun, as_string (-hx) * hun)));
     return "";
   }
   else return t;
