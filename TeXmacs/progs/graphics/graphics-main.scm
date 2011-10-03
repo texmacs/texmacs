@@ -713,36 +713,30 @@
 ;; Attributes for graphical objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (opacity-has-value? opacity)
-  (== opacity (graphics-get-property "gr-opacity")))
+(define (graphics-test-property? var)
+  (lambda (val)
+    (or (== val (graphics-get-property var))
+        (and (== (graphics-get-property var) "default")
+             (== val (graphics-attribute-default var))))))
 
 (tm-define (graphics-set-opacity val)
   (:argument val "Opacity")
-  (:check-mark "*" opacity-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-opacity"))
   (graphics-change-property "gr-opacity" val))
-
-(define (color-has-value? color)
-  (== color (graphics-get-property "gr-color")))
 
 (tm-define (graphics-set-color val)
   (:argument val "Color")
-  (:check-mark "*" color-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-color"))
   (graphics-change-property "gr-color" val))
-
-(define (point-style-has-value? val)
-  (== val (graphics-get-property "gr-point-style")))
 
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
-  (:check-mark "*" point-style-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-point-style"))
   (graphics-change-property "gr-point-style" val))
-
-(define (line-width-has-value? val)
-  (== val (graphics-get-property "gr-line-width")))
 
 (tm-define (graphics-set-line-width val)
   (:argument val "Line width")
-  (:check-mark "*" line-width-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-line-width"))
   (graphics-change-property "gr-line-width" val))
 
 (define (convert-dash-style val)
@@ -774,20 +768,14 @@
         ((== x '(tuple "1" "1" "1" "1" "0" "1" "0")) "- . - . -")
         (else "other")))
 
-(define (dash-style-unit-has-value? val)
-  (== val (graphics-get-property "gr-dash-style-unit")))
-
 (tm-define (graphics-set-dash-style-unit val)
   (:argument val "Dash style unit")
-  (:check-mark "*" dash-style-unit-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-dash-style-unit"))
   (graphics-change-property "gr-dash-style-unit" val))
-
-(define (fill-color-has-value? color)
-  (== color (graphics-get-property "gr-fill-color")))
 
 (tm-define (graphics-set-fill-color val)
   (:argument val "Fill color")
-  (:check-mark "*" fill-color-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-fill-color"))
   (graphics-change-property "gr-fill-color" val))
 
 (define default-line-arrows
@@ -837,18 +825,12 @@
         ((== val (vector-ref default-line-arrows 2)) "<--->")
         (else "other")))
 
-(define (text-at-halign-has-value? val)
-  (== val (graphics-get-property "gr-text-at-halign")))
-
 (tm-define (graphics-set-textat-halign val)
   (:argument val "Text-at horizontal alignment")
-  (:check-mark "*" text-at-halign-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-text-at-halign"))
   (graphics-change-property "gr-text-at-halign" val))
-
-(define (text-at-valign-has-value? val)
-  (== val (graphics-get-property "gr-text-at-valign")))
 
 (tm-define (graphics-set-textat-valign val)
   (:argument val "Text-at vertical alignment")
-  (:check-mark "*" text-at-valign-has-value?)
+  (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-change-property "gr-text-at-valign" val))

@@ -47,6 +47,15 @@
 ;; List of graphical attributes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (gr-prefixed? attr)
+  (string-starts? attr "gr-"))
+
+(tm-define (gr-prefix attr)
+  (string-append "gr-" attr))
+
+(tm-define (gr-unprefix attr)
+  (substring attr 3 (string-length attr)))
+
 (define-table attribute-default-table
   ("gid" . "default")
   ("magnification" . "1")
@@ -64,7 +73,9 @@
   ("text-at-valign" . "base"))
 
 (tm-define (graphics-attribute-default attr)
-  (ahash-ref attribute-default-table attr))
+  (if (gr-prefixed? attr)
+      (graphics-attribute-default (gr-unprefix attr))
+      (ahash-ref attribute-default-table attr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Attributes of the graphical tags
