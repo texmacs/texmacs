@@ -200,9 +200,15 @@
 (define moveclick-tolerance "5px")
 (define previous-leftclick #f)
 
+(define (hardly-moved?)
+  (and previous-leftclick
+       (points-dist<
+        previous-leftclick
+        `(point ,current-x ,current-y)
+        moveclick-tolerance)))
+
 (define (move-over)
-  (set-message "Left click: add or edit object; Middle click: remove object"
-               "")
+  (set-message "Left click: new object; Drag: edit object; Middle click: remove" "")
   (graphics-decorations-update)
   (if current-path
       (with p2 (tm-upwards-path current-path '(text-at) '(graphics))
@@ -213,7 +219,6 @@
 
 (define (start-move)
   (define edge current-edge-sel?)
-  (set-message "Left click: add point; Middle click: undo" "")
   (graphics-store-state 'start-move)
   (object_checkout)
   (graphics-group-start)
@@ -228,11 +233,7 @@
   (graphics-store-state #f))
 
 (define (move-point)
-  (if (and leftclick-waiting
-	   (not (points-dist<
-                 previous-leftclick
-		 `(point ,current-x ,current-y)
-                 moveclick-tolerance)))
+  (if (and leftclick-waiting (not (hardly-moved?)))
       (begin
         (set! leftclick-waiting #f)
         (object_add-point
@@ -242,36 +243,29 @@
          (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
       (begin
         (if leftclick-waiting
-            (set-message "Left click: finish" "")
+            (set-message "Left click: finish; Middle click: undo" "")
             (set-message "Left click: add point; Middle click: undo" ""))
         (object_set-point current-point-no current-x current-y)))
   (graphics-decorations-update))
 
 (define (last-point)
-  (object_set-point
-   current-point-no
-   current-x
-   current-y)
+  (object_set-point current-point-no current-x current-y)
   (object_commit))
 
 (define (next-point)
-  (cond ((and leftclick-waiting
-              (points-dist<
-               previous-leftclick
-               `(point ,current-x ,current-y)
-               moveclick-tolerance))
+  (cond ((not (hardly-moved?))
+         (set-message "Left click: finish; Middle click: undo" "")
+         (set! leftclick-waiting #t))
+        (leftclick-waiting
          (last-point))
-        ((and (not leftclick-waiting)
-              previous-leftclick
-              (points-dist<
-               previous-leftclick
-               `(point ,current-x ,current-y)
-               moveclick-tolerance))
+        ((== current-point-no 1)
          (undo 0)
          (set! leftclick-waiting #f))
         (else
-          (set-message "Left click: finish" "")
-          (set! leftclick-waiting #t))))
+         (set-message "Left click: finish; Middle click: undo" "")
+         (graphics-back-state #f)
+         (graphics-move current-x current-y)
+         (set! leftclick-waiting #t))))
 
 (define (remove-point)
   (if (or (current-in? gr-tags-oneshot) (null? (cdddr current-obj))
@@ -340,7 +334,9 @@
         (if sticky-point
             (move-point)
             (move-over)))
-      (graphics-decorations-reset)))
+      (begin
+        (set-message "Left click: new object" "")
+        (graphics-decorations-reset))))
 
 (tm-define (edit_left-button mode x y)
   (:require (== mode 'edit))
@@ -379,6 +375,12 @@
             (start-move)))
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
+
+(tm-define (edit_drag mode x y)
+  (:require (== mode 'edit))
+  (:state graphics-state)
+  (edit_move mode x y)
+  (set-message "Release left button: finish editing" ""))
 
 (tm-define (edit_end-drag mode x y)
   (:require (== mode 'edit))
