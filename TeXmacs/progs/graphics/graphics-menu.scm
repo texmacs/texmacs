@@ -307,12 +307,21 @@
   ("Other" (interactive graphics-set-dash-style-unit)))
 
 (menu-bind graphics-line-arrows-menu
-  ;;("Default" (graphics-set-line-arrows "default"))
-  ;;---
-  ;;("---" (graphics-set-line-arrows 0))
-  ("---" (graphics-set-line-arrows "default"))
-  ("--->" (graphics-set-line-arrows 1))
-  ("<--->" (graphics-set-line-arrows 2)))
+  (group "Right arrow")
+  ("None" (graphics-set-arrow-end "default"))
+  ("--->" (graphics-set-arrow-end "<gtr>"))
+  ("---|>" (graphics-set-arrow-end "|<gtr>"))
+  ("---|" (graphics-set-arrow-end "|"))
+  ("---<" (graphics-set-arrow-end "<less>"))
+  ("---<|" (graphics-set-arrow-end "<less>|"))
+  ---
+  (group "Left arrow")
+  ("None" (graphics-set-arrow-begin "default"))
+  ("<---" (graphics-set-arrow-begin "<less>"))
+  ("<|---" (graphics-set-arrow-begin "<less>|"))
+  ("|---" (graphics-set-arrow-begin "|"))
+  (">---" (graphics-set-arrow-begin "<gtr>"))
+  ("|>---" (graphics-set-arrow-begin "|<gtr>")))
 
 (menu-bind graphics-fill-color-menu
   ;;("Default" (graphics-set-fill-color "default"))
@@ -371,7 +380,9 @@
       (-> "Line width" (link graphics-line-width-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
       (-> "Line dashes" (link graphics-dash-menu)))
-    (assuming (graphics-mode-attribute? (graphics-mode) "line-arrows")
+    (assuming
+        (or (graphics-mode-attribute? (graphics-mode) "arrow-begin")
+            (graphics-mode-attribute? (graphics-mode) "arrow-end"))
       (-> "Line arrows" (link graphics-line-arrows-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
       (-> "Horizontal alignment" (link graphics-text-halign-menu)))
@@ -497,12 +508,17 @@
              (s (decode-dash dash)))
         (=> (eval s)
             (link graphics-dash-menu)))))
-  (assuming (graphics-mode-attribute? (graphics-mode) "line-arrows")
+  (assuming
+      (or (graphics-mode-attribute? (graphics-mode) "arrow-begin")
+          (graphics-mode-attribute? (graphics-mode) "arrow-end"))
     /
     (mini #t
       (group "Arrows:")
-      (let* ((arrows (graphics-get-property "gr-line-arrows"))
-             (s (decode-arrows arrows)))
+      (let* ((arrow-begin (graphics-get-property "gr-arrow-begin"))
+             (arrow-end (graphics-get-property "gr-arrow-end"))
+             (s (string-append (decode-arrow arrow-begin)
+                               "---"
+                               (decode-arrow arrow-end))))
         (=> (eval s)
             (link graphics-line-arrows-menu)))))
   (assuming (or (graphics-mode-attribute? (graphics-mode) "text-at-halign")

@@ -685,52 +685,15 @@
   (:check-mark "*" (graphics-test-property? "gr-fill-color"))
   (graphics-change-property "gr-fill-color" val))
 
-(define default-line-arrows
-  ;; REMARK: the points of the arrow are specified
-  ;; in absolute coordinates using tuples. Alternatively,
-  ;; one might include the arrows in a (with "gr-frame" ...) tag,
-  ;; but this does not yet work due to incorrect frame retrieval
-  ;; in edit_graphics.cpp.
-  #("none"
-    (tuple
-     (with "dash-style" "none"
-	(line (tuple "-10ln" "6ln") (tuple "0ln" "0ln")
-	      (tuple "-10ln" "-6ln"))))
-    (tuple
-     (with "dash-style" "none"
-	(line (tuple "10ln" "6ln") (tuple "0ln" "0ln")
-	      (tuple "10ln" "-6ln")))
-     (with "dash-style" "none"
-	(line (tuple "-10ln" "6ln") (tuple "0ln" "0ln")
-	      (tuple "-10ln" "-6ln"))))))
+(tm-define (graphics-set-arrow-begin val)
+  (:argument val "Left arrow")
+  (:check-mark "*" (graphics-test-property? "gr-arrow-begin"))
+  (graphics-change-property "gr-arrow-begin" val))
 
-(define (line-arrows-has-value? arrows)
-  (with gr-arrows (graphics-get-property "gr-line-arrows")
-     (if (pair? gr-arrows)
-         ;; FIXME: Shitty workaround around the <quote|none> bug...
-	 (set-car! (cddadr gr-arrows) "none"))
-     (if (number? arrows)
-	 (== (vector-ref default-line-arrows arrows) gr-arrows)
-	 (== arrows gr-arrows))))
-
-(tm-define (graphics-set-line-arrows arrows)
-  (:argument val "Arrows")
-  (:check-mark "*" line-arrows-has-value?)
-  (cond ((string? arrows)
-	 (graphics-change-property "gr-line-arrows" arrows))
-        ((integer? arrows)
-         (graphics-change-property
-          "gr-line-arrows"
-          (vector-ref default-line-arrows arrows)))
-	((pair? arrows)
-	 (graphics-change-property "gr-line-arrows" arrows))))
-
-(tm-define (decode-arrows val)
-  (cond ((== val "default") "---")
-        ((== val (vector-ref default-line-arrows 0)) "---")
-        ((== val (vector-ref default-line-arrows 1)) "--->")
-        ((== val (vector-ref default-line-arrows 2)) "<--->")
-        (else "other")))
+(tm-define (graphics-set-arrow-end val)
+  (:argument val "Right arrow")
+  (:check-mark "*" (graphics-test-property? "gr-arrow-end"))
+  (graphics-change-property "gr-arrow-end" val))
 
 (tm-define (graphics-set-textat-halign val)
   (:argument val "Text-at horizontal alignment")

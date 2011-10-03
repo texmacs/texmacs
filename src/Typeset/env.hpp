@@ -173,7 +173,7 @@ public:
   SI           dash_style_unit;
   int          fill_mode;
   color        fill_color;
-  array<box>   line_arrows;
+  array<tree>  line_arrows;
   string       text_at_halign;
   string       text_at_valign;
  
@@ -382,6 +382,7 @@ public:
   void   update_page_pars ();
   void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
 			SI& odd, SI& even, SI& top, SI& bottom);
+  tree   decode_arrow (tree t, string l, string h);
   void   update_font ();
   void   update_color ();
   void   update_mode ();

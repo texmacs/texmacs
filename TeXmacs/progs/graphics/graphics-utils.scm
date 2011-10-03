@@ -431,7 +431,8 @@
 	t
 	`(with ,@f ,t))))
 
-(tm-define (graphics-enrich-bis t id op color ps lw mag st stu lp fc ha va)
+(tm-define (graphics-enrich-bis t id op color ps lw mag st stu
+                                a1 a2 a3 a4 fc ha va)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t
@@ -448,7 +449,10 @@
 	      ("line-width" ,lw)
 	      ;;("magnification" ,mag)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
-	      ("line-arrows" ,lp)
+	      ("arrow-begin" ,a1)
+	      ("arrow-end" ,a2)
+	      ("arrow-length" ,a3)
+	      ("arrow-height" ,a4)
 	      ("fill-color" ,fc))))
 	  ((== mode 'text-at)
 	   (graphics-enrich-sub t
@@ -467,7 +471,10 @@
 	      ("line-width" ,lw)
 	      ;;("magnification" ,mag)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
-	      ("line-arrows" ,lp)
+	      ("arrow-begin" ,a1)
+	      ("arrow-end" ,a2)
+	      ("arrow-length" ,a3)
+	      ("arrow-height" ,a4)
 	      ("fill-color" ,fc)
 	      ("text-at-halign" ,ha)
 	      ("text-at-valign" ,va))))
@@ -482,11 +489,15 @@
 	 (mag "1.0")
 	 (st (graphics-get-property "gr-dash-style"))
 	 (stu (graphics-get-property "gr-dash-style-unit"))
-	 (lp (graphics-get-property "gr-line-arrows"))
+	 (a1 (graphics-get-property "gr-arrow-begin"))
+	 (a2 (graphics-get-property "gr-arrow-end"))
+	 (a3 (graphics-get-property "gr-arrow-length"))
+	 (a4 (graphics-get-property "gr-arrow-height"))
 	 (fc (graphics-get-property "gr-fill-color"))
 	 (ha (graphics-get-property "gr-text-at-halign"))
 	 (va (graphics-get-property "gr-text-at-valign")))
-    (graphics-enrich-bis t "default" op color ps lw mag st stu lp fc ha va)))
+    (graphics-enrich-bis t "default" op color ps lw mag st stu
+                         a1 a2 a3 a4 fc ha va)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -528,9 +539,10 @@
   (graphics-group-insert (graphics-enrich t)))
 
 (tm-define (graphics-group-enrich-insert-bis
-	    t op color ps lw mag st stu lp fc ha va go-into)
+	    t op color ps lw mag st stu a1 a2 a3 a4 fc ha va go-into)
   (graphics-group-insert-bis
-   (graphics-enrich-bis t "default" op color ps lw mag st stu lp fc ha va)
+   (graphics-enrich-bis t "default" op color ps lw mag st stu
+                        a1 a2 a3 a4 fc ha va)
    go-into))
 
 (tm-define (graphics-group-start)

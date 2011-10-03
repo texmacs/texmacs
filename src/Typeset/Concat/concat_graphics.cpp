@@ -108,6 +108,26 @@ concater_rep::typeset_point (tree t, path ip) {
                     env->point_style));
 }
 
+static tree
+protect_arrow (edit_env env, tree t) {
+  return tree (WITH, "arrow-begin", "none", "arrow-end", "none",
+               "dash-style", "none", t);
+}
+
+array<box>
+concater_rep::typeset_line_arrows (path ip) {
+  array<box> bs (2);
+  if (env->line_arrows[0] != "") {
+    tree a= protect_arrow (env, env->line_arrows[0]);
+    bs[0]= typeset_as_concat (env, a, decorate (ip));
+  }
+  if (env->line_arrows[1] != "") {
+    tree a= protect_arrow (env, env->line_arrows[1]);
+    bs[1]= typeset_as_concat (env, a, decorate (ip));
+  }
+  return bs;
+}
+
 void
 concater_rep::typeset_line (tree t, path ip, bool close) {
   int i, n= N(t);
@@ -130,7 +150,7 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   print (curve_box (ip, c, env->lw, env->col,
                     env->dash_style, env->dash_style_unit,
                     env->fill_mode, env->fill_color,
-                    env->line_arrows));
+                    typeset_line_arrows (ip)));
 }
 
 void
@@ -152,7 +172,7 @@ concater_rep::typeset_arc (tree t, path ip, bool close) {
     print (curve_box (ip, c, env->lw, env->col,
                       env->dash_style, env->dash_style_unit,
                       env->fill_mode, env->fill_color,
-                      env->line_arrows));
+                      typeset_line_arrows (ip)));
   }
 }
 
@@ -174,7 +194,7 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
   print (curve_box (ip, c, env->lw, env->col,
                     env->dash_style, env->dash_style_unit,
                     env->fill_mode, env->fill_color,
-                    env->line_arrows));
+                    typeset_line_arrows (ip)));
 }
 
 void

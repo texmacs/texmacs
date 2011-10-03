@@ -1968,7 +1968,7 @@ static charp var_rename []= {
   "line width", "line-width",
   "line style", "line-style",
   "line arrows", "line-arrows",
-  "line caps", "line-caps",
+  "line caps", "line-join",
   "fill mode", "fill-mode",
   "fill color", "fill-color",
   "fill style", "fill-style",
@@ -3349,12 +3349,48 @@ replace_dash_style (tree& t, string var) {
 }
 
 static tree
+encode_arrow (tree t) {
+  if (is_func (t, WITH, 3) && t[0] == "dash-style") {
+    if (t[2] == tree (LINE,
+                      tuple ("10ln", "6ln"),
+                      tuple ("0ln", "0ln"),
+                      tuple ("10ln", "-6ln")))
+      return "<less>";
+    if (t[2] == tree (LINE,
+                      tuple ("-10ln", "6ln"),
+                      tuple ("0ln", "0ln"),
+                      tuple ("-10ln", "-6ln")))
+      return "<gtr>";
+  }
+  return t;
+}
+
+static void
+replace_line_arrows (tree& t, string var, string begin, string end) {
+  if (find_attr (t, var)) {
+    tree val= get_attr (t, var, "default");
+    t= set_attr (t, "arrow-length", "10ln");
+    t= set_attr (t, "arrow-height", "6ln");
+    if (is_func (val, TUPLE, 1))
+      t= set_attr (t, end, encode_arrow (val[0]));
+    if (is_func (val, TUPLE, 2)) {
+      t= set_attr (t, begin, encode_arrow (val[0]));
+      t= set_attr (t, end, encode_arrow (val[1]));
+    }
+    t= remove_attr (t, var);
+  }
+}
+
+static tree
 upgrade_gr_attributes (tree t) {
   int i;
   if (is_atomic (t)) return t;
   if (is_func (t, WITH)) {
     replace_dash_style (t, "dash-style");
     replace_dash_style (t, "gr-dash-style");
+    replace_line_arrows (t, "line-arrows", "arrow-begin", "arrow-end");
+    replace_line_arrows (t, "gr-line-arrows",
+                         "gr-arrow-begin", "gr-arrow-end");
   }
   int n= N(t);
   tree r (t, n);

@@ -145,7 +145,10 @@
                    (local-magnification graphical-magnification)
                    graphical-lstyle
                    graphical-lstyle-unit
-                   graphical-larrows
+                   graphical-arrow-begin
+                   graphical-arrow-end
+                   graphical-arrow-length
+                   graphical-arrow-height
                    graphical-fcolor
                    graphical-textat-halign
                    graphical-textat-valign))

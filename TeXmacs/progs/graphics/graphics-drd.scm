@@ -63,10 +63,15 @@
   ("opacity" . "100%")
   ("point-style" . "disk")
   ("line-width" . "1ln")
+  ("line-join" . "normal")
+  ("line-caps" . "normal")
+  ("line-effects" . "normal")
   ("dash-style" . "none")
   ("dash-style-unit" . "5ln")
-  ("line-arrows" . "none")
-  ("line-caps" . "normal")
+  ("arrow-begin" . "none")
+  ("arrow-end" . "none")
+  ("arrow-length" . "5ln")
+  ("arrow-height" . "5ln")
   ("fill-color" . "none")
   ("fill-style" . "plain")
   ("text-at-halign" . "left")
@@ -82,6 +87,17 @@
         ((== x "10") ". . . . .")
         ((== x "11100") "- - - - -")
         ((== x "1111010") "- . - . -")
+        (else "other")))
+
+(tm-define (decode-arrow x)
+  (cond ((== x "default") "")
+        ((== x "none") "")
+        ((== x "") "")
+        ((== x "<less>") "<")
+        ((== x "<gtr>") ">")
+        ((== x "<less>|") "<|")
+        ((== x "|<gtr>") "|>")
+        ((string? x) x)
         (else "other")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -107,7 +123,9 @@
   (:require (graphical-curve-tag? tag))
   (append (graphics-common-attributes)
           '("fill-color"
-            "line-width" "dash-style" "dash-style-unit" "line-arrows")))
+            "line-width" "line-join" "line-caps" "line-effects"
+            "dash-style" "dash-style-unit"
+            "arrow-begin" "arrow-end" "arrow-length" "arrow-height")))
   
 (tm-define (graphics-attributes tag)
   (:require (graphical-text-tag? tag))

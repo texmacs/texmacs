@@ -109,7 +109,10 @@ initialize_default_var_type () {
   var_type (DASH_STYLE)        = Env_Dash_Style;
   var_type (DASH_STYLE_UNIT)   = Env_Dash_Style_Unit;
   var_type (FILL_COLOR)        = Env_Fill_Color;
-  var_type (LINE_ARROWS)       = Env_Line_Arrows;
+  var_type (ARROW_BEGIN)       = Env_Line_Arrows;
+  var_type (ARROW_END)         = Env_Line_Arrows;
+  var_type (ARROW_LENGTH)      = Env_Line_Arrows;
+  var_type (ARROW_HEIGHT)      = Env_Line_Arrows;
   var_type (TEXT_AT_HALIGN)    = Env_Text_At_Halign;
   var_type (TEXT_AT_VALIGN)    = Env_Text_At_Valign;
   var_type (GR_FRAME)          = Env_Frame;
@@ -433,34 +436,72 @@ edit_env_rep::update_dash_style () {
   }
 }
 
-/*FIXME: Currently, the line-arrows property is evaluated
-  only in the context of the variables which appear before
-  it in the <with>. For example :
+void
+decompose_length (string s, double& x, string& un) {
+  int i;
+  for (i=0; i<N(s); i++)
+    if ((s[i]>='a') && (s[i]<='z')) break;
+  x = as_double (s (0, i));
+  un= s (i, N(s));
+}
 
-  - <with|color|blue|<with|color|green|line-arrows|<line|...>|...>
-    draws green objects with green line arrows;
+tree
+edit_env_rep::decode_arrow (tree t, string l, string h) {
+  if (is_string (t)) {
+    string s= t->label;
+    if (s == "" || s == "none") return "";
+    double lx, hx;
+    string lun, hun;
+    decompose_length (l, lx, lun);
+    decompose_length (h, hx, hun);
+    if (s == "<less>")
+      return tree (LINE,
+                   tree (_POINT, l, h),
+                   tree (_POINT, "0" * lun, "0" * hun),
+                   tree (_POINT, l, as_string (-hx) * hun));
+    if (s == "<gtr>")
+      return tree (LINE,
+                   tree (_POINT, as_string (-lx) * lun, h),
+                   tree (_POINT, "0" * lun, "0" * hun),
+                   tree (_POINT, as_string (-lx) * lun,
+                                 as_string (-hx) * hun));
+    if (s == "<less>|")
+      return tree (WITH, FILL_COLOR, tree (VALUE, COLOR),
+                   LINE_WIDTH, "0ln",
+                   tree (CLINE,
+                         tree (_POINT, l, h),
+                         tree (_POINT, "0" * lun, "0" * hun),
+                         tree (_POINT, l, as_string (-hx) * hun)));
+    if (s == "|<gtr>")
+      return tree (WITH, FILL_COLOR, tree (VALUE, COLOR),
+                   LINE_WIDTH, "0ln",
+                   tree (CLINE,
+                         tree (_POINT, as_string (-lx) * lun, h),
+                         tree (_POINT, "0" * lun, "0" * hun),
+                         tree (_POINT, as_string (-lx) * lun,
+                               as_string (-hx) * hun)));
+    if (s == "<gtr>")
+      return tree (LINE,
+                   tree (_POINT, as_string (-lx) * lun, h),
+                   tree (_POINT, "0" * lun, "0" * hun),
+                   tree (_POINT, as_string (-lx) * lun,
+                                 as_string (-hx) * hun));
+    if (s == "|")
+      return tree (LINE,
+                   tree (_POINT, "0" * lun, h),
+                   tree (_POINT, "0" * lun, as_string (-hx) * hun));
+    return "";
+  }
+  else return t;
+}
 
-  - while <with|color|blue|<with|line-arrows|<line|...>|color|green|...>
-    draws green objects with blue line arrows.
- */
 void
 edit_env_rep::update_line_arrows () {
-  tree t= env [LINE_ARROWS];
-  line_arrows= array<box>(2);
-  if (is_string (t)) {
-    string s= as_string (t);
-    if (s == "none") {}
-  }
-  else
-  if (is_tuple (t) && N(t)<=2 && N(t)>0) {
-    array<box> b (2);
-    b[1]= t[0]=="" ? box () : typeset_as_box (this, t[0], path(0));
-    if (N(t)>=2) {
-      b[0]= b[1];
-      b[1]= t[1]=="" ? box () : typeset_as_box (this, t[1], path (0));
-    }
-    line_arrows= b;
-  }
+  line_arrows= array<tree> (2);
+  string l= get_string (ARROW_LENGTH);
+  string h= get_string (ARROW_HEIGHT);
+  line_arrows[0]= decode_arrow (env [ARROW_BEGIN], l, h);
+  line_arrows[1]= decode_arrow (env [ARROW_END], l, h);
 }
 
 void
