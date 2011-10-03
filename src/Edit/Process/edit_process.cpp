@@ -38,8 +38,8 @@ find_bib_file (url base, string fname, string suffix= ".bib") {
     return bibf;
   if (exists (relative (base, bibf)))
     return relative (base, bibf);
-  if (exists (relative (base, url_ancestor () * bibf)))
-    return resolve (relative (base, url_ancestor () * bibf));
+  if (exists (expand (relative (base, url_ancestor () * bibf))))
+    return resolve (expand (relative (base, url_ancestor () * bibf)));
   return url_none ();
 }
 

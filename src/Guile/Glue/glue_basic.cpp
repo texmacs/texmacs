@@ -3095,6 +3095,15 @@ tmg_url_parent () {
 }
 
 SCM
+tmg_url_ancestor () {
+  // SCM_DEFER_INTS;
+  url out= url_ancestor ();
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
 tmg_url_append (SCM arg1, SCM arg2) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "url-append");
   SCM_ASSERT_URL (arg2, SCM_ARG2, "url-append");
@@ -3199,6 +3208,19 @@ tmg_url_ref (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   url out= url_ref (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
+tmg_url_head (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "url-head");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= head (in1);
   // SCM_ALLOW_INTS;
 
   return url_to_scm (out);
@@ -5263,6 +5285,7 @@ initialize_glue_basic () {
   scm_new_procedure ("url-any", (FN) tmg_url_any, 0, 0, 0);
   scm_new_procedure ("url-wildcard", (FN) tmg_url_wildcard, 1, 0, 0);
   scm_new_procedure ("url-parent", (FN) tmg_url_parent, 0, 0, 0);
+  scm_new_procedure ("url-ancestor", (FN) tmg_url_ancestor, 0, 0, 0);
   scm_new_procedure ("url-append", (FN) tmg_url_append, 2, 0, 0);
   scm_new_procedure ("url-or", (FN) tmg_url_or, 2, 0, 0);
   scm_new_procedure ("url->string", (FN) tmg_url_2string, 1, 0, 0);
@@ -5271,6 +5294,7 @@ initialize_glue_basic () {
   scm_new_procedure ("url-concat?", (FN) tmg_url_concatP, 1, 0, 0);
   scm_new_procedure ("url-or?", (FN) tmg_url_orP, 1, 0, 0);
   scm_new_procedure ("url-ref", (FN) tmg_url_ref, 2, 0, 0);
+  scm_new_procedure ("url-head", (FN) tmg_url_head, 1, 0, 0);
   scm_new_procedure ("url-tail", (FN) tmg_url_tail, 1, 0, 0);
   scm_new_procedure ("url-suffix", (FN) tmg_url_suffix, 1, 0, 0);
   scm_new_procedure ("url-glue", (FN) tmg_url_glue, 2, 0, 0);

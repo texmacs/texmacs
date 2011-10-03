@@ -917,7 +917,7 @@ edit_env_rep::exec_use_package (tree t) {
     //cout << "Package " << name << "\n";
     if (is_rooted_web (base_file_name))
       styp= styp | head (base_file_name);
-    else styp= head (base_file_name) | styp;
+    else styp= ::expand (head (base_file_name) * url_ancestor ()) | styp;
     string doc_s;
     if (!load_string (styp * name, doc_s, false)) {
       tree doc= texmacs_document_to_tree (doc_s);
