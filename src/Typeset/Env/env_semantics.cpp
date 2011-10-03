@@ -431,12 +431,6 @@ edit_env_rep::update_dash_style () {
         dash_style[i]= (s[i] != '0');
     }
   }
-  else if (is_tuple (t)) {
-    int i, n= N(t);
-    dash_style= array<bool> (n);
-    for (i=0; i<n; i++)
-      dash_style[i]= (t[i] != "0");
-  }
 }
 
 /*FIXME: Currently, the line-arrows property is evaluated
