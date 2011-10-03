@@ -3331,6 +3331,39 @@ clean_header (tree t) {
 }
 
 /******************************************************************************
+* Upgrade graphical attributes
+******************************************************************************/
+
+static void
+replace_dash_style (tree& t, string var) {
+  if (find_attr (t, var)) {
+    tree val= get_attr (t, var, "default");
+    if (is_func (val, TUPLE)) {
+      string nval;
+      for (int i=0; i<N(val); i++)
+        if (val[i] == "0") nval << "0";
+        else nval << "1";
+      t= set_attr (t, var, tree (nval));
+    }
+  }
+}
+
+static tree
+upgrade_gr_attributes (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_func (t, WITH)) {
+    replace_dash_style (t, "dash-style");
+    replace_dash_style (t, "gr-dash-style");
+  }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_gr_attributes (t[i]);
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3492,6 +3525,9 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.7.10"))
     t= downgrade_big (t);
+  if (version_inf_eq (version, "1.0.7.13"))
+    t= upgrade_gr_attributes (t);
+
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

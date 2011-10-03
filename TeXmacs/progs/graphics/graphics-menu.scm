@@ -290,8 +290,8 @@
   (group "Style")
   ;;("Default" (graphics-set-dash-style "default"))
   ;;--
-  ("---"    (graphics-set-dash-style "default"))
-  (". . . . ."    (graphics-set-dash-style "10"))
+  ("-----" (graphics-set-dash-style "default"))
+  (". . . . ." (graphics-set-dash-style "10"))
   ("- - - - -" (graphics-set-dash-style "11100"))
   ("- . - . -" (graphics-set-dash-style "1111010"))
   ;;---

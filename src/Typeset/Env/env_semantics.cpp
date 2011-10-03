@@ -421,19 +421,21 @@ edit_env_rep::update_src_close () {
 void
 edit_env_rep::update_dash_style () {
   tree t= env [DASH_STYLE];
-  dash_style= array<bool>(0);
+  dash_style= array<bool> (0);
   if (is_string (t)) {
     string s= as_string (t);
-    if (s == "none") {}
+    if (N(s) > 0 && (s[0] == '0' || s[0] == '1')) {
+      int i, n= N(s);
+      dash_style= array<bool> (n);
+      for (i=0; i<n; i++)
+        dash_style[i]= (s[i] != '0');
+    }
   }
-  else
-  if (is_tuple (t)) {
+  else if (is_tuple (t)) {
     int i, n= N(t);
     dash_style= array<bool> (n);
-    for (i=0; i<n; i++) {
-      dash_style[i]= true;
-      if (t[i] == "0") dash_style[i]= false;
-    }
+    for (i=0; i<n; i++)
+      dash_style[i]= (t[i] != "0");
   }
 }
 

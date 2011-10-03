@@ -44,7 +44,7 @@
 (tm-define gr-tags-oneshot      '(point arc carc text-at gr-group))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; List of graphical attributes
+;; List of graphical attributes and their properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (gr-prefixed? attr)
@@ -76,6 +76,13 @@
   (if (gr-prefixed? attr)
       (graphics-attribute-default (gr-unprefix attr))
       (ahash-ref attribute-default-table attr)))
+
+(tm-define (decode-dash x)
+  (cond ((== x "default") "---")
+        ((== x "10") ". . . . .")
+        ((== x "11100") "- - - - -")
+        ((== x "1111010") "- . - . -")
+        (else "other")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Attributes of the graphical tags

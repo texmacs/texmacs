@@ -670,34 +670,10 @@
   (:check-mark "*" (graphics-test-property? "gr-line-width"))
   (graphics-change-property "gr-line-width" val))
 
-(define (convert-dash-style val)
-  (define (convert-1 ch)
-    (if (or (eq? ch #\0) (eq? ch #\space)) "0" "1"))
-  (if (and (string? val) (not (equal? val "")))
-      (cons 'tuple (map convert-1 (string->list val)))
-      'none))
-
-(define (dash-style-has-value? val)
-  (with sty (graphics-get-property "gr-dash-style")
-    (if (string? sty)
-	(== val sty)
-	(== (convert-dash-style val) sty))))
-
 (tm-define (graphics-set-dash-style val)
   (:argument val "Dash style")
-  (:check-mark "*" dash-style-has-value?)
-  (graphics-change-property
-   "gr-dash-style"
-   (if (== val "default")
-       "default"
-       (convert-dash-style val))))
-
-(tm-define (decode-dash x)
-  (cond ((== x "default") "---")
-        ((== x '(tuple "1" "0")) ". . . . .")
-        ((== x '(tuple "1" "1" "1" "0" "0")) "- - - - -")
-        ((== x '(tuple "1" "1" "1" "1" "0" "1" "0")) "- . - . -")
-        (else "other")))
+  (:check-mark "*" (graphics-test-property? "gr-dash-style"))
+  (graphics-change-property "gr-dash-style" val))
 
 (tm-define (graphics-set-dash-style-unit val)
   (:argument val "Dash style unit")
