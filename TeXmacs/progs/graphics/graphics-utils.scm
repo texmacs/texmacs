@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-utils)
-  (:use (utils library cursor)
-        (utils library tree)))
+  (:use (graphics graphics-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some global definitions
@@ -293,17 +292,6 @@
 ;; Subroutines for accessing the graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;NOTE: This section is OK.
-(tm-define gr-tags-all '(point
-			 line cline spline cspline
-			 arc carc
-			 text-at
-			 gr-group))
-(tm-define gr-tags-curves       '(line cline spline cspline arc carc))
-(tm-define gr-tags-point-curves `(point . ,gr-tags-curves))
-(tm-define gr-tags-noncurves    '(point text-at gr-group))
-(tm-define gr-tags-oneshot      '(point arc carc text-at gr-group))
-
 (tm-define (stree-at p)
   (tree->stree (path->tree p)))
 ;; TODO: Put this in kernel/library/tree.scm
@@ -348,16 +336,7 @@
 
 (tm-define (graphics-mode-attribute? mode attr)
   (if (func? mode 'edit 1) (set! mode (cadr mode)))
-  (cond ((in? attr '("gid" "opacity" "color"))
-         #t)
-        ((in? mode '(point))
-         (in? attr '("point-style")))
-        ((in? mode gr-tags-curves)
-         (in? attr '("line-width" "dash-style"
-                     "dash-style-unit" "line-arrows" "fill-color")))
-        ((in? mode '(text-at))
-         (in? attr '("text-at-halign" "text-at-valign")))
-        (else #f)))
+  (in? attr (graphics-attributes mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for accessing the properties of the graphics
@@ -454,26 +433,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;NOTE: This section is OK.
-(tm-define (graphics-valid-attribute? attr tag)
-  (cond ((in? attr '("gid" "opacity" "color"))
-         #t)
-        ((== tag 'point)
-	 (in? attr '("fill-color" "point-style")))
-	((not (in? tag gr-tags-noncurves))
-	 (in? attr '("fill-color" "line-width"
-		     "magnification" "dash-style" "dash-style-unit"
-		     "line-arrows")))
-	((== tag 'text-at)
-	 (in? attr '("text-at-halign" "text-at-valign" "magnification")))
-	((== tag 'gr-group)
-	 (in? attr '("fill-color"
-		     "point-style" "line-width"
-		     "magnification" "dash-style" "dash-style-unit"
-		     "line-arrows"
-		     "text-at-halign" "text-at-valign")))
-	(else #f)))
 
 (tm-define (graphics-enrich-filter t l)
   (if (null? l) l

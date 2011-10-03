@@ -18,7 +18,7 @@
 	(graphics graphics-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Keyboard handling
+;; Extra subroutines for keyboard handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-variant t forwards?)
@@ -45,12 +45,19 @@
   (and (in-graphics?) (== (get-env "preamble") "false")))
 
 (define (graphics-kbd-remove forward?)
-  (if (and (with-active-selection?)
-	   (with-cursor (rcons (selection-path) 0)
-	     (not (in-graphics?))))
-      (begin
-	(go-to (rcons (selection-path) 0))
-	(clipboard-cut "primary"))))
+  (cond ((and (with-active-selection?)
+              (with-cursor (rcons (selection-path) 0)
+                (not (in-graphics?))))
+         (go-to (rcons (selection-path) 0))
+         (clipboard-cut "primary"))
+        ((inside? 'text-at)
+         (if forward? (kbd-delete) (kbd-backspace)))
+        (else
+         (edit_delete))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyboard handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
   (:mode in-active-graphics?)
@@ -86,8 +93,8 @@
   ("M-up"    (if (current-is-textat?)
 		 (text-at-change-valign current-path #t)
 		 (graphics-change-geo-valign #t)))
-  ("backspace" (graphics-kbd-backspace))
-  ("delete" (graphics-kbd-delete))
+  ("backspace" (graphics-kbd-remove #f))
+  ("delete" (graphics-kbd-remove #t))
   ("C-g" (graphics-toggle-grid #f))
   ("C-G" (graphics-toggle-grid #t)))
 

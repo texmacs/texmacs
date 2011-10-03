@@ -319,6 +319,10 @@
 (tm-define (edit_tab-key mode inc)
   (display* "Uncaptured graphical tab-key " mode ", " inc "\n"))
 
+(tm-define (edit_delete)
+  (:state graphics-state)
+  (edit_middle-button 'edit current-x current-y))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
