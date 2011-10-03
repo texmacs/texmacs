@@ -211,6 +211,7 @@
 (menu-bind graphics-opacity-menu
   ("Default" (graphics-set-opacity "default"))
   ---
+  ("0%" (graphics-set-opacity "0%"))
   ("10%" (graphics-set-opacity "10%"))
   ("20%" (graphics-set-opacity "20%"))
   ("30%" (graphics-set-opacity "30%"))
@@ -220,6 +221,7 @@
   ("70%" (graphics-set-opacity "70%"))
   ("80%" (graphics-set-opacity "80%"))
   ("90%" (graphics-set-opacity "90%"))
+  ("100%" (graphics-set-opacity "100%"))
   ---
   ("Other" (interactive graphics-set-opacity)))
 
