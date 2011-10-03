@@ -95,7 +95,7 @@ graphics_box_rep::find_child (SI x, SI y, SI delta, bool force) {
     if (distance (i, x, y, delta)==0) {
       tree ty= (tree)bs[i];
       if ((bs[i]->accessible () || force)
-       && is_tuple (ty) && ty[0]=="textat")
+       && is_tuple (ty) && ty[0]=="text_at")
         return i;
     }
   return m;

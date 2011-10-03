@@ -60,8 +60,8 @@
 #define Env_Dash_Style_Unit   28
 #define Env_Fill_Color        29
 #define Env_Line_Arrows       30
-#define Env_Textat_Halign     31
-#define Env_Textat_Valign     32
+#define Env_Text_At_Halign     31
+#define Env_Text_At_Valign     32
 
 /******************************************************************************
 * For style file editing
@@ -174,8 +174,8 @@ public:
   int          fill_mode;
   color        fill_color;
   array<box>   line_arrows;
-  string       textat_halign;
-  string       textat_valign;
+  string       text_at_halign;
+  string       text_at_valign;
  
   int          inactive_mode;
   tree         recover_env;

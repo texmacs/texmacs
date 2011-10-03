@@ -110,8 +110,8 @@ initialize_default_var_type () {
   var_type (DASH_STYLE_UNIT)   = Env_Dash_Style_Unit;
   var_type (FILL_COLOR)        = Env_Fill_Color;
   var_type (LINE_ARROWS)       = Env_Line_Arrows;
-  var_type (TEXTAT_HALIGN)     = Env_Textat_Halign;
-  var_type (TEXTAT_VALIGN)     = Env_Textat_Valign;
+  var_type (TEXT_AT_HALIGN)    = Env_Text_At_Halign;
+  var_type (TEXT_AT_VALIGN)    = Env_Text_At_Valign;
   var_type (GR_FRAME)          = Env_Frame;
   var_type (GR_GEOMETRY)       = Env_Geometry;
   var_type (GR_GRID)           = Env_Grid;
@@ -489,8 +489,8 @@ edit_env_rep::update () {
   update_dash_style ();
   dash_style_unit= get_length (DASH_STYLE_UNIT);
   update_line_arrows ();
-  textat_halign= get_string (TEXTAT_HALIGN);
-  textat_valign= get_string (TEXTAT_VALIGN);
+  text_at_halign= get_string (TEXT_AT_HALIGN);
+  text_at_valign= get_string (TEXT_AT_VALIGN);
 
   update_src_style ();
   update_src_special ();
@@ -578,11 +578,11 @@ edit_env_rep::update (string s) {
   case Env_Line_Arrows:
     update_line_arrows();
     break;
-  case Env_Textat_Halign:
-    textat_halign= get_string (TEXTAT_HALIGN);
+  case Env_Text_At_Halign:
+    text_at_halign= get_string (TEXT_AT_HALIGN);
     break;
-  case Env_Textat_Valign:
-    textat_valign= get_string (TEXTAT_VALIGN);
+  case Env_Text_At_Valign:
+    text_at_valign= get_string (TEXT_AT_VALIGN);
     break;
   case Env_Src_Style:
     update_src_style ();

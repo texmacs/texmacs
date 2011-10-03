@@ -44,6 +44,29 @@
 (tm-define gr-tags-oneshot      '(point arc carc text-at gr-group))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; List of graphical attributes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table attribute-default-table
+  ("gid" . "default")
+  ("magnification" . "1")
+  ("color" . "black")
+  ("opacity" . "100%")
+  ("point-style" . "disk")
+  ("line-width" . "1ln")
+  ("dash-style" . "none")
+  ("dash-style-unit" . "5ln")
+  ("line-arrows" . "none")
+  ("line-caps" . "normal")
+  ("fill-color" . "none")
+  ("fill-style" . "plain")
+  ("text-at-halign" . "left")
+  ("text-at-valign" . "base"))
+
+(tm-define (graphics-attribute-default attr)
+  (ahash-ref attribute-default-table attr))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Attributes of the graphical tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -51,11 +74,7 @@
   '("gid" "magnification" "color" "opacity"))
 
 (tm-define (graphics-all-attributes)
-  (append (graphics-common-attributes)
-          '("fill-color"
-            "point-style"
-            "line-width" "dash-style" "dash-style-unit" "line-arrows"
-            "text-at-halign" "text-at-valign")))
+  (map car (ahash-table->list attribute-default-table)))
 
 (tm-define (graphics-attributes tag)
   (graphics-common-attributes))

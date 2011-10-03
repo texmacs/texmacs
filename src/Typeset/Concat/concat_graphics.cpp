@@ -77,8 +77,8 @@ concater_rep::typeset_text_at (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
   point  p     = env->fr (env->as_point (env->exec (t[1])));
-  string halign= env->textat_halign;
-  string valign= env->textat_valign;
+  string halign= env->text_at_halign;
+  string valign= env->text_at_valign;
 
   if (N(p) == 0)
     typeset_dynamic (tree (ERROR, "bad text-at"), ip);
@@ -91,7 +91,7 @@ concater_rep::typeset_text_at (tree t, path ip) {
     else if (valign == "axis") y -= (env->fn->yx >> 1);
     else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
     else if (valign == "top") y -= b->y2;
-    print (textat_box (ip, b, x, y, env->fn->spc->def));
+    print (text_at_box (ip, b, x, y, env->fn->spc->def));
   }
 }
 
