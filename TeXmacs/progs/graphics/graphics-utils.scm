@@ -705,6 +705,27 @@
 			      `(,(cadr box2) ,(cadddr box2))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enhanced trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (enhanced-tree? t)
+  (eq? (tree-label t) 'with))
+
+(tm-define (enhanced-tree->radical t)
+  (if (enhanced-tree? t)
+      (tree-ref t (- (tree-arity t) 1))
+      t))
+
+(tm-define (radical->enhanced-tree r)
+  (with t (tree-up r)
+     (if (enhanced-tree? t) t r)))
+
+(tm-define (stree-radical t)
+  (if (and (pair? t) (eq? (car t) 'with) (nnull? (cdr t)))
+      (cAr t)
+      t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; New style graphical attributes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -792,66 +813,3 @@
           (ahash-set! new var (ahash-ref tab var))
           (ahash-remove! new var)))
     (graphical-set-attributes t new)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Enhanced trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (enhanced-tree? t)
-  (eq? (tree-label t) 'with))
-
-(tm-define (enhanced-tree->radical t)
-  (if (enhanced-tree? t)
-      (tree-ref t (- (tree-arity t) 1))
-      t))
-
-(tm-define (stree-radical t)
-  (if (and (pair? t) (eq? (car t) 'with) (nnull? (cdr t)))
-      (cAr t)
-      t))
-
-(tm-define (radical->enhanced-tree r)
-  (with t (tree-up r)
-     (if (enhanced-tree? t) t r)))
-
-(tm-define (enhanced-tree-arity t)
-  (tree-arity (enhanced-tree->radical t)))
-
-(tm-define (enhanced-tree-ref t i)
-  (tree-ref (enhanced-tree->radical t) i))
-
-(tm-define (enhanced-tree-set! t i val)
-  (tree-set! (enhanced-tree->radical t) i val))
-
-(tm-define (enhanced-tree-insert! t i val)
-  (tree-insert! (enhanced-tree->radical t) i `(,val)))
-
-(tm-define (enhanced-tree-remove! t i n)
-  (tree-remove! (enhanced-tree->radical t) i n))
-
-(tm-define (enhanced-tree-property-ref t var)
-  (define res #f)
-  (if (string? var)
-      (set! var (stree->tree var)))
-  (if (enhanced-tree? t)
-      (foreach-number (i 0 < (- (tree-arity r) 1))
-	 (if (equal? (tree-ref t i) var)
-	     (set! res (tree-ref t (+ i 1))))
-	 (set! i (+ 1 i))))
-  res)
-
-(tm-define (enhanced-tree-property-set! t var val)
-  (define found #f)
-  (if (string? var)
-      (set! var (stree->tree var)))
-  (if (enhanced-tree? t)
-      (begin
-	 (foreach-number (i 0 < (- (tree-arity r) 1))
-	    (if (equal? (tree-ref t i) var)
-		(begin
-		   (set! found #t)
-		   (tree-set! t (+ i 1) val)))
-	    (set! i (+ 1 i))
-	 )
-         (if (not found)
-	     (tree-insert! t (tree-arity t) `(,var ,val))))))
