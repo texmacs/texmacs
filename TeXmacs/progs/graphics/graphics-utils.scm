@@ -485,22 +485,14 @@
 	   (graphics-enrich-sub t '())))))
 
 (tm-define (graphics-enrich t)
-  (let* ((op (graphics-get-property "gr-opacity"))
-	 (color (graphics-get-property "gr-color"))
-	 (ps (graphics-get-property "gr-point-style"))
-	 (lw (graphics-get-property "gr-line-width"))
-	 (mag "1.0")
-	 (st (graphics-get-property "gr-dash-style"))
-	 (stu (graphics-get-property "gr-dash-style-unit"))
-	 (a1 (graphics-get-property "gr-arrow-begin"))
-	 (a2 (graphics-get-property "gr-arrow-end"))
-	 (a3 (graphics-get-property "gr-arrow-length"))
-	 (a4 (graphics-get-property "gr-arrow-height"))
-	 (fc (graphics-get-property "gr-fill-color"))
-	 (ha (graphics-get-property "gr-text-at-halign"))
-	 (va (graphics-get-property "gr-text-at-valign")))
-    (graphics-enrich-bis t "default" op color ps lw mag st stu
-                         a1 a2 a3 a4 fc ha va)))
+  (let* ((l1 (graphics-all-attributes))
+         (l2 (map gr-prefix l1))
+         (l3 (map graphics-get-property l2))
+         (tab (list->ahash-table (map cons l1 l3)))
+         (l4 (begin (ahash-set! tab "magnification" "1.0")
+                    (ahash-table->properties tab)))
+         (args (append (list t "default") l4)))
+    (apply graphics-enrich-bis args)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
