@@ -209,8 +209,6 @@
   ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup))))
 
 (menu-bind graphics-opacity-menu
-  ("Default" (graphics-set-opacity "default"))
-  ---
   ("0%" (graphics-set-opacity "0%"))
   ("10%" (graphics-set-opacity "10%"))
   ("20%" (graphics-set-opacity "20%"))
