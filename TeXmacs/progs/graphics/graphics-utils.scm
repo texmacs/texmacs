@@ -432,13 +432,10 @@
   (with f (graphics-enrich-filter (car t) l)
     (if (null? f) t `(with ,@f ,t))))
 
-(tm-define (graphics-enrich-bis t id op color ps lw mag st stu
-                                a1 a2 a3 a4 fc ha va)
+(tm-define (graphics-enrich-bis t id tab)
   (let* ((mode (car t))
          (attrs (graphics-attributes mode))
          (attrs* (list-difference attrs '("magnification")))
-         (tab (properties->ahash-table
-               (list op color ps lw mag st stu a1 a2 a3 a4 fc ha va)))
          (sel (ahash-table-select tab attrs*))
          (l1 (cons (cons "gid" id) (ahash-table->list sel)))
          (l2 (map (lambda (x) (list (car x) (cdr x))) l1)))
@@ -449,11 +446,9 @@
   (let* ((l1 (graphics-all-attributes))
          (l2 (map gr-prefix l1))
          (l3 (map graphics-get-property l2))
-         (tab (list->ahash-table (map cons l1 l3)))
-         (l4 (begin (ahash-set! tab "magnification" "1.0")
-                    (ahash-table->properties tab)))
-         (args (append (list t "default") l4)))
-    (apply graphics-enrich-bis args)))
+         (tab (list->ahash-table (map cons l1 l3))))
+    (ahash-set! tab "magnification" "1.0")
+    (graphics-enrich-bis t "default" tab)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -494,8 +489,9 @@
 (tm-define (graphics-group-enrich-insert-bis
 	    t op color ps lw mag st stu a1 a2 a3 a4 fc ha va go-into)
   (graphics-group-insert-bis
-   (graphics-enrich-bis t "default" op color ps lw mag st stu
-                        a1 a2 a3 a4 fc ha va)
+   (graphics-enrich-bis
+    t "default" (properties->ahash-table
+                 (list op color ps lw mag st stu a1 a2 a3 a4 fc ha va)))
    go-into))
 
 (tm-define (graphics-group-enrich-insert-table t tab go-into)
