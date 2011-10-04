@@ -108,6 +108,12 @@
 (define-public (ahash-ref* h var val)
   (or (ahash-ref h var) val))
 
+(define-public (ahash-table-select t l)
+  (let ((r (make-ahash-table)))
+    (for-each (lambda (x)
+                (if (ahash-ref t x) (ahash-set! r x (ahash-ref t x)))) l)
+    r))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dictionaries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
