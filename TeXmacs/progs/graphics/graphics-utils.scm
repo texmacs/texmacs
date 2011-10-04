@@ -433,6 +433,8 @@
     (if (null? f) t `(with ,@f ,t))))
 
 (tm-define (graphics-enrich-bis t id tab)
+  (set! tab (list->ahash-table (ahash-table->list tab)))
+  (ahash-remove! tab "gid")
   (let* ((mode (car t))
          (attrs (graphics-attributes mode))
          (attrs* (list-difference attrs '("magnification")))
@@ -486,17 +488,9 @@
 (tm-define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(tm-define (graphics-group-enrich-insert-bis
-	    t op color ps lw mag st stu a1 a2 a3 a4 fc ha va go-into)
-  (graphics-group-insert-bis
-   (graphics-enrich-bis
-    t "default" (properties->ahash-table
-                 (list op color ps lw mag st stu a1 a2 a3 a4 fc ha va)))
-   go-into))
-
 (tm-define (graphics-group-enrich-insert-table t tab go-into)
-  (with l (append (list t) (ahash-table->properties tab) (list go-into))
-    (apply graphics-group-enrich-insert-bis l)))
+  (graphics-group-insert-bis (graphics-enrich-bis t "default" tab)
+                             go-into))
 
 (tm-define (graphics-group-start)
   (graphics-finish)
