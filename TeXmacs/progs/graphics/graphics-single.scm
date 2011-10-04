@@ -133,21 +133,6 @@
 (define (object_commit)
   (define obj (stree-radical (car (sketch-get1))))
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
-;;       (let* ((l (list graphical-opacity
-;;                       graphical-color
-;;                       graphical-pstyle
-;;                       graphical-lwidth
-;;                       (local-magnification graphical-magnification)
-;;                       graphical-lstyle
-;;                       graphical-lstyle-unit
-;;                       graphical-arrow-begin
-;;                       graphical-arrow-end
-;;                       graphical-arrow-length
-;;                       graphical-arrow-height
-;;                       graphical-fcolor
-;;                       graphical-textat-halign
-;;                       graphical-textat-valign))
-;;              (tab (properties->ahash-table l)))
       (with tab (make-ahash-table)
         (for (var (graphics-all-attributes))
           (when (nin? var '("gid" "magnification"))
