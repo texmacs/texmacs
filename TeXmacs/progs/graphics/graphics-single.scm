@@ -133,23 +133,31 @@
 (define (object_commit)
   (define obj (stree-radical (car (sketch-get1))))
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
-      (let* ((l (list graphical-opacity
-                      graphical-color
-                      graphical-pstyle
-                      graphical-lwidth
-                      (local-magnification graphical-magnification)
-                      graphical-lstyle
-                      graphical-lstyle-unit
-                      graphical-arrow-begin
-                      graphical-arrow-end
-                      graphical-arrow-length
-                      graphical-arrow-height
-                      graphical-fcolor
-                      graphical-textat-halign
-                      graphical-textat-valign))
-             (tab (properties->ahash-table l)))
+;;       (let* ((l (list graphical-opacity
+;;                       graphical-color
+;;                       graphical-pstyle
+;;                       graphical-lwidth
+;;                       (local-magnification graphical-magnification)
+;;                       graphical-lstyle
+;;                       graphical-lstyle-unit
+;;                       graphical-arrow-begin
+;;                       graphical-arrow-end
+;;                       graphical-arrow-length
+;;                       graphical-arrow-height
+;;                       graphical-fcolor
+;;                       graphical-textat-halign
+;;                       graphical-textat-valign))
+;;              (tab (properties->ahash-table l)))
+      (with tab (make-ahash-table)
+        (for (var (graphics-all-attributes))
+          (when (nin? var '("gid" "magnification"))
+            (ahash-set! tab var (ahash-ref graphical-attrs var))))
+        (ahash-set! tab "magnification"
+                    (local-magnification
+                     (ahash-ref graphical-attrs "magnification")))
         (graphical-fetch-props (car (sketch-get)))
-        (set! obj (graphics-enrich-bis obj graphical-id tab))
+        (set! obj (graphics-enrich-bis
+                   obj (ahash-ref graphical-attrs "gid") tab))
         (set! current-edge-sel? #f)
         (sketch-set! `(,obj))
         ;;(display* "Commited " (sketch-get) "\n")
