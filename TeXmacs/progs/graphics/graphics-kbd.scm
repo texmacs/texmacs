@@ -17,43 +17,8 @@
 	(graphics graphics-main)
 	(graphics graphics-edit)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra subroutines for keyboard handling
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (kbd-variant t forwards?)
-  (:require (in-active-graphics?))
-  (graphics-choose-point (if forwards? 1 -1)))
-
-(tm-define (kbd-horizontal t forwards?)
-  (:require (tree-is? t 'text-at))
-  (with move (if forwards? go-right go-left)
-    (go-to-remain-inside move 'text-at)))
-
-(tm-define (kbd-vertical t downwards?)
-  (:require (tree-is? t 'text-at))
-  (with move (if downwards? go-down go-up)
-    (go-to-remain-inside move 'text-at)))
-
-(tm-define (kbd-extremal t forwards?)
-  (:require (tree-is? t 'text-at))
-  (with move (if forwards? go-right go-left)
-    (with action (lambda () (go-to-remain-inside move 'text-at))
-      (go-to-repeat action))))
-
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
-
-(define (graphics-kbd-remove forward?)
-  (cond ((and (with-active-selection?)
-              (with-cursor (rcons (selection-path) 0)
-                (not (in-graphics?))))
-         (go-to (rcons (selection-path) 0))
-         (clipboard-cut "primary"))
-        ((inside? 'text-at)
-         (if forward? (kbd-delete) (kbd-backspace)))
-        (else
-         (edit_delete))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard handling
@@ -83,20 +48,94 @@
   ("A-S-right" (graphics-change-extents "+1cm" "0cm"))
   ("A-S-down" (graphics-change-extents "0cm" "+1cm"))
   ("A-S-up" (graphics-change-extents "0cm" "-1cm"))
-  ("M-left"  (if (current-is-textat?)
-		 (text-at-change-halign current-path #f)))
-  ("M-right" (if (current-is-textat?)
-		 (text-at-change-halign current-path #t)))
-  ("M-down"  (if (current-is-textat?)
-		 (text-at-change-valign current-path #f)
-		 (graphics-change-geo-valign #f)))
-  ("M-up"    (if (current-is-textat?)
-		 (text-at-change-valign current-path #t)
-		 (graphics-change-geo-valign #t)))
   ("backspace" (graphics-kbd-remove #f))
   ("delete" (graphics-kbd-remove #t))
   ("C-g" (graphics-toggle-grid #f))
   ("C-G" (graphics-toggle-grid #t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Overriding standard structured editing commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-variant t forwards?)
+  (:require (in-active-graphics?))
+  (graphics-choose-point (if forwards? 1 -1)))
+
+(tm-define (graphics-kbd-remove forward?)
+  (cond ((and (with-active-selection?)
+              (with-cursor (rcons (selection-path) 0)
+                (not (in-graphics?))))
+         (go-to (rcons (selection-path) 0))
+         (clipboard-cut "primary"))
+        ((inside? 'text-at)
+         (if forward? (kbd-delete) (kbd-backspace)))
+        (else
+         (edit_delete))))
+
+(tm-define (geometry-vertical t down?)
+  (:require (in-active-graphics?))
+  (graphics-change-geo-valign down?))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Text at 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphical-text-context? t)
+  (tree-in? t (graphical-text-tag-list)))
+
+(tm-define (kbd-horizontal t forwards?)
+  (:require (graphical-text-context? t))
+  (with move (if forwards? go-right go-left)
+    (go-to-remain-inside move 'text-at)))
+
+(tm-define (kbd-vertical t downwards?)
+  (:require (graphical-text-context? t))
+  (with move (if downwards? go-down go-up)
+    (go-to-remain-inside move 'text-at)))
+
+(tm-define (kbd-extremal t forwards?)
+  (:require (graphical-text-context? t))
+  (with move (if forwards? go-right go-left)
+    (with action (lambda () (go-to-remain-inside move graphical-text-context?))
+      (go-to-repeat action))))
+
+(tm-define (geometry-horizontal t forwards?)
+  (:require (graphical-text-context? t))
+  (let* ((old (graphical-get-attribute t "text-at-halign"))
+         (new (if forwards?
+                  (cond ((== old "right") "center")
+                        (else "left"))
+                  (cond ((== old "left") "center")
+                        (else "right")))))
+    (graphical-set-attribute t "text-at-halign" new)))
+
+(tm-define (geometry-vertical t down?)
+  (:require (graphical-text-context? t))
+  (let* ((old (graphical-get-attribute t "text-at-valign"))
+         (new (if down?
+                  (cond ((== old "bottom") "base")
+                        ((== old "base") "axis")
+                        ((== old "axis") "center")
+                        (else "top"))
+                  (cond ((== old "top") "center")
+                        ((== old "center") "axis")
+                        ((== old "axis") "base")
+                        (else "bottom")))))
+    (graphical-set-attribute t "text-at-valign" new)))
+
+(tm-define (geometry-extremal t forwards?)
+  (:require (graphical-text-context? t))
+  (graphical-set-attribute t "text-at-halign"
+                           (if forwards? "left" "right")))
+
+(tm-define (geometry-incremental t down?)
+  (:require (graphical-text-context? t))
+  (graphical-set-attribute t "text-at-valign"
+                           (if down? "top" "bottom")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Draw over / draw under
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (inside-draw-over/under?)
   (or (inside? 'draw-over) (inside? 'draw-under)))

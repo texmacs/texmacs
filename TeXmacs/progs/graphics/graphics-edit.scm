@@ -124,60 +124,6 @@
     (graphics-set-property "gr-text-at-halign" ha)
     (graphics-set-property "gr-text-at-valign" va)))
 
-(tm-define (current-is-textat?)
-  (and current-path
-       (== (tree-label (path->tree current-path)) 'text-at)))
-
-(tm-define (text-at-change-halign p dirn)
-  (:state graphics-state)
-  (let* ((obj (stree-at p))
-	 (mag (get-graphical-prop p "magnification"))
-	 (halign (get-graphical-prop p "text-at-halign"))
-	 (valign (get-graphical-prop p "text-at-valign"))
-	 (halign2 (if dirn
-		      (cond ((== halign "left") "right")
-			    ((== halign "center") "left")
-			    ((== halign "right") "center")
-			    (else "left"))
-		      (cond ((== halign "left") "center")
-			    ((== halign "center") "right")
-			    ((== halign "right") "left")
-			    (else "left"))))
-     )
-     (graphics-remove p 'memoize-layer)
-     (set! current-path
-	(graphics-group-enrich-insert-bis
-	   obj #f #f #f mag #f #f #f #f #f #f #f halign2 valign #f))
-     (sketch-reset)
-     (graphics-decorations-update)
-     (graphics-group-start)))
-
-(tm-define (text-at-change-valign p dirn)
-  (:state graphics-state)
-  (let* ((obj (stree-at p))
-	 (mag (get-graphical-prop p "magnification"))
-	 (halign (get-graphical-prop p "text-at-halign"))
-	 (valign (get-graphical-prop p "text-at-valign"))
-	 (valign2 (if dirn
-		      (cond ((== valign "bottom") "top")
-			    ((== valign "base") "bottom")
-			    ((== valign "center") "base")
-			    ((== valign "top") "center")
-			    (else "base"))
-		      (cond ((== valign "bottom") "base")
-			    ((== valign "base") "center")
-			    ((== valign "center") "top")
-			    ((== valign "top") "bottom")
-			    (else "base"))))
-     )
-     (graphics-remove p 'memoize-layer)
-     (set! current-path
-	(graphics-group-enrich-insert-bis
-	   obj #f #f #f mag #f #f #f #f #f #f #f halign valign2 #f))
-     (sketch-reset)
-     (graphics-decorations-update)
-     (graphics-group-start)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dealing with superpositions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

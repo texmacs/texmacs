@@ -5,6 +5,7 @@
 ;; DESCRIPTION : utilities routines for graphics mode
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;               (C) 2004, 2005, 2006  Joris van der Hoeven and Henri Lesourd
+;;               (C) 2011  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -416,11 +417,13 @@
   (if (null? l) l
       (let* ((head (car l))
 	     (tail (graphics-enrich-filter t (cdr l))))
-	(if (or (== (cadr head) "default")
+	(if (or (not (cadr head))
+                (== (cadr head) "default")
 		(== (cadr head) (get-default-val (car head)))
 		(and (== (car head) "magnification")
 		     (or (== (cadr head) "1.0")
-			 (== (cadr head) '(times "1.0" (value "magnification")))))
+			 (== (cadr head)
+                             '(times "1.0" (value "magnification")))))
 		(not (graphics-attribute? t (car head))))
 	    tail
 	    (cons* (car head) (cadr head) tail)))))
@@ -506,8 +509,7 @@
 (tm-define (graphics-group-insert-bis t go-into)
  ;(display* "t=" t "\n")
   (let* ((p (graphics-group-path))
-	 (p2 #f)
-    )
+	 (p2 #f))
     (if (null? layer-of-last-removed-object)
 	(set! layer-of-last-removed-object #f))
     (if p (with n (if layer-of-last-removed-object
@@ -525,12 +527,10 @@
 		    (set! p2 (append p (list n (- (length t) 2) 1))))
 		(if (and go-into (func? t 'text-at))
 		    (set! p2 (append p (list n 0 0)))
-		    (set! p2 (append p (list n 0))))
-	    )
+		    (set! p2 (append p (list n 0)))))
 	    (go-to p2)
-	    (graphics-path p2)
-	  )
-	  #f)))
+	    (graphics-path p2))
+        #f)))
 
 (tm-define (graphics-group-insert t)
   (graphics-group-insert-bis t #t))
@@ -544,6 +544,10 @@
    (graphics-enrich-bis t "default" op color ps lw mag st stu
                         a1 a2 a3 a4 fc ha va)
    go-into))
+
+(tm-define (graphics-group-enrich-insert-table t tab go-into)
+  (with l (append (list t) (ahash-table->properties tab) (list go-into))
+    (apply graphics-group-enrich-insert-bis l)))
 
 (tm-define (graphics-group-start)
   (graphics-finish)
@@ -699,6 +703,95 @@
 			      `(,(car box2) ,(caddr box2)))
 	 (interval-intersects `(,(cadr box1) ,(cadddr box1))
 			      `(,(cadr box2) ,(cadddr box2))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New style graphical attributes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (group-pairs l)
+  (if (or (null? l) (null? (cdr l))) '()
+      (cons (cons (car l) (cadr l)) (group-pairs (cddr l)))))
+
+(tm-define (with-get-attributes t)
+  (let* ((a1 (cDr (tree-children t)))
+         (a2 (map tree->stree a1))
+         (a3 (group-pairs a2)))
+    (list->ahash-table a3)))
+
+(define (ungroup-pairs l)
+  (if (null? l) l
+      (cons (caar l)
+            (cons (cdar l)
+                  (ungroup-pairs (cdr l))))))
+
+(tm-define (with-set-attributes t tab)
+  (let* ((a1 (ahash-table->list tab))
+         (a2 (ungroup-pairs a1))
+         (a3 (map tm->tree a2)))
+    (tree-remove! t 0 (- (tree-arity t) 1))
+    (tree-insert! t 0 a3)
+    t))
+
+(tm-define (graphical-get-attributes t)
+  (cond ((not (tree? t))
+         (graphical-get-attributes (tm->tree t)))
+        ((not (tree-is? t 'with))
+         (if (tree-is? t :up 'with)
+             (graphical-get-attributes (tree-ref t :up))
+             (make-ahash-table)))
+        (else (with-get-attributes t))))
+
+(tm-define (graphical-set-attributes t tab)
+  (cond ((not (tree? t))
+         (tree->stree (graphical-set-attributes (tm->tree t) tab)))
+        ((not (tree-is? t 'with))
+         (if (tree-is? t :up 'with)
+             (graphical-set-attributes (tree-ref t :up) tab)
+             (begin
+               (tree-insert-node! t 0 '(with))
+               (graphical-set-attributes t tab))))
+        (else
+         (set! t (with-set-attributes t tab))
+         (if (and (tree-is? t 'with) (== (tree-arity t) 1))
+             (tree-remove-node! t 0))
+         t)))
+
+(tm-define (graphical-get-attribute* t var)
+  (ahash-ref (graphical-get-attributes t) var))
+
+(tm-define (graphical-get-attribute t var)
+  (or (graphical-get-attribute* t var)
+      (graphics-attribute-default var)))
+
+(tm-define (graphical-set-attribute t var val)
+  (with new (graphical-get-attributes t)
+    (if val
+        (ahash-set! new var val)
+        (ahash-remove! new var))
+    (graphical-set-attributes t new)))
+
+(tm-define (graphical-get-selected-attributes* t filter-list)
+  (let* ((old (graphical-get-attributes t))
+         (new (make-ahash-table)))
+    (for (var filter-list)
+      (if (ahash-ref old var)
+          (ahash-set! new var (ahash-ref old var))))
+    new))
+
+(tm-define (graphical-get-selected-attributes t filter-list)
+  (with tab (graphical-get-selected-attributes t filter-list)
+    (for (var filter-list)
+      (if (and (not (ahash-ref tab var)) (graphics-attribute-default var))
+          (ahash-set! tab var (graphics-attribute-default var))))
+    tab))
+
+(tm-define (graphical-set-selected-attributes t filter-list tab)
+  (with new (graphical-get-attributes t)
+    (for (var filter-list)
+      (if (ahash-ref tab var)
+          (ahash-set! new var (ahash-ref tab var))
+          (ahash-remove! new var)))
+    (graphical-set-attributes t new)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enhanced trees

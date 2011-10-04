@@ -166,18 +166,18 @@
     (graphics-decorations-reset)
     (graphics-set-extents w h)))
 
-(tm-define (graphics-change-geo-valign dirn)
+(tm-define (graphics-change-geo-valign down?)
   (let* ((geo (graphics-geometry))
          (a (car (cddddr geo))))
     (graphics-set-geo-valign
-     (if dirn
-         (cond ((== a "top") "bottom")
-               ((== a "center") "top")
-               ((== a "bottom") "center")
-               (else "default"))
+     (if down?
          (cond ((== a "top") "center")
                ((== a "center") "bottom")
                ((== a "bottom") "top")
+               (else "default"))
+         (cond ((== a "top") "bottom")
+               ((== a "center") "top")
+               ((== a "bottom") "center")
                (else "default"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
