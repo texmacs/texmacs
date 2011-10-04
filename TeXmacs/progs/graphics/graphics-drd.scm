@@ -58,7 +58,7 @@
 
 (define-table attribute-default-table
   ("gid" . "default")
-  ("magnification" . "1")
+  ("magnify" . "1")
   ("color" . "black")
   ("opacity" . "100%")
   ("point-style" . "disk")
@@ -107,7 +107,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (graphics-common-attributes)
-  '("gid" "magnification" "color" "opacity"))
+  '("gid" "magnify" "color" "opacity"))
 
 (tm-define (graphics-all-attributes)
   (map car (ahash-table->list attribute-default-table)))

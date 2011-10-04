@@ -101,13 +101,12 @@
     (lambda (o)
       (let* ((res (traverse-transform
                    o (zoom-point group-bary-x group-bary-y h)))
-             (curmag #f)
-             (gmag (s2f (graphics-eval-magnification))))
+             (curmag #f))
 	(if (eq? (car res) 'with)
-	    (with curmag (s2f (find-prop res "magnification" "1.0"))
+	    (with curmag (s2f (find-prop res "magnify" "1.0"))
               (list-find&set-prop
-               res "magnification" (f2s (* curmag gmag h))))
-            `(with "magnification" ,(f2s (* gmag h)) ,res))))))
+               res "magnify" (f2s (* curmag h))))
+            `(with "magnify" ,(f2s h) ,res))))))
 
 (define (rotate-point x0 y0 alpha)
   (lambda (o)
@@ -164,20 +163,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (graphics-assign-props p obj)
-  (let* ((mag (graphics-path-property-1 p "magnification"))
-         (l1 (graphics-all-attributes))
+  (let* ((l1 (graphics-all-attributes))
          (l2 (map gr-prefix l1))
          (l3 (map graphics-get-property l2))
          (l4 (map cons l1 l3))
          (tab (list->ahash-table l4)))
-    (ahash-set! tab "magnification" mag)
     (graphics-remove p 'memoize-layer)
     (graphics-group-enrich-insert-table (stree-radical obj) tab #f)))
 
 (tm-define (graphics-copy-props p)
   (let* ((t (path->tree p))
          (attrs (graphical-relevant-attributes t))
-         (vars (list-difference attrs '("gid" "magnification")))
+         (vars (list-difference attrs '("gid")))
          (get-prop (lambda (var) (graphics-path-property p var)))
          (gr-vars (map gr-prefix vars))
          (vals (map get-prop vars)))

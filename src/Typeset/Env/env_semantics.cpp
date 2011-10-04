@@ -38,6 +38,7 @@ initialize_default_var_type () {
   var_type (FONT_SIZE)         = Env_Font_Size;
   var_type (FONT_BASE_SIZE)    = Env_Font_Size;
   var_type (MAGNIFICATION)     = Env_Magnification;
+  var_type (MAGNIFY)           = Env_Magnify;
   var_type (COLOR)             = Env_Color;
   var_type (OPACITY)           = Env_Color;
   var_type (LANGUAGE)          = Env_Language;
@@ -580,6 +581,9 @@ edit_env_rep::update (string s) {
     magn= get_double (MAGNIFICATION);
     update_font ();
     lw= get_length (LINE_WIDTH);
+    break;
+  case Env_Magnify:
+    mgfy= get_double (MAGNIFY);
     break;
   case Env_Language:
     update_language ();

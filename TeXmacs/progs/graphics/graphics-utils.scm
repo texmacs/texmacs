@@ -365,49 +365,24 @@
     (if p (path-remove-with p var))))
 
 ;; Magnification
-(tm-define (graphics-eval-magnification)
-  (tree->stree (get-env-tree-at
-		  "magnification" (rcons (graphics-graphics-path) 0))))
+(tm-define (graphics-eval-magnify)
+  (graphical-get-attribute (path->tree (graphics-graphics-path)) "magnify"))
 
-(tm-define (graphics-eval-magnification-at path)
-  (tree->stree (get-env-tree-at "magnification" path)))
+(tm-define (graphics-eval-magnify-at path)
+  (graphical-get-attribute (path->tree (cDr path)) "magnify"))
 
-(define (convert-magn m)
-  (if (== m "default")
-      (set! m 1.0))
-  (if (string? m)
-      (set! m (s2f m)))
-  m)
-  ;; FIXME: Using this function is crappy ; it would be
-  ;;   much better to be sure that a magnification equal
-  ;;   to "default" never enters the functions below.
-  ;;   But this seems to depend on some realtime-dependent
-  ;;   behaviour, thus testing this has not (yet) been
-  ;;   done correctly.
+(tm-define (magnify->number m)
+  (cond ((number? m) m)
+        ((== m "default") 1)
+        ((== m #f) 1)
+        (else (string->number m))))
 
-(tm-define (multiply-magnification magn h)
-  (set! h (convert-magn h))
-  (cond ((equal? h 1.0)
-         #t
-        )
-        ((and (pair? magn) (eq? (car magn) 'times))
-         (set! h (* h (s2f (cadr magn))))
-        )
-        ((or (string? magn) (number? magn))
-	 (set! magn (convert-magn magn))
-         (set! h (* h magn))
-        )
-        (else
-           (set! h 1.0))
-  )
-  (if (equal? h 1.0)
-      #f
-     `(times ,(f2s h) (value "magnification"))))
+(tm-define (number->magnify m)
+  (cond ((and (> m 0.999999) (< m 1.000001)) "default")
+        (else (number->string m))))
 
-(tm-define (local-magnification amagn)
-  (set! amagn (convert-magn amagn))
-  `(times ,(f2s (/ amagn (s2f (graphics-eval-magnification))))
-	  (value "magnification")))
+(tm-define (multiply-magnify m1 m2)
+  (number->magnify (* (magnify->number m1) (magnify->number m2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
@@ -420,10 +395,6 @@
 	(if (or (not (cadr head))
                 (== (cadr head) "default")
 		(== (cadr head) (get-default-val (car head)))
-		(and (== (car head) "magnification")
-		     (or (== (cadr head) "1.0")
-			 (== (cadr head)
-                             '(times "1.0" (value "magnification")))))
 		(not (graphics-attribute? t (car head))))
 	    tail
 	    (cons* (car head) (cadr head) tail)))))
@@ -436,8 +407,7 @@
   (set! tab (list->ahash-table (ahash-table->list tab)))
   (ahash-remove! tab "gid")
   (let* ((attrs (graphical-relevant-attributes t))
-         (attrs* (list-difference attrs '("magnification")))
-         (sel (ahash-table-select tab attrs*))
+         (sel (ahash-table-select tab attrs))
          (l1 (cons (cons "gid" id) (ahash-table->list sel)))
          (l2 (map (lambda (x) (list (car x) (cdr x))) l1)))
     ;;(display* "l= " l2 "\n")
@@ -448,7 +418,6 @@
          (l2 (map gr-prefix l1))
          (l3 (map graphics-get-property l2))
          (tab (list->ahash-table (map cons l1 l3))))
-    (ahash-set! tab "magnification" "1.0")
     (graphics-enrich-bis t "default" tab)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

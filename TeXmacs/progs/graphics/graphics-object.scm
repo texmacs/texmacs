@@ -133,8 +133,8 @@
 	((== mode 'active)
          (ahash-ref graphical-attrs prop))
 	((list? mode)
-	 (if (== prop "magnification")
-	     (graphics-eval-magnification-at (rcons mode 0))
+	 (if (== prop "magnify")
+	     (graphics-eval-magnify-at (rcons mode 0))
 	     (graphics-path-property mode prop)))
 	((== mode 'new)
 	 (graphics-get-property (string-append "gr-" prop)))
@@ -153,41 +153,25 @@
       ((list? mode)
        (for (var l)
          (ahash-set! tab var (graphics-path-property mode var)))
-       (ahash-set! tab "magnification"
-                   (graphics-eval-magnification-at (rcons mode 0))))
+       (ahash-set! tab "magnify"
+                   (graphics-eval-magnify-at (rcons mode 0))))
       ((== mode 'new)
        (for (var l)
-         (ahash-set! tab var (graphics-get-property (gr-prefix var))))
-       (ahash-remove! tab "magnification"))
+         (ahash-set! tab var (graphics-get-property (gr-prefix var)))))
       ((== mode 'default)
        (for (var l)
-         (ahash-set! tab var (graphics-attribute-default var)))
-       (ahash-remove! tab "magnification")))
+         (ahash-set! tab var (graphics-attribute-default var)))))
     (with ps (ahash-ref tab "point-style")
       (ahash-set! tab "point-style"
                   (if ps0 ps0 (if ps (dv "point-style" ps) "square"))))
     (let* ((l1 (ahash-table->list tab))
            (l2 (map (lambda (x) (list (car x) (dv (car x) (cdr x)))) l1))
            (l3 (apply append l2)))
-      (if (not (ahash-ref tab "magnification"))
-          (set! l3 (cons* "magnification-none"
-                          (dv "magnification" "default")
-                          l3)))
       (cons 'with l3))))
 
 ;; Graphical contours
 ;;NOTE: This subsection is OK.
-(define (create-graphical-embedding-box o ha0 va0 halign valign mag len)
-  (define (get-textat-vbase b0)
-    (if (and (== (car o) 'text-at) (== va0 "base"))
-        (begin
-          (set! o `(with "text-at-halign" ,ha0
-                     "text-at-valign" "bottom" ,o))
-          (let* ((info0 (cdr (box-info o "lbLB")))
-                 (b (f2s (min (s2f (cadr info0)) (s2f (cadddr info0))))))
-            (set! o (list-ref o 5))
-            b))
-        b0))
+(define (create-graphical-embedding-box o ha0 va0 halign valign mag)
   (define (create-text-at-handle o)
     (cond ((func? o 'with)
            (create-text-at-handle (cAr o)))
@@ -199,27 +183,25 @@
                            `(with "text-at-halign" ,ha0
                               "text-at-valign" ,va0 ,o)
 			   o)
-               ;;(if (!= mag "default")
-               ;;(set! res `(with "magnification" ,mag ,res)))
-               res))
+               `(with "magnify" ,(if (== mag "default") "1" mag) ,res)))
 	 (info0 (cdr (box-info o1 "lbLB")))
 	 (info1 (cdr (box-info o1 "rtRT")))
 	 (l (f2s (min (s2f (car  info0)) (s2f (caddr  info0)))))
-	 (b0 (f2s (min (s2f (cadr info0)) (s2f (cadddr info0)))))
+	 (b (f2s (min (s2f (cadr info0)) (s2f (cadddr info0)))))
 	 (r (f2s (max (s2f (car  info1)) (s2f (caddr  info1)))))
 	 (t (f2s (max (s2f (cadr info1)) (s2f (cadddr info1)))))
-	 (b (get-textat-vbase b0))
-	 (p00 (frame-inverse `(tuple ,l ,b0)))
-	 (p10 (frame-inverse `(tuple ,r ,b0)))
 	 (p0 (frame-inverse `(tuple ,l ,b)))
 	 (p1 (frame-inverse `(tuple ,r ,b)))
 	 (p2 (frame-inverse `(tuple ,r ,t)))
 	 (p3 (frame-inverse `(tuple ,l ,t))))
+    ;;(display* "o= " o1 "\n")
+    ;;(display* "p= " (cursor-path) ", " (cursor-tree) "\n")
+    ;;(display* "b= " l ", " b "; " r ", " t "\n")
     (set-car! p0 'point)
     (set-car! p1 'point)
     (set-car! p2 'point)
     (set-car! p3 'point)
-    (with res `((cline ,p00 ,p10 ,p2 ,p3))
+    (with res `((cline ,p0 ,p1 ,p2 ,p3))
       (set! res (append res (create-text-at-handle o)))
       res)))
 
@@ -261,14 +243,14 @@
         ((== (car o) 'text-at)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
-	        (mag (get-graphical-prop 'basic "magnification")))
-           (create-graphical-embedding-box o ha va ha va mag 0.1)))
+	        (mag (get-graphical-prop 'basic "magnify")))
+           (create-graphical-embedding-box o ha va ha va mag)))
         ((== (car o) 'gr-group)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
-	        (mag (get-graphical-prop 'basic "magnification")))
+	        (mag (get-graphical-prop 'basic "magnify")))
            (create-graphical-embedding-box
-            o ha va "center" "center" mag 0.1)))
+            o ha va "center" "center" mag)))
         (else (if (integer? no)
 		  (let* ((l (list-tail (cdr o) no))
 		         (ll (length l)))
@@ -377,10 +359,10 @@
                  (set! t
                        (let* ((ha (get-graphical-prop path0 "text-at-halign"))
                               (va (get-graphical-prop path0 "text-at-valign"))
-                              (mag (get-graphical-prop path0 "magnification"))
+                              (mag (get-graphical-prop path0 "magnify"))
 			      (gc (asc curscol #f
                                        (create-graphical-embedding-box
-                                        o ha va ha va mag 0.1))))
+                                        o ha va ha va mag))))
                          (if (== pts 'object-and-points)
                              (cons o gc)
                              (if (== pts 'object)
@@ -395,9 +377,9 @@
                                               (va (get-graphical-prop
                                                    path0 "text-at-valign"))
                                               (mag (get-graphical-prop
-                                                    path0 "magnification")))
+                                                    path0 "magnify")))
                                          (create-graphical-embedding-box
-                                          o ha va "center" "center" mag 0.1)))
+                                          o ha va "center" "center" mag)))
                            (if (== pts 'object-and-points)
                                (cons o gc)
                                (if (== pts 'object)
@@ -421,6 +403,11 @@
 ;; Create graphical object
 ;;NOTE: This subsection is OK
 
+(define (get-local-magnify)
+  (let* ((m1 (graphics-get-property "magnify"))
+         (m2 (and graphical-attrs (ahash-ref graphical-attrs "magnify"))))
+    (number->string (* (magnify->number m1) (magnify->number m2)))))
+
 (tm-define (create-graphical-object o mode pts no)
   ;; o    == the objet one wants to draw
   ;; mode == 'active, 'new, <path>, etc. (cf. "Graphical props" above).
@@ -438,22 +425,26 @@
                   (create-graphical-contour o edge no)
                   default-color-go-points #f))
 	     (props (if (and pts (!= pts 'points))
-			(create-graphical-props mode #f)
-			(create-graphical-props 'default #f)))
-             (mag (graphics-get-property "magnification"))
-             (mag-o `(with "magnification" ,mag ,o)))
+                        (create-graphical-props mode #f)
+                        (create-graphical-props 'default #f)))
+             (mag-o `(with "magnify" ,(get-local-magnify) ,o)))
+        ;;(display* "-------\n")
+        ;;(display* "o= " o ", mode= " mode ", pts= " pts ", op= " op "\n")
+        ;;(display* "no= " no ", props= " props "\n")
         (graphical-object!
          (if (or (== no 'group)
                  (and (!= no 'no-group)
                       (graphics-group-mode? (graphics-mode))))
-             `(concat .
-                      ,(create-graphical-contours
-                        (map (lambda (x)
-                               (if (tree? x)
-                                   (enhanced-tree->radical x)
-                                   x))
-                             the-sketch)
-                        current-path pts))
+             `(with "magnify" ,(number->string
+                                (magnify->number
+                                 (graphics-get-property "magnify")))
+                (concat ,@(create-graphical-contours
+                           (map (lambda (x)
+                                  (if (tree? x)
+                                      (enhanced-tree->radical x)
+                                      x))
+                                the-sketch)
+                           current-path pts)))
              (append
               props
               `((concat . ,(cond ((== pts 'points) op)

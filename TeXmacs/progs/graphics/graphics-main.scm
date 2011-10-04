@@ -134,11 +134,10 @@
          (y5 (if (and (string? y4) (string-ends? y4 "gh")) y4 y1))
          (newfr `(tuple "scale" ,newu (tuple ,x4 ,y4))))
     (if (and (> newud 100) (< newud 10000000))
-        (with magn (multiply-magnification
-                    (graphics-get-property "magnification") e)
+        (with magn (multiply-magnify (graphics-get-property "magnify") e)
           (graphics-decorations-reset)
           (graphics-set-property "gr-frame" newfr)
-          (if magn (graphics-set-property "magnification" magn))))))
+          (graphics-set-property "magnify" magn)))))
 
 (tm-define (graphics-move-origin dx dy)
   (define (add l1 l2)

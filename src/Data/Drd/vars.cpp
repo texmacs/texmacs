@@ -204,6 +204,7 @@ string CELL_COL_NR ("cell-col-nr");
 ******************************************************************************/
 
 string GID ("gid");
+string MAGNIFY ("magnify");
 string POINT_STYLE ("point-style");
 string LINE_WIDTH ("line-width");
 string LINE_JOIN ("line-join");
@@ -223,6 +224,7 @@ string TEXT_AT_VALIGN ("text-at-valign");
 string GR_GEOMETRY ("gr-geometry");
 string GR_FRAME ("gr-frame");
 string GR_MODE ("gr-mode");
+string GR_MAGNIFY ("gr-magnify");
 string GR_OPACITY ("gr-opacity");
 string GR_COLOR ("gr-color");
 string GR_POINT_STYLE ("gr-point-style");

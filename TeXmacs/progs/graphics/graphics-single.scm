@@ -135,11 +135,8 @@
   (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
       (with tab (make-ahash-table)
         (for (var (graphics-all-attributes))
-          (when (nin? var '("gid" "magnification"))
+          (when (nin? var '("gid"))
             (ahash-set! tab var (ahash-ref graphical-attrs var))))
-        (ahash-set! tab "magnification"
-                    (local-magnification
-                     (ahash-ref graphical-attrs "magnification")))
         (graphical-fetch-props (car (sketch-get)))
         (set! obj (graphics-enrich-bis
                    obj (ahash-ref graphical-attrs "gid") tab))

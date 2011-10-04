@@ -195,6 +195,7 @@ initialize_default_env () {
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
   env (GID)              = "default";   // graphical identifier
+  env (MAGNIFY)          = "1";         // magnification for graphical objects
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_JOIN)        = "normal";    // junctions in multilines
@@ -214,6 +215,7 @@ initialize_default_env () {
   env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
   env (GR_MODE)          = "line";      // graphical mode
+  env (GR_MAGNIFY)       = "default";   // magnify of new objects
   env (GR_OPACITY)       = "default";   // opacity of new objects
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_POINT_STYLE)   = "default";   // point style of new objects

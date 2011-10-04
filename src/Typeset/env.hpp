@@ -32,36 +32,37 @@
 #define Env_User               0
 #define Env_Fixed              1
 #define Env_Magnification      2
-#define Env_Language           3
-#define Env_Mode               4
-#define Env_Info_Level         5
-#define Env_Font               6
-#define Env_Font_Size          7
-#define Env_Index_Level        8
-#define Env_Display_Style      9
-#define Env_Math_Condensed    10
-#define Env_Vertical_Pos      11
-#define Env_Color             12
-#define Env_Paragraph         13
-#define Env_Page              14
-#define Env_Page_Extents      15
-#define Env_Preamble          16
-#define Env_Geometry          17
-#define Env_Frame             18
-#define Env_Line_Width        19
-#define Env_Grid              20
-#define Env_Grid_Aspect       21
-#define Env_Src_Style         22
-#define Env_Src_Special       23
-#define Env_Src_Compact       24
-#define Env_Src_Close         25
-#define Env_Point_Style       26
-#define Env_Dash_Style        27
-#define Env_Dash_Style_Unit   28
-#define Env_Fill_Color        29
-#define Env_Line_Arrows       30
-#define Env_Text_At_Halign     31
-#define Env_Text_At_Valign     32
+#define Env_Magnify            3
+#define Env_Language           4
+#define Env_Mode               5
+#define Env_Info_Level         6
+#define Env_Font               7
+#define Env_Font_Size          8
+#define Env_Index_Level        9
+#define Env_Display_Style     10
+#define Env_Math_Condensed    11
+#define Env_Vertical_Pos      12
+#define Env_Color             13
+#define Env_Paragraph         14
+#define Env_Page              15
+#define Env_Page_Extents      16
+#define Env_Preamble          17
+#define Env_Geometry          18
+#define Env_Frame             19
+#define Env_Line_Width        20
+#define Env_Grid              21
+#define Env_Grid_Aspect       22
+#define Env_Src_Style         23
+#define Env_Src_Special       24
+#define Env_Src_Compact       25
+#define Env_Src_Close         26
+#define Env_Point_Style       27
+#define Env_Dash_Style        28
+#define Env_Dash_Style_Unit   29
+#define Env_Fill_Color        30
+#define Env_Line_Arrows       31
+#define Env_Text_At_Halign    32
+#define Env_Text_At_Valign    33
 
 /******************************************************************************
 * For style file editing
@@ -142,6 +143,7 @@ public:
   int          dpi;
   double       inch;
   double       magn;
+  double       mgfy;
   double       flexibility;
   int          mode;
   int          mode_op;

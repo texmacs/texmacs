@@ -182,6 +182,7 @@ extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
 extern string GID;
+extern string MAGNIFY;
 extern string POINT_STYLE;
 extern string LINE_WIDTH;
 extern string LINE_JOIN;
@@ -201,6 +202,7 @@ extern string TEXT_AT_VALIGN;
 extern string GR_GEOMETRY;
 extern string GR_FRAME;
 extern string GR_MODE;
+extern string GR_MAGNIFY;
 extern string GR_OPACITY;
 extern string GR_COLOR;
 extern string GR_POINT_STYLE;

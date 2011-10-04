@@ -3381,6 +3381,32 @@ replace_line_arrows (tree& t, string var, string begin, string end) {
   }
 }
 
+static void
+replace_magnification (tree& t, string var, string repl) {
+  tree body= t[N(t)-1];
+  if (find_attr (t, var))
+    if (is_func (body, GRAPHICS) ||
+        is_func (body, GR_GROUP) ||
+        is_func (body, TEXT_AT) ||
+        is_func (body, _POINT) ||
+        is_func (body, LINE) ||
+        is_func (body, CLINE) ||
+        is_func (body, SPLINE) ||
+        is_func (body, CSPLINE) ||
+        is_func (body, ARC) ||
+        is_func (body, CARC) ||
+        is_func (body, VAR_SPLINE))
+      {
+        tree val= get_attr (t, var, "1");
+        if (is_func (val, TIMES, 2) &&
+            is_func (val[1], VALUE, 1) &&
+            val[1][0] == var)
+          val= val[0];
+        t= set_attr (t, repl, val);
+        t= remove_attr (t, var);
+      }
+}
+
 static tree
 upgrade_gr_attributes (tree t) {
   int i;
@@ -3390,7 +3416,8 @@ upgrade_gr_attributes (tree t) {
     replace_dash_style (t, "gr-dash-style");
     replace_line_arrows (t, "line-arrows", "arrow-begin", "arrow-end");
     replace_line_arrows (t, "gr-line-arrows",
-                         "gr-arrow-begin", "gr-arrow-end");
+                            "gr-arrow-begin", "gr-arrow-end");
+    replace_magnification (t, "magnification", "magnify");
   }
   int n= N(t);
   tree r (t, n);

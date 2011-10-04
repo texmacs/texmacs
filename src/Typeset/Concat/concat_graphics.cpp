@@ -14,6 +14,15 @@
 #include "drd_std.hpp"
 #include "hashset.hpp"
 
+#define BEGIN_MAGNIFY                                           \
+  tree new_mag= as_string (env->magn * env->mgfy);              \
+  tree old_mfy= env->local_begin (MAGNIFY, "1");                \
+  tree old_mag= env->local_begin (MAGNIFICATION, new_mag);
+
+#define END_MAGNIFY                             \
+  env->local_end (MAGNIFICATION, old_mag);      \
+  env->local_end (MAGNIFY, old_mfy);
+
 /******************************************************************************
 * Typesetting graphics
 ******************************************************************************/
@@ -28,6 +37,7 @@
 
 void
 concater_rep::typeset_graphics (tree t, path ip) {
+BEGIN_MAGNIFY
   grid gr= as_grid (env->read (GR_GRID));
   array<box> bs;
   gr->set_aspect (env->read (GR_GRID_ASPECT));
@@ -38,13 +48,16 @@ concater_rep::typeset_graphics (tree t, path ip) {
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
   box b= graphics_box (ip, bs, env->fr, gr, env->clip_lim1, env->clip_lim2);
   print (b);
+END_MAGNIFY
 }
 
 void
 concater_rep::typeset_gr_group (tree t, path ip) {
+BEGIN_MAGNIFY
   array<box> bs;
   typeset_graphical (bs, t, ip);
   print (graphics_group_box (ip, bs));
+END_MAGNIFY
 }
 
 void
@@ -74,38 +87,46 @@ concater_rep::typeset_gr_linear_transform (tree t, path ip) {
 
 void
 concater_rep::typeset_text_at (tree t, path ip) {
-  if (N(t) != 2) { typeset_error (t, ip); return; }
-  box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
-  point  p     = env->fr (env->as_point (env->exec (t[1])));
-  string halign= env->text_at_halign;
-  string valign= env->text_at_valign;
-
-  if (N(p) == 0)
-    typeset_dynamic (tree (ERROR, "bad text-at"), ip);
+BEGIN_MAGNIFY
+  if (N(t) != 2) typeset_error (t, ip);
   else {
-    SI x= (SI) p[0], y= (SI) p[1];
-    if (halign == "left") x -= b->x1;
-    else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
-    else if (halign == "right") x -= b->x2;
-    if (valign == "bottom") y -= b->y1;
-    else if (valign == "axis") y -= (env->fn->yx >> 1);
-    else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
-    else if (valign == "top") y -= b->y2;
-    print (text_at_box (ip, b, x, y, env->fn->spc->def));
+    box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
+    point  p     = env->fr (env->as_point (env->exec (t[1])));
+    string halign= env->text_at_halign;
+    string valign= env->text_at_valign;
+
+    if (N(p) == 0)
+      typeset_dynamic (tree (ERROR, "bad text-at"), ip);
+    else {
+      SI x= (SI) p[0], y= (SI) p[1];
+      if (halign == "left") x -= b->x1;
+      else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
+      else if (halign == "right") x -= b->x2;
+      if (valign == "bottom") y -= b->y1;
+      else if (valign == "axis") y -= (env->fn->yx >> 1);
+      else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
+      else if (valign == "top") y -= b->y2;
+      print (text_at_box (ip, b, x, y, env->fn->spc->def));
+    }
   }
+END_MAGNIFY
 }
 
 void
 concater_rep::typeset_point (tree t, path ip) {
-  if (N(t) < 2) { typeset_error (t, ip); return; }
-  int i, n= N(t);
-  tree u (TUPLE, N(t));
-  for (i=0; i<n; i++)
-    u[i]= env->exec (t[i]);
-  point p= env->fr (env->as_point (u));
-  print (point_box (ip, p, 20*PIXEL, env->col,
-                    env->fill_mode, env->fill_color,
-                    env->point_style));
+BEGIN_MAGNIFY
+  if (N(t) < 2) typeset_error (t, ip);
+  else {
+    int i, n= N(t);
+    tree u (TUPLE, N(t));
+    for (i=0; i<n; i++)
+      u[i]= env->exec (t[i]);
+    point p= env->fr (env->as_point (u));
+    print (point_box (ip, p, 20*PIXEL, env->col,
+                      env->fill_mode, env->fill_color,
+                      env->point_style));
+  }
+END_MAGNIFY
 }
 
 static tree
@@ -130,6 +151,7 @@ concater_rep::typeset_line_arrows (path ip) {
 
 void
 concater_rep::typeset_line (tree t, path ip, bool close) {
+BEGIN_MAGNIFY
   int i, n= N(t);
   array<point> a(n);
   for (i=0; i<n; i++)
@@ -141,43 +163,24 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
     a << copy (a[0]);
     cip << cip[0];
   }
-  if (N(a) == 0 || N(a[0]) == 0) { typeset_error (t, ip); return; }
-  if (N(a) == 1) {
-    a << copy (a[0]);
-    cip << cip[0];
-  }
-  curve c= env->fr (poly_segment (a, cip));
-  print (curve_box (ip, c, env->lw, env->col,
-                    env->dash_style, env->dash_style_unit,
-                    env->fill_mode, env->fill_color,
-                    typeset_line_arrows (ip)));
-}
-
-void
-concater_rep::typeset_arc (tree t, path ip, bool close) {
-  int i, n= N(t);
-  array<point> a(n);
-  for (i=0; i<n; i++)
-    a[i]= env->as_point (env->exec (t[i]));
-  array<path> cip(n);
-  for (i=0; i<n; i++)
-    cip[i]= descend (ip, i);
-  if (N(a) == 0 || N(a[0]) == 0) { typeset_error (t, ip); return; }
-  if (n != 3 || linearly_dependent (a[0], a[1], a[2]) ||
-      (N (intersection (midperp (a[0], a[1], a[2]),
-                        midperp (a[1], a[2], a[0]))) == 0))
-    typeset_line (t, ip, close);
+  if (N(a) == 0 || N(a[0]) == 0) typeset_error (t, ip);
   else {
-    curve c= env->fr (arc (a, cip, close));
+    if (N(a) == 1) {
+      a << copy (a[0]);
+      cip << cip[0];
+    }
+    curve c= env->fr (poly_segment (a, cip));
     print (curve_box (ip, c, env->lw, env->col,
                       env->dash_style, env->dash_style_unit,
                       env->fill_mode, env->fill_color,
                       typeset_line_arrows (ip)));
   }
+END_MAGNIFY
 }
 
 void
-concater_rep::typeset_spline (tree t, path ip, bool close) {
+concater_rep::typeset_arc (tree t, path ip, bool close) {
+BEGIN_MAGNIFY
   int i, n= N(t);
   array<point> a(n);
   for (i=0; i<n; i++)
@@ -185,16 +188,46 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
   array<path> cip(n);
   for (i=0; i<n; i++)
     cip[i]= descend (ip, i);
-  if (N(a) == 0 || N(a[0]) == 0) { typeset_error (t, ip); return; }
-  if (N(a) == 1) {
-    a << copy (a[0]);
-    cip << cip[0];
+  if (N(a) == 0 || N(a[0]) == 0) typeset_error (t, ip);
+  else {
+    if (n != 3 || linearly_dependent (a[0], a[1], a[2]) ||
+        (N (intersection (midperp (a[0], a[1], a[2]),
+                          midperp (a[1], a[2], a[0]))) == 0))
+      typeset_line (t, ip, close);
+    else {
+      curve c= env->fr (arc (a, cip, close));
+      print (curve_box (ip, c, env->lw, env->col,
+                        env->dash_style, env->dash_style_unit,
+                        env->fill_mode, env->fill_color,
+                        typeset_line_arrows (ip)));
+    }
   }
-  curve c= env->fr (N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
-  print (curve_box (ip, c, env->lw, env->col,
-                    env->dash_style, env->dash_style_unit,
-                    env->fill_mode, env->fill_color,
-                    typeset_line_arrows (ip)));
+END_MAGNIFY
+}
+
+void
+concater_rep::typeset_spline (tree t, path ip, bool close) {
+BEGIN_MAGNIFY
+  int i, n= N(t);
+  array<point> a(n);
+  for (i=0; i<n; i++)
+    a[i]= env->as_point (env->exec (t[i]));
+  array<path> cip(n);
+  for (i=0; i<n; i++)
+    cip[i]= descend (ip, i);
+  if (N(a) == 0 || N(a[0]) == 0) typeset_error (t, ip);
+  else {
+    if (N(a) == 1) {
+      a << copy (a[0]);
+      cip << cip[0];
+    }
+    curve c= env->fr (N(a)>=3 ? spline (a, cip, close): poly_segment (a, cip));
+    print (curve_box (ip, c, env->lw, env->col,
+                      env->dash_style, env->dash_style_unit,
+                      env->fill_mode, env->fill_color,
+                      typeset_line_arrows (ip)));
+  }
+END_MAGNIFY
 }
 
 void
@@ -205,7 +238,7 @@ concater_rep::typeset_var_spline (tree t, path ip) {
 
 void
 concater_rep::typeset_cspline (tree t, path ip) {
-  typeset_spline(t,ip,true);
+  typeset_spline (t, ip, true);
 }
 
 void
