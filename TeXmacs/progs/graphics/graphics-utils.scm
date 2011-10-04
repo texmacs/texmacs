@@ -509,40 +509,15 @@
   (with p (graphics-path path)
     (if p (tree->stree (path->tree p)) #f)))
 
-(tm-define (graphics-active-tree)
-  (with p (graphics-active-path)
-    (if p (path->tree p) #f)))
-
 (tm-define (graphics-active-object)
   (with p (graphics-active-path)
     (if p (tree->stree (path->tree p)) #f)))
-
-(tm-define (graphics-active-type)
-  (with t (graphics-active-tree)
-    (if t (tm-car t) #f)))
-  ;;NOTE: Currently unused.
-  ;;TODO: Test it.
-
-(tm-define (graphics-active-val var)
-  (graphics-active-property var (get-default-val var)))
-  ;;NOTE: Currently unused.
-  ;;TODO: Test it.
 
 (tm-define (get-default-tree-val var)
   (get-init-tree var))
 
 (tm-define (get-default-val var)
   (tree->stree (get-init-tree var)))
-
-(tm-define (graphics-active-color)
-  (graphics-active-val "color"))
-  ;;NOTE: Currently unused.
-  ;;TODO: Test it.
-
-(tm-define (graphics-active-lwidth)
-  (graphics-active-val "line-width"))
-  ;;NOTE: Currently unused.
-  ;;TODO: Test it.
 
 (tm-define (graphics-path-property-bis p var default-val)
   (with c (get-upwards-property p var)
@@ -558,48 +533,26 @@
 (tm-define (graphics-path-property-1 p var)
   (graphics-path-property-bis-1 p var "default"))
 
-(tm-define (graphics-active-property var default-val)
-  (graphics-path-property-bis (graphics-active-path) var default-val))
-
-(tm-define (graphics-active-assign t)
-  (with p (graphics-active-path)
-    (if p (begin
-	    (tree-assign (path->tree p) t)
-	    (go-to (rcons p 1))))))
-
-(tm-define (graphics-active-set-tag l)
-  (with t (graphics-active-object)
-    (if t (graphics-active-assign (cons l (cdr t))))))
-
-(tm-define (graphics-active-insert t)
-  (with p (graphics-active-path)
-    (if p (with n (tree-arity (path->tree p))
-	    (tree-insert (path->tree p) n (list t))
-	    (go-to (rcons p 1))))))
-
 (tm-define (graphics-object-root-path p)
   (let* ((q (tm-upwards-path p '(with) '()))
-	 (path (if (and q
-			(== (+ (length q) 1) (length p)))
-		   q p
-	       )))
-	path))
-    
+	 (path (if (and q (== (+ (length q) 1) (length p))) q p)))
+    path))
+
 (tm-define (graphics-remove p . parms)
-  (if p
-  (with p0 (graphics-object-root-path p)
-     (set! layer-of-last-removed-object
-	   (if (and (pair? parms) (eq? (car parms) 'memoize-layer))
-	       (if (list? layer-of-last-removed-object)
-		   (cons (cAr p0) layer-of-last-removed-object)
-		   (cAr p0))
-	       #f))
-     (tree-remove (path->tree (cDr p0)) (cAr p0) 1))))
+  (when p
+    (with p0 (graphics-object-root-path p)
+      (set! layer-of-last-removed-object
+            (if (and (pair? parms) (eq? (car parms) 'memoize-layer))
+                (if (list? layer-of-last-removed-object)
+                    (cons (cAr p0) layer-of-last-removed-object)
+                    (cAr p0))
+                #f))
+      (tree-remove (path->tree (cDr p0)) (cAr p0) 1))))
 
 (tm-define (graphics-assign p t)
-  (if p (begin
-	  (tree-assign (path->tree p) t)
-	  (go-to (rcons p 1)))))
+  (when p
+    (tree-assign (path->tree p) t)
+    (go-to (rcons p 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Box info & frame
