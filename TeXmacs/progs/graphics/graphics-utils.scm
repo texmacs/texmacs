@@ -346,18 +346,18 @@
 	 (if (eq? (tm-car val) 'quote)
 	     (tree-ref val 0)
 	     val))))
-         
+
 (tm-define (graphics-get-property var)
   (with val (graphics-get-raw-property var)
      (tree->stree val)))
-               
-(tm-define (graphics-change-property var val)
-  (set! val (t2o val))
-  (graphics-set-property var val))
 
 (tm-define (graphics-set-property var val)
   (with p (graphics-graphics-path)
-    (if p (path-insert-with p var val))))
+    (cond ((tree? val) (graphics-set-property var (tree->stree val)))
+          ((== val "default") (graphics-remove-property var))
+          ((== val (graphics-attribute-default var))
+           (graphics-remove-property var))
+          (p (path-insert-with p var val)))))
 
 (tm-define (graphics-remove-property var)
   (with p (graphics-graphics-path)
