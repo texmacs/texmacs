@@ -24,7 +24,7 @@
 (define (graphics-norm p1 p2)
   (let ((x (- (s2f (cadr p2)) (s2f (cadr p1))))
 	(y (- (s2f (caddr p2)) (s2f (caddr p1)))))
-	(sqrt (+ (* x x) (* y y)))))
+    (sqrt (+ (* x x) (* y y)))))
 
 (define infinity (/ 1.0 0.0))
 (define (is-point? p)
@@ -33,29 +33,29 @@
 (define (graphics-closest-point-pos-bis p l)
   (if (null? l)
       '()
-       (let ((n1 (if (is-point? (car l))
-				(graphics-norm p (car l))
-				infinity)))
-	    (if (null? (cdr l))
-		l
-		(let* ((p2 (graphics-closest-point-pos-bis p (cdr l)))
-		       (n2 (if (is-point? (car p2))
-			       (graphics-norm p (car p2))
-			       infinity)))
-		      (if (<= n1 n2) l p2))))))
+      (let ((n1 (if (is-point? (car l))
+                    (graphics-norm p (car l))
+                    infinity)))
+        (if (null? (cdr l))
+            l
+            (let* ((p2 (graphics-closest-point-pos-bis p (cdr l)))
+                   (n2 (if (is-point? (car p2))
+                           (graphics-norm p (car p2))
+                           infinity)))
+              (if (<= n1 n2) l p2))))))
 
 (define (graphics-closest-point-pos p l)
   (- (length l) (length (graphics-closest-point-pos-bis p l))))
 
 (define (object-closest-point-pos obj x y)
- ;(display* "obj(" x ", " y ")=" obj "\n")
+  ;;(display* "obj(" x ", " y ")=" obj "\n")
   (if (pair? obj)
       (with type (car obj)
-	 (if (== type 'point)
-	     0
-	 (if (not (in? (car obj) gr-tags-noncurves))
-	     (graphics-closest-point-pos (list 'point x y) (cdr obj))
-	 0)))
+        (if (== type 'point)
+            0
+            (if (not (in? (car obj) gr-tags-noncurves))
+                (graphics-closest-point-pos (list 'point x y) (cdr obj))
+                0)))
       0))
 
 (tm-define (points-dist< p1 p2 eps)
@@ -65,9 +65,8 @@
   (let* ((x1 (s2f (cadr p1)))
          (y1 (s2f (caddr p1)))
          (x2 (s2f (cadr p2)))
-         (y2 (s2f (caddr p2)))
-     )
-     (< (+ (* (- x2 x1) (- x2 x1)) (* (- y2 y1) (- y2 y1))) (* eps eps))))
+         (y2 (s2f (caddr p2))))
+    (< (+ (* (- x2 x1) (- x2 x1)) (* (- y2 y1) (- y2 y1))) (* eps eps))))
 
 ;; Graphical object
 (tm-define default-color-go-points "#4040ff")
@@ -88,7 +87,6 @@
 ;   about what is the best way now. Then, directly plug the tree and test
 ;   the new version of (find-prop) that works directly on trees.
   (with o (tree->stree (get-graphical-object))
-   ;(display* "o=" o "\n")
     (if (and fetch (pair? o))
 	(graphical-fetch-props o))
     (if (pair? o)
@@ -119,14 +117,15 @@
 ;;                       the one located at cursor) ;
 ;; -> 'basic         <=> if sticky-point => 'active
 ;;                             otherwise => current-path.
+
 (define (dv var val)
   (if (== val "default")
       (get-default-val var)
-      val)
-)
+      val))
+
 (tm-define (get-graphical-prop mode prop)
   (with res
-     (cond
+      (cond
 	((== mode 'basic)
 	 (if sticky-point
 	     (get-graphical-prop 'active prop)
@@ -140,8 +139,8 @@
 	((== mode 'new)
 	 (graphics-get-property (string-append "gr-" prop)))
 	(else ;;(== mode 'default)
-         (get-default-val (string-append "gr-" prop))))
-     (dv prop res)))
+          (get-default-val (string-append "gr-" prop))))
+    (dv prop res)))
 
 (tm-define (create-graphical-props mode ps0)
   (let ((op #f)
@@ -238,15 +237,15 @@
 ;;NOTE: This subsection is OK.
 (define (create-graphical-embedding-box o ha0 va0 halign valign mag len)
   (define (get-textat-vbase b0)
-     (if (and (== (car o) 'text-at) (== va0 "base"))
-	 (begin
-           (set! o `(with "text-at-halign" ,ha0
-                      "text-at-valign" "bottom" ,o))
-           (let* ((info0 (cdr (box-info o "lbLB")))
-                  (b (f2s (min (s2f (cadr info0)) (s2f (cadddr info0))))))
-             (set! o (list-ref o 5))
-             b))
-	 b0))
+    (if (and (== (car o) 'text-at) (== va0 "base"))
+        (begin
+          (set! o `(with "text-at-halign" ,ha0
+                     "text-at-valign" "bottom" ,o))
+          (let* ((info0 (cdr (box-info o "lbLB")))
+                 (b (f2s (min (s2f (cadr info0)) (s2f (cadddr info0))))))
+            (set! o (list-ref o 5))
+            b))
+        b0))
   (define (create-text-at-handle o)
     (cond ((func? o 'with)
            (create-text-at-handle (cAr o)))
@@ -256,7 +255,7 @@
           (else '())))
   (let* ((o1 (with res (if (in? (car o) '(text-at gr-group))
                            `(with "text-at-halign" ,ha0
-                                  "text-at-valign" ,va0 ,o)
+                              "text-at-valign" ,va0 ,o)
 			   o)
                ;;(if (!= mag "default")
                ;;(set! res `(with "magnification" ,mag ,res)))
@@ -290,8 +289,8 @@
   (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	 (va (get-graphical-prop 'basic "text-at-valign"))
 	 (o1 (if (and (pair? o) (== (car o) 'text-at))
-		`(with "text-at-halign" ,ha
-		       "text-at-valign" ,va ,o)
+                 `(with "text-at-halign" ,ha
+                    "text-at-valign" ,va ,o)
 		 o))
 	 (info0 (cdr (box-info o1 "lbLB")))
 	 (info1 (cdr (box-info o1 "rtRT")))
@@ -314,7 +313,7 @@
 (define draw-nonsticky-curp #t)
 (define (create-graphical-contour o edge no) ;; Point mode
   (define (curp lp)
-     (if draw-nonsticky-curp lp '()))
+    (if draw-nonsticky-curp lp '()))
   (cond ((== (car o) 'point)
          (cons o '()))
         ((== (car o) 'text-at)
@@ -379,13 +378,13 @@
       (concat . ,op))))
 
 (define (create-graphical-contours l ptr pts) ;; Group mode
-;; This routine draws the contours of each one
-;; of the trees contained in the list l. If the
-;; path ptr is the path of one of the trees in
-;; the list, the corresponding object is drawn
-;; using special points. Finally, the drawing
-;; is made according to the mode in pts (i.e.,
-;; object, points, etc.).
+  ;; This routine draws the contours of each one
+  ;; of the trees contained in the list l. If the
+  ;; path ptr is the path of one of the trees in
+  ;; the list, the corresponding object is drawn
+  ;; using special points. Finally, the drawing
+  ;; is made according to the mode in pts (i.e.,
+  ;; object, points, etc.).
   (define on-aobj #f)
   (define aobj-selected #f)
   (define (asc col fcol op)
@@ -481,100 +480,95 @@
 ;;NOTE: This subsection is OK
 
 (tm-define (create-graphical-object o mode pts no)
-;; o    == the objet one wants to draw
-;; mode == 'active, 'new, <path>, etc. (cf. "Graphical props" above).
-;; pts  == points, object, object-and-points.
-;; no   == description of the edge  <=> no | (edge no)
-;;      == flag used in group modes <=> 'group | 'no-group
+  ;; o    == the objet one wants to draw
+  ;; mode == 'active, 'new, <path>, etc. (cf. "Graphical props" above).
+  ;; pts  == points, object, object-and-points.
+  ;; no   == description of the edge  <=> no | (edge no)
+  ;;      == flag used in group modes <=> 'group | 'no-group
   (define edge #t)
- ;(display* "o[create-graphical-object](" mode "," pts "," no ")=")(write o)(newline)
+  ;;(display* "o[create-graphical-object](" mode "," pts "," no ")=")(write o)(newline)
   (if (pair? no)
       (begin
-	 (set! edge (car no))
-	 (set! no (cadr no))))
+        (set! edge (car no))
+        (set! no (cadr no))))
   (if (and o (not (null? o)))
       (let* ((op (add-selections-colors
-		    (create-graphical-contour o edge no)
-		    default-color-go-points #f))
+                  (create-graphical-contour o edge no)
+                  default-color-go-points #f))
 	     (props (if (and pts (!= pts 'points))
 			(create-graphical-props mode #f)
 			(create-graphical-props 'default #f)))
              (mag (graphics-get-property "magnification"))
-             (mag-o `(with "magnification" ,mag ,o))
-         )
-	 (graphical-object!
-	    (if (or (== no 'group)
-		    (and (!= no 'no-group)
-			 (graphics-group-mode? (graphics-mode)))
-		)
-	       `(concat .
-                  ,(create-graphical-contours
-		      (map (lambda (x)
-			      (if (tree? x)
-				  (enhanced-tree->radical x)
-				  x)
-			   )
-			   the-sketch)
-		      current-path pts)
-		)
-		(append
-		   props
-		  `((concat . ,(cond ((== pts 'points) op)
-				     ((== pts 'object) `(,mag-o))
-				     ((== pts 'object-and-points)
-				      (cons mag-o op)))))))))
+             (mag-o `(with "magnification" ,mag ,o)))
+        (graphical-object!
+         (if (or (== no 'group)
+                 (and (!= no 'no-group)
+                      (graphics-group-mode? (graphics-mode))))
+             `(concat .
+                      ,(create-graphical-contours
+                        (map (lambda (x)
+                               (if (tree? x)
+                                   (enhanced-tree->radical x)
+                                   x))
+                             the-sketch)
+                        current-path pts))
+             (append
+              props
+              `((concat . ,(cond ((== pts 'points) op)
+                                 ((== pts 'object) `(,mag-o))
+                                 ((== pts 'object-and-points)
+                                  (cons mag-o op)))))))))
       (graphical-object! '(concat))))
 
 (tm-define (graphics-decorations-update . parms)
-;; Creating the graphical object exclusively from the context
+  ;; Creating the graphical object exclusively from the context
   (invalidate-graphical-object)
   (if (== (length parms) 4)
       (create-graphical-object
-	 (car parms) (cadr parms) (caddr parms) (cadddr parms))
+       (car parms) (cadr parms) (caddr parms) (cadddr parms))
       (if (graphics-group-mode? (graphics-mode))
 	  (with pts #f
-	     (if (null? parms)
-		 (set! pts (if sticky-point 'object 'points))
-		 (set! pts (car parms)))
-	     (if (and (null? (sketch-get))
-		      (pair? current-obj)
-		      (> (length current-obj) 1))
-		 (create-graphical-object current-obj '() 'points 'no-group)
-		 (create-graphical-object current-obj current-path pts #f)))
+            (if (null? parms)
+                (set! pts (if sticky-point 'object 'points))
+                (set! pts (car parms)))
+            (if (and (null? (sketch-get))
+                     (pair? current-obj)
+                     (> (length current-obj) 1))
+                (create-graphical-object current-obj '() 'points 'no-group)
+                (create-graphical-object current-obj current-path pts #f)))
 	  (let* ((mode (if (null? parms)
 			   (if sticky-point
-			      'active
+                               'active
 			       current-path)
 			   (car parms)))
-		 (tag (if current-obj (car current-obj) #f))
-	     )
-	     (if (and sticky-point
-		      (== 1 (length (sketch-get))))
-		 (set! current-obj (car (sketch-get))))
-	     (if (tree? current-obj)
-		 (set! current-obj (tree->stree current-obj)))
-	     (if (and (== mode 'active)
-		      (pair? current-obj))
-		 (begin
-		    (graphical-fetch-props 
-		       (if (== (car current-obj) 'with)
-			   current-obj `(with ,current-obj)))
-		    (set! current-obj (stree-radical current-obj))))
-	     (create-graphical-object
-		current-obj
-		mode
-		(if sticky-point 'object-and-points 'points)
-                (if (== tag 'text-at)
-                    1
-                    (cond ((or (not tag)
-			       (== tag 'gr-group))
-                           #f)
-                          (else
-			     (if current-point-no
-				 (if current-edge-sel?
-				     current-point-no
-				    `(,current-edge-sel? ,current-point-no))
-				 #f))))))))
+		 (tag (if current-obj (car current-obj) #f)))
+            (if (and sticky-point
+                     (== 1 (length (sketch-get))))
+                (set! current-obj (car (sketch-get))))
+            (if (tree? current-obj)
+                (set! current-obj (tree->stree current-obj)))
+            (if (and (== mode 'active)
+                     (pair? current-obj))
+                (begin
+                  (graphical-fetch-props 
+                   (if (== (car current-obj) 'with)
+                       current-obj `(with ,current-obj)))
+                  (set! current-obj (stree-radical current-obj))))
+            (create-graphical-object
+             current-obj
+             mode
+             (if sticky-point 'object-and-points 'points)
+             (if (== tag 'text-at)
+                 1
+                 (cond ((or (not tag)
+                            (== tag 'gr-group))
+                        #f)
+                       (else
+                         (if current-point-no
+                             (if current-edge-sel?
+                                 current-point-no
+                                 `(,current-edge-sel? ,current-point-no))
+                             #f))))))))
   (invalidate-graphical-object))
 
 (tm-define (graphics-decorations-reset)
@@ -583,10 +577,10 @@
 ;; Operating on the graphical object
 (tm-define (transform-graphical-object opn)
   (with o (tree->stree (get-graphical-object))
-     (if (pair? o)
-     (begin
-	(set! o (opn o))
-	(graphical-object! o)))))
+    (if (pair? o)
+        (begin
+          (set! o (opn o))
+          (graphical-object! o)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Managing the sketch
@@ -632,17 +626,16 @@
   (set! layer-of-last-removed-object
 	(if (== (length (sketch-get)) 1)
 	    #f
-	   '()))
+            '()))
   (set! remove-undo-mark? #f)
   (foreach-cons (c (sketch-get))
-     (with o (car c)
-     (if (tree? o)
-     (begin
-	(set! remove-undo-mark? #t)
-	(graphics-remove (tree->path o) 'memoize-layer)
-	(if (or (tree->path o) (tree->path (enhanced-tree->radical o)))
-	    (set-car! c (tree-copy o))))))
-  )
+    (with o (car c)
+      (if (tree? o)
+          (begin
+            (set! remove-undo-mark? #t)
+            (graphics-remove (tree->path o) 'memoize-layer)
+            (if (or (tree->path o) (tree->path (enhanced-tree->radical o)))
+                (set-car! c (tree-copy o)))))))
   (set! sticky-point #t)
   (set! graphics-undo-enabled #f)
   (graphics-decorations-update))
@@ -652,26 +645,24 @@
   (if (not sticky-point)
       (graphics-error "(sketch-commit)"))
   (with sketch0 (list-copy (sketch-get))
-     (sketch-reset)
-     (for (o sketch0)
-	(with layer layer-of-last-removed-object
-	   (sketch-toggle (path->tree (graphics-group-insert-bis o group-mode?)))
-	   (if (not (list? layer))
-	       (set! layer-of-last-removed-object layer)))
-     )
-     (set! layer-of-last-removed-object #f)
-     (set! current-obj
-	   (if group-mode?
+    (sketch-reset)
+    (for (o sketch0)
+      (with layer layer-of-last-removed-object
+        (sketch-toggle (path->tree (graphics-group-insert-bis o group-mode?)))
+        (if (not (list? layer))
+            (set! layer-of-last-removed-object layer))))
+    (set! layer-of-last-removed-object #f)
+    (set! current-obj
+          (if group-mode?
 	      '(nothing)
-	       (if (== 1 (length (sketch-get)))
-		   (stree-radical (tm->stree (car (sketch-get))))
-		   #f)))
-     (set! current-path
-	   (if (and (== 1 (length (sketch-get)))
-		    (tree? (car (sketch-get))))
-	       (tree->path (car (sketch-get)))
-	       #f))
-  )
+              (if (== 1 (length (sketch-get)))
+                  (stree-radical (tm->stree (car (sketch-get))))
+                  #f)))
+    (set! current-path
+          (if (and (== 1 (length (sketch-get)))
+                   (tree? (car (sketch-get))))
+              (tree->path (car (sketch-get)))
+              #f)))
   (set! sticky-point #f)
   (set! graphics-undo-enabled #t)
   (if remove-undo-mark?
