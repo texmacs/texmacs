@@ -5,6 +5,7 @@
 ;; DESCRIPTION : editing routines for graphics group mode
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;               (C) 2004-2007  Joris van der Hoeven and Henri Lesourd
+;;               (C) 2011  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -34,32 +35,32 @@
   (define (store-points)
     (lambda (o)
        (if (match? o '(point :%2))
-	   (set! so-points (cons o so-points))
-       )
-       o)
-  )
+	   (set! so-points (cons o so-points)))
+       o))
   (set! group-bary-x #f)
   (set! group-bary-y #f)
   (if (nnull? (sketch-get))
-  (with so (map tree->stree (sketch-get))
-     (traverse-transform so (store-points))
-     (if (nnull? so-points)
-     (with n 0
-	(set! group-bary-x 0)
-	(set! group-bary-y 0)
-	(for (p so-points)
-          (set! group-bary-x (+ group-bary-x (s2f (cadr p))))
-          (set! group-bary-y (+ group-bary-y (s2f (caddr p))))
-          (set! n (+ n 1)))
-	(set! group-bary-x (/ group-bary-x n))
-	(set! group-bary-y (/ group-bary-y n))))
-  ))
+      (with so (map tree->stree (sketch-get))
+        (traverse-transform so (store-points))
+        (if (nnull? so-points)
+            (with n 0
+              (set! group-bary-x 0)
+              (set! group-bary-y 0)
+              (for (p so-points)
+                (set! group-bary-x (+ group-bary-x (s2f (cadr p))))
+                (set! group-bary-y (+ group-bary-y (s2f (caddr p))))
+                (set! n (+ n 1)))
+              (set! group-bary-x (/ group-bary-x n))
+              (set! group-bary-y (/ group-bary-y n))))))
   (set! group-first-x (s2f current-x))
   (set! group-first-y (s2f current-y))
   (> (point-norm (sub-point `(,group-first-x ,group-first-y)
 			    `(,group-bary-x ,group-bary-y))) 1e-3))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transformations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (sub-point p1 p2)
  `(,(- (car p1) (car p2))
    ,(- (cadr p1) (cadr p2))))
@@ -131,7 +132,10 @@
   (lambda (o)
      (traverse-transform o (rotate-point group-bary-x group-bary-y alpha)))))
 
-;; Grouping/Ungrouping
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Group / ungroup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (group-selected-objects)
   (if (and (not sticky-point) (nnull? (sketch-get)))
   (begin
@@ -162,14 +166,63 @@
     (set! graphics-undo-enabled #t)
     (graphics-forget-states))))
 
-;; Removing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copy and paste attribute style
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-assign-props p obj)
+  (let* ((mag (graphics-path-property-1 p "magnification"))
+         (l1 (graphics-all-attributes))
+         (l2 (map gr-prefix l1))
+         (l3 (map graphics-get-property l2))
+         (l4 (map cons l1 l3))
+         (tab (list->ahash-table l4)))
+    (ahash-set! tab "magnification" mag)
+    (graphics-remove p 'memoize-layer)
+    (graphics-group-enrich-insert-table (stree-radical obj) tab #f)))
+
+(tm-define (graphics-copy-props p)
+  (let* ((op (graphics-path-property p "opacity"))
+	 (color (graphics-path-property p "color"))
+	 (ps (graphics-path-property p "point-style"))
+	 (lw (graphics-path-property p "line-width"))
+	 (st (graphics-path-property p "dash-style"))
+	 (stu (graphics-path-property p "dash-style-unit"))
+	 (a1 (graphics-path-property p "arrow-begin"))
+	 (a2 (graphics-path-property p "arrow-end"))
+	 (a3 (graphics-path-property p "arrow-length"))
+	 (a4 (graphics-path-property p "arrow-height"))
+	 (fc (graphics-path-property p "fill-color"))
+	 (ha (graphics-path-property p "text-at-halign"))
+	 (va (graphics-path-property p "text-at-valign")))
+    (graphics-set-property "gr-opacity" op)
+    (graphics-set-property "gr-color" color)
+    (graphics-set-property "gr-point-style" ps)
+    (graphics-set-property "gr-line-width" lw)
+    (graphics-set-property "gr-dash-style" st)
+    (graphics-set-property "gr-dash-style-unit" stu)
+    (graphics-set-property "gr-arrow-begin" a1)
+    (graphics-set-property "gr-arrow-end" a2)
+    (graphics-set-property "gr-arrow-length" a3)
+    (graphics-set-property "gr-arrow-height" a4)
+    (graphics-set-property "gr-fill-color" fc)
+    (graphics-set-property "gr-text-at-halign" ha)
+    (graphics-set-property "gr-text-at-valign" va)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remove
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (remove-selected-objects)
   (sketch-checkout)
   (sketch-reset)
   (sketch-commit)
   (graphics-group-start))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; State transitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (start-operation opn p obj)
   (:require (in? (car obj) (append '(point text-at) gr-tags-curves)))
   (set! current-path #f)
@@ -273,19 +326,20 @@
   (any_toggle-select x y p obj))
 
 (define (any_unselect-all p obj)
-  (if (nnull? (sketch-get))
-  (begin
-     (sketch-reset)
-     (graphics-decorations-update))
-  (if (and p (not multiselecting)
-	   (== (cadr (graphics-mode)) "props"))
-      (graphics-copy-props p))))
+  (cond ((nnull? (sketch-get))
+         (sketch-reset)
+         (graphics-decorations-update))
+        ((and p (not multiselecting) (== (cadr (graphics-mode)) "props"))
+         (graphics-copy-props p))))
 
 (tm-define (unselect-all p obj)
   (:require (in? (car obj) (append '(point text-at) gr-tags-curves)))
   (any_unselect-all p obj))
 
-;; Dispatch
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global dispatching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (edit_move mode x y)
   (:require (eq? mode 'group-edit))
   (:state graphics-state)

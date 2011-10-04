@@ -58,50 +58,6 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Edit properties (implemented as a group mode, see below)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Functions for managing properties
-(tm-define (graphics-assign-props p obj)
-  (let* ((mag (graphics-path-property-1 p "magnification"))
-         (l1 (graphics-all-attributes))
-         (l2 (map gr-prefix l1))
-         (l3 (map graphics-get-property l2))
-         (l4 (map cons l1 l3))
-         (tab (list->ahash-table l4)))
-    (ahash-set! tab "magnification" mag)
-    (graphics-remove p 'memoize-layer)
-    (graphics-group-enrich-insert-table (stree-radical obj) tab #f)))
-
-(tm-define (graphics-copy-props p)
-  (let* ((op (graphics-path-property p "opacity"))
-	 (color (graphics-path-property p "color"))
-	 (ps (graphics-path-property p "point-style"))
-	 (lw (graphics-path-property p "line-width"))
-	 (st (graphics-path-property p "dash-style"))
-	 (stu (graphics-path-property p "dash-style-unit"))
-	 (a1 (graphics-path-property p "arrow-begin"))
-	 (a2 (graphics-path-property p "arrow-end"))
-	 (a3 (graphics-path-property p "arrow-length"))
-	 (a4 (graphics-path-property p "arrow-height"))
-	 (fc (graphics-path-property p "fill-color"))
-	 (ha (graphics-path-property p "text-at-halign"))
-	 (va (graphics-path-property p "text-at-valign")))
-    (graphics-set-property "gr-opacity" op)
-    (graphics-set-property "gr-color" color)
-    (graphics-set-property "gr-point-style" ps)
-    (graphics-set-property "gr-line-width" lw)
-    (graphics-set-property "gr-dash-style" st)
-    (graphics-set-property "gr-dash-style-unit" stu)
-    (graphics-set-property "gr-arrow-begin" a1)
-    (graphics-set-property "gr-arrow-end" a2)
-    (graphics-set-property "gr-arrow-length" a3)
-    (graphics-set-property "gr-arrow-height" a4)
-    (graphics-set-property "gr-fill-color" fc)
-    (graphics-set-property "gr-text-at-halign" ha)
-    (graphics-set-property "gr-text-at-valign" va)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dealing with superpositions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
