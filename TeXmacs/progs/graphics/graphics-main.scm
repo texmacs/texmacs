@@ -430,10 +430,10 @@
 
 ;; Setting visual grid aspect properties
 (tm-define (graphics-set-grid-aspect-properties c0 c1 s2 c2)
-  (:argument c0 "Color(axes)")
-  (:argument c1 "Color(unit)")
+  (:argument c0 "Color axes")
+  (:argument c1 "Color units")
   (:argument s2 "Subdivisions per unit")
-  (:argument c2 "Color(subds)")
+  (:argument c2 "Color subdivisions")
   (with aspect `(tuple (tuple "axes" ,c0) (tuple "1" ,c1) (tuple ,s2 ,c2))
     (graphics-set-property "gr-grid-aspect" aspect)
     (graphics-set-property "gr-grid-aspect-props" aspect))

@@ -377,18 +377,6 @@
 
 (hash-set! define-option-table :state-slots define-option-state-slots)
 
-;(define-public-macro (tmdefine head . body)
-;  (with st #f
-;    (foreach-cons (c body)
-;      (with i (car c)
-;        (if (and (pair? i) (eq? (car i) ':state))
-;            (set! st c)))
-;    )
-;    (if st
-;    (begin
-;      (set-car! st `(with-state-by-name ,(cadar st) . ,(cdr st)))
-;      (set-cdr! st '()))))
-;  `(tm-define ,head . ,body))
 
 ;; Graphics context [reset]
 (define current-cursor #f)
