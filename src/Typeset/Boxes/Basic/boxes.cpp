@@ -350,6 +350,7 @@ box_rep::graphical_select (SI x, SI y, SI dist) {
   gr_selections res;
   if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
+    gs->type= "box";
     gs->dist= graphical_distance (x, y);
     gs->cp << find_tree_path (x, y, dist);
     // FIXME: check whether this is correct: I do not remember whether
@@ -365,6 +366,7 @@ box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   if (in_rectangle (x1, y1, x2, y2)) {
     gr_selection gs;
+    gs->type= "box";
     gs->dist= graphical_distance (x1, y1);
     SI dist= (SI)norm (point (x2-x1, y2-y1));
     gs->cp << find_tree_path (x1, y1, dist);
@@ -634,7 +636,8 @@ gr_selection::gr_selection (array<path> cp, SI dist):
 
 tm_ostream&
 operator << (tm_ostream& out, gr_selection sel) {
-  return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
+  return out << "gr_selection (" << sel->type << ", "
+	     << sel->dist << ", " << sel->cp << ")";
 }
 
 struct less_eq_gr_selection {
@@ -642,14 +645,21 @@ struct less_eq_gr_selection {
     return a->dist <= b->dist; }
 };
 
-tree as_tree (gr_selections sels) {
+void
+sort (gr_selections& sels) {
   merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
+}
+
+tree
+as_tree (gr_selections sels) {
+  sort (sels);
   int i, n= N(sels);
   array<array<path> > res (n);
   for (i=0; i<n; i++)
     res[i]= sels[i]->cp;
   return (tree) res;
 }
+
 
 /******************************************************************************
 * Animations

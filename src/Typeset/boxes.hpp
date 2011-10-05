@@ -93,6 +93,7 @@ struct gr_selection {
 tm_ostream& operator << (tm_ostream& out, gr_selection sel);
 
 typedef array<gr_selection> gr_selections;
+void sort (gr_selections& sels);
 tree as_tree (gr_selections sels);
 
 /******************************************************************************
@@ -325,6 +326,7 @@ tree attach_dip (tree ref, path ip);
 ******************************************************************************/
 
 struct gr_selection_rep: concrete_struct {
+  string type;
   array<path> cp;
   array<point> pts;
   point p;

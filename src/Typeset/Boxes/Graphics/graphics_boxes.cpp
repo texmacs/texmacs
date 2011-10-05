@@ -140,6 +140,7 @@ graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
   gr_selections res;
   if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
+    gs->type= "group";
     gs->dist= graphical_distance (x, y);
   //gs->p= point (x, y); // The cursor moves freely inside the box
     gs->cp << reverse (path (0, ip));
@@ -155,6 +156,7 @@ graphics_group_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   if (in_rectangle (x1, y1, x2, y2)) {
     gr_selection gs;
+    gs->type= "group";
     gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
     gs->pts= array<point> (0);
@@ -207,6 +209,7 @@ point_box_rep::graphical_select (SI x, SI y, SI dist) {
   gr_selections res;
   if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
+    gs->type= "point";
     gs->dist= graphical_distance (x, y);
     gs->p= p;
     gs->cp << reverse (path (0, ip));
@@ -377,6 +380,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
       SI n= (SI)norm (p - pts[i]);
       if (n <= dist) {
 	gr_selection gs;
+	gs->type= "curve-handle";
 	gs->dist= n;
 	gs->p= pts[i];
 	gs->cp << reverse (paths[i]);
@@ -397,6 +401,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
 	SI n= (SI)norm (p - p2);
 	if (n <= dist) {
 	  gr_selection gs;
+	  gs->type= "curve-point";
 	  gs->dist= n;
 	  gs->p= p2;
 	  gs->cp << reverse (paths[i]);
@@ -417,6 +422,7 @@ curve_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   if (in_rectangle (x1, y1, x2, y2)) {
     gr_selection gs;
+    gs->type= "curve";
     gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
     gs->pts= array<point> (0);

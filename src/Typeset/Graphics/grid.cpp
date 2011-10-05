@@ -120,6 +120,7 @@ struct cartesian_rep: public grid_rep {
     grid_rep (subd, col, o), step (st) {}
   operator tree () { return "cartesian"; }
   array<grid_curve> get_curves (point lim1, point lim2, double u, bool b);
+  array<grid_curve> get_curves_around (point p, double delta, frame f);
   point find_closest_point (point p, point pmin, point pmax);
 };
 
@@ -177,6 +178,43 @@ cartesian_rep::get_curves (point lim1, point lim2, double u, bool b) {
     res << create_line (x1, yo, x2, yo, col[0]);
   if (!b && xo>=x1 && xo<=x2)
     res << create_line (xo, y1, xo, y2, col[0]);
+  return res;
+}
+
+array<grid_curve>
+cartesian_rep::get_curves_around (point p, double delta, frame f) {
+  double nsub= 0;
+  string c;
+  for (int i=0; i<N(subd); i++)
+    if (subd[i] != 0) { nsub= subd[i]; c= col[i]; }
+  if (nsub == 0) return array<grid_curve> (0);
+
+  point p2  = f (p);
+  point lim1= f[point (p2[0]-delta, p2[1]-delta)];
+  point lim2= f[point (p2[0]+delta, p2[1]+delta)];
+ 
+  double x1= min (lim1[0], lim2[0]);
+  double y1= min (lim1[1], lim2[1]);
+  double x2= max (lim1[0], lim2[0]);
+  double y2= max (lim1[1], lim2[1]);
+  double xo= center[0];
+  double yo= center[1];
+  double s = step / nsub;
+
+  double X1= xo + floor ((p[0] - xo) / s) * s;
+  double Y1= yo + floor ((p[1] - yo) / s) * s;
+  double X2= xo + ceil  ((p[0] - xo) / s) * s;
+  double Y2= yo + ceil  ((p[1] - yo) / s) * s;
+  x1= min (x1, X1 - s / 10);
+  y1= min (y1, Y1 - s / 10);
+  x2= max (x2, X2 + s / 10);
+  y2= max (y2, Y2 + s / 10);
+
+  array<grid_curve> res;
+  res << create_line (X1, y1, X1, y2, c);
+  res << create_line (x1, Y1, x2, Y1, c);
+  if (X2 > X1) res << create_line (X2, y1, X2, y2, c);
+  if (Y2 > Y1) res << create_line (x1, Y2, x2, Y2, c);
   return res;
 }
 

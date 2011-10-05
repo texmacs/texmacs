@@ -31,6 +31,54 @@ edit_graphics_rep::edit_graphics_rep () {
 edit_graphics_rep::~edit_graphics_rep () {}
 
 /******************************************************************************
+* Extra subroutines for graphical selections
+******************************************************************************/
+
+gr_selection
+snap_to_guide (point p, gr_selections sels, double eps) {
+  if (N(sels) == 0) {
+    gr_selection snap;
+    snap->type= "free";
+    snap->p= p;
+    snap->dist= 0;
+    return snap;
+  }
+
+  sort (sels);
+  gr_selection best;
+  best->type= "none";
+  for (int i=0; i<N(sels); i++)
+    if (sels[i]->type == "grid-point")
+      best= sels[i];
+    else if (is_nil (sels[i]->c))
+      return sels[i];
+
+  for (int i=0; i<N(sels); i++)
+    for (int j=i+1; j<N(sels); j++) {
+      if (!is_nil (sels[i]->c) &&
+	  !is_nil (sels[j]->c) &&
+	  (sels[i]->type != "grid-curve-point" ||
+	   sels[j]->type != "grid-curve-point"))
+	{
+	  array<point> ins= intersection (sels[i]->c, sels[j]->c, p, eps);
+	  for (int k=0; k<N(ins); k++)
+	    if (best->type == "none" || norm (ins[k] - p) < best->dist) {
+	      gr_selection sel;
+	      sel->type= sels[i]->type * "&" * sels[j]->type;
+	      sel->p   = ins[k];
+	      sel->dist= norm (ins[k] - p);
+	      sel->cp  = append (sels[i]->cp, sels[j]->cp);
+	      sel->pts = append (sels[i]->pts, sels[j]->pts);
+	      best= sel;
+	    }
+	}
+    }
+  
+  if (best->type != "none") return best;
+  return sels[0];
+}
+
+/******************************************************************************
 * Main edit_graphics routines
 ******************************************************************************/
 
@@ -145,70 +193,38 @@ point
 edit_graphics_rep::adjust (point p) {
   frame f= find_frame ();
   grid g= find_grid ();
-  if (!is_nil (g) && !is_nil (gr0) && g!=gr0) {
+  if (!is_nil (g) && !is_nil (gr0) && g != gr0) {
     graphical_select (p[0], p[1]);
     g= gr0;
   }
-  if (is_nil (g))
-    return p;
-  else {
-    point res;
-    gr_selections sels= gs;
-    frame f2= find_frame (true);
-    if (!is_nil (f2)) {
-      point fp= f2 (p);
-      int i;
-      if ((tree)g == "empty_grid") {
-        bool inters= false;
-	if (N(pts)>0) res= pts[0];
-        else if (N(ci)>0) { inters= true; res= ci[0]; }
-	for (i=0; i<N(pts); i++) {
-	  point sp= pts[i];
-	  if (N(sp)>0 && norm (fp - sp) < 5*get_pixel_size ())
-	    res= pts[i];
-	}
-	for (i=0; i<N(ci); i++) {
-	  point sp= ci[i];
-	  if (N(sp)>0 && norm (fp - sp) < norm (fp - res)) {
-	    inters= true; res= ci[i]; }
-	}
-	int n= N(sels);
-	for (i=0; i<n; i++) {
-	  point sp= sels[i]->p;
-	  if (N(res)==0 || (N(sp)>0 && !inters &&
-                            norm (fp - sp) < 5*get_pixel_size () &&
-                            norm (fp - sp) < norm (fp - res)))
-	    res= sels[i]->p;
-	}
-      }
-      else
-      if (!is_nil (f)) { 
-	res= f2 (g->find_point_around (p, 10*get_pixel_size (), f));
-	for (i=0; i<N(pts); i++) {
-	  point sp= pts[i];
-	  if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
-	    res= pts[i];
-	}
-	for (i=0; i<N(ci); i++) {
-	  point sp= ci[i];
-	  if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
-	    res= ci[i];
-	}
-	for (i=0; i<N(cgi); i++) {
-	  point sp= cgi[i];
-	  if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
-	    res= cgi[i];
-	}
-      //TODO: Adjusting by means on freely moving on surface of closed curves
-	;
-      }
-      if (N(res)>0)
-	res= f2[res];
-      else
-	res= p;
+  if (is_nil (g)) return p;
+  point res;
+  gr_selections sels= copy (gs);
+  frame f2= find_frame (true);
+  if (is_nil (f2)) return p;
+  if ((tree) g != "empty_grid") {
+    point q= f2 (g->find_point_around (p, 10*get_pixel_size (), f));
+    gr_selection sel;
+    sel->type= "grid-point";
+    sel->p   = q;
+    sel->dist= norm (q - p);
+    sels << sel;
+    array<grid_curve> gc=
+      g->get_curves_around (p, 10*get_pixel_size (), f);
+    for (int i=0; i<N(gc); i++) {
+      gr_selection sel;
+      sel->type= "grid-curve-point";
+      sel->p   = q;
+      sel->dist= norm (q - p);
+      sel->c   = f2 (gc[i]->c);
+      sels << sel;
     }
-    return res;
   }
+  point fp= f2 (p);
+  double eps= get_pixel_size () / 10.0;
+  gr_selection snap= snap_to_guide (fp, sels, eps);
+  //cout << "Snap " << fp << " to " << snap << ", " << snap->p << "\n";
+  return f2[snap->p];
 }
 
 tree
@@ -225,43 +241,10 @@ edit_graphics_rep::graphical_select (double x, double y) {
   point p = f (p0);
   sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10*get_pixel_size ());
   gs= sels;
-  pts= array<point> (0);
-  ci= array<point> (0);
-  cgi= array<point> (0);
   gr0= empty_grid ();
   grid g= find_grid ();
   frame f2= find_frame (true);
-  if (!is_nil (g) && !is_nil (f2)) {
-    gr0= g;
-    p = f2 (point (x, y));
-    int i, j, n= N(sels);
-    for (i=0; i<n; i++) {
-      array<point> pts2= sels[i]->pts;
-      if (N(pts2)>0 && norm (pts2[0] - p) <= 10*get_pixel_size ())
-	pts= pts << pts2[0];
-      if (N(pts2)>1 && norm (pts2[1] - p) <= 10*get_pixel_size ())
-	pts= pts << pts2[1];
-    }
-    double eps= get_pixel_size () / 10.0;
-    for (i=0; i<n; i++) {
-      for (j=0; j<n; j++)
-        if (i<j) {
-	  curve c1= sels[i]->c;
-	  curve c2= sels[j]->c;
-	  if (!is_nil (c1) && !is_nil (c2)) {
-	    ci= ci << intersection (c1, c2, p, eps);
-          }
-        }
-    }
-    array<grid_curve> gc= g->get_curves_around (p0, 10*get_pixel_size (), f);
-    //FIXME: Too slow
-    for (i=0; i<N(gc); i++) {
-      curve c= f2 (gc[i]->c);
-      for (j=0; j<n; j++)
-	if (!is_nil (sels[j]->c))
-	  cgi= cgi << intersection (c, sels[j]->c, p, eps);
-    }
-  }
+  if (!is_nil (g) && !is_nil (f2)) gr0= g;
   return as_tree (sels);
 }
 
