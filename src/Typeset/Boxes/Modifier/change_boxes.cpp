@@ -567,43 +567,84 @@ tag_box_rep::find_tag (string search) {
 ******************************************************************************/
 
 struct text_at_box_rep: public move_box_rep {
-  text_at_box_rep (path ip, box b, SI x, SI y, SI pad);
+  SI axis;
+  SI pad;
+  curve c;
+  text_at_box_rep (path ip, box b, SI x, SI y, SI axis, SI pad);
   gr_selections graphical_select (SI x, SI y, SI dist);
   operator tree () { return tree (TUPLE, "text-at", (tree) bs[0]); }
 };
 
-text_at_box_rep::text_at_box_rep (path ip, box b, SI x, SI y, SI pad):
-  move_box_rep (ip, b, x, y, false, false)
+text_at_box_rep::text_at_box_rep (path ip, box b, SI x, SI y, SI a2, SI p2):
+  move_box_rep (ip, b, x, y, false, false), axis (a2), pad (p2)
 {
-  x1 -= pad;
-  y1 -= pad;
-  x2 += pad;
-  y2 += pad;
+  path dip= decorate (ip);
+  array<point> a;
+  array<path> cip;
+  a << point (x1 - pad, y1 - pad) << point (x2 + pad, y1 - pad)
+    << point (x2 + pad, y2 + pad) << point (x1 - pad, y2 + pad)
+    << point (x1 - pad, y1 - pad);
+  cip << dip << dip << dip << dip << dip;
+  c= poly_segment (a, cip);
 }
 
 gr_selections
 text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
+  array<point> special;
+  special << point (x1 - pad, y1 - pad)
+	  << point (x1 - pad, y2 + pad)
+	  << point (x2 + pad, y2 + pad)
+	  << point (x2 + pad, y1 - pad)
+	  << point ((x1 + x2) >> 1, y1 - pad)
+	  << point ((x1 + x2) >> 1, y2 + pad)
+	  << point (x1 - pad, y1 + axis)
+	  << point (x2 + pad, y1 + axis);
+
   gr_selections res;
-  if (norm (point (x, y) - point (sx(0), sy(0))) <= dist) {
+  point p= point (x, y);
+  if (norm (p - point (sx(0), sy(0))) <= dist) {
     gr_selection gs;
     gs->type= "text-handle";
-    gs->dist= norm (point (x, y) - point (sx(0), sy(0)));
+    gs->dist= norm (p - point (sx(0), sy(0)));
     gs->p= point (sx(0), sy(0));
     gs->cp << reverse (path (0, path (1, ip)));
     gs->pts << gs->p;
     gs->c= curve ();
     res << gs;
   }
-  else if (graphical_distance (x, y) <= dist) {
+  else if (graphical_distance (x, y) == 0) {
     gr_selection gs;
     gs->type= "text";
     gs->dist= graphical_distance (x, y);
-    gs->p= point (x, y);
+    gs->p= p;
     gs->cp << box_rep::find_tree_path (x, y, dist);
     gs->pts << gs->p;
     gs->c= curve ();
     res << gs;
   }
+
+  for (int i=0; i<N(special); i++)
+    if (norm (special[i] - p) <= dist) {
+      gr_selection gs;
+      gs->type= "text-border-point";
+      gs->p= special[i];
+      gs->dist= norm (gs->p - p);
+      gs->cp << box_rep::find_tree_path (x, y, dist);
+      gs->pts << gs->p;
+      gs->c= curve ();
+      res << gs;
+    }
+  if (N(res) == 0)
+    if (norm (closest (c, p) - p) <= dist) {
+      gr_selection gs;
+      gs->type= "text-border";
+      gs->p= closest (c, p);
+      gs->dist= norm (gs->p - p);
+      gs->cp << box_rep::find_tree_path (x, y, dist);
+      gs->pts << gs->p;
+      gs->c= c;
+      res << gs;    
+    }
   return res;
 }
 
@@ -694,6 +735,6 @@ tag_box (path ip, box b, tree keys) {
 }
 
 box
-text_at_box (path ip, box b, SI x, SI y, SI pad) {
-  return tm_new<text_at_box_rep> (ip, b, x, y, pad);
+text_at_box (path ip, box b, SI x, SI y, SI axis, SI pad) {
+  return tm_new<text_at_box_rep> (ip, b, x, y, axis, pad);
 }

@@ -108,8 +108,14 @@ curvet_closest_points (
       if (stored && decreasing)
         n0= tm_infinity;
       double delta= (n - eps) / 2;
-      t+=c->bound (t, max (eps, delta));
+      t += max (0.00001, c->bound (t, max (eps, delta)));
       nprec= n;
+    }
+    if (!stored && decreasing) {
+      curvet ct;
+      ct.dist= norm (pclosest - p);
+      ct.t= closest;
+      res << ct;
     }
   }
   return res;
@@ -138,6 +144,29 @@ curve_rep::find_closest_point (
     return res[0];
   else
     return -1;
+}
+
+point
+closest (curve f, point p) {
+  array<double> abs;
+  array<point> pts;
+  array<path> rcip;
+  f->get_control_points (abs, pts, rcip);
+  if (N(abs) == 0) return f(0);
+  double t1= abs[0];
+  double t2= abs[N(abs)-1];
+  double best= 0;
+  double eps = norm (f(0) - p);
+  for (int i=0; i<10; i++) {
+    bool found= false;
+    double t= f->find_closest_point (t1, t2, p, eps, found);
+    if (found) best= t;
+    else break;
+    double eps2= norm (f(t) - p);
+    if (eps2 >= 0.9 * eps) break;
+    eps= eps2;
+  }
+  return f(best);
 }
 
 point

@@ -98,15 +98,18 @@ BEGIN_MAGNIFY
     if (N(p) == 0)
       typeset_dynamic (tree (ERROR, "bad text-at"), ip);
     else {
-      SI x= (SI) p[0], y= (SI) p[1];
+      SI x= (SI) p[0], y= (SI) p[1], axis= (b->h() >> 1);
       if (halign == "left") x -= b->x1;
       else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
       else if (halign == "right") x -= b->x2;
       if (valign == "bottom") y -= b->y1;
-      else if (valign == "axis") y -= (env->fn->yx >> 1);
+      else if (valign == "axis") {
+	axis= (env->fn->yx >> 1) - b->y1;
+	y -= (env->fn->yx >> 1);
+      }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
-      print (text_at_box (ip, b, x, y, env->fn->spc->def));
+      print (text_at_box (ip, b, x, y, axis, env->fn->spc->def));
     }
   }
 END_MAGNIFY
@@ -322,12 +325,16 @@ concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
           set_graphical_value (u[0], get_graphical_value (u[1]));
         break;
       case IS_INTERSECTION:
+	cout << "Not yet implemented 'is-intersection'\n";
         break;
       case ON_CURVE:
+	cout << "Not yet implemented 'on-curve'\n";
         break;
       case ON_TEXT_BORDER:
+	cout << "Not yet implemented 'on-text-border'\n";
         break;
       case ON_GRID:
+	cout << "Not yet implemented 'on-grid'\n";
         break;
       default:
         break;

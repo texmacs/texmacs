@@ -224,7 +224,9 @@ edit_graphics_rep::adjust (point p) {
   double eps= get_pixel_size () / 10.0;
   gr_selection snap= snap_to_guide (fp, sels, eps);
   //cout << "Snap " << fp << " to " << snap << ", " << snap->p << "\n";
-  return f2[snap->p];
+  point snp= f2[snap->p];
+  //if (norm (snap->p - fp) > 10 * get_pixel_size ()) snp= p;
+  return snp;
 }
 
 tree

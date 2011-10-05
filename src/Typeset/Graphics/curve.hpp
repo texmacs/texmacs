@@ -82,5 +82,6 @@ curve operator * (curve c1, curve c2);
 curve invert (curve c);
 
 array<point> intersection (curve f, curve g, point p0, double eps);
+point closest (curve f, point p);
 
 #endif // defined CURVE_H
