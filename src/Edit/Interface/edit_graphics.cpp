@@ -159,18 +159,25 @@ edit_graphics_rep::adjust (point p) {
       point fp= f2 (p);
       int i;
       if ((tree)g == "empty_grid") {
-	if (N(pts)>0)
-	  res= pts[0];
+        bool inters= false;
+	if (N(pts)>0) res= pts[0];
+        else if (N(ci)>0) { inters= true; res= ci[0]; }
 	for (i=0; i<N(pts); i++) {
 	  point sp= pts[i];
 	  if (N(sp)>0 && norm (fp - sp) < 5*get_pixel_size ())
 	    res= pts[i];
 	}
+	for (i=0; i<N(ci); i++) {
+	  point sp= ci[i];
+	  if (N(sp)>0 && norm (fp - sp) < norm (fp - res)) {
+	    inters= true; res= ci[i]; }
+	}
 	int n= N(sels);
 	for (i=0; i<n; i++) {
 	  point sp= sels[i]->p;
-	  if (N(res)==0 || (N(sp)>0 && norm (fp - sp) < 5*get_pixel_size ()
-			            && norm (fp - sp) < norm (fp - res)))
+	  if (N(res)==0 || (N(sp)>0 && !inters &&
+                            norm (fp - sp) < 5*get_pixel_size () &&
+                            norm (fp - sp) < norm (fp - res)))
 	    res= sels[i]->p;
 	}
       }
@@ -241,8 +248,9 @@ edit_graphics_rep::graphical_select (double x, double y) {
         if (i<j) {
 	  curve c1= sels[i]->c;
 	  curve c2= sels[j]->c;
-	  if (!is_nil (c1) && !is_nil (c2))
+	  if (!is_nil (c1) && !is_nil (c2)) {
 	    ci= ci << intersection (c1, c2, p, eps);
+          }
         }
     }
     array<grid_curve> gc= g->get_curves_around (p0, 10*get_pixel_size (), f);
