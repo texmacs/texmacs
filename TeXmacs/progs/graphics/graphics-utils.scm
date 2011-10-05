@@ -342,11 +342,11 @@
 ;;NOTE: This section is OK.
 (define (graphics-get-raw-property var)
   (with val (get-upwards-tree-property (graphics-graphics-path) var)
-     (if (eq? val nothing)
-	 (get-default-tree-val var)
-	 (if (eq? (tm-car val) 'quote)
-	     (tree-ref val 0)
-	     val))))
+    (if (eq? val nothing)
+	(get-default-tree-val var)
+	(if (eq? (tm-car val) 'quote)
+	    (tree-ref val 0)
+	    val))))
 
 (tm-define (graphics-get-property var)
   (with val (graphics-get-raw-property var)

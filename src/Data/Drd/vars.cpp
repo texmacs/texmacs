@@ -239,6 +239,7 @@ string GR_ARROW_END ("gr-arrow-end");
 string GR_ARROW_LENGTH ("gr-arrow-length");
 string GR_ARROW_HEIGHT ("gr-arrow-height");
 string GR_FILL_COLOR ("gr-fill-color");
+string GR_FILL_STYLE ("gr-fill-style");
 string GR_TEXT_AT_HALIGN ("gr-text-at-halign");
 string GR_TEXT_AT_VALIGN ("gr-text-at-valign");
 string GR_GRID ("gr-grid");

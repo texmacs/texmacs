@@ -229,6 +229,8 @@ initialize_default_env () {
   env (GR_ARROW_END)        = "default";   // arrow end for new objects
   env (GR_ARROW_LENGTH)     = "default";   // arrow length for new objects
   env (GR_ARROW_HEIGHT)     = "default";   // arrow height for new objects
+  env (GR_FILL_COLOR)       = "default";   // fill color for new objects
+  env (GR_FILL_STYLE)       = "default";   // fill style for new objects
   env (GR_TEXT_AT_HALIGN)   = "default";   // horiz. alignment for new text-ats
   env (GR_TEXT_AT_VALIGN)   = "default";   // vert. alignment for new text-ats
   env (GR_GRID)             = gr_grid;        // grid for graphics

@@ -217,6 +217,7 @@ extern string GR_ARROW_END;
 extern string GR_ARROW_LENGTH;
 extern string GR_ARROW_HEIGHT;
 extern string GR_FILL_COLOR;
+extern string GR_FILL_STYLE;
 extern string GR_TEXT_AT_HALIGN;
 extern string GR_TEXT_AT_VALIGN;
 extern string GR_GRID;
