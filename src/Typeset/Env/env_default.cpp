@@ -194,6 +194,35 @@ initialize_default_env () {
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
+  env (GR_GEOMETRY)         = gr_geometry;    // geometry of graphics
+  env (GR_FRAME)            = gr_frame;       // coordinate frame for graphics
+  env (GR_MODE)             = "line";         // graphical mode
+  env (GR_AUTO_CROP)        = "false";        // auto crop graphics
+  env (GR_GRID)             = gr_grid;        // grid for graphics
+  env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
+  env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
+  env (GR_EDIT_GRID_ASPECT) = gr_grid_aspect; // edit grid (subdivisions)
+
+  env (GR_MAGNIFY)       = "default";   // magnify of new objects
+  env (GR_OPACITY)       = "default";   // opacity of new objects
+  env (GR_COLOR)         = "default";   // color of new objects
+  env (GR_POINT_STYLE)   = "default";   // point style of new objects
+  env (GR_LINE_WIDTH)    = "default";   // line width for new objects
+  env (GR_LINE_JOIN)     = "default";   // line join for new objects
+  env (GR_LINE_CAPS)     = "default";   // line caps for new objects
+  env (GR_LINE_EFFECTS)    = "default";   // line effects for new objects
+  env (GR_DASH_STYLE)      = "default";   // dash style for new objects
+  env (GR_DASH_STYLE_UNIT) = "default";   // dash style unit for new objects
+  env (GR_ARROW_BEGIN)     = "default";   // arrow begin for new objects
+  env (GR_ARROW_END)       = "default";   // arrow end for new objects
+  env (GR_ARROW_LENGTH)    = "default";   // arrow length for new objects
+  env (GR_ARROW_HEIGHT)    = "default";   // arrow height for new objects
+  env (GR_FILL_COLOR)      = "default";   // fill color for new objects
+  env (GR_FILL_STYLE)      = "default";   // fill style for new objects
+  env (GR_TEXT_AT_HALIGN)  = "default";   // horiz. alignment for new text-ats
+  env (GR_TEXT_AT_VALIGN)  = "default";   // vert. alignment for new text-ats
+  env (GR_TEXT_AT_MARGIN)  = "default";   // margins for new text-ats
+
   env (GID)              = "default";   // graphical identifier
   env (MAGNIFY)          = "1";         // magnification for graphical objects
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
@@ -211,32 +240,7 @@ initialize_default_env () {
   env (FILL_STYLE)       = "plain";     // fill style
   env (TEXT_AT_HALIGN)   = "left";      // horizontal text-at alignment
   env (TEXT_AT_VALIGN)   = "base";      // vertical text-at alignment
-
-  env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
-  env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
-  env (GR_MODE)          = "line";      // graphical mode
-  env (GR_MAGNIFY)       = "default";   // magnify of new objects
-  env (GR_OPACITY)       = "default";   // opacity of new objects
-  env (GR_COLOR)         = "default";   // color of new objects
-  env (GR_POINT_STYLE)   = "default";   // point style of new objects
-  env (GR_LINE_WIDTH)    = "default";   // line width for new objects
-  env (GR_LINE_JOIN)     = "default";   // line join for new objects
-  env (GR_LINE_CAPS)     = "default";   // line caps for new objects
-  env (GR_LINE_EFFECTS)     = "default";   // line effects for new objects
-  env (GR_DASH_STYLE)       = "default";   // dash style for new objects
-  env (GR_DASH_STYLE_UNIT)  = "default";   // dash style unit for new objects
-  env (GR_ARROW_BEGIN)      = "default";   // arrow begin for new objects
-  env (GR_ARROW_END)        = "default";   // arrow end for new objects
-  env (GR_ARROW_LENGTH)     = "default";   // arrow length for new objects
-  env (GR_ARROW_HEIGHT)     = "default";   // arrow height for new objects
-  env (GR_FILL_COLOR)       = "default";   // fill color for new objects
-  env (GR_FILL_STYLE)       = "default";   // fill style for new objects
-  env (GR_TEXT_AT_HALIGN)   = "default";   // horiz. alignment for new text-ats
-  env (GR_TEXT_AT_VALIGN)   = "default";   // vert. alignment for new text-ats
-  env (GR_GRID)             = gr_grid;        // grid for graphics
-  env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
-  env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
-  env (GR_EDIT_GRID_ASPECT) = gr_grid_aspect; // edit grid (subdivisions)
+  env (TEXT_AT_MARGIN)   = "base";      // margin for smart guides
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

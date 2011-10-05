@@ -55,6 +55,7 @@ struct concat_box_rep: public composite_box_rep {
   SI        get_leaf_offset (string search);
 
   box       transform (frame fr);
+  gr_selections graphical_select (SI x, SI y, SI dist);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
@@ -495,6 +496,15 @@ concat_box_rep::get_leaf_offset (string search) {
     if (offset != bs[i]->w()) return sx1(i) + offset;
   }
   return w();
+}
+
+gr_selections
+concat_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=n-1; i>=0; i--)
+    res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  return res;
 }
 
 gr_selections

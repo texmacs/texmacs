@@ -33,6 +33,7 @@ struct graphics_box_rep: public composite_box_rep {
   void post_display (renderer &ren);
   int reindex (int i, int item, int n);
   virtual int find_child (SI x, SI y, SI delta, bool force);
+  gr_selections graphical_select (SI x, SI y, SI dist);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
@@ -101,6 +102,24 @@ graphics_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   return m;
 }
 
+/*NOTE: It seems that the dimensions of the boxes that inherit from
+  composite_box are not calculated correctly (namely : one can find
+  points inside the box that are outside the rectangle (x1, y1, x2, y2)
+  that defines the border of the box). As a consequence, we use a traversal
+  routine that doesn't tests contains_rectangle(). When this problem
+  will have been corrected, the method of composite_box should work,
+  and consequently, its more specific implementation below should be
+  removed (this is the same in concat_boxes and stack_boxes). */
+
+gr_selections
+graphics_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=n-1; i>=0; i--)
+    res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  return res;
+}
+
 gr_selections
 graphics_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
@@ -110,14 +129,6 @@ graphics_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 				    x2- sx(i), y2- sy(i));
   return res;
 }
-/*NOTE: It seems that the dimensions of the boxes that inherit from
-  composite_box are not calculated correctly (namely : one can find
-  points inside the box that are outside the rectangle (x1, y1, x2, y2)
-  that defines the border of the box). As a consequence, we use a traversal
-  routine that doesn't tests contains_rectangle(). When this problem
-  will have been corrected, the method of composite_box should work,
-  and consequently, its more specific implementation above should be
-  removed (this is the same in concat_boxes and stack_boxes). */
 
 /******************************************************************************
 * Group boxes

@@ -203,27 +203,15 @@ string CELL_COL_NR ("cell-col-nr");
 * Environment variables for graphics
 ******************************************************************************/
 
-string GID ("gid");
-string MAGNIFY ("magnify");
-string POINT_STYLE ("point-style");
-string LINE_WIDTH ("line-width");
-string LINE_JOIN ("line-join");
-string LINE_CAPS ("line-caps");
-string LINE_EFFECTS ("line-effects");
-string DASH_STYLE ("dash-style");
-string DASH_STYLE_UNIT ("dash-style-unit");
-string ARROW_BEGIN ("arrow-begin");
-string ARROW_END ("arrow-end");
-string ARROW_LENGTH ("arrow-length");
-string ARROW_HEIGHT ("arrow-height");
-string FILL_COLOR ("fill-color");
-string FILL_STYLE ("fill-style");
-string TEXT_AT_HALIGN ("text-at-halign");
-string TEXT_AT_VALIGN ("text-at-valign");
-
 string GR_GEOMETRY ("gr-geometry");
 string GR_FRAME ("gr-frame");
 string GR_MODE ("gr-mode");
+string GR_AUTO_CROP ("gr-auto-crop");
+string GR_GRID ("gr-grid");
+string GR_GRID_ASPECT ("gr-grid-aspect");
+string GR_EDIT_GRID ("gr-edit-grid");
+string GR_EDIT_GRID_ASPECT ("gr-edit-grid-aspect");
+
 string GR_MAGNIFY ("gr-magnify");
 string GR_OPACITY ("gr-opacity");
 string GR_COLOR ("gr-color");
@@ -242,10 +230,26 @@ string GR_FILL_COLOR ("gr-fill-color");
 string GR_FILL_STYLE ("gr-fill-style");
 string GR_TEXT_AT_HALIGN ("gr-text-at-halign");
 string GR_TEXT_AT_VALIGN ("gr-text-at-valign");
-string GR_GRID ("gr-grid");
-string GR_GRID_ASPECT ("gr-grid-aspect");
-string GR_EDIT_GRID ("gr-edit-grid");
-string GR_EDIT_GRID_ASPECT ("gr-edit-grid-aspect");
+string GR_TEXT_AT_MARGIN ("gr-text-at-margin");
+
+string GID ("gid");
+string MAGNIFY ("magnify");
+string POINT_STYLE ("point-style");
+string LINE_WIDTH ("line-width");
+string LINE_JOIN ("line-join");
+string LINE_CAPS ("line-caps");
+string LINE_EFFECTS ("line-effects");
+string DASH_STYLE ("dash-style");
+string DASH_STYLE_UNIT ("dash-style-unit");
+string ARROW_BEGIN ("arrow-begin");
+string ARROW_END ("arrow-end");
+string ARROW_LENGTH ("arrow-length");
+string ARROW_HEIGHT ("arrow-height");
+string FILL_COLOR ("fill-color");
+string FILL_STYLE ("fill-style");
+string TEXT_AT_HALIGN ("text-at-halign");
+string TEXT_AT_VALIGN ("text-at-valign");
+string TEXT_AT_MARGIN ("text-at-margin");
 
 /******************************************************************************
 * Environment variables for preamble mode

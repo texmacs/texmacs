@@ -202,31 +202,35 @@ edit_graphics_rep::adjust (point p) {
   gr_selections sels= copy (gs);
   frame f2= find_frame (true);
   if (is_nil (f2)) return p;
+  point fp= f2 (p);
   if ((tree) g != "empty_grid") {
-    point q= f2 (g->find_point_around (p, 10*get_pixel_size (), f));
-    gr_selection sel;
-    sel->type= "grid-point";
-    sel->p   = q;
-    sel->dist= norm (q - p);
-    sels << sel;
+    point q= g->find_point_around (p, 10*get_pixel_size (), f);
+    point fq= f2 (q);
+    if (norm (fq - fp) < 10*get_pixel_size ()) {
+      gr_selection sel;
+      sel->type= "grid-point";
+      sel->p   = fq;
+      sel->dist= norm (fq - fp);
+      sels << sel;
+    }
     array<grid_curve> gc=
       g->get_curves_around (p, 10*get_pixel_size (), f);
     for (int i=0; i<N(gc); i++) {
-      gr_selection sel;
-      sel->type= "grid-curve-point";
-      sel->p   = q;
-      sel->dist= norm (q - p);
-      sel->c   = f2 (gc[i]->c);
-      sels << sel;
+      point fc= closest (f2 (gc[i]->c), fp);
+      if (norm (fc - fp) < 10*get_pixel_size ()) {
+        gr_selection sel;
+        sel->type= "grid-curve-point";
+        sel->p   = fc;
+        sel->dist= norm (fc - fp);
+        sel->c   = f2 (gc[i]->c);
+        sels << sel;
+      }
     }
   }
-  point fp= f2 (p);
   double eps= get_pixel_size () / 10.0;
   gr_selection snap= snap_to_guide (fp, sels, eps);
   //cout << "Snap " << fp << " to " << snap << ", " << snap->p << "\n";
-  point snp= f2[snap->p];
-  //if (norm (snap->p - fp) > 10 * get_pixel_size ()) snp= p;
-  return snp;
+  return f2[snap->p];
 }
 
 tree

@@ -12,6 +12,7 @@
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
 #include "scheme.hpp"
+#include "gui.hpp"
 
 /******************************************************************************
 * changing the behaviour of a box
@@ -569,24 +570,22 @@ tag_box_rep::find_tag (string search) {
 struct text_at_box_rep: public move_box_rep {
   SI axis;
   SI pad;
-  curve c;
   text_at_box_rep (path ip, box b, SI x, SI y, SI axis, SI pad);
   gr_selections graphical_select (SI x, SI y, SI dist);
   operator tree () { return tree (TUPLE, "text-at", (tree) bs[0]); }
+  /*
+  void pre_display (renderer &ren) {
+    array<SI> xs, ys;
+    xs << x1 - pad << x2 + pad << x2 + pad << x1 - pad << x1 - pad;
+    ys << y1 - pad << y1 - pad << y2 + pad << y2 + pad << y1 - pad;
+    ren->set_color (rgb_color (255, 255, 224));
+    ren->polygon (xs, ys);
+  }
+  */
 };
 
 text_at_box_rep::text_at_box_rep (path ip, box b, SI x, SI y, SI a2, SI p2):
-  move_box_rep (ip, b, x, y, false, false), axis (a2), pad (p2)
-{
-  path dip= decorate (ip);
-  array<point> a;
-  array<path> cip;
-  a << point (x1 - pad, y1 - pad) << point (x2 + pad, y1 - pad)
-    << point (x2 + pad, y2 + pad) << point (x1 - pad, y2 + pad)
-    << point (x1 - pad, y1 - pad);
-  cip << dip << dip << dip << dip << dip;
-  c= poly_segment (a, cip);
-}
+  move_box_rep (ip, b, x, y, false, false), axis (a2), pad (p2) {}
 
 gr_selections
 text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
@@ -599,6 +598,13 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
 	  << point ((x1 + x2) >> 1, y2 + pad)
 	  << point (x1 - pad, y1 + axis)
 	  << point (x2 + pad, y1 + axis);
+  array<point> ps;
+  ps << point (x1 - pad, y1 - pad) << point (x2 + pad, y1 - pad)
+     << point (x2 + pad, y2 + pad) << point (x1 - pad, y2 + pad)
+     << point (x1 - pad, y1 - pad);
+  array<curve> cs;
+  for (int i=0; i<N(ps)-1; i++)
+    cs << segment (ps[i], ps[i+1]);
 
   gr_selections res;
   point p= point (x, y);
@@ -634,17 +640,18 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
       gs->c= curve ();
       res << gs;
     }
-  if (N(res) == 0)
-    if (norm (closest (c, p) - p) <= dist) {
+  for (int i=0; i<N(cs); i++) {
+    if (N(res) == 0 && norm (closest (cs[i], p) - p) <= dist) {
       gr_selection gs;
       gs->type= "text-border";
-      gs->p= closest (c, p);
+      gs->p= closest (cs[i], p);
       gs->dist= norm (gs->p - p);
       gs->cp << box_rep::find_tree_path (x, y, dist);
       gs->pts << gs->p;
-      gs->c= c;
+      gs->c= cs[i];
       res << gs;    
     }
+  }
   return res;
 }
 
