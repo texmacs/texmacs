@@ -339,22 +339,22 @@
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-halign-menu
-  ;;("Default" (graphics-set-textat-halign "default"))
+  ;;("Default" (graphics-set-text-at-halign "default"))
   ;;---
-  ;;("Left" (graphics-set-textat-halign "left"))
-  ("Left" (graphics-set-textat-halign "default"))
-  ("Center" (graphics-set-textat-halign "center"))
-  ("Right" (graphics-set-textat-halign "right")))
+  ;;("Left" (graphics-set-text-at-halign "left"))
+  ("Left" (graphics-set-text-at-halign "default"))
+  ("Center" (graphics-set-text-at-halign "center"))
+  ("Right" (graphics-set-text-at-halign "right")))
 
 (menu-bind graphics-text-valign-menu
-  ;;("Default" (graphics-set-textat-valign "default"))
+  ;;("Default" (graphics-set-text-at-valign "default"))
   ;;---
-  ("Bottom" (graphics-set-textat-valign "bottom"))
-  ;;("Base" (graphics-set-textat-valign "base"))
-  ("Base" (graphics-set-textat-valign "default"))
-  ("Axis" (graphics-set-textat-valign "axis"))
-  ("Center" (graphics-set-textat-valign "center"))
-  ("Top" (graphics-set-textat-valign "top")))
+  ("Bottom" (graphics-set-text-at-valign "bottom"))
+  ;;("Base" (graphics-set-text-at-valign "base"))
+  ("Base" (graphics-set-text-at-valign "default"))
+  ("Axis" (graphics-set-text-at-valign "axis"))
+  ("Center" (graphics-set-text-at-valign "center"))
+  ("Top" (graphics-set-text-at-valign "top")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode

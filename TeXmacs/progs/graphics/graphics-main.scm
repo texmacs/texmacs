@@ -694,12 +694,12 @@
   (:check-mark "*" (graphics-test-property? "gr-arrow-end"))
   (graphics-set-property "gr-arrow-end" val))
 
-(tm-define (graphics-set-textat-halign val)
+(tm-define (graphics-set-text-at-halign val)
   (:argument val "Text-at horizontal alignment")
   (:check-mark "*" (graphics-test-property? "gr-text-at-halign"))
   (graphics-set-property "gr-text-at-halign" val))
 
-(tm-define (graphics-set-textat-valign val)
+(tm-define (graphics-set-text-at-valign val)
   (:argument val "Text-at vertical alignment")
   (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-set-property "gr-text-at-valign" val))
