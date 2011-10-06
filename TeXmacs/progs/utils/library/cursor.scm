@@ -83,12 +83,26 @@
 (define (go-to-next-inside-sub fun l)
   (do ((p (cursor-path) (cursor-path))
        (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
-      ((or (== p q) (innermost-pattern q l)) (noop))))
+      ((or (== p q) (innermost-pattern q l))
+       q)
+    (noop)))
 
 (tm-define (go-to-next-inside fun . l)
   (with p (cursor-path)
     (go-to-next-inside-sub fun l)
     (if (not (innermost-pattern (cursor-path) l)) (go-to p))))
+
+(define (go-to-next-such-that fun pred?)
+  (do ((p (cursor-path) (cursor-path))
+       (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
+      ((or (== p q) (pred? (path->tree (cDr q))))
+       q)
+    (noop)))
+
+(tm-define (go-to-next-such-that fun pred?)
+  (with p (cursor-path)
+    (go-to-next-such-that fun pred?)
+    (if (not (pred? (path->tree (cDr (cursor-path))))) (go-to p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for cursor movement

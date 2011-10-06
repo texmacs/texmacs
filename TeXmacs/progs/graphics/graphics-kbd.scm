@@ -20,6 +20,16 @@
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
 
+(define (graphics-context? t)
+  (tree-is? t 'graphics))
+
+(define (inside-graphics-context? t)
+  (tree-search-upwards t graphics-context?))
+
+(tm-define (generic-context? t)
+  (:require (inside-graphics-context? t))
+  #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

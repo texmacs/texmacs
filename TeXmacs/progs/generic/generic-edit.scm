@@ -16,6 +16,8 @@
 	(utils library cursor)
 	(utils edit variants)))
 
+(tm-define (generic-context? t) #t) ;; overridden in, e.g., graphics mode
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic cursor movements via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -38,19 +40,23 @@
 
 (tm-define (kbd-horizontal t forwards?)
   (:require (tree-is-buffer? t))
-  (if forwards? (go-right) (go-left)))
+  (with move (lambda () (if forwards? (go-right) (go-left)))
+    (go-to-next-such-that move generic-context?)))
 
 (tm-define (kbd-vertical t downwards?)
   (:require (tree-is-buffer? t))
-  (if downwards? (go-down) (go-up)))
+  (with move (lambda () (if downwards? (go-down) (go-up)))
+    (go-to-next-such-that move generic-context?)))
 
 (tm-define (kbd-extremal t forwards?)
   (:require (tree-is-buffer? t))
-  (if forwards? (go-end-line) (go-start-line)))
+  (with move (lambda () (if forwards? (go-end-line) (go-start-line)))
+    (go-to-next-such-that move generic-context?)))
 
 (tm-define (kbd-incremental t downwards?)
   (:require (tree-is-buffer? t))
-  (if downwards? (go-page-down) (go-page-up)))
+  (with move (lambda () (if downwards? (go-page-down) (go-page-up)))
+    (go-to-next-such-that move generic-context?)))
 
 (tm-define (kbd-left)
   (kbd-horizontal (focus-tree) #f))
