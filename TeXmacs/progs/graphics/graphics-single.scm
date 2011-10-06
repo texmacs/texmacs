@@ -206,7 +206,18 @@
                                 (graphical-text-tag-list) '(graphics))
          (if (not p2) (go-to (rcons current-path 0))))))
 
+(define (edit-clean-up)
+  ;; remove cruft which uncareful editing may create
+  (with-innermost t 'graphics
+    (for (i (reverse (.. 0 (tree-arity t))))
+      (with c (tree-ref t i)
+        (if (tm-func? c 'with) (set! c (tree-ref c :last)))
+        (when (and (graphical-text-context? c)
+                   (== (tree->stree (tree-ref c 0)) ""))
+          (tree-remove! t i 1))))))
+
 (define (edit-insert x y)
+  (edit-clean-up)
   (object_create (cadr (graphics-mode)) x y))
 
 (define (start-move)
