@@ -554,6 +554,10 @@ init_std_drd () {
   init (TEXT_AT, "text-at",
 	fixed (1, 1, BIFORM) -> returns_graphical () ->
 	accessible (0) -> point_type (1));
+  init (MATH_AT, "math-at",
+	fixed (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> point_type (1) ->
+        locals (0, "mode", "math"));
   init (_POINT, "point",
 	repeat (1, 1) -> returns_graphical () -> point_type (0));
   init (LINE, "line",

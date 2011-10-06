@@ -68,8 +68,8 @@
     (graphics-store-state #f)))
 
 (tm-define (object_create tag x y)
-  (:require (== tag 'text-at))
-  (object-set! `(text-at "" (point ,x ,y)) 'new))
+  (:require (graphical-text-tag? tag))
+  (object-set! `(,tag "" (point ,x ,y)) 'new))
 
 (define (set-point-sub obj no x y)
   ;;(display* "set-point-sub " obj ", " no ", " x ", " y "\n")
@@ -202,7 +202,8 @@
   (set-message "Left click: new object; Drag: edit object; Middle click: remove" "")
   (graphics-decorations-update)
   (if current-path
-      (with p2 (tm-upwards-path current-path '(text-at) '(graphics))
+      (with p2 (tm-upwards-path current-path
+                                (graphical-text-tag-list) '(graphics))
          (if (not p2) (go-to (rcons current-path 0))))))
 
 (define (edit-insert x y)
@@ -324,7 +325,7 @@
   (set-texmacs-pointer 'graphics-cross #t)
   (if current-obj
       (begin
-        (if (current-in? '(text-at))
+        (if (current-in? (graphical-text-tag-list))
             (set! current-point-no 1))
         (if sticky-point
             (move-point)
@@ -338,11 +339,12 @@
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
   (cond (sticky-point
-         (if (current-in? '(text-at))
+         (if (current-in? (graphical-text-tag-list))
              (object_commit)
              (next-point)))
-        ((and (current-in? '(text-at))
-              (== (graphics-mode) '(edit text-at)))
+        ((and (current-in? (graphical-text-tag-list))
+              (== (car (graphics-mode)) 'edit)
+              (graphical-text-tag? (cadr (graphics-mode))))
          (set-texmacs-pointer 'text-arrow)
          (go-to (car (select-first (s2f current-x) (s2f current-y)))))
         (else
@@ -363,7 +365,7 @@
   (set! dragging-create? (or sticky-point (not current-obj)))
   (if (or sticky-point current-obj)
       (begin
-        (if (current-in? '(text-at))
+        (if (current-in? (graphical-text-tag-list))
             (set! current-point-no 1))
         (if sticky-point
             (next-point)

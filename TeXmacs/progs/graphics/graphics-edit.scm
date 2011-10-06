@@ -173,7 +173,7 @@
 	  (with submode (cadr mode)
 	     (cond ((== submode 'point) (noop))
 		   ((in? submode gr-tags-curves) (noop))
-		   ((== submode 'text-at) (noop))
+		   ((graphical-text-tag? submode) (noop))
 		   (else (display* "Uncaptured finish (edit)\n")))))
 	 ((== (car mode) 'group-edit) (noop))
 	 (else (display* "Uncaptured finish\n")))))
@@ -202,13 +202,13 @@
 
 (tm-define (graphics-move x y)
   ;;(display* "Graphics] Move " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (edit_move (car (graphics-mode)) x y)))
 
 (tm-define (graphics-release-left x y)
   ;;(display* "Graphics] Release-left " x ", " y "\n")
-  (if (inside? 'text-at)
-      (with-innermost t 'text-at
+  (if (inside-graphical-text?)
+      (with-innermost t graphical-text-context?
         (let* ((ps (select-first (s2f x) (s2f y)))
                (p (and ps (car ps))))
           (if (and p (list-starts? p (tree->path t)))
@@ -218,43 +218,43 @@
 
 (tm-define (graphics-release-middle x y)
   ;;(display* "Graphics] Release-middle " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (edit_middle-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-release-right x y)
-  ;;(display* "Graphics] Release-right " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  ;;(display* "Graphics] Release-right " x ", " y "\n")  
+  (when (not (inside-graphical-text?))
     (edit_right-button (car (graphics-mode)) x y)))
 
 (tm-define (graphics-start-drag-left x y)
   ;;(display* "Graphics] Start-drag-left " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (edit_start-drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-dragging-left x y)
   ;;(display* "Graphics] Dragging-left " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (edit_drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-end-drag-left x y)
   ;;(display* "Graphics] End-drag-left " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (edit_end-drag (car (graphics-mode)) x y)))
 
 (tm-define (graphics-start-drag-right x y)
   ;;(display* "Graphics] Start-right-drag " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (graphics-release-right x y)))
 
 (tm-define (graphics-dragging-right x y)
   ;;(display* "Graphics] Right-dragging " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (graphics-move x y)))
 
 (tm-define (graphics-end-drag-right x y)
   (:state graphics-state)
   ;;(display* "Graphics] End-right-drag " x ", " y "\n")
-  (when (not (inside? 'text-at))
+  (when (not (inside-graphical-text?))
     (if (not sticky-point)
         ;; FIXME : test due to timing problems in detecting the drag
         (graphics-release-right x y))))

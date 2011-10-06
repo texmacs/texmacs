@@ -175,13 +175,14 @@
   (define (create-text-at-handle o)
     (cond ((func? o 'with)
            (create-text-at-handle (cAr o)))
-          ((func? o 'text-at)
+          ((graphical-text-context? o)
            `((with "point-style" "disk" 
                ,(cAr o))))
           (else '())))
-  (let* ((o1 (with res (if (in? (car o) '(text-at gr-group))
+  (let* ((o1 (with res (if (or (graphical-text-context? o)
+                               (== (car o) 'gr-group))
                            `(with "text-at-halign" ,ha0
-                              "text-at-valign" ,va0 ,o)
+                                  "text-at-valign" ,va0 ,o)
 			   o)
                `(with "magnify" ,(if (== mag "default") "1" mag) ,res)))
 	 (info0 (cdr (box-info o1 "lbLB")))
@@ -212,9 +213,9 @@
   (set! eps (length-decode eps))
   (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	 (va (get-graphical-prop 'basic "text-at-valign"))
-	 (o1 (if (and (pair? o) (== (car o) 'text-at))
+	 (o1 (if (graphical-text-context? o)
                  `(with "text-at-halign" ,ha
-                    "text-at-valign" ,va ,o)
+                        "text-at-valign" ,va ,o)
 		 o))
 	 (info0 (cdr (box-info o1 "lbLB")))
 	 (info1 (cdr (box-info o1 "rtRT")))
@@ -240,7 +241,7 @@
     (if draw-nonsticky-curp lp '()))
   (cond ((== (car o) 'point)
          (cons o '()))
-        ((== (car o) 'text-at)
+        ((graphical-text-context? o)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
 	        (mag (get-graphical-prop 'basic "magnify")))
@@ -353,7 +354,7 @@
                  (set! t (if (== pts 'object)
                              `(,o)
                              (asc curscol #f `(,o)))))
-                ((== (car o) 'text-at)
+                ((graphical-text-context? o)
                  (if (not curscol)
                      (set! curscol default-color-selected-points))
                  (set! t
@@ -491,7 +492,7 @@
              current-obj
              mode
              (if sticky-point 'object-and-points 'points)
-             (if (== tag 'text-at)
+             (if (graphical-text-tag? tag)
                  1
                  (cond ((or (not tag)
                             (== tag 'gr-group))

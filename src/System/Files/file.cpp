@@ -74,8 +74,9 @@ load_string (url u, string& s, bool fatal) {
 #endif
     if (fin == NULL) {
       err= true;
-      cerr << "TeXmacs] warning, load error for " << name << ", "
-           << sys_errlist[errno] << "\n";
+      if (!occurs ("system", name))
+        cerr << "TeXmacs] warning, load error for " << name << ", "
+             << sys_errlist[errno] << "\n";
     }
     int size= 0;
     if (!err) {

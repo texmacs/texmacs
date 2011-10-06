@@ -96,7 +96,7 @@ edit_graphics_rep::inside_graphics (bool b) {
   tree st  = et;
   while (!is_nil (p)) {
     if (is_func (st, GRAPHICS)) flag= true;
-    if (b && is_func (st, TEXT_AT)) flag= false;
+    if (b && is_graphical_text (st)) flag= false;
     if (is_atomic (st) || p->item < 0 || p->item >= N(st)) break;
     st= st[p->item];
     p = p->next;
@@ -375,7 +375,9 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
 	return true;
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().
-    p = adjust (p);
+    point adj_p= adjust (p);
+    if (N(adj_p) == 2) p= adj_p;
+    // FIXME: it seems that adj_p sometimes returns an empty point; why?
     gr_x= p[0];
     gr_y= p[1];
     string sx= as_string (p[0]);

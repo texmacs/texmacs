@@ -116,6 +116,38 @@ END_MAGNIFY
 }
 
 void
+concater_rep::typeset_math_at (tree t, path ip) {
+BEGIN_MAGNIFY
+  if (N(t) != 2) typeset_error (t, ip);
+  else {
+    // FIXME: attaching ip to compound ("math", t[0]) is a bit hacky,
+    // but it seems to work fine for the time being
+    box    b     = typeset_as_concat (env, compound ("math", t[0]), ip);
+    point  p     = env->fr (env->as_point (env->exec (t[1])));
+    string halign= env->text_at_halign;
+    string valign= env->text_at_valign;
+
+    if (N(p) == 0)
+      typeset_dynamic (tree (ERROR, "bad text-at"), ip);
+    else {
+      SI x= (SI) p[0], y= (SI) p[1], axis= (b->h() >> 1);
+      if (halign == "left") x -= b->x1;
+      else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
+      else if (halign == "right") x -= b->x2;
+      if (valign == "bottom") y -= b->y1;
+      else if (valign == "axis") {
+	axis= (env->fn->yx >> 1) - b->y1;
+	y -= (env->fn->yx >> 1);
+      }
+      else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
+      else if (valign == "top") y -= b->y2;
+      print (text_at_box (ip, b, x, y, axis, env->fn->spc->def));
+    }
+  }
+END_MAGNIFY
+}
+
+void
 concater_rep::typeset_point (tree t, path ip) {
 BEGIN_MAGNIFY
   if (N(t) < 2) typeset_error (t, ip);

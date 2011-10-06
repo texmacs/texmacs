@@ -262,6 +262,7 @@ bool is_prime (tree t);
 bool is_right_script_prime (tree t);
 bool is_mod_active (tree t);
 bool is_mod_active_once (tree t);
+bool is_graphical_text (tree t);
 bool is_empty (tree t);
 
 inline bool

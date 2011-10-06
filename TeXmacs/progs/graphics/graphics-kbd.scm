@@ -67,7 +67,7 @@
                 (not (in-graphics?))))
          (go-to (rcons (selection-path) 0))
          (clipboard-cut "primary"))
-        ((inside? 'text-at)
+        ((inside-graphical-text?)
          (if forward? (kbd-delete) (kbd-backspace)))
         (else
          (edit_delete))))
@@ -80,23 +80,21 @@
 ;; Text at 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (graphical-text-context? t)
-  (tree-in? t (graphical-text-tag-list)))
-
 (tm-define (kbd-horizontal t forwards?)
   (:require (graphical-text-context? t))
   (with move (if forwards? go-right go-left)
-    (go-to-remain-inside move 'text-at)))
+    (go-to-remain-inside move graphical-text-context? 0)))
 
 (tm-define (kbd-vertical t downwards?)
   (:require (graphical-text-context? t))
   (with move (if downwards? go-down go-up)
-    (go-to-remain-inside move 'text-at)))
+    (go-to-remain-inside move graphical-text-context? 0)))
 
 (tm-define (kbd-extremal t forwards?)
   (:require (graphical-text-context? t))
   (with move (if forwards? go-right go-left)
-    (with action (lambda () (go-to-remain-inside move graphical-text-context?))
+    (with action
+        (lambda () (go-to-remain-inside move graphical-text-context? 0))
       (go-to-repeat action))))
 
 (tm-define (geometry-horizontal t forwards?)

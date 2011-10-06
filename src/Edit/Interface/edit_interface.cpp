@@ -321,7 +321,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
            is_func (st, ROW) || is_func (st, TFORMAT) ||
            is_graphical (st) ||
            (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
-           (is_func (st, WITH) && is_func (st[N(st)-1], TEXT_AT)) ||
+           (is_func (st, WITH) && is_graphical_text (st[N(st)-1])) ||
            (is_compound (st, "math", 1) &&
             is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (path_up (p), rs, recurse);

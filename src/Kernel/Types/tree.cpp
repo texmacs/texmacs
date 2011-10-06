@@ -363,6 +363,11 @@ is_mod_active_once (tree t) {
 }
 
 bool
+is_graphical_text (tree t) {
+  return is_func (t, TEXT_AT) || is_func (t, MATH_AT);
+}
+
+bool
 is_empty (tree t) {
   if (is_atomic (t)) return (t == "");
   if (is_document (t) || is_concat (t)) {

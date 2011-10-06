@@ -27,14 +27,22 @@
   line cline spline cspline arc carc)
 
 (define-group graphical-text-tag
-  text-at)
+  text-at math-at)
+
+(define-group graphical-non-group-tag
+  (graphical-curve-tag) (graphical-atomic-tag) (graphical-text-tag))
 
 (define-group graphical-group-tag
   gr-group)
 
 (define-group graphical-tag
-  (graphical-curve-tag) (graphical-atomic-tag)
-  (graphical-text-tag) (graphical-group-tag))
+  (graphical-non-group-tag) (graphical-group-tag))
+
+(tm-define (graphical-text-context? t)
+  (tm-in? t (graphical-text-tag-list)))
+
+(tm-define (inside-graphical-text?)
+  (tree-innermost graphical-text-context?))
 
 (tm-define gr-tags-all          (graphical-tag-list))
 (tm-define gr-tags-curves       (graphical-curve-tag-list))
