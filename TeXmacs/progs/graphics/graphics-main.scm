@@ -155,6 +155,11 @@
           (graphics-set-property "gr-frame" newfr)
           (graphics-set-property "magnify" magn)))))
 
+(tm-define (graphics-set-zoom z)
+  (with magn (graphics-get-property "magnify")
+    (if (or (not magn) (== magn "default")) (set! magn "1"))
+    (graphics-zoom (/ z (string->number magn)))))
+
 (tm-define (graphics-move-origin dx dy)
   (define (add l1 l2)
     (if (pair? l1)

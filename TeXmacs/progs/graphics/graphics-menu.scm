@@ -23,31 +23,8 @@
 ;; FIXME: provide automatic checkmarks for these actions
 
 (menu-bind graphics-extents-menu
-  ("Default" (graphics-remove-property "gr-geometry"))
-  ---
   ("Width" (interactive graphics-set-width))
   ("Height" (interactive graphics-set-height)))
-
-(menu-bind graphics-alignment-menu
-  ("Top" (graphics-set-geo-valign "top"))
-  ("Axis" (graphics-set-geo-valign "axis"))
-  ("Center" (graphics-set-geo-valign "center"))
-  ("Bottom" (graphics-set-geo-valign "bottom")))
-
-(menu-bind graphics-frame-menu
-  (group "Unit")
-  ("1 cm" (graphics-set-unit "1cm"))
-  ("1 inch" (graphics-set-unit "1in"))
-  ;;("5 em" (graphics-set-unit "5em"))
-  ("Other" (interactive graphics-set-unit))
-  ---
-  (group "Origin")
-  ("Center" (graphics-set-origin "0.5gw" "0.5gh"))
-  ("Left top" (graphics-set-origin "0gw" "1gh"))
-  ("Left axis" (graphics-set-origin "0gw" (length-add "0.5gh" "1yfrac")))
-  ("Left center" (graphics-set-origin "0gw" "0.5gh"))
-  ("Left bottom" (graphics-set-origin "0gw" "0gh"))
-  ("Other" (interactive graphics-set-origin)))
 
 (menu-bind graphics-auto-crop-menu
   ("Crop" (graphics-toggle-auto-crop))
@@ -57,13 +34,84 @@
     ("none" (graphics-set-crop-padding "0spc"))
     ("1 spc" (graphics-set-crop-padding "1spc"))
     ("1 em" (graphics-set-crop-padding "1em"))
+    ---
     ("Other" (interactive graphics-set-crop-padding))))
 
+(menu-bind graphics-alignment-menu
+  ("Top" (graphics-set-geo-valign "top"))
+  ("Axis" (graphics-set-geo-valign "axis"))
+  ("Center" (graphics-set-geo-valign "center"))
+  ("Bottom" (graphics-set-geo-valign "bottom")))
+
+(menu-bind graphics-resize-menu
+  (group "Width")
+  ("Fast decrease" (graphics-change-extents "-1cm" "0cm"))
+  ("Slow decrease" (graphics-change-extents "-0.1cm" "0cm"))
+  ("Slow increase" (graphics-change-extents "+0.1cm" "0cm"))
+  ("Fast increase" (graphics-change-extents "+1cm" "0cm"))
+  ---
+  (group "Height")
+  ("Fast decrease" (graphics-change-extents "0cm" "-1cm"))
+  ("Slow decrease" (graphics-change-extents "0cm" "-0.1cm"))
+  ("Slow increase" (graphics-change-extents "0cm" "+0.1cm"))
+  ("Fast increase" (graphics-change-extents "0cm" "+1cm")))
+
+(menu-bind graphics-frame-unit-menu
+  ("1 cm" (graphics-set-unit "1cm"))
+  ("1 inch" (graphics-set-unit "1in"))
+  ;;("5 em" (graphics-set-unit "5em"))
+  ---
+  ("Other" (interactive graphics-set-unit)))
+
+(menu-bind graphics-frame-origin-menu
+  ("Center" (graphics-set-origin "0.5gw" "0.5gh"))
+  ("Left top" (graphics-set-origin "0gw" "1gh"))
+  ("Left axis" (graphics-set-origin "0gw" (length-add "0.5gh" "1yfrac")))
+  ("Left center" (graphics-set-origin "0gw" "0.5gh"))
+  ("Left bottom" (graphics-set-origin "0gw" "0gh"))
+  ---
+  ("Other" (interactive graphics-set-origin)))
+
+(menu-bind graphics-move-menu
+  (group "Slow")
+  ("Left" (graphics-move-origin "+0.01gw" "0gh"))
+  ("Right" (graphics-move-origin "-0.01gw" "0gh"))
+  ("Down" (graphics-move-origin "0gw" "+0.01gh"))
+  ("Up" (graphics-move-origin "0gw" "-0.01gh"))
+  ---
+  (group "Fast")
+  ("Left" (graphics-move-origin "+0.1gw" "0gh"))
+  ("Right" (graphics-move-origin "-0.1gw" "0gh"))
+  ("Down" (graphics-move-origin "0gw" "+0.1gh"))
+  ("Up" (graphics-move-origin "0gw" "-0.1gh")))
+
+(menu-bind graphics-zoom-menu
+  ("Zoom in" (graphics-zoom 1.189207115))
+  ("Zoom out" (graphics-zoom 0.840896415))
+  ---
+  ("10%" (graphics-set-zoom 0.1))
+  ("25%" (graphics-set-zoom 0.25))
+  ("50%" (graphics-set-zoom 0.5))
+  ("75%" (graphics-set-zoom 0.75))
+  ("100%" (graphics-set-zoom 1.0))
+  ("150%" (graphics-set-zoom 1.5))
+  ("200%" (graphics-set-zoom 2.0))
+  ("300%" (graphics-set-zoom 3.0))
+  ("400%" (graphics-set-zoom 4.0))
+  ("500%" (graphics-set-zoom 5.0))
+  ("1000%" (graphics-set-zoom 10.0)))
+
 (menu-bind graphics-global-menu
-  (-> "Extents" (link graphics-extents-menu))
+  (group "Graphics")
+  (-> "Size" (link graphics-extents-menu))
+  (-> "Resize" (link graphics-resize-menu))
+  (-> "Crop" (link graphics-auto-crop-menu))
   (-> "Alignment" (link graphics-alignment-menu))
-  (-> "Frame" (link graphics-frame-menu))
-  (-> "Crop" (link graphics-auto-crop-menu)))
+  ---
+  (-> "Unit" (link graphics-frame-unit-menu))
+  (-> "Origin" (link graphics-frame-origin-menu))
+  (-> "Move" (link graphics-move-menu))
+  (-> "Zoom" (link graphics-zoom-menu)))
 
 (menu-bind graphics-visual-grid-menu
   (-> "Type"

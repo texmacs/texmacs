@@ -45,8 +45,17 @@
 
 (kbd-map
   (:mode in-active-graphics?)
-  ("+" (graphics-zoom (/ 1.0 0.75)))
-  ("-" (graphics-zoom 0.75))
+  ("+" (graphics-zoom 1.189207115))
+  ("-" (graphics-zoom 0.840896415))
+  ("1" (graphics-set-zoom 1.0))
+  ("2" (graphics-set-zoom 2.0))
+  ("3" (graphics-set-zoom 3.0))
+  ("4" (graphics-set-zoom 4.0))
+  ("5" (graphics-set-zoom 5.0))
+  ("6" (graphics-set-zoom 6.0))
+  ("7" (graphics-set-zoom 7.0))
+  ("8" (graphics-set-zoom 8.0))
+  ("9" (graphics-set-zoom 9.0))
   ("left" (graphics-move-origin "+0.01gw" "0gh"))
   ("right" (graphics-move-origin "-0.01gw" "0gh"))
   ("down" (graphics-move-origin "0gw" "+0.01gh"))
@@ -73,7 +82,7 @@
   ("C-G" (graphics-toggle-grid #t)))
 
 (define graphics-keys
-  '("+" "-"
+  '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
     "backspace" "delete"))
 
