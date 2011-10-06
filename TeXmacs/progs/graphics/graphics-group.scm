@@ -195,7 +195,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (start-operation opn p obj)
-  (:require (graphics-non-group-tag? (car obj)))
+  (:require (graphical-non-group-tag? (car obj)))
   (set! current-path #f)
   (if sticky-point
       ;;Perform operation
@@ -286,7 +286,7 @@
                 (set! multiselecting #t))))))
 
 (tm-define (toggle-select x y p obj)
-  (:require (graphics-non-group-tag? (car obj)))
+  (:require (graphical-non-group-tag? (car obj)))
   (any_toggle-select x y p obj))
 
 (define (any_unselect-all p obj)
@@ -297,7 +297,7 @@
          (graphics-copy-props p))))
 
 (tm-define (unselect-all p obj)
-  (:require (graphics-non-group-tag? (car obj)))
+  (:require (graphical-non-group-tag? (car obj)))
   (any_unselect-all p obj))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
