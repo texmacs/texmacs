@@ -198,6 +198,7 @@ initialize_default_env () {
   env (GR_FRAME)            = gr_frame;       // coordinate frame for graphics
   env (GR_MODE)             = "line";         // graphical mode
   env (GR_AUTO_CROP)        = "false";        // auto crop graphics
+  env (GR_CROP_PADDING)     = "1spc";         // padding when auto cropping
   env (GR_GRID)             = gr_grid;        // grid for graphics
   env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid

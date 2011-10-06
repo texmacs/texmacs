@@ -22,31 +22,48 @@
 
 ;; FIXME: provide automatic checkmarks for these actions
 
-(menu-bind graphics-geometry-menu
-  (-> "Extents"
-      ("Default" (graphics-remove-property "gr-geometry"))
-      ---
-      ("Width" (interactive graphics-set-width))
-      ("Height" (interactive graphics-set-height))
-      (-> "Alignment"
-	  ("Top" (graphics-set-geo-valign "top"))
-	  ("Center" (graphics-set-geo-valign "center"))
-	  ("Bottom" (graphics-set-geo-valign "bottom"))))
-  (-> "Frame"
-      ("Default" (graphics-remove-property "gr-frame"))
-      ---
-      (group "Cartesian")
-      (-> "Unit"
-	  ("1 cm" (graphics-set-unit "1cm"))
-	  ("1 inch" (graphics-set-unit "1in"))
-	  ---
-	  ("Other" (interactive graphics-set-unit)))
-      (-> "Origin"
-	  ("Centered" (graphics-set-origin "0.5gw" "0.5gh"))
-	  ("Baseline" (graphics-set-origin "0cm" "0.5gh"))
-	  ("Axis" (graphics-set-origin "0cm" (length-add "0.5gh" "1yfrac")))
-	  ---
-	  ("Other" (interactive graphics-set-origin)))))
+(menu-bind graphics-extents-menu
+  ("Default" (graphics-remove-property "gr-geometry"))
+  ---
+  ("Width" (interactive graphics-set-width))
+  ("Height" (interactive graphics-set-height)))
+
+(menu-bind graphics-alignment-menu
+  ("Top" (graphics-set-geo-valign "top"))
+  ("Axis" (graphics-set-geo-valign "axis"))
+  ("Center" (graphics-set-geo-valign "center"))
+  ("Bottom" (graphics-set-geo-valign "bottom")))
+
+(menu-bind graphics-frame-menu
+  (group "Unit")
+  ("1 cm" (graphics-set-unit "1cm"))
+  ("1 inch" (graphics-set-unit "1in"))
+  ;;("5 em" (graphics-set-unit "5em"))
+  ("Other" (interactive graphics-set-unit))
+  ---
+  (group "Origin")
+  ("Center" (graphics-set-origin "0.5gw" "0.5gh"))
+  ("Left top" (graphics-set-origin "0gw" "1gh"))
+  ("Left axis" (graphics-set-origin "0gw" (length-add "0.5gh" "1yfrac")))
+  ("Left center" (graphics-set-origin "0gw" "0.5gh"))
+  ("Left bottom" (graphics-set-origin "0gw" "0gh"))
+  ("Other" (interactive graphics-set-origin)))
+
+(menu-bind graphics-auto-crop-menu
+  ("Crop" (graphics-toggle-auto-crop))
+  ---
+  (when (graphics-auto-crop?)
+    (group "Padding")
+    ("none" (graphics-set-crop-padding "0spc"))
+    ("1 spc" (graphics-set-crop-padding "1spc"))
+    ("1 em" (graphics-set-crop-padding "1em"))
+    ("Other" (interactive graphics-set-crop-padding))))
+
+(menu-bind graphics-global-menu
+  (-> "Extents" (link graphics-extents-menu))
+  (-> "Alignment" (link graphics-alignment-menu))
+  (-> "Frame" (link graphics-frame-menu))
+  (-> "Crop" (link graphics-auto-crop-menu)))
 
 (menu-bind graphics-visual-grid-menu
   (-> "Type"
@@ -362,7 +379,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind graphics-insert-menu
-  (-> "Geometry" (link graphics-geometry-menu))
+  (-> "Geometry" (link graphics-global-menu))
   (-> "Grids" (link graphics-grids-menu))
   ---
   (link graphics-mode-menu))
@@ -400,7 +417,7 @@
 
 (tm-menu (graphics-global-icons)
   (=> (balloon (icon "tm_graphics_geometry.xpm") "Graphics geometry")
-      (link graphics-geometry-menu))
+      (link graphics-global-menu))
   (=> (balloon (icon "tm_graphics_grid.xpm") "Graphics grids")
       (link graphics-grids-menu)))
 

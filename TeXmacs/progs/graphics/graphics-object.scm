@@ -47,7 +47,7 @@
 (define (graphics-closest-point-pos p l)
   (- (length l) (length (graphics-closest-point-pos-bis p l))))
 
-(define (object-closest-point-pos obj x y)
+(tm-define (object-closest-point-pos obj x y)
   ;;(display* "obj(" x ", " y ")=" obj "\n")
   (if (pair? obj)
       (with type (car obj)

@@ -12,6 +12,7 @@
 #include "env.hpp"
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
+#include "Boxes/construct.hpp"
 #include "Graphics/math_util.hpp"
 
 /******************************************************************************
@@ -613,7 +614,9 @@ box
 graphics_box (
   path ip, array<box> bs, frame f, grid g, point lim1, point lim2)
 {
-  return tm_new<graphics_box_rep> (ip, bs, f, g, lim1, lim2);
+  box r= tm_new<graphics_box_rep> (ip, bs, f, g, lim1, lim2);
+  if (r->x1 != 0) r= move_box (ip, r, -r->x1, 0);
+  return r;
 }
 
 box

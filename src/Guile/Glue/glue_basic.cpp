@@ -2149,6 +2149,21 @@ tmg_string_numberP (SCM arg1) {
 }
 
 SCM
+tmg_string_occursP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-occurs?");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-occurs?");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= occurs (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_string_search_forwards (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-search-forwards");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "string-search-forwards");
@@ -5217,6 +5232,7 @@ initialize_glue_basic () {
   scm_new_procedure ("graphics-needs-update?", (FN) tmg_graphics_needs_updateP, 0, 0, 0);
   scm_new_procedure ("graphics-notify-update", (FN) tmg_graphics_notify_update, 1, 0, 0);
   scm_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
+  scm_new_procedure ("string-occurs?", (FN) tmg_string_occursP, 2, 0, 0);
   scm_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   scm_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
   scm_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);

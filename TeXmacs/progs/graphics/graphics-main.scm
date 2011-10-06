@@ -117,6 +117,22 @@
       (set! l (cdr l)))
   (list->string l)) ;; TODO: Move this in the utils (?)
 
+(tm-define (graphics-auto-crop?)
+  (== (graphics-get-property "gr-auto-crop") "true"))
+
+(tm-define (graphics-toggle-auto-crop)
+  (:check-mark "v" graphics-auto-crop?)
+  (with new (if (graphics-auto-crop?) "false" "true")
+    (graphics-set-property "gr-auto-crop" new)))
+
+(define (graphics-has-crop-padding? val)
+  (== (graphics-get-property "gr-crop-padding") val))
+
+(tm-define (graphics-set-crop-padding val)
+  (:argument val "Padding around cropped graphics")
+  (:check-mark "*" graphics-has-crop-padding?)
+  (graphics-set-property "gr-crop-padding" val))
+
 (tm-define (graphics-zoom e)
   (let* ((fr (graphics-cartesian-frame))
          (u (caddr fr))

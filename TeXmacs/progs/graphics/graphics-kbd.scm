@@ -53,6 +53,16 @@
   ("C-g" (graphics-toggle-grid #f))
   ("C-G" (graphics-toggle-grid #t)))
 
+(define graphics-keys
+  '("+" "-"
+    "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
+    "backspace" "delete"))
+
+(tm-define (keyboard-press key time)
+  (:mode in-active-graphics?)
+  (cond ((string-occurs? "-" key) (key-press key))
+        ((in? key graphics-keys) (key-press key))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overriding standard structured editing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

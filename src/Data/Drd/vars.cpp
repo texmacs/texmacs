@@ -207,6 +207,7 @@ string GR_GEOMETRY ("gr-geometry");
 string GR_FRAME ("gr-frame");
 string GR_MODE ("gr-mode");
 string GR_AUTO_CROP ("gr-auto-crop");
+string GR_CROP_PADDING ("gr-crop-padding");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");

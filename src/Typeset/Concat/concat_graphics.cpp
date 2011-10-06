@@ -44,9 +44,28 @@ BEGIN_MAGNIFY
   bs << grid_box (ip, gr, env->fr, env->as_length ("2ln"),
                   env->clip_lim1, env->clip_lim2);
   typeset_graphical (bs, t, ip);
+
+  point lim1= env->clip_lim1;
+  point lim2= env->clip_lim2;
+  if (env->get_bool (GR_AUTO_CROP)) {
+    SI x1= MAX_SI, y1= MAX_SI, x2= -MAX_SI, y2= -MAX_SI;
+    for (int i=1; i<N(bs); i++) {
+      box b= bs[i];
+      //cout << i << ", " << b << ", " << b->get_type () << "\n";
+      x1= min (x1, b->x1); y1= min (y1, b->y1);
+      x2= max (x2, b->x2); y2= max (y2, b->y2);
+      x1= min (x1, b->x3); y1= min (y1, b->y3);
+      x2= max (x2, b->x4); y2= max (y2, b->y4);
+    }
+    SI pad= env->get_length (GR_CROP_PADDING);
+    lim1= env->fr [point (x1 - pad, y1 - pad)];
+    lim2= env->fr [point (x2 + pad, y2 + pad)];
+    //cout << lim1 << " -- " << lim2 << "\n";
+  }
+
   gr= as_grid (env->read (GR_EDIT_GRID));
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
-  box b= graphics_box (ip, bs, env->fr, gr, env->clip_lim1, env->clip_lim2);
+  box b= graphics_box (ip, bs, env->fr, gr, lim1, lim2);
   print (b);
 END_MAGNIFY
 }
@@ -104,8 +123,8 @@ BEGIN_MAGNIFY
       else if (halign == "right") x -= b->x2;
       if (valign == "bottom") y -= b->y1;
       else if (valign == "axis") {
-	axis= (env->fn->yx >> 1) - b->y1;
-	y -= (env->fn->yx >> 1);
+	axis= env->fn->yfrac - b->y1;
+	y -= env->fn->yfrac;
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
@@ -374,6 +393,6 @@ concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
     }
 
   for (i=0; i<n; i++)
-    if (the_drd->get_type (t[i]) != TYPE_CONSTRAINT)
+    if (the_drd->get_type (t[i]) != TYPE_CONSTRAINT && !is_atomic (t[i]))
       bs << typeset_as_atomic (env, t[i], descend (ip, i));
 }

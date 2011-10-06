@@ -185,6 +185,7 @@ extern string GR_GEOMETRY;
 extern string GR_FRAME;
 extern string GR_MODE;
 extern string GR_AUTO_CROP;
+extern string GR_CROP_PADDING;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;

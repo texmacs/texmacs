@@ -197,6 +197,7 @@
 
   ;; routines for strings
   (string-number? is_double (bool string))
+  (string-occurs? occurs (bool string string))
   (string-search-forwards search_forwards (int string int string))
   (string-search-backwards search_backwards (int string int string))
   (string-replace replace (string string string string))

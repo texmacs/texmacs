@@ -355,12 +355,12 @@ edit_env_rep::update_frame () {
   tree t= env [GR_FRAME];
   SI yinc= gvalign == "top"    ? - gh
 	 : gvalign == "bottom" ? 0
+         : gvalign == "axis" ? - (gh/2) + as_length ("1yfrac")
 	 : - gh / 2;
   if (is_tuple (t, "scale", 2) && is_func (t[2], TUPLE, 2)) {
     SI magn= as_length (t[1]);
     SI x   = as_length (t[2][0]);
     SI y   = as_length (t[2][1]);
-    if (gvalign == "top") yinc += as_length ("1ex");
     fr= scaling (magn, point (x, y + yinc));
   }
   else {
@@ -371,13 +371,16 @@ edit_env_rep::update_frame () {
   }
   point p0= fr (as_point (tuple ("0par", "0par")));
   if (gvalign == "top") {
-    clip_lim1= fr [point (p0[0], p0[1] - gh + as_length ("1ex"))];
-    clip_lim2= fr [point (p0[0] + gw, p0[1] + as_length ("1ex"))];
+    clip_lim1= fr [point (p0[0], p0[1] - gh)];
+    clip_lim2= fr [point (p0[0] + gw, p0[1])];
   }
-  else
-  if (gvalign == "bottom") {
+  else if (gvalign == "bottom") {
     clip_lim1= fr [point (p0[0], p0[1])];
     clip_lim2= fr [point (p0[0] + gw, p0[1] + gh)];
+  }
+  else if (gvalign == "axis") {
+    clip_lim1= fr [point (p0[0], p0[1] - (gh/2) + as_length ("1yfrac"))];
+    clip_lim2= fr [point (p0[0] + gw, p0[1] + (gh/2) + as_length ("1yfrac"))];
   }
   else {
     clip_lim1= fr [point (p0[0], p0[1] - gh/2)];

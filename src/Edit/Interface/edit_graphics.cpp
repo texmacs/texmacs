@@ -230,7 +230,10 @@ edit_graphics_rep::adjust (point p) {
   double eps= get_pixel_size () / 10.0;
   gr_selection snap= snap_to_guide (fp, sels, eps);
   //cout << "Snap " << fp << " to " << snap << ", " << snap->p << "\n";
-  return f2[snap->p];
+  point snapped= f2[snap->p];
+  if (N(snapped) == 2) return snapped;
+  return p;
+  // FIXME: why can snapped be an invalid point?
 }
 
 tree
@@ -375,9 +378,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
 	return true;
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().
-    point adj_p= adjust (p);
-    if (N(adj_p) == 2) p= adj_p;
-    // FIXME: it seems that adj_p sometimes returns an empty point; why?
+    p= adjust (p);
     gr_x= p[0];
     gr_y= p[1];
     string sx= as_string (p[0]);
