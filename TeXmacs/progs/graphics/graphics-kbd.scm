@@ -17,6 +17,10 @@
 	(graphics graphics-main)
 	(graphics graphics-edit)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Various contexts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
 
@@ -25,6 +29,11 @@
 
 (define (inside-graphics-context? t)
   (tree-search-upwards t graphics-context?))
+
+(define (inside-graphical-text-context? t)
+  (and-with p (tree-ref t :up)
+    (and-with u (tree-search-upwards p graphical-text-context?)
+      (inside-graphics-context? u))))
 
 (tm-define (generic-context? t)
   (:require (inside-graphics-context? t))
@@ -102,20 +111,23 @@
 
 (tm-define (kbd-horizontal t forwards?)
   (:require (graphical-text-context? t))
-  (with move (if forwards? go-right go-left)
-    (go-to-remain-inside move graphical-text-context? 0)))
+  (with-define (move) ((if forwards? go-right go-left))
+    (with-define (next) (go-to-next-inside move inside-graphics-context?)
+      (go-to-next-such-that next inside-graphical-text-context?))))
 
 (tm-define (kbd-vertical t downwards?)
   (:require (graphical-text-context? t))
-  (with move (if downwards? go-down go-up)
-    (go-to-remain-inside move graphical-text-context? 0)))
+  (with-define (move) ((if downwards? go-down go-up))
+    (with-define (next) (go-to-next-inside move inside-graphics-context?)
+      (go-to-next-such-that next inside-graphical-text-context?))))
 
 (tm-define (kbd-extremal t forwards?)
   (:require (graphical-text-context? t))
-  (with move (if forwards? go-right go-left)
-    (with action
-        (lambda () (go-to-remain-inside move graphical-text-context? 0))
-      (go-to-repeat action))))
+  (with-define (move) ((if forwards? go-right go-left))
+    (with-define (next) (go-to-next-inside move inside-graphics-context?)
+      (with-define (action)
+          (go-to-next-such-that next inside-graphical-text-context?)
+        (go-to-repeat action)))))
 
 (tm-define (geometry-horizontal t forwards?)
   (:require (graphical-text-context? t))

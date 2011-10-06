@@ -73,7 +73,7 @@
   (append unary-keywords unary-definitions unary-no-highlight))
 
 (setq binary-keywords
-  '(with with-global and-with with-innermost receive
+  '(with with-define with-global and-with with-innermost receive
     with-environment with-environment* converter
     hidden-input pagelet radio-button toggle-button
     $with))

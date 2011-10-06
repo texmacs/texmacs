@@ -84,11 +84,14 @@
   (do ((p (cursor-path) (cursor-path))
        (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
       ((or (== p q) (innermost-pattern q l))
+       ;;(display* "  End " q ", " (path->tree (cDr q)) "\n")
        q)
+    ;;(display* "  Next " q ", " (path->tree (cDr q)) "\n")
     (noop)))
 
 (tm-define (go-to-next-inside fun . l)
   (with p (cursor-path)
+    ;;(display* "  First " p ", " (path->tree (cDr p)) ", " (procedure-source fun) ", " l "\n")
     (go-to-next-inside-sub fun l)
     (if (not (innermost-pattern (cursor-path) l)) (go-to p))))
 
@@ -96,11 +99,14 @@
   (do ((p (cursor-path) (cursor-path))
        (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
       ((or (== p q) (pred? (path->tree (cDr q))))
+       ;;(display* "End " q ", " (path->tree (cDr q)) "\n")
        q)
+    ;;(display* "Next " q ", " (path->tree (cDr q)) "\n")
     (noop)))
 
 (tm-define (go-to-next-such-that fun pred?)
   (with p (cursor-path)
+    ;;(display* "First " p ", " (path->tree (cDr p)) ", " (procedure-source fun) ", " pred? "\n")
     (go-to-next-such-that fun pred?)
     (if (not (pred? (path->tree (cDr (cursor-path))))) (go-to p))))
 

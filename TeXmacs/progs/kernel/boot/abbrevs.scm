@@ -92,6 +92,10 @@
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 
+(define-public-macro (with-define fun fun-body . body)
+  `(let ((,(car fun) (lambda ,(cdr fun) ,fun-body)))
+     ,@body))
+
 (define-public-macro (with-global var val . body)
   (let ((old (gensym)) (new (gensym)))
     `(let ((,old ,var))
