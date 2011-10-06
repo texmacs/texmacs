@@ -212,6 +212,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setUnifiedTitleAndToolBarOnMac(true);
 
   QWidget *cw= new QWidget ();
+  cw->setObjectName("central widget"); // this is important for styling toolbars.
   
   QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, cw);
   bl->setContentsMargins(2,2,2,2);
@@ -241,12 +242,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rulerWidget = new QWidget(cw);
   rulerWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
   rulerWidget->setMinimumHeight(1);
-  rulerWidget->setBackgroundRole(QPalette::Dark);
+  rulerWidget->setBackgroundRole(QPalette::Mid);
+  // FIXME: how to use 112 (active) and 146 (passive)
   rulerWidget->setVisible(false);
   rulerWidget->setAutoFillBackground(true);
-//  rulerWidget = new QLabel("pippo", cw);
+  // rulerWidget = new QLabel("pippo", cw);
   
-  
+
   bl->insertWidget(0, modeToolBar);
   bl->insertWidget(1, rulerWidget);
   bl->insertWidget(2, focusToolBar);

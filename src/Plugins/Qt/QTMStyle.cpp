@@ -15,7 +15,7 @@
 #include "tm_ostream.hpp"
 #include <qdrawutil.h>
 #include <QPainter>
-
+#include <QMainWindow>
 
 
 
@@ -72,7 +72,7 @@ public:
   void drawPrimitive (PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
   int pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidget *widget) const;
   QSize sizeFromContents (ContentsType type, const QStyleOption* option, const QSize& contentsSize, const QWidget* widget = 0) const;
-  // void drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
+   void drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
   int styleHint (StyleHint hint, const QStyleOption* option = 0, const QWidget* widget = 0, QStyleHintReturn* returnData = 0) const;
 };
 
@@ -448,10 +448,10 @@ QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidge
   return baseStyle()->pixelMetric(metric,opt,widget);
 }
 
-#if 0
 void
 QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const {
   switch (element) {
+#if 0
     case CE_MenuItem:
       if (const QStyleOptionMenuItem *mi =
           qstyleoption_cast<const QStyleOptionMenuItem *> (option)) {
@@ -460,11 +460,49 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
         baseStyle()->drawControl (element, &mi2, painter, widget);
         break;
       }
+#endif
+
+    case CE_ToolBar: {
+      if ((widget) &&  (widget->windowTitle() == "mode toolbar"))  {
+
+          // For unified tool bars, draw nothing.
+          if (QMainWindow * mainWindow = qobject_cast<QMainWindow *>(widget->window())) {
+            if ((mainWindow->unifiedTitleAndToolBarOnMac()) && 
+                (widget->parent()->objectName() != "central widget"))
+              break;
+          }
+
+          //QColor mainWindowGradientBeginActive (150, 150, 150);
+          //QColor mainWindowGradientBegin (200, 200, 200);
+          //QColor mainWindowGradientEnd (232, 232, 232);
+
+          QColor mainWindowGradientBeginActive (222, 222, 222);
+          QColor mainWindowGradientEndActive (202, 202, 202);
+          QColor mainWindowGradientBegin (236, 236, 236);
+          QColor mainWindowGradientEnd (226, 226, 226);
+  
+          if (widget->window()->isActiveWindow())
+            mainWindowGradientBegin = mainWindowGradientBeginActive;
+          if (widget->window()->isActiveWindow())
+            mainWindowGradientEnd = mainWindowGradientEndActive;
+
+          // draw background gradient
+          QLinearGradient linearGrad;
+          if (option->state & State_Horizontal)
+            linearGrad = QLinearGradient(0, option->rect.top(), 0, option->rect.bottom());
+          else
+            linearGrad = QLinearGradient(option->rect.left(), 0,  option->rect.right(), 0);
+          
+          linearGrad.setColorAt(0, mainWindowGradientBegin);
+          linearGrad.setColorAt(1, mainWindowGradientEnd);
+          painter->fillRect(option->rect, linearGrad);
+        }
+    } break;
+      
     default:
       baseStyle()->drawControl (element, option, painter, widget);
   }
 }
-#endif
 
 int
 QTMStyle::styleHint (StyleHint hint, const QStyleOption* option, const QWidget* widget, QStyleHintReturn* returnData) const {
