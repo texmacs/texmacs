@@ -126,7 +126,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   QMainWindow* mw= tm_mainwindow ();
   mw->setStyle (qtmstyle ());
-  mw->menuBar()->setStyle (qtmstyle ()); 
+  mw->menuBar()->setStyle (qtmstyle ());
   
   // there is a bug in the early implementation of toolbars in Qt 4.6
   // which has been fixed in 4.6.2 (at least)
@@ -254,6 +254,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->insertWidget(2, focusToolBar);
   bl->insertWidget(3, userToolBar);
 
+  tw->setContentsMargins (2, 0, 2, 0);
+  mw->setContentsMargins (-2, -2, -2, -2);
+
 #else
   mw->setCentralWidget(tw);
   
@@ -280,7 +283,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #ifndef Q_WS_MAC
   tm_mainwindow()->menuBar()->setVisible (false);
 #endif  
- 
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
