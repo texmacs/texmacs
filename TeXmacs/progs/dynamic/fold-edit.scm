@@ -434,10 +434,11 @@
 		"page-odd" "page-even" "page-right"
 		"par-width" "page-odd-shift" "page-even-shift"
 		"page-top" "page-bot" "page-height-margin")
-  (with t (buffer-tree)
-    (when (and (tm-func? t 'document 1) (switch-context? (tree-ref t 0)))
-      (tree-assign-node (tree-ref t 0) 'document)
-      (tree-set! t (tree-ref t 0))
+  (let* ((t (buffer-tree))
+         (c (tree-children t)))
+    (when (and (tm-func? t 'document) (switch-context? (cAr c)))
+      (tree-assign-node (cAr c) 'document)
+      (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
       (for-each dynamic-make-slide (tree-children t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
