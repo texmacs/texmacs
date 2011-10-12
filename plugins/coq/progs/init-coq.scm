@@ -16,13 +16,13 @@
 
 (lazy-keyboard (coq-kbd) in-coq-style?)
 
-(define-format coq-vernacular
-  (:name "Coq vernacular")
-  (:suffix "v"))
+(when (url-exists-in-path? "coq_to_texmacs")
+  (define-format coq-vernacular
+    (:name "Coq vernacular")
+    (:suffix "v"))
 
-(converter coq-vernacular-file stm-file
-  (:require (url-exists-in-path? "coq_to_texmacs"))
-  (:shell "coq_to_texmacs" from to))
+  (converter coq-vernacular-file stm-file
+    (:shell "coq_to_texmacs" from to)))
 
 (plugin-configure coq
   (:require (url-exists-in-path? "coq_texmacs"))
