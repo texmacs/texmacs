@@ -26,5 +26,4 @@
 
 (plugin-configure coq
   (:require (url-exists-in-path? "coq_texmacs"))
-  (:launch "coq_texmacs")
-  (:session "Coq"))
+  (:launch "coq_texmacs"))
