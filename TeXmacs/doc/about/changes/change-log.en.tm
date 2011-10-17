@@ -5,9 +5,15 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.7 to 1.0.7.13>
+  <section|Changes from version 1.0.7 to 1.0.7.14>
 
   <\itemize>
+    <item>New icons for Qt version of TeXmacs (1.0.7.14).
+
+    <item>Many bug fixes for graphics mode (1.0.7.14).
+
+    <item>Improved extensible arrows (1.0.7.14).
+
     <item>Experiment with new set of icons (1.0.7.13).
 
     <item>Fix Qt image support (1.0.7.13).

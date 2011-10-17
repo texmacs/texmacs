@@ -4,12 +4,12 @@
 
 [Setup]
 AppName=TeXmacs
-AppVerName=1.0.7.13
+AppVerName=1.0.7.14
 DefaultDirName={pf}\TeXmacs
 DefaultGroupName=TeXmacs
 UninstallDisplayIcon={app}\TeXmacs.ico
 OutputDir=..\..\..\distr
-OutputBaseFilename=TeXmacs-1.0.7.13-installer
+OutputBaseFilename=TeXmacs-1.0.7.14-installer
 ; SourceDir=../..
 ChangesAssociations=yes
 
