@@ -1,4 +1,5 @@
 # this script will invoke configure with the right set of parameters on macosx
+# you need to properly set ARCH and PREFIX before invoking the script
 
 case $ARCH in
  i386) 
@@ -23,13 +24,17 @@ case $ARCH in
  ;;
 esac
   
-export PREFIX=$PWD/../../usr
+#you need to set PREFIX to the root of the development tree (*/usr)
+#export PREFIX=$PWD/../../usr
 export PATH=$PREFIX/bin:$PREFIX/$ARCH/bin:$PATH
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/$ARCH/lib/pkgconfig
-export GUILE_CFLAGS=`pkg-config --cflags guile-1.8`
-export GUILE_LDFLAGS=`pkg-config --libs guile-1.8`
-export FREETYPE_CFLAGS=`pkg-config --cflags freetype2`
-export FREETYPE_LDFLAGS=`pkg-config --libs freetype2`
+export GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8`
+export GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8`
+export FREETYPE_CFLAGS=`pkg-config --static --cflags freetype2`
+export FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2`
+export QT_FRAMEWORKS_PATH=$PREFIX/lib
+
+printenv
 
 ./configure \
   --host=$HOST \
