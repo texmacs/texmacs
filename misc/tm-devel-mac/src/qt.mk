@@ -5,8 +5,8 @@
 # Qt
 PKG             := qt
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.7.2
-$(PKG)_CHECKSUM := 84414f82bbc9e8d356b986d5d1ebee89d06e4f2e
+$(PKG)_VERSION  := 4.7.4
+$(PKG)_CHECKSUM := af9016aa924a577f7b06ffd28c9773b56d74c939
 $(PKG)_SUBDIR   := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://qt.nokia.com/
@@ -15,7 +15,7 @@ $(PKG)_DEPS     :=
 #gcc libodbc++ postgresql freetds openssl libgcrypt zlib libpng jpeg libmng tiff sqlite libiconv
 
 define $(PKG)_UPDATE
-    wget -q -O- 'http://qt.gitorious.org/qt/qt/commits' | \
+    curl -s -L  'http://qt.gitorious.org/qt/qt/commits' | \
     grep '<li><a href="/qt/qt/commit/' | \
     $(SED) -n 's,.*<a[^>]*>v\([0-9][^<-]*\)<.*,\1,p' | \
     tail -1
@@ -54,9 +54,7 @@ define $(PKG)_BUILD
         -nomake docs \
         -nomake examples \
         -nomake tools \
-        -qt-sql-sqlite \
         -system-zlib \
-        -system-sqlite \
         -openssl \
         -arch "ppc x86_64 x86" \
         -v

@@ -5,12 +5,12 @@
 # freetype
 PKG             := freetype
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.4.4
-$(PKG)_CHECKSUM := 1d136cbc51c67b212c91ba04dc5db797f35e64e6
+$(PKG)_VERSION  := 2.4.7
+$(PKG)_CHECKSUM := e1b2356ebbc6d39d813797572b1e5d8a2635e969
 $(PKG)_SUBDIR   := freetype-$($(PKG)_VERSION)
 $(PKG)_FILE     := freetype-$($(PKG)_VERSION).tar.bz2
 $(PKG)_WEBSITE  := http://freetype.sourceforge.net/
-$(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_URL      := http://download.savannah.gnu.org/releases/freetype/$($(PKG)_FILE)
 $(PKG)_DEPS     := 
 
 define $(PKG)_UPDATE
