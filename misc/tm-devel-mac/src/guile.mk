@@ -40,15 +40,16 @@ define $(PKG)_BUILD_ARCH
         --prefix='$(PREFIX)/$(3)' \
         --disable-shared \
         --without-threads \
+		--with-sysroot=/Developer/SDKs/MacOSX10.5.sdk \
         scm_cv_struct_timespec=no \
-        CC="gcc-4.2 -arch $(3) -mmacosx-version-min=10.4 "\
-        CXX="g++-4.2 -arch $(3) -mmacosx-version-min=10.4 "\
+        CC="gcc-4.2 -arch $(3) -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk "\
+        CXX="g++-4.2 -arch $(3) -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk "\
         CPP="cpp-4.2"\
         CXXCPP="cpp-4.2" \
         CPPFLAGS=" -I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
         CFLAGS=" -I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
         CXXFLAGS="-I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
-        LDFLAGS="-L$(PREFIX)/$(3)/lib -L$(PREFIX)/lib" \
+        LDFLAGS="-Wl,-L$(PREFIX)/$(3)/lib -Wl,-L$(PREFIX)/lib  -Wl,-syslibroot /Developer/SDKs/MacOSX10.5.sdk " \
         $(MORE_OPT_$(3))
 
     $(MAKE) -C '$(1)/../$(3)' -j '$(JOBS)' schemelib_DATA=

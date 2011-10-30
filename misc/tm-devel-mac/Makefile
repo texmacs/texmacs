@@ -21,10 +21,12 @@ LIBTOOL    := $(shell glibtool --help >/dev/null 2>&1 && echo g)libtool
 LIBTOOLIZE := $(shell glibtoolize --help >/dev/null 2>&1 && echo g)libtoolize
 PATCH      := $(shell gpatch --help >/dev/null 2>&1 && echo g)patch
 SED        := $(shell gsed --help >/dev/null 2>&1 && echo g)sed
-VERSION    := $(shell $(SED) -n 's,^.*<span id="latest-version">\([^<]*\)</span>.*$$,\1,p' '$(TOP_DIR)/doc/index.html')
+VERSION    := 0.1
+#VERSION    := $(shell $(SED) -n 's,^.*<span id="latest-version">\([^<]*\)</span>.*$$,\1,p' '$(TOP_DIR)/doc/index.html')
 
 
-BUILD_ARCHS    := ppc i386 x86_64
+#BUILD_ARCHS    := ppc i386 x86_64
+BUILD_ARCHS    :=  i386 
 TARGET_i386    := i686-apple-darwin10.4.0
 TARGET_x86_64  := x86_64-apple-darwin10.4.0
 TARGET_ppc     := powerpc-apple-darwin10.4.0
