@@ -26,13 +26,21 @@ esac
   
 #you need to set PREFIX to the root of the development tree (*/usr)
 #export PREFIX=$PWD/../../usr
-export PATH=$PREFIX/bin:$PREFIX/$ARCH/bin:$PATH
-export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/$ARCH/lib/pkgconfig
+export DEVTOOLS=$HOME/Developer3
+export PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
+export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
 export GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8`
 export GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8`
+export GUILE_DATA_PATH=`pkg-config --variable=datadir guile-1.8`
+export GUILE_VERSION=`pkg-config --modversion guile-1.8`
 export FREETYPE_CFLAGS=`pkg-config --static --cflags freetype2`
 export FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2`
 export QT_FRAMEWORKS_PATH=$PREFIX/lib
+export QT_CPPFLAGS="`pkg-config --cflags QtCore QtGui` -I$PREFIX/lib/QtCore.framework/Headers -I$PREFIX/lib/QtGui.framework/Headers"
+export QT_LDFLAGS=`pkg-config --libs QtCore QtGui`
+export QMAKE=$PREFIX/bin/qmake
+export MOC=$PREFIX/bin/moc
+export UIC=$PREFIX/bin/uic
 
 printenv
 
@@ -40,6 +48,11 @@ printenv
   --host=$HOST \
   --enable-macosx-extensions\
   --enable-qt\
-  CC="gcc-4.2 -arch $ARCH -mmacosx-version-min=10.4 "\
-  CXX="g++-4.2 -arch $ARCH -mmacosx-version-min=10.4 "\
-  CPP="gcc-4.2 -E "
+  CC="gcc-4.2 -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
+  CXX="g++-4.2 -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
+  CPP="gcc-4.2 -E -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk" \
+  CXXCPP="gcc-4.2 -E -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk" \
+  LDFLAGS="-Wl,-search_paths_first  -Wl,-L$PREFIX/lib   -Wl,-syslibroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
+  CPPFLAGS="-I$PREFIX/include"\
+  CFLAGS="-I$PREFIX/include"\
+  CXXFLAGS="-I$PREFIX/include"

@@ -33,7 +33,9 @@ TARGET_ppc     := powerpc-apple-darwin10.4.0
 
 HOST := $(shell sh ./config.guess)
 
-MACOS_SDK := /Developer/SDKs/MacOSX10.5.sdk
+# point to your devtools here
+DEVTOOLS := $HOME/Developer3
+MACOS_SDK := $DEVTOOLS/SDKs/MacOSX10.5.sdk
 
 
 REQUIREMENTS := 
@@ -179,9 +181,10 @@ build-only-$(1):
 	    cd '$(2)' && $(call UNPACK_PKG_ARCHIVE,$(1))
 	    cd '$(2)/$($(1)_SUBDIR)'
 	    $(foreach PKG_PATCH,$(sort $(wildcard $(TOP_DIR)/src/$(1)-*.patch)),
+			    @echo '[patch]   $(1) $(PKG_PATCH)' 
 	        (cd '$(2)/$($(1)_SUBDIR)' && $(PATCH) -p1 -u) < $(PKG_PATCH))
 	    $$(call $(1)_BUILD,$(2)/$($(1)_SUBDIR),$(TOP_DIR)/src/$(1)-test,$(1))
-	    rm -rfv  '$(2)'
+#	    rm -rfv  '$(2)'
 	    ,)
 	[ -d '$(PREFIX)/installed' ] || mkdir -p '$(PREFIX)/installed'
 	touch '$(PREFIX)/installed/$(1)'
