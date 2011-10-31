@@ -34,8 +34,8 @@ TARGET_ppc     := powerpc-apple-darwin10.4.0
 HOST := $(shell sh ./config.guess)
 
 # point to your devtools here
-DEVTOOLS := $HOME/Developer3
-MACOS_SDK := $DEVTOOLS/SDKs/MacOSX10.5.sdk
+DEVTOOLS := /Developer_3.2.6
+MACOS_SDK := $(DEVTOOLS)/SDKs/MacOSX10.5.sdk
 
 
 REQUIREMENTS := 
@@ -53,15 +53,15 @@ unexport RANLIB STRIP
 
 
 
-
-export CC=gcc-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
-export CXX=g++-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
-export CPP=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
-export CXXCPP=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
-export CPPFLAGS=  -I$(PREFIX)/include
-export CFLAGS=  -I$(PREFIX)/include
-export CXXFLAGS= -I$(PREFIX)/include
-export LDFLAGS= -Wl,-search_paths_first  -Wl,-L$(PREFIX)/lib   -Wl,-syslibroot $(MACOS_SDK) 
+export PATH:=$DEVTOOLS/usr/bin:$(PATH)
+export CC:=gcc-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
+export CXX:=g++-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
+export CPP:=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
+export CXXCPP:=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
+export CPPFLAGS:=  -I$(PREFIX)/include
+export CFLAGS:=  -I$(PREFIX)/include
+export CXXFLAGS:= -I$(PREFIX)/include
+export LDFLAGS:= -Wl,-search_paths_first  -Wl,-L$(PREFIX)/lib   -Wl,-syslibroot $(MACOS_SDK) 
 
 
 
