@@ -429,7 +429,7 @@ MACOS_BUNDLE: TEXMACS
 	$(MKDIR) $(MACOS_PACKAGE_RESOURCES)/share
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
+	GUILE_DATA_PATH=@GUILE_DATA_PATH@; \
 	export GUILE_DATA_PATH; \
 	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
 	export GUILE_LOAD_PATH; \

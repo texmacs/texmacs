@@ -675,6 +675,7 @@ ac_ct_CXX
 GUILE_CFLAGS
 GUILE_LDFLAGS
 CONFIG_GUILE_SERIAL
+GUILE_DATA_PATH
 CXXCPP
 GREP
 EGREP
@@ -3441,6 +3442,13 @@ if test -z "$GUILE_VERSION" ; then
 fi
 { echo "$as_me:$LINENO: result: $GUILE_VERSION" >&5
 echo "${ECHO_T}$GUILE_VERSION" >&6; }
+{ echo "$as_me:$LINENO: checking guile data path" >&5
+echo $ECHO_N "checking guile data path... $ECHO_C" >&6; }
+if test -z "$GUILE_DATA_PATH" ; then
+  GUILE_DATA_PATH=`guile-config info pkgdatadir`
+fi
+{ echo "$as_me:$LINENO: result: $GUILE_DATA_PATH" >&5
+echo "${ECHO_T}$GUILE_DATA_PATH" >&6; }
 
 case "$GUILE_VERSION" in
   1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
@@ -3453,6 +3461,7 @@ case "$GUILE_VERSION" in
     CONFIG_GUILE_SERIAL="C"
   ;;
 esac
+
 
 
 #--------------------------------------------------------------------
@@ -9251,20 +9260,21 @@ fi
 case "$enable_qt" in
     yes)
 
-  if test -r "/c/Qt"; then
-    MOC="`which moc`"
-    qt_bin="`dirname $MOC`"
-    qt_home="`dirname $qt_bin`"
-    qt_version="`basename $qt_home`"
-    qt_parent="`dirname $qt_home`"
-    QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
-    QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
-    QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
-    QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
-    if test "$qt_parent" != "/c/Qt"; then
-      at_cv_qt_build="ko"
-    fi
-  else
+  if test "$QT_LDFLAGS" == ""; then
+    if test -r "/c/Qt"; then
+      MOC="`which moc`"
+      qt_bin="`dirname $MOC`"
+      qt_home="`dirname $qt_bin`"
+      qt_version="`basename $qt_home`"
+      qt_parent="`dirname $qt_home`"
+      QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
+      QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
+      QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
+      QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
+      if test "$qt_parent" != "/c/Qt"; then
+        at_cv_qt_build="ko"
+      fi
+    else
 
 
 
@@ -9889,6 +9899,7 @@ echo "${ECHO_T}$QT_LIBS" >&6; }
   cd "$my_configure_pwd" || echo 'WTF!'
   rm -rf "$my_tmpdir"
 
+    fi
   fi
 
 	if test x"$at_cv_qt_build" = xko; then
@@ -11072,6 +11083,7 @@ ac_ct_CXX!$ac_ct_CXX$ac_delim
 GUILE_CFLAGS!$GUILE_CFLAGS$ac_delim
 GUILE_LDFLAGS!$GUILE_LDFLAGS$ac_delim
 CONFIG_GUILE_SERIAL!$CONFIG_GUILE_SERIAL$ac_delim
+GUILE_DATA_PATH!$GUILE_DATA_PATH$ac_delim
 CXXCPP!$CXXCPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
@@ -11105,7 +11117,6 @@ QT_FRAMEWORKS_PATH!$QT_FRAMEWORKS_PATH$ac_delim
 CONFIG_PDF!$CONFIG_PDF$ac_delim
 QMAKE!$QMAKE$ac_delim
 MOC!$MOC$ac_delim
-UIC!$UIC$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -11147,6 +11158,7 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+UIC!$UIC$ac_delim
 RCC!$RCC$ac_delim
 QT_PATH!$QT_PATH$ac_delim
 TMPDIR!$TMPDIR$ac_delim
@@ -11213,7 +11225,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 64; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 65; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -11569,7 +11581,7 @@ do
     cat >>$CONFIG_STATUS <<_ACEOF
     # First, check the format of the line:
     cat >"\$tmp/defines.sed" <<\\CEOF
-/^[	 ]*#[	 ]*undef[	 ][	 ]*$ac_word_re[	 ]*\$/b def
+/^[	 ]*#[	 ]*undef[	 ][	 ]*$ac_word_re[	 ]*/b def
 /^[	 ]*#[	 ]*define[	 ][	 ]*$ac_word_re[(	 ]/b def
 b
 :def

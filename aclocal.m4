@@ -115,21 +115,23 @@ CPPFLAGS="$ac_save_cppflags"
 m4_include([misc/autotroll/autotroll.m4])
 
 AC_DEFUN([HACKED_AT_WITH_QT],[
-  if test -r "/c/Qt"; then
-    MOC="`which moc`"
-    qt_bin="`dirname $MOC`"
-    qt_home="`dirname $qt_bin`"
-    qt_version="`basename $qt_home`"
-    qt_parent="`dirname $qt_home`"
-    QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
-    QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
-    QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
-    QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
-    if test "$qt_parent" != "/c/Qt"; then
-      at_cv_qt_build="ko"
+  if test "$QT_LDFLAGS" == ""; then
+    if test -r "/c/Qt"; then
+      MOC="`which moc`"
+      qt_bin="`dirname $MOC`"
+      qt_home="`dirname $qt_bin`"
+      qt_version="`basename $qt_home`"
+      qt_parent="`dirname $qt_home`"
+      QT_CPPFLAGS="-I$qt_home/mkspecs/macx-g++ -I$qt_home/include/QtCore -I$qt_home/include/QtGui -I$qt_home/include -I/$qt_home/include/ActiveQt -I."
+      QT_CXXFLAGS="-pipe -g -Wall -W -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT"
+      QT_LDFLAGS="-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows"
+      QT_LIBS="-L'c:/Qt/$qt_version/lib' -lmingw32 -lqtmaind -lQtGuid4 -lQtCored4"
+      if test "$qt_parent" != "/c/Qt"; then
+        at_cv_qt_build="ko"
+      fi
+    else
+      AT_WITH_QT
     fi
-  else
-    AT_WITH_QT
   fi
 ])
 
