@@ -26,10 +26,15 @@ VERSION    := 0.1
 
 
 #BUILD_ARCHS    := ppc i386 x86_64
-BUILD_ARCHS    :=  i386 
+BUILD_ARCH    :=  i386 
 TARGET_i386    := i686-apple-darwin10.4.0
 TARGET_x86_64  := x86_64-apple-darwin10.4.0
 TARGET_ppc     := powerpc-apple-darwin10.4.0
+
+HOST := $(shell sh ./config.guess)
+
+MACOS_SDK := /Developer/SDKs/MacOSX10.5.sdk
+
 
 REQUIREMENTS := 
 #autoconf automake bash bison bzip2 cmake flex \
@@ -43,6 +48,21 @@ unexport CPPFLAGS CROSS CXX CXXCPP CXXFLAGS EXEEXT EXTRA_CFLAGS
 unexport EXTRA_LDFLAGS LD LDFLAGS LIBRARY_PATH LIBS NM
 unexport OBJC_INCLUDE_PATH PKG_CONFIG PKG_CONFIG_PATH QMAKESPEC
 unexport RANLIB STRIP
+
+
+
+
+export CC=gcc-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
+export CXX=g++-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
+export CPP=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
+export CXXCPP=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
+export CPPFLAGS=  -I$(PREFIX)/include
+export CFLAGS=  -I$(PREFIX)/include
+export CXXFLAGS= -I$(PREFIX)/include
+export LDFLAGS= -Wl,-search_paths_first  -Wl,-L$(PREFIX)/lib   -Wl,-syslibroot $(MACOS_SDK) 
+
+
+
 
 SHORT_PKG_VERSION = \
     $(word 1,$(subst ., ,$($(1)_VERSION))).$(word 2,$(subst ., ,$($(1)_VERSION)))

@@ -56,8 +56,8 @@ define $(PKG)_BUILD
         -nomake tools \
         -system-zlib \
         -openssl \
-        -arch "x86_64 x86" \
-		-sdk /Developer/SDKs/MacOSX10.5.sdk \
+        -arch "$(BUILD_ARCH)" \
+	    	-sdk $(MACOS_SDK)  \
         -v
 
     $(MAKE) -C '$(1)' -j '$(JOBS)'

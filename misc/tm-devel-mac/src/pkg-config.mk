@@ -15,7 +15,7 @@ $(PKG)_DEPS     :=
 #gcc libiconv
 
 define $(PKG)_UPDATE
-    wget -q -O- 'http://www.gnu.org/software/gettext/' | \
+    curl -s -L 'http://www.gnu.org/software/gettext/' | \
     grep 'gettext-' | \
     $(SED) -n 's,.*gettext-\([0-9][^>]*\)\.tar.*,\1,p' | \
     head -1
@@ -25,6 +25,7 @@ define $(PKG)_BUILD
     cd '$(1)' && ./configure \
         --prefix='$(PREFIX)' 
     $(MAKE) -C '$(1)' -j '$(JOBS)' install
+    $(MAKE) -C '$(1)' -j 1 install
 endef
 
 

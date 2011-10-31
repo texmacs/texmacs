@@ -18,42 +18,34 @@ $(PKG)_DEPS     := gmp gettext
 MORE_OPT_ppc := ac_cv_type_getgroups=gid_t ac_cv_type_setgroups=gid_t
 
 define $(PKG)_UPDATE
-    wget -q -O- 'http://git.savannah.gnu.org/gitweb/?p=$(PKG).git;a=tags' | \
+    curl -s -L 'http://git.savannah.gnu.org/gitweb/?p=$(PKG).git;a=tags' | \
     grep '<a class="list subject"' | \
     $(SED) -n 's,.*<a[^>]*>[^0-9>]*\([0-9][^< ]*\)\.<.*,\1,p' | \
     head -1
 endef
 
 define $(PKG)_BUILD
-   $(foreach BUILD_ARCH,$(BUILD_ARCHS),
-     $(call $(3)_BUILD_ARCH,$(1),$(2),$(BUILD_ARCH)))
+     $(call $(3)_BUILD_ARCH,$(1),$(2),$(BUILD_ARCH))
 endef
 
 define $(PKG)_BUILD_ARCH
-    [ -d '$(1)/../$(3)' ] || mkdir -p '$(1)/../$(3)'
     # The setting "scm_cv_struct_timespec=no" ensures that Guile
     # won't try to use the "struct timespec" from <pthreads.h>,
     # which would fail because we tell Guile not to use Pthreads.
-    cd '$(1)/../$(3)' && \
-        PKG_CONFIG_PATH=$(PREFIX)/$(3)/lib/pkgconfig/  '$(1)/configure' \
+    cd '$(1)' && \
+        PKG_CONFIG_PATH=$(PREFIX)/lib/pkgconfig/  \
+        CC_FOR_BUILD='gcc -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)' '$(1)/configure' \
         --host='$(TARGET_$(3))' \
-        --prefix='$(PREFIX)/$(3)' \
+        --build=$(HOST) \
+        --prefix='$(PREFIX)' \
         --disable-shared \
         --without-threads \
-		--with-sysroot=/Developer/SDKs/MacOSX10.5.sdk \
+	    	--with-sysroot=$(MACOS_SDK)  \
         scm_cv_struct_timespec=no \
-        CC="gcc-4.2 -arch $(3) -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk "\
-        CXX="g++-4.2 -arch $(3) -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk "\
-        CPP="cpp-4.2"\
-        CXXCPP="cpp-4.2" \
-        CPPFLAGS=" -I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
-        CFLAGS=" -I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
-        CXXFLAGS="-I$(PREFIX)/$(3)/include -I$(PREFIX)/include"\
-        LDFLAGS="-Wl,-L$(PREFIX)/$(3)/lib -Wl,-L$(PREFIX)/lib  -Wl,-syslibroot /Developer/SDKs/MacOSX10.5.sdk " \
         $(MORE_OPT_$(3))
 
-    $(MAKE) -C '$(1)/../$(3)' -j '$(JOBS)' schemelib_DATA=
-    $(MAKE) -C '$(1)/../$(3)' -j 1 install schemelib_DATA=
+    $(MAKE) -C '$(1)' -j '$(JOBS)' schemelib_DATA=
+    $(MAKE) -C '$(1)' -j 1 install schemelib_DATA=
 
 #         LIBS='-lunistring -lintl -liconv' \
 
