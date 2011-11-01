@@ -33,14 +33,14 @@ define $(PKG)_BUILD_ARCH
     # won't try to use the "struct timespec" from <pthreads.h>,
     # which would fail because we tell Guile not to use Pthreads.
     cd '$(1)' && \
-        PKG_CONFIG_PATH=$(PREFIX)/lib/pkgconfig/  \
-        CC_FOR_BUILD='gcc -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)' '$(1)/configure' \
+        PKG_CONFIG_PATH='$(PREFIX)/lib/pkgconfig/'  \
+        ./configure \
         --host='$(TARGET_$(3))' \
         --build=$(HOST) \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --without-threads \
-	    	--with-sysroot=$(MACOS_SDK)  \
+	    --with-sysroot='$(MACOS_SDK)'  \
         scm_cv_struct_timespec=no \
         CFLAGS='$(BASE_CFLAGS)'\
         LDFLAGS='$(BASE_LDFLAGS)'\

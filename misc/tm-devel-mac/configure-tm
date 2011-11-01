@@ -1,6 +1,20 @@
 # this script will invoke configure with the right set of parameters on macosx
 # you need to properly set ARCH, PREFIX and DEVTOOLS before invoking the script
 
+#---------------------------------------------------------------------------------------------------
+# main parameters
+
+#you need to set PREFIX to the root of the development tree (*/usr)
+#you need to set DEVTOOLS to the root of the development tools (usually /Developer)
+#export PREFIX=$PWD/../../usr
+#export DEVTOOLS=$HOME/Developer3
+
+export PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
+export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+
+#---------------------------------------------------------------------------------------------------
+# setup target architecure
+
 case $ARCH in
  i386) 
  ;;
@@ -12,48 +26,54 @@ case $ARCH in
   export ARCH=`arch` 
 esac
 
-case $ARCH in
- i386) 
-  export HOST=i686-apple-darwin10
- ;;
- x86_64) 
-  export HOST=x86_64-apple-darwin10
- ;;
- ppc) 
-  export HOST=powerpc-apple-darwin10
- ;;
-esac
-  
-#you need to set PREFIX to the root of the development tree (*/usr)
-#you need to set DEVTOOLS to the root of the development tools (usually /Developer)
-#export PREFIX=$PWD/../../usr
-#export DEVTOOLS=$HOME/Developer3
-export PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
-export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+TARGET_i386    := i686-apple-darwin10.4.0
+TARGET_x86_64  := x86_64-apple-darwin10.4.0
+TARGET_ppc     := powerpc-apple-darwin10.4.0
+
+TARGET_ARCH := TARGET_${ARCH}
+
+# the TeXmacs configure script do not know how to use info from pkg-config
+# so we override its behaviour to take into account this
+
+#---------------------------------------------------------------------------------------------------
+# Guile configuration
+
 export GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8`
 export GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8`
 export GUILE_DATA_PATH=`pkg-config --variable=datadir guile-1.8`
 export GUILE_VERSION=`pkg-config --modversion guile-1.8`
+
+#---------------------------------------------------------------------------------------------------
+# Freetype configuration
+
 export FREETYPE_CFLAGS=`pkg-config --static --cflags freetype2`
 export FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2`
+
+#---------------------------------------------------------------------------------------------------
+# Qt configuration
+
+# in general we cannot run qmake to obtain appopriate Qt build settings
+# this is because maybe we are crossbuiling (e.g. the PPC version on i386 architecture)
+# ideally we need to have a mkspec for this situation...
+
 export QT_FRAMEWORKS_PATH=$PREFIX/lib
-export QT_CPPFLAGS="`pkg-config --cflags QtCore QtGui` -I$PREFIX/lib/QtCore.framework/Headers -I$PREFIX/lib/QtGui.framework/Headers"
-export QT_LDFLAGS=`pkg-config --libs QtCore QtGui`
+export QT_CPPFLAGS=" -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I$PREFIX/mkspecs/macx-g++ -I$PREFIX/lib/QtCore.framework/Versions/4/Headers -I$PREFIX/include/QtCore -I$PREFIX/lib/QtGui.framework/Versions/4/Headers -I$PREFIX/include/QtGui -I$PREFIX/include -F$PREFIX/lib"
+export QT_LDFLAGS="-Wl,-F$PREFIX/lib -L$PREFIX/lib -framework QtCore -framework QtGui "
 export QMAKE=$PREFIX/bin/qmake
 export MOC=$PREFIX/bin/moc
 export UIC=$PREFIX/bin/uic
 
+
+#---------------------------------------------------------------------------------------------------
+# Let gos
+
 printenv
 
 ./configure \
-  --host=$HOST \
+  --host=${!TARGET_ARCH} \
   --enable-macosx-extensions\
   --enable-qt\
-  CC="gcc-4.2 -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
-  CXX="g++-4.2 -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
-  CPP="gcc-4.2 -E -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk" \
-  CXXCPP="gcc-4.2 -E -arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk" \
-  LDFLAGS="-Wl,-search_paths_first  -Wl,-L$PREFIX/lib   -Wl,-syslibroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
-  CPPFLAGS="-I$PREFIX/include"\
-  CFLAGS="-I$PREFIX/include"\
-  CXXFLAGS="-I$PREFIX/include"
+  LDFLAGS="-arch $ARCH  -mmacosx-version-min=10.5 -Wl,-search_paths_first  -Wl,-L$PREFIX/lib   -Wl,-syslibroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
+  CPPFLAGS="-arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -I$PREFIX/include"\
+  CFLAGS="-arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -I$PREFIX/include"\
+  CXXFLAGS="-arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -I$PREFIX/include"

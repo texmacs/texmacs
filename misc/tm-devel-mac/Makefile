@@ -56,7 +56,11 @@ unexport RANLIB STRIP
 
 
 export PATH := $DEVTOOLS/usr/bin:$(PATH)
-
+# be sure to use the non-llvm gcc
+#export CC := gcc-4.2
+#export CXX := g++-4.2
+#export CPP := cpp-4.2
+#export CXXCPP := cpp-4.2
 
 SHORT_PKG_VERSION = \
     $(word 1,$(subst ., ,$($(1)_VERSION))).$(word 2,$(subst ., ,$($(1)_VERSION)))

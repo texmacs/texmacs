@@ -29,6 +29,8 @@ define $(PKG)_BUILD_OLD
         --enable-threads=win32 \
         --without-libexpat-prefix \
         --without-libxml2-prefix \
+        CFLAGS='$(BASE_CFLAGS)'\
+        LDFLAGS='$(BASE_LDFLAGS)'\
         CONFIG_SHELL=$(SHELL)
     $(MAKE) -C '$(1)/gettext-runtime/intl' -j '$(JOBS)' install
 endef
