@@ -35,10 +35,12 @@ endef
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && '$(1)'/configure\
         --host=$(TARGET_$(3)) \
-        NM='/Developer/usr/bin/nm -p' \
+        NM='$(DEVTOOLS)/usr/bin/nm -p' \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --without-readline \
+        CFLAGS='$(BASE_CFLAGS)'\
+        LDFLAGS='$(BASE_LDFLAGS)'\
         ABI=$(GMP_ABI_$(3)) 
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install

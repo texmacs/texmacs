@@ -11,7 +11,7 @@ $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://www.gnu.org/software/$(PKG)/
 $(PKG)_URL      := http://ftp.gnu.org/gnu/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := gmp gettext
+$(PKG)_DEPS     := gmp gettext libtool
 #gcc libtool gmp libiconv gettext libunistring gc libffi readline
 
 # these options prevents some misbehaviour in configure due to cross-compilation to ppc from i386
@@ -42,6 +42,8 @@ define $(PKG)_BUILD_ARCH
         --without-threads \
 	    	--with-sysroot=$(MACOS_SDK)  \
         scm_cv_struct_timespec=no \
+        CFLAGS='$(BASE_CFLAGS)'\
+        LDFLAGS='$(BASE_LDFLAGS)'\
         $(MORE_OPT_$(3))
 
     $(MAKE) -C '$(1)' -j '$(JOBS)' schemelib_DATA=

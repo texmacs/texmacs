@@ -28,7 +28,9 @@ define $(PKG)_BUILD_ARCH
     cd '$(1)' && GNUMAKE=$(MAKE) '$(1)'/configure \
         --host='$(TARGET_$(3))' \
         --disable-shared \
-        --prefix='$(PREFIX)' 
+        --prefix='$(PREFIX)' \
+        CFLAGS='$(BASE_CFLAGS)'\
+        LDFLAGS='$(BASE_LDFLAGS)'
     $(MAKE) -C '$(1)' -j '$(JOBS)' 
     $(MAKE) -C '$(1)' -j 1 install
 endef

@@ -42,12 +42,14 @@ endef
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && '$(1)'/gettext-runtime/configure\
         --host=$(TARGET_$(3)) \
-        NM='/usr/bin/nm -p' \
+        NM='$(DEVTOOLS)/usr/bin/nm -p' \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-threads \
         --without-libexpat-prefix \
         --without-libxml2-prefix \
+        CFLAGS='$(BASE_CFLAGS)'\
+        LDFLAGS='$(BASE_LDFLAGS)'\
         CONFIG_SHELL=$(SHELL)
     $(MAKE) -C '$(1)/intl' -j '$(JOBS)' 
     $(MAKE) -C '$(1)/intl' -j 1 install

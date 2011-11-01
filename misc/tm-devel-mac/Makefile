@@ -36,6 +36,8 @@ HOST := $(shell sh ./config.guess)
 # point to your devtools here
 DEVTOOLS := /Developer_3.2.6
 MACOS_SDK := $(DEVTOOLS)/SDKs/MacOSX10.5.sdk
+BASE_CFLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) -I$(PREFIX)/include
+BASE_LDFLAGS := -Wl,-search_paths_first  -Wl,-L$(PREFIX)/lib   -Wl,-syslibroot $(MACOS_SDK) 
 
 
 REQUIREMENTS := 
@@ -53,17 +55,7 @@ unexport RANLIB STRIP
 
 
 
-export PATH:=$DEVTOOLS/usr/bin:$(PATH)
-export CC:=gcc-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
-export CXX:=g++-4.2 -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
-export CPP:=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK)
-export CXXCPP:=cpp-4.2  -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) 
-export CPPFLAGS:=  -I$(PREFIX)/include
-export CFLAGS:=  -I$(PREFIX)/include
-export CXXFLAGS:= -I$(PREFIX)/include
-export LDFLAGS:= -Wl,-search_paths_first  -Wl,-L$(PREFIX)/lib   -Wl,-syslibroot $(MACOS_SDK) 
-
-
+export PATH := $DEVTOOLS/usr/bin:$(PATH)
 
 
 SHORT_PKG_VERSION = \
@@ -184,7 +176,7 @@ build-only-$(1):
 			    @echo '[patch]   $(1) $(PKG_PATCH)' 
 	        (cd '$(2)/$($(1)_SUBDIR)' && $(PATCH) -p1 -u) < $(PKG_PATCH))
 	    $$(call $(1)_BUILD,$(2)/$($(1)_SUBDIR),$(TOP_DIR)/src/$(1)-test,$(1))
-#	    rm -rfv  '$(2)'
+	    rm -rfv  '$(2)'
 	    ,)
 	[ -d '$(PREFIX)/installed' ] || mkdir -p '$(PREFIX)/installed'
 	touch '$(PREFIX)/installed/$(1)'

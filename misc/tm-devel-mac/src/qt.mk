@@ -57,7 +57,7 @@ define $(PKG)_BUILD
         -system-zlib \
         -openssl \
         -arch "$(BUILD_ARCH)" \
-	    	-sdk $(MACOS_SDK)  \
+		-sdk $(MACOS_SDK)  \
         -v
 
     $(MAKE) -C '$(1)' -j '$(JOBS)'

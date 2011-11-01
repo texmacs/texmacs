@@ -1,5 +1,5 @@
 # this script will invoke configure with the right set of parameters on macosx
-# you need to properly set ARCH and PREFIX before invoking the script
+# you need to properly set ARCH, PREFIX and DEVTOOLS before invoking the script
 
 case $ARCH in
  i386) 
@@ -14,19 +14,20 @@ esac
 
 case $ARCH in
  i386) 
-  export HOST=i686-apple-darwin10.4.0
+  export HOST=i686-apple-darwin10
  ;;
  x86_64) 
-  export HOST=x86_64-apple-darwin10.4.0
+  export HOST=x86_64-apple-darwin10
  ;;
  ppc) 
-  export HOST=powerpc-apple-darwin10.4.0
+  export HOST=powerpc-apple-darwin10
  ;;
 esac
   
 #you need to set PREFIX to the root of the development tree (*/usr)
+#you need to set DEVTOOLS to the root of the development tools (usually /Developer)
 #export PREFIX=$PWD/../../usr
-export DEVTOOLS=$HOME/Developer3
+#export DEVTOOLS=$HOME/Developer3
 export PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
 export GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8`

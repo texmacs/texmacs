@@ -25,7 +25,9 @@ define $(PKG)_BUILD
         --host='$(TARGET_$(3))' \
         --prefix='$(PREFIX)' \
         --disable-shared \
-        --enable-ltdl-install
+        --enable-ltdl-install \
+        CFLAGS='$(BASE_CFLAGS)'\
+        LDFLAGS='$(BASE_LDFLAGS)'
     $(MAKE) -C '$(1)/libltdl' -j '$(JOBS)'
     $(MAKE) -C '$(1)/libltdl' -j 1 install
 endef
