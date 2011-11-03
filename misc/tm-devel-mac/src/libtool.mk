@@ -21,11 +21,16 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
+   $(call $(3)_BUILD_ARCH,$(1),$(2),$(BUILD_ARCH))
+endef
+
+define $(PKG)_BUILD_ARCH
     cd '$(1)/libltdl' && ./configure \
         --host='$(TARGET_$(3))' \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-ltdl-install \
+        CC="gcc -arch i386" CXX="g++ -arch i386" CPP="gcc -E" CXXCPP="g++ -E" \
         CFLAGS='$(BASE_CFLAGS)'\
         LDFLAGS='$(BASE_LDFLAGS)'
     $(MAKE) -C '$(1)/libltdl' -j '$(JOBS)'

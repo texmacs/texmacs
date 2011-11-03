@@ -21,21 +21,6 @@ define $(PKG)_UPDATE
     head -1
 endef
 
-define $(PKG)_BUILD_OLD
-    cd '$(1)/gettext-runtime' && ./configure \
-        --host='$(TARGET)' \
-        --disable-shared \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --enable-threads=win32 \
-        --without-libexpat-prefix \
-        --without-libxml2-prefix \
-        CFLAGS='$(BASE_CFLAGS)'\
-        LDFLAGS='$(BASE_LDFLAGS)'\
-        CONFIG_SHELL=$(SHELL)
-    $(MAKE) -C '$(1)/gettext-runtime/intl' -j '$(JOBS)' install
-endef
-
-
 define $(PKG)_BUILD
    $(call $(3)_BUILD_ARCH,$(1),$(2),$(BUILD_ARCH))
 endef
@@ -43,8 +28,8 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && '$(1)'/gettext-runtime/configure\
-        --host=$(TARGET_$(3)) \
         NM='$(DEVTOOLS)/usr/bin/nm -p' \
+        --host='$(TARGET_$(3))' \
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-threads \
