@@ -26,7 +26,7 @@ VERSION    := 0.1
 
 
 #BUILD_ARCHS    := ppc i386 x86_64
-BUILD_ARCH    :=  i386 
+BUILD_ARCH    :=  i386
 TARGET_i386    := i686-apple-darwin10.4.0
 TARGET_x86_64  := x86_64-apple-darwin10.4.0
 TARGET_ppc     := powerpc-apple-darwin10.4.0
@@ -37,7 +37,7 @@ HOST := $(shell sh ./config.guess)
 DEVTOOLS := /Developer_3.2.6
 MACOS_SDK := $(DEVTOOLS)/SDKs/MacOSX10.5.sdk
 BASE_CFLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) -I$(PREFIX)/include
-BASE_LDFLAGS := -Wl,-search_paths_first  -Wl,-L$(PREFIX)/lib   -Wl,-syslibroot $(MACOS_SDK) 
+BASE_LDFLAGS := -search_paths_first  -syslibroot,$(MACOS_SDK)  -L$(PREFIX)/lib  
 
 
 REQUIREMENTS := 
@@ -55,12 +55,13 @@ unexport RANLIB STRIP
 
 
 
-export PATH := $DEVTOOLS/usr/bin:$(PATH)
+export PATH := $(DEVTOOLS)/usr/bin:$(PATH)
 # be sure to use the non-llvm gcc
 #export CC := gcc-4.2
 #export CXX := g++-4.2
 #export CPP := cpp-4.2
 #export CXXCPP := cpp-4.2
+
 
 SHORT_PKG_VERSION = \
     $(word 1,$(subst ., ,$($(1)_VERSION))).$(word 2,$(subst ., ,$($(1)_VERSION)))
