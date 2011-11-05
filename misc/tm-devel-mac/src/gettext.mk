@@ -35,8 +35,9 @@ define $(PKG)_BUILD_ARCH
         --enable-threads \
         --without-libexpat-prefix \
         --without-libxml2-prefix \
-        CFLAGS='$(BASE_CFLAGS)'\
-        LDFLAGS='$(BASE_LDFLAGS)'\
+	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
+        CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
+        CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' \
         CONFIG_SHELL=$(SHELL)
     $(MAKE) -C '$(1)/intl' -j '$(JOBS)' 
     $(MAKE) -C '$(1)/intl' -j 1 install

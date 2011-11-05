@@ -27,7 +27,7 @@ VERSION    := 0.1
 
 #BUILD_ARCHS    := ppc i386 x86_64
 BUILD_ARCH    :=  i386
-TARGET_i386    := i686-apple-darwin10.4.0
+TARGET_i386    := i386-apple-darwin10.4.0
 TARGET_x86_64  := x86_64-apple-darwin10.4.0
 TARGET_ppc     := powerpc-apple-darwin10.4.0
 
@@ -36,8 +36,9 @@ HOST := $(shell sh ./config.guess)
 # point to your devtools here
 DEVTOOLS := /Developer_3.2.6
 MACOS_SDK := $(DEVTOOLS)/SDKs/MacOSX10.5.sdk
-BASE_CFLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) -I$(PREFIX)/include
-BASE_LDFLAGS := -search_paths_first  -syslibroot,$(MACOS_SDK)  -L$(PREFIX)/lib  
+BASE_FLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) -Wl,-syslibroot,$(MACOS_SDK) -Wl,-search_paths_first
+BASE_CFLAGS := -I$(PREFIX)/include 
+BASE_LDFLAGS :=  -L$(PREFIX)/lib  
 
 
 REQUIREMENTS := 
@@ -61,7 +62,6 @@ export PATH := $(DEVTOOLS)/usr/bin:$(PATH)
 #export CXX := g++-4.2
 #export CPP := cpp-4.2
 #export CXXCPP := cpp-4.2
-
 
 SHORT_PKG_VERSION = \
     $(word 1,$(subst ., ,$($(1)_VERSION))).$(word 2,$(subst ., ,$($(1)_VERSION)))

@@ -29,7 +29,11 @@ define $(PKG)_BUILD_ARCH
     cd '$(1)' && ./configure \
         --host='$(TARGET_$(3))' \
         --prefix='$(PREFIX)' \
-        --disable-shared
+        --disable-shared \
+    	CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
+        CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
+        CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' 
+
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install
 endef

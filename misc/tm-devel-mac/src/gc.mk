@@ -31,7 +31,11 @@ define $(PKG)_BUILD_ARCH
         --host='$(TARGET_$(3))' \
         --prefix='$(PREFIX)' \
         --disable-shared \
-        --enable-cplusplus
+        --enable-cplusplus \
+        CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
+        CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
+        CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' 
+
 #        --enable-threads=win32 \
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install

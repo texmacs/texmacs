@@ -34,7 +34,11 @@ define $(PKG)_BUILD_ARCH
         --prefix='$(PREFIX)' \
         --enable-multibyte \
         --without-purify \
-        --without-curses
+        --without-curses \
+	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
+        CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
+        CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' 
+
  #       --with-curses \
  #       LIBS='-lpdcurses'
 #    $(MAKE) -C '$(1)' -j '$(JOBS)' install SHARED_LIBS=

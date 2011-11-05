@@ -55,7 +55,15 @@ define $(PKG)_BUILD
         -nomake examples \
         -nomake tools \
         -system-zlib \
+        -qt-libtiff \
+        -qt-libpng \
+        -qt-libmng \
+        -qt-libjpeg \
+        -qt-gif \
         -openssl \
+        -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci \
+		-no-sql-odbc -no-sql-psql -no-sql-sqlite -no-sql-sqlite2 \
+		-no-sql-sqlite_symbian -no-sql-tds \
         -arch '$(BUILD_ARCH)' \
 		-sdk '$(MACOS_SDK)'  \
         -v

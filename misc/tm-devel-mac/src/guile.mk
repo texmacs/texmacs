@@ -45,9 +45,9 @@ define $(PKG)_BUILD_ARCH
         --disable-shared \
         --without-threads \
 	    --with-sysroot='$(MACOS_SDK)'  \
-	    CC="gcc -arch i386" CXX="g++ -arch i386" CPP="gcc -E" CXXCPP="g++ -E" \
-        CFLAGS='$(BASE_CFLAGS)'\
-        LDFLAGS='$(BASE_LDFLAGS)' \
+	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
+        CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
+        CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' \
         $(MORE_OPT_$(3))
 
 #    $(MAKE) -C '$(1)' -j '$(JOBS)' schemelib_DATA=

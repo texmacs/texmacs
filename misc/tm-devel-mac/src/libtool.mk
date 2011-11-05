@@ -30,9 +30,9 @@ define $(PKG)_BUILD_ARCH
         --prefix='$(PREFIX)' \
         --disable-shared \
         --enable-ltdl-install \
-        CC="gcc -arch i386" CXX="g++ -arch i386" CPP="gcc -E" CXXCPP="g++ -E" \
-        CFLAGS='$(BASE_CFLAGS)'\
-        LDFLAGS='$(BASE_LDFLAGS)'
+	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
+        CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
+        CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' 
     $(MAKE) -C '$(1)/libltdl' -j '$(JOBS)'
     $(MAKE) -C '$(1)/libltdl' -j 1 install
 endef
