@@ -28,6 +28,7 @@ void mac_fix_paths ();
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
 #include <QApplication>
+#include <QDir>
 #endif
 
 #ifdef MACOSX_EXTENSIONS
@@ -93,13 +94,17 @@ TeXmacs_init_paths (int& argc, char** argv) {
 #endif
 
 #if (defined(QTTEXMACS) && defined(Q_WS_MAC)) 
-  // the following line inibith external plugin loading
+  // the following line can inibith external plugin loading
   // QCoreApplication::setLibraryPaths(QStringList());
   // ideally we would like to control the external plugins
   // and add the most useful (gif, jpeg, svg converters)
   // to the bundle package. I still do not have a reliable solution
   // so just allow everything that is reachable.
-  {
+	
+  // plugins need to be installed in TeXmacs.app/Contents/Plugins	
+	QCoreApplication::addLibraryPath( QDir::cleanPath(QCoreApplication::applicationDirPath().append("/../Plugins")) );
+  // cout << from_qstring ( QCoreApplication::libraryPaths () .join("\n") ) << LF;
+	{
     // ensure that private versions of the Qt frameworks have priority on
     // other instances.
     // in the event that we load qt plugins which could possibly link to

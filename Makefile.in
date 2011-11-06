@@ -430,10 +430,7 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
 	GUILE_DATA_PATH=@GUILE_DATA_PATH@; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	$(CP) $$GUILE_LOAD_PATH $(MACOS_PACKAGE_TEXMACS)/progs/
+  	  $(CP) `find $$GUILE_DATA_PATH -type d | grep ice-9` $(MACOS_PACKAGE_TEXMACS)/progs/
 	$(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/.svn
@@ -443,9 +440,13 @@ MACOS_BUNDLE: TEXMACS
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/*/.svn
-	export ARCH=$(ARCH)  QT_FRAMEWORKS_PATH; \
+	# deploy libraries
+	ARCH=$(ARCH)  QT_FRAMEWORKS_PATH=$(QT_FRAMEWORKS_PATH) \
 	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh \
 	  $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
+	# deploy qt plugins
+	$(MKDIR) $(MACOS_PACKAGE_CONTENTS)/Plugins
+	$(CP) $(QT_FRAMEWORKS_PATH)/../plugins/ $(MACOS_PACKAGE_CONTENTS)/Plugins
 
 MACOS_PACKAGE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_DMG)
