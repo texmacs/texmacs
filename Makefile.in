@@ -398,8 +398,8 @@ UBUNTU_PACKAGE: COPY_SOURCES_TGZ
 # Make Mac OS X bundles and diskimages
 ###############################################################################
 
-ARCH = @ARCH@
 QT_FRAMEWORKS_PATH = @QT_FRAMEWORKS_PATH@
+QT_PLUGINS_PATH = @QT_PLUGINS_PATH@
 
 MACOS_PACKAGE_SRC = packages/macos
 MACOS_PACKAGE_DIR = ../distr/macos
@@ -441,12 +441,9 @@ MACOS_BUNDLE: TEXMACS
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/.svn
 	$(RM) -r $(MACOS_PACKAGE_TEXMACS)/*/*/*/*/*/*/*/.svn
 	# deploy libraries
-	ARCH=$(ARCH)  QT_FRAMEWORKS_PATH=$(QT_FRAMEWORKS_PATH) \
+	QT_FRAMEWORKS_PATH=$(QT_FRAMEWORKS_PATH) QT_PLUGINS_PATH=$(QT_PLUGINS_PATH) \
 	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh \
 	  $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
-	# deploy qt plugins
-	$(MKDIR) $(MACOS_PACKAGE_CONTENTS)/Plugins
-	$(CP) $(QT_FRAMEWORKS_PATH)/../plugins/ $(MACOS_PACKAGE_CONTENTS)/Plugins
 
 MACOS_PACKAGE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_DMG)

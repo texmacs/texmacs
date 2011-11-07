@@ -802,8 +802,9 @@ else
 fi
 
 AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
-AC_SUBST(ARCH)
+
 AC_SUBST(QT_FRAMEWORKS_PATH)
+AC_SUBST(QT_PLUGINS_PATH)
 
 #--------------------------------------------------------------------
 # Experimental PDF renderer

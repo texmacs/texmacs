@@ -704,8 +704,8 @@ GS_DLL
 CONFIG_EXPERIMENTAL
 CONFIG_MACOS
 MACOSX_DEPLOYMENT_TARGET
-ARCH
 QT_FRAMEWORKS_PATH
+QT_PLUGINS_PATH
 CONFIG_PDF
 QMAKE
 MOC
@@ -9206,6 +9206,7 @@ fi
 
 
 
+
 #--------------------------------------------------------------------
 # Experimental PDF renderer
 #--------------------------------------------------------------------
@@ -11112,8 +11113,8 @@ GS_DLL!$GS_DLL$ac_delim
 CONFIG_EXPERIMENTAL!$CONFIG_EXPERIMENTAL$ac_delim
 CONFIG_MACOS!$CONFIG_MACOS$ac_delim
 MACOSX_DEPLOYMENT_TARGET!$MACOSX_DEPLOYMENT_TARGET$ac_delim
-ARCH!$ARCH$ac_delim
 QT_FRAMEWORKS_PATH!$QT_FRAMEWORKS_PATH$ac_delim
+QT_PLUGINS_PATH!$QT_PLUGINS_PATH$ac_delim
 CONFIG_PDF!$CONFIG_PDF$ac_delim
 QMAKE!$QMAKE$ac_delim
 MOC!$MOC$ac_delim

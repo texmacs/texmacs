@@ -3,17 +3,20 @@
 EXECUTABLE=${1}
 BUNDLE_RESOURCES=${1%/*}/../Resources
 BUNDLE_FRAMEWORKS=${1%/*}/../Frameworks
+BUNDLE_PLUGINS=${1%/*}/../Plugins
 
 if [ x${QT_FRAMEWORKS_PATH}x == xx ]; then
   QT_FRAMEWORKS_PATH=/Library/Frameworks
 fi
 
-if [ x${ARCH}x == xx ]; then
-  ARCH=`arch`
-  echo Standard ARCH
+if [ x${QT_PLUGINS_PATH}x == xx ]; then
+ if [exists $QT_FRAMEWORKS_PATH/plugins]; then 
+  QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins;
+ else 
+  QT_PLUGINS_PATH=/Developer/Applications/Qt/plugins
+ fi
 fi
 
-echo Bundling for architecture [$ARCH]
 echo Qt Frameworks path [$QT_FRAMEWORKS_PATH]
 
 function bundle_install_lib {
@@ -32,6 +35,26 @@ function bundle_all_libs {
 	bundle_install_lib ${1} ${lib} $(basename ${lib})  
   done
 }
+
+
+
+function bundle_install_plugin {
+  RELPATH=@executable_path/../Plugins/${2#${BUNDLE_PLUGINS}}
+  echo Bundling plugin [$2] for [$1] relpath [${RELPATH}]
+  install_name_tool -id ${RELPATH} ${2}
+  install_name_tool -change ${3} ${RELPATH} ${1}
+  bundle_all_libs ${2}
+  bundle_qt_frameworks ${2}
+}
+
+function bundle_qt_plugins {
+  echo Bundling Qt plugins for ${1}
+  cp -R ${QT_PLUGINS_PATH} ${BUNDLE_PLUGINS}
+  for lib in $( find ${BUNDLE_PLUGINS} -name \*.dylib -print ) ; do 
+	  bundle_install_plugin ${1} ${lib} $(basename ${lib})  
+  done
+}
+
 
 
 function bundle_framework {
@@ -76,3 +99,4 @@ function bundle_qt_frameworks {
 
 bundle_all_libs ${EXECUTABLE}
 bundle_qt_frameworks ${EXECUTABLE}
+bundle_qt_plugins ${EXECUTABLE}

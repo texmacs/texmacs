@@ -1,16 +1,23 @@
 # this script will invoke configure with the right set of parameters on macosx
 # you need to properly set ARCH, PREFIX and DEVTOOLS before invoking the script
 
+
+set -k
+
 #---------------------------------------------------------------------------------------------------
 # main parameters
 
 #you need to set PREFIX to the root of the development tree (*/usr)
 #you need to set DEVTOOLS to the root of the development tools (usually /Developer)
-#export PREFIX=$PWD/../../usr
-#export DEVTOOLS=$HOME/Developer3
 
-export PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
-export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+ARCH=i386
+PREFIX=`(cd ..; pwd)`/usr
+DEVTOOLS=/Developer_3.2.6
+
+PATH=$DEVTOOLS/usr/bin:$PREFIX/bin:$PATH
+PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+
+SDK=$DEVTOOLS/SDKs/MacOSX10.5.sdk 
 
 #---------------------------------------------------------------------------------------------------
 # setup target architecure
@@ -26,9 +33,9 @@ case $ARCH in
   export ARCH=`arch` 
 esac
 
-TARGET_i386    := i686-apple-darwin10.4.0
-TARGET_x86_64  := x86_64-apple-darwin10.4.0
-TARGET_ppc     := powerpc-apple-darwin10.4.0
+TARGET_i386    = i686-apple-darwin10
+TARGET_x86_64  = x86_64-apple-darwin10
+TARGET_ppc     = powerpc-apple-darwin10
 
 TARGET_ARCH := TARGET_${ARCH}
 
@@ -38,16 +45,8 @@ TARGET_ARCH := TARGET_${ARCH}
 #---------------------------------------------------------------------------------------------------
 # Guile configuration
 
-export GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8`
-export GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8`
-export GUILE_DATA_PATH=`pkg-config --variable=datadir guile-1.8`
-export GUILE_VERSION=`pkg-config --modversion guile-1.8`
-
 #---------------------------------------------------------------------------------------------------
 # Freetype configuration
-
-export FREETYPE_CFLAGS=`pkg-config --static --cflags freetype2`
-export FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2`
 
 #---------------------------------------------------------------------------------------------------
 # Qt configuration
@@ -56,24 +55,33 @@ export FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2`
 # this is because maybe we are crossbuiling (e.g. the PPC version on i386 architecture)
 # ideally we need to have a mkspec for this situation...
 
-export QT_FRAMEWORKS_PATH=$PREFIX/lib
-export QT_CPPFLAGS=" -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I$PREFIX/mkspecs/macx-g++ -I$PREFIX/lib/QtCore.framework/Versions/4/Headers -I$PREFIX/include/QtCore -I$PREFIX/lib/QtGui.framework/Versions/4/Headers -I$PREFIX/include/QtGui -I$PREFIX/include -F$PREFIX/lib"
-export QT_LDFLAGS="-Wl,-F$PREFIX/lib -L$PREFIX/lib -framework QtCore -framework QtGui "
-export QMAKE=$PREFIX/bin/qmake
-export MOC=$PREFIX/bin/moc
-export UIC=$PREFIX/bin/uic
-
-
 #---------------------------------------------------------------------------------------------------
 # Let gos
 
-printenv
+#printenv
 
 ./configure \
   --host=${!TARGET_ARCH} \
   --enable-macosx-extensions\
   --enable-qt\
-  LDFLAGS="-arch $ARCH  -mmacosx-version-min=10.5 -Wl,-search_paths_first  -Wl,-L$PREFIX/lib   -Wl,-syslibroot $DEVTOOLS/SDKs/MacOSX10.5.sdk"\
-  CPPFLAGS="-arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -I$PREFIX/include"\
-  CFLAGS="-arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -I$PREFIX/include"\
-  CXXFLAGS="-arch $ARCH -mmacosx-version-min=10.5  -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -I$PREFIX/include"
+  CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
+  CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $DEVTOOLS/SDKs/MacOSX10.5.sdk -E" \
+  CPPFLAGS="-I$PREFIX/include" CFLAGS="-I$PREFIX/include" CXXFLAGS="-I$PREFIX/include" \
+  LDFLAGS="-Wl,-search_paths_first -Wl,-syslibroot $SDK -L$PREFIX/lib" \
+  GUILE_CFLAGS=`pkg-config --static --cflags guile-1.8` \
+  GUILE_LDFLAGS=`pkg-config --static --libs guile-1.8` \
+  GUILE_DATA_PATH=`pkg-config --variable=datadir guile-1.8` \
+  GUILE_VERSION=`pkg-config --modversion guile-1.8` \
+  FREETYPE_CFLAGS=`pkg-config --static --cflags freetype2` \
+  FREETYPE_LDFLAGS=`pkg-config --static --libs freetype2` \
+  QT_FRAMEWORKS_PATH="$PREFIX/lib" \
+  QT_PLUGINS_PATH="$PREFIX/plugins" \
+  QT_CPPFLAGS="-DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I$PREFIX/mkspecs/macx-g++ -I$PREFIX/lib/QtCore.framework/Versions/4/Headers -I$PREFIX/include/QtCore -I$PREFIX/lib/QtGui.framework/Versions/4/Headers -I$PREFIX/include/QtGui -I$PREFIX/include -F$PREFIX/lib" \
+  QT_LDFLAGS="-Wl,-F$PREFIX/lib -L$PREFIX/lib -framework QtCore -framework QtGui "\
+  QMAKE="$PREFIX/bin/qmake"\
+  MOC="$PREFIX/bin/moc"\
+  UIC="$PREFIX/bin/uic"
+
+
