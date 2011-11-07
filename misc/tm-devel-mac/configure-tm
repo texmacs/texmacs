@@ -33,11 +33,11 @@ case $ARCH in
   export ARCH=`arch` 
 esac
 
-TARGET_i386    = i686-apple-darwin10
-TARGET_x86_64  = x86_64-apple-darwin10
-TARGET_ppc     = powerpc-apple-darwin10
+TARGET_i386=i686-apple-darwin10
+TARGET_x86_64=x86_64-apple-darwin10
+TARGET_ppc=powerpc-apple-darwin10
 
-TARGET_ARCH := TARGET_${ARCH}
+TARGET_ARCH=TARGET_${ARCH}
 
 # the TeXmacs configure script do not know how to use info from pkg-config
 # so we override its behaviour to take into account this
