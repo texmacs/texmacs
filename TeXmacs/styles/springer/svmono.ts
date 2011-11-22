@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-float|header-book|title-base|section-book|std-latex>
+  <use-package|std|env-base|env-math|env-float|env-program|header-book|title-base|section-book|std-latex>
 
   <assign|env-theorem-dtd|1.0>
 
@@ -211,6 +211,10 @@
   </src-comment>>
 
   <group-common-counter|theorem-env>
+
+  <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+
+  <assign|enunciation-sep|<macro|. >>
 
   <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
@@ -425,7 +429,7 @@
   \;
 
   <assign|toc-title|<macro|env|title|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<style-with|src-compact|none|<if|<equal|<arg|env>|part>|<style-with|src-compact|none|<part-text>
-  <compound|<unquote|<merge|the-|<arg|env>>>><space|7pt><arg|title>>|<style-with|src-compact|none|<style-with|src-compact|none|<resize|<compound|<unquote|<merge|the-|<arg|env>>>>|||<value|<unquote|<merge|<arg|env>|-toc-width>>>||>><arg|title>>>>|<arg|title>>>>>
+  <compound|<unquote|<merge|the-|<arg|env>>>><space|7pt><arg|title>>|<style-with|src-compact|none|<style-with|src-compact|none|<resize|<compound|<unquote|<merge|the-|<arg|env>>>>|||<value|<unquote|<merge|<arg|env>|-toc-width>>>|>><arg|title>>>>|<arg|title>>>>>
 
   \;
 
