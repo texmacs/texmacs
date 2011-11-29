@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -28,6 +28,10 @@
     <assign|D|\<cal-D\>>
 
     <assign|L|\<cal-L\>>
+
+    <assign|o|<with|magnification|0.7|\<cal-O\>>>
+
+    <assign|O|\<cal-O\>>
 
     <assign|R|\<cal-R\>>
 
@@ -115,81 +119,81 @@
 
     \;
 
-    <assign|ssA|<math|<with|math-font-family|tss|A>>>
+    <assign|ssA|<math|<math-ss|A>>>
 
-    <assign|ssAlg|<math|<with|math-font-family|tss|Alg>>>
+    <assign|ssAlg|<math|<math-ss|Alg>>>
 
-    <assign|ssB|<math|<with|math-font-family|tss|B>>>
+    <assign|ssB|<math|<math-ss|B>>>
 
-    <assign|ssBall|<math|<with|math-font-family|tss|Ball>>>
+    <assign|ssBall|<math|<math-ss|Ball>>>
 
-    <assign|ssC|<math|<with|math-font-family|tss|C>>>
+    <assign|ssC|<math|<math-ss|C>>>
 
-    <assign|ssD|<math|<with|math-font-family|tss|D>>>
+    <assign|ssD|<math|<math-ss|D>>>
 
-    <assign|ssE|<math|<with|math-font-family|tss|E>>>
+    <assign|ssE|<math|<math-ss|E>>>
 
-    <assign|ssF|<math|<with|math-font-family|tss|F>>>
+    <assign|ssF|<math|<math-ss|F>>>
 
-    <assign|ssG|<math|<with|math-font-family|tss|G>>>
+    <assign|ssG|<math|<math-ss|G>>>
 
-    <assign|ssGal|<math|<with|math-font-family|tss|Gal>>>
+    <assign|ssGal|<math|<math-ss|Gal>>>
 
-    <assign|ssGL|<math|<with|math-font-family|tss|GL>>>
+    <assign|ssGL|<math|<math-ss|GL>>>
 
-    <assign|ssH|<math|<with|math-font-family|tss|H>>>
+    <assign|ssH|<math|<math-ss|H>>>
 
-    <assign|ssI|<math|<with|math-font-family|tss|I>>>
+    <assign|ssI|<math|<math-ss|I>>>
 
-    <assign|ssIM|<math|<with|math-font-family|tss|IM>>>
+    <assign|ssIM|<math|<math-ss|IM>>>
 
-    <assign|ssJ|<math|<with|math-font-family|tss|J>>>
+    <assign|ssJ|<math|<math-ss|J>>>
 
-    <assign|ssK|<math|<with|math-font-family|tss|K>>>
+    <assign|ssK|<math|<math-ss|K>>>
 
-    <assign|ssL|<math|<with|math-font-family|tss|L>>>
+    <assign|ssL|<math|<math-ss|L>>>
 
-    <assign|ssLin|<math|<with|math-font-family|tss|Lin>>>
+    <assign|ssLin|<math|<math-ss|Lin>>>
 
-    <assign|ssLM|<math|<with|math-font-family|tss|LM>>>
+    <assign|ssLM|<math|<math-ss|LM>>>
 
-    <assign|ssM|<math|<with|math-font-family|tss|M>>>
+    <assign|ssM|<math|<math-ss|M>>>
 
-    <assign|ssMat|<math|<with|math-font-family|tss|Mat>>>
+    <assign|ssMat|<math|<math-ss|Mat>>>
 
-    <assign|ssMM|<math|<with|math-font-family|tss|MM>>>
+    <assign|ssMM|<math|<math-ss|MM>>>
 
-    <assign|ssMV|<math|<with|math-font-family|tss|MV>>>
+    <assign|ssMV|<math|<math-ss|MV>>>
 
-    <assign|ssN|<math|<with|math-font-family|tss|N>>>
+    <assign|ssN|<math|<math-ss|N>>>
 
-    <assign|ssO|<math|<with|math-font-family|tss|O>>>
+    <assign|ssO|<math|<math-ss|O>>>
 
-    <assign|ssP|<math|<with|math-font-family|tss|P>>>
+    <assign|ssP|<math|<math-ss|P>>>
 
-    <assign|ssQ|<math|<with|math-font-family|tss|Q>>>
+    <assign|ssQ|<math|<math-ss|Q>>>
 
-    <assign|ssR|<math|<with|math-font-family|tss|R>>>
+    <assign|ssR|<math|<math-ss|R>>>
 
-    <assign|ssRM|<math|<with|math-font-family|tss|RM>>>
+    <assign|ssRM|<math|<math-ss|RM>>>
 
-    <assign|ssS|<math|<with|math-font-family|tss|S>>>
+    <assign|ssS|<math|<math-ss|S>>>
 
-    <assign|ssT|<math|<with|math-font-family|tss|T>>>
+    <assign|ssT|<math|<math-ss|T>>>
 
-    <assign|ssU|<math|<with|math-font-family|tss|U>>>
+    <assign|ssU|<math|<math-ss|U>>>
 
-    <assign|ssV|<inactive|<math|<with|math-font-family|tss|V>>>>
+    <assign|ssV|<inactive|<math|<math-ss|V>>>>
 
-    <assign|ssVect|<math|<with|math-font-family|tss|Vect>>>
+    <assign|ssVect|<math|<math-ss|Vect>>>
 
-    <assign|ssW|<math|<with|math-font-family|tss|W>>>
+    <assign|ssW|<math|<math-ss|W>>>
 
-    <assign|ssX|<math|<with|math-font-family|tss|X>>>
+    <assign|ssX|<math|<math-ss|X>>>
 
-    <assign|ssY|<math|<with|math-font-family|tss|Y>>>
+    <assign|ssY|<math|<math-ss|Y>>>
 
-    <assign|ssZ|<math|<with|math-font-family|tss|Z>>>
+    <assign|ssZ|<math|<math-ss|Z>>>
 
     \;
 
