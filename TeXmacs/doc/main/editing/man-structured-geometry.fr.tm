@@ -38,11 +38,11 @@
     <item*|<shortcut|(geometry-top)>>Augmente le décalage vertical d'un
     objet, ou l'aligne en haut.
 
-    <item*|<shortcut|(geometry-reset)>>Restaure la geometrie (taille,
+    <item*|<shortcut|(geometry-reset)>>Restaure la géomètrie (taille,
     position, alignement) aux valeurs par défaut.
 
     <item*|<shortcut|(geometry-circulate #t)>, <shortcut|(geometry-circulate
-    #f)>>Boucle u travers toutes les unités possible pour la géomètrie.
+    #f)>>Boucle à travers toutes les unités possibles pour la géomètrie.
 
     <item*|<shortcut|(geometry-slower)>, <shortcut|(geometry-faster)>>Décroît
     ou augmente le pas de variation pour le redimensionnement ou le
