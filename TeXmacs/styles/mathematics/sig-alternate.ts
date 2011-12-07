@@ -120,6 +120,10 @@
     Sectional macros.
   </src-comment>>
 
+  <assign|sectional-sep|<macro|<space|1em>>>
+
+  <assign|section-sep|<macro|.<space|1em>>>
+
   <assign|section-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|10pt|4pt|2pt>><large|<with|font|times|<change-case|<arg|name>|UPCASE>>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
 
   <assign|subsection-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|8pt|2pt|1pt>><large|<with|font|times|<arg|name>>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
@@ -128,17 +132,55 @@
 
   <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<tex-len|6pt|1pt|1pt>><normal-size|<arg|name>><space|5.5pt>>>>>
 
+  <assign|bibliography-text|<macro|<localize|References>>>
+
+  <assign|render-bibliography|<\macro|name|body>
+    <principal-section|<arg|name>>
+
+    <with|par-first|0fn|par-par-sep|0fn|<arg|body>>
+  </macro>>
+
+  <assign|transform-bibitem|<macro|body|[<arg|body>] \ >>
+
   <\active*>
     <\src-comment>
       Titles.
     </src-comment>
   </active*>
 
+  <assign|doc-render-title|<\macro|x>
+    <with|font-family|ss|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+      <doc-title-block|<font-magnify|2|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
+    </surround>>
+  </macro>>
+
+  <assign|author-render-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font|ms-arial|font-base-size|12|<arg|author>>>>>>
+
+  <assign|author-address|<\macro|address>
+    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font|ms-arial|font-base-size|10|<arg|address>>>>
+  </macro>>
+
+  <assign|author-email|<macro|email|<doc-author-block|<with|font|ms-arial|font-base-size|12|<arg|email>>>>>
+
+  <assign|author-homepage|<macro|homepage|<doc-author-block|<with|font|ms-arial|font-base-size|12|<arg|homepage>>>>>
+
   <assign|doc-abstract|<\macro|body>
     <section*|<abstract-text>>
 
     <surround|<no-indent>||<arg|body>>
   </macro>>
+
+  <assign|doc-keywords|<\xmacro|args>
+    <subsection*|<keywords-text>>
+
+    <no-indent><concat-tuple|<copy|<quote-arg|args>>|, >
+  </xmacro>>
+
+  <assign|doc-AMS-class|<\xmacro|args>
+    <subsection*|<AMS-class-text>>
+
+    <no-indent><concat-tuple|<copy|<map|msc-ref|<quote-arg|args>>>|, >
+  </xmacro>>
 
   <\active*>
     <\src-comment>
@@ -163,6 +205,51 @@
   <assign|header-primary|<macro|name|nr|what|>>
 
   <assign|header-secondary|<macro|name|nr|what|>>
+
+  <active*|<\src-comment>
+    Theorem-like environemments rendering.
+  </src-comment>>
+
+  <assign|theorem-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
+
+  <assign|theorem-sep|<macro|. >>
+
+  <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
+
+  <assign|remark-sep|<macro|. >>
+
+  <assign|exercise-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
+
+  <assign|exercise-sep|<macro|. >>
+
+  \;
+
+  <assign|render-remark|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<yes-indent><remark-name|<arg|which><remark-sep>>||<arg|body>>>
+  </macro>>
+
+  <assign|render-theorem|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<yes-indent><theorem-name|<arg|which><theorem-sep>>||<with|font-shape|italic|<arg|body>>>>
+  </macro>>
+
+  <assign|render-exercise|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<yes-indent><exercise-name|<arg|which><exercise-sep>>||<arg|body>>>
+  </macro>>
+
+  \;
+
+  <assign|proof-text|<macro|<localize|Proof>>>
+
+  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
+  >>>>
+
+  <assign|render-proof|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<yes-indent><theorem-name|<arg|which><theorem-sep>>|<space|1em><active*|<with|mode|math|\<box\>>>|<arg|body>>>
+  </macro>>
+
+  <assign|proof|<\macro|body>
+    <render-proof|<proof-text>|<arg|body>>
+  </macro>>
 </body>
 
 <\initial>
