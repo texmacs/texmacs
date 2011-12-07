@@ -163,17 +163,6 @@
   <assign|header-primary|<macro|name|nr|what|>>
 
   <assign|header-secondary|<macro|name|nr|what|>>
-
-  <\active*>
-    <\src-comment>
-      Other customizations.
-    </src-comment>
-  </active*>
-
-  <assign|xaligned-item|<macro|name|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<with|math-font-series|bold|font-series|bold|<arg|name>>
-  |<minus|1r|<item-hsep>>||1r|>>>>
-
-  \;
 </body>
 
 <\initial>
