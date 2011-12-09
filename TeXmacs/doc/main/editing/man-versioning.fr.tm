@@ -23,7 +23,7 @@
   Supposons que nous ayons deux versions <verbatim|old.tm> et
   <verbatim|new.tm> du même document. Afin de visualiser les changements,
   premièrement chargeons la nouvelle version <verbatim|new.tm>, puis cliquons
-  sur <menu|Version|File|Compare> et sélectionnons \ la vieille version
+  sur <menu|Version|File|Compare> et sélectionnons la vieille version
   <verbatim|old.tm>. Le tampon sera toujours nommé <verbatim|new.tm>, et les
   changements entre les deux versions seront indiqués par un marqueur
   spécial. Si il n'y a pas de changement, alors le curseur sera positionné
@@ -87,11 +87,11 @@
   <paragraph*|Controle fin et mise à jour des differences>
 
   Les entrées dans le sous-menu <menu|Version|Grain> permettent de contrôler
-  la finesse avec laquelle les \ differences entre les versions sont
-  calculées. Par défaut, nous utilisons le niveau <menu|Detailed>. Il est
-  aussi possible de calculer les différences au niveau du paragraphe, en
-  utilisant <menu|Block>. Dans se cas, c'est le paragraphe entier dans lequel
-  un changement intervient,qui va être surligné. Le niveau de finesse le plus
+  la finesse avec laquelle les differences entre les versions sont calculées.
+  Par défaut, nous utilisons le niveau <menu|Detailed>. Il est aussi possible
+  de calculer les différences au niveau du paragraphe, en utilisant
+  <menu|Block>. Dans se cas, c'est le paragraphe entier dans lequel un
+  changement intervient,qui va être surligné. Le niveau de finesse le plus
   grossier <menu|Rough> va surligné le texte entier, si un changement est
   paru.
 

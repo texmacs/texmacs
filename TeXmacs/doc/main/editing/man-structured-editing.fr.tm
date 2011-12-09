@@ -19,8 +19,9 @@
   <shortcut|(structured-insert-up)> et <shortcut|(structured-insert-down)>
   ont une signification particulière dans les tableaux et les arbres. Dans
   les tableaux, elles permettent d'insérer de nouvelles lignes et colonnes
-  (voir fig 1). Dans les arbres, elles insèrent de nouveaux noeuds (voir fig
-  2). Chaque fois que vous insérez un arbre dans un tableau, le tag le plus
+  (voir la figure<nbsp><reference|matrix-insert-fig>). Dans les arbres, elles
+  insèrent de nouveaux noeuds (voir la figure<nbsp><reference|tree-insert-fig>).
+  Chaque fois que vous insérez un arbre dans un tableau, le tag le plus
   intérieur est l'arbre et l'insertion de noeud prend le dessus sur
   l'insertion de lignes et de colonnes.
 
@@ -45,15 +46,13 @@
   </big-figure>
 
   <\big-figure|<tree|a|b|c<value|cursor>|d><space|3em><space|3em><tree|a|b|<value|cursor>|c|d><space|3em><tree|a|b|c|<value|cursor>|d><space|3em><tree|a|b|<tree|<value|cursor>|c>|d><space|3em><tree|a|b|<tree|c|<value|cursor>>|d>>
-    <label|matrix-insert-fig>Supposons que le curseur soit à la position
+    <label|tree-insert-fig>Supposons que le curseur soit à la position
     <value|cursor> dans l'arbre à l'extrème gauche. Alors les quatres arbres
     suivants correspondent respectivement à l'insertion d'un nouveau noeud à
-    gauche<nbsp>(<shortcut|(structured-insert-left)>), a
-    droite<nbsp>(<shortcut|(structured-insert-right)>), au
+    gauche<nbsp>(<shortcut|(structured-insert-left)>),
+    à<nbsp>droite<nbsp>(<shortcut|(structured-insert-right)>), au
     dessus<nbsp>(<shortcut|(structured-insert-up)>) ou en
-    dessous<nbsp>(<shortcut|(structured-insert-down)>)
-
-    \;
+    dessous<nbsp>(<shortcut|(structured-insert-down)>).
   </big-figure>
 
   De la même façon, dans le cas des matrices, les touches
@@ -82,7 +81,8 @@
     matrices suivantes. Presser l'une des touches
     <shortcut|(remove-structure-upwards)> ou
     <shortcut|(remove-structure-upwards)> remplace la matrice avec le contenu
-    de la cellule dans laquelle vous êtes, laissant le curseur à droite de b.
+    de la cellule dans laquelle vous êtes, laissant le curseur à droite de
+    <math|b>.
   </big-figure>
 
   <tmdoc-copyright|1998--2005|Joris van der Hoeven|Denis Raux>
