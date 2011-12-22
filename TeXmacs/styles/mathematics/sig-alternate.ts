@@ -148,21 +148,27 @@
     </src-comment>
   </active*>
 
+  <assign|title-bold-ss|<macro|x|<with|font-family|ss|font-series|bold|math-font-series|bold|<arg|x>>>>
+
+  <assign|title-ss|<macro|x|<with|font|ms-arial|font-base-size|12|<arg|x>>>>
+
+  <assign|title-ss|<macro|x|<with|font-family|ss|font-base-size|12|<arg|x>>>>
+
   <assign|doc-render-title|<\macro|x>
-    <with|font-family|ss|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
-      <doc-title-block|<font-magnify|2|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
-    </surround>>
+    <\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+      <doc-title-block|<font-magnify|2|<title-bold-ss|<arg|x>>>>
+    </surround>
   </macro>>
 
-  <assign|author-render-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font|ms-arial|font-base-size|12|<arg|author>>>>>>
+  <assign|author-render-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-ss|<arg|author>>>>>>
 
   <assign|author-address|<\macro|address>
-    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font|ms-arial|font-base-size|10|<arg|address>>>>
+    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-ss|<with|font-base-size|10|<arg|address>>>>>
   </macro>>
 
-  <assign|author-email|<macro|email|<doc-author-block|<with|font|ms-arial|font-base-size|12|<arg|email>>>>>
+  <assign|author-email|<macro|email|<doc-author-block|<title-ss|<arg|email>>>>>
 
-  <assign|author-homepage|<macro|homepage|<doc-author-block|<with|font|ms-arial|font-base-size|12|<arg|homepage>>>>>
+  <assign|author-homepage|<macro|homepage|<doc-author-block|<title-ss|<arg|homepage>>>>>
 
   <assign|doc-abstract|<\macro|body>
     <section*|<abstract-text>>
