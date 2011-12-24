@@ -406,7 +406,14 @@ edit_env_rep::exec_xspc_length () {
 tree
 edit_env_rep::exec_par_length () {
   SI width, d1, d2, d3, d4, d5, d6, d7;
-  if (read (PAR_WIDTH) != "auto") width= get_length (PAR_WIDTH);
+  if (read (PAR_WIDTH) != "auto") {
+    width= get_length (PAR_WIDTH);
+    int nr_cols= get_int (PAR_COLUMNS);
+    if (nr_cols > 1) {
+      SI col_sep= get_length (PAR_COLUMNS_SEP);
+      width= ((width+col_sep) / nr_cols) - col_sep;
+    }
+  }
   else get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
   width -= (get_length (PAR_LEFT) + get_length (PAR_RIGHT));
   return tree (TMLEN, as_string (width));

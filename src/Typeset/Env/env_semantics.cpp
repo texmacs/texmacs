@@ -237,9 +237,9 @@ edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
   cout << "height= " << (height/PIXEL) << "\n";
   cout << "odd   = " << (odd/PIXEL) << "\n";
   cout << "even  = " << (even/PIXEL) << "\n";
-  cout << "right = " << (right/PIXEL) << "\n";
   cout << "top   = " << (top/PIXEL) << "\n";
   cout << "bot   = " << (bot/PIXEL) << "\n";
+  cout << "cols  = " << nr_cols << "\n";
   */
 }
 
