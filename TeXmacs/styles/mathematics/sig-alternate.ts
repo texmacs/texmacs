@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-article|section-article|two-columns|std-latex>
+  <use-package|std|env|title-generic|header-article|section-article|std-latex|two-columns>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -149,8 +149,6 @@
   </active*>
 
   <assign|title-bold-ss|<macro|x|<with|font-family|ss|font-series|bold|math-font-series|bold|<arg|x>>>>
-
-  <assign|title-ss|<macro|x|<with|font|ms-arial|font-base-size|12|<arg|x>>>>
 
   <assign|title-ss|<macro|x|<with|font-family|ss|font-base-size|12|<arg|x>>>>
 
