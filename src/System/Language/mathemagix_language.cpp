@@ -151,6 +151,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("literal_integer")= c;
   t ("literal_floating")= c;
   t ("literal_string")= c;
+  t ("literal_constant")= c;
   t ("locked")= c;
   t ("loop")= c;
   t ("macro")= c;
