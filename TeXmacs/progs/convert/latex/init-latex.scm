@@ -38,8 +38,12 @@
 
 (define-format latex
   (:name "LaTeX")
-  (:suffix "tex" "ltx" "sty" "cls")
+  (:suffix "tex")
   (:recognize latex-recognizes?))
+
+(define-format latex-class
+  (:name "LaTeX class")
+  (:suffix "ltx" "sty" "cls"))
 
 (lazy-define (convert latex texout) serialize-latex)
 (lazy-define (convert latex tmtex) texmacs->latex)
@@ -50,6 +54,9 @@
 
 (converter latex-document texmacs-tree
   (:function latex-document->texmacs))
+
+(converter latex-class-document texmacs-tree
+  (:function latex-class-document->texmacs))
 
 (converter latex-stree latex-document
   (:function serialize-latex))

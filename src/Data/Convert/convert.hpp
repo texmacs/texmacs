@@ -62,6 +62,7 @@ tree   parse_latex (string s, bool change= false);
 tree   parse_latex_document (string s, bool change= false);
 tree   latex_to_tree (tree t);
 tree   latex_document_to_tree (string s);
+tree   latex_class_document_to_tree (string s);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);
