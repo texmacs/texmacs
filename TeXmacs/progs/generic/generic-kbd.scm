@@ -44,7 +44,7 @@
   ("\\" (if (or (inside? 'hybrid) (in-prog?)) (insert "\\") (make-hybrid)))
   ("\\ var" "\\")
   ("\\ var var" "<setminus>")
-  ("$" (if (inside? 'hybrid) (insert "$") (make 'math)))
+  ("$" (if (or (inside? 'hybrid) (inside? 'session)) (insert "$") (make 'math)))
   ("$ var" "$")
 
   ("-" "-")
@@ -171,7 +171,7 @@
   ("symbol $" "$")
   ("symbol &" "&")
   ("symbol #" "#")
-  ("symbol §" "§")
+  ("symbol ï¿½" "ï¿½")
   ("symbol %" "%")
   ("symbol _" "_")
   ("symbol ^" "^")
