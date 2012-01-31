@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.0.7.14>
 
 <style|source>
 
@@ -47,7 +47,7 @@
   <assign|script-status|<macro|body|<with|color|red|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   yellow>|<table|<row|<cell|<arg|body>>>>>>>>>
 
-  <assign|script-busy|<macro|<script-status|<localize|Busy>...>>>
+  <assign|script-busy|<macro|msg|<script-status|<if|<equal|<arg|msg>|<uninit>>|<localize|Busy>...|<arg|msg>>>>>
 
   <assign|script-interrupted|<macro|<script-status|<math|\<lightning\>>
   <localize|Interrupted>>>>
