@@ -464,14 +464,13 @@ static bool in_preprocessing (string s, tree t) {
   string s2= s;
   while (line_number(t2) > 0) {
     t2= line_inc(t2,-1);
+    if (!is_atomic(t2)) return false;
     s2= t2->label;
     if (!end_preprocessing(s2)) return false;
     if (begin_preprocessing(s2)) return true;
   } 
   return false;
 }
-
-
 
 string
 cpp_language_rep::get_color (tree t, int start, int end) {
