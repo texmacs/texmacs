@@ -285,12 +285,13 @@
   (let* ((lan (get-env "prog-language"))
 	 (ses (get-env "prog-session")))
     (with l (pending-ref lan ses)
-      (when (nnull? l)
-        (with (in out next opts) (session-decode (car l))
-
-          (when (and (tm-func? out 'document)
-                     (tm-func? (tree-ref out :last) 'script-busy))
-            (tree-assign (tree-ref out :last) `(script-busy ,msg))))))))
+      (for-each
+       (lambda (x)
+         (with (in out next opts) (session-decode x)
+           (when (and (tm-func? out 'document)
+                      (tm-func? (tree-ref out :last) 'script-busy))
+             (tree-assign (tree-ref out :last) `(script-busy ,msg)))))
+       l))))
 
 (tm-define (session-alive?)
   (> (session-status) 1))
