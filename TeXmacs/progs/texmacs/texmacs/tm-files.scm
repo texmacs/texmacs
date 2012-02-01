@@ -93,10 +93,13 @@
 	     (!= suffix ""))
 	(user-confirm question #t
 	  (lambda (answ)
-	    (when answ
-	      (texmacs-load-buffer (url-glue file suffix) fm where #t)
-	      (texmacs-load-buffer file fm where #f))
-	    (activate-highlighting))))))
+	    (if answ
+		(texmacs-load-buffer (url-glue file suffix) fm where #t)
+		(texmacs-load-buffer file fm where #f))
+	    (activate-highlighting)))
+	(begin
+	  (texmacs-load-buffer file fm where #f)
+	  (activate-highlighting)))))
 
 (tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
