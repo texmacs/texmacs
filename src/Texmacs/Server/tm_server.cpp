@@ -97,7 +97,7 @@ tm_server_rep::tm_server_rep ():
   if (exists (my_init_file)) exec_file (my_init_file);
   bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
-    my_init_cmds= "(dialogue" * my_init_cmds * ")";
+    my_init_cmds= "(begin" * my_init_cmds * ")";
     exec_delayed (scheme_cmd (my_init_cmds));
   }
 #ifdef OS_GNU_LINUX
