@@ -44,7 +44,7 @@
 (tm-define (server-remove client)
   (ahash-remove! server-client-active? client))
 
-(define (server-remote-sub client cmd return)
+(tm-define (server-remote client cmd cont)
   (when (not (ahash-ref server-client-waiting? client))
     (ahash-set! server-client-waiting? client #t)
     (server-write client (object->string* cmd))
@@ -57,11 +57,4 @@
 	  (when (!= result "")
 	    (ahash-set! server-client-waiting? client #f)
 	    (set! wait 1)
-	    (return (string->object result))))))))
-
-(tm-define (server-remote client cmd)
-  (if dialogue-break
-      (dialogue-user local-continue
-	(with return (dialogue-machine local-continue)
-	  (server-remote-sub client cmd return)))
-      (texmacs-error "dialogue-ask" "Not in dialogue")))
+	    (cont (string->object result))))))))

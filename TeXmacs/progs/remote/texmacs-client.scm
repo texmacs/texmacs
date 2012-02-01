@@ -41,7 +41,7 @@
 (tm-define (client-remove)
   (set! client-active? #f))
 
-(define (client-remote-sub cmd return)
+(tm-define (client-remote cmd cont)
   (when (not client-waiting?)
     (set! client-waiting? #t)
     (client-write (object->string* cmd))
@@ -54,11 +54,4 @@
 	  (when (!= result "")
 	    (set! client-waiting? #f)
 	    (set! wait 1)
-	    (return (string->object result))))))))
-
-(tm-define (client-remote cmd)
-  (if dialogue-break
-      (dialogue-user local-continue
-	(with return (dialogue-machine local-continue)
-	  (client-remote-sub cmd return)))
-      (texmacs-error "dialogue-ask" "Not in dialogue")))
+	    (cont (string->object result))))))))
