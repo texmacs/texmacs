@@ -79,11 +79,6 @@
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(provide-public call/cc call-with-current-continuation)
-
-(define-public-macro (with-cc cont . body)
-  `(call/cc (lambda (,cont) ,@body)))
-
 (define-public-macro (when cond? . body)
   `(if ,cond? (begin ,@body)))
 
