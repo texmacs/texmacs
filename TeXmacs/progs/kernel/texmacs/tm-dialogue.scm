@@ -109,9 +109,9 @@
 
 (define-public (user-ask prompt cont)
   (tm-interactive cont
-		  (if (string? prompt)
-		      (list (build-interactive-arg prompt))
-		      (list prompt))))
+    (if (string? prompt)
+	(list (build-interactive-arg prompt))
+	(list prompt))))
 
 (define-public (user-confirm prompt default cont)
   (let ((k (lambda (answ) (cont (yes? answ)))))
